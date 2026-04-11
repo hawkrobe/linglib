@@ -1,5 +1,6 @@
 /-
 # Graded Causative Verb Semantics
+@cite{cao-white-lassiter-2025}
 
 Causative verbs *cause*, *make*, and *force* encode not just sufficiency
 or necessity but a **unique blend of three graded measures**:
@@ -48,7 +49,7 @@ open NadathurLauer2020.Necessity
 open NadathurLauer2020.CoerciveImplication (ActionType)
 open NadathurLauer2020.Builder (CausativeBuilder)
 
-/-! ## The Three Measures (§2.2-2.4)
+/-! ## The Three Measures
 
 All three are defined within structural causal models.
 In the general case they are continuous ∈ [0,1] (or ℕ for ALT).
@@ -124,16 +125,15 @@ theorem alt_positive_volitional (n : ℕ) (h : n > 0) :
     altToActionType n = .Volitional := by
   simp [altToActionType, h]
 
-/-! ## Interaction Profiles (Table 1)
+/-! ## Interaction Profiles
 
 The core empirical finding: each verb has a unique set of
 reliable interaction terms among SUF, INT, and ALT. -/
 
 /-- Two-way and three-way interaction terms from the regression model.
 
-These correspond to the product terms in the Bayesian regression
-(Model I, Table 2). An interaction is "reliable" when its 95%
-credible interval excludes 0. -/
+These correspond to the product terms in the Bayesian regression.
+An interaction is "reliable" when its 95% credible interval excludes 0. -/
 inductive InteractionTerm where
   | sufInt      -- SUFresidALT × INT
   | sufAlt      -- SUFresidALT × ALT
@@ -234,13 +234,14 @@ theorem graded_subsumes_binary (dyn : CausalDynamics) (bg : Situation)
   rw [deterministicSuf_iff_sufficient] at h
   simp [CausativeBuilder.toSemantics, makeSem, h]
 
-/-! ## Main Effects (Model I, Table 2)
+/-! ## Main Effects
 
 The regression coefficients for the main effects, showing the
 direction and relative magnitude of each measure's contribution. -/
 
-/-- Main effect coefficients from Model I (Table 2).
+/-- Main effect coefficients from the Bayesian regression.
 
+-- UNVERIFIED: coefficient values (+1.19, +0.54, -0.82) need verification
 All three main effects are reliable (95% CI excludes 0):
 - SUFresidALT: +1.19 (more sufficiency → more acceptable)
 - INT: +0.54 (more intention → more acceptable)

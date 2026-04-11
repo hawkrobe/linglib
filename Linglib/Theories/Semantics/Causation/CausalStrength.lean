@@ -4,11 +4,11 @@ import Mathlib.Tactic.NormNum
 import Linglib.Core.StructuralEquationModel
 
 /-!
-# Causal Selection Models
+# Causal Strength Models
 @cite{icard-et-al-2017}
 
-Theory-layer definitions for **causal selection**: the cognitive process
-of ranking causes by importance, given a causal model.
+Theory-layer definitions for **causal strength**: computational models
+that rank candidate causes by importance, given a causal model.
 
 Two models are formalized:
 
@@ -22,7 +22,7 @@ These definitions are theory-layer infrastructure imported by study files
 (e.g., `KonukEtAl2026`, `BellerGerstenberg2025`).
 -/
 
-namespace Semantics.Causation.CausalSelection
+namespace Semantics.Causation.CausalStrength
 
 /-! ## Sampling Propensity
 
@@ -79,4 +79,4 @@ theorem nsm_mono_suf (pC nec : ℚ) (hpC : 0 ≤ pC) (s₁ s₂ : ℚ) (h : s₁
     nsm pC s₁ nec ≤ nsm pC s₂ nec := by
   unfold nsm; linarith [mul_le_mul_of_nonneg_left h hpC]
 
-end Semantics.Causation.CausalSelection
+end Semantics.Causation.CausalStrength

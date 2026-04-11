@@ -1,5 +1,244 @@
 # Changelog
 
+## [0.229.631] - 2026-04-10
+
+### Added
+- **CCSelection.lean**: `member_entails_completion` theorem — for positive dynamics, `causeSem` (Def 10b necessity) entails `completesForEffect` (simple but-for); proved via monotonicity of `normalDevelopment` under `trueLE`
+- **CCSelection.lean**: `member_not_entails_completion_negative` counterexample — inhibitory dynamics where Def 10b necessity holds but simple but-for fails, showing the positivity restriction is necessary
+- **CCSelection.lean**: `completion_not_entails_member` theorem — causal chains witness `completesForEffect` without `causeSem`
+- **CCSelection.lean**: `completion_entails_member_single_pathway` — single-pathway models where completion does entail membership (Fodor 1970)
+- **CCSelection.lean**: `member_asserts_necessity`, `completion_asserts_sufficiency` extraction theorems
+
+### Changed
+- **CCSelection.lean**: fixed false `member_entails_completion` theorem (was sorry-blocked); added `hPos : isPositiveDynamics dyn = true` hypothesis
+- **CausalSelection.lean → CausalStrength.lean**: renamed to reflect actual content (causal strength models, not CC-selection)
+- **Examples.lean**: deleted — content fully covered by `Phenomena/Causation/Studies/NadathurLauer2020.lean`; `make_cause_truth_conditionally_distinct` in `Basic.lean` now uses inline witness
+- **Citation cleanup**: replaced 15+ unverified `§`/table/equation refs with content descriptions or `-- UNVERIFIED:` tags across 8 causation files; normalized all inline citations to `@cite{key}` format
+- **references.bib**: added `bar-asher-siegal-2026` entry (Annual Review of Linguistics 12:125-145)
+
+## [0.229.630] - 2026-04-10
+
+### Added
+- **Core/Gender.lean**: shared `SurfaceGender` enum (masculine, feminine, neuter, common, animate, inanimate) with UD bridge and roundtrip theorem
+- **Fragments/Hausa/Gender.lean**: Hausa gender fragment with Set 1 VI derivation, *-ā* diagnostic (@cite{kramer-2020} §3.3.1)
+- **Fragments/German/Gender.lean**: German derivational gender (*-schaft*, *-heit*, *-ung* → feminine; *-chen*, *-lein* → neuter) with 3-gender VI verification and *Mädchen* override theorem
+
+### Changed
+- **Gender infrastructure unification**: replaced 4 independent `Gender` enums (French, Italian/Nouns, Italian/Determiners, Italian/NumberGender) with `Core.SurfaceGender`; added `.toSurfaceGender` bridge functions to 5 language-specific gender systems (Teop, Swahili, Xhosa, Shona, Mixtec/SMPM)
+- **DM Categorizer.lean**: added §6 surface gender bridge — 4 VI-parameterized functions (`surfaceGenderSet1`/`Set2`/`Three`/`Animacy`) mapping `CatHead` phi-features to `Core.SurfaceGender`
+- **Kramer2020.lean**: deleted local `SurfaceGender` type and `set1SurfaceGender`/`set2SurfaceGender` functions; all theorems now use DM bridge functions from Categorizer.lean
+
+## [0.229.629] - 2026-04-10
+
+### Added
+- **StapsRooryck2024.lean §11**: formal denotations (14)-(15), (35) — `parAgentiveDenot`/`deAgentiveDenot` return `PrProp W` with complementary proto-agentivity presuppositions; `parCausalDenot`/`deCausalDenot` for force/situation-based causal uses; `AgentivePrepParams` structure; `presup_agrees_with_prediction` grounding theorem connecting presuppositions to `predictsParRequired`; `par_de_same_assertion` (rfl), `par_de_presup_complementary`; `ProtoAgentivityLevel` with `profileToAgentivityLevel` bridge
+
+## [0.229.628] - 2026-04-10
+
+### Changed
+- **French Predicates.lean**: renamed `stimulusObjectProfile` → `minimalParticipantProfile` (IE-only profile used for non-stimulus objects too); `stativePositionalSubjectProfile` is now `abbrev` of `minimalParticipantProfile` (eliminates duplicate definition)
+- **StapsRooryck2024.lean**: second quality pass — added 7 missing survey data points from Table 2 (24a-b *entouré*, 27a-29 additional *suivre* contexts); added §10 cross-study bridge to Dowty 1991 (`active_implies_pAgent_ge_1`, `experiencer_high_pAgent_but_no_active`, `canonical_agent_full_agreement`); documented (34) hierarchy in `hasActiveAgentEntailment` docstring; narrowed `change_verbs_reject_de` filter to §3.1 items
+
+## [0.229.627] - 2026-04-10
+
+### Changed
+- **StapsRooryck2024.lean**: quality pass — consolidated 11 redundant per-verb bridge theorems into 5 per-profile theorems + comprehensive `par_verbs`/`de_available_verbs` classification; added `par_de_complementary` (paper's §3.5 (34)); connected to `voicePassive` infrastructure (`passive_provides_case_position`); added `suivi_low_prefers_de` survey theorem and `stative_subject_eq_stimulus_object` profile identity
+- **French Predicates.lean**: deduplicated profiles — `protoTransSubjectProfile` → `abbrev` for `kickSubjectProfile`, `experiencerSubjectProfile` → `seeSubjectProfile`, `dynamicFollowSubjectProfile` → `runSubjectProfile`; removed unused `AgentPrepPref` enum; fixed `suivreStat` sense tag from `.rogative` to `.stative`
+- **VerbEntry.lean**: added `.stative` variant to `SenseTag` for polysemous stative readings
+- **references.bib**: added `copley-harley-2022`, `croft-2012`, `tyler-evans-2003` bibliography entries cited by StapsRooryck2024
+
+## [0.229.626] - 2026-04-10
+
+### Added
+- **StapsRooryck2024.lean**: formalization of @cite{staps-rooryck-2024} — polymorphically-typed Agent prepositions (⟨η, ⟨θ, t⟩⟩), French *par*/*de* proto-agentivity threshold, causal chain distances, survey judgment data (Table 2), bridge theorems connecting EntailmentProfile to par/de predictions, causal adjunct force/situation type distinction
+
+### Changed
+- **French Predicates.lean**: added 13 verb entries with EntailmentProfiles for passive Agent preposition study (laver, écrire, construire, tuer, aimer, adorer, respecter, accompagner, suivre×2, précéder, abandonner, délaisser); added 6 new EntailmentProfile definitions (protoTransSubject, experiencerSubject, stativePositionalSubject, dynamicFollowSubject, accompanySubject, plus object profiles)
+
+## [0.229.625] - 2026-04-10
+
+### Changed
+- **GenderResolution.lean**: migrated `AnnotatedFeature.interp : Bool` → `Interpretability` from Features.lean; updated `percolateI` filter and all theorem constructors
+- **CoordinateResolution.lean**: migrated `percolate` and all `PhiBundle` examples to `Interpretability`; added type annotations for anonymous constructor inference
+- **AdamsonAnagnostopoulou2025.lean**: bulk-migrated ~25 `AnnotatedFeature` constructor sites from `true`/`false` to `.interpretable`/`.uninterpretable`
+- **Carstens2026.lean**: migrated `nP`, `trainFeatures`, `divinerFeatures`, `bantuDP`, and A&A bridge theorem to `Interpretability`; `TwoGrammarFeature.isCore : Bool` correctly unchanged
+- **Features.lean**: updated docstring — `AnnotatedFeature.interp` now uses `Interpretability` across all 4 files (no longer a "future refactor")
+
+## [0.229.624] - 2026-04-10
+
+### Changed
+- **Checking.lean**: added 12 lifecycle theorems (`interpretable_cannot_check`, `check_requires_active_uninterpretable`, `erase_requires_checked`, `full_lifecycle`, etc.); Agree–Checking bridge (§7) connecting `applyAgree` valuation to `TrackedFeature.check` lifecycle (`agree_enables_check`, `agree_then_check_converges`, `mustCheck_resolved_by_check`); Spell-Out convergence theorems (§8) proving checked strong features converge and unchecked crash
+- **Features.lean**: fixed docstring referencing non-existent types (`TenseInterpretability` → `TenseFeatureStatus`, `InterpretedGender` → `AnnotatedFeature.interp`); updated to reflect AgreeSOT migration
+- **Pronouns.lean**: added `GenderParadigm`, `genderOf`, `nameGender`, `genderAgrees` — gender paradigm infrastructure for binding agreement, since `Word.Features` lacks a gender field
+- **Coreference.lean**: replaced hardcoded string lists in `classifyNominal` with `Fragments.English.Pronouns.lookup`; replaced hardcoded name→gender mapping in `phiAgree` (was `["John", "he", "him"]` for masculine) with `Fragments.English.Pronouns.genderAgrees`
+- **Economy.lean**: added `overtOps` dimension to `DerivationCost` for Procrastinate; refactored `Admissibility` from stub to full structure using `convergesAtLF`/`convergesAtSpellOut`/`allLastResort`/`allProcrastinateOk`; added `mkAdmissibility` builder; Procrastinate–cost connection (`procrastinatePreferable`, `covert_minimal`)
+- **AgreeSOT.lean**: replaced local `TenseFeatureStatus` with unified `Interpretability` from Features.lean; updated `TenseHead.status` field type; clarified `toGramFeature` docstring on valued/interpretable axis coincidence in SOT domain
+- **SpellOut.lean**: added docstring section on feature convergence, cross-referencing Checking.lean and Economy.lean
+
+## [0.229.623] - 2026-04-10
+
+### Added
+- **Checking.lean**: new `Core/Checking.lean` formalizing the feature checking lifecycle from @cite{chomsky-1995} Ch 4 §4.5 — `FeatureStatus` (active/checked/erased), `TrackedFeature`, `StrongFeature`, `convergesAtLF`/`convergesAtSpellOut`; `isInterpretableOn` mapping feature × host category → ±Interpretable; verification theorems for phi-on-N vs phi-on-T, Case convergence
+
+### Changed
+- **Features.lean**: added `Interpretability` type (`.interpretable`/`.uninterpretable`) and `FeatureVal.inherentInterpretability` for host-independent features; updated `GramFeature` docstring to correct the valued=interpretable conflation; added `@cite{chomsky-1995}` and docstring on ±Interpretable distinction
+- **Economy.lean**: added Procrastinate (`Timing`, `ProcrastinateViolation`, `satisfiesProcrastinate`), Last Resort / Greed (`lastResort`, `greed`), `Admissibility`; updated docstring with local economy and reference sets
+- **XBar.lean**: updated docstring to note this formalizes the pre–bare-phrase-structure approach that @cite{chomsky-1995} Ch 4 §4.3 eliminates; points to `Labeling.lean` for the preferred bare phrase structure primitives
+
+## [0.229.622] - 2026-04-09
+
+### Changed
+- **Coordination study audit**: refactored BrueningAlKhalaf2020, Bruening2025, Schwarzer2026 for deeper integration and accuracy
+  - Renamed `bakStructuralAssumption` → `mergeCoordSymmetry` (derived from Merge asymmetry, not stipulated)
+  - Added `SelectionViolationType.cats`, `violation_from_extension`, `extension_to_violation` — bidirectional correspondence between permitted violations and `coordExtension`, proving the enumeration is derived from distributional profiles
+  - Added `merge_satisfies_structural_presupposition` connecting Merge to structural percolation
+  - Expanded `merge_grounds_prediction` to full 3-conjunct chain (Merge → asymmetry → presupposition → prediction)
+  - Derived `VerbPosition` from German clause type + V2Data fields (`german_root_v2`, `german_embedded_v_to_i`) instead of stipulating it
+  - Fixed `percolation_adjudication` docstring: paper says results are "against" linear/temporal, not "for" bottom-up (§4 epistemic claim)
+  - Fixed `german_embedded_verb_final` → clause-type-based derivation (embFinV2 means V-to-I, not verb-final)
+  - Opened `Core.Tree.Cat` in Bruening2025 for `NP`/`AdvP`/`AdjP` references
+
+## [0.229.621] - 2026-04-09
+
+### Changed
+- **LittleMoroneyRoyer2022.lean**: deep integration refactor — `predictionsOf : ClassifierStrategy → Predictions` derives language predictions from strategy (eliminates stipulative duplication); `greenberg_refined_by_strategy` theorem formalizing the paper's refinement of Greenberg 1972; §7 constituency trees (`cholTree`, `shanTree`) using `Core.Tree` showing different bracketings ([[Num CLF] N] vs [Num [CLF N]]), `constituency_differs`; §8 semantic derivation grounded in `Mereology.QMOD` with structural proofs (`derivations_extensionally_equal` via `Finset.card_eq_two`, `clfForNum_qua`/`clfForNoun_qua`/`both_strategies_quantize` via `Finset.card_lt_card`, `dogs_cum`); Chierchia1998 bridge theorems (`shan_agrees_with_chierchia_clf_for_noun`, `chol_differs_from_chierchia_languages`); removed 14 trivial field-echo theorems; fixed module docstring (false claim about `Mereology.atomize` usage); 0 `native_decide`, 0 `sorry`
+
+## [0.229.620] - 2026-04-09
+
+### Changed
+- **TaraldsenEtAl2018.lean**: fixed critical bug in `stacking_iff_distinct_N_general` — `p` conflated plural class number (`plCls`) with N inside plural entry's tree (`pN`), causing strong class instantiations (cl1/cl2, cl7/cl8) to fail; split into three parameters `s pN plCls`; removed spurious `hPlSpell`/`hSgSpell` hypotheses from `derivePlural_isStacked_eq` (derivable from `hr` via case analysis); upgraded 7 `native_decide` proofs to `rfl` (`sharesClassifierN` §4, `stacked_is_not_canonical` §10); new §11 NPStack–stacking bridge (`stacked_implies_not_canonical` via `beq_eq_false_iff_ne`, `direct_implies_canonical` via `beq_self_eq_true`); new §12 NounClass alignment (`nounclass_numbers_align`, `gender_singular_aligns`, `gender_plural_aligns`) connecting Fragment `NounClass` enum to study's raw Nat class numbers
+
+## [0.229.619] - 2026-04-09
+
+### Added
+- **AhnKocabDavidson2026.lean**: formalization of sign language loci as spatial modifiers; `ixLoc`/`ixA`/`ixModified` core semantics (eqs. 22–27); `VerbLocusType` replacing Padden's agreeing/spatial/plain trichotomy with selectional properties; `incorporateSubj`/`incorporateObj`/`incorporateBoth` for verbal locus incorporation; `PragmaticContext` modeling disambiguation need with experimental condition predictions; Gricean M2/M3 tension bridge; Ariel accessibility scale placement (`stressedPronGesture`); DOM parallel; deictic-to-abstract R continuum; introducing vs. anaphoric two-dimensional meaning
+- **references.bib**: added `ahn-kocab-davidson-2026`
+
+## [0.229.618] - 2026-04-09
+
+### Changed
+- **BrueningAlKhalaf2020.lean**: added `Supercategory.cats` mapping to `Finset Cat` (grounded in `Core.Tree.Cat`); `supercats_overlap` proves Pred ∩ Mod = {AdjP}; added `coordExtension : Cat → Finset Cat` for CP→NP and AdvP→AdjP distributional compatibility; `coordExtension_exhaustive` structurally derives "exactly two permitted violations" from distributional profiles (case analysis on `Cat`/`UPOS`, no `native_decide`); added `merge_distinguishes_children` proving Merge produces asymmetric objects (`merge x y ≠ merge y x` when `x ≠ y`), grounding `CoordSymmetry.asymmetric` in Minimalist architecture; `merge_grounds_prediction` connects full chain: Merge → asymmetric &P → structural percolation → DP-first
+
+## [0.229.617] - 2026-04-09
+
+### Changed
+- **TaraldsenEtAl2018.lean**: replaced `native_decide` in central bridge theorem with structural proof; new `stacking_iff_distinct_N_general` theorem proving stacking ↔ distinct Ns for **any** lexicon satisfying three conditions (plural/singular spellout exist, direct spellout succeeds iff s = p), with proof chaining algorithm structure (`derivePlural_isStacked_eq`) → lexicon property → entry form reduction via `NanoTree.foot`; per-pairing instantiations (`stacking_cl1_cl2` through `stacking_cl9_cl10`) apply the general theorem with `native_decide` only for concrete lexicon hypotheses
+
+## [0.229.616] - 2026-04-09
+
+### Added
+- **LittleMoroneyRoyer2022.lean**: formalization of classifier-for-numeral vs classifier-for-noun typology; `ClassifierStrategy` enum (`forNumeral | forNoun`) in `Core.NounCategorization`; Ch'ol (CLF-for-NUM) and Shan (CLF-for-N) system descriptions derived from fragment data; `Predictions` structure encoding Table 8 distributional diagnostics with verification theorems; semantic derivation showing both strategies yield equivalent "two dogs" denotation; plural co-occurrence data; scope diagnostics; integration with extended typology
+- **Fragments/Mayan/Chol/Classifiers.lean**: Ch'ol classifier inventory (6 entries: -p'ej, -kojty, -tyikil, -k'ej, -ts'ijty, -bujch) from Arcos López 2009 / Little et al. 2022
+- **Fragments/Shan/Classifiers.lean**: Shan classifier inventory (6 entries: ʔǎn, tǒ, kǒ, hòj, ton, lǎŋ) — first Kra-Dai fragment in linglib
+- **Core/Mereology.lean**: `atomize` combinator (restrict predicate to atoms), `atomize_qua` theorem (atomized predicates are quantized), `atomize_of_cum_is_qua` (CUM→QUA via atomization)
+
+### Changed
+- **NounCategorizationSystem**: added `classifierStrategy`, `hasObligatoryNumber`, `pluralClfCooccur` fields; French/Italian marked `hasObligatoryNumber := true`; Mandarin/Japanese marked `classifierStrategy := some .forNoun`
+- **Typology.lean**: Mandarin scopes expanded to `[.numeralNP, .attributiveNP]` (CLF appears with demonstratives); closed Greenberg 1972 TODO with `greenberg_complementarity` theorem; refined docstring for §3.4 plural co-occurrence per Little et al.
+- **Chierchia1998.lean**: added `chierchia_predicts_clf_for_noun` bridge theorem; docstring noting CLF-for-N connection to NMP
+- **references.bib**: added `little-moroney-royer-2022`, `bale-coon-2014`, `bale-et-al-2019`, `moroney-2021`, `arcos-lopez-2009`
+
+## [0.229.615] - 2026-04-09
+
+### Changed
+- **BrueningAlKhalaf2020.lean**: added `FeaturePercolation` inductive type (structural | linear) and `predictOrder` function parametrizing conjunct order predictions by percolation mechanism; redefined `linearClosenessPrediction` and `bottomUpPrediction` as instances of `predictOrder`; added `structural_position_invariant`, `linear_position_dependent`, `percolation_agrees_postverbal`, `percolation_diverges_preverbal` theorems; added `FeaturePercolation.requiredSymmetry` connecting to `CoordSymmetry` with `structural_requires_asymmetric` bridge
+- **Schwarzer2026.lean**: added `percolation_adjudication` theorem (German data selects structural over linear percolation) and `temporal_is_linear_percolation` bridge
+
+## [0.229.614] - 2026-04-09
+
+### Changed
+- **TaraldsenEtAl2018.lean**: fixed N numbering for weak classes — cl4Pl now `[# N₄]` (was `[# N₃]`), cl10Pl now `[# N₁₀]` (was `[# N₉]`), matching the paper's central empirical claim that weak class plurals contain distinct Ns; added cl5Sg (`[N₅]` → "ili") and cl6Pl (`[# N₆]` → "ama"); new §4 formalizing strong vs weak class distinction (`sharesClassifierN`, 5 theorems); rewrote §5 Foot Condition to show weak class failure (`foot_not_met_weak_cl4/cl6`, `no_spellout_forces_stacking_cl3/cl5/cl9`); renamed `cl4_foot_is_n3` → `cl4_foot_is_n4`; replaced `spellout_cl5_none` with `spellout_cl2_sg_none`; new §6 pluralization derivation (`PluralizationResult`, `derivePlural` backtracking algorithm, per-class theorems: `cl1_plural_direct`, `cl7_plural_direct`, `cl3_plural_stacked`, `cl5_plural_stacked`, `cl9_plural_stacked`; `isPluralEntry` structural classifier); new §7 stacking-agreement correlation (`ClassPairing`, `classPairings`, `stacking_iff_distinct_N` — central bridge theorem verifying over all 5 pairings that stacking ↔ distinct Ns; `stacking_outer_is_plural`, `all_pairings_derive`)
+- **TreeSpellout.lean**: updated module docstring and `contains` docstring to clarify relationship to @cite{taraldsen-et-al-2018}'s bidirectional Matching relation (35) and explain equivalence for single-daughter trees
+
+## [0.229.613] - 2026-04-09
+
+### Changed
+- **BrueningAlKhalaf2020.lean audit**: replaced dead `DerivationModel` structure (3 booleans all `true`, no downstream usage) with `bakStructuralAssumption : CoordSymmetry := .asymmetric` connecting to `Core.Coordination`; added `closeness_is_position_dependent` and `bottomUp_is_position_invariant` theorems; removed duplicate `postposition_pattern` theorem (identical to `bak_subject_cpfirst`); § 9 now docstring-only
+- **Schwarzer2026.lean**: merged anemic § 3 into § 4 as "Competing Analyses & Structural Predictions"; added `german_contradicts_bak_subject_evidence` theorem formalizing the English-German preverbal contrast
+- **Bruening2025.lean**: removed 3 trivial t-value significance theorems; added `DecidableEq`/`BEq` to `ExpCondition`; clarified *grow* copular sense
+
+## [0.229.612] - 2026-04-09
+
+### Added
+- **TreeSpellout.lean**: tree-based nanosyntactic spellout extending `Core.lean`; `NanoTree F` type, `contains` (Superset Principle on trees), `treeSpellout` (Elsewhere Condition by tree size), `footConditionMet`, `chainTree` bridge to 1D rank-based spellout; `chainTree_size`, `chainTree_foot` proved
+- **TaraldsenEtAl2018.lean**: formalization of Taraldsen, Taraldsen Medova & Langa 2018 (NLLT 36); `NCFeature` (num/cls), 8 Xhosa class prefix entries as `TreeLexEntry NCFeature`, tree-based spellout verification (5 theorems), Foot Condition stacking demonstration (5 theorems), DM vs Nanosyntax SC prefix comparison (`dm_nano_agree_cl1/cl2`), agreement-classifier bridge via `bantu_matching_iff_interpretable` (`agreement_resolve_iff_core`), NPStack derivation from tree analysis (6 theorems)
+- **Typology.lean**: Xhosa/Shona/Swahili `NounCategorizationSystem` instances (`.nounClass`, `.prefix` realization, `.mixed` assignment); `allSystemsExtended` (7 languages); extended universals: `classifier_no_agreement_nounclass_agreement_extended`, `all_obligatory_extended`, `all_have_default_extended`, `bantu_satisfies_inventory_bound`, `bantu_has_prefix_realization`
+
+### Changed
+- **references.bib**: added DOI for `taraldsen-et-al-2018`, updated sources field
+
+## [0.229.611] - 2026-04-09
+
+### Changed
+- **Multiplicity.lean**: removed dead code (`allParallels`, `allExamples` — unused anywhere)
+- **TieuEtAl2020.lean**: replaced all 5 `native_decide` calls — `uniformity_all_confirmed` restructured to `∧` with `⟨rfl, rfl, rfl⟩`; Horn scale computations changed from `native_decide` to `decide`
+- **Enguehard2024.lean §8 pex bridge**: now imports `PresuppositionalExhaustification.lean` and formalizes core claim — `pex_entails_conceivability` (actual |C|≥2 from pex entails conceivability), `conceivability_does_not_entail_pex` (converse fails via Bool model), `pex_neg_preserves_presup` (pex presupposition projects under negation via `pex_neg_presup`); §11 `bilateral_production_bridge` replaced with `underdetermined_implies_gradient` connecting agreement underdetermination to production utility monotonicity
+
+## [0.229.610] - 2026-04-09
+
+### Added
+- **BrueningAlKhalaf2020.lean**: formalization of Bruening & Al Khalaf 2020 (LI 51(1)); defines shared `ConjunctOrder`, `VerbPosition`, `OVOrder.toVerbPosition` types; `linearClosenessPrediction` (B&AK's core claim: closest conjunct to selector satisfies c-selection); `bottomUpPrediction` (competitor: first conjunct always satisfies); `SelectionViolationType` (exactly two permitted violations: CP↔NP, Adv↔Adj); `Supercategory` (Pred, Mod); English VO and subject-position theorems; cross-linguistic OV predictions; `DerivationModel` (left-to-right PF/LF)
+- **Bruening2025.lean**: formalization of Bruening 2025 (LI 56(3)); three AMT experiments (Exp 1a: prenominal Adj vs Adv coordination, n=65; Exp 1b: CP↔NP coordination rescue, n=65; Exp 2: one-replacement, n=77); z-score data from Tables 2/4/6; significance theorems; `CSelProfile` for c-selection irreducibility (*become*/*grow*/*get*/*end up*/*turn out*); bridge theorems to B&AK 2020
+- **German in Typology.lean**: added `german` ConjunctionSystem (J-only, *und*) to `allLanguages`; imports `Fragments.German.Coordination`
+
+### Changed
+- **Schwarzer2026.lean refactored**: `ConjunctOrder`, `VerbPosition`, `OVOrder.toVerbPosition`, `bottomUpPrediction`, `linearClosenessPrediction` now imported from `BrueningAlKhalaf2020` (respecting chronological dependency: B&AK 2020 defines, Schwarzer 2026 uses); `temporalClosenessPrediction` (Kim & Lu 2024) remains locally defined; all 35+ theorems unchanged
+
+## [0.229.609] - 2026-04-09
+
+### Changed
+- **Multiplicity.lean restructured**: replaced four independent stipulative prediction functions with single primitive `PluralTheory.usesSIMechanism`; each prediction (`predictsChildrenComputeFewer`, `predictsMultiplicitySICorrelation`, `accountsForPolarityAsymmetry`, `positiveNegativeDiffer`) now derived as `t.usesSIMechanism`; added `predictions_equivalent_to_mechanism` proving all four reduce to the single property; removed trivial `implicature_predicts_all` conjunction proof; added `ambiguity_not_si`/`homogeneity_not_si` negative results; removed all `native_decide` from file
+- **TieuEtAl2020.lean / BarLev2021.lean updated**: bridge theorems now go through `usesSIMechanism` instead of three independent prediction hypotheses
+- **Sauerland2003.lean docstring**: fixed stale cross-reference to removed `monotonicity_pattern`
+
+### Added
+- **Bilateral dynamics bridge** (Enguehard2024.lean §11): `NumberedDRef` type pairing discourse referent index with `IndefNumber`; `exists_negative_characterization`, `neg_exists_positive`, `neg_exists_eliminative` characterizing `¬∃x.φ` in bilateral semantics; `agreementFelicitous` connecting number features to `sgCardConceivable`/`plCardConceivable`; `toc_agreement_matches_conceivability`, `chapter_agreement_underdetermined`, `bilateral_production_bridge` connecting bilateral dynamics to production utility model
+
+## [0.229.608] - 2026-04-09
+
+### Changed
+- **Enguehard2024 theorem depth**: replaced stipulative `GradientPrediction` structure with derived theorems (`productionUtility_normalized`, `productionUtility_nonneg`, `utility_predicts_extreme_dominance`, `productionUtility_characterized` uniqueness theorem); removed `categorical_hypothesis_refuted` alias and `conceivability_nontrivial_under_negation` duplicate; generalized `conceivability_same_assertion` from `Unit` to arbitrary `W`
+
+### Fixed
+- **Enguehard2024 Pl condition data**: `plResult.sgRate` was 5/100 (hallucinated from graph reading); corrected to 0 per paper's explicit statement "no singular production in the Pl condition" (p. 295)
+- **Missing `elliott-2020` bib entry**: added `@unpublished{elliott-2020}` (Elliott, P. D. 2020. Towards a principled logic of anaphora. Ms. HHU Düsseldorf) — was `@cite`d in Enguehard2024 docstring without a references.bib entry
+
+### Added
+- **`sg_pl_production_asymmetry`** (Enguehard2024.lean): formalizes the paper's observation that pl intrudes into Sg-biased conditions but sg never appears in Pl — evidence for semantic weakness of plural
+
+## [0.229.607] - 2026-04-09
+
+### Fixed
+- **`peterson-2004` bib entry**: was hallucinated as `@phdthesis` (Stanford); corrected to `@article` in NLLT 22, pp. 643–679, DOI 10.1023/b:nala.0000027673.49915.2b (verified against Schwarzer 2026 reference list)
+- **`zhang-2010` DOI**: was `10.1017/CBO9780511760538` (hallucinated); corrected to `10.1017/cbo9780511770746` (verified against paper's reference list)
+- **Schwarzer2026 docstrings**: removed unverified "V-to-I" mechanism claim; fixed Exp1 docstring phrasing
+
+## [0.229.606] - 2026-04-09
+
+### Changed
+- **Schwarzer 2026 audit cleanup**: replaced `Exp1Cell.complement : String` with `Exp1ComplementType` enum; added `OVOrder.toVerbPosition` bridge from word-order typology to coordination prediction functions; added §11 typological bridges (`ov_languages_preverbal`, `linear_wrong_for_ov_languages`, `bottomUp_correct_for_ov_languages`); added §12 fragment membership verification (`experimental_verbs_in_allVerbs`) and coordination particle bridges (`experimental_conjunction_is_j`, `german_j_only`); fixed inline citations to use `@cite{peterson-2004}` and `@cite{zhang-2010}`
+- **`munn-1993` bib entry**: fixed entry type from `@article` to `@phdthesis`
+- **Bibliography**: added `peterson-2004` and `zhang-2010`
+
+## [0.229.605] - 2026-04-09
+
+### Added
+- **@cite{enguehard-2024} — Conceivability presuppositions on indefinite number marking** (`Phenomena/Plurals/Studies/Enguehard2024.lean`): conceivability presupposition generalization (sg presupposes conceivable |C|=1, pl presupposes conceivable |C|≥2); experimental data (5 conditions × production proportions, monotonicity theorems); production utility model (`productionUtility`, indifference at Mix); bridges to `Sauerland2003` (MP underprediction via `conceivability_presups_incomparable`), `PresuppositionContext` (`constant_presup_satisfied_iff_satisfiable`); book examples (table of contents vs chapters); gradient hypothesis testing
+- **§7 Conceivability lifting** (`Theories/Semantics/Presupposition/PhiFeatures.lean`): entity-level conceivability (`conceivableIn`, `cellConceivableIn`) with nesting and monotonicity; cardinality conceivability for indefinites (`cardConceivable`, `sgCardConceivable`, `plCardConceivable`, `duCardConceivable`); `both_sg_pl_conceivable` (non-complementarity), `sg_only_when_always_unique`/`pl_only_when_never_unique` (extreme cases), `conceivability_presups_incomparable` (MP gap), `negative_context_nontrivial` (projection under negation), `du_implies_pl`, `cardConceivable_mono`
+
+## [0.229.604] - 2026-04-09
+
+### Added
+- **@cite{schwarzer-2026} — Selection-violating coordination in German** (`Phenomena/Coordination/Studies/Schwarzer2026.lean`): three competing analyses (bottom-up, linear closeness, temporal closeness) as prediction functions; Experiment 1 acceptability data (z-scores, coordination rescue effect); Experiment 2 2AFC data (DP-first 77%, position-invariant); 20 theorems: per-verb selection profiles derived from fragment entries, theory-data alignment (bottom-up correct, linear/temporal wrong for preverbal), cross-linguistic generalization, asymmetric structure bridge
+- **German coordination fragment** (`Fragments/German/Coordination.lean`): *und*, *oder*, *aber*, *sondern* as `CoordEntry`; J-only strategy
+- **8 German verb entries** (`Fragments/German/Predicates.lean` §5): non-CP-selecting (*beenden*, *streichen*, *übereilen*, *entwickeln*) and CP-and-DP-selecting (*veranlassen*, *vergessen*, *erwarten*, *beschließen*); per-verb selection grounding theorems via `canTakeClausalComplement`/`canTakeNominalComplement`
+- **`ComplementType.isNominal`/`.isClausal`** and **`VerbCore.canTakeClausalComplement`/`.canTakeNominalComplement`** (`VerbEntry.lean`): selection predicates bridging verb fragment entries to syntactic c-selection
+- **`CoordSymmetry`** (`Core/Coordination.lean`): symmetric vs asymmetric coordination structure type
+- **Selection-violating coordination data** (`Phenomena/Coordination/Data.lean`): English DP&CP examples from @cite{sag-etal-1985}
+
+### Changed
+- **Coordination Data.lean**: replaced Law of Coordination of Likes with Wasow's generalization (@cite{pullum-zwicky-1986}) as the governing constraint
+
 ## [0.229.603] - 2026-04-09
 
 ### Changed

@@ -10,7 +10,7 @@ import Linglib.Theories.Semantics.Conditionals.Counterfactual
 infrastructure: temporal intervals, event sorts,
 and counterfactual semantics.
 
-Kim's core claim (§3.3): stative Class II psych verbs involve a
+Kim's core claim: stative Class II psych verbs involve a
 **maintenance** causal relation, not eventive causation. The two flavors
 differ along three dimensions:
 
@@ -144,7 +144,7 @@ theorem precedes_excludes_overlap {Time : Type*} [LinearOrder Time]
 -- § 5. Event Sort Properties
 -- ════════════════════════════════════════════════════
 
-/-- Maintenance relates two states (Kim §3.3 property (a)). -/
+/-- Maintenance relates two states (@cite{kim-2024} property (a)). -/
 theorem maintenance_both_states {Time : Type*} [LinearOrder Time] :
     (maintenanceLink Time).causeSort = .state ∧
     (maintenanceLink Time).effectSort = .state := ⟨rfl, rfl⟩
@@ -179,7 +179,7 @@ theorem flavors_differ_on_all_dimensions {Time : Type*} [LinearOrder Time] :
 
     ¬cause □→ ¬effect
 
-    This characterizes maintenance causation (Kim §3.3 property (c)):
+    This characterizes maintenance causation (@cite{kim-2024} property (c)):
     "The problem concerns John" — in the closest worlds where John
     no longer has the mental representation, the concern ceases. -/
 def counterfactuallyDependent {W : Type*} [DecidableEq W]
@@ -236,7 +236,7 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W]
   simp [h2] at h1
 
 -- ════════════════════════════════════════════════════
--- § 7. Kim §3.3: Three Properties of Maintenance
+-- § 7. @cite{kim-2024}: Three Properties of Maintenance
 -- ════════════════════════════════════════════════════
 
 /-- The three defining properties of maintenance causation from

@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
+import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
@@ -41,6 +42,7 @@ open NadathurLauer2020.Necessity
 open NadathurLauer2020.Builder (CausativeBuilder)
 open Fragments.English.Predicates.Verbal (VerbEntry make cause)
 open MartinRoseNichols2025
+open Causation.CCSelection
 
 /-! ## Causal Dynamics (@cite{nadathur-lauer-2020}; Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
 
@@ -54,7 +56,7 @@ The resultative construction performs **CC-selection**: it constrains which
 condition from a causal model can fill the cause role. Causative resultatives
 select via completion of a sufficient set: the verbal subevent must be the
 final condition that makes the result inevitable. Combined with the temporal
-constraint (G&J Principle 33), this gives the BBS2025 completion event
+constraint (G&J temporal ordering), this gives the @cite{baglini-bar-asher-siegal-2025} completion event
 analysis. -/
 
 section CausalModels
@@ -170,41 +172,16 @@ theorem causative_means_have_cause :
 
 /-! ### CC-selection (Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
 
-Different causative constructions constrain which condition from a causal
-model can be selected as "the cause." BBS2025 call this CC-selection.
+CC-selection types (`CCSelectionMode`, `completesForEffect`) are defined in
+`Causation.CCSelection` and re-exported here for backward compatibility.
 
-- Overt "cause" (BBS2025, Formula 11): the subject must be an INUS member
-  of a sufficient set — any contributing condition qualifies
-- CoS/lexical causatives (BBS2025, Formula 14): the subject must be the
-  **completion event** — the last condition to be realized, whose occurrence
-  makes the result inevitable
-- Resultatives pattern with CoS: the verbal subevent completes the
-  sufficient set for the constructional result -/
+- Overt "cause": `memberOfSufficientSet` — any necessary condition
+- CoS/resultative: `completionOfSufficientSet` — the completing condition -/
 
-/-- How a causative construction selects its cause (BBS2025). -/
-inductive CCSelectionMode where
-  /-- Overt "cause": subject is any member of a sufficient set (BBS2025 §4.1) -/
-  | memberOfSufficientSet
-  /-- CoS/resultative: subject completes a sufficient set (BBS2025 §4.2) -/
-  | completionOfSufficientSet
-  deriving Repr, DecidableEq
+export Causation.CCSelection (CCSelectionMode completesForEffect ccConstraintSatisfied)
 
 /-- Resultatives select via completion (like CoS verbs). -/
 def resultativeCCSelection : CCSelectionMode := .completionOfSufficientSet
-
-/-- BBS2025 completion event: sufficient + but-for necessary in context.
-    Uses simple counterfactual but-for rather than @cite{nadathur-2024}
-    Def 10b's supersituation necessity: the cause must be needed in the
-    CURRENT background, not resilient against all possible supersituations.
-    This is the right granularity for completion events — intermediate
-    variables in causal chains are passive (no independent source),
-    so simple but-for captures tightness correctly. -/
-def completesForEffect (dyn : CausalDynamics) (background : Situation)
-    (cause effect : Variable) : Bool :=
-  -- With cause: the set is sufficient
-  causallySufficient dyn background cause effect &&
-  -- Without cause: effect does NOT develop (but-for test)
-  !(normalDevelopment dyn (background.extend cause false)).hasValue effect true
 
 /-- Hammering completes the sufficient set for flatness. -/
 theorem hammer_completes_for_flat :
@@ -251,9 +228,9 @@ The resultative's CausativeBuilder is `.make`, but this is NOT stipulated —
 it is DERIVED from two independently-motivated properties:
 
 1. **MEANS relation**: the verbal subevent is the means by which the
-   constructional subevent is brought about (@cite{goldberg-jackendoff-2004}
-   §3, Principle 25). MEANS ↔ causal sufficiency: adding the verbal
-   subevent guarantees the result.
+   constructional subevent is brought about (@cite{goldberg-jackendoff-2004}).
+   MEANS ↔ causal sufficiency: adding the verbal subevent guarantees
+   the result.
 
 2. **CAUSE in constructional subevent**: causative subconstructions have
    `hasCause = true` (derived from `constructionalDesc`).
@@ -417,7 +394,7 @@ private def drinkingVar : Variable := mkVar "drinking"
 private def teaRemovalVar : Variable := mkVar "tea_removal"
 private def teapotDryVar : Variable := mkVar "teapot_dry"
 
-/-- "Drink the teapot dry": passive chain (Levin §4).
+/-- "Drink the teapot dry": passive chain (@cite{levin-2019}).
     drinking → tea_removal → teapot_dry.
     Tea removal has no independent energy source. -/
 def drinkTeapotDryModel : CausalDynamics :=
@@ -428,7 +405,7 @@ private def ballMotionVar : Variable := mkVar "ball_motion"
 private def ballEnergyVar : Variable := mkVar "ball_energy"
 private def doorOpenVar : Variable := mkVar "door_open"
 
-/-- *"Kick the door open" via ball (UNAVAILABLE, Levin §7).
+/-- *"Kick the door open" via ball (UNAVAILABLE, @cite{levin-2019}).
     kick → ball_motion → door_open, plus ball_energy → ball_motion.
     The ball has an independent energy source. -/
 def kickDoorViaBallModel : CausalDynamics :=
@@ -617,7 +594,7 @@ theorem independent_source_disrupts_tightness_concrete :
       kickingDoorVar doorOpenVar = false := by
   constructor <;> native_decide
 
-/-! ### Contiguity (Levin §4)
+/-! ### Contiguity (@cite{levin-2019})
 
 Nonselected-NP resultatives require contiguity between verb's object
 and affected entity. All types involve passive intermediates (no

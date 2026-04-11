@@ -1,5 +1,5 @@
 import Linglib.Core.StructuralEquationModel
-import Linglib.Theories.Semantics.Causation.CausalSelection
+import Linglib.Theories.Semantics.Causation.CausalStrength
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
@@ -33,7 +33,7 @@ Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
 | Concept | Connects to | Module |
 |---------|-------------|--------|
 | Compound sufficiency/necessity | `causallySufficient`/`causallyNecessary` | `Core.StructuralEquationModel` |
-| NSM (Nec/Suf weighting) | `nsm` | `Causation.CausalSelection` (@cite{icard-et-al-2017}) |
+| NSM (Nec/Suf weighting) | `nsm` | `Causation.CausalStrength` (@cite{icard-et-al-2017}) |
 | LOSS_strong (all absent) | `noneSatisfy` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
 | Compound sufficiency | `allSatisfy` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
 | Loss gap (classical − strong) | `inGap` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
@@ -44,7 +44,7 @@ Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
 namespace Phenomena.Causation.Studies.KonukEtAl2026
 
 open Core.StructuralEquationModel
-open Semantics.Causation.CausalSelection (nsm samplingPropensity)
+open Semantics.Causation.CausalStrength (nsm samplingPropensity)
 
 /-! ## § 1. Compound Sufficiency and Necessity
 
@@ -110,7 +110,7 @@ theorem compoundSufficient_eq_allSatisfy :
 /-! ## § 2. The Necessity-Sufficiency Model (NSM)
 
 The general NSM from @cite{icard-et-al-2017}: `NSM(C) = P(C)·Suf(C) + (1-P(C))·Nec(C)`.
-Imported from `Semantics.Causation.CausalSelection.nsm`. -/
+Imported from `Semantics.Causation.CausalStrength.nsm`. -/
 
 /-! ## § 3. Experiment 1: Threshold Game
 

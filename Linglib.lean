@@ -5,6 +5,7 @@ A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
 -/
 -- Core
+import Linglib.Core.Gender
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Lexical.PolarityItem
 import Linglib.Core.Grammar
@@ -452,9 +453,12 @@ import Linglib.Fragments.German.Morph
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.German.V2
+import Linglib.Fragments.German.Coordination
 import Linglib.Fragments.German.Distributives
 import Linglib.Fragments.German.Indefinites
+import Linglib.Fragments.German.Gender
 import Linglib.Fragments.Hausa.Determiners
+import Linglib.Fragments.Hausa.Gender
 import Linglib.Fragments.Akan.Determiners
 import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Georgian.Coordination
@@ -617,6 +621,7 @@ import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Swahili.Basic
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Zapotec.Basic
+import Linglib.Fragments.Shan.Classifiers
 import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Possession
@@ -667,6 +672,7 @@ import Linglib.Fragments.Mayan.Kiche.VoiceSystem
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement
+import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Fragments.Chuj.VerbBuilding
 import Linglib.Fragments.Chuj.ModalIndefinites
@@ -787,6 +793,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Everdell2024
 import Linglib.Phenomena.ArgumentStructure.Studies.Creissels2025
 import Linglib.Phenomena.ArgumentStructure.Studies.Siloni2012
 import Linglib.Phenomena.ArgumentStructure.Studies.Wood2015
+import Linglib.Phenomena.ArgumentStructure.Studies.StapsRooryck2024
 import Linglib.Phenomena.Modality.Studies.Hacquard2006
 import Linglib.Phenomena.Modality.Studies.Hacquard2010
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025
@@ -853,6 +860,9 @@ import Linglib.Phenomena.Causation.Studies.MunozPerez2026
 import Linglib.Phenomena.Causation.Studies.Coon2019
 import Linglib.Phenomena.Coordination.Data
 import Linglib.Phenomena.Coordination.Studies.BillEtAl2025
+import Linglib.Phenomena.Coordination.Studies.BrueningAlKhalaf2020
+import Linglib.Phenomena.Coordination.Studies.Bruening2025
+import Linglib.Phenomena.Coordination.Studies.Schwarzer2026
 import Linglib.Phenomena.Coordination.Studies.Stassen2000
 import Linglib.Phenomena.Coordination.Typology
 import Linglib.Phenomena.WordOrder.Studies.FutrellEtAl2020
@@ -1147,6 +1157,8 @@ import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
 import Linglib.Phenomena.Classifiers.Studies.Downing1996
 import Linglib.Phenomena.Classifiers.Studies.WangSun2026
+import Linglib.Phenomena.Classifiers.Studies.TaraldsenEtAl2018
+import Linglib.Phenomena.Classifiers.Studies.LittleMoroneyRoyer2022
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Phenomena.Quantification.Basic
 import Linglib.Phenomena.Quantification.Data
@@ -1486,6 +1498,7 @@ import Linglib.Theories.Syntax.HPSG.Inversion
 import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 -- Theories: Minimalism
 import Linglib.Theories.Syntax.Minimalism.Core.Features
+import Linglib.Theories.Syntax.Minimalism.Core.Checking
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.CyclicAgree
 import Linglib.Theories.Syntax.Minimalism.Core.CaseFilter
@@ -1551,6 +1564,7 @@ import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Theories.Morphology.Core.WordhoodBridge
 import Linglib.Theories.Morphology.Nanosyntax.Core
+import Linglib.Theories.Morphology.Nanosyntax.TreeSpellout
 import Linglib.Theories.Morphology.WP.LCEC
 import Linglib.Theories.Morphology.PFM.Core
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
@@ -1758,10 +1772,10 @@ import Linglib.Theories.Semantics.Attitudes.Representationality
 import Linglib.Theories.Semantics.Truthmaker.Basic
 import Linglib.Theories.Semantics.Causation.Basic
 import Linglib.Theories.Semantics.Causation.Builder
+import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
-import Linglib.Theories.Semantics.Causation.Examples
 import Linglib.Theories.Semantics.Causation.GradedCausation
-import Linglib.Theories.Semantics.Causation.CausalSelection
+import Linglib.Theories.Semantics.Causation.CausalStrength
 import Linglib.Theories.Semantics.Causation.Integration
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.Sufficiency
@@ -1885,6 +1899,7 @@ import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018
 import Linglib.Phenomena.Plurals.Studies.Magri2014
 import Linglib.Phenomena.Plurals.Studies.BarLev2021
 import Linglib.Phenomena.Plurals.Studies.Sauerland2003
+import Linglib.Phenomena.Plurals.Studies.Enguehard2024
 import Linglib.Phenomena.Plurals.Studies.VerbalNumber
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.ScalarImplicatures.Studies.Chierchia2004
@@ -1966,6 +1981,7 @@ import Linglib.Phenomena.Reference.Studies.Longobardi2005
 import Linglib.Phenomena.Reference.Studies.Zimmermann2026
 import Linglib.Phenomena.Reference.Studies.Bubnov2026
 import Linglib.Phenomena.Reference.Studies.Dekier2021
+import Linglib.Phenomena.Reference.Studies.AhnKocabDavidson2026
 import Linglib.Phenomena.Binominals.Studies.TenWolde2023
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Attitudes

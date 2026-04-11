@@ -24,25 +24,8 @@ Formalization of @cite{nadathur-lauer-2020} analysis of causative verbs
 - `Core.StructuralEquationModel`: Situations, causal laws, normal development
 - `Sufficiency`: Causal sufficiency, semantics of "make"
 - `Necessity`: Causal necessity, semantics of "cause"
-- `Examples`: Fire scenario, circuit, causal chains
 - `CoerciveImplication`: Volitionality and coercion inference
 - `Integration`: Bridge to @cite{grusdt-lassiter-franke-2022} probabilistic model
-
-## Usage
-
-```lean
-import Linglib.Theories.Semantics.Causation.Basic
-
-open NadathurLauer2020.Examples
-
--- Check if lightning is sufficient for fire
-#eval causallySufficient fireDynamics Situation.empty lightning fire
--- => true
-
--- Check if lightning is necessary in overdetermination
-#eval causallyNecessary fireDynamics bothCausesBackground lightning fire
--- => false
-```
 
 ## Key Definitions
 
@@ -63,12 +46,12 @@ open NadathurLauer2020.Examples
 import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
+import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Builder
-import Linglib.Theories.Semantics.Causation.Examples
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Causation.Integration
 import Linglib.Theories.Semantics.Causation.GradedCausation
-import Linglib.Theories.Semantics.Causation.CausalSelection
+import Linglib.Theories.Semantics.Causation.CausalStrength
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.ComplementEntailing
 import Linglib.Theories.Semantics.Causation.CausalClosure
@@ -96,6 +79,10 @@ export Builder (
   CausativeBuilder
 )
 
+export Causation.CCSelection (
+  CCSelectionMode completesForEffect ccConstraintSatisfied
+)
+
 -- Summary theorem: the main linguistic claim
 /--
 **Main Linguistic Claim**: "make" and "cause" are truth-conditionally distinct.
@@ -103,11 +90,15 @@ export Builder (
 There exist scenarios where "X made Y happen" is true but "X caused Y" is false,
 and vice versa.
 
-This is demonstrated by the overdetermination examples in `Examples.lean`.
--/
+Witnessed by disjunctive overdetermination: lightning OR arsonist → fire.
+With both present, lightning is sufficient (makeSem = true) but not necessary
+(causeSem = false) because the arsonist backup blocks but-for. -/
 theorem make_cause_truth_conditionally_distinct :
     ∃ (dyn : CausalDynamics) (s : Situation) (c e : Variable),
-      makeSem dyn s c e ≠ causeSem dyn s c e :=
-  Examples.make_cause_distinct
+      makeSem dyn s c e ≠ causeSem dyn s c e := by
+  open Core.StructuralEquationModel in
+  exact ⟨.disjunctiveCausation (mkVar "l") (mkVar "a") (mkVar "f"),
+         Situation.empty.extend (mkVar "l") true |>.extend (mkVar "a") true,
+         mkVar "l", mkVar "f", by native_decide⟩
 
 end NadathurLauer2020

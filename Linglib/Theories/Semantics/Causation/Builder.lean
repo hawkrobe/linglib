@@ -1,3 +1,4 @@
+import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 
@@ -254,5 +255,58 @@ theorem necessity_implies_causallyNecessary
     causallyNecessary dyn s c e = true := by
   simp only [CausativeBuilder.toSemantics, causeSem, Bool.and_eq_true] at h
   exact h.2
+
+/-! ## Bridge to CC-Selection
+
+`CausativeBuilder` encodes force-dynamic mechanisms; `CCSelectionMode`
+(@cite{baglini-bar-asher-siegal-2025}) encodes which element of a causal
+model the construction can select as "the cause." These are orthogonal
+but connected: each builder has a canonical selection mode. -/
+
+open Causation.CCSelection
+
+/-- The CC-selection mode associated with each builder.
+
+    - `.cause` selects any necessary condition → `memberOfSufficientSet`
+    - `.make`/`.force`/`.enable` select the completing condition →
+      `completionOfSufficientSet`
+    - `.prevent` selects the condition that blocks the effect →
+      `completionOfSufficientSet` (the preventer completes the blocking set) -/
+def CausativeBuilder.selectionMode : CausativeBuilder → CCSelectionMode
+  | .cause => .memberOfSufficientSet
+  | .make | .force | .enable | .prevent => .completionOfSufficientSet
+
+/-- Derive a `CausalProfile` from a builder.
+
+    The profile captures which causal-model properties the builder asserts.
+    This connects `CausativeBuilder` to `CausalProfile`
+    (Core/StructuralEquationModel.lean) without requiring model evaluation. -/
+def CausativeBuilder.toProfile : CausativeBuilder → CausalProfile
+  | .cause => { sufficient := false, necessary := true, direct := false }
+  | .make => { sufficient := true, necessary := false, direct := false }
+  | .force => { sufficient := true, necessary := false, direct := true }
+  | .enable => { sufficient := true, necessary := false, direct := false }
+  | .prevent => { sufficient := false, necessary := false, direct := false }
+
+/-- Sufficiency builders have completion selection mode. -/
+theorem sufficiency_selects_completion (b : CausativeBuilder)
+    (h : b.assertsSufficiency = true) :
+    b.selectionMode = .completionOfSufficientSet := by
+  cases b <;> simp_all [CausativeBuilder.assertsSufficiency, CausativeBuilder.selectionMode]
+
+/-- Necessity builder has member selection mode. -/
+theorem necessity_selects_member :
+    CausativeBuilder.cause.selectionMode = .memberOfSufficientSet := rfl
+
+/-- `toSemantics` is consistent with `selectionMode.toSemantics` for
+    the two canonical builders (cause, make). Force/enable share make's
+    truth conditions; prevent has its own. -/
+theorem selectionMode_consistent_cause :
+    CausativeBuilder.cause.toSemantics =
+    CausativeBuilder.cause.selectionMode.toSemantics := rfl
+
+theorem selectionMode_consistent_make :
+    CausativeBuilder.make.toSemantics =
+    CausativeBuilder.make.selectionMode.toSemantics := rfl
 
 end NadathurLauer2020.Builder

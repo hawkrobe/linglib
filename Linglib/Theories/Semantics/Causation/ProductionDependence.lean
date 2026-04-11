@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Causation.Builder
+import Linglib.Theories.Semantics.Causation.CCSelection
 
 /-!
 # Burning Facts: Thick and Thin Causatives
@@ -246,7 +247,7 @@ theorem thin_verbs_not_asr :
 theorem thick_state_not_asr :
     ThickThinClass.thickState.strongASRCompatible = false := rfl
 
-/-- Production entails directness (§6).
+/-- Production entails directness.
 
     When a verb encodes P-CAUSE (energy transfer), the causal relation
     is necessarily direct: for energy to transfer, there must be physical
@@ -292,5 +293,41 @@ theorem profileCausationType_dependence_iff (p : CausalProfile) :
     profileCausationType p = some .dependence ↔ p.direct = false ∧ p.necessary = true := by
   simp only [profileCausationType]
   cases p.direct <;> cases p.necessary <;> simp
+
+/-! ## Bridge to CC-Selection
+
+`CausationType` determines which CC-selection mode applies:
+P-CAUSE (production) → completion (the cause directly completes a
+sufficient set). D-CAUSE (dependence) → membership (any necessary
+condition qualifies). -/
+
+open Causation.CCSelection
+
+/-- Map causation type to CC-selection mode.
+
+    - `production` → `completionOfSufficientSet`: energy-transferring
+      causes complete the sufficient set directly
+    - `dependence` → `memberOfSufficientSet`: counterfactual causes
+      are any necessary member of a sufficient set -/
+def CausationType.selectionMode : CausationType → CCSelectionMode
+  | .production => .completionOfSufficientSet
+  | .dependence => .memberOfSufficientSet
+
+/-- Production uses completion selection. -/
+theorem production_selects_completion :
+    CausationType.production.selectionMode = .completionOfSufficientSet := rfl
+
+/-- Dependence uses member selection. -/
+theorem dependence_selects_member :
+    CausationType.dependence.selectionMode = .memberOfSufficientSet := rfl
+
+/-- Roundtrip: `CausationType.selectionMode` → `CCSelectionMode.toSemantics`
+    agrees with `CausationType.analogousBuilder` → `CausativeBuilder.toSemantics`.
+
+    This proves the three independent encodings of sufficiency/necessity
+    (CausationType, CCSelectionMode, CausativeBuilder) are consistent. -/
+theorem selectionMode_roundtrip (ct : CausationType) :
+    ct.selectionMode.toSemantics = ct.analogousBuilder.toSemantics := by
+  cases ct <;> rfl
 
 end MartinRoseNichols2025

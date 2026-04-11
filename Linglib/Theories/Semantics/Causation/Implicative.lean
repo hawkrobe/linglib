@@ -48,7 +48,7 @@ namespace Nadathur2024.Implicative
 open Core.StructuralEquationModel
 
 -- ════════════════════════════════════════════════════
--- § Prerequisite Types (@cite{nadathur-2024} §2, §5.2)
+-- § Prerequisite Types (@cite{nadathur-2024})
 -- ════════════════════════════════════════════════════
 
 /-- Lexically-specified prerequisite types for implicative verbs.
@@ -219,7 +219,7 @@ theorem prerequisite_derives_manageSem (pa : PrerequisiteAccount)
 -- § Directionality
 -- ════════════════════════════════════════════════════
 
-/-- Directionality of complement entailment (@cite{nadathur-2024} §6.3).
+/-- Directionality of complement entailment (@cite{nadathur-2024}).
 
     - **oneWay**: complement entailment under only one matrix polarity.
       For polarity-preserving verbs (*jaksaa*), negation entails ¬VP
@@ -357,7 +357,7 @@ theorem entailsComplement_negative :
     - **aspectGoverned**: whether aspect modulates the entailment (true for
       ability modals & enough/too; false for lexical implicatives)
     - **prerequisite**: what kind of causal prerequisite the verb lexicalizes
-      (@cite{nadathur-2024} §5.2) -/
+      (@cite{nadathur-2024}) -/
 structure ImplicativeClass where
   /-- Positive (manage, force) or negative (fail, prevent) polarity -/
   polarity : ImplicativeBuilder
@@ -412,7 +412,7 @@ def ImplicativeClass.too : ImplicativeClass :=
 
 /-- *hesitate/epäröidä*: polarity-reversing one-way.
     "hesitated to VP" ↛ ¬VP; "didn't hesitate to VP" → VP.
-    (@cite{nadathur-2024} §6.4) -/
+    (@cite{nadathur-2024}) -/
 def ImplicativeClass.hesitate : ImplicativeClass :=
   { polarity := .negative, directionality := .oneWay, aspectGoverned := false
     prerequisite := some .courage }

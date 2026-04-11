@@ -135,7 +135,7 @@ def CauseeAffecteeType.hasInducedAgentivity : CauseeAffecteeType → Bool
   | _                 => false
 
 -- ════════════════════════════════════════════════════
--- § 3. Mediation (@cite{comrie-1989} §8.1)
+-- § 3. Mediation (@cite{comrie-1989}, directness chapter)
 -- ════════════════════════════════════════════════════
 
 /-- Directness of causal mediation between causer and result.
@@ -150,7 +150,7 @@ inductive Mediation where
   deriving DecidableEq, Repr
 
 -- ════════════════════════════════════════════════════
--- § 4. Causative Complexity (@cite{comrie-1989} §8.2)
+-- § 4. Causative Complexity (@cite{comrie-1989}, morphological typology)
 -- ════════════════════════════════════════════════════
 
 /-- Morphological complexity of a causative construction.
@@ -217,7 +217,8 @@ structure CausativeConstruction where
     under which a construction receives its peak acceptability rating or
     is preferentially produced.
 
-    @cite{hafeez-2025} Table 25: each construction has a (possibly empty)
+    -- UNVERIFIED: table number
+    @cite{hafeez-2025}: each construction has a (possibly empty)
     set of features that define its prototype. A prototype is "hypothesized"
     when the acceptability peak exceeds 50% ceiling for a scene type.
 
@@ -241,7 +242,7 @@ structure SemanticPrototype where
 -- § 7. Comrie's Generalization
 -- ════════════════════════════════════════════════════
 
-/-- **Comrie's monotonicity** (@cite{comrie-1989} §8.4): within a single
+/-- **Comrie's monotonicity** (@cite{comrie-1989}): within a single
     language, if construction A is morphologically more compact than
     construction B, then A encodes more direct causation than B.
 
@@ -418,7 +419,8 @@ theorem reflexive_bieventive :
 
     The hierarchy is implicational: if a morpheme causativizes a
     higher verb class, it also causativizes all lower classes. This
-    is validated across 12 languages in @cite{krejci-2012} Table 2.8. -/
+    -- UNVERIFIED: table number
+    is validated across 12 languages in @cite{krejci-2012}. -/
 
 /-- Cross-linguistic data on causativizability: which verb classes
     a given morphological causative morpheme can apply to. -/
@@ -438,7 +440,7 @@ def CausativizabilityData.respectsHierarchy (d : CausativizabilityData) : Bool :
   (!d.unergative || d.middlesIngestive) &&
   (!d.middlesIngestive || d.unaccusative)
 
-/-- Cross-linguistic causativizability data from @cite{krejci-2012} Table 2.8.
+/-- Cross-linguistic causativizability data from @cite{krejci-2012}.
     Languages are ordered from narrowest to broadest causative scope. -/
 def krejciLanguages : List CausativizabilityData :=
   [ { language := "Slave",            morpheme := "-h-",    unaccusative := true }
