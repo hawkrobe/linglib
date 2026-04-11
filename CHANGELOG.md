@@ -38,6 +38,10 @@
 ### Added
 - **SubintervalProperty.lean**: `impf_entails_prfv_of_csip` — CSIP(P) → IMPF(P) ⊆ PRFV(P), the formal reason the imperfective paradox doesn't arise for homogeneous predicates; closed `csip_necessary_for_impf_prfv` sorry via refined predicate trick (Q carries reverse containment, mutual ⊆ closes to =), completing the biconditional: (∀P, IMPF(P) ⊆ PRFV(P)) ⟺ (∀P, CSIP(P))
 
+### Changed
+- **LexicalAspect.lean**: moved `predictsSubintervalProp`, `sub_agrees_with_homogeneous`, `fullSIP_strictly_stronger` here from SubintervalProperty.lean — VendlerClass classification predicates belong with `isHomogeneous` and `hasFullSubintervalProp`
+- **SubintervalProperty.lean**: now focused on formal property definitions (HasSIP, HasCSIP) and operator-level consequences (IMPF/PRFV ↔ CSIP biconditional)
+
 ## [0.229.638] - 2026-04-10
 
 ### Added
