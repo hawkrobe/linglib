@@ -133,10 +133,8 @@ export Phenomena.Plurals.NonMaximality (
 
 -- From Numerals
 export Numerals (
-  RoundnessLevel
   NumeralImprecisionDatum
   RoundnessAsymmetryDatum
-  classifyRoundness
 )
 
 -- From FormMeaning

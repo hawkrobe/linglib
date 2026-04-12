@@ -1,11 +1,12 @@
 /-
 # Quantification Phenomena
 
-Quantifier scope and numeral semantics.
+Quantifier scope phenomena.
 
 ## Main definitions
 - `ScopeFreezing.Availability`, `ScopeFreezing.FreezingContext`
-- `Numerals.NumeralImprecisionDatum`, `Numerals.RoundnessLevel`
+
+Numeral imprecision data has been consolidated into `Phenomena.Imprecision.Numerals`.
 
 -/
 
@@ -13,6 +14,6 @@ import Linglib.Phenomena.Quantification.Data
 
 namespace Phenomena.Quantification
 
-export Data (Availability FreezingContext NumeralImprecisionDatum RoundnessLevel)
+export Data (Availability FreezingContext)
 
 end Phenomena.Quantification

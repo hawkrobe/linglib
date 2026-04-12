@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.229.666] - 2026-04-12
+
+### Changed
+- **Numerals.lean**: eliminate `RoundnessLevel`/`classifyRoundness` in favor of `Core.Roundness.RoundnessGrade`/`roundnessGrade` — unified roundness API, delete `coarse_implies_kness` bridge theorem
+- **Quantification/Data.lean**: dissolve duplicate numerals section (verbatim copy of Imprecision/Numerals.lean), retain ScopeFreezing and ScopeWordOrder
+- **BeltramaSchwarz2024.lean**: reorganize file — move `open` statements to top, consolidate EM/BSB2022/speaker-conditioned sections into single Integration section, move `combined_nerdyTask` into regression section, use descriptive section headers throughout
+- **Imprecision/Basic.lean**, **Quantification/Basic.lean**: update barrel file exports for unified roundness types
+
+## [0.229.665] - 2026-04-12
+
+### Changed
+- **DisjunctiveUpdate.lean**: add paper's central negative results — `standard_update_incompatible` (Standard Updating + Preservation + Minimal Symmetry → ¬Safe Information: no dressing intension satisfies both `likes` and `dislikes` since `dislikes = ¬likes`), `uniform_charity_retains_nonfact` (Standard Updating + Uniform Charity retains non-fact worlds, violating condition i); `tdm_agrees_with_framework` (Tim Dislikes Mixed ↔ `disjunctiveUpdate`+`prune` pipeline, mirroring existing TLM theorem); `disjunctiveUpdate_eq_contextSet_update` bridging to `ContextSet.update` from `CommonGround.lean`; update Contextual Pruning docstring noting non-emptiness precondition from the paper; remove unused `BInterpAssignment` type alias
+
+## [0.229.664] - 2026-04-12
+
+### Added
+- **Denic2023.lean**: formalize Denić 2023 "Probabilities and logic in implicature computation" — inference puzzle data (ALL-20-OR, ALL-2-OR, SIMPLE-DISJ, COMPLEX-DISJ with `InferenceDatum`/`InferenceType`), deviance puzzle data (DEVIANT-BE, NON-DEVIANT-CALLED, DEVIANT-WRITE, NON-DEVIANT-READ with `DevianceDatum`); negative result: `entailment_invariant_across_domain_size` proving IE sets identical for ALT-or and ALT-all-or regardless of domain size; `thresholdPrediction` with `threshold_2_correct` classifying all 4 data points; probabilistic pruning proposal (`MonotonePruning`, `BlindInformativeness`, two axioms on conditional probability monotonicity in domain size and disjunct count); deviance via `ignoranceContradictsCK` extending Magri 2009's blindness — `deviantBE_ignorance_contradicts_ck` (singleton-denoting predicates trigger CK-contradicting ignorance) vs `nonDeviantCalled_ignorance_ok`; `singletonDenoting` predicate property; bridge to Franke 2011 IBR (`irm_inherits_inference_puzzle`); 1 bib entry
+
+## [0.229.663] - 2026-04-12
+
+### Added
+- **DisjunctiveUpdate.lean**: formalize Caie 2023 "Context Dynamics" — bridge compositional contexts (`C`) to context set updating (`Prop' W`); `standardUpdate` (Stalnaker 1978 with explicit diagonalization), `disjunctiveUpdate` (Caie's generalization: w survives iff ∃ c ∈ I_w making φ true), `prune` (Contextual Pruning: restrict interpretation sets to truth-making contexts), `ContextFragment` (⟨c, w⟩ pairs), `fragmentation` / `fragmentWorlds` (project fragments to worlds); prove `standard_eq_disjunctive_singleton` (Standard = singleton Disjunctive), `disjunctiveUpdate_constant` (constant interpretation = `ContextSet.update`), `generalized_preservation` (unique interpretations persist under pruning), monotonicity in both context set and interpretation set; Sarah's Socks worked example (2×2 finite model): both Tim Likes Matching and Tim Dislikes Mixed discourses yield {likesMatching}, Safe Information conditions (i)+(ii) verified by `rfl`/`cases`; `tlm_agrees_with_framework` connecting hand-computed results to the general `disjunctiveUpdate`+`prune` pipeline; 1 bib entry
+
 ## [0.229.662] - 2026-04-11
 
 ### Changed

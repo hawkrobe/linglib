@@ -17,34 +17,15 @@ Theory-neutral empirical patterns for imprecision in bare numerals.
 Round numerals (100, 50, 1000) permit imprecise readings, but non-round numerals
 (99, 47, 1003) require exact readings. This asymmetry is systematic across languages.
 
+Roundness classification uses `Core.Roundness.RoundnessGrade` (binned from the
+6-property k-ness score of @cite{krifka-2007}, @cite{sigurd-1988},
+@cite{woodin-etal-2023}).
+
 -/
 
 namespace Phenomena.Imprecision.Numerals
 
-
-/--
-Roundness level of a numeral.
-
-More round = more potential for imprecision.
-
-Source: @cite{krifka-2007}, @cite{sauerland-stateva-2007}
--/
-inductive RoundnessLevel where
-  | exact       -- 99, 47, 1003
-  | round1      -- 100, 50 (divisible by 10)
-  | round2      -- 1000, 500 (divisible by 100)
-  | round3      -- 10000 (divisible by 1000)
-  deriving Repr, DecidableEq
-
-/--
-Classify numeral roundness (simplified).
--/
-def classifyRoundness (n : Nat) : RoundnessLevel :=
-  if n % 1000 = 0 then .round3
-  else if n % 100 = 0 then .round2
-  else if n % 10 = 0 then .round1
-  else .exact
-
+open Core.Roundness
 
 /--
 Numeral imprecision datum: context-dependent exactness.
@@ -52,8 +33,8 @@ Numeral imprecision datum: context-dependent exactness.
 structure NumeralImprecisionDatum where
   /-- The numeral -/
   numeral : Nat
-  /-- Roundness level -/
-  roundness : RoundnessLevel
+  /-- Roundness grade (from `Core.Roundness`) -/
+  roundness : RoundnessGrade
   /-- Sentence frame -/
   sentenceFrame : String
   /-- Context favoring exact reading -/
@@ -75,7 +56,7 @@ Source: dissertation (19), (20)
 -/
 def carsExact : NumeralImprecisionDatum :=
   { numeral := 100
-  , roundness := .round2
+  , roundness := .high       -- score 6 (all 6 k-ness properties)
   , sentenceFrame := "This guy owns _ cars."
   , exactContext := "Tax rate depends on owning exactly 100+ cars"
   , inexactContext := "Discussing extreme wealth (exact count irrelevant)"
@@ -86,7 +67,7 @@ def carsExact : NumeralImprecisionDatum :=
 
 def carsNonRound : NumeralImprecisionDatum :=
   { numeral := 99
-  , roundness := .exact
+  , roundness := .none        -- score 0 (no k-ness properties)
   , sentenceFrame := "This guy owns _ cars."
   , exactContext := "Tax rate depends on owning exactly 100+ cars"
   , inexactContext := "Discussing extreme wealth (exact count irrelevant)"
@@ -254,8 +235,8 @@ structure ApproximatelyDatum where
   bareSentence : String
   /-- Approximately sentence -/
   approxSentence : String
-  /-- Roundness of numeral -/
-  roundness : RoundnessLevel
+  /-- Roundness grade (from `Core.Roundness`) -/
+  roundness : RoundnessGrade
   /-- Is approximately acceptable with this numeral? -/
   approxNatural : Bool
   /-- Notes -/
@@ -265,7 +246,7 @@ structure ApproximatelyDatum where
 def approximatelyWithRound : ApproximatelyDatum :=
   { bareSentence := "Ann owns 100 cars."
   , approxSentence := "Ann owns approximately 100 cars."
-  , roundness := .round2
+  , roundness := .high       -- 100: score 6
   , approxNatural := true
   , notes := "Natural: makes existing imprecision explicit"
   }
@@ -273,7 +254,7 @@ def approximatelyWithRound : ApproximatelyDatum :=
 def approximatelyWithNonRound : ApproximatelyDatum :=
   { bareSentence := "Ann owns 99 cars."
   , approxSentence := "Ann owns approximately 99 cars."
-  , roundness := .exact
+  , roundness := .none      -- 99: score 0
   , approxNatural := false  -- or at least marked
   , notes := "Odd/marked: why approximate to a non-round number?"
   }
@@ -384,26 +365,5 @@ def roundnessAsymmetryExamples : List RoundnessAsymmetryDatum :=
 
 def gameShowExamples : List GameShowDatum :=
   [gameShowPositive, gameShowNegative]
-
--- ============================================================================
--- Bridge: Coarse classifier ↔ k-ness model (Core.Roundness)
--- ============================================================================
-
-/-- Coarse round → positive k-ness score.
-    If classifyRoundness n ≠.exact, then n % 10 = 0, giving at least
-    multipleOf5 and multipleOf10, so roundnessScore ≥ 2. -/
-theorem coarse_implies_kness (n : Nat) (h : n > 0) (hc : classifyRoundness n ≠ .exact) :
-    Core.Roundness.roundnessScore n > 0 := by
-  unfold classifyRoundness at hc
-  have h10 : n % 10 = 0 := by
-    split at hc
-    · omega
-    · split at hc
-      · omega
-      · split at hc
-        · assumption
-        · exact absurd rfl hc
-  have := Core.Roundness.score_ge_two_of_div10 n h10
-  omega
 
 end Phenomena.Imprecision.Numerals
