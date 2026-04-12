@@ -136,23 +136,24 @@ def forall' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
     accessible worlds, variable assignments) project out a hidden index
     via one of these two operations:
 
-    | Theory                 | Index I              | ∃-projection       | ∀-projection    |
-    |------------------------|----------------------|--------------------|-----------------|
-    | @cite{klein-1980}      | comparison class C   | comparative (more) | at-least-as     |
-    | @cite{fine-1975}       | precisification      | sub-truth          | super-truth     |
-    | @cite{caie-2023}       | comp. context        | disjunctive update | —               |
-    | @cite{kratzer-1981}    | accessible world     | ◇ (possibility)    | □ (necessity)   |
-    | @cite{kamp-1975}       | completion           | strict comparative | at-least-as     |
+    | Theory                 | Index I              | ∃-projection       | ∀-projection    | Mathlib hook                           |
+    |------------------------|----------------------|--------------------|-----------------|----------------------------------------|
+    | @cite{klein-1980}      | comparison class C   | comparative (more) | at-least-as     | `measureDelineation_mono_in_class`     |
+    | @cite{fine-1975}       | precisification      | sub-truth          | super-truth     | `Preorder SpecSpace`, stability        |
+    | @cite{caie-2023}       | comp. context        | disjunctive update | —               | `disjunctiveUpdate_mono_interp`        |
+    | @cite{kratzer-1981}    | accessible world     | ◇ (possibility)    | □ (necessity)   | `GaloisConnection` (Proposition.lean)  |
+    | @cite{kamp-1975}       | completion           | strict comparative | at-least-as     | `Antitone` in S (via `kampPreorder`)   |
 
-    De Morgan duality between the two projections is just `not_forall`
-    and `not_exists` from Lean core / Mathlib. Bounded variants use
-    `not_forall`, `not_imp`, `not_and`.
+    The projections themselves are just `∃`/`∀`. De Morgan duality uses
+    `not_forall` / `not_exists` from Lean core. The deeper Mathlib
+    connections are on the **parameter spaces**: `Monotone`/`Antitone`
+    for how the projections vary as the parameter space changes,
+    `IsLeast`/`IsGreatest` for monotone collapse, and `GaloisConnection`
+    for the extension/intension adjunction.
 
-    For GQ-level duality operations (outer negation, inner negation, dual) see
-    `Core.Quantification.outerNeg` / `innerNeg` / `dualQ`.
-
-    For the antitone Galois connection between extensions and intensions, see
-    `Core.Proposition.GaloisConnection`.
+    See `ParameterizedUpdate.lean` for the shared framework (monotone
+    collapse via `IsLeast`/`IsGreatest` + `Antitone`, borderline region
+    characterization, sequential update with pruning).
 -/
 
 variable {I : Type*}

@@ -31,7 +31,7 @@ around (contra Cresswell's degree theory).
 6. **Main theorem: strict weak order** (§ 6): under monotonicity, the ordering
    is asymmetric + negatively transitive — a strict weak order. Transitivity
    and almost-connectedness follow as corollaries.
-7. **Kamp→Klein bridge** (§ 7): `asAsSem` = `kampAtLeastAs` (identity theorem)
+7. **Kamp→Klein bridge** (§ 7): `kleinPreorder` = `kampPreorder` over Set.univ
 
 The measure-induced delineation bridge (monotonicity, ordering↔degree
 equivalence) lives in the theory layer: `Delineation.lean` §10.
@@ -41,7 +41,7 @@ equivalence) lives in the theory layer: `Delineation.lean` §10.
 - **Theory layer**: `Theories/Semantics/Comparison/Delineation.lean`
   (comparison classes, ordering, monotonicity, very/fairly, less/as)
 - **Kamp (1975)**: `Studies/Kamp1975.lean` §3 (Kamp→Klein lineage,
-  `kampAtLeastAs` ↔ `kleinMoreThan`)
+  `kampPreorder` = `kleinPreorder` over Set.univ)
 - **Fine (1975)**: `Studies/Fine1975.lean` (supervaluation ↔ delineation duality)
 - **Kennedy (2007)**: `Studies/Kennedy2007Licensing.lean` (degree-based alternative)
 - **Hierarchy**: `Theories/Semantics/Comparison/Hierarchy.lean` (Klein ← Kennedy ← Measurement)
@@ -301,27 +301,30 @@ theorem klein_almost_connected {Entity : Type*}
     · exact Or.inr (Or.inr (nondistinct_of_incomparable delineation cc u v h1 h2))
 
 -- ════════════════════════════════════════════════════
--- § 7. Bridge: asAsSem = kampAtLeastAs
+-- § 7. Bridge: kleinPreorder = kampPreorder (over Set.univ)
 -- ════════════════════════════════════════════════════
 
 /-! Klein's `as...as` (§5.3) and Kamp's `at least as` (definition 12)
     are the SAME relation stated in different vocabularies:
 
-    - Kamp: `∀ completions c, ext(c)(u') → ext(c)(u)`
+    - Kamp: `∀ completions c ∈ S, ext(c)(u') → ext(c)(u)`
     - Klein: `∀ comparison classes C, tall(u', C) → tall(u, C)`
 
     Completions = comparison classes; both quantify universally over
-    ways of making the predicate precise. -/
+    ways of making the predicate precise. When S = Set.univ, the two
+    preorders coincide. -/
 
-/-- Klein's `asAsSem` is exactly Kamp's `kampAtLeastAs` when both
-    use the same extension function. -/
-theorem asAs_eq_kampAtLeastAs {E : Type*}
+/-- Klein's preorder is exactly Kamp's preorder (over all completions)
+    when both use the same extension function. -/
+theorem kleinPreorder_eq_kampPreorder {E : Type*}
     (delineation : ComparisonClass E → E → Prop)
     [∀ C (x : E), Decidable (delineation C x)] (u u' : E) :
-    asAsSem delineation u u' ↔
-    Kamp1975.kampAtLeastAs (fun C x => decide (delineation C x)) u u'
-      Set.univ := by
-  simp only [asAsSem, Kamp1975.kampAtLeastAs, Set.mem_univ, true_implies,
-    decide_eq_true_eq]
+    (kleinPreorder delineation).le u u' ↔
+    (Kamp1975.kampPreorder (fun C x => decide (delineation C x)) Set.univ).le u u' := by
+  constructor
+  · intro h c _ hext
+    exact decide_eq_true_eq.mpr (h c (decide_eq_true_eq.mp hext))
+  · intro h c hd
+    exact decide_eq_true_eq.mp (h c (Set.mem_univ _) (decide_eq_true_eq.mpr hd))
 
 end Phenomena.Gradability.Studies.Klein1980

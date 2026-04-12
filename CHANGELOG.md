@@ -1,5 +1,50 @@
 # Changelog
 
+## [0.229.683] - 2026-04-12
+
+### Changed
+- **Delineation.lean**: replace `asAsSem`/`more_iff_not_asAs` with `kleinPreorder` — a `Preorder Entity` where `≤` IS Klein's at-least-as relation; delete dead `positiveSem`, `lessThanSem`, `more_iff_less`
+- **Kamp1975.lean**: replace `kampAtLeastAs` with `kampPreorder` — a `Preorder E` parameterized by completion set S; delete `kleinMoreThan`, `klein_implies_not_kamp_reverse`, `kamp_strict_implies_klein` (subsumed by preorder duality); keep `kampPreorder_antitone`; delete redundant `kleene_indet_and_indet`, `kleene_cant_distinguish_contradiction`
+- **Klein1980.lean**: bridge theorem `kleinPreorder_eq_kampPreorder` replaces `kleinPreorder_eq_kampAtLeastAs`
+- **Boylan2023.lean**: fix build errors — add `{acc : List World}` to 6 definitions/theorems using `BoylanPartition acc` (required since `autoImplicit` is off)
+- Net -60 lines across Kamp/Klein/Delineation files
+
+## [0.229.682] - 2026-04-12
+
+### Changed
+- **Causation API reorganization**: delete `Basic.lean` re-export hub; move `GradedCausation.lean` → `Phenomena/Causation/Studies/CaoWhiteLassiter2025.lean`; rename all paper-specific namespaces to domain namespaces (`NadathurLauer2020.*` → `Semantics.Causation.*`, `Nadathur2024.Implicative` → `Semantics.Causation.Implicative`, `MartinRoseNichols2025` → `Semantics.Causation.ProductionDependence`, `CausalVerb` → `Semantics.Causation.ComplementEntailing`, `Causative.Resultatives` → `Semantics.Causation.Resultatives`, `Nadathur2023.Ability` → `Semantics.Modality.Ability`); drop redundant prefixes from file names (`CausalClosure` → `Closure`, `CausalStrength` → `Strength`, `ProgressiveCausation` → `Progressive`, `PsychCausation` → `Psych`, `PsychCausalLink` → `PsychLink`, `MorphologicalCausation` → `Morphological`, `DegreeCausation` → `Degree`); fix `Resultatives.lean` Theories→Fragments dependency violation (relocate 2 bridge theorems to `Levin2026.lean`); relocate `make_cause_truth_conditionally_distinct` to `NadathurLauer2020.lean`
+
+## [0.229.681] - 2026-04-12
+
+### Changed
+- **StructuralEquationModel.lean**: add `CausalLaw.inhibitory` (B := ¬A), `CausalDynamics.prevention` (eq. 4a), `CausalDynamics.preventionWithAccessory` (eq. 4b) from Sloman, Barbey & Hotaling 2009
+- **Builder.lean**: ground `preventSem` in Sloman, Barbey & Hotaling 2009 (the canonical SEM reference for prevent); add `preventSem_prevention_model`, `prevention_not_positive`, `preventSem_with_accessory` theorems; clean up stale TODOs in Builder.lean and PsychCausalLink.lean; add `@cite{sloman-barbey-hotaling-2009}` throughout
+- **references.bib**: add `sloman-barbey-hotaling-2009`
+
+## [0.229.680] - 2026-04-12
+
+### Changed
+- **Boylan2023.lean**: reorganize top-down (Mathlib style) — abstract framework precedes concrete scenarios; close `fact2_unique_deontic_complete` sorry (all Facts 1–4 fully proved); eliminate Bool/Prop duplication (single `StrictlyBetter` Prop, remove `propStrictlyBetter`/`StrictlyBetterP`/`propNonEmpty`/`undominated`/`limitAssumption`); `PBEST` parameterized by accessible worlds with bridge lemmas (`PBEST_subset`/`PBEST_nonempty`/`PBEST_undom`/`mem_PBEST`); `isDeontic` relativized to accessible worlds; `native_decide` → `decide` throughout; remove unused Partition import
+
+## [0.229.679] - 2026-04-12
+
+### Changed
+- **ParameterizedUpdate.lean**: monotone collapse theorems now use Mathlib's `IsLeast`/`IsGreatest` + `Antitone` instead of ad hoc hypotheses; docstrings connect `existentialProjection_mono`/`universalProjection_anti` to Mathlib `Monotone`/`Antitone`
+- **Delineation.lean**: add `measureDelineation_mono_in_class` — `Monotone (fun C => measureDelineation μ C x)` connecting Klein's measure-induced parameter space to Mathlib order infrastructure
+- **Supervaluation/Basic.lean**: add `Preorder SpecSpace` (reverse inclusion = information ordering), `stability_antitone_superTrue`/`stability_antitone_superFalse` restating stability via the `Preorder`
+- **Kamp1975.lean**: add `kampAtLeastAs_antitone` and `kleinMoreThan_mono` connecting Kamp's parameter space to Mathlib `Antitone`/`Monotone`
+- **Duality.lean**: instance table now documents Mathlib hooks for each theory
+
+## [0.229.678] - 2026-04-12
+
+### Changed
+- **Builder.lean**: replace trivial `prevent_cause_duality` (`rfl`) with three genuine theorems: `prevent_cause_exclusive` (prevent and cause mutually exclusive), `preventSem_impossible_positive` (prevention impossible in positive-only dynamics — von Wright's produce/prevent asymmetry), `preventSem_possible_inhibitory` (witness of inhibitory dynamics where prevention succeeds)
+
+## [0.229.677] - 2026-04-12
+
+### Changed
+- **Boylan2023.lean**: reorganize top-down (Mathlib style) — abstract framework (PropOrdering, BoylanPartition, PBEST, pairwise consistency, ought, ordering assumptions) precedes concrete scenarios; formalize appendix Assumptions 1–6 and Facts 1–4 (`fact1_partial_complete`, `fact2_unique_deontic_complete` [sorry], `fact3_deontic_boxy`, `fact4_no_agglomeration`), `undominated_of_geq` lemma, `inheritance`/`no_dilemma` structural properties; fix `isDeontic` entailment direction; remove unused Partition import
+
 ## [0.229.676] - 2026-04-12
 
 ### Changed

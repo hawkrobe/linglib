@@ -75,17 +75,6 @@ abbrev ComparisonClass (Entity : Type*) := Set Entity
 -- § 2. Positive Form
 -- ════════════════════════════════════════════════════
 
-/-- Klein's positive form: "Kim is tall" is true iff Kim is in the
-    positive extension of "tall" relative to comparison class C.
-
-    The delineation function partitions entities in C into those that
-    satisfy the predicate and those that don't. The partition can be
-    indeterminate (vagueness = gap between positive and negative extension). -/
-def positiveSem {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop)
-    (C : ComparisonClass Entity) (x : Entity) : Prop :=
-  delineation C x
-
 -- ════════════════════════════════════════════════════
 -- § 3. Comparative via Supervaluation
 -- ════════════════════════════════════════════════════
@@ -392,6 +381,20 @@ theorem measureDelineation_monotone {E D : Type*} [LinearOrder D]
     by_contra h; push_neg at h; exact hnotb ⟨y₁, hy₁, h⟩
   exact ⟨y₂, hy₂, lt_trans hlt_b (lt_of_le_of_lt hle hlt_a)⟩
 
+/-- For a fixed entity x, `measureDelineation μ · x` is `Monotone` in
+    the comparison class under `⊆`: enlarging C adds potential witnesses
+    y ∈ C with μ y < μ x, so if x is "tall in C" then x is "tall in C'"
+    for any C' ⊇ C.
+
+    This connects Klein's parameter space to Mathlib's `Monotone`
+    infrastructure. Note that general (non-measure-induced) delineations
+    are NOT uniformly monotone — that's the whole point of nonlinear
+    adjectives like "clever". -/
+theorem measureDelineation_mono_in_class {E D : Type*} [LinearOrder D]
+    (μ : E → D) (x : E) :
+    Monotone (λ C => measureDelineation μ C x) :=
+  λ _ _ hle ⟨y, hy, hlt⟩ => ⟨y, hle hy, hlt⟩
+
 /-- **Forward**: Klein's ordering entails degree ordering. -/
 theorem ordering_implies_degree {E D : Type*} [LinearOrder D]
     (μ : E → D) (cc : ComparisonClass E) (a b : E) :
@@ -500,48 +503,21 @@ theorem fairly_excludes_very {Entity : Type*}
   (hcc _ x hf).2
 
 -- ════════════════════════════════════════════════════
--- § 12. Less and As (Klein §5.3, eqs 89–90)
+-- § 12. Preorder on Entities (Klein §5.3, eq 89b)
 -- ════════════════════════════════════════════════════
 
-/-- "u is less A than u'" (§5.3, eq 89a) iff u' is more A than u.
-    Klein shows this follows directly from the symmetry of his
-    comparative, without any special degree machinery. -/
-def lessThanSem {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop)
-    (u u' : Entity) : Prop :=
-  comparativeSem delineation u' u
+/-- Klein's delineation induces a `Preorder` on entities:
+    `u ≤ v` iff every comparison class where `v` qualifies also
+    qualifies `u`. This is Klein's "as A as" (§5.3, eq 89b)
+    and Kamp's at-least-as (definition 12).
 
-/-- "u is as A as u'" (§5.3, eq 89b) iff in every comparison class
-    where u' is A, u is also A. This is exactly Kamp's `atLeastAs`
-    from `Kamp1975.lean`. -/
-def asAsSem {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop)
-    (u u' : Entity) : Prop :=
-  ∀ C, delineation C u' → delineation C u
-
-/-- Klein's equivalences (§5.3, eq 90): the three constructions
-    are interdefinable via classical logic:
-    (a) "A is taller than B" ↔ (b) "B is less tall than A"
-    ↔ (c) "B is not as tall as A".
-
-    (a) ↔ (b) is definitional. (a) → ¬(c) uses the existential
-    witness from the comparative to falsify the universal in `asAsSem`.
-    ¬(c) → (a) is the converse: if "as" fails, there is a
-    discriminating comparison class. -/
-theorem more_iff_less {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop) (a b : Entity) :
-    comparativeSem delineation a b ↔ lessThanSem delineation b a :=
-  Iff.rfl
-
-/-- Klein's equivalence (§5.3, eq 90c): `more A ↔ ¬(as A as)`.
-    De Morgan duality between ∃-projection (comparative) and
-    ∀-projection (at-least-as). -/
-theorem more_iff_not_asAs {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop) (a b : Entity) :
-    comparativeSem delineation a b ↔ ¬ asAsSem delineation b a := by
-  constructor
-  · intro ⟨C, ha, hnb⟩ haa; exact hnb (haa C ha)
-  · intro h; by_contra hne
-    exact h fun C ha => by_contra fun hnb => hne ⟨C, ha, hnb⟩
+    The strict part `u < v` is `u ≤ v ∧ ¬ v ≤ u`.
+    Under monotone delineation, this coincides with `comparativeSem`. -/
+@[reducible] def kleinPreorder {Entity : Type*}
+    (delineation : ComparisonClass Entity → Entity → Prop) :
+    Preorder Entity where
+  le u v := ∀ C, delineation C v → delineation C u
+  le_refl _ := fun _ h => h
+  le_trans _ _ _ hab hbc := fun C hc => hab C (hbc C hc)
 
 end Semantics.Comparison.Delineation

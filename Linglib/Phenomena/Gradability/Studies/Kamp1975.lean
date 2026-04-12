@@ -110,24 +110,7 @@ end Bridge
 
 open Core.Duality (Truth3)
 
-/-- Strong Kleene conjunction of `indet` with itself is `indet`, not
-    `false`. This means `φ ∧ φ` is correctly handled (same as `φ`),
-    but `φ ∧ ¬φ` gets `indet` rather than the desired `false`. -/
-theorem kleene_indet_and_indet :
-    Truth3.meet .indet .indet = .indet := rfl
-
-/-- Kamp's dilemma: Strong Kleene `meet` cannot distinguish `φ ∧ φ`
-    from `φ ∧ ¬φ` when `φ` is borderline, because both reduce to
-    `meet indet indet`.
-
-    Supervaluationism resolves this: `φ ∧ ¬φ` is **super-false** (false
-    on every precisification) while `φ ∧ φ` is **indefinite** (true on
-    some, false on others). See `Fine1975.non_contradiction_superfalse`. -/
-theorem kleene_cant_distinguish_contradiction :
-    Truth3.meet .indet .indet =
-    Truth3.meet .indet (Truth3.neg .indet) := by rfl
-
-/-- **Kamp's dilemma** (the actual impossibility result): no
+/-- **Kamp's dilemma**: no
     truth-functional binary operator can simultaneously be
     idempotent (`F(x,x) = x`) and make borderline contradictions
     false (`F(½, ¬½) = 0`).
@@ -164,47 +147,24 @@ theorem kleene_dilemma :
     is equivalent to Klein's "¬∃ completion where u₂ ∈ ext ∧ u₁ ∉ ext",
     and Klein's strict comparative adds the asymmetric witness. -/
 
-/-- Kamp's definition (12): u₁ is at least as A as u₂ iff every context
-    that puts u₂ in the extension also puts u₁ in the extension.
-    Parameterized by a set of "completions" (Kamp) or "comparison classes"
-    (Klein). -/
-def kampAtLeastAs {E C : Type*} (ext : C → E → Bool) (u₁ u₂ : E) (S : Set C) : Prop :=
-  ∀ c, c ∈ S → ext c u₂ = true → ext c u₁ = true
+/-- Kamp's definition (12) induces a `Preorder` on entities:
+    `u₁ ≤ u₂` iff every completion in S that puts u₂ in the extension
+    also puts u₁ in the extension.
 
-/-- Klein's strict comparative: there exists a context that separates
-    the two entities. This is `comparativeSem` from
-    `Theories/Semantics/Comparison/Delineation.lean`. -/
-def kleinMoreThan {E C : Type*} (ext : C → E → Bool) (u₁ u₂ : E) (S : Set C) : Prop :=
-  ∃ c, c ∈ S ∧ ext c u₁ = true ∧ ext c u₂ = false
+    This is the S-restricted analogue of `kleinPreorder` from
+    `Delineation.lean`. When S = Set.univ and ext is Bool-valued,
+    the two coincide (see `Klein1980.kleinPreorder_eq_kampAtLeastAs`). -/
+@[reducible] def kampPreorder {E C : Type*} (ext : C → E → Bool) (S : Set C) :
+    Preorder E where
+  le u₁ u₂ := ∀ c, c ∈ S → ext c u₂ = true → ext c u₁ = true
+  le_refl _ := fun _ _ h => h
+  le_trans _ _ _ hab hbc := fun c hc h => hab c hc (hbc c hc h)
 
-/-- **Kamp–Klein bridge**: Klein's strict comparative is equivalent to
-    Kamp's "at least as" in one direction but not the other. Precisely:
-    `kleinMoreThan u₁ u₂` implies `¬kampAtLeastAs u₂ u₁` (if u₁ is
-    strictly more A than u₂, then u₂ is NOT at least as A as u₁). -/
-theorem klein_implies_not_kamp_reverse {E C : Type*}
-    {ext : C → E → Bool} {u₁ u₂ : E} {S : Set C}
-    (h : kleinMoreThan ext u₁ u₂ S) :
-    ¬kampAtLeastAs ext u₂ u₁ S := by
-  intro hk
-  obtain ⟨c, hc, h₁, h₂⟩ := h
-  have := hk c hc h₁
-  simp_all
-
-/-- Kamp's strict comparative (asymmetric part of "at least as")
-    implies Klein's: if u₁ is at least as A as u₂ but not vice versa,
-    then there exists a separating context. -/
-theorem kamp_strict_implies_klein {E C : Type*}
-    {ext : C → E → Bool} {u₁ u₂ : E} {S : Set C}
-    (_h_ge : kampAtLeastAs ext u₁ u₂ S)
-    (h_not : ¬kampAtLeastAs ext u₂ u₁ S) :
-    kleinMoreThan ext u₁ u₂ S := by
-  unfold kampAtLeastAs at h_not
-  push_neg at h_not
-  obtain ⟨c, hc, h₁, h₂⟩ := h_not
-  refine ⟨c, hc, h₁, ?_⟩
-  cases hv : ext c u₂
-  · rfl
-  · exact absurd hv h₂
+/-- The Kamp preorder is `Antitone` in S: enlarging S (more completions
+    to quantify over) makes `≤` harder to satisfy. -/
+theorem kampPreorder_antitone {E C : Type*} (ext : C → E → Bool) (u₁ u₂ : E) :
+    Antitone (fun S => (kampPreorder ext S).le u₁ u₂) :=
+  fun _ _ hle hall c hc => hall c (hle hc)
 
 -- ════════════════════════════════════════════════════
 -- § 4. Concrete Witnesses for Each Class
