@@ -1,4 +1,4 @@
-import Linglib.Core.Interface
+import Linglib.Core.FelicityTypes
 import Linglib.Fragments.Mandarin.Particles
 import Mathlib.Data.Rat.Defs
 

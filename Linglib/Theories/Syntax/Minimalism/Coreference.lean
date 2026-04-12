@@ -14,7 +14,7 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Core.Interface
+import Linglib.Core.CoreferenceStatus
 
 namespace Minimalism.Phenomena.Coreference
 

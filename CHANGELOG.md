@@ -1,5 +1,77 @@
 # Changelog
 
+## [0.229.676] - 2026-04-12
+
+### Changed
+- **Duality.lean** (`Core/Logic/`): strip `projExists`/`projForall` wrapper types and all custom De Morgan theorems — these duplicate `∃`/`∀` and `not_forall`/`not_imp` from Lean core. Keep `DualityType.project` (parametric ∃/∀ dispatch) and the instance table docstring
+- **ParameterizedUpdate.lean**: revert `existentialProjection`/`universalProjection` to raw `∃`/`∀`, remove Duality import
+- **Delineation.lean**: revert `comparativeSem`/`asAsSem`/`ordering`/`nondistinct` to raw `∃`/`∀`, remove Duality import, `more_iff_not_asAs` proved directly
+- **Kamp1975.lean**: revert `kampAtLeastAs`/`kleinMoreThan` to raw `∀`/`∃`, remove Duality import
+
+## [0.229.675] - 2026-04-12
+
+### Changed
+- **Glass2023.lean**: strengthen `LocallySufficient` (require `bg.get effect = none`), add `glass_cause_is_make`/`glass_cause_equals_builder_make`/`glass_cause_equals_completion_mode`/`glass_nadathur_disagreement` (Builder + CCSelection bridges), `local_sufficient_not_implies_global`/`local_necessary_not_implies_global` (non-entailment witnesses for (21b)/(22b)), `disjunctive_not_globally_necessary`/`disjunctive_asymmetry` (Table 2 right column), `von_wright_duality`, rework AKP section with explicit failure model (`laziness_globally_sufficient`/`laziness_not_globally_necessary`), `sentiment_asymmetry` now proves full Table 3 (both positive AND negative outcome), fix docstrings throughout
+
+## [0.229.674] - 2026-04-12
+
+### Changed
+- **Rename SI Compare files** to describe results: `CompareExhaustivity.lean` → `ExhaustivityLimit.lean`, `CompareRSAExh.lean` → `ScopeExpressivity.lean`, `CompareSauerland.lean` → `EpistemicBlocking.lean`
+- **Dissolve `Comparisons/` directory**: distribute 8 cross-theory comparison files into their natural theory-layer homes — `Mueller2013` → `Theories/Syntax/`, `CategorialFeatures` → `Theories/Syntax/Minimalism/`, `CNsAsTypes`/`FrameComposition` → `Theories/Semantics/TypeTheoretic/`, `DynamicTTR` → `Theories/Semantics/Dynamic/`, `RelevanceTheories` → `Theories/Semantics/Questions/`, `RSAandPDS`/`SDSandRSA` → `Theories/Pragmatics/RSA/`
+- **Dissolve `Core/Interface.lean`**: replace umbrella re-export with direct imports of specific submodules (`CombinationKind`, `ScopeTypes`, `CoreferenceStatus`, `BindingSemantics`, `FelicityTypes`) in each consumer; 3 unused imports removed
+
+## [0.229.673] - 2026-04-12
+
+### Added
+- **Glass2023.lean** (`Phenomena/Causation/Studies/`): formalize @cite{glass-2023b} Anna Karenina Principle — `GloballySufficient`/`LocallySufficient`/`GloballyNecessary`/`LocallyNecessary` (Prop-valued, defs 8–11), `conjunctive_globally_necessary`/`conjunctive_not_globally_sufficient`/`conjunctive_locally_sufficient` (Table 2 lightbulb), `disjunctive_globally_sufficient` (direct fixpoint proof), `conjunctive_asymmetry`/`sentiment_asymmetry` (AKP sentiment prediction), `causeSemGlass` (Glass's sufficiency-only semantics for *cause*), `nadathur_implies_glass`/`glass_strictly_weaker` (theoretical disagreement with @cite{nadathur-lauer-2020}); 1 bib entry
+
+## [0.229.672] - 2026-04-12
+
+### Added
+- **Duality.lean** (`Core/Logic/`): `DualityType.project` (parametric ∃/∀ dispatch), instance table docstring linking Klein, Fine, Caie, Kratzer, Kamp as instances of ∃ ⊣ Δ ⊣ ∀ adjunction
+
+### Changed
+- **Delineation.lean**: `more_implies_not_asAs` + `not_asAs_implies_more` replaced by biconditional `more_iff_not_asAs`
+
+## [0.229.671] - 2026-04-12
+
+### Added
+- **Boylan2023.lean**: `inheritance` (general structured proof: φ ⊨ ψ → ought φ ⊨ ought ψ — distinguishes from contrastivism §10), `no_dilemma` (general structured proof: pairwise consistency prevents ought φ ∧ ought ¬φ — key advantage over conflict account §3.3), `conflict_dilemma` (conflict account predicts both φ and ¬φ in The Office), `pairConsistent_eq_isConsistent` (bridge to Kratzer Background.lean), `officeEpistemic`/`dessertDeontic` (typed via `Kratzer.Flavor` `EpistemicFlavor`/`DeonticFlavor`); 2 bib entries (`von-fintel-2012`, `horty-2012`)
+
+### Changed
+- **Boylan2023.lean**: delete dead code (`dessertStrictOrdering`, `whichWorkersIn`), import `Kratzer.Flavor`, fix orphaned docstring
+
+## [0.229.670] - 2026-04-12
+
+### Added
+- **RSABridge.lean** (`Theories/Pragmatics/IBR/`): extract `rsa_speaker_to_ibr` (softmax → argmax as α → ∞ for any `InterpGame`) from dissolved `Compare.lean` — general RSA-to-IBR limit theorem now lives in the theory layer alongside `IBR/Core.lean` and `ScalarGames.lean`
+- **Denic2023.lean**: add `altAllOr_not_symmetric` (existential alternatives are NOT symmetric in @cite{fox-katzir-2011} sense — IE emptiness comes from MCE structure, not partition); import `Symmetric.lean`; move `ignoranceContradictsCK` to `BlindScenario` method in `Magri2009.lean`; fix `ibr_equals_exhMW` attribution (was `Franke2011.lean`, is `ScalarGames.lean`); strengthen `puzzles_connected` to reference computational results; remove vacuous `inference_puzzle_stated`
+- **Magri2009.lean**: add `BlindScenario.ignoranceContradictsCK` method — complements `blindOdd` (scalar contradiction) with ignorance-inference contradiction detection
+
+### Changed
+- **Compare.lean** (`Phenomena/ScalarImplicatures/`): dissolved — `rsa_speaker_to_ibr` promoted to `IBR/RSABridge.lean`; delete 4 stubs (`True` fields, `Bool = true` definitions), 12 dead definitions/structures, 2 trivial `rfl` theorems, 2 unused imports
+- **CompareExhaustivity.lean**: update docstring to note position in limit chain (`rsa_speaker_to_ibr` → `ibr_equals_exhMW` → @cite{denic-2023} domain-size invariance)
+- **CompareRSAExh.lean**: fix docstring format (`/-` → `/-!`), delete dead `standardRSAGame`, remove unused `IBR.ScalarGames` import
+- **CompareSauerland.lean**: fix docstring format (`/-` → `/-!`), delete 9 dead definitions (`DisjWorld`, `DisjUtterance`, `disjMeaning`, `propA/B/AorB/AandB`, `ScalarScenario`, `hasPrimaryImplicature`), remove unused `Mathlib.Data.Rat.Defs` import; 293→131 lines
+
+## [0.229.669] - 2026-04-12
+
+### Added
+- **Boylan2023.lean** (`Phenomena/Modality/Studies/`): formalize @cite{boylan-2023} "Putting *oughts* together" — existential semantics for *ought* (`ought` as ∃ over PBEST), proposition-level ordering (`PropOrdering`), pairwise consistency definedness condition, deontic ordering constraint (`isDeontic`); The Office scenario (epistemic Agglomeration failure: `alice_should_be_in` + `not_everyone_should_be_in`), Dessert scenario (deontic Indifference: `dessert_indifference`), deontic box reduction (`deontic_ought_is_box`); conflict account counterexample (`conflict_predicts_alice_absent` vs `boylan_no_alice_absent`); `kratzer_agglomerates` (structured proof: Kratzer necessity is inherently Agglomeration-valid, so cannot model the epistemic pattern); 1 bib entry
+
+## [0.229.668] - 2026-04-12
+
+### Added
+- **ParameterizedUpdate.lean** (`Core/Semantics/`): unified parameterized update framework — `FragmentSet P W` (fiber bundle over worlds), `fiberwiseFilter` (fiberwise restriction by assertion), `existentialProjection`/`universalProjection` (∃/∀ projection from bundle to worlds), `existentialUpdate`/`universalUpdate` (context-set-gated projections); De Morgan duality (`deMorgan_existential_universal`, `deMorgan_universal_existential`); monotone collapse theorems for antitone semantics (`monotoneCollapse_exists` reduces ∃-projection to min-check, `monotoneCollapse_forall` reduces ∀-projection to max-check); `projections_agree_iff_clear` (∃ and ∀ agree outside the borderline region `sem p_min ∧ ¬sem p_max`); sequential update = single conjunctive update for both projections (`sequential_existentialUpdate`, `sequential_universalUpdate`); structural properties (monotonicity/antitonicity in fragment sets, singleton collapse, ∀⇒∃ with non-empty fiber); unifies Caie 2023 (∃), supervaluation/Fine 1975 (∀), RSA/Lassiter-Goodman 2017 (Σ), CCP (∃ over assignments), Klein 1980 delineation (∃ over comparison classes)
+
+### Changed
+- **DisjunctiveUpdate.lean**: refactor to use `ParameterizedUpdate` — `disjunctiveUpdate` is now `abbrev` for `existentialUpdate`, `prune` is `abbrev` for `fiberwiseFilter` (both with argument-order swap via `InterpAssignment.toFragmentSet`); delete 7 redundant theorems (`disjunctiveUpdate_restricts`, `standardUpdate_restricts`, `prune_restricts`, `prune_true`, `disjunctiveUpdate_mono_cs`, `prune_then_update_sub`, plus entire §11 bridge section) — callers use general `existentialUpdate_restricts`/`fiberwiseFilter_sub` directly; `contextual_pruning_sequential` is now a one-liner delegating to `sequential_existentialUpdate`; `discourseStep_restricts` delegates to general structural theorems; 630→563 lines
+
+## [0.229.667] - 2026-04-12
+
+### Changed
+- **Denic2023.lean**: major refactoring — replace 2 broken axioms (universally quantified over all functions) with computable `uniformCondProb` model (ℚ arithmetic: 1−((m−1)/m)^n) and `condProb_ordering` theorem; remove unused `PruningRegime`/`MonotonePruning`/`BlindInformativeness` structures, vacuous `two_blindness_claims` (True∧True), duplicate `irm_inherits_inference_puzzle`; add `altOr_exh_distributive` (exhB yields mixed-only meaning), `altAllOr_three_mces` (explicit MCE computation matching paper's (26a-c)), `singletonDenoting` verification against concrete Girl domain (`isMary_singleton`, `isCalledMary_not_singleton`), blindness argument (`deviantBE_all_alts_ck_settled`, `ck_pruning_would_be_vacuous`); fix `puzzles_connected` trailing True; add @cite coverage for @cite{fox-katzir-2011}, @cite{chierchia-2004}; 48 declarations, 0 sorrys, 0 axioms
+
 ## [0.229.666] - 2026-04-12
 
 ### Changed

@@ -30,9 +30,22 @@ The proof factors through two key steps:
 2. At the both world, "all" is strictly more informative (L0 = 1 vs 1/2),
    so `rpow_luce_eq_softmax` converts the rpow ratio to a softmax, and
    `tendsto_softmax_infty_not_max` gives S1(some|both) → 0.
+
+## Position in the limit chain
+
+The general RSA→IBR limit theorem (`rsa_speaker_to_ibr` in
+`IBR/RSABridge.lean`) shows that RSA S1 concentrates on the IBR-optimal
+message as α → ∞ for *any* `InterpGame`. This file instantiates that
+general result for the specific Horn scale ⟨some, all⟩.
+
+Combined with `ibr_equals_exhMW` (`ScalarGames.lean`) and
+@cite{denic-2023}'s `entailment_invariant_across_domain_size`
+(`Denic2023.lean`), the chain shows that RSA cannot escape domain-size
+blindness in the high-rationality limit — probabilistic mechanisms
+(like informativeness-based pruning) are the only way out.
 -/
 
-namespace Phenomena.ScalarImplicatures.CompareExhaustivity
+namespace Phenomena.ScalarImplicatures.ExhaustivityLimit
 
 open Core Real BigOperators Finset Filter Topology
 open Exhaustification.InnocentExclusion (exhB ieIndices)
@@ -169,4 +182,4 @@ theorem exh_via_alternativeSource :
       exhB scaleDomain scaleAlts weakMeaning w := by
   intro w; cases w <;> native_decide
 
-end Phenomena.ScalarImplicatures.CompareExhaustivity
+end Phenomena.ScalarImplicatures.ExhaustivityLimit

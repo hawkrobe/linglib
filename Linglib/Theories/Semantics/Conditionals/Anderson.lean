@@ -64,7 +64,7 @@ namespace Semantics.Conditionals.Anderson
 
 open Core.Context (KContext ContextTower ContextShift RichContext
   hpShift xMarkingShift DomainExpanding)
-open Semantics.Conditionals.Iatridou (ExclF)
+open Semantics.Conditionals.Iatridou (ExclF ExclDimension)
 open Semantics.Reference.Kaplan (opActually_access opActually_shift_invariant)
 open Semantics.Mood (subjShift)
 open Semantics.Tense.ConditionalShift (domainRestrictedConditional
@@ -136,6 +136,55 @@ abbrev MarkingStrategy.producesExclF (s : MarkingStrategy) : Bool := s.hasXMarki
     Definitionally equal to `hasXMarking` — the "actually" requirement is
     a direct consequence of ExclF. -/
 abbrev MarkingStrategy.requiresActuallyOperator (s : MarkingStrategy) : Bool := s.hasXMarking
+
+-- ════════════════════════════════════════════════════════════════
+-- § ExclDimension / Deal Bridge
+-- ════════════════════════════════════════════════════════════════
+
+/-- Map marking strategies to Iatridou's ExclDimension.
+
+    X-marking produces modal ExclF (world exclusion); O-marking produces
+    no ExclF — it expands the domain via HP backward time shift, not via
+    counterfactual world shift. -/
+def MarkingStrategy.exclDimension : MarkingStrategy → Option ExclDimension
+  | .xMarking => some .modal
+  | .oMarking => none
+
+/-- Map marking strategies to Deal's PastMorphologyUse.
+
+    X-marking corresponds to counterfactual tense (past morphology
+    encoding modal remoteness, not temporal precedence).
+    O-marking corresponds to temporal tense (Non-Past / HP). -/
+def MarkingStrategy.toDealUse : MarkingStrategy → Semantics.Tense.CounterfactualTense.PastMorphologyUse
+  | .xMarking => .counterfactual
+  | .oMarking => .temporal
+
+/-- X-marking maps to modal ExclDimension. -/
+theorem xMarking_exclDimension :
+    MarkingStrategy.xMarking.exclDimension = some .modal := rfl
+
+/-- O-marking has no ExclDimension — no world shift occurs. -/
+theorem oMarking_no_exclDimension :
+    MarkingStrategy.oMarking.exclDimension = none := rfl
+
+/-- X-marking is Deal's counterfactual use of past morphology:
+    the past morpheme encodes modal remoteness, not temporal precedence.
+
+    Connects to `ExclDimension.toDealUse` from Iatridou.lean:
+    `ExclDimension.modal.toDealUse = .counterfactual`. -/
+theorem xMarking_is_deal_counterfactual :
+    MarkingStrategy.xMarking.toDealUse = .counterfactual := rfl
+
+/-- O-marking is Deal's temporal use: Non-Past morphology performs its
+    ordinary temporal function (Historical Present). -/
+theorem oMarking_is_deal_temporal :
+    MarkingStrategy.oMarking.toDealUse = .temporal := rfl
+
+/-- Consistency: X-marking's ExclDimension maps to the same Deal use
+    as X-marking's direct toDealUse. -/
+theorem xMarking_excl_deal_consistent :
+    (MarkingStrategy.xMarking.exclDimension.map ExclDimension.toDealUse) =
+    some MarkingStrategy.xMarking.toDealUse := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § Tower-Level Theorems
@@ -216,6 +265,28 @@ theorem domain_expansion_avoids_triviality
     nonTrivialConsequent expandedDomain consequent :=
   expansion_resolves_triviality smallDomain expandedDomain consequent
     h_subset h_trivial w hw hw_fails
+
+/-- End-to-end O-marking domain expansion: backwards-closed history +
+    backward time shift → the HP-shifted domain contains the original.
+
+    This connects the three layers:
+    1. `BranchingTime.WorldHistory.backwardsClosed` (semantic property)
+    2. `ConditionalShift.history_monotone_set` (set-level monotonicity)
+    3. `hpShift` installs the expanded domain
+
+    For any RichContext whose domain is contained in `history s₀`, the
+    HP shift to an earlier time `t'` installs `history ⟨s₀.world, t'⟩`
+    as the new domain, which is a superset of the original. -/
+theorem oMarking_hpShift_expanding
+    {W : Type*} {T : Type*} [Preorder T]
+    (history : Semantics.Tense.BranchingTime.WorldHistory W T)
+    (h_bc : history.backwardsClosed)
+    (w₀ : W) (t₀ t' : T) (h_earlier : t' ≤ t₀)
+    (D : Set W) (h_domain : D ⊆ history ⟨w₀, t₀⟩) :
+    D ⊆ history ⟨w₀, t'⟩ :=
+  Set.Subset.trans h_domain
+    (Semantics.Tense.ConditionalShift.history_monotone_set
+      history h_bc ⟨w₀, t₀⟩ t' h_earlier)
 
 /-- The O-marking triviality problem: without domain expansion, the
     Anderson conditional is vacuously true. The `domainRestrictedConditional`

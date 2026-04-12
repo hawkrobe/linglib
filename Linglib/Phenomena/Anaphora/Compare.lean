@@ -41,7 +41,6 @@ import Linglib.Phenomena.Anaphora.Studies.MinimalismCoreference
 import Linglib.Phenomena.Anaphora.Studies.HPSGCoreference
 import Linglib.Phenomena.Anaphora.Studies.Hudson1990
 import Linglib.Phenomena.Anaphora.Studies.OsborneLi2023
-import Linglib.Core.Interface
 import Linglib.Core.Tree
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.GaloisConnection.Basic

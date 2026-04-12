@@ -38,7 +38,7 @@ a presupposition trigger (like *also*), and @cite{fox-2007}'s computable
 - `Exhaustification/InnocentExclusion.lean`: `exhB`, innocent exclusion algorithm
 - `Exhaustification/FreeChoice.lean`: feature-checking, scale reversal, FC
 - `Exhaustification/InnocentExclusion.lean`: `exhB`, `ieIndices` (computable exhaustification)
-- `ScalarImplicatures/CompareRSAExh.lean`: grammatical vs pragmatic SI
+- `ScalarImplicatures/ScopeExpressivity.lean`: grammatical vs pragmatic SI
 -/
 
 namespace Phenomena.ScalarImplicatures.Studies.ChowErlewine2022

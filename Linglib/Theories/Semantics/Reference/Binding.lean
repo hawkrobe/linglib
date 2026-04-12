@@ -10,7 +10,7 @@ with the continuation approach.
 import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Core.Interface
+import Linglib.Core.BindingSemantics
 
 namespace Semantics.Reference.Binding
 

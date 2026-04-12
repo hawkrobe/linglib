@@ -100,6 +100,21 @@ theorem hp_achieves_expansion
     w ∈ history ⟨s₀.world, t'⟩ :=
   h_bc s₀.world w s₀.time t' h_earlier hw
 
+/-- Set-level monotonicity: under backwards-closed history, the set of
+    historical alternatives at an earlier time is a superset of those at a
+    later time. This lifts `hp_achieves_expansion` (element-level) to
+    `Set.Subset` (set-level), connecting it to `DomainExpanding`.
+
+    This is the formal core of @cite{mizuno-2024}'s argument: HP shifts the
+    evaluation time backward, and backward time yields more historical
+    alternatives, i.e., domain expansion. -/
+theorem history_monotone_set
+    (history : WorldHistory W T)
+    (h_bc : history.backwardsClosed)
+    (s₀ : Situation W T) (t' : T) (h_earlier : t' ≤ s₀.time) :
+    (history s₀ : Set W) ⊆ (history ⟨s₀.world, t'⟩ : Set W) :=
+  λ _ hw => hp_achieves_expansion history h_bc s₀ t' h_earlier _ hw
+
 /-- The historical base (set of situations) at an earlier time includes
     situations with the same worlds as the later base, plus potentially more.
     This is the situation-level version of domain expansion. -/

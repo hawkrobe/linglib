@@ -20,7 +20,7 @@ This module provides:
 
 import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Core.Interface
+import Linglib.Core.ScopeTypes
 
 namespace Semantics.Scope
 

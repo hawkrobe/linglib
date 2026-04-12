@@ -39,7 +39,7 @@ For simple transitives, predictions are identical. Differences emerge with:
 -/
 
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
-import Linglib.Core.Interface
+import Linglib.Core.CoreferenceStatus
 
 namespace DepGrammar.CRDC
 

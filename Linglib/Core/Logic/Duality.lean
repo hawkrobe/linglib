@@ -4,16 +4,21 @@ import Linglib.Core.Logic.Truth3
 # Duality
 @cite{barwise-cooper-1981}
 
-Universal vs existential operators formalized as a Galois connection.
+Universal vs existential operators as the ∃ ⊣ Δ ⊣ ∀ adjunction.
 
-## Main definitions
+## § 1. Truth3 Aggregation
 
 - `DualityType`: existential vs universal classification
-- `aggregate`: aggregate list by duality type
+- `aggregate`: aggregate list by duality type (sup/inf over Truth3)
 
-For GQ-level duality operations (outer negation, inner negation, dual) see
-`Core.Quantification.outerNeg` / `innerNeg` / `dualQ`.
+## § 2. Prop-valued Quantifier Projection
 
+- `DualityType.project`: parametric projection by duality type (∃ vs ∀)
+
+The `Prop`-valued counterparts of `existsAny`/`forallAll` are just `∃`/`∀`
+from Lean core. De Morgan duality uses `not_forall`/`not_exists` from
+Mathlib. See the instance table in § 2's docstring for how parameterized
+semantic theories instantiate these.
 -/
 
 namespace Core.Duality
@@ -117,5 +122,45 @@ def exists' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
 
 def forall' {α : Type*} (P : α → Truth3) (l : List α) : Truth3 :=
   forallAll (l.map P)
+
+-- ════════════════════════════════════════════════════
+-- § 2. Prop-valued Quantifier Projection
+-- ════════════════════════════════════════════════════
+
+/-! The `Truth3` aggregation above (§ 1) is the decidable/three-valued
+    version of quantifier projection. The classical `Prop`-valued
+    counterparts are just `∃` and `∀` from Lean core — the left and
+    right adjoints to the diagonal in the adjunction ∃ ⊣ Δ ⊣ ∀.
+
+    Many parameterized semantic theories (comparison classes, precisifications,
+    accessible worlds, variable assignments) project out a hidden index
+    via one of these two operations:
+
+    | Theory                 | Index I              | ∃-projection       | ∀-projection    |
+    |------------------------|----------------------|--------------------|-----------------|
+    | @cite{klein-1980}      | comparison class C   | comparative (more) | at-least-as     |
+    | @cite{fine-1975}       | precisification      | sub-truth          | super-truth     |
+    | @cite{caie-2023}       | comp. context        | disjunctive update | —               |
+    | @cite{kratzer-1981}    | accessible world     | ◇ (possibility)    | □ (necessity)   |
+    | @cite{kamp-1975}       | completion           | strict comparative | at-least-as     |
+
+    De Morgan duality between the two projections is just `not_forall`
+    and `not_exists` from Lean core / Mathlib. Bounded variants use
+    `not_forall`, `not_imp`, `not_and`.
+
+    For GQ-level duality operations (outer negation, inner negation, dual) see
+    `Core.Quantification.outerNeg` / `innerNeg` / `dualQ`.
+
+    For the antitone Galois connection between extensions and intensions, see
+    `Core.Proposition.GaloisConnection`.
+-/
+
+variable {I : Type*}
+
+/-- Project by duality type: existential uses ∃, universal uses ∀. -/
+def DualityType.project (d : DualityType) (P : I → Prop) : Prop :=
+  match d with
+  | .existential => ∃ i, P i
+  | .universal => ∀ i, P i
 
 end Core.Duality

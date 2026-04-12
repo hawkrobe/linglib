@@ -30,7 +30,6 @@ exhaustification predictions live in `Alternatives/Lexical.lean` and
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Core.Interface
 import Linglib.Core.Lexical.Word
 
 namespace Implicature.ScalarImplicatures

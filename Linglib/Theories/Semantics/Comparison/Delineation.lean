@@ -61,6 +61,7 @@ see `Theories/Semantics/Comparison/Hierarchy.lean`.
 
 namespace Semantics.Comparison.Delineation
 
+
 -- ════════════════════════════════════════════════════
 -- § 1. Comparison Class
 -- ════════════════════════════════════════════════════
@@ -98,7 +99,7 @@ def positiveSem {Entity : Type*}
 def comparativeSem {Entity : Type*}
     (delineation : ComparisonClass Entity → Entity → Prop)
     (a b : Entity) : Prop :=
-  ∃ C : ComparisonClass Entity, delineation C a ∧ ¬ delineation C b
+  ∃ C, delineation C a ∧ ¬ delineation C b
 
 -- ════════════════════════════════════════════════════
 -- § 4. Properties
@@ -229,7 +230,7 @@ theorem PartialDelineation.trichotomy {Entity : Type*}
 def ordering {Entity : Type*}
     (delineation : ComparisonClass Entity → Entity → Prop)
     (cc : ComparisonClass Entity) (u u' : Entity) : Prop :=
-  ∃ X : ComparisonClass Entity, X ⊆ cc ∧ delineation X u ∧ ¬ delineation X u'
+  ∃ X, X ⊆ cc ∧ delineation X u ∧ ¬ delineation X u'
 
 /-- The unrestricted comparative is the ordering over all of U. -/
 theorem comparativeSem_eq_ordering_univ {Entity : Type*}
@@ -293,7 +294,7 @@ theorem ordering_neg_trans {Entity : Type*}
 def nondistinct {Entity : Type*}
     (delineation : ComparisonClass Entity → Entity → Prop)
     (cc : ComparisonClass Entity) (u u' : Entity) : Prop :=
-  ∀ X : ComparisonClass Entity, X ⊆ cc → u ∈ X → u' ∈ X →
+  ∀ X, X ⊆ cc → u ∈ X → u' ∈ X →
     (delineation X u ↔ delineation X u')
 
 theorem nondistinct_refl {Entity : Type*}
@@ -516,7 +517,7 @@ def lessThanSem {Entity : Type*}
 def asAsSem {Entity : Type*}
     (delineation : ComparisonClass Entity → Entity → Prop)
     (u u' : Entity) : Prop :=
-  ∀ C : ComparisonClass Entity, delineation C u' → delineation C u
+  ∀ C, delineation C u' → delineation C u
 
 /-- Klein's equivalences (§5.3, eq 90): the three constructions
     are interdefinable via classical logic:
@@ -532,20 +533,15 @@ theorem more_iff_less {Entity : Type*}
     comparativeSem delineation a b ↔ lessThanSem delineation b a :=
   Iff.rfl
 
-theorem more_implies_not_asAs {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop) (a b : Entity)
-    (h : comparativeSem delineation a b) :
-    ¬ asAsSem delineation b a := by
-  obtain ⟨C, ha, hnotb⟩ := h
-  intro has
-  exact hnotb (has C ha)
-
-theorem not_asAs_implies_more {Entity : Type*}
-    (delineation : ComparisonClass Entity → Entity → Prop) (a b : Entity)
-    (h : ¬ asAsSem delineation b a) :
-    comparativeSem delineation a b := by
-  unfold asAsSem at h; push_neg at h
-  obtain ⟨C, ha, hnotb⟩ := h
-  exact ⟨C, ha, hnotb⟩
+/-- Klein's equivalence (§5.3, eq 90c): `more A ↔ ¬(as A as)`.
+    De Morgan duality between ∃-projection (comparative) and
+    ∀-projection (at-least-as). -/
+theorem more_iff_not_asAs {Entity : Type*}
+    (delineation : ComparisonClass Entity → Entity → Prop) (a b : Entity) :
+    comparativeSem delineation a b ↔ ¬ asAsSem delineation b a := by
+  constructor
+  · intro ⟨C, ha, hnb⟩ haa; exact hnb (haa C ha)
+  · intro h; by_contra hne
+    exact h fun C ha => by_contra fun hnb => hne ⟨C, ha, hnb⟩
 
 end Semantics.Comparison.Delineation

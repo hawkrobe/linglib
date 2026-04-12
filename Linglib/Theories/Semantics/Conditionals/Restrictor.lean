@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Conditionals.Basic
+import Linglib.Theories.Semantics.Tense.ConditionalShift
 
 /-!
 # Restrictor Theory of Conditionals
@@ -188,5 +189,39 @@ theorem conditional_K (f : ModalBase) (g : OrderingSource)
     (hBeta : conditionalNecessity f g α β w = true) :
     conditionalNecessity f g α γ w = true :=
   K_axiom (restrictedBase f α) g β γ w hImpl hBeta
+
+/-! ## Prop-level bridge -/
+
+open Semantics.Tense.ConditionalShift (domainRestrictedConditional)
+
+/-- **Bool/Prop bridge**: `conditionalNecessity` (with empty ordering source)
+    corresponds to `domainRestrictedConditional` at the Prop level.
+
+    `conditionalNecessity f ∅ α β w = true` iff every world accessible from
+    `w` under `f` that satisfies `α` also satisfies `β` — which is exactly
+    `domainRestrictedConditional` over the accessible worlds, with `α` as
+    antecedent and `β` as consequent.
+
+    The two definitions live at different abstraction levels:
+    - `conditionalNecessity` operates on `World4`, `Bool`, `List` (computational)
+    - `domainRestrictedConditional` operates on generic `W`, `Prop`, `Set` (mathematical)
+
+    This theorem bridges the gap for the concrete `World` type. -/
+theorem conditionalNecessity_iff_domainRestricted
+    (f : ModalBase) (α β : BProp World) (w : World) :
+    conditionalNecessity f emptyBackground α β w = true ↔
+    (∀ w' ∈ accessibleWorlds f w, α w' = true → β w' = true) := by
+  rw [restrictor_eq_strict]
+  unfold strictImpFinite
+  constructor
+  · intro h w' hw' hα
+    have := List.all_eq_true.mp h w' hw'
+    simp [hα] at this
+    exact this
+  · intro h
+    apply List.all_eq_true.mpr
+    intro w' hw'
+    have := h w' hw'
+    cases hα : α w' <;> simp [hα, this]
 
 end Semantics.Conditionals.Restrictor

@@ -1,4 +1,7 @@
-/-
+import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
+
+/-!
 # RSA vs EXH: Expressivity Gap
 
 Formalizes what standard RSA cannot express that EXH can:
@@ -14,46 +17,16 @@ EXH is a compositional operator that can scope at different positions:
 
 These give different truth conditions, but standard RSA conflates them.
 
-## The Classic Example: Embedded Scalar Implicatures
-
-Consider: "Every student read some book"
-Alternative: "Every student read all books"
-
-**Global EXH** (wide scope):
-  EXH [∀x. some(x)] = ∀x. some(x) ∧ ¬(∀x. all(x))
-  = "every student read some, and not every student read all"
-  = at least one student read some but not all
-
-**Local EXH** (narrow scope, under ∀):
-  ∀x. [EXH some(x)] = ∀x. [some(x) ∧ ¬all(x)]
-  = "every student read some but not all"
-  = each individual student read some but not all
-
-These are different propositions. Standard RSA gives one answer.
-
 ## Results
 
-1. Standard RSA is scope-blind: it computes one distribution P(w | u)
-   without distinguishing scope configurations
-
-2. EXH is scope-sensitive: different scope positions yield different meanings
-
-3. The gap exists: there are scenarios where global and local EXH
-   predict different worlds, but standard RSA cannot distinguish them
-
-4. Compositional RSA closes the gap: by lifting scope to a latent variable,
-   RSA can recover EXH's scope sensitivity (as in ScontrasPearl2021)
-
+1. Standard RSA is scope-blind (`expressivity_gap`)
+2. IBR matches global EXH, not local (`ibr_is_global_not_local`)
+3. Compositional RSA closes the gap (`hierarchy_is_strict`)
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Operators
-import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
-import Linglib.Theories.Pragmatics.IBR.ScalarGames
-
-namespace Phenomena.ScalarImplicatures.CompareRSAExh
+namespace Phenomena.ScalarImplicatures.ScopeExpressivity
 
 open Exhaustification
-open RSA.IBR
 open RSA.Core.EmbeddedSI
 
 -- SECTION 3: Standard RSA (Scope-Blind)
@@ -68,14 +41,6 @@ and computes a single distribution over worlds.
 RSA gives one answer, but there are two legitimate readings (global vs
 local EXH).
 -/
-
-/-- Standard RSA interpretation game for embedded SI.
-    Note: This game has NO scope parameter - it's scope-blind. -/
-def standardRSAGame : InterpGame where
-  State := EmbeddedSIWorld
-  Message := EmbeddedSIMessage
-  meaning := embeddedMeaning
-  prior := λ _ => 1 / 4  -- Uniform prior
 
 -- SECTION 4: The Expressivity Gap
 
@@ -247,4 +212,4 @@ theorem hierarchy_is_strict :
       compositionalMeaning ⟨w, .local_⟩ = false :=
   ⟨.SA, rfl, rfl⟩
 
-end Phenomena.ScalarImplicatures.CompareRSAExh
+end Phenomena.ScalarImplicatures.ScopeExpressivity

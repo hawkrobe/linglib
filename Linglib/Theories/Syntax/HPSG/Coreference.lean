@@ -16,7 +16,7 @@ import Linglib.Theories.Syntax.HPSG.Core.Basic
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Core.Interface
+import Linglib.Core.CoreferenceStatus
 import Linglib.Core.Grammar
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg

@@ -108,4 +108,23 @@ theorem adaptive_base_ge_five_of_div10 (n : Nat) (h10 : n % 10 = 0) :
   · decide
   · exact absurd ‹_› (Core.Roundness.grade_ne_none_of_score_ge_one n (by omega))
 
+-- ════════════════════════════════════════════════════
+-- Speaker-conditioned precision (@cite{beltrama-schwarz-2024})
+-- ════════════════════════════════════════════════════
+
+/-- Speaker-conditioned pragmatic halo width: scales the base `haloWidth`
+    by a tolerance multiplier. @cite{beltrama-schwarz-2024} show that
+    numeral precision is jointly determined by roundness AND speaker
+    identity — the pragmatic halo is not a property of the number alone
+    but of the number-speaker pair. -/
+def speakerModulatedHalo (multiplier : ℚ) (n : Nat) : ℚ :=
+  multiplier * haloWidth n
+
+/-- Whether an actual value falls within the speaker-conditioned
+    pragmatic halo of a stated value. -/
+def inSpeakerHalo (multiplier : ℚ) (stated actual : Nat) : Bool :=
+  let hw := speakerModulatedHalo multiplier stated
+  decide ((actual : ℚ) ≥ (stated : ℚ) - hw ∧
+          (actual : ℚ) ≤ (stated : ℚ) + hw)
+
 end Semantics.Lexical.Numeral.Precision

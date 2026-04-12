@@ -1,7 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Interface
 
 /-!
 # RSA Scalar Implicatures

@@ -44,7 +44,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 - **EXH bridge** (§3) connects `Theories/Semantics/Lexical/Numeral/Semantics.lean`'s
   `exhNumeral` to `Theories/Semantics/Exhaustification/InnocentExclusion.lean`'s `exhB`
 - `Compare.lean` Bridge 9 independently shows RSA derives exact from LB
-- `CompareExhaustivity.lean` proves RSA at α→∞ = EXH for ⟨some, all⟩
+- `ExhaustivityLimit.lean` proves RSA at α→∞ = EXH for ⟨some, all⟩
 - @cite{spector-2007} proves Max(P) = {Exhaust(P)} (Gricean ↔ exhaustive)
 -/
 
@@ -402,7 +402,7 @@ The results here connect to three independent lines of evidence in the library:
    L1("two") peaks at w=2 under LB semantics. This is the RSA derivation of
    the same exact reading that EXH derives grammatically.
 
-3. **RSA=EXH limit** (`CompareExhaustivity.lean`): `l1_weak_weakOnly_tendsto_one`
+3. **RSA=EXH limit** (`ExhaustivityLimit.lean`): `l1_weak_weakOnly_tendsto_one`
    proves RSA L1 at α→∞ recovers Fox's EXH for ⟨some, all⟩. Combined with the
    EXH bridge here, this means RSA at α→∞ on numerals should also recover
    `exhNumeral` — the three formalisms (EXH, `exhNumeral`, RSA-limit) converge.

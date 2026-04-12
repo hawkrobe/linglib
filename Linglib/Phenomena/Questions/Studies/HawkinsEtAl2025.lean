@@ -1066,7 +1066,7 @@ decision-theoretic relevance coincide (Blackwell bridge). PRIOR-PQ's polar
 question partition is a binary QUD; the `vanRooy_question_ordering` theorem
 shows that comparing `questionerEU` across questions reduces to comparing
 Van Rooy's `questionUtility` — exactly the ordering that
-`Comparisons.Relevance.blackwell_unifies_relevance` proves is equivalent to
+`Theories.Semantics.Questions.Relevance.blackwell_unifies_relevance` proves is equivalent to
 QUD refinement.
 
 **Pragmatic answerhood** (`Phenomena/Questions/PragmaticAnswerhood`): PRIOR-PQ's

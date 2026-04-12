@@ -100,6 +100,30 @@ def blindOdd (u : U) : Bool :=
   !ie.isEmpty &&
   s.cWorlds.all (λ w => !s.strengthened u w)
 
+/-- Ignorance-based oddness: alternatives exist that are NOT innocently
+excludable (so ignorance inferences are derived), yet CK settles every
+alternative (all true at every CK world, or all false at every CK
+world). The speaker cannot be genuinely ignorant → contradiction →
+deviant.
+
+This complements `blindOdd`: `blindOdd` detects when *scalar*
+implicatures contradict CK (EXH(φ) ∩ W_ck = ∅), while
+`ignoranceContradictsCK` detects when *ignorance* inferences
+contradict CK (alternatives are relevant but CK-settled).
+
+@cite{denic-2023} §6: deviance of "#Each of those three girls is Mary,
+Susan, or Jane" arises because ignorance inferences about singleton-
+denoting predicates contradict CK. -/
+def ignoranceContradictsCK (u : U) : Bool :=
+  let ie := ieIndices s.worlds (s.meaning u) ((s.alternatives u).map s.meaning)
+  -- There are alternatives that are NOT IE (so ignorance inferences arise)
+  (s.alternatives u).length > ie.length &&
+  -- All CK worlds agree on all alternatives (speaker can't be ignorant)
+  (s.alternatives u).all (λ alt =>
+    let altMeaning := s.meaning alt
+    -- Either alt is true at ALL CK worlds or false at ALL CK worlds
+    s.cWorlds.all altMeaning || s.cWorlds.all (!altMeaning ·))
+
 end BlindScenario
 
 -- ═══════════════════════════════════════════════════════════════════════

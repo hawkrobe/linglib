@@ -99,11 +99,11 @@ svRSA uses no prior in L0 meaning — QUD projection neutralizes it
 
 ## Connection to Other Formalizations
 
-- `CompareExhaustivity.lean`: proves RSA at α→∞ recovers Fox's exh,
+- `ExhaustivityLimit.lean`: proves RSA at α→∞ recovers Fox's exh,
   using the same IE infrastructure (`applyIEBool`) as our `exhMeaning`.
 - `FrankeBergen2020.lean`: formalizes four RSA models (vanilla, LU, LI, GI)
   for nested quantifiers, using compositional exhaustification.
-- `CompareRSAExh.lean`: demonstrates the scope-blind vs scope-sensitive
+- `ScopeExpressivity.lean`: demonstrates the scope-blind vs scope-sensitive
   expressivity gap between standard RSA and compositional EXH.
 -/
 

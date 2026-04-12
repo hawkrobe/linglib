@@ -169,13 +169,13 @@ theorem kleene_dilemma :
     Parameterized by a set of "completions" (Kamp) or "comparison classes"
     (Klein). -/
 def kampAtLeastAs {E C : Type*} (ext : C → E → Bool) (u₁ u₂ : E) (S : Set C) : Prop :=
-  ∀ c ∈ S, ext c u₂ = true → ext c u₁ = true
+  ∀ c, c ∈ S → ext c u₂ = true → ext c u₁ = true
 
 /-- Klein's strict comparative: there exists a context that separates
     the two entities. This is `comparativeSem` from
     `Theories/Semantics/Comparison/Delineation.lean`. -/
 def kleinMoreThan {E C : Type*} (ext : C → E → Bool) (u₁ u₂ : E) (S : Set C) : Prop :=
-  ∃ c ∈ S, ext c u₁ = true ∧ ext c u₂ = false
+  ∃ c, c ∈ S ∧ ext c u₁ = true ∧ ext c u₂ = false
 
 /-- **Kamp–Klein bridge**: Klein's strict comparative is equivalent to
     Kamp's "at least as" in one direction but not the other. Precisely:

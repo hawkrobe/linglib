@@ -15,6 +15,7 @@ import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Empirical
 import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Tree
 import Linglib.Core.Coordination
@@ -58,7 +59,6 @@ import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Discourse.AtIssueness
-import Linglib.Core.Interface
 import Linglib.Core.CoreferenceStatus
 import Linglib.Core.BindingSemantics
 import Linglib.Core.CombinationKind
@@ -1032,6 +1032,7 @@ import Linglib.Phenomena.Modality.Studies.ImelGuoST2026
 import Linglib.Phenomena.Modality.Studies.AghaJeretic2022
 import Linglib.Phenomena.Modality.Studies.AghaJeretic2026
 import Linglib.Phenomena.Modality.Studies.Rubinstein2014
+import Linglib.Phenomena.Modality.Studies.Boylan2023
 import Linglib.Phenomena.Modality.Studies.Narrog2010
 import Linglib.Phenomena.Modality.Studies.Narrog2012
 import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
@@ -1323,15 +1324,15 @@ import Linglib.Theories.FormalLanguageTheory.PumpingLemma
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
--- Comparisons (framework-level metatheory)
-import Linglib.Comparisons.Mueller2013
-import Linglib.Comparisons.RelevanceTheories
-import Linglib.Comparisons.RSAandPDS
-import Linglib.Comparisons.SDSandRSA
-import Linglib.Comparisons.FrameComposition
-import Linglib.Comparisons.CategorialFeatures
-import Linglib.Comparisons.CNsAsTypes
-import Linglib.Comparisons.DynamicTTR
+-- Cross-theory comparisons (distributed into theory directories)
+import Linglib.Theories.Syntax.Mueller2013
+import Linglib.Theories.Syntax.Minimalism.CategorialFeatures
+import Linglib.Theories.Semantics.Questions.RelevanceTheories
+import Linglib.Theories.Semantics.TypeTheoretic.CNsAsTypes
+import Linglib.Theories.Semantics.TypeTheoretic.FrameComposition
+import Linglib.Theories.Semantics.Dynamic.DynamicTTR
+import Linglib.Theories.Pragmatics.RSA.RSAandPDS
+import Linglib.Theories.Pragmatics.RSA.SDSandRSA
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Phenomena.Anaphora.Compare
 import Linglib.Phenomena.Assertion.Compare
@@ -1339,10 +1340,9 @@ import Linglib.Phenomena.Case.Compare
 import Linglib.Phenomena.Gradability.Compare
 import Linglib.Phenomena.Modality.ComparePosition
 import Linglib.Phenomena.Presupposition.Compare
-import Linglib.Phenomena.ScalarImplicatures.Compare
-import Linglib.Phenomena.ScalarImplicatures.CompareExhaustivity
-import Linglib.Phenomena.ScalarImplicatures.CompareRSAExh
-import Linglib.Phenomena.ScalarImplicatures.CompareSauerland
+import Linglib.Phenomena.ScalarImplicatures.ExhaustivityLimit
+import Linglib.Phenomena.ScalarImplicatures.ScopeExpressivity
+import Linglib.Phenomena.ScalarImplicatures.EpistemicBlocking
 import Linglib.Phenomena.TenseAspect.Compare
 import Linglib.Phenomena.TenseAspect.CompareTenseModal
 import Linglib.Phenomena.TenseAspect.ComparePartee
@@ -1898,6 +1898,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.BrehenyEtAl2018
 import Linglib.Phenomena.ScalarImplicatures.Studies.Katzir2007
 import Linglib.Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
+import Linglib.Phenomena.ScalarImplicatures.Studies.Denic2023
 -- Theories: Alternatives + Exhaustification + Implicature
 import Linglib.Theories.Pragmatics.Implicature.Analyticity
 import Linglib.Theories.Pragmatics.Implicature.ConventionalImplicatures
@@ -1940,6 +1941,7 @@ import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Operations
 import Linglib.Theories.Pragmatics.IBR.Core
 import Linglib.Theories.Pragmatics.IBR.Convergence
 import Linglib.Theories.Pragmatics.IBR.ScalarGames
+import Linglib.Theories.Pragmatics.IBR.RSABridge
 -- Theories: RSA
 import Linglib.Theories.Pragmatics.RSA.Core.BToMGrounding
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
@@ -1972,6 +1974,7 @@ import Linglib.Phenomena.Causation.Studies.KoontzGarboden2009
 import Linglib.Phenomena.Causation.Studies.Krejci2012
 import Linglib.Phenomena.Causation.Studies.Song1996
 import Linglib.Phenomena.Causation.Studies.Lewis1973
+import Linglib.Phenomena.Causation.Studies.Glass2023
 import Linglib.Phenomena.Ellipsis.Studies.BergenGoodman2015
 import Linglib.Phenomena.Ellipsis.Studies.Osborne2019
 import Linglib.Phenomena.Ellipsis.Studies.Osborne2019Parallelism
@@ -2019,6 +2022,7 @@ import Linglib.Theories.Pragmatics.Assertion.Krifka
 import Linglib.Theories.Pragmatics.Assertion.Brandom
 import Linglib.Theories.Pragmatics.Assertion.Gunlogson
 import Linglib.Theories.Pragmatics.Assertion.Lauer
+import Linglib.Theories.Pragmatics.Assertion.DisjunctiveUpdate
 -- Theories: Pragmatics: Dialogue
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar

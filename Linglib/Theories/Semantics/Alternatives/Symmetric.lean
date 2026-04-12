@@ -37,7 +37,7 @@ Every subsequent theory of alternatives is shaped by this problem:
   without cost, Bayesian inference at finite rationality α handles
   symmetric alternatives gracefully — the symmetry problem only
   re-emerges in the categorical limit α → ∞ where RSA collapses
-  to `exh` (see `Comparisons.RSANeoGricean`)
+  to `exh` (see `IBR.RSABridge`)
 
 This file defines the core concepts — `isSymmetric`, complement
 equivalence, and inconsistency of joint exclusion — as theory-neutral

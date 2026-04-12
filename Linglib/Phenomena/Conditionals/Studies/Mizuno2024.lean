@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Conditionals.Anderson
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Mandarin.Conditionals
+import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
 
 /-!
 # @cite{mizuno-2024} — Anderson Conditionals Crosslinguistically
@@ -386,5 +387,41 @@ theorem flv_data_matches_profiles :
 -- by consequent-final *le*, not by the conditional marker.
 #guard Fragments.Mandarin.Conditionals.ruguo.markerType ==
   Semantics.Conditionals.ConditionalMarkerType.both
+
+-- ════════════════════════════════════════════════════════════════
+-- § Iatridou 2000 Cross-Reference
+-- ════════════════════════════════════════════════════════════════
+
+open Phenomena.Conditionals.Studies.Iatridou2000
+open Semantics.Conditionals.Anderson (MarkingStrategy)
+open Semantics.Conditionals.Iatridou (ExclDimension CounterfactualType)
+
+/-- English X-marking for Anderson conditionals uses the same number of
+    past layers as Iatridou's FLV type: 1 layer = 1 modal ExclF.
+
+    @cite{mizuno-2024} §4.2 predicts this correlation: X-marking availability
+    for Anderson conditionals and for FLV stand or fall together (English
+    has both). @cite{iatridou-2000} provides the independent morphological
+    count. -/
+theorem english_xMarking_layers_match_flv :
+    Iatridou2000.english_flv.pastLayers =
+    CounterfactualType.flv.exclFCount := rfl
+
+/-- English X-marking strategy maps to modal ExclDimension, consistent
+    with @cite{iatridou-2000}'s analysis of counterfactual past as
+    modal exclusion. -/
+theorem english_strategy_is_modal_excl :
+    english_strategy.exclDimension = some .modal := rfl
+
+/-- Japanese O-marking strategy has no ExclDimension — no counterfactual
+    morphology. The domain expansion comes from HP backward time shift,
+    not from world exclusion. -/
+theorem japanese_strategy_no_excl :
+    japanese_strategy.exclDimension = none := rfl
+
+/-- Mandarin O-marking strategy has no ExclDimension, paralleling
+    Japanese. -/
+theorem mandarin_strategy_no_excl :
+    mandarin_strategy.exclDimension = none := rfl
 
 end Phenomena.Conditionals.Studies.Mizuno2024
