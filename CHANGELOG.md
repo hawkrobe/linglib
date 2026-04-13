@@ -1,5 +1,44 @@
 # Changelog
 
+## [0.229.688] - 2026-04-12
+
+### Changed
+- **FormalMatching.lean**: remove dead code (ArgumentDomain struct, extractHeadPairs, mkSluicingLicense, EGivenness, EllipsisLicense), add VerbFrame/SCFrame derivation grounding connecting SIC to Minimalist Merge trees, prove general `same_root_convergence` theorem (AHM↔Rudin equivalence when domain roots match), add `removeFirst_map` lemma, derive concrete convergence examples from general theorem, fix module docstring, add Rudin 2019 coverage
+
+## [0.229.687] - 2026-04-12
+
+### Changed
+- **Verb classification enum consolidation**: `CausativeBuilder` → `Causative`, `ImplicativeBuilder` → `Implicative`, `PreferentialBuilder` → `Preferential`, `AttitudeBuilder` → `Attitude` — all classification enums now live in `Core/Lexical/VerbClass.lean` (zero imports); VerbCore fields renamed: `causativeBuilder` → `causative`, `implicativeBuilder` → `implicative`, `attitudeBuilder` → `attitude`; `getPreferentialBuilder` → `getPreferential`
+- **LevinClass consolidated**: `LevinClass`, `MeaningComponents`, `predictsUnaccusative`, `isVerbOfCreation` moved from `Core/Lexical/LevinClass.lean` to `Core/Lexical/VerbClass.lean`; old file deleted; theory content (`rootEntailments`, `CausationSource`, etc.) in new `Theories/Semantics/Lexical/Verb/LevinTheory.lean`
+- **Duplicate type definitions removed**: `Veridicality` from `Doxastic.lean`, `AttitudeValence` from `Preferential.lean`, `ImplicativeBuilder` from `Implicative.lean` — canonical definitions now in `VerbClass.lean`, source files re-export via `open Core.Verbs`
+- `Builder.lean` → `Interpretation.lean` import/open updates propagated across ~44 files
+- `open Core.Verbs` added to ~25 files for namespace visibility
+
+## [0.229.686] - 2026-04-12
+
+### Changed
+- **Hewett2026.lean**: add S7d Template → Voice → Applicative licensing — general `theta_implies_hasSemantics` on `VoiceHead` (θ → hasSemantics, converse fails for passive/impersonal) with contrapositive `no_semantics_implies_no_theta`; `high_appl_blocked_implies_no_theta` derived via general implication (not case analysis); `theta_licenses_all_appl` universally quantified over `ApplHead`; `voice_predicate_chain` proving strict inclusion chain assignsTheta ⊂ licensesAppl(high) ⊂ licensesAppl(low) = ⊤ with nXaYaZ and tXaYYaZ as witnesses; cross-references Pylkkänen 2008 and Wood 2015 `dative_voice_asymmetry`
+
+## [0.229.685] - 2026-04-12
+
+### Added
+- **AnandHardtMcCloskey2025.lean**: formalize @cite{anand-hardt-mccloskey-2025} "The Domain of Formal Matching in Sluicing" (LI 56(2): 353–373) — SC antecedent data (§2: perception verbs, causative *have*, absolute *with*), cross-categorial argument domain theorems (§3), stranded preposition examples and licensing (§4), copular pseudosluice data and SIC predictions (§5), anti-PredP argument from ellipsis, consistency bridge to 2021 corpus data
+
+### Changed
+- **FormalMatching.lean**: fix cite key `anand-mccloskey-2025` → `anand-hardt-mccloskey-2025`; add `HeadPair.isArgumentPP` field for argument/nonargument PP distinction; add `SmallClause` import + SC-ArgumentDomain bridge (`scArgumentDomainCat`, `scHeadPairs`, `sc_same_pred_sluicing_licensed`); add cross-categorial SC argument domain theorems; add `filterArgumentPairs`, Chung's Generalization theorem
+- **Properties.lean**: add `argumentDomainCat_in_property_zone`, `argdomain_cross_categorial`
+- Fix cite key in `VPEllipsis.lean`, `AnandHardtMcCloskey2021.lean`, `references.bib`
+
+## [0.229.684] - 2026-04-12
+
+### Added
+- **Hewett2026.lean**: formalize Hewett 2026 "Verbal Templates Can Influence L-Selection in Semitic" — `SemiticTemplate` enum with `toVoiceFlavor` mapping, `lSelect` joint selection function, `VerbalizedRoot` bridging `CategorizedRoot` and `VoiceHead`, `SelectionalFeature` with n-tuple `ActivationIndex` activation (Def 23), worked dwr derivation with matching activation (ex. 24--25), falsification theorems for Harley 2014 and Merchant 2019, homophony argument, MirrorPrinciple scope cross-reference, mono-eventive causative decomposition; `isTemplateDependent` derived from `lSelect` (not stipulated); unified `templateInvariant` replaces separate harley/merchant predictions; cross-linguistic Voice bridges to Kratzer 1996 (severing instantiation) and Wood 2015 (complementary VoiceFlavor coverage, ±θ exhaustive classification)
+- **Checking.lean**: add `.inactive` to `FeatureStatus` (4-stage lifecycle: inactive → active → checked → erased), `TrackedFeature.activate` operation, `extended_lifecycle` theorem, update `convergesAtLF`/`convergesAtSpellOut` to reject inactive uninterpretable features; add `ActivationIndex α` — parametric ordered n-tuple activation mechanism (Hewett 2026 Def 23) with matching-based stripping, `toStatus` mapping to `FeatureStatus`, and general theorems (`activate_matching_strips`, `activate_nonmatching_noop`, `full_activation_chain`)
+- **references.bib**: add `hewett-2026`, `merchant-2019`
+
+### Changed
+- **Categorizer.lean**: tighten `complement_selection_at_root_level` docstring — clarify it covers arity (c-selection) not l-selection, cross-reference Hewett 2026
+
 ## [0.229.683] - 2026-04-12
 
 ### Changed
@@ -7195,7 +7234,7 @@
 ## [0.227.80] - 2026-03-02
 
 ### Changed
-- **Bib audit round 10**: Verify all 113 remaining entries against citation context in Lean source files via 4 parallel verification agents + 4 CrossRef/web search agents. Fix 46 @misc entries to proper BibTeX types: @article (macuch-silva-2024, roberts-simons-2024, anand-mccloskey-2025, csiszr-tusndy-1984, zwicky-1970, bartsch-1973, shore-1986, alleton-1988, zu-2018, halm-huszr-2021, rizzi-1978), @book (kracht-2003), @incollection (sauerland-stateva-2007, szabolcsi-1986, haegeman-van-riemsdijk-1986, erbaugh-1986, simik-2024), @inproceedings (liu-rotter-2025, mitrovi-sauerland-2014, ladd-1981, landman-1986, white-2014, ahn-2015, brillman-hirsch-2016, schwab-liu-2020, mari-martin-2007, katzir-singh-2015, prez-carballo-2009), @phdthesis (antonyuk-2015, wiegand-2018, greco-2018, lpez-ixcoy-2022), @unpublished (kiparsky-2002, henderson-2008, bhatt-dayal-2014, bring-gunlogson-2000, gawron-2009, esipova-romero-2023, solt-2023). Add verified DOIs: macuch-silva-2024 (10.1080/0163853X.2024.2413311), roberts-simons-2024 (10.1007/s10988-024-09413-9), anand-mccloskey-2025 (10.1162/ling_a_00495), liu-rotter-2025 (10.3765/elm.3.5817), sauerland-stateva-2007 (10.3765/salt.v17i0.3091), white-2014 (10.3765/salt.v24i0.2427), mari-martin-2007 (10.3765/salt.v17i0.2949), kracht-2003 (10.1515/9783110895667), bennett-belnap-1990 (10.2307/2214285, year corrected 1990→1970). Fix erbaugh-1986 DOI (.26erb→.25erb). Fix title mismatches: macuch-silva-2024, roberts-simons-2024, anand-mccloskey-2025, liu-rotter-2025, sauerland-stateva-2007. Standardize 6 WALS entries with full metadata/URLs. Delete 3 duplicates: stankova-2026, rappaport-hovav-levin-1998b, macuch-silva-2024. Add simik-2024 co-author Gehrke. Flag dieuleveut-hsu-bhatt-2025 title mismatch (matches published Rotter & Liu). 1006 validated of 1007 total.
+- **Bib audit round 10**: Verify all 113 remaining entries against citation context in Lean source files via 4 parallel verification agents + 4 CrossRef/web search agents. Fix 46 @misc entries to proper BibTeX types: @article (macuch-silva-2024, roberts-simons-2024, anand-hardt-mccloskey-2025, csiszr-tusndy-1984, zwicky-1970, bartsch-1973, shore-1986, alleton-1988, zu-2018, halm-huszr-2021, rizzi-1978), @book (kracht-2003), @incollection (sauerland-stateva-2007, szabolcsi-1986, haegeman-van-riemsdijk-1986, erbaugh-1986, simik-2024), @inproceedings (liu-rotter-2025, mitrovi-sauerland-2014, ladd-1981, landman-1986, white-2014, ahn-2015, brillman-hirsch-2016, schwab-liu-2020, mari-martin-2007, katzir-singh-2015, prez-carballo-2009), @phdthesis (antonyuk-2015, wiegand-2018, greco-2018, lpez-ixcoy-2022), @unpublished (kiparsky-2002, henderson-2008, bhatt-dayal-2014, bring-gunlogson-2000, gawron-2009, esipova-romero-2023, solt-2023). Add verified DOIs: macuch-silva-2024 (10.1080/0163853X.2024.2413311), roberts-simons-2024 (10.1007/s10988-024-09413-9), anand-hardt-mccloskey-2025 (10.1162/ling_a_00495), liu-rotter-2025 (10.3765/elm.3.5817), sauerland-stateva-2007 (10.3765/salt.v17i0.3091), white-2014 (10.3765/salt.v24i0.2427), mari-martin-2007 (10.3765/salt.v17i0.2949), kracht-2003 (10.1515/9783110895667), bennett-belnap-1990 (10.2307/2214285, year corrected 1990→1970). Fix erbaugh-1986 DOI (.26erb→.25erb). Fix title mismatches: macuch-silva-2024, roberts-simons-2024, anand-hardt-mccloskey-2025, liu-rotter-2025, sauerland-stateva-2007. Standardize 6 WALS entries with full metadata/URLs. Delete 3 duplicates: stankova-2026, rappaport-hovav-levin-1998b, macuch-silva-2024. Add simik-2024 co-author Gehrke. Flag dieuleveut-hsu-bhatt-2025 title mismatch (matches published Rotter & Liu). 1006 validated of 1007 total.
 
 ## [0.227.79] - 2026-03-02
 
