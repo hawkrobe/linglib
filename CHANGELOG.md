@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.701] - 2026-04-13
+
+### Fixed
+- **`native_decide` → `decide`**: replaced 29 uses across `Agree.lean`, `ClauseSpine.lean`, `Keine2019.lean` — all finite data checks, now kernel-verified per mathlib style
+
+### Added
+- **`horizon_category_irrelevant`** (`Agree.lean`): proves `transparentTo` depends only on `horizon.isSome`, not on which category is stored — makes explicit that Horizon Inheritance collapses the specific category
+- **Vacuous probes** (`Agree.lean`): `ProbeProfile.isVacuous` predicate, `vacuous_transparent_to_nothing` theorem, `keine_probes_nonvacuous` — formalizes Keine §5.1's insight that certain probe-horizon pairings produce undetectable probes
+- **`three_locality_types`** (`Agree.lean`): verifies the four Keine probes produce exactly three distinct transparency profiles (φ/A share one, wh-licensing gets another, Ā gets a third), capturing the paper's central empirical discovery
+- **Phase-horizon divergence** (`Agree.lean`): `complementSize_matches_wh_not_phi` proves `ComplementSize.transparentToTenseAgree` matches wh-licensing (not φ-probe), `phase_horizon_diverge_on_tp` proves the two theories diverge on TP-sized complements
+- **`ProbeType.toProfile`** (`AissenPolian2025.lean`): bridge connecting local `ProbeType` to `ProbeProfile`, `dProbe_is_A`/`whProbe_is_Ā`, `probe_type_keine_consistency` showing clausal opacity predictions are consistent
+
 ## [0.229.700] - 2026-04-13
 
 ### Fixed

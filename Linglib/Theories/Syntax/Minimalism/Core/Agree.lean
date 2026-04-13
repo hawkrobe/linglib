@@ -295,10 +295,10 @@ def keineĀProbe : ProbeProfile := ⟨.C, none⟩
 -- Derived properties of the Keine probes
 -- ────────────────────────────────────────────────────────────────
 
-theorem phi_is_A : keinePhiProbe.isAProbe = true := by native_decide
-theorem a_is_A : keineAProbe.isAProbe = true := by native_decide
-theorem wh_is_Ā : keineWhLicensing.isĀProbe = true := by native_decide
-theorem ābar_is_Ā : keineĀProbe.isĀProbe = true := by native_decide
+theorem phi_is_A : keinePhiProbe.isAProbe = true := by decide
+theorem a_is_A : keineAProbe.isAProbe = true := by decide
+theorem wh_is_Ā : keineWhLicensing.isĀProbe = true := by decide
+theorem ābar_is_Ā : keineĀProbe.isĀProbe = true := by decide
 
 -- ============================================================================
 -- § 3e: Height-Locality Connection (@cite{keine-2019} §5)
@@ -340,6 +340,126 @@ theorem height_locality (p₁ p₂ : ProbeProfile) (c : Cat)
   cases h₁ : p₁.horizon <;> cases h₂ : p₂.horizon <;>
     simp_all [Option.isSome]
   omega
+
+-- ============================================================================
+-- § 3f: Horizon Category Irrelevance
+-- ============================================================================
+
+/-- The specific horizon category does not affect transparency —
+    only whether a horizon exists matters.
+
+    This is a consequence of Horizon Inheritance (@cite{keine-2019} (43)):
+    if category X is a horizon, all categories in the same extended
+    projection are also horizons. Combined with the Height-Locality
+    Theorem (65a), the effective cutoff is always the probe's own
+    position, regardless of which category was the "base" horizon.
+
+    Formally: `transparentTo` is invariant under changing the horizon
+    category, as long as it remains `some _`. -/
+theorem horizon_category_irrelevant (head : Cat) (h₁ h₂ : Cat) (c : Cat) :
+    (ProbeProfile.mk head (some h₁)).transparentTo c =
+    (ProbeProfile.mk head (some h₂)).transparentTo c := by
+  simp [ProbeProfile.transparentTo]
+
+-- ============================================================================
+-- § 3g: Vacuous Probes (@cite{keine-2019} §5.1)
+-- ============================================================================
+
+/-- A probe is *vacuous* if its search space is empty: no clause
+    head is transparent to it. This happens when the probe has a
+    horizon and sits at the bottom of the functional sequence
+    (fValue ≤ fValue of every clause head it could search into).
+
+    @cite{keine-2019} (p. 49–50): a probe on C⁰ with horizon T
+    would be vacuous — T is immediately below C, so the probe's
+    search terminates as soon as it encounters any structure.
+    Vacuous probes cannot trigger movement or agreement, and are
+    therefore undetectable. The Height-Locality Theorem (65)
+    emerges because only nonvacuous probes produce observable
+    dependencies. -/
+def ProbeProfile.isVacuous (p : ProbeProfile) : Bool :=
+  p.horizon.isSome && fValue p.probeHead ≤ 0
+
+/-- A probe with no horizon is never vacuous — it can always
+    search into any domain. -/
+theorem no_horizon_not_vacuous (head : Cat) :
+    (ProbeProfile.mk head none).isVacuous = false := by
+  simp [ProbeProfile.isVacuous]
+
+/-- The four Keine probes are all nonvacuous. -/
+theorem keine_probes_nonvacuous :
+    keinePhiProbe.isVacuous = false ∧
+    keineAProbe.isVacuous = false ∧
+    keineWhLicensing.isVacuous = false ∧
+    keineĀProbe.isVacuous = false := by decide
+
+/-- A vacuous probe with a horizon is transparent to nothing:
+    no category has fValue < 0 (all fValues are ≥ 0). -/
+theorem vacuous_transparent_to_nothing (p : ProbeProfile) (c : Cat)
+    (hv : p.isVacuous = true) :
+    p.transparentTo c = false := by
+  simp only [ProbeProfile.isVacuous, Bool.and_eq_true] at hv
+  simp only [ProbeProfile.transparentTo]
+  obtain ⟨h_some, h_low⟩ := hv
+  simp_all [Option.isSome]
+
+-- ============================================================================
+-- § 3h: Three Distinct Locality Types (@cite{keine-2019} p. 45)
+-- ============================================================================
+
+/-- The transparency profile of a probe: which of the three standard
+    clause sizes (vP, TP, CP) are transparent to it. -/
+def ProbeProfile.profile (p : ProbeProfile) : Bool × Bool × Bool :=
+  (p.transparentTo .v, p.transparentTo .T, p.transparentTo .C)
+
+/-- The four Keine probes produce exactly three distinct transparency
+    profiles. This is the paper's central empirical discovery:
+    selective opacity is not binary (A vs. Ā) but admits at least
+    three locality types.
+
+    | Profile       | vP | TP | CP | Probes                    |
+    |---------------|----|----|----| --------------------------|
+    | Type 1        | ✓  | *  | *  | φ-agreement, A-movement   |
+    | Type 2        | ✓  | ✓  | *  | wh-licensing              |
+    | Type 3        | ✓  | ✓  | ✓  | Ā-movement                |
+-/
+theorem three_locality_types :
+    -- φ and A share the same profile (Type 1)
+    keinePhiProbe.profile = keineAProbe.profile ∧
+    -- wh-licensing has a different profile from φ (Type 2 ≠ Type 1)
+    keineWhLicensing.profile ≠ keinePhiProbe.profile ∧
+    -- Ā has a different profile from wh (Type 3 ≠ Type 2)
+    keineĀProbe.profile ≠ keineWhLicensing.profile ∧
+    -- Ā has a different profile from φ (Type 3 ≠ Type 1)
+    keineĀProbe.profile ≠ keinePhiProbe.profile := by decide
+
+-- ============================================================================
+-- § 3i: ComplementSize Bridge
+-- ============================================================================
+
+/-- `ComplementSize.transparentToTenseAgree` (phase-based,
+    @cite{egressy-2026}) checks `fLevel < fValue C` — any complement
+    smaller than CP is transparent. This matches the transparency
+    profile of a probe on C⁰ with horizon C (= `keineWhLicensing`),
+    NOT the φ-probe on T⁰.
+
+    The two models diverge on TP-sized complements:
+    - Phase-based (`transparentToTenseAgree`): TP is transparent ✓
+    - Horizon-based (`keinePhiProbe.transparentTo`): TP is opaque ✗
+
+    This is a genuine theoretical difference: phase theory treats CP
+    as the only opaque boundary, while Keine's horizon theory derives
+    a tighter cutoff from the probe's own structural position. -/
+theorem complementSize_matches_wh_not_phi (cs : ComplementSize) :
+    cs.transparentToTenseAgree = keineWhLicensing.transparentTo cs.highestHead := by
+  simp [ComplementSize.transparentToTenseAgree, ComplementSize.fLevel,
+        ProbeProfile.transparentTo, keineWhLicensing]
+
+/-- The divergence: TP complements are transparent under the
+    phase-based model but opaque under Keine's φ-probe. -/
+theorem phase_horizon_diverge_on_tp :
+    ComplementSize.tP.transparentToTenseAgree = true ∧
+    keinePhiProbe.transparentTo ComplementSize.tP.highestHead = false := by decide
 
 -- ============================================================================
 -- § 4: Feature Valuation

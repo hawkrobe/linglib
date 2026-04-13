@@ -70,33 +70,33 @@ corresponding to different probe–horizon pairings. -/
 -- φ-agreement (probe on T⁰, horizon C): opaque to CP and TP, transparent to vP
 -- ────────────────────────────────────────────────────────────────
 
-theorem phi_opaque_to_cp : keinePhiProbe.transparentTo .C = false := by native_decide
-theorem phi_opaque_to_tp : keinePhiProbe.transparentTo .T = false := by native_decide
-theorem phi_transparent_to_vp : keinePhiProbe.transparentTo .v = true := by native_decide
+theorem phi_opaque_to_cp : keinePhiProbe.transparentTo .C = false := by decide
+theorem phi_opaque_to_tp : keinePhiProbe.transparentTo .T = false := by decide
+theorem phi_transparent_to_vp : keinePhiProbe.transparentTo .v = true := by decide
 
 -- ────────────────────────────────────────────────────────────────
 -- A-movement (probe on T⁰, horizon C): same locality as φ-agreement
 -- ────────────────────────────────────────────────────────────────
 
-theorem a_opaque_to_cp : keineAProbe.transparentTo .C = false := by native_decide
-theorem a_opaque_to_tp : keineAProbe.transparentTo .T = false := by native_decide
-theorem a_transparent_to_vp : keineAProbe.transparentTo .v = true := by native_decide
+theorem a_opaque_to_cp : keineAProbe.transparentTo .C = false := by decide
+theorem a_opaque_to_tp : keineAProbe.transparentTo .T = false := by decide
+theorem a_transparent_to_vp : keineAProbe.transparentTo .v = true := by decide
 
 -- ────────────────────────────────────────────────────────────────
 -- wh-licensing (probe on C⁰, horizon C): opaque to CP, transparent to TP and vP
 -- ────────────────────────────────────────────────────────────────
 
-theorem wh_opaque_to_cp : keineWhLicensing.transparentTo .C = false := by native_decide
-theorem wh_transparent_to_tp : keineWhLicensing.transparentTo .T = true := by native_decide
-theorem wh_transparent_to_vp : keineWhLicensing.transparentTo .v = true := by native_decide
+theorem wh_opaque_to_cp : keineWhLicensing.transparentTo .C = false := by decide
+theorem wh_transparent_to_tp : keineWhLicensing.transparentTo .T = true := by decide
+theorem wh_transparent_to_vp : keineWhLicensing.transparentTo .v = true := by decide
 
 -- ────────────────────────────────────────────────────────────────
 -- Ā-movement (probe on C⁰, no horizon): transparent to everything
 -- ────────────────────────────────────────────────────────────────
 
-theorem ābar_transparent_to_cp : keineĀProbe.transparentTo .C = true := by native_decide
-theorem ābar_transparent_to_tp : keineĀProbe.transparentTo .T = true := by native_decide
-theorem ābar_transparent_to_vp : keineĀProbe.transparentTo .v = true := by native_decide
+theorem ābar_transparent_to_cp : keineĀProbe.transparentTo .C = true := by decide
+theorem ābar_transparent_to_tp : keineĀProbe.transparentTo .T = true := by decide
+theorem ābar_transparent_to_vp : keineĀProbe.transparentTo .v = true := by decide
 
 -- ============================================================================
 -- § 2: Hindi Generalizations
@@ -139,7 +139,7 @@ so CP blocks them. Ā-probes have no horizon, so nothing blocks them. -/
 theorem finite_clause_selective_opacity :
     keineAProbe.transparentTo .C = false ∧
     keinePhiProbe.transparentTo .C = false ∧
-    keineĀProbe.transparentTo .C = true := ⟨by native_decide, by native_decide, by native_decide⟩
+    keineĀProbe.transparentTo .C = true := ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 3: Height-Locality Instantiations
@@ -158,7 +158,7 @@ extended projections. -/
 
 /-- Ā-probes are higher than A-probes in the functional sequence. -/
 theorem ābar_higher_than_a :
-    fValue keineĀProbe.probeHead > fValue keineAProbe.probeHead := by native_decide
+    fValue keineĀProbe.probeHead > fValue keineAProbe.probeHead := by decide
 
 /-- The Ā-probe can search into everything the A-probe can, and more.
     For all three clause sizes, Ā-transparency ≥ A-transparency. -/
@@ -166,7 +166,7 @@ theorem ābar_subsumes_a :
     (keineAProbe.transparentTo .v = true → keineĀProbe.transparentTo .v = true) ∧
     (keineAProbe.transparentTo .T = true → keineĀProbe.transparentTo .T = true) ∧
     (keineAProbe.transparentTo .C = true → keineĀProbe.transparentTo .C = true) :=
-  ⟨fun _ => by native_decide, fun _ => by native_decide, fun _ => by native_decide⟩
+  ⟨fun _ => by decide, fun _ => by decide, fun _ => by decide⟩
 
 -- ============================================================================
 -- § 4: Upward Entailment Instantiations
@@ -184,7 +184,7 @@ happens once and never reverses. -/
 theorem a_probe_monotonic_opacity :
     keineAProbe.transparentTo .v = true ∧
     keineAProbe.transparentTo .T = false ∧
-    keineAProbe.transparentTo .C = false := ⟨by native_decide, by native_decide, by native_decide⟩
+    keineAProbe.transparentTo .C = false := ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 5: ClauseSpine Bridge
@@ -202,7 +202,7 @@ theorem vP_transparent_all :
     keineAProbe.transparentTo ClauseSpine.vP.highestHead = true ∧
     keineWhLicensing.transparentTo ClauseSpine.vP.highestHead = true ∧
     keineĀProbe.transparentTo ClauseSpine.vP.highestHead = true :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide, by decide⟩
 
 /-- CP-sized clauses are transparent only to the Ā-probe. -/
 theorem cP_transparent_only_ābar :
@@ -210,7 +210,7 @@ theorem cP_transparent_only_ābar :
     keineAProbe.transparentTo ClauseSpine.cP.highestHead = false ∧
     keineWhLicensing.transparentTo ClauseSpine.cP.highestHead = false ∧
     keineĀProbe.transparentTo ClauseSpine.cP.highestHead = true :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide, by decide⟩
 
 /-- TP-sized clauses are transparent to wh-licensing and Ā-movement
     but opaque to φ-agreement and A-movement. -/
@@ -219,7 +219,7 @@ theorem tP_transparency :
     keineAProbe.transparentTo ClauseSpine.tP.highestHead = false ∧
     keineWhLicensing.transparentTo ClauseSpine.tP.highestHead = true ∧
     keineĀProbe.transparentTo ClauseSpine.tP.highestHead = true :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 6: Hyperraising (@cite{keine-2019} §4.2.3)
@@ -234,11 +234,11 @@ The CP boundary blocks the A-probe's search, ruling out
 
 /-- Hyperraising blocked: A-probe cannot search into CP. -/
 theorem hyperraising_blocked :
-    keineAProbe.transparentTo .C = false := by native_decide
+    keineAProbe.transparentTo .C = false := by decide
 
 /-- Ā-extraction is fine: Ā-probe has no horizon blocking CP.
     `Who do you think [CP t eats oatmeal]?` is grammatical. -/
 theorem ābar_extraction_ok :
-    keineĀProbe.transparentTo .C = true := by native_decide
+    keineĀProbe.transparentTo .C = true := by decide
 
 end Phenomena.Agreement.Studies.Keine2019

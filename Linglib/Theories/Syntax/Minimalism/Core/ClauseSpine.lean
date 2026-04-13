@@ -99,35 +99,35 @@ def ClauseSpine.cP : ClauseSpine :=
 -- ============================================================================
 
 /-- VoiceP projects Voice. -/
-theorem voiceP_has_voice : ClauseSpine.voiceP.projects .Voice = true := by native_decide
+theorem voiceP_has_voice : ClauseSpine.voiceP.projects .Voice = true := by decide
 
 /-- ApplP does not project Voice. This is the key distinction that
     `ComplementSize` cannot capture (both have fValue = 1 as highest head). -/
-theorem applP_lacks_voice : ClauseSpine.applP.projects .Voice = false := by native_decide
+theorem applP_lacks_voice : ClauseSpine.applP.projects .Voice = false := by decide
 
 /-- CP projects Voice (inherited from the full spine). -/
-theorem cP_has_voice : ClauseSpine.cP.projects .Voice = true := by native_decide
+theorem cP_has_voice : ClauseSpine.cP.projects .Voice = true := by decide
 
 /-- TP projects Voice. -/
-theorem tP_has_voice : ClauseSpine.tP.projects .Voice = true := by native_decide
+theorem tP_has_voice : ClauseSpine.tP.projects .Voice = true := by decide
 
 /-- Bare VP does not project Voice. -/
-theorem bareVP_lacks_voice : ClauseSpine.bareVP.projects .Voice = false := by native_decide
+theorem bareVP_lacks_voice : ClauseSpine.bareVP.projects .Voice = false := by decide
 
 /-- Bare VP does not project Appl. -/
-theorem bareVP_lacks_appl : ClauseSpine.bareVP.projects .Appl = false := by native_decide
+theorem bareVP_lacks_appl : ClauseSpine.bareVP.projects .Appl = false := by decide
 
 /-- vP does not project Voice. -/
-theorem vP_lacks_voice : ClauseSpine.vP.projects .Voice = false := by native_decide
+theorem vP_lacks_voice : ClauseSpine.vP.projects .Voice = false := by decide
 
 /-- ApplP projects Appl. -/
-theorem applP_has_appl : ClauseSpine.applP.projects .Appl = true := by native_decide
+theorem applP_has_appl : ClauseSpine.applP.projects .Appl = true := by decide
 
 /-- VoiceP and ApplP have the same fValue for their highest head, showing
     why ComplementSize can't distinguish them. -/
 theorem voiceP_applP_same_fLevel :
     fValue ClauseSpine.voiceP.highestHead = fValue ClauseSpine.applP.highestHead := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 5: F-Level Bridge
@@ -144,16 +144,16 @@ def ClauseSpine.fLevel (spine : ClauseSpine) : Nat :=
   fValue spine.highestHead
 
 /-- CP-sized clauses are F6. -/
-theorem cP_fLevel : ClauseSpine.cP.fLevel = 6 := by native_decide
+theorem cP_fLevel : ClauseSpine.cP.fLevel = 6 := by decide
 
 /-- TP-sized clauses are F2. -/
-theorem tP_fLevel : ClauseSpine.tP.fLevel = 2 := by native_decide
+theorem tP_fLevel : ClauseSpine.tP.fLevel = 2 := by decide
 
 /-- vP-sized clauses are F1. -/
-theorem vP_fLevel : ClauseSpine.vP.fLevel = 1 := by native_decide
+theorem vP_fLevel : ClauseSpine.vP.fLevel = 1 := by decide
 
 /-- VoiceP-sized clauses are F1. -/
-theorem voiceP_fLevel : ClauseSpine.voiceP.fLevel = 1 := by native_decide
+theorem voiceP_fLevel : ClauseSpine.voiceP.fLevel = 1 := by decide
 
 -- ============================================================================
 -- § 6: Size Ordering
@@ -164,6 +164,6 @@ theorem spine_size_ordering :
     ClauseSpine.applP.size < ClauseSpine.voiceP.size ∧
     ClauseSpine.voiceP.size < ClauseSpine.tP.size ∧
     ClauseSpine.tP.size < ClauseSpine.cP.size := by
-  native_decide
+  decide
 
 end Minimalism

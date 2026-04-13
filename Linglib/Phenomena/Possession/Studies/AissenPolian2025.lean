@@ -168,6 +168,41 @@ def canĀSubextract (_size : NominalSize) : Bool :=
 theorem subextraction_impossible (size : NominalSize) :
     canĀSubextract size = false := rfl
 
+-- ────────────────────────────────────────────────────────────────
+-- ProbeType ↔ ProbeProfile bridge
+-- ────────────────────────────────────────────────────────────────
+
+/-- Convert a `ProbeType` to a `ProbeProfile` from @cite{keine-2019}.
+
+    - `dProbe` (A-movement, on T°/Appl°) maps to an A-probe on T°
+      with horizon C — the same profile as `keineAProbe`.
+    - `whProbe` (Ā-movement, on D°/C°) maps to an Ā-probe on C°
+      with no horizon — the same profile as `keineĀProbe`. -/
+def ProbeType.toProfile : ProbeType → Minimalism.ProbeProfile
+  | .dProbe  => Minimalism.keineAProbe
+  | .whProbe => Minimalism.keineĀProbe
+
+/-- D-probes are A-probes in Keine's classification. -/
+theorem dProbe_is_A : ProbeType.dProbe.toProfile.isAProbe = true := by decide
+
+/-- Wh-probes are Ā-probes in Keine's classification. -/
+theorem whProbe_is_Ā : ProbeType.whProbe.toProfile.isĀProbe = true := by decide
+
+/-- Selective opacity is consistent with Keine's transparency:
+    wh-probes (Ā, no horizon) are transparent to all clause types
+    including CP, while d-probes (A, horizon C) cannot search into
+    CP or TP.
+
+    The `selectivelyOpaque` predicate captures a different facet —
+    opacity of *nominals* (N° as horizon), not opacity of *clauses*.
+    But both derive from the same underlying mechanism: probes
+    differ in their horizons. -/
+theorem probe_type_keine_consistency :
+    -- D-probes: opaque to CP (can't A-move out of finite clause)
+    ProbeType.dProbe.toProfile.transparentTo .C = false ∧
+    -- Wh-probes: transparent to CP (can Ā-move out of finite clause)
+    ProbeType.whProbe.toProfile.transparentTo .C = true := by decide
+
 -- ============================================================================
 -- § 4: D-Layer Shielding (Attract Closest)
 -- ============================================================================
