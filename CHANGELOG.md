@@ -1,5 +1,37 @@
 # Changelog
 
+## [0.229.694] - 2026-04-12
+
+### Fixed
+- **CI: update doc-gen4 pin** to `v4.29.0` tag (`aa4c3e4e`), fixing BibtexQuery build failure (`Lean.Data.Xml.Basic` removed in Lean v4.29.0)
+
+## [0.229.693] - 2026-04-12
+
+### Added
+- **Comrie 1989 bridge** (`Phenomena/Case/Studies/Comrie1989.lean`): cross-hierarchy coherence theorems connecting alignment typology, DOM, the Accessibility Hierarchy, causative complexity, and subject property convergence — proving linglib's independently formalized typological hierarchies cohere as Comrie's synthesis claims
+- **Subject property bundle** (`Core/SubjectProperties.lean`): Comrie Ch 5's coding/behavioral property distinction — accusative convergence, morphological ergativity divergence, syntactic ergativity convergence theorems
+- **Causee marking hierarchy** in `Theories/Semantics/Causation/Morphological.lean`: `CauseeSlot`, `causeeDemotion`, monotonicity theorem for Comrie's generalization that causee case descends GR hierarchy as base valency increases
+
+### Changed
+- **`comrie_monotone` strengthened** (`Theories/Semantics/Causation/Morphological.lean`): replaced weak disjunction (`c1.mediation = .direct ∨ c2.mediation = .indirect`) with proper ordering (`c1.mediation.rank ≤ c2.mediation.rank`); added `Mediation.rank`; Urdu proofs updated
+- **Causative bridge** (`Phenomena/Causation/Typology.lean`): added import of `Theories.Semantics.Causation.Morphological`, `CausativeConstructionType.toComplexity` mapping Song's types to Comrie's complexity scale, `multiclause_is_periphrastic` theorem
+
+## [0.229.692] - 2026-04-12
+
+### Changed
+- **AissenPolian2025.lean**: derive `dLayerShields`/`extractionAvailable` from `isSpecific` (not `== .dp`), derive `ψSubjectMarkerSet` from `GramFunction.S_O.markerSet` (not stipulated), rename `possessorPosition` → `highestProjection` (D head shields possessor, not where possessor sits), add complementary distribution theorem (`extraction_complementary`), add Table 2 Psr-S_O/Psr-O asymmetry, add `ψConstruction.piedPipingPossible` (pred poss/exp coll: no pied-piping), add `ψConstruction.ψSubjectFunction` bridge to GramFunction, move ClauseType/hasVP from Tseltalan.lean into study file (theory-neutral fragments)
+- **Tseltalan.lean**: remove ClauseType/hasVP (theory-laden Minimalist concepts → study file)
+- **Tsotsil/Tseltal Agreement**: remove ClauseType from exports
+- **InformationStructure.lean**: remove unused `JudgmentType.hasTheme` (duplicated `hasψSubject`)
+
+## [0.229.691] - 2026-04-12
+
+### Added
+- **Aissen & Polian 2025** (`Phenomena/Possession/Studies/AissenPolian2025.lean`): possessor extraction and categorical subject in Tseltalan — NominalSize/specificity, selective opacity, two extraction modes (pied-piping/stranding), Table 4 intervention paradigm derived from clause type × extraction mode, ψ-subject constructions, bridges to NominalStructure/SpecificityCondition/InformationStructure
+- **Tseltalan shared infrastructure** (`Fragments/Mayan/Tseltalan.lean`): factor GramFunction, ClauseType, markerSet assignment shared across Tsotsil and Tseltal
+- **JudgmentType** added to `Core/Discourse/InformationStructure.lean`: categorical vs thetic judgment (Kuroda 1972), with hasψSubject
+- **Tsotsil/Tseltal Agreement fragments**: refactored to import shared Tseltalan types, keeping language-specific exponents
+
 ## [0.229.690] - 2026-04-12
 
 ### Changed
