@@ -1,3 +1,6 @@
+import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.Linarith
+
 /-!
 # Inheritance Networks
 
@@ -161,7 +164,7 @@ Higher values = more prototypical. @cite{hudson-2010} Ch 2: categories have
 graded membership; the prototype is the best exemplar. -/
 structure Prototype (α : Type) where
   category : α
-  typicality : α → Nat
+  typicality : α → ℚ
 
 /-- Whether `a` is at least as typical as `b` in a prototype. -/
 def Prototype.atLeastAsTypical {α : Type} (proto : Prototype α) (a b : α) : Bool :=
@@ -182,6 +185,6 @@ theorem Prototype.atLeastAsTypical_trans {α : Type} (proto : Prototype α) (a b
     (hbc : proto.atLeastAsTypical b c = true) :
     proto.atLeastAsTypical a c = true := by
   simp [atLeastAsTypical] at *
-  omega
+  linarith
 
 end Core.Inheritance

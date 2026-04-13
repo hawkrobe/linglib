@@ -4,6 +4,7 @@ import Linglib.Core.SubjectProperties
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.Causation.Typology
+import Linglib.Phenomena.Case.Typology
 import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
@@ -394,5 +395,195 @@ theorem dargwa_causee_monotone :
 theorem dargwa_causee_on_ah :
     causeeToAH (dargwaCauseeSlot causStandUp) = .directObject ∧
     causeeToAH (dargwaCauseeSlot causDig) = .oblique := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 7: Alignment × Differential Object Marking
+-- ============================================================================
+
+/-! ### The alignment–DOM correlation (@cite{comrie-1989} Ch 6)
+
+@cite{comrie-1989} observes that alignment type determines which argument
+role undergoes differential marking:
+
+- **Accusative** (S=A vs P): P is the distinctly-marked role → DOM expected
+- **Ergative** (S=P vs A): A is the distinctly-marked role → DSM expected
+- **Neutral** (S=A=P): no role distinction → no differential marking
+- **Tripartite** (S≠A≠P): both A and P distinct → both possible
+
+This correlation was later derived formally by @cite{de-hoop-malchukov-2008}
+via the Primary Actant Immunity Principle: the argument encoded like the
+intransitive S resists differential marking, leaving the non-primary
+argument available for prominence-sensitive marking.
+
+The critical structural point: the **same** prominence hierarchies
+(`AnimacyLevel`, `DefinitenessLevel`) that condition split ergativity
+(@cite{silverstein-1976}) also condition DOM (@cite{aissen-2003}). This
+connection is built in by construction — both import `Core.Prominence`. -/
+
+open Core.Prominence (DefinitenessLevel)
+open Phenomena.Case.Typology
+  (DOMProfile spanishDOM russianDOM turkishDOM hindiDOM noDOMProfile)
+open Phenomena.Alignment.Typology (russian turkish dyirbalSplit)
+open Core (AlignmentFamily Aspect hindiSplit)
+
+/-- Whether DOM (differential P marking) is expected given alignment.
+    Structurally identical to `AlignmentType.marksPatient`: exactly
+    the alignments that mark P distinctly from S predict DOM. -/
+def domExpected (a : AlignmentType) : Bool := a.marksPatient
+
+/-- Whether DSM (differential A marking) is expected given alignment.
+    Structurally identical to `AlignmentType.marksAgent`. -/
+def dsmExpected (a : AlignmentType) : Bool := a.marksAgent
+
+/-- DOM expectation = patient marking. -/
+theorem dom_iff_marks_patient (a : AlignmentType) :
+    domExpected a = a.marksPatient := rfl
+
+/-- DSM expectation = agent marking. -/
+theorem dsm_iff_marks_agent (a : AlignmentType) :
+    dsmExpected a = a.marksAgent := rfl
+
+/-- Accusative predicts DOM (not DSM); ergative predicts DSM (not DOM).
+    @cite{comrie-1989} Ch 6 / @cite{de-hoop-malchukov-2008} §4. -/
+theorem acc_dom_erg_dsm :
+    domExpected .accusative = true ∧ dsmExpected .accusative = false ∧
+    domExpected .ergative = false ∧ dsmExpected .ergative = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Whether a DOMProfile has any differential marking (at least one
+    prominence cell is overtly marked). -/
+def hasAnyMarking (dom : DOMProfile) : Bool :=
+  AnimacyLevel.all.any (λ a =>
+    DefinitenessLevel.all.any (λ d => dom.marks a d))
+
+-- ============================================================================
+-- § 7a: Per-Language DOM × Alignment Consistency
+-- ============================================================================
+
+/-! ### Testing the alignment–DOM prediction against language data
+
+Languages with both an `AlignmentProfile` (from `Alignment.Typology`)
+and a `DOMProfile` (from `Case.Typology`) can be tested: accusative
+alignment predicts DOM; ergative predicts DSM instead.
+
+- **Turkish**: accusative + DOM (definiteness-based) → consistent
+- **Russian**: accusative + DOM (animacy-based) → consistent
+- **Hindi-Urdu**: ergative NP alignment + DOM (ko) — addressed in §7b
+- **Spanish**: neutral NP alignment + DOM (a-marking) — DOM operates
+  independently of the alignment system (on top of a caseless base) -/
+
+/-- Turkish: accusative alignment → DOM expected; DOM present. -/
+theorem turkish_dom_consistent :
+    domExpected turkish.npAlignment = true ∧
+    hasAnyMarking turkishDOM = true := ⟨rfl, by native_decide⟩
+
+/-- Russian: accusative alignment → DOM expected; DOM present. -/
+theorem russian_dom_consistent :
+    domExpected russian.npAlignment = true ∧
+    hasAnyMarking russianDOM = true := ⟨rfl, by native_decide⟩
+
+/-- No-DOM languages with neutral alignment: DOM not expected,
+    and no DOM exists. Doubly consistent. -/
+theorem neutral_no_dom :
+    domExpected .neutral = false ∧
+    hasAnyMarking noDOMProfile = false := ⟨rfl, by native_decide⟩
+
+-- ============================================================================
+-- § 7b: Split Ergativity × DOM Interaction
+-- ============================================================================
+
+/-! ### Split ergativity creates alignment zones with different DOM predictions
+
+In split-ergative languages, alignment varies across conditions (aspect,
+animacy, person). Each zone has its own prediction:
+
+- **Accusative zone**: P is distinct → DOM expected
+- **Ergative zone**: P groups with S → DOM not expected (DSM instead)
+
+Hindi-Urdu is the key test case: perfective → ergative (subject gets
+`-ne`), imperfective → accusative. Per-zone PaIP prediction: DOM
+expected only in the imperfective. But Hindi's `-ko` marking applies
+in **both** aspects. The ko-marked object receives differential marking
+regardless of whether the clause is ergative or accusative.
+
+The split-ergativity × DOM interaction demonstrates that the same
+prominence hierarchies operate at two levels simultaneously:
+1. **Macro level**: aspect conditions the alignment split
+2. **Micro level**: animacy/definiteness conditions DOM within each zone -/
+
+/-- In a split-ergative system, DOM availability in each zone
+    tracks the alignment of that zone. -/
+def domInZone (family : AlignmentFamily) : Bool :=
+  match family with
+  | .accusative => true
+  | .ergative   => false
+
+/-- Hindi imperfective: accusative zone → DOM expected. -/
+theorem hindi_impfv_dom :
+    domInZone (hindiSplit.alignment .imperfective) = true := rfl
+
+/-- Hindi perfective: ergative zone → DOM not expected. -/
+theorem hindi_pfv_no_dom :
+    domInZone (hindiSplit.alignment .perfective) = false := rfl
+
+/-- Hindi actually has DOM (ko-marking) that applies across both
+    aspects. The empirical profile exceeds the per-zone prediction:
+    ko operates on top of the case system, not within it. -/
+theorem hindi_has_dom_across_aspects :
+    hasAnyMarking hindiDOM = true := by native_decide
+
+/-- Dyirbal's animacy-based split creates analogous zones: inanimates
+    get ergative alignment (DOM not expected), animates get accusative
+    (DOM expected). The split threshold and DOM threshold operate
+    over the same `AnimacyLevel` type. -/
+theorem dyirbal_split_dom_zones :
+    domInZone (dyirbalSplit.alignment .inanimate) = false ∧
+    domInZone (dyirbalSplit.alignment .human) = true := ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 7c: Shared Prominence Scales
+-- ============================================================================
+
+/-! ### Structural unity: same hierarchies condition both phenomena
+
+The animacy hierarchy operates in two independent grammatical systems:
+
+1. **Split ergativity** (@cite{silverstein-1976}): `AnimacyLevel` determines
+   which NPs get ergative vs accusative alignment. In Dyirbal,
+   `inanimate → ergative`, `human/animate → accusative`.
+2. **DOM** (@cite{aissen-2003}): `AnimacyLevel` determines which objects get
+   overt marking. In Spanish, `human → marked`, `non-human → unmarked`.
+
+Both are monotone cutoffs on the **same** linearly ordered type. A change
+to `AnimacyLevel` propagates automatically to both systems. This is
+@cite{comrie-1989}'s central methodological point: the same hierarchies
+recur across grammatical domains. -/
+
+/-- The animacy hierarchy governs both split ergativity and DOM.
+    Dyirbal uses it for the ergative split; Spanish uses it for DOM.
+    Both are monotone cutoffs on the same ordered type. -/
+theorem animacy_governs_split_and_dom :
+    -- Split ergativity: inanimate below threshold (ergative)
+    dyirbalSplit.alignment .inanimate = .ergative ∧
+    -- Split ergativity: human above threshold (accusative)
+    dyirbalSplit.alignment .human = .accusative ∧
+    -- DOM: human above marking threshold (marked)
+    spanishDOM.marks .human .nonSpecific = true ∧
+    -- DOM: inanimate below marking threshold (unmarked)
+    spanishDOM.marks .inanimate .nonSpecific = false := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Hindi-Urdu's bidimensional DOM uses BOTH prominence scales:
+    human objects need only indefinite-specific status for ko-marking,
+    while animate objects require definite status. The staircase cutoff
+    operates jointly on `AnimacyLevel × DefinitenessLevel`. -/
+theorem hindi_bidimensional_dom :
+    -- Human + indefinite specific: marked
+    hindiDOM.marks .human .indefiniteSpecific = true ∧
+    -- Animate + indefinite specific: NOT marked
+    hindiDOM.marks .animate .indefiniteSpecific = false ∧
+    -- Animate + definite: marked
+    hindiDOM.marks .animate .definite = true ∧
+    -- Inanimate: never marked regardless of definiteness
+    hindiDOM.marks .inanimate .personalPronoun = false := ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Case.Studies.Comrie1989
