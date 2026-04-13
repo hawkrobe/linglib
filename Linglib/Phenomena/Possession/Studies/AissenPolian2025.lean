@@ -1,5 +1,6 @@
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Theories.Morphology.DM.NominalStructure
+import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Core.SpecificityCondition
 import Linglib.Core.Discourse.InformationStructure
 
@@ -666,5 +667,257 @@ theorem tseltalan_is_low_abs :
 theorem tseltalan_case_locus :
     Fragments.Mayan.toCaseLocus tseltalanABSPosition =
     Fragments.Mayan.CaseLocus.absDef := rfl
+
+-- ============================================================================
+-- § 16: Tree-Geometric Derivation (Attract Closest)
+-- ============================================================================
+
+section AttractClosest
+
+open Minimalism
+
+/-! ### Attract Closest on Concrete Trees
+
+The boolean functions `dLayerShields`, `hasIntervener`, and
+`canExtractPossessor` above capture the paper's predictions but
+**stipulate** them directly. Here we **derive** them from Attract
+Closest applied to concrete `SyntacticObject` trees
+(@cite{aissen-polian-2025} (9a-c)), using `closestGoalB` from
+`Theories.Syntax.Minimalism.Core.Agree`.
+
+**Key derivation**: T°'s [EPP:D] probe searches its c-command domain
+for the closest D-bearing element. The result depends only on tree
+geometry and which nodes carry D features:
+
+| Tree configuration         | Closest D-bearer | Possessor reachable? |
+|----------------------------|------------------|----------------------|
+| Unaccusative + PossP       | Psr              | ✓ (stranding)        |
+| Unaccusative + DP          | D°               | ✗ (D-layer shields)  |
+| Transitive + PossP         | Agent            | ✗ (agent intervenes) |
+| Transitive + DP            | Agent            | ✗ (double blocking)  |
+-/
+
+/-- Whether a `SyntacticObject` leaf carries D-category features.
+    Matching criterion for T°'s [EPP:D] probe: D-bearing elements
+    (possessor DPs, D° heads, agent DPs) are potential goals. -/
+private def hasDFeatures : SyntacticObject → Bool
+  | .leaf tok => tok.item.outerCat == .D
+  | .node _ _ => false
+
+/-! ### Leaf Nodes -/
+
+private def T₀  := mkLeaf .T [] 1   -- T° head (carries [EPP:D] probe)
+private def V₀  := mkLeaf .V [] 2   -- V° (lexical verb)
+private def v₀  := mkLeaf .v [] 3   -- v° (light verb, introduces agent)
+private def Psr := mkLeaf .D [] 4   -- Possessor DP (D-bearing)
+private def Psm := mkLeaf .N [] 5   -- Possessum (noun, not D-bearing)
+private def D₀  := mkLeaf .D [] 6   -- D° head of specific nominal
+private def Agt := mkLeaf .D [] 7   -- Agent DP (D-bearing)
+
+/-! ### Clause Trees (@cite{aissen-polian-2025} (9a-c))
+
+(9a) Unaccusative: `[TP T° [VP V° OBJECT]]`
+     No vP layer — sole argument is complement of V.
+
+(9b) Transitive: `[TP T° [vP Agent [v' v° [VP V° OBJECT]]]]`
+     Agent in Spec,vP — creates potential intervener.
+
+Object is PossP (non-specific) or DP (specific). -/
+
+-- Non-specific possessive object: [PossP Psr Psm]
+private def possP' := SyntacticObject.node Psr Psm
+
+-- Specific possessive object: [DP D° [PossP Psr Psm]]
+private def dpObj := SyntacticObject.node D₀ possP'
+
+-- (9a) Unaccusative + non-specific: [TP T° [VP V° [PossP Psr Psm]]]
+private def treeUnaccPossP :=
+  SyntacticObject.node T₀ (SyntacticObject.node V₀ possP')
+
+-- (9a') Unaccusative + specific: [TP T° [VP V° [DP D° [PossP Psr Psm]]]]
+private def treeUnaccDP :=
+  SyntacticObject.node T₀ (SyntacticObject.node V₀ dpObj)
+
+-- (9b) Transitive + non-specific:
+-- [TP T° [vP Agt [v' v° [VP V° [PossP Psr Psm]]]]]
+private def treeTransPossP :=
+  SyntacticObject.node T₀
+    (SyntacticObject.node Agt
+      (SyntacticObject.node v₀
+        (SyntacticObject.node V₀ possP')))
+
+-- (9b') Transitive + specific:
+-- [TP T° [vP Agt [v' v° [VP V° [DP D° [PossP Psr Psm]]]]]]
+private def treeTransDP :=
+  SyntacticObject.node T₀
+    (SyntacticObject.node Agt
+      (SyntacticObject.node v₀
+        (SyntacticObject.node V₀ dpObj)))
+
+/-! ### Core Predictions
+
+Each theorem shows that `closestGoalB` computes the correct
+result for T°'s [EPP:D] probe searching for the possessor. -/
+
+/-- **Unaccusative + PossP**: possessor IS the closest D-bearer to T°.
+    No D-layer, no agent → T°'s probe reaches possessor directly.
+    This is why stranding is available. -/
+theorem unacc_possP_psr_closest :
+    closestGoalB treeUnaccPossP T₀ Psr hasDFeatures = true := by decide
+
+/-- **Unaccusative + DP**: possessor is NOT the closest D-bearer.
+    D° is closer to T° than the possessor inside Spec,PossP.
+    This is D-layer shielding — stranding is blocked. -/
+theorem unacc_dp_psr_blocked :
+    closestGoalB treeUnaccDP T₀ Psr hasDFeatures = false := by decide
+
+/-- **Unaccusative + DP**: D° IS the closest D-bearer to T°.
+    The whole DP is what T°'s probe attracts — basis for pied-piping. -/
+theorem unacc_dp_dHead_closest :
+    closestGoalB treeUnaccDP T₀ D₀ hasDFeatures = true := by decide
+
+/-- **Transitive + PossP**: possessor is NOT the closest D-bearer.
+    Agent in Spec,vP is closer — the agent intervenes.
+    This is why stranding is blocked in transitives. -/
+theorem trans_possP_psr_blocked :
+    closestGoalB treeTransPossP T₀ Psr hasDFeatures = false := by decide
+
+/-- **Transitive + PossP**: agent IS the closest D-bearer to T°.
+    T°'s probe attracts the agent, not the possessor. -/
+theorem trans_possP_agt_closest :
+    closestGoalB treeTransPossP T₀ Agt hasDFeatures = true := by decide
+
+/-- **Transitive + DP**: double blocking — both agent AND D° shield
+    the possessor from T°'s probe. -/
+theorem trans_dp_psr_blocked :
+    closestGoalB treeTransDP T₀ Psr hasDFeatures = false := by decide
+
+/-! ### Bridge Theorems
+
+The tree-geometric derivation agrees with the boolean stipulations
+from §§3-4. Each conjunction pairs a tree prediction with the
+corresponding boolean function, showing they make identical claims. -/
+
+/-- D-layer shielding: tree geometry matches `dLayerShields .dp`. -/
+theorem bridge_dLayer_dp :
+    closestGoalB treeUnaccDP T₀ Psr hasDFeatures = false ∧
+    dLayerShields .dp = true := ⟨by decide, rfl⟩
+
+/-- No D-layer for PossP: tree geometry matches `dLayerShields .possP`. -/
+theorem bridge_no_dLayer_possP :
+    closestGoalB treeUnaccPossP T₀ Psr hasDFeatures = true ∧
+    dLayerShields .possP = false := ⟨by decide, rfl⟩
+
+/-- Agent intervention: tree geometry matches `hasIntervener .t .transitive`. -/
+theorem bridge_intervention_trans :
+    closestGoalB treeTransPossP T₀ Psr hasDFeatures = false ∧
+    hasIntervener .t .transitive false = true := ⟨by decide, rfl⟩
+
+/-- No intervention in unaccusative: tree geometry matches
+    `hasIntervener .t .unaccusative`. -/
+theorem bridge_no_intervention_unacc :
+    closestGoalB treeUnaccPossP T₀ Psr hasDFeatures = true ∧
+    hasIntervener .t .unaccusative false = false := ⟨by decide, rfl⟩
+
+-- ============================================================================
+-- § 17: Selective Opacity from Tree Geometry (N-Horizons)
+-- ============================================================================
+
+/-! ### Selective Opacity as a Tree Constraint
+
+Selective opacity (@cite{keine-2019}, @cite{aissen-polian-2025} (33))
+states that N° is a horizon for wh-probes: C°'s [EPP:WH] probe
+cannot see elements c-commanded by N° (= inside the nominal's
+lexical projection). Here we derive this from `behindHorizonB`
+applied to concrete trees.
+
+The key geometric fact: in `[PossP Psr N°]`, N° and Psr are sisters,
+so N° c-commands Psr. This makes Psr invisible to any probe for
+which N° is a horizon. But D° (sister of PossP, NOT c-commanded by
+N°) remains visible — which is why pied-piping works.
+
+Together with § 16 (Attract Closest), both pillars of A&P's analysis
+are now derived from tree geometry:
+- **D-layer shielding / intervention** → `closestGoalB` (§ 16)
+- **Selective opacity** → `behindHorizonB` (§ 17)
+-/
+
+private def C₀ := mkLeaf .C [] 8
+
+-- CP wrapping unaccusative + DP:
+-- [CP C° [TP T° [VP V° [DP D° [PossP Psr Psm]]]]]
+private def treeCPUnaccDP := SyntacticObject.node C₀ treeUnaccDP
+
+-- CP wrapping unaccusative + PossP:
+-- [CP C° [TP T° [VP V° [PossP Psr Psm]]]]
+private def treeCPUnaccPossP := SyntacticObject.node C₀ treeUnaccPossP
+
+/-! ### Core Predictions -/
+
+/-- Psr is behind the N-horizon in the DP tree: C°'s wh-probe cannot
+    subextract the possessor from inside the DP. N° (Psm) c-commands
+    Psr (they are sisters in PossP), so Psr is in N°'s opaque domain. -/
+theorem psr_behind_horizon_dp :
+    behindHorizonB treeCPUnaccDP C₀ Psr .N = true := by decide
+
+/-- Psr is behind the N-horizon in the PossP tree: selective opacity
+    applies regardless of nominal size. Even without a D layer, N°
+    c-commands Psr. -/
+theorem psr_behind_horizon_possP :
+    behindHorizonB treeCPUnaccPossP C₀ Psr .N = true := by decide
+
+/-- D° is NOT behind the N-horizon: N° (Psm) does not c-command D°.
+    D° is a sister of PossP, not inside N°'s c-command domain. This
+    is why pied-piping (whole DP movement to Spec,CP) is available:
+    the wh-probe can see D° even though it cannot see inside PossP. -/
+theorem dHead_not_behind_horizon :
+    behindHorizonB treeCPUnaccDP C₀ D₀ .N = false := by decide
+
+/-- The N-horizon is geometrically present even for D-probes — N°
+    c-commands Psr regardless of probe type. The difference is that
+    D-probes IGNORE the horizon (`selectivelyOpaque .dProbe = false`).
+    This is the "selective" in selective opacity: the same tree
+    geometry produces different results for different probe types. -/
+theorem horizon_present_but_dprobe_ignores :
+    behindHorizonB treeUnaccPossP T₀ Psr .N = true ∧
+    selectivelyOpaque .dProbe = false := ⟨by decide, rfl⟩
+
+/-! ### Bridge Theorems -/
+
+/-- Selective opacity from tree geometry: the N-horizon blocks
+    wh-subextraction of Psr from both DP and PossP nominals,
+    agreeing with `canĀSubextract`. -/
+theorem bridge_selective_opacity :
+    behindHorizonB treeCPUnaccDP C₀ Psr .N = true ∧
+    behindHorizonB treeCPUnaccPossP C₀ Psr .N = true ∧
+    canĀSubextract .dp = false ∧
+    canĀSubextract .possP = false := ⟨by decide, by decide, rfl, rfl⟩
+
+/-- D° visible despite N-horizon: pied-piping is available because
+    D° is outside N°'s c-command domain. Agrees with
+    `extractionAvailable .piedPiping .dp`. -/
+theorem bridge_piedpiping_ok :
+    behindHorizonB treeCPUnaccDP C₀ D₀ .N = false ∧
+    extractionAvailable .piedPiping .dp = true := ⟨by decide, rfl⟩
+
+/-! ### Unified Derivation -/
+
+/-- **Both pillars from tree geometry**: D-layer shielding, agent
+    intervention, selective opacity, and pied-piping availability
+    all follow from Attract Closest + N-horizons on concrete trees.
+
+    (a) D-layer shielding: D° closer to T° than Psr (`closestGoalB`)
+    (b) Agent intervention: Agt closer to T° than Psr (`closestGoalB`)
+    (c) Selective opacity: N° c-commands Psr (`behindHorizonB`)
+    (d) Pied-piping: D° NOT c-commanded by N° (`behindHorizonB`) -/
+theorem unified_tree_derivation :
+    closestGoalB treeUnaccDP T₀ Psr hasDFeatures = false ∧
+    closestGoalB treeTransPossP T₀ Psr hasDFeatures = false ∧
+    behindHorizonB treeCPUnaccDP C₀ Psr .N = true ∧
+    behindHorizonB treeCPUnaccPossP C₀ Psr .N = true ∧
+    behindHorizonB treeCPUnaccDP C₀ D₀ .N = false :=
+  ⟨by decide, by decide, by decide, by decide, by decide⟩
+
+end AttractClosest
 
 end Phenomena.Possession.Studies.AissenPolian2025

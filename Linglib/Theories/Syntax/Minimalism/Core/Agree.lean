@@ -37,6 +37,7 @@ This captures e.g. Mam's Infl probe, which has satisfaction condition
 
 import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
 namespace Minimalism
 
@@ -111,13 +112,234 @@ def intervenes (root : SyntacticObject) (probe x goal : SyntacticObject)
   cCommandsIn root x goal ∧
   hasValuedFeature xFeatures ftype = true
 
-/-- Goal is the closest matching goal for probe -/
+/-- Goal is the closest matching goal for probe.
+
+    **Caveat**: this definition existentially quantifies over feature
+    bundles (`∃ xFeats`), meaning ANY structurally intervening node
+    blocks regardless of its actual features. This is strictly stronger
+    than necessary — a V° with no phi-features would block a phi-probe.
+    For derivations that need to distinguish nodes by their actual
+    features, use `closestGoalWith` (propositional, with feature
+    assignment) or `closestGoalB` (boolean, with matching predicate). -/
 def closestGoal (a : AgreeRelation) (root : SyntacticObject) : Prop :=
   validAgree a root ∧
   ¬∃ (x : SyntacticObject) (xFeats : FeatureBundle),
     isTermOf x root ∧
     x ≠ a.goal ∧
     intervenes root a.probe x a.goal xFeats a.feature
+
+-- ============================================================================
+-- § 3b: Feature-Aware Locality
+-- ============================================================================
+
+/-- A feature assignment maps each syntactic object in a tree to its
+    actual feature bundle. -/
+abbrev FeatureAssignment := SyntacticObject → FeatureBundle
+
+/-- Goal is the closest matching goal for probe, given a feature
+    assignment that determines each node's actual features.
+
+    Compared to `closestGoal`: the existential `∃ xFeats` is replaced
+    by `fa x`, so only nodes whose ACTUAL features match can intervene.
+    This correctly models Agree: a V° (no phi-features) should not
+    block T°'s phi-probe even if V° is structurally between T° and the
+    subject DP. `closestGoal` is strictly stronger (see
+    `closestGoal_implies_closestGoalWith`). -/
+def closestGoalWith (a : AgreeRelation) (root : SyntacticObject)
+    (fa : FeatureAssignment) : Prop :=
+  validAgree a root ∧
+  ¬∃ x, isTermOf x root ∧ x ≠ a.goal ∧
+    intervenes root a.probe x a.goal (fa x) a.feature
+
+/-- `closestGoal` (existential over features) implies `closestGoalWith`
+    (fixed feature assignment): if no node with ANY features intervenes,
+    then no node with its ACTUAL features intervenes. -/
+theorem closestGoal_implies_closestGoalWith
+    (a : AgreeRelation) (root : SyntacticObject) (fa : FeatureAssignment)
+    (h : closestGoal a root) : closestGoalWith a root fa :=
+  ⟨h.1, fun ⟨x, hTerm, hNeq, hInt⟩ => h.2 ⟨x, fa x, hTerm, hNeq, hInt⟩⟩
+
+/-- Boolean closest-goal check: is `goal` the closest node matching
+    `pred` in `probe`'s c-command domain within `root`?
+
+    This is the computational counterpart of `closestGoalWith`, using
+    `cCommandsInB` and a matching predicate. `pred` determines which
+    nodes are potential goals/interveners — typically a category check
+    (e.g., "is this node D-bearing?").
+
+    1. `probe` c-commands `goal`
+    2. `goal` matches the predicate
+    3. No other matching node is both c-commanded by `probe` AND
+       c-commands `goal` (= no intervener) -/
+def closestGoalB (root probe goal : SyntacticObject)
+    (pred : SyntacticObject → Bool) : Bool :=
+  cCommandsInB root probe goal &&
+  pred goal &&
+  !(root.subtrees.any fun x =>
+    x != goal &&
+    pred x &&
+    cCommandsInB root probe x &&
+    cCommandsInB root x goal)
+
+-- ============================================================================
+-- § 3c: Horizons (@cite{keine-2019})
+-- ============================================================================
+
+/-- Is `target` behind a horizon of category `horizonCat` relative to
+    `probe` in tree `root`?
+
+    A leaf head `n` of category `horizonCat` creates a horizon: its
+    c-command domain is opaque to the probe. `target` is behind the
+    horizon iff there exists a leaf `n` with category `horizonCat`
+    such that:
+    1. `probe` c-commands `n` (n is in probe's search domain)
+    2. `n` c-commands `target` (target is in n's opaque domain)
+
+    This captures @cite{keine-2019}'s horizon mechanism: the probe
+    cannot see past a head of the horizon category. Elements that
+    are c-commanded by the horizon head are invisible to the probe.
+
+    Example: N° is a horizon for wh-probes (@cite{aissen-polian-2025}).
+    In `[DP D° [PossP Psr N°]]`, N° c-commands Psr (they are sisters),
+    so wh-probes on C° cannot reach Psr. But D° is a sister of PossP,
+    NOT c-commanded by N°, so the whole DP remains visible for
+    pied-piping. -/
+def behindHorizonB (root probe target : SyntacticObject)
+    (horizonCat : Cat) : Bool :=
+  root.subtrees.any fun n =>
+    match n with
+    | .leaf tok =>
+      tok.item.outerCat == horizonCat &&
+      cCommandsInB root n target &&
+      cCommandsInB root probe n
+    | .node _ _ => false
+
+-- ============================================================================
+-- § 3d: Probe Profiles (@cite{keine-2019})
+-- ============================================================================
+
+/-- A probe's identity: where it sits in the functional sequence and
+    what terminates its search.
+
+    @cite{keine-2019} argues that selective opacity arises because
+    probes differ in their *horizons* — the category that terminates
+    their search. A probe on T⁰ with horizon C cannot search past CP,
+    while a probe on C⁰ with no horizon can search into any clause.
+
+    The A/Ā distinction is *derived*: an "A-probe" is simply a probe
+    whose head is at or below T in the functional sequence (fValue ≤ 2),
+    and an "Ā-probe" is one at or above C (fValue ≥ 6). -/
+structure ProbeProfile where
+  /-- The head that hosts this probe (T⁰, C⁰, etc.) -/
+  probeHead : Cat
+  /-- The category that terminates this probe's search.
+      `none` means the probe can search into any domain. -/
+  horizon : Option Cat
+  deriving DecidableEq, Repr
+
+/-- Is this an A-probe? A-probes sit at or below T (fValue ≤ 2).
+    @cite{keine-2019} §3: A-movement lands in Spec,TP (fValue 2). -/
+def ProbeProfile.isAProbe (p : ProbeProfile) : Bool :=
+  fValue p.probeHead ≤ 2
+
+/-- Is this an Ā-probe? Ā-probes sit at or above C (fValue ≥ 6).
+    @cite{keine-2019} §3: Ā-movement lands in Spec,CP (fValue 6). -/
+def ProbeProfile.isĀProbe (p : ProbeProfile) : Bool :=
+  fValue p.probeHead ≥ 6
+
+/-- Is a clause with highest head `clauseHead` transparent to this probe?
+
+    @cite{keine-2019}'s Horizon Inheritance (43): if category X is a
+    horizon for probe π, all categories in the same extended projection
+    are also horizons. Combined with the Height-Locality Theorem (65a)
+    — projections below the probe can't be horizons for nonvacuous
+    probes — the effective cutoff is the probe's own position in the
+    functional sequence.
+
+    A clause is transparent iff:
+    - The probe has no horizon (`horizon = none`): always transparent.
+    - The probe has a horizon: the clause's highest head is strictly
+      below the probe head in the functional sequence
+      (`fValue clauseHead < fValue probeHead`).
+
+    The `horizon` field determines WHETHER a cutoff exists (Ā-probes
+    have none; all others do). The `probeHead` field determines WHERE
+    the cutoff falls. The specific horizon category matters for the
+    theoretical derivation (it's the base horizon from which inheritance
+    extends to the probe's own level), but the transparency calculation
+    depends only on the probe's height. -/
+def ProbeProfile.transparentTo (p : ProbeProfile) (clauseHead : Cat) : Bool :=
+  if p.horizon.isSome then fValue clauseHead < fValue p.probeHead else true
+
+-- ────────────────────────────────────────────────────────────────
+-- The four probes from @cite{keine-2019} table (58)
+-- ────────────────────────────────────────────────────────────────
+
+/-- φ-agreement probe: sits on T⁰, horizon is C.
+    Can search into vP but not TP or CP clauses. -/
+def keinePhiProbe : ProbeProfile := ⟨.T, some .C⟩
+
+/-- A-movement probe (EPP on T⁰): sits on T⁰, horizon is C.
+    Same locality as φ-agreement — both are on T⁰. -/
+def keineAProbe : ProbeProfile := ⟨.T, some .C⟩
+
+/-- Wh-licensing probe: sits on C⁰, horizon is C.
+    Can search into vP and TP but not CP clauses. -/
+def keineWhLicensing : ProbeProfile := ⟨.C, some .C⟩
+
+/-- Ā-movement probe: sits on C⁰, no horizon.
+    Can search into vP, TP, and CP clauses. -/
+def keineĀProbe : ProbeProfile := ⟨.C, none⟩
+
+-- ────────────────────────────────────────────────────────────────
+-- Derived properties of the Keine probes
+-- ────────────────────────────────────────────────────────────────
+
+theorem phi_is_A : keinePhiProbe.isAProbe = true := by native_decide
+theorem a_is_A : keineAProbe.isAProbe = true := by native_decide
+theorem wh_is_Ā : keineWhLicensing.isĀProbe = true := by native_decide
+theorem ābar_is_Ā : keineĀProbe.isĀProbe = true := by native_decide
+
+-- ============================================================================
+-- § 3e: Height-Locality Connection (@cite{keine-2019} §5)
+-- ============================================================================
+
+/-- **Upward Entailment** (@cite{keine-2019} (40)):
+    If a clause of size Π is opaque to probe π, every larger clause
+    (higher `fValue` for its highest head) is also opaque.
+
+    Proof: transparency requires `fValue clauseHead < fValue probeHead`.
+    If c₁ is opaque (¬ fValue c₁ < fValue probeHead) and c₂ ≥ c₁,
+    then c₂ is also opaque. -/
+theorem upward_entailment (p : ProbeProfile) (c₁ c₂ : Cat)
+    (h_opaque : p.transparentTo c₁ = false)
+    (h_larger : fValue c₁ ≤ fValue c₂) :
+    p.transparentTo c₂ = false := by
+  simp only [ProbeProfile.transparentTo] at *
+  cases h_eq : p.horizon <;> simp_all [Option.isSome]
+  omega
+
+/-- **Height-Locality Connection** (@cite{keine-2019} (33)/(62)):
+    The higher the structural position of a probe, the more kinds of
+    structures it can search into.
+
+    If probe π₂ is at least as high as π₁ (fValue p₁.probeHead ≤
+    fValue p₂.probeHead) and both have horizons, then every clause
+    transparent to π₁ is transparent to π₂. The Ā-probe (no horizon)
+    trivially subsumes everything.
+
+    The deeper consequence: probes higher in the spine can search into
+    strictly more domains, because the transparency cutoff
+    (`fValue clauseHead < fValue probeHead`) rises with the probe. -/
+theorem height_locality (p₁ p₂ : ProbeProfile) (c : Cat)
+    (h_higher : fValue p₁.probeHead ≤ fValue p₂.probeHead)
+    (h_horizon : p₁.horizon = none → p₂.horizon = none)
+    (h_transparent : p₁.transparentTo c = true) :
+    p₂.transparentTo c = true := by
+  simp only [ProbeProfile.transparentTo] at *
+  cases h₁ : p₁.horizon <;> cases h₂ : p₂.horizon <;>
+    simp_all [Option.isSome]
+  omega
 
 -- ============================================================================
 -- § 4: Feature Valuation

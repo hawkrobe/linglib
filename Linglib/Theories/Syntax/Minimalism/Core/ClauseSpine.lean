@@ -130,7 +130,33 @@ theorem voiceP_applP_same_fLevel :
   native_decide
 
 -- ============================================================================
--- § 5: Size Ordering
+-- § 5: F-Level Bridge
+-- ============================================================================
+
+/-- The F-level of a clause spine: the `fValue` of its highest projected
+    head. This bridges `ClauseSpine` (concrete head list) to
+    `ExtendedProjection`'s F-value hierarchy, enabling
+    @cite{keine-2019}'s transparency calculations.
+
+    Example: `ClauseSpine.cP.fLevel = 6` (C is F6),
+    `ClauseSpine.tP.fLevel = 2` (T is F2). -/
+def ClauseSpine.fLevel (spine : ClauseSpine) : Nat :=
+  fValue spine.highestHead
+
+/-- CP-sized clauses are F6. -/
+theorem cP_fLevel : ClauseSpine.cP.fLevel = 6 := by native_decide
+
+/-- TP-sized clauses are F2. -/
+theorem tP_fLevel : ClauseSpine.tP.fLevel = 2 := by native_decide
+
+/-- vP-sized clauses are F1. -/
+theorem vP_fLevel : ClauseSpine.vP.fLevel = 1 := by native_decide
+
+/-- VoiceP-sized clauses are F1. -/
+theorem voiceP_fLevel : ClauseSpine.voiceP.fLevel = 1 := by native_decide
+
+-- ============================================================================
+-- § 6: Size Ordering
 -- ============================================================================
 
 /-- Spine sizes are ordered: ApplP < vP < VoiceP < TP < CP. -/
