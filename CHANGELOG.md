@@ -1,5 +1,35 @@
 # Changelog
 
+## [0.229.700] - 2026-04-13
+
+### Fixed
+- **docs workflow** (`.github/workflows/docs.yml`): replace obsolete manual `doc-gen4 single`/`genCore`/`index` CLI calls with `lake build Linglib:docs` Lake facet — the pinned doc-gen4 (v4.29.0) switched to a SQLite-backed two-phase pipeline, breaking the old CLI arguments
+
+## [0.229.699] - 2026-04-13
+
+### Added
+- **Keine 2019 Selective Opacity** (`Phenomena/Agreement/Studies/Keine2019.lean`): transparency table (58) verified for all 12 cells (4 probes × 3 clause sizes), Hindi generalizations (21)/(23)/(25), Height-Locality Connection instantiations, Upward Entailment instantiations, hyperraising blocking, ClauseSpine bridge theorems
+- **`ProbeProfile`** (`Theories/Syntax/Minimalism/Core/Agree.lean`): probe identity type pairing head location with horizon setting; four Keine probes (`keinePhiProbe`, `keineAProbe`, `keineWhLicensing`, `keineĀProbe`); derived `isAProbe`/`isĀProbe` from probe height; `transparentTo` computing clause transparency from probe height + horizon existence
+- **`upward_entailment`** (`Agree.lean`): if a clause is opaque to a probe, all larger clauses are too (monotonicity of opacity along fValue)
+- **`height_locality`** (`Agree.lean`): higher probes can search into at least as many clause types as lower probes with horizons
+- **`ClauseSpine.fLevel`** (`ClauseSpine.lean`): bridge connecting clause spine to ExtendedProjection F-value hierarchy; fLevel theorems for cP/tP/vP/voiceP
+
+### Changed
+- **`Agree.lean`**: added import of `ExtendedProjection/Basic.lean` for `fValue` access
+
+## [0.229.698] - 2026-04-12
+
+### Fixed
+- **WesterbeekKoolenMaes2015.lean accuracy**: Exp 2 N corrected (16 → 62 participants, 31 pairs); descriptive rates (73.5%/13.1%) reassigned from Exp 1 to Exp 2 where the paper reports them; `φ_typical_grounded` docstring clarified as parameter coincidence not structural necessity
+
+### Added
+- **WesterbeekKoolenMaes2015.lean deepening**: `S1_q_eq_S1_colorMention` general algebraic equivalence (closed-form = S1_q for all t > 0, not just checked at specific points); `bareEffectiveness_strictMono` proving monotonicity of the typicality→effectiveness transform; `prototype_predicts_color_mention` strengthened to full three-link chain (Prototype → bareEffectiveness → S1)
+
+## [0.229.697] - 2026-04-12
+
+### Added
+- **Alignment × DOM interaction** (`Phenomena/Case/Studies/Comrie1989.lean`): `domExpected`/`dsmExpected` functions deriving differential marking predictions from alignment type (= `marksPatient`/`marksAgent` by construction), per-language DOM×alignment consistency (Turkish, Russian consistent; neutral→no DOM), `domInZone` for split-ergative systems with Hindi imperfective/perfective zone predictions, Hindi ko-marking exceeds per-zone prediction (DOM across both aspects), Dyirbal split-DOM zones, `animacy_governs_split_and_dom` proving shared `AnimacyLevel` governs both Silverstein split and Aissen DOM, Hindi bidimensional DOM staircase over `AnimacyLevel × DefinitenessLevel`
+
 ## [0.229.696] - 2026-04-12
 
 ### Added
