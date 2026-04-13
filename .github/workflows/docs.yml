@@ -54,7 +54,42 @@ jobs:
         run: lake build
 
       - name: Build documentation (Linglib only, skip Mathlib)
-        run: lake build Linglib:docs
+        run: |
+          # Use doc-gen4 CLI directly to avoid Lake facet processing ALL
+          # transitive deps (Mathlib/Lean core), which OOMs the runner.
+          lake build doc-gen4
+
+          BUILD=.lake/build
+          DOCGEN="lake exe doc-gen4"
+          REPO_URL="https://github.com/${{ github.repository }}"
+          COMMIT="${{ github.sha }}"
+          SRC_URI="$REPO_URL/blob/$COMMIT"
+          DB=api-docs.db
+
+          # Bibliography prepass
+          if [ -f docs/references.bib ]; then
+            $DOCGEN bibPrepass --build "$BUILD" docs/references.bib
+          elif [ -f docs/references.json ]; then
+            $DOCGEN bibPrepass --build "$BUILD" --json docs/references.json
+          else
+            $DOCGEN bibPrepass --build "$BUILD" --none
+          fi
+
+          # Core docs for Init only (basic type links, skip Lean/Std/Lake)
+          $DOCGEN genCore --build "$BUILD" Init "$DB" || true
+
+          # Document root module
+          $DOCGEN single --build "$BUILD" Linglib "$DB" "$SRC_URI/Linglib.lean" || true
+
+          # Document all Linglib submodules
+          find Linglib -name '*.lean' | sort | while read -r f; do
+            mod=$(echo "$f" | sed 's|/|.|g; s|\.lean$||')
+            echo "  doc: $mod"
+            $DOCGEN single --build "$BUILD" "$mod" "$DB" "$SRC_URI/$f" || true
+          done
+
+          # Generate HTML + search index from database
+          $DOCGEN fromDb --build "$BUILD" "$DB"
 
       - name: Install Hugo
         uses: peaceiris/actions-hugo@v3
