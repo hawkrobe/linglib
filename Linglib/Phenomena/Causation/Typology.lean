@@ -1,5 +1,6 @@
 import Linglib.Core.WALS.Features.F110A
 import Linglib.Core.WALS.Features.F111A
+import Linglib.Theories.Semantics.Causation.Morphological
 
 /-!
 # Cross-Linguistic Causative Typology
@@ -368,5 +369,38 @@ theorem purp_dominates_and :
 theorem morphological_dominates :
     (ch111.filter (·.value == .morphologicalOnly)).length * 100 / ch111.length ≥ 81 := by
   native_decide
+
+-- ============================================================================
+-- Bridge: Song's Typology ↔ Comrie's Complexity Scale
+-- ============================================================================
+
+open Semantics.Causation.Morphological (CausativeComplexity)
+
+/-- Song's construction types map to @cite{comrie-1989}'s complexity scale.
+
+    COMPACT subsumes both lexical and morphological causatives — the
+    distinction within compact types is about morphological realization,
+    not about the compact-vs-analytic dimension. AND and PURP are both
+    multi-clause (periphrastic) in Comrie's sense.
+
+    The mapping is many-to-one: Song's finer-grained typology distinguishes
+    AND from PURP by implicativity, while Comrie groups them together as
+    "analytic." -/
+def CausativeConstructionType.toComplexity :
+    CausativeConstructionType → CausativeComplexity
+  | .compact => .morphological
+  | .and_    => .periphrastic
+  | .purp    => .periphrastic
+
+/-- All non-compact (multi-clause) types are periphrastic. -/
+theorem multiclause_is_periphrastic (t : CausativeConstructionType) :
+    t ≠ .compact → t.toComplexity = CausativeComplexity.periphrastic := by
+  cases t <;> simp [CausativeConstructionType.toComplexity]
+
+/-- Compact causatives are at most morphological — never periphrastic. -/
+theorem compact_not_periphrastic :
+    CausativeConstructionType.compact.toComplexity ≠
+      CausativeComplexity.periphrastic := by
+  simp [CausativeConstructionType.toComplexity]
 
 end Phenomena.Causation.Typology

@@ -149,6 +149,13 @@ inductive Mediation where
   | indirect  -- causer acts through intermediary/causee
   deriving DecidableEq, Repr
 
+/-- Numeric rank: direct (0) < indirect (1). Used in `comrie_monotone`
+    to express the co-variation of complexity and indirectness as a
+    proper ordering rather than a disjunction. -/
+def Mediation.rank : Mediation → Nat
+  | .direct   => 0
+  | .indirect => 1
+
 -- ════════════════════════════════════════════════════
 -- § 4. Causative Complexity (@cite{comrie-1989}, morphological typology)
 -- ════════════════════════════════════════════════════
@@ -244,12 +251,63 @@ structure SemanticPrototype where
 
 /-- **Comrie's monotonicity** (@cite{comrie-1989}): within a single
     language, if construction A is morphologically more compact than
-    construction B, then A encodes more direct causation than B.
+    construction B, then A encodes at least as direct causation as B.
 
-    Stated as a predicate on pairs: a system satisfies Comrie's
-    generalization when complexity and mediation co-vary. -/
+    More compact morphology correlates with more direct causation:
+    compactness and directness co-vary monotonically. Stated as an
+    ordering on mediation rank (direct = 0 < indirect = 1). -/
 def comrie_monotone (c1 c2 : CausativeConstruction) : Prop :=
-  c1.complexity < c2.complexity → c1.mediation = .direct ∨ c2.mediation = .indirect
+  c1.complexity < c2.complexity → c1.mediation.rank ≤ c2.mediation.rank
+
+-- ════════════════════════════════════════════════════
+-- § 7b. Causee Marking Hierarchy (@cite{comrie-1989}, Ch 8)
+-- ════════════════════════════════════════════════════
+
+/-- Grammatical relation slots available for causee assignment,
+    ordered from highest to lowest on the hierarchy.
+
+    @cite{comrie-1989}: when a verb is causativized, the original
+    subject (S or A) is demoted to the next available slot on the
+    grammatical relations hierarchy. The slot depends on the
+    base verb's valency — higher valency leaves fewer slots open:
+
+    - Intransitive base (valency 1): causee → direct object
+    - Transitive base (valency 2): causee → indirect object (DO occupied)
+    - Ditransitive base (valency 3): causee → oblique (DO, IO occupied)
+
+    This hierarchy is attested across typologically diverse languages:
+    Turkish, French, Dargwa, Japanese, among others. -/
+inductive CauseeSlot where
+  | directObject    -- intransitive base → causee gets DO
+  | indirectObject  -- transitive base → causee gets IO
+  | oblique         -- ditransitive base → causee gets OBL
+  deriving DecidableEq, Repr
+
+/-- Rank on the GR hierarchy: DO (2) > IO (1) > OBL (0). -/
+def CauseeSlot.rank : CauseeSlot → Nat
+  | .directObject   => 2
+  | .indirectObject => 1
+  | .oblique        => 0
+
+/-- Predict causee slot from base verb valency.
+
+    @cite{comrie-1989}: the causee occupies the highest available slot
+    not already filled by the base verb's arguments.
+
+    - valency 1 (intransitive): S is the sole argument → causee = DO
+    - valency 2 (transitive): S + DO filled → causee = IO
+    - valency ≥ 3 (ditransitive): S + DO + IO filled → causee = OBL -/
+def causeeDemotion : Nat → CauseeSlot
+  | 1 => .directObject
+  | 2 => .indirectObject
+  | _ => .oblique  -- ditransitive or higher
+
+/-- Monotonicity: higher base valency → lower causee slot.
+    Proved for the bounded range 1 ≤ v1 < v2 ≤ 3. -/
+theorem causee_demotion_monotone :
+    ∀ v1 v2 : Fin 4, v1.val ≥ 1 → v1 < v2 →
+    (causeeDemotion v2.val).rank ≤ (causeeDemotion v1.val).rank := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridges to Existing Infrastructure

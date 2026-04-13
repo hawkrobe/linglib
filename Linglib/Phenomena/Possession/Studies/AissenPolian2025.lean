@@ -13,42 +13,47 @@ import Linglib.Core.Discourse.InformationStructure
 
 Tseltalan languages (Tsotsil, Tseltal) have two possessor extraction
 strategies — pied-piping and stranding — whose availability depends on
-nominal size (= specificity). Specific nominals project to DP and are
-opaque to Ā-subextraction (selective opacity, @cite{keine-2019}); only
-pied-piping of the whole DP is possible. Non-specific nominals project
-only to nP/PossP and are transparent; possessor stranding (raising to
-an A-position, then Ā-movement) is possible.
+nominal size (= specificity) and intervention by A-positioned DPs.
+
+The analysis rests on two independent mechanisms:
+
+1. **Selective opacity** (@cite{keine-2019}): N⁰ is a horizon for wh-probes
+   on C° — Ā-subextraction from within ANY nominal is impossible,
+   regardless of size. This forces all possessor extraction to proceed
+   via external possession.
+
+2. **D-layer shielding** (Attract Closest): in specific DPs, D° is closer
+   to T°'s [EPP:D] probe than the possessor inside Spec,PossP. Non-specific
+   nominals (PossP/nP) lack a D layer, so T°'s probe reaches the possessor.
+
+Together these derive:
+- Stranding: possessor A-moves out of non-specific nominal (D-probe sees
+  through nominal, no D-layer shields), then Ā-moves from external position
+- Pied-piping: whole DP moves to Spec,CP (DP is visible to wh-probe as a
+  unit; subextraction from within is blocked by selective opacity)
+- Why extracted possessors are ALWAYS external (claim (3)): follows from
+  selective opacity — not stipulated
 
 Stranding is further constrained by intervention: an A-positioned DP
-(agent or S_A) between the possessor and T°'s EPP:D probe blocks
-possessor raising. This correctly predicts that stranding is available
-in unaccusative clauses but blocked in transitive and unergative clauses.
+(agent or S_A) between the possessor and T°'s [EPP:D] probe blocks
+possessor raising via Attract Closest.
 
-The paper also identifies three construction types exhibiting ψ-subjects
-(categorical judgment subjects in Spec,TP, @cite{kuroda-1972}):
-predicative possession, experiential collocations, and lexical
-unaccusatives. ψ-subjects are always cross-referenced by Set B
-(absolutive), regardless of transitivity.
-
-## Key Claims Formalized
-
-1. Possessor extraction always produces external possessors (§3)
-2. Pied-piping ↔ specific nominals; stranding ↔ non-specific (§3.2)
-3. Table 4 intervention paradigm derived from clause type × extraction mode
-4. ψ-subjects receive Set B agreement (§5)
-5. All ψ-subject constructions are structurally unaccusative
+The paper also identifies three ψ-subject constructions (categorical
+judgment subjects in Spec,TP, @cite{kuroda-1972}): predicative possession,
+experiential collocations, and lexical unaccusatives.
 
 ## Integration Points
 
 - `NominalPosition` / `PossessionType` from `NominalStructure.lean`
 - `SpecificityCondition` from `Core/SpecificityCondition.lean`
 - `JudgmentType` from `Core/Discourse/InformationStructure.lean`
-- `GramFunction` / `ClauseType` from `Fragments/Mayan/Tseltalan.lean`
+- `GramFunction` from `Fragments/Mayan/Tseltalan.lean`
+- `ABSPosition` from `Fragments/Mayan/Params.lean`
 -/
 
 namespace Phenomena.Possession.Studies.AissenPolian2025
 
-open Fragments.Mayan (MarkerSet)
+open Fragments.Mayan (MarkerSet ABSPosition)
 open Fragments.Mayan.Tseltalan
 open Theories.Morphology.DM
 
@@ -57,8 +62,9 @@ open Theories.Morphology.DM
 -- ============================================================================
 
 /-- Nominal projections in Tseltalan, determining extractability.
-    @cite{aissen-polian-2025} §3.2: specific indefinites and definites
-    project to DP; non-specific indefinites project only to nP or PossP.
+    @cite{aissen-polian-2025} §3.2, (11)/(18): specific indefinites and
+    definites project to DP; non-specific indefinites project only to
+    nP (if non-possessive) or PossP (if possessive).
 
     Derived from the nominal spine in `NominalStructure.lean`:
     √ROOT < n < (Poss) < D. -/
@@ -68,11 +74,15 @@ inductive NominalSize where
   | nP    -- projects to nP: non-specific with inalienable possessor
   deriving DecidableEq, Repr
 
-/-- Map nominal size to the highest `NominalPosition` in the projection. -/
-def NominalSize.highestPosition : NominalSize → NominalPosition
-  | .dp    => .d
-  | .possP => .specPoss
-  | .nP    => .specN
+/-- The highest position projected in the nominal spine.
+    For DPs, the highest position is D (which shields the possessor
+    from external D-probes). For non-specific nominals, the highest
+    position IS the possessor's specifier position, making the
+    possessor directly accessible. -/
+def NominalSize.highestProjection : NominalSize → NominalPosition
+  | .dp    => .d       -- D head shields possessor
+  | .possP => .specPoss -- possessor directly accessible
+  | .nP    => .specN    -- possessor directly accessible
 
 /-- Specific nominals project to DP; non-specific nominals do not.
     @cite{aissen-polian-2025} §3.2. -/
@@ -82,51 +92,137 @@ def NominalSize.isSpecific : NominalSize → Bool
   | .nP    => false
 
 -- ============================================================================
--- § 2: Nominal Opacity (Selective Opacity, @cite{keine-2019})
+-- § 2: Clause Types (Theoretical Classification)
 -- ============================================================================
 
-/-- DPs are opaque to Ā-subextraction: movement cannot extract from
-    within a DP. Only elements at the DP edge or the whole DP can move.
-    Non-DP nominals (nP, PossP) are transparent — possessors at their
-    edge can raise out.
+/-- Clause types in Tseltalan, classified by whether the verb projects
+    an external argument (vP layer). This is a theoretical classification
+    from Minimalist syntax, used here to derive intervention effects.
 
-    This is @cite{keine-2019}'s selective opacity applied to the
-    nominal domain. -/
-def nominalOpaque (size : NominalSize) : Bool :=
-  size == .dp
+    @cite{aissen-polian-2025} (9):
+    - Unaccusative: no vP layer (sole argument is complement of V)
+    - Transitive: vP layer with agent in Spec,vP
+    - Unergative: vP layer with agentive S in Spec,vP -/
+inductive ClauseType where
+  | unaccusative  -- no vP layer (existentials, unaccusatives)
+  | transitive    -- vP layer with agent
+  | unergative    -- vP layer with agentive intransitive subject
+  deriving DecidableEq, Repr
 
-theorem nP_transparent : nominalOpaque .nP = false := rfl
-theorem possP_transparent : nominalOpaque .possP = false := rfl
-theorem dp_opaque : nominalOpaque .dp = true := rfl
+/-- Whether a clause type projects a vP layer (= has an external argument
+    position that could host an intervening DP).
+    @cite{aissen-polian-2025} (9): transitives and unergatives have vP;
+    unaccusatives do not. -/
+def ClauseType.hasVP : ClauseType → Bool
+  | .unaccusative => false
+  | .transitive   => true
+  | .unergative   => true
+
+/-- Unaccusatives lack a vP layer. -/
+theorem unaccusative_no_vP : ClauseType.unaccusative.hasVP = false := rfl
+
+/-- Transitives and unergatives both project vP. -/
+theorem vp_distribution :
+    ClauseType.transitive.hasVP = true ∧
+    ClauseType.unergative.hasVP = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 3: Extraction Modes
+-- § 3: Probe Types and Selective Opacity
+-- ============================================================================
+
+/-- Probe types that trigger movement in Tseltalan.
+    @cite{aissen-polian-2025} §3.1, (10):
+
+    - **[EPP:D]** on T° and Appl°: triggers A-movement of a DP to
+      the probe's specifier. T° and Appl° take rightside specifiers.
+    - **[EPP:WH]** on D° (secondary wh-movement) and C° (primary
+      wh-movement): triggers Ā-movement of a wh-phrase. -/
+inductive ProbeType where
+  | dProbe   -- [EPP:D] on T° or Appl° (A-movement)
+  | whProbe  -- [EPP:WH] on D° or C° (Ā-movement)
+  deriving DecidableEq, Repr
+
+/-- **Selective opacity** (@cite{keine-2019}, @cite{aissen-polian-2025} (33)):
+    N⁰ is a horizon for wh-probes on C°. Elements inside the extended
+    projection of N⁰ are invisible to wh-probes, blocking Ā-subextraction.
+
+    Crucially, this does NOT apply to D-probes: A-movement of a possessor
+    DP out of a nominal is permitted. The opacity is *selective* — it
+    depends on the probe type, not on nominal size.
+
+    `[wh]_{C°} -|| N` (A&P's (33)) -/
+def selectivelyOpaque (probe : ProbeType) : Bool :=
+  match probe with
+  | .whProbe => true   -- nominals always opaque to wh-probes
+  | .dProbe  => false  -- nominals transparent to D-probes
+
+theorem wh_probes_blocked : selectivelyOpaque .whProbe = true := rfl
+theorem d_probes_pass : selectivelyOpaque .dProbe = false := rfl
+
+/-- Ā-subextraction from within any nominal is impossible. Derived
+    from selective opacity: wh-probes cannot see into nominals. -/
+def canĀSubextract (_size : NominalSize) : Bool :=
+  !selectivelyOpaque .whProbe
+
+theorem subextraction_impossible (size : NominalSize) :
+    canĀSubextract size = false := rfl
+
+-- ============================================================================
+-- § 4: D-Layer Shielding (Attract Closest)
+-- ============================================================================
+
+/-- **D-layer shielding**: in a specific nominal (DP), D° is closer to
+    an external D-probe (T°'s [EPP:D]) than the possessor inside
+    Spec,PossP or Spec,nP. Attract Closest causes the probe to find
+    D° first, preventing it from reaching the possessor.
+
+    Non-specific nominals (PossP/nP) lack a D layer, so T°'s probe
+    reaches the possessor directly.
+
+    This is independent of selective opacity: D-probes CAN see into
+    nominals (selectivelyOpaque .dProbe = false), but D° intervenes
+    when present.
+
+    Derived from `isSpecific`: D-layer shielding ↔ specificity. -/
+def dLayerShields (size : NominalSize) : Bool :=
+  size.isSpecific
+
+theorem dp_shields : dLayerShields .dp = true := rfl
+theorem possP_no_shield : dLayerShields .possP = false := rfl
+theorem nP_no_shield : dLayerShields .nP = false := rfl
+
+-- ============================================================================
+-- § 5: Extraction Modes
 -- ============================================================================
 
 /-- Two possessor extraction strategies in Tseltalan.
     @cite{aissen-polian-2025} §3. -/
 inductive ExtractionMode where
   /-- Pied-piping: the entire nominal (including possessor) moves to
-      Spec,CP. The possessor stays nominal-internal. -/
+      Spec,CP. Requires D projection: only DPs can be targeted by a
+      wh-probe as a unit. -/
   | piedPiping
-  /-- Stranding: the possessor raises out of the nominal to an
-      A-position (Spec,ApplP or Spec,VoiceP), then undergoes
-      Ā-movement from there. The remnant nominal stays in situ. -/
+  /-- Stranding: the possessor first A-moves out of the nominal via
+      T°'s or Appl°'s [EPP:D] probe, then Ā-moves from the external
+      position. Requires the nominal to be transparent to D-probes
+      (always true) AND no D-layer shielding (non-specific). -/
   | stranding
   deriving DecidableEq, Repr
 
 /-- Whether a given extraction mode is available for a nominal of
-    given size.
+    given size, ignoring clause-level intervention.
 
-    - Pied-piping moves the whole DP — requires D projection (specific).
-    - Stranding raises the possessor out — requires nominal transparency
-      (non-specific, i.e., not a full DP).
+    - **Pied-piping**: the whole DP moves via wh-probe → requires D
+      projection (specific). Non-DPs cannot undergo wh-movement.
+    - **Stranding**: possessor A-moves out via D-probe → requires no
+      D-layer shielding. D-probes see through nominals (selective
+      opacity doesn't apply), but D° intervenes in specific DPs.
 
     @cite{aissen-polian-2025} §3.2. -/
 def extractionAvailable (mode : ExtractionMode) (size : NominalSize) : Bool :=
   match mode with
-  | .piedPiping => size == .dp
-  | .stranding  => !nominalOpaque size
+  | .piedPiping => size.isSpecific       -- only DPs can undergo wh-movement
+  | .stranding  => !dLayerShields size   -- no D-layer → possessor reachable
 
 /-- Pied-piping requires specificity (D projection). -/
 theorem piedPiping_requires_specific :
@@ -134,7 +230,7 @@ theorem piedPiping_requires_specific :
     extractionAvailable .piedPiping .possP = false ∧
     extractionAvailable .piedPiping .nP = false := ⟨rfl, rfl, rfl⟩
 
-/-- Stranding requires non-specificity (nominal transparency). -/
+/-- Stranding requires non-specificity (no D-layer shielding). -/
 theorem stranding_requires_nonspecific :
     extractionAvailable .stranding .dp = false ∧
     extractionAvailable .stranding .possP = true ∧
@@ -146,31 +242,39 @@ theorem stranding_requires_nonspecific :
 theorem extraction_always_possible (size : NominalSize) :
     extractionAvailable .piedPiping size = true ∨
     extractionAvailable .stranding size = true := by
-  cases size <;> simp [extractionAvailable, nominalOpaque]
+  cases size <;> simp [extractionAvailable, dLayerShields]
+
+/-- **Complementary distribution**: pied-piping and stranding are
+    mutually exclusive — exactly one is available for each nominal size.
+    Specific nominals admit only pied-piping; non-specific nominals
+    admit only stranding. Both reduce to `isSpecific`. -/
+theorem extraction_complementary (size : NominalSize) :
+    extractionAvailable .piedPiping size =
+    !extractionAvailable .stranding size := by
+  cases size <;> simp [extractionAvailable, dLayerShields]
 
 -- ============================================================================
--- § 4: External Possession
+-- § 6: External Possession (Derived from Selective Opacity)
 -- ============================================================================
 
-/-- Possessor extraction in Tseltalan always produces external possessors.
-    The possessor ends up outside the nominal projection regardless of
-    extraction mode:
+/-- Possessor extraction in Tseltalan never involves Ā-subextraction.
+    This follows from selective opacity: wh-probes cannot see into
+    nominals, so the possessor cannot be extracted from within.
 
-    - Pied-piping: the whole DP moves to Spec,CP; the possessor is at
-      the clause level.
-    - Stranding: the possessor raises to an A-position (Spec,ApplP or
-      Spec,VoiceP) before Ā-movement.
+    Since subextraction is impossible, extraction requires either:
+    (a) moving the whole nominal (pied-piping) — possessor at clause level
+    (b) first A-moving the possessor out (stranding) — possessor external
 
-    This follows from nominal opacity: Ā-subextraction from within a
-    nominal is blocked, so possessors can only be extracted by first
-    becoming external. @cite{aissen-polian-2025} §3.1. -/
-def extractedIsExternal (_mode : ExtractionMode) : Bool := true
-
-theorem extracted_always_external (mode : ExtractionMode) :
-    extractedIsExternal mode = true := by cases mode <;> rfl
+    In both cases, the extracted possessor is external at the point
+    of Ā-movement. This is A&P's claim (3): "An extracted possessor
+    in Tseltalan is always an external possessor." -/
+theorem extracted_always_external :
+    canĀSubextract .dp = false ∧
+    canĀSubextract .possP = false ∧
+    canĀSubextract .nP = false := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- § 5: Bridge to NominalStructure
+-- § 7: Bridge to NominalStructure
 -- ============================================================================
 
 /-- Map nominal size to possession type from `NominalStructure.lean`.
@@ -178,40 +282,42 @@ theorem extracted_always_external (mode : ExtractionMode) :
     - nP-internal possessors (Spec,nP) → inalienable
     - PossP-level possessors (Spec,PossP) → alienable
     - DP subsumes both; the type depends on internal structure. -/
-def NominalSize.possessionType : NominalSize → Option PossessionType
+def NominalSize.toPossessionType : NominalSize → Option PossessionType
   | .nP    => some .inalienable
   | .possP => some .alienable
   | .dp    => none
 
 theorem inalienable_at_nP :
-    NominalSize.nP.possessionType = some .inalienable := rfl
+    NominalSize.nP.toPossessionType = some .inalienable := rfl
 
 theorem alienable_at_possP :
-    NominalSize.possP.possessionType = some .alienable := rfl
+    NominalSize.possP.toPossessionType = some .alienable := rfl
 
-/-- The possessor position derived from NominalSize agrees with
-    PossessionType.possessorPosition from NominalStructure.lean. -/
-theorem possessor_position_agrees_inalienable :
-    NominalSize.nP.highestPosition =
+/-- For non-specific nominals, the highest projection IS the possessor's
+    position, agreeing with PossessionType.possessorPosition from
+    NominalStructure.lean. For DPs, the highest projection is D (the
+    possessor is shielded below). -/
+theorem highest_agrees_inalienable :
+    NominalSize.nP.highestProjection =
     PossessionType.inalienable.possessorPosition := rfl
 
-theorem possessor_position_agrees_alienable :
-    NominalSize.possP.highestPosition =
+theorem highest_agrees_alienable :
+    NominalSize.possP.highestProjection =
     PossessionType.alienable.possessorPosition := rfl
 
 -- ============================================================================
--- § 6: Bridge to SpecificityCondition
+-- § 8: Bridge to SpecificityCondition
 -- ============================================================================
 
-/-- Convergence: both A&P's nominal opacity and @cite{fiengo-higginbotham-1981}'s
+/-- Convergence: both A&P's D-layer shielding and @cite{fiengo-higginbotham-1981}'s
     Specificity Condition predict that specific DPs resist possessor
-    extraction by subextraction/binding into the DP.
+    extraction by stranding/binding into the DP.
 
     Divergence: A&P predict pied-piping IS available for specific DPs
     (whole DP moves, no subextraction); the Specificity Condition blocks
     ALL operator binding into specific DPs. The two constraints operate
-    at different levels — A&P targets syntactic movement, Fiengo &
-    Higginbotham targets operator-variable binding. -/
+    at different levels — D-layer shielding targets A-movement (D-probes),
+    the Specificity Condition targets operator-variable binding. -/
 theorem specificity_convergence_on_stranding :
     extractionAvailable .stranding .dp = false ∧
     Core.SpecificityCondition.blocked .whTrace .definite = true := ⟨rfl, rfl⟩
@@ -221,50 +327,67 @@ theorem specificity_divergence_on_piedpiping :
     Core.SpecificityCondition.blocked .whTrace .definite = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 7: Categorical Judgment (ψ-Subject)
+-- § 9: Categorical Judgment (ψ-Subject)
 -- ============================================================================
 
 open Core.InformationStructure
 
-/-- ψ-subjects are always cross-referenced by Set B (absolutive),
-    regardless of their thematic role.
+/-- The grammatical function of a ψ-subject.
+    ψ-subjects are always intransitive subjects — they raise from
+    unaccusative clauses where the sole argument is S_O (patientive).
 
-    @cite{aissen-polian-2025} §5, Table 2: in categorical judgment
-    constructions, the subject in Spec,TP triggers Set B agreement
-    on T°, even in contexts where an A argument would normally trigger
-    Set A. This is because T°'s EPP:D probe attracts the closest DP
-    to Spec,TP, and that DP is cross-referenced by Set B (the marker
-    set T° assigns). -/
-def ψSubjectMarkerSet : MarkerSet := .setB
+    @cite{aissen-polian-2025} §5, Table 1: all ψ-subject constructions
+    are structurally unaccusative, so the ψ-subject is always S_O. -/
+def ψSubjectGramFunction : GramFunction := .S_O
 
-/-- ψ-subjects get Set B, not Set A. This contrasts with the normal
-    transitive pattern where A gets Set A. -/
+/-- ψ-subject agreement is DERIVED from GramFunction.markerSet:
+    ψ-subjects are S_O, and S_O maps to Set B (absolutive). -/
+def ψSubjectMarkerSet : MarkerSet := ψSubjectGramFunction.markerSet
+
+/-- ψ-subjects receive Set B (absolutive) agreement — derived from
+    the fact that they are S_O, and S_O maps to Set B. -/
 theorem ψSubject_is_absolutive :
     ψSubjectMarkerSet = .setB := rfl
 
-/-- A categorical judgment places a ψ-subject in Spec,TP. -/
 theorem categorical_has_ψSubject :
     JudgmentType.categorical.hasψSubject = true := rfl
 
-/-- A thetic judgment has no ψ-subject. -/
 theorem thetic_no_ψSubject :
     JudgmentType.thetic.hasψSubject = false := rfl
 
+/-- A ψ-subject must be specific (= project to DP) to raise to Spec,TP.
+    @cite{aissen-polian-2025} §5.1, p. 85: "the subject of a clause
+    which expresses a categorical judgment cannot be non-specific."
+
+    This connects the specificity system to the ψ-subject system:
+    T°'s [EPP:D] probe searches for a DP. If the highest nominal in
+    T°'s domain is non-specific (PossP/nP), it is not a DP, and T°'s
+    probe passes over it. Only a specific DP satisfies the [EPP:D]
+    requirement and raises to Spec,TP as ψ-subject. -/
+def canBeψSubject (size : NominalSize) : Bool :=
+  size.isSpecific
+
+theorem specific_can_be_ψSubject : canBeψSubject .dp = true := rfl
+theorem nonspecific_cannot_be_ψSubject_possP :
+    canBeψSubject .possP = false := rfl
+theorem nonspecific_cannot_be_ψSubject_nP :
+    canBeψSubject .nP = false := rfl
+
 -- ============================================================================
--- § 8: ψ-Subject Constructions
+-- § 10: ψ-Subject Constructions
 -- ============================================================================
 
 /-- The three construction types that exhibit ψ-subjects in Tseltalan.
     @cite{aissen-polian-2025} §5. -/
 inductive ψConstruction where
-  /-- Predicative possession: 'X has Y' via existential construction.
-      ψ-subject = possessor. -/
+  /-- Predicative possession: 'X has Y' via existential construction
+      (Tsotsil *oy*, Tseltal *ay*). ψ-subject = possessor. -/
   | predicativePossession
-  /-- Experiential collocation: 'X is happy/angry/etc.'
-      ψ-subject = experiencer. -/
+  /-- Experiential collocation: 'X is angry' (lit: 'x's head gets
+      mixed up'). ψ-subject = experiencer-possessor. -/
   | experientialCollocation
-  /-- Lexical unaccusative: 'X arrived/fell/etc.'
-      ψ-subject = theme (internal argument of unaccusative V). -/
+  /-- Lexical unaccusative: 'X's money was lost.'
+      ψ-subject = possessor of theme (S_O). -/
   | lexicalUnaccusative
   deriving DecidableEq, Repr
 
@@ -276,86 +399,158 @@ def ψConstruction.clauseType : ψConstruction → ClauseType
   | .experientialCollocation  => .unaccusative
   | .lexicalUnaccusative     => .unaccusative
 
-/-- All ψ-subject constructions are structurally unaccusative.
-    @cite{aissen-polian-2025} §5: predicative possession, experiential
-    collocations, and lexical unaccusatives all lack a vP layer. -/
+/-- Whether pied-piping is possible for a given ψ-construction.
+
+    In predicative possession (§5.2, (48a/48b)) and experiential
+    collocations (§5.3, (55a/55b)), the possessor and possessum do NOT
+    form a constituent that can undergo wh-movement: the predicative
+    element (*oy*/*ay*, or the verb) intervenes. Only stranding works.
+
+    In lexical unaccusatives (§5.4, (62a/62b)), the entire possessive
+    phrase IS the internal argument and can be pied-piped. -/
+def ψConstruction.piedPipingPossible : ψConstruction → Bool
+  | .predicativePossession  => false  -- (48b): *[Mach'u x-chitom] oy t?
+  | .experientialCollocation => false  -- (55b): *[Much'u s-jol] kap-em t?
+  | .lexicalUnaccusative    => true   -- (62a): [Mach'a s-tak'in] ch'ay t?
+
+theorem pred_poss_no_piedpiping :
+    ψConstruction.predicativePossession.piedPipingPossible = false := rfl
+theorem exp_coll_no_piedpiping :
+    ψConstruction.experientialCollocation.piedPipingPossible = false := rfl
+theorem lex_unacc_piedpiping_ok :
+    ψConstruction.lexicalUnaccusative.piedPipingPossible = true := rfl
+
+/-- All ψ-subject constructions are structurally unaccusative. -/
 theorem ψ_constructions_unaccusative (c : ψConstruction) :
     c.clauseType = .unaccusative := by cases c <;> rfl
 
-/-- All ψ-subject constructions lack a vP layer. Derived from
-    `ClauseType.hasVP` in Tseltalan.lean. -/
+/-- All ψ-subject constructions lack a vP layer. -/
 theorem ψ_constructions_no_vP (c : ψConstruction) :
     c.clauseType.hasVP = false := by cases c <;> rfl
 
+/-- The grammatical function of the ψ-subject in each construction.
+    All three involve an unaccusative S_O that raises to Spec,TP.
+    @cite{aissen-polian-2025} §5:
+    - Predicative possession: possessor of the existential pivot
+    - Experiential collocation: experiencer-possessor
+    - Lexical unaccusative: possessor of the unaccusative theme -/
+def ψConstruction.ψSubjectFunction : ψConstruction → GramFunction
+  | .predicativePossession  => .S_O
+  | .experientialCollocation => .S_O
+  | .lexicalUnaccusative    => .S_O
+
+/-- All ψ-subject constructions assign S_O to the ψ-subject. -/
+theorem ψ_constructions_all_S_O (c : ψConstruction) :
+    c.ψSubjectFunction = .S_O := by cases c <;> rfl
+
+/-- ψ-subject agreement in each construction is Set B, derived from
+    the S_O grammatical function via the shared Tseltalan paradigm. -/
+theorem ψ_constructions_setB (c : ψConstruction) :
+    c.ψSubjectFunction.markerSet = .setB := by cases c <;> rfl
+
 -- ============================================================================
--- § 9: Intervention Effects (Table 4)
+-- § 11: Intervention Effects (Table 4)
 -- ============================================================================
+
+/-- Functional heads that carry [EPP:D] probes triggering A-movement.
+    @cite{aissen-polian-2025} §4.2, §6, Table 4. -/
+inductive DProbeHead where
+  | t     -- T° in all clause types
+  | appl  -- Appl° in applicative constructions
+  deriving DecidableEq, Repr
 
 /-- Does a clause type have an A-positioned DP that could intervene
-    between T°'s probe and a lower possessor?
+    between a given probe and a lower possessor?
 
-    Derived from `ClauseType.hasVP`: if there is a vP layer, its
-    specifier hosts an A-positioned DP (agent in transitive, S_A in
-    unergative). This DP intervenes via Attract Closest
-    (@cite{aissen-polian-2025} §4.2). -/
-def hasIntervener (ct : ClauseType) : Bool := ct.hasVP
+    Derived from `ClauseType.hasVP` for T° probes: if there is a vP
+    layer, its specifier hosts an A-positioned DP (agent or S_A).
+    For Appl° probes, intervention occurs when Spec,ApplP is filled
+    by a thematic applied argument (goal, recipient, etc.). -/
+def hasIntervener (head : DProbeHead) (ct : ClauseType)
+    (thematicAppl : Bool) : Bool :=
+  match head with
+  | .t    => ct.hasVP
+  | .appl => thematicAppl
 
-/-- Possessor stranding is blocked by intervention: an A-positioned
-    DP blocks possessor raising past it.
-    Pied-piping is unaffected: the whole DP moves directly to Spec,CP
-    via Ā-movement, bypassing A-positions entirely. -/
-def interventionBlocks (ct : ClauseType) (mode : ExtractionMode) : Bool :=
+/-- Possessor stranding is blocked when an A-positioned DP intervenes
+    between the [EPP:D] probe and the possessor.
+    Pied-piping is unaffected: the whole DP moves to Spec,CP via
+    wh-probe, bypassing A-positions entirely. -/
+def interventionBlocks (head : DProbeHead) (ct : ClauseType)
+    (mode : ExtractionMode) (thematicAppl : Bool := false) : Bool :=
   match mode with
-  | .stranding  => hasIntervener ct
+  | .stranding  => hasIntervener head ct thematicAppl
   | .piedPiping => false
 
 /-- An intervention datum for Table 4. -/
 structure InterventionDatum where
+  probe : DProbeHead
   clauseType : ClauseType
   mode : ExtractionMode
+  /-- Is Spec,ApplP filled by a thematic applied argument? -/
+  thematicAppl : Bool
+  /-- Is extraction blocked? -/
   blocked : Bool
   deriving DecidableEq, Repr
 
-/-- Table 4 of @cite{aissen-polian-2025}: intervention effects on
-    possessor extraction.
+/-- Table 4 of @cite{aissen-polian-2025} (p. 103): intervention effects
+    on possessor extraction. Expanded to include Appl° probe cases.
 
-    |              | Transitive | Unergative | Unaccusative |
-    |--------------|------------|------------|--------------|
-    | Pied-piping  | ok         | ok         | ok           |
-    | Stranding    | blocked    | blocked    | ok           | -/
+    | Probe  | Clause Type    | Thematic Appl | Pied-piping | Stranding |
+    |--------|----------------|---------------|-------------|-----------|
+    | T°     | unaccusative   | —             | ok          | ok        |
+    | T°     | transitive     | —             | ok          | blocked   |
+    | T°     | unergative     | —             | ok          | blocked   |
+    | Appl°  | (raising appl) | no            | ok          | ok        |
+    | Appl°  | (thematic appl)| yes           | ok          | blocked   | -/
 def table4 : List InterventionDatum :=
-  [ ⟨.transitive,   .piedPiping, false⟩
-  , ⟨.unergative,   .piedPiping, false⟩
-  , ⟨.unaccusative, .piedPiping, false⟩
-  , ⟨.transitive,   .stranding,  true⟩
-  , ⟨.unergative,   .stranding,  true⟩
-  , ⟨.unaccusative, .stranding,  false⟩ ]
+  -- T° probe, no thematic applicative
+  [ ⟨.t, .unaccusative, .piedPiping, false, false⟩
+  , ⟨.t, .unaccusative, .stranding,  false, false⟩
+  , ⟨.t, .transitive,   .piedPiping, false, false⟩
+  , ⟨.t, .transitive,   .stranding,  false, true⟩
+  , ⟨.t, .unergative,   .piedPiping, false, false⟩
+  , ⟨.t, .unergative,   .stranding,  false, true⟩
+  -- Appl° probe: raising applicative (empty Spec,ApplP)
+  , ⟨.appl, .transitive, .piedPiping, false, false⟩
+  , ⟨.appl, .transitive, .stranding,  false, false⟩
+  -- Appl° probe: thematic applicative (Goal in Spec,ApplP)
+  , ⟨.appl, .transitive, .piedPiping, true, false⟩
+  , ⟨.appl, .transitive, .stranding,  true, true⟩ ]
 
-/-- Table 4 is derivable from `interventionBlocks`: every cell matches.
-    The table is not stipulated — it follows from the clause type's
-    vP structure and the extraction mode. -/
+/-- Table 4 is derivable: every cell matches `interventionBlocks`. -/
 theorem table4_derived :
-    table4.all (λ d => d.blocked == interventionBlocks d.clauseType d.mode) = true := by
-  decide
+    table4.all (λ d => d.blocked ==
+      interventionBlocks d.probe d.clauseType d.mode d.thematicAppl)
+    = true := by decide
 
 /-- Pied-piping is never blocked by intervention (Ā-movement
     bypasses A-positions). -/
-theorem piedPiping_never_blocked (ct : ClauseType) :
-    interventionBlocks ct .piedPiping = false := by cases ct <;> rfl
+theorem piedPiping_never_blocked (head : DProbeHead) (ct : ClauseType)
+    (ta : Bool) :
+    interventionBlocks head ct .piedPiping ta = false := by
+  cases head <;> rfl
 
-/-- Stranding is blocked iff there is an intervener (= vP layer).
-    Derived from `ClauseType.hasVP`. -/
-theorem stranding_blocked_iff_vP (ct : ClauseType) :
-    interventionBlocks ct .stranding = ct.hasVP := by cases ct <;> rfl
+/-- For T° probes, stranding is blocked iff there is a vP layer. -/
+theorem t_stranding_blocked_iff_vP (ct : ClauseType) :
+    interventionBlocks .t ct .stranding = ct.hasVP := by
+  cases ct <;> rfl
+
+/-- For Appl° probes, stranding is blocked iff Spec,ApplP is filled
+    by a thematic applied argument. -/
+theorem appl_stranding_blocked_iff_thematic (ct : ClauseType) (ta : Bool) :
+    interventionBlocks .appl ct .stranding ta = ta := by
+  cases ta <;> rfl
 
 -- ============================================================================
--- § 10: Specifier Directionality
+-- § 12: Specifier Directionality
 -- ============================================================================
 
 /-- Specifier directionality parameter for functional heads.
-    @cite{aissen-polian-2025} §4: T° and Appl° in Tseltalan take
-    right-side specifiers, yielding post-verbal external possessors
-    and post-verbal ψ-subjects. -/
+    @cite{aissen-polian-2025} §3.1, (10): the default is leftside
+    specifiers, but T°, Appl°, and possibly Poss° take rightside
+    specifiers in Tseltalan. This yields post-verbal ψ-subjects
+    and post-verbal external possessors. -/
 inductive SpecDirection where
   | left   -- specifier precedes head (e.g., English Spec,TP)
   | right  -- specifier follows head (Tseltalan Spec,TP, Spec,ApplP)
@@ -368,44 +563,108 @@ def tseltalanTSpec : SpecDirection := .right
 def tseltalanApplSpec : SpecDirection := .right
 
 -- ============================================================================
--- § 11: Full Extraction Availability
+-- § 13: Full Extraction Availability
 -- ============================================================================
 
-/-- Combining extraction mode availability (§3) with intervention
-    effects (§9): is possessor extraction ultimately possible for
-    a given nominal size in a given clause type? -/
-def canExtractPossessor (size : NominalSize) (ct : ClauseType)
-    (mode : ExtractionMode) : Bool :=
-  extractionAvailable mode size && !interventionBlocks ct mode
+/-- Combining extraction mode availability (§4) with intervention
+    effects (§10): is possessor extraction ultimately possible for
+    a given nominal size, clause type, and probe? -/
+def canExtractPossessor (size : NominalSize) (head : DProbeHead)
+    (ct : ClauseType) (mode : ExtractionMode)
+    (thematicAppl : Bool := false) : Bool :=
+  extractionAvailable mode size &&
+    !interventionBlocks head ct mode thematicAppl
 
-/-- In unaccusative clauses, both modes are available for their
-    respective nominal sizes: no intervener blocks stranding,
-    and pied-piping is always available for DPs. -/
+/-- In unaccusative clauses via T°, both modes are available. -/
 theorem unaccusative_both_modes :
-    canExtractPossessor .dp .unaccusative .piedPiping = true ∧
-    canExtractPossessor .possP .unaccusative .stranding = true ∧
-    canExtractPossessor .nP .unaccusative .stranding = true := ⟨rfl, rfl, rfl⟩
+    canExtractPossessor .dp .t .unaccusative .piedPiping = true ∧
+    canExtractPossessor .possP .t .unaccusative .stranding = true ∧
+    canExtractPossessor .nP .t .unaccusative .stranding = true :=
+  ⟨rfl, rfl, rfl⟩
 
-/-- In transitive clauses, only pied-piping of specific DPs works.
-    Stranding is blocked by the agent in Spec,VoiceP. -/
+/-- In transitive clauses via T°, only pied-piping works. -/
 theorem transitive_only_piedpiping :
-    canExtractPossessor .dp .transitive .piedPiping = true ∧
-    canExtractPossessor .possP .transitive .stranding = false ∧
-    canExtractPossessor .nP .transitive .stranding = false := ⟨rfl, rfl, rfl⟩
+    canExtractPossessor .dp .t .transitive .piedPiping = true ∧
+    canExtractPossessor .possP .t .transitive .stranding = false ∧
+    canExtractPossessor .nP .t .transitive .stranding = false :=
+  ⟨rfl, rfl, rfl⟩
 
-/-- In unergative clauses, same as transitive: only pied-piping.
-    Stranding is blocked by S_A in Spec,vP. -/
-theorem unergative_only_piedpiping :
-    canExtractPossessor .dp .unergative .piedPiping = true ∧
-    canExtractPossessor .possP .unergative .stranding = false ∧
-    canExtractPossessor .nP .unergative .stranding = false := ⟨rfl, rfl, rfl⟩
+/-- Via Appl° raising applicative (no thematic arg), stranding works. -/
+theorem raising_appl_stranding :
+    canExtractPossessor .possP .appl .transitive .stranding false = true ∧
+    canExtractPossessor .nP .appl .transitive .stranding false = true :=
+  ⟨rfl, rfl⟩
+
+/-- Via Appl° thematic applicative (Goal fills Spec,ApplP), blocked. -/
+theorem thematic_appl_blocked :
+    canExtractPossessor .possP .appl .transitive .stranding true = false ∧
+    canExtractPossessor .nP .appl .transitive .stranding true = false :=
+  ⟨rfl, rfl⟩
 
 /-- ψ-subject constructions (all unaccusative) permit both extraction
-    modes. This follows from §8 (unaccusative) + §9 (no intervener). -/
+    modes via T°. -/
 theorem ψ_constructions_permit_both_modes (c : ψConstruction) :
-    canExtractPossessor .dp c.clauseType .piedPiping = true ∧
-    canExtractPossessor .possP c.clauseType .stranding = true ∧
-    canExtractPossessor .nP c.clauseType .stranding = true := by
+    canExtractPossessor .dp .t c.clauseType .piedPiping = true ∧
+    canExtractPossessor .possP .t c.clauseType .stranding = true ∧
+    canExtractPossessor .nP .t c.clauseType .stranding = true := by
   cases c <;> exact ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 14: Table 2 — Psr-S_O vs Psr-O Extraction Asymmetry
+-- ============================================================================
+
+/-- Table 2 of @cite{aissen-polian-2025} (p. 77): possessor extraction
+    and grammatical function in Ch'ol and Tseltalan.
+
+    | Mode        | Psr-S_O | Psr-O |
+    |-------------|---------|-------|
+    | Stranding   |    ✓    |   *   |
+    | Pied-piping |    ✓    |   ✓   |
+
+    Derived: Psr-S_O is the possessor of the internal argument of an
+    unaccusative clause (no vP → no intervener → stranding OK).
+    Psr-O is the possessor of the internal argument of a transitive
+    clause (vP layer → agent intervenes → stranding blocked). -/
+theorem table2_psr_S_O :
+    canExtractPossessor .possP .t .unaccusative .stranding = true ∧
+    canExtractPossessor .dp .t .unaccusative .piedPiping = true :=
+  ⟨rfl, rfl⟩
+
+theorem table2_psr_O :
+    canExtractPossessor .possP .t .transitive .stranding = false ∧
+    canExtractPossessor .dp .t .transitive .piedPiping = true :=
+  ⟨rfl, rfl⟩
+
+/-- The stranding asymmetry between Psr-S_O and Psr-O reduces to
+    whether the clause type has a vP layer. -/
+theorem stranding_asymmetry_is_vP :
+    canExtractPossessor .possP .t .unaccusative .stranding = true ∧
+    canExtractPossessor .possP .t .transitive .stranding = false :=
+  ⟨rfl, rfl⟩
+
+-- ============================================================================
+-- § 15: Bridge to Ergativity
+-- ============================================================================
+
+/-- Tseltalan is LOW-ABS: absolutive agreement follows the verb stem.
+    @cite{aissen-polian-2025} p. 97: in Tseltalan, "A's extract freely"
+    — there are no syntactic ergativity effects. This is consistent with
+    Tada's generalization: LOW-ABS languages lack extraction asymmetries.
+
+    The intervention effects in Table 4 are NOT about Ā-movement being
+    blocked by A-positioned DPs (as in HIGH-ABS/syntactically ergative
+    languages). Rather, they are about A-movement (possessor raising)
+    being blocked by a closer A-positioned DP, preventing the possessor
+    from reaching an external position from which it could Ā-extract. -/
+def tseltalanABSPosition : ABSPosition := .low
+
+theorem tseltalan_is_low_abs :
+    tseltalanABSPosition = .low := rfl
+
+/-- LOW-ABS languages have ABS=DEF (v° assigns case to transitive
+    object), not ABS=NOM (Infl° assigns case). -/
+theorem tseltalan_case_locus :
+    Fragments.Mayan.toCaseLocus tseltalanABSPosition =
+    Fragments.Mayan.CaseLocus.absDef := rfl
 
 end Phenomena.Possession.Studies.AissenPolian2025

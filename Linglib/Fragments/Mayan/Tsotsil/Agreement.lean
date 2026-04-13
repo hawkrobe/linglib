@@ -22,18 +22,16 @@ usually unpronounced unless topicalized or focused.
 
 3rd person singular Set B has no overt exponent (∅).
 
-## Clause Types (@cite{aissen-polian-2025}, (9))
-
-Clause types and grammatical function classification are shared across
-Tseltalan — see `Fragments.Mayan.Tseltalan` for the shared definitions.
+Grammatical function classification is shared across Tseltalan — see
+`Fragments.Mayan.Tseltalan` for the shared definitions.
 -/
 
 namespace Fragments.Mayan.Tsotsil
 
 open Fragments.Mayan (MarkerSet)
 
--- Re-export shared Tseltalan types for backward compatibility
-export Fragments.Mayan.Tseltalan (GramFunction ClauseType)
+-- Re-export shared Tseltalan types
+export Fragments.Mayan.Tseltalan (GramFunction)
 
 -- ============================================================================
 -- § 1: Agreement Marker Position

@@ -4,20 +4,17 @@ import Linglib.Fragments.Mayan.Params
 # Shared Tseltalan Infrastructure
 @cite{aissen-polian-2025} @cite{polian-2013}
 
-Types shared across the Tseltalan subgroup (Tsotsil, Tseltal). Both
-languages share agreement paradigm assignment, clause types, and
-grammatical function classification. They differ in agreement exponents
-and Set B marker position (Tsotsil: prefixal/suffixal; Tseltal:
-consistently suffixal).
+Descriptive types shared across the Tseltalan subgroup (Tsotsil, Tseltal).
+Both languages share agreement paradigm assignment and grammatical function
+classification. They differ in agreement exponents and Set B marker
+position (Tsotsil: prefixal/suffixal; Tseltal: consistently suffixal).
 
-## Clause Structure (@cite{aissen-polian-2025}, (9))
+## Agreement System (Table 1 of @cite{aissen-polian-2025})
 
-- **Transitive**: vP layer introduces external argument (A) in Spec,vP.
-  Set A indexes A; Set B indexes O.
-- **Unergative**: vP layer introduces external argument (S_A) in Spec,vP.
-  Set B indexes S_A.
-- **Unaccusative**: no vP layer; internal argument (S_O) is complement of V.
-  Set B indexes S_O.
+| Form   | Function | Tseltal  | Tsotsil          |
+|--------|----------|----------|------------------|
+| Set A  | A, Psr   | prefixal | prefixal         |
+| Set B  | S and O  | suffixal | prefixal/suffixal|
 -/
 
 namespace Fragments.Mayan.Tseltalan
@@ -31,19 +28,22 @@ open Fragments.Mayan (MarkerSet)
 /-- Grammatical functions in Tseltalan, determining which agreement
     marker set cross-references each argument.
 
-    | Function                       | Marker Set |
-    |--------------------------------|------------|
-    | A (transitive agent)           | Set A      |
-    | S_A (unergative subject)       | Set B      |
-    | S_O (unaccusative subject)     | Set B      |
-    | O (transitive/ditransitive obj)| Set B      |
-    | G (applied argument)           | Set B      |
-    | Possessor (genitive)           | Set A      | -/
+    These are traditional Mayanist descriptive categories
+    (footnote 9 of @cite{aissen-polian-2025}).
+
+    | Function                           | Marker Set |
+    |------------------------------------|------------|
+    | A (transitive subject)             | Set A      |
+    | S_A (agentive intransitive subject)| Set B      |
+    | S_O (patientive intransitive subj) | Set B      |
+    | O (transitive/ditransitive object) | Set B      |
+    | G (applied argument)               | Set B      |
+    | Possessor (genitive)               | Set A      | -/
 inductive GramFunction where
-  | A    -- external argument of transitive
-  | S_A  -- external argument of intransitive (unergative)
-  | S_O  -- internal argument of intransitive (unaccusative)
-  | O    -- internal argument of (di)transitive
+  | A    -- transitive subject (agent)
+  | S_A  -- intransitive subject (agentive)
+  | S_O  -- intransitive subject (patientive)
+  | O    -- transitive/ditransitive object
   | G    -- applied argument of ditransitive
   | psr  -- possessor (genitive)
   deriving DecidableEq, Repr
@@ -60,30 +60,7 @@ def GramFunction.markerSet : GramFunction → MarkerSet
   | .psr => .setA
 
 -- ============================================================================
--- § 2: Clause Types
--- ============================================================================
-
-/-- Clause types in Tseltalan, determining the functional structure
-    above VP (@cite{aissen-polian-2025}, (9)). -/
-inductive ClauseType where
-  /-- Transitive: vP introduces A in Spec,vP; V takes O as complement. -/
-  | transitive
-  /-- Unergative: vP introduces S_A in Spec,vP; no internal argument. -/
-  | unergative
-  /-- Unaccusative: no vP; S_O is complement of V. -/
-  | unaccusative
-  deriving DecidableEq, Repr
-
-/-- Whether a clause type has a vP layer (little-v projection).
-    Transitive and unergative clauses introduce an external argument
-    in Spec,vP; unaccusative clauses do not. -/
-def ClauseType.hasVP : ClauseType → Bool
-  | .transitive   => true
-  | .unergative   => true
-  | .unaccusative => false
-
--- ============================================================================
--- § 3: Shared Theorems
+-- § 2: Shared Theorems
 -- ============================================================================
 
 /-- Ergative-genitive homophony: Set A cross-references both transitive
@@ -97,12 +74,5 @@ theorem abs_uniform :
     GramFunction.S_O.markerSet = .setB ∧
     GramFunction.O.markerSet = .setB ∧
     GramFunction.G.markerSet = .setB := ⟨rfl, rfl, rfl, rfl⟩
-
-/-- Transitive and unergative clauses have a vP layer;
-    unaccusative clauses do not. -/
-theorem vp_distribution :
-    ClauseType.transitive.hasVP = true ∧
-    ClauseType.unergative.hasVP = true ∧
-    ClauseType.unaccusative.hasVP = false := ⟨rfl, rfl, rfl⟩
 
 end Fragments.Mayan.Tseltalan

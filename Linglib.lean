@@ -185,6 +185,7 @@ import Linglib.Core.Interval.RpowInterval
 import Linglib.Core.Interval.LogInterval
 import Linglib.Core.Interval.SqrtInterval
 import Linglib.Core.Modality.DeonticNecessity
+import Linglib.Core.SubjectProperties
 import Linglib.Core.Subjectivity
 import Linglib.Core.WALS.Datapoint
 import Linglib.Core.WALS.Languages
@@ -672,6 +673,9 @@ import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
 import Linglib.Fragments.Mayan.Kiche.VoiceSystem
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
+import Linglib.Fragments.Mayan.Tseltalan
+import Linglib.Fragments.Mayan.Tsotsil.Agreement
+import Linglib.Fragments.Mayan.Tseltal.Agreement
 import Linglib.Fragments.Mayan.Chol.Agreement
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
@@ -733,6 +737,7 @@ import Linglib.Phenomena.Case.Studies.Karlsson2017
 import Linglib.Phenomena.Case.Studies.AndersonJM2006
 import Linglib.Phenomena.Case.Studies.Woolford1997
 import Linglib.Phenomena.Case.Studies.Marantz1991
+import Linglib.Phenomena.Case.Studies.Comrie1989
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
 import Linglib.Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
@@ -1124,6 +1129,7 @@ import Linglib.Phenomena.Possession.Typology
 import Linglib.Phenomena.Possession.Studies.Heine1997
 import Linglib.Phenomena.Possession.Studies.HaninkKoontzGarboden2025
 import Linglib.Phenomena.Possession.Studies.Myler2016
+import Linglib.Phenomena.Possession.Studies.AissenPolian2025
 import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024_UPH

@@ -442,13 +442,6 @@ def JudgmentType.hasψSubject : JudgmentType → Bool
   | .categorical => true
   | .thetic      => false
 
-/-- Categorical judgments have a Theme (topic of predication);
-    thetic judgments are all-Rheme. Connects the pragmatic distinction
-    to the information-structural partition. -/
-def JudgmentType.hasTheme : JudgmentType → Bool
-  | .categorical => true
-  | .thetic      => false
-
 end Core.InformationStructure
 
 /-! ## Discourse Context
