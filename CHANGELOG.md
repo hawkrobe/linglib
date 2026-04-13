@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.229.690] - 2026-04-12
+
+### Changed
+- **FormalMatching.lean**: move from `Formal/Sluicing/` to `Ellipsis/`, extract NominalEllipsisLicense + nominal argument domain theorems to new `Ellipsis/Nominal.lean`, delete dead code (`argumentDomainSpine`, duplicate SC head pair functions, custom BEq reflexivity lemmas, binding domain bridge), consolidate `scHeadPairsForCat` as single SC head pair definition, simplify `lexicallyIdentical_refl` via `beq_self_eq_true`
+
+## [0.229.689] - 2026-04-12
+
+### Changed
+- **VendlerClass consolidated into VerbClass.lean**: `VendlerClass`, `Telicity`, `Duration`, `Dynamicity`, `AspectualProfile` + all pure methods/theorems (feature accessors, homogeneity, subinterval property, atomic distributivity) moved from `Theories/Semantics/Tense/Aspect/LexicalAspect.lean` to `Core/Lexical/VerbClass.lean`; shift functions (`telicize`, `atelicize`, `duratize`, `statify`), `toMereoTag`, and `naturallyImperfective`/`naturallyPerfective` remain in theory layer
+- `LexicalAspect.lean` stripped to theory-dependent content + `export Core.Verbs (...)` for backwards compatibility
+- `open Core.Verbs` added to ~50 files that use VendlerClass/AspectualProfile types
+
 ## [0.229.688] - 2026-04-12
 
 ### Changed

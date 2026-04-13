@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Phenomena.Ellipsis.Sluicing
-import Linglib.Theories.Syntax.Minimalism.Formal.Sluicing.FormalMatching
+import Linglib.Theories.Syntax.Minimalism.Ellipsis.FormalMatching
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
 
 /-!
@@ -150,23 +150,23 @@ def scss : CorpusSummary where
 
 /-- Sprouting + merger = 100%. -/
 theorem sprouting_merger_exhaustive :
-    scss.sproutingPctTenths + scss.mergerPctTenths = 1000 := by native_decide
+    scss.sproutingPctTenths + scss.mergerPctTenths = 1000 := by decide
 
 /-- Root + embedded = 100%. -/
 theorem root_embedded_exhaustive :
-    scss.rootPctTenths + scss.embeddedPctTenths = 1000 := by native_decide
+    scss.rootPctTenths + scss.embeddedPctTenths = 1000 := by decide
 
 /-- Sprouting is the majority kind. -/
 theorem sprouting_majority :
-    scss.sproutingPctTenths > scss.mergerPctTenths := by native_decide
+    scss.sproutingPctTenths > scss.mergerPctTenths := by decide
 
 /-- *Why* is the majority wh-remnant type. -/
 theorem why_majority :
-    scss.whyPctTenths > 500 := by native_decide
+    scss.whyPctTenths > 500 := by decide
 
 /-- Embedding is the majority context. -/
 theorem embedded_majority :
-    scss.embeddedPctTenths > scss.rootPctTenths := by native_decide
+    scss.embeddedPctTenths > scss.rootPctTenths := by decide
 
 /-- Modality mismatches are the most frequent mismatch type. -/
 theorem modality_most_frequent_mismatch :
@@ -176,7 +176,7 @@ theorem modality_most_frequent_mismatch :
     MismatchDimension.corpusCount .polarity ∧
     MismatchDimension.corpusCount .modality >
     MismatchDimension.corpusCount .newWords :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 /-- Voice mismatches are absent. -/
 theorem no_voice_mismatches :
@@ -195,15 +195,15 @@ theorem attested_iff_nonzero (d : MismatchDimension) :
 -- ============================================================================
 -- § 7: Sluicing — Minimalist Bridge Theorems
 -- ============================================================================
--- @cite{anand-hardt-mccloskey-2021} @cite{anand-mccloskey-2025}
+-- @cite{anand-hardt-mccloskey-2021} @cite{anand-hardt-mccloskey-2025}
 -- Connects empirical sluicing data — both the individual examples in
 -- `Phenomena.Ellipsis.Sluicing` and the corpus findings from
 -- @cite{anand-hardt-mccloskey-2021} — to the Syntactic Isomorphism Condition
 -- (SIC) formalized in
--- `Theories.Syntax.Minimalism.Formal.Sluicing.FormalMatching`.
+-- `Theories.Syntax.Minimalism.Ellipsis.FormalMatching`.
 
 open Minimalism
-open Minimalism.Sluicing
+open Minimalism.Ellipsis.FormalMatching
 open Phenomena.Ellipsis.Sluicing
 
 -- ============================================================================
@@ -217,11 +217,11 @@ open Phenomena.Ellipsis.Sluicing
 /-- Head pairs for a simple transitive vP: v selects V, V selects D.
     This is the argument domain structure of "someone left" / "John ate
     something" — any clause with a single verb and a DP argument. -/
-def transitiveVP : List HeadPair := [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, none, none⟩]
+def transitiveVP : List HeadPair := [⟨.v, .V, none, none, none⟩, ⟨.V, .D, none, none, none⟩]
 
 /-- Head pairs for an intransitive vP: v selects V only.
     Used for the antecedent of sprouting examples like "John left." -/
-def intransitiveVP : List HeadPair := [⟨.v, .V, 0, none, none⟩]
+def intransitiveVP : List HeadPair := [⟨.v, .V, none, none, none⟩]
 
 /-- SIC licenses basic sluicing: "Someone left, but I don't know who."
 
@@ -229,31 +229,31 @@ def intransitiveVP : List HeadPair := [⟨.v, .V, 0, none, none⟩]
     verb, so their argument domains have identical head pairs. -/
 theorem basic_sluice_licensed :
     structurallyIdentical transitiveVP transitiveVP = true := by
-  native_decide
+  decide
 
 /-- SIC licenses object sluicing: "John ate something, but I don't know what."
 
     Same verb "ate" → same head pairs. -/
 theorem object_sluice_licensed :
     structurallyIdentical transitiveVP transitiveVP = true := by
-  native_decide
+  decide
 
 /-- A `SluicingLicense` for same-verb sluices is licensed. -/
 theorem same_verb_license_is_licensed :
-    (SluicingLicense.mk transitiveVP transitiveVP .C .C).isLicensed = true := by
-  native_decide
+    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed = true := by
+  decide
 
 /-- SIC correctly predicts `basicSluice` is grammatical. -/
 theorem sic_predicts_basicSluice :
     basicSluice.grammatical = true ∧
-    (SluicingLicense.mk transitiveVP transitiveVP .C .C).isLicensed = true :=
-  ⟨rfl, by native_decide⟩
+    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed = true :=
+  ⟨rfl, by decide⟩
 
 /-- SIC correctly predicts `objectSluice` is grammatical. -/
 theorem sic_predicts_objectSluice :
     objectSluice.grammatical = true ∧
-    (SluicingLicense.mk transitiveVP transitiveVP .C .C).isLicensed = true :=
-  ⟨rfl, by native_decide⟩
+    (SluicingLicense.mk transitiveVP transitiveVP).isLicensed = true :=
+  ⟨rfl, by decide⟩
 
 -- Case matching: case is assigned within the argument domain, so the SIC
 -- requires case to match between antecedent and ellipsis site.
@@ -261,22 +261,22 @@ theorem sic_predicts_objectSluice :
 /-- Head pairs for a dative-assigning transitive vP.
     V assigns dative case to its DP complement (e.g., German *helfen*). -/
 def dativeVP : List HeadPair :=
-  [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, some .Dat, none⟩]
+  [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Dat, none, none⟩]
 
 /-- Head pairs for an accusative-assigning transitive vP.
     V assigns accusative case to its DP complement (e.g., German *sehen*). -/
 def accusativeVP : List HeadPair :=
-  [⟨.v, .V, 0, none, none⟩, ⟨.V, .D, 0, some .Acc, none⟩]
+  [⟨.v, .V, none, none, none⟩, ⟨.V, .D, some .Acc, none, none⟩]
 
 /-- Same-case head pairs are structurally identical (case match OK). -/
 theorem case_match_licensed :
     structurallyIdentical dativeVP dativeVP = true := by
-  native_decide
+  decide
 
 /-- Case mismatch blocks structural identity. -/
 theorem case_mismatch_blocked :
     structurallyIdentical dativeVP accusativeVP = false := by
-  native_decide
+  decide
 
 /-- SIC correctly predicts `germanCaseMatch` is grammatical:
     dative wh-phrase matches dative correlate. The SIC is licensed
@@ -285,7 +285,7 @@ theorem case_mismatch_blocked :
 theorem sic_predicts_germanCaseMatch :
     germanCaseMatch.grammatical = true ∧
     structurallyIdentical dativeVP dativeVP = true :=
-  ⟨rfl, by native_decide⟩
+  ⟨rfl, by decide⟩
 
 /-- SIC correctly predicts `germanCaseMismatch` is ungrammatical:
     accusative wh-phrase does not match dative correlate. The SIC
@@ -294,7 +294,7 @@ theorem sic_predicts_germanCaseMatch :
 theorem sic_predicts_germanCaseMismatch :
     germanCaseMismatch.grammatical = false ∧
     structurallyIdentical dativeVP accusativeVP = false :=
-  ⟨rfl, by native_decide⟩
+  ⟨rfl, by decide⟩
 
 -- ============================================================================
 -- § 7.2: SIC Mismatch Predictions Confirmed by Corpus
@@ -317,14 +317,14 @@ theorem argstructure_inside_and_absent :
 theorem tense_outside_and_attested :
     isInArgumentDomain .T .C = false ∧
     MismatchDimension.corpusCount .tense > 0 :=
-  ⟨by decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 /-- Mod is outside the argument domain: modal mismatches are licit.
     The corpus confirms: 394 modal mismatches — the most frequent type. -/
 theorem modality_outside_and_attested :
     isInArgumentDomain .Mod .C = false ∧
     MismatchDimension.corpusCount .modality > 0 :=
-  ⟨by decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 /-- The SIC cleanly separates tolerated from untolerated mismatches:
     every mismatch dimension inside the argument domain has 0 corpus
@@ -336,7 +336,7 @@ theorem sic_partition_confirmed :
     -- Outside arg domain → mismatches attested
     MismatchDimension.corpusCount .tense > 0 ∧
     MismatchDimension.corpusCount .modality > 0 :=
-  ⟨rfl, rfl, by native_decide, by native_decide⟩
+  ⟨rfl, rfl, by decide, by decide⟩
 
 -- ============================================================================
 -- § 7.3: Voice Mismatch Resolution (@cite{anand-hardt-mccloskey-2021})
@@ -347,14 +347,6 @@ theorem sic_partition_confirmed :
 -- within the argument domain (v is F1, inside vP). The 0 corpus count
 -- is predicted, not puzzling.
 
-/-- Head pairs for an active transitive vP with voice flavor. -/
-def activeTransitiveVP : List HeadPair :=
-  [⟨.v, .V, 0, none, some .agentive⟩, ⟨.V, .D, 0, none, none⟩]
-
-/-- Head pairs for a passive transitive vP with voice flavor. -/
-def passiveTransitiveVP : List HeadPair :=
-  [⟨.v, .V, 0, none, some .nonThematic⟩, ⟨.V, .D, 0, none, none⟩]
-
 /-- The SIC correctly blocks voice mismatches in sluicing: active
     v[agentive] ≠ passive v[nonThematic], and both are within the
     argument domain (F1 ≤ F1). The corpus confirms: 0 voice mismatches.
@@ -362,11 +354,11 @@ def passiveTransitiveVP : List HeadPair :=
     This resolves the voice puzzle from the earlier analysis. The puzzle
     arose from treating voice as outside the argument domain (like T/Mod),
     but @cite{anand-hardt-mccloskey-2021} shows that voice flavor is encoded on v, which IS inside
-    the argument domain. -/
+    the argument domain. Uses `activeVP`/`passiveVP` from FormalMatching. -/
 theorem voice_correctly_blocked :
-    structurallyIdentical activeTransitiveVP passiveTransitiveVP = false ∧
+    structurallyIdentical activeVP passiveVP = false ∧
     MismatchDimension.corpusCount .voice = 0 :=
-  ⟨by native_decide, rfl⟩
+  ⟨by decide, rfl⟩
 
 -- ============================================================================
 -- § 7.4: Corpus Distributions
@@ -375,7 +367,7 @@ theorem voice_correctly_blocked :
 /-- Sprouting is the dominant sluice kind (65.5%), overturning the
     literature's focus on merger. -/
 theorem sprouting_is_default :
-    scss.sproutingPctTenths > 500 := by native_decide
+    scss.sproutingPctTenths > 500 := by decide
 
 /-- *Why* accounts for the majority of sluicing. Since virtually all
     *why*-sluices are sprouting (reason adjuncts lack overt correlates),
@@ -383,7 +375,7 @@ theorem sprouting_is_default :
     (sprouting, reason), not "Someone left, but I don't know who"
     (merger, entity). -/
 theorem why_dominates :
-    scss.whyCount > scss.totalSluices / 2 := by native_decide
+    scss.whyCount > scss.totalSluices / 2 := by decide
 
 -- ============================================================================
 -- § 8: Merchant's Deletion Domain Predictions (@cite{merchant-2013})

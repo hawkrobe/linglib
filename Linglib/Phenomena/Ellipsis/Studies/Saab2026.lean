@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Ellipsis.NPEllipsis
-import Linglib.Theories.Syntax.Minimalism.Formal.Sluicing.FormalMatching
+import Linglib.Theories.Syntax.Minimalism.Ellipsis.Nominal
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
 
 /-!
@@ -23,7 +23,7 @@ to the NP-ellipsis data in Spanish binominals.
 namespace Phenomena.Ellipsis.Studies.Saab2026
 
 open Minimalism
-open Minimalism.Sluicing
+open Minimalism.Ellipsis.Nominal
 open Core.Lexical.Binominal
 open Phenomena.Ellipsis.NPEllipsis
 

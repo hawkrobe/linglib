@@ -42,25 +42,12 @@ via `same_root_convergence`.
 
 -/
 
-namespace Minimalism.Sluicing
+namespace Minimalism.Ellipsis.FormalMatching
 
 open Minimalism
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 1: Argument Domain
--- ═══════════════════════════════════════════════════════════════
-
-/-- The categories within the argument domain for a given top category.
-    Filters the full EP spine to just those at or below the AD boundary.
-
-    The argument domain (@cite{anand-hardt-mccloskey-2025}, Def 4) is the most
-    inclusive projection in the EP that denotes type ⟨e,t⟩ (a property).
-    For full clauses: vP. For small clauses: the SC itself. -/
-def argumentDomainSpine (topCat : Cat) : List Cat → List Cat :=
-  List.filter (λ c => isInArgumentDomain c topCat)
-
--- ═══════════════════════════════════════════════════════════════
--- Part 2: Head Pairs
+-- § 1: Head Pairs
 -- ═══════════════════════════════════════════════════════════════
 
 /-- A head pair: a head and its complement category within the argument domain.
@@ -93,7 +80,7 @@ structure HeadPair where
   deriving Repr, DecidableEq
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 3: Syntactic Identity
+-- § 2: Syntactic Identity
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Lexical identity of head pairs (@cite{anand-hardt-mccloskey-2025}, Def 5):
@@ -145,7 +132,7 @@ def structurallyIdentical (pairs1 pairs2 : List HeadPair) : Bool :=
   pairs1.length == pairs2.length && matchHeadPairs pairs1 pairs2
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 4: Sluicing License (SIC)
+-- § 3: Sluicing License (SIC)
 -- ═══════════════════════════════════════════════════════════════
 
 /-- Sluicing license: the Syntactic Isomorphism Condition (SIC).
@@ -164,7 +151,7 @@ def SluicingLicense.isLicensed (sl : SluicingLicense) : Bool :=
   structurallyIdentical sl.antecedentPairs sl.ellipsisPairs
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 5: Bridge Theorems — SIC Predictions
+-- § 4: SIC Predictions
 -- ═══════════════════════════════════════════════════════════════
 
 -- Voice Mismatch Resolution (@cite{anand-hardt-mccloskey-2021})
@@ -226,13 +213,6 @@ theorem small_clause_argdomain_is_self :
 theorem small_clause_excludes_v :
     isInArgumentDomain .v .V = false := by decide
 
-/-- Small clause argument domains are smaller (fewer head pairs to match).
-    This predicts more permissive matching for SC sluicing,
-    because fewer structural correspondences are required. -/
-theorem small_clause_smaller_argdomain :
-    (argumentDomainSpine .V fullVerbalEP).length <
-    (argumentDomainSpine .C fullVerbalEP).length := by decide
-
 -- Cross-categorial SC argument domains (@cite{anand-hardt-mccloskey-2025} Def 4)
 
 /-- For a P-headed small clause, the argument domain is P itself.
@@ -261,14 +241,9 @@ theorem sc_argdomain_le_clause (sc : SCPredCategory) :
     fValue (scArgumentDomainCat sc) ≤ fValue (argumentDomainCat .C) := by
   cases sc <;> decide
 
-/-- Extract head pairs from a small clause's argument domain.
+/-- Head pairs from a small clause's argument domain.
     The SC argument domain contains only the predicate head and its
     complement (the subject DP), yielding a single head pair. -/
-def scHeadPairs (sc : SmallClause) : List HeadPair :=
-  [⟨sc.predCat.toCat, .D, none, none, none⟩]
-
-/-- Head pairs for each SC predicate category (independent of the
-    specific subject and predicate syntactic objects). -/
 def scHeadPairsForCat (cat : SCPredCategory) : List HeadPair :=
   [⟨cat.toCat, .D, none, none, none⟩]
 
@@ -286,22 +261,6 @@ theorem sc_same_pred_sluicing_licensed (cat : SCPredCategory) :
 
 -- Matching properties
 
-/-- BEq on Cat is reflexive. -/
-theorem cat_beq_refl (c : Cat) : (c == c) = true := by
-  cases c <;> decide
-
-/-- BEq on UD.Case is reflexive. -/
-private theorem ud_case_beq_refl (c : UD.Case) : (c == c) = true := by
-  cases c <;> decide
-
-/-- BEq on VoiceFlavor is reflexive. -/
-private theorem voiceFlavor_beq_refl (v : VoiceFlavor) : (v == v) = true := by
-  cases v <;> decide
-
-/-- BEq on Bool is reflexive. -/
-private theorem bool_beq_refl (b : Bool) : (b == b) = true := by
-  cases b <;> decide
-
 /-- Lexical identity is reflexive for any head pair. -/
 theorem lexicallyIdentical_refl (hp : HeadPair) :
     lexicallyIdentical hp hp = true := by
@@ -309,17 +268,17 @@ theorem lexicallyIdentical_refl (hp : HeadPair) :
   cases hp.assignedCase with
   | none =>
     cases hp.voiceFlavor with
-    | none => cases hp.isArgumentPP with | none => rfl | some b => exact bool_beq_refl b
-    | some v =>
-      simp only [voiceFlavor_beq_refl, Bool.true_and]
-      cases hp.isArgumentPP with | none => rfl | some b => exact bool_beq_refl b
-  | some c =>
-    simp only [ud_case_beq_refl, Bool.true_and]
+    | none => cases hp.isArgumentPP with | none => rfl | some _ => simp
+    | some _ =>
+      simp only [beq_self_eq_true, Bool.true_and]
+      cases hp.isArgumentPP with | none => rfl | some _ => simp
+  | some _ =>
+    simp only [beq_self_eq_true, Bool.true_and]
     cases hp.voiceFlavor with
-    | none => cases hp.isArgumentPP with | none => rfl | some b => exact bool_beq_refl b
-    | some v =>
-      simp only [voiceFlavor_beq_refl, Bool.true_and]
-      cases hp.isArgumentPP with | none => rfl | some b => exact bool_beq_refl b
+    | none => cases hp.isArgumentPP with | none => rfl | some _ => simp
+    | some _ =>
+      simp only [beq_self_eq_true, Bool.true_and]
+      cases hp.isArgumentPP with | none => rfl | some _ => simp
 
 /-- Removing the first lexically identical element from a list headed
     by that element succeeds and returns the tail. -/
@@ -393,7 +352,7 @@ theorem case_match_licenses_sluicing :
   structurallyIdentical_refl _
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 6: Derivation Grounding — VerbFrame / SCFrame
+-- § 4b: Derivation Grounding — VerbFrame / SCFrame
 -- ═══════════════════════════════════════════════════════════════
 
 /-- A verb frame specifies the derivation-level properties of a
@@ -508,27 +467,17 @@ theorem same_case_from_frames :
 
 -- ── Small clause frames ────────────────────────────────────────
 
-/-- Head pairs from a small clause's argument domain.
-    An SC has a single head pair: the predicate head selects the subject DP.
-    The argument domain is the SC predicate itself (at F0). -/
-def scFrameHeadPairs (cat : SCPredCategory) : List HeadPair :=
-  [⟨cat.toCat, .D, none, none, none⟩]
-
-/-- SC frame head pairs match the hand-specified `scHeadPairsForCat`. -/
-theorem scFrame_eq (cat : SCPredCategory) :
-    scFrameHeadPairs cat = scHeadPairsForCat cat := rfl
-
 /-- Is sluicing licensed between a verb frame and an SC frame?
     Cross-category sluicing (full clause ↔ SC) involves different
     argument domain sizes, so it typically fails the SIC. -/
 def crossCategorySluicing (vf : VerbFrame) (sc : SCPredCategory) : Bool :=
-  structurallyIdentical vf.headPairs (scFrameHeadPairs sc)
+  structurallyIdentical vf.headPairs (scHeadPairsForCat sc)
 
 /-- Full clause → SC cross-category sluicing fails: different numbers
     of head pairs (2 vs 1) means the SIC length check blocks. -/
 theorem cross_category_blocked (vf : VerbFrame) (sc : SCPredCategory) :
     crossCategorySluicing vf sc = false := by
-  unfold crossCategorySluicing structurallyIdentical VerbFrame.headPairs scFrameHeadPairs
+  unfold crossCategorySluicing structurallyIdentical VerbFrame.headPairs scHeadPairsForCat
   rfl
 
 -- ── Derivation well-formedness ─────────────────────────────────
@@ -566,60 +515,7 @@ private def passiveTree := passiveFrame.tree 1 2 3
 #guard selectsB (mkLeaf .V [.D] 2) (mkLeaf .D [] 3)
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 7: Nominal Ellipsis Licensing (@cite{merchant-2001})
--- ═══════════════════════════════════════════════════════════════
-
-/-- Nominal ellipsis license: Num[E] feature.
-    NP-ellipsis is licensed when the Num head carries an [E] feature,
-    which permits PF-deletion of the nominal argument domain (complement
-    of Num — everything at or below nP). -/
-structure NominalEllipsisLicense where
-  /-- Does Num carry [E]? -/
-  numHasE : Bool
-  /-- The nominal argument domain boundary (n for full DPs). -/
-  argDomainBoundary : Cat := .n
-  deriving Repr, DecidableEq
-
-/-- Is NP-ellipsis licensed? Requires Num[E]. -/
-def NominalEllipsisLicense.isLicensed (nel : NominalEllipsisLicense) : Bool :=
-  nel.numHasE
-
--- ═══════════════════════════════════════════════════════════════
--- Part 8: Nominal Argument Domain (@cite{saab-2026})
--- ═══════════════════════════════════════════════════════════════
-
-/-- N is within the nominal argument domain (F0 ≤ F1 = n). -/
-theorem n_lexical_in_nominal_argdomain :
-    isInArgumentDomain .N .D = true := by decide
-
-/-- n is within the nominal argument domain (F1 ≤ F1). -/
-theorem n_functional_in_nominal_argdomain :
-    isInArgumentDomain .n .D = true := by decide
-
-/-- Num is NOT in the nominal argument domain (F2 > F1 = n). -/
-theorem num_not_in_nominal_argdomain :
-    isInArgumentDomain .Num .D = false := by decide
-
-/-- Q is NOT in the nominal argument domain (F3 > F1 = n). -/
-theorem q_not_in_nominal_argdomain :
-    isInArgumentDomain .Q .D = false := by decide
-
-/-- D is NOT in the nominal argument domain (F4 > F1 = n). -/
-theorem d_not_in_nominal_argdomain :
-    isInArgumentDomain .D .D = false := by decide
-
-/-- NP-ellipsis with Num[E]: pseudo-partitive/quantificational
-    binominals license deletion of the nominal argument domain. -/
-theorem pseudopartitive_licenses_npe :
-    NominalEllipsisLicense.isLicensed ⟨true, .n⟩ = true := by decide
-
-/-- NP-ellipsis without Num[E]: qualitative binominals
-    (with EquP + indexical empty noun) block NP-ellipsis. -/
-theorem qualitative_blocks_npe :
-    NominalEllipsisLicense.isLicensed ⟨false, .n⟩ = false := by decide
-
--- ═══════════════════════════════════════════════════════════════
--- Part 9: Nonargument PPs and Chung's Generalization
+-- § 5: Nonargument PPs and Chung's Generalization
 -- (@cite{anand-hardt-mccloskey-2025} §4)
 -- ═══════════════════════════════════════════════════════════════
 
@@ -671,39 +567,7 @@ theorem argument_pp_must_match :
   decide
 
 -- ═══════════════════════════════════════════════════════════════
--- Part 10: Binding Domain Bridge
--- ═══════════════════════════════════════════════════════════════
-
-/-- The argument domain and the binding domain share a boundary: vP.
-    In @cite{chomsky-1981}'s Binding Theory, the binding domain is the
-    Complete Functional Complex (CFC) — the minimal domain containing
-    the governor, a subject, and an accessible SUBJECT. For simple
-    transitive clauses, this is vP: v introduces the external argument
-    (subject) and governs V's complement.
-
-    The argument domain (@cite{anand-hardt-mccloskey-2025} Def 4) is
-    independently defined as the most inclusive ⟨e,t⟩ projection in
-    the EP. For full clauses, this is also vP: vP denotes a property
-    (⟨e,t⟩), while TP/CP denote propositions (⟨s,t⟩).
-
-    This convergence is not accidental: both notions pick out the
-    domain where argument structure is determined. The SIC requires
-    structural identity within this domain; Binding Theory constrains
-    coreference within the same domain.
-
-    Formally: v is the highest head inside the argument domain, and
-    the argument domain boundary is the argumentDomainCat of the EP's
-    top. For CP, this is .v (F1). -/
-theorem argdomain_equals_binding_domain :
-    -- v is the argument domain boundary for full clauses
-    argumentDomainCat .C = .v ∧
-    -- v is inside the argument domain
-    isInArgumentDomain .v .C = true ∧
-    -- T (the next projection up) is NOT inside
-    isInArgumentDomain .T .C = false := by decide
-
--- ═══════════════════════════════════════════════════════════════
--- Part 11: Rudin (2019) Comparison — Domination Chains vs Head Pairs
+-- § 6: Rudin (2019) Comparison — Domination Chains vs Head Pairs
 -- ═══════════════════════════════════════════════════════════════
 
 /-- @cite{rudin-2019}'s structure matching (Def 9) requires that heads
@@ -918,4 +782,4 @@ theorem domain_root_is_divergence_source :
       [⟨.N, .D, none, none, none⟩] = true :=
   ⟨rudin_also_licenses_same_voice, by decide, structurallyIdentical_refl _⟩
 
-end Minimalism.Sluicing
+end Minimalism.Ellipsis.FormalMatching
