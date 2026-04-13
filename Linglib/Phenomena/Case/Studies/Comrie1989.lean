@@ -4,6 +4,7 @@ import Linglib.Core.SubjectProperties
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Phenomena.Alignment.Typology
 import Linglib.Phenomena.Causation.Typology
+import Linglib.Fragments.Dargwa.ComplexPredicates
 
 /-!
 # Comrie (1989) @cite{comrie-1989}
@@ -116,6 +117,47 @@ theorem marking_polarity_matches_alignment :
     ArgumentRole.A.highDefault = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
+-- § 2a: Deriving Subject Properties from Alignment
+-- ============================================================================
+
+/-! ### Alignment predicts subject property convergence
+
+@cite{comrie-1989} Ch 5: alignment type predicts whether subject
+properties converge. In accusative languages, all properties pick S=A.
+In ergative languages, coding properties pick S=P; whether behavioral
+properties also pick S=P (**syntactic** ergativity, rare) or S=A
+(**morphological** ergativity, common) is a parametric dimension.
+
+The `toSubjectBundle` function derives the predicted subject property
+bundle from alignment type, so the three stipulated bundles in
+`Core.SubjectProperties` become consequences of alignment classification
+rather than independent definitions. -/
+
+/-- Derive the predicted subject property bundle from alignment type.
+    Non-ergative alignment → all properties S=A (accusative bundle).
+    Ergative → coding S=P, behavioral parametric. -/
+def toSubjectBundle (a : AlignmentType)
+    (syntacticErg : Bool := false) : SubjectPropertyBundle :=
+  match a with
+  | .ergative =>
+    if syntacticErg then syntacticErgativityBundle
+    else morphErgativityBundle
+  | _ => accusativeBundle
+
+/-- Accusative alignment derives the accusative bundle. -/
+theorem accusative_derives_bundle :
+    toSubjectBundle .accusative = accusativeBundle := rfl
+
+/-- Ergative alignment (default) derives morphological ergativity bundle. -/
+theorem morphErg_derives_bundle :
+    toSubjectBundle .ergative = morphErgativityBundle := rfl
+
+/-- Ergative alignment with syntacticErg=true derives syntactic ergativity. -/
+theorem syntacticErg_derives_bundle :
+    toSubjectBundle .ergative (syntacticErg := true)
+    = syntacticErgativityBundle := rfl
+
+-- ============================================================================
 -- § 3: Subject Property Convergence under Alignment
 -- ============================================================================
 
@@ -137,6 +179,72 @@ theorem morphErg_subject_diverges :
     This is the rare case where even behavioral tests track absolutive. -/
 theorem syntacticErg_subject_converges :
     syntacticErgativityBundle.converges = true := by decide
+
+-- ============================================================================
+-- § 3a: Per-Language Subject Property Predictions
+-- ============================================================================
+
+/-! ### Alignment profiles predict subject property convergence
+
+Each language's alignment profile (from `Phenomena.Alignment.Typology`)
+generates a predicted subject property bundle via `toSubjectBundle`.
+These theorems verify the predictions against the known typological
+facts for each language:
+
+- **Accusative** languages (English, Japanese): derived bundle converges.
+- **Morphologically ergative** languages (Basque, Dargwa, Hindi-Urdu):
+  derived bundle diverges (coding ≠ behavioral).
+- **Syntactically ergative** languages (Dyirbal): must set
+  `syntacticErg := true` to get a converging bundle.
+
+The `syntacticErg` parameter captures the rare/common ergativity
+distinction that @cite{comrie-1989} Ch 5 identifies as central. -/
+
+open Phenomena.Alignment.Typology
+  (english dyirbal basque hindiUrdu dargwa japanese)
+
+/-- English: accusative NP alignment → derived bundle converges. -/
+theorem english_subject_from_alignment :
+    (toSubjectBundle english.npAlignment).converges = true := by decide
+
+/-- Japanese: accusative NP alignment → derived bundle converges. -/
+theorem japanese_subject_from_alignment :
+    (toSubjectBundle japanese.npAlignment).converges = true := by decide
+
+/-- Basque: ergative alignment → default (morphological) derived bundle
+    diverges, correctly predicting that coding and behavioral properties
+    pick different NPs. -/
+theorem basque_morphErg_diverges :
+    (toSubjectBundle basque.npAlignment).converges = false := by decide
+
+/-- Basque's derived bundle is exactly the morphological ergativity
+    bundle: coding picks S=P, behavioral picks S=A. -/
+theorem basque_bundle_is_morphErg :
+    toSubjectBundle basque.npAlignment = morphErgativityBundle := rfl
+
+/-- Dargwa: consistently ergative → morphological ergativity predicted. -/
+theorem dargwa_bundle_is_morphErg :
+    toSubjectBundle dargwa.npAlignment = morphErgativityBundle := rfl
+
+/-- Hindi-Urdu: ergative NP alignment → morphological ergativity predicted.
+    The split-ergative conditioning (perfective → ERG) is orthogonal to
+    subject property convergence: even in perfective clauses, behavioral
+    properties track S=A. -/
+theorem hindiUrdu_morphErg_diverges :
+    (toSubjectBundle hindiUrdu.npAlignment).converges = false := by decide
+
+/-- Dyirbal: ergative NP alignment → default (morphological) prediction
+    diverges. But Dyirbal is one of the rare **syntactically ergative**
+    languages (@cite{dixon-1972}): even behavioral properties
+    (coordination deletion) track S=P. -/
+theorem dyirbal_default_diverges :
+    (toSubjectBundle dyirbal.npAlignment).converges = false := by decide
+
+/-- Dyirbal with syntacticErg=true → derived bundle converges,
+    correctly predicting full syntactic ergativity. -/
+theorem dyirbal_syntacticErg_converges :
+    (toSubjectBundle dyirbal.npAlignment (syntacticErg := true)).converges
+    = true := by decide
 
 -- ============================================================================
 -- § 4: Causative Hierarchies
@@ -197,5 +305,94 @@ theorem ah_mirrors_causee_hierarchy :
     AHPosition.directObject.rank > AHPosition.indirectObject.rank ∧
     AHPosition.indirectObject.rank > AHPosition.oblique.rank := by
   exact ⟨by decide, by decide, by decide⟩
+
+-- ============================================================================
+-- § 5a: CauseeSlot ↔ AHPosition — Shared GR Hierarchy
+-- ============================================================================
+
+/-! ### The GR hierarchy underlying both causee demotion and relativization
+
+@cite{comrie-1989} observes that the **same** grammatical relation
+hierarchy governs both causee demotion (Ch 8) and relativization
+accessibility (Ch 7):
+
+    Subject > Direct Object > Indirect Object > Oblique
+
+`CauseeSlot` (in `Theories.Semantics.Causation.Morphological`) and
+`AHPosition` (in `Core.Relativization.Hierarchy`) encode overlapping
+portions of this hierarchy independently. The bridge function
+`causeeToAH` maps causee slots to their corresponding AH positions,
+and the order-preservation theorem proves the mapping is monotone —
+confirming that the two hierarchies are structurally the same. -/
+
+/-- Map causee slots to their corresponding AH positions.
+    Both encode the same GR hierarchy; this bridge makes the
+    connection explicit. -/
+def causeeToAH : CauseeSlot → AHPosition
+  | .directObject   => .directObject
+  | .indirectObject => .indirectObject
+  | .oblique        => .oblique
+
+/-- The mapping preserves ordering: higher causee rank ↔ higher AH rank. -/
+theorem causee_ah_order_preserved (s1 s2 : CauseeSlot) :
+    s1.rank > s2.rank ↔ (causeeToAH s1).rank > (causeeToAH s2).rank := by
+  cases s1 <;> cases s2 <;> simp [CauseeSlot.rank, causeeToAH, AHPosition.rank]
+
+/-- Causee demotion follows the AH: the slots assigned by `causeeDemotion`
+    correspond to exactly the AH positions below subject. -/
+theorem causeeDemotion_maps_to_ah :
+    causeeToAH (causeeDemotion 1) = .directObject ∧
+    causeeToAH (causeeDemotion 2) = .indirectObject ∧
+    causeeToAH (causeeDemotion 3) = .oblique := ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 6: Dargwa Causee Data — Fragment Bridge
+-- ============================================================================
+
+/-! ### Dargwa causative system bridges to Comrie's causee hierarchy
+
+Dargwa (Tanti) has a productive causative morpheme *-aq*
+(@cite{sumbatova-2021} §4.5.7). The Dargwa fragment
+(`Fragments.Dargwa.ComplexPredicates`) records:
+
+- Intransitive base: causee appears in **absolutive** = direct object slot
+- Transitive base: causee appears in **elative** = oblique slot
+
+Comrie's hierarchy predicts IO for transitive bases, but Dargwa
+skips the IO position and demotes directly to oblique (elative).
+This is consistent with monotonicity — the actual slot is at most
+as high as the predicted slot — but represents a language-specific
+choice to use a spatial case rather than a dative/IO. -/
+
+open Fragments.Dargwa.ComplexPredicates (causStandUp causDig CausativeEntry)
+
+/-- Map Dargwa causee case to CauseeSlot based on base verb transitivity.
+    Intransitive base → DO (absolutive in Dargwa);
+    transitive base → OBL (elative in Dargwa). -/
+def dargwaCauseeSlot (e : CausativeEntry) : CauseeSlot :=
+  if e.baseTransitive then .oblique else .directObject
+
+/-- Dargwa intransitive causative: causee = DO, exactly matching
+    Comrie's prediction (`causeeDemotion 1`). -/
+theorem dargwa_intr_matches_prediction :
+    dargwaCauseeSlot causStandUp = causeeDemotion 1 := rfl
+
+/-- Dargwa transitive causative: causee = OBL, one step below
+    Comrie's prediction of IO (`causeeDemotion 2`). Dargwa uses elative
+    (a spatial/oblique case) rather than dative/IO. -/
+theorem dargwa_tr_more_demoted :
+    (dargwaCauseeSlot causDig).rank < (causeeDemotion 2).rank := by decide
+
+/-- Dargwa preserves Comrie's monotonicity: intransitive causee
+    outranks transitive causee on the GR hierarchy. -/
+theorem dargwa_causee_monotone :
+    (dargwaCauseeSlot causStandUp).rank >
+    (dargwaCauseeSlot causDig).rank := by decide
+
+/-- Dargwa causee slots map to the same AH positions as the
+    cross-linguistic generalization. -/
+theorem dargwa_causee_on_ah :
+    causeeToAH (dargwaCauseeSlot causStandUp) = .directObject ∧
+    causeeToAH (dargwaCauseeSlot causDig) = .oblique := ⟨rfl, rfl⟩
 
 end Phenomena.Case.Studies.Comrie1989

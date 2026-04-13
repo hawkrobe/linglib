@@ -1,5 +1,19 @@
 # Changelog
 
+## [0.229.696] - 2026-04-12
+
+### Added
+- **Comrie 1989 deepening** (`Phenomena/Case/Studies/Comrie1989.lean`): `toSubjectBundle` derives subject property bundles from alignment type (accusative→converges, ergative→diverges, syntacticErg→converges), per-language predictions for English/Japanese/Basque/Dargwa/Hindi-Urdu/Dyirbal, `causeeToAH` bridging CauseeSlot↔AHPosition with order-preservation proof, Dargwa causee data bridge (intransitive→DO matches prediction, transitive→OBL one step below predicted IO, monotonicity preserved)
+
+## [0.229.695] - 2026-04-12
+
+### Added
+- **Westerbeek, Koolen & Maes 2015** (`Phenomena/Reference/Studies/WesterbeekKoolenMaes2015.lean`): color typicality drives modifier production — RSA model with typicality-modulated meaning functions, shape diagnosticity × typicality interaction (Exp 2 2×2 design), `Core.Inheritance.Prototype` connection, bridge to Dale & Reiter 1995 (IA has no typicality sensitivity)
+
+### Changed
+- **`Prototype.typicality`** (`Core/Inheritance.lean`): `Nat` → `ℚ` for continuous typicality ratings; `atLeastAsTypical_trans` proof updated (`omega` → `linarith`)
+- **DegenEtAl2020.lean**: added import, `@cite{westerbeek-koolen-maes-2015}`, bridge theorem `typicality_direction_consistent` showing both papers find same-direction typicality effect
+
 ## [0.229.694] - 2026-04-12
 
 ### Fixed
