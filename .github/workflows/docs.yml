@@ -66,6 +66,10 @@ jobs:
           SRC_URI="$REPO_URL/blob/$COMMIT"
           DB=api-docs.db
 
+          # Remove stale DB from cache — schema changes cause
+          # "no such table" errors if an old DB is reused
+          rm -f "$BUILD/$DB"
+
           # Bibliography prepass
           if [ -f docs/references.bib ]; then
             $DOCGEN bibPrepass --build "$BUILD" docs/references.bib
