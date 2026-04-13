@@ -102,10 +102,13 @@ theorem ModalForce.possibility_weakest (f : ModalForce) :
 
 /-- Modal flavor: the contextual source of modality.
     Theory-neutral: avoids commitment to how flavor is semantically encoded.
-    Teleological is subsumed under circumstantial (both concern facts/abilities). -/
+    Teleological is subsumed under circumstantial (both concern facts/abilities).
+    Bouletic (desires/wishes) is distinguished from deontic (norms/rules),
+    following @cite{kratzer-1981}'s four-way classification. -/
 inductive ModalFlavor where
   | epistemic       -- Evidence/knowledge
   | deontic         -- Norms/rules
+  | bouletic        -- Desires/wishes
   | circumstantial  -- Facts/abilities (subsumes teleological)
   deriving DecidableEq, Repr, Inhabited
 
@@ -114,23 +117,23 @@ instance : LawfulBEq ModalFlavor where
   rfl {a} := by cases a <;> decide
 
 instance : ToString ModalFlavor where
-  toString | .epistemic => "e" | .deontic => "d" | .circumstantial => "c"
+  toString | .epistemic => "e" | .deontic => "d" | .bouletic => "b" | .circumstantial => "c"
 
 /-- All modal flavors. -/
-def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .circumstantial]
+def ModalFlavor.all : List ModalFlavor := [.epistemic, .deontic, .bouletic, .circumstantial]
 
 -- ============================================================================
 -- §3. Force-Flavor Pairs
 -- ============================================================================
 
 /-- A force-flavor pair: one point in the modal semantic space P.
-    |P| = |Force| × |Flavor| = 3 × 3 = 9.
+    |P| = |Force| × |Flavor| = 3 × 4 = 12.
 
     Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}: modal meanings are subsets of P.
     Their original database uses a 2×3 space (necessity/possibility × 3 flavors);
-    we extend to 3×3 by adding weak necessity as a distinct force value,
-    following @cite{agha-jeretic-2026}'s treatment of weak necessity as a
-    category intermediate between □ and ◇. -/
+    we extend to 3×4 by adding weak necessity as a distinct force value
+    (following @cite{agha-jeretic-2026}) and bouletic as a distinct flavor
+    (following @cite{kratzer-1981}). -/
 structure ForceFlavor where
   force : ModalForce
   flavor : ModalFlavor
@@ -150,7 +153,7 @@ instance : ToString ForceFlavor where
 def ForceFlavor.universe : List ForceFlavor :=
   ModalForce.all.flatMap fun fo => ModalFlavor.all.map fun fl => ⟨fo, fl⟩
 
-theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 9 := by native_decide
+theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 12 := by native_decide
 
 /-- The Cartesian product of forces and flavors. Infrastructure for constructing
     modal meanings; no theoretical commitment (just list operations). -/

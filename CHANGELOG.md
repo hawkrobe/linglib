@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.713] - 2026-04-13
+
+### Added
+- **Bouletic modal flavor**: add `.bouletic` to `ModalFlavor` (3→4 flavors, 9→12 ForceFlavor pairs), following Kratzer 1981's four-way classification; update all downstream files (German modals, Japanese particles, Narrog, OutlookMarker, ImelGuoST2026)
+- **German *sollte***: add as separate modal from *sollen* (Konjunktiv II, wider flavor range); German inventory now 7 modals
+- **Washo fragment** (`Fragments/Washo/Modals.lean`): *-eʔ* as SAV counterexample (variable force + variable flavor); satisfies IFF
+- **Koryak fragment** (`Fragments/Koryak/Modals.lean`): *ivək* as second SAV counterexample; satisfies IFF
+- **`Cat.Nmlz`**: nominalizer head (Keine 2020, Hindi -naa/-ne); update `catFeatures`, `fValue` (F3), `catFamily`, `categorialFeatures`, `epSemanticType`
+- **`isPhaseHeadV`**: traditional C+v phase identification; `isPhaseHead` now C-only per Keine 2020 ch. 5
+- **`Discourse/Goals.lean`**, **`Discourse/Scoreboard.lean`**: core discourse infrastructure (Portner 2004, Roberts 2023)
+- **`Roberts2023.lean`** (`Phenomena/Directives/Studies/`): imperatives in dynamic pragmatics
+- **Unattested meaning tests**: `mighst_not_iff`, `mighst_not_sav` (IFF rules out epistemic-possibility + deontic-necessity)
+- Bibliography: Bochnak 2015a/b, Močnik & Abramovitz 2019, Chemla et al. 2019, Ferreira 2023, von Fintel & Iatridou 2017, Portner 2004, Bratman 1987, Roberts 2023, Veltman 2018, Polinsky & Potsdam 2001, Bobaljik & Wurmbrand 2005, Keine 2020
+
+### Changed
+- Rename `fpos_iff_functional` → `fpos_iff_not_lexical` (cleaner biconditional: `isFHead ↔ ¬isLHead`)
+- German *wollen* now `.bouletic` (was `.deontic`); `sollen_wollen_deontic` split into `sollen_deontic` + `wollen_bouletic`
+- `Narrog.modalFlavor_roundtrip` and `orientationOfFlavor_consistent` exclude `.bouletic` (collapses with deontic in Narrog's 2D space)
+- Cross-linguistic summary: 10→12 inventories, `eight_of_ten_perfect_iff` → `ten_of_twelve_perfect_iff`
+
 ## [0.229.712] - 2026-04-13
 
 ### Added

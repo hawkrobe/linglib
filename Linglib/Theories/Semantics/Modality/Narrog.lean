@@ -69,6 +69,7 @@ inductive Volitivity where
     anyone's will. -/
 def toVolitivity : ModalFlavor → Volitivity
   | .deontic => .volitive
+  | .bouletic => .volitive
   | .epistemic => .nonVolitive
   | .circumstantial => .nonVolitive
 
@@ -176,13 +177,16 @@ theorem toModalFlavor_consistent_volitivity (r : NarrogRegion) (f : ModalFlavor)
 
 /-- Every non-mood `ModalFlavor` round-trips through the Narrog map:
     flavor → (volitivity, canonical orientation) → flavor. -/
-theorem modalFlavor_roundtrip (f : ModalFlavor) :
+theorem modalFlavor_roundtrip (f : ModalFlavor) (hf : f ≠ .bouletic) :
     NarrogRegion.toModalFlavor ⟨toVolitivity f,
       match f with
       | .deontic => .speakerOriented
+      | .bouletic => .speakerOriented  -- bouletic collapses with deontic in Narrog's 2D space
       | .epistemic => .speakerOriented
       | .circumstantial => .eventOriented⟩ = some f := by
-  cases f <;> rfl
+  cases f with
+  | epistemic | deontic | circumstantial => rfl
+  | bouletic => exact absurd rfl hf
 
 -- ============================================================================
 -- §5. Performativity and Traugott's Cline

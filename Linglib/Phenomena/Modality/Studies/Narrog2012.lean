@@ -354,6 +354,7 @@ theorem three_way_agreement_epistemic_above_root :
 def orientationOfFlavor : Core.Modality.ModalFlavor → SpeakerOrientationLevel
   | .epistemic => .speakerOriented
   | .deontic => .speakerOriented
+  | .bouletic => .speakerOriented
   | .circumstantial => .eventOriented
 
 /-- Circumstantial-only modals are event-oriented. -/
@@ -364,17 +365,18 @@ theorem circumstantial_is_event_oriented :
 theorem epistemic_is_speaker_oriented :
     orientationOfFlavor .epistemic = .speakerOriented := rfl
 
-/-- The `orientationOfFlavor` bridge is consistent with `NarrogRegion.toModalFlavor`:
-    for each flavor, there exists a Narrog region that maps to that flavor and
-    whose orientation matches what `orientationOfFlavor` assigns. -/
+/-- The consistency claim holds for flavors in Narrog's image.
+    Bouletic collapses with deontic in Narrog's 2D space (both volitive,
+    speaker-oriented), so the round-trip from `.bouletic` yields `.deontic`. -/
 theorem orientationOfFlavor_consistent :
-    ∀ f : Core.Modality.ModalFlavor,
+    ∀ f : Core.Modality.ModalFlavor, f ≠ .bouletic →
       ∃ r : NarrogRegion, r.toModalFlavor = some f ∧
         r.orientation = orientationOfFlavor f := by
-  intro f; cases f
-  · exact ⟨⟨.nonVolitive, .speakerOriented⟩, rfl, rfl⟩
-  · exact ⟨⟨.volitive, .speakerOriented⟩, rfl, rfl⟩
-  · exact ⟨⟨.nonVolitive, .eventOriented⟩, rfl, rfl⟩
+  intro f hf; cases f with
+  | epistemic => exact ⟨⟨.nonVolitive, .speakerOriented⟩, rfl, rfl⟩
+  | deontic => exact ⟨⟨.volitive, .speakerOriented⟩, rfl, rfl⟩
+  | bouletic => exact absurd rfl hf
+  | circumstantial => exact ⟨⟨.nonVolitive, .eventOriented⟩, rfl, rfl⟩
 
 /-- `toHacquardPosition` factors through `toOrientation` and
     `ComparePosition.narrogOrientationToPosition`. This links the category-level

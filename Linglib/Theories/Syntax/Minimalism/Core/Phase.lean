@@ -31,8 +31,15 @@ namespace Minimalism
 
 /-- Identify phase heads from the formal category system.
 
-    C and v are phase heads.
-    This is DERIVED from `labelCat`, not stipulated.
+    Only C is a phase head by default. @cite{keine-2020} (ch. 5)
+    argues that vP is NOT a phase: φ-Agree and wh-licensing can
+    cross unboundedly many vPs but not CPs, selective opacity
+    creates intractable problems for vP phases, and previous
+    arguments for vP phases (reconstruction, Dinka successive
+    cyclicity, Indonesian meN-deletion) can be reanalyzed.
+
+    `isPhaseHeadV` provides the traditional view where v is also
+    a phase head, for analyses that require it.
 
     **Voice/v* correspondence**: In the Kratzer/Schäfer framework,
     agentive Voice = v*. But `Cat.Voice` can be either a phase head
@@ -40,6 +47,14 @@ namespace Minimalism
     is tracked by `VoiceHead.phaseHead` in `Core/Voice.lean`, with
     bridge theorems in `Core/Voice.lean` § 8. -/
 def isPhaseHead (so : SyntacticObject) : Bool :=
+  match labelCat so with
+  | some .C => true    -- CP phase
+  | _ => false
+
+/-- Traditional phase identification where both C and v are phase heads.
+    Use this for analyses that assume vP phasehood (@cite{chomsky-2000},
+    @cite{chomsky-2001}). @cite{keine-2020} argues against vP phases. -/
+def isPhaseHeadV (so : SyntacticObject) : Bool :=
   match labelCat so with
   | some .C => true    -- CP phase
   | some .v => true    -- v*P phase

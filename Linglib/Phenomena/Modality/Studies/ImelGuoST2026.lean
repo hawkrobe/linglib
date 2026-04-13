@@ -8,6 +8,8 @@ import Linglib.Fragments.Greek.Modals
 import Linglib.Fragments.Mandarin.Modals
 import Linglib.Fragments.Dutch.Modals
 import Linglib.Fragments.Hungarian.Modals
+import Linglib.Fragments.Washo.Modals
+import Linglib.Fragments.Koryak.Modals
 import Linglib.Phenomena.Modality.GermanModals
 
 /-!
@@ -201,24 +203,87 @@ theorem english_all_iff : english.allIFF = true := by native_decide
 theorem english_size : english.size = 9 := by native_decide
 
 -- ============================================================================
--- §10: Cross-Linguistic Summary
+-- §10: Washo (isolate) — @cite{bochnak-2015a}, @cite{bochnak-2015b}
 -- ============================================================================
 
-/-- All ten inventories. -/
+/-- Washo is a key counterexample to the SAV universal: *-eʔ* expresses
+    both possibility and necessity with both epistemic and deontic flavors,
+    varying on both axes simultaneously. Its meaning is the full Cartesian
+    product {□,◇} × {e,d}, so it satisfies IFF.
+    @cite{steinert-threlkeld-imel-guo-2023} §4.1. -/
+def washo : ModalInventory where
+  language := "Washo"
+  family := "isolate"
+  source := "Bochnak (2015a,b)"
+  expressions := Fragments.Washo.Modals.allExpressions
+
+theorem washo_all_iff : washo.allIFF = true := by native_decide
+theorem washo_size : washo.size = 1 := by native_decide
+
+/-- *-eʔ* satisfies IFF despite varying on both axes. -/
+theorem washo_eq_iff :
+    satisfiesIFF [ne, nd, pe, pd] = true := by native_decide
+
+/-- *-eʔ* does NOT satisfy SAV: it varies on both force and flavor. -/
+theorem washo_eq_not_sav :
+    Semantics.Modality.Typology.satisfiesSAV [ne, nd, pe, pd] = false := by native_decide
+
+-- ============================================================================
+-- §11: Koryak (Chukotko-Kamchatkan) — @cite{mocnik-abramovitz-2019}
+-- ============================================================================
+
+/-- Koryak *ivək* is the other SAV counterexample: it expresses both
+    necessity and possibility with doxastic and assertive flavors (both
+    mapped to epistemic in the 3×3 space).
+    @cite{steinert-threlkeld-imel-guo-2023} §3, §4.1. -/
+def koryak : ModalInventory where
+  language := "Koryak"
+  family := "Chukotko-Kamchatkan"
+  source := "Močnik & Abramovitz (2019)"
+  expressions := Fragments.Koryak.Modals.allExpressions
+
+theorem koryak_all_iff : koryak.allIFF = true := by native_decide
+theorem koryak_size : koryak.size = 1 := by native_decide
+
+-- ============================================================================
+-- §12: Unattested meanings: the IFF universal rules out *mighst*
+-- ============================================================================
+
+/-- The hypothetical modal *mighst* (epistemic possibility + deontic
+    necessity) is ruled out by IFF: its meaning {(◇,e),(□,d)} is not
+    Cartesian-closed (missing (◇,d) and (□,e)).
+    @cite{steinert-threlkeld-imel-guo-2023} §4.1. -/
+theorem mighst_not_iff :
+    satisfiesIFF [pe, nd] = false := by native_decide
+
+/-- *mighst* also fails SAV (as expected, since SAV → IFF). -/
+theorem mighst_not_sav :
+    Semantics.Modality.Typology.satisfiesSAV [pe, nd] = false := by native_decide
+
+-- ============================================================================
+-- §13: Cross-Linguistic Summary
+-- ============================================================================
+
+/-- All twelve inventories. -/
 def allInventories : List ModalInventory :=
   [tlingit, javanese, gitksan, korean, greek, mandarin, dutch, hungarian, english,
-   Phenomena.Modality.GermanModalsBridge.german]
+   Phenomena.Modality.GermanModalsBridge.german, washo, koryak]
 
-/-- Eight of ten encoded languages have perfect IFF degree (1.0). -/
-theorem eight_of_ten_perfect_iff :
-    (allInventories.filter (·.allIFF)).length = 8 := by native_decide
+/-- Ten of twelve encoded languages have perfect IFF degree (1.0). -/
+theorem ten_of_twelve_perfect_iff :
+    (allInventories.filter (·.allIFF)).length = 10 := by native_decide
 
-/-- All nine languages have IFF degree ≥ 1/3 (the minimum is Greek at 1/3). -/
+/-- All twelve languages have IFF degree > 0 (the minimum is Greek at 1/3). -/
 theorem all_have_some_iff :
     allInventories.all (fun inv => inv.iffCount > 0) = true := by native_decide
 
+/-- The two SAV counterexamples (Washo, Koryak) both satisfy IFF:
+    this is the core empirical claim of @cite{steinert-threlkeld-imel-guo-2023}. -/
+theorem sav_counterexamples_satisfy_iff :
+    washo.allIFF = true ∧ koryak.allIFF = true := ⟨washo_all_iff, koryak_all_iff⟩
+
 -- ============================================================================
--- §11: IFF and Efficient Communication
+-- §14: IFF and Efficient Communication
 -- ============================================================================
 
 /-! ## Efficient Communication (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026})

@@ -61,6 +61,7 @@ def epSemanticType : Cat → EPSemanticType
   | .Top               => .intermediate   -- F5: topic (@cite{rizzi-1997} split-CP)
   | .Rel               => .intermediate   -- F5: relative (@cite{rizzi-1997})
   | .Fin               => .intermediate   -- F3: finiteness (@cite{rizzi-1997})
+  | .Nmlz              => .intermediate   -- F3: nominalizer (@cite{keine-2020})
   | .C                 => .proposition    -- F6: proposition (force)
   | .Force             => .proposition    -- F6: force (@cite{rizzi-1997} split-CP)
   | .SA                => .proposition    -- F7: speech act (@cite{speas-tenny-2003})

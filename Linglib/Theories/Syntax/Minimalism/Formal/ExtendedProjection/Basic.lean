@@ -65,6 +65,7 @@ def catFeatures : Cat → CatFeatures
   | .Pol   => ⟨true,  false⟩   -- [+V, -N] (@cite{laka-1990})
   | .Asp   => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
   | .Evid  => ⟨true,  false⟩   -- [+V, -N] (@cite{cinque-1999})
+  | .Nmlz  => ⟨true,  false⟩   -- [+V, -N] (@cite{keine-2020}; nominalizer extends verbal EP)
   | .N     => ⟨false, true⟩    -- [-V, +N]
   | .n     => ⟨false, true⟩    -- [-V, +N] (categorizer/gender, @cite{marantz-2001})
   | .Num   => ⟨false, true⟩    -- [-V, +N] (number, @cite{ritter-1991})
@@ -115,7 +116,7 @@ def fValue : Cat → Nat
   | .v | .n | .a | .Voice | .Appl | .Place => 1  -- first functional / categorizer (F1)
   | .T | .Q | .Neg | .Mod
   | .Pol | .Asp | .Evid | .Path => 2   -- specification domain (F2)
-  | .Fin | .Num                 => 3   -- inner edge (F3)
+  | .Fin | .Num | .Nmlz         => 3   -- inner edge / nominalizer (F3)
   | .Foc | .D                   => 4   -- discourse / referential (F4)
   | .Top | .Rel | .K            => 5   -- topic field / case shell (F5)
   | .C | .Force                 => 6   -- complementizer/force (F6)
@@ -171,7 +172,7 @@ inductive CatFamily where
     This determines which EP it can participate. -/
 def catFamily : Cat → CatFamily
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
-  | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => .verbal
+  | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid | .Nmlz => .verbal
   | .N | .n | .Num | .Q | .D | .K      => .nominal
   | .A | .a                              => .adjectival
   | .P | .Place | .Path                 => .adpositional
@@ -215,7 +216,7 @@ structure CategorialFeatures where
     P and its extended projection bear neither feature — P is the default case. -/
 def categorialFeatures : Cat → CategorialFeatures
   | .V | .v | .Voice | .Appl | .T | .Foc | .Top | .Fin | .C | .SA
-  | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid => ⟨false, true⟩   -- [V]
+  | .Force | .Neg | .Mod | .Rel | .Pol | .Asp | .Evid | .Nmlz => ⟨false, true⟩   -- [V]
   | .N | .n | .Num | .Q | .D | .K      => ⟨true, false⟩   -- [N]
   | .A | .a                              => ⟨true, true⟩    -- [N, V]
   | .P | .Place | .Path                 => ⟨false, false⟩  -- default (no features)
@@ -355,10 +356,10 @@ theorem f0_iff_lexical (c : Cat) :
     isLHead c = true ↔ (c = .V ∨ c = .N ∨ c = .A ∨ c = .P) := by
   cases c <;> simp [isLHead, fValue]
 
-/-- F1+ is exactly the functional heads. -/
-theorem fpos_iff_functional (c : Cat) :
-    isFHead c = true ↔ (c = .v ∨ c = .n ∨ c = .a ∨ c = .Place ∨ c = .Path ∨ c = .Num ∨ c = .Q ∨ c = .Voice ∨ c = .Appl ∨ c = .D ∨ c = .T ∨ c = .Foc ∨ c = .Top ∨ c = .Fin ∨ c = .C ∨ c = .SA ∨ c = .Force ∨ c = .Neg ∨ c = .Mod ∨ c = .Rel ∨ c = .Pol ∨ c = .Asp ∨ c = .Evid ∨ c = .K) := by
-  cases c <;> simp [isFHead, fValue]
+/-- Functional heads are exactly the non-lexical heads: F1+ ↔ ¬F0. -/
+theorem fpos_iff_not_lexical (c : Cat) :
+    isFHead c = true ↔ isLHead c = false := by
+  cases c <;> simp [isFHead, isLHead, fValue]
 
 -- Family consistency
 

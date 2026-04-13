@@ -51,6 +51,7 @@ inductive Cat where
   | Pol   -- polarity (@cite{laka-1990}; ΣP for affirmation/negation)
   | Asp   -- aspect (@cite{cinque-1999}; inner inflectional, between Voice and T)
   | Evid  -- evidential (@cite{cinque-1999}; outer inflectional, above T below Fin)
+  | Nmlz  -- nominalizer (@cite{keine-2020}; Hindi -naa/-ne nominalized clause; clause type distinct from CP)
   | K     -- inherent case shell (@cite{newman-2024}; KP wraps DP for oblique/inherent case; explains no-IO-passive languages)
   deriving Repr, DecidableEq, Inhabited
 

@@ -275,6 +275,8 @@ structure ModalCompatibility where
   epistemic : Bool
   /-- Compatible with deontic modals (*-beki* 'should') -/
   deontic : Bool
+  /-- Compatible with bouletic modals (desire/wish) -/
+  bouletic : Bool
   /-- Compatible with circumstantial/ability modals -/
   circumstantial : Bool
   deriving Repr, BEq
@@ -284,17 +286,18 @@ structure ModalCompatibility where
 def ModalCompatibility.allows (mc : ModalCompatibility) : ModalFlavor → Bool
   | .epistemic => mc.epistemic
   | .deontic => mc.deontic
+  | .bouletic => mc.bouletic
   | .circumstantial => mc.circumstantial
 
 /-- *nanka* is compatible with all modal flavors, but the evaluative force
     varies: deontic/bouletic → pejorative, epistemic → more neutral (45). -/
 def nanka_modalCompat : ModalCompatibility :=
-  { epistemic := true, deontic := true, circumstantial := true }
+  { epistemic := true, deontic := true, bouletic := true, circumstantial := true }
 
 /-- *semete* 'at least' selects for deontic/desiderative ordering sources.
     Incompatible with epistemic *hazu* and ability *-eru* (46a,b). -/
 def semete_modalCompat : ModalCompatibility :=
-  { epistemic := false, deontic := true, circumstantial := false }
+  { epistemic := false, deontic := true, bouletic := true, circumstantial := false }
 
 /-- *semete* rejects epistemic modals. -/
 theorem semete_rejects_epistemic :
@@ -308,8 +311,9 @@ theorem semete_accepts_deontic :
 theorem nanka_accepts_all_modals :
     nanka_modalCompat.allows .epistemic = true ∧
     nanka_modalCompat.allows .deontic = true ∧
+    nanka_modalCompat.allows .bouletic = true ∧
     nanka_modalCompat.allows .circumstantial = true :=
-  ⟨rfl, rfl, rfl⟩
+  ⟨rfl, rfl, rfl, rfl⟩
 
 
 /-! ## Projection Behavior

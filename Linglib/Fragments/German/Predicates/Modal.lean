@@ -17,10 +17,7 @@ they all satisfy IFF.
 | müssen   | muss | necessity   | epistemic, deontic     |
 | sollen   | soll | necessity   | deontic                |
 | mögen    | mag  | possibility | epistemic              |
-| wollen   | will | necessity   | deontic                |
-
-Note: *wollen* is bouletic, mapped to deontic in the 2×3 space per
-`BouleticFlavor.flavorTag =.deontic`.
+| wollen   | will | necessity   | bouletic               |
 
 Reference: Kratzer, A. (1981). The Notional Category of Modality.
 -/
@@ -75,18 +72,28 @@ def moegen : GermanModalEntry where
   form3sg := "mag"
   modalMeaning := cp [.possibility] [.epistemic]
 
-/-- *wollen* — "want to": bouletic → deontic in 2×3 space. -/
+/-- *wollen* — "want to": bouletic necessity. -/
 def wollen : GermanModalEntry where
   form := "wollen"
   form3sg := "will"
-  modalMeaning := cp [.necessity] [.deontic]
+  modalMeaning := cp [.necessity] [.bouletic]
+
+/-- *sollte* — Konjunktiv II of *sollen*: weak necessity across multiple flavors.
+    Treated as a **separate modal** from *sollen* because it has complex
+    morphology (root + Konj. II), following the morphological individuation
+    criterion of @cite{steinert-threlkeld-imel-guo-2023} §4.3.
+    Both *soll* and *sollte* individually satisfy IFF. -/
+def sollte : GermanModalEntry where
+  form := "sollte"
+  form3sg := "sollte"
+  modalMeaning := cp [.weakNecessity] [.deontic, .epistemic, .circumstantial]
 
 -- ============================================================================
 -- § 2: All Modals
 -- ============================================================================
 
 def allModals : List GermanModalEntry :=
-  [koennen, duerfen, muessen, sollen, moegen, wollen]
+  [koennen, duerfen, muessen, sollen, moegen, wollen, sollte]
 
 -- ============================================================================
 -- § 3: Grounding Theorems
@@ -104,12 +111,15 @@ theorem muessen_is_necessity :
 theorem duerfen_is_deontic :
     duerfen.modalMeaning = cp [.possibility] [.deontic] := rfl
 
-/-- *sollen* and *wollen* both map to deontic necessity. -/
-theorem sollen_wollen_deontic :
-    sollen.modalMeaning = cp [.necessity] [.deontic] ∧
-    wollen.modalMeaning = cp [.necessity] [.deontic] := ⟨rfl, rfl⟩
+/-- *sollen* is deontic necessity; *wollen* is bouletic necessity. -/
+theorem sollen_deontic : sollen.modalMeaning = cp [.necessity] [.deontic] := rfl
+theorem wollen_bouletic : wollen.modalMeaning = cp [.necessity] [.bouletic] := rfl
 
-/-- Six modals total. -/
-theorem allModals_size : allModals.length = 6 := rfl
+/-- *sollte* has wider flavor range than *sollen* (morphological flavor change). -/
+theorem sollte_wider_than_sollen :
+    sollte.modalMeaning.length > sollen.modalMeaning.length := by native_decide
+
+/-- Seven modals total (including *sollte* as distinct from *sollen*). -/
+theorem allModals_size : allModals.length = 7 := rfl
 
 end Fragments.German.Predicates.Modal

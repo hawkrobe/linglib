@@ -23,10 +23,11 @@ def german : ModalInventory :=
   .fromAuxEntries "German" "Indo-European" "Kratzer (1981)"
     allModals GermanModalEntry.form GermanModalEntry.modalMeaning
 
-/-- All six German modals satisfy IFF. -/
+/-- All seven German modals satisfy IFF (including *sollte* as distinct from *sollen*). -/
 theorem german_all_iff : german.allIFF = true := by native_decide
 
-/-- German has six modal expressions. -/
-theorem german_size : german.expressions.length = 6 := by native_decide
+/-- German has seven modal expressions (*sollte* counted separately from *sollen*
+    per morphological individuation, @cite{steinert-threlkeld-imel-guo-2023} §4.3). -/
+theorem german_size : german.expressions.length = 7 := by native_decide
 
 end Phenomena.Modality.GermanModalsBridge

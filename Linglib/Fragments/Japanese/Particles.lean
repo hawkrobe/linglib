@@ -141,11 +141,11 @@ theorem allRequireCounterstance (e : OutlookEntry) (h : e.requiresCounterstance 
 
 -- Default modal compatibility: no restrictions
 private def allModals : ModalCompatibility :=
-  { epistemic := true, deontic := true, circumstantial := true }
+  { epistemic := true, deontic := true, bouletic := true, circumstantial := true }
 
 -- Deontic/bouletic only (semete's restriction)
 private def deonticOnly : ModalCompatibility :=
-  { epistemic := false, deontic := true, circumstantial := false }
+  { epistemic := false, deontic := true, bouletic := true, circumstantial := false }
 
 
 /-! ### Adverbs (: (1)) -/
