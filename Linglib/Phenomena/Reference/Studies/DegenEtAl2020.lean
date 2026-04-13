@@ -4,11 +4,12 @@ import Linglib.Theories.Pragmatics.RSA.Core.Noise
 import Linglib.Theories.Pragmatics.GriceanMaxims
 import Linglib.Phenomena.Reference.Studies.DaleReiter1995
 import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
+import Linglib.Phenomena.Reference.Studies.WesterbeekKoolenMaes2015
 
 /-!
 # @cite{degen-etal-2020}
 @cite{frank-goodman-2012} @cite{dale-reiter-1995} @cite{engelhardt-etal-2006}
-@cite{grice-1975} @cite{kursat-degen-2021}
+@cite{grice-1975} @cite{kursat-degen-2021} @cite{westerbeek-koolen-maes-2015}
 
 When Redundancy Is Useful: A Bayesian Approach to "Overinformative" Referring
 Expressions. *Psychological Review* 127(4), 591–621.
@@ -700,6 +701,27 @@ theorem exp2_all_significant :
     typical colors) get mentioned LESS because they're already expected. -/
 theorem exp2_typicality_negative :
     exp2_typicality.β < 0 := by native_decide
+
+-- ============================================================================
+-- §18b. Bridge: Westerbeek, Koolen & Maes (2015) Typicality Effect
+-- ============================================================================
+
+/-- @cite{westerbeek-koolen-maes-2015} independently established the
+    same color typicality → color mention effect with a larger stimulus
+    set (42 target objects spanning the full typicality continuum).
+    Both findings are in the same direction: more typical color → less
+    color mention in referring expressions.
+
+    Degen et al. Exp 2: β = −4.17 (more typical → less color)
+    Westerbeek et al. Exp 1: β = −2.36 (more typical → less color)
+
+    The sign agreement is not coincidental — both arise from the same
+    mechanism: continuous semantics makes atypical colors more
+    informative than typical ones. -/
+theorem typicality_direction_consistent :
+    exp2_typicality.β < 0 ∧
+    WesterbeekKoolenMaes2015.exp1_typicality.β < 0 := by
+  constructor <;> native_decide
 
 -- ============================================================================
 -- §19. Experiment 2: Model Evaluation (§4.4)
