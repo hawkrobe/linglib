@@ -35,13 +35,31 @@ produces the observed selective opacity patterns.
      but not Ā-movement
    - (25): the transparency/opacity table by clause type and operation
 
+## Relationship to @cite{keine-2020}
+
+This article's simplified fValue model (`transparentTo`) treats clause
+types as linearly ordered. @cite{keine-2020} introduces bilateral labeling
+(`transparentToLabel`) which correctly handles partially ordered clause
+types (NmlzP vs CP in Hindi). The article probes remain useful for
+verifying the paper's original predictions, but the book's model
+supersedes the fValue approximation. See `Keine2020.lean` for the
+book's 4×4 transparency tables and bilateral-labeling theorems.
+
+Key refinements in @cite{keine-2020}:
+- Hindi φ/A horizon refined from ⊣ C to ⊣ T (book (219))
+- Hindi Ā horizon specified as ⊣ Nmlz (not just "no horizon")
+- English Ā has ⊣ C (the article treated it as horizonless)
+- German adds ForceP as a distinct clause size above CP
+- Vacuous probes derived from bilateral labeling (§3.5)
+- HLT (279) derived as emergent property, not stipulated
+
 ## Architecture
 
 The theory-layer infrastructure (`ProbeProfile`, `transparentTo`,
-`upward_entailment`, `height_locality`) lives in
-`Theories/Syntax/Minimalism/Core/Agree.lean`. This file imports those
-definitions and verifies the paper's empirical predictions as
-concrete theorems.
+`transparentToLabel`, `upward_entailment`, `height_locality_connection`)
+lives in `Theories/Syntax/Minimalism/Core/Probe.lean`. This file
+imports those definitions and verifies the paper's empirical predictions
+as concrete theorems using the simplified fValue model.
 -/
 
 namespace Phenomena.Agreement.Studies.Keine2019

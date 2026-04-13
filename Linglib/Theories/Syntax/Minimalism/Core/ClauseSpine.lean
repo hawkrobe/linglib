@@ -94,6 +94,19 @@ def ClauseSpine.tP : ClauseSpine :=
 def ClauseSpine.cP : ClauseSpine :=
   ⟨[.V, .Appl, .v, .Voice, .T, .C], by decide⟩
 
+/-- NmlzP-sized clause: [V, Appl, v, Voice, T, Nmlz]. Hindi nominalized clause.
+    @cite{keine-2020} ch. 2: NmlzP is a distinct clause type from CP — their
+    transparency profiles are incomparable (NmlzP blocks Ā but not wh;
+    CP blocks wh but not Ā in Hindi). -/
+def ClauseSpine.nmlzP : ClauseSpine :=
+  ⟨[.V, .Appl, .v, .Voice, .T, .Nmlz], by decide⟩
+
+/-- ForceP-sized clause: [V, Appl, v, Voice, T, C, Force]. German V2 clause.
+    @cite{keine-2020} ch. 4: V2 clauses in German are structurally larger
+    than V-final (CP) clauses — they project ForceP above CP. -/
+def ClauseSpine.forceP : ClauseSpine :=
+  ⟨[.V, .Appl, .v, .Voice, .T, .C, .Force], by decide⟩
+
 -- ============================================================================
 -- § 4: Projection Theorems
 -- ============================================================================
@@ -122,6 +135,17 @@ theorem vP_lacks_voice : ClauseSpine.vP.projects .Voice = false := by decide
 
 /-- ApplP projects Appl. -/
 theorem applP_has_appl : ClauseSpine.applP.projects .Appl = true := by decide
+
+/-- NmlzP projects Nmlz but not C. -/
+theorem nmlzP_has_nmlz : ClauseSpine.nmlzP.projects .Nmlz = true := by decide
+theorem nmlzP_lacks_c : ClauseSpine.nmlzP.projects .C = false := by decide
+
+/-- CP projects C but not Nmlz. -/
+theorem cP_lacks_nmlz : ClauseSpine.cP.projects .Nmlz = false := by decide
+
+/-- ForceP projects Force and C. -/
+theorem forceP_has_force : ClauseSpine.forceP.projects .Force = true := by decide
+theorem forceP_has_c : ClauseSpine.forceP.projects .C = true := by decide
 
 /-- VoiceP and ApplP have the same fValue for their highest head, showing
     why ComplementSize can't distinguish them. -/
@@ -155,15 +179,28 @@ theorem vP_fLevel : ClauseSpine.vP.fLevel = 1 := by decide
 /-- VoiceP-sized clauses are F1. -/
 theorem voiceP_fLevel : ClauseSpine.voiceP.fLevel = 1 := by decide
 
+/-- NmlzP-sized clauses are F3 (same as FinP). -/
+theorem nmlzP_fLevel : ClauseSpine.nmlzP.fLevel = 3 := by decide
+
+/-- ForceP-sized clauses are F6 (same as CP in fValue, but structurally larger). -/
+theorem forceP_fLevel : ClauseSpine.forceP.fLevel = 6 := by decide
+
 -- ============================================================================
 -- § 6: Size Ordering
 -- ============================================================================
 
-/-- Spine sizes are ordered: ApplP < vP < VoiceP < TP < CP. -/
+/-- Spine sizes are ordered: ApplP < vP < VoiceP < TP < CP < ForceP.
+    NmlzP has the same size as CP (both have 6 projected heads). -/
 theorem spine_size_ordering :
     ClauseSpine.applP.size < ClauseSpine.voiceP.size ∧
     ClauseSpine.voiceP.size < ClauseSpine.tP.size ∧
-    ClauseSpine.tP.size < ClauseSpine.cP.size := by
+    ClauseSpine.tP.size < ClauseSpine.cP.size ∧
+    ClauseSpine.cP.size < ClauseSpine.forceP.size := by
   decide
+
+/-- NmlzP and CP have the same number of projected heads — their
+    difference is in WHICH heads are projected, not how many. -/
+theorem nmlzP_cP_same_size :
+    ClauseSpine.nmlzP.size = ClauseSpine.cP.size := by decide
 
 end Minimalism

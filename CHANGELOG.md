@@ -1,5 +1,107 @@
 # Changelog
 
+## [0.229.708] - 2026-04-13
+
+### Fixed
+- **`BouleticFlavor.flavorTag`** was `.deontic` — now correctly `.bouletic`. Bouletic modality (desires/wishes) is not deontic (norms/rules) per @cite{kratzer-1981}'s four-way classification.
+- **`ModalFlavor`** now has 4 constructors: `epistemic`, `deontic`, `bouletic`, `circumstantial`. All exhaustive matches updated across codebase.
+- **German *wollen***: flavor changed from `.deontic` to `.bouletic` (it's a desire modal, not a norm modal)
+- **Narrog roundtrip theorems**: bouletic collapses with deontic in Narrog's 2D volitivity×orientation space; theorems updated with `f ≠ .bouletic` hypothesis
+- **Roberts2023**: unverified equation numbers marked per CLAUDE.md policy; added `roberts_disagrees_with_assert` theorem connecting Roberts' circumstantial claim to Kaufmann's deontic view in Assert.lean
+
+### Changed
+- `ForceFlavor.universe` is now 3×4 = 12 points (was 3×3 = 9)
+- `ModalCompatibility` (OutlookMarker.lean): added `bouletic : Bool` field; *semete* accepts bouletic (desiderative); *nanka* accepts all flavors
+- `Narrog.toVolitivity`: `.bouletic => .volitive` (desires involve will)
+- `Narrog2012.orientationOfFlavor`: `.bouletic => .speakerOriented`
+- `Typology.canonicalAssignment`: takes `BouleticFlavor` parameter
+
+## [0.229.707] - 2026-04-13
+
+### Fixed
+- **Itelmen probe config was backwards** (`Probe.lean`): book (269) specifies [*φ*] ⊣ T and [*μ*] ⊣ ∅ (A-movement more permissive than φ-agreement). Code had them swapped. Now correct: phi has T as horizon, aMove has no horizon.
+- **Itelmen docstring** corrected to match book: movement is more permissive, not φ
+- **`itelmen_tsez_same_config`** deleted — Itelmen and Tsez have *opposite* mismatch directions, replaced with `itelmen_tsez_opposite_mismatch`
+- **Tsez docstring** expanded to note that Force/Top horizons are simplified to none/some .T per book's footnote 23 (underdetermined by sparse evidence)
+
+### Added
+- **Crosslinguistic A-movement typology** (`Probe.lean`): `lubukusuAProbe`, `a_movement_typology` — three attested settings (Lubukusu ⊣ ∅, English ⊣ C, Hindi ⊣ T) from §3.6, (300)
+- **Locality profile entailment** (`Probe.lean`): `locality_profile_entailment`, `locality_profile_entailment_T` — horizon choices yield profiles in strict entailment relationship (§3.7, (305))
+- **Smuggling constraints** (`Keine2020.lean`): `smuggling_blocked_by_cp`, `smuggling_ābar_not_blocked` — A-movement out of Ā-moved constituents blocked by CP horizon; reverse is OK (§3.4.3)
+- **Phase–horizon orthogonality** (`Keine2020.lean`): `english_phase_horizon_division`, `hindi_phase_horizon_division` — phases provide absolute opacity, horizons provide selective opacity (ch. 4)
+- **Crosslinguistic A-movement** (`Keine2020.lean`): `crosslinguistic_a_movement` — three-way entailment chain verified
+
+### Changed
+- **`itelmen_movement_agreement_mismatch`** (`Probe.lean`) now tests both directions (Itelmen movement > agreement AND Tsez agreement > movement)
+- **Keine2020.lean §15** renamed: `itelmen_phi_more_permissive` → `itelmen_movement_more_permissive`, `tsez_phi_more_permissive` → `tsez_agreement_more_permissive`
+
+## [0.229.706] - 2026-04-13
+
+### Added
+- **Washo modal fragment** (`Fragments/Washo/Modals.lean`): Bochnak 2015 *-eʔ* — variable-force variable-flavor SAV counterexample, IFF-satisfying
+- **Koryak modal fragment** (`Fragments/Koryak/Modals.lean`): Močnik & Abramovitz 2019 *ivək* — variable-force attitude verb, SAV counterexample
+- **Convexity characterization of IFF** (`Theories/Semantics/Modality/Typology.lean`): grid betweenness (`isBetween`), convexity (`isConvex`), `iff_eq_convex` theorem (IFF ≡ convexity), path-connectedness (`satisfiesPathConnected`) as weaker alternative, `pathConnected_not_implies_iff` counterexample
+- **Hypothetical *mighst*** (`ImelGuoST2026.lean`): explicit formalization of the unattested {◇e, □d} meaning ruled out by IFF
+- **German *sollte*** (`Fragments/German/Predicates/Modal.lean`): Konjunktiv II form as separate modal from *sollen* per morphological individuation criterion
+- **SAV counterexample theorems** (`ImelGuoST2026.lean`): `washo_eq_not_sav`, `washo_eq_iff`, `sav_counterexamples_satisfy_iff`
+- **Bibliography**: `bochnak-2015a`, `bochnak-2015b`, `mocnik-abramovitz-2019`
+
+### Changed
+- Fixed `@cite` garbling in `satisfiesIFF` docstring (removed redundant author names before tag)
+- Updated `steinert-threlkeld-imel-guo-2023` bib entry: role `cited` → `formalized`, added sources
+- Expanded cross-linguistic summary: 10 → 12 inventories, updated `ten_of_twelve_perfect_iff`
+
+## [0.229.705] - 2026-04-13
+
+### Added
+- **Ferreira 2023: A square of necessities** (`Phenomena/Modality/Studies/Ferreira2023.lean`): Portuguese tripartite modal system (poder < dever < ter que), X-marking preserves force, entailment/consistency judgments, PortugueseSquare structure mapping to four vertices, English ought ambiguity
+- **X-marking on Kratzer modals** (`Theories/Semantics/Modality/Kratzer/XMarking.lean`): IsStarRevision (Xf, modal base widening), xMarkOrdering (Xg = combineOrdering g [p]), four square vertices (sn/snXg/snXf/snXfg), WN ≡ SN_Xg by rfl, SN → SN_Xg entailment via strong_entails_weak, non-entailment counterexamples, commutativity
+- **Portuguese modal fragment** (`Fragments/Portuguese/Modals.lean`): six ModalItem entries (poder/dever/terQue + podia/devia/tinhaQue), force classification, entailment ordering, X-marking preserves force, Portuguese vs Spanish contrast
+- **Bibliography**: `ferreira-2023`
+
+## [0.229.703] - 2026-04-13
+
+### Added
+- **Roberts 2023: Imperatives in Dynamic Pragmatics** (`Phenomena/Directives/Studies/Roberts2023.lean`): imperative character ¡ with futurate circumstantial modal (Kratzer modal base + goal-based ordering source), applicable circumstances (APPLIC), conservativity presupposition on imperative subjects, 9 desiderata verification theorems (a)–(i), comparison with Kaufmann/Portner, Force Linking Principle formalization
+- **`Core/Discourse/Goals.lean`**: discourse-level goal sets G_i with conditional goals, priority ordering, active goal filtering — the missing third leg of Roberts' scoreboard (CG, QUD, **G**), compatible with Portner 2004 ToDo list interface
+- **`Core/Discourse/Scoreboard.lean`**: unified discourse state K = ⟨I, M, ≺, CG, QUD, G⟩ bundling common ground + QUD + goals; Illocutionary Force Linking Principle (semantic type → default force); assertion/interrogation/direction update functions with orthogonality theorems
+- **Bibliography**: `roberts-2023`, `portner-2004`, `bratman-1987`
+
+## [0.229.704] - 2026-04-13
+
+### Added
+- **Keine 2020 deepening** (`Probe.lean`, `Keine2020.lean`): vacuous probes via bilateral labeling (§3.5, (274)–(278)), Height-Locality Theorem (279) concrete instances, Ban on Improper Movement (§3.4.1–3.4.2) as emergent property, A-movement–Agreement Generalization ((231)), Itelmen/Tsez movement–agreement mismatches (§3.4.5), English extraposition probe (T⁰ ⊣ T), upward entailment for bilateral labels
+- **`LanguageProbeConfig.itelmen`/`.tsez`** (`Probe.lean`): movement–agreement mismatch configs where φ-agreement is more permissive than A-movement
+- **`english_extr`** (`Probe.lean`): English extraposition probe (T⁰ ⊣ T), more local than A-movement (T⁰ ⊣ C)
+- **`isVacuousFor`/`isVacuous`** (`Probe.lean`): bilateral-labeling-based vacuity — checks whether sister's projected heads contain horizon category
+- **HLT (279) verification** (`Probe.lean`): `hlt_279a_C`, `hlt_279a_T`, `hlt_279b_T` — concrete instances proving location↔horizon constraints emerge from vacuity
+- **Keine2020 study file expansion** (`Keine2020.lean`): 20+ new theorems — BIM for all three languages, vacuity examples, HLT applications, A-movement–Agreement Generalization, Itelmen/Tsez transparency, English extraposition
+- **Bibliography**: `bobaljik-wurmbrand-2005`, `polinsky-potsdam-2001`
+
+### Changed
+- **`isVacuous`** (`Probe.lean`): rewritten from fValue comparison to bilateral-labeling-based check using `ClauseSpine` sister labels — correctly handles cross-EP categories (Nmlz)
+- **`height_locality`** → **`height_locality_connection`** (`Probe.lean`): renamed to distinguish empirical generalization from derived HLT
+- **English Ā probe** (`Probe.lean`): changed from `⟨.C, some .C⟩` to `⟨.C, none⟩` — English Ā/wh has no horizon
+
+### Fixed
+- **Fabricated DOI removed** (`references.bib`): `keine-2020` had hallucinated DOI `10.7551/mitpress/13prioritized.001.0001` — removed, marked `validated = true`
+- **Unverified cite numbers** (`Keine2020.lean`): replaced `(321)/(359)` with content-based `ch. 4` reference per conventions
+- **Keine 2019 sources** (`references.bib`): updated role from `cited` to `formalized`, added `Probe.lean` to sources
+
+## [0.229.702] - 2026-04-13
+
+### Added
+- **Keine 2020 monograph formalization** (`Phenomena/Agreement/Studies/Keine2020.lean`): bilateral labeling model with Hindi 4×4 transparency table (16 theorems), German 4×4 table (16 theorems), English opacity patterns, NmlzP ≱ CP incomparability, four distinct locality types, default horizon, ForceP > CP, same-head-different-locality
+- **`Cat.Nmlz`** (`Basic.lean`): Hindi nominalizer category for clause types distinct from CP
+- **`LanguageProbeConfig`** (`Probe.lean`): language-parameterized probe configurations (Hindi, English, German) with bilateral labeling transparency
+- **`ProbeProfile.transparentToLabel`** (`Probe.lean`): bilateral labeling transparency — probe search terminates when horizon category appears in projected heads list, replacing fValue-based comparison
+- **`ClauseSpine.nmlzP`/`.forceP`** (`ClauseSpine.lean`): Hindi nominalized and German V2 clause spines with projection and size theorems
+- **`isPhaseHeadV`** (`Phase.lean`): traditional v+C phase identification, separated from default C-only `isPhaseHead` per Keine 2020 ch. 5
+
+### Changed
+- **`isPhaseHead`** (`Phase.lean`): now C-only (was C+v), following Keine 2020 ch. 5 argument that vP is not a phase
+- **`fpos_iff_functional`** → **`fpos_iff_not_lexical`** (`ExtendedProjection/Basic.lean`): replaced 25-way disjunction with compact `cases c <;> simp` proof
+
 ## [0.229.701] - 2026-04-13
 
 ### Fixed

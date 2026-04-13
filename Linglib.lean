@@ -58,6 +58,8 @@ import Linglib.Core.PropertyDomain
 import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Discourse.QUD
+import Linglib.Core.Discourse.Goals
+import Linglib.Core.Discourse.Scoreboard
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.CoreferenceStatus
 import Linglib.Core.BindingSemantics
@@ -533,6 +535,7 @@ import Linglib.Fragments.Japanese.Coordination
 import Linglib.Fragments.Japanese.Determiners
 import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
+import Linglib.Fragments.Koryak.Modals
 import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Korean.Evidentials
@@ -659,6 +662,7 @@ import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.Spanish.Negation
 import Linglib.Fragments.Spanish.MoodChoice
 import Linglib.Fragments.Portuguese.MoodChoice
+import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Swedish.AnswerParticles
 import Linglib.Fragments.Mayan.Params
@@ -685,6 +689,7 @@ import Linglib.Fragments.Malagasy.Relativization
 import Linglib.Fragments.TobaBatak.Basic
 import Linglib.Fragments.TobaBatak.Relativization
 import Linglib.Fragments.Tlingit.Modals
+import Linglib.Fragments.Washo.Modals
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Yakut.Indefinites
 import Linglib.Fragments.Kannada.Indefinites
@@ -950,6 +955,7 @@ import Linglib.Phenomena.Comparison.Studies.Bobaljik2012
 import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
+import Linglib.Phenomena.Directives.Studies.Roberts2023
 import Linglib.Phenomena.Directives.Studies.RuytenbeekEtAl2017
 import Linglib.Phenomena.Directives.Studies.SumersEtAl2023
 import Linglib.Phenomena.Directives.Typology
@@ -1323,6 +1329,7 @@ import Linglib.Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
 import Linglib.Phenomena.Agreement.Studies.Toosarvandani2023
 import Linglib.Phenomena.Agreement.Studies.Harbour2016
 import Linglib.Phenomena.Agreement.Studies.Keine2019
+import Linglib.Phenomena.Agreement.Studies.Keine2020
 import Linglib.Phenomena.Coordination.Studies.Steedman2000
 import Linglib.Theories.Syntax.CCG.CrossSerial
 -- CCGDerivations moved to Studies/Steedman2000
@@ -1349,6 +1356,7 @@ import Linglib.Phenomena.Assertion.Compare
 import Linglib.Phenomena.Case.Compare
 import Linglib.Phenomena.Gradability.Compare
 import Linglib.Phenomena.Modality.ComparePosition
+import Linglib.Phenomena.Modality.Studies.Ferreira2023
 import Linglib.Phenomena.Presupposition.Compare
 import Linglib.Phenomena.ScalarImplicatures.ExhaustivityLimit
 import Linglib.Phenomena.ScalarImplicatures.ScopeExpressivity
@@ -1519,6 +1527,7 @@ import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Theories.Syntax.Minimalism.Core.Checking
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Core.Probe
 import Linglib.Theories.Syntax.Minimalism.Core.CyclicAgree
 import Linglib.Theories.Syntax.Minimalism.Core.CaseFilter
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
@@ -1838,6 +1847,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer.Background
 import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Linglib.Theories.Semantics.Modality.Kratzer.XMarking
 import Linglib.Theories.Semantics.Modality.Desire
 import Linglib.Theories.Semantics.Modality.EpistemicLogic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
