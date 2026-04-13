@@ -156,7 +156,7 @@ private def fEPI : AnchoringFn SpeechOrDescribed BookWorld :=
     Every book is available in some accessible world. -/
 theorem yalnhej_book_abc :
     modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true := by
-  native_decide
+  decide
 
 /-- Not upper-bounded: in world abc, all three books ARE available,
     yet the MI denotation holds. The anti-singleton condition fails
@@ -165,8 +165,8 @@ theorem yalnhej_not_upper_bounded_abc :
     modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true ∧
     ¬(upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc = true) := by
   constructor
-  · native_decide
-  · native_decide
+  · decide
+  · decide
 
 
 -- ════════════════════════════════════════════════════
@@ -193,7 +193,7 @@ even though not every book is available in the actual world. -/
     not-all-P-being-Q — non-maximality. -/
 theorem yalnhej_nonmaximal_ab :
     modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab = true := by
-  native_decide
+  decide
 
 /-- Three-way contrast: maximality vs yalnhej vs *algún*.
     In world abc (all books available): MI holds + UB fails.
@@ -208,7 +208,7 @@ theorem yalnhej_three_way_contrast :
     modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab = true ∧
     -- UB fails in abc (all satisfy scope → anti-singleton violated)
     upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc = false := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 
 -- ════════════════════════════════════════════════════
@@ -279,7 +279,7 @@ private def fGrab : AnchoringFn GrabEvent CardWorld
     c2 and c3 are not grabbable in any locally accessible world. -/
 theorem nonharmonic_fails :
     modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 = false := by
-  native_decide
+  decide
 
 /-- Harmonic MI succeeds: when the MI's anchor is co-indexed with the
     imperative event, all worlds are accessible. Every card is grabbable
@@ -288,7 +288,7 @@ theorem nonharmonic_fails :
     This gives the "any card is fine" reading. -/
 theorem harmonic_succeeds :
     modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 = true := by
-  native_decide
+  decide
 
 /-- Harmonic ≠ non-harmonic: the two readings are formally distinct.
     Same world of evaluation (.only1), same domain, same predicates —
@@ -296,7 +296,7 @@ theorem harmonic_succeeds :
 theorem harmonic_neq_nonharmonic :
     modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 = false ∧
     modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 
 end Semantics.Modality.ModalIndefinites

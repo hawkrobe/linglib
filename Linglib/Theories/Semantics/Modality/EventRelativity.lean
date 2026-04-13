@@ -959,14 +959,14 @@ The speaker's evidence is compatible with Jane taking the train.
 `◇_{f(e₀)} (took)` holds because the speaker considers `took` possible. -/
 theorem epistemic_reading_possible :
     possibility fEpistemicTrain .speechAct allTW
-      (· == .took) .took = true := by native_decide
+      (· == .took) .took = true := by decide
 
 /-- Root reading: modal anchored to VP event.
 Given Jane's circumstances, she HAD to take the train.
 `□_{f(e₂)} (took)` holds because only `took` is accessible. -/
 theorem root_reading_necessary :
     necessity fRootTrain .janesTaking allTW
-      (· == .took) .took = true := by native_decide
+      (· == .took) .took = true := by decide
 
 /-- The root anchoring via VP event restricts the accessible worlds
 more than the epistemic anchoring via speech event. Both readings
@@ -978,7 +978,7 @@ theorem root_restricts_more :
     (accessible fEpistemicTrain .speechAct allTW .took).length = 2 ∧
     -- Root: only took-world accessible from VP event
     (accessible fRootTrain .janesTaking allTW .took).length = 1 := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 
 -- ════════════════════════════════════════════════════
@@ -1067,7 +1067,7 @@ Jane's beliefs restrict to the pregnant-world only. Under Jane's
 beliefs, Mary's being pregnant is necessary (Jane is certain). -/
 theorem embedded_epistemic_necessity :
     necessity fBelief .thinking allPW (· == .pregnant) .notPregnant = true := by
-  native_decide
+  decide
 
 /-- Matrix epistemic: *might* bound to the speech event.
 The speaker considers both worlds possible, so Mary's NOT being
@@ -1075,7 +1075,7 @@ pregnant is also possible. -/
 theorem matrix_epistemic_both_possible :
     possibility fBelief .speech allPW (· == .pregnant) .notPregnant = true ∧
     possibility fBelief .speech allPW (· == .notPregnant) .notPregnant = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- Same modal (*might*), different event bindings, different epistemic
 domains. Under Jane's beliefs, only the pregnant-world is accessible.
@@ -1089,7 +1089,7 @@ theorem embedded_vs_matrix_epistemic :
     (accessible fBelief .thinking allPW .notPregnant).length = 1 ∧
     -- Under speech event: both worlds accessible (speaker's uncertainty)
     (accessible fBelief .speech allPW .notPregnant).length = 2 := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 
 end Semantics.Modality.EventRelativity

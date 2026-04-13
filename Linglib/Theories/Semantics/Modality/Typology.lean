@@ -45,7 +45,7 @@ Equivalently: ⟦m⟧ = fo(m) × fl(m) (Cartesian closure).
 Alternative formulation: a modal m satisfies IFF just in case ⟦m⟧ = fo(m) × fl(m),
 where × is the Cartesian product.
 
-Steinert-Threlkeld, Imel, & @cite{steinert-threlkeld-imel-guo-2023}. -/
+@cite{steinert-threlkeld-imel-guo-2023}. -/
 def satisfiesIFF (m : List ForceFlavor) : Bool :=
   m.all fun ⟨fo₁, _⟩ =>
     m.all fun ⟨_, fl₂⟩ =>
@@ -100,7 +100,7 @@ theorem iff_not_implies_sav :
       satisfiesIFF m = true ∧ satisfiesSAV m = false := by
   exact ⟨[⟨.necessity, .epistemic⟩, ⟨.necessity, .deontic⟩,
           ⟨.possibility, .epistemic⟩, ⟨.possibility, .deontic⟩],
-         by native_decide, by native_decide⟩
+         by decide, by decide⟩
 
 /-! ## Cartesian Products in the Force-Flavor Space -/
 
@@ -181,6 +181,146 @@ theorem singleton_satisfies_iff (ff : ForceFlavor) :
 theorem empty_satisfies_iff : satisfiesIFF [] = true := by
   unfold satisfiesIFF; simp [List.all_nil]
 
+/-! ## Convexity Characterization
+
+IFF is equivalent to convexity in the grid betweenness relation on the
+force-flavor space (@cite{steinert-threlkeld-imel-guo-2023} §4.2).
+
+Betweenness on a 2D grid: (fo_b, fl_b) lies between (fo_a, fl_a) and
+(fo_c, fl_c) iff one can reach (fo_b, fl_b) by first changing force,
+then flavor (or vice versa) on the path from a to c.
+
+Following @cite{chemla-buccola-dautriche-2019}: a set S is convex iff
+for any a, c ∈ S, every point between a and c is also in S. -/
+
+/-- Grid betweenness: `b` lies between `a` and `c` iff each coordinate
+    of `b` matches one of the corresponding coordinates of `a` or `c`. -/
+def isBetween (b a c : ForceFlavor) : Bool :=
+  (b.force == a.force || b.force == c.force) &&
+  (b.flavor == a.flavor || b.flavor == c.flavor)
+
+/-- A set of force-flavor pairs is convex iff it is closed under grid
+    betweenness: for any two members, all points between them are members. -/
+def isConvex (S : List ForceFlavor) : Bool :=
+  S.all fun a => S.all fun c =>
+    ForceFlavor.universe.all fun b =>
+      if isBetween b a c then S.any (· == b) else true
+
+/-- **IFF ≡ Convexity.** A modal meaning satisfies IFF iff it is convex
+    in the grid betweenness relation.
+
+    The proof reduces both sides to Cartesian closure: IFF checks that
+    every force-flavor recombination is present, while convexity checks
+    that every grid-between point is present. On the 2D grid, these
+    coincide because the points between (fo₁, fl₁) and (fo₂, fl₂) are
+    exactly {fo₁, fo₂} × {fl₁, fl₂}.
+
+    @cite{steinert-threlkeld-imel-guo-2023} §4.2. -/
+private theorem bool_ite_true (b x : Bool) :
+    (if b then x else true) = true ↔ (b = true → x = true) := by
+  cases b <;> simp
+
+private theorem forceFlavor_ext {a b : ForceFlavor}
+    (hf : a.force = b.force) (hfl : a.flavor = b.flavor) : a = b := by
+  cases a; cases b; simp_all
+
+private theorem mem_universe (ff : ForceFlavor) : ff ∈ ForceFlavor.universe := by
+  cases ff with | mk f fl => cases f <;> cases fl <;> decide
+
+set_option maxHeartbeats 800000 in
+theorem iff_eq_convex (m : List ForceFlavor) :
+    satisfiesIFF m = isConvex m := by
+  apply Bool.eq_iff_iff.mpr; constructor
+  · -- IFF → Convex: 4-way case split on betweenness coordinates
+    intro hIFF
+    unfold satisfiesIFF at hIFF
+    unfold isConvex
+    simp only [List.all_eq_true, List.any_eq_true, Bool.and_eq_true] at hIFF
+    simp only [List.all_eq_true]
+    intro a ha c hc b _
+    rw [bool_ite_true]; intro hBet
+    unfold isBetween at hBet
+    simp only [Bool.and_eq_true, Bool.or_eq_true] at hBet
+    obtain ⟨hfo, hfl⟩ := hBet
+    rw [List.any_eq_true]
+    rcases hfo with hfo | hfo <;> rcases hfl with hfl | hfl
+    · -- b.force = a.force, b.flavor = a.flavor: witness is a
+      refine ⟨a, ha, ?_⟩
+      rw [forceFlavor_ext (eq_of_beq hfo).symm (eq_of_beq hfl).symm]
+      exact beq_self_eq_true _
+    · -- b.force = a.force, b.flavor = c.flavor: IFF cross-product witness
+      obtain ⟨w, hw, hwf, hwfl⟩ := hIFF a ha c hc
+      refine ⟨w, hw, ?_⟩
+      rw [forceFlavor_ext
+        ((eq_of_beq hwf).trans (eq_of_beq hfo).symm)
+        ((eq_of_beq hwfl).trans (eq_of_beq hfl).symm)]
+      exact beq_self_eq_true _
+    · -- b.force = c.force, b.flavor = a.flavor: IFF cross-product witness (reversed)
+      obtain ⟨w, hw, hwf, hwfl⟩ := hIFF c hc a ha
+      refine ⟨w, hw, ?_⟩
+      rw [forceFlavor_ext
+        ((eq_of_beq hwf).trans (eq_of_beq hfo).symm)
+        ((eq_of_beq hwfl).trans (eq_of_beq hfl).symm)]
+      exact beq_self_eq_true _
+    · -- b.force = c.force, b.flavor = c.flavor: witness is c
+      refine ⟨c, hc, ?_⟩
+      rw [forceFlavor_ext (eq_of_beq hfo).symm (eq_of_beq hfl).symm]
+      exact beq_self_eq_true _
+  · -- Convex → IFF: ⟨fo₁, fl₂⟩ lies between ⟨fo₁, fl₁⟩ and ⟨fo₂, fl₂⟩
+    intro hConv
+    unfold isConvex at hConv
+    unfold satisfiesIFF
+    simp only [List.all_eq_true] at hConv
+    simp only [List.all_eq_true, List.any_eq_true, Bool.and_eq_true]
+    intro ⟨fo₁, fl₁⟩ h₁ ⟨fo₂, fl₂⟩ h₂
+    have h := hConv ⟨fo₁, fl₁⟩ h₁ ⟨fo₂, fl₂⟩ h₂ ⟨fo₁, fl₂⟩ (mem_universe _)
+    rw [bool_ite_true] at h
+    have hBet : isBetween ⟨fo₁, fl₂⟩ ⟨fo₁, fl₁⟩ ⟨fo₂, fl₂⟩ = true := by
+      unfold isBetween; simp
+    obtain ⟨w, hw, hweq⟩ := List.any_eq_true.mp (h hBet)
+    have heq := eq_of_beq hweq
+    subst heq
+    exact ⟨⟨fo₁, fl₂⟩, hw, beq_self_eq_true _, beq_self_eq_true _⟩
+
+/-- **Path-connectedness** — a weaker alternative to IFF/convexity.
+
+    A set S is path-connected iff for any two members, *some* point
+    between them is also in S. Equivalently: replace the "and" in IFF
+    with "or" — if (fo₁, fl₁) and (fo₂, fl₂) ∈ S, then (fo₁, fl₂)
+    or (fo₂, fl₁) ∈ S.
+
+    Strictly weaker than IFF. @cite{steinert-threlkeld-imel-guo-2023} §4.2,
+    footnote 17. -/
+def satisfiesPathConnected (m : List ForceFlavor) : Bool :=
+  m.all fun ⟨fo₁, fl₁⟩ =>
+    m.all fun ⟨fo₂, fl₂⟩ =>
+      m.any (fun ff => ff.force == fo₁ && ff.flavor == fl₂) ||
+      m.any (fun ff => ff.force == fo₂ && ff.flavor == fl₁)
+
+/-- IFF implies path-connectedness: if all between-points are present,
+    certainly some are. -/
+theorem iff_implies_pathConnected (m : List ForceFlavor)
+    (h : satisfiesIFF m = true) :
+    satisfiesPathConnected m = true := by
+  unfold satisfiesIFF at h
+  unfold satisfiesPathConnected
+  simp only [List.all_eq_true, List.any_eq_true, Bool.and_eq_true,
+             Bool.or_eq_true] at h ⊢
+  intro ⟨fo₁, fl₁⟩ h₁ ⟨fo₂, fl₂⟩ h₂
+  exact Or.inl (h ⟨fo₁, fl₁⟩ h₁ ⟨fo₂, fl₂⟩ h₂)
+
+/-- Path-connectedness does NOT imply IFF.
+    Table 1(b) in @cite{steinert-threlkeld-imel-guo-2023}:
+    {(◇,e),(◇,d),(◇,c),(□,d),(□,c)} is path-connected but not IFF
+    (missing (□,e)). -/
+theorem pathConnected_not_implies_iff :
+    ∃ m : List ForceFlavor,
+      satisfiesPathConnected m = true ∧ satisfiesIFF m = false := by
+  exact ⟨[⟨.possibility, .epistemic⟩, ⟨.possibility, .deontic⟩,
+          ⟨.possibility, .circumstantial⟩, ⟨.necessity, .deontic⟩,
+          ⟨.necessity, .circumstantial⟩],
+         by decide, by decide⟩
+
 /-! ## Language-Level Measures -/
 
 /-- A modal expression datum: a form paired with its meaning in the 3×3 space. -/
@@ -260,11 +400,13 @@ structure FlavorAssignment where
 def canonicalAssignment
     (epist : Semantics.Modality.Kratzer.EpistemicFlavor)
     (deont : Semantics.Modality.Kratzer.DeonticFlavor)
+    (boul : Semantics.Modality.Kratzer.BouleticFlavor)
     (teleo : Semantics.Modality.Kratzer.TeleologicalFlavor) :
     FlavorAssignment where
   assign
     | .epistemic => epist.toKratzerParams
     | .deontic => deont.toKratzerParams
+    | .bouletic => boul.toKratzerParams
     | .circumstantial => teleo.toKratzerParams
 
 /-! ## Bridge: ModalItem.decomposition ↔ satisfiesIFF

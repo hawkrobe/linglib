@@ -1,5 +1,57 @@
 # Changelog
 
+## [0.229.712] - 2026-04-13
+
+### Added
+- **Entailment diamond** for square of necessities: prove all four forward entailments (SN→SN_Xf, SN→SN_Xg, SN_Xf→SN_Xfg, SN_Xg→SN_Xfg) and both reverse non-entailments (SN_Xfg⊬SN_Xf, SN_Xfg⊬SN_Xg)
+  - `snXg_entails_snXfg`, `snXf_entails_snXfg` (XMarking.lean): complete the diamond by reusing `sn_entails_snXf` and `sn_entails_snXg` via substitution
+  - `snXfg_not_entails_snXf` (XMarking.lean): reverse non-entailment for the Xg edge
+  - `deve_entails_devia`, `tinhaQue_entails_devia` (Ferreira2023.lean): Portuguese-specific instantiations of the bottom-row entailments
+- **`dever_entails_poder`** (Ferreira2023.lean): WN ⊨ possibility under seriality, completing the ascending scale poder p < dever p < ter que p
+
+### Changed
+- Replace all `native_decide` with `decide` in XMarking.lean and Ferreira2023.lean (4 counterexample proofs) — kernel-verified per CLAUDE.md proof style conventions
+- Rename `xMarking_commutes` → `xMarking_parameter_independence` with clarified docstring — the theorem is a definitional observation about parameter independence, not a non-trivial commutativity result
+- Rename `deve_devia_independent` → `devia_not_entails_deve` with updated docstring noting that the reverse (deve → devia) DOES hold
+- Clarify `xMarkOrdering` docstring: note that our formulation follows @cite{von-fintel-iatridou-2008}'s `combineOrdering` rather than Ferreira's BTT definition (131), and explain the equivalence
+
+## [0.229.711] - 2026-04-13
+
+### Changed
+- **Roberts2023 deep integration**: connect Roberts' imperative semantics to existing Kratzer/Directive infrastructure
+  - `Circumstance` → `abbrev` for `Core.Situation` (eliminates redundant world-time pair type)
+  - `ImperativeCharacter` now stores `TeleologicalFlavor` instead of separate modalBase/orderingSource
+  - `imperativeCharacter_eq_kratzerTheory`: imperative realize = `KratzerTheory.eval .necessity` (by `rfl`)
+  - `imperativeCharacter_is_teleological`: flavor tag = `.circumstantial` (not deontic)
+  - `ImperativeCharacter.weakRealize`: weak imperatives via `Directive.weakNecessity`
+  - `strong_imperative_entails_suggestion`: strong realize → weak realize (delegates to `strong_entails_weak`)
+  - `cookie_is_suggestion` / `cookie_not_command`: "Have a cookie" as weak imperative worked example
+  - Scoreboard orthogonality: `interrogation_preserves_cg`, `interrogation_preserves_goals`, `direction_preserves_qud` — full 3×3 matrix of speech-act / scoreboard-component independence
+  - `ImperativeUse.expressive` docstring updated: Roberts explicitly declines to formalize expressives (p. 13); bouletic mapping is our extension of her remark
+
+## [0.229.710] - 2026-04-13
+
+### Added
+- **`sn_entails_snXf`** (XMarking.lean): SN → SN_Xf forward entailment under ∗-revision — best worlds in the wider domain either were already best (bestAmong_superset) or are new p-worlds
+- **`bestAmong_superset`** (Ordering.lean): best worlds in a superset that belong to a subset are best in the subset — key lemma for domain-widening proofs
+- **`eval_weakNecessity_eq_necessity`** (Flavor.lean): makes explicit that KratzerTheory uses the same quantifier for WN and SN, citing Ferreira 2023's WN ≡ SN_Xg
+- **`english_portuguese_weakNecessity_correspondence`** (Ferreira2023.lean): bridges English should/ought (FunctionWords) to Portuguese dever via shared `.weakNecessity` force
+- **`english_should_has_xmarking_morphology`** (Ferreira2023.lean): should carries `.Past` tense (X-marking), ought does not — connects to Iatridou's generalization
+- **`temQue_entails_tinhaQue`** (Ferreira2023.lean): PortugueseSquare entailment from tem que to tinha que via sn_entails_snXf
+- **Cross-references**: Iatridou.lean ↔ XMarking.lean docstrings now point to each other (ExclF ↔ IsStarRevision)
+
+## [0.229.709] - 2026-04-13
+
+### Added
+- **Roberts2023 desiderata (e), (f), (h)**: all 9 desiderata from Table 1 now formalized
+  - **(e) Conditional imperatives**: `desideratum_e_conditional` — imperative realization is parameterized by modal base, making all imperatives inherently conditional
+  - **(f) Range of modal flavors**: `ImperativeUse` (practical/expressive), `ImperativeUse.flavorTag`, `desideratum_f_flavor_range` — practical = circumstantial, expressive = bouletic
+  - **(h) Futurate flavor**: `desideratum_h_futurate` — FUT structurally excludes past times (`c.t < c'.t` for all futures)
+- **Bib entries**: `veltman-2018`, `von-fintel-iatridou-2017`
+
+### Fixed
+- **Roberts2023 UNVERIFIED tags removed**: equation numbers (42), (50), (53), (55) all verified against PDF — no unverified citations remain in the file
+
 ## [0.229.708] - 2026-04-13
 
 ### Fixed

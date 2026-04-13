@@ -156,8 +156,8 @@ theorem weak_not_entails_strong :
       (λ _ => [λ w => w == .w0 || w == .w1])
       (λ _ => [λ w => w == .w1])
       (λ w => w == .w1) .w0
-      (by native_decide))
-    (by native_decide)
+      (by decide))
+    (by decide)
 
 /-! ## Deontic application -/
 

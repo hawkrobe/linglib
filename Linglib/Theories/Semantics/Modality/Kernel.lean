@@ -360,31 +360,31 @@ private def notBlue : BProp World := λ w => match w with | .w1 => false | _ => 
 private def mastermindK : Kernel := ⟨[redOrBlue, notRed]⟩
 private def indirectK : Kernel := ⟨[redOrBlue]⟩
 
-theorem mastermind_base : mastermindK.base = [.w1] := by native_decide
+theorem mastermind_base : mastermindK.base = [.w1] := by decide
 
 theorem mastermind_blue_unsettled :
-    directlySettlesExplicit mastermindK blue = false := by native_decide
+    directlySettlesExplicit mastermindK blue = false := by decide
 
 theorem mastermind_blue_follows :
-    mastermindK.followsFrom blue = true := by native_decide
+    mastermindK.followsFrom blue = true := by decide
 
 theorem mastermind_must_blue_defined :
     (kernelMust mastermindK blue).presup .w0 := by
-  simp only [kernelMust, PrProp.ofBool]; native_decide
+  simp only [kernelMust, PrProp.ofBool]; decide
 
 theorem mastermind_must_blue_true :
     (kernelMust mastermindK blue).assertion .w0 := by
-  simp only [kernelMust, PrProp.ofBool]; native_decide
+  simp only [kernelMust, PrProp.ofBool]; decide
 
 theorem mastermind_red_settled :
-    directlySettlesExplicit mastermindK red = true := by native_decide
+    directlySettlesExplicit mastermindK red = true := by decide
 
 theorem mastermind_might_red_undefined :
     ¬(kernelMight mastermindK red).presup .w0 := by
-  simp only [kernelMight, PrProp.ofBool]; native_decide
+  simp only [kernelMight, PrProp.ofBool]; decide
 
 theorem mastermind_redOrBlue_settled :
-    directlySettlesExplicit mastermindK redOrBlue = true := by native_decide
+    directlySettlesExplicit mastermindK redOrBlue = true := by decide
 
 /-! ## Non-equivalence of the two implementations (@cite{von-fintel-gillies-2010} §7, p. 379)
 
@@ -401,7 +401,7 @@ imply entailment (see `explicit_implies_entailment` and
 theorem explicit_not_implies_partition :
     ∃ (k : Kernel) (φ : BProp World),
       directlySettlesExplicit k φ = true ∧ settlesByPartition k φ = false :=
-  ⟨⟨[red]⟩, redOrBlue, by native_decide, by native_decide⟩
+  ⟨⟨[red]⟩, redOrBlue, by decide, by decide⟩
 
 /-- Counterexample (Impl 2 ↛ Impl 1): K = mastermindK, φ = blue.
     No single X ∈ K entails or excludes blue, but S_K = {{w0},{w1},{w2,w3}}
@@ -409,7 +409,7 @@ theorem explicit_not_implies_partition :
 theorem partition_not_implies_explicit :
     ∃ (k : Kernel) (φ : BProp World),
       settlesByPartition k φ = true ∧ directlySettlesExplicit k φ = false :=
-  ⟨mastermindK, blue, by native_decide, by native_decide⟩
+  ⟨mastermindK, blue, by decide, by decide⟩
 
 /-- Entailment does not imply partition settling: B_K ⊆ ⟦φ⟧ does not
     guarantee S_K settles φ. Same witness as explicit_not_implies_partition:
@@ -418,7 +418,7 @@ theorem partition_not_implies_explicit :
 theorem entailment_not_implies_partition :
     ∃ (k : Kernel) (φ : BProp World),
       k.followsFrom φ = true ∧ settlesByPartition k φ = false :=
-  ⟨⟨[red]⟩, redOrBlue, by native_decide, by native_decide⟩
+  ⟨⟨[red]⟩, redOrBlue, by decide, by decide⟩
 
 /-! ## Deep theorems (@cite{von-fintel-gillies-2010}) -/
 
@@ -428,7 +428,7 @@ simultaneously defined and true. -/
 theorem entailment_settling_gap :
     ∃ (k : Kernel) (φ : BProp World),
       k.followsFrom φ = true ∧ directlySettlesExplicit k φ = false :=
-  ⟨mastermindK, blue, by native_decide, by native_decide⟩
+  ⟨mastermindK, blue, by decide, by decide⟩
 
 /-- **Indirectness ≠ weakness**: three independent cases show indirectness
 and assertion strength are orthogonal dimensions. -/
@@ -438,8 +438,8 @@ theorem indirectness_neq_weakness :
     ¬(kernelMust mastermindK red).presup .w0 ∧
     ((kernelMust indirectK blue).presup .w0 ∧
      ¬(kernelMust indirectK blue).assertion .w0) := by
-  simp only [kernelMust, PrProp.ofBool]; exact ⟨⟨by native_decide, by native_decide⟩,
-    by native_decide, by native_decide, by native_decide⟩
+  simp only [kernelMust, PrProp.ofBool]; exact ⟨⟨by decide, by decide⟩,
+    by decide, by decide, by decide⟩
 
 /-- **Modus ponens with must** (@cite{von-fintel-gillies-2010} Arg 4.3.1): the argument form
 "if φ, must ψ; φ; ∴ ψ" is valid under realistic B_K. -/
@@ -520,13 +520,13 @@ theorem cant_dilemma_resolved :
     ¬(kernelMight mastermindK notBlue).assertion .w1 ∧
     notBlue .w1 = false := by
   simp only [kernelCant, kernelMight, kernelMust, PrProp.ofBool]
-  exact ⟨by native_decide, by native_decide, by native_decide, by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide, by decide, by decide, by decide⟩
 
 /-- Direct evidence blocks can't, paralleling must: when K settles ¬φ,
 can't φ has presupposition failure. -/
 theorem cant_direct_evidence_infelicity :
     ¬(kernelCant mastermindK red).presup .w0 := by
-  simp only [kernelCant, kernelMust, PrProp.ofBool]; native_decide
+  simp only [kernelCant, kernelMust, PrProp.ofBool]; decide
 
 /-- can't φ and must(¬φ) are intensionally identical. -/
 theorem cant_eq_must_neg (k : Kernel) (φ : BProp World) (w : World) :
@@ -606,17 +606,17 @@ private def dryU : Background := [expectDry]
 /-- "Nandao waimian xiayu-le ma?" is felicitous with a dripping raincoat.
 P(rain|coat) = 1/2 > P(rain) = 1/4; K ∩ U = ∅; rain unsettled by K. -/
 theorem raincoat_nandao_felicitous :
-    nandaoFelicitous raincoatK dryU isRaining = true := by native_decide
+    nandaoFelicitous raincoatK dryU isRaining = true := by decide
 
 /-- Without evidence, nandao is infelicitous (@cite{zheng-2025} ex. 5 ctx 2). -/
 theorem no_evidence_nandao_infelicitous :
-    nandaoFelicitous ⟨[]⟩ dryU isRaining = false := by native_decide
+    nandaoFelicitous ⟨[]⟩ dryU isRaining = false := by decide
 
 /-- When evidence is expected (K compatible with U), nandao is infelicitous
 (@cite{zheng-2025} ex. 6 ctx 2). -/
 theorem expected_evidence_infelicitous :
     let expectWet : Background := [wearingRaincoat]
-    nandaoFelicitous raincoatK expectWet isRaining = false := by native_decide
+    nandaoFelicitous raincoatK expectWet isRaining = false := by decide
 
 /-- Nandao reuses the mastermind kernel: "must blue" and "nandao blue?" share
 condition (iii). When must is defined, nandao's indirectness condition holds. -/
@@ -624,6 +624,6 @@ theorem nandao_mastermind_bridge :
     (kernelMust mastermindK blue).presup .w0 ∧
     !directlySettlesExplicit mastermindK blue = true := by
   simp only [kernelMust, PrProp.ofBool]
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 end Semantics.Modality

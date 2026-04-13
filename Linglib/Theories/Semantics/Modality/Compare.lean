@@ -72,22 +72,22 @@ section CoreEquivalence
 theorem minimal_kratzer_equals_universal_simple_necessity :
     ∀ (w : World), KratzerMinimal.eval .necessity raining w = SimpleUniversal.eval .necessity raining w := by
   intro w
-  cases w <;> native_decide
+  cases w <;> decide
 
 theorem minimal_kratzer_equals_universal_simple_possibility :
     ∀ (w : World), KratzerMinimal.eval .possibility raining w = SimpleUniversal.eval .possibility raining w := by
   intro w
-  cases w <;> native_decide
+  cases w <;> decide
 
 /-- Agreement on trivially true. -/
 theorem agree_on_trivially_true :
     theoriesAgreeOnProposition KratzerMinimal SimpleUniversal triviallyTrue = true := by
-  native_decide
+  decide
 
 /-- Agreement on trivially false. -/
 theorem agree_on_trivially_false :
     theoriesAgreeOnProposition KratzerMinimal SimpleUniversal triviallyFalse = true := by
-  native_decide
+  decide
 
 end CoreEquivalence
 
@@ -98,13 +98,13 @@ theorem epistemic_vs_minimal_differ :
     ∃ (p : Proposition) (w : World),
     KratzerEpistemic.eval .necessity p w ≠ KratzerMinimal.eval .necessity p w := by
   use groundWet, .w0
-  native_decide
+  decide
 
 /-- Different conversational backgrounds yield different truth values. -/
 theorem kratzer_context_dependence :
     KratzerEpistemic.eval .necessity groundWet .w0 = true ∧
     KratzerMinimal.eval .necessity groundWet .w0 = false := by
-  native_decide
+  decide
 
 end Divergence
 
@@ -129,17 +129,17 @@ section SpecificExamples
 /-- Agreement: Minimal Kratzer and Universal Simple agree on necessity for trivially true. -/
 theorem agree_on_trivially_true_necessity :
     theoriesAgreeOn KratzerMinimal SimpleUniversal .necessity triviallyTrue = true := by
-  native_decide
+  decide
 
 /-- Agreement: Both agree on possibility for trivially true. -/
 theorem agree_on_trivially_true_possibility :
     theoriesAgreeOn KratzerMinimal SimpleUniversal .possibility triviallyTrue = true := by
-  native_decide
+  decide
 
 /-- Agreement: Both agree on necessity for trivially false. -/
 theorem agree_on_trivially_false_necessity :
     theoriesAgreeOn KratzerMinimal SimpleUniversal .necessity triviallyFalse = true := by
-  native_decide
+  decide
 
 end SpecificExamples
 

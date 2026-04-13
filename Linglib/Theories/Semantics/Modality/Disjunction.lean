@@ -300,7 +300,7 @@ Exhaustivity+Disjointness force A = {here}, A' = {there}. -/
 def mustHereOrThere : MDisjunction Loc := [dHere, dThere]
 
 /-- The disjunction holds: □(here) over {here} ∧ □(there) over {there}. -/
-theorem mustHereOrThere_holds : mustHereOrThere.holds = true := by native_decide
+theorem mustHereOrThere_holds : mustHereOrThere.holds = true := by decide
 
 /-- Exhaustivity: bgHereOrThere ⊆ {here} ∪ {there}. -/
 theorem mustHereOrThere_exhaustive :
@@ -318,7 +318,7 @@ theorem mustHereOrThere_disjoint : disjointness₂ dHere dThere := by
 "it must be here". The necessity over the full background fails. -/
 theorem must_here_not_entailed :
     FiniteWorlds.worlds.all (fun w => !bgHereOrThere w || isHere w) = false := by
-  native_decide
+  decide
 
 
 -- ══════════════════════════════════════════════════════════
@@ -331,19 +331,19 @@ def mayHereOrThere : MDisjunction Loc :=
   defaultBinding bgHereOrThere [isHere, isThere] .existential
 
 /-- The disjunction holds: ◇(here) w.r.t. C ∧ ◇(there) w.r.t. C. -/
-theorem mayHereOrThere_holds : mayHereOrThere.holds = true := by native_decide
+theorem mayHereOrThere_holds : mayHereOrThere.holds = true := by decide
 
 /-- Free choice: ◇(here) holds individually. -/
 theorem mayHereOrThere_fc_here :
     Disjunct.holds (W := Loc)
       { domain := bgHereOrThere, force := .existential, content := isHere } = true := by
-  native_decide
+  decide
 
 /-- Free choice: ◇(there) holds individually. -/
 theorem mayHereOrThere_fc_there :
     Disjunct.holds (W := Loc)
       { domain := bgHereOrThere, force := .existential, content := isThere } = true := by
-  native_decide
+  decide
 
 
 end Semantics.Modality.Disjunction

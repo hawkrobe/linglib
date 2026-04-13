@@ -282,17 +282,17 @@ private def fImpr : AnchoringFn Unit LeaveWorld :=
 /-- Under the declarative, both leaving and staying are possible
 (speaker is uncertain). -/
 theorem declarative_leave_possible :
-    possibility fDecl () allLW (· == .leave) .leave = true := by native_decide
+    possibility fDecl () allLW (· == .leave) .leave = true := by decide
 
 theorem declarative_stay_possible :
-    possibility fDecl () allLW (· == .stay) .leave = true := by native_decide
+    possibility fDecl () allLW (· == .stay) .leave = true := by decide
 
 /-- Under the imperative, leaving is permitted but staying is NOT. -/
 theorem imperative_leave_permitted :
-    possibility fImpr () allLW (· == .leave) .leave = true := by native_decide
+    possibility fImpr () allLW (· == .leave) .leave = true := by decide
 
 theorem imperative_stay_not_permitted :
-    possibility fImpr () allLW (· == .stay) .leave = false := by native_decide
+    possibility fImpr () allLW (· == .stay) .leave = false := by decide
 
 /-- The core contrast: same modal (◇), same proposition (stay),
 same evaluation world — but different speech acts yield different
@@ -303,7 +303,7 @@ theorem speech_act_modulates_domain :
     possibility fDecl () allLW (· == .stay) .leave = true ∧
     -- Imperative: ◇(stay) = false (staying is not permitted)
     possibility fImpr () allLW (· == .stay) .leave = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 
 -- ════════════════════════════════════════════════════

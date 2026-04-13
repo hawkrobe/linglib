@@ -70,8 +70,8 @@ def EpistemicFlavor.flavorTag : ModalFlavor := .epistemic
 /-- Deontic modality maps to the deontic flavor tag. -/
 def DeonticFlavor.flavorTag : ModalFlavor := .deontic
 
-/-- Bouletic modality maps to the deontic flavor tag (both norm-based). -/
-def BouleticFlavor.flavorTag : ModalFlavor := .deontic
+/-- Bouletic modality maps to the bouletic flavor tag (desire-based ordering). -/
+def BouleticFlavor.flavorTag : ModalFlavor := .bouletic
 
 /-- Teleological modality maps to the circumstantial flavor tag
     (teleological is subsumed under circumstantial in the 2×3 space). -/
@@ -108,11 +108,20 @@ def KratzerTheory (params : KratzerParams) : ModalTheory where
     let best := bestWorlds params.base params.ordering w
     match force with
     | .necessity => best.all p
-    | .weakNecessity => best.all p  -- same ∀ as necessity; weak necessity is
-      -- modeled by passing a refined ordering (g ∪ g') via KratzerParams, not by
-      -- a different quantifier. Use Directive.weakNecessity for the full
-      -- von Fintel & Iatridou (2008) semantics.
+    | .weakNecessity => best.all p  -- Same ∀ as necessity. This is correct:
+      -- WN ≡ SN_Xg (@cite{ferreira-2023}) — weak necessity IS strong necessity
+      -- with X-marked ordering source. The difference is entirely in the modal
+      -- parameters (refined ordering via KratzerParams), not the quantifier.
+      -- See `XMarking.wn_equiv_snXg` for the structural equation.
     | .possibility => best.any p
+
+/-- `KratzerTheory` evaluates weak necessity with the same quantifier as necessity.
+    This is correct by @cite{ferreira-2023}: WN ≡ SN_Xg — the weak/strong
+    distinction is encoded in the ordering source parameters, not the quantifier.
+    See `XMarking.wn_equiv_snXg` for the structural equation. -/
+theorem eval_weakNecessity_eq_necessity (params : KratzerParams) (p : Proposition) (w : World) :
+    (KratzerTheory params).eval .weakNecessity p w =
+    (KratzerTheory params).eval .necessity p w := rfl
 
 -- Standard parameter configurations
 

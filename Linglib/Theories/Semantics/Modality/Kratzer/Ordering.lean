@@ -259,4 +259,19 @@ theorem bestAmong_sub (worlds : List World) (ordering : List (BProp World)) :
     ∀ w, w ∈ bestAmong worlds ordering → w ∈ worlds :=
   λ _ hw => List.mem_of_mem_filter hw
 
+/-- Best worlds in a superset that belong to a subset are best in the subset.
+
+    If w' beats every world in a larger set, it certainly beats every world
+    in any subset. This is the key lemma for showing that star-revision
+    (domain widening) preserves strong necessity. -/
+theorem bestAmong_superset {sub sup : List World} {ordering : List (BProp World)} {w' : World}
+    (hSub : ∀ v, v ∈ sub → v ∈ sup)
+    (hBest : w' ∈ bestAmong sup ordering)
+    (hMem : w' ∈ sub) :
+    w' ∈ bestAmong sub ordering := by
+  unfold bestAmong at hBest ⊢
+  rw [List.mem_filter] at hBest ⊢
+  exact ⟨hMem, List.all_eq_true.mpr (λ v hv =>
+    List.all_eq_true.mp hBest.2 v (hSub v hv))⟩
+
 end Semantics.Modality.Kratzer

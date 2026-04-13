@@ -279,7 +279,7 @@ theorem believes_not_veridical :
       -- R false v = v (the identity on Bool viewed as: v itself)
       -- So accessible = filter (fun v => v) [true, false] = [true]
       -- all [true] (fun w => w) = true
-      native_decide
+      decide
     · rfl
 
 /-! ## Common Ground as Common Knowledge

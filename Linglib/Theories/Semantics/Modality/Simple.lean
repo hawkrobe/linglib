@@ -116,12 +116,12 @@ theorem simple_universal_possibility :
 theorem simple_reflexive_necessity_raining :
     ∀ (w : World), SimpleReflexive.eval .necessity raining w = raining w := by
   intro w
-  cases w <;> native_decide
+  cases w <;> decide
 
 theorem simple_reflexive_necessity_johnHome :
     ∀ (w : World), SimpleReflexive.eval .necessity johnHome w = johnHome w := by
   intro w
-  cases w <;> native_decide
+  cases w <;> decide
 
 end KeyProperties
 
@@ -155,17 +155,17 @@ section Examples
 theorem simple_universal_consistent_raining :
     ∀ (w : World), (SimpleUniversal.necessityEntailsPossibility raining w) = true := by
   intro w
-  cases w <;> native_decide
+  cases w <;> decide
 
 theorem simple_universal_consistent_johnHome :
     ∀ (w : World), (SimpleUniversal.necessityEntailsPossibility johnHome w) = true := by
   intro w
-  cases w <;> native_decide
+  cases w <;> decide
 
 theorem simple_universal_consistent_triviallyTrue :
     ∀ (w : World), (SimpleUniversal.necessityEntailsPossibility triviallyTrue w) = true := by
   intro w
-  cases w <;> native_decide
+  cases w <;> decide
 
 end Examples
 
