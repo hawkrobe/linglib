@@ -32,7 +32,7 @@ def a_vrea : VerbCore where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want
 
 /-- *a spera* 'hope' — cross-linguistically variable (IND/SBJV).
@@ -42,7 +42,7 @@ def a_spera : VerbCore where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *a intenționa* 'intend' — robustly rejects indicative.
     @cite{grano-2024}, (23): *să* (SBJV) required, *că* (IND) rejected. -/
@@ -51,7 +51,7 @@ def a_intentiona : VerbCore where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want
 
 /-- *a face* 'make' — causative, subjunctive-selecting via *să*.
@@ -60,7 +60,7 @@ def a_face : VerbCore where
   form := "a face"
   complementType := .finiteClause
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
 
 -- ════════════════════════════════════════════════════════════════
 -- Bridge Theorems
@@ -76,6 +76,6 @@ theorem a_intentiona_is_want_class :
     a_intentiona.levinClass = some .want := rfl
 
 theorem a_face_is_causative :
-    a_face.causativeBuilder.isSome = true := rfl
+    a_face.causative.isSome = true := rfl
 
 end Fragments.Romanian.MoodChoice

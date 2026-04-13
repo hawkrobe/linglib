@@ -1,15 +1,15 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.VerbClass
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Attitudes.Preferential
-import Linglib.Theories.Semantics.Causation.Basic
+import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.Implicative
-import Linglib.Theories.Semantics.Causation.PsychCausation
+import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Events.Krifka1998
@@ -18,8 +18,9 @@ import Linglib.Theories.Semantics.Lexical.Verb.LevinClassProfiles
 /-! # Cross-Linguistic Verb Infrastructure
 
 Framework-agnostic types for verb semantics: complement type, control type,
-attitude/causative builders, and the `VerbCore` structure that bundles all
-semantic fields shared across languages.
+and the `VerbCore` structure that bundles all semantic fields shared across
+languages. Verb classification enums (`Causative`, `Implicative`, `Attitude`,
+etc.) are in `Core/Lexical/VerbClass.lean`.
 
 English-specific morphology (3sg, past, participles) lives in
 `Fragments/English/Predicates/Verbal.lean`; other languages extend
@@ -45,15 +46,12 @@ Language-specific fragments extend `VerbCore` with morphological fields:
 namespace Core.Verbs
 
 open Core.Presupposition
--- LevinClass, RootProfile from Core.Lexical.LevinClass (root namespace)
 open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Probabilistic.Measurement (Dimension)
-open Semantics.Attitudes.Doxastic (Veridicality)
-open Semantics.Attitudes.Preferential (AttitudeValence NVPClass PreferentialPredicate)
+open Semantics.Attitudes.Preferential (NVPClass PreferentialPredicate)
 open Core.NaturalLogic (EntailmentSig)
-open Semantics.Causation.PsychCausation (CausalSource)
+open Semantics.Causation.Psych (CausalSource)
 open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile)
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Semantics.Events.Krifka1998 (VerbIncClass)
 open Semantics.Lexical.Verb.LevinClassProfiles
@@ -81,84 +79,6 @@ inductive VoiceType where
 def VoiceType.assignsTheta : VoiceType → Bool
   | .agentive | .reflexive | .experiencer => true
   | .nonThematic | .expletive => false
-
-/--
-Which Montague predicate builder this verb uses.
-
-This links the Fragment entry to the compositional semantics in
-`Semantics.Attitudes.Preferential`. Properties like C-distributivity
-are DERIVED from the builder via theorems, not stipulated.
-
-- `degreeComparison`: Uses `mkDegreeComparisonPredicate` → C-distributive (PROVED)
-- `uncertaintyBased`: Uses `worry` constructor → NOT C-distributive (PROVED)
-- `relevanceBased`: Uses `qidai` constructor → NOT C-distributive
-
-The connection to Montague is:
-- `degreeComparison.positive` → `Preferential.hope`, `Preferential.expect`, etc.
-- `degreeComparison.negative` → `Preferential.fear`, `Preferential.dread`
-- `uncertaintyBased` → `Preferential.worry`
-- `relevanceBased.positive` → `Preferential.qidai`
--/
-inductive PreferentialBuilder where
-  /-- Degree comparison semantics: ⟦x V Q⟧ = ∃p ∈ Q. μ(x,p) > θ. C-distributive. -/
-  | degreeComparison (valence : AttitudeValence)
-  /-- Uncertainty-based semantics (worry): involves global uncertainty. NOT C-distributive. -/
-  | uncertaintyBased
-  /-- Relevance-based semantics (qidai, care): involves resolution. NOT C-distributive. -/
-  | relevanceBased (valence : AttitudeValence)
-  deriving DecidableEq, Repr
-
-/-- Get the valence from the builder -/
-def PreferentialBuilder.valence : PreferentialBuilder → AttitudeValence
-  | .degreeComparison v => v
-  | .uncertaintyBased => .negative  -- worry is negative
-  | .relevanceBased v => v
-
-/--
-Unified builder for all attitude verbs, covering both doxastic (believe, know)
-and preferential (hope, fear) attitudes.
-
-This is the **minimal basis** from which theoretical properties are derived:
-1. **Doxastic attitudes**: Use accessibility relations (Hintikka semantics)
-2. **Preferential attitudes**: Use degree/uncertainty semantics (Villalta)
-
-Derived properties (in Theory layer):
-- C-distributivity: from PreferentialBuilder structure
-- NVP class: from C-distributivity + valence
-- Parasitic on belief: from being preferential
-- Presupposition projection: from veridicality + attitude type
--/
-inductive AttitudeBuilder where
-  /-- Doxastic attitude (believe, know, think) with accessibility semantics -/
-  | doxastic (veridicality : Veridicality)
-  /-- Preferential attitude (hope, fear, worry) with degree/uncertainty semantics -/
-  | preferential (builder : PreferentialBuilder)
-  deriving DecidableEq, Repr
-
-/-- Get veridicality from an attitude builder -/
-def AttitudeBuilder.veridicality : AttitudeBuilder → Veridicality
-  | .doxastic v => v
-  | .preferential _ => .nonVeridical  -- Preferential attitudes are non-veridical
-
-/-- Is this a doxastic attitude? -/
-def AttitudeBuilder.isDoxastic : AttitudeBuilder → Bool
-  | .doxastic _ => true
-  | .preferential _ => false
-
-/-- Is this a preferential attitude? -/
-def AttitudeBuilder.isPreferential : AttitudeBuilder → Bool
-  | .doxastic _ => false
-  | .preferential _ => true
-
-/-- Get the preferential builder if this is a preferential attitude -/
-def AttitudeBuilder.getPreferentialBuilder : AttitudeBuilder → Option PreferentialBuilder
-  | .doxastic _ => none
-  | .preferential b => some b
-
-/-- Get valence for preferential attitudes -/
-def AttitudeBuilder.valence : AttitudeBuilder → Option AttitudeValence
-  | .doxastic _ => none
-  | .preferential b => some b.valence
 
 /--
 Presupposition trigger type (@cite{tonhauser-beaver-roberts-simons-2013} classification).
@@ -213,14 +133,6 @@ inductive ProjectionBehavior where
   | filter  -- Conditionally cancels complement presuppositions
   deriving DecidableEq, Repr
 
--- CausativeBuilder is imported from NadathurLauer2020.Builder
--- (via Causative.Basic). Like PreferentialBuilder for attitude verbs,
--- it links lexical entries to their compositional semantics. Properties
--- like "asserts sufficiency" are DERIVED from the builder via theorems.
-open NadathurLauer2020.Builder (CausativeBuilder)
-
--- ImplicativeBuilder follows the same pattern for implicative verbs (manage, fail).
-open Nadathur2024.Implicative (ImplicativeBuilder)
 
 /--
 Disambiguates polysemous verb entries that share a citation form.
@@ -401,10 +313,10 @@ structure VerbCore where
   -- === Class-Specific Features ===
   /-- For CoS verbs: which type (cessation, inception, continuation)? -/
   cosType : Option CoSType := none
-  /-- For implicative verbs: which semantic builder (links to compositional semantics). -/
-  implicativeBuilder : Option ImplicativeBuilder := none
-  /-- For causative verbs: which semantic builder (links to compositional semantics). -/
-  causativeBuilder : Option CausativeBuilder := none
+  /-- For implicative verbs: complement entailment polarity (links to compositional semantics). -/
+  implicative : Option Implicative := none
+  /-- For causative verbs: force-dynamic mechanism (links to compositional semantics). -/
+  causative : Option Causative := none
   /-- Source of causation for psych causatives (@cite{kim-2024} UPH).
       `.external` = mind-external percept, `.internal` = mind-internal representation. -/
   causalSource : Option CausalSource := none
@@ -414,9 +326,9 @@ structure VerbCore where
   opaqueContext : Bool := false
 
   -- === Attitude-Specific Properties ===
-  /-- Unified attitude builder covering doxastic and preferential attitudes.
+  /-- Unified attitude classification covering doxastic and preferential attitudes.
       Theoretical properties (C-distributivity, parasitic, etc.) are DERIVED. -/
-  attitudeBuilder : Option AttitudeBuilder := none
+  attitude : Option Attitude := none
   /-- For non-preferential question-embedding verbs (know, wonder, ask) -/
   takesQuestionBase : Bool := false
   /-- Entailment signature of the complement position.
@@ -464,15 +376,15 @@ def VerbCore.effectiveObjectEntailments (v : VerbCore) : Option EntailmentProfil
 
 /-- Veridicality is DERIVED from the attitude builder -/
 def VerbCore.veridicality (v : VerbCore) : Option Veridicality :=
-  v.attitudeBuilder.map (·.veridicality)
+  v.attitude.map (·.veridicality)
 
 /-- Is this verb a doxastic attitude? -/
 def VerbCore.isDoxastic (v : VerbCore) : Bool :=
-  v.attitudeBuilder.map (·.isDoxastic) |>.getD false
+  v.attitude.map (·.isDoxastic) |>.getD false
 
 /-- Is this verb a preferential attitude? -/
 def VerbCore.isPreferential (v : VerbCore) : Bool :=
-  v.attitudeBuilder.map (·.isPreferential) |>.getD false
+  v.attitude.map (·.isPreferential) |>.getD false
 
 /-- Does this attitude distribute over conjunction?
     DERIVED from complementSig: any signature that refines `.mono`
@@ -487,7 +399,7 @@ def VerbCore.isComplementUE (v : VerbCore) : Bool :=
 
 /-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
 def VerbCore.preferentialValence (v : VerbCore) : Option AttitudeValence :=
-  v.attitudeBuilder.bind (·.valence)
+  v.attitude.bind (·.valence)
 
 -- Note: VerbCore.cDistributive, VerbCore.nvpClass, and VerbCore.takesQuestion
 -- are derived properties defined in Theories/Semantics.Intensional/Attitude/BuilderProperties.lean
@@ -503,9 +415,9 @@ def VerbCore.getCoSSemantics {W : Type*} (v : VerbCore) (P : W → Bool) :
   v.cosType.map λ t => cosSemantics t P
 
 /-- Does this verb presuppose its complement via factivity?
-    DERIVED from attitudeBuilder: true iff the verb is doxastic veridical. -/
+    DERIVED from attitude: true iff the verb is doxastic veridical. -/
 def VerbCore.factivePresup (v : VerbCore) : Bool :=
-  match v.attitudeBuilder with
+  match v.attitude with
   | some (.doxastic .veridical) => true
   | _ => false
 
@@ -534,15 +446,15 @@ def VerbCore.hasPostsupposition (v : VerbCore) : Bool :=
 def VerbCore.derivedPresupType (v : VerbCore) : Option PresupTriggerType :=
   if v.presupposesComplement then some .softTrigger else none
 
-/-- Is this verb a causative? DERIVED from causativeBuilder. -/
+/-- Is this verb a causative? DERIVED from causative field. -/
 def VerbCore.isCausative (v : VerbCore) : Bool :=
-  v.causativeBuilder.isSome
+  v.causative.isSome
 
 /-- Does this causative verb assert sufficiency (like "make")?
 
-    DERIVED from the builder: delegates to `CausativeBuilder.assertsSufficiency`. -/
+    DERIVED: delegates to `Causative.assertsSufficiency`. -/
 def VerbCore.assertsSufficiency (v : VerbCore) : Bool :=
-  v.causativeBuilder.map (·.assertsSufficiency) |>.getD false
+  v.causative.map (·.assertsSufficiency) |>.getD false
 
 /-- Does this verb's semantics predict it is an expletive negation trigger?
 
@@ -563,23 +475,23 @@ def VerbCore.isENTrigger (v : VerbCore) : Bool :=
   -- FEAR class: negative-valence preferential attitudes
   (v.preferentialValence == some .negative) ||
   -- FORGET class: negative implicative verbs
-  (v.implicativeBuilder == some .negative) ||
+  (v.implicative == some .negative) ||
   -- STOP/PREVENT: causative prevent verbs
-  (v.causativeBuilder == some .prevent)
+  (v.causative == some .prevent)
 
 /-- Does this causative verb assert necessity (like "cause")?
 
-    DERIVED from the builder: delegates to `CausativeBuilder.assertsNecessity`. -/
+    DERIVED: delegates to `Causative.assertsNecessity`. -/
 def VerbCore.assertsNecessity (v : VerbCore) : Bool :=
-  v.causativeBuilder.map (·.assertsNecessity) |>.getD false
+  v.causative.map (·.assertsNecessity) |>.getD false
 
 /-- Does success of this implicative verb entail the complement?
 
-    DERIVED from the builder: delegates to `ImplicativeBuilder.entailsComplement`.
+    DERIVED: delegates to `Implicative.entailsComplement`.
     Returns `some true` for positive implicatives (*manage*, *remember*),
     `some false` for negative (*fail*, *forget*), `none` for non-implicatives. -/
 def VerbCore.entailsComplement (v : VerbCore) : Option Bool :=
-  v.implicativeBuilder.map (·.entailsComplement)
+  v.implicative.map (·.entailsComplement)
 
 /-- Is this verb a preferential attitude predicate? -/
 def VerbCore.isPreferentialAttitude (v : VerbCore) : Bool :=

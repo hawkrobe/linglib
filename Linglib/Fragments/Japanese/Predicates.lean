@@ -5,14 +5,14 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 @cite{qing-uegaki-2025} @cite{ozaki-2026}
 
 Japanese predicates relevant to @cite{qing-uegaki-2025}. Properties like
-C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
+C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
 namespace Fragments.Japanese.Predicates
 
 open Core.Verbs
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
-open NadathurLauer2020.Builder (CausativeBuilder)
+open Core.Verbs (Causative)
 
 /-- Japanese verb entry: extends VerbCore with Japanese inflectional paradigm. -/
 structure JapaneseVerbEntry extends VerbCore where
@@ -36,7 +36,7 @@ def tanosimi : JapaneseVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.relevanceBased .positive))
+  attitude := some (.preferential (.relevanceBased .positive))
 
 /-- 恐れ "osore" — fear (Class 2: negative, C-distributive). -/
 def osore : JapaneseVerbEntry where
@@ -48,7 +48,7 @@ def osore : JapaneseVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential (.degreeComparison .negative))
 
 /-- 期待 "kitai" — expect/hope (Class 3: positive, C-distributive, anti-rogative). -/
 def kitai : JapaneseVerbEntry where
@@ -60,7 +60,7 @@ def kitai : JapaneseVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
 
 /-- 心配 "shinpai" — worry (Class 1: non-C-distributive). -/
 def shinpai : JapaneseVerbEntry where
@@ -72,7 +72,7 @@ def shinpai : JapaneseVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential .uncertaintyBased)
+  attitude := some (.preferential .uncertaintyBased)
 
 /-! ## Causative predicates
 
@@ -93,7 +93,7 @@ def ik_ase : JapaneseVerbEntry where
   formProgressive := "ik-ase-teiru"
   complementType := .smallClause
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- 食べさせる "tabe-sase-ru" — eat-CAUS (ACC causee = make reading). -/
 def tabe_sase : JapaneseVerbEntry where
@@ -104,11 +104,11 @@ def tabe_sase : JapaneseVerbEntry where
   formProgressive := "tabe-sase-teiru"
   complementType := .smallClause
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- Japanese causative -(s)ase uses `.make` builder (direct causation reading). -/
 theorem ik_ase_is_make :
-    ik_ase.causativeBuilder = some .make := rfl
+    ik_ase.causative = some .make := rfl
 
 /-! ## Accusative/Ablative Alternation Verbs
 

@@ -31,6 +31,7 @@ open Semantics.Events.Krifka1998
 open Semantics.Events.StratifiedReference
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 -- ════════════════════════════════════════════════════
 -- § 1. Nominal Reference Properties

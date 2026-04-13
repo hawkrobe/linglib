@@ -415,6 +415,40 @@ theorem extractionISClash_focused_new :
 theorem extractionISClash_given_given :
     extractionISClash .given .given = false := rfl
 
+/-! ## Categorical vs Thetic Judgment (@cite{kuroda-1972})
+
+@cite{kuroda-1972} distinguishes two types of judgment that correspond to
+different information structures:
+
+- **Categorical** judgment: a subject-predicate structure where the subject
+  (ψ-subject) is the topic of predication, yielding a Theme + Rheme partition.
+- **Thetic** judgment: presents an event or situation as a whole, without
+  a subject of predication, yielding an all-Rheme (no Theme) structure.
+
+Cross-linguistically attested in Japanese (wa/ga), Romance (subject
+inversion), and Mayan (ψ-subject constructions, @cite{aissen-polian-2025}). -/
+
+/-- Judgment type following @cite{kuroda-1972}.
+    Categorical judgments have a subject of predication (ψ-subject);
+    thetic judgments present an event without one. -/
+inductive JudgmentType where
+  | categorical  -- subject-predicate; ψ-subject is Topic
+  | thetic       -- event-presenting; no subject of predication
+  deriving DecidableEq, Repr
+
+/-- Does this judgment type place a subject of predication (ψ-subject)
+    in a dedicated syntactic position (e.g., Spec,TP)? -/
+def JudgmentType.hasψSubject : JudgmentType → Bool
+  | .categorical => true
+  | .thetic      => false
+
+/-- Categorical judgments have a Theme (topic of predication);
+    thetic judgments are all-Rheme. Connects the pragmatic distinction
+    to the information-structural partition. -/
+def JudgmentType.hasTheme : JudgmentType → Bool
+  | .categorical => true
+  | .thetic      => false
+
 end Core.InformationStructure
 
 /-! ## Discourse Context

@@ -47,6 +47,7 @@ vVPE's deletion domain, mismatches in Voice are tolerated.
 
 namespace Phenomena.Ellipsis.Studies.Kalyakin2026
 
+open Core.Verbs
 open Minimalism
 open Minimalism.Ellipsis
 

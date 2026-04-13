@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.VerbClass
 
 /-!
 # @cite{spalek-mcnally-2026}: The Anatomy of a Verb
@@ -34,6 +34,7 @@ patient restrictions, separation geometry, and agent control.
 
 namespace Phenomena.Causation.Studies.SpalekMcNally2026
 
+open Core.Verbs
 open Fragments.English.Predicates.Verbal
 open Fragments.Spanish.Predicates
 
@@ -47,12 +48,12 @@ theorem shared_levin_class :
 
 /-- Both use the `make` causative builder (sufficiency semantics). -/
 theorem shared_causative_builder :
-    tear_.causativeBuilder = rasgar.causativeBuilder := rfl
+    tear_.causative = rasgar.causative := rfl
 
-/-- Both are causative verbs (derived from causativeBuilder). -/
+/-- Both are causative verbs (derived from causative). -/
 theorem both_causative :
-    tear_.causativeBuilder = some .make ∧
-    rasgar.causativeBuilder = some .make := ⟨rfl, rfl⟩
+    tear_.causative = some .make ∧
+    rasgar.causative = some .make := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 2. Different Root Content (§3.2)

@@ -205,7 +205,7 @@ def classifyCrossLingVerb : String → SelectionClass
 Instead of classifying verbs by string matching (`classifyVerb "know" =>.responsive`),
 we derive the selection class from the primitive fields already encoded in
 each `VerbEntry`: `factivePresup`, `speechActVerb`, `opaqueContext`, `complementType`,
-`attitudeBuilder`, `takesQuestionBase`.
+`attitude`, `takesQuestionBase`.
 -/
 
 open Fragments.English.Predicates.Verbal
@@ -224,7 +224,7 @@ open Fragments.English.Predicates.Verbal
 def deriveSelectionClass (v : VerbEntry) : SelectionClass :=
   if v.complementType != .question && !v.takesQuestionBase then .uninterrogative
   else if v.factivePresup then .responsive
-  else match v.attitudeBuilder with
+  else match v.attitude with
   | some (.doxastic .nonVeridical) => .uninterrogative
   | _ =>
     if v.speechActVerb && v.complementType == .question then .rogativeSAP

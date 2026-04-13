@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
 import Linglib.Phenomena.Islands.Studies.Ross1967
 import Linglib.Phenomena.Islands.MannerOfSpeaking
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.VerbClass
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
@@ -34,6 +34,7 @@ namespace Phenomena.FillerGap.Studies.LuPanDegen2025
 
 open Semantics.Focus.BackgroundedIslands
 open Core.InformationStructure
+open Core.Verbs
 
 /-! ## §1. Island Source Classification
 

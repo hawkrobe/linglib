@@ -17,7 +17,7 @@ despite being separate words.
 namespace Fragments.French.Predicates
 
 open Core.Verbs
-open NadathurLauer2020.Builder (CausativeBuilder)
+open Core.Verbs (Causative)
 open Semantics.Lexical.Verb.EntailmentProfile
   (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)
 
@@ -42,7 +42,7 @@ def faire : FrenchVerbEntry where
   formPartPres := "faisant"
   complementType := .smallClause
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- laisser — permissive causative ("let"). -/
 def laisser : FrenchVerbEntry where
@@ -53,19 +53,19 @@ def laisser : FrenchVerbEntry where
   formPartPres := "laissant"
   complementType := .smallClause
   controlType := .objectControl
-  causativeBuilder := some .enable
+  causative := some .enable
 
 /-- French *faire* uses `.make` builder. -/
 theorem faire_is_make :
-    faire.causativeBuilder = some .make := rfl
+    faire.causative = some .make := rfl
 
 /-- French *laisser* uses `.enable` builder (permissive). -/
 theorem laisser_is_enable :
-    laisser.causativeBuilder = some .enable := rfl
+    laisser.causative = some .enable := rfl
 
 /-- *faire* and *laisser* have different builders (make vs enable). -/
 theorem faire_laisser_different :
-    faire.causativeBuilder ≠ laisser.causativeBuilder := by decide
+    faire.causative ≠ laisser.causative := by decide
 
 -- ============================================================================
 -- § Change-of-state verbs: property-change anticausative profile

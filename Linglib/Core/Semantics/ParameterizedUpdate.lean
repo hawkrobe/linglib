@@ -156,54 +156,52 @@ theorem deMorgan_universal_existential (F : FragmentSet P W)
 -- § 5. Monotone Collapse
 -- ════════════════════════════════════════════════════════════════
 
-/-- Monotone collapse (∃): when sem is antitone in p and F_w has a
-    minimum element, ∃-projection reduces to checking the minimum.
+/-- Monotone collapse (∃): when sem is `Antitone` in p and F_w has
+    a least element, ∃-projection reduces to checking the minimum.
 
-    For degree semantics: `⟦tall⟧(θ, w) = degree(w) > θ` is antitone
-    in θ. The ∃-projection `∃ θ ∈ Θ, degree(w) > θ` collapses to
-    `degree(w) > min(Θ)`. -/
+    The `Antitone` condition on `fun p => sem p w` means `p₁ ≤ p₂ →
+    sem p₂ w → sem p₁ w` — truth propagates downward in the parameter
+    ordering. This is the standard situation in degree semantics:
+    `⟦tall⟧(θ, w) = degree(w) > θ` is antitone in θ. -/
 theorem monotoneCollapse_exists [Preorder P]
     (F : FragmentSet P W) (sem : P → W → Prop) (w : W) (p₀ : P)
-    (h_mem : F p₀ w)
-    (h_min : ∀ p, F p w → p₀ ≤ p)
-    (h_anti : ∀ p₁ p₂ : P, p₁ ≤ p₂ → sem p₂ w → sem p₁ w) :
+    (h_least : IsLeast {p | F p w} p₀)
+    (h_anti : Antitone (λ p => sem p w)) :
     existentialProjection F sem w ↔ sem p₀ w := by
   constructor
-  · intro ⟨p, hF, hs⟩; exact h_anti p₀ p (h_min p hF) hs
-  · intro hs; exact ⟨p₀, h_mem, hs⟩
+  · intro ⟨p, hF, hs⟩; exact h_anti (h_least.2 hF) hs
+  · intro hs; exact ⟨p₀, h_least.1, hs⟩
 
-/-- Monotone collapse (∀): when sem is antitone in p and F_w has a
-    maximum element, ∀-projection reduces to checking the maximum.
+/-- Monotone collapse (∀): when sem is `Antitone` in p and F_w has
+    a greatest element, ∀-projection reduces to checking the maximum.
 
     For degree semantics: the ∀-projection `∀ θ ∈ Θ, degree(w) > θ`
     collapses to `degree(w) > max(Θ)`. -/
 theorem monotoneCollapse_forall [Preorder P]
     (F : FragmentSet P W) (sem : P → W → Prop) (w : W) (p₀ : P)
-    (h_mem : F p₀ w)
-    (h_max : ∀ p, F p w → p ≤ p₀)
-    (h_anti : ∀ p₁ p₂ : P, p₁ ≤ p₂ → sem p₂ w → sem p₁ w) :
+    (h_greatest : IsGreatest {p | F p w} p₀)
+    (h_anti : Antitone (λ p => sem p w)) :
     universalProjection F sem w ↔ sem p₀ w := by
   constructor
-  · intro hall; exact hall p₀ h_mem
-  · intro hs p hF; exact h_anti p p₀ (h_max p hF) hs
+  · intro hall; exact hall p₀ h_greatest.1
+  · intro hs p hF; exact h_anti (h_greatest.2 hF) hs
 
-/-- Corollary: when sem is antitone and F_w has both min and max,
-    the ∃ and ∀ projections agree iff w is outside the **borderline
-    region** — either sem holds at the hardest parameter (clearly in)
-    or fails at the easiest parameter (clearly out).
+/-- Corollary: when sem is antitone and F_w has both a least and
+    greatest element, the ∃ and ∀ projections agree iff w is outside
+    the **borderline region** — either sem holds at the hardest
+    parameter (clearly in) or fails at the easiest (clearly out).
 
     The borderline region where projections disagree is precisely
     `sem p_min w ∧ ¬ sem p_max w`. -/
 theorem projections_agree_iff_clear [Preorder P]
     (F : FragmentSet P W) (sem : P → W → Prop) (w : W) (p_min p_max : P)
-    (hmin_mem : F p_min w) (hmax_mem : F p_max w)
-    (h_min : ∀ p, F p w → p_min ≤ p)
-    (h_max : ∀ p, F p w → p ≤ p_max)
-    (h_anti : ∀ p₁ p₂ : P, p₁ ≤ p₂ → sem p₂ w → sem p₁ w) :
+    (h_least : IsLeast {p | F p w} p_min)
+    (h_greatest : IsGreatest {p | F p w} p_max)
+    (h_anti : Antitone (λ p => sem p w)) :
     (existentialProjection F sem w ↔ universalProjection F sem w) ↔
     (sem p_max w ∨ ¬ sem p_min w) := by
-  rw [monotoneCollapse_exists F sem w p_min hmin_mem h_min h_anti,
-      monotoneCollapse_forall F sem w p_max hmax_mem h_max h_anti]
+  rw [monotoneCollapse_exists F sem w p_min h_least h_anti,
+      monotoneCollapse_forall F sem w p_max h_greatest h_anti]
   constructor
   · intro ⟨mp, _⟩
     by_cases h : sem p_min w
@@ -211,10 +209,9 @@ theorem projections_agree_iff_clear [Preorder P]
     · exact Or.inr h
   · intro h
     cases h with
-    | inl hmax => exact ⟨λ _ => hmax, λ hs => h_anti p_min p_max
-        (h_min p_max hmax_mem) hs⟩
-    | inr hmin => exact ⟨λ hs => absurd hs hmin, λ hs => h_anti p_min p_max
-        (h_min p_max hmax_mem) hs⟩
+    | inl hmax => exact ⟨λ _ => hmax, λ hs => h_anti (h_least.2 h_greatest.1) hs⟩
+    | inr hmin => exact ⟨λ hs => absurd hs hmin,
+        λ hs => h_anti (h_least.2 h_greatest.1) hs⟩
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -270,15 +267,17 @@ theorem sequential_universalUpdate (cs : Prop' W) (F : FragmentSet P W)
 -- § 7. Structural Properties
 -- ════════════════════════════════════════════════════════════════
 
-/-- ∃-projection is monotone in F: expanding available parameters
-    can only add surviving worlds. -/
+/-- ∃-projection is `Monotone` in the fragment set: expanding available
+    parameters can only add surviving worlds. The `FragmentSet P W`
+    type `P → W → Prop` carries the pointwise `→` ordering, and
+    `∃-projection` preserves it. -/
 theorem existentialProjection_mono (F₁ F₂ : FragmentSet P W)
     (sem : P → W → Prop) (h : ∀ p w, F₁ p w → F₂ p w) (w : W) :
     existentialProjection F₁ sem w → existentialProjection F₂ sem w :=
   λ ⟨p, hF, hs⟩ => ⟨p, h p w hF, hs⟩
 
-/-- ∀-projection is antitone in F: expanding available parameters
-    can only remove surviving worlds (more to check). -/
+/-- ∀-projection is `Antitone` in the fragment set: expanding available
+    parameters can only remove surviving worlds (more to check). -/
 theorem universalProjection_anti (F₁ F₂ : FragmentSet P W)
     (sem : P → W → Prop) (h : ∀ p w, F₁ p w → F₂ p w) (w : W) :
     universalProjection F₂ sem w → universalProjection F₁ sem w :=

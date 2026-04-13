@@ -22,7 +22,7 @@ These definitions are theory-layer infrastructure imported by study files
 (e.g., `KonukEtAl2026`, `BellerGerstenberg2025`).
 -/
 
-namespace Semantics.Causation.CausalStrength
+namespace Semantics.Causation.Strength
 
 /-! ## Sampling Propensity
 
@@ -79,4 +79,4 @@ theorem nsm_mono_suf (pC nec : ℚ) (hpC : 0 ≤ pC) (s₁ s₂ : ℚ) (h : s₁
     nsm pC s₁ nec ≤ nsm pC s₂ nec := by
   unfold nsm; linarith [mul_le_mul_of_nonneg_left h hpC]
 
-end Semantics.Causation.CausalStrength
+end Semantics.Causation.Strength

@@ -715,7 +715,7 @@ theorem refined_agrees_on_nonexceptional (v : OdamVerb)
     predicts the exceptional transitive class.
 
     The hierarchy data and implicational validation are formalized in
-    `Semantics.Causation.MorphologicalCausation` (§11). -/
+    `Semantics.Causation.Morphological` (§11). -/
 
 -- ════════════════════════════════════════════════════
 -- § 16. Bridge to Pylkkänen 2008 (High/Low Typology)

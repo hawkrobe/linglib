@@ -177,6 +177,13 @@ def simple (cause effect : Variable) : CausalLaw :=
 def conjunctive (cause1 cause2 effect : Variable) : CausalLaw :=
   { preconditions := [(cause1, true), (cause2, true)], effect := effect }
 
+/-- Create an inhibitory law: if cause = false (absent), then effect = true.
+    This is the structural equation B := ¬A from @cite{sloman-barbey-hotaling-2009}
+    Figure 4 (eq. 4a). Inhibitory laws are the structural basis for prevention:
+    the effect occurs precisely when the cause is absent. -/
+def inhibitory (cause effect : Variable) : CausalLaw :=
+  { preconditions := [(cause, false)], effect := effect }
+
 /-- If preconditions are not met, applying the law is a no-op.
     Avoids leaving stuck `if false = true then …` terms in goals. -/
 @[simp] theorem apply_of_not_met {law : CausalLaw} {s : Situation}
@@ -228,6 +235,19 @@ def conjunctiveCausation (cause1 cause2 effect : Variable) : CausalDynamics :=
 /-- Causal chain: A → B → C. -/
 def causalChain (a b c : Variable) : CausalDynamics :=
   ⟨[CausalLaw.simple a b, CausalLaw.simple b c]⟩
+
+/-- Prevention model: B := ¬A (@cite{sloman-barbey-hotaling-2009} eq. 4a).
+    A single inhibitory law: if A is absent, B occurs. A's presence blocks B.
+    This is the simplest dynamics for which `preventSem` returns true. -/
+def prevention (preventer effect : Variable) : CausalDynamics :=
+  ⟨[CausalLaw.inhibitory preventer effect]⟩
+
+/-- Prevention with accessory: B := ¬A ∧ X (@cite{sloman-barbey-hotaling-2009} eq. 4b).
+    The effect requires both the preventer's absence AND an accessory cause.
+    Models "A prevents B when X is present" — e.g., "the vaccine prevents
+    infection when the patient is exposed." -/
+def preventionWithAccessory (preventer accessory effect : Variable) : CausalDynamics :=
+  ⟨[{ preconditions := [(preventer, false), (accessory, true)], effect := effect }]⟩
 
 end CausalDynamics
 

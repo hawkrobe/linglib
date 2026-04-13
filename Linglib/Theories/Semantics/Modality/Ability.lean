@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.ComplementEntailing
+import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 
 /-!
@@ -16,10 +16,10 @@ to Kratzer's circumstantial possibility.
 
 -/
 
-namespace Nadathur2023.Ability
+namespace Semantics.Modality.Ability
 
 open Core.StructuralEquationModel
-open CausalVerb
+open Semantics.Causation.ComplementEntailing
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer (ModalBase)
 
@@ -48,4 +48,4 @@ theorem ability_is_causal_sufficiency (f : CausalFrame World) (w : World) :
     f.sufficientAt w = causallySufficient f.dynamics (f.background w)
       f.trigger f.complement := rfl
 
-end Nadathur2023.Ability
+end Semantics.Modality.Ability

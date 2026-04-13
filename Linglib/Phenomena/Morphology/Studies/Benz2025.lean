@@ -37,7 +37,7 @@ namespace Phenomena.Morphology.Studies.Benz2025
 open Theories.Morphology.DM.Allosemy
 open Core.Empirical
 open Fragments.German.Predicates
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
+open Core.Verbs
 
 -- ════════════════════════════════════════════════════════════════════
 -- Part I: Content Nominalizations (Ch. 3)
@@ -552,7 +552,7 @@ means event can be concurrent with the change.
 The End Theme Postulate links the Theme of the complex event to the
 end state: End(e₁, s) & Theme(e₁, x) |= Theme(s, x).
 
-See also `Causative.Resultatives` for the complementary analysis
+See also `Semantics.Causation.Resultatives` for the complementary analysis
 via causal dynamics, structural sufficiency, and CC-selection. -/
 
 -- ────────────────────────────────────────────────────

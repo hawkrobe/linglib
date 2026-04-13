@@ -30,7 +30,7 @@ distinguishes it from both *cause* and *force*.
 
 1. `causallySufficient` (Nadathur & Lauer) = deterministic limit of SUF
 2. `CoerciveImplication.ActionType` = categorical limit of ALT
-3. `CausativeBuilder` = binary coarsening of the graded model
+3. `Causative` = binary coarsening of the graded model
 
 -/
 
@@ -39,15 +39,15 @@ import Mathlib.Tactic.NormNum
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
-import Linglib.Theories.Semantics.Causation.Builder
+import Linglib.Theories.Semantics.Causation.Interpretation
 
 namespace CaoWhiteLassiter2025
 
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
-open NadathurLauer2020.CoerciveImplication (ActionType)
-open NadathurLauer2020.Builder (CausativeBuilder)
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
+open Semantics.Causation.CoerciveImplication (ActionType)
+open Core.Verbs (Causative)
 
 /-! ## The Three Measures
 
@@ -196,7 +196,7 @@ theorem shared_interactions :
     makeProfile.reliablePositive.contains .intAlt = true ∧
     forceProfile.reliablePositive.contains .intAlt = true := by native_decide
 
-/-! ## Bridge to CausativeBuilder
+/-! ## Bridge to Causative
 
 The force-dynamic builder (@cite{wolff-2003} / @cite{talmy-1988}) provides a finer
 categorization than sufficiency/necessity alone. The graded model
@@ -204,7 +204,7 @@ reveals that verbs with different builders (e.g., `.make` and `.force`)
 can still differ in their full semantics even when they share the
 same N&L truth conditions. -/
 
-/-- *make* and *force* now have different `CausativeBuilder`s (`.make` vs
+/-- *make* and *force* now have different `Causative`s (`.make` vs
 `.force`) but both assert sufficiency, and have different interaction
 profiles.
 
@@ -213,8 +213,8 @@ even the fine-grained force-dynamic builder: *make* has a SUF×INT
 sensitivity that *force* lacks. -/
 theorem make_force_both_assert_sufficiency_different_profiles :
     -- Both assert sufficiency (derived from builder)
-    CausativeBuilder.make.assertsSufficiency = true ∧
-    CausativeBuilder.force.assertsSufficiency = true ∧
+    Causative.make.assertsSufficiency = true ∧
+    Causative.force.assertsSufficiency = true ∧
     -- Different reliable interactions
     (makeProfile.reliablePositive ≠ forceProfile.reliablePositive) := by
   refine ⟨rfl, rfl, ?_⟩
@@ -224,15 +224,15 @@ theorem make_force_both_assert_sufficiency_different_profiles :
 
 In the deterministic limit (SUF ∈ {0,1}, no probabilistic INT),
 the graded verb selection reduces to the binary
-sufficiency/necessity distinction of `CausativeBuilder`. -/
+sufficiency/necessity distinction of `Causative`. -/
 theorem graded_subsumes_binary (dyn : CausalDynamics) (bg : Situation)
     (c e : Variable) :
     -- When deterministic SUF = 1, the builder's `makeSem` agrees
     deterministicSuf dyn bg c e = 1 →
-    CausativeBuilder.make.toSemantics dyn bg c e = true := by
+    Causative.make.toSemantics dyn bg c e = true := by
   intro h
   rw [deterministicSuf_iff_sufficient] at h
-  simp [CausativeBuilder.toSemantics, makeSem, h]
+  simp [Causative.toSemantics, makeSem, h]
 
 /-! ## Main Effects
 

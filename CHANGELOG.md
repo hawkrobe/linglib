@@ -9,8 +9,9 @@
 
 ### Changed
 - **VendlerClass consolidated into VerbClass.lean**: `VendlerClass`, `Telicity`, `Duration`, `Dynamicity`, `AspectualProfile` + all pure methods/theorems (feature accessors, homogeneity, subinterval property, atomic distributivity) moved from `Theories/Semantics/Tense/Aspect/LexicalAspect.lean` to `Core/Lexical/VerbClass.lean`; shift functions (`telicize`, `atelicize`, `duratize`, `statify`), `toMereoTag`, and `naturallyImperfective`/`naturallyPerfective` remain in theory layer
-- `LexicalAspect.lean` stripped to theory-dependent content + `export Core.Verbs (...)` for backwards compatibility
-- `open Core.Verbs` added to ~50 files that use VendlerClass/AspectualProfile types
+- `LexicalAspect.lean` stripped to theory-dependent content; dead `export Core.Verbs (...)` block removed
+- **ComplementEntailing.lean merged into Implicative.lean**: all content (ActualizationMode, CausalFrame, ability frame, closure properties, ImplicativeScenario→CausalFrame bridge) absorbed under preserved `namespace Semantics.Causation.ComplementEntailing`; old file deleted; downstream imports updated (Ability.lean, ActualityEntailments.lean, Degree.lean)
+- `open Core.Verbs` added to ~50 files that use VendlerClass/AspectualProfile types; selective LexicalAspect opens removed from ~17 files
 
 ## [0.229.688] - 2026-04-12
 

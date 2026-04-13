@@ -18,6 +18,7 @@ predictions to the Fragment-level particle licensing.
 namespace Phenomena.TenseAspect.CrossDomainBridge
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Fragments.Mandarin.AspectComparison
 open Core.Time
 

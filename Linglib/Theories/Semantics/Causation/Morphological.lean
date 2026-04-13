@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.PsychCausation
+import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Lexical.Verb.AgentivityLattice
 import Linglib.Core.Lexical.RootFeatures
@@ -70,9 +70,9 @@ the external cause entirely, yielding monoeventive structure.
   intransitives but absent from anticausatives
 -/
 
-namespace Semantics.Causation.MorphologicalCausation
+namespace Semantics.Causation.Morphological
 
-open Semantics.Causation.PsychCausation (CausalSource)
+open Semantics.Causation.Psych (CausalSource)
 open Semantics.Lexical.Verb.AgentivityLattice (AgentivityNode)
 
 -- ════════════════════════════════════════════════════
@@ -470,4 +470,4 @@ def krejciLanguages : List CausativizabilityData :=
 theorem krejci_hierarchy_holds :
     krejciLanguages.all (·.respectsHierarchy) = true := by native_decide
 
-end Semantics.Causation.MorphologicalCausation
+end Semantics.Causation.Morphological

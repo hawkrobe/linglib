@@ -6,7 +6,7 @@ import Linglib.Core.Lexical.MorphRule
 English verb lexical entries with morphology, argument structure, semantic class,
 and links to compositional semantics (CoS, attitudes, causatives).
 
-Semantic types (`ComplementType`, `AttitudeBuilder`, etc.) and the
+Semantic types (`ComplementType`, `Attitude`, etc.) and the
 cross-linguistic `VerbCore` structure live in `Core/Verbs.lean`. This file
 defines `VerbEntry extends VerbCore` with English-specific inflectional fields
 and provides smart constructors for regular verbs.
@@ -17,14 +17,13 @@ namespace Fragments.English.Predicates.Verbal
 -- Re-export Core.Verbs types so downstream files that open this namespace
 -- (e.g., `open Fragments.English.Predicates.Verbal (ComplementType ...)`)
 -- continue to find them.
-export Core.Verbs (PreferentialBuilder AttitudeBuilder PresupTriggerType
+export Core.Verbs (Preferential Attitude PresupTriggerType
   ProjectionBehavior ComplementType ControlType VerbCore ImplicitInterp
   complementToValence)
 
 open Core.Verbs
-open NadathurLauer2020.Builder (CausativeBuilder)
-open Nadathur2024.Implicative (ImplicativeBuilder)
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
+-- Causative, Implicative already in scope via `open Core.Verbs`
+open Core.Verbs
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
 open Semantics.Events.Krifka1998 (VerbIncClass)
@@ -291,7 +290,7 @@ def see : VerbEntry where
   altComplementType := some .finiteClause
   subjectEntailments := some ⟨false, true, false, false, true, false, false, false, false, false⟩
   vendlerClass := some .state
-  attitudeBuilder := some (.doxastic .veridical)
+  attitude := some (.doxastic .veridical)
   levinClass := some .see
 
 -- ════════════════════════════════════════════════════
@@ -312,7 +311,7 @@ def know : VerbEntry where
   projectionBehavior := some .hole
   takesQuestionBase := true
   complementSig := some .mono
-  attitudeBuilder := some (.doxastic .veridical)
+  attitude := some (.doxastic .veridical)
 
 /-- "regret" — factive, presupposes complement is true -/
 def regret : VerbEntry where
@@ -326,7 +325,7 @@ def regret : VerbEntry where
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  attitudeBuilder := some (.doxastic .veridical)
+  attitude := some (.doxastic .veridical)
 
 /-- "realize" — factive, presupposes complement is true -/
 def realize : VerbEntry := .mkRegular {
@@ -336,7 +335,7 @@ def realize : VerbEntry := .mkRegular {
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  attitudeBuilder := some (.doxastic .veridical) }
+  attitude := some (.doxastic .veridical) }
 
 /-- "discover" — semifactive, weaker projection -/
 def discover : VerbEntry := .mkRegular {
@@ -347,7 +346,7 @@ def discover : VerbEntry := .mkRegular {
   presupType := some .softTrigger
   projectionBehavior := some .hole
   takesQuestionBase := true
-  attitudeBuilder := some (.doxastic .veridical) }
+  attitude := some (.doxastic .veridical) }
 
 /-- "notice" — semifactive -/
 def notice : VerbEntry := .mkRegular {
@@ -357,7 +356,7 @@ def notice : VerbEntry := .mkRegular {
   passivizable := false
   presupType := some .softTrigger
   projectionBehavior := some .hole
-  attitudeBuilder := some (.doxastic .veridical) }
+  attitude := some (.doxastic .veridical) }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Change of State
@@ -461,7 +460,7 @@ def manage : VerbEntry := .mkRegular {
   passivizable := false
   projectionBehavior := some .hole
   presupType := some .prerequisiteSoft
-  implicativeBuilder := some .positive }
+  implicative := some .positive }
 
 /-- "fail" — negative implicative: "failed to VP" entails "not VP" -/
 def fail : VerbEntry := .mkRegular {
@@ -470,7 +469,7 @@ def fail : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  implicativeBuilder := some .negative }
+  implicative := some .negative }
 
 /-- "try" — subject control, no entailment -/
 def try_ : VerbEntry where
@@ -493,7 +492,7 @@ def persuade : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   controlType := .objectControl
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- "promise" — subject control with object: "promise X to VP".
     Desiderative attitude verb: the subject commits to a future action.
@@ -505,7 +504,7 @@ def promise : VerbEntry := .mkRegular {
   controlType := .subjectControl
   projectionBehavior := some .plug
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- "remember" — implicative with infinitival ("remember to call") -/
 def remember : VerbEntry := .mkRegular {
@@ -514,7 +513,7 @@ def remember : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  implicativeBuilder := some .positive }
+  implicative := some .positive }
 
 /-- "forget" — negative implicative with infinitival -/
 def forget : VerbEntry where
@@ -527,7 +526,7 @@ def forget : VerbEntry where
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  implicativeBuilder := some .negative
+  implicative := some .negative
 
 /-- "neglect" — negative implicative (@cite{karttunen-1971} §10, ex. 38):
     "John neglected to lock his door" entails "John didn't lock his door." -/
@@ -537,7 +536,7 @@ def neglect : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  implicativeBuilder := some .negative }
+  implicative := some .negative }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Doxastic Attitude
@@ -551,7 +550,7 @@ def believe : VerbEntry := .mkRegular {
   passivizable := false
   projectionBehavior := some .hole
   opaqueContext := true
-  attitudeBuilder := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .nonVeridical)
   complementSig := some .mono }
 
 /-- "think" — doxastic attitude verb -/
@@ -565,7 +564,7 @@ def think : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .nonVeridical)
   complementSig := some .mono
 
 -- ════════════════════════════════════════════════════
@@ -580,7 +579,7 @@ def want : VerbEntry := .mkRegular {
   controlType := .subjectControl
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   complementSig := some .mono
   levinClass := some .want }
 
@@ -597,7 +596,7 @@ def intend : VerbEntry := .mkRegular {
   controlType := .subjectControl
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want }
 
 /-- "decide" — belief/intention hybrid attitude verb (@cite{grano-2024}, §6.2).
@@ -612,7 +611,7 @@ def decide_ : VerbEntry := .mkRegular {
   controlType := .subjectControl
   altComplementType := some .finiteClause
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want }
 
 /-- "hope" — preferential attitude verb (Class 3: anti-rogative).
@@ -626,7 +625,7 @@ def hope : VerbEntry := .mkRegular {
   altControlType := .subjectControl
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   complementSig := some .mono }
 
 /-- "expect" — preferential attitude verb (Class 3: anti-rogative) -/
@@ -636,7 +635,7 @@ def expect : VerbEntry := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   complementSig := some .mono }
 
 /-- "wish" — preferential attitude verb (Class 3: anti-rogative) -/
@@ -650,7 +649,7 @@ def wish : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   complementSig := some .mono
   levinClass := some .want
 
@@ -661,7 +660,7 @@ def fear : VerbEntry := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential (.degreeComparison .negative))
   complementSig := some .mono
   levinClass := some .admire }
 
@@ -672,7 +671,7 @@ def dread : VerbEntry := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential (.degreeComparison .negative))
   complementSig := some .mono
   levinClass := some .admire }
 
@@ -687,7 +686,7 @@ def worry : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential .uncertaintyBased)
+  attitude := some (.preferential .uncertaintyBased)
   complementSig := some .mono
 
 -- ════════════════════════════════════════════════════
@@ -713,7 +712,7 @@ def cause : VerbEntry := .mkRegular {
   complementType := .infinitival
   vendlerClass := some .accomplishment
   controlType := .objectControl
-  causativeBuilder := some .cause
+  causative := some .cause
   levinClass := some .engender }
 
 /-- "make" — direct sufficient guarantee -/
@@ -726,7 +725,7 @@ def make : VerbEntry where
   complementType := .smallClause
   vendlerClass := some .accomplishment
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- "let" — permissive causative (barrier removal) -/
 def let_ : VerbEntry where
@@ -738,7 +737,7 @@ def let_ : VerbEntry where
   complementType := .smallClause
   vendlerClass := some .achievement
   controlType := .objectControl
-  causativeBuilder := some .enable
+  causative := some .enable
 
 /-- "have" — causative use (directive causation) -/
 def have_caus : VerbEntry where
@@ -750,7 +749,7 @@ def have_caus : VerbEntry where
   complementType := .smallClause
   vendlerClass := some .achievement
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
   senseTag := .causative
 
 /-- "get" — causative use (persuasive causation) -/
@@ -763,7 +762,7 @@ def get_caus : VerbEntry where
   complementType := .infinitival
   vendlerClass := some .accomplishment
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
   senseTag := .causative
 
 /-- "force" — coercive causative (overcome resistance) -/
@@ -773,7 +772,7 @@ def force : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   controlType := .objectControl
   projectionBehavior := some .hole
-  causativeBuilder := some .force }
+  causative := some .force }
 
 /-- "prevent" — blocking causative (barrier addition).
     "X prevented Y from V-ing" entails the effect did NOT occur
@@ -785,7 +784,7 @@ def prevent : VerbEntry := .mkRegular {
   vendlerClass := some .accomplishment
   controlType := .objectControl
   projectionBehavior := some .hole
-  causativeBuilder := some .prevent }
+  causative := some .prevent }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Lexical Causatives
@@ -796,7 +795,7 @@ def kill : VerbEntry := .mkRegular {
   form := "kill"
   complementType := .np
   vendlerClass := some .accomplishment
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .murder
   rootProfile := some {
     resultType := some [.totalDestruction]
@@ -816,7 +815,7 @@ def break_ : VerbEntry where
   complementType := .np
   unaccusative := false
   vendlerClass := some .accomplishment
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .break_
   rootProfile := some {
     forceMag := some [.moderate, .high]
@@ -846,7 +845,7 @@ def tear_ : VerbEntry where
   unaccusative := false
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .break_
   rootProfile := some {
     forceMag := some [.moderate, .high]
@@ -876,7 +875,7 @@ def crack : VerbEntry := .mkRegular {
   degreeAchievementScale := some {
     scaleBoundedness := .closed, dimension := "cracking",
     baseAdjective := some "cracked" }
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .break_ }
 
 /-- "dent" — Levin 45.1 Break verbs. Physical disturbance CoS verb.
@@ -890,7 +889,7 @@ def dent : VerbEntry := .mkRegular {
   degreeAchievementScale := some {
     scaleBoundedness := .closed, dimension := "denting",
     baseAdjective := some "dented" }
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .break_ }
 
 /-- "scratch" — Levin 45.1 Break verbs. Physical disturbance CoS verb.
@@ -906,7 +905,7 @@ def scratch : VerbEntry := .mkRegular {
   degreeAchievementScale := some {
     scaleBoundedness := .closed, dimension := "scratching",
     baseAdjective := some "scratched" }
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .break_ }
 
 /-- "shatter" — Levin 45.1 Break verbs. NOT a physical disturbance verb.
@@ -917,7 +916,7 @@ def shatter : VerbEntry := .mkRegular {
   complementType := .np
   unaccusative := true
   vendlerClass := some .achievement
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .break_ }
 
 /-- "burn" — thick lexical causative (manner = by fire/heat). -/
@@ -926,7 +925,7 @@ def burn : VerbEntry := .mkRegular {
   complementType := .np
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .otherCoS
   rootProfile := some {
     forceMag := some [.moderate, .high]
@@ -941,7 +940,7 @@ def destroy : VerbEntry := .mkRegular {
   form := "destroy"
   complementType := .np
   vendlerClass := some .accomplishment
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .destroy
   rootProfile := some {
     resultType := some [.totalDestruction]
@@ -958,7 +957,7 @@ def melt : VerbEntry := .mkRegular {
   implicitObj := some .indef
   vendlerClass := some .accomplishment
   verbIncClass := some .sinc
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .otherCoS
   rootProfile := some {
     forceMag := some [.low, .moderate]
@@ -1258,7 +1257,7 @@ def reveal : VerbEntry := .mkRegular {
   speechActVerb := true
   vendlerClass := some .achievement
   presupType := some .softTrigger
-  attitudeBuilder := some (.doxastic .veridical)
+  attitude := some (.doxastic .veridical)
   levinClass := some .say }
 
 /-- "acknowledge" — optionally factive communication verb -/
@@ -1557,7 +1556,7 @@ def remember_rog : VerbEntry := .mkRegular {
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
-  attitudeBuilder := some (.doxastic .veridical)
+  attitude := some (.doxastic .veridical)
   takesQuestionBase := true
   senseTag := .rogative }
 
@@ -1572,7 +1571,7 @@ def forget_rog : VerbEntry where
   vendlerClass := some .state
   passivizable := false
   presupType := some .softTrigger
-  attitudeBuilder := some (.doxastic .veridical)
+  attitude := some (.doxastic .veridical)
   takesQuestionBase := true
   senseTag := .rogative
 
@@ -1601,7 +1600,7 @@ def manage_occasion : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  implicativeBuilder := some .positive
+  implicative := some .positive
   presupType := some .prerequisiteSoft
   senseTag := .occasion }
 
@@ -1616,7 +1615,7 @@ def dare : VerbEntry := .mkRegular {
   controlType := .subjectControl
   passivizable := false
   presupType := some .prerequisiteSoft
-  implicativeBuilder := some .positive }
+  implicative := some .positive }
 
 /-- "bother" — positive implicative with prerequisite presupposition: engagement.
     "He bothered to answer" → "He answered."
@@ -1629,7 +1628,7 @@ def bother : VerbEntry := .mkRegular {
   controlType := .subjectControl
   passivizable := false
   presupType := some .prerequisiteSoft
-  implicativeBuilder := some .positive }
+  implicative := some .positive }
 
 /-- "hesitate" — polarity-reversing one-way implicative.
     "Amira hesitated to drink a beer" ↛ "Amira did not drink a beer."
@@ -1644,7 +1643,7 @@ def hesitate : VerbEntry := .mkRegular {
   controlType := .subjectControl
   passivizable := false
   presupType := some .prerequisiteSoft
-  implicativeBuilder := some .negative }
+  implicative := some .negative }
 
 /-- "venture" — positive implicative (@cite{karttunen-1971} ex. 2):
     "John ventured to speak" entails "John spoke." -/
@@ -1654,7 +1653,7 @@ def venture : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  implicativeBuilder := some .positive }
+  implicative := some .positive }
 
 /-- "condescend" — positive implicative (@cite{karttunen-1971} ex. 2):
     "John condescended to help" entails "John helped." -/
@@ -1664,7 +1663,7 @@ def condescend : VerbEntry := .mkRegular {
   vendlerClass := some .achievement
   controlType := .subjectControl
   passivizable := false
-  implicativeBuilder := some .positive }
+  implicative := some .positive }
 
 /-- "happen" — raising verb, positive implicative (@cite{karttunen-1971} ex. 2):
     "John happened to see Mary" entails "John saw Mary."
@@ -1674,7 +1673,7 @@ def happen : VerbEntry := .mkRegular {
   complementType := .infinitival
   controlType := .raising
   passivizable := false
-  implicativeBuilder := some .positive }
+  implicative := some .positive }
 
 -- ════════════════════════════════════════════════════
 -- § Verb Entries — Agent-Experiencer (@cite{solstad-bott-2024})
@@ -2622,7 +2621,7 @@ def drown : VerbEntry := .mkRegular {
   form := "drown"
   complementType := .np
   vendlerClass := some .accomplishment
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .poison }
 
 -- ════════════════════════════════════════════════════
@@ -2676,7 +2675,7 @@ def bend : VerbEntry where
   vendlerClass := some .accomplishment
   degreeAchievementScale := some {
     scaleBoundedness := .closed, dimension := "curvature" }
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .bend
 
 /-- "boil" — Levin 45.3 Cooking verbs. Causative/inchoative alternation.
@@ -2688,7 +2687,7 @@ def boil : VerbEntry := .mkRegular {
   degreeAchievementScale := some {
     scaleBoundedness := .closed, dimension := "temperature",
     baseAdjective := some "hot" }
-  causativeBuilder := some .make
+  causative := some .make
   levinClass := some .cooking }
 
 /-- "rust" — Levin 45.5 Entity-Specific CoS verbs. Inchoative only.
@@ -3385,19 +3384,19 @@ def VerbEntry.toWordPresPart (v : VerbEntry) : Word :=
 -- ════════════════════════════════════════════════════
 
 /-! These verify that the Fragment's causative annotations are consistent with
-the formal semantics in `NadathurLauer2020`. -/
+the formal semantics in `Semantics.Causation`. -/
 
-open NadathurLauer2020.Builder (CausativeBuilder preventSem)
-open NadathurLauer2020.Sufficiency (makeSem)
-open NadathurLauer2020.Necessity (causeSem)
+open Semantics.Causation.Prevention (preventSem)
+open Semantics.Causation.Sufficiency (makeSem)
+open Semantics.Causation.Necessity (causeSem)
 
 /-- "make" uses sufficiency semantics. -/
 theorem make_semantics :
-    make.causativeBuilder.map CausativeBuilder.toSemantics = some makeSem := rfl
+    make.causative.map Causative.toSemantics = some makeSem := rfl
 
 /-- "cause" uses necessity semantics. -/
 theorem cause_semantics :
-    cause.causativeBuilder.map CausativeBuilder.toSemantics = some causeSem := rfl
+    cause.causative.map Causative.toSemantics = some causeSem := rfl
 
 /-- "make" asserts sufficiency — derived from its builder. -/
 theorem make_asserts_sufficiency : make.toVerbCore.assertsSufficiency = true := by native_decide
@@ -3413,20 +3412,20 @@ theorem cause_not_sufficiency : cause.toVerbCore.assertsSufficiency = false := b
 
 /-- make-type verbs (make, have, get) share the `.make` builder. -/
 theorem make_type_verbs_share_semantics :
-    make.causativeBuilder = have_caus.causativeBuilder ∧
-    make.causativeBuilder = get_caus.causativeBuilder := ⟨rfl, rfl⟩
+    make.causative = have_caus.causative ∧
+    make.causative = get_caus.causative := ⟨rfl, rfl⟩
 
 /-- "force" is coercive — derived from its builder. -/
 theorem force_is_coercive :
-    force.causativeBuilder.map (·.isCoercive) = some true := rfl
+    force.causative.map (·.isCoercive) = some true := rfl
 
 /-- "let" is permissive — derived from its builder. -/
 theorem let_is_permissive :
-    let_.causativeBuilder.map (·.isPermissive) = some true := rfl
+    let_.causative.map (·.isPermissive) = some true := rfl
 
 /-- "prevent" uses blocking semantics (`preventSem`). -/
 theorem prevent_semantics :
-    prevent.causativeBuilder.map CausativeBuilder.toSemantics = some preventSem := rfl
+    prevent.causative.map Causative.toSemantics = some preventSem := rfl
 
 /-- "prevent" asserts neither sufficiency nor necessity —
     it uses the dual `preventSem` (blocking). -/
@@ -3441,32 +3440,32 @@ theorem prevent_is_en_trigger :
 
 /-- All sufficiency-asserting causatives share the same truth conditions. -/
 theorem sufficiency_verbs_share_truth_conditions :
-    make.causativeBuilder.map CausativeBuilder.toSemantics =
-    force.causativeBuilder.map CausativeBuilder.toSemantics ∧
-    make.causativeBuilder.map CausativeBuilder.toSemantics =
-    let_.causativeBuilder.map CausativeBuilder.toSemantics ∧
-    make.causativeBuilder.map CausativeBuilder.toSemantics =
-    have_caus.causativeBuilder.map CausativeBuilder.toSemantics ∧
-    make.causativeBuilder.map CausativeBuilder.toSemantics =
-    get_caus.causativeBuilder.map CausativeBuilder.toSemantics :=
+    make.causative.map Causative.toSemantics =
+    force.causative.map Causative.toSemantics ∧
+    make.causative.map Causative.toSemantics =
+    let_.causative.map Causative.toSemantics ∧
+    make.causative.map Causative.toSemantics =
+    have_caus.causative.map Causative.toSemantics ∧
+    make.causative.map Causative.toSemantics =
+    get_caus.causative.map Causative.toSemantics :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- make, force, and let have different builders despite shared truth conditions. -/
 theorem causative_builders_distinguished :
-    make.causativeBuilder ≠ force.causativeBuilder ∧
-    make.causativeBuilder ≠ let_.causativeBuilder ∧
-    force.causativeBuilder ≠ let_.causativeBuilder := by
+    make.causative ≠ force.causative ∧
+    make.causative ≠ let_.causative ∧
+    force.causative ≠ let_.causative := by
   refine ⟨by decide, by decide, by decide⟩
 
 /-! ## Lexical causative theorems -/
 
 /-- All lexical causatives use the `.make` builder. -/
 theorem lexical_causatives_use_make :
-    kill.causativeBuilder = some .make ∧
-    break_.causativeBuilder = some .make ∧
-    burn.causativeBuilder = some .make ∧
-    destroy.causativeBuilder = some .make ∧
-    melt.causativeBuilder = some .make := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    kill.causative = some .make ∧
+    break_.causative = some .make ∧
+    burn.causative = some .make ∧
+    destroy.causative = some .make ∧
+    melt.causative = some .make := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Lexical causatives all assert sufficiency — like periphrastic "make". -/
 theorem lexical_causatives_assert_sufficiency :
@@ -3480,31 +3479,31 @@ theorem lexical_causatives_assert_sufficiency :
 
 /-- Lexical causatives share truth conditions with periphrastic "make". -/
 theorem lexical_causatives_match_make :
-    kill.causativeBuilder.map CausativeBuilder.toSemantics =
-    make.causativeBuilder.map CausativeBuilder.toSemantics ∧
-    break_.causativeBuilder.map CausativeBuilder.toSemantics =
-    make.causativeBuilder.map CausativeBuilder.toSemantics := ⟨rfl, rfl⟩
+    kill.causative.map Causative.toSemantics =
+    make.causative.map Causative.toSemantics ∧
+    break_.causative.map Causative.toSemantics =
+    make.causative.map Causative.toSemantics := ⟨rfl, rfl⟩
 
 /-- Lexical causatives differ from periphrastic "cause" in truth conditions. -/
 theorem lexical_causatives_differ_from_cause :
-    kill.causativeBuilder ≠ cause.causativeBuilder ∧
-    break_.causativeBuilder ≠ cause.causativeBuilder := by
+    kill.causative ≠ cause.causative ∧
+    break_.causative ≠ cause.causative := by
   constructor <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § Implicative Grounding Theorems
 -- ════════════════════════════════════════════════════
 
-open Nadathur2024.Implicative (ImplicativeBuilder manageSem failSem)
+open Semantics.Causation.Implicative (manageSem failSem)
 
 /-- "manage" uses positive implicative semantics (`manageSem`). -/
 theorem manage_semantics_implicative :
-    manage.implicativeBuilder.map ImplicativeBuilder.toSemantics =
+    manage.implicative.map Implicative.toSemantics =
       some manageSem := rfl
 
 /-- "fail" uses negative implicative semantics (`failSem`). -/
 theorem fail_semantics_implicative :
-    fail.implicativeBuilder.map ImplicativeBuilder.toSemantics =
+    fail.implicative.map Implicative.toSemantics =
       some failSem := rfl
 
 /-- "manage" entails the complement — derived from its builder. -/

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Theories.Semantics.Lexical.Verb.LevinTheory
 
 /-!
 # Levin Class → Entailment Profile Mapping
@@ -30,6 +30,7 @@ Individual verbs can override class-level profiles via explicit
 
 namespace Semantics.Lexical.Verb.LevinClassProfiles
 
+open Core.Verbs
 open Semantics.Lexical.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
@@ -116,9 +117,15 @@ def directedMotion : ArgTemplate where
 -- § 3. LevinClass → ArgTemplate
 -- ════════════════════════════════════════════════════
 
+end Semantics.Lexical.Verb.LevinClassProfiles
+
+namespace Core.Verbs
+open Semantics.Lexical.Verb.LevinClassProfiles
+open Semantics.Lexical.Verb.EntailmentProfile
+
 /-- Map a Levin class to its argument structure template.
     Returns `none` for classes whose profiles haven't been determined yet. -/
-def _root_.LevinClass.argTemplate : LevinClass → Option ArgTemplate
+def LevinClass.argTemplate : LevinClass → Option ArgTemplate
   -- § 18: Contact by Impact — manner verbs, no CoS entailment
   | .hit | .swat              => some mannerContact
   -- § 20: Contact: Touch — like hit but lighter force
@@ -158,12 +165,18 @@ def _root_.LevinClass.argTemplate : LevinClass → Option ArgTemplate
 -- ════════════════════════════════════════════════════
 
 /-- Subject entailment profile for a Levin class. -/
-def _root_.LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
+def LevinClass.subjectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.argTemplate.map (·.subjectProfile)
 
 /-- Object entailment profile for a Levin class. -/
-def _root_.LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
+def LevinClass.objectProfile (c : LevinClass) : Option EntailmentProfile :=
   c.argTemplate.bind (·.objectProfile)
+
+end Core.Verbs
+
+namespace Semantics.Lexical.Verb.LevinClassProfiles
+open Core.Verbs
+open Semantics.Lexical.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 5. Verification: templates match existing canonical profiles

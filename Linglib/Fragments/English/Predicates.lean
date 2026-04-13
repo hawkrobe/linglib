@@ -13,7 +13,7 @@ namespace Fragments.English.Predicates
 export Verbal (
   -- Types
   PresupTriggerType ComplementType ControlType VerbEntry
-  PreferentialBuilder
+  Preferential
   -- Functions
   allVerbs
 )

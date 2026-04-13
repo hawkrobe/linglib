@@ -80,7 +80,7 @@ def convincere : ItalianVerbEntry :=
     controlType := .objectControl
     altComplementType := some .finiteClause
     opaqueContext := true
-    -- No fixed attitudeBuilder: attitude type (belief vs intention)
+    -- No fixed attitude: attitude type (belief vs intention)
     -- is determined by complement size, not lexically specified.
     infComplements := [.di, .a_] }
 
@@ -92,7 +92,7 @@ def credere : ItalianVerbEntry :=
     controlType := .subjectControl
     altComplementType := some .infinitival
     opaqueContext := true
-    attitudeBuilder := some (.doxastic .nonVeridical)
+    attitude := some (.doxastic .nonVeridical)
     infComplements := [.di] }
 
 -- ════════════════════════════════════════════════════════════════
@@ -111,7 +111,7 @@ def volere : ItalianVerbEntry :=
     altComplementType := some .infinitival
     passivizable := false
     opaqueContext := true
-    attitudeBuilder := some (.preferential (.degreeComparison .positive))
+    attitude := some (.preferential (.degreeComparison .positive))
     levinClass := some .want
     infComplements := [.di] }
 
@@ -129,7 +129,7 @@ def sperare : ItalianVerbEntry :=
     altComplementType := some .infinitival
     passivizable := false
     opaqueContext := true
-    attitudeBuilder := some (.preferential (.degreeComparison .positive))
+    attitude := some (.preferential (.degreeComparison .positive))
     infComplements := [.di] }
 
 /-- *intendere* 'intend' — intention-reporting verb, robustly rejects indicative.
@@ -146,7 +146,7 @@ def intendere : ItalianVerbEntry :=
     controlType := .subjectControl
     passivizable := false
     opaqueContext := true
-    attitudeBuilder := some (.preferential (.degreeComparison .positive))
+    attitude := some (.preferential (.degreeComparison .positive))
     levinClass := some .want
     infComplements := [.di] }
 
@@ -160,7 +160,7 @@ def fare_caus : ItalianVerbEntry :=
   { form := "fare"
     complementType := .infinitival
     controlType := .objectControl
-    causativeBuilder := some .make
+    causative := some .make
     infComplements := [.a_] }
 
 -- ════════════════════════════════════════════════════════════════

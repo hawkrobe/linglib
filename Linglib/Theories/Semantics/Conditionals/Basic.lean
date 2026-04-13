@@ -442,7 +442,7 @@ This connects:
 - "If A were" → do(A)
 - Counterfactual dependence → Causal necessity
 
-See `Theories/NadathurLauer2020/` for the causal model infrastructure.
+See `Theories/Semantics/Causation/` for the causal model infrastructure.
 -/
 
 -- Connection to Assertability

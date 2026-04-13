@@ -33,7 +33,7 @@ closures with different triggers.
 
 -/
 
-namespace Core.CausalClosure
+namespace Semantics.Causation.Closure
 
 open Core.StructuralEquationModel
 

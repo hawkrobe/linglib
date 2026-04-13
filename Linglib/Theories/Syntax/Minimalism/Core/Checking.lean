@@ -6,18 +6,24 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 # Feature Checking: The Derivational Lifecycle
 @cite{chomsky-1995}
 
-The three-stage lifecycle of formal features in the Minimalist Program
-(Ch 4 §4.5):
+The four-stage lifecycle of formal features in the Minimalist Program
+(Ch 4 §4.5; extended with @cite{preminger-2014} §5 "derivational time
+bombs" and @cite{hewett-2026} Def 23):
 
+0. **Inactive**: feature is present but dormant — not yet accessible to
+   checking. Must be activated by a syntactic trigger (feature
+   activation, @cite{hewett-2026} Def 23) before entering the
+   checking lifecycle. Inactive –Interpretable features crash at LF.
 1. **Active**: feature is present and accessible to computation
 2. **Checked** (= deleted): feature has entered a checking relation;
    invisible at LF but still accessible to the narrow syntax
 3. **Erased**: feature is completely removed, inaccessible to all
    further computation
 
-–Interpretable features *must* pass through all three stages for the
-derivation to converge at LF. +Interpretable features remain active
-(they contribute to meaning and are never deleted).
+–Interpretable features *must* pass through stages 1–3 (or 0–3 if
+initially inactive) for the derivation to converge at LF.
++Interpretable features remain active (they contribute to meaning and
+are never deleted).
 
 ## Strong Features
 
@@ -42,6 +48,14 @@ checking + deletion in one step. This module formalizes the finer-grained
 - Strong features, which interact with Spell-Out timing
 - The parametric variation that allows –Interpretable features to
   escape erasure after checking (multiple-Spec constructions)
+
+## Activation Indices
+
+`ActivationIndex α` (§ 7) formalizes ordered n-tuple activation from
+@cite{hewett-2026} Def 23: a feature carries a tuple of keys
+`(c₁, …, cₙ)`, and each c-commanding head strips `c₁` if it matches.
+When the tuple is empty the feature transitions from `.inactive` to
+`.active`. Parametric over the key type `α`.
 -/
 
 namespace Minimalism
@@ -93,9 +107,17 @@ theorem phi_on_T_uninterpretable (pf : PhiFeature) :
 
 /-- The lifecycle state of a formal feature in the derivation.
 
-    Features begin `.active` and, if –Interpretable, must reach
-    `.erased` for the derivation to converge at LF. -/
+    Features begin `.active` (or `.inactive` if dormant) and, if
+    –Interpretable, must reach `.erased` for the derivation to
+    converge at LF. -/
 inductive FeatureStatus where
+  /-- Inactive: present but dormant. Not yet accessible to checking
+      operations — must be activated first. Used for selectional
+      features that await licensing by a specific syntactic trigger
+      (@cite{preminger-2014} "derivational time bombs";
+      @cite{hewett-2026} Def 23: selectional features activated
+      stepwise by categorizing head and template). -/
+  | inactive
   /-- Active: present and accessible to all computation. -/
   | active
   /-- Checked (= deleted in @cite{chomsky-1995}'s terminology):
@@ -144,14 +166,27 @@ def TrackedFeature.erase (tf : TrackedFeature) : Option TrackedFeature :=
   | .checked => some { tf with status := .erased }
   | _ => none
 
+/-- Activate a dormant feature: transition from inactive to active.
+    This models @cite{preminger-2014}'s "derivational time bombs" and
+    @cite{hewett-2026} Def 23: a selectional feature begins dormant
+    and is activated by a specific syntactic trigger (a categorizing
+    head, a template-defining head, etc.).
+    Returns `none` if the feature is not inactive. -/
+def TrackedFeature.activate (tf : TrackedFeature) : Option TrackedFeature :=
+  match tf.status with
+  | .inactive => some { tf with status := .active }
+  | _ => none
+
 /-- Is this feature visible at LF?
     +Interpretable active features are visible (they contribute meaning).
-    Everything else — checked, erased, or –Interpretable — is not. -/
+    Everything else — inactive, checked, erased, or –Interpretable — is not. -/
 def TrackedFeature.visibleAtLF (tf : TrackedFeature) : Bool :=
   tf.interp == .interpretable && tf.status == .active
 
 /-- Is this feature accessible to narrow-syntactic computation?
-    Active and checked features are accessible; erased features are not. -/
+    Inactive, active, and checked features are accessible; erased
+    features are not. Inactive features are accessible to Activate
+    operations even though they cannot yet enter checking relations. -/
 def TrackedFeature.accessible (tf : TrackedFeature) : Bool :=
   tf.status != .erased
 
@@ -171,37 +206,42 @@ structure StrongFeature where
   deriving Repr
 
 /-- Does a strong feature survive unchecked at Spell-Out?
-    If so, the derivation is canceled. -/
+    If so, the derivation is canceled. Both active (unchecked) and
+    inactive (never activated) strong features crash. -/
 def StrongFeature.crashesAtSpellOut (sf : StrongFeature) : Bool :=
-  sf.feature.status == .active
+  sf.feature.status == .active || sf.feature.status == .inactive
 
 -- ============================================================================
 -- § 4: Convergence
 -- ============================================================================
 
 /-- A set of tracked features converges at LF iff no –Interpretable
-    feature remains active (unchecked).
+    feature remains active or inactive (i.e., unchecked).
 
     This is the Full Interpretation (FI) condition at LF: every feature
     present at LF must be interpretable. –Interpretable features that
     have been checked (deleted) are invisible at LF and satisfy FI;
-    those that have been erased are gone entirely. Only active
-    –Interpretable features cause a crash. -/
+    those that have been erased are gone entirely. Both active and
+    inactive –Interpretable features cause a crash — inactive features
+    should have been activated and checked before reaching LF. -/
 def convergesAtLF (features : List TrackedFeature) : Bool :=
   features.all λ tf =>
-    tf.interp == .interpretable || tf.status != .active
+    tf.interp == .interpretable ||
+    (tf.status != .active && tf.status != .inactive)
 
 /-- A set of tracked features converges at Spell-Out iff no strong
-    feature remains active.
+    feature remains active or inactive.
 
     This is weaker than LF convergence: non-strong –Interpretable
     features can still be active at Spell-Out (they will be checked
-    covertly, after Spell-Out).
+    covertly, after Spell-Out). But strong features — whether active
+    or inactive — must be resolved before Spell-Out.
 
     `isStrong` marks which features are strong (must be checked overtly). -/
 def convergesAtSpellOut (features : List TrackedFeature)
     (isStrong : TrackedFeature → Bool) : Bool :=
-  features.all λ tf => !(isStrong tf) || tf.status != .active
+  features.all λ tf =>
+    !(isStrong tf) || (tf.status != .active && tf.status != .inactive)
 
 -- ============================================================================
 -- § 5: Lifecycle Theorems
@@ -253,6 +293,28 @@ theorem erased_cannot_erase (tf : TrackedFeature) (h : tf.status = .erased) :
     tf.erase = none := by
   simp [TrackedFeature.erase, h]
 
+/-- Only inactive features can be activated. -/
+theorem activate_requires_inactive (tf result : TrackedFeature)
+    (ha : tf.activate = some result) :
+    tf.status = .inactive := by
+  simp [TrackedFeature.activate] at ha
+  split at ha <;> simp_all
+
+/-- Active features cannot be activated (already active). -/
+theorem active_cannot_activate (tf : TrackedFeature) (h : tf.status = .active) :
+    tf.activate = none := by
+  simp [TrackedFeature.activate, h]
+
+/-- Inactive features cannot be checked (must activate first). -/
+theorem inactive_cannot_check (tf : TrackedFeature) (h : tf.status = .inactive) :
+    tf.check = none := by
+  simp [TrackedFeature.check, h]
+
+/-- Inactive features cannot be erased. -/
+theorem inactive_cannot_erase (tf : TrackedFeature) (h : tf.status = .inactive) :
+    tf.erase = none := by
+  simp [TrackedFeature.erase, h]
+
 /-- The full lifecycle: an active –Interpretable feature can be checked
     and then erased, reaching the terminal state. -/
 theorem full_lifecycle (fv : FeatureVal) (host : Cat)
@@ -262,14 +324,35 @@ theorem full_lifecycle (fv : FeatureVal) (host : Cat)
       tf2.status = .erased := by
   simp [TrackedFeature.fromHosted, h, TrackedFeature.check, TrackedFeature.erase]
 
+/-- The extended lifecycle: an inactive –Interpretable feature can be
+    activated, checked, and then erased.
+    This is the full chain for @cite{hewett-2026} Def 23 selectional
+    features: inactive → active → checked → erased. -/
+theorem extended_lifecycle (fv : FeatureVal) (host : Cat) :
+    let tf : TrackedFeature := ⟨fv, host, .uninterpretable, .inactive⟩
+    ∃ tf1 tf2 tf3, tf.activate = some tf1 ∧ tf1.check = some tf2 ∧
+      tf2.erase = some tf3 ∧ tf3.status = .erased := by
+  simp [TrackedFeature.activate, TrackedFeature.check, TrackedFeature.erase]
+
 /-- Checked features are invisible at LF. -/
 theorem checked_invisible_at_LF (tf : TrackedFeature) (h : tf.status = .checked) :
+    tf.visibleAtLF = false := by
+  simp [TrackedFeature.visibleAtLF, h]
+
+/-- Inactive features are invisible at LF. -/
+theorem inactive_invisible_at_LF (tf : TrackedFeature) (h : tf.status = .inactive) :
     tf.visibleAtLF = false := by
   simp [TrackedFeature.visibleAtLF, h]
 
 /-- Erased features are inaccessible to computation. -/
 theorem erased_inaccessible (tf : TrackedFeature) (h : tf.status = .erased) :
     tf.accessible = false := by
+  simp [TrackedFeature.accessible, h]
+
+/-- Inactive features ARE accessible to computation (they can be
+    targeted by Activate). Only erased features are inaccessible. -/
+theorem inactive_accessible (tf : TrackedFeature) (h : tf.status = .inactive) :
+    tf.accessible = true := by
   simp [TrackedFeature.accessible, h]
 
 /-- +Interpretable active features are visible at LF (they contribute meaning). -/
@@ -312,8 +395,103 @@ example : convergesAtLF [TrackedFeature.fromHosted
 example : convergesAtLF [TrackedFeature.fromHosted
     (.phi (.person .third)) .T] = false := rfl
 
+/-- An inactive –Interpretable feature also crashes at LF. -/
+example : convergesAtLF [⟨.case .nom, .N, .uninterpretable, .inactive⟩] = false := rfl
+
+/-- After activation and checking, a previously-inactive feature converges. -/
+example : convergesAtLF [⟨.case .nom, .N, .uninterpretable, .checked⟩] = true := rfl
+
 -- ============================================================================
--- § 7: Agree–Checking Bridge
+-- § 7: Feature Activation Indices (Def 23)
+-- ============================================================================
+
+/-! ### Ordered Activation Tuples
+
+@cite{hewett-2026} Def 23 (adapted from @cite{merchant-2019}): a feature
+can be indexed by an ordered tuple of category keys `(c₁, …, cₙ)`. Each
+c-commanding head bearing key `k` strips `c₁` from the tuple **if `k = c₁`**
+(matching activation). When the tuple is exhausted the feature transitions
+from `.inactive` to `.active`.
+
+`ActivationIndex α` is parametric over the key type `α` — for Semitic
+l-selection `α` combines `Cat` and `SemiticTemplate`, but the mechanism
+generalizes to any domain where features require ordered multi-head
+activation (e.g., applicatives, serial verbs). -/
+
+/-- An ordered tuple of activation keys. Stripping proceeds left-to-right:
+    only the leftmost key can be matched at any derivational step. -/
+structure ActivationIndex (α : Type) [BEq α] where
+  /-- Keys remaining to be stripped. Empty = fully activated. -/
+  remaining : List α
+  deriving Repr
+
+/-- Attempt to strip the leftmost key. Succeeds only if `key` matches
+    the head of the tuple (matching activation). Non-matching keys and
+    already-empty tuples are no-ops. -/
+def ActivationIndex.activate {α : Type} [BEq α] (idx : ActivationIndex α)
+    (key : α) : ActivationIndex α :=
+  match idx.remaining with
+  | k :: rest => if k == key then ⟨rest⟩ else idx
+  | [] => idx
+
+/-- Is the tuple fully stripped? -/
+def ActivationIndex.isFullyActive {α : Type} [BEq α]
+    (idx : ActivationIndex α) : Bool :=
+  idx.remaining.isEmpty
+
+/-- Map activation state to the `FeatureStatus` lifecycle: non-empty
+    tuples are `.inactive`, empty tuples are `.active`. -/
+def ActivationIndex.toStatus {α : Type} [BEq α]
+    (idx : ActivationIndex α) : FeatureStatus :=
+  if idx.isFullyActive then .active else .inactive
+
+/-- Matching key strips the head. -/
+theorem activate_matching_strips {α : Type} [BEq α] [LawfulBEq α]
+    (k : α) (rest : List α) :
+    (ActivationIndex.mk (k :: rest) : ActivationIndex α).activate k
+    = ⟨rest⟩ := by
+  simp [ActivationIndex.activate]
+
+/-- Non-matching key is a no-op. -/
+theorem activate_nonmatching_noop {α : Type} [BEq α] [LawfulBEq α]
+    (k₁ k₂ : α) (rest : List α) (h : k₁ ≠ k₂) :
+    (ActivationIndex.mk (k₁ :: rest) : ActivationIndex α).activate k₂
+    = ⟨k₁ :: rest⟩ := by
+  simp [ActivationIndex.activate, beq_iff_eq, h]
+
+/-- Empty tuple is fully active. -/
+theorem empty_is_active {α : Type} [BEq α] :
+    (ActivationIndex.mk (α := α) []).isFullyActive = true := rfl
+
+/-- Non-empty tuple is not fully active. -/
+theorem nonempty_is_inactive {α : Type} [BEq α] (k : α) (rest : List α) :
+    (ActivationIndex.mk (k :: rest) : ActivationIndex α).isFullyActive
+    = false := rfl
+
+/-- Empty tuple maps to `.active` status. -/
+theorem empty_toStatus_active {α : Type} [BEq α] :
+    (ActivationIndex.mk (α := α) []).toStatus = .active := rfl
+
+/-- Non-empty tuple maps to `.inactive` status. -/
+theorem nonempty_toStatus_inactive {α : Type} [BEq α]
+    (k : α) (rest : List α) :
+    (ActivationIndex.mk (k :: rest) : ActivationIndex α).toStatus
+    = .inactive := rfl
+
+/-- Activation on an already-empty tuple is a no-op. -/
+theorem activate_empty_noop {α : Type} [BEq α] (key : α) :
+    (ActivationIndex.mk (α := α) []).activate key = ⟨[]⟩ := rfl
+
+/-- Full activation chain: stripping each key in order yields `.active`. -/
+theorem full_activation_chain {α : Type} [BEq α] [LawfulBEq α]
+    (k₁ k₂ : α) :
+    let idx : ActivationIndex α := ⟨[k₁, k₂]⟩
+    (idx.activate k₁ |>.activate k₂).toStatus = .active := by
+  simp [ActivationIndex.activate, ActivationIndex.toStatus,
+        ActivationIndex.isFullyActive]
+
+-- ============================================================================
+-- § 8: Agree–Checking Bridge
 -- ============================================================================
 
 /-! ### Connecting Agree (valuation) to Checking (lifecycle)

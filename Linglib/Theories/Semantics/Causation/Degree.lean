@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.ComplementEntailing
+import Linglib.Theories.Semantics.Causation.Implicative
 
 /-!
 # Degree Constructions and Actuality Inferences (@cite{nadathur-2023}, Chapter 5)
@@ -28,16 +28,16 @@ causal relationship is asserted.
 variable (degree ≥ threshold). This means:
 - `enoughWithAspect` IS `CausalFrame.actualityWithAspect` with polarity = positive
 - `tooWithAspect` uses `CausalFrame.complementBlockedAt` with polarity = negative
-- The actuality theorems are INSTANCES of the generic ones from `CausalVerb.lean`
+- The actuality theorems are INSTANCES of the generic ones from `ComplementEntailing.lean`
 
 -/
 
-namespace Nadathur2023.DegreeCausation
+namespace Semantics.Causation.Degree
 
 open Core.StructuralEquationModel
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 open Semantics.Attitudes.Intensional (World allWorlds)
-open CausalVerb (CausalFrame ActualizationMode)
+open Semantics.Causation.ComplementEntailing (CausalFrame ActualizationMode)
 
 -- ════════════════════════════════════════════════════
 -- § 1. DegreeScenario
@@ -224,4 +224,4 @@ theorem enough_same_pattern_as_ability :
     ∀ (sc : DegreeScenario), sc.toFrame.actualization = .aspectual := by
   intro sc; rfl
 
-end Nadathur2023.DegreeCausation
+end Semantics.Causation.Degree

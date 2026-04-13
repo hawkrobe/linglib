@@ -55,6 +55,7 @@ open Core.Scale
 open Core.Time
 open Semantics.Lexical.Adjective
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Fragments.English.Predicates.Adjectival
 
 -- ════════════════════════════════════════════════════

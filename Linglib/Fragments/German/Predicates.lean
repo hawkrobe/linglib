@@ -27,8 +27,8 @@ German preferential attitudes pattern with other Indo-European languages:
 namespace Fragments.German.Predicates
 
 open Core.Verbs
-open NadathurLauer2020.Builder (CausativeBuilder)
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
+open Core.Verbs (Causative)
+open Core.Verbs
 
 /-- German verb entry: extends VerbCore with German inflectional paradigm. -/
 structure GermanVerbEntry extends VerbCore where
@@ -56,7 +56,7 @@ def lassen : GermanVerbEntry where
   formPastPart := "gelassen"
   complementType := .smallClause
   controlType := .objectControl
-  causativeBuilder := some .enable
+  causative := some .enable
 
 /-- *machen* — productive analytic causative.
     "Das macht mich traurig" = "That makes me sad." -/
@@ -67,7 +67,7 @@ def machen : GermanVerbEntry where
   formPastPart := "gemacht"
   complementType := .smallClause
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- *töten* — lexical COMPACT causative ("kill" = tot + -en).
     Deadjectival causative: *tot* "dead" → *töten* "make dead". -/
@@ -77,7 +77,7 @@ def toeten : GermanVerbEntry where
   formPast := "tötete"
   formPastPart := "getötet"
   complementType := .np
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- *zerbrechen* — lexical COMPACT causative ("break").
     Prefix *zer-* marks destructive result state. -/
@@ -87,7 +87,7 @@ def zerbrechen : GermanVerbEntry where
   formPast := "zerbrach"
   formPastPart := "zerbrochen"
   complementType := .np
-  causativeBuilder := some .make
+  causative := some .make
 
 -- ============================================================================
 -- § 2: Attitude Verbs (@cite{qing-uegaki-2025})
@@ -102,7 +102,7 @@ def hoffen : GermanVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *fürchten* — "fear" (Class 2: negative, C-distributive, takes questions). -/
 def fuerchten : GermanVerbEntry where
@@ -113,7 +113,7 @@ def fuerchten : GermanVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential (.degreeComparison .negative))
 
 /-- *befürchten* — "be afraid / apprehend" (Class 2: negative, C-distributive). -/
 def befuerchten : GermanVerbEntry where
@@ -124,7 +124,7 @@ def befuerchten : GermanVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential (.degreeComparison .negative))
 
 /-- *wünschen* — "wish" (Class 3: positive, C-distributive, anti-rogative). -/
 def wuenschen : GermanVerbEntry where
@@ -135,7 +135,7 @@ def wuenschen : GermanVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *sich sorgen* — "worry" (Class 1: uncertainty-based, non-C-distributive). -/
 def sorgen : GermanVerbEntry where
@@ -146,7 +146,7 @@ def sorgen : GermanVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential .uncertaintyBased)
+  attitude := some (.preferential .uncertaintyBased)
 
 -- ============================================================================
 -- § 3: Occasion Verbs (@cite{solstad-bott-2024}, S&P 17:11)
@@ -632,20 +632,20 @@ theorem occasion_verbs_sense_tag :
 
 /-- *lassen* uses `.enable` builder (permissive). -/
 theorem lassen_is_enable :
-    lassen.causativeBuilder = some .enable := rfl
+    lassen.causative = some .enable := rfl
 
 /-- *machen* uses `.make` builder. -/
 theorem machen_is_make :
-    machen.causativeBuilder = some .make := rfl
+    machen.causative = some .make := rfl
 
 /-- *lassen* and *machen* have different builders. -/
 theorem lassen_machen_different :
-    lassen.causativeBuilder ≠ machen.causativeBuilder := by decide
+    lassen.causative ≠ machen.causative := by decide
 
 /-- Lexical causatives (*töten*, *zerbrechen*) use `.make`. -/
 theorem lexical_causatives_use_make :
-    toeten.causativeBuilder = some .make ∧
-    zerbrechen.causativeBuilder = some .make := ⟨rfl, rfl⟩
+    toeten.causative = some .make ∧
+    zerbrechen.causative = some .make := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 9: Attitude Grounding Theorems
@@ -653,19 +653,19 @@ theorem lexical_causatives_use_make :
 
 /-- *hoffen* and *wünschen* are positive preferential (Class 3). -/
 theorem hoffen_is_positive :
-    hoffen.attitudeBuilder = some (.preferential (.degreeComparison .positive)) ∧
-    wuenschen.attitudeBuilder = some (.preferential (.degreeComparison .positive)) :=
+    hoffen.attitude = some (.preferential (.degreeComparison .positive)) ∧
+    wuenschen.attitude = some (.preferential (.degreeComparison .positive)) :=
   ⟨rfl, rfl⟩
 
 /-- *fürchten* and *befürchten* are negative preferential (Class 2). -/
 theorem fuerchten_is_negative :
-    fuerchten.attitudeBuilder = some (.preferential (.degreeComparison .negative)) ∧
-    befuerchten.attitudeBuilder = some (.preferential (.degreeComparison .negative)) :=
+    fuerchten.attitude = some (.preferential (.degreeComparison .negative)) ∧
+    befuerchten.attitude = some (.preferential (.degreeComparison .negative)) :=
   ⟨rfl, rfl⟩
 
 /-- *sich sorgen* is uncertainty-based (Class 1). -/
 theorem sorgen_is_uncertainty :
-    sorgen.attitudeBuilder = some (.preferential .uncertaintyBased) := rfl
+    sorgen.attitude = some (.preferential .uncertaintyBased) := rfl
 
 -- ============================================================================
 -- § 10: Selection-Violating Coordination Grounding Theorems (@cite{schwarzer-2026})
@@ -708,16 +708,16 @@ theorem all_experimental_select_dp :
 /-- German *fürchten* matches Japanese 恐れ *osore* and Turkish *kork-*:
     all are Class 2 negative preferential (degreeComparison.negative). -/
 theorem fuerchten_matches_crosslinguistic :
-    fuerchten.attitudeBuilder =
+    fuerchten.attitude =
       some (.preferential (.degreeComparison .negative)) := rfl
 
 /-- German *sich sorgen* matches Japanese 心配 *shinpai* and Turkish *endişelen-*:
     all are Class 1 uncertainty-based. -/
 theorem sorgen_matches_crosslinguistic :
-    sorgen.attitudeBuilder = some (.preferential .uncertaintyBased) := rfl
+    sorgen.attitude = some (.preferential .uncertaintyBased) := rfl
 
 /-- German *lassen* matches French *laisser*: both use `.enable` (permissive). -/
 theorem lassen_matches_french_laisser :
-    lassen.causativeBuilder = some .enable := rfl
+    lassen.causative = some .enable := rfl
 
 end Fragments.German.Predicates

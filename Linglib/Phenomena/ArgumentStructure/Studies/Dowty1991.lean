@@ -29,6 +29,7 @@ succeed and where they diverge from the modern approach.
 
 namespace Phenomena.ArgumentStructure.Studies.Dowty1991
 
+open Core.Verbs
 open Semantics.Lexical.Verb.EntailmentProfile
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 open Fragments.English.Predicates.Verbal

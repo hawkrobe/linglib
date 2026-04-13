@@ -526,8 +526,18 @@ theorem same_root_different_category (r : Root) (c1 c2 : Categorizer)
   simp only [CategorizedRoot.category, Categorizer.toCategory]
   cases c1 <;> cases c2 <;> simp_all
 
-/-- Complement selection is a root-level property, not contributed by the
-    categorizer (@cite{harley-2014} §3). Evidence:
+/-- Complement **arity** (c-selection) is a root-level property, not
+    contributed by the categorizer (@cite{harley-2014} §3). The root
+    determines *whether* it takes an internal argument (selectsTheme vs
+    noTheme); the categorizer does not alter this.
+
+    **Note**: This theorem covers arity, not **l-selection** (which
+    specific preposition heads the PP complement). @cite{hewett-2026}
+    shows that l-selection in Semitic can vary by verbal template,
+    falsifying any theory locating l-selection entirely at the root
+    level. See `Phenomena.ArgumentStructure.Studies.Hewett2026`.
+
+    Evidence for root-level arity:
 
     1. *one*-replacement in argument structure nominals: "the proud owner
        of a large dog" → "the proud one" — *one* replaces nP including
@@ -536,11 +546,7 @@ theorem same_root_different_category (r : Root) (c1 c2 : Categorizer)
        directly under vP, not via mediation by v.
     3. Hiaki suppletive verbs: suppletive forms are conditioned by the
        root's complement (singular vs. plural object), showing locality
-       between root and argument below the categorizer.
-
-    In our formalization, `RootArity.selectsTheme` captures this: the
-    root obligatorily selects an internal argument at the root level,
-    and this persists regardless of which categorizer it merges with. -/
+       between root and argument below the categorizer. -/
 theorem complement_selection_at_root_level (r : Root) (c1 c2 : Categorizer) :
     (CategorizedRoot.mk r c1).root.arity = (CategorizedRoot.mk r c2).root.arity := rfl
 

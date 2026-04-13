@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
-import Linglib.Theories.Semantics.Causation.Builder
+import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 
 /-!
@@ -30,7 +30,7 @@ is preserved here as a historically important precursor.
 
 - `ThematicRoles.ThematicFrame.agent` — Parsons' agent captures Cruse's `agentive_`
 - `CoerciveImplication.ActionType` — initiative ↔ volitional action
-- `CausativeBuilder` — initiative ↔ causative constructions
+- `Causative` — initiative ↔ causative constructions
 - `VendlerClass` / `DiagnosticResult` — aspect diagnostics
 
 ## Aspect bridge
@@ -44,10 +44,11 @@ namespace Phenomena.TenseAspect.Studies.Cruse1973
 
 open Semantics.Events
 open Semantics.Events.ThematicRoles
-open NadathurLauer2020.CoerciveImplication
-open NadathurLauer2020.Builder
+open Semantics.Causation.CoerciveImplication
+open Core.Verbs (Causative)
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Phenomena.TenseAspect.Diagnostics
 
 -- ════════════════════════════════════════════════════
@@ -238,7 +239,7 @@ theorem coercion_requires_volitive :
   cases f <;> simp [AgentivityFeature.toActionType]
 
 -- ════════════════════════════════════════════════════
--- § 6. Bridge to CausativeBuilder (Initiative)
+-- § 6. Bridge to Causative (Initiative)
 -- ════════════════════════════════════════════════════
 
 /-- Cruse's initiative feature (initiating action by command) corresponds
@@ -247,7 +248,7 @@ theorem coercion_requires_volitive :
 
     "The warder marched the prisoners" → the warder has initiative,
     the prisoners are the agentive doers. This pattern is lexicalized by
-    `CausativeBuilder.make` and `.force`: the subject (causer) initiates,
+    `Causative.make` and `.force`: the subject (causer) initiates,
     the object (causee) performs the action.
 
     The bridge: initiative ↔ {make, force} builders, where the causer
@@ -264,12 +265,12 @@ structure InitiativeCausativeLink (Entity Time : Type*) [LE Time]
     volitional causee, which is precisely the initiative pattern
     where the initiator overrides the causee's will. -/
 theorem force_lexicalizes_coercive_initiative :
-    CausativeBuilder.force.isCoercive = true := rfl
+    Causative.force.isCoercive = true := rfl
 
 /-- The make builder asserts sufficiency — the initiator's action
     is sufficient for the causee to act. -/
 theorem make_lexicalizes_sufficient_initiative :
-    CausativeBuilder.make.assertsSufficiency = true := rfl
+    Causative.make.assertsSufficiency = true := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 7. Stative Do-Verbs (Challenge to agent_selects_action)

@@ -184,7 +184,7 @@ def mejorar : SpanishVerbEntry :=
     careful controlled action. @cite{spalek-mcnally-2026} (§3.2). -/
 def rasgar : SpanishVerbEntry :=
   { form := "rasgar", complementType := .np,
-    causativeBuilder := some .make,
+    causative := some .make,
     anticausativeMarking := .marked,
     causativeAlternation := true, verbHead := [.vCAUSE, .vGO, .vBE],
     licensesStylLE := true,

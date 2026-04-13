@@ -42,6 +42,7 @@ open Semantics.Events
 open Semantics.Events.Mereology
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 -- ════════════════════════════════════════════════════
 -- § 1. Thematic Role Properties (§3.2, eq. 43–52)

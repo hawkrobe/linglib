@@ -31,6 +31,7 @@ Formalization of the core claims from @cite{goldberg-jackendoff-2004}.
 namespace ConstructionGrammar.Studies.GoldbergJackendoff2004
 
 open ConstructionGrammar
+open Core.Verbs
 open Semantics.Tense.Aspect.LexicalAspect
 
 /-! ## Core types -/

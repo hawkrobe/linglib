@@ -44,6 +44,7 @@ namespace Phenomena.Presupposition.Studies.RobertsSimons2024
 open Semantics.Presupposition.OntologicalPreconditions
 open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Phenomena.Presupposition.Diagnostics
 open Phenomena.Presupposition.ProjectiveContent
 

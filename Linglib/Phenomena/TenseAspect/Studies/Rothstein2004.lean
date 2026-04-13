@@ -45,6 +45,7 @@ import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 namespace Phenomena.TenseAspect.Diagnostics
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 -- Diagnostic Results
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.PsychCausation
+import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Modality.EventRelativity
 
 /-!
@@ -43,7 +43,7 @@ verb's event provides CON(e), just like an attitude verb's event does.
 
 namespace Phenomena.PsychVerbs.Studies.Kim2024
 
-open Semantics.Causation.PsychCausation
+open Semantics.Causation.Psych
 open Semantics.Modality.EventRelativity
 open Core.Modality (ModalFlavor)
 

@@ -26,7 +26,7 @@ namespace Phenomena.TenseAspect.Studies.KennedyLevin2008
 
 open Fragments.English.Predicates.Verbal hiding clean cool warm open_
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass Telicity)
+open Core.Verbs
 open Core.Scale (Boundedness LicensingPipeline MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 

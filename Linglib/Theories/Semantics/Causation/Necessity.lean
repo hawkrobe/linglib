@@ -50,7 +50,7 @@ These can come apart in overdetermination cases:
 
 -/
 
-namespace NadathurLauer2020.Necessity
+namespace Semantics.Causation.Necessity
 
 open Core.StructuralEquationModel
 export Core.StructuralEquationModel (causallyNecessary)
@@ -192,4 +192,4 @@ theorem actual_cause_necessary (dyn : CausalDynamics) (s : Situation)
   simp only [actuallyCaused, causeSem, Bool.and_eq_true] at h
   exact h.2.2
 
-end NadathurLauer2020.Necessity
+end Semantics.Causation.Necessity

@@ -30,6 +30,7 @@ namespace Semantics.Events.Mereology
 open Semantics.Events
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open _root_.Mereology
 
 -- Re-export Core.Mereology definitions in this namespace so that

@@ -1,6 +1,8 @@
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Theories.Semantics.Lexical.Verb.LevinTheory
+
+open Core.Verbs
 
 /-!
 # Root Typology: States and Changes of State (@cite{beavers-etal-2021}, B&@cite{beavers-koontz-garboden-2020}) @cite{beavers-etal-2021} @cite{beavers-koontz-garboden-2020} @cite{coon-2019}
@@ -678,6 +680,8 @@ theorem carry_manner_accompaniment :
     let e := DitransitiveRootClass.entailments .carrying
     e.manner = true ∧ e.accompaniment = true ∧ e.possession = .none := ⟨rfl, rfl, rfl⟩
 
+namespace Core.Verbs
+
 /-- Bridge to LevinClass: ditransitive Levin classes → root classes. -/
 def LevinClass.ditransitiveRootClass : LevinClass → Option DitransitiveRootClass
   | .give => some .causedPossession
@@ -696,6 +700,8 @@ theorem send_class_sending :
     LevinClass.ditransitiveRootClass .send = some .sending := rfl
 theorem carry_class_carrying :
     LevinClass.ditransitiveRootClass .carry = some .carrying := rfl
+
+end Core.Verbs
 
 -- ════════════════════════════════════════════════════
 -- § 7d. Ditransitive Root Denotations (B&@cite{beavers-koontz-garboden-2020} §3.5–3.6)

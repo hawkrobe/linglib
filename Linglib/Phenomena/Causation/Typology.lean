@@ -8,7 +8,7 @@ import Linglib.Core.WALS.Features.F111A
 Song's typology of causative constructions, orthogonal to the
 force-dynamic builder classification. This module classifies how
 causative meaning is **expressed** (morphosyntactic packaging), while
-`CausativeBuilder` classifies what causative meaning **is** (force-dynamic
+`Causative` classifies what causative meaning **is** (force-dynamic
 mechanism).
 
 ## Key Typology (§5.1-5.3)

@@ -663,7 +663,7 @@ break these theorems. -/
 section EndToEnd
 
 open Core.StructuralEquationModel
-open MartinRoseNichols2025 (profileCausationType)
+open Semantics.Causation.ProductionDependence (profileCausationType)
 
 /-- **Solo cause → P-CAUSE → S1 prefers "caused".**
 
@@ -709,7 +709,7 @@ theorem overdetermination_divergence :
     let cw := causalWorldFromModel overdetModel overdetBg mA mC
     profileCausationType p = some .production ∧
     expressionMeaning cw .caused = true ∧
-    NadathurLauer2020.Necessity.causeSem overdetModel overdetBg mA mC = false := by
+    Semantics.Causation.Necessity.causeSem overdetModel overdetBg mA mC = false := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 end EndToEnd

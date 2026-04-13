@@ -32,6 +32,7 @@ aspectual meaning = situation type × viewpoint aspect, independently combined.
 namespace Phenomena.TenseAspect.Studies.Smith1997
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Semantics.Tense.Aspect.Core (ViewpointType)
 open Semantics.Tense.Aspect.Composition
 open Phenomena.TenseAspect.Diagnostics (DiagnosticResult)

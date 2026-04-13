@@ -34,26 +34,26 @@ This follows the `deriveSelectionClass` pattern from LeftPeriphery.lean. -/
 
 /-- Derive Noonan's CTP class from a VerbEntry's primitive fields.
 
-    The mapping uses `levinClass`, `factivePresup`, `causativeBuilder`,
-    `implicativeBuilder`, `cosType`, `speechActVerb`, and `attitudeBuilder`:
+    The mapping uses `levinClass`, `factivePresup`, `causative`,
+    `implicative`, `cosType`, `speechActVerb`, and `attitude`:
     - levinClass ==.see → perception (see)
     - factivePresup → knowledge (know, realize, regret)
-    - causativeBuilder.isSome → manipulative (cause, make, force)
-    - implicativeBuilder.isSome → achievement (manage, fail)
+    - causative.isSome → manipulative (cause, make, force)
+    - implicative.isSome → achievement (manage, fail)
     - cosType.isSome → phasal (stop, start, continue)
     - speechActVerb → utterance (say, tell)
-    - attitudeBuilder doxastic → propAttitude (believe, think)
-    - attitudeBuilder preferential positive → desiderative (want, hope)
-    - attitudeBuilder preferential other → propAttitude (fear, worry)
+    - attitude doxastic → propAttitude (believe, think)
+    - attitude preferential positive → desiderative (want, hope)
+    - attitude preferential other → propAttitude (fear, worry)
     - Otherwise → none -/
 def deriveCTPClass (v : VerbEntry) : Option CTPClass :=
   if v.levinClass == some .see then some .perception
   else if v.factivePresup then some .knowledge
-  else if v.causativeBuilder.isSome then some .manipulative
-  else if v.implicativeBuilder.isSome then some .achievement
+  else if v.causative.isSome then some .manipulative
+  else if v.implicative.isSome then some .achievement
   else if v.cosType.isSome then some .phasal
   else if v.speechActVerb then some .utterance
-  else match v.attitudeBuilder with
+  else match v.attitude with
   | some (.doxastic _) => some .propAttitude
   | some (.preferential (.degreeComparison .positive)) => some .desiderative
   | some (.preferential _) => some .propAttitude
@@ -322,7 +322,7 @@ it needs both Verbal and Mood/Basic. Follows the `deriveSelectionClass` pattern.
     - Implicative → moodNeutral (manage: varies)
     - Otherwise → moodNeutral -/
 def deriveMoodSelector (v : VerbEntry) : MoodSelector :=
-  match v.attitudeBuilder with
+  match v.attitude with
   | some (.preferential (.degreeComparison .positive)) =>
     if v.levinClass == some .want then .subjunctiveSelecting
     else .crossLinguisticallyVariable
@@ -333,8 +333,8 @@ def deriveMoodSelector (v : VerbEntry) : MoodSelector :=
     else if v.levinClass == some .see then .indicativeSelecting
     else if v.speechActVerb then .moodNeutral
     else if v.cosType.isSome then .moodNeutral
-    else if v.causativeBuilder.isSome then .subjunctiveSelecting
-    else if v.implicativeBuilder.isSome then .moodNeutral
+    else if v.causative.isSome then .subjunctiveSelecting
+    else if v.implicative.isSome then .moodNeutral
     else .moodNeutral
 
 /-! ## E2. Per-verb mood selector verification -/

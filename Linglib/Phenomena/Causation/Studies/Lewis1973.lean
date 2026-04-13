@@ -54,9 +54,9 @@ strictly stronger.
 namespace Phenomena.Causation.Studies.Lewis1973
 
 open Core.StructuralEquationModel
-open Causation.CCSelection
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
+open Semantics.Causation.CCSelection
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
 
 -- ════════════════════════════════════════════════════
 -- § 1. Lewis's Counterfactual Via Intervention

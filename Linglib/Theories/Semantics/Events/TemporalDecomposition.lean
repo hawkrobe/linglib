@@ -47,6 +47,7 @@ namespace Semantics.Events
 
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 -- ════════════════════════════════════════════════════
 -- § 1. Subevent Phases
@@ -237,7 +238,7 @@ theorem prfv_phasePred {Time : Type*} [LinearOrder Time]
     The reference [3, 7] is properly inside the activity [0, 10], but
     entirely before the result [15, 20].
 
-    See also `Causation.ProgressiveCausation.progressive_not_entails_perfective`
+    See also `Semantics.Causation.Progressive.progressive_not_entails_perfective`
     for the causal explanation: the initiator is type-level sufficient
     (progressive holds) but an intervening event can prevent token-level
     completion (perfective fails). -/

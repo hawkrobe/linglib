@@ -34,7 +34,7 @@ telicity. The case morphology makes this composition visible.
 
 namespace Phenomena.Case.Studies.Karlsson2017
 
-open Semantics.Tense.Aspect.LexicalAspect (Telicity)
+open Core.Verbs
 
 -- ============================================================================
 -- § 1: Case–Aspect Mapping

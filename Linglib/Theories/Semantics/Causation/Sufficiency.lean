@@ -33,7 +33,7 @@ In other words: if we add C to the background, E necessarily follows.
 
 -/
 
-namespace NadathurLauer2020.Sufficiency
+namespace Semantics.Causation.Sufficiency
 
 open Core.StructuralEquationModel
 export Core.StructuralEquationModel (causallySufficient)
@@ -166,4 +166,4 @@ theorem conjunctive_sufficient_with_other (a b c : Variable)
     Situation.empty]
   split_ifs <;> simp_all [Ne.symm _ha]
 
-end NadathurLauer2020.Sufficiency
+end Semantics.Causation.Sufficiency

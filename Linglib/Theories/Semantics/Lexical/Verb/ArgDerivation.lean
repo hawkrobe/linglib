@@ -47,6 +47,7 @@ adds information beyond what root entailments + template predict:
 
 namespace Semantics.Lexical.Verb.ArgDerivation
 
+open Core.Verbs
 open EventStructure (Template)
 open LevinClassProfiles
 open Semantics.Lexical.Verb.EntailmentProfile

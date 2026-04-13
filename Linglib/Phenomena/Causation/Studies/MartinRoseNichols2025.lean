@@ -28,7 +28,8 @@ four binary properties:
 
 namespace Phenomena.Causation.ThickThin
 
-open MartinRoseNichols2025
+open Core.Verbs
+open Semantics.Causation.ProductionDependence
 open Fragments.English.Predicates.Verbal (VerbEntry)
 namespace V
   -- Re-export Fragment verb entries under a short alias to avoid name clashes
@@ -264,7 +265,7 @@ namespace Phenomena.Causation.Compare
 open Minimalism
 open Minimalism.Bridge
 open Semantics.Lexical.Verb.EventStructure
-open MartinRoseNichols2025
+open Semantics.Causation.ProductionDependence
 open Phenomena.Causation.ThickThin
 
 -- § 1: Template ↔ Syntactic Structure

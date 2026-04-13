@@ -22,6 +22,7 @@ ascension alternations. Additional verbs demonstrate the locative
 
 namespace Phenomena.ArgumentStructure.DiathesisAlternations.Data
 
+open Core.Verbs
 open LevinClass DiathesisAlternation
 
 /-- Result of testing whether a verb participates in a diathesis alternation. -/

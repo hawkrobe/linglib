@@ -48,6 +48,20 @@ structure SpecSpace (Spec : Type*) where
   admissible : Finset Spec
   nonempty : admissible.Nonempty
 
+/-- Specification spaces ordered by **reverse inclusion** on admissible
+    sets: `S ≤ T` iff `T.admissible ⊆ S.admissible`. A "larger" spec
+    space in this ordering has *fewer* admissible specs — it is *more
+    precise*. This is the information ordering: more precision = more
+    information = higher in the order.
+
+    Fine's Stability condition (§ 7) says super-truth is `Antitone`
+    under this ordering: making the language more precise (restricting
+    admissible specs) preserves definite truth values. -/
+instance instPreorderSpecSpace {Spec : Type*} : Preorder (SpecSpace Spec) where
+  le S T := T.admissible ⊆ S.admissible
+  le_refl _ := Finset.Subset.refl _
+  le_trans _ _ _ h₁ h₂ := Finset.Subset.trans h₂ h₁
+
 /-- Singleton specification space: a single admissible precisification.
     Classical models are degenerate specification spaces. -/
 def SpecSpace.singleton {Spec : Type*} [DecidableEq Spec] (s : Spec) : SpecSpace Spec where
@@ -281,6 +295,32 @@ theorem stability_definite {Spec : Type*} (eval : Spec → Bool)
   | .true => rw [stability_superTrue eval S T hsub hs]; exact Truth3.noConfusion
   | .false => rw [stability_superFalse eval S T hsub hs]; exact Truth3.noConfusion
   | .indet => exact absurd hs hdef
+
+/-- **Stability as antitonicity**: super-truth is preserved under
+    the information ordering on spec spaces (= reverse inclusion on
+    admissible sets). Making the language more precise (`S ≤ T`, i.e.,
+    `T.admissible ⊆ S.admissible`) preserves super-truth.
+
+    This is Mathlib's `Antitone` applied to `superTrue eval` with
+    the codomain ordered by `Truth3.true ≤ · ≤ Truth3.true` (super-truth
+    entails super-truth). The theorem says: if `superTrue eval S = .true`
+    and `S ≤ T` (T is more precise), then `superTrue eval T = .true`.
+
+    The full antitonicity on `Truth3`'s lattice ordering does NOT hold
+    (restriction can turn `indet` into `true`), but this weaker
+    preservation-of-definiteness property is what matters for Fine. -/
+theorem stability_antitone_superTrue {Spec : Type*} (eval : Spec → Bool)
+    {S T : SpecSpace Spec} (hle : S ≤ T)
+    (h : superTrue eval S = Truth3.true) :
+    superTrue eval T = Truth3.true :=
+  stability_superTrue eval S T hle h
+
+/-- Dual: super-falsity is also preserved under the information ordering. -/
+theorem stability_antitone_superFalse {Spec : Type*} (eval : Spec → Bool)
+    {S T : SpecSpace Spec} (hle : S ≤ T)
+    (h : superTrue eval S = Truth3.false) :
+    superTrue eval T = Truth3.false :=
+  stability_superFalse eval S T hle h
 
 -- ════════════════════════════════════════════════════
 -- § 8. The D Operator

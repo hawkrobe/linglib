@@ -29,7 +29,7 @@ diagnostic predictions in `DiagnosticsBridge.lean`.
 namespace Phenomena.TenseAspect.Studies.Krifka1998
 
 open Fragments.English.Predicates.Verbal
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
+open Core.Verbs
 open Semantics.Events.Krifka1998 (VerbIncClass)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction DiagnosticResult)
 

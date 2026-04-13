@@ -57,7 +57,7 @@ mereological structure enables monotonic measurement by `much`.
 namespace Semantics.Lexical.Measurement
 
 open Mereology
-open Semantics.Tense.Aspect.LexicalAspect (Telicity VendlerClass AspectualProfile)
+open Core.Verbs
 open Semantics.Lexical.Noun.Kind.Dayal2004 (NumberFeature)
 
 -- ════════════════════════════════════════════════════

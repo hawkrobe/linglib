@@ -43,7 +43,7 @@ OC in complement clauses divides into two subtypes:
 namespace Phenomena.Control.Studies.Landau2015
 
 open Syntax.Minimalism.MinimalPronoun
-open Core.Verbs (VerbCore ControlType AttitudeBuilder ComplementType)
+open Core.Verbs (VerbCore ControlType Attitude ComplementType)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: The Two-Tiered Theory of Control
@@ -623,25 +623,25 @@ theorem communicative_deTe :
     rather than storing it independently.
 
     Returns `none` when the classification cannot be determined from
-    the available fields (e.g., `try` has no `implicativeBuilder`,
-    `attitudeBuilder`, or `cosType`).
+    the available fields (e.g., `try` has no `implicative`,
+    `attitude`, or `cosType`).
 
     Mapping:
     - `cosType` present → `.aspectual` (begin, stop, continue, ...)
-    - `implicativeBuilder` present → `.implicative` (manage, fail, ...)
-    - `causativeBuilder` present → `.implicative` (force, cause — implicative
+    - `implicative` present → `.implicative` (manage, fail, ...)
+    - `causative` present → `.implicative` (force, cause — implicative
       causatives in Landau's (4a))
     - `factivePresup` and attitude → `.factive` (regret, know, ...)
-    - `attitudeBuilder.doxastic` → `.propositional` (believe, think, ...)
-    - `attitudeBuilder.preferential` → `.desiderative` (want, hope, ...)
+    - `attitude.doxastic` → `.propositional` (believe, think, ...)
+    - `attitude.preferential` → `.desiderative` (want, hope, ...)
     - `takesQuestionBase` without attitude → `.interrogative` (wonder, ask) -/
 def derivedLandauClass (v : VerbCore) : Option LandauPredicateClass :=
   if v.cosType.isSome then some .aspectual
-  else if v.implicativeBuilder.isSome then some .implicative
-  else if v.causativeBuilder.isSome then some .implicative
+  else if v.implicative.isSome then some .implicative
+  else if v.causative.isSome then some .implicative
   else if v.factivePresup then some .factive
-  else if v.takesQuestionBase && v.attitudeBuilder.isNone then some .interrogative
-  else match v.attitudeBuilder with
+  else if v.takesQuestionBase && v.attitude.isNone then some .interrogative
+  else match v.attitude with
     | some (.doxastic _)     => some .propositional
     | some (.preferential _) => some .desiderative
     | none                   => none
@@ -649,7 +649,7 @@ def derivedLandauClass (v : VerbCore) : Option LandauPredicateClass :=
 /-- Derive control tier from VerbCore fields.
 
     A verb induces logophoric control iff it selects an attitude
-    complement — detected by the presence of `attitudeBuilder`,
+    complement — detected by the presence of `attitude`,
     `factivePresup`, or `takesQuestionBase`. Otherwise it induces
     predicative control.
 
@@ -661,7 +661,7 @@ def derivedControlTier (v : VerbCore) : Option ControlTier :=
     | none =>
       -- Fallback: if we can't determine the Landau class but the verb
       -- is a control verb, check for attitude markers directly
-      if v.attitudeBuilder.isSome || v.factivePresup || v.takesQuestionBase
+      if v.attitude.isSome || v.factivePresup || v.takesQuestionBase
       then some .logophoric
       else some .predicative
 
@@ -721,13 +721,13 @@ theorem hope_desiderative :
     derivedLandauClass hope.toVerbCore = some .desiderative := rfl
 
 /-- "promise" (preferential attitude) → desiderative → logophoric.
-    Previously unclassified; fixed by adding `attitudeBuilder` to the
+    Previously unclassified; fixed by adding `attitude` to the
     Fragment entry per @cite{landau-2015} (5c). -/
 theorem promise_desiderative :
     derivedLandauClass promise.toVerbCore = some .desiderative := rfl
 
 /-- "persuade" (preferential attitude, object control) → desiderative → logophoric.
-    Previously unclassified; fixed by adding `attitudeBuilder` per
+    Previously unclassified; fixed by adding `attitude` per
     @cite{landau-2015} table (36). -/
 theorem persuade_desiderative :
     derivedLandauClass persuade.toVerbCore = some .desiderative := rfl
@@ -754,8 +754,8 @@ theorem wonder_interrogative :
 
 -- Negative test: verbs that should NOT be classifiable
 
-/-- "try" has no cosType, implicativeBuilder, causativeBuilder, factivePresup,
-    takesQuestionBase, or attitudeBuilder. It cannot be classified by
+/-- "try" has no cosType, implicative, causative, factivePresup,
+    takesQuestionBase, or attitude. It cannot be classified by
     `derivedLandauClass`. This is correct: "try" is not implicative (trying
     doesn't entail succeeding) and not clearly attitudinal. -/
 theorem try_unclassifiable :

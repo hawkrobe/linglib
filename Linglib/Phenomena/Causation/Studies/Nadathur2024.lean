@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Theories.Semantics.Causation.Necessity
-import Linglib.Theories.Semantics.Causation.Builder
+import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Fragments.Finnish.Predicates
@@ -46,8 +46,8 @@ via circumscription/antiperfection.
 namespace Phenomena.Causation.Studies.Nadathur2024
 
 open Core.StructuralEquationModel
-open Nadathur2024.Implicative
-open NadathurLauer2020.Builder (CausativeBuilder)
+open Semantics.Causation.Implicative
+open Core.Verbs (Causative)
 open Fragments.English.Predicates.Verbal
 open Fragments.English.Predicates.Copular (beAble)
 open Fragments.Finnish.Predicates
@@ -226,7 +226,7 @@ theorem bother_prerequisite_presup :
 
 /-- *hesitate* is a polarity-reversing one-way implicative. -/
 theorem hesitate_polarity_reversing :
-    hesitate.toVerbCore.implicativeBuilder = some .negative ∧
+    hesitate.toVerbCore.implicative = some .negative ∧
     hesitate.toVerbCore.presupType = some .prerequisiteSoft := ⟨rfl, rfl⟩
 
 /-- *manage* presupposes a prerequisite (32i), though the prerequisite
@@ -277,7 +277,7 @@ theorem directionality_predicts_entailment :
     jaksaa.directionality = .oneWay ∧
     -- Polarity-reversing: epäröidä → negative builder, one-way
     eparoida.directionality = .oneWay ∧
-    eparoida.implicativeBuilder = .negative :=
+    eparoida.implicative = .negative :=
   ⟨rfl, rfl, rfl, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
@@ -415,7 +415,7 @@ theorem dare_end_to_end :
     -- Layer 2: Prerequisite account → ImplicativeClass
     dreyfusDareAccount.toImplicativeClass .positive = ImplicativeClass.dare ∧
     -- Layer 3: ImplicativeClass → English fragment entry
-    dare.toVerbCore.implicativeBuilder = some ImplicativeClass.dare.polarity ∧
+    dare.toVerbCore.implicative = some ImplicativeClass.dare.polarity ∧
     dare.toVerbCore.presupType = some .prerequisiteSoft ∧
     -- Layer 4: Cross-linguistic — Finnish uskaltaa matches
     uskaltaa.toImplicativeClass = ImplicativeClass.dare := by
@@ -441,7 +441,7 @@ theorem manage_end_to_end :
     -- Layer 2: Prerequisite account → ImplicativeClass
     dreyfusManageAccount.toImplicativeClass .positive = ImplicativeClass.manage ∧
     -- Layer 3: ImplicativeClass → English fragment
-    manage.toVerbCore.implicativeBuilder = some ImplicativeClass.manage.polarity ∧
+    manage.toVerbCore.implicative = some ImplicativeClass.manage.polarity ∧
     manage.toVerbCore.presupType = some .prerequisiteSoft ∧
     -- Layer 4: Cross-linguistic — Finnish onnistua matches
     onnistua.toImplicativeClass = ImplicativeClass.manage := by

@@ -2,6 +2,8 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Core.CausalBayesNet
 import Linglib.Theories.Semantics.Conditionals.Assertability
+import Linglib.Theories.Semantics.Causation.Sufficiency
+import Linglib.Theories.Semantics.Causation.Necessity
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
@@ -480,5 +482,149 @@ theorem perfection_modulated_by_context :
    use "likely C" (`s3_likelyC_dominates`). Hearing "likely C" makes L1
    infer s3 (`l1_likelyC_prefers_s3`), the state with weakest dependence. -/
 
+
+-- ════════════════════════════════════════════════════
+-- § Structural ↔ Probabilistic Bridge
+-- ════════════════════════════════════════════════════
+
+/-! ## Structural Causation Grounds Probabilistic Inference
+
+When the underlying causal model has A both sufficient AND necessary for C,
+the RSA listener should infer `CausalRelation.ACausesC`. This section bridges
+@cite{nadathur-lauer-2020}'s structural semantics to the probabilistic
+inference above. -/
+
+open Core.StructuralEquationModel
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
+
+/-- Deterministic model parameters: the structural profile of a causal
+    model reduced to three Bools. -/
+structure DeterministicParams where
+  sufficient : Bool
+  necessary : Bool
+  alternativeCause : Bool
+  deriving Repr, DecidableEq
+
+namespace DeterministicParams
+
+def toConditionals (p : DeterministicParams) : ℚ × ℚ :=
+  let pCGivenA := if p.sufficient then 1 else 0
+  let pCGivenNotA := if p.alternativeCause then 1 else 0
+  (pCGivenA, pCGivenNotA)
+
+def toNoisyOR (p : DeterministicParams) : NoisyOR :=
+  let background : ℚ := if p.alternativeCause then 1 else 0
+  let power : ℚ := (if p.sufficient then 1 else 0) - background
+  { background := background, power := power }
+
+end DeterministicParams
+
+def DeterministicParams.ofProfile (p : CausalProfile) : DeterministicParams :=
+  { sufficient := p.sufficient
+  , necessary := p.necessary
+  , alternativeCause := !p.necessary }
+
+def extractParams (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable) : DeterministicParams :=
+  .ofProfile (extractProfile dyn background cause effect)
+
+/-- Convert a structural situation to a probabilistic world state. -/
+def situationToWorldState (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable) (pCause : ℚ) : WorldState :=
+  let params := extractParams dyn background cause effect
+  let (pCGivenA, pCGivenNotA) := params.toConditionals
+  let pA := pCause
+  let pC := pCGivenA * pA + pCGivenNotA * (1 - pA)
+  let pAC := pCGivenA * pA
+  { pA := pA, pC := pC, pAC := pAC }
+
+def situationToWorldStateUniform (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable) : WorldState :=
+  situationToWorldState dyn background cause effect (1/2)
+
+/-- Structural sufficiency → P(C|A) = 1. -/
+theorem sufficiency_implies_pCGivenA_one (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable) (pCause : ℚ) (hCause : 0 < pCause ∧ pCause ≤ 1)
+    (h_suff : causallySufficient dyn background cause effect = true) :
+    (situationToWorldState dyn background cause effect pCause).pCGivenA = 1 := by
+  simp only [situationToWorldState, extractParams, DeterministicParams.ofProfile,
+             extractProfile, WorldState.pCGivenA,
+             DeterministicParams.toConditionals, h_suff, ↓reduceIte]
+  have hpA_pos : 0 < pCause := hCause.1
+  simp only [gt_iff_lt, hpA_pos, ↓reduceIte]
+  have hpA_ne : pCause ≠ 0 := ne_of_gt hpA_pos
+  field_simp
+
+/-- Structural necessity → P(C|¬A) = 0. -/
+theorem necessity_implies_pCGivenNotA_zero (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable) (pCause : ℚ) (hCause : 0 ≤ pCause ∧ pCause < 1)
+    (h_nec : causallyNecessary dyn background cause effect = true) :
+    (situationToWorldState dyn background cause effect pCause).pCGivenNotA = 0 := by
+  simp only [situationToWorldState, extractParams, DeterministicParams.ofProfile,
+             extractProfile, WorldState.pCGivenNotA, WorldState.pNotAC,
+             DeterministicParams.toConditionals, h_nec, Bool.not_true]
+  have hNotA_pos : (0 : ℚ) < 1 - pCause := by linarith [hCause.2]
+  simp only [gt_iff_lt, hNotA_pos, ↓reduceIte]
+  norm_num
+
+/-- Sufficient + necessary → assertable. -/
+theorem structural_ac_implies_inferred_ac (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable) (θ : ℚ) (hθ : 0 ≤ θ ∧ θ < 1)
+    (h_suff : causallySufficient dyn background cause effect = true)
+    (h_nec : causallyNecessary dyn background cause effect = true) :
+    let ws := situationToWorldState dyn background cause effect (1/2)
+    assertable ws θ = true := by
+  simp only [situationToWorldState, extractParams, DeterministicParams.ofProfile,
+             extractProfile, h_suff, h_nec,
+             Bool.not_true, assertable, WorldState.pCGivenA, conditionalProbability,
+             DeterministicParams.toConditionals, ↓reduceIte]
+  simp only [Bool.and_eq_true, decide_eq_true_eq]
+  constructor
+  · norm_num
+  · simp only [gt_iff_lt]
+    norm_num
+    linarith [hθ.2]
+
+def structuralToCausalRelation (params : DeterministicParams) : CausalRelation :=
+  if params.sufficient && params.necessary then
+    .ACausesC
+  else if params.sufficient && !params.necessary then
+    .Independent
+  else
+    .Independent
+
+def inferStructuralCausalRelation (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable) : CausalRelation :=
+  let params := extractParams dyn background cause effect
+  structuralToCausalRelation params
+
+/-- Sufficient + necessary → ACausesC. -/
+theorem grounding_chain_consistent (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable)
+    (h_suff : causallySufficient dyn background cause effect = true)
+    (h_nec : causallyNecessary dyn background cause effect = true) :
+    inferStructuralCausalRelation dyn background cause effect = .ACausesC := by
+  simp only [inferStructuralCausalRelation, extractParams, DeterministicParams.ofProfile,
+             extractProfile, structuralToCausalRelation, h_suff, h_nec]
+  decide
+
+/-- Overdetermination → Independent (sufficient but not necessary). -/
+theorem overdetermination_not_ac (dyn : CausalDynamics) (background : Situation)
+    (cause effect : Variable)
+    (h_suff : causallySufficient dyn background cause effect = true)
+    (h_not_nec : causallyNecessary dyn background cause effect = false) :
+    inferStructuralCausalRelation dyn background cause effect = .Independent := by
+  simp only [inferStructuralCausalRelation, extractParams, DeterministicParams.ofProfile,
+             extractProfile, structuralToCausalRelation, h_suff, h_not_nec]
+  decide
+
+/-- In single-law models, sufficiency implies necessity. -/
+theorem single_cause_perfection (cause effect : Variable) :
+    let dyn := ⟨[CausalLaw.simple cause effect]⟩
+    causallySufficient dyn Situation.empty cause effect = true →
+    causallyNecessary dyn Situation.empty cause effect = true := by
+  intro _ _
+  exact simple_law_necessity cause effect
 
 end Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022

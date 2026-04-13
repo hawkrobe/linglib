@@ -78,7 +78,7 @@ theorem constraint_hierarchy_cdist_ptoq {W E : Type*}
     (for any fixed comparison class C).
 
     This closes the end-to-end chain for Class 2 and Class 3 NVPs:
-    `attitudeBuilder → isCDistributive → IsPtoQEntailing`.
+    `attitude → isCDistributive → IsPtoQEntailing`.
     Class 1 NVPs (non-C-distributive) require individual P-to-Q proofs
     (e.g., `wonder_satisfies_ptoq`, `daroo_satisfies_ptoq`, `care_satisfies_ptoq`). -/
 theorem preferential_cDist_implies_ptoq {W E : Type*}

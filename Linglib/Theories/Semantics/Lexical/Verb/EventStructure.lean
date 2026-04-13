@@ -29,6 +29,7 @@ import Linglib.Core.Lexical.DiathesisAlternation
 
 namespace Semantics.Lexical.Verb.EventStructure
 
+open Core.Verbs
 open Semantics.Lexical.Verb.EntailmentProfile
 open Semantics.Tense.Aspect.LexicalAspect
 
@@ -346,6 +347,8 @@ def CausationType.licensesBySelf : CausationType → Bool
 
 end Semantics.Lexical.Verb.EventStructure
 
+namespace Core.Verbs
+
 /-- Predicted event structure template from meaning components. -/
 def MeaningComponents.predictedTemplate : MeaningComponents → Semantics.Lexical.Verb.EventStructure.Template
   | mc => if mc.changeOfState && mc.causation then .accomplishment
@@ -359,7 +362,10 @@ def LevinClass.eventTemplate : LevinClass → Semantics.Lexical.Verb.EventStruct
   | .wipe => .motionContact
   | c => c.meaningComponents.predictedTemplate
 
+end Core.Verbs
+
 namespace Semantics.Lexical.Verb.EventStructure
+open Core.Verbs
 
 /-! ### Verification: canonical quadruple -/
 

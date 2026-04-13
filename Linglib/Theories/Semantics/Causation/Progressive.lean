@@ -58,12 +58,12 @@ at both levels — causal (`progressive_not_entails_perfective`) and
 temporal (`progressive_before_result`).
 -/
 
-namespace Causation.ProgressiveCausation
+namespace Semantics.Causation.Progressive
 
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
-open Causation.CCSelection
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
+open Semantics.Causation.CCSelection
 
 -- ════════════════════════════════════════════════════
 -- § 1. Causal Process
@@ -278,4 +278,4 @@ theorem causallyGroundedEvent_progressive_not_perfective :
   · native_decide
   · native_decide
 
-end Causation.ProgressiveCausation
+end Semantics.Causation.Progressive

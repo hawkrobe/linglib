@@ -3,7 +3,6 @@ import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
-import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Causation.ProductionDependence
 
 /-!
@@ -29,20 +28,20 @@ causative semantics infrastructure:
 
 -/
 
-namespace Causative.Resultatives
+namespace Semantics.Causation.Resultatives
 
 open ConstructionGrammar
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Semantics.Lexical.Verb.ChangeOfState
 open Core
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
-open NadathurLauer2020.Builder (CausativeBuilder)
-open Fragments.English.Predicates.Verbal (VerbEntry make cause)
-open MartinRoseNichols2025
-open Causation.CCSelection
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
+open Core.Verbs (Causative)
+open Semantics.Causation.ProductionDependence
+open Semantics.Causation.CCSelection
 
 /-! ## Causal Dynamics (@cite{nadathur-lauer-2020}; Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
 
@@ -173,12 +172,12 @@ theorem causative_means_have_cause :
 /-! ### CC-selection (Baglini & Bar-Asher @cite{baglini-bar-asher-siegal-2025})
 
 CC-selection types (`CCSelectionMode`, `completesForEffect`) are defined in
-`Causation.CCSelection` and re-exported here for backward compatibility.
+`Semantics.Causation.CCSelection` and re-exported here for backward compatibility.
 
 - Overt "cause": `memberOfSufficientSet` — any necessary condition
 - CoS/resultative: `completionOfSufficientSet` — the completing condition -/
 
-export Causation.CCSelection (CCSelectionMode completesForEffect ccConstraintSatisfied)
+export Semantics.Causation.CCSelection (CCSelectionMode completesForEffect ccConstraintSatisfied)
 
 /-- Resultatives select via completion (like CoS verbs). -/
 def resultativeCCSelection : CCSelectionMode := .completionOfSufficientSet
@@ -222,9 +221,9 @@ theorem hammer_not_completion_if_result_first :
       hammeringVar flatVar .means .constructionalFirst = false := by
   native_decide
 
-/-! ### CausativeBuilder bridge: derived from SubeventRelation + CAUSE
+/-! ### Causative bridge: derived from SubeventRelation + CAUSE
 
-The resultative's CausativeBuilder is `.make`, but this is NOT stipulated —
+The resultative's Causative is `.make`, but this is NOT stipulated —
 it is DERIVED from two independently-motivated properties:
 
 1. **MEANS relation**: the verbal subevent is the means by which the
@@ -239,7 +238,7 @@ MEANS + CAUSE → `makeSem` (sufficiency). Among sufficiency builders,
 `.make` is uniquely identified by lacking coercion (`.force`) and
 barrier-removal (`.enable`). -/
 
-/-- Derive the CausativeBuilder from subevent relation + constructional desc
+/-- Derive the Causative from subevent relation + constructional desc
     + force-dynamic properties.
 
     **Step 1** (structural): MEANS + CAUSE licenses a sufficiency-based builder.
@@ -259,7 +258,7 @@ barrier-removal (`.enable`). -/
     inspection — they cannot be derived from subevent structure alone. -/
 def deriveCausativeBuilder (rel : SubeventRelation) (desc : SubeventDesc)
     (coercive : Bool := false) (permissive : Bool := false) :
-    Option CausativeBuilder :=
+    Option Causative :=
   match rel, desc.hasCause with
   | .means, true =>
     some (if coercive then .force
@@ -269,13 +268,13 @@ def deriveCausativeBuilder (rel : SubeventRelation) (desc : SubeventDesc)
 
 /-- `.make` is the unique builder asserting neutral sufficiency
     (no coercion, no barrier-removal). -/
-theorem make_unique_neutral_sufficiency (b : CausativeBuilder)
+theorem make_unique_neutral_sufficiency (b : Causative)
     (hs : b.assertsSufficiency = true)
     (hc : b.isCoercive = false)
     (hp : b.isPermissive = false) :
     b = .make := by
-  cases b <;> simp_all [CausativeBuilder.assertsSufficiency,
-    CausativeBuilder.isCoercive, CausativeBuilder.isPermissive]
+  cases b <;> simp_all [Causative.assertsSufficiency,
+    Causative.isCoercive, Causative.isPermissive]
 
 /-- Neutral derivation (no coercion, no permissivity) yields `.make`. -/
 theorem neutral_derives_make (desc : SubeventDesc)
@@ -311,7 +310,7 @@ theorem causative_means_derives_make (sc : ResultativeSubconstruction)
   cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
     simp [deriveCausativeBuilder, ResultativeSubconstruction.constructionalDesc]
 
-/-- Noncausative subconstructions don't derive a CausativeBuilder
+/-- Noncausative subconstructions don't derive a Causative
     (no CAUSE operator → no external causation to encode). -/
 theorem noncausative_no_builder (sc : ResultativeSubconstruction)
     (h : sc.isCausative = false)
@@ -320,7 +319,7 @@ theorem noncausative_no_builder (sc : ResultativeSubconstruction)
   cases sc <;> simp [ResultativeSubconstruction.isCausative] at h <;>
     simp [deriveCausativeBuilder, ResultativeSubconstruction.constructionalDesc]
 
-/-- Non-MEANS relations never derive a CausativeBuilder, regardless of
+/-- Non-MEANS relations never derive a Causative, regardless of
     whether the constructional subevent has CAUSE or force-dynamic properties. -/
 theorem non_means_no_builder (desc : SubeventDesc) (coercive permissive : Bool) :
     deriveCausativeBuilder .result desc coercive permissive = none ∧
@@ -332,7 +331,7 @@ theorem non_means_no_builder (desc : SubeventDesc) (coercive permissive : Bool) 
     asserts causal sufficiency — regardless of force-dynamic properties. -/
 theorem derived_asserts_sufficiency (rel : SubeventRelation) (desc : SubeventDesc)
     (coercive permissive : Bool)
-    (b : CausativeBuilder) (h : deriveCausativeBuilder rel desc coercive permissive = some b) :
+    (b : Causative) (h : deriveCausativeBuilder rel desc coercive permissive = some b) :
     b.assertsSufficiency = true := by
   unfold deriveCausativeBuilder at h
   split at h
@@ -341,12 +340,12 @@ theorem derived_asserts_sufficiency (rel : SubeventRelation) (desc : SubeventDes
       simp_all <;> subst h <;> rfl
   · simp at h
 
-/-- The resultative CausativeBuilder, derived from MEANS + CAUSE.
+/-- The resultative Causative, derived from MEANS + CAUSE.
     Resultatives are neutral (no coercion, no barrier-removal), so
     the force-dynamic parameters default to false.
     `causative_means_derives_make` proves all causative subconstructions
     yield the same result. -/
-def resultativeCausativeBuilder : CausativeBuilder :=
+def resultativeCausativeBuilder : Causative :=
   match deriveCausativeBuilder .means
     ResultativeSubconstruction.causativeProperty.constructionalDesc with
   | some b => b
@@ -357,18 +356,9 @@ def resultativeCausativeBuilder : CausativeBuilder :=
 theorem resultative_is_make :
     resultativeCausativeBuilder = .make := rfl
 
-/-- Resultative CAUSE matches the Fragment entry for "make". -/
-theorem resultative_cause_matches_make_verb :
-    make.causativeBuilder = some resultativeCausativeBuilder := rfl
-
-/-- Resultative CAUSE ≠ "cause" verb (`.make` ≠ `.cause`). -/
-theorem resultative_cause_differs_from_cause_verb :
-    cause.causativeBuilder ≠ some resultativeCausativeBuilder := by
-  decide
-
 /-- `.prevent` is incompatible with resultatives. -/
 theorem prevent_incompatible_with_resultative :
-    CausativeBuilder.prevent ≠ resultativeCausativeBuilder := by decide
+    Causative.prevent ≠ resultativeCausativeBuilder := by decide
 
 /-! ## @cite{levin-2019}'s Tightness via Causal Necessity
 
@@ -644,7 +634,7 @@ theorem thick_manner_resultative_convergence :
 theorem thin_incompatible_with_resultative_cause :
     productionConstraint .thin = .dependence ∧
     CausationType.dependence.analogousBuilder = .cause ∧
-    CausativeBuilder.cause ≠ resultativeCausativeBuilder := by
+    Causative.cause ≠ resultativeCausativeBuilder := by
   exact ⟨rfl, rfl, by decide⟩
 
 /-! ## Aspect: activity + bounded RP → accomplishment -/
@@ -793,4 +783,4 @@ theorem phase_complements_cover_cos_types :
 
 end CrossLinguistic
 
-end Causative.Resultatives
+end Semantics.Causation.Resultatives

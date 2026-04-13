@@ -45,6 +45,7 @@ namespace Semantics.Tense.TemporalConnectives
 open Core.Time
 open Core.Time.Interval
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Semantics.Lexical.Verb.ChangeOfState
 open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton
   maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)

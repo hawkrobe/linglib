@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.PsychCausation
+import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Core.Temporal.Time
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
@@ -34,11 +34,11 @@ The fourth uses `universalCounterfactualB` from `Counterfactual.lean`.
 
 -/
 
-namespace Semantics.Causation.PsychCausalLink
+namespace Semantics.Causation.PsychLink
 
 open Core.Time (Interval)
 open Semantics.Events (EventSort)
-open Semantics.Causation.PsychCausation (CausalSource)
+open Semantics.Causation.Psych (CausalSource)
 open Semantics.Conditionals.Counterfactual (universalCounterfactualB closestWorldsB)
 
 -- ════════════════════════════════════════════════════
@@ -208,8 +208,9 @@ def counterfactuallyPersistent {W : Type*} [DecidableEq W]
     If all closest ¬cause worlds satisfy ¬effect (dependence), then
     at least one closest world falsifies effect, so persistence fails.
 
-    TODO: Proof via `List.all` reasoning — if `l.all (fun w => !f w)`
-    and `l ≠ []`, then `l.all f = false`. -/
+    Proved by extracting a witness from the non-empty closest-world
+    list and showing it satisfies `!effectProp w` (from dependence)
+    and `effectProp w` (from persistence), a contradiction. -/
 theorem dependent_excludes_persistent {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)
     (causeProp effectProp : W → Bool) (w : W)
@@ -262,4 +263,4 @@ theorem maintenance_three_properties {Time : Type*} [LinearOrder Time] :
     (maintenanceLink Time).involvesTransition = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Semantics.Causation.PsychCausalLink
+end Semantics.Causation.PsychLink

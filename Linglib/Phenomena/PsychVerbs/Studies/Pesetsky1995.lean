@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Cascade
-import Linglib.Theories.Semantics.Causation.PsychCausation
+import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -40,7 +40,7 @@ set_option autoImplicit false
 namespace Phenomena.PsychVerbs.Studies.Pesetsky1995
 
 open Minimalism
-open Semantics.Causation.PsychCausation
+open Semantics.Causation.Psych
 open Phenomena.PsychVerbs.Data
 open Fragments.English.Predicates.Verbal
 

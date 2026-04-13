@@ -32,7 +32,7 @@ only distinguish agent from stimulus. It correctly predicts ~71% of verbs
 ## Account 2: Lexicalist (@cite{levin-1993}, Rappaport @cite{rappaport-hovav-levin-1998})
 
 The verb's lexical semantics determines the theta role, bypassing Voice.
-`Ctx = Unit`; `predict` ignores structure. Uses attitudeBuilder,
+`Ctx = Unit`; `predict` ignores structure. Uses attitude,
 causalSource, objectTheta, factivePresup, levinClass, unaccusative,
 controlType — all verb-internal semantic properties.
 

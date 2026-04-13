@@ -29,6 +29,7 @@ phrasal patterns that only CxG can capture.
 namespace ConstructionGrammar
 
 open Core
+open Core.Verbs
 
 /-! ## Construction slots and argument frames -/
 

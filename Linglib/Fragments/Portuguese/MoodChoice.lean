@@ -30,7 +30,7 @@ def querer : VerbCore where
   altComplementType := some .infinitival
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want
 
 /-- *esperar* 'hope' — cross-linguistically variable (IND/SBJV).
@@ -42,7 +42,7 @@ def esperar : VerbCore where
   altComplementType := some .infinitival
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *pretender* 'intend' — robustly rejects indicative.
     @cite{grano-2024}, (26): SBJV required, IND rejected. -/
@@ -52,7 +52,7 @@ def pretender : VerbCore where
   controlType := .subjectControl
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want
 
 /-- *fazer* 'make' — causative, rejects indicative.
@@ -62,7 +62,7 @@ def fazer : VerbCore where
   complementType := .infinitival
   controlType := .objectControl
   altComplementType := some .finiteClause
-  causativeBuilder := some .make
+  causative := some .make
 
 -- ════════════════════════════════════════════════════════════════
 -- Bridge Theorems
@@ -78,6 +78,6 @@ theorem pretender_is_want_class :
     pretender.levinClass = some .want := rfl
 
 theorem fazer_is_causative :
-    fazer.causativeBuilder.isSome = true := rfl
+    fazer.causative.isSome = true := rfl
 
 end Fragments.Portuguese.MoodChoice

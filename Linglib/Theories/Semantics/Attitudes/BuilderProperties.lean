@@ -8,7 +8,7 @@ It provides the derivation functions that compute theoretical properties
 
 ## Architecture
 
-The Fragment layer defines `PreferentialBuilder` as minimal lexical features:
+The Fragment layer defines `Preferential` as minimal lexical features:
 - `degreeComparison`: Degree-comparison semantics
 - `uncertaintyBased`: Uncertainty-based semantics
 - `relevanceBased`: Relevance-based semantics
@@ -26,7 +26,7 @@ to get types like `AttitudeValence` and `NVPClass`. This creates a dependency:
 
 To derive properties FROM Fragment features, we need:
 
-    Theory → Fragment (for PreferentialBuilder)
+    Theory → Fragment (for Preferential)
 
 This file breaks the cycle by importing both and defining the derivations.
 
@@ -37,8 +37,8 @@ import Linglib.Theories.Semantics.Attitudes.Preferential
 
 namespace Semantics.Attitudes.BuilderProperties
 
-open Fragments.English.Predicates.Verbal (PreferentialBuilder AttitudeBuilder)
-open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
+open Core.Verbs (Preferential Attitude AttitudeValence)
+open Semantics.Attitudes.Preferential (NVPClass)
 
 -- C-Distributivity from Semantic Builder
 
@@ -55,7 +55,7 @@ The computation is justified by the semantic structure:
 - Uncertainty-based: ⟦x V Q⟧ involves global uncertainty, not existential
 - Relevance-based: ⟦x V Q⟧ involves resolution/relevance, not existential
 -/
-def PreferentialBuilder.isCDistributive : PreferentialBuilder → Bool
+def Preferential.isCDistributive : Preferential → Bool
   | .degreeComparison _ => true   -- By degreeComparisonPredicate_isCDistributive
   | .uncertaintyBased => false    -- By worry_not_cDistributive
   | .relevanceBased _ => false    -- By analogous theorem for relevance semantics
@@ -75,28 +75,28 @@ The derivation chain:
 2. Builder → valence (in Fragment, lexical property)
 3. C-distributivity + valence → NVP class (this function)
 -/
-def PreferentialBuilder.nvpClass (b : PreferentialBuilder) : NVPClass :=
-  if !PreferentialBuilder.isCDistributive b then .class1_nonCDist
+def Preferential.nvpClass (b : Preferential) : NVPClass :=
+  if !Preferential.isCDistributive b then .class1_nonCDist
   else if b.valence == .negative then .class2_cDist_negative
   else .class3_cDist_positive
 
--- AttitudeBuilder Derived Properties
+-- Attitude Derived Properties
 
 /--
 Get C-distributivity for preferential attitudes.
 Returns `none` for doxastic attitudes (C-distributivity doesn't apply).
 -/
-def AttitudeBuilder.cDistributive : AttitudeBuilder → Option Bool
+def Attitude.cDistributive : Attitude → Option Bool
   | .doxastic _ => none
-  | .preferential b => some (PreferentialBuilder.isCDistributive b)
+  | .preferential b => some (Preferential.isCDistributive b)
 
 /--
 Get NVP class for preferential attitudes.
 Returns `none` for doxastic attitudes (NVP classification doesn't apply).
 -/
-def AttitudeBuilder.nvpClass : AttitudeBuilder → Option NVPClass
+def Attitude.nvpClass : Attitude → Option NVPClass
   | .doxastic _ => none
-  | .preferential b => some (PreferentialBuilder.nvpClass b)
+  | .preferential b => some (Preferential.nvpClass b)
 
 -- VerbEntry Derived Properties
 
@@ -104,11 +104,11 @@ open Fragments.English.Predicates.Verbal (VerbEntry)
 
 /-- C-distributivity is derived from the attitude builder -/
 def VerbEntry.cDistributive (v : VerbEntry) : Option Bool :=
-  v.attitudeBuilder.bind AttitudeBuilder.cDistributive
+  v.attitude.bind Attitude.cDistributive
 
 /-- NVP class is derived from the attitude builder -/
 def VerbEntry.nvpClass (v : VerbEntry) : Option NVPClass :=
-  v.attitudeBuilder.bind AttitudeBuilder.nvpClass
+  v.attitude.bind Attitude.nvpClass
 
 /--
 Can take questions: Derived for preferential verbs, base field for others.
@@ -169,38 +169,38 @@ def questionEmbeddingVerbs : List VerbEntry :=
 
 /-- Hope (degree-comparison positive) is C-distributive -/
 theorem hope_builder_cDistributive :
-    PreferentialBuilder.isCDistributive (.degreeComparison .positive) = true := rfl
+    Preferential.isCDistributive (.degreeComparison .positive) = true := rfl
 
 /-- Fear (degree-comparison negative) is C-distributive -/
 theorem fear_builder_cDistributive :
-    PreferentialBuilder.isCDistributive (.degreeComparison .negative) = true := rfl
+    Preferential.isCDistributive (.degreeComparison .negative) = true := rfl
 
 /-- Worry (uncertainty-based) is NOT C-distributive -/
 theorem worry_builder_not_cDistributive :
-    PreferentialBuilder.isCDistributive .uncertaintyBased = false := rfl
+    Preferential.isCDistributive .uncertaintyBased = false := rfl
 
 /-- Qidai (relevance-based) is NOT C-distributive -/
 theorem qidai_builder_not_cDistributive :
-    PreferentialBuilder.isCDistributive (.relevanceBased .positive) = false := rfl
+    Preferential.isCDistributive (.relevanceBased .positive) = false := rfl
 
 /-- Hope is Class 3 (C-dist + positive → anti-rogative) -/
 theorem hope_builder_class3 :
-    PreferentialBuilder.nvpClass (.degreeComparison .positive) = .class3_cDist_positive := by
+    Preferential.nvpClass (.degreeComparison .positive) = .class3_cDist_positive := by
   native_decide
 
 /-- Fear is Class 2 (C-dist + negative → takes questions) -/
 theorem fear_builder_class2 :
-    PreferentialBuilder.nvpClass (.degreeComparison .negative) = .class2_cDist_negative := by
+    Preferential.nvpClass (.degreeComparison .negative) = .class2_cDist_negative := by
   native_decide
 
 /-- Worry is Class 1 (non-C-dist → takes questions) -/
 theorem worry_builder_class1 :
-    PreferentialBuilder.nvpClass .uncertaintyBased = .class1_nonCDist := by
+    Preferential.nvpClass .uncertaintyBased = .class1_nonCDist := by
   native_decide
 
 /-- Qidai is Class 1 (non-C-dist → takes questions despite positive valence) -/
 theorem qidai_builder_class1 :
-    PreferentialBuilder.nvpClass (.relevanceBased .positive) = .class1_nonCDist := by
+    Preferential.nvpClass (.relevanceBased .positive) = .class1_nonCDist := by
   native_decide
 
 end Semantics.Attitudes.BuilderProperties

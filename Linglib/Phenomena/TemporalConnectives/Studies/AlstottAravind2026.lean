@@ -53,6 +53,7 @@ INCHOAT / COMPLET Fragment.triggeredCoercion
 namespace Phenomena.TemporalConnectives.AspectInteractionBridge
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Semantics.Tense.TemporalConnectives
 open Fragments.English.TemporalExpressions
 open Phenomena.TemporalConnectives.AspectInteractionData

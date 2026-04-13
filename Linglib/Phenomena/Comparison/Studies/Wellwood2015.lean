@@ -268,7 +268,7 @@ open Semantics.Events (Ev EvPred)
 open Semantics.Events.ThematicRoles (ThematicFrame EventModifier
   modifiedStativeLogicalForm stativeLogicalForm modify modified_stative_is_pm)
 open Semantics.Lexical.Measurement
-open Semantics.Tense.Aspect.LexicalAspect (AspectualProfile)
+open Core.Verbs
 
 /-- Deg' = much_μ + -er: the comparative degree head.
 
@@ -611,13 +611,13 @@ theorem nonGradableAdj_patterns_with_qua :
 -- Grammar shift bridges
 
 theorem run_shift_via_telicize :
-    let p : AspectualProfile := Semantics.Tense.Aspect.LexicalAspect.activityProfile
+    let p : AspectualProfile := activityProfile
     telicityToStatus p.telicity = .cumulative ∧
     telicityToStatus p.telicize.telicity = .quantized :=
   telicize_shifts_status _ rfl
 
 theorem build_shift_via_atelicize :
-    let p : AspectualProfile := Semantics.Tense.Aspect.LexicalAspect.accomplishmentProfile
+    let p : AspectualProfile := accomplishmentProfile
     telicityToStatus p.telicity = .quantized ∧
     telicityToStatus p.atelicize.telicity = .cumulative :=
   atelicize_shifts_status _ rfl

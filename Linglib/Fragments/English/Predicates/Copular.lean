@@ -36,7 +36,7 @@ def beRight : ClauseEmbeddingAdj where
     @cite{karttunen-1971} §11: necessary-only (negation → ¬VP; affirmative ↛ VP).
     @cite{nadathur-2023}: one-way positive, **aspect-governed** — the actuality
     entailment arises in perfective contexts, not from the lexicon. Therefore
-    NO `implicativeBuilder`: the entailment is not unconditional like *manage*.
+    NO `implicative`: the entailment is not unconditional like *manage*.
 
     Not modeled via `ClauseEmbeddingAdj` because `toVerbCore` doesn't transfer
     `controlType`. Constructed as a direct `VerbCore` instead. -/
@@ -61,6 +61,6 @@ def Semantics.Lexical.Adjective.ClauseEmbeddingAdj.toVerbCore
   form := "be " ++ a.adjForm
   complementType := a.complementType
   presupType := a.presupType
-  attitudeBuilder := a.attitudeBuilder
+  attitude := a.attitude
   opaqueContext := a.opaqueContext
   complementSig := a.complementSig

@@ -43,6 +43,7 @@ Then `IsCDistributive propSemantics questionSemantics` is a theorem.
 
 import Mathlib.Data.Rat.Defs
 import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Lexical.VerbClass
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
@@ -50,6 +51,8 @@ import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 namespace Semantics.Attitudes.Preferential
 
 open Core.Proposition
+open Core.Verbs (AttitudeValence)
+export Core.Verbs (AttitudeValence)
 open Semantics.Attitudes.CDistributivity (IsCDistributive degreeComparison_isCDistributive
                       degreeComparisonProp degreeComparisonQuestion DegreeFn ThresholdFn)
 
@@ -207,23 +210,6 @@ theorem triviality_representation_independent {W : Type*}
   simp only [List.any_eq_true] at *
   obtain ⟨p, hp_in_Q, hp_holds⟩ := h_exists_Q
   exact ⟨p, h_subset p hp_in_Q, hp_holds⟩
-
--- Valence: Positive vs. Negative
-
-/--
-Evaluative valence of a preferential predicate.
-
-- **Positive**: Expresses desire for the proposition (hope, wish, expect)
-- **Negative**: Expresses aversion to the proposition (fear, worry, dread)
-
-This distinction is crucial for:
-1. TSP distribution (positive have TSP, negative don't)
-2. Interpretive asymmetry in "V whether" constructions
--/
-inductive AttitudeValence where
-  | positive   -- hope, wish, expect, look_forward_to
-  | negative   -- fear, worry, dread
-  deriving DecidableEq, Repr
 
 -- Significance Presuppositions (@cite{kennedy-2007}, @cite{uegaki-sudo-2019})
 

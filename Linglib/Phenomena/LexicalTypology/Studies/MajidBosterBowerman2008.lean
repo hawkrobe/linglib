@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.VerbClass
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -58,6 +58,7 @@ varies across languages.
 
 namespace Phenomena.LexicalTypology.Studies.MajidBosterBowerman2008
 
+open Core.Verbs
 open InstrumentType ObjectDimensionality Robustness ResultType
      ForceLevel ForceDirection
 

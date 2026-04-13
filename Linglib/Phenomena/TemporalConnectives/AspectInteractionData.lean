@@ -29,6 +29,7 @@ aspectual class (Vendler class) of their complement and main clauses.
 namespace Phenomena.TemporalConnectives.AspectInteractionData
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 -- ============================================================================
 -- § 1: Connective × Aspect Interaction Judgments

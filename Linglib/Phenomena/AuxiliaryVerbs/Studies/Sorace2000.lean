@@ -23,7 +23,7 @@ classification from `Theories.Semantics.Tense.Aspect.LexicalAspect`.
 
 namespace Phenomena.AuxiliaryVerbs.Selection.Bridge
 
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
+open Core.Verbs
 open Phenomena.AuxiliaryVerbs.Selection
 
 /-- Vendler's achievement class (telic, punctual) typically corresponds to

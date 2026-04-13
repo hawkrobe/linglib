@@ -1,4 +1,4 @@
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.VerbClass
 
 /-!
 # Diathesis Alternation Types and Prediction
@@ -169,6 +169,8 @@ def DiathesisAlternation.family : DiathesisAlternation → AlternationFamily
   -- Ch 7: Other constructions
   | .cognateObject | .wayConstruction | .resultative
   | .directionalPhrase => .otherConstructions
+
+namespace Core.Verbs
 
 /-- Predicted alternation participation derived from meaning components.
 
@@ -711,3 +713,4 @@ theorem swarm_classes :
     ∧ LevinClass.mannerOfMotion.participatesIn .swarm = true
     ∧ LevinClass.bodyInternalMotion.participatesIn .swarm = true := ⟨rfl, rfl, rfl⟩
 
+end Core.Verbs

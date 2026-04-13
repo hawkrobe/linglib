@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.Builder
+import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.CCSelection
 
 /-!
@@ -27,22 +27,22 @@ d-causes without producing anything.
 | P-CAUSE (deterministic) | `causallySufficient` + directness | Sufficiency.lean |
 | D-CAUSE (deterministic) | `causallyNecessary` | Necessity.lean |
 | Thick → P-CAUSE preference | production constraint | (this file) |
-| Thick → strong ASR | resultative compatibility | Causation/Studies/MartinRoseNichols2025.lean |
+| Thick → strong ASR | resultative compatibility | Causation/Studies/Semantics.Causation.ProductionDependence.lean |
 | Builder `.make` | sufficiency = P-CAUSE in deterministic limit | Builder.lean |
 
 -/
 
-namespace MartinRoseNichols2025
+namespace Semantics.Causation.ProductionDependence
 
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
-open NadathurLauer2020.Builder (CausativeBuilder)
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
+open Core.Verbs (Causative)
 
 /-! ## Causation Type
 
 The two concepts of causation that lexical causative verbs can encode.
-This is orthogonal to the `CausativeBuilder` (which classifies periphrastic
+This is orthogonal to the `Causative` (which classifies periphrastic
 causatives by force-dynamic mechanism) — it classifies how lexical
 causatives encode the causal relation itself. -/
 
@@ -116,7 +116,7 @@ x would prevent y. -/
     when there is exactly one causal pathway and no overdetermination,
     a sufficient cause is also necessary.
 
-    Note: This fails under overdetermination (see `builders_truth_conditionally_distinct`),
+    Note: This fails under overdetermination (see `truth_conditionally_distinct`),
     which is exactly when P-CAUSE and D-CAUSE can come apart. -/
 theorem single_pathway_sufficiency_implies_necessity
     (c e : Variable) (_hne : c ≠ e) :
@@ -145,7 +145,7 @@ theorem single_pathway_concrete :
     energy (sufficient) but the effect would have occurred anyway from
     another source (not necessary).
 
-    Reuses the existing witness from `builders_truth_conditionally_distinct`. -/
+    Reuses the existing witness from `truth_conditionally_distinct`. -/
 theorem overdetermination_breaks_entailment :
     ∃ (dyn : CausalDynamics) (s : Situation) (c e : Variable),
       causallySufficient dyn s c e = true ∧
@@ -182,23 +182,23 @@ theorem thick_prefers_production :
 theorem thin_defaults_dependence :
     productionConstraint .thin = .dependence := rfl
 
-/-! ## Bridge to CausativeBuilder
+/-! ## Bridge to Causative
 
 P-CAUSE maps to `makeSem` (sufficiency): production causes are sufficient.
 D-CAUSE maps to `causeSem` (necessity): dependence causes are necessary.
 
-The overt verb *cause* encodes D-CAUSE and uses `CausativeBuilder.cause`.
-Thick lexical causatives encode P-CAUSE and align with `CausativeBuilder.make`.
+The overt verb *cause* encodes D-CAUSE and uses `Causative.cause`.
+Thick lexical causatives encode P-CAUSE and align with `Causative.make`.
 
-Note: lexical causatives don't literally use `CausativeBuilder` (which
+Note: lexical causatives don't literally use `Causative` (which
 classifies periphrastic verbs), but their internal CAUSE operator has the
 same truth conditions as `makeSem` when P-CAUSE applies. -/
 
-/-- Map causation type to the analogous CausativeBuilder.
+/-- Map causation type to the analogous Causative.
 
     This is the structural bridge: P-CAUSE's truth conditions correspond
     to sufficiency (`makeSem`), D-CAUSE's to necessity (`causeSem`). -/
-def CausationType.analogousBuilder : CausationType → CausativeBuilder
+def CausationType.analogousBuilder : CausationType → Causative
   | .production => .make
   | .dependence => .cause
 
@@ -223,7 +223,7 @@ theorem dependence_asserts_necessity :
 Thick causative manner verbs (break-class) are compatible with strong
 adjectival resultatives (*break open*, *burn clean*). This connects to
 the resultative infrastructure in ArgumentStructure/Studies/TheoryComparison.lean,
-where the constructional CAUSE uses `CausativeBuilder.make`. -/
+where the constructional CAUSE uses `Causative.make`. -/
 
 /-- Causative manner verbs (thickManner) are compatible with strong ASR.
     This is the @cite{embick-2009} generalization formalized as a derived property.
@@ -301,7 +301,7 @@ P-CAUSE (production) → completion (the cause directly completes a
 sufficient set). D-CAUSE (dependence) → membership (any necessary
 condition qualifies). -/
 
-open Causation.CCSelection
+open Semantics.Causation.CCSelection
 
 /-- Map causation type to CC-selection mode.
 
@@ -322,12 +322,12 @@ theorem dependence_selects_member :
     CausationType.dependence.selectionMode = .memberOfSufficientSet := rfl
 
 /-- Roundtrip: `CausationType.selectionMode` → `CCSelectionMode.toSemantics`
-    agrees with `CausationType.analogousBuilder` → `CausativeBuilder.toSemantics`.
+    agrees with `CausationType.analogousBuilder` → `Causative.toSemantics`.
 
     This proves the three independent encodings of sufficiency/necessity
-    (CausationType, CCSelectionMode, CausativeBuilder) are consistent. -/
+    (CausationType, CCSelectionMode, Causative) are consistent. -/
 theorem selectionMode_roundtrip (ct : CausationType) :
     ct.selectionMode.toSemantics = ct.analogousBuilder.toSemantics := by
   cases ct <;> rfl
 
-end MartinRoseNichols2025
+end Semantics.Causation.ProductionDependence

@@ -1,6 +1,6 @@
 import Linglib.Phenomena.PsychVerbs.Data
-import Linglib.Theories.Semantics.Causation.PsychCausation
-import Linglib.Theories.Semantics.Causation.PsychCausalLink
+import Linglib.Theories.Semantics.Causation.Psych
+import Linglib.Theories.Semantics.Causation.PsychLink
 
 /-!
 # @cite{hartshorne-etal-2016} — Empirical Data
@@ -287,8 +287,8 @@ theorem class_type_alignment :
 -- § Bridge: SemanticType ↔ CausalSource
 -- ════════════════════════════════════════════════════
 
-open Semantics.Causation.PsychCausation (CausalSource)
-open Semantics.Causation.PsychCausalLink (PsychCausalLink eventiveLink maintenanceLink
+open Semantics.Causation.Psych (CausalSource)
+open Semantics.Causation.PsychLink (PsychCausalLink eventiveLink maintenanceLink
   CausalSource.toLink)
 
 /-- Map Hartshorne et al.'s semantic type to Kim's CausalSource.

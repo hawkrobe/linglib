@@ -48,6 +48,7 @@ When neither departure is present, only indicative mood is possible.
 
 namespace Phenomena.Complementation.Studies.Grano2024
 
+open Core.Verbs
 open Core.Discourse (GramMood MoodEffect)
 open Semantics.Mood
 open Semantics.Attitudes.RationalAttitude
@@ -403,7 +404,7 @@ theorem decide_is_hybrid :
     enables propositional memory ((120)–(121)). -/
 theorem remember_is_implicative :
     remember.complementType = .infinitival ∧
-    remember.implicativeBuilder.isSome = true := by native_decide
+    remember.implicative.isSome = true := by native_decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 7. Bridge: Fusco & Sgrizzi 2026 Connection
@@ -517,7 +518,7 @@ theorem greek_intend_fragment_consistent :
     greek_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 theorem greek_make_fragment_consistent :
-    Fragments.Greek.MoodChoice.vazo.causativeBuilder.isSome = true ∧
+    Fragments.Greek.MoodChoice.vazo.causative.isSome = true ∧
     greek_make.rejectsIndicative = true := ⟨rfl, rfl⟩
 
 -- Romanian fragments match Romanian data

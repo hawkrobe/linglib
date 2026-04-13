@@ -20,15 +20,15 @@ namespace Phenomena.Causation.Studies.Song1996
 
 Japanese -(s)ase is classified as a morphological COMPACT causative in
 @cite{song-1996}. The `ik_ase` entry in `Fragments/Japanese/Predicates` confirms
-this: `causativeBuilder = some.make`. -/
+this: `causative = some.make`. -/
 
-/-- The Japanese -(s)ase causative entry is causative (derived from causativeBuilder). -/
+/-- The Japanese -(s)ase causative entry is causative (derived from causative). -/
 theorem ik_ase_is_causative :
-    Fragments.Japanese.Predicates.ik_ase.causativeBuilder.isSome = true := rfl
+    Fragments.Japanese.Predicates.ik_ase.causative.isSome = true := rfl
 
 /-- Japanese -(s)ase uses the.make causative builder (direct causation). -/
 theorem ik_ase_is_make :
-    Fragments.Japanese.Predicates.ik_ase.causativeBuilder = some .make := rfl
+    Fragments.Japanese.Predicates.ik_ase.causative = some .make := rfl
 
 /-- @cite{song-1996} classifies Japanese -(s)ase as COMPACT.
 

@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Islands.Studies.Ross1967
 import Linglib.Core.SpecificityCondition
 import Linglib.Core.Definiteness
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.VerbClass
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
@@ -47,6 +47,7 @@ equally regardless of verb class — hence no VOC effect.
 
 namespace Phenomena.Islands.Studies.ShenHuang2026
 
+open Core.Verbs
 open Core.Definiteness
 open Core.SpecificityCondition (ExternalOperator blocked)
 

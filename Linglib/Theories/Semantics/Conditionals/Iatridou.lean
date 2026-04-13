@@ -47,7 +47,7 @@ open Core.Context (KContext ContextTower ContextShift temporalShift)
 open Semantics.Tense.CounterfactualTense (PastMorphologyUse CounterfactualDistance)
 open Semantics.Tense.BranchingTime (WorldHistory historicalBase)
 open Semantics.Mood (subjShift)
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
+open Core.Verbs
 
 -- ════════════════════════════════════════════════════════════════
 -- § ExclF: The Exclusion Feature

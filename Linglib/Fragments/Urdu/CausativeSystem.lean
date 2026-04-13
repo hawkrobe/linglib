@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.MorphologicalCausation
+import Linglib.Theories.Semantics.Causation.Morphological
 
 /-!
 # Urdu Causative Construction System
@@ -57,7 +57,7 @@ The discourse production study confirms key patterns:
 
 namespace Fragments.Urdu.CausativeSystem
 
-open Semantics.Causation.MorphologicalCausation
+open Semantics.Causation.Morphological
 
 -- ════════════════════════════════════════════════════
 -- § 1. Construction Definitions

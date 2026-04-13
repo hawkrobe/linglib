@@ -61,14 +61,15 @@ does not directly accommodate. This file formalizes the specific case.
 
 namespace Phenomena.Constructions.Resultatives.Studies.Levin2026
 
+open Core.Verbs
 open LevinClass (pushPull hit wipe)
 open Fragments.English.Predicates.Verbal (push pull kick)
 open Fragments.English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
   AdjectivalPredicateEntry)
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency (causallySufficient)
-open NadathurLauer2020.Necessity (causallyNecessary)
-open Causative.Resultatives (completesForEffect resultativeCausativeBuilder
+open Semantics.Causation.Sufficiency (causallySufficient)
+open Semantics.Causation.Necessity (causallyNecessary)
+open Semantics.Causation.Resultatives (completesForEffect resultativeCausativeBuilder
   freezeSolidModel)
 open Semantics.Lexical.Verb.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
@@ -1079,5 +1080,21 @@ analysis. -/
 theorem mandarin_tui_kai_is_cognate :
     Fragments.Mandarin.Resultatives.tui_kai.gloss = "push-open" ∧
     Fragments.Mandarin.Resultatives.tui_kai.orientation = .objectOriented := ⟨rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════
+-- § Fragment–Theory Bridge
+-- ════════════════════════════════════════════════════
+
+open Fragments.English.Predicates.Verbal (make cause)
+open Semantics.Causation.Resultatives (resultativeCausativeBuilder)
+
+/-- Resultative CAUSE matches the Fragment entry for "make". -/
+theorem resultative_cause_matches_make_verb :
+    make.causative = some resultativeCausativeBuilder := rfl
+
+/-- Resultative CAUSE ≠ "cause" verb (`.make` ≠ `.cause`). -/
+theorem resultative_cause_differs_from_cause_verb :
+    cause.causative ≠ some resultativeCausativeBuilder := by
+  decide
 
 end Phenomena.Constructions.Resultatives.Studies.Levin2026

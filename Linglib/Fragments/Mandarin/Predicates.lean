@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 @cite{qing-uegaki-2025} @cite{glass-2025}
 
 Mandarin predicates relevant to @cite{qing-uegaki-2025}. Properties like
-C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
+C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
 namespace Fragments.Mandarin.Predicates
@@ -28,7 +28,7 @@ def qidai : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.relevanceBased .positive)) }
+  attitude := some (.preferential (.relevanceBased .positive)) }
 
 /-- 担心 "danxin" — worry (Class 1: negative, non-C-distributive). -/
 def danxin : MandarinVerbEntry := .mk' {
@@ -36,7 +36,7 @@ def danxin : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential .uncertaintyBased) }
+  attitude := some (.preferential .uncertaintyBased) }
 
 /-- 希望 "xiwang" — hope (Class 3: positive, C-distributive, anti-rogative). -/
 def xiwang : MandarinVerbEntry := .mk' {
@@ -44,7 +44,7 @@ def xiwang : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive)) }
+  attitude := some (.preferential (.degreeComparison .positive)) }
 
 /-- 害怕 "haipa" — fear (Class 2: negative, C-distributive, takes questions). -/
 def haipa : MandarinVerbEntry := .mk' {
@@ -52,7 +52,7 @@ def haipa : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative)) }
+  attitude := some (.preferential (.degreeComparison .negative)) }
 
 /-!
 ## yǐwéi: Postsupposition via `postsupType`
@@ -79,7 +79,7 @@ def yiwei : MandarinVerbEntry := .mk' {
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.doxastic .nonVeridical)
+  attitude := some (.doxastic .nonVeridical)
   postsupType := some .weakContrafactive }
 
 def allVerbs : List MandarinVerbEntry := [qidai, danxin, xiwang, haipa, yiwei]

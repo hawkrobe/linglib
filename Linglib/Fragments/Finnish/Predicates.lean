@@ -174,13 +174,14 @@ theorem finnish_is_active_passive :
 
     The structure extends `FinnishVerb` with implicative fields. -/
 
-open Nadathur2024.Implicative (ImplicativeBuilder Directionality Prerequisite ImplicativeClass)
+open Core.Verbs (Implicative)
+open Semantics.Causation.Implicative (Directionality Prerequisite ImplicativeClass)
 
 /-- A Finnish implicative verb entry, extending the base verb with
     implicative classification from @cite{nadathur-2024}. -/
 structure FinnishImplicativeVerb extends FinnishVerb where
   /-- Positive (entails complement) or negative (entails ¬complement) -/
-  implicativeBuilder : ImplicativeBuilder
+  implicative : Implicative
   /-- One-way or two-way complement entailment -/
   directionality : Directionality
   /-- The lexically-specified prerequisite type -/
@@ -201,7 +202,7 @@ def onnistua : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "onnistuu"
     presImpersonal := "onnistutaan"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .twoWay
     prerequisite := .unspecified
     neg3sgAct := "onnistu" }
@@ -216,7 +217,7 @@ def uskaltaa : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "uskaltaa"
     presImpersonal := "uskalletaan"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .twoWay
     prerequisite := .courage
     neg3sgAct := "uskalla" }
@@ -229,7 +230,7 @@ def viitsia : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "viitsii"
     presImpersonal := "viitsitään"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .twoWay
     prerequisite := .engagement
     neg3sgAct := "viitsi" }
@@ -244,7 +245,7 @@ def malttaa : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "malttaa"
     presImpersonal := "maltetaan"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .twoWay
     prerequisite := .patience
     neg3sgAct := "maltta" }
@@ -257,7 +258,7 @@ def hennoa : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "hennoaa"  -- note: not *hennoo
     presImpersonal := "hennotaan"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .twoWay
     prerequisite := .hardHeartedness
     neg3sgAct := "hennoa" }  -- negation: ei hennoa (no consonant gradation)
@@ -270,7 +271,7 @@ def kehdata : FinnishImplicativeVerb :=
     verbType := .type4
     pres3sgAct := "kehtaa"
     presImpersonal := "kehdataan"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .twoWay
     prerequisite := .shamelessness
     neg3sgAct := "kehtaa" }
@@ -283,7 +284,7 @@ def ehtia : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "ehtii"
     presImpersonal := "ehditään"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .twoWay
     prerequisite := .time
     neg3sgAct := "ehdi" }
@@ -300,7 +301,7 @@ def jaksaa : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "jaksaa"
     presImpersonal := "jaksetaan"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .oneWay
     prerequisite := .strength
     neg3sgAct := "jaksa" }
@@ -315,7 +316,7 @@ def mahtua : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "mahtuu"
     presImpersonal := "mahdutaan"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .oneWay
     prerequisite := .fitness
     neg3sgAct := "mahdu" }
@@ -330,7 +331,7 @@ def pystya : FinnishImplicativeVerb :=
     verbType := .type1
     pres3sgAct := "pystyy"
     presImpersonal := "pystytään"
-    implicativeBuilder := .positive
+    implicative := .positive
     directionality := .oneWay
     prerequisite := .unspecified
     neg3sgAct := "pysty" }
@@ -347,7 +348,7 @@ def laiminlyoda : FinnishImplicativeVerb :=
     verbType := .type2
     pres3sgAct := "laiminlyö"
     presImpersonal := "laiminlyödään"
-    implicativeBuilder := .negative
+    implicative := .negative
     directionality := .twoWay
     prerequisite := .unspecified
     neg3sgAct := "laiminlyö" }
@@ -362,7 +363,7 @@ def eparoida : FinnishImplicativeVerb :=
     verbType := .type2
     pres3sgAct := "epäröi"
     presImpersonal := "epäröidään"
-    implicativeBuilder := .negative
+    implicative := .negative
     directionality := .oneWay
     prerequisite := .courage
     neg3sgAct := "epäröi" }
@@ -409,27 +410,27 @@ theorem bleached_unspecified :
 
 /-- Polarity-reversing verbs have negative polarity. -/
 theorem polarity_reversing :
-    laiminlyoda.implicativeBuilder = .negative ∧
-    eparoida.implicativeBuilder = .negative :=
+    laiminlyoda.implicative = .negative ∧
+    eparoida.implicative = .negative :=
   ⟨rfl, rfl⟩
 
 /-- Polarity-preserving verbs have positive polarity. -/
 theorem polarity_preserving :
-    onnistua.implicativeBuilder = .positive ∧
-    uskaltaa.implicativeBuilder = .positive ∧
-    viitsia.implicativeBuilder = .positive ∧
-    malttaa.implicativeBuilder = .positive ∧
-    hennoa.implicativeBuilder = .positive ∧
-    jaksaa.implicativeBuilder = .positive ∧
-    mahtua.implicativeBuilder = .positive ∧
-    pystya.implicativeBuilder = .positive ∧
-    kehdata.implicativeBuilder = .positive ∧
-    ehtia.implicativeBuilder = .positive :=
+    onnistua.implicative = .positive ∧
+    uskaltaa.implicative = .positive ∧
+    viitsia.implicative = .positive ∧
+    malttaa.implicative = .positive ∧
+    hennoa.implicative = .positive ∧
+    jaksaa.implicative = .positive ∧
+    mahtua.implicative = .positive ∧
+    pystya.implicative = .positive ∧
+    kehdata.implicative = .positive ∧
+    ehtia.implicative = .positive :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 /-- Convert a Finnish implicative verb to an ImplicativeClass. -/
 def FinnishImplicativeVerb.toImplicativeClass (v : FinnishImplicativeVerb) : ImplicativeClass :=
-  { polarity := v.implicativeBuilder
+  { polarity := v.implicative
     directionality := v.directionality
     aspectGoverned := false
     prerequisite := some v.prerequisite }

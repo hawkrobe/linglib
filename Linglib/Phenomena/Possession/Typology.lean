@@ -835,11 +835,65 @@ def fijian : PossessionProfile :=
   , notes := "Four-way possessive classification: direct (body/kin), " ++
              "ke- (edible), me- (drinkable), no- (general alienable)" }
 
+/--
+Tsotsil (Mayan, Tseltalan). Obligatory possessive inflection exists: nouns
+fall into three classes — must be possessed (kinship, body parts), may be
+possessed (most nouns), and may not be possessed. A noun class suffix can
+change class membership and alter the semantic relation between possessor
+and possessum (@cite{aissen-polian-2025}, §3.2; @cite{polian-2013}, §20.5).
+Three-or-more possessive classification via noun class system. Predicative
+possession uses a locational/existential strategy: `oy s-k'ox barko li
+kumpa Lol=e` 'EXIS A3-little.boat DET compadre Bob=ENC' = 'Compadre Bob had
+a little boat.' The existential particle `oy` combines with a possessive
+phrase as pivot. Adnominal possession is head-marking: the possessum is
+marked by Set A prefixes (ergative/genitive homophony) cross-referencing
+the possessor's person/number. The possessum precedes the possessor.
+-/
+def tsotsil : PossessionProfile :=
+  { language := "Tsotsil"
+  , family := "Mayan"
+  , iso := "tzo"
+  , obligatoryPossession := .exists_
+  , possessiveClassification := .threeOrMore
+  , predicativeStrategy := .locational
+  , adnominalStrategy := .headMarking
+  , affixPosition := some .prefixes
+  , examples := ["oy s-k'ox barko 'EXIS A3-little.boat'",
+                 "s-me' Xun 'A3-mother Juan' = 'Juan's mother'",
+                 "y-ak'-il li mok=e 'A3-vine-NCLS DET fence=ENC'"]
+  , notes := "Existential oy + possessive pivot for predicative; " ++
+             "Set A prefixes on possessum for adnominal (head-marking); " ++
+             "three noun classes: must/may/cannot be possessed" }
+
+/--
+Tseltal (Mayan, Tseltalan). Obligatory possessive inflection exists, with
+the same three-way noun class system as Tsotsil. Three-or-more possessive
+classification via noun classes. Predicative possession uses a
+locational/existential strategy with `ay`: `ay chenek' ta oxom`
+'EXIS bean P pot' = 'There are beans in the pot.' Adnominal possession
+is head-marking: Set A prefixes on the possessum, identical system to
+Tsotsil. The possessum precedes the possessor.
+-/
+def tseltal : PossessionProfile :=
+  { language := "Tseltal"
+  , family := "Mayan"
+  , iso := "tzh"
+  , obligatoryPossession := .exists_
+  , possessiveClassification := .threeOrMore
+  , predicativeStrategy := .locational
+  , adnominalStrategy := .headMarking
+  , affixPosition := some .prefixes
+  , examples := ["ay chenek' ta oxom 'EXIS bean P pot'",
+                 "s-be-lal te j-na=e 'A3-road-NCLS DET A1-house=ENC'"]
+  , notes := "Existential ay + possessive pivot for predicative; " ++
+             "Set A prefixes on possessum for adnominal (head-marking); " ++
+             "three noun classes as in Tsotsil" }
+
 /-- All language profiles in the sample. -/
 def allLanguages : List PossessionProfile :=
   [ english, russian, japanese, turkish, hindiUrdu, mandarin, finnish
   , hungarian, irish, swahili, korean, arabic, quechua, yoruba
-  , georgian, hawaiian, fijian ]
+  , georgian, hawaiian, fijian, tsotsil, tseltal ]
 
 -- ============================================================================
 -- Helper Predicates
@@ -1172,10 +1226,10 @@ theorem two_way_dominates_three_plus :
 -- ============================================================================
 
 /-- In our sample, locational strategies are the most common predicative
-    possession type (8 languages), followed by have-verb (4), genitive/dative
+    possession type (10 languages), followed by have-verb (4), genitive/dative
     (3), topic (1), and comitative (1). -/
 theorem predicative_distribution :
-    countByPredicative allLanguages .locational = 8 ∧
+    countByPredicative allLanguages .locational = 10 ∧
     countByPredicative allLanguages .haveVerb = 4 ∧
     countByPredicative allLanguages .genitiveDative = 3 ∧
     countByPredicative allLanguages .topic = 1 ∧
@@ -1196,12 +1250,12 @@ theorem all_predicative_strategies_attested :
 -- ============================================================================
 
 /-- In our sample, dependent-marking is the most common adnominal possession
-    strategy (9 languages), followed by double-marking (3), head-marking (3),
+    strategy (9 languages), followed by head-marking (5), double-marking (3),
     and juxtaposition (2). -/
 theorem adnominal_distribution :
     countByAdnominal allLanguages .dependentMarking = 9 ∧
     countByAdnominal allLanguages .doubleMarking = 3 ∧
-    countByAdnominal allLanguages .headMarking = 3 ∧
+    countByAdnominal allLanguages .headMarking = 5 ∧
     countByAdnominal allLanguages .juxtaposition = 2 := by
   native_decide
 
@@ -1242,7 +1296,7 @@ theorem head_marking_mostly_complex_possession :
     let headLangs := allLanguages.filter (·.isHeadMarking)
     let complexHeadLangs := headLangs.filter (λ p =>
       p.hasObligatoryPossession || p.hasClassification)
-    headLangs.length = 3 ∧ complexHeadLangs.length = 2 := by
+    headLangs.length = 5 ∧ complexHeadLangs.length = 4 := by
   native_decide
 
 -- ============================================================================
@@ -1255,7 +1309,7 @@ theorem head_marking_mostly_complex_possession :
     stretches from Finland through Turkey to Korea, and locational strategies
     also appear in Oceanian languages. -/
 theorem locational_count :
-    (allLanguages.filter (·.usesLocational)).length = 8 := by
+    (allLanguages.filter (·.usesLocational)).length = 10 := by
   native_decide
 
 -- ============================================================================
@@ -1318,7 +1372,7 @@ theorem classification_and_obligatory_independent :
     let classified := allLanguages.filter (·.hasClassification)
     -- Count how many also have obligatory possession
     let classifiedAndObligatory := classified.filter (·.hasObligatoryPossession)
-    classified.length = 3 ∧ classifiedAndObligatory.length = 1 := by
+    classified.length = 5 ∧ classifiedAndObligatory.length = 3 := by
   native_decide
 
 -- ============================================================================
@@ -1326,16 +1380,16 @@ theorem classification_and_obligatory_independent :
 -- ============================================================================
 
 /-- Number of languages in our sample. -/
-theorem sample_size : allLanguages.length = 17 := by native_decide
+theorem sample_size : allLanguages.length = 19 := by native_decide
 
 /-- Distribution of obligatory possession in our sample. -/
 theorem sample_obligatory_count :
-    (allLanguages.filter (·.hasObligatoryPossession)).length = 3 := by
+    (allLanguages.filter (·.hasObligatoryPossession)).length = 5 := by
   native_decide
 
 /-- Distribution of possessive classification in our sample. -/
 theorem sample_classification_count :
-    (allLanguages.filter (·.hasClassification)).length = 3 := by
+    (allLanguages.filter (·.hasClassification)).length = 5 := by
   native_decide
 
 /-- All four adnominal strategies are attested in our sample. -/

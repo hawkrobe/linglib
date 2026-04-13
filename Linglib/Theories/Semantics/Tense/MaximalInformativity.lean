@@ -56,6 +56,7 @@ namespace Semantics.Montague.Sentence.MaximalInformativity
 open Core.Time
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Semantics.Tense.Aspect.SubintervalProperty
 
 -- ════════════════════════════════════════════════════

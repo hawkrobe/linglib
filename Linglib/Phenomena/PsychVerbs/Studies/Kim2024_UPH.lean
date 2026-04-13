@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Cascade
-import Linglib.Theories.Semantics.Causation.PsychCausation
-import Linglib.Theories.Semantics.Causation.PsychCausalLink
+import Linglib.Theories.Semantics.Causation.Psych
+import Linglib.Theories.Semantics.Causation.PsychLink
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Fragments.English.Predicates.Verbal
@@ -51,8 +51,8 @@ verified per-verb (§ 2), and then used to DERIVE consequences (§§ 3–7).
 namespace Phenomena.PsychVerbs.Studies.Kim2024_UPH
 
 open Minimalism
-open Semantics.Causation.PsychCausation
-open Semantics.Causation.PsychCausalLink
+open Semantics.Causation.Psych
+open Semantics.Causation.PsychLink
 open Core.Time (Interval)
 open Fragments.English.Predicates.Verbal
 open Phenomena.PsychVerbs.Data
@@ -333,7 +333,7 @@ theorem external_implies_extensional :
     These theorems verify that each verb's derived stimulus type
     predicts the correct PP frame and Cause-cooccurrence behavior. -/
 
-open Semantics.Causation.PsychCausation (StimulusType CausalSource.toStimulusType)
+open Semantics.Causation.Psych (StimulusType CausalSource.toStimulusType)
 
 /-- Derive a verb's stimulus type from its causal source. -/
 def derivedStimulusType (v : VerbEntry) : Option StimulusType :=

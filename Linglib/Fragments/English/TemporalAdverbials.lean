@@ -23,6 +23,7 @@ import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 namespace Fragments.English.TemporalAdverbials
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 -- ============================================================================
 -- TIA Classification

@@ -41,11 +41,14 @@ import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Lexical.VerbClass
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Doxastic
 
 open Core.Proposition
+open Core.Verbs (Veridicality)
+export Core.Verbs (Veridicality)
 
 -- Accessibility Relations
 
@@ -74,19 +77,6 @@ Existential modal: true at w iff p true at some accessible world.
 def diaAt {W E : Type*} (R : AccessRel W E) (agent : E) (w : W)
     (worlds : List W) (p : W → Bool) : Bool :=
   worlds.any λ w' => R agent w w' && p w'
-
--- Veridicality
-
-/--
-A doxastic predicate is veridical if believing/knowing p entails p is true.
-
-Veridical: know, realize, discover
-Non-veridical: believe, think, suspect
--/
-inductive Veridicality where
-  | veridical      -- x V p ⊢ p (knowledge, factives)
-  | nonVeridical   -- x V p ⊬ p (belief, opinion)
-  deriving DecidableEq, Repr
 
 -- ============================================================================
 -- Presuppositional Classification (@cite{glass-2025})
@@ -685,7 +675,7 @@ open Core.Discourse (PsychMode CausalSelfRef)
     epistemic state is appropriately caused by p's being the case).
     Non-veridical attitudes (believe, think) are like belief: satisfaction
     depends only on whether p obtains, not on the causal chain. -/
-def Veridicality.psychMode : Veridicality → PsychMode
+def psychMode : Veridicality → PsychMode
   | .veridical    => .perception  -- know: world must cause the state
   | .nonVeridical  => .belief     -- believe: no causal requirement
 
@@ -695,8 +685,8 @@ def Veridicality.psychMode : Veridicality → PsychMode
     knowledge requires the world to cause the knowing, while belief
     requires only that the content match reality. -/
 theorem veridical_self_referential :
-    Veridicality.veridical.psychMode.causalSelfRef = .worldToState ∧
-    Veridicality.nonVeridical.psychMode.causalSelfRef = .none :=
+    (psychMode .veridical).causalSelfRef = .worldToState ∧
+    (psychMode .nonVeridical).causalSelfRef = .none :=
   ⟨rfl, rfl⟩
 
 end Semantics.Attitudes.Doxastic

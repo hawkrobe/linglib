@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.MorphologicalCausation
+import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Theories.Morphology.Core.Monotonicity
 import Linglib.Fragments.Spanish.Predicates
@@ -59,7 +59,7 @@ inchoatives have CAUSE.
 namespace Phenomena.Causation.Studies.KoontzGarboden2009
 
 open Fragments.Spanish.Predicates
-open Semantics.Causation.MorphologicalCausation
+open Semantics.Causation.Morphological
 open Semantics.Lexical.Verb.EventStructure
 open Theories.Morphology.Core.Monotonicity
 open Minimalism (VerbHead)

@@ -18,7 +18,7 @@ copula and its syntax belong in the Theory/Syntax layer, not here.
 
 namespace Semantics.Lexical.Adjective
 
-open Core.Verbs (ComplementType PresupTriggerType AttitudeBuilder)
+open Core.Verbs (ComplementType PresupTriggerType Attitude)
 open Core.NaturalLogic (EntailmentSig)
 
 /-- A clause-embedding adjective: an adjective that takes a propositional
@@ -33,7 +33,7 @@ structure ClauseEmbeddingAdj where
   /-- Is the adjective a presupposition trigger? -/
   presupType : Option PresupTriggerType := none
   /-- Attitude semantics (if applicable) -/
-  attitudeBuilder : Option AttitudeBuilder := none
+  attitude : Option Attitude := none
   /-- Does the adjective create an opaque context? -/
   opaqueContext : Bool := false
   /-- Entailment signature of the complement position -/

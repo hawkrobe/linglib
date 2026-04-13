@@ -30,7 +30,7 @@ def querer : VerbCore where
   altComplementType := some .infinitival
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want
 
 /-- *esperar* 'hope' — subjunctive in Spanish (unlike Portuguese/French).
@@ -42,7 +42,7 @@ def esperar : VerbCore where
   altComplementType := some .infinitival
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *tener la intención (de)* 'intend' — robustly rejects indicative.
     @cite{grano-2024}, (25): SBJV required in non-control complements.
@@ -53,7 +53,7 @@ def tener_la_intencion : VerbCore where
   controlType := .subjectControl
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want
 
 /-- *hacer* 'make' — causative, robustly subjunctive-selecting.
@@ -64,7 +64,7 @@ def hacer : VerbCore where
   complementType := .infinitival
   controlType := .objectControl
   altComplementType := some .finiteClause
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- *convencer* 'convince' — hybrid predicate (§6.2, (102)–(103)).
     SBJV complement → intention: "Wendy convenció a Paula de que le pidiera
@@ -92,7 +92,7 @@ theorem tener_la_intencion_is_want_class :
     tener_la_intencion.levinClass = some .want := rfl
 
 theorem hacer_is_causative :
-    hacer.causativeBuilder.isSome = true := rfl
+    hacer.causative.isSome = true := rfl
 
 /-- Spanish mood asymmetry: querer and tener la intención share want-class;
     esperar does not. Unlike Portuguese/French/Italian, Spanish 'hope' ALSO

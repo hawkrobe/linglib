@@ -566,6 +566,7 @@ theorem wxdy_presup_requires_cg {W : Type*}
 -- ============================================================================
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Phenomena.TenseAspect.Diagnostics
 
 /-- WXDY's *doing* selects for activities and accomplishments — predicates

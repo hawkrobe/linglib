@@ -58,6 +58,7 @@ open Fragments.French.Predicates
 open Semantics.Lexical.Verb.EntailmentProfile
 open Semantics.Lexical.Verb.Affectedness
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Minimalism
 
 -- ============================================================================

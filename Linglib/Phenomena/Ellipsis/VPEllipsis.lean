@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 
 /-!
 # VP Ellipsis: Empirical Data
-@cite{anand-mccloskey-2025} @cite{merchant-2013}
+@cite{anand-hardt-mccloskey-2025} @cite{merchant-2013}
 
 Theory-neutral data on VP ellipsis, focusing on voice mismatch tolerance.
 

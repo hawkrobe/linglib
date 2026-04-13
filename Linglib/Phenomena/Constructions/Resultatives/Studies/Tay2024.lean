@@ -48,9 +48,9 @@ Connects:
 
 namespace Phenomena.Constructions.Resultatives.Studies.Tay2024
 
-open Causative.Resultatives
+open Semantics.Causation.Resultatives
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency (causallySufficient)
+open Semantics.Causation.Sufficiency (causallySufficient)
 open Theories.Morphology.WordStructure
 open Semantics.Lexical.Verb.ChangeOfState (CoSType priorStatePresup)
 open Fragments.Mandarin.Resultatives

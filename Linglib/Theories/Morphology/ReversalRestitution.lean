@@ -42,6 +42,7 @@ result-state equivalence.
   check outcome cardinality)
 -/
 
+open Core.Verbs
 open Semantics.Lexical.Verb.EventStructure
 open Semantics.Lexical.Verb.EntailmentProfile
 open Semantics.Lexical.Verb.Affectedness

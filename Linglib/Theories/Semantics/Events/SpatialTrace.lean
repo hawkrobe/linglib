@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Core.Path
-import Linglib.Core.Lexical.LevinClass
+import Linglib.Core.Lexical.VerbClass
 
 /-!
 # Spatial Trace Function σ
@@ -46,6 +46,7 @@ open Semantics.Events
 open Semantics.Events.Mereology
 open Core.Path
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open _root_.Mereology
 
 -- ════════════════════════════════════════════════════
@@ -174,6 +175,8 @@ end Semantics.Events.SpatialTrace
 -- § 6. Motion Verb Path Annotations
 -- ════════════════════════════════════════════════════
 
+namespace Core.Verbs
+
 /-- Whether a verb class inherently specifies a path shape.
     Inherently directed motion verbs (Levin 51.1: arrive, come, go)
     lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
@@ -187,8 +190,6 @@ def LevinClass.pathSpec : LevinClass → Option Core.Path.PathShape
   | .chase => none             -- path from complement
   | _ => none                  -- non-motion verbs
 
-namespace Semantics.Events.SpatialTrace
-
 /-- Inherently directed motion verbs lexicalize a bounded path. -/
 theorem inherentlyDirected_bounded :
     LevinClass.inherentlyDirectedMotion.pathSpec = some .bounded := rfl
@@ -201,4 +202,4 @@ theorem leave_source :
 theorem mannerOfMotion_neutral :
     LevinClass.mannerOfMotion.pathSpec = none := rfl
 
-end Semantics.Events.SpatialTrace
+end Core.Verbs

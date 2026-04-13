@@ -25,8 +25,8 @@ and proves the predictions match via `native_decide`.
 namespace Phenomena.Causation.StructuralCausation
 
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
 
 /-! ## 1. Early preemption
 
@@ -318,5 +318,21 @@ theorem match_actually_caused_flame :
   native_decide
 
 end ActualCausation
+
+/-! ## 8. Make and cause are truth-conditionally distinct
+
+The main linguistic claim of @cite{nadathur-lauer-2020}: "make" and "cause"
+are not synonyms — there exist scenarios where one is true and the other false.
+
+Witnessed by disjunctive overdetermination: lightning OR arsonist → fire.
+With both present, lightning is sufficient (makeSem = true) but not necessary
+(causeSem = false) because the arsonist backup blocks but-for. -/
+
+theorem make_cause_truth_conditionally_distinct :
+    ∃ (dyn : CausalDynamics) (s : Situation) (c e : Variable),
+      makeSem dyn s c e ≠ causeSem dyn s c e := by
+  exact ⟨.disjunctiveCausation (mkVar "l") (mkVar "a") (mkVar "f"),
+         Situation.empty.extend (mkVar "l") true |>.extend (mkVar "a") true,
+         mkVar "l", mkVar "f", by decide⟩
 
 end Phenomena.Causation.StructuralCausation

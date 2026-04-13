@@ -31,7 +31,7 @@ def thelo : VerbCore where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want
 
 /-- *elpízo* (ελπίζω) 'hope' — accepts both *na* (SBJV) and *oti* (IND).
@@ -42,7 +42,7 @@ def elpizo : VerbCore where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
 
 /-- *protíthete* (προτίθεται) 'intend' — robustly rejects indicative.
     @cite{grano-2024}, (22): *na* (SBJV) required, *oti* (IND) rejected.
@@ -52,7 +52,7 @@ def protithete : VerbCore where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
   levinClass := some .want
 
 /-- *vázo* (βάζω) 'put/make' — causative, subjunctive-selecting via *na*.
@@ -62,7 +62,7 @@ def vazo : VerbCore where
   form := "vázo"
   complementType := .finiteClause
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
 
 -- ════════════════════════════════════════════════════════════════
 -- Bridge Theorems
@@ -78,7 +78,7 @@ theorem protithete_is_want_class :
     protithete.levinClass = some .want := rfl
 
 theorem vazo_is_causative :
-    vazo.causativeBuilder.isSome = true := rfl
+    vazo.causative.isSome = true := rfl
 
 /-- Greek mood is via complementizer (*na* vs *oti*), not verb morphology.
     All four predicates take finite clause complements (no infinitivals). -/

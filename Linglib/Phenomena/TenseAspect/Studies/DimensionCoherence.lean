@@ -30,7 +30,7 @@ namespace Phenomena.TenseAspect.Studies.DimensionCoherence
 
 open Semantics.Events.DimensionCoherence
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass Telicity)
+open Core.Verbs
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Core.Path (PathShape)
 open _root_.Mereology (quaBoundedness cumBoundedness)

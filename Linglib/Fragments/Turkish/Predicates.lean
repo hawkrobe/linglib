@@ -5,14 +5,14 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 @cite{qing-uegaki-2025}
 
 Turkish predicates relevant to @cite{qing-uegaki-2025}. Properties like
-C-distributivity and NVP class are DERIVED from the `attitudeBuilder` field.
+C-distributivity and NVP class are DERIVED from the `attitude` field.
 -/
 
 namespace Fragments.Turkish.Predicates
 
 open Core.Verbs
 open Semantics.Attitudes.Preferential (AttitudeValence NVPClass)
-open NadathurLauer2020.Builder (CausativeBuilder)
+open Core.Verbs (Causative)
 
 /-- Turkish verb entry: extends VerbCore with Turkish inflectional paradigm. -/
 structure TurkishVerbEntry extends VerbCore where
@@ -36,7 +36,7 @@ def kork : TurkishVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .negative))
+  attitude := some (.preferential (.degreeComparison .negative))
 
 /-- "um-" — hope (Class 3: C-distributive, positive, anti-rogative). -/
 def um : TurkishVerbEntry where
@@ -48,7 +48,7 @@ def um : TurkishVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential (.degreeComparison .positive))
+  attitude := some (.preferential (.degreeComparison .positive))
 
 /-- "merak et-" — wonder/be curious (rogative, non-preferential). -/
 def merakEt : TurkishVerbEntry where
@@ -72,7 +72,7 @@ def endiselen : TurkishVerbEntry where
   complementType := .finiteClause
   passivizable := false
   opaqueContext := true
-  attitudeBuilder := some (.preferential .uncertaintyBased)
+  attitude := some (.preferential .uncertaintyBased)
 
 /-! ## Causative predicates
 
@@ -88,7 +88,7 @@ def ol_dur : TurkishVerbEntry where
   formEvidential := "öldürmüş"
   formParticiple := "öldüren"
   complementType := .np
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- yap-tır-mak — do-CAUS = "to make (someone) do" (productive causative). -/
 def yap_tir : TurkishVerbEntry where
@@ -99,11 +99,11 @@ def yap_tir : TurkishVerbEntry where
   formParticiple := "yaptıran"
   complementType := .smallClause
   controlType := .objectControl
-  causativeBuilder := some .make
+  causative := some .make
 
 /-- Turkish causative *-dür* uses `.make` builder. -/
 theorem ol_dur_is_make :
-    ol_dur.causativeBuilder = some .make := rfl
+    ol_dur.causative = some .make := rfl
 
 def allVerbs : List TurkishVerbEntry := [kork, um, merakEt, endiselen, ol_dur, yap_tir]
 

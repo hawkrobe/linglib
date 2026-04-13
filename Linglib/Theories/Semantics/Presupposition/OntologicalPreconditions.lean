@@ -44,6 +44,7 @@ namespace Semantics.Presupposition.OntologicalPreconditions
 open Core.Presupposition
 open Semantics.Lexical.Verb.ChangeOfState
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 
 variable {W : Type*}

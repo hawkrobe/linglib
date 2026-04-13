@@ -28,6 +28,7 @@ namespace Semantics.Events
 
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 open Semantics.Tense.Aspect.Core
 
 -- ════════════════════════════════════════════════════

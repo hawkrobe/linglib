@@ -121,6 +121,7 @@ def tadasTable : List MayanExtractionDatum :=
   , ⟨"Chol",        .low,  false⟩
   , ⟨"Chontal",     .low,  false⟩
   , ⟨"Tseltal",     .low,  false⟩
+  , ⟨"Tsotsil",     .low,  false⟩
   , ⟨"Tojol-ab'al", .low,  false⟩ ]
 
 /-- All HIGH-ABS languages in the sample exhibit extraction asymmetries. -/

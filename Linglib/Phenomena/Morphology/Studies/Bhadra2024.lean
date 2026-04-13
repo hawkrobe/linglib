@@ -31,6 +31,7 @@ The cardinality of this set determines affix compatibility:
 
 namespace Phenomena.Morphology.Studies.Bhadra2024
 
+open Core.Verbs
 open ForceTransmissionClass OutcomeCardinality
 
 -- ════════════════════════════════════════════════════

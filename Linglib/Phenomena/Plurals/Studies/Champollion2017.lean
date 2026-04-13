@@ -32,7 +32,7 @@ empirical distributivity/atelicity data.
 namespace Phenomena.Plurals.Studies.Champollion2017
 
 open Fragments.English.Predicates.Verbal
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass)
+open Core.Verbs
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 
 -- ════════════════════════════════════════════════════

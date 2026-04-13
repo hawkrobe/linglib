@@ -28,7 +28,7 @@ This module derives `VendlerClass` from `Boundedness`, connecting to the existin
 namespace Semantics.Lexical.Verb.DegreeAchievement
 
 open Core.Scale (Boundedness LicensingPipeline)
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass Telicity)
+open Core.Verbs
 
 /-- A degree achievement's base scale structure.
 

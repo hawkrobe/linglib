@@ -31,8 +31,8 @@ situation variables).
 
 ```
 Fragments/English/Predicates/Verbal.lean
-  "believe": opaqueContext = true, attitudeBuilder =.doxastic.nonVeridical
-  "think": opaqueContext = true, attitudeBuilder =.doxastic.nonVeridical
+  "believe": opaqueContext = true, attitude =.doxastic.nonVeridical
+  "think": opaqueContext = true, attitude =.doxastic.nonVeridical
     ↓ (opaqueContext = true → introduces situation binder λs)
 (this file: theory + empirical predictions)
   believeSit: ∀s' ∈ Dox(s). complement(g[n ↦ s'])
@@ -49,7 +49,7 @@ open Core (Situation)
 open Core.VarAssignment (VarAssignment updateVar lookupVar varLambdaAbs
   update_lookup_same update_lookup_other)
 open Core.Context
-open Core.Verbs (AttitudeBuilder)
+open Core.Verbs (Attitude)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -178,7 +178,7 @@ def introducesSitBinder (v : Fragments.English.Predicates.Verbal.VerbEntry) : Bo
   v.opaqueContext
 
 def isDoxasticUniversal (v : Fragments.English.Predicates.Verbal.VerbEntry) : Bool :=
-  match v.attitudeBuilder with
+  match v.attitude with
   | some (.doxastic _) => true
   | _ => false
 
@@ -193,7 +193,7 @@ theorem think_is_doxastic :
     isDoxasticUniversal Fragments.English.Predicates.Verbal.think = true := rfl
 
 theorem believe_is_nonveridical :
-    Fragments.English.Predicates.Verbal.believe.attitudeBuilder =
+    Fragments.English.Predicates.Verbal.believe.attitude =
     some (.doxastic .nonVeridical) := rfl
 
 theorem always_is_universal :

@@ -69,6 +69,7 @@ def HasClosedSubintervalProp (P : EventPred W Time) : Prop :=
        if and only if the predicate has the closed subinterval property. -/
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 /-- **Activity entailment** (@cite{smith-1997} p. 25):
     If an activity predicate P holds at interval I (IMPF reading: I is

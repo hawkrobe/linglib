@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Theories.Semantics.Causation.ComplementEntailing
+import Linglib.Theories.Semantics.Causation.Implicative
 
 /-!
 # Actuality Entailments: Position × Aspect
@@ -56,7 +56,7 @@ aspect scope, without stipulation.
 namespace Semantics.Modality.ActualityEntailments
 
 open Semantics.Modality.EventRelativity
-open CausalVerb
+open Semantics.Causation.ComplementEntailing
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 open Core.StructuralEquationModel

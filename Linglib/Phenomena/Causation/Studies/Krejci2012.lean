@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.MorphologicalCausation
+import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Theories.Semantics.Lexical.Verb.ArgDerivation
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
@@ -47,7 +47,8 @@ Texas at Austin.
 
 namespace Phenomena.Causation.Studies.Krejci2012
 
-open Semantics.Causation.MorphologicalCausation
+open Core.Verbs
+open Semantics.Causation.Morphological
 open Semantics.Lexical.Verb.EventStructure
 open Semantics.Lexical.Verb.ArgDerivation
 

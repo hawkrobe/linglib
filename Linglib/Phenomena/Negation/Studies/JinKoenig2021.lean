@@ -4,7 +4,7 @@ import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Theories.Semantics.Causation.Basic
+import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.Implicative
 import Linglib.Phenomena.Negation.Typology
 import Linglib.Fragments.French.Negation
@@ -753,22 +753,21 @@ close to w₀), but they derive from distinct semantic mechanisms:
 
 | Subclass    | Theory module          | Key type                  |
 |-------------|------------------------|---------------------------|
-| FORGET      | Causation/Implicative  | ImplicativeBuilder.negative |
-| STOP/PREVENT| Causation/Builder      | CausativeBuilder.prevent  |
+| FORGET      | Causation/Implicative  | Implicative.negative |
+| STOP/PREVENT| Causation/Builder      | Causative.prevent  |
 | ALMOST      | Degree/Comparative     | threshold proximity       |
 
 Each mechanism independently entails ¬p in the real world, unifying
 the class despite its heterogeneity. -/
 
-open NadathurLauer2020.Builder (CausativeBuilder)
-open Nadathur2024.Implicative (ImplicativeBuilder)
+open Core.Verbs (Causative Implicative)
 
 /-- FORGET is a negative implicative: "X forgot to do Y" entails that
     Y did NOT happen (¬p in w₀). This is DERIVED from the implicative
     builder's polarity, not stipulated.
     @cite{nadathur-2023}: negative implicatives entail complement falsity. -/
 theorem forget_grounded_in_implicativity :
-    ImplicativeBuilder.negative.entailsComplement = false := rfl
+    Implicative.negative.entailsComplement = false := rfl
 
 /-- STOP/PREVENT are causative preventatives: "X prevented Y" entails
     that Y did NOT occur (¬p in w₀). The negative entailment comes from
@@ -776,7 +775,7 @@ theorem forget_grounded_in_implicativity :
     @cite{nadathur-lauer-2020}: prevent = effect blocked with preventer,
     would have occurred without it. -/
 theorem prevent_is_causative_builder :
-    (CausativeBuilder.prevent).assertsSufficiency = false := rfl
+    (Causative.prevent).assertsSufficiency = false := rfl
 
 /-- The FORGET class is unified by real-world negative entailment:
     all subclasses entail ¬p in w₀ (or worlds close to w₀), but
@@ -974,18 +973,18 @@ theorem negative_valence_is_en_trigger (v : VerbCore)
 /-- Any negative implicative verb is an EN trigger.
     This captures the FORGET class: "X forgot to p" entails ¬p in w₀. -/
 theorem negative_implicative_is_en_trigger (v : VerbCore)
-    (h : v.implicativeBuilder = some .negative) :
+    (h : v.implicative = some .negative) :
     v.isENTrigger = true := by
-  simp only [VerbCore.isENTrigger, h, show (some ImplicativeBuilder.negative ==
-    some ImplicativeBuilder.negative) = true from rfl, Bool.true_or, Bool.or_true]
+  simp only [VerbCore.isENTrigger, h, show (some Implicative.negative ==
+    some Implicative.negative) = true from rfl, Bool.true_or, Bool.or_true]
 
 /-- Any causative-prevent verb is an EN trigger.
     This captures the STOP/PREVENT class: blocking entails ¬p in w₀. -/
 theorem prevent_builder_is_en_trigger (v : VerbCore)
-    (h : v.causativeBuilder = some .prevent) :
+    (h : v.causative = some .prevent) :
     v.isENTrigger = true := by
-  simp only [VerbCore.isENTrigger, h, show (some CausativeBuilder.prevent ==
-    some CausativeBuilder.prevent) = true from rfl, Bool.or_true]
+  simp only [VerbCore.isENTrigger, h, show (some Causative.prevent ==
+    some Causative.prevent) = true from rfl, Bool.or_true]
 
 -- Instantiations for English fragment verbs: the conclusion follows
 -- from the general theorem applied to the verb's semantic builder.

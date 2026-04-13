@@ -39,6 +39,7 @@ namespace Semantics.Tense.Aspect.Core
 
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 -- ════════════════════════════════════════════════════
 -- § Core Types
@@ -259,7 +260,7 @@ theorem perf_xn_monotone (p : IntervalPred W Time) (tᵣ₁ tᵣ₂ : Set Time)
 
 end Semantics.Tense.Aspect.Core
 
-namespace Semantics.Tense.Aspect.LexicalAspect
+namespace Core.Verbs
 
 /-- States and activities naturally pair with IMPF (homogeneous). -/
 def VendlerClass.naturallyImperfective : VendlerClass → Bool
@@ -271,12 +272,13 @@ def VendlerClass.naturallyPerfective : VendlerClass → Bool
   | .state | .activity | .semelfactive => false
   | .achievement | .accomplishment => true
 
-end Semantics.Tense.Aspect.LexicalAspect
+end Core.Verbs
 
 namespace Semantics.Tense.Aspect.Core
 
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 variable {Time : Type*} [LinearOrder Time] {W : Type*}
 

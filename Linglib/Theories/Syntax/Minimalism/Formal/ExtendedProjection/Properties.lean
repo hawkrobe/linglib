@@ -278,6 +278,30 @@ theorem t_not_in_argdomain :
 theorem c_not_in_argdomain :
     isInArgumentDomain .C .C = false := by decide
 
+/-- The argument domain boundary is always in the property-or-intermediate zone.
+
+    @cite{anand-hardt-mccloskey-2025} Def 4: the argument domain is the most
+    inclusive ⟨e,t⟩ projection. In this formalization, `.intermediate` subsumes
+    the paper's ⟨e,t⟩ notion for vP/nP: these denote a property of events/entities
+    (conceptually ⟨e,t⟩) but are encoded as `.intermediate` because they sit
+    between the lexical head's pure `.property` and the closed `.proposition`
+    at the top of the EP. The functional distinction is harmless — the
+    `argumentDomainCat` function hardcodes the correct boundary regardless. -/
+theorem argumentDomainCat_in_property_zone (c : Cat) :
+    epSemanticType (argumentDomainCat c) = .property ∨
+    epSemanticType (argumentDomainCat c) = .intermediate := by
+  cases c <;> simp [argumentDomainCat, epSemanticType]
+
+/-- The argument domain is cross-categorial: it works uniformly for
+    verbal (vP), nominal (nP), adjectival (A), and adpositional (P) EPs.
+    @cite{anand-hardt-mccloskey-2025} Def 4. -/
+theorem argdomain_cross_categorial :
+    argumentDomainCat .C = .v ∧    -- verbal
+    argumentDomainCat .D = .n ∧    -- nominal
+    argumentDomainCat .A = .A ∧    -- adjectival (SC = self)
+    argumentDomainCat .P = .P      -- adpositional (SC = self)
+  := by decide
+
 /-- Full verbal EP is well-formed: consistent and monotone. -/
 theorem full_verbal_ep_wellformed :
     allCategoryConsistent fullVerbalEP = true ∧

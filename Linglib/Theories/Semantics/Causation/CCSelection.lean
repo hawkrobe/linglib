@@ -19,7 +19,7 @@ library. CC-selection unifies them:
 | Type | Location | Relationship to CC-selection |
 |------|----------|------------------------------|
 | `CCSelectionMode` | (this file) | **Primary**: how the construction selects |
-| `CausativeBuilder` | Builder.lean | Derived via `.selectionMode` |
+| `Causative` | Builder.lean | Derived via `.selectionMode` |
 | `CausationType` | ProductionDependence.lean | Derived via `.selectionMode` |
 | `CausalProfile` | Core/StructuralEquationModel.lean | Computed by evaluating selection against a model |
 
@@ -48,11 +48,11 @@ So: "cause" entails "completion" entails "make." The reverse fails:
   removing the root cause blocks the effect through the chain)
 -/
 
-namespace Causation.CCSelection
+namespace Semantics.Causation.CCSelection
 
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
 
 -- ════════════════════════════════════════════════════
 -- § 1. CC-Selection Mode
@@ -417,4 +417,4 @@ def CausalDependency.profile (dep : CausalDependency) : CausalProfile :=
 def CausalDependency.actualized (dep : CausalDependency) : Bool :=
   actualizationHolds dep.dynamics dep.background dep.cause dep.effect
 
-end Causation.CCSelection
+end Semantics.Causation.CCSelection

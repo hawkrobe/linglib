@@ -1,5 +1,5 @@
 import Linglib.Core.Alternation
-import Linglib.Theories.Semantics.Causation.MorphologicalCausation
+import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Core.VoiceSystem
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 
@@ -32,7 +32,7 @@ This study file bridges @cite{creissels-2025}'s framework (formalized in
 namespace Phenomena.ArgumentStructure.Studies.Creissels2025
 
 open Core.Alternation
-open Semantics.Causation.MorphologicalCausation
+open Semantics.Causation.Morphological
   (IntransitivizationType CausativeComplexity CausativeConstruction
    CausativizabilityData)
 open Interfaces (VoiceSystemProfile VoiceSystemSymmetry VoiceEntry PivotTarget)

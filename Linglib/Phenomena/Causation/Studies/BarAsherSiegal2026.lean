@@ -47,9 +47,9 @@ The model demonstrates CC-selection at work:
 namespace Phenomena.Causation.Studies.BarAsherSiegal2026
 
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
-open Causation.CCSelection
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
+open Semantics.Causation.CCSelection
 
 /-! ## Variables -/
 

@@ -30,8 +30,8 @@ verifies that the *cross-cutting invariants* hold:
 
 namespace Phenomena.TenseAspect.Studies.AspectualConsistency
 
+open Core.Verbs
 open Fragments.English.Predicates.Verbal
-open Semantics.Tense.Aspect.LexicalAspect (VendlerClass Telicity)
 open Semantics.Events.Krifka1998 (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)

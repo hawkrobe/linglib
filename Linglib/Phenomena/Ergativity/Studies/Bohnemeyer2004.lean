@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Yukatek.VerbClasses
 import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
 import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
-import Linglib.Theories.Semantics.Causation.MorphologicalCausation
+import Linglib.Theories.Semantics.Causation.Morphological
 
 /-!
 # Bohnemeyer 2004: Split Intransitivity in Yukatek Maya
@@ -314,7 +314,7 @@ theorem external_lacks_causation :
 -- § 9. Bridge to Detransitivization
 -- ════════════════════════════════════════════════════
 
-open Semantics.Causation.MorphologicalCausation (IntransitivizationType)
+open Semantics.Causation.Morphological (IntransitivizationType)
 
 /-- Detransitivization type in Yukatek, from
     rules (28)–(30).

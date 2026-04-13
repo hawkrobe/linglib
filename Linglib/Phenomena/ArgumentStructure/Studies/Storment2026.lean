@@ -43,6 +43,7 @@ not always align with semantic proto-role predictions.
 
 namespace Phenomena.ArgumentStructure.Unaccusativity.Bridge
 
+open Core.Verbs
 open Fragments.English.Predicates.Verbal
 open Phenomena.ArgumentStructure.Unaccusativity.Data
 open Phenomena.AuxiliaryVerbs.Selection (TransitivityClass canonicalSelection)

@@ -77,6 +77,7 @@ languages, but language-specific argument realization strategies
 
 namespace Phenomena.ArgumentStructure.Studies.BeaversUdayana2022
 
+open Core.Verbs
 open Fragments.Indonesian.VoiceSystem
 open Minimalism (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Phenomena.ArgumentStructure.Studies.Beavers2010

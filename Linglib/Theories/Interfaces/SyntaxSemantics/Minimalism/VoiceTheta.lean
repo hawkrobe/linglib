@@ -55,7 +55,7 @@ namespace Theories.Interfaces.SyntaxSemantics.VoiceTheta
 open _root_.Minimalism (VoiceFlavor VoiceHead voiceAgent voiceCauser
   voiceAnticausative voiceMiddle voiceImpersonal)
 open Core.Verbs (VerbCore ControlType SenseTag)
-open Semantics.Causation.PsychCausation (CausalSource)
+open Semantics.Causation.Psych (CausalSource)
 open _root_.Interfaces.SyntaxSemantics (LinkingTheory ArgPosition)
 
 -- ════════════════════════════════════════════════════════════════════
@@ -176,8 +176,8 @@ def _root_.Core.Verbs.VerbCore.predictedSubjectTheta (v : VerbCore) : Option The
   if v.controlType == .raising then none
   else if v.levinClass == some .weather then none
   else if v.causalSource.isSome then some .stimulus
-  else if v.attitudeBuilder.isSome then some .experiencer
-  else if v.factivePresup && v.attitudeBuilder.isNone then some .experiencer
+  else if v.attitude.isSome then some .experiencer
+  else if v.factivePresup && v.attitude.isNone then some .experiencer
   else if v.senseTag == .occasion then some .experiencer
   else if v.levinClass == some .flinch then some .experiencer
   else if v.levinClass == some .learn then some .experiencer

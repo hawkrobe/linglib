@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Causation.Builder
+import Linglib.Theories.Semantics.Causation.Interpretation
 
 /-!
 # Glass 2023: Anna Karenina Principle and *cause*
@@ -31,17 +31,18 @@ negative-sentiment complements. Semantics and Pragmatics 16, Article 6.
 Glass's proposed truth conditions for *cause* are truth-conditionally
 identical to @cite{nadathur-lauer-2020}'s *make* — both reduce to
 `causallySufficient`. This means Glass proposes collapsing the
-`CausativeBuilder.cause` / `CausativeBuilder.make` distinction at
+`Causative.cause` / `Causative.make` distinction at
 the semantic level, relegating the difference to pragmatic implicature.
 -/
 
 namespace Phenomena.Causation.Studies.Glass2023
 
 open Core.StructuralEquationModel
-open NadathurLauer2020.Sufficiency
-open NadathurLauer2020.Necessity
-open NadathurLauer2020.Builder
-open Causation.CCSelection
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
+open Core.Verbs (Causative)
+open Semantics.Causation.Interpretation
+open Semantics.Causation.CCSelection
 
 -- ============================================================
 -- § 1. Local vs Global Necessity and Sufficiency (defs 8–11)
@@ -500,12 +501,12 @@ theorem glass_strictly_weaker :
     simp only [hEntailed, Bool.or_true, ↓reduceIte]
 
 -- ============================================================
--- § 7. Bridge to CausativeBuilder and CC-Selection
+-- § 7. Bridge to Causative and CC-Selection
 -- ============================================================
 
 /-! Glass's proposal has a direct structural consequence for the
     causative verb lexicon: if *cause* = `causallySufficient`, then
-    `CausativeBuilder.cause` and `CausativeBuilder.make` have the
+    `Causative.cause` and `Causative.make` have the
     same truth conditions on Glass's analysis.
 
     On @cite{nadathur-lauer-2020}'s analysis they differ:
@@ -514,13 +515,13 @@ theorem glass_strictly_weaker :
 
     On Glass's analysis, both map to `makeSem`. -/
 
-/-- Glass's *cause* = `CausativeBuilder.make.toSemantics`.
+/-- Glass's *cause* = `Causative.make.toSemantics`.
 
     This is the key bridge: on Glass's analysis, the truth-conditional
     content of *cause* is identical to that of *make*. The difference
     is pragmatic — *cause* implicates necessity. -/
 theorem glass_cause_equals_builder_make :
-    causeSemGlass = CausativeBuilder.make.toSemantics := rfl
+    causeSemGlass = Causative.make.toSemantics := rfl
 
 /-- Glass's *cause* = `CCSelectionMode.completionOfSufficientSet.toSemantics`.
 
@@ -538,12 +539,12 @@ theorem glass_cause_equals_completion_mode :
     Formally: Nadathur's builder maps cause ≠ make, while Glass's
     proposed semantics would map both to `makeSem`. -/
 theorem glass_nadathur_disagreement :
-    CausativeBuilder.cause.toSemantics ≠ CausativeBuilder.make.toSemantics ∧
-    causeSemGlass = CausativeBuilder.make.toSemantics := by
+    Causative.cause.toSemantics ≠ Causative.make.toSemantics ∧
+    causeSemGlass = Causative.make.toSemantics := by
   constructor
   · -- Nadathur: cause ≠ make (witnessed by overdetermination)
-    have ⟨dyn, s, c, e, hne⟩ := builders_truth_conditionally_distinct
-    exact fun h => hne (by simp only [CausativeBuilder.toSemantics] at h ⊢; rw [h])
+    have ⟨dyn, s, c, e, hne⟩ := truth_conditionally_distinct
+    exact fun h => hne (by simp only [Causative.toSemantics] at h ⊢; rw [h])
   · rfl
 
 -- ============================================================

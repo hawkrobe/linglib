@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Causation.Implicative
-import Linglib.Theories.Semantics.Causation.Builder
+import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Attitudes.Factivity
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Copular
@@ -47,8 +47,8 @@ Key differences from the modern analysis:
 
 namespace Phenomena.Complementation.Studies.Karttunen1971
 
-open Nadathur2024.Implicative
-open NadathurLauer2020.Builder (CausativeBuilder)
+open Semantics.Causation.Implicative
+open Core.Verbs (Causative)
 open Fragments.English.Predicates.Verbal
 open Fragments.English.Predicates.Copular (beAble)
 open Core.Verbs
@@ -70,14 +70,14 @@ open Core.StructuralEquationModel
 
     This is the *historical* taxonomy from the 1971 paper. The modern
     causal analysis uses `ImplicativeClass` (which adds `aspectGoverned`)
-    and `CausativeBuilder` (which distinguishes causal mechanisms). -/
+    and `Causative` (which distinguishes causal mechanisms). -/
 structure KarttunenClass where
   /-- v(S) is sufficient for S: affirmative entails complement. -/
   isSufficient : Bool
   /-- v(S) is necessary for S: negation entails ¬complement. -/
   isNecessary : Bool
   /-- Positive (*manage*: entails S) vs negative (*fail*: entails ¬S). -/
-  polarity : ImplicativeBuilder
+  polarity : Implicative
   deriving DecidableEq, Repr
 
 -- ── Instances ──
@@ -154,11 +154,11 @@ theorem karttunen_manage_matches :
 theorem karttunen_fail_matches :
     KarttunenClass.fail.toImplicativeClass = ImplicativeClass.fail := rfl
 
-/-- Derive KarttunenClass from an ImplicativeBuilder (two-way cell). -/
-def karttunenOfImplicative (b : ImplicativeBuilder) : KarttunenClass :=
+/-- Derive KarttunenClass from an Implicative (two-way cell). -/
+def karttunenOfImplicative (b : Implicative) : KarttunenClass :=
   { isSufficient := true, isNecessary := true, polarity := b }
 
-/-- Map modern `CausativeBuilder` to the Karttunen cell that matches the
+/-- Map modern `Causative` to the Karttunen cell that matches the
     builder's **entailment pattern** (Karttunen's original criterion).
 
     All positive causative builders (make, force, enable, cause) share the
@@ -169,7 +169,7 @@ def karttunenOfImplicative (b : ImplicativeBuilder) : KarttunenClass :=
     The modern insight of @cite{nadathur-lauer-2020} is that these verbs
     differ in causal MECHANISM (sufficiency vs necessity) despite sharing
     the same ENTAILMENT PATTERN. See `cause_make_same_cell_different_mechanism`. -/
-def karttunenOfCausative : CausativeBuilder → KarttunenClass
+def karttunenOfCausative : Causative → KarttunenClass
   | .make | .force | .enable | .cause =>
     { isSufficient := true, isNecessary := false, polarity := .positive }
   | .prevent =>
@@ -192,10 +192,10 @@ theorem prevent_karttunen_class :
     This is the central insight of @cite{nadathur-lauer-2020}: same
     entailment pattern ≠ same truth conditions. The difference emerges
     in overdetermination scenarios where `makeSem` is true but `causeSem`
-    is false (see `builders_truth_conditionally_distinct` in Builder.lean). -/
+    is false (see `truth_conditionally_distinct` in Interpretation.lean). -/
 theorem cause_make_same_cell_different_mechanism :
     karttunenOfCausative .cause = karttunenOfCausative .make ∧
-    CausativeBuilder.cause.assertsNecessity ≠ CausativeBuilder.make.assertsNecessity := by
+    Causative.cause.assertsNecessity ≠ Causative.make.assertsNecessity := by
   exact ⟨rfl, by decide⟩
 
 /-- All positive causative builders map to `KarttunenClass.force`
@@ -213,50 +213,50 @@ theorem cause_karttunen_class :
 -- ── Positive implicatives ──
 
 theorem manage_positive_implicative :
-    manage.toVerbCore.implicativeBuilder = some .positive := rfl
+    manage.toVerbCore.implicative = some .positive := rfl
 
 theorem remember_positive_implicative :
-    remember.toVerbCore.implicativeBuilder = some .positive := rfl
+    remember.toVerbCore.implicative = some .positive := rfl
 
 theorem dare_positive_implicative :
-    dare.toVerbCore.implicativeBuilder = some .positive := rfl
+    dare.toVerbCore.implicative = some .positive := rfl
 
 theorem bother_positive_implicative :
-    bother.toVerbCore.implicativeBuilder = some .positive := rfl
+    bother.toVerbCore.implicative = some .positive := rfl
 
 theorem venture_positive_implicative :
-    venture.toVerbCore.implicativeBuilder = some .positive := rfl
+    venture.toVerbCore.implicative = some .positive := rfl
 
 theorem condescend_positive_implicative :
-    condescend.toVerbCore.implicativeBuilder = some .positive := rfl
+    condescend.toVerbCore.implicative = some .positive := rfl
 
 theorem happen_positive_implicative :
-    happen.toVerbCore.implicativeBuilder = some .positive := rfl
+    happen.toVerbCore.implicative = some .positive := rfl
 
 -- ── Negative implicatives (§10, ex. 38) ──
 
 theorem fail_negative_implicative :
-    fail.toVerbCore.implicativeBuilder = some .negative := rfl
+    fail.toVerbCore.implicative = some .negative := rfl
 
 theorem forget_negative_implicative :
-    forget.toVerbCore.implicativeBuilder = some .negative := rfl
+    forget.toVerbCore.implicative = some .negative := rfl
 
 theorem neglect_negative_implicative :
-    neglect.toVerbCore.implicativeBuilder = some .negative := rfl
+    neglect.toVerbCore.implicative = some .negative := rfl
 
 -- ── Non-implicatives ──
 
 theorem hope_not_implicative :
-    hope.toVerbCore.implicativeBuilder = none := rfl
+    hope.toVerbCore.implicative = none := rfl
 
 theorem want_not_implicative :
-    want.toVerbCore.implicativeBuilder = none := rfl
+    want.toVerbCore.implicative = none := rfl
 
 theorem try_not_implicative :
-    try_.toVerbCore.implicativeBuilder = none := rfl
+    try_.toVerbCore.implicative = none := rfl
 
 theorem believe_not_implicative :
-    believe.toVerbCore.implicativeBuilder = none := rfl
+    believe.toVerbCore.implicative = none := rfl
 
 -- ── Derived entailment predictions ──
 
@@ -283,11 +283,11 @@ theorem happen_is_raising :
     entails "John spoke." These are compatible per Karttunen §9. -/
 theorem dare_presup_and_implicative :
     dare.toVerbCore.presupType = some .prerequisiteSoft ∧
-    dare.toVerbCore.implicativeBuilder = some .positive := ⟨rfl, rfl⟩
+    dare.toVerbCore.implicative = some .positive := ⟨rfl, rfl⟩
 
 theorem bother_presup_and_implicative :
     bother.toVerbCore.presupType = some .prerequisiteSoft ∧
-    bother.toVerbCore.implicativeBuilder = some .positive := ⟨rfl, rfl⟩
+    bother.toVerbCore.implicative = some .positive := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Factive vs Implicative (§§0–2)
@@ -301,39 +301,39 @@ theorem bother_presup_and_implicative :
 
 theorem know_factive_not_implicative :
     know.toVerbCore.presupType = some .softTrigger ∧
-    know.toVerbCore.implicativeBuilder = none := ⟨rfl, rfl⟩
+    know.toVerbCore.implicative = none := ⟨rfl, rfl⟩
 
 theorem manage_implicative_not_factive :
-    manage.toVerbCore.implicativeBuilder = some .positive ∧
+    manage.toVerbCore.implicative = some .positive ∧
     manage.toVerbCore.presupType = some .prerequisiteSoft := ⟨rfl, rfl⟩
 
 theorem hope_neither :
     hope.toVerbCore.presupType = none ∧
-    hope.toVerbCore.implicativeBuilder = none := ⟨rfl, rfl⟩
+    hope.toVerbCore.implicative = none := ⟨rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 5. Sufficient-Only Verbs (§11, ex. 56–59)
 -- ════════════════════════════════════════════════════════════════
 
 theorem force_has_causative :
-    force.toVerbCore.causativeBuilder = some .force := rfl
+    force.toVerbCore.causative = some .force := rfl
 
 theorem force_asserts_sufficiency :
-    CausativeBuilder.force.assertsSufficiency = true := rfl
+    Causative.force.assertsSufficiency = true := rfl
 
 theorem force_no_necessity :
-    CausativeBuilder.force.assertsNecessity = false := rfl
+    Causative.force.assertsNecessity = false := rfl
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6. KarttunenClass → Entailment Predictions
 -- ════════════════════════════════════════════════════════════════
 
-/-! The grounding chain: KarttunenClass → ImplicativeBuilder →
+/-! The grounding chain: KarttunenClass → Implicative →
     causal semantics → complement entailment.
 
     For sufficient-positive classes, the chain is:
     `KarttunenClass.manage.polarity` = `.positive`
-    → `ImplicativeBuilder.positive.toSemantics` = `manageSem`
+    → `Implicative.positive.toSemantics` = `manageSem`
     → `manage_entails_complement`: manageSem sc = true → complement true
 
     These theorems derive the entailment from the classification,
@@ -418,13 +418,13 @@ theorem all_cells_populated :
 
 -- ── Necessary-only cell: be able (§11, schema 54) ──
 
-/-- *be able* is NOT a lexical implicative — it has no `implicativeBuilder`.
+/-- *be able* is NOT a lexical implicative — it has no `implicative`.
     The actuality entailment is **aspect-governed** (@cite{nadathur-2023}):
     perfective "was able to VP" → VP; imperfective "was able to VP" ↛ VP.
     Karttunen (§11) notes these verbs are ambiguous between implicative
     and non-implicative readings. -/
 theorem beAble_not_lexical_implicative :
-    beAble.implicativeBuilder = none := rfl
+    beAble.implicative = none := rfl
 
 /-- *be able* takes infinitival complement with subject control.
     "He was able to leave" — the subject has the ability (theta role). -/

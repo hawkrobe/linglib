@@ -205,9 +205,9 @@ theorem contra_satisfied_contrafactive :
 /-!
 Each English/Mandarin attitude verb's `PresupClass` is DERIVED from its
 veridicality in the Fragment entry. These theorems will BREAK if:
-1. A verb's `attitudeBuilder` changes
+1. A verb's `attitude` changes
 2. The `classifyVeridicality` function changes
-3. The `veridicality` derivation from `AttitudeBuilder` changes
+3. The `veridicality` derivation from `Attitude` changes
 -/
 
 -- Factive verbs → .factive
@@ -315,7 +315,7 @@ theorem all_english_attitude_verbs_valid :
 
 /-!
 The full derivation chain:
-  Fragment entry → attitudeBuilder → veridicality → PresupClass
+  Fragment entry → attitude → veridicality → PresupClass
     → presupClassIsValid → PLC check
 
 This section exercises the complete pipeline for representative verbs.

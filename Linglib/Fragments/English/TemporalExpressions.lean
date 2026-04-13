@@ -21,6 +21,7 @@ veridicality and NPI-licensing generalizations.
 namespace Fragments.English.TemporalExpressions
 
 open Semantics.Tense.Aspect.LexicalAspect
+open Core.Verbs
 
 -- ============================================================================
 -- § 1: Shared Types
