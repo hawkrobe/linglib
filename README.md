@@ -8,9 +8,7 @@ A Lean 4 library for formal linguistics.
 
 ## Why
 
-Formal linguistics has a dependency problem. Theories of modality rely on theories of propositions, which rely on theories of quantification, which rely on theories of types. A change anywhere can silently break things downstream — but the field tracks these dependencies informally, in prose scattered across hundreds of papers.
-
-Linglib puts the theories in one place so a proof assistant can do the bookkeeping:
+Decades of progress in formal linguistics live in prose scattered across hundreds of papers. Linglib is an attempt to gather the machinery in one place so a proof assistant can do the bookkeeping:
 
 - **Detect breakage.** If you change your semantics for attitude verbs, Lean tells you exactly which downstream theorems about conditionals, questions, or pragmatic inference no longer follow. No more discovering an inconsistency from a reviewer.
 
