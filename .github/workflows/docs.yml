@@ -80,20 +80,7 @@ jobs:
             $DOCGEN bibPrepass --build "$BUILD" --none
           fi
 
-          # Seed the DB schema via genCore (Init only for type cross-links).
-          # If this fails (e.g. Init oleans missing), single will create
-          # the schema on first use — so failure here is non-fatal.
-          $DOCGEN genCore --build "$BUILD" Init "$DB" || true
-
-          # Verify the DB has the expected schema before proceeding.
-          # If genCore produced a stale/empty DB, delete it so single
-          # creates a fresh one.
-          if ! sqlite3 "$BUILD/$DB" "SELECT 1 FROM declaration_args LIMIT 0" 2>/dev/null; then
-            echo "WARNING: DB schema missing declaration_args, recreating"
-            rm -f "$BUILD/$DB"
-          fi
-
-          # Document root module
+          # Document root module (may fail if Linglib.olean missing — non-fatal)
           $DOCGEN single --build "$BUILD" Linglib "$DB" "$SRC_URI/Linglib.lean" || true
 
           # Document all Linglib submodules
@@ -104,7 +91,9 @@ jobs:
           done
 
           # Generate HTML + search index from database
-          $DOCGEN fromDb --build "$BUILD" "$DB"
+          # NOTE: fromDb treats the db arg as a literal path (not relative
+          # to --build), unlike single/genCore which prepend --build.
+          $DOCGEN fromDb --build "$BUILD" "$BUILD/$DB"
 
       - name: Install Hugo
         uses: peaceiris/actions-hugo@v3
