@@ -53,18 +53,30 @@ def PercV : Cat := (S \ NP) / VP
 /-- Infinitival transitive: VP/NP (e.g., "zwemmen" when taking object) -/
 def InfTV : Cat := VP / NP
 
-/--
-Infinitival verb needing subject (for cross-serial): (S\NP)/NP
+/-- Infinitival verb needing subject (for cross-serial): (S\NP)/NP
 
-In Dutch verb-raising constructions, the infinitive's subject appears
-in what looks like an object position. This category allows the embedded
-subject to be picked up via composition.
+    In Dutch verb-raising constructions, the infinitive's subject appears
+    in what looks like an object position. This category allows the embedded
+    subject to be picked up via composition.
 
-  zwemmen : (S\NP)/NP -- "swim" needing its subject as argument
+      zwemmen : (S\NP)/NP — "swim" needing its subject as argument
 
-This differs from the simple intransitive VP = S\NP.
--/
+    This differs from the simple intransitive VP = S\NP. -/
 def InfSubj : Cat := (S \ NP) / NP
+
+/-- Verb-raising control verb: ((S\NP)/NP)/(S\NP)
+
+    In verb-raising constructions with 3+ verbs, each intermediate
+    restructuring verb (helpen, laten) must provide an extra /NP slot
+    for its own raised subject. Standard `ControlV = (S\NP)/(S\NP)`
+    only passes through the complement's arguments; `ControlVR` adds
+    an /NP so the verb's subject can be picked up via composition.
+
+    This is what enables the full cross-serial derivation:
+    - zwemmen  : (S\NP)/NP           — base: needs subject
+    - helpen   : ((S\NP)/NP)/(S\NP)  — VR: needs complement + passes NP
+    - zag      : (S\NP)/(S\NP)       — matrix: standard perception verb -/
+def ControlVR : Cat := ((S \ NP) / NP) / (S \ NP)
 
 -- Generalized Composition Rules
 
@@ -143,16 +155,17 @@ def dutchLexicon : List LexEntry := [
   ⟨"Karel", NP⟩,
 
   -- Perception verb: "zag" (saw) - takes VP complement
-  ⟨"zag", PercV⟩,  -- (S\NP)/VP
+  ⟨"zag", PercV⟩,  -- (S\NP)/(S\NP)
 
   -- Control verbs: "helpen" (help), "laten" (let)
-  ⟨"helpen", ControlV⟩,  -- VP/VP
-  ⟨"laten", ControlV⟩,   -- VP/VP
+  ⟨"helpen", ControlV⟩,   -- (S\NP)/(S\NP) — simple (2-verb clusters)
+  ⟨"laten", ControlV⟩,    -- (S\NP)/(S\NP) — simple
+  ⟨"helpen", ControlVR⟩,  -- ((S\NP)/NP)/(S\NP) — verb-raising (3+ verb clusters)
+  ⟨"laten", ControlVR⟩,   -- ((S\NP)/NP)/(S\NP) — verb-raising
 
   -- Intransitive infinitive: "zwemmen" (swim)
-  -- Two categories: VP for simple use, InfSubj for verb-raising
-  ⟨"zwemmen", VP⟩,
-  ⟨"zwemmen_vr", InfSubj⟩  -- (S\NP)/NP - for verb-raising constructions
+  ⟨"zwemmen", VP⟩,        -- S\NP — simple intransitive
+  ⟨"zwemmen", InfSubj⟩    -- (S\NP)/NP — verb-raising (needs raised subject)
 ]
 
 -- Lexical Entries for Derivations
@@ -168,6 +181,12 @@ def laten_lex : ExtDerivStep := .lex ⟨"laten", ControlV⟩   -- VP/VP
 
 /-- zwemmen with InfSubj category for verb-raising -/
 def zwemmen_vr : ExtDerivStep := .lex ⟨"zwemmen", InfSubj⟩ -- (S\NP)/NP
+
+/-- helpen with ControlVR category for verb-raising (3+ verb clusters) -/
+def helpen_vr : ExtDerivStep := .lex ⟨"helpen", ControlVR⟩ -- ((S\NP)/NP)/(S\NP)
+
+/-- laten with ControlVR category for verb-raising -/
+def laten_vr : ExtDerivStep := .lex ⟨"laten", ControlVR⟩ -- ((S\NP)/NP)/(S\NP)
 
 -- Derivation: "Jan Piet zag zwemmen" (2 NPs, 2 Vs)
 
@@ -220,41 +239,64 @@ def jan_zag_zwemmen_piet : ExtDerivStep := .bapp jan_lex zag_zwemmen_piet
 
 -- Derivation: "Jan Piet Marie zag helpen zwemmen" (3 NPs, 3 Vs)
 
-/-
-For 3-verb cross-serial "Jan Piet Marie zag helpen zwemmen"
-(Jan saw Piet help Marie swim):
+/-!
+### Full cross-serial derivation for 3 verbs
 
-We need all 3 NPs to bind with their respective verbs:
-- Jan → zag (Jan saw...)
-- Piet → helpen (Piet help...)
-- Marie → zwemmen (Marie swim)
+For "Jan Piet Marie zag helpen zwemmen" (Jan saw Piet help Marie swim),
+the cross-serial bindings are: Jan→zag, Piet→helpen, Marie→zwemmen.
 
-This requires B² (generalized composition) to thread multiple arguments through.
-Standard B composition only adds ONE extra argument slot, but 3-verb cross-serial
-needs TWO extra slots.
+The key is the verb-raising category `ControlVR = ((S\NP)/NP)/(S\NP)`:
+helpen in verb-raising passes through an /NP slot for its raised subject (Piet),
+in addition to taking its VP complement. This lets B² thread both Piet's and
+Marie's argument slots through the verb cluster:
 
-Steedman (Chapter 6) uses B² and carefully chosen categories:
-- Type-raise each NP into its respective domain
-- Use B² to thread argument slots through composition
+    helpen_vr >B zwemmen_vr : ((S\NP)/NP)/(S\NP) >B (S\NP)/NP = ((S\NP)/NP)/NP
+    zag >B² result          : (S\NP)/(S\NP) >B² ((S\NP)/NP)/NP = ((S\NP)/NP)/NP
+    result + Marie          : ((S\NP)/NP)/NP + NP = (S\NP)/NP       — Marie→zwemmen
+    result + Piet           : (S\NP)/NP + NP = S\NP                 — Piet→helpen
+    Jan + result            : NP + S\NP = S                          — Jan→zag
 
-For this simplified implementation, we demonstrate:
-1. How verbs compose to form complex predicates
-2. How the final derivation produces category S
-
-The full B²-based derivation is left as future work.
+The outermost /NP originates from zwemmen_vr, so Marie binds with zwemmen.
+The inner /NP originates from helpen_vr, so Piet binds with helpen.
+The \NP is zag's subject slot, so Jan binds with zag.
 -/
 
--- Simple verb cluster: helpen + zwemmen via application
-def helpen_zwemmen_simple : ExtDerivStep :=
-  .fapp (.lex ⟨"helpen", ControlV⟩) (.lex ⟨"zwemmen", VP⟩)
+-- Step 1: helpen_vr >B zwemmen_vr
+-- ((S\NP)/NP)/(S\NP) >B (S\NP)/NP = ((S\NP)/NP)/NP
+def helpen_comp_zwemmen : ExtDerivStep := .fcomp helpen_vr zwemmen_vr
 
--- zag + (helpen zwemmen): (S\NP)/VP + VP = S\NP
-def zag_helpen_zwemmen : ExtDerivStep :=
-  .fapp zag_lex helpen_zwemmen_simple
+-- Step 2: zag >B² (helpen_vr >B zwemmen_vr)
+-- (S\NP)/(S\NP) >B² ((S\NP)/NP)/NP = ((S\NP)/NP)/NP
+def zag_comp2_helpen_zwemmen : ExtDerivStep := .fcomp2 zag_lex helpen_comp_zwemmen
 
--- Jan provides the subject: NP + S\NP = S
+-- Step 3: verb cluster + Marie
+-- ((S\NP)/NP)/NP + NP = (S\NP)/NP
+def verbs_marie : ExtDerivStep := .fapp zag_comp2_helpen_zwemmen marie_lex
+
+-- Step 4: result + Piet
+-- (S\NP)/NP + NP = S\NP
+def verbs_marie_piet : ExtDerivStep := .fapp verbs_marie piet_lex
+
+-- Step 5: Jan + result
+-- NP + S\NP = S
 def jan_piet_marie_zag_helpen_zwemmen_deriv : ExtDerivStep :=
-  .bapp jan_lex zag_helpen_zwemmen
+  .bapp jan_lex verbs_marie_piet
+
+-- Verification
+
+/-- The 2-NP cross-serial derivation yields category S. -/
+theorem two_np_derives_S : jan_zag_zwemmen_piet.cat = some S := by decide
+
+/-- The 3-NP cross-serial derivation yields category S.
+    This uses B (forward composition) and B² (generalized composition)
+    to thread all three NP argument slots through the verb cluster. -/
+theorem three_np_derives_S :
+    jan_piet_marie_zag_helpen_zwemmen_deriv.cat = some S := by decide
+
+/-- Intermediate: the verb cluster composes into ((S\NP)/NP)/NP,
+    a 3-place predicate needing Jan (\NP), Piet (/NP), Marie (/NP). -/
+theorem verb_cluster_cat :
+    zag_comp2_helpen_zwemmen.cat = some (((S \ NP) / NP) / NP) := by decide
 
 -- Generative Capacity: Beyond CFG
 

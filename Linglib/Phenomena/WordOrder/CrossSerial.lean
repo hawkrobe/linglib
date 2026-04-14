@@ -1,6 +1,7 @@
+import Linglib.Core.VerbCluster
 import Linglib.Core.FormalLanguage
 
-/-
+/-!
 # Cross-Serial Dependencies
 @cite{bresnan-etal-1982}
 
@@ -47,52 +48,22 @@ is purely formal and irrefutable.
 
 namespace Phenomena.WordOrder.CrossSerial
 
--- NP-Verb Pairing Types
-
-/--
-A dependency pairing: which NP goes with which verb.
-
-Position 1 is leftmost in the string.
--/
-structure Dependency where
-  /-- Position of the NP (1-indexed from left) -/
-  npPosition : Nat
-  /-- Position of the verb (1-indexed from left among verbs) -/
-  verbPosition : Nat
-  deriving DecidableEq, Repr
-
-/--
-Dependency pattern: how NPs and verbs are paired.
--/
-inductive DependencyPattern where
-  | crossSerial  -- NP₁→V₁, NP₂→V₂, ... (Dutch)
-  | nested       -- NP₁→Vₙ, NP₂→Vₙ₋₁, ... (German)
-  deriving DecidableEq, Repr
-
-/-- Generate cross-serial dependencies for n NP-V pairs -/
-def crossSerialDeps (n : Nat) : List Dependency :=
-  List.range n |>.map (λ i => ⟨i + 1, i + 1⟩)
-
-/-- Generate nested dependencies for n NP-V pairs -/
-def nestedDeps (n : Nat) : List Dependency :=
-  List.range n |>.map (λ i => ⟨i + 1, n - i⟩)
+open Core (VerbClusterBinding BindingPattern)
 
 -- Dutch Examples (@cite{bresnan-etal-1982}, @cite{steedman-2000})
 
-/--
-Dutch cross-serial dependency example.
+/-- A verb cluster example with NP-verb dependency data.
 
-Surface:... dat Jan Piet Marie zag helpen zwemmen
-Gloss:... that Jan Piet Marie saw help swim
-Meaning:... that Jan saw Piet help Marie swim
-
-Dependencies:
-- Jan (NP₁) → zag (V₁) "saw"
-- Piet (NP₂) → helpen (V₂) "help"
-- Marie (NP₃) → zwemmen (V₃) "swim"
--/
-structure DutchExample where
-  /-- Surface string (Dutch) -/
+    Used for both Dutch cross-serial and German nested dependency patterns.
+    Surface string, gloss, and translation document the example; the binding
+    encodes the structural claim as a permutation σ : Fin n → Fin n. The
+    dependency pattern is derived from the binding via `binding.pattern`. -/
+structure VerbClusterExample where
+  /-- Number of NP-verb pairs -/
+  n : Nat
+  /-- Language name -/
+  language : String
+  /-- Surface string -/
   surface : String
   /-- English gloss -/
   gloss : String
@@ -102,68 +73,54 @@ structure DutchExample where
   nps : List String
   /-- Verbs in order -/
   verbs : List String
-  /-- The observed dependency pattern -/
-  pattern : DependencyPattern
-  /-- The actual pairings -/
-  dependencies : List Dependency
+  /-- The NP-verb binding permutation -/
+  binding : VerbClusterBinding n
   deriving Repr
 
-def dutch_3np_3v : DutchExample :=
-  { surface := "... dat Jan Piet Marie zag helpen zwemmen"
-  , gloss := "... that Jan Piet Marie saw help swim"
-  , translation := "that Jan saw Piet help Marie swim"
-  , nps := ["Jan", "Piet", "Marie"]
-  , verbs := ["zag", "helpen", "zwemmen"]
-  , pattern := .crossSerial
-  , dependencies := crossSerialDeps 3
-  }
-
-def dutch_2np_2v : DutchExample :=
-  { surface := "... dat Jan Piet zag zwemmen"
+def dutch_2np_2v : VerbClusterExample :=
+  { n := 2
+  , language := "Dutch"
+  , surface := "... dat Jan Piet zag zwemmen"
   , gloss := "... that Jan Piet saw swim"
   , translation := "that Jan saw Piet swim"
   , nps := ["Jan", "Piet"]
   , verbs := ["zag", "zwemmen"]
-  , pattern := .crossSerial
-  , dependencies := crossSerialDeps 2
+  , binding := VerbClusterBinding.identity 2
   }
 
-def dutch_4np_4v : DutchExample :=
-  { surface := "... dat Jan Piet Marie Karel zag helpen laten zwemmen"
+def dutch_3np_3v : VerbClusterExample :=
+  { n := 3
+  , language := "Dutch"
+  , surface := "... dat Jan Piet Marie zag helpen zwemmen"
+  , gloss := "... that Jan Piet Marie saw help swim"
+  , translation := "that Jan saw Piet help Marie swim"
+  , nps := ["Jan", "Piet", "Marie"]
+  , verbs := ["zag", "helpen", "zwemmen"]
+  , binding := VerbClusterBinding.identity 3
+  }
+
+def dutch_4np_4v : VerbClusterExample :=
+  { n := 4
+  , language := "Dutch"
+  , surface := "... dat Jan Piet Marie Karel zag helpen laten zwemmen"
   , gloss := "... that Jan Piet Marie Karel saw help let swim"
   , translation := "that Jan saw Piet help Marie let Karel swim"
   , nps := ["Jan", "Piet", "Marie", "Karel"]
   , verbs := ["zag", "helpen", "laten", "zwemmen"]
-  , pattern := .crossSerial
-  , dependencies := crossSerialDeps 4
+  , binding := VerbClusterBinding.identity 4
   }
 
 -- German Contrast (Nested)
 
-/--
-German nested dependency example.
-
-German has the opposite verb order from Dutch, giving nested dependencies
-that are context-free.
--/
-structure GermanExample where
-  surface : String
-  gloss : String
-  translation : String
-  nps : List String
-  verbs : List String
-  pattern : DependencyPattern
-  dependencies : List Dependency
-  deriving Repr
-
-def german_3np_3v : GermanExample :=
-  { surface := "... dass Jan Piet Marie schwimmen helfen sah"
+def german_3np_3v : VerbClusterExample :=
+  { n := 3
+  , language := "German"
+  , surface := "... dass Jan Piet Marie schwimmen helfen sah"
   , gloss := "... that Jan Piet Marie swim help saw"
   , translation := "that Jan saw Piet help Marie swim"
   , nps := ["Jan", "Piet", "Marie"]
   , verbs := ["schwimmen", "helfen", "sah"]
-  , pattern := .nested
-  , dependencies := nestedDeps 3
+  , binding := VerbClusterBinding.reverse 3
   }
 
 -- The Formal Language Connection
@@ -181,30 +138,17 @@ def nestedRequires : FormalLanguageType := .contextFree
 
 -- Collected Data
 
-def allDutchExamples : List DutchExample :=
-  [dutch_2np_2v, dutch_3np_3v, dutch_4np_4v]
-
-def allGermanExamples : List GermanExample :=
-  [german_3np_3v]
+def allExamples : List VerbClusterExample :=
+  [dutch_2np_2v, dutch_3np_3v, dutch_4np_4v, german_3np_3v]
 
 -- Verification
 
-/-- Cross-serial has same number of dependencies as NPs -/
-theorem crossSerial_length (n : Nat) :
-    (crossSerialDeps n).length = n := by
-  simp [crossSerialDeps]
-
-/-- Nested has same number of dependencies as NPs -/
-theorem nested_length (n : Nat) :
-    (nestedDeps n).length = n := by
-  simp [nestedDeps]
-
 /-- Dutch 3-NP example has cross-serial pattern -/
 theorem dutch_3_is_crossSerial :
-    dutch_3np_3v.pattern = .crossSerial := rfl
+    dutch_3np_3v.binding.pattern = .crossSerial := by decide
 
 /-- German 3-NP example has nested pattern -/
 theorem german_3_is_nested :
-    german_3np_3v.pattern = .nested := rfl
+    german_3np_3v.binding.pattern = .nested := by decide
 
 end Phenomena.WordOrder.CrossSerial

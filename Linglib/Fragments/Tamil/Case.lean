@@ -22,9 +22,8 @@ namespace Fragments.Tamil.Case
 def caseInventory : List Core.Case :=
   [.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com]
 
-/-- Contiguous on Blake's hierarchy (ranks 6 down to 1). -/
-theorem inventory_valid :
-    Core.validInventory caseInventory = true := by native_decide
+-- Contiguous on Blake's hierarchy (ranks 6 down to 1).
+#guard Core.validInventory caseInventory
 
 /-- Tamil COM/INST syncretism (-ōṭu covers both functions).
     Uses the cross-linguistic pattern from `Core.Case.Syncretism`. -/

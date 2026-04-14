@@ -287,8 +287,8 @@ German nested constructions are hard, like their Dutch cross-serial
 counterparts (though for different structural reasons). -/
 theorem german_nested_consistent :
     fillerVerbPattern .gerMultiSubjRel = .nested ∧
-    Phenomena.WordOrder.CrossSerial.german_3np_3v.pattern = .nested :=
-  ⟨rfl, rfl⟩
+    Phenomena.WordOrder.CrossSerial.german_3np_3v.binding.pattern = .nested :=
+  ⟨rfl, by decide⟩
 
 /-! ### Bridge to CCG combinators
 

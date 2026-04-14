@@ -1,3 +1,4 @@
+import Mathlib.Order.Basic
 import Linglib.Core.Discourse.Epistemicity
 
 /-!
@@ -40,21 +41,9 @@ def SubjectivityLevel.toNat : SubjectivityLevel → Nat
   | .subjective => 1
   | .intersubjective => 2
 
-instance : LE SubjectivityLevel where
-  le a b := a.toNat ≤ b.toNat
-
-instance : LT SubjectivityLevel where
-  lt a b := a.toNat < b.toNat
-
-instance (a b : SubjectivityLevel) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (a.toNat ≤ b.toNat))
-
-instance (a b : SubjectivityLevel) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (a.toNat < b.toNat))
-
-/-- The cline is totally ordered. -/
-theorem le_total (a b : SubjectivityLevel) : a ≤ b ∨ b ≤ a :=
-  Nat.le_total a.toNat b.toNat
+instance : LinearOrder SubjectivityLevel :=
+  LinearOrder.lift' SubjectivityLevel.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [SubjectivityLevel.toNat])
 
 /-- Bridge: epistemic authority to subjectivity level.
 

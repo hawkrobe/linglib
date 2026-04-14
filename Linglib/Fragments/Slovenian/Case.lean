@@ -18,7 +18,6 @@ namespace Fragments.Slovenian.Case
 def caseInventory : List Core.Case :=
   [.nom, .acc, .gen, .dat, .loc, .inst]
 
-theorem inventory_valid :
-    Core.validInventory caseInventory = true := by native_decide
+#guard Core.validInventory caseInventory
 
 end Fragments.Slovenian.Case

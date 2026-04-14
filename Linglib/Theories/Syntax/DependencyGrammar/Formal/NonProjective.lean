@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Dominance
+import Linglib.Core.VerbCluster
 
 /-!
 # Mildly Non-Projective Dependency Structures
@@ -930,13 +931,13 @@ private theorem escape_gives_crossing (t : DepTree)
   · -- u is outside (lo, hi): use chain from x (inside) to u (outside)
     push_neg at hu_inside
     have hx_ne_u : x ≠ u := by
-      intro h; subst h; exact hu_inside hx_lo hx_hi
+      intro h; subst h; exact absurd hx_hi (not_lt.mpr (hu_inside hx_lo))
     obtain ⟨k, hk_pos, hiter_k, hchain_k⟩ :=
       dominates_iterParent_uh t hwf (dominates_of_mem_projection hx_mem) hx_ne_u.symm
     have h0_in : P x 0 := by
       simp only [P, iterParent_uh]; exact ⟨hx_lo, hx_hi⟩
     have hk_out : ¬P x k := by
-      simp only [P, hiter_k]; intro ⟨h1, h2⟩; exact hu_inside h1 h2
+      simp only [P, hiter_k]; intro ⟨h1, h2⟩; exact absurd h2 (not_lt.mpr (hu_inside h1))
     obtain ⟨j, hj_lt, hj_in, hj1_out⟩ :=
       find_exit_step hk_pos (P x) h0_in hk_out
     simp only [P] at hj_in
@@ -1125,5 +1126,24 @@ theorem german_fully_projective :
     isProjective germanNested = true ∧
     DepTree.gapDegree germanNested = 0 := by
   exact ⟨by native_decide, by native_decide⟩
+
+-- ============================================================================
+-- §10b: Bridge to VerbClusterBinding
+-- ============================================================================
+
+/-- Both projectivity notions agree: DG-level `isProjective` on full dependency
+    trees and `VerbClusterBinding.isProjective` on the abstract binding
+    permutation give the same answer for Dutch cross-serial (non-projective)
+    and German nested (projective) patterns. -/
+theorem binding_matches_projectivity :
+    isProjective dutchCrossSerial = false ∧
+    Core.VerbClusterBinding.isProjective (Core.VerbClusterBinding.identity 3) = false ∧
+    isProjective germanNested = true ∧
+    Core.VerbClusterBinding.isProjective (Core.VerbClusterBinding.reverse 3) = true := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · native_decide
+  · decide
+  · native_decide
+  · decide
 
 end DepGrammar

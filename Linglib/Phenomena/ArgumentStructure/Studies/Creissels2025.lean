@@ -105,7 +105,7 @@ theorem causativization_decausativization_inverse :
 theorem complexity_alignment :
     (CausativeComplexity.lexical < CausativeComplexity.morphological) ∧
     (CausativeComplexity.morphological < CausativeComplexity.periphrastic) :=
-  ⟨trivial, trivial⟩
+  ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. Bridge: Applicativization ↔ Pylkkänen's ApplType

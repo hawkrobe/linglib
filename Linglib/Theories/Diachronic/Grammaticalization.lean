@@ -1,3 +1,5 @@
+import Mathlib.Order.Nat
+
 /-!
 # Grammaticalization
 @cite{anderson-2006} @cite{bybee-perkins-pagliuca-1994} @cite{lehmann-1985}
@@ -57,23 +59,9 @@ def GramStage.boundedness : GramStage → Nat
   | .affix     => 3
   | .zero      => 4
 
-instance : LE GramStage where
-  le a b := a.boundedness ≤ b.boundedness
-
-instance : LT GramStage where
-  lt a b := a.boundedness < b.boundedness
-
-instance (a b : GramStage) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (a.boundedness ≤ b.boundedness))
-
-instance (a b : GramStage) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (a.boundedness < b.boundedness))
-
-/-- Boundedness is injective — each stage has a unique rank. Combined with the
-    LE/LT instances (defined via `boundedness`), this makes the cline a total
-    order: for any two stages, one is strictly more bound than the other. -/
-theorem cline_rank_injective (a b : GramStage) (h : a.boundedness = b.boundedness) : a = b := by
-  cases a <;> cases b <;> simp_all [GramStage.boundedness]
+instance : LinearOrder GramStage :=
+  LinearOrder.lift' GramStage.boundedness
+    (fun a b h => by cases a <;> cases b <;> simp_all [GramStage.boundedness])
 
 /-- Unidirectionality: grammaticalization never reverses. Formalized as:
     if a language has a marker at stage s₂ that historically derives from

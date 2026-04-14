@@ -73,11 +73,11 @@ inductive Entity where
   | b4  -- bottle outside window (vista)
   deriving DecidableEq, Repr, Inhabited
 
-def bottleModel : Model := { Entity := Entity, decEq := inferInstance }
+abbrev bottleModel : Model := { Entity := Entity, decEq := inferInstance }
 
-instance : Fintype bottleModel.Entity where
-  elems := ({Entity.b1, Entity.b2, Entity.b3, Entity.b4} : Finset Entity)
-  complete := fun x => by cases x <;> (unfold bottleModel; simp)
+instance : Fintype Entity where
+  elems := {Entity.b1, Entity.b2, Entity.b3, Entity.b4}
+  complete := fun x => by cases x <;> simp
 
 -- ============================================================================
 -- §2. Spatial Scene & DDRPs
@@ -86,21 +86,12 @@ instance : Fintype bottleModel.Entity where
 /-- A spatial scene: each entity occupies a spatial zone. -/
 def SpatialScene (E : Type*) := E → SpatialScale
 
-/-- Entities perceivable at a given scale threshold: those whose zone ≤ threshold. -/
-def perceivable {E : Type*} (scene : SpatialScene E) (threshold : SpatialScale)
-    (e : E) : Bool :=
-  decide (scene e ≤ threshold)
-
 /-- A spatial scene induces a DDRP: region s contains entities in zone ≤ s.
     Monotonicity and top-totality follow from the ordering on `SpatialScale`. -/
 def sceneToDDRP {E : Type*} (scene : SpatialScene E) : DDRP SpatialScale E where
-  region s := perceivable scene s
-  monotone {s₁ s₂} h e hr := by
-    simp only [perceivable, decide_eq_true_eq] at hr ⊢
-    exact le_trans hr h
-  top_total e := by
-    simp only [perceivable, decide_eq_true_eq]
-    exact le_top
+  region s := λ e => scene e ≤ s
+  monotone {s₁ s₂} h _ hr := by exact le_trans hr h
+  top_total e := by show scene e ≤ ⊤; exact le_top
 
 /-- The dinner-party scene: b1,b2 peripersonal, b3 action, b4 vista. -/
 def dinnerScene : SpatialScene Entity
@@ -147,27 +138,26 @@ def isBottle : bottleModel.Entity → Bool := λ _ => true
 
 /-- Truth of "every bottle is empty" under a given spatial domain restriction.
     For all entities in the DDRP region that are bottles, they must be empty. -/
-def everyBottleEmpty (scale : SpatialScale) (w : World) : Bool :=
-  [Entity.b1, .b2, .b3, .b4].all
-    (λ e => !(sceneDDRP.region scale e && isBottle e) || emptyIn w e)
+abbrev everyBottleEmpty (scale : SpatialScale) (w : World) : Prop :=
+  ∀ e : Entity, dinnerScene e ≤ scale → isBottle e = true → emptyIn w e = true
 
 -- w_near: only proximal bottles empty
 -- Only peripersonal restriction licenses the utterance.
-theorem w_near_peri : everyBottleEmpty .peripersonal .nearEmpty = true := by native_decide
-theorem w_near_action : everyBottleEmpty .action .nearEmpty = false := by native_decide
-theorem w_near_vista : everyBottleEmpty .vista .nearEmpty = false := by native_decide
+theorem w_near_peri : everyBottleEmpty .peripersonal .nearEmpty := by decide
+theorem w_near_action : ¬ everyBottleEmpty .action .nearEmpty := by decide
+theorem w_near_vista : ¬ everyBottleEmpty .vista .nearEmpty := by decide
 
 -- w_mid: proximal + action-space bottles empty
 -- Both peripersonal and action restrictions license the utterance.
-theorem w_mid_peri : everyBottleEmpty .peripersonal .midEmpty = true := by native_decide
-theorem w_mid_action : everyBottleEmpty .action .midEmpty = true := by native_decide
-theorem w_mid_vista : everyBottleEmpty .vista .midEmpty = false := by native_decide
+theorem w_mid_peri : everyBottleEmpty .peripersonal .midEmpty := by decide
+theorem w_mid_action : everyBottleEmpty .action .midEmpty := by decide
+theorem w_mid_vista : ¬ everyBottleEmpty .vista .midEmpty := by decide
 
 -- w_all: all bottles empty
 -- All restrictions license the utterance.
-theorem w_all_peri : everyBottleEmpty .peripersonal .allEmpty = true := by native_decide
-theorem w_all_action : everyBottleEmpty .action .allEmpty = true := by native_decide
-theorem w_all_vista : everyBottleEmpty .vista .allEmpty = true := by native_decide
+theorem w_all_peri : everyBottleEmpty .peripersonal .allEmpty := by decide
+theorem w_all_action : everyBottleEmpty .action .allEmpty := by decide
+theorem w_all_vista : everyBottleEmpty .vista .allEmpty := by decide
 
 -- ============================================================================
 -- §5. Truth Table: "Some bottle is empty" under each DDRP
@@ -175,25 +165,24 @@ theorem w_all_vista : everyBottleEmpty .vista .allEmpty = true := by native_deci
 
 /-- Truth of "some bottle is empty" under a given spatial domain restriction.
     Some entity in the DDRP region that is a bottle must be empty. -/
-def someBottleEmpty (scale : SpatialScale) (w : World) : Bool :=
-  [Entity.b1, .b2, .b3, .b4].any
-    (λ e => sceneDDRP.region scale e && isBottle e && emptyIn w e)
+abbrev someBottleEmpty (scale : SpatialScale) (w : World) : Prop :=
+  ∃ e : Entity, dinnerScene e ≤ scale ∧ isBottle e = true ∧ emptyIn w e = true
 
 -- w_near: only proximal bottles empty
 -- All restrictions license "some bottle is empty" (there's always a witness).
-theorem some_near_peri : someBottleEmpty .peripersonal .nearEmpty = true := by native_decide
-theorem some_near_action : someBottleEmpty .action .nearEmpty = true := by native_decide
-theorem some_near_vista : someBottleEmpty .vista .nearEmpty = true := by native_decide
+theorem some_near_peri : someBottleEmpty .peripersonal .nearEmpty := by decide
+theorem some_near_action : someBottleEmpty .action .nearEmpty := by decide
+theorem some_near_vista : someBottleEmpty .vista .nearEmpty := by decide
 
 -- w_mid: proximal + action-space bottles empty
-theorem some_mid_peri : someBottleEmpty .peripersonal .midEmpty = true := by native_decide
-theorem some_mid_action : someBottleEmpty .action .midEmpty = true := by native_decide
-theorem some_mid_vista : someBottleEmpty .vista .midEmpty = true := by native_decide
+theorem some_mid_peri : someBottleEmpty .peripersonal .midEmpty := by decide
+theorem some_mid_action : someBottleEmpty .action .midEmpty := by decide
+theorem some_mid_vista : someBottleEmpty .vista .midEmpty := by decide
 
 -- w_all: all bottles empty
-theorem some_all_peri : someBottleEmpty .peripersonal .allEmpty = true := by native_decide
-theorem some_all_action : someBottleEmpty .action .allEmpty = true := by native_decide
-theorem some_all_vista : someBottleEmpty .vista .allEmpty = true := by native_decide
+theorem some_all_peri : someBottleEmpty .peripersonal .allEmpty := by decide
+theorem some_all_action : someBottleEmpty .action .allEmpty := by decide
+theorem some_all_vista : someBottleEmpty .vista .allEmpty := by decide
 
 -- ============================================================================
 -- §6. Key Predictions
@@ -203,9 +192,9 @@ theorem some_all_vista : someBottleEmpty .vista .allEmpty = true := by native_de
     makes "every bottle is empty" true. The listener *must* infer the speaker
     intended the proximal domain — no other DDRP candidate works. -/
 theorem proximal_default :
-    everyBottleEmpty .peripersonal .nearEmpty = true ∧
-    everyBottleEmpty .action .nearEmpty = false ∧
-    everyBottleEmpty .vista .nearEmpty = false :=
+    everyBottleEmpty .peripersonal .nearEmpty ∧
+    ¬ everyBottleEmpty .action .nearEmpty ∧
+    ¬ everyBottleEmpty .vista .nearEmpty :=
   ⟨w_near_peri, w_near_action, w_near_vista⟩
 
 /-- **↓MON/↑MON contrast**: ⟦every⟧ and ⟦some⟧ react oppositely to domain
@@ -213,11 +202,11 @@ theorem proximal_default :
     restriction (↓MON: smaller domain helps), while ⟦some⟧ is true under all
     restrictions (↑MON: larger domain never hurts). -/
 theorem monotonicity_contrast :
-    everyBottleEmpty .peripersonal .nearEmpty = true ∧
-    everyBottleEmpty .action .nearEmpty = false ∧
-    someBottleEmpty .peripersonal .nearEmpty = true ∧
-    someBottleEmpty .action .nearEmpty = true ∧
-    someBottleEmpty .vista .nearEmpty = true :=
+    everyBottleEmpty .peripersonal .nearEmpty ∧
+    ¬ everyBottleEmpty .action .nearEmpty ∧
+    someBottleEmpty .peripersonal .nearEmpty ∧
+    someBottleEmpty .action .nearEmpty ∧
+    someBottleEmpty .vista .nearEmpty :=
   ⟨w_near_peri, w_near_action, some_near_peri, some_near_action, some_near_vista⟩
 
 -- ============================================================================
@@ -254,10 +243,10 @@ instance : Fintype Utterance where
   elems := ({Utterance.everyEmpty, Utterance.someEmpty} : Finset Utterance)
   complete := λ x => by cases x <;> simp
 
-/-- Literal meaning under a given DDRP scale. -/
+/-- Literal meaning under a given DDRP scale (Bool for RSA computation). -/
 def utteranceMeaning (scale : SpatialScale) : Utterance → World → Bool
-  | .everyEmpty, w => everyBottleEmpty scale w
-  | .someEmpty, w => someBottleEmpty scale w
+  | .everyEmpty, w => decide (everyBottleEmpty scale w)
+  | .someEmpty, w => decide (someBottleEmpty scale w)
 
 /-- R&S §3.2: Three cognitive heuristics collectively determine which domain
     restrictions are defaults. Each heuristic assigns a relevance score to a
@@ -454,26 +443,27 @@ def partitionScene : SpatialScene Entity
   | .b4 => .vista
 
 theorem scenes_differ_on_b3 :
-    dinnerScene .b3 ≠ partitionScene .b3 := by native_decide
+    dinnerScene .b3 ≠ partitionScene .b3 := by decide
 
 /-- Different spatial scenes yield different DDRPs. -/
 theorem different_scenes_different_ddrps :
     (sceneToDDRP dinnerScene).region ≠ (sceneToDDRP partitionScene).region := by
   intro h
-  exact absurd (congrFun (congrFun h .action) .b3) (by native_decide)
+  have heq := Iff.of_eq (congrFun (congrFun h .action) Entity.b3)
+  have h1 : dinnerScene Entity.b3 ≤ SpatialScale.action := le_refl _
+  have h2 : ¬ partitionScene Entity.b3 ≤ SpatialScale.action := by decide
+  exact h2 (heq.mp h1)
 
 /-- Without perceptual co-presence, domain-restricted quantifiers can
     receive different truth values: "every bottle is empty" under action-space
     restriction is false with the dinner scene but true with the partition scene
     (where b3 is too far to be in the action zone). -/
 theorem perception_mismatch_changes_truth :
-    [Entity.b1, .b2, .b3, .b4].all
-      (λ e => !((sceneToDDRP dinnerScene).region .action e && isBottle e) ||
-        emptyIn .nearEmpty e) = false ∧
-    [Entity.b1, .b2, .b3, .b4].all
-      (λ e => !((sceneToDDRP partitionScene).region .action e && isBottle e) ||
-        emptyIn .nearEmpty e) = true := by
-  constructor <;> native_decide
+    (¬ ∀ e : Entity, dinnerScene e ≤ .action →
+        isBottle e = true → emptyIn .nearEmpty e = true) ∧
+    (∀ e : Entity, partitionScene e ≤ .action →
+        isBottle e = true → emptyIn .nearEmpty e = true) := by
+  constructor <;> decide
 
 -- ============================================================================
 -- §10. QUD and Non-Default Restrictions (R&S §4)
@@ -488,9 +478,9 @@ theorem perception_mismatch_changes_truth :
     empty at each spatial scale? Worlds that agree on the emptiness of
     peripersonal, action, and vista bottles give the same answer. -/
 def spatialQUD : QUD World :=
-  QUD.ofDecEq (λ w => (everyBottleEmpty .peripersonal w,
-                        everyBottleEmpty .action w,
-                        everyBottleEmpty .vista w))
+  QUD.ofDecEq (λ w => (decide (everyBottleEmpty .peripersonal w),
+                        decide (everyBottleEmpty .action w),
+                        decide (everyBottleEmpty .vista w)))
 
 /-- The spatial QUD distinguishes all three worlds: each has a different
     emptiness profile across scales. -/
@@ -498,7 +488,7 @@ theorem spatialQUD_distinguishes_all :
     spatialQUD.sameAnswer .nearEmpty .midEmpty = false ∧
     spatialQUD.sameAnswer .midEmpty .allEmpty = false ∧
     spatialQUD.sameAnswer .nearEmpty .allEmpty = false := by
-  constructor <;> [native_decide; constructor <;> native_decide]
+  constructor <;> [decide; constructor <;> decide]
 
 -- ============================================================================
 -- §11. Objectivity of Default Restrictions (R&S §3.2)

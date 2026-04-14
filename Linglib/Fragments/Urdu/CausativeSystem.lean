@@ -304,7 +304,7 @@ theorem mcv_between :
     mcv.construction.complexity = .morphological ∧
     (lexErg.construction.complexity < mcv.construction.complexity) ∧
     (mcv.construction.complexity < adv.construction.complexity) := by
-  exact ⟨rfl, trivial, trivial⟩
+  exact ⟨rfl, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 6. Comrie's Generalization (Partial)

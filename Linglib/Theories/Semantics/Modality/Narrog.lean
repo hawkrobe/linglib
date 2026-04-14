@@ -93,11 +93,9 @@ def SpeakerOrientationLevel.toNat : SpeakerOrientationLevel → Nat
   | .speakerOriented => 1
   | .mood => 2
 
-instance : LE SpeakerOrientationLevel where
-  le a b := a.toNat ≤ b.toNat
-
-instance (a b : SpeakerOrientationLevel) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (a.toNat ≤ b.toNat))
+instance : LinearOrder SpeakerOrientationLevel :=
+  LinearOrder.lift' SpeakerOrientationLevel.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [SpeakerOrientationLevel.toNat])
 
 /-- Bridge to Traugott's subjectivity cline.
 

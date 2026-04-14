@@ -50,9 +50,9 @@ structure JProsodicEntry where
 def JProsodicEntry.isAccented (e : JProsodicEntry) : Bool :=
   e.accentMora.isSome
 
-/-- Convert to accentedness type. -/
-def JProsodicEntry.accentedness (e : JProsodicEntry) : Accentedness :=
-  if e.isAccented then .accented else .unaccented
+/-- Convert to Bool accentedness for bridge to AccentualPhrase. -/
+def JProsodicEntry.accentedBool (e : JProsodicEntry) : Bool :=
+  e.isAccented
 
 -- ============================================================================
 -- § 2: Sample Entries (§2.1, §2.2)
@@ -111,10 +111,10 @@ structure JAccentualPhrase where
 def JAccentualPhrase.isAccented (ap : JAccentualPhrase) : Bool :=
   ap.words.any (·.isAccented)
 
-/-- Convert to the generic AccentualPhrase type. -/
+/-- Convert to the generic AccentualPhrase type.
+    Japanese accent shape is always H*+L; unaccented APs get null. -/
 def JAccentualPhrase.toGeneric (ap : JAccentualPhrase) : AccentualPhrase :=
-  { accentedness := if ap.isAccented then .accented else .unaccented
-    accent := if ap.isAccented then .H_star_plus_L else .null
+  { accent := if ap.isAccented then .H_star_plus_L else .null
     nWords := ap.words.length }
 
 -- ============================================================================
@@ -136,16 +136,91 @@ theorem japanese_accent_is_lexical :
 theorem japanese_accent_is_bitonal :
     PitchAccent.H_star_plus_L.isBitonal = true := rfl
 
-/-- The Japanese accent triggers catathesis. -/
-theorem japanese_accent_triggers_catathesis :
-    PitchAccent.H_star_plus_L.isBitonal = true := rfl
+/-- A Japanese accented AP always triggers catathesis (because H*+L is bitonal). -/
+theorem japanese_accented_ap_triggers_catathesis (ap : JAccentualPhrase)
+    (h : ap.isAccented = true) :
+    ap.toGeneric.accent.isBitonal = true := by
+  unfold JAccentualPhrase.toGeneric; rw [if_pos h]; rfl
+
+/-- A Japanese unaccented AP never triggers catathesis. -/
+theorem japanese_unaccented_ap_no_catathesis (ap : JAccentualPhrase)
+    (h : ap.isAccented = false) :
+    ap.toGeneric.accent.isBitonal = false := by
+  unfold JAccentualPhrase.toGeneric; rw [if_neg (by simp [h])]; rfl
 
 /-- An AP containing only unaccented words is unaccented. -/
 theorem unaccented_ap :
-    (JAccentualPhrase.mk [kami_paper, mame]).isAccented = false := rfl
+    ({ words := [kami_paper, mame] : JAccentualPhrase }).isAccented = false := rfl
 
 /-- An AP containing an accented word is accented. -/
 theorem accented_ap :
-    (JAccentualPhrase.mk [kami_god, mame]).isAccented = true := rfl
+    ({ words := [kami_god, mame] : JAccentualPhrase }).isAccented = true := rfl
+
+-- ============================================================================
+-- § 5: Suffix Prosodic Dominance (@cite{kawahara-2015})
+-- ============================================================================
+
+/-- Japanese suffix accent specification.
+
+    Japanese suffixes exhibit the same dominant/recessive distinction
+    as IE accent systems (@cite{kiparsky-halle-1977}) and GT systems
+    (@cite{rolle-2018}). Dominant suffixes remove stem accent;
+    recessive suffixes preserve it when present. -/
+structure JSuffixAccent where
+  form : String
+  gloss : String
+  dominance : Core.Prosody.ProsodicDominance
+  deriving Repr
+
+/-- *-teki* (的): deaccenting suffix. Removes stem accent regardless
+    of whether the stem is accented or unaccented — classified as
+    subtractive-dominant in GT terms (@cite{kawahara-2015}). -/
+def teki_suffix : JSuffixAccent :=
+  { form := "-teki", gloss := "的 ADJ", dominance := .dominant }
+
+/-- *-si* (氏): non-deaccenting suffix. Preserves stem accent when
+    present — classified as recessive (@cite{kawahara-2015}). -/
+def si_suffix : JSuffixAccent :=
+  { form := "-si", gloss := "氏 Mr.", dominance := .recessive }
+
+/-- Deaccenting suffixes are dominant. -/
+theorem teki_is_dominant : teki_suffix.dominance.isDominant = true := rfl
+
+/-- Non-deaccenting suffixes are not dominant. -/
+theorem si_is_not_dominant : si_suffix.dominance.isDominant = false := rfl
+
+-- ============================================================================
+-- § 6: Accent Combination (@cite{kawahara-2015})
+-- ============================================================================
+
+/-- Derive the accent of a suffixed word from stem accent + suffix dominance. -/
+def suffixedAccent (stem : JProsodicEntry) (suffix : JSuffixAccent) : Option Nat :=
+  suffix.dominance.combineAccent stem.accentMora
+
+/-- *-teki* deaccents *kami* 'god' (accented). -/
+theorem teki_deaccents_kami_god :
+    suffixedAccent kami_god teki_suffix = none := rfl
+
+/-- *-teki* leaves *kami* 'paper' (unaccented) unchanged. -/
+theorem teki_leaves_kami_paper :
+    suffixedAccent kami_paper teki_suffix = none := rfl
+
+/-- *-teki* neutralizes the *kami* 'god' / *kami* 'paper' contrast. -/
+theorem teki_neutralizes_kami :
+    suffixedAccent kami_god teki_suffix =
+    suffixedAccent kami_paper teki_suffix := rfl
+
+/-- *-si* preserves the accent on *kami* 'god'. -/
+theorem si_preserves_kami_god :
+    suffixedAccent kami_god si_suffix = some 0 := rfl
+
+/-- *-si* preserves the unaccentedness of *kami* 'paper'. -/
+theorem si_preserves_kami_paper :
+    suffixedAccent kami_paper si_suffix = none := rfl
+
+/-- *-si* maintains the *kami* 'god' / *kami* 'paper' contrast. -/
+theorem si_maintains_kami_contrast :
+    suffixedAccent kami_god si_suffix ≠
+    suffixedAccent kami_paper si_suffix := by decide
 
 end Fragments.Japanese.Prosody

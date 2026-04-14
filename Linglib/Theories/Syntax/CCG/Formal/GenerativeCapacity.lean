@@ -57,7 +57,7 @@ def categoryToSymbol (isArg : Bool) (pos : Nat) : FourSymbol :=
 
     Used here for the generative capacity proof; the full
     `AnnotatedDerivation` with binding information is in the
-    bridge file `Phenomena.FillerGap.CCG_CrossSerialBridge`. -/
+    bridge file `Phenomena.WordOrder.Studies.Steedman2000CrossSerial`. -/
 structure SimpleAnnotatedDerivation where
   /-- The derivation -/
   deriv : CCG.CrossSerial.ExtDerivStep

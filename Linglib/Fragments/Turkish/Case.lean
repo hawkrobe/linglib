@@ -20,8 +20,7 @@ namespace Fragments.Turkish.Case
 def caseInventory : List Core.Case :=
   [.nom, .acc, .gen, .dat, .loc, .abl]
 
-/-- Perfectly contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 3, 2). -/
-theorem inventory_valid :
-    Core.validInventory caseInventory = true := by native_decide
+-- Perfectly contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 3, 2).
+#guard Core.validInventory caseInventory
 
 end Fragments.Turkish.Case

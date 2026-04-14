@@ -34,9 +34,8 @@ namespace Fragments.Telugu.Case
 def caseInventory : List Core.Case :=
   [.nom, .acc, .gen, .dat, .loc]
 
-/-- Contiguous on Blake's hierarchy (ranks 6 down to 3). -/
-theorem inventory_valid :
-    Core.validInventory caseInventory = true := by native_decide
+-- Contiguous on Blake's hierarchy (ranks 6 down to 3).
+#guard Core.validInventory caseInventory
 
 -- ============================================================================
 -- § 2: Containment Properties

@@ -1,3 +1,5 @@
+import Mathlib.Order.Nat
+
 /-!
 # Prominence Scales and Differential Argument Marking @cite{just-2024} @cite{haspelmath-2021}
 @cite{aissen-2003} @cite{haspelmath-2019}
@@ -67,6 +69,11 @@ def AnimacyLevel.rank : AnimacyLevel → Nat
   | .human     => 2
   | .animate   => 1
   | .inanimate => 0
+
+/-- Inanimate < Animate < Human (ordered by prominence rank). -/
+instance : LinearOrder AnimacyLevel :=
+  LinearOrder.lift' AnimacyLevel.rank
+    (fun a b h => by cases a <;> cases b <;> simp_all [AnimacyLevel.rank])
 
 /-- All animacy levels (exhaustive enumeration for finite verification). -/
 def AnimacyLevel.all : List AnimacyLevel := [.human, .animate, .inanimate]

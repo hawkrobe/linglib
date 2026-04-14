@@ -1,3 +1,5 @@
+import Mathlib.Order.Nat
+
 /-!
 # Formal Language Classification
 
@@ -33,17 +35,9 @@ def FormalLanguageType.toNat : FormalLanguageType → Nat
   | .mildlyContextSensitive => 2
   | .contextSensitive => 3
 
-instance : LT FormalLanguageType where
-  lt a b := a.toNat < b.toNat
-
-instance : LE FormalLanguageType where
-  le a b := a.toNat ≤ b.toNat
-
-instance (a b : FormalLanguageType) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (a.toNat < b.toNat))
-
-instance (a b : FormalLanguageType) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (a.toNat ≤ b.toNat))
+instance : LinearOrder FormalLanguageType :=
+  LinearOrder.lift' FormalLanguageType.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [FormalLanguageType.toNat])
 
 /-- The proper inclusion chain: regular ⊂ CF ⊂ MCS ⊂ CS. -/
 theorem FormalLanguageType.hierarchy :

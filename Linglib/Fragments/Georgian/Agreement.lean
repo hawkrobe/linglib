@@ -200,8 +200,7 @@ theorem inventory_covers_objects :
     We validate the full case system instead. -/
 def fullCaseInventory : List Core.Case := [.nom, .erg, .gen, .dat]
 
-theorem full_inventory_valid :
-    Core.validInventory fullCaseInventory = true := by native_decide
+#guard Core.validInventory fullCaseInventory
 
 -- ============================================================================
 -- § 6: Verb Classes (@cite{harris-1981}, @cite{marantz-1991})

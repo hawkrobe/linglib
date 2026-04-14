@@ -117,9 +117,8 @@ def agreementCaseInventory : List Core.Case := [.erg, .abs, .dat]
 def fullCaseInventory : List Core.Case :=
   [.erg, .abs, .gen, .dat, .loc, .abl, .all, .inst, .com, .perl, .ben]
 
-/-- The full inventory is valid per Blake's hierarchy (ranks 6 down to 1,
-    all represented). -/
-theorem full_inventory_valid :
-    Core.validInventory fullCaseInventory = true := by native_decide
+-- The full inventory is valid per Blake's hierarchy (ranks 6 down to 1,
+-- all represented).
+#guard Core.validInventory fullCaseInventory
 
 end Fragments.Basque.Agreement

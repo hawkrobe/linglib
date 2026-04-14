@@ -54,45 +54,45 @@ open Semantics.Quantification.Quantifier
 -- ============================================================================
 
 /-- A domain restrictor is a predicate selecting contextually relevant entities. -/
-abbrev DomainRestrictor (E : Type*) := E → Bool
+abbrev DomainRestrictor (E : Type*) := Set E
 
 /-- Domain-restricted ⟦every⟧: ∀x. C(x) ∧ R(x) → S(x).
     Restricts the quantifier domain to entities satisfying C. -/
 def every_restricted (m : Model) [Fintype m.Entity]
     (C : DomainRestrictor m.Entity) (R S : m.Entity → Prop) : Prop :=
-  every_sem m (λ x => C x = true ∧ R x) S
+  every_sem m (λ x => C x ∧ R x) S
 
 /-- Domain-restricted ⟦some⟧: ∃x. C(x) ∧ R(x) ∧ S(x). -/
 def some_restricted (m : Model) [Fintype m.Entity]
     (C : DomainRestrictor m.Entity) (R S : m.Entity → Prop) : Prop :=
-  some_sem m (λ x => C x = true ∧ R x) S
+  some_sem m (λ x => C x ∧ R x) S
 
 /-- Domain-restricted ⟦no⟧: ¬∃x. C(x) ∧ R(x) ∧ S(x). -/
 def no_restricted (m : Model) [Fintype m.Entity]
     (C : DomainRestrictor m.Entity) (R S : m.Entity → Prop) : Prop :=
-  no_sem m (λ x => C x = true ∧ R x) S
+  no_sem m (λ x => C x ∧ R x) S
 
 -- ============================================================================
 -- §2. Unrestricted Recovery
 -- ============================================================================
 
 /-- Unrestricted domain recovers the standard quantifier:
-    ⟦every⟧_{λ_.true}(R)(S) = ⟦every⟧(R)(S). -/
+    ⟦every⟧_{λ_.True}(R)(S) = ⟦every⟧(R)(S). -/
 theorem every_unrestricted {m : Model} [Fintype m.Entity]
     (R S : m.Entity → Prop) :
-    every_restricted m (λ _ => true) R S = every_sem m R S := by
+    every_restricted m (λ _ => True) R S = every_sem m R S := by
   unfold every_restricted every_sem; simp
 
-/-- ⟦some⟧_{λ_.true}(R)(S) = ⟦some⟧(R)(S). -/
+/-- ⟦some⟧_{λ_.True}(R)(S) = ⟦some⟧(R)(S). -/
 theorem some_unrestricted {m : Model} [Fintype m.Entity]
     (R S : m.Entity → Prop) :
-    some_restricted m (λ _ => true) R S = some_sem m R S := by
+    some_restricted m (λ _ => True) R S = some_sem m R S := by
   unfold some_restricted some_sem; simp
 
-/-- ⟦no⟧_{λ_.true}(R)(S) = ⟦no⟧(R)(S). -/
+/-- ⟦no⟧_{λ_.True}(R)(S) = ⟦no⟧(R)(S). -/
 theorem no_unrestricted {m : Model} [Fintype m.Entity]
     (R S : m.Entity → Prop) :
-    no_restricted m (λ _ => true) R S = no_sem m R S := by
+    no_restricted m (λ _ => True) R S = no_sem m R S := by
   unfold no_restricted no_sem; simp
 
 -- ============================================================================
@@ -104,7 +104,7 @@ theorem no_unrestricted {m : Model} [Fintype m.Entity]
     to check means the universal is weaker. -/
 theorem every_restricted_anti_mono {m : Model} [Fintype m.Entity]
     {C C' : DomainRestrictor m.Entity} {R S : m.Entity → Prop}
-    (hCC' : ∀ x, C x = true → C' x = true)
+    (hCC' : ∀ x, C x → C' x)
     (h : every_restricted m C' R S) :
     every_restricted m C R S :=
   every_restrictor_down _ _ S
@@ -116,7 +116,7 @@ theorem every_restricted_anti_mono {m : Model} [Fintype m.Entity]
     more chances to find a witness. -/
 theorem some_restricted_mono {m : Model} [Fintype m.Entity]
     {C C' : DomainRestrictor m.Entity} {R S : m.Entity → Prop}
-    (hCC' : ∀ x, C x = true → C' x = true)
+    (hCC' : ∀ x, C x → C' x)
     (h : some_restricted m C R S) :
     some_restricted m C' R S :=
   some_restrictor_up _ _ S
@@ -128,7 +128,7 @@ theorem some_restricted_mono {m : Model} [Fintype m.Entity]
     to check means fewer chances for a counterexample. -/
 theorem no_restricted_anti_mono {m : Model} [Fintype m.Entity]
     {C C' : DomainRestrictor m.Entity} {R S : m.Entity → Prop}
-    (hCC' : ∀ x, C x = true → C' x = true)
+    (hCC' : ∀ x, C x → C' x)
     (h : no_restricted m C' R S) :
     no_restricted m C R S :=
   no_restrictor_down _ _ S
@@ -159,7 +159,7 @@ theorem every_restricted_conservative {m : Model} [Fintype m.Entity]
     entities invisible to the quantifier. -/
 theorem every_restricted_spectator {m : Model} [Fintype m.Entity]
     {C : DomainRestrictor m.Entity} {R S S' : m.Entity → Prop}
-    (h : ∀ x, C x = true → R x → (S x ↔ S' x)) :
+    (h : ∀ x, C x → R x → (S x ↔ S' x)) :
     every_restricted m C R S ↔ every_restricted m C R S' := by
   unfold every_restricted every_sem
   constructor
@@ -176,12 +176,12 @@ open Semantics.Quantification.Quantifier (PConservative PropGQ) in
 theorem conservative_domain_restricted {E : Type*}
     {Q : PropGQ E} {C : DomainRestrictor E}
     (hQ : PConservative Q) :
-    PConservative (λ R S => Q (λ x => C x = true ∧ R x) S) := by
+    PConservative (λ R S => Q (λ x => C x ∧ R x) S) := by
   intro R S
-  show Q (λ x => C x = true ∧ R x) S ↔ Q (λ x => C x = true ∧ R x) (λ x => R x ∧ S x)
-  have h1 := hQ (λ x => C x = true ∧ R x) S
-  have h2 := hQ (λ x => C x = true ∧ R x) (λ x => R x ∧ S x)
-  have heq : (λ x => (C x = true ∧ R x) ∧ R x ∧ S x) = (λ x => (C x = true ∧ R x) ∧ S x) := by
+  show Q (λ x => C x ∧ R x) S ↔ Q (λ x => C x ∧ R x) (λ x => R x ∧ S x)
+  have h1 := hQ (λ x => C x ∧ R x) S
+  have h2 := hQ (λ x => C x ∧ R x) (λ x => R x ∧ S x)
+  have heq : (λ x => (C x ∧ R x) ∧ R x ∧ S x) = (λ x => (C x ∧ R x) ∧ S x) := by
     funext x; exact propext ⟨fun ⟨⟨hc, hr⟩, _, hs⟩ => ⟨⟨hc, hr⟩, hs⟩,
                              fun ⟨⟨hc, hr⟩, hs⟩ => ⟨⟨hc, hr⟩, hr, hs⟩⟩
   rw [h1, h2, heq]

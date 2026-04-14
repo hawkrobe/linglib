@@ -22,15 +22,13 @@ namespace Fragments.Greek.Case
 def caseInventory : List Core.Case :=
   [.nom, .acc, .gen]
 
-/-- Contiguous on Blake's hierarchy (ranks 6, 6, 5). -/
-theorem inventory_valid :
-    Core.validInventory caseInventory = true := by native_decide
+-- Contiguous on Blake's hierarchy (ranks 6, 6, 5).
+#guard Core.validInventory caseInventory
 
 /-- Classical Greek with dative. -/
 def classicalInventory : List Core.Case :=
   [.nom, .acc, .gen, .dat]
 
-theorem classical_valid :
-    Core.validInventory classicalInventory = true := by native_decide
+#guard Core.validInventory classicalInventory
 
 end Fragments.Greek.Case

@@ -1,3 +1,4 @@
+import Mathlib.Order.Nat
 import Linglib.Core.Logic.OT
 
 /-!
@@ -70,22 +71,9 @@ def Stratum.rank : Stratum → Nat
   | .word => 1
   | .phrase => 2
 
-instance : LT Stratum where
-  lt a b := a.rank < b.rank
-
-instance : LE Stratum where
-  le a b := a.rank ≤ b.rank
-
-instance (a b : Stratum) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (a.rank < b.rank))
-
-instance (a b : Stratum) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (a.rank ≤ b.rank))
-
-/-- Stratum rank is injective — distinct strata have distinct ranks,
-    establishing a total order on phonological strata. -/
-theorem stratum_rank_injective (a b : Stratum) (h : a.rank = b.rank) : a = b := by
-  cases a <;> cases b <;> simp_all [Stratum.rank]
+instance : LinearOrder Stratum :=
+  LinearOrder.lift' Stratum.rank
+    (fun a b h => by cases a <;> cases b <;> simp_all [Stratum.rank])
 
 -- ============================================================================
 -- § 2: Stratal Evaluation

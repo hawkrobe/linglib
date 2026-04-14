@@ -452,4 +452,41 @@ theorem tripartite_nonlexical_cases
     · right; right; rfl
   · right; left; rfl
 
+-- ============================================================================
+-- S 12: Language-Specific Case System Configuration
+-- ============================================================================
+
+/-- How nominative case is assigned in a language.
+    @cite{baker-vinokurova-2010}: in Sakha (and Mongolian, per
+    @cite{gong-2022}), NOM is assigned by finite T via Agree, not
+    as an unmarked default. This distinction matters for Wholesale
+    Late Merger: Agree-based NOM is tied to a specific functional
+    head, while unmarked NOM is a last-resort default. -/
+inductive NomAssignment where
+  | agreeT           -- NOM assigned by finite T via Agree
+  | unmarkedDefault  -- NOM is the elsewhere/default case
+  deriving DecidableEq, Repr
+
+/-- How dative case is assigned.
+    @cite{gong-2022}: DAT is nonstructural in Mongolian — it does not
+    participate in dependent case competition and is not available at
+    intermediate scrambling positions for WLM. -/
+inductive DatAssignment where
+  | nonstructural  -- Inherent/lexical (Mongolian, Japanese)
+  | dependent      -- Dependent case (structurally assigned)
+  deriving DecidableEq, Repr
+
+/-- A language-specific case system configuration.
+    Bundles the alignment type with the mechanisms for NOM and DAT.
+
+    This extends `CaseLanguageType` (which only encodes alignment)
+    with the fine-grained case mechanism choices needed for WLM:
+    whether NOM is Agree-based or default, and whether DAT is
+    structural or inherent. -/
+structure CaseSystemConfig where
+  langType : CaseLanguageType
+  nomMode : NomAssignment
+  datMode : DatAssignment
+  deriving DecidableEq, Repr
+
 end Minimalism

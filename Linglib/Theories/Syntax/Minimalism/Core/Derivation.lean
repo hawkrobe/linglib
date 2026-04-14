@@ -37,6 +37,11 @@ inductive Step where
   | emR (item : SyntacticObject)
   /-- Internal Merge: move `mover` to left edge, leaving a trace with `traceId`. -/
   | im (mover : SyntacticObject) (traceId : Nat)
+  /-- Wholesale Late Merger: countercyclically merge `restrictor` (the NP
+      complement of a determiner) into the bare determiner `target` at a
+      chain position. The bare D is replaced by `{D, restrictor}`.
+      @cite{takahashi-hulsey-2009} @cite{lebeaux-1988} -/
+  | wlm (restrictor : SyntacticObject) (target : SyntacticObject)
   deriving Repr
 
 /-- Apply a derivation step to the current tree.
@@ -51,6 +56,9 @@ def Step.apply (step : Step) (current : SyntacticObject) : SyntacticObject :=
   | .im mover traceId =>
     let traced := current.replace mover (mkTrace traceId)
     .node mover traced
+  | .wlm restrictor target =>
+    -- Replace bare D with {D, NP-restrictor} at the merger site
+    current.replace target (.node target restrictor)
 
 /-- An ordered derivation: an initial SO plus a sequence of steps. -/
 structure Derivation where
@@ -75,6 +83,18 @@ def Derivation.movedItems (d : Derivation) : List SyntacticObject :=
     | .im mover _ => some mover
     | _ => none
 
+/-- The restrictor–target pairs from Wholesale Late Merger steps. -/
+def Derivation.wlmOperations (d : Derivation) : List (SyntacticObject × SyntacticObject) :=
+  d.steps.filterMap λ
+    | .wlm restrictor target => some (restrictor, target)
+    | _ => none
+
+/-- Whether a derivation uses Wholesale Late Merger. -/
+def Derivation.usesWLM (d : Derivation) : Bool :=
+  d.steps.any λ
+    | .wlm _ _ => true
+    | _ => false
+
 -- ============================================================================
 -- Verification theorems
 -- ============================================================================
@@ -93,5 +113,20 @@ theorem replace_self (so replacement : SyntacticObject) :
   cases so with
   | leaf _ => simp [SyntacticObject.replace]
   | node _ _ => simp [SyntacticObject.replace]
+
+/-- WLM at the root: if the target is the entire current tree,
+    the result is `{target, restrictor}`. -/
+theorem wlm_at_root (restrictor target : SyntacticObject) :
+    (Step.wlm restrictor target).apply target = .node target restrictor := by
+  simp [Step.apply, replace_self]
+
+/-- WLM is non-destructive: the target subtree is preserved (as left
+    daughter of the new node). -/
+theorem wlm_preserves_target (restrictor target current : SyntacticObject) :
+    let result := (Step.wlm restrictor target).apply current
+    containsB current target = true →
+    containsB result (.node target restrictor) = true := by
+  intro result h
+  sorry -- structural induction on `current`; follows from `replace` behavior
 
 end Minimalism

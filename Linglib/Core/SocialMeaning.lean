@@ -66,21 +66,9 @@ inductive IndexicalOrder where
 def IndexicalOrder.toNat : IndexicalOrder → Nat
   | .first => 0 | .second => 1 | .third => 2
 
-instance : LT IndexicalOrder where
-  lt a b := a.toNat < b.toNat
-
-instance : LE IndexicalOrder where
-  le a b := a.toNat ≤ b.toNat
-
-instance (a b : IndexicalOrder) : Decidable (a < b) :=
-  Nat.decLt a.toNat b.toNat
-
-instance (a b : IndexicalOrder) : Decidable (a ≤ b) :=
-  Nat.decLe a.toNat b.toNat
-
-theorem IndexicalOrder.toNat_injective (a b : IndexicalOrder) :
-    a.toNat = b.toNat → a = b := by
-  cases a <;> cases b <;> simp [toNat]
+instance : LinearOrder IndexicalOrder :=
+  LinearOrder.lift' IndexicalOrder.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [IndexicalOrder.toNat])
 
 -- ============================================================================
 -- Indexical field (@cite{eckert-2008})
@@ -146,21 +134,9 @@ def ContextualStyle.toNat : ContextualStyle → Nat
   | .casual => 0 | .careful => 1 | .reading => 2
   | .wordList => 3 | .minimalPair => 4
 
-instance : LT ContextualStyle where
-  lt a b := a.toNat < b.toNat
-
-instance : LE ContextualStyle where
-  le a b := a.toNat ≤ b.toNat
-
-instance (a b : ContextualStyle) : Decidable (a < b) :=
-  Nat.decLt a.toNat b.toNat
-
-instance (a b : ContextualStyle) : Decidable (a ≤ b) :=
-  Nat.decLe a.toNat b.toNat
-
-theorem ContextualStyle.toNat_injective (a b : ContextualStyle) :
-    a.toNat = b.toNat → a = b := by
-  cases a <;> cases b <;> simp [toNat]
+instance : LinearOrder ContextualStyle :=
+  LinearOrder.lift' ContextualStyle.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [ContextualStyle.toNat])
 
 /-- Bridge to `Core.Register.Level`: maps the 5-point Labovian style scale
     to the 3-point register scale used by Fragment lexical entries. -/

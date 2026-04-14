@@ -23,9 +23,8 @@ namespace Fragments.German.Case
 def caseInventory : List Core.Case :=
   [.nom, .acc, .gen, .dat]
 
-/-- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4). -/
-theorem inventory_valid :
-    Core.validInventory caseInventory = true := by native_decide
+-- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4).
+#guard Core.validInventory caseInventory
 
 /-- NOM/ACC syncretism in neuter and feminine.
     Instantiates the cross-linguistic NOM/ACC pattern from `Core.Case.Syncretism`. -/

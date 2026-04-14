@@ -491,8 +491,8 @@ theorem inventory_covers_positions :
     kaqArgPositions.all (λ p => caseInventory.any (· == p.case.toCase)) = true := by
   native_decide
 
-/-- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
-    (both are core cases at rank 6, trivially no gaps). -/
-theorem inventory_valid : Core.validInventory caseInventory = true := by native_decide
+-- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
+-- (both are core cases at rank 6, trivially no gaps).
+#guard Core.validInventory caseInventory
 
 end Fragments.Mayan.Kaqchikel

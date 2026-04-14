@@ -74,20 +74,20 @@ theorem basque_p1sg_indexed :
     basque.isInverse .first .first = true ∧
     basque.isInverse .second .first = true ∧
     basque.isInverse .third .first = true := by
-  exact ⟨rfl, by native_decide, by native_decide, by native_decide⟩
+  exact ⟨rfl, by decide, by decide, by decide⟩
 
 theorem basque_p2sg_indexed :
     Fragments.Basque.Agreement.pIsIndexed .p2sg = true ∧
     basque.isInverse .first .second = true ∧
     basque.isInverse .second .second = true ∧
     basque.isInverse .third .second = true := by
-  exact ⟨rfl, by native_decide, by native_decide, by native_decide⟩
+  exact ⟨rfl, by decide, by decide, by decide⟩
 
 theorem basque_p3sg_not_indexed :
     Fragments.Basque.Agreement.pIsIndexed .p3sg = false ∧
     basque.isInverse .first .third = false ∧
     basque.isInverse .second .third = false := by
-  exact ⟨rfl, by native_decide, by native_decide⟩
+  exact ⟨rfl, by decide, by decide⟩
 
 /-- Core bridge theorem (Basque): an object is indexed iff cyclic agree
     puts *every* EA→IA combination into an inverse context.
@@ -107,12 +107,11 @@ theorem basque_indexed_iff_always_inverse
     Fragments.Basque.Agreement.PersonNumber.isSAP,
     Fragments.Basque.Agreement.PersonNumber.person,
     basqueToLevel] <;> constructor
-  -- mp for SAP: intro, then case-split on ea
-  all_goals (try (intro; intro ea; cases ea <;> native_decide))
-  -- mpr for SAP/3P: provide witness or use false hypothesis
-  all_goals (try (intro h; exact h .first))
-  -- mp for 3P: false = true → _, dispatch with absurd
-  all_goals (intro h; exact absurd h (by native_decide))
+  all_goals first
+    | (intro _; exact fun | .first => rfl | .second => rfl | .third => rfl)
+    | (intro _; rfl)
+    | (intro h; exact absurd h Bool.false_ne_true)
+    | (intro h; exact absurd (h .first) Bool.false_ne_true)
 
 -- ============================================================================
 -- § 3: Georgian — pIsIndexed Matches Inverse Context
@@ -129,7 +128,7 @@ theorem georgian_1sg_prefix_and_inverse :
     basque.isInverse .first .first = true ∧
     basque.isInverse .second .first = true ∧
     basque.isInverse .third .first = true := by
-  exact ⟨rfl, by native_decide, by native_decide, by native_decide⟩
+  exact ⟨rfl, by decide, by decide, by decide⟩
 
 /-- Per-cell verification: Georgian 3sg has no object prefix, and
     there exist direct contexts. -/
@@ -137,7 +136,7 @@ theorem georgian_3sg_no_prefix_and_direct :
     Fragments.Georgian.Agreement.objectPrefix .p3sg = none ∧
     isDirectContext .standard partialProbe .first .third = true ∧
     isDirectContext .standard partialProbe .second .third = true := by
-  exact ⟨rfl, by native_decide, by native_decide⟩
+  exact ⟨rfl, by decide, by decide⟩
 
 /-- Core bridge theorem (Georgian): object is indexed iff always inverse.
 
@@ -151,14 +150,11 @@ theorem georgian_indexed_iff_always_inverse
   -- Georgian pIsIndexed tracks SAP (proved in fragment); SAP ↔ always inverse
   rw [georgian_indexed_eq_sap]
   cases pn <;> simp only [georgianToLevel, PersonLevel.isSAP] <;> constructor
-  -- mp for SAP: intro, then case-split on ea
-  all_goals (try (intro; intro ea; cases ea <;> native_decide))
-  -- mpr for SAP: goal is `... → True` after simp
-  all_goals (try (intro; trivial))
-  -- mpr for 3P: specialize ∀ ea to get false = true witness
-  all_goals (try (intro h; exact absurd (h .first) (by native_decide)))
-  -- mp for 3P: hypothesis is false = true directly
-  all_goals (intro h; exact absurd h (by native_decide))
+  all_goals first
+    | (intro _; exact fun | .first => rfl | .second => rfl | .third => rfl)
+    | (intro _; trivial)
+    | (intro h; exact absurd h Bool.false_ne_true)
+    | (intro h; exact absurd (h .first) Bool.false_ne_true)
 
 -- ============================================================================
 -- § 4: Georgian Second-Cycle Morphology
@@ -173,12 +169,12 @@ theorem georgian_m_is_cycle_I :
     hasSecondCycleEffect .standard partialProbe .third .first = false ∧
     hasSecondCycleEffect .standard partialProbe .second .first = false ∧
     hasSecondCycleEffect .standard partialProbe .first .first = false := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide, by decide⟩
 
 theorem georgian_v_is_cycle_II :
     hasSecondCycleEffect .standard partialProbe .first .third = true ∧
     hasSecondCycleEffect .standard partialProbe .second .third = true := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- The *m-*/*v-* split is exactly the inverse/direct split for 1P:
     - *m-* (1P object = IA, inverse) → cycle I only, no second-cycle effect
@@ -193,7 +189,7 @@ theorem georgian_mv_split_is_inverse_direct :
     -- v-: 1P as EA (1→3), direct, has second cycle
     (isDirectContext .standard partialProbe .first .third = true ∧
      hasSecondCycleEffect .standard partialProbe .first .third = true) := by
-  exact ⟨⟨by native_decide, by native_decide⟩, ⟨by native_decide, by native_decide⟩⟩
+  exact ⟨⟨by decide, by decide⟩, ⟨by decide, by decide⟩⟩
 
 -- ============================================================================
 -- § 5: Basque Agreement Displacement Paradigm (Table 1)
@@ -206,15 +202,15 @@ theorem georgian_mv_split_is_inverse_direct :
 -- non-underlined forms track the EA (direct/regular).
 
 /-- (2a) 1→2 = 2: "I saw you" — IA controls (inverse). -/
-theorem table1_basque_1_2 : basque.value .first .second = .second := by native_decide
+theorem table1_basque_1_2 : basque.value .first .second = .second := by decide
 /-- (2b) 3→1 = 1: "He saw me" — IA controls (inverse/displacement). -/
-theorem table1_basque_3_1 : basque.value .third .first = .first := by native_decide
+theorem table1_basque_3_1 : basque.value .third .first = .first := by decide
 /-- (2c) 2→1 = 1: "You saw me" — IA controls (inverse/displacement). -/
-theorem table1_basque_2_1 : basque.value .second .first = .first := by native_decide
+theorem table1_basque_2_1 : basque.value .second .first = .first := by decide
 /-- (2d) 1→3 = 1: "I saw him" — EA controls (direct/regular). -/
-theorem table1_basque_1_3 : basque.value .first .third = .first := by native_decide
+theorem table1_basque_1_3 : basque.value .first .third = .first := by decide
 /-- 2→3 = 2: "You saw him" — EA controls (direct/regular). -/
-theorem table1_basque_2_3 : basque.value .second .third = .second := by native_decide
+theorem table1_basque_2_3 : basque.value .second .third = .second := by decide
 
 -- ============================================================================
 -- § 6: Cross-Linguistic Uniformity

@@ -121,6 +121,7 @@ import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Core.Genericity
 import Linglib.Core.FormalLanguage
+import Linglib.Core.VerbCluster
 import Linglib.Core.Case
 import Linglib.Core.AgreementTarget
 import Linglib.Theories.Morphology.Containment
@@ -392,6 +393,7 @@ import Linglib.Tactics.CancelFin4
 import Linglib.Fragments.Arabic.Relativization
 import Linglib.Fragments.Arabic.Morph
 import Linglib.Fragments.ASL.Classifiers
+import Linglib.Fragments.ASL.Height
 import Linglib.Fragments.Dutch.Adpositions
 import Linglib.Fragments.Dutch.Binominals
 import Linglib.Fragments.Dutch.Nouns
@@ -440,6 +442,7 @@ import Linglib.Fragments.Tarifit.Inventory
 import Linglib.Fragments.Dargwa.Agreement
 import Linglib.Fragments.Dargwa.Case
 import Linglib.Fragments.Dargwa.ComplexPredicates
+import Linglib.Fragments.Dargwa.Locatives
 import Linglib.Fragments.Dargwa.Coordination
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
@@ -553,6 +556,8 @@ import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Japanese.Morph
 import Linglib.Fragments.Japanese.Negation
+import Linglib.Fragments.Japanese.Prosody
+import Linglib.Fragments.Mongolian.Case
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Fragments.Mandarin.DiscourseParticles
 import Linglib.Fragments.Mandarin.Determiners
@@ -637,6 +642,7 @@ import Linglib.Fragments.Swahili.Relativization
 import Linglib.Fragments.Wambaya.Reciprocals
 import Linglib.Fragments.Icelandic.Case
 import Linglib.Fragments.Icelandic.Nominalizations
+import Linglib.Fragments.Icelandic.Verbs
 import Linglib.Fragments.Icelandic.Predicates
 import Linglib.Fragments.Icelandic.Reciprocals
 import Linglib.Fragments.Icelandic.TemporalConnectives
@@ -736,7 +742,7 @@ import Linglib.Phenomena.Assertion.Studies.Krifka2015
 import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Ozaki2026
-import Linglib.Phenomena.Case.Studies.DependentCaseInventories
+import Linglib.Phenomena.Case.DependentCaseDerivations
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.Grimm2011
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
@@ -779,6 +785,7 @@ import Linglib.Phenomena.Anaphora.Studies.Spector2025
 import Linglib.Phenomena.Anaphora.Studies.Charlow2018
 import Linglib.Phenomena.Anaphora.Studies.DalrympleHaug2024
 import Linglib.Phenomena.Anaphora.Studies.Rakosi2019
+import Linglib.Phenomena.Anaphora.Studies.Gong2022
 import Linglib.Phenomena.Anaphora.Studies.HaugDalrymple2020
 import Linglib.Phenomena.Anaphora.Studies.GroenendijkStokhof1991
 import Linglib.Phenomena.Alignment.Typology
@@ -978,6 +985,8 @@ import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
 import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
 import Linglib.Phenomena.Gradability.Studies.BumfordRett2021
 import Linglib.Phenomena.Imprecision.Projection
+-- Phenomena: Intonation (prosodic hierarchy, catathesis, cross-linguistic comparison)
+import Linglib.Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
 -- Phenomena: Iconicity (sign language classifier predicates, viewpoints)
 import Linglib.Phenomena.Iconicity.Basic
 import Linglib.Phenomena.Iconicity.Studies.SchlenkerEtAl2026
@@ -994,7 +1003,7 @@ import Linglib.Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
 import Linglib.Phenomena.FillerGap.Studies.ErlewineSommerlot2025
 import Linglib.Phenomena.FillerGap.Studies.KeenanComrie1977
 import Linglib.Phenomena.FillerGap.Studies.PickeringBarry1991
-import Linglib.Phenomena.FillerGap.Studies.Steedman2000CrossSerial
+import Linglib.Phenomena.WordOrder.Studies.Steedman2000CrossSerial
 import Linglib.Phenomena.FillerGap.CCGGenerativeCapacity
 import Linglib.Phenomena.Islands.Studies.Adger2025
 import Linglib.Phenomena.Islands.Studies.CartnerEtAl2026
@@ -1190,6 +1199,7 @@ import Linglib.Phenomena.Quantification.Typology
 import Linglib.Phenomena.Quantification.Studies.BarwiseCooper1981
 import Linglib.Phenomena.Quantification.Studies.ScontrasPearl2021
 import Linglib.Phenomena.Quantification.Studies.RitchieSchiller2024
+import Linglib.Phenomena.Quantification.Studies.DavidsonGagne2022
 import Linglib.Phenomena.Quantification.Studies.Elliott2025
 import Linglib.Phenomena.Quantification.Studies.Mirrazi2024
 import Linglib.Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
@@ -1540,6 +1550,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.PConstraint
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 import Linglib.Theories.Syntax.Minimalism.Core.CaseDiscrimination
 import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Minimalism.Core.LateMerger
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.FormalMatching
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.Nominal

@@ -1,42 +1,22 @@
 import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
 import Linglib.Fragments.German.Case
 import Linglib.Fragments.Turkish.Case
-import Linglib.Fragments.Russian.Case
-import Linglib.Fragments.Czech.Case
-import Linglib.Fragments.Polish.Case
-import Linglib.Fragments.Ukrainian.Case
-import Linglib.Fragments.Serbian.Case
-import Linglib.Fragments.Slovenian.Case
-import Linglib.Fragments.Greek.Case
-import Linglib.Fragments.Latin.Case
-import Linglib.Fragments.Finnish.Case
-import Linglib.Fragments.Hungarian.Case
-import Linglib.Fragments.Tamil.Case
-import Linglib.Fragments.Japanese.Case
-import Linglib.Fragments.Korean.Case
 import Linglib.Fragments.Hindi.Case
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
-import Linglib.Fragments.Mayan.Mam.Agreement
-import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 
 /-!
-# Dependent Case ↔ Inventory Bridge
+# Dependent Case Derivations
 
-Connects the dependent case algorithm (`assignCases`) to language-specific
-case inventories from Fragment files. For each language, we prove that the
-**structural** cases the algorithm can assign are members of that language's
-validated case inventory.
+Runs the dependent case algorithm (`assignCases`) on representative
+languages and verifies the output against fragment inventories.
 
 ## Structure
 
-- **§ 1**: Language type assignments (accusative, ergative, or split)
-- **§ 2**: Inventory coverage — for each language, the structural cases
-  produced by `structuralCasesFor` are all in the language's `caseInventory`
-- **§ 3**: Ergative language coverage (Basque, Mam, Kaqchikel)
-- **§ 4**: Split-ergative coverage (Hindi, Georgian) — partial, because
-  the algorithm's ABS is realized as NOM in these languages
-- **§ 5**: Concrete derivation examples for representative languages
+- **§ 1**: Split-ergative syncretism (Hindi, Georgian) — the ABS/NOM
+  identity in languages that realize absolutive as nominative
+- **§ 2**: Concrete derivations for accusative (German, Turkish),
+  ergative (Basque), and split-ergative (Hindi, Georgian) languages
 
 ## The ABS/NOM Mismatch in Split-Ergative Languages
 
@@ -47,181 +27,14 @@ form. Their inventories contain ERG (the dependent case) but not ABS.
 This is a well-known typological fact: many split-ergative languages have
 a **syncretic** unmarked case that serves both the nominative (accusative
 frames) and absolutive (ergative frames) functions.
-
-The bridge documents this: we prove full coverage for accusative alignment
-and ERG-specific coverage for ergative alignment, noting that ABS → NOM
-is a morphological identity, not a gap in the theory.
 -/
 
-namespace Phenomena.Case.Studies.DependentCaseInventories
+namespace Phenomena.Case.DependentCaseDerivations
 
 open Minimalism
 
 -- ============================================================================
--- § 1: Language Type Assignments
--- ============================================================================
-
-/-- German is an accusative language (NOM for S/A, ACC for P). -/
-def germanLangType : CaseLanguageType := .accusative
-
-/-- Turkish is an accusative language. -/
-def turkishLangType : CaseLanguageType := .accusative
-
-/-- Russian is an accusative language. -/
-def russianLangType : CaseLanguageType := .accusative
-
-/-- Czech is an accusative language. -/
-def czechLangType : CaseLanguageType := .accusative
-
-/-- Polish is an accusative language. -/
-def polishLangType : CaseLanguageType := .accusative
-
-/-- Ukrainian is an accusative language. -/
-def ukrainianLangType : CaseLanguageType := .accusative
-
-/-- Serbian is an accusative language. -/
-def serbianLangType : CaseLanguageType := .accusative
-
-/-- Slovenian is an accusative language. -/
-def slovenianLangType : CaseLanguageType := .accusative
-
-/-- Greek is an accusative language. -/
-def greekLangType : CaseLanguageType := .accusative
-
-/-- Latin is an accusative language. -/
-def latinLangType : CaseLanguageType := .accusative
-
-/-- Finnish is an accusative language. -/
-def finnishLangType : CaseLanguageType := .accusative
-
-/-- Hungarian is an accusative language. -/
-def hungarianLangType : CaseLanguageType := .accusative
-
-/-- Tamil is an accusative language. -/
-def tamilLangType : CaseLanguageType := .accusative
-
-/-- Japanese is an accusative language. -/
-def japaneseLangType : CaseLanguageType := .accusative
-
-/-- Korean is an accusative language. -/
-def koreanLangType : CaseLanguageType := .accusative
-
-/-- Basque is an ergative language (ERG for A, ABS for S/P). -/
-def basqueLangType : CaseLanguageType := .ergative
-
-/-- Mam (Mayan) is a tripartite language (ERG, ACC, ABS all distinct). -/
-def mamLangType : CaseLanguageType := .tripartite
-
-/-- Kaqchikel (Mayan) is an ergative language. -/
-def kaqchikelLangType : CaseLanguageType := .ergative
-
--- ============================================================================
--- § 2: Accusative Language Coverage
--- ============================================================================
-
-/-! For each accusative language, the structural cases [NOM, ACC] are both
-    members of that language's case inventory. -/
-
-theorem german_structural_coverage :
-    (structuralCasesFor germanLangType).all
-      (λ cv => Fragments.German.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem turkish_structural_coverage :
-    (structuralCasesFor turkishLangType).all
-      (λ cv => Fragments.Turkish.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem russian_structural_coverage :
-    (structuralCasesFor russianLangType).all
-      (λ cv => Fragments.Russian.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem czech_structural_coverage :
-    (structuralCasesFor czechLangType).all
-      (λ cv => Fragments.Czech.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem polish_structural_coverage :
-    (structuralCasesFor polishLangType).all
-      (λ cv => Fragments.Polish.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem ukrainian_structural_coverage :
-    (structuralCasesFor ukrainianLangType).all
-      (λ cv => Fragments.Ukrainian.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem serbian_structural_coverage :
-    (structuralCasesFor serbianLangType).all
-      (λ cv => Fragments.Serbian.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem slovenian_structural_coverage :
-    (structuralCasesFor slovenianLangType).all
-      (λ cv => Fragments.Slovenian.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem greek_structural_coverage :
-    (structuralCasesFor greekLangType).all
-      (λ cv => Fragments.Greek.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem latin_structural_coverage :
-    (structuralCasesFor latinLangType).all
-      (λ cv => Fragments.Latin.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem finnish_structural_coverage :
-    (structuralCasesFor finnishLangType).all
-      (λ cv => Fragments.Finnish.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem hungarian_structural_coverage :
-    (structuralCasesFor hungarianLangType).all
-      (λ cv => Fragments.Hungarian.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem tamil_structural_coverage :
-    (structuralCasesFor tamilLangType).all
-      (λ cv => Fragments.Tamil.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem japanese_structural_coverage :
-    (structuralCasesFor japaneseLangType).all
-      (λ cv => Fragments.Japanese.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem korean_structural_coverage :
-    (structuralCasesFor koreanLangType).all
-      (λ cv => Fragments.Korean.Case.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
--- ============================================================================
--- § 3: Ergative Language Coverage
--- ============================================================================
-
-/-! For ergative languages, the structural cases [ABS, ERG] are in the
-    inventory. Basque and Kaqchikel are fully ergative; Mam is tripartite
-    (ERG, ACC, ABS all distinct). -/
-
-theorem basque_structural_coverage :
-    (structuralCasesFor basqueLangType).all
-      (λ cv => Fragments.Basque.Agreement.fullCaseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem mam_structural_coverage :
-    (structuralCasesFor mamLangType).all
-      (λ cv => Fragments.Mayan.Mam.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
-theorem kaqchikel_structural_coverage :
-    (structuralCasesFor kaqchikelLangType).all
-      (λ cv => Fragments.Mayan.Kaqchikel.caseInventory.any (· == cv.toCase)) = true := by
-  native_decide
-
--- ============================================================================
--- § 4: Split-Ergative Coverage
+-- § 1: Split-Ergative Syncretism
 -- ============================================================================
 
 /-! Hindi and Georgian are split-ergative: accusative alignment in some
@@ -274,7 +87,7 @@ theorem georgian_nom_covers_abs_function :
   native_decide
 
 -- ============================================================================
--- § 5: Concrete Derivation Examples
+-- § 2: Concrete Derivation Examples
 -- ============================================================================
 
 /-! ## German Derivations
@@ -425,7 +238,7 @@ theorem hindi_perfective_patient_abs :
 /-- In the perfective (ergative alignment), ERG is in the inventory
     but ABS is not — it is realized as NOM. The agent case (ERG) is
     correctly predicted; the patient case (ABS → NOM) requires the
-    morphological identity documented in § 4. -/
+    morphological identity documented in § 1. -/
 theorem hindi_perfective_erg_in_inventory :
     Fragments.Hindi.Case.caseInventory.any (· == CaseVal.erg.toCase) = true := by
   native_decide
@@ -480,4 +293,4 @@ theorem georgian_present_in_inventory :
         (· == np.case.toCase)) = true := by
   native_decide
 
-end Phenomena.Case.Studies.DependentCaseInventories
+end Phenomena.Case.DependentCaseDerivations

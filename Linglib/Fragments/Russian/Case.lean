@@ -16,8 +16,7 @@ namespace Fragments.Russian.Case
 def caseInventory : List Core.Case :=
   [.nom, .acc, .gen, .dat, .inst, .loc]
 
-/-- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 2, 3). -/
-theorem inventory_valid :
-    Core.validInventory caseInventory = true := by native_decide
+-- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 2, 3).
+#guard Core.validInventory caseInventory
 
 end Fragments.Russian.Case

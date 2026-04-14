@@ -687,17 +687,17 @@ def isTypical (k : Kind) (h : Height) : Bool :=
 /-- The comparison class hierarchy as a nested restriction on heights. -/
 def compClassRestriction (k : Kind) : Core.NestedRestriction ComparisonClass Height where
   region
-    | .subordinate => isTypical k
-    | .superordinate => λ _ => true
+    | .subordinate => λ h => isTypical k h = true
+    | .superordinate => Set.univ
   monotone {s₁ s₂} h d hr := by
-    cases s₁ <;> cases s₂ <;> simp_all
+    cases s₁ <;> cases s₂ <;> simp_all [Set.mem_univ]
     · exact absurd h (by decide)
-  top_total _ := rfl
+  top_total _ := Set.mem_univ _
 
 /-- Nesting: subordinate ⊆ superordinate for all kinds. -/
 theorem compClass_nesting (k : Kind) (h : Height) :
-    (compClassRestriction k).region .subordinate h = true →
-    (compClassRestriction k).region .superordinate h = true :=
+    h ∈ (compClassRestriction k).region .subordinate →
+    h ∈ (compClassRestriction k).region .superordinate :=
   (compClassRestriction k).subset_of_le (by decide) h
 
 /-- Bridge to `Core.TwoLevel`: the study-local `ComparisonClass` is

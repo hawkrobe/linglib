@@ -34,9 +34,8 @@ namespace Fragments.Hindi.Case
 def caseInventory : List Core.Case :=
   [.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst]
 
-/-- Contiguous on Blake's hierarchy (ranks 6 down to 2, all present). -/
-theorem inventory_valid :
-    Core.validInventory caseInventory = true := by native_decide
+-- Contiguous on Blake's hierarchy (ranks 6 down to 2, all present).
+#guard Core.validInventory caseInventory
 
 -- ============================================================================
 -- Section 2: Syncretism

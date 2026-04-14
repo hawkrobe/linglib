@@ -1,5 +1,78 @@
 # Changelog
 
+## [0.229.730] - 2026-04-14
+
+### Changed
+- **LinearOrder.lift' sweep (12 types)**: replaced hand-rolled LT/LE/Decidable instance boilerplate with single `LinearOrder.lift'` calls across `Core/FormalLanguage.lean`, `Core/Register.lean`, `Core/SocialMeaning.lean` (IndexicalOrder + ContextualStyle), `Core/Subjectivity.lean`, `Core/Case.lean`, `Core/Prosody.lean`, `Core/Prominence.lean` (AnimacyLevel, additive), `Theories/Diachronic/Grammaticalization.lean`, `Theories/Phonology/StratalOT.lean`, `Theories/Semantics/Causation/Morphological.lean`, `Theories/Semantics/Modality/Narrog.lean`; ~93 lines of boilerplate eliminated, all types gain full LinearOrder with min/max/compare/Ord
+- **Prosody.lean**: replaced `deriving Ord` + `ctorIdx`-based LT/LE with explicit `ProsodicLevel.toNat` + `LinearOrder.lift'`
+- **Morphological.lean**: added `CausativeComplexity.toNat`, replaced 23-line manual LT/LE/Decidable with `LinearOrder.lift'`
+- **Creissels2025.lean**, **Urdu/CausativeSystem.lean**: `trivial` → `by decide` for CausativeComplexity order goals (old LT reduced to True; new LinearOrder reduces to Nat comparison)
+- **NonProjective.lean**: fix `push_neg` proof for new Mathlib implication form (was disjunction)
+- **BejarRezac2009.lean**: replace `native_decide` with structural proofs; fix `all_goals try (cases ea <;> rfl)` pattern that produces uncatchable errors in Lean 4.29 — use `all_goals first | term-mode match | rfl | absurd` instead
+
+## [0.229.729] - 2026-04-13
+
+### Changed
+- **NestedRestriction.lean**: `region : S → (D → Bool)` → `region : S → Set D`; `monotone`/`top_total` now use `∈` instead of `= true`; `comparisonClassRestriction` takes `Set D` input with `Set.univ` for full level
+- **DomainRestriction.lean**: `DomainRestrictor E := Set E` (was `E → Bool`); `every_restricted`/`some_restricted`/`no_restricted` use `C x ∧ R x` (was `C x = true ∧ R x`); unrestricted recovery uses `λ _ => True`; monotonicity/spectator/conservativity theorems drop `= true`
+- **Height.lean**: `heightToDDRP` region defined as `λ e => zone e ≤ h` (Prop-valued Set); `partitive_ddrp_equiv` uses `∈` notation
+- **DavidsonGagne2022.lean**: truth tables (`fsAllBecomeVampire`, `someBecomeVampire`, `noneBecomeVampire`) now Prop-valued with `abbrev` for `decide` transparency; verification theorems use `decide` directly (no `= true`/`= false`); `vampireModel` → `abbrev`; grounding theorems simplified
+- **RitchieSchiller2024.lean**: `sceneToDDRP` region defined as `λ e => scene e ≤ s`; truth tables Prop-valued with `decide`; `perceivable` helper removed; `bottleModel` → `abbrev`; all `native_decide` → `decide`
+- **TesslerGoodman2022.lean**: `compClassRestriction` subordinate region lifts Bool via `= true`; superordinate uses `Set.univ`
+- **BarwiseCooper1981.lean**: `domain_restriction_preserves_conservativity` uses `C x ∧ R x` (was `C x = true ∧ R x`)
+
+## [0.229.728] - 2026-04-13
+
+### Changed
+- **Core/VerbCluster.lean**: upgrade `VerbClusterBinding n` from `Fin n → Fin n` to `Equiv.Perm (Fin n)` (Mathlib). `identity` → `Equiv.refl`, `reverse` → self-inverse `Equiv.mk`. Pattern classification via `DecidableEq` equality checks instead of element-wise `List.all`. New `isProjective_iff_antitone` theorem characterizing projectivity as `Antitone σ`; `reverse_is_projective` now proved via antitone property. Imports: `Mathlib.Logic.Equiv.Defs`, `Mathlib.Data.Fintype.Basic`, `Mathlib.Order.Monotone.Defs`
+- **BachBrownMarslenWilson1986.lean**: update simp lemma sets for `Equiv.Perm` (`Equiv.refl_apply`, `Equiv.coe_fn_mk` replace `id`, `Fin.val_mk`)
+
+## [0.229.727] - 2026-04-13
+
+### Changed
+- **Icelandic/Case.lean**: split — verb case frames, quirky subjects, and agreement data moved to new `Icelandic/Verbs.lean`; Case.lean now contains only inventory + `#guard` + count theorem
+- **Dargwa/Case.lean**: split — locative decomposition (Localization/Orientation/Direction) moved to new `Dargwa/Locatives.lean`; Case.lean now contains only grammatical case inventory + ergative alignment
+- **DependentCaseInventories.lean** → **DependentCaseDerivations.lean**: renamed, moved from `Studies/` to `Phenomena/Case/` (not a study); pruned 15 trivial `XXXLangType := .accusative` defs, 18 trivial coverage theorems, and redundant Mongolian config theorem; kept Hindi/Georgian ABS→NOM syncretism and all concrete derivation examples (505 → 270 lines)
+- **Fragment Case.lean files (21 files)**: replaced `inventory_valid` / `full_inventory_valid` theorems with `#guard validInventory` commands across German, Turkish, Russian, Czech, Polish, Ukrainian, Serbian, Slovenian, Greek, Latin, Korean, Japanese, Tamil, Hungarian, Telugu, Hindi, Basque, Georgian, Mam, Kaqchikel + Aitha2026
+
+## [0.229.726] - 2026-04-13
+
+### Changed
+- **Height.lean**: replace `partitiveOf` with `Set.Iic` (Mathlib's principal down-set); theorems now use `⊆` notation (`Set.Iic z ⊆ C`, `C ⊆ Set.Iic z`), connecting partitive ⟦of⟧ to Mathlib's order interval API
+
+### Added
+- **Height.lean**: `partitive_neutral_subset` (neutral presup ⊢ `Set.Iic z ⊆ C`), `partitive_high_superset` (high presup ⊢ `C ⊆ Set.Iic z`), `partitive_ddrp_equiv` (alignment between partitive and DDRP paths)
+- **DavidsonGagne2022.lean**: `fsAllComposed`/`fsSomeComposed` (composed via `every_restricted`/`some_restricted`); `fsAll_grounding`/`fsSome_grounding` proving stipulative truth tables agree with theory-layer semantics
+
+## [0.229.725] - 2026-04-13
+
+### Added
+- **Core/VerbCluster.lean**: `VerbClusterBinding (n : Nat) := Fin n → Fin n` — unified abstract type for verb cluster NP-verb binding permutations. Cross-serial = `identity`, nested = `reverse`. Arc crossing, projectivity (`isProjective`), matrix integration count (`integratedCount`), NP-verb distance (`npVerbDist`), `BindingPattern` classification (`.crossSerial`/`.nested`/`.other` — computed, not stored). Key theorems: `identity_not_projective`, `reverse_is_projective`, closed-form reduction lemmas (`identity_integratedCount`, `reverse_integratedCount`, etc.)
+- **NonProjective.lean**: `binding_matches_projectivity` bridge theorem connecting `VerbClusterBinding.isProjective` to DG-level `DepGrammar.isProjective` for Dutch and German patterns
+
+### Changed
+- **CrossSerial.lean**: refactored around `VerbClusterBinding`. Deleted `Dependency` (npPosition/verbPosition), `DependencyPattern` (.crossSerial/.nested), `crossSerialDeps`, `nestedDeps`. `VerbClusterExample` now has `n : Nat` + `binding : VerbClusterBinding n` instead of `pattern`/`dependencies`. Dutch examples use `identity n`, German uses `reverse n`. Pattern is computed via `binding.pattern`
+- **BachBrownMarslenWilson1986.lean**: `totalIntegrationCost` and `totalNPVerbDist` now take `VerbClusterBinding n` directly instead of `DependencyPattern`. Integration model derived from permutation (`max(σ(0), σ(i)) < k`) instead of stipulated per pattern. All proofs preserved including universal `crossed_lt_nested` and `dep_length_equal`
+- **Steedman2000CrossSerial.lean**: `AnnotatedDerivation` uses `binding : VerbClusterBinding n` instead of `bindings : List Dependency`. Bridge theorems are `rfl` (both sides are `identity n`)
+- **Shieber1985.lean**: removed unused `DependencyPattern` from `open` statement
+- **PickeringBarry1991.lean**: `.pattern` → `.binding.pattern`, `rfl` → `by decide`
+
+## [0.229.724] - 2026-04-13
+
+### Added
+- **Height.lean**: `partitiveOf` (⟦of⟧ = λxλy. y ≤ x, Ladusaw 1982), `partitive_neutral_subset` (neutral presup ⊢ parts(z) ⊆ C), `partitive_high_superset` (high presup ⊢ C ⊂ parts(z)), `partitive_ddrp_equiv` (alignment between partitive and DDRP paths)
+- **DavidsonGagne2022.lean**: `fsAllComposed`/`fsSomeComposed` (composed via `every_restricted`/`some_restricted`); `fsAll_grounding`/`fsSome_grounding` proving stipulative truth tables agree with theory-layer semantics
+
+## [0.229.723] - 2026-04-13
+
+### Added
+- **Derivation.lean**: `Step.wlm` constructor for Wholesale Late Merger as an explicit derivation operation; `Derivation.wlmOperations` and `Derivation.usesWLM` accessors; `wlm_at_root` verification theorem
+- **LateMerger.lean**: `conditionCViolation`/`conditionCSatisfied` — Condition C check over concrete `SyntacticObject` trees via `cCommandsInB`; `no_case_forces_reconstruction` theorem; `PhaseEdgePosition` type connecting phase theory to chain positions; `successiveCyclicChain` deriving chain positions from phase edges; `ldsChainTemplate` for cross-clausal movement; `lds_cp_edge_alone_no_bleed` (CP edges never provide case); `lds_matrix_case_bleeds` (matrix case position above binder enables WLM)
+- **Gong2022.lean**: `ldsChain` deriving LDS chain positions from phase theory; `lds_agrees_with_fragment_io`/`lds_agrees_with_fragment_subj` proving successive-cyclic chain agrees with direct fragment predictions; `lds_cp_edge_irrelevant` showing CP edge contributes nothing to WLM
+
+### Changed
+- **Coreference.lean**: fix vacuous `rExpressionFree` (was always `true`) to actually check Condition C via `subjectCCommandsObject`; fix `computeCoreferenceStatus` for R-expression objects (return `.blocked` when pronoun subject c-commands)
+
 ## [0.229.722] - 2026-04-13
 
 ### Changed

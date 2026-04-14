@@ -749,6 +749,12 @@ theorem verbalizers_are_dominant :
     verbM_GT.dominance.isDominant = true ∧
     verbMH_GT.dominance.isDominant = true := ⟨rfl, rfl⟩
 
+/-- Mwaghavul verbalisers are dominant at the abstract prosodic level,
+    bridging GT-specific and cross-domain classifications. -/
+theorem verbalizers_prosodic_dominant :
+    verbM_GT.dominance.toProsodicDominance = .dominant ∧
+    verbMH_GT.dominance.toProsodicDominance = .dominant := ⟨rfl, rfl⟩
+
 /-- The verbaliser-to-root relationship satisfies the dominant GT
     asymmetry, **derived from CoP-scope**: the verbaliser is in Spec
     position (dependent), the ideophone root is in Head position.

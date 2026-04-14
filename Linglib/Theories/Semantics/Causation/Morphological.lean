@@ -1,3 +1,4 @@
+import Mathlib.Order.Nat
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
 import Linglib.Theories.Semantics.Lexical.Verb.AgentivityLattice
@@ -174,27 +175,13 @@ inductive CausativeComplexity where
   | periphrastic
   deriving DecidableEq, Repr
 
-instance : LT CausativeComplexity where
-  lt a b := match a, b with
-    | .lexical, .morphological => True
-    | .lexical, .periphrastic => True
-    | .morphological, .periphrastic => True
-    | _, _ => False
+/-- Numeric encoding: lexical (0) < morphological (1) < periphrastic (2). -/
+def CausativeComplexity.toNat : CausativeComplexity → Nat
+  | .lexical => 0 | .morphological => 1 | .periphrastic => 2
 
-instance : LE CausativeComplexity where
-  le a b := a = b ∨ a < b
-
-instance (a b : CausativeComplexity) : Decidable (a < b) :=
-  match a, b with
-  | .lexical, .morphological => isTrue trivial
-  | .lexical, .periphrastic => isTrue trivial
-  | .morphological, .periphrastic => isTrue trivial
-  | .lexical, .lexical => isFalse (fun h => h)
-  | .morphological, .lexical => isFalse (fun h => h)
-  | .morphological, .morphological => isFalse (fun h => h)
-  | .periphrastic, .lexical => isFalse (fun h => h)
-  | .periphrastic, .morphological => isFalse (fun h => h)
-  | .periphrastic, .periphrastic => isFalse (fun h => h)
+instance : LinearOrder CausativeComplexity :=
+  LinearOrder.lift' CausativeComplexity.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [CausativeComplexity.toNat])
 
 -- ════════════════════════════════════════════════════
 -- § 5. Causative Construction

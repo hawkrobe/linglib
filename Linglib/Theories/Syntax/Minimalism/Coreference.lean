@@ -189,14 +189,27 @@ def pronounLocallyFree (clause : SimpleClause) : Bool :=
       !(subjectCCommandsObject clause && sameLocalDomain clause)
     | _ => true
 
-/-- Principle C: R-expressions must be free everywhere -/
+/-- Principle C: R-expressions must be free everywhere.
+
+    An R-expression is free iff no coreferential pronoun c-commands it.
+    In a simple clause `{subj, {verb, obj}}`, a pronominal subject
+    c-commands the object (via tree-relative `cCommandsInB`), so
+    subject–object coreference with an R-expression object is blocked.
+
+    Note: WLM (@cite{takahashi-hulsey-2009}, @cite{gong-2022}) can
+    bleed Condition C by merging the NP restrictor at a chain position
+    above the binder. This function checks the *surface* tree; the
+    WLM escape is modeled via `wlmAvoidsCondC` in `LateMerger.lean`. -/
 def rExpressionFree (clause : SimpleClause) : Bool :=
   match classifyNominal clause.subject with
   | some .pronoun =>
     match clause.object with
     | some obj =>
       match classifyNominal obj with
-      | some .rExpression => true
+      | some .rExpression =>
+        -- Condition C: R-expression object must NOT be c-commanded
+        -- by the coreferential pronominal subject
+        !(subjectCCommandsObject clause)
       | _ => true
     | none => true
   | _ => true
@@ -251,7 +264,12 @@ def computeCoreferenceStatus (clause : SimpleClause) (i j : Nat) : Interfaces.Co
         if subjectCCommandsObject clause && sameLocalDomain clause
         then .blocked
         else .possible
-      | some .rExpression => .possible
+      | some .rExpression =>
+        -- Condition C: pronoun subject c-commanding R-expression object
+        -- blocks coreference (the R-expression is not free)
+        if subjectCCommandsObject clause
+        then .blocked
+        else .possible
       | none => .unspecified
   else if i == 2 && j == 0 then
     -- Object→subject: does the object c-command the subject?

@@ -57,8 +57,7 @@ the case-marking facts, making no claims about phrase structure.
 namespace Phenomena.WordOrder.Studies.Shieber1985
 
 open Core (FormalLanguageType Case)
-open Phenomena.WordOrder.CrossSerial (DependencyPattern crossSerialRequires
-  nestedRequires)
+open Phenomena.WordOrder.CrossSerial (crossSerialRequires nestedRequires)
 open Fragments.SwissGerman.Case (CrossSerialVerb verbObjectCase)
 
 -- ============================================================================

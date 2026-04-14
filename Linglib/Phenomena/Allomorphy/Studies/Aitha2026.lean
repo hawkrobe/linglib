@@ -750,10 +750,9 @@ theorem hasACC_eq_isNonnom (c : TeluguCase) :
     c.hasACC = isNonnom c.toCore := by
   cases c <;> rfl
 
-/-- The Telugu 5-case inventory is contiguous on Blake's typological
-    hierarchy (@cite{blake-1994}). -/
-theorem telugu_inventory_valid :
-    Core.validInventory [.nom, .acc, .gen, .dat, .loc] = true := by native_decide
+-- The Telugu 5-case inventory is contiguous on Blake's typological
+-- hierarchy (@cite{blake-1994}).
+#guard Core.validInventory [.nom, .acc, .gen, .dat, .loc]
 
 /-- The strong alternation pattern derived from VI output matches the
     `strongAllomorphyPattern` used for the *ABA check.

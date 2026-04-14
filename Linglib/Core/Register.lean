@@ -62,23 +62,9 @@ def Level.fromNat : Nat → Level
   | _ => .formal
 
 /-- Ordering: informal < neutral < formal. -/
-instance : Ord Level where
-  compare a b := compare a.toNat b.toNat
-
-instance : LT Level where
-  lt a b := a.toNat < b.toNat
-
-instance : LE Level where
-  le a b := a.toNat ≤ b.toNat
-
-instance (a b : Level) : Decidable (a < b) := Nat.decLt a.toNat b.toNat
-instance (a b : Level) : Decidable (a ≤ b) := Nat.decLe a.toNat b.toNat
-
-/-- `toNat` is injective: distinct levels have distinct ranks. Combined with
-    the fact that `LT`/`LE` are defined via `toNat`, this subsumes all pairwise
-    ordering facts (e.g., `informal < neutral`) by `Nat.lt` on the images. -/
-theorem Level.toNat_injective (a b : Level) (h : a.toNat = b.toNat) : a = b := by
-  cases a <;> cases b <;> simp_all [Level.toNat]
+instance : LinearOrder Level :=
+  LinearOrder.lift' Level.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [Level.toNat])
 
 /-- Round-trip: `ofNat` inverts `toNat`. -/
 theorem ofNat_toNat (l : Level) : Level.fromNat l.toNat = l := by cases l <;> decide

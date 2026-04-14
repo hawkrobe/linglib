@@ -384,7 +384,7 @@ structure UniversalsSimplicityRanking where
 theorem domain_restriction_preserves_conservativity :
     ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity]
       (C : DomainRestrictor m.Entity),
-    PConservative (λ R S => q.gqDenotation m (λ x => C x = true ∧ R x) S) := by
+    PConservative (λ R S => q.gqDenotation m (λ x => C x ∧ R x) S) := by
   intro q m inst C
   exact conservative_domain_restricted (conservativity_universal q m)
 

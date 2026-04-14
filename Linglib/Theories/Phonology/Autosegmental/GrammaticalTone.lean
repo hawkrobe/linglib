@@ -1,3 +1,4 @@
+import Linglib.Core.Prosody
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 
 /-!
@@ -137,6 +138,12 @@ inductive GTOperation where
     interaction between trigger-sponsor and target-host tonal values
     (@cite{rolle-2018} §3.1, Table 2).
 
+    This is the tonal instantiation of `Core.Prosody.ProsodicDominance`,
+    which captures the abstract dominant/recessive/neutral distinction
+    across both accentual and tonal morphology. The GT-specific split
+    of dominant into replacive vs subtractive reflects whether the
+    trigger provides a replacement melody or just deletes the base tone.
+
     Dominance is a **lexical idiosyncrasy** of the trigger: it cannot
     be predicted from segmental or prosodic properties, the markedness
     of the grammatical tune, or the morphosyntactic position of the
@@ -199,6 +206,21 @@ def GTDominance.isDominant : GTDominance → Bool
 /-- Non-dominant GT preserves the lexical tonal contrast: the output
     differs depending on whether the target is valued or unvalued. -/
 def GTDominance.isNonDominant (d : GTDominance) : Bool := !d.isDominant
+
+open Core.Prosody (ProsodicDominance)
+
+/-- Collapse the GT-specific 4-way dominance to the abstract 3-way.
+    Both replacive and subtractive dominant map to `ProsodicDominance.dominant`. -/
+def GTDominance.toProsodicDominance : GTDominance → ProsodicDominance
+  | .replaciveDominant   => .dominant
+  | .subtractiveDominant => .dominant
+  | .recessive           => .recessive
+  | .neutral             => .neutral
+
+/-- The collapse preserves the dominant/non-dominant boundary. -/
+theorem GTDominance.toProsodicDominance_preserves_isDominant (d : GTDominance) :
+    d.toProsodicDominance.isDominant = d.isDominant := by
+  cases d <;> rfl
 
 -- ============================================================================
 -- § 5: GT Level (@cite{hyman-etal-2021})

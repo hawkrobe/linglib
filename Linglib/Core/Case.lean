@@ -1,3 +1,5 @@
+import Mathlib.Order.Nat
+
 /-!
 # Case
 @cite{blake-1994} @cite{anderson-jm-2006} @cite{stassen-1985}
@@ -429,17 +431,9 @@ def CaseGramStage.boundedness : CaseGramStage → Nat
   | .caseAffix  => 2
   | .lost       => 3
 
-instance : LE CaseGramStage where
-  le a b := a.boundedness ≤ b.boundedness
-
-instance : LT CaseGramStage where
-  lt a b := a.boundedness < b.boundedness
-
-instance (a b : CaseGramStage) : Decidable (a ≤ b) :=
-  inferInstanceAs (Decidable (a.boundedness ≤ b.boundedness))
-
-instance (a b : CaseGramStage) : Decidable (a < b) :=
-  inferInstanceAs (Decidable (a.boundedness < b.boundedness))
+instance : LinearOrder CaseGramStage :=
+  LinearOrder.lift' CaseGramStage.boundedness
+    (fun a b h => by cases a <;> cases b <;> simp_all [CaseGramStage.boundedness])
 
 theorem caseGramCline_ordered :
     CaseGramStage.lexical < CaseGramStage.adposition ∧

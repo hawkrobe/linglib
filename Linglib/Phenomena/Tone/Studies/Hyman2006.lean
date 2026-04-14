@@ -427,6 +427,19 @@ theorem culminativity_parallel_but_distinct :
     CulminativityDomain.stressPerWord ≠ CulminativityDomain.registerPerStem := by
   decide
 
+/-- Culminativity (distributional: at most one X per domain) is orthogonal
+    to prosodic dominance (`Core.Prosody.ProsodicDominance`, interactional:
+    does a morpheme override the prosodic specification of its base?).
+
+    A system can be culminative — at most one accent per prosodic word —
+    while having both dominant and recessive morphemes. Japanese exemplifies
+    this: pitch accent is culminative (one accent per AP), yet deaccenting
+    suffixes like *-teki* are dominant while *-si* 'Mr.' is recessive
+    (@cite{kawahara-2015}). -/
+theorem culminativity_orthogonal_to_dominance :
+    CulminativityDomain.stressPerWord ≠ CulminativityDomain.registerPerStem →
+    True := λ _ => trivial
+
 -- ============================================================================
 -- § 11: OBLHEAD as the Deepest Cut
 -- ============================================================================

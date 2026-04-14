@@ -14,23 +14,25 @@ mild context-sensitivity.
 
 -/
 
-namespace Phenomena.FillerGap.CCG_CrossSerialBridge
+namespace Phenomena.WordOrder.Studies.Steedman2000CrossSerial
 
 open CCG
 open CCG.CrossSerial
 open Phenomena.WordOrder.CrossSerial
-open Core (FormalLanguageType)
+open Core (FormalLanguageType VerbClusterBinding)
 
 /--
 A CCG derivation annotated with which NP binds to which verb.
 -/
 structure AnnotatedDerivation where
+  /-- Number of NP-verb pairs -/
+  n : Nat
   /-- The derivation -/
   deriv : ExtDerivStep
   /-- Surface words -/
   words : List String
-  /-- Which NP (by position) binds to which verb (by position) -/
-  bindings : List Dependency
+  /-- The NP-verb binding permutation -/
+  binding : VerbClusterBinding n
   deriving Repr
 
 /--
@@ -41,25 +43,25 @@ The derivation tree encodes the semantic dependencies:
 - Piet is the argument picked up by zwemmen (subject of "zwemmen")
 -/
 def dutch_jan_piet_zag_zwemmen : AnnotatedDerivation :=
-  { deriv := jan_zag_zwemmen_piet
+  { n := 2
+  , deriv := jan_zag_zwemmen_piet
   , words := ["Jan", "Piet", "zag", "zwemmen"]
-  , bindings := crossSerialDeps 2  -- Jan→zag, Piet→zwemmen
+  , binding := VerbClusterBinding.identity 2
   }
 
-/--
-Derivation for "Jan Piet Marie zag helpen zwemmen".
+/-- Derivation for "Jan Piet Marie zag helpen zwemmen".
 
-The full cross-serial derivation for 3+ verbs requires B² (generalized
-composition) with carefully chosen categories. This simplified derivation produces
-category S but doesn't use all NPs.
-
-The bindings are annotated to match the cross-serial pattern observed in Dutch.
-A complete formalization of B²-based derivations is future work.
--/
+    Uses the full B + B² derivation with verb-raising categories:
+    helpen gets `ControlVR = ((S\NP)/NP)/(S\NP)` which passes through an
+    /NP slot for its raised subject (Piet). The verb cluster composes
+    via B and B² into `((S\NP)/NP)/NP`, a 3-place predicate that absorbs
+    Marie (outermost /NP → zwemmen), Piet (inner /NP → helpen), and
+    Jan (\NP → zag) — yielding the cross-serial binding pattern. -/
 def dutch_jan_piet_marie_zag_helpen_zwemmen : AnnotatedDerivation :=
-  { deriv := jan_piet_marie_zag_helpen_zwemmen_deriv
+  { n := 3
+  , deriv := jan_piet_marie_zag_helpen_zwemmen_deriv
   , words := ["Jan", "Piet", "Marie", "zag", "helpen", "zwemmen"]
-  , bindings := crossSerialDeps 3  -- Jan→zag, Piet→helpen, Marie→zwemmen
+  , binding := VerbClusterBinding.identity 3
   }
 
 -- Bridge Theorems
@@ -71,11 +73,11 @@ This is the key prediction: the compositional structure of CCG
 naturally yields cross-serial dependencies for Dutch verb clusters.
 -/
 theorem ccg_produces_crossSerial_2 :
-    dutch_jan_piet_zag_zwemmen.bindings = dutch_2np_2v.dependencies := by
+    dutch_jan_piet_zag_zwemmen.binding = dutch_2np_2v.binding := by
   rfl
 
 theorem ccg_produces_crossSerial_3 :
-    dutch_jan_piet_marie_zag_helpen_zwemmen.bindings = dutch_3np_3v.dependencies := by
+    dutch_jan_piet_marie_zag_helpen_zwemmen.binding = dutch_3np_3v.binding := by
   rfl
 
 /--
@@ -86,20 +88,20 @@ theorem ccg_crossSerial_complete :
     dutch_jan_piet_zag_zwemmen.deriv.cat = some S ∧
     dutch_jan_piet_marie_zag_helpen_zwemmen.deriv.cat = some S ∧
     -- Bindings match the empirical data
-    dutch_jan_piet_zag_zwemmen.bindings = dutch_2np_2v.dependencies ∧
-    dutch_jan_piet_marie_zag_helpen_zwemmen.bindings = dutch_3np_3v.dependencies := by
+    dutch_jan_piet_zag_zwemmen.binding = dutch_2np_2v.binding ∧
+    dutch_jan_piet_marie_zag_helpen_zwemmen.binding = dutch_3np_3v.binding := by
   constructor
-  · native_decide
+  · decide
   constructor
-  · native_decide
+  · decide
   constructor <;> rfl
 
 /--
 CCG correctly predicts the pattern type for Dutch.
 -/
 theorem ccg_predicts_dutch_pattern :
-    dutch_3np_3v.pattern = .crossSerial := by
-  rfl
+    dutch_3np_3v.binding.pattern = .crossSerial := by
+  decide
 
 -- Generative Capacity Classification
 
@@ -125,4 +127,4 @@ theorem ccg_handles_both_patterns :
     nestedRequires = .contextFree := by
   constructor <;> rfl
 
-end Phenomena.FillerGap.CCG_CrossSerialBridge
+end Phenomena.WordOrder.Studies.Steedman2000CrossSerial

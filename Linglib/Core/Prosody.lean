@@ -1,3 +1,5 @@
+import Mathlib.Order.Nat
+
 /-!
 # Core.Prosody
 @cite{pierrehumbert-1980} @cite{beckman-pierrehumbert-1986}
@@ -139,13 +141,15 @@ inductive ProsodicLevel where
   | AP  -- accentual phrase (@cite{beckman-pierrehumbert-1986})
   | φ   -- phonological phrase / intermediate phrase (ip)
   | ι   -- intonational phrase
-  deriving DecidableEq, Repr, Ord
+  deriving DecidableEq, Repr
 
-instance : LT ProsodicLevel where
-  lt a b := a.ctorIdx < b.ctorIdx
+/-- Numeric encoding for the prosodic hierarchy ordering. -/
+def ProsodicLevel.toNat : ProsodicLevel → Nat
+  | .σ => 0 | .f => 1 | .ω => 2 | .AP => 3 | .φ => 4 | .ι => 5
 
-instance : LE ProsodicLevel where
-  le a b := a.ctorIdx ≤ b.ctorIdx
+instance : LinearOrder ProsodicLevel :=
+  LinearOrder.lift' ProsodicLevel.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [ProsodicLevel.toNat])
 
 /-- Head-prominence: each prosodic constituent has exactly one
     prominent daughter (its head). K&S (32). -/
@@ -175,5 +179,71 @@ inductive AccentSpecification where
   | lexical      -- location lexically distinctive, shape fixed
   | postlexical  -- shape intonationally distinctive, location by prominence
   deriving Repr, DecidableEq
+
+-- ============================================================================
+-- § 5: Morpheme-Level Prosodic Dominance
+-- ============================================================================
+
+/--
+How a morpheme interacts with the prosodic specification of its base.
+@cite{kiparsky-halle-1977} @cite{rolle-2018}
+
+Orthogonal to `AccentSpecification`, which classifies word-level accent
+determination (how is the accent *location* decided?). `ProsodicDominance`
+classifies morpheme-level prosodic *interaction* (does this morpheme
+override the base's accent/tone, or respect it?).
+
+The dominant/recessive distinction originates in the accentual morpheme
+classes of @cite{kiparsky-halle-1977} (deaccenting vs non-deaccenting
+suffixes in IE) and was generalized to tonal morphology by
+@cite{rolle-2018} as the GT dominance typology.
+
+- `dominant`: overrides the prosodic specification of the base.
+  Accent: Japanese *-teki* removes stem accent (@cite{kawahara-2015}).
+  Tone: Mwaghavul verbalisers replace base melody
+  (@cite{akinbo-fwangwar-2026}).
+- `recessive`: applies only when the base is prosodically unmarked.
+  Accent: Japanese *-si* 'Mr.' preserves stem accent.
+  Tone: Giphende floating tones dock only to unvalued TBUs.
+- `neutral`: concatenates without prosodic interaction; the general
+  phonological grammar determines the output.
+  Tone: Hausa referential *-ⁿn* (@cite{rolle-2018}).
+-/
+inductive ProsodicDominance where
+  | dominant   -- overrides base prosody
+  | recessive  -- respects base prosody when present
+  | neutral    -- no prosodic interaction
+  deriving Repr, DecidableEq
+
+/-- Dominant morphemes override the prosodic specification of their base. -/
+def ProsodicDominance.isDominant : ProsodicDominance → Bool
+  | .dominant => true
+  | .recessive | .neutral => false
+
+/-- Combine a base accent with a suffix's prosodic dominance.
+
+    The accent position (`Option Nat`) represents a mora- or
+    syllable-indexed accent; `none` = unaccented.
+
+    - `dominant`: accent is removed regardless of input.
+    - `recessive` / `neutral`: base accent is preserved. -/
+def ProsodicDominance.combineAccent
+    (baseAccent : Option Nat) : ProsodicDominance → Option Nat
+  | .dominant  => none
+  | .recessive => baseAccent
+  | .neutral   => baseAccent
+
+/-- **Transparadigmatic uniformity** (@cite{rolle-2018}): dominant
+    morphemes produce the same output regardless of whether the base
+    is accented or unaccented. This is the defining property of
+    dominance — it neutralizes the base contrast. -/
+theorem ProsodicDominance.dominant_neutralizes (a₁ a₂ : Option Nat) :
+    ProsodicDominance.combineAccent a₁ .dominant =
+    ProsodicDominance.combineAccent a₂ .dominant := rfl
+
+/-- Recessive morphemes preserve the base contrast: an accented base
+    stays accented, an unaccented base stays unaccented. -/
+theorem ProsodicDominance.recessive_preserves (a : Option Nat) :
+    ProsodicDominance.combineAccent a .recessive = a := rfl
 
 end Core.Prosody

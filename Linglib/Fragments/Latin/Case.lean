@@ -49,8 +49,7 @@ theorem core_inventory_fails_strict :
 def inventoryWithLocative : List Core.Case :=
   [.nom, .acc, .gen, .dat, .loc, .abl]
 
-theorem inventory_with_loc_valid :
-    Core.validInventory inventoryWithLocative = true := by native_decide
+#guard Core.validInventory inventoryWithLocative
 
 -- ============================================================================
 -- § 2: Syncretism Patterns (@cite{blake-1994}, pp. 19–24)
