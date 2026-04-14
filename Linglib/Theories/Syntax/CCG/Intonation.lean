@@ -1,4 +1,8 @@
-/-
+import Linglib.Theories.Syntax.CCG.Core.Basic
+import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.Prosody
+
+/-!
 # CCG Intonation and Information Structure
 
 @cite{steedman-2000}'s theory of how prosodic structure aligns with CCG derivations.
@@ -18,14 +22,11 @@ Intonation selects among these:
 ## Prosodic Marking
 
 - Pitch accents (H*, L+H*): Mark focus/contrast at word level
-- Boundary tones (L, LH%, LL%): Mark prosodic phrase edges
+- Terminal contours (phrase accent + boundary tone): Mark prosodic phrase edges
+  (@cite{beckman-pierrehumbert-1986} §4)
 - Information feature (theta/rho): Projects theme/rheme through derivation
 
 -/
-
-import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Core.Discourse.InformationStructure
-import Linglib.Core.Prosody
 
 namespace CCG.Intonation
 
@@ -97,6 +98,7 @@ The pitch accent determines the INFORMATION feature:
 - H* → ρ (rheme)
 - L+H* → θ (theme)
 - null → unmarked
+- Other accents → ρ (default to rheme for non-theme accents)
 -/
 structure ProsodicLexEntry where
   form : String
@@ -107,38 +109,38 @@ structure ProsodicLexEntry where
 /-- Get the prosodic category from a lexical entry -/
 def ProsodicLexEntry.prosodicCat (e : ProsodicLexEntry) : ProsodicCat :=
   let info := match e.accent with
-    | .H_star => .ρ
     | .L_plus_H_star => .θ
     | .null => .unmarked
+    | _ => .ρ  -- H*, L*, H*+L, H+L*, L*+H all mark rheme
   ⟨e.cat, info⟩
 
 -- Intonational Tunes
 
 /--
-An intonational tune: pitch accent + boundary.
+An intonational tune: pitch accent + terminal contour.
 
-The two main tunes in English:
-- L+H* LH%: Theme tune (fall-rise)
-- H* LL%: Rheme tune (fall)
+The two main tunes in English (@cite{steedman-2000}):
+- L+H* L H%: Theme tune (fall-rise)
+- H* L L%: Rheme tune (fall)
 -/
 structure Tune where
   accent : PitchAccent
-  boundary : BoundaryTone
+  terminal : TerminalContour
   deriving Repr, DecidableEq
 
-/-- The canonical theme tune -/
-def themeTune : Tune := ⟨.L_plus_H_star, .LH_pct⟩
+/-- The canonical theme tune: L+H* with continuation rise (L H%) -/
+def themeTune : Tune := ⟨.L_plus_H_star, .continuation⟩
 
-/-- The canonical rheme tune -/
-def rhemeTune : Tune := ⟨.H_star, .LL_pct⟩
+/-- The canonical rheme tune: H* with declarative fall (L L%) -/
+def rhemeTune : Tune := ⟨.H_star, .declarative⟩
 
 /-- Is this a theme tune? -/
 def Tune.isTheme (t : Tune) : Bool :=
-  t.accent == .L_plus_H_star && t.boundary == .LH_pct
+  t.accent == .L_plus_H_star && t.terminal == .continuation
 
 /-- Is this a rheme tune? -/
 def Tune.isRheme (t : Tune) : Bool :=
-  t.accent == .H_star && t.boundary == .LL_pct
+  t.accent == .H_star && t.terminal == .declarative
 
 -- Prosodic Combination Rules
 
@@ -182,10 +184,10 @@ def prosodicForwardComp : ProsodicCat → ProsodicCat → Option ProsodicCat
   | _, _ => none
 
 /--
-Apply a boundary tone to a prosodic category.
+Apply a terminal contour to a prosodic category.
 Converts θ/ρ marking to φ (phrasal).
 -/
-def applyBoundary : ProsodicCat → BoundaryTone → ProsodicCat
+def applyBoundary : ProsodicCat → TerminalContour → ProsodicCat
   | ⟨cat, info⟩, _ =>
     match info with
     | .θ | .ρ | .unmarked => ⟨cat, .φ⟩
@@ -204,7 +206,7 @@ inductive ProsodicDeriv where
   | fcomp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
   | bcomp : ProsodicDeriv → ProsodicDeriv → ProsodicDeriv
   | ftr : ProsodicDeriv → Cat → ProsodicDeriv  -- forward type-raise
-  | boundary : ProsodicDeriv → BoundaryTone → ProsodicDeriv
+  | boundary : ProsodicDeriv → TerminalContour → ProsodicDeriv
   deriving Repr
 
 /-- Get the prosodic category of a derivation -/
@@ -226,14 +228,14 @@ def ProsodicDeriv.prosodicCat : ProsodicDeriv → Option ProsodicCat
   | .ftr d t => do
     let ⟨x, i⟩ ← d.prosodicCat
     some ⟨forwardTypeRaise x t, i⟩
-  | .boundary d b => do
+  | .boundary d tc => do
     let c ← d.prosodicCat
-    some (applyBoundary c b)
+    some (applyBoundary c tc)
 
 -- Information Structure Extraction
 
 /--
-A prosodic phrase: a derivation with a boundary tone applied.
+A prosodic phrase: a derivation with a terminal contour applied.
 -/
 structure ProsodicPhrase where
   deriv : ProsodicDeriv
@@ -243,8 +245,8 @@ structure ProsodicPhrase where
 /--
 Extract Information Structure from a sequence of prosodic phrases.
 
-The phrase with theme tune (L+H* LH%) becomes the theme.
-The phrase with rheme tune (H* LL%) becomes the rheme.
+The phrase with theme tune (L+H* L H%) becomes the theme.
+The phrase with rheme tune (H* L L%) becomes the rheme.
 -/
 def extractInfoStructure (phrases : List ProsodicPhrase)
     : Option (InfoStructure (ProsodicDeriv)) :=
@@ -288,10 +290,10 @@ Derivation:
 2. Type-raise: NPθ → Sθ/(Sθ\NPθ)
 3. ate: (S\NP)/NP with null → unifies to θ
 4. Compose: Sθ/(Sθ\NPθ) + (Sθ\NPθ)/NPθ → Sθ/NPθ
-5. Boundary LH%: Sθ/NPθ → Sφ/NPφ (theme phrase)
+5. Boundary L H%: Sθ/NPθ → Sφ/NPφ (theme phrase)
 
 6. the BEANS: NP with H* → NPρ
-7. Boundary LL%: NPρ → NPφ (rheme phrase)
+7. Boundary L L%: NPρ → NPφ (rheme phrase)
 
 8. Apply: Sφ/NPφ + NPφ → Sφ
 -/
@@ -305,11 +307,11 @@ def beans_H : ProsodicLexEntry := ⟨"beans", N, .H_star⟩
 -- Derivation of theme "FRED ate"
 def fred_tr : ProsodicDeriv := .ftr (.lex fred_L) S
 def fred_ate : ProsodicDeriv := .fcomp fred_tr (.lex ate_null)
-def fred_ate_phrase : ProsodicDeriv := .boundary fred_ate .LH_pct
+def fred_ate_phrase : ProsodicDeriv := .boundary fred_ate .continuation
 
 -- Derivation of rheme "the BEANS"
 def the_beans : ProsodicDeriv := .fapp (.lex the_null) (.lex beans_H)
-def the_beans_phrase : ProsodicDeriv := .boundary the_beans .LL_pct
+def the_beans_phrase : ProsodicDeriv := .boundary the_beans .declarative
 
 -- Example: "(ANNA married) (MANNY)" from Steedman Ch. 5
 
@@ -317,20 +319,19 @@ def anna_L : ProsodicLexEntry := ⟨"Anna", NP, .L_plus_H_star⟩
 def married_null : ProsodicLexEntry := ⟨"married", TV, .null⟩
 def manny_H : ProsodicLexEntry := ⟨"Manny", NP, .H_star⟩
 
--- Theme: "ANNA married" (L+H* LH%)
+-- Theme: "ANNA married" (L+H* L H%)
 def anna_tr : ProsodicDeriv := .ftr (.lex anna_L) S
 def anna_married : ProsodicDeriv := .fcomp anna_tr (.lex married_null)
-def anna_married_theme : ProsodicPhrase := ⟨.boundary anna_married .LH_pct, themeTune⟩
+def anna_married_theme : ProsodicPhrase := ⟨.boundary anna_married .continuation, themeTune⟩
 
--- Rheme: "MANNY" (H* LL%)
-def manny_rheme : ProsodicPhrase := ⟨.boundary (.lex manny_H) .LL_pct, rhemeTune⟩
+-- Rheme: "MANNY" (H* L L%)
+def manny_rheme : ProsodicPhrase := ⟨.boundary (.lex manny_H) .declarative, rhemeTune⟩
 
 -- Full utterance
 def anna_married_manny : List ProsodicPhrase := [anna_married_theme, manny_rheme]
 
 -- Extract Information Structure
 -- #eval extractInfoStructure anna_married_manny
--- (uncomment after adding Repr instance to InfoStructure)
 -- Theme: "Anna married _" (λx. married x anna)
 -- Rheme: "Manny"
 

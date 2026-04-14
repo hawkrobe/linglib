@@ -1,5 +1,40 @@
 # Changelog
 
+## [0.229.716] - 2026-04-13
+
+### Added
+- **Matthewson 2016** (`Phenomena/Modality/Studies/Matthewson2016.lean`): formalize 7 core contributions — three-way background classification, Gitksan three-way split, absolute epistemic/circumstantial split, modals without duals, flavour–force correlation, temporal orientation, Nauze's SAV universal; Hacquard content licensing bridge (§8); force consistency theorems; modal inventories
+- **St'át'imcets fragment** (`Fragments/Statimcets/Modals.lean`): =ka (variable-force deontic) + ka-...-a (ability circumfix)
+- **Nez Perce fragment** (`Fragments/NezPerce/Modals.lean`): o'qa (strengthened possibility modal)
+- **Niuean fragment** (`Fragments/Niuean/Modals.lean`): liga (variable-force epistemic) + maeke/lata (circumstantial dual pair)
+- `ForcePattern` + `inferForcePattern` in Typology.lean: derivable force classification from meaning; `ForceAnalysis.isConsistentWith` verifies stipulations
+- `BackgroundClass` bridge in Kratzer/Flavor.lean: `toBackgroundClass` on each flavor structure
+- `ProjectionMode`, `BackgroundClass`, `ForceAnalysis` types in ModalTypes.lean
+- Gitksan `forceAnalysis`, `backgroundClass`, `TemporalOrientation`, `requiresDim` infrastructure
+- Bibliography: matthewson-2016, matthewson-et-al-2012, deal-2011, rullmann-matthewson-davis-2008, peterson-2010, seiter-1980
+
+### Changed
+- Standardize `forceAnalysis`/`backgroundClass` to function pattern (`ModalExpression → ...`) in Niuean and Nez Perce (was per-modal constants)
+- Remove unused `ModalItem.sharesForce` and `ModalItem.sharesFlavor`
+- Fix docs build: add schema validation after genCore to prevent stale DB crashes
+
+## [0.229.715] - 2026-04-13
+
+### Added
+- **Johnston 2023 deep integration**: `pairListAnswer` functional assignment semantics (replaces stipulative `pairListSem`); `pairListAnswer_entails_leftCoverage`/`pairListAnswer_entails_cumulativeOp` entailment theorems; `JerseyWorld` Hamblin refinement bridge (`pairList_strictly_finer`: pair-list propositions distinguish worlds that cumulation conflates); scope bridge (`pairListScopeOK` derives subject-object asymmetry from DP-over-wh scope); epistemic bridge (`agentKnowsUnderParse` derives felicity of *wonder*/*discover* with embedded QPDs from parse type)
+- Bibliography: beck-sauerland-2000, chierchia-1993, roelofsen-uegaki-2016b; URL for srivastav-1992
+
+## [0.229.714] - 2026-04-13
+
+### Added
+- **Johnston 2023 pair-list with plural definites** (`Phenomena/Questions/Studies/Johnston2023.lean`): two-parse model for QPDs (cumulative vs genuine pair-list parse); basketball jersey argument; number effect; subject-object asymmetry; numeral modifier scope ambiguity; embedded QPD data; bridge theorems connecting `cumulativeOp` to question semantics
+- `singleton_right_left_coverage`, `singleton_right_cumulativeOp` theorems in `Cumulativity.lean`: when right argument is singleton, `**` reduces to universal quantification
+- Bibliography: johnston-2023, krifka-1992, srivastav-1992
+
+### Changed
+- `PairListFactors.pluralDefinite` field (default `false`) in `ScopeReadings.lean`: plural definites no longer block pair-list predictions, per Johnston 2023
+- Updated `predictPairList` comment: definiteness blocking applies to non-plural definites only
+
 ## [0.229.713] - 2026-04-13
 
 ### Added

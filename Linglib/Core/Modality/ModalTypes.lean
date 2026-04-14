@@ -169,25 +169,12 @@ def ForceFlavor.cartesianProduct (fos : List ModalForce) (fls : List ModalFlavor
 
     Unifies `AuxEntry.{form, modalMeaning, register}`,
     `ModalAdvEntry.{form, modalMeaning, register}`, and
-    `ModalExpression.{form, meaning}` under a common type.
-
-    This enables generic operations (e.g., `sharesForce`, concord checks)
-    that work across syntactic categories. -/
+    `ModalExpression.{form, meaning}` under a common type. -/
 structure ModalItem where
   form : String
   meaning : List ForceFlavor
   register : Core.Register.Level := .neutral
   deriving Repr, BEq
-
-/-- Two modal items share force if at least one ForceFlavor pair in each
-    has the same force (exact match). -/
-def ModalItem.sharesForce (a b : ModalItem) : Bool :=
-  a.meaning.any fun ff1 => b.meaning.any fun ff2 => ff1.force == ff2.force
-
-/-- Two modal items share flavor if at least one ForceFlavor pair in each
-    has the same flavor. -/
-def ModalItem.sharesFlavor (a b : ModalItem) : Bool :=
-  a.meaning.any fun ff1 => b.meaning.any fun ff2 => ff1.flavor == ff2.flavor
 
 /-- Two modal items are register variants if they differ in register. -/
 def ModalItem.areRegisterVariants (a b : ModalItem) : Bool :=
@@ -323,5 +310,149 @@ theorem singleton_decomposable (ff : ForceFlavor) :
 theorem cross_cutting_is_unitary :
     (({ form := "m", meaning := [⟨.necessity, .epistemic⟩, ⟨.possibility, .deontic⟩] } : ModalItem)).isUnitary = true := by
   native_decide
+
+-- ============================================================================
+-- §8. Projection Modes (Kratzer 2012)
+-- ============================================================================
+
+/-- Mode of projecting conversational backgrounds.
+    @cite{kratzer-2012} replaces the traditional epistemic/circumstantial
+    dichotomy with a distinction between **factual** and **content** modes:
+
+    - **Factual**: the modal quantifies over worlds containing a counterpart
+      of some actual-world situation or body of evidence. The actual world
+      is always among the accessible worlds (`w ∈ ∩f(w)`).
+    - **Content**: the modal quantifies over worlds compatible with the
+      propositional content of some information source (rumour, report,
+      sensory evidence). The actual world need not be accessible — the
+      speaker can disbelieve the content.
+
+    @cite{matthewson-2016}: Table 18.2.
+
+    The old circumstantial class is entirely factual. The old epistemic
+    class splits: factual epistemics (inferential, based on situation
+    counterparts) vs. content epistemics (reportative, based on
+    propositional content). -/
+inductive ProjectionMode where
+  | factual   -- Counterparts of actual-world situation/evidence
+  | content   -- Propositional content of information source
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+instance : ToString ProjectionMode where
+  toString | .factual => "factual" | .content => "content"
+
+/-- Three-way classification of conversational backgrounds.
+    @cite{matthewson-2016}: Table 18.3. Refines the traditional
+    epistemic/circumstantial binary into a three-way split based on
+    projection mode and whether information source is encoded.
+
+    - **factualCircumstantial**: factual mode, no information source encoded.
+      Covers deontic, bouletic, teleological, ability, pure circumstantial.
+      English: *can* (circumstantial), German: *können*.
+    - **factualEvidential**: factual mode, information source encoded.
+      The speaker cannot disbelieve the prejacent.
+      St'át'imcets: *k'a* (inferential), English: *must* (indirect evidence).
+    - **contentEvidential**: content mode, information source encoded.
+      The speaker can disbelieve the prejacent.
+      St'át'imcets: *lákw7a* (sensory non-visual), German: *sollen*. -/
+inductive BackgroundClass where
+  | factualCircumstantial  -- Factual, no info source (deontic, ability, circ)
+  | factualEvidential      -- Factual, info source encoded (inferential)
+  | contentEvidential      -- Content, info source encoded (reportative, sensory)
+  deriving DecidableEq, Repr, BEq, Inhabited
+
+instance : ToString BackgroundClass where
+  toString
+    | .factualCircumstantial => "fact-circ"
+    | .factualEvidential => "fact-evid"
+    | .contentEvidential => "cont-evid"
+
+/-- The projection mode of each background class. -/
+def BackgroundClass.projectionMode : BackgroundClass → ProjectionMode
+  | .factualCircumstantial => .factual
+  | .factualEvidential => .factual
+  | .contentEvidential => .content
+
+/-- Whether the background class encodes an information source. -/
+def BackgroundClass.encodesInfoSource : BackgroundClass → Bool
+  | .factualCircumstantial => false
+  | .factualEvidential => true
+  | .contentEvidential => true
+
+/-- Whether the speaker can disbelieve the prejacent under this class.
+    Only content-mode backgrounds allow speaker disbelief —
+    factual modes commit the speaker to the prejacent being compatible
+    with reality. -/
+def BackgroundClass.allowsSpeakerDisbelief : BackgroundClass → Bool
+  | .factualCircumstantial => false
+  | .factualEvidential => false
+  | .contentEvidential => true
+
+/-- The traditional epistemic/circumstantial classification that the
+    three-way split refines. -/
+def BackgroundClass.traditionalFlavor : BackgroundClass → ModalFlavor
+  | .factualCircumstantial => .circumstantial
+  | .factualEvidential => .epistemic
+  | .contentEvidential => .epistemic
+
+/-- Traditional circumstantial modals are always factual. -/
+theorem circumstantial_always_factual :
+    BackgroundClass.factualCircumstantial.projectionMode = .factual := rfl
+
+/-- Content-mode backgrounds always encode an information source. -/
+theorem content_encodes_info :
+    BackgroundClass.contentEvidential.encodesInfoSource = true := rfl
+
+/-- Speaker disbelief distinguishes the two epistemic subtypes. -/
+theorem factual_epistemic_no_disbelief :
+    BackgroundClass.factualEvidential.allowsSpeakerDisbelief = false := rfl
+
+theorem content_epistemic_allows_disbelief :
+    BackgroundClass.contentEvidential.allowsSpeakerDisbelief = true := rfl
+
+-- ============================================================================
+-- §9. Force Analysis (how modal force arises)
+-- ============================================================================
+
+/-- How a modal's quantificational force is determined.
+    Distinguishes three mechanisms that the `List ForceFlavor` encoding conflates:
+
+    - **fixed**: The modal lexically specifies a single force value.
+      English *must* (necessity), *can* (possibility).
+    - **variableForce**: The modal is semantically compatible with both
+      necessity and possibility contexts without being ambiguous.
+      Gitksan *ima('a)*, *gat* (@cite{matthewson-2013}).
+    - **strengthened**: The modal has a fixed base force (typically
+      possibility) but can receive strengthened readings in the absence
+      of a contrasting dual. Nez Perce *o'qa* (@cite{deal-2011}):
+      a possibility modal acceptable in necessity contexts because no
+      contrasting necessity modal triggers scalar implicature. -/
+inductive ForceAnalysis where
+  | fixed         : ModalForce → ForceAnalysis
+  | variableForce : ForceAnalysis
+  | strengthened  : ModalForce → ForceAnalysis  -- base force
+  deriving DecidableEq, Repr
+
+/-- Whether the modal has a necessity reading (semantically or pragmatically). -/
+def ForceAnalysis.admitsNecessity : ForceAnalysis → Bool
+  | .fixed .necessity | .fixed .weakNecessity => true
+  | .variableForce => true
+  | .strengthened _ => true   -- via pragmatic strengthening
+  | _ => false
+
+/-- Whether the modal has a possibility reading. -/
+def ForceAnalysis.admitsPossibility : ForceAnalysis → Bool
+  | .fixed .possibility => true
+  | .variableForce => true
+  | .strengthened .possibility => true
+  | _ => false
+
+/-- Whether the modal has a lexical dual (contrasting force partner).
+    @cite{matthewson-2016} §18.3.2: modals without duals do not come
+    in necessity–possibility pairs. -/
+def ForceAnalysis.hasDual : ForceAnalysis → Bool
+  | .fixed _ => true        -- presumes a dual exists in the language
+  | .variableForce => false -- variable-force modals lack duals by definition
+  | .strengthened _ => false -- strengthened precisely because no dual exists
 
 end Core.Modality

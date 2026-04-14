@@ -7,7 +7,7 @@ import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 
 Mwaghavul (ISO 639-3: sur, Glottocode: mwag1236) is an A3 West Chadic
 (Afro-Asiatic) language spoken by more than 700,000 people in Plateau State,
-Nigeria (@cite{crozier-blench-1992}, @cite{barnabas-2011}).
+Nigeria (@cite{crozier-blench-1992}).
 
 ## Tone system
 

@@ -93,6 +93,45 @@ theorem cumulativeOp_right_universal (R : A → B → Bool) (x : Finset A) (y : 
   simp only [cumulativeOp, Bool.and_eq_true, decide_eq_true_iff] at h
   exact h.2 b hb
 
+omit [DecidableEq A] [DecidableEq B] in
+/-- Left coverage with singleton right argument reduces to universal quantification.
+
+    When the right plurality has exactly one element y, left coverage
+    becomes: ∀a ∈ x. R(a, y).
+
+    This is one half of @cite{johnston-2023}'s "number effect": with a
+    singular object DP, the cumulative reading collapses to universal
+    distribution, eliminating the pairing uncertainty that motivates
+    over-informative elaboration. -/
+theorem singleton_right_left_coverage (R : A → B → Bool) (x : Finset A) (y : B) :
+    leftCoverage R x {y} = decide (∀ a ∈ x, R a y = true) := by
+  simp only [leftCoverage, decide_eq_decide]
+  constructor
+  · intro h a ha
+    obtain ⟨b, hb, hR⟩ := h a ha
+    rw [Finset.mem_singleton.mp hb] at hR; exact hR
+  · intro h a ha
+    exact ⟨y, Finset.mem_singleton.mpr rfl, h a ha⟩
+
+omit [DecidableEq A] [DecidableEq B] in
+/-- Full `**` with singleton right argument and nonempty left argument.
+
+    When `|Y| = 1` and `X` is nonempty, `**(R)(X, {y}) = ∀a ∈ X. R(a, y)`.
+    Right coverage is trivially satisfied by any witness from X. -/
+theorem singleton_right_cumulativeOp (R : A → B → Bool) (x : Finset A) (y : B)
+    (hne : x.Nonempty) :
+    cumulativeOp R x {y} = decide (∀ a ∈ x, R a y = true) := by
+  rw [cumulativeOp_eq_coverages, singleton_right_left_coverage]
+  cases hd : decide (∀ a ∈ x, R a y = true) with
+  | false => simp
+  | true =>
+    simp only [Bool.true_and]
+    rw [decide_eq_true_iff] at hd
+    simp only [rightCoverage, decide_eq_true_iff, Finset.mem_singleton]
+    intro b hb; rw [hb]
+    obtain ⟨a, ha⟩ := hne
+    exact ⟨a, ha, hd a ha⟩
+
 -- Example: "Elephants live in Africa and Asia"
 
 section ElephantExample

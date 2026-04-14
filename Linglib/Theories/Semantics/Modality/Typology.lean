@@ -321,6 +321,48 @@ theorem pathConnected_not_implies_iff :
           ⟨.necessity, .circumstantial⟩],
          by decide, by decide⟩
 
+/-! ## Force Pattern (derived from meaning)
+
+`ForcePattern` captures the observable force structure of a modal meaning:
+how many distinct forces appear, and whether there is a single flavor.
+This is derivable from the `List ForceFlavor` without theoretical
+stipulation. The per-fragment `ForceAnalysis` (which distinguishes
+`variableForce` from `strengthened`) adds an explanatory layer on top.
+
+`ForceAnalysis.isConsistentWith` verifies that the stipulated analysis
+is compatible with the observed pattern. -/
+
+/-- The observable force structure of a modal meaning. -/
+inductive ForcePattern where
+  /-- Meaning is empty. -/
+  | empty
+  /-- Single force value (possibly across multiple flavors). -/
+  | singleForce (f : ModalForce)
+  /-- Multiple distinct force values. -/
+  | multiForce
+  deriving DecidableEq, Repr
+
+/-- Derive the force pattern from a modal meaning. -/
+def inferForcePattern (m : List ForceFlavor) : ForcePattern :=
+  match forces m with
+  | [] => .empty
+  | [f] => .singleForce f
+  | _ => .multiForce
+
+open Core.Modality (ForceAnalysis)
+
+/-- A `ForceAnalysis` is consistent with the observed `ForcePattern` when:
+    - `fixed fo` requires `singleForce fo` (only one force attested)
+    - `variableForce` requires `multiForce` (both forces attested)
+    - `strengthened fo` requires `singleForce fo` (base semantics has one force;
+      strengthened readings are pragmatic and not encoded in the meaning) -/
+def ForceAnalysis.isConsistentWith : ForceAnalysis → ForcePattern → Bool
+  | .fixed fo, .singleForce fo' => fo == fo'
+  | .variableForce, .multiForce => true
+  | .strengthened fo, .singleForce fo' => fo == fo'
+  | _, .empty => true  -- vacuously consistent
+  | _, _ => false
+
 /-! ## Language-Level Measures -/
 
 /-- A modal expression datum: a form paired with its meaning in the 3×3 space. -/

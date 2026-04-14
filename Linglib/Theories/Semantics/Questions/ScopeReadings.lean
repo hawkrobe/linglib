@@ -462,7 +462,9 @@ theorem wideScope_existential_licenses_mentionSome {W E : Type*} [DecidableEq E]
 
 **Factors**:
 - Attitude verbs: "know" licenses pair-list more than "wonder"
-- Definiteness: definite subjects are harder for pair-list
+- Definiteness: definite universals (non-plural) are harder for pair-list;
+  but *plural* definites license pair-list via both cumulation-and-elaboration
+  and a genuine pair-list parse (@cite{johnston-2023})
 - Information structure: contrastive focus on universal
 -/
 
@@ -476,20 +478,25 @@ structure PairListFactors where
   contrastiveFocus : Bool
   /-- Is the question matrix or embedded? -/
   isMatrix : Bool
+  /-- Is the "universal" a plural definite DP (not an overt quantifier)?
+      When `true`, pair-list responses are available via cumulation-and-
+      elaboration regardless of definiteness (@cite{johnston-2023}). -/
+  pluralDefinite : Bool := false
 
-/-- Predict pair-list availability from factors. -/
+/-- Predict pair-list availability from factors.
+
+    @cite{johnston-2023} shows that plural definites license pair-list
+    responses even though they are definite: the cumulation-and-elaboration
+    pathway produces pair-list surface form from a cumulative answer, and
+    a genuine pair-list parse may also be available. -/
 def predictPairList (factors : PairListFactors) : Bool :=
-  -- Pair-list more likely with:
-  -- - "know" than "wonder"
-  -- - indefinite universals
-  -- - contrastive focus
-  -- - embedded questions
   let verbOK := match factors.attitudeVerb with
     | some "know" => true
     | some "wonder" => false
     | some "ask" => false
     | _ => true  -- matrix questions
-  let defOK := !factors.universalDefinite
+  -- Plural definites always allow pair-list (via cumulation pathway)
+  let defOK := factors.pluralDefinite || !factors.universalDefinite
   let focusOK := factors.contrastiveFocus
   verbOK && (defOK || focusOK)
 

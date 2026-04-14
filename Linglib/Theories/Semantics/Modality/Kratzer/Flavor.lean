@@ -77,6 +77,60 @@ def BouleticFlavor.flavorTag : ModalFlavor := .bouletic
     (teleological is subsumed under circumstantial in the 2×3 space). -/
 def TeleologicalFlavor.flavorTag : ModalFlavor := .circumstantial
 
+/-! ## Background Classification (Kratzer 2012)
+
+Each flavor structure maps to a `BackgroundClass` from
+@cite{kratzer-2012}'s three-way classification, which refines the
+traditional epistemic/circumstantial binary based on the **projection
+mode** of the conversational background (@cite{matthewson-2016} Table 18.3).
+
+Deontic, bouletic, and teleological flavors are all **factual-circumstantial**:
+the modal base provides facts about the actual world, and the ordering source
+encodes norms/desires/goals. The modal base is realistic (w ∈ ∩f(w)).
+
+Epistemic flavor is either **factual-evidential** (default: inferential evidence,
+speaker committed to prejacent) or **content-evidential** (reportative/sensory:
+speaker can disbelieve). The `EpistemicFlavor` structure carries this distinction
+via an optional `backgroundClass` field defaulting to factual-evidential. -/
+
+open Core.Modality (BackgroundClass ProjectionMode)
+
+/-- Epistemic modality: factual-evidential by default (inferential evidence,
+    speaker committed). Content-evidential for reportative modals (German
+    *sollen*, St'át'imcets *lákw7a*). -/
+def EpistemicFlavor.toBackgroundClass (_ : EpistemicFlavor) : BackgroundClass :=
+  -- Default: factual-evidential. Override at the fragment level for
+  -- content-mode epistemics (e.g., Gitksan gat, German sollen).
+  .factualEvidential
+
+/-- Deontic modality is always factual-circumstantial. -/
+def DeonticFlavor.toBackgroundClass (_ : DeonticFlavor) : BackgroundClass :=
+  .factualCircumstantial
+
+/-- Bouletic modality is always factual-circumstantial. -/
+def BouleticFlavor.toBackgroundClass (_ : BouleticFlavor) : BackgroundClass :=
+  .factualCircumstantial
+
+/-- Teleological modality is always factual-circumstantial. -/
+def TeleologicalFlavor.toBackgroundClass (_ : TeleologicalFlavor) : BackgroundClass :=
+  .factualCircumstantial
+
+/-- Non-epistemic flavors are always factual. -/
+theorem deontic_factual (f : DeonticFlavor) :
+    f.toBackgroundClass.projectionMode = .factual := rfl
+
+theorem bouletic_factual (f : BouleticFlavor) :
+    f.toBackgroundClass.projectionMode = .factual := rfl
+
+theorem teleological_factual (f : TeleologicalFlavor) :
+    f.toBackgroundClass.projectionMode = .factual := rfl
+
+/-- Epistemic flavor defaults to factual (inferential evidence). -/
+theorem epistemic_default_factual (f : EpistemicFlavor) :
+    f.toBackgroundClass.projectionMode = .factual := rfl
+
+/-! ## Kratzer Parameters -/
+
 structure KratzerParams where
   base : ModalBase
   ordering : OrderingSource
