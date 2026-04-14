@@ -4,6 +4,8 @@
 
 A Lean 4 library for formal linguistics.
 
+> ⚠️ This is an experiment in "AI for Linguistics" using recent advances in proof assistants. Please let us know if you identify any inaccuracies. 
+
 ## Why
 
 Formal linguistics has a dependency problem. Theories of modality rely on theories of propositions, which rely on theories of quantification, which rely on theories of types. A change anywhere can silently break things downstream — but the field tracks these dependencies informally, in prose scattered across hundreds of papers.
