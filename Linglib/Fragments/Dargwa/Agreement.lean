@@ -1,5 +1,6 @@
 import Linglib.Core.Prominence
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Gender
 
 /-!
 # Dargwa (Tanti) Agreement @cite{sumbatova-2021}
@@ -55,6 +56,12 @@ inductive PlGender where
   | human       -- b-: 3rd person human plurals
   | nonHuman    -- d-: non-human plurals
   deriving DecidableEq, Repr
+
+/-- Bridge to cross-linguistic surface gender. -/
+def SgGender.toSurfaceGender : SgGender → Core.SurfaceGender
+  | .masculine => .masculine
+  | .feminine  => .feminine
+  | .neuter    => .neuter
 
 /-- Gender agreement prefix on the verb stem.
     The prefix immediately precedes the root in simplex verbs and

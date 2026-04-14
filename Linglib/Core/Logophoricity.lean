@@ -1,8 +1,7 @@
-import Linglib.Theories.Syntax.Minimalism.Core.PConstraint
+import Mathlib.Order.Nat
 
 /-!
 # Logophoric Roles @cite{sells-1987}
-@cite{pancheva-zubizarreta-2018}
 
 @cite{sells-1987} identifies three logophoric roles that govern the licensing
 of logophoric pronouns and long-distance reflexives cross-linguistically:
@@ -23,22 +22,7 @@ These roles form an implicational hierarchy:
 That is, a source is necessarily a self and a pivot; a self is necessarily
 a pivot; but a pivot need not be a self or source.
 
-## Connection to Person Features
-
-@cite{pancheva-zubizarreta-2018} connect logophoric roles to the
-interpretable person feature on Appl:
-
-| P-Prominence | Logophoric role | Eligible persons |
-|--------------|----------------|-----------------|
-| [+proximate] | pivot          | 1P, 2P, 3P proximate |
-| [+participant] | self         | 1P, 2P          |
-| [+author]    | source         | 1P only         |
-
-This connection is what gives the P-Constraint its semantic content: the
-syntactic mechanism of person-feature agreement on Appl *encodes* the
-identification of the indirect object as a point-of-view center.
-
-## Connection to Other Perspectival Phenomena
+## Connection to Perspectival Phenomena
 
 The same logophoric roles govern:
 - Logophoric pronouns (Ewe *yè*): antecedent must be at least a self
@@ -46,11 +30,12 @@ The same logophoric roles govern:
 - Point-of-view verbs (Japanese yar- vs kure-): lexically encode pivot
 - The Clitic Logophoric Restriction (CLR): 3P IO clitic interpreted as
   point-of-view center blocks *de se* reading of accusative clitic
+
+The bridge to Minimalist P-Prominence (@cite{pancheva-zubizarreta-2018}) is
+in `Phenomena.Agreement.Studies.PanchevaZubizarreta2018`.
 -/
 
 namespace Core.Logophoricity
-
-open Minimalism.PConstraint (PProminence)
 
 -- ============================================================================
 -- § 1: Logophoric Roles
@@ -60,62 +45,57 @@ open Minimalism.PConstraint (PProminence)
 
     The roles capture different dimensions of perspectival centering:
     who is the narrator (source), who is thinking/believing (self),
-    and whose viewpoint structures the description (pivot). -/
+    and whose viewpoint structures the description (pivot).
+
+    Ordered by entailment: `pivot ≤ self ≤ source`. Being a source
+    entails being a self, which entails being a pivot. -/
 inductive LogophoricRole where
   /-- The individual whose point of view the event is described from.
-      Most general role. -/
+      Most general role. Bottom of the hierarchy. -/
   | pivot
   /-- The individual whose mental state is reported. An attitude holder.
       Entails pivot. -/
   | self
-  /-- The individual who makes the report. Entails both self and pivot. -/
+  /-- The individual who makes the report. Entails both self and pivot.
+      Top of the hierarchy. -/
   | source
   deriving DecidableEq, Repr
 
-/-- Logophoric roles form an implicational hierarchy.
-    Rank: source (2) > self (1) > pivot (0). -/
-def LogophoricRole.rank : LogophoricRole → Nat
+/-- Numeric embedding into ℕ preserving the entailment order. -/
+def LogophoricRole.toNat : LogophoricRole → Nat
   | .pivot  => 0
   | .self   => 1
   | .source => 2
 
-/-- A source is also a self. -/
-theorem source_entails_self :
-    LogophoricRole.source.rank ≥ LogophoricRole.self.rank := by decide
-
-/-- A self is also a pivot. -/
-theorem self_entails_pivot :
-    LogophoricRole.self.rank ≥ LogophoricRole.pivot.rank := by decide
+instance : LinearOrder LogophoricRole :=
+  LinearOrder.lift' LogophoricRole.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [LogophoricRole.toNat])
 
 -- ============================================================================
--- § 2: Bridge to P-Prominence
+-- § 2: Implicational Hierarchy
 -- ============================================================================
 
-/-- The P-Prominence setting that corresponds to a logophoric role.
+/-- A self entails a pivot. -/
+theorem pivot_le_self : LogophoricRole.pivot ≤ .self := by decide
 
-    This is the formal link between the syntactic mechanism of the
-    P-Constraint and the semantic content of perspectival centering:
-    the interpretable person feature on Appl selects for the logophoric
-    role of the indirect object. -/
-def LogophoricRole.toProminence : LogophoricRole → PProminence
-  | .pivot  => .proximate
-  | .self   => .participant
-  | .source => .author
+/-- A source entails a self. -/
+theorem self_le_source : LogophoricRole.self ≤ .source := by decide
 
-/-- The logophoric role corresponding to a P-Prominence setting. -/
-def prominenceToRole : PProminence → LogophoricRole
-  | .proximate   => .pivot
-  | .participant => .self
-  | .author      => .source
+/-- A source entails a pivot (transitivity). -/
+theorem pivot_le_source : LogophoricRole.pivot ≤ .source := by decide
 
-/-- The bridge is an isomorphism. -/
-theorem prominence_role_roundtrip (r : LogophoricRole) :
-    prominenceToRole r.toProminence = r := by
-  cases r <;> rfl
+/-- The full hierarchy as a conjunction. -/
+theorem hierarchy :
+    LogophoricRole.pivot < LogophoricRole.self ∧
+    LogophoricRole.self < LogophoricRole.source := by decide
 
-theorem role_prominence_roundtrip (p : PProminence) :
-    (prominenceToRole p).toProminence = p := by
-  cases p <;> rfl
+/-- Pivot is the bottom of the hierarchy. -/
+theorem pivot_le (r : LogophoricRole) : .pivot ≤ r := by
+  cases r <;> decide
+
+/-- Source is the top of the hierarchy. -/
+theorem le_source (r : LogophoricRole) : r ≤ .source := by
+  cases r <;> decide
 
 -- ============================================================================
 -- § 3: Point-of-View Principle

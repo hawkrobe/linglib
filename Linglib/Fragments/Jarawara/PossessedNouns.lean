@@ -1,6 +1,7 @@
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Phenomena.Possession.Typology
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Gender
 
 /-!
 # Jarawara Possessed Nouns @cite{adamson-2024} @cite{dixon-2004}
@@ -146,6 +147,11 @@ theorem total_ipossessable :
 /-- Person–number features of a Jarawara possessor. -/
 inductive Person where | first | second | third deriving DecidableEq, Repr
 inductive PossGender where | masc | fem deriving DecidableEq, Repr
+
+/-- Bridge to cross-linguistic surface gender. -/
+def PossGender.toSurfaceGender : PossGender → Core.SurfaceGender
+  | .masc => .masculine
+  | .fem  => .feminine
 
 /-- A possessor with full φ-features. Third person distinguishes gender;
     first and second person can be singular or plural, with clusivity

@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Negation
 import Linglib.Core.WALS.Features.F112A
 import Linglib.Core.WALS.Features.F113A
 import Linglib.Core.WALS.Features.F114A
@@ -489,6 +490,10 @@ structure NegationProfile where
       Relevant for @cite{greco-2020}: only head-status markers can merge in CP
       to produce surprise negation. -/
   negIsHead : Option Bool := none
+  /-- Is expletive negation attested in this language?
+      Based on @cite{jin-koenig-2021} (722-language survey: EN in 74 languages)
+      and @cite{rett-2026}. -/
+  enAttested : Option Bool := none
   /-- Notes on the negation system. -/
   notes : String := ""
   deriving Repr
@@ -548,6 +553,7 @@ def french : NegationProfile :=
   , negIndefinite := some .mixed
   , negMarkers := ["ne", "pas"]
   , negIsHead := some true  -- ne is a weak clitic (X°)
+  , enAttested := some true  -- avant que... ne, craindre que... ne (@cite{rett-2026})
   , notes := "WALS codes as particle (ne optional in colloquial); " ++
              "historically bipartite ne...pas (Jespersen cycle)" }
 
@@ -667,6 +673,7 @@ def spanish : NegationProfile :=
   , negIndefinite := some .mixed
   , negMarkers := ["no"]
   , negIsHead := some false  -- no can be focused/coordinated (XP; @cite{greco-2020}, §5.2)
+  , enAttested := some true  -- comparative no (@cite{jin-koenig-2021})
   , notes := "Position-dependent: preverbal nadie precludes no, " ++
              "postverbal nada requires no" }
 
@@ -685,6 +692,7 @@ def italian : NegationProfile :=
   , negIndefinite := some .mixed
   , negMarkers := ["non"]
   , negIsHead := some true  -- non is a preverbal clitic (X°), cannot be focused/coordinated
+  , enAttested := some true  -- before, until, comparatives, exclamatives, Snegs (@cite{greco-2020})
   , notes := "Preverbal non; n-words: postverbal require non " ++
              "(Non ho visto nessuno), preverbal alone " ++
              "(Nessuno è venuto); parallels Spanish pattern" }
@@ -2026,5 +2034,25 @@ theorem before_more_widespread_than_fear :
     (enLanguages.filter (fun e => hasBeforeOrUntil e.triggers)).length >
     (enLanguages.filter (fun e => hasFearOrAfraid e.triggers)).length := by
   native_decide
+
+-- ============================================================================
+-- EN attestation from NegationProfile
+-- ============================================================================
+
+/-- Italian has EN attested. -/
+theorem italian_en_attested : italian.enAttested = some true := rfl
+
+/-- French has EN attested. -/
+theorem french_en_attested : french.enAttested = some true := rfl
+
+/-- Spanish has EN attested. -/
+theorem spanish_en_attested : spanish.enAttested = some true := rfl
+
+/-- All languages in our sample with EN attested have a negation marker. -/
+theorem en_languages_have_markers :
+    allLanguages.all (λ p =>
+      match p.enAttested with
+      | some true => !p.negMarkers.isEmpty
+      | _ => true) = true := by native_decide
 
 end Phenomena.Negation.Typology

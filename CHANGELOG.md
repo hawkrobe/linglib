@@ -1,5 +1,173 @@
 # Changelog
 
+## [0.229.747] - 2026-04-14
+
+### Added
+- **`Theories/Phonology/Accent.lean`** — language-general accent assignment rules (AAR, LSR), accent-to-tone derivation, NonFinality constraints, compound accent rules
+- **`Phenomena/Phonology/Studies/Kawahara2015.lean`** — study file: Table 1 AAR/LSR mismatches, tonal distinctness, culminativity, affix typology coarse partition, compound accent + NonFinality, WBP weight sensitivity
+- **`AffixAccentType`** 8-way enum (`Core/Prosody.lean`) — recessive, dominant, recessivePreAccent, dominantPreAccent, accentShifting, postAccenting, deaccenting, initialAccenting; `toProsodicDominance` bridge to coarse 3-way classification
+- **Japanese fragment extensions** (`Fragments/Japanese/Prosody.lean`) — loanword entries, AAR/LSR comparison theorems, 8 affix entries, compound accent verification, accent-to-tone verification
+
+### Fixed
+- **`DalrympleHaug2024.lean`** — `LogophoricRole.rank` → `≤` (field removed in Logophoricity.lean refactor)
+
+## [0.229.746] - 2026-04-14
+
+### Added
+- **`PolarityClass`** enum (`Core/Negation.lean`) — `weakNPI | strongNPI | notAlsoConj | nWord`, replacing four independent Bool fields with a single function `PolarityLicensing.licenses : PolarityClass → Bool`. Enables universal quantification: `strongEN_rejects_all` proves strong EN rejects all four classes in one theorem
+- **`classifications_agree`** (`NegScope.lean`) — master theorem proving `scopesIntoVP`, `ENType`, `ENStrength`, and weak-NPI licensing are all in bijection over `NegMergePosition`
+- **`scope_iff_not_cp_area`** (`NegScope.lean`) — grounds vP scope in f-value position: `tp.scopesIntoVP = !isCPArea .Neg` and `cp.scopesIntoVP = !isCPArea .Foc`
+- **`vpTransferred` / `focPOccupied`** (`Greco2020.lean`) — two structural primitives from which all 8 Sneg predictions derive as one-liners. Category A (neg raising, aux-to-comp, downward entailment) = `!vpTransferred`; Category B (focus, wh, root requirement, EE licensing) = `!focPOccupied` / `focPOccupied`
+
+### Changed
+- **`Core/Negation.lean`**: `PolarityClass.toPolarityType?` / `fromPolarityType?` partial bijection with round-trip theorems; `licensesType` refactored as composition through `PolarityClass`
+- **`Greco2020.lean`**: deleted duplicate `ENEnvironment` (was shadowing Fragments import); all predictions now derive from two master lemmas (`vp_transferred`, `focp_occupied`)
+
+## [0.229.745] - 2026-04-14
+
+### Added
+- **`PolarityLicensing.licensesType`** (`Core/Negation.lean`) — bridge from EN polarity profiles to `PolarityType`: maps `npiWeak`/`npiStrong` fields to the corresponding `PolarityType` constructors. Verification theorems: `strongEN_rejects_weak`, `weakEN_licenses_weak`, `strength_determines_weakNPI_licensing`
+- **Czech NegPosition → NegMergePosition** (`NegScope.lean`) — coarsening map: inner/medial → tp, outer → cp. `nci_licensing_matches_scope` proves Czech NCI diagnostic aligns with vP scope prediction
+- **`NegationProfile.enAttested`** (`Typology.lean`) — optional field tracking whether EN is attested in a language. Populated for Italian, French, Spanish. `en_languages_have_markers` verifies all EN-attesting languages have negation markers
+
+## [0.229.744] - 2026-04-14
+
+### Added
+- **`Theories/Syntax/Minimalism/Core/NegScope.lean`** — `NegMergePosition` (tp/cp), `scopesIntoVP`, bridge theorems (`toENType`, `toENStrength`, `polarityProfile`, `scope_determines_entype`, `high_en_is_strong`, `strength_iff_weakNPIs`), f-value theorems (`neg_in_tp`, `foc_in_cp`, `fin_is_cp_boundary`, `cp_area_above_neg`)
+- **`Fragments/Italian/ExpletiveNegation.lean`** — Italian Table 1 data: `ENEnvironment` (11 construction types), `strength`/`licensing` classification, `strong_rejects_all`/`snegs_are_strong` verification theorems
+
+### Changed
+- **`Core/Negation.lean`** extended with framework-agnostic EN types: `ENType` (high/low), `ENStrength` (weak/strong), `PolarityLicensing`, `weakENProfile`/`strongENProfile`
+- **Rett2026**: imports `Core.Negation` for `ENType` (was `ExpletiveNegation`)
+- **Greco2020**: imports split across `NegScope` (merge position), `Core.Negation` (EN types), `Fragments.Italian.ExpletiveNegation` (Table 1 data)
+
+### Removed
+- **`Phenomena/Negation/ExpletiveNegation.lean`** deleted — contents split upward into Core, Theories, and Fragments per dependency discipline
+
+## [0.229.743] - 2026-04-14
+
+### Added
+- **`Phenomena/Negation/ExpletiveNegation.lean`** — shared EN classification infrastructure extracted from study files: `NegMergePosition` (tp/cp), `ENType` (high/low), `ENStrength` (weak/strong), `PolarityLicensing`, `weakENProfile`/`strongENProfile`. Merge position determines both EN type and polarity profile via `NegMergePosition.toENType`, `toENStrength`, `polarityProfile`. Bridge theorems: `high_en_is_strong`, `scope_determines_entype`, `strength_iff_weakNPIs`
+- **`isCPArea`** added to `ExtendedProjection/Basic.lean` — general predicate on `Cat`, testing `fValue c ≥ fValue .Fin`
+
+### Changed
+- **Rett2026**: `ENType` re-exported from `ExpletiveNegation` (no longer defined locally)
+- **Greco2020**: imports `ExpletiveNegation` instead of defining `NegMergePosition`, `ENStrength`, `PolarityLicensing`, `isCPArea` locally; import chain simplified (`ExtendedProjection/Basic.lean` import dropped — transitive via `ExpletiveNegation`)
+
+## [0.229.742] - 2026-04-14
+
+### Changed
+- **Greco 2020 second pass** (`Phenomena/Negation/Studies/Greco2020.lean`): all 8 predictions now methods on `SnegRepresentation` derived from `negInCP`/`tpFocused` fields (not bare Bool stipulations); deleted tautological `wh_competes_with_focus`; fixed French docstring (factor iii, not morphological sufficiency); added `StrongENType` differentiation (Sneg ≠ NRQ ≠ ENE, §3) with `sneg_unique_answerhood`/`sneg_unique_wh_rejection`; `sneg_strong_is_high` bridge to Rett 2026; non-DE prediction (§2.3 (25)); PPI theorem now takes `SnegRepresentation` argument
+
+## [0.229.741] - 2026-04-14
+
+### Changed
+- **Greco 2020 deepened** (`Phenomena/Negation/Studies/Greco2020.lean`): strong/weak EN typology (`ENStrength`, `ENEnvironment`, `PolarityLicensing`) formalizing Table 1; 8 derived predictions from the Sneg representation (root-only, focus/topic asymmetry, Wh-rejection, propositional-Q-only, preverbal-subject topicalization, NEG-raising blocking, EE licensing, Aux-to-Comp blocking); PPI licensing from phase theory; ED disambiguation structure; French Sneg conditions; replaced 4× `native_decide` with `decide`
+
+## [0.229.740] - 2026-04-14
+
+### Added
+- **Referent context classification** (`KonnellyCowper2020.lean`): `ReferentContext` type and `genderObligatoryFor` function capturing K&C §4.1 (12)--(13) data — quantifier-bound vs. referential vs. ungendered proper name contexts differ in whether [MASC]/[FEM] must be projected at each stage
+- **CatHead→PronFeature projection** (`KonnellyCowper2020.lean`): `catHeadToPronFeatures` bridges Kramer 2015 DM n-heads (GenderFeature with dimension/polarity) to K&C's flat VI features; end-to-end pipeline theorems (`iFem_singular_yields_she`, `plain_n_singular_yields_they`, etc.)
+- **Bjorkman 2017 formalization** (`KonnellyCowper2020.lean`): `bjorkmanSubset` encodes the dynamic discourse condition; `bjorkman_vacuous_at_stage3` and `bjorkman_blind_to_projection` formalize K&C's §5 counterarguments
+- **`Contrastivity.obligatory`** (`Categorizer.lean`): derives feature obligatoriness from contrastivity status (Wiltschko 2008)
+- **`PronDP` — K&C's (14) DP structure** (`KonnellyCowper2020.lean`): record (nHead × singular × isQuantifier), `toPronBundle` feature projection from structural positions, `spellout` end-to-end pipeline; EP well-formedness theorems proving [n, Num, D] spine is category-consistent and F-monotone via Extended Projection infrastructure; `stage3_they_from_structure` composes non-obligatoriness with structural spellout
+
+### Changed
+- **`genderObligatory` now derived**: `genderObligatory_from_contrastivity` theorem proves `Stage.genderObligatory` equals `Contrastivity.obligatory` — no longer stipulated
+- **`vi_paradigm_consistency` replaced**: vacuous `genderOf "she" = .feminine` replaced with `vi_fragment_consistency` covering all four pronoun forms
+- **Organizational cleanup**: removed 4 duplicate theorems between §3/§6 (kept named-bundle versions), removed unused `SingTheyKind`/`GenderParadigm` opens, renamed `NominalStructure`→`PronDP` to avoid collision with `Theories/Morphology/DM/NominalStructure.lean`, simplified `stage1_aligns_with_underspecified_they` (removed pointless universal quantification)
+
+## [0.229.739] - 2026-04-14
+
+### Added
+- **Konnelly & Cowper 2020 — singular *they* in three stages**: `Phenomena/Pronouns/Studies/KonnellyCowper2020.lean` formalizes the DM account of singular *they* as a grammatical change in progress — pronoun VIs via `FeatureVI`/`subsetPrinciple`, three-stage parameterization, Elsewhere Condition theorems, bridges to Arnold 2026 discourse conditions and Kramer 2015 n-heads
+- **`Contrastivity`** (`Theories/Morphology/DM/Categorizer.lean`): contrastive vs. non-contrastive feature status (Wiltschko 2008), orthogonal to `Interpretability` — captures the Stage 1→3 shift from contrastive [MASC]/[FEM] to optional modifiers
+
+### Fixed
+- **`references.bib`**: konnelly-cowper-2020 pages corrected from `51` to `1--19`, added `eid = {40}`, role upgraded to `formalized`; added bjorkman-2017, kramer-2009, wiltschko-2008
+
+## [0.229.738] - 2026-04-14
+
+### Added
+- **Gender API connectivity audit**: wired up 4 previously disconnected gender types to the main coarsening chain
+- **`SgGender.toSurfaceGender`** (`Fragments/Dargwa/Agreement.lean`): bridge from Dargwa singular gender to `Core.SurfaceGender`
+- **`PossGender.toSurfaceGender`** (`Fragments/Jarawara/PossessedNouns.lean`): bridge from Jarawara possessor gender to `Core.SurfaceGender`
+- **`Infl.toSurfaceGender`** (`Phenomena/Agreement/Studies/AdamsonAnagnostopoulou2025.lean`): bridge from A&A 2025 VI inflection class to `Core.SurfaceGender`
+- **`GenderNode.toGenderDimension`** (`Phenomena/Agreement/Studies/AdamsonAnagnostopoulou2025.lean`): partial bridge from privative geometry nodes to DM `GenderDimension` (`.masc`/`.fem`/`.anim` map; `.cls`/`.indiv`/`.grp` → `none`)
+
+### Changed
+- **`surfaceGender`** (`Fragments/Russian/Gender.lean`): deleted local `SurfaceGender` inductive that shadowed `Core.SurfaceGender`; function now returns `Core.SurfaceGender` directly
+
+## [0.229.737] - 2026-04-14
+
+### Added
+- **Arnold 2026 — Two kinds of singular *they***: `Phenomena/Pronouns/Studies/Arnold2026.lean` formalizes the underspecified/personal distinction, `DiscourseElaboration` type, `SingTheyKind` taxonomy, licensing predicates, inverse correlation theorem, Table 1 antecedent data
+- **`GenderInfo`** (`Core/Gender.lean`): discourse-level gender knowledge type (`known SurfaceGender | unspecified`) with `SurfaceGender.toGenderInfo` coercion and `roundtrip_known` theorem
+- **`PronounSpec`** (`Core/Lexical/Pronouns.lean`): personal pronoun specification type (`heHim | sheHer | theyThem`) for modeling common-ground pronoun knowledge
+- **Singular *they* entries** (`Fragments/English/Pronouns.lean`): `they_sg`, `them_sg`, `themself` with `number := some .sg`
+- **`GenderParadigm.toSurfaceGender`** and **`PronounSpec.toGenderParadigm`**: bridge morphisms connecting the pronoun selection layer to the cross-linguistic surface gender layer
+
+### Changed
+- **`GenderParadigm`** (`Fragments/English/Pronouns.lean`): `.plural` renamed to `.epicene` — singular *they* is an animate-ungendered gender class, not a number class; `genderOf`/`genderAgrees` updated accordingly
+- **`Core.Pronouns.PronounEntry`** (`Core/Lexical/Pronouns.lean`): added `gender : Option SurfaceGender` field for 3rd-person pronouns in gendered languages
+- **`references.bib`**: added arnold-2026, balhorn-2004, newman-1992, newman-1998, camilliere-etal-2021, konnelly-cowper-2020
+
+## [0.229.736] - 2026-04-14
+
+### Changed
+- **HalpertHammerly2026.lean**: deleted stipulated `AnimacyOverridePattern` (override now derived from `agreementClass .relativized` + `hasAnimateCore`); refactored `nyaturu_om_allowed` to delegate to `NPStack.hasAnimateCore`; added `aa_structural_basis` theorem deriving Lubukusu AA from containment; added Table 18 `canonical_classes_show_expected` / `noncanonical_converges_to_core`; added `override_from_animate_core` / `no_override_without_animate_core`; added `om_and_override_share_predicate` proving OM and override share the same predicate; added `core_classes_match_prominence` bridging to `AnimacyLevel`; added Kramer bridge section (`toGenderFeature`, `core_features_are_interpretable`, `interpretability_alignment`)
+- **Params.lean**: added `import Linglib.Core.Prominence`; added `AnimacyFeatures.toAnimacyLevel` bridging to `Core.Prominence.AnimacyLevel`; added `NPStack.hasAnimateCore` shared predicate for [+Animate]-relativized probing; fixed `FinalVowel.i` docstring (human nominalizer, not animate); replaced `native_decide` with `decide` in `exactly_three`
+- **references.bib**: fixed `hammerly-2023` — was hallucinated `@phdthesis` at U of Minnesota, corrected to `@article` in *Language* 99(1). 38–80 (DOI: 10.1353/lan.2023.0005)
+
+## [0.229.735] - 2026-04-14
+
+### Added
+- **`DoublingFunction.all` + `all_complete`** (`Doubling.lean`): complete enumeration of constructors with compile-time completeness guard — adding a constructor without updating `all` breaks `all_complete`
+- **`no_morph_no_realizeMorph`** (`Doubling.lean`): the missing fourth transfer case — no morphology means no REALIZE-MORPH regardless of reduplication
+- **`realizeMorphAvailable_complete`** (`Doubling.lean`): exhaustive case analysis proving the four transfer theorems cover all input combinations
+- **`redupFor_not_monotone`** (`Doubling.lean`): existential witness proving adding reduplication for one function can block REALIZE-MORPH for another (the formal content of negative transfer)
+
+### Changed
+- **`hasAnyRedup`** (`Doubling.lean`): now defined via `DoublingFunction.all.any` instead of manual `||` disjunction — adding a constructor automatically extends the check
+- **Doubling.lean**: added structural transfer theorems (`no_redup_no_negative_transfer`, `redup_positive_transfer`, `redup_negative_transfer`) deriving transfer predictions from `realizeMorphAvailable`; added `MorphProfile` bridge (`noRedupGrammar`, `noRedup_realizeMorph`) connecting WALS Ch 27 reduplication typology; fixed `ocpXX` docstring (was incorrectly describing `mkOCP`'s tier-counting level)
+- **BerentEtAl2016.lean**: docstrings now note gradient-vs-categorical gap (paper reports continuous rating/RT effects; OT model gives categorical direction predictions)
+
+## [0.229.733] - 2026-04-14
+
+### Added
+- **Halpert & Hammerly 2026 — Reconciling animacy and noun class in Bantu**: `Phenomena/Agreement/Studies/HalpertHammerly2026.lean` formalizes the Core Noun Class Hypothesis, person–animacy containment, probe articulation (flat vs relativized), anti-agreement in Lubukusu, animacy override, and convergence under coordination
+- **`AnimacyFeatures`** (`Fragments/Bantu/Params.lean`): bivalent [±Animate, ±Human] features from Hammerly 2023's containment hierarchy; `PhiFeatures` instance proves person and animacy share the same `PrivativePair` architecture
+- **`FinalVowel`** (`Fragments/Bantu/Params.lean`): nominalizing final vowels (*-i* animate, *-o* inanimate) derived from core noun class features
+- **`ConflationPattern` / `FeatureConjunction`** (`Fragments/Bantu/Params.lean`): conflation via feature dropping; `impossible_human_inanimate_without_animal` proves no feature conjunction can select HUMAN+INANIMATE while excluding ANIMAL
+- **`AnimacyFeatures ↔ SemanticCore` bridge** (`Fragments/Bantu/Params.lean`): `toCoreClass`/`toFeatures` with `roundtrip` theorem; derives `SemanticCore` from features rather than stipulating it
+
+## [0.229.732] - 2026-04-14
+
+### Added
+- **Doubling theory** (`Theories/Phonology/Doubling.lean`): shared framework for the double identity of doubling — `DoublingFunction` (plurality, diminutive), `DoublingGrammar` (L1 morphological knowledge), `realizeMorphAvailable` (positive/negative transfer), `DoublingParse`, OT constraints (`ocpXX`, `starRED`, `realizeMorph`), L1-parameterized candidate/ranking functions (`l1CandidatesFor`, `l1RankingFor`)
+- **Berent et al. 2016** (`Phenomena/Phonology/Studies/BerentEtAl2016.lean`): formalizes the 2x2 cross-linguistic dissociation — English (no productive reduplication) prefers XX for plurality but not diminutives; Hebrew (reduplicative diminutives) prefers XX for diminutives but not plurality. Four OT theorems matching the four cells, all derived from `DoublingGrammar` instances via `realizeMorphAvailable`
+
+### Changed
+- **Berent2026.lean**: refactored to import `Doubling.lean`; doubling types and constraints extracted to theory layer; §3 replaced with re-exported `amodal_doubling_reversal` theorem
+- **NaturalClass.lean**: deleted dead `clementsSonority` function and `parker_refines_clements` theorem (redundant with `toSonorityRank`)
+- **Defs.lean**: deleted unused `LE SonorityRank` instance (dead code — SSP uses `.rank` directly)
+- **Berent2026.lean**: `native_decide` → `decide` on all OT theorems; `onsetMarkedness` → `onsetSSP` (proper `NamedConstraint` via `mkMarkGrad`)
+
+## [0.229.731] - 2026-04-14
+
+### Added
+- **Berent 2026 — substance-free phonology**: `Phenomena/Phonology/Studies/Berent2026.lean` formalizes three arguments for abstraction in phonology: (1) onset markedness as gradient over abstract `SonorityRank`, (2) OCP as type-polymorphic `mkOCP` constraint (algebraic by construction), (3) doubling ambiguity as competing OT parses with phonology–morphology reversal
+- **`SonorityRank` type** (`Syllable/Defs.lean`): the sonority hierarchy is now an abstract inductive type (`stop | fricative | nasal | liquid | glide | vowel`) rather than a bare `Nat` derived from articulatory features; `sonorityOf` is explicitly a substance-based *grounding function* that maps segments to the abstract hierarchy; SSP constraints operate on `SonorityRank` via `.rank`
+- **`mkOCP` constraint** (`Constraints.lean`): reusable OCP (Obligatory Contour Principle) markedness constraint constructor, parametrically polymorphic over feature type `α` — the algebraic property is the polymorphism itself
+- **`adjacentIdentical`** (`Constraints.lean`): helper counting adjacent identical pairs in a list, used by `mkOCP`
+- **`NatClass.toSonorityRank`** (`NaturalClass.lean`): bridge from the Parker 8-level scale to the abstract 6-level `SonorityRank`, with `clements_eq_sonorityRank` proving agreement
+
+### Changed
+- **`Syllable/Defs.lean`**: `sonorityOf` returns `SonorityRank` (was `Nat`); SSP functions use `.rank` for numeric comparison
+- **`NaturalClass.lean`**: docstring references updated from `sonorityOf` to `SonorityRank`
+- **`Moraic/Defs.lean`**: removed dead `sonorityOf` import
+
 ## [0.229.730] - 2026-04-14
 
 ### Changed

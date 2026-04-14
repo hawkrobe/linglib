@@ -129,6 +129,37 @@ inductive Interpretability where
   | u  -- uninterpretable (arbitrary gender)
   deriving DecidableEq, Repr
 
+/-- Feature contrastivity (@cite{konnelly-cowper-2020} §4, following
+    @cite{wiltschko-2008}).
+
+    Orthogonal to `Interpretability`. A feature can be both interpretable
+    (visible at LF when present) and non-contrastive (its absence carries
+    no semantic content).
+
+    - **Contrastive**: absence is meaningful — "not [F]" is distinct from
+      having no specification. In a context where [F] could appear, its
+      absence is interpreted as ¬F. Gender features at K&C Stage 1.
+    - **NonContrastive**: a modifier/adjunct whose presence adds meaning
+      but whose absence is vacuous — it simply doesn't restrict the
+      denotation. Gender features at K&C Stage 3. -/
+inductive Contrastivity where
+  | contrastive     -- absence = ¬F (privative but semantically active)
+  | nonContrastive  -- absence = vacuous (optional modifier)
+  deriving DecidableEq, Repr
+
+/-- Whether a contrastive feature's presence is obligatory for referents
+    with known values.
+
+    A contrastive feature whose absence is meaningful (¬F) must be present
+    when the referent has a known value — otherwise absence would wrongly
+    convey ¬F. A non-contrastive feature is an optional modifier whose
+    absence is vacuous, so it need not be present even for known values.
+
+    @cite{wiltschko-2008}; applied to gender by @cite{konnelly-cowper-2020}. -/
+def Contrastivity.obligatory : Contrastivity → Bool
+  | .contrastive => true
+  | .nonContrastive => false
+
 /-- A gender feature annotated for interpretability.
 
     @cite{kramer-2015} Ch 3 identifies four attested combinations on n
@@ -763,5 +794,45 @@ theorem animacy_verification :
 theorem set1_set2_default_contrast :
     CatHead.n_plain.surfaceGenderSet1 ≠ CatHead.n_plain.surfaceGenderSet2 := by
   decide
+
+-- ============================================================================
+-- § 7: Composed Morphisms: DM → Discourse
+-- ============================================================================
+
+open Core (GenderInfo)
+
+/-- Composed morphism: DM categorizer → discourse-level gender knowledge.
+
+    The chain `CatHead → SurfaceGender → GenderInfo` composes the structural
+    mechanism (how gender is encoded on *n*) with the discourse layer (what
+    participants know about a referent's gender). A noun whose categorizer head
+    determines a surface gender always yields `.known g` at the discourse level.
+
+    This is parameterized over a VI schema (Set 1, Set 2, Three, Animacy)
+    because the structural → surface mapping is language-specific. -/
+def CatHead.toGenderInfoSet1 (ch : CatHead) : GenderInfo :=
+  ch.surfaceGenderSet1.toGenderInfo
+
+def CatHead.toGenderInfoSet2 (ch : CatHead) : GenderInfo :=
+  ch.surfaceGenderSet2.toGenderInfo
+
+def CatHead.toGenderInfoThree (ch : CatHead) : GenderInfo :=
+  ch.surfaceGenderThree.toGenderInfo
+
+def CatHead.toGenderInfoAnimacy (ch : CatHead) : GenderInfo :=
+  ch.surfaceGenderAnimacy.toGenderInfo
+
+/-- The composition always yields `.known _` — a DM categorizer head
+    always determines a concrete surface gender, so gender is never
+    unspecified at the discourse level when the morphosyntax is fully
+    resolved. Gender underspecification (@cite{arnold-2026}) arises
+    from the discourse, not from the grammar. -/
+theorem catHead_gender_always_known_set1 (ch : CatHead) :
+    ∃ g, ch.toGenderInfoSet1 = .known g := by
+  exact ⟨ch.surfaceGenderSet1, rfl⟩
+
+theorem catHead_gender_always_known_three (ch : CatHead) :
+    ∃ g, ch.toGenderInfoThree = .known g := by
+  exact ⟨ch.surfaceGenderThree, rfl⟩
 
 end Theories.Morphology.DM

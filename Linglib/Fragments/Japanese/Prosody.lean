@@ -1,12 +1,14 @@
 import Linglib.Core.Prosody
+import Linglib.Theories.Phonology.Accent
 import Linglib.Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
 
 /-!
 # Japanese Prosody Fragment
-@cite{beckman-pierrehumbert-1986}
+@cite{beckman-pierrehumbert-1986} @cite{kawahara-2015}
 
 Japanese prosodic entries following the autosegmental-metrical analysis
-of @cite{beckman-pierrehumbert-1986}.
+of @cite{beckman-pierrehumbert-1986}, with accent assignment rules and
+affix typology from @cite{kawahara-2015}.
 
 ## Key Properties
 
@@ -19,11 +21,21 @@ of @cite{beckman-pierrehumbert-1986}.
   mora) and a boundary L. Contains at most one accent.
 - **Sparse tonal specification**: only the accent H, the phrasal H, and
   the boundary L are specified; F0 between them is interpolated.
+- **Culminativity**: at most one HL fall per prosodic word — Japanese is
+  a pitch-accent language, not a tone language.
+- **Default accent**: loanwords and nonce words receive antepenultimate
+  accent (AAR) or Latin Stress Rule (LSR) accent.
+- **Eight affix accent types**: recessive, dominant, recessive
+  pre-accenting, dominant pre-accenting, accent-shifting,
+  post-accenting, deaccenting, initial-accenting.
 -/
 
 namespace Fragments.Japanese.Prosody
 
 open Core.Prosody
+open Theories.Phonology.Accent (defaultAccentAAR latinStressRule accentToTones
+  LevelTone shortN2CompoundAccent longN2CompoundAccent)
+open Theories.Phonology.Syllable (SyllWeight)
 open Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
 
 -- ============================================================================
@@ -222,5 +234,199 @@ theorem si_preserves_kami_paper :
 theorem si_maintains_kami_contrast :
     suffixedAccent kami_god si_suffix ≠
     suffixedAccent kami_paper si_suffix := by decide
+
+-- ============================================================================
+-- § 7: Loanword Entries (@cite{kawahara-2015} §2)
+-- ============================================================================
+
+/-- Loanword prosodic entry. Extends `JProsodicEntry` with syllable weight
+    profile for testing AAR vs LSR predictions. -/
+structure JLoanwordEntry where
+  entry : JProsodicEntry
+  /-- Syllable weight profile (left to right) -/
+  weights : List SyllWeight
+  deriving Repr
+
+/-- *kurisumasu* 'Christmas' — accent on antepenultimate mora (su).
+    @cite{kawahara-2015} (10a). -/
+def kurisumasu : JLoanwordEntry :=
+  { entry := { form := "kurisumasu", gloss := "Christmas"
+               accentMora := some 2, nMorae := 5 }
+    weights := [.light, .light, .light, .light, .light] }
+
+/-- *asufaruto* 'asphalt' — accent on antepenultimate mora (fa).
+    @cite{kawahara-2015} (10g). -/
+def asufaruto : JLoanwordEntry :=
+  { entry := { form := "asufaruto", gloss := "asphalt"
+               accentMora := some 2, nMorae := 5 }
+    weights := [.light, .light, .light, .light, .light] }
+
+/-- *makudonarudo* 'McDonald' — accent on antepenultimate mora (na).
+    @cite{kawahara-2015} (10h). -/
+def makudonarudo : JLoanwordEntry :=
+  { entry := { form := "makudonarudo", gloss := "McDonald's"
+               accentMora := some 4, nMorae := 7 }
+    weights := [.light, .light, .light, .light, .light, .light, .light] }
+
+/-- *amerika* 'America' — unaccented (4-mora with two final light σ).
+    @cite{kawahara-2015} (16a). -/
+def amerika : JLoanwordEntry :=
+  { entry := { form := "amerika", gloss := "America"
+               accentMora := none, nMorae := 4 }
+    weights := [.light, .light, .light, .light] }
+
+/-- Loanword accent matches AAR prediction for all-light syllables. -/
+theorem kurisumasu_matches_aar :
+    defaultAccentAAR kurisumasu.weights = kurisumasu.entry.accentMora := rfl
+
+/-- Loanword accent matches LSR prediction for all-light syllables. -/
+theorem kurisumasu_matches_lsr :
+    latinStressRule kurisumasu.weights = kurisumasu.entry.accentMora := by
+  unfold latinStressRule; unfold latinStressRule; unfold latinStressRule; rfl
+
+-- ============================================================================
+-- § 8: AAR vs LSR Mismatch Cases (@cite{kawahara-2015} Table 1)
+-- ============================================================================
+
+/-- HLH: AAR predicts penultimate (σ₂), LSR predicts antepenultimate (σ₁).
+    @cite{kawahara-2015} Table 1, row (c). -/
+theorem aar_lsr_mismatch_hlh :
+    defaultAccentAAR [.heavy, .light, .heavy] = some 1 ∧
+    latinStressRule [.heavy, .light, .heavy] = some 0 := by
+  constructor <;> (first | rfl | (unfold latinStressRule; rfl))
+
+/-- LLH: AAR predicts penultimate (σ₂), LSR predicts antepenultimate (σ₁).
+    @cite{kawahara-2015} Table 1, row (g). -/
+theorem aar_lsr_mismatch_llh :
+    defaultAccentAAR [.light, .light, .heavy] = some 1 ∧
+    latinStressRule [.light, .light, .heavy] = some 0 := by
+  constructor <;> (first | rfl | (unfold latinStressRule; rfl))
+
+/-- The remaining 6 conditions in Table 1 produce matching predictions. -/
+theorem aar_lsr_match_hhh :
+    defaultAccentAAR [.heavy, .heavy, .heavy] =
+    latinStressRule [.heavy, .heavy, .heavy] := by unfold latinStressRule; rfl
+theorem aar_lsr_match_hhl :
+    defaultAccentAAR [.heavy, .heavy, .light] =
+    latinStressRule [.heavy, .heavy, .light] := by unfold latinStressRule; rfl
+theorem aar_lsr_match_hll :
+    defaultAccentAAR [.heavy, .light, .light] =
+    latinStressRule [.heavy, .light, .light] := by unfold latinStressRule; rfl
+theorem aar_lsr_match_lhh :
+    defaultAccentAAR [.light, .heavy, .heavy] =
+    latinStressRule [.light, .heavy, .heavy] := by unfold latinStressRule; rfl
+theorem aar_lsr_match_lhl :
+    defaultAccentAAR [.light, .heavy, .light] =
+    latinStressRule [.light, .heavy, .light] := by unfold latinStressRule; rfl
+theorem aar_lsr_match_lll :
+    defaultAccentAAR [.light, .light, .light] =
+    latinStressRule [.light, .light, .light] := by unfold latinStressRule; rfl
+
+-- ============================================================================
+-- § 9: Fine-Grained Affix Accent Typology (@cite{kawahara-2015} §6)
+-- ============================================================================
+
+/-- Japanese suffix with fine-grained accent classification. -/
+structure JAffixEntry where
+  form : String
+  gloss : String
+  accentType : AffixAccentType
+  deriving Repr
+
+-- The eight affix types with canonical examples from Kawahara (2015):
+
+/-- *-tara* (conditional): recessive suffix — bears accent, loses to root.
+    @cite{kawahara-2015} (29). -/
+def tara_suffix : JAffixEntry :=
+  { form := "-tara", gloss := "conditional", accentType := .recessive }
+
+/-- *-ppoi* (-ish): dominant suffix — bears accent, overrides root.
+    @cite{kawahara-2015} (30). -/
+def ppoi_suffix : JAffixEntry :=
+  { form := "-ppoi", gloss := "-ish", accentType := .dominant }
+
+/-- *-si* (Mr.): recessive pre-accenting — inserts accent on root-final σ
+    when root is unaccented, preserves root accent when present.
+    @cite{kawahara-2015} (31). -/
+def si_affix : JAffixEntry :=
+  { form := "-si", gloss := "Mr.", accentType := .recessivePreAccent }
+
+/-- *-ke* (family of): dominant pre-accenting — always inserts accent on
+    root-final σ, deleting any root accent.
+    @cite{kawahara-2015} (32). -/
+def ke_suffix : JAffixEntry :=
+  { form := "-ke", gloss := "family of", accentType := .dominantPreAccent }
+
+/-- *-mono* (thing): accent-shifting — shifts existing root accent to
+    pre-suffix position. Unaccented roots stay unaccented.
+    @cite{kawahara-2015} (33). -/
+def mono_suffix : JAffixEntry :=
+  { form := "-mono", gloss := "thing", accentType := .accentShifting }
+
+/-- *o-* (honorific prefix): post-accenting — inserts accent after prefix.
+    @cite{kawahara-2015} (34). -/
+def o_prefix : JAffixEntry :=
+  { form := "o-", gloss := "honorific", accentType := .postAccenting }
+
+/-- *-teki* (的 -like): deaccenting — deletes root accent, no new accent.
+    @cite{kawahara-2015} (36). -/
+def teki_affix : JAffixEntry :=
+  { form := "-teki", gloss := "的 -like", accentType := .deaccenting }
+
+/-- *-zu* (group/plural): initial-accenting — inserts accent on root-initial σ.
+    @cite{kawahara-2015} (39). -/
+def zu_suffix : JAffixEntry :=
+  { form := "-zu", gloss := "group", accentType := .initialAccenting }
+
+-- Classification theorems: the 8 types project correctly to the
+-- coarser dominant/recessive distinction.
+
+/-- Recessive pre-accenting is recessive at the coarse level
+    (preserves root accent when present). -/
+theorem si_is_recessive_coarse :
+    si_affix.accentType.toProsodicDominance = .recessive := rfl
+
+/-- Deaccenting is dominant at the coarse level (overrides root accent).
+    This corrects the earlier classification of *-teki* in this fragment,
+    which used `ProsodicDominance.dominant` — functionally the same
+    projection, but the fine-grained type makes the behavior explicit. -/
+theorem teki_is_dominant_coarse :
+    teki_affix.accentType.toProsodicDominance = .dominant := rfl
+
+/-- Accent-shifting is recessive at the coarse level: it only operates
+    on accent that is already present, never creating new accent. -/
+theorem mono_is_recessive_coarse :
+    mono_suffix.accentType.toProsodicDominance = .recessive := rfl
+
+-- ============================================================================
+-- § 10: Compound Accent (@cite{kawahara-2015} §4)
+-- ============================================================================
+
+/-- *kabuto+musi* 'beetle': short N2 (*musi*, 2μ) pre-accents on
+    N1-final syllable. @cite{kawahara-2015} (22a). -/
+theorem kabuto_musi_compound :
+    shortN2CompoundAccent 3 (some 0) true = some 2 := rfl
+
+/-- *sin+yokohama* 'Shin-Yokohama': long N2 (*yokohama*, 4μ, unaccented)
+    → accent on N2-initial syllable. @cite{kawahara-2015} (23a). -/
+theorem sin_yokohama_compound :
+    longN2CompoundAccent 2 none 4 = some 2 := rfl
+
+/-- *sin+tamane'gi* 'new onion': long N2 retains accent.
+    @cite{kawahara-2015} (24a). -/
+theorem sin_tamanegi_compound :
+    longN2CompoundAccent 2 (some 2) 4 = some 4 := rfl
+
+-- ============================================================================
+-- § 11: Accent-to-Tone Verification (@cite{kawahara-2015} §1.4)
+-- ============================================================================
+
+/-- Unaccented trisyllable *ame+ga* → LHH (initial rise + H spread). -/
+theorem ame_ga_tones :
+    accentToTones ame.accentMora 3 = [.L, .H, .H] := rfl
+
+/-- Accented *ka'mi+ga* → HLL (accent HL + L spread). -/
+theorem kami_god_ga_tones :
+    accentToTones kami_god.accentMora 3 = [.H, .L, .L] := rfl
 
 end Fragments.Japanese.Prosody

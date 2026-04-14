@@ -25,7 +25,7 @@ in `Syllable.Defs`, which is essentially a segmental (X-theory) view.
 namespace Theories.Phonology.Moraic
 
 open Theories.Phonology (Segment Feature)
-open Theories.Phonology.Syllable (Syllable SyllWeight SyllabifiedForm sonorityOf)
+open Theories.Phonology.Syllable (Syllable SyllWeight SyllabifiedForm)
 
 -- ============================================================================
 -- § 1: Moraic Segment — a segment with its mora count

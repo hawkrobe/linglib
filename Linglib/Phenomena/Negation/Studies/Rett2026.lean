@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Tense.TemporalConnectives
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
+import Linglib.Core.Negation
 import Linglib.Fragments.English.Modifiers.Adjectives
 import Linglib.Fragments.Italian.Negation
 import Linglib.Phenomena.Negation.Studies.Tsiakmakis2025
@@ -44,21 +45,10 @@ open Semantics.Degree.Comparative (MannerEffect)
 open Fragments.English.Modifiers.Adjectives (AdjModifierEntry)
 
 -- ════════════════════════════════════════════════════
--- § 1. High vs Low EN
+-- § 1. High vs Low EN (re-exported from ExpletiveNegation)
 -- ════════════════════════════════════════════════════
 
-/-- Two syntactic types of expletive negation.
-
-    **High EN** appears above TP, targets non-truth-conditional content
-    (exclamatives, surprise negation). It is obligatory where licensed.
-
-    **Low EN** appears below TP (VP-level), targets truth-conditional
-    content in ambidirectional environments. It is optional and triggers
-    a manner implicature (evaluativity). -/
-inductive ENType where
-  | high   -- Non-truth-conditional; obligatory (exclamatives, surprise)
-  | low    -- Truth-conditional; optional (before, than, fear)
-  deriving DecidableEq, Repr
+open Core (ENType)
 
 -- ════════════════════════════════════════════════════
 -- § 2. Cross-Linguistic EN Data

@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.PConstraint
-import Linglib.Core.Discourse.Logophoricity
+import Linglib.Core.Logophoricity
 
 /-!
 # Pancheva & Zubizarreta (2018): The Person Case Constraint
@@ -157,6 +157,32 @@ theorem weak_departs_on_uniqueness :
 -- ============================================================================
 
 open Core.Logophoricity
+
+/-- The P-Prominence setting that corresponds to a logophoric role.
+
+    This is the formal link between the syntactic mechanism of the
+    P-Constraint and the semantic content of perspectival centering:
+    the interpretable person feature on Appl selects for the logophoric
+    role of the indirect object. @cite{pancheva-zubizarreta-2018} -/
+def roleToProminence : LogophoricRole → PProminence
+  | .pivot  => .proximate
+  | .self   => .participant
+  | .source => .author
+
+/-- The logophoric role corresponding to a P-Prominence setting. -/
+def prominenceToRole : PProminence → LogophoricRole
+  | .proximate   => .pivot
+  | .participant => .self
+  | .author      => .source
+
+/-- The bridge is an isomorphism. -/
+theorem prominence_role_roundtrip (r : LogophoricRole) :
+    prominenceToRole (roleToProminence r) = r := by
+  cases r <;> rfl
+
+theorem role_prominence_roundtrip (p : PProminence) :
+    roleToProminence (prominenceToRole p) = p := by
+  cases p <;> rfl
 
 theorem prominence_is_logophoric :
     prominenceToRole strongGrammar.prominence = .pivot ∧

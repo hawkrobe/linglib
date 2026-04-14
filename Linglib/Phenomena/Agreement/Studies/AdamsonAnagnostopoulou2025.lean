@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Agreement.GenderResolution
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Core.Gender
 
 /-!
 # Adamson & Anagnostopoulou 2025 @cite{adamson-anagnostopoulou-2025}
@@ -85,6 +86,18 @@ inductive GenderNode where
   | anim   -- animate (BCS: under MASC)
   deriving DecidableEq, Repr
 
+open Theories.Morphology.DM (GenderDimension)
+
+/-- Partial bridge from privative geometry nodes to DM gender dimensions.
+    `.cls`, `.indiv`, and `.grp` are structural organizing nodes with no
+    counterpart in the DM `GenderDimension` type (which tracks only
+    semantic gender dimensions). -/
+def GenderNode.toGenderDimension : GenderNode → Option GenderDimension
+  | .masc => some .masc
+  | .fem  => some .fem
+  | .anim => some .anim
+  | _     => none  -- cls, indiv, grp: structural nodes, not gender dimensions
+
 open GenderNode
 
 -- ============================================================================
@@ -94,6 +107,12 @@ open GenderNode
 /-- Inflection class for three-gendered languages. -/
 inductive Infl where | fem | masc | neut
   deriving DecidableEq, Repr
+
+/-- Bridge from VI inflection class to cross-linguistic surface gender. -/
+def Infl.toSurfaceGender : Infl → Core.SurfaceGender
+  | .fem  => .feminine
+  | .masc => .masculine
+  | .neut => .neuter
 
 /-- Greek vocabulary item schema (21).
 

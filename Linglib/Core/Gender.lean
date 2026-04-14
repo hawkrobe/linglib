@@ -77,4 +77,47 @@ theorem SurfaceGender.roundtrip_ud (g : UD.Gender) :
     (SurfaceGender.ofUDGender g).toUDGender = some g := by
   cases g <;> rfl
 
+-- ============================================================================
+-- § 2: Discourse-Level Gender Knowledge
+-- ============================================================================
+
+/-- Gender knowledge state for a discourse referent.
+
+    Distinct from `SurfaceGender`, which describes the morphosyntactic
+    agreement class a noun triggers. `GenderInfo` describes what the
+    discourse participants know or assume about a referent's gender.
+
+    Motivated by @cite{arnold-2026}'s observation that singular *they*
+    is licensed by two inversely correlated pragmatic conditions:
+    one requiring an underspecified discourse representation (where gender
+    is unknown or irrelevant), the other requiring knowledge that the
+    referent's personal pronouns are *they/them* (where gender information
+    is highly specific).
+
+    See also @cite{newman-1992} ("nonsolid" antecedents),
+    @cite{newman-1998} (low individuation), and
+    @cite{camilliere-etal-2021} (social distance as a proxy for
+    discourse specificity). -/
+inductive GenderInfo where
+  /-- Gender is known to discourse participants and matches a
+      morphosyntactic agreement class.
+      Example: "my sister" → `.known .feminine` -/
+  | known : SurfaceGender → GenderInfo
+  /-- Gender is unknown, irrelevant, or not elaborated in the discourse.
+      Example: "every student", "someone", "the clerk" (in passing). -/
+  | unspecified : GenderInfo
+  deriving DecidableEq, Repr, BEq
+
+/-- Lift a surface gender to discourse-level knowledge. -/
+def SurfaceGender.toGenderInfo (g : SurfaceGender) : GenderInfo := .known g
+
+/-- Extract the surface gender, if known. -/
+def GenderInfo.toSurfaceGender : GenderInfo → Option SurfaceGender
+  | .known g => some g
+  | .unspecified => none
+
+/-- Round-trip: known surface gender survives the coarsening. -/
+theorem GenderInfo.roundtrip_known (g : SurfaceGender) :
+    (SurfaceGender.toGenderInfo g).toSurfaceGender = some g := rfl
+
 end Core

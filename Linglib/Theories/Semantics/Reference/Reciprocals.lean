@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Composition.Scope
-import Linglib.Core.Discourse.Logophoricity
+import Linglib.Core.Logophoricity
 
 /-!
 # Reciprocal Semantics: Anaphoric Relations and Scope

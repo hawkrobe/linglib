@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Pronouns
-import Linglib.Core.Discourse.Logophoricity
+import Linglib.Core.Logophoricity
 
 /-!
 # Wan (Mande) Reciprocal and Logophoric Fragment
@@ -91,9 +91,7 @@ theorem log_distinct_from_ordinary :
     The logophoric pronoun is confined to the report context. -/
 theorem logophoric_forces_narrow_scope :
     logPl.form ≠ ordinaryPl.form ∧
-    logophoricRole.rank ≥ LogophoricRole.pivot.rank := by
-  constructor
-  · decide
-  · decide
+    LogophoricRole.pivot ≤ logophoricRole := by
+  exact ⟨by decide, pivot_le _⟩
 
 end Fragments.Wan.Reciprocals

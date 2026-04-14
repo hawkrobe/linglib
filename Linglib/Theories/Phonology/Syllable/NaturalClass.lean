@@ -1,4 +1,5 @@
 import Linglib.Theories.Phonology.Features
+import Linglib.Theories.Phonology.Syllable.Defs
 
 /-!
 # Natural Classes and the Parker Sonority Scale
@@ -20,7 +21,7 @@ and [±voice]:
 | Vowels             |  +  |  +   |  ±    |  8   |
 
 Sonorants (ranks 5–8) are distinguished by [±approximant], [±consonantal],
-and [±syllabic], exactly as in the Clements scale (`sonorityOf`). The
+and [±syllabic], exactly as in the Clements scale (`SonorityRank`). The
 Parker refinement adds [±voice] only within obstruents.
 
 This finer granularity is needed for sonority-conditioned gradient
@@ -60,7 +61,7 @@ def NatClass.parkerSonority : NatClass → Nat
 -- ============================================================================
 
 /-- Classify a segment into the Parker 8-level scale.
-    Follows the feature decomposition of `sonorityOf` but additionally
+    Follows the feature decomposition of `SonorityRank` but additionally
     splits obstruents by [±voice] (@cite{parker-2002}). -/
 def natClassOf (s : Segment) : NatClass :=
   if s.hasValue .sonorant false then
@@ -82,26 +83,17 @@ def parkerSonorityOf (s : Segment) : Nat :=
 -- § 3: Verification
 -- ============================================================================
 
-/-- Map NatClass to the Clements 6-level rank. -/
-def NatClass.clementsSonority : NatClass → Nat
-  | .vls | .vds => 0
-  | .vlf | .vdf => 1
-  | .nasal => 2
-  | .liquid => 3
-  | .glide => 4
-  | .vowel => 5
-
-/-- The Parker scale is a strict refinement of Clements: every rank
-    maps to the correct Clements rank. -/
-theorem parker_refines_clements (nc : NatClass) :
-    nc.clementsSonority = match nc with
-    | .vls | .vds => 0
-    | .vlf | .vdf => 1
-    | .nasal => 2
-    | .liquid => 3
-    | .glide => 4
-    | .vowel => 5 := by
-  cases nc <;> rfl
+/-- Map NatClass to the abstract `SonorityRank`. This collapses the Parker
+    voicing distinction within obstruents (vls/vds → stop, vlf/vdf → fricative),
+    connecting the fine-grained 8-level scale to the substance-free 6-level
+    hierarchy that the grammar operates on. -/
+def NatClass.toSonorityRank : NatClass → SonorityRank
+  | .vls | .vds => .stop
+  | .vlf | .vdf => .fricative
+  | .nasal => .nasal
+  | .liquid => .liquid
+  | .glide => .glide
+  | .vowel => .vowel
 
 /-- Parker sonority is strictly monotone: the ranking is a total order. -/
 theorem parker_strictly_monotone (a b : NatClass) (h : a ≠ b) :

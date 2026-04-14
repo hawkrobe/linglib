@@ -155,6 +155,12 @@ def isLHead (c : Cat) : Bool := fValue c == 0
     F-heads are functional categories: v, D, T, C. -/
 def isFHead (c : Cat) : Bool := fValue c > 0
 
+/-- Is this category in the CP area (left periphery)?
+    @cite{rizzi-1997}: Fin (F3) is the boundary between the inflectional
+    domain (F0–F2) and the left periphery (F3+). Categories at or above
+    Fin belong to the CP area. -/
+def isCPArea (c : Cat) : Bool := fValue c ≥ fValue .Fin
+
 -- ═══════════════════════════════════════════════════════════════
 -- Part 5: Category Family
 -- ═══════════════════════════════════════════════════════════════

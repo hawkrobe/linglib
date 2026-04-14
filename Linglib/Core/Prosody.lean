@@ -246,4 +246,76 @@ theorem ProsodicDominance.dominant_neutralizes (a₁ a₂ : Option Nat) :
 theorem ProsodicDominance.recessive_preserves (a : Option Nat) :
     ProsodicDominance.combineAccent a .recessive = a := rfl
 
+-- ============================================================================
+-- § 6: Affix Accent Typology
+-- ============================================================================
+
+/--
+Fine-grained affix accent classification (@cite{kawahara-2015} §6).
+
+The 3-way `ProsodicDominance` (dominant/recessive/neutral) captures only
+one axis of morpheme–accent interaction. @cite{kawahara-2015}, building
+on @cite{poser-1984} and @cite{vance-1987}, identifies eight distinct
+affix accent behaviors in Japanese, differing in whether the affix
+carries its own accent, whether it deletes or preserves root accent,
+and whether it inserts a new accent at a particular position.
+
+`toProsodicDominance` projects back to the coarser 3-way classification:
+types that preserve root accent when present map to `recessive`; types
+that override root accent map to `dominant`.
+-/
+inductive AffixAccentType where
+  /-- Suffix bears accent; loses to root accent when root is accented.
+      E.g., Japanese `-tara` (conditional): accented root → root accent
+      preserved; unaccented root → suffix accent surfaces. -/
+  | recessive
+  /-- Suffix bears accent; always overrides root accent.
+      E.g., Japanese `-ppoi` (-ish): root accent deleted, suffix accent
+      surfaces regardless. -/
+  | dominant
+  /-- No own accent; inserts accent on root-final syllable only when
+      root is unaccented. Preserves root accent when present.
+      E.g., Japanese `-si` (Mr.): `ono → ono'+si`; `u'ra → u'ra+si`. -/
+  | recessivePreAccent
+  /-- No own accent; always inserts accent on root-final syllable,
+      deleting root accent.
+      E.g., Japanese `-ke` (family of): `ono → ono'+ke`; `mu'raki →
+      muraki'+ke`. -/
+  | dominantPreAccent
+  /-- No own accent; shifts existing root accent to pre-suffix position.
+      Unaccented roots remain unaccented.
+      E.g., Japanese `-mono` (thing): `ka'k(+u) → kaki'+mono`;
+      `nor(+u) → nori+mono`. -/
+  | accentShifting
+  /-- Inserts accent immediately after the affix (typically a prefix).
+      E.g., Japanese `o-` (honorific): `huro' → o+hu'ro`. -/
+  | postAccenting
+  /-- No own accent; deletes root accent. Output is unaccented.
+      E.g., Japanese `-teki` (的 -like): `ke'izai → keizai+teki`. -/
+  | deaccenting
+  /-- No own accent; inserts accent on root-initial syllable.
+      E.g., Japanese `-zu` (group/plural): `okamoto → o'kamoto+zu`. -/
+  | initialAccenting
+  deriving DecidableEq, Repr
+
+/-- Project the fine-grained 8-way classification to the coarser 3-way
+    `ProsodicDominance`. Types that preserve root accent when present
+    map to `recessive`; types that override it map to `dominant`. -/
+def AffixAccentType.toProsodicDominance : AffixAccentType → ProsodicDominance
+  | .recessive | .recessivePreAccent | .accentShifting => .recessive
+  | .dominant | .dominantPreAccent | .postAccenting
+  | .deaccenting | .initialAccenting => .dominant
+
+/-- All recessive-class affixes preserve root accent when present. -/
+theorem AffixAccentType.recessive_preserves_root :
+    AffixAccentType.recessive.toProsodicDominance = .recessive := rfl
+
+/-- All dominant-class affixes override root accent. -/
+theorem AffixAccentType.dominant_overrides_root :
+    AffixAccentType.dominant.toProsodicDominance = .dominant := rfl
+
+/-- Deaccenting is a special case of dominance (overrides root accent). -/
+theorem AffixAccentType.deaccenting_is_dominant :
+    AffixAccentType.deaccenting.toProsodicDominance = .dominant := rfl
+
 end Core.Prosody

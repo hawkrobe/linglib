@@ -1,10 +1,11 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Register
 import Linglib.Core.Prominence
+import Linglib.Core.Gender
 
 /-!
 # Shared Pronoun and Allocutive Entry Types
-@cite{alok-bhalla-2026}
+@cite{alok-bhalla-2026} @cite{arnold-2026}
 
 Cross-linguistic structures for pronoun inventories and allocutive markers,
 shared across all Fragment/*/Pronouns.lean files.
@@ -13,9 +14,18 @@ shared across all Fragment/*/Pronouns.lean files.
 
 Covers the union of fields needed by all language fragments:
 - Core: form, person, number (all fragments)
-- Morphosyntactic: case_ (Galician, English)
+- Morphosyntactic: case_, gender (Galician, English, French, etc.)
 - Sociolinguistic: register (all SA-based fragments)
 - Orthographic: script (Korean hangul, Japanese kanji)
+
+## PronounSpec
+
+Personal pronoun specification — which pronouns a person uses. A
+social-linguistic fact independent of grammatical gender: a person
+with known feminine gender may use she/her, they/them, or neopronouns.
+Motivated by @cite{arnold-2026}'s distinction between underspecified
+singular *they* (discourse representation is thin) and personal singular
+*they* (referent's pronouns are known to be *they/them*).
 
 ## AllocutiveEntry
 
@@ -28,6 +38,29 @@ clitics (Galician) that realize speaker-addressee agreement.
 namespace Core.Pronouns
 
 open Core.Register (Level)
+open Core (SurfaceGender)
+
+-- ============================================================================
+-- § 1: Personal Pronoun Specification
+-- ============================================================================
+
+/-- Personal pronoun specification — which pronouns a person uses.
+
+    A social-linguistic fact that may or may not be in common ground.
+    Independent of grammatical gender: a person with known feminine
+    gender may use she/her, they/them, or neopronouns.
+    @cite{arnold-2026} §3: the pragmatic condition for *personal*
+    singular *they* is knowing that the referent's personal pronouns
+    are *they/them*. -/
+inductive PronounSpec where
+  | heHim      -- he/him/his
+  | sheHer     -- she/her/hers
+  | theyThem   -- they/them/theirs
+  deriving DecidableEq, Repr, BEq
+
+-- ============================================================================
+-- § 2: Cross-linguistic Pronoun Entry
+-- ============================================================================
 
 /-- Cross-linguistic pronoun entry.
 
@@ -43,6 +76,10 @@ structure PronounEntry where
   number : Option Number := none
   /-- Grammatical case (UD.Case) -/
   case_ : Option Case := none
+  /-- Grammatical gender. For 3rd-person pronouns in gendered languages
+      (French il/elle, German er/sie/es, etc.). 1st/2nd-person pronouns
+      and languages without pronominal gender leave this as `none`. -/
+  gender : Option SurfaceGender := none
   /-- Register level (formality/honorifics). Binary T/V systems use
       `.informal`/`.formal`; ternary honorific systems (Hindi, Magahi,
       Maithili, Korean) use all three levels. -/

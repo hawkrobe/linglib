@@ -171,4 +171,63 @@ theorem pronoun_lightest :
     ReferentialForm.typicalWeight .shortDefDescription := by
   native_decide
 
+-- ════════════════════════════════════════════════════
+-- § 5. Discourse Elaboration
+-- ════════════════════════════════════════════════════
+
+/-- How elaborated a referent's discourse representation is.
+
+    @cite{arnold-2026} §2: the key criterion for underspecified singular
+    *they* is "discourse specificity" — whether the speaker intends to
+    evoke a detailed mental representation for the addressee.
+
+    This extends @cite{newman-1992}'s "solidity" (existence of a specific
+    concrete referent) and @cite{newman-1998}'s "individuation" (referents
+    treated as individuals with identity-relevant details).
+
+    The scale runs from `underspecified` (the referent is barely sketched
+    in the discourse model — quantified, indefinite, or mentioned only in
+    passing) to `elaborated` (the referent has a rich, detailed
+    representation — named, described, central to the narrative). -/
+inductive DiscourseElaboration where
+  /-- The referent's discourse representation is minimal: quantified,
+      indefinite, epicene, or not developed. Identity is unknown or
+      unimportant. "Everyone should make their bed." -/
+  | underspecified
+  /-- The referent has a rich, detailed discourse representation:
+      named, described, topical, with known personal attributes.
+      "Asia Kate Dillon (born November 15, 1984) is an American actor.
+      They are known for their roles as…" -/
+  | elaborated
+  deriving DecidableEq, Repr, BEq
+
+/-- Bridge from Ariel's accessibility scale to discourse elaboration.
+
+    @cite{ariel-2001}'s Accessibility Marking Scale describes which
+    referential form is appropriate given how accessible a referent is.
+    Arnold's discourse elaboration is related but distinct: low
+    accessibility *tends to co-occur with* underspecified elaboration
+    (a referent you haven't mentioned much is both less accessible and
+    less elaborated), but they are not identical.
+
+    This coarsening maps high-accessibility forms (pronouns, agreement,
+    zero) to elaborated (these forms require a well-established referent)
+    and low-accessibility forms (full names, descriptions) to underspecified
+    (these forms are used when the referent is being newly introduced or
+    is not yet established). The boundary is approximate. -/
+def AccessibilityLevel.toElaboration (a : AccessibilityLevel) : DiscourseElaboration :=
+  if a.rank ≥ 13 then .elaborated    -- stressed pronoun and above
+  else .underspecified                -- demonstrations, descriptions, names
+
+/-- Pronouns (high accessibility) correlate with elaborated discourse
+    representations — you use a pronoun for a referent that is already
+    well-established in the discourse. -/
+theorem pronoun_implies_elaborated :
+    AccessibilityLevel.unstressedPron.toElaboration = .elaborated := rfl
+
+/-- Full names (low accessibility) correlate with underspecified discourse
+    representations — the referent is being (re-)introduced. -/
+theorem fullName_implies_underspecified :
+    AccessibilityLevel.fullName.toElaboration = .underspecified := rfl
+
 end Core.Discourse.ReferentialForm

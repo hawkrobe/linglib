@@ -1,7 +1,8 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
-import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Phenomena.Negation.Studies.Rett2026
+import Linglib.Theories.Syntax.Minimalism.Core.NegScope
+import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Phenomena.Negation.Typology
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # Phase-Based Analysis of Surprise Negation
@@ -28,87 +29,39 @@ account (3) explains why Sneg negation is non-truth-conditional: by the
 time the neg head merges, the vP complement has been transferred to LF,
 so the negation cannot scope into the propositional content.
 
+## Two structural primitives
+
+All Sneg predictions derive from exactly two structural consequences of
+the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
+
+- **vP transferred**: neg merged in CP → PIC → no scope into vP
+  (blocks: NPIs, N-words, NEG-raising, DE inferences, Aux-to-Comp;
+   licenses: PPIs)
+- **FocP occupied**: TP fills [Spec, FocP] → unique FocP exhausted
+  (blocks: other foci, Wh-elements, entity-question answers;
+   forces: root-only, preverbal-subject topicalization;
+   licenses: EE)
+
 ## Connections
 
-- `Phenomena.Negation.Studies.Rett2026.ENType` — high vs low EN
+- `Core.Negation` — framework-agnostic EN types (ENType, ENStrength, PolarityLicensing)
+- `Minimalism.NegScope` — merge position, scope, classification chain
+- `Fragments.Italian.ExpletiveNegation` — Italian Table 1 data
 - `Phenomena.Negation.Typology.NegationProfile.negIsHead` — head status
-- `Minimalism.fValue` — f-value classification (Extended Projection)
-- `Minimalism.isPhaseHead` — phase head identification
+- `Minimalism.fValue` / `isCPArea` — f-value classification
 -/
 
 namespace Phenomena.Negation.Studies.Greco2020
 
-open Minimalism (Cat fValue isPhaseHead)
-open Phenomena.Negation.Studies.Rett2026 (ENType ENDatum)
+open Minimalism (Cat fValue isPhaseHead isCPArea)
+open Minimalism.NegScope (NegMergePosition)
+open Core (ENStrength PolarityLicensing PolarityClass
+           weakENProfile strongENProfile)
+open Fragments.Italian.ExpletiveNegation (ENEnvironment)
 open Phenomena.Negation.Typology (NegationProfile italian spanish french)
 
 -- ════════════════════════════════════════════════════
--- § 1. Neg merge position relative to the clause spine
--- ════════════════════════════════════════════════════
-
-/-- Where a negation head is merged in the extended projection.
-    Standard NegP is in the inflectional domain (F2, between v and C).
-    In surprise negation, *non* merges in the CP layer (F3+, between
-    Fin and Foc). -/
-inductive NegMergePosition where
-  | tp   -- Standard NegP: inflectional domain (F2)
-  | cp   -- CP-area: left periphery (F3+, @cite{greco-2020} §4)
-  deriving DecidableEq, Repr
-
--- ════════════════════════════════════════════════════
--- § 2. F-value classification — derive TP vs CP from Extended Projection
--- ════════════════════════════════════════════════════
-
-/-- A category is in the CP area iff its f-value is at or above Fin (F3).
-    @cite{rizzi-1997}: Fin is the boundary between the inflectional domain and
-    the left periphery. -/
-def isCPArea (c : Cat) : Bool := fValue c ≥ fValue .Fin
-
-/-- Standard NegP (F2) is in TP, not CP. -/
-theorem neg_in_tp : isCPArea .Neg = false := by decide
-
-/-- Foc (F4) is in the CP area. -/
-theorem foc_in_cp : isCPArea .Foc = true := by decide
-
-/-- Force (F6) is in the CP area. -/
-theorem force_in_cp : isCPArea .Force = true := by decide
-
-/-- Fin (F3) is the boundary (inclusive — it's the lowest CP head). -/
-theorem fin_is_cp_boundary : isCPArea .Fin = true := by decide
-
--- ════════════════════════════════════════════════════
--- § 3. Phase-based scope restriction (@cite{greco-2020}, §4.3)
--- ════════════════════════════════════════════════════
-
-/-- Whether a Neg head at this merge position can scope into the vP domain.
-    Under weak PIC: vP complement is accessible until the
-    NEXT phase head (C) is merged. Standard NegP (F2) is merged before C,
-    so vP is still accessible. CP-area Neg is merged during/after C-phase
-    assembly, when vP complement has been transferred. -/
-def NegMergePosition.scopesIntoVP : NegMergePosition → Bool
-  | .tp => true    -- Merged before C, vP still accessible
-  | .cp => false   -- Merged with/after C, vP transferred
-
-/-- CP-area negation is non-truth-conditional (= high EN).
-    TP-area negation is truth-conditional (standard or low EN). -/
-def NegMergePosition.toENEffect : NegMergePosition → ENType
-  | .tp => .low   -- Can scope → truth-conditional
-  | .cp => .high  -- Cannot scope → non-truth-conditional (Greco's high EN)
-
-/-- TP-area negation scopes into vP. -/
-theorem tp_neg_scopes : NegMergePosition.tp.scopesIntoVP = true := rfl
-
-/-- CP-area negation does NOT scope into vP. -/
-theorem cp_neg_no_scope : NegMergePosition.cp.scopesIntoVP = false := rfl
-
-/-- CP-area negation maps to high EN. -/
-theorem cp_is_high_en : NegMergePosition.cp.toENEffect = .high := rfl
-
-/-- TP-area negation maps to low EN. -/
-theorem tp_is_low_en : NegMergePosition.tp.toENEffect = .low := rfl
-
--- ════════════════════════════════════════════════════
--- § 4. Greco's four factors for surprise negation
+-- § 1. Greco's four factors for surprise negation
 -- ════════════════════════════════════════════════════
 
 /-- @cite{greco-2020}: four necessary conditions for surprise negation.
@@ -136,7 +89,7 @@ def italianSnegConditions : SnegConditions :=
   , tpIsFocused := true }
 
 theorem italian_yields_snegs :
-    italianSnegConditions.yieldsSnegs = true := by native_decide
+    italianSnegConditions.yieldsSnegs = true := by decide
 
 /-- Spanish fails condition (ii): *no* is XP, not X°. -/
 def spanishSnegConditions : SnegConditions :=
@@ -146,10 +99,10 @@ def spanishSnegConditions : SnegConditions :=
   , tpIsFocused := true }
 
 theorem spanish_no_snegs :
-    spanishSnegConditions.yieldsSnegs = false := by native_decide
+    spanishSnegConditions.yieldsSnegs = false := by decide
 
 -- ════════════════════════════════════════════════════
--- § 5. Cross-linguistic predictions — connect to NegationProfile
+-- § 2. Cross-linguistic predictions — connect to NegationProfile
 -- ════════════════════════════════════════════════════
 
 /-- Sneg attestation datum: links a language's negation profile to
@@ -176,12 +129,12 @@ def allSnegAttestations : List SnegAttestation :=
 /-- Greco's prediction: Snegs are attested only when negIsHead = true. -/
 theorem sneg_requires_head :
     allSnegAttestations.all (λ s =>
-      if s.attested then s.negIsHead == some true else true) = true := by native_decide
+      if s.attested then s.negIsHead == some true else true) = true := by decide
 
 /-- Converse: head-status neg predicts Sneg availability (in our sample). -/
 theorem head_predicts_snegs :
     allSnegAttestations.all (λ s =>
-      if s.negIsHead == some false then !s.attested else true) = true := by native_decide
+      if s.negIsHead == some false then !s.attested else true) = true := by decide
 
 /-- The Italian Sneg attestation derives its head status from the
     NegationProfile, not by stipulation. -/
@@ -194,21 +147,298 @@ theorem spanish_snegs_from_profile :
     spanishSnegs.negIsHead = spanish.negIsHead := rfl
 
 -- ════════════════════════════════════════════════════
--- § 6. Phase theory connection
+-- § 3. Phase theory connection
 -- ════════════════════════════════════════════════════
-
-/-- The f-value boundary: anything at F3+ (CP area) is above the
-    inflectional domain where standard NegP resides. -/
-theorem cp_area_above_neg : fValue .Fin > fValue .Neg := by decide
 
 /-- NegP and T share the same f-value (both F2, inflectional domain). -/
 theorem neg_t_same_fvalue : fValue .Neg = fValue .T := by decide
 
-/-- The merge position determines scope: TP-area neg is truth-conditional,
-    CP-area neg is non-truth-conditional. This is consistent: CP-area
-    maps to high EN, TP-area maps to low EN. -/
-theorem scope_determines_entype (pos : NegMergePosition) :
-    (pos.scopesIntoVP = true) ↔ (pos.toENEffect = .low) := by
-  cases pos <;> simp [NegMergePosition.scopesIntoVP, NegMergePosition.toENEffect]
+-- ════════════════════════════════════════════════════
+-- § 4. The Sneg representation and its two structural primitives
+-- ════════════════════════════════════════════════════
+
+/-! ### Derived predictions from [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]
+
+@cite{greco-2020} §4.2 derives 11 properties from a single structural
+representation. Every prediction reduces to one of two structural
+primitives:
+
+- `vpTransferred`: neg merged in CP → vP complement transferred by PIC
+- `focPOccupied`: TP fills [Spec, FocP] → FocP projection exhausted
+
+These are the only two structural consequences. Each of Greco's
+predictions is a one-line derivation from one primitive. -/
+
+/-- The structural representation of a Sneg (@cite{greco-2020} (59)/(106)):
+    the negative head merges in the CP layer, and TP occupies [Spec, FocP]. -/
+structure SnegRepresentation where
+  /-- The negative head merges in the CP area (F3+). -/
+  negPos : NegMergePosition
+  negInCP : negPos = .cp
+  /-- TP moves to [Spec, FocP]: the whole predicate is focused. -/
+  tpFocused : Bool
+  tpFocused_eq : tpFocused = true
+
+/-- **Primitive A**: vP complement has been transferred by PIC.
+    Neg merged in CP → past the phase boundary → vP shipped to LF.
+    This blocks all propositional-scope interactions. -/
+def SnegRepresentation.vpTransferred (s : SnegRepresentation) : Bool :=
+  !s.negPos.scopesIntoVP
+
+/-- **Primitive B**: FocP projection is occupied by TP.
+    The unique Italian FocP (@cite{rizzi-1997}) is exhausted, blocking
+    any other element that targets [Spec, FocP]. -/
+def SnegRepresentation.focPOccupied (s : SnegRepresentation) : Bool :=
+  s.tpFocused
+
+-- Master lemmas: both primitives are true for every Sneg
+
+theorem vp_transferred (s : SnegRepresentation) : s.vpTransferred = true := by
+  simp [SnegRepresentation.vpTransferred, s.negInCP, NegMergePosition.scopesIntoVP]
+
+theorem focp_occupied (s : SnegRepresentation) : s.focPOccupied = true := by
+  simp [SnegRepresentation.focPOccupied, s.tpFocused_eq]
+
+-- ════════════════════════════════════════════════════
+-- § 5. Category A: consequences of vP transfer
+-- ════════════════════════════════════════════════════
+
+/-! Predictions that follow from the vP complement being transferred.
+    In each case, the blocked operation requires negation to scope into
+    the propositional content — impossible when vP is gone. -/
+
+/-- **Prediction 6** (@cite{greco-2020} §4.2.3): No NEG-raising.
+    NEG-raising requires neg in TP scope domain. -/
+def SnegRepresentation.allowsNegRaising (s : SnegRepresentation) : Bool :=
+  !s.vpTransferred
+
+/-- **Prediction 8** (@cite{greco-2020} §4.2.5, (64)): No Aux-to-Comp.
+    Aux-to-Comp requires neg to originate in TP. -/
+def SnegRepresentation.allowsAuxToComp (s : SnegRepresentation) : Bool :=
+  !s.vpTransferred
+
+/-- **§2.3 (25)**: Sneg negation is not downward entailing.
+    DE requires neg to scope over the predicate. -/
+def SnegRepresentation.isDownwardEntailing (s : SnegRepresentation) : Bool :=
+  !s.vpTransferred
+
+theorem snegs_block_neg_raising (s : SnegRepresentation) :
+    s.allowsNegRaising = false := by
+  simp [SnegRepresentation.allowsNegRaising, vp_transferred s]
+
+theorem snegs_block_aux_to_comp (s : SnegRepresentation) :
+    s.allowsAuxToComp = false := by
+  simp [SnegRepresentation.allowsAuxToComp, vp_transferred s]
+
+theorem sneg_not_downward_entailing (s : SnegRepresentation) :
+    s.isDownwardEntailing = false := by
+  simp [SnegRepresentation.isDownwardEntailing, vp_transferred s]
+
+-- ════════════════════════════════════════════════════
+-- § 6. Category B: consequences of FocP occupancy
+-- ════════════════════════════════════════════════════
+
+/-! Predictions that follow from TP filling [Spec, FocP].
+    In each case, the blocked operation requires access to FocP,
+    which is already occupied. -/
+
+/-- **Prediction 2** (@cite{greco-2020} §4.2.4): Snegs reject foci.
+    FocP is already occupied by TP. -/
+def SnegRepresentation.allowsFocus (s : SnegRepresentation) : Bool :=
+  !s.focPOccupied
+
+/-- **Prediction 3** (@cite{greco-2020} §4.2.4): Snegs reject Wh.
+    Wh-phrases target [Spec, FocP], same as TP. -/
+def SnegRepresentation.allowsWh (s : SnegRepresentation) : Bool :=
+  !s.focPOccupied
+
+/-- **Prediction 1** (@cite{greco-2020} §4.2.5): Snegs are root-only.
+    Subordinate clauses block whole-TP focalization. -/
+def SnegRepresentation.requiresRoot (s : SnegRepresentation) : Bool :=
+  s.focPOccupied
+
+/-- **Prediction 7** (@cite{greco-2020} §4.2.7): Snegs license EE.
+    EE is parasitic on an active FocP (@cite{poletto-2005}). -/
+def SnegRepresentation.licensesEE (s : SnegRepresentation) : Bool :=
+  s.focPOccupied
+
+/-- Topics are freely allowed — TopP is recursive and independent
+    of FocP. This is NOT derived from either primitive. -/
+def SnegRepresentation.allowsTopics (_s : SnegRepresentation) : Bool :=
+  true
+
+theorem snegs_reject_focus (s : SnegRepresentation) :
+    s.allowsFocus = false := by
+  simp [SnegRepresentation.allowsFocus, focp_occupied s]
+
+theorem snegs_reject_wh (s : SnegRepresentation) :
+    s.allowsWh = false := by
+  simp [SnegRepresentation.allowsWh, focp_occupied s]
+
+theorem snegs_require_root (s : SnegRepresentation) :
+    s.requiresRoot = true := by
+  simp [SnegRepresentation.requiresRoot, focp_occupied s]
+
+theorem snegs_license_ee (s : SnegRepresentation) :
+    s.licensesEE = true := by
+  simp [SnegRepresentation.licensesEE, focp_occupied s]
+
+theorem snegs_allow_topics (s : SnegRepresentation) :
+    s.allowsTopics = true := rfl
+
+-- ════════════════════════════════════════════════════
+-- § 7. Parameterized predictions (FocP-derived)
+-- ════════════════════════════════════════════════════
+
+/-- **Prediction 4** (@cite{greco-2020} §4.2.4, (26)–(27)): Snegs answer
+    propositional questions but NOT entity questions.
+
+    TP-focalization means the WHOLE predicate is new-information focus.
+    Propositional questions ask about the entire proposition — compatible.
+    Entity questions require sub-TP focus — incompatible. -/
+inductive QuestionType where
+  | propositional   -- "Cos'è successo?" (What happened?)
+  | entity          -- "Chi è sceso dal treno?" (Who got off the train?)
+  deriving DecidableEq, Repr
+
+def SnegRepresentation.answersQuestion (s : SnegRepresentation) :
+    QuestionType → Bool
+  | .propositional => s.focPOccupied
+  | .entity        => !s.focPOccupied
+
+theorem snegs_answer_propositional (s : SnegRepresentation) :
+    s.answersQuestion .propositional = true := by
+  simp [SnegRepresentation.answersQuestion, focp_occupied s]
+
+theorem snegs_reject_entity (s : SnegRepresentation) :
+    s.answersQuestion .entity = false := by
+  simp [SnegRepresentation.answersQuestion, focp_occupied s]
+
+/-- **Prediction 5** (@cite{greco-2020} §4.2.6): Preverbal subjects
+    are topicalized. FocP full → subject forced to TopP. -/
+inductive SubjectPosition where
+  | preverbal   -- [Spec, TopP]: topicalized
+  | postverbal  -- Inside TP (in [Spec, FocP]): part of focus
+  deriving DecidableEq, Repr
+
+def SnegRepresentation.subjectIsTopicalized (s : SnegRepresentation) :
+    SubjectPosition → Bool
+  | .preverbal  => s.focPOccupied
+  | .postverbal => false
+
+theorem preverbal_subject_topicalized (s : SnegRepresentation) :
+    s.subjectIsTopicalized .preverbal = true := by
+  simp [SnegRepresentation.subjectIsTopicalized, focp_occupied s]
+
+-- ════════════════════════════════════════════════════
+-- § 8. PPIs — consequence of vP transfer
+-- ════════════════════════════════════════════════════
+
+/-! ### PPI licensing (@cite{greco-2020} §2.3 (24), @cite{giannakidou-2011})
+
+Snegs CAN host PPIs like *già* ("already"), despite containing a
+negative marker. Since vP has been transferred, the PPI inside vP
+is outside negation's scope — it has already "escaped" by PIC. -/
+
+/-- PPIs survive because vP has been transferred. -/
+theorem ppi_survives_in_sneg (s : SnegRepresentation) :
+    s.vpTransferred = true := vp_transferred s
+
+-- ════════════════════════════════════════════════════
+-- § 9. Ethical Dative disambiguates Sneg from SN
+-- ════════════════════════════════════════════════════
+
+/-! ### Ethical Dative interaction (@cite{greco-2020} §2.2 (13))
+
+When Ethical Dative (*mi*/*ti*) co-occurs with *non*, only the Sneg
+reading is available — standard negation is ruled out. ED is
+associated with the CP layer (discourse-level emotional participation),
+which is exactly where Sneg *non* merges. -/
+
+/-- ED disambiguates: presence of ED forces the Sneg reading. -/
+structure EDDisambiguation where
+  hasEthicalDative : Bool
+  negInterpretation : NegMergePosition
+  ed_forces_sneg : hasEthicalDative = true → negInterpretation = .cp
+
+def snegWithED : EDDisambiguation :=
+  { hasEthicalDative := true
+  , negInterpretation := .cp
+  , ed_forces_sneg := λ _ => rfl }
+
+-- ════════════════════════════════════════════════════
+-- § 10. Cross-linguistic variation: four Sneg factors
+-- ════════════════════════════════════════════════════
+
+/-! ### Parametric variation (@cite{greco-2020} §4.2.9)
+
+Snegs require the conspiracy of four factors. Blocking any one prevents
+Snegs. French *ne* is X° (head) but merges in TP, not CP — factor
+(iii) fails. -/
+
+/-- French: *ne* is X° (head), but Snegs are not attested.
+    @cite{greco-2020} §4.2.9: *ne* merges in TP area (standard NegP),
+    not externally merged in CP, so factor (iii) fails. -/
+def frenchSnegConditions : SnegConditions :=
+  { hasNegMorpheme := true
+  , negIsHead := true
+  , mergePosition := .tp
+  , tpIsFocused := false }
+
+theorem french_no_snegs :
+    frenchSnegConditions.yieldsSnegs = false := by decide
+
+-- ════════════════════════════════════════════════════
+-- § 11. Sneg ≠ NRQ ≠ ENE: three strong EN constructions
+-- ════════════════════════════════════════════════════
+
+/-! ### Differentiation from NRQs and ENEs (@cite{greco-2020} §3)
+
+All three belong to strong EN but differ on four diagnostics:
+
+| Property             | Sneg | NRQ  | ENE  |
+|----------------------|------|------|------|
+| Wh-elements          | ✗    | ✓    | ✓    |
+| Answerhood           | ✓    | ✗    | ✗    |
+| Embeddable (factive) | ✗    | —    | ✓    |
+| *dopo tutto*         | ✗    | ✓    | —    |
+-/
+
+inductive StrongENType where
+  | sneg | nrq | ene
+  deriving DecidableEq, Repr
+
+def StrongENType.allowsWh : StrongENType → Bool
+  | .sneg => false
+  | .nrq  => true
+  | .ene  => true
+
+def StrongENType.isAnswer : StrongENType → Bool
+  | .sneg => true
+  | .nrq  => false
+  | .ene  => false
+
+def StrongENType.embeddableUnderFactive : StrongENType → Bool
+  | .sneg => false
+  | .nrq  => false
+  | .ene  => true
+
+def StrongENType.enStrength : StrongENType → ENStrength
+  | .sneg => .strong
+  | .nrq  => .strong
+  | .ene  => .strong
+
+theorem all_strong_en (t : StrongENType) :
+    t.enStrength = .strong := by cases t <;> rfl
+
+/-- Snegs are the only strong EN type that can serve as answers. -/
+theorem sneg_unique_answerhood :
+    [StrongENType.sneg, .nrq, .ene].filter StrongENType.isAnswer
+    = [.sneg] := rfl
+
+/-- Snegs are the only strong EN type that rejects Wh-elements. -/
+theorem sneg_unique_wh_rejection :
+    [StrongENType.sneg, .nrq, .ene].filter (fun t => !t.allowsWh)
+    = [.sneg] := rfl
 
 end Phenomena.Negation.Studies.Greco2020

@@ -141,6 +141,28 @@ def mkMarkGrad {C : Type} (name : String) (violations : C → Nat) : NamedConstr
     eval := violations }
 
 -- ============================================================================
+-- § 2b: OCP (Obligatory Contour Principle)
+-- ============================================================================
+
+/-- Count adjacent identical pairs in a list.
+    Used by `mkOCP` to evaluate identity violations on a tier. -/
+def adjacentIdentical {α : Type} [BEq α] : List α → Nat
+  | [] | [_] => 0
+  | a :: b :: rest => (if a == b then 1 else 0) + adjacentIdentical (b :: rest)
+
+/-- Build an OCP constraint: penalizes adjacent identical elements on a tier.
+    `project` extracts the relevant tier from a candidate.
+
+    The OCP is parametrically polymorphic over the feature type `α` — it
+    operates on identity vs. non-identity of adjacent elements, regardless
+    of what kind of features they are. Following @cite{berent-2026}, this
+    polymorphism captures the algebraic nature of phonological constraints:
+    they generalize to novel feature values by construction. -/
+def mkOCP {C α : Type} [BEq α] (name : String) (project : C → List α) :
+    NamedConstraint C :=
+  mkMarkGrad name (λ c => adjacentIdentical (project c))
+
+-- ============================================================================
 -- § 3: Classification Properties
 -- ============================================================================
 
@@ -160,6 +182,11 @@ theorem mkMark_is_markedness {C : Type} (name : String) (p : C → Bool) :
 theorem mkMaxCtx_is_faithfulness {C : Type} (name : String)
     (d : C → Bool) (ctx : C → Bool) :
     (mkMaxCtx name d ctx).family = .faithfulness := rfl
+
+/-- OCP constraints are markedness constraints. -/
+theorem mkOCP_is_markedness {C α : Type} [BEq α] (name : String)
+    (project : C → List α) :
+    (mkOCP name project).family = .markedness := rfl
 
 -- ============================================================================
 -- § 4: Violation Bounds

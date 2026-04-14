@@ -103,7 +103,7 @@ import Linglib.Core.Agent.SocialUtility
 import Linglib.Core.GameTheory
 import Linglib.Core.Discourse.Evidence
 import Linglib.Core.Discourse.Epistemicity
-import Linglib.Core.Discourse.Logophoricity
+import Linglib.Core.Logophoricity
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Temporal.Time
 import Linglib.Core.Temporal.Reichenbach
@@ -1078,6 +1078,8 @@ import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
 import Linglib.Phenomena.ModalIndefinites.Studies.KratzerShimoyama2002
 import Linglib.Phenomena.Negation.Basic
+import Linglib.Theories.Syntax.Minimalism.Core.NegScope
+import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Phenomena.Negation.Studies.Rett2026
 import Linglib.Phenomena.Negation.Studies.Tsiakmakis2025
@@ -1150,6 +1152,8 @@ import Linglib.Phenomena.Possession.Studies.HaninkKoontzGarboden2025
 import Linglib.Phenomena.Possession.Studies.Myler2016
 import Linglib.Phenomena.Possession.Studies.AissenPolian2025
 import Linglib.Phenomena.Pronouns.Typology
+import Linglib.Phenomena.Pronouns.Studies.Arnold2026
+import Linglib.Phenomena.Pronouns.Studies.KonnellyCowper2020
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024_UPH
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024
@@ -1302,6 +1306,9 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
 import Linglib.Phenomena.ScalarImplicatures.Studies.PottsLevy2015
 import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.Phonology.Typology
+import Linglib.Phenomena.Phonology.Studies.Berent2026
+import Linglib.Phenomena.Phonology.Studies.BerentEtAl2016
+import Linglib.Phenomena.Phonology.Studies.Kawahara2015
 import Linglib.Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000
 import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations
@@ -1340,6 +1347,7 @@ import Linglib.Theories.Syntax.Minimalism.Agreement.GenderResolution
 import Linglib.Theories.Syntax.Minimalism.Agreement.CoordinateResolution
 import Linglib.Phenomena.Agreement.Studies.Corbett2000
 import Linglib.Phenomena.Agreement.Studies.Carstens2026
+import Linglib.Phenomena.Agreement.Studies.HalpertHammerly2026
 import Linglib.Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
 import Linglib.Phenomena.Agreement.Studies.Toosarvandani2023
 import Linglib.Phenomena.Agreement.Studies.Harbour2016
@@ -2088,10 +2096,12 @@ import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
 import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
 import Linglib.Theories.Phonology.HarmonicGrammar.Separability
 import Linglib.Theories.Phonology.HarmonicGrammar.Variation
+import Linglib.Theories.Phonology.Accent
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.CophonologyTheory
 import Linglib.Theories.Phonology.ProsodicWord
+import Linglib.Theories.Phonology.Doubling
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

@@ -6,10 +6,21 @@ import Linglib.Theories.Phonology.Features
 Syllable constituency (onset–nucleus–coda), sonority scale, the Sonority
 Sequencing Principle, moraic weight, and OT markedness constraints.
 
+## Substance-free sonority
+
+The sonority hierarchy is represented as an abstract ordered type
+(`SonorityRank`) rather than being defined by articulatory features.
+Following @cite{berent-2026}, the synchronic grammar operates on the
+ordering alone — the correlation with phonetic features ([±sonorant],
+[±approximant], etc.) is a diachronic/evolutionary fact, not a
+grammatical primitive. The grounding function `sonorityOf` maps
+segments to ranks via their features, but the SSP and markedness
+constraints see only `SonorityRank`.
+
 Source: @cite{goldsmith-2011} "The Syllable" in *The Handbook of Phonological
 Theory* (Ch 6, pp. 164–196). Cross-referenced with Hayes §4.6 and §15.
 
-@cite{goldsmith-2011}
+@cite{goldsmith-2011} @cite{berent-2026}
 -/
 
 namespace Theories.Phonology.Syllable
@@ -20,35 +31,72 @@ open Theories.Phonology (Segment Feature)
 -- § 1: Sonority Scale
 -- ============================================================================
 
-/-- Sonority rank (0 = least sonorous). Following @cite{hayes-2009},
-    the 5-level hierarchy is decomposed by four features:
+/-- The abstract sonority hierarchy: what the synchronic grammar operates on.
 
-    | Class     | son | approx | cons | syll | Rank |
-    |-----------|-----|--------|------|------|------|
-    | Obstruent |  −  |   −    |  +   |  −   |  0   |
-    | Nasal     |  +  |   −    |  +   |  −   |  1   |
-    | Liquid    |  +  |   +    |  +   |  −   |  2   |
-    | Glide     |  +  |   +    |  −   |  −   |  3   |
-    | Vowel     |  +  |   +    |  −   |  +   |  4   |
+    Following @cite{berent-2026}, phonological constraints on syllable
+    structure are *substance-free* — the grammar sees an ordered set of
+    sonority categories, not the articulatory features that happen to
+    correlate with them. The correlation is diachronic (shaped by cultural
+    evolution and articulatory pressures), but the synchronic computation
+    is algebraic.
 
-    Within obstruents, [±continuant] further splits stops (rank 0) from
-    fricatives (rank 1) per @cite{clements-1990}, yielding a 6-level scale. -/
-def sonorityOf (s : Segment) : Nat :=
+    | Rank | Category  |
+    |------|-----------|
+    |  0   | Stop      |
+    |  1   | Fricative |
+    |  2   | Nasal     |
+    |  3   | Liquid    |
+    |  4   | Glide     |
+    |  5   | Vowel     |
+
+    The 6 levels follow @cite{clements-1990}'s refinement of the basic
+    5-class hierarchy (splitting obstruents by [±continuant]). See
+    `NatClass.parkerSonority` for the finer 8-level Parker scale. -/
+inductive SonorityRank where
+  | stop
+  | fricative
+  | nasal
+  | liquid
+  | glide
+  | vowel
+  deriving DecidableEq, Repr
+
+namespace SonorityRank
+
+/-- Numeric rank (0 = least sonorous). -/
+def rank : SonorityRank → Nat
+  | .stop => 0 | .fricative => 1 | .nasal => 2
+  | .liquid => 3 | .glide => 4 | .vowel => 5
+
+end SonorityRank
+
+/-- Substance-based grounding: classify a segment into the sonority
+    hierarchy by its phonetic features.
+
+    Following @cite{hayes-2009}, the hierarchy is decomposed by four
+    features ([±sonorant] > [±approximant] > [±consonantal] > [±syllabic]),
+    with @cite{clements-1990}'s refinement splitting obstruents by
+    [±continuant].
+
+    This function bridges phonetic substance and the abstract `SonorityRank`
+    type. The SSP and other grammatical constraints operate on `SonorityRank`
+    directly — they do not inspect articulatory features. -/
+def sonorityOf (s : Segment) : SonorityRank :=
   if s.hasValue .sonorant false then
     -- Obstruent: stop vs fricative (@cite{clements-1990} refinement)
-    if s.hasValue .continuant true then 1 else 0
+    if s.hasValue .continuant true then .fricative else .stop
   else if s.hasValue .approximant false then
     -- Nasal ([+sonorant, −approximant])
-    2
+    .nasal
   else if s.hasValue .consonantal true then
     -- Liquid ([+sonorant, +approximant, +consonantal])
-    3
+    .liquid
   else if s.hasValue .syllabic true then
     -- Vowel ([+sonorant, +approximant, −consonantal, +syllabic])
-    5
+    .vowel
   else
     -- Glide ([+sonorant, +approximant, −consonantal, −syllabic])
-    4
+    .glide
 
 -- ============================================================================
 -- § 2: Syllable Constituents
@@ -89,11 +137,11 @@ def monotoneFalling : List Nat → Bool
 
 /-- Does the onset obey SSP? Sonority rises toward the nucleus. -/
 def Syllable.sspOnset (σ : Syllable) : Bool :=
-  monotoneRising (σ.onset.map sonorityOf)
+  monotoneRising (σ.onset.map (λ s => (sonorityOf s).rank))
 
 /-- Does the coda obey SSP? Sonority falls from the nucleus. -/
 def Syllable.sspCoda (σ : Syllable) : Bool :=
-  monotoneFalling (σ.coda.map sonorityOf)
+  monotoneFalling (σ.coda.map (λ s => (sonorityOf s).rank))
 
 /-- Full SSP: onset rises, coda falls. -/
 def Syllable.sspValid (σ : Syllable) : Bool :=
