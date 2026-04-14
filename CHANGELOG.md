@@ -1,5 +1,56 @@
 # Changelog
 
+## [0.229.722] - 2026-04-13
+
+### Changed
+- **BeckmanPierrehumbert1986.lean second-round cleanup**: delete dead stub `SupraPhrasalProcess` (two constructors, zero operations — replaced with informative comment about §5 final lowering/declination); delete unused `PitchCompressionTrigger` type (documentation-as-code with no consumers — catathesis/downdrift distinction preserved as comment); remove `IntermediatePhrase.prosodicLevel` constant (ignored `self`, served only as indirection for `ip_dual_function` which now states the bitonal facts directly); fix docstring "reanalyzed from" → "decomposed from" for Pierrehumbert 1980 phrase accent; renumber sections §6–§10 → §6–§9
+
+## [0.229.721] - 2026-04-13
+
+### Changed
+- **BeckmanPierrehumbert1986.lean audit cleanup**: delete vacuous `ap_culminativity` (was `Bool.eq_false_or_eq_true`), trivial `catathesis_blocked` (was `List.map` unfold), string-test `foc_new_downstep_is_catathesis`; fix `IntonationPhrase.terminalContour` to use `getLast` with proof (no unreachable branch); move `CatathesisTiming` into `IntonationSystem` as field; delete `SupraPhrasalProcess.minDomain` (both variants returned same value); replace vacuous `ip_boundary_prevents_cumulative_compression` (was list-length mismatch) with real `catathesis_blocking` corollary from `realizePitch_baseline_mono`; add `catathesis_specs_no_raising`, `catathesis_blocking_concrete`, `japanese_catathesis_timing`, `english_catathesis_timing`
+- **RegisterTier.lean**: replace 5 `native_decide` with `decide` (kernel-verified)
+
+## [0.229.720] - 2026-04-13
+
+### Added
+- **Davidson & Gagné 2022** (`Fragments/ASL/Height.lean`, `Phenomena/Quantification/Studies/DavidsonGagne2022.lean`): formalize "More is up" for domain restriction in ASL; `VerticalHeight` (low/neutral/high) as third `NestedRestriction` instance; `HeightDDRP` with `heightToDDRP` constructor; presuppositional denotations for IX-arc (`arcPresup`, `domainPresup`, `ixArcHeightPresup`); `arc_low_contradictory` (IX-arc + low height unsatisfiable — plural requires ¬Atom, low requires Atom); vampire scenario truth tables for ALL/SOME/NONE; `height_disambiguates` core observation; nesting theorems via DDRP reuse (zero new proof lines); monotonicity contrast (ALL↓MON vs SOME↑MON); height≠intensification refutation; `uniform_nesting` bridge proving height-DDRP and spatial-DDRP share abstract monotonicity; `domainPresup .low` = `Mereology.Atom` (specific indefinite per Schwarzschild 2002)
+
+### Changed
+- **NestedRestriction.lean**: docstring updated to list ASL height as third instance alongside SpatialScale and TwoLevel
+
+## [0.229.719] - 2026-04-13
+
+### Added
+- **Gong 2022** (`Phenomena/Anaphora/Studies/Gong2022.lean`): formalize Wholesale Late Merger (WLM) predictions for Condition C reconstruction in Mongolian scrambling; case-controlled reconstruction (dependent ACC vs Agree NOM vs nonstructural DAT); per-scenario verification theorems; negative result that A/A-bar distinction does not predict reconstruction; Subject Binding Generalization overprediction; PP-scrambling contrast; `dependent_acc_determines_wlm` bridge theorem connecting dependent case algorithm to WLM predictions
+- **Wholesale Late Merger theory** (`Theories/Syntax/Minimalism/Core/LateMerger.lean`): `ChainPosition`, `wlmBleedsCondC`, `wlmForcesReconstruction`; structural property theorems (`top_binder_forces_reconstruction`, `case_above_binder_bleeds`, `wlm_bleeding_monotone`)
+- **Mongolian case fragment** (`Fragments/Mongolian/Case.lean`): `CaseSystemConfig` instantiation (ACC=dependent, NOM=Agree, DAT=nonstructural); `ScrambleType` (SS/IS/LDS); `BinderRole`; ditransitive NP domain (`ditransSubject`, `ditransDO`, `ditransIO`); `do_gets_dependent_acc` / `subject_gets_unmarked` theorems deriving case positions from `dependentAccusative`; WLM prediction function; PP-scrambling always-reconstructs; `caseInventory` with Blake hierarchy gap documentation
+
+### Changed
+- **DependentCase.lean**: add `NomAssignment` (agreeT / unmarkedDefault), `DatAssignment` (nonstructural / dependent), `CaseSystemConfig`; parameterize how NOM and DAT are assigned per-language
+- **DependentCaseInventories.lean**: add Mongolian (accusative, hybrid NOM=Agree/ACC=dependent/DAT=nonstructural); `mongolian_structural_coverage`, `mongolian_acc_is_dependent`
+
+## [0.229.718] - 2026-04-13
+
+### Added
+- **`realizePitch` monotonicity** (`RegisterTier.lean`): `realizePitch_baseline_mono` (higher baseline → pointwise higher output), `realizePitch_mono` (more lowering specs + higher baseline → pointwise lower output), `regSpecLE` ordering on register specs, `pointwiseLE` for Nat lists, `specsMoreLowering` for spec lists
+- **CCG Tune bridge** (`BeckmanPierrehumbert1986.lean` §9): `ipToTune` constructs CCG `Tune` from B&P `IntonationPhrase`; `declarative_ip_matches_rheme_terminal` and `continuation_ip_matches_theme_terminal` prove B&P's decomposition produces the same terminal contours as Steedman's theme/rheme tunes
+- **Kratzer & Selkirk 2020 bridge** (`BeckmanPierrehumbert1986.lean` §10): `IntermediatePhrase.prosodicLevel = .φ`; `ip_dual_function` (ip is simultaneously catathesis domain and [FoC] spellout domain); `japanese_foc_always_triggers_catathesis` (bitonal accent → focus = catathesis); `foc_new_downstep_is_catathesis` (K&S's ⇓H datum = B&P catathesis)
+- **Catathesis monotonicity corollaries** (§11): `more_catathesis_lower_pitch`, `ip_boundary_prevents_cumulative_compression`
+
+## [0.229.717] - 2026-04-13
+
+### Added
+- **Beckman & Pierrehumbert 1986** (`Phenomena/Intonation/Studies/BeckmanPierrehumbert1986.lean`): formalize prosodic hierarchy (accentual phrase, intermediate phrase, intonation phrase), catathesis (pitch range compression triggered by bitonal accents), catathesis blocking by ip boundaries, cross-linguistic intonation system comparison (Japanese vs English), focus–prosody interaction, catathesis timing contrast, supra-phrasal processes (final lowering, declination)
+- **Japanese prosody fragment** (`Fragments/Japanese/Prosody.lean`): lexical accent entries (accented/unaccented minimal pairs), accentual phrase structure with phrasal H, verification theorems
+- New `Phenomena/Intonation/` phenomenon directory
+
+### Changed
+- **Core/Prosody.lean**: full 6-type ToBI pitch accent inventory (was 3); decompose `BoundaryTone` into `PhraseAccent` (H/L, ip-terminal) + `BoundaryTone` (L%/H%, IP-terminal) + `TerminalContour` (composed); add `AccentualPhrase` (AP) level to prosodic hierarchy; add `AccentSpecification` (lexical vs postlexical accent); add `PitchAccent.isBitonal`; fix docstring attribution to credit Pierrehumbert 1980 / Beckman & Pierrehumbert 1986 as originators
+- **CCG/Intonation.lean**: update `Tune`, `applyBoundary`, `ProsodicDeriv.boundary` to use new `TerminalContour` type; generalize `ProsodicLexEntry.prosodicCat` to handle all 6 accent types; update all examples
+- **B&P 1986 study file** refactored: derive catathesis from RegisterTier `realizePitch` (bridge to `@cite{snider-1999}`); replace ad-hoc `PitchRange` Nat fractions with `catathesisToRegisterSpecs`; delete stipulative `FocusPhrasing`/`focus_blocks_catathesis`; derive accent inventory size from actual accent lists; add catathesis ≠ downdrift distinction (§3.1); add worked examples with pitch realization theorems proving staircase and blocking effects
+- Fix bibliography: `beckman-pierrehumbert-1986` and `pierrehumbert-1980` subfield corrected from `semantics/compositional` to `phonology`, role upgraded to `foundational`
+
 ## [0.229.716] - 2026-04-13
 
 ### Added

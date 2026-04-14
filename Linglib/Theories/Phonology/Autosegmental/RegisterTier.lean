@@ -251,7 +251,7 @@ theorem terracing (n : Nat) :
 /-- Concrete terracing from baseline 4 (mid-high on 1–5 scale). -/
 theorem terracing_from_4 :
     realizePitch 4 [some .l, some .l, some .l] = [3, 2, 1] := by
-  native_decide
+  decide
 
 /-- h-epenthesis raises the RBU before a downstep. -/
 theorem h_epenthesis_before_downstep :
@@ -262,7 +262,7 @@ theorem h_epenthesis_before_downstep :
 /-- h-epenthesis + realization: the raised RBU is higher than baseline. -/
 theorem h_epenthesis_raises_pitch :
     realizePitch 4 (hEpenthesis [none, some .l, none]) = [5, 4, 4] := by
-  native_decide
+  decide
 
 /-- Utterance-initial neutralization removes an initial downstep. -/
 theorem utt_initial_neutralizes :
@@ -272,14 +272,109 @@ theorem utt_initial_neutralizes :
 /-- After neutralization, the utterance starts at baseline. -/
 theorem utt_initial_pitch :
     realizePitch 4 (uttInitialNeutralize [some .l, none]) = [4, 4] := by
-  native_decide
+  decide
 
 /-- Culminativity: a single `l` is culminative. -/
 theorem single_l_culminative :
-    isCulminative [none, some .l, none] = true := by native_decide
+    isCulminative [none, some .l, none] = true := by decide
 
 /-- Non-culminative: two `l` features violate culminativity. -/
 theorem double_l_not_culminative :
-    isCulminative [some .l, some .l] = false := by native_decide
+    isCulminative [some .l, some .l] = false := by decide
+
+-- ============================================================================
+-- § 8: Monotonicity
+-- ============================================================================
+
+/-- Pointwise ≤ on same-length Nat lists.
+    Used to state that pitch realization is order-preserving. -/
+def pointwiseLE : List Nat → List Nat → Prop
+  | [], [] => True
+  | a :: as, b :: bs => a ≤ b ∧ pointwiseLE as bs
+  | _, _ => False
+
+instance decPointwiseLE : (l1 l2 : List Nat) → Decidable (pointwiseLE l1 l2)
+  | [], [] => isTrue trivial
+  | [], _ :: _ => isFalse id
+  | _ :: _, [] => isFalse id
+  | a :: as, b :: bs =>
+    match Nat.decLe a b, decPointwiseLE as bs with
+    | isTrue h1, isTrue h2 => isTrue ⟨h1, h2⟩
+    | isFalse h1, _ => isFalse (fun ⟨h, _⟩ => h1 h)
+    | _, isFalse h2 => isFalse (fun ⟨_, h⟩ => h2 h)
+
+/-- **Monotonicity of `realizePitch` in the baseline**: a higher starting
+    pitch produces pointwise higher output for any fixed register spec
+    sequence.
+
+    This is the structural basis for catathesis blocking
+    (@cite{beckman-pierrehumbert-1986} §4): when an ip boundary resets
+    the register to the original baseline, subsequent pitches are higher
+    than if catathesis had continued from a compressed baseline. -/
+theorem realizePitch_baseline_mono (specs : List RegisterSpec)
+    {n m : Nat} (h : n ≤ m) :
+    pointwiseLE (realizePitch n specs) (realizePitch m specs) := by
+  induction specs generalizing n m with
+  | nil => exact trivial
+  | cons s rest ih =>
+    cases s with
+    | none => exact ⟨h, ih h⟩
+    | some r => cases r with
+      | l => exact ⟨by omega, ih (by omega)⟩
+      | h => exact ⟨by omega, ih (by omega)⟩
+
+/-- Register spec ordering: `some .l` is at least as lowering as
+    `none`, which is at least as lowering as `some .h`. Reflexive. -/
+def regSpecLE : RegisterSpec → RegisterSpec → Bool
+  | some .l, _ => true
+  | none, none | none, some .h => true
+  | some .h, some .h => true
+  | _, _ => false
+
+/-- Pointwise register spec ordering on same-length lists. -/
+def specsMoreLowering : List RegisterSpec → List RegisterSpec → Prop
+  | [], [] => True
+  | a :: as, b :: bs => regSpecLE a b = true ∧ specsMoreLowering as bs
+  | _, _ => False
+
+/-- **Full monotonicity of `realizePitch`**: if each spec in `specs1` is
+    at least as lowering as the corresponding spec in `specs2`, and the
+    baseline `n ≤ m`, then the realized pitches are pointwise `≤`.
+
+    This captures the linguistic generalization that adding downstep
+    features can only compress pitch range further, never raise it.
+    Subsumes baseline monotonicity as a special case. -/
+theorem realizePitch_mono
+    {specs1 specs2 : List RegisterSpec}
+    (h_specs : specsMoreLowering specs1 specs2)
+    {n m : Nat} (h_nm : n ≤ m) :
+    pointwiseLE (realizePitch n specs1) (realizePitch m specs2) := by
+  induction specs1 generalizing specs2 n m with
+  | nil =>
+    cases specs2 with
+    | nil => exact trivial
+    | cons _ _ => exact absurd h_specs id
+  | cons a rest1 ih =>
+    cases specs2 with
+    | nil => exact absurd h_specs id
+    | cons b rest2 =>
+      obtain ⟨h_head, h_tail⟩ := h_specs
+      cases a with
+      | none => cases b with
+        | none => exact ⟨h_nm, ih h_tail h_nm⟩
+        | some rb => cases rb with
+          | l => simp [regSpecLE] at h_head
+          | h => exact ⟨by omega, ih h_tail (by omega)⟩
+      | some ra => cases ra with
+        | l => cases b with
+          | none => exact ⟨by omega, ih h_tail (by omega)⟩
+          | some rb => cases rb with
+            | l => exact ⟨by omega, ih h_tail (by omega)⟩
+            | h => exact ⟨by omega, ih h_tail (by omega)⟩
+        | h => cases b with
+          | none => simp [regSpecLE] at h_head
+          | some rb => cases rb with
+            | l => simp [regSpecLE] at h_head
+            | h => exact ⟨by omega, ih h_tail (by omega)⟩
 
 end Theories.Phonology.Autosegmental.RegisterTier
