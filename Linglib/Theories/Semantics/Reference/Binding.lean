@@ -7,43 +7,45 @@ with the continuation approach.
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Types
-import Linglib.Theories.Semantics.Montague.Variables
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Fragments.ToyDomain
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Core.BindingSemantics
 
 namespace Semantics.Reference.Binding
 
+open Core.IntensionalLogic
+open Core.IntensionalLogic.Variables
 open Semantics.Montague
-open Semantics.Montague.Variables
 open Interfaces.BindingSemantics
 
 
 section InterpretationState
 
 /-- Semantic interpretation state: current assignment + pending abstractions. -/
-structure InterpState (m : Model) where
-  assignment : Assignment m
+structure InterpState (F : Frame) where
+  assignment : Assignment F
   abstractionStack : List Nat
 
 /-- Initial interpretation state with a given assignment. -/
-def InterpState.initial {m : Model} (g : Assignment m) : InterpState m :=
+def InterpState.initial {F : Frame} (g : Assignment F) : InterpState F :=
   { assignment := g, abstractionStack := [] }
 
 /-- Push an abstraction index onto the stack. -/
-def InterpState.pushAbstraction {m : Model}
-    (state : InterpState m) (idx : Nat) : InterpState m :=
+def InterpState.pushAbstraction {F : Frame}
+    (state : InterpState F) (idx : Nat) : InterpState F :=
   { state with abstractionStack := idx :: state.abstractionStack }
 
 /-- Interpret a bound pronoun: read from assignment at the variable index. -/
-def interpretBoundPronoun {m : Model}
-    (state : InterpState m) (varIdx : Nat) : m.Entity :=
+def interpretBoundPronoun {F : Frame}
+    (state : InterpState F) (varIdx : Nat) : F.Entity :=
   state.assignment varIdx
 
 /-- Interpret a binder: create a function that updates the assignment. -/
-def interpretBinder {m : Model} {τ : Ty}
-    (varIdx : Nat) (body : InterpState m → m.interpTy τ)
-    (state : InterpState m) : m.interpTy (.e ⇒ τ) :=
+def interpretBinder {F : Frame} {τ : Ty}
+    (varIdx : Nat) (body : InterpState F → F.Denot τ)
+    (state : InterpState F) : F.Denot (.e ⇒ τ) :=
   λ x => body { state with assignment := state.assignment[varIdx ↦ x] }
 
 
@@ -52,13 +54,13 @@ end InterpretationState
 section BindingConditions
 
 /-- A binding is semantically well-formed if the binder's scope includes the bindee. -/
-def bindingWellFormed {m : Model}
-    (state : InterpState m) (varIdx : Nat) : Bool :=
+def bindingWellFormed {F : Frame}
+    (state : InterpState F) (varIdx : Nat) : Bool :=
   varIdx ∈ state.abstractionStack
 
 /-- Interpret a binding configuration as a semantic check. -/
-def interpretBindingConfig {m : Model}
-    (bc : BindingConfig) (_g : Assignment m) : Bool :=
+def interpretBindingConfig {F : Frame}
+    (bc : BindingConfig) (_g : Assignment F) : Bool :=
   -- All bindings must have consistent indices
   bc.wellFormed
 
@@ -73,8 +75,8 @@ def W {A B : Type} (κ : A → A → B) (x : A) : B := κ x x
 example : W (λ x y => x == y) 5 = true := rfl
 
 /-- H&K interpretation of binding. -/
-def hkBinding {m : Model} (n : Nat) (body : m.Entity → Bool)
-    (binder : m.Entity) (g : Assignment m) : Bool :=
+def hkBinding {F : Frame} (n : Nat) (body : F.Entity → Bool)
+    (binder : F.Entity) (g : Assignment F) : Bool :=
   body (g[n ↦ binder] n)
 
 /-- B&S interpretation of binding (continuation-based). -/
@@ -83,9 +85,9 @@ def bsBinding {Entity : Type} (body : Entity → Entity → Bool)
   W body binder
 
 /-- H&K and B&S agree for reflexive binding: both produce `body(binder, binder)`. -/
-theorem hk_bs_reflexive_equiv {m : Model} (n : Nat)
-    (body : m.Entity → m.Entity → Bool)
-    (binder : m.Entity) (g : Assignment m) :
+theorem hk_bs_reflexive_equiv {F : Frame} (n : Nat)
+    (body : F.Entity → F.Entity → Bool)
+    (binder : F.Entity) (g : Assignment F) :
     body (g[n ↦ binder] n) (g[n ↦ binder] n) = W body binder := by
   simp only [W, update_same]
 
@@ -189,32 +191,31 @@ scope `∃x.φ(g[n↦x])` IS cylindrification `cₙ(φ)`. -/
 
 section CylindricAlgebra
 
-open Semantics.Montague.Variables
-
 /-- Existential quantifier scope at index n is cylindrification.
 
 `(∃n.φ)(g) = ∃x. φ(g[n↦x])` where the binder at n creates the
 scope via `interpretBinder`. -/
-theorem binder_scope_is_existsClosure {m : Model} (n : Nat)
-    (body : InterpState m → Prop) (state : InterpState m) :
-    (∃ x : m.Entity, body { state with assignment := state.assignment[n ↦ x] }) ↔
-    existsClosure n (fun g => body { state with assignment := g }) state.assignment := by
-  simp [existsClosure]
+theorem binder_scope_is_existsClosure {F : Frame} (n : Nat)
+    (body : InterpState F → Prop) (state : InterpState F) :
+    (∃ x : F.Entity, body { state with assignment := state.assignment[n ↦ x] }) ↔
+    existsClosure n
+      (fun g => body { state with assignment := g }) state.assignment := by
+  simp only [existsClosure, Assignment.update]
 
 /-- Binding links pronoun κ to binder l by substituting g(l) for g(κ).
 
 After binding, `g(κ) = g(l)`, which is the diagonal element `Dκl`.
 The semantic effect on a predicate φ is `φ(g[κ↦g(l)])`, which is
 cylindric substitution `σ^κ_l(φ)`. -/
-theorem binding_eq_resolve {m : Model} (κ l : Nat)
-    (φ : Assignment m → Prop) (g : Assignment m) :
+theorem binding_eq_resolve {F : Frame} (κ l : Nat)
+    (φ : Assignment F → Prop) (g : Assignment F) :
     φ (g[κ ↦ g l]) = resolve κ l φ g := rfl
 
 /-- After binding, the bound pronoun and its binder agree:
 `(g[κ↦g(l)])(κ) = (g[κ↦g(l)])(l)`. This is the diagonal condition
 `Dκl` that cylindric substitution enforces. -/
-theorem binding_establishes_diagonal {m : Model} (κ l : Nat)
-    (g : Assignment m) (h : κ ≠ l) :
+theorem binding_establishes_diagonal {F : Frame} (κ l : Nat)
+    (g : Assignment F) (h : κ ≠ l) :
     diag κ l (g[κ ↦ g l]) := by
   simp [diag, update_same, update_other g κ l (g l) (Ne.symm h)]
 

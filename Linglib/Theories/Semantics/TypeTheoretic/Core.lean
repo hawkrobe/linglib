@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Proposition
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Grammar
 import Linglib.Core.Semantics.Presupposition

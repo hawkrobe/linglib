@@ -15,7 +15,7 @@ import Linglib.Theories.Semantics.Attitudes.Intensional
 
 namespace Phenomena.Complementation.Attitudes.IntensionalExamples
 
-open Semantics.Montague
+open Core.IntensionalLogic
 open Semantics.Attitudes.Intensional
 
 /-- A small domain for examples -/
@@ -26,14 +26,13 @@ inductive ToyIEntity where
   | phosphorus -- the evening star (= Venus, but potentially different in other worlds)
   deriving Repr, DecidableEq
 
-def toyIModel : Model := {
+def toyIFrame : Frame := {
   Entity := ToyIEntity
-  World := World
-  decEq := inferInstance
+  Index := World
 }
 
 /-- "sleeps" as a world-dependent property. -/
-def sleeps : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
+def sleeps : toyIFrame.Denot (Ty.intens (.e ⇒ .t)) :=
   λ w x => match w, x with
     | .w0, .john => True
     | .w1, .mary => True
@@ -42,7 +41,7 @@ def sleeps : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
     | _, _ => False
 
 /-- "is happy" as a world-dependent property. -/
-def happy : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
+def happy : toyIFrame.Denot (Ty.intens (.e ⇒ .t)) :=
   λ w x => match w, x with
     | .w0, .john => True
     | .w0, .mary => True
@@ -52,7 +51,7 @@ def happy : toyIModel.interpTy (Ty.intens (.e ⇒ .t)) :=
 
 /-- "the morning star" - an individual concept that picks out potentially
 different individuals in different worlds. -/
-def morningStar : toyIModel.interpTy Ty.indConcept :=
+def morningStar : toyIFrame.Denot Ty.indConcept :=
   λ w => match w with
     | .w0 => .hesperus
     | .w1 => .hesperus
@@ -60,7 +59,7 @@ def morningStar : toyIModel.interpTy Ty.indConcept :=
     | .w3 => .hesperus
 
 /-- "the evening star" - another individual concept -/
-def eveningStar : toyIModel.interpTy Ty.indConcept :=
+def eveningStar : toyIFrame.Denot Ty.indConcept :=
   λ w => match w with
     | .w0 => .hesperus
     | .w1 => .phosphorus  -- different in w1!
@@ -90,18 +89,18 @@ def believes_access : ToyIEntity → World → World → Bool
 
 /-- "believe" as an attitude verb.
 ⟦believe⟧(a)(p)(w) = ∀w'. R(a,w,w') → p(w') -/
-def believe : toyIModel.interpTy (.e ⇒ Ty.prop ⇒ .t) :=
+def believe : toyIFrame.Denot (.e ⇒ Ty.prop ⇒ .t) :=
   λ agent prop =>
     ∀ w' : World, believes_access agent .w0 w' = true → prop w'
 
 /-- Extended believe that's world-dependent. -/
-def believeAt : World → toyIModel.interpTy (.e ⇒ Ty.prop ⇒ .t) :=
+def believeAt : World → toyIFrame.Denot (.e ⇒ Ty.prop ⇒ .t) :=
   λ evalWorld agent prop =>
     ∀ w' : World, believes_access agent evalWorld w' = true → prop w'
 
 /-- "John believes Mary sleeps" (de dicto) -/
-def johnBelievesMary_deDicto : toyIModel.interpTy .t :=
-  let marySleeps : toyIModel.interpTy Ty.prop := λ w => sleeps w .mary
+def johnBelievesMary_deDicto : toyIFrame.Denot .t :=
+  let marySleeps : toyIFrame.Denot Ty.prop := λ w => sleeps w .mary
   believe .john marySleeps
 
 /-- John does NOT believe Mary sleeps: Mary doesn't sleep in w0 (John's accessible world). -/
@@ -110,8 +109,8 @@ theorem johnDoesNotBelieveMarySleeps : ¬johnBelievesMary_deDicto := by
   exact h .w0 rfl
 
 /-- "John believes John sleeps" (de dicto) -/
-def johnBelievesJohnSleeps : toyIModel.interpTy .t :=
-  let johnSleeps : toyIModel.interpTy Ty.prop := λ w => sleeps w .john
+def johnBelievesJohnSleeps : toyIFrame.Denot .t :=
+  let johnSleeps : toyIFrame.Denot Ty.prop := λ w => sleeps w .john
   believe .john johnSleeps
 
 /-- John believes he sleeps: he sleeps in both w0 and w2. -/
@@ -120,19 +119,19 @@ theorem johnBelievesJohnSleeps_true : johnBelievesJohnSleeps := by
   cases w' <;> simp_all [believes_access, sleeps]
 
 /-- Proposition: "John ate some cookies" (simplified) -/
-def someCookies : toyIModel.interpTy Ty.prop := λ _ => True
+def someCookies : toyIFrame.Denot Ty.prop := λ _ => True
 
 /-- Proposition: "John ate all cookies" (simplified) -/
-def allCookies : toyIModel.interpTy Ty.prop :=
+def allCookies : toyIFrame.Denot Ty.prop :=
   λ w => match w with
     | .w0 | .w1 => True
     | .w2 | .w3 => False
 
 /-- "Mary believes John ate some cookies" -/
-def maryBelievesSome : toyIModel.interpTy .t := believe .mary someCookies
+def maryBelievesSome : toyIFrame.Denot .t := believe .mary someCookies
 
 /-- "Mary believes John ate all cookies" -/
-def maryBelievesAll : toyIModel.interpTy .t := believe .mary allCookies
+def maryBelievesAll : toyIFrame.Denot .t := believe .mary allCookies
 
 /-- Mary believes John ate some cookies (trivially true proposition). -/
 theorem maryBelievesSome_true : maryBelievesSome := by
@@ -150,7 +149,7 @@ theorem belief_intensional :
     cases this
 
 /-- Up-down identity: applying down after up returns the original value. -/
-theorem up_down_identity {m : Model} {τ : Ty} (x : m.interpTy τ) (w : m.World) :
+theorem up_down_identity {F : Frame} {τ : Ty} (x : F.Denot τ) (w : F.Index) :
     down (up x) w = x := rfl
 
 /-! ## Bridge to Direct Reference Theory

@@ -1,6 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Theories.Semantics.Composition.LexEntry
 
 /-!
 # Covert Operators: Theory and Compositional Interface
@@ -23,10 +24,10 @@ with no overt realization. This module provides:
 ```
 open Semantics.Lexical.CovertQuantifier (genThreshold dist dpp extendLexicon)
 
-def myLex : Lexicon myModel :=
+def myLex : Lexicon FyModel :=
   extendLexicon baseLex
-    [("Gen",  genThreshold myModel atoms 2 3),
-     ("DIST", dist myModel atomsOf)]
+    [("Gen",  genThreshold myFrame atoms 2 3),
+     ("DIST", dist myFrame atomsOf)]
 ```
 -/
 
@@ -136,7 +137,8 @@ theorem reduces_to_threshold (domain : List D)
 
 section Compositional
 
-open Semantics.Montague
+open Core.IntensionalLogic
+open Semantics.Montague (LexEntry Lexicon)
 
 /-- Gen: `(e→t) → (e→t) → t`. Dyadic generic quantifier.
 
@@ -144,16 +146,16 @@ open Semantics.Montague
     instantiate it differently (threshold, normalcy, probabilistic).
     `traditionalGEN` (in `Generics.lean`) and `thresholdQ` (above)
     are specific instantiations. -/
-def gen (m : Model)
-    (generally : (m.Entity → Prop) → (m.Entity → Prop) → Prop)
-    : LexEntry m :=
+def gen (F : Frame)
+    (generally : (F.Entity → Prop) → (F.Entity → Prop) → Prop)
+    : LexEntry F :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, generally⟩
 
 open Classical in
 /-- Gen with threshold: true iff ≥ `num/denom` of restrictor-satisfying
     atoms also satisfy scope. Montague-typed counterpart of `thresholdQ`. -/
-noncomputable def genThreshold (m : Model) (atoms : List m.Entity)
-    (num denom : Nat) : LexEntry m :=
+noncomputable def genThreshold (F : Frame) (atoms : List F.Entity)
+    (num denom : Nat) : LexEntry F :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun restr scope =>
     let restricted := atoms.filter (fun x => decide (restr x))
     let both := restricted.filter (fun x => decide (scope x))
@@ -164,8 +166,8 @@ noncomputable def genThreshold (m : Model) (atoms : List m.Entity)
     `atomsOf x` returns the atomic parts of x — for atomic entities
     it returns `[x]`, for plural/kind entities their parts.
     Montague-typed counterpart of `Distributivity.distMaximal`. -/
-def dist (m : Model) (atomsOf : m.Entity → List m.Entity)
-    : LexEntry m :=
+def dist (F : Frame) (atomsOf : F.Entity → List F.Entity)
+    : LexEntry F :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), fun P x => ∀ a ∈ atomsOf x, P a⟩
 
 /-- DPP: `(e→t) → (e→t) → t`. Derived Property Predication.
@@ -173,7 +175,7 @@ def dist (m : Model) (atomsOf : m.Entity → List m.Entity)
     DPP(P)(Q) = ∃x[P(x) ∧ Q(x)]. An existential type-shift for
     kind-denoting NPs combining with stage-level predicates.
     @cite{guerrini-2026} structure (105b). -/
-def dpp (m : Model) (atoms : List m.Entity) : LexEntry m :=
+def dpp (F : Frame) (atoms : List F.Entity) : LexEntry F :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t) ⇒ .t, fun prop pred =>
     ∃ x ∈ atoms, prop x ∧ pred x⟩
 
@@ -181,8 +183,8 @@ def dpp (m : Model) (atoms : List m.Entity) : LexEntry m :=
 
     `h` maps a predicate to its habitual counterpart.
     Montague-typed counterpart of `traditionalHAB` (in `Habituals.lean`). -/
-def hab (m : Model) (h : (m.Entity → Prop) → (m.Entity → Prop))
-    : LexEntry m :=
+def hab (F : Frame) (h : (F.Entity → Prop) → (F.Entity → Prop))
+    : LexEntry F :=
   ⟨(.e ⇒ .t) ⇒ (.e ⇒ .t), h⟩
 
 /-- EXH: `(s→t) → (s→t)`. Exhaustivity operator (proposition modifier).
@@ -198,13 +200,13 @@ def hab (m : Model) (h : (m.Entity → Prop) → (m.Entity → Prop))
     Montague type system handles the dispatch:
     - Gen:  `(e→t) → (e→t) → t`  — FA with entity predicates
     - EXH:  `(s→t) → (s→t)`      — FA with propositions -/
-def exh (m : Model) (exhOp : (m.World → Prop) → (m.World → Prop))
-    : LexEntry m :=
-  ⟨(.s ⇒ .t) ⇒ (.s ⇒ .t), exhOp⟩
+def exh (F : Frame) (exhOp : (F.Index → Prop) → (F.Index → Prop))
+    : LexEntry F :=
+  ⟨(.intens .t) ⇒ (.intens .t), exhOp⟩
 
 /-- Extend a lexicon with named covert operators. -/
-def extendLexicon {m : Model} (base : Lexicon m)
-    (ops : List (String × LexEntry m)) : Lexicon m :=
+def extendLexicon {F : Frame} (base : Lexicon F)
+    (ops : List (String × LexEntry F)) : Lexicon F :=
   fun s => match ops.find? (fun p => p.1 == s) with
     | some (_, entry) => some entry
     | none => base s

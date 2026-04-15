@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 
 /-!
 # Metalinguistic Gradability

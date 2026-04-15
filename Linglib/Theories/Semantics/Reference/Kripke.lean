@@ -25,7 +25,7 @@ Pure intension algebra (`varying_not_rigid`, `rigid_neq_nonrigid`,
 
 -/
 
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.KaplanLD
 

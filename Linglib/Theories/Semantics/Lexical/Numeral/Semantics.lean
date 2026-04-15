@@ -707,25 +707,25 @@ theorem atLeast_eq_lowerBound_three (n : Nat) :
 -- intersection cardinality. This connects B&N's quantifier view (type ⟨⟨e,t⟩,⟨e,t⟩,t⟩)
 -- to the Kennedy maximality view (type ⟨d,t⟩) that `maxMeaning` implements.
 
-open Classical Semantics.Montague Semantics.Quantification in
+open Classical Core.IntensionalLogic Semantics.Quantification in
 /-- GQT "at least n" agrees with `maxMeaning.ge` on intersection cardinality. -/
-theorem gqt_atLeast_agrees (m : Model) [Fintype m.Entity]
+theorem gqt_atLeast_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.at_least_n_sem m n R S ↔
     (maxMeaning .ge n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) = true) := by
   simp [Quantifier.at_least_n_sem, maxMeaning, decide_eq_true_eq]
 
-open Classical Semantics.Montague Semantics.Quantification in
+open Classical Core.IntensionalLogic Semantics.Quantification in
 /-- GQT "at most n" agrees with `maxMeaning.le` on intersection cardinality. -/
-theorem gqt_atMost_agrees (m : Model) [Fintype m.Entity]
+theorem gqt_atMost_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.at_most_n_sem m n R S ↔
     (maxMeaning .le n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) = true) := by
   simp [Quantifier.at_most_n_sem, maxMeaning, decide_eq_true_eq]
 
-open Classical Semantics.Montague Semantics.Quantification in
+open Classical Core.IntensionalLogic Semantics.Quantification in
 /-- GQT "exactly n" agrees with `maxMeaning.eq` on intersection cardinality. -/
-theorem gqt_exactly_agrees (m : Model) [Fintype m.Entity]
+theorem gqt_exactly_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.exactly_n_sem m n R S ↔
     (maxMeaning .eq n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) = true) := by

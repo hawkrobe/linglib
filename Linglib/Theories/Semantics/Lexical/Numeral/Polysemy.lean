@@ -77,10 +77,10 @@ def contextualistPath : SemanticFunction → DerivationPath
 
 /-- Close appositive semantics: ⟦the N₁ N₂⟧ = ιx[N₁(x) ∧ N₂(x)] (Snyder §5.2, (16b)).
     N₁ functions as intersective modifier via IDENT, N₂ is the numeral predicate. -/
-noncomputable def closeAppositive {m : Semantics.Montague.Model}
-    (domain : List m.Entity)
-    (n1 n2 : m.interpTy Semantics.Montague.Ty.et)
-    : Option (m.interpTy .e) :=
+noncomputable def closeAppositive {F : Core.IntensionalLogic.Frame}
+    (domain : List F.Entity)
+    (n1 n2 : F.Denot Core.IntensionalLogic.Ty.et)
+    : Option (F.Denot .e) :=
   Semantics.Composition.TypeShifting.iota domain (fun x => n1 x ∧ n2 x)
 
 /-- The Identification Problem is resolved: close appositives are context-sensitive.

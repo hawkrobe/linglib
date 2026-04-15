@@ -56,7 +56,7 @@ to the GQ property predicates in `Core.Quantification` and
 namespace Phenomena.Quantification.Bridge
 
 open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
-open Semantics.Montague (Model)
+open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier
 open Semantics.Lexical.Determiner.DomainRestriction (DomainRestrictor
   conservative_domain_restricted)
@@ -70,9 +70,9 @@ open Semantics.Lexical.Determiner.DomainRestriction (DomainRestrictor
     language. Proved individually for each quantity word via
     `every_conservative`, `some_conservative`, etc. -/
 theorem conservativity_universal :
-  ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity],
+  ∀ (q : QuantityWord) (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity],
     PConservative (q.gqDenotation m) := by
-  intro q m inst
+  intro q m inst inst2
   cases q <;> simp only [QuantityWord.gqDenotation]
   · exact Semantics.Quantification.Quantifier.no_conservative
   · exact Semantics.Quantification.Quantifier.few_conservative
@@ -91,9 +91,9 @@ theorem conservativity_universal :
     TODO: Rewrite proof for cardinality-based quantifiers (most, few, half)
     which need `count_bij_inv` adapted to Prop predicates. -/
 theorem quantity_universal :
-  ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity],
+  ∀ (q : QuantityWord) (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity],
     PQuantityInvariant (q.gqDenotation m) := by
-  intro q m inst A B A' B' f hBij hA hB
+  intro q m inst inst2 A B A' B' f hBij hA hB
   cases q <;> simp only [QuantityWord.gqDenotation]
   case all =>
     simp only [every_sem]
@@ -242,7 +242,7 @@ theorem strong_not_symmetric :
 /-- The dual of ⟦every⟧ is ⟦some⟧: Q̌(every) = some (@cite{barwise-cooper-1981} §4.11).
     ¬(∀x. R(x) → ¬S(x)) = ∃x. R(x) ∧ S(x).
     Bridges `dualQ_every_eq_some` from Quantifier.lean to fragment entries. -/
-theorem dual_all_eq_some (m : Model) [Fintype m.Entity] :
+theorem dual_all_eq_some (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity] :
     pdualQ (QuantityWord.all.gqDenotation m) = QuantityWord.some_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
   exact Semantics.Quantification.Quantifier.pdualQ_every_eq_some
@@ -250,7 +250,7 @@ theorem dual_all_eq_some (m : Model) [Fintype m.Entity] :
 /-- Inner negation maps ⟦every⟧ to ⟦no⟧: every~ = no (@cite{barwise-cooper-1981} §4.11).
     ∀x. R(x) → ¬S(x) = ¬∃x. R(x) ∧ S(x).
     Bridges `pinnerNeg_every_eq_no` to fragment entries. -/
-theorem innerNeg_all_eq_none (m : Model) [Fintype m.Entity] :
+theorem innerNeg_all_eq_none (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity] :
     pinnerNeg (QuantityWord.all.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
   exact Semantics.Quantification.Quantifier.pinnerNeg_every_eq_no
@@ -258,7 +258,7 @@ theorem innerNeg_all_eq_none (m : Model) [Fintype m.Entity] :
 /-- Outer negation maps ⟦some⟧ to ⟦no⟧: ~some = no (@cite{barwise-cooper-1981} §4.11).
     ¬(∃x. R(x) ∧ S(x)) = ∀x. R(x) → ¬S(x).
     Bridges `pouterNeg_some_eq_no` to fragment entries. -/
-theorem outerNeg_some_eq_none (m : Model) [Fintype m.Entity] :
+theorem outerNeg_some_eq_none (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity] :
     pouterNeg (QuantityWord.some_.gqDenotation m) = QuantityWord.none_.gqDenotation m := by
   simp only [QuantityWord.gqDenotation]
   exact Semantics.Quantification.Quantifier.pouterNeg_some_eq_no
@@ -282,10 +282,10 @@ theorem outerNeg_some_eq_none (m : Model) [Fintype m.Entity] :
     `PositiveStrong` is vacuously false (contradicted by `R = λ _ => false`
     or `R = λ _ => true`), making the implication trivially true. -/
 theorem positive_strong_determiners_upward_monotone :
-  ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity],
+  ∀ (q : QuantityWord) (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity],
     PPositiveStrong (q.gqDenotation m) →
     PScopeUpwardMono (q.gqDenotation m) := by
-  intro q m inst hPS
+  intro q m inst inst2 hPS
   cases q
   case all => exact Semantics.Quantification.Quantifier.every_scope_up
   case some_ => exact Semantics.Quantification.Quantifier.some_scope_up
@@ -382,10 +382,10 @@ structure UniversalsSimplicityRanking where
     - `DDRP` structure (nested spatial regions → candidate restrictors)
     - `RitchieSchiller2024.lean` (full RSA model with DDRPs) -/
 theorem domain_restriction_preserves_conservativity :
-    ∀ (q : QuantityWord) (m : Model) [Fintype m.Entity]
+    ∀ (q : QuantityWord) (m : Frame) [Fintype m.Entity] [DecidableEq m.Entity]
       (C : DomainRestrictor m.Entity),
     PConservative (λ R S => q.gqDenotation m (λ x => C x ∧ R x) S) := by
-  intro q m inst C
+  intro q m inst inst2 C
   exact conservative_domain_restricted (conservativity_universal q m)
 
 end Phenomena.Quantification.Bridge

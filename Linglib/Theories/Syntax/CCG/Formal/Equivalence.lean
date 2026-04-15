@@ -29,13 +29,13 @@ since all derivations in an equivalence class have the same meaning.
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
 import Linglib.Theories.Syntax.CCG.Core.Combinators
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
 
 namespace CCG.Equivalence
 
 open CCG
 open CCG.Combinators
-open Semantics.Montague
+open Core.IntensionalLogic
 
 -- Semantic Equivalence
 
@@ -45,33 +45,33 @@ have the same category, and have the same meaning.
 
 This defines equivalence for "spurious ambiguity" analysis.
 -/
-structure DerivEquiv (m : Model) where
+structure DerivEquiv (F : Frame) where
   /-- First derivation's category -/
   cat : Cat
   /-- First derivation's meaning -/
-  meaning₁ : m.interpTy (catToTy cat)
+  meaning₁ : F.Denot (catToTy cat)
   /-- Second derivation's meaning -/
-  meaning₂ : m.interpTy (catToTy cat)
+  meaning₂ : F.Denot (catToTy cat)
   /-- The meanings are equal -/
   meanings_eq : meaning₁ = meaning₂
 
 /--
 Semantic equivalence for category-meaning pairs.
 -/
-def semanticallyEquivalent {m : Model} (cm₁ cm₂ : Σ c : Cat, m.interpTy (catToTy c)) : Prop :=
+def semanticallyEquivalent {F : Frame} (cm₁ cm₂ : Σ c : Cat, F.Denot (catToTy c)) : Prop :=
   ∃ (h : cm₁.1 = cm₂.1), h ▸ cm₁.2 = cm₂.2
 
 /--
 Semantic equivalence is reflexive.
 -/
-theorem sem_equiv_refl {m : Model} (cm : Σ c : Cat, m.interpTy (catToTy c)) :
+theorem sem_equiv_refl {F : Frame} (cm : Σ c : Cat, F.Denot (catToTy c)) :
     semanticallyEquivalent cm cm := by
   use rfl
 
 /--
 Semantic equivalence is symmetric.
 -/
-theorem sem_equiv_symm {m : Model} (cm₁ cm₂ : Σ c : Cat, m.interpTy (catToTy c)) :
+theorem sem_equiv_symm {F : Frame} (cm₁ cm₂ : Σ c : Cat, F.Denot (catToTy c)) :
     semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₁ := λ ⟨h, eq⟩ =>
   match cm₁, cm₂, h, eq with
   | ⟨_c, _m₁⟩, ⟨_, _m₂⟩, rfl, eq => ⟨rfl, eq.symm⟩
@@ -79,7 +79,7 @@ theorem sem_equiv_symm {m : Model} (cm₁ cm₂ : Σ c : Cat, m.interpTy (catToT
 /--
 Semantic equivalence is transitive.
 -/
-theorem sem_equiv_trans {m : Model} (cm₁ cm₂ cm₃ : Σ c : Cat, m.interpTy (catToTy c)) :
+theorem sem_equiv_trans {F : Frame} (cm₁ cm₂ cm₃ : Σ c : Cat, F.Denot (catToTy c)) :
     semanticallyEquivalent cm₁ cm₂ → semanticallyEquivalent cm₂ cm₃ →
     semanticallyEquivalent cm₁ cm₃ := λ ⟨h₁, eq₁⟩ ⟨h₂, eq₂⟩ =>
   match cm₁, cm₂, cm₃, h₁, eq₁, h₂, eq₂ with
@@ -368,16 +368,16 @@ Checking (3) requires unification or equality testing on semantic structures.
 /--
 A chart entry: category + meaning for a span.
 -/
-structure ChartEntry (m : Model) where
+structure ChartEntry (F : Frame) where
   leftPos : Nat
   rightPos : Nat
   cat : Cat
-  meaning : m.interpTy (catToTy cat)
+  meaning : F.Denot (catToTy cat)
 
 /--
 Two chart entries match if they have the same span, category, and meaning.
 -/
-def chartEntriesMatch {m : Model} (e₁ e₂ : ChartEntry m) : Prop :=
+def chartEntriesMatch {F : Frame} (e₁ e₂ : ChartEntry F) : Prop :=
   e₁.leftPos = e₂.leftPos ∧
   e₁.rightPos = e₂.rightPos ∧
   ∃ (h : e₁.cat = e₂.cat), h ▸ e₁.meaning = e₂.meaning
@@ -385,7 +385,7 @@ def chartEntriesMatch {m : Model} (e₁ e₂ : ChartEntry m) : Prop :=
 /--
 The matching relation is decidable for categories (not meanings in general).
 -/
-def chartEntriesSameCat {m : Model} (e₁ e₂ : ChartEntry m) : Bool :=
+def chartEntriesSameCat {F : Frame} (e₁ e₂ : ChartEntry F) : Bool :=
   e₁.leftPos == e₂.leftPos &&
   e₁.rightPos == e₂.rightPos &&
   e₁.cat == e₂.cat
@@ -414,21 +414,21 @@ it provides more paths to the same meanings.
 /--
 An equivalence class of derivations: all have the same meaning.
 -/
-structure EquivalenceClass (m : Model) where
+structure EquivalenceClass (F : Frame) where
   cat : Cat
-  meaning : m.interpTy (catToTy cat)
+  meaning : F.Denot (catToTy cat)
   -- In a full implementation, would track the set of derivations
 
 /--
 Real ambiguity: multiple equivalence classes for the same string.
 -/
-def reallyAmbiguous {m : Model} (classes : List (EquivalenceClass m)) : Prop :=
+def reallyAmbiguous {F : Frame} (classes : List (EquivalenceClass F)) : Prop :=
   classes.length > 1
 
 /--
 Spuriously ambiguous: multiple derivations but only one equivalence class.
 -/
-def spuriouslyAmbiguous {m : Model} (derivCount : Nat) (classes : List (EquivalenceClass m)) : Prop :=
+def spuriouslyAmbiguous {F : Frame} (derivCount : Nat) (classes : List (EquivalenceClass F)) : Prop :=
   derivCount > 1 ∧ classes.length = 1
 
 end CCG.Equivalence

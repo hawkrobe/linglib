@@ -469,17 +469,17 @@ def QuantityWord.doubleMono : QuantityWord → Option Core.Quantification.Double
   | _      => none
 
 section CanonicalGQDenotations
-open Semantics.Montague (Model)
+open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier
 
-variable {m : Model} [Fintype m.Entity]
+variable {m : Frame} [Fintype m.Entity] [DecidableEq m.Entity]
 
 /-- Map quantity words to their canonical model-theoretic GQ denotation.
     These are the compositional `(e→t) → ((e→t) → t)` meanings from
     Montague/Barwise & Cooper, proved conservative and monotone in
     `Semantics.Quantification.Quantifier`. -/
 def QuantityWord.gqDenotation (q : QuantityWord)
-    (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+    (m : Frame) [Fintype m.Entity] : m.Denot Ty.det :=
   match q with
   | .none_ => no_sem m
   | .some_ => some_sem m
@@ -584,7 +584,7 @@ theorem none_symmetry_bridge : none_.strength = .weak ∧
 open Semantics.Montague in
 /-- Every: strong and NOT symmetric. -/
 theorem every_not_symmetric_bridge : every.strength = .strong ∧
-    ¬PQSymmetric (every_sem (m := toyModel)) := ⟨rfl, every_not_symmetric⟩
+    ¬PQSymmetric (every_sem (F := toyModel)) := ⟨rfl, every_not_symmetric⟩
 
 -- ============================================================================
 -- both/neither: Boolean GQ composition (K&S §2.3, §3.2)
@@ -594,14 +594,14 @@ open Classical in
 /-- `⟦both⟧(R)(S)` = `⟦every⟧(R)(S)` when |R|=2.
     For the general case, both = every restricted to exactly-2 restrictors.
     Simplified: on finite models, both(R,S) = every(R,S) ∧ |R|≥2. -/
-noncomputable def both_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+noncomputable def both_sem (m : Frame) [Fintype m.Entity] : m.Denot Ty.det :=
   λ (R : m.Entity → Prop) S => every_sem m R S ∧ (Finset.univ.filter (fun x : m.Entity => R x)).card ≥ 2
 
 open Classical in
 /-- `⟦neither⟧` = outer negation of `⟦both⟧` (K&S (83b)).
     "Neither student passed" = "It's not the case that both students passed"
     when exactly 2 students exist. K&S: neither = (not one) of the two. -/
-noncomputable def neither_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
+noncomputable def neither_sem (m : Frame) [Fintype m.Entity] : m.Denot Ty.det :=
   pgqMeet (no_sem m)
     (λ (R : m.Entity → Prop) _ => (Finset.univ.filter (fun x : m.Entity => R x)).card ≥ 2)
 

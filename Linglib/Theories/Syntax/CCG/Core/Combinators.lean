@@ -11,12 +11,12 @@ T = CI, C is definable from B and T, and BTS is equivalent to the lambda-I calcu
 
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Interfaces.SyntaxSemantics.CCG.Interface
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
 
 namespace CCG.Combinators
 
 open CCG
-open Semantics.Montague
+open Core.IntensionalLogic
 
 section Combinators
 
@@ -115,9 +115,9 @@ end CombinatorLaws
 section CCGCorrespondence
 
 /-- Forward composition = B: fcomp semantics is B f g. -/
-theorem fcomp_is_B {m : Model} {x y z : Cat}
-    (f_sem : m.interpTy (catToTy (x.rslash y)))
-    (g_sem : m.interpTy (catToTy (y.rslash z))) :
+theorem fcomp_is_B {F : Frame} {x y z : Cat}
+    (f_sem : F.Denot (catToTy (x.rslash y)))
+    (g_sem : F.Denot (catToTy (y.rslash z))) :
     -- The semantics of forward composition is B
     (λ arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
@@ -126,15 +126,15 @@ theorem fcomp_type_is_B (x _y z : Cat) :
     catToTy (x.rslash z) = (catToTy z ⇒ catToTy x) := rfl
 
 /-- Backward composition = B: bcomp semantics is B f g. -/
-theorem bcomp_is_B {m : Model} {x y z : Cat}
-    (g_sem : m.interpTy (catToTy (y.lslash z)))
-    (f_sem : m.interpTy (catToTy (x.lslash y))) :
+theorem bcomp_is_B {F : Frame} {x y z : Cat}
+    (g_sem : F.Denot (catToTy (y.lslash z)))
+    (f_sem : F.Denot (catToTy (x.lslash y))) :
     (λ arg => f_sem (g_sem arg)) = B f_sem g_sem := rfl
 
 /-- Forward type-raising = T: semantics of ftr is T a. -/
-theorem type_raise_is_T {m : Model} {x t : Cat}
-    (a_sem : m.interpTy (catToTy x)) :
-    (λ (f : m.interpTy (catToTy (t.lslash x))) => f a_sem) = T a_sem := rfl
+theorem type_raise_is_T {F : Frame} {x t : Cat}
+    (a_sem : F.Denot (catToTy x)) :
+    (λ (f : F.Denot (catToTy (t.lslash x))) => f a_sem) = T a_sem := rfl
 
 /-- catToTy (T/(T\X)) = (catToTy X => catToTy T) => catToTy T. -/
 theorem ftr_type_is_T (x t : Cat) :
@@ -145,23 +145,23 @@ theorem btr_type_is_T (x t : Cat) :
     catToTy (backwardTypeRaise x t) = ((catToTy x ⇒ catToTy t) ⇒ catToTy t) := rfl
 
 /-- Crossed composition = S: (X/Y)/Z + Y/Z => X/Z with S f g x = f x (g x). -/
-theorem crossed_comp_is_S {m : Model} {x y z : Cat}
-    (f_sem : m.interpTy (catToTy ((x.rslash y).rslash z)))
-    (g_sem : m.interpTy (catToTy (y.rslash z))) :
+theorem crossed_comp_is_S {F : Frame} {x y z : Cat}
+    (f_sem : F.Denot (catToTy ((x.rslash y).rslash z)))
+    (g_sem : F.Denot (catToTy (y.rslash z))) :
     (λ arg => f_sem arg (g_sem arg)) = S f_sem g_sem := rfl
 
 /-- Forward application via T: f a = T a f. -/
-theorem fapp_via_T {m : Model} {x y : Cat}
-    (f_sem : m.interpTy (catToTy (x.rslash y)))
-    (a_sem : m.interpTy (catToTy y)) :
+theorem fapp_via_T {F : Frame} {x y : Cat}
+    (f_sem : F.Denot (catToTy (x.rslash y)))
+    (a_sem : F.Denot (catToTy y)) :
     f_sem a_sem = T a_sem f_sem := rfl
 
 /-- Direct function application. -/
 def apply' {α β : Type} (f : α → β) (a : α) : β := f a
 
-theorem fapp_is_apply {m : Model} {x y : Cat}
-    (f_sem : m.interpTy (catToTy (x.rslash y)))
-    (a_sem : m.interpTy (catToTy y)) :
+theorem fapp_is_apply {F : Frame} {x y : Cat}
+    (f_sem : F.Denot (catToTy (x.rslash y)))
+    (a_sem : F.Denot (catToTy y)) :
     f_sem a_sem = apply' f_sem a_sem := rfl
 
 -- The Non-Constituent Coordination Example Revisited
@@ -202,10 +202,10 @@ The computation is:
 - subj_raised = T subj_sem = λf. f subj_sem
 - result = B subj_raised verb_sem = λy. subj_raised (verb_sem y) = λy. verb_sem y subj_sem
 -/
-theorem subject_verb_composition {m : Model}
-    (subj_sem : m.interpTy (catToTy NP))
-    (verb_sem : m.interpTy (catToTy TV))
-    (obj : m.interpTy (catToTy NP)) :
+theorem subject_verb_composition {F : Frame}
+    (subj_sem : F.Denot (catToTy NP))
+    (verb_sem : F.Denot (catToTy TV))
+    (obj : F.Denot (catToTy NP)) :
     B (T subj_sem) verb_sem obj = verb_sem obj subj_sem := rfl
 
 -- Summary: The Combinator Correspondence
@@ -653,7 +653,7 @@ This follows from the semantic requirement that constituents be interpretable.
 -/
 
 /-- A fragment satisfies the Sense Unit Condition if it's semantically coherent -/
-def senseUnitCondition {m : Model} (cat : Cat) (_meaning : m.interpTy (catToTy cat)) : Prop :=
+def senseUnitCondition {F : Frame} (cat : Cat) (_meaning : F.Denot (catToTy cat)) : Prop :=
   True  -- In CCG, this is guaranteed by the category system
 
 /-

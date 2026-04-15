@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Proposition
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
@@ -360,31 +360,31 @@ theorem cost_reflects_polarity :
 
 section CompositionalGrounding
 
-open Semantics.Montague
+open Core.IntensionalLogic
 
 /-- A simple model for part-whole relations. -/
 inductive PWEntity where
   | house | classroom | bathroom | stove
   deriving DecidableEq, Repr
 
-/-- Part-whole model. -/
-def pwModel : Model where
+/-- Part-whole frame. -/
+def pwFrame : Frame where
   Entity := PWEntity
-  decEq := inferInstance
+  Index := Unit
 
 /-- The "has" relation: which containers have which parts. -/
-def has_sem : pwModel.interpTy (.e ⇒ .e ⇒ .t) :=
+def has_sem : pwFrame.Denot (.e ⇒ .e ⇒ .t) :=
   λ part container => match container, part with
     | .house, .bathroom => True
     | .classroom, .stove => False
     | _, _ => False
 
 /-- Positive sentence meaning: "A has B". -/
-def posMeaning (container part : PWEntity) : pwModel.interpTy .t :=
+def posMeaning (container part : PWEntity) : pwFrame.Denot .t :=
   has_sem part container
 
 /-- Negative sentence meaning: "A doesn't have B" = neg(has(A, B)). -/
-def negMeaning (container part : PWEntity) : pwModel.interpTy .t :=
+def negMeaning (container part : PWEntity) : pwFrame.Denot .t :=
   neg (posMeaning container part)
 
 /-- Key theorem: negative meaning is compositionally derived via `neg`. -/

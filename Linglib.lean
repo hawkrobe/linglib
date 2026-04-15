@@ -33,7 +33,10 @@ import Linglib.Core.Logic.PolarizedIndividuals
 import Linglib.Core.Logic.SquareOfOpposition
 import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Alternatives.Lexical
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Core.IntensionalLogic.Conjunction
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Normality
@@ -430,6 +433,7 @@ import Linglib.Fragments.English.Morph
 import Linglib.Fragments.English.Negation
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.Indefinites
+import Linglib.Fragments.English.PolarityMarking
 import Linglib.Fragments.Bulgarian.Evidentials
 import Linglib.Fragments.Czech.Case
 import Linglib.Fragments.Czech.Determiners
@@ -466,6 +470,7 @@ import Linglib.Fragments.German.Gender
 import Linglib.Fragments.Hausa.Determiners
 import Linglib.Fragments.Hausa.Gender
 import Linglib.Fragments.Akan.Determiners
+import Linglib.Fragments.Akan.Phonology
 import Linglib.Fragments.SwissGerman.Case
 import Linglib.Fragments.Georgian.Coordination
 import Linglib.Fragments.Georgian.Morph
@@ -526,6 +531,7 @@ import Linglib.Fragments.French.Predicates
 import Linglib.Fragments.French.Negation
 import Linglib.Fragments.French.ModalIndefinites
 import Linglib.Fragments.French.Reciprocals
+import Linglib.Fragments.French.PolarityMarking
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Javanese.Modals
@@ -659,6 +665,7 @@ import Linglib.Fragments.Italian.AdjAgreement
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.Italian.ModalIndefinites
 import Linglib.Fragments.Italian.NumberGender
+import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Fragments.Statimcets.Modals
 import Linglib.Fragments.Spanish.Binominals
 import Linglib.Fragments.Spanish.Clitics
@@ -670,6 +677,7 @@ import Linglib.Fragments.Spanish.Gender
 import Linglib.Fragments.Spanish.ModalIndefinites
 import Linglib.Fragments.Spanish.Negation
 import Linglib.Fragments.Spanish.MoodChoice
+import Linglib.Fragments.Spanish.PolarityMarking
 import Linglib.Fragments.Portuguese.MoodChoice
 import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.Romanian.MoodChoice
@@ -726,7 +734,7 @@ import Linglib.Fragments.Swahili.PolarityItems
 -- Phenomena
 import Linglib.Phenomena.Causation.Studies.SpalekMcNally2026
 import Linglib.Phenomena.TenseAspect.Studies.AlstottAravind2026
-import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014.Data
+import Linglib.Theories.Semantics.Focus.PolarityLevel
 import Linglib.Phenomena.TemporalConnectives.Studies.AlstottAravind2026
 import Linglib.Phenomena.TemporalConnectives.AspectInteractionData
 import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
@@ -916,7 +924,7 @@ import Linglib.Phenomena.FillerGap.Typology
 import Linglib.Phenomena.Focus.Basic
 import Linglib.Phenomena.Focus.Studies.Roberts2012
 import Linglib.Phenomena.Focus.Studies.Rooth1992
-import Linglib.Phenomena.Focus.PolarityStress
+import Linglib.Phenomena.Polarity.Stress
 import Linglib.Phenomena.Focus.ProsodicExhaustivity
 import Linglib.Phenomena.Focus.DiscourseOnly
 import Linglib.Phenomena.Focus.Studies.IppolitoKissWilliams2025
@@ -1062,8 +1070,11 @@ import Linglib.Phenomena.Modality.Studies.Boylan2023
 import Linglib.Phenomena.Modality.Studies.Narrog2010
 import Linglib.Phenomena.Modality.Studies.Narrog2012
 import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
-import Linglib.Theories.Semantics.Dynamic.BSML.Basic
-import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
+import Linglib.Theories.Semantics.BSML.Defs
+import Linglib.Theories.Semantics.BSML.Enrichment
+import Linglib.Theories.Semantics.BSML.FreeChoice
+import Linglib.Theories.Semantics.BSML.Negation
+import Linglib.Theories.Semantics.BSML.Bridge
 import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.Studies.BarLevFox2020
@@ -1207,6 +1218,7 @@ import Linglib.Phenomena.Quantification.Studies.DavidsonGagne2022
 import Linglib.Phenomena.Quantification.Studies.Elliott2025
 import Linglib.Phenomena.Quantification.Studies.Mirrazi2024
 import Linglib.Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
+import Linglib.Phenomena.Quantification.Studies.LuckingGinzburg2022
 import Linglib.Phenomena.Questions.Basic
 import Linglib.Phenomena.Questions.Typology
 import Linglib.Phenomena.Questions.Studies.BhattDayal2020
@@ -1309,6 +1321,8 @@ import Linglib.Phenomena.Phonology.Typology
 import Linglib.Phenomena.Phonology.Studies.Berent2026
 import Linglib.Phenomena.Phonology.Studies.BerentEtAl2016
 import Linglib.Phenomena.Phonology.Studies.Kawahara2015
+import Linglib.Phenomena.Phonology.Studies.Sagey1986
+import Linglib.Phenomena.Reduplication.Studies.McCarthyPrince1995
 import Linglib.Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000
 import Linglib.Phenomena.PhonologicalAlternation.Data
 import Linglib.Phenomena.PhonologicalAlternation.Studies.SPEDerivations
@@ -1499,7 +1513,7 @@ import Linglib.Theories.Semantics.Dynamic.PLA.Update
 import Linglib.Theories.Semantics.Dynamic.Comparisons.ICDRT_BUS
 import Linglib.Theories.Semantics.Dynamic.Comparisons.PLA_BUS
 import Linglib.Theories.Semantics.Dynamic.State
-import Linglib.Theories.Semantics.Dynamic.TeamSemantics
+import Linglib.Theories.Semantics.Dynamic.DependenceLogic
 -- Theories: Decision-Theoretic Semantics (Merin 1999)
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Theories.Pragmatics.DecisionTheoretic.ScalarImplicature
@@ -1680,7 +1694,6 @@ import Linglib.Theories.Semantics.Lexical.Adjective.Aggregation
 import Linglib.Theories.Semantics.Lexical.Adjective.Theory
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
-import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Composition.Glue
@@ -1691,7 +1704,6 @@ import Linglib.Theories.Semantics.Composition.Effects
 import Linglib.Theories.Semantics.Composition.LexiconBuilder
 import Linglib.Theories.Semantics.Composition.MaybeMonad
 import Linglib.Theories.Semantics.Composition.TypeShifting
-import Linglib.Theories.Semantics.Montague.Conjunction
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Tense.BranchingTime
 import Linglib.Theories.Semantics.Composition.PredicateTransfer
@@ -1705,6 +1717,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
 import Linglib.Theories.Semantics.Lexical.Determiner.Definite
 import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
+import Linglib.Theories.Semantics.Lexical.Determiner.DomainVagueness
 import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Lexical.Determiner.Exceptive
@@ -1725,7 +1738,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface
 import Linglib.Theories.Interfaces.SyntaxSemantics.Borer2005
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
-import Linglib.Theories.Semantics.Montague.Modification
+import Linglib.Theories.Semantics.Composition.Modification
 import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 import Linglib.Theories.Semantics.Lexical.Noun.Binominal
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
@@ -1753,11 +1766,13 @@ import Linglib.Theories.Semantics.Entailment.PresuppositionPolarity
 import Linglib.Theories.Semantics.Entailment.ScaleInteraction
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Theories.Semantics.Negation.CzechNegation
+import Linglib.Theories.Semantics.Negation.Defs
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
 import Linglib.Phenomena.Focus.Studies.DeoThomas2025
 import Linglib.Phenomena.Focus.Studies.Francescotti1995
 import Linglib.Phenomena.Focus.Studies.Umbach2004
-import Linglib.Phenomena.Focus.AdditiveParticles.Studies.TurcoBraunDimroth2014
+import Linglib.Phenomena.Polarity.Studies.TurcoBraunDimroth2014
+import Linglib.Phenomena.Polarity.MarkingTypology
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Focus.Sensitivity
 import Linglib.Theories.Semantics.Focus.Particles
@@ -1780,7 +1795,6 @@ import Linglib.Theories.Semantics.Tense.PerfectPolysemy
 import Linglib.Theories.Semantics.Tense.SequenceOfTense
 import Linglib.Theories.Semantics.Tense.TOChain
 import Linglib.Theories.Semantics.Tense.ConditionalShift
-import Linglib.Theories.Semantics.Montague.Variables
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Tense.Aspect.Composition
@@ -1975,6 +1989,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.Chierchia2004
 import Linglib.Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity
 import Linglib.Phenomena.ScalarImplicatures.Studies.Spector2007
 import Linglib.Phenomena.Polarity.Studies.Israel2001
+import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025Closure
 import Linglib.Theories.Pragmatics.Implicature.NegationScope
@@ -2077,6 +2092,7 @@ import Linglib.Theories.Pragmatics.Dialogue.KOS.TTRBridge
 -- Theories: Phonology
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
+import Linglib.Theories.Phonology.ComplexSegments
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
@@ -2098,6 +2114,7 @@ import Linglib.Theories.Phonology.HarmonicGrammar.Separability
 import Linglib.Theories.Phonology.HarmonicGrammar.Variation
 import Linglib.Theories.Phonology.Accent
 import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.Correspondence
 import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.CophonologyTheory
 import Linglib.Theories.Phonology.ProsodicWord

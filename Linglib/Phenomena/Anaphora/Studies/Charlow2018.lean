@@ -1,4 +1,6 @@
-import Linglib.Theories.Semantics.Montague.Variables
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Fragments.ToyDomain
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Semantics.Composition.Applicative
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
@@ -28,12 +30,12 @@ The same ρ/⊛ combinators, instantiated with entities instead of assignments,
 recover @cite{jacobson-1999}'s variable-free semantics (§6). The generic
 applicative operations (`readerPure`, `readerAp`, `composedPure`, `composedAp`,
 `vfPronoun`) and their laws live in `Composition/Applicative.lean`; this file
-bridges them to the Montague `Model`/`DenotG` infrastructure.
+bridges them to the `Frame`/`DenotG` infrastructure.
 
 ## Key results
 
 1. `constDenot`/`applyG` satisfy the four applicative functor laws
-   (`Theories/Semantics/Montague/Variables.lean`)
+   (`Core/IntensionalLogic/Variables.lean`)
 2. `denotGJoin` satisfies the monad laws (ibid.)
 3. H&K's `⟦·⟧` decomposes as ρ + ⊛ (`hk_decomposition`)
 4. Λᵢ as a categorematic operation (`lambdaAbsG`)
@@ -48,8 +50,9 @@ set_option autoImplicit false
 
 namespace Phenomena.Anaphora.Studies.Charlow2018
 
+open Core.IntensionalLogic
+open Core.IntensionalLogic.Variables
 open Semantics.Montague
-open Semantics.Montague.Variables
 open Semantics.Composition.Applicative
 
 -- ════════════════════════════════════════════════════════════════
@@ -71,30 +74,30 @@ This decomposition is directly visible in linglib's `interp`
 
 section HKDecomposition
 
-variable {m : Model} {σ τ : Ty}
+variable {F : Frame} {σ τ : Ty}
 
 /-- H&K's interpretation function `⟦α β⟧ = λg. ⟦α⟧ g (⟦β⟧ g)` is
     definitionally `applyG`: ⊛ *is* `⟦·⟧` restricted to binary branching. -/
-theorem hk_decomposition (f : DenotG m (σ ⇒ τ)) (x : DenotG m σ) :
+theorem hk_decomposition (f : DenotG F (σ ⇒ τ)) (x : DenotG F σ) :
     applyG f x = fun g => f g (x g) := rfl
 
 /-- Non-pronominal entries in H&K are trivially assignment-dependent:
     `⟦John⟧ := λg. j`. This is exactly ρ(j). -/
-theorem hk_lexical_lift (d : m.interpTy σ) :
-    constDenot d = fun (_ : Assignment m) => d := rfl
+theorem hk_lexical_lift (d : F.Denot σ) :
+    constDenot d = fun (_ : Assignment F) => d := rfl
 
 /-- Composing two ρ-lifted entries via ⊛ yields ρ of the composition. -/
-theorem rho_ap_reduces (f : m.interpTy (σ ⇒ τ)) (x : m.interpTy σ) :
+theorem rho_ap_reduces (f : F.Denot (σ ⇒ τ)) (x : F.Denot σ) :
     applyG (constDenot f) (constDenot x) = constDenot (f x) :=
   constDenot_applyG f x
 
 /-- `constDenot` IS `readerPure` (from `Applicative.lean`). -/
-theorem constDenot_is_readerPure {σ : Ty} (d : m.interpTy σ) :
+theorem constDenot_is_readerPure {σ : Ty} (d : F.Denot σ) :
     constDenot d = readerPure d := rfl
 
 /-- `applyG` IS `readerAp` (from `Applicative.lean`). -/
 theorem applyG_is_readerAp {σ τ : Ty}
-    (f : DenotG m (σ ⇒ τ)) (x : DenotG m σ) :
+    (f : DenotG F (σ ⇒ τ)) (x : DenotG F σ) :
     applyG f x = readerAp f x := rfl
 
 end HKDecomposition
@@ -112,19 +115,19 @@ In H&K, predicate abstraction is a syncategorematic rule. With ρ/⊛,
 
 section CategorematicAbstraction
 
-variable {m : Model} {τ : Ty}
+variable {F : Frame} {τ : Ty}
 
 /-- Λᵢ applied to a pronoun recovers the identity function:
     `Λₙ(proₙ) = λg λx. x`. -/
-theorem lambda_pronoun (n : Nat) (g : Assignment m) (x : m.Entity) :
+theorem lambda_pronoun (n : Nat) (g : Assignment F) (x : F.Entity) :
     lambdaAbsG n (interpPronoun n) g x = x := by
   simp [lambdaAbsG, interpPronoun]
 
 /-- Λᵢ applied to `ρ(left) ⊛ proₙ` yields `ρ(left)`:
     `Λₙ(ρ(left) ⊛ proₙ) = λg λx. left(x) = ρ(left)`. -/
 theorem lambda_rho_ap_pronoun (n : Nat)
-    (left : m.interpTy (.e ⇒ .t))
-    (g : Assignment m) (x : m.Entity) :
+    (left : F.Denot (.e ⇒ .t))
+    (g : Assignment F) (x : F.Entity) :
     lambdaAbsG n (applyG (constDenot left) (interpPronoun n)) g x =
     left x := by
   simp [lambdaAbsG, applyG, constDenot, interpPronoun]
@@ -141,7 +144,7 @@ end CategorematicAbstraction
 *intensions* rather than *extensions*. The key mechanism is
 **higher-order variables** + the monadic join μ (`denotGJoin`).
 
-The `Assignment m = Nat → m.Entity` type can only store entities, not
+The `Assignment F = Nat → F.Entity` type can only store entities, not
 intensions. @cite{charlow-2018} §5.1 proposes type-homogeneous assignments
 `gᵣ := ℕ → r` to fix this — see `typed_paycheck` in `Applicative.lean`
 for the self-contained derivation. Here we show the paycheck truth
@@ -149,31 +152,31 @@ conditions using externally-provided intensions. -/
 
 section Paycheck
 
-variable {m : Model}
+variable {F : Frame}
 
 /-- The intension `⟦his₀ mom⟧ = ρ(mom) ⊛ pro₀ = λg. mom(g₀)`. -/
-def momIntension (mom : m.Entity → m.Entity) (n : Nat) : DenotG m .e :=
+def momIntension (mom : F.Entity → F.Entity) (n : Nat) : DenotG F .e :=
   fun g => mom (g n)
 
 /-- `momIntension` is compositionally derived: `ρ(mom) ⊛ proₙ`. -/
-theorem momIntension_eq_rho_ap_pro (mom : m.Entity → m.Entity) (n : Nat) :
+theorem momIntension_eq_rho_ap_pro (mom : F.Entity → F.Entity) (n : Nat) :
     momIntension mom n =
     applyG (constDenot (ty := .e ⇒ .e) mom) (interpPronoun n) := rfl
 
 /-- Paycheck truth conditions: `likes(mom(g n), bill)`. -/
 theorem paycheck_truth_conditions
-    (mom : m.Entity → m.Entity)
-    (likes : m.interpTy (.e ⇒ .e ⇒ .t))
-    (bill : m.Entity) (n : Nat) (g : Assignment m) :
+    (mom : F.Entity → F.Entity)
+    (likes : F.Denot (.e ⇒ .e ⇒ .t))
+    (bill : F.Entity) (n : Nat) (g : Assignment F) :
     applyG (applyG (constDenot likes) (momIntension mom n))
            (constDenot bill) g =
     likes (mom (g n)) bill := rfl
 
 /-- When `g(n) = bill`, the paycheck pronoun denotes Bill's mom. -/
 theorem paycheck_reading
-    (mom : m.Entity → m.Entity)
-    (likes : m.interpTy (.e ⇒ .e ⇒ .t))
-    (bill : m.Entity) (n : Nat) (g : Assignment m) (h : g n = bill) :
+    (mom : F.Entity → F.Entity)
+    (likes : F.Denot (.e ⇒ .e ⇒ .t))
+    (bill : F.Entity) (n : Nat) (g : Assignment F) (h : g n = bill) :
     applyG (applyG (constDenot likes) (momIntension mom n))
            (constDenot bill) g =
     likes (mom bill) bill := by
@@ -201,13 +204,13 @@ reconstructed predicate `λx. likes(mom(x), x)` without c-command. -/
 
 section BindingReconstruction
 
-variable {m : Model}
+variable {F : Frame}
 
 /-- The reconstructed VP predicate: `λx. likes(mom(x), x)`. -/
 theorem reconstruction_predicate
-    (mom : m.Entity → m.Entity)
-    (likes : m.interpTy (.e ⇒ .e ⇒ .t))
-    (n : Nat) (g : Assignment m) (x : m.Entity) :
+    (mom : F.Entity → F.Entity)
+    (likes : F.Denot (.e ⇒ .e ⇒ .t))
+    (n : Nat) (g : Assignment F) (x : F.Entity) :
     lambdaAbsG n
       (applyG (applyG (constDenot likes) (momIntension mom n))
               (interpPronoun n))
@@ -218,9 +221,9 @@ theorem reconstruction_predicate
 
 /-- The reconstruction predicate is assignment-independent. -/
 theorem reconstruction_independent
-    (mom : m.Entity → m.Entity)
-    (likes : m.interpTy (.e ⇒ .e ⇒ .t))
-    (n : Nat) (g₁ g₂ : Assignment m) :
+    (mom : F.Entity → F.Entity)
+    (likes : F.Denot (.e ⇒ .e ⇒ .t))
+    (n : Nat) (g₁ g₂ : Assignment F) :
     lambdaAbsG n
       (applyG (applyG (constDenot likes) (momIntension mom n))
               (interpPronoun n)) g₁ =
@@ -267,8 +270,8 @@ end ComposedPaycheck
 @cite{charlow-2018}'s operations are instantiations of the Reader monad
 from `Binding.lean`:
 
-- `constDenot d` = Reader pure at `Assignment m`
-- `applyG f x` = Reader `<*>` at `Assignment m`
+- `constDenot d` = Reader pure at `Assignment F`
+- `applyG f x` = Reader `<*>` at `Assignment F`
 - `denotGJoin` = the W combinator (`Binding.lean`)
 - VF `readerPure` = Reader pure at Entity -/
 
@@ -276,21 +279,21 @@ section ReaderBridge
 
 open Semantics.Reference.Binding
 
-variable {m : Model}
+variable {F : Frame}
 
 /-- `constDenot` is the Reader monad's `pure`. -/
-theorem constDenot_is_reader_pure {σ : Ty} (d : m.interpTy σ) :
+theorem constDenot_is_reader_pure {σ : Ty} (d : F.Denot σ) :
     constDenot d =
-    @Pure.pure (Semantics.Reference.Binding.Reader (Assignment m)) _ _ d := rfl
+    @Pure.pure (Semantics.Reference.Binding.Reader (Assignment F)) _ _ d := rfl
 
 /-- VF `readerPure` is also the Reader monad's `pure`. -/
 theorem readerPure_is_reader_monad_pure {A : Type} (x : A) :
-    readerPure (E := m.Entity) x =
-    @Pure.pure (Semantics.Reference.Binding.Reader m.Entity) _ A x := rfl
+    readerPure (E := F.Entity) x =
+    @Pure.pure (Semantics.Reference.Binding.Reader F.Entity) _ A x := rfl
 
 /-- `denotGJoin` is the `W` (duplicator) combinator from `Binding.lean`. -/
 theorem denotGJoin_is_W {A : Type}
-    (f : Assignment m → Assignment m → A) :
+    (f : Assignment F → Assignment F → A) :
     denotGJoin f = Semantics.Reference.Binding.W f := rfl
 
 end ReaderBridge

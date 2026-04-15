@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Fragments.ToyDomain
 import Linglib.Theories.Semantics.TypeTheoretic.Core
 
 /-!
@@ -37,7 +38,8 @@ same truth conditions for basic predication.
 
 namespace Comparisons.CNsAsTypes
 
-open Semantics.Montague (Model Ty ToyEntity toyModel)
+open Core.IntensionalLogic (Frame Ty)
+open Semantics.Montague (ToyEntity toyModel)
 open Semantics.TypeTheoretic (PredType Ppty IsTrue IsFalse propT
   SubtypeOf propExtension IType)
 

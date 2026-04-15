@@ -6,7 +6,10 @@ import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Reference.Binding
-import Linglib.Theories.Semantics.Montague.Variables
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.LexEntry
 
 /-!
 # Effect-Driven Interpretation
@@ -60,8 +63,9 @@ open Semantics.Composition.QuantifierComposition
 open Semantics.Lexical.Expressives
 open Semantics.Quantification.Quantifier
 open Semantics.Reference.Binding
+open Core.IntensionalLogic
+open Core.IntensionalLogic.Variables
 open Semantics.Montague
-open Semantics.Montague.Variables
 
 -- ════════════════════════════════════════════════════════════════════
 -- §1 Lean Typeclass Instances
@@ -425,9 +429,9 @@ theorem adj_counit_yields_W (κ : ι → ι → β) (x : ι) :
 
     This connects the adjunction (§5.1 of the paper) to the existing
     `hk_bs_reflexive_equiv` theorem in `Binding.lean`. -/
-theorem adj_binding_agrees_with_hk {m : Model} (n : Nat)
-    (body : m.Entity → m.Entity → Prop)
-    (binder : m.Entity) (g : Assignment m) :
+theorem adj_binding_agrees_with_hk {F : Frame} (n : Nat)
+    (body : F.Entity → F.Entity → Prop)
+    (binder : F.Entity) (g : Assignment F) :
     adj_ε (body binder, binder) = body (g[n ↦ binder] n) (g[n ↦ binder] n) := by
   show body binder binder = body (g[n ↦ binder] n) (g[n ↦ binder] n)
   simp only [update_same]
@@ -685,15 +689,15 @@ section ScopeBridge
     Ch. 4: the continuation monad is the
     algebraic effect for scope-taking. A GQ `(e → t) → t` IS
     `Cont Prop Entity` by definition. -/
-def gqAsCont {m : Model} (gq : (m.Entity → Prop) → Prop) : Cont Prop m.Entity :=
+def gqAsCont {F : Frame} (gq : (F.Entity → Prop) → Prop) : Cont Prop F.Entity :=
   gq
 
 /-- A `Cont Prop Entity` value IS a generalized quantifier. -/
-def contAsGQ {m : Model} (c : Cont Prop m.Entity) : (m.Entity → Prop) → Prop :=
+def contAsGQ {F : Frame} (c : Cont Prop F.Entity) : (F.Entity → Prop) → Prop :=
   c
 
 /-- Round-trip: GQ → Cont → GQ is identity. -/
-theorem gq_cont_roundtrip {m : Model} (gq : (m.Entity → Prop) → Prop) :
+theorem gq_cont_roundtrip {F : Frame} (gq : (F.Entity → Prop) → Prop) :
     contAsGQ (gqAsCont gq) = gq := rfl
 
 /-- `every_sem` applied to a restrictor is a `Cont Prop Entity` value. -/
@@ -950,9 +954,9 @@ theorem cont_pure_is_fa {A : Type} (f : A → R) (x : A) :
     predicate abstraction of its scope. QR and Cont differ only in
     how scope order is *specified* (tree structure vs bind order),
     not in what they *compute*. -/
-theorem qr_cont_structural_agreement {m : Model}
-    (q : (m.Entity → Prop) → Prop)
-    (body : DenotG m .t) (n : Nat) (g : Assignment m) :
+theorem qr_cont_structural_agreement {F : Frame}
+    (q : (F.Entity → Prop) → Prop)
+    (body : DenotG F .t) (n : Nat) (g : Assignment F) :
     q (lambdaAbsG n body g) =
     Cont.lower (Cont.bind q (fun x => Cont.pure (body (g[n ↦ x])))) := rfl
 
@@ -992,8 +996,8 @@ theorem w_three_way {E A : Type} (f : E → E → A) (e : E) :
 
 /-- Specialization for Montague assignments: `denotGJoin` = `W` = `adj_ε`
     when applied to assignment-dependent meanings. -/
-theorem binding_unification {m : Model} {A : Type}
-    (f : Assignment m → Assignment m → A) (g : Assignment m) :
+theorem binding_unification {F : Frame} {A : Type}
+    (f : Assignment F → Assignment F → A) (g : Assignment F) :
     denotGJoin f g = W f g ∧ W f g = adj_ε (f g, g) := ⟨rfl, rfl⟩
 
 /-- Closing the triangle directly: `denotGJoin` = `adj_ε ∘ ⟨f·, ·⟩`.
@@ -1006,8 +1010,8 @@ theorem binding_unification {m : Model} {A : Type}
                  ↘                 ↓
                    adj_ε ∘ ⟨f·, ·⟩
     ``` -/
-theorem binding_triangle {m : Model} {A : Type}
-    (f : Assignment m → Assignment m → A) (g : Assignment m) :
+theorem binding_triangle {F : Frame} {A : Type}
+    (f : Assignment F → Assignment F → A) (g : Assignment F) :
     denotGJoin f g = adj_ε (f g, g) := rfl
 
 end BindingUnification

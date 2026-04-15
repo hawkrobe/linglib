@@ -219,9 +219,9 @@ indefinites compositionally. -/
 section LiftDecomposition
 
 open Semantics.Composition.TypeShifting (lift A ident A_ident_eq_lift)
-open Semantics.Montague (Model Ty)
+open Core.IntensionalLogic (Frame Ty)
 
-variable {m : Model}
+variable {F : Frame}
 
 /-- **LIFT = A ∘ η** on the domain.
 
@@ -233,9 +233,9 @@ variable {m : Model}
 
     This is exactly `A_ident_eq_lift` from TypeShifting.lean, re-exported
     here in the set monad context. -/
-theorem lift_eq_A_eta (domain : List m.Entity) (j : m.interpTy .e)
+theorem lift_eq_A_eta (domain : List F.Entity) (j : F.Entity)
     (hj : j ∈ domain) (_hnd : domain.Nodup) :
-    ∀ P : m.interpTy Ty.et, A domain (ident j) P = lift j P := by
+    ∀ P : F.Denot Ty.et, A domain (ident j) P = lift j P := by
   intro P; exact congrFun (A_ident_eq_lift domain j hj) P
 
 end LiftDecomposition

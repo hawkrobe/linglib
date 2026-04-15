@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Montague.Conjunction
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Conjunction
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Phenomena.Coordination.Typology
 
@@ -50,6 +51,7 @@ so the M&S derivation is the definition itself, not a theorem.
 namespace Phenomena.Coordination.Studies.BillEtAl2025
 
 open Core.Coordination
+open Core.IntensionalLogic (Frame)
 
 -- Conjunction Particle Typology
 
@@ -473,7 +475,7 @@ P(e₁) ∧ P(e₂) equals Link's `distMaximal P {e₁, e₂}`
 (`mu_is_distributive_check`).
 -/
 
-open Semantics.Montague.Conjunction in
+open Core.IntensionalLogic.Conjunction in
 /--
 Type-raising an entity and checking subset inclusion of its singleton
 is equivalent to applying the predicate directly.
@@ -481,17 +483,18 @@ is equivalent to applying the predicate directly.
 This is the core of the M&S decomposition: the roundtrip through
 ☉ + MU + J recovers ordinary conjunction semantics.
 -/
-theorem typeRaise_incl_reduces {m : Semantics.Montague.Model} (e : m.Entity) (p : m.Entity → Prop) :
-    typeRaise e p = p e := rfl
+theorem typeRaise_incl_reduces {F : Frame} (e : F.Entity) (p : F.Entity → Prop) :
+    typeRaise (F := F) e p = p e := rfl
 
-open Semantics.Montague.Conjunction in
+open Core.IntensionalLogic.Conjunction in
 /--
 Full M&S derivation: "DP₁ and DP₂ VP" via ☉ + MU + J
 yields the same result as Partee & Rooth's `coordEntities`.
 -/
-theorem ms_decomposition_eq_coord {m : Semantics.Montague.Model} (e1 e2 : m.Entity)
-    (p : m.Entity → Prop) :
-    (typeRaise e1 p ∧ typeRaise e2 p) = coordEntities e1 e2 p := rfl
+theorem ms_decomposition_eq_coord {F : Frame} (e1 e2 : F.Entity)
+    (p : F.Entity → Prop) :
+    (typeRaise (F := F) e1 p ∧ typeRaise (F := F) e2 p) =
+      coordEntities (F := F) e1 e2 p := rfl
 
 -- ============================================================================
 -- § MU ↔ Distributivity: The Root Explanation
@@ -514,7 +517,7 @@ typeRaise e₂)` by definition, and MU IS `typeRaise` by `abbrev`.
 The Link side is independently structural: `distMaximal` IS
 `decide (∀ a ∈ x, P a w)`.
 
-The theorem below bridges the two type systems (Montague `Model.Entity`
+The theorem below bridges the two type systems (Montague `Frame.Entity`
 vs `Finset Atom`). This bridge can't be made structural — the types
 are different — but it proves the same operation is being computed.
 
@@ -527,7 +530,7 @@ general case for arbitrary pluralities.
 
 section MUDistributivity
 
-open Semantics.Montague.Conjunction
+open Core.IntensionalLogic.Conjunction
 open Semantics.Lexical.Plural.Distributivity
 
 /--
@@ -540,15 +543,13 @@ Both sides compute `P(e₁) ∧ P(e₂)`:
 - RHS by `distMaximal_pair`
 
 This can't be an `abbrev` — the types are different (Montague
-`Model.Entity` vs `Finset Atom`). The theorem is the right tool
+`Frame.Entity` vs `Finset Atom`). The theorem is the right tool
 for cross-theory unification.
 -/
-theorem mu_is_distributive_check {m : Semantics.Montague.Model}
-    (e1 e2 : m.Entity) (P : m.Entity → Unit → Bool) :
-    letI := m.decEq
-    coordEntities e1 e2 (fun a => P a () = true) ↔
+theorem mu_is_distributive_check {F : Frame} [DecidableEq F.Entity]
+    (e1 e2 : F.Entity) (P : F.Entity → Unit → Bool) :
+    coordEntities (F := F) e1 e2 (fun a => P a () = true) ↔
     (distMaximal P {e1, e2} () = true) := by
-  letI := m.decEq
   simp [coordEntities_both_satisfy, distMaximal_pair]
 
 end MUDistributivity

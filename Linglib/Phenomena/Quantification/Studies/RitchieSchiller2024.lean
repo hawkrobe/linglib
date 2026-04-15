@@ -57,7 +57,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Quantification.Studies.RitchieSchiller2024
 
-open Semantics.Montague (Model)
+open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier (every_sem some_sem)
 open Semantics.Lexical.Determiner.DomainRestriction
 
@@ -73,7 +73,7 @@ inductive Entity where
   | b4  -- bottle outside window (vista)
   deriving DecidableEq, Repr, Inhabited
 
-abbrev bottleModel : Model := { Entity := Entity, decEq := inferInstance }
+abbrev bottleModel : Frame := { Entity := Entity, Index := Unit }
 
 instance : Fintype Entity where
   elems := {Entity.b1, Entity.b2, Entity.b3, Entity.b4}

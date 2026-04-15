@@ -140,7 +140,7 @@ noncomputable def kindExtensionFinset (k : Kind W Atom) (w : W) : Finset Atom :=
     ```
     Then pass `lionExt` directly to `distributiveKindPred`. -/
 def kindExtensionOfBool [Fintype Atom] (member : W → Atom → Bool) (w : W) : Finset Atom :=
-  Finset.univ.filter (member w)
+  Finset.univ.filter (fun a => member w a)
 
 /--
 Distributive Kind Predication: evaluate a kind at the actual world to
@@ -1824,7 +1824,9 @@ truth value.
 
 section CompositionalTreeDemo
 
-open Semantics.Montague
+open Core.IntensionalLogic (Frame)
+open Core.IntensionalLogic.Variables (Assignment)
+open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Semantics.Lexical.CovertQuantifier (genThreshold dist dpp)
 open Core.Tree
@@ -1837,8 +1839,8 @@ inductive DemoEntity where
 
 instance : BEq DemoEntity := ⟨fun a b => decide (a = b)⟩
 
-private def demoModel : Model :=
-  { Entity := DemoEntity, decEq := inferInstance }
+private def demoModel : Frame :=
+  { Entity := DemoEntity, Index := Unit }
 
 private def demoAtoms : List DemoEntity := [.simba, .nala, .mufasa]
 
@@ -1864,7 +1866,7 @@ private noncomputable def guerriniLex : Lexicon demoModel := fun s =>
   | "DPP"    => some (dpp demoModel demoAtoms)
   | _        => none
 
-private def g₀ : Semantics.Montague.Variables.Assignment demoModel :=
+private def g₀ : Assignment demoModel :=
   fun _ => DemoEntity.simba
 
 /-- BFG parse: Gen(lion, hunt) — @cite{guerrini-2026}, structure (29). -/

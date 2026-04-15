@@ -22,7 +22,6 @@ For the adjective classification hierarchy (intersective, subsective, privative,
 extensional), see `Classification.lean`.
 -/
 
-import Linglib.Theories.Semantics.Montague.Types
 import Linglib.Core.Scales.Scale
 import Linglib.Core.PropertyDomain
 import Linglib.Theories.Semantics.Lexical.Adjective.MLScale

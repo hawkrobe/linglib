@@ -30,7 +30,8 @@ with presuppositions:
 
 namespace Semantics.Lexical.Determiner.Definite
 
-open Semantics.Montague (Model Ty toyModel ToyEntity)
+open Core.IntensionalLogic (Frame Ty)
+open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Quantification.Quantifier (every_sem some_sem Ty.det)
 open Semantics.Composition.TypeShifting (iota lift)
 open Core.Presupposition (PrProp)
@@ -146,8 +147,8 @@ theorem the_uniq_eq_definitePrProp {W E : Type} (domain : List E)
 `iota domain P = some e` exactly when the uniqueness presupposition
 of `the_uniq` is satisfied. The ι-operator is the presupposition-free
 core of the uniqueness-based definite. -/
-theorem the_uniq_presup_iff_iota {m : Model} (domain : List m.Entity)
-    (restrictor : m.interpTy Ty.et) :
+theorem the_uniq_presup_iff_iota {m : Frame} (domain : List m.Entity)
+    (restrictor : m.Denot Ty.et) :
     (match domain.filter (fun x => @decide (restrictor x) (Classical.dec _)) with
      | [_] => true | _ => false) =
     (iota domain restrictor).isSome := by
@@ -169,7 +170,7 @@ When exactly one entity satisfies the restrictor, "the φ is ψ" and
 "every φ is ψ" have the same truth value. This is the classical
 observation that the definite article is a universal quantifier
 restricted to singletons. -/
-theorem the_is_every_on_singletons (m : Model) [Fintype m.Entity]
+theorem the_is_every_on_singletons (m : Frame) [Fintype m.Entity]
     (restrictor scope : m.Entity → Prop)
     (e : m.Entity)
     (h_restr : restrictor e)

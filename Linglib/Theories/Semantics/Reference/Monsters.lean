@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Theories.Semantics.Reference.Kaplan
 
 /-!

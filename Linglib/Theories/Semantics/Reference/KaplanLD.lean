@@ -21,7 +21,7 @@ and metatheorems.
 -/
 
 import Linglib.Core.Context.Basic
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Theories.Semantics.Reference.Basic
 
 namespace Semantics.Reference.KaplanLD

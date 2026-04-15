@@ -30,7 +30,8 @@ namespace Phenomena.Polarity.Studies.Ladusaw1979
 
 open Core.Quantification
 open Phenomena.Polarity.NPIs (LicensingContext)
-open Semantics.Montague
+open Core.IntensionalLogic
+open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Quantification.Quantifier
 
 -- ============================================================================
@@ -71,7 +72,7 @@ def licensingStrength : LicensingContext → LicensingStrength
 -- §2. GQ monotonicity → NPI licensing (the Ladusaw bridge)
 -- ============================================================================
 
-variable {m : Model} [Fintype m.Entity]
+variable {m : Frame} [Fintype m.Entity] [DecidableEq m.Entity]
 
 /-- The core Ladusaw generalization: scope-DE quantifiers license weak NPIs
     in their scope. Formally: `PScopeDownwardMono q` implies that the scope
@@ -80,7 +81,7 @@ variable {m : Model} [Fintype m.Entity]
     Verified instances:
     - `no_scope_down`: "No student saw anyone" ✓
     - `few_scope_down`: "Few students saw anyone" ✓ -/
-structure ScopeDELicensesWeakNPIs (q : m.interpTy Ty.det) where
+structure ScopeDELicensesWeakNPIs (q : m.Denot Ty.det) where
   scopeDE : PScopeDownwardMono q
   /-- The licensing context this corresponds to -/
   context : LicensingContext
@@ -108,7 +109,7 @@ def few_scope_licenses_weak :
     Verified instances:
     - `every_restrictor_down`: "Everyone who saw anyone was questioned" ✓
     - `no_restrictor_down`: "No one who saw anyone was questioned" ✓ -/
-structure RestrictorDELicensesWeakNPIs (q : m.interpTy Ty.det) where
+structure RestrictorDELicensesWeakNPIs (q : m.Denot Ty.det) where
   restrictorDE : PRestrictorDownwardMono q
   context : LicensingContext
   isDE : licensingStrength context = .downwardEntailing ∨
@@ -142,7 +143,7 @@ def no_restrictor_licenses_weak :
 
     Counter-example: "few" is merely DE, not anti-additive:
     - *"Few people lifted a finger to help" ✗ -/
-structure AntiAddLicensesStrongNPIs (q : m.interpTy Ty.det) where
+structure AntiAddLicensesStrongNPIs (q : m.Denot Ty.det) where
   laa : PLeftAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
@@ -165,7 +166,7 @@ def no_laa_licenses_strong :
 /-- Scope-level anti-additivity also licenses strong NPIs.
     `RightAntiAdditive q` means the scope of `q` is anti-additive.
     "Nobody lifted a finger" is licensed by scope-level AA of `no`. -/
-structure ScopeAALicensesStrongNPIs (q : m.interpTy Ty.det) where
+structure ScopeAALicensesStrongNPIs (q : m.Denot Ty.det) where
   raa : PRightAntiAdditive q
   context : LicensingContext
   isAA : licensingStrength context = .antiAdditive
@@ -202,8 +203,8 @@ set_option maxHeartbeats 400000 in
     - few(R, S) = (1 < 2) = true, few(R, S') = (1 < 2) = true
     - true ∧ true ≠ false -/
 theorem few_DE_not_RAA :
-    PScopeDownwardMono (few_sem (m := toyModel)) ∧
-    ¬PRightAntiAdditive (few_sem (m := toyModel)) := by
+    PScopeDownwardMono (few_sem (F := toyModel)) ∧
+    ¬PRightAntiAdditive (few_sem (F := toyModel)) := by
   refine ⟨few_scope_down, fun h => ?_⟩
   -- Witness: R = not-book, S = john-only, S' = mary-only
   let R : ToyEntity → Prop := fun | .book => False | _ => True

@@ -39,12 +39,13 @@ detected via `isTrace so`.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Semantics.Montague.Variables
-import Linglib.Theories.Semantics.Montague.Modification
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Theories.Semantics.Composition.Modification
 
 namespace Minimalism.Semantics
 
-open Semantics.Montague Semantics.Montague.Variables Semantics.Montague.Modification
+open Core.IntensionalLogic Core.IntensionalLogic.Variables Semantics.Composition.Modification
 open Minimalism
 
 -- ============================================================================
@@ -61,12 +62,12 @@ the assignment function at the appropriate index.
 The trace index n should match the index of the binder (λ-abstraction)
 at the landing site of movement.
 -/
-def interpTrace {m : Model} (n : ℕ) : DenotG m .e :=
+def interpTrace {F : Frame} (n : ℕ) : DenotG F .e :=
   interpPronoun n
 
 /-- Traces and pronouns have the same interpretation -/
-theorem interpTrace_eq_interpPronoun {m : Model} (n : ℕ) :
-    interpTrace (m := m) n = interpPronoun n := rfl
+theorem interpTrace_eq_interpPronoun {F : Frame} (n : ℕ) :
+    interpTrace (F := F) n = interpPronoun n := rfl
 
 -- ============================================================================
 -- Predicate Abstraction (H&K Ch. 7)
@@ -85,8 +86,8 @@ where Op_n is the moved operator and YP contains the trace t_n.
 This rule creates a predicate (type ⟨e,t⟩) from a proposition (type t)
 by abstracting over the trace's index.
 -/
-def predicateAbstraction {m : Model} (n : ℕ) (body : DenotG m .t)
-    : DenotG m (.e ⇒ .t) :=
+def predicateAbstraction {F : Frame} (n : ℕ) (body : DenotG F .t)
+    : DenotG F (.e ⇒ .t) :=
   lambdaAbsG n body
 
 /--
@@ -95,8 +96,8 @@ Generalized predicate abstraction for any result type.
 This handles cases like "the book that John said Mary read _"
 where the trace is embedded and the result may need further composition.
 -/
-def predicateAbstractionGen {m : Model} {τ : Ty} (n : ℕ) (body : DenotG m τ)
-    : DenotG m (.e ⇒ τ) :=
+def predicateAbstractionGen {F : Frame} {τ : Ty} (n : ℕ) (body : DenotG F τ)
+    : DenotG F (.e ⇒ τ) :=
   lambdaAbsG n body
 
 -- ============================================================================
@@ -110,8 +111,8 @@ Interpret a simple movement configuration:
 
 Returns the predicate λx. ⟦body(t_n := x)⟧
 -/
-def interpMovement {m : Model} (n : ℕ)
-    (bodyWithTrace : DenotG m .t) : DenotG m (.e ⇒ .t) :=
+def interpMovement {F : Frame} (n : ℕ)
+    (bodyWithTrace : DenotG F .t) : DenotG F (.e ⇒ .t) :=
   predicateAbstraction n bodyWithTrace
 
 /--
@@ -120,8 +121,8 @@ The binding relationship: predicate abstraction at index n binds traces at n.
 When we apply a predicate-abstracted meaning to an entity,
 that entity becomes the value of all traces with the same index.
 -/
-theorem binding_correct {m : Model} (n : ℕ) (body : DenotG m .t)
-    (x : m.Entity) (g : Assignment m)
+theorem binding_correct {F : Frame} (n : ℕ) (body : DenotG F .t)
+    (x : F.Entity) (g : Assignment F)
     : (predicateAbstraction n body g) x = body (g[n ↦ x]) := rfl
 
 -- ============================================================================
@@ -131,8 +132,8 @@ theorem binding_correct {m : Model} (n : ℕ) (body : DenotG m .t)
 /--
 A semantic interpretation context pairs a model with an assignment.
 -/
-structure InterpContext (m : Model) where
-  assignment : Assignment m
+structure InterpContext (F : Frame) where
+  assignment : Assignment F
 
 /--
 The semantic type corresponding to a syntactic object.
@@ -150,7 +151,7 @@ Interpret a trace in a syntactic object.
 
 This extracts the trace index and interprets it via the assignment.
 -/
-def interpSOTrace {m : Model} (so : SyntacticObject) : Option (DenotG m .e) :=
+def interpSOTrace {F : Frame} (so : SyntacticObject) : Option (DenotG F .e) :=
   match isTrace so with
   | some n => some (interpTrace n)
   | none => none
@@ -171,14 +172,14 @@ def getTraceIndex : SyntacticObject → Option ℕ
 Identity of indiscernibles for traces:
 traces with the same index have the same interpretation.
 -/
-theorem trace_index_determines_meaning {m : Model} (n : ℕ)
-    : interpTrace (m := m) n = interpTrace n := rfl
+theorem trace_index_determines_meaning {F : Frame} (n : ℕ)
+    : interpTrace (F := F) n = interpTrace n := rfl
 
 /--
 Different indices yield independent interpretations.
 -/
-theorem trace_indices_independent {m : Model} (n₁ n₂ : ℕ) (h : n₁ ≠ n₂)
-    (x : m.Entity) (g : Assignment m)
+theorem trace_indices_independent {F : Frame} (n₁ n₂ : ℕ) (h : n₁ ≠ n₂)
+    (x : F.Entity) (g : Assignment F)
     : interpTrace n₁ (g[n₂ ↦ x]) = interpTrace n₁ g := by
   simp only [interpTrace, interpPronoun]
   exact update_other g n₂ n₁ x h
@@ -187,8 +188,8 @@ theorem trace_indices_independent {m : Model} (n₁ n₂ : ℕ) (h : n₁ ≠ n�
 Predicate abstraction creates the right binding:
 the abstracted variable is bound, other variables are free.
 -/
-theorem abstraction_binds_correct_variable {m : Model} (n : ℕ)
-    (g : Assignment m) (x : m.Entity)
+theorem abstraction_binds_correct_variable {F : Frame} (n : ℕ)
+    (g : Assignment F) (x : F.Entity)
     : interpTrace n (g[n ↦ x]) = x := by
   simp only [interpTrace, interpPronoun]
   exact update_same g n x
@@ -206,17 +207,17 @@ For "the N that... t..."":
 
 Result: λx. N(x) ∧ ⟦relative clause⟧(x)
 -/
-def relativePM {m : Model} (n : ℕ)
-    (headNoun : DenotG m (.e ⇒ .t))
-    (relClauseBody : DenotG m .t)
-    : DenotG m (.e ⇒ .t) :=
+def relativePM {F : Frame} (n : ℕ)
+    (headNoun : DenotG F (.e ⇒ .t))
+    (relClauseBody : DenotG F .t)
+    : DenotG F (.e ⇒ .t) :=
   λ g => predicateModification (headNoun g) (predicateAbstraction n relClauseBody g)
 
 /-- Relative PM is commutative (the order of N and RC doesn't matter) -/
-theorem relativePM_comm {m : Model} (n : ℕ)
-    (headNoun : DenotG m (.e ⇒ .t))
-    (relClauseBody : DenotG m .t)
-    (g : Assignment m)
+theorem relativePM_comm {F : Frame} (n : ℕ)
+    (headNoun : DenotG F (.e ⇒ .t))
+    (relClauseBody : DenotG F .t)
+    (g : Assignment F)
     : relativePM n headNoun relClauseBody g =
       predicateModification (predicateAbstraction n relClauseBody g) (headNoun g) := by
   simp only [relativePM, predicateModification_comm]

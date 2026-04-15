@@ -42,7 +42,7 @@ namespace Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
 
 open Semantics.Quantification.Quantifier (every_sem some_sem no_sem
   subalternation_a_i)
-open Semantics.Montague (Model)
+open Core.IntensionalLogic (Frame)
 
 -- ============================================================================
 -- §1. Ontology: Venn Diagram Regions and States
@@ -72,7 +72,7 @@ def hasC : Region → Bool | .C | .AC | .BC | .ABC => true | _ => false
 -- ============================================================================
 
 /-- Regions as a Montague model, enabling reuse of `every_sem`/`some_sem`/`no_sem`. -/
-def regionModel : Model := { Entity := Region, decEq := inferInstance }
+def regionModel : Frame := { Entity := Region, Index := Unit }
 
 instance regionFM : Fintype regionModel.Entity where
   elems := ({Region.A, Region.B, Region.C, Region.AB, Region.AC, Region.BC, Region.ABC} : Finset Region)

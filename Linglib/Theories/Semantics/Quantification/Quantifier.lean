@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Fragments.ToyDomain
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Core.Logic.Quantification
 import Mathlib.Data.Fintype.Basic
@@ -32,7 +33,7 @@ the universals.
 - **Prop-valued GQ properties**: Defined locally in this file for Prop-valued denotations
   (`PConservative`, `PScopeUpwardMono`, etc.)
 - **Concrete denotations**: `every_sem`, `some_sem`, etc. — Prop-valued, matching
-  `interpTy .t = Prop`
+  `Denot .t = Prop`
 - **Counting quantifiers**: `most_sem`, `few_sem`, etc. — use `Finset.univ.filter`
   for cardinality comparisons
 
@@ -40,7 +41,8 @@ the universals.
 
 namespace Semantics.Quantification.Quantifier
 
-open Semantics.Montague
+open Core.IntensionalLogic
+open Semantics.Montague (toyModel ToyEntity)
 open Core.Quantification
 
 def Ty.det : Ty := (.e ⇒ .t) ⇒ ((.e ⇒ .t) ⇒ .t)
@@ -269,85 +271,85 @@ def count {α : Type} [Fintype α] (P : α → Prop) [DecidablePred P] : Nat :=
 -- Denotations
 -- ============================================================================
 
-def every_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    ∀ x : m.Entity, R x → S x
+def every_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    ∀ x : F.Entity, R x → S x
 
-def some_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    ∃ x : m.Entity, R x ∧ S x
+def some_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    ∃ x : F.Entity, R x ∧ S x
 
 /-- Partee's `A` (existential closure) = Barwise & Cooper's `⟦some⟧`.
     Both compute `λR.λS. ∃x. R(x) ∧ S(x)` over a finite domain.
     `A` takes the domain explicitly; `some_sem` uses `∃` over the entity type. -/
-theorem A_eq_some_sem (m : Model) [Fintype m.Entity] (domain : List m.Entity)
-    (hComplete : ∀ x : m.Entity, x ∈ domain) :
-    Semantics.Composition.TypeShifting.A domain = some_sem m := by
+theorem A_eq_some_sem (F : Frame) [Fintype F.Entity] (domain : List F.Entity)
+    (hComplete : ∀ x : F.Entity, x ∈ domain) :
+    Semantics.Composition.TypeShifting.A domain = some_sem F := by
   funext R S
   simp only [Semantics.Composition.TypeShifting.A, some_sem]
   exact propext ⟨fun ⟨x, _, hR, hS⟩ => ⟨x, hR, hS⟩,
                  fun ⟨x, hR, hS⟩ => ⟨x, hComplete x, hR, hS⟩⟩
 
-def no_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    ∀ x : m.Entity, R x → ¬S x
+def no_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    ∀ x : F.Entity, R x → ¬S x
 
 open Classical in
 /-- `⟦most⟧(R)(S) = |R ∩ S| > |R \ S|` -/
-noncomputable def most_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    count (fun x : m.Entity => R x ∧ S x) >
-    count (fun x : m.Entity => R x ∧ ¬S x)
+noncomputable def most_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    count (fun x : F.Entity => R x ∧ S x) >
+    count (fun x : F.Entity => R x ∧ ¬S x)
 
 open Classical in
 /-- `⟦few⟧(R)(S) = |R ∩ S| < |R \ S|` — a minority of Rs are Ss.
     Dual of `most_sem`: few(R,S) ↔ ¬most(R,S) ∧ ¬half(R,S). -/
-noncomputable def few_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    count (fun x : m.Entity => R x ∧ S x) <
-    count (fun x : m.Entity => R x ∧ ¬S x)
+noncomputable def few_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    count (fun x : F.Entity => R x ∧ S x) <
+    count (fun x : F.Entity => R x ∧ ¬S x)
 
 open Classical in
 /-- `⟦half⟧(R)(S) = 2 * |R ∩ S| = |R|` — exactly half of Rs are Ss. -/
-noncomputable def half_sem (m : Model) [Fintype m.Entity] : m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    2 * count (fun x : m.Entity => R x ∧ S x) =
-    count (fun x : m.Entity => R x)
+noncomputable def half_sem (F : Frame) [Fintype F.Entity] : F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    2 * count (fun x : F.Entity => R x ∧ S x) =
+    count (fun x : F.Entity => R x)
 
 open Classical in
 /-- `⟦at least n⟧(R)(S) = |R ∩ S| ≥ n` -/
-noncomputable def at_least_n_sem (m : Model) [Fintype m.Entity] (n : Nat) :
-    m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    count (fun x : m.Entity => R x ∧ S x) ≥ n
+noncomputable def at_least_n_sem (F : Frame) [Fintype F.Entity] (n : Nat) :
+    F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    count (fun x : F.Entity => R x ∧ S x) ≥ n
 
 open Classical in
 /-- `⟦at most n⟧(R)(S) = |R ∩ S| ≤ n` -/
-noncomputable def at_most_n_sem (m : Model) [Fintype m.Entity] (n : Nat) :
-    m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    count (fun x : m.Entity => R x ∧ S x) ≤ n
+noncomputable def at_most_n_sem (F : Frame) [Fintype F.Entity] (n : Nat) :
+    F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    count (fun x : F.Entity => R x ∧ S x) ≤ n
 
 open Classical in
 /-- `⟦exactly n⟧(R)(S) = |R ∩ S| = n` -/
-noncomputable def exactly_n_sem (m : Model) [Fintype m.Entity] (n : Nat) :
-    m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    count (fun x : m.Entity => R x ∧ S x) = n
+noncomputable def exactly_n_sem (F : Frame) [Fintype F.Entity] (n : Nat) :
+    F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    count (fun x : F.Entity => R x ∧ S x) = n
 
 open Classical in
 /-- `⟦all but n⟧(R)(S) = |R \ S| = n` — exactly n R-elements are non-S.
     Generalizes "every" (= all but 0). The exceptive counterpart of
     `exactly_n_sem` (which counts |R ∩ S| = n). -/
-noncomputable def all_but_n_sem (m : Model) [Fintype m.Entity] (n : Nat) :
-    m.interpTy Ty.det :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    count (fun x : m.Entity => R x ∧ ¬S x) = n
+noncomputable def all_but_n_sem (F : Frame) [Fintype F.Entity] (n : Nat) :
+    F.Denot Ty.det :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    count (fun x : F.Entity => R x ∧ ¬S x) = n
 
 /-- `⟦between n and k⟧(R)(S) = n ≤ |R ∩ S| ≤ k` -/
-noncomputable def between_n_m_sem (m : Model) [Fintype m.Entity] (n k : Nat) :
-    m.interpTy Ty.det :=
-  pgqMeet (at_least_n_sem m n) (at_most_n_sem m k)
+noncomputable def between_n_m_sem (F : Frame) [Fintype F.Entity] (n k : Nat) :
+    F.Denot Ty.det :=
+  pgqMeet (at_least_n_sem F n) (at_most_n_sem F k)
 
 instance : Fintype ToyEntity where
   elems := {.john, .mary, .pizza, .book}
@@ -359,19 +361,19 @@ instance : Fintype toyModel.Entity :=
 
 section ToyLexicon
 
-def student_sem : toyModel.interpTy (.e ⇒ .t) :=
+def student_sem : toyModel.Denot (.e ⇒ .t) :=
   λ x => match x with
     | .john => True
     | .mary => True
     | _ => False
 
-def person_sem : toyModel.interpTy (.e ⇒ .t) :=
+def person_sem : toyModel.Denot (.e ⇒ .t) :=
   λ x => match x with
     | .john => True
     | .mary => True
     | _ => False
 
-def thing_sem : toyModel.interpTy (.e ⇒ .t) :=
+def thing_sem : toyModel.Denot (.e ⇒ .t) :=
   λ _ => True
 
 instance : DecidablePred student_sem :=
@@ -388,7 +390,7 @@ end ToyLexicon
 
 section Examples
 
-open ToyLexicon Semantics.Montague.ToyLexicon
+open Semantics.Montague.ToyLexicon
 
 /-- Not every student sleeps (john sleeps but mary doesn't). -/
 theorem not_everyStudentSleeps : ¬every_sem toyModel student_sem sleeps_sem := by
@@ -437,29 +439,29 @@ section FintypeProofs
 
 open Classical Semantics.Montague.ToyLexicon
 
-variable {m : Model} [Fintype m.Entity]
+variable {F : Frame} [Fintype F.Entity]
 
 -- === Bijection invariance (for QuantityInvariant) ===
 
 /-- `∀ x, P x` is invariant under bijective substitution. -/
-theorem forall_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
-    (P : m.Entity → Prop) :
+theorem forall_bij_inv (f : F.Entity → F.Entity) (hBij : Function.Bijective f)
+    (P : F.Entity → Prop) :
     (∀ x, P x) ↔ (∀ x, P (f x)) := by
   constructor
   · intro h x; exact h (f x)
   · intro h x; obtain ⟨y, rfl⟩ := hBij.surjective x; exact h y
 
 /-- `∃ x, P x` is invariant under bijective substitution. -/
-theorem exists_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
-    (P : m.Entity → Prop) :
+theorem exists_bij_inv (f : F.Entity → F.Entity) (hBij : Function.Bijective f)
+    (P : F.Entity → Prop) :
     (∃ x, P x) ↔ (∃ x, P (f x)) := by
   constructor
   · intro ⟨x, hx⟩; obtain ⟨y, rfl⟩ := hBij.surjective x; exact ⟨y, hx⟩
   · intro ⟨y, hy⟩; exact ⟨f y, hy⟩
 
 /-- `count P = count (P ∘ f)` when f is a bijection. -/
-theorem count_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
-    {P : m.Entity → Prop} [DecidablePred P] :
+theorem count_bij_inv (f : F.Entity → F.Entity) (hBij : Function.Bijective f)
+    {P : F.Entity → Prop} [DecidablePred P] :
     count P = @count _ _ (P ∘ f) (fun x => ‹DecidablePred P› (f x)) := by
   simp only [count, Function.comp]
   symm; apply Finset.card_bij (fun x _ => f x)
@@ -473,21 +475,21 @@ theorem count_bij_inv (f : m.Entity → m.Entity) (hBij : Function.Bijective f)
 -- === Conservativity proofs ===
 
 /-- `⟦every⟧` is conservative: `∀x. R(x) → S(x)` iff `∀x. R(x) → (R(x) ∧ S(x))`. -/
-theorem every_conservative : PConservative (every_sem m) := by
+theorem every_conservative : PConservative (every_sem F) := by
   intro R S; simp only [every_sem]
   exact ⟨fun h x hR => ⟨hR, h x hR⟩, fun h x hR => (h x hR).2⟩
 
 /-- `⟦some⟧` is conservative: `∃x. R(x) ∧ S(x)` iff `∃x. R(x) ∧ (R(x) ∧ S(x))`. -/
-theorem some_conservative : PConservative (some_sem m) := by
+theorem some_conservative : PConservative (some_sem F) := by
   intro R S; simp only [some_sem]
   exact ⟨fun ⟨x, hR, hS⟩ => ⟨x, hR, hR, hS⟩, fun ⟨x, hR, _, hS⟩ => ⟨x, hR, hS⟩⟩
 
 /-- `⟦no⟧` is conservative: `∀x. R(x) → ¬S(x)` iff `∀x. R(x) → ¬(R(x) ∧ S(x))`. -/
-theorem no_conservative : PConservative (no_sem m) := by
+theorem no_conservative : PConservative (no_sem F) := by
   intro R S; simp only [no_sem]
   exact ⟨fun h x hR ⟨_, hS⟩ => h x hR hS, fun h x hR hS => h x hR ⟨hR, hS⟩⟩
 
-private theorem count_congr_iff {P Q : m.Entity → Prop}
+private theorem count_congr_iff {P Q : F.Entity → Prop}
     [DecidablePred P] [DecidablePred Q]
     (h : ∀ x, P x ↔ Q x) : count P = count Q := by
   unfold count; congr 1; ext x
@@ -498,18 +500,18 @@ private theorem count_congr_iff {P Q : m.Entity → Prop}
 /-- Instance-polymorphic: `count(R∧S) = count(R∧(R∧S))` for any `DecidablePred` instances.
     Universally quantifying over instances avoids the decidability diamond that arises
     when counting quantifier definitions and proofs elaborate in different scopes. -/
-private theorem count_and_idem_any (R S : m.Entity → Prop)
-    (inst1 : DecidablePred (fun x : m.Entity => R x ∧ S x))
-    (inst2 : DecidablePred (fun x : m.Entity => R x ∧ (R x ∧ S x))) :
+private theorem count_and_idem_any (R S : F.Entity → Prop)
+    (inst1 : DecidablePred (fun x : F.Entity => R x ∧ S x))
+    (inst2 : DecidablePred (fun x : F.Entity => R x ∧ (R x ∧ S x))) :
     @count _ _ _ inst1 = @count _ _ _ inst2 := by
   unfold count; congr 1; ext x
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
   exact ⟨fun ⟨hR, hS⟩ => ⟨hR, hR, hS⟩, fun ⟨hR, _, hS⟩ => ⟨hR, hS⟩⟩
 
 /-- Instance-polymorphic: `count(R∧¬S) = count(R∧¬(R∧S))` for any `DecidablePred` instances. -/
-private theorem count_neg_idem_any (R S : m.Entity → Prop)
-    (inst1 : DecidablePred (fun x : m.Entity => R x ∧ ¬S x))
-    (inst2 : DecidablePred (fun x : m.Entity => R x ∧ ¬(R x ∧ S x))) :
+private theorem count_neg_idem_any (R S : F.Entity → Prop)
+    (inst1 : DecidablePred (fun x : F.Entity => R x ∧ ¬S x))
+    (inst2 : DecidablePred (fun x : F.Entity => R x ∧ ¬(R x ∧ S x))) :
     @count _ _ _ inst1 = @count _ _ _ inst2 := by
   unfold count; congr 1; ext x
   simp only [Finset.mem_filter, Finset.mem_univ, true_and]
@@ -517,42 +519,42 @@ private theorem count_neg_idem_any (R S : m.Entity → Prop)
          fun ⟨hR, hN⟩ => ⟨hR, fun hS => hN ⟨hR, hS⟩⟩⟩
 
 /-- `⟦most⟧` is conservative: the R-elements in S are the R-elements in R∩S. -/
-theorem most_conservative : PConservative (most_sem m) := by
+theorem most_conservative : PConservative (most_sem F) := by
   intro R S; simp only [most_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _, ← count_neg_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _, count_neg_idem_any R S _ _]; exact h
 
 /-- `⟦few⟧` is conservative: the R-elements in S are the R-elements in R∩S. -/
-theorem few_conservative : PConservative (few_sem m) := by
+theorem few_conservative : PConservative (few_sem F) := by
   intro R S; simp only [few_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _, ← count_neg_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _, count_neg_idem_any R S _ _]; exact h
 
 /-- `⟦half⟧` is conservative: depends only on R ∩ S within R. -/
-theorem half_conservative : PConservative (half_sem m) := by
+theorem half_conservative : PConservative (half_sem F) := by
   intro R S; simp only [half_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _]; exact h
 
 /-- `⟦at least n⟧` is conservative: |R ∩ S| = |R ∩ (R ∩ S)|. -/
-theorem at_least_n_conservative (n : Nat) : PConservative (at_least_n_sem m n) := by
+theorem at_least_n_conservative (n : Nat) : PConservative (at_least_n_sem F n) := by
   intro R S; simp only [at_least_n_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _]; exact h
 
 /-- `⟦at most n⟧` is conservative. -/
-theorem at_most_n_conservative (n : Nat) : PConservative (at_most_n_sem m n) := by
+theorem at_most_n_conservative (n : Nat) : PConservative (at_most_n_sem F n) := by
   intro R S; simp only [at_most_n_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _]; exact h
   · rw [count_and_idem_any R S _ _]; exact h
 
 /-- `⟦exactly n⟧` is conservative. -/
-theorem exactly_n_conservative (n : Nat) : PConservative (exactly_n_sem m n) := by
+theorem exactly_n_conservative (n : Nat) : PConservative (exactly_n_sem F n) := by
   intro R S; simp only [exactly_n_sem]
   constructor <;> intro h
   · rw [← count_and_idem_any R S _ _]; exact h
@@ -561,19 +563,19 @@ theorem exactly_n_conservative (n : Nat) : PConservative (exactly_n_sem m n) := 
 -- === Scope monotonicity proofs ===
 
 /-- `⟦every⟧` is upward monotone in scope. -/
-theorem every_scope_up : PScopeUpwardMono (every_sem m) := by
+theorem every_scope_up : PScopeUpwardMono (every_sem F) := by
   intro R S S' hSS' h x hR; exact hSS' x (h x hR)
 
 /-- `⟦some⟧` is upward monotone in scope. -/
-theorem some_scope_up : PScopeUpwardMono (some_sem m) := by
+theorem some_scope_up : PScopeUpwardMono (some_sem F) := by
   intro R S S' hSS' ⟨x, hR, hS⟩; exact ⟨x, hR, hSS' x hS⟩
 
 /-- `⟦no⟧` is downward monotone in scope. -/
-theorem no_scope_down : PScopeDownwardMono (no_sem m) := by
+theorem no_scope_down : PScopeDownwardMono (no_sem F) := by
   intro R S S' hSS' h x hR hS; exact h x hR (hSS' x hS)
 
 /-- Finset.filter monotonicity: if P implies Q pointwise, then |filter P| ≤ |filter Q|. -/
-private theorem count_le_of_imp {P Q : m.Entity → Prop}
+private theorem count_le_of_imp {P Q : F.Entity → Prop}
     [DecidablePred P] [DecidablePred Q]
     (h : ∀ x, P x → Q x) :
     count P ≤ count Q := by
@@ -584,27 +586,27 @@ private theorem count_le_of_imp {P Q : m.Entity → Prop}
 
 /-- `⟦few⟧` is downward monotone in scope: if S ⊆ S' and few(R,S'),
     then few(R,S). Fewer Ss among Rs means even fewer S-subsets. -/
-theorem few_scope_down : PScopeDownwardMono (few_sem m) := by
+theorem few_scope_down : PScopeDownwardMono (few_sem F) := by
   intro R S S' hSS' h
   simp only [few_sem] at *
-  have h1 : count (fun x : m.Entity => R x ∧ S x) ≤
-      count (fun x : m.Entity => R x ∧ S' x) :=
+  have h1 : count (fun x : F.Entity => R x ∧ S x) ≤
+      count (fun x : F.Entity => R x ∧ S' x) :=
     count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩
-  have h2 : count (fun x : m.Entity => R x ∧ ¬S' x) ≤
-      count (fun x : m.Entity => R x ∧ ¬S x) :=
+  have h2 : count (fun x : F.Entity => R x ∧ ¬S' x) ≤
+      count (fun x : F.Entity => R x ∧ ¬S x) :=
     count_le_of_imp fun x ⟨hR, hNS'⟩ => ⟨hR, fun hS => hNS' (hSS' x hS)⟩
   omega
 
 /-- `⟦most⟧` is upward monotone in scope: if S ⊆ S' and most(R,S),
     then most(R,S'). |R∩S'| ≥ |R∩S| > |R\S| ≥ |R\S'|. -/
-theorem most_scope_up : PScopeUpwardMono (most_sem m) := by
+theorem most_scope_up : PScopeUpwardMono (most_sem F) := by
   intro R S S' hSS' h
   simp only [most_sem] at *
-  have h1 : count (fun x : m.Entity => R x ∧ S x) ≤
-      count (fun x : m.Entity => R x ∧ S' x) :=
+  have h1 : count (fun x : F.Entity => R x ∧ S x) ≤
+      count (fun x : F.Entity => R x ∧ S' x) :=
     count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩
-  have h2 : count (fun x : m.Entity => R x ∧ ¬S' x) ≤
-      count (fun x : m.Entity => R x ∧ ¬S x) :=
+  have h2 : count (fun x : F.Entity => R x ∧ ¬S' x) ≤
+      count (fun x : F.Entity => R x ∧ ¬S x) :=
     count_le_of_imp fun x ⟨hR, hNS'⟩ => ⟨hR, fun hS => hNS' (hSS' x hS)⟩
   omega
 
@@ -612,7 +614,7 @@ theorem most_scope_up : PScopeUpwardMono (most_sem m) := by
 
 /-- `⟦some⟧ = ⟦at least 1⟧`: existential quantification is "at least one". -/
 theorem some_eq_at_least_1 :
-    (some_sem m : PropGQ m.Entity) = (at_least_n_sem m 1 : PropGQ m.Entity) := by
+    (some_sem F : PropGQ F.Entity) = (at_least_n_sem F 1 : PropGQ F.Entity) := by
   funext R S
   simp only [some_sem, at_least_n_sem]
   exact propext ⟨
@@ -622,14 +624,14 @@ theorem some_eq_at_least_1 :
         ⟨Finset.mem_univ _, hR, hS⟩⟩).ne',
     fun h => by
       simp only [count] at h
-      have hpos : 0 < (Finset.univ.filter (fun x : m.Entity => R x ∧ S x)).card := by omega
+      have hpos : 0 < (Finset.univ.filter (fun x : F.Entity => R x ∧ S x)).card := by omega
       obtain ⟨x, hx⟩ := Finset.card_pos.mp hpos
       simp only [Finset.mem_filter, Finset.mem_univ, true_and] at hx
       exact ⟨x, hx.1, hx.2⟩⟩
 
 /-- `outerNeg ⟦some⟧ = ⟦no⟧`: negating existence gives universal negation. -/
 theorem pouterNeg_some_eq_no :
-    (pouterNeg (some_sem m) : PropGQ m.Entity) = (no_sem m : PropGQ m.Entity) := by
+    (pouterNeg (some_sem F) : PropGQ F.Entity) = (no_sem F : PropGQ F.Entity) := by
   funext R S; simp only [pouterNeg, some_sem, no_sem]
   exact propext ⟨
     fun h x hR hS => h ⟨x, hR, hS⟩,
@@ -638,34 +640,34 @@ theorem pouterNeg_some_eq_no :
 /-- `⟦at most n⟧ = outerNeg ⟦at least n+1⟧`: duality of lower and upper bounds.
     This is the counting quantifier instance of the Square of Opposition. -/
 theorem at_most_eq_pouterNeg_at_least_succ (n : Nat) :
-    (at_most_n_sem m n : PropGQ m.Entity) =
-    (pouterNeg (at_least_n_sem m (n + 1)) : PropGQ m.Entity) := by
+    (at_most_n_sem F n : PropGQ F.Entity) =
+    (pouterNeg (at_least_n_sem F (n + 1)) : PropGQ F.Entity) := by
   funext R S; simp only [at_most_n_sem, at_least_n_sem, pouterNeg]
   exact propext ⟨fun h hGe => by omega, fun h => by omega⟩
 
 /-- `⟦no⟧ = ⟦at most 0⟧`. Derived algebraically:
     no = outerNeg(some) = outerNeg(at_least 1) = at_most 0. -/
 theorem no_eq_at_most_0 :
-    (no_sem m : PropGQ m.Entity) = (at_most_n_sem m 0 : PropGQ m.Entity) := by
+    (no_sem F : PropGQ F.Entity) = (at_most_n_sem F 0 : PropGQ F.Entity) := by
   rw [← pouterNeg_some_eq_no, some_eq_at_least_1, at_most_eq_pouterNeg_at_least_succ]
 
 /-- `⟦exactly n⟧ = ⟦at least n⟧ ⊓ ⟦at most n⟧` in the GQ lattice.
     "Exactly n" is the meet of a lower bound and an upper bound. -/
 theorem exactly_eq_meet_at_least_at_most (n : Nat) :
-    (exactly_n_sem m n : PropGQ m.Entity) =
-    (pgqMeet (at_least_n_sem m n) (at_most_n_sem m n) : PropGQ m.Entity) := by
+    (exactly_n_sem F n : PropGQ F.Entity) =
+    (pgqMeet (at_least_n_sem F n) (at_most_n_sem F n) : PropGQ F.Entity) := by
   funext R S; simp only [exactly_n_sem, at_least_n_sem, at_most_n_sem, pgqMeet]
   exact propext ⟨fun h => ⟨by omega, by omega⟩, fun ⟨h1, h2⟩ => by omega⟩
 
 /-- `⟦at least n⟧` is Mon↑ in scope: enlarging B cannot decrease |A ∩ B|. -/
-theorem at_least_n_scope_up (n : Nat) : PScopeUpwardMono (at_least_n_sem m n) := by
+theorem at_least_n_scope_up (n : Nat) : PScopeUpwardMono (at_least_n_sem F n) := by
   intro R S S' hSS' h
   simp only [at_least_n_sem] at *
   exact le_trans h (count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hR, hSS' x hS⟩)
 
 /-- `⟦at most n⟧` is Mon↓ in scope. Derived from duality:
     outerNeg flips Mon↑ to Mon↓, and `at_most = outerNeg(at_least)`. -/
-theorem at_most_n_scope_down (n : Nat) : PScopeDownwardMono (at_most_n_sem m n) := by
+theorem at_most_n_scope_down (n : Nat) : PScopeDownwardMono (at_most_n_sem F n) := by
   rw [at_most_eq_pouterNeg_at_least_succ]
   exact pouterNeg_up_to_down _ (at_least_n_scope_up _)
 
@@ -682,8 +684,8 @@ truth value. This is the type ⟨1,1⟩ (binary) generalization of
 quantifiers; the extension to binary determiners is due to
 @cite{van-benthem-1984} (building on Lindström 1966).
 -/
-def Quantity (q : PropGQ m.Entity) : Prop :=
-  ∀ (R₁ S₁ R₂ S₂ : m.Entity → Prop),
+def Quantity (q : PropGQ F.Entity) : Prop :=
+  ∀ (R₁ S₁ R₂ S₂ : F.Entity → Prop),
     count (fun x => R₁ x ∧ S₁ x) =
     count (fun x => R₂ x ∧ S₂ x) →
     count (fun x => R₁ x ∧ ¬S₁ x) =
@@ -696,15 +698,15 @@ def Quantity (q : PropGQ m.Entity) : Prop :=
 
 /-- `Quantity → QuantityInvariant`: cardinality-dependence implies bijection-invariance.
     TODO: proof requires adapting cell-bijection machinery to Prop predicates. -/
-theorem quantityInvariant_of_quantity (q : PropGQ m.Entity) (hQ : Quantity q) :
+theorem quantityInvariant_of_quantity (q : PropGQ F.Entity) (hQ : Quantity q) :
     PQuantityInvariant q := by
   sorry
 
-local instance decEqEntity : DecidableEq m.Entity := m.decEq
+variable [DecidableEq F.Entity]
 
 /-- `QuantityInvariant → Quantity`: bijection-invariance implies cardinality-dependence.
     TODO: proof requires adapting cell-bijection machinery to Prop predicates. -/
-theorem quantity_of_quantityInvariant (q : PropGQ m.Entity)
+theorem quantity_of_quantityInvariant (q : PropGQ F.Entity)
     (hQ : PQuantityInvariant q) :
     Quantity q := by
   sorry
@@ -713,12 +715,12 @@ theorem quantity_of_quantityInvariant (q : PropGQ m.Entity)
 
 /-- A non-conservative quantifier for contrast: `⟦M⟧(A,B) = |A| > |B|`
 (van de Pol et al.'s hypothetical counterpart to "most"). -/
-noncomputable def m_sem (m : Model) [Fintype m.Entity] : PropGQ m.Entity :=
-  fun (R : m.Entity → Prop) (S : m.Entity → Prop) =>
-    count (fun x : m.Entity => R x) > count (fun x : m.Entity => S x)
+noncomputable def m_sem (F : Frame) [Fintype F.Entity] : PropGQ F.Entity :=
+  fun (R : F.Entity → Prop) (S : F.Entity → Prop) =>
+    count (fun x : F.Entity => R x) > count (fun x : F.Entity => S x)
 
 /-- M is not conservative: it inspects B outside A. -/
-theorem m_not_conservative : ¬PConservative (m_sem (m := toyModel)) := by
+theorem m_not_conservative : ¬PConservative (m_sem (F := toyModel)) := by
   intro h
   have := (h student_sem (fun x => match x with | .john => True | .pizza => True | _ => False)).mp
   simp only [m_sem, student_sem, count] at this
@@ -729,18 +731,18 @@ theorem m_not_conservative : ¬PConservative (m_sem (m := toyModel)) := by
 -- === Symmetry proofs (P&W Ch.6) ===
 
 /-- `⟦some⟧` is symmetric: ∃x.R(x)∧S(x) = ∃x.S(x)∧R(x). -/
-theorem some_symmetric : PQSymmetric (some_sem m) := by
+theorem some_symmetric : PQSymmetric (some_sem F) := by
   intro R S; simp only [some_sem]
   exact ⟨fun ⟨x, hR, hS⟩ => ⟨x, hS, hR⟩, fun ⟨x, hS, hR⟩ => ⟨x, hR, hS⟩⟩
 
 /-- `⟦no⟧` is symmetric: ¬∃x.R(x)∧S(x) = ¬∃x.S(x)∧R(x). -/
-theorem no_symmetric : PQSymmetric (no_sem m) := by
+theorem no_symmetric : PQSymmetric (no_sem F) := by
   intro R S; simp only [no_sem]
   exact ⟨fun h x hS hR => h x hR hS, fun h x hR hS => h x hS hR⟩
 
 /-- `⟦every⟧` is NOT symmetric. Witness: R=students, S=things (everything).
     every(students)(things)=true but every(things)(students)=false. -/
-theorem every_not_symmetric : ¬PQSymmetric (every_sem (m := toyModel)) := by
+theorem every_not_symmetric : ¬PQSymmetric (every_sem (F := toyModel)) := by
   intro h
   have := (h student_sem thing_sem).mp (fun x _ => trivial)
   exact absurd (this ToyEntity.pizza trivial) (by simp [student_sem])
@@ -748,14 +750,14 @@ theorem every_not_symmetric : ¬PQSymmetric (every_sem (m := toyModel)) := by
 -- === Intersectivity via CONSERV+SYMM bridge ===
 
 /-- `⟦some⟧` is intersective (follows from CONSERV + SYMM). -/
-theorem some_intersective : PIntersectionCondition (some_sem m) := by
+theorem some_intersective : PIntersectionCondition (some_sem F) := by
   intro R S R' S' hInt
   simp only [some_sem]
   exact ⟨fun ⟨x, hR, hS⟩ => let ⟨hR', hS'⟩ := (hInt x).mp ⟨hR, hS⟩; ⟨x, hR', hS'⟩,
          fun ⟨x, hR', hS'⟩ => let ⟨hR, hS⟩ := (hInt x).mpr ⟨hR', hS'⟩; ⟨x, hR, hS⟩⟩
 
 /-- `⟦no⟧` is intersective. -/
-theorem no_intersective : PIntersectionCondition (no_sem m) := by
+theorem no_intersective : PIntersectionCondition (no_sem F) := by
   intro R S R' S' hInt
   simp only [no_sem]
   constructor
@@ -769,7 +771,7 @@ theorem no_intersective : PIntersectionCondition (no_sem m) := by
 -- === Left anti-additivity (P&W §5.8) ===
 
 /-- `⟦every⟧` is left anti-additive: every(A∪B, C) = every(A,C) ∧ every(B,C). -/
-theorem every_laa : PLeftAntiAdditive (every_sem m) := by
+theorem every_laa : PLeftAntiAdditive (every_sem F) := by
   intro R R' S; simp only [every_sem]
   constructor
   · intro h; exact ⟨fun x hR => h x (Or.inl hR), fun x hR' => h x (Or.inr hR')⟩
@@ -779,7 +781,7 @@ theorem every_laa : PLeftAntiAdditive (every_sem m) := by
     · exact h2 x hR'
 
 /-- `⟦no⟧` is left anti-additive: no(A∪B, C) = no(A,C) ∧ no(B,C). -/
-theorem no_laa : PLeftAntiAdditive (no_sem m) := by
+theorem no_laa : PLeftAntiAdditive (no_sem F) := by
   intro R R' S; simp only [no_sem]
   constructor
   · intro h; exact ⟨fun x hR => h x (Or.inl hR), fun x hR' => h x (Or.inr hR')⟩
@@ -791,7 +793,7 @@ theorem no_laa : PLeftAntiAdditive (no_sem m) := by
 /-- `⟦no⟧` is right anti-additive: no(A, B∪C) = no(A,B) ∧ no(A,C).
     "Nobody saw A-or-B" ↔ "Nobody saw A and nobody saw B".
     This licenses strong NPIs in scope: "Nobody lifted a finger." -/
-theorem no_raa : PRightAntiAdditive (no_sem m) := by
+theorem no_raa : PRightAntiAdditive (no_sem F) := by
   intro R S S'; simp only [no_sem]
   constructor
   · intro h
@@ -805,21 +807,21 @@ theorem no_raa : PRightAntiAdditive (no_sem m) := by
 /-- @cite{peters-westerstahl-2006} Prop 13: the only non-trivial CONSERV, EXT,
     and ISOM quantifiers satisfying LAA are `every` and `no` (and `A = ∅`). -/
 theorem laa_characterization :
-    PLeftAntiAdditive (every_sem m) ∧
-    PLeftAntiAdditive (no_sem m) := ⟨every_laa, no_laa⟩
+    PLeftAntiAdditive (every_sem F) ∧
+    PLeftAntiAdditive (no_sem F) := ⟨every_laa, no_laa⟩
 
 -- === Duality square (P&W §1.1.1) ===
 
 /-- Inner negation maps `every` to `no`: every...not = no.
     `∀x. R(x) → ¬S(x)` = `¬∃x. R(x) ∧ S(x)`. -/
 theorem pinnerNeg_every_eq_no :
-    (pinnerNeg (every_sem m) : PropGQ m.Entity) = (no_sem m : PropGQ m.Entity) := by
+    (pinnerNeg (every_sem F) : PropGQ F.Entity) = (no_sem F : PropGQ F.Entity) := by
   funext R S; simp only [pinnerNeg, every_sem, no_sem]
 
 /-- The dual of `every` is `some`: Q̌(every) = some.
     `¬(∀x. R(x) → ¬S(x))` = `∃x. R(x) ∧ S(x)`. -/
 theorem pdualQ_every_eq_some :
-    (pdualQ (every_sem m) : PropGQ m.Entity) = (some_sem m : PropGQ m.Entity) := by
+    (pdualQ (every_sem F) : PropGQ F.Entity) = (some_sem F : PropGQ F.Entity) := by
   funext R S; simp only [pdualQ, pouterNeg, pinnerNeg, every_sem, some_sem]
   exact propext ⟨
     fun h => by push_neg at h; exact h,
@@ -829,30 +831,30 @@ theorem pdualQ_every_eq_some :
 
 /-- `every_sem` satisfies Extension: spectator elements
     (outside the restrictor) don't affect truth values. -/
-theorem every_ext_spectator {m : Model} (es : List m.Entity) (e : m.Entity)
-    (R S : m.Entity → Bool) (hR : R e = false) :
+theorem every_ext_spectator {F : Frame} (es : List F.Entity) (e : F.Entity)
+    (R S : F.Entity → Bool) (hR : R e = false) :
     (e :: es).all (λ x => !R x || S x) =
     es.all (λ x => !R x || S x) := by
   simp [List.all_cons, hR]
 
 /-- `some_sem` satisfies Extension. -/
-theorem some_ext_spectator {m : Model} (es : List m.Entity) (e : m.Entity)
-    (R S : m.Entity → Bool) (hR : R e = false) :
+theorem some_ext_spectator {F : Frame} (es : List F.Entity) (e : F.Entity)
+    (R S : F.Entity → Bool) (hR : R e = false) :
     (e :: es).any (λ x => R x && S x) =
     es.any (λ x => R x && S x) := by
   simp [List.any_cons, hR]
 
 /-- `no_sem` satisfies Extension. -/
-theorem no_ext_spectator {m : Model} (es : List m.Entity) (e : m.Entity)
-    (R S : m.Entity → Bool) (hR : R e = false) :
+theorem no_ext_spectator {F : Frame} (es : List F.Entity) (e : F.Entity)
+    (R S : F.Entity → Bool) (hR : R e = false) :
     (e :: es).all (λ x => !R x || !S x) =
     es.all (λ x => !R x || !S x) := by
   simp [List.all_cons, hR]
 
 /-- `most_sem` satisfies Extension: spectators don't enter
     either R∩S or R\S, so the cardinality comparison is unchanged. -/
-theorem most_ext_spectator {m : Model} (es : List m.Entity) (e : m.Entity)
-    (R S : m.Entity → Bool) (hR : R e = false) :
+theorem most_ext_spectator {F : Frame} (es : List F.Entity) (e : F.Entity)
+    (R S : F.Entity → Bool) (hR : R e = false) :
     (e :: es).filter (λ x => R x && S x) = es.filter (λ x => R x && S x) ∧
     (e :: es).filter (λ x => R x && !S x) = es.filter (λ x => R x && !S x) := by
   constructor <;> (simp [hR])
@@ -861,21 +863,21 @@ theorem most_ext_spectator {m : Model} (es : List m.Entity) (e : m.Entity)
 
 /-- `every_sem` is positive strong: every(A,A) = true for all A.
     Proof: `R(x) → R(x)` for all x. -/
-theorem every_positive_strong : PPositiveStrong (every_sem m) := by
+theorem every_positive_strong : PPositiveStrong (every_sem F) := by
   intro R x hR; exact hR
 
 /-- `no_sem` is negative strong on non-empty restrictors:
     no(A,A) = false for all non-empty A. -/
-theorem no_negative_strong_nonempty (R : m.Entity → Prop)
-    (hR : ∃ x : m.Entity, R x) :
-    ¬no_sem m R R := by
+theorem no_negative_strong_nonempty (R : F.Entity → Prop)
+    (hR : ∃ x : F.Entity, R x) :
+    ¬no_sem F R R := by
   intro h
   obtain ⟨x, hRx⟩ := hR
   exact h x hRx hRx
 
 /-- `no_sem` is NOT positive strong: no(A,A) = false when A is non-empty.
     Counterexample: R = {john}. -/
-theorem no_not_positive_strong : ¬PPositiveStrong (no_sem (m := toyModel)) := by
+theorem no_not_positive_strong : ¬PPositiveStrong (no_sem (F := toyModel)) := by
   intro h
   have := h student_sem
   exact this ToyEntity.john (by simp [student_sem]) (by simp [student_sem])
@@ -884,19 +886,19 @@ theorem no_not_positive_strong : ¬PPositiveStrong (no_sem (m := toyModel)) := b
 
 /-- `⟦some⟧` is existential (K&S G3): some(A,B) = some(A∩B, everything).
     some is natural in there-sentences: "There are some cats." -/
-theorem some_existential : PExistential (some_sem m) := by
+theorem some_existential : PExistential (some_sem F) := by
   intro R S; simp only [some_sem]
   exact ⟨fun ⟨x, hR, hS⟩ => ⟨x, ⟨hR, hS⟩, trivial⟩,
          fun ⟨x, ⟨hR, hS⟩, _⟩ => ⟨x, hR, hS⟩⟩
 
 /-- `⟦no⟧` is existential (K&S G3): no(A,B) = no(A∩B, everything). -/
-theorem no_existential : PExistential (no_sem m) := by
+theorem no_existential : PExistential (no_sem F) := by
   intro R S; simp only [no_sem]
   exact ⟨fun h x ⟨hR, hS⟩ _ => h x hR hS,
          fun h x hR hS => h x ⟨hR, hS⟩ trivial⟩
 
 /-- `⟦every⟧` is NOT existential (K&S §3.3). -/
-theorem every_not_existential : ¬PExistential (every_sem (m := toyModel)) := by
+theorem every_not_existential : ¬PExistential (every_sem (F := toyModel)) := by
   intro h
   -- every(thing, student) should be false (pizza is a thing but not a student)
   -- but every(thing ∩ student, True) = every(student, True) = true
@@ -907,7 +909,7 @@ theorem every_not_existential : ¬PExistential (every_sem (m := toyModel)) := by
   exact absurd (this ToyEntity.pizza trivial) (by simp [student_sem])
 
 /-- `⟦most⟧` is NOT existential (K&S §3.3). -/
-theorem most_not_existential : ¬PExistential (most_sem (m := toyModel)) := by
+theorem most_not_existential : ¬PExistential (most_sem (F := toyModel)) := by
   intro h
   -- most(student, sleeps): |{john}∩{john}|=1 vs |{mary}\{john}|=1, so 1 > 1 = false
   -- most(student∩sleeps, True) = most({john}, True): |{john}|=1 vs |∅|=0, so 1 > 0 = true
@@ -923,20 +925,20 @@ theorem most_not_existential : ¬PExistential (most_sem (m := toyModel)) := by
 -- ============================================================================
 
 /-- `⟦every⟧` is transitive: A ⊆ B and B ⊆ C implies A ⊆ C. -/
-theorem every_transitive : PQTransitive (every_sem m) := by
+theorem every_transitive : PQTransitive (every_sem F) := by
   intro A B C hAB hBC x hA; exact hBC x (hAB x hA)
 
 /-- `⟦every⟧` is antisymmetric: A ⊆ B and B ⊆ A implies A = B. -/
-theorem every_antisymmetric : PQAntisymmetric (every_sem m) := by
+theorem every_antisymmetric : PQAntisymmetric (every_sem F) := by
   intro A B hAB hBA
   funext x; exact propext ⟨fun hA => hAB x hA, fun hB => hBA x hB⟩
 
 /-- `⟦some⟧` is quasi-reflexive: A∩B ≠ ∅ implies A∩A ≠ ∅ (i.e., A ≠ ∅). -/
-theorem some_quasi_reflexive : PQuasiReflexive (some_sem m) := by
+theorem some_quasi_reflexive : PQuasiReflexive (some_sem F) := by
   intro A B ⟨x, hA, _⟩; exact ⟨x, hA, hA⟩
 
 /-- `⟦no⟧` is quasi-universal: A∩A = ∅ (i.e., A = ∅) implies A∩B = ∅ for all B. -/
-theorem no_quasi_universal : PQuasiUniversal (no_sem m) := by
+theorem no_quasi_universal : PQuasiUniversal (no_sem F) := by
   intro A B hAA x hA; exact absurd hA (hAA x hA)
 
 -- ============================================================================
@@ -945,41 +947,41 @@ theorem no_quasi_universal : PQuasiUniversal (no_sem m) := by
 
 /-- `⟦every⟧` is restrictor-↓ (anti-persistent).
     Follows from Zwarts bridge: reflexive + transitive + CONSERV → ↓MON. -/
-theorem every_restrictor_down : PRestrictorDownwardMono (every_sem m) :=
+theorem every_restrictor_down : PRestrictorDownwardMono (every_sem F) :=
   pzwarts_refl_trans_restrictorDown _ every_conservative every_positive_strong every_transitive
 
 /-- `⟦some⟧` is restrictor-↑ (persistent): A ⊆ A' and some(A,B) → some(A',B). -/
-theorem some_restrictor_up : PRestrictorUpwardMono (some_sem m) := by
+theorem some_restrictor_up : PRestrictorUpwardMono (some_sem F) := by
   intro R R' S hRR' ⟨x, hR, hS⟩; exact ⟨x, hRR' x hR, hS⟩
 
 /-- `⟦no⟧` is restrictor-↓ (anti-persistent): A ⊆ A' and no(A',B) → no(A,B). -/
-theorem no_restrictor_down : PRestrictorDownwardMono (no_sem m) := by
+theorem no_restrictor_down : PRestrictorDownwardMono (no_sem F) := by
   intro R R' S hRR' hQ x hR; exact hQ x (hRR' x hR)
 
 /-- `⟦every⟧` has double monotonicity ↓MON↑ (@cite{van-benthem-1984} §4.2). -/
 theorem every_doubleMono :
-    PRestrictorDownwardMono (every_sem m) ∧ PScopeUpwardMono (every_sem m) :=
+    PRestrictorDownwardMono (every_sem F) ∧ PScopeUpwardMono (every_sem F) :=
   ⟨every_restrictor_down, every_scope_up⟩
 
 /-- `⟦some⟧` has double monotonicity ↑MON↑. -/
 theorem some_doubleMono :
-    PRestrictorUpwardMono (some_sem m) ∧ PScopeUpwardMono (some_sem m) :=
+    PRestrictorUpwardMono (some_sem F) ∧ PScopeUpwardMono (some_sem F) :=
   ⟨some_restrictor_up, some_scope_up⟩
 
 /-- `⟦no⟧` has double monotonicity ↓MON↓. -/
 theorem no_doubleMono :
-    PRestrictorDownwardMono (no_sem m) ∧ PScopeDownwardMono (no_sem m) :=
+    PRestrictorDownwardMono (no_sem F) ∧ PScopeDownwardMono (no_sem F) :=
   ⟨no_restrictor_down, no_scope_down⟩
 
 /-- `outerNeg ⟦every⟧` (= "not all") has double monotonicity ↑MON↓. -/
 theorem notAll_doubleMono :
-    PRestrictorUpwardMono (pouterNeg (every_sem m)) ∧
-    PScopeDownwardMono (pouterNeg (every_sem m)) :=
+    PRestrictorUpwardMono (pouterNeg (every_sem F)) ∧
+    PScopeDownwardMono (pouterNeg (every_sem F)) :=
   ⟨pouterNeg_restrictorDown_to_up _ every_restrictor_down,
    pouterNeg_up_to_down _ every_scope_up⟩
 
 /-- `⟦every⟧` is filtrating: every(A,B) ∧ every(A,C) → every(A, B∩C). -/
-theorem every_filtrating : PFiltrating (every_sem m) := by
+theorem every_filtrating : PFiltrating (every_sem F) := by
   intro A B C hAB hAC x hA; exact ⟨hAB x hA, hAC x hA⟩
 
 -- ============================================================================
@@ -988,45 +990,45 @@ theorem every_filtrating : PFiltrating (every_sem m) := by
 -- ============================================================================
 
 /-- **Contradiction (A vs O)**: the A-form and O-form are contradictories. -/
-theorem every_contradicts_notEvery (R S : m.Entity → Prop) :
-    every_sem m R S ↔ ¬(pouterNeg (every_sem m) R S) := by
+theorem every_contradicts_notEvery (R S : F.Entity → Prop) :
+    every_sem F R S ↔ ¬(pouterNeg (every_sem F) R S) := by
   simp [pouterNeg, Classical.not_not]
 
 /-- **Contradiction (E vs I)**: the E-form and I-form are contradictories. -/
-theorem no_contradicts_some (R S : m.Entity → Prop) :
-    no_sem m R S ↔ ¬(some_sem m R S) := by
+theorem no_contradicts_some (R S : F.Entity → Prop) :
+    no_sem F R S ↔ ¬(some_sem F R S) := by
   simp only [no_sem, some_sem]; push_neg; rfl
 
 /-- **Contrariety (A ∧ E)**: the A-form and E-form can't both hold
     unless the restrictor is empty. -/
-theorem a_e_contrary (R S : m.Entity → Prop) :
-    every_sem m R S → no_sem m R S →
-    ∀ x : m.Entity, ¬R x := by
+theorem a_e_contrary (R S : F.Entity → Prop) :
+    every_sem F R S → no_sem F R S →
+    ∀ x : F.Entity, ¬R x := by
   intro hA hE x hR
   exact hE x hR (hA x hR)
 
 /-- **Subalternation (A → I)**: the A-form entails the I-form when the
     restrictor is non-empty. -/
-theorem subalternation_a_i (R S : m.Entity → Prop)
-    (hR : ∃ x : m.Entity, R x) :
-    every_sem m R S → some_sem m R S := by
+theorem subalternation_a_i (R S : F.Entity → Prop)
+    (hR : ∃ x : F.Entity, R x) :
+    every_sem F R S → some_sem F R S := by
   intro hA; obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
 
 /-- **Subalternation (E → O)**: the E-form entails the O-form when the
     restrictor is non-empty. -/
-theorem subalternation_e_o (R S : m.Entity → Prop)
-    (hR : ∃ x : m.Entity, R x) :
-    no_sem m R S → pouterNeg (every_sem m) R S := by
+theorem subalternation_e_o (R S : F.Entity → Prop)
+    (hR : ∃ x : F.Entity, R x) :
+    no_sem F R S → pouterNeg (every_sem F) R S := by
   intro hE hA
   obtain ⟨x, hRx⟩ := hR
   exact hE x hRx (hA x hRx)
 
 /-- **Subcontrariety (I ∨ O)**: the I-form and O-form can't both fail
     when the restrictor is non-empty. -/
-theorem subcontrariety_i_o (R S : m.Entity → Prop)
-    (hR : ∃ x : m.Entity, R x) :
-    some_sem m R S ∨ pouterNeg (every_sem m) R S := by
-  by_cases h : some_sem m R S
+theorem subcontrariety_i_o (R S : F.Entity → Prop)
+    (hR : ∃ x : F.Entity, R x) :
+    some_sem F R S ∨ pouterNeg (every_sem F) R S := by
+  by_cases h : some_sem F R S
   · exact Or.inl h
   · right; intro hA
     apply h; obtain ⟨x, hRx⟩ := hR; exact ⟨x, hRx, hA x hRx⟩
@@ -1036,27 +1038,27 @@ theorem subcontrariety_i_o (R S : m.Entity → Prop)
 -- ============================================================================
 
 /-- `⟦some⟧` is ↑_SE Mon: adding elements of B to A preserves some(A,B). -/
-theorem some_upSE : PUpSEMon (some_sem m) :=
+theorem some_upSE : PUpSEMon (some_sem F) :=
   pRestrictorUpMono_to_upSE _ some_restrictor_up
 
 /-- `⟦some⟧` is ↑_SW Mon: adding elements outside B to A preserves some(A,B). -/
-theorem some_upSW : PUpSWMon (some_sem m) :=
+theorem some_upSW : PUpSWMon (some_sem F) :=
   pRestrictorUpMono_to_upSW _ some_restrictor_up
 
 /-- `⟦every⟧` is ↓_NW Mon: removing elements of B from A preserves every(A,B). -/
-theorem every_downNW : PDownNWMon (every_sem m) :=
+theorem every_downNW : PDownNWMon (every_sem F) :=
   pRestrictorDownMono_to_downNW _ every_restrictor_down
 
 /-- `⟦every⟧` is ↓_NE Mon: removing elements outside B from A preserves every(A,B). -/
-theorem every_downNE : PDownNEMon (every_sem m) :=
+theorem every_downNE : PDownNEMon (every_sem F) :=
   pRestrictorDownMono_to_downNE _ every_restrictor_down
 
 /-- `⟦no⟧` is ↓_NW Mon. -/
-theorem no_downNW : PDownNWMon (no_sem m) :=
+theorem no_downNW : PDownNWMon (no_sem F) :=
   pRestrictorDownMono_to_downNW _ no_restrictor_down
 
 /-- `⟦no⟧` is ↓_NE Mon. -/
-theorem no_downNE : PDownNEMon (no_sem m) :=
+theorem no_downNE : PDownNEMon (no_sem F) :=
   pRestrictorDownMono_to_downNE _ no_restrictor_down
 
 -- ============================================================================
@@ -1065,90 +1067,90 @@ theorem no_downNE : PDownNEMon (no_sem m) :=
 
 /-- `⟦some⟧` is ↓_NE Mon (direct proof).
     Removing non-S elements from A preserves ∃x.R(x)∧S(x) since the witness is in S. -/
-theorem some_downNE : PDownNEMon (some_sem m) := by
+theorem some_downNE : PDownNEMon (some_sem F) := by
   intro R S R' hSub hKeep ⟨x, hR, hS⟩
   exact ⟨x, hKeep x hR hS, hS⟩
 
 /-- `⟦some⟧` is smooth (↓_NE + ↑_SE). -/
-theorem some_smooth : PSmooth (some_sem m) :=
+theorem some_smooth : PSmooth (some_sem F) :=
   ⟨some_downNE, pRestrictorUpMono_to_upSE _ some_restrictor_up⟩
 
 /-- `⟦every⟧` is ↑_SE Mon (direct proof).
     Adding B-elements to A preserves ∀x.R(x)→S(x) since the new elements satisfy S. -/
-theorem every_upSE_direct : PUpSEMon (every_sem m) := by
+theorem every_upSE_direct : PUpSEMon (every_sem F) := by
   intro R S R' hSub hDiff hQ x hR'
   by_cases hS : S x
   · exact hS
   · exact hQ x (hDiff x hR' hS)
 
 /-- `⟦every⟧` is smooth (↓_NE + ↑_SE). -/
-theorem every_smooth : PSmooth (every_sem m) :=
+theorem every_smooth : PSmooth (every_sem F) :=
   ⟨every_downNE, every_upSE_direct⟩
 
 /-- `⟦no⟧` is co-smooth (↓_NW + ↑_SW). Follows from anti-persistence. -/
-theorem no_coSmooth_partial : PDownNWMon (no_sem m) ∧ PDownNEMon (no_sem m) :=
+theorem no_coSmooth_partial : PDownNWMon (no_sem F) ∧ PDownNEMon (no_sem F) :=
   ⟨pRestrictorDownMono_to_downNW _ no_restrictor_down,
    pRestrictorDownMono_to_downNE _ no_restrictor_down⟩
 
 /-- `⟦most⟧` is ↓_NE Mon (direct proof). -/
-theorem most_downNE : PDownNEMon (most_sem m) := by
+theorem most_downNE : PDownNEMon (most_sem F) := by
   intro R S R' hSub hKeep hQ
   simp only [most_sem] at *
-  have hEq : count (fun x : m.Entity => R' x ∧ S x) =
-      count (fun x : m.Entity => R x ∧ S x) := by
+  have hEq : count (fun x : F.Entity => R' x ∧ S x) =
+      count (fun x : F.Entity => R x ∧ S x) := by
     simp only [count]; congr 1; ext x; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩, fun ⟨hR, hS⟩ => ⟨hKeep x hR hS, hS⟩⟩
-  have hLe : count (fun x : m.Entity => R' x ∧ ¬S x) ≤
-      count (fun x : m.Entity => R x ∧ ¬S x) :=
+  have hLe : count (fun x : F.Entity => R' x ∧ ¬S x) ≤
+      count (fun x : F.Entity => R x ∧ ¬S x) :=
     count_le_of_imp fun x ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩
   omega
 
 /-- `⟦most⟧` is ↑_SE Mon (direct proof). -/
-theorem most_upSE : PUpSEMon (most_sem m) := by
+theorem most_upSE : PUpSEMon (most_sem F) := by
   intro R S R' hSub hDiff hQ
   simp only [most_sem] at *
-  have hEq : count (fun x : m.Entity => R' x ∧ ¬S x) =
-      count (fun x : m.Entity => R x ∧ ¬S x) := by
+  have hEq : count (fun x : F.Entity => R' x ∧ ¬S x) =
+      count (fun x : F.Entity => R x ∧ ¬S x) := by
     simp only [count]; congr 1; ext x; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun ⟨hR', hS⟩ => ⟨hDiff x hR' hS, hS⟩, fun ⟨hR, hS⟩ => ⟨hSub x hR, hS⟩⟩
-  have hLe : count (fun x : m.Entity => R x ∧ S x) ≤
-      count (fun x : m.Entity => R' x ∧ S x) :=
+  have hLe : count (fun x : F.Entity => R x ∧ S x) ≤
+      count (fun x : F.Entity => R' x ∧ S x) :=
     count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hSub x hR, hS⟩
   omega
 
 /-- `⟦most⟧` is smooth. -/
-theorem most_smooth : PSmooth (most_sem m) :=
+theorem most_smooth : PSmooth (most_sem F) :=
   ⟨most_downNE, most_upSE⟩
 
 -- === Counting quantifier smoothness ===
 
 /-- `⟦at least n⟧` is persistent (Mon↑ in restrictor). -/
-theorem at_least_n_restrictor_up (n : Nat) : PRestrictorUpwardMono (at_least_n_sem m n) := by
+theorem at_least_n_restrictor_up (n : Nat) : PRestrictorUpwardMono (at_least_n_sem F n) := by
   intro R R' S hRR' h
   simp only [at_least_n_sem] at *
   exact le_trans h (count_le_of_imp fun x ⟨hR, hS⟩ => ⟨hRR' x hR, hS⟩)
 
 /-- `⟦at least n⟧` is ↓_NE Mon. -/
-theorem at_least_n_downNE (n : Nat) : PDownNEMon (at_least_n_sem m n) := by
+theorem at_least_n_downNE (n : Nat) : PDownNEMon (at_least_n_sem F n) := by
   intro R S R' hSub hKeep hQ
   simp only [at_least_n_sem] at *
-  have hEq : count (fun x : m.Entity => R' x ∧ S x) =
-      count (fun x : m.Entity => R x ∧ S x) := by
+  have hEq : count (fun x : F.Entity => R' x ∧ S x) =
+      count (fun x : F.Entity => R x ∧ S x) := by
     simp only [count]; congr 1; ext x; simp only [Finset.mem_filter, Finset.mem_univ, true_and]
     exact ⟨fun ⟨hR', hS⟩ => ⟨hSub x hR', hS⟩, fun ⟨hR, hS⟩ => ⟨hKeep x hR hS, hS⟩⟩
   omega
 
 /-- `⟦at least n⟧` is smooth (↓_NE + ↑_SE). -/
-theorem at_least_n_smooth (n : Nat) : PSmooth (at_least_n_sem m n) :=
+theorem at_least_n_smooth (n : Nat) : PSmooth (at_least_n_sem F n) :=
   ⟨at_least_n_downNE n, pRestrictorUpMono_to_upSE _ (at_least_n_restrictor_up n)⟩
 
 /-- `⟦at most n⟧` is anti-persistent (Mon↓ in restrictor). -/
-theorem at_most_n_restrictor_down (n : Nat) : PRestrictorDownwardMono (at_most_n_sem m n) := by
+theorem at_most_n_restrictor_down (n : Nat) : PRestrictorDownwardMono (at_most_n_sem F n) := by
   rw [at_most_eq_pouterNeg_at_least_succ]
   exact pouterNeg_restrictorUp_to_down _ (at_least_n_restrictor_up _)
 
 /-- `⟦at most n⟧` is co-smooth (↓_NW + ↑_SW). -/
-theorem at_most_n_coSmooth (n : Nat) : PCoSmooth (at_most_n_sem m n) := by
+theorem at_most_n_coSmooth (n : Nat) : PCoSmooth (at_most_n_sem F n) := by
   rw [at_most_eq_pouterNeg_at_least_succ]
   exact pSmooth_iff_outerNeg_coSmooth _ (at_least_n_smooth _)
 
@@ -1157,13 +1159,13 @@ theorem at_most_n_coSmooth (n : Nat) : PCoSmooth (at_most_n_sem m n) := by
 -- ============================================================================
 
 /-- `Quantity` is closed under pouterNeg. -/
-theorem quantity_pouterNeg (q : PropGQ m.Entity) (h : Quantity q) :
+theorem quantity_pouterNeg (q : PropGQ F.Entity) (h : Quantity q) :
     Quantity (pouterNeg q) := by
   intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
   simp only [pouterNeg]; exact Iff.not (h R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
 
 /-- `Quantity` is closed under pgqMeet. -/
-theorem quantity_pgqMeet (q₁ q₂ : PropGQ m.Entity)
+theorem quantity_pgqMeet (q₁ q₂ : PropGQ F.Entity)
     (h₁ : Quantity q₁) (h₂ : Quantity q₂) :
     Quantity (pgqMeet q₁ q₂) := by
   intro R₁ S₁ R₂ S₂ hTT hTF hFT hFF
@@ -1171,55 +1173,55 @@ theorem quantity_pgqMeet (q₁ q₂ : PropGQ m.Entity)
   exact Iff.and (h₁ R₁ S₁ R₂ S₂ hTT hTF hFT hFF) (h₂ R₁ S₁ R₂ S₂ hTT hTF hFT hFF)
 
 /-- `⟦at least n⟧` satisfies Quantity: truth depends only on |A ∩ B|. -/
-theorem at_least_n_quantity (n : Nat) : Quantity (at_least_n_sem m n) := by
+theorem at_least_n_quantity (n : Nat) : Quantity (at_least_n_sem F n) := by
   intro R₁ S₁ R₂ S₂ hTT _ _ _
   simp only [at_least_n_sem]; omega
 
 /-- `⟦at most n⟧` satisfies Quantity: truth depends only on |A ∩ B|. -/
-theorem at_most_n_quantity (n : Nat) : Quantity (at_most_n_sem m n) := by
+theorem at_most_n_quantity (n : Nat) : Quantity (at_most_n_sem F n) := by
   intro R₁ S₁ R₂ S₂ hTT _ _ _
   simp only [at_most_n_sem]; omega
 
 /-- `⟦exactly n⟧` satisfies Quantity. -/
-theorem exactly_n_quantity (n : Nat) : Quantity (exactly_n_sem m n) := by
+theorem exactly_n_quantity (n : Nat) : Quantity (exactly_n_sem F n) := by
   rw [exactly_eq_meet_at_least_at_most]
   exact quantity_pgqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity n)
 
 /-- `⟦some⟧` satisfies Quantity. -/
-theorem some_quantity : Quantity (some_sem m) := by
+theorem some_quantity : Quantity (some_sem F) := by
   rw [some_eq_at_least_1]; exact at_least_n_quantity 1
 
 /-- `⟦no⟧` satisfies Quantity. -/
-theorem no_quantity : Quantity (no_sem m) := by
+theorem no_quantity : Quantity (no_sem F) := by
   rw [no_eq_at_most_0]; exact at_most_n_quantity 0
 
 /-- `⟦every⟧` satisfies Quantity. -/
 private theorem every_quantityInvariant :
-    PQuantityInvariant (every_sem m) := by
+    PQuantityInvariant (every_sem F) := by
   intro A B A' B' f hBij hA hB
   simp only [every_sem]
   rw [forall_bij_inv f hBij]
   exact forall_congr' fun x => by rw [show A (f x) ↔ A' x from hA x,
                                        show B (f x) ↔ B' x from hB x]
 
-theorem every_quantity : Quantity (every_sem m) := by
+theorem every_quantity : Quantity (every_sem F) := by
   sorry -- Requires quantity_of_quantityInvariant which itself is sorry'd
 
 /-- `⟦most⟧` satisfies Quantity. -/
-theorem most_quantity : Quantity (most_sem m) := by
+theorem most_quantity : Quantity (most_sem F) := by
   intro R₁ S₁ R₂ S₂ hTT hTF _ _
   simp only [most_sem]; omega
 
 /-- `⟦few⟧` satisfies Quantity. -/
-theorem few_quantity : Quantity (few_sem m) := by
+theorem few_quantity : Quantity (few_sem F) := by
   intro R₁ S₁ R₂ S₂ hTT hTF _ _
   simp only [few_sem]; omega
 
 /-- Count decomposition: |R| = |R∩S| + |R\S|. -/
-private theorem count_decompose (R S : m.Entity → Prop) [DecidablePred R] [DecidablePred S] :
-    count (fun x : m.Entity => R x) =
-    count (fun x : m.Entity => R x ∧ S x) +
-    count (fun x : m.Entity => R x ∧ ¬S x) := by
+private theorem count_decompose (R S : F.Entity → Prop) [DecidablePred R] [DecidablePred S] :
+    count (fun x : F.Entity => R x) =
+    count (fun x : F.Entity => R x ∧ S x) +
+    count (fun x : F.Entity => R x ∧ ¬S x) := by
   simp only [count]
   rw [← Finset.card_union_of_disjoint]
   · congr 1; ext x; simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_union]
@@ -1229,7 +1231,7 @@ private theorem count_decompose (R S : m.Entity → Prop) [DecidablePred R] [Dec
     intro x _ ⟨_, h1⟩ ⟨_, h2⟩; exact h2 h1
 
 /-- `⟦half⟧` satisfies Quantity. -/
-theorem half_quantity : Quantity (half_sem m) := by
+theorem half_quantity : Quantity (half_sem F) := by
   intro R₁ S₁ R₂ S₂ hTT hTF _ _
   simp only [half_sem]
   constructor <;> intro h
@@ -1241,38 +1243,38 @@ theorem half_quantity : Quantity (half_sem m) := by
 -- ============================================================================
 
 /-- `⟦some⟧` satisfies CONSERV ∧ Mon↑. -/
-theorem some_satisfiesUniversals : PSatisfiesUniversals (some_sem m) :=
+theorem some_satisfiesUniversals : PSatisfiesUniversals (some_sem F) :=
   ⟨some_conservative, Or.inl some_scope_up⟩
 
 /-- `⟦every⟧` satisfies CONSERV ∧ Mon↑. -/
-theorem every_satisfiesUniversals : PSatisfiesUniversals (every_sem m) :=
+theorem every_satisfiesUniversals : PSatisfiesUniversals (every_sem F) :=
   ⟨every_conservative, Or.inl every_scope_up⟩
 
 /-- `⟦no⟧` satisfies CONSERV ∧ Mon↓. -/
-theorem no_satisfiesUniversals : PSatisfiesUniversals (no_sem m) :=
+theorem no_satisfiesUniversals : PSatisfiesUniversals (no_sem F) :=
   ⟨no_conservative, Or.inr no_scope_down⟩
 
 /-- `⟦most⟧` satisfies CONSERV ∧ Mon↑. -/
-theorem most_satisfiesUniversals : PSatisfiesUniversals (most_sem m) :=
+theorem most_satisfiesUniversals : PSatisfiesUniversals (most_sem F) :=
   ⟨most_conservative, Or.inl most_scope_up⟩
 
 /-- `⟦few⟧` satisfies CONSERV ∧ Mon↓. -/
-theorem few_satisfiesUniversals : PSatisfiesUniversals (few_sem m) :=
+theorem few_satisfiesUniversals : PSatisfiesUniversals (few_sem F) :=
   ⟨few_conservative, Or.inr few_scope_down⟩
 
 /-- `⟦at least n⟧` satisfies CONSERV ∧ Mon↑. -/
 theorem at_least_n_satisfiesUniversals (n : Nat) :
-    PSatisfiesUniversals (at_least_n_sem m n) :=
+    PSatisfiesUniversals (at_least_n_sem F n) :=
   ⟨at_least_n_conservative n, Or.inl (at_least_n_scope_up n)⟩
 
 /-- `⟦at most n⟧` satisfies CONSERV ∧ Mon↓. -/
 theorem at_most_n_satisfiesUniversals (n : Nat) :
-    PSatisfiesUniversals (at_most_n_sem m n) :=
+    PSatisfiesUniversals (at_most_n_sem F n) :=
   ⟨at_most_n_conservative n, Or.inr (at_most_n_scope_down n)⟩
 
 /-- `⟦exactly n⟧` satisfies CONSERV (but not MON for n ≥ 1). -/
 theorem exactly_n_conservative_quantity (n : Nat) :
-    PConservative (exactly_n_sem m n) :=
+    PConservative (exactly_n_sem F n) :=
   exactly_n_conservative n
 
 -- ============================================================================
@@ -1281,13 +1283,13 @@ theorem exactly_n_conservative_quantity (n : Nat) :
 
 /-- `⟦all but 0⟧ = ⟦every⟧`: zero exceptions means universal. -/
 theorem all_but_0_eq_every :
-    (all_but_n_sem m 0 : PropGQ m.Entity) = (every_sem m : PropGQ m.Entity) := by
+    (all_but_n_sem F 0 : PropGQ F.Entity) = (every_sem F : PropGQ F.Entity) := by
   funext R S
   simp only [all_but_n_sem, every_sem]
   exact propext ⟨
     fun h x hR => by
       by_contra hS
-      have : 0 < count (fun x : m.Entity => R x ∧ ¬S x) :=
+      have : 0 < count (fun x : F.Entity => R x ∧ ¬S x) :=
         Finset.card_pos.mpr ⟨x, Finset.mem_filter.mpr ⟨Finset.mem_univ _, hR, hS⟩⟩
       omega,
     fun h => by
@@ -1295,25 +1297,25 @@ theorem all_but_0_eq_every :
       intro x _ ⟨hR, hNS⟩; exact hNS (h x hR)⟩
 
 /-- `⟦all but n⟧` is conservative. -/
-theorem all_but_n_conservative (n : Nat) : PConservative (all_but_n_sem m n) := by
+theorem all_but_n_conservative (n : Nat) : PConservative (all_but_n_sem F n) := by
   intro R S; simp only [all_but_n_sem]
   constructor <;> intro h
   · rw [← count_neg_idem_any R S _ _]; exact h
   · rw [count_neg_idem_any R S _ _]; exact h
 
 /-- `⟦all but n⟧` satisfies Quantity. -/
-theorem all_but_n_quantity (n : Nat) : Quantity (all_but_n_sem m n) := by
+theorem all_but_n_quantity (n : Nat) : Quantity (all_but_n_sem F n) := by
   intro R₁ S₁ R₂ S₂ _ hTF _ _
   simp only [all_but_n_sem]; omega
 
 /-- `⟦between n and k⟧` is conservative. -/
 theorem between_n_m_conservative (n k : Nat) :
-    PConservative (between_n_m_sem m n k) := by
+    PConservative (between_n_m_sem F n k) := by
   intro R S; simp only [between_n_m_sem, pgqMeet]
   exact Iff.and (at_least_n_conservative n R S) (at_most_n_conservative k R S)
 
 /-- `⟦between n and k⟧` satisfies Quantity. -/
-theorem between_n_m_quantity (n k : Nat) : Quantity (between_n_m_sem m n k) :=
+theorem between_n_m_quantity (n k : Nat) : Quantity (between_n_m_sem F n k) :=
   quantity_pgqMeet _ _ (at_least_n_quantity n) (at_most_n_quantity k)
 
 -- ============================================================================
@@ -1321,12 +1323,12 @@ theorem between_n_m_quantity (n k : Nat) : Quantity (between_n_m_sem m n k) :=
 -- ============================================================================
 
 /-- Proportional: Q's truth value depends only on the ratio |A∩B|/|A\B|. -/
-def Proportional (q : PropGQ m.Entity) : Prop :=
-  ∀ (R₁ S₁ R₂ S₂ : m.Entity → Prop),
-    let tt₁ := count (fun x : m.Entity => R₁ x ∧ S₁ x)
-    let tf₁ := count (fun x : m.Entity => R₁ x ∧ ¬S₁ x)
-    let tt₂ := count (fun x : m.Entity => R₂ x ∧ S₂ x)
-    let tf₂ := count (fun x : m.Entity => R₂ x ∧ ¬S₂ x)
+def Proportional (q : PropGQ F.Entity) : Prop :=
+  ∀ (R₁ S₁ R₂ S₂ : F.Entity → Prop),
+    let tt₁ := count (fun x : F.Entity => R₁ x ∧ S₁ x)
+    let tf₁ := count (fun x : F.Entity => R₁ x ∧ ¬S₁ x)
+    let tt₂ := count (fun x : F.Entity => R₂ x ∧ S₂ x)
+    let tf₂ := count (fun x : F.Entity => R₂ x ∧ ¬S₂ x)
     0 < tt₁ + tf₁ → 0 < tt₂ + tf₂ →
     tt₁ * tf₂ = tt₂ * tf₁ →
     (q R₁ S₁ ↔ q R₂ S₂)
@@ -1378,13 +1380,13 @@ private theorem cross_ratio_eq_iff (a₁ b₁ a₂ b₂ : Nat)
     exact Nat.mul_left_cancel (by omega) hcross
 
 /-- `⟦most⟧` is proportional. -/
-theorem most_proportional : Proportional (most_sem m) := by
+theorem most_proportional : Proportional (most_sem F) := by
   intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
   simp only [most_sem]
   exact cross_ratio_gt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
 
 /-- `⟦few⟧` is proportional. -/
-theorem few_proportional : Proportional (few_sem m) := by
+theorem few_proportional : Proportional (few_sem F) := by
   intro R₁ S₁ R₂ S₂ a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
   simp only [few_sem]
   exact cross_ratio_lt_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross
@@ -1402,7 +1404,7 @@ private theorem half_prop_core (a₁ b₁ a₂ b₂ : Nat)
     have := (cross_ratio_eq_iff a₁ b₁ a₂ b₂ hNE₁ hNE₂ hCross).mpr (by omega)
     omega
 
-theorem half_proportional : Proportional (half_sem m) := by
+theorem half_proportional : Proportional (half_sem F) := by
   intro R₁ S₁ R₂ S₂
   dsimp only []
   intro hNE₁ hNE₂ hCross

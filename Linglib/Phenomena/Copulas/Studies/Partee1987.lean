@@ -31,10 +31,10 @@ copula), covert (zero copula), or expressed through other strategies.
 namespace Phenomena.Copulas.Studies.Partee1987
 
 open Semantics.Composition.TypeShifting (BE lift ident BE_lift_eq_ident)
-open Semantics.Montague (Model Ty)
+open Core.IntensionalLogic (Frame Ty)
 open Phenomena.Copulas.Typology
 
-variable {m : Model}
+variable {m : Frame}
 
 -- ============================================================================
 -- §1: ⟦be⟧ = BE
@@ -42,12 +42,12 @@ variable {m : Model}
 
 /-- ⟦be⟧ = BE (Partee §5): the copula IS the type-shifting functor.
     Takes a GQ (⟨⟨e,t⟩,t⟩) and returns a predicate (⟨e,t⟩). -/
-abbrev be_sem (m : Model) : m.interpTy Ty.ett → m.interpTy Ty.et := BE
+abbrev be_sem (m : Frame) : m.Denot Ty.ett → m.Denot Ty.et := BE
 
 /-- The copula is semantically transparent for proper names.
     "John is a teacher" with `⟦John⟧ = lift(j)`:
     `BE(lift(j)) = ident(j) = λx. [j = x]`. -/
-theorem be_transparent (j : m.interpTy .e) :
+theorem be_transparent (j : m.Denot .e) :
     be_sem m (lift j) = ident j :=
   BE_lift_eq_ident j
 

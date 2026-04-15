@@ -73,7 +73,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Quantification.Studies.DavidsonGagne2022
 
-open Semantics.Montague (Model)
+open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier (every_sem some_sem)
 open Semantics.Lexical.Determiner.DomainRestriction
 open Fragments.ASL.Height
@@ -99,7 +99,7 @@ inductive Entity where
   | p5 | p6             -- wider world
   deriving DecidableEq, Repr, Inhabited
 
-abbrev vampireModel : Model := { Entity := Entity, decEq := inferInstance }
+abbrev vampireModel : Frame := { Entity := Entity, Index := Unit }
 
 instance : Fintype Entity where
   elems := {Entity.f1, .f2, .f3, .f4, .p5, .p6}

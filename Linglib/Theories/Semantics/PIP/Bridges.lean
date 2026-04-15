@@ -241,18 +241,18 @@ All GQ property proofs in Quantifier.lean (duality, monotonicity,
 Zwarts monotonicity hierarchy, quantity invariance, etc.) apply
 directly to PIP's quantifiers.
 -/
-theorem pipEvery_eq_every_sem (m : Semantics.Montague.Model)
-    [Fintype m.Entity] :
-    (pipEvery : Semantics.Quantification.Quantifier.PropGQ m.Entity) =
-    Semantics.Quantification.Quantifier.every_sem m := rfl
+theorem pipEvery_eq_every_sem (F : Core.IntensionalLogic.Frame)
+    [Fintype F.Entity] :
+    (pipEvery : Semantics.Quantification.Quantifier.PropGQ F.Entity) =
+    Semantics.Quantification.Quantifier.every_sem F := rfl
 
 /--
 PIP's SOME is definitionally equal to `some_sem` from `Quantifier.lean`.
 -/
-theorem pipSome_eq_some_sem (m : Semantics.Montague.Model)
-    [Fintype m.Entity] :
-    (pipSome : Semantics.Quantification.Quantifier.PropGQ m.Entity) =
-    Semantics.Quantification.Quantifier.some_sem m := rfl
+theorem pipSome_eq_some_sem (F : Core.IntensionalLogic.Frame)
+    [Fintype F.Entity] :
+    (pipSome : Semantics.Quantification.Quantifier.PropGQ F.Entity) =
+    Semantics.Quantification.Quantifier.some_sem F := rfl
 
 
 -- ============================================================

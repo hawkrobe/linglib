@@ -1,5 +1,7 @@
 import Linglib.Theories.Semantics.Composition.Tree
-import Linglib.Theories.Semantics.Montague.Variables
+import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Fragments.ToyDomain
+import Linglib.Theories.Semantics.Composition.LexEntry
 import Linglib.Theories.Semantics.Quantification.Quantifier
 
 /-!
@@ -47,10 +49,11 @@ for `∀ (p : Prop), Decidable p`).
 
 namespace Semantics.Composition.QuantifierComposition
 
+open Core.IntensionalLogic
+open Core.IntensionalLogic.Variables
 open Semantics.Montague
 open Core.Tree
 open Semantics.Composition.Tree
-open Semantics.Montague.Variables
 open Semantics.Quantification.Quantifier
 
 -- ════════════════════════════════════════════════════════════════════

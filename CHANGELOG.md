@@ -1,5 +1,183 @@
 # Changelog
 
+## [0.229.770] - 2026-04-15
+
+### Changed
+- **ConstraintEvaluation.lean: single-layer Prop architecture** — eliminated Bool `lexLE`/`satLE`/`lexLT` functions and `LexLE_iff_lexLE`/`SatLE_iff_satLE` bridge theorems entirely. `Decidable` instances now defined directly by structural recursion using `inferInstanceAs`, delegating to standard combinators (`And.decidable`, `Or.decidable`). Added `IsOptimal`/`IsSatOptimal` as primary Prop predicates; `optimal`/`satOptimal` retained as derived computations using `decide`. Bridge theorems `mem_optimal_iff`/`mem_satOptimal_iff` connect the two.
+- **OT.lean**: added `buildTableau_isOptimal_exists` and `isOptimal_zero_first` as primary `IsOptimal`-based theorems; backward-compatible `optimal_zero_first` delegates via `mem_optimal_iff`
+- **Bidirectional.lean**: `satisfiesQ`/`satisfiesI`/`blocked_false_of_strongOptimal_aux` — `lexLT` → `decide (LexLT ...)`
+- **Zuraw2010.lean**: `subWins` — `lexLT` → `decide (LexLT ...)`
+- **Wang2023.lean**, **MaximizePresupposition.lean**: removed `lexLE`/`LexLE_iff_lexLE` from opens
+
+## [0.229.769] - 2026-04-15
+
+### Removed
+- **Theories/Semantics/Montague.lean**: deleted — all definitions moved to canonical homes
+  - `ToyEntity`/`toyFrame`/`ToyLexicon` → `Fragments/ToyDomain.lean`
+  - `LexEntry`/`Lexicon` → `Theories/Semantics/Composition/LexEntry.lean`
+  - `Model` type eliminated entirely; all ~35 consumer files migrated to `Frame`
+
+### Changed
+- **Model → Frame migration**: `{m : Model}` → `{F : Frame}`, `m.interpTy` → `F.Denot`, `m.Entity` → `F.Entity`, `m.World` → `F.Index` across ~35 files spanning Theories/, Phenomena/, and Fragments/
+- Model constructor sites (`{ Entity := X, decEq := inferInstance }`) → `{ Entity := X, Index := Unit }` with `[DecidableEq F.Entity]` added where needed
+- All `import Linglib.Theories.Semantics.Montague` → direct imports (`Core.IntensionalLogic.Frame`, `Fragments.ToyDomain`, `Composition.LexEntry`, etc.)
+- All `open Semantics.Montague.Variables` → `open Core.IntensionalLogic.Variables`
+- All `open Semantics.Montague` for IL primitives → `open Core.IntensionalLogic`
+- **Guerrini2026.lean**: fixed pre-existing `Bool`/`Prop` mismatch in `kindExtensionOfBool`
+
+## [0.229.768] - 2026-04-15
+
+### Added
+- **Phenomena/Polarity/**: new top-level phenomenon directory for polarity marking/contrast
+- **Fragments/Italian/PolarityMarking.lean**: Italian *sì che* as `PolarityMarkingEntry` — `.polarityReversal` strategy, cognate of Spanish *sí que* (@cite{garassino-jacob-2018})
+- **references.bib**: added @cite{garassino-jacob-2018} (DOI verified from book chapter)
+
+### Changed
+- **Phenomena/Polarity/**: moved `PolarityStress`, `TurcoBraunDimroth2014`, and `MarkingTypology` from `Phenomena/Focus/` to `Phenomena/Polarity/`; updated namespaces and all downstream imports
+- **Phenomena/Polarity/MarkingTypology.lean**: expanded to 7 languages / 8 entries with Italian *sì che*; `italian_spanish_cognates` theorem verifies identical properties
+
+## [0.229.767] - 2026-04-15
+
+### Added
+- **Polarity-marking typology expansion**: cross-linguistic polarity-marking infrastructure now covers 6 languages
+- **Fragments/English/PolarityMarking.lean**: English emphatic *do* (VF use) as `PolarityMarkingEntry` — `.verumFocus` strategy, sentence-internal, context-general (@cite{wilder-2013})
+- **Fragments/Spanish/PolarityMarking.lean**: Spanish *sí (que)* as `PolarityMarkingEntry` — `.polarityReversal` strategy, clause-initial, correction-only (@cite{batllori-hernanz-2013})
+- **Phenomena/Polarity/MarkingTypology.lean**: cross-linguistic typology connecting all polarity-marking entries with 4 verified generalizations: strategy–level mapping, reversal=correction-only, VF=context-general, sentence-internality splits by strategy type
+- **references.bib**: added @cite{wilder-2013}, @cite{batllori-hernanz-2013}; updated sources for @cite{turco-braun-dimroth-2014}
+- **Linglib.lean**: added imports for English.PolarityMarking, French.PolarityMarking, Spanish.PolarityMarking, Polarity.MarkingTypology
+
+## [0.229.766] - 2026-04-15
+
+### Changed
+- **Erlewine2016.lean**: `transitive_lex_worse` restated from `lexLT ... = true` to `LexLT ...` (Prop); proof changed from `native_decide` to `decide` — completes the Bool→Prop migration for all downstream theorem statements
+
+## [0.229.765] - 2026-04-15
+
+### Changed
+- **ConstraintEvaluation.lean: Bool→Prop migration** — added `LexLE`, `SatLE`, `LexLT` as Prop-valued relations alongside the Bool `lexLE`/`satLE`/`lexLT` (retained for computation in `OTTableau.optimal`, `blocked`). Bridge theorems `LexLE_iff_lexLE`/`SatLE_iff_satLE` connect the two layers; `Decidable` instances derived from bridges. All 13 theorems (`lexLE_refl`, `lexLE_trans`, `lexLE_total`, `exists_lexLE_minimum`, etc.) restated using `LexLE`/`SatLE` — eliminates `= true` noise throughout. `lexLE_cons_cons_iff` and `lexLE_cons_nil_iff` now `Iff.rfl` (definitional from the Prop). Proofs simplified: `lexLE_refl` is 2 lines (was 4), `lexLT_irrefl`/`lexLT_asymm` are one-liners
+- **OT.lean**: updated `buildTableau_optimal_nonempty` and `optimal_zero_first` to bridge between Bool (`lexLE` in `optimal`) and Prop (`LexLE` in theorem statements) via `LexLE_iff_lexLE`
+- **Wang2023.lean, MaximizePresupposition.lean**: updated `open` statements and proofs to use `LexLE`/`LexLE_iff_lexLE`; `tod_mp_minimal_is_optimal` proof uses `.inl`/`.inr` constructors directly (was `rw [lexLE_cons_cons_iff]; exact Or.inl`)
+
+## [0.229.764] - 2026-04-15
+
+### Changed
+- **Correspondence.lean: mathlib-quality architecture** — added `wf` well-formedness invariant to `Corr` (`∀ p ∈ pairs, p.1 < s₁.length ∧ p.2 < s₂.length`), ensuring all index lookups succeed by construction; `Type*` universe polymorphism throughout; refactored `uniformityViol`/`integrityViol` from `eraseDups`-based counting to `List.range`-based counting (enables structural proofs); closed `identity_uniformity_zero` and `identity_integrity_zero` via inductive helper lemmas (`filter_identity_snd_eq/le_one`, `filter_identity_fst_eq/le_one`, `filter_gt_one_empty`); added bound theorems (`maxViol_le_length`, `depViol_le_length`, `uniformityViol_le_length`, `integrityViol_le_length`); added `IsContiguous` Prop with decidability instance (`decIsContiguous`). File now has ZERO sorrys and ZERO `native_decide`
+- **OT.lean: `NamedConstraint` name optional** — `name : String := ""` default, backward-compatible with all existing constraint definitions
+
+## [0.229.763] - 2026-04-15
+
+### Changed
+- **Model→Frame migration phase 1**: migrated 4 core composition files from `{m : Model}` to `{F : Frame}` — `Modification.lean`, `TypeShifting.lean`, `Quantifier.lean`, `Scope.lean`; replaced `m.interpTy` → `F.Denot`, `m.Entity` → `F.Entity`, `m.decEq` → `[DecidableEq F.Entity]` typeclass; added `Fintype`/`DecidableEq` bridge instances in `Montague.lean` for `m.toFrame.Entity`; fixed 7 downstream files (DomainRestriction, Monotonicity, PIP/Bridges, Numeral/Semantics, Belnap1970, Ladusaw1979, English/Determiners) with `(F := m.toFrame)` annotations and `Iff.rfl` closers for definitional equality goals
+
+## [0.229.762] - 2026-04-15
+
+### Changed
+- **`Core/Temporal/Time.lean`: interval relation algebra** — added `overlaps_refl` (`@[simp]`), `overlaps_symm`, `overlaps_comm`, `overlaps_not_transitive` (ℤ counterexample — the cornerstone property from @cite{sagey-1986} §5.2.3), `subinterval_overlaps`, `precedes_irrefl`, `precedes_asymm`, `precedes_trans`, `precedes_not_overlaps`; all clean term proofs except the counterexample
+- **`Autosegmental/Defs.lean`: cleanup** — deleted dead `AssocLine` struct (never used), renumbered sections, added `simultaneity_no_contours` theorem (@cite{sagey-1986} §5.2.2 negative argument), sharpened NCC docstring to reference §5.3 specifically
+- **`Sagey1986.lean`: substantive crossing example** — replaced vacuous `example` (just instantiated `no_crossing`) with `crossing_forces_invalidity` proving a concrete crossing configuration has valid crossing geometry but invalid association (timing [0,1] cannot overlap melody [4,5])
+- **`PsychLink.lean`: delegate to Time.lean** — `maintenance_temporal_symmetric`, `eventive_temporal_irrefl`, `precedes_excludes_overlap` now one-liner delegations to `Interval.overlaps_symm`, `precedes_irrefl`, `precedes_not_overlaps`
+- **`CompensatoryLengthening.lean`: reference formal NCC** — `vowel_loss_leftward` docstring now references `Autosegmental.no_crossing` instead of just citing "the ban"
+
+## [0.229.761] - 2026-04-15
+
+### Added
+- **McCarthyPrince1995.lean §5.1: Akan underapplication** — `AkanCand` (over/normal/under), 4 constraints (OCP(+cor), IDENT-BR(−cor), PAL, IDENT-IO(−cor)) with violation counts from tableau (131), `akan_underapplication` theorem proving kɪ–ka wins under OCP(+cor) >> IDENT-BR >> PAL >> IDENT-IO. Demonstrates that underapplication requires a 4th blocking constraint (OCP) beyond the Basic Model's three — the concrete validation of `basic_model_no_underapplication`
+- **Fragments/Akan/Phonology.lean** — Akan segment inventory grounding the palatalization analysis: `/k/` ([+dorsal, −coronal]), `/tɕ/` ([+coronal, +dorsal, +del.rel.]) as corono-dorsal complex per Keating 1987, vowels `/a/` ([−front]) and `/ɪ/` ([+front]). Feature verification theorems (`k_minus_coronal`, `tc_plus_coronal`, `palatalization_is_coronal_change`, `ocp_targets_palatalized`) connect the OT violation counts to the phonological feature system
+- **McCarthyPrince1995.lean §5a: feature grounding** — 4 grounding theorems (`akan_over_ocp_grounded`, `akan_normal_identBR_grounded`, `akan_under_pal_grounded`, `akan_over_identIO_grounded`) linking each candidate's violation profile to the Fragment's featural representations. The Akan tableau violation counts are now derived from `Theories.Phonology.Features` via `Fragments.Akan.Phonology`, not just stipulated
+
+### Changed
+- **Correspondence.lean**: simplified UNIFORMITY/INTEGRITY conditions from `!= 0 && != 1` to `> 1`; added cross-referencing docstring linking to `BasemapCorrespondence.lean` and `Harmony/OT.lean` as parallel implementations
+- **McCarthyPrince1995.lean**: fixed section numbering in docstring to match paper's actual sections (§3.4, §4.2, §4, §5, §5.1)
+
+## [0.229.760] - 2026-04-15
+
+### Changed
+- **Correspondence.lean: close all sorrys** — refactored `maxViol`/`depViol` from `eraseDups`-based counting to direct `filter`+`any` counting (eliminates opaque `eraseDupsBy.loop`); refactored `linearityViol` from nested `foldl` to `map`+`sum` (enables `List.sum_eq_zero_iff_forall_eq_nat`); closed `identity_max_zero`, `identity_dep_zero`, `identity_ident_zero`, `identity_linearity_zero` — all structural proofs, zero `native_decide`
+- **McCarthyPrince1995.lean: underapplication impossibility** — added `basic_model_no_underapplication` (every ranking selects faithful/over/normal, by decide), `basic_model_exactly_three_types` (factorial typology = 3, by decide); fixed `javIdentBR` from `mkMax` to `mkIdent`
+
+## [0.229.759] - 2026-04-15
+
+### Fixed
+- **Montague dissolution cleanup** — fixed 23 stale import paths (`Montague.Types`, `.Variables`, `.Conjunction`, `.Modification`) across 16 files; fixed `open Semantics.Montague.Modification` → `Semantics.Composition.Modification` in 3 files; fixed `Ty.s` → `.intens` in CovertQuantifier and Montague1973; added `(F := m.toFrame)` annotations for Frame/Model unification in Binding, Effects, Charlow2018, BillEtAl2025; fixed `Conjunction.genConj` qualified name in CCG/Interface
+
+## [0.229.758] - 2026-04-15
+
+### Added
+- **`Autosegmental/Defs.lean` §7**: No-Crossing Constraint derived from temporal precedence (@cite{sagey-1986} Ch. 5) — `TierPosition`, `Association`, `validAssociation` (temporal overlap), `crosses` (timing/melody order reversal), `no_crossing` theorem (structural proof via `calc` chain + `lt_irrefl`), `geminate`/`contourTone` constructors
+- **`Sagey1986.lean` §6**: concrete ℤ demonstrations — `geminate_tt`/`contour_HL` with validity proofs, example showing `no_crossing` rules out any crossing attempt
+
+## [0.229.757] - 2026-04-15
+
+### Changed
+- **Dissolve `Theories/Semantics/Montague/` directory** — collapsed from 4 files (Types.lean, Conjunction.lean, Variables.lean, Modification.lean) to a single `Montague.lean`. Modification.lean moved to `Composition/Modification.lean`; Conjunction.lean and Variables.lean content merged into `Montague.lean` and originals deleted. 28+ import paths updated across the codebase.
+- **Dissolve `Core/Semantics/Intension.lean`** — intension/rigidity content absorbed into `Core/IntensionalLogic/Rigidity.lean`; VarAssignment section moved to `Core/Assignment.lean`. 19 importers updated.
+- **Remove redundant `Attitudes/Intensional.lean` up/down wrappers** — Model-based up/down delegates were removed since `Core.IntensionalLogic.Frame` provides the canonical versions
+- **`Core/Assignment.lean`** — converted from `universe u`/`Type u` to Mathlib `Type*` convention; added VarAssignment section (from dissolved Intension.lean)
+
+## [0.229.756] - 2026-04-15
+
+### Added
+- **`Theories/Phonology/Correspondence.lean`** — Correspondence Theory (@cite{mccarthy-prince-1995} Definition 10, Appendix A): `Corr α` (correspondence relation between two strings), `CorrDomain` (.io, .br, .ir, .oo), constraint families computed over `Corr` — `maxViol`, `depViol`, `identViol`, `contigIViol`, `contigOViol`, `anchorLViol`, `anchorRViol`, `linearityViol`, `uniformityViol`, `integrityViol`; `Corr.identity` for fully faithful correspondence; structural theorems for identity correspondence
+- **`Phenomena/Reduplication/Studies/McCarthyPrince1995.lean`** — Javanese *h*-deletion overapplication (`javanese_overapplication`, by decide), Balangao partial reduplication emergence of the unmarked (`balangao_emergence_unmarked`, by decide), Basic Model factorial typology (`basic_model_factorial`: 3 constraints × 6 rankings → 3 distinct optima, by decide), all 6 individual ranking theorems verified
+
+### Changed
+- **`references.bib`** — `mccarthy-prince-1995` upgraded from `cited` to `formalized`; added editor, publisher, address fields
+
+## [0.229.755] - 2026-04-14
+
+### Fixed
+- **`ComplexSegments.lean`**: `isArticulator` no longer includes soft palate — only the three place articulators (labial, coronal, dorsal) participate in complex segment formation; nasals (e.g., /ŋ/) are correctly classified as simple segments despite activating both dorsal and soft palate; added `softPalate_not_articulator`, `articulators_under_place` theorems
+- **`Sagey1986.lean`**: added `velar_nasal_not_complex`/`velar_nasal_wf` verifying nasals are simple; added `alveolar_not_complex`/`alveopalatal_not_complex` proving same-articulator segments can't be complex (Sagey's prediction about impossible palatal-velar stops)
+- **`Features.lean`**: docstring now cross-references `FeatureGeometry.lean` and notes that the flat "manner/root" grouping diverges from the geometric node assignments
+
+## [0.229.754] - 2026-04-14
+
+### Added
+- **`Theories/Phonology/ComplexSegments.lean`** — complex segment theory: `isArticulator`, `activeArticulators`, `isComplex`, `complexWF` well-formedness predicate, `place_articulators_distinct` (labial ≠ coronal ≠ dorsal), `softPalate_not_under_place` (soft palate independent of place node)
+- **`Phenomena/Phonology/Studies/Sagey1986.lean`** — Sagey's feature geometry contributions: `MajorMinor` major/minor articulator distinction, `DegreeOfClosure` as articulator-level property, `ArticulatorSpec` for click analysis, Nupe /k͡p/ as labio-dorsal complex segment (`nupe_kp_is_complex`, `nupe_kp_wf`), `nasal_not_under_place`/`nasal_under_supralaryngeal` (soft palate independence), `nasal_assimilation_scope` (1 < 14 features)
+
+### Changed
+- **Feature geometry**: added `softPalate` node to `GeomNode` (8 nodes, was 7); `[nasal]` moved from root to soft palate node; supralaryngeal feature count 15 → 16; tree now matches @cite{sagey-1986} with labial/coronal/dorsal/softPalate as articulator nodes
+
+## [0.229.753] - 2026-04-14
+
+### Changed
+- **`KadmonLandman1993.lean`** — new §9 unifying GEN with domain vagueness: local `gen` operator + `exception_tolerance_via_normalcy` (counterexamples under one normalcy predicate are excluded under another) + `domain_vagueness_explains_gen_exceptions` (domain vagueness + subvaluationist truth → two precisifications with different domains, one satisfying the generic); new §10 conditional strengthening with implicit restrictions (K&L §3.5.3): `conditionalWithRestriction` (conditional as restricted universal over cases), `widening_satisfies_conditional_strengthening` (the paper's deepest theorem: if widening weakens both the restriction and antecedent, the wide conditional entails the narrow — no sorry), `widening_weakens_restriction` (delegates to `widenAlong_expands_domain`), `any_always_licensed_in_conditionals` (corollary: widening + restriction-weakening conspire to guarantee strengthening)
+
+## [0.229.752] - 2026-04-14
+
+### Changed
+- **`DomainVagueness.lean`** — `VagueRestriction` gains `precise_mem` field (v₀ ∈ V, closing the sorry in `domain_vague_allows_exceptions`); new §6b bridge to `DomainRestriction.lean` (`VagueRestriction.ofRestrictor` embeds a `DomainRestrictor` as a trivially precise vague restriction, `restrictor_is_domain_precise` proves domain precision); new §7 generic quantification apparatus (`genericTrue`, `genericSuperTrue`, `genericSubTrue` — K&L's ∀ ↾ X_owl(Owl) as vague universal); `domain_vague_allows_exceptions` (sorry closed); `domain_precise_unique_domain`; new §8 `total_widening_creates_universality` (K&L p. 419: total widening empties the precise part → true universality)
+- **`KadmonLandman1993.lean`** — fixed module docstring (K&L's adversatives/conditionals ARE DE on constant parameters, not "non-DE cases"); `KLDatum` restructured with `localSig`/`globalSig` fields (K&L's locality condition D: strengthening checked at local proposition); ungrammatical examples (`ex2`, `ex55`, `ex56`, `ex73`) now use `.byOtherMechanism` (strengthening fails) instead of misleading `.byStrengthening`; `ex56` properly records `localSig = .mult` (UE) vs `globalSig = .antiMult` (DE); new verification guards for locality (global DE but local not-DE); new §4c negated because-clauses (K&L §3.4): `BecauseClauseDatum` with metalinguistic licensing data (ex105, ex106, ex122, ex125, ex132), verified prediction that grammaticality tracks negative implication presence; `almost_no` and `almost_some` data added (K&L p. 412: *no* is domain precise)
+
+## [0.229.751] - 2026-04-14
+
+### Added
+- **`Phenomena/Quantification/Studies/LuckingGinzburg2022.lean`** — Referential Transparency Theory (RTT): `BP` ordered set bipartitions as QNP denotations, `QCond` descriptive quantifier conditions as cardinality sieves (`every`, `no`, `some`, `most`, `few`, `aFew`, `many`), `QPerspective` derived from bipartition structure gating compset anaphora, `antiPredication` (nucl/anti-nucl), `rtt_matches_cooper` bridge theorem proving RTT anaphora predictions agree with Cooper 2023 Ch. 7 stipulated table, `qcond_conservative` structural conservativity (by construction — bipartitions partition only the restrictor), `rttQuantifierCount` complexity reduction (2^(k+1)−1 vs GQT's 2^(T(k))), concrete DogWorld examples with `decide` proofs
+
+## [0.229.750] - 2026-04-14
+
+### Changed
+- **`DomainVagueness.lean`** — added `nonTrivialDimension` (K&L 176–177: dimension must have both P and ¬P entities); `dimensionallyUniversal` now requires non-triviality; `widening_creates_universality` theorem (K&L §4.3); `any_cn_dimensionally_universal` corollary; `IsDE_OnConstant` definition for the "DE on a constant parameter" pattern (adversatives and conditionals); deleted trivially true `ddrp_is_domain_precise_at_level`
+- **`KadmonLandman1993.lean`** — adversative analysis now derived from `StrawsonEntailment.lean` (was stipulative `AdversativePredicate` structure): `sorry_licenses_any` (Strawson-DE), `sorry_not_classically_de`, `glad_does_not_license` (UE), `SettleForLessDatum` (K&L §3.3.2 settle-for-less cases); conditional strengthening derived from `conditional_antecedent_DE` via `conditional_de_on_constant_domain` (IsDE_OnConstant bridge); deleted stipulative `detDomainPrecision` string lookup; `AlmostDatum` now has typed `precision`/`dimUniversal` fields with `predicted` function verified by `#guard`; `verifyStrengtheningExamples` replaced by `#guard`
+
+## [0.229.749] - 2026-04-14
+
+### Added
+- **`Theories/Semantics/Negation/Defs.lean`** (NEW) — unified semantic negation foundations: `NegOp` structure bundling involution + antitonicity, `standardNeg` (`pnot`) as canonical instance with `isAntiAdditive`/`isAntiMorphic` Prop-based properties; `DEStrength → PolarityLicensing` bridge connecting the Prop-based entailment hierarchy (`Antitone`/`IsAntiAdditive`/`IsAntiMorphic` from `Entailment/`) to the Bool-valued polarity licensing table in `Core/Negation`; `ENStrength ↔ DEStrength` bridge; `ENType → ENStrength → PolarityLicensing` composite; scoped vs unscoped negation (`scopeToLicensing`); full derivation chain: merge position → scope → DEStrength → licensing
+- **Mathlib instances on Core/Negation types**: `PolarityLicensing` gets `Lattice`, `BoundedOrder` (⊥ = `strongENProfile`, ⊤ = `standardNegProfile`), `Fintype` (Bool⁴ pattern from AgentivityLattice); `ENType` / `ENStrength` get `LinearOrder` (low < high, weak < strong), `Fintype`, `Equiv Bool`; `PolarityClass` gets `Fintype` (via `Fin 4`)
+- **Equiv chain** (`NegScope.lean`) — `NegMergePosition ≃ ENType ≃ ENStrength ≃ Bool` with factoring theorems; `NegMergePosition` gets `LinearOrder` (tp < cp), `Fintype`, `equivBool`; `merge_position_semantic_bridge` / `merge_position_licensing` connect to `Defs.lean` semantic chain
+- **Czech negation instances** (`CzechNegation.lean`) — `NegPosition` gets `LinearOrder` (inner < medial < outer), `Fintype`; `Diagnostic` gets `Fintype`; `licenses_injective` proves unique 5-bit diagnostic fingerprint per reading
+- **StrongENType instances** (`Greco2020.lean`) — `Fintype`; `strongEN_fingerprint_injective` proves unique 3-column diagnostic fingerprint (Wh, answerhood, embeddability)
+- **`toNegMergePosition_monotone`** (`NegScope.lean`) — Czech three-way → two-way coarsening is monotone (preserves scope ordering)
+- **`strongEN_le_weakEN`** (`Core/Negation.lean`) — lattice consequence: ⊥ = strongENProfile ≤ weakENProfile
+
+## [0.229.748] - 2026-04-14
+
+### Added
+- **`Phenomena/Polarity/Studies/KadmonLandman1993.lean`** — study file: K&L unified analysis of PS *any* and FC *any* via widening + strengthening; `LicensingContext → EntailmentSig` bridge unifying the stipulated licensing context inventory with Icard's algebraic lattice; sorry-vs-glad adversative analysis (DE on constant perspective); FC *any* as generic indefinite; locality via signature composition; key example verification
+- **`Theories/Semantics/Lexical/Determiner/DomainVagueness.lean`** — K&L's domain vagueness apparatus: `VagueRestriction` (precise part + precisifications), `isDomainPrecise`/`isDomainVague`, `widenAlong` with domain expansion proof, dimensional universality (`universalWrtDimension`, `dimensionallyUniversal`)
+
 ## [0.229.747] - 2026-04-14
 
 ### Added

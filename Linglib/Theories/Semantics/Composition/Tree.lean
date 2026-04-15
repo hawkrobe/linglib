@@ -12,22 +12,24 @@ Composition principles:
 -/
 
 import Linglib.Core.Tree
-import Linglib.Theories.Semantics.Montague.Types
-import Linglib.Theories.Semantics.Montague.Modification
-import Linglib.Theories.Semantics.Montague.Variables
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Theories.Semantics.Composition.LexEntry
+import Linglib.Theories.Semantics.Composition.Modification
 
 namespace Semantics.Composition.Tree
 
-open Semantics.Montague Semantics.Montague.Modification
-open Semantics.Montague.Variables
+open Core.IntensionalLogic Semantics.Composition.Modification
+open Core.IntensionalLogic.Variables
+open Semantics.Montague (Lexicon)
 
 -- ============================================================================
 -- Composition Primitives
 -- ============================================================================
 
-structure TypedDenot (m : Model) where
+structure TypedDenot (F : Frame) where
   ty : Ty
-  val : m.interpTy ty
+  val : F.Denot ty
 
 def canApply (funTy argTy : Ty) : Option Ty :=
   match funTy with
@@ -35,33 +37,33 @@ def canApply (funTy argTy : Ty) : Option Ty :=
   | _ => none
 
 /-- TN: lexical lookup. -/
-def interpTerminal (m : Model) (lex : Lexicon m) (word : String)
-    : Option (TypedDenot m) :=
+def interpTerminal (F : Frame) (lex : Lexicon F) (word : String)
+    : Option (TypedDenot F) :=
   (lex word).map λ entry => ⟨entry.ty, entry.denot⟩
 
 /-- NN: identity. -/
-def interpNonBranching {m : Model} (daughter : TypedDenot m) : TypedDenot m :=
+def interpNonBranching {F : Frame} (daughter : TypedDenot F) : TypedDenot F :=
   daughter
 
 /-- FA: `⟦β⟧(⟦γ⟧)` -/
-def interpFA {m : Model} {σ τ : Ty}
-    (f : m.interpTy (σ ⇒ τ)) (x : m.interpTy σ) : m.interpTy τ :=
+def interpFA {F : Frame} {σ τ : Ty}
+    (f : F.Denot (σ ⇒ τ)) (x : F.Denot σ) : F.Denot τ :=
   f x
 
 /-- Try FA in both orders. -/
-def tryFA {m : Model} (d1 d2 : TypedDenot m) : Option (TypedDenot m) :=
+def tryFA {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
   match hf : d1.ty with
   | .fn σ τ =>
     if ha : σ = d2.ty then
-      let f : m.interpTy (σ ⇒ τ) := hf ▸ d1.val
-      let a : m.interpTy σ := ha ▸ d2.val
+      let f : F.Denot (σ ⇒ τ) := hf ▸ d1.val
+      let a : F.Denot σ := ha ▸ d2.val
       some ⟨τ, f a⟩
     else
       match hf' : d2.ty with
       | .fn σ' τ' =>
         if ha' : σ' = d1.ty then
-          let f : m.interpTy (σ' ⇒ τ') := hf' ▸ d2.val
-          let a : m.interpTy σ' := ha' ▸ d1.val
+          let f : F.Denot (σ' ⇒ τ') := hf' ▸ d2.val
+          let a : F.Denot σ' := ha' ▸ d1.val
           some ⟨τ', f a⟩
         else none
       | _ => none
@@ -69,23 +71,23 @@ def tryFA {m : Model} (d1 d2 : TypedDenot m) : Option (TypedDenot m) :=
     match hf : d2.ty with
     | .fn σ τ =>
       if ha : σ = d1.ty then
-        let f : m.interpTy (σ ⇒ τ) := hf ▸ d2.val
-        let a : m.interpTy σ := ha ▸ d1.val
+        let f : F.Denot (σ ⇒ τ) := hf ▸ d2.val
+        let a : F.Denot σ := ha ▸ d1.val
         some ⟨τ, f a⟩
       else none
     | _ => none
 
 /-- PM: combine two `⟨e,t⟩` predicates. -/
-def tryPM {m : Model} (d1 d2 : TypedDenot m) : Option (TypedDenot m) :=
+def tryPM {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
   match h1 : d1.ty, h2 : d2.ty with
   | .fn .e .t, .fn .e .t =>
-    let p1 : m.interpTy (.e ⇒ .t) := h1 ▸ d1.val
-    let p2 : m.interpTy (.e ⇒ .t) := h2 ▸ d2.val
+    let p1 : F.Denot (.e ⇒ .t) := h1 ▸ d1.val
+    let p2 : F.Denot (.e ⇒ .t) := h2 ▸ d2.val
     some ⟨.fn .e .t, predicateModification p1 p2⟩
   | _, _ => none
 
 /-- Binary node: try FA, then PM. -/
-def interpBinary {m : Model} (d1 d2 : TypedDenot m) : Option (TypedDenot m) :=
+def interpBinary {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
   tryFA d1 d2 <|> tryPM d1 d2
 
 -- ============================================================================
@@ -115,28 +117,28 @@ The category parameter `C` is ignored during interpretation — composition
 is type-driven, not category-driven. This means the same function works
 for `Tree Cat String` (UD-grounded), `Tree Unit String` (category-free),
 or any other category system. -/
-def interp (m : Model) (lex : Lexicon m) (g : Assignment m)
-    : Tree C String → Option (TypedDenot m)
-  | .terminal _ w => interpTerminal m lex w
-  | .node _ (t :: []) => (interp m lex g t).map interpNonBranching
+def interp (F : Frame) (lex : Lexicon F) (g : Assignment F)
+    : Tree C String → Option (TypedDenot F)
+  | .terminal _ w => interpTerminal F lex w
+  | .node _ (t :: []) => (interp F lex g t).map interpNonBranching
   | .node _ (t1 :: t2 :: []) => do
-    let d1 ← interp m lex g t1
-    let d2 ← interp m lex g t2
+    let d1 ← interp F lex g t1
+    let d2 ← interp F lex g t2
     interpBinary d1 d2
   | .node _ _ => none
   | .trace n _ => some ⟨.e, g n⟩
   | .bind n _ body => do
-    let ⟨bodyTy, probeVal⟩ ← interp m lex g body
-    some ⟨.fn .e bodyTy, λ (x : m.Entity) =>
-      match interp m lex (g[n ↦ x]) body with
+    let ⟨bodyTy, probeVal⟩ ← interp F lex g body
+    some ⟨.fn .e bodyTy, λ (x : F.Entity) =>
+      match interp F lex (g[n ↦ x]) body with
       | some ⟨ty, val⟩ => if h : ty = bodyTy then h ▸ val else probeVal
       | none => probeVal⟩
 
 /-- Extract truth value from tree interpretation. -/
-def evalTree {m : Model} [∀ (p : m.interpTy .t), Decidable p]
-    (lex : Lexicon m) (g : Assignment m) (t : Tree C String)
+def evalTree {F : Frame} [∀ (p : F.Denot .t), Decidable p]
+    (lex : Lexicon F) (g : Assignment F) (t : Tree C String)
     : Option Bool :=
-  match interp m lex g t with
+  match interp F lex g t with
   | some ⟨.t, b⟩ => some (decide b)
   | _ => none
 
@@ -146,11 +148,11 @@ def evalTree {m : Model} [∀ (p : m.interpTy .t), Decidable p]
     rather than a bare truth value — e.g., trees containing EXH
     or other propositional operators. Evaluate the result at a
     specific world to get a truth value. -/
-def evalTreeProp {m : Model} [∀ (p : m.interpTy .t), Decidable p]
-    (lex : Lexicon m) (g : Assignment m) (t : Tree C String)
-    : Option (m.World → Bool) :=
-  match interp m lex g t with
-  | some ⟨.fn .s .t, p⟩ => some (λ w => decide (p w))
+def evalTreeProp {F : Frame} [∀ (p : F.Denot .t), Decidable p]
+    (lex : Lexicon F) (g : Assignment F) (t : Tree C String)
+    : Option (F.Index → Bool) :=
+  match interp F lex g t with
+  | some ⟨.intens .t, p⟩ => some (λ w => decide (p w))
   | _ => none
 
 end TreeInterp
@@ -166,14 +168,14 @@ end TypeMismatch
 
 section Properties
 
-theorem interpNonBranching_id {m : Model} (d : TypedDenot m) :
+theorem interpNonBranching_id {F : Frame} (d : TypedDenot F) :
     interpNonBranching d = d := rfl
 
-theorem interpFA_type {m : Model} {σ τ : Ty}
-    (f : m.interpTy (σ ⇒ τ)) (x : m.interpTy σ)
-    : (interpFA f x : m.interpTy τ) = f x := rfl
+theorem interpFA_type {F : Frame} {σ τ : Ty}
+    (f : F.Denot (σ ⇒ τ)) (x : F.Denot σ)
+    : (interpFA f x : F.Denot τ) = f x := rfl
 
-theorem tryPM_preserves_type {m : Model} (d1 d2 : TypedDenot m)
+theorem tryPM_preserves_type {F : Frame} (d1 d2 : TypedDenot F)
     (h1 : d1.ty = .fn .e .t) (h2 : d2.ty = .fn .e .t)
     : ∃ d, tryPM d1 d2 = some d ∧ d.ty = .fn .e .t := by
   cases d1 with | mk ty1 val1 =>
@@ -182,7 +184,7 @@ theorem tryPM_preserves_type {m : Model} (d1 d2 : TypedDenot m)
   subst h1 h2
   exact ⟨_, rfl, rfl⟩
 
-theorem interpBinary_eq {m : Model} (d1 d2 : TypedDenot m) :
+theorem interpBinary_eq {F : Frame} (d1 d2 : TypedDenot F) :
     interpBinary d1 d2 = (tryFA d1 d2).orElse (λ _ => tryPM d1 d2) := rfl
 
 end Properties

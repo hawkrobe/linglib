@@ -1,5 +1,4 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Montague.Types
 
 /-!
 # Degree Semantics: Core Infrastructure

@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
+import Linglib.Theories.Semantics.Composition.LexEntry
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 
 /-!
@@ -10,12 +11,12 @@ semantics. Provides:
 1. **Type dispatch** (`ComplementType.toTy`): deterministic mapping from verb
    complement type to Montague semantic type.
 
-2. **Lexicon construction** (`buildLexicon`): assembles a `Lexicon m` from a
+2. **Lexicon construction** (`buildLexicon`): assembles a `Lexicon F` from a
    list of named entries, replacing the hand-written match-on-strings pattern
    that Studies currently use.
 
 3. **Entry construction** (`VerbCore.mkLexEntry`): given a VerbCore and a
-   denotation of the appropriate type, produce a `LexEntry m`.
+   denotation of the appropriate type, produce a `LexEntry F`.
 
 ## Design
 
@@ -44,13 +45,14 @@ def myLexicon : Lexicon myModel :=
 ```
 -/
 
-open Semantics.Montague (Ty LexEntry Lexicon Model)
+open Core.IntensionalLogic (Ty Frame)
+open Semantics.Montague (LexEntry Lexicon)
 
 /-! ## Type Dispatch -/
 
 namespace Core.Verbs
 
-open Semantics.Montague (Ty)
+open Core.IntensionalLogic (Ty)
 
 /-- Map a verb's complement type to its Montague semantic type.
 
@@ -86,7 +88,7 @@ open Core.Verbs (ComplementType VerbCore)
 
 /-! ## Lexicon Construction -/
 
-/-- Build a `Lexicon m` from a list of named entries.
+/-- Build a `Lexicon F` from a list of named entries.
 
 Replaces the pattern of hand-written match expressions on strings that
 Studies currently use. Lookup is linear in the entry list; this is fine
@@ -99,17 +101,17 @@ def myLex : Lexicon myModel := buildLexicon [
 ]
 ```
 -/
-def buildLexicon {m : Model} (entries : List (String × LexEntry m)) : Lexicon m :=
+def buildLexicon {F : Frame} (entries : List (String × LexEntry F)) : Lexicon F :=
   λ s => (entries.find? (λ p => p.1 == s)).map (·.2)
 
 /-- Extend a lexicon with additional entries. Later entries shadow earlier
     ones with the same name. -/
-def extendLexicon {m : Model} (base : Lexicon m) (extra : List (String × LexEntry m))
-    : Lexicon m :=
+def extendLexicon {F : Frame} (base : Lexicon F) (extra : List (String × LexEntry F))
+    : Lexicon F :=
   λ s => (extra.find? (λ p => p.1 == s)).map (·.2) |>.orElse (λ _ => base s)
 
 /-- Merge two lexicons. The first lexicon takes priority on conflicts. -/
-def mergeLexicons {m : Model} (lex1 lex2 : Lexicon m) : Lexicon m :=
+def mergeLexicons {F : Frame} (lex1 lex2 : Lexicon F) : Lexicon F :=
   λ s => (lex1 s).orElse (λ _ => lex2 s)
 
 /-! ## Entry Construction -/
@@ -119,17 +121,17 @@ def mergeLexicons {m : Model} (lex1 lex2 : Lexicon m) : Lexicon m :=
 
     This ensures the entry's type tag matches the verb's argument structure
     by construction. -/
-def VerbCore.mkLexEntry (v : VerbCore) (m : Model) (denot : m.interpTy v.semanticType)
-    : LexEntry m :=
+def VerbCore.mkLexEntry (v : VerbCore) (F : Frame) (denot : F.Denot v.semanticType)
+    : LexEntry F :=
   ⟨v.semanticType, denot⟩
 
 /-! ## Convenience -/
 
 /-- The empty lexicon. -/
-def emptyLexicon {m : Model} : Lexicon m := λ _ => none
+def emptyLexicon {F : Frame} : Lexicon F := λ _ => none
 
 /-- A single-entry lexicon. -/
-def singletonLexicon {m : Model} (name : String) (entry : LexEntry m) : Lexicon m :=
+def singletonLexicon {F : Frame} (name : String) (entry : LexEntry F) : Lexicon F :=
   λ s => if s == name then some entry else none
 
 end Semantics.Composition.LexiconBuilder

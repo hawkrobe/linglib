@@ -18,12 +18,12 @@ represented as `s ⇒ τ` rather than a separate `intens` constructor.
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
 import Mathlib.Data.Set.Basic
 
 namespace Phenomena.Quantification.Studies.Montague1973
 
-open Semantics.Montague
+open Core.IntensionalLogic
 
 -- Section 1: Types (IL - Intensional Logic)
 
@@ -39,21 +39,14 @@ The set of types is the smallest set Y such that:
 We use the canonical `Semantics.Montague.Ty` which has:
 - `.e` : entities
 - `.t` : truth values
-- `.s` : possible worlds
+- `.intens a` : intensions ⟨s, a⟩
 - `.fn` / `⇒` : function types
-
-Intensions `⟨s, a⟩` are represented as `.s ⇒ a`.
 -/
 
 -- Notation for PTQ-style types
 notation "𝐞" => Ty.e
 notation "𝐭" => Ty.t
-notation "𝐬" => Ty.s
 notation "⦃" a ", " b "⦄" => Ty.fn a b  -- ⟨a, b⟩
-
-/-- Intension type: ⟨s, a⟩ -/
-abbrev Ty.intens (a : Ty) : Ty := .s ⇒ a
-
 notation "⦃𝐬, " a "⦄" => Ty.intens a   -- ⟨s, a⟩
 
 /-- Common derived types -/
@@ -122,22 +115,22 @@ a property (intension) and returns true iff every man has that property.
 -/
 theorem term_phrase_is_gq : catToTy .T = ⦃⦃𝐬, ⦃𝐞, 𝐭⦄⦄, 𝐭⦄ := rfl
 
--- Section 4: Model Structure
+-- Section 4: Frame Structure
 
 /--
-Intensional Model
+Intensional Frame
 
-A PTQ model uses the canonical `Semantics.Montague.Model` which includes:
+A PTQ model uses the canonical `Semantics.Montague.Frame` which includes:
 - `Entity` : domain of entities
-- `World` : possible worlds (indices)
+- `Index` : possible worlds (indices)
 -/
-abbrev PTQModel := Model
+abbrev PTQModel := Frame
 
-/-- Denotation of a type in a model (uses canonical interpTy) -/
-abbrev PTQModel.Den (m : PTQModel) (τ : Ty) := m.interpTy τ
+/-- Denotation of a type in a frame (uses canonical Denot) -/
+abbrev PTQModel.Den (F : PTQModel) (τ : Ty) := F.Denot τ
 
-/-- Intension: function from worlds to extensions -/
-abbrev PTQModel.Intens (m : PTQModel) (a : Ty) := m.World → m.interpTy a
+/-- Intension: function from indices to extensions -/
+abbrev PTQModel.Intens (F : PTQModel) (a : Ty) := F.Index → F.Denot a
 
 -- Section 5: Lexical Entries and Translations
 
@@ -149,10 +142,10 @@ Each word has:
 - Syntactic category
 - Translation (semantic representation)
 -/
-structure LexEntry (m : PTQModel) where
+structure LexEntry (F : PTQModel) where
   form : String
   cat : Cat
-  -- The translation would be a term of type m.interpTy (catToTy cat)
+  -- The translation would be a term of type F.Denot (catToTy cat)
 
 /-
 Basic Expressions (BₐC for each category C)
@@ -294,8 +287,7 @@ inductive ToyEntity where
 
 def toyPTQModel : PTQModel where
   Entity := ToyEntity
-  World := Unit  -- Single world for simplicity
-  decEq := inferInstance
+  Index := Unit  -- Single index for simplicity
 
 /-- Predicate: is a man -/
 def isMan : ToyEntity → Bool

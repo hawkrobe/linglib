@@ -66,7 +66,7 @@ open Core (PrivativePair)
 open Core.OT (NamedConstraint ConstraintFamily buildTableau
               optimal_zero_first buildProfile)
 open Core.ConstraintEvaluation (OTTableau optimal_subset
-  lexLE lexLE_cons_cons_iff lexLE_refl)
+  LexLE lexLE_cons_cons_iff lexLE_refl)
 open Presupposition.PhiFeatures
 
 -- ============================================================================

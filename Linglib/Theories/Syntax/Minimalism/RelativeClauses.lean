@@ -36,7 +36,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 namespace Minimalism.RelativeClauses
 
-open Semantics.Montague Semantics.Montague.Variables Semantics.Montague.Modification
+open Core.IntensionalLogic Core.IntensionalLogic.Variables Semantics.Composition.Modification
 open Minimalism.Semantics
 open Minimalism
 
@@ -58,9 +58,9 @@ inductive ReadEntity where
   deriving Repr, DecidableEq, Inhabited
 
 /-- The model for our example -/
-def readModel : Model := {
+def readModel : Frame := {
   Entity := ReadEntity
-  decEq := inferInstance
+  Index := Unit
 }
 
 -- ============================================================================
@@ -70,20 +70,20 @@ def readModel : Model := {
 open ReadEntity
 
 /-- "John" denotes the entity john -/
-def john_sem : readModel.interpTy .e := john
+def john_sem : readModel.Denot .e := john
 
 /-- "Mary" denotes the entity mary -/
-def mary_sem : readModel.interpTy .e := mary
+def mary_sem : readModel.Denot .e := mary
 
 /-- "book" is true of book1 and book2 -/
-def book_sem : readModel.interpTy (.e ⇒ .t) :=
+def book_sem : readModel.Denot (.e ⇒ .t) :=
   λ x => match x with
     | .book1 => True
     | .book2 => True
     | _ => False
 
 /-- "read" as a relation: John read book1, Mary read book2 -/
-def read_sem : readModel.interpTy (.e ⇒ .e ⇒ .t) :=
+def read_sem : readModel.Denot (.e ⇒ .e ⇒ .t) :=
   λ obj => λ subj => match subj, obj with
     | .john, .book1 => True      -- John read book1
     | .mary, .book2 => True      -- Mary read book2

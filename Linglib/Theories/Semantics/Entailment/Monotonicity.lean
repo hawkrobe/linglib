@@ -19,7 +19,7 @@ section QuantifierSemantics
 /-! ## Bridge to Canonical GQ Denotations
 
 The 4-element `World` type used in the entailment domain doubles as an
-entity domain. We create a `Model` + `Fintype` instance so that the
+entity domain. We create a `Frame` + `Fintype` instance so that the
 canonical GQ denotations from `Semantics.Quantification.Quantifier`
 (`every_sem`, `some_sem`, `no_sem`) can be instantiated here.
 
@@ -35,13 +35,14 @@ theorems — `every_scope_up`, `no_scope_down`, `every_restrictor_down`,
 consistent instances of those general proofs.
 -/
 
-/-- The entailment World type, viewed as a Model entity domain. -/
-def entailmentModel : Semantics.Montague.Model :=
-  { Entity := World, decEq := inferInstance }
+/-- The entailment World type, viewed as a Frame entity domain. -/
+def entailmentModel : Core.IntensionalLogic.Frame :=
+  { Entity := World, Index := Unit }
 
 instance : Fintype entailmentModel.Entity where
   elems := ({World.w0, World.w1, World.w2, World.w3} : Finset World)
   complete := fun x => by cases x <;> (unfold entailmentModel; simp)
+
 
 instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePred S] :
     Decidable (every_sem entailmentModel R S) := by

@@ -84,7 +84,7 @@ open Phenomena.ArgumentStructure.Studies.Beavers2010
 open Semantics.Lexical.Verb.Affectedness (AffectednessDegree)
 open Semantics.Events.ArgumentRealization
 open Theories.Interfaces.SyntaxSemantics.VoiceSemantics
-open Semantics.Montague
+open Core.IntensionalLogic
 
 -- ============================================================================
 -- § 2: Indonesian ber- Middle Inventory
@@ -300,9 +300,9 @@ section Compositional
 
     We prove this for an arbitrary model `m` and transitive verb `V`. -/
 
-variable {m : Model}
-variable (V : m.interpTy (.e ⇒ .e ⇒ .t))
-variable (np : m.interpTy (.e ⇒ .t))
+variable {m : Frame}
+variable (V : m.Denot (.e ⇒ .e ⇒ .t))
+variable (np : m.Denot (.e ⇒ .t))
 variable (patient z agent : m.Entity)
 
 /-- **Dispositional middle derivation** (the paper's (54)):

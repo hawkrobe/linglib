@@ -37,7 +37,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Mereology
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 
 
 

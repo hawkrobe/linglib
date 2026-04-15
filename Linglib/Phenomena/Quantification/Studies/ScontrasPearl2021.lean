@@ -325,7 +325,7 @@ namespace EveryNot
 
 open BigOperators
 open Real (rpow rpow_nonneg)
-open Semantics.Montague (Model)
+open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier (every_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 
@@ -409,18 +409,18 @@ def jumpIn : JumpOutcome → Horse → Bool
   | .one, .h1 => true | .one, .h2 => false
   | .two, _ => true
 
-/-- Horse model as a Montague `Model`. -/
-abbrev horseModel : Model := { Entity := Horse, decEq := inferInstance }
+/-- Horse model as a `Frame`. -/
+abbrev horseModel : Frame := { Entity := Horse, Index := Unit }
 
 instance : Fintype horseModel.Entity where
   elems := ({Horse.h1, Horse.h2} : Finset Horse)
   complete := fun x => by cases x <;> simp
 
 /-- Restrictor: all entities are horses (trivial for this model). -/
-def horse_sem : horseModel.interpTy (.e ⇒ .t) := fun _ => True
+def horse_sem : horseModel.Denot (.e ⇒ .t) := fun _ => True
 
 /-- Scope predicate: did entity h jump in world w? -/
-def jumpIn_sem (w : JumpOutcome) : horseModel.interpTy (.e ⇒ .t) :=
+def jumpIn_sem (w : JumpOutcome) : horseModel.Denot (.e ⇒ .t) :=
   fun h => jumpIn w h = true
 
 /-- Surface scope: ⟦every⟧(horse)(λx.¬jump(x))(w). -/
@@ -847,7 +847,7 @@ theorem atLeast_truth_table :
 
 -- Compositional Grounding
 
-open Semantics.Montague (Model)
+open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier (exactly_n_sem at_least_n_sem)
 open Semantics.Scope (ScopeConfig ScopeDerivation)
 
@@ -867,18 +867,18 @@ def jumpIn4 : JumpOutcome4 → Horse4 → Bool
   | .w3, .h1 => true | .w3, .h2 => true | .w3, .h3 => true | .w3, _ => false
   | .w4, _ => true
 
-/-- Horse4 model as a Montague `Model`. -/
-abbrev horseModel4 : Model := { Entity := Horse4, decEq := inferInstance }
+/-- Horse4 model as a `Frame`. -/
+abbrev horseModel4 : Frame := { Entity := Horse4, Index := Unit }
 
 instance : Fintype horseModel4.Entity where
   elems := ({Horse4.h1, .h2, .h3, .h4} : Finset Horse4)
   complete := fun x => by cases x <;> simp
 
 /-- Restrictor: all entities are horses (trivial for this model). -/
-def horse4_sem : horseModel4.interpTy (.e ⇒ .t) := fun _ => True
+def horse4_sem : horseModel4.Denot (.e ⇒ .t) := fun _ => True
 
 /-- Jump predicate as Montague semantic value. -/
-def jumpIn4_sem (w : JumpOutcome4) : horseModel4.interpTy (.e ⇒ .t) :=
+def jumpIn4_sem (w : JumpOutcome4) : horseModel4.Denot (.e ⇒ .t) :=
   fun h => jumpIn4 w h = true
 
 -- Exact semantics grounding

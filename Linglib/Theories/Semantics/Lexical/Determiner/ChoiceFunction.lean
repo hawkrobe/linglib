@@ -1,5 +1,5 @@
 import Mathlib.Init
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 
 /-!
 # Choice Functions for Indefinite Determiners

@@ -9,11 +9,11 @@ Documents compositional homomorphism requirement and syntax-agnostic nature of M
 
 -/
 
-import Linglib.Theories.Semantics.Montague.Types
+import Linglib.Core.IntensionalLogic.Frame
 
 namespace Semantics.Montague.Interface.SyntaxInterface
 
-open Semantics.Montague
+open Core.IntensionalLogic
 
 /-- Type assignment maps syntactic categories to semantic types -/
 structure TypeAssignment (SynCat : Type) where
@@ -22,19 +22,19 @@ structure TypeAssignment (SynCat : Type) where
 /-- Compositional semantics maps derivations to meanings -/
 class CompositionalSemantics (SynCat : Type) (Deriv : Type) where
   types : TypeAssignment SynCat
-  model : Model
-  interp : Deriv → (cat : SynCat) → model.interpTy (types.typeOf cat)
+  frame : Frame
+  interp : Deriv → (cat : SynCat) → frame.Denot (types.typeOf cat)
 
 /-- Requirements for a syntax to interface with Montague semantics -/
 class MontagueSyntax (SynCat : Type) (Deriv : Type) where
   catOf : Deriv → SynCat
   typeOf : SynCat → Ty
   wellFormed : Deriv → Prop
-  interp : (d : Deriv) → (m : Model) → m.interpTy (typeOf (catOf d))
+  interp : (d : Deriv) → (F : Frame) → F.Denot (typeOf (catOf d))
 
 /-- Results that Montague provides to any compatible syntax -/
 structure MontagueBenefits (SynCat : Type) (Deriv : Type) [MontagueSyntax SynCat Deriv] where
-  trueIn : Deriv → Model → Bool
-  entails : Deriv → Deriv → Model → Bool
+  trueIn : Deriv → Frame → Bool
+  entails : Deriv → Deriv → Frame → Bool
 
 end Semantics.Montague.Interface.SyntaxInterface
