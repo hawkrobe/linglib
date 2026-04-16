@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.229.844] - 2026-04-16
+
+### Added
+- **Mathlib polish for `Core/Inquisitive.lean`** (Phase 6 starter — apply per-Discourse-file polish to the central type used by every question/answer formalization in the library):
+  - **Pointwise unfolds** (4 `@[simp]` lemmas): `absurdState_apply`, `trivialState_apply`, `InfoState.inter_apply`, `InfoState.union_apply` — let `simp` reduce constructions to their boolean content automatically.
+  - **Bool↔Prop characterizations** (7 `_iff` lemmas): `propEntails_iff`, `supports_iff`, `InfoState.subset_iff`, `InfoState.isEmpty_iff`, `InfoState.isNonEmpty_iff`, `Issue.isPartition_iff` — expose the propositional content of each `Bool`-valued predicate. Standard `forall_congr' fun w => forall_congr' fun _ => …; cases _ <;> simp` recipe for the implication-shaped predicates.
+  - **Algebraic identities** (10 `@[simp]` lemmas + 2 `_comm` lemmas): `InfoState.{inter,union}_{self,absurd,trivial}` (both orientations for non-symmetric pairs), plus `InfoState.{inter,union}_comm`. Makes `InfoState` behave as a commutative idempotent semilattice with absurd/trivial as identities for `union`/`inter`.
+  - **Reflexivity / basic facts**: `propEntails_refl` (moved here from `Core/QUD/Relevance.lean` since it's about `propEntails`, defined here), `supports_trivialState`, `supports_absurdState`.
+  - **Issue cardinality** (3 `@[simp]`): `Issue.numAlternatives_polar` (= 2), `numAlternatives_empty`, `numAlternatives_absurd` (both = 1).
+  - Build verifies green on all Inquisitive consumers (353 jobs).
+
 ## [0.229.843] - 2026-04-16
 
 ### Changed

@@ -90,12 +90,6 @@ def moveRelevant {W : Type*} (den : Issue W) (qud : Issue W)
     subquestions.any fun sq =>
       partiallyAnswers alt sq worlds
 
-/-- `propEntails` is reflexive. -/
-theorem propEntails_refl {W : Type*} (p : W → Bool) (worlds : List W) :
-    propEntails p p worlds = true := by
-  unfold propEntails
-  simp [List.all_eq_true]
-
 /-- `questionEntails` is reflexive: every question entails itself. -/
 theorem questionEntails_refl {W : Type*} (q : Issue W) (worlds : List W) :
     questionEntails q q worlds = true := by

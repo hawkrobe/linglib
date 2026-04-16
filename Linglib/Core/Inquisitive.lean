@@ -257,4 +257,113 @@ theorem polar_is_inquisitive {W : Type*} (p : W → Bool) :
 theorem empty_not_inquisitive {W : Type*} :
     (Issue.empty : Issue W).isInquisitive = false := rfl
 
+-- Pointwise unfolds for the trivial constructors.
+
+@[simp] theorem absurdState_apply {W : Type*} (w : W) :
+    (absurdState : InfoState W) w = false := rfl
+
+@[simp] theorem trivialState_apply {W : Type*} (w : W) :
+    (trivialState : InfoState W) w = true := rfl
+
+@[simp] theorem InfoState.inter_apply {W : Type*} (σ σ' : InfoState W) (w : W) :
+    InfoState.inter σ σ' w = (σ w && σ' w) := rfl
+
+@[simp] theorem InfoState.union_apply {W : Type*} (σ σ' : InfoState W) (w : W) :
+    InfoState.union σ σ' w = (σ w || σ' w) := rfl
+
+-- Bool/Prop characterizations of the basic predicates.
+
+theorem propEntails_iff {W : Type*} (p q : W → Bool) (worlds : List W) :
+    propEntails p q worlds = true ↔ ∀ w ∈ worlds, p w = true → q w = true := by
+  unfold propEntails
+  rw [List.all_eq_true]
+  refine forall_congr' fun w => forall_congr' fun _ => ?_
+  cases p w <;> simp
+
+theorem supports_iff {W : Type*} (σ : InfoState W) (p : W → Bool) (worlds : List W) :
+    supports σ p worlds = true ↔ ∀ w ∈ worlds, σ w = true → p w = true := by
+  unfold supports
+  rw [List.all_eq_true]
+  refine forall_congr' fun w => forall_congr' fun _ => ?_
+  cases σ w <;> simp
+
+theorem InfoState.subset_iff {W : Type*} (σ σ' : InfoState W) (worlds : List W) :
+    σ.subset σ' worlds = true ↔ ∀ w ∈ worlds, σ w = true → σ' w = true := by
+  unfold InfoState.subset
+  rw [List.all_eq_true]
+  refine forall_congr' fun w => forall_congr' fun _ => ?_
+  cases σ w <;> simp
+
+theorem InfoState.isEmpty_iff {W : Type*} (σ : InfoState W) (worlds : List W) :
+    σ.isEmpty worlds = true ↔ ∀ w ∈ worlds, σ w = false := by
+  simp only [InfoState.isEmpty, Bool.not_eq_true', List.any_eq_false, Bool.not_eq_true]
+
+theorem InfoState.isNonEmpty_iff {W : Type*} (σ : InfoState W) (worlds : List W) :
+    σ.isNonEmpty worlds = true ↔ ∃ w ∈ worlds, σ w = true := by
+  simp only [InfoState.isNonEmpty, List.any_eq_true]
+
+theorem Issue.isPartition_iff {W : Type*} (q : Issue W) (worlds : List W) :
+    q.isPartition worlds = true ↔
+    ∀ w ∈ worlds, (q.alternatives.filter (· w)).length = 1 := by
+  simp only [Issue.isPartition, List.all_eq_true, beq_iff_eq]
+
+-- Reflexivity / basic identities.
+
+/-- Propositional entailment is reflexive. -/
+theorem propEntails_refl {W : Type*} (p : W → Bool) (worlds : List W) :
+    propEntails p p worlds = true := by
+  rw [propEntails_iff]; intros; assumption
+
+theorem supports_trivialState {W : Type*} (p : W → Bool) (worlds : List W)
+    (h : ∀ w ∈ worlds, p w = true) :
+    supports trivialState p worlds = true := by
+  rw [supports_iff]; intros w hw _; exact h w hw
+
+theorem supports_absurdState {W : Type*} (p : W → Bool) (worlds : List W) :
+    supports absurdState p worlds = true := by
+  rw [supports_iff]; intros _ _ h; cases h
+
+-- InfoState algebra.
+
+theorem InfoState.inter_comm {W : Type*} (σ σ' : InfoState W) :
+    σ.inter σ' = σ'.inter σ := by funext w; simp [Bool.and_comm]
+
+theorem InfoState.union_comm {W : Type*} (σ σ' : InfoState W) :
+    σ.union σ' = σ'.union σ := by funext w; simp [Bool.or_comm]
+
+@[simp] theorem InfoState.inter_self {W : Type*} (σ : InfoState W) :
+    σ.inter σ = σ := by funext w; simp
+
+@[simp] theorem InfoState.union_self {W : Type*} (σ : InfoState W) :
+    σ.union σ = σ := by funext w; simp
+
+@[simp] theorem InfoState.inter_absurd {W : Type*} (σ : InfoState W) :
+    σ.inter absurdState = absurdState := by funext w; simp
+
+@[simp] theorem InfoState.absurd_inter {W : Type*} (σ : InfoState W) :
+    absurdState.inter σ = absurdState := by funext w; simp
+
+@[simp] theorem InfoState.inter_trivial {W : Type*} (σ : InfoState W) :
+    σ.inter trivialState = σ := by funext w; simp
+
+@[simp] theorem InfoState.trivial_inter {W : Type*} (σ : InfoState W) :
+    trivialState.inter σ = σ := by funext w; simp
+
+@[simp] theorem InfoState.union_absurd {W : Type*} (σ : InfoState W) :
+    σ.union absurdState = σ := by funext w; simp
+
+@[simp] theorem InfoState.union_trivial {W : Type*} (σ : InfoState W) :
+    σ.union trivialState = trivialState := by funext w; simp
+
+-- Issue cardinality.
+
+@[simp] theorem Issue.numAlternatives_polar {W : Type*} (p : W → Bool) :
+    (Issue.polar p).numAlternatives = 2 := rfl
+
+@[simp] theorem Issue.numAlternatives_empty {W : Type*} :
+    (Issue.empty : Issue W).numAlternatives = 1 := rfl
+
+@[simp] theorem Issue.numAlternatives_absurd {W : Type*} :
+    (Issue.absurd : Issue W).numAlternatives = 1 := rfl
+
 end Discourse
