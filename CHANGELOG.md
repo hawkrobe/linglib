@@ -1,5 +1,39 @@
 # Changelog
 
+## [0.229.831] - 2026-04-16
+
+### Changed
+- **Core/Discourse/ architectural cleanup, phase 1**: move misplaced files whose namespaces didn't match their path. `Core/Discourse/Evidence.lean` → `Core/Evidence.lean`, `Core/Discourse/Epistemicity.lean` → `Core/Epistemicity.lean`, `Core/Discourse/InformationStructure.lean` → `Core/InformationStructure.lean` (these three already had correct top-level namespaces — pure file moves). `Core/Discourse/GramMood.lean` → `Core/GrammaticalMood.lean` and `Core/Discourse/ClauseType.lean` → `Core/ClauseType.lean`, with namespace `Core.Discourse` → `Core` (mathlib-style: file name expanded `GramMood` → `GrammaticalMood`; type name kept as `GramMood` to minimize call-site churn). Updated 30+ importer files across Phenomena, Theories, Fragments. `Core/Discourse/` now contains only files that are genuinely about discourse structure (AtIssueness, CoherenceRelation, Goals, ReferentialForm, Scoreboard, Segment, SpeechActs, QUD).
+
+## [0.229.830] - 2026-04-16
+
+### Changed
+- **Close all `sorry`s in `pumping_from_tall_tree`** (CFL pumping lemma). Added helper lemmas `sizeList_le_of_mem`, `size_subtreeAt?_le`, `size_subtreeAt?_lt_of_cons` (subtree size bounds), `derives_yieldList`, `validFor_derives` (soundness: valid tree ⇒ grammar derives its yield), `flatten_replicate_succ_right`. Fixed ~24 Lean 4.29 toolchain breakages (`wlog` argument order, let-binding unfolding in `show`/`change`/`cases`, renamed list lemmas). Both sorry sites closed: (1) size inequality via `size_subtreeAt?_lt_of_cons`, (2) language membership via `validFor_derives`.
+
+## [0.229.829] - 2026-04-16
+
+### Changed
+- **DM/Impoverishment refactor: `Neighborhood` + `Prop`-valued condition.** `ImpoverishmentRule.condition` is now `Neighborhood → Prop` (with a `DecidablePred` witness exposed as an instance), where `Neighborhood` bundles a `focus` `FeatureBundle` plus optional `leftCtx`/`rightCtx`. This brings the rule type in line with the project-wide Bool→Prop migration (cf. `GroszJoshiWeinstein1995.lean`, OT/Conditionals) and lets the **paradigmatic / syntagmatic** distinction be a *theorem about a rule* rather than a flag: `Paradigmatic r := ∀ n₁ n₂, n₁.focus = n₂.focus → (r.condition n₁ ↔ r.condition n₂)`, `Syntagmatic r := ¬ Paradigmatic r`. Smart constructors `paradigmatic`/`syntagmatic` take Bool predicates and discharge `Paradigmatic` automatically (`paradigmatic_isParadigmatic`); `redundancyRule` is paradigmatic by construction (`redundancyRule_isParadigmatic`). `applyImpoverishment` takes a `Neighborhood`; new `ImpoverishmentRule.applyToBundle` is the bare-focus convenience.
+- **Phenomena/Agreement/Studies/Scott2023.lean**: migrated `mamImpoverishmentRule` to the `paradigmatic` smart constructor; converted four `native_decide` Bool theorems (`impoverishment_fires_1sg`, `impoverishment_blocked_3sg`, `impoverishment_deletes_number`, `no_impoverishment_preserves`) to structural `decide` proofs of Prop statements; added `mamImpoverishment_paradigmatic` discharging the structural classification by `paradigmatic_isParadigmatic`.
+
+## [0.229.828] - 2026-04-16
+
+### Added
+- **Centering Theory mathlib-style refactor** — extract from monolithic study file into a layered, typeclass-parameterized framework under `Theories/Discourse/Centering/`:
+  - `Defs.lean` — `CfRanker R` typeclass, `Realization E R`, `Utterance E R`, plus `Realizes U E` / `Pronominalizes U E` typeclasses (with `outParam E`) so `cb` can take any current-utterance representation.
+  - `Basic.lean` — default `Realizes`/`Pronominalizes` instances for `Utterance`; `cf` via insertion sort (`cfInsert` + `foldr`) so kernel reduction works for `decide`; `cb` polymorphic in the current-utterance type; `cb_mem_prev_cf` locality theorem.
+  - `Transition.lean` — split `classifyTransition` into `classifyTransitionStrict : Option Transition` (faithful to @cite{grosz-joshi-weinstein-1995} Def 4) and `classifyTransitionExtended : Transition` (segment-initial convention from worked examples), plus `extended_eq_strict_when_defined` agreement theorem.
+  - `Rules.lean` — `Rule1Holds` (pronominalization rule) and `pairRank` (Rule 2 transition pair scoring).
+  - `Coherence.lean` — `CoherenceRelation.preferredTransition` mapping Kehler relations to Centering transitions.
+  - `Instances/{GrammaticalRole,ThematicRole}.lean` — Kameyama (subject>object>other) and Sidner (experiencer>agent>goal>theme>other) `CfRanker` instances with `LinearOrder` lifted from `Nat` ranks.
+- **Core/Discourse/Segment.lean** — Grosz & Sidner 1986 DSP stack with `push`/`pop`/`coSegmental` operations, framework-agnostic location for use beyond Centering.
+- **Core/Salience/Defs.lean** — flat `HasAccessibility`, `HasAnimacy`, `HasDiscourseStatus` typeclasses unifying salience dimensions across Centering, Givenness, and Animacy theories (no hierarchy — each dimension stands alone).
+- **Theories/Interfaces/SemanticsDiscourse/CenteringDRT.lean** — `Realizes DRSExpr Nat` instance lets `cb prev cur` apply directly to a DRT current-utterance representation, no glue code; `box_realizes_new_dref` confirms the bridge.
+- **Theories/Interfaces/PragmaticsDiscourse/CenteringCoherence.lean** — `coherencePairScore` joins `CoherenceRelation.preferredTransition` with `pairRank` to give a coherence-pair Rule-2 prediction; proves causal pairs strictly outrank substitution pairs.
+
+### Changed
+- **Phenomena/Reference/Studies/GroszJoshiWeinstein1995.lean** — refactored to use the new framework (`Utt = Utterance String GrammaticalRole`); added explicit comment on the D2 (Discourse 2) divergence between the paper's prose-level SHIFT label and the formal RETAIN classification (paper text vs. Definition 4 mechanics).
+
 ## [0.229.827] - 2026-04-16
 
 ### Changed
