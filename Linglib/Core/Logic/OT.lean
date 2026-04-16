@@ -10,7 +10,7 @@ typology computation.
 
 ## Connection to ConstraintEvaluation
 
-`ConstraintEvaluation` provides the generic engine (`lexLE`, `OTTableau`,
+`ConstraintEvaluation` provides the generic engine (`LexLE`, `OTTableau`,
 `OTTableau.optimal`). This module adds OT-specific structure: constraint
 families, named constraints, and the factorial typology pattern (enumerate
 all rankings, compute optima, count distinct outcomes).
@@ -33,9 +33,13 @@ inductive ConstraintFamily where
   deriving DecidableEq, Repr
 
 /-- A named OT constraint with family classification.
-    `eval c` returns the number of violations candidate `c` incurs. -/
+    `eval c` returns the number of violations candidate `c` incurs.
+
+    The `name` field is purely documentary — no evaluation function reads it.
+    It defaults to `""` so constraints can be defined without a name when
+    the string label adds no information. -/
 structure NamedConstraint (C : Type) where
-  name : String
+  name : String := ""
   family : ConstraintFamily
   eval : C → Nat
 
@@ -114,29 +118,35 @@ theorem buildProfile_length {C : Type}
 -- § 6: Optimal Set is Non-Empty
 -- ============================================================================
 
-/-- The optimal set of a `buildTableau` is non-empty: OT always picks
-    at least one winner.
+/-- OT always picks at least one winner: there exists an optimal
+    candidate in any `buildTableau`.
 
     Proof: all profiles have equal length (= `ranking.length`), so
-    `lexLE` is a total preorder on the profile space. By
+    `LexLE` is a total preorder on the profile space. By
     `exists_lexLE_minimum`, the non-empty candidate set has a minimum
-    element under `lexLE`. That element passes the `optimal` filter. -/
-theorem buildTableau_optimal_nonempty {C : Type}
+    element under `LexLE`. -/
+theorem buildTableau_isOptimal_exists {C : Type}
     (candidates : List C) (ranking : List (NamedConstraint C))
     (h : candidates ≠ []) :
-    (buildTableau candidates ranking h).optimal ≠ [] := by
+    ∃ c, (buildTableau candidates ranking h).IsOptimal c := by
   have hlen : ∀ a ∈ candidates, ∀ b ∈ candidates,
       (buildProfile ranking a).length = (buildProfile ranking b).length :=
     fun _ _ _ _ => by simp [buildProfile]
   obtain ⟨m, hm_mem, hm_min⟩ :=
     exists_lexLE_minimum candidates h (buildProfile ranking) hlen
+  exact ⟨m, hm_mem, hm_min⟩
+
+/-- The computed optimal list is non-empty (derived from
+    `buildTableau_isOptimal_exists` via `mem_optimal_iff`). -/
+theorem buildTableau_optimal_nonempty {C : Type}
+    (candidates : List C) (ranking : List (NamedConstraint C))
+    (h : candidates ≠ []) :
+    (buildTableau candidates ranking h).optimal ≠ [] := by
+  obtain ⟨c, hc⟩ := buildTableau_isOptimal_exists candidates ranking h
   intro hemp
-  have hm_opt : m ∈ (buildTableau candidates ranking h).optimal := by
-    simp only [OTTableau.optimal, buildTableau]
-    rw [List.mem_filter]
-    exact ⟨hm_mem, List.all_eq_true.mpr (fun c hc => hm_min c hc)⟩
-  rw [hemp] at hm_opt
-  nomatch hm_opt
+  have := (mem_optimal_iff _ c).mpr hc
+  rw [hemp] at this
+  nomatch this
 
 -- ============================================================================
 -- § 7: Top-Constraint Optimality
@@ -153,23 +163,31 @@ theorem buildTableau_optimal_nonempty {C : Type}
 
     Used by `BasemapCorrespondence.dominant_coph_selects_basemap_faithful`
     to derive that dominant cophonologies select basemap-faithful outputs. -/
+theorem isOptimal_zero_first {C : Type}
+    (candidates : List C) (con : NamedConstraint C)
+    (rest : List (NamedConstraint C))
+    (h : candidates ≠ [])
+    (hExists : ∃ c₀ ∈ candidates, con.eval c₀ = 0)
+    : ∀ c, (buildTableau candidates (con :: rest) h).IsOptimal c →
+        con.eval c = 0 := by
+  intro c ⟨_, hc_all⟩
+  obtain ⟨c₀, hc₀_mem, hc₀_zero⟩ := hExists
+  have hle := hc_all c₀ hc₀_mem
+  simp only [buildTableau, buildProfile, List.map_cons] at hle
+  rw [hc₀_zero] at hle
+  obtain hlt | ⟨heq, _⟩ := hle
+  · exact absurd hlt (Nat.not_lt_zero _)
+  · exact heq
+
+/-- `∈ .optimal` version of `isOptimal_zero_first`. -/
 theorem optimal_zero_first {C : Type}
     (candidates : List C) (con : NamedConstraint C)
     (rest : List (NamedConstraint C))
     (h : candidates ≠ [])
     (hExists : ∃ c₀ ∈ candidates, con.eval c₀ = 0)
     : ∀ c ∈ (buildTableau candidates (con :: rest) h).optimal,
-        con.eval c = 0 := by
-  intro c hc
-  simp only [OTTableau.optimal, buildTableau, List.mem_filter, List.all_eq_true] at hc
-  obtain ⟨_, hc_all⟩ := hc
-  obtain ⟨c₀, hc₀_mem, hc₀_zero⟩ := hExists
-  have hle := hc_all c₀ hc₀_mem
-  simp only [buildProfile, List.map_cons] at hle
-  rw [hc₀_zero] at hle
-  rw [lexLE_cons_cons_iff] at hle
-  cases hle with
-  | inl hlt => exact absurd hlt (Nat.not_lt_zero _)
-  | inr heq => exact heq.1
+        con.eval c = 0 :=
+  fun c hc => isOptimal_zero_first candidates con rest h hExists c
+    ((mem_optimal_iff _ c).mp hc)
 
 end Core.OT

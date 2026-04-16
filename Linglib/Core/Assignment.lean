@@ -1,3 +1,5 @@
+import Mathlib.Init
+
 /-!
 # Variable Assignments
 
@@ -11,8 +13,6 @@ all others fixed. These operations satisfy the cylindric set algebra
 axioms (@cite{henkin-monk-tarski-1971}).
 -/
 
-universe u
-
 namespace Core
 
 /-- Variable assignment: function from indices to entities.
@@ -21,30 +21,30 @@ This is the canonical assignment type used across the library:
 - Montague semantics (static variable binding)
 - DRT, DPL, CDRT (dynamic discourse referents)
 - Cylindric algebra (abstract coordinate functions) -/
-abbrev Assignment (E : Type u) := Nat → E
+abbrev Assignment (E : Type*) := Nat → E
 
 namespace Assignment
 
 /-- Assignment update `g[n↦d]`: set register `n` to value `d`,
 preserving all other registers. -/
-def update {E : Type u} (g : Assignment E) (n : Nat) (d : E) : Assignment E :=
+def update {E : Type*} (g : Assignment E) (n : Nat) (d : E) : Assignment E :=
   fun m => if m = n then d else g m
 
-@[simp] theorem update_at {E : Type u} (g : Assignment E) (n : Nat) (d : E) :
+@[simp] theorem update_at {E : Type*} (g : Assignment E) (n : Nat) (d : E) :
     (g.update n d) n = d := by simp [update]
 
-@[simp] theorem update_ne {E : Type u} (g : Assignment E) {n m : Nat} (d : E)
+@[simp] theorem update_ne {E : Type*} (g : Assignment E) {n m : Nat} (d : E)
     (h : m ≠ n) : (g.update n d) m = g m := by simp [update, h]
 
-theorem update_overwrite {E : Type u} (g : Assignment E) (n : Nat) (x y : E) :
+theorem update_overwrite {E : Type*} (g : Assignment E) (n : Nat) (x y : E) :
     (g.update n x).update n y = g.update n y := by
   funext m; simp [update]; split <;> rfl
 
-theorem update_comm {E : Type u} (g : Assignment E) {n m : Nat} (x y : E)
+theorem update_comm {E : Type*} (g : Assignment E) {n m : Nat} (x y : E)
     (h : n ≠ m) : (g.update n x).update m y = (g.update m y).update n x := by
   funext k; simp [update]; by_cases hn : k = n <;> by_cases hm : k = m <;> simp_all
 
-theorem update_self {E : Type u} (g : Assignment E) (n : Nat) :
+theorem update_self {E : Type*} (g : Assignment E) (n : Nat) :
     g.update n (g n) = g := by
   funext i; simp [update]; intro h; exact congrArg g h.symm
 
@@ -59,11 +59,11 @@ end Assignment
     Used in trivalent semantics (@cite{spector-2025}, @cite{beaver-krahmer-2001})
     where `g(x) = none` means variable `x` is not valued, yielding
     undefinedness (`#`) in predicate application. -/
-abbrev PartialAssign (D : Type u) := Nat → Option D
+abbrev PartialAssign (D : Type*) := Nat → Option D
 
 namespace PartialAssign
 
-variable {D : Type u}
+variable {D : Type*}
 
 /-- A partial assignment that values no variables. -/
 def empty : PartialAssign D := λ _ => none
@@ -118,13 +118,13 @@ end PartialAssign
 
     Uses a structure wrapper to prevent Lean from currying
     `(Nat → Option D) → Prop` into `Nat → Option D → Prop`. -/
-@[ext] structure PluralAssign (D : Type u) where
+@[ext] structure PluralAssign (D : Type*) where
   /-- The membership predicate on atomic assignments. -/
   pred : PartialAssign D → Prop
 
 namespace PluralAssign
 
-variable {D : Type u}
+variable {D : Type*}
 
 instance : Membership (PartialAssign D) (PluralAssign D) where
   mem G g := G.pred g
@@ -180,3 +180,50 @@ theorem singular_iff_exists_singularAt (G : PluralAssign D) (x : Nat) :
 end PluralAssign
 
 end Core
+
+-- ════════════════════════════════════════════════════════════════
+-- Generic Variable Assignment (@cite{partee-1973}, @cite{heim-kratzer-1998})
+-- ════════════════════════════════════════════════════════════════
+
+namespace Core.VarAssignment
+
+/-- Generic variable assignment: maps indices to values in domain `D`.
+    Instantiate with `D = Entity` for pronoun interpretation (@cite{heim-kratzer-1998})
+    or `D = Time` for temporal variable interpretation.
+
+    This is the same type as `Core.Assignment D` (both are `ℕ → D`). The alias
+    exists for historical reasons; prefer `Core.Assignment` in new code. -/
+abbrev VarAssignment (D : Type*) := Nat → D
+
+/-- Modified assignment g[n ↦ d]: update index `n` to value `d`. -/
+def updateVar {D : Type*} (g : VarAssignment D) (n : Nat) (d : D) : VarAssignment D :=
+  λ i => if i = n then d else g i
+
+/-- Variable denotation: ⟦xₙ⟧^g = g(n). -/
+def lookupVar {D : Type*} (n : Nat) (g : VarAssignment D) : D := g n
+
+/-- Lambda abstraction over variable `n`: bind a variable in `body`. -/
+def varLambdaAbs {D α : Type*} (n : Nat) (body : VarAssignment D → α) :
+    VarAssignment D → D → α :=
+  λ g d => body (updateVar g n d)
+
+@[simp]
+theorem update_lookup_same {D : Type*} (g : VarAssignment D) (n : Nat) (d : D) :
+    lookupVar n (updateVar g n d) = d := by
+  simp [lookupVar, updateVar]
+
+@[simp]
+theorem update_lookup_other {D : Type*} (g : VarAssignment D)
+    (n i : Nat) (d : D) (h : i ≠ n) :
+    lookupVar i (updateVar g n d) = lookupVar i g := by
+  simp [lookupVar, updateVar, h]
+
+theorem update_update_same {D : Type*} (g : VarAssignment D) (n : Nat) (d₁ d₂ : D) :
+    updateVar (updateVar g n d₁) n d₂ = updateVar g n d₂ := by
+  funext i; simp [updateVar]; by_cases h : i = n <;> simp [h]
+
+theorem update_self {D : Type*} (g : VarAssignment D) (n : Nat) :
+    updateVar g n (g n) = g := by
+  funext i; simp only [updateVar]; by_cases h : i = n <;> simp [h]
+
+end Core.VarAssignment

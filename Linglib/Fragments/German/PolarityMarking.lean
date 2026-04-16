@@ -28,7 +28,10 @@ namespace Fragments.German.PolarityMarking
 open Core.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
 
 /-- Verum focus — pitch accent on the finite verb.
-    Dominant strategy in German for neg→affirm switches in both contexts. -/
+    Dominant strategy in German for neg→affirm switches in both contexts.
+    Sentence-internal; available in both contrast and correction.
+    @cite{hohle-1992}, @cite{turco-braun-dimroth-2014}: ~82% in contrast,
+    ~78% in correction. -/
 def verumFocus : PolarityMarkingEntry where
   label := "Verum focus"
   prosodicTarget := some "finite verb"

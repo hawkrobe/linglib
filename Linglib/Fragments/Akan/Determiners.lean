@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
-import Linglib.Theories.Semantics.Lexical.Determiner.Definite
+import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
 import Linglib.Core.Definiteness
 
@@ -49,7 +49,7 @@ alternative-sensitive scalar operator *ara*.
 namespace Fragments.Akan.Determiners
 
 open Semantics.Lexical.Determiner.ChoiceFunction
-open Semantics.Lexical.Determiner.Definite
+open Semantics.Definiteness
 open Semantics.Lexical.Determiner.UnifiedUniversal
 open Core.Definiteness
 open Core.Presupposition

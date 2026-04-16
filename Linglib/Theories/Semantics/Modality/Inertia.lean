@@ -52,12 +52,12 @@ def InertialParams.toKratzer (p : InertialParams) : KratzerParams where
 
     For intention readings: in all worlds where the experiencer's current
     course of action continues uninterrupted, the intended event obtains. -/
-def inertialNecessity (p : InertialParams) (prop : BProp World) (w : World) : Bool :=
+def inertialNecessity (p : InertialParams) (prop : BProp World) (w : World) : Prop :=
   necessity p.circumstances p.inertia prop w
 
 /-- Inertial possibility: p holds in some best (most inertial) circumstantially
     accessible world. -/
-def inertialPossibility (p : InertialParams) (prop : BProp World) (w : World) : Bool :=
+def inertialPossibility (p : InertialParams) (prop : BProp World) (w : World) : Prop :=
   possibility p.circumstances p.inertia prop w
 
 /-- Inertial modality is a normal modal logic (inherits from Kratzer). -/
@@ -68,11 +68,15 @@ theorem inertial_isNormal (p : InertialParams) :
 /-- With empty inertial ordering, inertial modality reduces to simple
     circumstantial necessity (no preference among accessible worlds). -/
 theorem empty_inertia_is_simple (circ : ModalBase) (prop : BProp World) (w : World) :
-    inertialNecessity ⟨circ, emptyBackground⟩ prop w =
+    inertialNecessity ⟨circ, emptyBackground⟩ prop w ↔
     simpleNecessity circ prop w := by
-  simp only [inertialNecessity, necessity, simpleNecessity]
-  congr 1
-  exact empty_ordering_simple circ w
+  simp only [inertialNecessity, necessity, simpleNecessity,
+             Core.IntensionalLogic.RestrictedModality.boxR]
+  constructor
+  · intro h j hj
+    exact h j ((kratzerBestR_empty circ w j).mpr hj)
+  · intro h j hj
+    exact h j ((kratzerBestR_empty circ w j).mp hj)
 
 /-- Inertial modality maps to the circumstantial flavor tag.
     Both inertial and teleological modality concern what happens given

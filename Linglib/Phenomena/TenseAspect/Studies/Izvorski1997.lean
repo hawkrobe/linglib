@@ -234,10 +234,9 @@ theorem izvorski_koev_diverge :
 theorem izvorski_collapses_to_koev_when_realistic
     (f : ModalBase) (p : BProp World) (w : World)
     (hTotal : accessibleWorlds f w = [w]) :
-    (izvorskiEv f emptyBackground p).assertion w = p w := by
-  simp only [izvorskiEv, necessity]
-  rw [empty_ordering_emptyBackground]
-  rw [hTotal]
+    (izvorskiEv f emptyBackground p).assertion w ↔ (p w = true) := by
+  simp only [izvorskiEv]
+  rw [necessity_iff_all, empty_ordering_emptyBackground, hTotal]
   simp only [List.all_cons, List.all_nil, Bool.and_true]
 
 theorem izvorski_projection (f : ModalBase) (g : OrderingSource) (p : BProp World) :

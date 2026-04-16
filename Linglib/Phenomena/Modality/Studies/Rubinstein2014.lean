@@ -234,10 +234,11 @@ ordering source. -/
 /-- With no promoted priorities, Rubinstein's strong necessity equals
     simple Kratzer necessity (no ordering). -/
 theorem strongR_eq_simpleNecessity (f : ModalBase) (p : BProp World) (w : World) :
-    strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w =
+    (strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w = true) ↔
     simpleNecessity f p w := by
-  unfold strongNecessityR simpleNecessity
-  rw [show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
+  unfold strongNecessityR
+  rw [simpleNecessity_iff_all,
+    show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
       accessibleWorlds f w from favored_no_promoted f emptyBackground w]
 
 /-- With no promoted priorities, Rubinstein's weak necessity equals
@@ -249,9 +250,10 @@ theorem strongR_eq_simpleNecessity (f : ModalBase) (p : BProp World) (w : World)
     material; Rubinstein promotes some to modal-base status. -/
 theorem weakR_eq_necessity (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World) :
-    weakNecessityR ⟨f, emptyBackground, g⟩ p w =
+    (weakNecessityR ⟨f, emptyBackground, g⟩ p w = true) ↔
     necessity f g p w := by
-  unfold weakNecessityR necessity bestAmong bestWorlds
+  rw [necessity_iff_all]
+  unfold weakNecessityR bestAmong bestWorlds
     favoredWorlds accessibleWorlds emptyBackground propIntersection
   simp only [List.append_nil]
 
@@ -260,9 +262,10 @@ theorem weakR_eq_necessity (f : ModalBase) (g : OrderingSource)
 theorem strongR_eq_weakR_trivial (f : ModalBase) (p : BProp World) (w : World) :
     strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w =
     weakNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w := by
-  rw [strongR_eq_simpleNecessity, weakR_eq_necessity]
-  unfold simpleNecessity necessity
-  rw [empty_ordering_emptyBackground]
+  unfold strongNecessityR weakNecessityR
+  rw [show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
+      accessibleWorlds f w from favored_no_promoted f emptyBackground w]
+  simp only [emptyBackground, bestAmong_empty]
 
 -- ============================================================================
 -- §7. The Evaluative Comparative Natural Class (§1, §2.1.3)

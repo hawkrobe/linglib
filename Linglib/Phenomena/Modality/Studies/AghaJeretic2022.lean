@@ -577,15 +577,15 @@ open Semantics.Modality.Directive (weakNecessity)
 open Semantics.Modality.Kratzer (ModalBase OrderingSource)
 open Core.Proposition (BProp)
 
-/-- `Directive.weakNecessity` is bivalent: it returns Bool, so wrapping
-    in Truth3 can only yield true or false — never indet. -/
+/-- `Directive.weakNecessity` is bivalent: as a Prop, it is classically
+    true or false — never indeterminate. This contrasts with `shouldEval`,
+    which can return `Truth3.indet`. -/
 theorem directive_bivalent
     (f : ModalBase) (g g' : OrderingSource)
     (p : BProp Semantics.Attitudes.Intensional.World)
     (w : Semantics.Attitudes.Intensional.World) :
-    Truth3.ofBool (weakNecessity f g g' p w) = Truth3.true ∨
-    Truth3.ofBool (weakNecessity f g g' p w) = Truth3.false := by
-  cases weakNecessity f g g' p w <;> simp [Truth3.ofBool]
+    weakNecessity f g g' p w ∨ ¬ weakNecessity f g g' p w :=
+  em _
 
 end DirectiveBridge
 

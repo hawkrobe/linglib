@@ -31,6 +31,13 @@ namespace Theories.Phonology
     - **Place (Coronal)**: coronal, anterior, distributed
     - **Place (Dorsal)**: dorsal, high, low, front, back, tense
 
+    **Note**: The grouping above follows Hayes's flat classification.
+    The hierarchical feature geometry (`FeatureGeometry.lean`) re-maps
+    some of these features to different nodes: [nasal] → soft palate,
+    [continuant] → supralaryngeal, [lateral]/[strident] → coronal.
+    The flat `isMajorClass` predicate has no single geometric counterpart
+    — see subsumption theorems in `FeatureGeometry.lean` §6.
+
     The sonority hierarchy (Hayes Table 4.1) is decomposed as:
     [±sonorant] > [±approximant] > [±consonantal] > [±syllabic],
     yielding 5 natural classes (obstruent, nasal, liquid, glide, vowel). -/

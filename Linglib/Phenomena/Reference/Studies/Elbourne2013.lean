@@ -1,8 +1,8 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Definiteness
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.Discourse.QUD
-import Linglib.Theories.Semantics.Lexical.Determiner.Definite
+import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Reference.Donnellan
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Pronouns
@@ -61,7 +61,7 @@ namespace Phenomena.Reference.Studies.Elbourne2013
 open Core.Presupposition (PrProp)
 open Core.Definiteness (DefPresupType)
 open Core.SitVarStatus (SitVarStatus)
-open Semantics.Lexical.Determiner.Definite (the_uniq_w qforceToPresupType)
+open Semantics.Definiteness (the_uniq_w qforceToPresupType)
 open Semantics.Reference.Donnellan (definitePrProp UseMode)
 
 

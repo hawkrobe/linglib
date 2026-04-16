@@ -82,10 +82,11 @@ open Core.ConstraintEvaluation
     This is the blocking mechanism — it suppresses interpretations
     that can be triggered more economically by an alternative form
     (@cite{horn-1984}'s Q-based implicature). -/
-def satisfiesQ {F M : Type} [BEq F] [BEq M]
+def satisfiesQ {F M : Type} [DecidableEq F] [DecidableEq M]
     (gen : List (F × M)) (profile : F × M → List Nat)
     (p : F × M) : Bool :=
-  !gen.any (fun q => !(q.1 == p.1) && q.2 == p.2 && lexLT (profile q) (profile p))
+  gen.all fun q =>
+    decide (q.2 = p.2 → q.1 ≠ p.1 → ¬LexLT (profile q) (profile p))
 
 /-- **I-principle** (comprehension optimality, @cite{blutner-2000} eq. 9(I)):
     ⟨A, τ⟩ satisfies I iff no other pair with the same form A
@@ -96,14 +97,15 @@ def satisfiesQ {F M : Type} [BEq F] [BEq M]
     be dispreferred. This is the interpretation mechanism — it
     selects the most coherent/stereotypical reading
     (@cite{horn-1984}'s R-based inference). -/
-def satisfiesI {F M : Type} [BEq F] [BEq M]
+def satisfiesI {F M : Type} [DecidableEq F] [DecidableEq M]
     (gen : List (F × M)) (profile : F × M → List Nat)
     (p : F × M) : Bool :=
-  !gen.any (fun q => q.1 == p.1 && !(q.2 == p.2) && lexLT (profile q) (profile p))
+  gen.all fun q =>
+    decide (q.1 = p.1 → q.2 ≠ p.2 → ¬LexLT (profile q) (profile p))
 
 /-- Strong-optimal = satisfies BOTH Q and I against the full candidate set.
     This is equivalent to `strongOptimal` in `ConstraintEvaluation`. -/
-theorem strongOptimal_eq_both {F M : Type} [BEq F] [BEq M]
+theorem strongOptimal_eq_both {F M : Type} [DecidableEq F] [DecidableEq M]
     (pairs : List (F × M)) (profile : F × M → List Nat) :
     strongOptimal pairs profile =
     pairs.filter (fun p => satisfiesQ pairs profile p && satisfiesI pairs profile p) := by
@@ -244,54 +246,42 @@ theorem total_blocking_weak_vs_strong :
 -- ============================================================================
 
 /-- Every strong-optimal pair satisfies Q against the full set. -/
-theorem strongOptimal_satisfies_Q {F M : Type} [BEq F] [BEq M]
+theorem strongOptimal_satisfies_Q {F M : Type} [DecidableEq F] [DecidableEq M]
     (pairs : List (F × M)) (profile : F × M → List Nat)
     (p : F × M) (hp : p ∈ strongOptimal pairs profile) :
     satisfiesQ pairs profile p = true := by
-  simp only [strongOptimal, List.mem_filter] at hp
-  simp only [satisfiesQ]
-  exact Bool.and_eq_true_iff.mp hp.2 |>.1
+  rw [strongOptimal_eq_both, List.mem_filter] at hp
+  exact (Bool.and_eq_true_iff.mp hp.2).1
 
 /-- Every strong-optimal pair satisfies I against the full set. -/
-theorem strongOptimal_satisfies_I {F M : Type} [BEq F] [BEq M]
+theorem strongOptimal_satisfies_I {F M : Type} [DecidableEq F] [DecidableEq M]
     (pairs : List (F × M)) (profile : F × M → List Nat)
     (p : F × M) (hp : p ∈ strongOptimal pairs profile) :
     satisfiesI pairs profile p = true := by
-  simp only [strongOptimal, List.mem_filter] at hp
-  simp only [satisfiesI]
-  exact Bool.and_eq_true_iff.mp hp.2 |>.2
+  rw [strongOptimal_eq_both, List.mem_filter] at hp
+  exact (Bool.and_eq_true_iff.mp hp.2).2
 
 /-- `strongOptimal` membership implies not blocked by the full pair set.
-    This is the key step: the two independent checks in `strongOptimal`
-    (no Q-blocker, no I-blocker) together cover the disjunction checked
-    by `blocked` (Q-blocker ∨ I-blocker). -/
-private theorem blocked_false_of_strongOptimal_aux {F M : Type} [BEq F] [BEq M]
-    (profile : F × M → List Nat) (p : F × M)
-    : (l : List (F × M)) →
-    l.any (fun q => !(q.1 == p.1) && q.2 == p.2 && lexLT (profile q) (profile p)) = false →
-    l.any (fun q => q.1 == p.1 && !(q.2 == p.2) && lexLT (profile q) (profile p)) = false →
-    l.any (fun q => ((q.1 == p.1 && !(q.2 == p.2)) || (!(q.1 == p.1) && q.2 == p.2)) &&
-      lexLT (profile q) (profile p)) = false
-  | [], _, _ => rfl
-  | q :: qs, hQ, hI => by
-    simp only [List.any_cons] at *
-    cases h1 : (q.1 == p.1) <;> cases h2 : (q.2 == p.2) <;>
-      simp_all [blocked_false_of_strongOptimal_aux profile p qs]
-
-theorem strongOptimal_not_blocked {F M : Type} [BEq F] [BEq M]
+    The two independent checks in `strongOptimal` (no Q-blocker, no
+    I-blocker) together cover the disjunction checked by `blocked`
+    (Q-blocker ∨ I-blocker). -/
+theorem strongOptimal_not_blocked {F M : Type} [DecidableEq F] [DecidableEq M]
     (pairs : List (F × M)) (profile : F × M → List Nat)
     (p : F × M) (hp : p ∈ strongOptimal pairs profile) :
     blocked profile pairs p = false := by
-  simp only [strongOptimal, List.mem_filter] at hp
-  obtain ⟨_, hp2⟩ := hp
-  have ⟨hQ, hI⟩ := Bool.and_eq_true_iff.mp hp2
-  rw [Bool.not_eq_true'] at hQ hI
-  exact blocked_false_of_strongOptimal_aux profile p pairs hQ hI
+  rw [Bool.eq_false_iff]
+  intro hb
+  rw [← isBlocked_iff_blocked] at hb
+  rw [mem_strongOptimal_iff] at hp
+  obtain ⟨q, hq_mem, hq_dim, hq_lt⟩ := hb
+  rcases hq_dim with ⟨heq_f, hne_m⟩ | ⟨hne_f, heq_m⟩
+  · exact hp.2.2 q hq_mem heq_f hne_m hq_lt
+  · exact hp.2.1 q hq_mem heq_m hne_f hq_lt
 
 /-- @cite{blutner-2000} p. 12: "It is simple to prove that a pair which
     is optimal (strong bidirection), is super-optimal (weak bidirection)
     as well." Strong-optimal is a subset of super-optimal. -/
-theorem strong_subset_weak {F M : Type} [BEq F] [BEq M]
+theorem strong_subset_weak {F M : Type} [DecidableEq F] [DecidableEq M]
     (pairs : List (F × M)) (profile : F × M → List Nat)
     (p : F × M) (hp : p ∈ strongOptimal pairs profile) :
     p ∈ superoptimal pairs profile := by

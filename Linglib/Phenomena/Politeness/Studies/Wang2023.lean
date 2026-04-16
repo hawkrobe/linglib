@@ -505,7 +505,7 @@ section GeneralTheorem
 
 open Core.OT (optimal_zero_first buildProfile)
 open Core.ConstraintEvaluation (OTTableau optimal_subset
-  lexLE lexLE_cons_cons_iff lexLE_refl)
+  LexLE lexLE_cons_cons_iff lexLE_refl)
 
 /-- Every optimal candidate under ToD >> MP! is `.minimal`. The proof:
     `optimal_zero_first` gives `todConstraint.eval c = 0`, i.e.
@@ -536,19 +536,17 @@ theorem tod_mp_minimal_is_optimal (candidates : List PrivativePair)
       (buildTableau candidates [todConstraint, mpConstraint] hNE).optimal := by
   simp only [OTTableau.optimal, buildTableau, List.mem_filter]
   refine ⟨hMin, List.all_eq_true.mpr fun c' _ => ?_⟩
+  rw [decide_eq_true_eq]
   simp only [buildProfile, List.map_cons, List.map_nil]
   rw [show todConstraint.eval .minimal = 0 from rfl,
       show mpConstraint.eval .minimal = 2 from rfl]
-  rw [lexLE_cons_cons_iff]
   by_cases h : (0 : Nat) < todConstraint.eval c'
-  · exact Or.inl h
-  · right
-    have h0 : todConstraint.eval c' = 0 := by omega
-    refine ⟨h0.symm, ?_⟩
+  · exact .inl h
+  · have h0 : todConstraint.eval c' = 0 := by omega
     have h1 : mpConstraint.eval c' = 2 := by
       simp only [mpConstraint, todConstraint, presupStrength] at h0 ⊢
       simp only [PrivativePair.spec_maximal]; omega
-    rw [h1]; exact lexLE_refl _
+    exact .inr ⟨h0.symm, by rw [h1]; exact lexLE_refl _⟩
 
 /-- **General ToD >> MP! Theorem**: for any set of well-formed candidates
     containing `.minimal`, the optimal set under ToD >> MP! is exactly

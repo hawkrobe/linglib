@@ -2,6 +2,7 @@ import Linglib.Core.Mereology
 import Linglib.Core.PrivativePair
 import Linglib.Core.Number
 import Linglib.Core.Person
+import Linglib.Core.Gender
 import Linglib.Core.Semantics.Presupposition
 
 /-!
@@ -25,6 +26,7 @@ stronger presupposition = smaller domain.
 |-------------|------------------|-------------------------------|-------------|-------------------|-------------|
 | Number      | Atom             | MinimalGroup                  | singular    | dual              | plural      |
 | Person      | speaker ≤ ·      | speaker ≤ · ∨ addressee ≤ ·   | 1st         | 2nd               | 3rd         |
+| Gender      | isInanimate      | isFemale                      | neuter      | feminine          | masculine   |
 | Definiteness| familiar/unique  | —                             | definite    | —                 | indefinite  |
 
 ## Semantic Markedness (@cite{wang-r-2023})
@@ -131,27 +133,27 @@ def dualSem {E : Type*} (minimalP : E → Prop) : PrProp E where
 -- ── Number denotations as `phiPresup` instances ─────
 
 /-- `sgSem` is `phiPresup` at the maximal cell. -/
-theorem sgSem_eq_phiPresup {E : Type*} [PartialOrder E]
+@[simp] theorem sgSem_eq_phiPresup {E : Type*} [PartialOrder E]
     (outerP : E → Prop) :
     phiPresup Atom outerP .maximal = sgSem E := rfl
 
 /-- `dualSem` is `phiPresup` at the intermediate cell. -/
-theorem dualSem_eq_phiPresup {E : Type*} [PartialOrder E]
+@[simp] theorem dualSem_eq_phiPresup {E : Type*} [PartialOrder E]
     (minimalP : E → Prop) :
     phiPresup (E := E) Atom minimalP .intermediate = dualSem minimalP := rfl
 
 /-- `plSem` is `phiPresup` at the minimal cell. -/
-theorem plSem_eq_phiPresup {E : Type*} (innerP outerP : E → Prop) :
+@[simp] theorem plSem_eq_phiPresup {E : Type*} (innerP outerP : E → Prop) :
     phiPresup innerP outerP .minimal = plSem E := rfl
 
 -- ── Bridge to Core.Number ─────
 
 /-- Singular features map to the maximal `PrivativePair` cell (specLevel 2). -/
-theorem sg_is_maximal_cell :
+@[simp] theorem sg_is_maximal_cell :
     PhiFeatures.toPair Core.Number.singularF = .maximal := rfl
 
 /-- Plural features map to the minimal cell (specLevel 0). -/
-theorem pl_is_minimal_cell :
+@[simp] theorem pl_is_minimal_cell :
     PhiFeatures.toPair Core.Number.pluralF = .minimal := rfl
 
 /-- The presuppositional asymmetry tracks specification level:
@@ -241,6 +243,113 @@ theorem person_number_isomorphism :
 end PersonPresuppositions
 
 -- ============================================================================
+-- §3b  Gender Presuppositions
+-- ============================================================================
+
+/-!
+## §3b: Gender Presuppositions (@cite{sauerland-2003} §6)
+
+Gender features [±feminine, ±neuter] form a third `PrivativePair` instance,
+with containment [+neuter] → [+feminine] (see `Core.Gender.Features`).
+
+The presuppositional semantics mirrors number and person:
+- **neuter** (maximal, specLevel 2): presupposes inanimate
+- **feminine** (intermediate, specLevel 1): presupposes female
+- **masculine** (minimal, specLevel 0): vacuous (default/unmarked)
+
+@cite{wang-r-2023}: masculine, as the semantically unmarked gender,
+is available for honorific use cross-linguistically — paralleling the
+use of plural (unmarked number) and 3rd person (unmarked person) for
+politeness.
+-/
+
+section GenderPresuppositions
+
+variable {E : Type*}
+
+/-- ⟦Neut⟧: presupposes the referent is inanimate.
+    Maximal cell [+feminine, +neuter] (specLevel 2). -/
+def neutSem (isInanimate : E → Prop) : PrProp E where
+  presup := isInanimate
+  assertion := fun _ => True
+
+/-- ⟦Fem⟧: presupposes the referent is female.
+    Intermediate cell [+feminine, −neuter] (specLevel 1). -/
+def femSem (isFemale : E → Prop) : PrProp E where
+  presup := isFemale
+  assertion := fun _ => True
+
+/-- ⟦Masc⟧: vacuous presupposition.
+    Minimal cell [−feminine, −neuter] (specLevel 0). -/
+def mascSem : PrProp E where
+  presup := fun _ => True
+  assertion := fun _ => True
+
+-- ── Gender denotations as `phiPresup` instances ─────
+
+/-- `neutSem` is `phiPresup` at the maximal cell. -/
+@[simp] theorem neutSem_eq_phiPresup (isInanimate isFemale : E → Prop) :
+    phiPresup isInanimate isFemale .maximal = neutSem isInanimate := rfl
+
+/-- `femSem` is `phiPresup` at the intermediate cell. -/
+@[simp] theorem femSem_eq_phiPresup (isInanimate isFemale : E → Prop) :
+    phiPresup isInanimate isFemale .intermediate = femSem isFemale := rfl
+
+/-- `mascSem` is `phiPresup` at the minimal cell. -/
+@[simp] theorem mascSem_eq_phiPresup (innerP outerP : E → Prop) :
+    phiPresup innerP outerP .minimal = (mascSem : PrProp E) := rfl
+
+-- ── Bridge to Core.Gender ─────
+
+/-- Neuter features map to the maximal `PrivativePair` cell (specLevel 2). -/
+@[simp] theorem neut_is_maximal_cell :
+    PhiFeatures.toPair Core.Gender.neuterF = .maximal := rfl
+
+/-- Feminine features map to the intermediate cell (specLevel 1). -/
+@[simp] theorem fem_is_intermediate_cell :
+    PhiFeatures.toPair Core.Gender.feminineF = .intermediate := rfl
+
+/-- Masculine features map to the minimal cell (specLevel 0). -/
+@[simp] theorem masc_is_minimal_cell :
+    PhiFeatures.toPair Core.Gender.masculineF = .minimal := rfl
+
+/-- Gender domain nesting: dom(Neut) ⊆ dom(Fem) ⊆ dom(Masc).
+    Parallels number (sg ⊆ pl) and person (1st ⊆ 3rd). -/
+theorem gender_domain_nesting (isInanimate isFemale : E → Prop)
+    (hContain : ∀ x, isInanimate x → isFemale x) :
+    (∀ x, (neutSem isInanimate).defined x →
+          (femSem isFemale).defined x) ∧
+    (∀ x, (femSem isFemale).defined x →
+          (mascSem (E := E)).defined x) :=
+  ⟨fun _ h => hContain _ h, fun _ _ => trivial⟩
+
+/-- Gender nesting via `phiPresup_nesting` — structurally identical
+    to person nesting and number nesting. -/
+theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
+    (hContain : ∀ x, isInanimate x → isFemale x)
+    {c₁ c₂ : PrivativePair}
+    (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true)
+    (hSpec : c₁.specLevel ≥ c₂.specLevel) (x : E)
+    (h : (phiPresup isInanimate isFemale c₁).defined x) :
+    (phiPresup isInanimate isFemale c₂).defined x :=
+  phiPresup_nesting hContain hw₁ hw₂ hSpec x h
+
+/-- Gender, person, and number have the same `specLevel` ordering —
+    all three domains share the phi kernel structure. -/
+theorem gender_person_number_isomorphism :
+    PhiFeatures.specLevel Core.Gender.neuterF =
+      PhiFeatures.specLevel Core.Person.first ∧
+    PhiFeatures.specLevel Core.Gender.neuterF =
+      PhiFeatures.specLevel Core.Number.singularF ∧
+    PhiFeatures.specLevel Core.Gender.feminineF =
+      PhiFeatures.specLevel Core.Person.second ∧
+    PhiFeatures.specLevel Core.Gender.masculineF =
+      PhiFeatures.specLevel Core.Person.third :=
+  ⟨rfl, rfl, rfl, rfl⟩
+
+end GenderPresuppositions
+
+-- ============================================================================
 -- §4  Definiteness Presuppositions
 -- ============================================================================
 
@@ -280,11 +389,11 @@ def indefSem : PrProp E where
   assertion := fun _ => True
 
 /-- `defSem` is `phiPresup` at the maximal cell (with outerP = familiar). -/
-theorem defSem_eq_phiPresup (familiar : E → Prop) :
+@[simp] theorem defSem_eq_phiPresup (familiar : E → Prop) :
     phiPresup familiar familiar .maximal = defSem familiar := rfl
 
 /-- `indefSem` is `phiPresup` at the minimal cell. -/
-theorem indefSem_eq_phiPresup (innerP outerP : E → Prop) :
+@[simp] theorem indefSem_eq_phiPresup (innerP outerP : E → Prop) :
     phiPresup innerP outerP .minimal = (indefSem : PrProp E) := rfl
 
 /-- Definiteness domain nesting: dom(DEF) ⊆ dom(INDEF). -/
@@ -326,13 +435,13 @@ def isSemanticUnmarked (c : PrivativePair) : Bool := c.specLevel == 0
 def isSemanticMarked (c : PrivativePair) : Bool := c.specLevel > 0
 
 /-- The minimal cell is the unique unmarked cell. -/
-theorem minimal_is_unmarked : isSemanticUnmarked .minimal = true := rfl
+@[simp] theorem minimal_is_unmarked : isSemanticUnmarked .minimal = true := rfl
 
 /-- The maximal cell is marked. -/
-theorem maximal_is_marked : isSemanticMarked .maximal = true := rfl
+@[simp] theorem maximal_is_marked : isSemanticMarked .maximal = true := rfl
 
 /-- The intermediate cell is marked. -/
-theorem intermediate_is_marked : isSemanticMarked .intermediate = true := rfl
+@[simp] theorem intermediate_is_marked : isSemanticMarked .intermediate = true := rfl
 
 /-- Only the minimal cell is unmarked among well-formed cells. -/
 theorem unmarked_iff_minimal (c : PrivativePair) (hw : c.wellFormed = true) :

@@ -316,16 +316,16 @@ def EvidentialBiasFlavor.toKratzerParams (f : EvidentialBiasFlavor) : KratzerPar
   ordering := f.stereotypical
 
 /-- Evidential necessity: ∀w' ∈ Best(f,g,w). p(w'). -/
-def evidentialNecessity (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Bool :=
+def evidentialNecessity (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :=
   necessity f.contextBase f.stereotypical p w
 
 /-- Evidential possibility: ∃w' ∈ Best(f,g,w). p(w'). -/
-def evidentialPossibility (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Bool :=
+def evidentialPossibility (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :=
   possibility f.contextBase f.stereotypical p w
 
 /-- □_ev satisfies modal duality. -/
 theorem evidentialBias_duality (f : EvidentialBiasFlavor) (p : BProp World) (w : World) :
-    (evidentialNecessity f p w == !evidentialPossibility f (λ w' => !p w') w) = true :=
+    evidentialNecessity f p w ↔ ¬ evidentialPossibility f (λ w' => !p w') w :=
   duality f.contextBase f.stereotypical p w
 
 -- ============================================================================
@@ -335,14 +335,14 @@ theorem evidentialBias_duality (f : EvidentialBiasFlavor) (p : BProp World) (w :
 /-- **Inner negation** scopes under □_ev: □_ev(¬p).
 
 Strong evidential bias: based on the context, it must be that ¬p. -/
-def innerBias (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Bool :=
+def innerBias (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :=
   evidentialNecessity f (λ w' => !p w') w
 
 /-- **Medial negation** scopes over □_ev: ¬□_ev(p).
 
 Weak evidential bias: it's not the case that p must hold. -/
-def medialBias (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Bool :=
-  !evidentialNecessity f p w
+def medialBias (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :=
+  ¬ evidentialNecessity f p w
 
 /-- Inner bias entails medial bias given seriality (D axiom):
 □_ev(¬p) → ¬□_ev(p), provided Best(f,g,w) is non-empty.
@@ -351,27 +351,22 @@ TODO: The seriality condition holds whenever the modal base is realistic
 (cf. `Kratzer.realistic_is_serial`). -/
 theorem inner_entails_medial (f : EvidentialBiasFlavor) (p : BProp World) (w : World)
     (hSerial : (bestWorlds f.contextBase f.stereotypical w).length > 0)
-    (hInner : innerBias f p w = true) :
-    medialBias f p w = true := by
-  simp only [medialBias, Bool.not_eq_true']
-  simp only [innerBias, evidentialNecessity, necessity] at hInner
-  simp only [evidentialNecessity, necessity]
-  -- hInner: best.all (λ w' => !p w') = true. Goal: best.all p = false.
-  -- If best is non-empty, some w' satisfies !p w', so p w' = false, so best.all p = false.
-  match hBest : bestWorlds f.contextBase f.stereotypical w with
-  | [] => simp only [hBest, List.length_nil, gt_iff_lt, Nat.lt_irrefl] at hSerial
-  | w' :: ws =>
-    simp only [hBest, List.all_cons] at hInner
-    -- hInner : ((!p w') && (ws.all fun w' => !p w')) = true
-    -- We need: (p w' && ws.all p) = false
-    simp only [hBest, List.all_cons]
-    -- Goal: (p w' && ws.all p) = false
-    -- From hInner, !p w' = true (first conjunct), so p w' = false
-    cases hp : p w'
-    · -- p w' = false
-      simp only [hp, Bool.false_and]
-    · -- p w' = true, but hInner says p w' = false — contradiction
-      simp [hp] at hInner
+    (hInner : innerBias f p w) :
+    medialBias f p w := by
+  simp only [medialBias, evidentialNecessity]
+  rw [necessity_iff_all]
+  simp only [innerBias, evidentialNecessity] at hInner
+  rw [necessity_iff_all] at hInner
+  -- hInner : (bestWorlds ...).all (fun w' => !p w') = true
+  -- Goal : ¬ (bestWorlds ...).all p = true
+  rw [List.all_eq_true] at hInner
+  intro hAll
+  rw [List.all_eq_true] at hAll
+  -- Best worlds is non-empty, so pick the first element
+  obtain ⟨w', hw'⟩ := List.exists_mem_of_length_pos hSerial
+  have := hInner w' hw'
+  have := hAll w' hw'
+  simp_all
 
 -- ============================================================================
 -- §8: Focus Requirement on FALSUM (@cite{romero-2024} §3.2, Staňková 2026 §4)

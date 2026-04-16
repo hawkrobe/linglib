@@ -52,9 +52,12 @@ These convert between semantic types:
 - ∃ (exists): Property → GQ (existential quantification)
 -/
 inductive TypeShift where
-  | down   -- ∩: λP λs ιx[Ps(x)] - kind formation
-  | iota   -- ι: λP ιx[Ps(x)] - definite description
-  | exists -- ∃: λP λQ ∃x[P(x) ∧ Q(x)] - existential
+  | down           -- ∩: λP λs ιx[Ps(x)] - kind formation
+  | iota           -- ι: λP ιx[Ps(x)] - unique definite description
+  | iotaAnaphoric  -- ι^x: λP λQ ιx[Ps(x) ∧ Q(x)] - anaphoric definite
+                   -- (@cite{moroney-2021} Def 508): presupposes unique P-satisfier
+                   -- that additionally satisfies anaphoric restrictor Q
+  | exists         -- ∃: λP λQ ∃x[P(x) ∧ Q(x)] - existential
   deriving DecidableEq, Repr
 
 /--
@@ -71,9 +74,10 @@ that "loses" some information.
 ∃P only preserves existence of some satisfier (loses identity)
 -/
 def meaningPreservationRank : TypeShift → Nat
-  | .down => 1   -- Highest rank (most preserving)
-  | .iota => 1   -- Same rank as ∩
-  | .exists => 2 -- Lower rank (less preserving)
+  | .down          => 1 -- Highest rank (most preserving)
+  | .iota          => 1 -- Same rank as ∩
+  | .iotaAnaphoric => 1 -- Same rank as ι: preserves full semantic content
+  | .exists        => 2 -- Lower rank (less preserving)
 
 /-- Type shifts with equal rank are equally preferred -/
 def equallyPreferred (t1 t2 : TypeShift) : Bool :=
@@ -140,9 +144,13 @@ It's about whether the instantiation set is conceptualized as:
 - Non-atomic/multiple (plural)
 -/
 inductive NumberFeature where
-  | sg   -- Singular: atomic instantiation set
-  | pl   -- Plural: non-atomic instantiation set
-  | mass -- Mass: no number distinction
+  | sg      -- Singular: atomic instantiation set
+  | pl      -- Plural: non-atomic instantiation set
+  | mass    -- Mass: no number distinction
+  | neutral -- Number-neutral: no obligatory number marking (Shan, Serbian).
+              -- Both ι and ∩ are available; context disambiguates.
+              -- @cite{moroney-2021} §2.1: Shan nouns are genuinely number-neutral,
+              -- not underlyingly singular or plural.
   deriving DecidableEq, Repr
 
 /--
@@ -250,6 +258,10 @@ structure TypeShiftContext where
   downDefined : Bool
   /-- Is ι blocked by an overt definite article? -/
   iotaBlocked : Bool
+  /-- Is ι^x blocked by an overt demonstrative or strong article?
+      @cite{moroney-2021} Def 507: ι^x is blocked when an overt form
+      (demonstrative, strong article) duplicates its anaphoric function. -/
+  iotaAnaphoricBlocked : Bool
   /-- Is ∃ blocked by an overt indefinite article? -/
   existsBlocked : Bool
   /-- Is the instantiation set accessible? -/
@@ -263,17 +275,27 @@ Returns shifts in preference order (most preferred first).
 -/
 def availableShifts (ctx : TypeShiftContext) : List TypeShift :=
   let shifts := []
-  -- ∩ is available if defined and number is compatible
+  -- ∩ is available if defined and number is compatible.
+  -- For .neutral (Shan), ∩ is available (bare nouns can be kind-denoting).
   let shifts := if ctx.downDefined &&
                    (ctx.number == .pl || ctx.number == .mass ||
+                    ctx.number == .neutral ||
                     !ctx.instantiationAccessible)
                 then shifts ++ [.down]
                 else shifts
-  -- ι is available if not blocked and number is sg
+  -- ι is available if not blocked and number is sg or neutral.
+  -- For .neutral (Shan), ι is available (bare nouns can be definite).
   let shifts := if !ctx.iotaBlocked &&
-                   (ctx.number == .sg ||
+                   (ctx.number == .sg || ctx.number == .neutral ||
                     !ctx.instantiationAccessible)
                 then shifts ++ [.iota]
+                else shifts
+  -- ι^x is available if not blocked and number is sg or neutral.
+  -- @cite{moroney-2021} Def 508: anaphoric iota for discourse-familiar referents.
+  let shifts := if !ctx.iotaAnaphoricBlocked &&
+                   (ctx.number == .sg || ctx.number == .neutral ||
+                    !ctx.instantiationAccessible)
+                then shifts ++ [.iotaAnaphoric]
                 else shifts
   -- ∃ is available if not blocked (but lower preference)
   let shifts := if !ctx.existsBlocked
@@ -454,9 +476,15 @@ theorem ranking_transitive (t1 t2 t3 : TypeShift)
   simp only [morePreferred] at *
   cases t1 <;> cases t2 <;> cases t3 <;> simp_all [meaningPreservationRank]
 
-/-- ∩ and ι are always preferred over ∃ -/
+/-- ∩, ι, and ι^x are always preferred over ∃ -/
 theorem down_preferred_over_exists : morePreferred .down .exists = true := rfl
 theorem iota_preferred_over_exists : morePreferred .iota .exists = true := rfl
+theorem iotaAnaphoric_preferred_over_exists :
+    morePreferred .iotaAnaphoric .exists = true := rfl
+
+/-- ι and ι^x are equally preferred (both rank 1). -/
+theorem iota_iotaAnaphoric_equal :
+    equallyPreferred .iota .iotaAnaphoric = true := rfl
 
 /-- English bare plurals use ∩ (most preferred available shift) -/
 theorem english_bare_plural_uses_down :
@@ -464,6 +492,7 @@ theorem english_bare_plural_uses_down :
       number := .pl
       downDefined := true
       iotaBlocked := true
+      iotaAnaphoricBlocked := true
       existsBlocked := true
       instantiationAccessible := true
     }
@@ -475,6 +504,7 @@ theorem english_singular_kind_uses_iota :
       number := .sg
       downDefined := false  -- ∩ undefined for singular count
       iotaBlocked := false  -- "the" makes ι available
+      iotaAnaphoricBlocked := true  -- Anaphoric use requires "that"
       existsBlocked := true
       instantiationAccessible := false  -- Inaccessible allows singular
     }
@@ -496,6 +526,8 @@ def chierchiaToContext (bp : BlockingPrinciple) (nt : MassCount) (isPlural : Boo
               | .count => if isPlural then .pl else .sg
   , downDefined := downDefinedFor nt isPlural
   , iotaBlocked := bp.iotaBlocked
+  , iotaAnaphoricBlocked := bp.iotaBlocked  -- Default: same as ι.
+      -- Languages with weak/strong article splits (German) override this.
   , existsBlocked := bp.existsBlocked
   , instantiationAccessible := instantiationAccessible
   }
@@ -579,6 +611,7 @@ theorem meaning_preservation_derives_kind_preference :
       number := .pl
       downDefined := true
       iotaBlocked := true
+      iotaAnaphoricBlocked := true
       existsBlocked := false  -- ∃ available but not preferred
       instantiationAccessible := true
     }

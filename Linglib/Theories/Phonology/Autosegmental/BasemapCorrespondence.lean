@@ -75,7 +75,7 @@ theorem deficientProjection_uniform {S : Type} [DecidableEq S] [BEq S] [Repr S]
     (host : List (TBU S)) (defaultTone : ToneFeature) :
     (deficientProjection host defaultTone).map TBU.tone =
     host.map (λ _ => defaultTone) := by
-  simp [deficientProjection, List.map_map]
+  simp only [deficientProjection, List.map_map]; congr 1
 
 -- ============================================================================
 -- § 2: Basemap Output
@@ -225,7 +225,7 @@ private theorem tonalTier_overwrite_whole {S : Type} [DecidableEq S] [BEq S] [Re
     (host : List (TBU S)) (t : ToneFeature) :
     tonalTier (tonalOverwrite host ⟨"", [t], .whole⟩) =
     host.map (λ _ => t) := by
-  simp [tonalTier, tonalOverwrite, List.map_map]
+  simp only [tonalTier, tonalOverwrite, List.map_map]; congr 1
 
 /-- The central theorem of MxBM-C: for replacive-dominant GT with a
     whole-word single-tone melody, the matrix output's tonal tier

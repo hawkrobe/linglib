@@ -1,5 +1,5 @@
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
-import Linglib.Theories.Semantics.Lexical.Determiner.Definite
+import Linglib.Theories.Semantics.Definiteness.Basic
 
 /-!
 # Paape & Vasishth (2026) @cite{paape-vasishth-2026}
@@ -510,7 +510,8 @@ The argument chain:
 
 section UniquenessBridge
 
-open Semantics.Lexical.Determiner.Definite (the_uniq modifierNecessary)
+open Semantics.Definiteness (the_uniq modifierNecessary evalDefinite)
+open Core.Definiteness (DefiniteDesc)
 
 /-- Toy discourse entity for the uniqueness worked example. -/
 inductive DiscEntity where
@@ -541,21 +542,24 @@ def toldScope : DiscEntity → Bool := fun _ => true
     of `the_uniq` is not met. -/
 theorem bare_fails_nonunique :
     ¬(the_uniq nonUniqueDomain isWoman toldScope).presup () := by
-  simp only [the_uniq, nonUniqueDomain, List.filter, isWoman]; decide
+  simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+    nonUniqueDomain, List.filter, isWoman]; decide
 
 /-- In non-unique context, modified "the woman that he'd risked his
     life for" SUCCEEDS: the RC modifier narrows to one entity. -/
 theorem modified_succeeds_nonunique :
     (the_uniq nonUniqueDomain
       (fun e => isWoman e && rcModifier e) toldScope).presup () := by
-  simp only [the_uniq, nonUniqueDomain, List.filter, isWoman, rcModifier,
+  simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+    nonUniqueDomain, List.filter, isWoman, rcModifier,
     Bool.and_false, Bool.true_and]
 
 /-- In unique context, bare "the woman" already SUCCEEDS:
     only one entity satisfies the restrictor, so no modifier needed. -/
 theorem bare_succeeds_unique :
     (the_uniq uniqueDomain isWoman toldScope).presup () := by
-  simp only [the_uniq, uniqueDomain, List.filter, isWoman]
+  simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+    uniqueDomain, List.filter, isWoman]
 
 /-- The full argument chain: uniqueness presupposition grounds
     `contextSupports` from `Basic.lean`.
@@ -574,11 +578,14 @@ theorem uniqueness_grounds_context_supports :
     (the_uniq uniqueDomain isWoman toldScope).presup () ∧
     contextSupports .uniqueReferent .complementClause = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · simp only [the_uniq, nonUniqueDomain, List.filter, isWoman]; decide
-  · simp only [the_uniq, nonUniqueDomain, List.filter, isWoman, rcModifier,
+  · simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+      nonUniqueDomain, List.filter, isWoman]; decide
+  · simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+      nonUniqueDomain, List.filter, isWoman, rcModifier,
       Bool.and_false, Bool.true_and]
   · native_decide
-  · simp only [the_uniq, uniqueDomain, List.filter, isWoman]
+  · simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+      uniqueDomain, List.filter, isWoman]
   · native_decide
 
 -- ────────────────────────────────────────────────────

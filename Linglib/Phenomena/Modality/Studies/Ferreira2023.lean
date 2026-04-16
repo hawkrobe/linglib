@@ -102,14 +102,14 @@ theorem xMarking_preserves_force (m : PortugueseModal) :
     are a subset of the unrefined best worlds. -/
 theorem terQue_entails_dever (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World)
-    (h : sn f g p w = true) :
-    snXg f g p w = true :=
+    (h : sn f g p w) :
+    snXg f g p w :=
   sn_entails_snXg f g p w h
 
 /-- *dever* p ⊭ *ter que* p: weak necessity does not entail strong. -/
 theorem dever_not_entails_terQue :
     ¬(∀ (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
-        snXg f g p w = true → sn f g p w = true) :=
+        snXg f g p w → sn f g p w) :=
   snXg_not_entails_sn
 
 /-- *dever* p ⊨ *poder* p: weak necessity entails possibility, completing
@@ -118,9 +118,14 @@ theorem dever_not_entails_terQue :
 theorem dever_entails_poder (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World)
     (hSerial : (bestWorlds f (xMarkOrdering g p) w).length > 0)
-    (h : snXg f g p w = true) :
-    possibility f (xMarkOrdering g p) p w = true :=
-  D_axiom f (xMarkOrdering g p) p w hSerial h
+    (h : snXg f g p w) :
+    possibility f (xMarkOrdering g p) p w := by
+  unfold snXg at h
+  rw [necessity_iff_all] at h
+  rw [possibility_iff_any]
+  rw [List.any_eq_true]
+  obtain ⟨w', hw'⟩ := List.length_pos_iff_exists_mem.mp hSerial
+  exact ⟨w', hw', List.all_eq_true.mp h w' hw'⟩
 
 /-! ## Consistency judgments (§2) -/
 
@@ -129,15 +134,17 @@ theorem dever_entails_poder (f : ModalBase) (g : OrderingSource)
     mas ele pode não ter sido"). -/
 theorem dever_consistent_with_not_p :
     ∃ (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
-      snXg f g p w = true ∧ p w = false := by
+      snXg f g p w ∧ p w = false := by
   -- Model: w0 is actual, p false at w0. Best worlds under refined ordering
   -- satisfy p, so weak necessity holds even though p is false at w0.
-  exact ⟨emptyBackground,
+  refine ⟨emptyBackground,
          λ _ => [λ w => w == .w0 || w == .w1],
          λ w => w == .w1,
          .w0,
-         by decide,
-         by decide⟩
+         ?_, by decide⟩
+  unfold snXg
+  rw [necessity_iff_all]
+  decide
 
 /-- *ter que* p ∧ ¬p is contradictory when the base is realistic:
     if w ∈ ∩f(w) and all best worlds satisfy p, then w satisfies p
@@ -145,7 +152,7 @@ theorem dever_consistent_with_not_p :
 theorem terQue_inconsistent_with_not_p_realistic
     (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World)
     (hReal : ∀ w, (accessibleWorlds f w) = [w])
-    (hSN : sn f g p w = true) :
+    (hSN : sn f g p w) :
     p w = true :=
   totally_realistic_gives_T f g hReal p w hSN
 
@@ -162,7 +169,7 @@ theorem terQue_inconsistent_with_not_p_realistic
 theorem devia_not_entails_deve :
     ¬(∀ (f f' : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
         IsStarRevision f f' p →
-        snXfg f' g p w = true → snXg f g p w = true) :=
+        snXfg f' g p w → snXg f g p w) :=
   xMarked_unmarked_independent
 
 /-! ## Square instantiation: Portuguese occupies all four vertices -/
@@ -187,25 +194,25 @@ structure PortugueseSquare where
   hRev : IsStarRevision f fStar p
 
 /-- *tem que*: top-left vertex (SN). -/
-def PortugueseSquare.temQue (sq : PortugueseSquare) (w : World) : Bool :=
+def PortugueseSquare.temQue (sq : PortugueseSquare) (w : World) : Prop :=
   sn sq.f sq.g sq.p w
 
 /-- *deve*: bottom-left vertex (SN_Xg = WN). -/
-def PortugueseSquare.deve (sq : PortugueseSquare) (w : World) : Bool :=
+def PortugueseSquare.deve (sq : PortugueseSquare) (w : World) : Prop :=
   snXg sq.f sq.g sq.p w
 
 /-- *tinha que*: top-right vertex (SN_Xf). -/
-def PortugueseSquare.tinhaQue (sq : PortugueseSquare) (w : World) : Bool :=
+def PortugueseSquare.tinhaQue (sq : PortugueseSquare) (w : World) : Prop :=
   snXf sq.fStar sq.g sq.p w
 
 /-- *devia*: bottom-right vertex (SN_{Xf,g}). -/
-def PortugueseSquare.devia (sq : PortugueseSquare) (w : World) : Bool :=
+def PortugueseSquare.devia (sq : PortugueseSquare) (w : World) : Prop :=
   snXfg sq.fStar sq.g sq.p w
 
 /-- tem que ⊨ deve: top-left entails bottom-left (SN → SN_Xg). -/
 theorem PortugueseSquare.temQue_entails_deve (sq : PortugueseSquare) (w : World)
-    (h : sq.temQue w = true) :
-    sq.deve w = true :=
+    (h : sq.temQue w) :
+    sq.deve w :=
   sn_entails_snXg sq.f sq.g sq.p w h
 
 /-! ## Forward entailment under star-revision (§3) -/
@@ -214,22 +221,22 @@ theorem PortugueseSquare.temQue_entails_deve (sq : PortugueseSquare) (w : World)
     Follows from `sn_entails_snXf`: best worlds in the wider domain either
     (a) were already best in the narrower domain, or (b) are new p-worlds. -/
 theorem PortugueseSquare.temQue_entails_tinhaQue (sq : PortugueseSquare) (w : World)
-    (h : sq.temQue w = true) :
-    sq.tinhaQue w = true :=
+    (h : sq.temQue w) :
+    sq.tinhaQue w :=
   sn_entails_snXf sq.f sq.fStar sq.g sq.p w sq.hRev h
 
 /-- deve ⊨ devia: SN_Xg entails SN_{Xf,g} under ∗-revision (bottom-left → bottom-right).
     Follows from `snXg_entails_snXfg`. -/
 theorem PortugueseSquare.deve_entails_devia (sq : PortugueseSquare) (w : World)
-    (h : sq.deve w = true) :
-    sq.devia w = true :=
+    (h : sq.deve w) :
+    sq.devia w :=
   snXg_entails_snXfg sq.f sq.fStar sq.g sq.p w sq.hRev h
 
 /-- tinha que ⊨ devia: SN_Xf entails SN_{Xf,g} (top-right → bottom-right).
     Follows from `snXf_entails_snXfg`. -/
 theorem PortugueseSquare.tinhaQue_entails_devia (sq : PortugueseSquare) (w : World)
-    (h : sq.tinhaQue w = true) :
-    sq.devia w = true :=
+    (h : sq.tinhaQue w) :
+    sq.devia w :=
   snXf_entails_snXfg sq.fStar sq.g sq.p w h
 
 /-! ## Entailment diamond

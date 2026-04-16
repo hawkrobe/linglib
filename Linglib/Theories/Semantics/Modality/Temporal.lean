@@ -75,7 +75,7 @@ theorem lift_atTime_id {Time : Type*} (f : ConvBackground) (t : Time) :
     ⟦must p⟧(w, t) = ∀w' ∈ Best(f(w,t), g(w,t), w). p(w') -/
 def temporalNecessity {Time : Type*}
     (f : TemporalModalBase Time) (g : TemporalOrderingSource Time)
-    (t : Time) (p : BProp World) (w : World) : Bool :=
+    (t : Time) (p : BProp World) (w : World) : Prop :=
   necessity (f.atTime t) (g.atTime t) p w
 
 /-- Modal possibility evaluated at a world-time pair.
@@ -83,7 +83,7 @@ def temporalNecessity {Time : Type*}
     ⟦might p⟧(w, t) = ∃w' ∈ Best(f(w,t), g(w,t), w). p(w') -/
 def temporalPossibility {Time : Type*}
     (f : TemporalModalBase Time) (g : TemporalOrderingSource Time)
-    (t : Time) (p : BProp World) (w : World) : Bool :=
+    (t : Time) (p : BProp World) (w : World) : Prop :=
   possibility (f.atTime t) (g.atTime t) p w
 
 /-- **Temporal ↔ Static bridge**: temporal modal evaluation reduces to
@@ -92,15 +92,16 @@ theorem temporal_eq_static {Time : Type*}
     (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World) (t : Time) :
     temporalNecessity (ConvBackground.liftTemporal f)
-      (ConvBackground.liftTemporal g) t p w =
-    necessity f g p w := rfl
+      (ConvBackground.liftTemporal g) t p w ↔
+    necessity f g p w :=
+  Iff.rfl
 
 /-- Temporal duality: □ₜp ↔ ¬◇ₜ¬p. -/
 theorem temporal_duality {Time : Type*}
     (f : TemporalModalBase Time) (g : TemporalOrderingSource Time)
     (t : Time) (p : BProp World) (w : World) :
-    (temporalNecessity f g t p w ==
-     !temporalPossibility f g t (λ w' => !p w') w) = true :=
+    temporalNecessity f g t p w ↔
+    ¬ temporalPossibility f g t (λ w' => !p w') w :=
   duality (f.atTime t) (g.atTime t) p w
 
 /-! ## Historical accessibility
@@ -115,7 +116,7 @@ is open. -/
     the ordering source is empty (pure accessibility, no ranking). -/
 def historicalNecessity {Time : Type*}
     (history : TemporalConvBackground Time)
-    (t : Time) (p : BProp World) (w : World) : Bool :=
+    (t : Time) (p : BProp World) (w : World) : Prop :=
   temporalNecessity history
     (λ _ _ => ([] : List (BProp World))) t p w
 
@@ -124,11 +125,9 @@ def historicalNecessity {Time : Type*}
 theorem empty_history_universal {Time : Type*}
     (t : Time) (p : BProp World) (w : World) :
     historicalNecessity (λ (_ : World) (_ : Time) => ([] : List (BProp World)))
-      t p w = (allWorlds.all p) := by
-  -- Reduces to necessity emptyBackground emptyBackground p w
-  change necessity emptyBackground emptyBackground p w = allWorlds.all p
-  unfold necessity
-  congr 1
+      t p w ↔ (allWorlds.all p = true) := by
+  show necessity emptyBackground emptyBackground p w ↔ _
+  simp only [necessity_iff_all, empty_ordering_emptyBackground, empty_base_universal_access]
 
 /-! ## Epistemic change over time -/
 
@@ -141,14 +140,12 @@ theorem evidence_monotone {Time : Type*}
     (f : TemporalModalBase Time) (t₁ t₂ : Time)
     (p : BProp World) (w : World)
     (hSub : ∀ q, q ∈ f w t₁ → q ∈ f w t₂)
-    (hNec : temporalNecessity f (λ _ _ => ([] : List (BProp World))) t₁ p w = true) :
-    temporalNecessity f (λ _ _ => ([] : List (BProp World))) t₂ p w = true := by
-  unfold temporalNecessity TemporalConvBackground.atTime at hNec ⊢
-  change necessity (λ w => f w t₁) emptyBackground p w = true at hNec
-  change necessity (λ w => f w t₂) emptyBackground p w = true
-  unfold necessity at hNec ⊢
-  rw [empty_ordering_emptyBackground] at hNec ⊢
-  unfold accessibleWorlds propIntersection at hNec ⊢
+    (hNec : temporalNecessity f (λ _ _ => ([] : List (BProp World))) t₁ p w) :
+    temporalNecessity f (λ _ _ => ([] : List (BProp World))) t₂ p w := by
+  change necessity (f.atTime t₂) emptyBackground p w
+  change necessity (f.atTime t₁) emptyBackground p w at hNec
+  rw [necessity_iff_all, empty_ordering_emptyBackground] at hNec ⊢
+  unfold accessibleWorlds propIntersection TemporalConvBackground.atTime at hNec ⊢
   simp only [List.all_eq_true, List.mem_filter] at hNec ⊢
   intro w' ⟨hw'_mem, hw'_all⟩
   exact hNec w' ⟨hw'_mem, λ q hq => hw'_all q (hSub q hq)⟩
@@ -161,16 +158,15 @@ theorem evidence_monotone {Time : Type*}
 
     This captures the unitary modal analysis: "will" does not decompose
     cleanly into force × flavor. -/
-def futureAsModal (circumstantial : ModalBase) (p : BProp World) (w : World) : Bool :=
+def futureAsModal (circumstantial : ModalBase) (p : BProp World) (w : World) : Prop :=
   necessity circumstantial emptyBackground p w
 
 /-- Future-as-modal with empty ordering = simple necessity over the
     circumstantial base. -/
 theorem future_eq_simple_necessity
     (circumstantial : ModalBase) (p : BProp World) (w : World) :
-    futureAsModal circumstantial p w =
+    futureAsModal circumstantial p w ↔
     simpleNecessity circumstantial p w := by
-  unfold futureAsModal simpleNecessity necessity
-  rw [empty_ordering_emptyBackground]
+  exact necessity_empty_eq_simple circumstantial p w
 
 end Semantics.Modality.Temporal

@@ -56,7 +56,7 @@ private theorem filter_all_eq_all_imp {α : Type} (L : List α) (P Q : α → Bo
 
     ⟦if α, must β⟧(w) = ∀w' ∈ Best(f+α, g, w). β(w') -/
 def conditionalNecessity (f : ModalBase) (g : OrderingSource)
-    (α β : BProp World) (w : World) : Bool :=
+    (α β : BProp World) (w : World) : Prop :=
   necessity (restrictedBase f α) g β w
 
 /-- **If α, might β** under the restrictor analysis:
@@ -64,7 +64,7 @@ def conditionalNecessity (f : ModalBase) (g : OrderingSource)
 
     ⟦if α, might β⟧(w) = ∃w' ∈ Best(f+α, g, w). β(w') -/
 def conditionalPossibility (f : ModalBase) (g : OrderingSource)
-    (α β : BProp World) (w : World) : Bool :=
+    (α β : BProp World) (w : World) : Prop :=
   possibility (restrictedBase f α) g β w
 
 /-! ## Structural lemma -/
@@ -95,12 +95,14 @@ theorem restricted_accessible_eq (f : ModalBase) (α : BProp World) (w : World) 
 
     This connects `Modality/Kratzer.lean` to `Conditionals/Basic.lean`. -/
 theorem restrictor_eq_strict (f : ModalBase) (α β : BProp World) (w : World) :
-    conditionalNecessity f emptyBackground α β w =
-    strictImpFinite (accessibleWorlds f) α β w := by
-  unfold conditionalNecessity strictImpFinite necessity
+    conditionalNecessity f emptyBackground α β w ↔
+    strictImpFinite (accessibleWorlds f) α β w = true := by
+  unfold conditionalNecessity
+  rw [necessity_iff_all]
   rw [empty_ordering_emptyBackground]
   rw [restricted_accessible_eq]
-  exact filter_all_eq_all_imp (accessibleWorlds f w) α β
+  unfold strictImpFinite
+  simp only [filter_all_eq_all_imp]
 
 /-- Kratzer's `materialImplication` equals `materialImpB` from
     `Conditionals/Basic.lean` — the two modules defined the same operation
@@ -113,8 +115,8 @@ theorem kratzer_material_eq_conditional (p q : BProp World) (w : World) :
 /-- **Conditional duality**: "if α, must β" ↔ ¬"if α, might ¬β". -/
 theorem conditional_duality (f : ModalBase) (g : OrderingSource)
     (α β : BProp World) (w : World) :
-    (conditionalNecessity f g α β w ==
-     !conditionalPossibility f g α (λ w' => !β w') w) = true :=
+    conditionalNecessity f g α β w ↔
+    ¬ conditionalPossibility f g α (λ w' => !β w') w :=
   duality (restrictedBase f α) g β w
 
 /-- **Vacuous conditional**: if no accessible worlds satisfy α, conditional
@@ -122,13 +124,15 @@ theorem conditional_duality (f : ModalBase) (g : OrderingSource)
 theorem vacuous_conditional (f : ModalBase) (g : OrderingSource)
     (α β : BProp World) (w : World)
     (h : ((accessibleWorlds f w).filter α).isEmpty = true) :
-    conditionalNecessity f g α β w = true := by
-  unfold conditionalNecessity necessity bestWorlds
+    conditionalNecessity f g α β w := by
+  unfold conditionalNecessity
+  rw [necessity_iff_all]
   have hRestr : accessibleWorlds (restrictedBase f α) w = [] := by
     rw [restricted_accessible_eq]
     cases hL : (accessibleWorlds f w).filter α with
     | nil => rfl
     | cons => simp [List.isEmpty, hL] at h
+  unfold bestWorlds
   rw [hRestr]
   simp
 
@@ -140,8 +144,8 @@ theorem vacuous_conditional (f : ModalBase) (g : OrderingSource)
 theorem material_from_restrictor (f : ModalBase)
     (α β : BProp World) (w : World)
     (hTotal : accessibleWorlds f w = [w]) :
-    conditionalNecessity f emptyBackground α β w =
-    materialImpB α β w := by
+    conditionalNecessity f emptyBackground α β w ↔
+    materialImpB α β w = true := by
   rw [restrictor_eq_strict]
   unfold strictImpFinite materialImpB
   simp [hTotal]
@@ -185,9 +189,9 @@ theorem restrictor_strengthens (f : ModalBase) (α : BProp World) (w : World) :
     If (if α, must (β → γ)) and (if α, must β), then (if α, must γ). -/
 theorem conditional_K (f : ModalBase) (g : OrderingSource)
     (α β γ : BProp World) (w : World)
-    (hImpl : conditionalNecessity f g α (λ w' => !β w' || γ w') w = true)
-    (hBeta : conditionalNecessity f g α β w = true) :
-    conditionalNecessity f g α γ w = true :=
+    (hImpl : conditionalNecessity f g α (λ w' => !β w' || γ w') w)
+    (hBeta : conditionalNecessity f g α β w) :
+    conditionalNecessity f g α γ w :=
   K_axiom (restrictedBase f α) g β γ w hImpl hBeta
 
 /-! ## Prop-level bridge -/
@@ -209,19 +213,18 @@ open Semantics.Tense.ConditionalShift (domainRestrictedConditional)
     This theorem bridges the gap for the concrete `World` type. -/
 theorem conditionalNecessity_iff_domainRestricted
     (f : ModalBase) (α β : BProp World) (w : World) :
-    conditionalNecessity f emptyBackground α β w = true ↔
+    conditionalNecessity f emptyBackground α β w ↔
     (∀ w' ∈ accessibleWorlds f w, α w' = true → β w' = true) := by
-  rw [restrictor_eq_strict]
-  unfold strictImpFinite
+  unfold conditionalNecessity
+  rw [necessity_iff_all, empty_ordering_emptyBackground, restricted_accessible_eq]
   constructor
   · intro h w' hw' hα
-    have := List.all_eq_true.mp h w' hw'
-    simp [hα] at this
+    have := List.all_eq_true.mp h w' (List.mem_filter.mpr ⟨hw', hα⟩)
     exact this
   · intro h
     apply List.all_eq_true.mpr
     intro w' hw'
-    have := h w' hw'
-    cases hα : α w' <;> simp [hα, this]
+    have hmem := List.mem_filter.mp hw'
+    exact h w' hmem.1 hmem.2
 
 end Semantics.Conditionals.Restrictor

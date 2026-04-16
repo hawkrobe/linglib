@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustificat
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
-import Linglib.Theories.Semantics.Dynamic.BSML.FreeChoice
+import Linglib.Theories.Semantics.BSML.FreeChoice
 import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.FreeChoice
 import Linglib.Theories.Semantics.PossibilitySemantics.Epistemic
@@ -45,7 +45,7 @@ open Exhaustification.FreeChoice
 open RSA.FreeChoice
 open RSA.FCIAny
 open Semantics.Dynamic.BUS.FreeChoice
-open Semantics.Dynamic.BSML
+open Semantics.BSML (enrich support BSMLModel BSMLFormula)
 open Phenomena.Modality.Studies.Aloni2022
 open Semantics.PossibilitySemantics
 open Exhaustification.Presuppositional
@@ -312,20 +312,10 @@ theorem alsop_not_every_sensitive :
 4. Therefore ◇α and ◇β are both supported
 -/
 
--- Verify BSML narrow-scope FC computationally
-#eval
-  let enriched := enrich mayHaveCoffeeOrTea
-  let t := freeChoiceTeam
-  let supEnriched := support deonticModel enriched t
-  let supCoffee := support deonticModel mayCoffee t
-  let supTea := support deonticModel mayTea t
-  (supEnriched, supCoffee, supTea)  -- (true, true, true)
-
 /-- Aloni BSML: DNE holds definitionally -/
-theorem aloni_dne {W : Type*} [DecidableEq W] (M : BSMLModel W)
-    (φ : BSMLFormula) (t : Semantics.Dynamic.TeamSemantics.Team W) :
-    support M (.neg (.neg φ)) t = support M φ t :=
-  dne_support M φ t
+theorem aloni_dne {W : Type*} [DecidableEq W] [Fintype W] (M : BSMLModel W)
+    (φ : BSMLFormula) (t : Finset W) :
+    support M (.neg (.neg φ)) t ↔ support M φ t := Iff.rfl
 
 -- ============================================================================
 -- SECTION 3d: @cite{elliott-sudo-2025} - Bilateral Update Semantics

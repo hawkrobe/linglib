@@ -55,22 +55,29 @@ inductive ArticleType where
   | weakAndStrong -- Both weak and strong articles (e.g., German, Bavarian)
   deriving DecidableEq, Repr
 
-/-- Which presupposition types a language's article system makes available. -/
-def articleTypeToAvailablePresup : ArticleType → List DefPresupType
-  | .none_         => []                            -- No articles
-  | .weakOnly      => [.uniqueness]                 -- Only uniqueness (or ambiguous)
-  | .weakAndStrong => [.uniqueness, .familiarity]   -- Both explicitly
+/-- Which presupposition types are **morphologically distinguished** by a
+language's article system. This tracks overt marking, not semantic
+availability: a language with no articles (`.none_`) morphologically
+distinguishes zero presupposition types, but may still *express* both
+uniqueness and familiarity via covert type-shifting (e.g., Shan bare
+nouns; @cite{moroney-2021}). Semantic availability of presupposition
+types is determined by the blocking principle and type-shift hierarchy
+(@cite{dayal-2004}), not by article inventory alone. -/
+def articleTypeToDistinguishedPresup : ArticleType → List DefPresupType
+  | .none_         => []                            -- No articles: no morphological signal
+  | .weakOnly      => [.uniqueness]                 -- One form: uniqueness (or ambiguous)
+  | .weakAndStrong => [.uniqueness, .familiarity]   -- Two forms: both explicitly marked
 
-/-- Languages with two article forms have both presupposition types available.
-This is PG&G's structural claim translated to semantics: 2 D-layers = 2
-presupposition types. -/
-theorem two_layers_two_presup_types :
-    (articleTypeToAvailablePresup .weakAndStrong).length = 2 := rfl
+/-- Languages with two article forms morphologically distinguish both
+presupposition types. This is @cite{patel-grosz-grosz-2017}'s structural
+claim: 2 D-layers = 2 morphologically distinct presupposition signals. -/
+theorem two_forms_two_distinguished :
+    (articleTypeToDistinguishedPresup .weakAndStrong).length = 2 := rfl
 
-/-- Languages with one article form have one presupposition type
-(modulo ambiguity). -/
-theorem one_layer_one_presup_type :
-    (articleTypeToAvailablePresup .weakOnly).length = 1 := rfl
+/-- Languages with one article form morphologically distinguish one
+presupposition type (modulo ambiguity). -/
+theorem one_form_one_distinguished :
+    (articleTypeToDistinguishedPresup .weakOnly).length = 1 := rfl
 
 -- ============================================================================
 -- §3: Definite Use Types (@cite{hawkins-1978} / @cite{schwarz-2013})
@@ -83,6 +90,10 @@ inductive DefiniteUseType where
   | immediateSituation -- Referent present in utterance situation (weak article)
   | largerSituation    -- Unique in larger context, e.g., "the king" (weak article)
   | bridging           -- Related to antecedent via relation (split: see BridgingSubtype)
+  | donkey             -- Donkey anaphora: variable bound by c-commanding quantifier.
+                       -- German: strong article (*von dem*); Thai/Mandarin: demonstrative.
+                       -- @cite{schwarz-2009} §3: donkey pronouns pattern with anaphoric
+                       -- uses (familiarity), not uniqueness uses.
   deriving DecidableEq, Repr
 
 /-- Map definite use type to presupposition type (@cite{schwarz-2013} §3.1).
@@ -94,6 +105,8 @@ def useTypeToPresupType : DefiniteUseType → DefPresupType
   | .immediateSituation => .uniqueness    -- Weak article: situationally unique
   | .largerSituation    => .uniqueness    -- Weak article: contextually unique
   | .bridging           => .uniqueness    -- Default weak (relational bridging overrides)
+  | .donkey             => .familiarity   -- Strong article: donkey anaphora patterns
+                                          -- with familiarity (@cite{schwarz-2009} §3)
 
 -- ============================================================================
 -- §4: Bridging Subtypes (@cite{schwarz-2013} §3.2)
@@ -136,7 +149,58 @@ inductive WeakArticleStrategy where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- §6: The Indefinite–Definite Contrast
+-- §6: Definite Description Structure
+-- ============================================================================
+
+/-- A definite description is characterized by two predicates:
+
+1. **restrictor** P: the NP-internal content ("dog", "book", "man drinking
+   a martini"). This is what the definite description is "about."
+
+2. **presupFilter** Q: the discourse-linking content (anaphoric index,
+   familiarity condition). This is what connects the description to
+   prior discourse or the utterance situation.
+
+The presupposition of a definite description is: ∃!x ∈ domain. P(x) ∧ Q(x).
+The assertion is: S(that unique x).
+
+The @cite{schwarz-2009} weak/strong distinction reduces to the triviality
+of Q:
+- **Weak article** (uniqueness): Q = λ _ => true — no discourse-linking
+  requirement. The description succeeds by situational uniqueness alone.
+- **Strong article** (familiarity): Q is a non-trivial anaphoric predicate.
+  The description succeeds only for discourse-familiar entities.
+
+@cite{moroney-2021} Def 508: ι^x P Q = ιx[P(x) ∧ Q(x)] is the general
+form; standard ι P = ι^x P (λ _ => true) is the special case. -/
+structure DefiniteDesc (E : Type) where
+  /-- NP-internal content: the restrictor predicate -/
+  restrictor : E → Bool
+  /-- Discourse-linking content: the presupposition filter.
+      Trivial (λ _ => true) for uniqueness; non-trivial for familiarity. -/
+  presupFilter : E → Bool
+
+/-- Construct a uniqueness-based (weak, ι) definite description.
+The presupposition filter is vacuous — any entity in the domain
+that satisfies the restrictor is a candidate. -/
+def DefiniteDesc.unique {E : Type} (restrictor : E → Bool) : DefiniteDesc E :=
+  ⟨restrictor, λ _ => true⟩
+
+/-- Construct an anaphoric (strong, ι^x) definite description.
+The presupposition filter Q further restricts candidates to
+discourse-familiar entities. -/
+def DefiniteDesc.anaphoric {E : Type}
+    (restrictor : E → Bool) (anaphoricQ : E → Bool) : DefiniteDesc E :=
+  ⟨restrictor, anaphoricQ⟩
+
+/-- A uniqueness description is an anaphoric description with trivial Q. -/
+theorem DefiniteDesc.unique_eq_anaphoric_trivial {E : Type}
+    (restrictor : E → Bool) :
+    DefiniteDesc.unique restrictor =
+    DefiniteDesc.anaphoric restrictor (λ _ => true) := rfl
+
+-- ============================================================================
+-- §7: The Indefinite–Definite Contrast
 -- ============================================================================
 
 /-- The fundamental semantic contrast between indefinite and definite:

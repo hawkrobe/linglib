@@ -1,3 +1,6 @@
+import Mathlib.Order.Nat
+import Mathlib.Data.Fintype.Basic
+
 /-!
 # Czech Three-Way Negation: Core Types
 @cite{stankova-2025} @cite{zeijlstra-2004}
@@ -27,6 +30,31 @@ inductive NegPosition where
   | outer
   deriving DecidableEq, Repr
 
+-- ── NegPosition: LinearOrder, Fintype ──
+
+/-- Numeric embedding: inner ↦ 0, medial ↦ 1, outer ↦ 2 (by scope width). -/
+def NegPosition.toNat : NegPosition → Nat
+  | .inner  => 0
+  | .medial => 1
+  | .outer  => 2
+
+instance : LinearOrder NegPosition :=
+  LinearOrder.lift' NegPosition.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [NegPosition.toNat])
+
+/-- NegPosition ≃ Fin 3. -/
+def NegPosition.equivFin : NegPosition ≃ Fin 3 where
+  toFun | .inner => 0 | .medial => 1 | .outer => 2
+  invFun | ⟨0, _⟩ => .inner | ⟨1, _⟩ => .medial | ⟨2, _⟩ => .outer
+         | ⟨n + 3, h⟩ => absurd h (by omega)
+  left_inv p := by cases p <;> rfl
+  right_inv i := by
+    match i with
+    | ⟨0, _⟩ => rfl | ⟨1, _⟩ => rfl | ⟨2, _⟩ => rfl
+    | ⟨n + 3, h⟩ => exact absurd h (by omega)
+
+instance : Fintype NegPosition := Fintype.ofEquiv _ NegPosition.equivFin.symm
+
 /-- Diagnostics that distinguish the three negation readings (Table 1). -/
 inductive Diagnostic where
   /-- ne- outscopes a PPI like *nějaký* 'some.DET.PPI' -/
@@ -40,6 +68,24 @@ inductive Diagnostic where
   /-- Particle *fakt* 'really' is compatible -/
   | fakt
   deriving DecidableEq, Repr
+
+-- ── Diagnostic: Fintype ──
+
+/-- Diagnostic ≃ Fin 5. -/
+def Diagnostic.equivFin : Diagnostic ≃ Fin 5 where
+  toFun | .ppiOutscoping => 0 | .nciLicensed => 1 | .nahodou => 2
+        | .jeste => 3 | .fakt => 4
+  invFun | ⟨0, _⟩ => .ppiOutscoping | ⟨1, _⟩ => .nciLicensed
+         | ⟨2, _⟩ => .nahodou | ⟨3, _⟩ => .jeste | ⟨4, _⟩ => .fakt
+         | ⟨n + 5, h⟩ => absurd h (by omega)
+  left_inv d := by cases d <;> rfl
+  right_inv i := by
+    match i with
+    | ⟨0, _⟩ => rfl | ⟨1, _⟩ => rfl | ⟨2, _⟩ => rfl
+    | ⟨3, _⟩ => rfl | ⟨4, _⟩ => rfl
+    | ⟨n + 5, h⟩ => exact absurd h (by omega)
+
+instance : Fintype Diagnostic := Fintype.ofEquiv _ Diagnostic.equivFin.symm
 
 /-- Table 1 from Staňková (2026 §3): compatibility of each negation reading
 with polarity items and particles.
@@ -62,5 +108,21 @@ def licenses : NegPosition → Diagnostic → Bool
   | .inner,  .nahodou       => false
   | .inner,  .jeste         => true
   | .inner,  .fakt          => true
+
+/-- Each NegPosition has a unique 5-bit diagnostic signature.
+    This is the formal statement that the diagnostic table (Table 1)
+    distinguishes all three negation readings. -/
+theorem licenses_injective :
+    Function.Injective (fun pos => fun d => licenses pos d) := by
+  intro a b h
+  have h1 : licenses a .nciLicensed = licenses b .nciLicensed := congr_fun h _
+  have h2 : licenses a .nahodou = licenses b .nahodou := congr_fun h _
+  have h3 : licenses a .fakt = licenses b .fakt := congr_fun h _
+  cases a <;> cases b <;> simp_all [licenses]
+
+/-- Scope ordering: inner < medial < outer. -/
+theorem inner_lt_medial : NegPosition.inner < .medial := by decide
+theorem medial_lt_outer : NegPosition.medial < .outer := by decide
+theorem inner_lt_outer : NegPosition.inner < .outer := by decide
 
 end Semantics.Negation.CzechNegation

@@ -38,7 +38,7 @@ this with two arguments:
 
 namespace Phenomena.Conditionals.Studies.McKayVanInwagen1977
 
-open Semantics.Conditionals.Counterfactual (closestWorldsB)
+open Semantics.Conditionals.Counterfactual (closestWorlds)
 open Semantics.Conditionals.AlternativeSensitive (lewisDAC sdaEval)
 
 -- ════════════════════════════════════════════════════

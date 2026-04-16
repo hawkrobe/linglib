@@ -37,7 +37,7 @@ def toCircumstantialBase (f : CausalFrame World) : ModalBase :=
 
 /-- Ability as Kratzer possibility: "can VP" is ◇(complement) where
     the modal base encodes circumstantial facts. -/
-def abilityAsKratzerPossibility (f : CausalFrame World) (w : World) : Bool :=
+def abilityAsKratzerPossibility (f : CausalFrame World) (w : World) : Prop :=
   Semantics.Modality.Kratzer.simplePossibility
     (toCircumstantialBase f)
     (λ w' => f.actualizedAt w')

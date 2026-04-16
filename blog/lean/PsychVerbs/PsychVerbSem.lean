@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Causation.PsychCausalLink
 import Linglib.Core.Agent.BToM
 import Linglib.Core.Agent.Emotion
 import Linglib.Core.StructuralEquationModel
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
 import Linglib.Theories.Semantics.Attitudes.Preferential
 

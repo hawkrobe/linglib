@@ -170,8 +170,10 @@ theorem wbp_strands_mora (v c₁ c₂ : Segment) :
 /-- **Vowel-loss directionality** (@cite{hayes-1989}, §5.2.2):
     CL through vowel loss always lengthens the vowel to the **left** of the
     deleted vowel, never to the right. In moraic theory this follows from
-    Parasitic Delinking + the ban on crossing association lines: a stranded
-    mora can only be picked up by spreading leftward without crossing. -/
+    Parasitic Delinking + the No-Crossing Constraint (derived from temporal
+    precedence in `Theories.Phonology.Autosegmental.no_crossing`,
+    @cite{sagey-1986} §5.3): a stranded mora can only be picked up by
+    spreading leftward without crossing. -/
 theorem vowel_loss_leftward (v₁ v₂ : Segment) :
     let σ₁ := MoraicSyllable.mk [] [⟨v₁, .one⟩]
     let σ₂ := MoraicSyllable.mk [] [⟨v₂, .one⟩]

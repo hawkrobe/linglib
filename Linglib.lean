@@ -37,6 +37,10 @@ import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Variables
 import Linglib.Core.IntensionalLogic.Conjunction
+import Linglib.Core.IntensionalLogic.Quantification
+import Linglib.Core.IntensionalLogic.Algebra
+import Linglib.Core.IntensionalLogic.CategoryType
+import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Normality
@@ -682,6 +686,7 @@ import Linglib.Fragments.Portuguese.MoodChoice
 import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.Romanian.MoodChoice
 import Linglib.Fragments.Swedish.AnswerParticles
+import Linglib.Fragments.Swedish.QuestionParticles
 import Linglib.Fragments.Mayan.Params
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Mam.Agreement
@@ -853,11 +858,13 @@ import Linglib.Phenomena.Conditionals.Studies.Mizuno2024
 import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 import Linglib.Phenomena.Conditionals.Studies.Belnap1970
 import Linglib.Phenomena.Conditionals.Studies.McKayVanInwagen1977
+import Linglib.Phenomena.Conditionals.Studies.Stalnaker1981
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
 import Linglib.Phenomena.DefaultReasoning.Studies.DarwichePearl1997
 import Linglib.Phenomena.DefaultReasoning.Studies.Veltman1996
+import Linglib.Phenomena.Definiteness.Studies.Moroney2021
 import Linglib.Phenomena.Clarification.Basic
 import Linglib.Phenomena.Clarification.Studies.DongEtAl2026
 import Linglib.Phenomena.Clarification.Studies.TsvilodubEtAl2026
@@ -1248,6 +1255,7 @@ import Linglib.Phenomena.Questions.Studies.Uegaki2022
 import Linglib.Phenomena.Questions.Studies.ChanShen2026
 import Linglib.Phenomena.Questions.Studies.AlonsoOvalleMoghiseh2025b
 import Linglib.Phenomena.Questions.Studies.Johnston2023
+import Linglib.Phenomena.Questions.Studies.SeeligerRepp2018
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
@@ -1715,7 +1723,7 @@ import Linglib.Theories.Semantics.Lexical.Numeral.Embedding
 import Linglib.Theories.Semantics.Lexical.Numeral.Polysemy
 import Linglib.Theories.Semantics.Lexical.Numeral.Precision
 import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-import Linglib.Theories.Semantics.Lexical.Determiner.Definite
+import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
 import Linglib.Theories.Semantics.Lexical.Determiner.DomainVagueness
 import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
@@ -1954,6 +1962,7 @@ import Linglib.Theories.Semantics.Questions.SignalingGames
 import Linglib.Theories.Semantics.Questions.VerumFocus
 import Linglib.Theories.Semantics.Questions.QParticleLayer
 import Linglib.Theories.Semantics.Questions.AnsweringSystems
+import Linglib.Theories.Semantics.Questions.DeclarativeQuestions
 import Linglib.Phenomena.ScalarImplicatures.Studies.BrehenyEtAl2018
 import Linglib.Phenomena.ScalarImplicatures.Studies.Katzir2007
 import Linglib.Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
@@ -2119,6 +2128,7 @@ import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.CophonologyTheory
 import Linglib.Theories.Phonology.ProsodicWord
 import Linglib.Theories.Phonology.Doubling
+import Linglib.Theories.Phonology.ViolationSemiring
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

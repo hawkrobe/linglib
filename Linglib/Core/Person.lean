@@ -102,9 +102,9 @@ open Core.Prominence
 -- § 4: Features Verification
 -- ============================================================================
 
-theorem first_wellFormed : first.wellFormed = true := rfl
-theorem second_wellFormed : second.wellFormed = true := rfl
-theorem third_wellFormed : third.wellFormed = true := rfl
+@[simp] theorem first_wellFormed : first.wellFormed = true := rfl
+@[simp] theorem second_wellFormed : second.wellFormed = true := rfl
+@[simp] theorem third_wellFormed : third.wellFormed = true := rfl
 
 /-- The ill-formed combination [−participant, +author] is the only
     combination that violates well-formedness. -/
@@ -113,7 +113,7 @@ theorem illFormed_only : (⟨false, true⟩ : Features).wellFormed = false := rf
 /-- There are exactly 3 well-formed feature combinations (= 3 persons). -/
 theorem exactly_three_wellFormed :
     ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
-      Features.wellFormed).length = 3 := by native_decide
+      Features.wellFormed).length = 3 := by decide
 
 /-- All person levels yield well-formed features. -/
 theorem PersonLevel.toFeatures_wellFormed (p : PersonLevel) :
@@ -138,9 +138,9 @@ instance : Core.PhiFeatures Features where
   roundtrip := fun ⟨_, _⟩ => rfl
 
 /-- The three canonical person values map to the three PrivativePair cells. -/
-theorem first_is_maximal : PhiFeatures.toPair first = .maximal := rfl
-theorem second_is_intermediate : PhiFeatures.toPair second = .intermediate := rfl
-theorem third_is_minimal : PhiFeatures.toPair third = .minimal := rfl
+@[simp] theorem first_is_maximal : PhiFeatures.toPair first = .maximal := rfl
+@[simp] theorem second_is_intermediate : PhiFeatures.toPair second = .intermediate := rfl
+@[simp] theorem third_is_minimal : PhiFeatures.toPair third = .minimal := rfl
 
 /-- No 4-way singular person distinction (inherited from `PhiFeatures`). -/
 theorem no_fourth_person :
@@ -176,7 +176,7 @@ namespace Category
 def all : List Category :=
   [.s1, .s2, .s3, .minIncl, .augIncl, .excl, .secondGrp, .thirdGrp]
 
-theorem all_length : all.length = 8 := by native_decide
+theorem all_length : all.length = 8 := by decide
 
 /-- Is this a singular (individual) category? -/
 def isSingular : Category → Bool

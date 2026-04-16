@@ -219,7 +219,7 @@ def A (domain : List F.Entity) (P : F.Denot Ty.et) : F.Denot Ty.ett :=
 
     Maps `⟨e,t⟩ → ⟨⟨e,t⟩,t⟩` (partial). Unlike `A` (which is total), `THE`
     presupposes existence and uniqueness. Connects to the semantics of "the"
-    in `Semantics.Lexical.Determiner.Definite`. -/
+    in `Semantics.Definiteness`. -/
 noncomputable def THE (domain : List F.Entity) (P : F.Denot Ty.et) : Option (F.Denot Ty.ett) :=
   (iota domain P).map lift
 

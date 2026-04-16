@@ -831,7 +831,7 @@ that justifies calling deontic *ought* "a box after all" (§7). -/
 /-- The classic Kratzer semantics: ought is a universal quantifier
     over best worlds. Boylan argues this is correct for deontics but
     not epistemics. -/
-def classicOught (f : ModalBase) (g : OrderingSource) (φ : BProp World) (w : World) : Bool :=
+def classicOught (f : ModalBase) (g : OrderingSource) (φ : BProp World) (w : World) : Prop :=
   necessity f g φ w
 
 /-- **The classic semantics cannot distinguish the epistemic pattern.**
@@ -843,12 +843,12 @@ def classicOught (f : ModalBase) (g : OrderingSource) (φ : BProp World) (w : Wo
     of modal base and ordering. -/
 theorem kratzer_agglomerates :
     ∀ (f : ModalBase) (g : OrderingSource) (w : World),
-      necessity f g aliceIn w = true →
-      necessity f g bobIn w = true →
-      necessity f g carolIn w = true →
-      necessity f g everyoneIn w = true := by
+      necessity f g aliceIn w →
+      necessity f g bobIn w →
+      necessity f g carolIn w →
+      necessity f g everyoneIn w := by
   intro f g w ha hb hc
-  unfold necessity at *
+  rw [necessity_iff_all] at *
   rw [List.all_eq_true] at *
   intro w' hw'
   simp only [everyoneIn, Bool.and_eq_true]

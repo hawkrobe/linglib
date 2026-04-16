@@ -33,7 +33,7 @@ in `Counterfactual.closestWorlds`.
 
 ## Key definitions
 
-- `closB`: Computable closest-worlds selector (= `closestWorldsB`)
+- `closB`: Computable closest-worlds selector (= `closestWorlds`)
 - `ifPresup`: K/P* conditional with CLOS-based filtering
 - `ifKP`: K/P conditional with local filtering (for comparison)
 - `trivialCloser`: Degenerate similarity (all worlds equally close)
@@ -55,7 +55,7 @@ variable {W : Type*}
 /-- Computable CLOS (@cite{sharvit-2025}, (120)).
 
 Selects worlds in `antecedent ∩ restriction` that are not dominated
-under the similarity ordering. Same formula as `Counterfactual.closestWorldsB`. -/
+under the similarity ordering. Same formula as `Counterfactual.closestWorlds`. -/
 def closB [DecidableEq W] (closer : W → W → W → Bool)
     (restriction : List W) (antecedent : List W) (w : W) : List W :=
   let pWorlds := antecedent.filter (restriction.contains ·)

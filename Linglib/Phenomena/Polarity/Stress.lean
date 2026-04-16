@@ -32,7 +32,7 @@ Polarity stress targets truth/polarity rather than content alternatives.
 
 import Linglib.Core.Lexical.Word
 
-namespace Phenomena.Focus.PolarityStress
+namespace Phenomena.Polarity.Stress
 
 -- Data Structure
 
@@ -149,4 +149,4 @@ def contentFocusData : List PolarityStressDatum := [
 def allData : List PolarityStressDatum :=
   polarityStressData ++ contentFocusData
 
-end Phenomena.Focus.PolarityStress
+end Phenomena.Polarity.Stress

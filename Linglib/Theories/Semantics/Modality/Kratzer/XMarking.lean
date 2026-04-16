@@ -101,25 +101,25 @@ def xMarkOrdering (g : OrderingSource) (p : BProp World) : OrderingSource :=
 /-- **SN**: unmarked strong necessity.
     Portuguese *tem que*, English *must*/*have to*. -/
 abbrev sn (f : ModalBase) (g : OrderingSource)
-    (p : BProp World) (w : World) : Bool :=
+    (p : BProp World) (w : World) : Prop :=
   necessity f g p w
 
 /-- **SN_Xg**: strong necessity with X-marked ordering source = weak necessity.
     Portuguese *deve*, English *ought*/*should* (non-X-marked reading). -/
-def snXg (f : ModalBase) (g : OrderingSource)
-    (p : BProp World) (w : World) : Bool :=
+@[reducible] def snXg (f : ModalBase) (g : OrderingSource)
+    (p : BProp World) (w : World) : Prop :=
   necessity f (xMarkOrdering g p) p w
 
 /-- **SN_Xf**: strong necessity with X-marked modal base.
     Portuguese *tinha que*. Domain is widened to include p-worlds. -/
-def snXf (f' : ModalBase) (g : OrderingSource)
-    (p : BProp World) (w : World) : Bool :=
+@[reducible] def snXf (f' : ModalBase) (g : OrderingSource)
+    (p : BProp World) (w : World) : Prop :=
   necessity f' g p w
 
 /-- **SN_{Xf,g}**: both X-markings applied.
     Portuguese *devia*, English *ought*/*should* (X-marked reading). -/
-def snXfg (f' : ModalBase) (g : OrderingSource)
-    (p : BProp World) (w : World) : Bool :=
+@[reducible] def snXfg (f' : ModalBase) (g : OrderingSource)
+    (p : BProp World) (w : World) : Prop :=
   necessity f' (xMarkOrdering g p) p w
 
 /-! ## Key equation: WN ≡ SN_Xg -/
@@ -133,7 +133,7 @@ def snXfg (f' : ModalBase) (g : OrderingSource)
     by the prejacent. -/
 theorem wn_equiv_snXg (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World) :
-    weakNecessity f g (λ _ => [p]) p w = snXg f g p w := rfl
+    weakNecessity f g (λ _ => [p]) p w ↔ snXg f g p w := Iff.rfl
 
 /-! ## Entailment: SN → SN_Xg (must → ought) -/
 
@@ -141,8 +141,8 @@ theorem wn_equiv_snXg (f : ModalBase) (g : OrderingSource)
     Direct corollary of `Directive.strong_entails_weak`. -/
 theorem sn_entails_snXg (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World)
-    (h : sn f g p w = true) :
-    snXg f g p w = true :=
+    (h : sn f g p w) :
+    snXg f g p w :=
   strong_entails_weak f g (λ _ => [p]) p w h
 
 /-- The converse fails: SN_Xg ⊭ SN.
@@ -152,7 +152,7 @@ theorem sn_entails_snXg (f : ModalBase) (g : OrderingSource)
     Under g∪[p], w0 outranks w1 → best = {w0} → snXg = true. -/
 theorem snXg_not_entails_sn :
     ¬(∀ (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
-        snXg f g p w = true → sn f g p w = true) := by
+        snXg f g p w → sn f g p w) := by
   intro h
   let f : ModalBase := λ _ => [λ w => w == .w0 || w == .w1]
   let g : OrderingSource := emptyBackground
@@ -166,7 +166,8 @@ theorem snXg_not_entails_sn :
     ranges over bestWorlds of the widened modal base. -/
 theorem xf_is_universal (f' : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World) :
-    snXf f' g p w = (bestWorlds f' g w).all p := rfl
+    snXf f' g p w ↔ (bestWorlds f' g w).all p = true :=
+  necessity_iff_all f' g p w
 
 /-- SN_Xf does not entail SN: the wider domain can promote new worlds
     that change which worlds are best, breaking SN even when SN_Xf holds.
@@ -177,7 +178,7 @@ theorem xf_is_universal (f' : ModalBase) (g : OrderingSource)
 theorem xf_no_entailment :
     ¬(∀ (f f' : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
         IsStarRevision f f' p →
-        snXf f' g p w = true → sn f g p w = true) := by
+        snXf f' g p w → sn f g p w) := by
   intro h
   have hRev : IsStarRevision
       (λ _ => [λ w => w == .w0 || w == .w1])
@@ -209,16 +210,17 @@ theorem xf_no_entailment :
 theorem sn_entails_snXf (f f' : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World)
     (hRev : IsStarRevision f f' p)
-    (hSN : sn f g p w = true) :
-    snXf f' g p w = true := by
-  show (bestAmong (accessibleWorlds f' w) (g w)).all p = true
-  rw [List.all_eq_true]
+    (hSN : sn f g p w) :
+    snXf f' g p w := by
+  rw [snXf, necessity_iff_all]
+  rw [sn, necessity_iff_all] at hSN
+  rw [List.all_eq_true] at hSN ⊢
   intro w' hw'
   have hw'_acc : w' ∈ accessibleWorlds f' w := bestAmong_sub _ _ w' hw'
   by_cases hmem : w' ∈ accessibleWorlds f w
   · have hBest : w' ∈ bestAmong (accessibleWorlds f w) (g w) :=
       bestAmong_superset (hRev.widens w) hw' hmem
-    exact List.all_eq_true.mp hSN w' hBest
+    exact hSN w' hBest
   · exact hRev.new_satisfy_p w w' hw'_acc hmem
 
 /-! ## Parameter independence: Xf and Xg target independent parameters -/
@@ -240,8 +242,8 @@ theorem xMarking_parameter_independence (f' : ModalBase) (g : OrderingSource)
 theorem snXg_entails_snXfg (f f' : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World)
     (hRev : IsStarRevision f f' p)
-    (h : snXg f g p w = true) :
-    snXfg f' g p w = true :=
+    (h : snXg f g p w) :
+    snXfg f' g p w :=
   sn_entails_snXf f f' (xMarkOrdering g p) p w hRev h
 
 /-- **SN_Xf → SN_Xfg**: X-marked strong necessity entails doubly X-marked
@@ -249,8 +251,8 @@ theorem snXg_entails_snXfg (f f' : ModalBase) (g : OrderingSource)
     by definition. -/
 theorem snXf_entails_snXfg (f' : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World)
-    (h : snXf f' g p w = true) :
-    snXfg f' g p w = true :=
+    (h : snXf f' g p w) :
+    snXfg f' g p w :=
   sn_entails_snXg f' g p w h
 
 /-! ## Entailment diamond
@@ -280,7 +282,7 @@ SN_Xfg. No reverse entailments hold (proved below). -/
 theorem xMarked_unmarked_independent :
     ¬(∀ (f f' : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
         IsStarRevision f f' p →
-        snXfg f' g p w = true → snXg f g p w = true) := by
+        snXfg f' g p w → snXg f g p w) := by
   intro h
   have hRev : IsStarRevision
       (λ _ => [λ w => w == .w1])
@@ -307,7 +309,7 @@ theorem xMarked_unmarked_independent :
     worlds can be best. -/
 theorem snXfg_not_entails_snXf :
     ¬(∀ (f' : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
-        snXfg f' g p w = true → snXf f' g p w = true) := by
+        snXfg f' g p w → snXf f' g p w) := by
   intro h
   let f' : ModalBase := λ _ => [λ w => w == .w0 || w == .w1]
   let g : OrderingSource := emptyBackground

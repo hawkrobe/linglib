@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
-import Linglib.Phenomena.Focus.PolarityStress
+import Linglib.Phenomena.Polarity.Stress
 
 /-!
 # English Auxiliary Diagnostics: NICE Properties
@@ -257,7 +257,7 @@ phenomenon as polarity stress: prosodic prominence on the auxiliary targets
 truth/polarity rather than content alternatives (@cite{hohle-1992}). -/
 
 section PolarityStressBridge
-open Phenomena.Focus.PolarityStress
+open Phenomena.Polarity.Stress
 
 /-- NICE Emphasis maps to polarity stress on the auxiliary: both describe
     prosodic prominence on AUX signaling verum focus. The PolarityStress

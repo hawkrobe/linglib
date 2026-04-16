@@ -94,7 +94,12 @@ theorem ja_jo_complementary :
     ja.blockedInNegativeContext = true ∧ jo.requiresNegativeContext = true ∧
     ja.requiresNegativeContext = false ∧ jo.blockedInNegativeContext = false := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- *jo* as a polarity-marking entry for cross-linguistic comparison. -/
+/-- *jo* — Swedish polarity-reversing affirmative particle.
+    Assigns [+Pol] while contradicting a negative context.
+    Clause-initial or standalone response; not sentence-internal.
+    Correction-only: requires a negative context to reverse.
+    @cite{holmberg-2016}: paradigm example of polarity-reversing particle,
+    same class as German *doch* and French *si*. -/
 def joMarking : PolarityMarkingEntry where
   label := "jo"
   form := some "jo"
@@ -102,6 +107,15 @@ def joMarking : PolarityMarkingEntry where
   contrastOk := false
   correctionOk := true
   strategy := .polarityReversal
+
+-- Per-entry verification theorems
+theorem joMarking_form : joMarking.form = some "jo" := rfl
+theorem joMarking_not_sentenceInternal : joMarking.sentenceInternal = false := rfl
+theorem joMarking_not_contrastOk : joMarking.contrastOk = false := rfl
+theorem joMarking_correctionOk : joMarking.correctionOk = true := rfl
+theorem joMarking_strategy : joMarking.strategy = .polarityReversal := rfl
+
+def allPolarityMarkings : List PolarityMarkingEntry := [joMarking]
 
 /-- Swedish polar answer profile: polarity-based, mixed strategy
     (particles + verb echo), with polarity reversal (*jo*). -/

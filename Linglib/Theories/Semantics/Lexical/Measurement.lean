@@ -153,9 +153,12 @@ def telicityToStatus : Telicity → MereologicalStatus
     ("Plural predicates are cumulative"), but their measurement is restricted
     to NUMBER (counting atoms). At the lexical level, count nouns are QUA. -/
 def numberToStatus : NumberFeature → MereologicalStatus
-  | .mass => .cumulative
-  | .sg   => .quantized
-  | .pl   => .quantized
+  | .mass    => .cumulative
+  | .sg      => .quantized
+  | .pl      => .quantized
+  | .neutral => .quantized  -- Number-neutral nouns (Shan) have identifiable
+                             -- atomic parts despite lacking obligatory number
+                             -- marking (@cite{moroney-2021} §2.2).
 
 /-- Gradable adjectives predicate of states that "form mereologies", enabling monotonic measurement by `much`.
 

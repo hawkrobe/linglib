@@ -291,9 +291,11 @@ introduce low-scoped existential quantification:
   DPP(Q)(P) = ∃x[P(x) ∧ Q(x)]
 
 This is the mirror image of DKP. Where DKP applies to kinds (via ∪),
-DPP applies to properties directly. @cite{guerrini-2026} §5.3: the
-existential reading of bare plurals in episodic sentences arises from
-property-level LFs via DPP, not from kind-level DKP.
+DPP applies to properties directly. @cite{moroney-2021} (85): DPP
+applies when bare nouns (base type ⟨s,⟨e,t⟩⟩) compose with a verb
+at vP, yielding obligatory low scope w.r.t. negation. @cite{guerrini-2026}
+§5.3: the existential reading of bare plurals in episodic sentences
+arises from property-level LFs via DPP, not from kind-level DKP.
 
 Example: "Bears are destroying my garden" (existential reading)
 - "bears" denotes a property (λx.bear(x))

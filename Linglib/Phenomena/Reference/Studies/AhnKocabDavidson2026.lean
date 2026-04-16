@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Montague.Modification
+import Linglib.Theories.Semantics.Composition.Modification
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Theories.Pragmatics.GriceanMaxims
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
@@ -50,7 +50,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Reference.Studies.AhnKocabDavidson2026
 
-open Semantics.Montague.Modification (predMod truePred predMod_true_left predMod_comm)
+open Semantics.Composition.Modification (predMod truePred predMod_true_left predMod_comm)
 open Core.Discourse.ReferentialForm (AccessibilityLevel)
 open Theories.Pragmatics.GriceanMaxims
 open Semantics.Lexical.Expressives (TwoDimProp)

@@ -7,12 +7,14 @@ Hierarchical organization of phonological features following the standard
 feature geometry model. The tree synthesizes three sources:
 
 - **@cite{clements-1985}**: root, laryngeal, supralaryngeal, and place nodes
-- **@cite{sagey-1986}**: articulator sub-nodes under Place (labial, coronal, dorsal)
+- **@cite{sagey-1986}**: articulator sub-nodes under Place (labial, coronal, dorsal);
+  soft palate node under Supralaryngeal
 - **@cite{hayes-2009}**: complete 26-feature inventory mapped to geometric nodes
 
-    Root [±syll, ±cons, ±son, ±approx, ±nas, ±del.rel., ±tap, ±trill]
+    Root [±syll, ±cons, ±son, ±approx, ±del.rel., ±tap, ±trill]
     ├── Laryngeal [±voice, ±s.g., ±c.g.]
     └── Supralaryngeal [±cont]
+        ├── Soft Palate [±nasal]
         └── Place
             ├── Labial [±lab, ±round, ±labiodental]
             ├── Coronal [±cor, ±ant, ±dist, ±lat, ±strid]
@@ -34,6 +36,7 @@ inductive GeomNode where
   | root           -- Root node (dominates everything)
   | laryngeal      -- Laryngeal node (@cite{clements-1985})
   | supralaryngeal -- Supralaryngeal node (@cite{clements-1985})
+  | softPalate     -- Soft palate node (@cite{sagey-1986})
   | place          -- Place node (@cite{clements-1985})
   | labial         -- Labial articulator (@cite{sagey-1986})
   | coronal        -- Coronal articulator (@cite{sagey-1986})
@@ -50,6 +53,7 @@ def GeomNode.parent : GeomNode → Option GeomNode
   | .root           => none
   | .laryngeal      => some .root
   | .supralaryngeal => some .root
+  | .softPalate     => some .supralaryngeal
   | .place          => some .supralaryngeal
   | .labial         => some .place
   | .coronal        => some .place
@@ -57,7 +61,7 @@ def GeomNode.parent : GeomNode → Option GeomNode
 
 /-- All geometric nodes. -/
 def GeomNode.allNodes : List GeomNode :=
-  [.root, .laryngeal, .supralaryngeal, .place, .labial, .coronal, .dorsal]
+  [.root, .laryngeal, .supralaryngeal, .softPalate, .place, .labial, .coronal, .dorsal]
 
 /-- Children of a node: nodes whose parent is `n`. -/
 def GeomNode.children (n : GeomNode) : List GeomNode :=
@@ -67,7 +71,7 @@ def GeomNode.children (n : GeomNode) : List GeomNode :=
 def GeomNode.depth : GeomNode → Nat
   | .root => 0
   | .laryngeal | .supralaryngeal => 1
-  | .place => 2
+  | .softPalate | .place => 2
   | .labial | .coronal | .dorsal => 3
 
 -- ============================================================================
@@ -96,18 +100,20 @@ namespace Theories.Phonology
 open FeatureGeometry in
 /-- Each terminal feature maps to its dominating class node.
 
-    - Root: [syllabic], [consonantal], [sonorant], [approximant], [nasal],
+    - Root: [syllabic], [consonantal], [sonorant], [approximant],
       [delayedRelease], [tap], [trill]
     - Laryngeal: [voice], [spreadGlottis], [constrGlottis]
     - Supralaryngeal: [continuant]
+    - Soft Palate: [nasal]
     - Labial: [labial], [round], [labiodental]
     - Coronal: [coronal], [anterior], [distributed], [lateral], [strident]
     - Dorsal: [dorsal], [high], [low], [front], [back], [tense] -/
 def Feature.node : Feature → GeomNode
   | .syllabic | .consonantal | .sonorant | .approximant
-  | .nasal | .delayedRelease | .tap | .trill => .root
+  | .delayedRelease | .tap | .trill => .root
   | .voice | .spreadGlottis | .constrGlottis => .laryngeal
   | .continuant => .supralaryngeal
+  | .nasal => .softPalate
   | .labial | .round | .labiodental => .labial
   | .coronal | .anterior | .distributed | .lateral | .strident => .coronal
   | .dorsal | .high | .low | .front | .back | .tense => .dorsal
@@ -153,6 +159,7 @@ theorem allNodes_complete (n : GeomNode) : n ∈ GeomNode.allNodes := by
 
 theorem root_depth : GeomNode.root.depth = 0 := rfl
 theorem supralaryngeal_depth : GeomNode.supralaryngeal.depth = 1 := rfl
+theorem softPalate_depth : GeomNode.softPalate.depth = 2 := rfl
 theorem place_depth : GeomNode.place.depth = 2 := rfl
 theorem labial_depth : GeomNode.labial.depth = 3 := rfl
 theorem coronal_depth : GeomNode.coronal.depth = 3 := rfl
@@ -163,7 +170,9 @@ theorem dorsal_depth : GeomNode.dorsal.depth = 3 := rfl
 theorem root_features_count : GeomNode.root.features.length = 26 := by native_decide
 theorem laryngeal_features_count : GeomNode.laryngeal.features.length = 3 := by native_decide
 theorem supralaryngeal_features_count :
-    GeomNode.supralaryngeal.features.length = 15 := by native_decide
+    GeomNode.supralaryngeal.features.length = 16 := by native_decide
+theorem softPalate_features_count :
+    GeomNode.softPalate.features.length = 1 := by native_decide
 theorem place_features_count : GeomNode.place.features.length = 14 := by native_decide
 theorem labial_features_count : GeomNode.labial.features.length = 3 := by native_decide
 theorem coronal_features_count : GeomNode.coronal.features.length = 5 := by native_decide
@@ -175,7 +184,7 @@ theorem dorsal_features_count : GeomNode.dorsal.features.length = 6 := by native
 -- isDorsal matches the geometry exactly.
 -- isPlace now matches the geometry exactly (includes labiodental, front, tense).
 -- isMajorClass has no single geometric counterpart: its features are
--- distributed across root, supralaryngeal, and coronal.
+-- distributed across root, supralaryngeal, softPalate, and coronal.
 
 theorem isLaryngeal_iff_laryngeal_dominates (f : Feature) :
     f.isLaryngeal = f.dominatedBy .laryngeal := by

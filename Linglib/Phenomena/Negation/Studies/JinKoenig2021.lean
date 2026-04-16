@@ -600,7 +600,8 @@ satisfy ¬p. The ¬ in the complement is structural, not expletive —
 but from the language production perspective, the activation of ¬p
 alongside p (in worlds outside the modal base) triggers EN. -/
 
-open Semantics.Modality.Kratzer (necessity possibility ModalBase OrderingSource bestWorlds)
+open Semantics.Modality.Kratzer (necessity possibility necessity_iff_all possibility_iff_any
+  ModalBase OrderingSource bestWorlds)
 open Semantics.Attitudes.Intensional (World)
 
 /-- IMPOSSIBLE maps to the logical operator licensing condition. -/
@@ -623,9 +624,13 @@ private theorem all_not_false_any_true {α : Type*} (L : List α) (p : α → Bo
 
 theorem not_impossible_activates_p (f : ModalBase) (g : OrderingSource)
     (p : Core.Proposition.BProp World) (w : World) :
-    necessity f g (λ w' => !p w') w = false →
-    possibility f g p w = true := by
-  exact all_not_false_any_true _ p
+    ¬ necessity f g (λ w' => !p w') w →
+    possibility f g p w := by
+  rw [necessity_iff_all, possibility_iff_any]
+  exact fun h => all_not_false_any_true _ p (by
+    cases hc : (bestWorlds f g w).all (fun w' => !p w')
+    · rfl
+    · exact absurd hc h)
 
 -- ════════════════════════════════════════════════════
 -- § 9b. WITHOUT Bridge: q ∧ ¬p → Logical Operator

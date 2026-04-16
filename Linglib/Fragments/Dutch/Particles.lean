@@ -29,7 +29,7 @@ def wel : PolarityMarkingEntry where
   correctionOk := true
   strategy := .particle
 
-def allPolarityParticles : List PolarityMarkingEntry := [wel]
+def allPolarityMarkings : List PolarityMarkingEntry := [wel]
 
 -- Per-entry verification theorems
 theorem wel_form : wel.form = some "wel" := rfl

@@ -48,7 +48,7 @@ namespace Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 
 open Core.Duality (Truth3 ProjectionType)
 open Semantics.Conditionals.AlternativeSensitive
-open Semantics.Conditionals.Counterfactual (closestWorldsB)
+open Semantics.Conditionals.Counterfactual (closestWorlds)
 
 
 -- ============================================================
@@ -102,10 +102,10 @@ theorem alt_semantics_validates_sda {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)
     (A B C : W → Bool) (w : W) :
     sdaEval closer domain [A, B] C w =
-    (((closestWorldsB closer domain w (domain.filter A)).isEmpty ||
-      (closestWorldsB closer domain w (domain.filter A)).all C) &&
-     ((closestWorldsB closer domain w (domain.filter B)).isEmpty ||
-      (closestWorldsB closer domain w (domain.filter B)).all C)) := by
+    (((closestWorlds closer domain w (domain.filter A)).isEmpty ||
+      (closestWorlds closer domain w (domain.filter A)).all C) &&
+     ((closestWorlds closer domain w (domain.filter B)).isEmpty ||
+      (closestWorlds closer domain w (domain.filter B)).all C)) := by
   unfold sdaEval altConditionalResults
   exact all_id_pair _ _
 

@@ -88,7 +88,8 @@ about OT candidate competition.
 
 namespace Phenomena.FillerGap.Studies.Erlewine2016
 
-open Fragments.Mayan.Kaqchikel Minimalism Core.ConstraintEvaluation
+open Fragments.Mayan.Kaqchikel Minimalism
+open Core.ConstraintEvaluation (LexLT)
 
 -- ============================================================================
 -- § 1: Anti-Locality Grounds the Transitive Crash
@@ -141,9 +142,9 @@ theorem lex_needed : agentExtractionTableau.satOptimal = [] :=
     violates the HIGHER-ranked constraint (SSAL, position 0).
     AF violates only the lower-ranked constraint (XRef, position 1). -/
 theorem transitive_lex_worse :
-    lexLT (AFCandidate.agentFocusExtraction.violations)
-          (AFCandidate.transitiveExtraction.violations) = true := by
-  native_decide
+    LexLT (AFCandidate.agentFocusExtraction.violations)
+          (AFCandidate.transitiveExtraction.violations) := by
+  decide
 
 -- ============================================================================
 -- § 4: Anti-Locality Predicate Grounding

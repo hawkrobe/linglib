@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.TeamSemantics
+import Linglib.Theories.Semantics.Dynamic.DependenceLogic
 import Linglib.Theories.Morphology.Nanosyntax.Core
 import Linglib.Phenomena.Reference.Studies.Dekier2021
 import Linglib.Fragments.Russian.Indefinites
@@ -45,7 +45,7 @@ pronouns as a test case. The key claims:
 
 This study connects six modules:
 
-- `TeamSemantics`: `variation` and `constancy` predicates formalize
+- `DependenceLogic`: `variation` and `constancy` predicates formalize
   Degano & Aloni's `var(y,x)` and `dep(y,x)`.
   `type_vi_contradictory` derives the gap from these predicates.
 - `Nanosyntax.Core`: `spellout` and `abaViolation` demonstrate the
@@ -65,7 +65,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Reference.Studies.Bubnov2026
 
-open Semantics.Dynamic.TeamSemantics
+open Semantics.Dynamic.DependenceLogic
 open Theories.Morphology.Nanosyntax
 open Phenomena.Reference.Studies.Dekier2021
 open Core.IndefiniteType

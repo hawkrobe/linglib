@@ -1,4 +1,5 @@
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
+import Linglib.Core.Assignment
 import Linglib.Core.Temporal.Time
 import Linglib.Core.Temporal.Reichenbach
 import Linglib.Core.Context.Tower

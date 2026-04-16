@@ -70,14 +70,14 @@ theorem combine_empty_right (g : OrderingSource) (w : World) :
 /-- **Strong necessity** ("must φ"): standard Kratzer necessity under
     modal base f and ordering source g. -/
 def strongNecessity (f : ModalBase) (g : OrderingSource)
-    (p : BProp World) (w : World) : Bool :=
+    (p : BProp World) (w : World) : Prop :=
   necessity f g p w
 
 /-- **Weak necessity** ("ought φ"): Kratzer necessity under modal base f
     and a *refined* ordering g ∪ g', where g' is a secondary ordering
     source (e.g., stereotypical expectations beyond strict norms). -/
 def weakNecessity (f : ModalBase) (g g' : OrderingSource)
-    (p : BProp World) (w : World) : Bool :=
+    (p : BProp World) (w : World) : Prop :=
   necessity f (combineOrdering g g') p w
 
 /-! ## Ordering extension lemma -/
@@ -127,11 +127,10 @@ theorem best_refines (f : ModalBase) (g g' : OrderingSource) (w : World) :
     than "ought φ" — the former entails the latter but not vice versa. -/
 theorem strong_entails_weak (f : ModalBase) (g g' : OrderingSource)
     (p : BProp World) (w : World)
-    (h : strongNecessity f g p w = true) :
-    weakNecessity f g g' p w = true := by
-  unfold strongNecessity at h
-  unfold weakNecessity
-  unfold necessity at h ⊢
+    (h : strongNecessity f g p w) :
+    weakNecessity f g g' p w := by
+  rw [strongNecessity, necessity_iff_all] at h
+  rw [weakNecessity, necessity_iff_all]
   rw [List.all_eq_true] at h ⊢
   intro w' hw'
   exact h w' (best_refines f g g' w w' hw')
@@ -146,18 +145,21 @@ theorem strong_entails_weak (f : ModalBase) (g g' : OrderingSource)
     necessity fails. -/
 theorem weak_not_entails_strong :
     ¬(∀ (f : ModalBase) (g g' : OrderingSource) (p : BProp World) (w : World),
-        weakNecessity f g g' p w = true → strongNecessity f g p w = true) := by
+        weakNecessity f g g' p w → strongNecessity f g p w) := by
   intro h
-  -- g: worlds satisfying (w0 ∨ w1) are best — {w0, w1}
-  -- g': refines to worlds satisfying w1 — under g∪g', only {w1} is best
-  -- p = (· == w1): holds at w1 but not w0
-  exact absurd
-    (h emptyBackground
-      (λ _ => [λ w => w == .w0 || w == .w1])
-      (λ _ => [λ w => w == .w1])
-      (λ w => w == .w1) .w0
-      (by decide))
-    (by decide)
+  have := h emptyBackground
+    (λ _ => [λ w => w == .w0 || w == .w1])
+    (λ _ => [λ w => w == .w1])
+    (λ w => w == .w1) .w0
+  rw [weakNecessity, necessity_iff_all] at this
+  rw [strongNecessity, necessity_iff_all] at this
+  have hWeak : (bestWorlds emptyBackground (combineOrdering
+    (λ _ => [λ w => w == .w0 || w == .w1]) (λ _ => [λ w => w == .w1])) .w0).all
+    (λ w => w == .w1) = true := by native_decide
+  have hStrong := this hWeak
+  have : ¬ (bestWorlds emptyBackground (λ _ => [λ w => w == .w0 || w == .w1]) .w0).all
+    (λ w => w == .w1) = true := by native_decide
+  exact this hStrong
 
 /-! ## Deontic application -/
 
@@ -181,35 +183,48 @@ structure DeonticStrength where
 
 /-- Strong deontic necessity: "You must do X" (legal obligation). -/
 def DeonticStrength.must (d : DeonticStrength)
-    (p : BProp World) (w : World) : Bool :=
+    (p : BProp World) (w : World) : Prop :=
   strongNecessity d.primary.circumstances d.primary.norms p w
 
 /-- Weak deontic necessity: "You ought to do X" (refined by social norms). -/
 def DeonticStrength.ought (d : DeonticStrength)
-    (p : BProp World) (w : World) : Bool :=
+    (p : BProp World) (w : World) : Prop :=
   weakNecessity d.primary.circumstances d.primary.norms d.secondaryNorms p w
 
 /-- Bridge to Kratzer's DeonticFlavor: strong necessity with DeonticFlavor
     is exactly standard Kratzer necessity. -/
 theorem deontic_must_eq_kratzer (d : DeonticFlavor)
     (p : BProp World) (w : World) :
-    necessity d.circumstances d.norms p w =
-    strongNecessity d.circumstances d.norms p w := rfl
+    necessity d.circumstances d.norms p w ↔
+    strongNecessity d.circumstances d.norms p w :=
+  Iff.rfl
 
 /-- Must entails ought for any deontic scenario. -/
 theorem deontic_must_entails_ought (d : DeonticStrength)
     (p : BProp World) (w : World)
-    (h : d.must p w = true) :
-    d.ought p w = true :=
+    (h : d.must p w) :
+    d.ought p w :=
   strong_entails_weak d.primary.circumstances d.primary.norms d.secondaryNorms p w h
 
 /-- With no secondary norms, weak necessity reduces to strong necessity. -/
 theorem weak_eq_strong_no_secondary (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World) :
-    weakNecessity f g emptyBackground p w =
+    weakNecessity f g emptyBackground p w ↔
     strongNecessity f g p w := by
-  unfold weakNecessity strongNecessity necessity bestWorlds combineOrdering emptyBackground
-  simp only [List.append_nil]
+  simp only [weakNecessity, strongNecessity, necessity_iff_all]
+  constructor
+  · intro h
+    have : bestWorlds f (combineOrdering g emptyBackground) w = bestWorlds f g w := by
+      unfold combineOrdering emptyBackground
+      simp only [List.append_nil]
+    rw [this] at h
+    exact h
+  · intro h
+    have : bestWorlds f g w = bestWorlds f (combineOrdering g emptyBackground) w := by
+      unfold combineOrdering emptyBackground
+      simp only [List.append_nil]
+    rw [this] at h
+    exact h
 
 /-! ## Bridge: Kratzer semantics ↔ typological force
 
@@ -219,16 +234,20 @@ necessity is `necessity` with the primary ordering source alone. The
 entailment chain □ → □w → ◇ is the semantic content of
 `ModalForce.atLeastAsStrong`. -/
 
-/-- Strong necessity under Kratzer params IS `ModalForce.necessity`. -/
-theorem strongNecessity_is_necessity (f : ModalBase) (g : OrderingSource)
+/-- Strong necessity under Kratzer params ↔ `ModalForce.necessity` evaluation. -/
+theorem strongNecessity_iff_eval (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World) :
-    strongNecessity f g p w = (KratzerTheory ⟨f, g⟩).eval .necessity p w := rfl
+    strongNecessity f g p w ↔ (KratzerTheory ⟨f, g⟩).eval .necessity p w = true := by
+  simp only [strongNecessity, necessity_iff_all]
+  rfl
 
-/-- Weak necessity under Kratzer params with refinement IS
+/-- Weak necessity under Kratzer params with refinement ↔
     `ModalForce.weakNecessity` evaluated under combined ordering. -/
-theorem weakNecessity_is_weakForce (f : ModalBase) (g g' : OrderingSource)
+theorem weakNecessity_iff_eval (f : ModalBase) (g g' : OrderingSource)
     (p : BProp World) (w : World) :
-    weakNecessity f g g' p w =
-    (KratzerTheory ⟨f, combineOrdering g g'⟩).eval .weakNecessity p w := rfl
+    weakNecessity f g g' p w ↔
+    (KratzerTheory ⟨f, combineOrdering g g'⟩).eval .weakNecessity p w = true := by
+  simp only [weakNecessity, necessity_iff_all]
+  rfl
 
 end Semantics.Modality.Directive

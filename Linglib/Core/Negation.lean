@@ -1,4 +1,8 @@
 import Linglib.Core.Lexical.PolarityItem
+import Mathlib.Order.Lattice
+import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Data.Fintype.Prod
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Core Negation Types
@@ -53,6 +57,26 @@ inductive ENType where
   | low    -- Truth-conditional; optional (before, than, fear)
   deriving DecidableEq, Repr
 
+-- ── ENType: Equiv, Fintype, LinearOrder ──
+
+/-- ENType ≃ Bool: low ↦ false, high ↦ true. -/
+def ENType.equivBool : ENType ≃ Bool where
+  toFun | .low => false | .high => true
+  invFun | false => .low | true => .high
+  left_inv t := by cases t <;> rfl
+  right_inv b := by cases b <;> rfl
+
+instance : Fintype ENType := Fintype.ofEquiv _ ENType.equivBool.symm
+
+/-- Numeric embedding: low ↦ 0, high ↦ 1.
+    Ordering: low < high (truth-conditional before non-truth-conditional). -/
+def ENType.toNat : ENType → Nat
+  | .low => 0 | .high => 1
+
+instance : LinearOrder ENType :=
+  LinearOrder.lift' ENType.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [ENType.toNat])
+
 -- ════════════════════════════════════════════════════
 -- § 3. EN strength classification
 -- ════════════════════════════════════════════════════
@@ -71,6 +95,26 @@ inductive ENStrength where
   | strong  -- Loses all SN polarity properties
   deriving DecidableEq, Repr
 
+-- ── ENStrength: Equiv, Fintype, LinearOrder ──
+
+/-- ENStrength ≃ Bool: weak ↦ false, strong ↦ true. -/
+def ENStrength.equivBool : ENStrength ≃ Bool where
+  toFun | .weak => false | .strong => true
+  invFun | false => .weak | true => .strong
+  left_inv s := by cases s <;> rfl
+  right_inv b := by cases b <;> rfl
+
+instance : Fintype ENStrength := Fintype.ofEquiv _ ENStrength.equivBool.symm
+
+/-- Numeric embedding: weak ↦ 0, strong ↦ 1.
+    Ordering: weak < strong (retains-polarity before loses-polarity). -/
+def ENStrength.toNat : ENStrength → Nat
+  | .weak => 0 | .strong => 1
+
+instance : LinearOrder ENStrength :=
+  LinearOrder.lift' ENStrength.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [ENStrength.toNat])
+
 -- ════════════════════════════════════════════════════
 -- § 4. Polarity classes and licensing profiles
 -- ════════════════════════════════════════════════════
@@ -84,6 +128,21 @@ inductive PolarityClass where
   | notAlsoConj  -- *e neanche* / *not ... also* conjunctions
   | nWord        -- N-words: *nessuno*, *niente*, *mai*
   deriving DecidableEq, Repr
+
+-- ── PolarityClass: Fintype ──
+
+/-- PolarityClass ≃ Fin 4: weakNPI ↦ 0, strongNPI ↦ 1, notAlsoConj ↦ 2, nWord ↦ 3. -/
+def PolarityClass.equivFin : PolarityClass ≃ Fin 4 where
+  toFun | .weakNPI => 0 | .strongNPI => 1 | .notAlsoConj => 2 | .nWord => 3
+  invFun | ⟨0, _⟩ => .weakNPI | ⟨1, _⟩ => .strongNPI | ⟨2, _⟩ => .notAlsoConj | ⟨3, _⟩ => .nWord
+         | ⟨n + 4, h⟩ => absurd h (by omega)
+  left_inv c := by cases c <;> rfl
+  right_inv i := by
+    match i with
+    | ⟨0, _⟩ => rfl | ⟨1, _⟩ => rfl | ⟨2, _⟩ => rfl | ⟨3, _⟩ => rfl
+    | ⟨n + 4, h⟩ => exact absurd h (by omega)
+
+instance : Fintype PolarityClass := Fintype.ofEquiv _ PolarityClass.equivFin.symm
 
 /-- Polarity licensing profile for an EN environment (@cite{greco-2020} Table 1).
     Each field records whether that class of polarity-sensitive element
@@ -120,6 +179,59 @@ theorem weakEN_licenses_weakNPI : weakENProfile.licenses .weakNPI = true := rfl
 theorem weakEN_licenses_nWord : weakENProfile.licenses .nWord = true := rfl
 theorem weakEN_rejects_strongNPI : weakENProfile.licenses .strongNPI = false := rfl
 theorem weakEN_rejects_notAlso : weakENProfile.licenses .notAlsoConj = false := rfl
+
+-- ── PolarityLicensing: Equiv, Fintype, Lattice, BoundedOrder ──
+
+/-- Equivalence with `Bool⁴` for `Fintype` derivation. -/
+def PolarityLicensing.equiv : PolarityLicensing ≃ (Bool × Bool × Bool × Bool) where
+  toFun p := (p.weakNPIs, p.strongNPIs, p.notAlsoConj, p.nWords)
+  invFun t := ⟨t.1, t.2.1, t.2.2.1, t.2.2.2⟩
+  left_inv p := by cases p; rfl
+  right_inv t := by obtain ⟨_, _, _, _⟩ := t; rfl
+
+instance : Fintype PolarityLicensing := Fintype.ofEquiv _ PolarityLicensing.equiv.symm
+
+/-- Componentwise implication ordering: `a ≤ b` iff every class that `a`
+    licenses, `b` also licenses. -/
+private def PolarityLicensing.leBool (a b : PolarityLicensing) : Bool :=
+  (!a.weakNPIs || b.weakNPIs) && (!a.strongNPIs || b.strongNPIs) &&
+  (!a.notAlsoConj || b.notAlsoConj) && (!a.nWords || b.nWords)
+
+instance : PartialOrder PolarityLicensing where
+  le a b := a.leBool b = true
+  le_refl a := by simp [PolarityLicensing.leBool]
+  le_trans := by decide
+  le_antisymm := by decide
+
+instance : DecidableRel (α := PolarityLicensing) (· ≤ ·) := fun a b =>
+  inferInstanceAs (Decidable (a.leBool b = true))
+
+instance : Lattice PolarityLicensing where
+  sup a b := ⟨a.weakNPIs || b.weakNPIs, a.strongNPIs || b.strongNPIs,
+              a.notAlsoConj || b.notAlsoConj, a.nWords || b.nWords⟩
+  inf a b := ⟨a.weakNPIs && b.weakNPIs, a.strongNPIs && b.strongNPIs,
+              a.notAlsoConj && b.notAlsoConj, a.nWords && b.nWords⟩
+  le_sup_left := by decide
+  le_sup_right := by decide
+  sup_le := by decide
+  inf_le_left := by decide
+  inf_le_right := by decide
+  le_inf := by decide
+
+/-- Standard negation profile: licenses all polarity-sensitive elements. -/
+def standardNegProfile : PolarityLicensing :=
+  { weakNPIs := true, strongNPIs := true, notAlsoConj := true, nWords := true }
+
+instance : OrderBot PolarityLicensing where
+  bot := strongENProfile
+  bot_le := by decide
+
+instance : OrderTop PolarityLicensing where
+  top := standardNegProfile
+  le_top := by decide
+
+/-- Strong EN (⊥) ≤ weak EN in the licensing lattice. -/
+theorem strongEN_le_weakEN : strongENProfile ≤ weakENProfile := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Bridge: PolarityClass ↔ PolarityType

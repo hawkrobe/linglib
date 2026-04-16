@@ -408,6 +408,21 @@ inductive StrongENType where
   | sneg | nrq | ene
   deriving DecidableEq, Repr
 
+-- ── StrongENType: Fintype ──
+
+/-- StrongENType ≃ Fin 3. -/
+def StrongENType.equivFin : StrongENType ≃ Fin 3 where
+  toFun | .sneg => 0 | .nrq => 1 | .ene => 2
+  invFun | ⟨0, _⟩ => .sneg | ⟨1, _⟩ => .nrq | ⟨2, _⟩ => .ene
+         | ⟨n + 3, h⟩ => absurd h (by omega)
+  left_inv t := by cases t <;> rfl
+  right_inv i := by
+    match i with
+    | ⟨0, _⟩ => rfl | ⟨1, _⟩ => rfl | ⟨2, _⟩ => rfl
+    | ⟨n + 3, h⟩ => exact absurd h (by omega)
+
+instance : Fintype StrongENType := Fintype.ofEquiv _ StrongENType.equivFin.symm
+
 def StrongENType.allowsWh : StrongENType → Bool
   | .sneg => false
   | .nrq  => true
@@ -440,5 +455,15 @@ theorem sneg_unique_answerhood :
 theorem sneg_unique_wh_rejection :
     [StrongENType.sneg, .nrq, .ene].filter (fun t => !t.allowsWh)
     = [.sneg] := rfl
+
+/-- The three-column diagnostic table (Wh, answerhood, embeddability)
+    uniquely identifies each StrongENType — formalizing @cite{greco-2020}
+    Table 3's claim that sneg, NRQ, and ENE are empirically distinct. -/
+theorem strongEN_fingerprint_injective :
+    Function.Injective (fun t : StrongENType =>
+      (t.allowsWh, t.isAnswer, t.embeddableUnderFactive)) := by
+  intro a b h
+  cases a <;> cases b <;> simp_all [StrongENType.allowsWh,
+    StrongENType.isAnswer, StrongENType.embeddableUnderFactive]
 
 end Phenomena.Negation.Studies.Greco2020

@@ -58,7 +58,7 @@ Both are instances of the generic `dist` operator (`Core/Logic/Truth3.lean`).
 namespace Semantics.Conditionals.AlternativeSensitive
 
 open Core.Duality (Truth3 dist)
-open Semantics.Conditionals.Counterfactual (closestWorldsB)
+open Semantics.Conditionals.Counterfactual (closestWorlds)
 
 
 -- ============================================================
@@ -72,7 +72,7 @@ def altConditionalResults {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) : List Bool :=
   alts.map λ A =>
-    let closest := closestWorldsB closer domain w (domain.filter A)
+    let closest := closestWorlds closer domain w (domain.filter A)
     closest.isEmpty || closest.all C
 
 
@@ -115,7 +115,7 @@ def lewisDAC {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)
     (A B C : W → Bool) (w : W) : Bool :=
   let disj := λ v => A v || B v
-  let closest := closestWorldsB closer domain w (domain.filter disj)
+  let closest := closestWorlds closer domain w (domain.filter disj)
   closest.isEmpty || closest.all C
 
 

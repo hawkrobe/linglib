@@ -23,7 +23,7 @@ differ along three dimensions:
 
 The first three properties are formalized using existing Linglib types:
 `EventSort`, `Interval.precedes`/`.overlaps`.
-The fourth uses `universalCounterfactualB` from `Counterfactual.lean`.
+The fourth uses `universalCounterfactual` from `Counterfactual.lean`.
 
 ## Key results
 
@@ -39,7 +39,7 @@ namespace Semantics.Causation.PsychLink
 open Core.Time (Interval)
 open Semantics.Events (EventSort)
 open Semantics.Causation.Psych (CausalSource)
-open Semantics.Conditionals.Counterfactual (universalCounterfactualB closestWorldsB)
+open Semantics.Conditionals.Counterfactual (universalCounterfactual closestWorlds)
 
 -- ════════════════════════════════════════════════════
 -- § 1. PsychCausalLink
@@ -113,32 +113,30 @@ def CausalSource.toLink (Time : Type*) [LinearOrder Time] :
 -- ════════════════════════════════════════════════════
 
 /-- Maintenance is temporally symmetric: if cause overlaps effect,
-    effect overlaps cause. This follows from `Interval.overlaps`
-    being symmetric. -/
+    effect overlaps cause. Delegates to `Interval.overlaps_symm`. -/
 theorem maintenance_temporal_symmetric {Time : Type*} [LinearOrder Time]
     (i₁ i₂ : Interval Time)
     (h : (maintenanceLink Time).temporalConstraint i₁ i₂) :
     (maintenanceLink Time).temporalConstraint i₂ i₁ :=
-  ⟨h.2, h.1⟩
+  Interval.overlaps_symm h
 
 /-- Eventive causation is temporally irreflexive: no eventuality
-    can precede itself. Follows from `Interval.precedes` requiring
-    `i.finish < i.start`, contradicting `i.valid : i.start ≤ i.finish`. -/
+    can precede itself. Delegates to `Interval.precedes_irrefl`. -/
 theorem eventive_temporal_irrefl {Time : Type*} [LinearOrder Time]
     (i : Interval Time) :
     ¬ (eventiveLink Time).temporalConstraint i i :=
-  fun h => absurd (lt_of_lt_of_le h i.valid) (lt_irrefl _)
+  Interval.precedes_irrefl i
 
 /-- Precedence and overlap are mutually exclusive: if cause precedes
     effect, they cannot overlap. This is the structural basis for the
     eventive/stative dichotomy — the two temporal configurations are
-    incompatible for any given pair of eventualities. -/
+    incompatible for any given pair of eventualities.
+    Delegates to `Interval.precedes_not_overlaps`. -/
 theorem precedes_excludes_overlap {Time : Type*} [LinearOrder Time]
     (i₁ i₂ : Interval Time)
     (h : (eventiveLink Time).temporalConstraint i₁ i₂) :
-    ¬ (maintenanceLink Time).temporalConstraint i₁ i₂ := by
-  intro ⟨_, h2⟩
-  exact absurd (lt_of_lt_of_le h h2) (lt_irrefl _)
+    ¬ (maintenanceLink Time).temporalConstraint i₁ i₂ :=
+  Interval.precedes_not_overlaps h
 
 -- ════════════════════════════════════════════════════
 -- § 5. Event Sort Properties
@@ -185,7 +183,7 @@ theorem flavors_differ_on_all_dimensions {Time : Type*} [LinearOrder Time] :
 def counterfactuallyDependent {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)
     (causeProp effectProp : W → Bool) (w : W) : Bool :=
-  universalCounterfactualB closer domain
+  universalCounterfactual closer domain
     (fun w => !causeProp w) (fun w => !effectProp w) w
 
 /-- Counterfactual persistence: in the closest worlds where the cause
@@ -199,7 +197,7 @@ def counterfactuallyDependent {W : Type*} [DecidableEq W]
 def counterfactuallyPersistent {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)
     (causeProp effectProp : W → Bool) (w : W) : Bool :=
-  universalCounterfactualB closer domain
+  universalCounterfactual closer domain
     (fun w => !causeProp w) effectProp w
 
 /-- Counterfactual dependence and persistence are mutually exclusive
@@ -215,13 +213,13 @@ theorem dependent_excludes_persistent {W : Type*} [DecidableEq W]
     (closer : W → W → W → Bool) (domain : List W)
     (causeProp effectProp : W → Bool) (w : W)
     (hDep : counterfactuallyDependent closer domain causeProp effectProp w = true)
-    (hNonempty : (closestWorldsB closer domain w
+    (hNonempty : (closestWorlds closer domain w
       (domain.filter (fun w => !causeProp w))).length > 0) :
     counterfactuallyPersistent closer domain causeProp effectProp w = false := by
-  simp only [counterfactuallyDependent, universalCounterfactualB] at hDep
-  simp only [counterfactuallyPersistent, universalCounterfactualB]
+  simp only [counterfactuallyDependent, universalCounterfactual] at hDep
+  simp only [counterfactuallyPersistent, universalCounterfactual]
   -- Extract a witness from the non-empty closest worlds
-  set cl := closestWorldsB closer domain w (domain.filter fun w => !causeProp w) with hcl
+  set cl := closestWorlds closer domain w (domain.filter fun w => !causeProp w) with hcl
   obtain ⟨x, xs, hcons⟩ : ∃ x xs, cl = x :: xs := by
     match h : cl, hNonempty with
     | a :: as, _ => exact ⟨a, as, rfl⟩

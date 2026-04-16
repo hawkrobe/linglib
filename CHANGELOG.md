@@ -1,5 +1,159 @@
 # Changelog
 
+## [0.229.791] - 2026-04-15
+
+### Changed
+- **Phi-feature files (PrivativePair, Person, Number, Gender)**: mathlib-quality cleanup — all `native_decide` → `decide` (16 proofs), add `@[simp]` to wellFormed/specLevel/toPair bridge theorems (24 lemmas), add `BEq` derivation to `PrivativePair`
+- **PhiFeatures.lean**: add `@[simp]` to all `*_eq_phiPresup` bridges, `*_is_*_cell` bridges, and markedness lemmas (13 lemmas)
+- **Sauerland2003.lean**: remove 5 tautological orphaned theorems (`multiplicity_inference`, `singular_coordination_when_atomic`, `sg_projects_universally`, `sauerland_is_implicature_theory`, `multiplicity_monotonicity_from_competition`), remove 4 unused hypotheses from `projection_asymmetry` and `negated_pl_entails_negated_sg`
+
+## [0.229.790] - 2026-04-15
+
+### Changed
+- **ViolationSemiring.lean**: bundle `weightedSum` as `weightMap : ViolationProfile n →+ ℚ` (`AddMonoidHom`), making the ⊗-preservation property structural. Add `lt_iff_lexStrictlyBetter` (bridge `ViolationProfile <` to `LexStrictlyBetter`), `weightMap_strictMono` / `weightMap_mono` (order-preservation under `ExponentiallySeparated`), `weightMap_preserves_minimum` (OT winner = HG winner as a semiring-theoretic corollary)
+
+## [0.229.789] - 2026-04-15
+
+### Changed
+- **ConstraintEvaluation.lean**: refactor `ViolationProfile n` from `@[ext] structure` to `abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)` — mathlib-idiomatic type synonym inheriting `LinearOrder` from `Pi.Lex`, `Add`/`Zero` from `instAddLex`/`instZeroLex`. `AddCommMonoid` proved manually (Lex strips algebraic instances). Full chain: `IsOrderedAddMonoid` → `IsOrderedCancelAddMonoid` → `LinearOrderedAddCommMonoidWithTop (WithTop ...)` → `CommSemiring (Tropical ...)` via `inferInstance`
+- **ViolationSemiring.lean**: update for `abbrev ViolationProfile` (remove `.val` field accessors), mark tropical semiring derivation `noncomputable`
+- **BasemapCorrespondence.lean**: fix `simp [List.map_map]` proofs broken by simp lemma changes (`simp only [...]; congr 1`)
+
+## [0.229.788] - 2026-04-15
+
+### Changed
+- **Kratzer/Operators.lean**: Kratzer modal operators (`necessity`, `possibility`, `simpleNecessity`, `simplePossibility`) now return `Prop` instead of `Bool`, defined as `boxR`/`diamondR` from `Core.IntensionalLogic.RestrictedModality`. Characterization lemmas (`necessity_iff_all`, `possibility_iff_any`, etc.) bridge to `List.all`/`List.any` Bool computation. Frame conditions and modal axioms (K, T, D, 4, B, 5) derived from RestrictedModality foundations.
+- **Directive.lean**: `strongNecessity`, `weakNecessity`, `DeonticStrength.must`, `DeonticStrength.ought` return `Prop`
+- **XMarking.lean**: `sn`, `snXg`, `snXf`, `snXfg` return `Prop`; entailment theorems use `Prop` directly
+- **Inertia.lean**, **Temporal.lean**, **Kernel.lean**, **BiasedPQ.lean**, **ProbabilityOrdering.lean**: all Bool→Prop for modal operators
+- **Restrictor.lean**: `conditionalNecessity`, `conditionalPossibility` return `Prop`
+- **DegreeCollapse.lean**, **Boylan2023.lean**, **Izvorski1997.lean**, **JinKoenig2021.lean**, **Rubinstein2014.lean**, **AghaJeretic2026.lean**, **AghaJeretic2022.lean**, **Roberts2023.lean**, **Ferreira2023.lean**, **Tsiakmakis2025.lean**: downstream fixes for Bool→Prop migration
+
+### Removed
+- **Core/IntensionalLogic/KripkeBridge.lean**: deleted (Kratzer operators ARE boxR/diamondR now, no bridge needed)
+- **Kratzer/ILBridge.lean**: deleted (same reason)
+
+## [0.229.787] - 2026-04-15
+
+### Added
+- **Dayal2004.lean**: add `.iotaAnaphoric` to `TypeShift` (@cite{moroney-2021} Def 508: ι^x for anaphoric definiteness), add `.neutral` to `NumberFeature` (number-neutral languages like Shan), add `iotaAnaphoricBlocked` field to `TypeShiftContext`, update `availableShifts` so `.neutral` enables both ∩ and ι/ι^x simultaneously, add `iotaAnaphoric_preferred_over_exists` and `iota_iotaAnaphoric_equal` theorems
+- **Core/Definiteness.lean**: add `.donkey` to `DefiniteUseType` (donkey anaphora patterns with familiarity/strong article per @cite{schwarz-2009}), update `useTypeToPresupType`
+- **Definite.lean**: add `the_anaphoric` (ι^x denotation: ιx[P(x) ∧ Q(x)]), `the_anaphoric_vacuous_eq_the_uniq` (ι^x subsumes ι when Q is vacuous), `the_anaphoric_more_restrictive` (ι^x can only narrow satisfier set)
+
+### Changed
+- **Moroney2021.lean**: add donkey anaphora rows to `germanData`/`thaiData`/`shanData` (Table 4.4 now has 6 rows), add `mandarinData` (4th language from Table 4.4), add `mandarin_thai_same_pattern` theorem, replace `.sg`/`.pl` with `.neutral` number in type-shift theorems, add `shan_neutral_both_available` (∩ and ι and ι^x all available for number-neutral nouns), add `shan_thai_anaphoric_contrast` (ι^x blocked in Thai but not Shan), add `DefMarkingParams`/`deriveStrategy` (derive marking strategy from article inventory rather than stipulating), add `derive_all_languages`/`derive_consistent_with_stipulated` theorems, add `type_shift_denotation_agreement` bridge to `the_anaphoric`, convert all `native_decide` → `decide`
+- **Measurement.lean**: add `.neutral` case to `numberToStatus` (→ `.quantized`)
+
+## [0.229.786] - 2026-04-15
+
+### Changed
+- **Sauerland2003.lean**: maximize reuse of existing infrastructure — §3 now derives singular preference from `phi_mp_selects_maximal` (OT constraint `phiMP`) instead of hand-rolling the MP argument; `sg_pl_same_assertion` calls `phiPresup_same_assertion`; `number_competition_is_presuppositional` stated in terms of `presupStrength`/`phiMP.eval`; §5 adds `der_unique` (DER well-definedness via `cum_maximal_unique` on `AlgClosure`) and `je_assertion_eq_forall` (JE truth conditions = standard universal, bridging JE∘DER to QForall); imports `MaximizePresupposition.lean` and opens `Mereology.isMaximal`/`CUM`/`cum_maximal_unique`/`algClosure_cum`
+
+## [0.229.785] - 2026-04-15
+
+### Changed
+- **Counterfactual.lean**: derive `selectionalMight` from `selectionalCounterfactual` (was independent definition), add general `lewis_might_eq_would_cem` collapse theorem, `native_decide` → `decide` in `selectional_might_weaker` and `distribution_fails_universal`
+- **Stalnaker1981.lean**: fix similarity orderings to model "equally close" with mutual ≤ and centering (was missing centering and symmetry), derive `bizet_verdi_cem` from generic `cem_selectional` (zero-proof instantiation), all `native_decide` → `decide`, add `@cite{quine-1950}` attribution for Bizet–Verdi example, remove unverified page citations
+- **references.bib**: update `stalnaker-1981` role to formalized with all 4 source files, add `quine-1950`
+
+## [0.229.784] - 2026-04-15
+
+### Added
+- **Core/Gender.lean §2**: `Gender.Features` struct ([±feminine, ±neuter]), `PhiFeatures` instance mapping to `PrivativePair` (neuter=maximal, feminine=intermediate, masculine=minimal), well-formedness and containment theorems, `SurfaceGender` bridge
+- **PhiFeatures.lean §3b**: gender presuppositional denotations (`neutSem`, `femSem`, `mascSem`) as `phiPresup` instances, domain nesting via `phiPresup_nesting`, `gender_person_number_isomorphism` (all three phi-domains share specLevel ordering)
+- **Sauerland2003.lean**: comprehensive formalization of @cite{sauerland-2003} — Feature-Subset Principle (§2), Maximize Presupposition derives singular preference (§3), coordination forces plural (§4), JE∘DER decomposition of *every* with mereological atoms and bridge to `QForall` (§5), existential `aSem` with projection asymmetry (§5b), multiplicity as presuppositional competition (§6), negated Pl→Sg entailment (§6b), Czech gender coordination data (§7), politeness via `isSemanticUnmarked` (§8)
+
+## [0.229.783] - 2026-04-15
+
+### Added
+- **Moroney2021.lean**: formalize @cite{moroney-2021} "Definiteness and Quantification — Evidence from Shan" — `DefMarkingStrategy` typology (extends @cite{jenks-2018} with `.unmarked` category for Shan/Serbian/Kannada), cross-linguistic definiteness expression data (German/Thai/Shan, Table 4.4), bare noun interpretation distribution (Table 2.3), type-shifting analysis via Dayal 2004 `selectShift` (`shan_singular_prefers_iota`, `shan_plural_prefers_down`, `shan_english_definiteness_contrast`), bridge to `Core.Definiteness` via `strategyToArticleType`, central insight theorem `marking_ne_availability` (morphological marking ≠ semantic availability)
+
+### Changed
+- **Core/Definiteness.lean**: rename `articleTypeToAvailablePresup` → `articleTypeToDistinguishedPresup` — clarifies that this function tracks morphological marking, not semantic availability. Theorem renames: `two_layers_two_presup_types` → `two_forms_two_distinguished`, `one_layer_one_presup_type` → `one_form_one_distinguished`
+- **Chierchia1998.lean**: add `@cite{moroney-2021}` to DPP docstring (DPP used for Shan bare noun existential readings)
+- **references.bib**: add `jenks-2018`, `jenks-2015`; update `moroney-2021` role to formalized with new sources
+
+## [0.229.782] - 2026-04-15
+
+### Added
+- **ViolationSemiring.lean**: OT/HG unification via @cite{riggle-2009} — names the violation semiring `VS n = Tropical (WithTop (ViolationProfile n))` alongside the standard tropical semiring, defines the weight map `weightedSum` as an additive monoid homomorphism (`weightedSum_add`, `weightedSum_zero`), proves `ViolationProfile.zero_le` (zero profile is bottom), `merge_monotone` (Dijkstra's principle: merging violations can only make things worse), `min_idempotent` (⊗ is idempotent). Bridges to existing `weightedViolations` from `OTLimit.lean` via `weightedSum_eq_weightedViolations`
+
+## [0.229.781] - 2026-04-15
+
+### Added
+- **ConstraintEvaluation.lean: tropical semiring derivation** — `vpLE_cancel_left` (left cancellation for lexicographic ≤), `IsOrderedCancelAddMonoid (ViolationProfile n)`, `LinearOrderedAddCommMonoidWithTop (WithTop (ViolationProfile n))`. The tropical semiring `CommSemiring (Tropical (WithTop (ViolationProfile n)))` is now automatically derived by `inferInstance` — we define `ViolationProfile n` with its algebraic properties, and everything else follows from mathlib's `Tropical` wrapper (@cite{riggle-2009})
+
+## [0.229.780] - 2026-04-15
+
+### Added
+- **Stalnaker1981.lean**: formalize @cite{stalnaker-1981} "A Defense of Conditional Excluded Middle" — Bizet–Verdi indeterminacy (selectional counterfactual = gap), CEM holds under selectional semantics / fails under universal, might/would asymmetry under supervaluation, singleton might–would collapse, distribution principle worked examples, Supreme Court quantifier scope contrast (narrow scope true, wide scope gap)
+- **Counterfactual.lean**: `lewisMight` (¬(would ¬B)), `selectionalMight` (∃ closest B-world), `lewis_might_eq_would_singleton` (collapse theorem), `selectional_might_weaker` (might ≥ would), `distribution_selectional` (holds with uniqueness), `distribution_fails_universal` (counterexample)
+- **Basic.lean**: `selectionPrefers`, `SelectionFunction.isCoherent`, `coherentSelectionToSimilarity` — bridge from selection functions to similarity orderings
+
+### Changed
+- **Conditionals refactoring**: deleted dead Prop-level parallel definitions (`closestWorlds` Set version, `selectionalCounterfactual` Prop version, `universalCounterfactual` Prop version) from Basic.lean and Counterfactual.lean. Renamed surviving computable versions: `closestWorldsB` → `closestWorlds`, `universalCounterfactualB` → `universalCounterfactual`, `selectionalCounterfactualB` → `selectionalCounterfactual`. Updated all downstream references in AlternativeSensitive.lean, McKayVanInwagen1977.lean, ZaniCiardelliSanfelici2026.lean, PsychLink.lean, Presuppositional.lean
+
+## [0.229.779] - 2026-04-15
+
+### Changed
+- **Kratzer/Operators.lean**: rewrite Kratzer modal operators to be DEFINED as `boxR`/`diamondR` from `Core.IntensionalLogic.RestrictedModality` (Prop-valued, not Bool). `kratzerR` (modal-base accessibility as `AccessRel`), `kratzerBestR` (best-world accessibility). `simpleNecessity`/`simplePossibility`/`necessity`/`possibility` are now literally `boxR`/`diamondR` with Kratzer-derived accessibility relations. `Decidable` instances provided for computation. Frame condition derivation from conversational backgrounds (`realistic_refl`, `transitive_trans`, `symmetric_symm`, `euclidean_eucl`). All modal axioms (K/T/D/4/B/5) become trivial applications of `boxR_K`/`boxR_T`/etc. Duality follows from `boxR_neg_diamondR`
+
+## [0.229.778] - 2026-04-15
+
+### Added
+- **ConstraintEvaluation.lean: violation semiring** — `ViolationProfile n` now carries `AddCommMonoid` (componentwise addition = Riggle's ⊎/merge) and `IsOrderedAddMonoid` (compatibility = Riggle's distributivity), in addition to the existing `LinearOrder` (= Riggle's ⊗/min). Together these encode @cite{riggle-2009}'s violation semiring as a standard mathlib ordered monoid. `vpLE_add_le_add_left` proves the monotonicity axiom: adding violations preserves the harmony ordering. This is the structural property that makes OT optimization decomposable (Dijkstra's principle)
+- **references.bib**: added `riggle-2009` (Violation Semirings in Optimality Theory)
+
+### Changed
+- **ConstraintOrdering.lean merged into ConstraintEvaluation.lean** — single unified module, no separate "computational engine" vs "mathematical interface" layers. All types (`LexProfile`, `SatProfile`, `ViolationProfile n`, `SatViolationProfile n`, `Tableau C n`) and their order instances live alongside the evaluation functions. Mathlib imports (`Mathlib.Order.Defs.PartialOrder`, `Mathlib.Order.Defs.LinearOrder`, `Mathlib.Data.Fintype.Pi`, `Mathlib.Data.Finset.Max`, `Mathlib.Algebra.Order.Monoid.Defs`) added directly to `ConstraintEvaluation.lean`
+
+## [0.229.777] - 2026-04-15
+
+### Added
+- **RestrictedModality.lean**: accessibility-parameterized `boxR`/`diamondR` in `Core/IntensionalLogic/`, bridging Montague's S5 operators (DWP B.13) with Kripke's accessibility-restricted modality. `AccessRel F`, frame conditions (`Refl`/`Serial`/`Trans`/`Symm`/`Eucl`), frame condition relationships (`refl_serial`, `refl_eucl_symm`, `refl_eucl_trans`). Specialization theorems proving S5 `box`/`diamond` = `boxR`/`diamondR` with universal accessibility. Full modal axiom correspondence (K/T/D/4/B/5) in the Prop-valued IL setting. Monotonicity, connective distribution, accessibility restriction theorems (`boxR_restrict`, `diamondR_restrict`), S5 recovery (`S5_frame_all_axioms`). Connects to lattice bridge in `Algebra.lean` via `valid_boxR` and entailment lifting
+- **references.bib**: added `kripke-1963` (Semantical Considerations on Modal Logic)
+
+## [0.229.776] - 2026-04-15
+
+### Added
+- **ConstraintEvaluation.lean: fixed-length profiles with `LinearOrder`** — `ViolationProfile n` (`Fin n → Nat`) with mathlib `LinearOrder` instance (reflexive, transitive, antisymmetric, total). Order defined by `vpLE` (lexicographic ≤ by recursion on `n`) with computable `Decidable` instances. Proves `vpLE_antisymm` — the key property that fixing the length eliminates the trailing-zero ambiguity, upgrading from preorder to linear order. `SatViolationProfile n` wraps `Fin n → Nat` with `Preorder` (pointwise satisfaction ordering). `Tableau C n` — `Finset`-based OT tableau with `ViolationProfile n` profiles. `Tableau.exists_optimal` delegates to `Finset.exists_min_image` (one line!). `Tableau.optimal_nonempty` — OT always picks a winner.
+- **ConstraintEvaluation.lean**: `lexLE_antisymm` — lexicographic ≤ is antisymmetric on equal-length `List Nat` profiles (the missing piece for `LinearOrder`)
+
+## [0.229.775] - 2026-04-15
+
+### Added
+- **ConstraintOrdering.lean** — newtype wrappers `LexProfile` and `SatProfile` wrapping `List Nat` with mathlib `Preorder` instances. `LexProfile.≤` = `LexLE` (OT harmony ordering), `SatProfile.≤` = `SatLE` (Kratzer ordering). Both have `Decidable` instances for `≤` and `<`. Separate file from `ConstraintEvaluation.lean` to keep the evaluation engine mathlib-free. Includes bridge theorems (`le_iff`, `lt_iff`), conditional totality for `LexProfile`, and non-totality proof for `SatProfile`.
+
+## [0.229.774] - 2026-04-15
+
+### Added
+- **DeclarativeQuestions.lean**: bias profile typology for declarative questions (DQ) vs rejecting questions (RQ), following Seeliger & Repp 2018 and Sudo 2013. Four types (PDQ/NDQ/PRQ/NRQ) with evidential × epistemic bias values. IllocutionaryModifier (FALSUM/VERUM) parameterizes REJECTQ; RQ bias profiles derived from IM choice via `rejectQBiasProfile` (not stipulated). NRQ⊂PDQ / PRQ⊂NDQ subset theorems, DQ/RQ epistemic plus/minus distinction, bridge to Romero's BiasedPQ framework (maps Sudo's 5-valued system to Romero's 3-valued one). Uses `Core.Polarity` (no duplicate enum)
+- **Swedish QuestionParticles.lean**: *väl* — question-inducing modal particle marking declarative questions (distinct from *jo* in AnswerParticles). Signals epistemic uncertainty, requires evidential bias
+- **German QuestionParticles.lean**: *doch wohl* — non-compositional RQ marker. Requires both evidential and epistemic bias. Conventionalized combination entering Agree with REJECTQ
+- **SeeligerRepp2018.lean**: study file connecting bias profile typology to Swedish *väl* and German *doch wohl* Fragment entries, with cross-linguistic comparison theorems. German *doch* dual-role bridge theorem (polarity-reversal `dochPreUtterance` vs RQ-marking `dochWohl`). RQ derivation from REJECTQ verified (`prq_from_verum`, `nrq_from_falsum`)
+
+## [0.229.773] - 2026-04-15
+
+### Changed
+- **ConstraintEvaluation.lean + Bidirectional.lean: BiOT migration to `DecidableEq` + Prop predicates** — migrated `blocked`, `strongOptimal`, `superoptimal`, `iterativeSuperoptimal` and all BiOT property theorems from `[BEq F] [BEq M]` to `[DecidableEq F] [DecidableEq M]`. Added `IsBlocked`/`IsStrongOptimal` Prop predicates with `isBlocked_iff_blocked`/`mem_strongOptimal_iff` bridge theorems. Rewrote `blocked`/`strongOptimal` bodies to use `decide` on Props (instead of `==`/`&&`/`!`), making bridge theorems one-line `simp`. Deleted `blocked_false_of_strongOptimal_aux` (22-line Bool induction) — replaced by 7-line Prop proof via `IsBlocked`/`IsStrongOptimal` destructuring. Rewrote `satisfiesQ`/`satisfiesI` to use `decide` on Props, matching `strongOptimal` structure.
+
+## [0.229.772] - 2026-04-15
+
+### Added
+- **BSML Fact 3 (Modal Disjunction)** — `modalDisjunction`: enriched plain disjunction entails ◇α ∧ ◇β under state-based accessibility, for arbitrary NE-free α, β (not just atoms)
+- **BSML Fact 10 (Enrichment under ¬¬)** — `enrichment_not_vacuous_under_double_negation`: counterexample showing ¬¬[p]⁺ ≢ ¬¬p (enrichment is NOT vacuous under double negation, unlike single negation per Fact 9)
+- **BSML Fact 13 (BSML* ↔ BSML+)** — `bsmlStar_iff_bsmlPlus` (sorry): for classical positive formulas, BSML* consequence (non-empty teams) equals BSML+ consequence (enriched formulas). Added `consequenceStar`, `consequencePlus`, `isClassicalPositive` definitions
+- **BSML Fact 14 (Negative FC failures)** — `negativeFC_poss_fails_bsmlPlus`, `negativeFC_nec_fails_bsmlPlus`: ◇¬(α∧β) ⊭_{BSML+} ◇¬α and ¬□(α∧β) ⊭_{BSML+} ¬□α, proved via decide on concrete counterexample model
+- **Aloni2022.lean**: added state-based model and Fact 3 computational verification (#guard checks)
+
+## [0.229.771] - 2026-04-15
+
+### Added
+- **ConstraintEvaluation.lean: SatLE algebraic structure** — proved `satLE_trans` (transitivity, completing the preorder), `satLE_of_nil_right` (all-zeros is bottom), `satLE_not_antisymm` (counterexample: `SatLE [1] [2]` and `SatLE [2] [1]` but `[1] ≠ [2]`). Added structural lemmas `satLE_nil`, `satLE_cons_nil_iff`, `satLE_cons_cons_iff` (parallel to `LexLE` set)
+
+### Changed
+- **ConstraintEvaluation.lean**: fixed docstring — `SatLE` is a **preorder** (not partial order) on `List Nat`; antisymmetric only on binary {0,1} profiles
+
 ## [0.229.770] - 2026-04-15
 
 ### Changed

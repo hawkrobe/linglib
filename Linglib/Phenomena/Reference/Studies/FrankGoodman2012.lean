@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.GriceanMaxims
-import Linglib.Theories.Semantics.Montague.Modification
+import Linglib.Theories.Semantics.Composition.Modification
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
@@ -206,7 +206,7 @@ reference game context are uniquely characterized by predicate modification
 This means the RSA meaning function `cfg.meaning` inherits its semantics from
 Montague composition rather than being stipulated independently. -/
 
-open Semantics.Montague.Modification in
+open Semantics.Composition.Modification in
 /-- Each object is uniquely characterized by predicate modification of its
     color and shape features. Reference resolution in the game IS predicate
     modification: the listener identifies the referent by intersecting the

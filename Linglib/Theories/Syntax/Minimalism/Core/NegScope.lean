@@ -1,6 +1,8 @@
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Negation
 import Linglib.Theories.Semantics.Negation.CzechNegation
+import Linglib.Theories.Semantics.Negation.Defs
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Negation Merge Position and Scope
@@ -56,6 +58,27 @@ def NegMergePosition.scopesIntoVP : NegMergePosition → Bool
   | .tp => true    -- Merged before CP-phase head, vP still accessible
   | .cp => false   -- Merged with/after CP-phase head, vP transferred
 
+-- ── NegMergePosition: Equiv, Fintype, LinearOrder ──
+
+/-- NegMergePosition ≃ Bool: tp ↦ false, cp ↦ true.
+    Aligned with the LinearOrder (tp < cp) and the ENType/ENStrength
+    equivalences (low/weak ↦ false, high/strong ↦ true). -/
+def NegMergePosition.equivBool : NegMergePosition ≃ Bool where
+  toFun | .tp => false | .cp => true
+  invFun | false => .tp | true => .cp
+  left_inv p := by cases p <;> rfl
+  right_inv b := by cases b <;> rfl
+
+instance : Fintype NegMergePosition := Fintype.ofEquiv _ NegMergePosition.equivBool.symm
+
+/-- Numeric embedding: tp ↦ 0, cp ↦ 1 (by f-value position). -/
+def NegMergePosition.toNat : NegMergePosition → Nat
+  | .tp => 0 | .cp => 1
+
+instance : LinearOrder NegMergePosition :=
+  LinearOrder.lift' NegMergePosition.toNat
+    (fun a b h => by cases a <;> cases b <;> simp_all [NegMergePosition.toNat])
+
 -- ════════════════════════════════════════════════════
 -- § 2. Bridge: merge position → EN type
 -- ════════════════════════════════════════════════════
@@ -88,6 +111,52 @@ def NegMergePosition.toENStrength : NegMergePosition → ENStrength
 def NegMergePosition.polarityProfile : NegMergePosition → PolarityLicensing
   | .tp => weakENProfile
   | .cp => strongENProfile
+
+-- ── Equiv chain: NegMergePosition ≃ ENType ≃ ENStrength ≃ Bool ──
+
+/-- NegMergePosition ≃ ENType: tp ↦ low, cp ↦ high. -/
+def NegMergePosition.equivENType : NegMergePosition ≃ ENType where
+  toFun := NegMergePosition.toENType
+  invFun | .low => .tp | .high => .cp
+  left_inv p := by cases p <;> rfl
+  right_inv t := by cases t <;> rfl
+
+/-- NegMergePosition ≃ ENStrength: tp ↦ weak, cp ↦ strong. -/
+def NegMergePosition.equivENStrength : NegMergePosition ≃ ENStrength where
+  toFun := NegMergePosition.toENStrength
+  invFun | .weak => .tp | .strong => .cp
+  left_inv p := by cases p <;> rfl
+  right_inv s := by cases s <;> rfl
+
+/-- The Equiv chain factors through Bool:
+    `toENType p = equivBool.symm (scopesIntoVP p)` pointwise. -/
+theorem equiv_factors_entype (p : NegMergePosition) :
+    NegMergePosition.equivENType p =
+    ENType.equivBool.invFun (NegMergePosition.equivBool p) := by
+  cases p <;> rfl
+
+/-- The Equiv chain factors through Bool:
+    `equivENStrength = equivBool ∘ ENStrength.equivBool⁻¹` pointwise. -/
+theorem equiv_factors_enstrength (p : NegMergePosition) :
+    NegMergePosition.equivENStrength p =
+    ENStrength.equivBool.invFun (NegMergePosition.equivBool p) := by
+  cases p <;> rfl
+
+-- ── Bridge to Defs.lean semantic chain ──
+
+open Semantics.Negation (scopeToENType scopeToLicensing enTypeToLicensing)
+
+/-- Merge position's `scopesIntoVP` determines EN type via the
+    semantic chain from `Defs.lean`. -/
+theorem merge_position_semantic_bridge (pos : NegMergePosition) :
+    scopeToENType pos.scopesIntoVP = pos.toENType := by
+  cases pos <;> rfl
+
+/-- Merge position determines licensing via the full semantic chain:
+    merge → scopesIntoVP → scopeToENType → enTypeToLicensing. -/
+theorem merge_position_licensing (pos : NegMergePosition) :
+    scopeToLicensing pos.scopesIntoVP = pos.polarityProfile := by
+  cases pos <;> rfl
 
 -- ════════════════════════════════════════════════════
 -- § 4. The classification chain
@@ -201,5 +270,17 @@ theorem nci_licensing_matches_scope :
     (NegPosition.toNegMergePosition .inner).scopesIntoVP ∧
     Semantics.Negation.CzechNegation.licenses .outer .nciLicensed =
     (NegPosition.toNegMergePosition .outer).scopesIntoVP := ⟨rfl, rfl⟩
+
+/-- The Czech three-way → two-way coarsening preserves scope ordering:
+    inner ≤ medial ≤ outer maps to tp ≤ tp ≤ cp (monotone). -/
+theorem toNegMergePosition_monotone :
+    Monotone NegPosition.toNegMergePosition := by
+  intro a b hab
+  -- Both ≤ relations reduce to toNat comparisons via LinearOrder.lift'
+  change NegMergePosition.toNat _ ≤ NegMergePosition.toNat _
+  change NegPosition.toNat a ≤ NegPosition.toNat b at hab
+  cases a <;> cases b <;>
+    simp only [NegPosition.toNegMergePosition, NegMergePosition.toNat,
+               NegPosition.toNat] at * <;> omega
 
 end Minimalism.NegScope

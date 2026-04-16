@@ -63,8 +63,9 @@ theorem strength_without_normalcy (w : World) :
 theorem strength_one_iff_necessity (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World)
     (hNonempty : ¬(bestWorlds f g w).isEmpty) :
-    modalStrength f g p w = 1 ↔ necessity f g p w = true := by
-  simp only [modalStrength, necessity]
+    modalStrength f g p w = 1 ↔ necessity f g p w := by
+  rw [necessity_iff_all]
+  simp only [modalStrength]
   split
   · -- best.isEmpty = true: contradiction
     rename_i h; exact absurd h (by simpa using hNonempty)
@@ -97,8 +98,9 @@ theorem strength_one_iff_necessity (f : ModalBase) (g : OrderingSource)
 theorem strength_pos_iff_possibility (f : ModalBase) (g : OrderingSource)
     (p : BProp World) (w : World)
     (hNonempty : ¬(bestWorlds f g w).isEmpty) :
-    modalStrength f g p w > 0 ↔ possibility f g p w = true := by
-  simp only [modalStrength, possibility]
+    modalStrength f g p w > 0 ↔ possibility f g p w := by
+  rw [possibility_iff_any]
+  simp only [modalStrength]
   split
   · -- best.isEmpty = true: contradiction
     rename_i h; exact absurd h (by simpa using hNonempty)

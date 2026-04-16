@@ -1,13 +1,15 @@
 /-
-# Type-Driven Interpretation (@cite{heim-kratzer-1998}, Ch. 3-5)
+# Type-Driven Interpretation (@cite{heim-kratzer-1998}, Ch. 3-5; @cite{von-fintel-heim-2011}, Ch. 1)
 
 
 Composition principles:
 1. Terminal Nodes (TN): lexical lookup
 2. Non-Branching Nodes (NN): identity
 3. Functional Application (FA): `⟦α⟧ = ⟦β⟧(⟦γ⟧)` when types match
-4. Predicate Modification (PM): combine two `⟨e,t⟩` predicates (Ch. 4)
-5. Predicate Abstraction (PA): `⟦[n β]⟧^g = λx. ⟦β⟧^{g[n↦x]}` (Ch. 5)
+4. Intensional Functional Application (IFA): `⟦α⟧ = ⟦β⟧(^⟦γ⟧)` when
+   β expects an intension `⟨s,σ⟩` and γ has type σ (@cite{von-fintel-heim-2011} Step 10)
+5. Predicate Modification (PM): combine two `⟨e,t⟩` predicates (Ch. 4)
+6. Predicate Abstraction (PA): `⟦[n β]⟧^g = λx. ⟦β⟧^{g[n↦x]}` (Ch. 5)
 
 -/
 
@@ -77,6 +79,40 @@ def tryFA {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
       else none
     | _ => none
 
+/-- IFA: Intensional Functional Application (@cite{von-fintel-heim-2011} Step 10).
+
+    If β expects an intension `⟨s,σ⟩` as argument and γ has type σ,
+    then `⟦α⟧ = ⟦β⟧(^⟦γ⟧)` — we wrap γ's denotation in `up` (rigid intension)
+    before applying. This lets intensional operators (modals, attitude verbs)
+    take the intension of their sister as argument via type-driven composition.
+
+    Tries both orders (β,γ) and (γ,β). -/
+def tryIFA {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
+  match hf : d1.ty with
+  | .fn (.intens σ) τ =>
+    if ha : σ = d2.ty then
+      let f : F.Denot (.fn (.intens σ) τ) := hf ▸ d1.val
+      let a : F.Denot σ := ha ▸ d2.val
+      some ⟨τ, f (up a)⟩
+    else
+      match hf' : d2.ty with
+      | .fn (.intens σ') τ' =>
+        if ha' : σ' = d1.ty then
+          let f : F.Denot (.fn (.intens σ') τ') := hf' ▸ d2.val
+          let a : F.Denot σ' := ha' ▸ d1.val
+          some ⟨τ', f (up a)⟩
+        else none
+      | _ => none
+  | _ =>
+    match hf : d2.ty with
+    | .fn (.intens σ) τ =>
+      if ha : σ = d1.ty then
+        let f : F.Denot (.fn (.intens σ) τ) := hf ▸ d2.val
+        let a : F.Denot σ := ha ▸ d1.val
+        some ⟨τ, f (up a)⟩
+      else none
+    | _ => none
+
 /-- PM: combine two `⟨e,t⟩` predicates. -/
 def tryPM {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
   match h1 : d1.ty, h2 : d2.ty with
@@ -86,9 +122,9 @@ def tryPM {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
     some ⟨.fn .e .t, predicateModification p1 p2⟩
   | _, _ => none
 
-/-- Binary node: try FA, then PM. -/
+/-- Binary node: try FA, then IFA, then PM. -/
 def interpBinary {F : Frame} (d1 d2 : TypedDenot F) : Option (TypedDenot F) :=
-  tryFA d1 d2 <|> tryPM d1 d2
+  tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2
 
 -- ============================================================================
 -- Tree Interpretation
@@ -185,7 +221,8 @@ theorem tryPM_preserves_type {F : Frame} (d1 d2 : TypedDenot F)
   exact ⟨_, rfl, rfl⟩
 
 theorem interpBinary_eq {F : Frame} (d1 d2 : TypedDenot F) :
-    interpBinary d1 d2 = (tryFA d1 d2).orElse (λ _ => tryPM d1 d2) := rfl
+    interpBinary d1 d2 =
+    (tryFA d1 d2 <|> tryIFA d1 d2 <|> tryPM d1 d2) := rfl
 
 end Properties
 

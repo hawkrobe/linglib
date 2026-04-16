@@ -175,7 +175,7 @@ def Category.fromUD : UD.Number → Option Category
 theorem roundtrip_fromUD_toUD :
     [Category.singular, .dual, .trial, .paucal, .plural,
      .greaterPaucal, .greaterPlural].all
-      (λ v => v.toUD.bind Category.fromUD == some v) = true := by native_decide
+      (λ v => v.toUD.bind Category.fromUD == some v) = true := by decide
 
 -- ============================================================================
 -- § 4: Number Features
@@ -255,9 +255,9 @@ instance : Core.PhiFeatures Features where
   roundtrip := fun ⟨_, _⟩ => rfl
 
 /-- The three canonical number values map to the three PrivativePair cells. -/
-theorem singular_is_maximal : PhiFeatures.toPair singularF = .maximal := rfl
-theorem dual_is_intermediate : PhiFeatures.toPair dualF = .intermediate := rfl
-theorem plural_is_minimal : PhiFeatures.toPair pluralF = .minimal := rfl
+@[simp] theorem singular_is_maximal : PhiFeatures.toPair singularF = .maximal := rfl
+@[simp] theorem dual_is_intermediate : PhiFeatures.toPair dualF = .intermediate := rfl
+@[simp] theorem plural_is_minimal : PhiFeatures.toPair pluralF = .minimal := rfl
 
 /-- No 4-way base number distinction (inherited from `PhiFeatures`). -/
 theorem no_fourth_base_number :
@@ -272,9 +272,9 @@ theorem no_fourth_base_number :
 -- § 7: Features Verification
 -- ============================================================================
 
-theorem singular_wellFormed : singularF.wellFormed = true := rfl
-theorem dual_wellFormed : dualF.wellFormed = true := rfl
-theorem plural_wellFormed : pluralF.wellFormed = true := rfl
+@[simp] theorem singular_wellFormed : singularF.wellFormed = true := rfl
+@[simp] theorem dual_wellFormed : dualF.wellFormed = true := rfl
+@[simp] theorem plural_wellFormed : pluralF.wellFormed = true := rfl
 
 /-- The ill-formed combination [+atomic, −minimal] is the only
     combination that violates well-formedness. -/
@@ -283,13 +283,13 @@ theorem illFormed_only : (⟨true, false⟩ : Features).wellFormed = false := rf
 /-- There are exactly 3 well-formed feature combinations (= 3 base numbers). -/
 theorem exactly_three_wellFormed :
     ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
-      Features.wellFormed).length = 3 := by native_decide
+      Features.wellFormed).length = 3 := by decide
 
 /-- Round-trip: fromCategory ∘ toCategory = some for all well-formed features. -/
 theorem roundtrip_fromCategory_toCategory :
     [singularF, dualF, pluralF].all
       (λ f => f.toCategory.bind Features.fromCategory == some f) = true := by
-  native_decide
+  decide
 
 /-- toCategory returns none for the ill-formed bundle. -/
 theorem illFormed_toCategory_none :
@@ -381,11 +381,11 @@ theorem latticeToFeatures_wellFormed {D : Type} [DecidableEq D]
 private def ps2Domain : List Nat := [1, 2, 3]
 
 theorem ex_atom_is_singular :
-    latticeToFeatures bitmaskJoin ps2Domain 1 = singularF := by native_decide
+    latticeToFeatures bitmaskJoin ps2Domain 1 = singularF := by decide
 theorem ex_atom_is_singular' :
-    latticeToFeatures bitmaskJoin ps2Domain 2 = singularF := by native_decide
+    latticeToFeatures bitmaskJoin ps2Domain 2 = singularF := by decide
 theorem ex_pair_is_dual :
-    latticeToFeatures bitmaskJoin ps2Domain 3 = dualF := by native_decide
+    latticeToFeatures bitmaskJoin ps2Domain 3 = dualF := by decide
 
 /-- Powerset lattice with 3 atoms: {0}=1, {1}=2, {2}=4.
     Pairs (3,5,6) are minimal non-atoms → dual.
@@ -396,13 +396,13 @@ theorem ex_pair_is_dual :
 def ps3Domain : List Nat := [1, 2, 4, 3, 5, 6, 7]
 
 theorem ps3_atom_is_singular :
-    latticeToFeatures bitmaskJoin ps3Domain 1 = singularF := by native_decide
+    latticeToFeatures bitmaskJoin ps3Domain 1 = singularF := by decide
 theorem ps3_pair_is_dual :
-    latticeToFeatures bitmaskJoin ps3Domain 3 = dualF := by native_decide
+    latticeToFeatures bitmaskJoin ps3Domain 3 = dualF := by decide
 theorem ps3_pair_is_dual' :
-    latticeToFeatures bitmaskJoin ps3Domain 5 = dualF := by native_decide
+    latticeToFeatures bitmaskJoin ps3Domain 5 = dualF := by decide
 theorem ps3_triple_is_plural :
-    latticeToFeatures bitmaskJoin ps3Domain 7 = pluralF := by native_decide
+    latticeToFeatures bitmaskJoin ps3Domain 7 = pluralF := by decide
 
 -- ============================================================================
 -- § 9: The Additive Feature
@@ -466,7 +466,7 @@ private def ps3NonAtoms : List Nat := [3, 5, 6, 7]
 /-- With 3 atoms, the entire non-atomic region is join-complete.
     [±additive] is vacuous — no paucal/plural split possible. -/
 theorem ps3_nonAtoms_joinComplete :
-    isRegionJoinComplete bitmaskJoin ps3NonAtoms = true := by native_decide
+    isRegionJoinComplete bitmaskJoin ps3NonAtoms = true := by decide
 
 /-- "Paucal" region in a 5-atom powerset: elements with 2–3 atoms.
     Atoms: 1, 2, 4, 8, 16.
@@ -483,12 +483,12 @@ private def ps5Plural : List Nat := [15, 23, 27, 29, 30, 31]
 /-- The paucal region is NOT join-complete: {0,1}=3 ⊔ {2,3}=12 =
     {0,1,2,3}=15 has 4 atoms and escapes the region. -/
 theorem ps5_paucal_not_joinComplete :
-    isRegionJoinComplete bitmaskJoin ps5Paucal = false := by native_decide
+    isRegionJoinComplete bitmaskJoin ps5Paucal = false := by decide
 
 /-- The plural region IS join-complete: joining two large sums stays
     large. Satisfies complement completeness (@cite{harbour-2014} (11)). -/
 theorem ps5_plural_joinComplete :
-    isRegionJoinComplete bitmaskJoin ps5Plural = true := by native_decide
+    isRegionJoinComplete bitmaskJoin ps5Plural = true := by decide
 
 /-- The paucal/plural asymmetry: the [+additive] region is join-complete,
     the [−additive] region is not. This is the formal content of the

@@ -130,8 +130,8 @@ theorem must_entails_ought_kratzer :
       (g g' : Semantics.Modality.Kratzer.OrderingSource)
       (p : Core.Proposition.BProp Semantics.Attitudes.Intensional.World)
       (w : Semantics.Attitudes.Intensional.World),
-    strongNecessity f g p w = true →
-    weakNecessity f g g' p w = true :=
+    strongNecessity f g p w →
+    weakNecessity f g g' p w :=
   fun f g g' p w => strong_entails_weak f g g' p w
 
 /-- Re-export: the converse fails (Directive.lean). -/
@@ -140,8 +140,8 @@ theorem ought_not_entails_must_kratzer :
         (g g' : Semantics.Modality.Kratzer.OrderingSource)
         (p : Core.Proposition.BProp Semantics.Attitudes.Intensional.World)
         (w : Semantics.Attitudes.Intensional.World),
-      weakNecessity f g g' p w = true →
-      strongNecessity f g p w = true) :=
+      weakNecessity f g g' p w →
+      strongNecessity f g p w) :=
   weak_not_entails_strong
 
 -- ============================================================================

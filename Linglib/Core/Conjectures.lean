@@ -10,7 +10,7 @@ If a conjecture is proved, promote it to a `theorem` in the appropriate module.
 If refuted, replace the body with `False` and add a counterexample comment.
 -/
 
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.Logic.ModalLogic
 import Mathlib.Data.Rat.Defs
 

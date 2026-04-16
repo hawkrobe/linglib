@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Theories.Semantics.Degree.Comparative
 import Linglib.Theories.Semantics.Degree.Differential
 import Linglib.Theories.Semantics.Degree.Equative

@@ -1,17 +1,20 @@
 import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
+import Linglib.Core.Temporal.Time
 
 /-!
 # Autosegmental Representations
-@cite{goldsmith-1976}
+@cite{goldsmith-1976} @cite{sagey-1986}
 
 Autosegmental phonology adds **feature sharing** to segmental
 representations: when adjacent segments share a geometric node's features, they
 are linked to a single autosegmental element on that node's tier. This module
 builds on the feature geometry (`FeatureGeometry.lean`) and segment type
-(`Features.lean`) to provide association lines, feature agreement predicates,
-autosegmental representations with consistency checking, and spread/delink
-operations.
+(`Features.lean`) to provide feature agreement predicates,
+autosegmental representations with consistency checking, spread/delink
+operations, and a temporal derivation of the no-crossing constraint
+(@cite{sagey-1986} §5.3) including the negative argument against
+simultaneity (§5.2.2).
 -/
 
 namespace Theories.Phonology.Autosegmental
@@ -20,18 +23,7 @@ open Theories.Phonology (Segment Feature FeatureVal)
 open Theories.Phonology.FeatureGeometry (GeomNode)
 
 -- ============================================================================
--- § 1: Association Lines
--- ============================================================================
-
-/-- An association line connects a source position to a target position
-    on an autosegmental tier. -/
-structure AssocLine where
-  src : Nat
-  tgt : Nat
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- § 2: Feature Agreement
+-- § 1: Feature Agreement
 -- ============================================================================
 
 /-- Do `s1` and `s2` agree on all features dominated by node `n`? -/
@@ -45,7 +37,7 @@ def placeAssimilation (s1 s2 : Segment) : Bool := agreeAt s1 s2 .place
 def totalAssimilation (s1 s2 : Segment) : Bool := agreeAt s1 s2 .supralaryngeal
 
 -- ============================================================================
--- § 3: Feature Sharing
+-- § 2: Feature Sharing
 -- ============================================================================
 
 /-- Segments at positions `left` and `left + 1` share all features
@@ -56,7 +48,7 @@ structure Sharing where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- § 4: Autosegmental Representation
+-- § 3: Autosegmental Representation
 -- ============================================================================
 
 /-- An autosegmental representation: a sequence of segments with an explicit
@@ -77,7 +69,7 @@ def AutosegRep.consistent (r : AutosegRep) : Bool :=
     | _, _ => false
 
 -- ============================================================================
--- § 5: Operations
+-- § 4: Operations
 -- ============================================================================
 
 /-- Spread node `n` rightward from position `pos`. -/
@@ -92,7 +84,7 @@ def AutosegRep.delink (r : AutosegRep) (pos : Nat) (n : GeomNode) :
       !(s.left == pos && s.node == n) }
 
 -- ============================================================================
--- § 5b: Feature Spreading
+-- § 4a: Feature Spreading
 -- ============================================================================
 
 /-- Replace all features under geometric node `n` in `tgt` with `src`'s values.
@@ -137,7 +129,7 @@ theorem copyFeaturesUnder_agreeAt (tgt src : Segment) (n : GeomNode) :
     (fun f => n.dominates f.node) src.spec tgt.spec
 
 -- ============================================================================
--- § 6: Verification Theorems
+-- § 5: Verification Theorems
 -- ============================================================================
 
 private theorem list_all_beq_self {α : Type} [BEq α] [LawfulBEq α]
@@ -156,9 +148,10 @@ theorem agreeAt_refl (s : Segment) (n : GeomNode) :
 theorem place_assimilation_checks_14 :
     GeomNode.place.features.length = 14 := by native_decide
 
-/-- Total assimilation checks 15 features (the supralaryngeal node's natural class). -/
-theorem total_assimilation_checks_15 :
-    GeomNode.supralaryngeal.features.length = 15 := by native_decide
+/-- Total assimilation checks 16 features (the supralaryngeal node's natural class,
+    including [nasal] via the soft palate node). -/
+theorem total_assimilation_checks_16 :
+    GeomNode.supralaryngeal.features.length = 16 := by native_decide
 
 private theorem filter_all_pass (l : List Sharing) (p : Sharing → Bool)
     (h : l.all p = true) : l.filter p = l := by
@@ -182,5 +175,150 @@ theorem spread_delink_not_present (r : AutosegRep) (pos : Nat) (n : GeomNode)
   have hcond : (!(pos == pos && n == n)) = false := by rw [beq_self_eq_true, hnn]; rfl
   rw [List.filter_cons, if_neg (by rw [hcond]; decide)]
   exact ⟨trivial, filter_all_pass shs _ h⟩
+
+-- ============================================================================
+-- § 6: Temporal Tiers and the No-Crossing Constraint
+-- ============================================================================
+
+/-! ### Temporal derivation of the No-Crossing Constraint
+
+@cite{sagey-1986} §5.3 derives the ban on crossing association lines from
+temporal precedence rather than stipulating it as a well-formedness condition.
+
+The key move is choosing the right temporal relation for association lines.
+Simultaneity (identity of time points) is too strong — it predicts that
+contour segments and geminates are impossible, since two distinct elements
+cannot both be identical to the same time point (§5.2.2). Overlap is the
+correct relation: it is reflexive and symmetric but crucially NOT transitive
+(`Interval.overlaps_not_transitive`), which is what allows the NCC proof to
+go through via a contradiction chain (§5.2.3, fn. 6).
+
+The derivation (§5.3, p.294): if timing₁ ≺ timing₂ on the timing tier but
+melody₂ ≺ melody₁ on the melody tier, the overlap requirements on valid
+associations produce a chain melody₂.finish < melody₁.start ≤ timing₁.finish
+< timing₂.start ≤ melody₂.finish — a contradiction. Crossing is therefore
+logically impossible for valid associations.
+
+This section formalizes the derivation using `Core.Time.Interval` for
+temporal intervals and its `precedes`/`overlaps` relations.
+-/
+
+section NoCrossing
+
+variable {T : Type*} [LinearOrder T]
+
+open Core.Time (Interval)
+
+/-- A position on an autosegmental tier, occupying a temporal interval. -/
+structure TierPosition (T : Type*) [LinearOrder T] where
+  interval : Interval T
+
+/-- An association between a timing-tier position and a melody-tier position.
+    An association line represents temporal overlap: the melody element is
+    realized during the timing position's interval. -/
+structure Association (T : Type*) [LinearOrder T] where
+  timing : TierPosition T
+  melody : TierPosition T
+
+/-- Association validity: the timing and melody intervals must overlap.
+    This is the phonetic grounding — an association line means the melodic
+    content is realized during the timing slot. -/
+def validAssociation (a : Association T) : Prop :=
+  a.timing.interval.overlaps a.melody.interval
+
+/-- **Simultaneity contradicts contours** (@cite{sagey-1986} §5.2.2):
+    if association required temporal identity (simultaneity), contour
+    segments — two distinct melody elements F ≠ G associated to the same
+    timing position x — would be impossible, since F = x and G = x
+    imply F = G by transitivity. This is Sagey's negative argument for
+    why association must be overlap, not identity. -/
+theorem simultaneity_no_contours {T : Type*} (t m₁ m₂ : T)
+    (h₁ : t = m₁) (h₂ : t = m₂) : m₁ = m₂ :=
+  h₁.symm.trans h₂
+
+/-- Two associations cross iff their timing positions are ordered one way
+    but their melody positions are ordered the other way.
+    Crossing(a₁, a₂) ≡ timing₁ ≺ timing₂ ∧ melody₂ ≺ melody₁. -/
+def crosses (a₁ a₂ : Association T) : Prop :=
+  a₁.timing.interval.precedes a₂.timing.interval ∧
+  a₂.melody.interval.precedes a₁.melody.interval
+
+/-- **No-Crossing Constraint** (@cite{sagey-1986} §5.3, @cite{goldsmith-1976}):
+    Two valid associations cannot cross.
+
+    If timing₁ ≺ timing₂, then timing₁.finish < timing₂.start.
+    Validity requires timing₁ overlaps melody₁ and timing₂ overlaps melody₂.
+    If melodies also cross (melody₂ ≺ melody₁), then melody₂.finish < melody₁.start.
+
+    From timing₁ overlaps melody₁: melody₁.start ≤ timing₁.finish.
+    From timing₂ overlaps melody₂: timing₂.start ≤ melody₂.finish.
+
+    Chaining: melody₂.finish < melody₁.start ≤ timing₁.finish < timing₂.start ≤ melody₂.finish.
+    This gives melody₂.finish < melody₂.finish — a contradiction. -/
+theorem no_crossing (a₁ a₂ : Association T)
+    (h₁ : validAssociation a₁) (h₂ : validAssociation a₂) :
+    ¬ crosses a₁ a₂ := by
+  intro ⟨htime, hmelody⟩
+  -- Unpack definitions
+  simp only [Interval.precedes] at htime hmelody
+  simp only [validAssociation, Interval.overlaps] at h₁ h₂
+  obtain ⟨h₁_tm, h₁_mt⟩ := h₁
+  obtain ⟨h₂_tm, h₂_mt⟩ := h₂
+  -- Chain: melody₂.finish < melody₁.start ≤ timing₁.finish < timing₂.start ≤ melody₂.finish
+  have : a₂.melody.interval.finish < a₂.melody.interval.finish :=
+    calc a₂.melody.interval.finish
+        < a₁.melody.interval.start := hmelody
+      _ ≤ a₁.timing.interval.finish := h₁_mt
+      _ < a₂.timing.interval.start := htime
+      _ ≤ a₂.melody.interval.finish := h₂_tm
+  exact lt_irrefl _ this
+
+/-- Crossing is also impossible in the symmetric direction: if timing₂ ≺ timing₁
+    and melody₁ ≺ melody₂, the same contradiction arises. -/
+theorem no_crossing_symm (a₁ a₂ : Association T)
+    (h₁ : validAssociation a₁) (h₂ : validAssociation a₂) :
+    ¬ crosses a₂ a₁ :=
+  no_crossing a₂ a₁ h₂ h₁
+
+-- ────────────────────────────────────────────────────
+-- § 6a: Concrete Demonstrations
+-- ────────────────────────────────────────────────────
+
+/-- Helper: build an interval from start and finish with a proof of validity. -/
+private def mkInterval (s f : T) (h : s ≤ f) : Interval T := ⟨s, f, h⟩
+
+/-- A geminate consonant: two adjacent timing positions associated to a single
+    melodic element. The melodic element's interval spans both timing slots.
+
+    Example: /t/ linked to two C-slots in [atta].
+
+    ```
+    C-tier:    C₁    C₂
+                \  /
+    melody:     t
+    ``` -/
+def geminate (t1s t1f t2s t2f ms mf : T)
+    (h1 : t1s ≤ t1f) (h2 : t2s ≤ t2f) (hm : ms ≤ mf)
+    : Association T × Association T :=
+  ( ⟨⟨mkInterval t1s t1f h1⟩, ⟨mkInterval ms mf hm⟩⟩,
+    ⟨⟨mkInterval t2s t2f h2⟩, ⟨mkInterval ms mf hm⟩⟩ )
+
+/-- A contour tone: one timing position associated to two tonal elements
+    sequenced within it. The two tonal elements occupy sub-intervals.
+
+    Example: falling tone HL on a single syllable.
+
+    ```
+    timing:     σ
+               / \
+    tone:     H   L
+    ``` -/
+def contourTone (ts tf m1s m1f m2s m2f : T)
+    (ht : ts ≤ tf) (hm1 : m1s ≤ m1f) (hm2 : m2s ≤ m2f)
+    : Association T × Association T :=
+  ( ⟨⟨mkInterval ts tf ht⟩, ⟨mkInterval m1s m1f hm1⟩⟩,
+    ⟨⟨mkInterval ts tf ht⟩, ⟨mkInterval m2s m2f hm2⟩⟩ )
+
+end NoCrossing
 
 end Theories.Phonology.Autosegmental

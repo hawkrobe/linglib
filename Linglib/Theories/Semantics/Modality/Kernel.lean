@@ -282,12 +282,12 @@ def kernelMightW (kb : KernelBackground) (φ : BProp World) : PrProp World :=
 
 /-! ## Core properties -/
 
-/-- Must is strong: when defined, must φ = universal necessity over B_K. -/
+/-- Must is strong: when defined, must φ ↔ universal necessity over B_K. -/
 theorem must_is_strong (k : Kernel) (φ : BProp World) (w : World)
     (_hDef : (kernelMust k φ).presup w) :
-    (kernelMust k φ).assertion w = (simpleNecessity k.toModalBase φ w = true) := by
-  unfold kernelMust PrProp.ofBool simpleNecessity accessibleWorlds Kernel.toModalBase followsFrom
-  rfl
+    (kernelMust k φ).assertion w ↔ simpleNecessity k.toModalBase φ w := by
+  simp only [kernelMust, PrProp.ofBool, followsFrom, simpleNecessity_iff_all,
+             accessibleWorlds, Kernel.toModalBase]
 
 /-- T axiom: must φ entails φ when B_K is realistic (w ∈ B_K). -/
 theorem must_entails_prejacent (k : Kernel) (φ : BProp World) (w : World)
@@ -312,38 +312,30 @@ theorem empty_kernel_always_defined (φ : BProp World) (w : World) :
 
 /-! ## Bridge to Kratzer.lean -/
 
-/-- Kernel must assertion = Kratzer simple necessity. -/
+/-- Kernel must assertion ↔ Kratzer simple necessity. -/
 theorem kernelMust_eq_simpleNecessity (k : Kernel) (φ : BProp World) (w : World) :
-    (kernelMust k φ).assertion w = (simpleNecessity k.toModalBase φ w = true) := by
-  unfold kernelMust PrProp.ofBool simpleNecessity accessibleWorlds Kernel.toModalBase followsFrom
-  rfl
+    (kernelMust k φ).assertion w ↔ simpleNecessity k.toModalBase φ w := by
+  simp only [kernelMust, PrProp.ofBool, followsFrom, simpleNecessity_iff_all,
+             accessibleWorlds, Kernel.toModalBase]
 
-/-- Kernel must assertion = full Kratzer necessity with empty ordering.
-
-    This extends `kernelMust_eq_simpleNecessity` by connecting through
-    `kernelMust_eq_simpleNecessity`: kernel must = simple necessity. -/
+/-- Kernel must assertion ↔ full Kratzer necessity with empty ordering. -/
 theorem kernelMust_eq_necessity (k : Kernel) (φ : BProp World) (w : World) :
-    (kernelMust k φ).assertion w = (necessity k.toModalBase emptyBackground φ w = true) := by
+    (kernelMust k φ).assertion w ↔ necessity k.toModalBase emptyBackground φ w := by
   rw [kernelMust_eq_simpleNecessity]
-  unfold simpleNecessity necessity emptyBackground
-  rw [empty_ordering_simple]
+  exact (necessity_empty_eq_simple k.toModalBase φ w).symm
 
-/-- Kernel must assertion = Kratzer necessity evaluated via `EpistemicFlavor`.
+/-- Kernel must assertion ↔ Kratzer necessity evaluated via `EpistemicFlavor`.
 
     This bridges the kernel (@cite{von-fintel-gillies-2010}) to Kratzer's parametric semantics:
     kernel must is exactly Kratzer necessity with the kernel's epistemic flavor. -/
 theorem kernelMust_eq_epistemicNecessity (k : Kernel) (φ : BProp World) (w : World) :
-    (kernelMust k φ).assertion w =
-    (necessity k.toEpistemicFlavor.evidence k.toEpistemicFlavor.ordering φ w = true) := by
-  rw [kernelMust_eq_necessity]
-  rfl
+    (kernelMust k φ).assertion w ↔
+    necessity k.toEpistemicFlavor.evidence k.toEpistemicFlavor.ordering φ w :=
+  kernelMust_eq_necessity k φ w
 
-/-- World-dependent kernel must = world-dependent Kratzer necessity.
-
-    `kernelMustW kb φ` asserts `necessity (kb.toModalBase) emptyBackground φ`
-    at each world. -/
+/-- World-dependent kernel must ↔ world-dependent Kratzer necessity. -/
 theorem kernelMustW_eq_necessity (kb : KernelBackground) (φ : BProp World) (w : World) :
-    (kernelMustW kb φ).assertion w = (necessity kb.toModalBase emptyBackground φ w = true) :=
+    (kernelMustW kb φ).assertion w ↔ necessity kb.toModalBase emptyBackground φ w :=
   kernelMust_eq_necessity (kb w) φ w
 
 /-! ## Mastermind example (@cite{von-fintel-gillies-2010} pp. 365–366)

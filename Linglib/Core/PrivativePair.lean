@@ -54,7 +54,7 @@ structure PrivativePair where
   outer : Bool
   /-- The entailing (inner) feature — implies `outer`. -/
   inner : Bool
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, BEq
 
 -- ============================================================================
 -- § 2: Well-Formedness
@@ -85,9 +85,9 @@ def PrivativePair.minimal : PrivativePair := ⟨false, false⟩
 -- § 4: Cell Verification
 -- ============================================================================
 
-theorem PrivativePair.maximal_wellFormed : PrivativePair.maximal.wellFormed = true := rfl
-theorem PrivativePair.intermediate_wellFormed : PrivativePair.intermediate.wellFormed = true := rfl
-theorem PrivativePair.minimal_wellFormed : PrivativePair.minimal.wellFormed = true := rfl
+@[simp] theorem PrivativePair.maximal_wellFormed : PrivativePair.maximal.wellFormed = true := rfl
+@[simp] theorem PrivativePair.intermediate_wellFormed : PrivativePair.intermediate.wellFormed = true := rfl
+@[simp] theorem PrivativePair.minimal_wellFormed : PrivativePair.minimal.wellFormed = true := rfl
 
 /-- The unique ill-formed combination. -/
 theorem PrivativePair.illFormed_unique :
@@ -96,7 +96,7 @@ theorem PrivativePair.illFormed_unique :
 /-- There are exactly 3 well-formed combinations. -/
 theorem PrivativePair.exactly_three :
     ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
-      PrivativePair.wellFormed).length = 3 := by native_decide
+      PrivativePair.wellFormed).length = 3 := by decide
 
 -- ============================================================================
 -- § 5: Classification
@@ -131,9 +131,9 @@ theorem PrivativePair.inner_implies_outer (p : PrivativePair)
 def PrivativePair.specLevel (p : PrivativePair) : Nat :=
   p.outer.toNat + p.inner.toNat
 
-theorem PrivativePair.spec_maximal : PrivativePair.maximal.specLevel = 2 := rfl
-theorem PrivativePair.spec_intermediate : PrivativePair.intermediate.specLevel = 1 := rfl
-theorem PrivativePair.spec_minimal : PrivativePair.minimal.specLevel = 0 := rfl
+@[simp] theorem PrivativePair.spec_maximal : PrivativePair.maximal.specLevel = 2 := rfl
+@[simp] theorem PrivativePair.spec_intermediate : PrivativePair.intermediate.specLevel = 1 := rfl
+@[simp] theorem PrivativePair.spec_minimal : PrivativePair.minimal.specLevel = 0 := rfl
 
 /-- Specification is strictly ordered across cells. -/
 theorem PrivativePair.spec_strict_order :
@@ -157,10 +157,10 @@ theorem PrivativePair.no_four_way :
       a.wellFormed → b.wellFormed → c.wellFormed → d.wellFormed →
       a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False := by
   intro a b c d ha hb hc hd hab hac had hbc hbd hcd
-  have := PrivativePair.classification a (by exact ha)
-  have := PrivativePair.classification b (by exact hb)
-  have := PrivativePair.classification c (by exact hc)
-  have := PrivativePair.classification d (by exact hd)
+  have := PrivativePair.classification a ha
+  have := PrivativePair.classification b hb
+  have := PrivativePair.classification c hc
+  have := PrivativePair.classification d hd
   -- Each of a, b, c, d is one of 3 values; with 4 distinct items, pigeonhole
   rcases ‹a = _ ∨ _› with rfl | rfl | rfl <;>
     rcases ‹b = _ ∨ _› with rfl | rfl | rfl <;>

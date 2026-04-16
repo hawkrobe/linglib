@@ -153,7 +153,8 @@ def ImperativeCharacter.realize (ic : ImperativeCharacter) (w : World) : Bool :=
 /-- The imperative character yields a Kratzer necessity over the
     futurate circumstantial modal base. -/
 theorem imperativeCharacter_is_necessity (ic : ImperativeCharacter) (w : World) :
-    ic.realize w = necessity ic.modalBase ic.orderingSource ic.prejacent w := rfl
+    (ic.realize w = true) ↔ necessity ic.modalBase ic.orderingSource ic.prejacent w :=
+  (necessity_iff_all ic.modalBase ic.orderingSource ic.prejacent w).symm
 
 /-- The imperative character evaluates as `KratzerTheory` necessity
     under the teleological parameters. This connects Roberts' formalization
@@ -461,7 +462,7 @@ open Semantics.Modality.Directive in
     obligation." -/
 def ImperativeCharacter.weakRealize
     (ic : ImperativeCharacter) (secondaryGoals : OrderingSource)
-    (w : World) : Bool :=
+    (w : World) : Prop :=
   weakNecessity ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w
 
 open Semantics.Modality.Directive in
@@ -473,8 +474,9 @@ open Semantics.Modality.Directive in
 theorem strong_imperative_entails_suggestion
     (ic : ImperativeCharacter) (secondaryGoals : OrderingSource) (w : World)
     (h : ic.realize w = true) :
-    ic.weakRealize secondaryGoals w = true :=
-  strong_entails_weak ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w h
+    ic.weakRealize secondaryGoals w :=
+  strong_entails_weak ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w
+    ((necessity_iff_all ic.modalBase ic.orderingSource ic.prejacent w).mpr h)
 
 /-- Example: "Have a cookie." (@cite{roberts-2023} §3, (60))
 
@@ -499,6 +501,8 @@ open Semantics.Modality.Directive in
 theorem cookie_is_suggestion :
     haveCookieExample.weakRealize
       (λ _ => [λ w => w == .w0])  -- secondary: favor cookie-eating
-      .w0 = true := by native_decide
+      .w0 := by
+  unfold ImperativeCharacter.weakRealize weakNecessity
+  decide
 
 end Phenomena.Directives.Studies.Roberts2023

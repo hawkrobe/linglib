@@ -1,5 +1,5 @@
 import Linglib.Core.CylindricAlgebra
-import Linglib.Core.Semantics.Intension
+import Linglib.Core.Assignment
 
 /-!
 # Bridge: VarAssignment = Assignment

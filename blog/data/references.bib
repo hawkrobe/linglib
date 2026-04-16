@@ -929,6 +929,19 @@
   role      = {formalized},
   sources   = {Phenomena/Imprecision/Studies/BeltramaSchwarz2024.lean}
 }
+@article{lucking-ginzburg-2022,
+  author    = {L{\"u}cking, Andy and Ginzburg, Jonathan},
+  title     = {Referential transparency as the proper treatment for quantification},
+  journal   = {Semantics and Pragmatics},
+  year      = {2022},
+  volume    = {15},
+  number    = {4},
+  pages     = {1--58},
+  doi       = {10.3765/sp.15.4},
+  subfield  = {semantics},
+  role      = {primary},
+  sources   = {Phenomena/Quantification/Studies/LuckingGinzburg2022.lean}
+}
 @book{luce-1959,
   author    = {Luce, R. Duncan},
   year      = {1959},
@@ -1799,7 +1812,40 @@
   subfield  = {semantics/questions},
   role      = {formalized},
   sources   = {Phenomena/Questions/Studies/AlonsoOvalleMoghiseh2025b.lean}
-}% REF: Lo Guercio, N. (2025). Maximize Conventional Implicatures! S&P 18(9).
+}
+@incollection{seeliger-repp-2018,
+  author    = {Seeliger, Heiko and Repp, Sophie},
+  year      = {2018},
+  title     = {Biased declarative questions in {S}wedish and {G}erman: {N}egation meets modal particles (\emph{väl} and \emph{doch wohl})},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {129--172},
+  series    = {Linguistik Aktuell/Linguistics Today},
+  volume    = {249},
+  doi       = {10.1075/la.249.05see},
+  subfield  = {semantics/questions},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Theories/Semantics/Questions/DeclarativeQuestions.lean;Fragments/Swedish/QuestionParticles.lean;Fragments/German/QuestionParticles.lean;Phenomena/Questions/Studies/SeeligerRepp2018.lean}
+}
+@incollection{sudo-2013,
+  author    = {Sudo, Yasutada},
+  year      = {2013},
+  title     = {Biased polar questions in {E}nglish and {J}apanese},
+  booktitle = {Beyond Expressives: Explorations in Use-conditional Meaning},
+  editor    = {Gutzmann, Daniel and Gärtner, Hans-Martin},
+  publisher = {Brill},
+  address   = {Leiden},
+  pages     = {275--296},
+  doi       = {10.1163/9789004183988_009},
+  subfield  = {semantics/questions},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Questions/DeclarativeQuestions.lean}
+}
+% REF: Lo Guercio, N. (2025). Maximize Conventional Implicatures! S&P 18(9).
 @article{lo-guercio-2025,
   author    = {Lo Guercio, Nicolás Francisco},
   year      = {2025},
@@ -1913,9 +1959,9 @@
   publisher = {Springer},
   doi       = {10.1007/978-94-009-9117-0_4},
   subfield  = {semantics/conditionals},
-  role      = {cited},
+  role      = {formalized},
   validated = {true},
-  sources   = {Theories/Semantics/Homogeneity.lean}
+  sources   = {Theories/Semantics/Conditionals/Counterfactual.lean;Theories/Semantics/Conditionals/Basic.lean;Phenomena/Conditionals/Studies/Stalnaker1981.lean;Theories/Semantics/Homogeneity.lean}
 }
 @book{brandom-1994,
   author    = {Brandom, Robert},
@@ -3082,9 +3128,9 @@
   doi       = {10.1007/bf00985272},
   number    = {4},
   subfield  = {semantics/compositional},
-  role      = {cited},
+  role      = {formalized},
   validated = {true},
-  sources   = {Fragments/English/PolarityItems.lean;Phenomena/Modality/FreeChoice.lean;Phenomena/Polarity/NPIs.lean}
+  sources   = {Fragments/English/PolarityItems.lean;Phenomena/Modality/FreeChoice.lean;Phenomena/Polarity/NPIs.lean;Phenomena/Polarity/Studies/KadmonLandman1993.lean;Theories/Semantics/Lexical/Determiner/DomainVagueness.lean}
 }% REF: Kamp, H. & Reyle, U. (1993). From Discourse to Logic.
 @book{kamp-reyle-1993,
   author    = {Kamp, Hans and Reyle, Uwe},
@@ -5463,7 +5509,7 @@
   subfield  = {semantics/modality},
   role      = {cited},
   validated = {true},
-  sources   = {Core/Semantics/Intension.lean;Phenomena/Conditionals/Data.lean}
+  sources   = {Core/Semantics/Intension.lean;Phenomena/Conditionals/Data.lean;Theories/Semantics/Composition/Tree.lean}
 }% REF: von Fintel, K. (2012). Subjunctive conditionals. In Russell & Fara, Routledge Companion to Philosophy of Language.
 @misc{von-fintel-2012,
   author    = {von Fintel, Kai},
@@ -5938,6 +5984,18 @@
   doi       = {10.1111/j.1475-4975.1977.tb00045.x},
   validated = {true},
   sources   = {Phenomena/Reference/Studies/Elbourne2013.lean}
+}% REF: Kripke (1963). Semantical Considerations on Modal Logic.
+@article{kripke-1963,
+  author    = {Kripke, Saul},
+  year      = {1963},
+  title     = {Semantical Considerations on Modal Logic},
+  journal   = {Acta Philosophica Fennica},
+  volume    = {16},
+  pages     = {83--94},
+  subfield  = {semantics/modality},
+  role      = {cited},
+  validated = {true},
+  sources   = {Core/IntensionalLogic/RestrictedModality.lean, Core/Logic/ModalLogic.lean, Theories/Semantics/Modality/Simple.lean}
 }% REF: Greenberg, J. H. (1978). Generalizations about Numeral Systems. In Greenberg (ed.), Universals of Human Language, vol. 3
 @incollection{greenberg-1978,
   author    = {Greenberg, Joseph H.},
@@ -6242,6 +6300,47 @@
   validated = {true},
   sources   = {Phenomena/Gradability/Studies/Tham2025.lean;Fragments/English/Predicates/Adjectival.lean;Fragments/English/Predicates/Verbal.lean}
 }
+@incollection{garassino-jacob-2018,
+  author    = {Garassino, Davide and Jacob, Daniel},
+  year      = {2018},
+  title     = {Polarity focus and non-canonical syntax in {I}talian, {F}rench and {S}panish: Clitic left dislocation and \textit{s{\`\i} che} / \textit{s{\'i} que}-constructions},
+  booktitle = {The Grammatical Realization of Polarity Contrast: Theoretical, Empirical, and Typological Approaches},
+  editor    = {Dimroth, Christine and Sudhoff, Stefan},
+  publisher = {John Benjamins},
+  address   = {Amsterdam},
+  pages     = {227--254},
+  doi       = {10.1075/la.249.08gar},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Italian/PolarityMarking.lean;Phenomena/Polarity/MarkingTypology.lean}
+}
+@article{wilder-2013,
+  author    = {Wilder, Chris},
+  year      = {2013},
+  title     = {English `emphatic \textit{do}'},
+  journal   = {Lingua},
+  volume    = {128},
+  pages     = {142--171},
+  doi       = {10.1016/j.lingua.2012.10.005},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/English/PolarityMarking.lean;Phenomena/Polarity/MarkingTypology.lean}
+}
+@article{batllori-hernanz-2013,
+  author    = {Batllori, Montserrat and Hernanz, M. Llu{\"\i}sa},
+  year      = {2013},
+  title     = {Emphatic polarity particles in {S}panish and {C}atalan},
+  journal   = {Lingua},
+  volume    = {128},
+  pages     = {9--30},
+  doi       = {10.1016/j.lingua.2012.11.010},
+  subfield  = {semantics/focus},
+  validated = {true},
+  role      = {cited},
+  sources   = {Fragments/Spanish/PolarityMarking.lean;Phenomena/Polarity/MarkingTypology.lean}
+}
 @article{turco-braun-dimroth-2014,
   author    = {Turco, Giuseppina and Braun, Bettina and Dimroth, Christine},
   year      = {2014},
@@ -6253,7 +6352,7 @@
   subfield  = {semantics/focus},
   validated = {true},
   role      = {cited},
-  sources   = {Phenomena/Focus/AdditiveParticles/Studies/TurcoBraunDimroth2014.lean;Phenomena/Focus/AdditiveParticles/Studies/TurcoBraunDimroth2014/Data.lean}
+  sources   = {Phenomena/Polarity/Studies/TurcoBraunDimroth2014.lean;Theories/Semantics/Focus/PolarityLevel.lean;Phenomena/Polarity/MarkingTypology.lean}
 }
 @inproceedings{knick-sharf-2026,
   author    = {Knick, Emily and Sharf, Eli},
@@ -8454,7 +8553,34 @@
   validated = {true},
   role      = {formalized},
   sources   = {Theories/Semantics/Lexical/Determiner/DomainRestriction.lean;Phenomena/Quantification/Studies/RitchieSchiller2024.lean}
-}% REF: Russell, B. (1905). On Denoting. Mind.
+}% REF: Riggle, J. (2009). Violation Semirings in Optimality Theory. Research on Language and Computation.
+@article{riggle-2009,
+  author    = {Riggle, Jason},
+  year      = {2009},
+  title     = {Violation Semirings in Optimality Theory},
+  journal   = {Research on Language and Computation},
+  volume    = {7},
+  pages     = {1--12},
+  doi       = {10.1007/s11168-009-9063-0},
+  subfield  = {phonology/formal},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Linglib/Core/Logic/ConstraintEvaluation.lean, Linglib/Theories/Phonology/ViolationSemiring.lean}
+}% REF: Dijkstra, E. W. (1959). A note on two problems in connexion with graphs.
+@article{dijkstra-1959,
+  author    = {Dijkstra, Edsger W.},
+  year      = {1959},
+  title     = {A Note on Two Problems in Connexion with Graphs},
+  journal   = {Numerische Mathematik},
+  volume    = {1},
+  pages     = {269--271},
+  doi       = {10.1007/BF01386390},
+  subfield  = {formal},
+  validated = {true},
+  role      = {cited},
+  sources   = {Linglib/Theories/Phonology/ViolationSemiring.lean}
+}
+% REF: Russell, B. (1905). On Denoting. Mind.
 @article{russell-1905,
   author    = {Russell, Bertrand},
   year      = {1905},
@@ -10358,6 +10484,17 @@
   validated = {true},
   role      = {formalized},
   sources   = {Theories/Semantics/Dynamic/Effects/Nondeterminism/Charlow2019.lean}
+}% REF: Quine, W.V. (1950). Methods of Logic.
+@book{quine-1950,
+  author    = {Quine, W. V.},
+  year      = {1950},
+  title     = {Methods of Logic},
+  publisher = {Holt, Rinehart and Winston},
+  address   = {New York},
+  subfield  = {logic},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Conditionals/Studies/Stalnaker1981.lean}
 }% REF: Quine, W.V.O. (1956). Quantifiers and Propositional Attitudes.
 @article{quine-1956,
   author    = {Quine, W. V.},
@@ -12598,8 +12735,35 @@
   school    = {Cornell University},
   address   = {Ithaca, NY},
   subfield  = {semantics/lexical},
+  role      = {formalized},
+  sources   = {Phenomena/Definiteness/Studies/Moroney2021.lean;Phenomena/Classifiers/Studies/LittleMoroneyRoyer2022.lean;Fragments/Shan/Classifiers.lean}
+}% REF: Jenks, P. (2018). Articulated Definiteness without Articles.
+@article{jenks-2018,
+  author    = {Jenks, Peter},
+  year      = {2018},
+  title     = {Articulated Definiteness without Articles},
+  journal   = {Linguistic Inquiry},
+  volume    = {49},
+  number    = {3},
+  pages     = {501--536},
+  doi       = {10.1162/ling_a_00280},
+  subfield  = {semantics/lexical},
   role      = {cited},
-  sources   = {Phenomena/Classifiers/Studies/LittleMoroneyRoyer2022.lean;Fragments/Shan/Classifiers.lean}
+  validated = {true},
+  sources   = {Phenomena/Definiteness/Studies/Moroney2021.lean}
+}% REF: Jenks, P. (2015). Two Kinds of Definites in Numeral Classifier Languages.
+@inproceedings{jenks-2015,
+  author    = {Jenks, Peter},
+  year      = {2015},
+  title     = {Two Kinds of Definites in Numeral Classifier Languages},
+  booktitle = {Proceedings of Semantics and Linguistic Theory (SALT)},
+  volume    = {25},
+  pages     = {103--124},
+  doi       = {10.3765/salt.v25i0.3057},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Definiteness/Studies/Moroney2021.lean}
 }% REF: Arcos López, N. (2009). Los clasificadores numerales y las clases nominales en ch'ol.
 @mastersthesis{arcos-lopez-2009,
   author    = {Arcos L\'{o}pez, Nicol\'{a}s},
@@ -15680,15 +15844,19 @@
   subfield  = {phonology},
   role      = {cited},
 }
-@book{mccarthy-prince-1995,
+@incollection{mccarthy-prince-1995,
   author    = {McCarthy, John J. and Prince, Alan},
   title     = {Faithfulness and Reduplicative Identity},
   year      = {1995},
+  booktitle = {Papers in Optimality Theory},
+  editor    = {Beckman, Jill N. and Dickey, Laura Walsh and Urbanczyk, Suzanne},
   series    = {University of Massachusetts Occasional Papers in Linguistics},
   volume    = {18},
   pages     = {249--384},
+  publisher = {GLSA},
+  address   = {Amherst, MA},
   subfield  = {phonology},
-  role      = {cited},
+  role      = {formalized},
 }
 @incollection{coetzee-pater-2011,
   author    = {Coetzee, Andries W. and Pater, Joe},

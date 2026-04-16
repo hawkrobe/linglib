@@ -45,7 +45,7 @@ the RSAConfig loop as paper-specific extensions (Part V).
 
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Semantics.Montague.Modification
+import Linglib.Theories.Semantics.Composition.Modification
 import Mathlib.Data.Rat.Defs
 
 set_option autoImplicit false
@@ -371,12 +371,12 @@ that denotes a characteristic function of type `e → t`:
   - ⟦blue⟧ = λx. color(x) = target.color
   - ⟦checked⟧ = λx. texture(x) = target.texture
 
-This is exactly `Semantics.Montague.Modification.predMod` applied iteratively.
+This is exactly `Semantics.Composition.Modification.predMod` applied iteratively.
 -/
 
 namespace MontaguGrounding
 
-open Semantics.Montague.Modification
+open Semantics.Composition.Modification
 
 /-- Shape predicate: matches target's shape (only target has shape=0) -/
 def shapePred : VisObj → Bool

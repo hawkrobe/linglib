@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.UD
+import Linglib.Core.PrivativePair
 
 /-!
 # Surface Gender
@@ -78,7 +79,141 @@ theorem SurfaceGender.roundtrip_ud (g : UD.Gender) :
   cases g <;> rfl
 
 -- ============================================================================
--- § 2: Discourse-Level Gender Knowledge
+-- § 2: Gender Features
+-- ============================================================================
+
+/-! ### Gender Features (@cite{sauerland-2003})
+
+Binary feature decomposition of sex-based gender:
+- **[±feminine]**: whether the referent triggers feminine agreement.
+  Feminine and neuter are [+feminine]; masculine is [−feminine].
+- **[±neuter]**: whether the referent triggers neuter agreement.
+  Only neuter is [+neuter]; feminine and masculine are [−neuter].
+
+These features form a containment hierarchy: [+neuter] → [+feminine].
+This is a feature-geometric claim from @cite{sauerland-2003} §6,
+not a natural-kind claim: neuter is the *most specified* gender
+(like singular for number, 1st for person), and masculine is the
+*least specified* (like plural, 3rd).
+
+The three well-formed combinations yield the three gender values:
+- **neuter**: [+feminine, +neuter] — maximal (presupposes inanimate)
+- **feminine**: [+feminine, −neuter] — intermediate (presupposes female)
+- **masculine**: [−feminine, −neuter] — minimal (vacuous/default)
+
+This parallels person [±author] ⊂ [±participant] and number
+[±atomic] ⊂ [±minimal]. All three are instances of `PhiFeatures`.
+
+For the morphosyntactic (DM) analysis, see
+`Theories.Morphology.DM.Categorizer.GenderFeature`. -/
+
+namespace Gender
+
+/-- Binary gender features: [±feminine, ±neuter].
+
+    These two features suffice for the three-way gender distinction:
+    - neuter:    [+feminine, +neuter]
+    - feminine:  [+feminine, −neuter]
+    - masculine: [−feminine, −neuter]
+
+    The fourth combination [−feminine, +neuter] is ill-formed:
+    a neuter entity necessarily triggers feminine agreement
+    ([+neuter] → [+feminine] in the feature geometry). -/
+structure Features where
+  /-- [+feminine]: referent triggers feminine (or neuter) agreement. -/
+  isFeminine : Bool
+  /-- [+neuter]: referent triggers neuter agreement. -/
+  isNeuter : Bool
+  deriving DecidableEq, Repr
+
+/-- Well-formedness: [+neuter] → [+feminine].
+    Neuter entails feminine in the feature geometry. -/
+def Features.wellFormed (gf : Features) : Bool :=
+  !gf.isNeuter || gf.isFeminine
+
+/-- Neuter features: [+feminine, +neuter]. -/
+def neuterF : Features := ⟨true, true⟩
+
+/-- Feminine features: [+feminine, −neuter]. -/
+def feminineF : Features := ⟨true, false⟩
+
+/-- Masculine features: [−feminine, −neuter]. -/
+def masculineF : Features := ⟨false, false⟩
+
+/-- Gender features are a `PhiFeatures` instance:
+    outer = isFeminine, inner = isNeuter.
+
+    The containment [+neuter] → [+feminine] maps to PrivativePair's
+    [+inner] → [+outer], unifying the structure with person and number.
+    All shared properties are inherited by construction. -/
+instance : Core.PhiFeatures Features where
+  toPair f := ⟨f.isFeminine, f.isNeuter⟩
+  ofPair p := ⟨p.outer, p.inner⟩
+  roundtrip := fun ⟨_, _⟩ => rfl
+
+/-- The three canonical gender values map to the three PrivativePair cells. -/
+@[simp] theorem neuter_is_maximal : PhiFeatures.toPair neuterF = .maximal := rfl
+@[simp] theorem feminine_is_intermediate : PhiFeatures.toPair feminineF = .intermediate := rfl
+@[simp] theorem masculine_is_minimal : PhiFeatures.toPair masculineF = .minimal := rfl
+
+/-- No 4-way gender distinction (inherited from `PhiFeatures`). -/
+theorem no_fourth_gender :
+    ∀ (a b c d : Features),
+      a.wellFormed = true → b.wellFormed = true →
+      c.wellFormed = true → d.wellFormed = true →
+      a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
+  fun a b c d ha hb hc hd =>
+    Core.PhiFeatures.no_four_way a b c d ha hb hc hd
+
+@[simp] theorem neuter_wellFormed : neuterF.wellFormed = true := rfl
+@[simp] theorem feminine_wellFormed : feminineF.wellFormed = true := rfl
+@[simp] theorem masculine_wellFormed : masculineF.wellFormed = true := rfl
+
+/-- The ill-formed combination [−feminine, +neuter] is the only
+    combination that violates well-formedness. -/
+theorem illFormed_only : (⟨false, true⟩ : Features).wellFormed = false := rfl
+
+/-- There are exactly 3 well-formed feature combinations (= 3 genders). -/
+theorem exactly_three_wellFormed :
+    ([⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩].filter
+      Features.wellFormed).length = 3 := by decide
+
+/-- Containment: [+neuter] → [+feminine] for all well-formed features. -/
+theorem neuter_implies_feminine (f : Features) (hw : f.wellFormed = true) :
+    f.isNeuter = true → f.isFeminine = true := by
+  intro hn
+  simp [Features.wellFormed] at hw
+  simp [hn] at hw
+  exact hw
+
+-- ── Bridge to SurfaceGender ──
+
+/-- Map gender features to the descriptive `SurfaceGender` type. -/
+def Features.toSurfaceGender : Features → Option SurfaceGender
+  | ⟨true, true⟩   => some .neuter
+  | ⟨true, false⟩  => some .feminine
+  | ⟨false, false⟩ => some .masculine
+  | ⟨false, true⟩  => none  -- ill-formed
+
+/-- Map `SurfaceGender` to gender features (partial — only sex-based
+    genders have feature equivalents). -/
+def Features.fromSurfaceGender : SurfaceGender → Option Features
+  | .neuter    => some neuterF
+  | .feminine  => some feminineF
+  | .masculine => some masculineF
+  | _          => none
+
+/-- Round-trip: fromSurfaceGender ∘ toSurfaceGender = some for
+    all well-formed features. -/
+theorem roundtrip_fromSG_toSG :
+    [neuterF, feminineF, masculineF].all
+      (λ f => f.toSurfaceGender.bind Features.fromSurfaceGender == some f) = true := by
+  decide
+
+end Gender
+
+-- ============================================================================
+-- § 3: Discourse-Level Gender Knowledge
 -- ============================================================================
 
 /-- Gender knowledge state for a discourse referent.

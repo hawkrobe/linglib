@@ -83,13 +83,32 @@ This is typically modeled as a preorder on worlds centered at each world.
 `closer w w₁ w₂` means w₁ is at least as similar to w as w₂ is.
 -/
 structure SimilarityOrdering (W : Type*) where
-  /-- w₁ is at least as close to w as w₂ -/
+  /-- `closer w₀ w₁ w₂` means w₁ is at least as close to w₀ as w₂ is -/
   closer : W → W → W → Prop
-  /-- Reflexivity: at each center, every world is at least as close as itself.
-      This makes `closer w₀` a preorder at every center `w₀`. -/
-  refl : ∀ w₀ w, closer w₀ w w
+  /-- Reflexivity: every world is as close to any center as itself -/
+  closer_refl (w₀ w : W) : closer w₀ w w
   /-- Transitivity -/
-  trans : ∀ w w₁ w₂ w₃, closer w w₁ w₂ → closer w w₂ w₃ → closer w w₁ w₃
+  closer_trans (w₀ w₁ w₂ w₃ : W) :
+    closer w₀ w₁ w₂ → closer w₀ w₂ w₃ → closer w₀ w₁ w₃
+  /-- Decidability of the similarity relation -/
+  closerDec (w₀ w₁ w₂ : W) : Decidable (closer w₀ w₁ w₂)
+
+instance {W : Type*} (sim : SimilarityOrdering W) (w₀ w₁ w₂ : W) :
+    Decidable (sim.closer w₀ w₁ w₂) :=
+  sim.closerDec w₀ w₁ w₂
+
+/-- Construct a `SimilarityOrdering` from a `Bool`-valued function.
+    Proofs can typically be discharged by `decide` on finite types. -/
+def SimilarityOrdering.ofBool {W : Type*}
+    (f : W → W → W → Bool)
+    (hrefl : ∀ w₀ w, f w₀ w w = true)
+    (htrans : ∀ w₀ w₁ w₂ w₃, f w₀ w₁ w₂ = true → f w₀ w₂ w₃ = true →
+      f w₀ w₁ w₃ = true) :
+    SimilarityOrdering W where
+  closer w₀ w₁ w₂ := f w₀ w₁ w₂ = true
+  closer_refl := hrefl
+  closer_trans w₀ w₁ w₂ w₃ := htrans w₀ w₁ w₂ w₃
+  closerDec _ _ _ := inferInstance
 
 /-- The `NormalityOrder` centered at world `w₀`: `le w₁ w₂` iff `w₁` is
     at least as close to `w₀` as `w₂` is. Connects Lewis/Stalnaker
@@ -98,8 +117,8 @@ structure SimilarityOrdering (W : Type*) where
 def SimilarityOrdering.atCenter {W : Type*} (sim : SimilarityOrdering W)
     (w₀ : W) : Core.Order.NormalityOrder W where
   le := sim.closer w₀
-  le_refl w := sim.refl w₀ w
-  le_trans w₁ w₂ w₃ := sim.trans w₀ w₁ w₂ w₃
+  le_refl w := sim.closer_refl w₀ w
+  le_trans w₁ w₂ w₃ := sim.closer_trans w₀ w₁ w₂ w₃
 
 /--
 Variably strict conditional (@cite{stalnaker-1968}/@cite{lewis-1973}):
@@ -196,7 +215,8 @@ theorem perfection_not_entailed_variablyStrict :
       (p q : Prop' W) (w : W),
       variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w) := by
   use Bool
-  exact ⟨⟨fun _ _ _ => True, fun _ _ => trivial, fun _ _ _ _ _ _ => trivial⟩,
+  exact ⟨⟨fun _ _ _ => True, fun _ _ => trivial, fun _ _ _ _ _ _ => trivial,
+    fun _ _ _ => .isTrue trivial⟩,
     Set.univ, (· = true), (fun _ => True), false,
     Or.inr ⟨true, ⟨Set.mem_univ _, rfl⟩, fun _ _ _ => trivial⟩,
     fun h => h Bool.false_ne_true trivial⟩
@@ -251,7 +271,7 @@ theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W
     · -- w = w', so we need to show q w = q w'
       subst h_eq
       -- Apply h_q_close to w itself
-      exact h_q_close w hw_in_pWorlds (sim.refl w w)
+      exact h_q_close w hw_in_pWorlds (sim.closer_refl w w)
     · -- w ≠ w', so by centering, w is strictly closer to itself
       have ⟨h_closer, _⟩ := h_centered w w' h_eq
       exact h_q_close w hw_in_pWorlds h_closer
@@ -405,17 +425,6 @@ def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
   { w' ∈ pWorlds | ∀ w'' ∈ pWorlds, sim.closer w w' w'' }
 
 /--
-**Counterfactual via selection function** (Stalnaker semantics).
-
-"If A were, C would be" is true at w iff C holds at the selected A-world.
--/
-def selectionalCounterfactual {W : Type*} (s : SelectionFunction W)
-    (allWorlds : Set W) (p q : Prop' W) : Prop' W :=
-  λ w =>
-    let pWorlds := { w' ∈ allWorlds | p w' }
-    pWorlds = ∅ ∨ q (s.select w pWorlds)
-
-/--
 **Comparative closeness** relation derived from a similarity ordering.
 
 `w₁ ≤_w₀ w₂` means w₁ is at least as similar to w₀ as w₂ is.
@@ -426,6 +435,97 @@ def comparativeCloseness {W : Type*} (sim : SimilarityOrdering W)
   sim.closer w₀ w₁ w₂
 
 notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ => comparativeCloseness sim w₀ w₁ w₂
+
+-- Closest Worlds
+
+/--
+The closest A-worlds to w₀: minimal elements of `A` under the similarity
+preorder centered at `w₀`.
+
+In @cite{lewis-1973}'s notation: min_{≤_w}(A) = {w' ∈ A : ¬∃w'' ∈ A. w'' <_w w'}.
+-/
+def SimilarityOrdering.closestWorlds {W : Type*} [DecidableEq W]
+    (sim : SimilarityOrdering W) (w₀ : W) (A : Finset W) : Finset W :=
+  A.filter fun w' => ∀ w'' ∈ A, sim.closer w₀ w' w'' ∨ ¬sim.closer w₀ w'' w'
+
+@[simp]
+theorem SimilarityOrdering.closestWorlds_empty {W : Type*} [DecidableEq W]
+    (sim : SimilarityOrdering W) (w₀ : W) :
+    sim.closestWorlds w₀ ∅ = ∅ := by
+  simp [closestWorlds]
+
+theorem SimilarityOrdering.closestWorlds_subset {W : Type*} [DecidableEq W]
+    (sim : SimilarityOrdering W) (w₀ : W) (A : Finset W) :
+    sim.closestWorlds w₀ A ⊆ A :=
+  Finset.filter_subset _ A
+
+theorem SimilarityOrdering.mem_closestWorlds {W : Type*} [DecidableEq W]
+    (sim : SimilarityOrdering W) (w₀ : W) (A : Finset W) (w' : W) :
+    w' ∈ sim.closestWorlds w₀ A ↔
+    w' ∈ A ∧ ∀ w'' ∈ A, sim.closer w₀ w' w'' ∨ ¬sim.closer w₀ w'' w' := by
+  simp [closestWorlds, Finset.mem_filter]
+
+-- Selection ↔ Similarity Bridge
+
+/-!
+## Selection Function ↔ Similarity Ordering
+@cite{stalnaker-1981}
+
+A selection function induces a comparative similarity relation that is
+*stronger* than what Lewis requires.
+
+- **Similarity → Selection**: `candidateSelections` extracts the set of
+  minimally close worlds under a similarity ordering. Any selection
+  function that always picks from this set is "legitimate."
+
+- **Selection → Similarity**: A selection function `s` determines a
+  pairwise preference: `w₁ ≤_{w₀} w₂` iff `s(w₀, {w₁, w₂}) = w₁`.
+  This is reflexive (by `success`) and total (by definition), but
+  transitivity requires additional coherence constraints on `s` beyond
+  `success` + `centering` — specifically, the selection function must be
+  rationalizable by a total preorder on worlds. See `isCoherent` below.
+-/
+
+/--
+**Pairwise preference induced by a selection function.**
+
+`w₁` is preferred to `w₂` from center `w₀` iff when choosing between
+just the two of them, the selection function picks `w₁`. -/
+def selectionPrefers {W : Type*} (s : SelectionFunction W)
+    (w₀ w₁ w₂ : W) : Prop :=
+  s.select w₀ {w₁, w₂} = w₁
+
+/--
+**A selection function is coherent** iff its induced pairwise preference
+is transitive. This is the content of @cite{stalnaker-1981}'s claim that
+selection functions determine a *well-ordering* of possible worlds.
+
+Not all selection functions satisfying `success` + `centering` are
+coherent — coherence is an additional rationality constraint. -/
+def SelectionFunction.isCoherent {W : Type*} (s : SelectionFunction W) : Prop :=
+  ∀ w₀ w₁ w₂ w₃ : W,
+    selectionPrefers s w₀ w₁ w₂ → selectionPrefers s w₀ w₂ w₃ →
+    selectionPrefers s w₀ w₁ w₃
+
+/--
+**Coherent selection functions induce similarity orderings.**
+
+Given a coherent selection function, its pairwise preference relation
+is a valid `SimilarityOrdering`: reflexive (from `success`) and
+transitive (from coherence). -/
+def coherentSelectionToSimilarity {W : Type*} [DecidableEq W]
+    (s : SelectionFunction W)
+    (h_coherent : s.isCoherent) : SimilarityOrdering W where
+  closer := selectionPrefers s
+  closer_refl w₀ w := by
+    show s.select w₀ {w, w} = w
+    have h_eq : ({w, w} : Set W) = {w} := Set.insert_eq_of_mem (Set.mem_singleton w)
+    rw [h_eq]
+    have h_ne : ({w} : Set W).Nonempty := ⟨w, Set.mem_singleton w⟩
+    have h_in := s.success w₀ {w} h_ne
+    exact Set.mem_singleton_iff.mp h_in
+  closer_trans w₀ w₁ w₂ w₃ := h_coherent w₀ w₁ w₂ w₃
+  closerDec w₀ w₁ w₂ := inferInstanceAs (Decidable (s.select w₀ {w₁, w₂} = w₁))
 
 -- Connection to Causal Models
 
