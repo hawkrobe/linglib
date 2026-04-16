@@ -38,7 +38,7 @@ this with two arguments:
 
 namespace Phenomena.Conditionals.Studies.McKayVanInwagen1977
 
-open Semantics.Conditionals.Counterfactual (closestWorlds)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.AlternativeSensitive (lewisDAC sdaEval)
 
 -- ════════════════════════════════════════════════════
@@ -69,12 +69,16 @@ section BumperCrop
 inductive CropWorld where | actual | goodWeather | sunCold
   deriving Repr, DecidableEq
 
+instance : Fintype CropWorld where
+  elems := {.actual, .goodWeather, .sunCold}
+  complete x := by cases x <;> simp
+
 /-- Good weather is much more similar to the actual world than the sun
     growing cold. -/
-def cropCloser : CropWorld → CropWorld → CropWorld → Bool
-  | _, w₁, w₂ => w₁ == w₂ || (w₁ == .goodWeather && w₂ == .sunCold)
+def cropSim : SimilarityOrdering CropWorld := .ofBool
+  (fun _ w₁ w₂ => w₁ == w₂ || (w₁ == .goodWeather && w₂ == .sunCold))
+  (by decide) (by decide)
 
-def cropDomain : List CropWorld := [.actual, .goodWeather, .sunCold]
 def goodWeather : CropWorld → Bool | .goodWeather => true | _ => false
 def sunCold : CropWorld → Bool | .sunCold => true | _ => false
 def bumperCrop : CropWorld → Bool | .goodWeather => true | _ => false
@@ -83,23 +87,23 @@ def bumperCrop : CropWorld → Bool | .goodWeather => true | _ => false
     (goodWeather ∨ sunCold)-world is a good-weather world. This is
     premise (3) of the critics' argument. -/
 theorem bumperCrop_lewis_true :
-    lewisDAC cropCloser cropDomain goodWeather sunCold
-      bumperCrop .actual = true := by native_decide
+    lewisDAC cropSim goodWeather sunCold
+      bumperCrop .actual = true := by decide
 
 /-- The conjunction regimentation is FALSE:
     "if the sun grew cold, we'd have a bumper crop" is false.
     This matches the English judgment that S is false. -/
 theorem bumperCrop_conjunction_false :
-    sdaEval cropCloser cropDomain [goodWeather, sunCold]
-      bumperCrop .actual = false := by native_decide
+    sdaEval cropSim [goodWeather, sunCold]
+      bumperCrop .actual = false := by decide
 
 /-- Lewis's disjunctive closure and the conjunction regimentation diverge.
     Since the English sentence S is false (matching the conjunction) while
     S* is true (matching Lewis), S ≠ S*: premise (2) is false. -/
 theorem lewis_ne_conjunction :
-    lewisDAC cropCloser cropDomain goodWeather sunCold bumperCrop .actual ≠
-    sdaEval cropCloser cropDomain [goodWeather, sunCold] bumperCrop .actual := by
-  native_decide
+    lewisDAC cropSim goodWeather sunCold bumperCrop .actual ≠
+    sdaEval cropSim [goodWeather, sunCold] bumperCrop .actual := by
+  decide
 
 end BumperCrop
 
@@ -126,11 +130,15 @@ section Spain
 inductive SpainWorld where | actual | axis | allies
   deriving Repr, DecidableEq
 
-/-- Axis is closer to actual than Allies (Spain's ideological alignment). -/
-def spainCloser : SpainWorld → SpainWorld → SpainWorld → Bool
-  | _, w₁, w₂ => w₁ == w₂ || (w₁ == .axis && w₂ == .allies)
+instance : Fintype SpainWorld where
+  elems := {.actual, .axis, .allies}
+  complete x := by cases x <;> simp
 
-def spainDomain : List SpainWorld := [.actual, .axis, .allies]
+/-- Axis is closer to actual than Allies (Spain's ideological alignment). -/
+def spainSim : SimilarityOrdering SpainWorld := .ofBool
+  (fun _ w₁ w₂ => w₁ == w₂ || (w₁ == .axis && w₂ == .allies))
+  (by decide) (by decide)
+
 def foughtAxis : SpainWorld → Bool | .axis => true | _ => false
 def foughtAllies : SpainWorld → Bool | .allies => true | _ => false
 
@@ -139,34 +147,34 @@ def foughtAllies : SpainWorld → Bool | .allies => true | _ => false
     The English sentence "if she had fought on one side or the other,
     it would have been the Axis" is acceptable. -/
 theorem spain_lewis_true :
-    lewisDAC spainCloser spainDomain foughtAxis foughtAllies
-      foughtAxis .actual = true := by native_decide
+    lewisDAC spainSim foughtAxis foughtAllies
+      foughtAxis .actual = true := by decide
 
 /-- The absurd SDA simplification: "If Spain had fought on the Allied
     side, Spain would have fought on the Axis side" is false. This is
     what the SDA schema would derive from `spain_lewis_true`. -/
 theorem allies_implies_axis_false :
-    sdaEval spainCloser spainDomain [foughtAllies]
-      foughtAxis .actual = false := by native_decide
+    sdaEval spainSim [foughtAllies]
+      foughtAxis .actual = false := by decide
 
 /-- The conjunction reading (both simplifications must hold) is FALSE,
     because the Allies simplification fails. -/
 theorem spain_conjunction_false :
-    sdaEval spainCloser spainDomain [foughtAxis, foughtAllies]
-      foughtAxis .actual = false := by native_decide
+    sdaEval spainSim [foughtAxis, foughtAllies]
+      foughtAxis .actual = false := by decide
 
 /-- **SDA is not a valid schema for counterfactuals.** There exist
     propositions A, B, C and a world w such that (A ∨ B) > C is true
     but B > C is false. The Spain example: (Axis ∨ Allies) > Axis is
     true, but Allies > Axis is false. -/
 theorem sda_invalid :
-    ∃ (W : Type) (_ : DecidableEq W) (closer : W → W → W → Bool)
-      (domain : List W) (A B C : W → Bool) (w : W),
-      lewisDAC closer domain A B C w = true ∧
-      sdaEval closer domain [B] C w = false :=
-  ⟨SpainWorld, inferInstance, spainCloser, spainDomain,
+    ∃ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
+      (sim : SimilarityOrdering W) (A B C : W → Bool) (w : W),
+      lewisDAC sim A B C w = true ∧
+      sdaEval sim [B] C w = false :=
+  ⟨SpainWorld, inferInstance, inferInstance, spainSim,
    foughtAxis, foughtAllies, foughtAxis, .actual,
-   ⟨by native_decide, by native_decide⟩⟩
+   ⟨by decide, by decide⟩⟩
 
 end Spain
 
@@ -194,13 +202,13 @@ disjunctive closure (disjuncts combined before evaluation).
     readings in each case — confirming that natural-language "or" in
     counterfactual antecedents is ambiguous between the two. -/
 theorem readings_diverge :
-    (lewisDAC spainCloser spainDomain foughtAxis foughtAllies
+    (lewisDAC spainSim foughtAxis foughtAllies
        foughtAxis .actual = true ∧
-     sdaEval spainCloser spainDomain [foughtAxis, foughtAllies]
+     sdaEval spainSim [foughtAxis, foughtAllies]
        foughtAxis .actual = false) ∧
-    (lewisDAC cropCloser cropDomain goodWeather sunCold
+    (lewisDAC cropSim goodWeather sunCold
        bumperCrop .actual = true ∧
-     sdaEval cropCloser cropDomain [goodWeather, sunCold]
+     sdaEval cropSim [goodWeather, sunCold]
        bumperCrop .actual = false) :=
   ⟨⟨spain_lewis_true, spain_conjunction_false⟩,
    ⟨bumperCrop_lewis_true, bumperCrop_conjunction_false⟩⟩

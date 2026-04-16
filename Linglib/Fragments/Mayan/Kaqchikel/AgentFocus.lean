@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
-import Linglib.Core.Logic.ConstraintEvaluation
+import Linglib.Core.Logic.OT
 import Linglib.Core.ExtractionMorphology
 import Linglib.Core.VoiceSystem
 
@@ -49,7 +49,7 @@ cross-referencing agreement.
 
 namespace Fragments.Mayan.Kaqchikel
 
-open Minimalism Core.ConstraintEvaluation
+open Minimalism Core.OT Core.ConstraintEvaluation
 
 -- ============================================================================
 -- § 1: Morphological Forms
@@ -176,27 +176,22 @@ def AFCandidate.violatesXRef : AFCandidate → Bool
 
     SSAL dominates XRef: it is better to lose agreement (AF) than to
     violate anti-locality (crash). -/
-inductive AFConstraint where
-  | antiLocality  -- Highest: Spec-to-Spec Anti-Locality (SSAL)
-  | xref          -- Lower: cross-referencing agreement
-  deriving DecidableEq, Repr
+def ssalConstraint : NamedConstraint AFCandidate :=
+  { name := "SSAL"
+    family := .markedness
+    eval := fun c => if c.violatesAntiLocality then 1 else 0 }
 
-/-- Violation profile for each candidate.
+def xrefConstraint : NamedConstraint AFCandidate :=
+  { name := "XRef"
+    family := .faithfulness
+    eval := fun c => if c.violatesXRef then 1 else 0 }
 
-    Position 0 = highest-ranked constraint (SSAL / AntiLocality).
-    Position 1 = lower-ranked constraint (XRef).
+/-- The ranked constraint list for Kaqchikel AF: SSAL >> XRef. -/
+def afRanking : List (NamedConstraint AFCandidate) :=
+  [ssalConstraint, xrefConstraint]
 
-    - Transitive extraction: [1, 0] — violates SSAL, satisfies XRef
-    - AF extraction: [0, 1] — satisfies SSAL, violates XRef -/
-def AFCandidate.violations : AFCandidate → List Nat
-  | .transitiveExtraction => [1, 0]
-  | .agentFocusExtraction => [0, 1]
-
-/-- The OT tableau for Kaqchikel clause-local agent extraction. -/
-def agentExtractionTableau : OTTableau AFCandidate :=
-  { candidates := [.transitiveExtraction, .agentFocusExtraction]
-  , profile := AFCandidate.violations
-  , nonempty := by decide }
+def afCandidates : List AFCandidate :=
+  [.transitiveExtraction, .agentFocusExtraction]
 
 -- ============================================================================
 -- § 5: Clause Spine and Voice
@@ -264,10 +259,13 @@ theorem trans_has_set_a : VerbForm.transitive.hasSetA = true := rfl
 /-- AF bears the *-Vn* suffix. -/
 theorem af_has_suffix : VerbForm.agentFocus.hasAFSuffix = true := rfl
 
-/-- The two candidates have different violation profiles. -/
+/-- The two candidates have different violation profiles: they disagree
+    on at least one constraint. -/
 theorem candidates_differ :
-    AFCandidate.transitiveExtraction.violations ≠
-    AFCandidate.agentFocusExtraction.violations := by decide
+    ssalConstraint.eval .transitiveExtraction ≠
+      ssalConstraint.eval .agentFocusExtraction ∨
+    xrefConstraint.eval .transitiveExtraction ≠
+      xrefConstraint.eval .agentFocusExtraction := by decide
 
 /-- The transitive derivation violates SSAL. -/
 theorem trans_violates_antilocality :
@@ -281,15 +279,24 @@ theorem af_obeys_antilocality :
     constraint (SSAL) at the cost of the lower-ranked one (XRef).
     This is the central result of @cite{erlewine-2016}. -/
 theorem af_is_optimal :
-    agentExtractionTableau.optimal = [.agentFocusExtraction] := by
+    (mkTableau afCandidates afRanking).optimal =
+      {AFCandidate.agentFocusExtraction} := by
   native_decide
 
-/-- Under satisfaction ordering (subset inclusion), the two candidates
-    would be incomparable — each satisfies a constraint the other violates.
-    OT's strict ranking is what breaks the tie in favor of AF. -/
+/-- Under componentwise ≤ (satisfaction ordering), neither candidate
+    dominates the other — each satisfies a constraint the other violates.
+    OT's strict lexicographic ranking is what breaks the tie in favor
+    of AF. -/
 theorem satisfaction_ordering_incomparable :
-    agentExtractionTableau.satOptimal = [] := by
-  native_decide
+    ¬(ssalConstraint.eval .transitiveExtraction ≤
+        ssalConstraint.eval .agentFocusExtraction ∧
+      xrefConstraint.eval .transitiveExtraction ≤
+        xrefConstraint.eval .agentFocusExtraction) ∧
+    ¬(ssalConstraint.eval .agentFocusExtraction ≤
+        ssalConstraint.eval .transitiveExtraction ∧
+      xrefConstraint.eval .agentFocusExtraction ≤
+        xrefConstraint.eval .transitiveExtraction) := by
+  decide
 
 /-- Kaqchikel clause projects Voice. -/
 theorem kaq_has_voice :

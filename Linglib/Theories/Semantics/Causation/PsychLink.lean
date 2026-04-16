@@ -39,7 +39,8 @@ namespace Semantics.Causation.PsychLink
 open Core.Time (Interval)
 open Semantics.Events (EventSort)
 open Semantics.Causation.Psych (CausalSource)
-open Semantics.Conditionals.Counterfactual (universalCounterfactual closestWorlds)
+open Semantics.Conditionals (SimilarityOrdering)
+open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
 -- ════════════════════════════════════════════════════
 -- § 1. PsychCausalLink
@@ -180,10 +181,10 @@ theorem flavors_differ_on_all_dimensions {Time : Type*} [LinearOrder Time] :
     This characterizes maintenance causation (@cite{kim-2024} property (c)):
     "The problem concerns John" — in the closest worlds where John
     no longer has the mental representation, the concern ceases. -/
-def counterfactuallyDependent {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+def counterfactuallyDependent {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (causeProp effectProp : W → Bool) (w : W) : Bool :=
-  universalCounterfactual closer domain
+  universalCounterfactual sim
     (fun w => !causeProp w) (fun w => !effectProp w) w
 
 /-- Counterfactual persistence: in the closest worlds where the cause
@@ -194,10 +195,10 @@ def counterfactuallyDependent {W : Type*} [DecidableEq W]
     This characterizes eventive causation: "The noise frightened John" —
     even if the noise hadn't occurred (in the closest worlds), the
     frightened state, once established by BECOME, persists independently. -/
-def counterfactuallyPersistent {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+def counterfactuallyPersistent {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (causeProp effectProp : W → Bool) (w : W) : Bool :=
-  universalCounterfactual closer domain
+  universalCounterfactual sim
     (fun w => !causeProp w) effectProp w
 
 /-- Counterfactual dependence and persistence are mutually exclusive
@@ -209,29 +210,20 @@ def counterfactuallyPersistent {W : Type*} [DecidableEq W]
     Proved by extracting a witness from the non-empty closest-world
     list and showing it satisfies `!effectProp w` (from dependence)
     and `effectProp w` (from persistence), a contradiction. -/
-theorem dependent_excludes_persistent {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (causeProp effectProp : W → Bool) (w : W)
-    (hDep : counterfactuallyDependent closer domain causeProp effectProp w = true)
-    (hNonempty : (closestWorlds closer domain w
-      (domain.filter (fun w => !causeProp w))).length > 0) :
-    counterfactuallyPersistent closer domain causeProp effectProp w = false := by
-  simp only [counterfactuallyDependent, universalCounterfactual] at hDep
+    (hDep : counterfactuallyDependent sim causeProp effectProp w = true)
+    (hNonempty : (sim.closestWorlds w
+      (Finset.univ.filter (fun w => (!causeProp w) = true))).Nonempty) :
+    counterfactuallyPersistent sim causeProp effectProp w = false := by
+  simp only [counterfactuallyDependent, universalCounterfactual, decide_eq_true_eq] at hDep
   simp only [counterfactuallyPersistent, universalCounterfactual]
-  -- Extract a witness from the non-empty closest worlds
-  set cl := closestWorlds closer domain w (domain.filter fun w => !causeProp w) with hcl
-  obtain ⟨x, xs, hcons⟩ : ∃ x xs, cl = x :: xs := by
-    match h : cl, hNonempty with
-    | a :: as, _ => exact ⟨a, as, rfl⟩
-  rw [hcons] at hDep ⊢
-  -- isEmpty is false for a cons
-  simp only [List.isEmpty_cons, Bool.false_or] at hDep ⊢
-  rw [Bool.eq_false_iff]
+  rw [decide_eq_false_iff_not]
   intro hall
-  rw [List.all_eq_true] at hDep hall
-  have hmem : x ∈ x :: xs := List.mem_cons_self ..
-  have h1 := hDep x hmem
-  have h2 := hall x hmem
+  obtain ⟨x, hx⟩ := hNonempty
+  have h1 := hDep x hx
+  have h2 := hall x hx
   simp [h2] at h1
 
 -- ════════════════════════════════════════════════════

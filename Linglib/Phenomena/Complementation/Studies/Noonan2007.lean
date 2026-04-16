@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Complementation.Typology
-import Linglib.Theories.Semantics.Questions.LeftPeriphery
+import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 
@@ -20,7 +20,7 @@ namespace Phenomena.Complementation.Bridge
 
 open Phenomena.Complementation.Typology
 open Fragments.English.Predicates.Verbal
-open Semantics.Questions.LeftPeriphery
+open Interfaces.SyntaxSemantics.LeftPeriphery
 open Semantics.Mood
 
 -- ============================================================================

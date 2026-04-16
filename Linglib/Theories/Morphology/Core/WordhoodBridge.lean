@@ -157,28 +157,28 @@ theorem clitic_implies_ms_free (s : MorphStatus) (h : s.isClitic = true) :
     PrWd-external are p-free (they form their own prosodic word,
     satisfying minimal word constraints independently).
 
-    This connects `Theories.Phonology.ProsodicWord` (which provides
+    This connects `Phonology.ProsodicWord` (which provides
     phonological diagnostics for PrWd membership) to the p-boundedness
     dimension of the @cite{kalin-bjorkman-etal-2026} wordhood typology. -/
 def prWdMembershipToPBound (isPrWdInternal : Bool) : PBoundedness :=
   if isPrWdInternal then .bound else .free
 
-open Theories.Phonology.ProsodicWord in
+open Phonology.ProsodicWord in
 /-- Inflectional suffixes are PrWd-internal → p-bound. -/
 theorem inflectional_is_p_bound :
     prWdMembershipToPBound MorphStatus.inflectional.isPrWdInternal = .bound := rfl
 
-open Theories.Phonology.ProsodicWord in
+open Phonology.ProsodicWord in
 /-- Agreement markers are PrWd-internal → p-bound. -/
 theorem agreement_is_p_bound :
     prWdMembershipToPBound MorphStatus.agreement.isPrWdInternal = .bound := rfl
 
-open Theories.Phonology.ProsodicWord in
+open Phonology.ProsodicWord in
 /-- Derivational affixes are PrWd-internal → p-bound. -/
 theorem derivational_is_p_bound :
     prWdMembershipToPBound MorphStatus.derivational.isPrWdInternal = .bound := rfl
 
-open Theories.Phonology.ProsodicWord in
+open Phonology.ProsodicWord in
 /-- Postpositions are PrWd-external → p-free. -/
 theorem postposition_is_p_free :
     prWdMembershipToPBound MorphStatus.postposition.isPrWdInternal = .free := rfl
@@ -187,7 +187,7 @@ theorem postposition_is_p_free :
 -- §7: Full Wordhood from ZP Diagnostics + PrWd Diagnostics
 -- ============================================================================
 
-open Theories.Phonology.ProsodicWord in
+open Phonology.ProsodicWord in
 /-- An inflectional affix (ms-bound by ZP criteria) that is also
     PrWd-internal (p-bound by prosodic diagnostics) is a canonical
     affix — the prototypical affix that is internal to its host on
@@ -197,7 +197,7 @@ theorem inflAffix_prWdInternal_is_canonicalAffix :
       (prWdMembershipToPBound MorphStatus.inflectional.isPrWdInternal)
     ).classify = .canonicalAffix := rfl
 
-open Theories.Phonology.ProsodicWord in
+open Phonology.ProsodicWord in
 /-- A postposition (ms-free by ZP criteria) that is PrWd-external
     (p-free by prosodic diagnostics) is a canonical word — independent
     on both dimensions. Example: Telugu postpositions. -/

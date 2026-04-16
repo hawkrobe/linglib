@@ -25,18 +25,18 @@ def groundWet : Proposition := λ w =>
 
 -- Concrete Kratzer configurations for comparison examples
 
-def concreteEpistemicBase : ModalBase := λ _ => [groundWet]
+def concreteEpistemicBase : ModalBase World := λ _ => [groundWet]
 
-def concreteEpistemicParams : KratzerParams where
+def concreteEpistemicParams : KratzerParams World where
   base := concreteEpistemicBase
   ordering := emptyBackground
 
 def KratzerEpistemic : ModalTheory := KratzerTheory concreteEpistemicParams
 
-def concreteCircumstantialBase : ModalBase := λ _ => []
-def concreteDeonticOrdering : OrderingSource := λ _ => [johnHome]
+def concreteCircumstantialBase : ModalBase World := λ _ => []
+def concreteDeonticOrdering : OrderingSource World := λ _ => [johnHome]
 
-def concreteDeonticParams : KratzerParams where
+def concreteDeonticParams : KratzerParams World where
   base := concreteCircumstantialBase
   ordering := concreteDeonticOrdering
 
@@ -112,14 +112,14 @@ section DualityComparison
 
 /-- Both Kratzer and Simple satisfy duality. -/
 theorem both_satisfy_duality
-    (params : KratzerParams)
+    (params : KratzerParams World)
     (R : World → World → Bool)
     (p : Proposition)
     (w : World) :
     (KratzerTheory params).dualityHolds p w = true ∧
     (Simple R).dualityHolds p w = true := by
   constructor
-  · exact kratzer_duality params p w
+  · exact kratzerTheory_duality params p w
   · exact simple_duality R p w
 
 end DualityComparison

@@ -128,6 +128,7 @@ def applyTense {Time : Type*} [LinearOrder Time] (t : GramTense) (f : Reichenbac
   | .past => f.referenceTime < f.perspectiveTime
   | .present => f.referenceTime = f.perspectiveTime
   | .future => f.referenceTime > f.perspectiveTime
+  | .nonpast => f.referenceTime ≥ f.perspectiveTime
 
 /--
 Check if a Reichenbach frame satisfies a given tense.
@@ -140,6 +141,7 @@ def satisfiesTense {Time : Type*} [LinearOrder Time] [DecidableEq Time]
   | .past => f.referenceTime < f.perspectiveTime
   | .present => f.referenceTime == f.perspectiveTime
   | .future => f.referenceTime > f.perspectiveTime
+  | .nonpast => f.referenceTime >= f.perspectiveTime
 
 
 /--
@@ -151,10 +153,16 @@ def composeTense : GramTense → GramTense → GramTense
   | .past, .past => .past      -- Past of past is past (in English)
   | .past, .present => .past   -- Present of past is past
   | .past, .future => .past    -- Future of past... complex (would)
+  | .past, .nonpast => .past   -- Nonpast of past is past
   | .present, t => t           -- Present is transparent
+  | .nonpast, .past => .past    -- Past of nonpast is past
+  | .nonpast, .present => .nonpast -- Present is transparent (right)
+  | .nonpast, .future => .future -- Future of nonpast is future
+  | .nonpast, .nonpast => .nonpast -- Nonpast is idempotent
   | .future, .past => .future  -- Past of future... complex
   | .future, .present => .future
   | .future, .future => .future
+  | .future, .nonpast => .future
 
 
 -- ════════════════════════════════════════════════════════════════

@@ -166,7 +166,7 @@ theorem diagonal_is_anbncndn (n : Nat) :
 
 /-- The diagonal clause images are in {aⁿbⁿcⁿdⁿ}. -/
 theorem diagonal_in_language (n : Nat) :
-    isInLanguage_anbncndn (clauseImage (arbitraryDepth n n)) = true := by
+    clauseImage (arbitraryDepth n n) ∈ anbncndn := by
   rw [diagonal_is_anbncndn]
   exact makeString_in_language n
 
@@ -182,19 +182,14 @@ theorem diagonal_in_language (n : Nat) :
     since linglib does not formalize the full theory of CFLs. The pumping lemma
     proof of the specific non-CFL witness ({aⁿbⁿcⁿdⁿ}) IS fully verified. -/
 def cfl_closure_contrapositive : Prop :=
-  ∀ (L : List Token → Bool),
-    (∀ n : Nat, L (List.replicate n Token.datNP ++ List.replicate n Token.accNP ++
-                    List.replicate n Token.datV ++ List.replicate n Token.accV) = true) →
-    (∀ n : Nat, isInLanguage_anbncndn (
-      (List.replicate n Token.datNP ++ List.replicate n Token.accNP ++
-       List.replicate n Token.datV ++ List.replicate n Token.accV).map tokenToSymbol) = true) →
-    ¬ HasPumpingProperty4 isInLanguage_anbncndn →
-    ¬ (∃ p : Nat, p > 0 ∧ ∀ w, L w = true → w.length ≥ p →
-      ∃ u v x y z, w = u ++ v ++ x ++ y ++ z ∧
-        (v ++ x ++ y).length ≤ p ∧
-        (v.length + y.length) ≥ 1 ∧
-        ∀ i, L (u ++ List.flatten (List.replicate i v) ++ x ++
-                     List.flatten (List.replicate i y) ++ z) = true)
+  ∀ (L : Language Token),
+    (∀ n : Nat, (List.replicate n Token.datNP ++ List.replicate n Token.accNP ++
+                  List.replicate n Token.datV ++ List.replicate n Token.accV) ∈ L) →
+    (∀ n : Nat, (List.replicate n Token.datNP ++ List.replicate n Token.accNP ++
+                  List.replicate n Token.datV ++ List.replicate n Token.accV).map tokenToSymbol
+                ∈ anbncndn) →
+    ¬ HasCFLPumpingProperty anbncndn →
+    ¬ HasCFLPumpingProperty L
 
 /-- **Main result.** The image of Swiss German cross-serial clauses under
     @cite{shieber-1985}'s homomorphism contains {aⁿbⁿcⁿdⁿ}, which is not
@@ -205,8 +200,8 @@ def cfl_closure_contrapositive : Prop :=
     1. The homomorphism maps Swiss German data to {aⁿbⁿcⁿdⁿ} (by construction)
     2. {aⁿbⁿcⁿdⁿ} violates the CFL pumping property (by proof) -/
 theorem swiss_german_not_context_free :
-    (∀ n : Nat, isInLanguage_anbncndn (clauseImage (arbitraryDepth n n)) = true) ∧
-    ¬ HasPumpingProperty4 isInLanguage_anbncndn :=
+    (∀ n : Nat, clauseImage (arbitraryDepth n n) ∈ anbncndn) ∧
+    ¬ HasCFLPumpingProperty anbncndn :=
   ⟨diagonal_in_language, anbncndn_not_pumpable⟩
 
 -- ============================================================================

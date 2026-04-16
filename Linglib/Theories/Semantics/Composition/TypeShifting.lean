@@ -46,6 +46,17 @@ Uses `j = x` order for definitional equality with `BE(lift(j))`. -/
 def ident (j : F.Entity) : F.Denot Ty.et :=
   fun x => j = x
 
+/-- Propositional analogue of `ident`: `propIdent(p) = λq. [p = q]`,
+i.e. the singleton question `{p}` from a proposition `p`.
+
+This is `ID` of @cite{elliott-etal-2017} (their eq. 10), used to coerce a
+proposition into a question denotation when an embedding predicate (e.g.
+a Predicate of Relevance like `care`) selects only for questions. The shape
+mirrors `ident` one type-theoretic level up: entities ↦ singleton properties
+becomes propositions ↦ singleton questions. -/
+def propIdent (p : F.Denot Ty.prop) : F.Denot (Ty.prop ⇒ Ty.t) :=
+  fun q => p = q
+
 /-- Predicative content of a GQ: `BE(Q) = λx. Q(λy. y = x)` -/
 def BE (Q : F.Denot Ty.ett) : F.Denot Ty.et :=
   fun x => Q (fun y => y = x)

@@ -33,7 +33,7 @@ situation-dependent types natively, with backward-compat wrappers.
 namespace Semantics.Attitudes.SituationDependent
 
 open Core.Time
-open Core.ModalLogic (AgentAccessRel)
+open Core.IntensionalLogic.RestrictedModality (BAgentAccessRel)
 open Semantics.Attitudes.Doxastic
   (Veridicality DoxasticPredicate boxAt veridicalityHolds)
 
@@ -58,7 +58,7 @@ abbrev SitProp (W Time : Type*) := Situation W Time → Bool
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 
-    Generalizes `AgentAccessRel W E = E → W → W → Bool` to include
+    Generalizes `BAgentAccessRel W E = E → W → W → Bool` to include
     temporal coordinates in both the evaluation and accessible situations. -/
 abbrev SitAccessRel (W Time E : Type*) := E → Situation W Time → Situation W Time → Bool
 
@@ -106,7 +106,7 @@ def liftProp {W Time : Type*} (p : W → Bool) : SitProp W Time :=
     `liftAccess R agent s₁ s₂ = R agent s₁.world s₂.world`.
     This gives classic Hintikka behavior where doxastic alternatives
     differ only in world, not time. -/
-def liftAccess {W Time E : Type*} (R : AgentAccessRel W E) : SitAccessRel W Time E :=
+def liftAccess {W Time E : Type*} (R : BAgentAccessRel W E) : SitAccessRel W Time E :=
   λ agent s₁ s₂ => R agent s₁.world s₂.world
 
 
@@ -123,7 +123,7 @@ def liftAccess {W Time E : Type*} (R : AgentAccessRel W E) : SitAccessRel W Time
     This means code using the old world-only operators produces
     identical results when embedded in the situation framework. -/
 theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
-    (R : AgentAccessRel W E) (agent : E) (s : Situation W Time)
+    (R : BAgentAccessRel W E) (agent : E) (s : Situation W Time)
     (sits : List (Situation W Time)) (p : W → Bool) :
     sitBoxAt (liftAccess R) agent s sits (liftProp p) =
     boxAt R agent s.world (sits.map (·.world)) p := by
@@ -283,14 +283,14 @@ connection between these temporal constraints and SOT readings.
     evaluation situation's time. This gives the "simultaneous"
     reading in sequence of tense. -/
 def temporallyBound {W Time E : Type*} [DecidableEq Time]
-    (R : AgentAccessRel W E) : SitAccessRel W Time E :=
+    (R : BAgentAccessRel W E) : SitAccessRel W Time E :=
   λ agent s₁ s₂ => R agent s₁.world s₂.world && (s₂.time == s₁.time)
 
 /-- Future-oriented constraint: accessible situations have times
     at or after the evaluation time. This models forward-looking
     attitudes like "expect" or "intend". -/
 def futureOriented {W Time E : Type*} [LE Time] [DecidableRel (α := Time) (· ≤ ·)]
-    (R : AgentAccessRel W E) : SitAccessRel W Time E :=
+    (R : BAgentAccessRel W E) : SitAccessRel W Time E :=
   λ agent s₁ s₂ => R agent s₁.world s₂.world && decide (s₁.time ≤ s₂.time)
 
 

@@ -14,7 +14,7 @@ probability operators (`EpistemicProbability.lean`) by defining
 
 ## Key contributions
 
-1. **`KripkeKP`**: bundles `AgentAccessRel` (knowledge) + `WorldCredence`
+1. **`KripkeKP`**: bundles `BAgentAccessRel` (knowledge) + `WorldCredence`
    (probability) into a single structure.
 
 2. **Structural conditions**: CONS, OBJ, UNIF, SDP as predicates on
@@ -55,7 +55,7 @@ set_option autoImplicit false
 namespace Semantics.Modality.KnowledgeProbability
 
 open Core.Proposition (BProp FiniteWorlds)
-open Core.ModalLogic (AgentAccessRel AccessRel kripkeEval)
+open Core.IntensionalLogic.RestrictedModality (BAgentAccessRel BAccessRel kripkeEval)
 open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
 open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
 
@@ -74,7 +74,7 @@ open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
     Structural conditions (CONS, UNIF, etc.) are separate predicates. -/
 structure KripkeKP (W E : Type*) where
   /-- Agent-indexed accessibility relation (information partition) -/
-  accessRel : AgentAccessRel W E
+  accessRel : BAgentAccessRel W E
   /-- World-dependent agent credence (probability spaces) -/
   worldCredence : WorldCredence E W
 
@@ -317,12 +317,12 @@ theorem probCKIter_monotone {W E : Type*}
     coincide whenever w' is accessible from w. This is the key property
     that makes S5 relations equivalence relations: accessibility classes
     are either identical or disjoint. -/
-private theorem s5_access_eq {W : Type*} {R : AccessRel W}
-    (hRefl : Core.ModalLogic.Refl R) (hEucl : Core.ModalLogic.Eucl R)
+private theorem s5_access_eq {W : Type*} {R : BAccessRel W}
+    (hRefl : Core.IntensionalLogic.RestrictedModality.BRefl R) (hEucl : Core.IntensionalLogic.RestrictedModality.BEucl R)
     {w w' : W} (hAcc : R w w' = true) :
     ∀ v, R w v = R w' v := by
-  have hSymm := Core.ModalLogic.refl_eucl_symm hRefl hEucl
-  have hTrans := Core.ModalLogic.refl_eucl_trans hRefl hEucl
+  have hSymm := Core.IntensionalLogic.RestrictedModality.brefl_eucl_symm hRefl hEucl
+  have hTrans := Core.IntensionalLogic.RestrictedModality.brefl_eucl_trans hRefl hEucl
   intro v
   cases hR : R w v <;> cases hR' : R w' v
   · rfl
@@ -342,8 +342,8 @@ private theorem s5_access_eq {W : Type*} {R : AccessRel W}
 theorem sdp_implies_unif {W E : Type*}
     (kp : KripkeKP W E)
     (hSDP : SDP kp)
-    (hS5 : ∀ i, Core.ModalLogic.Refl (kp.accessRel i) ∧
-                  Core.ModalLogic.Eucl (kp.accessRel i)) :
+    (hS5 : ∀ i, Core.IntensionalLogic.RestrictedModality.BRefl (kp.accessRel i) ∧
+                  Core.IntensionalLogic.RestrictedModality.BEucl (kp.accessRel i)) :
     UNIF kp := by
   intro i w w' hAcc φ
   exact hSDP i i w w' (s5_access_eq (hS5 i).1 (hS5 i).2 hAcc) φ

@@ -31,10 +31,9 @@ a preorder (incomparable candidates possible, as in Kratzer's semantics).
 
 Each comparison is a decidable Prop relation (`LexLE`, `SatLE`, `LexLT`).
 `Decidable` instances are defined by structural recursion, delegating to
-standard combinators (`And.decidable`, `Or.decidable`). Optimality is a
-predicate (`IsOptimal`, `IsSatOptimal`); the list-producing `optimal` /
-`satOptimal` are derived computations for concrete evaluation
-(`native_decide`).
+standard combinators (`And.decidable`, `Or.decidable`). `Tableau C n`
+provides the Finset-based OT tableau with `ViolationProfile n` profiles;
+study files use `mkTableau` (in `Core.OT`) for concrete evaluation.
 
 ## Algebraic Structure — Violation Semiring
 
@@ -148,55 +147,7 @@ instance instDecidableLexLT (a b : List Nat) : Decidable (LexLT a b) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================================
--- § 3: OT Tableau
--- ============================================================================
-
-/-- An OT tableau: candidates evaluated against ranked constraints.
-
-    `profile c` gives the violation list for candidate `c`, with
-    position 0 = highest-ranked constraint. -/
-structure OTTableau (Candidate : Type) where
-  candidates : List Candidate
-  profile : Candidate → List Nat
-  nonempty : candidates ≠ []
-
-variable {Candidate : Type}
-
-/-- `c` is optimal in tableau `t`: it is a candidate and lexicographically
-    ≤ every other candidate. In a well-formed OT tableau this is typically
-    unique — strict ranking ensures a unique winner when profiles differ. -/
-def OTTableau.IsOptimal (t : OTTableau Candidate) (c : Candidate) : Prop :=
-  c ∈ t.candidates ∧ ∀ c' ∈ t.candidates, LexLE (t.profile c) (t.profile c')
-
-/-- `c` is satisfaction-optimal: it is a candidate and satisfaction ≤ every
-    other candidate. May have multiple optimal candidates (partial order). -/
-def OTTableau.IsSatOptimal (t : OTTableau Candidate) (c : Candidate) : Prop :=
-  c ∈ t.candidates ∧ ∀ c' ∈ t.candidates, SatLE (t.profile c) (t.profile c')
-
-/-- Computable list of optimal candidates (for `native_decide` proofs). -/
-def OTTableau.optimal (t : OTTableau Candidate) : List Candidate :=
-  t.candidates.filter fun c =>
-    t.candidates.all fun c' => decide (LexLE (t.profile c) (t.profile c'))
-
-/-- Computable list of satisfaction-optimal candidates. -/
-def OTTableau.satOptimal (t : OTTableau Candidate) : List Candidate :=
-  t.candidates.filter fun c =>
-    t.candidates.all fun c' => decide (SatLE (t.profile c) (t.profile c'))
-
-/-- `c ∈ t.optimal` iff `t.IsOptimal c`. -/
-theorem mem_optimal_iff (t : OTTableau Candidate) (c : Candidate) :
-    c ∈ t.optimal ↔ t.IsOptimal c := by
-  simp only [OTTableau.optimal, OTTableau.IsOptimal, List.mem_filter,
-    List.all_eq_true, decide_eq_true_eq]
-
-/-- `c ∈ t.satOptimal` iff `t.IsSatOptimal c`. -/
-theorem mem_satOptimal_iff (t : OTTableau Candidate) (c : Candidate) :
-    c ∈ t.satOptimal ↔ t.IsSatOptimal c := by
-  simp only [OTTableau.satOptimal, OTTableau.IsSatOptimal, List.mem_filter,
-    List.all_eq_true, decide_eq_true_eq]
-
--- ============================================================================
--- § 4: Properties
+-- § 3: Properties
 -- ============================================================================
 
 /-- Lexicographic ≤ is reflexive. -/
@@ -240,13 +191,8 @@ theorem satLE_not_total : ¬∀ (a b : List Nat), SatLE a b ∨ SatLE b a := by
   | inl h => exact absurd h (by decide)
   | inr h => exact absurd h (by decide)
 
-/-- Optimal candidates are drawn from the candidate set. -/
-theorem optimal_subset (t : OTTableau Candidate) (c : Candidate) :
-    c ∈ t.optimal → c ∈ t.candidates :=
-  fun hc => (List.mem_filter.mp hc).1
-
 -- ============================================================================
--- § 4b: LexLE Structural Lemmas
+-- § 3b: LexLE Structural Lemmas
 -- ============================================================================
 
 /-- `LexLE [] b` holds for any `b`: the empty profile is vacuously
@@ -796,12 +742,12 @@ instance (n : Nat) : IsOrderedCancelAddMonoid (ViolationProfile n) where
         Nat.lt_of_add_lt_add_left hi⟩
 
 -- ============================================================================
--- § 12a: Backward Compatibility — vpLE
+-- § 12a: Decidable Ordering on ViolationProfile
 -- ============================================================================
 
 /-- Lexicographic ≤ on `Fin n → Nat`, defined by recursion on `n`.
-    Retained for backward compatibility and computable decidability.
-    Equivalent to `¬ Pi.Lex (· < ·) (· < ·) b a`. -/
+    This computable relation is the decision procedure for `≤` on
+    `ViolationProfile n` (see `vpLE_iff_le`). -/
 def vpLE : (n : Nat) → (Fin n → Nat) → (Fin n → Nat) → Prop
   | 0, _, _ => True
   | _ + 1, a, b => a 0 < b 0 ∨ (a 0 = b 0 ∧ vpLE _ (a ∘ Fin.succ) (b ∘ Fin.succ))
@@ -813,8 +759,88 @@ instance instDecidableVpLE : (n : Nat) → (a b : Fin n → Nat) → Decidable (
       instDecidableVpLE _ _ _
     inferInstanceAs (Decidable (a 0 < b 0 ∨ (a 0 = b 0 ∧ vpLE _ _ _)))
 
+/-- `vpLE n a b` is equivalent to the negation of `Pi.Lex (· < ·) (· < ·) b a`.
+
+    Proof: by induction on `n`. At each step, the recursive structure of
+    `vpLE` (head comparison + tail recursion) mirrors the existential
+    structure of `Pi.Lex` (first differing position). -/
+private theorem vpLE_iff_not_lt : (n : Nat) → (a b : Fin n → Nat) →
+    vpLE n a b ↔ ¬ (∃ i : Fin n, (∀ j : Fin n, j < i → b j = a j) ∧ b i < a i)
+  | 0, _, _ => by
+    constructor
+    · intro _ ⟨i, _, _⟩; exact i.elim0
+    · intro _; exact trivial
+  | n + 1, a, b => by
+    constructor
+    · intro hvp ⟨i, hpre, hlt⟩
+      rcases hvp with h_head_lt | ⟨h_head_eq, h_tail⟩
+      · rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩
+        · exact absurd hlt (Nat.not_lt.mpr (Nat.le_of_lt h_head_lt))
+        · exact absurd (hpre 0 (Fin.succ_pos j)).symm (Nat.ne_of_lt h_head_lt)
+      · rcases Fin.eq_zero_or_eq_succ i with rfl | ⟨j, rfl⟩
+        · exact absurd hlt (Nat.not_lt.mpr (le_of_eq h_head_eq))
+        · exact absurd ⟨j,
+            fun k hk => hpre k.succ (Fin.succ_lt_succ_iff.mpr hk), hlt⟩
+            ((vpLE_iff_not_lt n (a ∘ Fin.succ) (b ∘ Fin.succ)).mp h_tail)
+    · intro hno
+      rcases Nat.lt_trichotomy (a 0) (b 0) with hlt | heq | hgt
+      · exact Or.inl hlt
+      · right; exact ⟨heq,
+          (vpLE_iff_not_lt n (a ∘ Fin.succ) (b ∘ Fin.succ)).mpr fun ⟨j, hp, hl⟩ =>
+            hno ⟨j.succ,
+              fun k hk => by
+                rcases Fin.eq_zero_or_eq_succ k with rfl | ⟨k', rfl⟩
+                · exact heq.symm
+                · exact hp k' (Fin.succ_lt_succ_iff.mp hk),
+              hl⟩⟩
+      · exact absurd ⟨(0 : Fin (n + 1)),
+          fun j hj => absurd hj (Fin.not_lt_zero j), hgt⟩ hno
+
+/-- **Bridge theorem**: `vpLE` is equivalent to `≤` on `ViolationProfile n`.
+
+    This connects the computable recursive comparison (`vpLE`, defined by
+    structural recursion on `n`) to the algebraic `LinearOrder` on
+    `ViolationProfile n` (derived from `Pi.Lex`). The bridge enables
+    decidable ≤ on `ViolationProfile n` (see `instDecidableVpProfileLE`),
+    which in turn makes `Tableau.optimal` computable. -/
+theorem vpLE_iff_le {n : Nat} (a b : ViolationProfile n) :
+    vpLE n a b ↔ a ≤ b := by
+  rw [show a ≤ b ↔ ¬ (b < a) from not_lt.symm]
+  exact vpLE_iff_not_lt n a b
+
+/-- Decidable `≤` on `ViolationProfile n`, via `vpLE`.
+
+    This makes `ViolationProfile n` computationally comparable despite
+    the `LinearOrder` being noncomputable (from `Pi.Lex`). With this
+    instance, `Tableau.optimal` becomes computable: study files can use
+    `by decide` to verify OT winners on `Tableau C n`. -/
+instance instDecidableVpProfileLE {n : Nat} (a b : ViolationProfile n) :
+    Decidable (a ≤ b) :=
+  decidable_of_iff (vpLE n a b) (vpLE_iff_le a b)
+
+/-- Decidable `<` on `ViolationProfile n`, from decidable `≤`. -/
+instance instDecidableVpProfileLT {n : Nat} (a b : ViolationProfile n) :
+    Decidable (a < b) :=
+  decidable_of_iff (¬ b ≤ a) (@not_le _ _ b a)
+
 -- ============================================================================
--- § 12b: Tropical Semiring Derivation (@cite{riggle-2009})
+-- § 12b: buildViolationProfile
+-- ============================================================================
+
+/-- Build a `ViolationProfile n` from `n` constraint evaluation functions.
+
+    Given constraints as `Fin n → C → Nat` (constraint `i` evaluated on
+    candidate `c` yields violation count `constraints i c`), produce the
+    fixed-length violation profile for candidate `c`.
+
+    This is the bridge between the study-file workflow (define individual
+    constraint functions) and the algebraic `Tableau C n` infrastructure. -/
+def buildViolationProfile {C : Type} {n : Nat}
+    (constraints : Fin n → C → Nat) (c : C) : ViolationProfile n :=
+  toLex fun i => constraints i c
+
+-- ============================================================================
+-- § 12c: Tropical Semiring Derivation (@cite{riggle-2009})
 -- ============================================================================
 
 /-- `WithTop (ViolationProfile n)` is a `LinearOrderedAddCommMonoidWithTop`:
@@ -914,12 +940,8 @@ instance {n : Nat} (a b : SatViolationProfile n) : Decidable (a < b) :=
 /-- An OT tableau with `n` ranked constraints and candidate type `C`.
 
     Uses `Finset C` for the candidate set (guaranteeing finiteness and
-    deduplication) and `ViolationProfile n` for profiles (guaranteeing
-    fixed length and providing `LinearOrder`).
-
-    Compare with `OTTableau` above, which uses `List Candidate` and
-    `List Nat` for maximal simplicity in downstream evaluations. `Tableau`
-    is the mathematically precise version. -/
+    deduplication) and `ViolationProfile n` for fixed-length profiles with
+    decidable `LinearOrder`. -/
 structure Tableau (C : Type) [DecidableEq C] (n : Nat) where
   candidates : Finset C
   profile : C → ViolationProfile n
@@ -942,10 +964,11 @@ theorem Tableau.exists_optimal (t : Tableau C n) : ∃ c, t.IsOptimal c := by
   obtain ⟨c, hc_mem, hc_min⟩ := Finset.exists_min_image t.candidates t.profile t.nonempty
   exact ⟨c, hc_mem, hc_min⟩
 
-/-- Set of optimal candidates. Noncomputable because the `LinearOrder` on
-    `ViolationProfile n` is derived from `Pi.Lex` (classical). For concrete
-    OT evaluation, use `OTTableau.optimal` (List-based, fully computable). -/
-noncomputable def Tableau.optimal (t : Tableau C n) : Finset C :=
+/-- Set of optimal candidates. Computable via `instDecidableVpProfileLE`:
+    the `Finset.filter` tests `∀ c' ∈ candidates, profile c ≤ profile c'`
+    using the decidable ≤ on `ViolationProfile n`. Study files can verify
+    OT winners with `by decide` on concrete tableaux. -/
+def Tableau.optimal (t : Tableau C n) : Finset C :=
   t.candidates.filter fun c =>
     ∀ c' ∈ t.candidates, t.profile c ≤ t.profile c'
 
@@ -958,5 +981,48 @@ theorem Tableau.mem_optimal_iff (t : Tableau C n) (c : C) :
 theorem Tableau.optimal_nonempty (t : Tableau C n) : t.optimal.Nonempty := by
   obtain ⟨c, hc⟩ := t.exists_optimal
   exact ⟨c, (t.mem_optimal_iff c).mpr hc⟩
+
+/-- Optimal candidates belong to the candidate set. -/
+theorem Tableau.optimal_subset (t : Tableau C n) (c : C) :
+    c ∈ t.optimal → c ∈ t.candidates :=
+  fun hc => ((t.mem_optimal_iff c).mp hc).1
+
+-- ============================================================================
+-- § 14a: Computable Finset Predicates
+-- ============================================================================
+
+/-- Check a Bool predicate for all elements of a Finset.
+
+    Computable via `Finset.decidableBAll` — avoids noncomputable
+    `Finset.toList`. Use this to verify properties of optimal candidates
+    in `native_decide` proofs. -/
+def Finset.checkAll {α : Type} [DecidableEq α]
+    (s : Finset α) (p : α → Bool) : Bool :=
+  decide (∀ c ∈ s, p c = true)
+
+/-- Check a Bool predicate for some element of a Finset.
+
+    Computable via `Finset.decidableBEx` — avoids noncomputable
+    `Finset.toList`. -/
+def Finset.checkAny {α : Type} [DecidableEq α]
+    (s : Finset α) (p : α → Bool) : Bool :=
+  decide (∃ c ∈ s, p c = true)
+
+-- ============================================================================
+-- § 15: ViolationProfile Component Lemmas
+-- ============================================================================
+
+/-- If `a ≤ b` lexicographically, then the first component satisfies
+    `a 0 ≤ b 0`. Extracting the first component is the algebraic
+    backbone of `isOptimal_zero_first`: if the first constraint has
+    0 violations for any candidate, all optimal candidates must also
+    have 0 violations on it. -/
+theorem ViolationProfile.le_apply_zero {n : Nat}
+    {a b : ViolationProfile (n + 1)} (h : a ≤ b) : a 0 ≤ b 0 := by
+  by_contra hgt
+  push Not at hgt
+  exact absurd (show b < a from
+    ⟨0, fun j hj => absurd hj (Fin.not_lt_zero j), hgt⟩)
+    (not_lt.mpr h)
 
 end Core.ConstraintEvaluation

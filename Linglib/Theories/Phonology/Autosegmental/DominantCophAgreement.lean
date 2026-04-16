@@ -36,14 +36,13 @@ dominant_coph_agrees_with_tonalOverwrite
 ```
 -/
 
-namespace Theories.Phonology.Autosegmental.DominantCophAgreement
+namespace Phonology.Autosegmental.DominantCophAgreement
 
-open Theories.Phonology.Autosegmental.GrammaticalTone
-open Theories.Phonology.Autosegmental.RegisterTier (ToneFeature)
-open Theories.Phonology.Autosegmental.BasemapCorrespondence
-open Theories.Phonology.CophonologyTheory (mergeRanking cophonologicalEval)
-open Core.OT (NamedConstraint buildTableau optimal_zero_first)
-open Core.ConstraintEvaluation (OTTableau optimal_subset)
+open Phonology.Autosegmental.GrammaticalTone
+open Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.BasemapCorrespondence
+open Phonology.CophonologyTheory (mergeRanking cophonologicalEval)
+open Core.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
 
 -- ============================================================================
 -- § 1: Dominant Cophonology Selects Basemap-Faithful Candidates
@@ -59,7 +58,7 @@ open Core.ConstraintEvaluation (OTTableau optimal_subset)
     the basemap output, which is independent of the target's underlying
     tones (`basemapOutput_tone_independent_whole`). -/
 theorem dominant_coph_selects_basemap_faithful
-    {C : Type}
+    {C : Type} [DecidableEq C]
     (basemapTier : List ToneFeature)
     (extractTier : C → List ToneFeature)
     (defaultRanking : List (NamedConstraint C))
@@ -77,12 +76,12 @@ theorem dominant_coph_selects_basemap_faithful
     obtain ⟨c₀, hc₀_mem, hc₀_eq⟩ := hFaithful
     exact ⟨c₀, hc₀_mem, by simp [mxbmc, mkBasemapConstraint, hc₀_eq,
       basemapViolations_self_eq_zero]⟩
-  -- Step 3: By optimal_zero_first, every optimal candidate has 0 violations
-  have hZero := optimal_zero_first candidates mxbmc _ h hExists c hc
+  -- Step 3: By mkTableau_optimal_zero_first, every optimal candidate has 0 violations
+  have hZero := mkTableau_optimal_zero_first candidates mxbmc _ h hExists c hc
   -- Step 4: 0 violations implies extractTier c = basemapTier
   simp only [mxbmc, mkBasemapConstraint] at hZero
   exact basemapViolations_eq_zero_imp (extractTier c) basemapTier
-    (hLen c (optimal_subset _ c hc)) hZero
+    (hLen c (mkTableau_optimal_mem candidates _ h c hc)) hZero
 
 -- ============================================================================
 -- § 2: Agreement with tonalOverwrite
@@ -103,7 +102,7 @@ theorem dominant_coph_selects_basemap_faithful
     `dominant_coph_selects_basemap_faithful` ensures the OT evaluation
     selects exactly the basemap-faithful candidates. -/
 theorem dominant_coph_agrees_with_tonalOverwrite
-    {S C : Type} [DecidableEq S] [BEq S] [Repr S]
+    {S C : Type} [DecidableEq S] [BEq S] [Repr S] [DecidableEq C]
     (host : List (TBU S)) (t defaultTone : ToneFeature)
     (extractTier : C → List ToneFeature)
     (defaultRanking : List (NamedConstraint C))
@@ -124,4 +123,4 @@ theorem dominant_coph_agrees_with_tonalOverwrite
   rw [hFaith]
   exact (tonalOverwrite_basemap_faithful host t defaultTone).symm
 
-end Theories.Phonology.Autosegmental.DominantCophAgreement
+end Phonology.Autosegmental.DominantCophAgreement

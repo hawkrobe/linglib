@@ -48,7 +48,7 @@ Verum focus targets ASSERT; polarity particles target POL. The radical
 is the polarity-neutral propositional content.
 -/
 
-namespace Theories.Semantics.Focus.PolarityLevel
+namespace Semantics.Focus.PolarityLevel
 
 open Core (Polarity)
 open Core.InformationStructure (PolarityMarkingStrategy PolaritySwitchContext)
@@ -212,4 +212,4 @@ theorem particle_vf_different_levels :
 theorem reversal_targets_polarity :
     strategyLevel .polarityReversal = some .polarity := rfl
 
-end Theories.Semantics.Focus.PolarityLevel
+end Semantics.Focus.PolarityLevel

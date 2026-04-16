@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Attitudes.CDistributivity
 import Linglib.Theories.Semantics.Attitudes.EmbeddingConstraints
 import Linglib.Theories.Semantics.Attitudes.Preferential
-import Linglib.Theories.Semantics.Questions.LeftPeriphery
+import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 
 /-!
 # Uegaki (2022) @cite{uegaki-2022}
@@ -361,7 +361,7 @@ in the SelectionClass taxonomy. Predicates that are responsive correspond to
 `responsive`. Rogative predicates correspond to `rogativePerspP`/`rogativeSAP`.
 -/
 
-open Semantics.Questions.LeftPeriphery
+open Interfaces.SyntaxSemantics.LeftPeriphery
 
 /-- Anti-rogative predicates (uninterrogative) don't embed interrogatives. -/
 theorem antirogative_no_interrogative :

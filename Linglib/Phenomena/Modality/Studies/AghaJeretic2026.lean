@@ -1,4 +1,3 @@
-import Linglib.Core.Logic.ModalLogic
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Fragments.English.FunctionWords
 
@@ -42,6 +41,7 @@ namespace Phenomena.Modality.Studies.AghaJeretic2026
 
 open Core.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
 open Semantics.Modality.Directive
+open Semantics.Attitudes.Intensional (World)
 open Fragments.English.FunctionWords
 
 -- ============================================================================
@@ -126,8 +126,8 @@ entailment chain via the proven theorems in `Directive.lean`. -/
 
 /-- Re-export: strong necessity entails weak necessity (Directive.lean). -/
 theorem must_entails_ought_kratzer :
-    ∀ (f : Semantics.Modality.Kratzer.ModalBase)
-      (g g' : Semantics.Modality.Kratzer.OrderingSource)
+    ∀ (f : Semantics.Modality.Kratzer.ModalBase World)
+      (g g' : Semantics.Modality.Kratzer.OrderingSource World)
       (p : Core.Proposition.BProp Semantics.Attitudes.Intensional.World)
       (w : Semantics.Attitudes.Intensional.World),
     strongNecessity f g p w →
@@ -136,13 +136,13 @@ theorem must_entails_ought_kratzer :
 
 /-- Re-export: the converse fails (Directive.lean). -/
 theorem ought_not_entails_must_kratzer :
-    ¬(∀ (f : Semantics.Modality.Kratzer.ModalBase)
-        (g g' : Semantics.Modality.Kratzer.OrderingSource)
-        (p : Core.Proposition.BProp Semantics.Attitudes.Intensional.World)
-        (w : Semantics.Attitudes.Intensional.World),
+    ¬(∀ {W : Type} [DecidableEq W] [Fintype W]
+        (f : Semantics.Modality.Kratzer.ModalBase W)
+        (g g' : Semantics.Modality.Kratzer.OrderingSource W)
+        (p : W → Bool) (w : W),
       weakNecessity f g g' p w →
       strongNecessity f g p w) :=
-  weak_not_entails_strong
+  fun h => weak_not_entails_strong fun _ _ _ f g g' p w hw => h f g g' p w hw
 
 -- ============================================================================
 -- §4. Variable Force Typology (§3.2)

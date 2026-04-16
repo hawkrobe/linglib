@@ -628,6 +628,22 @@ def hope : VerbEntry := .mkRegular {
   attitude := some (.preferential (.degreeComparison .positive))
   complementSig := some .mono }
 
+/-- "pray" — preferential attitude verb, permits future temporal orientation.
+    @cite{klecha-2016}: like *hope*, *pray* can take a circumstantial modal base,
+    allowing future-oriented readings under past tense morphology.
+    Primary frame: finite clause ("pray that God helps").
+    Alternate frame: infinitival with subject control ("pray to be saved"). -/
+def pray : VerbEntry := .mkRegular {
+  form := "pray"
+  complementType := .finiteClause
+  vendlerClass := some .state
+  altComplementType := some .infinitival
+  altControlType := .subjectControl
+  passivizable := false
+  opaqueContext := true
+  attitude := some (.preferential (.degreeComparison .positive))
+  complementSig := some .mono }
+
 /-- "expect" — preferential attitude verb (Class 3: anti-rogative) -/
 def expect : VerbEntry := .mkRegular {
   form := "expect"

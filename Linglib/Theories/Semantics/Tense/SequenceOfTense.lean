@@ -94,7 +94,7 @@ open Core (Situation)
     accessibility. This is the situation-semantic formulation of "the
     embedded tense receives the matrix event time." -/
 theorem temporallyBound_forces_time_eq {W Time E : Type*} [DecidableEq Time]
-    (R : Core.ModalLogic.AgentAccessRel W E) (agent : E)
+    (R : Core.IntensionalLogic.RestrictedModality.BAgentAccessRel W E) (agent : E)
     (s₁ s₂ : Situation W Time)
     (h : temporallyBound R agent s₁ s₂ = true) :
     s₂.time = s₁.time := by
@@ -108,7 +108,7 @@ theorem temporallyBound_forces_time_eq {W Time E : Type*} [DecidableEq Time]
     This connects the attitude-side formalization (SituationDependent.temporallyBound)
     to the tense-side formalization (simultaneousFrame in IS/Tense/Basic). -/
 theorem temporallyBound_gives_simultaneous {W Time E : Type*} [LinearOrder Time]
-    (R : Core.ModalLogic.AgentAccessRel W E) (agent : E)
+    (R : Core.IntensionalLogic.RestrictedModality.BAgentAccessRel W E) (agent : E)
     (s₁ s₂ : Situation W Time) (speechTime : Time)
     (h : temporallyBound R agent s₁ s₂ = true) :
     let embFrame : ReichenbachFrame Time :=

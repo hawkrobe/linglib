@@ -42,7 +42,7 @@ models over weighted features, differing only in what the features measure.
 
 namespace Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
 
-open Theories.Phonology.HarmonicGrammar Core Finset Real
+open Phonology.HarmonicGrammar Core Finset Real
 
 -- ============================================================================
 -- § 1: MaxEnt = softmax (eq (1))

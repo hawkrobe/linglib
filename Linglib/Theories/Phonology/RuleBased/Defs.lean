@@ -25,10 +25,10 @@ This module provides:
 -/
 
 -- ============================================================================
--- § 1: Segment Utilities (in Theories.Phonology to extend Segment)
+-- § 1: Segment Utilities (in Phonology to extend Segment)
 -- ============================================================================
 
-namespace Theories.Phonology
+namespace Phonology
 
 /-- Create a segment from a list of (feature, value) pairs.
     Unmentioned features are unspecified (`none`), giving natural class
@@ -60,15 +60,15 @@ def Segment.applyChanges (s : Segment) (change : Segment) : Segment where
     | some v => some v
     | none => s.spec f
 
-end Theories.Phonology
+end Phonology
 
 -- ============================================================================
 -- § 2–8: Rule-Based Phonology
 -- ============================================================================
 
-namespace Theories.Phonology.RuleBased
+namespace Phonology.RuleBased
 
-open Theories.Phonology
+open Phonology
 
 -- ============================================================================
 -- § 2: Context Elements
@@ -255,4 +255,4 @@ theorem derive_nil (input : List Segment) :
   unfold derive
   simp only [List.foldl_nil]
 
-end Theories.Phonology.RuleBased
+end Phonology.RuleBased

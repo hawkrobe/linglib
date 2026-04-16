@@ -1,5 +1,5 @@
+import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Logic.ModalLogic
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 
 /-!

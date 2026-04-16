@@ -56,8 +56,8 @@ paper notes these as partly idiosyncratic (Table 7).
 
 namespace Phenomena.PhonologicalAlternation.Studies.AfkirZellou2025
 
-open Theories.Phonology.HarmonicGrammar Theories.Phonology.Constraints
-open Theories.Phonology.Syllable
+open Phonology.HarmonicGrammar Phonology.Constraints
+open Phonology.Syllable
 open Fragments.Tarifit.Inventory
 open Core.OT
 

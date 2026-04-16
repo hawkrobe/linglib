@@ -49,7 +49,7 @@ which suffices for the mathematical theorem. The full paper uses a
 
 namespace Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
 
-open Theories.Phonology.HarmonicGrammar
+open Phonology.HarmonicGrammar
 open Fragments.Tagalog.Phonology
 
 -- ============================================================================

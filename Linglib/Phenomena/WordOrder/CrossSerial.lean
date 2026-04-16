@@ -23,8 +23,14 @@ The dependencies are cross-serial (not nested):
       └────────────┘
           └────────────┘
 
-This pattern is beyond the power of context-free grammars.
-CCG handles it via generalized composition.
+Cross-serial word order alone is context-free — @cite{gazdar-pullum-1982}
+exhibit a CF-PSG (grammar 29) generating the correct Dutch strings with
+proper verb subcategorization (formalized in `Studies.PullumGazdar1982`).
+What takes this beyond CF power is cross-serial order PLUS case agreement:
+requiring dative NPs to match dative verbs and accusative NPs to match
+accusative verbs across unbounded depth. This was proven for Swiss German
+by @cite{shieber-1985} (formalized in `Studies.Shieber1985`).
+CCG handles the full pattern via generalized composition.
 
 ## Contrast with German
 
@@ -127,9 +133,13 @@ def german_3np_3v : VerbClusterExample :=
 
 open Core (FormalLanguageType)
 
-/-- Cross-serial dependencies require mild context-sensitivity.
+/-- Cross-serial dependencies with case agreement require mild
+    context-sensitivity.
 
-    Proven formally for Swiss German in
+    Cross-serial word ORDER alone is context-free
+    (@cite{gazdar-pullum-1982} grammar 29). The mildly context-sensitive
+    classification applies to the full pattern with case-matching,
+    proven formally for Swiss German in
     `Phenomena.WordOrder.Studies.Shieber1985` via the pumping lemma. -/
 def crossSerialRequires : FormalLanguageType := .mildlyContextSensitive
 

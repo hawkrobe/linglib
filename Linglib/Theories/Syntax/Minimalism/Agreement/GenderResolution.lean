@@ -50,7 +50,7 @@ speakers: **Highest Wins** (outermost nP layer wins) and **Best Semantic
 Match** (most specific semantic core wins).
 -/
 
-namespace Theories.Syntax.Minimalism.Agreement.GenderResolution
+namespace Minimalism.Agreement.GenderResolution
 
 open _root_.Minimalism (Interpretability)
 
@@ -269,4 +269,4 @@ def FeatureOrder.entails {F : Type} [BEq F]
 def FeatureOrder.satisfiesMRH' {F : Type} [BEq F] (order : FeatureOrder F) : Bool :=
   satisfiesMRH (order.nodes.map order.bundle)
 
-end Theories.Syntax.Minimalism.Agreement.GenderResolution
+end Minimalism.Agreement.GenderResolution

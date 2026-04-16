@@ -42,7 +42,7 @@ namespace Phenomena.ArgumentStructure.Studies.Wood2015
 
 open Minimalism
 open Fragments.Icelandic.Predicates
-open Theories.Interfaces.SyntaxSemantics.VoiceTheta
+open Interfaces.SyntaxSemantics.VoiceTheta
 
 -- ============================================================================
 -- § 1: Voice–CAUSE Independence (Ch. 3)

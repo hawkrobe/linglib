@@ -791,14 +791,15 @@ theorem distribution_selectional {W : Type*} [DecidableEq W] [Fintype W]
     (h : selectionalCounterfactual sim A (λ w => B w || C w) w = .true) :
     selectionalCounterfactual sim A B w = .true ∨
     selectionalCounterfactual sim A C w = .true := by
-  simp only [selectionalCounterfactual]
   set cl := sim.closestWorlds w _ with hcl
-  -- Extract the hypothesis: selectional = .true means all closest satisfy B∨C
+  -- Extract: selectional = .true means all closest satisfy B∨C
+  unfold selectionalCounterfactual at h
+  simp only [← hcl] at h
   by_cases hall : ∀ w' ∈ cl, (B w' || C w') = true
   · -- cl has at most 1 element
     by_cases hempty : cl = ∅
     · -- vacuously true for both B and C
-      left; simp [hempty]
+      left; unfold selectionalCounterfactual; simp [← hcl, hempty]
     · -- cl = {w'} for some w'
       have hcard : cl.card = 1 := by
         have := Finset.card_pos.mpr (Finset.nonempty_of_ne_empty hempty)
@@ -806,12 +807,12 @@ theorem distribution_selectional {W : Type*} [DecidableEq W] [Fintype W]
       obtain ⟨w', hw'⟩ := Finset.card_eq_one.mp hcard
       have hbc := hall w' (by simp [hw'])
       rcases Bool.or_eq_true_iff.mp hbc with hb | hc
-      · left; simp only [selectionalCounterfactual, hw', Finset.mem_singleton, forall_eq, hb,
-          ite_true]
-      · right; simp only [selectionalCounterfactual, hw', Finset.mem_singleton, forall_eq, hc,
-          ite_true]
+      · left; unfold selectionalCounterfactual
+        simp only [← hcl, hw', Finset.mem_singleton, forall_eq, hb, ite_true]
+      · right; unfold selectionalCounterfactual
+        simp only [← hcl, hw', Finset.mem_singleton, forall_eq, hc, ite_true]
   · -- ¬(all B∨C true) → selectional ≠ .true, contradicts h
-    exfalso; simp only [if_neg hall] at h; split_ifs at h <;> simp_all
+    exfalso; simp only [if_neg hall] at h; split_ifs at h
 
 /-- **Distribution fails for universal semantics.**
 

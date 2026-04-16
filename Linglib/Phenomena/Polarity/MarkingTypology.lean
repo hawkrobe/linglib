@@ -51,7 +51,7 @@ Fragment entries from seven languages to the `PolarityMarkingLevel` theory.
 namespace Phenomena.Polarity.MarkingTypology
 
 open Core.InformationStructure (PolarityMarkingEntry PolarityMarkingStrategy)
-open Theories.Semantics.Focus.PolarityLevel (PolarityMarkingLevel strategyLevel)
+open Semantics.Focus.PolarityLevel (PolarityMarkingLevel strategyLevel)
 
 -- Fragment imports
 open Fragments.Dutch.Particles (wel)

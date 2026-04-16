@@ -83,8 +83,8 @@ set_option autoImplicit false
 
 namespace Fragments.Hungarian.VowelHarmony
 
-open Theories.Phonology (Segment Feature FeatureVal)
-open Theories.Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
+open Phonology (Segment Feature FeatureVal)
+open Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
   harmonizeOne harmonyDomain spreadSuffix)
 
 -- ============================================================================

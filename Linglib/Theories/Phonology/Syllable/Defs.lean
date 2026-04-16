@@ -1,3 +1,4 @@
+import Mathlib.Order.Nat
 import Linglib.Theories.Phonology.Features
 
 /-!
@@ -23,9 +24,9 @@ Theory* (Ch 6, pp. 164–196). Cross-referenced with Hayes §4.6 and §15.
 @cite{goldsmith-2011} @cite{berent-2026}
 -/
 
-namespace Theories.Phonology.Syllable
+namespace Phonology.Syllable
 
-open Theories.Phonology (Segment Feature)
+open Phonology (Segment Feature)
 
 -- ============================================================================
 -- § 1: Sonority Scale
@@ -67,6 +68,17 @@ namespace SonorityRank
 def rank : SonorityRank → Nat
   | .stop => 0 | .fricative => 1 | .nasal => 2
   | .liquid => 3 | .glide => 4 | .vowel => 5
+
+/-- `SonorityRank.rank` is injective: distinct ranks map to distinct Nats. -/
+theorem rank_injective : Function.Injective SonorityRank.rank :=
+  fun a b h => by cases a <;> cases b <;> simp_all [SonorityRank.rank]
+
+/-- Linear order on sonority ranks, lifted from the numeric ranking.
+    Enables `<`, `≤`, `max`, `min` on `SonorityRank` directly — used by
+    SONCON and other sonority-sensitive constraints. Follows the same
+    pattern as `Stratum` in `StratalOT.lean`. -/
+instance : LinearOrder SonorityRank :=
+  LinearOrder.lift' SonorityRank.rank rank_injective
 
 end SonorityRank
 
@@ -244,4 +256,4 @@ theorem cvc_is_heavy (σ : Syllable) (h1 : σ.nucleus.length = 1)
     σ.weight = .heavy := by
   simp only [Syllable.weight, Syllable.moraCount, h1, h2, ite_true]
 
-end Theories.Phonology.Syllable
+end Phonology.Syllable

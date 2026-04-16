@@ -47,7 +47,7 @@ namespace Phenomena.Questions.Studies.VanRooy2003
 open Core.DecisionTheory
 open Semantics.Questions hiding Question
 open Semantics.Questions.MentionSome
-open Theories.Semantics.Questions.Relevance
+open Semantics.Questions.Relevance
 
 
 /-! ## Examples

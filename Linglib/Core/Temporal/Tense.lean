@@ -58,6 +58,11 @@ inductive GramTense where
   | past
   | present
   | future
+  /-- @cite{klecha-2016}'s non-past tense: perspective ≤ ref (present or future).
+      Distinct from `.present` (ref = perspective). The non-past is what allows
+      embedded tense under circumstantial modals to have future-oriented readings:
+      ⟦NPST⟧ = λp λt λu λh[p(t)(h) & u ≤ t], i.e., ref ≥ perspective. -/
+  | nonpast
   deriving DecidableEq, Repr, Inhabited
 
 namespace GramTense
@@ -67,15 +72,18 @@ def toRelation : GramTense → TemporalRelation
   | .past => .before
   | .present => .overlapping
   | .future => .after
+  | .nonpast => .notBefore
 
 /-- The inverse relation (for "backwards" reference) -/
 def inverseRelation : GramTense → TemporalRelation
   | .past => .after
   | .present => .overlapping
   | .future => .before
+  | .nonpast => .notAfter
 
 /-- The temporal constraint imposed by a grammatical tense.
     Past: ref < perspective. Present: ref = perspective. Future: ref > perspective.
+    Nonpast: ref ≥ perspective (@cite{klecha-2016}).
     This is the core ordering that Priorean operators assert and
     Abusch's tense pronouns presuppose. -/
 def constrains {Time : Type*} [LinearOrder Time]
@@ -84,6 +92,7 @@ def constrains {Time : Type*} [LinearOrder Time]
   | .past => refTime < perspTime
   | .present => refTime = perspTime
   | .future => refTime > perspTime
+  | .nonpast => refTime ≥ perspTime
 
 end GramTense
 

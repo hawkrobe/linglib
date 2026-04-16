@@ -9,7 +9,6 @@ semantics with Simple/primitive-accessibility semantics.
 -/
 
 import Linglib.Theories.Semantics.Attitudes.Intensional
-import Linglib.Core.Logic.ModalLogic
 
 namespace Semantics.Modality
 

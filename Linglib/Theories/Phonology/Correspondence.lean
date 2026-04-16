@@ -37,7 +37,7 @@ of `Corr.identViol` specialized to particular tiers:
   feature values (IO correspondence on a single feature dimension).
 -/
 
-namespace Theories.Phonology.Correspondence
+namespace Phonology.Correspondence
 
 open Core.OT
 
@@ -409,4 +409,52 @@ theorem integrityViol_le_length {α : Type*} (c : Corr α) :
   simp only [Corr.integrityViol]
   exact le_of_le_of_eq (List.length_filter_le _ _) List.length_range
 
-end Theories.Phonology.Correspondence
+-- ============================================================================
+-- § 7: Correspondence → NamedConstraint Bridge
+-- ============================================================================
+
+/-- Build a MAX `NamedConstraint` from the structural `Corr.maxViol`.
+    Ties the schema-level definition (§3) to the OT evaluation
+    machinery in `Core.OT`. -/
+def Corr.toMaxConstraint (α : Type) (domain : CorrDomain) :
+    NamedConstraint (Corr α) :=
+  { name := "MAX-" ++ domain.label
+    family := .faithfulness
+    eval := Corr.maxViol }
+
+/-- Build a DEP `NamedConstraint` from `Corr.depViol`. -/
+def Corr.toDepConstraint (α : Type) (domain : CorrDomain) :
+    NamedConstraint (Corr α) :=
+  { name := "DEP-" ++ domain.label
+    family := .faithfulness
+    eval := Corr.depViol }
+
+/-- Build an IDENT `NamedConstraint` from `Corr.identViol`. -/
+def Corr.toIdentConstraint (α : Type) [BEq α] (domain : CorrDomain) :
+    NamedConstraint (Corr α) :=
+  { name := "IDENT-" ++ domain.label
+    family := .faithfulness
+    eval := Corr.identViol }
+
+/-- Build a LINEARITY `NamedConstraint` from `Corr.linearityViol`. -/
+def Corr.toLinearityConstraint (α : Type) (domain : CorrDomain) :
+    NamedConstraint (Corr α) :=
+  { name := "LINEARITY-" ++ domain.label
+    family := .faithfulness
+    eval := Corr.linearityViol }
+
+/-- Build a UNIFORMITY `NamedConstraint` from `Corr.uniformityViol`. -/
+def Corr.toUniformityConstraint (α : Type) (domain : CorrDomain) :
+    NamedConstraint (Corr α) :=
+  { name := "UNIFORMITY-" ++ domain.label
+    family := .faithfulness
+    eval := Corr.uniformityViol }
+
+/-- Build an INTEGRITY `NamedConstraint` from `Corr.integrityViol`. -/
+def Corr.toIntegrityConstraint (α : Type) (domain : CorrDomain) :
+    NamedConstraint (Corr α) :=
+  { name := "INTEGRITY-" ++ domain.label
+    family := .faithfulness
+    eval := Corr.integrityViol }
+
+end Phonology.Correspondence

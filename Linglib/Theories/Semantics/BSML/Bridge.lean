@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.BSML.Defs
-import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.IntensionalLogic.RestrictedModality
 
 /-!
 # BSML–CML Bridge
@@ -217,23 +217,23 @@ theorem neFree_flat (M : BSMLModel W)
 -- §5: BSML–CML Type Bridge
 -- ============================================================================
 
-open Core.ModalLogic (AccessRel kripkeEval)
+open Core.IntensionalLogic.RestrictedModality (BAccessRel kripkeEval)
 open Core.Proposition (FiniteWorlds)
 
 /-!
 ### Accessibility Type Bridge
 
-`BSMLModel.access : W → Finset W` can be converted to `AccessRel W = W → W → Bool`
+`BSMLModel.access : W → Finset W` can be converted to `BAccessRel W = W → W → Bool`
 via `fun w v => decide (v ∈ M.access w)`.
 -/
 
 /-- Convert BSML accessibility to a classical accessibility relation. -/
-def BSMLModel.toAccessRel (M : BSMLModel W) : AccessRel W :=
+def BSMLModel.toAccessRel (M : BSMLModel W) : BAccessRel W :=
   fun w v => decide (v ∈ M.access w)
 
 /-- `classicalEval` of ◇φ agrees with `kripkeEval` at `.possibility`,
     connecting BSML's classical evaluation to the shared modal logic
-    infrastructure from `Core.ModalLogic`. -/
+    infrastructure from `Core.IntensionalLogic.RestrictedModality`. -/
 theorem classicalEval_agrees_kripkeEval_poss
     [fw : FiniteWorlds W]
     (M : BSMLModel W) (φ : BSMLFormula) (w : W)

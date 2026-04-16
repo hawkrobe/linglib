@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Discourse.InformationStructure
 import Linglib.Core.Discourse.SpeechActs
@@ -157,12 +158,11 @@ theorem hiNQ_evidence_neutral_ok :
 We model this as: in all epistemically accessible worlds where the speaker's
 conversational goals are fulfilled, p is in the CG. This is a double universal:
 necessity over epistemic alternatives, then necessity over conversational goals. -/
-def verum (epistemic : ModalBase) (conversational : OrderingSource)
+def verum (epistemic : ModalBase World) (conversational : OrderingSource World)
     (cg : BContextSet World) (p : BProp World) (w : World) : Bool :=
   -- For all best epistemic worlds w': in the CG induced at w', p holds
-  (bestWorlds epistemic conversational w).all λ w' =>
-    -- p is entailed by the context set at w'
-    cg w' && p w'
+  decide (∀ w' ∈ bestWorlds epistemic conversational w,
+    cg w' = true ∧ p w' = true)
 
 /-- FALSUM operator (@cite{repp-2013}, @cite{romero-2019}, @cite{romero-2024} def. 33).
 
@@ -183,17 +183,17 @@ structure FalsumContent where
   cgManagement : World → Prop
 
 /-- Construct FALSUM content for a proposition p. -/
-def mkFalsum (epistemic : ModalBase) (conversational : OrderingSource)
+def mkFalsum (epistemic : ModalBase World) (conversational : OrderingSource World)
     (cg : BContextSet World) (p : BProp World) : FalsumContent where
   atIssue := λ w => !p w
   cgManagement := λ w =>
     -- Speaker considers p epistemically possible
-    (bestWorlds epistemic conversational w).any p = true ∧
+    (∃ w' ∈ bestWorlds epistemic conversational w, p w' = true) ∧
     -- But p is not entailed by the CG
     ¬(∀ w', cg w' = true → p w' = true)
 
 /-- FALSUM's at-issue content is propositional negation. -/
-theorem falsum_atIssue_is_negation (ep : ModalBase) (cv : OrderingSource)
+theorem falsum_atIssue_is_negation (ep : ModalBase World) (cv : OrderingSource World)
     (cg : BContextSet World) (p : BProp World) (w : World) :
     (mkFalsum ep cv cg p).atIssue w = !p w := rfl
 
@@ -230,18 +230,18 @@ structure FalsumCZ where
 
 The attitude holder's epistemic state is modeled via the modal base
 (their epistemic alternatives). -/
-def mkFalsumCZ (attitudeEpi : ModalBase) (ordering : OrderingSource)
+def mkFalsumCZ (attitudeEpi : ModalBase World) (ordering : OrderingSource World)
     (cg : BContextSet World) (p : BProp World) : FalsumCZ where
   atIssue := λ w => !p w
   definedness := λ w =>
     -- ∃w' ∈ EPI(w). p(w') = true — epistemic possibility
-    (bestWorlds attitudeEpi ordering w).any p = true
+    ∃ w' ∈ bestWorlds attitudeEpi ordering w, p w' = true
   cgContent := λ w =>
     -- p ∉ CG_w
     ¬(∀ w', cg w' = true → p w' = true)
 
 /-- FALSUM^CZ at-issue content is still propositional negation. -/
-theorem falsumCZ_atIssue_is_negation (ep : ModalBase) (cv : OrderingSource)
+theorem falsumCZ_atIssue_is_negation (ep : ModalBase World) (cv : OrderingSource World)
     (cg : BContextSet World) (p : BProp World) (w : World) :
     (mkFalsumCZ ep cv cg p).atIssue w = !p w := rfl
 
@@ -249,8 +249,8 @@ theorem falsumCZ_atIssue_is_negation (ep : ModalBase) (cv : OrderingSource)
 is possible (necessity over goals), then they certainly *consider* it possible.
 This captures why standard FALSUM is a special case of FALSUM^CZ. -/
 theorem standard_falsum_entails_CZ_definedness
-    (ep : ModalBase) (cv : OrderingSource) (cg : BContextSet World) (p : BProp World) (w : World)
-    (hStd : (bestWorlds ep cv w).any p = true) :
+    (ep : ModalBase World) (cv : OrderingSource World) (cg : BContextSet World) (p : BProp World) (w : World)
+    (hStd : ∃ w' ∈ bestWorlds ep cv w, p w' = true) :
     (mkFalsumCZ ep cv cg p).definedness w :=
   hStd
 
@@ -269,14 +269,14 @@ of the modal."
 Formally, náhodou replaces the ordering source g with a weaker g' such that
 Best(f, g', w) ⊇ Best(f, g, w). The resulting proposition is stronger because
 ruling out p in less likely worlds entails ruling it out in more likely worlds. -/
-def loosenOrderingSource (_ : OrderingSource) (loosened : OrderingSource) :
-    OrderingSource := loosened
+def loosenOrderingSource (_ : OrderingSource World) (loosened : OrderingSource World) :
+    OrderingSource World := loosened
 
 /-- With náhodou, FALSUM^CZ quantifies over a larger set of worlds,
 making the epistemic possibility condition easier to satisfy.
 This is why náhodou is licensed in contexts where the speaker's evidence
 is weaker — it signals willingness to explore remote possibilities. -/
-theorem nahodou_widens_domain (ep : ModalBase) (cv cvLoose : OrderingSource)
+theorem nahodou_widens_domain (ep : ModalBase World) (cv cvLoose : OrderingSource World)
     (cg : BContextSet World) (p : BProp World) (w : World)
     (hSubset : ∀ w', w' ∈ bestWorlds ep cv w → w' ∈ bestWorlds ep cvLoose w) :
     (mkFalsumCZ ep cv cg p).definedness w →
@@ -285,13 +285,8 @@ theorem nahodou_widens_domain (ep : ModalBase) (cv cvLoose : OrderingSource)
   simp only [mkFalsumCZ] at h ⊢
   -- If some world in Best(cv) satisfies p, and Best(cv) ⊆ Best(cvLoose),
   -- then some world in Best(cvLoose) satisfies p.
-  rw [List.any_eq_true] at h ⊢
   obtain ⟨w', hw', hp⟩ := h
-  exact ⟨w', List.mem_of_subset hSubset hw', hp⟩
-  where
-    List.mem_of_subset {α : Type} {l1 l2 : List α} {x : α}
-        (h : ∀ y, y ∈ l1 → y ∈ l2) (hx : x ∈ l1) : x ∈ l2 :=
-      h x hx
+  exact ⟨w', hSubset w' hw', hp⟩
 
 -- ============================================================================
 -- §6: Evidential Bias Modal □_ev (Staňková 2026 §3.1)
@@ -308,10 +303,10 @@ This captures evidential bias in PQs: the speaker's expectation about the
 answer, derived from contextual evidence rather than prior epistemic state.
 It corresponds to Romero's "contextual evidence bias" dimension. -/
 structure EvidentialBiasFlavor where
-  contextBase : ModalBase
-  stereotypical : OrderingSource
+  contextBase : ModalBase World
+  stereotypical : OrderingSource World
 
-def EvidentialBiasFlavor.toKratzerParams (f : EvidentialBiasFlavor) : KratzerParams where
+def EvidentialBiasFlavor.toKratzerParams (f : EvidentialBiasFlavor) : KratzerParams World where
   base := f.contextBase
   ordering := f.stereotypical
 
@@ -350,20 +345,16 @@ def medialBias (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :
 TODO: The seriality condition holds whenever the modal base is realistic
 (cf. `Kratzer.realistic_is_serial`). -/
 theorem inner_entails_medial (f : EvidentialBiasFlavor) (p : BProp World) (w : World)
-    (hSerial : (bestWorlds f.contextBase f.stereotypical w).length > 0)
+    (hSerial : (bestWorlds f.contextBase f.stereotypical w).card > 0)
     (hInner : innerBias f p w) :
     medialBias f p w := by
   simp only [medialBias, evidentialNecessity]
   rw [necessity_iff_all]
   simp only [innerBias, evidentialNecessity] at hInner
   rw [necessity_iff_all] at hInner
-  -- hInner : (bestWorlds ...).all (fun w' => !p w') = true
-  -- Goal : ¬ (bestWorlds ...).all p = true
-  rw [List.all_eq_true] at hInner
   intro hAll
-  rw [List.all_eq_true] at hAll
-  -- Best worlds is non-empty, so pick the first element
-  obtain ⟨w', hw'⟩ := List.exists_mem_of_length_pos hSerial
+  -- Best worlds is non-empty, so pick an element
+  obtain ⟨w', hw'⟩ := Finset.card_pos.mp hSerial
   have := hInner w' hw'
   have := hAll w' hw'
   simp_all

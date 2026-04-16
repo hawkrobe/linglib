@@ -48,7 +48,7 @@ namespace Semantics.Tense.PTS
 open Core.Time
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.Aspect.SubintervalProperty
-open Semantics.Montague.Sentence.TemporalAdverbials (PTSConstraint AdverbialType)
+open Semantics.Tense.TemporalAdverbials (PTSConstraint AdverbialType)
 open Semantics.Tense.PerfectPolysemy (PerfectReading)
 
 variable {W Time : Type*} [LinearOrder Time]

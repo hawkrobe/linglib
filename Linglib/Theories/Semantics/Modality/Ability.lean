@@ -32,7 +32,7 @@ open Semantics.Modality.Kratzer (ModalBase)
     The modal base at each world returns propositions encoding the
     causal background. Ability IS circumstantial possibility, where the
     "circumstances" are the causal structure. -/
-def toCircumstantialBase (f : CausalFrame World) : ModalBase :=
+def toCircumstantialBase (f : CausalFrame World) : ModalBase World :=
   λ _w => [λ w' => f.sufficientAt w']
 
 /-- Ability as Kratzer possibility: "can VP" is ◇(complement) where

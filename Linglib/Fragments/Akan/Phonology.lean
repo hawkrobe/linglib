@@ -25,7 +25,7 @@ Clements 1976, Hume 1992).
 
 namespace Fragments.Akan.Phonology
 
-open Theories.Phonology
+open Phonology
 
 -- ============================================================================
 -- § 1: Consonant Inventory

@@ -618,6 +618,15 @@ def Attitude.valence : Attitude → Option AttitudeValence
   | .doxastic _ => none
   | .preferential b => some b.valence
 
+/-- Can this attitude verb take a circumstantial modal base?
+    @cite{klecha-2016}: doxastic attitudes (think, believe) take only DOX;
+    preferential attitudes (hope, want, pray) can also take CIR, which
+    permits future temporal orientation. This is the source of the
+    Upper Limit Constraint: DOX-only verbs block future readings. -/
+def Attitude.permitsCircumstantial : Attitude → Bool
+  | .doxastic _ => false
+  | .preferential _ => true
+
 -- ════════════════════════════════════════════════════
 -- § Vendler classification: situation types
 -- ════════════════════════════════════════════════════

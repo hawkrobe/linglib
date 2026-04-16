@@ -603,7 +603,7 @@ theorem twoDim_neg_val_via_writer (p : TwoDimProp W) :
 
     For a single-CI Writer (the standard case from `twoDimToWriter`),
     this computes `atIssue w && ci w` — identical to the `shunt`
-    function in `Theories.Semantics.Quotation.MixedQuotation`.
+    function in `Semantics.Quotation.MixedQuotation`.
 
     For multi-CI Writers (e.g., "that bastard John met that jerk Pete"
     with two CI entries), this conjoins all CIs into at-issue content. -/
@@ -637,7 +637,7 @@ theorem runCIWriter_trivial_log {W : Type} (val : W → Bool) (w : W) :
     shunting operation ↓ from @cite{kirk-giannini-2024}.
 
     This is definitionally equal to `shunt` from
-    `Theories.Semantics.Quotation.MixedQuotation`. -/
+    `Semantics.Quotation.MixedQuotation`. -/
 theorem runCIWriter_twoDim {W : Type} (p : TwoDimProp W) (w : W) :
     (runCIWriter (twoDimToWriter p)).atIssue w = (p.atIssue w && p.ci w) := rfl
 

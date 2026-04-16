@@ -123,7 +123,7 @@ theorem deRe_unfolds
     of μ(polar bear). Used for modal comparatives (§VIII).
 
     The `acc` parameter is a set of worlds (typically `{w | R w₀ w = true}`
-    for some `Core.ModalLogic.AccessRel R` and base world `w₀`). -/
+    for some `Core.IntensionalLogic.RestrictedModality.BAccessRel R` and base world `w₀`). -/
 def IsMaxDegOverWorlds
     (acc : Set W) (μw : W → D) (d : D) : Prop :=
   (∃ w ∈ acc, μw w = d) ∧ ∀ w ∈ acc, μw w ≤ d
@@ -267,12 +267,12 @@ theorem tooSem_exceeds_counterfactual_worlds {W Entity : Type*}
 -- ════════════════════════════════════════════════════
 
 /-- Convert a binary accessibility relation to a set of worlds.
-    When `R` is a `Core.ModalLogic.AccessRel`, this gives the set
+    When `R` is a `Core.IntensionalLogic.RestrictedModality.BAccessRel`, this gives the set
     of R-accessible worlds from w₀, suitable for `IsMaxDegOverWorlds`
     and `maxDeg_witness`.
 
     This bridges the abstract intensional degree infrastructure to
-    concrete Kripke frames used in `Core.Logic.ModalLogic` and
+    concrete Kripke frames used in `Core.IntensionalLogic.RestrictedModality` and
     `Theories.Semantics.Modality.Kratzer`. -/
 def accessibleSet {W : Type*} (R : W → W → Bool) (w₀ : W) : Set W :=
   {w | R w₀ w = true}

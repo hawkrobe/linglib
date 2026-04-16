@@ -36,7 +36,7 @@ The eval* operators instantiate the situation (fixing world and time).
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Compositional
 
-namespace Semantics.TenseAspectComposition
+namespace Semantics.Tense.TenseAspectComposition
 
 open Core.Time
 open Semantics.Tense.Aspect.Core
@@ -256,4 +256,4 @@ theorem earlier_lb_not_weaker_impf :
   simp only [LB, Eventuality.τ] at hLB hS1
   omega
 
-end Semantics.TenseAspectComposition
+end Semantics.Tense.TenseAspectComposition

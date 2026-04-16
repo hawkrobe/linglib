@@ -58,8 +58,8 @@ set_option autoImplicit false
 namespace Phenomena.Politeness.Studies.Wang2023
 
 open Core (PrivativePair PhiFeatures)
-open Core.OT (NamedConstraint ConstraintFamily buildTableau
-              factorialOptima factorialTypologySize)
+open Core.OT (NamedConstraint ConstraintFamily mkTableau
+              mkFactorialOptima mkFactorialTypologySize)
 open Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
   presupWeakerThan wellFormed_specLevel_le_two sgSem plSem)
 open Phenomena.Politeness.Honorifics (AllocDatum allAllocData)
@@ -252,29 +252,29 @@ private theorem binaryCandidates_ne : binaryCandidates ≠ [] := by
     constraints (ToD from politeness, MP! from presupposition theory)
     evaluated over the `PrivativePair` structure from @cite{harbour-2016}. -/
 theorem tod_mp_selects_minimal :
-    (buildTableau binaryCandidates [todConstraint, mpConstraint]
-      binaryCandidates_ne).optimal = [.minimal] := by
+    (mkTableau binaryCandidates [todConstraint, mpConstraint]
+      binaryCandidates_ne).optimal = {PrivativePair.minimal} := by
   native_decide
 
 /-- Converse: MP! >> ToD selects the maximal (marked) cell.
     Non-respect speech uses the strongest presupposition.
     This is the standard Maximize Presupposition from @cite{heim-1991}. -/
 theorem mp_tod_selects_maximal :
-    (buildTableau binaryCandidates [mpConstraint, todConstraint]
-      binaryCandidates_ne).optimal = [.maximal] := by
+    (mkTableau binaryCandidates [mpConstraint, todConstraint]
+      binaryCandidates_ne).optimal = {PrivativePair.maximal} := by
   native_decide
 
 /-- The optimal candidate under ToD >> MP! is semantically unmarked. -/
 theorem tod_mp_optimal_is_unmarked :
-    (buildTableau binaryCandidates [todConstraint, mpConstraint]
-      binaryCandidates_ne).optimal.all
-      (fun c => isSemanticUnmarked c) = true := by
-  native_decide
+    ∀ c ∈ (mkTableau binaryCandidates [todConstraint, mpConstraint]
+      binaryCandidates_ne).optimal,
+      isSemanticUnmarked c = true := by
+  decide
 
 /-- Factorial typology: the binary ToD/MP! system predicts exactly
     2 language types — honorific (unmarked) vs normal (marked). -/
 theorem binary_factorial_typology :
-    factorialTypologySize binaryCandidates [todConstraint, mpConstraint]
+    mkFactorialTypologySize binaryCandidates [todConstraint, mpConstraint]
       binaryCandidates_ne = 2 := by
   native_decide
 
@@ -328,31 +328,31 @@ theorem stod_eval_eq_tod (c : PrivativePair) :
 /-- WToD >> MP! >> SToD selects the intermediate (dual) cell.
     Moderate respect in articulated number systems. -/
 theorem wtod_mp_stod_selects_dual :
-    (buildTableau ternaryCandidates
+    (mkTableau ternaryCandidates
       [wtodConstraint, mpConstraint, todConstraint]
-      ternaryCandidates_ne).optimal = [.intermediate] := by
+      ternaryCandidates_ne).optimal = {PrivativePair.intermediate} := by
   native_decide
 
 /-- SToD >> MP! >> WToD selects the minimal (plural) cell.
     Maximal respect (French/Slovenian-type pattern). -/
 theorem stod_mp_wtod_selects_plural :
-    (buildTableau ternaryCandidates
+    (mkTableau ternaryCandidates
       [todConstraint, mpConstraint, wtodConstraint]
-      ternaryCandidates_ne).optimal = [.minimal] := by
+      ternaryCandidates_ne).optimal = {PrivativePair.minimal} := by
   native_decide
 
 /-- MP! >> SToD >> WToD selects the maximal (singular) cell.
     Normal non-honorific speech. -/
 theorem mp_stod_wtod_selects_singular :
-    (buildTableau ternaryCandidates
+    (mkTableau ternaryCandidates
       [mpConstraint, todConstraint, wtodConstraint]
-      ternaryCandidates_ne).optimal = [.maximal] := by
+      ternaryCandidates_ne).optimal = {PrivativePair.maximal} := by
   native_decide
 
 /-- Factorial typology: {SToD (= todConstraint), WToD, MP!} with 3
     candidates predicts exactly 3 language types. -/
 theorem ternary_factorial_typology :
-    factorialTypologySize ternaryCandidates
+    mkFactorialTypologySize ternaryCandidates
       [todConstraint, wtodConstraint, mpConstraint]
       ternaryCandidates_ne = 3 := by
   native_decide
@@ -360,12 +360,12 @@ theorem ternary_factorial_typology :
 /-- No unattested ternary pattern: every constraint permutation selects
     one of the three canonical cells. -/
 theorem no_unattested_ternary_pattern :
-    (factorialOptima ternaryCandidates
+    (mkFactorialOptima ternaryCandidates
       [todConstraint, wtodConstraint, mpConstraint]
       ternaryCandidates_ne).all
-    (fun opt => opt == [.maximal] ||
-                opt == [.intermediate] ||
-                opt == [.minimal]) = true := by
+    (fun opt => opt == {PrivativePair.maximal} ||
+                opt == {PrivativePair.intermediate} ||
+                opt == {PrivativePair.minimal}) = true := by
   native_decide
 
 -- ============================================================================
@@ -396,8 +396,8 @@ locus, embeddability) is orthogonal — [iHON] may play a role in the
     2. The minimal cell is semantically unmarked
     3. All attested strategies target the minimal cell -/
 theorem ihon_redundant_for_recruitment :
-    (buildTableau binaryCandidates [todConstraint, mpConstraint]
-      binaryCandidates_ne).optimal = [.minimal] ∧
+    (mkTableau binaryCandidates [todConstraint, mpConstraint]
+      binaryCandidates_ne).optimal = {PrivativePair.minimal} ∧
     isSemanticUnmarked .minimal = true ∧
     (∀ s : HonStrategy, honStrategyCell s = .minimal) :=
   ⟨by native_decide, rfl, fun s => by cases s <;> rfl⟩
@@ -503,9 +503,8 @@ it holds for arbitrary candidate sets. The proof is purely algebraic:
 
 section GeneralTheorem
 
-open Core.OT (optimal_zero_first buildProfile)
-open Core.ConstraintEvaluation (OTTableau optimal_subset
-  LexLE lexLE_cons_cons_iff lexLE_refl)
+open Core.OT (mkTableau_optimal_zero_first mkTableau_optimal_mem)
+open Core.ConstraintEvaluation (Tableau buildViolationProfile)
 
 /-- Every optimal candidate under ToD >> MP! is `.minimal`. The proof:
     `optimal_zero_first` gives `todConstraint.eval c = 0`, i.e.
@@ -515,12 +514,12 @@ theorem tod_mp_only_minimal (candidates : List PrivativePair)
     (hWF : ∀ c ∈ candidates, c.wellFormed = true)
     (hMin : PrivativePair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
-    ∀ c ∈ (buildTableau candidates [todConstraint, mpConstraint] hNE).optimal,
+    ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
       c = .minimal := by
   intro c hc
-  have hZero := optimal_zero_first candidates todConstraint [mpConstraint] hNE
+  have hZero := mkTableau_optimal_zero_first candidates todConstraint [mpConstraint] hNE
     ⟨.minimal, hMin, rfl⟩ c hc
-  have hcWF := hWF c (optimal_subset _ c hc)
+  have hcWF := hWF c (mkTableau_optimal_mem candidates _ hNE c hc)
   cases c with | mk o i =>
   cases o <;> cases i
   · rfl
@@ -533,20 +532,38 @@ theorem tod_mp_minimal_is_optimal (candidates : List PrivativePair)
     (hMin : PrivativePair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
     PrivativePair.minimal ∈
-      (buildTableau candidates [todConstraint, mpConstraint] hNE).optimal := by
-  simp only [OTTableau.optimal, buildTableau, List.mem_filter]
-  refine ⟨hMin, List.all_eq_true.mpr fun c' _ => ?_⟩
-  rw [decide_eq_true_eq]
-  simp only [buildProfile, List.map_cons, List.map_nil]
-  rw [show todConstraint.eval .minimal = 0 from rfl,
-      show mpConstraint.eval .minimal = 2 from rfl]
-  by_cases h : (0 : Nat) < todConstraint.eval c'
-  · exact .inl h
-  · have h0 : todConstraint.eval c' = 0 := by omega
-    have h1 : mpConstraint.eval c' = 2 := by
-      simp only [mpConstraint, todConstraint, presupStrength] at h0 ⊢
+      (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal := by
+  rw [Tableau.mem_optimal_iff]
+  refine ⟨List.mem_toFinset.mpr hMin, fun c' _ => ?_⟩
+  simp only [mkTableau, buildViolationProfile]
+  -- Goal: toLex (fun i => ..minimal..) ≤ toLex (fun i => ..c'..)
+  -- Strategy: show ¬ (c' profile < minimal profile) using Pi.Lex
+  apply not_lt.mp
+  intro ⟨i, hlt_eq, hlt⟩
+  -- i is the first position where c' < minimal; all j < i have c' j = minimal j
+  have h0 : todConstraint.eval PrivativePair.minimal = 0 := rfl
+  have h2 : mpConstraint.eval PrivativePair.minimal = 2 := rfl
+  -- `toLex f i` reduces to `f i` definitionally
+  change ([todConstraint, mpConstraint].get i).eval c' <
+         ([todConstraint, mpConstraint].get i).eval PrivativePair.minimal at hlt
+  match i with
+  | ⟨0, _⟩ =>
+    -- i = 0: c'.eval < minimal.eval on ToD, but minimal has 0 violations
+    simp only [List.get, todConstraint] at hlt
+    exact absurd hlt (Nat.not_lt_zero _)
+  | ⟨1, _⟩ =>
+    -- i = 1: c' agrees on constraint 0, has fewer on constraint 1
+    have hc'_tod : todConstraint.eval c' = 0 := by
+      have := hlt_eq ⟨0, Nat.zero_lt_succ _⟩ (show (⟨0, _⟩ : Fin 2) < ⟨1, _⟩ from Nat.zero_lt_one)
+      change todConstraint.eval c' = todConstraint.eval PrivativePair.minimal at this
+      simp [h0] at this; exact this
+    have hc'_mp : mpConstraint.eval c' = 2 := by
+      simp only [mpConstraint, todConstraint, presupStrength] at hc'_tod ⊢
       simp only [PrivativePair.spec_maximal]; omega
-    exact .inr ⟨h0.symm, by rw [h1]; exact lexLE_refl _⟩
+    simp only [List.get] at hlt
+    change mpConstraint.eval c' < mpConstraint.eval PrivativePair.minimal at hlt
+    rw [hc'_mp, h2] at hlt
+    exact lt_irrefl _ hlt
 
 /-- **General ToD >> MP! Theorem**: for any set of well-formed candidates
     containing `.minimal`, the optimal set under ToD >> MP! is exactly
@@ -559,8 +576,8 @@ theorem tod_mp_general (candidates : List PrivativePair)
     (hMin : PrivativePair.minimal ∈ candidates)
     (hNE : candidates ≠ []) :
     PrivativePair.minimal ∈
-      (buildTableau candidates [todConstraint, mpConstraint] hNE).optimal ∧
-    ∀ c ∈ (buildTableau candidates [todConstraint, mpConstraint] hNE).optimal,
+      (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal ∧
+    ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
       c = .minimal :=
   ⟨tod_mp_minimal_is_optimal candidates hMin hNE,
    tod_mp_only_minimal candidates hWF hMin hNE⟩
@@ -661,8 +678,8 @@ theorem ihon_structurally_redundant :
        (_ : PrivativePair.minimal ∈ candidates)
        (hNE : candidates ≠ []),
        PrivativePair.minimal ∈
-         (buildTableau candidates [todConstraint, mpConstraint] hNE).optimal ∧
-       ∀ c ∈ (buildTableau candidates [todConstraint, mpConstraint] hNE).optimal,
+         (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal ∧
+       ∀ c ∈ (mkTableau candidates [todConstraint, mpConstraint] hNE).optimal,
          c = .minimal) :=
   ⟨rfl, rfl, honLevel_all_wellFormed, tod_mp_general⟩
 

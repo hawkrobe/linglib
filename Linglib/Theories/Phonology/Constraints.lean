@@ -38,7 +38,7 @@ Binary constraints use a `Bool` predicate; gradient constraints use a
 `Nat`-valued evaluation function directly.
 -/
 
-namespace Theories.Phonology.Constraints
+namespace Phonology.Constraints
 
 open Core.OT
 
@@ -123,22 +123,12 @@ theorem mkIntegrity_is_faithfulness {C : Type} (name : String) (p : C → Bool) 
     (mkIntegrity name p).family = .faithfulness := rfl
 
 -- ============================================================================
--- § 2: Markedness Constraint Constructors
+-- § 2: Markedness Constraint Constructors (re-exported from Core.OT)
 -- ============================================================================
 
-/-- Build a binary markedness constraint.
-    `violated c` returns `true` when the marked structure is present. -/
-def mkMark {C : Type} (name : String) (violated : C → Bool) : NamedConstraint C :=
-  { name := name
-    family := .markedness
-    eval := fun c => if violated c then 1 else 0 }
-
-/-- Build a gradient markedness constraint with a Nat-valued violation count.
-    `violations c` returns the number of violations for candidate `c`. -/
-def mkMarkGrad {C : Type} (name : String) (violations : C → Nat) : NamedConstraint C :=
-  { name := name
-    family := .markedness
-    eval := violations }
+-- `mkMark`, `mkFaith`, `mkMarkGrad`, `mkFaithGrad` are defined in `Core.OT`.
+-- Re-export them so `open Phonology.Constraints` includes them.
+export Core.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
 
 -- ============================================================================
 -- § 2b: OCP (Obligatory Contour Principle)
@@ -212,7 +202,7 @@ theorem mkMaxCtx_bounded {C : Type} (name : String)
 -- § 5: Weighted Constraint Constructors
 -- ============================================================================
 
-open Theories.Phonology.HarmonicGrammar
+open Phonology.HarmonicGrammar
 
 /-- Build a weighted MAX constraint with a given weight. -/
 def mkMaxW {C : Type} (name : String) (violated : C → Bool) (w : ℚ) :
@@ -245,4 +235,4 @@ def mkMarkGradW {C : Type} (name : String) (violations : C → Nat) (w : ℚ) :
     WeightedConstraint C :=
   { toNamedConstraint := mkMarkGrad name violations, weight := w }
 
-end Theories.Phonology.Constraints
+end Phonology.Constraints

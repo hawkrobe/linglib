@@ -1,6 +1,9 @@
-/-
-# Donkey Anaphora: Empirical Data
+import Linglib.Core.Lexical.Word
+import Linglib.Core.Definiteness
 
+/-!
+# Donkey Anaphora: Empirical Data
+@cite{geach-1962} @cite{heim-1982} @cite{kadmon-1987} @cite{kanazawa-1994} @cite{schwarz-2009}
 
 Theory-neutral data on donkey anaphora and related binding puzzles.
 
@@ -22,8 +25,6 @@ to depend on it for its reference.
 4. "Most farmers who own a donkey beat it" (proportion problem).
 
 -/
-
-import Linglib.Core.Lexical.Word
 
 namespace Phenomena.Anaphora.DonkeyAnaphora
 
@@ -241,5 +242,90 @@ def discourseDonkeyData : List DiscourseDonkeyDatum := [
   crossSententialDonkey,
   indefinitePersists
 ]
+
+-- ============================================================================
+-- §6: Bridge to Core.Definiteness
+-- ============================================================================
+
+/-! ### Donkey anaphora as a definiteness use type
+
+@cite{schwarz-2009} §3: donkey pronouns in German pattern with anaphoric
+definites (strong article *von dem*), not with uniqueness definites
+(weak article *vom*). This means donkey anaphora selects the
+*familiarity* presupposition type — the same as regular anaphora.
+
+The cross-linguistic pattern:
+- **German**: strong article (*von dem*) — two-article system distinguishes
+- **Thai/Mandarin**: demonstrative — demonstratives fill the strong-article role
+- **Shan**: bare noun — no articles, so no morphological signal
+
+This parallels the general pattern for anaphoric definites in
+@cite{moroney-2021} Table 4.4. -/
+
+open Core.Definiteness (DefiniteUseType DefPresupType useTypeToPresupType
+  ArticleType)
+
+/-- Donkey anaphora is classified as its own use type in the definiteness
+typology, distinct from regular anaphora but sharing the same
+presupposition type (familiarity). -/
+def donkeyUseType : DefiniteUseType := .donkey
+
+/-- Donkey pronouns select the familiarity (strong article) presupposition
+type. @cite{schwarz-2009} §3: in German, donkey pronouns require the
+strong article (*von dem*), patterning with anaphoric uses rather
+than uniqueness uses. -/
+theorem donkey_presup_is_familiarity :
+    useTypeToPresupType donkeyUseType = .familiarity := rfl
+
+/-- Donkey anaphora and regular anaphora share the same presupposition
+type (familiarity). This is why they select the same article form
+cross-linguistically: both require discourse familiarity, not
+situational uniqueness. -/
+theorem donkey_patterns_with_anaphoric :
+    useTypeToPresupType .donkey = useTypeToPresupType .anaphoric := rfl
+
+/-- Cross-linguistic data on how donkey anaphora is expressed
+morphologically. This connects the abstract `DefiniteUseType.donkey`
+to concrete article forms. -/
+structure DonkeyArticleDatum where
+  language : String
+  isoCode : String
+  /-- Morphological form used for donkey pronouns -/
+  form : String
+  /-- Article system of the language -/
+  articleSystem : ArticleType
+  deriving Repr
+
+def germanDonkey : DonkeyArticleDatum :=
+  { language := "German", isoCode := "deu"
+    form := "strong article (von dem)"
+    articleSystem := .weakAndStrong }
+
+def thaiDonkey : DonkeyArticleDatum :=
+  { language := "Thai", isoCode := "tha"
+    form := "demonstrative"
+    articleSystem := .weakOnly }
+
+def mandarinDonkey : DonkeyArticleDatum :=
+  { language := "Mandarin", isoCode := "cmn"
+    form := "demonstrative"
+    articleSystem := .none_ }
+
+def shanDonkey : DonkeyArticleDatum :=
+  { language := "Shan", isoCode := "shn"
+    form := "bare noun"
+    articleSystem := .none_ }
+
+/-- All cross-linguistic donkey article data. -/
+def donkeyArticleData : List DonkeyArticleDatum :=
+  [germanDonkey, thaiDonkey, mandarinDonkey, shanDonkey]
+
+/-- In languages with a weak/strong article distinction, donkey anaphora
+uses the strong form — never the weak form. This is predicted by
+`donkey_presup_is_familiarity`: strong articles encode familiarity,
+and donkey anaphora requires familiarity. -/
+theorem weakAndStrong_uses_strong :
+    (donkeyArticleData.filter (·.articleSystem == .weakAndStrong)).all
+      (·.form == "strong article (von dem)") = true := by decide
 
 end Phenomena.Anaphora.DonkeyAnaphora

@@ -1,4 +1,3 @@
-import Linglib.Core.Logic.ModalLogic
 import Linglib.Theories.Semantics.Modality.EventRelativity
 
 /-!

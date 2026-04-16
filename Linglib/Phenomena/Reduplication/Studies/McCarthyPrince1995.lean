@@ -39,7 +39,7 @@ three core constraints can produce it. We prove this as
 namespace Phenomena.Reduplication.Studies.McCarthyPrince1995
 
 open Core.OT
-open Theories.Phonology.Constraints
+open Phonology.Constraints
 
 -- ============================================================================
 -- § 1: Javanese Intervocalic h-Deletion (Overapplication)
@@ -99,8 +99,8 @@ theorem javCandidates_ne : javCandidates ≠ [] := by simp [javCandidates]
     output sacrifices faithfulness to achieve both identity and
     phonological well-formedness. -/
 theorem javanese_overapplication :
-    (buildTableau javCandidates javRanking javCandidates_ne).optimal
-    = [.over] := by decide
+    (mkTableau javCandidates javRanking javCandidates_ne).optimal
+    = {JavaneseCand.over} := by decide
 
 -- ============================================================================
 -- § 2: Balangao Partial Reduplication (Emergence of the Unmarked)
@@ -175,8 +175,8 @@ theorem balCandidates_ne : balCandidates ≠ [] := by simp [balCandidates]
     generally permit codas — because B-R identity (MAX-BR) is low-ranked,
     the unmarked (coda-free) structure emerges in the reduplicant. -/
 theorem balangao_emergence_unmarked :
-    (buildTableau balCandidates balRanking balCandidates_ne).optimal
-    = [.partialRedup] := by decide
+    (mkTableau balCandidates balRanking balCandidates_ne).optimal
+    = {.partialRedup} := by decide
 
 -- ============================================================================
 -- § 3: Basic Model Factorial Typology (§4)
@@ -227,40 +227,40 @@ theorem basicCandidates_ne : basicCandidates ≠ [] := by simp [basicCandidates]
 /-- Non-application ranking (ex. 104): IO-Faith, BR-Id >> Phono.
     The faithful candidate wins — phonology cannot affect anything. -/
 theorem nonapplication_io_br_phono :
-    (buildTableau basicCandidates [basicIOFaith, basicBRId, basicPhono]
-      basicCandidates_ne).optimal = [.faithful] := by decide
+    (mkTableau basicCandidates [basicIOFaith, basicBRId, basicPhono]
+      basicCandidates_ne).optimal = {.faithful} := by decide
 
 /-- Non-application (symmetric): BR-Id, IO-Faith >> Phono.
     Same outcome — faithful candidate wins regardless of IO/BR order. -/
 theorem nonapplication_br_io_phono :
-    (buildTableau basicCandidates [basicBRId, basicIOFaith, basicPhono]
-      basicCandidates_ne).optimal = [.faithful] := by decide
+    (mkTableau basicCandidates [basicBRId, basicIOFaith, basicPhono]
+      basicCandidates_ne).optimal = {.faithful} := by decide
 
 /-- Emergence of the unmarked (ex. 105): IO-Faith >> Phono >> BR-Id.
     The normal candidate wins — phonology affects the reduplicant
     (low BR-Id), but the base is protected (high IO-Faith). -/
 theorem emergence_unmarked :
-    (buildTableau basicCandidates [basicIOFaith, basicPhono, basicBRId]
-      basicCandidates_ne).optimal = [.normal] := by decide
+    (mkTableau basicCandidates [basicIOFaith, basicPhono, basicBRId]
+      basicCandidates_ne).optimal = {BasicCand.normal} := by decide
 
 /-- Overapplication: Phono >> IO-Faith >> BR-Id.
     The over candidate wins — phonological unmarking applies to both
     B and R, sacrificing IO faithfulness. -/
 theorem overapplication_phono_io_br :
-    (buildTableau basicCandidates [basicPhono, basicIOFaith, basicBRId]
-      basicCandidates_ne).optimal = [.over] := by decide
+    (mkTableau basicCandidates [basicPhono, basicIOFaith, basicBRId]
+      basicCandidates_ne).optimal = {BasicCand.over} := by decide
 
 /-- Overapplication: Phono >> BR-Id >> IO-Faith.
     Same outcome — phonology dominates. -/
 theorem overapplication_phono_br_io :
-    (buildTableau basicCandidates [basicPhono, basicBRId, basicIOFaith]
-      basicCandidates_ne).optimal = [.over] := by decide
+    (mkTableau basicCandidates [basicPhono, basicBRId, basicIOFaith]
+      basicCandidates_ne).optimal = {BasicCand.over} := by decide
 
 /-- Overapplication: BR-Id >> Phono >> IO-Faith.
     B-R identity copies phonological effects to both B and R. -/
 theorem overapplication_br_phono_io :
-    (buildTableau basicCandidates [basicBRId, basicPhono, basicIOFaith]
-      basicCandidates_ne).optimal = [.over] := by decide
+    (mkTableau basicCandidates [basicBRId, basicPhono, basicIOFaith]
+      basicCandidates_ne).optimal = {BasicCand.over} := by decide
 
 /-- **Factorial typology summary**: all 6 rankings of 3 constraints produce
     exactly 3 distinct optima — `faithful` (non-application), `normal`
@@ -271,9 +271,9 @@ theorem overapplication_br_phono_io :
     independently) and is demonstrated by the Balangao and Tagalog examples
     in §§3-5 rather than the abstract model. -/
 theorem basic_model_factorial :
-    factorialOptima basicCandidates
+    mkFactorialOptima basicCandidates
       [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne
-    = [[.normal], [.over], [.faithful]] := by decide
+    = [{BasicCand.normal}, {BasicCand.over}, {BasicCand.faithful}] := by decide
 
 -- ============================================================================
 -- § 4: Underapplication Impossibility
@@ -304,16 +304,16 @@ unmarked) are the only optima. No ranking produces a 4th outcome. -/
     argument that underapplication requires an additional constraint
     beyond the three in the Basic Model. -/
 theorem basic_model_no_underapplication :
-    ∀ optima ∈ factorialOptima basicCandidates
+    ∀ optima ∈ mkFactorialOptima basicCandidates
       [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne,
-    optima = [.faithful] ∨ optima = [.over] ∨ optima = [.normal] := by
+    optima = {BasicCand.faithful} ∨ optima = {BasicCand.over} ∨ optima = {BasicCand.normal} := by
   decide
 
 /-- The factorial typology produces exactly 3 distinct language types,
     not 4 — confirming that underapplication is absent from the Basic
     Model. -/
 theorem basic_model_exactly_three_types :
-    factorialTypologySize basicCandidates
+    mkFactorialTypologySize basicCandidates
       [basicIOFaith, basicPhono, basicBRId] basicCandidates_ne
     = 3 := by decide
 
@@ -431,8 +431,8 @@ theorem akanCandidates_ne : akanCandidates ≠ [] := by simp [akanCandidates]
     OCP blocks overapplication, IDENT-BR blocks normal application,
     leaving underapplication as the only surviving candidate. -/
 theorem akan_underapplication :
-    (buildTableau akanCandidates akanRanking akanCandidates_ne).optimal
-    = [.under] := by decide
+    (mkTableau akanCandidates akanRanking akanCandidates_ne).optimal
+    = {AkanCand.under} := by decide
 
 -- ============================================================================
 -- § 5a: Akan Feature Grounding
@@ -456,7 +456,7 @@ constraints target exactly this feature dimension.
 
 section AkanGrounding
 open Fragments.Akan.Phonology
-open Theories.Phonology
+open Phonology
 
 /-- The `over` candidate's OCP violation is grounded: /tɕ/ is [+coronal],
     so two /tɕ/ in successive syllables violate OCP(+cor). -/

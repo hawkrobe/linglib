@@ -51,7 +51,7 @@ Hebrew and proves the four cells of the dissociation table as OT theorems.
 namespace Phenomena.Phonology.Studies.BerentEtAl2016
 
 open Core.OT
-open Theories.Phonology.Doubling
+open Phonology.Doubling
 
 -- ============================================================================
 -- § 1: L1 Morphological Grammars
@@ -123,11 +123,11 @@ theorem hebrew_diminutive_available :
     in a plurality context. The categorical prediction captures the
     direction of this gradient effect. -/
 theorem english_plurality_prefers_XX :
-    (buildTableau
+    (mkTableau
       (l1CandidatesFor englishGrammar .plurality)
       (l1RankingFor englishGrammar .plurality)
       (l1CandidatesFor_ne englishGrammar .plurality)).optimal
-    = [.reduplication] := by decide
+    = {.reduplication} := by decide
 
 /-- English + diminutive: XY wins (Exp 12).
     English speakers show no XX advantage for diminutive signs
@@ -135,11 +135,11 @@ theorem english_plurality_prefers_XX :
     predicts XY wins categorically; the data show absence of the
     XX preference seen in the plurality condition. -/
 theorem english_diminutive_prefers_XY :
-    (buildTableau
+    (mkTableau
       (l1CandidatesFor englishGrammar .diminutive)
       (l1RankingFor englishGrammar .diminutive)
       (l1CandidatesFor_ne englishGrammar .diminutive)).optimal
-    = [.nonidentical] := by decide
+    = {.nonidentical} := by decide
 
 /-- Hebrew + plurality: XY wins (Exp 10a).
     Hebrew speakers show weak/no XX advantage for plural signs
@@ -148,11 +148,11 @@ theorem english_diminutive_prefers_XY :
     XY categorically; the data show attenuation or absence of the
     XX preference relative to the diminutive condition. -/
 theorem hebrew_plurality_prefers_XY :
-    (buildTableau
+    (mkTableau
       (l1CandidatesFor hebrewGrammar .plurality)
       (l1RankingFor hebrewGrammar .plurality)
       (l1CandidatesFor_ne hebrewGrammar .plurality)).optimal
-    = [.nonidentical] := by decide
+    = {.nonidentical} := by decide
 
 /-- Hebrew + diminutive: reduplication wins (Exp 11a).
     Hebrew speakers show a gradient XX preference for diminutive signs
@@ -160,11 +160,11 @@ theorem hebrew_plurality_prefers_XY :
     transfer makes the reduplication parse available. The categorical
     prediction captures the direction of the effect. -/
 theorem hebrew_diminutive_prefers_XX :
-    (buildTableau
+    (mkTableau
       (l1CandidatesFor hebrewGrammar .diminutive)
       (l1RankingFor hebrewGrammar .diminutive)
       (l1CandidatesFor_ne hebrewGrammar .diminutive)).optimal
-    = [.reduplication] := by decide
+    = {.reduplication} := by decide
 
 -- ============================================================================
 -- § 4: The full dissociation
@@ -183,27 +183,27 @@ theorem hebrew_diminutive_prefers_XX :
     encodes both positive and negative transfer from L1 morphology. -/
 theorem doubling_dissociation :
     -- English: prefer XX for plurality, XY for diminutive
-    (buildTableau
+    (mkTableau
       (l1CandidatesFor englishGrammar .plurality)
       (l1RankingFor englishGrammar .plurality)
       (l1CandidatesFor_ne englishGrammar .plurality)).optimal
-      = [.reduplication] ∧
-    (buildTableau
+      = {.reduplication} ∧
+    (mkTableau
       (l1CandidatesFor englishGrammar .diminutive)
       (l1RankingFor englishGrammar .diminutive)
       (l1CandidatesFor_ne englishGrammar .diminutive)).optimal
-      = [.nonidentical] ∧
+      = {.nonidentical} ∧
     -- Hebrew: prefer XY for plurality, XX for diminutive
-    (buildTableau
+    (mkTableau
       (l1CandidatesFor hebrewGrammar .plurality)
       (l1RankingFor hebrewGrammar .plurality)
       (l1CandidatesFor_ne hebrewGrammar .plurality)).optimal
-      = [.nonidentical] ∧
-    (buildTableau
+      = {.nonidentical} ∧
+    (mkTableau
       (l1CandidatesFor hebrewGrammar .diminutive)
       (l1RankingFor hebrewGrammar .diminutive)
       (l1CandidatesFor_ne hebrewGrammar .diminutive)).optimal
-      = [.reduplication] := by
+      = {.reduplication} := by
   exact ⟨english_plurality_prefers_XX, english_diminutive_prefers_XY,
          hebrew_plurality_prefers_XY, hebrew_diminutive_prefers_XX⟩
 

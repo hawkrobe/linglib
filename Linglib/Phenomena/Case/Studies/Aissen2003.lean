@@ -42,8 +42,10 @@ to a possible OT grammar.
 namespace Phenomena.Case.Studies.Aissen2003
 
 open Core.Prominence
-open Core.OT Theories.Phonology.Constraints
+open Core.OT Phonology.Constraints
 open Phenomena.Case.Typology
+
+open Core.ConstraintEvaluation (Finset.checkAll Finset.checkAny)
 
 -- ============================================================================
 -- § 1: Interleavings
@@ -75,8 +77,6 @@ structure Scale2Cand where
 def scale2Cands : List Scale2Cand :=
   [⟨true, true⟩, ⟨true, false⟩, ⟨false, true⟩, ⟨false, false⟩]
 
-theorem scale2_nonempty : scale2Cands ≠ [] := by decide
-
 /-- *Ø/High: penalize unmarked High objects. -/
 def starZeroHigh : NamedConstraint Scale2Cand :=
   mkMark "*Ø/High" fun c => !c.high
@@ -107,12 +107,12 @@ def rankings2 : List (List (NamedConstraint Scale2Cand)) :=
 theorem rankings2_count : rankings2.length = 6 := by native_decide
 
 /-- Compute optima for each consistent ranking. -/
-def optima2 : List (List Scale2Cand) :=
+def optima2 : List (Finset Scale2Cand) :=
   rankings2.map λ ranking =>
-    (buildTableau scale2Cands ranking scale2_nonempty).optimal
+    (mkTableau scale2Cands ranking).optimal
 
 /-- Distinct language types. -/
-def types2 : List (List Scale2Cand) := optima2.eraseDups
+def types2 : List (Finset Scale2Cand) := optima2.eraseDups
 
 /-- The 2-element scale yields exactly 3 language types, not 4
     (Table 14, p. 473). -/
@@ -121,7 +121,7 @@ theorem two_element_three_types : types2.length = 3 := by native_decide
 /-- The impossible pattern — mark Low without High — is never optimal. -/
 theorem no_low_without_high :
     optima2.all (λ opts =>
-      opts.all (λ c => !(c.low && !c.high))) = true := by native_decide
+      opts.checkAll (λ c => !(c.low && !c.high))) = true := by native_decide
 
 -- ============================================================================
 -- § 3: Three-Element Animacy Scale (Table 17, p. 476)
@@ -140,8 +140,6 @@ def animCands : List AnimCand :=
    ⟨true, false, true⟩, ⟨true, false, false⟩,
    ⟨false, true, true⟩, ⟨false, true, false⟩,
    ⟨false, false, true⟩, ⟨false, false, false⟩]
-
-theorem anim_nonempty : animCands ≠ [] := by decide
 
 /-- Iconicity: *Ø/Hu >> *Ø/An >> *Ø/In. -/
 def starZeroHu : NamedConstraint AnimCand :=
@@ -179,12 +177,12 @@ def animRankings : List (List (NamedConstraint AnimCand)) :=
 theorem anim_rankings_count : animRankings.length = 20 := by native_decide
 
 /-- Compute optima for each consistent ranking. -/
-def animOptima : List (List AnimCand) :=
+def animOptima : List (Finset AnimCand) :=
   animRankings.map λ ranking =>
-    (buildTableau animCands ranking anim_nonempty).optimal
+    (mkTableau animCands ranking).optimal
 
 /-- Distinct language types. -/
-def animTypes : List (List AnimCand) := animOptima.eraseDups
+def animTypes : List (Finset AnimCand) := animOptima.eraseDups
 
 /-- The 3-element animacy scale yields exactly 4 language types, not 8
     (Table 17, p. 476). -/
@@ -194,7 +192,7 @@ theorem animacy_four_types : animTypes.length = 4 := by native_decide
     if In is marked then An is too (Aissen's central prediction). -/
 theorem animacy_all_monotone :
     animOptima.all (λ opts =>
-      opts.all (λ c =>
+      opts.checkAll (λ c =>
         (if c.an then c.hu else true) &&
         (if c.inan then c.an else true))) = true := by native_decide
 
@@ -205,22 +203,22 @@ theorem animacy_all_monotone :
 /-- Type 1: mark all (Hu + An + In). Extreme iconicity. -/
 theorem anim_type_all :
     animTypes.any (λ opts =>
-      opts.any (λ c => c.hu && c.an && c.inan)) = true := by native_decide
+      opts.checkAny (λ c => c.hu && c.an && c.inan)) = true := by native_decide
 
 /-- Type 2: mark Hu + An only. Russian pattern (animate accusative). -/
 theorem anim_type_hu_an :
     animTypes.any (λ opts =>
-      opts.any (λ c => c.hu && c.an && !c.inan)) = true := by native_decide
+      opts.checkAny (λ c => c.hu && c.an && !c.inan)) = true := by native_decide
 
 /-- Type 3: mark Hu only. Spanish pattern (personal `a`). -/
 theorem anim_type_hu_only :
     animTypes.any (λ opts =>
-      opts.any (λ c => c.hu && !c.an && !c.inan)) = true := by native_decide
+      opts.checkAny (λ c => c.hu && !c.an && !c.inan)) = true := by native_decide
 
 /-- Type 4: mark none. No DOM (economy dominates). -/
 theorem anim_type_none :
     animTypes.any (λ opts =>
-      opts.any (λ c => !c.hu && !c.an && !c.inan)) = true := by native_decide
+      opts.checkAny (λ c => !c.hu && !c.an && !c.inan)) = true := by native_decide
 
 -- ============================================================================
 -- § 5: Impossible Patterns
@@ -229,22 +227,22 @@ theorem anim_type_none :
 /-- Mark In without An: never generated. -/
 theorem no_in_without_an :
     animOptima.all (λ opts =>
-      opts.all (λ c => !(c.inan && !c.an))) = true := by native_decide
+      opts.checkAll (λ c => !(c.inan && !c.an))) = true := by native_decide
 
 /-- Mark An without Hu: never generated. -/
 theorem no_an_without_hu :
     animOptima.all (λ opts =>
-      opts.all (λ c => !(c.an && !c.hu))) = true := by native_decide
+      opts.checkAll (λ c => !(c.an && !c.hu))) = true := by native_decide
 
 /-- Mark In without Hu: never generated. -/
 theorem no_in_without_hu :
     animOptima.all (λ opts =>
-      opts.all (λ c => !(c.inan && !c.hu))) = true := by native_decide
+      opts.checkAll (λ c => !(c.inan && !c.hu))) = true := by native_decide
 
 /-- Mark In only (without An or Hu): never generated. -/
 theorem no_in_only :
     animOptima.all (λ opts =>
-      opts.all (λ c => !(c.inan && !c.an && !c.hu))) = true := by native_decide
+      opts.checkAll (λ c => !(c.inan && !c.an && !c.hu))) = true := by native_decide
 
 -- ============================================================================
 -- § 6: Bridge to DOMProfiles
@@ -262,7 +260,7 @@ def animCandToDOM (c : AnimCand) : DOMProfile :=
 /-- Every OT-generated animacy type produces a monotone DOMProfile. -/
 theorem ot_types_are_monotone_dom :
     animOptima.all (λ opts =>
-      opts.all (λ c => (animCandToDOM c).isMonotone)) = true := by native_decide
+      opts.checkAll (λ c => (animCandToDOM c).isMonotone)) = true := by native_decide
 
 /-- Spanish DOM (human only) matches OT Type 3 (Hu only). -/
 theorem spanish_matches_type3 :
@@ -439,7 +437,7 @@ def overtProfile (lang : CaseLanguageType) (dom : DOMProfile) : DOMProfile :=
     produces a monotone overt marking profile. -/
 theorem ot_pipeline_monotone :
     animOptima.all (λ opts =>
-      opts.all (λ c =>
+      opts.checkAll (λ c =>
         (overtProfile .accusative (animCandToDOM c)).isMonotone)) = true := by
   native_decide
 

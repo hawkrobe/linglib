@@ -171,8 +171,9 @@ of Q:
 - **Strong article** (familiarity): Q is a non-trivial anaphoric predicate.
   The description succeeds only for discourse-familiar entities.
 
-@cite{moroney-2021} Def 508: ι^x P Q = ιx[P(x) ∧ Q(x)] is the general
-form; standard ι P = ι^x P (λ _ => true) is the special case. -/
+@cite{moroney-2021} §4.3 (anaphoric iota): ι^x P Q = ιx[P(x) ∧ Q(x)]
+is the general form; standard ι P = ι^x P (λ _ => true) is the special
+case. -/
 structure DefiniteDesc (E : Type) where
   /-- NP-internal content: the restrictor predicate -/
   restrictor : E → Bool
@@ -221,5 +222,85 @@ inductive Definiteness where
 theorem definite_indefinite_exhaustive :
     ∀ d : Definiteness, d = .indefinite ∨ d = .definite := by
   intro d; cases d <;> simp
+
+-- ============================================================================
+-- §8: Definiteness Marking Typology (@cite{jenks-2018} / @cite{moroney-2021})
+-- ============================================================================
+
+/-- Cross-linguistic strategy for marking definiteness, following
+@cite{jenks-2018}'s typology extended by @cite{moroney-2021} with the
+`.unmarked` category.
+
+The original @cite{jenks-2018} typology had four cells (2×2:
+both-marked × same/different + one-marked × unique/anaphoric), but
+"one-marked, unique" was unattested. @cite{moroney-2021} adds a fifth:
+neither type is obligatorily marked, yet both are expressible via bare
+nouns. This captures Shan, Serbian, and Kannada.
+
+This is strictly finer than `ArticleType`: `.generallyMarked` and
+`.markedAnaphoric` both map to `ArticleType.weakOnly`, so `ArticleType`
+collapses a real distinction. -/
+inductive DefMarkingStrategy where
+  /-- Both unique and anaphoric definiteness are marked with the same form.
+      Languages: English (*the*), Cantonese. -/
+  | generallyMarked
+  /-- Unique and anaphoric definiteness are marked with different forms.
+      Languages: German (weak/strong articles), Lakhota. -/
+  | bipartite
+  /-- Only anaphoric definiteness is obligatorily marked (via demonstrative).
+      Unique definiteness is expressed with bare nouns.
+      Languages: Mandarin, Akan, Wu. -/
+  | markedAnaphoric
+  /-- Neither type is obligatorily marked. Bare nouns can express both
+      unique and anaphoric definiteness. Demonstrative-noun phrases are
+      optional in anaphoric contexts.
+      Languages: Shan, Serbian, Kannada. NEW in @cite{moroney-2021}. -/
+  | unmarked
+  deriving DecidableEq, Repr
+
+/-- Language-specific definiteness parameters: the article inventory and
+what each form expresses. This is the input from which `DefMarkingStrategy`
+is derivable — rather than stipulating the strategy directly, we derive it
+from the language's overt forms and which type-shifts they block.
+
+@cite{moroney-2021} Tables 4.6–4.9: the blocking principle + article
+inventory jointly determine the marking strategy. -/
+structure DefMarkingParams where
+  /-- Does the language have an overt form for unique definiteness? -/
+  hasUniqueForm : Bool
+  /-- Does the language have an overt form for anaphoric definiteness? -/
+  hasAnaphoricForm : Bool
+  /-- If both forms exist, are they the same form? -/
+  sameForm : Bool := false
+  deriving Repr, DecidableEq
+
+/-- Derive the marking strategy from language-specific parameters.
+
+This replaces stipulated classification: instead of manually classifying
+each language, we derive its classification from observable properties
+(article inventory). -/
+def deriveStrategy : DefMarkingParams → DefMarkingStrategy
+  | ⟨true, true, true⟩   => .generallyMarked
+  | ⟨true, true, false⟩  => .bipartite
+  | ⟨false, true, _⟩     => .markedAnaphoric
+  | ⟨true, false, _⟩     => .generallyMarked
+  | ⟨false, false, _⟩    => .unmarked
+
+/-- Map marking strategy to `ArticleType`. Lossy: `.generallyMarked`
+and `.markedAnaphoric` both map to `.weakOnly`. -/
+def strategyToArticleType : DefMarkingStrategy → ArticleType
+  | .generallyMarked  => .weakOnly
+  | .bipartite        => .weakAndStrong
+  | .markedAnaphoric  => .weakOnly
+  | .unmarked         => .none_
+
+/-- The marking strategy typology is finer than `ArticleType`:
+`.generallyMarked` and `.markedAnaphoric` both map to `.weakOnly`,
+so `ArticleType` cannot distinguish them. -/
+theorem strategy_finer_than_articleType :
+    strategyToArticleType .generallyMarked =
+    strategyToArticleType .markedAnaphoric ∧
+    DefMarkingStrategy.generallyMarked ≠ .markedAnaphoric :=
+  ⟨rfl, by decide⟩
 
 end Core.Definiteness

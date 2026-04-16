@@ -45,7 +45,7 @@ across phrases.
 namespace Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
 
 open Core.Prosody
-open Theories.Phonology.Autosegmental.RegisterTier
+open Phonology.Autosegmental.RegisterTier
 
 -- ============================================================================
 -- § 1: Accentual Phrase (§2.2)

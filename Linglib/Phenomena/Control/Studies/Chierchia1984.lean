@@ -236,9 +236,9 @@ the level of abstraction in the `ControlVerb` structure. -/
     if □P(x) and the actual world is among the best worlds, then P(x). -/
 structure ModalControl (Args : Type) where
   /-- Circumstantial modal base -/
-  base : ModalBase
+  base : ModalBase World
   /-- Ordering source (bouletic for try, deontic for force, ...) -/
-  ordering : OrderingSource
+  ordering : OrderingSource World
   /-- Select the controlled argument -/
   controller : Args → E
   /-- Reflexivity: actual world is among best worlds (axiom T) -/
@@ -250,10 +250,10 @@ structure ModalControl (Args : Type) where
     The CP follows from reflexivity. -/
 def ModalControl.toControlVerb (m : ModalControl E Args) :
     ControlVerb E Args where
-  sem P args w := (bestWorlds m.base m.ordering w).all (λ _ => P (m.controller args))
+  sem P args w := decide (∀ w' ∈ bestWorlds m.base m.ordering w, P (m.controller args) = true)
   controller := m.controller
   entails P args w h := by
-    simp only [List.all_eq_true] at h
+    simp only [decide_eq_true_eq] at h
     exact h _ (m.reflexive w)
 
 -- ════════════════════════════════════════════════════════════════

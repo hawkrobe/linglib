@@ -581,7 +581,8 @@ open Core.Proposition (BProp)
     true or false — never indeterminate. This contrasts with `shouldEval`,
     which can return `Truth3.indet`. -/
 theorem directive_bivalent
-    (f : ModalBase) (g g' : OrderingSource)
+    (f : ModalBase Semantics.Attitudes.Intensional.World)
+    (g g' : OrderingSource Semantics.Attitudes.Intensional.World)
     (p : BProp Semantics.Attitudes.Intensional.World)
     (w : Semantics.Attitudes.Intensional.World) :
     weakNecessity f g g' p w ∨ ¬ weakNecessity f g g' p w :=

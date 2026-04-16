@@ -44,7 +44,7 @@ import Linglib.Theories.Semantics.Questions.Utility.GSVanRooyBridge
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Mathlib.Tactic.Ring
 
-namespace Comparisons.Relevance
+namespace Semantics.Questions.RelevanceComparisons
 
 open Core.DecisionTheory
 open Semantics.Questions
@@ -705,4 +705,4 @@ theorem unified_view
   · intro h
     exact QUD.blackwell_characterizes_refinement q q' h
 
-end Comparisons.Relevance
+end Semantics.Questions.RelevanceComparisons

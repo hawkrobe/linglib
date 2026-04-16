@@ -33,11 +33,11 @@ open Phenomena.Modality.ConditionalModality
 
     This captures Kratzer's graded modality: the ordering source modulates
     modal strength between bare possibility and necessity. -/
-def modalStrength (f : ModalBase) (g : OrderingSource)
+def modalStrength (f : ModalBase World) (g : OrderingSource World)
     (p : BProp World) (w : World) : ℚ :=
   let best := bestWorlds f g w
-  if best.isEmpty then 0
-  else (best.filter p).length / best.length
+  if best = ∅ then 0
+  else (best.filter p).card / best.card
 
 /-! ## Concrete scenario: Rain / Wet Streets
 
@@ -60,88 +60,64 @@ theorem strength_without_normalcy (w : World) :
 /-! ## General theorems linking strength to modal operators -/
 
 /-- **Strength 1 ↔ necessity** (when best worlds are nonempty). -/
-theorem strength_one_iff_necessity (f : ModalBase) (g : OrderingSource)
+theorem strength_one_iff_necessity (f : ModalBase World) (g : OrderingSource World)
     (p : BProp World) (w : World)
-    (hNonempty : ¬(bestWorlds f g w).isEmpty) :
+    (hNonempty : (bestWorlds f g w).Nonempty) :
     modalStrength f g p w = 1 ↔ necessity f g p w := by
   rw [necessity_iff_all]
   simp only [modalStrength]
-  split
-  · -- best.isEmpty = true: contradiction
-    rename_i h; exact absurd h (by simpa using hNonempty)
-  · -- best.isEmpty = false
-    rename_i hNe
-    have hLen_pos : 0 < (bestWorlds f g w).length := by
-      cases hb : bestWorlds f g w with
-      | nil => simp [hb, List.isEmpty] at hNe
-      | cons _ _ => exact Nat.zero_lt_succ _
-    have hCast_ne : (↑(bestWorlds f g w).length : ℚ) ≠ 0 := by
-      exact_mod_cast hLen_pos.ne'
-    constructor
-    · -- Forward: strength = 1 → necessity
-      intro hStr
-      rw [div_eq_one_iff_eq hCast_ne] at hStr
-      have hEqNat : ((bestWorlds f g w).filter p).length = (bestWorlds f g w).length := by
-        exact_mod_cast hStr
-      have hFilterEq : (bestWorlds f g w).filter p = bestWorlds f g w :=
-        List.filter_sublist.eq_of_length hEqNat
-      rw [List.all_eq_true]
-      exact List.filter_eq_self.mp hFilterEq
-    · -- Backward: necessity → strength = 1
-      intro hAll
-      have hFilterEq : (bestWorlds f g w).filter p = bestWorlds f g w :=
-        List.filter_eq_self.mpr (List.all_eq_true.mp hAll)
-      rw [hFilterEq]
-      exact div_self hCast_ne
+  have hNe : bestWorlds f g w ≠ ∅ := hNonempty.ne_empty
+  simp only [hNe, ↓reduceIte]
+  have hCard_pos : 0 < (bestWorlds f g w).card := Finset.card_pos.mpr hNonempty
+  have hCast_ne : (↑(bestWorlds f g w).card : ℚ) ≠ 0 := by exact_mod_cast hCard_pos.ne'
+  constructor
+  · intro hStr
+    rw [div_eq_one_iff_eq hCast_ne] at hStr
+    have hCardEq : ((bestWorlds f g w).filter p).card = (bestWorlds f g w).card := by
+      exact_mod_cast hStr
+    have hFilterEq : (bestWorlds f g w).filter p = bestWorlds f g w :=
+      Finset.eq_of_subset_of_card_le (Finset.filter_subset _ _) (le_of_eq hCardEq.symm)
+    intro w' hw'
+    have hw'_filter : w' ∈ (bestWorlds f g w).filter p := hFilterEq.symm ▸ hw'
+    exact (Finset.mem_filter.mp hw'_filter).2
+  · intro hAll
+    rw [Finset.filter_true_of_mem hAll]
+    exact div_self hCast_ne
 
 /-- **Positive strength ↔ possibility** (when best worlds are nonempty). -/
-theorem strength_pos_iff_possibility (f : ModalBase) (g : OrderingSource)
+theorem strength_pos_iff_possibility (f : ModalBase World) (g : OrderingSource World)
     (p : BProp World) (w : World)
-    (hNonempty : ¬(bestWorlds f g w).isEmpty) :
+    (hNonempty : (bestWorlds f g w).Nonempty) :
     modalStrength f g p w > 0 ↔ possibility f g p w := by
   rw [possibility_iff_any]
   simp only [modalStrength]
-  split
-  · -- best.isEmpty = true: contradiction
-    rename_i h; exact absurd h (by simpa using hNonempty)
-  · -- best.isEmpty = false
-    rename_i hNe
-    have hLen_pos : 0 < (bestWorlds f g w).length := by
-      cases hb : bestWorlds f g w with
-      | nil => simp [hb, List.isEmpty] at hNe
-      | cons _ _ => exact Nat.zero_lt_succ _
-    have hCast_pos : (0 : ℚ) < ↑(bestWorlds f g w).length := by exact_mod_cast hLen_pos
-    constructor
-    · -- Forward: strength > 0 → possibility
-      intro hStr
-      rw [List.any_eq_true]
-      have hFilterPos : 0 < ((bestWorlds f g w).filter p).length := by
-        by_contra hc
-        push_neg at hc
-        have hZero : ((bestWorlds f g w).filter p).length = 0 := Nat.eq_zero_of_le_zero hc
-        simp only [hZero, Nat.cast_zero, zero_div] at hStr
-        exact lt_irrefl 0 hStr
-      have hNeNil : (bestWorlds f g w).filter p ≠ [] := by
-        intro heq; simp [heq] at hFilterPos
-      obtain ⟨x, hx⟩ := List.exists_mem_of_ne_nil _ hNeNil
-      rw [List.mem_filter] at hx
-      exact ⟨x, hx.1, hx.2⟩
-    · -- Backward: possibility → strength > 0
-      intro hAny
-      rw [List.any_eq_true] at hAny
-      obtain ⟨x, hxB, hpx⟩ := hAny
-      have hMem : x ∈ (bestWorlds f g w).filter p := List.mem_filter.mpr ⟨hxB, hpx⟩
-      have hFilterPos : 0 < ((bestWorlds f g w).filter p).length :=
-        List.length_pos_of_mem hMem
-      exact div_pos (by exact_mod_cast hFilterPos) hCast_pos
+  have hNe : bestWorlds f g w ≠ ∅ := hNonempty.ne_empty
+  simp only [hNe, ↓reduceIte]
+  have hCard_pos : 0 < (bestWorlds f g w).card := Finset.card_pos.mpr hNonempty
+  have hCast_pos : (0 : ℚ) < ↑(bestWorlds f g w).card := by exact_mod_cast hCard_pos
+  constructor
+  · intro hStr
+    have hFilterPos : 0 < ((bestWorlds f g w).filter p).card := by
+      by_contra hc
+      push Not at hc
+      have hZero : ((bestWorlds f g w).filter p).card = 0 := Nat.eq_zero_of_le_zero hc
+      simp only [hZero, Nat.cast_zero, zero_div] at hStr
+      exact lt_irrefl 0 hStr
+    obtain ⟨x, hx⟩ := Finset.card_pos.mp hFilterPos
+    exact ⟨x, (Finset.mem_filter.mp hx).1, (Finset.mem_filter.mp hx).2⟩
+  · intro ⟨x, hxB, hpx⟩
+    have hMem : x ∈ (bestWorlds f g w).filter p := Finset.mem_filter.mpr ⟨hxB, hpx⟩
+    have hFilterPos : 0 < ((bestWorlds f g w).filter p).card :=
+      Finset.card_pos.mpr ⟨x, hMem⟩
+    exact div_pos (by exact_mod_cast hFilterPos) hCast_pos
 
 /-- **Empty ordering gives strength = proportion of all accessible worlds.** -/
-theorem empty_ordering_strength (f : ModalBase) (p : BProp World) (w : World)
-    (hNe : ¬(accessibleWorlds f w).isEmpty) :
+theorem empty_ordering_strength (f : ModalBase World) (p : BProp World) (w : World)
+    (hNe : (accessibleWorlds f w).Nonempty) :
     modalStrength f (λ _ => []) p w =
-    ↑((accessibleWorlds f w).filter p).length / ↑(accessibleWorlds f w).length := by
+    ↑((accessibleWorlds f w).filter p).card / ↑(accessibleWorlds f w).card := by
   unfold modalStrength
   rw [empty_ordering_simple f w]
-  simp [hNe]
+  simp [hNe.ne_empty]
 
 end Phenomena.Modality.DegreeCollapse

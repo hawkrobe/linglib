@@ -718,7 +718,7 @@ The boolean functions `dLayerShields`, `hasIntervener`, and
 **stipulate** them directly. Here we **derive** them from Attract
 Closest applied to concrete `SyntacticObject` trees
 (@cite{aissen-polian-2025} (9a-c)), using `closestGoalB` from
-`Theories.Syntax.Minimalism.Core.Agree`.
+`Minimalism.Core.Agree`.
 
 **Key derivation**: T°'s [EPP:D] probe searches its c-command domain
 for the closest D-bearing element. The result depends only on tree

@@ -29,16 +29,16 @@ This gives DM's Vocabulary Item a four-part structure:
 
 `CophVocabItem` extends `VocabItem` with an R component. The
 `cophonologicalEval` function merges the winning VI's subranking with
-the default ranking and runs `OTTableau.optimal`, connecting DM
+the default ranking and runs `Tableau.optimal`, connecting DM
 vocabulary insertion (`Theories.Morphology.DM.VI`) to OT constraint evaluation
 (`Core.OT` / `Core.ConstraintEvaluation`).
 -/
 
-namespace Theories.Phonology.CophonologyTheory
+namespace Phonology.CophonologyTheory
 
 open Theories.Morphology.DM.VI (VocabItem)
-open Core.OT (NamedConstraint buildTableau)
-open Core.ConstraintEvaluation (OTTableau)
+open Core.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
+open Core.ConstraintEvaluation (Tableau)
 
 -- ============================================================================
 -- § 1: Cophonological Vocabulary Item
@@ -127,22 +127,23 @@ theorem mergeRanking_preserves_default {C : Type}
     constraint (basemap correspondence) above default markedness
     constraints, forcing the output to match the basemap rather than
     preserving the target's underlying tones (@cite{rolle-2018} Ch 5). -/
-def cophonologicalEval {C : Type}
+def cophonologicalEval {C : Type} [DecidableEq C]
     (defaultRanking : List (NamedConstraint C))
     (subranking : List (NamedConstraint C))
     (candidates : List C)
-    (h : candidates ≠ []) : List C :=
+    (h : candidates ≠ [] := by decide) : Finset C :=
   let effective := mergeRanking defaultRanking subranking
-  (buildTableau candidates effective h).optimal
+  (mkTableau candidates effective h).optimal
 
 /-- When the subranking is empty, cophonological evaluation reduces to
     standard OT evaluation. CPT is a proper generalization of OT. -/
-theorem cophonologicalEval_empty_sub {C : Type}
+theorem cophonologicalEval_empty_sub {C : Type} [DecidableEq C]
     (defaultRanking : List (NamedConstraint C))
     (candidates : List C) (h : candidates ≠ []) :
     cophonologicalEval defaultRanking [] candidates h =
-    (buildTableau candidates defaultRanking h).optimal := by
-  simp [cophonologicalEval, mergeRanking_empty_sub]
+    (mkTableau candidates defaultRanking h).optimal := by
+  show (mkTableau candidates (mergeRanking defaultRanking []) h).optimal = _
+  rw [mergeRanking_empty_sub]
 
 -- ============================================================================
 -- § 4: Dominant vs Non-dominant Cophonology
@@ -172,4 +173,4 @@ theorem coph_dominant_complement {Ctx Root C : Type}
     cvi.isDominantCoph = !cvi.isNonDominantCoph := by
   simp [CophVocabItem.isDominantCoph, CophVocabItem.isNonDominantCoph]
 
-end Theories.Phonology.CophonologyTheory
+end Phonology.CophonologyTheory

@@ -3459,6 +3459,16 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Polarity/NPIs.lean;Phenomena/Polarity/Typology.lean;Theories/Semantics/Focus/Particles.lean}
+}% REF: Lahiri, U. (2002). Questions and Answers in Embedded Contexts. Oxford University Press.
+@book{lahiri-2002,
+  author    = {Lahiri, Utpal},
+  year      = {2002},
+  title     = {Questions and Answers in Embedded Contexts},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  subfield  = {semantics/questions},
+  role      = {cited},
+  validated = {false}
 }% REF: Heim, I. (1999). Notes on superlatives. Ms., MIT.
 @unpublished{heim-1999,
   author    = {Heim, Irene},
@@ -4939,8 +4949,8 @@
   url       = {https://web.stanford.edu/~cleoc/temp-mod.pdf},
   subfield  = {semantics/modality},
   validated = {true},
-  role      = {cited},
-  sources   = {Theories/Semantics/Modality/TemporalOrientation.lean;Phenomena/Modality/Bridge/TemporalOrientationBridge.lean}
+  role      = {formalized},
+  sources   = {Phenomena/Modality/Studies/Condoravdi2002.lean;Theories/Semantics/Tense/AT.lean;Theories/Semantics/Tense/BranchingTime.lean}
 }
 @article{alonso-ovalle-menendez-benito-2010,
   author    = {Alonso-Ovalle, Luis and Men\'{e}ndez-Benito, Paula},
@@ -6509,7 +6519,7 @@
   role      = {cited},
   doi       = {10.1016/b978-0-12-545850-4.50014-5},
   validated = {true},
-  sources   = {Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Questions.lean;Theories/Semantics/Focus/Interpretation.lean;Theories/Semantics/Questions/Hamblin.lean;Theories/Semantics/Questions/LeftPeriphery.lean}
+  sources   = {Theories/Pragmatics/RSA/ScalarImplicatures/Embedded/Questions.lean;Theories/Semantics/Focus/Interpretation.lean;Theories/Semantics/Questions/Hamblin.lean;Theories/Interfaces/SyntaxSemantics/LeftPeriphery.lean}
 }% REF: Karttunen, L. & Peters, S. (1979). Conventional implicature.
 @incollection{karttunen-peters-1979,
   author    = {Karttunen, Lauri and Peters, Stanley},
@@ -7259,7 +7269,7 @@
   subfield  = {semantics/tense},
   validated = {true},
   role      = {formalized},
-  sources   = {Theories/Semantics/Tense/Klecha.lean}
+  sources   = {Theories/Semantics/Tense/ModalTense.lean, Theories/Semantics/Modality/Temporal.lean, Phenomena/TenseAspect/Studies/Klecha2016.lean}
 }
 @book{deal-2020,
   author    = {Deal, Amy Rose},
@@ -12008,6 +12018,63 @@
   role      = {cited},
   sources   = {Core/Discourse/ReferentialForm.lean, Phenomena/Reference/Studies/Ariel2001.lean}
 }
+@article{kwon-lee-2026,
+  author    = {Kwon, Nayoung and Lee, So Young},
+  year      = {2026},
+  title     = {From null pronouns to full {NPs}: Exploring accessibility markers in {Korean}},
+  journal   = {Journal of Linguistics},
+  doi       = {10.1017/S0022226726101194},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  sources   = {Phenomena/Reference/Studies/KwonLee2026.lean}
+}
+@phdthesis{carminati-2002,
+  author    = {Carminati, Maria Nella},
+  year      = {2002},
+  title     = {The Processing of {Italian} Subject Pronouns},
+  school    = {University of Massachusetts at Amherst},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  sources   = {Phenomena/Reference/Studies/KwonLee2026.lean}
+}
+@article{zhang-kwon-2022,
+  author    = {Zhang, Aili and Kwon, Nayoung},
+  year      = {2022},
+  title     = {The interpretational preferences of null and overt pronouns in {Chinese}},
+  journal   = {Journal of Linguistics},
+  volume    = {58},
+  number    = {3},
+  pages     = {649--676},
+  doi       = {10.1017/S0022226721000402},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  sources   = {Phenomena/Reference/Studies/KwonLee2026.lean}
+}
+@article{contemori-di-domenico-2021,
+  author    = {Contemori, Carla and Di Domenico, Elisa},
+  year      = {2021},
+  title     = {Microvariation in the division of labor between null- and overt-subject pronouns: the case of {Italian} and {Spanish}},
+  journal   = {Applied Psycholinguistics},
+  volume    = {42},
+  number    = {4},
+  pages     = {997--1028},
+  doi       = {10.1017/S0142716421000199},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  sources   = {Phenomena/Reference/Studies/KwonLee2026.lean}
+}
+@article{kweon-2011,
+  author    = {Kweon, Soo-Ok},
+  year      = {2011},
+  title     = {Processing null and overt pronoun subject in ambiguous sentences in {Korean}},
+  journal   = {International Journal of Linguistics},
+  volume    = {3},
+  number    = {1},
+  doi       = {10.5296/ijl.v3i1.732},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  sources   = {Phenomena/Reference/Studies/KwonLee2026.lean}
+}
 @article{gundel-hedberg-zacharski-1993,
   author    = {Gundel, Jeanette K. and Hedberg, Nancy and Zacharski, Ron},
   year      = {1993},
@@ -12567,9 +12634,50 @@
   pages     = {471--504},
   doi       = {10.1007/BF00360802},
   subfield  = {syntax},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Phenomena/WordOrder/Studies/PullumGazdar1982.lean;Phenomena/WordOrder/CrossSerial.lean}
+}% REF: Huybregts (1976). Overlapping Dependencies in Dutch.
+@article{huybregts-1976,
+  author    = {Huybregts, M. A. C.},
+  year      = {1976},
+  title     = {Overlapping Dependencies in Dutch},
+  journal   = {Utrecht Working Papers in Linguistics},
+  volume    = {1},
+  pages     = {24--65},
+  subfield  = {syntax},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/WordOrder/CrossSerial.lean}
+  sources   = {Phenomena/WordOrder/Studies/PullumGazdar1982.lean}
+}% REF: Postal (1964). Limitations of Phrase Structure Grammars.
+@incollection{postal-1964-limitations,
+  author    = {Postal, Paul M.},
+  year      = {1964},
+  title     = {Limitations of Phrase Structure Grammars},
+  booktitle = {The Structure of Language: Readings in the Philosophy of Language},
+  editor    = {Fodor, Jerry A. and Katz, Jerrold J.},
+  publisher = {Prentice-Hall},
+  address   = {Englewood Cliffs, NJ},
+  pages     = {137--151},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/WordOrder/Studies/PullumGazdar1982.lean}
+}% REF: Bar-Hillel & Shamir (1960). Finite-State Languages.
+@incollection{bar-hillel-shamir-1960,
+  author    = {Bar-Hillel, Yehoshua and Shamir, Eliahu},
+  year      = {1960},
+  title     = {Finite-State Languages: Formal Representations and Adequacy Problems},
+  booktitle = {Language and Information},
+  editor    = {Bar-Hillel, Yehoshua},
+  publisher = {Addison-Wesley},
+  address   = {Reading, MA},
+  pages     = {87--98},
+  note      = {Reprinted from Bulletin of the Research Council of Israel 8F (1960)},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/WordOrder/Studies/PullumGazdar1982.lean}
 }% REF: Zwicky, A. (1985). Heads. Journal of Linguistics, 21(1), 1–29.
 @book{burzio-1986,
   author    = {Burzio, Luigi},
@@ -12811,6 +12919,20 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Ellipsis/Sluicing.lean;Theories/Syntax/Minimalism/Formal/Sluicing/FormalMatching.lean;Theories/Syntax/Minimalism/Ellipsis/DeletionDomain.lean}
+}
+@article{merchant-riggle-2016,
+  author    = {Merchant, Nazarré and Riggle, Jason},
+  year      = {2016},
+  title     = {OT grammars, beyond partial orders: ERC sets and antimatroids},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {34},
+  number    = {1},
+  pages     = {241--269},
+  doi       = {10.1007/s11049-015-9297-5},
+  subfield  = {phonology},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Linglib/Core/OT/Defs.lean;Linglib/Core/OT/ERC.lean;Linglib/Core/OT/Antimatroid.lean;Linglib/Core/OT/ERCAntimatroid.lean}
 }% REF: de Vries, M. (2002). The Syntax of Relativization. LOT Dissertation Series. University of Amsterdam.
 @article{goldberg-2003,
   author    = {Goldberg, Adele E},
@@ -15857,6 +15979,27 @@
   address   = {Amherst, MA},
   subfield  = {phonology},
   role      = {formalized},
+}
+@incollection{mccarthy-2005,
+  author    = {McCarthy, John J.},
+  title     = {Optimal Paradigms},
+  year      = {2005},
+  booktitle = {Paradigms in Phonological Theory},
+  editor    = {Downing, Laura J. and Hall, T. Alan and Raffelsiefen, Renate},
+  publisher = {Oxford University Press},
+  subfield  = {phonology},
+  role      = {formalized},
+  sources   = {Theories/Phonology/OptimalParadigms.lean;Phenomena/PhonologicalAlternation/Studies/MarcoRasin2026.lean}
+}
+@article{marco-rasin-2026,
+  author    = {Marco, Eyal and Rasin, Ezer},
+  title     = {Optimal Paradigms: A Challenge from {J}udeo-{T}ripolitanian {A}rabic},
+  year      = {2026},
+  journal   = {Linguistic Inquiry},
+  doi       = {10.1162/ling_a_00575},
+  subfield  = {phonology},
+  role      = {formalized},
+  sources   = {Phenomena/PhonologicalAlternation/Studies/MarcoRasin2026.lean}
 }
 @incollection{coetzee-pater-2011,
   author    = {Coetzee, Andries W. and Pater, Joe},

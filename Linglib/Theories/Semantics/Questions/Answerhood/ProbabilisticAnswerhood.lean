@@ -1,5 +1,5 @@
 import Linglib.Core.FinitePMF
-import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
+import Linglib.Core.Discourse.QUD
 import Mathlib.Algebra.Order.Field.Basic
 
 /-!

@@ -123,6 +123,7 @@ def classifyUse (gramTense : GramTense) (f : TensePerspective ℤ) : TenseUse :=
   | .past    => if f.eventTime < f.speechTime then .trueTense else .falseTense
   | .present => if f.eventTime = f.speechTime then .trueTense else .falseTense
   | .future  => if f.speechTime < f.eventTime then .trueTense else .falseTense
+  | .nonpast => if f.speechTime ≤ f.eventTime then .trueTense else .falseTense
 
 open Core.Morphology.Tense in
 

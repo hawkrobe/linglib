@@ -17,12 +17,14 @@ This is DERIVED, not stipulated.
 -/
 
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
-import Linglib.Theories.Semantics.Questions.Answerhood.Answerhood
+import Linglib.Theories.Semantics.Questions.Answerhood.ANS
 import Linglib.Theories.Semantics.Questions.Answerhood.Exhaustivity
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Fragments.English.Predicates.Verbal
 
-namespace Semantics.Questions.LeftPeriphery
+namespace Interfaces.SyntaxSemantics.LeftPeriphery
+
+open Semantics.Questions
 
 -- ============================================================================
 -- A. Clause-type feature
@@ -581,11 +583,11 @@ responsive predicates and PerspP is weakened. -/
 theorem ep_gives_definite_ans {W P : Type _}
     (qden : (W → List W) → P → W → Bool)
     (mb : W → List W) (answers : List P) (worlds : List W) (w : W)
-    (α : P) (hα : Theories.Semantics.Questions.Exhaustivity.dayalAns
+    (α : P) (hα : Semantics.Questions.Exhaustivity.dayalAns
       qden mb answers worlds w = some α) :
-    (Theories.Semantics.Questions.Exhaustivity.dayalAnsProposition
+    (Semantics.Questions.Exhaustivity.dayalAnsProposition
       qden mb answers worlds w).isSome = true := by
-  simp only [Theories.Semantics.Questions.Exhaustivity.dayalAnsProposition, hα]
+  simp only [Semantics.Questions.Exhaustivity.dayalAnsProposition, hα]
   rfl
 
-end Semantics.Questions.LeftPeriphery
+end Interfaces.SyntaxSemantics.LeftPeriphery

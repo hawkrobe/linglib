@@ -51,7 +51,7 @@ Number resolution is derived from the join-semilattice of individuals
   all three resolution levels.
 -/
 
-namespace Theories.Syntax.Minimalism.Agreement.CoordinateResolution
+namespace Minimalism.Agreement.CoordinateResolution
 
 open Core.Number (Category)
 open Core.Prominence (PersonLevel)
@@ -439,15 +439,15 @@ example : resolveCoordinate [.singular, .dual, .plural]
     = ⟨some .third, some .dual, some [.m]⟩ := rfl
 
 /-- Gender mismatch: [m] + [f] → none (default). -/
-example : resolveCoordinate [.singular, .plural]
-    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .interpretable⟩]⟩ : PhiBundle ExGender)
-    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.f, .interpretable⟩]⟩ : PhiBundle ExGender)
+example : resolveCoordinate (G := ExGender) [.singular, .plural]
+    ⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .interpretable⟩]⟩
+    ⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.f, .interpretable⟩]⟩
     = ⟨some .third, some .plural, none⟩ := rfl
 
 /-- Uninterpretable gender: u + u → none regardless of values. -/
-example : resolveCoordinate [.singular, .plural]
-    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .uninterpretable⟩]⟩ : PhiBundle ExGender)
-    (⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .uninterpretable⟩]⟩ : PhiBundle ExGender)
+example : resolveCoordinate (G := ExGender) [.singular, .plural]
+    ⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .uninterpretable⟩]⟩
+    ⟨⟨.third, .interpretable⟩, ⟨.singular, .interpretable⟩, [⟨ExGender.m, .uninterpretable⟩]⟩
     = ⟨some .third, some .plural, none⟩ := rfl
 
 -- ============================================================================
@@ -466,4 +466,4 @@ theorem first_wins_second : personResolve .first .second = some .first := rfl
 /-- 3rd + 3rd → 3rd: full DPs are always third person. -/
 theorem third_third : personResolve .third .third = some .third := rfl
 
-end Theories.Syntax.Minimalism.Agreement.CoordinateResolution
+end Minimalism.Agreement.CoordinateResolution

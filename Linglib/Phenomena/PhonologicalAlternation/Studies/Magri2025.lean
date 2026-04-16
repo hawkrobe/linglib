@@ -34,7 +34,7 @@ The constraint data comes from `Fragments.Tagalog.Phonology`.
 
 namespace Phenomena.PhonologicalAlternation.Studies.Magri2025
 
-open Theories.Phonology.HarmonicGrammar
+open Phonology.HarmonicGrammar
 open Fragments.Tagalog.Phonology
 
 -- ============================================================================

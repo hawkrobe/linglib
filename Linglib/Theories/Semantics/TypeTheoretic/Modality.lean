@@ -195,7 +195,7 @@ theorem ModalTypeSystem.roundtrip {W Pred : Type} (mts : ModalTypeSystem W Pred)
     ((mts.toModalSystem Unit).poss w).witnesses P () ↔ (mts w P = true) :=
   Iff.rfl
 
-/-! ## Bridge: ModalSystem ↔ Core.ModalLogic.AccessRel
+/-! ## Bridge: ModalSystem ↔ Core.IntensionalLogic.RestrictedModality.BAccessRel
 
 A Cooper modal system induces a Kripke accessibility relation for each type T:
 R_T(p₁, p₂) holds iff every witness of T in p₁ is also a witness in p₂.

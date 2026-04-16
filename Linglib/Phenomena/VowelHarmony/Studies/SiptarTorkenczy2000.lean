@@ -12,7 +12,7 @@ End-to-end OT analysis of Hungarian vowel harmony, connecting:
 2. **Harmony system** (`Harmony.Defs`) — trigger/target/transparent predicates
 3. **OT constraints** (`Harmony.OT`) — SPREAD and IDENT derived from
    `HarmonySystem`
-4. **Tableaux** (`Core.Logic.OT`) — `buildTableau` + `optimal` select winner
+4. **Tableaux** (`Core.Logic.OT`) — `mkTableau` + `optimal` select winner
 5. **Hungarian fragments** (`Fragments.Hungarian.VowelHarmony`) — concrete
    vowel segments and `hungarianPalatalHarmony`
 
@@ -39,8 +39,8 @@ goals. One type system, no enum wrappers.
 
 namespace Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000
 
-open Theories.Phonology (Segment Feature)
-open Theories.Phonology.Harmony
+open Phonology (Segment Feature)
+open Phonology.Harmony
 open Core.OT Core.ConstraintEvaluation
 open Fragments.Hungarian.VowelHarmony
 
@@ -118,21 +118,21 @@ theorem papírCands_ne : papírCands ≠ [] := by simp [papírCands]
 /-- *ház*: SPREAD ≫ IDENT selects back-harmonized suffix as unique winner.
     @cite{siptar-torkenczy-2000} §3.2.2, class IA-b. -/
 theorem ház_back_optimal :
-    (buildTableau házCands spreadDominant házCands_ne).optimal
-      = [ház_back] := by native_decide
+    (mkTableau házCands spreadDominant házCands_ne).optimal
+      = {ház_back} := by native_decide
 
 /-- *tűz*: SPREAD ≫ IDENT selects front-harmonized suffix as unique winner.
     @cite{siptar-torkenczy-2000} §3.2.2, class IA-f. -/
 theorem tűz_front_optimal :
-    (buildTableau tűzCands spreadDominant tűzCands_ne).optimal
-      = [tűz_front] := by native_decide
+    (mkTableau tűzCands spreadDominant tűzCands_ne).optimal
+      = {tűz_front} := by native_decide
 
 /-- *papír*: neutral /i/ is transparent — back harmony passes through.
     SPREAD ≫ IDENT selects back-harmonized suffix, same as *ház*.
     @cite{siptar-torkenczy-2000} §3.2.2, class IIB-b. -/
 theorem papír_transparency_optimal :
-    (buildTableau papírCands spreadDominant papírCands_ne).optimal
-      = [papír_back] := by native_decide
+    (mkTableau papírCands spreadDominant papírCands_ne).optimal
+      = {papír_back} := by native_decide
 
 -- ============================================================================
 -- § 6: Optimality — IDENT ≫ SPREAD (No-Harmony Language)
@@ -141,8 +141,8 @@ theorem papír_transparency_optimal :
 /-- Under IDENT ≫ SPREAD, the faithful candidate wins — no harmony applies.
     This is the predicted grammar for a language without vowel harmony. -/
 theorem faithful_wins_reversed :
-    (buildTableau házCands identDominant házCands_ne).optimal
-      = [ház_faithful] := by native_decide
+    (mkTableau házCands identDominant házCands_ne).optimal
+      = {ház_faithful} := by native_decide
 
 -- ============================================================================
 -- § 7: Factorial Typology
@@ -153,7 +153,7 @@ theorem faithful_wins_reversed :
     This matches the typological prediction: suffix harmony is either
     present or absent, with no intermediate grammars. -/
 theorem factorial_two_types :
-    factorialTypologySize házCands
+    mkFactorialTypologySize házCands
       [mkSpread hungarianPalatalHarmony, mkIdentHarmony hungarianPalatalHarmony]
       házCands_ne = 2 := by native_decide
 
@@ -164,18 +164,18 @@ theorem factorial_two_types :
 /-- The OT-optimal candidate for *ház* is identical to the output of
     `spreadSuffix` — the direct computation and the OT analysis agree. -/
 theorem ház_ot_matches_direct :
-    (buildTableau házCands spreadDominant házCands_ne).optimal
-      = [⟨[a_vowel], [archiphoneU],
-          spreadSuffix hungarianPalatalHarmony true [archiphoneU]⟩] := by
+    (mkTableau házCands spreadDominant házCands_ne).optimal
+      = {⟨[a_vowel], [archiphoneU],
+          spreadSuffix hungarianPalatalHarmony true [archiphoneU]⟩} := by
   native_decide
 
 /-- The OT-optimal candidate for *papír* matches `spreadSuffix` with
     the trigger value extracted from the stem. Transparency is derived:
     `triggerValue` skips neutral /i/ and finds /a/. -/
 theorem papír_ot_matches_direct :
-    (buildTableau papírCands spreadDominant papírCands_ne).optimal
-      = [⟨[a_vowel, i_vowel], [archiphoneU],
-          spreadSuffix hungarianPalatalHarmony true [archiphoneU]⟩] := by
+    (mkTableau papírCands spreadDominant papírCands_ne).optimal
+      = {⟨[a_vowel, i_vowel], [archiphoneU],
+          spreadSuffix hungarianPalatalHarmony true [archiphoneU]⟩} := by
   native_decide
 
 end Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000

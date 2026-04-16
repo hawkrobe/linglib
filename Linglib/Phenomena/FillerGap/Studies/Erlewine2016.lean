@@ -89,7 +89,7 @@ about OT candidate competition.
 namespace Phenomena.FillerGap.Studies.Erlewine2016
 
 open Fragments.Mayan.Kaqchikel Minimalism
-open Core.ConstraintEvaluation (LexLT)
+open Core.OT (mkTableau)
 
 -- ============================================================================
 -- § 1: Anti-Locality Grounds the Transitive Crash
@@ -113,7 +113,9 @@ theorem af_survives :
 
 /-- AF is the unique optimal candidate. SSAL >> XRef means the derivation
     that avoids anti-locality wins, even though it loses Set A agreement. -/
-theorem af_wins : agentExtractionTableau.optimal = [.agentFocusExtraction] :=
+theorem af_wins :
+    (mkTableau afCandidates afRanking).optimal =
+      {AFCandidate.agentFocusExtraction} :=
   af_is_optimal
 
 /-- The winning candidate surfaces with AF morphology: *-Vn* suffix,
@@ -134,29 +136,36 @@ theorem af_morphology :
 
     This is why OT's lexicographic comparison (strict ranking) is
     necessary: it breaks the tie by giving priority to the higher-ranked
-    constraint. Kratzer's satisfaction ordering cannot select a winner. -/
-theorem lex_needed : agentExtractionTableau.satOptimal = [] :=
+    constraint. Satisfaction ordering cannot select a winner. -/
+theorem lex_needed :
+    ¬(ssalConstraint.eval .transitiveExtraction ≤
+        ssalConstraint.eval .agentFocusExtraction ∧
+      xrefConstraint.eval .transitiveExtraction ≤
+        xrefConstraint.eval .agentFocusExtraction) ∧
+    ¬(ssalConstraint.eval .agentFocusExtraction ≤
+        ssalConstraint.eval .transitiveExtraction ∧
+      xrefConstraint.eval .agentFocusExtraction ≤
+        xrefConstraint.eval .transitiveExtraction) :=
   satisfaction_ordering_incomparable
 
 /-- The transitive candidate is lexicographically worse because it
     violates the HIGHER-ranked constraint (SSAL, position 0).
     AF violates only the lower-ranked constraint (XRef, position 1). -/
-theorem transitive_lex_worse :
-    LexLT (AFCandidate.agentFocusExtraction.violations)
-          (AFCandidate.transitiveExtraction.violations) := by
-  decide
+theorem transitive_worse_on_ssal :
+    ssalConstraint.eval .transitiveExtraction >
+      ssalConstraint.eval .agentFocusExtraction := by decide
 
 -- ============================================================================
 -- § 4: Anti-Locality Predicate Grounding
 -- ============================================================================
 
 /-- The transitive candidate's violation profile reflects
-    `specToSpecAntiLocality` from Position.lean. The constraint at
-    position 0 (SSAL) has 1 violation for the transitive candidate,
+    `specToSpecAntiLocality` from Position.lean. The SSAL constraint
+    assigns 1 violation to the transitive candidate and 0 to AF,
     grounding the OT violation count in the structural predicate. -/
 theorem antilocality_grounded :
-    (AFCandidate.transitiveExtraction.violations.head?) = some 1 ∧
-    (AFCandidate.agentFocusExtraction.violations.head?) = some 0 :=
+    ssalConstraint.eval .transitiveExtraction = 1 ∧
+    ssalConstraint.eval .agentFocusExtraction = 0 :=
   ⟨rfl, rfl⟩
 
 /-- AF wins because it has 0 violations of the highest-ranked constraint.
@@ -165,8 +174,9 @@ theorem antilocality_grounded :
     dominates TP — exactly what the predicate bans. AF avoids this
     by not placing the agent in Spec,TP at all. -/
 theorem antilocality_drives_af :
-    (AFCandidate.agentFocusExtraction.violations.head? = some 0) ∧
-    agentExtractionTableau.optimal = [.agentFocusExtraction] :=
+    ssalConstraint.eval .agentFocusExtraction = 0 ∧
+    (mkTableau afCandidates afRanking).optimal =
+      {AFCandidate.agentFocusExtraction} :=
   ⟨rfl, af_is_optimal⟩
 
 -- ============================================================================

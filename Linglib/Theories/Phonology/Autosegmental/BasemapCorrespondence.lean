@@ -48,10 +48,10 @@ proves that the overwrite function produces the same tonal output as
 basemap-faithful evaluation.
 -/
 
-namespace Theories.Phonology.Autosegmental.BasemapCorrespondence
+namespace Phonology.Autosegmental.BasemapCorrespondence
 
-open Theories.Phonology.Autosegmental.GrammaticalTone
-open Theories.Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.GrammaticalTone
+open Phonology.Autosegmental.RegisterTier (ToneFeature)
 open Core.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
@@ -281,4 +281,4 @@ theorem basemapOutput_tone_independent_whole {S : Type} [DecidableEq S] [BEq S] 
                                  List.replicate_succ]; exact congrArg _ ih
   rw [mapConst, mapConst, hLen]
 
-end Theories.Phonology.Autosegmental.BasemapCorrespondence
+end Phonology.Autosegmental.BasemapCorrespondence

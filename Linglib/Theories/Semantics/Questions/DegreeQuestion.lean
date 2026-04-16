@@ -1,5 +1,5 @@
+import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Degree Questions and the Universal Density of Measurement

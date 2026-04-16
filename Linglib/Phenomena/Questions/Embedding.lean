@@ -76,6 +76,20 @@ def know_d : EmbeddingDatum :=
   , subordination := true, quasiSubordination := false
   , quotation := false, embedsDeclarative := true }
 
+/-- Predicate of Relevance: responsive but resists question-to-proposition
+reduction (@cite{elliott-etal-2017}). The reduction-resistance is a separate
+property — see `Phenomena.Questions.Studies.Elliott2017`. -/
+def care_d : EmbeddingDatum :=
+  { verb := "care"
+  , subordination := true, quasiSubordination := false
+  , quotation := false, embedsDeclarative := true }
+
+/-- Predicate of Relevance (@cite{elliott-etal-2017}). -/
+def matter_d : EmbeddingDatum :=
+  { verb := "matter"
+  , subordination := true, quasiSubordination := false
+  , quotation := false, embedsDeclarative := true }
+
 -- Uninterrogative predicates (declaratives only)
 
 def believe_d : EmbeddingDatum :=
@@ -84,7 +98,7 @@ def believe_d : EmbeddingDatum :=
   , quotation := false, embedsDeclarative := true }
 
 def allEmbeddingData : List EmbeddingDatum :=
-  [investigate_d, depend_on_d, wonder_d, ask_d, know_d, believe_d]
+  [investigate_d, depend_on_d, wonder_d, ask_d, know_d, care_d, matter_d, believe_d]
 
 -- ============================================================================
 -- Key generalizations
@@ -96,8 +110,8 @@ theorem quasi_sub_implies_sub :
       d.quasiSubordination = true → d.subordination = true := by
   intro d hd hq
   simp [allEmbeddingData] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, believe_d]
+  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, care_d, matter_d, believe_d]
 
 /-- Quotation implies quasi-subordination (@cite{dayal-2025}: (20)). -/
 theorem quotation_implies_quasi_sub :
@@ -105,8 +119,8 @@ theorem quotation_implies_quasi_sub :
       d.quotation = true → d.quasiSubordination = true := by
   intro d hd hq
   simp [allEmbeddingData] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl <;>
-    simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, believe_d]
+  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [investigate_d, depend_on_d, wonder_d, ask_d, know_d, care_d, matter_d, believe_d]
 
 -- ============================================================================
 -- Shiftiness data (@cite{mccloskey-2006}, @cite{dayal-2025}: §3.2)

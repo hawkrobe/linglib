@@ -61,9 +61,9 @@ This module provides the core types and operations. Language-specific
 instantiations live in `Fragments/`; empirical applications in `Phenomena/`.
 -/
 
-namespace Theories.Phonology.Autosegmental.GrammaticalTone
+namespace Phonology.Autosegmental.GrammaticalTone
 
-open Theories.Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (ToneFeature)
 
 -- ============================================================================
 -- § 1: Tone-Bearing Units
@@ -459,4 +459,4 @@ theorem dominant_asymmetry_typical :
 theorem outward_dominance_violates :
     DominantGTAsymmetry.holds ⟨false, true⟩ = false := rfl
 
-end Theories.Phonology.Autosegmental.GrammaticalTone
+end Phonology.Autosegmental.GrammaticalTone

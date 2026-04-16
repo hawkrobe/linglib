@@ -63,10 +63,9 @@ set_option autoImplicit false
 namespace Presupposition.MaximizePresupposition
 
 open Core (PrivativePair)
-open Core.OT (NamedConstraint ConstraintFamily buildTableau
-              optimal_zero_first buildProfile)
-open Core.ConstraintEvaluation (OTTableau optimal_subset
-  LexLE lexLE_cons_cons_iff lexLE_refl)
+open Core.OT (NamedConstraint ConstraintFamily mkTableau
+              mkTableau_optimal_zero_first mkTableau_optimal_mem)
+open Core.ConstraintEvaluation
 open Presupposition.PhiFeatures
 
 -- ============================================================================
@@ -154,37 +153,37 @@ theorem mp_reverses_markedness {C : Type} (maxStrength : Nat)
     all optimal candidates have maximal presuppositional strength.
     Proof via `optimal_zero_first` — a max-strength candidate has 0 MP
     violations, forcing all winners to have 0 as well. -/
-theorem mp_selects_strongest {C : Type} (candidates : List C)
+theorem mp_selects_strongest {C : Type} [DecidableEq C] (candidates : List C)
     (maxStrength : Nat) (strength : C → Nat)
     (rest : List (NamedConstraint C))
     (hNE : candidates ≠ [])
     (hBound : ∀ c ∈ candidates, strength c ≤ maxStrength)
     (hExists : ∃ c₀ ∈ candidates, strength c₀ = maxStrength) :
-    ∀ c ∈ (buildTableau candidates
+    ∀ c ∈ (mkTableau candidates
       (mpConstraintOf maxStrength strength :: rest) hNE).optimal,
       strength c = maxStrength := by
   intro c hc
-  have hZero := optimal_zero_first candidates
+  have hZero := mkTableau_optimal_zero_first candidates
     (mpConstraintOf maxStrength strength) rest hNE
     (by obtain ⟨c₀, hm, hs⟩ := hExists
         exact ⟨c₀, hm, mp_zero_at_max maxStrength strength c₀ hs⟩) c hc
-  have hcBound := hBound c (optimal_subset _ c hc)
+  have hcBound := hBound c (mkTableau_optimal_mem candidates _ hNE c hc)
   simp only [mpConstraintOf] at hZero; omega
 
 /-- **Markedness dominant → weakest wins**: when a markedness constraint
     is the top-ranked constraint, all optimal candidates have zero
     presuppositional strength. This is the general form of Wang2023's
     `tod_mp_only_minimal`. -/
-theorem markedness_selects_weakest {C : Type} (candidates : List C)
+theorem markedness_selects_weakest {C : Type} [DecidableEq C] (candidates : List C)
     (strength : C → Nat)
     (rest : List (NamedConstraint C))
     (hNE : candidates ≠ [])
     (hExists : ∃ c₀ ∈ candidates, strength c₀ = 0) :
-    ∀ c ∈ (buildTableau candidates
+    ∀ c ∈ (mkTableau candidates
       (markednessPenalty strength :: rest) hNE).optimal,
       strength c = 0 := by
   intro c hc
-  have hZero := optimal_zero_first candidates
+  have hZero := mkTableau_optimal_zero_first candidates
     (markednessPenalty strength) rest hNE
     (by obtain ⟨c₀, hm, hs⟩ := hExists
         exact ⟨c₀, hm, markedness_zero_at_min strength c₀ hs⟩) c hc
@@ -266,7 +265,7 @@ theorem phi_mp_selects_maximal (candidates : List PrivativePair)
     (hNE : candidates ≠ [])
     (hWF : ∀ c ∈ candidates, c.wellFormed = true)
     (hMax : PrivativePair.maximal ∈ candidates) :
-    ∀ c ∈ (buildTableau candidates (phiMP :: rest) hNE).optimal,
+    ∀ c ∈ (mkTableau candidates (phiMP :: rest) hNE).optimal,
       presupStrength c = PrivativePair.maximal.specLevel :=
   mp_selects_strongest candidates _ presupStrength rest hNE
     (fun c hc => wellFormed_specLevel_le_two c (hWF c hc))

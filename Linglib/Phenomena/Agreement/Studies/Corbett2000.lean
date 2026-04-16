@@ -686,7 +686,7 @@ theorem compositional_plural_is_inclusive :
 -- §12: Bridge to Unified Coordinate Resolution
 -- ============================================================================
 
-open Theories.Syntax.Minimalism.Agreement.CoordinateResolution
+open Minimalism.Agreement.CoordinateResolution
 
 /-- Corbett's `semanticResolveIn` agrees with the lattice-grounded
     `numberResolveIn` for any system containing `.plural`.

@@ -27,7 +27,7 @@ trochees, final in iambs.
 - OT constraints: `ftBinViolations`, `parseSylViolations`, `allFtLeftViolations`
 -/
 
-namespace Theories.Phonology.Syllable
+namespace Phonology.Syllable
 
 -- `SyllWeight.morae` is now a field accessor — no separate function needed.
 
@@ -211,4 +211,4 @@ private abbrev parse_lllH : MetricalParse :=
 
 theorem lllH_ftbin : ftBinViolations parse_lllH = 2 := rfl
 
-end Theories.Phonology.Syllable
+end Phonology.Syllable

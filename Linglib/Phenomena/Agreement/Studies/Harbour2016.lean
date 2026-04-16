@@ -363,7 +363,7 @@ theorem specLevel_agrees_with_segments (p : PersonLevel) :
     categories its feature geometry makes available (syncretism, facultative
     marking). What matters is that every attested category IS generated. -/
 
-open Theories.Syntax.Minimalism.Agreement.FeatureRecursion (HarbourConfig)
+open Minimalism.Agreement.FeatureRecursion (HarbourConfig)
 open Phenomena.Agreement.Studies.Corbett2000
 
 /-- Every attested number system's values are a subset of what some

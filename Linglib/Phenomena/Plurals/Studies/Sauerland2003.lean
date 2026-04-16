@@ -52,7 +52,7 @@ namespace Phenomena.Plurals.Studies.Sauerland2003
 open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
 open Core (PrivativePair PhiFeatures)
 open Core.Presupposition (PrProp)
-open Core.OT (NamedConstraint buildTableau)
+open Core.OT (NamedConstraint mkTableau)
 open Presupposition.PhiFeatures
 open Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)
 
@@ -159,7 +159,7 @@ theorem sg_strictly_stronger {E : Type*} [PartialOrder E]
 theorem mp_selects_sg
     (rest : List (NamedConstraint PrivativePair))
     (hNE : [PrivativePair.maximal, .minimal] ≠ []) :
-    ∀ c ∈ (buildTableau [.maximal, .minimal]
+    ∀ c ∈ (mkTableau [.maximal, .minimal]
       (phiMP :: rest) hNE).optimal,
     presupStrength c = PrivativePair.maximal.specLevel :=
   phi_mp_selects_maximal _ rest hNE (by decide) (.head _)

@@ -47,7 +47,7 @@ Hyman's SA dimension.
 
 namespace Phenomena.Tone.Studies.Hyman2006
 
-open Theories.Phonology.Autosegmental.RegisterTier
+open Phonology.Autosegmental.RegisterTier
 open Phenomena.Phonology
 
 -- ============================================================================

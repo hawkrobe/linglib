@@ -322,7 +322,7 @@ Formalizes the derivation chain from, Section 5.2 (ex. 93):
 5. Prove both frameworks agree on the same finite model
 6. Contrast with partition reading: EP holds → MA
 
-This connects Xiang's semantic theory (`Theories.Semantics.Questions.Exhaustivity`)
+This connects Xiang's semantic theory (`Semantics.Questions.Exhaustivity`)
 to the decision-theoretic infrastructure (`Core.Agent.DecisionTheory`) through
 a shared concrete scenario, exercising both and proving agreement.
 
@@ -346,7 +346,7 @@ These overlap at w0 → EP fails → but RelExh passes → MS licensed.
 | `dayalEP`               | Exhaustivity.lean           | 2 theorems (fails FO, holds partition) |
 | `relExh`                | Exhaustivity.lean           | 2 theorems (passes FO, holds partition) |
 | `foQDen`                | Exhaustivity.lean           | Used throughout scenario         |
-| `propEntails`           | Exhaustivity.lean           | 2 theorems (incomparability)     |
+| `entails`           | Denotation/Basic.lean       | 2 theorems (incomparability)     |
 | `DecisionProblem`       | Core.Agent.DecisionTheory   | findChairDP, identifyAllDP       |
 | `isMentionSome`         | Core.Agent.DecisionTheory   | canQ_mentionSome                 |
 | `isMentionAll`          | Core.Agent.DecisionTheory   | foQ_identifyAll_mentionAll       |
@@ -355,7 +355,8 @@ These overlap at w0 → EP fails → but RelExh passes → MS licensed.
 -/
 
 open Core.DecisionTheory
-open Theories.Semantics.Questions.Exhaustivity
+open Semantics.Questions (entails)
+open Semantics.Questions.Exhaustivity
 
 /-! ### Finite Types (ex. 93 scenario) -/
 
@@ -470,13 +471,13 @@ theorem foAnswer_true_b : foQDen chairs abilityMB .b .w0 = true := by native_dec
 /-- The a-proposition does not entail the b-proposition.
 ◇chair(a) = {w0, w1} and ◇chair(b) = {w0, w2}: w1 ∈ ◇chair(a) but w1 ∉ ◇chair(b). -/
 theorem propExt_a_not_entails_b :
-    propEntails (foQDen chairs abilityMB .a) (foQDen chairs abilityMB .b) allWorlds = false := by
+    entails (foQDen chairs abilityMB .a) (foQDen chairs abilityMB .b) allWorlds = false := by
   native_decide
 
 /-- The b-proposition does not entail the a-proposition.
 w2 ∈ ◇chair(b) but w2 ∉ ◇chair(a). -/
 theorem propExt_b_not_entails_a :
-    propEntails (foQDen chairs abilityMB .b) (foQDen chairs abilityMB .a) allWorlds = false := by
+    entails (foQDen chairs abilityMB .b) (foQDen chairs abilityMB .a) allWorlds = false := by
   native_decide
 
 /-! ### Step 3: EP fails -/

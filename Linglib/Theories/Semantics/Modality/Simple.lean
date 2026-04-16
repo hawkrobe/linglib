@@ -9,12 +9,12 @@ Accessibility is a primitive relation, unlike Kratzer's derived approach.
 -/
 
 import Linglib.Theories.Semantics.Modality.Basic
-import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.IntensionalLogic.RestrictedModality
 
 namespace Semantics.Modality
 
 open Semantics.Attitudes.Intensional
-open Core.ModalLogic (Refl Serial Trans Symm Eucl)
+open Core.IntensionalLogic.RestrictedModality (BRefl BSerial BTrans BSymm BEucl)
 
 /-- Construct a simple modal theory from accessibility relation R. -/
 def Simple (R : World → World → Bool) : ModalTheory where
@@ -32,16 +32,16 @@ def Simple (R : World → World → Bool) : ModalTheory where
 section AccessibilityRelations
 
 /-- Universal accessibility: every world is accessible from every world.
-Matches `Core.ModalLogic.universalR`. -/
-def universalR : World → World → Bool := Core.ModalLogic.universalR
+Matches `Core.IntensionalLogic.RestrictedModality.universalBR`. -/
+def universalR : World → World → Bool := Core.IntensionalLogic.RestrictedModality.universalBR
 
 /-- Reflexive accessibility: each world is accessible from itself.
-Matches `Core.ModalLogic.identityR`. -/
-def reflexiveR : World → World → Bool := Core.ModalLogic.identityR
+Matches `Core.IntensionalLogic.RestrictedModality.identityBR`. -/
+def reflexiveR : World → World → Bool := Core.IntensionalLogic.RestrictedModality.identityBR
 
 /-- Empty accessibility: no world is accessible from any world.
-Matches `Core.ModalLogic.emptyR`. -/
-def emptyR : World → World → Bool := Core.ModalLogic.emptyR
+Matches `Core.IntensionalLogic.RestrictedModality.emptyBR`. -/
+def emptyR : World → World → Bool := Core.IntensionalLogic.RestrictedModality.emptyBR
 
 /-- Sample epistemic accessibility: w0↔w2, w1↔w3. -/
 def sampleEpistemicR : World → World → Bool := λ w w' =>
@@ -189,11 +189,11 @@ end Normality
 
 section TAxiom
 
-/-- Reflexivity of R: every world accesses itself. Alias for `Core.ModalLogic.Refl`. -/
-abbrev isReflexive (R : World → World → Bool) : Prop := Refl R
+/-- Reflexivity of R: every world accesses itself. Alias for `BRefl`. -/
+abbrev isReflexive (R : World → World → Bool) : Prop := BRefl R
 
 /-- T Axiom: reflexive R implies □p -> p.
-Uses `Core.ModalLogic.T_of_refl` under the hood. -/
+Uses `T_of_refl` under the hood. -/
 theorem T_axiom_from_reflexivity (R : World → World → Bool) (hRefl : isReflexive R)
     (p : Proposition) (w : World)
     (hNec : (Simple R).eval .necessity p w = true) : p w = true := by
@@ -215,11 +215,11 @@ end TAxiom
 
 section DAxiom
 
-/-- Seriality of R: every world accesses at least one world. Alias for `Core.ModalLogic.Serial`. -/
-abbrev isSerial (R : World → World → Bool) : Prop := Serial R
+/-- Seriality of R: every world accesses at least one world. Alias for `BSerial`. -/
+abbrev isSerial (R : World → World → Bool) : Prop := BSerial R
 
 /-- D Axiom: serial R implies □p -> ◇p.
-Uses `Core.ModalLogic.D_of_serial` under the hood. -/
+Uses `D_of_serial` under the hood. -/
 theorem D_axiom_from_seriality (R : World → World → Bool) (hSerial : isSerial R)
     (p : Proposition) (w : World)
     (hNec : (Simple R).eval .necessity p w = true) :
@@ -243,12 +243,12 @@ end DAxiom
 
 section ConsistencyFromD
 
-/-- Universal R is serial. Uses `Core.ModalLogic.universalR_serial`. -/
-theorem universalR_isSerial : isSerial universalR := Core.ModalLogic.universalR_serial
+/-- Universal R is serial. Uses `Core.IntensionalLogic.RestrictedModality.universalBR_serial`. -/
+theorem universalR_isSerial : isSerial universalR := Core.IntensionalLogic.RestrictedModality.universalBR_serial
 
 /-- Reflexive R is serial (reflexivity implies seriality). -/
 theorem reflexiveR_isSerial : isSerial reflexiveR :=
-  Core.ModalLogic.refl_serial Core.ModalLogic.identityR_refl
+  Core.IntensionalLogic.RestrictedModality.brefl_serial Core.IntensionalLogic.RestrictedModality.identityBR_refl
 
 /-- Universal accessibility gives consistency via D axiom. -/
 theorem simple_universal_isConsistent_from_D :

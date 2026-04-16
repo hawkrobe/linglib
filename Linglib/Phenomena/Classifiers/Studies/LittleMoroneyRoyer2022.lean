@@ -4,6 +4,7 @@ import Linglib.Core.Tree
 import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Shan.Classifiers
+import Linglib.Theories.Semantics.Lexical.Noun.Classifier
 
 /-!
 # Little, Moroney & Royer (2022)
@@ -488,5 +489,31 @@ theorem shan_agrees_with_chierchia_clf_for_noun :
 theorem chol_differs_from_chierchia_languages :
     chol.classifierStrategy ≠ mandarin.classifierStrategy :=
   by decide
+
+-- ============================================================================
+-- § 10: Bridge to Unified Classifier Semantics
+-- ============================================================================
+
+/-- The unified `classifierDenot` correctly dispatches based on strategy.
+
+    - CLF-for-N → `clfForNoun` (= `atomize`)
+    - CLF-for-NUM → `clfForNum` (= `QMOD`)
+
+    This confirms that the typological enum in `Core.NounCategorization`
+    is structurally connected to semantic content, not just a label. -/
+theorem strategy_dispatch_forNoun :
+    Semantics.Lexical.Noun.Classifier.classifierDenot
+      Core.NounCategorization.ClassifierStrategy.forNoun
+      (fun (_ : Finset Dog) => True) (fun _ => 0) 0
+    = Semantics.Lexical.Noun.Classifier.clfForNoun (fun (_ : Finset Dog) => True) := rfl
+
+/-- The local `clfForNumSem` IS `QMOD` from `Core.Mereology`: both compute
+    `R(x) ∧ μ(x) = n` with `μ = Finset.card` and `n = 2`. The unified
+    `clfForNum` specializes `QMOD` to `ℚ`; the local definition uses `ℕ`
+    directly. Both reduce to `QMOD`. -/
+theorem clfForNum_agrees_with_local (s : Finset Dog) :
+    clfForNumSem s ↔
+      Mereology.QMOD (·.Nonempty : Finset Dog → Prop) Finset.card 2 s :=
+  Iff.rfl
 
 end Phenomena.Classifiers.Studies.LittleMoroneyRoyer2022

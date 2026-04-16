@@ -5,7 +5,7 @@ import Linglib.Theories.Phonology.RuleBased.Defs
 # English Phonological Inventory
 
 Concrete English segments and language-specific phonological rules,
-defined using the SPE formalism from `Theories.Phonology.RuleBased.Defs`.
+defined using the SPE formalism from `Phonology.RuleBased.Defs`.
 
 ## Segments
 
@@ -21,8 +21,8 @@ Core inventory for demo alternations: /p t k b d m n ŋ s w r æ ɪ ə/.
 
 namespace Fragments.English.Phonology
 
-open Theories.Phonology
-open Theories.Phonology.RuleBased
+open Phonology
+open Phonology.RuleBased
 
 -- ============================================================================
 -- § 1: Segment Inventory

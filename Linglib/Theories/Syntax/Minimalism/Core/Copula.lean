@@ -455,7 +455,7 @@ theorem expletive_voice_complement_determines_meaning (c : HaveComplement) :
 -- ════════════════════════════════════════════════════
 
 open Theories.Morphology.DM.Allosemy (VoiceAlloseme) in
-open Theories.Interfaces.SyntaxSemantics.VoiceTheta in
+open Interfaces.SyntaxSemantics.VoiceTheta in
 
 /-- The complete theta-role prediction chain for HAVE sentences:
 

@@ -1,5 +1,5 @@
-import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Modality.DeonticNecessity
+import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Subjectivity
 
 /-!

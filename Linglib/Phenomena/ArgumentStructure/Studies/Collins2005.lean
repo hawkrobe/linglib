@@ -6,8 +6,8 @@ import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 # Minimalist Passive as Smuggling
 
 @cite{collins-2005} @cite{chomsky-2001} @cite{legate-2003}Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
-to the smuggling theory in `Theories.Syntax.Minimalism.Movement.Smuggling`
-and the Voice/phase infrastructure in `Theories.Syntax.Minimalism.Core.Voice`.
+to the smuggling theory in `Minimalism.Movement.Smuggling`
+and the Voice/phase infrastructure in `Minimalism.Core.Voice`.
 
 ## The Analysis
 

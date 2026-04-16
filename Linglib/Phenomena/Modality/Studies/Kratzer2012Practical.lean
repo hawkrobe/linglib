@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Practical Reasoning — @cite{kratzer-2012} §2.8
@@ -44,18 +45,18 @@ def noDelay : BProp World := λ w =>
 /-! ## Conversational backgrounds -/
 
 /-- Circumstantial modal base: all worlds accessible (empty fact set). -/
-def circumstantialBase : ModalBase := emptyBackground
+def circumstantialBase : ModalBase World := emptyBackground
 
 /-- Goal ordering source: ranks worlds by whether the goal is reached. -/
-def goalOrdering : OrderingSource := λ _ => [reachesGoal]
+def goalOrdering : OrderingSource World := λ _ => [reachesGoal]
 
 /-- Efficiency ordering: ranks by goal AND no-delay. w0 > w1. -/
-def efficiencyOrdering : OrderingSource := λ _ => [reachesGoal, noDelay]
+def efficiencyOrdering : OrderingSource World := λ _ => [reachesGoal, noDelay]
 
 /-! ## Teleological flavor structure -/
 
 /-- Harlem scenario as a Kratzer teleological flavor. -/
-def harlemTeleological : TeleologicalFlavor where
+def harlemTeleological : TeleologicalFlavor World where
   circumstances := circumstantialBase
   goals := goalOrdering
 
@@ -70,20 +71,20 @@ theorem goal_worlds_all_take_a :
 /-- **Teleological necessity**: Given the goal ordering, the A train is necessary.
     Best worlds = {w0, w1} (goal-reaching), both take the A train. -/
 theorem teleological_necessity (w : World) :
-    necessity circumstantialBase goalOrdering takesATrain w = true := by
-  cases w <;> native_decide
+    necessity circumstantialBase goalOrdering takesATrain w := by
+  cases w <;> decide
 
 /-- **Without goal restriction, A train is not necessary.**
     With empty ordering, all worlds are best, and w2/w3 don't take the A train. -/
 theorem unrestricted_not_necessary (w : World) :
-    necessity circumstantialBase emptyBackground takesATrain w = false := by
-  cases w <;> native_decide
+    ¬ necessity circumstantialBase emptyBackground takesATrain w := by
+  cases w <;> decide
 
 /-- **Efficiency refines**: Adding a no-delay criterion still yields necessity.
     Best worlds = {w0} (goal + no delay), and w0 takes the A train. -/
 theorem efficiency_refines (w : World) :
-    necessity circumstantialBase efficiencyOrdering takesATrain w = true := by
-  cases w <;> native_decide
+    necessity circumstantialBase efficiencyOrdering takesATrain w := by
+  cases w <;> decide
 
 /-- **Teleological uses circumstantial flavor tag.** -/
 theorem harlem_uses_teleological :

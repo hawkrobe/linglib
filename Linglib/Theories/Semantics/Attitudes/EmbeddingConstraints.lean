@@ -732,6 +732,7 @@ Modeled as a list of propositions (subsets of DOX) that the agent
 would like to resolve. -/
 abbrev InqState (W : Type*) := List (W → Bool)
 
+-- UNVERIFIED: @cite{roelofsen-uegaki-2020} eq. 33
 /--
 Wonder semantics (@cite{roelofsen-uegaki-2020} eq. 33):
 ⟦wonder⟧ = λQ λx. DOX_x ∉ Q ∧ INQ_x ⊆ Q
@@ -789,6 +790,7 @@ theorem wonder_satisfies_ptoq {W E : Type*}
   -- hDox : covers (dox x w) p = true contradicts hIgn
   exact absurd hDox (by rw [hIgn]; exact Bool.false_ne_true)
 
+-- UNVERIFIED: @cite{roelofsen-uegaki-2020} eq. 24
 /--
 Daroo semantics (@cite{roelofsen-uegaki-2020} eq. 24, @cite{uegaki-roelofsen-2018}):
 ⟦daroo⟧ = λQ λx. INQ_sp ⊆ Q
@@ -823,6 +825,7 @@ theorem daroo_satisfies_ptoq {W E : Type*}
   simp only [List.mem_singleton] at hq_mem
   exact ⟨p, hp, hq_mem ▸ hq_cov⟩
 
+-- UNVERIFIED: @cite{roelofsen-uegaki-2020} eq. 23
 /--
 Care semantics (@cite{roelofsen-uegaki-2020} eq. 23, based on
 @cite{elliott-etal-2017} and @cite{theiler-etal-2018}):
@@ -869,6 +872,7 @@ theorem care_satisfies_ptoq {W E : Type*}
   simp only [List.mem_singleton] at hq_mem
   exact ⟨hMono _ _ _ hDox hp, p, hp, hq_mem ▸ hq_settled⟩
 
+-- UNVERIFIED: @cite{roelofsen-uegaki-2020} eq. 32
 /--
 Mõtlema semantics (@cite{roelofsen-uegaki-2020} eq. 32, @cite{roberts-2018}):
 
@@ -924,6 +928,7 @@ theorem mõtlema_satisfies_ptoq {W E : Type*}
     simp only [List.mem_singleton] at hq_mem
     exact ⟨p, hp, hq_mem ▸ hq_bel, hq_mem ▸ hq_img⟩
 
+-- UNVERIFIED: @cite{roelofsen-uegaki-2020} eq. 35
 /--
 *wondows (@cite{steinert-threlkeld-2020}, @cite{roelofsen-uegaki-2020} eq. 35):
 "know" with declaratives, "be uncertain" with interrogatives.

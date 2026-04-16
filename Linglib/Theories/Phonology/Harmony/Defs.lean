@@ -35,9 +35,9 @@ and halting at **blocker** (opaque) segments.
   suffix vowels; neutral vowels (/i, í, e, é/) are transparent
 -/
 
-namespace Theories.Phonology.Harmony
+namespace Phonology.Harmony
 
-open Theories.Phonology (Segment Feature FeatureVal)
+open Phonology (Segment Feature FeatureVal)
 
 -- ============================================================================
 -- § 1: Harmony System Type
@@ -208,4 +208,4 @@ theorem spreadSuffix_blocker (sys : HarmonySystem) (val : Bool)
     spreadSuffix sys val (s :: rest) = s :: rest := by
   simp [spreadSuffix, hb]
 
-end Theories.Phonology.Harmony
+end Phonology.Harmony

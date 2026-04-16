@@ -126,6 +126,33 @@ theorem altMonotone_iff_backwardsClosed (a : HistAlt W T) :
   · intro h w t t' hle w' hw'
     exact h w w' t' t hle hw'
 
+omit [LinearOrder T] in
+/-- `HistAlt` symmetry is equivalent to `WorldHistory.symmetric`:
+    if w' ∈ alt(w,t) then w ∈ alt(w',t). -/
+theorem altSymmetric_iff_symmetric (a : HistAlt W T) :
+    (∀ w t, ∀ w' ∈ a w t, w ∈ a w' t) ↔
+    (worldHistoryOfHistAlt a).symmetric := by
+  unfold Semantics.Tense.BranchingTime.WorldHistory.symmetric worldHistoryOfHistAlt
+  constructor
+  · intro h w w' t hw'; exact h w t w' hw'
+  · intro h w t w' hw'; exact h w w' t hw'
+
+omit [LinearOrder T] in
+/-- `HistAlt` transitivity is equivalent to `WorldHistory.transitive`:
+    if w' ∈ alt(w,t) and w'' ∈ alt(w',t) then w'' ∈ alt(w,t). -/
+theorem altTransitive_iff_transitive (a : HistAlt W T) :
+    (∀ w t, ∀ w' ∈ a w t, ∀ w'' ∈ a w' t, w'' ∈ a w t) ↔
+    (worldHistoryOfHistAlt a).transitive := by
+  unfold Semantics.Tense.BranchingTime.WorldHistory.transitive worldHistoryOfHistAlt
+  constructor
+  · intro h w w' w'' t h₁ h₂; exact h w t w' h₁ w'' h₂
+  · intro h w t w' h₁ w'' h₂; exact h w w' w'' t h₁ h₂
+
+/-- B&C's `alt(w,t)` is exactly the `histEquiv` equivalence class:
+    `w' ∈ alt(w,t)` iff `histEquiv history t w w'`. -/
+theorem histAlt_eq_histEquiv (h : Semantics.Tense.BranchingTime.WorldHistory W T) (w : W) (t : T) :
+    histAltOfWorldHistory h w t = { w' | Semantics.Tense.BranchingTime.histEquiv h t w w' } := rfl
+
 -- ============================================================================
 -- § 2: Earliest Across Alternatives
 -- ============================================================================

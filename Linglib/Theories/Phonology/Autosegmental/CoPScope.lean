@@ -39,9 +39,9 @@ be dominant triggers, because Complement does not scope over Head.
 This rules out outward dominance from complements.
 -/
 
-namespace Theories.Phonology.Autosegmental.CoPScope
+namespace Phonology.Autosegmental.CoPScope
 
-open Theories.Phonology.Autosegmental.GrammaticalTone
+open Phonology.Autosegmental.GrammaticalTone
 
 -- ============================================================================
 -- § 1: CoP-Scope Positions
@@ -235,4 +235,4 @@ theorem complement_cannot_dominate_head :
 theorem head_cannot_dominate_spec :
     scopesOver .head .spec = false := rfl
 
-end Theories.Phonology.Autosegmental.CoPScope
+end Phonology.Autosegmental.CoPScope

@@ -51,7 +51,7 @@ E-TIA licensing ◁───── MIP ─────▷ G-TIA polarity sensiti
 
 -/
 
-namespace Semantics.Montague.Sentence.MaximalInformativity
+namespace Semantics.Tense.MaximalInformativity
 
 open Core.Time
 open Semantics.Tense.Aspect.Core
@@ -447,4 +447,4 @@ theorem div_implies_subintervalProp (P : EventPred W Time) :
   have : e₂.τ = t := by simp [Eventuality.τ]; exact hτ
   exact hDiv e₁ e₂ w hP (this ▸ hsub)
 
-end Semantics.Montague.Sentence.MaximalInformativity
+end Semantics.Tense.MaximalInformativity

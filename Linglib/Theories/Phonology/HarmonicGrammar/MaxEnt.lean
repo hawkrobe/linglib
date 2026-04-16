@@ -33,7 +33,7 @@ score decomposes additively ⇒ the joint distribution factorizes ⇒ each margi
 equals its factor.
 -/
 
-namespace Theories.Phonology.HarmonicGrammar
+namespace Phonology.HarmonicGrammar
 
 open Core.OT Core
 
@@ -200,4 +200,4 @@ theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type}
   (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal_eq_independent_when_uncoupled
     ⟨0, systemicScoreR_zero h_zero⟩ i o
 
-end Theories.Phonology.HarmonicGrammar
+end Phonology.HarmonicGrammar

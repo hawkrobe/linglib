@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Modality.ActualityEntailments
+import Linglib.Phenomena.Modality.Studies.Condoravdi2002
 
 /-!
 # Event Projection → Temporal Orientation
@@ -43,12 +44,18 @@ open Semantics.Modality.Temporal
 -- ════════════════════════════════════════════════════
 
 /-- The temporal orientation of a modal: what time the modal's
-conversational background is evaluated at. -/
+conversational background is evaluated at.
+
+@cite{hacquard-2006} derives present vs. past from modal position (§ 3).
+@cite{klecha-2016} adds future: derived not from position but from the
+modal base kind (CIR permits future orientation). -/
 inductive TemporalOrientation where
   /-- Present: evaluated at the speech time -/
   | present
-  /-- past: evaluated at a past event time -/
+  /-- Past: evaluated at a past event time -/
   | past
+  /-- Future: accessible via circumstantial modal base (@cite{klecha-2016}) -/
+  | future
   deriving DecidableEq, Repr
 
 /-- A time type for the orientation examples. -/
@@ -177,6 +184,97 @@ theorem jane_train_orientation :
     positionToOrientation .belowAsp = .past :=
   ⟨rfl, rfl, rfl, rfl⟩
 
+
+-- ════════════════════════════════════════════════════
+-- § 6. Hacquard ↔ Klecha comparison
+-- ════════════════════════════════════════════════════
+
+/-! @cite{hacquard-2006} and @cite{klecha-2016} explain different aspects of
+temporal orientation:
+
+- **Hacquard**: Position (high/low) determines whether the conversational
+  background is evaluated at speech time (present) or event time (past).
+  This explains the epistemic/root contrast.
+
+- **Klecha**: Modal base kind (DOX/CIR) determines whether future-oriented
+  readings are available. DOX (doxastic) constrains RT ≤ EvalT (upper limit);
+  CIR (circumstantial) permits RT > EvalT (future orientation).
+
+The two theories are complementary: Hacquard tells you WHAT time the modal
+base is evaluated at; Klecha tells you WHICH DIRECTION of temporal reference
+is available from that time. -/
+
+/-- Hacquard's derivation covers present and past orientation.
+    Future orientation is NOT derived from position — it requires
+    @cite{klecha-2016}'s modal base analysis. -/
+theorem position_covers_present_past :
+    positionToOrientation .aboveAsp = .present ∧
+    positionToOrientation .belowAsp = .past :=
+  ⟨rfl, rfl⟩
+
+/-- Hacquard's positional analysis does not derive future orientation.
+    Future orientation is orthogonal to position — it is determined by the
+    modal base kind (CIR), not by where the modal is merged. -/
+theorem future_not_from_position :
+    positionToOrientation .aboveAsp ≠ .future ∧
+    positionToOrientation .belowAsp ≠ .future := by
+  exact ⟨by decide, by decide⟩
+
+
+/-! ## Bridge: Hacquard ↔ @cite{condoravdi-2002}
+
+@cite{hacquard-2006} determines which time the modal base is evaluated at
+(via event projection); @cite{condoravdi-2002} determines what modal base
+types are available at that time (via settledness and diversity).
+
+The bridge: position determines perspective (Hacquard), and perspective
+determines available modal base types (Condoravdi). High modals get
+present perspective → MODAL > PERF scope → `settled_not_diverse` blocks
+metaphysical. Low modals get past perspective → PERF > MODAL scope →
+`counterfactual_widens_domain` widens the metaphysical domain. -/
+
+open Phenomena.Modality.Studies.Condoravdi2002 (Perspective)
+open Semantics.Modality.ActualityEntailments (AspectModalScope toAspectScope)
+
+/-- Map Hacquard's temporal orientation to Condoravdi's temporal
+    perspective. Future orientation (Klecha 2016) has no Condoravdi
+    analogue — it is orthogonal to the scope–modality correlation. -/
+def toPerspective : TemporalOrientation → Option Perspective
+  | .present => some .present
+  | .past    => some .past
+  | .future  => none
+
+/-- High modals (above Asp) have Condoravdi's present perspective. -/
+theorem high_modal_present_perspective :
+    toPerspective (positionToOrientation .aboveAsp) = some .present := rfl
+
+/-- Low modals (below Asp) have Condoravdi's past perspective. -/
+theorem low_modal_past_perspective :
+    toPerspective (positionToOrientation .belowAsp) = some .past := rfl
+
+/-- The key derivation chain: position determines both perspective AND
+    aspect scope, and these two together determine which modal base
+    types are available.
+
+    - High (above Asp): present perspective + modal over aspect.
+      MODAL > PERF scoping → the property under the modal is past →
+      settled → diversity fails → metaphysical blocked → epistemic only.
+
+    - Low (below Asp): past perspective + aspect over modal.
+      PERF > MODAL scoping → the property under the modal is future
+      (of the past event time) → not settled → diversity satisfiable →
+      metaphysical available.
+
+    This connects Hacquard's structural account to Condoravdi's temporal
+    one without either stipulating anything. -/
+theorem position_determines_modal_base_type :
+    -- High → present perspective + MODAL > ASP (= epistemic scope)
+    (toPerspective (positionToOrientation .aboveAsp) = some .present ∧
+     toAspectScope .aboveAsp = .modalOverAspect) ∧
+    -- Low → past perspective + ASP > MODAL (= root scope)
+    (toPerspective (positionToOrientation .belowAsp) = some .past ∧
+     toAspectScope .belowAsp = .aspectOverModal) :=
+  ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
 end Phenomena.Modality.Studies.Hacquard2006
 

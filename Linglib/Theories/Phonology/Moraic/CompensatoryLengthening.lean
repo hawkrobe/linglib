@@ -24,10 +24,10 @@ line rearrangements.
 @cite{hayes-1989}
 -/
 
-namespace Theories.Phonology.Moraic.CL
+namespace Phonology.Moraic.CL
 
-open Theories.Phonology (Segment)
-open Theories.Phonology.Moraic
+open Phonology (Segment)
+open Phonology.Moraic
 
 -- ============================================================================
 -- § 1: CL Typology
@@ -171,7 +171,7 @@ theorem wbp_strands_mora (v c₁ c₂ : Segment) :
     CL through vowel loss always lengthens the vowel to the **left** of the
     deleted vowel, never to the right. In moraic theory this follows from
     Parasitic Delinking + the No-Crossing Constraint (derived from temporal
-    precedence in `Theories.Phonology.Autosegmental.no_crossing`,
+    precedence in `Phonology.Autosegmental.no_crossing`,
     @cite{sagey-1986} §5.3): a stranded mora can only be picked up by
     spreading leftward without crossing. -/
 theorem vowel_loss_leftward (v₁ v₂ : Segment) :
@@ -196,4 +196,4 @@ theorem no_wbp_params_disable_cl (o n c : Segment) :
     let σ := syllableToMoraic { wbp := false } ⟨[o], [n], [c]⟩
     (deleteMoraic σ 1).2 = 0 := rfl
 
-end Theories.Phonology.Moraic.CL
+end Phonology.Moraic.CL

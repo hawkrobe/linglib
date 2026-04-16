@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.PIP.Basic
-import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.IntensionalLogic.RestrictedModality
 
 /-!
 # PIP Expression Language (Full Static Formulation)
@@ -39,7 +39,7 @@ all `X ≡ φ` definitions regardless of their structural position.
 
 namespace Semantics.PIP
 
-open Core.ModalLogic (AccessRel)
+open Core.IntensionalLogic.RestrictedModality (BAccessRel)
 open Core.Proposition (FiniteWorlds)
 
 /-- A finite domain of individuals for PIP quantifier evaluation.
@@ -87,10 +87,10 @@ inductive PIPExprF (W : Type*) (D : Type*) where
   | labelDef (label : FLabel) (φ : PIPExprF W D)
   /-- Modal necessity: □_R φ (paper item 28, MUST).
       Universal quantification over R-accessible worlds. -/
-  | must (R : AccessRel W) (φ : PIPExprF W D)
+  | must (R : BAccessRel W) (φ : PIPExprF W D)
   /-- Modal possibility: ◇_R φ (paper item 28, MIGHT).
       Existential quantification over R-accessible worlds. -/
-  | might (R : AccessRel W) (φ : PIPExprF W D)
+  | might (R : BAccessRel W) (φ : PIPExprF W D)
 
 
 -- ============================================================
@@ -237,7 +237,7 @@ theorem felicitousF_exists (body : D → PIPExprF W D) (w : W) :
     FiniteDomain.elements.all (λ d => (body d).felicitous w) := rfl
 
 /-- Modal necessity felicity is universal over accessible worlds. -/
-theorem felicitousF_must (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+theorem felicitousF_must (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).felicitous w =
     (FiniteWorlds.worlds.filter (R w)).all φ.felicitous := rfl
 

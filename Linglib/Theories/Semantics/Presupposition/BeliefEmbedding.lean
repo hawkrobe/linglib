@@ -287,7 +287,7 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
 ### Bridging Bool-valued and Prop-valued Accessibility
 @cite{hintikka-1962}
 
-`EpistemicLogic` uses Bool-valued `AgentAccessRel W E = E → W → W → Bool`.
+`EpistemicLogic` uses Bool-valued `BAgentAccessRel W E = E → W → W → Bool`.
 `BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`
 where `ContextSet W = W → Prop`.
 
@@ -297,14 +297,14 @@ converts `R i w v = true` (Bool) to `Dox i w v` (Prop).
 
 section BoolPropBridge
 
-open Core.ModalLogic (AgentAccessRel)
+open Core.IntensionalLogic.RestrictedModality (BAgentAccessRel)
 open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
 
 variable {W E : Type*}
 
 /-- Convert a Bool-valued `AgentAccessRel` to a Prop-valued `DoxasticAccessibility`.
     `R i w v = true` becomes the Prop `Dox i w v`. -/
-def doxOfAccessRel (Rs : AgentAccessRel W E) : DoxasticAccessibility W E :=
+def doxOfAccessRel (Rs : BAgentAccessRel W E) : DoxasticAccessibility W E :=
   fun i w v => Rs i w v = true
 
 /-- Construct a `BeliefLocalCtx` from a `KnowledgeBeliefFrame` using the

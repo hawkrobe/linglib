@@ -7,6 +7,7 @@ Reference: Phillips-Brown, M. (2025). Some-things-considered desire. S&P.
 -/
 
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Core.Semantics.Presupposition
 import Mathlib.Order.Basic
 
@@ -260,22 +261,22 @@ open Semantics.Modality.Desire
 open Core.SatisfactionOrdering
 
 /-- Question-based desire: ⟦S wants p⟧ = all best answers in Q-Bel_S entail p. -/
-def evalWant (self : BouleticFlavor) (w : World)
+def evalWant (self : BouleticFlavor World) (w : World)
     (belS : BProp World) (question : List (BProp World)) (p : BProp World) : Bool :=
   wantQuestionBased belS (self.desires w) question p
 
 /-- Preference ordering on propositions at world w. -/
-def preferenceOrdering (self : BouleticFlavor) (w : World) :
+def preferenceOrdering (self : BouleticFlavor World) (w : World) :
     SatisfactionOrdering (BProp World) (BProp World) :=
   Desire.propositionOrdering (self.desires w)
 
 /-- Best answers according to S's desires at world w. -/
-def getBestAnswers (self : BouleticFlavor) (w : World) (answers : List (BProp World)) :
+def getBestAnswers (self : BouleticFlavor World) (w : World) (answers : List (BProp World)) :
     List (BProp World) :=
   bestAnswers (self.desires w) answers
 
 /-- Answers compatible with S's beliefs. -/
-def liveAnswers (_self : BouleticFlavor) (question : List (BProp World)) (belS : BProp World) :
+def liveAnswers (_self : BouleticFlavor World) (question : List (BProp World)) (belS : BProp World) :
     List (BProp World) :=
   questionRelativeBelief question belS
 
@@ -288,7 +289,7 @@ open Semantics.Modality.Kratzer
 open Core.SatisfactionOrdering
 
 /-- BouleticFlavor.evalWant = wantQuestionBased (definitionally equal). -/
-theorem bouletic_evalWant_eq (flavor : BouleticFlavor) (w : World)
+theorem bouletic_evalWant_eq (flavor : BouleticFlavor World) (w : World)
     (belS : BProp World) (question : List (BProp World)) (p : BProp World) :
     flavor.evalWant w belS question p =
     wantQuestionBased belS (flavor.desires w) question p := rfl

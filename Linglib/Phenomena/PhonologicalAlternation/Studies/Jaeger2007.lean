@@ -42,7 +42,7 @@ Gradient Ascent (SGA) for Maximum Entropy models. This unifies two traditions:
 
 namespace Phenomena.PhonologicalAlternation.Studies.Jaeger2007
 
-open Core Theories.Phonology.HarmonicGrammar Real
+open Core Phonology.HarmonicGrammar Real
 
 -- ============================================================================
 -- § 1: GLA = SGA (Main Theorem)

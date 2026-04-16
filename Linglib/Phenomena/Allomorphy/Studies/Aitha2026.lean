@@ -54,7 +54,7 @@ namespace Phenomena.Allomorphy.Studies.Aitha2026
 
 open Core Core.OT Core.ConstraintEvaluation
 open Theories.Morphology.DM.VI
-open Theories.Phonology.Syllable
+open Phonology.Syllable
 
 -- ============================================================================
 -- § 1: Telugu Case System and Paradigm Data
@@ -477,8 +477,8 @@ theorem stem_parsesyl_violations :
 /-- The optimal Stem-level parse is (ˈsa.mu).(ˌdram): two well-formed
     moraic trochees, (LL)(H), with no unparsed syllables. -/
 theorem stem_optimal :
-    (buildTableau stemCandidates stemRanking stemCandidates_ne).optimal
-      = [.ll_H] := by native_decide
+    (mkTableau stemCandidates stemRanking stemCandidates_ne).optimal
+      = {.ll_H} := by native_decide
 
 -- ============================================================================
 -- § 5: Word-Level Phonology (Stratal OT)
@@ -486,8 +486,8 @@ theorem stem_optimal :
 
 section WordLevel
 
-open Theories.Phonology.StratalOT
-open Theories.Phonology.ProsodicWord
+open Phonology.StratalOT
+open Phonology.ProsodicWord
 open Theories.Morphology.DM.RichRepresentation
 
 /-- The singular suffix *-ni* carries prespecified stress.
@@ -549,8 +549,8 @@ theorem wordNomCands_ne : wordNomCands ≠ [] := by decide
 /-- Word level, NOM: PrWd-final stressed *-ni* is deleted.
     Surface: *samudr-am* (short form). -/
 theorem wordNom_optimal :
-    (buildTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
-      = [.deleteNi] := by native_decide
+    (mkTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
+      = {.deleteNi} := by native_decide
 
 -- ────────────────────────────────────────────────────────────────────
 -- § 5.2: DAT — light -ki follows within PrWd
@@ -601,8 +601,8 @@ theorem wordDatCands_ne : wordDatCands ≠ [] := by decide
 /-- Word level, DAT: /mn/ boundary repaired by compensatory lengthening.
     Surface: *samudr-āni-ki* (long form). -/
 theorem wordDat_optimal :
-    (buildTableau wordDatCands wordDatRanking wordDatCands_ne).optimal
-      = [.compLengthen] := by native_decide
+    (mkTableau wordDatCands wordDatRanking wordDatCands_ne).optimal
+      = {.compLengthen} := by native_decide
 
 -- ────────────────────────────────────────────────────────────────────
 -- § 5.3: Core result — same constraints, different outputs
@@ -619,10 +619,10 @@ theorem wordDat_optimal :
     (§3) stipulates: the alternation is now DERIVED from OT constraint
     interaction, not encoded by fiat. -/
 theorem word_level_derives_alternation :
-    (buildTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
-      = [.deleteNi] ∧
-    (buildTableau wordDatCands wordDatRanking wordDatCands_ne).optimal
-      = [.compLengthen] :=
+    (mkTableau wordNomCands wordNomRanking wordNomCands_ne).optimal
+      = {.deleteNi} ∧
+    (mkTableau wordDatCands wordDatRanking wordDatCands_ne).optimal
+      = {.compLengthen} :=
   ⟨wordNom_optimal, wordDat_optimal⟩
 
 /-- Map Word-level optimal outputs to `WeakStemForm`.
@@ -647,7 +647,7 @@ end WordLevel
 
 section PrWdIntegration
 
-open Theories.Phonology.ProsodicWord
+open Phonology.ProsodicWord
 
 /-- Predict the weak stem form from the following morphological element.
     Uses `MorphElement.triggersLongForm` from `ProsodicWord`: the long
@@ -787,9 +787,9 @@ theorem central_argument :
 
 section MoraicCLConnection
 
-open Theories.Phonology (Segment)
-open Theories.Phonology.Moraic (MoraicParams syllableToMoraic MoraicSyllable)
-open Theories.Phonology.Moraic.CL (deleteMoraic spreadToFill)
+open Phonology (Segment)
+open Phonology.Moraic (MoraicParams syllableToMoraic MoraicSyllable)
+open Phonology.Moraic.CL (deleteMoraic spreadToFill)
 
 /-- Telugu has Weight by Position: coda consonants bear morae, making
     CVC syllables heavy. This is assumed by the Stem-level parse, where

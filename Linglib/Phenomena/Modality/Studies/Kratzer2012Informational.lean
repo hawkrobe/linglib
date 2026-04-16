@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Core.Discourse.Evidence
 
 /-!
@@ -41,28 +42,28 @@ def reportSaysRain : BProp World := λ w =>
 
 /-- Informational modal base: accessible worlds are those where the report
     says rain. Accessible = {w0, w2}. -/
-def informationalBg : ModalBase := λ _ => [reportSaysRain]
+def informationalBg : ModalBase World := λ _ => [reportSaysRain]
 
 /-- Reliability assumption: if the report says rain, it's raining.
     This is a conditional proposition (report → rain). -/
 def reliabilityAssumption : BProp World := λ w => !reportSaysRain w || raining w
 
 /-- Strong epistemic base: report + reliability. Accessible = {w0} only. -/
-def strongEpistemicBg : ModalBase := λ _ => [reportSaysRain, reliabilityAssumption]
+def strongEpistemicBg : ModalBase World := λ _ => [reportSaysRain, reliabilityAssumption]
 
 /-! ## Derivation theorems -/
 
 /-- **Report alone doesn't entail rain.** The informational base gives
     accessible worlds {w0, w2}, and raining is false at w2. -/
 theorem informational_alone_not_necessity (w : World) :
-    necessity informationalBg emptyBackground raining w = false := by
-  cases w <;> native_decide
+    ¬ necessity informationalBg emptyBackground raining w := by
+  cases w <;> decide
 
 /-- **Report + reliability entails rain.** The strong base gives
     accessible worlds {w0}, and raining is true at w0. -/
 theorem with_reliability_necessity (w : World) :
-    necessity strongEpistemicBg emptyBackground raining w = true := by
-  cases w <;> native_decide
+    necessity strongEpistemicBg emptyBackground raining w := by
+  cases w <;> decide
 
 /-- **The informational base is not realistic.** At w1 (it rains but
     the report doesn't say so), w1 ∉ ∩f(w1) because reportSaysRain w1 = false. -/
@@ -82,8 +83,8 @@ theorem strong_epistemic_not_realistic : ¬ isRealistic strongEpistemicBg := by
 /-- **Possibility holds under report alone.** Even without reliability,
     rain is possible (w0 is accessible and raining). -/
 theorem informational_possibility (w : World) :
-    possibility informationalBg emptyBackground raining w = true := by
-  cases w <;> native_decide
+    possibility informationalBg emptyBackground raining w := by
+  cases w <;> decide
 
 /-! ## Evidence type bridge -/
 

@@ -154,7 +154,7 @@ theorem the_fam_from_eval {E : Type} [DecidableEq E]
 
 /-- ⟦the⟧ under anaphoric definiteness (ι^x):
 
-@cite{moroney-2021} Def 508: ι^x P Q = ιx[P(x) ∧ Q(x)].
+@cite{moroney-2021} §4.3 (anaphoric iota): ι^x P Q = ιx[P(x) ∧ Q(x)].
 The additional restrictor Q encodes the anaphoric link to a prior discourse
 referent.
 

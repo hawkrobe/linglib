@@ -47,7 +47,7 @@ namespace Phenomena.Anaphora.Studies.KeshetAbney2024
 open Semantics.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity)
 open Semantics.Dynamic.IntensionalCDRT (IContext)
-open Core.ModalLogic (AccessRel Refl kripkeEval)
+open Core.IntensionalLogic.RestrictedModality (BAccessRel BRefl kripkeEval)
 open Core.Proposition (FiniteWorlds)
 open Phenomena.Anaphora
 
@@ -79,7 +79,7 @@ def αWolf : FLabel := ⟨0⟩
 def vWolf : IVar := ⟨0⟩
 
 /-- Epistemic accessibility from actual world. -/
-def sAccess : AccessRel SWorld
+def sAccess : BAccessRel SWorld
   | .actual, .wolfIn => true
   | .actual, .noWolf => true
   | _, _ => false
@@ -565,7 +565,7 @@ def ibWorlds : List IBWorld := [.actual, .burgerW]
 def αBurger : FLabel := ⟨10⟩
 def vBurger : IVar := ⟨10⟩
 
-def ibAccess : AccessRel IBWorld
+def ibAccess : BAccessRel IBWorld
   | .actual, .actual => true
   | .actual, .burgerW => true
   | _, _ => false
@@ -648,7 +648,7 @@ def αAnimal : FLabel := ⟨11⟩
 def vAnimal : IVar := ⟨11⟩
 
 /-- Realistic epistemic: actual accessible from itself. -/
-def iaAccess : AccessRel IAWorld
+def iaAccess : BAccessRel IAWorld
   | .actual, .actual => true
   | .actual, .shedW => true
   | _, _ => false
@@ -729,7 +729,7 @@ def αMA : FLabel := ⟨12⟩
 def vMA : IVar := ⟨12⟩
 
 /-- Realistic epistemic: actual accessible from itself, plus two alternatives. -/
-def maAccess : AccessRel MAWorld
+def maAccess : BAccessRel MAWorld
   | .actual, _ => true
   | _, _ => false
 
@@ -812,7 +812,7 @@ def αWinner : FLabel := ⟨20⟩
 def vWinner : IVar := ⟨20⟩
 
 /-- Epistemic: speaker considers all outcomes possible. -/
-def pcAccess : AccessRel PCWorld
+def pcAccess : BAccessRel PCWorld
   | .actual, _ => true
   | _, _ => false
 
@@ -1232,12 +1232,12 @@ def αWitch : FLabel := ⟨40⟩
 def vWitch : IVar := ⟨40⟩
 
 /-- Hob's doxastic accessibility: Hob believes from actual to hobBelief. -/
-def hobAccess : AccessRel HNWorld
+def hobAccess : BAccessRel HNWorld
   | .actual, .hobBelief => true
   | _, _ => false
 
 /-- Nob's bouletic accessibility: Nob wonders from actual to nobWonder. -/
-def nobAccess : AccessRel HNWorld
+def nobAccess : BAccessRel HNWorld
   | .actual, .nobWonder => true
   | _, _ => false
 

@@ -1,3 +1,4 @@
+import Mathlib.Data.Finset.Card
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Core.Logic.Truth3
 import Linglib.Theories.Semantics.Alternatives.Structural
@@ -58,7 +59,7 @@ Both are instances of the generic `dist` operator (`Core/Logic/Truth3.lean`).
 namespace Semantics.Conditionals.AlternativeSensitive
 
 open Core.Duality (Truth3 dist)
-open Semantics.Conditionals.Counterfactual (closestWorlds)
+open Semantics.Conditionals (SimilarityOrdering)
 
 
 -- ============================================================
@@ -68,12 +69,12 @@ open Semantics.Conditionals.Counterfactual (closestWorlds)
 /-- Evaluate each alternative antecedent separately against closest worlds.
     Returns one Bool per alternative: true iff all closest worlds for that
     alternative satisfy the consequent. -/
-def altConditionalResults {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+def altConditionalResults {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) : List Bool :=
   alts.map λ A =>
-    let closest := closestWorlds closer domain w (domain.filter A)
-    closest.isEmpty || closest.all C
+    decide (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter (fun w => A w = true)),
+      C w' = true)
 
 
 -- ============================================================
@@ -90,33 +91,32 @@ def altConditionalResults {W : Type*} [DecidableEq W]
 
     This is `dist` applied to per-alternative conditional results,
     making the structural parallel with plural DIST explicit. -/
-def homogeneityEval {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+def homogeneityEval {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) : Truth3 :=
-  dist (altConditionalResults closer domain alts C w)
+  dist (altConditionalResults sim alts C w)
 
 /-- **SDA reading**: universal resolution of DIST_π (conjunction).
     "if A or B, C" is true iff BOTH (if A, C) and (if B, C). -/
-def sdaEval {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+def sdaEval {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) : Bool :=
-  (altConditionalResults closer domain alts C w).all id
+  (altConditionalResults sim alts C w).all id
 
 /-- **DCR reading**: existential resolution of DIST_π (disjunction).
     "if A or B, C" is true iff EITHER (if A, C) or (if B, C). -/
-def dcrEval {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+def dcrEval {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) : Bool :=
-  (altConditionalResults closer domain alts C w).any id
+  (altConditionalResults sim alts C w).any id
 
 /-- Lewis semantics: Boolean disjunction, not alternative-generating.
     "if A or B, C" evaluates min_w(A ∪ B) against C. -/
-def lewisDAC {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+def lewisDAC {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (A B C : W → Bool) (w : W) : Bool :=
-  let disj := λ v => A v || B v
-  let closest := closestWorlds closer domain w (domain.filter disj)
-  closest.isEmpty || closest.all C
+  decide (∀ w' ∈ sim.closestWorlds w
+    (Finset.univ.filter (fun v => (A v || B v) = true)), C w' = true)
 
 
 -- ============================================================
@@ -124,21 +124,21 @@ def lewisDAC {W : Type*} [DecidableEq W]
 -- ============================================================
 
 /-- DIST_π for conditionals = generic `dist` on per-alternative results. -/
-theorem homogeneityEval_eq_dist {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+theorem homogeneityEval_eq_dist {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) :
-    homogeneityEval closer domain alts C w =
-    dist (altConditionalResults closer domain alts C w) := rfl
+    homogeneityEval sim alts C w =
+    dist (altConditionalResults sim alts C w) := rfl
 
 /-- SDA = homogeneity resolving to TRUE. The universal (SDA) reading
     is exactly the case where the truth-value gap does not arise. -/
-theorem sda_is_universal_homogeneity {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+theorem sda_is_universal_homogeneity {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W) :
-    sdaEval closer domain alts C w =
-    (homogeneityEval closer domain alts C w == .true) := by
+    sdaEval sim alts C w =
+    (homogeneityEval sim alts C w == .true) := by
   unfold sdaEval homogeneityEval dist
-  generalize altConditionalResults closer domain alts C w = rs
+  generalize altConditionalResults sim alts C w = rs
   cases rs.all id <;> cases rs.all (!·) <;> rfl
 
 /-- De Morgan for Bool lists: `any id` ↔ `¬ all not`. -/
@@ -159,20 +159,20 @@ private theorem any_id_eq_not_all_not : ∀ (rs : List Bool),
 
     Dual of `sda_is_universal_homogeneity`. Requires non-empty alternatives
     (for `[] : List Bool`, `any id = false` but `dist [] = .true`). -/
-theorem dcr_is_existential_homogeneity {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+theorem dcr_is_existential_homogeneity {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (alts : List (W → Bool)) (C : W → Bool) (w : W)
     (h : alts ≠ []) :
-    dcrEval closer domain alts C w =
-    !(homogeneityEval closer domain alts C w == .false) := by
+    dcrEval sim alts C w =
+    !(homogeneityEval sim alts C w == .false) := by
   unfold dcrEval homogeneityEval dist
   rw [any_id_eq_not_all_not]
-  have hne : (altConditionalResults closer domain alts C w) ≠ [] := by
+  have hne : (altConditionalResults sim alts C w) ≠ [] := by
     unfold altConditionalResults
     cases alts with
     | nil => exact absurd rfl h
     | cons _ _ => exact List.cons_ne_nil _ _
-  generalize altConditionalResults closer domain alts C w = rs at hne
+  generalize altConditionalResults sim alts C w = rs at hne
   cases hid : rs.all id
   · cases rs.all (!·) <;> rfl
   · -- all id = true → all (!·) = false for non-empty rs
@@ -211,33 +211,36 @@ section Spain
 private inductive SpainW where | actual | axis | allies
   deriving Repr, DecidableEq
 
-private def spainCloser : SpainW → SpainW → SpainW → Bool
-  | _, w₁, w₂ => w₁ == w₂ || (w₁ == .axis && w₂ == .allies)
+private instance : Fintype SpainW where
+  elems := {.actual, .axis, .allies}
+  complete x := by cases x <;> simp
 
-private def spainDomain : List SpainW := [.actual, .axis, .allies]
+private def spainSim : SimilarityOrdering SpainW := .ofBool
+  (fun _ w₁ w₂ => w₁ == w₂ || (w₁ == .axis && w₂ == .allies))
+  (by decide) (by decide)
 private def fightAxis : SpainW → Bool | .axis => true | _ => false
 private def fightAllies : SpainW → Bool | .allies => true | _ => false
 
 /-- With DIST_π, SDA fails: the Allies simplification is false. -/
 theorem spain_sda_fails :
-    sdaEval spainCloser spainDomain [fightAxis, fightAllies]
+    sdaEval spainSim [fightAxis, fightAllies]
       fightAxis .actual = false := by native_decide
 
 /-- Homogeneity evaluation returns GAP (mixed results). -/
 theorem spain_homogeneity_gap :
-    homogeneityEval spainCloser spainDomain [fightAxis, fightAllies]
+    homogeneityEval spainSim [fightAxis, fightAllies]
       fightAxis .actual = .gap := by native_decide
 
 /-- Without DIST_π, Lewis's disjunctive closure gives TRUE: the closest
     (Axis ∨ Allies)-world is the Axis-world, which satisfies C. -/
 theorem spain_lewis_true :
-    lewisDAC spainCloser spainDomain fightAxis fightAllies
+    lewisDAC spainSim fightAxis fightAllies
       fightAxis .actual = true := by native_decide
 
 /-- DCR reading gives TRUE: at least one alternative succeeds
     (the Axis simplification is true). -/
 theorem spain_dcr_true :
-    dcrEval spainCloser spainDomain [fightAxis, fightAllies]
+    dcrEval spainSim [fightAxis, fightAllies]
       fightAxis .actual = true := by native_decide
 
 /-- **Failure of Antecedent Strengthening** (Constraint #1, p. 513):
@@ -245,8 +248,8 @@ theorem spain_dcr_true :
     but strengthening the antecedent to just "Allies" (which entails
     "Axis or Allies") reverses the truth value. -/
 theorem antecedent_strengthening_fails :
-    lewisDAC spainCloser spainDomain fightAxis fightAllies fightAxis .actual = true ∧
-    sdaEval spainCloser spainDomain [fightAllies] fightAxis .actual = false :=
+    lewisDAC spainSim fightAxis fightAllies fightAxis .actual = true ∧
+    sdaEval spainSim [fightAllies] fightAxis .actual = false :=
   ⟨by native_decide, by native_decide⟩
 
 end Spain
@@ -274,14 +277,16 @@ section Hyperintensional
 private inductive PartyW where | actual | annaOnly | both | ottoOnly
   deriving Repr, DecidableEq
 
-/-- annaOnly is closest to actual; both is next. -/
-private def partyCloser : PartyW → PartyW → PartyW → Bool
-  | _, w₁, w₂ => w₁ == w₂ ||
-    (w₁ == .annaOnly && w₂ != .actual) ||
-    (w₁ == .both && w₂ == .ottoOnly)
+private instance : Fintype PartyW where
+  elems := {.actual, .annaOnly, .both, .ottoOnly}
+  complete x := by cases x <;> simp
 
-private def partyDomain : List PartyW :=
-  [.actual, .annaOnly, .both, .ottoOnly]
+/-- annaOnly is closest to actual; both is next. -/
+private def partySim : SimilarityOrdering PartyW := .ofBool
+  (fun _ w₁ w₂ => w₁ == w₂ ||
+    (w₁ == .annaOnly && w₂ != .actual) ||
+    (w₁ == .both && w₂ == .ottoOnly))
+  (by decide) (by decide)
 private def annaCame : PartyW → Bool
   | .annaOnly => true | .both => true | _ => false
 private def ottoAndAnnaCame : PartyW → Bool
@@ -298,13 +303,13 @@ theorem antecedents_equivalent :
 /-- Simple antecedent [annaCame]: TRUE.
     Closest annaCame-world is annaOnly; the party is fun there. -/
 theorem simple_antecedent_true :
-    sdaEval partyCloser partyDomain [annaCame] partyFun .actual = true := by
+    sdaEval partySim [annaCame] partyFun .actual = true := by
   native_decide
 
 /-- Disjunctive antecedent [annaCame, ottoAndAnnaCame]: FALSE.
     Closest ottoAndAnnaCame-world is both; the party is not fun there. -/
 theorem disjunctive_antecedent_false :
-    sdaEval partyCloser partyDomain [annaCame, ottoAndAnnaCame]
+    sdaEval partySim [annaCame, ottoAndAnnaCame]
       partyFun .actual = false := by native_decide
 
 /-- **Hyperintensionality**: logically equivalent antecedents with
@@ -312,8 +317,8 @@ theorem disjunctive_antecedent_false :
     This is **Failure of SLE** (Constraint #3, p. 514). -/
 theorem hyperintensional :
     (∀ w : PartyW, annaCame w = (annaCame w || ottoAndAnnaCame w)) ∧
-    sdaEval partyCloser partyDomain [annaCame] partyFun .actual ≠
-    sdaEval partyCloser partyDomain [annaCame, ottoAndAnnaCame]
+    sdaEval partySim [annaCame] partyFun .actual ≠
+    sdaEval partySim [annaCame, ottoAndAnnaCame]
       partyFun .actual :=
   ⟨antecedents_equivalent, by native_decide⟩
 
@@ -321,8 +326,8 @@ theorem hyperintensional :
     @cite{santorio-2018} (p. 514). Alias for `hyperintensional`. -/
 theorem sle_fails :
     (∀ w : PartyW, annaCame w = (annaCame w || ottoAndAnnaCame w)) ∧
-    sdaEval partyCloser partyDomain [annaCame] partyFun .actual ≠
-    sdaEval partyCloser partyDomain [annaCame, ottoAndAnnaCame]
+    sdaEval partySim [annaCame] partyFun .actual ≠
+    sdaEval partySim [annaCame, ottoAndAnnaCame]
       partyFun .actual := hyperintensional
 
 end Hyperintensional
@@ -363,24 +368,23 @@ Section 9 below (`stability_exclusion_duality`, `ie_from_stability`).
 
 section Stability
 
-/-- Satisfiability: some world in the domain makes all propositions true. -/
-def satisfiable {W : Type} (domain : List W)
-    (props : List (W → Bool)) : Bool :=
-  domain.any (fun w => props.all (fun p => p w))
+/-- Satisfiability: some world makes all propositions true. -/
+def satisfiable {W : Type*} [Fintype W] (props : List (W → Bool)) : Bool :=
+  decide (∃ w : W, (props.all (fun p => p w)) = true)
 
 /-- Stability (p. 540): a subset σ (given by indices into `alts`) is stable
     w.r.t. ALT_S iff σ together with the negation of every non-member
     alternative is satisfiable.
 
     σ ⊆ ALT_S is stable iff σ ∪ (ALT_S \ σ)⁻ ⊬ ⊥ -/
-def isStable {W : Type} (domain : List W)
+def isStable {W : Type*} [Fintype W]
     (alts : List (W → Bool)) (σ : List Nat) : Bool :=
   let inσ := σ.filterMap (fun i => alts[i]?)
   let complement := (List.range alts.length).filter (fun i => !σ.contains i)
   let complementProps := complement.filterMap (fun i => alts[i]?)
   let negComplement : List (W → Bool) :=
     complementProps.map (fun (p : W → Bool) => fun (w : W) => !p w)
-  satisfiable domain (inσ ++ negComplement)
+  satisfiable (inσ ++ negComplement)
 
 /-- All sublists of a list (the power set). Used by both the stability
     algorithm (Santorio) and innocent exclusion (Fox). -/
@@ -390,16 +394,16 @@ def sublists {α : Type} : List α → List (List α)
 
 /-- Minimal stability (p. 540): non-empty, stable, and no non-empty proper
     subset is stable. -/
-def isMinimalStable {W : Type} (domain : List W)
+def isMinimalStable {W : Type*} [Fintype W]
     (alts : List (W → Bool)) (σ : List Nat) : Bool :=
   σ.length > 0 &&
-  isStable domain alts σ &&
+  isStable alts σ &&
   (sublists σ).all (fun τ =>
-    τ.length == 0 || τ.length == σ.length || !isStable domain alts τ)
+    τ.length == 0 || τ.length == σ.length || !isStable alts τ)
 
 /-- Conjunctive closure: the conjunction of all propositions at given indices.
     ⋀σ = λw. ∀i ∈ σ, alts[i](w) = true -/
-def conjunctiveClosure {W : Type}
+def conjunctiveClosure {W : Type*}
     (alts : List (W → Bool)) (σ : List Nat) : W → Bool :=
   fun w => (σ.filterMap (fun i => alts[i]?)).all (fun p => p w)
 
@@ -418,9 +422,9 @@ def IsTruthmaker {W : Type*} (p S : W → Bool) : Prop :=
 /-- Full truthmaker definition (p. 540): σ witnesses that its conjunctive
     closure is a truthmaker of S iff (i) σ is a minimal stable subset of
     ALT_S, and (ii) ⋀σ entails S. -/
-def IsTruthmakerOf {W : Type} (domain : List W)
+def IsTruthmakerOf {W : Type*} [Fintype W]
     (alts : List (W → Bool)) (S : W → Bool) (σ : List Nat) : Prop :=
-  isMinimalStable domain alts σ = true ∧
+  isMinimalStable alts σ = true ∧
   IsTruthmaker (conjunctiveClosure alts σ) S
 
 /-- Each disjunct is a truthmaker of the disjunction. -/
@@ -461,7 +465,9 @@ private inductive OAWorld where
   | ottoOnly | annaOnly | both | neither
   deriving Repr, DecidableEq
 
-private def oaDomain : List OAWorld := [.ottoOnly, .annaOnly, .both, .neither]
+private instance : Fintype OAWorld where
+  elems := {.ottoOnly, .annaOnly, .both, .neither}
+  complete x := by cases x <;> simp
 
 private def ottoWent : OAWorld → Bool
   | .ottoOnly => true | .both => true | _ => false
@@ -481,31 +487,31 @@ private def oaAlts : List (OAWorld → Bool) :=
 /-- {O∨A} alone is NOT stable (p. 536): no world satisfies
     O∨A ∧ ¬O ∧ ¬A ∧ ¬(O∧A). -/
 theorem oa_singleton_not_stable :
-    isStable oaDomain oaAlts [0] = false := by native_decide
+    isStable oaAlts [0] = false := by native_decide
 
 /-- {O∨A, O} IS stable (witness: ottoOnly satisfies
     O∨A ∧ O ∧ ¬A ∧ ¬(O∧A)). -/
 theorem oa_otto_stable :
-    isStable oaDomain oaAlts [0, 1] = true := by native_decide
+    isStable oaAlts [0, 1] = true := by native_decide
 
 /-- {O∨A, A} IS stable (witness: annaOnly). -/
 theorem oa_anna_stable :
-    isStable oaDomain oaAlts [0, 2] = true := by native_decide
+    isStable oaAlts [0, 2] = true := by native_decide
 
 /-- {O∨A, O∧A} is NOT stable: O∧A implies O∨A, but ¬O ∧ ¬A
     contradicts O∧A. -/
 theorem oa_conj_not_stable :
-    isStable oaDomain oaAlts [0, 3] = false := by native_decide
+    isStable oaAlts [0, 3] = false := by native_decide
 
 -- ── Minimality checks ─────────────────────────────────────────
 
 /-- {O∨A, O} is MINIMAL stable: neither {O∨A} nor {O} alone is stable. -/
 theorem oa_otto_minimal :
-    isMinimalStable oaDomain oaAlts [0, 1] = true := by native_decide
+    isMinimalStable oaAlts [0, 1] = true := by native_decide
 
 /-- {O∨A, A} is MINIMAL stable. -/
 theorem oa_anna_minimal :
-    isMinimalStable oaDomain oaAlts [0, 2] = true := by native_decide
+    isMinimalStable oaAlts [0, 2] = true := by native_decide
 
 -- ── Truthmaker identification ─────────────────────────────────
 
@@ -523,8 +529,8 @@ theorem oa_anna_closure_eq :
 /-- O is a truthmaker of O∨A via the minimal stable subset {O∨A, O}:
     both conditions of the full definition (p. 540) are satisfied. -/
 theorem oa_otto_is_truthmaker :
-    IsTruthmakerOf oaDomain oaAlts ottoOrAnna [0, 1] := by
-  constructor
+    IsTruthmakerOf oaAlts ottoOrAnna [0, 1] := by
+  unfold IsTruthmakerOf; constructor
   · native_decide
   · intro w h
     have := oa_otto_closure_eq w
@@ -533,8 +539,8 @@ theorem oa_otto_is_truthmaker :
 
 /-- A is a truthmaker of O∨A via {O∨A, A}. -/
 theorem oa_anna_is_truthmaker :
-    IsTruthmakerOf oaDomain oaAlts ottoOrAnna [0, 2] := by
-  constructor
+    IsTruthmakerOf oaAlts ottoOrAnna [0, 2] := by
+  unfold IsTruthmakerOf; constructor
   · native_decide
   · intro w h
     have := oa_anna_closure_eq w
@@ -576,6 +582,10 @@ open Exhaustification.InnocentExclusion hiding sublists
 -- Both algorithms are applied to the same data (InnocentExclusion's public
 -- PQWorld/disjAlts) to verify the duality computationally.
 
+private instance : Fintype PQWorld where
+  elems := {.pOnly, .qOnly, .both, .neither}
+  complete x := by cases x <;> simp
+
 /-- InnocentExclusion's disjunction alternatives, used as input for Santorio's
     stability algorithm. -/
 private def dualAlts : List (PQWorld → Bool) := disjAlts
@@ -586,7 +596,7 @@ private def dualAlts : List (PQWorld → Bool) := disjAlts
     Each includes the prejacent (index 0) plus one disjunct. -/
 theorem disj_minStable_sets :
     (sublists (List.range dualAlts.length)).filter
-      (isMinimalStable pqDomain dualAlts) = [[0, 2], [0, 1]] := by
+      (isMinimalStable dualAlts) = [[0, 2], [0, 1]] := by
   native_decide
 
 -- ── Fox's exclusions on the same data ──────────────────────────

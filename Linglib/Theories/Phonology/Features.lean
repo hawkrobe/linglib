@@ -14,7 +14,7 @@ and syllable analyses.
 @cite{hayes-2009}
 -/
 
-namespace Theories.Phonology
+namespace Phonology
 
 -- ============================================================================
 -- § 1: Feature Inventory
@@ -173,4 +173,4 @@ instance : DecidableEq Segment := fun s1 s2 =>
     subst heq
     exact h (List.all_eq_true.mpr fun f _ => beq_self_eq_true (s1.spec f)))
 
-end Theories.Phonology
+end Phonology

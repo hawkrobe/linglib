@@ -53,7 +53,7 @@ predictions against @cite{carstens-2026}'s empirical data.
 namespace Phenomena.Agreement.Studies.Carstens2026
 
 open Fragments.Bantu
-open Theories.Syntax.Minimalism.Agreement.GenderResolution
+open Minimalism.Agreement.GenderResolution
 open _root_.Minimalism (Interpretability)
 
 -- ============================================================================
@@ -680,7 +680,7 @@ theorem two_grammars_differ_diviner :
 -- § 14: Bridge to Unified Coordinate Resolution
 -- ============================================================================
 
-open Theories.Syntax.Minimalism.Agreement.CoordinateResolution
+open Minimalism.Agreement.CoordinateResolution
 
 /-! ### Bantu–CoordinateResolution bridge
 

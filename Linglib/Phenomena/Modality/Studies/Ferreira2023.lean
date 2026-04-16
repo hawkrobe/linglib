@@ -100,7 +100,7 @@ theorem xMarking_preserves_force (m : PortugueseModal) :
 /-- *ter que* p ⊨ *dever* p: strong necessity entails weak.
     Follows from `Directive.strong_entails_weak` — the Xg-refined best worlds
     are a subset of the unrefined best worlds. -/
-theorem terQue_entails_dever (f : ModalBase) (g : OrderingSource)
+theorem terQue_entails_dever (f : ModalBase World) (g : OrderingSource World)
     (p : BProp World) (w : World)
     (h : sn f g p w) :
     snXg f g p w :=
@@ -108,24 +108,29 @@ theorem terQue_entails_dever (f : ModalBase) (g : OrderingSource)
 
 /-- *dever* p ⊭ *ter que* p: weak necessity does not entail strong. -/
 theorem dever_not_entails_terQue :
-    ¬(∀ (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
-        snXg f g p w → sn f g p w) :=
-  snXg_not_entails_sn
+    ¬(∀ (f : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World),
+        snXg f g p w → sn f g p w) := by
+  intro h
+  have := h
+    (fun _ => [fun w => w == .w0 || w == .w1])
+    (emptyBackground (W := World))
+    (fun w => w == .w0)
+    .w0
+  exact absurd (this (by decide)) (by decide)
 
 /-- *dever* p ⊨ *poder* p: weak necessity entails possibility, completing
     the ascending scale *poder* p < *dever* p < *ter que* p.
     Requires seriality (nonempty best worlds) — the D axiom. -/
-theorem dever_entails_poder (f : ModalBase) (g : OrderingSource)
+theorem dever_entails_poder (f : ModalBase World) (g : OrderingSource World)
     (p : BProp World) (w : World)
-    (hSerial : (bestWorlds f (xMarkOrdering g p) w).length > 0)
+    (hSerial : (bestWorlds f (xMarkOrdering g p) w).card > 0)
     (h : snXg f g p w) :
     possibility f (xMarkOrdering g p) p w := by
   unfold snXg at h
   rw [necessity_iff_all] at h
   rw [possibility_iff_any]
-  rw [List.any_eq_true]
-  obtain ⟨w', hw'⟩ := List.length_pos_iff_exists_mem.mp hSerial
-  exact ⟨w', hw', List.all_eq_true.mp h w' hw'⟩
+  obtain ⟨w', hw'⟩ := Finset.card_pos.mp hSerial
+  exact ⟨w', hw', h w' hw'⟩
 
 /-! ## Consistency judgments (§2) -/
 
@@ -133,7 +138,7 @@ theorem dever_entails_poder (f : ModalBase) (g : OrderingSource)
     the prejacent being false ("Este homem deve ter sido assassinado,
     mas ele pode não ter sido"). -/
 theorem dever_consistent_with_not_p :
-    ∃ (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
+    ∃ (f : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World),
       snXg f g p w ∧ p w = false := by
   -- Model: w0 is actual, p false at w0. Best worlds under refined ordering
   -- satisfy p, so weak necessity holds even though p is false at w0.
@@ -150,8 +155,8 @@ theorem dever_consistent_with_not_p :
     if w ∈ ∩f(w) and all best worlds satisfy p, then w satisfies p
     (by the T axiom). -/
 theorem terQue_inconsistent_with_not_p_realistic
-    (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World)
-    (hReal : ∀ w, (accessibleWorlds f w) = [w])
+    (f : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World)
+    (hReal : ∀ w, (accessibleWorlds f w) = {w})
     (hSN : sn f g p w) :
     p w = true :=
   totally_realistic_gives_T f g hReal p w hSN
@@ -167,10 +172,27 @@ theorem terQue_inconsistent_with_not_p_realistic
     applied to the refined ordering: ∗-revision only adds p-worlds, which
     cannot worsen the truth of the prejacent among best worlds. -/
 theorem devia_not_entails_deve :
-    ¬(∀ (f f' : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
+    ¬(∀ (f f' : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World),
         IsStarRevision f f' p →
-        snXfg f' g p w → snXg f g p w) :=
-  xMarked_unmarked_independent
+        snXfg f' g p w → snXg f g p w) := by
+  intro h
+  have hRev : IsStarRevision (W := World)
+      (fun _ => [fun w => w == .w1])
+      (fun _ => [fun w => w == .w0 || w == .w1])
+      (fun w => w == .w0) := by
+    constructor
+    · intro w w' hw'
+      simp only [accessibleWorlds, propIntersection, Finset.mem_filter, Finset.mem_univ,
+                  true_and, List.all_cons, List.all_nil, Bool.and_true] at hw' ⊢
+      cases w' <;> simp_all
+    · intro w w' hw' hnew
+      simp only [accessibleWorlds, propIntersection, Finset.mem_filter, Finset.mem_univ,
+                  true_and, List.all_cons, List.all_nil, Bool.and_true] at hw' hnew
+      cases w' <;> simp_all
+  exact absurd
+    (h _ _
+      (fun _ => [fun w => w == .w1]) _ .w0 hRev (by decide))
+    (by decide)
 
 /-! ## Square instantiation: Portuguese occupies all four vertices -/
 
@@ -183,11 +205,11 @@ theorem devia_not_entails_deve :
     - `snXfg` = *devia* (weak necessity, X-marked modal base) -/
 structure PortugueseSquare where
   /-- Modal base (epistemic/circumstantial) -/
-  f : ModalBase
+  f : ModalBase World
   /-- ∗-revised modal base -/
-  fStar : ModalBase
+  fStar : ModalBase World
   /-- Ordering source -/
-  g : OrderingSource
+  g : OrderingSource World
   /-- Prejacent -/
   p : BProp World
   /-- fStar is a valid ∗-revision of f for p -/

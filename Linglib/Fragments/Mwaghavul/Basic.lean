@@ -39,9 +39,9 @@ this pattern. Data from @cite{akinbo-fwangwar-2026} and
 
 namespace Fragments.Mwaghavul
 
-open Theories.Phonology.Autosegmental.RegisterTier (ToneFeature TBUKind
+open Phonology.Autosegmental.RegisterTier (ToneFeature TBUKind
   WordProsodicType)
-open Theories.Phonology.Autosegmental.GrammaticalTone (TBU Spec ValuationWindow)
+open Phonology.Autosegmental.GrammaticalTone (TBU Spec ValuationWindow)
 
 -- ============================================================================
 -- S 1: Phonological Inventory
@@ -148,7 +148,7 @@ def deriveVerb (base : Ideophone) : List ToneFeature :=
     | .m  => verbM
     | .mh => verbMH
   let host := base.tones.map λ t => mkTSyl base.form t
-  (Theories.Phonology.Autosegmental.GrammaticalTone.tonalOverwrite host spec).map TBU.tone
+  (Phonology.Autosegmental.GrammaticalTone.tonalOverwrite host spec).map TBU.tone
 
 -- M-tone verbaliser: wùlàʃ [L L] → wūlāʃ [M M]
 theorem wuulash_verb : deriveVerb wuulash = [.M, .M] := by native_decide
@@ -176,7 +176,7 @@ theorem jalpat_verb : deriveVerb jalpat = [.M, .H] := by native_decide
 theorem m_verb_uniform (i : Ideophone) (h : i.verbType = .m) :
     deriveVerb i = i.tones.map (λ _ => ToneFeature.M) := by
   simp [deriveVerb, h, verbM,
-    Theories.Phonology.Autosegmental.GrammaticalTone.tonalOverwrite,
+    Phonology.Autosegmental.GrammaticalTone.tonalOverwrite,
     List.map_map]
 
 /-- M-H derived verbs have M on nonfinal TBUs and H on the final TBU.
@@ -187,6 +187,6 @@ theorem mh_verb_bisyllabic_pattern (i : Ideophone)
   simp [deriveVerb, h, verbMH]
   match i, h2 with
   | ⟨_, _, [_, _], _⟩, _ =>
-    simp [Theories.Phonology.Autosegmental.GrammaticalTone.tonalOverwrite]
+    simp [Phonology.Autosegmental.GrammaticalTone.tonalOverwrite]
 
 end Fragments.Mwaghavul

@@ -18,7 +18,7 @@ for decidable computation via `native_decide`.
   @cite{fox-2018}'s restated Ans operator (presupposition of (38))
 -/
 
-namespace Theories.Semantics.Questions.Exhaustivity
+namespace Semantics.Questions.Exhaustivity
 
 /-- All sublists (power set) of a list, preserving order.
 Used to enumerate candidate MC-sets of cell indices. -/
@@ -131,7 +131,7 @@ def foxAns {W : Type _} (cells : List (W → Bool))
   | [j] =>
     let cellId := getCell cells j
     (List.range cells.length).filter (λ i =>
-      getCell cells i w && propEntails (getCell cells i) cellId worlds) |>.length
+      getCell cells i w && entails (getCell cells i) cellId worlds) |>.length
   | _ => 0
 
 /-- Schwarzschild's partition test: do the exhaustified
@@ -147,4 +147,4 @@ def foxPartition {W : Type _} (cells : List (W → Bool))
     let n := (List.range cells.length).filter (λ i => foxExh cells i worlds w) |>.length
     n == 1)
 
-end Theories.Semantics.Questions.Exhaustivity
+end Semantics.Questions.Exhaustivity

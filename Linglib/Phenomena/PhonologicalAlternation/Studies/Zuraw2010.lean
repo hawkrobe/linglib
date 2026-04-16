@@ -50,8 +50,7 @@ labial place (p: 253/263 vs b: 177/277).
 
 namespace Phenomena.PhonologicalAlternation.Studies.Zuraw2010
 
-open Core.OT Theories.Phonology.Constraints
-open Core.ConstraintEvaluation (LexLT)
+open Core.OT Phonology.Constraints
 open Fragments.Tagalog.Phonology (StemC SubSt NSCand dictRate_p dictRate_b dict_voicing_labial)
 
 -- ============================================================================
@@ -141,7 +140,7 @@ structure SubPattern where
 
 /-- Determine whether YES wins over NO for a given consonant under a ranking. -/
 def subWins (ranking : List (NamedConstraint NSCand)) (c : StemC) : Bool :=
-  decide (LexLT (buildProfile ranking (c, .yes)) (buildProfile ranking (c, .no)))
+  decide (mkProfile ranking (c, .yes) < mkProfile ranking (c, .no))
 
 /-- Extract the substitution pattern for a given ranking. -/
 def patternOf (ranking : List (NamedConstraint NSCand)) : SubPattern where

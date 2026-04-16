@@ -11,12 +11,12 @@ If refuted, replace the body with `False` and add a counterexample comment.
 -/
 
 import Linglib.Core.IntensionalLogic.Rigidity
-import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.IntensionalLogic.RestrictedModality
 import Mathlib.Data.Rat.Defs
 
 namespace Core.Conjectures
 
-open Core.ModalLogic (AgentAccessRel)
+open Core.IntensionalLogic.RestrictedModality (BAgentAccessRel)
 open Core (Intension)
 open Core.Intension (IsRigid)
 
@@ -33,13 +33,13 @@ accessibility — but should be two views of the same structure.
 /-- Accessibility = non-zero belief: w' is accessible from w for agent x
 iff x assigns positive credence to w' given w. -/
 def accessibility_iff_positive_credence (W E : Type*)
-    (R : AgentAccessRel W E) (credence : E → W → W → ℚ) : Prop :=
+    (R : BAgentAccessRel W E) (credence : E → W → W → ℚ) : Prop :=
   ∀ x w w', R x w w' = true ↔ credence x w w' > 0
 
 /-- □_x p (agent x believes p) iff P_x(p) = 1.
 Categorical doxastic necessity is the probability-1 limit. -/
 def box_iff_credence_one (W E : Type*)
-    (R : AgentAccessRel W E) (credence : E → W → W → ℚ) : Prop :=
+    (R : BAgentAccessRel W E) (credence : E → W → W → ℚ) : Prop :=
   ∀ x w (p : BProp W),
     (∀ w', R x w w' = true → p w' = true) ↔
     (∀ w', credence x w w' > 0 → p w' = true)

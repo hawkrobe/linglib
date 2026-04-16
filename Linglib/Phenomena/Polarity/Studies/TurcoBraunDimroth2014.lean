@@ -50,7 +50,7 @@ namespace Phenomena.Polarity.Studies.TurcoBraunDimroth2014
 open Core.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry)
 open Fragments.Dutch.Particles (wel)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
-open Theories.Semantics.Focus.PolarityLevel (PolarityMarkingLevel strategyLevel)
+open Semantics.Focus.PolarityLevel (PolarityMarkingLevel strategyLevel)
 
 /-! ## Types -/
 

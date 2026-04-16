@@ -22,7 +22,7 @@ Two orthogonal classifications of expletive negation (EN):
 These types are framework-agnostic: they classify EN constructions by
 their empirical properties without committing to a syntactic analysis.
 The syntactic derivation (from merge position in the extended projection)
-lives in `Theories.Syntax.Minimalism.Core.NegScope`.
+lives in `Minimalism.Core.NegScope`.
 -/
 
 namespace Core

@@ -1,4 +1,3 @@
-import Linglib.Core.Logic.ModalLogic
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 
 /-!
@@ -433,18 +432,20 @@ Variable-force modals (e.g., Gitksan ima'a) produce
 
 open Semantics.Modality.Kratzer (KratzerParams)
 
+variable {W : Type*} [DecidableEq W] [Fintype W]
+
 /-- A flavor assignment maps each typological `ModalFlavor` to a
     Kratzer parameterization (modal base + ordering source). -/
-structure FlavorAssignment where
-  assign : ModalFlavor → KratzerParams
+structure FlavorAssignment (W : Type*) [DecidableEq W] [Fintype W] where
+  assign : ModalFlavor → KratzerParams W
 
 /-- Canonical assignment from the standard Kratzer flavor structures. -/
 def canonicalAssignment
-    (epist : Semantics.Modality.Kratzer.EpistemicFlavor)
-    (deont : Semantics.Modality.Kratzer.DeonticFlavor)
-    (boul : Semantics.Modality.Kratzer.BouleticFlavor)
-    (teleo : Semantics.Modality.Kratzer.TeleologicalFlavor) :
-    FlavorAssignment where
+    (epist : Semantics.Modality.Kratzer.EpistemicFlavor W)
+    (deont : Semantics.Modality.Kratzer.DeonticFlavor W)
+    (boul : Semantics.Modality.Kratzer.BouleticFlavor W)
+    (teleo : Semantics.Modality.Kratzer.TeleologicalFlavor W) :
+    FlavorAssignment W where
   assign
     | .epistemic => epist.toKratzerParams
     | .deontic => deont.toKratzerParams

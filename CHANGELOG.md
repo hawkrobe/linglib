@@ -1,5 +1,259 @@
 # Changelog
 
+## [0.229.817] - 2026-04-16
+
+### Added
+- **Phenomena/Questions/Studies/Elliott2017.lean**: complete overhaul formalizing @cite{elliott-klinedinst-sudo-uegaki-2017} "Predicates of Relevance and Theories of Question Embedding" — `IsKarttunenReducible` (Karttunen postulate), `karttunen_predicts_vacuous_falsity` (key prediction), `karttunen_implies_witness_nonempty` (strictly stronger than C-distributivity), `idQ` propositional ID type-shift λp.{p}, `cDist_agrees_on_idQ` (proposition-to-question agreement), `elliottCareSem` with explicit existence + belief presuppositions, `elliottCare_not_karttunen_reducible`, `care_is_responsive`/`matter_is_responsive`, `PoRJudgement` structure with `careJudgement`/`matterJudgement` instances, bridge to `Semantics.Attitudes.EmbeddingConstraints.careSem`
+- **Phenomena/Questions/Embedding.lean**: `care_d`, `matter_d` predicates of relevance — extends `allEmbeddingData` from 6 to 8 entries; `quasi_sub_implies_sub` and `quotation_implies_quasi_sub` rcases extended accordingly
+- **Theories/Semantics/Composition/TypeShifting.lean**: `propIdent` — propositional analogue of Partee 1987 IDENT (λp.λq. p = q), used by Elliott's eq. 10 ID type-shift
+- **Theories/Semantics/Attitudes/EmbeddingConstraints.lean**: `-- UNVERIFIED:` location markers flagging Roelofsen-Uegaki equation citations (eqs 33, 24, 23, 32, 35) for human review
+- **blog/data/references.bib**: `lahiri-2002` (Questions and Answers in Embedded Contexts, OUP) — minimal entry per "leave blank rather than guess" rule
+
+### Changed
+- **Phenomena/Questions/Studies/Dayal2025.lean**: extend `classifyVerb` with `care`/`matter` → `.responsive`; rcases extended to 8 patterns to match new `allEmbeddingData` length
+- **Phenomena/Questions/Studies/Uegaki2022.lean**, **Xiang2022.lean**, **VanRooy2003.lean**: namespace migration follow-ups (LeftPeriphery → Interfaces.SyntaxSemantics.LeftPeriphery; Exhaustivity → Semantics.Questions.Exhaustivity)
+
+## [0.229.816] - 2026-04-16
+
+### Added
+- **Theories/FormalLanguageTheory/PumpingLemma.lean**: spine infrastructure for the `pumping_from_tall_tree` proof — `CFGTree.IsSpine` predicate (consecutive elements parent-child related), `spine_length_le_height_succ` (length bound), `exists_max_height` (find tallest child in a list); detailed proof outline added to `pumping_from_tall_tree` docstring covering spine extraction, pigeonhole, yield decomposition, and pumping via tree replacement
+
+## [0.229.815] - 2026-04-16
+
+### Changed
+- **Theories/FormalLanguageTheory/PumpingLemma.lean**: close two of three remaining sorrys in `cfl_pumping_lemma` proof structure — `yield_length_le_of_height` (well-founded recursion on tree size; helpers `height_le_heightMax`, `le_foldl_max_*`, `maxBranch_ge_output`, `yieldList_le`) and `exists_valid_tree` (forest-based induction via `Relation.ReflTransGen.head_induction_on`; helpers `Rewrites.at_position`/`append_split`, `Produces.append_split`, `Derives.append_split`/`of_terminal`, `forest_exists`); only `pumping_from_tall_tree` remains as documented sorry (requires tree-path infrastructure + pigeonhole + subtree replacement)
+
+## [0.229.814] - 2026-04-16
+
+### Added
+- **Phenomena/Reference/Studies/KwonLee2026.lean**: formalize @cite{kwon-lee-2026} "From null pronouns to full NPs: Exploring accessibility markers in Korean" — `KoreanRefForm` (null *pro* / overt *kyay* / full NP) maps to @cite{ariel-2001}'s `AccessibilityLevel` (zero / unstressedPron / distalDemNP); Exp 3 antecedent-choice data (71% / 43% / 35% subject bias) verifies `accessibility_predicts_subject_bias` and `informativity_predicts_object_bias`; Exp 1 naturalness (`exp1_null_most_natural`, `exp1_overt_fullNP_close`); Exp 2 comprehension asymmetry (`null_alone_context_sensitive`); cross-linguistic `CrossLingProfile` for Italian @cite{carminati-2002} / Spanish @cite{contemori-di-domenico-2021} / Chinese @cite{zhang-kwon-2022} / Korean with `null_dominates_overt_universally` and `italian_widest_spread`; bridges to `KehlerRohde2013` (topichood) and `Ariel2001` (form-function criteria)
+- **Fragments/Korean/Pronouns.lean**: add *kyay* (걔), the colloquial gender-neutral 3sg pronoun primary in spoken Korean (contracted from *ku ai* 'that child'); mark *geu*/*geunyeo*/*geudeul* as `.formal` register (literary forms restricted to written narratives per @cite{kwon-lee-2026} fn. 2); add `gender` annotations (geu = masculine, geunyeo = feminine, kyay = none); `third_person_register_split` and `kyay_gender_neutral` theorems
+- **blog/data/references.bib**: @cite{kwon-lee-2026}, @cite{carminati-2002}, @cite{zhang-kwon-2022}, @cite{contemori-di-domenico-2021}, @cite{kweon-2011}
+
+## [0.229.813] - 2026-04-16
+
+### Added
+- **PullumGazdar1982.lean**: `xy_language_isContextFree`, `dutch_crossSerial_order_isContextFree`, `crossSerial_cf_vs_caseMatching_not_cf` — critical distinction theorem using mathlib's `Language.IsContextFree`
+
+### Changed
+- **Theories/FormalLanguageTheory/PumpingLemma.lean**: migrate to mathlib's `Language α := Set (List α)` — replace `HasPumpingProperty4`/`HasPumpingProperty3` with polymorphic `HasCFLPumpingProperty` over `Language α`; add `anbncndn`/`anbnc` as `Language` values; `anbncndn_not_contextFree`, `anbnc_not_contextFree` via `Language.IsContextFree`; `CFGTree` derivation tree type with `ValidFor` predicate; `cfl_pumping_lemma` proof structure complete (3 sorry'd helper lemmas: tree existence, height-yield bound, pumping decomposition); `StringHom` / `Language.stringMap` (from ClosureProperties)
+- **Shieber1985.lean**: update to use `HasCFLPumpingProperty anbncndn` and `∈ anbncndn`
+- **CCG/Formal/GenerativeCapacity.lean**: update to use `HasCFLPumpingProperty anbncndn` and `∈ anbncndn`
+
+### Removed
+- **Theories/FormalLanguageTheory/ClosureProperties.lean**: deleted — content merged into PumpingLemma.lean; old `Language α := List α → Bool` type alias eliminated (conflicted with mathlib's `Language`)
+
+## [0.229.812] - 2026-04-16
+
+### Added
+- **Phenomena/WordOrder/Studies/PullumGazdar1982.lean**: formalize @cite{gazdar-pullum-1982} "Natural Languages and Context-Free Languages" — Dutch CF grammar (29) using mathlib's `ContextFreeGrammar` with concrete derivation proofs for 2-NP and 3-NP cross-serial strings; xy language CF grammar ({aⁿbᵐ | n ≠ m}); critical distinction theorem: cross-serial word order is CF, order + case-matching is not (connecting to Shieber1985)
+
+### Changed
+- **Phenomena/WordOrder/CrossSerial.lean**: fix imprecise claim that cross-serial dependencies are "beyond CFG power" — qualify that word order alone is CF (@cite{gazdar-pullum-1982} grammar 29); it is order + case agreement that requires MCS (@cite{shieber-1985})
+
+## [0.229.811] - 2026-04-15
+
+### Removed
+- **Core/Logic/ModalLogic.lean**: dissolved entirely — `Core.IntensionalLogic.RestrictedModality` is now the single source of truth for Kripke semantics, frame conditions, correspondence theorems, and the Logic lattice. All 26 consumer files migrated: `AccessRel` → `BAccessRel`, `AgentAccessRel` → `BAgentAccessRel`, `Refl/Serial/Trans/Symm/Eucl` → `BRefl/BSerial/BTrans/BSymm/BEucl`, `universalR/identityR/emptyR` → `universalBR/identityBR/emptyBR`, `Logic.frameConditions` → `Logic.bframeConditions`
+
+## [0.229.810] - 2026-04-15
+
+### Changed
+- **Core/Mereology.lean**: fix gHomogeneous docstring (removed false "→ CUM" claim; noted simplified vs full Deal 2017 definition); rename `atom_gHomogeneous_vacuous` → `atom_gHomogeneous_trivial` with corrected docstring; replace fragile `Rat.not_lt.mpr Rat.le_refl` with `lt_irrefl _`
+- **Core/Definiteness.lean**: replace unverified "Def 508" reference with content-descriptive "§4.3 (anaphoric iota)"
+- **Theories/Semantics/Lexical/Noun/Classifier.lean**: remove redundant `[PartialOrder E]` from `groupClf`/`groupClf_qua` (already provided by `SemilatticeSup`); generalize `clfForNum_qua` to arbitrary base predicate P; add `classifierDenot` dispatch from `ClassifierStrategy` to denotation functions; fix fragile `Rat.not_lt.mpr Rat.le_refl` with `lt_irrefl _`
+- **Theories/Semantics/Lexical/Noun/Kind/Dayal2004.lean**: replace unverified "Def 507"/"Def 508" references with "§4.3"/"§4.3 (anaphoric iota)"; add intensional type-shift denotations (`shiftDown`, `shiftIota`, `shiftIotaAnaphoric`, `shiftExists`) connecting abstract TypeShift enum to Chierchia1998 operators
+- **Theories/Semantics/Definiteness/Basic.lean**: replace unverified "Def 508" reference
+- **Phenomena/Definiteness/Studies/Moroney2021.lean**: derive `shanBlocking` and `shanParams` from `Fragments.Shan.Definiteness` instead of duplicating; add `dpp_scope_below_neg`, FakeMass witness (`isDog_not_gHomogeneous`), `blocking_strategy_correspondence`, `shan_clf_is_atomization`, `demonstrative_adds_spatial_info`
+- **Phenomena/Classifiers/Studies/LittleMoroneyRoyer2022.lean**: import unified Classifier module; add `strategy_dispatch_forNoun` and `clfForNum_agrees_with_local` bridge theorems
+
+### Added
+- **Fragments/Shan/Definiteness.lean**: Shan definiteness fragment — blocking principle, marking parameters, type-shift contexts, demonstrative semantics (`naj`/`nan` with `SpatialRelation` and `demDenotation`/`bareDefinite` connecting to `DefiniteDesc`)
+
+## [0.229.809] - 2026-04-15
+
+### Added
+- **Core/OT/ directory** — new mathlib-style OT infrastructure formalizing @cite{merchant-riggle-2016}:
+  - `Core/OT/Defs.lean`: `ERCVal` ({W, L, e}), `ERC n` (Fin n → ERCVal), `Ranking n` (Equiv.Perm), `dominates`, `ercOfProfiles` bridge from ViolationProfile, `simpleERC`, `ercOfList`
+  - `Core/OT/ERC.lean`: `ERC.satisfiedBy`, `ERCSet.consistent`, `ERCSet.entails` with refl/trans/pointwise properties, `tableauERC` bridge, `simpleERC_satisfiedBy_iff` (fully proved)
+  - `Core/OT/Antimatroid.lean`: `SetSystem` → `AccessibleSetSystem` → `Antimatroid` hierarchy (bundled structures following mathlib `Matroid` pattern), `Antimatroid.Finite` typeclass, `Antimatroid.free` (fully proved), `Antimatroid.trace` (Definition 7), `Antimatroid.RootedCircuit` (Definition 9)
+  - `Core/OT/ERCAntimatroid.lean`: `maximalChain`, `MChain` (Definition 1), `Antimat` (ERC set → Antimatroid), `RCErc_single` (rooted circuit → ERC), `Antimat_entailment` (Theorem 3, fully proved — entailment preserves feasibility)
+
+## [0.229.808] - 2026-04-15
+
+### Added
+- **Hacquard ↔ Condoravdi bridge** (`Hacquard2006.lean`): `toPerspective` maps Hacquard's `TemporalOrientation` to Condoravdi's `Perspective`; `position_determines_modal_base_type` derives that high modals → present perspective + MODAL > ASP (epistemic only via settledness), low modals → past perspective + ASP > MODAL (metaphysical available via domain widening)
+- **B&C 2003 ↔ BranchingTime bridges** (`BeaverCondoravdi2003.lean`): `altSymmetric_iff_symmetric`, `altTransitive_iff_transitive` completing the equivalence set; `histAlt_eq_histEquiv` identifies B&C's `alt(w,t)` with Condoravdi's `histEquiv` equivalence class
+
+## [0.229.807] - 2026-04-15
+
+### Changed
+- **Mathlib-quality polish for Condoravdi 2002 formalization**: replace box-drawing section headers with `/-! ## ... -/` across AT.lean, BranchingTime.lean, Condoravdi2002.lean; add `@[simp]` lemmas for `presC_eq`/`perfC_eq`/`mayC_eq`/`wollC_eq`; add bundled `histEquiv_equivalence'`/`histSetoid'` from `HistoricalProperties`; add `metaphysicalBase`/`metaphysicalBase_antitone` to theory layer; factor `compatible` through `ReferenceDirection` × `TemporalRegion` composition
+
+## [0.229.806] - 2026-04-15
+
+### Added
+- **g-homogeneity** (`Core/Mereology.lean`): `gHomogeneous`, `div_implies_gHomogeneous`, `atom_gHomogeneous_vacuous`, `FakeMass` (CUM ∧ ¬g-homogeneous — fake mass nouns like English "furniture", Shan bare nouns)
+- **Classifier semantics** (`Theories/Semantics/Lexical/Noun/Classifier.lean`): unified module composing `atomize` (CLF-for-N), `QMOD` (CLF-for-NUM), and Link's materialization (group classifiers). `clfForNoun`, `clfForNum`, `groupClf` with QUA theorems.
+
+### Changed
+- **Promote `DefMarkingStrategy` to `Core/Definiteness.lean`**: `DefMarkingStrategy`, `DefMarkingParams`, `deriveStrategy`, `strategyToArticleType`, `strategy_finer_than_articleType` moved from `Phenomena/Definiteness/Studies/Moroney2021.lean` to `Core/Definiteness.lean` for cross-phenomenon reuse
+
+## [0.229.805] - 2026-04-15
+
+### Changed
+- **Generalize Kratzer modality from `World` to `{W : Type*}`**: `ModalBase`, `OrderingSource`, `ConvBackground`, `KratzerParams`, all flavor structures (`EpistemicFlavor`, `DeonticFlavor`, `BouleticFlavor`, `TeleologicalFlavor`) now polymorphic over the world type. `accessibleWorlds`/`bestWorlds` return `Finset W` (was `List World`). `necessity`/`possibility` remain Prop-valued via `boxR`/`diamondR`. Delete `modalFrame` kludge from `Operators.lean`. Add `ModalTheoryBridge` section to `Flavor.lean` for World-specific `KratzerTheory`/`KratzerMinimal`. Fix ~15 downstream files for `List`→`Finset` migration (Restrictor, DegreeCollapse, Ferreira2023, Roberts2023, Izvorski1997, JinKoenig2021, Boylan2023, AghaJeretic2022, AghaJeretic2026, Haspelmath2021, etc.)
+- **Add Gallin's propositional operator hierarchy** to `RestrictedModality.lean`: `PropOp`, `indicialNec`/`indicialPoss` (Kripke-type operators), `IsIndicial` predicate, `s5Nec`/`s5Poss` (IL's S5 operators), monotonicity/distribution theorems
+- **Begin dissolving `Core/Logic/ModalLogic.lean`**: remove dead imports from ~16 files
+
+## [0.229.804] - 2026-04-15
+
+### Changed
+- **`HistoricalProperties` now requires full equivalence relation** (`BranchingTime.lean`): add `WorldHistory.symmetric` and `WorldHistory.transitive`; add `histEquiv_symm`, `histEquiv_trans`, `alternatives_antitone` (historical alternatives shrink over time as set inclusion)
+- **Fix adverb compatibility to be sort-dependent** (`Condoravdi2002.lean`): `compatible` now takes `Dynamicity` parameter — "now" is compatible with stative modals for the present ([1c]) but not eventive ([1a]), matching Condoravdi's actual predictions
+- **Add `counterfactual_widens_domain`** (`Condoravdi2002.lean`): when PERF > MODAL, monotonicity of ≃ ensures the past modal base is a superset of the present one, deriving the counterfactual reading's wider domain of quantification
+
+## [0.229.803] - 2026-04-15
+
+### Added
+- **AT relation** (`Theories/Semantics/Tense/AT.lean`): unified temporal instantiation operator dispatching on eventuality sort — `atEvent` (⊆), `atState` (∘), `at'` dispatch, forward-expansion variants `atForward` for Condoravdi's `[t,_)`, bridge lemmas `prfv_iff_atEvent` / `impf_implies_atState`, monotonicity
+- **Settledness & diversity** (`Theories/Semantics/Tense/BranchingTime.lean`): `histEquiv`, `settled`, `diverse`, `settled_not_diverse` (settledness blocks metaphysical readings), `diverse_of_witnesses`
+- **Condoravdi 2002 formalization** (`Phenomena/Modality/Studies/Condoravdi2002.lean`): `presC`/`perfC`/`mayC`/`wollC` operators, composed readings (epistemic/counterfactual), perspective×orientation table, `perfC_eventive_implies_perfSimple` (bridge to Klein), `modal_over_perf_blocks_metaphysical` (scope–modality correlation), adverb compatibility
+
+## [0.229.802] - 2026-04-15
+
+### Changed
+- **OT API ergonomics: constraint constructors, default nonempty, re-exports**
+  - Promote `mkMark`/`mkMarkGrad` to `Core.OT`; add `mkFaith`/`mkFaithGrad` (new)
+  - Re-export from `Theories.Phonology.Constraints` via `export Core.OT (...)`
+  - Default `h : candidates ≠ [] := by decide` on `mkTableau`, `mkFactorialOptima`, `mkFactorialTypologySize`, `cophonologicalEval`, `evalStratum`
+  - Remove 12 boilerplate `*_nonempty` proofs and their references (Aissen2003, AkinboFwangwar2026, AgentFocus, Erlewine2016, Stojkovic2026, Doubling, Berent2026)
+
+## [0.229.801] - 2026-04-15
+
+### Changed
+- **OT API: dissolve OTTableau, migrate to fixed-length ViolationProfile**
+  - Remove `OTTableau`, `buildTableau`, `OTTableau.optimal` — replaced by `Tableau C n`, `mkTableau`, `Tableau.optimal`
+  - Remove `buildProfile` (returned `List Nat`) — replaced by `mkProfile` (returns `ViolationProfile ranking.length`)
+  - Add `vpOfList` for readable literal profile comparisons in theorems
+  - Add `mkTableau_isOptimal_zero_first` / `mkTableau_optimal_zero_first` (top-constraint optimality)
+  - Add `Finset.checkAll` / `Finset.checkAny` — computable ∀/∃ on Finsets without `toList`
+  - Migrate AkinboFwangwar2026 (15 profile theorems), Zuraw2010 (`subWins`), Erlewine2016 (full rewrite), Aissen2003 (12 checkAll/checkAny conversions)
+  - Remove 3 `noncomputable` markers (Barker2011 `ExDecidable`/`possessiveAsNPQ`, CandidateInterpretation `isStronglyRelevant`)
+  - Remove `buildProfile` from MaximizePresupposition open
+
+## [0.229.800] - 2026-04-15
+
+### Added
+- **BranchingTime ↔ TemporalConstraint bridge**: 10 theorems connecting situation-semantic history bases to abstract time predicates
+  - `historicalBase_time_prospective`, `actualHistoryBase_time_actual`, `futureHistoryBase_time_future`: membership implies time predicate
+  - `prospective_time_mem_historicalBase`, `actual_time_mem_actualHistoryBase`, `future_time_mem_futureHistoryBase`: converse (time predicate + world agreement → membership)
+  - `futureHistoryBase_subset_historicalBase`: future ⊂ prospective for situation bases
+  - `actualBase_inter_historicalBase_simultaneous`: actual ∩ prospective = simultaneous
+  - `actualBase_futureBase_disjoint`, `actualBase_futureBase_complementary`: partition on time component
+
+## [0.229.799] - 2026-04-15
+
+### Added
+- **Optimal Paradigms theory module** (`Theories/Phonology/OptimalParadigms.lean`): paradigm-level constraint combinators `liftPerMember`, `liftPairwise`, `mkOPMaxV`; `majorityRules` with `majority_minimizes_violations` theorem (McCarthy 2005)
+- **Marco & Rasin 2026 formalization** (`Phenomena/PhonologicalAlternation/Studies/MarcoRasin2026.lean`): OP challenge from Judeo-Tripolitanian Arabic schwa distribution — verb/noun/adjective paradigm candidates, `op_correct_verbs`, `op_correct_nouns`, `op_wrong_adjectives`, `adj_always_initial` (OP fails under all rankings), `op_wrong_adj_bare` (tableau (20) — also fails without paradigm), category-specific template alternative
+- **Corr → NamedConstraint bridge** (`Theories/Phonology/Correspondence.lean` §7): six constructors (`toMaxConstraint`, `toDepConstraint`, `toIdentConstraint`, `toLinearityConstraint`, `toUniformityConstraint`, `toIntegrityConstraint`) connecting structural correspondence definitions to OT evaluation
+- **LinearOrder SonorityRank** (`Theories/Phonology/Syllable/Defs.lean`): `rank_injective` + `LinearOrder.lift'` instance for sonority-sensitive constraints
+- Bibliography: `mccarthy-2005`, `marco-rasin-2026`
+
+### Fixed
+- **Author name hallucination**: bib entry `marco-rasin-2026` had fabricated name — corrected to "Eyal Marco" per the paper
+- **TCNP citation**: `templateMedial` cited `@cite{mccarthy-2005}` for naming the TCNP — corrected to `@cite{bobaljik-2008}`
+- **Hallucinated `mkOPConstraint`**: OptimalParadigms.lean docstring referenced nonexistent function — corrected
+- **`native_decide` → `decide`**: all 10 OT tableau theorems now kernel-verified
+- **SONCON uses `SonorityRank`**: `sonCon` takes `SonorityRank` parameters instead of raw `Bool`
+- **`Syllable/Defs.lean` import**: `Mathlib.Order.Defs.LinearOrder` → `Mathlib.Order.Nat`
+
+## [0.229.798] - 2026-04-15
+
+### Changed
+- **Mathlib-style Tense/Modality restructuring**: split, promote, and fix namespace anomalies
+  - Promote `ModalBaseKind` to `Core/Modality/ModalBaseKind.lean` (was inlined in Theory layer)
+  - Extract Klecha material from `Modality/Temporal.lean` into new `Modality/TemporalConstraint.lean`
+  - `Temporal.lean` now Kratzer-only (generic over `W`, no concrete `World` dependency)
+  - Fix namespace anomalies: `Semantics.TenseAspectComposition` → `Semantics.Tense.TenseAspectComposition`, `Semantics.Montague.Sentence.MaximalInformativity` → `Semantics.Tense.MaximalInformativity`, `Semantics.Montague.Sentence.TemporalAdverbials` → `Semantics.Tense.TemporalAdverbials`
+  - Update all downstream imports/opens (ModalTense, Klecha2016, Decomposition, PTS, DimensionBridge, Rouillard2026, HeimKratzer1998)
+
+### Fixed
+- `Temporal.lean` pre-existing build failure from Bool→Prop migration: parameterize by `W` with `[DecidableEq W] [Fintype W]`, fix `evidence_monotone` proof
+
+## [0.229.797] - 2026-04-15
+
+### Added
+- **Klecha 2016 deep integration**: compositional intersection theorems and infrastructure connections
+  - Complete history taxonomy: `isPastHistory`, `isProspectiveHistory`, `isMaximalHistory` (Definition 3)
+  - Relationship theorems: `past_prospective_complementary`, `past_implies_actual`, `future_implies_prospective`, `actual_and_prospective_iff_simultaneous`, `past_future_disjoint`
+  - `ModalFlavor.toModalBaseKind` bridge: epistemic→DOX, circumstantial/deontic/bouletic→CIR (Table 1)
+  - Table 1 verification: `epistemic_blocks_future`, `circumstantial_permits_future`, `deontic_permits_future`, `non_epistemic_is_cir`
+  - Compositional intersection theorems in `ModalTense.lean`: `dox_past_iff`, `dox_npst_iff`, `cir_npst_iff`, `cir_past_impossible` — the central predictions
+  - `hope_permits_past`: preferential attitudes also take DOX (§3.2)
+  - `actualHistoryBase`, `futureHistoryBase` in `BranchingTime.lean` — DOX/CIR as situation-semantic bases
+  - NPST≠present distinctness: `present_implies_nonpast`, `nonpast_strictly_weaker`
+  - Table 1 modal-temporal data, reportative upper limit, hope ambiguity analysis in `Klecha2016.lean`
+
+### Fixed
+- Hallucinated "Definition 35" → corrected to "(35)" in `ModalBaseKind` docstring
+- Wrong inequality in `.nonpast` docstring: "ref ≤ perspective" → "perspective ≤ ref" (ref ≥ perspective)
+
+## [0.229.796] - 2026-04-15
+
+### Added
+- **Klecha 2016 formalization**: modal base pronouns determine temporal orientation of embedded clauses
+  - `GramTense.nonpast` variant in `Core/Temporal/Tense.lean` — Klecha's NPST (≥, not =)
+  - `ModalBaseKind` enum (`.doxastic` | `.circumstantial`) in `Modality/Temporal.lean`
+  - `isActualHistory`, `isFutureHistory`, `doxConstrainsRT`, `cirConstrainsRT` — history predicates
+  - `attitudeTemporalConstraint` — modal base kind → temporal constraint on embedded RT
+  - `Attitude.permitsCircumstantial` — derived from `Attitude` classification in `VerbClass.lean`
+  - `Attitude.toModalBaseKind` — bridge from attitude type to modal base kind
+  - `pray` Fragment entry in `Fragments/English/Predicates/Verbal.lean`
+  - `Klecha2016.lean` study file in `Phenomena/TenseAspect/Studies/` — per-verb classification, temporal orientation predictions, ULC derivation
+- **Hacquard2006.lean**: `TemporalOrientation.future` constructor, Hacquard↔Klecha comparison theorems
+
+### Changed
+- **ModalTense.lean**: rewritten to correctly reflect Klecha's mechanism (modal base pronouns constrain RT via temporal structure of accessible histories, not eval time shifting)
+- `composeTense`, `applyTense`, `satisfiesTense`, `classifyUse` updated with `.nonpast` cases
+
+## [0.229.795] - 2026-04-15
+
+### Added
+- **Heim1991.lean** deleted — OT-based the/a competition was anachronistic (Heim 1991 doesn't use OT); content better suited for RSA treatment
+
+### Changed
+- **DonkeyAnaphora.lean**: import `Core.Definiteness`, add `donkeyUseType := .donkey`, `donkey_presup_is_familiarity` (donkey → familiarity presupposition type), `donkey_patterns_with_anaphoric` (donkey = anaphoric presupposition type), `DonkeyArticleDatum` structure with cross-linguistic data (German strong article, Thai/Mandarin demonstrative, Shan bare), `weakAndStrong_uses_strong` (German donkey → strong article)
+
+## [0.229.794] - 2026-04-15
+
+### Changed
+- **Conditionals API**: full migration from `closer : W → W → W → Bool` + `domain : List W` to `SimilarityOrdering W` (bundled Prop-level `closer` with `Decidable` instances) + `[Fintype W]` + `Finset`. All `native_decide` proofs in study files replaced with `decide`
+- **Basic.lean**: `SimilarityOrdering.closestWorlds` now returns `Finset W` via `Finset.filter`; `SimilarityOrdering.ofBool` constructor from Bool function
+- **Counterfactual.lean**: `selectionalCounterfactual`, `universalCounterfactual`, `lewisMight`, `selectionalMight`, `homogeneityCounterfactual` all take `sim : SimilarityOrdering W` + `[Fintype W]`; 0 sorrys remaining
+- **AlternativeSensitive.lean**: `altConditionalResults`, `sdaEval`, `dcrEval`, `homogeneityEval`, `lewisDAC`, `satisfiable`, `isStable`, `isMinimalStable`, `IsTruthmakerOf` all take `sim : SimilarityOrdering W` + `[Fintype W]`; removed all `domain : List W` parameters
+- **PsychLink.lean**: `counterfactuallyDependent`, `counterfactuallyPersistent` take `sim : SimilarityOrdering W`
+- **Stalnaker1981.lean**: concrete examples use `bvSim`, `sSim`, `courtSim` via `.ofBool` + `Fintype` instances
+- **McKayVanInwagen1977.lean**: `cropSim`, `spainSim` via `.ofBool`; `sda_invalid` existential updated to quantify over `SimilarityOrdering`
+- **ZaniCiardelliSanfelici2026.lean**: `alt_semantics_validates_sda` updated to use `SimilarityOrdering` + `Finset`
+
+## [0.229.793] - 2026-04-15
+
+### Added
+- **ConstraintEvaluation.lean**: `vpLE_iff_le` bridge theorem connecting the recursive `vpLE` decision procedure to `≤` on `ViolationProfile n`. `instDecidableVpProfileLE` / `instDecidableVpProfileLT` — computable decidable ordering on `ViolationProfile n` via `vpLE`. `buildViolationProfile` — construct `ViolationProfile n` from `Fin n → C → Nat` constraint functions
+- **ConstraintEvaluation.lean**: `Tableau.optimal` is now **computable** (was `noncomputable`) — study files can use `by decide` to verify OT winners on `Tableau C n`
+
+## [0.229.792] - 2026-04-15
+
+### Changed
+- **Definiteness API unified**: promote `Theories/Semantics/Lexical/Determiner/Definite.lean` → `Theories/Semantics/Definiteness/Basic.lean` (top-level semantic domain). Single source of truth: `evalDefinite` parameterized by `DefiniteDesc` from `Core/Definiteness.lean`. All definite denotations (`the_uniq`, `the_fam`, `the_anaphoric`) derived from `evalDefinite`. Schwarz weak/strong distinction reduces to triviality of `presupFilter`. New unification theorems: `the_anaphoric_vacuous_eq_the_uniq`, `domain_restriction_eq_filter`, `the_uniq_from_eval`, `the_anaphoric_from_eval`, `the_fam_from_eval`
+- **Core/Definiteness.lean**: add `DefiniteDesc` structure (restrictor + presupFilter), constructors `.unique` / `.anaphoric`, `unique_eq_anaphoric_trivial` theorem
+- **PaapeVasishth2026.lean**, **Elbourne2013.lean**, **Moroney2021.lean**, **Akan/Determiners.lean**: migrate imports and namespaces from `Semantics.Lexical.Determiner.Definite` → `Semantics.Definiteness`
+
+### Removed
+- **Theories/Semantics/Lexical/Determiner/Definite.lean**: deleted (superseded by `Theories/Semantics/Definiteness/Basic.lean`)
+
 ## [0.229.791] - 2026-04-15
 
 ### Changed

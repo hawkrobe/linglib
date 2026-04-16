@@ -41,10 +41,10 @@ reduplication for other functions while excluding *f*).
 @cite{berent-2026}
 -/
 
-namespace Theories.Phonology.Doubling
+namespace Phonology.Doubling
 
 open Core.OT
-open Theories.Phonology.Constraints
+open Phonology.Constraints
 
 -- ============================================================================
 -- § 1: Doubling Functions
@@ -323,12 +323,6 @@ def phonCandidates : List DoublingParse := [.identity, .nonidentical]
 def morphCandidates : List DoublingParse :=
   [.identity, .reduplication, .nonidentical]
 
-theorem phonCandidates_ne : phonCandidates ≠ [] := by
-  simp [phonCandidates]
-
-theorem morphCandidates_ne : morphCandidates ≠ [] := by
-  simp [morphCandidates]
-
 -- ============================================================================
 -- § 6: L1-Parameterized Model
 -- ============================================================================
@@ -360,24 +354,24 @@ theorem l1CandidatesFor_ne (g : DoublingGrammar) (f : DoublingFunction) :
     OCP-XX bans identity; *RED is irrelevant since reduplication
     is not a candidate. -/
 theorem phon_prefers_XY :
-    (buildTableau phonCandidates phonRanking phonCandidates_ne).optimal
-    = [.nonidentical] := by decide
+    (mkTableau phonCandidates phonRanking).optimal
+    = {.nonidentical} := by decide
 
 /-- In morphological contexts where reduplication is available,
     reduplication wins. OCP-XX bans identity; REALIZE-MORPH bans
     nonidentical; reduplication violates only low-ranked *RED. -/
 theorem morph_prefers_reduplication :
-    (buildTableau morphCandidates morphRanking morphCandidates_ne).optimal
-    = [.reduplication] := by decide
+    (mkTableau morphCandidates morphRanking).optimal
+    = {.reduplication} := by decide
 
 /-- The phonology--morphology reversal: context determines which
     constraints are active, producing opposite surface preferences
     from the same underlying OCP-XX. -/
 theorem doubling_reversal :
-    (buildTableau phonCandidates phonRanking phonCandidates_ne).optimal
-      = [.nonidentical] ∧
-    (buildTableau morphCandidates morphRanking morphCandidates_ne).optimal
-      = [.reduplication] := by
+    (mkTableau phonCandidates phonRanking).optimal
+      = {.nonidentical} ∧
+    (mkTableau morphCandidates morphRanking).optimal
+      = {.reduplication} := by
   exact ⟨phon_prefers_XY, morph_prefers_reduplication⟩
 
-end Theories.Phonology.Doubling
+end Phonology.Doubling

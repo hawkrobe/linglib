@@ -36,7 +36,7 @@ not whether F is overt. See `MovedConstituent`.
 ## Cross-references
 
 - `Fragments.Dutch.Adpositions`: lexical inventory
-- `Theories.Syntax.Minimalism.Formal.ExtendedProjection`: Place/Path in EP
+- `Minimalism.Formal.ExtendedProjection`: Place/Path in EP
 - `Core.Path.PathShape`: bounded/unbounded/source classification
 - `Theories.Semantics.Events.SpatialTrace`: PathShape → telicity
 - `Phenomena.AuxiliaryVerbs.Selection`: Dutch *zijn*/*hebben* split

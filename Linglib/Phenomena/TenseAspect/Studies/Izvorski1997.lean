@@ -2,6 +2,7 @@ import Linglib.Core.Discourse.Evidence
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Tense.Evidential
+import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Fragments.Bulgarian.Evidentials
 
 /-!
@@ -169,9 +170,9 @@ open Fragments.Bulgarian.Evidentials
 open Core.Proposition (World4)
 
 /-- Izvorski's EV operator (formalization of (17)–(19) + (8ii)). -/
-def izvorskiEv (f : ModalBase) (g : OrderingSource)
+def izvorskiEv (f : ModalBase World) (g : OrderingSource World)
     (p : BProp World) : PrProp World where
-  presup := λ w => !(accessibleWorlds f w).isEmpty
+  presup := λ w => (accessibleWorlds f w).Nonempty
   assertion := λ w => necessity f g p w
 
 def johnDrank : BProp World
@@ -186,15 +187,15 @@ def bottlesEmpty : BProp World
   | .w2 => true
   | .w3 => false
 
-def evBase : ModalBase := λ _ => [bottlesEmpty]
+def evBase : ModalBase World := λ _ => [bottlesEmpty]
 
-def mustBase : ModalBase := λ _ => [bottlesEmpty, johnDrank]
+def mustBase : ModalBase World := λ _ => [bottlesEmpty, johnDrank]
 
-def beliefOrdering : OrderingSource := λ _ => [johnDrank]
+def beliefOrdering : OrderingSource World := λ _ => [johnDrank]
 
 theorem ev_presup_satisfied (w : World) :
     (izvorskiEv evBase beliefOrdering johnDrank).presup w := by
-  simp only [izvorskiEv]; cases w <;> native_decide
+  simp only [izvorskiEv]; cases w <;> decide
 
 theorem ev_asserts_drank (w : World) :
     (izvorskiEv evBase beliefOrdering johnDrank).assertion w := by
@@ -204,17 +205,18 @@ theorem must_accessible_subset_ev (w w' : World)
     (hw' : w' ∈ accessibleWorlds mustBase w) :
     w' ∈ accessibleWorlds evBase w := by
   cases w <;> cases w' <;> simp_all [accessibleWorlds, propIntersection,
-    mustBase, evBase, bottlesEmpty, johnDrank, allWorlds,
-    Core.Proposition.FiniteWorlds.worlds]
+    mustBase, evBase, bottlesEmpty, johnDrank, Finset.mem_filter]
 
 theorem restricted_base_enlarges_access
-    (f_ev f_must : ModalBase)
+    (f_ev f_must : ModalBase World)
     (h : ∀ w p, p ∈ f_ev w → p ∈ f_must w)
     (w w' : World)
     (hw' : w' ∈ accessibleWorlds f_must w) :
     w' ∈ accessibleWorlds f_ev w := by
-  rw [accessible_is_extension] at hw' ⊢
-  exact extension_antitone (f_ev w) (f_must w) w' (h w) hw'
+  simp only [accessibleWorlds, propIntersection, Finset.mem_filter] at hw' ⊢
+  refine ⟨Finset.mem_univ _, ?_⟩
+  rw [List.all_eq_true] at hw' ⊢
+  exact fun p hp => hw'.2 p (h w p hp)
 
 theorem ev_and_must_agree_here (w : World) :
     (izvorskiEv evBase beliefOrdering johnDrank).assertion w ↔
@@ -226,20 +228,23 @@ private def pOnlyW0 : BProp World
   | _ => false
 
 theorem izvorski_koev_diverge :
-    ∃ (f : ModalBase) (g : OrderingSource) (p : BProp World) (w : World),
+    ∃ (f : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World),
       (izvorskiEv f g p).assertion w ≠ p w := by
   refine ⟨emptyBackground, emptyBackground, pOnlyW0, .w0, ?_⟩
   simp only [izvorskiEv]; native_decide
 
 theorem izvorski_collapses_to_koev_when_realistic
-    (f : ModalBase) (p : BProp World) (w : World)
-    (hTotal : accessibleWorlds f w = [w]) :
+    (f : ModalBase World) (p : BProp World) (w : World)
+    (hTotal : accessibleWorlds f w = {w}) :
     (izvorskiEv f emptyBackground p).assertion w ↔ (p w = true) := by
   simp only [izvorskiEv]
   rw [necessity_iff_all, empty_ordering_emptyBackground, hTotal]
-  simp only [List.all_cons, List.all_nil, Bool.and_true]
+  simp only [Finset.mem_singleton]
+  constructor
+  · intro h; exact h w rfl
+  · intro h w' hw'; rw [hw']; exact h
 
-theorem izvorski_projection (f : ModalBase) (g : OrderingSource) (p : BProp World) :
+theorem izvorski_projection (f : ModalBase World) (g : OrderingSource World) (p : BProp World) :
     (PrProp.neg (izvorskiEv f g p)).presup = (izvorskiEv f g p).presup :=
   PrProp.neg_presup _
 

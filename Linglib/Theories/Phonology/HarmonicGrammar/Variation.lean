@@ -14,7 +14,7 @@ This makes `moreProbable` a computable, decidable proxy for
 probability comparison without requiring real-number arithmetic.
 -/
 
-namespace Theories.Phonology.HarmonicGrammar
+namespace Phonology.HarmonicGrammar
 
 -- ============================================================================
 -- § 1: Probability Ordering
@@ -30,4 +30,4 @@ def moreProbable {C : Type} (constraints : List (WeightedConstraint C))
     (a b : C) : Prop :=
   harmonyScore constraints a > harmonyScore constraints b
 
-end Theories.Phonology.HarmonicGrammar
+end Phonology.HarmonicGrammar

@@ -34,7 +34,7 @@ Tonal languages without tone: downstep in Drubea and Numèè
 
 namespace Phenomena.Tone.Studies.Lionnet2025
 
-open Theories.Phonology.Autosegmental.RegisterTier
+open Phonology.Autosegmental.RegisterTier
 open Fragments.Drubea.Prosody
 
 -- ============================================================================

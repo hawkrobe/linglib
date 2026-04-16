@@ -55,7 +55,7 @@ inductive TypeShift where
   | down           -- ∩: λP λs ιx[Ps(x)] - kind formation
   | iota           -- ι: λP ιx[Ps(x)] - unique definite description
   | iotaAnaphoric  -- ι^x: λP λQ ιx[Ps(x) ∧ Q(x)] - anaphoric definite
-                   -- (@cite{moroney-2021} Def 508): presupposes unique P-satisfier
+                   -- (@cite{moroney-2021} §4.3 (anaphoric iota)): presupposes unique P-satisfier
                    -- that additionally satisfies anaphoric restrictor Q
   | exists         -- ∃: λP λQ ∃x[P(x) ∧ Q(x)] - existential
   deriving DecidableEq, Repr
@@ -259,7 +259,7 @@ structure TypeShiftContext where
   /-- Is ι blocked by an overt definite article? -/
   iotaBlocked : Bool
   /-- Is ι^x blocked by an overt demonstrative or strong article?
-      @cite{moroney-2021} Def 507: ι^x is blocked when an overt form
+      @cite{moroney-2021} §4.3: ι^x is blocked when an overt form
       (demonstrative, strong article) duplicates its anaphoric function. -/
   iotaAnaphoricBlocked : Bool
   /-- Is ∃ blocked by an overt indefinite article? -/
@@ -291,7 +291,7 @@ def availableShifts (ctx : TypeShiftContext) : List TypeShift :=
                 then shifts ++ [.iota]
                 else shifts
   -- ι^x is available if not blocked and number is sg or neutral.
-  -- @cite{moroney-2021} Def 508: anaphoric iota for discourse-familiar referents.
+  -- @cite{moroney-2021} §4.3 (anaphoric iota): anaphoric iota for discourse-familiar referents.
   let shifts := if !ctx.iotaAnaphoricBlocked &&
                    (ctx.number == .sg || ctx.number == .neutral ||
                     !ctx.instantiationAccessible)
@@ -310,6 +310,81 @@ Follows Meaning Preservation: choose highest-ranked available shift.
 -/
 def selectShift (ctx : TypeShiftContext) : Option TypeShift :=
   (availableShifts ctx).head?
+
+-- ============================================================================
+-- Intensional Type-Shift Denotations (@cite{moroney-2021} §2.2, §4.3)
+-- ============================================================================
+
+/-! ## Intensional Semantics of Type-Shifts
+
+The `TypeShift` enum above classifies type-shifts abstractly; the
+`availableShifts`/`selectShift` functions determine which are available.
+What's been missing is the *intensional denotation* of each shift.
+
+Bare nouns have base type `⟨s,⟨e,t⟩⟩` — they denote properties across
+possible worlds (@cite{moroney-2021} §2.2; @cite{chierchia-1998}). Each
+type-shift converts this intensional property into a different semantic type:
+
+- ∩ (`.down`): `⟨s,⟨e,t⟩⟩ → e` — kind formation (Chierchia's ∩)
+- ι (`.iota`): `⟨s,⟨e,t⟩⟩ × s → e` — unique definite, world-relative
+- ι^x (`.iotaAnaphoric`): `⟨s,⟨e,t⟩⟩ × ⟨e,t⟩ × s → e` — anaphoric definite
+- ∃ (`.exists`): `⟨s,⟨e,t⟩⟩ × s → Prop` — existential closure at a world
+
+These connect the abstract shift-selection machinery to Chierchia's `down`
+operator and the `DefiniteDesc`/`evalDefinite` infrastructure in
+`Theories/Semantics/Definiteness/Basic.lean`.
+-/
+
+section IntensionalDenotations
+
+variable {World Atom : Type}
+
+/-- ∩-shift (kind formation): maps an intensional property to its kind
+    individual. This IS `Chierchia1998.down`. -/
+abbrev shiftDown (P : Chierchia1998.Property World Atom) :
+    Chierchia1998.Kind World Atom :=
+  Chierchia1998.down World Atom P
+
+/-- ι-shift (unique definite): at world w, returns the unique satisfier
+    of P(w) if one exists. This is the world-relative definite description.
+
+    @cite{moroney-2021} §2.2: Shan bare nouns get this reading when the
+    context supplies a unique referent. -/
+def shiftIota (P : Chierchia1998.Property World Atom) (w : World)
+    (unique : ∃! x, x ∈ P w) : Chierchia1998.Individual Atom :=
+  Classical.choose unique.exists
+
+/-- ι^x-shift (anaphoric definite): at world w, returns the unique
+    satisfier of P(w) ∧ Q(w) where Q is the anaphoric restrictor.
+
+    @cite{moroney-2021} §4.3: ι^x P Q = ιx[P(x) ∧ Q(x)]. Shan bare
+    nouns get this reading in anaphoric contexts (narrative continuations,
+    relational bridging); demonstrative-noun phrases optionally reinforce it. -/
+def shiftIotaAnaphoric (P : Chierchia1998.Property World Atom)
+    (Q : Chierchia1998.Individual Atom → Prop) (w : World)
+    (unique : ∃! x, x ∈ P w ∧ Q x) : Chierchia1998.Individual Atom :=
+  Classical.choose unique.exists
+
+/-- ∃-shift (existential closure): at world w, existentially closes over
+    P(w). This is `Chierchia1998.DPP` restricted to a predicate.
+
+    @cite{moroney-2021} §2.3: the existential reading of Shan bare nouns
+    arises via DPP at vP, yielding obligatory low scope w.r.t. negation. -/
+def shiftExists (P : Chierchia1998.Property World Atom) (w : World)
+    (predicate : Chierchia1998.Individual Atom → Prop) : Prop :=
+  ∃ x, x ∈ P w ∧ predicate x
+
+/-- ∩ and ι are both rank-1 shifts (meaning-preserving). ∃ is rank-2
+    (meaning-losing). This is why Shan bare nouns default to definite/kind
+    readings rather than existential — Meaning Preservation selects the
+    highest-ranked available shift. -/
+theorem rank_1_preferred_over_exists :
+    meaningPreservationRank .down < meaningPreservationRank .exists ∧
+    meaningPreservationRank .iota < meaningPreservationRank .exists ∧
+    meaningPreservationRank .iotaAnaphoric < meaningPreservationRank .exists :=
+  ⟨by decide, by decide, by decide⟩
+
+end IntensionalDenotations
 
 -- Cross-Linguistic Kind Reference Patterns
 

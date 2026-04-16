@@ -29,8 +29,8 @@ rules or extrinsic ordering.
 
 ## Connection to Linglib
 
-Each individual stratum is evaluated using `Core.OT.buildTableau` and
-`OTTableau.optimal`. This module adds the stratal architecture:
+Each individual stratum is evaluated using `Core.OT.mkTableau` and
+`Tableau.optimal`. This module adds the stratal architecture:
 strata ordering, cross-stratal chaining, and reranking specification.
 
 The Telugu weak alternation (@cite{aitha-2026}) is a key application:
@@ -39,9 +39,10 @@ Phrase strata derives the *-am*/*-āni* alternation from a single
 underlying form.
 -/
 
-namespace Theories.Phonology.StratalOT
+namespace Phonology.StratalOT
 
-open Core.OT Core.ConstraintEvaluation
+open Core.OT (NamedConstraint ConstraintFamily mkTableau)
+open Core.ConstraintEvaluation
 
 -- ============================================================================
 -- § 1: Strata
@@ -82,14 +83,14 @@ instance : LinearOrder Stratum :=
 /-- Evaluate a single stratum: select optimal candidates from a
     candidate set under a constraint ranking.
 
-    Thin wrapper around `buildTableau` + `optimal` that labels the
+    Thin wrapper around `mkTableau` + `optimal` that labels the
     evaluation with its stratum. -/
 def evalStratum {C : Type} [DecidableEq C]
     (_stratum : Stratum)
     (candidates : List C)
     (ranking : List (NamedConstraint C))
-    (h : candidates ≠ []) : List C :=
-  (buildTableau candidates ranking h).optimal
+    (h : candidates ≠ [] := by decide) : Finset C :=
+  (mkTableau candidates ranking h).optimal
 
 /-- Chain two strata: take the optimal output of stratum s₁, transform
     it into candidates for stratum s₂ via a bridge function, and evaluate
@@ -104,8 +105,8 @@ def chainEval {C₁ C₂ : Type} [DecidableEq C₂]
     (s₁Output : C₁)
     (bridge : C₁ → List C₂)
     (ranking : List (NamedConstraint C₂))
-    (hBridge : (bridge s₁Output) ≠ []) : List C₂ :=
-  (buildTableau (bridge s₁Output) ranking hBridge).optimal
+    (hBridge : (bridge s₁Output) ≠ []) : Finset C₂ :=
+  (mkTableau (bridge s₁Output) ranking hBridge).optimal
 
 -- ============================================================================
 -- § 3: Stratal Derivation Record
@@ -245,4 +246,4 @@ theorem stem_feeds_word : isOutputFeeding .stem .word = true := rfl
 theorem word_feeds_phrase : isOutputFeeding .word .phrase = true := rfl
 theorem stem_not_feeds_phrase : isOutputFeeding .stem .phrase = false := rfl
 
-end Theories.Phonology.StratalOT
+end Phonology.StratalOT

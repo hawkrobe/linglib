@@ -41,7 +41,6 @@ import Linglib.Core.IntensionalLogic.Quantification
 import Linglib.Core.IntensionalLogic.Algebra
 import Linglib.Core.IntensionalLogic.CategoryType
 import Linglib.Core.IntensionalLogic.RestrictedModality
-import Linglib.Core.Logic.ModalLogic
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Normality
 import Linglib.Core.Order.Plausibility
@@ -63,6 +62,7 @@ import Linglib.Core.Polarity
 import Linglib.Core.PolarityPartition
 import Linglib.Core.PropertyDomain
 import Linglib.Core.Modality.ModalIndefinite
+import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Discourse.QUD
 import Linglib.Core.Discourse.Goals
@@ -88,6 +88,10 @@ import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Logic.ConstraintEvaluation
 import Linglib.Core.Logic.OT
+import Linglib.Core.OT.Defs
+import Linglib.Core.OT.ERC
+import Linglib.Core.OT.Antimatroid
+import Linglib.Core.OT.ERCAntimatroid
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.BayesianUpdate
 import Linglib.Core.Agent.ExperimentDesign
@@ -644,6 +648,7 @@ import Linglib.Fragments.Swahili.Basic
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Zapotec.Basic
 import Linglib.Fragments.Shan.Classifiers
+import Linglib.Fragments.Shan.Definiteness
 import Linglib.Fragments.Shona.Basic
 import Linglib.Fragments.Swahili.Reciprocals
 import Linglib.Fragments.Swahili.Possession
@@ -1090,6 +1095,7 @@ import Linglib.Phenomena.Modality.Studies.Kratzer1981
 import Linglib.Phenomena.Modality.Studies.CiardelliGuerrini2026
 import Linglib.Phenomena.Modality.Studies.ElliottSudo2025
 import Linglib.Phenomena.Modality.Studies.AnandHacquard2013
+import Linglib.Phenomena.Modality.Studies.Condoravdi2002
 import Linglib.Phenomena.Modality.FreeChoiceCompare
 import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
@@ -1252,6 +1258,7 @@ import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Questions.Studies.Dayal2025
 import Linglib.Phenomena.Questions.Studies.Uegaki2022
+import Linglib.Phenomena.Questions.Studies.Elliott2017
 import Linglib.Phenomena.Questions.Studies.ChanShen2026
 import Linglib.Phenomena.Questions.Studies.AlonsoOvalleMoghiseh2025b
 import Linglib.Phenomena.Questions.Studies.Johnston2023
@@ -1272,6 +1279,7 @@ import Linglib.Phenomena.Reference.Studies.QingFranke2015
 import Linglib.Phenomena.Reference.Studies.KursatDegen2021
 import Linglib.Phenomena.Reference.Studies.GilesEtAl2026
 import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
+import Linglib.Phenomena.Reference.Studies.KwonLee2026
 import Linglib.Phenomena.Reference.Studies.RonderosEtAl2024
 import Linglib.Phenomena.Reference.Studies.RosaArnold2017
 import Linglib.Phenomena.Reference.Studies.Schlenker2003
@@ -1295,6 +1303,7 @@ import Linglib.Phenomena.TenseAspect.Studies.TsiliaZhao2026
 import Linglib.Phenomena.TenseAspect.Studies.Zhao2025ThenPresent
 import Linglib.Phenomena.TenseAspect.Studies.Abusch1997
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
+import Linglib.Phenomena.TenseAspect.Studies.Klecha2016
 import Linglib.Phenomena.TenseAspect.Studies.Filip2012
 import Linglib.Phenomena.TenseAspect.Studies.SpatialTrace
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
@@ -1344,6 +1353,7 @@ import Linglib.Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
 import Linglib.Phenomena.PhonologicalAlternation.Studies.Zuraw2010
 import Linglib.Phenomena.PhonologicalAlternation.Studies.AfkirZellou2025
 import Linglib.Phenomena.PhonologicalAlternation.Studies.CoetzeePater2011
+import Linglib.Phenomena.PhonologicalAlternation.Studies.MarcoRasin2026
 import Linglib.Phenomena.Phonotactics.Studies.HayesWilson2008
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 import Linglib.Phenomena.Tone.Studies.Lionnet2025
@@ -1381,7 +1391,6 @@ import Linglib.Theories.Syntax.CCG.CrossSerial
 import Linglib.Theories.Syntax.CCG.Gapping
 import Linglib.Phenomena.Entailment.Studies.ScontrasPearl2021
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
-import Linglib.Theories.FormalLanguageTheory.ClosureProperties
 import Linglib.Theories.FormalLanguageTheory.PumpingLemma
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
@@ -1451,6 +1460,7 @@ import Linglib.Phenomena.WordOrder.Studies.AlexeyenkoZeijlstra2025
 import Linglib.Phenomena.WordOrder.Studies.FedzechkinaEtAl2017
 import Linglib.Phenomena.WordOrder.Studies.BachBrownMarslenWilson1986
 import Linglib.Phenomena.WordOrder.Studies.Shieber1985
+import Linglib.Phenomena.WordOrder.Studies.PullumGazdar1982
 import Linglib.Phenomena.WordOrder.Studies.ArregiPietraszko2021
 import Linglib.Phenomena.WordOrder.Studies.BroekhuisCorver2026
 import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
@@ -1714,6 +1724,7 @@ import Linglib.Theories.Semantics.Composition.MaybeMonad
 import Linglib.Theories.Semantics.Composition.TypeShifting
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Theories.Semantics.Tense.AT
 import Linglib.Theories.Semantics.Composition.PredicateTransfer
 import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
@@ -1749,6 +1760,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.VoiceSemantics
 import Linglib.Theories.Semantics.Composition.Modification
 import Linglib.Theories.Semantics.Lexical.CovertQuantifier
 import Linglib.Theories.Semantics.Lexical.Noun.Binominal
+import Linglib.Theories.Semantics.Lexical.Noun.Classifier
 import Linglib.Theories.Semantics.Lexical.Noun.GradableNouns
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
@@ -1904,6 +1916,7 @@ import Linglib.Theories.Semantics.Modality.ActualityEntailments
 import Linglib.Theories.Semantics.Modality.Assert
 import Linglib.Theories.Semantics.Modality.Simple
 import Linglib.Theories.Semantics.Modality.Temporal
+import Linglib.Theories.Semantics.Modality.TemporalConstraint
 import Linglib.Theories.Semantics.Modality.Typology
 import Linglib.Theories.Semantics.Modality.Inertia
 import Linglib.Theories.Semantics.Modality.EventRelativity
@@ -1941,6 +1954,7 @@ import Linglib.Theories.Semantics.Questions.Denotation.Basic
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Questions.Denotation.Partition
 import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
+import Linglib.Theories.Semantics.Questions.Answerhood.ANS
 import Linglib.Theories.Semantics.Questions.Answerhood.Answerhood
 import Linglib.Theories.Semantics.Questions.Answerhood.PragmaticAnswerhood
 import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
@@ -1951,11 +1965,11 @@ import Linglib.Theories.Semantics.Questions.Answerhood.Support
 import Linglib.Theories.Semantics.Questions.Utility.GSVanRooyBridge
 import Linglib.Theories.Semantics.Questions.Utility.Polarity
 import Linglib.Theories.Semantics.Questions.Utility.Relevance
-import Linglib.Theories.Semantics.Questions.Utility.MerinBridge
+import Linglib.Theories.Pragmatics.DecisionTheoretic.MerinBridge
 import Linglib.Theories.Semantics.Questions.Coordination
 import Linglib.Theories.Semantics.Questions.LiftedTypes
 import Linglib.Theories.Semantics.Questions.ScopeReadings
-import Linglib.Theories.Semantics.Questions.LeftPeriphery
+import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Theories.Semantics.Questions.DegreeQuestion
 import Linglib.Theories.Semantics.Questions.EntropyNPIs
 import Linglib.Theories.Semantics.Questions.SignalingGames
@@ -2124,6 +2138,7 @@ import Linglib.Theories.Phonology.HarmonicGrammar.Variation
 import Linglib.Theories.Phonology.Accent
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.Correspondence
+import Linglib.Theories.Phonology.OptimalParadigms
 import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.CophonologyTheory
 import Linglib.Theories.Phonology.ProsodicWord

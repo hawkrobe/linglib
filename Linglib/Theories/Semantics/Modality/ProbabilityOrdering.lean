@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Probability-Ordering Bridge — @cite{kratzer-2012} §2.4
@@ -37,7 +38,7 @@ abbrev ProbAssignment := World → ℚ
     For each world v, generate the proposition "at least as probable as v":
     w satisfies this iff P(w) ≥ P(v). The resulting ordering ranks worlds
     by probability: w ≥_A z iff P(w) ≥ P(z). -/
-def probToOrdering (prob : ProbAssignment) : OrderingSource := λ _ =>
+def probToOrdering (prob : ProbAssignment) : OrderingSource World := λ _ =>
   allWorlds.map λ v => (λ w => decide (prob w ≥ prob v))
 
 /-- `probToOrdering` is world-independent: the ordering source is the
@@ -66,7 +67,7 @@ theorem uniform_all_equivalent (w z : World) :
 /-- **Under skewed P, best worlds (from universal base) = {w0}.**
     w0 has the highest probability and dominates all others. -/
 theorem prob_ordering_best_w0 (w : World) :
-    bestWorlds emptyBackground (probToOrdering skewedProb) w = [.w0] := by
+    bestWorlds emptyBackground (probToOrdering skewedProb) w = {.w0} := by
   cases w <;> native_decide
 
 /-- **Probability ordering preserves ranking**: w0 ≥ w1 ≥ w2 ≥ w3. -/
@@ -93,7 +94,8 @@ theorem prob_necessity_at_best (p : BProp World) (w : World)
     (hp : p .w0 = true) :
     necessity emptyBackground (probToOrdering skewedProb) p w := by
   rw [necessity_iff_all, prob_ordering_best_w0]
-  simp only [List.all_cons, List.all_nil, Bool.and_true]
+  intro w' hw'
+  rw [Finset.mem_singleton.mp hw']
   exact hp
 
 end Semantics.Modality.ProbabilityOrdering

@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Proposition
-import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.IntensionalLogic.RestrictedModality
 
 /-!
 # Event-Relative Modality
@@ -726,7 +726,7 @@ proposition encodes the doxastic accessibility from world w.
 This implements @cite{hacquard-2010}'s insight that CON(e) for an
 attitude event e IS the set of doxastic alternatives of holder(e). -/
 def doxasticAnchoring {Ev W E : Type*}
-    (R : Core.ModalLogic.AgentAccessRel W E)
+    (R : Core.IntensionalLogic.RestrictedModality.BAgentAccessRel W E)
     (holder : Ev → E) : AnchoringFn Ev W :=
   λ e w => [R (holder e) w]
 
@@ -753,7 +753,7 @@ same quantificational structure. Embedded epistemics under *believe*
 quantify over the SAME set of worlds as the attitude verb itself
 (@cite{hacquard-2010}, §6.1.3). -/
 theorem doxastic_necessity_eq {Ev W E : Type*}
-    (R : Core.ModalLogic.AgentAccessRel W E)
+    (R : Core.IntensionalLogic.RestrictedModality.BAgentAccessRel W E)
     (holder : Ev → E) (e : Ev)
     (allW : List W) (p : BProp W) (w : W) :
     necessity (doxasticAnchoring R holder) e allW p w =
@@ -765,7 +765,7 @@ theorem doxastic_necessity_eq {Ev W E : Type*}
 /-- Doxastic possibility dually: ◇_{DOX(holder(e))} p at w
 iff some doxastic alternative of holder(e) satisfies p. -/
 theorem doxastic_possibility_eq {Ev W E : Type*}
-    (R : Core.ModalLogic.AgentAccessRel W E)
+    (R : Core.IntensionalLogic.RestrictedModality.BAgentAccessRel W E)
     (holder : Ev → E) (e : Ev)
     (allW : List W) (p : BProp W) (w : W) :
     possibility (doxasticAnchoring R holder) e allW p w =

@@ -27,7 +27,7 @@ and the connection is that Op(P)(w) collects the groups with maximal
 relevance/utility.
 -/
 
-namespace Theories.Semantics.Questions.Relevance
+namespace Semantics.Questions.Relevance
 
 open Core.DecisionTheory
 
@@ -110,4 +110,4 @@ def decisionRelevantDomain {W E : Type*} [Fintype W] [DecidableEq W]
     (predicate : W → E → Bool) (domain : List E) : List E :=
   domain.filter λ d => isDecisionRelevant dp actions (predicate · d)
 
-end Theories.Semantics.Questions.Relevance
+end Semantics.Questions.Relevance

@@ -18,9 +18,9 @@ labial assimilation (/n/ + /p/ → [mp]).
 
 namespace Phenomena.PhonologicalAlternation.Studies.Clements1985
 
-open Theories.Phonology
-open Theories.Phonology.FeatureGeometry (GeomNode)
-open Theories.Phonology.Autosegmental
+open Phonology
+open Phonology.FeatureGeometry (GeomNode)
+open Phonology.Autosegmental
 open Fragments.English.Phonology
 
 -- ============================================================================

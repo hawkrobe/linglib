@@ -39,9 +39,9 @@ over segmental prosodic theories (X theory, CV theory).
 
 namespace Phenomena.CompensatoryLengthening.Studies.Hayes1989
 
-open Theories.Phonology (Segment Feature Segment.ofSpecs)
-open Theories.Phonology.Moraic
-open Theories.Phonology.Moraic.CL
+open Phonology (Segment Feature Segment.ofSpecs)
+open Phonology.Moraic
+open Phonology.Moraic.CL
 
 -- ============================================================================
 -- § 1: Segment Inventory (minimal, for derivations)

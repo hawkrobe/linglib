@@ -5,7 +5,7 @@ import Linglib.Theories.Phonology.RuleBased.Defs
 # Korean Phonological Inventory
 
 Korean segments and the stop nasalization rule, using the SPE formalism
-from `Theories.Phonology.RuleBased.Defs`.
+from `Phonology.RuleBased.Defs`.
 
 ## Segments
 
@@ -22,8 +22,8 @@ target feature for the nasalization rule.
 
 namespace Fragments.Korean.Phonology
 
-open Theories.Phonology
-open Theories.Phonology.RuleBased
+open Phonology
+open Phonology.RuleBased
 
 -- ============================================================================
 -- § 1: Segment Inventory

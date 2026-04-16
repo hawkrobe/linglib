@@ -36,7 +36,7 @@ open Core.Verbs
 open Semantics.Events.SpatialTrace
 open Semantics.Events
 open Semantics.Events.Mereology
-open Semantics.Montague.Sentence.MaximalInformativity
+open Semantics.Tense.MaximalInformativity
 open Core.Scale
 open Core.Path
 open Core.Time

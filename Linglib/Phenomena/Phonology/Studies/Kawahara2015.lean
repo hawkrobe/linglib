@@ -30,8 +30,8 @@ epenthesis, rendaku, and vowel devoicing.
 namespace Phenomena.Phonology.Studies.Kawahara2015
 
 open Core.Prosody
-open Theories.Phonology.Accent
-open Theories.Phonology.Syllable (SyllWeight)
+open Phonology.Accent
+open Phonology.Syllable (SyllWeight)
 open Fragments.Japanese.Prosody
 
 -- ============================================================================
@@ -160,9 +160,9 @@ theorem long_n2_initial_avoids_final :
     @cite{kawahara-2015} §2.3: syllables with coda nasal, first part of
     geminate, long vowel, or diphthong are bimoraic (heavy). Open
     syllables with short vowels are monomoraic (light). -/
-theorem japanese_wbp_active (o n c : Theories.Phonology.Segment) :
+theorem japanese_wbp_active (o n c : Phonology.Segment) :
     -- CVC with WBP is heavy (e.g., /tan/ = 2μ)
-    (Theories.Phonology.Moraic.syllableToMoraic { wbp := true }
+    (Phonology.Moraic.syllableToMoraic { wbp := true }
       ⟨[o], [n], [c]⟩).toSyllWeight = .heavy := rfl
 
 end Phenomena.Phonology.Studies.Kawahara2015

@@ -66,7 +66,7 @@ correspond to attested groups; {[iv]} is unattested.
 
 namespace Phenomena.Allomorphy.Studies.Stojkovic2026
 
-open Core.OT Core.ConstraintEvaluation Theories.Phonology.Constraints
+open Core.OT Core.ConstraintEvaluation Phonology.Constraints
 
 -- ============================================================================
 -- § 0: Empirical Data
@@ -167,12 +167,8 @@ inductive VBLZCandidate where
 /-- All candidates. -/
 def allCandidates : List VBLZCandidate := [.ov, .ev, .uv, .iv, .uHiatus]
 
-theorem allCandidates_nonempty : allCandidates ≠ [] := by decide
-
 /-- The four fission candidates (excluding hiatus), for factorial typology. -/
 def fissionCandidates : List VBLZCandidate := [.ov, .ev, .uv, .iv]
-
-theorem fissionCandidates_nonempty : fissionCandidates ≠ [] := by decide
 
 -- ============================================================================
 -- § 2: Constraints
@@ -261,20 +257,20 @@ def uvRanking : List (NamedConstraint VBLZCandidate) :=
 
 /-- The [ov] group ranking selects [ov] as the unique optimal candidate. -/
 theorem ov_optimal :
-    (buildTableau allCandidates ovRanking allCandidates_nonempty).optimal
-      = [.ov] := by native_decide
+    (mkTableau allCandidates ovRanking).optimal
+      = {.ov} := by native_decide
 
 /-- The [ov]/[ev] ranking selects [ev] as optimal in the palatal context.
     (In the non-palatal context, [ev] and [iv] are unavailable because
     there is no palatal to share [−back]; [ov] wins trivially.) -/
 theorem ev_optimal :
-    (buildTableau allCandidates ovEvRanking allCandidates_nonempty).optimal
-      = [.ev] := by native_decide
+    (mkTableau allCandidates ovEvRanking).optimal
+      = {.ev} := by native_decide
 
 /-- The [uv] group ranking selects [uv] as the unique optimal candidate. -/
 theorem uv_optimal :
-    (buildTableau allCandidates uvRanking allCandidates_nonempty).optimal
-      = [.uv] := by native_decide
+    (mkTableau allCandidates uvRanking).optimal
+      = {.uv} := by native_decide
 
 -- ============================================================================
 -- § 5: Factorial Typology
@@ -291,15 +287,15 @@ set_option maxRecDepth 1024 in
 
     The fourth ({[iv]}) is unattested in Slavic. -/
 theorem factorial_typology_size :
-    factorialTypologySize fissionCandidates variableConstraints
-      fissionCandidates_nonempty = 4 := by native_decide
+    mkFactorialTypologySize fissionCandidates variableConstraints
+      = 4 := by native_decide
 
 set_option maxRecDepth 1024 in
 /-- The four distinct optima are exactly the four singleton candidate sets. -/
 theorem factorial_optima_are_singletons :
-    factorialOptima fissionCandidates variableConstraints
-      fissionCandidates_nonempty
-    = [[.uv], [.iv], [.ov], [.ev]] := by native_decide
+    mkFactorialOptima fissionCandidates variableConstraints
+     
+    = [{.uv}, {.iv}, {.ov}, {.ev}] := by native_decide
 
 /-- The [iv] pattern (shared [−back] + [+high], giving a front high vowel)
     is the only unattested pattern among the four predicted by the

@@ -25,7 +25,7 @@ type and connected to it via bridge theorems.
 
 namespace Semantics.PIP
 
-open Core.ModalLogic (AccessRel)
+open Core.IntensionalLogic.RestrictedModality (BAccessRel)
 open Core.Proposition (FiniteWorlds)
 
 
@@ -215,7 +215,7 @@ Three-argument necessity: the modal base β restricted by W₁ is
 included in W₂. When W₁ = ⊤, reduces to β ⊆ W₂.
 
 The modal base β corresponds to `accessRelToBase R w` for an
-`AccessRel W` from `Core.Logic.ModalLogic`. `PIP.Connectives.must`
+`BAccessRel W` from `Core.IntensionalLogic.RestrictedModality`. `PIP.Connectives.must`
 provides the dynamic implementation; `must_truth_iff_mustBase` below
 bridges the static `PIPExprF.must` to this set-based formulation.
 Cf. `Theories.Semantics.Modality.Kratzer.simpleNecessity` for the
@@ -260,12 +260,12 @@ theorem modal_duality (β W₁ W₂ : Set W) :
   exact gq_duality (β ∩ W₁) W₂
 
 /-- Convert an accessibility relation to a modal base at world w. -/
-def accessRelToBase (R : AccessRel W) (w : W) : Set W :=
+def accessRelToBase (R : BAccessRel W) (w : W) : Set W :=
   { w' | R w w' = true }
 
 /-- `PIPExprF.must R φ` truth agrees with three-argument `mustBase`. -/
 theorem must_truth_iff_mustBase {D : Type*} [FiniteDomain D] [FiniteWorlds W]
-    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).truth w = true ↔
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def, Set.mem_setOf_eq]
@@ -279,7 +279,7 @@ theorem must_truth_iff_mustBase {D : Type*} [FiniteDomain D] [FiniteWorlds W]
 
 /-- `PIPExprF.might R φ` truth agrees with three-argument `mightBase`. -/
 theorem might_truth_iff_mightBase {D : Type*} [FiniteDomain D] [FiniteWorlds W]
-    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.might R φ).truth w = true ↔
     mightBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } := by
   simp only [mightBase, accessRelToBase, Set.inter_univ, Set.Nonempty,

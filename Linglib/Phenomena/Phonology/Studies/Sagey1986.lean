@@ -39,10 +39,10 @@ the consensus geometry:
 
 namespace Phenomena.Phonology.Studies.Sagey1986
 
-open Theories.Phonology (Segment Feature FeatureVal)
-open Theories.Phonology.FeatureGeometry (GeomNode)
-open Theories.Phonology.ComplexSegments
-open Theories.Phonology.Autosegmental (agreeAt)
+open Phonology (Segment Feature FeatureVal)
+open Phonology.FeatureGeometry (GeomNode)
+open Phonology.ComplexSegments
+open Phonology.Autosegmental (agreeAt)
 
 -- ============================================================================
 -- § 1: Major/Minor Articulator Distinction (Ch. 3)
@@ -214,7 +214,7 @@ concrete integer-valued time instances. -/
 
 section NoCrossing
 
-open Theories.Phonology.Autosegmental (Association TierPosition
+open Phonology.Autosegmental (Association TierPosition
   validAssociation crosses no_crossing)
 open Core.Time (Interval)
 

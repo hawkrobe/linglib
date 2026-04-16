@@ -190,7 +190,7 @@ theorem universal3_single_argument_coding :
     (prominent Ps marked before non-prominent Ps).
     Re-exported from @cite{aissen-2003}. -/
 theorem universal4_split_P_flagging : animOptima.all (λ opts =>
-    opts.all (λ c =>
+    opts.checkAll (λ c =>
       (if c.an then c.hu else true) &&
       (if c.inan then c.an else true))) = true :=
   animacy_all_monotone

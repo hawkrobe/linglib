@@ -25,7 +25,7 @@ do not exactly correspond to any single geometric node —
 see the subsumption theorems below.
 -/
 
-namespace Theories.Phonology.FeatureGeometry
+namespace Phonology.FeatureGeometry
 
 -- ============================================================================
 -- § 1: Geometric Nodes
@@ -89,13 +89,13 @@ def GeomNode.dominates (n m : GeomNode) : Bool :=
         | none => false
         | some ppp => n == ppp
 
-end Theories.Phonology.FeatureGeometry
+end Phonology.FeatureGeometry
 
 -- ============================================================================
 -- § 3: Feature-to-Node Mapping
 -- ============================================================================
 
-namespace Theories.Phonology
+namespace Phonology
 
 open FeatureGeometry in
 /-- Each terminal feature maps to its dominating class node.
@@ -123,13 +123,13 @@ open FeatureGeometry in
 def Feature.dominatedBy (f : Feature) (n : GeomNode) : Bool :=
   n.dominates f.node
 
-end Theories.Phonology
+end Phonology
 
 -- ============================================================================
 -- § 5–7: Natural Classes, Verification, Spreading/Delinking
 -- ============================================================================
 
-namespace Theories.Phonology.FeatureGeometry
+namespace Phonology.FeatureGeometry
 
 /-- Features dominated by node `n` — a natural class in the feature-geometric
     sense: the features that pattern together under processes targeting `n`. -/
@@ -219,4 +219,4 @@ def canSpreadUnder (n : GeomNode) (f : Feature) : Bool :=
 def delinkedBy (n : GeomNode) (f : Feature) : Bool :=
   n.dominates f.node && n != .root
 
-end Theories.Phonology.FeatureGeometry
+end Phonology.FeatureGeometry

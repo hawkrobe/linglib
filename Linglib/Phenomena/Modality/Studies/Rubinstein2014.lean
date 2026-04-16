@@ -1,6 +1,7 @@
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Directive
+import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Fragments.English.FunctionWords
 
 /-!
@@ -112,14 +113,14 @@ inductive Negotiability where
     negotiability, promoting the non-negotiable part to modal-base status. -/
 structure PriorityTypology where
   /-- Factual circumstances: standard Kratzer modal base f(e). -/
-  circumstances : ModalBase
+  circumstances : ModalBase World
   /-- Non-negotiable priorities h(e): promoted to modal-base status.
       These are norms/ideals that all discourse participants endorse. -/
-  nonNegotiable : ModalBase
+  nonNegotiable : ModalBase World
   /-- Negotiable priorities g(e): remain as ordering source.
       These are ideals promoted by an opinionated assessor but not
       universally endorsed. -/
-  negotiable : OrderingSource
+  negotiable : OrderingSource World
 
 -- ============================================================================
 -- §2. Favored Worlds (§3.2, definitions 39–40)
@@ -139,15 +140,15 @@ We implement the consistent case, which covers the paper's examples. -/
 /-- **Favored worlds** (definition 40, consistent case):
     worlds satisfying both the factual circumstances f(w) and the
     non-negotiable priorities h(w). -/
-def favoredWorlds (pt : PriorityTypology) (w : World) : List World :=
+def favoredWorlds (pt : PriorityTypology) (w : World) : Finset World :=
   propIntersection (pt.circumstances w ++ pt.nonNegotiable w)
 
 /-- Favored worlds with no non-negotiable priorities reduce to
     standard Kratzer accessible worlds. -/
-theorem favored_no_promoted (f : ModalBase) (g : OrderingSource) (w : World) :
+theorem favored_no_promoted (f : ModalBase World) (g : OrderingSource World) (w : World) :
     favoredWorlds ⟨f, emptyBackground, g⟩ w = accessibleWorlds f w := by
   unfold favoredWorlds accessibleWorlds emptyBackground propIntersection
-  simp only [List.append_nil]
+  simp
 
 -- `bestAmong`, `bestAmong_empty`, and `bestAmong_sub` are imported from
 -- `Kratzer.lean`, where they were promoted as general-purpose operations.
@@ -169,7 +170,7 @@ weak necessity uses world ranking, strong necessity does not. -/
     Universal quantification over favored worlds. No ordering source
     is consulted — strong necessity is non-comparative. -/
 def strongNecessityR (pt : PriorityTypology) (p : BProp World) (w : World) : Bool :=
-  (favoredWorlds pt w).all p
+  decide (∀ w' ∈ favoredWorlds pt w, p w' = true)
 
 /-- **Weak necessity** (definition 42):
     `⟦ought⟧ = λpλe∀w'(w' ∈ BEST(Fav(f, h, e), g(e)) → w' ∈ p)`
@@ -177,7 +178,7 @@ def strongNecessityR (pt : PriorityTypology) (p : BProp World) (w : World) : Boo
     Universal quantification over the best favored worlds, where "best"
     is determined by the negotiable ordering source g(e). -/
 def weakNecessityR (pt : PriorityTypology) (p : BProp World) (w : World) : Bool :=
-  (bestAmong (favoredWorlds pt w) (pt.negotiable w)).all p
+  decide (∀ w' ∈ bestAmong (favoredWorlds pt w) (pt.negotiable w), p w' = true)
 
 -- ============================================================================
 -- §5. Entailment (§1, paper's key asymmetry)
@@ -197,7 +198,7 @@ theorem strong_entails_weak_R (pt : PriorityTypology) (p : BProp World) (w : Wor
     weakNecessityR pt p w = true := by
   unfold strongNecessityR at h
   unfold weakNecessityR
-  rw [List.all_eq_true] at h ⊢
+  simp only [decide_eq_true_eq] at h ⊢
   intro w' hw'
   exact h w' (bestAmong_sub _ _ w' hw')
 
@@ -233,11 +234,11 @@ ordering source. -/
 
 /-- With no promoted priorities, Rubinstein's strong necessity equals
     simple Kratzer necessity (no ordering). -/
-theorem strongR_eq_simpleNecessity (f : ModalBase) (p : BProp World) (w : World) :
+theorem strongR_eq_simpleNecessity (f : ModalBase World) (p : BProp World) (w : World) :
     (strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w = true) ↔
     simpleNecessity f p w := by
   unfold strongNecessityR
-  rw [simpleNecessity_iff_all,
+  rw [decide_eq_true_eq, simpleNecessity_iff_all,
     show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
       accessibleWorlds f w from favored_no_promoted f emptyBackground w]
 
@@ -248,21 +249,23 @@ theorem strongR_eq_simpleNecessity (f : ModalBase) (p : BProp World) (w : World)
     "weak" with h=∅ equals Directive's "strong" (with g). The analyses
     differ structurally: Directive treats all priorities as ordering-source
     material; Rubinstein promotes some to modal-base status. -/
-theorem weakR_eq_necessity (f : ModalBase) (g : OrderingSource)
+theorem weakR_eq_necessity (f : ModalBase World) (g : OrderingSource World)
     (p : BProp World) (w : World) :
     (weakNecessityR ⟨f, emptyBackground, g⟩ p w = true) ↔
     necessity f g p w := by
   rw [necessity_iff_all]
-  unfold weakNecessityR bestAmong bestWorlds
-    favoredWorlds accessibleWorlds emptyBackground propIntersection
-  simp only [List.append_nil]
+  unfold weakNecessityR
+  rw [decide_eq_true_eq, show favoredWorlds ⟨f, emptyBackground, g⟩ w =
+    accessibleWorlds f w from favored_no_promoted f g w]
+  rfl
 
 /-- When no priorities are promoted AND no negotiable ordering exists,
     strong and weak necessity coincide (both = simple necessity). -/
-theorem strongR_eq_weakR_trivial (f : ModalBase) (p : BProp World) (w : World) :
+theorem strongR_eq_weakR_trivial (f : ModalBase World) (p : BProp World) (w : World) :
     strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w =
     weakNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w := by
   unfold strongNecessityR weakNecessityR
+  congr 1
   rw [show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
       accessibleWorlds f w from favored_no_promoted f emptyBackground w]
   simp only [emptyBackground, bestAmong_empty]

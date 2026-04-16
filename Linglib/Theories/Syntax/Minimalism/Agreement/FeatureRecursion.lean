@@ -50,7 +50,7 @@ captures all implicational universals in a single statement.
 
 -/
 
-namespace Theories.Syntax.Minimalism.Agreement.FeatureRecursion
+namespace Minimalism.Agreement.FeatureRecursion
 
 open Core.Number
 
@@ -696,4 +696,4 @@ feature value list has at most 2 elements for any single feature. -/
 theorem axiom_of_extension_binary :
     (Finset.univ : Finset Bool).card = 2 := by decide
 
-end Theories.Syntax.Minimalism.Agreement.FeatureRecursion
+end Minimalism.Agreement.FeatureRecursion

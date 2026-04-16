@@ -1,7 +1,10 @@
 import Linglib.Core.Definiteness
+import Linglib.Core.Mereology
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
 import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Definiteness.Basic
+import Linglib.Theories.Semantics.Lexical.Noun.Classifier
+import Linglib.Fragments.Shan.Definiteness
 
 /-!
 # Moroney (2021): Definiteness and Quantification — Evidence from Shan
@@ -38,34 +41,15 @@ type of definiteness.
 namespace Phenomena.Definiteness.Studies.Moroney2021
 
 open Core.Definiteness
+open Fragments.Shan.Definiteness (SpatialRelation)
 
 -- ============================================================================
 -- §1: Definiteness Marking Typology (Table 4.1, extended)
 -- ============================================================================
 
-/-- @cite{jenks-2018}'s typology of definiteness marking, extended by
-@cite{moroney-2021} with the `.unmarked` category. The original typology
-had four cells (2×2: both-marked × same/different + one-marked ×
-unique/anaphoric), but "one-marked, unique" was unattested. Moroney adds
-a fifth: neither type is obligatorily marked, yet both are expressible
-via bare nouns. -/
-inductive DefMarkingStrategy where
-  /-- Both unique and anaphoric definiteness are marked with the same form.
-      Languages: English (*the*), Cantonese. -/
-  | generallyMarked
-  /-- Unique and anaphoric definiteness are marked with different forms.
-      Languages: German (weak/strong articles), Lakhota. -/
-  | bipartite
-  /-- Only anaphoric definiteness is obligatorily marked (via demonstrative).
-      Unique definiteness is expressed with bare nouns.
-      Languages: Mandarin, Akan, Wu. -/
-  | markedAnaphoric
-  /-- Neither type is obligatorily marked. Bare nouns can express both
-      unique and anaphoric definiteness. Demonstrative-noun phrases are
-      optional in anaphoric contexts.
-      Languages: Shan, Serbian, Kannada. NEW in @cite{moroney-2021}. -/
-  | unmarked
-  deriving DecidableEq, Repr
+-- DefMarkingStrategy, DefMarkingParams, deriveStrategy, and
+-- strategyToArticleType are defined in Core.Definiteness (promoted
+-- from this study file to Core for reuse across phenomena).
 
 -- ============================================================================
 -- §2: Cross-Linguistic Definiteness Expression Data (Table 4.4)
@@ -263,12 +247,12 @@ Contrast with English (`Dayal2004.englishBlocking`): the presence of
 absence of articles means the blocking principle imposes no constraints
 on covert type-shifting. Crucially, both ι AND ι^x are unblocked —
 this is what allows Shan bare nouns to express both unique and anaphoric
-definiteness (@cite{moroney-2021} §4.3). -/
+definiteness (@cite{moroney-2021} §4.3).
+
+Derived from `Fragments.Shan.Definiteness.blocking` — the single source
+of truth for Shan's article inventory. -/
 def shanBlocking : Chierchia1998.BlockingPrinciple :=
-  { determiners := []
-  , iotaBlocked := false
-  , existsBlocked := false
-  , downBlocked := false }
+  Fragments.Shan.Definiteness.blocking
 
 /-- When a Shan bare noun is used in a context requiring unique definiteness,
 the preferred type-shift is ι (definite), by Meaning Preservation
@@ -385,13 +369,6 @@ theorem shan_exists_is_last_resort :
 -- §5: Marking Strategy ↔ Core/Definiteness Bridge
 -- ============================================================================
 
-/-- Map marking strategy to `Core.Definiteness.ArticleType`. -/
-def strategyToArticleType : DefMarkingStrategy → ArticleType
-  | .generallyMarked  => .weakOnly       -- Single form for both (English *the*)
-  | .bipartite        => .weakAndStrong   -- Two distinct forms (German)
-  | .markedAnaphoric  => .weakOnly        -- One form (anaphoric dem)
-  | .unmarked         => .none_           -- No articles (Shan)
-
 /-- Shan's unmarked strategy correctly maps to `ArticleType.none_`. -/
 theorem shan_article_type :
     strategyToArticleType .unmarked = .none_ := rfl
@@ -426,48 +403,9 @@ theorem unmarked_distinct_from_existing :
     DefMarkingStrategy.unmarked ≠ .bipartite ∧
     DefMarkingStrategy.unmarked ≠ .markedAnaphoric := by decide
 
-/-- The marking strategy typology is finer than `ArticleType`:
-`.generallyMarked` and `.markedAnaphoric` both map to `.weakOnly`,
-so `ArticleType` cannot distinguish them. Moroney's typology
-captures a contrast that `ArticleType` collapses. -/
-theorem strategy_finer_than_articleType :
-    strategyToArticleType .generallyMarked =
-    strategyToArticleType .markedAnaphoric ∧
-    DefMarkingStrategy.generallyMarked ≠ .markedAnaphoric :=
-  ⟨rfl, by decide⟩
-
 -- ============================================================================
--- §7: Deriving Marking Strategy from Blocking
+-- §7: Language-Specific Parameters
 -- ============================================================================
-
-/-- Language-specific definiteness parameters: the article inventory and
-what each form expresses. This is the input from which `DefMarkingStrategy`
-is derivable — rather than stipulating the strategy directly, we derive it
-from the language's overt forms and which type-shifts they block.
-
-@cite{moroney-2021} Tables 4.6–4.9: the blocking principle + article
-inventory jointly determine the marking strategy. -/
-structure DefMarkingParams where
-  /-- Does the language have an overt form for unique definiteness? -/
-  hasUniqueForm : Bool
-  /-- Does the language have an overt form for anaphoric definiteness? -/
-  hasAnaphoricForm : Bool
-  /-- If both forms exist, are they the same form? -/
-  sameForm : Bool := false
-  deriving Repr, DecidableEq
-
-/-- Derive the marking strategy from language-specific parameters.
-
-This replaces the stipulated `strategyToArticleType`: instead of manually
-classifying each language, we derive its classification from observable
-properties (article inventory). -/
-def deriveStrategy : DefMarkingParams → DefMarkingStrategy
-  | ⟨true, true, true⟩   => .generallyMarked   -- Same form for both (English *the*)
-  | ⟨true, true, false⟩  => .bipartite          -- Different forms (German weak/strong)
-  | ⟨false, true, _⟩     => .markedAnaphoric    -- Only anaphoric marked (Thai dem)
-  | ⟨true, false, _⟩     => .generallyMarked    -- Only unique marked (unattested in
-                                                  -- Jenks 2018 but logically possible)
-  | ⟨false, false, _⟩    => .unmarked           -- No forms (Shan)
 
 /-- Language parameters for the four languages in Table 4.4. -/
 def englishParams : DefMarkingParams :=
@@ -477,7 +415,7 @@ def germanParams : DefMarkingParams :=
 def thaiParams : DefMarkingParams :=
   { hasUniqueForm := false, hasAnaphoricForm := true }
 def shanParams : DefMarkingParams :=
-  { hasUniqueForm := false, hasAnaphoricForm := false }
+  Fragments.Shan.Definiteness.markingParams
 
 /-- The derivation correctly classifies all four Table 4.4 languages. -/
 theorem derive_all_languages :
@@ -517,7 +455,181 @@ theorem type_shift_denotation_agreement :
       (restrictor scope : E → Bool),
       the_anaphoric domain restrictor (λ _ => true) scope =
       the_uniq domain restrictor scope :=
-  fun E domain _ restrictor scope =>
+  fun _E domain _ restrictor scope =>
     the_anaphoric_vacuous_eq_the_uniq domain restrictor scope
+
+-- ============================================================================
+-- §9: DPP Obligatory Low Scope (Table 2.3 derived)
+-- ============================================================================
+
+/-- DPP yields obligatory low scope existential: the existential
+    introduced by DPP applies at the vP level, so it cannot scope above
+    negation. This is why `highExistential` is universally unavailable for
+    bare nouns (@cite{chierchia-1998}; @cite{moroney-2021} §2.3).
+
+    The theorem derives the universal blocking from the data table rather
+    than stipulating it. -/
+theorem dpp_scope_below_neg :
+    ∀ interp ∈ interpretationTable,
+      interp.interp = .highExistential →
+        interp.shanCount = false ∧ interp.shanMass = false ∧
+        interp.englishCount = false ∧ interp.englishMass = false := by
+  intro interp hmem heq
+  simp only [interpretationTable, List.mem_cons, List.mem_nil_iff, or_false] at hmem
+  rcases hmem with rfl | rfl | rfl | rfl | rfl <;> simp_all
+
+-- ============================================================================
+-- §10: FakeMass Witness — Shan Count Nouns (§2.4)
+-- ============================================================================
+
+/-- Concrete witness of `FakeMass` behavior: Shan bare count nouns like
+    *mǎa* 'dog' are CUM (the sum of two dogs is dogs) but not g-homogeneous
+    (a dog's leg is part of a dog but is not itself a dog).
+
+    We construct a three-element partial order: two atoms `a`, `b` and their
+    join `ab = a ⊔ b`. The predicate `isDog` holds of `a`, `b`, and `ab`
+    (CUM), but fails g-homogeneity at `ab` because its proper parts `a` and
+    `b` could have sub-parts (in a richer model) that are not dogs. Here we
+    use the atoms directly: `ab` has proper parts `a` and `b` which ARE dogs,
+    so g-homogeneity holds vacuously on this small model. The genuine failure
+    requires non-atomic non-P parts, which we model by adding a non-dog atom
+    `c` with `c ≤ ab` (representing a dog-leg). -/
+inductive FakeMassEntity : Type where
+  | a   -- first dog
+  | b   -- second dog
+  | c   -- a leg (not a dog)
+  | ab  -- sum of two dogs (includes the leg)
+  deriving DecidableEq, Repr
+
+/-- Partial order: a, b, c ≤ ab (atoms below their join); reflexive. -/
+private def fmLe : FakeMassEntity → FakeMassEntity → Bool
+  | _, .ab => true
+  | .a, .a => true
+  | .b, .b => true
+  | .c, .c => true
+  | _, _ => false
+
+private theorem fmLe_refl (x : FakeMassEntity) : fmLe x x = true := by
+  cases x <;> rfl
+
+private theorem fmLe_antisymm (x y : FakeMassEntity)
+    (hxy : fmLe x y = true) (hyx : fmLe y x = true) : x = y := by
+  cases x <;> cases y <;> simp_all [fmLe]
+
+private theorem fmLe_trans (x y z : FakeMassEntity)
+    (hxy : fmLe x y = true) (hyz : fmLe y z = true) : fmLe x z = true := by
+  cases x <;> cases y <;> cases z <;> simp_all [fmLe]
+
+instance : PartialOrder FakeMassEntity where
+  le x y := fmLe x y = true
+  le_refl := fmLe_refl
+  le_antisymm x y hxy hyx := fmLe_antisymm x y hxy hyx
+  le_trans x y z hxy hyz := fmLe_trans x y z hxy hyz
+
+/-- Dog-predicate: `a`, `b`, and `ab` are dogs; `c` (the leg) is not. -/
+def isDog : FakeMassEntity → Prop
+  | .a => True
+  | .b => True
+  | .c => False
+  | .ab => True
+
+/-- `isDog` is not g-homogeneous: `ab` is a dog, `c < ab`, but no dog
+    `z ≤ c` exists (since `c` is an atom and `isDog c = False`). -/
+theorem isDog_not_gHomogeneous : ¬ Mereology.gHomogeneous isDog := by
+  intro h
+  have hlt : (FakeMassEntity.c : FakeMassEntity) < .ab :=
+    ⟨show fmLe .c .ab = true from rfl,
+     fun heq => by cases heq⟩
+  obtain ⟨z, hzc, hPz⟩ := h .ab .c trivial hlt
+  -- z ≤ c means fmLe z c = true; by cases on z, only z = c works
+  cases z with
+  | a => exact absurd hzc (show ¬(fmLe .a .c = true) from by decide)
+  | b => exact absurd hzc (show ¬(fmLe .b .c = true) from by decide)
+  | c => exact hPz  -- isDog c = False
+  | ab => exact absurd hzc (show ¬(fmLe .ab .c = true) from by decide)
+
+-- ============================================================================
+-- §11: Blocking ↔ Marking Strategy Correspondence
+-- ============================================================================
+
+/-- The blocking principle connects article inventory to available type-shifts,
+    and `deriveStrategy` connects article inventory to marking strategy. This
+    theorem shows the full correspondence for the four Table 4.4 languages:
+    the same `DefMarkingParams` that determine the marking strategy also
+    determine which type-shifts are blocked.
+
+    This is the structural core of Moroney's analysis: article inventory is the
+    single parameter from which both the typological classification AND the
+    available interpretations of bare nouns are derived. -/
+theorem blocking_strategy_correspondence :
+    -- English: both forms → generallyMarked, both ι and ∃ blocked
+    (deriveStrategy englishParams = .generallyMarked ∧
+     englishParams.hasUniqueForm = true ∧
+     englishParams.hasAnaphoricForm = true) ∧
+    -- German: two different forms → bipartite, ι split into weak/strong
+    (deriveStrategy germanParams = .bipartite ∧
+     germanParams.hasUniqueForm = true ∧
+     germanParams.hasAnaphoricForm = true ∧
+     germanParams.sameForm = false) ∧
+    -- Thai: only dem → markedAnaphoric, ι^x blocked (dem), ι unblocked (bare)
+    (deriveStrategy thaiParams = .markedAnaphoric ∧
+     thaiParams.hasUniqueForm = false ∧
+     thaiParams.hasAnaphoricForm = true) ∧
+    -- Shan: no forms → unmarked, nothing blocked, all shifts available
+    (deriveStrategy shanParams = .unmarked ∧
+     shanParams.hasUniqueForm = false ∧
+     shanParams.hasAnaphoricForm = false ∧
+     shanBlocking.iotaBlocked = false ∧
+     shanBlocking.existsBlocked = false ∧
+     shanBlocking.downBlocked = false) :=
+  ⟨⟨rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩⟩
+
+-- ============================================================================
+-- §12: Demonstrative–Bare Noun Contrast (§2.1.3)
+-- ============================================================================
+
+/-- Shan demonstratives add spatial content to the presupposition filter,
+    while bare definites have a trivial filter. This derives the contrast:
+
+    - Bare noun: any unique satisfier of P_s is a candidate
+    - DEM noun: only spatially-proximal/distal satisfiers of P_s
+
+    The demonstrative is always optional in Shan because the bare noun
+    already provides a definite reading via unblocked ι. The demonstrative
+    adds information (spatial restriction) but never replaces an unavailable
+    reading (unlike Thai/Mandarin where demonstratives are required for
+    anaphoric definiteness). -/
+theorem demonstrative_adds_spatial_info {E : Type}
+    (restrictor : E → Bool) (spatialPred : SpatialRelation → E → Bool) :
+    -- Bare definite has trivial filter
+    (Fragments.Shan.Definiteness.bareDefinite restrictor).presupFilter =
+      (fun _ => true) ∧
+    -- nâj adds proximal filter
+    (Fragments.Shan.Definiteness.demDenotation
+      Fragments.Shan.Definiteness.naj restrictor spatialPred).presupFilter =
+      spatialPred .proximal ∧
+    -- nân adds distal filter
+    (Fragments.Shan.Definiteness.demDenotation
+      Fragments.Shan.Definiteness.nan restrictor spatialPred).presupFilter =
+      spatialPred .distal :=
+  ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- §13: Bridge to Classifier Semantics (Ch. 3)
+-- ============================================================================
+
+/-- Shan is a CLF-for-N language: the classifier atomizes the noun
+    denotation (@cite{little-moroney-royer-2022}; @cite{moroney-2021} Ch. 3).
+
+    The classifier semantics module provides `clfForNoun` as a thin wrapper
+    around `Mereology.atomize`. This bridge confirms that Shan classifiers
+    use the atomization strategy (CLF-for-N), connecting the Shan fragment's
+    `ClassifierStrategy.forNoun` to the denotation function. -/
+theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
+    (P : α → Prop) :
+    Semantics.Lexical.Noun.Classifier.classifierDenot
+      Core.NounCategorization.ClassifierStrategy.forNoun P
+      (fun _ => 0) 0   -- μ and n are unused for CLF-for-N
+    = Semantics.Lexical.Noun.Classifier.clfForNoun P := rfl
 
 end Phenomena.Definiteness.Studies.Moroney2021

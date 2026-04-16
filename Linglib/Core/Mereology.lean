@@ -301,7 +301,7 @@ theorem extMeasure_qua {α : Type*} [SemilatticeSup α]
   intro x y hx hlt hy
   have hsm := hμ.strict_mono x y hlt
   rw [hy, hx] at hsm
-  exact absurd hsm (Rat.not_lt.mpr Rat.le_refl)
+  exact absurd hsm (lt_irrefl _)
 
 -- ════════════════════════════════════════════════════
 -- § 6. QMOD: Quantizing Modification (@cite{krifka-1989})
@@ -574,7 +574,66 @@ theorem cum_qua_dimension_disjoint {α β : Type*}
   cum_qua_disjoint ⟨x, y, hx, hy, hne⟩
 
 -- ════════════════════════════════════════════════════
--- § 13. Convex Closure (@cite{kriz-spector-2021} def. 21)
+-- § 13. g-Homogeneity (@cite{deal-2017})
+-- ════════════════════════════════════════════════════
+
+/-- g-homogeneous reference (@cite{deal-2017}): every proper part of a
+    P-entity has a P-part below it.
+
+      DIV → g-homogeneous    (proved: `div_implies_gHomogeneous`)
+
+    g-Homogeneity and CUM are independent: a predicate can be
+    g-homogeneous without being CUM (e.g., `{a, b}` where atoms have no
+    proper parts — vacuously g-homogeneous — but `a ⊔ b ∉ P`), and CUM
+    without being g-homogeneous (fake mass nouns, see `FakeMass`).
+
+    NOTE: this is a simplified version of @cite{deal-2017}'s full
+    definition, which involves CUM conjoined with one of four conditions
+    about minimal parts (divisive, lacking stable/non-overlapping/
+    non-strongly-connected minimal parts). Our formalization captures the
+    intuitive core that Deal extracts as the common thread.
+
+    Mass nouns are g-homogeneous: every part of water contains water.
+    Fake mass nouns (English "furniture", Shan bare nouns per
+    @cite{moroney-2021}) are CUM but NOT g-homogeneous: a leg of a
+    chair is part of the furniture but is not itself furniture. -/
+def gHomogeneous {α : Type*} [PartialOrder α] (P : α → Prop) : Prop :=
+  ∀ (x y : α), P x → y < x → ∃ z, z ≤ y ∧ P z
+
+/-- DIV implies g-homogeneity: if every part of a P-entity is P, then
+    a fortiori every proper part has a P-part (itself). -/
+theorem div_implies_gHomogeneous {α : Type*} [PartialOrder α]
+    {P : α → Prop} (hDiv : DIV P) : gHomogeneous P :=
+  fun x y hPx hlt => ⟨y, le_refl y, hDiv x y hPx (le_of_lt hlt)⟩
+
+/-- g-Homogeneity is vacuously satisfied at atoms: since atoms have
+    no proper parts, the universal condition `∀ y < a, ∃ z ≤ y, P z`
+    holds trivially.
+
+    This means g-homogeneity failures arise at *non-atomic* P-entities
+    whose proper parts include non-P elements. For fake mass nouns like
+    "furniture", the sum of two chairs is a non-atomic furniture-entity
+    whose proper part (a chair leg) has no furniture-part below it. -/
+theorem atom_gHomogeneous_trivial {α : Type*} [PartialOrder α]
+    {P : α → Prop} {a : α} (_hP : P a) (hAtom : Atom a) :
+    ∀ y, y < a → ∃ z, z ≤ y ∧ P z := by
+  intro y hlt
+  exact absurd (hAtom y (le_of_lt hlt)) (ne_of_lt hlt)
+
+/-- A predicate that is cumulative but NOT g-homogeneous has "fake mass"
+    behavior (@cite{deal-2017}; @cite{moroney-2021} §2.4): sums of
+    P-entities are P-entities (CUM), but parts of P-entities need not
+    contain any P-entity (failure of g-homogeneity). English "furniture"
+    and Shan bare nouns exhibit this pattern: the sum of two chairs is
+    furniture (CUM), but a chair leg is part of furniture without itself
+    being furniture (¬g-homogeneous).
+
+    This is a definitional wrapper for naming the property combination. -/
+def FakeMass {α : Type*} [SemilatticeSup α] (P : α → Prop) : Prop :=
+  CUM P ∧ ¬ gHomogeneous P
+
+-- ════════════════════════════════════════════════════
+-- § 14. Convex Closure (@cite{kriz-spector-2021} def. 21)
 -- ════════════════════════════════════════════════════
 
 /-- Convex closure under a partial order: add all elements "in between"

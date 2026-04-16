@@ -622,15 +622,18 @@ private theorem all_not_false_any_true {α : Type*} (L : List α) (p : α → Bo
     simp only [List.all_cons, List.any_cons]
     cases p x <;> simp_all
 
-theorem not_impossible_activates_p (f : ModalBase) (g : OrderingSource)
+theorem not_impossible_activates_p (f : ModalBase World) (g : OrderingSource World)
     (p : Core.Proposition.BProp World) (w : World) :
     ¬ necessity f g (λ w' => !p w') w →
     possibility f g p w := by
   rw [necessity_iff_all, possibility_iff_any]
-  exact fun h => all_not_false_any_true _ p (by
-    cases hc : (bestWorlds f g w).all (fun w' => !p w')
-    · rfl
-    · exact absurd hc h)
+  intro h
+  by_contra hne
+  push_neg at hne
+  exact h fun w' hw' => by
+    have := hne w' hw'
+    simp only [Bool.not_eq_true] at this
+    simp [this]
 
 -- ════════════════════════════════════════════════════
 -- § 9b. WITHOUT Bridge: q ∧ ¬p → Logical Operator

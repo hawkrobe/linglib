@@ -83,7 +83,7 @@ open Minimalism (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Phenomena.ArgumentStructure.Studies.Beavers2010
 open Semantics.Lexical.Verb.Affectedness (AffectednessDegree)
 open Semantics.Events.ArgumentRealization
-open Theories.Interfaces.SyntaxSemantics.VoiceSemantics
+open Interfaces.SyntaxSemantics.VoiceSemantics
 open Core.IntensionalLogic
 
 -- ============================================================================

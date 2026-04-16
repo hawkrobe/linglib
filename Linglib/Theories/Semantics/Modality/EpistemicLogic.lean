@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.Scales.EpistemicScale.Defs
 
 /-!
@@ -36,18 +36,18 @@ context management (`ContextSet`, `CG`, `BContextSet`) remains in
 namespace Semantics.Modality.EpistemicLogic
 
 open Core.Proposition (BProp FiniteWorlds)
-open Core.ModalLogic (AccessRel AgentAccessRel kripkeEval)
+open Core.IntensionalLogic.RestrictedModality (BAccessRel BAgentAccessRel kripkeEval)
 open Core.CommonGround (CG)
 
 /-! ## Individual Knowledge
 
 Agent i knows φ at world w iff φ holds at all worlds accessible to i.
-This re-uses `kripkeEval` from `ModalLogic.lean` with agent-indexed
+This re-uses `kripkeEval` from `RestrictedModality.lean` with agent-indexed
 accessibility relations. -/
 
 /-- Agent i knows φ at world w: Kᵢ(φ)(w) = □ᵢ φ(w). -/
 def knows {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (i : E) (φ : BProp W) (w : W) : Bool :=
+    (Rs : BAgentAccessRel W E) (i : E) (φ : BProp W) (w : W) : Bool :=
   kripkeEval (Rs i) .necessity φ w
 
 /-! ## Everyone Knows
@@ -57,12 +57,12 @@ E_G(φ) = ∧ᵢ∈G Kᵢ(φ). -/
 
 /-- Everyone in group G knows φ at w. -/
 def everyoneKnows {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
   group.all fun i => knows Rs i φ w
 
 /-- Everyone knows implies each individual knows. -/
 theorem everyoneKnows_implies_knows {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W)
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W) (w : W)
     (i : E) (hi : i ∈ group)
     (h : everyoneKnows Rs group φ w = true) :
     knows Rs i φ w = true := by
@@ -79,7 +79,7 @@ there are finitely many truth assignments, this terminates. -/
 
 /-- Iterate "everyone knows" n times: E^n_G(φ). -/
 def everyoneKnowsIter {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) : ℕ → BProp W
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W) : ℕ → BProp W
   | .zero => φ
   | .succ n => everyoneKnows Rs group (everyoneKnowsIter Rs group φ n)
 
@@ -90,13 +90,13 @@ def everyoneKnowsIter {W E : Type*} [FiniteWorlds W]
     2^k iterations (since each iteration can only shrink the set
     of satisfying worlds). -/
 def commonKnowledge {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W)
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W)
     (bound : ℕ) (w : W) : Bool :=
   (List.range (bound + 1)).all fun n => everyoneKnowsIter Rs group φ n w
 
 /-- Common knowledge implies everyone knows (at depth 1). -/
 theorem commonKnowledge_implies_everyoneKnows {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W)
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W)
     (bound : ℕ) (w : W) (_hbound : 0 < bound)
     (h : commonKnowledge Rs group φ bound w = true) :
     everyoneKnows Rs group φ w = true := by
@@ -105,7 +105,7 @@ theorem commonKnowledge_implies_everyoneKnows {W E : Type*} [FiniteWorlds W]
 
 /-- Common knowledge implies the proposition itself (depth 0). -/
 theorem commonKnowledge_implies_prop {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W)
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W)
     (bound : ℕ) (w : W)
     (h : commonKnowledge Rs group φ bound w = true) :
     φ w = true := by
@@ -125,12 +125,12 @@ D_G(φ) → Kᵢ(φ) for each i, but C_G(φ) → E_G(φ) → Kᵢ(φ). -/
 
 /-- Intersection of accessibility relations for a group. -/
 def groupAccessRel {W E : Type*}
-    (Rs : AgentAccessRel W E) (group : List E) : AccessRel W :=
+    (Rs : BAgentAccessRel W E) (group : List E) : BAccessRel W :=
   fun w v => group.all fun i => Rs i w v
 
 /-- Distributed knowledge: D_G(φ)(w) = □_{∩R} φ(w). -/
 def distributedKnowledge {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
   kripkeEval (groupAccessRel Rs group) .necessity φ w
 
 /-- Individual knowledge implies distributed knowledge: the intersection
@@ -138,7 +138,7 @@ def distributedKnowledge {W E : Type*} [FiniteWorlds W]
     group-accessible world is also i-accessible. Therefore if φ holds
     at all i-accessible worlds, it holds at all group-accessible worlds. -/
 theorem knows_implies_distributedKnowledge {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W)
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W) (w : W)
     (i : E) (hi : i ∈ group)
     (h : knows Rs i φ w = true) :
     distributedKnowledge Rs group φ w = true := by
@@ -170,29 +170,29 @@ accessible worlds), knowledge is harder to achieve than belief. -/
     satisfies KD45 (serial + transitive + Euclidean) rather than
     S5 (reflexive + Euclidean). -/
 def believes {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (i : E) (φ : BProp W) (w : W) : Bool :=
+    (Rs : BAgentAccessRel W E) (i : E) (φ : BProp W) (w : W) : Bool :=
   kripkeEval (Rs i) .necessity φ w
 
 /-- Everyone in group G believes φ at w. -/
 def everyoneBelieves {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
   group.all fun i => believes Rs i φ w
 
 /-- Iterate "everyone believes" n times: EB^n_G(φ). -/
 def everyoneBeliefIter {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) : ℕ → BProp W
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W) : ℕ → BProp W
   | .zero => φ
   | .succ n => everyoneBelieves Rs group (everyoneBeliefIter Rs group φ n)
 
 /-- Common belief: CB_G(φ)(w) iff EB^n_G(φ)(w) for all n up to bound. -/
 def commonBelief {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W)
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W)
     (bound : ℕ) (w : W) : Bool :=
   (List.range (bound + 1)).all fun n => everyoneBeliefIter Rs group φ n w
 
 /-- Distributed belief: DB_G(φ)(w) = □_{∩R_B} φ(w). -/
 def distributedBelief {W E : Type*} [FiniteWorlds W]
-    (Rs : AgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
+    (Rs : BAgentAccessRel W E) (group : List E) (φ : BProp W) (w : W) : Bool :=
   kripkeEval (groupAccessRel Rs group) .necessity φ w
 
 /-- A knowledge-belief frame bundles S5 knowledge relations and KD45
@@ -204,9 +204,9 @@ def distributedBelief {W E : Type*} [FiniteWorlds W]
     belief-accessible worlds. -/
 structure KnowledgeBeliefFrame (W E : Type*) where
   /-- Knowledge accessibility relations (should satisfy S5: reflexive + Euclidean) -/
-  knowsRel : AgentAccessRel W E
+  knowsRel : BAgentAccessRel W E
   /-- Belief accessibility relations (should satisfy KD45: serial + transitive + Euclidean) -/
-  believesRel : AgentAccessRel W E
+  believesRel : BAgentAccessRel W E
   /-- Belief accessibility implies knowledge accessibility -/
   believes_sub_knows : ∀ i w v, believesRel i w v = true → knowsRel i w v = true
 
@@ -229,22 +229,22 @@ theorem knows_implies_believes {W E : Type*} [FiniteWorlds W]
 /-- Belief is consistent: Bᵢ(φ) → ◇ᵢφ (the D axiom).
     Follows from seriality of the belief accessibility relation. -/
 theorem believes_consistent {W E : Type*} [FiniteWorlds W]
-    {Rs : AgentAccessRel W E} (i : E)
-    (hSerial : Core.ModalLogic.Serial (Rs i))
+    {Rs : BAgentAccessRel W E} (i : E)
+    (hSerial : Core.IntensionalLogic.RestrictedModality.BSerial (Rs i))
     (φ : BProp W) (w : W)
     (h : believes Rs i φ w = true) :
     kripkeEval (Rs i) .possibility φ w = true :=
-  Core.ModalLogic.D_of_serial hSerial φ w h
+  Core.IntensionalLogic.RestrictedModality.D_of_serial hSerial φ w h
 
 /-- Positive introspection: Bᵢ(φ) → Bᵢ(Bᵢ(φ)) (the 4 axiom).
     Follows from transitivity of the belief accessibility relation. -/
 theorem believes_positive_introspection {W E : Type*} [FiniteWorlds W]
-    {Rs : AgentAccessRel W E} (i : E)
-    (hTrans : Core.ModalLogic.Trans (Rs i))
+    {Rs : BAgentAccessRel W E} (i : E)
+    (hTrans : Core.IntensionalLogic.RestrictedModality.BTrans (Rs i))
     (φ : BProp W) (w : W)
     (h : believes Rs i φ w = true) :
     believes Rs i (believes Rs i φ) w = true :=
-  Core.ModalLogic.four_of_trans hTrans φ w h
+  Core.IntensionalLogic.RestrictedModality.four_of_trans hTrans φ w h
 
 /-- Negative introspection: ¬Bᵢ(φ) → Bᵢ(¬Bᵢ(φ)) (the 5 axiom).
     Follows from Euclideanness of the belief accessibility relation.
@@ -253,19 +253,19 @@ theorem believes_positive_introspection {W E : Type*} [FiniteWorlds W]
     Equivalently: ◇Bφ → □◇Bφ, which combined with ¬Bφ → ¬◇Bφ → □¬Bφ
     gives the standard negative introspection. -/
 theorem believes_negative_introspection {W E : Type*} [FiniteWorlds W]
-    {Rs : AgentAccessRel W E} (i : E)
-    (hEucl : Core.ModalLogic.Eucl (Rs i))
+    {Rs : BAgentAccessRel W E} (i : E)
+    (hEucl : Core.IntensionalLogic.RestrictedModality.BEucl (Rs i))
     (φ : BProp W) (w : W)
     (h : kripkeEval (Rs i) .possibility φ w = true) :
     kripkeEval (Rs i) .necessity (kripkeEval (Rs i) .possibility φ) w = true :=
-  Core.ModalLogic.five_of_eucl hEucl φ w h
+  Core.IntensionalLogic.RestrictedModality.five_of_eucl hEucl φ w h
 
 /-- Belief is not veridical: there exist frames where Bᵢ(φ) ∧ ¬φ.
     Unlike knowledge (which requires reflexivity), belief frames are
     serial but not reflexive, so an agent can believe φ at a world
     where φ is false. -/
 theorem believes_not_veridical :
-    ∃ (W : Type) (E : Type) (_ : FiniteWorlds W) (Rs : AgentAccessRel W E)
+    ∃ (W : Type) (E : Type) (_ : FiniteWorlds W) (Rs : BAgentAccessRel W E)
       (i : E) (φ : BProp W) (w : W),
       believes Rs i φ w = true ∧ φ w = false := by
   -- 2-world counterexample: W = Bool, agent sees only `true` from both worlds
@@ -290,7 +290,7 @@ are common knowledge among the discourse participants. -/
 /-- A common ground is grounded in common knowledge when its context
     set equals the intersection of what is commonly known. -/
 def _root_.Core.CommonGround.CG.groundedIn {W E : Type*} [FiniteWorlds W]
-    (cg : CG W) (Rs : AgentAccessRel W E) (group : List E)
+    (cg : CG W) (Rs : BAgentAccessRel W E) (group : List E)
     (bound : ℕ) : Prop :=
   ∀ w, cg.contextSet w ↔
     (cg.propositions.all fun p =>
@@ -306,7 +306,7 @@ representation theorems in `EpistemicScale/`). -/
 
 /-- An S5 accessibility relation induces a world ordering for
     `halpernLift`: w ≥ v iff w is accessible from v. -/
-def s5ToWorldOrder {W : Type*} (R : AccessRel W) (w v : W) : Prop :=
+def s5ToWorldOrder {W : Type*} (R : BAccessRel W) (w v : W) : Prop :=
   R v w = true
 
 /-- An S5 frame yields an `EpistemicSystemW` via l-lifting.
@@ -314,7 +314,7 @@ def s5ToWorldOrder {W : Type*} (R : AccessRel W) (w v : W) : Prop :=
     The reflexivity of R gives reflexivity of the world ordering;
     `halpernSystemW` does the rest. -/
 def s5ToSystemW {W : Type*}
-    (R : AccessRel W) (hRefl : Core.ModalLogic.Refl R) :
+    (R : BAccessRel W) (hRefl : Core.IntensionalLogic.RestrictedModality.BRefl R) :
     Core.Scale.EpistemicSystemW W :=
   Core.Scale.halpernSystemW (s5ToWorldOrder R) (fun w => hRefl w)
 

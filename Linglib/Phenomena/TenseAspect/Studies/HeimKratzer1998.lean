@@ -331,7 +331,7 @@ theorem aspect_tense_pipeline_types {W Time : Type*} [LinearOrder Time]
 -- § evalPast ↔ PAST Bridge
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.TenseAspectComposition (evalPast evalPres)
+open Semantics.Tense.TenseAspectComposition (evalPast evalPres)
 
 /-- `evalPast` agrees with `PAST`. -/
 theorem evalPast_iff_PAST {W Time : Type*} [LinearOrder Time]

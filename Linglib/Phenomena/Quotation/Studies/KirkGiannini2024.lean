@@ -53,7 +53,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Quotation.Studies.KirkGiannini2024
 
-open Theories.Semantics.Quotation
+open Semantics.Quotation
 open Semantics.Lexical.Expressives (TwoDimProp)
 open Core.Proposition (BProp)
 

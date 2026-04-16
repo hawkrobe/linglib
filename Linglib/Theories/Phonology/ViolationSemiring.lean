@@ -41,9 +41,9 @@ algorithms applicable to OT optimization. Riggle: "every subpath of
 an optimal input–output mapping is itself an optimal mapping."
 -/
 
-namespace Theories.Phonology.ViolationSemiring
+namespace Phonology.ViolationSemiring
 
-open Core.ConstraintEvaluation Theories.Phonology.HarmonicGrammar
+open Core.ConstraintEvaluation Phonology.HarmonicGrammar
 
 -- ============================================================================
 -- § 1: The Violation Semiring V
@@ -214,4 +214,4 @@ theorem weightMap_preserves_minimum {n : Nat} (w : Fin n → ℚ) (M : Nat)
   fun b hb => weightMap_mono w M hw a b
     (fun i => ⟨hM a ha i, hM b hb i⟩) (hmin b hb)
 
-end Theories.Phonology.ViolationSemiring
+end Phonology.ViolationSemiring

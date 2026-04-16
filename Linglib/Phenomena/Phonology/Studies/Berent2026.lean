@@ -54,9 +54,9 @@ data supporting the doubling reversal is in
 namespace Phenomena.Phonology.Studies.Berent2026
 
 open Core.OT
-open Theories.Phonology.Syllable (SonorityRank)
-open Theories.Phonology.Constraints
-open Theories.Phonology.Doubling
+open Phonology.Syllable (SonorityRank)
+open Phonology.Constraints
+open Phonology.Doubling
 
 -- ============================================================================
 -- § 1: Onset Markedness — the sonority gradient
@@ -161,14 +161,14 @@ theorem ocp_passes_ab {α : Type} [BEq α] (a b : α) (rest : List α)
     This is the core of @cite{berent-2026}'s third argument: the
     reversal is amodal (it transfers from speech to sign) and
     L1-dependent (it depends on the speaker's morphological system).
-    See `Theories.Phonology.Doubling.doubling_reversal` for the proof
+    See `Phonology.Doubling.doubling_reversal` for the proof
     and @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016} for
     the experimental evidence. -/
 theorem amodal_doubling_reversal :
-    (buildTableau phonCandidates phonRanking phonCandidates_ne).optimal
-      = [.nonidentical] ∧
-    (buildTableau morphCandidates morphRanking morphCandidates_ne).optimal
-      = [.reduplication] :=
+    (mkTableau phonCandidates phonRanking).optimal
+      = {DoublingParse.nonidentical} ∧
+    (mkTableau morphCandidates morphRanking).optimal
+      = {DoublingParse.reduplication} :=
   doubling_reversal
 
 end Phenomena.Phonology.Studies.Berent2026

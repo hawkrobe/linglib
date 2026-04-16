@@ -26,7 +26,7 @@ independent.
 
 -- Define `isArticulator` in the FeatureGeometry namespace so dot notation
 -- works on GeomNode values across the codebase.
-namespace Theories.Phonology.FeatureGeometry
+namespace Phonology.FeatureGeometry
 
 /-- Is this a place articulator node? The three place articulators —
     labial (lips), coronal (tongue blade/tip), dorsal (tongue body) —
@@ -40,12 +40,12 @@ def GeomNode.isArticulator : GeomNode → Bool
   | .labial | .coronal | .dorsal => true
   | _ => false
 
-end Theories.Phonology.FeatureGeometry
+end Phonology.FeatureGeometry
 
-namespace Theories.Phonology.ComplexSegments
+namespace Phonology.ComplexSegments
 
-open Theories.Phonology (Segment Feature FeatureVal)
-open Theories.Phonology.FeatureGeometry (GeomNode)
+open Phonology (Segment Feature FeatureVal)
+open Phonology.FeatureGeometry (GeomNode)
 
 -- ============================================================================
 -- § 1: Articulator Nodes
@@ -133,4 +133,4 @@ theorem articulators_under_place :
     articulatorNodes.all (λ n => GeomNode.place.dominates n) = true := by
   native_decide
 
-end Theories.Phonology.ComplexSegments
+end Phonology.ComplexSegments

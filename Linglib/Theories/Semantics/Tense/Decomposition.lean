@@ -158,7 +158,7 @@ discourse-salient temporal antecedent. This explains the striking contrast:
   German: #"Ich schaltete den Herd nicht aus." ✗ (needs narrative context)
   German: "Ich habe den Herd nicht ausgeschaltet." ✓ (present perfect ok) -/
 
-open Semantics.TenseAspectComposition
+open Semantics.Tense.TenseAspectComposition
 open Semantics.Tense.Aspect.Core
 
 /-- Kratzer's English simple past = PRESENT tense + PERFECT aspect.

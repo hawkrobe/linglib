@@ -253,10 +253,8 @@ def isStronglyRelevantProp (q : QUD W) (p : BProp W) : Prop :=
   ∀ w1 w2 : W, q.sameAnswer w1 w2 = true → p w1 = p w2
 
 /-- Decidable version -/
-noncomputable def isStronglyRelevant (q : QUD W) (p : BProp W) : Bool :=
-  (Fintype.elems : Finset W).toList.all λ w1 =>
-    (Fintype.elems : Finset W).toList.all λ w2 =>
-      !q.sameAnswer w1 w2 || (p w1 == p w2)
+def isStronglyRelevant (q : QUD W) (p : BProp W) : Bool :=
+  decide (∀ w1 w2 : W, q.sameAnswer w1 w2 = true → p w1 = p w2)
 
 /-- Filter candidate set to strongly relevant propositions -/
 def stronglyRelevantSet (q : QUD W) (candidates : Set (BProp W)) : Set (BProp W) :=

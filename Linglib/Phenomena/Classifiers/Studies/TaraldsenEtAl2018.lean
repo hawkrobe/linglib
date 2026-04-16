@@ -508,7 +508,7 @@ theorem dm_nano_agree_cl2 :
 
 section AgreementBridge
 open Phenomena.Agreement.Studies.Carstens2026
-open Theories.Syntax.Minimalism.Agreement.GenderResolution
+open Minimalism.Agreement.GenderResolution
 
 /-- Combining @cite{carstens-2026}'s agreement diagnostic with the
     classifier analysis: matching agreement (resolve succeeds) iff

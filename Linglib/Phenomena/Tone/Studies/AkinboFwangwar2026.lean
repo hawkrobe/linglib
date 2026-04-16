@@ -57,7 +57,7 @@ at the expected edge of the root morpheme.
 namespace Phenomena.Tone.Studies.AkinboFwangwar2026
 
 open Core.OT
-open Theories.Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (ToneFeature)
 open Fragments.Mwaghavul
 
 -- ============================================================================
@@ -258,25 +258,23 @@ def t24_candidates : List SingleCand := [t24a, t24b, t24c, t24d, t24e]
 def t24_ranking : List (NamedConstraint SingleCand) :=
   [lAnch24, rAnch24, maxT24]
 
-theorem t24_nonempty : t24_candidates ≠ [] := by decide
-
 -- Verify individual violation counts (L-ANCH, R-ANCH, MAX-T):
 -- (24a): no gram → L=2, R=2; no deletions → MAX-T=0
-theorem t24a_profile : buildProfile t24_ranking t24a = [2, 2, 0] := by native_decide
+theorem t24a_profile : mkProfile t24_ranking t24a = vpOfList [2, 2, 0] := by native_decide
 -- (24b): same anchor profile as (a); per-TBU MAX-T=0 (paper: 1, per autosegment)
-theorem t24b_profile : buildProfile t24_ranking t24b = [2, 2, 0] := by native_decide
+theorem t24b_profile : mkProfile t24_ranking t24b = vpOfList [2, 2, 0] := by native_decide
 -- (24c): gram on σ2 → L=1, R=0; 1 lex deleted → MAX-T=1
-theorem t24c_profile : buildProfile t24_ranking t24c = [1, 0, 1] := by native_decide
+theorem t24c_profile : mkProfile t24_ranking t24c = vpOfList [1, 0, 1] := by native_decide
 -- (24d): gram on σ1 → L=0, R=1; 1 lex deleted → MAX-T=1
-theorem t24d_profile : buildProfile t24_ranking t24d = [0, 1, 1] := by native_decide
+theorem t24d_profile : mkProfile t24_ranking t24d = vpOfList [0, 1, 1] := by native_decide
 -- (24e): gram on both → L=0, R=0; 2 lex deleted → MAX-T=2
 -- Paper: MAX-T=* (1, per autosegment). Does not affect optimality.
-theorem t24e_profile : buildProfile t24_ranking t24e = [0, 0, 2] := by native_decide
+theorem t24e_profile : mkProfile t24_ranking t24e = vpOfList [0, 0, 2] := by native_decide
 
 /-- The M-on-every-TBU candidate (24e) is optimal under the proposed ranking.
     L-ANCH-Mᵥ >> R-ANCH-Mᵥ >> MAX-Tone -/
 theorem t24_optimal :
-    (buildTableau t24_candidates t24_ranking t24_nonempty).optimal = [t24e] := by
+    (mkTableau t24_candidates t24_ranking).optimal = {t24e} := by
   native_decide
 
 -- ============================================================================
@@ -350,22 +348,20 @@ def t25_candidates : List SingleCand :=
 def t25_ranking : List (NamedConstraint SingleCand) :=
   [lAnchM25, rAnchH25, rAnchM25, lAnchH25, maxT25]
 
-theorem t25_nonempty : t25_candidates ≠ [] := by decide
-
 -- Verify violation profiles (L-ANCH-M, R-ANCH-H, R-ANCH-M, L-ANCH-H, MAX-T):
 -- MAX-T is per-TBU (paper counts per autosegment; see maxToneViolations).
-theorem t25a_profile : buildProfile t25_ranking t25a = [3, 3, 3, 3, 0] := by native_decide
-theorem t25b_profile : buildProfile t25_ranking t25b = [0, 3, 1, 3, 2] := by native_decide
-theorem t25c_profile : buildProfile t25_ranking t25c = [3, 0, 3, 0, 3] := by native_decide
-theorem t25d_profile : buildProfile t25_ranking t25d = [0, 3, 0, 3, 3] := by native_decide
-theorem t25e_profile : buildProfile t25_ranking t25e = [0, 0, 1, 2, 3] := by native_decide
-theorem t25f_profile : buildProfile t25_ranking t25f = [0, 0, 2, 1, 3] := by native_decide
-theorem t25g_profile : buildProfile t25_ranking t25g = [0, 0, 2, 2, 2] := by native_decide
+theorem t25a_profile : mkProfile t25_ranking t25a = vpOfList [3, 3, 3, 3, 0] := by native_decide
+theorem t25b_profile : mkProfile t25_ranking t25b = vpOfList [0, 3, 1, 3, 2] := by native_decide
+theorem t25c_profile : mkProfile t25_ranking t25c = vpOfList [3, 0, 3, 0, 3] := by native_decide
+theorem t25d_profile : mkProfile t25_ranking t25d = vpOfList [0, 3, 0, 3, 3] := by native_decide
+theorem t25e_profile : mkProfile t25_ranking t25e = vpOfList [0, 0, 1, 2, 3] := by native_decide
+theorem t25f_profile : mkProfile t25_ranking t25f = vpOfList [0, 0, 2, 1, 3] := by native_decide
+theorem t25g_profile : mkProfile t25_ranking t25g = vpOfList [0, 0, 2, 2, 2] := by native_decide
 
 /-- The M-on-nonfinal, H-on-final candidate (25e) is optimal.
     L-ANCH-Mᵥ, R-ANCH-Hᵥ >> R-ANCH-Mᵥ >> L-ANCH-Hᵥ >> MAX-Tone -/
 theorem t25_optimal :
-    (buildTableau t25_candidates t25_ranking t25_nonempty).optimal = [t25e] := by
+    (mkTableau t25_candidates t25_ranking).optimal = {t25e} := by
   native_decide
 
 -- ============================================================================
@@ -373,17 +369,17 @@ theorem t25_optimal :
 -- ============================================================================
 
 /-- The OT winner for háŋláyáp produces the same output tones as
-    `deriveVerb` (which uses `tonalOverwrite`). -/
+    `deriveVerb` (which uses `tonalOverwrite`). Since `t25_optimal`
+    proves the winner is `t25e`, we verify directly. -/
 theorem t25_winner_agrees_with_deriveVerb :
-    (buildTableau t25_candidates t25_ranking t25_nonempty).optimal.head?.map
-      (λ c => c.output.map OutputTBU.tone) = some (deriveVerb hanlayap) := by
+    t25e.output.map OutputTBU.tone = deriveVerb hanlayap := by
   native_decide
 
 /-- The OT winner for wùlàʃ produces the same output tones as
-    `deriveVerb`. -/
+    `deriveVerb`. Since `t24_optimal` proves the winner is `t24e`,
+    we verify directly. -/
 theorem t24_winner_agrees_with_deriveVerb :
-    (buildTableau t24_candidates t24_ranking t24_nonempty).optimal.head?.map
-      (λ c => c.output.map OutputTBU.tone) = some (deriveVerb wuulash) := by
+    t24e.output.map OutputTBU.tone = deriveVerb wuulash := by
   native_decide
 
 -- ============================================================================
@@ -511,19 +507,17 @@ def t26_candidates : List PlurCand :=
 def t26_ranking : List (NamedConstraint PlurCand) :=
   [lAnchM26, rAnchH26, rAnchM26, lAnchH26, maxT26]
 
-theorem t26_nonempty : t26_candidates ≠ [] := by decide
-
 -- Verify key profiles (L-ANCH-M on RED, R-ANCH-H on BASE, R-ANCH-M on RED, L-ANCH-H on BASE, MAX-T):
 -- (26a): no gram anywhere → all max violations per host (2 TBUs each)
-theorem t26a_profile : buildProfile t26_ranking t26a = [2, 2, 2, 2, 0] := by native_decide
+theorem t26a_profile : mkProfile t26_ranking t26a = vpOfList [2, 2, 2, 2, 0] := by native_decide
 -- (26d): winner — M perfectly anchored on RED, H perfectly anchored on BASE
-theorem t26d_profile : buildProfile t26_ranking t26d = [0, 0, 0, 0, 4] := by native_decide
+theorem t26d_profile : mkProfile t26_ranking t26d = vpOfList [0, 0, 0, 0, 4] := by native_decide
 -- (26e): both tones on RED, none on BASE → H-anchors on BASE penalize
-theorem t26e_profile : buildProfile t26_ranking t26e = [0, 2, 1, 2, 2] := by native_decide
+theorem t26e_profile : mkProfile t26_ranking t26e = vpOfList [0, 2, 1, 2, 2] := by native_decide
 
 /-- The reduplicant-M, base-H candidate (26d) is optimal. -/
 theorem t26_optimal :
-    (buildTableau t26_candidates t26_ranking t26_nonempty).optimal = [t26d] := by
+    (mkTableau t26_candidates t26_ranking).optimal = {t26d} := by
   native_decide
 
 -- ============================================================================
@@ -560,9 +554,9 @@ theorem t26_base_uniform_H :
     with the M melody (VBZ₁ applied to the reduplicant). -/
 theorem t26_red_agrees_with_tonalOverwrite :
     t26d.redOutput.map OutputTBU.tone =
-      (Theories.Phonology.Autosegmental.GrammaticalTone.tonalOverwrite
+      (Phonology.Autosegmental.GrammaticalTone.tonalOverwrite
         (jalpat.tones.map λ t => mkTSyl jalpat.form t) verbM).map
-        Theories.Phonology.Autosegmental.GrammaticalTone.TBU.tone := by
+        Phonology.Autosegmental.GrammaticalTone.TBU.tone := by
   native_decide
 
 -- ============================================================================
@@ -690,7 +684,7 @@ theorem mwaghavul_is_tonal_hyman :
 
 /-- The factorial typology of the M-tone verbaliser constraints. -/
 def mToneFactorialSize : Nat :=
-  factorialTypologySize t24_candidates t24_ranking t24_nonempty
+  mkFactorialTypologySize t24_candidates t24_ranking
 
 /-- The M-tone tableau has a restricted factorial typology —
     fewer distinct optima than the number of possible rankings of
@@ -719,9 +713,9 @@ The `tonalOverwrite` function used by `deriveVerb` implements exactly
 the replacive-dominant operation: it replaces all tones within the
 valuation window without checking whether the input TBUs are valued. -/
 
-open Theories.Phonology.Autosegmental.GrammaticalTone
+open Phonology.Autosegmental.GrammaticalTone
   (GTSpec GTDominance GTLevel ExponenceType DominantGTAsymmetry)
-open Theories.Phonology.Autosegmental.CoPScope
+open Phonology.Autosegmental.CoPScope
   (CoPPosition scopesOver dominant_gt_asymmetry_from_scope)
 
 /-- The M-tone verbaliser (VBZ₁) classified under @cite{rolle-2018}:
@@ -794,8 +788,8 @@ The three `cophEval` theorems below prove that `cophonologicalEval` with
 each verbaliser's subranking selects the same optimal candidates as the
 existing inline tableaux (24, 25, 26). -/
 
-open Theories.Phonology.CophonologyTheory (CophVocabItem cophonologicalEval)
-open Theories.Phonology.Autosegmental.BasemapCorrespondence (basemapViolations)
+open Phonology.CophonologyTheory (CophVocabItem cophonologicalEval)
+open Phonology.Autosegmental.BasemapCorrespondence (basemapViolations)
 
 /-- Default ranking for the M-tone verbaliser context: MAX-Tone high,
     no anchor constraints. Without morpheme-specific effects, lexical
@@ -841,7 +835,7 @@ theorem verbalizers_are_dominant_coph :
     winner as Tableau 24: (wūlāʃ)₂ with M on every TBU. -/
 theorem verbM_cophEval_optimal :
     cophonologicalEval defaultRanking24 verbM_CophVI.subranking
-      t24_candidates t24_nonempty = [t24e] := by
+      t24_candidates = {t24e} := by
   native_decide
 
 /-- Cophonological evaluation with VBZ₂'s subranking selects the same
@@ -849,14 +843,14 @@ theorem verbM_cophEval_optimal :
     H-on-final. -/
 theorem verbMH_cophEval_optimal :
     cophonologicalEval defaultRanking25 verbMH_CophVI.subranking
-      t25_candidates t25_nonempty = [t25e] := by
+      t25_candidates = {t25e} := by
   native_decide
 
 /-- Cophonological evaluation with VBZ₂'s pluractional subranking
     selects the same winner as Tableau 26: (jālpāt)₃(jálpát)₄. -/
 theorem verbMH_plur_cophEval_optimal :
     cophonologicalEval defaultRanking26 verbMH_plur_CophVI.subranking
-      t26_candidates t26_nonempty = [t26d] := by
+      t26_candidates = {t26d} := by
   native_decide
 
 -- ============================================================================

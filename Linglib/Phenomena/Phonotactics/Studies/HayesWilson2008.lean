@@ -36,7 +36,7 @@ the model assigns higher harmony (= higher MaxEnt probability via
 
 namespace Phenomena.Phonotactics.Studies.HayesWilson2008
 
-open Theories.Phonology Theories.Phonology.HarmonicGrammar Theories.Phonology.Constraints
+open Phonology Phonology.HarmonicGrammar Phonology.Constraints
 open Core Core.OT Finset Real
 
 -- ============================================================================

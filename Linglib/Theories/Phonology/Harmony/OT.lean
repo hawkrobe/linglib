@@ -7,7 +7,7 @@ import Linglib.Core.Logic.OT
 
 Derives OT constraints from a `HarmonySystem`, connecting the direct
 computation in `Harmony.Defs` to the OT evaluation framework in
-`Core.Logic.OT` and `Theories.Phonology.Constraints`.
+`Core.Logic.OT` and `Phonology.Constraints`.
 
 ## Constraints
 
@@ -27,9 +27,9 @@ produces the candidate that satisfies SPREAD, at the cost of IDENT
 violations. Under SPREAD ≫ IDENT, the harmonized output is optimal.
 -/
 
-namespace Theories.Phonology.Harmony
+namespace Phonology.Harmony
 
-open Theories.Phonology (Segment Feature)
+open Phonology (Segment Feature)
 open Core.OT
 
 -- ============================================================================
@@ -195,4 +195,4 @@ theorem spreadSuffix_ot_motivation (sys : HarmonySystem)
   simp only [mkSpread, hv]
   exact spreadSuffix_zero_spread sys val suffix h_no_blockers
 
-end Theories.Phonology.Harmony
+end Phonology.Harmony

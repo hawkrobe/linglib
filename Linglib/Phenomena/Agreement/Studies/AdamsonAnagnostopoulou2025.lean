@@ -59,7 +59,7 @@ namespace Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
 
 open _root_.Minimalism (Interpretability)
 
-open Theories.Syntax.Minimalism.Agreement.GenderResolution
+open Minimalism.Agreement.GenderResolution
 
 -- ============================================================================
 -- § 1: Gender Feature Nodes

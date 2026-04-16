@@ -31,8 +31,8 @@ right context: a following consonant signals a closed syllable.
 
 namespace Fragments.Finnish.ConsonantGradation
 
-open Theories.Phonology (Segment Feature Segment.ofSpecs)
-open Theories.Phonology.RuleBased
+open Phonology (Segment Feature Segment.ofSpecs)
+open Phonology.RuleBased
 
 -- ============================================================================
 -- § 1: Natural Classes

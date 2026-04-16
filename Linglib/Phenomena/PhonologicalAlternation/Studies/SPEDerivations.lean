@@ -16,8 +16,8 @@ All theorems are proved by `native_decide` (finite segment data).
 
 namespace Phenomena.PhonologicalAlternation.Studies.SPEDerivations
 
-open Theories.Phonology
-open Theories.Phonology.RuleBased (derive)
+open Phonology
+open Phonology.RuleBased (derive)
 
 -- ============================================================================
 -- § 1: English Preglottalization

@@ -36,7 +36,7 @@ projection under quotation. The operators here compose over `TwoDimProp`.
 
 set_option autoImplicit false
 
-namespace Theories.Semantics.Quotation
+namespace Semantics.Quotation
 
 open Semantics.Lexical.Expressives (TwoDimProp)
 open Core.Proposition (BProp)
@@ -385,7 +385,7 @@ theorem full_chain_preserves_rContent
 theorem shunt_conserves (p : MQProp W) (w : W) :
     (p.shunt.atIssue w && p.shunt.rContent w && p.shunt.appropContent w)
     = (p.atIssue w && p.rContent w && p.appropContent w) :=
-  Theories.Semantics.Quotation.bool_and_comm_middle
+  Semantics.Quotation.bool_and_comm_middle
     (p.atIssue w) (p.rContent w) (p.appropContent w)
 
 -- ────────────────────────────────────────────────────
@@ -409,8 +409,8 @@ theorem flat_agreement_atIssue
     (ctx : MQContext W Expr Speaker Utt)
     (approp : AppropStandard Speaker Expr W) (q : Expr) (w : W) :
     ((MQProp.applyMQ ctx q).applyApprop approp ctx.sx q |>.shunt |>.neg).atIssue w
-    = (TwoDimProp.neg (Theories.Semantics.Quotation.shunt
-        (Theories.Semantics.Quotation.applyApprop approp ctx.sx q
+    = (TwoDimProp.neg (Semantics.Quotation.shunt
+        (Semantics.Quotation.applyApprop approp ctx.sx q
           (ctx.applyMQ q)))).atIssue w := rfl
 
 /-- What the flat model loses: R-content is present in the layered
@@ -427,12 +427,12 @@ theorem flat_loses_rContent
     ((MQProp.applyMQ ctx q).applyApprop approp ctx.sx q |>.shunt |>.neg).rContent
       = ctx.uttRel ctx.sx ctx.ux q
     -- Flat model: no R-content field at all (only ci, which is now trivial after shunting)
-    ∧ (TwoDimProp.neg (Theories.Semantics.Quotation.shunt
-        (Theories.Semantics.Quotation.applyApprop approp ctx.sx q
-          (ctx.applyMQ q)))).ci = (Theories.Semantics.Quotation.shunt
-        (Theories.Semantics.Quotation.applyApprop approp ctx.sx q
+    ∧ (TwoDimProp.neg (Semantics.Quotation.shunt
+        (Semantics.Quotation.applyApprop approp ctx.sx q
+          (ctx.applyMQ q)))).ci = (Semantics.Quotation.shunt
+        (Semantics.Quotation.applyApprop approp ctx.sx q
           (ctx.applyMQ q))).ci := ⟨rfl, rfl⟩
 
 end MQProp
 
-end Theories.Semantics.Quotation
+end Semantics.Quotation

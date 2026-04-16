@@ -200,7 +200,7 @@ theorem attested_iff_nonzero (d : MismatchDimension) :
 -- `Phenomena.Ellipsis.Sluicing` and the corpus findings from
 -- @cite{anand-hardt-mccloskey-2021} — to the Syntactic Isomorphism Condition
 -- (SIC) formalized in
--- `Theories.Syntax.Minimalism.Ellipsis.FormalMatching`.
+-- `Minimalism.Ellipsis.FormalMatching`.
 
 open Minimalism
 open Minimalism.Ellipsis.FormalMatching

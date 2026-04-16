@@ -17,10 +17,10 @@ operations, and a temporal derivation of the no-crossing constraint
 simultaneity (§5.2.2).
 -/
 
-namespace Theories.Phonology.Autosegmental
+namespace Phonology.Autosegmental
 
-open Theories.Phonology (Segment Feature FeatureVal)
-open Theories.Phonology.FeatureGeometry (GeomNode)
+open Phonology (Segment Feature FeatureVal)
+open Phonology.FeatureGeometry (GeomNode)
 
 -- ============================================================================
 -- § 1: Feature Agreement
@@ -321,4 +321,4 @@ def contourTone (ts tf m1s m1f m2s m2f : T)
 
 end NoCrossing
 
-end Theories.Phonology.Autosegmental
+end Phonology.Autosegmental

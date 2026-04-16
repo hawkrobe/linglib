@@ -1,5 +1,5 @@
+import Linglib.Core.Modality.ModalTypes
 import Linglib.Phenomena.Modality.ModalConcord.Data
-import Linglib.Core.Logic.ModalLogic
 
 /-!
 # Modal Concord: Commitment and Social Meaning — @cite{rotter-liu-2025}

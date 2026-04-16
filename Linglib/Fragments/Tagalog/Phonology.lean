@@ -29,7 +29,7 @@ the latter (@cite{zuraw-2010}):
 
 namespace Fragments.Tagalog.Phonology
 
-open Theories.Phonology.HarmonicGrammar
+open Phonology.HarmonicGrammar
 
 -- ============================================================================
 -- § 1: Stem Consonants (@cite{zuraw-2010})

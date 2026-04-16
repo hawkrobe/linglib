@@ -37,10 +37,10 @@ are skipped by `triggerValue` (not triggers) and `harmonizeOne` (not targets).
 
 namespace Fragments.Finnish.VowelHarmony
 
-open Theories.Phonology (Segment Feature FeatureVal)
-open Theories.Phonology.FeatureGeometry (GeomNode)
-open Theories.Phonology.Autosegmental (AutosegRep agreeAt)
-open Theories.Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
+open Phonology (Segment Feature FeatureVal)
+open Phonology.FeatureGeometry (GeomNode)
+open Phonology.Autosegmental (AutosegRep agreeAt)
+open Phonology.Harmony (HarmonySystem HarmonyDir triggerValue
   harmonizeOne spreadSuffix)
 
 -- ============================================================================

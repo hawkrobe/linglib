@@ -11,8 +11,8 @@ with time-indexed conversational backgrounds and derives the static
 
 ## Core Extension
 
-Kratzer.lean defines `ConvBackground := World → List (BProp World)`.
-@cite{kratzer-2012} Ch. 4 argues that this should be `World → Time → List (BProp World)`:
+Kratzer.lean defines `ConvBackground W := W → List (W → Bool)`.
+@cite{kratzer-2012} Ch. 4 argues that this should be `W → Time → List (W → Bool)`:
 the modal base and ordering source can vary with the temporal perspective.
 
 This distinction matters for:
@@ -33,8 +33,8 @@ evaluation when the conversational backgrounds are time-independent.
 namespace Semantics.Modality.Temporal
 
 open Semantics.Modality.Kratzer
-open Semantics.Attitudes.Intensional
-open Core.Proposition
+
+variable {W : Type*} [DecidableEq W] [Fintype W]
 
 /-! ## Time-indexed conversational backgrounds -/
 
@@ -43,29 +43,30 @@ open Core.Proposition
 
     At different times, the same world may yield different sets of relevant
     facts (modal base) or normative standards (ordering source). -/
-abbrev TemporalConvBackground (Time : Type*) := World → Time → List (BProp World)
+abbrev TemporalConvBackground (W : Type*) (Time : Type*) := W → Time → List (W → Bool)
 
 /-- Time-indexed modal base: what facts are relevant at (w, t). -/
-abbrev TemporalModalBase (Time : Type*) := TemporalConvBackground Time
+abbrev TemporalModalBase (W : Type*) (Time : Type*) := TemporalConvBackground W Time
 
 /-- Time-indexed ordering source: what standards apply at (w, t). -/
-abbrev TemporalOrderingSource (Time : Type*) := TemporalConvBackground Time
+abbrev TemporalOrderingSource (W : Type*) (Time : Type*) := TemporalConvBackground W Time
 
 /-- Fix a time t to obtain a standard (time-independent) conversational
     background. This is the "temporal perspective" operation: evaluating
     the modal at a specific time. -/
 def TemporalConvBackground.atTime {Time : Type*}
-    (f : TemporalConvBackground Time) (t : Time) : ConvBackground :=
+    (f : TemporalConvBackground W Time) (t : Time) : ConvBackground W :=
   λ w => f w t
 
 /-- Lift a time-independent background to a trivially temporal one
     (constant across time). -/
 def ConvBackground.liftTemporal {Time : Type*}
-    (f : ConvBackground) : TemporalConvBackground Time :=
+    (f : ConvBackground W) : TemporalConvBackground W Time :=
   λ w _ => f w
 
+omit [DecidableEq W] [Fintype W] in
 /-- Lifting then fixing at any time recovers the original background. -/
-theorem lift_atTime_id {Time : Type*} (f : ConvBackground) (t : Time) :
+theorem lift_atTime_id {Time : Type*} (f : ConvBackground W) (t : Time) :
     (ConvBackground.liftTemporal f).atTime t = f := rfl
 
 /-! ## Temporal modal evaluation -/
@@ -74,23 +75,23 @@ theorem lift_atTime_id {Time : Type*} (f : ConvBackground) (t : Time) :
 
     ⟦must p⟧(w, t) = ∀w' ∈ Best(f(w,t), g(w,t), w). p(w') -/
 def temporalNecessity {Time : Type*}
-    (f : TemporalModalBase Time) (g : TemporalOrderingSource Time)
-    (t : Time) (p : BProp World) (w : World) : Prop :=
+    (f : TemporalModalBase W Time) (g : TemporalOrderingSource W Time)
+    (t : Time) (p : W → Bool) (w : W) : Prop :=
   necessity (f.atTime t) (g.atTime t) p w
 
 /-- Modal possibility evaluated at a world-time pair.
 
     ⟦might p⟧(w, t) = ∃w' ∈ Best(f(w,t), g(w,t), w). p(w') -/
 def temporalPossibility {Time : Type*}
-    (f : TemporalModalBase Time) (g : TemporalOrderingSource Time)
-    (t : Time) (p : BProp World) (w : World) : Prop :=
+    (f : TemporalModalBase W Time) (g : TemporalOrderingSource W Time)
+    (t : Time) (p : W → Bool) (w : W) : Prop :=
   possibility (f.atTime t) (g.atTime t) p w
 
 /-- **Temporal ↔ Static bridge**: temporal modal evaluation reduces to
     standard Kratzer when the backgrounds are time-independent. -/
 theorem temporal_eq_static {Time : Type*}
-    (f : ModalBase) (g : OrderingSource)
-    (p : BProp World) (w : World) (t : Time) :
+    (f : ModalBase W) (g : OrderingSource W)
+    (p : W → Bool) (w : W) (t : Time) :
     temporalNecessity (ConvBackground.liftTemporal f)
       (ConvBackground.liftTemporal g) t p w ↔
     necessity f g p w :=
@@ -98,8 +99,8 @@ theorem temporal_eq_static {Time : Type*}
 
 /-- Temporal duality: □ₜp ↔ ¬◇ₜ¬p. -/
 theorem temporal_duality {Time : Type*}
-    (f : TemporalModalBase Time) (g : TemporalOrderingSource Time)
-    (t : Time) (p : BProp World) (w : World) :
+    (f : TemporalModalBase W Time) (g : TemporalOrderingSource W Time)
+    (t : Time) (p : W → Bool) (w : W) :
     temporalNecessity f g t p w ↔
     ¬ temporalPossibility f g t (λ w' => !p w') w :=
   duality (f.atTime t) (g.atTime t) p w
@@ -115,19 +116,20 @@ is open. -/
     The history function (a `TemporalConvBackground`) serves as the modal base;
     the ordering source is empty (pure accessibility, no ranking). -/
 def historicalNecessity {Time : Type*}
-    (history : TemporalConvBackground Time)
-    (t : Time) (p : BProp World) (w : World) : Prop :=
+    (history : TemporalConvBackground W Time)
+    (t : Time) (p : W → Bool) (w : W) : Prop :=
   temporalNecessity history
-    (λ _ _ => ([] : List (BProp World))) t p w
+    (λ _ _ => ([] : List (W → Bool))) t p w
 
 /-- With empty history (no shared past), all worlds are accessible:
-    historical necessity collapses to universal quantification. -/
+    historical necessity collapses to necessity over `Finset.univ`. -/
 theorem empty_history_universal {Time : Type*}
-    (t : Time) (p : BProp World) (w : World) :
-    historicalNecessity (λ (_ : World) (_ : Time) => ([] : List (BProp World)))
-      t p w ↔ (allWorlds.all p = true) := by
+    (t : Time) (p : W → Bool) (w : W) :
+    historicalNecessity (λ (_ : W) (_ : Time) => ([] : List (W → Bool)))
+      t p w ↔ ∀ w' : W, p w' = true := by
   show necessity emptyBackground emptyBackground p w ↔ _
-  simp only [necessity_iff_all, empty_ordering_emptyBackground, empty_base_universal_access]
+  rw [necessity_iff_all, empty_ordering_emptyBackground, empty_base_universal_access]
+  simp [Finset.mem_univ]
 
 /-! ## Epistemic change over time -/
 
@@ -137,18 +139,22 @@ theorem empty_history_universal {Time : Type*}
 
     More evidence → fewer accessible worlds → at least as many necessities. -/
 theorem evidence_monotone {Time : Type*}
-    (f : TemporalModalBase Time) (t₁ t₂ : Time)
-    (p : BProp World) (w : World)
+    (f : TemporalModalBase W Time) (t₁ t₂ : Time)
+    (p : W → Bool) (w : W)
     (hSub : ∀ q, q ∈ f w t₁ → q ∈ f w t₂)
-    (hNec : temporalNecessity f (λ _ _ => ([] : List (BProp World))) t₁ p w) :
-    temporalNecessity f (λ _ _ => ([] : List (BProp World))) t₂ p w := by
+    (hNec : temporalNecessity f (λ _ _ => ([] : List (W → Bool))) t₁ p w) :
+    temporalNecessity f (λ _ _ => ([] : List (W → Bool))) t₂ p w := by
   change necessity (f.atTime t₂) emptyBackground p w
   change necessity (f.atTime t₁) emptyBackground p w at hNec
-  rw [necessity_iff_all, empty_ordering_emptyBackground] at hNec ⊢
-  unfold accessibleWorlds propIntersection TemporalConvBackground.atTime at hNec ⊢
-  simp only [List.all_eq_true, List.mem_filter] at hNec ⊢
-  intro w' ⟨hw'_mem, hw'_all⟩
-  exact hNec w' ⟨hw'_mem, λ q hq => hw'_all q (hSub q hq)⟩
+  intro w' hBest₂
+  apply hNec w'
+  -- More propositions in the modal base → stronger filtering → subset of accessible worlds
+  rw [kratzerBestR_empty] at hBest₂ ⊢
+  rw [kratzerR_iff_accessible] at hBest₂ ⊢
+  simp only [accessibleWorlds, propIntersection, TemporalConvBackground.atTime,
+    Finset.mem_filter, Finset.mem_univ, true_and, List.all_eq_true] at hBest₂ ⊢
+  intro q hq
+  exact hBest₂ q (hSub q hq)
 
 /-! ## Future-as-modal (Ch 4 bridge) -/
 
@@ -158,13 +164,13 @@ theorem evidence_monotone {Time : Type*}
 
     This captures the unitary modal analysis: "will" does not decompose
     cleanly into force × flavor. -/
-def futureAsModal (circumstantial : ModalBase) (p : BProp World) (w : World) : Prop :=
+def futureAsModal (circumstantial : ModalBase W) (p : W → Bool) (w : W) : Prop :=
   necessity circumstantial emptyBackground p w
 
 /-- Future-as-modal with empty ordering = simple necessity over the
     circumstantial base. -/
 theorem future_eq_simple_necessity
-    (circumstantial : ModalBase) (p : BProp World) (w : World) :
+    (circumstantial : ModalBase W) (p : W → Bool) (w : W) :
     futureAsModal circumstantial p w ↔
     simpleNecessity circumstantial p w := by
   exact necessity_empty_eq_simple circumstantial p w

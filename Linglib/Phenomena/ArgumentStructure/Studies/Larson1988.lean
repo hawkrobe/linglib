@@ -46,7 +46,7 @@ on the positions of DP arguments, not the position of V.
 
 ## Cross-references
 
-- `Theories.Syntax.Minimalism.Core.Derivation`: `Step.im` = Internal Merge
+- `Minimalism.Core.Derivation`: `Step.im` = Internal Merge
 - `Studies/Pylkkanen2008.lean`: Modern Voice/Appl decomposition with
   tree-based c-command verification; bridge theorem proving convergence
 - `Phenomena.WordOrder.Studies.ColeHermon2008`: English passive derivation

@@ -44,7 +44,7 @@ Following standard OT/MaxEnt constraint families:
 
 namespace Phenomena.PhonologicalAlternation.Studies.Storme2026
 
-open Theories.Phonology.HarmonicGrammar Theories.Phonology.Constraints
+open Phonology.HarmonicGrammar Phonology.Constraints
 open Fragments.Farsi.Phonology
 open Core.OT
 

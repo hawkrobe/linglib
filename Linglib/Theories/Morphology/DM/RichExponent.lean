@@ -42,7 +42,7 @@ with general phonological constraints. The surface pattern is
 
 namespace Theories.Morphology.DM.RichRepresentation
 
-open Theories.Phonology.Syllable
+open Phonology.Syllable
 open Theories.Morphology.DM.VI
 
 -- ============================================================================

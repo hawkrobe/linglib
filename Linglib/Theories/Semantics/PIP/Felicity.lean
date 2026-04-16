@@ -287,7 +287,7 @@ This section derives:
 section FullFelicity
 
 open Core.Proposition (FiniteWorlds)
-open Core.ModalLogic (AccessRel)
+open Core.IntensionalLogic.RestrictedModality (BAccessRel)
 
 variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
 
@@ -320,7 +320,7 @@ theorem existsF_forallF_felicity_agree (body : D → PIPExprF W D) (w : W) :
     (PIPExprF.forall_ body).felicitous w := rfl
 
 /-- F(□_R φ) iff φ is felicitous at every R-accessible world. -/
-theorem mustF_felicitous_iff (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+theorem mustF_felicitous_iff (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).felicitous w = true ↔
     ∀ w', R w w' = true → φ.felicitous w' = true := by
   simp only [PIPExprF.felicitous]
@@ -333,7 +333,7 @@ theorem mustF_felicitous_iff (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
 
 /-- F(◇_R φ) iff φ is felicitous at every R-accessible world.
     Truth is existential for ◇ but felicity is universal for both. -/
-theorem mightF_felicitous_iff (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+theorem mightF_felicitous_iff (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.might R φ).felicitous w = true ↔
     ∀ w', R w w' = true → φ.felicitous w' = true := by
   simp only [PIPExprF.felicitous]
@@ -346,7 +346,7 @@ theorem mightF_felicitous_iff (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
 
 /-- □ and ◇ have identical felicity clauses — both project universally.
     The asymmetry between must and might is in truth, not felicity. -/
-theorem mustF_mightF_felicity_agree (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+theorem mustF_mightF_felicity_agree (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).felicitous w =
     (PIPExprF.might R φ).felicitous w := rfl
 
@@ -394,7 +394,7 @@ No `Nonempty` hypothesis needed: ψ varies with w', so this is a
 direct instance of `∀x, (P x ∧ Q x) ↔ (∀x, P x) ∧ (∀x, Q x)`.
 -/
 theorem mustF_presup_factored
-    (R : AccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w : W) :
+    (R : BAccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w : W) :
     (PIPExprF.must R (PIPExprF.presup φ ψ)).felicitous w = true ↔
     (∀ w', R w w' = true → φ.felicitous w' = true) ∧
     (∀ w', R w w' = true → ψ w' = true) := by
@@ -405,7 +405,7 @@ theorem mustF_presup_factored
 
 /-- Factored projection through ◇ — identical structure to □. -/
 theorem mightF_presup_factored
-    (R : AccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w : W) :
+    (R : BAccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w : W) :
     (PIPExprF.might R (PIPExprF.presup φ ψ)).felicitous w = true ↔
     (∀ w', R w w' = true → φ.felicitous w' = true) ∧
     (∀ w', R w w' = true → ψ w' = true) := by
@@ -436,7 +436,7 @@ theorem forallF_presup_projection
 
 /-- Presupposition extraction through □ at an accessible world. -/
 theorem mustF_presup_at_accessible
-    (R : AccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w w' : W)
+    (R : BAccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w w' : W)
     (hR : R w w' = true)
     (hF : (PIPExprF.must R (PIPExprF.presup φ ψ)).felicitous w = true) :
     ψ w' = true :=
@@ -444,7 +444,7 @@ theorem mustF_presup_at_accessible
 
 /-- Presupposition extraction through ◇ at an accessible world. -/
 theorem mightF_presup_at_accessible
-    (R : AccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w w' : W)
+    (R : BAccessRel W) (φ : PIPExprF W D) (ψ : W → Bool) (w w' : W)
     (hR : R w w' = true)
     (hF : (PIPExprF.might R (PIPExprF.presup φ ψ)).felicitous w = true) :
     ψ w' = true :=

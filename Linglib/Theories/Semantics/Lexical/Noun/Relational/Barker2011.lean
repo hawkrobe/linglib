@@ -39,9 +39,9 @@ scoped notation "relationalizer(" P ", " R ")" => π P R
 def ExProp {E S : Type} (R : Pred2 E S) : E → S → Prop :=
   λ x s => ∃ y : E, R x y s = true
 
-noncomputable def ExDecidable {E S : Type} [Fintype E] [DecidableEq E]
+def ExDecidable {E S : Type} [Fintype E] [DecidableEq E]
     (R : Pred2 E S) : Pred1 E S :=
-  λ x s => (Fintype.elems : Finset E).toList.any (λ y => R x y s)
+  λ x s => decide (∃ y : E, R x y s = true)
 
 /-- Semantic structure of possessive phrase -/
 structure PossessiveSemantics (E S : Type) where
@@ -238,10 +238,10 @@ theorem structural_explanation (t : NominalInterpType) :
     Possessive GQs are NON-ISOM: "John's cat" depends on the identity
     of John, not just cardinalities. This connects Barker's type-shifting
     analysis to the GQ framework in `Core.Quantification`. -/
-noncomputable def possessiveAsNPQ {E : Type} [Fintype E] [DecidableEq E]
+def possessiveAsNPQ {E : Type} [Fintype E] [DecidableEq E]
     (possessor : E) (R : E → E → Bool) :
     Core.Quantification.NPQ E :=
-  λ P => (Fintype.elems : Finset E).toList.any (λ y => R possessor y && P y)
+  λ P => decide (∃ y : E, (R possessor y && P y) = true)
 
 /-- When the possessum is unique, the possessive NP denotes a Montagovian
     individual: ⟦John's brother⟧ = I_{b} where b is John's unique brother.

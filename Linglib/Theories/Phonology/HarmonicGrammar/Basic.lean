@@ -20,7 +20,7 @@ different mechanisms:
 All three share the `WeightedConstraint` and `harmonyScore` definitions.
 -/
 
-namespace Theories.Phonology.HarmonicGrammar
+namespace Phonology.HarmonicGrammar
 
 open Core.OT
 
@@ -44,4 +44,4 @@ noncomputable def harmonyScoreR {C : Type}
     (constraints : List (WeightedConstraint C)) (c : C) : ℝ :=
   (harmonyScore constraints c : ℝ)
 
-end Theories.Phonology.HarmonicGrammar
+end Phonology.HarmonicGrammar

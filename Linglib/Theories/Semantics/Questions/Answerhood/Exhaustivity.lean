@@ -50,14 +50,7 @@ Fox 2018 exhaustification machinery (Exh, IE, MC-sets, foxAns, foxPartition)
 is in the companion file `FoxExhaustification.lean`.
 -/
 
-namespace Theories.Semantics.Questions.Exhaustivity
-
-/-! ### Propositional Entailment -/
-
-/-- Propositional entailment as Bool: `p ⊆ q` over a finite universe.
-`propEntails p q worlds = true` iff every world where `p` holds also has `q`. -/
-def propEntails {W : Type _} (p q : W → Bool) (worlds : List W) : Bool :=
-  worlds.all (λ v => !p v || q v)
+namespace Semantics.Questions.Exhaustivity
 
 /-! ### True Answers (@cite{karttunen-1977}) -/
 
@@ -99,7 +92,7 @@ def dayalAns {W P : Type _}
     (mb : W → List W) (answers : List P) (worlds : List W) (w : W) : Option P :=
   (trueAnswers qden mb answers w).find? (λ α =>
     (trueAnswers qden mb answers w).all (λ β =>
-      propEntails (qden mb α) (qden mb β) worlds))
+      entails (qden mb α) (qden mb β) worlds))
 
 /-! ### Dayal's Exhaustivity Presupposition -/
 
@@ -178,7 +171,7 @@ theorem dayalAns_eq_conjunction {W P : Type _}
     apply Eq.symm; rw [List.all_eq_true]
     intro β hβ
     have hEnt := hPred β hβ
-    simp only [propEntails, List.all_eq_true] at hEnt
+    simp only [entails, List.all_eq_true] at hEnt
     have := hEnt v hv
     simp [hαv] at this
     exact this
@@ -286,4 +279,4 @@ def relExh {W P : Type _}
       qden singletonMB α w && qden mb α w)
     !hasRelevant || dayalEP qden singletonMB answers worlds w)
 
-end Theories.Semantics.Questions.Exhaustivity
+end Semantics.Questions.Exhaustivity

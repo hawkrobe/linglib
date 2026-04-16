@@ -47,8 +47,8 @@ modeling phonological variation, illustrated with English t/d-deletion.
 namespace Phenomena.PhonologicalAlternation.Studies.CoetzeePater2011
 
 open Core.OT Core.ConstraintEvaluation
-open Theories.Phonology.HarmonicGrammar
-open Theories.Phonology.Constraints
+open Phonology.HarmonicGrammar
+open Phonology.Constraints
 open Fragments.English.TDDeletion
 
 -- ============================================================================
@@ -169,8 +169,8 @@ theorem delete_pause_profile :
 /-- Check if deletion is optimal under a given ranking for a given context. -/
 def deletionOptimal (ranking : List (NamedConstraint TDCandidate))
     (ctx : Context) : Bool :=
-  let tab := buildTableau (candidatesFor ctx) ranking (by simp [candidatesFor])
-  tab.optimal == [⟨ctx, .delete⟩]
+  let tab := mkTableau (candidatesFor ctx) ranking (by simp [candidatesFor])
+  tab.optimal == {⟨ctx, .delete⟩}
 
 /-- Count how many of the 24 total orderings produce deletion for a context. -/
 def deletionCount (ctx : Context) : Nat :=
@@ -432,9 +432,9 @@ theorem framework_separation :
 theorem max_dominates_implies_no_deletion :
     ∀ ctx : Context,
     let ranking := [maxC, maxPreV, maxFinal, starCT]
-    let tab := buildTableau (candidatesFor ctx) ranking
+    let tab := mkTableau (candidatesFor ctx) ranking
       (by simp [candidatesFor])
-    tab.optimal = [⟨ctx, .retain⟩] := by
+    tab.optimal = {⟨ctx, .retain⟩} := by
   intro ctx; cases ctx <;> native_decide
 
 /-- When *CT >> all faithfulness, the categorical OT prediction is
@@ -442,9 +442,9 @@ theorem max_dominates_implies_no_deletion :
 theorem ct_dominates_implies_deletion :
     ∀ ctx : Context,
     let ranking := [starCT, maxC, maxPreV, maxFinal]
-    let tab := buildTableau (candidatesFor ctx) ranking
+    let tab := mkTableau (candidatesFor ctx) ranking
       (by simp [candidatesFor])
-    tab.optimal = [⟨ctx, .delete⟩] := by
+    tab.optimal = {⟨ctx, .delete⟩} := by
   intro ctx; cases ctx <;> native_decide
 
 end Phenomena.PhonologicalAlternation.Studies.CoetzeePater2011

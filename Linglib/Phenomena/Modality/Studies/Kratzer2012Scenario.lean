@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Conditional Modality Data — Rain and Wet Streets (@cite{kratzer-2012} §2.9)
@@ -53,11 +54,11 @@ def atTime (p : World → ℤ → Bool) (t : ℤ) : BProp World := λ w => p w t
 
 /-- Totally realistic modal base: ∩f(w) = {w} for each world.
     Each world's fact set contains the proposition "being exactly that world." -/
-def totallyRealisticBg : ModalBase := λ w => [λ w' => w' == w]
+def totallyRealisticBg : ModalBase World := λ w => [λ w' => w' == w]
 
 /-- Normalcy ordering source: ranks worlds where rain-without-wet-street is
     abnormal. The ordering proposition penalizes w1 (rained ∧ ¬streetWet). -/
-def normalcySource : OrderingSource := λ _ => [λ w' => !(rained w' && !streetWet w')]
+def normalcySource : OrderingSource World := λ _ => [λ w' => !(rained w' && !streetWet w')]
 
 /-! ## Theory-neutral facts -/
 

@@ -94,8 +94,7 @@ yield corresponds to aⁿbⁿcⁿdⁿ.
 -/
 theorem ccg_generates_cross_serial_language :
     ∀ n : Nat, ∃ (w : FourString),
-      isInLanguage_anbncndn w = true ∧
-      w = makeString_anbncndn n := by
+      w ∈ anbncndn ∧ w = makeString_anbncndn n := by
   intro n
   exact ⟨makeString_anbncndn n, makeString_in_language n, rfl⟩
 
@@ -109,8 +108,8 @@ CCG is strictly more expressive than CFG.
 3. Therefore: CCG can generate languages that CFG cannot
 -/
 theorem ccg_strictly_more_expressive_than_cfg :
-    (∀ n : Nat, isInLanguage_anbncndn (makeString_anbncndn n) = true) ∧
-    ¬ HasPumpingProperty4 isInLanguage_anbncndn :=
+    (∀ n : Nat, makeString_anbncndn n ∈ anbncndn) ∧
+    ¬ HasCFLPumpingProperty anbncndn :=
   ⟨makeString_in_language, anbncndn_not_pumpable⟩
 
 -- CCG's Position in the Chomsky Hierarchy

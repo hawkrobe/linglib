@@ -50,7 +50,7 @@ shared linking interface.
 
 -/
 
-namespace Theories.Interfaces.SyntaxSemantics.VoiceTheta
+namespace Interfaces.SyntaxSemantics.VoiceTheta
 
 open _root_.Minimalism (VoiceFlavor VoiceHead voiceAgent voiceCauser
   voiceAnticausative voiceMiddle voiceImpersonal)
@@ -198,4 +198,4 @@ def lexicalistAccount : LinkingTheory VerbCore Unit where
     | .subject => v.predictedSubjectTheta
     | _ => none  -- currently only predicts subject
 
-end Theories.Interfaces.SyntaxSemantics.VoiceTheta
+end Interfaces.SyntaxSemantics.VoiceTheta

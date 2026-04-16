@@ -298,6 +298,10 @@ instance : FiniteWorlds World4 where
   worlds := [.w0, .w1, .w2, .w3]
   complete := λ w => by cases w <;> simp
 
+instance : Fintype World4 where
+  elems := {.w0, .w1, .w2, .w3}
+  complete := λ w => by cases w <;> simp
+
 /-- A simple 2-world type (true/false worlds). -/
 inductive World2 where
   | wT | wF

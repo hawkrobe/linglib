@@ -52,7 +52,7 @@ under MaxEnt. We encode this data and verify:
 
 namespace Phenomena.PhonologicalAlternation.Studies.Flemming2021
 
-open Theories.Phonology.HarmonicGrammar Core Real
+open Phonology.HarmonicGrammar Core Real
 
 -- ============================================================================
 -- § 1: MaxEnt as Gumbel RUM (McFadden)

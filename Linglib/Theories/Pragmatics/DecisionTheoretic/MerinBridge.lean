@@ -44,7 +44,7 @@ Note: UV(E) for a **single cell** E can be negative even when BF > 1
 - `irrelevant_implies_zero_uv`: BF = 1 → UV(E) = 0 (non-degenerate)
 -/
 
-namespace Theories.Semantics.Questions.MerinBridge
+namespace Pragmatics.DecisionTheoretic.MerinBridge
 
 open Core.DecisionTheory
 open Core.Proposition (World4 BProp)
@@ -160,4 +160,4 @@ theorem truthDP_eu_reject {W : Type*} [Fintype W] [DecidableEq W]
       if ctx.issue.topic w then 0 else 1 := by
   simp [expectedUtility, truthDP]
 
-end Theories.Semantics.Questions.MerinBridge
+end Pragmatics.DecisionTheoretic.MerinBridge

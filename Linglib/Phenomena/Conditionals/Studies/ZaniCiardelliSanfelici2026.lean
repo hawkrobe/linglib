@@ -47,8 +47,8 @@ The DCR→SDA trajectory supports homogeneity-based accounts
 namespace Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 
 open Core.Duality (Truth3 ProjectionType)
+open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.AlternativeSensitive
-open Semantics.Conditionals.Counterfactual (closestWorlds)
 
 
 -- ============================================================
@@ -98,14 +98,14 @@ private theorem all_id_pair (a b : Bool) : [a, b].all id = (a && b) := by
 /-- Alternative semantics validates SDA universally (for two alternatives):
     "if {A,B}, C" ≡ ∀p ∈ {A,B}. min_w(p) ⊆ C ≡ (if A, C) ∧ (if B, C).
     Under Lewis, SDA is only contingently valid. -/
-theorem alt_semantics_validates_sda {W : Type*} [DecidableEq W]
-    (closer : W → W → W → Bool) (domain : List W)
+theorem alt_semantics_validates_sda {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
     (A B C : W → Bool) (w : W) :
-    sdaEval closer domain [A, B] C w =
-    (((closestWorlds closer domain w (domain.filter A)).isEmpty ||
-      (closestWorlds closer domain w (domain.filter A)).all C) &&
-     ((closestWorlds closer domain w (domain.filter B)).isEmpty ||
-      (closestWorlds closer domain w (domain.filter B)).all C)) := by
+    sdaEval sim [A, B] C w =
+    (decide (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter (fun w => A w = true)),
+       C w' = true) &&
+     decide (∀ w' ∈ sim.closestWorlds w (Finset.univ.filter (fun w => B w = true)),
+       C w' = true)) := by
   unfold sdaEval altConditionalResults
   exact all_id_pair _ _
 

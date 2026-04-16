@@ -33,9 +33,9 @@ affix typology from @cite{kawahara-2015}.
 namespace Fragments.Japanese.Prosody
 
 open Core.Prosody
-open Theories.Phonology.Accent (defaultAccentAAR latinStressRule accentToTones
+open Phonology.Accent (defaultAccentAAR latinStressRule accentToTones
   LevelTone shortN2CompoundAccent longN2CompoundAccent)
-open Theories.Phonology.Syllable (SyllWeight)
+open Phonology.Syllable (SyllWeight)
 open Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
 
 -- ============================================================================

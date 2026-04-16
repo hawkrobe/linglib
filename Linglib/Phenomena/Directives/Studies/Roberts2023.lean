@@ -131,14 +131,14 @@ structure ImperativeCharacter where
   prejacent : BProp World
   /-- The modal parameters: futurate circumstantial modal base + goal-based
       ordering source, bundled as a `TeleologicalFlavor`. -/
-  flavor : TeleologicalFlavor
+  flavor : TeleologicalFlavor World
 
 /-- Convenience accessor: the futurate circumstantial modal base. -/
-abbrev ImperativeCharacter.modalBase (ic : ImperativeCharacter) : ModalBase :=
+abbrev ImperativeCharacter.modalBase (ic : ImperativeCharacter) : ModalBase World :=
   ic.flavor.circumstances
 
 /-- Convenience accessor: the goal-based ordering source. -/
-abbrev ImperativeCharacter.orderingSource (ic : ImperativeCharacter) : OrderingSource :=
+abbrev ImperativeCharacter.orderingSource (ic : ImperativeCharacter) : OrderingSource World :=
   ic.flavor.goals
 
 /-- Evaluate the imperative character at a world: the prejacent holds
@@ -148,20 +148,21 @@ abbrev ImperativeCharacter.orderingSource (ic : ImperativeCharacter) : OrderingS
     This is a **necessity** claim: ∀w' ∈ Best(f, g, w). P(w').
     The modal force is universal (not deontic — circumstantial). -/
 def ImperativeCharacter.realize (ic : ImperativeCharacter) (w : World) : Bool :=
-  (bestWorlds ic.modalBase ic.orderingSource w).all ic.prejacent
+  decide (necessity ic.modalBase ic.orderingSource ic.prejacent w)
 
 /-- The imperative character yields a Kratzer necessity over the
     futurate circumstantial modal base. -/
 theorem imperativeCharacter_is_necessity (ic : ImperativeCharacter) (w : World) :
-    (ic.realize w = true) ↔ necessity ic.modalBase ic.orderingSource ic.prejacent w :=
-  (necessity_iff_all ic.modalBase ic.orderingSource ic.prejacent w).symm
+    (ic.realize w = true) ↔ necessity ic.modalBase ic.orderingSource ic.prejacent w := by
+  simp only [ImperativeCharacter.realize, decide_eq_true_eq]
 
 /-- The imperative character evaluates as `KratzerTheory` necessity
     under the teleological parameters. This connects Roberts' formalization
     directly to the Kratzer infrastructure. -/
 theorem imperativeCharacter_eq_kratzerTheory (ic : ImperativeCharacter) (w : World) :
     ic.realize w =
-    (KratzerTheory ic.flavor.toKratzerParams).eval .necessity ic.prejacent w := rfl
+    (KratzerTheory ic.flavor.toKratzerParams).eval .necessity ic.prejacent w := by
+  rfl
 
 /-- Roberts' imperative uses teleological (circumstantial) flavor.
     This is the structural encoding of her central claim:
@@ -234,7 +235,7 @@ theorem desideratum_d_different_updates :
     assumption of semantic modality in imperatives. -/
 theorem desideratum_e_conditional :
     ∀ (ic : ImperativeCharacter),
-    ic.realize = λ w => (bestWorlds ic.modalBase ic.orderingSource w).all ic.prejacent :=
+    ic.realize = λ w => decide (necessity ic.modalBase ic.orderingSource ic.prejacent w) :=
   λ _ => rfl
 
 /-- **(f) Range of modal flavors** (@cite{roberts-2023} Table 1, §1):
@@ -461,7 +462,7 @@ open Semantics.Modality.Directive in
     directive does not imply that the addressee is necessarily under an
     obligation." -/
 def ImperativeCharacter.weakRealize
-    (ic : ImperativeCharacter) (secondaryGoals : OrderingSource)
+    (ic : ImperativeCharacter) (secondaryGoals : OrderingSource World)
     (w : World) : Prop :=
   weakNecessity ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w
 
@@ -472,11 +473,11 @@ open Semantics.Modality.Directive in
     This delegates to `Directive.strong_entails_weak` — the universal
     quantification over a *refined* best set is logically weaker. -/
 theorem strong_imperative_entails_suggestion
-    (ic : ImperativeCharacter) (secondaryGoals : OrderingSource) (w : World)
+    (ic : ImperativeCharacter) (secondaryGoals : OrderingSource World) (w : World)
     (h : ic.realize w = true) :
     ic.weakRealize secondaryGoals w :=
   strong_entails_weak ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w
-    ((necessity_iff_all ic.modalBase ic.orderingSource ic.prejacent w).mpr h)
+    (by simp only [ImperativeCharacter.realize, decide_eq_true_eq] at h; exact h)
 
 /-- Example: "Have a cookie." (@cite{roberts-2023} §3, (60))
 

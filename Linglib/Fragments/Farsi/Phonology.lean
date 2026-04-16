@@ -18,7 +18,7 @@ across the paradigm.
 ## Segments
 
 We define the two low vowels using the phonological feature system from
-`Theories.Phonology.Features`. These are the segments relevant to hiatus
+`Phonology.Features`. These are the segments relevant to hiatus
 resolution; the full Persian consonant inventory is not needed.
 
 ## Hiatus domain
@@ -30,7 +30,7 @@ resolution; the full Persian consonant inventory is not needed.
 
 namespace Fragments.Farsi.Phonology
 
-open Theories.Phonology
+open Phonology
 
 -- ============================================================================
 -- § 1: Persian Vowel Segments

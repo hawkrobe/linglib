@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Questions.LeftPeriphery
+import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Phenomena.Questions.Embedding
 import Linglib.Phenomena.Questions.Typology
 import Linglib.Phenomena.Questions.Studies.BhattDayal2020
@@ -8,7 +8,7 @@ import Linglib.Phenomena.Questions.Studies.BhattDayal2020
 @cite{dayal-2025} @cite{mccloskey-2006}
 
 Connects the left-peripheral selection class theory from
-`Theories.Semantics.Questions.LeftPeriphery` to the empirical embedding
+`Theories.Interfaces.SyntaxSemantics.LeftPeriphery` to the empirical embedding
 data in `Phenomena.Questions.Embedding` and cross-linguistic typology
 data in `Phenomena.Questions.Typology`.
 
@@ -20,7 +20,7 @@ cross-linguistic Q-particle predictions.
 
 namespace Phenomena.Questions.LeftPeripheryBridge
 
-open Semantics.Questions.LeftPeriphery
+open Interfaces.SyntaxSemantics.LeftPeriphery
 open Phenomena.Questions.Embedding
 open Phenomena.Questions.Typology
 open Phenomena.Questions.TypologyBridge
@@ -36,18 +36,20 @@ def classifyVerb : String → SelectionClass
   | "wonder"      => .rogativePerspP
   | "ask"         => .rogativeSAP
   | "know"        => .responsive
+  | "care"        => .responsive
+  | "matter"      => .responsive
   | "believe"     => .uninterrogative
   | _             => .uninterrogative
 
 /-- The theory correctly predicts all embedding judgments from the data. -/
 theorem theory_predicts_embedding :
     ∀ d ∈ allEmbeddingData,
-      allowsEmbedding (classifyVerb d.verb) Semantics.Questions.LeftPeriphery.EmbedType.subordination false false = d.subordination ∧
-      allowsEmbedding (classifyVerb d.verb) Semantics.Questions.LeftPeriphery.EmbedType.quasiSubordination false false = d.quasiSubordination ∧
-      allowsEmbedding (classifyVerb d.verb) Semantics.Questions.LeftPeriphery.EmbedType.quotation false false = d.quotation := by
+      allowsEmbedding (classifyVerb d.verb) Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.subordination false false = d.subordination ∧
+      allowsEmbedding (classifyVerb d.verb) Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.quasiSubordination false false = d.quasiSubordination ∧
+      allowsEmbedding (classifyVerb d.verb) Interfaces.SyntaxSemantics.LeftPeriphery.EmbedType.quotation false false = d.quotation := by
   intro d hd
   simp only [allEmbeddingData, List.mem_cons, List.mem_singleton, List.mem_nil_iff, or_false] at hd
-  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl <;> native_decide
+  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> native_decide
 
 /-- Shiftiness predictions match McCloskey's data for remember (responsive). -/
 theorem shiftiness_predicted :

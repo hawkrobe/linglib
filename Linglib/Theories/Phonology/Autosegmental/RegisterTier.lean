@@ -32,7 +32,7 @@ and the system is fully described by register features alone.
 This distinction enriches @cite{hyman-2006}'s word-prosodic typology.
 -/
 
-namespace Theories.Phonology.Autosegmental.RegisterTier
+namespace Phonology.Autosegmental.RegisterTier
 
 -- ============================================================================
 -- § 1: Register and Tone Features
@@ -377,4 +377,4 @@ theorem realizePitch_mono
             | l => simp [regSpecLE] at h_head
             | h => exact ⟨by omega, ih h_tail (by omega)⟩
 
-end Theories.Phonology.Autosegmental.RegisterTier
+end Phonology.Autosegmental.RegisterTier

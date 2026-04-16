@@ -24,7 +24,7 @@ four-way typology of morpheme attachment (Table 3):
 
 This classification connects `Theories.Morphology.Diagnostics`
 (Zwicky & Pullum's clitic-vs-affix criteria, which diagnose
-ms-boundedness) with `Theories.Phonology.ProsodicWord` (PrWd
+ms-boundedness) with `Phonology.ProsodicWord` (PrWd
 structure, which diagnoses p-boundedness).
 -/
 

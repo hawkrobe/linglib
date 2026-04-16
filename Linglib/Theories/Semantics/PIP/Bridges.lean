@@ -18,7 +18,7 @@ between PIP's formulation and the standard treatments in:
 1. **Presupposition projection** — PIP's F operator ↔ `PrProp.andFilter`
 2. **Generalized quantifiers** — PIP's EVERY/SOME ↔ `PropGQ`
 3. **Plural semantics** — PIP's SINGLE/PLURAL ↔ Link's Atom/properPlural
-4. **Modal logic** — PIP's must/might ↔ `Core.ModalLogic.kripkeEval`
+4. **Modal logic** — PIP's must/might ↔ `Core.IntensionalLogic.RestrictedModality.kripkeEval`
 5. **Static↔dynamic agreement** — `PIPExprF.truth` ↔ `PUpdate` filtering
 
 The set-based GQ operations (`setEvery`/`setSome`), three-argument modals
@@ -39,7 +39,7 @@ namespace Semantics.PIP.Bridges
 open Semantics.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity)
 open Semantics.Dynamic.IntensionalCDRT (IContext)
-open Core.ModalLogic (AccessRel Refl kripkeEval)
+open Core.IntensionalLogic.RestrictedModality (BAccessRel BRefl kripkeEval)
 open Core.Proposition (FiniteWorlds)
 
 
@@ -335,7 +335,7 @@ frame condition: reflexivity).
 The `must_truth_agrees_kripkeEval` and `must_realistic_of_refl`
 theorems in `Connectives.lean` already prove this correspondence.
 This section classifies PIP's modal operators in the lattice of
-normal modal logics from `Core.ModalLogic`.
+normal modal logics from `Core.IntensionalLogic.RestrictedModality`.
 -/
 
 /--
@@ -347,16 +347,16 @@ with a reflexive R guarantees the description holds at the evaluation
 world; might with a non-reflexive R does not.
 -/
 theorem pip_anaphora_requires_T :
-    Core.ModalLogic.Logic.K ≤ Core.ModalLogic.Logic.T :=
-  Core.ModalLogic.Logic.K_bot ▸ OrderBot.bot_le _
+    Core.IntensionalLogic.RestrictedModality.Logic.K ≤ Core.IntensionalLogic.RestrictedModality.Logic.T :=
+  Core.IntensionalLogic.RestrictedModality.Logic.K_bot ▸ OrderBot.bot_le _
 
 /--
 A reflexive accessibility relation satisfies Logic.T's frame condition.
 -/
-theorem reflexive_satisfies_T {W : Type*} (R : AccessRel W) (hRefl : Refl R) :
-    Core.ModalLogic.Logic.frameConditions Core.ModalLogic.Logic.T R := by
-  unfold Core.ModalLogic.Logic.frameConditions Core.ModalLogic.Logic.hasAxiom
-    Core.ModalLogic.Logic.T
+theorem reflexive_satisfies_T {W : Type*} (R : BAccessRel W) (hRefl : BRefl R) :
+    Core.IntensionalLogic.RestrictedModality.Logic.bframeConditions Core.IntensionalLogic.RestrictedModality.Logic.T R := by
+  unfold Core.IntensionalLogic.RestrictedModality.Logic.bframeConditions Core.IntensionalLogic.RestrictedModality.Logic.hasAxiom
+    Core.IntensionalLogic.RestrictedModality.Logic.T
   refine ⟨fun _ => hRefl, fun h => ?_, fun h => ?_, fun h => ?_, fun h => ?_⟩ <;>
     simp_all [Finset.mem_singleton]
 
@@ -378,20 +378,20 @@ This is structurally identical to @cite{kratzer-1991}'s analysis where:
 - The ordering source (for graded modality) is not used in PIP's
   simple must/might
 
-The formal connection is established via `Core.ModalLogic.kripkeEval`:
+The formal connection is established via `Core.IntensionalLogic.RestrictedModality.kripkeEval`:
 `must_truth_agrees_kripkeEval` (in Connectives.lean) proves that PIP's
 `must R allWorlds (atom p)` produces the same truth conditions as
 `kripkeEval R .necessity (p g)`.
 
 Direct import of `Theories/Semantics/Modality/Kratzer/` is not possible
 because Kratzer's implementation is monomorphic over `World4`. The
-correspondence is structural (via `AccessRel` ≅ `ModalBase`) rather
+correspondence is structural (via `BAccessRel` ≅ `ModalBase`) rather
 than definitional.
 -/
 
 /--
 Full Kratzer bridge: PIP's three-argument `mustBase` agrees with
-`kripkeEval .necessity` when the modal base comes from an AccessRel
+`kripkeEval .necessity` when the modal base comes from a BAccessRel
 and the restriction is tautological.
 
 This composes two independently proved correspondences:
@@ -401,7 +401,7 @@ This composes two independently proved correspondences:
 The composed result: `mustBase (accessRelToBase R w) ⊤ S ↔ kripkeEval R .necessity ...`
 -/
 theorem mustBase_agrees_kripkeEval {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
-    (R : AccessRel W) (φ : PIPExprF W D) (w : W) :
+    (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } ↔
     kripkeEval R .necessity φ.truth w = true :=
   (must_truth_iff_mustBase R φ w).symm.trans (by

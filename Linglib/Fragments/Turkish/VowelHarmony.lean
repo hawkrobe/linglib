@@ -50,9 +50,9 @@ Turkish VH decomposes into two `HarmonySystem` instances:
 
 namespace Fragments.Turkish.VowelHarmony
 
-open Theories.Phonology (Segment Feature)
-open Theories.Phonology.Autosegmental (agreeAt)
-open Theories.Phonology.Harmony (HarmonySystem HarmonyDir triggerValue)
+open Phonology (Segment Feature)
+open Phonology.Autosegmental (agreeAt)
+open Phonology.Harmony (HarmonySystem HarmonyDir triggerValue)
 
 -- ============================================================================
 -- § 1: Turkish Vowel Inventory (8 vowels)

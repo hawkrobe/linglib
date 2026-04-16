@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Logic.ModalLogic
+import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.FelicityTypes
 import Linglib.Theories.Pragmatics.Implicature.Presuppositions
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
@@ -51,7 +51,7 @@ namespace Implicature.Constraints.Wang2025
 
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
-open Core.ModalLogic (AccessRel kripkeEval)
+open Core.IntensionalLogic.RestrictedModality (BAccessRel kripkeEval)
 open Core.Proposition (BProp FiniteWorlds)
 open Interfaces (FelicityStatus FelicityResult)
 open Implicature.Presuppositions (AltStructure PragConstraint Obligatoriness)
@@ -189,9 +189,9 @@ epistemic stance. It scopes relative to exh_mx:
 - K >> exh_mx: preferred for atomic sentences
 - exh_mx >> K: available for complex sentences
 
-Uses the existing Kripke accessibility relation from Core.ModalLogic.
+Uses the existing Kripke accessibility relation from Core.IntensionalLogic.RestrictedModality.
 -/
-def speakerK [FiniteWorlds W] (R : AccessRel W) (φ : BProp W) : BProp W :=
+def speakerK [FiniteWorlds W] (R : BAccessRel W) (φ : BProp W) : BProp W :=
   kripkeEval R .necessity φ
 
 

@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Inertial Modality @cite{dowty-1979}
@@ -38,12 +39,12 @@ open Semantics.Attitudes.Intensional
     the current course of events continues normally. -/
 structure InertialParams where
   /-- Circumstantial modal base: facts holding at the evaluation world -/
-  circumstances : ModalBase
+  circumstances : ModalBase World
   /-- Inertial ordering: propositions describing normal continuation -/
-  inertia : OrderingSource
+  inertia : OrderingSource World
 
 /-- Extract Kratzer parameters from inertial parameters. -/
-def InertialParams.toKratzer (p : InertialParams) : KratzerParams where
+def InertialParams.toKratzer (p : InertialParams) : KratzerParams World where
   base := p.circumstances
   ordering := p.inertia
 
@@ -67,7 +68,7 @@ theorem inertial_isNormal (p : InertialParams) :
 
 /-- With empty inertial ordering, inertial modality reduces to simple
     circumstantial necessity (no preference among accessible worlds). -/
-theorem empty_inertia_is_simple (circ : ModalBase) (prop : BProp World) (w : World) :
+theorem empty_inertia_is_simple (circ : ModalBase World) (prop : BProp World) (w : World) :
     inertialNecessity ⟨circ, emptyBackground⟩ prop w ↔
     simpleNecessity circ prop w := by
   simp only [inertialNecessity, necessity, simpleNecessity,

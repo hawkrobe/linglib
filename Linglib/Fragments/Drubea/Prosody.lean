@@ -18,7 +18,7 @@ Data from @cite{lionnet-2025}, building on @cite{rivierre-1973} and
 
 namespace Fragments.Drubea.Prosody
 
-open Theories.Phonology.Autosegmental.RegisterTier
+open Phonology.Autosegmental.RegisterTier
 
 -- ============================================================================
 -- § 1: Stem Prosodic Patterns

@@ -40,7 +40,7 @@ namespace Phenomena.TenseAspect.TemporalAdverbials.Rouillard2026
 
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
-open Semantics.Montague.Sentence.MaximalInformativity
+open Semantics.Tense.MaximalInformativity
 open Core.Scale
 open Fragments.English.TemporalAdverbials
 
