@@ -31,7 +31,7 @@ Four classes of nominal heads, ranked by three diagnostic tests:
 object-referentiality, predicative restrictions, and kind-referentiality.
 -/
 
-namespace Interfaces.SyntaxSemantics.TopologicalMapping
+namespace Minimalism.TopologicalMapping
 
 -- ============================================================================
 -- § 1: Nominal Head Classification — Table (28)
@@ -337,4 +337,4 @@ theorem proper_name_in_d_is_constant
   ⟨Semantics.Reference.Basic.properName_isDirectlyReferential e,
    Semantics.Reference.Basic.properName_constantCharacter e⟩
 
-end Interfaces.SyntaxSemantics.TopologicalMapping
+end Minimalism.TopologicalMapping

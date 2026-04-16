@@ -24,7 +24,7 @@ Subset obligations (`C ⊆ B`) on Sets are closed by
 open Core.Scale
 open Lean Elab Tactic Meta
 
-namespace NgeFS
+namespace Tactics.NgeFS
 
 variable {n : ℕ}
 
@@ -277,7 +277,7 @@ private def try3 (outer middle inner : Name) : TacticM Bool := do
 
 /-- All 1-step lemma names (Finset + Set variants). -/
 private def lemmas1 : List Name :=
-  [``NgeFS.ngeFS_of_mono_right', ``NgeFS.ngeFS_of_mono_left',
+  [``Tactics.NgeFS.ngeFS_of_mono_right', ``Tactics.NgeFS.ngeFS_of_mono_left',
    ``ngeFS_of_trans_left, ``ngeFS_of_trans_right,
    ``ngeFS_via_hpos,
    ``nge_of_mono_right_set, ``nge_of_mono_left_set,
@@ -289,13 +289,13 @@ private def lemmas1 : List Name :=
 /-- All 2-step (outer, inner) combinations. -/
 private def lemmas2 : List (Name × Name) :=
   -- Finset combos
-  [(``NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_left),
-   (``NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_right),
-   (``NgeFS.ngeFS_of_mono_right', ``NgeFS.ngeFS_of_mono_right'),
-   (``NgeFS.ngeFS_of_mono_right', ``NgeFS.ngeFS_of_mono_left'),
-   (``NgeFS.ngeFS_of_mono_left', ``NgeFS.ngeFS_of_mono_left'),
-   (``NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_left),
-   (``NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_right),
+  [(``Tactics.NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_left),
+   (``Tactics.NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_right),
+   (``Tactics.NgeFS.ngeFS_of_mono_right', ``Tactics.NgeFS.ngeFS_of_mono_right'),
+   (``Tactics.NgeFS.ngeFS_of_mono_right', ``Tactics.NgeFS.ngeFS_of_mono_left'),
+   (``Tactics.NgeFS.ngeFS_of_mono_left', ``Tactics.NgeFS.ngeFS_of_mono_left'),
+   (``Tactics.NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_left),
+   (``Tactics.NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_right),
    -- Set combos
    (``nge_of_mono_right_set, ``nge_of_trans_left_set),
    (``nge_of_mono_right_set, ``nge_of_trans_right_set),
@@ -326,12 +326,12 @@ private def lemmas2 : List (Name × Name) :=
 /-- All 3-step (outer, middle, inner) combinations. -/
 private def lemmas3 : List (Name × Name × Name) :=
   -- Finset combos
-  [(``NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_left, ``ngeFS_of_trans_left),
-   (``NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_left, ``ngeFS_of_trans_right),
-   (``NgeFS.ngeFS_of_mono_right', ``NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_left),
-   (``NgeFS.ngeFS_of_mono_right', ``NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_left),
-   (``NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_left, ``ngeFS_of_trans_left),
-   (``NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_left, ``ngeFS_of_trans_right),
+  [(``Tactics.NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_left, ``ngeFS_of_trans_left),
+   (``Tactics.NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_left, ``ngeFS_of_trans_right),
+   (``Tactics.NgeFS.ngeFS_of_mono_right', ``Tactics.NgeFS.ngeFS_of_mono_right', ``ngeFS_of_trans_left),
+   (``Tactics.NgeFS.ngeFS_of_mono_right', ``Tactics.NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_left),
+   (``Tactics.NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_left, ``ngeFS_of_trans_left),
+   (``Tactics.NgeFS.ngeFS_of_mono_left', ``ngeFS_of_trans_left, ``ngeFS_of_trans_right),
    -- Set combos
    (``nge_of_mono_right_set, ``nge_of_trans_left_set, ``nge_of_trans_left_set),
    (``nge_of_mono_right_set, ``nge_of_trans_left_set, ``nge_of_trans_right_set),
@@ -340,7 +340,7 @@ private def lemmas3 : List (Name × Name × Name) :=
    (``nge_of_mono_left_set, ``nge_of_trans_left_set, ``nge_of_trans_left_set),
    (``nge_of_mono_left_set, ``nge_of_trans_left_set, ``nge_of_trans_right_set)]
 
-end NgeFS
+end Tactics.NgeFS
 
 /-- Automatically derive `¬sys.ge A B` or `¬sys.geFS A B` from hypotheses
     via compositions of monotonicity, transitivity, and positivity lemmas
@@ -352,14 +352,14 @@ elab "nge_close" : tactic => do
   -- 0-step
   try goal.assumption; setGoals otherGoals; return catch _ => pure ()
   -- 1-step
-  for lem in NgeFS.lemmas1 do
-    if ← NgeFS.tryLem lem then setGoals otherGoals; return
+  for lem in Tactics.NgeFS.lemmas1 do
+    if ← Tactics.NgeFS.tryLem lem then setGoals otherGoals; return
   -- 2-step
-  for (o, i) in NgeFS.lemmas2 do
-    if ← NgeFS.try2 o i then setGoals otherGoals; return
+  for (o, i) in Tactics.NgeFS.lemmas2 do
+    if ← Tactics.NgeFS.try2 o i then setGoals otherGoals; return
   -- 3-step
-  for (o, m, i) in NgeFS.lemmas3 do
-    if ← NgeFS.try3 o m i then setGoals otherGoals; return
+  for (o, m, i) in Tactics.NgeFS.lemmas3 do
+    if ← Tactics.NgeFS.try3 o m i then setGoals otherGoals; return
   throwError "nge_close: no pattern matched"
 
 /-- Close `∀ pair ∈ pairs, ¬sys.ge ↑pair.1 ↑pair.2` goals by iterating over

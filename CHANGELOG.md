@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.827] - 2026-04-16
+
+### Changed
+- **Within-subtree namespace consistency** — match each file's primary namespace to its directory siblings: `Pragmatics.DecisionTheoretic.MerinBridge` → `DTS.MerinBridge` (matches `DTS.X` siblings); `Pragmatics.RSA.RankingBridge` → `RSA.RankingBridge`; `Interfaces.SyntaxSemantics.{TopologicalMapping,VoiceTheta}` → `Minimalism.{TopologicalMapping,VoiceTheta}` (matches `Minimalism.X` siblings in same dir); `StructuralAlternatives` → `Alternatives.Structural`; `Presupposition.{MaximizePresupposition,PhiFeatures}` → `Semantics.Presupposition.X`; `NgeFS` → `Tactics.NgeFS`. Reduces directory-consistency lint findings from 66 to 58.
+- **scripts/rename_namespace.py**: read/write in binary mode to preserve CRLF line endings (some files in the repo use CRLF; the previous text-mode read normalized them to LF, producing spurious whole-file diffs).
+
 ## [0.229.826] - 2026-04-16
 
 ### Changed

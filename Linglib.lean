@@ -86,6 +86,7 @@ import Linglib.Core.Lexical.VerbClass
 import Linglib.Core.Lexical.DiathesisAlternation
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
+import Linglib.Core.Constraint.Profile
 import Linglib.Core.Logic.ConstraintEvaluation
 import Linglib.Core.Logic.OT
 import Linglib.Core.OT.Defs

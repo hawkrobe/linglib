@@ -140,7 +140,7 @@ These are re-exported from `Structural.lean`.
 
 section FBreaksSymmetry
 
-open StructuralAlternatives
+open Alternatives.Structural
 
 /-- F contains the non-symmetric alternative (all) but excludes the
     symmetric partner (sbna). This is exactly what's needed for exh
@@ -208,7 +208,7 @@ def formalAlternatives {C W : Type}
     (φ : Core.Tree.Tree C W)
     (salient : List (Core.Tree.Tree C W)) :
     Set (Core.Tree.Tree C W) :=
-  {ψ | StructuralAlternatives.atMostAsComplex
+  {ψ | Alternatives.Structural.atMostAsComplex
     (substitutionSourceFC lex φ salient) ψ φ}
 
 

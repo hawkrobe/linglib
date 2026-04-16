@@ -71,7 +71,7 @@ set_option autoImplicit false
 namespace Phenomena.Plurals.Studies.Enguehard2024
 
 open Core.Presupposition (PrProp)
-open Presupposition.PhiFeatures
+open Semantics.Presupposition.PhiFeatures
 
 -- ============================================================================
 -- §1  Core Types

@@ -58,7 +58,7 @@ namespace Implicature.ConventionalImplicatures
 
 open Semantics.Lexical.Expressives
 open Semantics.Entailment.Polarity (ContextPolarity)
-open StructuralAlternatives
+open Alternatives.Structural
 open Core.Tree
 
 

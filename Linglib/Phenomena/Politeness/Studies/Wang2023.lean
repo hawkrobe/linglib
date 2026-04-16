@@ -60,7 +60,7 @@ namespace Phenomena.Politeness.Studies.Wang2023
 open Core (PrivativePair PhiFeatures)
 open Core.OT (NamedConstraint ConstraintFamily mkTableau
               mkFactorialOptima mkFactorialTypologySize)
-open Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
+open Semantics.Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
   presupWeakerThan wellFormed_specLevel_le_two sgSem plSem)
 open Phenomena.Politeness.Honorifics (AllocDatum allAllocData)
 
@@ -207,14 +207,14 @@ theorem mp_maximal_zero : mpConstraint.eval .maximal = 0 := rfl
     `MaximizePresupposition`: same eval function, same name, same family.
     This connects Wang2023's domain-specific MP! to the general theory. -/
 theorem mpConstraint_eq_phiMP :
-    mpConstraint = Presupposition.MaximizePresupposition.phiMP := rfl
+    mpConstraint = Semantics.Presupposition.MaximizePresupposition.phiMP := rfl
 
 /-- `todConstraint.eval` equals `markednessPenalty presupStrength`.eval.
     ToD is an instance of the general markedness penalty from
     `MaximizePresupposition`. -/
 theorem todConstraint_eval_eq_markednessPenalty (c : PrivativePair) :
     todConstraint.eval c =
-    (Presupposition.MaximizePresupposition.markednessPenalty presupStrength).eval c := rfl
+    (Semantics.Presupposition.MaximizePresupposition.markednessPenalty presupStrength).eval c := rfl
 
 /-- `tod_reverses_mp` is a corollary of the general
     `mp_reverses_markedness` theorem from `MaximizePresupposition`. -/
@@ -222,7 +222,7 @@ theorem tod_reverses_mp_from_general (c₁ c₂ : PrivativePair)
     (hw₁ : c₁.wellFormed = true) (hw₂ : c₂.wellFormed = true) :
     todConstraint.eval c₁ < todConstraint.eval c₂ ↔
     mpConstraint.eval c₁ > mpConstraint.eval c₂ :=
-  Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂ hw₁ hw₂
+  Semantics.Presupposition.MaximizePresupposition.phi_mp_reverses_markedness c₁ c₂ hw₁ hw₂
 
 -- ============================================================================
 -- §3  Binary Case: ToD >> MP! Derives Unmarked Recruitment
@@ -445,7 +445,7 @@ theorem thirdPerson_strategy_is_third :
     Proved via `unmarked_vacuous_presup` from PhiFeatures. -/
 theorem recruited_cells_have_vacuous_presup {E : Type*} (innerP outerP : E → Prop) :
     ∀ s : HonStrategy,
-      ∀ x : E, (Presupposition.PhiFeatures.phiPresup innerP outerP
+      ∀ x : E, (Semantics.Presupposition.PhiFeatures.phiPresup innerP outerP
         (honStrategyCell s)).defined x := by
   intro s x; cases s <;> trivial
 

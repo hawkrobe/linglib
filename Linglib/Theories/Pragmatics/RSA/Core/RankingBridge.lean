@@ -40,7 +40,7 @@ quantitative Bayesian pragmatics are not rival frameworks but
 endpoints of the same rationality continuum.
 -/
 
-namespace Pragmatics.RSA.RankingBridge
+namespace RSA.RankingBridge
 
 open Core.Logic.Ranking Core.Logic.SystemZ Core Real BigOperators
 open Finset Filter Topology
@@ -523,4 +523,4 @@ theorem condProb_tendsto_one [Fintype W] [DecidableEq W]
     simp only [sub_zero] at this
     exact this
 
-end Pragmatics.RSA.RankingBridge
+end RSA.RankingBridge

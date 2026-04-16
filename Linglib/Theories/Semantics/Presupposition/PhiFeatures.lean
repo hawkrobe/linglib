@@ -47,7 +47,7 @@ belong in `Phenomena/Plurals/Studies/`).
 
 set_option autoImplicit false
 
-namespace Presupposition.PhiFeatures
+namespace Semantics.Presupposition.PhiFeatures
 
 open Mereology (Atom)
 open Core (PrivativePair PhiFeatures)
@@ -723,4 +723,4 @@ theorem cardConceivable_mono (witnessCard : W → Nat)
 
 end CardinalityConceivability
 
-end Presupposition.PhiFeatures
+end Semantics.Presupposition.PhiFeatures

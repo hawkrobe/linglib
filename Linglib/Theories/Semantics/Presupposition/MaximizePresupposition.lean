@@ -60,13 +60,13 @@ strength directly (`mp_reverses_markedness`).
 
 set_option autoImplicit false
 
-namespace Presupposition.MaximizePresupposition
+namespace Semantics.Presupposition.MaximizePresupposition
 
 open Core (PrivativePair)
 open Core.OT (NamedConstraint ConstraintFamily mkTableau
               mkTableau_optimal_zero_first mkTableau_optimal_mem)
 open Core.ConstraintEvaluation
-open Presupposition.PhiFeatures
+open Semantics.Presupposition.PhiFeatures
 
 -- ============================================================================
 -- §1  Abstract MP and Markedness Constraints
@@ -348,4 +348,4 @@ theorem strength_iff_specLevel (a b : PrivativePair) :
     presupWeakerThan a b = true ↔ a.specLevel < b.specLevel := by
   simp [presupWeakerThan, decide_eq_true_eq]
 
-end Presupposition.MaximizePresupposition
+end Semantics.Presupposition.MaximizePresupposition

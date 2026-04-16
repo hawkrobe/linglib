@@ -238,7 +238,7 @@ theorem weak_evidence_revises :
     the **ordering** is preserved: worlds with higher probability have
     lower rank. We verify this concretely.
 
-    See `Pragmatics.RSA.RankingBridge` for the formal
+    See `RSA.RankingBridge` for the formal
     connection: `rankToPrior κ w = exp(-κ(w))` gives the exponential
     prior, and `softmax_concentrates_unique` proves that softmax
     with ranking scores concentrates on rank-0 worlds as α → ∞. -/

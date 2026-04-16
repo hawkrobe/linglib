@@ -55,7 +55,7 @@ parameterized over the category type `C`, so they work with UD-grounded
   in `KatzirSingh2015.lean` is based on structural complexity (def 19)
 -/
 
-namespace StructuralAlternatives
+namespace Alternatives.Structural
 
 open Core.Tree
 open Tree
@@ -793,4 +793,4 @@ def atLeastAsGoodAs {C W World : Type}
   atMostAsComplex (substitutionSource lex ψ) φ ψ ∧
   ∀ w, meaning φ w = true → meaning ψ w = true
 
-end StructuralAlternatives
+end Alternatives.Structural

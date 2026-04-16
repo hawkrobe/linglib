@@ -53,8 +53,8 @@ open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
 open Core (PrivativePair PhiFeatures)
 open Core.Presupposition (PrProp)
 open Core.OT (NamedConstraint mkTableau)
-open Presupposition.PhiFeatures
-open Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)
+open Semantics.Presupposition.PhiFeatures
+open Semantics.Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)
 
 -- ============================================================================
 -- §1  Presuppositional Denotations (re-exported from PhiFeatures)

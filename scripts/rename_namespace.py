@@ -30,9 +30,12 @@ LINGLIB_DIR = REPO_ROOT / "Linglib"
 def rename_in_file(filepath: Path, old: str, new: str, dry_run: bool) -> int:
     """Returns the number of substitutions made in the file."""
     pattern = re.compile(rf"(?<![A-Za-z0-9_.]){re.escape(old)}(?![A-Za-z0-9_])")
-    text = filepath.read_text()
+    # Read in binary mode to preserve line endings (some files use CRLF).
+    raw = filepath.read_bytes()
+    text = raw.decode("utf-8")
     new_lines = []
     total = 0
+    # `splitlines(keepends=True)` keeps both \n and \r\n as-is.
     for line in text.splitlines(keepends=True):
         if re.match(r"^\s*import\s+", line):
             new_lines.append(line)
@@ -41,7 +44,7 @@ def rename_in_file(filepath: Path, old: str, new: str, dry_run: bool) -> int:
         new_lines.append(new_line)
         total += n
     if total > 0 and not dry_run:
-        filepath.write_text("".join(new_lines))
+        filepath.write_bytes("".join(new_lines).encode("utf-8"))
     return total
 
 

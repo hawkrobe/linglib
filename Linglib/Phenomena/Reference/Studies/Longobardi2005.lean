@@ -30,7 +30,7 @@ derived theorems, and noun taxonomy. This study file:
 
 namespace Phenomena.Reference.Studies.Longobardi2005
 
-open Interfaces.SyntaxSemantics.TopologicalMapping
+open Minimalism.TopologicalMapping
 open Phenomena.Reference.Studies.Longobardi2001 (DPParameter ArgumentType
   romance english greek pnRequiresOvertD bnCanBeReferential)
 
