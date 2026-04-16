@@ -1,7 +1,7 @@
 import Linglib.Core.Gender
 import Linglib.Core.Lexical.Pronouns
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Discourse.ReferentialForm
+import Linglib.Core.Discourse.Accessibility
 import Linglib.Fragments.English.Pronouns
 
 /-!
@@ -64,7 +64,7 @@ namespace Arnold2026
 
 open Core (GenderInfo SurfaceGender)
 open Core.Pronouns (PronounSpec)
-open Core.Discourse.ReferentialForm (DiscourseElaboration AccessibilityLevel)
+open Core.Discourse.Accessibility (DiscourseElaboration AccessibilityLevel)
 open Fragments.English.Pronouns (GenderParadigm)
 
 -- ============================================================================
@@ -254,7 +254,7 @@ theorem personal_has_stronger_precondition :
     representations — you use a pronoun for a referent that is already
     well-established in the discourse. The bridge function
     `AccessibilityLevel.toElaboration` is defined in
-    `Core.Discourse.ReferentialForm`. -/
+    `Core.Discourse.Accessibility`. -/
 theorem pronoun_implies_elaborated :
     AccessibilityLevel.unstressedPron.toElaboration = .elaborated := rfl
 

@@ -27,7 +27,7 @@ NP weight/reduction.
 
 set_option autoImplicit false
 
-namespace Core.Discourse.ReferentialForm
+namespace Core.Discourse.Accessibility
 
 open Core.Prominence
 
@@ -230,4 +230,4 @@ theorem pronoun_implies_elaborated :
 theorem fullName_implies_underspecified :
     AccessibilityLevel.fullName.toElaboration = .underspecified := rfl
 
-end Core.Discourse.ReferentialForm
+end Core.Discourse.Accessibility

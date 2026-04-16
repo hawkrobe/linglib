@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.ReferentialForm
+import Linglib.Core.Discourse.Accessibility
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
 import Linglib.Phenomena.Reference.Studies.KwonLee2026
@@ -631,7 +631,7 @@ theorem korean_subject_bias_for_null_exceeds_chance :
 -- § 9. Bridge to @cite{ariel-2001} (Accessibility Marking)
 -- ════════════════════════════════════════════════════
 
-open Core.Discourse.ReferentialForm
+open Core.Discourse.Accessibility
 
 /-- Centering's Cb (the "currently centered" entity) corresponds to a
     high-accessibility referent on @cite{ariel-2001}'s scale. Rule 1

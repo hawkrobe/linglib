@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.ReferentialForm
+import Linglib.Core.Discourse.Accessibility
 import Linglib.Phenomena.Anaphora.Typology
 
 /-!
@@ -19,7 +19,7 @@ of multiple factors.
 
 ## The Accessibility Marking Scale
 
-The 18-level `AccessibilityLevel` type (defined in `Core/Discourse/ReferentialForm.lean`)
+The 18-level `AccessibilityLevel` type (defined in `Core/Discourse/Accessibility.lean`)
 encodes Ariel's ordering. This study file adds the three form-function criteria
 (informativity, rigidity, attenuation), the multi-factor accessibility assessment,
 and comparisons with competing theories.
@@ -54,7 +54,7 @@ set_option autoImplicit false
 
 -- Extend the Core namespace with study-specific form-function criteria.
 -- This enables dot notation (e.g., AccessibilityLevel.zero.informativity).
-namespace Core.Discourse.ReferentialForm
+namespace Core.Discourse.Accessibility
 
 /-- Informativity: approximate lexical content, encoded as an ordinal
     ranking (0–4). Anti-correlated with accessibility (more informative
@@ -112,12 +112,12 @@ def AccessibilityLevel.all : List AccessibilityLevel :=
    .stressedPronGesture, .stressedPron, .unstressedPron,
    .cliticizedPron, .verbalAgreement, .zero]
 
-end Core.Discourse.ReferentialForm
+end Core.Discourse.Accessibility
 
 namespace Phenomena.Reference.Studies.Ariel2001
 
 open Core.Prominence (DefinitenessLevel)
-open Core.Discourse.ReferentialForm
+open Core.Discourse.Accessibility
 
 -- ════════════════════════════════════════════════════
 -- § 1. Form-Function Criteria

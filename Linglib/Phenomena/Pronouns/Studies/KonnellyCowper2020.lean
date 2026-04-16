@@ -1,7 +1,7 @@
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Core.Discourse.ReferentialForm
+import Linglib.Core.Discourse.Accessibility
 import Linglib.Fragments.English.Pronouns
 import Linglib.Phenomena.Pronouns.Studies.Arnold2026
 
@@ -57,7 +57,7 @@ namespace KonnellyCowper2020
 open Morphology.DM (Contrastivity GenderFeature GenderVal GenderDimension
   Polarity Interpretability CatHead PhiBundle)
 open Morphology.DM.VI (FeatureVI subsetPrinciple)
-open Core.Discourse.ReferentialForm (DiscourseElaboration)
+open Core.Discourse.Accessibility (DiscourseElaboration)
 open _root_.Arnold2026 (licensesUnderspecified)
 
 -- ============================================================================

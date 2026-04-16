@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
-import Linglib.Core.Discourse.ReferentialForm
+import Linglib.Core.Discourse.Accessibility
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Phenomena.Reference.Studies.KehlerRohde2013
 import Linglib.Fragments.Korean.Pronouns
@@ -30,7 +30,7 @@ set_option autoImplicit false
 
 namespace KwonLee2026
 
-open Core.Discourse.ReferentialForm
+open Core.Discourse.Accessibility
 
 -- ════════════════════════════════════════════════════
 -- § 1. Korean Referential Forms

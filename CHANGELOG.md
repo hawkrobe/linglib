@@ -1,5 +1,26 @@
 # Changelog
 
+## [0.229.835] - 2026-04-16
+
+### Added
+- **Middleton (2026) formalization** — Taos impoverishment-ordering counterexamples to Arregi & Nevins (2012)'s strict modular postsyntax.
+  - `Theories/Morphology/DM/Metathesis.lean`: `MetathesisRule` (Prop-valued condition + decidability witness, two `swap{Fst,Snd}` feature types), `focusRule` smart constructor, `applyMetathesis` / `applyMetathesisChain`.
+  - `Theories/Morphology/DM/PostsyntacticDerivation.lean`: two architectures — `runStrict` (A&N's para-block → syn-block → metathesis) and `runInterleaved` (Middleton's free impoverishment ordering → metathesis). Theorems: `runStrict_eq_interleaved_paraSyn` (strict ⊑ interleaved on para++syn lists, by `List.foldl_append`), `runStrict_forces_paraSyn_order`, `runInterleaved_admits_synPara`.
+  - `Fragments/Taos/Agreement.lean`: minimal Kiowa-Tanoan fragment — `ArgRole` (A/G/O), Harbour person/number bundles (`person1/2/3`, `numSg/Du/Pl`), `argBundle`, diagnostic prefixes, `Morpheme` exponent enum.
+  - `Phenomena/Allomorphy/Studies/Middleton2026.lean`: schematic `r_para` (paradigmatic, deletes `[+atomic]` when focus has `[+author,+minimal]`) and `r_syn` (syntagmatic, deletes `[+minimal]` when focus has `[+atomic]` and rightCtx non-empty); `Syntagmatic r_syn` proved by concrete two-neighborhood witness. `decide`-checked outputs at a witness neighborhood: `stripParaSyn = [+author, +minimal]` (A&N order) vs. `stripSynPara = [+author, +atomic]` (Middleton order). Architectural theorem `runStrict_neq_runInterleaved_at_witness` shows A&N's strict pipeline cannot reach Middleton's syn-first output. §5 carries the upheld claim: with `r_meta` swapping `[+author]`↔`[+atomic]` when all three of `[+author,+atomic,+minimal]` are present, `derivIM ≠ derivMI` — metathesis must follow impoverishment.
+- **Minimalism.FeatureVal**: extended with `atomic`/`minimal`/`participant`/`author` constructors (Harbour 2014, 2016) and matching `sameType` cases. The Harbour features are distinct types (a `[+atomic]` does not match a `[+minimal]` under `sameType`) — necessary so paradigmatic and syntagmatic impoverishment rules can target them independently.
+- **References**: 12 new bib entries — `middleton-2026` (verified DOI 10.1162/ling.a.546), `arregi-nevins-2012`, `bonet-1991`, `halle-1997`, `harbour-2003`, `harbour-2008`, `harbour-2011`, `harbour-middleton-2026`, `harris-halle-2005`, `kontak-kunkel-1987`, `watkins-1984`, `harrington-1916`. Bibliography regenerated.
+
+## [0.229.834] - 2026-04-16
+
+### Changed
+- **Core/Discourse/ architectural cleanup, phase 2**: mathlib-style renames within `Core/Discourse/`. `Goals.lean` → `Goal.lean` (singular), `CoherenceRelation.lean` → `Coherence.lean` (Relation implied by directory), `ReferentialForm.lean` → `Accessibility.lean` (Ariel's central concept). Namespace declarations updated to match (`Core.Discourse.CoherenceRelation` → `Core.Discourse.Coherence`, `Core.Discourse.ReferentialForm` → `Core.Discourse.Accessibility`). The `abbrev ReferentialForm := AccessibilityLevel` alias inside `Accessibility.lean` is preserved for back-compat. Updated all importers across `Phenomena/Reference/Studies/`, `Phenomena/Pronouns/Studies/`, `Core/Salience/`, plus `Linglib.lean`.
+
+## [0.229.833] - 2026-04-16
+
+### Changed
+- **Migrate `Phonology.HarmonicGrammar` to `Core.Constraint`** — finish the abstraction migration started in 0.229.820+. Delete pure duplicates `Phonology/HarmonicGrammar/Basic.lean` and `Phonology/HarmonicGrammar/MaxEnt.lean` (already replicated in `Core/Constraint/Weighted.lean` and `Core/Constraint/MaxEnt.lean`). Move framework-agnostic HG modules into `Core/Constraint/`: `Variation.lean`, `NoisyHG.lean`, `OTLimit.lean`, `Separability.lean`, plus `Phonology/ViolationSemiring.lean` → `Core/Constraint/ViolationSemiring.lean`. Rewrite namespace `Phonology.HarmonicGrammar` → `Core.Constraint` throughout. Update all consumers (Tagalog/Phonology, Phonology/Constraints, 9 study files in `PhonologicalAlternation/Studies/` and `Phonotactics/Studies/`, `CoupledEvaluation` doc refs, `Linglib.lean` import block). The legacy `Phonology/HarmonicGrammar/` directory is gone; HG/MaxEnt/NHG/separability theory now lives alongside the rest of the constraint-system abstraction in `Core/Constraint/`.
+
 ## [0.229.832] - 2026-04-16
 
 ### Changed

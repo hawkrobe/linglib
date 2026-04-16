@@ -1,5 +1,5 @@
 import Linglib.Core.Prominence
-import Linglib.Core.Discourse.ReferentialForm
+import Linglib.Core.Discourse.Accessibility
 import Linglib.Core.InformationStructure
 
 /-!
@@ -37,7 +37,7 @@ set_option autoImplicit false
 namespace Core.Salience
 
 open Core.Prominence
-open Core.Discourse.ReferentialForm
+open Core.Discourse.Accessibility
 open Core.InformationStructure
 
 -- ════════════════════════════════════════════════════

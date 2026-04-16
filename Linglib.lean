@@ -65,7 +65,7 @@ import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.Discourse.QUD
-import Linglib.Core.Discourse.Goals
+import Linglib.Core.Discourse.Goal
 import Linglib.Core.Discourse.Scoreboard
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Core.CoreferenceStatus
@@ -200,8 +200,8 @@ import Linglib.Theories.Morphology.Core.MirrorPrinciple
 import Linglib.Theories.Morphology.Core.Monotonicity
 import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Morphology.Core.WordStructure
-import Linglib.Core.Discourse.CoherenceRelation
-import Linglib.Core.Discourse.ReferentialForm
+import Linglib.Core.Discourse.Coherence
+import Linglib.Core.Discourse.Accessibility
 import Linglib.Core.Discourse.SpeechActs
 import Linglib.Core.GrammaticalMood
 import Linglib.Core.ClauseType
