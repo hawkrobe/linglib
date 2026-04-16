@@ -46,7 +46,7 @@ Connects:
   data for cross-linguistic contrast
 -/
 
-namespace Phenomena.Constructions.Resultatives.Studies.Tay2024
+namespace Tay2024
 
 open Semantics.Causation.Resultatives
 open Core.StructuralEquationModel
@@ -482,4 +482,4 @@ theorem vv_compound_architecture :
     resultStateMapsToCoS = .inception := by
   refine ⟨?_, rfl, ?_, ?_, ?_, ?_, ?_, rfl⟩ <;> native_decide
 
-end Phenomena.Constructions.Resultatives.Studies.Tay2024
+end Tay2024

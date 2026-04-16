@@ -25,7 +25,7 @@ algebra approach to too/either (@cite{ahn-2015}).
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Theories.Semantics.Lexical.Particle.Additive
 
-namespace Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
+namespace Thomas2026
 
 open Phenomena.Focus.AdditiveParticles
 
@@ -464,4 +464,4 @@ theorem cross_product_too_infelicitous :
 
 end Verification
 
-end Phenomena.Focus.AdditiveParticles.Studies.Thomas2026
+end Thomas2026

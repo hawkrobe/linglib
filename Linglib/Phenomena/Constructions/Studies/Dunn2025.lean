@@ -99,13 +99,13 @@ theorem ditransitive_specificity_consistent :
 /-- *Let alone*: derived `.partiallyOpen` matches stipulated. -/
 theorem letAlone_specificity_consistent :
     derivedSpecificity letAloneForm =
-      FillmoreKayOConnor1988.letAloneConstruction.specificity := by
+      ConstructionGrammar.Studies.FillmoreKayOConnor1988.letAloneConstruction.specificity := by
   native_decide
 
 /-- must-VERB: derived `.partiallyOpen` matches stipulated. -/
 theorem mustVerb_specificity_consistent :
     derivedSpecificity mustVerbForm =
-      GoldbergShirtz2025.mustVerbConstruction.specificity := by
+      ConstructionGrammar.Studies.GoldbergShirtz2025.mustVerbConstruction.specificity := by
   native_decide
 
 /-- Veggie-wrap: derived `.lexicallySpecified` (all fixed). -/

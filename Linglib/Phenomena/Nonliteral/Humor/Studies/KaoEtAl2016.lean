@@ -25,7 +25,7 @@ Funniness rated on 1–7 scale, z-scored across participants.
 See `ErkHerbelot2024` for the SDS↔Kao bridge.
 -/
 
-namespace Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
+namespace KaoEtAl2016
 
 -- Pun Structure
 
@@ -260,4 +260,4 @@ In SDS: selectional vs scenario → different concepts
 
 -/
 
-end Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
+end KaoEtAl2016

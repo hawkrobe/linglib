@@ -31,12 +31,12 @@ onto SC predicate categories:
 - `HaddicanEtAl2026`: SC family
   geometry; `resultative_sc` defined there has shape
   `node(leaf, node(leaf, leaf))`, same as PVC and DOC.
-- `Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995`:
+- `Dendikken1995`:
   path resultatives share SC predicate category P with PVCs.
 
 -/
 
-namespace Phenomena.Constructions.Resultatives.Studies.Dendikken1995
+namespace Dendikken1995
 
 open Minimalism
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
@@ -145,4 +145,4 @@ theorem path_res_shares_cat_with_pvc :
     resToSCPred .noncausativePath = .P :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Constructions.Resultatives.Studies.Dendikken1995
+end Dendikken1995

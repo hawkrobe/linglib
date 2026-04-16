@@ -35,7 +35,7 @@ re-derive the entire paradigm. Instead:
   instantiate it.
 -/
 
-namespace Phenomena.Allomorphy.Studies.Middleton2026
+namespace Middleton2026
 
 open Minimalism Morphology.DM.Impoverishment Morphology.DM.Metathesis
      Morphology.DM.PostsyntacticDerivation
@@ -77,7 +77,7 @@ def r_syn : ImpoverishmentRule where
   condition n :=
     (n.focus.any (λ f => f.featureType.sameType (fAtomic true)) = true)
     ∧ (n.rightCtx.length > 0)
-  decCond n := inferInstanceAs (Decidable (_ ∧ _))
+  decCond _ := inferInstance
   target := fMinimal true
 
 /-- The two rules are genuinely in distinct phases: `r_syn` actually
@@ -198,14 +198,20 @@ theorem runStrict_neq_runInterleaved_at_witness :
 -- § 5: Metathesis Still Follows Impoverishment (the Uphold)
 -- ============================================================================
 
-/-- A trivial metathesis rule that swaps `[+author]` with `[+atomic]`
-    when the focus contains both. Schematic of @cite{middleton-2026}'s
-    rules (24) and (26). -/
+/-- A metathesis rule that swaps `[+author]` with `[+atomic]` when the
+    focus contains all three of `[+author]`, `[+atomic]`, `[+minimal]`.
+    Schematic of @cite{middleton-2026}'s rules (24) and (26): a
+    metathesis triggered in the presence of a particular number
+    feature. The dependence on `[+minimal]` is what couples this rule
+    to `r_syn` (which deletes `[+minimal]`), so that the IM/MI orders
+    diverge — the empirically motivated witness of "metathesis after
+    impoverishment, not before." -/
 def r_meta : MetathesisRule :=
   focusRule
     (λ fb =>
       fb.any (λ f => f.featureType.sameType (fAuthor true)) &&
-      fb.any (λ f => f.featureType.sameType (fAtomic true)))
+      fb.any (λ f => f.featureType.sameType (fAtomic true)) &&
+      fb.any (λ f => f.featureType.sameType (fMinimal true)))
     (fAuthor true)
     (fAtomic true)
 
@@ -226,4 +232,4 @@ theorem impov_before_meta_diverges_from_meta_before_impov :
     derivIM ≠ derivMI := by
   decide
 
-end Phenomena.Allomorphy.Studies.Middleton2026
+end Middleton2026

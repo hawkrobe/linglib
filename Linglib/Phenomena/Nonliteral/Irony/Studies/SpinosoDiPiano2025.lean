@@ -98,7 +98,7 @@ wrapper with an explicit `toWeather` conversion.
 
 set_option autoImplicit false
 
-namespace Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
+namespace SpinosoDiPiano2025
 
 open Phenomena.Nonliteral.Irony.KaoEtAl2015 (Weather pleasantWeather terribleWeather)
 open Real (rpow rpow_nonneg)
@@ -600,4 +600,4 @@ theorem irony_iff_prior_favors_antonym (wp : Weather → ℝ) (hw : ∀ s, 0 ≤
 
 end Structural
 
-end Phenomena.Nonliteral.Irony.Studies.SpinosoDiPiano2025
+end SpinosoDiPiano2025

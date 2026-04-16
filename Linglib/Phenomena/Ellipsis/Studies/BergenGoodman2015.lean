@@ -56,7 +56,7 @@ literal meaning, so S1's exp(α·utility) term is zero for them (matching
 exp(-∞) = 0 from log(0) in the utility).
 -/
 
-open BigOperators RSA
+open BigOperators RSA Phenomena.Ellipsis
 
 namespace BergenGoodman2015
 

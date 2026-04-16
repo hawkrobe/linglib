@@ -96,8 +96,11 @@ def collect_studies(phenomenon: str | None) -> list[tuple[Path, str, str]]:
     (e.g. `Minimalism.Phenomena.Allocutivity`) are skipped.
     """
     out = []
-    pattern = "Phenomena/*/Studies/**/*.lean" if phenomenon is None \
-        else f"Phenomena/{phenomenon}/Studies/**/*.lean"
+    # `**` matches any depth, so this catches both
+    # `Phenomena/X/Studies/Y.lean` and nested forms like
+    # `Phenomena/X/Y/Studies/Z.lean`.
+    pattern = "Phenomena/**/Studies/**/*.lean" if phenomenon is None \
+        else f"Phenomena/{phenomenon}/**/Studies/**/*.lean"
     for f in sorted(LINGLIB_DIR.rglob(pattern)):
         expected = expected_path_namespace(f)
         if expected is None:
@@ -147,6 +150,12 @@ def apply_renames(studies: list[tuple[Path, str, str]],
     grand_total = 0
     files_touched: set[Path] = set()
     for f in sorted(LINGLIB_DIR.rglob("*.lean")):
+        # The partial `Studies.X` rewrite is only safe inside Phenomena/.
+        # Elsewhere (e.g. Theories/Syntax/ConstructionGrammar/Studies/*),
+        # `Studies.X` is a path-relative reference to a sibling, NOT to one
+        # of our renamed Phenomena studies — applying the substitution there
+        # silently misroutes the reference.
+        in_phenomena = f.relative_to(REPO_ROOT).parts[1] == "Phenomena"
         raw = f.read_bytes()
         text = raw.decode("utf-8")
         new_lines = []
@@ -156,7 +165,9 @@ def apply_renames(studies: list[tuple[Path, str, str]],
                 new_lines.append(line)
                 continue
             new_line, n1 = full_pattern.subn(replace_full, line)
-            new_line, n2 = partial_pattern.subn(replace_partial, new_line)
+            n2 = 0
+            if in_phenomena:
+                new_line, n2 = partial_pattern.subn(replace_partial, new_line)
             new_lines.append(new_line)
             file_total += n1 + n2
         if file_total > 0:

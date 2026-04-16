@@ -31,7 +31,7 @@ movement, preferring continuous order (P incorporates instead).
 
 -/
 
-namespace Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
+namespace Dendikken1995
 
 open Minimalism
 open Phenomena.Constructions.ParticleVerbs
@@ -147,4 +147,4 @@ theorem light_prediction_matches_data :
     weightToDerivation .light = none :=
   ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995
+end Dendikken1995

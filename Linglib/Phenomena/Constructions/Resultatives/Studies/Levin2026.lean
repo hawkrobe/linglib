@@ -59,7 +59,7 @@ grammar point that the current verb-level `participatesIn` infrastructure
 does not directly accommodate. This file formalizes the specific case.
 -/
 
-namespace Phenomena.Constructions.Resultatives.Studies.Levin2026
+namespace Levin2026
 
 open Core.Verbs
 open LevinClass (pushPull hit wipe)
@@ -1097,4 +1097,4 @@ theorem resultative_cause_differs_from_cause_verb :
     cause.causative ≠ some resultativeCausativeBuilder := by
   decide
 
-end Phenomena.Constructions.Resultatives.Studies.Levin2026
+end Levin2026

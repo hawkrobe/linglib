@@ -178,10 +178,16 @@ def check_directory_consistency() -> list[tuple[Path, int, str]]:
       - directories with only one .lean file (no comparison possible)
       - files with no top-level namespace
       - files with banned-prefix namespaces (reported by banned-prefix check)
+      - `Phenomena/<X>/Studies/` directories: each study uses its own bare
+        `<AuthorYear>` namespace by convention (mathlib pattern), so every
+        file in the directory has a different first segment. Cross-directory
+        consistency is meaningless here — only check that each file's
+        namespace matches its basename.
 
     For directories with mixed first-segments, the majority wins and minorities
     are flagged. Ties (e.g. 2 files, 2 different segments) flag both.
     """
+    violations = []
     by_dir: dict[Path, list[tuple[Path, int, str]]] = defaultdict(list)
     for f in find_lean_files():
         prim = primary_namespace(f)
@@ -191,9 +197,33 @@ def check_directory_consistency() -> list[tuple[Path, int, str]]:
         first = ns.split(".")[0]
         if first in BANNED_FIRST_SEGMENTS:
             continue
+
+        # Special case: Phenomena/X/Studies/...AuthorYear.lean.
+        # We only flag the stale path-mirror form
+        # `Phenomena.<X>.Studies....<AuthorYear>` — that's the leftover
+        # from before the mathlib migration. Concept-driven namespaces
+        # (e.g. `RSA.LassiterGoodman2017`, `Semantics.Tense.X`) are
+        # legitimate mathlib style and intentionally varied; the bare
+        # `<AuthorYear>` form is also fine. So only the path-mirror is
+        # actionable.
+        rel_parts = f.relative_to(REPO_ROOT).parts
+        if (len(rel_parts) >= 5
+                and rel_parts[1] == "Phenomena"
+                and "Studies" in rel_parts):
+            # Compute the path-mirror namespace and check if `ns` is it.
+            path_mirror = ".".join(
+                list(rel_parts[1:-1]) + [rel_parts[-1].removesuffix(".lean")]
+            )
+            if ns == path_mirror:
+                violations.append((f, line_num,
+                    f"study namespace `{ns}` is the stale path-mirror form; "
+                    f"use bare `{f.stem}` (mathlib pattern) or a "
+                    f"concept-driven namespace"))
+            # Don't include in directory-consistency check either way.
+            continue
+
         by_dir[f.parent].append((f, line_num, first))
 
-    violations = []
     for dirpath, entries in by_dir.items():
         if len(entries) < 2:
             continue

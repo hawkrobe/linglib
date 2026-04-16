@@ -44,6 +44,8 @@ is the existential dual of supervaluation. See
 `Theories/Semantics/Comparison/Delineation.lean`.
 -/
 
+open Phenomena.Gradability
+
 namespace Fine1975
 
 open Core.Duality (Truth3)
@@ -222,7 +224,7 @@ theorem D_idempotent {Spec : Type*} (eval : Spec → Bool) (S : SpecSpace Spec) 
 -- § 7. Verification: Vagueness.lean Data
 -- ════════════════════════════════════════════════════
 
-open Gradability.Vagueness
+open Phenomena.Gradability.Vagueness
 
 /-- Excluded middle data says supervaluationism captures it;
     `Supervaluation.Basic.excludedMiddle_superTrue` proves this. -/

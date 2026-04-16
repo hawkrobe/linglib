@@ -22,8 +22,6 @@ entry, we verify:
 
 -/
 
-open Phenomena.Comparison
-
 namespace Kennedy2007Typology
 
 open Phenomena.Gradability.Kennedy2007

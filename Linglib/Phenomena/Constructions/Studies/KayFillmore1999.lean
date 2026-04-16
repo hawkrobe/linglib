@@ -301,11 +301,12 @@ The two readings are distinguished by the PerspectiveP layer:
 
 -/
 
+open KayFillmore1999
+open FillmoreKayOConnor1988
+
 namespace ConstructionGrammar.Studies.KayFillmore1999
 
 open ConstructionGrammar
-open KayFillmore1999
-open FillmoreKayOConnor1988
 
 -- ============================================================================
 -- A. Construction definition

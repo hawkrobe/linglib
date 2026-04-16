@@ -37,8 +37,6 @@ and temporal adverb diagnostics.
 
 -/
 
-open Phenomena.TenseAspect
-
 namespace Egressy2026
 
 open Core.Tense

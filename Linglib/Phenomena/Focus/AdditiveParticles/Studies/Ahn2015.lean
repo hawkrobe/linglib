@@ -54,7 +54,7 @@ rather than contradiction. The NPI result requires Chierchia's assumption
 that NPIs obligatorily activate domain alternatives exhaustified by O_ALT.
 -/
 
-namespace Phenomena.Focus.AdditiveParticles.Studies.Ahn2015
+namespace Ahn2015
 
 open Exhaustification
 
@@ -228,4 +228,4 @@ def examples : List AdditiveParticleDatum :=
   , tooUnderNegation, almostDoesNotLicenseEither, rullmannProblem
   , eitherNegAntecedent, elevatorToo ]
 
-end Phenomena.Focus.AdditiveParticles.Studies.Ahn2015
+end Ahn2015
