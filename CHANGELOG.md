@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.832] - 2026-04-16
+
+### Changed
+- **PumpingLemma.lean lint cleanup** — update stale docstrings (remove "(sorry)" annotations now that all proofs are complete), replace deprecated `push_neg` with `push Not`, remove dead `change` tactics, drop unused `simp` arguments. Zero warnings.
+
 ## [0.229.831] - 2026-04-16
 
 ### Changed

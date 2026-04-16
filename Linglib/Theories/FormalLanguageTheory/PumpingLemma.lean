@@ -14,8 +14,7 @@ constructed:
 
 - `anbncndn_not_pumpable : ¬ HasCFLPumpingProperty anbncndn` — fully proved
 - `anbnc_not_pumpable : ¬ HasCFLPumpingProperty anbnc` — fully proved
-- `cfl_pumping_lemma : L.IsContextFree → HasCFLPumpingProperty L` —
-  proof structure complete, pending three lemmas (see below)
+- `cfl_pumping_lemma : L.IsContextFree → HasCFLPumpingProperty L` — fully proved
 - `anbncndn_not_contextFree : ¬ Language.IsContextFree anbncndn`
 - `anbnc_not_contextFree : ¬ Language.IsContextFree anbnc`
 
@@ -29,12 +28,12 @@ The proof follows the standard textbook argument via derivation trees:
    to split derivations at production sites).
 2. **`yield_length_le_of_height`** ✓: a valid tree of height h has
    ≤ b^h leaves. Proved by well-founded recursion on tree size.
-3. **`pumping_from_tall_tree`** (sorry): a tall tree (height > #rules) has a
-   repeated nonterminal, yielding the uvxyz decomposition. Requires
-   tree-path infrastructure + pigeonhole + subtree replacement.
+3. **`pumping_from_tall_tree`** ✓: a tall tree (height > #rules) has a
+   repeated nonterminal, yielding the uvxyz decomposition. Proved via
+   pigeonhole on root-to-leaf paths, subtree replacement, and
+   `validFor_derives` (soundness of valid trees).
 
-The main theorem `cfl_pumping_lemma` combines these three lemmas; its proof
-body is complete modulo the remaining lemma.
+The main theorem `cfl_pumping_lemma` combines these three lemmas.
 
 ## Consumers
 
@@ -1216,7 +1215,7 @@ theorem exists_pos_of_height (t : CFGTree T N) (k : Nat) (h : t.height ≥ k + 1
     | .node nt children =>
       have hmax : heightMax children ≥ n + 1 := by simp [height] at h; omega
       match hcs : children with
-      | [] => simp [hcs, heightMax] at hmax
+      | [] => simp [heightMax] at hmax
       | c :: cs =>
         obtain ⟨c_max, hmem, heq⟩ := exists_max_height_child c cs
         have hc_height : c_max.height ≥ n + 1 := by rw [heq]; exact hmax
@@ -1248,7 +1247,7 @@ theorem exists_pos_max_descent (t : CFGTree T N) (k : Nat) (h : t.height ≥ k +
     | .node nt children =>
       have hmax : heightMax children ≥ n + 1 := by simp [height] at h; omega
       match hcs : children with
-      | [] => simp [hcs, heightMax] at hmax
+      | [] => simp [heightMax] at hmax
       | c :: cs =>
         obtain ⟨c_max, hmem, heq⟩ := exists_max_height_child c cs
         have hc_height_ge : c_max.height ≥ n + 1 := by rw [heq]; exact hmax
@@ -1319,7 +1318,6 @@ theorem spine_node_at_prefix (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
         rcases hi : children[i]? with _ | child
         · simp [hi] at hsub
         · simp [hi] at hsub
-          simp [hi]
           exact ih child hsub k' hk'
 
 /-- Validity propagates through subtreeAt?. -/
@@ -1766,7 +1764,7 @@ theorem pumping_from_tall_tree {T : Type} (g : ContextFreeGrammar T)
   -- Step 8: |vy| ≥ 1 via minimality
   have hvy_pos : v.length + y.length ≥ 1 := by
     by_contra hcontra
-    push_neg at hcontra
+    push Not at hcontra
     have hv_empty : v = [] :=
       List.eq_nil_of_length_eq_zero (by omega)
     have hy_empty : y = [] :=
@@ -1849,11 +1847,9 @@ theorem pumping_from_tall_tree {T : Type} (g : ContextFreeGrammar T)
       show (t_outer.replaceAt p_inner_rel (pumpInner m)).rootSymbol = _
       cases hp_rel_eq : p_inner_rel with
       | nil =>
-        change (t_outer.replaceAt [] (pumpInner m)).rootSymbol = t_inner.rootSymbol
         simp [CFGTree.replaceAt]
         exact ih
       | cons hh tt =>
-        change (t_outer.replaceAt (hh :: tt) (pumpInner m)).rootSymbol = t_inner.rootSymbol
         exact (CFGTree.rootSymbol_replaceAt_cons t_outer hh tt (pumpInner m)).trans hroot_o_eq_i
   have hpump_valid : ∀ n, (pumpInner n).ValidFor g := by
     intro n
@@ -1935,7 +1931,7 @@ theorem not_isContextFree_of_not_pumpable {T : Type} (L : Language T)
 
     Proof via `not_isContextFree_of_not_pumpable`: the pumping failure is
     fully verified in `anbncndn_not_pumpable`; the connection to
-    `Language.IsContextFree` goes through the CFL pumping lemma (sorry). -/
+    `Language.IsContextFree` goes through the CFL pumping lemma. -/
 theorem anbncndn_not_contextFree : ¬ Language.IsContextFree anbncndn :=
   not_isContextFree_of_not_pumpable anbncndn anbncndn_not_pumpable
 
