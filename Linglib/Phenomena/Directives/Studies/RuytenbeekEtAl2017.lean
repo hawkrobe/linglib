@@ -47,7 +47,7 @@ thesis — that imperatives have the semantics of deontic necessity modals —
 predicts that deontic necessity declaratives should receive directive force
 as readily as imperatives. Study 2 confirms exactly this.
 
-## Connection to SpeechActs.lean
+## Connection to IllocutionaryForce.lean
 
 The paper reveals a gap in the `SAPMood → IllocutionaryMood` mapping:
 `SAPMood.toIllocutionaryMood` treats the mapping as 1-to-1, but indirect

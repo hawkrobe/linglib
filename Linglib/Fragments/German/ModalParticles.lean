@@ -1,6 +1,8 @@
 import Linglib.Theories.Semantics.UseConditional.LTU
 import Linglib.Theories.Semantics.Mood.SentenceMoodUCI
-import Linglib.Core.Discourse.SpeechActs
+import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Core.Discourse.Intentionality
+import Linglib.Core.Discourse.Commitment
 
 /-!
 # German Modal Particles

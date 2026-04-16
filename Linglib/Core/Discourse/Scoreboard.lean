@@ -1,5 +1,7 @@
 import Linglib.Core.Discourse.Goal
-import Linglib.Core.Discourse.SpeechActs
+import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Core.Discourse.Intentionality
+import Linglib.Core.Discourse.Commitment
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
 import Linglib.Core.QUD.Relevance

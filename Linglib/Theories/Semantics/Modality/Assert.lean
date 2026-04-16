@@ -1,5 +1,7 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
-import Linglib.Core.Discourse.SpeechActs
+import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Core.Discourse.Intentionality
+import Linglib.Core.Discourse.Commitment
 
 /-!
 # The ASSERT Operator and Speech Act Phrase
@@ -343,7 +345,7 @@ speech act (always the speaker in Hacquard's framework). This is distinct
 from the SEAT OF KNOWLEDGE, which is the hearer for
 interrogatives — that notion captures who has epistemic authority over
 the content, not who initiates the speech event. The bridge between these
-is in `SpeechActs.lean`: `seat_of_knowledge_agrees_with_epistemic_authority`. -/
+is in `IllocutionaryForce.lean`: `seat_of_knowledge_agrees_with_epistemic_authority`. -/
 def speechActProjection : EventProjection SpeechActType Interlocutor SpeechTime where
   holder
     | .declarative => .speaker

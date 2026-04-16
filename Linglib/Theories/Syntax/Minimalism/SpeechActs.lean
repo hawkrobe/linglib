@@ -28,7 +28,9 @@ import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Context.Basic
-import Linglib.Core.Discourse.SpeechActs
+import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Core.Discourse.Intentionality
+import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Evidence
 import Linglib.Fragments.English.Pronouns
 
@@ -124,7 +126,7 @@ def PRole.toDiscourseRole : PRole → Core.Discourse.DiscourseRole
 
 open Core.Discourse (moodAuthority) in
 /-- `seatOfKnowledge` (Speas & Tenny, configurational) agrees with
-    `moodAuthority` (SpeechActs.lean, framework-agnostic) via
+    `moodAuthority` (IllocutionaryForce.lean, framework-agnostic) via
     the `toIllocutionaryMood` bridge. Both encode the same generalization:
     declarative/imperative/subjunctive → speaker, interrogative → addressee. -/
 theorem seat_of_knowledge_agrees_with_mood_authority (m : SAPMood) :

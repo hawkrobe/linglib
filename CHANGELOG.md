@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.843] - 2026-04-16
+
+### Changed
+- **Split `Core/Discourse/SpeechActs.lean` (~611 lines) into three focused files** (Phase 4 of the Discourse architectural overhaul):
+  - `Core/Discourse/IllocutionaryForce.lean` — F in F(p): `DiscourseRole`, `IllocutionaryMood`, `moodAuthority`, `resolveRole` (+ `resolveRole_shift_invariant`), `DirectionOfFit`, `SearleClass` + `directionOfFit`, `IllocutionaryMood.searleClass`/`directionOfFit`, `PreparatoryCondition` + `subsumes` and theorems, plus epistemic-authority and direction-of-fit verification.
+  - `Core/Discourse/Intentionality.lean` — S in S(r) (the Searlean parallel kept paired with speech acts): `PsychMode` + `directionOfFit`, `sincerityCondition` (the F→S bridge) + `sincerity_direction_matches_class`, `CausalSelfRef` + `PsychMode.causalSelfRef` and theorems, `IntentionalState` + `conditionsOfSatisfaction` and `conditions_are_content`.
+  - `Core/Discourse/Commitment.lean` — public commitment infrastructure: `Commitment.CommitmentSlate` (Krifka 2015, Brandom 1994) with `empty`/`add`/`retract`/`toContextSet`/`entails` and theorems, `CommitmentSource`/`TaggedCommitment`/`TaggedSlate` (Gunlogson 2001), `ContextualEvidence` (Büring & Gunlogson 2000), and the `HasContextSet` instance.
+  - All three files keep `namespace Core.Discourse` to avoid identifier-level churn in downstream consumers.
+  - Updated 17 consumer imports + 3 docstring references to old filename. Build verifies green (5073 jobs).
+
 ## [0.229.842] - 2026-04-16
 
 ### Added

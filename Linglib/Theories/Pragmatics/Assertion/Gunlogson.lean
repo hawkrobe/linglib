@@ -1,5 +1,7 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Discourse.SpeechActs
+import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Core.Discourse.Intentionality
+import Linglib.Core.Discourse.Commitment
 
 /-!
 # @cite{gunlogson-2004}: Source-Marked Commitments

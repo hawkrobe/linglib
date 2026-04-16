@@ -1,5 +1,7 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Discourse.SpeechActs
+import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Core.Discourse.Intentionality
+import Linglib.Core.Discourse.Commitment
 
 /-!
 # Krifka: Commitment Space Semantics and Layered Assertive Clauses
@@ -124,7 +126,7 @@ theorem strength_ordering :
 
     Each layer is independent: the epistemic status (JP) can vary without
     affecting the commitment strength (ComP), and vice versa. The actType
-    uses `IllocutionaryMood` from `Core/Discourse/DiscourseRole.lean`. -/
+    uses `IllocutionaryMood` from `Core/Discourse/IllocutionaryForce.lean`. -/
 structure LayeredAssertion (W : Type*) where
   /-- TP: the propositional content -/
   content : BProp W
