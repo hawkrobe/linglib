@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.821] - 2026-04-16
+
+### Changed
+- **Phenomena/Questions/Studies/Elliott2017.lean**: strengthen `care_is_semantically_rogative` to the strong form — `IsSemanticallyRogative (elliottCareLex bel relevance)` for any V_prop, dropping both the previous weakened conclusion (no V_prop ⟹ singleton-care V_prop) and the unused `hConsistent` hypothesis. New proof: Karttunen (→) at the polar `[p, ¬p]` extracts `V_prop x p w = true ∧ V_prop x (¬p) w = true`; Karttunen (←) at the singletons forces `elliottCareLex` true on `[p]` and `[¬p]`; the existence presuppositions then yield `p w = true` and `(¬p) w = true` simultaneously, which is purely propositionally false. The contradiction now surfaces from existence projection rather than belief-consistency, exposing the deeper architectural reason PoRs resist universal reduction
+
+
 ## [0.229.820] - 2026-04-16
 
 ### Changed

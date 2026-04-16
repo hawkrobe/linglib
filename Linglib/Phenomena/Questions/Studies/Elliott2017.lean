@@ -509,49 +509,60 @@ def IsSemanticallyRogative {W E : Type*}
   ¬ ∃ (V_prop : E → BProp W → W → Bool), IsKarttunenReducible V_prop V_question
 
 /--
-**Elliott's `care` is semantically rogative.** Witness: any belief operator
-that respects belief consistency (does not believe `p` and `¬p`
-simultaneously) at some world for some `p`. Then *no* `V_prop` makes
-`elliottCareLex` Karttunen-reducible: pick polar `Q = [p, ¬p]` at that
-world, observe the LHS is true (by `elliott_polar_belief_is_tautology`),
-and the RHS would require `V_prop x p w = true ∧ V_prop x (¬p) w = true`.
-That `V_prop` would then have to satisfy both belief presuppositions —
-contradicting consistency.
+**Elliott's `care` is semantically rogative — strong form.** Given a witness
+world/entity/proposition where the existence + relevance preconditions of
+the polar reading are met, *no* `V_prop` whatsoever satisfies the Karttunen
+reduction with `elliottCareLex bel relevance`.
+
+Proof outline:
+1. From the witness, `elliottCareLex bel relevance x [p, ¬p] w = true`
+   (by `elliott_polar_belief_is_tautology`).
+2. Karttunen's (→) at the polar question forces
+   `V_prop x p w = true ∧ V_prop x (¬p) w = true`.
+3. Karttunen's (←) at the singletons `[p]` and `[¬p]` then forces
+   `elliottCareLex bel relevance x [p] w = true` and similarly for `[¬p]`.
+4. But `elliottCareLex` on `[p]` requires `existsTrueAnswer [p] w = p w = true`,
+   and on `[¬p]` requires `(¬p) w = true`. Both cannot hold — contradiction.
+
+The argument no longer needs a `hConsistent` hypothesis: the contradiction
+is purely propositional (from `p w = true ∧ !(p w) = true`), surfacing the
+deeper reason PoRs resist reduction — Karttunen's universal closure cannot
+distinguish the question-level disjunctive belief from per-alternative truth
+of the alternatives themselves.
 -/
 theorem care_is_semantically_rogative {W E : Type*}
     (bel : E → BProp W → W → Bool)
     (relevance : E → QuestionDen W → W → Bool)
     (x : E) (p : BProp W) (w : W)
-    (hConsistent :
-        ¬ (bel x p w = true ∧ bel x (Core.Proposition.Decidable.pnot W p) w = true))
     (hBelTop : bel x (fun _ => true) w = true)
     (hRel : relevance x [p, Core.Proposition.Decidable.pnot W p] w = true) :
-    -- We do NOT prove the strong form (no V_prop exists) — proving universal
-    -- non-existence over arbitrary V_prop requires a richer counterexample
-    -- structure. Instead, we prove the weaker form: the *natural* V_prop
-    -- (the singleton care reading) does not satisfy the Karttunen reduction.
-    ¬ IsKarttunenReducible
-        (fun y q v => elliottCareLex bel relevance y [q] v)
-        (elliottCareLex bel relevance) := by
-  intro hKR
-  -- Apply hKR at the polar question
-  have hPolar :=
-    (hKR x [p, Core.Proposition.Decidable.pnot W p] w).mp
-      (elliott_polar_belief_is_tautology bel relevance x p w hBelTop hRel)
-  -- Extract V_prop x p w = true and V_prop x (¬p) w = true
-  have hVp_p : elliottCareLex bel relevance x [p] w = true :=
-    hPolar p List.mem_cons_self
-  have hVp_np :
-      elliottCareLex bel relevance x [Core.Proposition.Decidable.pnot W p] w
-        = true := by
-    apply hPolar
-    exact List.mem_cons_of_mem _ List.mem_cons_self
-  -- These each force the corresponding belief
-  simp only [elliottCareLex, disjOf_singleton, existsTrueAnswer, List.any_cons,
-             List.any_nil, Bool.or_false, Bool.and_eq_true] at hVp_p hVp_np
-  obtain ⟨⟨_, hBelP⟩, _⟩ := hVp_p
-  obtain ⟨⟨_, hBelNotP⟩, _⟩ := hVp_np
-  exact hConsistent ⟨hBelP, hBelNotP⟩
+    IsSemanticallyRogative (elliottCareLex bel relevance) := by
+  rintro ⟨V_prop, hKR⟩
+  -- (1) The polar care-claim is true under the witness.
+  have hPolar :
+      elliottCareLex bel relevance x
+        [p, Core.Proposition.Decidable.pnot W p] w = true :=
+    elliott_polar_belief_is_tautology bel relevance x p w hBelTop hRel
+  -- (2) Karttunen (→) at the polar question forces V_prop on each alternative.
+  have hAll := (hKR x [p, Core.Proposition.Decidable.pnot W p] w).mp hPolar
+  have hVp_p : V_prop x p w = true := hAll p List.mem_cons_self
+  have hVp_np : V_prop x (Core.Proposition.Decidable.pnot W p) w = true :=
+    hAll _ (List.mem_cons_of_mem _ List.mem_cons_self)
+  -- (3) Karttunen (←) at each singleton forces elliottCareLex on the singleton.
+  have hSing_p : elliottCareLex bel relevance x [p] w = true :=
+    (hKR x [p] w).mpr (fun q hq => by rw [List.mem_singleton.mp hq]; exact hVp_p)
+  have hSing_np :
+      elliottCareLex bel relevance x [Core.Proposition.Decidable.pnot W p] w = true :=
+    (hKR x [Core.Proposition.Decidable.pnot W p] w).mpr
+      (fun q hq => by rw [List.mem_singleton.mp hq]; exact hVp_np)
+  -- (4) Singleton care extracts the existence presupposition: p w and (¬p) w.
+  simp only [elliottCareLex, existsTrueAnswer, List.any_cons, List.any_nil,
+             Bool.or_false, Bool.and_eq_true] at hSing_p hSing_np
+  obtain ⟨⟨hPw, _⟩, _⟩ := hSing_p
+  obtain ⟨⟨hNotPw, _⟩, _⟩ := hSing_np
+  -- hNotPw : (pnot W p) w = true, i.e., !(p w) = true. Combined with hPw, false.
+  simp only [Core.Proposition.Decidable.pnot, hPw, Bool.not_true] at hNotPw
+  exact Bool.false_ne_true hNotPw
 
 -- ============================================================================
 -- H. Empirical anchor: the embedding datum table + coordination data
