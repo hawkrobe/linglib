@@ -20,10 +20,10 @@ target feature for the nasalization rule.
 @cite{hayes-2009}
 -/
 
-namespace Fragments.Korean.Phonology
-
 open Phonology
 open Phonology.RuleBased
+
+namespace Fragments.Korean.Phonology
 
 -- ============================================================================
 -- § 1: Segment Inventory

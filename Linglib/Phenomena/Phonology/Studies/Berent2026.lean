@@ -51,12 +51,13 @@ data supporting the doubling reversal is in
 @cite{berent-2026}
 -/
 
-namespace Phenomena.Phonology.Studies.Berent2026
-
-open Core.OT
 open Phonology.Syllable (SonorityRank)
 open Phonology.Constraints
 open Phonology.Doubling
+
+namespace Phenomena.Phonology.Studies.Berent2026
+
+open Core.OT
 
 -- ============================================================================
 -- § 1: Onset Markedness — the sonority gradient

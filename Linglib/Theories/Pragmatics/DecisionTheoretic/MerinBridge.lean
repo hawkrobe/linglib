@@ -48,7 +48,7 @@ namespace Pragmatics.DecisionTheoretic.MerinBridge
 
 open Core.DecisionTheory
 open Core.Proposition (World4 BProp)
-open Theories.DTS
+open DTS
 
 /-! ## Encoding Merin's Issue as a Decision Problem
 

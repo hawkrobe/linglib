@@ -32,7 +32,7 @@ spell-outs of distinct heads in a cartographic left periphery.
 namespace Fragments.Tigrinya.ClausePrefixes
 
 open Minimalism
-open Theories.Morphology.Circumfix
+open Morphology.Circumfix
 
 -- ============================================================================
 -- Clause type

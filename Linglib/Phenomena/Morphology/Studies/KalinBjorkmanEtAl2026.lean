@@ -33,7 +33,7 @@ namespace Phenomena.Morphology.Studies.KalinBjorkmanEtAl2026
 -- §1: Theory Space (Element §2)
 -- ============================================================================
 
-open Theories.Morphology.TheorySpace
+open Morphology.TheorySpace
 
 /-! ### 1a. The four major theories occupy correct positions -/
 
@@ -114,7 +114,7 @@ theorem mas_uniquely_incremental :
 -- ============================================================================
 
 open Core.Morphology.Wordhood
-open Theories.Morphology.WordhoodBridge
+open Morphology.WordhoodBridge
 
 /-! ### 2a. The 2×2 wordhood typology is exhaustive and injective -/
 
@@ -206,8 +206,8 @@ for all cases below Y on the fseq. -/
 /-- The *ABA derivation is verified by example:
     attempting an ABA lexicon produces ABB instead. -/
 theorem starABA_verified :
-    Theories.Morphology.Nanosyntax.abaViolation
-      Theories.Morphology.Nanosyntax.attemptedABA 0 1 2 = false := by
+    Morphology.Nanosyntax.abaViolation
+      Morphology.Nanosyntax.attemptedABA 0 1 2 = false := by
   native_decide
 
 /-! ### 4b. PFM's Paradigm Function architecture
@@ -266,10 +266,10 @@ inductive TheoryName where
 
 /-- Map a named theory to its position in the theory space. -/
 def TheoryName.position : TheoryName → TheoryPosition
-  | .pfm => Theories.Morphology.TheorySpace.pfm
-  | .mas => Theories.Morphology.TheorySpace.mas
-  | .nanosyntax => Theories.Morphology.TheorySpace.nanosyntax
-  | .dm => Theories.Morphology.TheorySpace.dm
+  | .pfm => Morphology.TheorySpace.pfm
+  | .mas => Morphology.TheorySpace.mas
+  | .nanosyntax => Morphology.TheorySpace.nanosyntax
+  | .dm => Morphology.TheorySpace.dm
 
 /-- @cite{kalin-bjorkman-etal-2026} Table 4: for each (mapping type,
     theory) pair, the coverage verdicts across subcases.
@@ -388,10 +388,10 @@ theorem syncretism_splits_on_realizational :
 /-- The realizational/incremental split matches the theory space:
     DM, PFM, and Nanosyntax are realizational; MaS is incremental. -/
 theorem syncretism_matches_mapping_dimension :
-    Theories.Morphology.TheorySpace.dm.mapping = Mapping.realizational ∧
-    Theories.Morphology.TheorySpace.pfm.mapping = Mapping.realizational ∧
-    Theories.Morphology.TheorySpace.nanosyntax.mapping = Mapping.realizational ∧
-    Theories.Morphology.TheorySpace.mas.mapping = Mapping.incremental :=
+    Morphology.TheorySpace.dm.mapping = Mapping.realizational ∧
+    Morphology.TheorySpace.pfm.mapping = Mapping.realizational ∧
+    Morphology.TheorySpace.nanosyntax.mapping = Mapping.realizational ∧
+    Morphology.TheorySpace.mas.mapping = Mapping.incremental :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end Phenomena.Morphology.Studies.KalinBjorkmanEtAl2026

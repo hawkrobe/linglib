@@ -56,7 +56,7 @@ claim about the internal structure of case representations. The two
 are complementary, not competing.
 -/
 
-namespace Theories.Morphology.CaseContainment
+namespace Morphology.CaseContainment
 
 open Core
 
@@ -320,8 +320,8 @@ theorem abl_loc_same_case_relation :
     from `Containment.lean`. -/
 theorem case_violatesABA_eq_generic (p : AllomorphyPattern) :
     p.violatesABA =
-      Theories.Morphology.Containment.violatesABA [p.nom, p.acc, p.gen, p.dat] := by
+      Morphology.Containment.violatesABA [p.nom, p.acc, p.gen, p.dat] := by
   simp only [AllomorphyPattern.violatesABA,
-    Theories.Morphology.Containment.violatesABA_four]
+    Morphology.Containment.violatesABA_four]
 
-end Theories.Morphology.CaseContainment
+end Morphology.CaseContainment

@@ -18,7 +18,7 @@ Hausa is a Set 1 language: masculine is default (plain n), feminine requires
 
 namespace Fragments.Hausa.Gender
 
-open Theories.Morphology.DM (CatHead)
+open Morphology.DM (CatHead)
 open Core (SurfaceGender)
 
 -- ============================================================================

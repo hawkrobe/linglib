@@ -622,7 +622,7 @@ This connects to `Recategorization` in `Theories/Morphology/DM/Categorizer.lean`
 denominal verbs (n → v) and deadjectival verbs (a → v) are both attested
 in Mwaghavul's ideophone-to-verb derivation. -/
 
-open Theories.Morphology.DM
+open Morphology.DM
 
 /-- Both M-tone and M-H verbalisers are verbal categorizers: they take
     an ideophonic base (which may be nominal, adjectival, or adverbial)

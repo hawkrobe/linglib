@@ -44,7 +44,7 @@ three levels at which "contrast" appears:
 
 - Focus alternatives & FIP: `Semantics.FocusInterpretation` (@cite{rooth-1992})
 - QUD / implicit questions: `Discourse.Issue`, `Discourse.partiallyAnswers` (@cite{roberts-2012})
-- DTS "but": `Theories.DTS.But` (@cite{merin-1999})
+- DTS "but": `DTS.But` (@cite{merin-1999})
 - Coherence relations: `Core.Discourse.CoherenceRelation` (@cite{kehler-2002})
 - Focus particles: `Fragments.English.FocusParticles`
 -/
@@ -433,7 +433,7 @@ theorem polarity_switch_bridge :
 
 /-! Two accounts of "but" are now formalized in linglib:
 
-1. **@cite{merin-1999}** (in `Theories.DTS.But`): "A but B" is felicitous
+1. **@cite{merin-1999}** (in `DTS.But`): "A but B" is felicitous
    iff A is positively relevant and B is negatively relevant to an issue H,
    with B "winning" (A∧B negatively relevant). This yields unexpectedness
    as the core meaning: P(B|A) < P(B).
@@ -470,7 +470,7 @@ Umbach's account directly predicts that shifting focus in the second
 conjunct changes the contrast (§3.1, ex. 16a vs 16b).
 
 @cite{merin-1999} Theorem 8 (CIP + contrariness → unexpectedness) is in
-`Theories.DTS.But.cip_contrariness_implies_unexpectedness`.
+`DTS.But.cip_contrariness_implies_unexpectedness`.
 -/
 
 /-- Both accounts treat "but" as semantically distinct from "and".

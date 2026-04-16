@@ -30,7 +30,7 @@ The structural isomorphism between these domains is made explicit
 via bridge theorems in each domain module.
 -/
 
-namespace Theories.Morphology.Containment
+namespace Morphology.Containment
 
 -- ============================================================================
 -- § 1: Generic *ABA Detection
@@ -138,4 +138,4 @@ theorem no_aba_contiguous :
     (allPatterns3.filter (λ p => violatesABA p && isContiguous p)).length = 0 := by
   native_decide
 
-end Theories.Morphology.Containment
+end Morphology.Containment

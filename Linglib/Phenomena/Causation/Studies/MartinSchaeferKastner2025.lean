@@ -65,7 +65,7 @@ namespace Phenomena.Causation.Studies.MartinSchaeferKastner2025
 
 open Minimalism (VoiceFlavor)
 open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile predictsUnaccusative)
-open Theories.Pragmatics.GriceanMaxims (MannerSubmaxim)
+open Pragmatics.GriceanMaxims (MannerSubmaxim)
 open Fragments.French.Predicates
 
 -- ============================================================================

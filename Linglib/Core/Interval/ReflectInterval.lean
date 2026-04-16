@@ -22,9 +22,9 @@ The `rsa_decide` tactic reifies ℝ expressions into `RExpr` values, then:
 This eliminates the 5M+ `Nat.cast` kernel reductions from the old Expr-based approach.
 -/
 
-namespace Linglib.Interval
+namespace Interval
 
-open Linglib.Interval.QInterval
+open Interval.QInterval
 
 -- ============================================================================
 -- RExpr: Reified Arithmetic Expressions
@@ -130,8 +130,8 @@ def RExpr.eval : RExpr → QInterval
     else ⟨-1000, 1000, by norm_num⟩  -- fallback (guarded by evalValid)
   | .rpow a n =>
     let ra := a.eval
-    if n == 0 then Linglib.Interval.rpowZero
-    else if h : 0 ≤ ra.lo then c (Linglib.Interval.rpowNat ra n h)
+    if n == 0 then Interval.rpowZero
+    else if h : 0 ≤ ra.lo then c (Interval.rpowNat ra n h)
     else ⟨0, 1, by norm_num⟩  -- fallback (guarded by evalValid)
   | .inv a =>
     let ra := a.eval
@@ -158,7 +158,7 @@ def RExpr.eval : RExpr → QInterval
         let xpow :=
           if n == 0 then QInterval.exact 1
           else if n == 1 then rx
-          else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+          else Interval.rpowNat rx n (le_of_lt hx)
         -- exp(-α * c): at most one Padé call per unique cost value
         let negαc := (rα.mul rc).neg
         let expFactor := c (expInterval negαc)
@@ -301,8 +301,8 @@ def RExpr.evalBoth : RExpr → QInterval × Bool
     else (⟨-1000, 1000, by norm_num⟩, false)
   | .rpow a n =>
     let (ra, va) := a.evalBoth
-    if n == 0 then (Linglib.Interval.rpowZero, va)
-    else if h : 0 ≤ ra.lo then (c (Linglib.Interval.rpowNat ra n h), va)
+    if n == 0 then (Interval.rpowZero, va)
+    else if h : 0 ≤ ra.lo then (c (Interval.rpowNat ra n h), va)
     else (⟨0, 1, by norm_num⟩, false)
   | .inv a =>
     let (ra, va) := a.evalBoth
@@ -333,7 +333,7 @@ def RExpr.evalBoth : RExpr → QInterval × Bool
         let xpow :=
           if n == 0 then QInterval.exact 1
           else if n == 1 then rx
-          else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+          else Interval.rpowNat rx n (le_of_lt hx)
         let negαc := (rα.mul rc).neg
         let expFactor := c (expInterval negαc)
         if h₁ : 0 ≤ xpow.lo then
@@ -924,7 +924,7 @@ def RExpr.evalRexpOpt : RExpr → QInterval × Bool
     let (xiv, xv) := x.evalBoth
     if α == 0 then (QInterval.exact 1, xv)
     else if h : 0 < xiv.lo then
-      (c (Linglib.Interval.rpowNat xiv α (le_of_lt h)), xv)
+      (c (Interval.rpowNat xiv α (le_of_lt h)), xv)
     else
       let (iv, valid) := RExpr.evalBoth (.mul (.nat α) (.rlog x))
       (c (expInterval iv), valid)
@@ -934,7 +934,7 @@ def RExpr.evalRexpOpt : RExpr → QInterval × Bool
     else
       let (base, bv) := body.evalRexpOpt
       if h : 0 ≤ base.lo then
-        (c (Linglib.Interval.rpowNat base α h), bv)
+        (c (Interval.rpowNat base α h), bv)
       else
         let (iv, valid) := RExpr.evalBoth (.mul (.nat α) body)
         (c (expInterval iv), valid)
@@ -992,8 +992,8 @@ def RExpr.evalBothOpt : RExpr → QInterval × Bool
     else (⟨-1000, 1000, by norm_num⟩, false)
   | .rpow a n =>
     let (ra, va) := a.evalBothOpt
-    if n == 0 then (Linglib.Interval.rpowZero, va)
-    else if h : 0 ≤ ra.lo then (c (Linglib.Interval.rpowNat ra n h), va)
+    if n == 0 then (Interval.rpowZero, va)
+    else if h : 0 ≤ ra.lo then (c (Interval.rpowNat ra n h), va)
     else (⟨0, 1, by norm_num⟩, false)
   | .inv a =>
     let (ra, va) := a.evalBothOpt
@@ -1024,7 +1024,7 @@ def RExpr.evalBothOpt : RExpr → QInterval × Bool
         let xpow :=
           if n == 0 then QInterval.exact 1
           else if n == 1 then rx
-          else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+          else Interval.rpowNat rx n (le_of_lt hx)
         let negαc := (rα.mul rc).neg
         let expFactor := c (expInterval negαc)
         if h₁ : 0 ≤ xpow.lo then
@@ -1643,8 +1643,8 @@ private unsafe def RExpr.evalBothOptCached (e : @& RExpr)
       else pure (⟨-1000, 1000, by norm_num⟩, false)
     | .rpow a n => do
       let (ra, va) ← a.evalBothOptCached cache
-      if n == 0 then pure (Linglib.Interval.rpowZero, va)
-      else if h : 0 ≤ ra.lo then pure (c (Linglib.Interval.rpowNat ra n h), va)
+      if n == 0 then pure (Interval.rpowZero, va)
+      else if h : 0 ≤ ra.lo then pure (c (Interval.rpowNat ra n h), va)
       else pure (⟨0, 1, by norm_num⟩, false)
     | .inv a => do
       let (ra, va) ← a.evalBothOptCached cache
@@ -1675,7 +1675,7 @@ private unsafe def RExpr.evalBothOptCached (e : @& RExpr)
           let xpow :=
             if n == 0 then QInterval.exact 1
             else if n == 1 then rx
-            else Linglib.Interval.rpowNat rx n (le_of_lt hx)
+            else Interval.rpowNat rx n (le_of_lt hx)
           let negαc := (rα.mul rc).neg
           let expFactor := c (expInterval negαc)
           if h₁ : 0 ≤ xpow.lo then
@@ -2393,4 +2393,4 @@ theorem RExpr.not_gt_of_denote_eq (lhs rhs : RExpr)
     (h : lhs.denote = rhs.denote) : ¬(lhs.denote > rhs.denote) :=
   h ▸ lt_irrefl _
 
-end Linglib.Interval
+end Interval

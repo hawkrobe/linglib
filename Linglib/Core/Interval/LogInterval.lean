@@ -25,9 +25,9 @@ Bracket width is `log₂(num) + log₂(den) + 2`, so for 64-bit rationals: `W �
 precision ≈ `1.2 × 10⁻¹³`.
 -/
 
-namespace Linglib.Interval
+namespace Interval
 
-open Linglib.Interval.QInterval
+open Interval.QInterval
 
 -- ============================================================================
 -- Bisection
@@ -242,4 +242,4 @@ theorem log_zero_containsReal {I : QInterval} {x : ℝ}
   rw [this, Real.log_zero]
   exact QInterval.exact_zero_containsReal
 
-end Linglib.Interval
+end Interval

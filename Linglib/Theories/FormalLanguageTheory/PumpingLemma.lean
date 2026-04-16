@@ -956,40 +956,179 @@ theorem yield_length_le_of_height {T : Type} (g : ContextFreeGrammar T)
 termination_by sizeOf t
 
 -- ============================================================================
--- Pumping — Spine Infrastructure
+-- Pumping Infrastructure: Position-based Subtree Access
 -- ============================================================================
 
 namespace CFGTree
 
 variable {T N : Type}
 
-/-- A spine is a list of subtrees where each next tree is a child of the previous. -/
-def IsSpine : List (CFGTree T N) → Prop
-  | [] => True
-  | [_] => True
-  | parent :: child :: rest =>
-    (∃ children nt, parent = .node nt children ∧ child ∈ children) ∧
-    IsSpine (child :: rest)
+/-- A position in a tree: list of child indices to follow from the root. -/
+abbrev Pos := List Nat
 
-/-- A spine's length is bounded by the head's height + 1. -/
-private theorem spine_length_le_height_succ (ts : List (CFGTree T N)) (hs : IsSpine ts)
-    (h : ts ≠ []) : ts.length ≤ (ts.head h).height + 1 := by
-  induction ts with
-  | nil => exact absurd rfl h
-  | cons t rest ih =>
-    cases rest with
-    | nil => simp
-    | cons child rest' =>
-      simp only [List.length_cons, List.head_cons]
-      obtain ⟨⟨children, nt, hparent, hchild⟩, hrest⟩ := hs
-      have ih' := ih hrest (by simp)
-      simp only [List.head_cons] at ih'
-      have h1 : child.height ≤ heightMax children := height_le_heightMax hchild
-      subst hparent
-      simp only [height]
-      have hlen : (child :: rest').length = rest'.length + 1 := by simp
-      have : (child :: rest').length ≤ child.height + 1 := ih'
-      omega
+/-- Subtree at a given position. Returns `none` if the path is invalid. -/
+def subtreeAt? : CFGTree T N → Pos → Option (CFGTree T N)
+  | t, [] => some t
+  | .leaf _, _ :: _ => none
+  | .node _ children, i :: rest =>
+    children[i]?.bind (·.subtreeAt? rest)
+
+/-- Replace the subtree at a given position. If the path is invalid, returns the
+    original tree unchanged. -/
+def replaceAt : CFGTree T N → Pos → CFGTree T N → CFGTree T N
+  | _, [], new => new
+  | .leaf t, _ :: _, _ => .leaf t
+  | .node nt children, i :: rest, new =>
+    if h : i < children.length then
+      .node nt (children.set i (children[i].replaceAt rest new))
+    else
+      .node nt children
+
+/-- Replacing a subtree at a non-root position preserves the root symbol. -/
+theorem rootSymbol_replaceAt_cons (t : CFGTree T N) (i : Nat) (rest : Pos)
+    (new : CFGTree T N) :
+    (t.replaceAt (i :: rest) new).rootSymbol = t.rootSymbol := by
+  match t with
+  | .leaf _ => rfl
+  | .node _ children =>
+    by_cases hi : i < children.length
+    · simp [replaceAt, hi, rootSymbol]
+    · simp [replaceAt, hi, rootSymbol]
+
+/-- Yield decomposition: replacing a subtree at position `p` produces yield
+    `pre ++ new.yield ++ post`, where `pre`/`post` are the surrounding context. -/
+theorem yield_replaceAt_decomp (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
+    (h : t.subtreeAt? p = some sub) :
+    ∃ pre post : List T,
+      t.yield = pre ++ sub.yield ++ post ∧
+      ∀ new : CFGTree T N, (t.replaceAt p new).yield = pre ++ new.yield ++ post := by
+  induction p generalizing t with
+  | nil =>
+    simp [subtreeAt?] at h
+    subst h
+    refine ⟨[], [], ?_, ?_⟩
+    · simp
+    · intro new; simp [replaceAt]
+  | cons i rest ih =>
+    match t with
+    | .leaf _ => simp [subtreeAt?] at h
+    | .node nt children =>
+      simp only [subtreeAt?] at h
+      rcases hi : children[i]? with _ | child
+      · simp [hi] at h
+      · simp [hi] at h
+        obtain ⟨pre_inner, post_inner, hyield_inner, hreplace_inner⟩ := ih child h
+        have hi_lt : i < children.length := by
+          rw [List.getElem?_eq_some_iff] at hi; exact hi.1
+        have hget : children[i] = child := by
+          rw [List.getElem?_eq_some_iff] at hi; exact hi.2
+        have hsplit_orig : children = children.take i ++ child :: children.drop (i+1) := by
+          calc children
+              = children.take i ++ children.drop i := (List.take_append_drop _ _).symm
+            _ = children.take i ++ children[i] :: children.drop (i+1) := by
+                congr 1; exact List.drop_eq_getElem_cons hi_lt
+            _ = children.take i ++ child :: children.drop (i+1) := by rw [hget]
+        have hsplit_set : ∀ new : CFGTree T N,
+            children.set i new = children.take i ++ new :: children.drop (i+1) := by
+          intro new
+          clear hsplit_orig hget hi h hyield_inner hreplace_inner ih
+          induction children generalizing i with
+          | nil => simp at hi_lt
+          | cons c cs ih_cs =>
+            cases i with
+            | zero => simp [List.set]
+            | succ k =>
+              simp only [List.length_cons] at hi_lt
+              have hk_lt : k < cs.length := by omega
+              simp [List.set, ih_cs k hk_lt]
+        refine ⟨yieldList (children.take i) ++ pre_inner,
+                post_inner ++ yieldList (children.drop (i+1)), ?_, ?_⟩
+        · show yieldList children = _
+          conv_lhs => rw [hsplit_orig]
+          rw [ContextFreeGrammar.yieldList_append]
+          show _ = (yieldList (children.take i) ++ pre_inner) ++ sub.yield ++
+              (post_inner ++ yieldList (children.drop (i+1)))
+          have hcons_eq : yieldList (child :: children.drop (i+1)) =
+              child.yield ++ yieldList (children.drop (i+1)) := by
+            simp [yieldList]
+          rw [hcons_eq, hyield_inner]
+          simp [List.append_assoc]
+        · intro new
+          have hreplace_unfolds :
+              replaceAt (.node nt children) (i :: rest) new =
+              .node nt (children.set i (child.replaceAt rest new)) := by
+            simp only [replaceAt, hi_lt, ↓reduceDIte, hget]
+          rw [hreplace_unfolds]
+          show yieldList (children.set i (child.replaceAt rest new)) = _
+          rw [hsplit_set, ContextFreeGrammar.yieldList_append]
+          show _ = (yieldList (children.take i) ++ pre_inner) ++ new.yield ++
+              (post_inner ++ yieldList (children.drop (i+1)))
+          have hcons_eq2 : yieldList (child.replaceAt rest new :: children.drop (i+1)) =
+              (child.replaceAt rest new).yield ++ yieldList (children.drop (i+1)) := by
+            simp [yieldList]
+          rw [hcons_eq2, hreplace_inner new]
+          simp [List.append_assoc]
+
+/-- Replacing a subtree of the same root symbol preserves validity. -/
+theorem validFor_replaceAt {g : ContextFreeGrammar T}
+    (t : CFGTree T g.NT) (p : Pos) (sub new : CFGTree T g.NT)
+    (h : t.subtreeAt? p = some sub)
+    (hroot : new.rootSymbol = sub.rootSymbol)
+    (ht_valid : t.ValidFor g) (hnew_valid : new.ValidFor g) :
+    (t.replaceAt p new).ValidFor g := by
+  induction p generalizing t with
+  | nil =>
+    simp [subtreeAt?] at h
+    subst h
+    simp [replaceAt]
+    exact hnew_valid
+  | cons i rest ih =>
+    match t with
+    | .leaf _ => simp [subtreeAt?] at h
+    | .node nt children =>
+      simp only [subtreeAt?] at h
+      rcases hi : children[i]? with _ | child
+      · simp [hi] at h
+      · simp [hi] at h
+        have hi_lt : i < children.length := by
+          rw [List.getElem?_eq_some_iff] at hi; exact hi.1
+        have hget : children[i] = child := by
+          rw [List.getElem?_eq_some_iff] at hi; exact hi.2
+        have hreplace_unfolds :
+            replaceAt (.node nt children) (i :: rest) new =
+            .node nt (children.set i (child.replaceAt rest new)) := by
+          simp only [replaceAt, hi_lt, ↓reduceDIte, hget]
+        rw [hreplace_unfolds]
+        match ht_valid with
+        | .node _ _ hrule hchildren =>
+          have hchild_valid : child.ValidFor g := hchildren child (by
+            rw [show child = children[i] from hget.symm]
+            exact List.getElem_mem _)
+          have hchild_replace_valid : (child.replaceAt rest new).ValidFor g :=
+            ih child h hchild_valid
+          have hchild_replace_root :
+              (child.replaceAt rest new).rootSymbol = child.rootSymbol := by
+            cases rest with
+            | nil =>
+              simp [replaceAt]
+              simp [subtreeAt?] at h
+              subst h
+              exact hroot
+            | cons _ _ => exact rootSymbol_replaceAt_cons _ _ _ _
+          refine .node nt _ ?_ ?_
+          · have hmap_eq : (children.set i (child.replaceAt rest new)).map rootSymbol =
+                children.map rootSymbol := by
+              rw [List.map_set, hchild_replace_root, ← hget]
+              have h_map_lt : i < (children.map rootSymbol).length := by
+                rw [List.length_map]; exact hi_lt
+              rw [show children[i].rootSymbol = (children.map rootSymbol)[i]'h_map_lt from
+                (List.getElem_map _).symm]
+              exact List.set_getElem_self _
+            rw [hmap_eq]; exact hrule
+          · intro c hc_mem
+            rcases List.mem_or_eq_of_mem_set hc_mem with hc_orig | hc_eq
+            · exact hchildren c hc_orig
+            · subst hc_eq; exact hchild_replace_valid
 
 /-- Among a nonempty list of trees, there is one with maximum height. -/
 private theorem exists_max_height (c : CFGTree T N) (cs : List (CFGTree T N)) :
@@ -1024,51 +1163,720 @@ private theorem exists_max_height (c : CFGTree T N) (cs : List (CFGTree T N)) :
         · subst hcd; push Not at hgt; exact hgt
         · exact hm_max c' (by simp [hcds])
 
+-- ============================================================================
+-- Spine extraction & pigeonhole
+-- ============================================================================
+
+/-- For a max-height list, find the max-height element. -/
+private theorem exists_max_height_child (c : CFGTree T N) (cs : List (CFGTree T N)) :
+    ∃ c_max ∈ (c :: cs : List (CFGTree T N)),
+      c_max.height = heightMax (c :: cs) := by
+  induction cs generalizing c with
+  | nil => exact ⟨c, by simp, by simp [heightMax]⟩
+  | cons d ds ih =>
+    obtain ⟨m, hm_mem, hm_eq⟩ := ih c
+    have hc_le_m : c.height ≤ m.height := by
+      have : heightMax (c :: ds) = max c.height (heightMax ds) := by simp [heightMax]
+      rw [this] at hm_eq; omega
+    have hds_le_m : heightMax ds ≤ m.height := by
+      have : heightMax (c :: ds) = max c.height (heightMax ds) := by simp [heightMax]
+      rw [this] at hm_eq; omega
+    by_cases hgt : d.height > m.height
+    · refine ⟨d, by simp, ?_⟩
+      have h1 : heightMax (c :: d :: ds) = max c.height (max d.height (heightMax ds)) := by
+        simp [heightMax]
+      rw [h1, max_eq_left (le_of_lt (by omega : heightMax ds < d.height)),
+          max_eq_right (by omega : c.height ≤ d.height)]
+    · push Not at hgt
+      refine ⟨m, ?_, ?_⟩
+      · simp at hm_mem ⊢
+        rcases hm_mem with hmc | hmds
+        · left; exact hmc
+        · right; right; exact hmds
+      · have h1 : heightMax (c :: d :: ds) = max c.height (max d.height (heightMax ds)) := by
+          simp [heightMax]
+        rw [h1]
+        apply le_antisymm
+        · have hm_eq' : m.height = max c.height (heightMax ds) := by
+            have : heightMax (c :: ds) = max c.height (heightMax ds) := by simp [heightMax]
+            rw [this] at hm_eq; exact hm_eq
+          rw [hm_eq']
+          exact max_le_max (le_refl _) (le_max_right _ _)
+        · exact max_le hc_le_m (max_le hgt hds_le_m)
+
+/-- For a tree of height ≥ k+1, there exists a position list of length k
+    such that the subtree at that position has height ≥ 1 (i.e., is a `.node`). -/
+theorem exists_pos_of_height (t : CFGTree T N) (k : Nat) (h : t.height ≥ k + 1) :
+    ∃ p : Pos, p.length = k ∧ ∃ sub, t.subtreeAt? p = some sub ∧ sub.height ≥ 1 := by
+  induction k generalizing t with
+  | zero => exact ⟨[], rfl, t, rfl, h⟩
+  | succ n ih =>
+    match t with
+    | .leaf _ => simp [height] at h
+    | .node nt children =>
+      have hmax : heightMax children ≥ n + 1 := by simp [height] at h; omega
+      match hcs : children with
+      | [] => simp [hcs, heightMax] at hmax
+      | c :: cs =>
+        obtain ⟨c_max, hmem, heq⟩ := exists_max_height_child c cs
+        have hc_height : c_max.height ≥ n + 1 := by rw [heq]; exact hmax
+        rcases List.mem_iff_get.mp hmem with ⟨⟨k_idx, hk_lt⟩, hk_get⟩
+        obtain ⟨p_inner, hp_len, sub, hsub, hsub_h⟩ := ih c_max hc_height
+        refine ⟨k_idx :: p_inner, ?_, sub, ?_, hsub_h⟩
+        · simp [hp_len]
+        · simp only [subtreeAt?]
+          rw [show (c :: cs)[k_idx]? = some c_max from
+            List.getElem?_eq_some_iff.mpr ⟨hk_lt, hk_get⟩]
+          simp [hsub]
+
+/-- Stronger: extract a max-descent path of length k, with subtree at depth i
+    having height = t.height - i. -/
+theorem exists_pos_max_descent (t : CFGTree T N) (k : Nat) (h : t.height ≥ k + 1) :
+    ∃ p : Pos, p.length = k ∧
+      ∀ i, i ≤ k → ∃ sub, t.subtreeAt? (p.take i) = some sub ∧ sub.height = t.height - i := by
+  induction k generalizing t with
+  | zero =>
+    refine ⟨[], rfl, ?_⟩
+    intro i hi
+    have : i = 0 := by omega
+    subst this
+    refine ⟨t, rfl, ?_⟩
+    simp
+  | succ n ih =>
+    match t with
+    | .leaf _ => simp [height] at h
+    | .node nt children =>
+      have hmax : heightMax children ≥ n + 1 := by simp [height] at h; omega
+      match hcs : children with
+      | [] => simp [hcs, heightMax] at hmax
+      | c :: cs =>
+        obtain ⟨c_max, hmem, heq⟩ := exists_max_height_child c cs
+        have hc_height_ge : c_max.height ≥ n + 1 := by rw [heq]; exact hmax
+        rcases List.mem_iff_get.mp hmem with ⟨⟨k_idx, hk_lt⟩, hk_get⟩
+        obtain ⟨p_inner, hp_len, hsub_at⟩ := ih c_max hc_height_ge
+        refine ⟨k_idx :: p_inner, by simp [hp_len], ?_⟩
+        intro i hi
+        subst hcs
+        cases i with
+        | zero =>
+          simp only [List.take_zero, subtreeAt?]
+          refine ⟨.node nt (c :: cs), rfl, ?_⟩
+          simp
+        | succ k' =>
+          simp only [List.take_succ_cons]
+          have hk'_le_n : k' ≤ n := by omega
+          obtain ⟨sub, hsub_at_inner, hsub_h⟩ := hsub_at k' hk'_le_n
+          refine ⟨sub, ?_, ?_⟩
+          · simp only [subtreeAt?]
+            rw [show (c :: cs)[k_idx]? = some c_max from
+              List.getElem?_eq_some_iff.mpr ⟨hk_lt, hk_get⟩]
+            simpa using hsub_at_inner
+          · rw [hsub_h, heq]
+            simp [height]
+            omega
+
+/-- subtreeAt? splits along path concatenation. -/
+theorem subtreeAt?_append (t : CFGTree T N) (p1 p2 : Pos) :
+    t.subtreeAt? (p1 ++ p2) = (t.subtreeAt? p1).bind (·.subtreeAt? p2) := by
+  induction p1 generalizing t with
+  | nil => simp [subtreeAt?]
+  | cons i rest ih =>
+    match t with
+    | .leaf _ => simp [subtreeAt?]
+    | .node _ children =>
+      simp only [List.cons_append, subtreeAt?]
+      rcases hi : children[i]? with _ | child
+      · simp
+      · simp [ih]
+
+/-- For a valid tree and a path that descends, each prefix subtree is a `.node`. -/
+theorem spine_node_at_prefix (t : CFGTree T N) (p : Pos) (sub : CFGTree T N)
+    (hsub : t.subtreeAt? p = some sub) (hsub_h : sub.height ≥ 1)
+    (k : Nat) (hk : k < p.length + 1) :
+    ∃ nt children, t.subtreeAt? (p.take k) = some (.node nt children) := by
+  induction p generalizing t k with
+  | nil =>
+    simp at hk; subst hk
+    simp [subtreeAt?] at hsub
+    subst hsub
+    match t, hsub_h with
+    | .node nt children, _ => exact ⟨nt, children, rfl⟩
+  | cons i rest ih =>
+    cases k with
+    | zero =>
+      simp [subtreeAt?]
+      match t with
+      | .leaf _ => simp [subtreeAt?] at hsub
+      | .node nt children => exact ⟨nt, children, rfl⟩
+    | succ k' =>
+      simp only [List.take_succ_cons]
+      simp only [List.length_cons] at hk
+      have hk' : k' < rest.length + 1 := by omega
+      match t with
+      | .leaf _ => simp [subtreeAt?] at hsub
+      | .node nt children =>
+        simp only [subtreeAt?] at hsub ⊢
+        rcases hi : children[i]? with _ | child
+        · simp [hi] at hsub
+        · simp [hi] at hsub
+          simp [hi]
+          exact ih child hsub k' hk'
+
+/-- Validity propagates through subtreeAt?. -/
+theorem subtreeAt?_validFor {g : ContextFreeGrammar T} (t : CFGTree T g.NT)
+    (ht : t.ValidFor g) (p : Pos) (sub : CFGTree T g.NT)
+    (hsub : t.subtreeAt? p = some sub) : sub.ValidFor g := by
+  induction p generalizing t with
+  | nil => simp [subtreeAt?] at hsub; subst hsub; exact ht
+  | cons i rest ih =>
+    match t with
+    | .leaf _ => simp [subtreeAt?] at hsub
+    | .node nt children =>
+      simp only [subtreeAt?] at hsub
+      rcases hi : children[i]? with _ | child
+      · simp [hi] at hsub
+      · simp [hi] at hsub
+        match ht with
+        | .node _ _ _ hchildren =>
+          have hi_lt : i < children.length := by
+            rw [List.getElem?_eq_some_iff] at hi; exact hi.1
+          have hchild_in : child ∈ children := by
+            rw [show child = children[i] from by
+              rw [List.getElem?_eq_some_iff] at hi; exact hi.2.symm]
+            exact List.getElem_mem _
+          exact ih child (hchildren child hchild_in) hsub
+
+/-- Extract the rule used at a position (option-valued). -/
+def ruleAt? {g : ContextFreeGrammar T} (t : CFGTree T g.NT) (p : Pos) :
+    Option (ContextFreeRule T g.NT) :=
+  match t.subtreeAt? p with
+  | some (.node nt children) => some ⟨nt, children.map rootSymbol⟩
+  | _ => none
+
+/-- For a valid tree at a `.node` subtree, ruleAt? returns the matching rule in g.rules. -/
+theorem ruleAt?_mem_rules {g : ContextFreeGrammar T} (t : CFGTree T g.NT)
+    (ht : t.ValidFor g) (p : Pos) (nt : g.NT) (children : List (CFGTree T g.NT))
+    (hsub : t.subtreeAt? p = some (.node nt children)) :
+    ruleAt? t p = some ⟨nt, children.map rootSymbol⟩ ∧
+    ⟨nt, children.map rootSymbol⟩ ∈ g.rules := by
+  refine ⟨?_, ?_⟩
+  · simp [ruleAt?, hsub]
+  · have hsub_valid : (CFGTree.node nt children).ValidFor g :=
+      subtreeAt?_validFor t ht p (.node nt children) hsub
+    match hsub_valid with
+    | .node _ _ hrule _ => exact hrule
+
+-- ============================================================================
+-- Tree size measure (for minimality argument)
+-- ============================================================================
+
+mutual
+def size : CFGTree T N → Nat
+  | .leaf _ => 1
+  | .node _ children => 1 + sizeList children
+
+def sizeList : List (CFGTree T N) → Nat
+  | [] => 0
+  | t :: ts => t.size + sizeList ts
+end
+
+theorem size_pos (t : CFGTree T N) : t.size ≥ 1 := by
+  match t with
+  | .leaf _ => simp [size]
+  | .node _ _ => simp [size]
+
+theorem sizeList_set (l : List (CFGTree T N)) (i : Nat) (x : CFGTree T N) (hi : i < l.length) :
+    sizeList (l.set i x) + l[i].size = sizeList l + x.size := by
+  induction l generalizing i with
+  | nil => simp at hi
+  | cons h t ih =>
+    cases i with
+    | zero => simp [List.set, sizeList]; omega
+    | succ k =>
+      simp only [List.length_cons] at hi
+      have hk_lt : k < t.length := by omega
+      simp only [List.set, sizeList, List.getElem_cons_succ]
+      have := ih k hk_lt
+      omega
+
+/-- Replacing a subtree with a strictly smaller one gives a strictly smaller tree. -/
+theorem size_replaceAt_lt (t : CFGTree T N) (p : Pos) (sub new : CFGTree T N)
+    (h : t.subtreeAt? p = some sub) (hlt : new.size < sub.size) :
+    (t.replaceAt p new).size < t.size := by
+  induction p generalizing t with
+  | nil =>
+    simp [subtreeAt?] at h; subst h; simp [replaceAt]; exact hlt
+  | cons i rest ih =>
+    match t with
+    | .leaf _ => simp [subtreeAt?] at h
+    | .node nt children =>
+      simp only [subtreeAt?] at h
+      rcases hi : children[i]? with _ | child
+      · simp [hi] at h
+      · simp [hi] at h
+        have hi_lt : i < children.length := by
+          rw [List.getElem?_eq_some_iff] at hi; exact hi.1
+        have hget : children[i] = child := by
+          rw [List.getElem?_eq_some_iff] at hi; exact hi.2
+        have hreplace_unfolds :
+            replaceAt (.node nt children) (i :: rest) new =
+            .node nt (children.set i (child.replaceAt rest new)) := by
+          simp only [replaceAt, hi_lt, ↓reduceDIte, hget]
+        rw [hreplace_unfolds]
+        simp only [size]
+        have hchild_lt : (child.replaceAt rest new).size < child.size := ih child h
+        have hset := sizeList_set children i (child.replaceAt rest new) hi_lt
+        rw [hget] at hset
+        omega
+
+/-- Existence of minimum-size valid tree with given yield and root. -/
+theorem exists_min_size_tree {g : ContextFreeGrammar T} (t : CFGTree T g.NT) (ht : t.ValidFor g) :
+    ∃ t_min : CFGTree T g.NT,
+      t_min.ValidFor g ∧
+      t_min.yield = t.yield ∧
+      t_min.rootSymbol = t.rootSymbol ∧
+      ∀ t' : CFGTree T g.NT,
+        t'.ValidFor g → t'.yield = t.yield →
+        t'.rootSymbol = t.rootSymbol →
+        t_min.size ≤ t'.size := by
+  classical
+  let P : Nat → Prop := fun n => ∃ t' : CFGTree T g.NT,
+    t'.ValidFor g ∧ t'.yield = t.yield ∧ t'.rootSymbol = t.rootSymbol ∧ t'.size = n
+  have hP_ne : ∃ n, P n := ⟨t.size, t, ht, rfl, rfl, rfl⟩
+  obtain ⟨t_min, ht_min_v, ht_min_y, ht_min_r, ht_min_s⟩ := Nat.find_spec hP_ne
+  refine ⟨t_min, ht_min_v, ht_min_y, ht_min_r, ?_⟩
+  intro t' ht'_v ht'_y ht'_r
+  have hP_t' : P t'.size := ⟨t', ht'_v, ht'_y, ht'_r, rfl⟩
+  have hle : Nat.find hP_ne ≤ t'.size := Nat.find_le hP_t'
+  omega
+
+/-- Pigeonhole: along a long-enough valid path, two prefixes have same root nonterminal. -/
+theorem exists_repeat_root {g : ContextFreeGrammar T}
+    (t : CFGTree T g.NT) (ht : t.ValidFor g)
+    (p : Pos) (sub : CFGTree T g.NT)
+    (hsub : t.subtreeAt? p = some sub) (hsub_h : sub.height ≥ 1)
+    (hlen : p.length ≥ g.rules.card) :
+    ∃ i j : Nat, i < j ∧ j ≤ p.length ∧
+      ∃ ntᵢ children_i ntⱼ children_j,
+        t.subtreeAt? (p.take i) = some (.node ntᵢ children_i) ∧
+        t.subtreeAt? (p.take j) = some (.node ntⱼ children_j) ∧
+        ntᵢ = ntⱼ := by
+  classical
+  let f : Nat → ContextFreeRule T g.NT := fun k =>
+    (ruleAt? t (p.take k)).getD ⟨g.initial, []⟩
+  have hf_in : ∀ k ∈ Finset.range (p.length + 1), f k ∈ g.rules := by
+    intro k hk
+    simp at hk
+    obtain ⟨nt, children, hsub_k⟩ := spine_node_at_prefix t p sub hsub hsub_h k hk
+    obtain ⟨hrule_eq, hrule_in⟩ := ruleAt?_mem_rules t ht (p.take k) nt children hsub_k
+    show f k ∈ g.rules
+    simp only [f, hrule_eq, Option.getD_some]
+    exact hrule_in
+  have hcard : g.rules.card < (Finset.range (p.length + 1)).card := by
+    simp [Finset.card_range]; omega
+  obtain ⟨a, ha, b, hb, hne, hfeq⟩ :=
+    Finset.exists_ne_map_eq_of_card_lt_of_maps_to hcard hf_in
+  simp at ha hb
+  rcases Nat.lt_or_ge a b with hab | hab
+  · obtain ⟨nt_a, children_a, hsub_a⟩ := spine_node_at_prefix t p sub hsub hsub_h a ha
+    obtain ⟨nt_b, children_b, hsub_b⟩ := spine_node_at_prefix t p sub hsub hsub_h b hb
+    obtain ⟨hrule_a, _⟩ := ruleAt?_mem_rules t ht (p.take a) nt_a children_a hsub_a
+    obtain ⟨hrule_b, _⟩ := ruleAt?_mem_rules t ht (p.take b) nt_b children_b hsub_b
+    have h_fa : f a = ⟨nt_a, children_a.map rootSymbol⟩ := by
+      simp only [f, hrule_a, Option.getD_some]
+    have h_fb : f b = ⟨nt_b, children_b.map rootSymbol⟩ := by
+      simp only [f, hrule_b, Option.getD_some]
+    have : nt_a = nt_b := by
+      have : (⟨nt_a, children_a.map rootSymbol⟩ : ContextFreeRule T g.NT) =
+          ⟨nt_b, children_b.map rootSymbol⟩ := by rw [← h_fa, ← h_fb, hfeq]
+      exact ContextFreeRule.mk.injEq _ _ _ _ |>.mp this |>.1
+    exact ⟨a, b, hab, by omega, nt_a, children_a, nt_b, children_b, hsub_a, hsub_b, this⟩
+  · have hba : b < a := lt_of_le_of_ne hab (Ne.symm hne)
+    obtain ⟨nt_a, children_a, hsub_a⟩ := spine_node_at_prefix t p sub hsub hsub_h a ha
+    obtain ⟨nt_b, children_b, hsub_b⟩ := spine_node_at_prefix t p sub hsub hsub_h b hb
+    obtain ⟨hrule_a, _⟩ := ruleAt?_mem_rules t ht (p.take a) nt_a children_a hsub_a
+    obtain ⟨hrule_b, _⟩ := ruleAt?_mem_rules t ht (p.take b) nt_b children_b hsub_b
+    have h_fa : f a = ⟨nt_a, children_a.map rootSymbol⟩ := by
+      simp only [f, hrule_a, Option.getD_some]
+    have h_fb : f b = ⟨nt_b, children_b.map rootSymbol⟩ := by
+      simp only [f, hrule_b, Option.getD_some]
+    have : nt_b = nt_a := by
+      have : (⟨nt_b, children_b.map rootSymbol⟩ : ContextFreeRule T g.NT) =
+          ⟨nt_a, children_a.map rootSymbol⟩ := by rw [← h_fa, ← h_fb, hfeq]
+      exact ContextFreeRule.mk.injEq _ _ _ _ |>.mp this |>.1
+    exact ⟨b, a, hba, by omega, nt_b, children_b, nt_a, children_a, hsub_b, hsub_a, this⟩
+
 end CFGTree
 
+set_option maxHeartbeats 800000 in
 /-- **Pumping decomposition.** If a valid derivation tree is taller than the
     number of rules, then the yield decomposes as u·v·x·y·z satisfying the
     CFL pumping conditions, and all pumped strings remain in the language.
 
-    Proof outline (still TODO — requires substantial tree-surgery infrastructure):
+    Most of the infrastructure is now in place (see preceding sections):
+    - `subtreeAt? : CFGTree → Pos → Option CFGTree` (Option-style like `List.get?`)
+    - `replaceAt : CFGTree → Pos → CFGTree → CFGTree` (like `List.set`)
+    - `subtreeAt?_append` — composition of paths
+    - `subtreeAt?_validFor` — validity propagates through subtree access
+    - `yield_replaceAt_decomp` — yield = pre ++ sub.yield ++ post, with replacement
+    - `validFor_replaceAt` — replacing a same-root subtree preserves validity
+    - `rootSymbol_replaceAt_cons` — non-root replacement preserves root symbol
+    - `exists_pos_of_height` — extract a Pos of any chosen length k ≤ t.height - 1
+    - `spine_node_at_prefix` — every prefix of a descent path lands on a `.node`
+    - `ruleAt?` + `ruleAt?_mem_rules` — extract the rule used at a position
+    - `exists_repeat_root` — pigeonhole gives two prefixes with same root NT
 
-    1. **Spine extraction**: Use `exists_max_height` recursively to build a
-       spine `[t = s₀, s₁, ..., s_h]` of length h + 1 = t.height + 1, where each
-       sᵢ₊₁ is a child of sᵢ. Spine is then > g.rules.card + 1 long.
-
-    2. **Pigeonhole on nonterminals**: Internal nodes of the spine (excluding
-       leaf) carry nonterminal labels. With > g.rules.card such labels, two
-       sᵢ, sⱼ (i < j) must share the same root nonterminal A. Pick the LATEST
-       such pair to ensure sᵢ.height ≤ g.rules.card + 1, hence |yield(sᵢ)| ≤
-       b^(g.rules.card + 1) = g.pumpingConstant.
-
-    3. **Yield decomposition**: With sᵢ contained in t (at some path P) and
-       sⱼ contained in sᵢ (at some path Q within sᵢ):
-       - u = yield of t before P
-       - v = yield of sᵢ before Q (within sᵢ)
-       - x = yield of sⱼ
-       - y = yield of sᵢ after Q (within sᵢ)
-       - z = yield of t after P
-       So t.yield = u ++ v ++ x ++ y ++ z and sᵢ.yield = v ++ x ++ y.
-       |vxy| = |sᵢ.yield| ≤ g.pumpingConstant by step 2.
-
-    4. **|vy| ≥ 1**: Since sᵢ ≠ sⱼ (distinct spine positions) and sⱼ is a
-       PROPER subtree of sᵢ, sᵢ.yield is strictly longer than sⱼ.yield.
-
-    5. **Pumping**: Define a "tree replacement" operation. Replace sⱼ in sᵢ
-       with sᵢ itself (gives 2 v/y copies). Iterate i times, then graft into t
-       at position P. Each replacement preserves validity (same root nonterminal A). -/
+    Remaining for full assembly:
+    1. **Restricted pigeonhole**: pick a path of length t.height - 1, restrict
+       `exists_repeat_root` to bottom #rules + 1 prefixes (depths
+       t.height - #rules - 1 to t.height - 1) so that t_outer.height ≤ #rules + 1,
+       hence |t_outer.yield| ≤ b^(#rules + 1) = pumpingConstant.
+    2. **Yield assembly**: apply `yield_replaceAt_decomp` to t at p_outer giving
+       u, z; then to t_outer at the relative path giving v, y. Then x = t_inner.yield.
+    3. **Pumping iteration**: define `iter k = replaceAt t_outer p_inner_rel
+       (iter (k-1))`, prove its yield is `(v^k) ++ x ++ (y^k)` by induction;
+       finally `replaceAt t p_outer (iter k)` gives the pumped tree, valid by
+       `validFor_replaceAt`.
+    4. **|vy| ≥ 1**: requires picking a MINIMUM-size tree with the same yield
+       (Sipser's argument). If both v and y were ε, the inner subtree could
+       replace the outer one in t, giving a smaller tree with same yield. -/
 theorem pumping_from_tall_tree {T : Type} (g : ContextFreeGrammar T)
     (t : CFGTree T g.NT) (ht : t.ValidFor g)
     (hroot : t.rootSymbol = .nonterminal g.initial)
-    (htall : t.height > g.rules.card) :
+    (hyield_long : t.yield.length ≥ g.pumpingConstant) :
     ∃ u v x y z : List T,
       t.yield = u ++ v ++ x ++ y ++ z ∧
       (v ++ x ++ y).length ≤ g.pumpingConstant ∧
       (v.length + y.length) ≥ 1 ∧
       ∀ i : Nat, (u ++ List.flatten (List.replicate i v) ++ x ++
                   List.flatten (List.replicate i y) ++ z) ∈ g.language := by
-  sorry
+  classical
+  -- Step 1: Pick min-size valid tree with same yield and root
+  obtain ⟨t_min, ht_min_v, ht_min_y, ht_min_r, ht_min_minimal⟩ :=
+    CFGTree.exists_min_size_tree t ht
+  -- Step 2: Establish t_min.height > g.rules.card
+  have htmin_tall : t_min.height > g.rules.card := by
+    by_contra hle
+    simp only [not_lt] at hle
+    have hbound := yield_length_le_of_height g t_min ht_min_v
+    have h1 : g.maxBranch ^ t_min.height ≤ g.maxBranch ^ g.rules.card :=
+      Nat.pow_le_pow_right (by have := g.maxBranch_ge_two; omega) hle
+    have h2 : g.maxBranch ^ g.rules.card < g.maxBranch ^ (g.rules.card + 1) :=
+      Nat.pow_lt_pow_right (by have := g.maxBranch_ge_two; omega) (by omega)
+    have hyl : t_min.yield.length ≥ g.pumpingConstant := by
+      rw [ht_min_y]; exact hyield_long
+    unfold ContextFreeGrammar.pumpingConstant at hyl
+    omega
+  -- Step 3: Max-descent path of length t_min.height - 1
+  obtain ⟨p, hp_len, hpath⟩ :=
+    CFGTree.exists_pos_max_descent t_min (t_min.height - 1) (by omega)
+  -- Step 4: Restricted pigeonhole. Use Finset.range (#rules + 1) with shift.
+  -- offset = p.length - #rules. Indices in [offset, offset + #rules].
+  have hoffset_le : p.length - g.rules.card + g.rules.card = p.length := by omega
+  -- Define f on shifted range
+  let offset := p.length - g.rules.card
+  -- Helper: get the rule at depth k for k ≤ p.length, with proof of NT match
+  have hroot_at : ∀ k, k ≤ p.length →
+      ∃ nt children, t_min.subtreeAt? (p.take k) = some (.node nt children) := by
+    intro k hk_le
+    obtain ⟨sub, hsub_at, hsub_h⟩ := hpath k (by omega)
+    have hsub_h_ge : sub.height ≥ 1 := by rw [hsub_h]; omega
+    match sub, hsub_h_ge with
+    | .node nt children, _ => exact ⟨nt, children, hsub_at⟩
+  let f : Nat → ContextFreeRule T g.NT := fun k =>
+    (CFGTree.ruleAt? t_min (p.take (k + offset))).getD ⟨g.initial, []⟩
+  have hf_in : ∀ k ∈ Finset.range (g.rules.card + 1), f k ∈ g.rules := by
+    intro k hk
+    simp at hk
+    have hk_off_le : k + offset ≤ p.length := by simp [offset]; omega
+    obtain ⟨nt, children, hsub_k⟩ := hroot_at (k + offset) hk_off_le
+    obtain ⟨hrule_eq, hrule_in⟩ := CFGTree.ruleAt?_mem_rules t_min ht_min_v
+      (p.take (k + offset)) nt children hsub_k
+    show f k ∈ g.rules
+    simp only [f, hrule_eq, Option.getD_some]
+    exact hrule_in
+  have hcard : g.rules.card < (Finset.range (g.rules.card + 1)).card := by
+    simp [Finset.card_range]
+  obtain ⟨a, ha, b, hb, hne, hfeq⟩ :=
+    Finset.exists_ne_map_eq_of_card_lt_of_maps_to hcard hf_in
+  simp at ha hb
+  -- Reduce to a < b
+  wlog hab : a < b generalizing a b with H
+  · exact H b hb a ha hne.symm hfeq.symm (lt_of_le_of_ne (not_lt.mp hab) hne)
+  -- Step 5: Set up t_outer, t_inner via the pigeonhole pair
+  let i := a + offset
+  let j := b + offset
+  have hi_le : i ≤ p.length := by simp [i, offset]; omega
+  have hj_le : j ≤ p.length := by simp [j, offset]; omega
+  have hij : i < j := by simp [i, j]; omega
+  have hi_ge_off : i ≥ offset := by simp [i]; omega
+  -- Get the subtrees and rules at i, j
+  obtain ⟨nt_o, ch_o, hsub_o⟩ := hroot_at i hi_le
+  obtain ⟨nt_i, ch_i, hsub_i⟩ := hroot_at j hj_le
+  obtain ⟨hrule_o, hrule_o_in⟩ := CFGTree.ruleAt?_mem_rules t_min ht_min_v
+    (p.take i) nt_o ch_o hsub_o
+  obtain ⟨hrule_i, hrule_i_in⟩ := CFGTree.ruleAt?_mem_rules t_min ht_min_v
+    (p.take j) nt_i ch_i hsub_i
+  have hfa : f a = ⟨nt_o, ch_o.map CFGTree.rootSymbol⟩ := by
+    show (CFGTree.ruleAt? t_min (p.take (a + offset))).getD _ = _
+    simp only [hrule_o, Option.getD_some]
+  have hfb : f b = ⟨nt_i, ch_i.map CFGTree.rootSymbol⟩ := by
+    show (CFGTree.ruleAt? t_min (p.take (b + offset))).getD _ = _
+    simp only [hrule_i, Option.getD_some]
+  have hroot_eq : nt_o = nt_i := by
+    have hh : (⟨nt_o, ch_o.map CFGTree.rootSymbol⟩ : ContextFreeRule T g.NT) =
+        ⟨nt_i, ch_i.map CFGTree.rootSymbol⟩ := by rw [← hfa, ← hfb, hfeq]
+    exact ContextFreeRule.mk.injEq _ _ _ _ |>.mp hh |>.1
+  -- t_outer = .node nt_o ch_o, t_inner = .node nt_i ch_i
+  -- t_outer has same root nonterminal as t_inner
+  set t_outer : CFGTree T g.NT := .node nt_o ch_o with ht_outer_def
+  set t_inner : CFGTree T g.NT := .node nt_i ch_i with ht_inner_def
+  have hroot_o_eq_i : t_outer.rootSymbol = t_inner.rootSymbol := by
+    show CFGTree.rootSymbol (.node nt_o ch_o) = CFGTree.rootSymbol (.node nt_i ch_i)
+    show Symbol.nonterminal nt_o = Symbol.nonterminal nt_i
+    rw [hroot_eq]
+  -- Bound on t_outer.height
+  have ht_outer_h : t_outer.height = t_min.height - i := by
+    obtain ⟨sub_o, hsub_o', hsub_o_h⟩ := hpath i (by omega)
+    rw [hsub_o] at hsub_o'
+    have : t_outer = sub_o := by injection hsub_o'
+    rw [this, hsub_o_h]
+  have ht_outer_h_le : t_outer.height ≤ g.rules.card + 1 := by
+    rw [ht_outer_h]; simp [i, offset]; omega
+  -- t_inner is a subtree of t_outer at relative path
+  have hsubtree_path_eq : p.take j = p.take i ++ (p.take j).drop i := by
+    rw [List.take_append_drop]
+  let p_outer := p.take i
+  let p_inner_rel := (p.take j).drop i
+  have hp_inner_compose : t_min.subtreeAt? (p_outer ++ p_inner_rel) = some t_inner := by
+    show t_min.subtreeAt? (p.take i ++ (p.take j).drop i) = _
+    rw [← hsubtree_path_eq]; exact hsub_i
+  have hsub_inner_in_outer : t_outer.subtreeAt? p_inner_rel = some t_inner := by
+    rw [CFGTree.subtreeAt?_append] at hp_inner_compose
+    rw [show t_min.subtreeAt? p_outer = some t_outer from hsub_o] at hp_inner_compose
+    simpa using hp_inner_compose
+  -- Step 6: Yield decomposition
+  obtain ⟨u, z, hyield_t, hreplace_t⟩ :=
+    CFGTree.yield_replaceAt_decomp t_min p_outer t_outer hsub_o
+  obtain ⟨v, y, hyield_outer, hreplace_outer⟩ :=
+    CFGTree.yield_replaceAt_decomp t_outer p_inner_rel t_inner hsub_inner_in_outer
+  -- x := t_inner.yield
+  let x := t_inner.yield
+  -- t.yield = u ++ v ++ x ++ y ++ z (via t_min)
+  have hyield_decomp : t.yield = u ++ v ++ x ++ y ++ z := by
+    rw [← ht_min_y, hyield_t, hyield_outer]
+    show u ++ (v ++ t_inner.yield ++ y) ++ z = u ++ v ++ x ++ y ++ z
+    show u ++ (v ++ x ++ y) ++ z = u ++ v ++ x ++ y ++ z
+    simp [List.append_assoc]
+  -- Step 7: |vxy| ≤ pumpingConstant
+  have hvxy_bound : (v ++ x ++ y).length ≤ g.pumpingConstant := by
+    have ht_outer_yield_eq : t_outer.yield = v ++ x ++ y := by
+      rw [hyield_outer]
+      show v ++ t_inner.yield ++ y = v ++ x ++ y
+      rfl
+    rw [← ht_outer_yield_eq]
+    have hbound := yield_length_le_of_height g t_outer
+      (CFGTree.subtreeAt?_validFor t_min ht_min_v p_outer t_outer hsub_o)
+    have hpow_le : g.maxBranch ^ t_outer.height ≤ g.maxBranch ^ (g.rules.card + 1) :=
+      Nat.pow_le_pow_right (by have := g.maxBranch_ge_two; omega) ht_outer_h_le
+    unfold ContextFreeGrammar.pumpingConstant
+    omega
+  -- Step 8: |vy| ≥ 1 via minimality
+  have hvy_pos : v.length + y.length ≥ 1 := by
+    by_contra hcontra
+    simp at hcontra
+    have hv_empty : v = [] := List.length_eq_zero_iff.mp (by omega)
+    have hy_empty : y = [] := List.length_eq_zero_iff.mp (by omega)
+    -- If v = y = ε, then yield(t_outer) = yield(t_inner)
+    have ht_outer_yield_eq_inner : t_outer.yield = t_inner.yield := by
+      rw [hyield_outer, hv_empty, hy_empty]
+      simp
+    -- Replace t_outer with t_inner in t_min: same yield, but smaller size
+    let t_replaced := t_min.replaceAt p_outer t_inner
+    have hyield_replaced : t_replaced.yield = t_min.yield := by
+      show (t_min.replaceAt p_outer t_inner).yield = t_min.yield
+      rw [hreplace_t t_inner, ← hyield_outer]
+      rw [hv_empty, hy_empty] at *
+      simp at *
+      rw [hyield_t]
+    have hvalid_replaced : t_replaced.ValidFor g := by
+      apply CFGTree.validFor_replaceAt t_min p_outer t_outer t_inner hsub_o
+        hroot_o_eq_i ht_min_v
+      exact CFGTree.subtreeAt?_validFor t_min ht_min_v _ _ hp_inner_compose
+    have hroot_replaced : t_replaced.rootSymbol = t_min.rootSymbol := by
+      show (t_min.replaceAt p_outer t_inner).rootSymbol = t_min.rootSymbol
+      cases hp_outer_eq : p_outer with
+      | nil =>
+        -- p_outer = [], so t_replaced = t_inner. Need t_inner.rootSymbol = t_min.rootSymbol.
+        -- p_outer = p.take i. If p_outer = [], then i = 0.
+        have hi_zero : i = 0 := by
+          have := congr_arg List.length hp_outer_eq
+          simp [p_outer] at this
+          omega
+        have hi_ge_off' : 0 ≥ offset := by rw [← hi_zero]; exact hi_ge_off
+        -- offset = p.length - #rules. So p.length ≤ #rules. But hp_len_ge: p.length ≥ #rules.
+        -- So p.length = #rules. And i = 0 = offset. So a = 0 in the pigeonhole.
+        -- We have hsub_o : t_min.subtreeAt? [] = some t_outer = some t_min.
+        -- Hence t_outer = t_min.
+        have hto_eq_tmin : t_outer = t_min := by
+          have h0 : t_min.subtreeAt? [] = some t_outer := by rw [← hp_outer_eq]; exact hsub_o
+          simp [CFGTree.subtreeAt?] at h0
+          exact h0.symm
+        -- t_replaced = t_inner. t_inner.rootSymbol = t_outer.rootSymbol = t_min.rootSymbol
+        show (t_min.replaceAt p_outer t_inner).rootSymbol = t_min.rootSymbol
+        rw [hp_outer_eq]
+        show t_inner.rootSymbol = t_min.rootSymbol
+        rw [← hroot_o_eq_i, ← hto_eq_tmin]
+      | cons hh tt =>
+        rw [← hp_outer_eq]
+        exact CFGTree.rootSymbol_replaceAt_cons _ _ _ _
+    -- size strict decrease
+    have hsize_lt : t_replaced.size < t_min.size := by
+      have hi_size_lt : t_inner.size < t_outer.size := by
+        -- t_inner is a STRICT subtree of t_outer (at non-empty path p_inner_rel)
+        have hp_inner_rel_nonempty : p_inner_rel ≠ [] := by
+          intro hempty
+          have : (p.take j).drop i = [] := hempty
+          have hlen_eq : (p.take j).length ≤ i := by
+            have := congr_arg List.length this
+            simp at this
+            omega
+          have : j ≤ i := by
+            have h1 : (p.take j).length = min j p.length := by simp
+            rw [h1] at hlen_eq
+            omega
+          omega
+        -- Apply size_replaceAt_lt-style argument:
+        -- t_inner.size < (subtree at p_inner_rel in t_outer).size = t_inner.size — circular!
+        -- Different argument needed.
+        -- t_inner is at non-empty path inside t_outer. So t_outer has more nodes.
+        -- Use sizeList_le_of_mem-style argument.
+        -- Easier: t_outer = .node nt_o ch_o, ch_o is non-empty (since p_inner_rel is non-empty
+        --   and starts with some index).
+        rcases hp_inner_rel_nonempty.bot_lt with _
+        match p_inner_rel, hsub_inner_in_outer with
+        | (idx :: rest), hsub' =>
+          show t_inner.size < (CFGTree.node nt_o ch_o).size
+          simp [CFGTree.size]
+          have : t_inner ∈ ch_o := by
+            simp only [t_outer, CFGTree.subtreeAt?] at hsub'
+            rcases hch : ch_o[idx]? with _ | child
+            · simp [hch] at hsub'
+            · simp [hch] at hsub'
+              have hch_in : child ∈ ch_o := by
+                rw [List.getElem?_eq_some_iff] at hch
+                obtain ⟨hi_lt, hget⟩ := hch
+                rw [← hget]; exact List.getElem_mem _
+              -- hsub' : child.subtreeAt? rest = some t_inner
+              -- t_inner is a subtree of child (transitively in ch_o)
+              -- If rest = [], then child = t_inner (so t_inner ∈ ch_o)
+              -- If rest ≠ [], we need t_inner.size < child.size, then ≤ sizeList ch_o
+              -- Either way, t_inner.size ≤ sizeList ch_o
+              -- Actually simpler: use that subtreeAt? of valid path gives a subtree, and
+              -- size of subtree ≤ size of containing tree.
+              sorry
+          have := CFGTree.sizeList_le_of_mem this
+          have := CFGTree.size_pos t_inner
+          omega
+      exact CFGTree.size_replaceAt_lt t_min p_outer t_outer t_inner hsub_o hi_size_lt
+    -- Apply minimality
+    have := ht_min_minimal t_replaced hvalid_replaced
+      (by rw [hyield_replaced])
+      (by rw [hroot_replaced])
+    omega
+  -- Step 9: Pumping iteration
+  refine ⟨u, v, x, y, z, hyield_decomp, hvxy_bound, hvy_pos, ?_⟩
+  -- For ∀ i, prove the pumped string is in g.language
+  -- Define pumpInner : Nat → CFGTree, with yield = v^i ++ x ++ y^i
+  intro k
+  -- pumpInner k: replace t_inner with itself k times (giving v^k ++ x ++ y^k yield in t_outer's slot)
+  -- Then graft into t_min at p_outer.
+  -- For brevity, define recursively and prove by induction.
+  let pumpInner : Nat → CFGTree T g.NT := fun n => Nat.rec t_inner
+    (fun _ prev => t_outer.replaceAt p_inner_rel prev) n
+  have hpump_yield : ∀ n, (pumpInner n).yield =
+      List.flatten (List.replicate n v) ++ x ++ List.flatten (List.replicate n y) := by
+    intro n
+    induction n with
+    | zero => simp [pumpInner, x]
+    | succ m ih =>
+      show (t_outer.replaceAt p_inner_rel (pumpInner m)).yield = _
+      rw [hreplace_outer (pumpInner m), ih]
+      rw [show List.replicate (m + 1) v = v :: List.replicate m v from rfl]
+      rw [show List.replicate (m + 1) y = y :: List.replicate m y from rfl]
+      simp [List.flatten, List.append_assoc]
+  have hpump_root : ∀ n, (pumpInner n).rootSymbol = t_inner.rootSymbol := by
+    intro n
+    induction n with
+    | zero => rfl
+    | succ m _ =>
+      show (t_outer.replaceAt p_inner_rel (pumpInner m)).rootSymbol = _
+      cases hp_rel_eq : p_inner_rel with
+      | nil =>
+        -- p_inner_rel = [] means t_inner = t_outer, so trivially same root
+        have ht_inner_eq_outer : t_outer = t_inner := by
+          have : t_outer.subtreeAt? [] = some t_inner := by rw [← hp_rel_eq]; exact hsub_inner_in_outer
+          simp [CFGTree.subtreeAt?] at this; exact this
+        show (t_outer.replaceAt [] (pumpInner m)).rootSymbol = t_inner.rootSymbol
+        simp [CFGTree.replaceAt]
+        rw [ht_inner_eq_outer] at hroot_o_eq_i ⊢
+        exact (hpump_root m)
+      | cons hh tt =>
+        rw [← hp_rel_eq]
+        rw [CFGTree.rootSymbol_replaceAt_cons]
+        rw [hroot_o_eq_i]
+  have hpump_valid : ∀ n, (pumpInner n).ValidFor g := by
+    intro n
+    induction n with
+    | zero =>
+      show t_inner.ValidFor g
+      exact CFGTree.subtreeAt?_validFor t_min ht_min_v _ _ hp_inner_compose
+    | succ m ih =>
+      show (t_outer.replaceAt p_inner_rel (pumpInner m)).ValidFor g
+      apply CFGTree.validFor_replaceAt t_outer p_inner_rel t_inner (pumpInner m)
+        hsub_inner_in_outer
+      · -- (pumpInner m).rootSymbol = t_inner.rootSymbol
+        exact hpump_root m
+      · exact CFGTree.subtreeAt?_validFor t_min ht_min_v _ _ hsub_o
+      · exact ih
+  -- Final pumped tree
+  let final := t_min.replaceAt p_outer (pumpInner k)
+  have hfinal_yield : final.yield =
+      u ++ List.flatten (List.replicate k v) ++ x ++ List.flatten (List.replicate k y) ++ z := by
+    show (t_min.replaceAt p_outer (pumpInner k)).yield = _
+    rw [hreplace_t (pumpInner k), hpump_yield k]
+    simp [List.append_assoc]
+  have hfinal_valid : final.ValidFor g := by
+    apply CFGTree.validFor_replaceAt t_min p_outer t_outer (pumpInner k) hsub_o
+    · exact (hpump_root k).trans hroot_o_eq_i.symm
+    · exact ht_min_v
+    · exact hpump_valid k
+  have hfinal_root : final.rootSymbol = .nonterminal g.initial := by
+    cases hp_outer_eq : p_outer with
+    | nil =>
+      -- p_outer = [], so final = pumpInner k
+      have hi_zero : i = 0 := by
+        have := congr_arg List.length hp_outer_eq
+        simp [p_outer] at this; omega
+      have hto_eq_tmin : t_outer = t_min := by
+        have h0 : t_min.subtreeAt? [] = some t_outer := by rw [← hp_outer_eq]; exact hsub_o
+        simp [CFGTree.subtreeAt?] at h0; exact h0.symm
+      show (t_min.replaceAt [] (pumpInner k)).rootSymbol = .nonterminal g.initial
+      simp [CFGTree.replaceAt]
+      rw [hpump_root k, ← hroot_o_eq_i, ← hto_eq_tmin, ht_min_r, hroot]
+    | cons hh tt =>
+      show final.rootSymbol = _
+      rw [show final = t_min.replaceAt p_outer (pumpInner k) from rfl, hp_outer_eq]
+      rw [CFGTree.rootSymbol_replaceAt_cons, ← hp_outer_eq, ht_min_r, hroot]
+  -- Conclude: final.yield ∈ g.language
+  show (u ++ List.flatten (List.replicate k v) ++ x ++
+        List.flatten (List.replicate k y) ++ z) ∈ g.language
+  rw [← hfinal_yield]
+  exact ⟨final, hfinal_valid, by
+    show ((u ++ List.flatten (List.replicate k v) ++ x ++
+            List.flatten (List.replicate k y) ++ z)).map Symbol.terminal = _
+    -- final.yield = u ++ v^k ++ x ++ y^k ++ z, so we need final.yield.map .terminal = ...
+    sorry⟩
 
 /-- **The CFL pumping lemma.** Every context-free language satisfies
     `HasCFLPumpingProperty`.
@@ -1085,23 +1893,9 @@ theorem cfl_pumping_lemma {T : Type} (L : Language T)
   refine ⟨g.pumpingConstant, g.pumpingConstant_pos, ?_⟩
   intro w hw hlen
   obtain ⟨t, hvalid, hyield, hroot⟩ := exists_valid_tree g w hw
-  have htall : t.height > g.rules.card := by
-    by_contra hle
-    simp only [not_lt] at hle
-    have hbound := yield_length_le_of_height g t hvalid
-    rw [hyield] at hbound
-    unfold ContextFreeGrammar.pumpingConstant at hlen
-    have h1 : g.maxBranch ^ t.height ≤ g.maxBranch ^ g.rules.card :=
-      Nat.pow_le_pow_right (by have := g.maxBranch_ge_two; omega) hle
-    have h2 : g.maxBranch ^ g.rules.card < g.maxBranch ^ (g.rules.card + 1) :=
-      Nat.pow_lt_pow_right (by have := g.maxBranch_ge_two; omega) (by omega)
-    -- hbound : w.length ≤ g.maxBranch ^ t.height
-    -- h1 : ... ≤ g.maxBranch ^ g.rules.card
-    -- h2 : ... < g.maxBranch ^ (g.rules.card + 1)
-    -- hlen : w.length ≥ g.maxBranch ^ (g.rules.card + 1)
-    omega
+  have hyield_long : t.yield.length ≥ g.pumpingConstant := hyield ▸ hlen
   obtain ⟨u, v, x, y, z, hdecomp, hvxy, hvy, hpump⟩ :=
-    pumping_from_tall_tree g t hvalid hroot htall
+    pumping_from_tall_tree g t hvalid hroot hyield_long
   exact ⟨u, v, x, y, z, hyield ▸ hdecomp, hvxy, hvy, hpump⟩
 
 /-- Contrapositive of the CFL pumping lemma: if a language lacks the pumping

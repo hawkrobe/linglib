@@ -61,7 +61,7 @@ namespace Phenomena.Causation.Studies.KoontzGarboden2009
 open Fragments.Spanish.Predicates
 open Semantics.Causation.Morphological
 open Semantics.Lexical.Verb.EventStructure
-open Theories.Morphology.Core.Monotonicity
+open Morphology.Core.Monotonicity
 open Minimalism (VerbHead)
 open Core.Alternation
 

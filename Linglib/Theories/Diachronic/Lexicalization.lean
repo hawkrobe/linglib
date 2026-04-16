@@ -28,7 +28,7 @@ The model extends RSA's speaker-listener framework to lexicon evolution:
 
 ## Connection to LCEC
 
-The LCEC (`Theories.Morphology.WP.LCEC`) states that I-complexity (conditional entropy
+The LCEC (`Morphology.WP.LCEC`) states that I-complexity (conditional entropy
 across paradigm cells) is uniformly low despite high E-complexity. The analog
 here: lexicons maintain low information loss despite high polysemy, because
 reuse and compounding are informationally efficient. Both are instances of a

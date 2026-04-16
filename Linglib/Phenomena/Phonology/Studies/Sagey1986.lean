@@ -37,12 +37,12 @@ the consensus geometry:
    complex segments with dorsal as major articulator.
 -/
 
-namespace Phenomena.Phonology.Studies.Sagey1986
-
 open Phonology (Segment Feature FeatureVal)
 open Phonology.FeatureGeometry (GeomNode)
 open Phonology.ComplexSegments
 open Phonology.Autosegmental (agreeAt)
+
+namespace Phenomena.Phonology.Studies.Sagey1986
 
 -- ============================================================================
 -- § 1: Major/Minor Articulator Distinction (Ch. 3)

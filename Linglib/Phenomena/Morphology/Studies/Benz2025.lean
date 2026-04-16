@@ -28,13 +28,13 @@ This file formalizes three interconnected contributions from @cite{benz-2025}:
 
 ## Architecture
 
-- `Theories.Morphology.DM.Allosemy`: general framework + v/n/Voice allosemy
+- `Morphology.DM.Allosemy`: general framework + v/n/Voice allosemy
 - `Core.Empirical`: Acceptability type
 -/
 
 namespace Phenomena.Morphology.Studies.Benz2025
 
-open Theories.Morphology.DM.Allosemy
+open Morphology.DM.Allosemy
 open Core.Empirical
 open Fragments.German.Predicates
 open Core.Verbs

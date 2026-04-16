@@ -66,7 +66,7 @@ structure AdjModifierEntry where
       throughout). Set to `abb` for suppletive entries like *good/better/best*.
       See `DegreeContainment.lean` for pattern definitions and the *ABA
       constraint. -/
-  suppletion : Theories.Morphology.DegreeContainment.DegreePattern := ⟨0, 0, 0⟩
+  suppletion : Morphology.DegreeContainment.DegreePattern := ⟨0, 0, 0⟩
   deriving Repr, BEq
 
 -- ============================================================================

@@ -72,7 +72,7 @@ namespace Phenomena.Reference.Studies.DaleReiter1995
 -- § Brevity Interpretations (§3)
 -- ============================================================================
 
-open Theories.Pragmatics.GriceanMaxims
+open Pragmatics.GriceanMaxims
 
 /-- The four computational interpretations of Grice's Brevity maxim (Q2),
     ordered from most to least constrained. All four satisfy Q1

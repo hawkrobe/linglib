@@ -27,12 +27,12 @@ antecedent D must have been relevant before becoming presupposed.
 
 -/
 
-namespace Theories.DTS.Also
+namespace DTS.Also
 
 open Core.Proposition
 open Core.Presupposition
-open Theories.DTS
-open Theories.DTS.ScalarImplicature (sgnRelevance RelevanceSign)
+open DTS
+open DTS.ScalarImplicature (sgnRelevance RelevanceSign)
 
 -- ============================================================
 -- Section 1: Presupposition as Irrelevance (Def. 12)
@@ -399,4 +399,4 @@ antecedent as presupposed (hence independent).
 
 end Theorems
 
-end Theories.DTS.Also
+end DTS.Also

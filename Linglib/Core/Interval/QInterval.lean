@@ -17,7 +17,7 @@ preserve ℝ containment. This is the foundation for the `rsa_decide` tactic:
 4. Conclude `a > b` on ℝ via `gt_of_separated`
 -/
 
-namespace Linglib.Interval
+namespace Interval
 
 /-- A closed rational interval [lo, hi]. -/
 structure QInterval where
@@ -645,4 +645,4 @@ theorem coarsen_containsReal {I : QInterval} {x : ℝ} (bits : ℕ)
 
 end QInterval
 
-end Linglib.Interval
+end Interval

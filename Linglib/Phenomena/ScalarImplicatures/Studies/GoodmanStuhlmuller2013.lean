@@ -292,8 +292,8 @@ unlike WebPPL where `log(0) = -∞` makes quality emerge from the score.
 The model reproduces all 11 findings. All proofs use `rsa_predict`.
 
 **Data source**: `GoodmanStuhlmuller2013.Data`
-**Theories used**: `Theories.Pragmatics.RSA.Core.Config`,
-  `Theories.Pragmatics.RSA.Quantities`,
+**Theories used**: `Pragmatics.RSA.Core.Config`,
+  `Pragmatics.RSA.Quantities`,
   `Theories.Semantics.Lexical.Numeral.Semantics`
 
 -/

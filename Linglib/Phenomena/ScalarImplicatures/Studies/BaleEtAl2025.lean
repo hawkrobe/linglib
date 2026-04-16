@@ -228,7 +228,7 @@ theorem only_competenceByDefault_predicts_interaction :
 -- ============================================================================
 
 /-! Connects the experimental findings to the NeoGricean competence
-formalization in `Theories.Pragmatics.Implicature.Core`. -/
+formalization in `Pragmatics.Implicature.Core`. -/
 
 open Implicature Implicature.Competence
 

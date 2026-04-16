@@ -16,9 +16,9 @@ Zero approximation error: the entire interval computation is exact when
 α ∈ ℕ and the base data is rational.
 -/
 
-namespace Linglib.Interval
+namespace Interval
 
-open Linglib.Interval.QInterval
+open Interval.QInterval
 
 -- ============================================================================
 -- rpow for natural exponents
@@ -62,4 +62,4 @@ theorem rpowOne_containsReal {a : QInterval} {x : ℝ}
   rw [Real.rpow_one]
   exact hx
 
-end Linglib.Interval
+end Interval

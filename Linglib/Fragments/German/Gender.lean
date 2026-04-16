@@ -21,7 +21,7 @@ follows from the feature on n, not from a phonological rule.
 
 namespace Fragments.German.Gender
 
-open Theories.Morphology.DM (CatHead)
+open Morphology.DM (CatHead)
 open Core (SurfaceGender)
 
 -- ============================================================================

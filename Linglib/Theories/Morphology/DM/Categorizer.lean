@@ -55,7 +55,7 @@ in `VocabularyInsertion.lean`.
 
 -/
 
-namespace Theories.Morphology.DM
+namespace Morphology.DM
 
 open Minimalism
 
@@ -835,4 +835,4 @@ theorem catHead_gender_always_known_three (ch : CatHead) :
     ∃ g, ch.toGenderInfoThree = .known g := by
   exact ⟨ch.surfaceGenderThree, rfl⟩
 
-end Theories.Morphology.DM
+end Morphology.DM

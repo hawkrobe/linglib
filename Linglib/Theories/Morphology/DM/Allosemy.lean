@@ -38,10 +38,10 @@ and retroactively classifies existing n and Voice types as allosemy.
 
 -/
 
-namespace Theories.Morphology.DM.Allosemy
+namespace Morphology.DM.Allosemy
 
-open Theories.Morphology.DM (Categorizer CatHead)
-open Theories.Morphology.DM.CategorizerSemantics (NSemanticType)
+open Morphology.DM (Categorizer CatHead)
+open Morphology.DM.CategorizerSemantics (NSemanticType)
 open Minimalism (VoiceFlavor VoiceHead)
 
 -- ════════════════════════════════════════════════════
@@ -468,4 +468,4 @@ inductive AllomorphyAnalogyPosition where
 /-- Benz's position. -/
 def benzPosition : AllomorphyAnalogyPosition := .partialAnalogy
 
-end Theories.Morphology.DM.Allosemy
+end Morphology.DM.Allosemy

@@ -44,7 +44,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Nonliteral.Studies.RelevanceTheory
 
-open Theories.Pragmatics.RelevanceTheory
+open Pragmatics.RelevanceTheory
 
 -- ============================================================================
 -- §1. Metaphor: "He is a whale"

@@ -44,7 +44,7 @@ morphology. Clitics and nonconcatenative morphology are outside its
 scope (@cite{baker-1985} §5).
 -/
 
-namespace Theories.Morphology.MirrorPrinciple
+namespace Morphology.MirrorPrinciple
 
 open Core.Morphology (MorphCategory)
 
@@ -289,4 +289,4 @@ theorem gfRule_inside_agreement (r : GFRuleType) :
     r.toMorphCategory.relevanceRank < MorphCategory.agreement.relevanceRank := by
   cases r <;> native_decide
 
-end Theories.Morphology.MirrorPrinciple
+end Morphology.MirrorPrinciple

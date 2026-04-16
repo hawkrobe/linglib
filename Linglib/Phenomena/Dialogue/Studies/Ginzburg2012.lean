@@ -33,7 +33,7 @@ framework and verified with the existing DGB/TIS/conversational-rule machinery.
 
 namespace Phenomena.Dialogue.Studies.Ginzburg2012
 
-open Theories.Pragmatics.Dialogue.KOS
+open Pragmatics.Dialogue.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. NSU Resolution via QUD
@@ -540,7 +540,7 @@ This section proves the full pipeline for the worked example
 
 section EndToEndChain
 
-open Theories.Pragmatics.Dialogue.KOS.Grammar
+open Pragmatics.Dialogue.KOS.Grammar
 
 instance : Answerhood String String where
   resolves fact question := fact == question

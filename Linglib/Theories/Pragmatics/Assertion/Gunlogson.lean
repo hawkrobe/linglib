@@ -31,7 +31,7 @@ Source determines who can challenge:
 
 -/
 
-namespace Theories.Pragmatics.Assertion.Gunlogson
+namespace Pragmatics.Assertion.Gunlogson
 
 open Core.Discourse.Commitment
 open Core.CommonGround (ContextSet CG)
@@ -304,4 +304,4 @@ theorem confirm_still_unstable {W : Type*} (p : BProp W) :
     let s := GunlogsonState.empty.risingDeclarative p
     (s.confirm p).isStable = false := rfl
 
-end Theories.Pragmatics.Assertion.Gunlogson
+end Pragmatics.Assertion.Gunlogson

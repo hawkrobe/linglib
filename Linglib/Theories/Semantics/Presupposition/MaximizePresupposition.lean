@@ -30,7 +30,7 @@ connects it to existing domain-specific implementations:
    candidate-generation mechanisms.
 
 3. **IC/FP/MP ranking** (`PragConstraint.MP` in
-   `Theories.Pragmatics.Implicature.Presuppositions`): MP as a
+   `Pragmatics.Implicature.Presuppositions`): MP as a
    violable constraint ranked below IC (Internal Coherence) and FP
    (Felicity Presupposition). Describes MP's position in the
    constraint hierarchy for presupposition obligatoriness

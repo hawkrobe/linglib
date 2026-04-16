@@ -37,7 +37,7 @@ whether the MH holds empirically. Study files use these definitions
 to argue for or against specific analyses.
 -/
 
-namespace Theories.Morphology.Core.Monotonicity
+namespace Morphology.Core.Monotonicity
 
 -- ════════════════════════════════════════════════════
 -- § 1. Definitions
@@ -130,4 +130,4 @@ theorem satisfiesMH_comp {Op : Type} [BEq Op] [LawfulBEq Op]
   have hxf : x ∈ f ops := List.contains_iff_mem.mp (hf' x hx)
   exact List.contains_iff_mem.mpr (List.contains_iff_mem.mp (hg' x hxf))
 
-end Theories.Morphology.Core.Monotonicity
+end Morphology.Core.Monotonicity

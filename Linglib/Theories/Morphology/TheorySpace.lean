@@ -45,7 +45,7 @@ Not all 2⁴ = 16 combinations are possible:
   co-present but independent)
 -/
 
-namespace Theories.Morphology.TheorySpace
+namespace Morphology.TheorySpace
 
 -- ============================================================================
 -- §1: Dimensions
@@ -244,4 +244,4 @@ theorem lexicalist_syntactic_illFormed :
     (TheoryPosition.mk .lexicalist .syntactic e m).wellFormed = false := by
   intro e m; cases e <;> cases m <;> rfl
 
-end Theories.Morphology.TheorySpace
+end Morphology.TheorySpace

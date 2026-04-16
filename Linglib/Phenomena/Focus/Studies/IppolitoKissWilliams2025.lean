@@ -329,8 +329,8 @@ theorem interrogative_s'_ci_satisfied {W' : Type*} [Fintype W']
 -- ============================================================================
 
 open Core.Proposition
-open Theories.DTS
-open Theories.DTS.But
+open DTS
+open DTS.But
 
 -- ============================================================================
 -- § 9: Binary Issue Conversion

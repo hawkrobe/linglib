@@ -10,10 +10,10 @@ Low-level expression utilities, `MetaBounds` interval arithmetic, and enum extra
 used across the RSAPredict tactic submodules.
 -/
 
-namespace Linglib.Tactics.RSAPredict
+namespace Tactics.RSAPredict
 
 open Lean Meta Elab Tactic
-open Linglib.Interval
+open Interval
 
 -- ============================================================================
 -- Expr Inspection Helpers
@@ -292,13 +292,15 @@ def mkRatExpr (q : ℚ) : MetaM Expr := do
     if q.num ≥ 0 then
       mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.num.natAbs]
     else
-      mkAppM ``Neg.neg #[← mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.num.natAbs]]
+      let nat ← mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.num.natAbs]
+      mkAppM ``Neg.neg #[nat]
   else
     -- Fraction: num / den
     let numExpr ← if q.num ≥ 0 then
       mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.num.natAbs]
     else
-      mkAppM ``Neg.neg #[← mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.num.natAbs]]
+      let nat ← mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.num.natAbs]
+      mkAppM ``Neg.neg #[nat]
     let denExpr ← mkAppOptM ``Nat.cast #[mkConst ``Rat, none, mkRawNatLit q.den]
     mkAppM ``HDiv.hDiv #[numExpr, denExpr]
 
@@ -323,4 +325,4 @@ private unsafe def tryEvalBoolUnsafe (e : Expr) : MetaM (Option Bool) := do
 @[implemented_by tryEvalBoolUnsafe]
 opaque tryEvalBool (e : Expr) : MetaM (Option Bool)
 
-end Linglib.Tactics.RSAPredict
+end Tactics.RSAPredict

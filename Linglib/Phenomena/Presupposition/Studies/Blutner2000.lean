@@ -207,15 +207,15 @@ theorem accommodation_blocked :
 /-- This is a Q-principle effect: the definite is blocked because
     a competing form (indefinite) with the same meaning is better. -/
 theorem accommodation_blocked_is_Q :
-    Theories.Pragmatics.Bidirectional.satisfiesQ
+    Pragmatics.Bidirectional.satisfiesQ
       genAccident profileAccident (.definite, .carHitHim) = false := by
   native_decide
 
 /-- The indefinite satisfies both Q and I. -/
 theorem indefinite_satisfies_both :
-    Theories.Pragmatics.Bidirectional.satisfiesQ
+    Pragmatics.Bidirectional.satisfiesQ
       genAccident profileAccident (.indefinite, .carHitHim) = true ∧
-    Theories.Pragmatics.Bidirectional.satisfiesI
+    Pragmatics.Bidirectional.satisfiesI
       genAccident profileAccident (.indefinite, .carHitHim) = true := by
   exact ⟨by native_decide, by native_decide⟩
 

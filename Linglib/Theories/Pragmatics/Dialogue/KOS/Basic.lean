@@ -51,7 +51,7 @@ processing state for Clarification Ellipsis. These are preserved in a
 clearly separated section below.
 -/
 
-namespace Theories.Pragmatics.Dialogue.KOS
+namespace Pragmatics.Dialogue.KOS
 
 -- ════════════════════════════════════════════════════════════
 -- Part I: @cite{ginzburg-2012} — Core DGB/TIS Framework
@@ -734,4 +734,4 @@ def InfoStruc.withFEC {QContent Cont : Type}
   q := q
   fec := [fec]
 
-end Theories.Pragmatics.Dialogue.KOS
+end Pragmatics.Dialogue.KOS

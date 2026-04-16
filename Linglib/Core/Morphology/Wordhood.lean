@@ -22,7 +22,7 @@ four-way typology of morpheme attachment (Table 3):
 | p-free  | canonical word  | non-cohering affix   |
 | p-bound | simple clitic   | canonical affix      |
 
-This classification connects `Theories.Morphology.Diagnostics`
+This classification connects `Morphology.Diagnostics`
 (Zwicky & Pullum's clitic-vs-affix criteria, which diagnose
 ms-boundedness) with `Phonology.ProsodicWord` (PrWd
 structure, which diagnoses p-boundedness).

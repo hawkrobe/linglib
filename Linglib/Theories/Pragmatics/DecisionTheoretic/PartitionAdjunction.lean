@@ -43,7 +43,7 @@ only trivially dominable DPs.
 open Core.DecisionTheory
 open Core.Categorical
 
-namespace Theories.DTS.PartitionAdjunction
+namespace DTS.PartitionAdjunction
 
 variable {W A : Type*}
 
@@ -276,4 +276,4 @@ def dpRefinementMorphism {dp₁ dp₂ : DecisionProblem W A} {actions : List A}
     QUDHom ⟨sufficientPartition dp₁ actions⟩ ⟨sufficientPartition dp₂ actions⟩ :=
   ⟨h⟩
 
-end Theories.DTS.PartitionAdjunction
+end DTS.PartitionAdjunction

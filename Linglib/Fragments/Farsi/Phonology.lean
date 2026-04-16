@@ -28,9 +28,9 @@ resolution; the full Persian consonant inventory is not needed.
 - `HiatusCandidate`: input–output pairs for MaxEnt evaluation
 -/
 
-namespace Fragments.Farsi.Phonology
-
 open Phonology
+
+namespace Fragments.Farsi.Phonology
 
 -- ============================================================================
 -- § 1: Persian Vowel Segments

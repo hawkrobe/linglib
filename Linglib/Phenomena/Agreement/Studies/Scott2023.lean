@@ -514,14 +514,14 @@ theorem phi_and_oblique_agree_parallel :
     the pronominal base morphemes *qin* ([+author,+singular]) and *qo*
     ([+author,−singular]), yielding reduced pronouns.
 
-    We model this using `Theories.Morphology.DM.Impoverishment.ImpoverishmentRule`.
+    We model this using `Morphology.DM.Impoverishment.ImpoverishmentRule`.
     The condition checks for [+author] (= first person in our feature
     system), and the target is [±singular] (= number). -/
 
 /-- The Mam first-person impoverishment rule: delete [±singular]
     (number) when the bundle contains [+author] (first person) features
     that have been agreed with. -/
-def mamImpoverishmentRule : Theories.Morphology.DM.Impoverishment.ImpoverishmentRule :=
+def mamImpoverishmentRule : Morphology.DM.Impoverishment.ImpoverishmentRule :=
   { condition := λ fb =>
       -- Check for [+author] (= valued first person): the F diacritic
       -- condition is modeled by this rule only being applied in
@@ -546,14 +546,14 @@ theorem impoverishment_blocked_3sg :
 /-- After impoverishment, the number feature is deleted from 1st
     person bundles, bleeding insertion of the base morpheme *qin*. -/
 theorem impoverishment_deletes_number :
-    Theories.Morphology.DM.Impoverishment.applyImpoverishment mamImpoverishmentRule
+    Morphology.DM.Impoverishment.applyImpoverishment mamImpoverishmentRule
       [.valued (.phi (.person .first)), .valued (.phi (.number .sg))] =
     [.valued (.phi (.person .first))] := by
   native_decide
 
 /-- Without impoverishment (3rd person), the number feature survives. -/
 theorem no_impoverishment_preserves :
-    Theories.Morphology.DM.Impoverishment.applyImpoverishment mamImpoverishmentRule
+    Morphology.DM.Impoverishment.applyImpoverishment mamImpoverishmentRule
       [.valued (.phi (.person .third)), .valued (.phi (.number .sg))] =
     [.valued (.phi (.person .third)), .valued (.phi (.number .sg))] := by
   native_decide

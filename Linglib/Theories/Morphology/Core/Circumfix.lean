@@ -21,7 +21,7 @@ Cross-linguistically attested circumfixes include:
 
 -/
 
-namespace Theories.Morphology.Circumfix
+namespace Morphology.Circumfix
 
 open Core.Morphology (AttachmentSide)
 
@@ -88,4 +88,4 @@ def germanPastParticiple (stem : String) : CircumfixExponence where
 theorem german_pp_example :
     (germanPastParticiple "mach").realize = "ge-mach-t" := rfl
 
-end Theories.Morphology.Circumfix
+end Morphology.Circumfix

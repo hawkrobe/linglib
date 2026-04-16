@@ -66,7 +66,7 @@ set_option autoImplicit false
 namespace Phenomena.Reference.Studies.Bubnov2026
 
 open Semantics.Dynamic.DependenceLogic
-open Theories.Morphology.Nanosyntax
+open Morphology.Nanosyntax
 open Phenomena.Reference.Studies.Dekier2021
 open Core.IndefiniteType
 open Fragments.Russian.Indefinites
@@ -108,8 +108,8 @@ theorem russian_no_containment :
     is NOT. This asymmetry supports @cite{bubnov-2026}'s claim that
     nanosyntax is the right tool for case but not for indefinites. -/
 theorem case_has_containment_indefinites_dont :
-    Theories.Morphology.CaseContainment.containedIn .nom .acc = true ∧
-    Theories.Morphology.CaseContainment.containedIn .acc .gen = true ∧
+    Morphology.CaseContainment.containedIn .nom .acc = true ∧
+    Morphology.CaseContainment.containedIn .acc .gen = true ∧
     morphContains "-to" "-nibud'" = false ∧
     morphContains "koe-" "-to" = false := by native_decide
 

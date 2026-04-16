@@ -51,12 +51,16 @@ Number resolution is derived from the join-semilattice of individuals
   all three resolution levels.
 -/
 
+open Minimalism (Interpretability)
+open Minimalism.Agreement.GenderResolution (AnnotatedFeature)
+-- `FeatureBundle` is intentionally NOT opened: parent namespace `Minimalism`
+-- defines its own `FeatureBundle` which would shadow `GenderResolution.FeatureBundle`.
+-- Use `GenderResolution.FeatureBundle` qualified throughout this file.
+
 namespace Minimalism.Agreement.CoordinateResolution
 
 open Core.Number (Category)
 open Core.Prominence (PersonLevel)
-open _root_.Minimalism (Interpretability)
-open GenderResolution (AnnotatedFeature FeatureBundle)
 
 -- ============================================================================
 -- § 1: Resolution Operations
@@ -388,7 +392,7 @@ theorem person_comm (p₁ p₂ : PersonLevel) :
 theorem gender_only_fallible :
     (∀ system a b, (numberResolveIn system a b).isSome = true) ∧
     (∀ p₁ p₂ : PersonLevel, (personResolve p₁ p₂).isSome = true) ∧
-    (∃ g₁ g₂ : FeatureBundle Bool,
+    (∃ g₁ g₂ : GenderResolution.FeatureBundle Bool,
       (GenderResolution.resolve g₁ g₂).isSome = false) :=
   ⟨number_total, person_total, ⟨[⟨true, .interpretable⟩], [⟨false, .interpretable⟩], rfl⟩⟩
 
@@ -400,7 +404,7 @@ theorem gender_only_fallible :
 structure PhiBundle (G : Type) where
   person : AnnotatedFeature PersonLevel
   number : AnnotatedFeature Category
-  gender : FeatureBundle G
+  gender : GenderResolution.FeatureBundle G
 
 /-- Resolved phi-features for a conjoined DP (&P). -/
 structure PhiResolved (G : Type) where

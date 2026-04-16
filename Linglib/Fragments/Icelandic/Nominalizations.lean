@@ -18,7 +18,7 @@ connecting them to the -st verb data in `Predicates.lean`.
 
 namespace Fragments.Icelandic.Nominalizations
 
-open Theories.Morphology.DM.Allosemy
+open Morphology.DM.Allosemy
 open Fragments.Icelandic.Predicates
 
 -- ============================================================================

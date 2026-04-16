@@ -38,7 +38,7 @@ Because the tree is strictly right-branching, each case is fully
 characterized by its **rank** (depth): NOM = 0, ACC = 1, GEN = 2,
 DAT = 3, etc. A lexical entry storing a tree of rank r contains
 all sub-constituents of rank ≤ r. This is exactly the containment
-hierarchy formalized in `Theories.Morphology.CaseContainment`.
+hierarchy formalized in `Morphology.CaseContainment`.
 
 ## Deriving *ABA
 
@@ -54,13 +54,13 @@ Result: β–β–α. There is no way to get α–β–α, because any entry
 that beats α for the intermediate case Y also beats α for all
 cases below Y (it matches them too, and it's smaller).
 
-See `Theories.Morphology.CaseContainment` for the *ABA constraint
+See `Morphology.CaseContainment` for the *ABA constraint
 formalized independently via `AllomorphyPattern`.
 -/
 
-namespace Theories.Morphology.Nanosyntax
+namespace Morphology.Nanosyntax
 
-open Theories.Morphology.CaseContainment
+open Morphology.CaseContainment
 
 -- ============================================================================
 -- §1: Lexical Entries on the fseq
@@ -361,4 +361,4 @@ inductive MorphType where
   | suffix | prefix
   deriving DecidableEq, Repr, BEq
 
-end Theories.Morphology.Nanosyntax
+end Morphology.Nanosyntax

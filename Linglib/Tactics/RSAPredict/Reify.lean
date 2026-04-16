@@ -11,10 +11,10 @@ Convert `Expr : ℝ` to `MetaBounds` via memoized recursive reification,
 and extract ℚ values from ℝ expressions.
 -/
 
-namespace Linglib.Tactics.RSAPredict
+namespace Tactics.RSAPredict
 
 open Lean Meta Elab Tactic
-open Linglib.Interval
+open Interval
 
 -- ============================================================================
 -- ℚ Extraction from ℝ Expressions
@@ -22,7 +22,7 @@ open Linglib.Interval
 
 def evalLogPoint (q : ℚ) : ℚ × ℚ :=
   if h : 0 < q then
-    let I := Linglib.Interval.logPoint q h
+    let I := Interval.logPoint q h
     (I.lo, I.hi)
   else (0, 0)
 
@@ -433,8 +433,8 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
               let lo_arg := -(α * cBounds.hi)
               let hi_arg := -(α * cBounds.lo)
               if lo_arg == 0 && hi_arg == 0 then ⟨1, 1⟩
-              else ⟨(Linglib.Interval.expPoint lo_arg).lo,
-                    (Linglib.Interval.expPoint hi_arg).hi⟩
+              else ⟨(Interval.expPoint lo_arg).lo,
+                    (Interval.expPoint hi_arg).hi⟩
             let bounds := metaEvalMul xPowBounds expFactorBounds
             -- Use expMulLogSub when both α and c are from the original expression
             if αExprOpt.isSome && cExprOpt.isSome then
@@ -453,8 +453,8 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     -- Fallback: reify argument normally
     let (ra, ba) ← reifyToRExpr cache args[0]! (depth - 1)
     let rexpr := mkApp (mkConst ``RExpr.rexp) ra
-    let elo := (Linglib.Interval.expPoint ba.lo).lo
-    let ehi := (Linglib.Interval.expPoint ba.hi).hi
+    let elo := (Interval.expPoint ba.lo).lo
+    let ehi := (Interval.expPoint ba.hi).hi
     return ← cacheReturn cache key (rexpr, ⟨elo, ehi⟩)
 
   -- Real.log
@@ -473,11 +473,11 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     -- √[lo,hi] ⊆ [√lo, √hi] for nonneg; conservative [0,√hi] otherwise
     let bounds : MetaBounds :=
       if ba.lo > 0 then
-        let sqLo := (Linglib.Interval.expPoint ((safeLogBounds ba.lo).1 / 2)).lo
-        let sqHi := (Linglib.Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
+        let sqLo := (Interval.expPoint ((safeLogBounds ba.lo).1 / 2)).lo
+        let sqHi := (Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
         ⟨sqLo, sqHi⟩
       else ⟨0, if ba.hi > 0 then
-        (Linglib.Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
+        (Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
       else 1⟩
     return ← cacheReturn cache key (rexpr, bounds)
 
@@ -824,8 +824,8 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
     if let some arg := expMatch then
       let (ra, ba) ← reifyToRExpr cache arg (depth - 1)
       let rexpr := mkApp (mkConst ``RExpr.rexp) ra
-      let elo := (Linglib.Interval.expPoint ba.lo).lo
-      let ehi := (Linglib.Interval.expPoint ba.hi).hi
+      let elo := (Interval.expPoint ba.lo).lo
+      let ehi := (Interval.expPoint ba.hi).hi
       return ← cacheReturn cache key (rexpr, ⟨elo, ehi⟩)
     let logMatch ← withNewMCtxDepth do
       try
@@ -853,11 +853,11 @@ partial def reifyToRExpr (cache : ReifyCache) (e : Expr) (depth : ℕ) :
       let rexpr := mkApp (mkConst ``RExpr.rsqrt) ra
       let bounds : MetaBounds :=
         if ba.lo > 0 then
-          let sqLo := (Linglib.Interval.expPoint ((safeLogBounds ba.lo).1 / 2)).lo
-          let sqHi := (Linglib.Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
+          let sqLo := (Interval.expPoint ((safeLogBounds ba.lo).1 / 2)).lo
+          let sqHi := (Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
           ⟨sqLo, sqHi⟩
         else ⟨0, if ba.hi > 0 then
-          (Linglib.Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
+          (Interval.expPoint ((safeLogBounds ba.hi).2 / 2)).hi
         else 1⟩
       return ← cacheReturn cache key (rexpr, bounds)
     let invMatch ← withNewMCtxDepth do
@@ -1097,4 +1097,4 @@ def reifyS1Scores (cfg : Expr) :
 
   return (U, W, L, allUElems, allWElems, allLElems, s1Bounds, wpValues, lpValues)
 
-end Linglib.Tactics.RSAPredict
+end Tactics.RSAPredict

@@ -34,10 +34,10 @@ positions are implicit between adjacent morphemes in the flattened list.
 
 -/
 
-namespace Theories.Morphology.WordStructure
+namespace Morphology.WordStructure
 
 open Core.Morphology (MorphStatus AttachmentSide)
-open Theories.Morphology.Circumfix (CircumfixExponence)
+open Morphology.Circumfix (CircumfixExponence)
 
 -- ============================================================================
 -- §1: Morpheme
@@ -269,4 +269,4 @@ theorem circumfixed_bridge (pre suf : Morpheme) (base : MorphWord) :
              , stem := base.surface } := by
   simp only [MorphWord.toCircumfixExponence]
 
-end Theories.Morphology.WordStructure
+end Morphology.WordStructure

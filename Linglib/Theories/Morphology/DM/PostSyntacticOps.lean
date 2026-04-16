@@ -20,7 +20,7 @@ from syntax that serves as input to VI.
 @cite{kalin-bjorkman-etal-2026} §3.3.3, §4.2, §4.4, §4.5.2.
 -/
 
-namespace Theories.Morphology.DM.PostSyntactic
+namespace Morphology.DM.PostSyntactic
 
 -- ============================================================================
 -- §1: Lowering
@@ -145,4 +145,4 @@ structure DissociatedNode (Feature : Type) where
       `true` = after the host terminal; `false` = before. -/
   insertAfter : Bool := true
 
-end Theories.Morphology.DM.PostSyntactic
+end Morphology.DM.PostSyntactic

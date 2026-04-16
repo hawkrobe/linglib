@@ -15,7 +15,7 @@ The distinction between **sex-based** systems (masculine/feminine/neuter) and
 WALS Chapter 31. @cite{kramer-2020} argues that these surface categories
 arise from a single underlying mechanism (phi-features on the nominalizing
 head *n*), parameterized by feature dimension; that analysis lives in
-`Theories.Morphology.DM.Categorizer`.
+`Morphology.DM.Categorizer`.
 
 For languages with many noun classes (Bantu, Mixtec), the fragment retains
 its own fine-grained `Gender` type and provides a bridge to `SurfaceGender`
@@ -28,7 +28,7 @@ namespace Core
 
     These are the descriptive labels a grammar assigns to nouns based on
     agreement patterns. For the structural analysis, see
-    `Theories.Morphology.DM.GenderFeature`. -/
+    `Morphology.DM.GenderFeature`. -/
 inductive SurfaceGender where
   /-- Masculine: male humans/higher animates; default in many sex-based systems. -/
   | masculine
@@ -105,7 +105,7 @@ This parallels person [±author] ⊂ [±participant] and number
 [±atomic] ⊂ [±minimal]. All three are instances of `PhiFeatures`.
 
 For the morphosyntactic (DM) analysis, see
-`Theories.Morphology.DM.Categorizer.GenderFeature`. -/
+`Morphology.DM.Categorizer.GenderFeature`. -/
 
 namespace Gender
 

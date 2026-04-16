@@ -104,7 +104,7 @@ set_option autoImplicit false
 
 namespace Phenomena.ScalarImplicatures.Studies.ReesReksnesRohde2026
 
-open Theories.Pragmatics.RelevanceTheory
+open Pragmatics.RelevanceTheory
 
 -- ============================================================================
 -- §1. Interpretation Space

@@ -927,7 +927,7 @@ is equal across alternatives. For green_circle, both "circle" and "green"
 have the same L0 informativity (each applies to 2 objects), so Q1 cannot
 distinguish them. Only Q2 (cost) breaks the tie. -/
 
-open Theories.Pragmatics.GriceanMaxims
+open Pragmatics.GriceanMaxims
 
 /-- Q&F's cost dimension IS Grice's Q2 sub-maxim. Without cost
     (No Brevity regime), ambiguous words with equal informativity are

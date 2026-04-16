@@ -40,10 +40,10 @@ with general phonological constraints. The surface pattern is
 - @cite{moren-zsiga-2006}: Lexical tone in Thai
 -/
 
-namespace Theories.Morphology.DM.RichRepresentation
+namespace Morphology.DM.RichRepresentation
 
 open Phonology.Syllable
-open Theories.Morphology.DM.VI
+open Morphology.DM.VI
 
 -- ============================================================================
 -- § 1: Prosodic Prespecification
@@ -187,4 +187,4 @@ def teluguNAm : RichExponent := .bare "am"
 theorem telugu_n_am_inert :
     teluguNAm.prosody.isInert = true := rfl
 
-end Theories.Morphology.DM.RichRepresentation
+end Morphology.DM.RichRepresentation

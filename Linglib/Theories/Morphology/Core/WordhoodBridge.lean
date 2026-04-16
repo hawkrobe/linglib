@@ -15,7 +15,7 @@ This module connects two independent formalizations:
   to yield four wordhood classes (canonical word, simple clitic, non-cohering
   affix, canonical affix).
 
-- **Clitic vs. affix diagnostics** (`Theories.Morphology.Diagnostics`): the six
+- **Clitic vs. affix diagnostics** (`Morphology.Diagnostics`): the six
   criteria from @cite{zwicky-pullum-1983} for determining whether a bound
   morpheme is an inflectional affix or a clitic.
 
@@ -26,11 +26,11 @@ is ms-free. The p-boundedness dimension is orthogonal (determined by
 prosodic diagnostics, not the ZP criteria).
 -/
 
-namespace Theories.Morphology.WordhoodBridge
+namespace Morphology.WordhoodBridge
 
 open Core.Morphology.Wordhood
 open Core.Morphology (MorphStatus)
-open Theories.Morphology.Diagnostics (CliticAffixProfile)
+open Morphology.Diagnostics (CliticAffixProfile)
 
 -- ============================================================================
 -- §1: MorphStatus → MSBoundedness
@@ -206,4 +206,4 @@ theorem postposition_prWdExternal_is_canonicalWord :
       (prWdMembershipToPBound MorphStatus.postposition.isPrWdInternal)
     ).classify = .canonicalWord := rfl
 
-end Theories.Morphology.WordhoodBridge
+end Morphology.WordhoodBridge

@@ -56,7 +56,7 @@ sequential update = single conjunctive update — apply directly.
   analogue with different conceptual content.
 -/
 
-namespace Theories.Pragmatics.Assertion.DisjunctiveUpdate
+namespace Pragmatics.Assertion.DisjunctiveUpdate
 
 open Core.CommonGround (ContextSet)
 open Core.Proposition (Prop' BProp)
@@ -560,4 +560,4 @@ theorem matching_mixed_compl (c : DressInt) (w : TimPref) :
 
 end SarahsSocks
 
-end Theories.Pragmatics.Assertion.DisjunctiveUpdate
+end Pragmatics.Assertion.DisjunctiveUpdate

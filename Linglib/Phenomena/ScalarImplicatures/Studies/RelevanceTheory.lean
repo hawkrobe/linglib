@@ -35,7 +35,7 @@ set_option autoImplicit false
 
 namespace Phenomena.ScalarImplicatures.Studies.RelevanceTheory
 
-open Theories.Pragmatics.RelevanceTheory
+open Pragmatics.RelevanceTheory
 open Phenomena.ScalarImplicatures
 
 -- ============================================================================

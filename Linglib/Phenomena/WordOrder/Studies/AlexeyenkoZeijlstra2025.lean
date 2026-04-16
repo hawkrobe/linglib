@@ -44,7 +44,7 @@ open Core.WALS.F87A
 open Minimalism.Modification (AttrStatus AdjPosition AdjMorphProfile
   ModificationRoute MAGFeatureType AdjAgreementEntry
   modificationRoute morphStatusToAttrStatus)
-open Theories.Morphology.ICP (icpBlocksIntervention)
+open Morphology.ICP (icpBlocksIntervention)
 
 -- ============================================================================
 -- § 2: Decision Procedures

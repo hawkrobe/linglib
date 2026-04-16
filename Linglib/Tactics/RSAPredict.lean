@@ -43,11 +43,11 @@ theorem prediction : cfg.L1 u w₁ > cfg.L1 u w₂ := by rsa_predict
 ```
 -/
 
-namespace Linglib.Tactics
+namespace Tactics
 
 open Lean Meta Elab Tactic
-open Linglib.Interval
-open Linglib.Tactics.RSAPredict
+open Interval
+open Tactics.RSAPredict
 
 -- ============================================================================
 -- Main Tactic
@@ -99,7 +99,8 @@ elab "rsa_predict" : tactic => do
             if ← tryDirectRExprEq scoreEqGoal.mvarId! scoreExpr1 scoreExpr2 then
               let policyEq ← mkAppM ``Core.RationalAction.policy_eq_of_score_eq
                 #[l1Agent, u, w₁, w₂, scoreEqGoal]
-              let notGtProof ← mkAppM ``not_lt_of_ge #[← mkAppM ``le_of_eq #[policyEq]]
+              let leProof ← mkAppM ``le_of_eq #[policyEq]
+              let notGtProof ← mkAppM ``not_lt_of_ge #[leProof]
               goal.assign notGtProof
               logInfo m!"rsa_predict: ✓ proved ¬(>) via L1 score equality"
               pure true
@@ -177,4 +178,4 @@ elab "rsa_predict" : tactic => do
 
   throwError "rsa_predict: reflection failed for (>) goal: {← ppExpr goalType}"
 
-end Linglib.Tactics
+end Tactics

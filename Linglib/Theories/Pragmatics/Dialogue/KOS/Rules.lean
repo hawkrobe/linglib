@@ -36,7 +36,7 @@ structure. Activity relevance (`GenreRelevant`, p. 105, ex. 90) constrains
 which initiating moves are felicitous.
 -/
 
-namespace Theories.Pragmatics.Dialogue.KOS
+namespace Pragmatics.Dialogue.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. Answerhood
@@ -674,4 +674,4 @@ theorem downdateQud_restores_nonResolveCond
   simp only [DGB.nonResolveCond, DGB.downdateQud]
   exact all_filter_self _ _
 
-end Theories.Pragmatics.Dialogue.KOS
+end Pragmatics.Dialogue.KOS

@@ -526,7 +526,7 @@ theorem fitted_cost_near_zero :
 -- §13. Bridge: No-Brevity Regime
 -- ============================================================================
 
-open Theories.Pragmatics.GriceanMaxims
+open Pragmatics.GriceanMaxims
 
 /-- cs-RSA operates in the No-Brevity regime: cost = 0, so there is no
     penalty for longer utterances (empirically confirmed: fitted β_c ≈ 0).

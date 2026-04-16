@@ -27,9 +27,9 @@ the latter (@cite{zuraw-2010}):
   underlying concatenations for probabilistic analysis
 -/
 
-namespace Fragments.Tagalog.Phonology
-
 open Phonology.HarmonicGrammar
+
+namespace Fragments.Tagalog.Phonology
 
 -- ============================================================================
 -- § 1: Stem Consonants (@cite{zuraw-2010})

@@ -30,7 +30,7 @@ spellout reduces to rank-based spellout. A chain of depth n is
 isomorphic to a rank-n `LexEntry` from `Core.lean`.
 -/
 
-namespace Theories.Morphology.Nanosyntax
+namespace Morphology.Nanosyntax
 
 -- ============================================================================
 -- §1: NanoTree
@@ -293,4 +293,4 @@ theorem chain_contains_iff_ge {F : Type} [DecidableEq F] (feat : Nat → F)
     rw [chainTree_beq_eq_decide feat hInj]
     exact decide_or_iff (by omega)
 
-end Theories.Morphology.Nanosyntax
+end Morphology.Nanosyntax

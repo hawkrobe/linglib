@@ -568,7 +568,7 @@ Algorithm — both produce a referring expression that identifies a
 target among distractors, but RSA does it via probabilistic inference
 rather than deterministic attribute selection. -/
 
-open Theories.Pragmatics.GriceanMaxims
+open Pragmatics.GriceanMaxims
 
 /-- RSA S1 implements a decomposition of Grice's Quantity maxim into
     two independent components: Q1 (informativeness, via log L0) and

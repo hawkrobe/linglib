@@ -24,10 +24,10 @@ so a speaker who says "A or B" implicates ¬(A ∧ B).
 
 -/
 
-namespace Theories.DTS.ScalarImplicature
+namespace DTS.ScalarImplicature
 
 open Core.Proposition
-open Theories.DTS
+open DTS
 
 -- ============================================================
 -- Section 1: Protentive Speaker Meaning (Def. 7)
@@ -132,4 +132,4 @@ theorem if_not_indeed_conjunction (ctx : DTSContext W) (a b : BProp W)
 
 end Predictions
 
-end Theories.DTS.ScalarImplicature
+end DTS.ScalarImplicature

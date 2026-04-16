@@ -24,10 +24,10 @@ sets H = B, yielding unexpected-B-given-A.
 
 -/
 
-namespace Theories.DTS.But
+namespace DTS.But
 
 open Core.Proposition
-open Theories.DTS
+open DTS
 
 -- ============================================================
 -- Section 1: Felicity Conditions for "But"
@@ -462,4 +462,4 @@ Reference: Gaifman, H. & Snir, M. (1982). Probabilities over rich languages. -/
 
 end Theorems
 
-end Theories.DTS.But
+end DTS.But

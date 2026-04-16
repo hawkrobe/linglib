@@ -17,7 +17,7 @@ highly manifest; distant inferences are weakly manifest.
 
 set_option autoImplicit false
 
-namespace Theories.Pragmatics.RelevanceTheory
+namespace Pragmatics.RelevanceTheory
 
 /-- A cognitive environment: assumptions manifest to an individual.
 
@@ -70,4 +70,4 @@ structure SharedCogEnv (W : Type*) (A : Type*) extends CogEnv W A where
   /-- The sharing itself is manifest (reflexivity condition) -/
   sharingManifest : Prop
 
-end Theories.Pragmatics.RelevanceTheory
+end Pragmatics.RelevanceTheory

@@ -19,10 +19,10 @@ Core inventory for demo alternations: /p t k b d m n ŋ s w r æ ɪ ə/.
 @cite{hayes-2009}
 -/
 
-namespace Fragments.English.Phonology
-
 open Phonology
 open Phonology.RuleBased
+
+namespace Fragments.English.Phonology
 
 -- ============================================================================
 -- § 1: Segment Inventory

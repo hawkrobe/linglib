@@ -15,9 +15,9 @@ Used by `RExpr.rsqrt` to support `Real.sqrt` in the `rsa_predict` tactic,
 enabling Hellinger-distance-based RSA models (@cite{herbstritt-franke-2019}).
 -/
 
-namespace Linglib.Interval
+namespace Interval
 
-open Linglib.Interval.QInterval
+open Interval.QInterval
 
 /-- Interval square root for positive intervals.
     Uses the identity `√x = exp(log(x) / 2)` for `x > 0`.
@@ -44,4 +44,4 @@ theorem sqrtInterval_containsReal {a : QInterval} {x : ℝ}
   push_cast
   constructor <;> nlinarith [hlog.1, hlog.2]
 
-end Linglib.Interval
+end Interval

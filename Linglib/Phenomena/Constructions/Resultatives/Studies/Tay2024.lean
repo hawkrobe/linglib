@@ -40,7 +40,7 @@ Connects:
 - `Theories.Semantics.Causation.Resultatives`: causal dynamics, CC-selection,
   tightness, cross-linguistic parameters (`ResultativeRealization`,
   `ResultOrientation`, `PhaseComplement`)
-- `Theories.Morphology.Core.WordStructure`: `MorphWord.compound` for V-V
+- `Morphology.Core.WordStructure`: `MorphWord.compound` for V-V
 - `Fragments.Mandarin.Resultatives`: compound and phase complement lexical entries
 - `Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004`: English
   data for cross-linguistic contrast
@@ -51,7 +51,7 @@ namespace Phenomena.Constructions.Resultatives.Studies.Tay2024
 open Semantics.Causation.Resultatives
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency (causallySufficient)
-open Theories.Morphology.WordStructure
+open Morphology.WordStructure
 open Semantics.Lexical.Verb.ChangeOfState (CoSType priorStatePresup)
 open Fragments.Mandarin.Resultatives
 

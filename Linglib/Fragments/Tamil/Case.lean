@@ -1,6 +1,6 @@
 import Linglib.Core.Case
 import Linglib.Theories.Morphology.CaseContainment
-open Theories.Morphology.CaseContainment
+open Morphology.CaseContainment
 
 /-!
 # Tamil Case Inventory

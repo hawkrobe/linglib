@@ -29,7 +29,7 @@ Impoverishment: features on the pronoun node are deleted (at PF) when
 they are recoverable from agreement, yielding a reduced form.
 -/
 
-namespace Theories.Morphology.DM.Impoverishment
+namespace Morphology.DM.Impoverishment
 
 open Minimalism
 
@@ -108,4 +108,4 @@ theorem deleteFeature_idempotent (fb : FeatureBundle) (target : FeatureVal) :
   ext f
   simp only [Bool.and_self]
 
-end Theories.Morphology.DM.Impoverishment
+end Morphology.DM.Impoverishment

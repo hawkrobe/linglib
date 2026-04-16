@@ -73,7 +73,7 @@ def copulaVI (voice : VoiceHead) : CopulaForm :=
 
 -- ─── VocabItem formulation ───
 
-open Theories.Morphology.DM.VI in
+open Morphology.DM.VI in
 
 /-- The copula VI rule as a proper `VocabItem` from the DM VI framework.
 
@@ -90,7 +90,7 @@ def copulaVIRules : List (VocabItem VoiceHead Unit) :=
     , contextMatch := λ _ => true
     , specificity := 0 } ]
 
-open Theories.Morphology.DM.VI in
+open Morphology.DM.VI in
 
 /-- The `VocabItem` formulation agrees with the direct `copulaVI` function:
     "have" is inserted iff `copulaVI` returns `.have`. -/
@@ -368,7 +368,7 @@ inductive HaveReading where
     3. Stative SC → holder (stative predicate)
     4. Elsewhere (possessedDP, FreeP, modalBase) → expletive (Voice is vacuous) -/
 def voiceAllosemeForComplement (c : HaveComplement) :
-    Theories.Morphology.DM.Allosemy.VoiceAlloseme :=
+    Morphology.DM.Allosemy.VoiceAlloseme :=
   if c.isSaturatedEventiveVoiceP then .engineer
   else if c.isEventDP then .agent
   else if c.isStativePredicate then .holder
@@ -381,12 +381,12 @@ def voiceAllosemeForComplement (c : HaveComplement) :
 theorem voiceAlloseme_agrees_fromComplement (c : HaveComplement)
     (hNotEventDP : c.isEventDP = false) :
     voiceAllosemeForComplement c =
-    Theories.Morphology.DM.Allosemy.VoiceAlloseme.fromComplement
+    Morphology.DM.Allosemy.VoiceAlloseme.fromComplement
       c.isSaturatedEventiveVoiceP c.isStativePredicate := by
   cases c <;> simp_all [voiceAllosemeForComplement,
     HaveComplement.isSaturatedEventiveVoiceP, HaveComplement.isEventDP,
     HaveComplement.isStativePredicate,
-    Theories.Morphology.DM.Allosemy.VoiceAlloseme.fromComplement]
+    Morphology.DM.Allosemy.VoiceAlloseme.fromComplement]
 
 /-- The predicted reading for each complement type. -/
 def haveReading : HaveComplement → HaveReading
@@ -427,7 +427,7 @@ theorem modal_have_expletive :
 
 -- § 6a. Starred cells: ruled-out combinations
 
-open Theories.Morphology.DM.Allosemy in
+open Morphology.DM.Allosemy in
 
 /-- Agent + stative SC = * : agentive Voice requires a dynamic event,
     but a stative SC does not provide one. -/
@@ -454,7 +454,7 @@ theorem expletive_voice_complement_determines_meaning (c : HaveComplement) :
 -- § 6b. Voice Alloseme → Theta Role (via VoiceTheta)
 -- ════════════════════════════════════════════════════
 
-open Theories.Morphology.DM.Allosemy (VoiceAlloseme) in
+open Morphology.DM.Allosemy (VoiceAlloseme) in
 open Interfaces.SyntaxSemantics.VoiceTheta in
 
 /-- The complete theta-role prediction chain for HAVE sentences:
@@ -522,28 +522,28 @@ theorem modal_no_theta :
     substructure that blocks delayed gratification. When v is zero
     (identity), delayed gratification is available. -/
 def nominalAllowsDelayedGratification
-    (v : Theories.Morphology.DM.Allosemy.VAlloseme) : Bool :=
+    (v : Morphology.DM.Allosemy.VAlloseme) : Bool :=
   !v.introducesEvent
 
-open Theories.Morphology.DM.Allosemy in
+open Morphology.DM.Allosemy in
 
 /-- Relational nouns (v = zero, no event variable) allow delayed gratification. -/
 theorem relational_allows_delayed :
     nominalAllowsDelayedGratification .zero = true := rfl
 
-open Theories.Morphology.DM.Allosemy in
+open Morphology.DM.Allosemy in
 
 /-- CENs (v = eventive, introduces event variable) block delayed gratification. -/
 theorem cen_blocks_delayed :
     nominalAllowsDelayedGratification .eventive = false := rfl
 
-open Theories.Morphology.DM.Allosemy in
+open Morphology.DM.Allosemy in
 
 /-- The bridge: delayed gratification is blocked iff v introduces an event.
     This derives the CEN restriction from the allosemy framework rather
     than stipulating it as a separate parameter. -/
 theorem delayed_gratification_iff_no_event
-    (v : Theories.Morphology.DM.Allosemy.VAlloseme) :
+    (v : Morphology.DM.Allosemy.VAlloseme) :
     nominalAllowsDelayedGratification v = !v.introducesEvent := rfl
 
 end Minimalism

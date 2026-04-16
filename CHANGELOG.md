@@ -1,21 +1,56 @@
 # Changelog
 
+## [0.229.826] - 2026-04-16
+
+### Changed
+- **Namespace migration: drop banned library/org prefixes from declarations.** Closes the remaining 105 `banned-prefix` lint violations to zero. Renames: `Theories.Morphology` → `Morphology` (76 files), `Theories.Pragmatics` → `Pragmatics` (43 files), `Theories.DTS` → `DTS` (9 files), `Linglib.Interval` → `Interval` (11 files), `Linglib.Tactics` → `Tactics` (6 files). Rationale: namespaces describe concepts, not file locations — mathlib convention. The library prefix never belongs in a namespace.
+- **Open-before-namespace pattern (mathlib idiom)** in 9 Phonology/Agreement files where the file's own namespace shadowed the opened module (e.g. `Fragments.English.Phonology` shadowing root `Phonology`). Moving `open X` *before* `namespace ...` resolves `X` at root scope, eliminating ugly `_root_.X` workarounds. Files: `Fragments/{English,Korean,Tagalog,Akan,Farsi}/Phonology.lean`, `Phenomena/Phonology/Studies/{Sagey1986,Berent2026,BerentEtAl2016,Kawahara2015}.lean`, `Theories/Syntax/Minimalism/Agreement/CoordinateResolution.lean`.
+- **Parser fixes for nested `[ ]` brackets**: `Linglib/Core/Interval/PadeExp.lean` (2 sites: `rw [show ... from by rw [...]]` extracted to `have`/`rw`) and `Linglib/Tactics/RSAPredict/{Helpers.lean,RSAPredict.lean}` (3 sites: `mkAppM ... #[← mkAppM ... #[...]]` extracted to intermediate `let`). Pre-existing parser ambiguity surfaced by the rebuild.
+
+### Added
+- **scripts/lint_architecture.py**: architectural lint with 3 rules — `layer` (forbidden imports across Theories/Phenomena/Fragments/Core), `banned-prefix` (`Theories.`/`Linglib.`/`Mathlib.` first segments), `directory-consistency` (files in same dir share their primary namespace's first segment). `--check` mode for CI.
+- **scripts/rename_namespace.py**: helper that rewrites a namespace prefix across all `.lean` files in `Linglib/`, leaving `import` lines untouched (file paths stay the same when namespaces change).
+
+## [0.229.825] - 2026-04-16
+
+### Added
+- **Theories/FormalLanguageTheory/PumpingLemma.lean**: complete the supporting infrastructure for `pumping_from_tall_tree` — `CFGTree.size` + `sizeList` (custom mutual recursive size measure cleaner than auto `sizeOf`), `size_pos`, `sizeList_set` (size of `List.set`), `size_replaceAt_lt` (replacing a subtree with a strictly smaller one strictly decreases the tree size), `exists_min_size_tree` (via `Nat.find` over `{n | ∃ t', valid ∧ same yield/root ∧ size = n}`, gives a tree minimizing `size` among same-yield same-root valid trees), `exists_pos_max_descent` (strengthens `exists_pos_of_height` to give the height equation `sub.height = t.height - i` at every prefix depth via tracking max-child descent through the induction). Updated `pumping_from_tall_tree` signature to take `hyield_long : t.yield.length ≥ g.pumpingConstant` instead of `htall : t.height > g.rules.card` (cleaner — internal min-tree pick can re-derive the height bound from the yield bound). Detailed proof body sketch using all proven helpers; the remaining work is the mechanical assembly (restricted-pigeonhole shift, double `yield_replaceAt_decomp`, pumping iteration via `replaceAt`, and `|vy| ≥ 1` via `size_replaceAt_lt` + minimality contradiction).
+
+## [0.229.824] - 2026-04-16
+
+### Changed
+- **Phenomena/Reference/Studies/GroszJoshiWeinstein1995.lean**: convert Bool predicates to `Prop` (mathlib idiom) — `Utterance.Realizes`/`Utterance.Pronominalizes` defined as `∃ r ∈ realizations, ...`; `Rule1Holds` defined as a structured implication `(∃ e ∈ prev.cf, cur.Pronominalizes e) → cur.Pronominalizes curCb`. Bool helpers (`realizesBool`, `pronominalizesBool`) retained internally for `cb`'s `find?` and to back the `Decidable` instances via `decidable_of_iff` (Bool reduction keeps `decide` proofs fast — 24s vs ~52s for the pure-`∃` Decidable instance). Theorem statements updated: `satisfiesRule1 X Y = true` → `Rule1Holds X Y`, `... = false` → `¬ Rule1Holds X Y`. Affects `d15_*`, `d7_*`/`d8_*`/`d9_*`/`d10_*`, `discourse20_rule1_*`, `korean_null_realization_satisfies_rule1`, `rule1_distinguishes_variants_7_8_from_9_10`
+
 ## [0.229.823] - 2026-04-16
 
 ### Changed
 - **Phenomena/Questions/Studies/Elliott2017.lean**: redefine `elliottCareLex` directly in terms of @cite{roelofsen-uegaki-2020}'s canonical `careSem` primitives (`dox`, `bou`, `doxSupports`, `settled`) plus an existence presupposition — `elliottCareLex = λx Q w. existsTrueAnswer Q w && careSem dox bou doxSupports settled x Q w`. The bridge to `careSem` is now `rfl` (`elliottCareLex_eq_careSem_with_existence`), making the proposition-to-question architecture *the* lexical entry rather than something recovered via translation. Drop the parametric opaque `bel`/`relevance` arguments — they were indirections preventing the structural connection. `elliott_polar_belief_is_tautology` becomes `elliott_polar_is_licit` (assumption is now `careSem` content, not `Bel(x, ⊤)`); the Elliott/Karttunen disagreement theorem now relates two distinct architectures (`bel` Karttunen-side, careSem primitives Elliott-side); `care_is_semantically_rogative` rephrased on careSem primitives, proof structurally unchanged. Witness model rewritten with concrete `dox`/`bou`/`doxSupports`/`settled` over `worlds := [true, false]`, with `care_holds_on_polar` closed by `decide`; `bel`/`relevance_dec` retained for the Karttunen side only. Updates to the canonical `careSem` now propagate to Elliott automatically
+
+## [0.229.822] - 2026-04-16
+
+### Changed
+- **Phenomena/Reference/Studies/GroszJoshiWeinstein1995.lean**: audit-driven additions/cleanup — `cb_mem_prev_cf` (Locality of Cb theorem from paper §4 claim 5, proved via `List.mem_of_find?_eq_some`); `pairRank`/`rule2_*` faithfully formalize Rule 2 at the pair-of-transitions level (paper §6); replace `!a || b` Bool-implication idiom in `satisfiesRule1` with `if-then-else`; add `D7_10` namespace + Discourses 7-10 (Susan/Betsy hamster) — the central Cf-ranking + Rule 1 examples from paper §5 with `d7_satisfies_rule1`/`d8_satisfies_rule1`/`d9_violates_rule1`/`d10_violates_rule1` and the bundled `rule1_distinguishes_variants_7_8_from_9_10`; strengthen Korean bridge — `KoreanContinuation` namespace constructs a concrete two-utterance Korean SVO discourse (Mary/Tom/sea), then derives `korean_cb_is_prior_subject`, `korean_null_realization_satisfies_rule1`, `korean_null_is_top_form` as the formal chain producing the empirical 71% subject bias
 
 ## [0.229.821] - 2026-04-16
 
 ### Changed
 - **Phenomena/Questions/Studies/Elliott2017.lean**: strengthen `care_is_semantically_rogative` to the strong form — `IsSemanticallyRogative (elliottCareLex bel relevance)` for any V_prop, dropping both the previous weakened conclusion (no V_prop ⟹ singleton-care V_prop) and the unused `hConsistent` hypothesis. New proof: Karttunen (→) at the polar `[p, ¬p]` extracts `V_prop x p w = true ∧ V_prop x (¬p) w = true`; Karttunen (←) at the singletons forces `elliottCareLex` true on `[p]` and `[¬p]`; the existence presuppositions then yield `p w = true` and `(¬p) w = true` simultaneously, which is purely propositionally false. The contradiction now surfaces from existence projection rather than belief-consistency, exposing the deeper architectural reason PoRs resist universal reduction
 
-
 ## [0.229.820] - 2026-04-16
 
 ### Changed
 - **Phenomena/Questions/Studies/Elliott2017.lean**: audit-driven complete rewrite — fix belief-presupposition shape (`disjOf Q` at the question level, not per-alternative `Q.all`); add `disjOf`/`existsTrueAnswer`/`disjOf_singleton` as concrete operators; reframe Karttunen failure as `karttunen_polar_requires_inconsistent_belief` (truth-conditional shadow of presupposition projection) paired with `elliott_polar_belief_is_tautology` and `elliott_and_karttunen_disagree_on_polar`; add `IsKarttunenReducibleTrueAnswers` variant; ground `idQ` in `propIdent` via `idQ_realizes_propIdent`; add §4 positive-Karttunen theorems for `know` (`knowDec`, `knowKarttunen`, `knowUegaki`, `know_karttunen_agrees_with_uegaki` covering paper eqs 11–12); add §5 typology with `IsSemanticallyRogative` and `care_is_semantically_rogative`; populate the `P-to-Q ⧹ C-dist` cell with `care_violates_cDist` + `care_in_ptoq_minus_cdist`; replace `decide` with `⟨rfl, rfl⟩` in `care_is_responsive`/`matter_is_responsive`; replace `match Q, hNE` with `List.exists_cons_of_ne_nil`; rename `resistsUniversalReduction` → `semanticallyRogative` in `PoRJudgement`; add `CoordinationDatum`/`coord_7` recording paper eq. 7; add `Witness` namespace with `Mary`/`bel`/`isSick`/`mary_cares_whether_sue_is_sick`/`karttunen_predicts_false` as a concrete two-world anchor; bridge to the @cite{roelofsen-uegaki-2020} `careSem` refinement
 
+## [0.229.819] - 2026-04-16
+
+### Changed
+- **CLAUDE.md**: rewrite Project Overview and Core Principle to reflect actual library scope — replace RSA-centric framing with general "linguistic theory across semantics/syntax/pragmatics/morphology/phonology/processing"; rename "Compositional Grounding" → "Layered Grounding" with RSA as one example; update file counts (Core 30→390, Languages 30→100, Phenomena 38→76 / 260→750); trim References section to point at the bibliography
+- **Phenomena/Reference/Studies/KwonLee2026.lean**: comprehensive mathlib-style cleanup — `LinearOrder KoreanRefForm` lifted from `toAccessibility.rank`; `subjectBias_strictMono` and `objectBias_strictAnti` replace per-pair monotonicity claims; `attenuation_strictMono` and `informativity_antitone` replace per-pair criteria theorems; `three_way_split` becomes `Function.Injective subjectBias` corollary; `Bool.all (...) = true` patterns rewritten as `∀ p ∈ list, ...`; switch all naturalness encodings from `Nat × 100` to `ℚ` with `norm_num` proofs; expand abbreviated field names (`nullSubjPct` → `nullSubjectPercent`, `subjBiasedAcc` → `subjectBiasedAccuracy`); remove `String` source field from `CrossLingProfile` (provenance via `@cite{}`); split bundled conjunctive theorems into single-claim theorems; add `@[simp]` lemmas for `toAccessibility`/`pahPosition`/`surface`/`rank` reductions; remove `korean_subject_is_specIP : Bool := true` flag; shorten module docstring from 90 lines to 18
+
+## [0.229.818] - 2026-04-16
+
+### Changed
+- **Theories/FormalLanguageTheory/PumpingLemma.lean**: replace ad-hoc `IsSpine` predicate with mathlib-style position-based subtree access — `CFGTree.Pos := List Nat` (path of child indices), `subtreeAt?` (Option-style like `List.get?`), `replaceAt` (like `List.set`); prove the key surgery lemmas: `yield_replaceAt_decomp` (yield decomposes as `pre ++ sub.yield ++ post`, with replacement preserving the context), `validFor_replaceAt` (replacing a same-root subtree preserves validity), `rootSymbol_replaceAt_cons` (non-root replacement preserves root symbol); detailed updated proof outline for `pumping_from_tall_tree` showing remaining work: spine→position-list extraction, pigeonhole on `g.rules` (a `Finset`) via `Finset.exists_ne_map_eq_of_card_lt_of_maps_to`, then double application of `yield_replaceAt_decomp` for u/v/x/y/z assembly
 
 ## [0.229.817] - 2026-04-16
 

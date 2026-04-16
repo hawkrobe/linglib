@@ -24,9 +24,9 @@ continue to use plain HPSG signs. Theories that need the Ginzburg 2012
 architecture import this module.
 -/
 
-namespace Theories.Pragmatics.Dialogue.KOS.Grammar
+namespace Pragmatics.Dialogue.KOS.Grammar
 
-open Theories.Pragmatics.Dialogue.KOS
+open Pragmatics.Dialogue.KOS
 open HPSG
 
 -- ════════════════════════════════════════════════════
@@ -153,4 +153,4 @@ theorem slash_cparams_both_decrease
   · simp only [HPSG.SlashValue.discharge]; exact List.length_erase_le
   · exact List.length_filter_le _ _
 
-end Theories.Pragmatics.Dialogue.KOS.Grammar
+end Pragmatics.Dialogue.KOS.Grammar

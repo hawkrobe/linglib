@@ -33,7 +33,7 @@ head strips the second.
 Templates are realized by nonconcatenative morphology (vocalic melodies
 applied to consonantal roots). The Mirror Principle
 (@cite{baker-1985}) explicitly scopes out nonconcatenative morphology
-(see `Theories.Morphology.MirrorPrinciple.MorphDomain.inScope`).
+(see `Morphology.MirrorPrinciple.MorphDomain.inScope`).
 Template-dependent l-selection is therefore a phenomenon that falls
 outside the domain where morphological and syntactic orderings are
 required to mirror each other.
@@ -45,8 +45,8 @@ open Minimalism (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus TrackedFeature
   ActivationIndex ApplType ApplHead applHigh applLowRecipient applLowSource
   buildDecomposition voiceAgent voiceCauser voiceAnticausative
   voiceMiddle voicePassive voiceReflexive voiceExperiencer isCausative)
-open Theories.Morphology.DM (CategorizedRoot Categorizer)
-open Theories.Morphology.MirrorPrinciple (MorphDomain)
+open Morphology.DM (CategorizedRoot Categorizer)
+open Morphology.MirrorPrinciple (MorphDomain)
 
 -- ============================================================================
 -- S1: Semitic Verbal Templates (Binyanim)

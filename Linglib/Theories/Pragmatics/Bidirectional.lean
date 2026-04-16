@@ -65,7 +65,7 @@ correspond to weak-BiOT super-optimal pairs for scalar games
 
 set_option autoImplicit false
 
-namespace Theories.Pragmatics.Bidirectional
+namespace Pragmatics.Bidirectional
 
 open Core.ConstraintEvaluation
 
@@ -312,4 +312,4 @@ theorem iterative_eq_strong_totalBlock :
     strongOptimal totalBlockPairs totalBlockProfile := by
   native_decide
 
-end Theories.Pragmatics.Bidirectional
+end Pragmatics.Bidirectional

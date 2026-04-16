@@ -293,7 +293,7 @@ theorem gp_derives_veltman_specificity :
     rank-0 world) as α → ∞. This means RSA's pragmatic listener
     with infinite rationality reasons exactly like System Z. -/
 
-open Theories.Pragmatics.RSA.RankingBridge
+open Pragmatics.RSA.RankingBridge
 
 instance : Nonempty TweetyWorld := ⟨.birdFlies⟩
 
@@ -342,10 +342,10 @@ theorem minRank_penguins_dont_fly :
     theorem applied to the Tweety scenario. -/
 theorem condProb_birds_fly :
     Filter.Tendsto
-      (fun α => Theories.Pragmatics.RSA.RankingBridge.condProb
+      (fun α => Pragmatics.RSA.RankingBridge.condProb
         (rankToScore κ_z) α isBirdB fliesB)
       Filter.atTop (nhds 1) :=
-  Theories.Pragmatics.RSA.RankingBridge.condProb_tendsto_one
+  Pragmatics.RSA.RankingBridge.condProb_tendsto_one
     κ_z isBirdB fliesB birds_fly ⟨.birdFlies, rfl⟩
 
 /-- **Conditional limit: "Do penguin-birds fly?" → probability 0.**
@@ -354,11 +354,11 @@ theorem condProb_birds_fly :
     We prove this by showing P_α(¬flies|penguin∧bird) → 1. -/
 theorem condProb_penguins_dont_fly :
     Filter.Tendsto
-      (fun α => Theories.Pragmatics.RSA.RankingBridge.condProb
+      (fun α => Pragmatics.RSA.RankingBridge.condProb
         (rankToScore κ_z) α
         (fun w => isPenguinB w && isBirdB w) (fun w => !fliesB w))
       Filter.atTop (nhds 1) :=
-  Theories.Pragmatics.RSA.RankingBridge.condProb_tendsto_one κ_z
+  Pragmatics.RSA.RankingBridge.condProb_tendsto_one κ_z
     (fun w => isPenguinB w && isBirdB w) (fun w => !fliesB w)
     penguin_birds_dont_fly ⟨.penguinNoFly, rfl⟩
 

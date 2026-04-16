@@ -30,7 +30,7 @@ sign, and demonstrates the speaker/addressee IS asymmetry.
 
 namespace Phenomena.Ellipsis.Studies.GinzburgCooper2004
 
-open Theories.Pragmatics.Dialogue.KOS
+open Pragmatics.Dialogue.KOS
 open Phenomena.Ellipsis.ClarificationEllipsis
 
 -- ════════════════════════════════════════════════════

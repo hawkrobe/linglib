@@ -56,7 +56,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Reference.Studies.Dekier2021
 
-open Theories.Morphology.Nanosyntax
+open Morphology.Nanosyntax
 open Core.IndefiniteType
 open Fragments.Russian.Indefinites
 open Fragments.English.Indefinites

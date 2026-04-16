@@ -425,7 +425,7 @@ of `RSA.CombinedUtility.combined3` with negative social weights:
     U_FS = 1·vSelf + (−α)·DI + (−β)·AI
 
 This connects the social cognition infrastructure (`Core.Agent.SocialUtility`)
-to the RSA combined utility framework (`Theories.Pragmatics.RSA.Core`). -/
+to the RSA combined utility framework (`Pragmatics.RSA.Core`). -/
 theorem fehrSchmidt_eq_combined3 (vSelf vOther α β : ℚ) :
     fehrSchmidt vSelf vOther α β =
     RSA.CombinedUtility.combined3 1 (-α) (-β)

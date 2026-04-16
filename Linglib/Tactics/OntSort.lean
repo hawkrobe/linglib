@@ -13,7 +13,7 @@ Ontological commitments of a definition emerge from which
 
 -/
 
-namespace Linglib.Tactics
+namespace Tactics
 
 open Lean
 
@@ -21,4 +21,4 @@ initialize ontSortAttr : TagAttribute ←
   registerTagAttribute `ont_sort
     "Natural language ontological sort (Liefke 2024)"
 
-end Linglib.Tactics
+end Tactics

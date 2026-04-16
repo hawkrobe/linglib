@@ -26,7 +26,7 @@ an input can be relevant — an input that produces none of these is irrelevant.
 
 set_option autoImplicit false
 
-namespace Theories.Pragmatics.RelevanceTheory
+namespace Pragmatics.RelevanceTheory
 
 /-- The three types of cognitive effect (S&W, Ch. 3).
     These exhaust the ways new information can be relevant in a context.
@@ -61,4 +61,4 @@ structure EffectProfile where
 def EffectProfile.irrelevant (p : EffectProfile) : Prop :=
   p.effects = [] ∧ p.magnitude = 0
 
-end Theories.Pragmatics.RelevanceTheory
+end Pragmatics.RelevanceTheory

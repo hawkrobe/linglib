@@ -22,7 +22,7 @@ to the addressee and invite confirmation or denial.
 
 namespace Phenomena.Assertion.Studies.Gunlogson2001
 
-open Theories.Pragmatics.Assertion.Gunlogson
+open Pragmatics.Assertion.Gunlogson
 open Core.Discourse.Commitment (CommitmentSource)
 open Phenomena.Assertion
 

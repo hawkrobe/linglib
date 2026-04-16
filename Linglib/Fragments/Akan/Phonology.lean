@@ -23,9 +23,9 @@ palatals from @cite{mccarthy-prince-1995} (citing Keating 1987,
 Clements 1976, Hume 1992).
 -/
 
-namespace Fragments.Akan.Phonology
-
 open Phonology
+
+namespace Fragments.Akan.Phonology
 
 -- ============================================================================
 -- § 1: Consonant Inventory

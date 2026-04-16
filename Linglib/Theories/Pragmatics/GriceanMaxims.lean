@@ -35,7 +35,7 @@ frequently, tolerated explicitly, but detected implicitly via
 processing costs.
 -/
 
-namespace Theories.Pragmatics.GriceanMaxims
+namespace Pragmatics.GriceanMaxims
 
 -- ============================================================================
 -- § The Cooperative Principle and Maxims
@@ -139,4 +139,4 @@ theorem manner_violations_M1_M2_independent :
     MannerViolation.obscure.submaxim ≠
     MannerViolation.ambiguous.submaxim := by decide
 
-end Theories.Pragmatics.GriceanMaxims
+end Pragmatics.GriceanMaxims

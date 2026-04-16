@@ -28,7 +28,7 @@ principle — it derives implicatures about the speaker's knowledge and goals.
 
 set_option autoImplicit false
 
-namespace Theories.Pragmatics.RelevanceTheory
+namespace Pragmatics.RelevanceTheory
 
 /-- Relevance assessment: the two independent dimensions.
 
@@ -126,4 +126,4 @@ theorem RelevanceAssessment.less_effort_more_relevant
     (⟨e, eff2⟩ : RelevanceAssessment).moreRelevant ⟨e, eff1⟩ :=
   ⟨⟨Nat.le_refl _, Nat.le_of_lt h⟩, Or.inr h⟩
 
-end Theories.Pragmatics.RelevanceTheory
+end Pragmatics.RelevanceTheory

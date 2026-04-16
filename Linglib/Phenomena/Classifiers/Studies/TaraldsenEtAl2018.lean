@@ -45,8 +45,8 @@ import Linglib.Fragments.Bantu.Params
 
 namespace Phenomena.Classifiers.Studies.TaraldsenEtAl2018
 
-open Theories.Morphology.Nanosyntax
-open Theories.Morphology.DM.VI
+open Morphology.Nanosyntax
+open Morphology.DM.VI
 open Fragments.Xhosa
 open Fragments.Bantu
 

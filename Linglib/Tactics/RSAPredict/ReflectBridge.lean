@@ -27,10 +27,10 @@ This eliminates the congruence proof tree (O(n) nodes → O(1) proof term) and t
 equality bridge (`gt_of_eq_gt_eq`), reducing both reification time and proof term size.
 -/
 
-namespace Linglib.Tactics.RSAPredict
+namespace Tactics.RSAPredict
 
 open Lean Meta Elab Tactic
-open Linglib.Interval
+open Interval
 
 -- ============================================================================
 -- Policy Expression Parsing
@@ -455,4 +455,4 @@ def tryDirectRExprEq (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := 
     logInfo m!"rsa_predict: [direct/eq] failed: {e.toMessageData}"
     return false
 
-end Linglib.Tactics.RSAPredict
+end Tactics.RSAPredict

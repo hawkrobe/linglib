@@ -23,9 +23,9 @@ For large |x|:
 
 -/
 
-namespace Linglib.Interval
+namespace Interval
 
-open Linglib.Interval.QInterval
+open Interval.QInterval
 
 -- ============================================================================
 -- Padé Coefficients
@@ -258,13 +258,15 @@ private theorem abs_le_one_of_natAbs_le_den (q : ℚ) (h : q.num.natAbs ≤ q.de
   constructor
   · -- -1 ≤ q ↔ -↑q.den ≤ ↑q.num (after multiplying by q.den)
     rw [← Rat.num_div_den q]
-    rw [show (-1 : ℚ) = -(↑q.den) / ↑q.den from by rw [neg_div_self (ne_of_gt hd_pos)]]
+    have hneg : (-1 : ℚ) = -(↑q.den) / ↑q.den := by rw [neg_div_self (ne_of_gt hd_pos)]
+    rw [hneg]
     apply div_le_div_of_nonneg_right _ (le_of_lt hd_pos)
     exact_mod_cast le_trans (neg_le_neg (Int.ofNat_le.mpr h))
       (show -(↑q.num.natAbs : ℤ) ≤ q.num from by rw [← Int.abs_eq_natAbs]; exact neg_abs_le _)
   · -- q ≤ 1 ↔ ↑q.num ≤ ↑q.den
     rw [← Rat.num_div_den q]
-    rw [show (1 : ℚ) = ↑q.den / ↑q.den from by rw [div_self (ne_of_gt hd_pos)]]
+    have hone : (1 : ℚ) = ↑q.den / ↑q.den := by rw [div_self (ne_of_gt hd_pos)]
+    rw [hone]
     apply div_le_div_of_nonneg_right _ (le_of_lt hd_pos)
     exact_mod_cast le_trans Int.le_natAbs (Int.ofNat_le.mpr h)
 
@@ -420,4 +422,4 @@ theorem expInterval_containsReal {I : QInterval} {x : ℝ}
   · exact le_trans hlo.1 (Real.exp_le_exp_of_le hx.1)
   · exact le_trans (Real.exp_le_exp_of_le hx.2) hhi.2
 
-end Linglib.Interval
+end Interval

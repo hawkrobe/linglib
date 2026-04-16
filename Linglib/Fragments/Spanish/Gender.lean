@@ -15,7 +15,7 @@ Spanish is a **Set 1** language: the four n-types in the [±FEM] dimension are
 
 namespace Fragments.Spanish.Gender
 
-open Theories.Morphology.DM
+open Morphology.DM
 
 -- ============================================================================
 -- § 1: Spanish Noun with Gender

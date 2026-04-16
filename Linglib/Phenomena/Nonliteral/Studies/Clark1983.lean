@@ -81,7 +81,7 @@ against lexical rules.
 namespace Phenomena.Nonliteral.Studies.Clark1983
 
 open Core.CommonGround
-open Theories.Morphology.DM (Categorizer Recategorization CategorizedRoot
+open Morphology.DM (Categorizer Recategorization CategorizedRoot
   denominal_requires_n recategorization_changes_category)
 
 -- ════════════════════════════════════════════════════════════════

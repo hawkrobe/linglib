@@ -167,7 +167,7 @@ def exp3_headNoun_firstFixation : AnovaResult :=
 -- § Bridge: Q1/Q2 Asymmetry
 -- ============================================================================
 
-open Theories.Pragmatics.GriceanMaxims
+open Pragmatics.GriceanMaxims
 
 /-- Q1 and Q2 violations map to under- and over-description. -/
 theorem violation_mapping :

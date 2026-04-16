@@ -29,7 +29,7 @@ core objects are:
 @cite{kalin-bjorkman-etal-2026} §2.2, Table 2, Table 4.
 -/
 
-namespace Theories.Morphology.PFM
+namespace Morphology.PFM
 
 -- ============================================================================
 -- §1: Lexeme and Morphosyntactic Property Sets
@@ -191,4 +191,4 @@ def derive {Feature : Type} [BEq Feature]
   | some form => form
   | none => pf.apply σ lex
 
-end Theories.Morphology.PFM
+end Morphology.PFM

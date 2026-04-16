@@ -26,7 +26,7 @@ This derivation is formalized in `Gunlogson.cbc_from_uninformativeness`.
 
 namespace Phenomena.Assertion.Studies.BringGunlogson2000
 
-open Theories.Pragmatics.Assertion.Gunlogson
+open Pragmatics.Assertion.Gunlogson
 open Core.Discourse.Commitment
 
 -- ════════════════════════════════════════════════════

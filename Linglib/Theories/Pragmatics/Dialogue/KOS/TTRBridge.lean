@@ -22,7 +22,7 @@ TTRQuestions). This closes the loop between:
 
 -/
 
-namespace Theories.Pragmatics.Dialogue.KOS.TTRBridge
+namespace Pragmatics.Dialogue.KOS.TTRBridge
 
 open Semantics.TypeTheoretic (BCheckableAustinian TTRQuestion TTRAnswer CheckableAustinian
   InfoState IsTrue IsFalse SubtypeOf)
@@ -190,4 +190,4 @@ theorem atis_has_fact : itIsRaining ∈ atis₂.dgb.facts := by
 
 end AustinianExample
 
-end Theories.Pragmatics.Dialogue.KOS.TTRBridge
+end Pragmatics.Dialogue.KOS.TTRBridge

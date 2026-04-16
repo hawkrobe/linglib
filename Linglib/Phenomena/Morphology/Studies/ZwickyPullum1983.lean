@@ -29,7 +29,7 @@ of inflectional affixes, not clitics.
 
 namespace Phenomena.Morphology.ZwickyPullum1983
 
-open Theories.Morphology.Diagnostics
+open Morphology.Diagnostics
 open Core.Morphology (MorphStatus SelectionDegree)
 open Fragments.English.FunctionWords (AuxEntry)
 

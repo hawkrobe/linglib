@@ -52,7 +52,7 @@ namespace Phenomena.Reference.Studies.AhnKocabDavidson2026
 
 open Semantics.Composition.Modification (predMod truePred predMod_true_left predMod_comm)
 open Core.Discourse.ReferentialForm (AccessibilityLevel)
-open Theories.Pragmatics.GriceanMaxims
+open Pragmatics.GriceanMaxims
 open Semantics.Lexical.Expressives (TwoDimProp)
 open Semantics.Lexical.Verb.SelectionalPreferences (SemClass)
 

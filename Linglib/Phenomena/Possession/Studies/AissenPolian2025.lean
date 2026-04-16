@@ -56,7 +56,7 @@ namespace Phenomena.Possession.Studies.AissenPolian2025
 
 open Fragments.Mayan (MarkerSet ABSPosition)
 open Fragments.Mayan.Tseltalan
-open Theories.Morphology.DM
+open Morphology.DM
 
 -- ============================================================================
 -- § 1: Nominal Size and Specificity

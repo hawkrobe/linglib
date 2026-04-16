@@ -27,11 +27,12 @@ epenthesis, rendaku, and vowel devoicing.
    retention; long N2 (≥3μ) triggers N2-initial accent or retention.
 -/
 
+open Phonology.Accent
+open Phonology.Syllable (SyllWeight)
+
 namespace Phenomena.Phonology.Studies.Kawahara2015
 
 open Core.Prosody
-open Phonology.Accent
-open Phonology.Syllable (SyllWeight)
 open Fragments.Japanese.Prosody
 
 -- ============================================================================

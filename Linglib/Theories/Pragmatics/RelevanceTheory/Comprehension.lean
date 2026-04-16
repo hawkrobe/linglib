@@ -49,7 +49,7 @@ Set `effortWeight = 0` to ignore effort in the threshold (pure effects-based).
 
 set_option autoImplicit false
 
-namespace Theories.Pragmatics.RelevanceTheory
+namespace Pragmatics.RelevanceTheory
 
 -- ============================================================================
 -- §1. RT Scenarios
@@ -287,4 +287,4 @@ theorem RTScenario.selects_of_strengthened_effects
       unfold adjustedThreshold; rw [← hthr, ← hew, ← heffort]
     omega
 
-end Theories.Pragmatics.RelevanceTheory
+end Pragmatics.RelevanceTheory

@@ -42,7 +42,7 @@ The discourse state is a `CommitmentSpace` tree (§4):
 
 -/
 
-namespace Theories.Pragmatics.Assertion.Krifka
+namespace Pragmatics.Assertion.Krifka
 
 open Core.Discourse.Commitment (CommitmentSlate)
 open Core.CommonGround (ContextSet)
@@ -582,4 +582,4 @@ open Core.CommonGround in
 theorem krifkaState_contextSet_eq_space {W : Type*} (s : KrifkaState W) :
     HasContextSet.toContextSet s = HasContextSet.toContextSet s.space := rfl
 
-end Theories.Pragmatics.Assertion.Krifka
+end Pragmatics.Assertion.Krifka

@@ -338,7 +338,7 @@ theorem stacking_preserves_core :
     Interpretable genders bear `Interpretability.i` (natural gender);
     uninterpretable genders bear `Interpretability.u` (arbitrary gender).
     @cite{carstens-2026} directly extends @cite{kramer-2015}'s i/u distinction. -/
-def toDMInterpretability : GenderStatus → Theories.Morphology.DM.Interpretability
+def toDMInterpretability : GenderStatus → Morphology.DM.Interpretability
   | .interpretable _ => .i
   | .uninterpretable => .u
 

@@ -7,7 +7,7 @@ import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.ProsodicWord
 import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Phonology.Moraic.CompensatoryLengthening
-open Theories.Morphology.CaseContainment
+open Morphology.CaseContainment
 
 /-!
 # The Nouns that Say *-ni* @cite{aitha-2026}
@@ -53,7 +53,7 @@ Telugu nouns exhibit two stem alternation patterns:
 namespace Phenomena.Allomorphy.Studies.Aitha2026
 
 open Core Core.OT Core.ConstraintEvaluation
-open Theories.Morphology.DM.VI
+open Morphology.DM.VI
 open Phonology.Syllable
 
 -- ============================================================================
@@ -488,7 +488,7 @@ section WordLevel
 
 open Phonology.StratalOT
 open Phonology.ProsodicWord
-open Theories.Morphology.DM.RichRepresentation
+open Morphology.DM.RichRepresentation
 
 /-- The singular suffix *-ni* carries prespecified stress.
     This prespecification, interacting with FT-BIN(μ) and IDENT-STRESS

@@ -31,7 +31,7 @@ Krifka's ComP layer models categorically.
 
 -/
 
-namespace Theories.Pragmatics.Assertion.Lauer
+namespace Pragmatics.Assertion.Lauer
 
 open Core.Discourse.Commitment (CommitmentSlate)
 open Core.CommonGround (ContextSet)
@@ -142,4 +142,4 @@ This lifts RSA's world-level prior to Lauer's proposition-level credence.
 theorem always_stable {W : Type*} (s : LauerState W) :
     LauerState.isStable s = true := rfl
 
-end Theories.Pragmatics.Assertion.Lauer
+end Pragmatics.Assertion.Lauer

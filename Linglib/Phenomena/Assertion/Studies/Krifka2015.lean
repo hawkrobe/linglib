@@ -24,7 +24,7 @@ questions, acceptance, and rejection interact.
 
 namespace Phenomena.Assertion.Studies.Krifka2015
 
-open Theories.Pragmatics.Assertion.Krifka
+open Pragmatics.Assertion.Krifka
 
 -- ════════════════════════════════════════════════════
 -- § 1. Finite World Setup

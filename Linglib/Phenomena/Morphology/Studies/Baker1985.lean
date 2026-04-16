@@ -21,7 +21,7 @@ data from Chamorro, Quechua, and Bantu languages, as presented in
 
 namespace Phenomena.Morphology.Studies.Baker1985
 
-open Theories.Morphology.MirrorPrinciple
+open Morphology.MirrorPrinciple
 
 -- ============================================================================
 -- §1: Chamorro (Baker §§1, 3.1)

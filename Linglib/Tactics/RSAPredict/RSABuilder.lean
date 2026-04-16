@@ -27,10 +27,10 @@ The builder's RExpr matches because:
 - Leaf values are reified by the generic reifier (denote matches by construction)
 -/
 
-namespace Linglib.Tactics.RSAPredict
+namespace Tactics.RSAPredict
 
 open Lean Meta Elab Tactic
-open Linglib.Interval
+open Interval
 
 -- ============================================================================
 -- RExpr Construction Helpers
@@ -65,8 +65,8 @@ private def rexprExpMulLogSub (α x c : Expr × MetaBounds) (αVal : ℚ) :
     let lo_arg := -(αVal * c.2.hi)
     let hi_arg := -(αVal * c.2.lo)
     if lo_arg == 0 && hi_arg == 0 then ⟨1, 1⟩
-    else ⟨(Linglib.Interval.expPoint lo_arg).lo,
-          (Linglib.Interval.expPoint hi_arg).hi⟩
+    else ⟨(Interval.expPoint lo_arg).lo,
+          (Interval.expPoint hi_arg).hi⟩
   (mkApp3 (mkConst ``RExpr.expMulLogSub) α.1 x.1 c.1,
    metaEvalMul xPowBounds expFactorBounds)
 
@@ -652,4 +652,4 @@ def tryPreseedL1 (cache : ReifyCache) (lhs rhs : Expr) : TacticM Unit := do
   -- Build and seed
   buildAndSeedL1 cache cfg
 
-end Linglib.Tactics.RSAPredict
+end Tactics.RSAPredict

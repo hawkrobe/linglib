@@ -48,10 +48,11 @@ Hebrew and proves the four cells of the dissociation table as OT theorems.
 @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}
 -/
 
+open Phonology.Doubling
+
 namespace Phenomena.Phonology.Studies.BerentEtAl2016
 
 open Core.OT
-open Phonology.Doubling
 
 -- ============================================================================
 -- § 1: L1 Morphological Grammars

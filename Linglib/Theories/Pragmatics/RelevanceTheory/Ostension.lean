@@ -27,7 +27,7 @@ hearer to treat the stimulus as optimally relevant.
 
 set_option autoImplicit false
 
-namespace Theories.Pragmatics.RelevanceTheory
+namespace Pragmatics.RelevanceTheory
 
 /-- An informative intention: the set of assumptions the communicator
     wants to make manifest (or more manifest) to the audience.
@@ -59,4 +59,4 @@ structure OstensiveStimulus (W : Type*) (A : Type*) where
   /-- The communicator's cognitive environment -/
   communicatorEnv : CogEnv W A
 
-end Theories.Pragmatics.RelevanceTheory
+end Pragmatics.RelevanceTheory

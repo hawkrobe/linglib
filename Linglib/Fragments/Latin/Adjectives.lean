@@ -19,7 +19,7 @@ No Latin adjective shows an *ABA pattern.
 
 namespace Fragments.Latin.Adjectives
 
-open Theories.Morphology.DegreeContainment
+open Morphology.DegreeContainment
 
 -- ============================================================================
 -- § 1: Latin Adjective Entry

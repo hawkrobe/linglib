@@ -45,8 +45,8 @@ the grammar itself no longer requires a contrastive gender feature.
 ## Formalization
 
 We define the pronoun VI rules using `FeatureVI` from
-`Theories.Morphology.DM.VocabularyInsertion`, parameterize the three
-stages via `Contrastivity` from `Theories.Morphology.DM.Categorizer`,
+`Morphology.DM.VocabularyInsertion`, parameterize the three
+stages via `Contrastivity` from `Morphology.DM.Categorizer`,
 and prove bridge theorems connecting to Arnold's discourse conditions.
 -/
 
@@ -54,9 +54,9 @@ set_option autoImplicit false
 
 namespace Phenomena.Pronouns.Studies.KonnellyCowper2020
 
-open Theories.Morphology.DM (Contrastivity GenderFeature GenderVal GenderDimension
+open Morphology.DM (Contrastivity GenderFeature GenderVal GenderDimension
   Polarity Interpretability CatHead PhiBundle)
-open Theories.Morphology.DM.VI (FeatureVI subsetPrinciple)
+open Morphology.DM.VI (FeatureVI subsetPrinciple)
 open Core.Discourse.ReferentialForm (DiscourseElaboration)
 open _root_.Phenomena.Pronouns.Studies.Arnold2026 (licensesUnderspecified)
 

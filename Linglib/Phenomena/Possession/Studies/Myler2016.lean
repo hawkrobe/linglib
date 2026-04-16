@@ -83,7 +83,7 @@ theorem hafa_iff_pred (dp : IcelandicPossDP) :
 
 -- ─── VocabItem formulation (parallel to copulaVIRules) ───
 
-open Theories.Morphology.DM.VI in
+open Morphology.DM.VI in
 
 /-- Icelandic HAVE VI as proper `VocabItem`s from the DM framework.
 
@@ -102,7 +102,7 @@ def icelandicHaveVIRules : List (VocabItem IcelandicPossDP Unit) :=
     , contextMatch := fun _ => true
     , specificity := 0 } ]
 
-open Theories.Morphology.DM.VI in
+open Morphology.DM.VI in
 
 /-- The VocabItem formulation agrees with the direct `icelandicHaveVI`. -/
 theorem icelandicVI_agrees_vocabItem (dp : IcelandicPossDP) :
@@ -206,7 +206,7 @@ theorem bare_sortal_blocks_relational :
 
 -- ─── Bridge to NominalStructure (Possession Type) ───
 
-open Theories.Morphology.DM in
+open Morphology.DM in
 
 /-- Delayed gratification connects to the inalienable/alienable distinction
     from NominalStructure.lean:
@@ -223,7 +223,7 @@ theorem both_possession_types_allow_have :
     PossessionType.inalienable.possessorPosition.isWithinNP = true ∧
     PossessionType.alienable.possessorPosition.isWithinNP = false := ⟨rfl, rfl⟩
 
-open Theories.Morphology.DM in
+open Morphology.DM in
 
 /-- Inalienable possession is nP-internal (can affect gender under GLH);
     alienable possession is nP-external (cannot). This is orthogonal to

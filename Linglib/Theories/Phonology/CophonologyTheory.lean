@@ -30,13 +30,13 @@ This gives DM's Vocabulary Item a four-part structure:
 `CophVocabItem` extends `VocabItem` with an R component. The
 `cophonologicalEval` function merges the winning VI's subranking with
 the default ranking and runs `Tableau.optimal`, connecting DM
-vocabulary insertion (`Theories.Morphology.DM.VI`) to OT constraint evaluation
+vocabulary insertion (`Morphology.DM.VI`) to OT constraint evaluation
 (`Core.OT` / `Core.ConstraintEvaluation`).
 -/
 
 namespace Phonology.CophonologyTheory
 
-open Theories.Morphology.DM.VI (VocabItem)
+open Morphology.DM.VI (VocabItem)
 open Core.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
 open Core.ConstraintEvaluation (Tableau)
 

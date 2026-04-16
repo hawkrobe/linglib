@@ -51,7 +51,7 @@ ordering forces contiguity of suppletive forms. The generic
 contiguity predicate shared by both domains is in `Containment.lean`.
 -/
 
-namespace Theories.Morphology.DegreeContainment
+namespace Morphology.DegreeContainment
 
 -- ============================================================================
 -- § 1: Degree Grade
@@ -368,9 +368,9 @@ theorem vi_pattern_abb_or_aaa (rules : List LocalVIRule) (defaultForm : Nat) :
     from `Containment.lean`. -/
 theorem degree_violatesABA_eq_generic (p : DegreePattern) :
     p.violatesABA =
-      Theories.Morphology.Containment.violatesABA [p.pos, p.cmpr, p.sprl] := by
+      Morphology.Containment.violatesABA [p.pos, p.cmpr, p.sprl] := by
   simp only [DegreePattern.violatesABA,
-    Theories.Morphology.Containment.violatesABA_three]
+    Morphology.Containment.violatesABA_three]
 
 -- ============================================================================
 -- § 11: VI Consistency and Attestedness
@@ -427,4 +427,4 @@ theorem aba_not_attested : aba.isAttested = false := by native_decide
 /-- *AAB is not attested (fails VI consistency). -/
 theorem aab_not_attested : aab.isAttested = false := by native_decide
 
-end Theories.Morphology.DegreeContainment
+end Morphology.DegreeContainment

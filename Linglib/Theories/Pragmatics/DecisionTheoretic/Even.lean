@@ -32,11 +32,11 @@ relevant than A to the current issue."
 
 -/
 
-namespace Theories.DTS.Even
+namespace DTS.Even
 
 open Core.Proposition
-open Theories.DTS
-open Theories.DTS.But
+open DTS
+open DTS.But
 
 -- ============================================================
 -- Section 1: Felicity Conditions for "Even"
@@ -95,4 +95,4 @@ def dtsLikelihood {W : Type} [Fintype W] (ctx : DTSContext W) :
     Semantics.FocusParticles.LikelihoodOrder W :=
   fun a b => bayesFactor ctx a > bayesFactor ctx b
 
-end Theories.DTS.Even
+end DTS.Even

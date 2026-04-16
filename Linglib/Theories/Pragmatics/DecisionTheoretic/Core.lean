@@ -37,7 +37,7 @@ relative to a dichotomic issue {H, ¬H}.
 
 -/
 
-namespace Theories.DTS
+namespace DTS
 
 open Core.Proposition
 
@@ -519,4 +519,4 @@ theorem xor_not_necessarily_positive :
 
 end Theorems
 
-end Theories.DTS
+end DTS

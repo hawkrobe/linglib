@@ -25,7 +25,7 @@ from `Theories/Semantics/Dynamic/State.lean` rather than redefining it.
 
 -/
 
-namespace Theories.Pragmatics.Assertion.FarkasAdapter
+namespace Pragmatics.Assertion.FarkasAdapter
 
 open Semantics.Dynamic.State
 open Core.CommonGround (ContextSet)
@@ -68,4 +68,4 @@ theorem accept_restores_stability {W : Type*} (ds : DiscourseState W) (p : BProp
              DiscourseState.isStable] at *
   exact hStable
 
-end Theories.Pragmatics.Assertion.FarkasAdapter
+end Pragmatics.Assertion.FarkasAdapter

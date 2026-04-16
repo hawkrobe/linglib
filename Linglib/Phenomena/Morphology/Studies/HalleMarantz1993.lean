@@ -42,9 +42,9 @@ impoverishment on the English paradigm to derive syncretism (§4).
 
 namespace Phenomena.Morphology.Studies.HalleMarantz1993
 
-open Theories.Morphology.DM.VI
-open Theories.Morphology.DM.PostSyntactic
-open Theories.Morphology.MirrorPrinciple
+open Morphology.DM.VI
+open Morphology.DM.PostSyntactic
+open Morphology.MirrorPrinciple
 open Core.Morphology (MorphCategory)
 
 -- ============================================================================

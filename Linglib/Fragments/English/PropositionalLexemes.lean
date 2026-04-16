@@ -25,7 +25,7 @@ regular affirmatives/negatives in languages that use verbal echo
 
 namespace Fragments.English.PropositionalLexemes
 
-open Theories.Pragmatics.Dialogue.KOS
+open Pragmatics.Dialogue.KOS
 
 -- ════════════════════════════════════════════════════
 -- § 1. PropLexeme Structure

@@ -46,7 +46,7 @@ encode empirically observed root-class patterns.
 
 namespace Phenomena.Comparison.Studies.Bobaljik2012
 
-open Theories.Morphology.DegreeContainment
+open Morphology.DegreeContainment
 open Fragments.English.Modifiers.Adjectives
 
 -- ============================================================================
@@ -242,7 +242,7 @@ theorem latin_all_three_patterns :
     the domain-independent `isContiguous`. -/
 theorem english_generic_contiguity :
     allEntries.all (λ e =>
-      Theories.Morphology.Containment.isContiguous
+      Morphology.Containment.isContiguous
         [e.suppletion.pos, e.suppletion.cmpr, e.suppletion.sprl]) = true := by
   native_decide
 

@@ -18,7 +18,7 @@ supplementary adverbs, and emotive markers.
 
 This file contains judgment data on when ACIs arise. Theoretical analysis
 (MCIs! principle, structural alternatives) is in
-`Theories.Pragmatics.Implicature.ConventionalImplicatures`.
+`Pragmatics.Implicature.ConventionalImplicatures`.
 -/
 
 namespace Phenomena.Expressives.Studies.LoGuercio2025
