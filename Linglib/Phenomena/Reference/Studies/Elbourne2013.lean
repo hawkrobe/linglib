@@ -1,7 +1,12 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Definiteness
 import Linglib.Core.IntensionalLogic.Rigidity
-import Linglib.Core.Discourse.QUD
+import Linglib.Core.QUD.Basic
+import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.QUD.Relevance
+import Linglib.Core.Inquisitive
+import Linglib.Core.Discourse.QUDStack
+import Linglib.Core.Discourse.Strategy
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Reference.Donnellan
 import Linglib.Fragments.English.Determiners

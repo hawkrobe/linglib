@@ -14,7 +14,12 @@ alternatives, explaining why it substitutes in only 2 of the 9 flavors.
 
 -/
 
-import Linglib.Core.Discourse.QUD
+import Linglib.Core.QUD.Basic
+import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.QUD.Relevance
+import Linglib.Core.Inquisitive
+import Linglib.Core.Discourse.QUDStack
+import Linglib.Core.Discourse.Strategy
 import Linglib.Phenomena.Focus.Exclusives
 import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
 import Linglib.Theories.Semantics.Degree.Granularity

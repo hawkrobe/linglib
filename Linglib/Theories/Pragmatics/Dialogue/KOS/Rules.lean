@@ -1,6 +1,11 @@
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
 import Linglib.Core.Discourse.SpeechActs
-import Linglib.Core.Discourse.QUD
+import Linglib.Core.QUD.Basic
+import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.QUD.Relevance
+import Linglib.Core.Inquisitive
+import Linglib.Core.Discourse.QUDStack
+import Linglib.Core.Discourse.Strategy
 
 /-!
 # KOS Conversational Rules

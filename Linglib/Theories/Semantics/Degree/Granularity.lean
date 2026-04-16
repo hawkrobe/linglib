@@ -1,7 +1,12 @@
 import Mathlib.Order.Basic
 import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Discourse.QUD
+import Linglib.Core.QUD.Basic
+import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.QUD.Relevance
+import Linglib.Core.Inquisitive
+import Linglib.Core.Discourse.QUDStack
+import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Partition
 
 /-!

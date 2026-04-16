@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.229.839] - 2026-04-16
+
+### Changed
+- **Middleton (2026) tightening pass** — clean up the schematic study file based on a re-audit of the paper.
+  - `Phenomena/Allomorphy/Studies/Middleton2026.lean`: rename schematic rules `r_para`/`r_syn`/`r_meta` → `paraAtomicRule`/`synMinimalRule`/`authorAtomicMetathesis` (descriptive, no hallucinated paper-rule numbers); drop fabricated `(43)`/`(44)` equation references from rule docstrings (the original cites conflated §4.2.5 numbers with the §4.2.1–§4.2.4 schema the rules actually witness). Rename pipeline configs `MAN`/`MMid` → `arregiNevinsPostsyntax`/`middletonPostsyntax`. Replace the `[[]]` rightCtx hack in `witness` and `synMinimalRule_isSyntagmatic` with a real Taos-shaped 3s bundle (`argBundle person3 numSg`). Add a Scope section explicitly listing what is and is not modeled (full paradigm, Reciprocal Containment, literal paper rules — out of scope). Add §6 "Postsyntax Feeds Vocabulary Insertion": three schematic `FeatureVI` entries (Subset Principle from `Theories/Morphology/DM/VocabularyInsertion.lean`), and theorems `arregiNevinsOutput_inserts_n` / `middletonOutput_inserts_o` showing that the architectural divergence projects to *different surface morphemes* (`n` vs `o` from the Taos `Morpheme` inventory) at the same input neighborhood, with `arregiNevins_vs_middleton_surface` packaging the surface-form divergence as the empirical bite of the architectural argument.
+
+## [0.229.838] - 2026-04-16
+
+### Added
+- **Migrate Storme2026 + CoetzeePater2011 to `ConstraintSystem.predict`** — extend the dog-food pattern from 0.229.836 to two more phonology studies.
+  - `Phenomena/PhonologicalAlternation/Studies/Storme2026.lean`: per-input `stormeSystem : HiatusInput → ConstraintSystem HiatusOutput ℝ` (`Finset.univ` candidates, `harmonyScoreR classicalConstraints (i, ·)` score, `softmaxDecoder 1`). Theorem `stormeSystem_epenthesis_gt_deleteV1` proves that at /æ.ɑ/ the system softmax-prefers epenthesis over deleteV1 (genuine probability comparison through the 5-output partition function); `stormeSystem_isProb` confirms each per-input distribution sums to 1.
+  - `Phenomena/PhonologicalAlternation/Studies/CoetzeePater2011.lean`: per-context `aaveSystem : Context → ConstraintSystem TDOutput ℝ` for the AAVE ME-HG weights (table (23)). Add `Fintype TDOutput` and `Fintype Context` instances. Theorems `aave_preC_prefers_delete` and `aave_preV_prefers_retain` exhibit the empirical pattern as conditional probabilities (two-candidate softmax = logistic over the harmony difference); `aaveSystem_isProb` confirms each per-context distribution sums to 1.
+
+## [0.229.837] - 2026-04-16
+
+### Changed
+- **Core/Discourse/ architectural cleanup, phase 3**: split the monolithic `Core/Discourse/QUD.lean` (~670 lines covering QUD partitions, precision projections, inquisitive primitives, Roberts 2012 relevance, QUD stack, and strategies of inquiry) into six focused files: `Core/QUD/Basic.lean` (QUD M + ProductQUD), `Core/QUD/PrecisionProjection.lean` (granularity), `Core/Inquisitive.lean` (top-level — InfoState, Issue, support, entailment, widerThan), `Core/QUD/Relevance.lean` (Roberts 2012 questionEntails/partiallyAnswers/moveRelevant + refinesOn), `Core/Discourse/QUDStack.lean` (Roberts' accepted-unanswered stack), `Core/Discourse/Strategy.lean` (rose-tree strategy of inquiry + moveRelevantToStrategy). Namespaces preserved (`Discourse` for inquisitive/relevance/stack/strategy content) to keep all 19 consumer files working without identifier-level edits. Updated `Linglib.lean` and the 19 consumers' import lines to point at the new file paths.
+
+## [0.229.836] - 2026-04-16
+
+### Added
+- **Eat the dog food on `ConstraintSystem.predict`** — `Phenomena/Phonotactics/Studies/HayesWilson2008.lean` now exercises the framework-agnostic constraint-system abstraction (`Core/Constraint/System.lean`) end-to-end. Add `candidateOnsets : Finset Onset` over `{[k], [ŋ], [r,k], [b,r]}`, build `onsetSystem := maxEntSystem candidateOnsets onsetGrammar`, and prove `predict_k_gt_ŋ`, `predict_ŋ_gt_rk` (load-bearing softmax-probability comparisons through the partition function on `candidateOnsets`, not just exp-of-harmony as in the §3 theorems) and `onsetSystem_isProb` (totality from the generic `softmaxDecoder_isProb` instance). Validates that the `Decoder` / `ConstraintSystem` / `predict` pipeline is usable for empirical predictions, not just an internal bridge.
+
 ## [0.229.835] - 2026-04-16
 
 ### Added

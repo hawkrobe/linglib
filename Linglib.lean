@@ -64,7 +64,12 @@ import Linglib.Core.PropertyDomain
 import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.ModalTypes
-import Linglib.Core.Discourse.QUD
+import Linglib.Core.QUD.Basic
+import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.QUD.Relevance
+import Linglib.Core.Inquisitive
+import Linglib.Core.Discourse.QUDStack
+import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Discourse.Goal
 import Linglib.Core.Discourse.Scoreboard
 import Linglib.Core.Discourse.AtIssueness
@@ -1403,7 +1408,9 @@ import Linglib.Theories.Syntax.CCG.CrossSerial
 import Linglib.Theories.Syntax.CCG.Gapping
 import Linglib.Phenomena.Entailment.Studies.ScontrasPearl2021
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
+import Linglib.Theories.FormalLanguageTheory.CFGTree
 import Linglib.Theories.FormalLanguageTheory.PumpingLemma
+import Linglib.Theories.FormalLanguageTheory.NonContextFree
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation

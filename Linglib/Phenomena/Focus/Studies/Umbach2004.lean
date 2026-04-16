@@ -1,6 +1,11 @@
 import Linglib.Core.InformationStructure
-import Linglib.Core.Discourse.CoherenceRelation
-import Linglib.Core.Discourse.QUD
+import Linglib.Core.Discourse.Coherence
+import Linglib.Core.QUD.Basic
+import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.QUD.Relevance
+import Linglib.Core.Inquisitive
+import Linglib.Core.Discourse.QUDStack
+import Linglib.Core.Discourse.Strategy
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 import Linglib.Fragments.English.FocusParticles
@@ -45,14 +50,14 @@ three levels at which "contrast" appears:
 - Focus alternatives & FIP: `Semantics.FocusInterpretation` (@cite{rooth-1992})
 - QUD / implicit questions: `Discourse.Issue`, `Discourse.partiallyAnswers` (@cite{roberts-2012})
 - DTS "but": `DTS.But` (@cite{merin-1999})
-- Coherence relations: `Core.Discourse.CoherenceRelation` (@cite{kehler-2002})
+- Coherence relations: `Core.Discourse.Coherence` (@cite{kehler-2002})
 - Focus particles: `Fragments.English.FocusParticles`
 -/
 
 namespace Umbach2004
 
 open Core.InformationStructure
-open Core.Discourse.CoherenceRelation
+open Core.Discourse.Coherence
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  World Model
