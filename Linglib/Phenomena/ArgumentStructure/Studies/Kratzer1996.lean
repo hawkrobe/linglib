@@ -49,7 +49,7 @@ with missing annotations.
 -- tree derivations (Part III) remain below.
 -- ════════════════════════════════════════════════════════════════════════
 
-namespace Phenomena.ArgumentStructure.Studies.Kratzer1996
+namespace Kratzer1996
 
 open Fragments.English.Predicates.Verbal
 
@@ -160,4 +160,4 @@ theorem causative_pair_voice_contrast :
 
 end TreeDerivations
 
-end Phenomena.ArgumentStructure.Studies.Kratzer1996
+end Kratzer1996

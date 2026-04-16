@@ -46,7 +46,7 @@ SI §4.1-4.2, AUC values from SI Figures 6 and 8.
 
 -/
 
-namespace Phenomena.Morphology.Studies.HahnDegenFutrell2021
+namespace HahnDegenFutrell2021
 
 open Processing.MemorySurprisal
 open Core.Morphology (MorphCategory respectsRelevanceHierarchy)
@@ -257,4 +257,4 @@ theorem relevance_hierarchy_implies_locality :
     sesothoRealAUC100 < sesothoRandomAUC100 :=
   ⟨by native_decide, by native_decide⟩
 
-end Phenomena.Morphology.Studies.HahnDegenFutrell2021
+end HahnDegenFutrell2021

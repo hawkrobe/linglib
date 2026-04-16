@@ -39,11 +39,11 @@ two propagation theorems. "Drink margarita" falls in the gap that
 `composedRef` cannot compute.
 -/
 
-namespace Phenomena.TenseAspect.Studies.Filip2012
+namespace Filip2012
 
 open Mereology
 open Semantics.Events.Krifka1998 (VP CumTheta UP SINC VerbIncClass)
-open Phenomena.TenseAspect.Studies.Krifka1989 (NomRef composedRef)
+open Krifka1989 (NomRef composedRef)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Three-Way Exhaustiveness
@@ -172,4 +172,4 @@ are ¬CUM ∧ ¬QUA, the conduit faithfully transmits the indeterminacy
 (`middle_ground_stable`).
 -/
 
-end Phenomena.TenseAspect.Studies.Filip2012
+end Filip2012

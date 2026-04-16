@@ -40,7 +40,7 @@ the signature of indirect speech driven by self-presentation.
 
 set_option autoImplicit false
 
-namespace Phenomena.Politeness.Studies.YoonEtAl2020
+namespace YoonEtAl2020
 
 open Core.GradedProposition (GProp neg)
 
@@ -591,4 +591,4 @@ theorem kind_h0_prefers_negation :
 def socialGoalSubjectivityLevel : Core.Subjectivity.SubjectivityLevel :=
   .intersubjective
 
-end Phenomena.Politeness.Studies.YoonEtAl2020
+end YoonEtAl2020

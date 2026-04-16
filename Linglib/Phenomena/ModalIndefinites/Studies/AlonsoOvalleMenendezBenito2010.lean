@@ -55,7 +55,7 @@ Two parameters (uniqueness × domain constraint) yield a 2×2 typology:
 
 -/
 
-namespace Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
+namespace AlonsoOvalleMenendezBenito2010
 
 open Core.ModalIndefinite
 open Fragments.Spanish.ModalIndefinites
@@ -617,4 +617,4 @@ theorem algún_entry_epistemic_only :
   constructor <;> native_decide
 
 
-end Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
+end AlonsoOvalleMenendezBenito2010

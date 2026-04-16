@@ -55,7 +55,7 @@ speech acts involve a mismatch — a declarative or interrogative sentence
 type receiving directive illocutionary force.
 -/
 
-namespace Phenomena.Directives.Studies.RuytenbeekEtAl2017
+namespace RuytenbeekEtAl2017
 
 open Core.Modality (ModalFlavor ModalForce)
 open Core.Discourse (IllocutionaryMood)
@@ -663,4 +663,4 @@ theorem mechanism2_queries_ability_condition :
     SentType.isDirectiveCompatible .canYouInterrog = false ∧
     SentType.isDirectiveCompatible .possibleInterrog = false := ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Directives.Studies.RuytenbeekEtAl2017
+end RuytenbeekEtAl2017

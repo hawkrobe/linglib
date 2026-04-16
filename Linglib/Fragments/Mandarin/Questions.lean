@@ -30,7 +30,7 @@ is compatible with wh-in-situ but Singlish *the-hell* is not.
 namespace Fragments.Mandarin.Questions
 
 open Phenomena.Questions.Typology (WhInterpMechanism WhMovementStrategy)
-open Phenomena.Questions.Studies.ChanShen2026
+open ChanShen2026
   (ANDLMovementType theHellFeature andlLicensedInSitu)
 open Minimalism (GramFeature)
 

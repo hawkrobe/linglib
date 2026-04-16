@@ -46,7 +46,7 @@ individual-level predicates trigger homogeneity (assumption (70)), while
 stage-level predicates do not.
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.Magri2009
+namespace Magri2009
 
 open Exhaustification.InnocentExclusion (exhB ieIndices)
 open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel)
@@ -1069,4 +1069,4 @@ theorem strengthened_eq_alternativeSource :
 
 end AlternativeSourceBridge
 
-end Phenomena.ScalarImplicatures.Studies.Magri2009
+end Magri2009

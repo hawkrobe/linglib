@@ -65,7 +65,7 @@ condition is strictly stronger. This means every *but* context could license
 discourse *only*, but not vice versa.
 -/
 
-namespace Phenomena.Focus.Studies.IppolitoKissWilliams2025
+namespace IppolitoKissWilliams2025
 
 -- ============================================================================
 -- Part I: End-to-End Derivation Chains
@@ -537,4 +537,4 @@ theorem discOnly_implies_unexpectedness_under_but {W : Type*} [Fintype W]
   exact cip_contrariness_implies_unexpectedness w.dtsCtx w.s w.s'
     hPrior hNorm hCIP (.inl ⟨w.sPosRelevant, hS'neg⟩) hS_pos hH_pos hNH_pos
 
-end Phenomena.Focus.Studies.IppolitoKissWilliams2025
+end IppolitoKissWilliams2025

@@ -56,7 +56,7 @@ the sample. Fragment bridge theorems connect Fragments ↔ Typology ↔
 chaining types across three layers.
 -/
 
-namespace Phenomena.Comparison.Studies.Stassen1985
+namespace Stassen1985
 
 open Phenomena.Comparison.Typology
 
@@ -384,4 +384,4 @@ theorem turkish_deranking_consistent :
       UD.VerbForm.Conv :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Comparison.Studies.Stassen1985
+end Stassen1985

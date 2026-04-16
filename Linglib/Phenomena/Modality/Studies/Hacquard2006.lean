@@ -33,7 +33,7 @@ modal evaluation framework in `Temporal.lean`.
 
 -/
 
-namespace Phenomena.Modality.Studies.Hacquard2006
+namespace Hacquard2006
 
 open Semantics.Modality.EventRelativity
 open Semantics.Modality.Temporal
@@ -233,7 +233,7 @@ present perspective → MODAL > PERF scope → `settled_not_diverse` blocks
 metaphysical. Low modals get past perspective → PERF > MODAL scope →
 `counterfactual_widens_domain` widens the metaphysical domain. -/
 
-open Phenomena.Modality.Studies.Condoravdi2002 (Perspective)
+open Condoravdi2002 (Perspective)
 open Semantics.Modality.ActualityEntailments (AspectModalScope toAspectScope)
 
 /-- Map Hacquard's temporal orientation to Condoravdi's temporal
@@ -276,7 +276,7 @@ theorem position_determines_modal_base_type :
      toAspectScope .belowAsp = .aspectOverModal) :=
   ⟨⟨rfl, rfl⟩, ⟨rfl, rfl⟩⟩
 
-end Phenomena.Modality.Studies.Hacquard2006
+end Hacquard2006
 
 /-! ## Bridge content (merged from ActualityInferencesBridge.lean) -/
 

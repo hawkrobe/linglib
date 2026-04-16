@@ -52,7 +52,7 @@ But it correctly distinguishes experiencer from agent (unlike the
 two-feature simplification).
 -/
 
-namespace Phenomena.Case.Studies.AndersonJM2006
+namespace AndersonJM2006
 
 open Core (CaseRelation Scenario Case)
 open Interfaces.SyntaxSemantics (LinkingTheory ArgPosition)
@@ -336,4 +336,4 @@ theorem anderson_dowty_experiencer_agree :
     (ThetaRole.canonicalProfile .experiencer).pAgentScore := by
   exact ⟨by decide, by native_decide⟩
 
-end Phenomena.Case.Studies.AndersonJM2006
+end AndersonJM2006

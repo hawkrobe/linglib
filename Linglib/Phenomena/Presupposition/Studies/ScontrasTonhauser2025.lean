@@ -71,7 +71,7 @@ incorporates prior beliefs, so higher priors yield higher posteriors.
 
 set_option autoImplicit false
 
-namespace Phenomena.Presupposition.Studies.ScontrasTonhauser2025
+namespace ScontrasTonhauser2025
 
 open BigOperators
 open Real (rpow rpow_nonneg rpow_pos_of_pos)
@@ -709,4 +709,4 @@ theorem prior_effect_consistent_with_dt2021 :
     (DegenTonhauser2021.exp1_priorEffect .individualLevel).β > 0 :=
   ⟨by native_decide, by native_decide, by native_decide⟩
 
-end Phenomena.Presupposition.Studies.ScontrasTonhauser2025
+end ScontrasTonhauser2025

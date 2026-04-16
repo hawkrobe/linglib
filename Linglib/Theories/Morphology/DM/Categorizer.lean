@@ -566,7 +566,7 @@ theorem same_root_different_category (r : Root) (c1 c2 : Categorizer)
     specific preposition heads the PP complement). @cite{hewett-2026}
     shows that l-selection in Semitic can vary by verbal template,
     falsifying any theory locating l-selection entirely at the root
-    level. See `Phenomena.ArgumentStructure.Studies.Hewett2026`.
+    level. See `Hewett2026`.
 
     Evidence for root-level arity:
 

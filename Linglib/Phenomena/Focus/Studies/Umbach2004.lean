@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Core.Discourse.QUD
 import Linglib.Theories.Semantics.Focus.Interpretation
@@ -49,7 +49,7 @@ three levels at which "contrast" appears:
 - Focus particles: `Fragments.English.FocusParticles`
 -/
 
-namespace Phenomena.Focus.Studies.Umbach2004
+namespace Umbach2004
 
 open Core.InformationStructure
 open Core.Discourse.CoherenceRelation
@@ -525,4 +525,4 @@ theorem contrast_levels :
       CoherenceRelation.correction :=
   ⟨rfl, rfl, by decide, rfl, rfl⟩
 
-end Phenomena.Focus.Studies.Umbach2004
+end Umbach2004

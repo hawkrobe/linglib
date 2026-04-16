@@ -50,7 +50,7 @@ The asymmetry arises from monotonicity:
 
 set_option autoImplicit false
 
-namespace Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
+namespace PottsEtAl2016
 
 -- ============================================================================
 -- §1. Domain Types
@@ -352,4 +352,4 @@ theorem matches_someAllBlocking :
     someAllBlocking.implicatureInDE = false := by
   exact ⟨rfl, rfl⟩
 
-end Phenomena.ScalarImplicatures.Studies.PottsEtAl2016
+end PottsEtAl2016

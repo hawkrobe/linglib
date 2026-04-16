@@ -38,7 +38,7 @@ linking-relevant property. Two classes of counterevidence:
   linking under transitivization.
 -/
 
-namespace Phenomena.Ergativity.Studies.Bohnemeyer2004
+namespace Bohnemeyer2004
 
 open Semantics.Lexical.Verb.EventStructure (EventType CausationType Template)
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
@@ -427,4 +427,4 @@ theorem aspect_conditioned_split_family :
     yukatekSplit.alignment .completive =
       Core.hindiSplit.alignment .perfective := rfl
 
-end Phenomena.Ergativity.Studies.Bohnemeyer2004
+end Bohnemeyer2004

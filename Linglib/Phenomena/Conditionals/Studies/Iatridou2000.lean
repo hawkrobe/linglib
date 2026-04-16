@@ -27,7 +27,7 @@ Theory-neutral cross-linguistic data on counterfactual morphology from
 - Example sentences from §2
 -/
 
-namespace Phenomena.Conditionals.Studies.Iatridou2000
+namespace Iatridou2000
 
 -- ════════════════════════════════════════════════════════════════
 -- § Datum Structures
@@ -428,4 +428,4 @@ theorem pastCF_tower_depth_matches_greek :
 theorem pastCF_origin_preserved :
     pastCFTower.origin = actualCtx := rfl
 
-end Phenomena.Conditionals.Studies.Iatridou2000
+end Iatridou2000

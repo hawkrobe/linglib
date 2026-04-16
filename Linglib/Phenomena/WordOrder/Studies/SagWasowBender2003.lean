@@ -18,7 +18,7 @@ licensing result, verifying that the theory's predictions match the
 empirical pattern.
 -/
 
-namespace Phenomena.WordOrder.Studies.SagWasowBender2003
+namespace SagWasowBender2003
 
 open Phenomena.WordOrder.SubjectAuxInversion
 
@@ -92,4 +92,4 @@ The HPSG [INV ±] analysis correctly captures all 6 core SAI data points:
 | ex08  | *...what can John eat      | ✗ ungram.  | ✗ blocked  |
 -/
 
-end Phenomena.WordOrder.Studies.SagWasowBender2003
+end SagWasowBender2003

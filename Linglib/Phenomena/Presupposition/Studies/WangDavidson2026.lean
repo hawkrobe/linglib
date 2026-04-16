@@ -65,7 +65,7 @@ Type B (EXH¹).
 *zhidao* shows symmetric filtering (uniform, p = .99 for PREDICATE).
 -/
 
-namespace Phenomena.Presupposition.Studies.WangDavidson2026
+namespace WangDavidson2026
 
 open Core.Duality (Truth3 Prop3)
 open Core.Presupposition (PrProp)
@@ -368,4 +368,4 @@ theorem end_to_end_bivalent_sk_challenged :
   ⟨disj_exh_eq_exor, rfl, rfl, rfl⟩
 
 
-end Phenomena.Presupposition.Studies.WangDavidson2026
+end WangDavidson2026

@@ -64,7 +64,7 @@ from veridicality alone (@cite{glass-2025}, @cite{glass-2023}).
 
 Encoded structurally as `postsupType := some .weakContrafactive` in VerbCore,
 formalized as `Core.Postsupposition.weakContrafactive`, and exercised in
-`Phenomena.Presupposition.Studies.Glass2025`.
+`Glass2025`.
 -/
 
 /-- 以为 "yǐwéi" — be under the impression that (weak contrafactive).
@@ -72,7 +72,7 @@ formalized as `Core.Postsupposition.weakContrafactive`, and exercised in
 Has postsupposition ◇¬p (CG compatible with ¬p after utterance).
 This cannot be derived from veridicality; see @cite{glass-2025} and @cite{glass-2023}.
 The postsupposition is recorded structurally via `postsupType` and exercised
-in `Phenomena.Presupposition.Studies.Glass2025`.
+in `Glass2025`.
 -/
 def yiwei : MandarinVerbEntry := .mk' {
   form := "yiwei"

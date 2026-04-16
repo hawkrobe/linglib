@@ -15,7 +15,7 @@ SVO order. SOV "John Mary sees" would require the verb to look left
 for both arguments, but TV looks right first.
 -/
 
-namespace Phenomena.WordOrder.Studies.Steedman2000
+namespace Steedman2000
 
 open CCG
 open Phenomena.WordOrder
@@ -44,4 +44,4 @@ theorem mary_eats_pizza_derives_S : derivesS mary_eats_pizza = true := rfl
 theorem he_sees_her_derives_S : derivesS he_sees_her = true := rfl
 theorem the_cat_eats_pizza_derives_S : derivesS the_cat_eats_pizza = true := rfl
 
-end Phenomena.WordOrder.Studies.Steedman2000
+end Steedman2000

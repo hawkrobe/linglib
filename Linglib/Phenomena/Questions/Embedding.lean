@@ -78,7 +78,7 @@ def know_d : EmbeddingDatum :=
 
 /-- Predicate of Relevance: responsive but resists question-to-proposition
 reduction (@cite{elliott-etal-2017}). The reduction-resistance is a separate
-property — see `Phenomena.Questions.Studies.Elliott2017`. -/
+property — see `Elliott2017`. -/
 def care_d : EmbeddingDatum :=
   { verb := "care"
   , subordination := true, quasiSubordination := false

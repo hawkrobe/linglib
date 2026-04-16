@@ -346,11 +346,11 @@ GAP restrictions, not universal Subjacency. This means:
 This is exactly the division of labor the processing comparison reveals:
 grammar determines structural possibility, processing determines ease.
 
-The F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) classifies which
+The F-G typology (`Sag2010`) classifies which
 constructions are islands. The processing model explains **within-island**
 gradient effects (filler complexity, NP type). -/
 
-open Phenomena.FillerGap.Studies.Sag2010
+open Sag2010
 
 /-- Sag's two island constructions are a proper subset of all F-G types.
 The non-island types (interrogative, relative, the-clause) freely permit
@@ -422,7 +422,7 @@ for weight-free ordinal comparison.
 
 ### Connection to
 
-Sag's F-G typology (`Phenomena.FillerGap.Studies.Sag2010`) identifies grammar-based
+Sag's F-G typology (`Sag2010`) identifies grammar-based
 islands (topicalization, exclamatives with `[GAP ⟨⟩]`). covers
 processing-based islands (CNPC, wh-islands). @cite{lu-pan-degen-2025} covers
 discourse-based islands (MoS). Together they provide a three-mechanism account.

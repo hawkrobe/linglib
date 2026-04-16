@@ -47,7 +47,7 @@ supporting its role as a case-assigner.
 3. There is only a single specifier available for extraction out of vP
 -/
 
-namespace Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
+namespace CoonMateoPedroPreminger2014
 
 open Minimalism
 open Phenomena.Ergativity
@@ -686,4 +686,4 @@ theorem both_af_lose_setA :
     Fragments.Mayan.Qanjobal.agentFocusForm.hasSetA = false ∧
     Fragments.Mayan.Kaqchikel.VerbForm.agentFocus.hasSetA = false := ⟨rfl, rfl⟩
 
-end Phenomena.Ergativity.Studies.CoonMateoPedroPreminger2014
+end CoonMateoPedroPreminger2014

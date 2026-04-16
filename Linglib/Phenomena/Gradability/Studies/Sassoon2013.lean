@@ -46,7 +46,7 @@ for non-comparatives) is the paper's actual finding — per-adjective binary
 predictions are our addition for verification purposes.
 -/
 
-namespace Phenomena.Gradability.Studies.Sassoon2013
+namespace Sassoon2013
 
 open Semantics.Lexical.Adjective (DimensionBindingType conjunctiveBinding
   disjunctiveBinding deMorgan_conjunctive_disjunctive
@@ -412,4 +412,4 @@ theorem polarity_above_midpoint :
     polarityData.all fun j => if j.isPositive then j.mean > 4.0 else j.mean < 4.0 := by
   native_decide
 
-end Phenomena.Gradability.Studies.Sassoon2013
+end Sassoon2013

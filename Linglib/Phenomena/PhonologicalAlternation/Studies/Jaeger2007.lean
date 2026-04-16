@@ -1,6 +1,6 @@
 import Linglib.Core.Agent.Learning
-import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
-import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
+import Linglib.Core.Constraint.OTLimit
+import Linglib.Core.Constraint.MaxEnt
 
 /-!
 # @cite{jaeger-2007}: Maximum Entropy Models and Stochastic Optimality Theory
@@ -40,9 +40,9 @@ Gradient Ascent (SGA) for Maximum Entropy models. This unifies two traditions:
    consistent with child language data.
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.Jaeger2007
+namespace Jaeger2007
 
-open Core Phonology.HarmonicGrammar Real
+open Core Core.Constraint Real
 
 -- ============================================================================
 -- § 1: GLA = SGA (Main Theorem)
@@ -200,4 +200,4 @@ theorem cv_dominates_ccvcc :
     violations starComplexCoda CCVCC + violations starComplexOnset CCVCC := by
   native_decide
 
-end Phenomena.PhonologicalAlternation.Studies.Jaeger2007
+end Jaeger2007

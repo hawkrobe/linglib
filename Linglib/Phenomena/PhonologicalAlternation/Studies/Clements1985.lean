@@ -16,7 +16,7 @@ labial assimilation (/n/ + /p/ → [mp]).
 @cite{clements-1985}
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.Clements1985
+namespace Clements1985
 
 open Phonology
 open Phonology.FeatureGeometry (GeomNode)
@@ -91,4 +91,4 @@ theorem sr_np_consistent : sr_np.consistent = true := by native_decide
 
 end LabialAssimilation
 
-end Phenomena.PhonologicalAlternation.Studies.Clements1985
+end Clements1985

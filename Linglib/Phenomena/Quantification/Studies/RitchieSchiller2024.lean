@@ -55,7 +55,7 @@ scales, L1_latent infers the proximal restriction (§8).
 
 set_option autoImplicit false
 
-namespace Phenomena.Quantification.Studies.RitchieSchiller2024
+namespace RitchieSchiller2024
 
 open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier (every_sem some_sem)
@@ -535,4 +535,4 @@ theorem ddpr_is_minimum :
     ∀ l : SubjectivityLevel, ddprSubjectivityLevel ≤ l := by
   intro l; exact Core.Subjectivity.nonSubjective_le l
 
-end Phenomena.Quantification.Studies.RitchieSchiller2024
+end RitchieSchiller2024

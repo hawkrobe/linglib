@@ -15,7 +15,7 @@ coreference data in `Phenomena.Anaphora.Coreference`.
 - `reflexive_pairs_captured`: Per-pair verification
 -/
 
-namespace Phenomena.Anaphora.Studies.HPSGCoreference
+namespace HPSGCoreference
 
 open HPSG.Coreference
 open Phenomena.Anaphora.Coreference
@@ -86,4 +86,4 @@ theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [john, sees, eachOther] = false := by
   native_decide
 
-end Phenomena.Anaphora.Studies.HPSGCoreference
+end HPSGCoreference

@@ -41,7 +41,7 @@ The Bigness Generalization is *derived* from scale structure (§4.4, eqs. 81–8
 predict the acceptability pattern recorded in the data below.
 -/
 
-namespace Phenomena.Gradability.Studies.Morzycki2009
+namespace Morzycki2009
 
 open Semantics.Lexical.Noun.GradableNouns
 open Core.Scale (deg)
@@ -415,4 +415,4 @@ theorem floyd_small_eq_bare :
     smallIdiot exampleIdiot .floyd = exampleIdiot.pos .floyd := by
   rw [small_idiot_vacuous]
 
-end Phenomena.Gradability.Studies.Morzycki2009
+end Morzycki2009

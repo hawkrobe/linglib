@@ -46,7 +46,7 @@ Gradience emerges from pragmatic competition, not encoded in semantics.
 Connects to `Semantics.Montague.Quantifiers` for threshold semantics.
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
+namespace VanTielEtAl2021
 
 -- ============================================================================
 -- Section I: Empirical Data
@@ -459,4 +459,4 @@ The truth-conditional (GQT) account works when complemented by probabilistic
 pragmatics. We don't need to encode prototypes into the semantics.
 -/
 
-end Phenomena.ScalarImplicatures.Studies.VanTielEtAl2021
+end VanTielEtAl2021

@@ -63,7 +63,7 @@ Human speakers trade off truthfulness and relevance:
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 
-namespace Phenomena.Directives.Studies.SumersEtAl2023
+namespace SumersEtAl2023
 
 open RSA.CombinedUtility
 
@@ -786,4 +786,4 @@ theorem sumers_uses_combined (lam uT uR costWeight cost : ℚ) :
 def integratedModel : String :=
   "U_C = lambda*U_Relevance + (1-lambda)*U_Truthfulness - Cost"
 
-end Phenomena.Directives.Studies.SumersEtAl2023
+end SumersEtAl2023

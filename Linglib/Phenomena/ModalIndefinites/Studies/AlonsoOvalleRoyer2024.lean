@@ -64,7 +64,7 @@ speech event despite intervening projections.
 
 -/
 
-namespace Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
+namespace AlonsoOvalleRoyer2024
 
 open Core.Modality (ModalFlavor)
 open Core.ModalIndefinite
@@ -339,7 +339,7 @@ by composing the full derivation chain. -/
 def predictedMIFlavorsOf (vh : VoiceHead) (volitional : Bool) : List ModalFlavor :=
   predictedMIFlavors (argPositionOf vh) volitional
 
-open Phenomena.Causation.Studies.Coon2019 in
+open Coon2019 in
 
 /-- The four Chuj voice heads yield the correct argument positions. -/
 theorem voice_to_position :
@@ -348,7 +348,7 @@ theorem voice_to_position :
     argPositionOf v_ch = .internal ∧
     argPositionOf v_j = .internal := ⟨rfl, rfl, rfl, rfl⟩
 
-open Phenomena.Causation.Studies.Coon2019 in
+open Coon2019 in
 
 /-- End-to-end flavor predictions for each Chuj voice head.
 Active/antipassive (external arg): epistemic only.
@@ -360,7 +360,7 @@ theorem voice_to_flavors :
     predictedMIFlavorsOf v_j true = [.epistemic, .circumstantial] :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-open Phenomena.Causation.Studies.Coon2019 in
+open Coon2019 in
 
 /-- Non-volitional verbs block RC even in passive: only epistemic. -/
 theorem voice_nonvolitional :
@@ -506,4 +506,4 @@ theorem harmonic_neq_nonharmonic :
     EventBinder.speechAct.availableFlavors := by decide
 
 
-end Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
+end AlonsoOvalleRoyer2024

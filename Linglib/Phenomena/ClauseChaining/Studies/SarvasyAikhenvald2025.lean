@@ -47,7 +47,9 @@ the origin (the final verb's context).
    DS = `.agent` differs
 -/
 
-namespace Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
+open Phenomena.ClauseChaining
+
+namespace SarvasyAikhenvald2025
 
 -- ============================================================================
 -- Part I: Fragment Verification
@@ -404,4 +406,4 @@ theorem chain_shift_label :
 theorem chain_is_not_attitude :
     (chainShift .subjectB (-3)).label ≠ ShiftLabel.attitude := by decide
 
-end Phenomena.ClauseChaining.Studies.SarvasyAikhenvald2025
+end SarvasyAikhenvald2025

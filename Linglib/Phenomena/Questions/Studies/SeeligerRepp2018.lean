@@ -55,7 +55,7 @@ with the bias profiles of the question types they mark, and that
 RQ profiles derive from the REJECTQ operator.
 -/
 
-namespace Phenomena.Questions.Studies.SeeligerRepp2018
+namespace SeeligerRepp2018
 
 open Semantics.Questions.DeclarativeQuestions
 open Fragments.Swedish.QuestionParticles
@@ -241,4 +241,4 @@ theorem rq_vs_dq_romero_coverage :
     (epistemicToOriginalBias DeclQuestionType.PRQ.biasProfile.epistemic).isSome = true ∧
     (epistemicToOriginalBias DeclQuestionType.PDQ.biasProfile.epistemic).isNone = true := ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Questions.Studies.SeeligerRepp2018
+end SeeligerRepp2018

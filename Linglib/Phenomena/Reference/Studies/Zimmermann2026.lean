@@ -49,14 +49,14 @@ data and the indefiniteness contrast (§3.3) which Haslinger et al.
 do not cover.
 -/
 
-namespace Phenomena.Reference.Studies.Zimmermann2026
+namespace Zimmermann2026
 
 open Fragments.Hausa.Determiners
 open Fragments.Akan.Determiners
 open Semantics.Lexical.Determiner.UnifiedUniversal
 open Semantics.Lexical.Determiner.ONEModifiers
 open Semantics.Lexical.Determiner.ChoiceFunction
-open Phenomena.Plurals.Studies.HaslingerHienEtAl2025
+open HaslingerHienEtAl2025
 
 -- ════════════════════════════════════════════════════
 -- § 1. Hausa UQ Decomposition
@@ -219,4 +219,4 @@ def extendedSample : List UQLanguageEntry :=
 theorem extended_sample_size :
     extendedSample.length = 13 := by native_decide
 
-end Phenomena.Reference.Studies.Zimmermann2026
+end Zimmermann2026

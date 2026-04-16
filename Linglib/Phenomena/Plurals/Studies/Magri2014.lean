@@ -72,7 +72,7 @@ single-EXH result `Max(P) = {Exhaust(P)}` is formalized in
 `ScalarImplicatures/Studies/Spector2007.lean`.
 -/
 
-namespace Phenomena.Plurals.Studies.Magri2014
+namespace Magri2014
 
 open Core (Polarity)
 
@@ -1147,4 +1147,4 @@ theorem enriched_conjunction_end_to_end :
 end ConjunctionBridge
 
 
-end Phenomena.Plurals.Studies.Magri2014
+end Magri2014

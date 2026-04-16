@@ -41,7 +41,7 @@ rank 0 — ensures the belief state is non-vacuous.
    the iterated revision postulates C1–C4 (§2), which AGM alone
    does not constrain.
 
-See `Phenomena.DefaultReasoning.Studies.Spohn1988` for a verified
+See `Spohn1988` for a verified
 concrete instance demonstrating evidence strength, commutativity
 (Theorem 4), and the connection to `NormalityOrder`.
 

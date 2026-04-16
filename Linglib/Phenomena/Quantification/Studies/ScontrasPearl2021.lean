@@ -88,7 +88,7 @@ contexts under exact numeral semantics.
 
 set_option autoImplicit false
 
-namespace Phenomena.Quantification.Studies.ScontrasPearl2021
+namespace ScontrasPearl2021
 
 -- ============================================================================
 -- §1. Every-Not (n=2) — Shared Types & Truth Conditions
@@ -1223,4 +1223,4 @@ theorem everyNot_baseline_endorsement_low :
     The exact/at-least split is the only difference between high and low
     endorsement in the 2-of-4 context. -/
 
-end Phenomena.Quantification.Studies.ScontrasPearl2021
+end ScontrasPearl2021

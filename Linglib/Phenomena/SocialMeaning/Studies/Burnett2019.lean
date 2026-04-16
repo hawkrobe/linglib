@@ -46,7 +46,7 @@ All predictions are verified by `rsa_predict`.
 
 set_option autoImplicit false
 
-namespace Phenomena.SocialMeaning.Studies.Burnett2019
+namespace Burnett2019
 
 open Sociolinguistics
 open Sociolinguistics.EckertMontague
@@ -448,4 +448,4 @@ theorem smg_L0_uniform_compatible :
 
 end smgBridge
 
-end Phenomena.SocialMeaning.Studies.Burnett2019
+end Burnett2019

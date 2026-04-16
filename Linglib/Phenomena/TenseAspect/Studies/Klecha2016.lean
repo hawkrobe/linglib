@@ -44,7 +44,7 @@ can be future-oriented:
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Klecha2016
+namespace Klecha2016
 
 open Core.Verbs (Attitude Preferential Veridicality)
 open Core.Modality (ModalBaseKind)
@@ -325,4 +325,4 @@ theorem cir_compat_permit_future :
   decide
 
 
-end Phenomena.TenseAspect.Studies.Klecha2016
+end Klecha2016

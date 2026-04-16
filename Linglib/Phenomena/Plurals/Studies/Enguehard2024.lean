@@ -68,7 +68,7 @@ conceivability presupposition — not about the entity but about the
 
 set_option autoImplicit false
 
-namespace Phenomena.Plurals.Studies.Enguehard2024
+namespace Enguehard2024
 
 open Core.Presupposition (PrProp)
 open Semantics.Presupposition.PhiFeatures
@@ -840,4 +840,4 @@ theorem underdetermined_implies_gradient
 
 end BilateralBridge
 
-end Phenomena.Plurals.Studies.Enguehard2024
+end Enguehard2024

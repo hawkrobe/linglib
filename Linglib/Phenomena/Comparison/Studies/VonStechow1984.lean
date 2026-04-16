@@ -33,7 +33,7 @@ is simpler and better motivated than competing scope-based analyses.
 
 -/
 
-namespace Phenomena.Comparison.Studies.VonStechow1984
+namespace VonStechow1984
 
 open Semantics.Degree.Intensional
 open Semantics.Degree.Comparative (comparativeSem)
@@ -426,4 +426,4 @@ def tooData : List TooCounterfactualDatum :=
 example : tooSem (λ _ : Unit => (80 : ℚ)) () 50 30 := by
   simp [tooSem, moreSem]; norm_num
 
-end Phenomena.Comparison.Studies.VonStechow1984
+end VonStechow1984

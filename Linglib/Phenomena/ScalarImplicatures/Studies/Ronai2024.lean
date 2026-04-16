@@ -57,7 +57,7 @@ from `exp1_data.csv` (Exp 1, 0–100 sliding scale) and `exp2_data.csv`
 the nearest integer.
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.Ronai2024
+namespace Ronai2024
 
 
 -- ============================================================================
@@ -484,4 +484,4 @@ theorem globalSIRate_is_vt2016_exp2 :
 theorem bounded_is_vt2016 :
     darkBlack.bounded = VanTielEtAl2016.Scales.darkBlack.bounded := rfl
 
-end Phenomena.ScalarImplicatures.Studies.Ronai2024
+end Ronai2024

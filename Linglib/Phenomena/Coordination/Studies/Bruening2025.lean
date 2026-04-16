@@ -36,9 +36,9 @@ one-replacement (t=6.895, p<.001).
 proving c-selection is not reducible to s-selection.
 -/
 
-namespace Phenomena.Coordination.Studies.Bruening2025
+namespace Bruening2025
 
-open Phenomena.Coordination.Studies.BrueningAlKhalaf2020
+open BrueningAlKhalaf2020
 open Core.Tree (Cat)
 open Core.Tree.Cat (NP AdvP AdjP)
 
@@ -276,4 +276,4 @@ theorem exp1a_tests_advAsAdj :
     permittedViolations.contains .advAsAdj = true ∧
     SelectionViolationType.advAsAdj.cats = (AdvP, AdjP) := ⟨by native_decide, rfl⟩
 
-end Phenomena.Coordination.Studies.Bruening2025
+end Bruening2025

@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.Variation
+import Linglib.Core.Constraint.Variation
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.Syllable.NaturalClass
 import Linglib.Fragments.Tarifit.Inventory
@@ -54,9 +54,9 @@ vowelless when empirically vowelless > intrusive for those items. The
 paper notes these as partly idiosyncratic (Table 7).
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.AfkirZellou2025
+namespace AfkirZellou2025
 
-open Phonology.HarmonicGrammar Phonology.Constraints
+open Core.Constraint Phonology.Constraints
 open Phonology.Syllable
 open Fragments.Tarifit.Inventory
 open Core.OT
@@ -336,4 +336,4 @@ theorem faithful_disjoint (c : TarifitCandidate) (h : c.surface = .faithful) :
     sonoPeak.eval c = 0 := by
   rcases c with ⟨c1, c2, c3, sf⟩; subst h; exact ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.PhonologicalAlternation.Studies.AfkirZellou2025
+end AfkirZellou2025

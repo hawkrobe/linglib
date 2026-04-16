@@ -29,7 +29,7 @@ A Defense of Conditional Excluded Middle. In Harper, Stalnaker & Pearce
 - This file: concrete worked examples (Bizet--Verdi, might/would, scope)
 -/
 
-namespace Phenomena.Conditionals.Studies.Stalnaker1981
+namespace Stalnaker1981
 
 open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual
@@ -334,4 +334,4 @@ theorem scope_contrast :
 
 end QuantifierScope
 
-end Phenomena.Conditionals.Studies.Stalnaker1981
+end Stalnaker1981

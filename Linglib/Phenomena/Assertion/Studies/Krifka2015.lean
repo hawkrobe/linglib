@@ -22,7 +22,7 @@ questions, acceptance, and rejection interact.
 
 -/
 
-namespace Phenomena.Assertion.Studies.Krifka2015
+namespace Krifka2015
 
 open Pragmatics.Assertion.Krifka
 
@@ -354,4 +354,4 @@ theorem oath_data_bridge :
     CommitmentStrength.strong.rank > CommitmentStrength.standard.rank :=
   ⟨rfl, by decide⟩
 
-end Phenomena.Assertion.Studies.Krifka2015
+end Krifka2015

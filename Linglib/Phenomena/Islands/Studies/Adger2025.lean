@@ -43,7 +43,7 @@ dimensional transitivity), not from separate constraints.
 
 -/
 
-namespace Phenomena.Islands.Studies.Adger2025
+namespace Adger2025
 
 -- ════════════════════════════════════════════════════
 -- § 1. Re-export key SynGraph theorems
@@ -132,4 +132,4 @@ def subjectIslandStrength : ConstraintStrength := .weak
     Derived from `adjunct_island_blocks` in SynGraph. -/
 def adjunctIslandStrength : ConstraintStrength := .strong
 
-end Phenomena.Islands.Studies.Adger2025
+end Adger2025

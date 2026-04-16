@@ -56,7 +56,7 @@ numbers from the finer-grained data.
 
 set_option autoImplicit false
 
-namespace Phenomena.SocialMeaning.Studies.Labov2006
+namespace Labov2006
 
 open Core.SocialMeaning
 
@@ -508,4 +508,4 @@ def ing_behavior : VariableBehavior where
 
 theorem ing_isMarker : ing_behavior.isMarker := rfl
 
-end Phenomena.SocialMeaning.Studies.Labov2006
+end Labov2006

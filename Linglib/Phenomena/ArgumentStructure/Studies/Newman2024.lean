@@ -39,7 +39,7 @@ passive accessibility, and anti-redundancy for agreement.
 
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Newman2024
+namespace Newman2024
 
 open Minimalism Minimalism.CMH
 
@@ -425,4 +425,4 @@ theorem doc_agent_ccommands_IO :
 theorem doc_agent_not_ccommands_DO :
     cCommandsInB docTree agent₂ DO₂ = false := by native_decide
 
-end Phenomena.ArgumentStructure.Studies.Newman2024
+end Newman2024

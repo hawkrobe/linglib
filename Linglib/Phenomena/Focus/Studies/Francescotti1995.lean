@@ -29,7 +29,7 @@ and prove that only Francescotti's "most" threshold gives the correct
 predictions for both.
 -/
 
-namespace Phenomena.Focus.Studies.Francescotti1995
+namespace Francescotti1995
 
 open Semantics.FocusParticles (EvenThreshold evenPresupWith)
 open Fragments.English.FocusParticles (even_)
@@ -232,4 +232,4 @@ theorem andre_far_more_felicitous :
     felicityDegree scenarioAndreBarely < felicityDegree scenarioAndreFar := by
   native_decide
 
-end Phenomena.Focus.Studies.Francescotti1995
+end Francescotti1995

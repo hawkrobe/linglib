@@ -47,7 +47,7 @@ tolerance modifier:
 
 -/
 
-namespace Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
+namespace BeltramaSoltBurnett2022
 
 open Core.SocialMeaning
 open Sociolinguistics.SCM
@@ -458,4 +458,4 @@ theorem underspecified_indexes_nothing :
     bsbGroundedField.indexedProperties .underspecified = ∅ := by
   native_decide
 
-end Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
+end BeltramaSoltBurnett2022

@@ -36,7 +36,7 @@ object as a **point-of-view center**.
    Spanish weak, Kambera super-strong, Bulgarian me-first.
 -/
 
-namespace Phenomena.Agreement.Studies.PanchevaZubizarreta2018
+namespace PanchevaZubizarreta2018
 
 open Core.Prominence (PersonLevel)
 open Minimalism (DecomposedPerson decomposePerson)
@@ -311,4 +311,4 @@ theorem mefirst_count : licitCount meFirstGrammar = 6 := by native_decide
 /-- Me-first and weak have different licit sets. -/
 theorem mefirst_ne_weak : meFirstGrammar ≠ weakGrammar := by decide
 
-end Phenomena.Agreement.Studies.PanchevaZubizarreta2018
+end PanchevaZubizarreta2018

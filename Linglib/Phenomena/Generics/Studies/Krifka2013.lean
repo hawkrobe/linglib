@@ -59,7 +59,7 @@ only universal closure which requires a rule-like interpretation.
   the descriptive/definitional distinction rather than default reasoning
 -/
 
-namespace Phenomena.Generics.Studies.Krifka2013
+namespace Krifka2013
 
 open Core.Genericity (GenericForm GenericReading)
 
@@ -570,4 +570,4 @@ theorem cohen_krifka_felicity_agreement :
     madrigalPopularIS.felicitous = false := ⟨rfl, rfl, rfl, rfl⟩
 
 
-end Phenomena.Generics.Studies.Krifka2013
+end Krifka2013

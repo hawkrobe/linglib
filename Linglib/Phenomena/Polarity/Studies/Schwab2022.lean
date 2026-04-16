@@ -33,7 +33,7 @@ illusion arises.
 
 import Linglib.Core.Lexical.PolarityItem
 
-namespace Phenomena.Polarity.Studies.Schwab2022
+namespace Schwab2022
 
 open Core.Lexical.PolarityItem (ScalarDirection)
 
@@ -161,4 +161,4 @@ theorem illusion_asymmetry_from_scalar_direction :
     predictsIllusion .strengthening = true ∧
     predictsIllusion .attenuating = false := ⟨rfl, rfl⟩
 
-end Phenomena.Polarity.Studies.Schwab2022
+end Schwab2022

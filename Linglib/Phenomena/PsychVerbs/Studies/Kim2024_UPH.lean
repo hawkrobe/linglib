@@ -48,7 +48,7 @@ verified per-verb (§ 2), and then used to DERIVE consequences (§§ 3–7).
    Cause+SM incompatibility but diverge on Cause+Target
 -/
 
-namespace Phenomena.PsychVerbs.Studies.Kim2024_UPH
+namespace Kim2024_UPH
 
 open Minimalism
 open Semantics.Causation.Psych
@@ -56,7 +56,7 @@ open Semantics.Causation.PsychLink
 open Core.Time (Interval)
 open Fragments.English.Predicates.Verbal
 open Phenomena.PsychVerbs.Data
-open Phenomena.ImplicitCausality.Studies.SolstadBott2022
+open SolstadBott2022
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)
 open Semantics.Lexical.Verb.EntailmentProfile
 
@@ -456,4 +456,4 @@ theorem accounts_diverge_on_cause_target :
     StimulusType.conflictsWithCause .target = false :=
   ⟨rfl, rfl⟩
 
-end Phenomena.PsychVerbs.Studies.Kim2024_UPH
+end Kim2024_UPH

@@ -36,7 +36,7 @@ This explains why *koii bhii* has free-choice readings in generic contexts
 does not.
 -/
 
-namespace Phenomena.Polarity.Studies.Lahiri1998
+namespace Lahiri1998
 
 open Semantics.FocusParticles (TraditionalEven LikelihoodOrder LikelihoodMonotone)
 open Semantics.Entailment (World allWorlds entails pnot)
@@ -768,4 +768,4 @@ theorem fragment_alternativeType_matches :
     koiiBhii.alternativeType = .contextualProperty ∧
     alternativeTypeOf koiiBhiiD = .contextualProperty := ⟨rfl, rfl⟩
 
-end Phenomena.Polarity.Studies.Lahiri1998
+end Lahiri1998

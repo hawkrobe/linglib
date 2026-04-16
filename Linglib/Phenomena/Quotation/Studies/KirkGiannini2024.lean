@@ -51,7 +51,7 @@ not scalar implicature enrichment.
 
 set_option autoImplicit false
 
-namespace Phenomena.Quotation.Studies.KirkGiannini2024
+namespace KirkGiannini2024
 
 open Semantics.Quotation
 open Semantics.Lexical.Expressives (TwoDimProp)
@@ -442,4 +442,4 @@ theorem not_all_senses :
 
 end InASense
 
-end Phenomena.Quotation.Studies.KirkGiannini2024
+end KirkGiannini2024

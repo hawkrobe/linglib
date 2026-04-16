@@ -26,7 +26,7 @@ worlds to drop from the ∃-reading's quantification domain.
 
 -/
 
-namespace Phenomena.Presupposition.Studies.Sharvit2025
+namespace Sharvit2025
 
 open Core.Presupposition
 open Core.Proposition
@@ -268,4 +268,4 @@ theorem kp_orFilter_undefined_at_penny :
     ¬(PrProp.orFilter pennilessPr proudOfMoney).presup W.pennyNotLend := by
   exact orFilter_undefined_at_penny
 
-end Phenomena.Presupposition.Studies.Sharvit2025
+end Sharvit2025

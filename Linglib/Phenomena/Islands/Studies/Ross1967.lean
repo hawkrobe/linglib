@@ -65,7 +65,7 @@ inductive IslandSource where
   | discourse
   deriving Repr, DecidableEq
 
-namespace Phenomena.Islands.Studies.Ross1967
+namespace Ross1967
 
 -- ============================================================================
 -- §1. Lexical entries for example sentences
@@ -196,4 +196,4 @@ def islandData : List PhenomenonData := [
 #guard wordsToString [what, do_, you, wonder, who, bought] == "what do you wonder who bought"
 #guard wordsToString [what, did, john, buy, and_, sell] == "what did John buy and sell"
 
-end Phenomena.Islands.Studies.Ross1967
+end Ross1967

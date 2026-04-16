@@ -60,7 +60,7 @@ strict/non-strict distinction and the non-strict version connects cleanly to
 
 -/
 
-namespace Phenomena.TemporalConnectives.Studies.Giannakidou2002
+namespace Giannakidou2002
 
 open Core.Time
 open Core.Time.Interval
@@ -660,4 +660,4 @@ theorem before_not_equiv_eventiveUntil :
     (∃ (A B : SentDenotation ℤ), Karttunen.notUntil A B ∧ ¬ ∃ t, t ∈ timeTrace A) :=
   ⟨eventiveUntil_entails_actualization, negBefore_lacks_actualization⟩
 
-end Phenomena.TemporalConnectives.Studies.Giannakidou2002
+end Giannakidou2002

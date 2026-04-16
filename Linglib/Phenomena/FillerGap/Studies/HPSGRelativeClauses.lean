@@ -20,7 +20,7 @@ Connects the HPSG relative clause mechanism (MOD feature + SLASH/GAP
   head noun's category
 -/
 
-namespace Phenomena.FillerGap.Studies.HPSGRelativeClauses
+namespace HPSGRelativeClauses
 
 open HPSG
 open HPSG.RelativeClauses
@@ -139,4 +139,4 @@ theorem modification_preserves_head_cat (headNoun : Sign)
     result.synsem.cat = headNoun.synsem.cat :=
   headMod_preserves_cat headNoun relClause result hMod
 
-end Phenomena.FillerGap.Studies.HPSGRelativeClauses
+end HPSGRelativeClauses

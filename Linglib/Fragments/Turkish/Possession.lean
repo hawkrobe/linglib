@@ -126,7 +126,7 @@ theorem location_not_inalienable :
 -- §6. Heine 1997 Prediction Verification
 -- ============================================================================
 
-open Phenomena.Possession.Studies.Heine1997
+open Heine1997
 
 /-- Turkish's primary Genitive Schema matches Heine's predictions:
     have-construction (not belong), possessee as subject. -/

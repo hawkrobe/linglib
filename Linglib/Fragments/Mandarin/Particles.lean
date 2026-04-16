@@ -27,7 +27,7 @@ experimental data (@cite{wang-2025} Experiments 1-3).
 
 - `Implicature.Presuppositions.AltStructure`: alternative classification
 - `Implicature.Presuppositions.PresupTrigger`: trigger type
-- `Phenomena.Presupposition.Studies.Wang2025`: experimental data
+- `Wang2025`: experimental data
 
 -/
 

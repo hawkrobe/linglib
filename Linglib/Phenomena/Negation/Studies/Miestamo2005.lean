@@ -67,7 +67,9 @@ Note: the WALS Ch 113 sample (also by Miestamo) covers 297 languages with
 different numbers; those are captured separately via `Core.WALS.F113A`.
 -/
 
-namespace Phenomena.Negation.Studies.Miestamo2005
+open Phenomena.Negation
+
+namespace Miestamo2005
 
 open Phenomena.Negation.Typology
   (NegSymmetry AsymmetrySubtype NegMorphemeType AsymmetryDimension AsymmetrySource)
@@ -1003,4 +1005,4 @@ theorem neg_verb_implies_avc_and_afin :
 
 end NegAuxBridge
 
-end Phenomena.Negation.Studies.Miestamo2005
+end Miestamo2005

@@ -49,7 +49,7 @@ and noun classification.
 
 -/
 
-namespace Phenomena.Agreement.Studies.PrasertsonSmithCulbertson2026
+namespace PrasertsonSmithCulbertson2026
 
 open Core.NounCategorization
 
@@ -373,4 +373,4 @@ theorem argument_chain :
     exp2a.animacy_x1000 > exp2a.colour_x1000 := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-end Phenomena.Agreement.Studies.PrasertsonSmithCulbertson2026
+end PrasertsonSmithCulbertson2026

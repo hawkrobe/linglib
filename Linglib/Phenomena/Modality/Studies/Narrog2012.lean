@@ -35,7 +35,7 @@ map) and `Diachronic.ModalChange` (Bybee et al. data + directionality).
    three stages of modal development, mapped to `SpeakerOrientationLevel`.
 -/
 
-namespace Phenomena.Modality.Studies.Narrog2012
+namespace Narrog2012
 
 open Semantics.Modality.Narrog
 open Semantics.Modality.EventRelativity (ModalPosition EventBinder)
@@ -386,4 +386,4 @@ theorem toHacquardPosition_factors (c : GramCategory) :
       Phenomena.Modality.ComparePosition.narrogOrientationToPosition c.toOrientation := by
   cases c <;> rfl
 
-end Phenomena.Modality.Studies.Narrog2012
+end Narrog2012

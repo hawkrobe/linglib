@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Modality.Kernel
-import Linglib.Core.Discourse.Epistemicity
+import Linglib.Core.Epistemicity
 
 /-!
 # Tense–Modal Evidentiality Bridge

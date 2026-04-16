@@ -25,11 +25,11 @@ The dependencies are cross-serial (not nested):
 
 Cross-serial word order alone is context-free — @cite{gazdar-pullum-1982}
 exhibit a CF-PSG (grammar 29) generating the correct Dutch strings with
-proper verb subcategorization (formalized in `Studies.PullumGazdar1982`).
+proper verb subcategorization (formalized in `PullumGazdar1982`).
 What takes this beyond CF power is cross-serial order PLUS case agreement:
 requiring dative NPs to match dative verbs and accusative NPs to match
 accusative verbs across unbounded depth. This was proven for Swiss German
-by @cite{shieber-1985} (formalized in `Studies.Shieber1985`).
+by @cite{shieber-1985} (formalized in `Shieber1985`).
 CCG handles the full pattern via generalized composition.
 
 ## Contrast with German
@@ -44,7 +44,7 @@ German has nested dependencies (can be handled by CFG):
 
 The Dutch cross-serial data is from @cite{bresnan-etal-1982}. The formal
 proof that cross-serial dependencies with case-marking are beyond CFG power
-is @cite{shieber-1985}, formalized in `Phenomena.WordOrder.Studies.Shieber1985`.
+is @cite{shieber-1985}, formalized in `Shieber1985`.
 The distinction matters: @cite{bresnan-etal-1982}'s argument relied on
 constituency assumptions (refuted by @cite{gazdar-pullum-1982}), whereas
 @cite{shieber-1985}'s string-set argument via Swiss German case-marking
@@ -140,7 +140,7 @@ open Core (FormalLanguageType)
     (@cite{gazdar-pullum-1982} grammar 29). The mildly context-sensitive
     classification applies to the full pattern with case-matching,
     proven formally for Swiss German in
-    `Phenomena.WordOrder.Studies.Shieber1985` via the pumping lemma. -/
+    `Shieber1985` via the pumping lemma. -/
 def crossSerialRequires : FormalLanguageType := .mildlyContextSensitive
 
 /-- Nested dependencies are context-free. -/

@@ -50,7 +50,7 @@ domain.
 
 set_option autoImplicit false
 
-namespace Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
+namespace QingGoodmanLassiter2016
 
 open BigOperators
 open Real (rpow rpow_nonneg)
@@ -502,4 +502,4 @@ this component of the model."
 The terminological difference is interpretive, not computational.
 -/
 
-end Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
+end QingGoodmanLassiter2016

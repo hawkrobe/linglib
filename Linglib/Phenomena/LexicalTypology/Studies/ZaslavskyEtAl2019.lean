@@ -38,7 +38,7 @@ communicated). Their key finding is that *both* matter.
 
 set_option autoImplicit false
 
-namespace Phenomena.LexicalTypology.Studies.ZaslavskyEtAl2019
+namespace ZaslavskyEtAl2019
 
 open Core.ChannelCapacity
 
@@ -195,4 +195,4 @@ This "prior optimization" perspective connects to @cite{zaslavsky-hu-levy-2020}'
 rate-distortion view of RSA, where the rationality parameter α trades off
 compression rate against distortion. -/
 
-end Phenomena.LexicalTypology.Studies.ZaslavskyEtAl2019
+end ZaslavskyEtAl2019

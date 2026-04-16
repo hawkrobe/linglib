@@ -64,7 +64,7 @@ correspond to attested groups; {[iv]} is unattested.
 
 -/
 
-namespace Phenomena.Allomorphy.Studies.Stojkovic2026
+namespace Stojkovic2026
 
 open Core.OT Core.ConstraintEvaluation Phonology.Constraints
 
@@ -348,4 +348,4 @@ theorem uv_surface_correct :
 theorem ev_surface_correct :
     VBLZCandidate.ev.surfaceForm = "ev" := rfl
 
-end Phenomena.Allomorphy.Studies.Stojkovic2026
+end Stojkovic2026

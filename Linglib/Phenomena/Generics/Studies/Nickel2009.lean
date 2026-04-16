@@ -50,7 +50,7 @@ conjunct:
 This is discussed in the introduction to *Genericity* (OUP 2013).
 -/
 
-namespace Phenomena.Generics.Studies.Nickel2009
+namespace Nickel2009
 
 open Semantics.Lexical.Noun.Kind.Generics (prevalence thresholdGeneric)
 
@@ -261,4 +261,4 @@ The three views are formalized in:
 - This file (way-indexed normality)
 -/
 
-end Phenomena.Generics.Studies.Nickel2009
+end Nickel2009

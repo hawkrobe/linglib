@@ -79,9 +79,9 @@ by host:
 - Biased questions: epistemic ordering (speaker's bias)
 -/
 
-namespace Phenomena.Negation.Studies.Tsiakmakis2025
+namespace Tsiakmakis2025
 
-open Phenomena.Negation.Studies.JinKoenig2021
+open JinKoenig2021
   (LicensingCondition TriggerSubclass DualInferenceProfile negativeValenceEntailsDual)
 open Semantics.Attitudes.Intensional (World)
 open Core.Proposition (BProp)
@@ -739,4 +739,4 @@ theorem greek_min_form_grounded :
 theorem italian_non_form_grounded :
     italianNonTemporal.form = Fragments.Italian.Negation.negMarker := rfl
 
-end Phenomena.Negation.Studies.Tsiakmakis2025
+end Tsiakmakis2025

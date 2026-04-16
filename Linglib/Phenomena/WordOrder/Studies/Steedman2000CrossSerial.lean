@@ -14,7 +14,7 @@ mild context-sensitivity.
 
 -/
 
-namespace Phenomena.WordOrder.Studies.Steedman2000CrossSerial
+namespace Steedman2000CrossSerial
 
 open CCG
 open CCG.CrossSerial
@@ -127,4 +127,4 @@ theorem ccg_handles_both_patterns :
     nestedRequires = .contextFree := by
   constructor <;> rfl
 
-end Phenomena.WordOrder.Studies.Steedman2000CrossSerial
+end Steedman2000CrossSerial

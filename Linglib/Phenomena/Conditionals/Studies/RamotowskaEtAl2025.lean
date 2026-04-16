@@ -48,9 +48,7 @@ Test sentences (Experiment 2):
   raw means E-QuD M=41.0, U-QuD M=22.8), confirming QUD manipulation effective
 -/
 
-namespace Phenomena.Conditionals.Studies.RamotowskaEtAl2025
-
-open Phenomena
+namespace RamotowskaEtAl2025
 
 -- ════════════════════════════════════════════════════════════════
 -- Experimental Design
@@ -573,4 +571,4 @@ theorem scope_determines_qud_sensitivity (n : Nat) (hn : n > 0)
    See `Counterfactual.lean` for the proof.
 -/
 
-end Phenomena.Conditionals.Studies.RamotowskaEtAl2025
+end RamotowskaEtAl2025

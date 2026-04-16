@@ -39,7 +39,7 @@ P(concept | context) ∝ P_selectional(concept | role) × P_scenario(concept | f
 - §9: Connection to copredication
 -/
 
-namespace Phenomena.Polysemy.Studies.ErkHerbelot2024
+namespace ErkHerbelot2024
 
 open Semantics.Probabilistic.SDS.Core
 
@@ -604,4 +604,4 @@ quantitative bounds `distinctiveness(model) ≥ f(conflictDegree(kaoToSDS model)
 This needs `Real.log` from Mathlib for KL divergence.
 -/
 
-end Phenomena.Polysemy.Studies.ErkHerbelot2024
+end ErkHerbelot2024

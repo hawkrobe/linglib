@@ -51,7 +51,7 @@ This is built from:
    and number of measured parts (Moon §4.3.2)
 -/
 
-namespace Phenomena.Countability.Studies.Moon2026
+namespace Moon2026
 
 open Mereology Mereotopology
 
@@ -603,4 +603,4 @@ theorem mixedDrink_middle_ground {n : ℕ}
     (mixedDrinkDen_selfConnected recipe μ phase)
     ha hb hDisc hx hy hlt
 
-end Phenomena.Countability.Studies.Moon2026
+end Moon2026

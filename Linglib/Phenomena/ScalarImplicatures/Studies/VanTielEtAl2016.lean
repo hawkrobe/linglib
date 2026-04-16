@@ -45,10 +45,7 @@ on ⟨some, all⟩ and ⟨or, and⟩ — predicts yes.
    Gricean reasoning to combine prior likelihoods with the current context.
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
-
-open Phenomena
-
+namespace VanTielEtAl2016
 
 /--
 Grammatical category of a scale.
@@ -715,4 +712,4 @@ theorem distinctness_exceeds_availability_tenfold :
     (associationStrength.r2 + grammaticalClass.r2 +
      relativeFrequency.r2 + semanticRelatedness.r2) * 10000 := by native_decide
 
-end Phenomena.ScalarImplicatures.Studies.VanTielEtAl2016
+end VanTielEtAl2016

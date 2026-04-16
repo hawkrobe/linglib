@@ -48,7 +48,7 @@ paper text (§3.1–§3.4). SE is not reported for target-advantage or
 baseline analyses and is omitted here.
 -/
 
-namespace Phenomena.Reference.Studies.RonderosEtAl2024
+namespace RonderosEtAl2024
 
 -- ============================================================================
 -- § Adjective Types
@@ -401,4 +401,4 @@ theorem two_routes :
     RSA.Noise.colorDiscrimination > RSA.Noise.materialDiscrimination := by
   refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl, by decide, ?_⟩; native_decide
 
-end Phenomena.Reference.Studies.RonderosEtAl2024
+end RonderosEtAl2024

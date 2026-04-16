@@ -39,7 +39,7 @@ and binding predictions are formalized separately using the paper's
 empirical generalizations.
 -/
 
-namespace Phenomena.WordOrder.Studies.ColeHermon2008
+namespace ColeHermon2008
 
 open Minimalism
 
@@ -599,4 +599,4 @@ theorem cross_linguistic_binding_contrast :
     cCommandsInB englishPassive.final n_by_himself n_boy = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.WordOrder.Studies.ColeHermon2008
+end ColeHermon2008

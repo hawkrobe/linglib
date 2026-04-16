@@ -41,7 +41,7 @@ Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
 | Crossing avoidance | structural sufficiency gap | `Core.StructuralEquationModel` |
 -/
 
-namespace Phenomena.Causation.Studies.KonukEtAl2026
+namespace KonukEtAl2026
 
 open Core.StructuralEquationModel
 open Semantics.Causation.Strength (nsm samplingPropensity)
@@ -437,4 +437,4 @@ theorem lossStrong_eq_noneSatisfy :
       (fun (i : Fin 4) (_ : Unit) => f i) Finset.univ () := by
   native_decide
 
-end Phenomena.Causation.Studies.KonukEtAl2026
+end KonukEtAl2026

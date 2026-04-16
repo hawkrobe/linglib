@@ -141,7 +141,7 @@ theorem cause_implies_resultState (t : Template) :
 
     `Template.intransitiveVariant` below implements the deletion view at the
     template level. The reflexivization analysis is formalized in
-    `Phenomena.Causation.Studies.KoontzGarboden2009`. -/
+    `KoontzGarboden2009`. -/
 
 /-- The intransitive variant of a template on the **deletion** analysis,
     stripping the external cause. Only accomplishments have an alternation

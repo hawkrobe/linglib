@@ -25,7 +25,7 @@ special mechanisms.
 
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.TheoryComparison
+namespace TheoryComparison
 
 open ConstructionGrammar
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
@@ -299,4 +299,4 @@ All three predict the same surface frame [Agent, V, Patient, Result],
 but CxG handles argument augmentation via construction-licensed roles
 while Minimalism requires special mechanisms for fake reflexives. -/
 
-end Phenomena.ArgumentStructure.Studies.TheoryComparison
+end TheoryComparison

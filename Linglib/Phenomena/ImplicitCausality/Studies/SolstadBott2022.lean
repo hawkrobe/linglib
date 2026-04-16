@@ -56,7 +56,7 @@ of grammatical position.
 | AgPat    | V + S + C + M + IE       | all five                 |
 -/
 
-namespace Phenomena.ImplicitCausality.Studies.SolstadBott2022
+namespace SolstadBott2022
 
 open Semantics.Lexical.Verb.EntailmentProfile
 open Core.Discourse.CoherenceRelation
@@ -402,7 +402,7 @@ theorem predictions_match_data :
 -- § 10. Cross-Study Bridge: @cite{rosa-arnold-2017}
 -- ════════════════════════════════════════════════════
 
-open Phenomena.Reference.Studies.RosaArnold2017
+open RosaArnold2017
 
 /-- The IC reversal (StimExp→NP1, ExpStim→NP2) and the transfer verb
     goal bias are both instances of the same deeper pattern: **swapping
@@ -462,7 +462,7 @@ theorem coherence_selects_complementary_roles :
 -- § 11. Cross-Study Bridge: @cite{kehler-rohde-2013}
 -- ════════════════════════════════════════════════════
 
-open Phenomena.Reference.Studies.KehlerRohde2013
+open KehlerRohde2013
 
 /-- @cite{kehler-rohde-2013}'s Table 2 establishes that Explanation
     coherence relations are Source-biased (80% Source for transfer
@@ -493,4 +493,4 @@ theorem because_collapses_KR_mixture :
     predictICBias expStimSubjectProfile = .np2 := by
   exact ⟨rfl, rfl, by native_decide, by native_decide⟩
 
-end Phenomena.ImplicitCausality.Studies.SolstadBott2022
+end SolstadBott2022

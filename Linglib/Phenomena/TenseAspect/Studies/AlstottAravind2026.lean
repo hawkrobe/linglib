@@ -37,7 +37,7 @@ Key findings:
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.AlstottAravind2026
+namespace AlstottAravind2026
 
 open Phenomena
 
@@ -453,4 +453,4 @@ theorem coercion_has_crosslinguistic_reflexes :
     Fragments.Serbian.TemporalConnectives.pre_pfv.culminating = true :=
   ⟨rfl, rfl, rfl⟩
 
-end Phenomena.TenseAspect.Studies.AlstottAravind2026
+end AlstottAravind2026

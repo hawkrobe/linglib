@@ -55,7 +55,9 @@ by construction. We cover the key patterns: gap-to-resumptive split
 RCs (Korean, Finnish), and single-strategy (Malagasy).
 -/
 
-namespace Phenomena.FillerGap.Studies.KeenanComrie1977
+open Phenomena.FillerGap
+
+namespace KeenanComrie1977
 
 open Phenomena.FillerGap.Typology
 open Core
@@ -489,4 +491,4 @@ theorem kc_at_least_as_detailed_as_wals :
     arabic.lowestCovered.rank ≤ Typology.arabic.lowestRelativizable.rank := by
   native_decide
 
-end Phenomena.FillerGap.Studies.KeenanComrie1977
+end KeenanComrie1977

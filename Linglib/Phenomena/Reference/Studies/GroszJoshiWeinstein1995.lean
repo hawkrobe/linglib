@@ -31,7 +31,7 @@ perceived coherence. The framework predicts the difference.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.GroszJoshiWeinstein1995
+namespace GroszJoshiWeinstein1995
 
 -- ════════════════════════════════════════════════════
 -- § 1. Grammatical Role
@@ -643,4 +643,4 @@ theorem cb_marker_is_high_accessibility :
     cbExpectedAccessibility.rank ≥ AccessibilityLevel.shortDefDescription.rank := by
   decide
 
-end Phenomena.Reference.Studies.GroszJoshiWeinstein1995
+end GroszJoshiWeinstein1995

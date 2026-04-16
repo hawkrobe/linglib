@@ -28,7 +28,7 @@ copula), covert (zero copula), or expressed through other strategies.
   type-shifting operations.
 -/
 
-namespace Phenomena.Copulas.Studies.Partee1987
+namespace Partee1987
 
 open Semantics.Composition.TypeShifting (BE lift ident BE_lift_eq_ident)
 open Core.IntensionalLogic (Frame Ty)
@@ -137,4 +137,4 @@ theorem majority_nom_loc_different :
     (allLanguages.filter (·.nomLoc == .different)).length >
     (allLanguages.filter (·.nomLoc == .identical)).length := by native_decide
 
-end Phenomena.Copulas.Studies.Partee1987
+end Partee1987

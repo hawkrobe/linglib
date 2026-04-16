@@ -48,7 +48,7 @@ multidominance as the PF reduction mechanism.
   in a single derivation.
 -/
 
-namespace Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025
+namespace CitkoGracaninYuksek2025
 
 open Minimalism
 
@@ -770,4 +770,4 @@ theorem rnr_md_beats_ellipsis (pm pl nm nl : Nat) :
     rnrMDPivotCost, rnrEllipsisCost]
   omega
 
-end Phenomena.Ellipsis.Studies.CitkoGracaninYuksek2025
+end CitkoGracaninYuksek2025

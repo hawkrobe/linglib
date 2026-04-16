@@ -64,7 +64,7 @@ semantics), and extends it to explain the neg-raising asymmetry between
 *should* and *must*.
 -/
 
-namespace Phenomena.Modality.Studies.AghaJeretic2022
+namespace AghaJeretic2022
 
 open Core.Duality (Truth3)
 open Phenomena.Plurals.Homogeneity (HomogeneityJudgment HomogeneityDatum
@@ -1061,4 +1061,4 @@ theorem french_devrais_same_flavors :
     Fragments.French.Modals.devrais.flavors =
     Fragments.French.Modals.devoir.flavors := rfl
 
-end Phenomena.Modality.Studies.AghaJeretic2022
+end AghaJeretic2022

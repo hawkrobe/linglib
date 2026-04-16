@@ -26,7 +26,7 @@ This file bridges the GQ monotonicity proofs from `Core.Quantification` and
    Mere DE ("few") is insufficient for strong NPIs.
 -/
 
-namespace Phenomena.Polarity.Studies.Ladusaw1979
+namespace Ladusaw1979
 
 open Core.Quantification
 open Phenomena.Polarity.NPIs (LicensingContext)
@@ -250,4 +250,4 @@ theorem strong_npi_requires_aa :
     licensingStrength .withoutClause = .antiAdditive ∧
     licensingStrength .fewNP ≠ .antiAdditive := by decide
 
-end Phenomena.Polarity.Studies.Ladusaw1979
+end Ladusaw1979

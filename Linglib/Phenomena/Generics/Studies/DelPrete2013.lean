@@ -59,7 +59,7 @@ the SOE conflicting with common knowledge (§8.7).
    Italian SOEs — formalized as `sameObjectParallel` in BonehDoron2013.
 -/
 
-namespace Phenomena.Generics.Studies.DelPrete2013
+namespace DelPrete2013
 
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 
@@ -482,4 +482,4 @@ theorem soe_is_crosslinguistic :
     gianniGuidava.habOK = true ∧ gianniLeggevaFilosofia.habOK = false := ⟨rfl, rfl⟩
 
 
-end Phenomena.Generics.Studies.DelPrete2013
+end DelPrete2013

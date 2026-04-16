@@ -41,7 +41,7 @@ author sets.
 - Bridge theorems below connect Q_∀ to existing `distMaximal`/`allViaForallH`
 -/
 
-namespace Phenomena.Plurals.Studies.HaslingerHienEtAl2025
+namespace HaslingerHienEtAl2025
 
 open Semantics.Lexical.Determiner.UnifiedUniversal
 open Semantics.Lexical.Determiner.ONEModifiers
@@ -334,4 +334,4 @@ theorem each_ten_minutes_blocked {α : Type*} [PartialOrder α]
   obtain ⟨x, hPx, hNA⟩ := hNonAtomic
   exact hNA (hONE_AT.all_atomic x hPx)
 
-end Phenomena.Plurals.Studies.HaslingerHienEtAl2025
+end HaslingerHienEtAl2025

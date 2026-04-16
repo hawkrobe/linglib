@@ -43,7 +43,7 @@ All F-statistics, degrees of freedom, and mean values verified against
 paper Tables 2–3 (Exp 1), Tables 5–7 (Exp 2), Tables 10–11 (Exp 3).
 -/
 
-namespace Phenomena.Reference.Studies.SedivyEtAl1999
+namespace SedivyEtAl1999
 
 -- ============================================================================
 -- § Adjective Types
@@ -259,4 +259,4 @@ theorem size_has_intermediate_discrimination :
     RSA.Noise.sizeDiscrimination > RSA.Noise.materialDiscrimination := by
   refine ⟨rfl, ?_, ?_⟩ <;> native_decide
 
-end Phenomena.Reference.Studies.SedivyEtAl1999
+end SedivyEtAl1999

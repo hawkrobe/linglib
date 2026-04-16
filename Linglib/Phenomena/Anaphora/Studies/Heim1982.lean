@@ -35,7 +35,7 @@ Each section below derives FCS predictions that account for specific
 data in `CrossSententialAnaphora`.
 -/
 
-namespace Phenomena.Anaphora.Studies.Heim1982
+namespace Heim1982
 
 open Semantics.Dynamic.FileChangeSemantics
 open Semantics.Dynamic.Core
@@ -319,4 +319,4 @@ theorem datum_conditionalAntecedent :
 | `definiteReference` | `def_` requires familiarity; succeeds when dref established | `indef_then_def_defined` |
 -/
 
-end Phenomena.Anaphora.Studies.Heim1982
+end Heim1982

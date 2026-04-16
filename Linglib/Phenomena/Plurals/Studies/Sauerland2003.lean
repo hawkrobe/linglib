@@ -47,7 +47,7 @@ Sauerland's specific arguments about number semantics.
 
 set_option autoImplicit false
 
-namespace Phenomena.Plurals.Studies.Sauerland2003
+namespace Sauerland2003
 
 open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
 open Core (PrivativePair PhiFeatures)
@@ -653,4 +653,4 @@ theorem marked_not_polite :
     isSemanticMarked (PhiFeatures.toPair Core.Gender.neuterF) = true :=
   ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Plurals.Studies.Sauerland2003
+end Sauerland2003

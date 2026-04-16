@@ -43,7 +43,7 @@ OV: B&AK predict CP-first for OV complements, but Schwarzer finds
 DP-first (~77%), supporting bottom-up accounts instead.
 -/
 
-namespace Phenomena.Coordination.Studies.BrueningAlKhalaf2020
+namespace BrueningAlKhalaf2020
 
 open Core.Coordination
 open Core.Tree (Cat)
@@ -499,4 +499,4 @@ coordination precedes the selecting head, making it structurally
 identical to subject position (cf. `bak_subject_cpfirst`).
 -/
 
-end Phenomena.Coordination.Studies.BrueningAlKhalaf2020
+end BrueningAlKhalaf2020

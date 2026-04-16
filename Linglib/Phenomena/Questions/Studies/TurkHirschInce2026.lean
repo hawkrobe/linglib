@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Fragments.Turkish.QuestionParticles
 import Linglib.Phenomena.Questions.PolarAnswers
@@ -30,7 +30,7 @@ Four worlds: Ali sleeps/doesn't × deontic must/free.
 
 -/
 
-namespace Phenomena.Questions.Studies.TurkHirschInce2026
+namespace TurkHirschInce2026
 
 open Core.InformationStructure
 open Semantics.Questions.Hamblin
@@ -212,4 +212,4 @@ open Fragments.Turkish.QuestionParticles
 theorem mi_category_matches :
     mi.cat = UD.UPOS.PART := rfl
 
-end Phenomena.Questions.Studies.TurkHirschInce2026
+end TurkHirschInce2026

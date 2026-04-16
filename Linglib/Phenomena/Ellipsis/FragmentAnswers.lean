@@ -34,7 +34,7 @@ import Linglib.Core.Lexical.Word
 @cite{bergen-goodman-2015} @cite{merchant-2004}
 
 This phenomenon is modeled by @cite{bergen-goodman-2015}'s noisy channel RSA.
-See `Phenomena.Ellipsis.Studies.BergenGoodman2015` for the noisy channel RSA
+See `BergenGoodman2015` for the noisy channel RSA
 model that derives fragment interpretation from noise inference.
 
 Connection to unified noise theory: `Theories/RSA/Core/Noise.lean`
@@ -239,7 +239,7 @@ Even with very low actual noise, fragments work because:
 - Conditional on hearing a fragment, listener knows something was deleted
 - Most likely deletion recovers the correct full sentence
 
-See `Phenomena.Ellipsis.Studies.BergenGoodman2015` for proofs.
+See `BergenGoodman2015` for proofs.
 
 ### Proven Results
 

@@ -46,7 +46,7 @@ open RSA.FreeChoice
 open RSA.FCIAny
 open Semantics.Dynamic.BUS.FreeChoice
 open Semantics.BSML (enrich support BSMLModel BSMLFormula)
-open Phenomena.Modality.Studies.Aloni2022
+open Aloni2022
 open Semantics.PossibilitySemantics
 open Exhaustification.Presuppositional
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
+import Linglib.Core.Constraint.MaxEnt
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Fragments.Farsi.Phonology
 
@@ -42,9 +42,9 @@ Following standard OT/MaxEnt constraint families:
 - **\*HOMOPHONY** (systemic): penalizes identical outputs for distinct inputs
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.Storme2026
+namespace Storme2026
 
-open Phonology.HarmonicGrammar Phonology.Constraints
+open Core.Constraint Phonology.Constraints
 open Fragments.Farsi.Phonology
 open Core.OT
 
@@ -219,4 +219,4 @@ theorem joint_not_separable :
   · rfl
   · native_decide
 
-end Phenomena.PhonologicalAlternation.Studies.Storme2026
+end Storme2026

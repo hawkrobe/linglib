@@ -47,7 +47,7 @@ equivalence) lives in the theory layer: `Delineation.lean` §10.
 - **Hierarchy**: `Theories/Semantics/Comparison/Hierarchy.lean` (Klein ← Kennedy ← Measurement)
 -/
 
-namespace Phenomena.Gradability.Studies.Klein1980
+namespace Klein1980
 
 open Semantics.Comparison.Delineation
 
@@ -327,4 +327,4 @@ theorem kleinPreorder_eq_kampPreorder {E : Type*}
   · intro h c hd
     exact decide_eq_true_eq.mp (h c (Set.mem_univ _) (decide_eq_true_eq.mpr hd))
 
-end Phenomena.Gradability.Studies.Klein1980
+end Klein1980

@@ -68,7 +68,7 @@ and dynamic update semantics:
 - `Semantics.Modality.Disjunction` (Geurts): exhaustivity → uninformative
 -/
 
-namespace Phenomena.Presupposition.Studies.Yagi2025
+namespace Yagi2025
 
 open Core.Duality
 open Core.Presupposition
@@ -524,4 +524,4 @@ theorem orFlex_eq_orBelnap_summary :
     PrProp.orFlex = @PrProp.orBelnap W :=
   funext₂ PrProp.orFlex_eq_orBelnap
 
-end Phenomena.Presupposition.Studies.Yagi2025
+end Yagi2025

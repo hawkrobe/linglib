@@ -23,7 +23,7 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Core.Agent.ExperimentDesign
 import Linglib.Phenomena.Questions.Studies.VanRooy2003
 
-namespace Phenomena.Questions.Studies.HawkinsEtAl2025
+namespace HawkinsEtAl2025
 
 
 /-!
@@ -1243,7 +1243,7 @@ and cost selects mention-some. -/
 
 section NewspaperCostInstance
 
-open Phenomena.Questions.Studies.VanRooy2003
+open VanRooy2003
 
 /-- In the newspaper scenario, "At Shop A" (cost 1) is strictly
 preferred over "At Shop A and Shop B" (cost 2) for any w_c > 0.
@@ -1266,4 +1266,4 @@ theorem newspaper_mentionSome_advantage (w_c : ℚ) :
 
 end NewspaperCostInstance
 
-end Phenomena.Questions.Studies.HawkinsEtAl2025
+end HawkinsEtAl2025

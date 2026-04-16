@@ -96,7 +96,7 @@ Per-kind RSAConfig with `Latent = ComparisonClass`, `World = Height`:
 
 set_option autoImplicit false
 
-namespace Phenomena.Gradability.Studies.TesslerGoodman2022
+namespace TesslerGoodman2022
 
 open Core.Scale (Degree Threshold deg thr allDegrees allThresholds
   Degree.toNat Threshold.toNat)
@@ -711,4 +711,4 @@ theorem ComparisonClass.toTwoLevel_monotone {a b : ComparisonClass}
     (h : a ≤ b) : a.toTwoLevel ≤ b.toTwoLevel := by
   revert h; cases a <;> cases b <;> decide
 
-end Phenomena.Gradability.Studies.TesslerGoodman2022
+end TesslerGoodman2022

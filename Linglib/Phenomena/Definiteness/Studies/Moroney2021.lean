@@ -38,7 +38,7 @@ type of definiteness.
    demonstratives.
 -/
 
-namespace Phenomena.Definiteness.Studies.Moroney2021
+namespace Moroney2021
 
 open Core.Definiteness
 open Fragments.Shan.Definiteness (SpatialRelation)
@@ -632,4 +632,4 @@ theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
       (fun _ => 0) 0   -- μ and n are unused for CLF-for-N
     = Semantics.Lexical.Noun.Classifier.clfForNoun P := rfl
 
-end Phenomena.Definiteness.Studies.Moroney2021
+end Moroney2021

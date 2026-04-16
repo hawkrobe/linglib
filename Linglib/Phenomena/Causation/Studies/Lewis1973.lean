@@ -51,7 +51,7 @@ strictly stronger.
   later revision to "causation as influence."
 -/
 
-namespace Phenomena.Causation.Studies.Lewis1973
+namespace Lewis1973
 
 open Core.StructuralEquationModel
 open Semantics.Causation.CCSelection
@@ -338,7 +338,7 @@ theorem single_cause_dependence :
 test case for Lewis's analysis. The manual and automatic pathways
 create overdetermination-like structure when both are available. -/
 
-open Phenomena.Causation.Studies.BarAsherSiegal2026
+open BarAsherSiegal2026
 
 /-- Lewis's but-for for the door model: handle is necessary in the
     single-pathway model. -/
@@ -541,4 +541,4 @@ theorem lewis_vs_def10b_chain :
     causallySufficient chainDyn Situation.empty va vc = true := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
-end Phenomena.Causation.Studies.Lewis1973
+end Lewis1973

@@ -84,7 +84,7 @@ canonical entry propagate automatically. Elliott's original
 exactly believing the disjunction.
 -/
 
-namespace Phenomena.Questions.Studies.Elliott2017
+namespace Elliott2017
 
 open Semantics.Attitudes.CDistributivity (QuestionDen IsCDistributive)
 open Semantics.Attitudes.EmbeddingConstraints
@@ -819,4 +819,4 @@ theorem karttunen_predicts_false (w : Bool) :
 
 end Witness
 
-end Phenomena.Questions.Studies.Elliott2017
+end Elliott2017

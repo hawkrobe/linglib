@@ -49,7 +49,7 @@ not just atomic referents. A group is [+author] iff it **contains** the speaker;
 
 -/
 
-namespace Phenomena.Agreement.Studies.Harbour2016
+namespace Harbour2016
 
 open Core.Person
 open Core.Number (singularF dualF pluralF)
@@ -364,7 +364,7 @@ theorem specLevel_agrees_with_segments (p : PersonLevel) :
     marking). What matters is that every attested category IS generated. -/
 
 open Minimalism.Agreement.FeatureRecursion (HarbourConfig)
-open Phenomena.Agreement.Studies.Corbett2000
+open Corbett2000
 
 /-- Every attested number system's values are a subset of what some
     well-formed Harbour configuration generates.
@@ -422,4 +422,4 @@ theorem bridge_configs_wellFormed :
     (HarbourConfig.mk false true true false false).wellFormed = true
     := by decide
 
-end Phenomena.Agreement.Studies.Harbour2016
+end Harbour2016

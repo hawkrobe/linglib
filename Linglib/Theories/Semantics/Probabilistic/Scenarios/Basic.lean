@@ -114,7 +114,7 @@ Context words activate scenarios:
 
 This is modeled as P(scenario | context-words).
 
-See `Phenomena.Polysemy.Studies.ErkHerbelot2024` for worked disambiguation
+See `ErkHerbelot2024` for worked disambiguation
 examples using these types.
 -/
 

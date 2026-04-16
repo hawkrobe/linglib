@@ -55,7 +55,7 @@ This file connects three layers:
 
 set_option autoImplicit false
 
-namespace Phenomena.Politeness.Studies.Wang2023
+namespace Wang2023
 
 open Core (PrivativePair PhiFeatures)
 open Core.OT (NamedConstraint ConstraintFamily mkTableau
@@ -685,4 +685,4 @@ theorem ihon_structurally_redundant :
 
 end HonLevelBridge
 
-end Phenomena.Politeness.Studies.Wang2023
+end Wang2023

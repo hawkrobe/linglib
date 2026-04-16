@@ -55,7 +55,7 @@ endpoint — instantiated with `GenderNode` as the feature type. Each
 prediction is a verified theorem.
 -/
 
-namespace Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
+namespace AdamsonAnagnostopoulou2025
 
 open _root_.Minimalism (Interpretability)
 
@@ -841,4 +841,4 @@ theorem nary_subsumes_binary_greek :
     resolveN [gkHF, gkHM] = resolve gkHF gkHM := by
   exact resolveN_binary gkHF gkHM
 
-end Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
+end AdamsonAnagnostopoulou2025

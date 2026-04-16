@@ -30,7 +30,7 @@ constraints on alternatives prevent the symmetric alternative
 from being generated, licensing the scalar implicature.
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.Katzir2007
+namespace Katzir2007
 
 open Core.Tree
 open Semantics.Composition.Tree
@@ -117,4 +117,4 @@ theorem subtrees_lack_conjp :
 -- ConjP and NegP structure not available in L(φ), so it is not a
 -- structural alternative. The scalar implicature ¬"every" is licensed.
 
-end Phenomena.ScalarImplicatures.Studies.Katzir2007
+end Katzir2007

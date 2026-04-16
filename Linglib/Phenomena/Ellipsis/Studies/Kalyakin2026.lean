@@ -45,7 +45,7 @@ share the same root [vGO, vBE]; only Voice differs. Since Voice is outside
 vVPE's deletion domain, mismatches in Voice are tolerated.
 -/
 
-namespace Phenomena.Ellipsis.Studies.Kalyakin2026
+namespace Kalyakin2026
 
 open Core.Verbs
 open Minimalism
@@ -365,4 +365,4 @@ theorem persian_stricter_than_dargwa :
     persianVVPE.virRequired = true ∧
     muiraDargwaVVPE.virRequired = false := ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Ellipsis.Studies.Kalyakin2026
+end Kalyakin2026

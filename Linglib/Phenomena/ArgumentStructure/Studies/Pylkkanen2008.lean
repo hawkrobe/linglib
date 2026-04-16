@@ -51,7 +51,7 @@ import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
   (transitive, anticausative) using the same infrastructure.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Pylkkanen2008
+namespace Pylkkanen2008
 
 open Minimalism
 
@@ -275,7 +275,7 @@ Applicative decomposition. While the tree shapes differ (Larson uses
 one VP-shell layer; modern theory uses Voice and Appl heads), the
 c-command hierarchy among DP arguments is identical: agent > goal/IO > theme/DO. -/
 
-open Phenomena.ArgumentStructure.Studies.Larson1988 in
+open Larson1988 in
 
 /-- @cite{larson-1988}'s DOC and the modern Voice + low-Appl derivation
     produce the same c-command hierarchy: IO asymmetrically c-commands DO.
@@ -292,4 +292,4 @@ theorem larson_modern_same_hierarchy :
     cCommandsInB ditransitiveTree DP_letter_t DP_mary_t = false := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
-end Phenomena.ArgumentStructure.Studies.Pylkkanen2008
+end Pylkkanen2008

@@ -35,7 +35,7 @@ rejection).
 
 -/
 
-namespace Phenomena.Modality.Studies.Khoo2015
+namespace Khoo2015
 
 /-! ## Experimental Conditions -/
 
@@ -131,4 +131,4 @@ theorem nsf_predicts_khoo_pattern
     MI (mightSimple p) smith ∧ rejectionLicensed (mightSimple p) beth :=
   might_truth_acceptance_dissociate p smith beth h_smith h_beth
 
-end Phenomena.Modality.Studies.Khoo2015
+end Khoo2015

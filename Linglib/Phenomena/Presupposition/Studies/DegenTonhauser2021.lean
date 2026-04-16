@@ -51,7 +51,7 @@ within the RSA framework, which standardly assumes utterance interpretation
 is modulated by listeners' prior beliefs.
 -/
 
-namespace Phenomena.Presupposition.Studies.DegenTonhauser2021
+namespace DegenTonhauser2021
 
 open Phenomena.Presupposition.Gradience
 
@@ -326,4 +326,4 @@ theorem all_predicates_take_clause_complement (p : Predicate) :
 
 end FragmentBridge
 
-end Phenomena.Presupposition.Studies.DegenTonhauser2021
+end DegenTonhauser2021

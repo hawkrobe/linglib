@@ -48,7 +48,7 @@ so the M&S derivation is the definition itself, not a theorem.
 
 -/
 
-namespace Phenomena.Coordination.Studies.BillEtAl2025
+namespace BillEtAl2025
 
 open Core.Coordination
 open Core.IntensionalLogic (Frame)
@@ -596,4 +596,4 @@ theorem boundness_confound :
       (·.effect == "sentence")).all (·.significant == false) = true := by
   native_decide
 
-end Phenomena.Coordination.Studies.BillEtAl2025
+end BillEtAl2025

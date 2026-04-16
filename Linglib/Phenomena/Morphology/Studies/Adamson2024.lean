@@ -56,7 +56,7 @@ and Fragment data from `Fragments/Teop/Nouns.lean` and
 `Fragments/Jarawara/PossessedNouns.lean`.
 -/
 
-namespace Phenomena.Morphology.Studies.Adamson2024
+namespace Adamson2024
 
 open Morphology.DM
 open Morphology.DM.VI
@@ -603,4 +603,4 @@ theorem italian_body_part_dominance :
       ["arm", "finger", "knee", "lip", "bone", "eyebrow"].contains n.gloss)).length = 6 := by
   native_decide
 
-end Phenomena.Morphology.Studies.Adamson2024
+end Adamson2024

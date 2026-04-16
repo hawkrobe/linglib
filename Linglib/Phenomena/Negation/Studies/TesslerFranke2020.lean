@@ -48,7 +48,7 @@ The gap region θ₂ ≤ x ≤ θ₁ is "not unhappy" but NOT "happy".
 
 set_option autoImplicit false
 
-namespace Phenomena.Negation.Studies.TesslerFranke2020
+namespace TesslerFranke2020
 
 open Core.Scale (Degree Threshold deg thr Degree.toNat Threshold.toNat)
 open Semantics.Degree (positiveMeaning negativeMeaning)
@@ -251,4 +251,4 @@ theorem not_unhappy_more_positive_than_not_happy :
 The ordering `happy_implies_high` + `not_unhappy_prefers_gap` together
 show that "not unhappy" ≠ "happy": they peak in different regions. -/
 
-end Phenomena.Negation.Studies.TesslerFranke2020
+end TesslerFranke2020

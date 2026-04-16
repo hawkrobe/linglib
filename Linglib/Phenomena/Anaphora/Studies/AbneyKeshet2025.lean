@@ -30,7 +30,7 @@ anaphora, modal subordination, and the exists/sigma bridge.
 9. **Modal subordination** — MUST/MIGHT on two-world intensional model
 -/
 
-namespace Phenomena.Anaphora.Studies.AbneyKeshet2025
+namespace AbneyKeshet2025
 
 open Semantics.PIP
 open Semantics.PIP.Bridges (single plural setEvery_eq_pipEvery)
@@ -466,4 +466,4 @@ theorem wolf_might_not_enter :
 end ModalSubordination
 
 
-end Phenomena.Anaphora.Studies.AbneyKeshet2025
+end AbneyKeshet2025

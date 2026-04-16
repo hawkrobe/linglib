@@ -30,7 +30,7 @@ computed in tandem at every compositional step.
 
 import Linglib.Theories.Semantics.Exhaustification.Operators
 
-namespace Phenomena.ScalarImplicatures.Studies.Chierchia2004
+namespace Chierchia2004
 
 open Exhaustification
 
@@ -395,4 +395,4 @@ theorem scalarLicensing_strongerThan_strength (φ : Prop' World)
     strengthCondition (scalarLicensing .strongerThan φ ALT) :=
   krifkaRule_satisfies_strength φ ALT
 
-end Phenomena.ScalarImplicatures.Studies.Chierchia2004
+end Chierchia2004

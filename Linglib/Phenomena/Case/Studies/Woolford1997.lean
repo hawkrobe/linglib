@@ -56,7 +56,7 @@ with Nez Perce as the primary case study.
   showing where the theories agree and diverge
 -/
 
-namespace Phenomena.Case.Studies.Woolford1997
+namespace Woolford1997
 
 open Minimalism
 
@@ -545,4 +545,4 @@ theorem agreement_asymmetry_is_woolford_specific :
 theorem erg_nonstructural :
     WCase.erg.kind = .lexical := rfl
 
-end Phenomena.Case.Studies.Woolford1997
+end Woolford1997

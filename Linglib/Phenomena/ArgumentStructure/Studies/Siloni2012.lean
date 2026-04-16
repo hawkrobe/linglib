@@ -36,7 +36,7 @@ embedding.
   verbs denote singular events that do not distribute over atomic agents
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Siloni2012
+namespace Siloni2012
 
 open Phenomena.ArgumentStructure.Typology
 open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile)
@@ -441,4 +441,4 @@ theorem discontinuity_bridge (f : RecipFormation) :
     (predictedProperties f).discontinuous = f.allowsDiscontinuous := by
   cases f <;> rfl
 
-end Phenomena.ArgumentStructure.Studies.Siloni2012
+end Siloni2012

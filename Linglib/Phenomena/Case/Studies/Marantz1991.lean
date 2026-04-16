@@ -74,7 +74,7 @@ determines case *assignment* priority, the latter determines agreement
 
 -/
 
-namespace Phenomena.Case.Studies.Marantz1991
+namespace Marantz1991
 
 open Minimalism
 open Fragments.Georgian.Agreement
@@ -476,8 +476,8 @@ theorem burzio_from_voice :
     "Split ergativity of the Georgian sort simply exploits this lack of
     correlation." This connects to the agreement data formalized in
     `Fragments.Georgian.Agreement` and verified in
-    `Phenomena.Agreement.Studies.Aissen2003` and
-    `Phenomena.Agreement.Studies.BejarRezac2009`. -/
+    `Aissen2003` and
+    `BejarRezac2009`. -/
 
 /-- Case direction changes between present and aorist. -/
 theorem case_direction_changes :
@@ -514,4 +514,4 @@ theorem case_splits_but_agreement_does_not :
   · decide
   · native_decide
 
-end Phenomena.Case.Studies.Marantz1991
+end Marantz1991

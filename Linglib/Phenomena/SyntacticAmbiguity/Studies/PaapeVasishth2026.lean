@@ -51,7 +51,7 @@ bimodality (@cite{van-schijndel-linzen-2021}, @cite{huang-etal-2024}).
   inference (Sedivy) and context-sensitive attachment (§ 9)
 -/
 
-namespace Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
+namespace PaapeVasishth2026
 
 open Phenomena.SyntacticAmbiguity
 
@@ -668,4 +668,4 @@ theorem shared_mechanism :
 
 end UniquenessBridge
 
-end Phenomena.SyntacticAmbiguity.Studies.PaapeVasishth2026
+end PaapeVasishth2026

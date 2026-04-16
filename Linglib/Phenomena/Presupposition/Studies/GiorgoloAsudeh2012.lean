@@ -50,7 +50,7 @@ the continuation-based approach: each monad isolates one kind of
 side-effect, and monad transformers compose them modularly.
 -/
 
-namespace Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
+namespace GiorgoloAsudeh2012
 
 open Semantics.Composition.WriterMonad (Writer)
 
@@ -351,4 +351,4 @@ to different side-effects (CI propositions vs cardinality tests), confirming
 @cite{shan-2001}'s insight that monads capture recurring compositional
 structure in natural language. -/
 
-end Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
+end GiorgoloAsudeh2012

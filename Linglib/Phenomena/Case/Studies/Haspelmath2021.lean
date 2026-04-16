@@ -1,6 +1,6 @@
 import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Phenomena.Case.Studies.Aissen2003
 import Linglib.Phenomena.Case.Studies.DeHoopMalchukov2008
 import Linglib.Phenomena.Alignment.Typology
@@ -60,13 +60,13 @@ alternation) are noted but require additional infrastructure.
 
 -/
 
-namespace Phenomena.Case.Studies.Haspelmath2021
+namespace Haspelmath2021
 
 open Core.Prominence
 open Core.FormFrequency
 open Core.ConstraintEvaluation
-open Phenomena.Case.Studies.Aissen2003
-open Phenomena.Case.Studies.DeHoopMalchukov2008
+open Aissen2003
+open DeHoopMalchukov2008
 open Phenomena.Alignment.Typology
 
 -- ============================================================================
@@ -511,4 +511,4 @@ theorem scenario_frequency_consistent :
         then s1.frequencyClass > s2.frequencyClass
         else true)) = true := by native_decide
 
-end Phenomena.Case.Studies.Haspelmath2021
+end Haspelmath2021

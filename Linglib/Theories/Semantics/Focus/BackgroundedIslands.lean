@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.QUD
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Theories.Semantics.Focus.Interpretation
 

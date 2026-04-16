@@ -45,7 +45,7 @@ This module captures theory-neutral denial data and the `DenialType →
 ContentLayer` mapping. The directed reverse anaphora (RA*) mechanism
 is formalized in `Theories.Semantics.Dynamic.DRT.Basic` (`LDRS.directedRA`),
 with worked examples and Off→DenialDatum agreement proofs in
-`Phenomena.Negation.Studies.VanDerSandtMaier2003`.
+`VanDerSandtMaier2003`.
 -/
 
 namespace Phenomena.Negation.Denial

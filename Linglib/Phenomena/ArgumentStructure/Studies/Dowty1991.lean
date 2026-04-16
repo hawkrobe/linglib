@@ -27,7 +27,7 @@ succeed and where they diverge from the modern approach.
 - §12: Agentivity × telicity → unaccusativity (Table 1)
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Dowty1991
+namespace Dowty1991
 
 open Core.Verbs
 open Semantics.Lexical.Verb.EntailmentProfile
@@ -385,4 +385,4 @@ theorem die_asp_grimm_consistent :
     (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion = .accAbs :=
   ⟨by native_decide, by native_decide, by native_decide⟩
 
-end Phenomena.ArgumentStructure.Studies.Dowty1991
+end Dowty1991

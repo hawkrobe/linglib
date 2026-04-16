@@ -43,7 +43,7 @@ gives `F(∧)(½, ½) = 0` for non-contradictory `⟦φ ∧ φ⟧`. This
 motivates the move to supervaluation / probability over completions.
 -/
 
-namespace Phenomena.Gradability.Studies.Kamp1975
+namespace Kamp1975
 
 open Semantics.Lexical.Adjective.Classification
 
@@ -281,4 +281,4 @@ theorem alleged_not_privative : ¬isPrivative allegedAdj := by
 
 end Witnesses
 
-end Phenomena.Gradability.Studies.Kamp1975
+end Kamp1975

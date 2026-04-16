@@ -15,7 +15,7 @@ See `Theories/Semantics/Mood/Basic.lean` for the semantic operators (SUBJ, IND)
 that interpret these categories.
 -/
 
-namespace Core.Discourse
+namespace Core
 
 /--
 Grammatical mood categories.
@@ -87,4 +87,4 @@ theorem subj_opens_eventuality : GramMood.subjunctive.effect.eventualityOpen = t
 theorem mood_effects_differ :
     GramMood.indicative.effect ≠ GramMood.subjunctive.effect := by decide
 
-end Core.Discourse
+end Core

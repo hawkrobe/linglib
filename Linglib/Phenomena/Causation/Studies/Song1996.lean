@@ -6,7 +6,7 @@ import Linglib.Phenomena.Causation.Typology
 @cite{song-1996}
 
 Connects the Japanese causative -(s)ase morpheme order analysis from
-`Phenomena.Morphology.Studies.HahnDegenFutrell2021` to @cite{song-1996}'s causative typology
+`HahnDegenFutrell2021` to @cite{song-1996}'s causative typology
 in `Phenomena.Causation.Typology`.
 
 The key bridge: Japanese -(s)ase occupies the valence slot (innermost
@@ -14,7 +14,7 @@ functional suffix), consistent with its classification as a COMPACT
 morphological causative.
 -/
 
-namespace Phenomena.Causation.Studies.Song1996
+namespace Song1996
 
 /-! ### Bridge: Japanese -(s)ase = Song's COMPACT morphological causative
 
@@ -38,4 +38,4 @@ This is consistent with the slot being valence (innermost). -/
 theorem japanese_causative_is_compact :
     Phenomena.Causation.Typology.japaneseAse.constructionType = .compact := by native_decide
 
-end Phenomena.Causation.Studies.Song1996
+end Song1996

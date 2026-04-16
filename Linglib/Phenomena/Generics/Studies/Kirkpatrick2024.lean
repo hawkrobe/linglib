@@ -39,7 +39,7 @@ makes exceptional individuals salient before the general claim is assessed.
   explaining prevalence-based judgments — complementary, not competing
 -/
 
-namespace Phenomena.Generics.Studies.Kirkpatrick2024
+namespace Kirkpatrick2024
 
 open Semantics.Dynamic.Generics
 
@@ -433,4 +433,4 @@ theorem static_vs_dynamic_divergence :
   ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
 
 
-end Phenomena.Generics.Studies.Kirkpatrick2024
+end Kirkpatrick2024

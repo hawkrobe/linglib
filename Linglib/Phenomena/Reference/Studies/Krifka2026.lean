@@ -36,7 +36,7 @@ He₁ is afraid of them₂,₄.
 ```
 -/
 
-namespace Phenomena.Reference.Studies.Krifka2026
+namespace Krifka2026
 
 open Semantics.Dynamic.Core (ConceptDRef DRefVal)
 open Semantics.Dynamic.Core.KindAnaphora
@@ -210,4 +210,4 @@ theorem kind_vs_concept_distinction :
     derivesKind .emptyPP = false :=
   ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Reference.Studies.Krifka2026
+end Krifka2026

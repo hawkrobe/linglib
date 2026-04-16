@@ -36,7 +36,7 @@ the grammar of adjectival mildness. *Natural Language Semantics* 33, 169--205.
 - `⟦POS MPA⟧ = λx. μ_value(x)(w) ≥ s(MPA)` — positive form
 -/
 
-namespace Phenomena.Gradability.Studies.Beltrama2025
+namespace Beltrama2025
 
 open Core.Scale (Boundedness)
 open Semantics.Degree (PositiveStandard interpretiveEconomy positiveMeaning)
@@ -444,4 +444,4 @@ theorem ie_divergence_on_value_scale :
     mpaStandard ≠ minsaaStandard := by
   exact ⟨rfl, rfl, rfl, rfl, by decide, by decide⟩
 
-end Phenomena.Gradability.Studies.Beltrama2025
+end Beltrama2025

@@ -69,7 +69,7 @@ is derived from it via `AnimacyFeatures.toCoreClass`.
   `Kramer2020.lean` (n-head typology)
 -/
 
-namespace Phenomena.Agreement.Studies.HalpertHammerly2026
+namespace HalpertHammerly2026
 
 open Fragments.Bantu
 open Core.Person (Features)
@@ -461,4 +461,4 @@ theorem interpretability_alignment :
 
 end KramerBridge
 
-end Phenomena.Agreement.Studies.HalpertHammerly2026
+end HalpertHammerly2026

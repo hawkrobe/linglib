@@ -46,7 +46,7 @@ is `CyclicChain` from Position.lean:
 
 -/
 
-namespace Phenomena.FillerGap.Studies.Erlewine2018
+namespace Erlewine2018
 
 open Fragments.TobaBatak
 
@@ -180,7 +180,7 @@ theorem nonDP_unrestricted :
     - @cite{cole-hermon-2008}: VP moves to Spec,TP; subject stranded in Spec,vP
     - @cite{erlewine-2018}: vP moves to Spec,CP; subject stranded in Spec,TP -/
 theorem predicate_fronting_yields_vi_order :
-    Phenomena.WordOrder.Studies.ColeHermon2008.tobaBatakVOS.final.phonYield.head?
+    ColeHermon2008.tobaBatakVOS.final.phonYield.head?
       = some "mangatuk" := by native_decide
 
 -- ============================================================================
@@ -197,7 +197,7 @@ Both derive the same VOS surface order, but the derived tree is structurally
 different: Erlewine's has an additional CP layer, and the fronted constituent
 is vP (containing a subject trace) rather than bare VP. -/
 
-open Phenomena.WordOrder.Studies.ColeHermon2008 (v_mangatuk n_biangi n_dakdanakan vp tobaBatakVOS)
+open ColeHermon2008 (v_mangatuk n_biangi n_dakdanakan vp tobaBatakVOS)
 open Minimalism
 
 /-- Little v (Erlewine's analysis, unique ID). -/
@@ -277,4 +277,4 @@ theorem vP_ccommands_subject_erlewine :
 theorem same_vp :
     tobaBatakVOS.stageAt 1 = erlewineDerivation.stageAt 1 := by native_decide
 
-end Phenomena.FillerGap.Studies.Erlewine2018
+end Erlewine2018

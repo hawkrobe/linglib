@@ -49,7 +49,7 @@ mean the content is MORE not-at-issue (more backgrounded).
 
 -/
 
-namespace Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018
+namespace TonhauserBeaverDegen2018
 
 -- ════════════════════════════════════════════════════
 -- § Experiment 1a: Nine Expression Types
@@ -435,4 +435,4 @@ theorem shared_predicates_intermediate_atissueness :
     verbAtIssueness Predicate.beAnnoyed < 1/2 := by
   native_decide
 
-end Phenomena.Presupposition.Studies.TonhauserBeaverDegen2018
+end TonhauserBeaverDegen2018

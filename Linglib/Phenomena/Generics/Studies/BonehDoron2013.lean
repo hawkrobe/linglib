@@ -46,7 +46,7 @@ the simple past tense form, the periphrastic *used to*, and *would*.
   The `sameObjectParallel` theorem makes this connection explicit.
 -/
 
-namespace Phenomena.Generics.Studies.BonehDoron2013
+namespace BonehDoron2013
 
 open Semantics.Lexical.CovertQuantifier
 open Semantics.Lexical.Noun.Kind.Generics (Situation traditionalGEN)
@@ -484,4 +484,4 @@ theorem shared_skeleton :
       covertQ occs characteristic activity) :=
   ⟨λ _ _ _ _ => rfl, λ _ _ _ => rfl⟩
 
-end Phenomena.Generics.Studies.BonehDoron2013
+end BonehDoron2013

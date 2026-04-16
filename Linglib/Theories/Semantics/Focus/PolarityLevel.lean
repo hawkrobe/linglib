@@ -1,5 +1,5 @@
 import Linglib.Core.Polarity
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 
 /-!
 # Polarity-Marking Levels

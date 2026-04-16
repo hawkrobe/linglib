@@ -76,7 +76,7 @@ LI = 0.033, LU = 0.010, vanilla = 0.
 
 set_option autoImplicit false
 
-namespace Phenomena.ScalarImplicatures.Studies.FrankeBergen2020
+namespace FrankeBergen2020
 
 open Real (rpow rpow_nonneg)
 
@@ -672,4 +672,4 @@ unavailable to the smaller models. Only GI can access the reading that
 uniquely identifies wNS, explaining its superior production predictions
 for SS (Figure 5, Figure 7c). -/
 
-end Phenomena.ScalarImplicatures.Studies.FrankeBergen2020
+end FrankeBergen2020

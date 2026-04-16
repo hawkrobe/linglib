@@ -37,7 +37,7 @@ This file: concrete end-to-end verification
 ```
 -/
 
-namespace Phenomena.Reference.Studies.Schlenker2003
+namespace Schlenker2003
 
 open Core.Context
 open Semantics.Attitudes.ContextQuantification
@@ -183,4 +183,4 @@ theorem alice_not_logophoric :
     isLogophoric .alice shiftedT .local = false := by
   native_decide
 
-end Phenomena.Reference.Studies.Schlenker2003
+end Schlenker2003

@@ -21,7 +21,7 @@ predictions and cross-linguistic data from @cite{myler-2016}.
   nominal structure (inalienable/alienable)
 -/
 
-namespace Phenomena.Possession.Studies.Myler2016
+namespace Myler2016
 
 open Minimalism
 
@@ -232,4 +232,4 @@ theorem possession_type_orthogonal_to_copula :
     PossessionType.inalienable.canAffectGender = true ∧
     PossessionType.alienable.canAffectGender = false := ⟨rfl, rfl⟩
 
-end Phenomena.Possession.Studies.Myler2016
+end Myler2016

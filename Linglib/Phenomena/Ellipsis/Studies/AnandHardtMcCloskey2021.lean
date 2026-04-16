@@ -26,7 +26,7 @@ a 4,700-example annotated data set of naturally occurring English sluices.
 
 -/
 
-namespace Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
+namespace AnandHardtMcCloskey2021
 
 -- ============================================================================
 -- § 1: Sluice Classification
@@ -408,4 +408,4 @@ theorem merchant_deletion_domain_matches_corpus :
     MismatchDimension.corpusCount .argumentStructure = 0 :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
+end AnandHardtMcCloskey2021

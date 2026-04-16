@@ -42,7 +42,7 @@ This file imports and connects existing infrastructure:
 - `LeftPeriphery.lean`: SelectionClass derivation
 -/
 
-namespace Phenomena.Questions.Studies.Uegaki2022
+namespace Uegaki2022
 
 open Semantics.Attitudes.CDistributivity
 open Semantics.Attitudes.EmbeddingConstraints
@@ -538,4 +538,4 @@ more nuanced analysis — same TSP, flipped assertion — is left as future
 refinement.
 -/
 
-end Phenomena.Questions.Studies.Uegaki2022
+end Uegaki2022

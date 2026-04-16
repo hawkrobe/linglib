@@ -39,7 +39,7 @@ This study file imports and bridges:
 - `Diagnostics` (empirical diagnostic data)
 -/
 
-namespace Phenomena.Presupposition.Studies.RobertsSimons2024
+namespace RobertsSimons2024
 
 open Semantics.Presupposition.OntologicalPreconditions
 open Semantics.Lexical.Verb.ChangeOfState
@@ -442,4 +442,4 @@ theorem selectional_end_to_end (req event : W → Bool) (w : W) :
 end EndToEnd
 
 
-end Phenomena.Presupposition.Studies.RobertsSimons2024
+end RobertsSimons2024

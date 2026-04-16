@@ -28,15 +28,15 @@ verifies that the *cross-cutting invariants* hold:
   Boundedness) converge at the same licensing prediction
 -/
 
-namespace Phenomena.TenseAspect.Studies.AspectualConsistency
+namespace AspectualConsistency
 
 open Core.Verbs
 open Fragments.English.Predicates.Verbal
 open Semantics.Events.Krifka1998 (VerbIncClass)
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
-open Phenomena.TenseAspect.Studies.Krifka1998 (predictsGRAD)
-open Phenomena.Plurals.Studies.Champollion2017 (predictsSSR)
+open Krifka1998 (predictsGRAD)
+open Champollion2017 (predictsSSR)
 open Core.Path (PathShape)
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
 
@@ -504,4 +504,4 @@ def daVendlerConsistent (v : VerbEntry) : Bool :=
 theorem all_verbs_da_vendler_consistent :
     allVerbs.all daVendlerConsistent = true := by native_decide
 
-end Phenomena.TenseAspect.Studies.AspectualConsistency
+end AspectualConsistency

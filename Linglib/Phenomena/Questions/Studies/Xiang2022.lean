@@ -36,7 +36,7 @@ Empirical generalizations from the paper, with exact example numbers:
 7. Table 3 summary: RelExh vs Dayal's EP predictions
 -/
 
-namespace Phenomena.Questions.Studies.Xiang2022
+namespace Xiang2022
 
 /-- Whether a question receives mention-some, mention-all, or is ambiguous
 between the two readings. -/
@@ -752,4 +752,4 @@ theorem canQ_ho_ms_agree :
     isMentionSome findChairDP {.w0, .w1, .w2} {.a, .b} foCells = true := by
   exact ⟨canQ_ho_foxAns_w0, canQ_relExh_passes, canQ_mentionSome⟩
 
-end Phenomena.Questions.Studies.Xiang2022
+end Xiang2022

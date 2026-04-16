@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 
 /-!
 # French Polarity-Marking Strategies

@@ -32,7 +32,7 @@ patient restrictions, separation geometry, and agent control.
 
 -/
 
-namespace Phenomena.Causation.Studies.SpalekMcNally2026
+namespace SpalekMcNally2026
 
 open Core.Verbs
 open Fragments.English.Predicates.Verbal
@@ -133,4 +133,4 @@ theorem tear_preferred_for_rasgar :
     (rasgarToEnglish.filter (·.targetVerb == "rend")).head!.instances := by
   native_decide
 
-end Phenomena.Causation.Studies.SpalekMcNally2026
+end SpalekMcNally2026

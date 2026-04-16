@@ -44,7 +44,7 @@ Bedeutung 27*, pp. 674–692.
 - **latentPrior** = `goalPrior condition` (concentrated or uniform)
 -/
 
-namespace Phenomena.Gradability.Studies.WaldonEtAl2023
+namespace WaldonEtAl2023
 
 open Semantics.Degree.Aggregation
 
@@ -323,4 +323,4 @@ theorem flashlight_additive_positive :
 theorem artifact_aggregation_is_utilitarian :
     AggregationType.utilitarian ≠ .counting := by decide
 
-end Phenomena.Gradability.Studies.WaldonEtAl2023
+end WaldonEtAl2023

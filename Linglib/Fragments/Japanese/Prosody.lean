@@ -36,7 +36,7 @@ open Core.Prosody
 open Phonology.Accent (defaultAccentAAR latinStressRule accentToTones
   LevelTone shortN2CompoundAccent longN2CompoundAccent)
 open Phonology.Syllable (SyllWeight)
-open Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
+open BeckmanPierrehumbert1986
 
 -- ============================================================================
 -- § 1: Lexical Accent
@@ -141,7 +141,7 @@ theorem kami_paper_unaccented : kami_paper.isAccented = false := rfl
 
 /-- Japanese accent is lexical. -/
 theorem japanese_accent_is_lexical :
-    (Phenomena.Intonation.Studies.BeckmanPierrehumbert1986.japanese).accentSpec
+    (BeckmanPierrehumbert1986.japanese).accentSpec
     = .lexical := rfl
 
 /-- The Japanese pitch accent shape is H*+L (a single bitonal accent). -/

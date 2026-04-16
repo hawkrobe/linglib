@@ -91,9 +91,9 @@ direction (green_circle: 115/180 = 64%), NOT salience.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.QingFranke2015
+namespace QingFranke2015
 
-open Phenomena RSA BigOperators Core
+open RSA BigOperators Core
 open Real (exp log exp_pos exp_lt_exp)
 
 -- ============================================================================
@@ -946,4 +946,4 @@ theorem cost_is_q2 :
     QuantityViolation.overInformative.submaxim :=
   ⟨no_cost_symmetry, cost_breaks_symmetry, rfl, violations_independent⟩
 
-end Phenomena.Reference.Studies.QingFranke2015
+end QingFranke2015

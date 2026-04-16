@@ -3,7 +3,7 @@ import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.German.V2
@@ -75,7 +75,7 @@ def V2Data.toProfile (d : V2Data) : V2Profile where
     | .Excl => d.exclV2  | .Imp  => d.impV2   | .Fin  => d.embFinV2
     | .Wh   => d.embQV2
 
-namespace Phenomena.WordOrder.Studies.Westergaard2009
+namespace Westergaard2009
 
 open Minimalism (ForceHead V2Profile WhElementStatus whBlocksVerbMovement)
 open Core.InformationStructure (DiscourseStatus)
@@ -732,4 +732,4 @@ theorem english_fewer_active :
 theorem nordmore_fewer_active :
     nordmoreNorwegian.toProfile.activeCount < stdNorwegian.toProfile.activeCount := by native_decide
 
-end Phenomena.WordOrder.Studies.Westergaard2009
+end Westergaard2009

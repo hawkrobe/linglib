@@ -43,7 +43,7 @@ reciprocity is a species of cumulativity, as @cite{langendoen-1978}
 first observed and @cite{haug-dalrymple-2020} §1 reaffirms.
 -/
 
-namespace Phenomena.Anaphora.Studies.HaugDalrymple2020
+namespace HaugDalrymple2020
 
 open Semantics.Reference.Reciprocals
 
@@ -191,4 +191,4 @@ theorem scope_parasitic_on_antecedent :
     -- Narrow scope = group identity; no c-command required (can be nonlocal)
     narrowScopeRelations.1 = .groupIdentity := ⟨rfl, rfl⟩
 
-end Phenomena.Anaphora.Studies.HaugDalrymple2020
+end HaugDalrymple2020

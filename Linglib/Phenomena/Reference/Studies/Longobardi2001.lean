@@ -42,7 +42,7 @@ into a 2×2 parametric space that also predicts PN syntax.
 
 -/
 
-namespace Phenomena.Reference.Studies.Longobardi2001
+namespace Longobardi2001
 
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping canDenoteKind)
 open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel barePluralTranslation
@@ -930,4 +930,4 @@ theorem carlson_longobardi_integration :
     (bnGenericAvailable romance (predicateLevelToEnvironment .stageLevel) = false) :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Reference.Studies.Longobardi2001
+end Longobardi2001

@@ -13,7 +13,7 @@ deontic model and verifies the FC predictions computationally.
 
 -/
 
-namespace Phenomena.Modality.Studies.Aloni2022
+namespace Aloni2022
 
 open Semantics.BSML
 
@@ -143,4 +143,4 @@ def stateBasedModel : BSMLModel PermissionWorld where
 #guard decide (support stateBasedModel (BSMLFormula.poss (.atom "coffee")) freeChoiceTeam)
 #guard decide (support stateBasedModel (BSMLFormula.poss (.atom "tea")) freeChoiceTeam)
 
-end Phenomena.Modality.Studies.Aloni2022
+end Aloni2022

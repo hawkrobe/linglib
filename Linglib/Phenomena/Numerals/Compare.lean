@@ -47,7 +47,7 @@ WoodinEtAl2024 NumericalExprs (extended)
 namespace Phenomena.Numerals.Compare
 
 open Core.Roundness
-open Phenomena.Numerals.Studies.WoodinEtAl2024
+open WoodinEtAl2024
 open Implicature.Constraints.NumericalExpressions
 open Semantics.Lexical.Numeral.Precision
 open Core.Scale (HasDegree)
@@ -230,7 +230,7 @@ The prediction: negative valence → reversed framing, positive/neutral → stan
 section Bridge7
 
 open Fragments.English.NumeralModifiers
-open Phenomena.Numerals.Studies.ClausWalch2024
+open ClausWalch2024
 
 /-- "at most" has negative evaluative valence, which predicts reversed framing.
 

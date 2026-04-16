@@ -66,7 +66,7 @@ condition from `Semantics.Conditionals.Assertability`: a conditional
 
 set_option autoImplicit false
 
-namespace Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
+namespace GrusdtLassiterFranke2022
 
 open Core.CausalBayesNet
 open Semantics.Conditionals.Assertability
@@ -627,4 +627,4 @@ theorem single_cause_perfection (cause effect : Variable) :
   intro _ _
   exact simple_law_necessity cause effect
 
-end Phenomena.Conditionals.Studies.GrusdtLassiterFranke2022
+end GrusdtLassiterFranke2022

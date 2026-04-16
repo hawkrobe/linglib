@@ -50,7 +50,7 @@ propositional drefs, following @cite{stone-1999} and
 4. **Accessibility predictions** (§4): The classification, verified against derivations
 -/
 
-namespace Phenomena.Anaphora.Studies.Hofmann2025
+namespace Hofmann2025
 
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.IntensionalCDRT
@@ -825,4 +825,4 @@ theorem veridical_comp_factors (c : IContext BWorld BEnt) :
   ICDRTUpdate.seq_toDynProp _ _ c
 
 
-end Phenomena.Anaphora.Studies.Hofmann2025
+end Hofmann2025

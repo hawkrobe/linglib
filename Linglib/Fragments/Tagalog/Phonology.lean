@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.Separability
+import Linglib.Core.Constraint.Separability
 
 /-!
 # Tagalog Nasal Substitution Data @cite{zuraw-2010}
@@ -27,7 +27,7 @@ the latter (@cite{zuraw-2010}):
   underlying concatenations for probabilistic analysis
 -/
 
-open Phonology.HarmonicGrammar
+open Core.Constraint
 
 namespace Fragments.Tagalog.Phonology
 

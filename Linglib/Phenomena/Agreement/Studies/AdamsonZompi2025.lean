@@ -51,7 +51,7 @@ confirming the effect depends on syntacticosemantic person features,
 not addressee reference per se.
 -/
 
-namespace Phenomena.Agreement.Studies.AdamsonZompi2025
+namespace AdamsonZompi2025
 
 open Core.Prominence (PersonLevel)
 open Minimalism (DecomposedPerson decomposePerson)
@@ -494,7 +494,7 @@ theorem syntacticosemantic_finds_participant :
 -- § 10a: Direct Test of Deal's isLicit on LEI
 -- ============================================================================
 
-open Phenomena.Agreement.Studies.Deal2024 (isLicit) in
+open Deal2024 (isLicit) in
 /-- @cite{deal-2024}'s `isLicit` directly demonstrates the morphosyntactic
     failure. Under the Weak PCC (Italian), the probe reads agreement person:
 
@@ -509,7 +509,7 @@ theorem deal_weak_wrong_for_lei :
     isLicit Deal2024.weak .third lei.agreementPerson = true ∧
     isLicit Deal2024.weak .third lei.interpretablePerson = false := ⟨rfl, rfl⟩
 
-open Phenomena.Agreement.Studies.Deal2024 (isLicit) in
+open Deal2024 (isLicit) in
 /-- The same failure obtains under the Strong PCC variant: Deal's model
     reads agreement-3P as ⟨3,3⟩ (licit) rather than interpretable-2P as
     ⟨3,2⟩ (illicit). -/
@@ -734,4 +734,4 @@ theorem mismatch_is_crucial (d : DualPersonFeatures)
     morphosyntacticPrediction d = syntacticosemanticPrediction d := by
   simp only [morphosyntacticPrediction, syntacticosemanticPrediction, h]
 
-end Phenomena.Agreement.Studies.AdamsonZompi2025
+end AdamsonZompi2025

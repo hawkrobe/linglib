@@ -25,7 +25,7 @@ dimension is what distinguishes them — a prediction from the (S, A, T)
 framework applied to Turkish.
 -/
 
-namespace Phenomena.TenseAspect.Studies.GokselKerslake2005
+namespace GokselKerslake2005
 
 open Semantics.Tense.Evidential
 open Fragments.Turkish.TAM
@@ -68,4 +68,4 @@ theorem di_unique_direct : diEP = .contemporaneous := rfl
 /-- -mIş EP is strictly downstream — evidence comes after the event. -/
 theorem miş_indirect : mişEP = .strictDownstream := rfl
 
-end Phenomena.TenseAspect.Studies.GokselKerslake2005
+end GokselKerslake2005

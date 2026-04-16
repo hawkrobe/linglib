@@ -24,7 +24,7 @@ import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Exhaustification.Operators
 import Mathlib.Tactic.FinCases
 
-namespace Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity
+namespace MontagueExhaustivity
 
 open Core.IntensionalLogic Semantics.Quantification.Quantifier
 open Exhaustification
@@ -297,4 +297,4 @@ This closes the gap identified in CLAUDE.md:
 Now the scalar implicature derivation is grounded in compositional semantics.
 -/
 
-end Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity
+end MontagueExhaustivity

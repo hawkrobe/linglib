@@ -65,7 +65,7 @@ Regression coefficients verified against Tables 1 and 2 of the paper.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.GilesEtAl2026
+namespace GilesEtAl2026
 
 open Core.SearchEfficiency
 
@@ -507,4 +507,4 @@ noncomputable def poeAsMultidimLuce :
     Core.RationalAction Unit DegenEtAl2020.World :=
   Core.multidim_luce poeNoiseScales worldStimulus
 
-end Phenomena.Reference.Studies.GilesEtAl2026
+end GilesEtAl2026

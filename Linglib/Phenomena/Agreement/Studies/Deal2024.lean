@@ -42,7 +42,7 @@ This study file connects @cite{deal-2024}'s framework to both:
 
 -/
 
-namespace Phenomena.Agreement.Studies.Deal2024
+namespace Deal2024
 
 open Core.Prominence (PersonLevel)
 open Minimalism (decomposePerson)
@@ -497,4 +497,4 @@ theorem dpBears_grounded_in_decomposePerson (p : PersonLevel) :
     dpBears p .spkr = (decomposePerson p).hasAuthor := by
   cases p <;> exact ⟨rfl, rfl⟩
 
-end Phenomena.Agreement.Studies.Deal2024
+end Deal2024

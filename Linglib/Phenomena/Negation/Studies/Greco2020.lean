@@ -51,7 +51,7 @@ the representation [CP ... [X° non] ... [FocP [TP ...] Foc° ...]]:
 - `Minimalism.fValue` / `isCPArea` — f-value classification
 -/
 
-namespace Phenomena.Negation.Studies.Greco2020
+namespace Greco2020
 
 open Minimalism (Cat fValue isPhaseHead isCPArea)
 open Minimalism.NegScope (NegMergePosition)
@@ -466,4 +466,4 @@ theorem strongEN_fingerprint_injective :
   cases a <;> cases b <;> simp_all [StrongENType.allowsWh,
     StrongENType.isAnswer, StrongENType.embeddableUnderFactive]
 
-end Phenomena.Negation.Studies.Greco2020
+end Greco2020

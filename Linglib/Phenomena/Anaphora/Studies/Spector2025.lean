@@ -53,7 +53,7 @@ condition: `∃xφ` is true at `(w,g)` only if `g(x)` witnesses `φ`,
 undefined if classically true but `g(x)` is not a witness.
 -/
 
-namespace Phenomena.Anaphora.Studies.Spector2025
+namespace Spector2025
 
 open Core
 open Core.Duality
@@ -503,7 +503,7 @@ open Phenomena.Anaphora.DonkeyAnaphora in
 theorem conditional_donkey_has_bound_reading :
     conditionalDonkey.boundReading = true := rfl
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 /-- The classic bathroom sentence is felicitous. Spector's system
     predicts this via `bathroom_transparency`: the frame
     `F(ψ) = joinMiddle (¬∃xB(x)) ψ` satisfies Transparency
@@ -512,21 +512,21 @@ open Phenomena.Anaphora.Studies.Hofmann2025 in
 theorem classic_bathroom_felicitous :
     bathroomDisjunction.felicitous = true := rfl
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 /-- Standard negation across sentence boundary is infelicitous —
     consistent with Transparency failing for bare pronouns.
     @cite{karttunen-1976} -/
 theorem standard_negation_infelicitous :
     negationBlocks.felicitous = false := rfl
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 /-- Conjunction doesn't license bathroom-pattern anaphora (wrong
     connective). Spector's system handles this: conjunction uses
     `meetMiddle`, not `joinMiddle`, so the mechanism is different. -/
 theorem conjunction_version_infelicitous :
     conjunctionBlocks.felicitous = false := rfl
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 /-- Wrong-order bathroom sentence is infelicitous. This corresponds to
     `reverse_bathroom_transparency_fails`: `H(x̲) ∨ ¬∃xB(x)` fails
     Transparency because `H(x̲)` is in left position, and Middle Kleene
@@ -534,7 +534,7 @@ open Phenomena.Anaphora.Studies.Hofmann2025 in
 theorem wrong_order_bathroom_infelicitous :
     wrongOrderBathroom.felicitous = false := rfl
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 /-- Summary: Spector's Transparency predictions align with the
     @cite{hofmann-2025} accessibility data. Felicitous examples have the
     presupposition in the RIGHT disjunct (after the negated existential);
@@ -934,7 +934,7 @@ while Spector's Transparency-based approach handles them naturally via
 Middle Kleene disjunction.
 -/
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 /-- Spector handles bathroom sentences; standard DPL does not.
     Middle Kleene disjunction + Transparency handles `¬∃xB(x) ∨ F(x̲)`
     without any dynamic mechanism — the key empirical advantage.
@@ -942,11 +942,11 @@ open Phenomena.Anaphora.Studies.Hofmann2025 in
 theorem spector_handles_bathroom :
     bathroomDisjunction.felicitous = true := rfl
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 /-- Both systems correctly block cataphora (reverse conjunction). -/
 theorem spector_dpl_agree_cataphora_blocked :
     negatedBasic.felicitous = false := rfl
 
 end Comparison
 
-end Phenomena.Anaphora.Studies.Spector2025
+end Spector2025

@@ -9,7 +9,7 @@ Verifies that Minimalist Merge derivations model SVO sentences from the
 phenomena data, with phonological yields matching expected word order.
 -/
 
-namespace Phenomena.WordOrder.Studies.Chomsky1995
+namespace Chomsky1995
 
 open Minimalism.Phenomena.Derivations
 
@@ -21,4 +21,4 @@ theorem models_svo_word_order :
 /-- Verify the phonological yield of a derivation matches expected word order -/
 example : john_sees_mary.final.phonYield = ["John", "sees", "Mary"] := by native_decide
 
-end Phenomena.WordOrder.Studies.Chomsky1995
+end Chomsky1995

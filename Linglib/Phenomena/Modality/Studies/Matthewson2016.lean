@@ -47,7 +47,7 @@ St'át'imcets, Nez Perce, Niuean, and other languages.
    orientation.
 -/
 
-namespace Phenomena.Modality.Studies.Matthewson2016
+namespace Matthewson2016
 
 open Core.Modality (ForceFlavor ForceAnalysis BackgroundClass ProjectionMode)
 open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)
@@ -367,4 +367,4 @@ theorem all_inventories_iff :
   constructor; decide
   constructor <;> decide
 
-end Phenomena.Modality.Studies.Matthewson2016
+end Matthewson2016

@@ -31,7 +31,7 @@ framework and verified with the existing DGB/TIS/conversational-rule machinery.
 
 -/
 
-namespace Phenomena.Dialogue.Studies.Ginzburg2012
+namespace Ginzburg2012
 
 open Pragmatics.Dialogue.KOS
 
@@ -634,4 +634,4 @@ theorem e2e_nonResolveCond_after_ground :
 
 end EndToEndChain
 
-end Phenomena.Dialogue.Studies.Ginzburg2012
+end Ginzburg2012

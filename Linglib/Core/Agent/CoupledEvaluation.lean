@@ -249,7 +249,7 @@ def CoupledSoftmax.genuinelyCoupled
     - `couplingScore f = systemicScore(f)`
 
     This shows that the MaxEnt systemic constraint framework from
-    `Phonology.HarmonicGrammar.MaxEnt` is an instance of
+    `Core.Constraint.MaxEnt` is an instance of
     the general coupled evaluation pattern. The `marginal_eq_classical_when_no_systemic`
     theorem in `MaxEnt.lean` is a corollary of `marginal_eq_independent_when_uncoupled`. -/
 noncomputable def coupledSoftmaxOfMaxEnt

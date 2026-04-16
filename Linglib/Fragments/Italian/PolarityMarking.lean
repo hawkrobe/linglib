@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 
 /-!
 # Italian Polarity-Marking Strategies

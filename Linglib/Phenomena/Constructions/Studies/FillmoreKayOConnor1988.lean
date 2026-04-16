@@ -22,7 +22,7 @@ Idiomaticity in Grammatical Constructions: The Case of *Let Alone*"
 
 -/
 
-namespace Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+namespace FillmoreKayOConnor1988
 
 open Core.Empirical
 
@@ -299,7 +299,7 @@ theorem has_all_judgment_types :
   constructor; native_decide
   native_decide
 
-end Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+end FillmoreKayOConnor1988
 
 /-! ## Bridge content (merged from CxG_FillmoreKayOConnor1988Bridge.lean) -/
 
@@ -311,7 +311,7 @@ Connects the Construction Grammar analysis of *let alone* to:
 
 1. NPI licensing contexts in `Phenomena.Polarity.NPIs` — maps each FKO NPI
    trigger type to a known licensing context
-2. Empirical judgments in `Phenomena.Constructions.Studies.FillmoreKayOConnor1988`
+2. Empirical judgments in `FillmoreKayOConnor1988`
    — verifies that *barely* licenses *let alone* while *almost* does not
 
 -/
@@ -346,13 +346,13 @@ while *almost* does not (ex.113). This matches the Polarity.NPIs
 classification: *barely* is a syntactic negative polarity trigger,
 *almost* is not. -/
 
-open _root_.Phenomena.Constructions.Studies.FillmoreKayOConnor1988 in
+open _root_.FillmoreKayOConnor1988 in
 open Core.Empirical in
 /-- *barely* licenses *let alone* in the phenomena data. -/
 theorem barely_licenses_let_alone :
     ex115.judgment = Acceptability.ok := rfl
 
-open _root_.Phenomena.Constructions.Studies.FillmoreKayOConnor1988 in
+open _root_.FillmoreKayOConnor1988 in
 open Core.Empirical in
 /-- *almost* does NOT license *let alone* in the phenomena data. -/
 theorem almost_blocks_let_alone :

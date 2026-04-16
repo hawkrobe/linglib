@@ -48,7 +48,7 @@ differential object marking.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.AhnKocabDavidson2026
+namespace AhnKocabDavidson2026
 
 open Semantics.Composition.Modification (predMod truePred predMod_true_left predMod_comm)
 open Core.Discourse.ReferentialForm (AccessibilityLevel)
@@ -673,4 +673,4 @@ theorem anaphoric_ci_trivial (R : Entity → Locus → Bool) (loc : Locus)
     (P : Entity → Bool) (x : Entity) :
     (anaphoricUse R loc P).ci x = true := rfl
 
-end Phenomena.Reference.Studies.AhnKocabDavidson2026
+end AhnKocabDavidson2026

@@ -36,7 +36,7 @@ private distributions. The LU limitation (Appendix A) proves standard
 LU models cannot derive the triangular shape.
 -/
 
-namespace Phenomena.Imprecision.Studies.EgreEtAl2023
+namespace EgreEtAl2023
 
 open Phenomena.Imprecision.Numerals
 
@@ -804,4 +804,4 @@ theorem closed_form_matches_phenomena_offset5 :
     birClosedForm 20 15 = closedForm_offset5.expectedProb := by
   native_decide
 
-end Phenomena.Imprecision.Studies.EgreEtAl2023
+end EgreEtAl2023

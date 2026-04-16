@@ -62,9 +62,7 @@ salience, 263 listener). All proofs use `rsa_predict`.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.FrankGoodman2012
-
-open Phenomena
+namespace FrankGoodman2012
 
 -- ============================================================================
 -- §1. Empirical Data
@@ -581,4 +579,4 @@ theorem gricean_q1_q2_decomposition :
     QuantityViolation.overInformative.submaxim :=
   violations_independent
 
-end Phenomena.Reference.Studies.FrankGoodman2012
+end FrankGoodman2012

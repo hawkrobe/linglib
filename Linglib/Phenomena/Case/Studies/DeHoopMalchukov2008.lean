@@ -74,13 +74,13 @@ This derives: DOM ↔ nom-acc, DSM ↔ ergative (p. 580).
 
 -/
 
-namespace Phenomena.Case.Studies.DeHoopMalchukov2008
+namespace DeHoopMalchukov2008
 
 open Core.ConstraintEvaluation (superoptimal)
 open Core.OT
 open Core.Prominence
 open Phenomena.Case.Typology
-open Phenomena.Case.Studies.Aissen2003
+open Aissen2003
 
 -- ============================================================================
 -- § 1: Forms and Meanings
@@ -515,4 +515,4 @@ theorem dom_targets_prominent :
      pairs_d.any (λ p => p.1 == .zero && p.2 == .weak)) = true := by
   native_decide
 
-end Phenomena.Case.Studies.DeHoopMalchukov2008
+end DeHoopMalchukov2008

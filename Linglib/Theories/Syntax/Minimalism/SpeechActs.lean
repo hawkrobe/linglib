@@ -29,7 +29,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Context.Basic
 import Linglib.Core.Discourse.SpeechActs
-import Linglib.Core.Discourse.Evidence
+import Linglib.Core.Evidence
 import Linglib.Fragments.English.Pronouns
 
 namespace Minimalism.Phenomena.SpeechActs

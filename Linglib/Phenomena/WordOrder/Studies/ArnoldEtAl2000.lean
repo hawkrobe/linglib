@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 
 /-!
@@ -58,7 +58,7 @@ less constraining.
   independent newness effect that Arnold et al. demonstrate.
 -/
 
-namespace Phenomena.WordOrder.Studies.ArnoldEtAl2000
+namespace ArnoldEtAl2000
 
 open Core.InformationStructure
 
@@ -449,4 +449,4 @@ theorem heaviness_refutes_pure_discourse :
 status, encoding Arnold et al.'s central finding. -/
 abbrev OrderingModel := Nat → DiscourseStatus → Nat
 
-end Phenomena.WordOrder.Studies.ArnoldEtAl2000
+end ArnoldEtAl2000

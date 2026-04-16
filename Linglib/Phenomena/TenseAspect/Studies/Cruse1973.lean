@@ -40,7 +40,7 @@ theory: the do-test accepts durative dynamic classes (activity, accomplishment)
 and is marginal for others.
 -/
 
-namespace Phenomena.TenseAspect.Studies.Cruse1973
+namespace Cruse1973
 
 open Semantics.Events
 open Semantics.Events.ThematicRoles
@@ -361,4 +361,4 @@ theorem doTest_agrees_imperative_for_dynamic_durative (c : VendlerClass)
   cases c <;> simp_all [doTestPrediction, imperativePrediction,
     VendlerClass.dynamicity, VendlerClass.duration]
 
-end Phenomena.TenseAspect.Studies.Cruse1973
+end Cruse1973

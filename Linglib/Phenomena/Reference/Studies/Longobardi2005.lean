@@ -28,10 +28,10 @@ derived theorems, and noun taxonomy. This study file:
    nouns must NOT raise (economy)
 -/
 
-namespace Phenomena.Reference.Studies.Longobardi2005
+namespace Longobardi2005
 
 open Minimalism.TopologicalMapping
-open Phenomena.Reference.Studies.Longobardi2001 (DPParameter ArgumentType
+open Longobardi2001 (DPParameter ArgumentType
   romance english greek pnRequiresOvertD bnCanBeReferential)
 
 -- ============================================================================
@@ -254,4 +254,4 @@ theorem greek_confirms :
     bnCanBeReferential greek = false :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Reference.Studies.Longobardi2005
+end Longobardi2005

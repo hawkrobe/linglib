@@ -36,7 +36,7 @@ verifies the core predictions from @cite{phillips-brown-2025} using an
 
 set_option autoImplicit false
 
-namespace Phenomena.Modality.Studies.PhillipsBrown2025
+namespace PhillipsBrown2025
 
 open Core.Proposition (BProp FiniteWorlds)
 open Semantics.Modality.Desire
@@ -394,4 +394,4 @@ def desAvoidWar : List (W → Bool) := [nap]
 theorem modern_wants_avoidNuclearWar :
     wantQuestionBased belModern desAvoidWar qNuclear avoidNuclearWar = true := by native_decide
 
-end Phenomena.Modality.Studies.PhillipsBrown2025
+end PhillipsBrown2025

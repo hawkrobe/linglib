@@ -31,7 +31,7 @@ This avoids dependence on log approximations.
 
 -/
 
-namespace Phenomena.Persuasion.Studies.CumminsFranke2021
+namespace CumminsFranke2021
 
 open RSA.ArgumentativeStrength
 open Semantics.Lexical.Numeral
@@ -269,4 +269,4 @@ theorem h2_groups_consistent :
       = h2_powerGroup.groupSize := by native_decide
 
 
-end Phenomena.Persuasion.Studies.CumminsFranke2021
+end CumminsFranke2021

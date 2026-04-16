@@ -67,7 +67,7 @@ Dessert) and comparisons (conflict account, Kratzer bridge).
   best-world sets. Boylan's operator is existential over propositions.
 -/
 
-namespace Phenomena.Modality.Studies.Boylan2023
+namespace Boylan2023
 
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional (World allWorlds)
@@ -996,4 +996,4 @@ theorem office_base_from_flavor :
 theorem dessert_base_from_flavor :
     dessertDeontic.toKratzerParams.base = dessertBase := rfl
 
-end Phenomena.Modality.Studies.Boylan2023
+end Boylan2023

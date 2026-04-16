@@ -139,7 +139,7 @@ asymmetrically c-commands the theme in complement of Appl. QR of the
 theme over the goal is blocked by superiority, derived from c-command rather
 than stipulated. -/
 
-open Phenomena.ArgumentStructure.Studies.Pylkkanen2008 in
+open Pylkkanen2008 in
 
 /-- DOC scope freezing config with @cite{pylkknen-2008}'s tree:
     superiority is derived from goal asymmetrically c-commanding theme
@@ -154,7 +154,7 @@ def docScopeConfig : MinimalistScopeConfig :=
   , freezingContext := .doubleObject
   , tree := some ditransitiveTree }
 
-open Phenomena.ArgumentStructure.Studies.Pylkkanen2008 in
+open Pylkkanen2008 in
 
 /-- Superiority in the DOC is DERIVED from c-command in @cite{pylkknen-2008}'s
     tree: goal (Mary) asymmetrically c-commands theme (a letter) via low Appl,

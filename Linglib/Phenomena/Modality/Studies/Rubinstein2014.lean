@@ -73,7 +73,7 @@ lower-negation reading, while "I don't think you have to go" does not
   and *must* as `necessity`, matching Rubinstein's force assignments.
 -/
 
-namespace Phenomena.Modality.Studies.Rubinstein2014
+namespace Rubinstein2014
 
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Directive
@@ -714,4 +714,4 @@ theorem fragment_need_not_weak :
     Fragments.English.FunctionWords.need.modalMeaning.any
       (·.force == .weakNecessity) = false := by native_decide
 
-end Phenomena.Modality.Studies.Rubinstein2014
+end Rubinstein2014

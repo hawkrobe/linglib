@@ -64,12 +64,12 @@ Two components:
 - @cite{chierchia-2004}: embedded scalar items and disjunction
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.Denic2023
+namespace Denic2023
 
 open Exhaustification.InnocentExclusion
   (exhB ieIndices nonWeakerIndices maxConsistentExclusions)
 open Alternatives.Symmetric (isSymmetric)
-open Phenomena.ScalarImplicatures.Studies.Magri2009 (BlindScenario)
+open Magri2009 (BlindScenario)
 
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -775,4 +775,4 @@ theorem puzzles_connected :
   simp only [uniformCondProb]; native_decide
 
 
-end Phenomena.ScalarImplicatures.Studies.Denic2023
+end Denic2023

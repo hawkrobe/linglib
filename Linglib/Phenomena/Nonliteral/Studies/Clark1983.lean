@@ -78,7 +78,7 @@ against lexical rules.
 - §12: ContextualMeaning — the deeper formal principle
 -/
 
-namespace Phenomena.Nonliteral.Studies.Clark1983
+namespace Clark1983
 
 open Core.CommonGround
 open Morphology.DM (Categorizer Recategorization CategorizedRoot
@@ -1006,4 +1006,4 @@ theorem cg_independent_lexicon_suffices {W : Type}
   rw [h cg]
   exact List.Mem.head _
 
-end Phenomena.Nonliteral.Studies.Clark1983
+end Clark1983

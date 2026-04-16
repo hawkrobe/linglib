@@ -37,7 +37,7 @@ crosses the island boundary).
 namespace Fragments.Singlish.Questions
 
 open Phenomena.Questions.Typology (WhInterpMechanism WhMovementStrategy)
-open Phenomena.Islands.Studies.ShenHuang2026 (WhDependencyType)
+open ShenHuang2026 (WhDependencyType)
 
 -- ============================================================================
 -- Question formation strategies
@@ -118,7 +118,7 @@ end Fragments.Singlish.Questions
     unselective binding maps to `.binding`. -/
 def Phenomena.Questions.Typology.WhInterpMechanism.toDependencyType :
     Phenomena.Questions.Typology.WhInterpMechanism →
-    Phenomena.Islands.Studies.ShenHuang2026.WhDependencyType
+    ShenHuang2026.WhDependencyType
   | .overtMovement      => .movement
   | .covertMovement     => .movement
   | .unselectiveBinding => .binding

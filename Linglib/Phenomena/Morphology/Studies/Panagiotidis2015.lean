@@ -38,7 +38,7 @@ Phenomena/Morphology/CategoryChanging.lean (RootFamily, LexCat)
 
 -/
 
-namespace Phenomena.Morphology.Studies.Panagiotidis2015
+namespace Panagiotidis2015
 
 open Minimalism
 open Phenomena.Morphology.CategoryChanging
@@ -188,4 +188,4 @@ theorem all_families_match_all_categorizers :
       rf.hasCategory .verb && rf.hasCategory .noun && rf.hasCategory .adjective) = true := by
   native_decide
 
-end Phenomena.Morphology.Studies.Panagiotidis2015
+end Panagiotidis2015

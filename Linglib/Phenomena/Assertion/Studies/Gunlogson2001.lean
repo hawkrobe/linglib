@@ -20,7 +20,7 @@ to the addressee and invite confirmation or denial.
 
 -/
 
-namespace Phenomena.Assertion.Studies.Gunlogson2001
+namespace Gunlogson2001
 
 open Pragmatics.Assertion.Gunlogson
 open Core.Discourse.Commitment (CommitmentSource)
@@ -76,4 +76,4 @@ theorem data_matches_theory :
 theorem falling_data_matches :
     (risingExamples.filter (! ·.isRising)).all (·.speakerCommits) = true := rfl
 
-end Phenomena.Assertion.Studies.Gunlogson2001
+end Gunlogson2001

@@ -59,7 +59,7 @@ plays the role of β. The s1Score uses precomputed L0(longer|u) values squared
 
 set_option autoImplicit false
 
-namespace Phenomena.Persuasion.Studies.BarnettEtAl2022
+namespace BarnettEtAl2022
 
 open RSA.ArgumentativeStrength
 open RSA.CombinedUtility
@@ -462,4 +462,4 @@ theorem model_predicts_interaction :
     literalResult.meanSlider > 49 :=
   ⟨s4_positive_argStr, weak_evidence_effect, pragmatic_backfire, literal_no_backfire⟩
 
-end Phenomena.Persuasion.Studies.BarnettEtAl2022
+end BarnettEtAl2022

@@ -42,7 +42,7 @@ boundary resets the register, preventing catathesis from propagating
 across phrases.
 -/
 
-namespace Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
+namespace BeckmanPierrehumbert1986
 
 open Core.Prosody
 open Phonology.Autosegmental.RegisterTier
@@ -475,4 +475,4 @@ theorem japanese_catathesis_timing :
 theorem english_catathesis_timing :
     english.catathesisTiming = .afterAccent := rfl
 
-end Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
+end BeckmanPierrehumbert1986

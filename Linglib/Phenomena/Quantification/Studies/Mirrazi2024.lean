@@ -57,7 +57,7 @@ functions — they cannot separate their quantificational force from their
 descriptive content.
 -/
 
-namespace Phenomena.Quantification.Studies.Mirrazi2024
+namespace Mirrazi2024
 
 open Semantics.Lexical.Determiner.ChoiceFunction
 open Semantics.Attitudes.Doxastic (AccessRel boxAt)
@@ -329,4 +329,4 @@ theorem plainIndef_pseudo_de_dicto (entry : PlainIndefiniteEntry)
     IndefType.canPseudoDeDicto entry.indefType entry.hasWorldVar = true := by
   simp [hCF, hWV, IndefType.canPseudoDeDicto]
 
-end Phenomena.Quantification.Studies.Mirrazi2024
+end Mirrazi2024

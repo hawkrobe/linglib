@@ -14,7 +14,7 @@ and verifies the output matches the expected surface form.
 All theorems are proved by `native_decide` (finite segment data).
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.SPEDerivations
+namespace SPEDerivations
 
 open Phonology
 open Phonology.RuleBased (derive)
@@ -91,4 +91,4 @@ theorem korean_nasalization_preserves_length :
 
 end KoreanNasalization
 
-end Phenomena.PhonologicalAlternation.Studies.SPEDerivations
+end SPEDerivations

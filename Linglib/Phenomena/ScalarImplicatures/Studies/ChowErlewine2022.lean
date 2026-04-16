@@ -41,7 +41,7 @@ a presupposition trigger (like *also*), and @cite{fox-2007}'s computable
 - `ScalarImplicatures/ScopeExpressivity.lean`: grammatical vs pragmatic SI
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.ChowErlewine2022
+namespace ChowErlewine2022
 
 -- ============================================================================
 -- § 1. OpTree: Theory-Neutral Scope Tree
@@ -418,4 +418,4 @@ theorem strong_forces_inner :
     ∧ satisfiesUExhStar treeExhM "also" "exh" "Q2" = false := by
   exact ⟨by native_decide, by native_decide⟩
 
-end Phenomena.ScalarImplicatures.Studies.ChowErlewine2022
+end ChowErlewine2022

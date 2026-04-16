@@ -80,7 +80,7 @@ construction.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.WesterbeekKoolenMaes2015
+namespace WesterbeekKoolenMaes2015
 
 -- ============================================================================
 -- §1. Domain Types
@@ -601,4 +601,4 @@ theorem noise_and_typicality_complementary :
     S1_q φ_atypical .withColor .target > S1_q φ_typical .withColor .target :=
   ⟨RSA.Noise.color_gt_size, atypical_more_color⟩
 
-end Phenomena.Reference.Studies.WesterbeekKoolenMaes2015
+end WesterbeekKoolenMaes2015

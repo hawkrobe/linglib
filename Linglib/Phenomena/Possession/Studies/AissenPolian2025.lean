@@ -2,7 +2,7 @@ import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Core.SpecificityCondition
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 
 /-!
 # Aissen & Polian 2025: Possessor Extraction and Categorical Subject in Tseltalan
@@ -52,7 +52,7 @@ experiential collocations, and lexical unaccusatives.
 - `ABSPosition` from `Fragments/Mayan/Params.lean`
 -/
 
-namespace Phenomena.Possession.Studies.AissenPolian2025
+namespace AissenPolian2025
 
 open Fragments.Mayan (MarkerSet ABSPosition)
 open Fragments.Mayan.Tseltalan
@@ -955,4 +955,4 @@ theorem unified_tree_derivation :
 
 end AttractClosest
 
-end Phenomena.Possession.Studies.AissenPolian2025
+end AissenPolian2025

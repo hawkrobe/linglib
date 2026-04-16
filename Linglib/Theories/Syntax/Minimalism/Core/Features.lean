@@ -134,6 +134,14 @@ inductive FeatureVal where
   | foc : Bool → FeatureVal       -- [±FOC] information structure (@cite{westergaard-2009})
   | pol : Bool → FeatureVal       -- [±Pol] polarity (@cite{laka-1990}; @cite{holmberg-2016})
   | pov : Bool → FeatureVal      -- [±d] point-of-view (@cite{chou-2012}; @cite{chan-shen-2026})
+  -- Harbour decompositional features for person/number; distinct from the
+  -- `phi` constructors above so postsyntactic rules can target them
+  -- individually without colliding with existing person/number/gender
+  -- pattern-matching elsewhere in the library.
+  | atomic : Bool → FeatureVal     -- [±atomic] number lattice (@cite{harbour-2014})
+  | minimal : Bool → FeatureVal    -- [±minimal] number lattice (@cite{harbour-2014})
+  | participant : Bool → FeatureVal -- [±participant] person lattice (@cite{harbour-2016})
+  | author : Bool → FeatureVal     -- [±author] person lattice (@cite{harbour-2016})
   deriving Repr, DecidableEq
 
 /-- Do two feature values have the same type, ignoring specific values?
@@ -166,6 +174,10 @@ def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
   | .foc _, .foc _ => true
   | .pol _, .pol _ => true
   | .pov _, .pov _ => true
+  | .atomic _, .atomic _ => true
+  | .minimal _, .minimal _ => true
+  | .participant _, .participant _ => true
+  | .author _, .author _ => true
   | _, _ => false
 
 -- ============================================================================

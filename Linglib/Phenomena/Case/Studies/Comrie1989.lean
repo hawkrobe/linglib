@@ -51,7 +51,7 @@ in accusative languages and diverge under ergativity. Formalized in
 ## Relative clauses and the AH (Ch 7)
 
 Relativization typology is formalized in
-`Phenomena.FillerGap.Studies.KeenanComrie1977` and
+`KeenanComrie1977` and
 `Core.Relativization.Hierarchy`. The AH concerns accessibility to
 extraction — a filler-gap dependency — which is why the study file
 lives under `FillerGap/`. Non-extraction relative clause types
@@ -60,7 +60,7 @@ lives under `FillerGap/`. Non-extraction relative clause types
 hierarchy.
 -/
 
-namespace Phenomena.Case.Studies.Comrie1989
+namespace Comrie1989
 
 -- ============================================================================
 -- § 1: Shared Animacy Scale
@@ -70,7 +70,7 @@ namespace Phenomena.Case.Studies.Comrie1989
 
 The `AnimacyLevel` type in `Core.Prominence` is imported by both
 `Phenomena.Alignment.Typology` (Silverstein's split ergativity) and
-`Phenomena.Case.Studies.Aissen2003` (DOM via OT). This is structural
+`Aissen2003` (DOM via OT). This is structural
 grounding: the same 3-level hierarchy (human > animate > inanimate)
 governs both phenomena, with no possibility of drift between separate
 definitions.
@@ -586,4 +586,4 @@ theorem hindi_bidimensional_dom :
     -- Inanimate: never marked regardless of definiteness
     hindiDOM.marks .inanimate .personalPronoun = false := ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Case.Studies.Comrie1989
+end Comrie1989

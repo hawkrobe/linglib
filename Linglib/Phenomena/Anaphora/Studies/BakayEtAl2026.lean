@@ -46,7 +46,7 @@ binary-branching `cCommand` from `Phenomena.Anaphora.Compare`.
 
 set_option autoImplicit false
 
-namespace Phenomena.Anaphora.Studies.BakayEtAl2026
+namespace BakayEtAl2026
 
 open Processing.CueBasedRetrieval
 open Phenomena.Anaphora.Compare (cCommand Dir Address dominates)
@@ -316,4 +316,4 @@ theorem exp1_privileged_advantage :
     isPrivileged exp1TargetItem birbirleriCues ≠
     isPrivileged exp1DistractorMatch birbirleriCues := by native_decide
 
-end Phenomena.Anaphora.Studies.BakayEtAl2026
+end BakayEtAl2026

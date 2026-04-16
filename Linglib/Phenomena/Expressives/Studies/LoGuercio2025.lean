@@ -21,7 +21,7 @@ This file contains judgment data on when ACIs arise. Theoretical analysis
 `Pragmatics.Implicature.ConventionalImplicatures`.
 -/
 
-namespace Phenomena.Expressives.Studies.LoGuercio2025
+namespace LoGuercio2025
 
 open Implicature.ConventionalImplicatures (ScalarInferenceComparison
   siProperties antipresupProperties aciProperties)
@@ -373,4 +373,4 @@ inductive ArgExtensionPattern where
   | argumentHopping
   deriving DecidableEq, Repr
 
-end Phenomena.Expressives.Studies.LoGuercio2025
+end LoGuercio2025

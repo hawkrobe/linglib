@@ -29,7 +29,7 @@ quantifying over situations where the presupposition holds locally,
 rather than requiring it globally.
 -/
 
-namespace Phenomena.TenseAspect.Studies.Mendes2025
+namespace Mendes2025
 
 open Core.Time
 open Semantics.Tense.BranchingTime
@@ -416,4 +416,4 @@ theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time
   obtain ⟨s₁, h_s₁⟩ := h_nonempty
   exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
 
-end Phenomena.TenseAspect.Studies.Mendes2025
+end Mendes2025

@@ -19,7 +19,7 @@ classically downward entailing. Von Fintel's Strawson-DE explains why,
 but the data here is pre-theoretical.
 -/
 
-namespace Phenomena.Polarity.Studies.VonFintel1999
+namespace VonFintel1999
 
 -- ============================================================================
 -- Datum Structure
@@ -231,7 +231,7 @@ def notClassicallyDEExamples : List StrawsonDEDatum :=
     agreement supports von Fintel's Strawson-DE analysis as a universal
     licensing mechanism, not an English-specific phenomenon. -/
 
-open Phenomena.Polarity.Studies.Lahiri1998
+open Lahiri1998
   (npi_adversative_surprise_ek npi_adversative_surprise_koii npi_glad_bad)
 
 /-- Cross-linguistic adversative pattern: both Hindi (@cite{lahiri-1998})
@@ -247,7 +247,7 @@ theorem adversative_crosslinguistic :
     npi_adversative_surprise_koii.grammatical = true ∧
     npi_glad_bad.grammatical = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Polarity.Studies.VonFintel1999
+end VonFintel1999
 
 /-! ## Bridge content (merged from PolarityBuilderBridge.lean) -/
 
@@ -273,7 +273,7 @@ namespace Phenomena.Polarity.PolarityBuilderBridge
 open Semantics.Entailment.PolarityBuilder
 open Core.Lexical.PolarityItem
 open Fragments.English.PolarityItems
-open Phenomena.Polarity.Studies.VonFintel1999 (onlyNotDE)
+open VonFintel1999 (onlyNotDE)
 
 -- ============================================================================
 -- Fragment ↔ Builder Cross-Layer Agreement

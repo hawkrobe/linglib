@@ -26,7 +26,7 @@ Dynamic Predicate Logic. *Linguistics and Philosophy* 14(1): 39-100.
    but not vice versa — the DPL asymmetry.
 -/
 
-namespace Phenomena.Anaphora.Studies.GroenendijkStokhof1991
+namespace GroenendijkStokhof1991
 
 open Semantics.Dynamic.DPL
 
@@ -164,4 +164,4 @@ theorem conj_not_from_static_ops {E : Type*} [Nontrivial E] :
     ∃ (φ ψ : DPLRel E), DPLRel.conj φ ψ ≠ DPLRel.conj ψ φ :=
   conj_not_comm
 
-end Phenomena.Anaphora.Studies.GroenendijkStokhof1991
+end GroenendijkStokhof1991

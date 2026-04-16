@@ -26,7 +26,7 @@ when do-support is used and ungrammatical without it.
 
 -/
 
-namespace Phenomena.WordOrder.Studies.Pollock1989
+namespace Pollock1989
 
 open Phenomena.WordOrder.SubjectAuxInversion
 open Minimalism
@@ -206,4 +206,4 @@ theorem doSupport_iff_no_raising (p : VMovementParam) (ctx : TenseSupportContext
     needsDoSupport p ctx = !verbPrecedesDiagnostic p .negation :=
   doSupport_anticorrelates_raising p ctx
 
-end Phenomena.WordOrder.Studies.Pollock1989
+end Pollock1989

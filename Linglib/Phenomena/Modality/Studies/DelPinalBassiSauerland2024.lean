@@ -36,7 +36,7 @@ embedding puzzles from §3–§5.
 
 set_option autoImplicit false
 
-namespace Phenomena.Modality.Studies.DelPinalBassiSauerland2024
+namespace DelPinalBassiSauerland2024
 
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
@@ -696,4 +696,4 @@ theorem enemy_territory_blocks_projection {W : Type*}
     heimSelect c pex_output.presup = .local :=
   heim_cancellation_equivalence c pex_output.presup h_inconsistent
 
-end Phenomena.Modality.Studies.DelPinalBassiSauerland2024
+end DelPinalBassiSauerland2024

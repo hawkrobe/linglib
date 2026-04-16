@@ -34,7 +34,7 @@ import Linglib.Theories.Semantics.Entailment.Polarity
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Finite.Basic
 
-namespace Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
+namespace AlonsoOvalleMoghiseh2025
 
 open Exhaustification
 
@@ -702,4 +702,4 @@ def anyExamples : List AnyExample :=
 #guard anyExamples.all (λ ex => ex.grammatical == ufciGrammatical ex.context)
 
 
-end Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
+end AlonsoOvalleMoghiseh2025

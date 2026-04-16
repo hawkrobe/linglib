@@ -87,6 +87,7 @@ import Linglib.Core.Lexical.DiathesisAlternation
 import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Constraint.Profile
+import Linglib.Core.Constraint.Weighted
 import Linglib.Core.Logic.ConstraintEvaluation
 import Linglib.Core.Logic.OT
 import Linglib.Core.OT.Defs
@@ -98,6 +99,16 @@ import Linglib.Core.Agent.BayesianUpdate
 import Linglib.Core.Agent.ExperimentDesign
 import Linglib.Core.Agent.RationalAction
 import Linglib.Core.Agent.CoupledEvaluation
+import Linglib.Core.Constraint.MaxEnt
+import Linglib.Core.Constraint.Decoder
+import Linglib.Core.Constraint.NoiseKernel
+import Linglib.Core.Constraint.System
+import Linglib.Core.Constraint.Semiring
+import Linglib.Core.Constraint.Variation
+import Linglib.Core.Constraint.NoisyHG
+import Linglib.Core.Constraint.OTLimit
+import Linglib.Core.Constraint.Separability
+import Linglib.Core.Constraint.ViolationSemiring
 import Linglib.Core.Agent.SoftmaxOptimality
 import Linglib.Core.Agent.UtilityTheory
 import Linglib.Core.Agent.ChoiceApproximations
@@ -113,8 +124,8 @@ import Linglib.Core.Agent.PsychophysicalChoice
 import Linglib.Core.Agent.Learning
 import Linglib.Core.Agent.SocialUtility
 import Linglib.Core.GameTheory
-import Linglib.Core.Discourse.Evidence
-import Linglib.Core.Discourse.Epistemicity
+import Linglib.Core.Evidence
+import Linglib.Core.Epistemicity
 import Linglib.Core.Logophoricity
 import Linglib.Core.ProcessingModel
 import Linglib.Core.Temporal.Time
@@ -124,7 +135,7 @@ import Linglib.Core.Context.Basic
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
 import Linglib.Core.IndefiniteType
@@ -192,8 +203,8 @@ import Linglib.Theories.Morphology.Core.WordStructure
 import Linglib.Core.Discourse.CoherenceRelation
 import Linglib.Core.Discourse.ReferentialForm
 import Linglib.Core.Discourse.SpeechActs
-import Linglib.Core.Discourse.GramMood
-import Linglib.Core.Discourse.ClauseType
+import Linglib.Core.GrammaticalMood
+import Linglib.Core.ClauseType
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
@@ -2130,12 +2141,6 @@ import Linglib.Theories.Phonology.Syllable.NaturalClass
 import Linglib.Theories.Phonology.Moraic.Defs
 import Linglib.Theories.Phonology.Moraic.CompensatoryLengthening
 import Linglib.Theories.Phonology.RuleBased.Defs
-import Linglib.Theories.Phonology.HarmonicGrammar.Basic
-import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
-import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
-import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
-import Linglib.Theories.Phonology.HarmonicGrammar.Separability
-import Linglib.Theories.Phonology.HarmonicGrammar.Variation
 import Linglib.Theories.Phonology.Accent
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.Correspondence
@@ -2144,7 +2149,6 @@ import Linglib.Theories.Phonology.StratalOT
 import Linglib.Theories.Phonology.CophonologyTheory
 import Linglib.Theories.Phonology.ProsodicWord
 import Linglib.Theories.Phonology.Doubling
-import Linglib.Theories.Phonology.ViolationSemiring
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

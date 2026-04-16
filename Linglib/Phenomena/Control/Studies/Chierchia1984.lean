@@ -85,7 +85,7 @@ the meaning postulate.
   attitude verbs like want), while Landau separates attitude verbs as logophoric.
 -/
 
-namespace Phenomena.Control.Studies.Chierchia1984
+namespace Chierchia1984
 
 open Semantics.Attitudes.Intensional (World allWorlds)
 open Semantics.Modality.Kratzer
@@ -567,7 +567,7 @@ ALL control verbs, while Landau → logophoric for attitude verbs. The
 theories agree on non-attitude verbs (both predicative) and diverge
 precisely on attitude verbs. -/
 
-open Phenomena.Control.Studies.Landau2015
+open Landau2015
 
 /-- Map Chierchia's control classes to Landau's control tiers. -/
 def chierchiaToLandauTier : ChierchiaControlClass → Landau2015.ControlTier
@@ -646,4 +646,4 @@ theorem persuade_diverges :
 
 end CrossSystemVerification
 
-end Phenomena.Control.Studies.Chierchia1984
+end Chierchia1984

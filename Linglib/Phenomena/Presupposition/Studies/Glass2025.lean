@@ -39,7 +39,7 @@ presupposition (or lack thereof). yǐwéi's postsupposition is a separate
 validation from `Doxastic.lean` derive the contrafactive gap.
 -/
 
-namespace Phenomena.Presupposition.Studies.Glass2025
+namespace Glass2025
 
 open Semantics.Attitudes.Doxastic
 open Core.Presupposition
@@ -381,4 +381,4 @@ theorem veridicality_determines_both :
     negRaisingAvailable .nonVeridical = true :=
   ⟨factive_presup_valid, rfl, nonfactive_presup_valid, rfl⟩
 
-end Phenomena.Presupposition.Studies.Glass2025
+end Glass2025

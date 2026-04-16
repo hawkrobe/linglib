@@ -102,7 +102,7 @@ inferences about why the speaker chose to speak.
 
 set_option autoImplicit false
 
-namespace Phenomena.ScalarImplicatures.Studies.ReesReksnesRohde2026
+namespace ReesReksnesRohde2026
 
 open Pragmatics.RelevanceTheory
 
@@ -538,4 +538,4 @@ theorem style_is_effect_strengthening :
     familiarScenario.effects .literal = quietFamiliarScenario.effects .literal :=
   ⟨by show 3 < 4; omega, rfl⟩
 
-end Phenomena.ScalarImplicatures.Studies.ReesReksnesRohde2026
+end ReesReksnesRohde2026

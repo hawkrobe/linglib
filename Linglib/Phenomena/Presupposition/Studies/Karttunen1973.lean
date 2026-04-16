@@ -50,7 +50,7 @@ proves that correspondence and verifies Fragment verb entries carry the
 correct `ProjectionBehavior` annotations.
 -/
 
-namespace Phenomena.Presupposition.Studies.Karttunen1973
+namespace Karttunen1973
 
 open Classical
 open Core.Presupposition
@@ -348,4 +348,4 @@ theorem simple_is_special_case_of_revised (p q : PrProp W)
     (PrProp.impFilter p q).presup = p.presup :=
   PrProp.impFilter_eliminates_presup p q h
 
-end Phenomena.Presupposition.Studies.Karttunen1973
+end Karttunen1973

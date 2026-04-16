@@ -64,7 +64,7 @@ A key prediction: the positive and negative cases are *not symmetric*.
 This asymmetry is derived in `negative_universal` below.
 -/
 
-namespace Phenomena.Plurals.Studies.BarLev2021
+namespace BarLev2021
 
 open Exhaustification
 
@@ -871,4 +871,4 @@ theorem positive_negative_asymmetry :
   exact ⟨⟨.onlyKelly, trivial, fun ⟨_, h⟩ => h⟩, negative_universal⟩
 
 
-end Phenomena.Plurals.Studies.BarLev2021
+end BarLev2021

@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Islands.Studies.Ross1967
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 
 /-!
 # Cartner, Kogan, Webster, Wagers & Sichel (2026)
@@ -62,7 +62,7 @@ inductive ExtractionPosition where
 
 open Core.InformationStructure
 
-namespace Phenomena.Islands.Studies.CartnerEtAl2026
+namespace CartnerEtAl2026
 
 -- ============================================================================
 -- §1. Information-Structural Profiles of Filler-Gap Constructions
@@ -477,4 +477,4 @@ theorem argument_chain :
   · native_decide
   · native_decide
 
-end Phenomena.Islands.Studies.CartnerEtAl2026
+end CartnerEtAl2026

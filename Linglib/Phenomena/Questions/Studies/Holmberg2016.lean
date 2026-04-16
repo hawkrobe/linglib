@@ -37,7 +37,7 @@ parameter is the **answering system**: truth-based vs polarity-based.
   answer variation. Both derive unbalanced partitions for negative questions.
 -/
 
-namespace Phenomena.Questions.Studies.Holmberg2016
+namespace Holmberg2016
 
 open Semantics.Questions.Hamblin
 open Semantics.Questions (AnsweringSystem PolarAnswerProfile)
@@ -199,4 +199,4 @@ theorem polarityBased_reversal_variation :
     swedishProfile.hasPolarityReversal = true ∧
     englishProfile.hasPolarityReversal = false := ⟨rfl, rfl⟩
 
-end Phenomena.Questions.Studies.Holmberg2016
+end Holmberg2016

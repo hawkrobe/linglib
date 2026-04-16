@@ -30,7 +30,7 @@ epenthesis, rendaku, and vowel devoicing.
 open Phonology.Accent
 open Phonology.Syllable (SyllWeight)
 
-namespace Phenomena.Phonology.Studies.Kawahara2015
+namespace Kawahara2015
 
 open Core.Prosody
 open Fragments.Japanese.Prosody
@@ -166,4 +166,4 @@ theorem japanese_wbp_active (o n c : Phonology.Segment) :
     (Phonology.Moraic.syllableToMoraic { wbp := true }
       ⟨[o], [n], [c]⟩).toSyllWeight = .heavy := rfl
 
-end Phenomena.Phonology.Studies.Kawahara2015
+end Kawahara2015

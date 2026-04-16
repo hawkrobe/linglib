@@ -222,7 +222,7 @@ turn outscope dynamic (ability) categories, which outscope voice and aspect.
 This agrees with both Cinque and Hacquard on the basic prediction (epistemic
 is high, root is low) but adds a finer-grained picture with ~10 scope levels
 vs. Cinque's 2 (high/low) or Hacquard's 2 (above/below AspP). The detailed
-hierarchy is formalized in `Phenomena.Modality.Studies.Narrog2012`.
+hierarchy is formalized in `Narrog2012`.
 
 The key insight: Narrog's event-oriented / speaker-oriented cut aligns with
 Hacquard's AspP boundary. Below aspect: event-oriented (no propositional

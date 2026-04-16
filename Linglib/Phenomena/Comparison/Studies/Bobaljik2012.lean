@@ -44,7 +44,7 @@ Adjectives.lean`), using the `suppletion` field on each entry to
 encode empirically observed root-class patterns.
 -/
 
-namespace Phenomena.Comparison.Studies.Bobaljik2012
+namespace Bobaljik2012
 
 open Morphology.DegreeContainment
 open Fragments.English.Modifiers.Adjectives
@@ -246,4 +246,4 @@ theorem english_generic_contiguity :
         [e.suppletion.pos, e.suppletion.cmpr, e.suppletion.sprl]) = true := by
   native_decide
 
-end Phenomena.Comparison.Studies.Bobaljik2012
+end Bobaljik2012

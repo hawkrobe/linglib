@@ -55,7 +55,7 @@ with multiple context-dependent meanings:
    never have idiosyncratic RN readings.
 -/
 
-namespace Phenomena.Morphology.Studies.Wood2023
+namespace Wood2023
 
 open Morphology.DM.Allosemy
 open Fragments.Icelandic.Nominalizations
@@ -344,4 +344,4 @@ theorem different_suffix_same_reading :
     opnun.availableReadings.contains .complexEvent = true ∧
     pvottur.availableReadings.contains .complexEvent = true := by native_decide
 
-end Phenomena.Morphology.Studies.Wood2023
+end Wood2023

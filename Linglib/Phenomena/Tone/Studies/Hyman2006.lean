@@ -45,7 +45,7 @@ realization. @cite{lionnet-2025} shows this category splits further into
 Hyman's SA dimension.
 -/
 
-namespace Phenomena.Tone.Studies.Hyman2006
+namespace Hyman2006
 
 open Phonology.Autosegmental.RegisterTier
 open Phenomena.Phonology
@@ -478,4 +478,4 @@ theorem no_stress_implies_no_oblhead :
       e.profile.hasStressAccent || !isOblHeadSystem e.profile) = true := by
   native_decide
 
-end Phenomena.Tone.Studies.Hyman2006
+end Hyman2006

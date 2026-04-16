@@ -61,7 +61,7 @@ the subject-object asymmetry from scope constraints (`pairListScopeOK`),
 and verify predictions against Johnston's data.
 -/
 
-namespace Phenomena.Questions.Studies.Johnston2023
+namespace Johnston2023
 
 open Semantics.Lexical.Plural.Cumulativity
 
@@ -962,4 +962,4 @@ theorem predictPairList_nondefinite_unchanged :
       , isMatrix := true
       , pluralDefinite := false } = true := by decide
 
-end Phenomena.Questions.Studies.Johnston2023
+end Johnston2023

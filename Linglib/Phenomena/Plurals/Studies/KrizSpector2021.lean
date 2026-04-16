@@ -34,7 +34,7 @@ These theorems connect two independently formalized mechanisms:
 showing they agree on the bivalent fragment.
 -/
 
-namespace Phenomena.Plurals.Studies.KrizSpector2021
+namespace KrizSpector2021
 
 open Core.Duality (Truth3)
 open Semantics.Lexical.Plural.Distributivity
@@ -324,4 +324,4 @@ theorem upward_homogeneity_gap
     ⟨b, hb, hov, hPb⟩
   simp [decide_eq_true this]
 
-end Phenomena.Plurals.Studies.KrizSpector2021
+end KrizSpector2021

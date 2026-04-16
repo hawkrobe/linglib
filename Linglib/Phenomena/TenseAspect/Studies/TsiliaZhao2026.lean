@@ -56,7 +56,7 @@ which is why English ⌈then⌉ is compatible with it.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.TsiliaZhao2026
+namespace TsiliaZhao2026
 
 open Core.Reichenbach
 open Semantics.Tense
@@ -245,4 +245,4 @@ theorem embedded_deleted_tense_then_ok {Time : Type*}
   hDisjoint
 
 
-end Phenomena.TenseAspect.Studies.TsiliaZhao2026
+end TsiliaZhao2026

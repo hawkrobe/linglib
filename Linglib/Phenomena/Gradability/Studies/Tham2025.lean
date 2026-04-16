@@ -53,7 +53,7 @@ Physical disturbance predicates (*crack/cracked*, *scratch/scratched*,
 
 -/
 
-namespace Phenomena.Gradability.Studies.Tham2025
+namespace Tham2025
 
 open Core.Verbs (LevinClass MeaningComponents)
 open Core.Scale (Boundedness LicensingPipeline)
@@ -519,4 +519,4 @@ theorem sassoon_is_counting_tham_is_utilitarian :
     AggregationType.utilitarian ≠ AggregationType.counting := by
   exact ⟨sassoon_all_counting, by decide⟩
 
-end Phenomena.Gradability.Studies.Tham2025
+end Tham2025

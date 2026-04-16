@@ -35,7 +35,7 @@ Phenomena.TenseAspect.Data (matrixSaid, embeddedSickSimultaneous, etc.)
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Abusch1997
+namespace Abusch1997
 
 open Core.Context
 open Phenomena.TenseAspect
@@ -186,4 +186,4 @@ theorem nested_double_access :
     presentAccess.resolve nestedTower = 0 := by
   exact presentAccess.origin_stable rfl sotTower (temporalShift (-4))
 
-end Phenomena.TenseAspect.Studies.Abusch1997
+end Abusch1997

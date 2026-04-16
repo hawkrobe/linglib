@@ -115,7 +115,7 @@ def imetNotions : List PossessiveNotion :=
 -- §6. Heine 1997 Prediction Verification
 -- ============================================================================
 
-open Phenomena.Possession.Studies.Heine1997
+open Heine1997
 
 /-- Russian's primary Location Schema matches Heine's predictions:
     have-construction (not belong), possessee as subject. -/

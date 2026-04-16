@@ -12,7 +12,7 @@ Proves that the DG analysis captures all reflexive coreference patterns,
 complementary distribution, and pronominal disjoint reference.
 -/
 
-namespace Phenomena.Anaphora.Studies.Hudson1990
+namespace Hudson1990
 
 open DepGrammar.Coreference
 open DepGrammar.Nominal
@@ -71,4 +71,4 @@ theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [john, sees, eachOther] = false := by
   native_decide
 
-end Phenomena.Anaphora.Studies.Hudson1990
+end Hudson1990

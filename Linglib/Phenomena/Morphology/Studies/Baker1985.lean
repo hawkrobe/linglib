@@ -19,7 +19,7 @@ data from Chamorro, Quechua, and Bantu languages, as presented in
   Restriction (§3.2)
 -/
 
-namespace Phenomena.Morphology.Studies.Baker1985
+namespace Baker1985
 
 open Morphology.MirrorPrinciple
 
@@ -317,4 +317,4 @@ theorem achenese_attested :
 
 end AgreementRestriction
 
-end Phenomena.Morphology.Studies.Baker1985
+end Baker1985

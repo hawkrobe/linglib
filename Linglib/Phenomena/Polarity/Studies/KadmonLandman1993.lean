@@ -60,7 +60,7 @@ do not freely license *any*. The difference traces to lexical semantics:
 
 set_option autoImplicit false
 
-namespace Phenomena.Polarity.Studies.KadmonLandman1993
+namespace KadmonLandman1993
 
 open Core.NaturalLogic
 open Core.Lexical.PolarityItem (LicensingContext PolarityType)
@@ -263,7 +263,7 @@ necessary but not sufficient for a full account.
 -/
 
 private abbrev PhenCtx := Phenomena.Polarity.NPIs.LicensingContext
-open Phenomena.Polarity.Studies.Ladusaw1979 (LicensingStrength licensingStrength)
+open Ladusaw1979 (LicensingStrength licensingStrength)
 
 /-- Map a Phenomena-level licensing context to its K&L explanation.
 
@@ -1138,4 +1138,4 @@ theorem any_always_licensed_in_conditionals {Case : Type*}
   widening_satisfies_conditional_strengthening R_narrow R_wide A_narrow A_wide
     consequent hRestrWeaker hAntWeaker
 
-end Phenomena.Polarity.Studies.KadmonLandman1993
+end KadmonLandman1993

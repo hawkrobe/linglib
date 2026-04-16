@@ -29,7 +29,7 @@ Gorum (doubled), Jakaltek (split), Pipil (split + lex-headed), Finnish (split),
 Hemba (split/doubled). All five patterns attested.
 -/
 
-namespace Phenomena.AuxiliaryVerbs.Studies.Anderson2006
+namespace Anderson2006
 
 open Phenomena.AuxiliaryVerbs.Typology
 open Phenomena.AuxiliaryVerbs.NegativeAuxiliaries (NegStrategy)
@@ -218,4 +218,4 @@ theorem italian_selection_is_auxHeaded :
     italianArrivare.selectionRule = .split ∧
     canonicalSelection italianArrivare.transitivityClass = .be := ⟨rfl, rfl⟩
 
-end Phenomena.AuxiliaryVerbs.Studies.Anderson2006
+end Anderson2006

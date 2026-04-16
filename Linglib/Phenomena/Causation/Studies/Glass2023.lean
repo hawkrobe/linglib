@@ -35,7 +35,7 @@ identical to @cite{nadathur-lauer-2020}'s *make* — both reduce to
 the semantic level, relegating the difference to pragmatic implicature.
 -/
 
-namespace Phenomena.Causation.Studies.Glass2023
+namespace Glass2023
 
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
@@ -651,4 +651,4 @@ theorem sentiment_asymmetry :
 
 end AnnaKarenina
 
-end Phenomena.Causation.Studies.Glass2023
+end Glass2023

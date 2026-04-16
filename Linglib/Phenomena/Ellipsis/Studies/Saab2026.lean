@@ -20,7 +20,7 @@ to the NP-ellipsis data in Spanish binominals.
 
 -/
 
-namespace Phenomena.Ellipsis.Studies.Saab2026
+namespace Saab2026
 
 open Minimalism
 open Minimalism.Ellipsis.Nominal
@@ -118,4 +118,4 @@ theorem nominal_external_to_verbal :
     isEPExternal .Q .T = true ∧
     isEPExternal .n .v = true := by decide
 
-end Phenomena.Ellipsis.Studies.Saab2026
+end Saab2026

@@ -109,7 +109,7 @@ svRSA uses no prior in L0 meaning — QUD projection neutralizes it
 
 set_option autoImplicit false
 
-namespace Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
+namespace CremersWilcoxSpector2023
 
 -- ============================================================================
 -- §1. Domain Types
@@ -576,4 +576,4 @@ theorem exhaustive_group :
   ⟨exhlu_blocks_antiexhaustivity, rsali_blocks_antiexhaustivity,
    svRSA_biased_exhaustive⟩
 
-end Phenomena.ScalarImplicatures.Studies.CremersWilcoxSpector2023
+end CremersWilcoxSpector2023

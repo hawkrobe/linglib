@@ -54,7 +54,7 @@ violations — they count TBUs where the verbaliser tone is not realized
 at the expected edge of the root morpheme.
 -/
 
-namespace Phenomena.Tone.Studies.AkinboFwangwar2026
+namespace AkinboFwangwar2026
 
 open Core.OT
 open Phonology.Autosegmental.RegisterTier (ToneFeature)
@@ -674,9 +674,9 @@ theorem pluractional_uses_mh :
     "an indication of pitch enters into the lexical realisation of at
     least some morphemes." This connects to the Hyman2006 study's
     word-prosodic typology, paralleling the cross-reference in
-    `Phenomena.Tone.Studies.Lionnet2025.drubea_is_tonal_hyman`. -/
+    `Lionnet2025.drubea_is_tonal_hyman`. -/
 theorem mwaghavul_is_tonal_hyman :
-    Studies.Hyman2006.isTonalUnderHyman wordProsodicType = true := rfl
+    Hyman2006.isTonalUnderHyman wordProsodicType = true := rfl
 
 -- ============================================================================
 -- S 12: Factorial Typology
@@ -885,4 +885,4 @@ theorem t26_winner_basemap_faithful :
       [.M, .M, .H, .H] = 0 := by
   native_decide
 
-end Phenomena.Tone.Studies.AkinboFwangwar2026
+end AkinboFwangwar2026

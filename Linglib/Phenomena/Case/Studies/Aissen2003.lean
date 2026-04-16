@@ -39,7 +39,7 @@ to a possible OT grammar.
 
 -/
 
-namespace Phenomena.Case.Studies.Aissen2003
+namespace Aissen2003
 
 open Core.Prominence
 open Core.OT Phonology.Constraints
@@ -461,4 +461,4 @@ theorem full_pipeline_faithful_and_monotone :
       -- Monotone: overt marking pattern is an upper set
       (overtProfile .accusative dom).isMonotone) = true := by native_decide
 
-end Phenomena.Case.Studies.Aissen2003
+end Aissen2003

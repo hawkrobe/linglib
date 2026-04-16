@@ -40,7 +40,7 @@ Entailment flows downward through both paths (SN → SN_Xf → SN_Xfg and
 SN → SN_Xg → SN_Xfg), forming a diamond. No reverse entailments hold.
 -/
 
-namespace Phenomena.Modality.Studies.Ferreira2023
+namespace Ferreira2023
 
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Kratzer.XMarking
@@ -319,4 +319,4 @@ theorem english_should_has_xmarking_morphology :
     FunctionWords.ought.tense = none := by
   exact ⟨rfl, rfl⟩
 
-end Phenomena.Modality.Studies.Ferreira2023
+end Ferreira2023

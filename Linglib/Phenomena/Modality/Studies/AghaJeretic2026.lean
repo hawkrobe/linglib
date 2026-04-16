@@ -37,7 +37,7 @@ non-quantificational (plural predication over worlds), explaining
 neg-raising asymmetries between *should* and *must*.
 -/
 
-namespace Phenomena.Modality.Studies.AghaJeretic2026
+namespace AghaJeretic2026
 
 open Core.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
 open Semantics.Modality.Directive
@@ -326,4 +326,4 @@ def haveToProfile : NegRaisingProfile where
 theorem should_no_neg_raising : shouldProfile.higherNeg_narrowScope = false := rfl
 theorem must_neg_raises : mustProfile.higherNeg_narrowScope = true := rfl
 
-end Phenomena.Modality.Studies.AghaJeretic2026
+end AghaJeretic2026

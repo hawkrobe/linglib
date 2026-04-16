@@ -16,7 +16,7 @@ well-nestedness, gap degree, and fan-out constraints.
 - Fan-out ≤ 2 (block-degree ≤ 2) loses very few trees across all languages
 -/
 
-namespace Phenomena.WordOrder.Studies.KuhlmannNivre2006
+namespace KuhlmannNivre2006
 
 open Phenomena.WordOrder.NonProjectivity
 
@@ -53,4 +53,4 @@ theorem fanout2_good_coverage :
   exact ⟨by native_decide, by native_decide, by native_decide,
          by native_decide, by native_decide⟩
 
-end Phenomena.WordOrder.Studies.KuhlmannNivre2006
+end KuhlmannNivre2006

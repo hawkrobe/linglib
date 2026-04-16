@@ -47,7 +47,7 @@ utility to produce qualitative differences — both k = 1 and k = 10 yield
 identical S1/L1 predictions after normalization.
 -/
 
-namespace Phenomena.Clarification.Studies.DongEtAl2026
+namespace DongEtAl2026
 
 -- ============================================================================
 -- §1. Types
@@ -138,4 +138,4 @@ theorem L1_medical_identifies :
     medicalCfg.L1 .t₁ .t₁ > medicalCfg.L1 .t₁ .t₂ := by
   rsa_predict
 
-end Phenomena.Clarification.Studies.DongEtAl2026
+end DongEtAl2026

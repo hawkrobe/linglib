@@ -50,7 +50,7 @@ parameters (casedness, tensedness) are the least settled — recognized as
 tendencies but with many counterexamples.
 -/
 
-namespace Phenomena.Coordination.Studies.Stassen2000
+namespace Stassen2000
 
 open Phenomena.Coordination.Typology
 
@@ -220,4 +220,4 @@ theorem japanese_mu_quantifier_bridge :
     Fragments.Japanese.Determiners.dare_mo.particle = some "mo" := by
   exact ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Coordination.Studies.Stassen2000
+end Stassen2000

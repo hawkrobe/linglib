@@ -36,7 +36,7 @@ three core constraints can produce it. We prove this as
   mechanism predicted by the Basic Model impossibility result.
 -/
 
-namespace Phenomena.Reduplication.Studies.McCarthyPrince1995
+namespace McCarthyPrince1995
 
 open Core.OT
 open Phonology.Constraints
@@ -486,4 +486,4 @@ theorem akan_over_identIO_grounded :
 
 end AkanGrounding
 
-end Phenomena.Reduplication.Studies.McCarthyPrince1995
+end McCarthyPrince1995

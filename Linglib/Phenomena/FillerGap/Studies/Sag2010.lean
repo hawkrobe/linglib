@@ -17,7 +17,7 @@ a common filler–gap structure but differ systematically along 7 parameters.
 
 import Linglib.Phenomena.Islands.Studies.Ross1967
 
-namespace Phenomena.FillerGap.Studies.Sag2010
+namespace Sag2010
 
 -- ============================================================================
 -- F-G Clause Types
@@ -309,4 +309,4 @@ theorem how_crosses_interrog_exclam :
     (whWordProfiles.filter (λ w =>
       w.interrogative && w.exclamative)).length ≥ 1 := by native_decide
 
-end Phenomena.FillerGap.Studies.Sag2010
+end Sag2010

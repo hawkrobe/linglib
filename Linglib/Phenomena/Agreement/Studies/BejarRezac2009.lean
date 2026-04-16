@@ -37,7 +37,7 @@ second-cycle information: *m-* appears when valued on cycle I (IA=1P),
 
 -/
 
-namespace Phenomena.Agreement.Studies.BejarRezac2009
+namespace BejarRezac2009
 
 open Core.Prominence (PersonLevel)
 open Minimalism.CyclicAgree
@@ -233,4 +233,4 @@ theorem cross_linguistic_uniformity :
       (georgianToLevel pn).isSAP) :=
   ⟨basque_indexed_eq_sap, georgian_indexed_eq_sap⟩
 
-end Phenomena.Agreement.Studies.BejarRezac2009
+end BejarRezac2009

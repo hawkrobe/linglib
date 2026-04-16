@@ -26,7 +26,7 @@ and the Minimal Link Condition.
 See `Phenomena.FillerGap.Compare` for the competence vs. performance comparison.
 -/
 
-namespace Phenomena.Islands.Studies.HofmeisterSag2010
+namespace HofmeisterSag2010
 
 -- ============================================================================
 -- §1. Processing factors
@@ -161,4 +161,4 @@ non-island baseline (108). Islands are ameliorated, not eliminated. -/
 theorem best_island_lt_baseline :
     (85 : Nat) < cnpcBaseline := by native_decide
 
-end Phenomena.Islands.Studies.HofmeisterSag2010
+end HofmeisterSag2010

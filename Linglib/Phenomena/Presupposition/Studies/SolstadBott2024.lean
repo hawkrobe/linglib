@@ -54,12 +54,12 @@ m-anaphoric and m-cataphoric) and **symmetric filtering** — they
 constitute "a cage of their own" within the trigger taxonomy.
 -/
 
-namespace Phenomena.Presupposition.Studies.SolstadBott2024
+namespace SolstadBott2024
 
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.OntologicalPreconditions
 open Phenomena.Presupposition.ProjectiveContent
-open Phenomena.ImplicitCausality.Studies.SolstadBott2022
+open SolstadBott2022
 open Fragments.German.Predicates
 open Core.Presupposition
 open Core.CommonGround
@@ -556,4 +556,4 @@ theorem gpp_orders_occasion_vs_psych :
     norm_num [exp2_occasion_gpp, exp2_stimExp_gpp, exp2_expStim_gpp,
               exp2_occasion_proj, exp2_stimExp_proj, exp2_expStim_proj]
 
-end Phenomena.Presupposition.Studies.SolstadBott2024
+end SolstadBott2024

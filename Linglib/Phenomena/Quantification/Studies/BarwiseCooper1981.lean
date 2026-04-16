@@ -270,7 +270,7 @@ theorem outerNeg_some_eq_none (m : Frame) [Fintype m.Entity] [DecidableEq m.Enti
 /- Left anti-additive determiners license NPIs (@cite{peters-westerstahl-2006}).
    LAA is formalized: see `every_laa`, `no_laa` in Quantifier.lean.
    The NPI ↔ DE bridge is now formalized in
-   `Phenomena.Polarity.Studies.Ladusaw1979`. -/
+   `Ladusaw1979`. -/
 
 -- ============================================================================
 -- §10. Positive-strong → scope-↑MON
@@ -321,7 +321,7 @@ theorem positive_strong_determiners_upward_monotone :
    Bridge theorems in `Fragments.English.Determiners`:
      `all_inferential_bridge`, `some_inferential_bridge`, `none_inferential_bridge`
 
-   NPI licensing connection (via `Phenomena.Polarity.Studies.Ladusaw1979`):
+   NPI licensing connection (via `Ladusaw1979`):
    - scope-↓ monotone quantifiers (no, few) license weak NPIs in scope
    - restrictor-↓ monotone quantifiers (every, no) license weak NPIs in restrictor
    - left-anti-additive quantifiers (every, no) license strong NPIs -/

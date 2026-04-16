@@ -63,7 +63,7 @@ connect the QP inventory to `DegPType` and verify suppletion outputs
 against Fragment `formComp` entries.
 -/
 
-namespace Phenomena.Comparison.Studies.Bresnan1973
+namespace Bresnan1973
 
 open Semantics.Degree (DegPType)
 open Semantics.Degree.ThanClause (ThanClauseType)
@@ -585,4 +585,4 @@ theorem simple_comparative_consensus {Entity D : Type*} [LinearOrder D]
     comparativeSem μ a b .positive ↔ μ a > μ b := by
   simp [comparativeSem]
 
-end Phenomena.Comparison.Studies.Bresnan1973
+end Bresnan1973

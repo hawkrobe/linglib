@@ -46,7 +46,7 @@ each sentence revises the common ground, and C1–C4 ensure that
 the ordering of live possibilities evolves rationally.
 -/
 
-namespace Phenomena.DefaultReasoning.Studies.DarwichePearl1997
+namespace DarwichePearl1997
 
 open Core.Logic.Ranking
 open Core.Order (NormalityOrder)
@@ -298,4 +298,4 @@ example : ∀ (κ : RankingFunction W4), κ.satisfies_C3 :=
 example : ∀ (κ : RankingFunction W4), κ.satisfies_C4 :=
   fun κ => RankingFunction.ranking_satisfies_C4 κ
 
-end Phenomena.DefaultReasoning.Studies.DarwichePearl1997
+end DarwichePearl1997

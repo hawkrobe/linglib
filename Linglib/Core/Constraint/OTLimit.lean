@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.Basic
+import Linglib.Core.Constraint.Weighted
 import Linglib.Core.Agent.RationalAction
 
 /-!
@@ -33,7 +33,7 @@ Together: MaxEnt(α → ∞) → HG winner = OT winner.
 - `maxent_ot_limit`: main limit theorem
 -/
 
-namespace Phonology.HarmonicGrammar
+namespace Core.Constraint
 
 open Core Core.OT Core.ConstraintEvaluation Real Finset
 
@@ -386,4 +386,4 @@ theorem maxent_ot_limit {C : Type} [Fintype C] [Nonempty C] [DecidableEq C]
     (fun con hcon => ⟨hbound c_opt con hcon, hbound c con hcon⟩)
     (hlex c hc)
 
-end Phonology.HarmonicGrammar
+end Core.Constraint

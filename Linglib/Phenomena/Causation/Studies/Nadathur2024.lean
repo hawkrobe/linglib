@@ -43,7 +43,7 @@ via circumscription/antiperfection.
 
 -/
 
-namespace Phenomena.Causation.Studies.Nadathur2024
+namespace Nadathur2024
 
 open Core.StructuralEquationModel
 open Semantics.Causation.Implicative
@@ -51,7 +51,7 @@ open Core.Verbs (Causative)
 open Fragments.English.Predicates.Verbal
 open Fragments.English.Predicates.Copular (beAble)
 open Fragments.Finnish.Predicates
-open Phenomena.Complementation.Studies.Karttunen1971
+open Karttunen1971
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. The Dreyfus Scenario (@cite{nadathur-2024} §6.1.1, Figure 3)
@@ -460,4 +460,4 @@ theorem jaksaa_end_to_end :
     jaksaa.toImplicativeClass = ImplicativeClass.jaksaa := by
   exact ⟨by native_decide, by native_decide, rfl, rfl⟩
 
-end Phenomena.Causation.Studies.Nadathur2024
+end Nadathur2024

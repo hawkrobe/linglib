@@ -37,7 +37,7 @@ over segmental prosodic theories (X theory, CV theory).
 - Estonian (trimoraic syllables, Q1/Q2/Q3 quantity system)
 -/
 
-namespace Phenomena.CompensatoryLengthening.Studies.Hayes1989
+namespace Hayes1989
 
 open Phonology (Segment Feature Segment.ofSpecs)
 open Phonology.Moraic
@@ -269,4 +269,4 @@ theorem tale_minword_preserved :
 
 end ProsodicPipeline
 
-end Phenomena.CompensatoryLengthening.Studies.Hayes1989
+end Hayes1989

@@ -20,7 +20,7 @@ precondition for polarity asymmetry under negation. Contradictory antonyms
 
 set_option autoImplicit false
 
-namespace Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
+namespace AlexandropoulouGotzner2024
 
 open Core (NegationType)
 open Core.Scale (Boundedness Degree Threshold
@@ -358,4 +358,4 @@ theorem cleanliness_same_dimension :
     clean.dimension = filthy.dimension := by
   simp [clean, dirty, pristine, filthy]
 
-end Phenomena.Gradability.Studies.AlexandropoulouGotzner2024
+end AlexandropoulouGotzner2024

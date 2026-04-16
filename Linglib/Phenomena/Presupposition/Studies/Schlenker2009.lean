@@ -14,7 +14,7 @@ under belief predicates, and verifies trigger-specific predictions.
 
 -/
 
-namespace Phenomena.Presupposition.Studies.Schlenker2009
+namespace Schlenker2009
 
 open Semantics.Presupposition.BeliefEmbedding
 open Phenomena.Presupposition.ProjectiveContent
@@ -172,4 +172,4 @@ theorem pronoun_requires_antecedent :
 theorem pronoun_shifts_under_belief :
     ProjectiveTrigger.pronoun_existence.toClass.ole = .obligatory := rfl
 
-end Phenomena.Presupposition.Studies.Schlenker2009
+end Schlenker2009

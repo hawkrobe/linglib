@@ -20,7 +20,7 @@ filler-gap data in `Phenomena.FillerGap`.
   not blocked by an island
 -/
 
-namespace Phenomena.FillerGap.Studies.HPSGExtraction
+namespace HPSGExtraction
 
 open HPSG
 
@@ -151,4 +151,4 @@ theorem extraction_and_island_complementary :
     extractionLicensed weakPP = false := by
   native_decide
 
-end Phenomena.FillerGap.Studies.HPSGExtraction
+end HPSGExtraction

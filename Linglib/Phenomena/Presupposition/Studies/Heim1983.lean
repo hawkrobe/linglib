@@ -15,7 +15,7 @@ examples from Phenomena for NeoGricean SI computation.
 -/
 
 
-namespace Phenomena.Presupposition.Studies.Heim1983
+namespace Heim1983
 
 open Core.Presupposition
 open Implicature.Presuppositions
@@ -66,4 +66,4 @@ involving that trigger may behave differently.
 theorem filtering_removes_trigger :
     ifKingThenBaldDerivation.triggers = [] := rfl
 
-end Phenomena.Presupposition.Studies.Heim1983
+end Heim1983

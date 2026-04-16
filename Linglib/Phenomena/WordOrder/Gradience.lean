@@ -32,8 +32,6 @@ Garrido Rodriguez, Gupton, Kidd, Liu, Naccarato, Nordlinger, @cite{levshina-stoy
 namespace Phenomena.WordOrder.Gradience
 
 open Phenomena.WordOrder.Typology
-open Phenomena.WordOrder.Studies
-
 -- ============================================================================
 -- §1: Gradient Measures on Existing CrossTab Data
 -- ============================================================================

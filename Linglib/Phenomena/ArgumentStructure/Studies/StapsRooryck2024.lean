@@ -51,7 +51,7 @@ and `VendlerClass`, connecting to the affectedness hierarchy
 - Object affectedness derives from @cite{beavers-2010}'s `profileToDegree`.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.StapsRooryck2024
+namespace StapsRooryck2024
 
 open Core.Presupposition
 open Fragments.French.Predicates
@@ -595,4 +595,4 @@ def FrenchAgentPrep.agentiveDenot (prep : FrenchAgentPrep)
   | .par => parAgentiveDenot params x e
   | .de  => deAgentiveDenot params x e
 
-end Phenomena.ArgumentStructure.Studies.StapsRooryck2024
+end StapsRooryck2024

@@ -17,6 +17,6 @@ import Linglib.Phenomena.FillerGap.Studies.Sag2010
 namespace Phenomena.FillerGap
 
 export LongDistance (longDistanceData)
-export Studies.Sag2010 (FGClauseType FGParameters fgParams)
+export Sag2010 (FGClauseType FGParameters fgParams)
 
 end Phenomena.FillerGap

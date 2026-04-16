@@ -15,7 +15,7 @@ coreference data in `Phenomena.Anaphora.Coreference`.
 - `reflexive_pairs_captured`: Per-pair verification
 -/
 
-namespace Phenomena.Anaphora.Studies.MinimalismCoreference
+namespace MinimalismCoreference
 
 open Minimalism.Phenomena.Coreference
 open Phenomena.Anaphora.Coreference
@@ -79,4 +79,4 @@ theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [john, sees, eachOther] = false := by
   native_decide
 
-end Phenomena.Anaphora.Studies.MinimalismCoreference
+end MinimalismCoreference

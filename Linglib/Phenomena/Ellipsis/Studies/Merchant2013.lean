@@ -30,7 +30,7 @@ Every grammaticality judgment is verified against `canMismatch` from
 the English paradigm.
 -/
 
-namespace Phenomena.Ellipsis.Studies.Merchant2013
+namespace Merchant2013
 
 open Minimalism
 open Minimalism.Ellipsis
@@ -333,4 +333,4 @@ theorem again_confirms_vp_boundary :
     againSurvives .vP_adjunction englishVPE = true ∧
     againSurvives .VP_adjunction englishVPE = false := by native_decide
 
-end Phenomena.Ellipsis.Studies.Merchant2013
+end Merchant2013

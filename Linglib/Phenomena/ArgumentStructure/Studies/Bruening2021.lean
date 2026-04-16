@@ -48,7 +48,7 @@ altComplementType, so max two frames) prevents fully encoding verbs like
 send/tell/throw that have NP, NP_NP, and NP_PP frames.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Bruening2021
+namespace Bruening2021
 
 open Fragments.English.Predicates.Verbal
 open Core.Verbs
@@ -338,4 +338,4 @@ theorem give_has_implicit_goal :
     give.implicitGoal = some .def
     ∧ give.implicitObj = some .indef := ⟨rfl, rfl⟩
 
-end Phenomena.ArgumentStructure.Studies.Bruening2021
+end Bruening2021

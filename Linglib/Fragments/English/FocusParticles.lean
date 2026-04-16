@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Focus.Particles
 import Linglib.Core.Semantics.ContentLayer
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 
 /-!
 # English Focus-Sensitive Particles

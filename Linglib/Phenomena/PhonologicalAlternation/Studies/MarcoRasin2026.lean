@@ -40,7 +40,7 @@ covers (19) and `op_wrong_adj_bare` covers (20), formalizing the paper's
 argument that OP fails "regardless of what constitutes a paradigm."
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.MarcoRasin2026
+namespace MarcoRasin2026
 
 open Core.OT
 open Phonology.Constraints
@@ -337,4 +337,4 @@ theorem template_correct_adjectives :
     (mkTableau adjTemplateCands (templateRanking .adj) adjTemplateCands_ne).optimal =
       {mkP [.medial, .medial, .medial] aSuf} := by decide
 
-end Phenomena.PhonologicalAlternation.Studies.MarcoRasin2026
+end MarcoRasin2026

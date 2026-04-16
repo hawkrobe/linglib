@@ -1,5 +1,5 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
-import Linglib.Theories.Phonology.HarmonicGrammar.MaxEnt
+import Linglib.Core.Constraint.OTLimit
+import Linglib.Core.Constraint.MaxEnt
 
 /-!
 # @cite{goldwater-johnson-2003}: Learning OT Constraint Rankings Using a Maximum Entropy Model
@@ -40,9 +40,9 @@ models over weighted features, differing only in what the features measure.
    empirical counterpart of `maxent_ot_limit`.
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
+namespace GoldwaterJohnson2003
 
-open Phonology.HarmonicGrammar Core Finset Real
+open Core.Constraint Core Finset Real
 
 -- ============================================================================
 -- § 1: MaxEnt = softmax (eq (1))
@@ -158,4 +158,4 @@ theorem wolof_separated : ExponentiallySeparated wolofWeights 1 := by
   refine ⟨wolof_pos, fun k => ?_⟩
   fin_cases k <;> native_decide
 
-end Phenomena.PhonologicalAlternation.Studies.GoldwaterJohnson2003
+end GoldwaterJohnson2003

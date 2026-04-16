@@ -43,7 +43,7 @@ and shows the account satisfies all of them. See `section Desiderata` below.
 - **Scoreboard updates**: assertion (57), interrogation (58), direction (59)
 -/
 
-namespace Phenomena.Directives.Studies.Roberts2023
+namespace Roberts2023
 
 open Core.Discourse
 open Core.Proposition (BProp)
@@ -506,4 +506,4 @@ theorem cookie_is_suggestion :
   unfold ImperativeCharacter.weakRealize weakNecessity
   decide
 
-end Phenomena.Directives.Studies.Roberts2023
+end Roberts2023

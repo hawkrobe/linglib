@@ -49,7 +49,7 @@ closure. See `Fragments.Farsi.Determiners` and
 
 set_option autoImplicit false
 
-namespace Phenomena.Questions.Studies.AlonsoOvalleMoghiseh2025b
+namespace AlonsoOvalleMoghiseh2025b
 
 open Core.Quantification (NPQ conjGQ disjGQ conjGQs disjGQs nonemptySubsets
   conjGQ_eq_all disjGQ_eq_any conjGQ_le_individual individual_le_disjGQ
@@ -585,4 +585,4 @@ theorem data_consistent :
     data.all (λ d => d.singularOk == predictSg d.intType &&
                      d.pluralOk == predictPl d.intType) = true := by decide
 
-end Phenomena.Questions.Studies.AlonsoOvalleMoghiseh2025b
+end AlonsoOvalleMoghiseh2025b

@@ -42,7 +42,7 @@ open Phonology.FeatureGeometry (GeomNode)
 open Phonology.ComplexSegments
 open Phonology.Autosegmental (agreeAt)
 
-namespace Phenomena.Phonology.Studies.Sagey1986
+namespace Sagey1986
 
 -- ============================================================================
 -- § 1: Major/Minor Articulator Distinction (Ch. 3)
@@ -266,4 +266,4 @@ theorem crossing_forces_invalidity :
 
 end NoCrossing
 
-end Phenomena.Phonology.Studies.Sagey1986
+end Sagey1986

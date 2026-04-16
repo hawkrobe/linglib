@@ -37,7 +37,7 @@ adjunction through the Cascade spine, and nonaffixal overt prepositions
 
 set_option autoImplicit false
 
-namespace Phenomena.PsychVerbs.Studies.Pesetsky1995
+namespace Pesetsky1995
 
 open Minimalism
 open Semantics.Causation.Psych
@@ -529,4 +529,4 @@ theorem shift_site_hierarchy :
     cascadeTarget.shiftSites < cascadeCausePlusStimulus.shiftSites :=
   ⟨by native_decide, by native_decide, by native_decide⟩
 
-end Phenomena.PsychVerbs.Studies.Pesetsky1995
+end Pesetsky1995

@@ -50,7 +50,7 @@ competence-by-default: load impairs effortful cancellation of the default
 competence assumption.
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
+namespace BaleEtAl2025
 
 /-- Total participants (N = 60, n = 30 per load group). -/
 def nTotal : Nat := 60
@@ -313,4 +313,4 @@ theorem competence_default_is_simpleAssertion :
     shouldAssumeCompetence .uncertain = false := by
   exact ⟨rfl, rfl⟩
 
-end Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
+end BaleEtAl2025

@@ -41,7 +41,7 @@ construction.
 7. Compulsory E_R: attributive-only adjectives
 -/
 
-namespace Phenomena.Copulas.Studies.Elbourne2026
+namespace Elbourne2026
 
 open Semantics.Lexical.Adjective.Classification
   (Property AdjMeaning isIntersective isSubsective)
@@ -335,4 +335,4 @@ theorem former_attributive_only : canBePredicate .compulsory = false := rfl
 
 end CompulsoryER
 
-end Phenomena.Copulas.Studies.Elbourne2026
+end Elbourne2026

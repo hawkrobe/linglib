@@ -32,7 +32,7 @@ dominates B — which is exactly what `cCommand` tests.
 
 set_option autoImplicit false
 
-namespace Phenomena.Anaphora.Studies.Reinhart1976
+namespace Reinhart1976
 
 open Phenomena.Anaphora.Compare
 open Set
@@ -393,4 +393,4 @@ theorem restriction_10b_subsumes_10a (isPronA isPronB : Bool) (addrA addrB : Add
   simp only [corefPermitted_10a, corefPermittedAddr]
   cases isPronA <;> cases isPronB <;> simp_all
 
-end Phenomena.Anaphora.Studies.Reinhart1976
+end Reinhart1976

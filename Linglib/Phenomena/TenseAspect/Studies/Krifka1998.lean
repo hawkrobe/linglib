@@ -26,7 +26,7 @@ diagnostic predictions in `DiagnosticsBridge.lean`.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Krifka1998
+namespace Krifka1998
 
 open Fragments.English.Predicates.Verbal
 open Core.Verbs
@@ -323,4 +323,4 @@ theorem grad_requires_incrementality :
     (predictsGRAD (some .sinc) = true) ∧
     (predictsGRAD (some .cumOnly) = false) := ⟨rfl, rfl⟩
 
-end Phenomena.TenseAspect.Studies.Krifka1998
+end Krifka1998

@@ -32,7 +32,7 @@ This file formalizes three interconnected contributions from @cite{benz-2025}:
 - `Core.Empirical`: Acceptability type
 -/
 
-namespace Phenomena.Morphology.Studies.Benz2025
+namespace Benz2025
 
 open Morphology.DM.Allosemy
 open Core.Empirical
@@ -1082,4 +1082,4 @@ theorem frieren_canonical_vs_possible :
     -- Because eventive v is always available (that's what allosemy means)
     readingFromAllosemes .eventive .sortal = some .complexEvent := ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Morphology.Studies.Benz2025
+end Benz2025

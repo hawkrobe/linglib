@@ -52,7 +52,7 @@ bridging to `comparativeSem` (@cite{schwarzschild-2008}) and
 
 -/
 
-namespace Phenomena.Comparison.Studies.Wellwood2015
+namespace Wellwood2015
 
 -- ════════════════════════════════════════════════════
 -- § 1. Lexical Category
@@ -881,4 +881,4 @@ theorem covert_much_is_bresnan_deletion :
 theorem overt_much_no_deletion :
     Bresnan1973.muchDeletionApplies .much (adjFollows := false) = false := rfl
 
-end Phenomena.Comparison.Studies.Wellwood2015
+end Wellwood2015

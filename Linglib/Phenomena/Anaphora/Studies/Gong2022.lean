@@ -47,7 +47,7 @@ a subject binder can bleed Condition C in LDS when a dependent ACC
 position is available in the matrix clause.
 -/
 
-namespace Phenomena.Anaphora.Studies.Gong2022
+namespace Gong2022
 
 open Minimalism
 open Fragments.Mongolian.Case
@@ -293,4 +293,4 @@ theorem lds_cp_edge_irrelevant :
   exact ⟨lds_cp_edge_alone_no_bleed 4 (binderHeight .io),
           lds_cp_edge_alone_no_bleed 4 (binderHeight .subject)⟩
 
-end Phenomena.Anaphora.Studies.Gong2022
+end Gong2022

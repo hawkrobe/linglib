@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.SpeechActs
-import Linglib.Core.Discourse.GramMood
+import Linglib.Core.GrammaticalMood
 
 /-!
 # Clause Type: Force × Mood
@@ -22,7 +22,9 @@ subjunctive question is [interrogative, subjunctive].
 | imperative    | —           | "Sleep!" (mood often neutralized)    |
 -/
 
-namespace Core.Discourse
+namespace Core
+
+open Core.Discourse (IllocutionaryMood DiscourseRole moodAuthority)
 
 /-- A clause's type: the independent pairing of illocutionary force
     with grammatical mood. -/
@@ -54,4 +56,4 @@ def ClauseType.authority (ct : ClauseType) : DiscourseRole :=
 theorem polarQuestion_addressee_authority :
     ClauseType.polarQuestion.authority = .addressee := rfl
 
-end Core.Discourse
+end Core

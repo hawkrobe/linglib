@@ -19,7 +19,7 @@ import Linglib.Phenomena.Focus.Exclusives
 import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
 import Linglib.Theories.Semantics.Degree.Granularity
 
-namespace Phenomena.Focus.Studies.DeoThomas2025
+namespace DeoThomas2025
 
 open Phenomena.Focus.Exclusives
 open Discourse (Issue)
@@ -453,4 +453,4 @@ theorem fig1_finer_is_wider :
     (by simp [fig1Worlds]) (by simp [fig1Worlds])
     (by native_decide) (by native_decide)
 
-end Phenomena.Focus.Studies.DeoThomas2025
+end DeoThomas2025

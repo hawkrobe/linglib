@@ -68,7 +68,7 @@ to empirical data in `Phenomena/Causation/Studies/BeaversEtAl2021.lean`.
 
 -/
 
-namespace Phenomena.Causation.Studies.Coon2019
+namespace Coon2019
 
 open Fragments.Chuj
 
@@ -579,7 +579,7 @@ theorem w_verbalization_cross_class :
 -- § 17. Root Typology Bridge (BeaversEtAl2021)
 -- ════════════════════════════════════════════════════
 
-open Phenomena.Causation.Studies.BeaversEtAl2021
+open BeaversEtAl2021
 
 /-- Map the theory's root type to the phenomena's root class.
     These are parallel enums — the bridge makes the correspondence explicit. -/
@@ -783,4 +783,4 @@ theorem subclass_counts_match :
      .killing, .destroying, .calibratableCoS, .inherentlyDirectedMotion].length :=
   ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Causation.Studies.Coon2019
+end Coon2019

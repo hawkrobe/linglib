@@ -55,7 +55,7 @@ open Phonology.Syllable (SonorityRank)
 open Phonology.Constraints
 open Phonology.Doubling
 
-namespace Phenomena.Phonology.Studies.Berent2026
+namespace Berent2026
 
 open Core.OT
 
@@ -172,4 +172,4 @@ theorem amodal_doubling_reversal :
       = {DoublingParse.reduplication} :=
   doubling_reversal
 
-end Phenomena.Phonology.Studies.Berent2026
+end Berent2026

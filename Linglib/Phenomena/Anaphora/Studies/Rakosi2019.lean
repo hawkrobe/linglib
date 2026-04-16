@@ -45,7 +45,7 @@ a morphosyntactic mechanism.
   notes that syntactically singular antecedents are possible
 -/
 
-namespace Phenomena.Anaphora.Studies.Rakosi2019
+namespace Rakosi2019
 
 open Semantics.Reference.Reciprocals
 open Fragments.Hungarian.Reciprocals
@@ -224,4 +224,4 @@ theorem recip_indifferent_to_verb_agreement :
     reciprocalLicensed singularCoordinate = true ∧
     reciprocalLicensed pluralAntecedent = true := ⟨rfl, rfl⟩
 
-end Phenomena.Anaphora.Studies.Rakosi2019
+end Rakosi2019

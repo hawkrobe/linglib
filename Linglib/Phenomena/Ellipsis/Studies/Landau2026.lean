@@ -47,7 +47,7 @@ EIR diagnoses contested "mixed anaphors" as deep:
 - Korean null objects — fail EIR (supporting *pro* over AE)
 -/
 
-namespace Phenomena.Ellipsis.Studies.Landau2026
+namespace Landau2026
 
 open Core
 
@@ -431,4 +431,4 @@ theorem resumptive_covers_genitive :
 theorem gap_excludes_genitive :
     Fragments.Hebrew.relSheGap.covers .genitive = false := rfl
 
-end Phenomena.Ellipsis.Studies.Landau2026
+end Landau2026

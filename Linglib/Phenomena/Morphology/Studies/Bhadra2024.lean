@@ -29,7 +29,7 @@ The cardinality of this set determines affix compatibility:
 4. Per-verb *un-* and *re-* predictions verified against empirical data from (12), (45)
 -/
 
-namespace Phenomena.Morphology.Studies.Bhadra2024
+namespace Bhadra2024
 
 open Core.Verbs
 open ForceTransmissionClass OutcomeCardinality
@@ -565,4 +565,4 @@ theorem cross_layer_re_agreement :
 
 end StressTests
 
-end Phenomena.Morphology.Studies.Bhadra2024
+end Bhadra2024

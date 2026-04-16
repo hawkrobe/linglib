@@ -49,7 +49,7 @@ of CAUSE (the outermost predicate), so it is highest → subject.
 | 9 | English | Children (4–5 y.o.) | Early emergence of the distinction |
 -/
 
-namespace Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
+namespace HartshorneEtAl2016
 
 open Phenomena.PsychVerbs.Data (PsychVerbClass ClassIIReading SubjectRole)
 
@@ -386,4 +386,4 @@ theorem transition_prediction_consistent (t : SemanticType) (Time : Type*) [Line
       (causalSourceToProfile (semanticTypeToCausalSource t)).involvesBecome := by
   cases t <;> rfl
 
-end Phenomena.PsychVerbs.Studies.HartshorneEtAl2016
+end HartshorneEtAl2016

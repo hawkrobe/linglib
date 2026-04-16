@@ -26,7 +26,7 @@ outcome because spell-out depends only on WHETHER the chain is split.
 
 -/
 
-namespace Phenomena.WordOrder.Studies.ArregiPietraszko2021
+namespace ArregiPietraszko2021
 
 open Phenomena.WordOrder.SubjectAuxInversion
 open Minimalism
@@ -257,4 +257,4 @@ theorem genHM_consistent_with_pollock_aux (ctx : TenseSupportContext) :
     needsDoSupport englishAux ctx = false := by
   cases ctx <;> rfl
 
-end Phenomena.WordOrder.Studies.ArregiPietraszko2021
+end ArregiPietraszko2021

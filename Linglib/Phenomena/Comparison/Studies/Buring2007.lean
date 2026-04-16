@@ -62,7 +62,7 @@ disambiguate the two, favoring Analysis 1.
   ("Ede is more tall than broad") is exactly a `subcomparative`.
 -/
 
-namespace Phenomena.Comparison.Studies.Buring2007
+namespace Buring2007
 
 open Semantics.Degree.Comparative (comparativeSem ScaleDirection littlePred
   little_posExt_eq_negExt little_involution little_reverses_comparison
@@ -387,4 +387,4 @@ def modalDiagnosticData : List ModalNomalyDatum :=
 -- All modal diagnostic cases favor Analysis 1.
 #guard modalDiagnosticData.all (·.nativeSpeakerMatch)
 
-end Phenomena.Comparison.Studies.Buring2007
+end Buring2007

@@ -18,7 +18,7 @@ and a verb assigned IV cannot take one. These are implicit category-theoretic
 failures: no valid derivation exists.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.CCGSubcategorization
+namespace CCGSubcategorization
 
 open CCG
 
@@ -51,4 +51,4 @@ theorem john_devours_pizza_derives_S : derivesS john_devours_pizza = true := rfl
 theorem mary_sees_john_derives_S : derivesS mary_sees_john = true := rfl
 theorem john_gives_mary_book_derives_S : derivesS john_gives_mary_book = true := rfl
 
-end Phenomena.ArgumentStructure.Studies.CCGSubcategorization
+end CCGSubcategorization

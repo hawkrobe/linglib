@@ -36,7 +36,7 @@ and rates should be correlated.
 - Links multiplicity inferences to `ScalarImplicatures/Basic` DE blocking
 -/
 
-namespace Phenomena.Plurals.Studies.TieuEtAl2020
+namespace TieuEtAl2020
 
 open Alternatives (Monotonicity)
 open Alternatives.Number (NumberExpr numberScale)
@@ -268,4 +268,4 @@ theorem scales_predict_same_pattern :
       Alternatives.Quantifiers.quantScale .some_ .upward).length > 0 := by
   decide
 
-end Phenomena.Plurals.Studies.TieuEtAl2020
+end TieuEtAl2020

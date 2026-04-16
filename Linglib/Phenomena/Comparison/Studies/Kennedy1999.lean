@@ -60,7 +60,7 @@ distribution), @cite{bhatt-pancheva-2004} and @cite{lechner-2004}
 
 -/
 
-namespace Phenomena.Comparison.Studies.Kennedy1999
+namespace Kennedy1999
 
 open Semantics.Degree.Comparative (comparativeSem
   comparative_iff_posExt_ssubset comparative_iff_negExt_ssubset)
@@ -451,4 +451,4 @@ def equativeTypology : List EquativeTypologyDatum :=
     , exampleForm := "...と同じぐらい高い (...to onaji gurai takai)" }
   ]
 
-end Phenomena.Comparison.Studies.Kennedy1999
+end Kennedy1999

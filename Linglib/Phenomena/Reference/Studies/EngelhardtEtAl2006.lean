@@ -45,7 +45,7 @@ text (§3). Production proportions and judgment mean ratings read from
 Tables 1–2 (not restated in running text).
 -/
 
-namespace Phenomena.Reference.Studies.EngelhardtEtAl2006
+namespace EngelhardtEtAl2006
 
 -- ============================================================================
 -- § Experiment 1: Production (§2, N = 24)
@@ -284,4 +284,4 @@ theorem supports_noBrevity :
     DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := by
   refine ⟨?_, by decide, rfl, rfl⟩; native_decide
 
-end Phenomena.Reference.Studies.EngelhardtEtAl2006
+end EngelhardtEtAl2006

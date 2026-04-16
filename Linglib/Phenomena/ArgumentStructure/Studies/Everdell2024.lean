@@ -65,7 +65,7 @@ linking (MAP alone).
   are valency operations that probe base argument structure.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Everdell2024
+namespace Everdell2024
 
 -- ════════════════════════════════════════════════════
 -- § 1. O'dam Verb Properties
@@ -733,7 +733,7 @@ theorem refined_agrees_on_nonexceptional (v : OdamVerb)
     *-ish* is: with a given verb, the function is deterministic. -/
 
 /-- O'dam passes both high-applicative diagnostics from Table 2.1. -/
-def odam_appl : Phenomena.ArgumentStructure.Studies.Pylkkanen2008.ApplClassification :=
+def odam_appl : Pylkkanen2008.ApplClassification :=
   { language := "O'dam"
   , applType := .high  -- closest fit (agent-introduction for intransitives)
   , unergativeOK := some true      -- *kox-chuda'* 'put to sleep'
@@ -742,7 +742,7 @@ def odam_appl : Phenomena.ArgumentStructure.Studies.Pylkkanen2008.ApplClassifica
 
 /-- O'dam patterns as high by the diagnostics. -/
 theorem odam_diagnostics_predict_high :
-    Phenomena.ArgumentStructure.Studies.Pylkkanen2008.diagnosticPredictsHigh
+    Pylkkanen2008.diagnosticPredictsHigh
       odam_appl = true := rfl
 
 /-- But O'dam also performs promotion (a low-like function). The
@@ -871,4 +871,4 @@ theorem animacy_gates_promotion :
     bakta_hang.animateLocative = .incompatible ∧
     predictFunction bakta_hang = .beneficiary := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.ArgumentStructure.Studies.Everdell2024
+end Everdell2024

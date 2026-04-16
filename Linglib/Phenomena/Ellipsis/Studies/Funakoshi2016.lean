@@ -23,7 +23,7 @@ The source elides even with an overt manner adverb (*suguni* 'quickly'),
 which would be impossible if it were an adjunct.
 -/
 
-namespace Phenomena.Ellipsis.Studies.Funakoshi2016
+namespace Funakoshi2016
 
 /-- Funakoshi's generalization: adjuncts can be elided under VP ellipsis
     only if no other VP-internal elements are present. -/
@@ -74,4 +74,4 @@ theorem adjunct_blocked_predicted :
 theorem argument_ok_predicted :
     funakoshiPredicts argument_ok = true := rfl
 
-end Phenomena.Ellipsis.Studies.Funakoshi2016
+end Funakoshi2016

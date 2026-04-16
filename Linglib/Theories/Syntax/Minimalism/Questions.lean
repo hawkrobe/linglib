@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Polarity
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
-import Linglib.Core.Discourse.ClauseType
+import Linglib.Core.ClauseType
 
 /-!
 # Question Syntax: ForceP, FinP, PolP
@@ -33,7 +33,7 @@ to the semantic `WHFeature`:
 
 ## Connection to ClauseType
 
-A clause's `Core.Discourse.ClauseType` (force × mood) is determined by
+A clause's `Core.ClauseType` (force × mood) is determined by
 the syntactic projections:
 - Force⁰[+Q] → `IllocutionaryMood.interrogative`
 - Force⁰[-Q] → `IllocutionaryMood.declarative`
@@ -43,7 +43,8 @@ the syntactic projections:
 namespace Minimalism.Questions
 
 open Minimalism
-open Core.Discourse (ClauseType IllocutionaryMood GramMood)
+open Core (ClauseType GramMood)
+open Core.Discourse (IllocutionaryMood)
 
 /-- The Q-feature on Force⁰: [+Q] for interrogatives, [-Q] for declaratives. -/
 inductive QFeature where

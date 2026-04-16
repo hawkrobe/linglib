@@ -32,9 +32,7 @@ Across 4 experiments with adults and two-knower children (ages 2;6–3;7):
 
 -/
 
-namespace Phenomena.Numerals.Studies.HuangSpelkeSnedeker2013
-
-open Phenomena
+namespace HuangSpelkeSnedeker2013
 
 -- ============================================================================
 -- Section 1: Task and Measures
@@ -144,4 +142,4 @@ they cannot have derived exactness via scalar implicature against "three". -/
 theorem two_knower_knows_two : knowsNumeral .twoKnower 2 = true := rfl
 theorem two_knower_lacks_three : knowsNumeral .twoKnower 3 = false := rfl
 
-end Phenomena.Numerals.Studies.HuangSpelkeSnedeker2013
+end HuangSpelkeSnedeker2013

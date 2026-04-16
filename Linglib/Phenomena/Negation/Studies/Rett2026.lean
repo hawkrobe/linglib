@@ -38,7 +38,7 @@ Two types of EN with different syntactic positions and licensing:
 
 -/
 
-namespace Phenomena.Negation.Studies.Rett2026
+namespace Rett2026
 
 open Core.Scale (Boundedness isAmbidirectional)
 open Semantics.Degree.Comparative (MannerEffect)
@@ -253,7 +253,7 @@ possibility.
 The bridge: negative valence in Preferential.lean corresponds to the
 propositional attitude licensing condition in @cite{jin-koenig-2021}. -/
 
-open Phenomena.Negation.Studies.JinKoenig2021 (negativeValenceEntailsDual
+open JinKoenig2021 (negativeValenceEntailsDual
   LicensingCondition TriggerSubclass)
 
 /-- The FEAR subclass maps to the propositional attitude licensing condition. -/
@@ -428,7 +428,7 @@ NEG₁ hosts have their negative semantics masked by independent factors
 (verbal aspect, operator spell-out), while the one NEG₂ host (fear)
 has a genuinely different marker — a modal, not negation. -/
 
-open Phenomena.Negation.Studies.Tsiakmakis2025
+open Tsiakmakis2025
   (ENHostCategory NegatorType)
 
 /-- Map each EN construction to its Tsiakmakis host category.
@@ -457,4 +457,4 @@ theorem neg_type_of_en_hosts :
       = true :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Negation.Studies.Rett2026
+end Rett2026

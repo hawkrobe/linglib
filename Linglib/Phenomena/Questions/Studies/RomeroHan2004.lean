@@ -27,7 +27,7 @@ for provenance tracking.
   *cross-linguistic answer variation*
 -/
 
-namespace Phenomena.Questions.Studies.RomeroHan2004
+namespace RomeroHan2004
 
 open Semantics.Questions.VerumFocus
 
@@ -213,4 +213,4 @@ def generalization2 : String :=
   "Preposed negation yes/no questions are potentially ambiguous between two readings: " ++
   "PI-reading (double-check p, licenses PPIs) and NI-reading (double-check ¬p, licenses NPIs)."
 
-end Phenomena.Questions.Studies.RomeroHan2004
+end RomeroHan2004

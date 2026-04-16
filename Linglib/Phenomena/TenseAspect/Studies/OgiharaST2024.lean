@@ -29,7 +29,7 @@ temporal connectives *before* and *after*.
 - Beaver, D. & Condoravdi, C. (2003), §2 (three readings of *before*).
 -/
 
-namespace Phenomena.TenseAspect.Studies.OgiharaST2024
+namespace OgiharaST2024
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Veridicality Judgments
@@ -945,7 +945,7 @@ theorem mozart_is_case_iii
 
 end Def19
 
-end Phenomena.TenseAspect.Studies.OgiharaST2024
+end OgiharaST2024
 
 -- ════════════════════════════════════════════════════════════════
 -- Veridicality ↔ Presupposition Bridge
@@ -965,13 +965,13 @@ For each temporal connective, the Fragment's `complementVeridical` field is
 **grounded** in a theory-level proof, and matches the empirical data.
 -/
 
-namespace Phenomena.TenseAspect.Studies.OgiharaST2024.VeridicalityBridge
+namespace OgiharaST2024.VeridicalityBridge
 
 open Core.Time
 open Core.Time.Interval
 open Semantics.Tense.TemporalConnectives
 open Fragments.English.TemporalExpressions
-open Phenomena.TenseAspect.Studies.OgiharaST2024
+open OgiharaST2024
 
 -- ============================================================================
 -- § 19: Fragment ↔ Theory Agreement (Per-Entry Verification)
@@ -1112,4 +1112,4 @@ theorem bc_readings_in_data :
     before_noncommittal.complementEntailed = false :=
   ⟨rfl, rfl, rfl⟩
 
-end Phenomena.TenseAspect.Studies.OgiharaST2024.VeridicalityBridge
+end OgiharaST2024.VeridicalityBridge

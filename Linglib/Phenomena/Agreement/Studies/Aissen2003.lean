@@ -29,7 +29,7 @@ Connects @cite{just-2024} differential indexing to three existing formalizations
 
 -/
 
-namespace Phenomena.Agreement.Studies.Aissen2003
+namespace Aissen2003
 
 open Core.Prominence
 open Phenomena.Agreement.DifferentialIndexing
@@ -238,4 +238,4 @@ theorem hungarian_definiteness_conditioned :
 theorem hungarian_not_person_conditioned :
     hungarian.personConditioned = false := by native_decide
 
-end Phenomena.Agreement.Studies.Aissen2003
+end Aissen2003

@@ -51,7 +51,7 @@ via **specificity**: the more specific "penguins don't fly" overrides
 specificity-resolved result directly.
 -/
 
-namespace Phenomena.Generics.Studies.AsherPelletier2013
+namespace AsherPelletier2013
 
 open Core.Order (NormalityOrder)
 open Phenomena.DefaultReasoning
@@ -351,4 +351,4 @@ theorem generic_nonmonotonic :
     tweetyLe .penguinFlies .penguinNoFly = false ∧
     tweetyLe .penguinFlies .birdFlies = false := ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Generics.Studies.AsherPelletier2013
+end AsherPelletier2013

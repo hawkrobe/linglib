@@ -37,7 +37,7 @@ reference ("during then"), the presuppositions clash.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Zhao2025ThenPresent
+namespace Zhao2025ThenPresent
 
 open Core.Reichenbach
 open Semantics.Tense
@@ -108,4 +108,4 @@ theorem then_compatible_with_deleted_tense {Time : Type*}
   then_deleted_tense_compatible thenRef perspective hDisjoint
 
 
-end Phenomena.TenseAspect.Studies.Zhao2025ThenPresent
+end Zhao2025ThenPresent

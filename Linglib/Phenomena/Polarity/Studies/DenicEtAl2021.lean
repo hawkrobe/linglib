@@ -42,7 +42,7 @@ distinction (DN = `addMult`, simple UE = `mono`), suggesting PI-sensitive
 code should use `EntailmentSig` paths rather than `ContextPolarity`.
 -/
 
-namespace Phenomena.Polarity.Studies.DenicEtAl2021
+namespace DenicEtAl2021
 
 -- ============================================================================
 -- Environment and Condition Types
@@ -431,4 +431,4 @@ theorem mechanism_verdict_linked :
 theorem npi_items_match_fragment :
     npiItemsTested = [any.form, ever.form, atAll.form] := rfl
 
-end Phenomena.Polarity.Studies.DenicEtAl2021
+end DenicEtAl2021

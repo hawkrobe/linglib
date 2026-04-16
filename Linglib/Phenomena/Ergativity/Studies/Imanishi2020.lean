@@ -47,7 +47,7 @@ Three strategies satisfy this:
 - **Pseudo noun incorporation**: object Case-licensed by adjacency
 -/
 
-namespace Phenomena.Ergativity.Studies.Imanishi2020
+namespace Imanishi2020
 
 open Minimalism
 open Phenomena.Ergativity
@@ -349,4 +349,4 @@ theorem qanjobal_cross_cutting :
     deriveAccPattern qanjobalParams = cholPattern :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Ergativity.Studies.Imanishi2020
+end Imanishi2020

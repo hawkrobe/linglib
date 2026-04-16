@@ -54,7 +54,7 @@ Chain reduction removes person features from the bundle, so only the
 default matches.
 -/
 
-namespace Phenomena.FillerGap.Studies.Scott2021
+namespace Scott2021
 
 open Core Fragments.Swahili Fragments.Swahili.Relativization
 open Minimalism (FeatureBundle FeatureVal PhiFeature)
@@ -524,4 +524,4 @@ theorem number_without_person :
     hasPerson (extractFeatures pronTreeCl1) = false := by
   constructor <;> native_decide
 
-end Phenomena.FillerGap.Studies.Scott2021
+end Scott2021

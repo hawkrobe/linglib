@@ -47,7 +47,7 @@ open Phenomena.Possession.Typology
 open Diachronic.Grammaticalization
 open Semantics.Lexical.Noun.Relational.Barker2011 (Pred1 Pred2 SemType)
 
-namespace Phenomena.Possession.Studies.Heine1997
+namespace Heine1997
 
 -- ============================================================================
 -- §1. Schema Contrastive Properties (Table 2.3)
@@ -438,4 +438,4 @@ theorem wals_agrees_with_predicativeSource :
     walsToSchema .conjunctional = predicativeSource .comitative := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Possession.Studies.Heine1997
+end Heine1997

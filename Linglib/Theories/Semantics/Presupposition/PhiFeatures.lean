@@ -39,7 +39,7 @@ framework without stipulation.
 
 ## Architecture
 
-This file was extracted from `Phenomena.Plurals.Studies.Sauerland2003` to
+This file was extracted from `Sauerland2003` to
 separate general phi-feature presuppositional theory (which belongs in
 `Theories/`) from Sauerland's specific arguments about number (which
 belong in `Phenomena/Plurals/Studies/`).

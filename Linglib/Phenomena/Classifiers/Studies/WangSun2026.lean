@@ -27,7 +27,7 @@ detachment from N explains all three problems.
 
 -/
 
-namespace Phenomena.Classifiers.Studies.WangSun2026
+namespace WangSun2026
 
 open MereologicalSyntax
 
@@ -581,7 +581,7 @@ variable {α : Type*} [SemilatticeSup α]
 theorem mandarin_needs_classifiers :
     Fragments.Mandarin.Nouns.mandarinMapping =
       Semantics.Lexical.Noun.Kind.Chierchia1998.NominalMapping.argOnly :=
-  Phenomena.Classifiers.Studies.Chierchia1998.mandarin_mapping
+  Chierchia1998.mandarin_mapping
 
 /-- The Chierchia–Borer–Wang&Sun chain for 杯 bēi:
     1. Mandarin NMP = argOnly → classifiers required (Chierchia)
@@ -601,7 +601,7 @@ theorem full_chain (P : α → Prop) (hc : CUM P) :
     -- Semantic: opposite mereological properties
     QUA (nominalDenotation noDe_D P) ∧
     CUM (nominalDenotation de_D P) :=
-  ⟨Phenomena.Classifiers.Studies.Chierchia1998.mandarin_mapping,
+  ⟨Chierchia1998.mandarin_mapping,
    rfl,
    by native_decide,
    by native_decide,
@@ -610,4 +610,4 @@ theorem full_chain (P : α → Prop) (hc : CUM P) :
 
 end CrossTheoryChain
 
-end Phenomena.Classifiers.Studies.WangSun2026
+end WangSun2026

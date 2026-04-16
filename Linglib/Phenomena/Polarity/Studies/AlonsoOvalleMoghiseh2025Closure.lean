@@ -19,10 +19,10 @@ This breaks closure and creates the need for rescue mechanisms.
 import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 
-namespace Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025Closure
+namespace AlonsoOvalleMoghiseh2025Closure
 
 open Exhaustification
-open Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
+open AlonsoOvalleMoghiseh2025
 
 variable {World : Type*} {Entity : Type*}
 
@@ -216,4 +216,4 @@ theorem unique_witness_falsifies_allNotPreExh
   exact hnotPreExh hpreExh
 
 
-end Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025Closure
+end AlonsoOvalleMoghiseh2025Closure

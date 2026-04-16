@@ -47,7 +47,7 @@ Since ◇(A ∨ B) ↔ ◇A ∨ ◇B truth-conditionally, the two analyses agree
 truth conditions but differ on compositional source. The Geurts analysis
 here is compatible with C&G if the "overt modals" in such sentences are
 reanalyzed as uninterpretable concord markers rather than semantic operators.
-See `Phenomena.Modality.Studies.CiardelliGuerrini2026`.
+See `CiardelliGuerrini2026`.
 
 -/
 

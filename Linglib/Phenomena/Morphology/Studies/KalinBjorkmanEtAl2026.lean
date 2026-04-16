@@ -27,7 +27,7 @@ Nanosyntax, and the Wordhood typology.
   independent formalizations.
 -/
 
-namespace Phenomena.Morphology.Studies.KalinBjorkmanEtAl2026
+namespace KalinBjorkmanEtAl2026
 
 -- ============================================================================
 -- §1: Theory Space (Element §2)
@@ -394,4 +394,4 @@ theorem syncretism_matches_mapping_dimension :
     Morphology.TheorySpace.mas.mapping = Mapping.incremental :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Morphology.Studies.KalinBjorkmanEtAl2026
+end KalinBjorkmanEtAl2026

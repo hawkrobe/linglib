@@ -37,7 +37,7 @@ Formalizes the core empirical and theoretical contributions:
    The 4-way Zapotec animacy system refines the 3-way typological scale.
 -/
 
-namespace Phenomena.Agreement.Studies.Toosarvandani2023
+namespace Toosarvandani2023
 
 open Minimalism.PhiSemantics
 open Fragments.Zapotec
@@ -435,4 +435,4 @@ theorem zapotec_refines_3way :
 theorem prontype_features_wellFormed : ∀ p : PronType,
     p.toPersonFeatures.wellFormed = true := by native_decide
 
-end Phenomena.Agreement.Studies.Toosarvandani2023
+end Toosarvandani2023

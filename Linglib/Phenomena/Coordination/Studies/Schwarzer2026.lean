@@ -46,13 +46,13 @@ Two experiments show German speakers uniformly prefer DP-first order
 out linear/temporal closeness accounts and supports bottom-up analyses.
 -/
 
-namespace Phenomena.Coordination.Studies.Schwarzer2026
+namespace Schwarzer2026
 
 open Core.Coordination
 open Core.Verbs (ComplementType VerbCore)
 open Fragments.German.Predicates
 open Phenomena.WordOrder.Typology
-open Phenomena.Coordination.Studies.BrueningAlKhalaf2020
+open BrueningAlKhalaf2020
 
 -- ============================================================================
 -- § 1: German Clause Type → Complement Position
@@ -487,4 +487,4 @@ theorem experimental_conjunction_is_j :
 theorem german_j_only :
     Fragments.German.Coordination.conjunctionStrategy = .jOnly := rfl
 
-end Phenomena.Coordination.Studies.Schwarzer2026
+end Schwarzer2026

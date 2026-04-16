@@ -48,7 +48,7 @@ the Polish data argues it is.
 - § 3: Polish NP-splitting evidence (Nowak 2000)
 -/
 
-namespace Phenomena.Gradability.Studies.Partee2010
+namespace Partee2010
 
 open Semantics.Lexical.Adjective.Classification
 
@@ -160,4 +160,4 @@ theorem traditional_mispredicts_privative_splitting :
     -- Under the revised analysis, "privative" = subsective, so can split
     canSplitNP .subsective = true := rfl
 
-end Phenomena.Gradability.Studies.Partee2010
+end Partee2010

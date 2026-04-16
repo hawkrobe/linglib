@@ -38,7 +38,7 @@ Part-whole relations (e.g., house-bathroom, classroom-stove):
 
 -/
 
-namespace Phenomena.Presupposition.Studies.HeKaiserIskarous2025
+namespace HeKaiserIskarous2025
 
 -- State Model
 

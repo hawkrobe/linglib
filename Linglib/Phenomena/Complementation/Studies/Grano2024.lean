@@ -46,10 +46,10 @@ semantics of unembedded assertions. Two kinds of departure:
 When neither departure is present, only indicative mood is possible.
 -/
 
-namespace Phenomena.Complementation.Studies.Grano2024
+namespace Grano2024
 
 open Core.Verbs
-open Core.Discourse (GramMood MoodEffect)
+open Core (GramMood MoodEffect)
 open Semantics.Mood
 open Semantics.Attitudes.RationalAttitude
 
@@ -552,4 +552,4 @@ theorem portuguese_intend_fragment_consistent :
     Fragments.Portuguese.MoodChoice.pretender.levinClass = some LevinClass.want ∧
     portuguese_intend.rejectsIndicative = true := ⟨rfl, rfl⟩
 
-end Phenomena.Complementation.Studies.Grano2024
+end Grano2024

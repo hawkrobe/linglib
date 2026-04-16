@@ -48,7 +48,7 @@ bridges them to the `Frame`/`DenotG` infrastructure.
 
 set_option autoImplicit false
 
-namespace Phenomena.Anaphora.Studies.Charlow2018
+namespace Charlow2018
 
 open Core.IntensionalLogic
 open Core.IntensionalLogic.Variables
@@ -298,4 +298,4 @@ theorem denotGJoin_is_W {A : Type}
 
 end ReaderBridge
 
-end Phenomena.Anaphora.Studies.Charlow2018
+end Charlow2018

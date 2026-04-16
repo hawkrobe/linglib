@@ -67,7 +67,7 @@ suggests restricted quantification is a deep linguistic universal.
 
 set_option autoImplicit false
 
-namespace Phenomena.Conditionals.Studies.Belnap1970
+namespace Belnap1970
 
 open Core.Presupposition (PrProp)
 open Core.Duality (Truth3)
@@ -413,4 +413,4 @@ theorem contrapositive_different_assertiveness {m : Frame} [Fintype m.Entity]
       ∃ x : m.Entity, (!B x) = true) :=
   ⟨Iff.rfl, Iff.rfl⟩
 
-end Phenomena.Conditionals.Studies.Belnap1970
+end Belnap1970

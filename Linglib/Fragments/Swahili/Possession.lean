@@ -110,7 +110,7 @@ theorem covers_all_notions :
 -- §6. Heine 1997 Prediction Verification
 -- ============================================================================
 
-open Phenomena.Possession.Studies.Heine1997
+open Heine1997
 
 /-- Swahili's Companion Schema matches Heine's predictions:
     have-construction (not belong), possessor as subject, Pred2. -/

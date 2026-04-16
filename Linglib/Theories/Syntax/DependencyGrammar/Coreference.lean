@@ -190,7 +190,7 @@ def pronounCoreferenceBlocked (ws : List Word) : Bool :=
   | some clause => !pronounLocallyFree clause
 
 -- Binding theory tests are verified by native_decide theorems in
--- Phenomena.Anaphora.Studies.Hudson1990
+-- Hudson1990
 
 -- ============================================================================
 -- Part 10: Dependency Grammar Configuration

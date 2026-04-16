@@ -66,7 +66,7 @@ accessibility. The noise discrimination ordering in `RSA.Noise`
 based on perceptual reliability.
 -/
 
-namespace Phenomena.Reference.Studies.DaleReiter1995
+namespace DaleReiter1995
 
 -- ============================================================================
 -- § Brevity Interpretations (§3)
@@ -391,4 +391,4 @@ theorem q1_q2_decomposition :
     QuantityViolation.underInformative.submaxim ≠
     QuantityViolation.overInformative.submaxim := by decide
 
-end Phenomena.Reference.Studies.DaleReiter1995
+end DaleReiter1995

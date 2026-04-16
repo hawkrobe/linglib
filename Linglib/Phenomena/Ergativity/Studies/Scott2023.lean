@@ -45,11 +45,11 @@ marking patterns) to neutral (one pattern for all). The custom
 
 ## See Also
 
-`Phenomena.Agreement.Studies.Scott2023` for the Agree-based derivation
+`Scott2023` for the Agree-based derivation
 of the matrix tripartite pattern (probe blocking by Voice_TR).
 -/
 
-namespace Phenomena.Ergativity.Studies.Scott2023
+namespace Scott2023
 
 open Fragments.Mayan (MarkerSet)
 
@@ -137,4 +137,4 @@ def objectSetAIsDefault : Bool := true
 theorem object_default_parallel :
     objectSetAIsDefault = true := rfl
 
-end Phenomena.Ergativity.Studies.Scott2023
+end Scott2023

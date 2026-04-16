@@ -47,9 +47,9 @@ which suffices for the mathematical theorem. The full paper uses a
   (stem vowel AGREE + final consonant BILABIAL/SIBILANT/etc.)
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
+namespace ZurawHayes2017
 
-open Phonology.HarmonicGrammar
+open Core.Constraint
 open Fragments.Tagalog.Phonology
 
 -- ============================================================================
@@ -252,4 +252,4 @@ theorem nhg_tagalog_consistent (w : Fin 6 → ℝ) (σ : ℝ) (hσ : 0 < σ)
   nhg_consistent_ordering (fun x => ∑ k : Fin 6, w k * deltaR k x)
     σ hσ nasalSubSquare (maxent_predicts_hz_tagalog w) hne
 
-end Phenomena.PhonologicalAlternation.Studies.ZurawHayes2017
+end ZurawHayes2017

@@ -56,7 +56,7 @@ constructor with matching `QInterval.sqrt` evaluation and soundness proof.
 
 set_option autoImplicit false
 
-namespace Phenomena.Modality.Studies.HerbstrittFranke2019
+namespace HerbstrittFranke2019
 
 open Core.Distributions Core.Divergence
 
@@ -547,4 +547,4 @@ modal concord are "probably likely" and "might be possible", both of which
 combine modals of similar strength.
 -/
 
-end Phenomena.Modality.Studies.HerbstrittFranke2019
+end HerbstrittFranke2019

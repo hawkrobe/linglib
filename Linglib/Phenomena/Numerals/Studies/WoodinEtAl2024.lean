@@ -20,7 +20,7 @@ interacts with communicative goals.
 
 -/
 
-namespace Phenomena.Numerals.Studies.WoodinEtAl2024
+namespace WoodinEtAl2024
 
 open Core.Roundness
 
@@ -145,4 +145,4 @@ def nonInformationalEffect : RegisterEffectDatum :=
   , notes := "Fiction/conversation show weaker roundness effects; approximate use less marked"
   }
 
-end Phenomena.Numerals.Studies.WoodinEtAl2024
+end WoodinEtAl2024

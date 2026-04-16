@@ -45,7 +45,7 @@ linear order). Only the Specificity Condition applies, and it applies
 equally regardless of verb class — hence no VOC effect.
 -/
 
-namespace Phenomena.Islands.Studies.ShenHuang2026
+namespace ShenHuang2026
 
 open Core.Verbs
 open Core.Definiteness
@@ -707,4 +707,4 @@ theorem incorporation_determines_syntactic_source (dHead : SyntacticObject)
     (DPPhaseStatus.mk dHead (isDPhaseHead dHead) inc).isActivePhase = !inc := by
   cases inc <;> simp [DPPhaseStatus.isActivePhase, h_phase]
 
-end Phenomena.Islands.Studies.ShenHuang2026
+end ShenHuang2026

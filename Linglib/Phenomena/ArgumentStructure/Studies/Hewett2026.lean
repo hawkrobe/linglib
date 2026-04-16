@@ -39,7 +39,7 @@ outside the domain where morphological and syntactic orderings are
 required to mirror each other.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Hewett2026
+namespace Hewett2026
 
 open Minimalism (VoiceFlavor VoiceHead VerbHead Cat FeatureStatus TrackedFeature
   ActivationIndex ApplType ApplHead applHigh applLowRecipient applLowSource
@@ -952,4 +952,4 @@ theorem activation_matches_lSelect_dwr :
     eala.selectedP = .Eala ∧
     some .Eala = lSelect .dwr .XaYYaZ := ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.ArgumentStructure.Studies.Hewett2026
+end Hewett2026

@@ -93,7 +93,7 @@ We achieve this without ℚ division by computing:
 
 set_option autoImplicit false
 
-namespace Phenomena.Generics.Studies.TesslerGoodman2019
+namespace TesslerGoodman2019
 
 open Core.Scale (Degree Threshold deg thr allDegrees allThresholds
   Degree.toNat Threshold.toNat)
@@ -907,4 +907,4 @@ theorem unification :
     (∃ pr hp, rareWeakCfg = mkGenericCfg pr hp) :=
   ⟨⟨_, _, rfl⟩, ⟨_, _, rfl⟩, ⟨_, _, rfl⟩⟩
 
-end Phenomena.Generics.Studies.TesslerGoodman2019
+end TesslerGoodman2019

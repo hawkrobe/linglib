@@ -81,13 +81,13 @@ predictive density), supporting the FDH over the FGH.
 
 set_option autoImplicit false
 
-namespace Phenomena.Presupposition.Studies.GroveWhite2025
+namespace GroveWhite2025
 
 open Semantics.Attitudes.Factivity
 open Semantics.Probabilistic.ParamPred
 open Phenomena.Presupposition.Gradience
-open Phenomena.Presupposition.Studies.DegenTonhauser2021
-open Phenomena.Presupposition.Studies.DegenTonhauser2022
+open DegenTonhauser2021
+open DegenTonhauser2022
 
 -- ============================================================================
 -- §1. The Two Hypotheses
@@ -373,4 +373,4 @@ theorem prior_effect_consistent :
     exp2b_priorEffect .categorical = some ⟨0.18, 0.01, 12.81⟩ :=
   prior_effect_replicates
 
-end Phenomena.Presupposition.Studies.GroveWhite2025
+end GroveWhite2025

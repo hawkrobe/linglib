@@ -53,7 +53,7 @@ from scope rather than from local-context filtering.
 
 set_option autoImplicit false
 
-namespace Phenomena.Presupposition.Studies.Grove2022
+namespace Grove2022
 
 open Semantics.Composition.MaybeMonad
 
@@ -236,7 +236,7 @@ We reuse the world model from @cite{heim-1992} (`AttWorld` with
 `actual` and `believed`) and show that the scope theory derives the
 same empirical predictions via different machinery. -/
 
-open Phenomena.Presupposition.Studies.Heim1992 (AttWorld believesR)
+open Heim1992 (AttWorld believesR)
 
 /-- The complement "he lost his wetsuit" as an `Iₚ`-typed meaning.
 
@@ -331,4 +331,4 @@ theorem global_projects_past_attitude :
     ∧ (lostWetsuit .actual).isSome = false := by
   exact ⟨rfl, rfl⟩
 
-end Phenomena.Presupposition.Studies.Grove2022
+end Grove2022

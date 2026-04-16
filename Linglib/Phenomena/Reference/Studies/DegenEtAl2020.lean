@@ -102,7 +102,7 @@ SE = .11, NS. BDA (§5.3, Figure 19): β_fixed MAP = 0.004,
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.DegenEtAl2020
+namespace DegenEtAl2020
 
 -- ============================================================================
 -- §1. Domain Types
@@ -1233,4 +1233,4 @@ theorem cost_crossover_table :
     S1_nom_cost (1/5) .dalmatian .basic > S1_nom_cost (1/5) .dalmatian .sub := by
   refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
 
-end Phenomena.Reference.Studies.DegenEtAl2020
+end DegenEtAl2020

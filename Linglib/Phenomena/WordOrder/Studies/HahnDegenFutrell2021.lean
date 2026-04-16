@@ -35,7 +35,7 @@ information structure rather than minimize processing cost.
   Korean's entropy is unavailable in the published data.
 -/
 
-namespace Phenomena.WordOrder.Studies.HahnDegenFutrell2021
+namespace HahnDegenFutrell2021
 
 open Processing.MemorySurprisal
 
@@ -547,4 +547,4 @@ theorem wals_family_divergence_count :
       | none => false
     )).length = 9 := by native_decide
 
-end Phenomena.WordOrder.Studies.HahnDegenFutrell2021
+end HahnDegenFutrell2021

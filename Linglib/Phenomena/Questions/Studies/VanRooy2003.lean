@@ -42,7 +42,7 @@ produces mention-some readings.
 - `Theories.Semantics.Questions.GSVanRooyBridge`: Blackwell's theorem
 -/
 
-namespace Phenomena.Questions.Studies.VanRooy2003
+namespace VanRooy2003
 
 open Core.DecisionTheory
 open Semantics.Questions hiding Question
@@ -513,4 +513,4 @@ theorem mentionSome_value_eq_mentionAll :
     QUD.partitionValue newspaperDP newspaperGS Finset.univ {Shop.A, .B} :=
   newspaper_value_saturation_A.symm
 
-end Phenomena.Questions.Studies.VanRooy2003
+end VanRooy2003

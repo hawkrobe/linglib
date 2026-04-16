@@ -39,7 +39,9 @@ Phenomena.Reference.DirectReference (MonsterThesis, shift languages)
 
 -/
 
-namespace Phenomena.Reference.Studies.AnandNevins2004
+open Phenomena.Reference
+
+namespace AnandNevins2004
 
 open Core.Context
 open Semantics.Reference.FreeIndirectDiscourse
@@ -164,4 +166,4 @@ theorem fid_time_eq_direct :
     classicFIDProfile.resolveTime fidTower =
     directProfile.resolveTime fidTower := rfl
 
-end Phenomena.Reference.Studies.AnandNevins2004
+end AnandNevins2004

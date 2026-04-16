@@ -40,7 +40,7 @@ Each tree is licensed (or rejected) by the network, connecting:
 Reference: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
-namespace Phenomena.WordOrder.Studies.Hudson1984
+namespace Hudson1984
 
 open DepGrammar DepGrammar.WG
 
@@ -315,4 +315,4 @@ because that is what the interrogative_auxiliary word class says — not
 because a lexical rule has flipped a direction.
 -/
 
-end Phenomena.WordOrder.Studies.Hudson1984
+end Hudson1984

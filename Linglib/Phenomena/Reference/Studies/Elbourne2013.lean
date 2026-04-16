@@ -56,7 +56,7 @@ Fragments/English/Pronouns.lean
 
 -/
 
-namespace Phenomena.Reference.Studies.Elbourne2013
+namespace Elbourne2013
 
 open Core.Presupposition (PrProp)
 open Core.Definiteness (DefPresupType)
@@ -773,4 +773,4 @@ theorem np_sources_exercised :
 end PronounAsDefiniteExample
 
 
-end Phenomena.Reference.Studies.Elbourne2013
+end Elbourne2013

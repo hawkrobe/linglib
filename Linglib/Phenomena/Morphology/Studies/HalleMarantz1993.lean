@@ -40,7 +40,7 @@ and `Theories/Morphology/DM/Fission.lean`. This study file instantiates
 impoverishment on the English paradigm to derive syncretism (§4).
 -/
 
-namespace Phenomena.Morphology.Studies.HalleMarantz1993
+namespace HalleMarantz1993
 
 open Morphology.DM.VI
 open Morphology.DM.PostSyntactic
@@ -463,4 +463,4 @@ theorem english_inflection_in_scope :
 
 end BakerBridge
 
-end Phenomena.Morphology.Studies.HalleMarantz1993
+end HalleMarantz1993

@@ -1,5 +1,5 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.NoisyHG
-import Linglib.Theories.Phonology.HarmonicGrammar.Separability
+import Linglib.Core.Constraint.NoisyHG
+import Linglib.Core.Constraint.Separability
 import Linglib.Core.Agent.GumbelLuce
 
 /-!
@@ -50,9 +50,9 @@ under MaxEnt. We encode this data and verify:
   paired contexts, violating probit uniformity (NHG prediction)
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.Flemming2021
+namespace Flemming2021
 
-open Phonology.HarmonicGrammar Core Real
+open Core.Constraint Core Real
 
 -- ============================================================================
 -- § 1: MaxEnt as Gumbel RUM (McFadden)
@@ -413,4 +413,4 @@ theorem schwaSchwa_hz (w : Fin 6 → ℝ) :
       schwaSquareSchwa :=
   me_predicts_hz w _ schwaSquareSchwa schwaSchwa_independence
 
-end Phenomena.PhonologicalAlternation.Studies.Flemming2021
+end Flemming2021

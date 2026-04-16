@@ -28,7 +28,7 @@ connecting `KnowledgeBeliefFrame` (from `EpistemicLogic.lean`) through
 
 -/
 
-namespace Phenomena.Presupposition.Studies.Heim1992
+namespace Heim1992
 
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
@@ -193,4 +193,4 @@ theorem heim_know_believe_asymmetry :
     have := reflexivity_forces_actual_truth h
     simp [presup] at this
 
-end Phenomena.Presupposition.Studies.Heim1992
+end Heim1992

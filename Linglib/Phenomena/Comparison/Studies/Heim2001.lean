@@ -41,7 +41,7 @@ scope configurations are empirically available.
 
 -/
 
-namespace Phenomena.Comparison.Studies.Heim2001
+namespace Heim2001
 
 open Semantics.Degree.DegreeAbstraction
 open Semantics.Degree.Comparative (comparativeSem)
@@ -334,4 +334,4 @@ theorem scope_collapse_exists {Entity D : Type*} [LinearOrder D]
     highDegP_exists restrictor μ threshold :=
   exists_more_scope_collapse restrictor μ threshold
 
-end Phenomena.Comparison.Studies.Heim2001
+end Heim2001

@@ -34,7 +34,7 @@ object marking profiles in `Phenomena/Case/Typology.lean`.
    DOM regularized earliest for agent-patient verbs.
 -/
 
-namespace Phenomena.Case.Studies.Grimm2011
+namespace Grimm2011
 
 open Semantics.Lexical.Verb.AgentivityLattice
 open Semantics.Lexical.Verb.EntailmentProfile
@@ -391,4 +391,4 @@ theorem instigation_is_the_feature :
     arriveSubjectProfile.causation = false :=
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Case.Studies.Grimm2011
+end Grimm2011

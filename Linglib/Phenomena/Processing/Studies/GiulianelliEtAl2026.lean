@@ -48,7 +48,7 @@ multi-dimensional.
 
 set_option autoImplicit false
 
-namespace Phenomena.Processing.Studies.GiulianelliEtAl2026
+namespace GiulianelliEtAl2026
 
 open Core.GeneralisedSurprisal
 
@@ -284,4 +284,4 @@ theorem surprisal_is_best_case :
     surprisalBestMatchesSummary = .min :=
   rfl
 
-end Phenomena.Processing.Studies.GiulianelliEtAl2026
+end GiulianelliEtAl2026

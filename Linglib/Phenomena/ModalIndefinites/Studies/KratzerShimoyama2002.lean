@@ -53,7 +53,7 @@ movement.
 
 set_option autoImplicit false
 
-namespace Phenomena.ModalIndefinites.Studies.KratzerShimoyama2002
+namespace KratzerShimoyama2002
 
 open Semantics.Composition.SetMonad (eta)
 open Semantics.Composition.Applicative (setAp)
@@ -627,4 +627,4 @@ theorem selective_contrast :
   ⟨rfl, rfl⟩
 
 
-end Phenomena.ModalIndefinites.Studies.KratzerShimoyama2002
+end KratzerShimoyama2002

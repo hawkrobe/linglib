@@ -70,7 +70,7 @@ These connect to `PredicateTransfer.lean` (T_g, γ, SHIFT, `QuantifierSource`),
 `CovertQuantifier.lean` (shared `covertQ`), and `Scope.lean` (ScopeConfig).
 -/
 
-namespace Phenomena.Generics.Studies.Cohen2013
+namespace Cohen2013
 
 open Semantics.Composition.PredicateTransfer
 open Semantics.Lexical.CovertQuantifier
@@ -428,4 +428,4 @@ theorem habitual_scope_restricted :
     habitualScopeConfigs.length < Semantics.Scope.allScopeConfigs.length := by
   native_decide
 
-end Phenomena.Generics.Studies.Cohen2013
+end Cohen2013

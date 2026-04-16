@@ -14,9 +14,9 @@ Verifies that:
 
 -/
 
-namespace Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
+namespace CumulativeReadings
 
-open Phenomena.Plurals.Studies.Charlow2021.Data
+open Data
 
 /-- The pointwise system overgenerates: it predicts Scenario B is TRUE
     under the pseudo-cumulative reading.
@@ -45,4 +45,4 @@ theorem cumulative_strictly_stronger :
     (pseudoCumulativeReading scenarioB_saw allBoys4 allMovies6 3 5 = true) :=
   ⟨scenarioB_cumulative_false, scenarioB_pseudo_true⟩
 
-end Phenomena.Plurals.Studies.Charlow2021.CumulativeReadings
+end CumulativeReadings

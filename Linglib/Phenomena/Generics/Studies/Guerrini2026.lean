@@ -68,7 +68,7 @@ This derives from @cite{chierchia-1998}'s Nominal Mapping Parameter:
 English [+arg, +pred] allows both; Italian [-arg, +pred] forces D.
 -/
 
-namespace Phenomena.Generics.Studies.Guerrini2026
+namespace Guerrini2026
 
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping Kind canDenoteKind
   canDenoteProperty downDefinedFor DPP)
@@ -682,7 +682,7 @@ section DKPPrevalence
 
 variable {Atom W : Type}
 
-open Phenomena.Generics.Studies.TesslerGoodman2019 (genericMeaning GenThreshold Prevalence)
+open TesslerGoodman2019 (genericMeaning GenThreshold Prevalence)
 open Core.Scale (deg thr)
 
 /-- Prevalence of P among atoms in an extension at world w.
@@ -1032,7 +1032,7 @@ theorem table1_from_lf_structure :
 
 section Longobardi2001Bridge
 
-open Phenomena.Reference.Studies.Longobardi2001 (DPParameter bnCanBeReferential
+open Longobardi2001 (DPParameter bnCanBeReferential
   toNominalMapping romance english GenericType)
 
 /-- @cite{longobardi-2001}'s referential BN reading corresponds to DKP/CKP
@@ -1925,4 +1925,4 @@ theorem all_hunt_agreement :
 
 end CompositionalTreeDemo
 
-end Phenomena.Generics.Studies.Guerrini2026
+end Guerrini2026

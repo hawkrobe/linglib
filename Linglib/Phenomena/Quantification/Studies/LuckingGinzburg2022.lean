@@ -37,7 +37,7 @@ a **descriptive quantifier condition** (q-cond), and a **quantifier perspective*
 - **Dog example**: reuses `DogWorld` from TTR Ch. 7
 -/
 
-namespace Phenomena.Quantification.Studies.LuckingGinzburg2022
+namespace LuckingGinzburg2022
 
 open Semantics.TypeTheoretic
 open Core.Quantification
@@ -434,4 +434,4 @@ theorem few_dog_sieve_card :
 theorem aFew_dog_sieve_card :
     (refindFilter (sieve few_qcond (allBP dogs))).card = 3 := by decide
 
-end Phenomena.Quantification.Studies.LuckingGinzburg2022
+end LuckingGinzburg2022

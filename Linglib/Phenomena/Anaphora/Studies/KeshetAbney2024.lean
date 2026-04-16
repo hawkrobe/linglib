@@ -42,7 +42,7 @@ finite models with `native_decide` verification.
 
 -/
 
-namespace Phenomena.Anaphora.Studies.KeshetAbney2024
+namespace KeshetAbney2024
 
 open Semantics.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity)
@@ -486,15 +486,15 @@ theorem modal_sub_binding_modes :
 -- Bridge 2: Bathroom Sentences
 -- ============================================================
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 theorem pip_classic_bathroom :
     bathroomDisjunction.felicitous = true := rfl
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 theorem pip_negation_blocks :
     negationBlocks.felicitous = false := rfl
 
-open Phenomena.Anaphora.Studies.Hofmann2025 in
+open Hofmann2025 in
 theorem pip_conjunction_fails :
     conjunctionBlocks.felicitous = false := rfl
 
@@ -1345,4 +1345,4 @@ theorem pip_extends_dpl :
     coverageData.all (λ d => !d.dpl || d.pip) = true := by native_decide
 
 
-end Phenomena.Anaphora.Studies.KeshetAbney2024
+end KeshetAbney2024

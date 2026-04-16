@@ -27,7 +27,7 @@ bias for dependency-length-minimizing (= memory-efficient) orders.
 
 -/
 
-namespace Phenomena.WordOrder.Studies.FedzechkinaEtAl2017
+namespace FedzechkinaEtAl2017
 
 open DepGrammar DependencyLength Processing.MemorySurprisal
 
@@ -158,4 +158,4 @@ theorem short_deps_implies_efficient :
     langACurve.auc < langBCurve.auc :=
   ⟨by native_decide, by native_decide⟩
 
-end Phenomena.WordOrder.Studies.FedzechkinaEtAl2017
+end FedzechkinaEtAl2017

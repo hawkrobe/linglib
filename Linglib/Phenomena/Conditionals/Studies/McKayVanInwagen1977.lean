@@ -36,7 +36,7 @@ this with two arguments:
 - Lewis's disjunctive-closure semantics corresponds to `lewisDAC`
 -/
 
-namespace Phenomena.Conditionals.Studies.McKayVanInwagen1977
+namespace McKayVanInwagen1977
 
 open Semantics.Conditionals (SimilarityOrdering)
 open Semantics.Conditionals.AlternativeSensitive (lewisDAC sdaEval)
@@ -213,4 +213,4 @@ theorem readings_diverge :
   ⟨⟨spain_lewis_true, spain_conjunction_false⟩,
    ⟨bumperCrop_lewis_true, bumperCrop_conjunction_false⟩⟩
 
-end Phenomena.Conditionals.Studies.McKayVanInwagen1977
+end McKayVanInwagen1977

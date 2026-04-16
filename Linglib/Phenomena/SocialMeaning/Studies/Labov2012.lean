@@ -35,7 +35,7 @@ careful context) from Bayesian pragmatic reasoning.
 
 set_option autoImplicit false
 
-namespace Phenomena.SocialMeaning.Studies.Labov2012
+namespace Labov2012
 
 -- ============================================================================
 -- Obama's (ING) rates (Ch. 2, Figure 3)
@@ -66,4 +66,4 @@ theorem obama_ING_monotone :
     obama_ING.careful > obama_ING.formal := by
   exact ⟨by native_decide, by native_decide⟩
 
-end Phenomena.SocialMeaning.Studies.Labov2012
+end Labov2012

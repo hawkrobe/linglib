@@ -40,7 +40,7 @@ Passive: [TP DP_obj [T' T [VoiceP [PartP Part V t_obj] [Voice' by [vP DP_ext [v'
 
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Collins2005
+namespace Collins2005
 
 open Minimalism
 
@@ -139,4 +139,4 @@ theorem unified_smuggling :
     voiceAgent.permitsSmuggling = false ∧
     voiceCauser.permitsSmuggling = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.ArgumentStructure.Studies.Collins2005
+end Collins2005

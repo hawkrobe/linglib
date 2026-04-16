@@ -28,7 +28,7 @@ sign, and demonstrates the speaker/addressee IS asymmetry.
 
 -/
 
-namespace Phenomena.Ellipsis.Studies.GinzburgCooper2004
+namespace GinzburgCooper2004
 
 open Pragmatics.Dialogue.KOS
 open Phenomena.Ellipsis.ClarificationEllipsis
@@ -293,4 +293,4 @@ theorem hybrid_content_evidence :
 theorem running_example_matches_ce_data :
     ceProperName.readings = [CEReading.clausal, CEReading.constituent] := rfl
 
-end Phenomena.Ellipsis.Studies.GinzburgCooper2004
+end GinzburgCooper2004

@@ -44,7 +44,7 @@ cases, while the quantificational analysis fails for distributive operators
   (exhaustive vs. partial) relevant to §4
 -/
 
-namespace Phenomena.Anaphora.Studies.DalrympleHaug2024
+namespace DalrympleHaug2024
 
 open Semantics.Reference.Reciprocals
 
@@ -516,4 +516,4 @@ theorem logophoric_forces_groupIdentity_relation :
     relationalPrediction logophoricProps = [.narrow] ∧
     narrowScopeRelations.1 = .groupIdentity := ⟨rfl, rfl⟩
 
-end Phenomena.Anaphora.Studies.DalrympleHaug2024
+end DalrympleHaug2024

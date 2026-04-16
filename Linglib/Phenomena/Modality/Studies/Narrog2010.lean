@@ -34,7 +34,7 @@ speaker-orientation. Face-threat is derived from this decomposition (see
   (volitivity, speaker-orientation, performativity, directionality).
 -/
 
-namespace Phenomena.Modality.Studies.Narrog2010
+namespace Narrog2010
 
 open Core.Modality.DeonticNecessity
 open Semantics.Modality.Narrog
@@ -152,4 +152,4 @@ theorem face_threat_predicts_avoidance :
     japaneseStrongNecessity.secondPerson = 0 :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Modality.Studies.Narrog2010
+end Narrog2010

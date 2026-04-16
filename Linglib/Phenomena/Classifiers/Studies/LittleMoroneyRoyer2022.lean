@@ -57,7 +57,9 @@ The extensional equivalence (`derivations_extensionally_equal`) bridges the
 two via `Finset.card_eq_two`.
 -/
 
-namespace Phenomena.Classifiers.Studies.LittleMoroneyRoyer2022
+open Phenomena.Classifiers
+
+namespace LittleMoroneyRoyer2022
 
 open Core.NounCategorization
 open Phenomena.Classifiers.Typology
@@ -516,4 +518,4 @@ theorem clfForNum_agrees_with_local (s : Finset Dog) :
       Mereology.QMOD (·.Nonempty : Finset Dog → Prop) Finset.card 2 s :=
   Iff.rfl
 
-end Phenomena.Classifiers.Studies.LittleMoroneyRoyer2022
+end LittleMoroneyRoyer2022

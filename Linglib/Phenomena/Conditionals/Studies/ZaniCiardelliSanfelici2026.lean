@@ -44,7 +44,7 @@ The DCR→SDA trajectory supports homogeneity-based accounts
   existential→homogeneous shift
 -/
 
-namespace Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
+namespace ZaniCiardelliSanfelici2026
 
 open Core.Duality (Truth3 ProjectionType)
 open Semantics.Conditionals (SimilarityOrdering)
@@ -368,7 +368,7 @@ theorem sda_without_equal_realism :
 -- SECTION 10: Parallel with Plural Definite Acquisition
 -- ============================================================
 
-open Phenomena.Plurals.Studies.TieuKrizChemla2019
+open TieuKrizChemla2019
   (DefinitePluralReading DevelopmentalStage)
 
 /-- The developmental trajectory for DACs parallels the trajectory for
@@ -482,4 +482,4 @@ prediction that non-equally-realistic disjuncts should yield AR.
 -/
 
 
-end Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
+end ZaniCiardelliSanfelici2026

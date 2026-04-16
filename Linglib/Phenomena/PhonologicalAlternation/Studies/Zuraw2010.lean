@@ -48,7 +48,7 @@ voiceless stems show higher substitution rates than voiced stems at the
 labial place (p: 253/263 vs b: 177/277).
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.Zuraw2010
+namespace Zuraw2010
 
 open Core.OT Phonology.Constraints
 open Fragments.Tagalog.Phonology (StemC SubSt NSCand dictRate_p dictRate_b dict_voicing_labial)
@@ -310,4 +310,4 @@ theorem voicing_monotonicity :
     @cite{magri-2025}'s MaxEnt analysis. -/
 theorem tagalog_is_pattern_j : factorialPatterns.contains pat_j = true := by native_decide
 
-end Phenomena.PhonologicalAlternation.Studies.Zuraw2010
+end Zuraw2010

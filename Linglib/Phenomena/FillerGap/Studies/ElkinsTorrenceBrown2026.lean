@@ -47,7 +47,7 @@ and Spellout — to the empirical data on =(y)a' distribution in SJO Mam.
    independently Agrees, yielding multiple =(y)a' (one per Voice/Dir).
 -/
 
-namespace Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
+namespace ElkinsTorrenceBrown2026
 
 -- ============================================================================
 -- Part I: Cross-Linguistic Comparison
@@ -341,4 +341,4 @@ theorem full_derivation_pipeline :
 
 end Derivation
 
-end Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
+end ElkinsTorrenceBrown2026

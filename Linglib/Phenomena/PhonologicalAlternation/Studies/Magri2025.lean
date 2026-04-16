@@ -32,9 +32,9 @@ nasal substitution case study from the paper's §2–3, verifying:
 The constraint data comes from `Fragments.Tagalog.Phonology`.
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.Magri2025
+namespace Magri2025
 
-open Phonology.HarmonicGrammar
+open Core.Constraint
 open Fragments.Tagalog.Phonology
 
 -- ============================================================================
@@ -268,4 +268,4 @@ theorem me_separable_predicts_hz_tagalog (w : Fin 6 → ℝ) :
       starStemVelarCoronal, unifMang, unifPang] <;>
     simp
 
-end Phenomena.PhonologicalAlternation.Studies.Magri2025
+end Magri2025

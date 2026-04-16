@@ -26,7 +26,7 @@ and `Events/DimensionBridge.lean` to concrete VP data and licensing predictions.
 5. **Diagnostic bridge** — licensing → for/in compatibility
 -/
 
-namespace Phenomena.TenseAspect.Studies.DimensionCoherence
+namespace DimensionCoherence
 
 open Semantics.Events.DimensionCoherence
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
@@ -192,4 +192,4 @@ theorem blocked_accepts_forX :
     forXPrediction .state = .accept ∧
     forXPrediction .activity = .accept := ⟨rfl, rfl⟩
 
-end Phenomena.TenseAspect.Studies.DimensionCoherence
+end DimensionCoherence

@@ -62,7 +62,7 @@ imports those definitions and verifies the paper's empirical predictions
 as concrete theorems using the simplified fValue model.
 -/
 
-namespace Phenomena.Agreement.Studies.Keine2019
+namespace Keine2019
 
 open Minimalism (ProbeProfile keinePhiProbe keineAProbe keineWhLicensing
   keineĀProbe fValue ClauseSpine Cat)
@@ -259,4 +259,4 @@ theorem hyperraising_blocked :
 theorem ābar_extraction_ok :
     keineĀProbe.transparentTo .C = true := by decide
 
-end Phenomena.Agreement.Studies.Keine2019
+end Keine2019

@@ -62,7 +62,7 @@ Both are production choices along the same NP weight/reduction dimension.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.RosaArnold2017
+namespace RosaArnold2017
 
 open Core.Discourse.CoherenceRelation
 open Core.Discourse.ReferentialForm
@@ -331,7 +331,7 @@ theorem pronoun_at_most_as_heavy :
 -- § 10. Cross-Study Bridge: @cite{arnold-wasow-losongco-ginstrom-2000}
 -- ════════════════════════════════════════════════════
 
-open Phenomena.WordOrder.Studies.ArnoldEtAl2000
+open ArnoldEtAl2000
 
 /-- The goal argument receives a MORE REDUCED referential form than the
     source argument. This derived contrast — not the individual predictions —
@@ -375,7 +375,7 @@ theorem dual_path_to_ordering :
 -- § 11. Cross-Study Bridge: @cite{kehler-rohde-2013}
 -- ════════════════════════════════════════════════════
 
-open Phenomena.Reference.Studies.KehlerRohde2013
+open KehlerRohde2013
 
 /-- @cite{kehler-rohde-2013}'s Bayesian decomposition predicts that
     P(pronoun | referent) depends only on topichood, not on semantic
@@ -413,4 +413,4 @@ theorem coherence_interaction_matches_KR_biases :
     other_interaction.significant = false := by
   exact ⟨by native_decide, by native_decide, rfl, rfl⟩
 
-end Phenomena.Reference.Studies.RosaArnold2017
+end RosaArnold2017

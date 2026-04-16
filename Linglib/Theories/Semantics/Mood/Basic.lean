@@ -38,7 +38,7 @@ In CDRT, these operators compose dynamically:
 
 import Linglib.Theories.Semantics.Tense.BranchingTime
 import Linglib.Core.Context.Shifts
-import Linglib.Core.Discourse.GramMood
+import Linglib.Core.GrammaticalMood
 
 namespace Semantics.Mood
 
@@ -46,7 +46,7 @@ open Core.Time
 open Semantics.Tense.BranchingTime
 
 -- Re-export Core types into this namespace for backward compatibility
-export Core.Discourse (GramMood SubjunctiveType MoodEffect)
+export Core (GramMood SubjunctiveType MoodEffect)
 
 
 /--

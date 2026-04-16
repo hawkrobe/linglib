@@ -52,13 +52,13 @@ and prove bridge theorems connecting to Arnold's discourse conditions.
 
 set_option autoImplicit false
 
-namespace Phenomena.Pronouns.Studies.KonnellyCowper2020
+namespace KonnellyCowper2020
 
 open Morphology.DM (Contrastivity GenderFeature GenderVal GenderDimension
   Polarity Interpretability CatHead PhiBundle)
 open Morphology.DM.VI (FeatureVI subsetPrinciple)
 open Core.Discourse.ReferentialForm (DiscourseElaboration)
-open _root_.Phenomena.Pronouns.Studies.Arnold2026 (licensesUnderspecified)
+open _root_.Arnold2026 (licensesUnderspecified)
 
 -- ============================================================================
 -- § 1: Morphosyntactic Features for English Pronouns
@@ -669,4 +669,4 @@ theorem pets_pattern_with_animates :
 theorem inanimates_always_it :
     subsetPrinciple pronounVIs inanimateBundle = some "it" := by decide
 
-end Phenomena.Pronouns.Studies.KonnellyCowper2020
+end KonnellyCowper2020

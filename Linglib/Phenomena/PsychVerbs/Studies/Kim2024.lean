@@ -41,7 +41,7 @@ verb's event provides CON(e), just like an attitude verb's event does.
 
 -/
 
-namespace Phenomena.PsychVerbs.Studies.Kim2024
+namespace Kim2024
 
 open Semantics.Causation.Psych
 open Semantics.Modality.EventRelativity
@@ -195,4 +195,4 @@ theorem eventive_verbs_are_contentless :
     psychCanProjectEpistemic .external = false := ⟨rfl, rfl⟩
 
 
-end Phenomena.PsychVerbs.Studies.Kim2024
+end Kim2024

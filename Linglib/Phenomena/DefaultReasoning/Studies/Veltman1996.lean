@@ -29,7 +29,7 @@ The normality ordering in update semantics plays the same role as
 the normalcy predicate in the GEN operator for generic sentences.
 -/
 
-namespace Phenomena.DefaultReasoning.Studies.Veltman1996
+namespace Veltman1996
 
 open Phenomena.DefaultReasoning
 open Semantics.Dynamic.Default
@@ -506,4 +506,4 @@ theorem optimal_as_normalcy (no : NormalityOrder W) (d : Set W)
 end GenericsBridge
 
 
-end Phenomena.DefaultReasoning.Studies.Veltman1996
+end Veltman1996

@@ -45,7 +45,7 @@ Texas at Austin.
 - `anticausative_no_theta` / `middle_no_theta` → `VoiceHead` (Minimalist syntax)
 -/
 
-namespace Phenomena.Causation.Studies.Krejci2012
+namespace Krejci2012
 
 open Core.Verbs
 open Semantics.Causation.Morphological
@@ -378,4 +378,4 @@ theorem middle_no_theta :
 theorem hierarchy_holds :
     krejciLanguages.all (·.respectsHierarchy) = true := by native_decide
 
-end Phenomena.Causation.Studies.Krejci2012
+end Krejci2012

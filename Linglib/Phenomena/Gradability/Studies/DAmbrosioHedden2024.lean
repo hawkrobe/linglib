@@ -34,7 +34,7 @@ DOI: 10.1080/00048402.2023.2277923
 - §4: Connection to @cite{sassoon-2013} (binding types = counting)
 -/
 
-namespace Phenomena.Gradability.Studies.DAmbrosioHedden2024
+namespace DAmbrosioHedden2024
 
 open Semantics.Lexical.Adjective (DimensionBindingType conjunctiveBinding
   disjunctiveBinding)
@@ -202,4 +202,4 @@ theorem counting_accepts_partial :
        fun (_ : Unit) => false]
       () = true := by native_decide
 
-end Phenomena.Gradability.Studies.DAmbrosioHedden2024
+end DAmbrosioHedden2024

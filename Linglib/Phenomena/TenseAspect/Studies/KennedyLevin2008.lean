@@ -22,7 +22,7 @@ that the fragment annotations are consistent with that derivation.
   156–182. OUP.
 -/
 
-namespace Phenomena.TenseAspect.Studies.KennedyLevin2008
+namespace KennedyLevin2008
 
 open Fragments.English.Predicates.Verbal hiding clean cool warm open_
 open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
@@ -290,4 +290,4 @@ theorem warm_pipeline_converge :
     LicensingPipeline.toBoundedness vWarm.toVerbCore.degreeAchievementScale.get! =
     LicensingPipeline.toBoundedness vWarm.toVerbCore.vendlerClass.get! := rfl
 
-end Phenomena.TenseAspect.Studies.KennedyLevin2008
+end KennedyLevin2008

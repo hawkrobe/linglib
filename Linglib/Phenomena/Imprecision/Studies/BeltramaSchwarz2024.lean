@@ -34,7 +34,7 @@ exactness demands in the inference task.
 
 -/
 
-namespace Phenomena.Imprecision.Studies.BeltramaSchwarz2024
+namespace BeltramaSchwarz2024
 
 open Core.SocialMeaning
 open Sociolinguistics.SCM
@@ -474,7 +474,7 @@ contextually determined. -/
     precision resolution is the object of study. -/
 theorem bsb_stim_also_round :
     impreciseReadingAvailable
-      Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022.stimRound := by
+      BeltramaSoltBurnett2022.stimRound := by
   native_decide
 
 -- Speaker-conditioned precision
@@ -498,4 +498,4 @@ theorem wider_halo_of_larger_multiplier (m₁ m₂ : ℚ) (n : Nat)
 theorem round_has_positive_halo :
     0 < haloWidth exampleStatedAmount := by native_decide
 
-end Phenomena.Imprecision.Studies.BeltramaSchwarz2024
+end BeltramaSchwarz2024

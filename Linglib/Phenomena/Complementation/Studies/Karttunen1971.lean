@@ -45,7 +45,7 @@ Key differences from the modern analysis:
   necessity. This difference surfaces in overdetermination scenarios.
 -/
 
-namespace Phenomena.Complementation.Studies.Karttunen1971
+namespace Karttunen1971
 
 open Semantics.Causation.Implicative
 open Core.Verbs (Causative)
@@ -440,4 +440,4 @@ theorem beAble_infinitival_subject_control :
     *form* (irrealis) and complement *entailment* (realis) diverge for
     implicative verbs. -/
 
-end Phenomena.Complementation.Studies.Karttunen1971
+end Karttunen1971

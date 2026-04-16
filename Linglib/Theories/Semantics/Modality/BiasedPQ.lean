@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Core.Discourse.SpeechActs
 
 /-!

@@ -55,7 +55,7 @@ both paths.
 
 -/
 
-namespace Phenomena.Agreement.Studies.Scott2023
+namespace Scott2023
 
 open Minimalism Fragments.Mayan.Mam
 
@@ -468,7 +468,7 @@ This section makes the unity explicit by running both pipelines in
 parallel and showing they produce different exponents from the same
 mechanism.
 
-See also: `Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026` for the
+See also: `ElkinsTorrenceBrown2026` for the
 full =(y)a' analysis. -/
 
 /-- Voice's oblique probe features (from VoiceSystem). -/
@@ -520,42 +520,53 @@ theorem phi_and_oblique_agree_parallel :
 
 /-- The Mam first-person impoverishment rule: delete [±singular]
     (number) when the bundle contains [+author] (first person) features
-    that have been agreed with. -/
+    that have been agreed with.
+
+    Built via the `paradigmatic` smart constructor — the F-diacritic
+    condition only inspects the focus bundle (the agreed-with pronoun's
+    own features), so the rule is paradigmatic by construction. -/
 def mamImpoverishmentRule : Morphology.DM.Impoverishment.ImpoverishmentRule :=
-  { condition := λ fb =>
-      -- Check for [+author] (= valued first person): the F diacritic
-      -- condition is modeled by this rule only being applied in
-      -- agreed-with contexts (subj/poss position, not objects).
-      fb.any (λ f => match f with
-        | .valued (.phi (.person .first)) => true
-        | _ => false)
-  , target := .phi (.number .sg) }
+  Morphology.DM.Impoverishment.paradigmatic
+    -- Check for [+author] (= valued first person): the F diacritic
+    -- condition is modeled by this rule only being applied in
+    -- agreed-with contexts (subj/poss position, not objects).
+    (λ fb => fb.any (λ f => match f with
+      | .valued (.phi (.person .first)) => true
+      | _ => false))
+    (.phi (.number .sg))
+
+/-- Mam's rule is paradigmatic — discharged by the smart constructor. -/
+theorem mamImpoverishment_paradigmatic :
+    Morphology.DM.Impoverishment.Paradigmatic mamImpoverishmentRule :=
+  Morphology.DM.Impoverishment.paradigmatic_isParadigmatic _ _
 
 /-- The impoverishment rule fires for 1st person bundles. -/
 theorem impoverishment_fires_1sg :
     mamImpoverishmentRule.condition
-      [.valued (.phi (.person .first)), .valued (.phi (.number .sg))] = true := by
-  native_decide
+      (Morphology.DM.Impoverishment.Neighborhood.ofBundle
+        [.valued (.phi (.person .first)), .valued (.phi (.number .sg))]) := by
+  decide
 
 /-- The impoverishment rule does NOT fire for 3rd person bundles. -/
 theorem impoverishment_blocked_3sg :
-    mamImpoverishmentRule.condition
-      [.valued (.phi (.person .third)), .valued (.phi (.number .sg))] = false := by
-  native_decide
+    ¬ mamImpoverishmentRule.condition
+        (Morphology.DM.Impoverishment.Neighborhood.ofBundle
+          [.valued (.phi (.person .third)), .valued (.phi (.number .sg))]) := by
+  decide
 
 /-- After impoverishment, the number feature is deleted from 1st
     person bundles, bleeding insertion of the base morpheme *qin*. -/
 theorem impoverishment_deletes_number :
-    Morphology.DM.Impoverishment.applyImpoverishment mamImpoverishmentRule
+    mamImpoverishmentRule.applyToBundle
       [.valued (.phi (.person .first)), .valued (.phi (.number .sg))] =
     [.valued (.phi (.person .first))] := by
-  native_decide
+  decide
 
 /-- Without impoverishment (3rd person), the number feature survives. -/
 theorem no_impoverishment_preserves :
-    Morphology.DM.Impoverishment.applyImpoverishment mamImpoverishmentRule
+    mamImpoverishmentRule.applyToBundle
       [.valued (.phi (.person .third)), .valued (.phi (.number .sg))] =
     [.valued (.phi (.person .third)), .valued (.phi (.number .sg))] := by
-  native_decide
+  decide
 
-end Phenomena.Agreement.Studies.Scott2023
+end Scott2023

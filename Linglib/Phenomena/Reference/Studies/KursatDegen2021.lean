@@ -70,7 +70,7 @@ parameters. The full S1 redundancy prediction requires the incremental
 model of @cite{waldon-degen-2021}.
 -/
 
-namespace Phenomena.Reference.Studies.KursatDegen2021
+namespace KursatDegen2021
 
 -- ============================================================================
 -- § Property Types
@@ -283,11 +283,11 @@ analogue of the color/material asymmetry tested in Exp 2. -/
     This is the color/size version of the color/material asymmetry
     observed in Exp 2. -/
 theorem incremental_model_predicts_color_asymmetry :
-    Phenomena.Reference.Studies.WaldonDegen2021.englishSS.trajectoryProb ()
+    WaldonDegen2021.englishSS.trajectoryProb ()
       .smallBlue [.small, .blue, .pin, .stop] >
-    Phenomena.Reference.Studies.WaldonDegen2021.englishCS.trajectoryProb ()
+    WaldonDegen2021.englishCS.trajectoryProb ()
       .smallBlue [.small, .blue, .pin, .stop] :=
-  Phenomena.Reference.Studies.WaldonDegen2021.prediction1_english_asymmetry
+  WaldonDegen2021.prediction1_english_asymmetry
 
 -- ============================================================================
 -- § Connection to @cite{engelhardt-etal-2006}
@@ -332,4 +332,4 @@ theorem discrimination_predicts_preference :
     DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := by
   refine ⟨by native_decide, by native_decide, rfl, ?_, rfl⟩; native_decide
 
-end Phenomena.Reference.Studies.KursatDegen2021
+end KursatDegen2021

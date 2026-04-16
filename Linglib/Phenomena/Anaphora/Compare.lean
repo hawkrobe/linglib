@@ -479,49 +479,49 @@ the command relations must agree.
 All four theories correctly predict the reflexive coreference patterns.
 -/
 theorem all_theories_capture_reflexive_coreference :
-    Phenomena.Anaphora.Studies.MinimalismCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    Phenomena.Anaphora.Studies.HPSGCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    Phenomena.Anaphora.Studies.Hudson1990.capturesCoreferenceData reflexiveCoreferenceData = true ∧
-    Phenomena.Anaphora.Studies.OsborneLi2023.capturesCoreferenceData reflexiveCoreferenceData = true := by
+    MinimalismCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    HPSGCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    Hudson1990.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    OsborneLi2023.capturesCoreferenceData reflexiveCoreferenceData = true := by
   constructor
-  · exact Phenomena.Anaphora.Studies.MinimalismCoreference.captures_reflexive_coreference
+  · exact MinimalismCoreference.captures_reflexive_coreference
   constructor
-  · exact Phenomena.Anaphora.Studies.HPSGCoreference.captures_reflexive_coreference
+  · exact HPSGCoreference.captures_reflexive_coreference
   constructor
-  · exact Phenomena.Anaphora.Studies.Hudson1990.captures_reflexive_coreference
-  · exact Phenomena.Anaphora.Studies.OsborneLi2023.captures_reflexive_coreference
+  · exact Hudson1990.captures_reflexive_coreference
+  · exact OsborneLi2023.captures_reflexive_coreference
 
 /--
 **Main Agreement Theorem: Complementary Distribution**
 -/
 theorem all_theories_capture_complementary_distribution :
-    Phenomena.Anaphora.Studies.MinimalismCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
-    Phenomena.Anaphora.Studies.HPSGCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
-    Phenomena.Anaphora.Studies.Hudson1990.capturesCoreferenceData complementaryDistributionData = true ∧
-    Phenomena.Anaphora.Studies.OsborneLi2023.capturesCoreferenceData complementaryDistributionData = true := by
+    MinimalismCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
+    HPSGCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
+    Hudson1990.capturesCoreferenceData complementaryDistributionData = true ∧
+    OsborneLi2023.capturesCoreferenceData complementaryDistributionData = true := by
   constructor
-  · exact Phenomena.Anaphora.Studies.MinimalismCoreference.captures_complementary_distribution
+  · exact MinimalismCoreference.captures_complementary_distribution
   constructor
-  · exact Phenomena.Anaphora.Studies.HPSGCoreference.captures_complementary_distribution
+  · exact HPSGCoreference.captures_complementary_distribution
   constructor
-  · exact Phenomena.Anaphora.Studies.Hudson1990.captures_complementary_distribution
-  · exact Phenomena.Anaphora.Studies.OsborneLi2023.captures_complementary_distribution
+  · exact Hudson1990.captures_complementary_distribution
+  · exact OsborneLi2023.captures_complementary_distribution
 
 /--
 **Main Agreement Theorem: Pronominal Disjoint Reference**
 -/
 theorem all_theories_capture_pronominal_disjoint_reference :
-    Phenomena.Anaphora.Studies.MinimalismCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    Phenomena.Anaphora.Studies.HPSGCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    Phenomena.Anaphora.Studies.Hudson1990.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
-    Phenomena.Anaphora.Studies.OsborneLi2023.capturesCoreferenceData pronominalDisjointReferenceData = true := by
+    MinimalismCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    HPSGCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    Hudson1990.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    OsborneLi2023.capturesCoreferenceData pronominalDisjointReferenceData = true := by
   constructor
-  · exact Phenomena.Anaphora.Studies.MinimalismCoreference.captures_pronominal_disjoint_reference
+  · exact MinimalismCoreference.captures_pronominal_disjoint_reference
   constructor
-  · exact Phenomena.Anaphora.Studies.HPSGCoreference.captures_pronominal_disjoint_reference
+  · exact HPSGCoreference.captures_pronominal_disjoint_reference
   constructor
-  · exact Phenomena.Anaphora.Studies.Hudson1990.captures_pronominal_disjoint_reference
-  · exact Phenomena.Anaphora.Studies.OsborneLi2023.captures_pronominal_disjoint_reference
+  · exact Hudson1990.captures_pronominal_disjoint_reference
+  · exact OsborneLi2023.captures_pronominal_disjoint_reference
 
 
 /-- Total minimal pairs tested -/

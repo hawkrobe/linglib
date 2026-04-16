@@ -43,7 +43,7 @@ ordering contradictions. The key theorem is that object extraction with
 overt Voice creates a contradiction, while null Voice does not.
 -/
 
-namespace Phenomena.FillerGap.Studies.ErlewineSommerlot2025
+namespace ErlewineSommerlot2025
 
 open Fragments.Malayic.VoiceSystem
 
@@ -377,4 +377,4 @@ theorem active_consistent_with_core :
     (clauseToVoiceHead .active).flavor = .agentive ∧
     (clauseToVoiceHead .active).phaseHead = Minimalism.voiceAgent.phaseHead := ⟨rfl, rfl⟩
 
-end Phenomena.FillerGap.Studies.ErlewineSommerlot2025
+end ErlewineSommerlot2025

@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.Evidence
+import Linglib.Core.Evidence
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Tense.Evidential

@@ -18,7 +18,7 @@ licensing result, verifying that the theory's predictions match the
 empirical pattern.
 -/
 
-namespace Phenomena.WordOrder.Studies.Adger2003
+namespace Adger2003
 
 open Phenomena.WordOrder.SubjectAuxInversion
 
@@ -80,4 +80,4 @@ ground as HPSG but through different formal machinery (derivational
 movement vs. declarative feature constraint).
 -/
 
-end Phenomena.WordOrder.Studies.Adger2003
+end Adger2003

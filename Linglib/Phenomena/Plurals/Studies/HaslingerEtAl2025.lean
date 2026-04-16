@@ -34,7 +34,7 @@ preserves it at the operator level. See `Phenomena/Imprecision/Basic.lean`.
 import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
 import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
 
-namespace Phenomena.Plurals.Studies.HaslingerEtAl2025
+namespace HaslingerEtAl2025
 
 open Semantics.Lexical.Plural.Distributivity
 
@@ -235,4 +235,4 @@ theorem each_box_maximal (b : Box) :
 
 end MagnetsModel
 
-end Phenomena.Plurals.Studies.HaslingerEtAl2025
+end HaslingerEtAl2025

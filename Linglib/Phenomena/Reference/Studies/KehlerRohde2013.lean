@@ -53,7 +53,7 @@ but NOT pronominalization rate.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.KehlerRohde2013
+namespace KehlerRohde2013
 
 open Core.Discourse.CoherenceRelation
 open UD (Voice)
@@ -539,4 +539,4 @@ theorem contiguity_class_splits :
     cr_elaboration.sourceGivenCR > 50 := by
   exact ⟨rfl, by native_decide, by native_decide⟩
 
-end Phenomena.Reference.Studies.KehlerRohde2013
+end KehlerRohde2013

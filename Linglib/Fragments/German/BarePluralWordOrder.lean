@@ -29,7 +29,7 @@ strengthening is vacuous.
 ## Cross-Module Connections
 
 - `Phenomena.Generics.BarePlurals`: English BPS reading data
-- `Phenomena.ScalarImplicatures.Studies.Magri2009`: BH+MH mechanism
+- `Magri2009`: BH+MH mechanism
 -/
 
 namespace Fragments.German.BarePluralWordOrder

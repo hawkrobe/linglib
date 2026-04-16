@@ -15,7 +15,7 @@ to empirical data from `Phenomena.ScalarImplicatures.Basic`.
 -/
 
 
-namespace Phenomena.ScalarImplicatures.Studies.Geurts2010
+namespace Geurts2010
 
 open RSA.EmbeddedScalars
 open Phenomena.ScalarImplicatures
@@ -36,4 +36,4 @@ theorem empirical_pattern_documented :
     someAllBlocking.implicatureInUE = true := by
   native_decide
 
-end Phenomena.ScalarImplicatures.Studies.Geurts2010
+end Geurts2010

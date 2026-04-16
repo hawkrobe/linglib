@@ -59,7 +59,7 @@ through the S1 behavioral policy:
   → safe to commit even under uncertainty → less need to clarify
 -/
 
-namespace Phenomena.Clarification.Studies.TsvilodubEtAl2026
+namespace TsvilodubEtAl2026
 
 -- ============================================================================
 -- §1. Types
@@ -238,4 +238,4 @@ theorem L1_high_ms1_still_certain :
     cfgLargeHigh.L1 .ms1 .g₁ > cfgLargeHigh.L1 .ms1 .g₂ := by
   rsa_predict
 
-end Phenomena.Clarification.Studies.TsvilodubEtAl2026
+end TsvilodubEtAl2026

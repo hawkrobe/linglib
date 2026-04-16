@@ -32,7 +32,7 @@ The same logophoric roles govern:
   point-of-view center blocks *de se* reading of accusative clitic
 
 The bridge to Minimalist P-Prominence (@cite{pancheva-zubizarreta-2018}) is
-in `Phenomena.Agreement.Studies.PanchevaZubizarreta2018`.
+in `PanchevaZubizarreta2018`.
 -/
 
 namespace Core.Logophoricity

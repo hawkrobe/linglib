@@ -56,7 +56,7 @@ inchoatives have CAUSE.
 - `AnticausativeAnalysis` — parameterization of competing analyses
 -/
 
-namespace Phenomena.Causation.Studies.KoontzGarboden2009
+namespace KoontzGarboden2009
 
 open Fragments.Spanish.Predicates
 open Semantics.Causation.Morphological
@@ -469,4 +469,4 @@ theorem syncretism_majority :
 theorem all_have_anticausative :
     haspelmathData.all (·.hasAnticausativeUse) = true := by native_decide
 
-end Phenomena.Causation.Studies.KoontzGarboden2009
+end KoontzGarboden2009

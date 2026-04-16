@@ -63,7 +63,7 @@ partially addressed by the `QuantifierProjection` type in
 `PresuppositionPolarity.lean`.
 -/
 
-namespace Phenomena.Presupposition.Studies.Beaver2001
+namespace Beaver2001
 
 open Core.Presupposition
 open Core.Proposition
@@ -515,4 +515,4 @@ theorem spiff_lands_then_weight_admits :
 
 end ABLEExamples
 
-end Phenomena.Presupposition.Studies.Beaver2001
+end Beaver2001

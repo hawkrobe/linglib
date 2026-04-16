@@ -17,7 +17,7 @@ Also verifies well-formedness, projectivity, and Behaghel's law for the
 example trees from `HarmonicOrder.lean`.
 -/
 
-namespace Phenomena.WordOrder.Studies.Dryer1992
+namespace Dryer1992
 
 open DepGrammar DependencyLength DepGrammar.HarmonicOrder
 open Phenomena.WordOrder.Typology
@@ -77,4 +77,4 @@ example : oberstesGesetz harmonicHF 2 = true := by native_decide
 example : oberstesGesetz disharmonicHF 2 = false := by native_decide
 example : oberstesGesetz disharmonicFH 2 = false := by native_decide
 
-end Phenomena.WordOrder.Studies.Dryer1992
+end Dryer1992

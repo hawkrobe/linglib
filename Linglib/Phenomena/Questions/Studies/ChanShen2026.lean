@@ -45,11 +45,11 @@ satisfy this; unselective binding (in-situ) does not.
   correct word order for partially moved *wh-the-hell*).
 -/
 
-namespace Phenomena.Questions.Studies.ChanShen2026
+namespace ChanShen2026
 
 open Fragments.Singlish.Questions (WhStrategy fullMovement partialMovement whInSitu)
 open Phenomena.Questions.Typology (WhInterpMechanism)
-open Phenomena.Islands.Studies.ShenHuang2026 (WhDependencyType constraintsForDependencyType)
+open ShenHuang2026 (WhDependencyType constraintsForDependencyType)
 open Minimalism (FeatureVal GramFeature)
 
 -- ============================================================================
@@ -362,4 +362,4 @@ def andlLicensedInSitu (mvt : ANDLMovementType) : Bool :=
 theorem daodi_ok_insitu : andlLicensedInSitu daodiMovement = true := rfl
 theorem theHell_bad_insitu : andlLicensedInSitu theHellMovement = false := rfl
 
-end Phenomena.Questions.Studies.ChanShen2026
+end ChanShen2026

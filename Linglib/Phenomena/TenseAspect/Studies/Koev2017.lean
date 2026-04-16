@@ -20,7 +20,7 @@ is **fully committed** to the proposition (non-modal analysis, contra
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Koev2017
+namespace Koev2017
 
 -- ════════════════════════════════════════════════════
 -- § 1. Spatiotemporal Overlap Types
@@ -479,4 +479,4 @@ theorem indirect_downstream : downstreamEvidence indirectFrame := by
     disjointness + described-before-learning gives T ≤ A. -/
 theorem nfutL_is_downstream : nfutL.ep = .downstream := rfl
 
-end Phenomena.TenseAspect.Studies.Koev2017
+end Koev2017

@@ -44,7 +44,7 @@ The model demonstrates CC-selection at work:
    there's genuinely no alternative explanation.
 -/
 
-namespace Phenomena.Causation.Studies.BarAsherSiegal2026
+namespace BarAsherSiegal2026
 
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
@@ -235,4 +235,4 @@ theorem johnOpenedDoor_completion :
 theorem johnOpenedDoor_actualized :
     johnOpenedDoor.actualized = true := by native_decide
 
-end Phenomena.Causation.Studies.BarAsherSiegal2026
+end BarAsherSiegal2026

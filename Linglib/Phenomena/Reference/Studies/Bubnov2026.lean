@@ -63,11 +63,11 @@ This study connects six modules:
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.Bubnov2026
+namespace Bubnov2026
 
 open Semantics.Dynamic.DependenceLogic
 open Morphology.Nanosyntax
-open Phenomena.Reference.Studies.Dekier2021
+open Dekier2021
 open Core.IndefiniteType
 open Fragments.Russian.Indefinites
 open Fragments.English.Indefinites
@@ -388,4 +388,4 @@ theorem irgend_compatible_classifications :
 -- typology, and `type_vi_contradictory` derives the gap from the
 -- fundamental incompatibility of constancy and variation.
 
-end Phenomena.Reference.Studies.Bubnov2026
+end Bubnov2026

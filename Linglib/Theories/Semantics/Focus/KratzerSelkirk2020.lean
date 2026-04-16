@@ -32,7 +32,7 @@ are the result of default prosody.
 
 -/
 
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Core.Semantics.Presupposition

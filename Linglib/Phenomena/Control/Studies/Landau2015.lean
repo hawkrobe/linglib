@@ -40,7 +40,7 @@ OC in complement clauses divides into two subtypes:
    control shift, partial control, split control
 -/
 
-namespace Phenomena.Control.Studies.Landau2015
+namespace Landau2015
 
 open Syntax.Minimalism.MinimalPronoun
 open Core.Verbs (VerbCore ControlType Attitude ComplementType)
@@ -865,4 +865,4 @@ theorem ctp_tier_consistent (c : CTPClass)
     ctpToControlTier c = (ctpToLandauClass c).map (·.controlTier) := by
   cases c <;> simp_all [ctpToControlTier, ctpToLandauClass, LandauPredicateClass.controlTier]
 
-end Phenomena.Control.Studies.Landau2015
+end Landau2015

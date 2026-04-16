@@ -29,7 +29,7 @@ Six bias profiles from English, Japanese, and Hungarian are encoded
 and verified against the delimiting principles.
 -/
 
-namespace Phenomena.Questions.Studies.GartnerGyuris2017
+namespace GartnerGyuris2017
 
 open Semantics.Modality.BiasedPQ (PQForm OriginalBias ContextualEvidence)
 
@@ -654,4 +654,4 @@ while Hungarian *e*-PPQ carries positive epistemic bias. -/
 theorem czech_hungarian_shared_antibias :
     czechV1.ppqEv = hungarianE.ppqEv := rfl
 
-end Phenomena.Questions.Studies.GartnerGyuris2017
+end GartnerGyuris2017

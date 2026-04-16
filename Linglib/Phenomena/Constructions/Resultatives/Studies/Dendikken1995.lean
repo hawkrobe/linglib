@@ -28,7 +28,7 @@ onto SC predicate categories:
 
 ## Cross-references
 
-- `Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026`: SC family
+- `HaddicanEtAl2026`: SC family
   geometry; `resultative_sc` defined there has shape
   `node(leaf, node(leaf, leaf))`, same as PVC and DOC.
 - `Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995`:

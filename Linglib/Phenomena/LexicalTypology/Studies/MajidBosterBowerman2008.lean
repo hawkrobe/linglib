@@ -56,7 +56,7 @@ This captures the many-to-many mapping between events and verbs that
 varies across languages.
 -/
 
-namespace Phenomena.LexicalTypology.Studies.MajidBosterBowerman2008
+namespace MajidBosterBowerman2008
 
 open Core.Verbs
 open InstrumentType ObjectDimensionality Robustness ResultType
@@ -631,4 +631,4 @@ theorem yeliDnye_grain_limitation :
     yeliDnyeVerb clip09_sliceCarrot = .v1
     ∧ clip09_sliceCarrot.predictability = .high := ⟨rfl, rfl⟩
 
-end Phenomena.LexicalTypology.Studies.MajidBosterBowerman2008
+end MajidBosterBowerman2008

@@ -57,7 +57,7 @@ such unification. See also @cite{ciardelli-groenendijk-roelofsen-2018} for
 an inquisitive-semantics approach to the same unification.
 -/
 
-namespace Phenomena.Copulas.Studies.Romero2005
+namespace Romero2005
 
 open Core.Proposition (World4)
 open Core (Intension)
@@ -392,7 +392,7 @@ This is Romero's novel contribution: specificational `be` is an intensional
 verb, paralleling `know` and `look for`, not a variant of the predicational
 copula.
 
-See `Phenomena.Copulas.Studies.Partee1987` for the predicational analysis. -/
+See `Partee1987` for the predicational analysis. -/
 
 /-! ## Refutation of Account 2: Trace Type Ambiguity (§2.4.2)
 
@@ -717,4 +717,4 @@ theorem cq_ss_unified :
     (∀ x y w, be₂_spec x y w = @beGeneric (W → E) _ x y w) :=
   ⟨fun _ _ _ => rfl, fun _ _ _ => rfl, fun _ _ _ => rfl, fun _ _ _ => rfl⟩
 
-end Phenomena.Copulas.Studies.Romero2005
+end Romero2005

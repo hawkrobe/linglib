@@ -41,7 +41,7 @@ distribution of schwa in verbs, nouns, and adjectives in Judeo-Tripolitanian
 Arabic: adjectives pattern phonologically with verbs but paradigmatically
 with nouns — contradicting OP's prediction that phonological behavior
 tracks paradigm structure. See
-`Phenomena.PhonologicalAlternation.Studies.MarcoRasin2026` for the
+`MarcoRasin2026` for the
 formalization.
 -/
 

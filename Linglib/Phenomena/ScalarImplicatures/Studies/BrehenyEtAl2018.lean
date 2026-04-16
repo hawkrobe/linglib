@@ -51,7 +51,7 @@ and the AC's overcorrection are verified by `native_decide`.
 - `swanson_exh_vacuous`: lexicalized symmetric alts make exh vacuous
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.BrehenyEtAl2018
+namespace BrehenyEtAl2018
 
 open Exhaustification.InnocentExclusion
 open Alternatives.Symmetric
@@ -479,4 +479,4 @@ This paper reveals several tensions in linglib's organization:
 -/
 
 
-end Phenomena.ScalarImplicatures.Studies.BrehenyEtAl2018
+end BrehenyEtAl2018

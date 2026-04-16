@@ -1,6 +1,6 @@
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
-import Linglib.Core.Discourse.Evidence
+import Linglib.Core.Evidence
 
 /-!
 # Rich Context

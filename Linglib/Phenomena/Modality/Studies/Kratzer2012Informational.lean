@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Attitudes.Intensional
-import Linglib.Core.Discourse.Evidence
+import Linglib.Core.Evidence
 
 /-!
 # Informational Backgrounds — @cite{kratzer-2012} §2.3d

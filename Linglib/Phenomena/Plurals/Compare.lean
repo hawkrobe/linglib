@@ -24,7 +24,7 @@ is a *consequence* of the update-theoretic architecture, not an add-on.
 
 namespace Phenomena.Plurals.Compare
 
-open Phenomena.Plurals.Studies.Charlow2021.Data
+open Data
 open Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
 
 /-- All three approaches derive the cumulative reading for Scenario A. -/

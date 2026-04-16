@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.OTLimit
+import Linglib.Core.Constraint.OTLimit
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Fragments.English.Phonology
@@ -34,9 +34,9 @@ the model assigns higher harmony (= higher MaxEnt probability via
 `exp_lt_exp`) to attested onsets than to unattested ones (§2).
 -/
 
-namespace Phenomena.Phonotactics.Studies.HayesWilson2008
+namespace HayesWilson2008
 
-open Phonology Phonology.HarmonicGrammar Phonology.Constraints
+open Phonology Core.Constraint Phonology.Constraints
 open Core Core.OT Finset Real
 
 -- ============================================================================
@@ -88,7 +88,7 @@ def onsetGrammar : List (WeightedConstraint Onset) :=
   [c1_star_son_dors, c4_star_blank_cont, c5_star_blank_voice, c6_star_son_blank]
 
 -- ============================================================================
--- § 2: Harmony Predictions (using harmonyScore from HarmonicGrammar.Basic)
+-- § 2: Harmony Predictions (using harmonyScore from Core.Constraint.Weighted)
 -- ============================================================================
 
 open Fragments.English.Phonology in
@@ -123,7 +123,7 @@ open Fragments.English.Phonology
 /-- **MaxEnt probability ordering**: higher harmony ⟹ higher
     `exp(harmonyScore)` ⟹ higher MaxEnt probability.
 
-    Applies `exp_lt_exp` (Mathlib) to `harmonyScoreR` (HarmonicGrammar.Basic). -/
+    Applies `exp_lt_exp` (Mathlib) to `harmonyScoreR` (Core.Constraint.Weighted). -/
 theorem maxent_prob_k_gt_ŋ :
     exp (harmonyScoreR onsetGrammar [ŋ]) <
     exp (harmonyScoreR onsetGrammar [k]) := by
@@ -142,4 +142,4 @@ theorem gradient_prob_ŋ_gt_rk :
 
 end MaxEntProb
 
-end Phenomena.Phonotactics.Studies.HayesWilson2008
+end HayesWilson2008

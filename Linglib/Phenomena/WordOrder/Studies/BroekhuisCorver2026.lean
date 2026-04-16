@@ -44,7 +44,7 @@ not whether F is overt. See `MovedConstituent`.
 - `Core.WALS.Features.F85A`: cross-linguistic adposition order
 -/
 
-namespace Phenomena.WordOrder.Studies.BroekhuisCorver2026
+namespace BroekhuisCorver2026
 
 open Fragments.Dutch.Adpositions
 open Minimalism
@@ -340,4 +340,4 @@ theorem complex_no_rPron :
     tijdens.rPronOk = false ∧ ondanks.rPronOk = false ∧
     zonder.rPronOk = false := complex_Ps_no_rPron
 
-end Phenomena.WordOrder.Studies.BroekhuisCorver2026
+end BroekhuisCorver2026

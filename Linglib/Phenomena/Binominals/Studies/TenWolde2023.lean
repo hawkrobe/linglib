@@ -28,7 +28,7 @@ and English fragment data to the empirical claims in @cite{ten-wolde-2023}.
    skip pseudo-partitive and enter evaluative uses directly.
 -/
 
-namespace Phenomena.Binominals.Studies.TenWolde2023
+namespace TenWolde2023
 
 open Core.Lexical.Binominal
 open Semantics.Lexical.Noun.Binominal
@@ -243,4 +243,4 @@ theorem entailment_summary :
   · exact bi_entails_em _ _ _ _ _ _
   · constructor <;> native_decide
 
-end Phenomena.Binominals.Studies.TenWolde2023
+end TenWolde2023

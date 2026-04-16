@@ -48,7 +48,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 - @cite{spector-2007} proves Max(P) = {Exhaust(P)} (Gricean ↔ exhaustive)
 -/
 
-namespace Phenomena.Numerals.Studies.Spector2013
+namespace Spector2013
 
 open Semantics.Lexical.Numeral
 open Exhaustification.InnocentExclusion (exhB ieIndices)
@@ -434,4 +434,4 @@ theorem spector2013_summary :
     (exhOverPossibility LowerBound .two [2, 3] ≠
       possibilityMeaning Exact .two [2, 3]) := by native_decide
 
-end Phenomena.Numerals.Studies.Spector2013
+end Spector2013

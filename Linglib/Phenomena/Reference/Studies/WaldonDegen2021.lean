@@ -56,7 +56,7 @@ different `RSAConfig` instances (language × scene).
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.WaldonDegen2021
+namespace WaldonDegen2021
 
 open RSA
 
@@ -370,4 +370,4 @@ theorem prediction4_overall_redundancy :
     spanishCS.trajectoryProb () .smallBlue [.pin, .blue, .small, .stop] := by
   rsa_predict
 
-end Phenomena.Reference.Studies.WaldonDegen2021
+end WaldonDegen2021

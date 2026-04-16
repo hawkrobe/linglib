@@ -29,7 +29,7 @@ empirical distributivity/atelicity data.
 5. **SSR ↔ atelicity bridge** — SSR connects to for/in diagnostics
 -/
 
-namespace Phenomena.Plurals.Studies.Champollion2017
+namespace Champollion2017
 
 open Fragments.English.Predicates.Verbal
 open Core.Verbs
@@ -195,4 +195,4 @@ theorem eat_no_ssr : predictsSSR eat.toVerbCore.vendlerClass = false := rfl
 /-- "see" (state) → SSR expected. -/
 theorem see_ssr : predictsSSR see.toVerbCore.vendlerClass = true := rfl
 
-end Phenomena.Plurals.Studies.Champollion2017
+end Champollion2017

@@ -265,10 +265,10 @@ theorem confidence_comparative_reduces
     (ha_unique : ∀ s, frame.holder a s → P s → s = sa)
     (hb : frame.holder b sb ∧ P sb)
     (hb_unique : ∀ s, frame.holder b s → P s → s = sb) :
-    Phenomena.Comparison.Studies.Wellwood2015.adjectivalComparative
+    Wellwood2015.adjectivalComparative
       frame P μ a b ↔
     μ sb < μ sa :=
-  Phenomena.Comparison.Studies.Wellwood2015.adjectival_max_reduces
+  Wellwood2015.adjectival_max_reduces
     ha ha_unique hb hb_unique
 
 end Phenomena.Gradability.CarianiSantorioWellwood2024

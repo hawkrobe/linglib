@@ -32,7 +32,7 @@ Tonal languages without tone: downstep in Drubea and Numèè
    vs. 3 + 2 (@cite{lionnet-2025} §5).
 -/
 
-namespace Phenomena.Tone.Studies.Lionnet2025
+namespace Lionnet2025
 
 open Phonology.Autosegmental.RegisterTier
 open Fragments.Drubea.Prosody
@@ -291,19 +291,19 @@ theorem drubea_is_register_based :
     (via register features) enters into the lexical realization of
     morphemes. The minimal pairs in §1 demonstrate this directly. -/
 theorem drubea_is_tonal_hyman :
-    Studies.Hyman2006.isTonalUnderHyman wordProsodicType = true := rfl
+    Hyman2006.isTonalUnderHyman wordProsodicType = true := rfl
 
 /-- Drubea enriches Hyman's typology: it is a tonal system (by def. 3)
     that is register-based rather than tone-based — a sub-distinction
     within Hyman's tone prototype that he did not draw. -/
 theorem drubea_enriches_hyman :
-    Studies.Hyman2006.isTonalUnderHyman .registerBased = true ∧
+    Hyman2006.isTonalUnderHyman .registerBased = true ∧
     wordProsodicType = .registerBased := ⟨rfl, rfl⟩
 
 /-- Drubea is +T, −SA under @cite{hyman-2006}'s 2×2 typology
     (same quadrant as Yoruba). -/
 theorem drubea_quadrant :
-    Studies.Hyman2006.drubea.quadrant = .toneOnly := rfl
+    Hyman2006.drubea.quadrant = .toneOnly := rfl
 
 -- ============================================================================
 -- § 12: Culminativity — Register vs Stress
@@ -322,7 +322,7 @@ theorem drubea_register_culminative_not_stress :
     -- Register culminativity holds (Lionnet)
     allStems.all (fun e => isCulminative e.specs) = true ∧
     -- Stress accent is absent (Hyman)
-    Studies.Hyman2006.drubea.hasStressAccent = false := by
+    Hyman2006.drubea.hasStressAccent = false := by
   exact ⟨by native_decide, rfl⟩
 
-end Phenomena.Tone.Studies.Lionnet2025
+end Lionnet2025

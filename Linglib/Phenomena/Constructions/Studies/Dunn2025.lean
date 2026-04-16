@@ -19,7 +19,7 @@ Concrete `TypedForm` instantiations for six constructions verify:
 5. WXDY coinstantiation: X and Y share refIdx 2 (subject control)
 -/
 
-namespace Phenomena.Constructions.Studies.Dunn2025
+namespace Dunn2025
 
 open ConstructionGrammar
 
@@ -99,13 +99,13 @@ theorem ditransitive_specificity_consistent :
 /-- *Let alone*: derived `.partiallyOpen` matches stipulated. -/
 theorem letAlone_specificity_consistent :
     derivedSpecificity letAloneForm =
-      Studies.FillmoreKayOConnor1988.letAloneConstruction.specificity := by
+      FillmoreKayOConnor1988.letAloneConstruction.specificity := by
   native_decide
 
 /-- must-VERB: derived `.partiallyOpen` matches stipulated. -/
 theorem mustVerb_specificity_consistent :
     derivedSpecificity mustVerbForm =
-      Studies.GoldbergShirtz2025.mustVerbConstruction.specificity := by
+      GoldbergShirtz2025.mustVerbConstruction.specificity := by
   native_decide
 
 /-- Veggie-wrap: derived `.lexicallySpecified` (all fixed). -/
@@ -225,4 +225,4 @@ theorem basic_forms_no_constraints :
     hasConstraint ditransitiveForm .negMinus = false ∧
     hasConstraint letAloneForm .locMinus = false := ⟨rfl, rfl, rfl⟩
 
-end Phenomena.Constructions.Studies.Dunn2025
+end Dunn2025

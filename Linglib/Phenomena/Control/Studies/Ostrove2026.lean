@@ -54,10 +54,10 @@ infinitival classification.
 | *(not applicable)*| finite embedded        | No  |
 -/
 
-namespace Phenomena.Control.Studies.Ostrove2026
+namespace Ostrove2026
 
 open Syntax.Minimalism.MinimalPronoun
-open Phenomena.Control.Studies.Landau2015
+open Landau2015
 open Minimalism.Tense.InfinitivalTense (InfinitivalTenseClass)
 open Fragments.Mixtec.SMPM (ClauseType clauseProperties)
 
@@ -577,4 +577,4 @@ theorem utterance_is_realis :
 theorem propAttitude_is_realis :
     ctpRealityStatus .propAttitude = .realis := rfl
 
-end Phenomena.Control.Studies.Ostrove2026
+end Ostrove2026

@@ -37,7 +37,7 @@ field on `NounCategorizationSystem` captures this finer distinction.
 - English [+arg, +pred] prediction (no system) not yet connected to data
 -/
 
-namespace Phenomena.Classifiers.Studies.Chierchia1998
+namespace Chierchia1998
 
 open Core.NounCategorization
 open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping)
@@ -116,4 +116,4 @@ theorem chierchia_predicts_clf_for_noun :
     mandarin.classifierStrategy = some .forNoun ∧
     japanese.classifierStrategy = some .forNoun := ⟨rfl, rfl⟩
 
-end Phenomena.Classifiers.Studies.Chierchia1998
+end Chierchia1998

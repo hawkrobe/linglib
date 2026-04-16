@@ -44,7 +44,7 @@ Fragments/English/Predicates/Verbal.lean
 
 -/
 
-namespace Phenomena.Reference.Studies.Percus2000
+namespace Percus2000
 
 open Core (Situation)
 open Core.VarAssignment (VarAssignment updateVar lookupVar varLambdaAbs
@@ -440,4 +440,4 @@ theorem ex3_genXY_violation :
 end Example3
 
 
-end Phenomena.Reference.Studies.Percus2000
+end Percus2000

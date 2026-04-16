@@ -101,7 +101,7 @@ identical — only the domain and lexica differ.
 
 set_option autoImplicit false
 
-namespace Phenomena.ScalarImplicatures.Studies.PottsLevy2015
+namespace PottsLevy2015
 
 -- ============================================================================
 -- §1. Domain Types
@@ -597,4 +597,4 @@ theorem all_findings_verified (f : Finding) : f.verified := by
   · exact S2_expertise_w12_AorX_vs_A
   · exact S2_expertise_w1_A_vs_AorX
 
-end Phenomena.ScalarImplicatures.Studies.PottsLevy2015
+end PottsLevy2015

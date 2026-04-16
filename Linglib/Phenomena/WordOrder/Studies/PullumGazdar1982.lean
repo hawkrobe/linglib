@@ -60,7 +60,7 @@ Two constructive results are formalized here:
 2. **The critical distinction**: Cross-serial word order alone is CF (grammar
    29). What is non-CF is cross-serial order PLUS case agreement across
    unbounded depth — proven for Swiss German by @cite{shieber-1985},
-   formalized in `Phenomena.WordOrder.Studies.Shieber1985`.
+   formalized in `Shieber1985`.
 
 ## Architectural Note
 
@@ -82,7 +82,7 @@ and `anbncndn_not_contextFree` / `anbnc_not_contextFree` stated using
 `Language.IsContextFree`
 -/
 
-namespace Phenomena.WordOrder.Studies.PullumGazdar1982
+namespace PullumGazdar1982
 
 open Core (FormalLanguageType)
 
@@ -349,10 +349,10 @@ theorem crossSerial_order_cf_but_caseMatching_not :
     valid proof (for Swiss German) using case-marking — a purely string-based
     argument making no constituency assumptions. -/
 theorem question_settled_by_shieber :
-    (∀ n, Phenomena.WordOrder.Studies.Shieber1985.clauseImage
-        (Phenomena.WordOrder.Studies.Shieber1985.arbitraryDepth n n) ∈ anbncndn) ∧
+    (∀ n, Shieber1985.clauseImage
+        (Shieber1985.arbitraryDepth n n) ∈ anbncndn) ∧
     ¬ HasCFLPumpingProperty anbncndn :=
-  Phenomena.WordOrder.Studies.Shieber1985.swiss_german_not_context_free
+  Shieber1985.swiss_german_not_context_free
 
 -- ============================================================================
 -- §8: IsContextFree Results (Mathlib Integration)
@@ -374,4 +374,4 @@ theorem crossSerial_cf_vs_caseMatching_not_cf :
     ¬ Language.IsContextFree anbncndn :=
   ⟨dutch_crossSerial_order_isContextFree, anbncndn_not_contextFree⟩
 
-end Phenomena.WordOrder.Studies.PullumGazdar1982
+end PullumGazdar1982

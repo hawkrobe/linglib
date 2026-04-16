@@ -37,7 +37,7 @@ syntactic isomorphism in sluicing applies only to the **argument domain**
   with rampant tense/modality/polarity mismatches.
 -/
 
-namespace Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2025
+namespace AnandHardtMcCloskey2025
 
 open Minimalism
 open Minimalism.Ellipsis.FormalMatching
@@ -437,4 +437,4 @@ def scSluicingData : List SCSluicingDatum :=
 def copularPseudosluiceData : List CopularPseudosluice :=
   [copularEx18a, copularEx18b, copularEx19a]
 
-end Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2025
+end AnandHardtMcCloskey2025

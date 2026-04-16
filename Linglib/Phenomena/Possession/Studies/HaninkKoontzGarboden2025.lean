@@ -61,7 +61,7 @@ Property concept (PC) roots in Wá·šiw come in two semantic types:
   type*, not in structural entailments.
 -/
 
-namespace Phenomena.Possession.Studies.HaninkKoontzGarboden2025
+namespace HaninkKoontzGarboden2025
 
 open Morphology.Core.Monotonicity
 open Morphology.DM (Categorizer)
@@ -409,4 +409,4 @@ theorem class2_characterization (mc : MorphClass) :
   cases mc <;> simp [MorphClass.denotationType, MorphClass.canBeResultFinal,
     RootDenotationType.hasIndivArg]
 
-end Phenomena.Possession.Studies.HaninkKoontzGarboden2025
+end HaninkKoontzGarboden2025

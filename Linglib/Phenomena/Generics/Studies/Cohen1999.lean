@@ -50,7 +50,7 @@ hold with probability > 0.5, which is impossible if the populations
 are disjoint. See `Phenomena/Generics/Studies/Nickel2009.lean`.
 -/
 
-namespace Phenomena.Generics.Studies.Cohen1999
+namespace Cohen1999
 
 open Semantics.Lexical.Noun.Kind.Generics
 open Semantics.Lexical.CovertQuantifier
@@ -275,4 +275,4 @@ theorem cohen_fixes_threshold :
     thresholdGeneric situations restrictor scope (1/2) :=
   λ _ _ _ => rfl
 
-end Phenomena.Generics.Studies.Cohen1999
+end Cohen1999

@@ -33,7 +33,7 @@ participants and running time of the MOST LOCAL event. Event projection
 explaining why certain pairs are systematically absent.
 -/
 
-namespace Phenomena.Modality.Studies.Hacquard2010
+namespace Hacquard2010
 
 open Semantics.Modality.EventRelativity
 open Core.Modality (ModalFlavor)
@@ -236,4 +236,4 @@ theorem events_richer_than_pairs :
       EventBinder.attitude.availableFlavors :=
   ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Modality.Studies.Hacquard2010
+end Hacquard2010

@@ -14,7 +14,7 @@ data from `Phenomena.ScalarImplicatures.Basic`.
 -/
 
 
-namespace Phenomena.ScalarImplicatures.Studies.RSAHurford
+namespace RSAHurford
 
 open Phenomena.ScalarImplicatures
 
@@ -35,4 +35,4 @@ RSA predicts infelicity (disjunction always redundant), matching the empirical j
 theorem rsa_matches_data_americanCalifornian :
     americanCalifornian.felicitous = false := rfl
 
-end Phenomena.ScalarImplicatures.Studies.RSAHurford
+end RSAHurford

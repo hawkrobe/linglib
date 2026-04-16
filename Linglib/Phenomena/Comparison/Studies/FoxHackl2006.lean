@@ -20,7 +20,7 @@ of "how" is undefined over dense scales with downward-monotone predicates.
 
 -/
 
-namespace Phenomena.Comparison.Studies.FoxHackl2006
+namespace FoxHackl2006
 
 -- ════════════════════════════════════════════════════
 -- § 1. Basic Degree Question Data
@@ -82,4 +82,4 @@ def modalObviationExamples : List DegreeQuestionDatum :=
     , mechanism := "existential modal fails" }
   ]
 
-end Phenomena.Comparison.Studies.FoxHackl2006
+end FoxHackl2006

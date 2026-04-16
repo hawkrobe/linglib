@@ -30,7 +30,7 @@ Extended @cite{yoon-etal-2020} RSA with:
 
 -/
 
-namespace Phenomena.Politeness.Studies.MachinoEtAl2025
+namespace MachinoEtAl2025
 
 -- ============================================================================
 -- Modifier Hierarchy
@@ -193,4 +193,4 @@ def modifierDirection : Culture → Modifier → ModifierDirection
 #guard modifierDirection .americanEnglish .very == .amplifier
 #guard modifierDirection .britishEnglish .very == .amplifier
 
-end Phenomena.Politeness.Studies.MachinoEtAl2025
+end MachinoEtAl2025

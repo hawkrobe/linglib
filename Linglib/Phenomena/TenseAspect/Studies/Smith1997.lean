@@ -29,7 +29,9 @@ aspectual meaning = situation type × viewpoint aspect, independently combined.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Smith1997
+open Phenomena.TenseAspect
+
+namespace Smith1997
 
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
@@ -510,4 +512,4 @@ theorem semelfactive_coercion_three_ways :
     (overrideDuration semelfactiveProfile .durative).toVendlerClass = .activity ∧
     Diagnostics.forXPrediction .semelfactive = .coerced := ⟨rfl, rfl, rfl⟩
 
-end Phenomena.TenseAspect.Studies.Smith1997
+end Smith1997

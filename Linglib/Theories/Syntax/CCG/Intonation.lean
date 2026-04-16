@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.CCG.Core.Basic
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 
 /-!

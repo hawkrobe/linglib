@@ -61,7 +61,7 @@ IS reflexivization. The pragmatic effects arise precisely because this
 syncretism creates voice ambiguity that speakers must manage.
 -/
 
-namespace Phenomena.Causation.Studies.MartinSchaeferKastner2025
+namespace MartinSchaeferKastner2025
 
 open Minimalism (VoiceFlavor)
 open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile predictsUnaccusative)
@@ -409,4 +409,4 @@ theorem exp1a_reflexive_human_reversal :
 theorem exp1b_reflexive_human_confirms_G2 :
     (2994 : Nat) < 5891 := by omega
 
-end Phenomena.Causation.Studies.MartinSchaeferKastner2025
+end MartinSchaeferKastner2025

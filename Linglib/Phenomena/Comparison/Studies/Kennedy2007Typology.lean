@@ -22,7 +22,9 @@ entry, we verify:
 
 -/
 
-namespace Phenomena.Comparison.Studies.Kennedy2007Typology
+open Phenomena.Comparison
+
+namespace Kennedy2007Typology
 
 open Phenomena.Gradability.Kennedy2007
 open Fragments.English.Predicates.Adjectival
@@ -97,4 +99,4 @@ theorem full_threshold_stable :
     fullTypology.thresholdShifts = false ∧ full.scaleType = .closed :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Comparison.Studies.Kennedy2007Typology
+end Kennedy2007Typology

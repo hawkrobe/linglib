@@ -17,7 +17,7 @@ Phenomena files against TTR predictions.
 
 -/
 
-namespace Phenomena.Anaphora.Studies.Cooper2023
+namespace Cooper2023
 
 open Semantics.TypeTheoretic
 open Phenomena.Anaphora.DonkeyAnaphora
@@ -145,4 +145,4 @@ theorem reflexive_predicts_binding :
     pronounPattern.antecedentDomain = some .nonlocal :=
   ⟨fun _ _ => rfl, fun _ _ => rfl, rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Anaphora.Studies.Cooper2023
+end Cooper2023

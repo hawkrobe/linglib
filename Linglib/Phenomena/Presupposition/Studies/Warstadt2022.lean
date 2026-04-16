@@ -23,7 +23,7 @@ sprinter") triggers stronger accommodation than genus-level ("not runner").
 
 -/
 
-namespace Phenomena.Presupposition.Studies.Warstadt2022
+namespace Warstadt2022
 
 open Core.Presupposition
 
@@ -341,4 +341,4 @@ theorem notGreenCard_is_boolean_negation (w : GCWorld) :
     gcMeaning .notGreenCard w = !gcMeaning .greenCard w :=
   gcMeaning_notGreenCard_eq_neg w
 
-end Phenomena.Presupposition.Studies.Warstadt2022
+end Warstadt2022

@@ -35,7 +35,7 @@ ignores scope entirely (it only checks the restrictor).
 
 -/
 
-namespace Phenomena.Quantification.Studies.Elliott2025
+namespace Elliott2025
 
 open Core.Quantification
 open Semantics.Lexical.Determiner.Polarized
@@ -87,4 +87,4 @@ theorem every_from_neg_polInd (entities : List α) (R S : α → Bool) :
   rw [← dual_some_eq_every]
   congr 1; congr 1; ext e; simp
 
-end Phenomena.Quantification.Studies.Elliott2025
+end Elliott2025

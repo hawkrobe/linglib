@@ -67,7 +67,7 @@ illustrative Table 1 scenarios, M=true and U=true throughout.
 
 set_option autoImplicit false
 
-namespace Phenomena.Causation.Studies.BellerGerstenberg2025
+namespace BellerGerstenberg2025
 
 
 -- ============================================================================
@@ -865,4 +865,4 @@ theorem only_cause_low_suf :
     ex_lowSuf_made.judgment = .unacceptable ∧
     ex_lowSuf_forced.judgment = .unacceptable := by decide
 
-end Phenomena.Causation.Studies.BellerGerstenberg2025
+end BellerGerstenberg2025

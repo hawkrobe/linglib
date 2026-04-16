@@ -1,8 +1,10 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.Basic
+import Linglib.Core.Constraint.Weighted
+import Linglib.Core.Constraint.Decoder
+import Linglib.Core.Constraint.System
 import Linglib.Core.Agent.CoupledEvaluation
 
 /-!
-# MaxEnt Harmonic Grammar @cite{storme-2026}
+# MaxEnt Constraint Systems @cite{storme-2026}
 
 MaxEnt grammars assign probabilities to input→output mappings using the
 softmax function over weighted constraint violations — the probabilistic
@@ -16,11 +18,14 @@ Systemic constraints require evaluating a joint distribution over the product
 space of all input→output mappings, then marginalizing to recover individual
 mapping probabilities.
 
+The framework is generic in the candidate type — phonology is one
+instance, but the same machinery applies to any domain that scores
+candidates by weighted constraint violations.
+
 ## Architecture
 
-- `WeightedConstraint` extends `NamedConstraint` with a `weight : ℚ` field
-- `harmonyScore` computes `-Σ wⱼ · Cⱼ(c)` in ℚ (computable)
 - `MaxEntGrammar` packages inputs, candidate generation, and weighted constraints
+  (`WeightedConstraint` and `harmonyScore` come from `Core.Constraint.Weighted`)
 - `SystemicConstraint` evaluates *tuples* of outputs (different type signature)
 - `jointHarmonyScore` combines classical + systemic scores over the product space
 - `marginalProb` marginalizes the joint to recover individual mapping probabilities
@@ -33,7 +38,7 @@ score decomposes additively ⇒ the joint distribution factorizes ⇒ each margi
 equals its factor.
 -/
 
-namespace Phonology.HarmonicGrammar
+namespace Core.Constraint
 
 open Core.OT Core
 
@@ -200,4 +205,32 @@ theorem marginal_eq_classical_when_no_systemic {n : Nat} {I O : Type}
   (maxEntCoupled inputs classicalConstraints systemicConstraints).marginal_eq_independent_when_uncoupled
     ⟨0, systemicScoreR_zero h_zero⟩ i o
 
-end Phonology.HarmonicGrammar
+-- ============================================================================
+-- § 5: Bridge to Generic ConstraintSystem
+-- ============================================================================
+
+/-- Realize a `MaxEntGrammar` (at a fixed input) as a generic
+    `ConstraintSystem` over the universal candidate set, decoded by
+    `softmaxDecoder` at temperature 1.
+
+    This shows the legacy MaxEnt API is a special case of the
+    framework-agnostic abstraction in `System.lean` — pick the universal
+    candidate set, the harmony score, and the Gumbel/softmax decoder. -/
+noncomputable def MaxEntGrammar.toSystem {I O : Type} [Fintype O]
+    (g : MaxEntGrammar I O) (i : I) : ConstraintSystem O ℝ where
+  candidates := Finset.univ
+  score := fun o => harmonyScoreR g.constraints (i, o)
+  decoder := softmaxDecoder 1
+
+/-- The legacy `MaxEntGrammar.prob` agrees with the generic
+    `ConstraintSystem.predict` of the system produced by `toSystem`.
+    Equivalent by direct unfolding: both are softmax over the harmony
+    score on the universal candidate set. -/
+theorem MaxEntGrammar.prob_eq_toSystem_predict {I O : Type} [Fintype O] [Nonempty O]
+    (g : MaxEntGrammar I O) (i : I) (o : O) :
+    g.prob i o = (g.toSystem i).predict o := by
+  classical
+  show softmax _ 1 o = (softmaxDecoder 1).decode Finset.univ _ o
+  simp [softmaxDecoder, softmax, Finset.mem_univ, MaxEntGrammar.toSystem]
+
+end Core.Constraint

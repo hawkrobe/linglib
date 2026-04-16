@@ -77,7 +77,7 @@ This file imports `Probe.lean` (for `ProbeProfile`, `LanguageProbeConfig`,
 bilateral labels). It verifies the book's predictions as theorems.
 -/
 
-namespace Phenomena.Agreement.Studies.Keine2020
+namespace Keine2020
 
 open Minimalism (ProbeProfile LanguageProbeConfig ClauseSpine Cat fValue english_extr
   lubukusuAProbe)
@@ -657,4 +657,4 @@ theorem hindi_phase_horizon_division :
     hindiCfg.ābar.transparentToLabel cPLabel = true ∧
     hindiCfg.aMove.transparentToLabel cPLabel = false := by decide
 
-end Phenomena.Agreement.Studies.Keine2020
+end Keine2020

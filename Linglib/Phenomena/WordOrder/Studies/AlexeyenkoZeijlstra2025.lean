@@ -38,7 +38,7 @@ correctly predicts all of them while the HFF fails for 11. Bridge theorems
 connect to WALS F87A and Minimalist feature infrastructure.
 -/
 
-namespace Phenomena.WordOrder.Studies.AlexeyenkoZeijlstra2025
+namespace AlexeyenkoZeijlstra2025
 
 open Core.WALS.F87A
 open Minimalism.Modification (AttrStatus AdjPosition AdjMorphProfile
@@ -533,4 +533,4 @@ theorem wals_italian : walsConsistent "ita" italian = true := by native_decide
 theorem wals_farsi : walsConsistent "prs" farsi = true := by native_decide
 theorem wals_tagalog : walsConsistent "tag" tagalog = true := by native_decide
 
-end Phenomena.WordOrder.Studies.AlexeyenkoZeijlstra2025
+end AlexeyenkoZeijlstra2025

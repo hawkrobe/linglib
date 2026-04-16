@@ -26,7 +26,7 @@ possibleNecessaryDatum), we prove:
 
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.Horn1972
+namespace Horn1972
 
 open Alternatives
 open Phenomena.ScalarImplicatures
@@ -114,4 +114,4 @@ theorem entailment_reflexive :
     Connectives.entails .or_ .or_ = true ∧
     Modals.entails .possible .possible = true := by native_decide
 
-end Phenomena.ScalarImplicatures.Studies.Horn1972
+end Horn1972

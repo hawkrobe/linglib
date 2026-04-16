@@ -48,7 +48,7 @@ association directly. This is the `subject_verb_composition` theorem in
 - §5: Bridges to ProcessingProfile, CrossSerial, and CCG
 -/
 
-namespace Phenomena.FillerGap.Studies.PickeringBarry1991
+namespace PickeringBarry1991
 
 open ProcessingModel
 
@@ -306,4 +306,4 @@ a constituent S/NP via rule (80a) (type-raising + composition), and
 operations use combinators rather than bound variables, which is the
 formal counterpart of "no empty categories." -/
 
-end Phenomena.FillerGap.Studies.PickeringBarry1991
+end PickeringBarry1991

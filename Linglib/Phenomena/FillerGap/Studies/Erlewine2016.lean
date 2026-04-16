@@ -86,7 +86,7 @@ about OT candidate competition.
 
 -/
 
-namespace Phenomena.FillerGap.Studies.Erlewine2016
+namespace Erlewine2016
 
 open Fragments.Mayan.Kaqchikel Minimalism
 open Core.OT (mkTableau)
@@ -223,4 +223,4 @@ theorem locality_sensitivity :
 theorem strategy_is_af :
     kaqExtractionProfile.strategy = .agentFocusAlternation := rfl
 
-end Phenomena.FillerGap.Studies.Erlewine2016
+end Erlewine2016

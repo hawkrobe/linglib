@@ -65,7 +65,7 @@ more frequent than kind classifiers (function-based).
 
 -/
 
-namespace Phenomena.Classifiers.Studies.Downing1996
+namespace Downing1996
 
 open Core.NounCategorization
 open Fragments.Japanese
@@ -400,4 +400,4 @@ theorem quality_over_kind_classifiers :
     qualityTotal > kindMax := by
   omega
 
-end Phenomena.Classifiers.Studies.Downing1996
+end Downing1996

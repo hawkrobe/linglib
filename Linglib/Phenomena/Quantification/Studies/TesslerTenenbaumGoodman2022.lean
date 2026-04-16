@@ -38,7 +38,7 @@ This equivalence is proved as `stateCom_eq_beliefAlignment`.
 
 set_option autoImplicit false
 
-namespace Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
+namespace TesslerTenenbaumGoodman2022
 
 open Semantics.Quantification.Quantifier (every_sem some_sem no_sem
   subalternation_a_i)
@@ -628,4 +628,4 @@ theorem allAB_allCB_l0_does_not_concentrate :
      concMeaning .allAC state_AB_BC = false) := by
   native_decide
 
-end Phenomena.Quantification.Studies.TesslerTenenbaumGoodman2022
+end TesslerTenenbaumGoodman2022

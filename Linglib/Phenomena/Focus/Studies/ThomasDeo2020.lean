@@ -18,7 +18,7 @@ forces failure at coarser grains.
 
 -/
 
-namespace Phenomena.Focus.Studies.ThomasDeo2020
+namespace ThomasDeo2020
 
 open Semantics.Degree.Granularity
 open Semantics.Degree (AdjectivalConstruction)
@@ -204,4 +204,4 @@ theorem comp_data_matches_exclusives :
     comp_album.predictedFlavor = precisifying_prox_older.flavor :=
   ⟨rfl, rfl⟩
 
-end Phenomena.Focus.Studies.ThomasDeo2020
+end ThomasDeo2020

@@ -28,7 +28,7 @@ This reversal is predicted by @cite{blok-2015}'s evaluative valence distinction:
 
 -/
 
-namespace Phenomena.Numerals.Studies.ClausWalch2024
+namespace ClausWalch2024
 
 -- ============================================================================
 -- Shared Types
@@ -194,4 +194,4 @@ theorem atMost_upTo_diverge :
   constructor; · native_decide
   constructor <;> native_decide
 
-end Phenomena.Numerals.Studies.ClausWalch2024
+end ClausWalch2024

@@ -62,7 +62,7 @@ are vacuous. This yields Δ(A ∘ B), not ΔA ∘ ΔB.
 
 -/
 
-namespace Phenomena.Modality.Studies.CiardelliGuerrini2026
+namespace CiardelliGuerrini2026
 
 open Core.Modality
 open Exhaustification.FreeChoice (diamond pdisj diamond_distributes_iff FCAltSet free_choice_forward)
@@ -647,4 +647,4 @@ theorem mustOrMust_force_verified :
 theorem mayAndMay_force_verified :
     mayAndMay.modalForce = may.toModalFeature.get!.force := rfl
 
-end Phenomena.Modality.Studies.CiardelliGuerrini2026
+end CiardelliGuerrini2026

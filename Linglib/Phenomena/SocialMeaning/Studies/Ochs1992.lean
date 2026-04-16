@@ -57,14 +57,14 @@ mediation thesis (Figure 14.1):
 * `Core.SocialMeaning.IndexicalField`: the composed field is lifted
   to an `IndexicalField`, connecting to @cite{eckert-2008}'s framework
   which explicitly builds on @cite{ochs-1992} and @cite{silverstein-1976}
-* `Phenomena.SocialMeaning.Studies.Burnett2019`: RSA model of persona
+* `Burnett2019`: RSA model of persona
   inference from variant choice — the computational realization of
   Ochs's indirect indexicality thesis via @cite{burnett-2019}'s SMG
 -/
 
 set_option autoImplicit false
 
-namespace Phenomena.SocialMeaning.Studies.Ochs1992
+namespace Ochs1992
 
 open Core.SocialMeaning
 
@@ -317,4 +317,4 @@ theorem ze_wa_contrast_masculine :
   simp only [IndexicalField.contrasts, composedField]
   native_decide
 
-end Phenomena.SocialMeaning.Studies.Ochs1992
+end Ochs1992

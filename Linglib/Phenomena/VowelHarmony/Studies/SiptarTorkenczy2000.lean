@@ -37,7 +37,7 @@ exhaustive feature comparison) enables `native_decide` on segment-level
 goals. One type system, no enum wrappers.
 -/
 
-namespace Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000
+namespace SiptarTorkenczy2000
 
 open Phonology (Segment Feature)
 open Phonology.Harmony
@@ -178,4 +178,4 @@ theorem papír_ot_matches_direct :
           spreadSuffix hungarianPalatalHarmony true [archiphoneU]⟩} := by
   native_decide
 
-end Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000
+end SiptarTorkenczy2000

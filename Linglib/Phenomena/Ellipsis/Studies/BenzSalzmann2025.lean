@@ -60,7 +60,7 @@ All already proved in `DeletionDomain.lean` §§ 11-12. This file adds
 the German empirical data and verifies it against those predictions.
 -/
 
-namespace Phenomena.Ellipsis.Studies.BenzSalzmann2025
+namespace BenzSalzmann2025
 
 open Minimalism.Ellipsis
 
@@ -385,4 +385,4 @@ theorem gender_voice_parallel :
     -- Voice internal under C[E] → voice mismatch blocked
     canMismatch sluicing voiceMismatch = false := ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Ellipsis.Studies.BenzSalzmann2025
+end BenzSalzmann2025

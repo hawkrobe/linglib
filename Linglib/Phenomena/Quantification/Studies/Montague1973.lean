@@ -21,7 +21,7 @@ represented as `s ⇒ τ` rather than a separate `intens` constructor.
 import Linglib.Core.IntensionalLogic.Frame
 import Mathlib.Data.Set.Basic
 
-namespace Phenomena.Quantification.Studies.Montague1973
+namespace Montague1973
 
 open Core.IntensionalLogic
 
@@ -445,4 +445,4 @@ def Derivation.cat : Derivation → Cat
   | .quantIn _ _ _ => .t
 
 
-end Phenomena.Quantification.Studies.Montague1973
+end Montague1973

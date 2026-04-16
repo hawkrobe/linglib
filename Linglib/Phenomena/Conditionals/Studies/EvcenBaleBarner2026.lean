@@ -51,9 +51,7 @@ Reported values are estimated marginal means from logistic mixed-effects
 regressions (on the probability scale), as reported in the paper.
 -/
 
-namespace Phenomena.Conditionals.Studies.EvcenBaleBarner2026
-
-open Phenomena
+namespace EvcenBaleBarner2026
 
 -- ============================================================================
 -- Experimental Conditions
@@ -721,7 +719,7 @@ This section connects `KnowledgeCondition` to the shared infrastructure. -/
 open Implicature Implicature.Competence
 
 private abbrev siToBeliefState :=
-  Phenomena.ScalarImplicatures.Studies.BaleEtAl2025.toBeliefState
+  BaleEtAl2025.toBeliefState
 
 /-- Map speaker knowledge in the CP paradigm to NeoGricean belief state.
 
@@ -819,4 +817,4 @@ theorem no_competence_blocks_exhaustification :
       exhaustificationLicensed .partialKnowledge q = false := by
   intro q; cases q <;> rfl
 
-end Phenomena.Conditionals.Studies.EvcenBaleBarner2026
+end EvcenBaleBarner2026

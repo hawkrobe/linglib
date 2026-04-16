@@ -29,7 +29,7 @@ representations under the SC analysis.
 
 ## Cross-references
 
-- `Phenomena.WordOrder.Studies.ArnoldEtAl2000`: The same two constructions
+- `ArnoldEtAl2000`: The same two constructions
   (dative alternation + particle placement) studied from a processing
   perspective — heaviness drives linearization while abstract structure
   drives priming.
@@ -37,7 +37,7 @@ representations under the SC analysis.
   frames as grammatical — the precondition for the priming study.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
+namespace HaddicanEtAl2026
 
 /-- A priming contrast between two prime conditions. -/
 structure PrimingContrast where
@@ -351,4 +351,4 @@ theorem complexPred_fails_at_control :
     structurallyIsomorphic pvc_complexPred transitive_control = true := by
   exact ⟨rfl, by native_decide⟩
 
-end Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026
+end HaddicanEtAl2026

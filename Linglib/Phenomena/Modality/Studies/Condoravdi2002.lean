@@ -32,7 +32,7 @@ Present and for the Past. In D. Beaver, S. Kaufmann, B. Clark, & L. Casillas
   derives the paper's predictions.
 -/
 
-namespace Phenomena.Modality.Studies.Condoravdi2002
+namespace Condoravdi2002
 
 open Core.Time
 open Core.Verbs (Dynamicity)
@@ -359,4 +359,4 @@ theorem tomorrow_past_epistemic_incompat :
     compatible .tomorrow modalsForPastEpistemic .dynamic = false := by
   decide
 
-end Phenomena.Modality.Studies.Condoravdi2002
+end Condoravdi2002

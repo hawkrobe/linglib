@@ -47,7 +47,7 @@ Griceans predict SIs are global pragmatic inferences only.
    and minimal conventionalism are falsified.
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+namespace GeurtsPouscoulous2009
 
 open Core.Empirical
 
@@ -638,4 +638,4 @@ theorem bothThenOr_prediction_matches_data :
   · intro _; rfl
   · intro _; exact bothThenOr_not_predicted_felicitous
 
-end Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
+end GeurtsPouscoulous2009

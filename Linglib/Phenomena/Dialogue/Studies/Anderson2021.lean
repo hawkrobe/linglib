@@ -47,7 +47,7 @@ worlds are individuals characterized by features (major, location) and
 utterances describe those features.
 -/
 
-namespace Phenomena.Dialogue.Studies.Anderson2021
+namespace Anderson2021
 
 open Core.CommonGround (ContextSet)
 
@@ -952,4 +952,4 @@ theorem a_initial_diff_nancy_highest :
     simp only [aDiffFromUniform, differenceSample, beliefsA, DistributionalCG.uniform] <;>
     norm_num
 
-end Phenomena.Dialogue.Studies.Anderson2021
+end Anderson2021

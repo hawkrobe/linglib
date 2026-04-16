@@ -37,7 +37,7 @@ Implications for the Typology of O-Marking and X-Marking."
 
 -/
 
-namespace Phenomena.Conditionals.Studies.Mizuno2024
+namespace Mizuno2024
 
 -- ════════════════════════════════════════════════════════════════
 -- § Datum Structures
@@ -392,7 +392,7 @@ theorem flv_data_matches_profiles :
 -- § Iatridou 2000 Cross-Reference
 -- ════════════════════════════════════════════════════════════════
 
-open Phenomena.Conditionals.Studies.Iatridou2000
+open Iatridou2000
 open Semantics.Conditionals.Anderson (MarkingStrategy)
 open Semantics.Conditionals.Iatridou (ExclDimension CounterfactualType)
 
@@ -424,4 +424,4 @@ theorem japanese_strategy_no_excl :
 theorem mandarin_strategy_no_excl :
     mandarin_strategy.exclDimension = none := rfl
 
-end Phenomena.Conditionals.Studies.Mizuno2024
+end Mizuno2024

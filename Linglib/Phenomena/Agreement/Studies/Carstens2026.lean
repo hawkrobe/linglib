@@ -50,7 +50,7 @@ endpoint — via `statusToBundle` which bridges Bantu `GenderStatus` to
 predictions against @cite{carstens-2026}'s empirical data.
 -/
 
-namespace Phenomena.Agreement.Studies.Carstens2026
+namespace Carstens2026
 
 open Fragments.Bantu
 open Minimalism.Agreement.GenderResolution
@@ -759,7 +759,7 @@ theorem xhosa_uninterpretable_coordinate :
     structural fact: both resolution functions are projections of the same
     parameterized mechanism. -/
 
-open Phenomena.Agreement.Studies.AdamsonAnagnostopoulou2025
+open AdamsonAnagnostopoulou2025
 
 /-- Both studies agree on the self-matching property for interpretable
     features: Bantu interpretable cores self-match via `statusToBundle`,
@@ -864,4 +864,4 @@ theorem nary_subsumes_binary_bantu (s₁ s₂ : GenderStatus) :
     = resolve (statusToBundle s₁) (statusToBundle s₂) := by
   exact resolveN_binary (statusToBundle s₁) (statusToBundle s₂)
 
-end Phenomena.Agreement.Studies.Carstens2026
+end Carstens2026

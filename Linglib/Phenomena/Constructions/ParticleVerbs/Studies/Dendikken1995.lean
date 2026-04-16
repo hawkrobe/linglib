@@ -24,7 +24,7 @@ movement, preferring continuous order (P incorporates instead).
 
 ## Cross-references
 
-- `Phenomena.ArgumentStructure.Studies.HaddicanEtAl2026`: SC family
+- `HaddicanEtAl2026`: SC family
   geometry and tree-shape isomorphism proofs
 - `Minimalism.Formal.HeadMovement.Basic`: head-to-head
   movement type and `formComplexLI` for incorporation

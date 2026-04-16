@@ -12,7 +12,7 @@ specific: the *constructions* are Italian, but the *classification*
 (ENStrength, PolarityLicensing) comes from `Core.Negation`.
 
 The syntactic analysis (why each construction falls into its class)
-lives in `Phenomena.Negation.Studies.Greco2020`.
+lives in `Greco2020`.
 -/
 
 namespace Fragments.Italian.ExpletiveNegation

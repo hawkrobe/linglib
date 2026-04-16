@@ -44,7 +44,7 @@ is the existential dual of supervaluation. See
 `Theories/Semantics/Comparison/Delineation.lean`.
 -/
 
-namespace Phenomena.Gradability.Studies.Fine1975
+namespace Fine1975
 
 open Core.Duality (Truth3)
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat)
@@ -244,4 +244,4 @@ theorem comparativeEntailment_captured :
 theorem definitelyOperator_eliminates :
     definitelyOperator.eliminatesBorderline = true := rfl
 
-end Phenomena.Gradability.Studies.Fine1975
+end Fine1975

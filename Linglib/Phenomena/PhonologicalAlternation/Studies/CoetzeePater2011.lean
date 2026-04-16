@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.Variation
+import Linglib.Core.Constraint.Variation
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Fragments.English.TDDeletion
 
@@ -44,10 +44,10 @@ modeling phonological variation, illustrated with English t/d-deletion.
   framework separation theorem.
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.CoetzeePater2011
+namespace CoetzeePater2011
 
 open Core.OT Core.ConstraintEvaluation
-open Phonology.HarmonicGrammar
+open Core.Constraint
 open Phonology.Constraints
 open Fragments.English.TDDeletion
 
@@ -447,4 +447,4 @@ theorem ct_dominates_implies_deletion :
     tab.optimal = {⟨ctx, .delete⟩} := by
   intro ctx; cases ctx <;> native_decide
 
-end Phenomena.PhonologicalAlternation.Studies.CoetzeePater2011
+end CoetzeePater2011

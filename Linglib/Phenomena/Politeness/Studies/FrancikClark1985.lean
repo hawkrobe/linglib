@@ -48,7 +48,7 @@ subsumption hierarchy.
 
 set_option autoImplicit false
 
-namespace Phenomena.Politeness.Studies.FrancikClark1985
+namespace FrancikClark1985
 
 open Core.Discourse (PreparatoryCondition)
 open Core.Modality (ModalFlavor)
@@ -552,4 +552,4 @@ theorem endToEnd_canCould_general :
          by native_decide, by native_decide,
          by native_decide, by native_decide⟩
 
-end Phenomena.Politeness.Studies.FrancikClark1985
+end FrancikClark1985

@@ -45,7 +45,7 @@ content. The RA* algorithm (§4.3):
 
 set_option autoImplicit false
 
-namespace Phenomena.Negation.Studies.VanDerSandtMaier2003
+namespace VanDerSandtMaier2003
 
 open Core.Semantics.ContentLayer
 open Semantics.Dynamic.DRT
@@ -314,4 +314,4 @@ theorem same_surface_different_types :
     still_propositional.denialType ≠ still_presuppositional.denialType :=
   ⟨rfl, by decide⟩
 
-end Phenomena.Negation.Studies.VanDerSandtMaier2003
+end VanDerSandtMaier2003

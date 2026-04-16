@@ -22,7 +22,7 @@ The study used 435 sentences:
 
 Funniness rated on 1–7 scale, z-scored across participants.
 
-See `Phenomena.Polysemy.Studies.ErkHerbelot2024` for the SDS↔Kao bridge.
+See `ErkHerbelot2024` for the SDS↔Kao bridge.
 -/
 
 namespace Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016

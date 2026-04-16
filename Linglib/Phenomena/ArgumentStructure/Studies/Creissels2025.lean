@@ -29,7 +29,7 @@ This study file bridges @cite{creissels-2025}'s framework (formalized in
 - `Core/RootDimensions.lean`: Levin's diathesis alternation diagnostics
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Creissels2025
+namespace Creissels2025
 
 open Core.Alternation
 open Semantics.Causation.Morphological
@@ -380,4 +380,4 @@ create an intransitive base first. -/
 def causativization_via_antipassive : VoiceStack :=
   [antipassivization, causativization]
 
-end Phenomena.ArgumentStructure.Studies.Creissels2025
+end Creissels2025

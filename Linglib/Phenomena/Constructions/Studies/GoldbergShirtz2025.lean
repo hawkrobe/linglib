@@ -24,7 +24,7 @@ PALs are phrases that fill word-level syntactic slots:
 
 -/
 
-namespace Phenomena.Constructions.Studies.GoldbergShirtz2025
+namespace GoldbergShirtz2025
 
 /-! ## Study result structure -/
 
@@ -215,7 +215,7 @@ def palExamples : List PALExample :=
 (e.g., BLACKbird vs. black BIRD). -/
 def palStressIsCompoundLike : Bool := true
 
-end Phenomena.Constructions.Studies.GoldbergShirtz2025
+end GoldbergShirtz2025
 
 /-! ## Bridge content (merged from CxG_GoldbergShirtz2025Bridge.lean) -/
 
@@ -224,7 +224,7 @@ end Phenomena.Constructions.Studies.GoldbergShirtz2025
 
 Connects the PAL construction theoretical analysis in
 `ConstructionGrammar.Studies.GoldbergShirtz2025` to the empirical data in
-`Phenomena.Constructions.Studies.GoldbergShirtz2025`.
+`GoldbergShirtz2025`.
 
 Claims 3 and 4 reference empirical study results (effect sizes from
 Studies 2/3, cross-linguistic attestation data) and so belong here
@@ -242,8 +242,8 @@ PALs are judged wittier and more sarcastic than paraphrases.
 We record this as the empirical observation that effect sizes are positive
 and significant across both studies. -/
 def claim_rhetorical_effects : Prop :=
-  _root_.Phenomena.Constructions.Studies.GoldbergShirtz2025.study2.beta > 0 ∧
-  _root_.Phenomena.Constructions.Studies.GoldbergShirtz2025.study3.beta > 0
+  _root_.GoldbergShirtz2025.study2.beta > 0 ∧
+  _root_.GoldbergShirtz2025.study3.beta > 0
 
 /-- Claim 3 holds: β > 0 in both Studies 2 and 3. -/
 theorem claim_rhetorical_effects_holds : claim_rhetorical_effects := by
@@ -255,7 +255,7 @@ theorem claim_rhetorical_effects_holds : claim_rhetorical_effects := by
 Attested in Germanic (German, Dutch, Afrikaans), Turkic (Turkish),
 Semitic (Hebrew), and Romance (Brazilian Portuguese). -/
 def claim_crosslinguistic : Prop :=
-  (_root_.Phenomena.Constructions.Studies.GoldbergShirtz2025.crossLinguisticData.map
+  (_root_.GoldbergShirtz2025.crossLinguisticData.map
     (·.family)).eraseDups.length ≥ 3
 
 /-- Claim 4 holds: 4 distinct families attested. -/

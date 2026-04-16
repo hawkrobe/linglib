@@ -75,12 +75,12 @@ languages, but language-specific argument realization strategies
 (and their absence) determine which middle types surface.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.BeaversUdayana2022
+namespace BeaversUdayana2022
 
 open Core.Verbs
 open Fragments.Indonesian.VoiceSystem
 open Minimalism (VoiceParams VoiceFlavor ExternalArgSemantics)
-open Phenomena.ArgumentStructure.Studies.Beavers2010
+open Beavers2010
 open Semantics.Lexical.Verb.Affectedness (AffectednessDegree)
 open Semantics.Events.ArgumentRealization
 open Interfaces.SyntaxSemantics.VoiceSemantics
@@ -447,4 +447,4 @@ theorem no_incorporation_allows_core :
     incorporationPredicted false dispositionalMiddle = true ∧
     incorporationPredicted false reflexiveMiddle = true := ⟨rfl, rfl⟩
 
-end Phenomena.ArgumentStructure.Studies.BeaversUdayana2022
+end BeaversUdayana2022

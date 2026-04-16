@@ -24,7 +24,7 @@ languages. 159 have no verbal number; 34 have singular-plural pairs
 (with or without suppletion); 7 have sg-du-pl triples.
 -/
 
-namespace Phenomena.Plurals.Studies.VerbalNumber
+namespace VerbalNumber
 
 open Core.Number (Category)
 
@@ -148,4 +148,4 @@ theorem wals_majority_no_verbal_number :
     (Core.WALS.F80A.allData.filter (·.value != .none)).length := by
   native_decide
 
-end Phenomena.Plurals.Studies.VerbalNumber
+end VerbalNumber

@@ -65,7 +65,7 @@ than the non-presuppositional alternative.
 
 set_option autoImplicit false
 
-namespace Phenomena.Presupposition.Studies.Blutner2000
+namespace Blutner2000
 
 open Core.ConstraintEvaluation
 
@@ -244,4 +244,4 @@ theorem global_is_global_accommodation :
 theorem local_is_local_accommodation :
     ProjectionSite.local.toAccommodationLevel = AccommodationLevel.local := rfl
 
-end Phenomena.Presupposition.Studies.Blutner2000
+end Blutner2000

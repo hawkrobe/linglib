@@ -49,7 +49,7 @@ implicatures are independent, with homogeneity acquired earlier.
   (end-to-end: inner EXH → double-EXH → ALL → falsified by HOM/−SI data)
 -/
 
-namespace Phenomena.Plurals.Studies.TieuKrizChemla2019
+namespace TieuKrizChemla2019
 
 open Core (Polarity)
 open Phenomena.Plurals.Homogeneity (HomogeneityJudgment HomogeneityDatum
@@ -423,7 +423,7 @@ theorem unidirectional_implication :
 -- SECTION 8: End-to-End Argument Against Magri2014
 -- ============================================================
 
-open Phenomena.Plurals.Studies.Magri2014 (Role exh doubleExh someMeaning
+open Magri2014 (Role exh doubleExh someMeaning
   allMeaning exh_some exh_the double_strengthening_yields_universal)
 
 /--
@@ -518,4 +518,4 @@ theorem attested_groups_ordered :
   exact ⟨rfl, rfl, rfl, by native_decide, by native_decide⟩
 
 
-end Phenomena.Plurals.Studies.TieuKrizChemla2019
+end TieuKrizChemla2019

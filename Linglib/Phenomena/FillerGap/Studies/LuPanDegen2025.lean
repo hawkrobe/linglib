@@ -30,7 +30,7 @@ extraction predictions, with no stipulation.
 -/
 
 
-namespace Phenomena.FillerGap.Studies.LuPanDegen2025
+namespace LuPanDegen2025
 
 open Semantics.Focus.BackgroundedIslands
 open Core.InformationStructure
@@ -337,4 +337,4 @@ theorem adverb_replicates_model :
   · rfl
   · native_decide
 
-end Phenomena.FillerGap.Studies.LuPanDegen2025
+end LuPanDegen2025

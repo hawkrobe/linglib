@@ -49,7 +49,7 @@ per @cite{bar-lev-fox-2017}, not negation-based).
 
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021
+namespace MeyerFeiman2021
 
 
 /-! ## Processing Architecture Types -/
@@ -462,4 +462,4 @@ theorem all_profiles_distinct :
     classProfile .numeral ≠ classProfile .freeChoiceDisjunction := by
   exact ⟨by decide, by decide, by decide⟩
 
-end Phenomena.ScalarImplicatures.Studies.MeyerFeiman2021
+end MeyerFeiman2021

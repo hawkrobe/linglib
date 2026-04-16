@@ -27,7 +27,7 @@ concrete verb-NP composition and telicity diagnostics.
 5. **Diagnostic bridge** — composed VP reference → for/in compatibility
 -/
 
-namespace Phenomena.TenseAspect.Studies.Krifka1989
+namespace Krifka1989
 
 open Fragments.English.Predicates.Verbal
 open Semantics.Events.Krifka1998 (VerbIncClass)
@@ -224,4 +224,4 @@ theorem read_book_composition :
     composedRef .inc .qua = .qua ∧
     inXPrediction .accomplishment = .accept := ⟨rfl, rfl⟩
 
-end Phenomena.TenseAspect.Studies.Krifka1989
+end Krifka1989

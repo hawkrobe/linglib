@@ -59,7 +59,7 @@ exercises this parallel with concrete data from Figures 3 and 4.
 * `Core.SocialMeaning.composeIndex`: the shared composition operation
 * `Core.SocialMeaning.IndexicalField`: Eckert's concept, formalized
   as infrastructure in `Core`
-* `Phenomena.SocialMeaning.Studies.Ochs1992`: predecessor —
+* `Ochs1992`: predecessor —
   `composeIndex` was introduced to formalize Ochs's indirect
   indexicality; Eckert generalizes it to stance accretion
 * `Theories.Sociolinguistics.EckertMontague`: the Eckert-Montague
@@ -69,7 +69,7 @@ exercises this parallel with concrete data from Figures 3 and 4.
 
 set_option autoImplicit false
 
-namespace Phenomena.SocialMeaning.Studies.Eckert2008
+namespace Eckert2008
 
 open Core.SocialMeaning
 open Phenomena.SocialMeaning.ING
@@ -638,4 +638,4 @@ theorem apical_em_count :
 theorem velar_apical_em_differ :
     ingEM .velar ≠ ingEM .apical := by native_decide
 
-end Phenomena.SocialMeaning.Studies.Eckert2008
+end Eckert2008

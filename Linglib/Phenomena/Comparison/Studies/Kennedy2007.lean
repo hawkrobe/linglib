@@ -38,7 +38,7 @@ comparison ("3 inches taller", "twice as expensive", "much faster").
 
 -/
 
-namespace Phenomena.Comparison.Studies.Kennedy2007
+namespace Kennedy2007
 
 open Semantics.Degree
 open Core.Scale (Boundedness)
@@ -162,4 +162,4 @@ def degreeModifierExamples : List DegreeModifierDatum :=
     , requiresComparison := true }
   ]
 
-end Phenomena.Comparison.Studies.Kennedy2007
+end Kennedy2007

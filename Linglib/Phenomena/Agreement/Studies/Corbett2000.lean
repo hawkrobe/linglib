@@ -51,7 +51,7 @@ Formalizes the core typological framework from:
    @cite{chierchia-1998}'s Nominal Mapping Parameter.
 -/
 
-namespace Phenomena.Agreement.Studies.Corbett2000
+namespace Corbett2000
 
 -- Number categories, predicates, and UD bridges are in `Core/Number.lean`.
 -- We alias `NumberValue` here for backward compatibility within this file.
@@ -942,4 +942,4 @@ def russianDecaPredHier : PredicateHierarchyProfile :=
 theorem russian_predicate_hierarchy_holds :
     russianDecaPredHier.respectsHierarchy = true := by native_decide
 
-end Phenomena.Agreement.Studies.Corbett2000
+end Corbett2000

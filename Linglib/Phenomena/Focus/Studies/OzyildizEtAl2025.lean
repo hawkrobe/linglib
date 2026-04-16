@@ -52,7 +52,7 @@ of @cite{rooth-1992} and @cite{villalta-2008}.
 - @cite{tonhauser-matthewson-2016}: Desiderata for semantic data collection
 -/
 
-namespace Phenomena.Focus.Studies.OzyildizEtAl2025
+namespace OzyildizEtAl2025
 
 open Semantics.FocusInterpretation (PropFocusValue ClauseEmbedPred IsFocusSensitive
   IsNotFocusSensitive not_fs_iff_ignores_focus liftNonFS liftNonFS_not_fs)
@@ -711,4 +711,4 @@ def inferenceTestReliable : ComplementMonotonicity → Bool
   | .upwardEntailing => true
   | .nonUpwardEntailing => false
 
-end Phenomena.Focus.Studies.OzyildizEtAl2025
+end OzyildizEtAl2025

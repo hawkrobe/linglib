@@ -25,7 +25,7 @@ from `Core.Accessibility` to empirical anaphora phenomena.
    anaphoric accessibility.
 -/
 
-namespace Phenomena.Anaphora.Studies.KampReyle1993
+namespace KampReyle1993
 
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core.Accessibility
@@ -475,4 +475,4 @@ theorem exDisjunction_merge (rels : RelInterp E) :
                    .atom 3 [2], .atom 4 [2, 1]]) :=
   (reduce_sound rels exDisjunction_compositional).symm
 
-end Phenomena.Anaphora.Studies.KampReyle1993
+end KampReyle1993

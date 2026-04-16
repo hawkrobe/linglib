@@ -59,7 +59,7 @@ contradictory base → effective ThresholdPair is derived via two routes:
 
 set_option autoImplicit false
 
-namespace Phenomena.Negation.Studies.Krifka2007
+namespace Krifka2007
 
 open Core.Scale (Degree Threshold deg thr)
 open Semantics.Lexical.Adjective (ThresholdPair inGapRegion
@@ -414,4 +414,4 @@ theorem biot_breaks_synonymy :
      result.any (· == (.notNegative, Region.plateauHigh))) = true := by
   native_decide
 
-end Phenomena.Negation.Studies.Krifka2007
+end Krifka2007

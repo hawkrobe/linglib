@@ -24,7 +24,7 @@ This derivation is formalized in `Gunlogson.cbc_from_uninformativeness`.
 
 -/
 
-namespace Phenomena.Assertion.Studies.BringGunlogson2000
+namespace BringGunlogson2000
 
 open Pragmatics.Assertion.Gunlogson
 open Core.Discourse.Commitment
@@ -121,4 +121,4 @@ theorem rising_is_not_partition {W : Type*}
     s.addresseeSlate.commitments.length = 1 :=
   rfl
 
-end Phenomena.Assertion.Studies.BringGunlogson2000
+end BringGunlogson2000

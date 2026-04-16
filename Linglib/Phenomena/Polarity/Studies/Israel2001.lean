@@ -31,7 +31,7 @@ Formalizes the core contributions of Israel's Scalar Model of Polarity:
   cross-cuts traditional theta labels.
 -/
 
-namespace Phenomena.Polarity.Studies.Israel2001
+namespace Israel2001
 
 open Core.Lexical.PolarityItem
 open Fragments.English.PolarityItems
@@ -356,4 +356,4 @@ def expectedScaleDirection : PolarityType → Option ScaleDirection
 -- FCIs are orthogonal to this distinction
 #guard expectedScaleDirection .fci == none
 
-end Phenomena.Polarity.Studies.Israel2001
+end Israel2001

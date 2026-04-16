@@ -33,7 +33,7 @@ Hand-computed conditioned rankings are verified against the
 A,α-conditionalization algorithm.
 -/
 
-namespace Phenomena.DefaultReasoning.Studies.Spohn1988
+namespace Spohn1988
 
 open Core.Logic.Ranking
 
@@ -271,4 +271,4 @@ theorem sunny_warm_independent :
     min (prior.rank .sunny_warm) (prior.rank .sunny_cold) +
     min (prior.rank .sunny_warm) (prior.rank .rainy_warm) := by decide
 
-end Phenomena.DefaultReasoning.Studies.Spohn1988
+end Spohn1988

@@ -55,7 +55,7 @@ where parsing difficulty tracks the Chomsky hierarchy and provides evidence
 against push-down-store models of human parsing (@cite{evers-1975}).
 -/
 
-namespace Phenomena.WordOrder.Studies.BachBrownMarslenWilson1986
+namespace BachBrownMarslenWilson1986
 
 open Core (VerbClusterBinding)
 open Core.VerbClusterBinding (identity reverse unintegratedCount npVerbDist
@@ -335,4 +335,4 @@ theorem model_matches_data :
     totalNPVerbDist (identity 3) = totalNPVerbDist (reverse 3) :=
   ⟨by decide, by decide, by decide, by decide⟩
 
-end Phenomena.WordOrder.Studies.BachBrownMarslenWilson1986
+end BachBrownMarslenWilson1986

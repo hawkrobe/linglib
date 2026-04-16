@@ -71,7 +71,7 @@ theorems derive from `DDRP.every_nesting` / `DDRP.some_nesting` /
 
 set_option autoImplicit false
 
-namespace Phenomena.Quantification.Studies.DavidsonGagne2022
+namespace DavidsonGagne2022
 
 open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier (every_sem some_sem)
@@ -428,4 +428,4 @@ theorem fsSome_grounding (h : VerticalHeight) (w : World) :
   · intro ⟨e, hC, hS⟩; exact ⟨e, ⟨hC, trivial⟩, hS⟩
   · intro ⟨e, ⟨hC, _⟩, hS⟩; exact ⟨e, hC, hS⟩
 
-end Phenomena.Quantification.Studies.DavidsonGagne2022
+end DavidsonGagne2022

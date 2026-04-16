@@ -104,7 +104,7 @@ qualitative predictions — they are not taken from the paper's fitted values.
 
 set_option autoImplicit false
 
-namespace Phenomena.WordOrder.Studies.SchlotterbeckWang2023
+namespace SchlotterbeckWang2023
 
 open RSA
 
@@ -425,4 +425,4 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
   · exact both_orderings_identify_target_A
   · exact both_orderings_identify_target_B
 
-end Phenomena.WordOrder.Studies.SchlotterbeckWang2023
+end SchlotterbeckWang2023

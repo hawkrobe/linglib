@@ -50,7 +50,7 @@ import Mathlib.Data.Rat.Defs
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.HawkinsGweonGoodman2021
+namespace HawkinsGweonGoodman2021
 
 /-! ================================================================
     PART I: EMPIRICAL DATA
@@ -715,4 +715,4 @@ theorem listener_compensates_for_low_speaker_effort :
   simp only [min_def, max_def]
   split_ifs <;> linarith
 
-end Phenomena.Reference.Studies.HawkinsGweonGoodman2021
+end HawkinsGweonGoodman2021

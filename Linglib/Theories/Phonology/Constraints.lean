@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.OT
-import Linglib.Theories.Phonology.HarmonicGrammar.Basic
+import Linglib.Core.Constraint.Weighted
 
 /-!
 # Shared Phonological Constraint Library
@@ -202,7 +202,7 @@ theorem mkMaxCtx_bounded {C : Type} (name : String)
 -- § 5: Weighted Constraint Constructors
 -- ============================================================================
 
-open Phonology.HarmonicGrammar
+open Core.Constraint
 
 /-- Build a weighted MAX constraint with a given weight. -/
 def mkMaxW {C : Type} (name : String) (violated : C → Bool) (w : ℚ) :

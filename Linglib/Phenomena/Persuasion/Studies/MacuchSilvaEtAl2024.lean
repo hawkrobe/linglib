@@ -46,7 +46,7 @@ from speaker-oriented argStr to a situation-oriented difficulty measure.
 
 -/
 
-namespace Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024
+namespace MacuchSilvaEtAl2024
 
 open RSA.ArgumentativeStrength
 open RSA.Domains.Quantity
@@ -357,4 +357,4 @@ theorem crossovers_follow_horn_scale :
     Alternatives.Quantifiers.entails .most .some_ = true := by native_decide
 
 
-end Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024
+end MacuchSilvaEtAl2024

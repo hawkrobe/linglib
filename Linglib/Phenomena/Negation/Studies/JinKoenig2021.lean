@@ -66,7 +66,7 @@ EN triggers obey one of four semantic licensing conditions:
 | COMPARATIVES | MORE THAN, LESS THAN, DIFFERENT THAN, TOO…TO |
 -/
 
-namespace Phenomena.Negation.Studies.JinKoenig2021
+namespace JinKoenig2021
 
 open Semantics.Attitudes.Preferential (AttitudeValence PreferentialPredicate NVPClass
                                         classifyNVP fear dread worry)
@@ -918,7 +918,7 @@ theorem wish_is_not_en : isEN french_ne_wish = false := rfl
 
 /-! ### Connecting JK2021 licensing conditions to Rett's ambidirectionality
 
-@cite{rett-2026} (formalized in `Phenomena.Negation.Studies.Rett2026`)
+@cite{rett-2026} (formalized in `Rett2026`)
 proposes that EN is licensed in *ambidirectional* constructions — those
 where negating an argument doesn't change truth conditions. This is
 a stronger, unified condition that subsumes JK2021's four conditions.
@@ -1069,4 +1069,4 @@ theorem almost_barely_converse :
     -- ALMOST puts ¬p in the real world
     almostProfile.negativeInference = "¬p in w₀" := ⟨rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Negation.Studies.JinKoenig2021
+end JinKoenig2021

@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.InformationStructure
+import Linglib.Core.InformationStructure
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
 import Linglib.Theories.Semantics.Focus.PolarityLevel
@@ -45,7 +45,7 @@ formal theory.
 Note: Production percentages are approximate (read from bar charts).
 -/
 
-namespace Phenomena.Polarity.Studies.TurcoBraunDimroth2014
+namespace TurcoBraunDimroth2014
 
 open Core.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry)
 open Fragments.Dutch.Particles (wel)
@@ -349,4 +349,4 @@ theorem vf_targets_assertion :
 theorem strategies_target_different_levels :
     strategyLevel wel.strategy ≠ strategyLevel verumFocus.strategy := by decide
 
-end Phenomena.Polarity.Studies.TurcoBraunDimroth2014
+end TurcoBraunDimroth2014

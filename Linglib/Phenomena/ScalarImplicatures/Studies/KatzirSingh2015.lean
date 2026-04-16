@@ -31,7 +31,7 @@ stated globally but oddness persists in embedded constituents.
 
 -/
 
-namespace Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
+namespace KatzirSingh2015
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Core K&S Definitions
@@ -840,4 +840,4 @@ theorem three_way_disagree_all :
 
 end ThreeWayComparison
 
-end Phenomena.ScalarImplicatures.Studies.KatzirSingh2015
+end KatzirSingh2015

@@ -29,7 +29,7 @@ Oxford University Press.
 | Imperative        | p         | DEONT(p)                     |
 -/
 
-namespace Phenomena.SentenceMood.Studies.Gutzmann2015
+namespace Gutzmann2015
 
 open Semantics.Mood.SentenceMoodUCI
 open Fragments.German.ModalParticles
@@ -125,4 +125,4 @@ theorem restriction_reflects_kind :
       (mp.exprKind = .ucModifier → mp.restrictionKind = .selectional) :=
   restriction_tracks_kind
 
-end Phenomena.SentenceMood.Studies.Gutzmann2015
+end Gutzmann2015

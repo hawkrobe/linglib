@@ -30,7 +30,7 @@ position data.
 - `models_embedded_verb_final`: German embedded clauses are verb-final
 -/
 
-namespace Phenomena.WordOrder.Studies.HarizanovGribanova2019
+namespace HarizanovGribanova2019
 
 -- ============================================================================
 -- Bulgarian Long Head Movement (@cite{lambova-2004c})
@@ -66,7 +66,7 @@ theorem captures_alternation :
 -- Germanic V2 (@cite{vikner-1995})
 -- ============================================================================
 
-open Phenomena.WordOrder.Studies.Westergaard2009
+open Westergaard2009
 
 /-- German root declaratives are V2 — consistent with V-to-C head movement. -/
 theorem models_root_v2 :
@@ -81,4 +81,4 @@ theorem models_embedded_verb_final :
 theorem root_sentence :
     de_decl.sentence = "Diesen Film haben die Kinder gesehen" := rfl
 
-end Phenomena.WordOrder.Studies.HarizanovGribanova2019
+end HarizanovGribanova2019

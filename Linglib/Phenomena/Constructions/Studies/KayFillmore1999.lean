@@ -30,9 +30,9 @@ Generalizations: The *What's X doing Y?* Construction" (Language 75(1):1–33).
 
 -/
 
-namespace Phenomena.Constructions.Studies.KayFillmore1999
+namespace KayFillmore1999
 
-open Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+open FillmoreKayOConnor1988
 open Core.Empirical
 
 /-- Check if a string contains a substring. -/
@@ -260,7 +260,7 @@ theorem progressive_is_required :
     )).all (λ d => containsSubstr d.sentence "doing" || containsSubstr d.sentence "is doing") = true := by
   native_decide
 
-end Phenomena.Constructions.Studies.KayFillmore1999
+end KayFillmore1999
 
 /-! ## Bridge content (merged from CxG_KayFillmore1999Bridge.lean) -/
 
@@ -304,8 +304,8 @@ The two readings are distinguished by the PerspectiveP layer:
 namespace ConstructionGrammar.Studies.KayFillmore1999
 
 open ConstructionGrammar
-open Phenomena.Constructions.Studies.KayFillmore1999
-open Phenomena.Constructions.Studies.FillmoreKayOConnor1988
+open KayFillmore1999
+open FillmoreKayOConnor1988
 
 -- ============================================================================
 -- A. Construction definition

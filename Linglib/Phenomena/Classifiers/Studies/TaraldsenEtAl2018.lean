@@ -43,7 +43,7 @@ import Linglib.Fragments.Bantu.Params
 - §12: NounClass alignment (Fragment enums ↔ study Nats)
 -/
 
-namespace Phenomena.Classifiers.Studies.TaraldsenEtAl2018
+namespace TaraldsenEtAl2018
 
 open Morphology.Nanosyntax
 open Morphology.DM.VI
@@ -507,7 +507,7 @@ theorem dm_nano_agree_cl2 :
 -- ============================================================================
 
 section AgreementBridge
-open Phenomena.Agreement.Studies.Carstens2026
+open Carstens2026
 open Minimalism.Agreement.GenderResolution
 
 /-- Combining @cite{carstens-2026}'s agreement diagnostic with the
@@ -629,4 +629,4 @@ theorem gender_plural_aligns :
     Gender.genderD.pluralClass.classNumber = 8 ∧
     Gender.genderE.pluralClass.classNumber = 10 := ⟨rfl, rfl, rfl, rfl, rfl⟩
 
-end Phenomena.Classifiers.Studies.TaraldsenEtAl2018
+end TaraldsenEtAl2018

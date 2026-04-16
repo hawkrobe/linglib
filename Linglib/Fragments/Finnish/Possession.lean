@@ -113,7 +113,7 @@ theorem covers_all_notions :
 -- §6. Heine 1997 Prediction Verification
 -- ============================================================================
 
-open Phenomena.Possession.Studies.Heine1997
+open Heine1997
 
 /-- Finnish's Location Schema matches Heine's predictions:
     have-construction (not belong), possessee as subject, Pred1 arity. -/

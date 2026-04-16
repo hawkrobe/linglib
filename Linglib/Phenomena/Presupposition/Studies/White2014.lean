@@ -23,7 +23,7 @@ empirical data about *forget*'s presuppositions (from
 
 -/
 
-namespace Phenomena.Presupposition.Studies.White2014
+namespace White2014
 
 open Core.Verbs (ComplementType)
 open Phenomena.Presupposition.ForgetPresuppositions
@@ -148,4 +148,4 @@ theorem question_isFinite : ComplementType.isFinite .question = true := rfl
 theorem infinitival_not_finite : ComplementType.isFinite .infinitival = false := rfl
 theorem gerund_not_finite : ComplementType.isFinite .gerund = false := rfl
 
-end Phenomena.Presupposition.Studies.White2014
+end White2014

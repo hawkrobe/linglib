@@ -41,7 +41,9 @@ is on a 7-point scale (7 = best, 1 = worst). Classifier direction
 (left vs. right) systematically determines the character's inferred path.
 -/
 
-namespace Phenomena.Iconicity.Studies.SchlenkerEtAl2026
+open Phenomena.Iconicity
+
+namespace SchlenkerEtAl2026
 
 open Semantics.Iconic
 open Semantics.Reference.Monsters (IsTowerMonster)
@@ -295,4 +297,4 @@ theorem paradigm13_uses_treeCl
     (proj : Fragments.ASL.Entity → StaticViewpoint SigningSpace → Bool) :
     (Fragments.ASL.treeCl proj).label = "TREE-cl" := rfl
 
-end Phenomena.Iconicity.Studies.SchlenkerEtAl2026
+end SchlenkerEtAl2026

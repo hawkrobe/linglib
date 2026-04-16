@@ -52,10 +52,10 @@ widening strengthens in DE but weakens in UE. The PSI parameter space
 refines this into D-MAX (even-like) vs D-MIN (antiexhaustive) enrichment.
 -/
 
-namespace Phenomena.Polarity.Studies.Chierchia2006
+namespace Chierchia2006
 
 open Phenomena.Polarity.Typology
-open Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025 (FCIFlavor EFCIRescue)
+open AlonsoOvalleMoghiseh2025 (FCIFlavor EFCIRescue)
 
 -- ============================================================================
 -- §1. The PSI Parameter Space
@@ -702,4 +702,4 @@ theorem existential_fci_existential_force :
 theorem negation_rhetorical_only :
     obs_12.force = .universal := rfl
 
-end Phenomena.Polarity.Studies.Chierchia2006
+end Chierchia2006

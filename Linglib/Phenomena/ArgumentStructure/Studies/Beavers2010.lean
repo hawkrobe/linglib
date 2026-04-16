@@ -31,7 +31,7 @@ truth-conditional definitions) to empirical argument realization facts
 through the MAP.
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Beavers2010
+namespace Beavers2010
 
 open Semantics.Lexical.Verb.EntailmentProfile
 open Semantics.Lexical.Verb.AgentivityLattice
@@ -477,4 +477,4 @@ theorem grimm_beavers_monotone_canonical :
     PersistenceLevel.fromPatientProfile seeSubjectProfile = .totalNonPersistence :=
   ⟨rfl, by native_decide, rfl, by native_decide, rfl, by native_decide⟩
 
-end Phenomena.ArgumentStructure.Studies.Beavers2010
+end Beavers2010

@@ -49,7 +49,7 @@ computational appraisal theory.
 
 set_option autoImplicit false
 
-namespace Phenomena.Emotion.Studies.HoulihanEtAl2023
+namespace HoulihanEtAl2023
 
 open Core.Agent.Emotion Core.GameTheory Core.Agent.SocialUtility
      Core.DecisionTheory
@@ -371,7 +371,7 @@ def SocialValueProfile.evaluate (p : SocialValueProfile)
     (g : SymmetricGame) (a₁ a₂ : Action2) : ℚ :=
   g.socialUtility a₁ a₂ p.ωMoney p.ωAIA p.ωDIA
 
-end Phenomena.Emotion.Studies.HoulihanEtAl2023
+end HoulihanEtAl2023
 
 /-! Game→DecisionProblem bridges are defined in the `SymmetricGame`
 namespace for dot notation. -/
@@ -403,7 +403,7 @@ def toSocialDecisionProblem (g : SymmetricGame)
 
 end Core.GameTheory.SymmetricGame
 
-namespace Phenomena.Emotion.Studies.HoulihanEtAl2023
+namespace HoulihanEtAl2023
 
 open Core.Agent.Emotion Core.GameTheory Core.Agent.SocialUtility
      Core.DecisionTheory
@@ -480,4 +480,4 @@ theorem generous_selfish_exclusive (θ : ℚ) (p : SocialValueProfile)
     (hg : p.ωAIA > θ) (hs : p.ωMoney > θ ∧ p.ωAIA < θ ∧ p.ωDIA < θ) :
     False := by linarith [hg, hs.2.1]
 
-end Phenomena.Emotion.Studies.HoulihanEtAl2023
+end HoulihanEtAl2023

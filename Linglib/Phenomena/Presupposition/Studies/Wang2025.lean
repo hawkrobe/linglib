@@ -28,7 +28,7 @@ can be resolved de re (against CG) vs. de dicto (against attitude holder's belie
 
 -/
 
-namespace Phenomena.Presupposition.Studies.Wang2025
+namespace Wang2025
 
 open Interfaces (FelicityStatus)
 open Fragments.Mandarin.Particles (MandarinTrigger)
@@ -141,4 +141,4 @@ def ye_deDicto : Exp3Datum :=
 theorem additive_deRe_available : ye_deRe.accepted = true := rfl
 
 
-end Phenomena.Presupposition.Studies.Wang2025
+end Wang2025

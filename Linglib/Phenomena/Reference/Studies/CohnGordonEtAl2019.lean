@@ -56,7 +56,7 @@ red dress, red object). Costs are 0 for all words.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.CohnGordonEtAl2019
+namespace CohnGordonEtAl2019
 
 open RSA
 
@@ -355,4 +355,4 @@ to longer utterances via the chain rule product (Finding 3:
 theorem incremental_rsa_is_no_brevity :
     DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := rfl
 
-end Phenomena.Reference.Studies.CohnGordonEtAl2019
+end CohnGordonEtAl2019

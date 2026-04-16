@@ -49,7 +49,7 @@ suffices to uniquely characterize all 20 emotion concepts.
 
 For domain-refined profiles that distinguish monetary/AIA/DIA effects,
 see `RefinedAppraisalWeights` (§6) and the full instantiation in
-`Phenomena.Emotion.Studies.HoulihanEtAl2023`.
+`HoulihanEtAl2023`.
 
 -/
 

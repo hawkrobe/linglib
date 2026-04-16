@@ -54,7 +54,7 @@ purely formal — it rests entirely on the string set of Swiss German and
 the case-marking facts, making no claims about phrase structure.
 -/
 
-namespace Phenomena.WordOrder.Studies.Shieber1985
+namespace Shieber1985
 
 open Core (FormalLanguageType Case)
 open Phenomena.WordOrder.CrossSerial (crossSerialRequires nestedRequires)
@@ -248,7 +248,7 @@ theorem aastriiche_is_acc :
     harder (not CF) but psycholinguistically easier.
 
     @cite{shieber-1985} establishes the formal side; the processing side is
-    in `Phenomena.WordOrder.Studies.BachBrownMarslenWilson1986`. -/
+    in `BachBrownMarslenWilson1986`. -/
 theorem formal_processing_dissociation :
     crossSerialRequires = .mildlyContextSensitive ∧
     nestedRequires = .contextFree :=
@@ -280,4 +280,4 @@ def example5 : GrammaticalClause := arbitraryDepth 1 2
 theorem example5_image :
     clauseImage example5 = [.a, .b, .b, .c, .d, .d] := by rfl
 
-end Phenomena.WordOrder.Studies.Shieber1985
+end Shieber1985

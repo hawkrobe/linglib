@@ -49,11 +49,11 @@ on the positions of DP arguments, not the position of V.
 - `Minimalism.Core.Derivation`: `Step.im` = Internal Merge
 - `Studies/Pylkkanen2008.lean`: Modern Voice/Appl decomposition with
   tree-based c-command verification; bridge theorem proving convergence
-- `Phenomena.WordOrder.Studies.ColeHermon2008`: English passive derivation
+- `ColeHermon2008`: English passive derivation
   using the same `Derivation` infrastructure
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Larson1988
+namespace Larson1988
 
 open Minimalism
 
@@ -411,4 +411,4 @@ theorem indirect_passive_io_ccommands_do :
 theorem indirect_passive_two_im :
     indirectPassive.movedItems.length = 2 := by native_decide
 
-end Phenomena.ArgumentStructure.Studies.Larson1988
+end Larson1988

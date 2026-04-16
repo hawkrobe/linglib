@@ -30,7 +30,7 @@ import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Turkish.Predicates
 
-namespace Phenomena.Questions.Studies.QingEtAl2025
+namespace QingEtAl2025
 
 -- Language Type
 
@@ -206,4 +206,4 @@ Why does "kork-" have symmetric interpretation with questions?
 - Contrast with "hopefully" which is asymmetric (positive valence)
 -/
 
-end Phenomena.Questions.Studies.QingEtAl2025
+end QingEtAl2025

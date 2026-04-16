@@ -37,7 +37,9 @@ and temporal adverb diagnostics.
 
 -/
 
-namespace Phenomena.TenseAspect.Studies.Egressy2026
+open Phenomena.TenseAspect
+
+namespace Egressy2026
 
 open Core.Tense
 open Core.Reichenbach
@@ -437,4 +439,4 @@ theorem hogyCP_uses_definite_conjugation :
     pastUnderPast_hogyCP_hitte.matrixVerb = hisz.formPastDef := ⟨rfl, rfl, rfl⟩
 
 
-end Phenomena.TenseAspect.Studies.Egressy2026
+end Egressy2026

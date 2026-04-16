@@ -35,7 +35,7 @@ via ∩. This structural difference explains why person/animacy trigger PCC effe
 PARTICIPANT ⊂ π is the set-theoretic realization of the [+inner] → [+outer]
 constraint in `Core.PrivativePair`. The 3-cell partition (speaker/participant/π)
 corresponds to the three well-formed cells (maximal/intermediate/minimal) of the
-privative pair. See `Phenomena.Agreement.Studies.Harbour2016` for bridge theorems
+privative pair. See `Harbour2016` for bridge theorems
 connecting the algebraic and syntactic person hierarchies.
 
 ## Sections

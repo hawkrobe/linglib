@@ -28,7 +28,7 @@ inequalities. Bridges to @cite{kehler-rohde-2013} (topichood),
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.KwonLee2026
+namespace KwonLee2026
 
 open Core.Discourse.ReferentialForm
 
@@ -810,4 +810,4 @@ theorem korean_attenuation_overt_gt_fullNP :
     (KoreanRefForm.overt.toAccessibility).attenuation >
       (KoreanRefForm.fullNP.toAccessibility).attenuation := by decide
 
-end Phenomena.Reference.Studies.KwonLee2026
+end KwonLee2026

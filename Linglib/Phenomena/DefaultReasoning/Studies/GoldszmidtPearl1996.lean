@@ -45,7 +45,7 @@ subset is sufficient to demonstrate tolerance stratification, κ^z
 construction, admissibility, and specificity.
 -/
 
-namespace Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
+namespace GoldszmidtPearl1996
 
 open Core.Logic.SystemZ
 open Core.Logic.Ranking
@@ -260,7 +260,7 @@ theorem κz_connected :
     theorem makes this derivation-vs-stipulation relationship explicit
     by combining both papers' conclusions. -/
 
-open Phenomena.DefaultReasoning.Studies.Veltman1996 in
+open Veltman1996 in
 
 /-- What @cite{veltman-1996} stipulates about penguin normality,
     @cite{goldszmidt-pearl-1996}'s System Z derives:
@@ -439,4 +439,4 @@ theorem κplus_strength_admissible : strengthAdmissible κ_plus Δ_pb_plus := by
 theorem κz_gap_too_small_for_sr₃ :
     κ_z.rank .penguinNoFly + sr₃.strength ≥ κ_z.rank .penguinFlies := by native_decide
 
-end Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
+end GoldszmidtPearl1996

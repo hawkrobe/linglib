@@ -32,7 +32,7 @@ telicity. The case morphology makes this composition visible.
 
 -/
 
-namespace Phenomena.Case.Studies.Karlsson2017
+namespace Karlsson2017
 
 open Core.Verbs
 
@@ -215,4 +215,4 @@ theorem number_closer_than_agreement :
     MorphCategory.relevanceRank .number <
     MorphCategory.relevanceRank .agreement := by decide
 
-end Phenomena.Case.Studies.Karlsson2017
+end Karlsson2017

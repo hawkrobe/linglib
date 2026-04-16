@@ -58,7 +58,7 @@ exp(-∞) = 0 from log(0) in the utility).
 
 open BigOperators RSA
 
-namespace Phenomena.Ellipsis.Studies.BergenGoodman2015
+namespace BergenGoodman2015
 
 -- ============================================================================
 -- § 1. Ellipsis: Sentence Fragments
@@ -532,7 +532,7 @@ Both the ellipsis deletion channel and the prosody confusion channel are
 special cases. The key insight from @cite{bergen-goodman-2015} is that noise
 can be **strategically exploited** — a feature not shared by
 @cite{degen-etal-2020}'s semantic noise model
-(see `Phenomena.Reference.Studies.DegenEtAl2020`).
+(see `DegenEtAl2020`).
 
 | Property | @cite{bergen-goodman-2015} | @cite{degen-etal-2020} |
 |----------|---------------------------|----------------------|
@@ -557,4 +557,4 @@ theorem stress_increases_discrimination (ε : ℝ) (hε : 0 < ε) :
   simp only [ProsodyModel.noiseChannel]
   linarith
 
-end Phenomena.Ellipsis.Studies.BergenGoodman2015
+end BergenGoodman2015

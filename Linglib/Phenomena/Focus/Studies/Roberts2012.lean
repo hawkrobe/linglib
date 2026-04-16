@@ -40,7 +40,7 @@ q_ai (H beans?) q_aii (H tofu?) q_bi (R beans?) q_bii (R tofu?)
 ```
 -/
 
-namespace Phenomena.Focus.Studies.Roberts2012
+namespace Roberts2012
 
 open Discourse
 
@@ -366,4 +366,4 @@ theorem toIssue_roundtrip_q1_cells :
 theorem toIssue_roundtrip_qai_cells :
     ((q_ai.toQUD).toIssue allWorlds).alternatives.length = 2 := by native_decide
 
-end Phenomena.Focus.Studies.Roberts2012
+end Roberts2012

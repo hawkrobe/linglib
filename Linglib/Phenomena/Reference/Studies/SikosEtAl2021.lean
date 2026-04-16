@@ -49,7 +49,7 @@ of recursive reasoning (S1, L1) don't add empirical value — the first step of
 RSA may be all that's needed.
 -/
 
-namespace Phenomena.Reference.Studies.SikosEtAl2021
+namespace SikosEtAl2021
 
 /-! ## Context Types
 
@@ -264,4 +264,4 @@ theorem solvable_ctx_has_nontrivial :
     (solvableUtts.filter (λ u => !isTrivial solvableCtx u)).length > 0 := by
   native_decide
 
-end Phenomena.Reference.Studies.SikosEtAl2021
+end SikosEtAl2021

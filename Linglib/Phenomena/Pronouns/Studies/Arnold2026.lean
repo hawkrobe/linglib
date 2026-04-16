@@ -60,7 +60,7 @@ grammatical account does not address.
 
 set_option autoImplicit false
 
-namespace Phenomena.Pronouns.Studies.Arnold2026
+namespace Arnold2026
 
 open Core (GenderInfo SurfaceGender)
 open Core.Pronouns (PronounSpec)
@@ -269,4 +269,4 @@ theorem structural_gender_consistency :
     Fragments.English.Pronouns.they_sg.genderParadigm =
     Fragments.English.Pronouns.they.genderParadigm := rfl
 
-end Phenomena.Pronouns.Studies.Arnold2026
+end Arnold2026

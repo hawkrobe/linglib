@@ -39,7 +39,7 @@ WHY the results hold; this file verifies the algorithm (`exhB`)
 computes the right answers.
 -/
 
-namespace Phenomena.Modality.Studies.AlonsoOvalleMoghiseh2025
+namespace AlonsoOvalleMoghiseh2025
 
 open Exhaustification.InnocentExclusion
 
@@ -659,4 +659,4 @@ theorem vreun_grammaticality_agrees :
 end Bridge
 
 
-end Phenomena.Modality.Studies.AlonsoOvalleMoghiseh2025
+end AlonsoOvalleMoghiseh2025

@@ -38,7 +38,7 @@ configurations, not a single "reflexive" or "anticausative" morpheme.
    Icelandic lacks true high applicatives).
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Wood2015
+namespace Wood2015
 
 open Minimalism
 open Fragments.Icelandic.Predicates
@@ -225,4 +225,4 @@ theorem subjectexp_no_active : leidast.hasActiveVariant = false := rfl
 /-- Ten -st verb entries in the fragment. -/
 theorem verb_count : allStVerbs.length = 10 := rfl
 
-end Phenomena.ArgumentStructure.Studies.Wood2015
+end Wood2015

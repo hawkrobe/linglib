@@ -54,7 +54,7 @@ appraisal architecture: emotive doxastics ARE prospective emotions
 computed from BToM marginals.
 -/
 
-namespace Phenomena.Modality.Studies.AnandHacquard2013
+namespace AnandHacquard2013
 
 open Semantics.Attitudes.Representationality
 open Semantics.Attitudes.Preferential
@@ -367,4 +367,4 @@ theorem necessity_contradicts_uncertainty
     (cred : ℚ) (h_high : cred ≥ 1) (h_lt : cred < 1) : False :=
   not_lt.mpr h_high h_lt
 
-end Phenomena.Modality.Studies.AnandHacquard2013
+end AnandHacquard2013

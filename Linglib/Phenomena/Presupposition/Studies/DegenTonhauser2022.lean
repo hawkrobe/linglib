@@ -57,9 +57,9 @@ This paper extends and empirically tests the Tonhauser taxonomy:
 - The gradient projection patterns challenge simple binary classification
 -/
 
-namespace Phenomena.Presupposition.Studies.DegenTonhauser2022
+namespace DegenTonhauser2022
 
-open Phenomena.Presupposition.Studies.DegenTonhauser2021
+open DegenTonhauser2021
 
 /-- Traditional classification of clause-embedding predicates.
     This classification is challenged by the experimental results. -/
@@ -287,7 +287,7 @@ theorem nonfactive_entries_lack_factivePresup :
     think.factivePresup = false := by
   exact ⟨rfl, rfl, rfl, rfl⟩
 
-open Phenomena.Presupposition.Studies.DegenTonhauser2021 in
+open DegenTonhauser2021 in
 open Fragments.English.Predicates.Verbal in
 /-- The traditional classification is consistent with Fragment factivity
     for verbal entries: every verb classified as factive has
@@ -299,7 +299,7 @@ theorem traditionalClass_consistent_with_fragment (p : Predicate)
   cases p <;> (unfold toVerbEntry at h; cases h) <;>
     refine ⟨fun hc => ?_, fun hc => ?_⟩ <;> first | rfl | simp [traditionalClass] at hc
 
-open Phenomena.Presupposition.Studies.DegenTonhauser2021 in
+open DegenTonhauser2021 in
 open Fragments.English.Predicates.Copular in
 /-- "be annoyed" is a presupposition trigger (emotive factive), while
     "be right" is not. This matches D&T 2022's traditional classification:
@@ -309,4 +309,4 @@ theorem copular_presup_matches_classification :
     (toPredicateCore .beRight).isPresupTrigger = false := by
   exact ⟨rfl, rfl⟩
 
-end Phenomena.Presupposition.Studies.DegenTonhauser2022
+end DegenTonhauser2022

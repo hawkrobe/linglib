@@ -50,7 +50,7 @@ Hebrew and proves the four cells of the dissociation table as OT theorems.
 
 open Phonology.Doubling
 
-namespace Phenomena.Phonology.Studies.BerentEtAl2016
+namespace BerentEtAl2016
 
 open Core.OT
 
@@ -208,4 +208,4 @@ theorem doubling_dissociation :
   exact ⟨english_plurality_prefers_XX, english_diminutive_prefers_XY,
          hebrew_plurality_prefers_XY, hebrew_diminutive_prefers_XX⟩
 
-end Phenomena.Phonology.Studies.BerentEtAl2016
+end BerentEtAl2016

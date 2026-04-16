@@ -54,7 +54,7 @@ formalizes the critique.
 
 set_option autoImplicit false
 
-namespace Phenomena.Reference.Studies.Dekier2021
+namespace Dekier2021
 
 open Morphology.Nanosyntax
 open Core.IndefiniteType
@@ -517,4 +517,4 @@ theorem gaps_at_top :
       -- if SU is present, NS must be present
       (p.suForm.isSome → p.nsForm.isSome)) = true := by native_decide
 
-end Phenomena.Reference.Studies.Dekier2021
+end Dekier2021

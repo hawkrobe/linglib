@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.HarmonicGrammar.Basic
+import Linglib.Core.Constraint.Weighted
 
 /-!
 # MaxEnt Gradient Variation
@@ -14,7 +14,7 @@ This makes `moreProbable` a computable, decidable proxy for
 probability comparison without requiring real-number arithmetic.
 -/
 
-namespace Phonology.HarmonicGrammar
+namespace Core.Constraint
 
 -- ============================================================================
 -- § 1: Probability Ordering
@@ -30,4 +30,4 @@ def moreProbable {C : Type} (constraints : List (WeightedConstraint C))
     (a b : C) : Prop :=
   harmonyScore constraints a > harmonyScore constraints b
 
-end Phonology.HarmonicGrammar
+end Core.Constraint

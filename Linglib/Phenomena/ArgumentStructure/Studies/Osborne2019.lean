@@ -49,7 +49,7 @@ Phenomena data match ← grammaticality predictions
 
 -/
 
-namespace Phenomena.ArgumentStructure.Studies.Osborne2019
+namespace Osborne2019
 
 open DepGrammar Catena
 
@@ -377,4 +377,4 @@ propagates through valence, trees, verification, and breaks exactly
 the affected theorems.
 -/
 
-end Phenomena.ArgumentStructure.Studies.Osborne2019
+end Osborne2019

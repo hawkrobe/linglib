@@ -50,7 +50,7 @@ Telugu nouns exhibit two stem alternation patterns:
 - §6: PrWd-based surface form prediction
 -/
 
-namespace Phenomena.Allomorphy.Studies.Aitha2026
+namespace Aitha2026
 
 open Core Core.OT Core.ConstraintEvaluation
 open Morphology.DM.VI
@@ -816,4 +816,4 @@ theorem telugu_cl_conservation (o n c : Segment) :
 
 end MoraicCLConnection
 
-end Phenomena.Allomorphy.Studies.Aitha2026
+end Aitha2026
