@@ -146,13 +146,43 @@ def applyImpoverishment (rule : ImpoverishmentRule) (n : Neighborhood) :
     FeatureBundle :=
   if rule.condition n then deleteFeature n.focus rule.target else n.focus
 
-/-- Apply a sequence of rules. Each rule sees the *updated* focus from
-    prior rules, but the surrounding context bundles are held fixed for
-    the duration of the chain (one cycle of impoverishment, in DM terms). -/
+/-- Generic postsyntactic chain: apply a list of rules to a neighborhood,
+    threading the *focus* bundle through each step while holding the
+    surrounding context fixed. This is the shared shape of one cycle of
+    Impoverishment and one cycle of Metathesis (and any other focus-rewriting
+    rule class). -/
+def runChain {R : Type} (apply : R → Neighborhood → FeatureBundle)
+    (rules : List R) (n : Neighborhood) : FeatureBundle :=
+  rules.foldl (init := n.focus)
+    (λ focusAcc rule => apply rule { n with focus := focusAcc })
+
+/-- Concatenating two chains is the same as running them sequentially:
+    the second chain starts where the first left off. The proof is
+    `List.foldl_append`. This lemma underwrites the
+    strict-vs-interleaved equivalence in
+    `Theories/Morphology/DM/PostsyntacticDerivation.lean`. -/
+theorem runChain_append {R : Type} (apply : R → Neighborhood → FeatureBundle)
+    (rs₁ rs₂ : List R) (n : Neighborhood) :
+    runChain apply (rs₁ ++ rs₂) n =
+      runChain apply rs₂ { n with focus := runChain apply rs₁ n } := by
+  simp only [runChain, List.foldl_append]
+
+/-- The empty chain is the identity on the focus. -/
+@[simp] theorem runChain_nil {R : Type} (apply : R → Neighborhood → FeatureBundle)
+    (n : Neighborhood) : runChain apply [] n = n.focus := rfl
+
+/-- Apply a sequence of impoverishment rules. Specializes `runChain`. -/
 def applyImpoverishmentChain (rules : List ImpoverishmentRule)
     (n : Neighborhood) : FeatureBundle :=
-  rules.foldl (init := n.focus)
-    (λ focusAcc rule => applyImpoverishment rule { n with focus := focusAcc })
+  runChain applyImpoverishment rules n
+
+/-- `applyImpoverishmentChain` distributes over list concatenation. -/
+theorem applyImpoverishmentChain_append (rs₁ rs₂ : List ImpoverishmentRule)
+    (n : Neighborhood) :
+    applyImpoverishmentChain (rs₁ ++ rs₂) n =
+      applyImpoverishmentChain rs₂
+        { n with focus := applyImpoverishmentChain rs₁ n } :=
+  runChain_append _ _ _ _
 
 /-- Convenience: apply a rule to a bare focus bundle with no surrounding
     context. Useful for paradigmatic rules where context is irrelevant. -/

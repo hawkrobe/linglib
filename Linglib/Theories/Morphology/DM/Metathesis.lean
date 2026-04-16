@@ -91,11 +91,19 @@ def applyMetathesis (rule : MetathesisRule) (n : Neighborhood) :
 
 /-- Apply a sequence of metathesis rules left-to-right. Each rule sees
     the focus as updated by prior rules; surrounding context is held
-    fixed (one cycle of metathesis, in DM terms). -/
+    fixed (one cycle of metathesis, in DM terms). Specializes the
+    generic `runChain` from `Impoverishment.lean`. -/
 def applyMetathesisChain (rules : List MetathesisRule) (n : Neighborhood) :
     FeatureBundle :=
-  rules.foldl (init := n.focus)
-    (λ focusAcc rule => applyMetathesis rule { n with focus := focusAcc })
+  runChain applyMetathesis rules n
+
+/-- `applyMetathesisChain` distributes over list concatenation. -/
+theorem applyMetathesisChain_append (rs₁ rs₂ : List MetathesisRule)
+    (n : Neighborhood) :
+    applyMetathesisChain (rs₁ ++ rs₂) n =
+      applyMetathesisChain rs₂
+        { n with focus := applyMetathesisChain rs₁ n } :=
+  runChain_append _ _ _ _
 
 /-- Convenience: apply a rule to a bare focus bundle with no context. -/
 def MetathesisRule.applyToBundle (rule : MetathesisRule)

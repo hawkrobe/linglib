@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.842] - 2026-04-16
+
+### Added
+- **Middleton (2026) Basque half — phrase-level postsyntax** — extend the Taos-only formalization to cover §3.1 of the paper (Basque auxiliary), establishing the second of the two empirical legs of the metathesis-after-impoverishment claim.
+  - `Theories/Morphology/DM/LinearPostsyntax.lean` (NEW): a sister module to `Impoverishment.lean` and `Metathesis.lean` that lifts both operations from the *focus* level (modify a single bundle) to the *phrase* level (delete or swap whole terminals). Defines `MorphPhrase = List FeatureBundle`, `PhraseFocus`, `TermImpovRule` (whole-terminal deletion via `Prop`-valued condition + `DecidablePred`), `TermMetaRule` (adjacent-pair swap), smart constructors `termImpov`/`termMeta`, applicators `applyTermImpov`/`applyTermMeta` (left-to-right, first-match), generic chain runner `runPhraseChain`, the two pipelines `runPhraseImpovThenMeta` (endorsed) and `runPhraseMetaThenImpov` (rejected), and `runPhraseImpov_neq_runPhraseMeta_of_diverges` packaging the divergence claim.
+  - `Fragments/Basque/Postsyntax.lean` (NEW): bundle constructors and predicates needed by the Basque half of @cite{middleton-2026}. `abs1pAuthor` (1p ABS clitic, `[CL ABS +participant +author]`), `erg2s` (2s ERG clitic, `[CL ERG +participant −author]`), `tPast` (T head, `[+tense]`); predicates `isT`/`isErgClitic`/`isAbsClitic`/`isAuthor`/`isParticipant`/`isAbsParticipantAuthor`/`isErgParticipant`. Five sanity-check theorems via `decide`.
+  - `Phenomena/Allomorphy/Studies/Middleton2026.lean`: add §7 with `participantDissimilation` (rule 16, terminal-level impoverishment), `ergativeMetathesis` (rule 13, T-leftmost adjacent swap), the Ondarru witness phrase `[abs1pAuthor, tPast, erg2s]`, and three theorems closing the Basque divergence: `basqueImpovThenMeta_eq` (yields `[erg2s, tPast]`, the grammatical `s-endu-n` order), `basqueMetaThenImpov_eq` (yields `[tPast, erg2s]`, the rejected *17b T-leftmost order), and `basque_orderings_diverge`.
+
 ## [0.229.841] - 2026-04-16
 
 ### Added

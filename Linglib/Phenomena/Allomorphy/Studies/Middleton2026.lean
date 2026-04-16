@@ -1,9 +1,11 @@
 import Linglib.Theories.Morphology.DM.PostsyntacticDerivation
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Theories.Morphology.DM.LinearPostsyntax
 import Linglib.Fragments.Taos.Agreement
+import Linglib.Fragments.Basque.Postsyntax
 
 /-!
-# Middleton (2026) — Ordering of Impoverishment Rules in Taos
+# Middleton (2026) — Ordering of Impoverishment Rules in Taos and Basque
 @cite{middleton-2026} @cite{arregi-nevins-2012} @cite{halle-marantz-1993}
 @cite{harbour-2014} @cite{harbour-2016} @cite{kontak-kunkel-1987}
 @cite{watkins-1984} @cite{harbour-middleton-2026}
@@ -14,8 +16,11 @@ Working within Distributed Morphology (@cite{halle-marantz-1993}),
 which paradigmatic Impoverishment applies *as a block* before
 syntagmatic Impoverishment, and Metathesis follows all
 Impoverishment. Middleton shows from Taos verbal agreement that the
-second claim survives but the first does not: paradigmatic and
-syntagmatic Impoverishment must be allowed to interleave.
+second claim survives but the first does not (§§4.2.1–§4.2.5);
+the Basque half of the paper (§3.1) re-establishes the second
+claim — metathesis after impoverishment — using a different
+language and different rule shapes (whole-terminal deletion +
+adjacent-terminal swap).
 
 ## Scope
 
@@ -41,6 +46,14 @@ re-derive the entire paradigm. What lives here:
 * §6 demonstrates how the postsyntactic output feeds Vocabulary
   Insertion (Subset Principle, @cite{halle-marantz-1993}), again
   schematically.
+* §7 turns to the Basque half of the paper. Where §§1–5 work at the
+  *focus* level (rules modify a single bundle), Basque needs *whole
+  terminal* deletion (Participant Dissimilation, rule 16) and
+  *adjacent terminal* swap (Ergative Metathesis, rule 13). The
+  framework lift lives in
+  `Theories/Morphology/DM/LinearPostsyntax.lean`; the bundles live
+  in `Fragments/Basque/Postsyntax.lean`; the rules and the
+  Ondarru `s-endu-n` (17a) divergence witness are stated here.
 
 What is **not** modeled:
 
@@ -56,7 +69,8 @@ namespace Middleton2026
 
 open Minimalism Morphology.DM.Impoverishment Morphology.DM.Metathesis
      Morphology.DM.PostsyntacticDerivation Morphology.DM.VI
-     Fragments.Taos.Agreement
+     Morphology.DM.LinearPostsyntax
+     Fragments.Taos.Agreement Fragments.Basque.Postsyntax
 
 -- ============================================================================
 -- § 1: Two Schematic Rules in Distinct Phases
@@ -308,6 +322,71 @@ theorem arregiNevins_vs_middleton_surface :
     subsetPrinciple viSet (arregiNevinsOutput.map GramFeature.featureType) ≠
       subsetPrinciple viSet (middletonOutput.map GramFeature.featureType) := by
   rw [arregiNevinsOutput_inserts_n, middletonOutput_inserts_o]
+  decide
+
+-- ============================================================================
+-- § 7: Basque — Whole-Terminal Postsyntax (Middleton §3.1)
+-- ============================================================================
+
+/-- **Participant Dissimilation** (@cite{middleton-2026} (16),
+    @cite{arregi-nevins-2012} §4.6). Delete a 1p absolutive clitic
+    (`[CL +participant +author]`) when there is a participant
+    ergative clitic somewhere to the right in the same auxiliary.
+    The rule operates at the terminal level — it deletes a whole
+    bundle, not a feature within one. -/
+def participantDissimilation : TermImpovRule :=
+  termImpov (λ pf =>
+    isAbsParticipantAuthor pf.focus &&
+    pf.rightCtx.any isErgParticipant)
+
+/-- **Ergative Metathesis** (@cite{middleton-2026} (13),
+    @cite{arregi-nevins-2012} §3.2). Swap T with an immediately
+    following ergative clitic when T is leftmost in the auxiliary.
+    The leftmost requirement (`left.isEmpty`) is what lets
+    Participant Dissimilation *feed* Ergative Metathesis: only
+    after PD deletes the absolutive clitic does T become leftmost. -/
+def ergativeMetathesis : TermMetaRule :=
+  termMeta (λ left t1 t2 _ =>
+    left.isEmpty && isT t1 && isErgClitic t2)
+
+/-- The Ondarru witness phrase from @cite{middleton-2026} (17a):
+    `s-endu-n` `[1pABS, T:past, 2sERG]`. The complementizer is
+    suppressed — it does not participate in either rule. -/
+def basqueWitnessPhrase : MorphPhrase :=
+  [abs1pAuthor, tPast, erg2s]
+
+/-- **PD-then-Meta surface form (the grammatical s-endu-n order).**
+    PD deletes the absolutive 1p, leaving `[T, ERG]`; with T now
+    leftmost, Ergative Metathesis swaps to `[ERG, T]` — the order
+    that surfaces as `s-endu-n`. -/
+theorem basqueImpovThenMeta_eq :
+    runPhraseImpovThenMeta [participantDissimilation] [ergativeMetathesis]
+        basqueWitnessPhrase
+      = [erg2s, tPast] := by decide
+
+/-- **Meta-then-PD surface form (the rejected *17b order).**
+    Ergative Metathesis cannot fire at the input — T is not
+    leftmost (the absolutive clitic precedes it). PD then deletes
+    the absolutive clitic, but it is too late to feed metathesis;
+    the result is the T-leftmost order `[T, ERG]`, the form
+    @cite{middleton-2026} marks ungrammatical (would require
+    L-Support repair `*d-endu-s-n`). -/
+theorem basqueMetaThenImpov_eq :
+    runPhraseMetaThenImpov [participantDissimilation] [ergativeMetathesis]
+        basqueWitnessPhrase
+      = [tPast, erg2s] := by decide
+
+/-- **The two phrase-level pipelines diverge on the Ondarru
+    witness.** This is the Basque counterpart to
+    `arregiNevins_neq_middleton_at_witness` (Taos §4); together they
+    are the two empirical legs of @cite{middleton-2026}'s claim that
+    metathesis must follow impoverishment. -/
+theorem basque_orderings_diverge :
+    runPhraseImpovThenMeta [participantDissimilation] [ergativeMetathesis]
+        basqueWitnessPhrase
+      ≠ runPhraseMetaThenImpov [participantDissimilation] [ergativeMetathesis]
+        basqueWitnessPhrase := by
+  rw [basqueImpovThenMeta_eq, basqueMetaThenImpov_eq]
   decide
 
 end Middleton2026

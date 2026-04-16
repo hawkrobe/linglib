@@ -625,6 +625,8 @@ import Linglib.Fragments.Maori.Negation
 import Linglib.Fragments.Hixkaryana.Negation
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Basque.Agreement
+import Linglib.Fragments.Basque.Postsyntax
+import Linglib.Fragments.Taos.Agreement
 import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
 import Linglib.Fragments.Korean.Relativization
@@ -1148,6 +1150,7 @@ import Linglib.Phenomena.Morphology.Studies.Benz2025
 import Linglib.Phenomena.Morphology.Studies.Wood2023
 import Linglib.Phenomena.Allomorphy.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.Studies.Aitha2026
+import Linglib.Phenomena.Allomorphy.Studies.Middleton2026
 import Linglib.Phenomena.Negation.Studies.StankovaSimik2024.Data
 import Linglib.Phenomena.Negation.Studies.Greco2020
 import Linglib.Phenomena.Negation.Studies.Krifka2007
@@ -1670,6 +1673,9 @@ import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Morphology.DM.RichExponent
 import Linglib.Theories.Morphology.DM.Allosemy
 import Linglib.Theories.Morphology.DM.Impoverishment
+import Linglib.Theories.Morphology.DM.Metathesis
+import Linglib.Theories.Morphology.DM.PostsyntacticDerivation
+import Linglib.Theories.Morphology.DM.LinearPostsyntax
 import Linglib.Theories.Morphology.DM.PostSyntacticOps
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Theories.Morphology.Core.ICP

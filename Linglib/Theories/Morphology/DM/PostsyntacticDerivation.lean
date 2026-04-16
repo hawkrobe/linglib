@@ -20,13 +20,16 @@ Morphology:
 
 The two pipelines coincide on inputs whose impoverishment list is in
 para-then-syn order (`runStrict_eq_interleaved_paraSyn`). They diverge
-when a syntagmatic rule must precede a paradigmatic one — and Taos has
-five such cases (@cite{middleton-2026}, §4.2). The architectural
-consequence: A&N's `runStrict` cannot derive Taos.
+when a syntagmatic rule must precede a paradigmatic one
+(@cite{middleton-2026} §4.2.1–§4.2.4) *or* when a paradigmatic rule
+must precede a syntagmatic one and one cannot guarantee the strict
+block ordering (@cite{middleton-2026} §4.2.5). Together these five
+cases force *interleaving*: neither a fixed para-then-syn ordering
+(A&N) nor its reverse can satisfy all five witnesses simultaneously.
 
 This file states the architectures and proves the divergence as a
 self-contained existential, parametric in the rule shapes; the
-specific Taos witness is in
+Taos witnesses are in
 `Phenomena/Allomorphy/Studies/Middleton2026.lean`.
 -/
 
@@ -84,42 +87,106 @@ def ModularPostsyntax.toInterleaved (M : ModularPostsyntax) :
 /-- The strict pipeline is exactly the interleaved pipeline run on the
     paradigmatic-then-syntagmatic concatenation. Hence `runStrict` is
     strictly *less expressive* than `runInterleaved`: anything strict
-    can derive, interleaved can derive too (with the same rules). -/
+    can derive, interleaved can derive too (with the same rules).
+
+    Proof: `applyImpoverishmentChain_append` reduces the strict pipeline's
+    two-block fold to a single fold on the concatenation. -/
 theorem runStrict_eq_interleaved_paraSyn
     (M : ModularPostsyntax) (n : Neighborhood) :
     runStrict M n = runInterleaved M.toInterleaved n := by
   simp only [runStrict, runInterleaved, ModularPostsyntax.toInterleaved,
-             applyImpoverishmentChain, List.foldl_append]
+             applyImpoverishmentChain_append]
 
 -- ============================================================================
--- § 4: The Disputed Claim: Para-before-Syn is Not Universal
+-- § 4: Reduction Lemmas for Singleton Pipelines
 -- ============================================================================
 
-/-- **The structural inadequacy of `runStrict`.** Suppose a paradigmatic
-    rule `p` and a syntagmatic rule `s` produce different outputs
-    depending on whether they fire in `[s, p]` or `[p, s]` order at
-    some neighborhood `n`. Then for *every* `ModularPostsyntax`
-    containing `p` among the paradigmatic rules and `s` among the
-    syntagmatic rules (with no metathesis), `runStrict` is forced to
-    yield the `[p, s]` answer — the `[s, p]` derivation is unavailable.
+/-- A two-rule strict pipeline (one paradigmatic, one syntagmatic, no
+    metathesis) reduces to applying `[p, s]` in order. This is the
+    workhorse equation behind `runStrict_forces_paraSyn_order` and
+    its consumers in study files. -/
+@[simp] theorem runStrict_singleton (p s : ImpoverishmentRule)
+    (n : Neighborhood) :
+    runStrict ⟨[p], [s], []⟩ n = applyImpoverishmentChain [p, s] n := by
+  simp only [runStrict, applyImpoverishmentChain, runChain,
+             applyMetathesisChain, List.foldl_nil, List.foldl_cons]
+
+/-- An interleaved pipeline with no metathesis reduces to the
+    impoverishment chain. -/
+@[simp] theorem runInterleaved_no_metathesis (rs : List ImpoverishmentRule)
+    (n : Neighborhood) :
+    runInterleaved ⟨rs, []⟩ n = applyImpoverishmentChain rs n := by
+  simp only [runInterleaved, applyMetathesisChain, runChain, List.foldl_nil]
+
+-- ============================================================================
+-- § 5: The Disputed Claim: Para-before-Syn is Not Universal
+-- ============================================================================
+
+/-- **The structural inadequacy of `runStrict`.** Whenever a paradigmatic
+    rule `p` and a syntagmatic rule `s` produce different outputs depending
+    on whether they fire in `[s, p]` or `[p, s]` order at some neighborhood
+    `n`, the strict pipeline ⟨[p], [s], []⟩ is *forced* to yield the
+    `[p, s]` answer — the `[s, p]` derivation is unreachable.
 
     This is the formal counterpart of @cite{middleton-2026}'s argument
     that A&N's modular ordering cannot derive Taos: the four cases in
-    §4.2 of the paper require precisely the syn-before-para derivation
-    that `runStrict` excludes by construction. -/
+    §4.2.1–§4.2.4 require precisely the syn-before-para derivation that
+    `runStrict` excludes by construction. -/
 theorem runStrict_forces_paraSyn_order
     (p s : ImpoverishmentRule) (n : Neighborhood) :
-    runStrict { paradigmatic := [p], syntagmatic := [s], metathesis := [] } n
-      = applyImpoverishmentChain [p, s] n := by
-  simp only [runStrict, applyImpoverishmentChain, applyMetathesisChain,
-             List.foldl_nil, List.foldl_cons]
+    runStrict ⟨[p], [s], []⟩ n = applyImpoverishmentChain [p, s] n :=
+  runStrict_singleton p s n
 
 /-- The interleaved pipeline can deliver the syn-first derivation that
     `runStrict` cannot. -/
 theorem runInterleaved_admits_synPara
     (p s : ImpoverishmentRule) (n : Neighborhood) :
-    runInterleaved { impoverishment := [s, p], metathesis := [] } n
-      = applyImpoverishmentChain [s, p] n := by
-  simp only [runInterleaved, applyMetathesisChain, List.foldl_nil]
+    runInterleaved ⟨[s, p], []⟩ n = applyImpoverishmentChain [s, p] n :=
+  runInterleaved_no_metathesis _ _
+
+/-- **Inadequacy theorem.** If `[p, s]` and `[s, p]` give different focuses
+    at `n`, then the strict pipeline ⟨[p], [s], []⟩ cannot match the
+    interleaved pipeline ⟨[s, p], []⟩ at `n`. This packages
+    `runStrict_forces_paraSyn_order` and `runInterleaved_admits_synPara`
+    into the actual divergence claim. -/
+theorem runStrict_neq_runInterleaved_of_diverges
+    (p s : ImpoverishmentRule) (n : Neighborhood)
+    (h : applyImpoverishmentChain [p, s] n ≠ applyImpoverishmentChain [s, p] n) :
+    runStrict ⟨[p], [s], []⟩ n ≠ runInterleaved ⟨[s, p], []⟩ n := by
+  rw [runStrict_singleton, runInterleaved_no_metathesis]
+  exact h
+
+-- ============================================================================
+-- § 6: Metathesis Follows Impoverishment (the Upheld Claim)
+-- ============================================================================
+
+/-- A two-step pipeline that runs impoverishment then metathesis at a
+    neighborhood (the order both A&N and Middleton endorse). -/
+def runImpovThenMeta (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
+    (n : Neighborhood) : FeatureBundle :=
+  applyMetathesisChain ms { n with focus := applyImpoverishmentChain rs n }
+
+/-- The reversed two-step pipeline: metathesis first, then impoverishment
+    (the order both A&N and Middleton reject — supported by Basque in §3.1
+    and by Taos in §3.2 of @cite{middleton-2026}). -/
+def runMetaThenImpov (rs : List ImpoverishmentRule) (ms : List MetathesisRule)
+    (n : Neighborhood) : FeatureBundle :=
+  applyImpoverishmentChain rs { n with focus := applyMetathesisChain ms n }
+
+/-- **Metathesis-after-impoverishment is non-trivial.** If a single
+    impoverishment rule `r` and a single metathesis rule `m` produce
+    different focuses depending on order at `n`, then `runImpovThenMeta`
+    and `runMetaThenImpov` differ — i.e., the architectural choice has
+    empirical content. -/
+theorem runImpov_neq_runMeta_of_diverges
+    (r : ImpoverishmentRule) (m : MetathesisRule) (n : Neighborhood)
+    (h : applyMetathesisChain [m] { n with focus := applyImpoverishment r n } ≠
+         applyImpoverishment r { n with focus := applyMetathesis m n }) :
+    runImpovThenMeta [r] [m] n ≠ runMetaThenImpov [r] [m] n := by
+  intro heq
+  apply h
+  simp only [runImpovThenMeta, runMetaThenImpov, applyImpoverishmentChain,
+             runChain, List.foldl_cons, List.foldl_nil] at heq
+  exact heq
 
 end Morphology.DM.PostsyntacticDerivation
