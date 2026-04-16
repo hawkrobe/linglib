@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.229.820] - 2026-04-16
+
+### Changed
+- **Phenomena/Questions/Studies/Elliott2017.lean**: audit-driven complete rewrite — fix belief-presupposition shape (`disjOf Q` at the question level, not per-alternative `Q.all`); add `disjOf`/`existsTrueAnswer`/`disjOf_singleton` as concrete operators; reframe Karttunen failure as `karttunen_polar_requires_inconsistent_belief` (truth-conditional shadow of presupposition projection) paired with `elliott_polar_belief_is_tautology` and `elliott_and_karttunen_disagree_on_polar`; add `IsKarttunenReducibleTrueAnswers` variant; ground `idQ` in `propIdent` via `idQ_realizes_propIdent`; add §4 positive-Karttunen theorems for `know` (`knowDec`, `knowKarttunen`, `knowUegaki`, `know_karttunen_agrees_with_uegaki` covering paper eqs 11–12); add §5 typology with `IsSemanticallyRogative` and `care_is_semantically_rogative`; populate the `P-to-Q ⧹ C-dist` cell with `care_violates_cDist` + `care_in_ptoq_minus_cdist`; replace `decide` with `⟨rfl, rfl⟩` in `care_is_responsive`/`matter_is_responsive`; replace `match Q, hNE` with `List.exists_cons_of_ne_nil`; rename `resistsUniversalReduction` → `semanticallyRogative` in `PoRJudgement`; add `CoordinationDatum`/`coord_7` recording paper eq. 7; add `Witness` namespace with `Mary`/`bel`/`isSick`/`mary_cares_whether_sue_is_sick`/`karttunen_predicts_false` as a concrete two-world anchor; bridge to the @cite{roelofsen-uegaki-2020} `careSem` refinement
+
+
 ## [0.229.817] - 2026-04-16
 
 ### Added
