@@ -207,7 +207,9 @@ import Linglib.Theories.Morphology.Core.ScaleFromParadigm
 import Linglib.Theories.Morphology.Core.WordStructure
 import Linglib.Core.Discourse.Coherence
 import Linglib.Core.Discourse.Accessibility
-import Linglib.Core.Discourse.SpeechActs
+import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Core.Discourse.Intentionality
+import Linglib.Core.Discourse.Commitment
 import Linglib.Core.GrammaticalMood
 import Linglib.Core.ClauseType
 import Linglib.Core.Interval.QInterval

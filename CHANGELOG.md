@@ -1,5 +1,21 @@
 # Changelog
 
+## [0.229.841] - 2026-04-16
+
+### Added
+- **Migrate Flemming2021 + AfkirZellou2025 to `ConstraintSystem.predict`** — continue the dog-food pattern from 0.229.836/0.229.838 to two more phonology studies, bringing the total to five and establishing that the same `softmaxDecoder 1` API works across `List Segment`, simple inductive, structure-with-inductive-field, and product-input candidate types.
+  - `Phenomena/PhonologicalAlternation/Studies/Flemming2021.lean`: `flemmingSystem : ConstraintSystem Cand3 ℝ` over `Finset.univ` with `harmonyScoreR table45C` score (private to match `Cand3`'s privacy). Theorem `flemmingSystem_b_eq_c` lifts the existing `table45_equal_harmony` to *equal MaxEnt probabilities* — the system genuinely makes the harmony tie observable as a softmax tie. `flemmingSystem_isProb` confirms the distribution sums to 1.
+  - `Phenomena/PhonologicalAlternation/Studies/AfkirZellou2025.lean`: per-word `tarifitSystem : TriconWord → ConstraintSystem SurfaceForm ℝ` (`Finset.univ` candidates over the three surface forms, `harmonyScoreR tarifitConstraints (mkCandidate w ·)` score). Add `Fintype SurfaceForm`. Theorems `tarifitSystem_qreb_intrusive_gt_faithful` and `tarifitSystem_ntef_faithful_gt_intrusive` exhibit the rising vs falling sonority asymmetry as softmax probability orderings. `tarifitSystem_isProb` confirms each per-word distribution sums to 1.
+
+## [0.229.840] - 2026-04-16
+
+### Changed
+- **Split `PumpingLemma.lean` (~1940 lines) into three focused files** following mathlib ~500-line convention:
+  - `CFGTree.lean` (~1054 lines): derivation tree infrastructure — `CFGTree T N`, `ValidFor`, `subtreeAt?`, `replaceAt`, `yield`, position/spine/pigeonhole machinery, `validFor_derives` soundness theorem
+  - `PumpingLemma.lean` (~351 lines): `HasCFLPumpingProperty`, `pumping_from_tall_tree`, `cfl_pumping_lemma`, `not_isContextFree_of_not_pumpable`
+  - `NonContextFree.lean` (~500 lines): `FourSymbol`/`ThreeSymbol` alphabets, `anbncndn`/`anbnc` languages, non-pumpability proofs, `StringHom`, non-context-freeness theorems
+  - Updated consumer imports: `GenerativeCapacity.lean`, `Shieber1985.lean`, `PullumGazdar1982.lean`
+
 ## [0.229.839] - 2026-04-16
 
 ### Changed
