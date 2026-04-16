@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.823] - 2026-04-16
+
+### Changed
+- **Phenomena/Questions/Studies/Elliott2017.lean**: redefine `elliottCareLex` directly in terms of @cite{roelofsen-uegaki-2020}'s canonical `careSem` primitives (`dox`, `bou`, `doxSupports`, `settled`) plus an existence presupposition — `elliottCareLex = λx Q w. existsTrueAnswer Q w && careSem dox bou doxSupports settled x Q w`. The bridge to `careSem` is now `rfl` (`elliottCareLex_eq_careSem_with_existence`), making the proposition-to-question architecture *the* lexical entry rather than something recovered via translation. Drop the parametric opaque `bel`/`relevance` arguments — they were indirections preventing the structural connection. `elliott_polar_belief_is_tautology` becomes `elliott_polar_is_licit` (assumption is now `careSem` content, not `Bel(x, ⊤)`); the Elliott/Karttunen disagreement theorem now relates two distinct architectures (`bel` Karttunen-side, careSem primitives Elliott-side); `care_is_semantically_rogative` rephrased on careSem primitives, proof structurally unchanged. Witness model rewritten with concrete `dox`/`bou`/`doxSupports`/`settled` over `worlds := [true, false]`, with `care_holds_on_polar` closed by `decide`; `bel`/`relevance_dec` retained for the Karttunen side only. Updates to the canonical `careSem` now propagate to Elliott automatically
+
 ## [0.229.821] - 2026-04-16
 
 ### Changed

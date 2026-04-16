@@ -47,14 +47,19 @@ The argument turns on three empirical observations:
 - Paper eq. (10) — the propositional ID type-shift `idQ`, with a grounding
   theorem connecting it to the schematic `propIdent` from
   `Theories.Semantics.Composition.TypeShifting` (singleton characteristic).
-- Paper eq. (9) — Elliott's `care` lexical entry with a *question-level*
-  belief presupposition `Bel(x, ⋁Q)`. The `disjOf` operator is concrete
-  rather than parametric.
+- Paper eq. (9) — Elliott's `care` lexical entry, *defined directly* in
+  terms of @cite{roelofsen-uegaki-2020}'s `careSem` primitives
+  (`dox`, `bou`, `doxSupports`, `settled`) plus an existence
+  presupposition. The bridge to the canonical `careSem` is `rfl`
+  (`elliottCareLex_eq_careSem_with_existence`), making the proposition-to-
+  question architecture *the* lexical entry rather than something we
+  recover via a separate translation.
 - The decisive contrast: under the @cite{karttunen-1977} reduction, `care`
   of a polar question requires the agent to believe *both* `p` and `¬p`,
   contradicting belief consistency (`karttunen_polar_requires_inconsistent_belief`).
-  Elliott's lexical entry imposes only `Bel(x, ⊤)` on polar questions
-  (`elliott_polar_belief_is_tautology`).
+  Elliott's lexical entry only requires the inquisitive `careSem` content,
+  which is automatically satisfied on `[p, ¬p]` whenever `DOX ⊆ ⊤` and some
+  alternative settles preferences (`elliott_polar_is_licit`).
 - Paper eq. (11) and eq. (12) — the two analyses of `know`, and a theorem
   showing they agree at the answer set (`know_karttunen_agrees_with_uegaki`).
 - Paper §5 — the refined typology placing PoRs in the
@@ -70,10 +75,13 @@ The argument turns on three empirical observations:
   `Phenomena.Questions.Embedding` to this study, including the coordination
   observation (paper eq. 7).
 
-The intensional/inquisitive refinement of Elliott's eq. (9) lives in
-`Theories.Semantics.Attitudes.EmbeddingConstraints.careSem` (doxastic
-support + bouletic settlement); we keep Elliott's original presupposition
-decomposition recoverable in this file for paper-faithfulness.
+The single source of truth for the doxastic-support + bouletic-settlement
+core is `Theories.Semantics.Attitudes.EmbeddingConstraints.careSem`. Elliott's
+eq. (9) is here *defined* as `existsTrueAnswer ∧ careSem`, so updates to the
+canonical entry propagate automatically. Elliott's original
+`Bel(x, ⋁Q)` presentation is recoverable as the special case where
+`doxSupports DOX Q` is read as "all doxastic worlds verify some answer" —
+exactly believing the disjunction.
 -/
 
 namespace Phenomena.Questions.Studies.Elliott2017
@@ -229,34 +237,62 @@ elimination in proofs about Elliott's `care`. -/
   funext w; simp [disjOf]
 
 /--
-**Elliott's `care` lexical entry** (paper eq. 9):
+**Elliott's `care` lexical entry** (paper eq. 9), expressed using the
+canonical @cite{roelofsen-uegaki-2020} `careSem` primitives so that the
+connection to the constraint-lattice machinery is *definitional* rather than
+mediated by a bridge theorem.
 
+The three Elliott components map onto the @cite{roelofsen-uegaki-2020}
+formulation as follows:
+
+- *Existence presupposition*: some answer in `Q` is true at `w` —
+  `existsTrueAnswer Q w`. This is the only component @cite{elliott-etal-2017}
+  has and @cite{roelofsen-uegaki-2020} dropped, and is the **only delta**
+  between the two formulations.
+- *Belief presupposition*: `x` believes the disjunction `⋁Q`. In
+  @cite{roelofsen-uegaki-2020} this becomes the *doxastic-support* condition
+  `DOX_x ⊆ ⋃Q`, i.e. `doxSupports (dox x w) Q`. The two are equivalent for
+  reasonable belief operators: believing the disjunction of `Q` says exactly
+  that every doxastic alternative satisfies *some* answer in `Q`.
+- *Asserted content*: the relevance/utility condition becomes the *bouletic
+  settlement* `∃p ∈ Q. settled(BOU_x, p)`, i.e. `Q.any (settled (bou x w))`.
+  An answer is relevant iff it settles the agent's preferences (either all
+  bouletic worlds satisfy it, or none do).
+
+The combined non-existence content is exactly `careSem`. Hence:
 ```
-⟦care⟧ʷ = λQ_⟨st,t⟩ : ∃p ∈ Q. p(w).
-          λx_e   : believe_w(x, λw'. ∃p ∈ Q. p(w')).
-          care_w(x, Q)
+elliottCareLex dox bou doxSupports settled
+  = λx Q w. existsTrueAnswer Q w && careSem dox bou doxSupports settled x Q w
 ```
-
-Three components, conjoined into a single Boolean for the truth-conditional
-fragment:
-
-- *Existence presupposition*: some answer in `Q` is true at `w`.
-- *Belief presupposition*: `x` believes the disjunction `⋁Q`. **Crucial:**
-  this is one belief at the question level, *not* per-alternative beliefs.
-- *Asserted content*: a relevance/utility condition.
-
-We parametrise on `bel` (the agent's belief operator) and `relevance` (the
-asserted content) since the paper treats these as components of the model
-rather than fixing them; `disjOf` and `existsTrueAnswer` are concrete.
+which is @cite{roelofsen-uegaki-2020}'s `careSem` augmented with Elliott's
+existence presupposition. The bridge theorem `elliottCareLex_eq_careSem_with_existence`
+is `rfl`.
 -/
 def elliottCareLex {W E : Type*}
-    (bel : E → BProp W → W → Bool)
-    (relevance : E → QuestionDen W → W → Bool)
+    (dox : E → W → DoxState W)
+    (bou : E → W → BouState W)
+    (doxSupports : DoxState W → QuestionDen W → Bool)
+    (settled : BouState W → BProp W → Bool)
     : E → QuestionDen W → W → Bool :=
   fun x Q w =>
     existsTrueAnswer Q w &&
-    bel x (disjOf Q) w &&
-    relevance x Q w
+    careSem dox bou doxSupports settled x Q w
+
+/--
+**Bridge to canonical `careSem` is definitional.** Elliott's `care` is
+literally @cite{roelofsen-uegaki-2020}'s `careSem` plus the existence
+presupposition that some answer in `Q` is true at `w`. No bridge theorem is
+needed — the equality holds by `rfl`.
+-/
+@[simp] theorem elliottCareLex_eq_careSem_with_existence {W E : Type*}
+    (dox : E → W → DoxState W)
+    (bou : E → W → BouState W)
+    (doxSupports : DoxState W → QuestionDen W → Bool)
+    (settled : BouState W → BProp W → Bool)
+    (x : E) (Q : QuestionDen W) (w : W) :
+    elliottCareLex dox bou doxSupports settled x Q w =
+      (existsTrueAnswer Q w && careSem dox bou doxSupports settled x Q w) :=
+  rfl
 
 /-- For polar questions, `disjOf [p, ¬p] = ⊤`. -/
 theorem disjOf_polar_eq_top {W : Type*} (p : BProp W) :
@@ -329,45 +365,64 @@ theorem karttunen_polar_requires_inconsistent_belief {W E : Type*}
   exact hConsistent ⟨hBelP, hBelNotP⟩
 
 /--
-**Elliott's `care` is licit on polar questions for any rational agent.**
-Compare with `karttunen_polar_requires_inconsistent_belief`: where the
-Karttunen reduction *forces* falsity, Elliott's eq. (9) requires only that
-the agent believes the tautology `⊤` (always true for rational agents) and
-that the relevance condition holds.
+**Elliott's `care` is licit on polar questions whenever the doxastic+bouletic
+core is satisfied.** Compare with `karttunen_polar_requires_inconsistent_belief`:
+where the Karttunen reduction *forces* falsity, Elliott's eq. (9) requires
+only the canonical `careSem` content to hold — no inconsistent beliefs at
+all. The existence presupposition is automatically satisfied on `[p, ¬p]`
+(`existsTrueAnswer_polar`).
+
+The "tautology" framing of @cite{elliott-etal-2017}'s original presentation
+(believing `⋁[p, ¬p] = ⊤` is trivial) survives in this formulation as the
+observation that `doxSupports DOX [p, ¬p] = (DOX ⊆ ⋃[p, ¬p]) = (DOX ⊆ ⊤)`
+is trivially true for any reasonable `doxSupports`. Stated as a theorem of
+the parametric `careSem`, this is captured by the assumption `hCare`.
 -/
-theorem elliott_polar_belief_is_tautology {W E : Type*}
-    (bel : E → BProp W → W → Bool)
-    (relevance : E → QuestionDen W → W → Bool)
+theorem elliott_polar_is_licit {W E : Type*}
+    (dox : E → W → DoxState W)
+    (bou : E → W → BouState W)
+    (doxSupports : DoxState W → QuestionDen W → Bool)
+    (settled : BouState W → BProp W → Bool)
     (x : E) (p : BProp W) (w : W)
-    (hBelTop : bel x (fun _ => true) w = true)
-    (hRel : relevance x [p, Core.Proposition.Decidable.pnot W p] w = true) :
-    elliottCareLex bel relevance x [p, Core.Proposition.Decidable.pnot W p] w
-      = true := by
+    (hCare : careSem dox bou doxSupports settled x
+                [p, Core.Proposition.Decidable.pnot W p] w = true) :
+    elliottCareLex dox bou doxSupports settled x
+        [p, Core.Proposition.Decidable.pnot W p] w = true := by
   simp only [elliottCareLex, Bool.and_eq_true]
-  refine ⟨⟨existsTrueAnswer_polar p w, ?_⟩, hRel⟩
-  rw [disjOf_polar_eq_top]; exact hBelTop
+  exact ⟨existsTrueAnswer_polar p w, hCare⟩
 
 /--
 **The two analyses disagree on polar questions.** Composing the two prior
-theorems: there exist a `bel` and a `relevance` such that for any polar
-question, Elliott's `care` is true while the Karttunen-reduction is false.
+theorems: under any rational agent (consistent `bel`) whose canonical
+`careSem` content holds on the polar question, Elliott's `care` is true
+while the Karttunen-reduction is false.
+
+The Karttunen side keeps its `bel` parameter (it represents the
+question-to-proposition architecture, where belief is a propositional
+operator); the Elliott side uses the canonical inquisitive primitives. The
+disagreement is therefore between two *different* formal architectures, not
+just two parameter settings of one.
 
 This is the formal expression of @cite{elliott-etal-2017}'s decisive
 empirical argument from Section 2.
 -/
 theorem elliott_and_karttunen_disagree_on_polar {W E : Type*}
     (bel : E → BProp W → W → Bool)
-    (relevance : E → QuestionDen W → W → Bool)
     (relevance_dec : E → BProp W → W → Bool)
+    (dox : E → W → DoxState W)
+    (bou : E → W → BouState W)
+    (doxSupports : DoxState W → QuestionDen W → Bool)
+    (settled : BouState W → BProp W → Bool)
     (x : E) (p : BProp W) (w : W)
     (hConsistent :
         ¬ (bel x p w = true ∧ bel x (Core.Proposition.Decidable.pnot W p) w = true))
-    (hBelTop : bel x (fun _ => true) w = true)
-    (hRel : relevance x [p, Core.Proposition.Decidable.pnot W p] w = true) :
-    elliottCareLex bel relevance x [p, Core.Proposition.Decidable.pnot W p] w = true ∧
+    (hCare : careSem dox bou doxSupports settled x
+                [p, Core.Proposition.Decidable.pnot W p] w = true) :
+    elliottCareLex dox bou doxSupports settled x
+        [p, Core.Proposition.Decidable.pnot W p] w = true ∧
     karttunenCareInt bel relevance_dec x [p, Core.Proposition.Decidable.pnot W p] w
       = false :=
-  ⟨elliott_polar_belief_is_tautology bel relevance x p w hBelTop hRel,
+  ⟨elliott_polar_is_licit dox bou doxSupports settled x p w hCare,
    karttunen_polar_requires_inconsistent_belief bel relevance_dec x p w hConsistent⟩
 
 -- ============================================================================
@@ -510,56 +565,58 @@ def IsSemanticallyRogative {W E : Type*}
 
 /--
 **Elliott's `care` is semantically rogative — strong form.** Given a witness
-world/entity/proposition where the existence + relevance preconditions of
-the polar reading are met, *no* `V_prop` whatsoever satisfies the Karttunen
-reduction with `elliottCareLex bel relevance`.
+world/entity/proposition where the canonical `careSem` core holds on the
+polar question, *no* `V_prop` whatsoever satisfies the Karttunen reduction
+with `elliottCareLex dox bou doxSupports settled`.
 
 Proof outline:
-1. From the witness, `elliottCareLex bel relevance x [p, ¬p] w = true`
-   (by `elliott_polar_belief_is_tautology`).
+1. From the witness, `elliottCareLex … x [p, ¬p] w = true`
+   (by `elliott_polar_is_licit`).
 2. Karttunen's (→) at the polar question forces
    `V_prop x p w = true ∧ V_prop x (¬p) w = true`.
 3. Karttunen's (←) at the singletons `[p]` and `[¬p]` then forces
-   `elliottCareLex bel relevance x [p] w = true` and similarly for `[¬p]`.
+   `elliottCareLex … x [p] w = true` and similarly for `[¬p]`.
 4. But `elliottCareLex` on `[p]` requires `existsTrueAnswer [p] w = p w = true`,
    and on `[¬p]` requires `(¬p) w = true`. Both cannot hold — contradiction.
 
-The argument no longer needs a `hConsistent` hypothesis: the contradiction
-is purely propositional (from `p w = true ∧ !(p w) = true`), surfacing the
-deeper reason PoRs resist reduction — Karttunen's universal closure cannot
-distinguish the question-level disjunctive belief from per-alternative truth
-of the alternatives themselves.
+The contradiction is purely propositional (from `p w = true ∧ !(p w) = true`),
+surfacing the deeper reason PoRs resist reduction: Karttunen's universal
+closure cannot distinguish the question-level doxastic-support condition
+from per-alternative truth of the alternatives themselves.
 -/
 theorem care_is_semantically_rogative {W E : Type*}
-    (bel : E → BProp W → W → Bool)
-    (relevance : E → QuestionDen W → W → Bool)
+    (dox : E → W → DoxState W)
+    (bou : E → W → BouState W)
+    (doxSupports : DoxState W → QuestionDen W → Bool)
+    (settled : BouState W → BProp W → Bool)
     (x : E) (p : BProp W) (w : W)
-    (hBelTop : bel x (fun _ => true) w = true)
-    (hRel : relevance x [p, Core.Proposition.Decidable.pnot W p] w = true) :
-    IsSemanticallyRogative (elliottCareLex bel relevance) := by
+    (hCare : careSem dox bou doxSupports settled x
+                [p, Core.Proposition.Decidable.pnot W p] w = true) :
+    IsSemanticallyRogative (elliottCareLex dox bou doxSupports settled) := by
   rintro ⟨V_prop, hKR⟩
   -- (1) The polar care-claim is true under the witness.
   have hPolar :
-      elliottCareLex bel relevance x
+      elliottCareLex dox bou doxSupports settled x
         [p, Core.Proposition.Decidable.pnot W p] w = true :=
-    elliott_polar_belief_is_tautology bel relevance x p w hBelTop hRel
+    elliott_polar_is_licit dox bou doxSupports settled x p w hCare
   -- (2) Karttunen (→) at the polar question forces V_prop on each alternative.
   have hAll := (hKR x [p, Core.Proposition.Decidable.pnot W p] w).mp hPolar
   have hVp_p : V_prop x p w = true := hAll p List.mem_cons_self
   have hVp_np : V_prop x (Core.Proposition.Decidable.pnot W p) w = true :=
     hAll _ (List.mem_cons_of_mem _ List.mem_cons_self)
   -- (3) Karttunen (←) at each singleton forces elliottCareLex on the singleton.
-  have hSing_p : elliottCareLex bel relevance x [p] w = true :=
+  have hSing_p : elliottCareLex dox bou doxSupports settled x [p] w = true :=
     (hKR x [p] w).mpr (fun q hq => by rw [List.mem_singleton.mp hq]; exact hVp_p)
   have hSing_np :
-      elliottCareLex bel relevance x [Core.Proposition.Decidable.pnot W p] w = true :=
+      elliottCareLex dox bou doxSupports settled x
+        [Core.Proposition.Decidable.pnot W p] w = true :=
     (hKR x [Core.Proposition.Decidable.pnot W p] w).mpr
       (fun q hq => by rw [List.mem_singleton.mp hq]; exact hVp_np)
   -- (4) Singleton care extracts the existence presupposition: p w and (¬p) w.
   simp only [elliottCareLex, existsTrueAnswer, List.any_cons, List.any_nil,
              Bool.or_false, Bool.and_eq_true] at hSing_p hSing_np
-  obtain ⟨⟨hPw, _⟩, _⟩ := hSing_p
-  obtain ⟨⟨hNotPw, _⟩, _⟩ := hSing_np
+  obtain ⟨hPw, _⟩ := hSing_p
+  obtain ⟨hNotPw, _⟩ := hSing_np
   -- hNotPw : (pnot W p) w = true, i.e., !(p w) = true. Combined with hPw, false.
   simp only [Core.Proposition.Decidable.pnot, hPw, Bool.not_true] at hNotPw
   exact Bool.false_ne_true hNotPw
@@ -631,7 +688,7 @@ def matterJudgement : PoRJudgement :=
     semanticallyRogative := true }
 
 -- ============================================================================
--- I. Bridge to the Roelofsen–Uegaki refinement
+-- I. Relation to the Roelofsen–Uegaki refinement
 -- ============================================================================
 
 /--
@@ -641,14 +698,14 @@ existence + belief presuppositions into a *doxastic support* condition
 (`DOX ⊆ ⋃Q`) and replaces the relevance assertion with a *bouletic
 settlement* condition (`∃p ∈ Q. BOU ⊆ p ∨ BOU ∩ p = ∅`).
 
-The connection: Elliott's `bel x (disjOf Q) w` is the doxastic-support
-condition specialised to a single belief operator (rather than a doxastic
-state with set-membership semantics); the relevance assertion is replaced
-by an explicit settlement condition over the bouletic state. Both
-formulations agree on the empirical core: PoR-`whether` is licit even
-though no single answer satisfies the propositional kernel.
+The connection is now **definitional** (see `elliottCareLex_eq_careSem_with_existence`
+above): Elliott's `care` is `careSem` plus the existence presupposition
+that some answer is true. The two formulations agree on the empirical core
+(PoR-`whether` is licit even though no single answer satisfies the
+propositional kernel) and differ only in whether the existence
+presupposition is recorded.
 
-The Roelofsen–Uegaki version satisfies P-to-Q Entailment (see
+The shared `careSem` core satisfies P-to-Q Entailment (see
 `care_satisfies_ptoq` in `EmbeddingConstraints`), placing `care` in the
 `P-to-Q ⧹ C-distributivity` cell of the constraint hierarchy
 (see `care_violates_cDist` above for the C-distributivity failure).
@@ -670,8 +727,16 @@ example {W E : Type*}
 
 - Worlds: `Bool` (`true` = "Sue is sick", `false` = "Sue is not sick")
 - Entity: `Unit` (Mary)
-- `bel`: Mary believes propositions true at the actual world (veridical)
-- `relevance`: Mary cares about everything
+- `dox x w`: Mary considers only the actual world possible (veridical doxastic state)
+- `bou x w`: Mary's preferences are settled at the actual world (degenerate
+  bouletic state — used only to make `settled` non-vacuous)
+- `doxSupports DOX Q`: `DOX ⊆ ⋃Q`, decided over the finite world set `[true, false]`
+- `settled BOU p`: `BOU ⊆ p ∨ BOU ∩ p = ∅`, decided over `[true, false]`
+
+For the Karttunen side, we still need a single belief operator `bel` (the
+question-to-proposition architecture treats belief as propositional). We
+keep a veridical `bel` to derive `bel_consistent` for the Karttunen
+disagreement theorem.
 
 Then for `p := id : Bool → Bool` ("Sue is sick"), at world `true`:
 - `elliottCareLex` is true on the polar question (felicity of (4a))
@@ -682,21 +747,51 @@ namespace Witness
 /-- Mary, the lone entity. -/
 abbrev Mary : Unit := ()
 
-/-- The belief operator: Mary believes propositions that are true at the
-actual world. (A simple "veridical believer" model.) -/
+/-- "Sue is sick" — the proposition true at world `true`, false at `false`. -/
+def isSick : BProp Bool := id
+
+/-- Finite world set for deciding set-containment via `List.all`. -/
+def worlds : List Bool := [true, false]
+
+/-- Mary's doxastic state at world `w`: only `w` itself is doxastically
+possible (veridical believer). -/
+def dox : Unit → Bool → DoxState Bool :=
+  fun _ w w' => decide (w' = w)
+
+/-- Mary's bouletic state at world `w`: only `w` itself is bouletically
+possible (degenerate; ensures `settled` is non-vacuous). -/
+def bou : Unit → Bool → BouState Bool :=
+  fun _ w w' => decide (w' = w)
+
+/-- Doxastic support: `DOX ⊆ ⋃Q`, decided as
+`∀ w' ∈ worlds. DOX(w') → ∃p ∈ Q. p(w')`. -/
+def doxSupports : DoxState Bool → QuestionDen Bool → Bool :=
+  fun s Q => worlds.all (fun w' => !(s w') || Q.any (fun p => p w'))
+
+/-- Bouletic settlement: `BOU ⊆ p ∨ BOU ∩ p = ∅`, decided over `worlds`. -/
+def settled : BouState Bool → BProp Bool → Bool :=
+  fun b p =>
+    worlds.all (fun w' => !(b w') || p w') ||
+    worlds.all (fun w' => !(b w') || !(p w'))
+
+/-- The veridical belief operator (used only for the Karttunen side). -/
 def bel : Unit → BProp Bool → Bool → Bool :=
   fun _ p w => p w
 
-/-- Relevance: every question is relevant to Mary. -/
-def relevance : Unit → QuestionDen Bool → Bool → Bool :=
-  fun _ _ _ => true
-
-/-- Declarative-relevance kernel for `careDec`. -/
+/-- Declarative-relevance kernel for `careDec` (used only for the Karttunen
+side). -/
 def relevance_dec : Unit → BProp Bool → Bool → Bool :=
   fun _ _ _ => true
 
-/-- "Sue is sick" — the proposition true at world `true`, false at `false`. -/
-def isSick : BProp Bool := id
+/-- The canonical `careSem` core is satisfied on the polar question for
+Mary at any world. By construction: doxSupports holds since the polar
+question covers every world (any world is in either `isSick` or `¬isSick`),
+and the bouletic state is settled by `isSick` (Mary's bouletic singleton
+is `{w}`, contained in either `isSick` or `¬isSick` depending on `w`). -/
+theorem care_holds_on_polar (w : Bool) :
+    careSem dox bou doxSupports settled Mary
+      [isSick, Core.Proposition.Decidable.pnot Bool isSick] w = true := by
+  cases w <;> decide
 
 /-- Mary's belief is consistent: she does not believe `p` and `¬p` at the
 same world. (Direct from the veridical-believer definition.) -/
@@ -707,15 +802,12 @@ theorem bel_consistent (w : Bool) :
   simp only [bel, isSick, Core.Proposition.Decidable.pnot] at h1 h2
   cases w <;> simp_all
 
-/-- Mary believes the tautology at every world. -/
-theorem bel_top (w : Bool) : bel Mary (fun _ => true) w = true := rfl
-
 /-- **Felicity of (4a):** Mary cares whether Sue is sick. -/
 theorem mary_cares_whether_sue_is_sick (w : Bool) :
-    elliottCareLex bel relevance Mary
+    elliottCareLex dox bou doxSupports settled Mary
       [isSick, Core.Proposition.Decidable.pnot Bool isSick] w = true :=
-  elliott_polar_belief_is_tautology bel relevance Mary isSick w
-    (bel_top w) rfl
+  elliott_polar_is_licit dox bou doxSupports settled Mary isSick w
+    (care_holds_on_polar w)
 
 /-- **Karttunen prediction:** Mary cares whether Sue is sick is *false*
 under the Karttunen reduction of `careDec`. -/
