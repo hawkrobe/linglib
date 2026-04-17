@@ -71,6 +71,9 @@ def trivial : QUD M where
   trans _ _ _ _ _ := rfl
   name := "trivial"
 
+@[simp] theorem trivial_sameAnswer (m1 m2 : M) :
+    (trivial : QUD M).sameAnswer m1 m2 = true := rfl
+
 /-- Compose two QUDs: equivalent iff equivalent under both. -/
 def compose (q1 q2 : QUD M) : QUD M where
   sameAnswer m1 m2 := q1.sameAnswer m1 m2 && q2.sameAnswer m1 m2
@@ -81,8 +84,19 @@ def compose (q1 q2 : QUD M) : QUD M where
     exact ⟨q1.trans m1 m2 m3 h12.1 h23.1, q2.trans m1 m2 m3 h12.2 h23.2⟩
   name := s!"{q1.name}∧{q2.name}"
 
+@[simp] theorem compose_sameAnswer (q1 q2 : QUD M) (m1 m2 : M) :
+    (compose q1 q2).sameAnswer m1 m2 = (q1.sameAnswer m1 m2 && q2.sameAnswer m1 m2) := rfl
+
+theorem compose_sameAnswer_iff (q1 q2 : QUD M) (m1 m2 : M) :
+    (compose q1 q2).sameAnswer m1 m2 = true ↔
+    q1.sameAnswer m1 m2 = true ∧ q2.sameAnswer m1 m2 = true := by
+  simp only [compose_sameAnswer, Bool.and_eq_true]
+
 instance : Mul (QUD M) where
   mul := compose
+
+@[simp] theorem mul_sameAnswer (q1 q2 : QUD M) (m1 m2 : M) :
+    (q1 * q2).sameAnswer m1 m2 = (q1.sameAnswer m1 m2 && q2.sameAnswer m1 m2) := rfl
 
 /-- The equivalence class (partition cell) of a meaning under a QUD. -/
 def cell (q : QUD M) (m : M) : Set M :=
@@ -92,6 +106,17 @@ def cell (q : QUD M) (m : M) : Set M :=
 theorem mem_cell_iff (q : QUD M) (m m' : M) :
     m' ∈ q.cell m ↔ q.sameAnswer m m' = true := by
   simp only [cell, Set.mem_setOf_eq]
+
+theorem cell_self (q : QUD M) (m : M) : m ∈ q.cell m := by
+  simp only [mem_cell_iff]; exact q.refl m
+
+theorem mem_cell_symm (q : QUD M) (m m' : M) :
+    m' ∈ q.cell m ↔ m ∈ q.cell m' := by
+  simp only [mem_cell_iff]
+  rw [q.symm]
+
+@[simp] theorem toSetoid_r (q : QUD M) (a b : M) :
+    q.toSetoid.r a b ↔ q.sameAnswer a b = true := Iff.rfl
 
 /-- Build QUD from a projection function using `DecidableEq` on the codomain.
 Avoids the need for `BEq` + `LawfulBEq`; useful when the codomain only derives
@@ -108,6 +133,15 @@ def ofDecEq {α : Type*} [DecidableEq α] (project : M → α) (name : String :=
     rw [decide_eq_true_eq] at *
     exact h1.trans h2
   name := name
+
+@[simp] theorem ofDecEq_sameAnswer {α : Type*} [DecidableEq α]
+    (project : M → α) (name : String) (w v : M) :
+    (ofDecEq project name).sameAnswer w v = decide (project w = project v) := rfl
+
+theorem ofDecEq_sameAnswer_iff {α : Type*} [DecidableEq α]
+    (project : M → α) (name : String) (w v : M) :
+    (ofDecEq project name).sameAnswer w v = true ↔ project w = project v := by
+  simp only [ofDecEq_sameAnswer, decide_eq_true_eq]
 
 /-- Build QUD from a projection function with `BEq`/`LawfulBEq` codomain.
 
@@ -154,6 +188,13 @@ def exact [LawfulBEq M] : QUD M where
     exact h12.trans h23
   name := "exact"
 
+@[simp] theorem exact_sameAnswer [LawfulBEq M] (m1 m2 : M) :
+    (exact : QUD M).sameAnswer m1 m2 = (m1 == m2) := rfl
+
+theorem exact_sameAnswer_iff [LawfulBEq M] (m1 m2 : M) :
+    (exact : QUD M).sameAnswer m1 m2 = true ↔ m1 = m2 := by
+  simp only [exact_sameAnswer, beq_iff_eq]
+
 end BEqConstructors
 
 end QUD
@@ -173,5 +214,30 @@ def snd : QUD (A × B) :=
 /-- QUD that cares about both components (exact) -/
 def both : QUD (A × B) :=
   QUD.exact (M := A × B)
+
+omit [BEq B] [LawfulBEq B] in
+@[simp] theorem fst_sameAnswer (p1 p2 : A × B) :
+    (fst : QUD (A × B)).sameAnswer p1 p2 = (p1.fst == p2.fst) := rfl
+
+omit [BEq B] [LawfulBEq B] in
+theorem fst_sameAnswer_iff (p1 p2 : A × B) :
+    (fst : QUD (A × B)).sameAnswer p1 p2 = true ↔ p1.fst = p2.fst := by
+  simp only [fst_sameAnswer, beq_iff_eq]
+
+omit [BEq A] [LawfulBEq A] in
+@[simp] theorem snd_sameAnswer (p1 p2 : A × B) :
+    (snd : QUD (A × B)).sameAnswer p1 p2 = (p1.snd == p2.snd) := rfl
+
+omit [BEq A] [LawfulBEq A] in
+theorem snd_sameAnswer_iff (p1 p2 : A × B) :
+    (snd : QUD (A × B)).sameAnswer p1 p2 = true ↔ p1.snd = p2.snd := by
+  simp only [snd_sameAnswer, beq_iff_eq]
+
+@[simp] theorem both_sameAnswer (p1 p2 : A × B) :
+    (both : QUD (A × B)).sameAnswer p1 p2 = (p1 == p2) := rfl
+
+theorem both_sameAnswer_iff (p1 p2 : A × B) :
+    (both : QUD (A × B)).sameAnswer p1 p2 = true ↔ p1 = p2 := by
+  simp only [both_sameAnswer, beq_iff_eq]
 
 end ProductQUD

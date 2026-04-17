@@ -1,5 +1,25 @@
 # Changelog
 
+## [0.229.848] - 2026-04-16
+
+### Added
+- **Mathlib polish for `Core/QUD/Basic.lean`** (Phase 6 continuation — the `QUD M` algebraic core):
+  - **Pointwise `@[simp]` unfolds for every constructor**: `trivial_sameAnswer`, `compose_sameAnswer`, `mul_sameAnswer` (so `q1 * q2` rewrites the same way `compose q1 q2` does), `ofDecEq_sameAnswer`, `exact_sameAnswer`. Each reduces `(constructor …).sameAnswer m1 m2` to its underlying Bool expression by `rfl`.
+  - **Bool↔Prop characterizations** (4 `_iff` lemmas): `compose_sameAnswer_iff` (∧), `ofDecEq_sameAnswer_iff` (project equality), `exact_sameAnswer_iff` (full equality). All chain through the corresponding pointwise simp lemma plus `Bool.and_eq_true`/`decide_eq_true_eq`/`beq_iff_eq`.
+  - **`cell` reasoning lemmas**: `cell_self` (every meaning is in its own cell, by `q.refl`), `mem_cell_symm` (cell membership is symmetric, via `q.symm`). Complements the existing `mem_cell_iff` and `ofProject_cell_eq_fiber`.
+  - **Setoid bridge**: `toSetoid_r` — `q.toSetoid.r a b ↔ q.sameAnswer a b = true` by `Iff.rfl`. Makes the QUD↔Setoid translation transparent for callers like `Finpartition.ofSetoid`.
+  - **`ProductQUD` characterizations**: `fst_sameAnswer`/`snd_sameAnswer`/`both_sameAnswer` (pointwise `@[simp]`) plus `_iff` versions for each, so projecting a product QUD onto its component reduces to a `Prod.fst`/`Prod.snd`/full-product equality. Uses `omit` clauses to drop unused `BEq`/`LawfulBEq` instances on the unprojected component.
+
+## [0.229.847] - 2026-04-16
+
+### Changed
+- **RUM-unification cleanup pass** (follows 0.229.845's bridge addition):
+  - **Stale doc fixed in `Core/Constraint/System.lean`**: header comment claimed noise kernels live in `NoiseKernel.lean` "(forthcoming)". The file has existed for a while with full Dirac/Gumbel/Gaussian (Thurstone) bridges — comment now points to it directly.
+  - **Redundant `Core.Logic.OT` imports trimmed** from the 5 OT studies migrated in 0.229.845 (`SiptarTorkenczy2000`, `McCarthyPrince1995`, `Berent2026`, `AkinboFwangwar2026`, `Aitha2026`). `Core.Constraint.System` re-exports `Core.Logic.OT` transitively, so the explicit import is dead weight per CLAUDE.md ("Only import what's needed").
+
+### Added
+- **`Phenomena/PhonologicalAlternation/Studies/MarcoRasin2026.lean` migrated to `tableauSystem`**: 5 systems (`verbSystem`, `nounSystem`, `adjSystem`, `verbTemplateSystem`, `adjTemplateSystem`) plus `adjSystem_predict_attested_zero`. The probability-1 prediction on `adjOPpred` (uniform-initial) and probability-0 on the attested CCəC pattern make @cite{marco-rasin-2026}'s OP-failure argument a quantitative claim about predicted choice probability, not just an `optimal`-set inequality.
+
 ## [0.229.846] - 2026-04-16
 
 ### Added
