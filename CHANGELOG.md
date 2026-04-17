@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.849] - 2026-04-16
+
+### Added
+- **Mathlib polish for `Core/Discourse/Goal.lean` and `Core/Discourse/Scoreboard.lean`** (Phase 6 continuation — Roberts 2023 scoreboard layer):
+  - **`GoalSet` pointwise `@[simp]` unfolds** (`Goal.lean`): `empty_goals`, `add_goals`, `remove_goals`, `activeGoals_empty`, `toPropertyList_empty`, `toPropertyList_add`, `empty_isEmpty`, `size_eq` (= `goals.length`), `empty_size`, `add_size` (= `size + 1`). Wrapper-around-`List` reasoning now reduces by simp without manual unfolding.
+  - **`GoalSet` Bool↔Prop characterizations**: `isEmpty_iff` (= `[]`), `mem_activeGoals_iff` (∈ goals ∧ condition w = true). Chains through `List.isEmpty_iff` / `List.mem_filter`.
+  - **IFLP `@[simp]`-tagged** (`Scoreboard.lean`): all six exhaustive cases of `forceLinkingPrinciple` (3 cases) and `defaultSemanticType` (3 cases shown — declarative/interrogative/imperative; promissive/exclamative omitted to avoid asymmetric round-trip implications). The existing `iflp_roundtrip_*` theorems now follow trivially via these simp lemmas.
+  - **Update lemmas completed and `@[simp]`-tagged**: previously had `assertion_adds_to_cg`, `direction_preserves_cg`, `direction_preserves_qud`, `assertion_preserves_goals` (un-tagged). Added the missing partners — `assertion_preserves_qud`, `interrogation_adds_to_qud`, `interrogation_preserves_cg`, `interrogation_preserves_goals` — and tagged all 8 update-component identities `@[simp]`. The Roberts 2023 IFLP table (declarative→CG, interrogative→QUD, imperative→G) now has full simp coverage on every (update × component) pair.
+
 ## [0.229.848] - 2026-04-16
 
 ### Added

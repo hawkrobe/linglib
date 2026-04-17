@@ -68,9 +68,14 @@ namespace GoalSet
 /-- The empty goal set. -/
 def empty : GoalSet W := ⟨[]⟩
 
+@[simp] theorem empty_goals : (empty : GoalSet W).goals = [] := rfl
+
 /-- Add a goal to the set. -/
 def add (gs : GoalSet W) (g : Goal W) : GoalSet W :=
   ⟨g :: gs.goals⟩
+
+@[simp] theorem add_goals (gs : GoalSet W) (g : Goal W) :
+    (gs.add g).goals = g :: gs.goals := rfl
 
 /-- Add an unconditional goal with given priority. -/
 def addSimple (gs : GoalSet W) (content : BProp W) (priority : Nat := 0) : GoalSet W :=
@@ -80,9 +85,19 @@ def addSimple (gs : GoalSet W) (content : BProp W) (priority : Nat := 0) : GoalS
 def remove (gs : GoalSet W) (shouldRemove : Goal W → Bool) : GoalSet W :=
   ⟨gs.goals.filter (λ g => !shouldRemove g)⟩
 
+@[simp] theorem remove_goals (gs : GoalSet W) (f : Goal W → Bool) :
+    (gs.remove f).goals = gs.goals.filter (fun g => !f g) := rfl
+
 /-- Goals active in circumstance w (condition satisfied). -/
 def activeGoals (gs : GoalSet W) (w : W) : List (Goal W) :=
   gs.goals.filter (λ g => g.condition w)
+
+@[simp] theorem activeGoals_empty (w : W) :
+    (empty : GoalSet W).activeGoals w = [] := rfl
+
+theorem mem_activeGoals_iff (gs : GoalSet W) (w : W) (g : Goal W) :
+    g ∈ gs.activeGoals w ↔ g ∈ gs.goals ∧ g.condition w = true := by
+  simp only [activeGoals, List.mem_filter]
 
 /-- Active goal contents at w, sorted by priority (ascending = most important first). -/
 def activeContents (gs : GoalSet W) (w : W) : List (BProp W) :=
@@ -93,13 +108,31 @@ def activeContents (gs : GoalSet W) (w : W) : List (BProp W) :=
 def toPropertyList (gs : GoalSet W) : List (BProp W) :=
   gs.goals.map Goal.content
 
+@[simp] theorem toPropertyList_empty :
+    (empty : GoalSet W).toPropertyList = [] := rfl
+
+@[simp] theorem toPropertyList_add (gs : GoalSet W) (g : Goal W) :
+    (gs.add g).toPropertyList = g.content :: gs.toPropertyList := rfl
+
 /-- Whether the goal set is empty. -/
 def isEmpty (gs : GoalSet W) : Bool :=
   gs.goals.isEmpty
 
+@[simp] theorem empty_isEmpty : (empty : GoalSet W).isEmpty = true := rfl
+
+theorem isEmpty_iff (gs : GoalSet W) : gs.isEmpty = true ↔ gs.goals = [] := by
+  simp only [isEmpty, List.isEmpty_iff]
+
 /-- Number of goals. -/
 def size (gs : GoalSet W) : Nat :=
   gs.goals.length
+
+@[simp] theorem size_eq (gs : GoalSet W) : gs.size = gs.goals.length := rfl
+
+@[simp] theorem empty_size : (empty : GoalSet W).size = 0 := rfl
+
+@[simp] theorem add_size (gs : GoalSet W) (g : Goal W) :
+    (gs.add g).size = gs.size + 1 := rfl
 
 end GoalSet
 

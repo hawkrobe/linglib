@@ -73,6 +73,15 @@ def forceLinkingPrinciple : SemanticType → IllocutionaryMood
   | .setOfPropositions  => .interrogative
   | .indexedProperty    => .imperative
 
+@[simp] theorem forceLinkingPrinciple_proposition :
+    forceLinkingPrinciple .proposition = .declarative := rfl
+
+@[simp] theorem forceLinkingPrinciple_setOfPropositions :
+    forceLinkingPrinciple .setOfPropositions = .interrogative := rfl
+
+@[simp] theorem forceLinkingPrinciple_indexedProperty :
+    forceLinkingPrinciple .indexedProperty = .imperative := rfl
+
 /-- The default semantic type for each illocutionary mood (inverse of IFLP). -/
 def defaultSemanticType : IllocutionaryMood → SemanticType
   | .declarative   => .proposition
@@ -80,6 +89,15 @@ def defaultSemanticType : IllocutionaryMood → SemanticType
   | .imperative     => .indexedProperty
   | .promissive     => .indexedProperty  -- promissives also denote properties
   | .exclamative    => .proposition      -- exclamatives denote propositions
+
+@[simp] theorem defaultSemanticType_declarative :
+    defaultSemanticType .declarative = .proposition := rfl
+
+@[simp] theorem defaultSemanticType_interrogative :
+    defaultSemanticType .interrogative = .setOfPropositions := rfl
+
+@[simp] theorem defaultSemanticType_imperative :
+    defaultSemanticType .imperative = .indexedProperty := rfl
 
 /-- IFLP round-trips for the three core moods. -/
 theorem iflp_roundtrip_decl :
@@ -168,20 +186,36 @@ def directionUpdate (K : Scoreboard W) (p : BProp W)
     moves := ⟨.imperative, p, speaker, true⟩ :: K.moves }
 
 /-- Assertion update adds to CG. -/
-theorem assertion_adds_to_cg (K : Scoreboard W) (p : BProp W) (a : Nat) :
+@[simp] theorem assertion_adds_to_cg (K : Scoreboard W) (p : BProp W) (a : Nat) :
     (K.assertionUpdate p a).cg = p :: K.cg := rfl
 
+/-- Assertion update preserves QUD. -/
+@[simp] theorem assertion_preserves_qud (K : Scoreboard W) (p : BProp W) (a : Nat) :
+    (K.assertionUpdate p a).qud = K.qud := rfl
+
+/-- Assertion update preserves G. -/
+@[simp] theorem assertion_preserves_goals (K : Scoreboard W) (p : BProp W) (a : Nat) :
+    (K.assertionUpdate p a).goals = K.goals := rfl
+
+/-- Interrogation update adds to QUD. -/
+@[simp] theorem interrogation_adds_to_qud (K : Scoreboard W) (q : BProp W) (a : Nat) :
+    (K.interrogationUpdate q a).qud = q :: K.qud := rfl
+
+/-- Interrogation update preserves CG. -/
+@[simp] theorem interrogation_preserves_cg (K : Scoreboard W) (q : BProp W) (a : Nat) :
+    (K.interrogationUpdate q a).cg = K.cg := rfl
+
+/-- Interrogation update preserves G. -/
+@[simp] theorem interrogation_preserves_goals (K : Scoreboard W) (q : BProp W) (a : Nat) :
+    (K.interrogationUpdate q a).goals = K.goals := rfl
+
 /-- Direction update preserves CG. -/
-theorem direction_preserves_cg (K : Scoreboard W) (p : BProp W) (s t pr : Nat) :
+@[simp] theorem direction_preserves_cg (K : Scoreboard W) (p : BProp W) (s t pr : Nat) :
     (K.directionUpdate p s t pr).cg = K.cg := rfl
 
 /-- Direction update preserves QUD. -/
-theorem direction_preserves_qud (K : Scoreboard W) (p : BProp W) (s t pr : Nat) :
+@[simp] theorem direction_preserves_qud (K : Scoreboard W) (p : BProp W) (s t pr : Nat) :
     (K.directionUpdate p s t pr).qud = K.qud := rfl
-
-/-- Assertion update preserves G. -/
-theorem assertion_preserves_goals (K : Scoreboard W) (p : BProp W) (a : Nat) :
-    (K.assertionUpdate p a).goals = K.goals := rfl
 
 end Scoreboard
 end Core.Discourse
