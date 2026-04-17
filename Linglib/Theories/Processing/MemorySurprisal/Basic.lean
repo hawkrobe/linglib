@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
-import Linglib.Core.ProcessingModel
-import Linglib.Core.GeneralisedSurprisal
+import Linglib.Theories.Processing.Cost.Profile
+import Linglib.Theories.Processing.PredictiveUncertainty.Config
 
 /-!
 # Memory-Surprisal Trade-off Framework
@@ -591,7 +591,7 @@ trade-off: standard surprisal (negLog × indicator × h=1 × predictive).
 The trade-off curve parametrizes over memory encodings while holding
 this resolution fixed. IAS extends this by also parametrizing over the
 prediction resolution (horizon and representational level). -/
-def memorySurprisalConfig : Core.GeneralisedSurprisal.SurprisalConfig :=
-  Core.GeneralisedSurprisal.standardSurprisal
+def memorySurprisalConfig : Theories.Processing.PredictiveUncertainty.SurprisalConfig :=
+  Theories.Processing.PredictiveUncertainty.standardSurprisal
 
 end Processing.MemorySurprisal

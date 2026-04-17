@@ -1,4 +1,4 @@
-import Linglib.Core.ProcessingModel
+import Linglib.Theories.Processing.Cost.Profile
 
 /-!
 # Syntactic Ambiguity: Temporary Ambiguity and Garden-Path Effects

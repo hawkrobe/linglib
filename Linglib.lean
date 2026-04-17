@@ -132,7 +132,6 @@ import Linglib.Core.GameTheory
 import Linglib.Core.Evidence
 import Linglib.Core.Epistemicity
 import Linglib.Core.Logophoricity
-import Linglib.Core.ProcessingModel
 import Linglib.Core.Temporal.Time
 import Linglib.Core.Temporal.Reichenbach
 import Linglib.Core.Temporal.Tense
@@ -190,7 +189,6 @@ import Linglib.Core.Lexical.Binominal
 import Linglib.Core.Efficiency
 import Linglib.Core.SearchEfficiency
 import Linglib.Core.InformationTheory
-import Linglib.Core.GeneralisedSurprisal
 import Linglib.Core.Distributions
 import Linglib.Core.FinitePMF
 import Linglib.Core.Divergence
@@ -1214,6 +1212,7 @@ import Linglib.Phenomena.Presupposition.Studies.GroveWhite2025
 import Linglib.Phenomena.Presupposition.Studies.HeKaiserIskarous2025
 import Linglib.Phenomena.Expressives.Studies.LoGuercio2025
 import Linglib.Phenomena.Quotation.Studies.KirkGiannini2024
+import Linglib.Phenomena.Quotation.Studies.Rudin2025LI
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
 import Linglib.Phenomena.Presupposition.Studies.Wang2025
 import Linglib.Phenomena.Presupposition.Studies.Warstadt2022
@@ -1462,9 +1461,12 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Ellipsis
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
+import Linglib.Theories.Processing.Cost.Profile
 import Linglib.Theories.Processing.CueBasedRetrieval.Basic
+import Linglib.Theories.Processing.LanguageModel.Basic
 import Linglib.Theories.Processing.MemorySurprisal.Basic
-import Linglib.Theories.Processing.PredictiveUncertainty.Generalised
+import Linglib.Theories.Processing.PredictiveUncertainty.Config
+import Linglib.Theories.Processing.PredictiveUncertainty.IAS
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
@@ -1775,6 +1777,7 @@ import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
 import Linglib.Theories.Semantics.Quotation.MixedQuotation
+import Linglib.Theories.Semantics.Quotation.Demonstration
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
@@ -1859,6 +1862,7 @@ import Linglib.Theories.Semantics.Iconic.Basic
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Events.DegreeEvents
 import Linglib.Theories.Semantics.Events.ThematicRoles
+import Linglib.Theories.Semantics.Events.EventRelations
 import Linglib.Theories.Semantics.Events.Mereology
 import Linglib.Theories.Semantics.Events.StratifiedReference
 import Linglib.Theories.Semantics.Events.Krifka1989
@@ -2130,6 +2134,7 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Questions
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
 import Linglib.Theories.Pragmatics.Assertion.Stalnaker
 import Linglib.Theories.Pragmatics.Assertion.FarkasAdapter
+import Linglib.Theories.Pragmatics.Assertion.QuotationFBOntology
 import Linglib.Theories.Pragmatics.Assertion.Krifka
 import Linglib.Theories.Pragmatics.Assertion.Brandom
 import Linglib.Theories.Pragmatics.Assertion.Gunlogson

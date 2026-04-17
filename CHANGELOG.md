@@ -1,5 +1,50 @@
 # Changelog
 
+## [0.229.860] - 2026-04-17
+
+### Changed
+- **Lifted `LangModel` to `Theories/Processing/LanguageModel/Basic.lean`** — the autoregressive Markov-kernel primitive (`List Voc → FinitePMF (Option Voc)`) is no longer buried inside `PredictiveUncertainty/IAS.lean`. It is the smallest cross-cutting object shared by everything in `Theories/Processing/` (surprisal, IAS, anything downstream that wants a unified notion of an LM's predictive distribution), so it deserves its own file. `IAS.lean` now imports it; `GiulianelliEtAl2026.lean` opens the new namespace.
+- **Moved `ProcessingProfile` out of `Core/`** → `Theories/Processing/Cost/Profile.lean`. Pareto cost profiles are theory-laden (Lewis-Vasishth/Gibson-flavored: locality, boundaries, referentialLoad, ease) and don't belong in framework-agnostic `Core/`. Namespace stays `ProcessingModel`. 7 dependent files updated (MemorySurprisal/Basic, CueBasedRetrieval/Basic, DependencyGrammar/Formal/DependencyLength, FillerGap/Compare, FillerGap/Studies/PickeringBarry1991, SyntacticAmbiguity/Basic, plus `Linglib.lean`).
+- **Codified `Theories/Processing/` scope in CLAUDE.md** — added a new "Theories/Processing/ - Scope" subsection capturing the principle that processing theories specify *how* input is processed (cost functions OR architectures: operations + intermediate representations + accrued costs), and that measurement modalities and empirical-fit tables are out of scope. Architectural theories (parsing strategies, stage models with reanalysis, ACT-R-style memory operations) are first-class alongside cost-function theories like surprisal and IAS.
+
+## [0.229.859] - 2026-04-17
+
+### Changed
+- **Mathlib-style refactor of `Phenomena/Quotation/Studies/Rudin2025LI.lean`** — eliminated the parallel formalizations (the 30-cell `empirical : Verb → Complement → Felicity` matrix, the `predicted` decision function, the `Felicity` enum, and helper predicates `bearsCommitment`/`isQuote`/`isQuestionThat`/`isLoudQuote`/`isWhisperedQuote`/`isNonLoudQuote`). Replaced with the mathlib pattern: (1) one `Felicitous M V c : Prop` definition that universally states what felicity means for any model + verb predicate + complement type; (2) `class IsRudinModel M` with 30 fields — *the* statement of @cite{rudin-2025b}'s empirical claim, against which any `SpeechVerbs` model is tested; (3) one concrete `rudinModel : SpeechVerbs ℕ Bool (FBPerformance Bool) (fbOntology Bool)` with verb predicates defined as the postulate RHS so all 6 meaning postulates hold by `Iff.rfl`; (4) `instance : IsRudinModel rudinModel` discharges the 30 cells from FB-ontology axioms + 7 named witness performances (`committingDecl`, `committingLoud`, `committingWhispered`, `risingDecl`, `risingLoud`, `risingWhispered`, `respNonLingmat`) with their property theorems. The empirical matrix and its derivation are now the same proposition, not a `predicted_matches_empirical` bridge.
+- **Added `prop_not_question` field to `SpeechVerbs`** in `Demonstration.lean` — sortal disjointness axiom (a semantic object cannot be both a proposition and a question). Required to derive `*say that <question>*` infelicity from the SAY/ASK content sortal restrictions.
+
+## [0.229.858] - 2026-04-17
+
+### Changed
+- **Processing-library scope cleanup** — codified the principle that linglib's processing layer formalizes processing *theories* (math/structure), not measurement modalities (EEG/eye-tracking) or empirical-fit tables. (a) `Core/GeneralisedSurprisal.lean` → `Theories/Processing/PredictiveUncertainty/Config.lean` (theory-specific, doesn't belong in framework-agnostic `Core/`); namespace `Core.GeneralisedSurprisal` → `Theories.Processing.PredictiveUncertainty`. (b) `Generalised.lean` → `IAS.lean` to match @cite{giulianelli-etal-2026}'s own terminology and align with the bib entry. (c) Dropped `PsychMeasure`, `PsychMeasure.isExplicit`, `PsychMeasure.expectedSign`, `DistanceSummary` enum (semantically empty stub) from the formal hierarchy — measurement-instrument labels are out of scope. (d) Rewrote `GiulianelliEtAl2026.lean`: dropped 6 stipulative empirical-table defs (`peakHorizon`, `peakLevel`, `LayerPattern`, `layerPatternAligned`, `iasOutperformsSurprisal`, `observedSign`, `highComplementarity`, `surprisalBestMatchesSummary`, `Dataset`, `naturalStoriesSPRT_*`) and the 13 `rfl`-over-table "theorems" that unpacked them. Empirical findings now live as cited prose in the docstring. Replaced with one real theorem — `informationValue1_not_determined_by_surprisal` — witnessing the structural claim that IAS is strictly more expressive than surprisal. (e) Fixed `references.bib` source paths for `giulianelli-etal-2026`, `giulianelli-opedal-cotterell-2024`, `levy-2008`, `smith-levy-2013`, `meister-giulianelli-pimentel-2024`.
+
+## [0.229.857] - 2026-04-17
+
+### Changed
+- **Split `SpeechModel` into `PerformanceOntology Perf` + `SpeechVerbs Time SemObj Perf [Ω]`** in `Theories/Semantics/Quotation/Demonstration.lean`. Mirrors mathlib practice: small data structure (performance properties + axioms) separated from the larger verb structure that consumes it. Enables alternative performance ontologies. **Corrected `ask_iff_no_commits` → `ask_iff_resp`**: ASK requires reenacted performances to be RESP (RaisesIssue ∧ ¬Commits), not merely non-committing — a silent grunt would satisfy the old axiom but not Rudin's intent. **Performance properties** added: `RaisesIssue` and the derived `RESP := RaisesIssue ∧ ¬ Commits` (Rudin §4.4.1). **Extrapolation flagging**: docstrings on `assert_iff_say_and_commits`, `yell_iff_say_and_loud`, `whisper_iff_say_and_whispered` now mark them as formal extrapolations of @cite{rudin-2025b}'s informal generalizations (Rudin states the empirical claim but doesn't give formal postulates per verb).
+
+### Added
+- **`Theories/Pragmatics/Assertion/QuotationFBOntology.lean`** — Farkas-Bruce performance ontology bridge. `FBPerformance W` bundles the data of a F&B utterance (form, content, lingmat, volume, rising). `update : FBPerformance W → DiscourseState W → DiscourseState W` gives the F&B-grounded discourse effect. **`Commits` and `RaisesIssue` are derived from F&B updates**, not stipulated: `Commits u := u.content ∈ (u.update empty).dcS`. The `fbOntology` instance discharges all four `PerformanceOntology` axioms (`loud_not_whispered`, `rd_not_commits`, `rd_raises_issue`, `rd_is_lingmat`) by direct reduction. `commits_iff` proves the structural characterization (commits ↔ non-rising declarative) and `update_decl_eq_assert` bridges to `FarkasAdapter.assert_adds_to_dcS`.
+- **Fragment verb bridge in `Phenomena/Quotation/Studies/Rudin2025LI.lean`** — `fromEnglishVerb : VerbEntry → Option Verb` reads off `speechActVerb` / `takesQuestionBase` / `levinClass` / surface form. 11 per-entry classification witnesses (say, claim, whisper, murmur, mumble, mutter, yell, shout, scream, shriek, ask) plus 2 negative cases (tell, wonder). Renaming or reclassifying any Fragment verb breaks exactly the relevant witness.
+- **F&B-grounded predictions in `Rudin2025LI.lean`** — `risingDeclP W p` constructs a concrete rising-declarative `FBPerformance`. `risingDeclP_resp` proves it is RESP and `risingDeclP_not_commits` proves the F&B-derived non-commitment, both via direct reduction through `update`.
+- **6 new theorems in `Demonstration.lean`** — `ask_quote_no_issue_empty` (ASK requires issue-raising, not just non-commitment), `assert_implies_say` / `yell_implies_say` / `whisper_implies_say` (verb subsumption), `assert_ask_incompatible_at_perf` (ASSERT and ASK can't share a performance witness), `say_non_lingmat_impossible` (the karate-gestures contradiction). `quoteCompEx` provides the existentially-closed quotative composition that appears at sentence level.
+
+## [0.229.856] - 2026-04-17
+
+### Added
+- **Symmetric enum-config denotation in `PredictiveUncertainty/Generalised.lean`** — `ScoringFn.denote` (parametric in `dist` / `sim`, with `.indicator` ↦ `indicatorScore` baked in), `SurprisalConfig.applyTo` (whole-config denotation through `genSurprisal`), and the higher-level reductions `standardSurprisal_applyTo_eq_surprisal` and `informationValue_applyTo_eq_informationValue1`. The full `(warp, scoring, h, l)` enum tuple now denotes a real function on a language model, not just its first field — so the @cite{giulianelli-etal-2026} family is grounded end-to-end at the enum-config level.
+
+## [0.229.855] - 2026-04-17
+
+### Added
+- **`Theories/Semantics/Events/EventRelations.lean`** — `EventRel Time α := Ev Time → α → Prop`, sibling to `ThematicRel`, generalizes past the entity-first restriction so events can relate to propositions, questions, performances, or other ontological sorts.
+- **`Theories/Semantics/Quotation/Demonstration.lean`** — double-Davidsonian analysis of quotative complements (@cite{rudin-2025b}). `Performance Time := Ev Time` (per Rudin's fn 21). `SpeechModel` bundles 1-place verb predicates (SAY/ASSERT/ASK/YELL/WHISPER) with CONTENT/REENACT relations and meaning postulates from §4.4–4.7. Five prediction theorems (`say_quote_lingmat`, `assert_quote_rd_empty`, `ask_quote_rd_consistent`, `yell_quote_loud`, `whisper_quote_loud_empty`) derive the cross-verb felicity patterns from the postulates.
+- **`Phenomena/Quotation/Studies/Rudin2025LI.lean`** — empirical felicity matrix (5 verbs × 6 complement types) with a `predicted` decision function. `predicted_matches_empirical` verifies all 30 cells via `cases v <;> cases c <;> rfl`.
+- **`rudin-2025b` bib entry** for "Embedded Intonation and Quotative Complements to Verbs of Speech" (Linguistic Inquiry, doi:10.1162/ling.a.554).
+
+### Changed
+- **`rudin-2025` → `rudin-2025a`** in bib + 3 cite sites (`Core/Order/Normality.lean`, `Phenomena/Modality/Studies/Khoo2015.lean`, `Theories/Semantics/Dynamic/Epistemic/Basic.lean`) to disambiguate from the new LI paper.
+
 ## [0.229.854] - 2026-04-17
 
 ### Added

@@ -1,4 +1,4 @@
-import Linglib.Core.ProcessingModel
+import Linglib.Theories.Processing.Cost.Profile
 
 /-!
 # Cue-Based Retrieval
