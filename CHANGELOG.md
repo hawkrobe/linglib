@@ -1,5 +1,32 @@
 # Changelog
 
+## [0.229.846] - 2026-04-16
+
+### Added
+- **Mathlib polish for `Core/QUD/Relevance.lean`** (Phase 6 continuation — Roberts 2012 relevance/subquestion machinery):
+  - **Bool↔Prop characterizations** (5 `_iff` lemmas): `refinesOn_iff` (∀ w v ∈ elements, sameAnswer w v → q'.sameAnswer w v), `partiallyAnswers_iff` (∃ alt ∈ q.alts, propEntails p alt ∨ propEntails p ¬alt), `questionEntails_iff` (∀ alt₁ ∈ q₁.alts, ∃ alt₂ ∈ q₂.alts, propEntails alt₁ alt₂), `isSubquestion_iff` (derived from `questionEntails_iff`), `moveRelevant_iff` (∃ alt ∈ den.alts, partiallyAnswers alt qud ∨ ∃ sq ∈ subqs, partiallyAnswers alt sq).
+  - **Transitivity** (3 lemmas): `propEntails_trans`, `questionEntails_trans` (proven via `propEntails_trans` on the matched alternatives), `isSubquestion_trans` (derived from `questionEntails_trans`).
+  - **Reflexivity proofs simplified**: `questionEntails_refl` rewritten via the new `questionEntails_iff` instead of raw `simp` on `List.all_eq_true`/`List.any_eq_true`.
+  - **New utility**: `propEntails_alt_implies_partiallyAnswers` — full entailment of an alternative is the canonical way to construct a partial answer; `partiallyAnswers_implies_relevant` rewritten to use `moveRelevant_iff`.
+  - The four core Bool predicates (`refinesOn`, `partiallyAnswers`, `questionEntails`, `moveRelevant`) now each have a `_iff` lemma at the same level of abstraction as `propEntails_iff`/`supports_iff`, completing the Bool/Prop bridge for the Roberts 2012 layer.
+
+## [0.229.845] - 2026-04-16
+
+### Added
+- **`Tableau → ConstraintSystem` bridge in `Core/Constraint/System.lean`** (continuation of the RUM-unification thread that converted MaxEnt studies in 0.229.840–841). `tableauSystem (t : Tableau C n) : ConstraintSystem C (LexProfile Nat n)` views any OT tableau as a generic constraint system whose decoder is `argminDecoder`. Three downstream theorems make per-study migrations into one-liners:
+  - `tableauSystem_predict_eq` — the unifying identity: prediction is `1/|optimal|` on winners, 0 elsewhere.
+  - `tableauSystem_predict_pos_iff_optimal` — support of the distribution = `Tableau.optimal`.
+  - `tableauSystem_predict_unique_winner` / `tableauSystem_predict_loser` — the deterministic-OT pattern (`mkTableau ... .optimal = {winner}`) collapses to probability 1 on the winner / 0 on losers.
+  Resolves the architectural mismatch between `Core.ConstraintEvaluation.Tableau` (existing study-file API) and `Core.Constraint.ConstraintSystem` (the unified RUM interface) — `Tableau` is now a special case of `ConstraintSystem` rather than a parallel framework.
+- **OT studies migrated to expose `predict` API via the new bridge**:
+  - `Phenomena/VowelHarmony/Studies/SiptarTorkenczy2000.lean` — `házSystem`, `tűzSystem` over Hungarian palatal harmony.
+  - `Phenomena/Reduplication/Studies/McCarthyPrince1995.lean` — `javaneseSystem` (overapplication), `balangaoSystem` (emergence of unmarked), `akanSystem` (underapplication).
+  - `Phenomena/Phonology/Studies/Berent2026.lean` — `phonSystem` / `morphSystem` for the doubling reversal.
+  - `Phenomena/Tone/Studies/AkinboFwangwar2026.lean` — `t24System`, `t25System`, `t26System` for Mwaghavul tonal verbalisers.
+  - `Phenomena/Allomorphy/Studies/Aitha2026.lean` — `stemSystem`, `wordNomSystem`, `wordDatSystem` for the Telugu Stratal-OT derivation.
+
+  All migrations delegate to the existing `_optimal` theorems via `tableauSystem_predict_unique_winner`; no new proof obligations beyond what each study already established.
+
 ## [0.229.844] - 2026-04-16
 
 ### Added
