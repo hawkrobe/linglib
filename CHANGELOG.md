@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.229.870] - 2026-04-17
+
+### Added
+- **`Theories/Semantics/Verb/Roots/SalienceClass.lean` — named class predicates** (`FeatureSignature.isAgentSalient`, `.isAgentPatientSalient`, `.isPatientSalient`, `.isPositional`) plus per-`Root` lifts. The four diagnostic predicates that previously lived as inline λs on each Yukatek operator's `applies` field are now first-class names with documented semantics, so `Fragments/Mayan/Yukatek/Operators.lean` reads `affectiveT.applies := Root.isAgentSalient` (and similarly for `=∅`, `=s`, `-tal`). The operator-applicability ↔ salience-class connection is now true *by construction* rather than just provable per-case.
+- **`classOfSignature_eq_dispatch`** — establishes that the salience classifier table is the disjunction of the four named predicates rather than an arbitrary lookup. Plus `classes_pairwise_disjoint` (six conjuncts) and `classOfSignature_eq_none_iff` characterising the diagnostic gap (`(¬manner, ¬result)` rows that lack the positional configuration).
+- **`orbit_eq_iff_predictedClass_eq`** in `Lucy1994.lean` § 4 — the orbit-as-classifier theorem: two roots have the same operator orbit under @cite{lucy-1994}'s diagnostic inventory iff they have the same predicted salience class. The four named-class iff-theorems (`agent_iff_orbit_t`, `agentPatient_iff_orbit_zero`, `patient_iff_orbit_s`, `positional_iff_orbit_tal`) and `none_iff_orbit_empty` are the special cases.
+- **Bohnemeyer→Lucy fibre theorems** in `Fragments/Mayan/Yukatek/VerbClasses.lean`: `toSalienceClass_surjective` (every Lucy class has a Bohnemeyer pre-image), `toSalienceClass_fiber_positional` (the only non-singleton fibre is `{.inchoative, .positional}`), plus `toSalienceClass_fiber_agent` / `_patient` / `_agentPatient` for the three singleton fibres.
+- **`closure_bkgRules_any_idempotent`** in `Theories/Semantics/Verb/Roots/Closure.lean` — `(closure bkgRules (closure bkgRules atoms)).any p = (closure bkgRules atoms).any p`. Closure produces duplicates so structural equality fails, but `any p`-equivalence holds, which is the only thing downstream `featureSignature` checks need. Companion lemmas `bkgRules_eq_nil_of_isState`, `flatMap_bkgRules_eq_nil_of_all_isState`, `flatMap_bkgRules_flatMap_bkgRules_eq_nil`.
+- **18 new Yukatek roots** in `Fragments/Mayan/Yukatek/Roots.lean` (now ~26 roots total): agent-salient (`miis`, `cheh`, `paak`), patient-salient (`ah`, `wen`, `siih`, `tuub`, `kaah`, `chuun`, `chenCease`, `hoop`, `heel`, `paat`), motion (`maan`, `taal`, `bin`, `naak`, `liik`). Per-root `_signature` rfl theorems and `_agent`/`_patient` predicted-class theorems in `Lucy1994.lean`. Section 7 of `Roots.lean` gathers the per-class lists (`agentSalientRoots`, `agentPatientSalientRoots`, `patientSalientRoots`, `motionRoots`, `positionalRoots`).
+
+### Changed
+- **`haan` → `haanCease` / `haanEat` (tone disambiguation)** — split the previously-conflated `haan` into high-tone `háan` "stop, cease, heal" (`Roots.haanCease`, patient-salient per @cite{lucy-1994}) and low-tone `hàan` "eat" (`VerbClasses.haanEat`, inactive but internally caused per @cite{bohnemeyer-2004}). Three Bohnemeyer theorems renamed to use `haanEat`.
+- **Dropped spurious `.motion` and `.contact` atoms** from `siit` "jump", `luub` "fall", `ok` "enter", `los` "punch" — these atoms are not part of the B&K-G feature signature and were not used anywhere in the classification. `featureSignature` is unchanged so all downstream theorems still hold.
+- **`Closure.closeStep` → `closeOnce`** for clarity; `closure` is now an `abbrev` alias preserving the old name.
+- **Tightened `bkgRules_only_state`** with explicit constructor pattern matching.
+- **`@[simp]` tags** added to `closedFeatureSignature_manner/result/cause` for downstream rewriting.
+- **Local macro `lucy_orbit r`** in `Lucy1994.lean` § 4 packages the unfold + `simp only` + 16-case truth-table dispatch shared by all five orbit-characterisation theorems (`agent_iff_orbit_t`, `agentPatient_iff_orbit_zero`, `patient_iff_orbit_s`, `positional_iff_orbit_tal`, `none_iff_orbit_empty`).
+
 ## [0.229.869] - 2026-04-17
 
 ### Added

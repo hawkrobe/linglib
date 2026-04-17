@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Verb.EventStructure
+import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Params
 import Linglib.Core.Case
 
@@ -169,8 +170,10 @@ def kulTal : YukatekVerb := ⟨"sit down", .positional, .external⟩
 def waalTal : YukatekVerb := ⟨"stand up", .positional, .external⟩
 
 -- Key exception: inactive stem class but internally caused → applicative
--- @cite{bohnemeyer-2004} ex. (9): hàan-t-ik (applicative -t, not causative -s)
-def haan : YukatekVerb := ⟨"eat", .inactive, .internal⟩
+-- @cite{bohnemeyer-2004} ex. (9): hàan-t-ik (applicative -t, not causative -s).
+-- Low-tone `hàan` "eat" — distinct from high-tone `háan` "stop, cease,
+-- heal" in `Roots.haanCease`, which is patient-salient (Lucy's diagnostic).
+def haanEat : YukatekVerb := ⟨"eat", .inactive, .internal⟩
 
 -- Active verbs (externally caused: manner of motion)
 def chiik : YukatekVerb := ⟨"shake", .active, .external⟩
@@ -221,6 +224,74 @@ def VerbStemClass.toTemplate : VerbStemClass → Template
 theorem eventType_consistent (c : VerbStemClass) :
     c.eventType = c.toTemplate.eventType := by
   cases c <;> rfl
+
+-- ════════════════════════════════════════════════════
+-- § 5.5. Bridge to @cite{lucy-1994} Salience Classes
+-- ════════════════════════════════════════════════════
+
+open Semantics.Verb.Roots (SalienceClass)
+
+/-- Map @cite{bohnemeyer-2004}'s 5-way Yukatek stem classification to
+    @cite{lucy-1994}'s 4-way salience cut. The 5-way is a refinement:
+    `inchoative` and `positional` both pattern as Lucy's `positional`
+    (both derive via `-tal` from a stative root); `active`/`inactive`/
+    `transitiveActive` map straightforwardly to `agent`/`patient`/
+    `agentPatient`. -/
+def VerbStemClass.toSalienceClass : VerbStemClass → SalienceClass
+  | .active           => .agent
+  | .inactive         => .patient
+  | .inchoative       => .positional
+  | .positional       => .positional
+  | .transitiveActive => .agentPatient
+
+/-- Bohnemeyer's 5-way stem classes refining Lucy's positional class:
+    `inchoative` and `positional` both reduce to the same Lucy class. -/
+theorem inchoative_positional_collapse_under_lucy :
+    VerbStemClass.toSalienceClass .inchoative =
+      VerbStemClass.toSalienceClass .positional := rfl
+
+/-- The other three Bohnemeyer classes are mutually distinct under
+    Lucy's salience cut (they map to three different `SalienceClass`
+    values). -/
+theorem active_inactive_transitive_distinct :
+    VerbStemClass.toSalienceClass .active ≠
+      VerbStemClass.toSalienceClass .inactive ∧
+    VerbStemClass.toSalienceClass .active ≠
+      VerbStemClass.toSalienceClass .transitiveActive ∧
+    VerbStemClass.toSalienceClass .inactive ≠
+      VerbStemClass.toSalienceClass .transitiveActive := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-- `toSalienceClass` is surjective: every Lucy class is in the image of
+    Bohnemeyer's 5-way refinement. -/
+theorem toSalienceClass_surjective :
+    ∀ c : SalienceClass, ∃ s : VerbStemClass, s.toSalienceClass = c
+  | .agent        => ⟨.active,           rfl⟩
+  | .agentPatient => ⟨.transitiveActive, rfl⟩
+  | .patient      => ⟨.inactive,         rfl⟩
+  | .positional   => ⟨.positional,       rfl⟩
+
+/-- The fibre of `toSalienceClass` over `.positional` is exactly
+    `{.inchoative, .positional}` — these are the two Bohnemeyer classes
+    that collapse under @cite{lucy-1994}'s 4-way cut. The other three
+    fibres are singletons (`active ↦ agent`, `inactive ↦ patient`,
+    `transitiveActive ↦ agentPatient`). -/
+theorem toSalienceClass_fiber_positional (s : VerbStemClass) :
+    s.toSalienceClass = .positional ↔ s = .inchoative ∨ s = .positional := by
+  cases s <;> simp [VerbStemClass.toSalienceClass]
+
+/-- The other three fibres are singletons. -/
+theorem toSalienceClass_fiber_agent (s : VerbStemClass) :
+    s.toSalienceClass = .agent ↔ s = .active := by
+  cases s <;> simp [VerbStemClass.toSalienceClass]
+
+theorem toSalienceClass_fiber_patient (s : VerbStemClass) :
+    s.toSalienceClass = .patient ↔ s = .inactive := by
+  cases s <;> simp [VerbStemClass.toSalienceClass]
+
+theorem toSalienceClass_fiber_agentPatient (s : VerbStemClass) :
+    s.toSalienceClass = .agentPatient ↔ s = .transitiveActive := by
+  cases s <;> simp [VerbStemClass.toSalienceClass]
 
 -- ════════════════════════════════════════════════════
 -- § 6. Split-Ergative System

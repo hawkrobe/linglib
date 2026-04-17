@@ -268,20 +268,20 @@ theorem same_causation_same_transitivization :
     This directly refutes stem-class-based linking: if stem class
     determined transitivization, hàan (inactive) would causativize
     like kim "die". Instead, it applicativizes like meyah "work". -/
-theorem haan_applicative_despite_inactive :
-    haan.stemClass = .inactive ∧
-    verbTransitivization haan = .applicative := ⟨rfl, rfl⟩
+theorem haanEat_applicative_despite_inactive :
+    haanEat.stemClass = .inactive ∧
+    verbTransitivization haanEat = .applicative := ⟨rfl, rfl⟩
 
 /-- hàan patterns with internally-caused active verbs, not with
     its own (inactive) stem class, for transitivization. -/
-theorem haan_patterns_with_actives :
-    verbTransitivization haan = verbTransitivization meyah := rfl
+theorem haanEat_patterns_with_actives :
+    verbTransitivization haanEat = verbTransitivization meyah := rfl
 
 /-- hàan and kim are both inactive but get different transitivization
     because they differ in causation type. -/
 theorem inactive_split_by_causation :
-    haan.stemClass = kim.stemClass ∧
-    verbTransitivization haan ≠ verbTransitivization kim := by
+    haanEat.stemClass = kim.stemClass ∧
+    verbTransitivization haanEat ≠ verbTransitivization kim := by
   exact ⟨rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════

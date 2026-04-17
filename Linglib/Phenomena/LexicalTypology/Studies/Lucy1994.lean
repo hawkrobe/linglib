@@ -1,4 +1,6 @@
 import Linglib.Fragments.Mayan.Yukatek.Operators
+import Linglib.Fragments.Mayan.Yukatek.VerbClasses
+import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
 
 /-!
 # Lucy 1994: The role of semantic value in lexical comparison
@@ -69,58 +71,115 @@ theorem class_depends_only_on_signature
 -- § 4. Predicted Class Agrees with Operator Orbit
 -- ════════════════════════════════════════════════════
 
+/-! Each of the four orbit characterisations follows the same
+    pattern: unfold the orbit and the named class predicates, then
+    case-split on the four B&K-G feature bits and let `simp_all`
+    discharge each cell of the 16-row truth table. The local macro
+    `lucy_orbit` packages this so the four theorems differ only in
+    which class label appears on the LHS. -/
+
+local macro "lucy_orbit " r:term : tactic =>
+  `(tactic|
+    (unfold predictedClass Root.predictedSalience classOfSignature
+       inventory Inventory.orbit
+       affectiveT zeroDeriv causativeS positionalTal
+       Root.isAgentSalient Root.isAgentPatientSalient
+       Root.isPatientSalient Root.isPositional
+       FeatureSignature.isAgentSalient FeatureSignature.isAgentPatientSalient
+       FeatureSignature.isPatientSalient FeatureSignature.isPositional
+       Root.featureSignature
+     simp only [List.filter_cons, List.filter_nil]
+     cases hs : ($r).hasState <;> cases hm : ($r).hasManner <;>
+       cases hr : ($r).hasResult <;> cases hc : ($r).hasCause <;> simp_all))
+
 /-- The `=t`-only orbit characterises agent-salient roots. -/
 theorem agent_iff_orbit_t (r : Root) :
     predictedClass r = some .agent ↔ inventory.orbit r = ["=t"] := by
-  unfold predictedClass classOfSignature inventory Inventory.orbit
-    affectiveT zeroDeriv causativeS positionalTal Root.featureSignature
-  simp only [List.filter_cons, List.filter_nil]
-  cases hs : r.hasState <;> cases hm : r.hasManner <;>
-    cases hr : r.hasResult <;> cases hc : r.hasCause <;> simp_all
+  lucy_orbit r
 
 /-- The `=∅`-only orbit characterises agent-patient salient roots. -/
 theorem agentPatient_iff_orbit_zero (r : Root) :
     predictedClass r = some .agentPatient ↔ inventory.orbit r = ["=∅"] := by
-  unfold predictedClass classOfSignature inventory Inventory.orbit
-    affectiveT zeroDeriv causativeS positionalTal Root.featureSignature
-  simp only [List.filter_cons, List.filter_nil]
-  cases hs : r.hasState <;> cases hm : r.hasManner <;>
-    cases hr : r.hasResult <;> cases hc : r.hasCause <;> simp_all
+  lucy_orbit r
 
 /-- The `=s`-only orbit characterises patient-salient roots. -/
 theorem patient_iff_orbit_s (r : Root) :
     predictedClass r = some .patient ↔ inventory.orbit r = ["=s"] := by
-  unfold predictedClass classOfSignature inventory Inventory.orbit
-    affectiveT zeroDeriv causativeS positionalTal Root.featureSignature
-  simp only [List.filter_cons, List.filter_nil]
-  cases hs : r.hasState <;> cases hm : r.hasManner <;>
-    cases hr : r.hasResult <;> cases hc : r.hasCause <;> simp_all
+  lucy_orbit r
 
 /-- The `-tal`-only orbit characterises positional roots. -/
 theorem positional_iff_orbit_tal (r : Root) :
     predictedClass r = some .positional ↔ inventory.orbit r = ["-tal"] := by
-  unfold predictedClass classOfSignature inventory Inventory.orbit
-    affectiveT zeroDeriv causativeS positionalTal Root.featureSignature
+  lucy_orbit r
+
+/-- An empty orbit characterises roots outside @cite{lucy-1994}'s
+    diagnostic gap (`(¬manner, ¬result)` rows that lack the positional
+    configuration `state ∧ ¬cause`). -/
+theorem none_iff_orbit_empty (r : Root) :
+    predictedClass r = none ↔ inventory.orbit r = [] := by
+  lucy_orbit r
+
+/-- **Orbit-as-classifier.** Two roots have the same operator orbit
+    under @cite{lucy-1994}'s diagnostic inventory iff they have the
+    same predicted salience class. The 4 named-class iff-theorems are
+    special cases. -/
+theorem orbit_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
+    inventory.orbit r₁ = inventory.orbit r₂ ↔
+      predictedClass r₁ = predictedClass r₂ := by
+  unfold predictedClass Root.predictedSalience classOfSignature
+    inventory Inventory.orbit
+    affectiveT zeroDeriv causativeS positionalTal
+    Root.isAgentSalient Root.isAgentPatientSalient
+    Root.isPatientSalient Root.isPositional
+    FeatureSignature.isAgentSalient FeatureSignature.isAgentPatientSalient
+    FeatureSignature.isPatientSalient FeatureSignature.isPositional
+    Root.featureSignature
   simp only [List.filter_cons, List.filter_nil]
-  cases hs : r.hasState <;> cases hm : r.hasManner <;>
-    cases hr : r.hasResult <;> cases hc : r.hasCause <;> simp_all
+  cases r₁.hasState <;> cases r₁.hasManner <;>
+    cases r₁.hasResult <;> cases r₁.hasCause <;>
+    cases r₂.hasState <;> cases r₂.hasManner <;>
+      cases r₂.hasResult <;> cases r₂.hasCause <;> simp_all
 
 -- ════════════════════════════════════════════════════
 -- § 5. Per-Root Sanity Checks
 -- ════════════════════════════════════════════════════
 
-theorem siit_agent : predictedClass siit = some .agent := rfl
+/-! Agent-salient. -/
+theorem siit_agent  : predictedClass siit  = some .agent := rfl
 theorem tziib_agent : predictedClass tziib = some .agent := rfl
+theorem miis_agent  : predictedClass miis  = some .agent := rfl
+theorem cheh_agent  : predictedClass cheh  = some .agent := rfl
+theorem paak_agent  : predictedClass paak  = some .agent := rfl
 
+/-! Agent-patient salient. -/
 theorem kuc_agentPatient : predictedClass kuc = some .agentPatient := rfl
 theorem pis_agentPatient : predictedClass pis = some .agentPatient := rfl
 theorem los_agentPatient : predictedClass los = some .agentPatient := rfl
 
-theorem kiim_patient : predictedClass kiim = some .patient := rfl
-theorem haan_patient : predictedClass haan = some .patient := rfl
-theorem luub_patient : predictedClass luub = some .patient := rfl
-theorem ok_patient : predictedClass ok = some .patient := rfl
+/-! Patient-salient. -/
+theorem kiim_patient      : predictedClass kiim      = some .patient := rfl
+theorem haanCease_patient : predictedClass haanCease = some .patient := rfl
+theorem luub_patient      : predictedClass luub      = some .patient := rfl
+theorem ok_patient        : predictedClass ok        = some .patient := rfl
+theorem ah_patient        : predictedClass ah        = some .patient := rfl
+theorem wen_patient       : predictedClass wen       = some .patient := rfl
+theorem siih_patient      : predictedClass siih      = some .patient := rfl
+theorem tuub_patient      : predictedClass tuub      = some .patient := rfl
+theorem kaah_patient      : predictedClass kaah      = some .patient := rfl
+theorem chuun_patient     : predictedClass chuun     = some .patient := rfl
+theorem chenCease_patient : predictedClass chenCease = some .patient := rfl
+theorem hoop_patient      : predictedClass hoop      = some .patient := rfl
+theorem heel_patient      : predictedClass heel      = some .patient := rfl
+theorem paat_patient      : predictedClass paat      = some .patient := rfl
 
+/-! Motion roots — pattern as patient-salient (Lucy's central point). -/
+theorem maan_patient : predictedClass maan = some .patient := rfl
+theorem taal_patient : predictedClass taal = some .patient := rfl
+theorem bin_patient  : predictedClass bin  = some .patient := rfl
+theorem naak_patient : predictedClass naak = some .patient := rfl
+theorem liik_patient : predictedClass liik = some .patient := rfl
+
+/-! Positional. -/
 theorem cin_positional : predictedClass cin = some .positional := rfl
 theorem kul_positional : predictedClass kul = some .positional := rfl
 
@@ -161,7 +220,8 @@ def closedPredictedClass (r : Root) : Option SalienceClass :=
     which case the positional arm is already excluded by `result`. -/
 theorem predictedClass_closure_invariant (r : Root) :
     closedPredictedClass r = predictedClass r := by
-  unfold closedPredictedClass predictedClass classOfSignature
+  unfold closedPredictedClass predictedClass Root.predictedSalience
+    classOfSignature
   rw [closedFeatureSignature_manner, closedFeatureSignature_result,
       closedFeatureSignature_cause, closedFeatureSignature_state_eq]
   rcases hm : r.featureSignature.manner with _ | _ <;>
@@ -169,5 +229,66 @@ theorem predictedClass_closure_invariant (r : Root) :
     rcases hc : r.featureSignature.cause with _ | _ <;>
     rcases hs : r.featureSignature.state with _ | _ <;>
     simp_all
+
+-- ════════════════════════════════════════════════════
+-- § 8. Bridge to Bohnemeyer's 5-Way Verb Stem Classes
+-- ════════════════════════════════════════════════════
+
+/-! @cite{bohnemeyer-2004} refines @cite{lucy-1994}'s 4-way salience
+    cut into a 5-way stem classification (`active`, `inactive`,
+    `inchoative`, `positional`, `transitiveActive`). The mapping is
+    `VerbStemClass.toSalienceClass` in `VerbClasses.lean`. The agent /
+    patient / agent-patient classes correspond one-to-one; Lucy's
+    `positional` covers both Bohnemeyer's `inchoative` and `positional`.
+
+    The per-root theorems below check that for each Yukatek root in
+    `Roots.lean`, Lucy's predicted class agrees with the Bohnemeyer
+    stem-class label converted via `toSalienceClass`. -/
+
+open Fragments.Mayan.Yukatek (VerbStemClass)
+
+/-- Agent-salient Lucy roots map to Bohnemeyer's `active` stem class. -/
+theorem siit_lucy_agrees_active :
+    predictedClass siit = some (VerbStemClass.active.toSalienceClass) := rfl
+
+theorem tziib_lucy_agrees_active :
+    predictedClass tziib = some (VerbStemClass.active.toSalienceClass) := rfl
+
+/-- Agent-patient salient Lucy roots map to Bohnemeyer's
+    `transitiveActive`. -/
+theorem kuc_lucy_agrees_transitiveActive :
+    predictedClass kuc =
+      some (VerbStemClass.transitiveActive.toSalienceClass) := rfl
+
+theorem pis_lucy_agrees_transitiveActive :
+    predictedClass pis =
+      some (VerbStemClass.transitiveActive.toSalienceClass) := rfl
+
+theorem los_lucy_agrees_transitiveActive :
+    predictedClass los =
+      some (VerbStemClass.transitiveActive.toSalienceClass) := rfl
+
+/-- Patient-salient Lucy roots map to Bohnemeyer's `inactive`. -/
+theorem kiim_lucy_agrees_inactive :
+    predictedClass kiim = some (VerbStemClass.inactive.toSalienceClass) := rfl
+
+theorem haanCease_lucy_agrees_inactive :
+    predictedClass haanCease = some (VerbStemClass.inactive.toSalienceClass) := rfl
+
+theorem luub_lucy_agrees_inactive :
+    predictedClass luub = some (VerbStemClass.inactive.toSalienceClass) := rfl
+
+theorem ok_lucy_agrees_inactive :
+    predictedClass ok = some (VerbStemClass.inactive.toSalienceClass) := rfl
+
+/-- Positional Lucy roots map to Bohnemeyer's `positional` (and would
+    equally map to `inchoative` per `inchoative_positional_collapse_under_lucy`). -/
+theorem cin_lucy_agrees_positional :
+    predictedClass cin =
+      some (VerbStemClass.positional.toSalienceClass) := rfl
+
+theorem kul_lucy_agrees_positional :
+    predictedClass kul =
+      some (VerbStemClass.positional.toSalienceClass) := rfl
 
 end Phenomena.LexicalTypology.Studies.Lucy1994

@@ -1,4 +1,5 @@
 import Linglib.Theories.Morphology.Derivation.Operator
+import Linglib.Theories.Semantics.Verb.Roots.SalienceClass
 import Linglib.Fragments.Mayan.Yukatek.Roots
 
 /-!
@@ -45,7 +46,7 @@ open Fragments.Mayan.Yukatek.Roots
     without inherent result. -/
 def affectiveT : DerivOp :=
   { name := "=t"
-  , applies := λ r => r.hasManner && !r.hasResult }
+  , applies := Root.isAgentSalient }
 
 /-- Zero derivation `=∅`: signals that the root is already lexically
     transitive — both an agent and a patient are salient in the
@@ -54,7 +55,7 @@ def affectiveT : DerivOp :=
     encode both manner (the action) and result (its effect). -/
 def zeroDeriv : DerivOp :=
   { name := "=∅"
-  , applies := λ r => r.hasManner && r.hasResult }
+  , applies := Root.isAgentPatientSalient }
 
 /-- Causative `=s`: forms a transitive stem from a *patient-salient*
     root by adding an agent argument. Per @cite{lucy-1994}, applies
@@ -63,7 +64,7 @@ def zeroDeriv : DerivOp :=
     result without specified manner. -/
 def causativeS : DerivOp :=
   { name := "=s"
-  , applies := λ r => r.hasResult && !r.hasManner }
+  , applies := Root.isPatientSalient }
 
 /-- Positional inchoative `-tal` (allomorph `-lah`): forms a positional stem from a
     *positional* root (a stative root denoting orientation, posture,
@@ -73,8 +74,7 @@ def causativeS : DerivOp :=
     result, or cause atoms. -/
 def positionalTal : DerivOp :=
   { name := "-tal"
-  , applies := λ r =>
-      r.hasState && !r.hasResult && !r.hasManner && !r.hasCause }
+  , applies := Root.isPositional }
 
 -- ════════════════════════════════════════════════════
 -- § 2. The Inventory

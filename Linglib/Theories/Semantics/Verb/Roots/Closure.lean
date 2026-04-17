@@ -8,25 +8,28 @@ import Linglib.Theories.Semantics.Verb.Roots.Typology
 `Root.entailments` is the *base* entailment set: atoms asserted directly
 by the lexicographer. But @cite{beavers-koontz-garboden-2020}'s typology
 treats roots as *networks* of entailments, where some atoms entail
-others. The transitive closure of the base under such network rules is
-the root's full entailment set.
+others. The closure of the base under such network rules is the root's
+full entailment set.
 
 This file provides:
 
 1. `EntailmentRules`: a function `LexEntailment → List LexEntailment`
    giving the atoms each premise atom directly entails.
-2. `closure`: one closure step (single inference). Iterating to a
-   fixpoint is unnecessary for the rules we currently codify because
-   none chains.
-3. `bkgRules`: the documented B&K-G rules. Currently a single rule:
+2. `closeOnce`: one closure step (single inference round).
+3. `closure`: alias for `closeOnce` — kept as the public API. For the
+   currently-codified rules a single step is a fixpoint
+   (`closure_bkgRules_idempotent`); if a chaining rule is added later,
+   redefine `closure` as `Nat.iterate closeOnce n` and re-prove
+   idempotence at the new bound.
+4. `bkgRules`: the documented B&K-G rules. Currently a single rule:
    `becomesState s ⇒ hasState s` (a change-of-state to `s` entails the
    resulting state attribution `s`).
-4. `Root.closedEntailments` and `Root.closedFeatureSignature`: the
+5. `Root.closedEntailments` and `Root.closedFeatureSignature`: the
    closure-derived counterparts of `entailments`/`featureSignature`.
 
 The infrastructure is designed so that adding a new B&K-G inference
 (e.g., `volitional ⇒ sentient`, `contact ⇒ motion`) is a one-line
-extension — no proofs need to be redone.
+extension to `bkgRules`.
 -/
 
 namespace Semantics.Verb.Roots
@@ -42,17 +45,15 @@ abbrev EntailmentRules := LexEntailment → List LexEntailment
     an atom in `atoms`. Result is `atoms` followed by all derived atoms.
     Duplicates are not removed (they are inert under `List.any` /
     `List.contains` queries used downstream). -/
-def closeStep (rules : EntailmentRules) (atoms : List LexEntailment) :
+def closeOnce (rules : EntailmentRules) (atoms : List LexEntailment) :
     List LexEntailment :=
   atoms ++ atoms.flatMap rules
 
-/-- The closure of `atoms` under `rules`. We iterate `closeStep` once;
-    rules in `bkgRules` are non-chaining so a single step suffices. If a
-    chain rule is later added, increase the iteration count and re-prove
-    `closure_idempotent`. -/
-def closure (rules : EntailmentRules) (atoms : List LexEntailment) :
-    List LexEntailment :=
-  closeStep rules atoms
+/-- Backwards-compatible alias for `closeOnce`. The currently-codified
+    `bkgRules` reach a fixpoint after one step (`closure_bkgRules_idempotent`).
+    If a chaining rule is added, redefine via `Nat.iterate closeOnce`. -/
+abbrev closure : EntailmentRules → List LexEntailment → List LexEntailment :=
+  closeOnce
 
 -- ════════════════════════════════════════════════════
 -- § 2. B&K-G Rules
@@ -72,9 +73,11 @@ def bkgRules : EntailmentRules
 /-- Every atom produced by `bkgRules` is a state-attribution. -/
 theorem bkgRules_only_state (a b : LexEntailment) (h : a ∈ bkgRules b) :
     a.isState = true := by
-  cases b <;> simp [bkgRules] at h
-  obtain rfl := h
-  rfl
+  match b, h with
+  | .becomesState _, h =>
+    rw [show bkgRules (.becomesState _) = [.hasState _] from rfl] at h
+    rcases List.mem_singleton.mp h with rfl
+    rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. Closed Entailments and Signature
@@ -107,7 +110,7 @@ end Root
 theorem closure_includes (rules : EntailmentRules)
     (atoms : List LexEntailment) (a : LexEntailment) (h : a ∈ atoms) :
     a ∈ closure rules atoms := by
-  unfold closure closeStep
+  unfold closure closeOnce
   exact List.mem_append_left _ h
 
 /-- Adding the closure step never makes `any p` go from `true` to
@@ -116,7 +119,7 @@ theorem closure_any_of_any (rules : EntailmentRules)
     (atoms : List LexEntailment) (p : LexEntailment → Bool)
     (h : atoms.any p = true) :
     (closure rules atoms).any p = true := by
-  unfold closure closeStep
+  unfold closure closeOnce
   rw [List.any_append, h, Bool.true_or]
 
 -- ════════════════════════════════════════════════════
@@ -137,31 +140,31 @@ private theorem flatMap_bkgRules_any_eq_false (atoms : List LexEntailment)
   simp [hp]
 
 /-- Closed and base signatures agree on `manner`. -/
-theorem closedFeatureSignature_manner (r : Root) :
+@[simp] theorem closedFeatureSignature_manner (r : Root) :
     r.closedFeatureSignature.manner = r.featureSignature.manner := by
   show r.closedEntailments.any LexEntailment.isManner =
     r.entailments.any LexEntailment.isManner
-  unfold Root.closedEntailments closure closeStep
+  unfold Root.closedEntailments closure closeOnce
   rw [List.any_append,
       flatMap_bkgRules_any_eq_false r.entailments _ (fun _ => rfl),
       Bool.or_false]
 
 /-- Closed and base signatures agree on `result`. -/
-theorem closedFeatureSignature_result (r : Root) :
+@[simp] theorem closedFeatureSignature_result (r : Root) :
     r.closedFeatureSignature.result = r.featureSignature.result := by
   show r.closedEntailments.any LexEntailment.isBecome =
     r.entailments.any LexEntailment.isBecome
-  unfold Root.closedEntailments closure closeStep
+  unfold Root.closedEntailments closure closeOnce
   rw [List.any_append,
       flatMap_bkgRules_any_eq_false r.entailments _ (fun _ => rfl),
       Bool.or_false]
 
 /-- Closed and base signatures agree on `cause`. -/
-theorem closedFeatureSignature_cause (r : Root) :
+@[simp] theorem closedFeatureSignature_cause (r : Root) :
     r.closedFeatureSignature.cause = r.featureSignature.cause := by
   show r.closedEntailments.any LexEntailment.isCause =
     r.entailments.any LexEntailment.isCause
-  unfold Root.closedEntailments closure closeStep
+  unfold Root.closedEntailments closure closeOnce
   rw [List.any_append,
       flatMap_bkgRules_any_eq_false r.entailments _ (fun _ => rfl),
       Bool.or_false]
@@ -180,7 +183,7 @@ theorem closedFeatureSignature_state_of_becomes (r : Root) (s : String)
     (h : LexEntailment.becomesState s ∈ r.entailments) :
     r.closedFeatureSignature.state = true := by
   show r.closedEntailments.any LexEntailment.isState = true
-  unfold Root.closedEntailments closure closeStep
+  unfold Root.closedEntailments closure closeOnce
   rw [List.any_append]
   apply Bool.or_eq_true_iff.mpr
   right
@@ -198,7 +201,7 @@ theorem closedFeatureSignature_state_eq (r : Root) :
   show r.closedEntailments.any LexEntailment.isState =
     (r.entailments.any LexEntailment.isState ||
       r.entailments.any LexEntailment.isBecome)
-  unfold Root.closedEntailments closure closeStep
+  unfold Root.closedEntailments closure closeOnce
   rw [List.any_append]
   congr 1
   -- (flatMap bkgRules).any isState = entailments.any isBecome
@@ -219,5 +222,51 @@ theorem closedFeatureSignature_state_eq (r : Root) :
     refine ⟨LexEntailment.hasState s, ?_, rfl⟩
     apply List.mem_flatMap.mpr
     exact ⟨LexEntailment.becomesState s, ha, by simp [bkgRules]⟩
+
+-- ════════════════════════════════════════════════════
+-- § 6. Idempotence of bkgRules
+-- ════════════════════════════════════════════════════
+
+/-- `bkgRules` produces nothing from a `hasState` atom (and similarly
+    nothing from any non-`becomesState` atom). -/
+theorem bkgRules_eq_nil_of_isState (a : LexEntailment) (h : a.isState = true) :
+    bkgRules a = [] := by
+  cases a <;> simp_all [bkgRules, LexEntailment.isState]
+
+/-- If every atom in `atoms` is a `hasState`, `flatMap bkgRules` is empty. -/
+theorem flatMap_bkgRules_eq_nil_of_all_isState (atoms : List LexEntailment)
+    (h : ∀ a ∈ atoms, a.isState = true) :
+    atoms.flatMap bkgRules = [] := by
+  induction atoms with
+  | nil => rfl
+  | cons a t ih =>
+    have ha : a.isState = true := h a List.mem_cons_self
+    have ht : ∀ x ∈ t, x.isState = true :=
+      fun x hx => h x (List.mem_cons_of_mem _ hx)
+    rw [List.flatMap_cons, bkgRules_eq_nil_of_isState a ha, List.nil_append,
+        ih ht]
+
+/-- After one `flatMap bkgRules`, every atom is a state-attribution, so a
+    further `flatMap bkgRules` produces nothing. -/
+theorem flatMap_bkgRules_flatMap_bkgRules_eq_nil
+    (atoms : List LexEntailment) :
+    (atoms.flatMap bkgRules).flatMap bkgRules = [] := by
+  apply flatMap_bkgRules_eq_nil_of_all_isState
+  intro a ha
+  rcases List.mem_flatMap.mp ha with ⟨b, _, hb⟩
+  exact bkgRules_only_state a b hb
+
+/-- `closeOnce bkgRules` is idempotent up to `List.any` queries — a
+    second application adds duplicate copies of state atoms, but no new
+    distinct atoms. This is the precise sense in which `closure := closeOnce`
+    suffices for the downstream `Root.closedFeatureSignature` API. -/
+theorem closure_bkgRules_any_idempotent (atoms : List LexEntailment)
+    (p : LexEntailment → Bool) :
+    (closure bkgRules (closure bkgRules atoms)).any p =
+      (closure bkgRules atoms).any p := by
+  unfold closure closeOnce
+  rw [List.flatMap_append, flatMap_bkgRules_flatMap_bkgRules_eq_nil,
+      List.append_nil]
+  simp only [List.any_append, Bool.or_assoc, Bool.or_self]
 
 end Semantics.Verb.Roots
