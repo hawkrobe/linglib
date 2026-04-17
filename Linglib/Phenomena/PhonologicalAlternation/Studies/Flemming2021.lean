@@ -1,5 +1,6 @@
 import Linglib.Core.Constraint.NoisyHG
 import Linglib.Core.Constraint.Separability
+import Linglib.Core.Constraint.System
 import Linglib.Core.Agent.GumbelLuce
 
 /-!
@@ -412,5 +413,42 @@ theorem schwaSchwa_hz (w : Fin 6 → ℝ) :
       (fun ctx => ∑ k : Fin 6, w k * (schwaDiff ctx k : ℝ))
       schwaSquareSchwa :=
   me_predicts_hz w _ schwaSquareSchwa schwaSchwa_independence
+
+-- ============================================================================
+-- § 9: Generic ConstraintSystem View of Table (45)
+-- ============================================================================
+
+/-! Flemming's three-candidate table-(45) MaxEnt model is a
+`ConstraintSystem Cand3 ℝ` decoded by `softmaxDecoder 1`. The key
+observation `H(b) = H(c) ⟹ predict b = predict c` is a property of
+*any* MaxEnt-style decoder: it depends only on the score equality and
+the symmetry of softmax. By contrast NHG and Normal MaxEnt distinguish
+b and c despite equal harmony (`table45_nhg_variance_differs`,
+`table45_nhg_covariance_nonzero`) — same `score`, different `decoder`,
+different `predict`. -/
+
+/-- Flemming's table-(45) MaxEnt grammar as a generic
+    `ConstraintSystem` over `Cand3`. -/
+private noncomputable def flemmingSystem : ConstraintSystem Cand3 ℝ :=
+  maxEntSystem Finset.univ table45C
+
+/-- The MaxEnt system assigns equal probability to candidates b and c,
+    matching `table45_maxent_equal_prob` but stated through the generic
+    `predict` API. The frame here makes the framework distinction
+    sharp: NHG (`argmax` after Gaussian noise on weights) and Normal
+    MaxEnt (`argmax` after Gaussian noise on candidates) would assign
+    different probabilities to b and c despite identical harmonies because
+    they differ only in `decoder`, not in `score`. -/
+theorem flemmingSystem_b_eq_c :
+    flemmingSystem.predict Cand3.b = flemmingSystem.predict Cand3.c :=
+  ConstraintSystem.predict_softmax_eq_of_score_eq _ rfl
+    (Finset.mem_univ _) (Finset.mem_univ _)
+    ((harmonyScoreR_eq_iff_harmonyScore_eq _ _ _).mpr table45_equal_harmony)
+
+/-- The MaxEnt system on `Cand3` is a probability distribution. -/
+theorem flemmingSystem_isProb :
+    ∑ x : Cand3, flemmingSystem.predict x = 1 :=
+  ConstraintSystem.predict_softmax_isProb _ rfl
+    ⟨.a, Finset.mem_univ _⟩
 
 end Flemming2021

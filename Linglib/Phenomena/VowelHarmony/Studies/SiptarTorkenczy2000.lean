@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Harmony.OT
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.System
 import Linglib.Fragments.Hungarian.VowelHarmony
 
 /-!
@@ -177,5 +177,43 @@ theorem papír_ot_matches_direct :
       = {⟨[a_vowel, i_vowel], [archiphoneU],
           spreadSuffix hungarianPalatalHarmony true [archiphoneU]⟩} := by
   native_decide
+
+-- ============================================================================
+-- § 9: Generic ConstraintSystem Predictions
+-- ============================================================================
+
+/-! Hungarian vowel harmony as a generic `ConstraintSystem` via `tableauSystem`.
+The same softmax-based phonology studies in this directory and the OT studies
+here both expose `predict : Cand → ℝ`; for the deterministic OT case,
+`predict winner = 1` and `predict loser = 0`. -/
+
+section PredictAPI
+open Core.Constraint
+
+/-- *ház* SPREAD ≫ IDENT tableau as a generic `ConstraintSystem`. -/
+noncomputable def házSystem : ConstraintSystem VHCandidate (LexProfile Nat 2) :=
+  tableauSystem (mkTableau házCands spreadDominant házCands_ne)
+
+/-- The OT prediction lifts to a probability claim: under SPREAD ≫ IDENT,
+    the back-harmonized candidate is assigned probability 1. -/
+theorem házSystem_predict_back :
+    házSystem.predict ház_back = 1 :=
+  tableauSystem_predict_unique_winner _ _ ház_back_optimal
+
+/-- And the faithful loser is assigned probability 0. -/
+theorem házSystem_predict_faithful_zero :
+    házSystem.predict ház_faithful = 0 :=
+  tableauSystem_predict_loser _ _ _
+    (by unfold ház_faithful ház_back; decide) ház_back_optimal
+
+/-- *tűz* under SPREAD ≫ IDENT: front-harmonized winner gets probability 1. -/
+noncomputable def tűzSystem : ConstraintSystem VHCandidate (LexProfile Nat 2) :=
+  tableauSystem (mkTableau tűzCands spreadDominant tűzCands_ne)
+
+theorem tűzSystem_predict_front :
+    tűzSystem.predict tűz_front = 1 :=
+  tableauSystem_predict_unique_winner _ _ tűz_front_optimal
+
+end PredictAPI
 
 end SiptarTorkenczy2000

@@ -1,4 +1,6 @@
 import Linglib.Core.Constraint.MaxEnt
+import Linglib.Core.Constraint.System
+import Linglib.Core.Constraint.Variation
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Fragments.Farsi.Phonology
 
@@ -218,5 +220,47 @@ theorem joint_not_separable :
   refine ⟨diverseTuple, homophonousTuple, ?_, ?_⟩
   · rfl
   · native_decide
+
+-- ============================================================================
+-- § 7: Generic ConstraintSystem Predictions (per-input MaxEnt)
+-- ============================================================================
+
+/-! At each input, the classical MaxEnt model is a `ConstraintSystem
+HiatusOutput ℝ`: candidates = `Finset.univ`, score = harmony, decoder =
+`softmaxDecoder 1`. This is the same `ConstraintSystem` API used by
+`HayesWilson2008.onsetSystem` — different domain, identical scaffolding.
+
+The systemic-constraint (\*HOMOPHONY) story in §§3–6 sits *above* this
+per-input view: it couples the per-input distributions into a joint
+distribution on `Fin 4 → HiatusOutput`. With zero systemic weight, the
+joint factorises and each marginal equals the per-input
+`predict`. -/
+
+/-- The classical MaxEnt distribution at input `i`, packaged as a generic
+    `ConstraintSystem`. Score = `harmonyScoreR classicalConstraints (i, ·)`,
+    decoder = `softmaxDecoder 1`. -/
+noncomputable def stormeSystem (i : HiatusInput) : ConstraintSystem HiatusOutput ℝ where
+  candidates := Finset.univ
+  score := fun o => harmonyScoreR classicalConstraints (i, o)
+  decoder := softmaxDecoder 1
+
+/-- For input /æ.ɑ/, the system predicts a higher MaxEnt probability for
+    epenthesis (cost −1) than for deleteV1 (cost −2). This is a comparison
+    of *actual* softmax probabilities (numerator / partition function over
+    all 5 outputs), not just exponentiated harmonies. -/
+theorem stormeSystem_epenthesis_gt_deleteV1 :
+    (stormeSystem .ae_ah).predict HiatusOutput.deleteV1 <
+    (stormeSystem .ae_ah).predict HiatusOutput.epenthesis :=
+  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
+    (Finset.mem_univ _) (Finset.mem_univ _)
+    (harmonyScoreR_lt_of_moreProbable (by native_decide :
+      moreProbable classicalConstraints (.ae_ah, .epenthesis) (.ae_ah, .deleteV1)))
+
+/-- The classical Persian system at /æ.ɑ/ is a probability distribution
+    over `HiatusOutput`. Follows from the generic `softmaxDecoder_isProb`. -/
+theorem stormeSystem_isProb (i : HiatusInput) :
+    ∑ o : HiatusOutput, (stormeSystem i).predict o = 1 :=
+  ConstraintSystem.predict_softmax_isProb _ rfl
+    ⟨.faithful, Finset.mem_univ _⟩
 
 end Storme2026

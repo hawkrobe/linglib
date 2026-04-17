@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Discourse.AtIssueness
-import Linglib.Core.Discourse.CoherenceRelation
+import Linglib.Core.Discourse.Coherence
 
 /-!
 # Core.InformationStructure
@@ -230,7 +230,7 @@ inductive PolaritySwitchContext where
   | correction
   deriving DecidableEq, Repr
 
-open Core.Discourse.CoherenceRelation in
+open Core.Discourse.Coherence in
 /-- Bridge from polarity-switch contexts to discourse coherence relations.
     @cite{umbach-2004} §3: the contrast/correction distinction in information
     structure corresponds directly to two distinct resemblance relations
@@ -348,7 +348,7 @@ inductive ExclusionVariety where
   | substitution
   deriving DecidableEq, Repr
 
-open Core.Discourse.CoherenceRelation in
+open Core.Discourse.Coherence in
 /-- Bridge from exclusion variety to discourse coherence relation.
     @cite{umbach-2004} §3.2: the information-structural exclusion type
     determines which discourse relation holds. -/
@@ -467,4 +467,4 @@ structure Core.Discourse.DiscourseContext (M : Type*) where
   /-- Discourse status of the current expression -/
   status : Core.InformationStructure.DiscourseStatus
   /-- Coherence relation to the preceding discourse unit, if any -/
-  coherence : Option Core.Discourse.CoherenceRelation.CoherenceRelation := none
+  coherence : Option Core.Discourse.Coherence.CoherenceRelation := none

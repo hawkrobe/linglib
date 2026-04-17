@@ -1,5 +1,6 @@
 import Linglib.Core.Logic.OT
 import Mathlib.Data.Real.Basic
+import Mathlib.Data.Rat.Cast.Order
 
 /-!
 # Weighted Constraints — Generic Foundation
@@ -47,5 +48,35 @@ def harmonyScore {C : Type} (constraints : List (WeightedConstraint C)) (c : C) 
 noncomputable def harmonyScoreR {C : Type}
     (constraints : List (WeightedConstraint C)) (c : C) : ℝ :=
   (harmonyScore constraints c : ℝ)
+
+-- ============================================================================
+-- § 2: ℚ ↔ ℝ Cast Lemmas
+-- ============================================================================
+
+/-! `harmonyScoreR` is just `(harmonyScore : ℝ)`. The lemmas below let
+study files state ranking facts in the computable ℚ world (where
+`native_decide`/`decide` work) and lift them to the ℝ world where the
+softmax / `predict` API lives, without writing the
+`show (harmonyScore _ : ℝ) < … from by exact_mod_cast …` boilerplate. -/
+
+/-- The defining cast equation for `harmonyScoreR`: it is just the
+    real-valued cast of `harmonyScore`. -/
+theorem harmonyScoreR_eq_cast {C : Type}
+    (constraints : List (WeightedConstraint C)) (c : C) :
+    harmonyScoreR constraints c = (harmonyScore constraints c : ℝ) := rfl
+
+/-- `<` lifts from ℚ-valued `harmonyScore` to ℝ-valued `harmonyScoreR`. -/
+theorem harmonyScoreR_lt_iff_harmonyScore_lt {C : Type}
+    (constraints : List (WeightedConstraint C)) (a b : C) :
+    harmonyScoreR constraints a < harmonyScoreR constraints b ↔
+    harmonyScore constraints a < harmonyScore constraints b := by
+  unfold harmonyScoreR; exact Rat.cast_lt (K := ℝ)
+
+/-- `=` lifts from ℚ-valued `harmonyScore` to ℝ-valued `harmonyScoreR`. -/
+theorem harmonyScoreR_eq_iff_harmonyScore_eq {C : Type}
+    (constraints : List (WeightedConstraint C)) (a b : C) :
+    harmonyScoreR constraints a = harmonyScoreR constraints b ↔
+    harmonyScore constraints a = harmonyScore constraints b := by
+  unfold harmonyScoreR; exact (Rat.cast_injective (α := ℝ)).eq_iff
 
 end Core.Constraint

@@ -1,6 +1,7 @@
 import Linglib.Theories.Phonology.OptimalParadigms
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.Syllable.Defs
+import Linglib.Core.Constraint.System
 
 /-!
 # Marco & Rasin (2026): Optimal Paradigms — A Challenge from JTA
@@ -336,5 +337,72 @@ theorem adjTemplateCands_ne : adjTemplateCands ≠ [] := by simp [adjTemplateCan
 theorem template_correct_adjectives :
     (mkTableau adjTemplateCands (templateRanking .adj) adjTemplateCands_ne).optimal =
       {mkP [.medial, .medial, .medial] aSuf} := by decide
+
+-- ============================================================================
+-- § 10: Generic ConstraintSystem Predictions
+-- ============================================================================
+
+/-! Each unique-winner tableau lifts to a generic `ConstraintSystem` via
+`tableauSystem`. For McCarthy's OP ranking this exposes the correct
+predictions for verbs and nouns, and the *wrong* prediction for adjectives —
+the empirical content of @cite{marco-rasin-2026}'s argument. -/
+
+section PredictAPI
+open Core.Constraint
+
+/-- Verbal paradigm under McCarthy's OP ranking. -/
+noncomputable def verbSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=
+  tableauSystem (mkTableau verbCands mccarthyRanking verbCands_ne)
+
+/-- OP correctly predicts the attested bare-medial verbal paradigm (10a). -/
+theorem verbSystem_predict_vA : verbSystem.predict vA = 1 :=
+  tableauSystem_predict_unique_winner _ _ op_correct_verbs
+
+/-- Nominal paradigm under McCarthy's OP ranking. -/
+noncomputable def nounSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=
+  tableauSystem (mkTableau nounCands mccarthyRanking nounCands_ne)
+
+/-- OP correctly predicts CəCC for nouns when C₂ > C₃. -/
+theorem nounSystem_predict_nI : nounSystem.predict nI = 1 :=
+  tableauSystem_predict_unique_winner _ _ op_correct_nouns
+
+/-- Adjectival paradigm under McCarthy's OP ranking. The probability-1
+    prediction here is the *wrong* uniform-initial paradigm — the formal
+    content of @cite{marco-rasin-2026}'s challenge. -/
+noncomputable def adjSystem : ConstraintSystem (List JTAForm) (LexProfile Nat 4) :=
+  tableauSystem (mkTableau adjCands mccarthyRanking adjCands_ne)
+
+/-- OP wrongly assigns probability 1 to the uniform-initial adjective
+    paradigm. The attested CCəC pattern receives probability 0 — the
+    formal sharpening of "OP fails for adjectives." -/
+theorem adjSystem_predict_OPpred : adjSystem.predict adjOPpred = 1 :=
+  tableauSystem_predict_unique_winner _ _ op_wrong_adjectives
+
+/-- Loser side: the attested adjective paradigm gets probability 0. -/
+theorem adjSystem_predict_attested_zero :
+    adjSystem.predict adjAttested = 0 :=
+  tableauSystem_predict_loser _ _ _
+    (by unfold adjAttested adjOPpred mkP; decide) op_wrong_adjectives
+
+/-- Verbal paradigm under the category-specific template ranking. -/
+noncomputable def verbTemplateSystem :
+    ConstraintSystem (List JTAForm) (LexProfile Nat 2) :=
+  tableauSystem (mkTableau verbTemplateCands (templateRanking .verb) verbTemplateCands_ne)
+
+theorem verbTemplateSystem_predict_unifM :
+    verbTemplateSystem.predict verbUnifM = 1 :=
+  tableauSystem_predict_unique_winner _ _ template_correct_verbs
+
+/-- Adjectival paradigm under the category-specific template ranking —
+    now correctly predicting the attested medial pattern with probability 1. -/
+noncomputable def adjTemplateSystem :
+    ConstraintSystem (List JTAForm) (LexProfile Nat 2) :=
+  tableauSystem (mkTableau adjTemplateCands (templateRanking .adj) adjTemplateCands_ne)
+
+theorem adjTemplateSystem_predict_medial :
+    adjTemplateSystem.predict (mkP [.medial, .medial, .medial] aSuf) = 1 :=
+  tableauSystem_predict_unique_winner _ _ template_correct_adjectives
+
+end PredictAPI
 
 end MarcoRasin2026

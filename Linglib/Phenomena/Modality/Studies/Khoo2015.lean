@@ -6,7 +6,7 @@ import Linglib.Theories.Semantics.Dynamic.Epistemic.Basic
 Empirical data from Khoo's experiment on epistemic modal disagreements.
 The key finding: speakers reject might-claims (high rejection rating)
 without judging them false (low falsity rating). This dissociation
-between rejection and falsity judgments is predicted by @cite{rudin-2025}'s
+between rejection and falsity judgments is predicted by @cite{rudin-2025a}'s
 Neo-Stalnakerian Framework, which derives it from the fact that truth
 depends on the *assertor's* information while rejection depends on the
 *rejector's* information.

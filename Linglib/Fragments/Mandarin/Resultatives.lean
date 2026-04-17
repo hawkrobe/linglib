@@ -22,7 +22,7 @@ dǎo 倒, wán 完, hǎo 好, diào 掉, zhù 住.
 
 - `Theories.Semantics.Causation.Resultatives`: `ResultativeRealization`,
   `ResultOrientation`, `PhaseComplement`, `CoSType`
-- `Phenomena.Constructions.Resultatives.Studies.Tay2024`: thesis-specific
+- `Tay2024`: thesis-specific
   theorems and analysis that import this Fragment
 -/
 

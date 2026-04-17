@@ -1,7 +1,7 @@
 import Linglib.Theories.Phonology.Syllable.Defs
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.Doubling
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.System
 
 /-!
 # Berent (2026) @cite{berent-2026}
@@ -171,5 +171,39 @@ theorem amodal_doubling_reversal :
     (mkTableau morphCandidates morphRanking).optimal
       = {DoublingParse.reduplication} :=
   doubling_reversal
+
+-- ============================================================================
+-- § 4: Generic ConstraintSystem Predictions
+-- ============================================================================
+
+/-! Both doubling tableaux lift to generic `ConstraintSystem`s via
+`tableauSystem`. The phonology--morphology reversal then becomes a
+probability-1 reversal: the same OCP-XX assigns probability 1 to
+`.nonidentical` in phonological contexts and to `.reduplication` in
+morphological contexts. -/
+
+section PredictAPI
+open Core.Constraint
+
+/-- Phonological-context tableau as a generic `ConstraintSystem`. -/
+noncomputable def phonSystem : ConstraintSystem DoublingParse (LexProfile Nat 2) :=
+  tableauSystem (mkTableau phonCandidates phonRanking)
+
+/-- In phonological contexts, `.nonidentical` has probability 1. -/
+theorem phonSystem_predict_nonidentical :
+    phonSystem.predict DoublingParse.nonidentical = 1 :=
+  tableauSystem_predict_unique_winner _ _ phon_prefers_XY
+
+/-- Morphological-context tableau as a generic `ConstraintSystem`. -/
+noncomputable def morphSystem : ConstraintSystem DoublingParse (LexProfile Nat 3) :=
+  tableauSystem (mkTableau morphCandidates morphRanking)
+
+/-- In morphological contexts where reduplication is available,
+    `.reduplication` has probability 1. -/
+theorem morphSystem_predict_reduplication :
+    morphSystem.predict DoublingParse.reduplication = 1 :=
+  tableauSystem_predict_unique_winner _ _ morph_prefers_reduplication
+
+end PredictAPI
 
 end Berent2026

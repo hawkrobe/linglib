@@ -1,6 +1,6 @@
 import Linglib.Core.Case
 import Linglib.Theories.Morphology.CaseContainment
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.System
 import Linglib.Theories.Phonology.Syllable.Foot
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Phonology.StratalOT
@@ -815,5 +815,45 @@ theorem telugu_cl_conservation (o n c : Segment) :
     σ.moraCount = (spreadToFill σ_del stranded .left).moraCount := rfl
 
 end MoraicCLConnection
+
+-- ============================================================================
+-- § 10: Generic ConstraintSystem Predictions
+-- ============================================================================
+
+/-! All three Telugu OT tableaux lift to generic `ConstraintSystem`s via
+`tableauSystem`. The Stratal-OT derivation of the weak alternation
+becomes a probability-1 claim per stratum. -/
+
+section PredictAPI
+open Core.Constraint
+
+/-- Stem-level metrical parse tableau as a generic `ConstraintSystem`. -/
+noncomputable def stemSystem : ConstraintSystem StemCandidate (LexProfile Nat 3) :=
+  tableauSystem (mkTableau stemCandidates stemRanking stemCandidates_ne)
+
+/-- Probability 1 on (LL)(H): two well-formed moraic trochees. -/
+theorem stemSystem_predict_ll_H :
+    stemSystem.predict StemCandidate.ll_H = 1 :=
+  tableauSystem_predict_unique_winner _ _ stem_optimal
+
+/-- Word-level NOM tableau as a generic `ConstraintSystem`. -/
+noncomputable def wordNomSystem : ConstraintSystem WordCandNom (LexProfile Nat 6) :=
+  tableauSystem (mkTableau wordNomCands wordNomRanking wordNomCands_ne)
+
+/-- Probability 1 on `deleteNi`: PrWd-final stressed *-ni* is deleted. -/
+theorem wordNomSystem_predict_deleteNi :
+    wordNomSystem.predict WordCandNom.deleteNi = 1 :=
+  tableauSystem_predict_unique_winner _ _ wordNom_optimal
+
+/-- Word-level DAT tableau as a generic `ConstraintSystem`. -/
+noncomputable def wordDatSystem : ConstraintSystem WordCandDat (LexProfile Nat 6) :=
+  tableauSystem (mkTableau wordDatCands wordDatRanking wordDatCands_ne)
+
+/-- Probability 1 on `compLengthen`: /m/ deletion + CL yields *-āni*. -/
+theorem wordDatSystem_predict_compLengthen :
+    wordDatSystem.predict WordCandDat.compLengthen = 1 :=
+  tableauSystem_predict_unique_winner _ _ wordDat_optimal
+
+end PredictAPI
 
 end Aitha2026

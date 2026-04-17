@@ -19,7 +19,7 @@ core properties (R-pronominalization, complement types).
 ## Cross-references
 
 - `Fragments.Dutch.TemporalConnectives`: *tot* as temporal connective
-- `Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995`: particles as P heads
+- `Dendikken1995`: particles as P heads
 -/
 
 namespace Fragments.Dutch.Adpositions

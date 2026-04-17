@@ -1464,6 +1464,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
 import Linglib.Theories.Processing.CueBasedRetrieval.Basic
 import Linglib.Theories.Processing.MemorySurprisal.Basic
+import Linglib.Theories.Processing.PredictiveUncertainty.Generalised
 import Linglib.Theories.Syntax.DependencyGrammar.Coordination
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC

@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.System
 import Linglib.Theories.Phonology.Correspondence
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Fragments.Akan.Phonology
@@ -485,5 +485,48 @@ theorem akan_over_identIO_grounded :
     seg_tc.hasValue Feature.coronal true = true := ⟨by native_decide, by native_decide⟩
 
 end AkanGrounding
+
+-- ============================================================================
+-- § 6: Generic ConstraintSystem Predictions
+-- ============================================================================
+
+/-! Each tableau lifts to a generic `ConstraintSystem` via `tableauSystem`.
+For these deterministic OT analyses, the unique-winner pattern collapses
+the `argminDecoder` distribution to probability 1 on the winner. -/
+
+section PredictAPI
+open Core.Constraint
+
+/-- Javanese overapplication tableau as a generic `ConstraintSystem`. -/
+noncomputable def javaneseSystem : ConstraintSystem JavaneseCand (LexProfile Nat 3) :=
+  tableauSystem (mkTableau javCandidates javRanking javCandidates_ne)
+
+/-- The OT prediction lifts: the overapplicational candidate is assigned
+    probability 1 under IDENT-BR, *VhV >> MAX-IO. -/
+theorem javaneseSystem_predict_over :
+    javaneseSystem.predict JavaneseCand.over = 1 :=
+  tableauSystem_predict_unique_winner _ _ javanese_overapplication
+
+/-- Balangao emergence-of-the-unmarked tableau as a generic `ConstraintSystem`. -/
+noncomputable def balangaoSystem : ConstraintSystem BalangaoCand (LexProfile Nat 3) :=
+  tableauSystem (mkTableau balCandidates balRanking balCandidates_ne)
+
+/-- The OT prediction lifts: the partial-reduplicant candidate is assigned
+    probability 1 under MAX-IO >> NO-CODA >> MAX-BR. -/
+theorem balangaoSystem_predict_partial :
+    balangaoSystem.predict BalangaoCand.partialRedup = 1 :=
+  tableauSystem_predict_unique_winner _ _ balangao_emergence_unmarked
+
+/-- Akan underapplication tableau as a generic `ConstraintSystem`. -/
+noncomputable def akanSystem : ConstraintSystem AkanCand (LexProfile Nat 4) :=
+  tableauSystem (mkTableau akanCandidates akanRanking akanCandidates_ne)
+
+/-- The OT prediction lifts: the underapplicational candidate is assigned
+    probability 1 under OCP(+cor) >> IDENT-BR(−cor) >> PAL >> IDENT-IO(−cor). -/
+theorem akanSystem_predict_under :
+    akanSystem.predict AkanCand.under = 1 :=
+  tableauSystem_predict_unique_winner _ _ akan_underapplication
+
+end PredictAPI
 
 end McCarthyPrince1995

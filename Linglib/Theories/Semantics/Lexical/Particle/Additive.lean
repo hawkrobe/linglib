@@ -14,7 +14,7 @@ Felicity conditions for additive particles following @cite{thomas-2026}
   Traditional focus particle semantics (EVEN, only). @cite{thomas-2026} §6
   argues that Def. 64 subsumes @cite{heim-1992}'s individual-based
   presupposition as a special case of the standard focus-alternative use.
-- `Phenomena.Focus.AdditiveParticles.Studies.Ahn2015`: Ahn's ⊓/⊔ Boolean
+- `Ahn2015`: Ahn's ⊓/⊔ Boolean
   semantics for too/either. Independent analysis; Thomas does not discuss it.
 - `ProbabilisticAnswerhood`: Core definitions (Defs. 61–63) used here.
 

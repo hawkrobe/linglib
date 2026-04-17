@@ -33,7 +33,7 @@ similarity+dissimilarity but no exclusion.
 
 -/
 
-namespace Core.Discourse.CoherenceRelation
+namespace Core.Discourse.Coherence
 
 -- ════════════════════════════════════════════════════
 -- § 1. Coherence Classes (@cite{kehler-2002})
@@ -174,4 +174,4 @@ theorem contrast_correction_same_class :
 theorem contrast_ne_correction :
     CoherenceRelation.contrast ≠ CoherenceRelation.correction := by decide
 
-end Core.Discourse.CoherenceRelation
+end Core.Discourse.Coherence

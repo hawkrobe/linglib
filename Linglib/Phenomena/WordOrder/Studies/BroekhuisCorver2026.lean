@@ -40,7 +40,7 @@ not whether F is overt. See `MovedConstituent`.
 - `Core.Path.PathShape`: bounded/unbounded/source classification
 - `Theories.Semantics.Events.SpatialTrace`: PathShape → telicity
 - `Phenomena.AuxiliaryVerbs.Selection`: Dutch *zijn*/*hebben* split
-- `Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995`: particles as P heads
+- `Dendikken1995`: particles as P heads
 - `Core.WALS.Features.F85A`: cross-linguistic adposition order
 -/
 
@@ -319,7 +319,7 @@ theorem af_only_intransitive :
 /-- @cite{dendikken-1995} PVC predicate category is P — matching
     the category of intransitive adpositions in the fragment. -/
 theorem pvc_predCat_is_P :
-    Phenomena.Constructions.ParticleVerbs.Studies.Dendikken1995.pvc_pred_is_P
+    Dendikken1995.pvc_pred_is_P
       Phenomena.Constructions.ParticleVerbs.pick_up 0 1 = rfl := rfl
 
 -- ════════════════════════════════════════════════════

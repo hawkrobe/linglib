@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mwaghavul.Basic
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.System
 import Linglib.Theories.Semantics.Lexical.Expressives.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
@@ -884,5 +884,42 @@ theorem t26_winner_basemap_faithful :
       (t26d.redOutput.map OutputTBU.tone ++ t26d.baseOutput.map OutputTBU.tone)
       [.M, .M, .H, .H] = 0 := by
   native_decide
+
+-- ============================================================================
+-- S 16: Generic ConstraintSystem Predictions
+-- ============================================================================
+
+/-! Each Mwaghavul tableau lifts to a generic `ConstraintSystem` via
+`tableauSystem`. The deterministic OT winner gets probability 1
+under the `argminDecoder`. -/
+
+section PredictAPI
+open Core.Constraint
+
+/-- Tableau (24) as a generic `ConstraintSystem`. -/
+noncomputable def t24System : ConstraintSystem SingleCand (LexProfile Nat 3) :=
+  tableauSystem (mkTableau t24_candidates t24_ranking)
+
+/-- Probability 1 on (24e): M on every TBU of wùlàʃ. -/
+theorem t24System_predict_e : t24System.predict t24e = 1 :=
+  tableauSystem_predict_unique_winner _ _ t24_optimal
+
+/-- Tableau (25) as a generic `ConstraintSystem`. -/
+noncomputable def t25System : ConstraintSystem SingleCand (LexProfile Nat 5) :=
+  tableauSystem (mkTableau t25_candidates t25_ranking)
+
+/-- Probability 1 on (25e): M-on-nonfinal, H-on-final for háŋláyáp. -/
+theorem t25System_predict_e : t25System.predict t25e = 1 :=
+  tableauSystem_predict_unique_winner _ _ t25_optimal
+
+/-- Tableau (26) (pluractional) as a generic `ConstraintSystem`. -/
+noncomputable def t26System : ConstraintSystem PlurCand (LexProfile Nat 5) :=
+  tableauSystem (mkTableau t26_candidates t26_ranking)
+
+/-- Probability 1 on (26d): M-on-reduplicant, H-on-base for jàlpàt. -/
+theorem t26System_predict_d : t26System.predict t26d = 1 :=
+  tableauSystem_predict_unique_winner _ _ t26_optimal
+
+end PredictAPI
 
 end AkinboFwangwar2026

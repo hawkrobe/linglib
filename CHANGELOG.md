@@ -1,5 +1,41 @@
 # Changelog
 
+## [0.229.854] - 2026-04-17
+
+### Added
+- **ℚ↔ℝ cast helpers in `Core/Constraint/Weighted.lean`** — `harmonyScoreR_eq_cast`, `harmonyScoreR_lt_iff_harmonyScore_lt`, `harmonyScoreR_eq_iff_harmonyScore_eq`. Erases the `show (harmonyScore _ : ℝ) < … ; exact_mod_cast …` boilerplate that appeared in five MaxEnt study files for crossing between the computable ℚ-level harmony and the ℝ-level `predict` API.
+- **`harmonyScoreR_lt_of_moreProbable` bridge in `Core/Constraint/Variation.lean`** — takes a `moreProbable` (ℚ-level, `native_decide`-able) and produces the ℝ-level `harmonyScoreR b < harmonyScoreR a` needed by `predict_softmax_lt_of_score_lt`. Lets the two layers compose without manual cast manipulation.
+- **`ConstraintSystem.predict_softmax_eq_of_score_eq`** in `Core/Constraint/System.lean` — softmax equality counterpart to `predict_softmax_lt_of_score_lt`. Used by Flemming2021's b/c equiprobability theorem.
+
+### Changed
+- **All 5 MaxEnt study files now compose cleanly through the new bridges.** `flemmingSystem_b_eq_c` collapses to a single `predict_softmax_eq_of_score_eq` delegation (was a multi-step `rw` chain through cast lemmas). `predict_k_gt_ŋ` and `predict_ŋ_gt_rk` (HayesWilson2008) and `stormeSystem_*_gt_*` (Storme2026) consume `moreProbable` via the new bridge instead of unfolding `harmonyScoreR` by hand.
+- Added `Linglib.Core.Constraint.Variation` import to `HayesWilson2008` and `Storme2026` (previously transitive only through `MaxEnt`/`OTLimit`).
+
+## [0.229.853] - 2026-04-16
+
+### Added
+- **`Theories/Processing/PredictiveUncertainty/Generalised.lean`** — real-valued backbone for @cite{giulianelli-etal-2026}. Introduces `LangModel Voc` as a Markov kernel `List Voc → FinitePMF (Option Voc)` (none = EOS), `LangModel.surprisal` (= −log p(w | c) in nats), and `genSurprisal lm warp score c w` per the paper's Eq. 3. The reduction theorem `standardSurprisal_denotes_surprisal` proves that `Core.GeneralisedSurprisal.standardSurprisal`'s enum tags, denoted via `WarpingFn.denote`, collapse `genSurprisal` to classical surprisal — so the enum config in `Core.GeneralisedSurprisal` is no longer stipulative. `informationValue1` plus `informationValue1_eq_genSurprisal` records IAS at horizon 1 as the (warp = id, score = distance) instantiation.
+
+### Changed
+- **GiulianelliEtAl2026 study file** — fixed implicit hallucination that `selfPacedRT` had an s-shaped layer pattern in the Natural Stories dataset (the paper's §5.2 explicitly says it declines). Renamed `layerPattern` → `layerPatternAligned` and added `naturalStoriesSPRT_layerDeclines` flag for the Natural Stories finding. Added a "Where the formal content lives" section to the docstring pointing at the new reduction theorem.
+
+## [0.229.851] - 2026-04-16
+
+### Added
+- **MaxEnt prediction lemmas in `Core/Constraint/System.lean`** (dual of 0.229.845's `tableauSystem_*` for OT):
+  - `ConstraintSystem.predict_softmax_of_mem` — closed-form `exp(α · score(c)) / Σ exp(α · score(c'))` for in-set candidates
+  - `ConstraintSystem.predict_softmax_lt_of_score_lt` — softmax monotonicity (α > 0): higher score ⇒ higher predicted probability
+  - `ConstraintSystem.predict_softmax_isProb` — sums to 1 over the non-empty candidate set, delegating to `softmaxDecoder_isProb`
+  - All three keyed on `hd : s.decoder = softmaxDecoder α`, which is `rfl` for systems built via `maxEntSystem` or the explicit-record pattern study files use.
+
+### Changed
+- **Refactored 5 MaxEnt study files** to use the new lemmas — each ranking proof collapses from ~8 lines of `softmaxDecoder` / `div_lt_div_iff` / `Real.exp_lt_exp` boilerplate to one delegation:
+  - `Phenomena/PhonologicalAlternation/Studies/AfkirZellou2025.lean` (Tarifit schwa intrusion)
+  - `Phenomena/PhonologicalAlternation/Studies/Storme2026.lean` (Persian hiatus)
+  - `Phenomena/PhonologicalAlternation/Studies/CoetzeePater2011.lean` (AAVE t/d-deletion)
+  - `Phenomena/PhonologicalAlternation/Studies/Flemming2021.lean` (independence-of-irrelevant-alternatives, equality case)
+  - `Phenomena/Phonotactics/Studies/HayesWilson2008.lean` (English onset gradient)
+
 ## [0.229.850] - 2026-04-16
 
 ### Changed

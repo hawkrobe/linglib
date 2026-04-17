@@ -44,6 +44,18 @@ ProcessingProfile's separation of `locality`, `boundaries`,
 `referentialLoad`, and `ease` into orthogonal cognitive dimensions —
 both architectures recognize that processing cost is irreducibly
 multi-dimensional.
+
+## Where the formal content lives
+
+This file records the paper's *empirical* claims as enum-level
+configurations (peak horizon per measure, observed sign per measure,
+which dataset shows which pattern, etc.). The *probabilistic backbone*
+— `LangModel`, the real-valued `genSurprisal`, and the reduction theorem
+showing that classical surprisal is the (warp = −log, score = indicator)
+specialisation of @cite{giulianelli-etal-2026}'s Eq. 3 — lives in
+`Theories.Processing.PredictiveUncertainty.Generalised`. The enum tags
+in `Core.GeneralisedSurprisal` are grounded by `WarpingFn.denote` there,
+so the configurations recorded below are not mere labels.
 -/
 
 set_option autoImplicit false
@@ -79,16 +91,22 @@ def peakHorizon : PsychMeasure → Nat
 /-- For each psycholinguistic measure, the representational level at which
 incremental information value is most predictive (primary peak).
 
-- Explicit predictability (cloze, ratings): embedding layer (lexical identity)
-- N400: embedding layer — shallow lexical-semantic prediction error
-- Eye-tracked RT: early-to-intermediate layers — structural processing
-- Self-paced RT and P600: intermediate layers — syntactic integration
+Per §5.2: "the peaks in predictive power observed for P600 and N400
+occur at depths of 25–42% and 50%, respectively". Mapping percent-depth
+to `RepLevel`: 0% = .lexical (embedding); 25–42% = .syntactic;
+~50% = .semantic; 100% = .predictive.
 
-Note: most measures show bimodal layer patterns; see `layerPattern`
+- Explicit predictability (cloze, ratings): embedding layer (lexical identity)
+- N400: ~50% depth — interaction of syntactic organisation and semantics
+- P600: 25–42% depth — construction-based syntactic expectations
+- Eye-tracked RT: early-to-intermediate layers
+- Self-paced RT (Aligned): intermediate layers
+
+Note: most measures show bimodal layer patterns; see `layerPatternAligned`
 for the full picture. -/
 def peakLevel : PsychMeasure → RepLevel
   | .predictabilityRating | .clozeProbability | .clozeSurprisal => .lexical
-  | .n400                                                      => .lexical
+  | .n400                                                      => .semantic
   | .firstFixationRT | .firstPassRT | .rightBoundedRT | .goPastRT
                                                                => .shallowSyntactic
   | .selfPacedRT | .p600                                       => .syntactic
@@ -108,24 +126,39 @@ inductive LayerPattern where
   | sShaped
   deriving DecidableEq, Repr
 
-/-- Layer-activation pattern for each psycholinguistic measure.
+/-- Layer-activation pattern for each psycholinguistic measure
+**in the Aligned dataset** (sentence-level stimuli).
 
 - Explicit measures (cloze, ratings): U-shaped — peak at embedding and
   final layer, the two layers closest to lexical identity
-- Reading times: S-shaped — peak at early-to-intermediate layers with
-  secondary rise at the final layer
+- Reading times (eye-tracking + self-paced): S-shaped — peak at
+  early-to-intermediate layers with secondary rise at the final layer
 - N400: unimodal at embedding layer
-- P600: unimodal at intermediate (syntactic) layers -/
-def layerPattern : PsychMeasure → LayerPattern
+- P600: unimodal at intermediate (syntactic) layers
+
+For self-paced RT in the Natural Stories dataset, see
+`naturalStoriesSPRT_layerDeclines`: the curve declines with depth
+rather than being s-shaped. -/
+def layerPatternAligned : PsychMeasure → LayerPattern
   | .predictabilityRating | .clozeProbability | .clozeSurprisal => .uShaped
   | .n400 | .p600 => .unimodal
   | _ => .sShaped
 
-/-- In Natural Stories (multi-sentence stimuli), self-paced reading time
-predictive power increases with forecast horizon up to h = 7, unlike
-sentence-level stimuli where h = 1 is optimal. The extended context and
-dashed moving-window display promote longer-range predictions. -/
-def naturalStoriesSPRT_peakHorizon : Nat := 7
+/-- §5.2: "Self-paced reading times in Natural Stories, instead, generally
+show a decline in predictive power with deeper layers, yet none of the
+curves for the four models is monotonically decreasing." This is a
+qualitatively different layer profile from the s-shaped pattern that
+the same measure exhibits in the Aligned dataset. -/
+def naturalStoriesSPRT_layerDeclines : Bool := true
+
+/-- In Natural Stories (multi-sentence stimuli), §5.1 reports that
+self-paced reading time predictive power "nearly doubles as the horizon h
+increases from 1 to 2 and continues to increase with higher values of h",
+unlike the Aligned dataset where h = 1 dominates. Rather than commit to
+a specific peak (the paper does not state one), we record the qualitative
+lower bound the paper actually establishes: the optimal horizon exceeds
+the next-word baseline. -/
+def naturalStoriesSPRT_horizonAtLeast : Nat := 2
 
 -- ============================================================================
 -- §3: Model Comparison
@@ -207,18 +240,19 @@ theorem erp_peaks_at_h2 :
   ⟨rfl, rfl⟩
 
 /-- N400 and P600 are predicted by different representational levels:
-N400 by embedding (lexical-semantic), P600 by intermediate (syntactic).
+N400 by semantic (~50% depth), P600 by syntactic (25–42% depth).
 This dissociation mirrors the established functional distinction between
-these components. -/
+these components — N400 reflects semantic-prediction interactions,
+P600 reflects construction-based syntactic expectations. -/
 theorem n400_p600_level_dissociation :
-    peakLevel .n400 = .lexical ∧ peakLevel .p600 = .syntactic :=
+    peakLevel .n400 = .semantic ∧ peakLevel .p600 = .syntactic :=
   ⟨rfl, rfl⟩
 
 /-- Self-paced RT in multi-sentence stimuli benefits from substantially
 longer forecast horizons than sentence-level stimuli. -/
 theorem discourse_extends_horizon :
-    naturalStoriesSPRT_peakHorizon > peakHorizon .selfPacedRT := by
-  native_decide
+    naturalStoriesSPRT_horizonAtLeast > peakHorizon .selfPacedRT := by
+  decide
 
 /-- IAS outperforms surprisal for both ERP components (Aligned dataset). -/
 theorem ias_outperforms_for_erps :
@@ -249,11 +283,11 @@ theorem explicit_implicit_level_dissociation :
   by decide
 
 /-- Explicit measures show U-shaped layer patterns while reading times
-show S-shaped patterns — different measure classes engage different
-representational geometries. -/
+show S-shaped patterns (Aligned dataset) — different measure classes
+engage different representational geometries. -/
 theorem explicit_rt_pattern_dissociation :
-    layerPattern .clozeProbability = .uShaped ∧
-    layerPattern .firstPassRT = .sShaped :=
+    layerPatternAligned .clozeProbability = .uShaped ∧
+    layerPatternAligned .firstPassRT = .sShaped :=
   ⟨rfl, rfl⟩
 
 /-- P600's observed sign is negative, contradicting the predicted positive

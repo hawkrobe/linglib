@@ -10816,7 +10816,7 @@
   validated = {true},
   sources   = {Theories/Syntax/Minimalism/Formal/Sluicing/FormalMatching.lean}
 }
-@article{rudin-2025,
+@article{rudin-2025a,
   author    = {Rudin, Deniz},
   year      = {2025},
   title     = {Asserting epistemic modals},
@@ -10828,6 +10828,18 @@
   role      = {cited},
   validated = {true},
   sources   = {Theories/Semantics/Dynamic/Epistemic/Basic.lean}
+}
+@article{rudin-2025b,
+  author    = {Rudin, Deniz},
+  year      = {2025},
+  title     = {Embedded Intonation and Quotative Complements to Verbs of Speech},
+  journal   = {Linguistic Inquiry},
+  note      = {Early access},
+  doi       = {10.1162/ling.a.554},
+  subfield  = {semantics/quotation},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Theories/Semantics/Quotation/Demonstration.lean, Phenomena/Quotation/Studies/Rudin2025LI.lean}
 }
 @article{rudolph-kocurek-2024,
   author    = {Rudolph, Rachel Etta and Kocurek, Alexander W.},
@@ -17289,7 +17301,18 @@
   subfield  = {psycholinguistics/processing},
   validated = {true},
   role      = {formalized},
-  sources   = {Core/GeneralisedSurprisal.lean}
+  sources   = {Core/GeneralisedSurprisal.lean,Theories/Processing/PredictiveUncertainty/IAS.lean,Phenomena/Processing/Studies/GiulianelliEtAl2026.lean}
+}
+@inproceedings{giulianelli-opedal-cotterell-2024,
+  author    = {Giulianelli, Mario and Opedal, Andreas and Cotterell, Ryan},
+  year      = {2024},
+  title     = {Generalized Measures of Anticipation and Responsivity in Online Language Processing},
+  booktitle = {Findings of the Association for Computational Linguistics: EMNLP 2024},
+  doi       = {10.18653/v1/2024.findings-emnlp.306},
+  subfield  = {psycholinguistics/processing},
+  validated = {false},
+  role      = {foundational},
+  sources   = {Theories/Processing/PredictiveUncertainty/Generalised.lean}
 }
 @article{levy-2008,
   author    = {Levy, Roger},
@@ -19479,4 +19502,144 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Possession/Studies/AissenPolian2025.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  Distributed Morphology — Taos / Kiowa-Tanoan and surrounding apparatus
+
+@article{middleton-2026,
+  author    = {Middleton, Jane},
+  year      = {2026},
+  title     = {A Remark on the Ordering of Impoverishment Rules: Differences between Taos and Basque},
+  journal   = {Linguistic Inquiry},
+  note      = {Early access},
+  doi       = {10.1162/ling.a.546},
+  subfield  = {morphology},
+  role      = {formalized},
+  sources   = {Phenomena/Allomorphy/Studies/Middleton2026.lean;Theories/Morphology/DM/PostsyntacticDerivation.lean;Theories/Morphology/DM/Metathesis.lean;Fragments/Taos/Agreement.lean}
+}
+
+@book{arregi-nevins-2012,
+  author    = {Arregi, Karlos and Nevins, Andrew},
+  year      = {2012},
+  title     = {Morphotactics: Basque Auxiliaries and the Structure of Spellout},
+  publisher = {Springer},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Theories/Morphology/DM/Impoverishment.lean;Theories/Morphology/DM/Metathesis.lean;Theories/Morphology/DM/PostsyntacticDerivation.lean;Phenomena/Allomorphy/Studies/Middleton2026.lean}
+}
+
+@phdthesis{bonet-1991,
+  author    = {Bonet, Eulàlia},
+  year      = {1991},
+  title     = {Morphology after Syntax: Pronominal Clitics in {Romance}},
+  school    = {MIT},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Theories/Morphology/DM/Impoverishment.lean}
+}
+
+@incollection{halle-1997,
+  author    = {Halle, Morris},
+  year      = {1997},
+  title     = {Distributed Morphology: Impoverishment and Fission},
+  booktitle = {Papers at the Interface},
+  editor    = {Kang, Yoonjung and Bruening, Benjamin and McGinnis, Martha},
+  series    = {MIT Working Papers in Linguistics},
+  volume    = {30},
+  pages     = {425--449},
+  publisher = {MITWPL},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Phenomena/Allomorphy/Studies/Middleton2026.lean}
+}
+
+@article{harbour-2003,
+  author    = {Harbour, Daniel},
+  year      = {2003},
+  title     = {The {Kiowa} Case for Feature Insertion},
+  journal   = {Natural Language and Linguistic Theory},
+  volume    = {21},
+  pages     = {543--578},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Fragments/Taos/Agreement.lean}
+}
+
+@book{harbour-2008,
+  author    = {Harbour, Daniel},
+  year      = {2008},
+  title     = {Morphosemantic Number: From {Kiowa} Noun Classes to {UG} Number Features},
+  publisher = {Springer},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Fragments/Taos/Agreement.lean}
+}
+
+@article{harbour-2011,
+  author    = {Harbour, Daniel},
+  year      = {2011},
+  title     = {Valence and Atomic Number},
+  journal   = {Linguistic Inquiry},
+  volume    = {42},
+  pages     = {561--594},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Fragments/Taos/Agreement.lean}
+}
+
+@unpublished{harbour-middleton-2026,
+  author    = {Harbour, Daniel and Middleton, Jane},
+  year      = {2026},
+  title     = {{Jemez} Metasyncretism and the {Subset Principle}'s Explanatory Clout},
+  note      = {Manuscript, Queen Mary University of London and Mirima Dawang Woorlab-gerring Language and Culture Centre},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Phenomena/Allomorphy/Studies/Middleton2026.lean}
+}
+
+@article{harris-halle-2005,
+  author    = {Harris, James and Halle, Morris},
+  year      = {2005},
+  title     = {Unexpected Plural Inflections in {Spanish}: Reduplication and Metathesis},
+  journal   = {Linguistic Inquiry},
+  volume    = {36},
+  number    = {2},
+  pages     = {195--222},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Theories/Morphology/DM/Metathesis.lean}
+}
+
+@unpublished{kontak-kunkel-1987,
+  author    = {Kontak, Corrie and Kunkel, Janet},
+  year      = {1987},
+  title     = {Grammar Sketch of {Northern Tiwa}, {Taos} Dialect},
+  note      = {Manuscript},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Fragments/Taos/Agreement.lean;Phenomena/Allomorphy/Studies/Middleton2026.lean}
+}
+
+@book{watkins-1984,
+  author    = {Watkins, Laurel J.},
+  year      = {1984},
+  title     = {A Grammar of {Kiowa}},
+  publisher = {University of Nebraska Press},
+  address   = {Lincoln},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Fragments/Taos/Agreement.lean;Phenomena/Allomorphy/Studies/Middleton2026.lean}
+}
+
+@incollection{harrington-1916,
+  author    = {Harrington, John Peabody},
+  year      = {1916},
+  title     = {The Ethnogeography of the {Tewa} {Indians}},
+  booktitle = {Twenty-Ninth Annual Report of the Bureau of American Ethnology},
+  publisher = {US Government Printing Office},
+  address   = {Washington, DC},
+  subfield  = {morphology},
+  role      = {cited},
+  sources   = {Fragments/Taos/Agreement.lean}
 }

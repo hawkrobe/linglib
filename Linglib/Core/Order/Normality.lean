@@ -2,7 +2,7 @@ import Mathlib.Data.Set.Basic
 
 /-!
 # Normality Orderings
-@cite{kraus-magidor-1990} @cite{veltman-1996} @cite{rudin-2025}
+@cite{kraus-magidor-1990} @cite{veltman-1996} @cite{rudin-2025a}
 
 A normality ordering is a preorder on worlds encoding relative normalcy.
 This structure appears in four places across formal semantics:
@@ -13,7 +13,7 @@ This structure appears in four places across formal semantics:
    default consequence, System P (`Core/Logic/BeliefRevision.lean`)
 3. **@cite{veltman-1996}**: expectation patterns are normality orderings that
    get dynamically refined (`Theories/Semantics/Dynamic/UpdateSemantics/`)
-4. **@cite{rudin-2025}**: ordering-source updates for epistemic modals
+4. **@cite{rudin-2025a}**: ordering-source updates for epistemic modals
    (`Theories/Semantics/Dynamic/Epistemic/`)
 
 This module extracts the common mathematical core. The `PlausibilityOrder`

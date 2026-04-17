@@ -1,4 +1,5 @@
 import Linglib.Core.Constraint.Variation
+import Linglib.Core.Constraint.System
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Fragments.English.TDDeletion
 
@@ -446,5 +447,66 @@ theorem ct_dominates_implies_deletion :
       (by simp [candidatesFor])
     tab.optimal = {⟨ctx, .delete⟩} := by
   intro ctx; cases ctx <;> native_decide
+
+-- ============================================================================
+-- § 11: Generic ConstraintSystem Predictions (per-context MaxEnt)
+-- ============================================================================
+
+/-! At each context, the AAVE MaxEnt model is a per-context
+`ConstraintSystem TDOutput ℝ`: candidates = `{retain, delete}`, score =
+harmony of `(ctx, ·)`, decoder = `softmaxDecoder 1`. The two-candidate
+softmax is the logistic function, so `predict .delete` is genuine
+conditional probability `P(delete | ctx)`. -/
+
+instance : Fintype TDOutput where
+  elems := {.retain, .delete}
+  complete := fun x => by cases x <;> simp
+
+instance : Fintype Context where
+  elems := {.preV, .pause, .preC}
+  complete := fun x => by cases x <;> simp
+
+/-- The AAVE constraint weights from table (23) ME-HG row. -/
+def aaveWeights : List (WeightedConstraint TDCandidate) :=
+  mkWeightedConstraints (1006/10) (994/10) (21/10) (2/10)
+
+/-- The AAVE MaxEnt model at a fixed context, packaged as a generic
+    `ConstraintSystem`. With only two candidates, `predict .delete` is
+    the conditional probability `P(delete | ctx)`. -/
+noncomputable def aaveSystem (ctx : Context) : ConstraintSystem TDOutput ℝ where
+  candidates := Finset.univ
+  score := fun o => harmonyScoreR aaveWeights ⟨ctx, o⟩
+  decoder := softmaxDecoder 1
+
+/-- In the pre-consonantal context, the AAVE system predicts deletion
+    over retention. Conditional probability claim: P(delete | preC) > P(retain | preC). -/
+theorem aave_preC_prefers_delete :
+    (aaveSystem .preC).predict TDOutput.retain <
+    (aaveSystem .preC).predict TDOutput.delete :=
+  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
+    (Finset.mem_univ _) (Finset.mem_univ _)
+    (harmonyScoreR_lt_of_moreProbable (by
+      unfold aaveWeights mkWeightedConstraints; native_decide :
+      moreProbable aaveWeights ⟨.preC, .delete⟩ ⟨.preC, .retain⟩))
+
+/-- In the pre-vocalic context, the AAVE system predicts retention over
+    deletion: pre-V deletion violates both MAX and MAX-PRE-V, costing
+    more than the *CT violation incurred by retention. Conditional
+    probability claim: P(retain | preV) > P(delete | preV). -/
+theorem aave_preV_prefers_retain :
+    (aaveSystem .preV).predict TDOutput.delete <
+    (aaveSystem .preV).predict TDOutput.retain :=
+  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
+    (Finset.mem_univ _) (Finset.mem_univ _)
+    (harmonyScoreR_lt_of_moreProbable (by
+      unfold aaveWeights mkWeightedConstraints; native_decide :
+      moreProbable aaveWeights ⟨.preV, .retain⟩ ⟨.preV, .delete⟩))
+
+/-- The per-context AAVE system is a probability distribution over
+    `TDOutput`. Generic property of `softmaxDecoder`. -/
+theorem aaveSystem_isProb (ctx : Context) :
+    ∑ o : TDOutput, (aaveSystem ctx).predict o = 1 :=
+  ConstraintSystem.predict_softmax_isProb _ rfl
+    ⟨.retain, Finset.mem_univ _⟩
 
 end CoetzeePater2011

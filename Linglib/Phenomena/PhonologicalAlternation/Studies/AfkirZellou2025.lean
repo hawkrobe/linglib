@@ -1,4 +1,5 @@
 import Linglib.Core.Constraint.Variation
+import Linglib.Core.Constraint.System
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.Syllable.NaturalClass
 import Linglib.Fragments.Tarifit.Inventory
@@ -335,5 +336,64 @@ theorem faithful_disjoint (c : TarifitCandidate) (h : c.surface = .faithful) :
     maxV.eval c = 0 ∧ depV.eval c = 0 ∧ sonoCC.eval c = 0 ∧
     sonoPeak.eval c = 0 := by
   rcases c with ⟨c1, c2, c3, sf⟩; subst h; exact ⟨rfl, rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- § 9: Generic ConstraintSystem Predictions
+-- ============================================================================
+
+/-! @cite{afkir-zellou-2025}'s MaxEnt grammar realised through the
+generic `ConstraintSystem` API in `Core.Constraint.System`. The same
+softmax decoder used for English onset phonotactics
+(`HayesWilson2008.onsetSystem`), French hiatus resolution
+(`Storme2026.stormeSystem`), and AAVE t/d-deletion
+(`CoetzeePater2011.aaveSystem`) scores Tarifit surface forms here. -/
+
+section PredictAPI
+
+open Core.Constraint Core.OT
+
+instance : Fintype SurfaceForm where
+  elems := {.faithful, .intrusive, .vowelless}
+  complete := fun x => by cases x <;> simp
+
+/-- The Tarifit MaxEnt grammar as a per-word `ConstraintSystem` over
+    the three surface candidates (faithful, intrusive, vowelless),
+    decoded by softmax at temperature 1. -/
+noncomputable def tarifitSystem (w : TriconWord) : ConstraintSystem SurfaceForm ℝ where
+  candidates := Finset.univ
+  score := fun sf => harmonyScoreR tarifitConstraints (mkCandidate w sf)
+  decoder := softmaxDecoder 1
+
+/-- Rising onset /qrəβ/: intrusive schwa (harmony −2) is softmax-preferred
+    over faithful (harmony −5). The system predicts the empirical
+    "almost exclusively C1ǎC2" pattern (Table 9). -/
+theorem tarifitSystem_qreb_intrusive_gt_faithful :
+    (tarifitSystem w_qreb).predict SurfaceForm.faithful <
+    (tarifitSystem w_qreb).predict SurfaceForm.intrusive :=
+  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
+    (Finset.mem_univ _) (Finset.mem_univ _)
+    (harmonyScoreR_lt_of_moreProbable qreb_intrusive_gt_faithful)
+
+/-- Falling onset /ntəf/: faithful is softmax-preferred over intrusive,
+    because *SONO-PEAK heavily penalises a schwa between a more-sonorous
+    C1 (nasal) and a less-sonorous C2 (VLS). -/
+theorem tarifitSystem_ntef_faithful_gt_intrusive :
+    (tarifitSystem w_ntef).predict SurfaceForm.intrusive <
+    (tarifitSystem w_ntef).predict SurfaceForm.faithful :=
+  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
+    (Finset.mem_univ _) (Finset.mem_univ _)
+    (harmonyScoreR_lt_of_moreProbable (by native_decide :
+      moreProbable tarifitConstraints
+        (mkCandidate w_ntef SurfaceForm.faithful)
+        (mkCandidate w_ntef SurfaceForm.intrusive)))
+
+/-- The softmax decoder is a probability decoder, so the per-word system's
+    predictions sum to 1 across the three surface forms. -/
+theorem tarifitSystem_isProb (w : TriconWord) :
+    ∑ sf : SurfaceForm, (tarifitSystem w).predict sf = 1 :=
+  ConstraintSystem.predict_softmax_isProb _ rfl
+    ⟨SurfaceForm.faithful, Finset.mem_univ _⟩
+
+end PredictAPI
 
 end AfkirZellou2025

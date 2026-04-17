@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 
 /-!
 # Neo-Stalnakerian Formalization of Assertion
-@cite{rudin-2025} @cite{stalnaker-1978} @cite{veltman-1996} @cite{kratzer-1981}
+@cite{rudin-2025a} @cite{stalnaker-1978} @cite{veltman-1996} @cite{kratzer-1981}
 
 Rudin proposes that when a speaker asserts a sentence s, she predicates her
 epistemic state: she presents herself as though she knows s, and proposes

@@ -1,4 +1,4 @@
-import Linglib.Core.Discourse.CoherenceRelation
+import Linglib.Core.Discourse.Coherence
 import Linglib.Core.Lexical.UD
 
 /-!
@@ -55,7 +55,7 @@ set_option autoImplicit false
 
 namespace KehlerRohde2013
 
-open Core.Discourse.CoherenceRelation
+open Core.Discourse.Coherence
 open UD (Voice)
 
 -- ════════════════════════════════════════════════════

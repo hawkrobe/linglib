@@ -1,4 +1,6 @@
 import Linglib.Core.Constraint.OTLimit
+import Linglib.Core.Constraint.System
+import Linglib.Core.Constraint.Variation
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Fragments.English.Phonology
@@ -141,5 +143,65 @@ theorem gradient_prob_ŋ_gt_rk :
   exact_mod_cast (by native_decide : harmonyScore onsetGrammar [r, k] < harmonyScore onsetGrammar [ŋ])
 
 end MaxEntProb
+
+-- ============================================================================
+-- § 4: Generic ConstraintSystem Predictions
+-- ============================================================================
+
+/-! Phonological MaxEnt is one instance of the framework-agnostic
+`ConstraintSystem` abstraction in `Core.Constraint.System`. The same
+`maxEntSystem` constructor that scores phonological onsets here also
+scores syntactic candidates in HG/MaxEnt syntax models, RSA utterances
+in soft-max pragmatic listeners, etc. The decoder (`softmaxDecoder 1`)
+is what makes this MaxEnt rather than HG (`argmaxDecoder`) or OT
+(`argminDecoder` over a `LexProfile`).
+
+This section eats the dog food: rather than comparing
+`exp(harmonyScoreR ...)` directly (as in §3), we go through
+`ConstraintSystem.predict`. -/
+
+section PredictAPI
+open Fragments.English.Phonology
+
+/-- The four onsets used as MaxEnt candidates: two attested ([k], [b,r])
+    and two unattested (*[ŋ], *[r,k]). -/
+def candidateOnsets : Finset Onset :=
+  ({[k], [ŋ], [r, k], [b, r]} : Finset Onset)
+
+/-- @cite{hayes-wilson-2008}'s grammar realised as a generic
+    `ConstraintSystem` over `candidateOnsets`, decoded by softmax at
+    temperature 1. The score component is `harmonyScoreR onsetGrammar`
+    (the canonical MaxEnt harmony function). -/
+noncomputable def onsetSystem : ConstraintSystem Onset ℝ :=
+  maxEntSystem candidateOnsets onsetGrammar
+
+/-- The system literally predicts a higher MaxEnt probability for [k]
+    than for *[ŋ]. Unlike `maxent_prob_k_gt_ŋ`, this is a comparison of
+    actual softmax probabilities (numerator / partition function), not
+    just exponentiated harmony scores — so the partition function over
+    `candidateOnsets` is part of the claim. -/
+theorem predict_k_gt_ŋ :
+    onsetSystem.predict [ŋ] < onsetSystem.predict [k] :=
+  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
+    (by decide) (by decide)
+    (harmonyScoreR_lt_of_moreProbable attested_higher_harmony_k_ŋ)
+
+/-- The system also predicts a higher MaxEnt probability for *[ŋ] than
+    for *[rk] — gradient well-formedness among unattested forms. -/
+theorem predict_ŋ_gt_rk :
+    onsetSystem.predict [r, k] < onsetSystem.predict [ŋ] :=
+  ConstraintSystem.predict_softmax_lt_of_score_lt _ one_pos rfl
+    (by decide) (by decide)
+    (harmonyScoreR_lt_of_moreProbable (by native_decide :
+      moreProbable onsetGrammar [ŋ] [r, k]))
+
+/-- The MaxEnt softmax decoder is a probability decoder, so the system's
+    predictions are non-negative and sum to 1 over the candidate set.
+    Follows from `Decoder.IsProb.sum_eq_one` for `softmaxDecoder`. -/
+theorem onsetSystem_isProb :
+    ∑ c ∈ candidateOnsets, onsetSystem.predict c = 1 :=
+  ConstraintSystem.predict_softmax_isProb _ rfl ⟨[k], by decide⟩
+
+end PredictAPI
 
 end HayesWilson2008
