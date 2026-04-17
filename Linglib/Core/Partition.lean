@@ -462,10 +462,8 @@ theorem coarsestPreserving_refines (q : QUD M) (P : M → Bool) :
 /-- The P-preserving coarsening respects P: equivalent elements agree on P. -/
 theorem coarsestPreserving_preserves_P (q : QUD M) (P : M → Bool)
     (w v : M) (h : (coarsestPreserving q P).sameAnswer w v = true) :
-    P w = P v := by
-  have hbin := compose_refines_right q (binaryPartition P) w v h
-  simp only [ofProject_sameAnswer, beq_iff_eq] at hbin
-  exact hbin
+    P w = P v :=
+  (ofProject_sameAnswer_iff _ _ _).mp (compose_refines_right q (binaryPartition P) w v h)
 
 /-- Any partition that refines Q and preserves P also refines the
 P-preserving coarsening. This is the universality property: `coarsestPreserving`
@@ -476,9 +474,8 @@ theorem coarsestPreserving_universal (q q' : QUD M) (P : M → Bool)
     q' ⊑ coarsestPreserving q P := by
   intro w v h
   unfold coarsestPreserving
-  simp only [HMul.hMul, Mul.mul, compose]
-  simp only [Bool.and_eq_true]
-  exact ⟨hrefines w v h, by simp only [ofProject_sameAnswer, beq_iff_eq]; exact hpreserves w v h⟩
+  simp only [mul_sameAnswer, Bool.and_eq_true]
+  exact ⟨hrefines w v h, (ofProject_sameAnswer_iff _ _ _).mpr (hpreserves w v h)⟩
 
 /-! ### Finpartition from QUD -/
 
@@ -891,9 +888,8 @@ theorem resolution_value_eq_exact [Fintype M] [DecidableEq M]
       have h_filter_singleton : ∀ w : M,
           (Finset.univ : Finset M).filter (fun v => QUD.exact.sameAnswer w v) = {w} := by
         intro w; ext v
-        simp only [Finset.mem_filter, Finset.mem_univ, true_and, Finset.mem_singleton,
-          QUD.exact, beq_iff_eq]
-        exact ⟨fun h => h.symm, fun h => h.symm⟩
+        rw [Finset.mem_filter, Finset.mem_singleton, QUD.exact_sameAnswer_iff]
+        exact ⟨fun h => h.2.symm, fun h => ⟨Finset.mem_univ _, h.symm⟩⟩
       have h_exact_rw :
           (QUD.exact.toCellsFinset Finset.univ).sum
             (fun cell => actions.sup' hne (fun a => cell.sum (fun w => f w a))) =
