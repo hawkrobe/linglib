@@ -62,25 +62,26 @@ theorem hypergeometric_nonneg (N K n k : ℕ) :
 
 /-- Drawing 1 success from 3 with 2 successes in 1 draw: C(2,1)·C(1,0)/C(3,1) = 2/3.
     Matches `obsPriorTable .a1 .s2 .o1a1` in @cite{goodman-stuhlmuller-2013}. -/
-example : hypergeometric 3 2 1 1 = 2/3 := by native_decide
+example : hypergeometric 3 2 1 1 = 2/3 := by unfold hypergeometric; simp [Nat.choose]
 
 /-- Drawing 0 successes from 3 with 1 success in 2 draws: C(1,0)·C(2,2)/C(3,2) = 1/3.
     Matches `obsPriorTable .a2 .s1 .o0a2`. -/
-example : hypergeometric 3 1 2 0 = 1/3 := by native_decide
+example : hypergeometric 3 1 2 0 = 1/3 := by unfold hypergeometric; simp [Nat.choose]
 
 /-- Full access, exact match: C(2,2)·C(1,1)/C(3,3) = 1.
     Matches `obsPriorTable .a3 .s2 .o2a3 = 1`. -/
-example : hypergeometric 3 2 3 2 = 1 := by native_decide
+example : hypergeometric 3 2 3 2 = 1 := by unfold hypergeometric; simp [Nat.choose]
 
 /-- N=10 urn: drawing 3 red from 5 total red in 4 draws.
     C(5,3)·C(5,1)/C(10,4) = 10·5/210 = 50/210 = 5/21. -/
-example : hypergeometric 10 5 4 3 = 5/21 := by native_decide
+example : hypergeometric 10 5 4 3 = 5/21 := by
+  unfold hypergeometric; simp [Nat.choose]; norm_num
 
 /-- N=10 urn: drawing 0 red from 0 total red in 8 draws.
     C(0,0)·C(10,8)/C(10,8) = 1·45/45 = 1. -/
-example : hypergeometric 10 0 8 0 = 1 := by native_decide
+example : hypergeometric 10 0 8 0 = 1 := by unfold hypergeometric; simp [Nat.choose]
 
 /-- Impossible draw: 5 red from 3 total red. -/
-example : hypergeometric 10 3 8 5 = 0 := by native_decide
+example : hypergeometric 10 3 8 5 = 0 := by unfold hypergeometric; simp [Nat.choose]
 
 end Core.Distributions

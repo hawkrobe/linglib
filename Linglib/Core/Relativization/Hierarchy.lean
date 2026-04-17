@@ -96,25 +96,23 @@ theorem ah_transitive (a b c : AHPosition)
 
 /-- The full hierarchy [SU, DO, IO, OBL, GEN, OCOMP] is contiguous. -/
 theorem full_ah_contiguous :
-    contiguousOnAH AHPosition.all = true := by native_decide
+    contiguousOnAH AHPosition.all = true := rfl
 
 /-- A single position is trivially contiguous. -/
 theorem singleton_contiguous :
-    contiguousOnAH [AHPosition.subject] = true := by native_decide
+    contiguousOnAH [AHPosition.subject] = true := rfl
 
 /-- [SU, DO] is contiguous. -/
 theorem su_do_contiguous :
-    contiguousOnAH [AHPosition.subject, .directObject] = true := by native_decide
+    contiguousOnAH [AHPosition.subject, .directObject] = true := rfl
 
 /-- [IO, OBL, GEN] is contiguous (a non-primary segment). -/
 theorem io_obl_gen_contiguous :
-    contiguousOnAH [AHPosition.indirectObject, .oblique, .genitive] = true := by
-  native_decide
+    contiguousOnAH [AHPosition.indirectObject, .oblique, .genitive] = true := rfl
 
 /-- [SU, DO, OBL] is NOT contiguous (skips IO at rank 4). -/
 theorem su_do_obl_not_contiguous :
-    contiguousOnAH [AHPosition.subject, .directObject, .oblique] = false := by
-  native_decide
+    contiguousOnAH [AHPosition.subject, .directObject, .oblique] = false := rfl
 
 -- ============================================================================
 -- § 5: Primary Relativization Constraint (General Proof)
@@ -223,6 +221,6 @@ theorem prc_all_primary_segments :
       seg.any (· == .subject) &&
       seg.all (λ p => AHPosition.all.all (λ above =>
         if above.rank > p.rank then seg.any (· == above) else true))) = true := by
-  native_decide
+  decide
 
 end Core

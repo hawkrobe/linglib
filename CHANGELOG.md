@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.850] - 2026-04-16
+
+### Changed
+- **`native_decide` → structural proofs in 4 `Core/` files** (per CLAUDE.md "Prefer structural proofs"):
+  - `Core/IndefiniteType.lean` — 5 `classifyTriple` patterns (AAA/AAB/ABB/ABC/ABA) now `rfl` instead of `native_decide`. The classifier is a chain of decidable `String == String` checks; full kernel reduction works.
+  - `Core/Relativization/Hierarchy.lean` — 6 `contiguousOnAH` checks: 5 `rfl`, 1 `decide` (the `prc_all_primary_segments` case where the `let segs` binding requires `decide`'s elaboration). Includes the full hierarchy contiguity claim and the PRC's enumeration of all 6 primary segments.
+  - `Core/Relativization/Extraction.lean` — 3 `ExtractionTarget ↔ AHPosition` round-trip theorems via `decide` (involves `Option`/`match`).
+  - `Core/Distributions.lean` — 6 hypergeometric examples via `unfold hypergeometric; simp [Nat.choose]` (1 needs `; norm_num` for the C(5,3)·C(5,1)/C(10,4) = 5/21 case where the rational arithmetic doesn't fully reduce by simp). All proofs now kernel-checkable rather than relying on the `native_decide` compile-and-run path.
+  - Net: 20 `native_decide` invocations eliminated across these 4 files (out of ~2784 in the repo). All proofs verified by `lake build` (5073 jobs green).
+
 ## [0.229.849] - 2026-04-16
 
 ### Added

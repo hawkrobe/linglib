@@ -172,10 +172,10 @@ theorem aba_unattested : SyncretismPattern.isAttested .ABA = false := rfl
 -- §5. Pattern Classification Verification
 -- ============================================================================
 
-theorem classify_aaa : classifyTriple "A" "A" "A" = .AAA := by native_decide
-theorem classify_aab : classifyTriple "A" "A" "B" = .AAB := by native_decide
-theorem classify_abb : classifyTriple "A" "B" "B" = .ABB := by native_decide
-theorem classify_abc : classifyTriple "A" "B" "C" = .ABC := by native_decide
-theorem classify_aba : classifyTriple "A" "B" "A" = .ABA := by native_decide
+theorem classify_aaa : classifyTriple "A" "A" "A" = .AAA := rfl
+theorem classify_aab : classifyTriple "A" "A" "B" = .AAB := rfl
+theorem classify_abb : classifyTriple "A" "B" "B" = .ABB := rfl
+theorem classify_abc : classifyTriple "A" "B" "C" = .ABC := rfl
+theorem classify_aba : classifyTriple "A" "B" "A" = .ABA := rfl
 
 end Core.IndefiniteType

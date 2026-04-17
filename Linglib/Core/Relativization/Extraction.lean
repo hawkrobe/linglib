@@ -62,7 +62,7 @@ theorem extraction_ah_roundtrip :
                     .indirectObject, .oblique, .possessor]
     targets.all (λ t => ahToExtractionTarget (extractionTargetToAH t) == some t)
       = true := by
-  native_decide
+  decide
 
 /-- Round-tripping AH → ExtractionTarget → AH is the identity for all
     positions except `.objComparison` (which has no ExtractionTarget). -/
@@ -74,7 +74,7 @@ theorem ah_extraction_roundtrip :
       | some t => extractionTargetToAH t == p
       | none   => false)  -- objComparison excluded
       = true := by
-  native_decide
+  decide
 
 /-- `.objComparison` is the only AH position without an ExtractionTarget. -/
 theorem objComparison_no_extraction_target :
@@ -85,6 +85,6 @@ theorem non_ocomp_have_extraction_target :
     let positions := [AHPosition.subject, .directObject, .indirectObject,
                       .oblique, .genitive]
     positions.all (λ p => (ahToExtractionTarget p).isSome) = true := by
-  native_decide
+  decide
 
 end Core
