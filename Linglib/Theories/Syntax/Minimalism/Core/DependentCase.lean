@@ -563,10 +563,16 @@ inductive CasePhase where
 
 /-- An NP equipped with phase information.
     `basePhase` records where the NP was merged; `shifted` marks
-    NPs that have moved to a higher phase before case evaluation. -/
+    NPs that have moved to a higher phase before case evaluation.
+    `isArgumental` flags whether the NP bears a θ-role w.r.t. some
+    case-assigning head — only argumental NPs are case competitors
+    for rules (4a)/(4b). Bare-NP adverbs (e.g., 'yesterday', 'two
+    kilometers') are non-argumental. @cite{baker-vinokurova-2010}
+    (8)–(9) and footnote 5. -/
 structure PhasedNP extends NPInDomain where
   basePhase : CasePhase
   shifted : Bool := false
+  isArgumental : Bool := true
   deriving DecidableEq, Repr
 
 /-- Visible on the VP cycle: NPs whose basePhase is `vp`.
@@ -604,14 +610,17 @@ def setCaseAt (i : Nat) (c : CaseVal) (src : CaseSource)
   states.zipIdx.map fun (s, j) =>
     if j == i then { s with case := some (c, src) } else s
 
-/-- Indices of unmarked NPs visible on a given cycle, in c-command
-    order (highest first, since list-position encodes height). -/
+/-- Indices of unmarked, *argumental* NPs visible on a given cycle, in
+    c-command order (highest first, since list-position encodes height).
+    Non-argumental NPs (bare-NP adverbs) are filtered out per
+    @cite{baker-vinokurova-2010} (8)–(9): rules (4a)/(4b) only apply
+    between argumental NPs. -/
 def unmarkedVisible (cycle : CasePhase) (states : List PhasedState) : List Nat :=
   states.zipIdx.filterMap fun (s, i) =>
     let visible := match cycle with
                    | .vp => s.np.visibleOnVP
                    | .cp => s.np.visibleOnCP
-    if visible && !s.marked then some i else none
+    if visible && s.np.isArgumental && !s.marked then some i else none
 
 /-- Apply the DAT rule (4a) on the VP cycle: if there are at least
     two unmarked NPs visible at vP, mark the highest as DAT. -/
@@ -628,8 +637,7 @@ def applyAccRule (cfg : CaseSystemConfig) (cycle : CasePhase)
     (states : List PhasedState) : List PhasedState :=
   if cfg.accMode != .dependent then states
   else
-    let idxs := unmarkedVisible cycle states
-    match idxs.reverse with
+    match (unmarkedVisible cycle states).reverse with
     | last :: _ :: _ => setCaseAt last .acc .dependent states
     | _ => states
 
@@ -668,5 +676,97 @@ def assignCasesPhased (cfg : CaseSystemConfig) (nps : List PhasedNP) :
   let s4 := applyNomAgree cfg s3          -- T-Agree → NOM
   let s5 := applyDefault cfg s4           -- last resort
   s5.filterMap PhasedState.toCased
+
+-- ============================================================================
+-- § 14: Soundness of the Phased Algorithm
+-- ============================================================================
+
+/-! Length preservation (one CasedNP per input PhasedNP) and totality
+(every input NP receives exactly one case) are the key well-formedness
+properties of `assignCasesPhased`. They fall out structurally:
+each per-pass operation preserves list length, and `applyDefault`
+guarantees no state escapes uncased. -/
+
+theorem initStates_length (nps : List PhasedNP) :
+    (initStates nps).length = nps.length := by
+  unfold initStates; rw [List.length_map]
+
+theorem setCaseAt_length (i : Nat) (c : CaseVal) (src : CaseSource)
+    (states : List PhasedState) :
+    (setCaseAt i c src states).length = states.length := by
+  unfold setCaseAt
+  rw [List.length_map, List.length_zipIdx]
+
+theorem applyDatRule_length (cfg : CaseSystemConfig)
+    (states : List PhasedState) :
+    (applyDatRule cfg states).length = states.length := by
+  unfold applyDatRule
+  split
+  · rfl
+  · split <;> first | rfl | exact setCaseAt_length _ _ _ _
+
+theorem applyAccRule_length (cfg : CaseSystemConfig) (cycle : CasePhase)
+    (states : List PhasedState) :
+    (applyAccRule cfg cycle states).length = states.length := by
+  unfold applyAccRule
+  split
+  · rfl
+  · split <;> first | rfl | exact setCaseAt_length _ _ _ _
+
+theorem applyNomAgree_length (cfg : CaseSystemConfig)
+    (states : List PhasedState) :
+    (applyNomAgree cfg states).length = states.length := by
+  unfold applyNomAgree
+  split
+  · split <;> first | rfl | exact setCaseAt_length _ _ _ _
+  · rfl
+
+theorem applyDefault_length (cfg : CaseSystemConfig)
+    (states : List PhasedState) :
+    (applyDefault cfg states).length = states.length := by
+  unfold applyDefault; rw [List.length_map]
+
+/-- After the final default sweep, every state's case is valued. -/
+theorem applyDefault_all_some (cfg : CaseSystemConfig)
+    (states : List PhasedState) :
+    ∀ s ∈ applyDefault cfg states, s.case.isSome := by
+  intro s hs
+  simp only [applyDefault, List.mem_map] at hs
+  obtain ⟨t, _, rfl⟩ := hs
+  unfold PhasedState.marked
+  split <;> simp_all
+
+private theorem filterMap_length_of_all_some {α β}
+    (f : α → Option β) (l : List α)
+    (h : ∀ x ∈ l, (f x).isSome) :
+    (l.filterMap f).length = l.length := by
+  induction l with
+  | nil => rfl
+  | cons x xs ih =>
+    have hx : (f x).isSome := h x (by simp)
+    have hxs : ∀ y ∈ xs, (f y).isSome := fun y hy => h y (by simp [hy])
+    rw [List.filterMap_cons]
+    cases hf : f x with
+    | none => rw [hf] at hx; cases hx
+    | some _ =>
+      simp only [List.length_cons]
+      exact congrArg (· + 1) (ih hxs)
+
+private theorem toCased_isSome_iff (s : PhasedState) :
+    s.toCased.isSome ↔ s.case.isSome := by
+  unfold PhasedState.toCased
+  cases s.case <;> simp
+
+/-- **Soundness (length preservation).** The phased algorithm produces
+    exactly one `CasedNP` per input `PhasedNP`. No NP is dropped or
+    duplicated; the algorithm is total. -/
+theorem assignCasesPhased_length (cfg : CaseSystemConfig) (nps : List PhasedNP) :
+    (assignCasesPhased cfg nps).length = nps.length := by
+  unfold assignCasesPhased
+  simp only []
+  rw [filterMap_length_of_all_some _ _ (fun s hs => by
+        rw [toCased_isSome_iff]; exact applyDefault_all_some _ _ s hs)]
+  rw [applyDefault_length, applyNomAgree_length, applyAccRule_length,
+      applyAccRule_length, applyDatRule_length, initStates_length]
 
 end Minimalism

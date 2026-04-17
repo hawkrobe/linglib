@@ -313,4 +313,218 @@ theorem all_nom_is_agree_in_sakha :
     unaccResult.all       (fun cn => cn.case ≠ .nom ∨ cn.source = .agree) := by
   decide
 
+-- ============================================================================
+-- § 11: Causative Cascade — The Cleanest Test of Dependent Case
+-- ============================================================================
+
+/-! @cite{baker-vinokurova-2010} (23)–(24): morphological causatives in
+Sakha exhibit a striking cascade. The causee surfaces with ACC if the
+base verb is intransitive (one argumental NP in max VP, no DAT competitor)
+but with DAT if the base verb is transitive (two argumental NPs in max
+VP, (4a) fires marking the causee as DAT).
+
+This is the cleanest test of the dependent-case modality: *adding* an
+NP (the lower theme) *changes* the case on a different NP (the causee),
+which is impossible under any version of head-driven Agree case. The
+algorithmic Mechanism — (4a) bleeding (4b) on the VP cycle — predicts
+the cascade without any additional stipulation. -/
+
+/-- (23a) "Sardaana made Aisen cry" — base verb 'cry' is intransitive.
+    Max VP contains only the causee (Aisen). With only one argumental
+    NP visible on the VP cycle, neither (4a) nor (4b) fires. The causee
+    shifts to the CP phase, becomes a competitor for the causer
+    (Sardaana), and is valued ACC by (4b) on the CP cycle. -/
+def causativeOfIntransitive : List PhasedNP :=
+  [subj "causer", shiftedVP "causee"]
+
+def causIntransResult : List CasedNP :=
+  assignCasesPhased sakhaConfig causativeOfIntransitive
+
+theorem caus_intrans_causee_acc :
+    getCaseOf "causee" causIntransResult = some .acc ∧
+    getSourceOf "causee" causIntransResult = some .dependent := by decide
+
+theorem caus_intrans_causer_nom :
+    getCaseOf "causer" causIntransResult = some .nom ∧
+    getSourceOf "causer" causIntransResult = some .agree := by decide
+
+/-- (23b) "Misha made Masha eat soup" — base verb 'eat' is transitive.
+    Max VP contains the causee (Masha) and theme (soup), both argumental.
+    On the VP cycle, (4a) fires: Masha (the higher of the two unmarked
+    NPs) is valued DAT, bleeding (4b). The theme then shifts to the CP
+    phase, competes with the causer (Misha), and is valued ACC. -/
+def causativeOfTransitive : List PhasedNP :=
+  [subj "causer", lowVP "causee", shiftedVP "theme"]
+
+def causTransResult : List CasedNP :=
+  assignCasesPhased sakhaConfig causativeOfTransitive
+
+theorem caus_trans_causee_dat :
+    getCaseOf "causee" causTransResult = some .dat ∧
+    getSourceOf "causee" causTransResult = some .dependent := by decide
+
+theorem caus_trans_theme_acc :
+    getCaseOf "theme" causTransResult = some .acc ∧
+    getSourceOf "theme" causTransResult = some .dependent := by decide
+
+theorem caus_trans_causer_nom :
+    getCaseOf "causer" causTransResult = some .nom ∧
+    getSourceOf "causer" causTransResult = some .agree := by decide
+
+/-- The causative cascade: the *same* causative morpheme produces ACC
+    on the causee in (23a) and DAT on the causee in (23b). The only
+    difference is the transitivity of the base verb — i.e., the
+    *number of argumental NPs in max VP*. This is the structural
+    signature of dependent case. -/
+theorem causee_case_depends_on_base_transitivity :
+    getCaseOf "causee" causIntransResult = some .acc ∧
+    getCaseOf "causee" causTransResult = some .dat := by decide
+
+-- ============================================================================
+-- § 12: Bare-NP Adverb Test — The Argumental Filter
+-- ============================================================================
+
+/-! @cite{baker-vinokurova-2010} (8)–(9): rules (4a)/(4b) only apply
+between *argumental* NPs (those bearing a θ-role w.r.t. some case-
+assigning head). Bare-NP adverbs like *sajyn* 'summer' do not count
+as case competitors, even when c-commanded by another caseless NP.
+
+The PhasedNP `isArgumental` field captures this: when set to false,
+the NP is filtered out of `unmarkedVisible` and so cannot trigger or
+receive dependent case. The very same noun that surfaces as ACC when
+functioning as the object of a transitive verb (8c) surfaces unmarked
+when functioning as a temporal adverb (8a)/(8b). -/
+
+/-- Adverbial NP — bears no θ-role w.r.t. a case-assigning head. -/
+def adverb (label : String) : PhasedNP :=
+  { label := label, lexicalCase := none, basePhase := .cp,
+    shifted := false, isArgumental := false }
+
+/-- (8a) "Bihigi beqehee ystan-nybyt" 'we yesterday jumped'. Two NPs:
+    'we' (subject, argumental) and 'yesterday' (adverb, non-argumental).
+    The adverb is filtered from case competition; only one argumental
+    NP is visible to T-Agree on the CP cycle. -/
+def intransitiveWithAdverb : List PhasedNP :=
+  [subj "subj", adverb "yesterday"]
+
+def intrAdvResult : List CasedNP :=
+  assignCasesPhased sakhaConfig intransitiveWithAdverb
+
+/-- The adverb is *not* marked ACC: rule (4b) does not see it as a
+    case competitor. The subject is valued NOM by T-Agree, and the
+    adverb falls through to the default sweep with unmarked NOM. -/
+theorem adverb_does_not_get_acc :
+    getCaseOf "yesterday" intrAdvResult = some .nom ∧
+    getSourceOf "yesterday" intrAdvResult = some .unmarked := by decide
+
+theorem subj_with_adverb_nom_agree :
+    getCaseOf "subj" intrAdvResult = some .nom ∧
+    getSourceOf "subj" intrAdvResult = some .agree := by decide
+
+/-- (8c) "Masha sajyn-y axt-ar" 'Masha summer-ACC misses'. Same noun
+    'summer', now functioning as the *object* of transitive 'miss' —
+    it bears a θ-role and so counts as argumental. Now (4b) applies
+    and the object is marked ACC, exactly the contrast (8a/b vs 8c). -/
+def transitiveSummerObject : List PhasedNP :=
+  [subj "masha", shiftedVP "summer"]
+
+def transSummerResult : List CasedNP :=
+  assignCasesPhased sakhaConfig transitiveSummerObject
+
+theorem summer_as_object_gets_acc :
+    getCaseOf "summer" transSummerResult = some .acc ∧
+    getSourceOf "summer" transSummerResult = some .dependent := by decide
+
+/-- The argumental contrast: the very same lexical noun receives ACC
+    when argumental and unmarked NOM when adverbial. The grammar does
+    not stipulate that 'summer' is ambiguous between an argumental
+    and an adverbial entry; both readings reduce to a single algorithm
+    parameterized by the `isArgumental` feature. -/
+theorem argumental_status_drives_case :
+    getCaseOf "summer" transSummerResult ≠ getCaseOf "yesterday" intrAdvResult ∨
+    getSourceOf "summer" transSummerResult ≠ getSourceOf "yesterday" intrAdvResult := by
+  decide
+
+-- ============================================================================
+-- § 13: Substantive Two-Modality Theorem
+-- ============================================================================
+
+/-! Replacing the trivial `two_modalities_present` (which only restated
+the config) with a theorem that *no single modality* — pure Marantz
+or pure Chomsky — can produce the Sakha derivational pattern. The
+two-modality grammar is empirically required, not just stipulated. -/
+
+/-- Pure Marantz (Sakha pattern with NOM as unmarked default and no
+    Agree-based case): all structural cases are configurational. -/
+def pureMarantz : CaseSystemConfig where
+  langType := .accusative
+  nomMode  := .unmarkedDefault
+  datMode  := .dependent
+  accMode  := .dependent
+  genMode  := .nonstructural
+
+/-- Pure Chomsky (Sakha pattern with all cases assigned by Agree).
+    Note: the present algorithm has no `applyAccAgree` pass, so the
+    `.agreeV` setting effectively turns the dependent ACC mechanism
+    off without replacing it. The point of the comparison is precisely
+    that neither pure analysis derives the Sakha NOM/DAT/ACC ditrans
+    pattern. -/
+def pureChomsky : CaseSystemConfig where
+  langType := .accusative
+  nomMode  := .agreeT
+  datMode  := .nonstructural
+  accMode  := .agreeV
+  genMode  := .agreeD
+
+/-- Pure Marantz produces the same surface NOM on the subject as Sakha
+    — but with `source := .unmarked`, not `.agree`. The structural
+    fingerprint of the modality differs even when the morphology
+    coincides. -/
+theorem pure_marantz_subj_unmarked :
+    getSourceOf "subj" (assignCasesPhased pureMarantz ditransitive) = some .unmarked := by
+  decide
+
+theorem sakha_subj_distinct_from_pure_marantz :
+    getSourceOf "subj" (assignCasesPhased pureMarantz ditransitive) ≠
+    getSourceOf "subj" ditransitiveResult := by decide
+
+/-- Pure Chomsky has `datMode := .nonstructural`, so the algorithm
+    never derives DAT — Mongolian-style, every DAT must be lexical.
+    This contradicts the Sakha pattern where DAT is productive on
+    structural goals. -/
+theorem pure_chomsky_no_algorithmic_dat :
+    (assignCasesPhased pureChomsky ditransitive).all (·.case ≠ .dat) := by decide
+
+/-- The strong two-modality theorem: neither pure modality derives
+    the Sakha pattern (NOM-via-Agree on the subject + DAT on the goal).
+    The two-modality grammar is *required*, not optional. -/
+theorem two_modalities_required :
+    -- Pure Marantz fails on NOM source
+    (getSourceOf "subj" (assignCasesPhased pureMarantz ditransitive) ≠ some .agree) ∧
+    -- Pure Chomsky fails on DAT presence
+    (¬ ∃ cn ∈ assignCasesPhased pureChomsky ditransitive, cn.case = .dat) ∧
+    -- Sakha succeeds on both
+    (getSourceOf "subj" ditransitiveResult = some .agree) ∧
+    (∃ cn ∈ ditransitiveResult, cn.case = .dat) := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+
+-- ============================================================================
+-- § 14: Soundness — One Case per NP (Re-export from DependentCase)
+-- ============================================================================
+
+/-- The phased algorithm is total on every Sakha derivation in this
+    file: each input NP appears in the output with exactly one case.
+    Follows from `assignCasesPhased_length` in `DependentCase.lean`. -/
+theorem all_sakha_derivations_total :
+    transSpecificResult.length = transSpecific.length ∧
+    transNonspecificResult.length = transNonspecific.length ∧
+    ditransitiveResult.length = ditransitive.length ∧
+    unaccResult.length = unaccusative.length ∧
+    causIntransResult.length = causativeOfIntransitive.length ∧
+    causTransResult.length = causativeOfTransitive.length ∧
+    intrAdvResult.length = intransitiveWithAdverb.length ∧
+    transSummerResult.length = transitiveSummerObject.length := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    apply assignCasesPhased_length
+
 end Phenomena.Case.Studies.BakerVinokurova2010

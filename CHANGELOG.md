@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.871] - 2026-04-17
+
+### Added
+- **Soundness of `assignCasesPhased`** (`DependentCase.lean` § 14) — `assignCasesPhased_length : (assignCasesPhased cfg nps).length = nps.length` proves the phased B&V algorithm produces exactly one `CasedNP` per input `PhasedNP`. Decomposes via per-pass length lemmas (`initStates_length`, `setCaseAt_length`, `applyDatRule_length`, `applyAccRule_length`, `applyNomAgree_length`, `applyDefault_length`) plus `applyDefault_all_some` (every state is valued after the default sweep) and a private `filterMap_length_of_all_some` general list lemma. Closes the biggest mathlib-PR-review objection: per-datum `decide` proofs are now backed by a *general* totality theorem about the algorithm itself.
+- **`PhasedNP.isArgumental` field** (default `true`, `DependentCase.lean` § 13) — `unmarkedVisible` now filters non-argumental NPs so bare-NP adverbs cannot be case competitors. Implements the "argumental" qualification @cite{baker-vinokurova-2010} (8)–(9) and footnote 5: rules (4a)/(4b) only apply between NPs bearing a θ-role w.r.t. some case-assigning head.
+- **Causative cascade** (`BakerVinokurova2010.lean` § 11, ex 23) — `causativeOfIntransitive` (causee → ACC, no DAT competitor in max VP) and `causativeOfTransitive` (causee → DAT by (4a) on max-VP cycle, theme → ACC on CP cycle). The `causee_case_depends_on_base_transitivity` theorem stages the cleanest test of dependent case: the *same* causative morpheme produces ACC on the causee under intransitive bases and DAT under transitive bases — adding the lower theme *changes* the case on the causee. Impossible under any version of head-driven Agree.
+- **Bare-NP adverb test** (`BakerVinokurova2010.lean` § 12, ex 8–9) — `adverb` constructor + `intransitiveWithAdverb` and `transitiveSummerObject`. Proves the very same lexical noun ('summer') gets ACC when functioning as an object (argumental) but unmarked NOM when functioning as a temporal adverb (non-argumental). Demonstrates the `isArgumental` filter empirically.
+- **Substantive `two_modalities_required` theorem** (`BakerVinokurova2010.lean` § 13) — replaces the trivial `two_modalities_present` (which was definitionally `rfl`) with a four-conjunct theorem proving that *neither* `pureMarantz` (NOM unmarked, all cases configurational) *nor* `pureChomsky` (no dependent case, DAT nonstructural) derives the Sakha NOM-via-Agree + algorithmic-DAT pattern. The two-modality grammar is empirically *required*, not a stylistic choice.
+- **`all_sakha_derivations_total`** (`BakerVinokurova2010.lean` § 14) — application of `assignCasesPhased_length` to all eight Sakha derivations in the file, confirming the algorithm is total on each.
+
+### Changed
+- **`applyAccRule` definition** (`DependentCase.lean` § 13) inlined the `let idxs := unmarkedVisible cycle states` binding to enable `split` inside length proofs (the `let` blocked the split tactic). Behavior unchanged.
+
 ## [0.229.870] - 2026-04-17
 
 ### Added
