@@ -383,16 +383,19 @@ theorem lexical_bleeds_dependent_georgian :
 
 /-- Map case assignment source to agreement accessibility level.
     The hierarchies are isomorphic: lexical→lexical, dependent→dependent,
-    unmarked→unmarked. -/
+    unmarked→unmarked. Agree-based case (@cite{baker-vinokurova-2010})
+    behaves like unmarked for accessibility — once T values NOM, the NP
+    is fully visible to higher probes, just like an unmarked-NOM NP. -/
 def sourceToAccessibility : CaseSource → CaseAccessibility
   | .lexical   => CaseAccessibility.lexical
   | .dependent => CaseAccessibility.dependent
   | .unmarked  => CaseAccessibility.unmarked
+  | .agree     => CaseAccessibility.unmarked
 
 /-- The mapping preserves the rank ordering. -/
 theorem accessibility_preserves_rank (s : CaseSource) :
     (sourceToAccessibility s).rank = match s with
-      | .lexical => 0 | .dependent => 1 | .unmarked => 2 := by
+      | .lexical => 0 | .dependent => 1 | .unmarked => 2 | .agree => 2 := by
   cases s <;> rfl
 
 /-- Georgian Class 4's quirky DAT subject has lexical case, which maps to

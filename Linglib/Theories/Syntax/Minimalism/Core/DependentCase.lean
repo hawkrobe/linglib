@@ -57,6 +57,8 @@ inductive CaseSource where
   | lexical    -- Assigned by a specific head (P, inherent V case)
   | dependent  -- Assigned by structural configuration (@cite{baker-2015})
   | unmarked   -- Default when no other case applies
+  | agree      -- Assigned by Agree with a functional head T or D
+               -- (@cite{chomsky-2000}; NOM/GEN in @cite{baker-vinokurova-2010})
   deriving DecidableEq, Repr
 
 -- ============================================================================
@@ -476,17 +478,195 @@ inductive DatAssignment where
   | dependent      -- Dependent case (structurally assigned)
   deriving DecidableEq, Repr
 
-/-- A language-specific case system configuration.
-    Bundles the alignment type with the mechanisms for NOM and DAT.
+/-- How accusative case is assigned.
+    @cite{baker-vinokurova-2010}: in Sakha (and Mongolian, per
+    @cite{gong-2022}), ACC is dependent case (Marantz-style); the
+    standard Chomskyan alternative is that ACC is assigned by v/Voice
+    via Agree (often paired with Burzio's Generalization). -/
+inductive AccAssignment where
+  | dependent  -- ACC is dependent case (Marantz; B&V Sakha)
+  | agreeV     -- ACC assigned by v via Agree (standard Chomsky 2000/2001)
+  deriving DecidableEq, Repr
 
-    This extends `CaseLanguageType` (which only encodes alignment)
-    with the fine-grained case mechanism choices needed for WLM:
-    whether NOM is Agree-based or default, and whether DAT is
-    structural or inherent. -/
+/-- How genitive case is assigned.
+    @cite{baker-vinokurova-2010}: in Sakha, GEN is assigned by D via
+    Agree to the possessor (parallel to T-Agree NOM at the clausal
+    level). Russian numeric and partitive GEN is nonstructural. -/
+inductive GenAssignment where
+  | agreeD         -- GEN assigned by D via Agree (Sakha; @cite{baker-vinokurova-2010})
+  | nonstructural  -- GEN as inherent/lexical (Russian numeric)
+  deriving DecidableEq, Repr
+
+/-- A language-specific case system configuration.
+    Bundles the alignment type with the per-case mechanism choices.
+
+    Each of the four structural cases (NOM, GEN, ACC, DAT) gets an
+    independent mechanism plug-in. Marantz's purely-configurational
+    picture, Chomsky's purely-Agree picture, and B&V's two-modality
+    Sakha grammar all fall out as parameterizations of this single
+    structure:
+
+    | Theory          | nom              | gen      | acc       | dat            |
+    |-----------------|------------------|----------|-----------|----------------|
+    | Marantz pure    | unmarkedDefault  | (—)      | dependent | dependent      |
+    | Chomsky pure    | agreeT           | agreeD   | agreeV    | nonstructural  |
+    | Sakha (B&V)     | agreeT           | agreeD   | dependent | dependent      |
+    | Mongolian       | agreeT           | agreeD   | dependent | nonstructural  |
+
+    `accMode` and `genMode` default to the most common values across the
+    library so that existing instances need not specify them. -/
 structure CaseSystemConfig where
   langType : CaseLanguageType
   nomMode : NomAssignment
   datMode : DatAssignment
+  accMode : AccAssignment := .dependent
+  genMode : GenAssignment := .agreeD
   deriving DecidableEq, Repr
+
+-- ============================================================================
+-- § 13: Phased Case Assignment (@cite{baker-vinokurova-2010})
+-- ============================================================================
+
+/-! ## Phased case assignment
+
+@cite{baker-vinokurova-2010} formalize Sakha case as cycling over
+two phases: VP (the smaller phase) and CP. Two configurational
+rules apply (paper (4a)/(4b), restated as (85)):
+
+- (4a) DAT rule: if NP1 c-commands NP2 in the same VP-phase,
+  value NP1 as DAT unless NP2 is already marked.
+- (4b) ACC rule: if NP1 c-commands NP2 in the same phase,
+  value NP2 as ACC unless NP1 is already marked.
+
+(4a) bleeds (4b) on the VP cycle by Elsewhere ordering — its
+context (one specific phase) is more restrictive than (4b)'s
+(any phase).
+
+After dependent case has applied, Agree (paper (5)/(86)) values
+remaining unvalued NPs:
+
+- T agrees with the highest unvalued NP visible at CP, valuing NOM.
+- D agrees with its dependent NP inside a DP, valuing GEN.
+
+Each NP carries a `basePhase` (where it was merged) and a
+`shifted` flag (did it move to a higher phase before evaluation).
+PIC: NPs that stayed inside VP are not visible on the CP cycle. -/
+
+/-- Cycle in the @cite{baker-vinokurova-2010} two-phase model.
+    Distinct from the more articulated `Minimalism.Phase` structure
+    in `Phase.lean`; this is just the binary VP-vs-CP distinction
+    that the case algorithm cycles over. -/
+inductive CasePhase where
+  | vp  -- inside VP (the smaller phase in B&V)
+  | cp  -- in SpecvP or higher (visible on the CP cycle)
+  deriving DecidableEq, Repr
+
+/-- An NP equipped with phase information.
+    `basePhase` records where the NP was merged; `shifted` marks
+    NPs that have moved to a higher phase before case evaluation. -/
+structure PhasedNP extends NPInDomain where
+  basePhase : CasePhase
+  shifted : Bool := false
+  deriving DecidableEq, Repr
+
+/-- Visible on the VP cycle: NPs whose basePhase is `vp`.
+    Even shifted NPs are visible at this point — shift happens at
+    the boundary between cycles. -/
+def PhasedNP.visibleOnVP (p : PhasedNP) : Bool := p.basePhase == .vp
+
+/-- Visible on the CP cycle: NPs in `cp`, plus VP-base NPs that
+    shifted out of VP. Unshifted VP NPs were transferred (PIC). -/
+def PhasedNP.visibleOnCP (p : PhasedNP) : Bool :=
+  p.basePhase == .cp || p.shifted
+
+/-- Mutable state during phased case assignment. `case = none`
+    means "not yet valued"; lexical case starts with the value
+    pre-set. -/
+structure PhasedState where
+  np : PhasedNP
+  case : Option (CaseVal × CaseSource)
+  deriving Repr
+
+/-- An NP is "marked" iff its case has been valued (lexically,
+    by dependent rule, or by agreement). The "unless...marked"
+    clauses of (4a)/(4b) check this. -/
+def PhasedState.marked (s : PhasedState) : Bool := s.case.isSome
+
+/-- Initialize: pre-fill lexical case from the NP's `lexicalCase`
+    field; everything else starts unvalued. -/
+def initStates (nps : List PhasedNP) : List PhasedState :=
+  nps.map fun p => { np := p,
+                     case := p.lexicalCase.map (fun c => (c, .lexical)) }
+
+/-- Replace the case of the NP at index `i` with `(c, src)`. -/
+def setCaseAt (i : Nat) (c : CaseVal) (src : CaseSource)
+    (states : List PhasedState) : List PhasedState :=
+  states.zipIdx.map fun (s, j) =>
+    if j == i then { s with case := some (c, src) } else s
+
+/-- Indices of unmarked NPs visible on a given cycle, in c-command
+    order (highest first, since list-position encodes height). -/
+def unmarkedVisible (cycle : CasePhase) (states : List PhasedState) : List Nat :=
+  states.zipIdx.filterMap fun (s, i) =>
+    let visible := match cycle with
+                   | .vp => s.np.visibleOnVP
+                   | .cp => s.np.visibleOnCP
+    if visible && !s.marked then some i else none
+
+/-- Apply the DAT rule (4a) on the VP cycle: if there are at least
+    two unmarked NPs visible at vP, mark the highest as DAT. -/
+def applyDatRule (cfg : CaseSystemConfig) (states : List PhasedState) :
+    List PhasedState :=
+  if cfg.datMode != .dependent then states
+  else match unmarkedVisible .vp states with
+       | i :: _ :: _ => setCaseAt i .dat .dependent states
+       | _ => states
+
+/-- Apply the ACC rule (4b) on a given cycle: if there are at least
+    two unmarked NPs visible, mark the lowest as ACC. -/
+def applyAccRule (cfg : CaseSystemConfig) (cycle : CasePhase)
+    (states : List PhasedState) : List PhasedState :=
+  if cfg.accMode != .dependent then states
+  else
+    let idxs := unmarkedVisible cycle states
+    match idxs.reverse with
+    | last :: _ :: _ => setCaseAt last .acc .dependent states
+    | _ => states
+
+/-- Apply T-Agree (paper (5)/(86)): the highest unmarked NP visible
+    on the CP cycle gets NOM via Agree. -/
+def applyNomAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
+    List PhasedState :=
+  match cfg.nomMode with
+  | .agreeT =>
+    match (unmarkedVisible .cp states).head? with
+    | some i => setCaseAt i .nom .agree states
+    | none => states
+  | .unmarkedDefault => states
+
+/-- Default case for any NP still unmarked at the end of the
+    derivation. Uses `unmarkedCaseFor` from § 6. -/
+def applyDefault (cfg : CaseSystemConfig) (states : List PhasedState) :
+    List PhasedState :=
+  states.map fun s =>
+    if s.marked then s
+    else { s with case := some (unmarkedCaseFor cfg.langType, .unmarked) }
+
+/-- Materialize a `PhasedState` as a `CasedNP` (or omit if no case
+    was ever assigned — caller should ensure `applyDefault` ran). -/
+def PhasedState.toCased (s : PhasedState) : Option CasedNP :=
+  s.case.map fun (c, src) => { label := s.np.label, case := c, source := src }
+
+/-- The B&V phased algorithm: VP cycle (DAT then ACC), CP cycle (ACC),
+    NOM via T-Agree, then a default sweep. -/
+def assignCasesPhased (cfg : CaseSystemConfig) (nps : List PhasedNP) :
+    List CasedNP :=
+  let s0 := initStates nps
+  let s1 := applyDatRule cfg s0           -- VP cycle: (4a)
+  let s2 := applyAccRule cfg .vp s1       -- VP cycle: (4b), bled if (4a) fired
+  let s3 := applyAccRule cfg .cp s2       -- CP cycle: (4b)
+  let s4 := applyNomAgree cfg s3          -- T-Agree → NOM
+  let s5 := applyDefault cfg s4           -- last resort
+  s5.filterMap PhasedState.toCased
 
 end Minimalism

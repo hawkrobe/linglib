@@ -746,6 +746,7 @@ import Linglib.Fragments.Tlingit.Modals
 import Linglib.Fragments.Washo.Modals
 import Linglib.Fragments.Welsh.Relativization
 import Linglib.Fragments.Yakut.Indefinites
+import Linglib.Fragments.Yakut.Case
 import Linglib.Fragments.Kannada.Indefinites
 import Linglib.Fragments.Russian.PolarityItems
 import Linglib.Fragments.Russian.Indefinites
@@ -796,6 +797,7 @@ import Linglib.Phenomena.Case.Studies.Karlsson2017
 import Linglib.Phenomena.Case.Studies.AndersonJM2006
 import Linglib.Phenomena.Case.Studies.Woolford1997
 import Linglib.Phenomena.Case.Studies.Marantz1991
+import Linglib.Phenomena.Case.Studies.BakerVinokurova2010
 import Linglib.Phenomena.Case.Studies.Comrie1989
 import Linglib.Phenomena.ClauseChaining.Typology
 import Linglib.Phenomena.ClauseChaining.Data
@@ -1405,7 +1407,6 @@ import Linglib.Phenomena.Agreement.Studies.AdamsonZompi2025
 import Linglib.Phenomena.Agreement.Studies.BejarRezac2009
 import Linglib.Phenomena.Agreement.Studies.Deal2024
 import Linglib.Phenomena.Agreement.Studies.ClemDeal2024
-import Linglib.Phenomena.Agreement.Studies.BakerVinokurova2010
 import Linglib.Phenomena.Agreement.Studies.PanchevaZubizarreta2018
 import Linglib.Theories.Syntax.Minimalism.Agreement.FeatureRecursion
 import Linglib.Theories.Syntax.Minimalism.Agreement.GenderResolution

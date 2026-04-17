@@ -1,5 +1,27 @@
 # Changelog
 
+## [0.229.869] - 2026-04-17
+
+### Added
+- **`CaseSystemConfig` extended with `accMode` + `genMode`** (`Theories/Syntax/Minimalism/Core/DependentCase.lean` § 12): each of the four structural cases (NOM, GEN, ACC, DAT) now has an independent mechanism plug-in. The `AccAssignment` (`dependent` | `agreeV`) and `GenAssignment` (`agreeD` | `nonstructural`) inductives sit alongside the existing `NomAssignment` / `DatAssignment`. Marantz's purely-configurational picture, Chomsky's purely-Agree picture, and B&V's two-modality Sakha grammar all fall out as parameterizations of one structure. Defaults (`accMode := .dependent`, `genMode := .agreeD`) keep existing instances (Mongolian) source-compatible.
+- **Phased two-cycle case algorithm** (`DependentCase.lean` § 13): new `CasePhase` (vp/cp), `PhasedNP` (NPInDomain + basePhase + shifted), `PhasedState`, and `assignCasesPhased`. Implements @cite{baker-vinokurova-2010}'s (4a)/(4b)/(85) DAT/ACC dependent-case rules cycled over VP and CP, with (5)/(86) T-Agree NOM as a separate pass. (4a) bleeds (4b) on the VP cycle by Elsewhere ordering. PIC is captured via `visibleOnVP` / `visibleOnCP` (an unshifted VP-NP is invisible on the CP cycle).
+- **`CaseSource.agree`** added as a fourth case-source constructor — distinguishes Chomskyan Agree-NOM from Marantzian unmarked-NOM. `Marantz1991.sourceToAccessibility` now maps `.agree` to `.unmarked` (Agree-valued NPs are visible to higher probes the same way unmarked-NOM is).
+- **`Phenomena/Case/Studies/BakerVinokurova2010.lean`** rewritten against the extended config: monotransitive (specific vs nonspecific object DOM), ditransitive (subject-NOM / goal-DAT / theme-ACC), unaccusative, and a Mongolian cross-comparison (the Sakha vs Mongolian difference localizes to a single `datMode` parameter). Per-datum verification theorems via structural `decide` proofs. Replaces the previous file (which had misformalized B&V as Deal-2024 multigoal Agree — the opposite of the paper's two-modality thesis — and cited hallucinated equation numbers).
+- **`Fragments/Yakut/Case.lean`** — Sakha case morphology fragment exposing `yakutCaseConfig` (the B&V `CaseSystemConfig` instance) plus the standard 8-case inventory; mirror of `Fragments/Mongolian/Case.lean`.
+
+### Changed
+- `Phenomena/Case/Studies/BakerVinokurova2010.lean` moved from `Phenomena/Agreement/Studies/` (the old location reflected the misclassification of the paper as primarily about Agree).
+
+## [0.229.868] - 2026-04-17
+
+### Added
+- **`SalienceClass` promoted to Theory** (`Theories/Semantics/Verb/Roots/SalienceClass.lean`): the 4-way @cite{lucy-1994} salience cut (agent / agentPatient / patient / positional) plus `classOfSignature` and `Root.predictedSalience` now live in the framework-agnostic Theory layer. This unblocks Fragment-level references (e.g., Yukatek `VerbStemClass.toSalienceClass`) without requiring Fragments to import Phenomena Studies.
+- **`VerbStemClass.toSalienceClass`** in `Fragments/Mayan/Yukatek/VerbClasses.lean`: bridge from @cite{bohnemeyer-2004}'s 5-way Yukatek stem classification (active / inactive / inchoative / positional / transitiveActive) to @cite{lucy-1994}'s 4-way salience cut. The 5-way is a refinement: Bohnemeyer's `inchoative` and `positional` both map to Lucy's `positional` (both derive via `-tal` from a stative root); the other three classes map one-to-one. Companion theorems: `inchoative_positional_collapse_under_lucy` (witnesses the refinement) and `active_inactive_transitive_distinct` (the other three remain mutually distinct).
+- **11 per-root agreement theorems** in `Lucy1994.lean` § 8 (`siit_lucy_agrees_active`, `kuc_lucy_agrees_transitiveActive`, `kiim_lucy_agrees_inactive`, `cin_lucy_agrees_positional`, etc.): for each Yukatek root in `Roots.lean`, Lucy's `predictedClass` agrees with the corresponding Bohnemeyer stem-class label converted via `toSalienceClass`. These are the per-datum bridge theorems making the typology refinement true by construction at the lexicon level.
+
+### Changed
+- **`Lucy1994.lean` refactored**: `SalienceClass` and `classOfSignature` definitions migrated to the new Theory file. The study now re-exports `predictedClass` as an `abbrev` over `Root.predictedSalience` and keeps the linguistic interpretation (operator-orbit characterizations, motion-roots-non-class theorem, per-root sanity checks, closure-invariance theorem). Net effect: one source of truth for the 4-way classification, with the study file dedicated to the @cite{lucy-1994}-specific commentary and verifications.
+
 ## [0.229.867] - 2026-04-17
 
 ### Added
