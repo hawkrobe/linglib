@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Classifiers.Typology
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
 /-!
 Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
@@ -7,7 +7,7 @@ Noun Categorization × @cite{chierchia-1998} Nominal Mapping Parameter
 
 Connects the cross-linguistic noun categorization typology in
 `Phenomena.Classifiers.Typology` to the Nominal Mapping
-Parameter from `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`.
+Parameter from `Theories.Semantics.Noun.Kind.Chierchia1998`.
 
 ## Predictions verified
 
@@ -40,7 +40,7 @@ field on `NounCategorizationSystem` captures this finer distinction.
 namespace Chierchia1998
 
 open Core.NounCategorization
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping)
+open Semantics.Noun.Kind.Chierchia1998 (NominalMapping)
 open Phenomena.Classifiers.Typology
 
 /-- Map NominalMapping to the expected classifier type.

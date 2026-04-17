@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.Roundness
 import Linglib.Core.SocialMeaning
-import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Theories.Semantics.Quantification.Numerals.Precision
 import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Fragments.English.NumeralModifiers
@@ -41,7 +41,7 @@ PCA-derived evaluation dimensions and four communicative scenarios.
 Stimuli use numerals 49 (precise) and 50 (round), with "about" as the
 tolerance modifier:
 - `Core.Roundness.roundnessScore`: 49 → 0, 50 → 4
-- `Semantics.Lexical.Numeral.Precision.inferPrecisionMode`: 49 →.exact,
+- `Semantics.Quantification.Numerals.Precision.inferPrecisionMode`: 49 →.exact,
   50 →.approximate
 - `Fragments.English.NumeralModifiers.about`: tolerance modifier
 
@@ -84,12 +84,12 @@ theorem stim_precise_not_round :
 theorem stim_round_is_round :
     Core.Roundness.roundnessScore stimRound = 4 := by native_decide
 
-open Semantics.Lexical.Numeral.Precision in
+open Semantics.Quantification.Numerals.Precision in
 /-- 49 → exact precision mode (roundnessScore 0 < 2). -/
 theorem precise_stim_is_exact :
     inferPrecisionMode stimPrecise = .exact := by native_decide
 
-open Semantics.Lexical.Numeral.Precision in
+open Semantics.Quantification.Numerals.Precision in
 /-- 50 → approximate precision mode (roundnessScore 4 ≥ 2). -/
 theorem round_stim_is_approximate :
     inferPrecisionMode stimRound = .approximate := by native_decide

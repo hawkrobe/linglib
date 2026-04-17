@@ -257,7 +257,7 @@ def bindingSem (u_ant u_pro : S → E) : Prop :=
     @cite{haug-dalrymple-2020} §2.3: `∪u₂ → ∪u₁`.
 
     Structurally parallel to `cumulativeOp` in
-    `Theories.Semantics.Lexical.Plural.Cumulativity`:
+    `Theories.Semantics.Plurality.Cumulativity`:
     both express bidirectional existential coverage over a domain. -/
 def groupIdentitySem (u_ant u_pro : S → E) : Prop :=
   (∀ s, ∃ s', u_pro s = u_ant s') ∧ (∀ s, ∃ s', u_ant s = u_pro s')

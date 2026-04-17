@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
-import Linglib.Theories.Semantics.Lexical.Determiner.ONEModifiers
-import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
+import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
+import Linglib.Theories.Semantics.Quantification.ONEModifiers
+import Linglib.Theories.Semantics.Quantification.ChoiceFunction
 import Linglib.Core.Definiteness
 
 /-!
@@ -48,9 +48,9 @@ universal *koo-wane/koo-wace*.
 
 namespace Fragments.Hausa.Determiners
 
-open Semantics.Lexical.Determiner.UnifiedUniversal
-open Semantics.Lexical.Determiner.ONEModifiers
-open Semantics.Lexical.Determiner.ChoiceFunction
+open Semantics.Quantification.UnifiedUniversal
+open Semantics.Quantification.ONEModifiers
+open Semantics.Quantification.ChoiceFunction
 open Core.Definiteness
 
 -- ════════════════════════════════════════════════════

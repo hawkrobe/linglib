@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
-import Linglib.Theories.Semantics.Lexical.CovertQuantifier
+import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 
 /-!
 # @cite{cohen-1999a}: Probability-Based Generic Quantification
@@ -52,8 +52,8 @@ are disjoint. See `Phenomena/Generics/Studies/Nickel2009.lean`.
 
 namespace Cohen1999
 
-open Semantics.Lexical.Noun.Kind.Generics
-open Semantics.Lexical.CovertQuantifier
+open Semantics.Noun.Kind.Generics
+open Semantics.Quantification.CovertQuantifier
 -- Cohen's Probability-Based GEN
 
 /-- Cohen's GEN: a generic "Ps are Q" is true iff the conditional probability

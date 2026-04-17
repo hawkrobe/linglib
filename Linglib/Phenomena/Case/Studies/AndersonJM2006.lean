@@ -1,5 +1,5 @@
 import Linglib.Core.Case
-import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -56,7 +56,7 @@ namespace AndersonJM2006
 
 open Core (CaseRelation Scenario Case)
 open Interfaces.SyntaxSemantics (LinkingTheory ArgPosition)
-open Semantics.Lexical.Verb.EntailmentProfile
+open Semantics.Verb.EntailmentProfile
 open Fragments.English.Predicates.Verbal
 
 -- ============================================================================

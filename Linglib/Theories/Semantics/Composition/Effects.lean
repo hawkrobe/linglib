@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Composition.WriterMonad
 import Linglib.Theories.Semantics.Composition.SetMonad
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Core.IntensionalLogic.Frame
@@ -60,7 +60,7 @@ open Core.Continuation
 open Semantics.Composition.WriterMonad
 open Semantics.Composition.Tree
 open Semantics.Composition.QuantifierComposition
-open Semantics.Lexical.Expressives
+open Pragmatics.Expressives
 open Semantics.Quantification.Quantifier
 open Semantics.Reference.Binding
 open Core.IntensionalLogic

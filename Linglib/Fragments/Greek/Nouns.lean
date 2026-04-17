@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
 /-! # Greek Noun Fragment
 
@@ -14,7 +14,7 @@ and must instead appear with an overt definite article.
 
 namespace Fragments.Greek.Nouns
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
+open Semantics.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 /-- Greek is a [-arg, +pred] language: nouns are predicates,
     bare arguments are not licensed for kind reference.

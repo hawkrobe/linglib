@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 /-!
@@ -106,7 +106,7 @@ inductive Utterance where
     The change-of-state utterances (stopped, started, always smoked) encode
     presupposition + assertion as a conjunction over two temporal projections
     of the world state. See bridge theorems below connecting these to the
-    CoS theory in `Theories.Semantics.Lexical.Verb.ChangeOfState.Theory`. -/
+    CoS theory in `Theories.Semantics.Verb.ChangeOfState.Theory`. -/
 def literalMeaning : Utterance → WorldState → Bool
   | .smokes,            w => w.now
   | .doesntSmoke,       w => !w.now
@@ -122,7 +122,7 @@ def literalMeaning : Utterance → WorldState → Bool
   | .notNeverSmoked,    w => !(!w.past && !w.now)
   | .silence,           _ => true
 
-open Semantics.Lexical.Verb.ChangeOfState (priorStatePresup resultStateAssertion)
+open Semantics.Verb.ChangeOfState (priorStatePresup resultStateAssertion)
 
 /-- "Stopped smoking" = cessation presupposition (past=T) ∧ cessation assertion (now=F).
 

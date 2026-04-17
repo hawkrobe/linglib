@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
+import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
 import Linglib.Phenomena.Plurals.Studies.Kriz2016
 
 /-!
@@ -29,7 +29,7 @@ This file proves the correspondence between the two accounts:
 
 These theorems connect two independently formalized mechanisms:
 - `Semantics.Homogeneity.addressesIssue` (from Križ 2016)
-- `Semantics.Lexical.Plural.Distributivity.isStronglyRelevantProp` (from K&S 2021)
+- `Semantics.Plurality.Distributivity.isStronglyRelevantProp` (from K&S 2021)
 
 showing they agree on the bivalent fragment.
 -/
@@ -37,7 +37,7 @@ showing they agree on the bivalent fragment.
 namespace KrizSpector2021
 
 open Core.Duality (Truth3)
-open Semantics.Lexical.Plural.Distributivity
+open Semantics.Plurality.Distributivity
 open Semantics.Homogeneity
 open Phenomena.Plurals.Studies.Kriz2016
 

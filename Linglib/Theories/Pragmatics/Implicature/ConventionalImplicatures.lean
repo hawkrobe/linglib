@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Alternatives.Structural
 
@@ -56,7 +56,7 @@ applied to CI content. This file provides:
 
 namespace Implicature.ConventionalImplicatures
 
-open Semantics.Lexical.Expressives
+open Pragmatics.Expressives
 open Semantics.Entailment.Polarity (ContextPolarity)
 open Alternatives.Structural
 open Core.Tree

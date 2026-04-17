@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.DimensionBridge
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
@@ -53,7 +53,7 @@ namespace Phenomena.Gradability.CrossDomainLicensingBridge
 
 open Core.Scale
 open Core.Time
-open Semantics.Lexical.Adjective
+open Semantics.Gradability
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open Fragments.English.Predicates.Adjectival

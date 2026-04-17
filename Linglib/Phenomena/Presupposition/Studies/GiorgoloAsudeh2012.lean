@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Composition.WriterMonad
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Phenomena.Presupposition.ProjectiveContent
 
 /-!
@@ -323,7 +323,7 @@ theorem classB_properties :
     propositions, the CI channel maps directly to @cite{potts-2005}'s
     `TwoDimProp`. The presupposition channel is orthogonal. -/
 
-open Semantics.Lexical.Expressives (TwoDimProp)
+open Pragmatics.Expressives (TwoDimProp)
 
 section Bridge
 variable {W : Type*}

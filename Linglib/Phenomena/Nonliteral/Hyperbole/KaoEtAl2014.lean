@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Quantification.Numerals.Precision
 import Linglib.Tactics.RSAPredict
 
 /-!
@@ -55,7 +55,7 @@ set_option autoImplicit false
 namespace Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 
 open Core.Scale (HasDegree)
-open Semantics.Lexical.Numeral (MeasurePredicate DegreePhrase measureSentence numeralExact)
+open Semantics.Quantification.Numerals (MeasurePredicate DegreePhrase measureSentence numeralExact)
 open Real (exp log exp_pos)
 
 -- ============================================================================

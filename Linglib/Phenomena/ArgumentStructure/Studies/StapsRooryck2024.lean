@@ -1,6 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Fragments.French.Predicates
-import Linglib.Theories.Semantics.Lexical.Verb.Affectedness
+import Linglib.Theories.Semantics.Verb.Affectedness
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 
@@ -55,8 +55,8 @@ namespace StapsRooryck2024
 
 open Core.Presupposition
 open Fragments.French.Predicates
-open Semantics.Lexical.Verb.EntailmentProfile
-open Semantics.Lexical.Verb.Affectedness
+open Semantics.Verb.EntailmentProfile
+open Semantics.Verb.Affectedness
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open Minimalism

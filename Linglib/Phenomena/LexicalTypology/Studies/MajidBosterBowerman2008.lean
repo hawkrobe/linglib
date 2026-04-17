@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.VerbClass
-import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
+import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Fragments.English.Predicates.Verbal
 
 /-!

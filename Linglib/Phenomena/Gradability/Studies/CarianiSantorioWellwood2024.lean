@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.StatesBased
+import Linglib.Theories.Semantics.Gradability.StatesBased
 import Linglib.Theories.Semantics.Attitudes.Confidence
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -124,7 +124,7 @@ def csw_conditional_confidence : ConditionalConfidenceDatum where
 -- § Theory-to-Data Bridge
 -- ════════════════════════════════════════════════════
 
-open Semantics.Lexical.Adjective.StatesBased
+open Semantics.Gradability.StatesBased
 open Semantics.Attitudes.Confidence
 
 -- ════════════════════════════════════════════════════

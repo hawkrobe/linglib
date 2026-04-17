@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
+import Linglib.Theories.Semantics.Quantification.DomainRestriction
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.BToMGrounding
 import Linglib.Core.Semantics.CommonGround
@@ -64,7 +64,7 @@ namespace RitchieSchiller2024
 
 open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier (every_sem some_sem)
-open Semantics.Lexical.Determiner.DomainRestriction
+open Semantics.Quantification.DomainRestriction
 
 -- ============================================================================
 -- §1. Domain Types

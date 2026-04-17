@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
+import Linglib.Theories.Semantics.Verb.VerbEntry
 import Linglib.Theories.Semantics.Attitudes.RationalAttitude
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 

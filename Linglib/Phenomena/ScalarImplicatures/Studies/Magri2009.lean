@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Alternatives.Lexical
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
+import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
 import Linglib.Phenomena.Generics.BarePlurals
 import Linglib.Fragments.German.BarePluralWordOrder
 
@@ -49,7 +49,7 @@ stage-level predicates do not.
 namespace Magri2009
 
 open Exhaustification.InnocentExclusion (exhB ieIndices)
-open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel)
+open Semantics.Noun.Kind.Carlson1977 (PredicateLevel)
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §1  Blind Strengthening Framework

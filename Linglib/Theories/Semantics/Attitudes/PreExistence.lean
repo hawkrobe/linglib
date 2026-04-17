@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
+import Linglib.Theories.Semantics.Verb.VerbEntry
 
 /-!
 # Pre-Existence and Modal Insertion in Factive Complements

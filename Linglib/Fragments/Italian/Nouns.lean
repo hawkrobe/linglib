@@ -1,6 +1,6 @@
 import Linglib.Core.Gender
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
 /-! # Italian Noun Lexicon Fragment
 
@@ -25,7 +25,7 @@ indefinite plural — Italian has no bare plural arguments.
 
 namespace Fragments.Italian.Nouns
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
+open Semantics.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 open Core (SurfaceGender)
 
 -- ============================================================================
@@ -188,7 +188,7 @@ example : bareSingularLicensed = false := rfl
 -- § 9a: Nominal Denotation — Kind vs Property (@cite{guerrini-2026})
 -- ============================================================================
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (canDenoteKind canDenoteProperty)
+open Semantics.Noun.Kind.Chierchia1998 (canDenoteKind canDenoteProperty)
 
 /-- Italian definite plurals denote kinds: derived from `predOnly` + overt D.
     Because Italian is [-arg, +pred], D is required for argumenthood.

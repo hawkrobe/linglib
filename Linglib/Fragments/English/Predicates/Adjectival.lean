@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 
 /-! # Adjectival Predicate Lexicon Fragment
 
@@ -7,10 +7,10 @@ Gradable adjective entries following @cite{kennedy-2007}. Scale type, dimension,
 
 namespace Fragments.English.Predicates.Adjectival
 
-open Semantics.Lexical.Adjective (AntonymRelation GradableAdjEntry)
+open Semantics.Gradability (AntonymRelation GradableAdjEntry)
 open Core.Scale (Boundedness)
 open Core (EvaluativeValence)
-open Semantics.Lexical.Adjective (NegationType)
+open Semantics.Gradability (NegationType)
 
 
 /-- @cite{kennedy-2007}

@@ -1,6 +1,6 @@
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Theories.Semantics.Composition.LexEntry
-import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
+import Linglib.Theories.Semantics.Verb.VerbEntry
 
 /-!
 # Lexicon Builder

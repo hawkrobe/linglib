@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Core.Semantics.Proposition
 
 /-!
@@ -38,7 +38,7 @@ set_option autoImplicit false
 
 namespace Semantics.Quotation
 
-open Semantics.Lexical.Expressives (TwoDimProp)
+open Pragmatics.Expressives (TwoDimProp)
 open Core.Proposition (BProp)
 
 -- ════════════════════════════════════════════════════

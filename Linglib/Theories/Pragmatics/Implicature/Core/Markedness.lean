@@ -22,15 +22,15 @@ The key point: these are objective, measurable properties. Different theories
 
 -/
 
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 import Linglib.Fragments.English.Predicates.Adjectival
 import Mathlib.Data.Rat.Defs
 
 namespace Implicature.Markedness
 
-open Semantics.Lexical.Adjective
+open Semantics.Gradability
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
-open Semantics.Lexical.Adjective (NegationType ThresholdPair)
+open Semantics.Gradability (NegationType ThresholdPair)
 open Fragments.English.Predicates.Adjectival (tall short happy unhappy)
 
 

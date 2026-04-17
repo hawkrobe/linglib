@@ -1,6 +1,6 @@
 import Linglib.Phenomena.TemporalConnectives.Studies.Anscombe1964
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Linglib.Phenomena.TemporalConnectives.Studies.Karttunen1974
 import Linglib.Fragments.English.TemporalExpressions
 
@@ -46,7 +46,7 @@ open Core.Time
 open Core.Time.Interval
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
-open Semantics.Lexical.Verb.ChangeOfState
+open Semantics.Verb.ChangeOfState
 open Core.Scale (maxOnScale isAmbidirectional maxOnScale_singleton
   maxOnScale_lt_closedInterval maxOnScale_gt_closedInterval)
 

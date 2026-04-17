@@ -1,5 +1,5 @@
 import Linglib.Fragments.ASL.Height
-import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
+import Linglib.Theories.Semantics.Quantification.DomainRestriction
 
 /-!
 # @cite{davidson-gagne-2022}
@@ -75,7 +75,7 @@ namespace DavidsonGagne2022
 
 open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier (every_sem some_sem)
-open Semantics.Lexical.Determiner.DomainRestriction
+open Semantics.Quantification.DomainRestriction
 open Fragments.ASL.Height
 
 -- ============================================================================

@@ -1,9 +1,9 @@
 import Linglib.Core.Definiteness
 import Linglib.Core.Mereology
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Definiteness.Basic
-import Linglib.Theories.Semantics.Lexical.Noun.Classifier
+import Linglib.Theories.Semantics.Noun.Classifier
 import Linglib.Fragments.Shan.Definiteness
 
 /-!
@@ -238,7 +238,7 @@ theorem high_existential_universally_blocked :
 -- §4: Type-Shifting Analysis
 -- ============================================================================
 
-open Semantics.Lexical.Noun.Kind
+open Semantics.Noun.Kind
 
 /-- Shan has no overt determiners: all type-shifts are unblocked.
 
@@ -627,9 +627,9 @@ theorem demonstrative_adds_spatial_info {E : Type}
     `ClassifierStrategy.forNoun` to the denotation function. -/
 theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
     (P : α → Prop) :
-    Semantics.Lexical.Noun.Classifier.classifierDenot
+    Semantics.Noun.Classifier.classifierDenot
       Core.NounCategorization.ClassifierStrategy.forNoun P
       (fun _ => 0) 0   -- μ and n are unused for CLF-for-N
-    = Semantics.Lexical.Noun.Classifier.clfForNoun P := rfl
+    = Semantics.Noun.Classifier.clfForNoun P := rfl
 
 end Moroney2021

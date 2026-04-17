@@ -71,7 +71,7 @@ open Semantics.Causation.Sufficiency (causallySufficient)
 open Semantics.Causation.Necessity (causallyNecessary)
 open Semantics.Causation.Resultatives (completesForEffect resultativeCausativeBuilder
   freezeSolidModel)
-open Semantics.Lexical.Verb.ChangeOfState (CoSType)
+open Semantics.Verb.ChangeOfState (CoSType)
 open ConstructionGrammar (resultative composedMeaning predictedAlternationInConstruction
   ArgStructureConstruction)
 open ConstructionGrammar.Studies.GoldbergJackendoff2004 (ResultativeType)
@@ -192,7 +192,7 @@ template shift: manner verbs (activity template) become accomplishments
 inside the resultative. This connects to telicity, result state
 diagnostics (*again*/*re-* ambiguity), and CAUSE structure. -/
 
-open Semantics.Lexical.Verb.EventStructure
+open Semantics.Verb.EventStructure
 
 /-- PushPull alone is an activity (no CoS, no CAUSE). -/
 theorem pushPull_is_activity :
@@ -277,7 +277,7 @@ Three semantic subtypes:
    surface -/
 
 /-- Reuse the theory-level `SpatialConfigType` from `Adjective.Theory`. -/
-abbrev SpatialAdjType := Semantics.Lexical.Adjective.SpatialConfigType
+abbrev SpatialAdjType := Semantics.Gradability.SpatialConfigType
 
 /-- All six attested adjectives have a spatial classification in their
     Fragment entries (structural, not string-based). -/

@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
 import Linglib.Phenomena.Generics.KindReference
 import Linglib.Fragments.Italian.Nouns
 import Linglib.Fragments.English.Nouns
@@ -44,8 +44,8 @@ into a 2×2 parametric space that also predicts PN syntax.
 
 namespace Longobardi2001
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping canDenoteKind)
-open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel barePluralTranslation
+open Semantics.Noun.Kind.Chierchia1998 (NominalMapping canDenoteKind)
+open Semantics.Noun.Kind.Carlson1977 (PredicateLevel barePluralTranslation
   genericDerivation existentialDerivation RealizationRel stageLevelPred)
 
 -- ============================================================================

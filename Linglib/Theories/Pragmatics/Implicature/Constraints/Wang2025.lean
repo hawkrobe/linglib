@@ -3,7 +3,7 @@ import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.FelicityTypes
 import Linglib.Theories.Pragmatics.Implicature.Presuppositions
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 
 /-!
 # Alternative Competition for Presupposition Triggers
@@ -55,7 +55,7 @@ open Core.IntensionalLogic.RestrictedModality (BAccessRel kripkeEval)
 open Core.Proposition (BProp FiniteWorlds)
 open Interfaces (FelicityStatus FelicityResult)
 open Implicature.Presuppositions (AltStructure PragConstraint Obligatoriness)
-open Semantics.Lexical.Expressives (ciLift)
+open Pragmatics.Expressives (ciLift)
 
 
 -- ============================================================================

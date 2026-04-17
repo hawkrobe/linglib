@@ -31,12 +31,12 @@ preserves it at the operator level. See `Phenomena/Imprecision/Basic.lean`.
 
 -/
 
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
-import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
+import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
 
 namespace HaslingerEtAl2025
 
-open Semantics.Lexical.Plural.Distributivity
+open Semantics.Plurality.Distributivity
 
 -- German Distributive Lexical Items
 

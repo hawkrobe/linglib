@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
-import Linglib.Theories.Semantics.Lexical.Adjective.Antonymy
+import Linglib.Theories.Semantics.Gradability.Theory
+import Linglib.Theories.Semantics.Gradability.Antonymy
 import Linglib.Fragments.English.Predicates.Adjectival
 /-!
 # @cite{alexandropoulou-gotzner-2024} — Negated Gradable Adjectives
@@ -25,7 +25,7 @@ namespace AlexandropoulouGotzner2024
 open Core (NegationType)
 open Core.Scale (Boundedness Degree Threshold
   Degree.toNat Threshold.toNat deg thr)
-open Semantics.Lexical.Adjective (GradableAdjEntry InformationalStrength
+open Semantics.Gradability (GradableAdjEntry InformationalStrength
   ThresholdPair inGapRegion positiveMeaning' contraryNegMeaning contraryNeg)
 open Semantics.Degree (positiveMeaning negativeMeaning antonymMeaning
   positiveMeaning_monotone)
@@ -191,14 +191,14 @@ theorem gap_iff_neither {max : Nat}
 theorem contradictory_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
     positiveMeaning d θ = true ∨ antonymMeaning d θ = true :=
-  Semantics.Lexical.Adjective.Antonymy.contradictory_exhaustive d θ
+  Semantics.Gradability.Antonymy.contradictory_exhaustive d θ
 
 /-- `antonymMeaning` IS the Boolean complement of `positiveMeaning`.
     Now derived from `Antonymy.contradictory_is_complement`. -/
 theorem contradictory_is_complement {max : Nat}
     (d : Degree max) (θ : Threshold max) :
     antonymMeaning d θ = !positiveMeaning d θ :=
-  Semantics.Lexical.Adjective.Antonymy.contradictory_is_complement d θ
+  Semantics.Gradability.Antonymy.contradictory_is_complement d θ
 
 -- ============================================================================
 -- § 6. Monotonicity → Strength & Precision

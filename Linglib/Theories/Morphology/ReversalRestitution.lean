@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.RootTypology
-import Linglib.Theories.Semantics.Lexical.Verb.Affectedness
+import Linglib.Theories.Semantics.Verb.Affectedness
 import Linglib.Theories.Semantics.Events.Basic
 
 /-!
@@ -43,9 +43,9 @@ result-state equivalence.
 -/
 
 open Core.Verbs
-open Semantics.Lexical.Verb.EventStructure
-open Semantics.Lexical.Verb.EntailmentProfile
-open Semantics.Lexical.Verb.Affectedness
+open Semantics.Verb.EventStructure
+open Semantics.Verb.EntailmentProfile
+open Semantics.Verb.Affectedness
 
 -- ════════════════════════════════════════════════════
 -- § 1. Outcome Set Cardinality (eq. 62)

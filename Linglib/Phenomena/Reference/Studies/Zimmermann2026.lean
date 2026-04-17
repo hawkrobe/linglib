@@ -1,8 +1,8 @@
 import Linglib.Fragments.Hausa.Determiners
 import Linglib.Fragments.Akan.Determiners
-import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
-import Linglib.Theories.Semantics.Lexical.Determiner.ONEModifiers
-import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
+import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
+import Linglib.Theories.Semantics.Quantification.ONEModifiers
+import Linglib.Theories.Semantics.Quantification.ChoiceFunction
 import Linglib.Phenomena.Plurals.Studies.HaslingerHienEtAl2025
 
 /-!
@@ -53,9 +53,9 @@ namespace Zimmermann2026
 
 open Fragments.Hausa.Determiners
 open Fragments.Akan.Determiners
-open Semantics.Lexical.Determiner.UnifiedUniversal
-open Semantics.Lexical.Determiner.ONEModifiers
-open Semantics.Lexical.Determiner.ChoiceFunction
+open Semantics.Quantification.UnifiedUniversal
+open Semantics.Quantification.ONEModifiers
+open Semantics.Quantification.ChoiceFunction
 open HaslingerHienEtAl2025
 
 -- ════════════════════════════════════════════════════

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Exhaustification.Operators
-import Linglib.Theories.Semantics.Lexical.Plural.ExistentialPL
+import Linglib.Theories.Semantics.Plurality.ExistentialPL
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Multiplicity
@@ -117,7 +117,7 @@ is provably equivalent to `existPL` applied with the appropriate domain
 variable D.
 -/
 
-open Semantics.Lexical.Plural.ExistentialPL (existPL existPL_full existPL_singleton)
+open Semantics.Plurality.ExistentialPL (existPL existPL_full existPL_singleton)
 
 /-- The two atoms of the plurality "the kids". -/
 inductive Kid where | kelly | jane

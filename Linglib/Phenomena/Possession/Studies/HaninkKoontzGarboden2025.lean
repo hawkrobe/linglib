@@ -1,7 +1,7 @@
 import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Morphology.Core.Monotonicity
 import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Semantics.Lexical.Noun.Relational.Barker2011
+import Linglib.Theories.Semantics.Noun.Relational.Barker2011
 
 /-!
 # Variation in the lexical semantics of property concept roots
@@ -65,7 +65,7 @@ namespace HaninkKoontzGarboden2025
 
 open Morphology.Core.Monotonicity
 open Morphology.DM (Categorizer)
-open Semantics.Lexical.Noun.Relational.Barker2011 (π Pred1 Pred2)
+open Semantics.Noun.Relational.Barker2011 (π Pred1 Pred2)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Morphological Classes and Semantic Types

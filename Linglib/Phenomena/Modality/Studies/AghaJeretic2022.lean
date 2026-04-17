@@ -2,7 +2,7 @@ import Linglib.Core.Logic.NonBivalence
 import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Theories.Semantics.Modality.Directive
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.French.Modals

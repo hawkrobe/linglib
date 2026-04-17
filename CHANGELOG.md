@@ -1,5 +1,86 @@
 # Changelog
 
+## [0.229.867] - 2026-04-17
+
+### Added
+- **Shawi (Kawapanan) agreement fragment** (`Fragments/Kawapanan/Shawi/Basic.lean`) — first Kawapanan fragment, theory-neutral, `Core/`-only. Subject and object agreement paradigms (Tables 1–2 of @cite{clem-deal-2024}) as 8-cell `(person × clusivity × number → Option String)` lookups; ergative `-ri`; OAgr-on-S morpheme reusing the object paradigm; `mustBeHigh` capturing local-person object obligatory raising; `ObjectSyntax` (overt-postverbal / overt-fronted / *pro*-dropped) with `objectSyntaxLicit` blocking overt-postverbal under `-ri`.
+- **`Phenomena/Agreement/Studies/ClemDeal2024.lean`** (audit-driven refactor) — Shawi ergative as Béjar-Rezac multigoal Agree on the Deal 2024 INT/SAT lattice. New `objectVisible` factor + `predictsErgative` integrating object position. Hierarchy bridge `erg_off_diagonal_iff_subj_outranks_obj` derives Shawi's pattern from `sd_off_diagonal_iff_outranks` rather than re-asserting it. Two configurational-rule counterexamples (`configurational_rule_overgenerates_2_to_1`, `augmented_config_rule_overgenerates_3_3_low`) concretely show why Marantz/Baker-style configurational case (and @cite{barany-sheehan-2024}'s augmented version) overgenerate for Shawi. Object-syntax theorem `outranking_subj_blocks_postverbal_obj` connects `-ri` to OSV/*pro*-drop. Renamed `table4_*` theorems to content-based names; replaced `simp_all` with structural proofs.
+- **`Phenomena/Agreement/Studies/BakerVinokurova2010.lean`** — Sakha (Turkic) accusative as the *mirror image* of Shawi ergative under @cite{clem-deal-2024} §5.1's Directionality Correlation. Reuses `Deal2024.noPCC` grammar (insatiable T probe, no dynamic interaction); `predictsAccusative` parametrized by an `ObjectPosition` (high/low) that captures Sakha DOM. Theorems: `acc_high_obj_always` (high object always ACC, no person hierarchy because the probe is insatiable) and `acc_low_obj_blocked` (low object never ACC).
+- Bibliography: new `clem-deal-2024` entry (DOI 10.1162/ling_a_00529); `baker-vinokurova-2010` role bumped from `cited` to `formalized`, sources extended to include the new Sakha file.
+
+## [0.229.866] - 2026-04-17
+
+### Added
+- **Entailment closure on roots** (`Theories/Semantics/Verb/Roots/Closure.lean`): infrastructure to layer @cite{beavers-koontz-garboden-2020}'s "network of entailments" on top of the base atom list.
+  - `EntailmentRules := LexEntailment → List LexEntailment` — a rule set giving the atoms each premise atom directly entails.
+  - `closure rules atoms = atoms ++ atoms.flatMap rules` — one closure step (sufficient since `bkgRules` doesn't chain).
+  - `bkgRules`: a single conservative rule, `becomesState s ⇒ hasState s`, motivated by the semantic claim that a change to state `s` entails that `s` holds at the post-state. Other candidate rules (`volitional ⇒ sentient`, `contact ⇒ motion`) are intentionally omitted until they can be argued for from primary sources.
+  - `Root.closedEntailments` and `Root.closedFeatureSignature` — the closure-derived counterparts of `entailments`/`featureSignature`.
+- **Structural theorems on closure**: `closure_includes` (closure preserves all base atoms), `closure_any_of_any` (closure is monotone for `List.any`), `closedFeatureSignature_manner/result/cause` (closure preserves these three fields), `closedFeatureSignature_state_eq` (the keystone: `closed.state = base.state || base.result`), and `closedFeatureSignature_state_of_becomes` (every `becomesState` atom in the base forces `state = true` post-closure).
+- **`predictedClass_closure_invariant`** in `Lucy1994.lean`: closure under `bkgRules` doesn't change Lucy's salience classification. Predicated on `closedFeatureSignature_state_eq` — the `state` flip from `false` to `true` only happens when `result = true`, which already excludes the positional arm. So agent / agentPatient / patient / positional predictions are robust under entailment closure.
+- 11 per-root `closedFeatureSignature` rfl-theorems in `Fragments/Mayan/Yukatek/Roots.lean`, witnessing that closure promotes the 6 change-of-state roots (`kuc`, `pis`, `los`, `kiim`, `haan`, `luub`, `ok`) to `state = true` while leaving manner/result/cause unchanged.
+
+## [0.229.865] - 2026-04-17
+
+### Changed
+- **Renamed `Theories/Processing/MemoryProcess/` → `Theories/Processing/Memory/`** to match mathlib-style directory naming (the type stays `MemoryProcess`, but the directory is the more general "memory" — the same way `Mathlib/Topology/` houses `TopologicalSpace`). Updated `Linglib.lean` imports, `LossyContext.lean` self-import, and the cross-reference in `MemorySurprisal/Basic.lean`'s `MemoryEncoding.summary` docstring.
+
+### Documented
+- **§11 of `ArnoldEtAl2000.lean` extended with the architectural anchor.** The original §11 docstring already named `MutualInfoProfile.weightedSum` as the cost that DLM and UID both reduce to. With the new `MemoryProcess` substrate (0.229.863), that cost is itself the *behavioural profile* of a finite-capacity lossy-memory predictor, so the chain extends one level deeper: `MemoryProcess → MemorySurprisal → {DLM, UID} → {*HEAVY-FIRST, *NEW-FIRST}`. Both Arnold constraints become diagnostic of the same architectural primitive — `*HEAVY-FIRST` stresses retention (longer first constituents force more history into the encoder before integration); `*NEW-FIRST` stresses prediction (high-surprisal items at sentence-initial position face a memory state with no informative context yet to condition on). No new theorems — the bridges `heavyDiff_eq_dlm_signal` and `newDiff_pos_implies_uid_prefers_themeLast` already do the work — but a common architectural source for both constraints, with the prose grounding chain made explicit. Bridges section in the file header lists `Theories.Processing.Memory` alongside the existing `MemorySurprisal` pointer.
+
+## [0.229.864] - 2026-04-17
+
+### Changed
+- **Lucy 1994 reframed correctly: 3-way root salience cut, derived from operator orbits.** Previous `BohnemeyerStemClasses.lean` misattributed the analysis; deleted and replaced with `Phenomena/LexicalTypology/Studies/Lucy1994.lean`.
+  - **Yukatek operator inventory** (`Fragments/Mayan/Yukatek/Operators.lean`) rewritten per @cite{lucy-1994}'s actual diagnostic: `affectiveT` (`=t`, manner ∧ ¬result), `zeroDeriv` (`=∅`, manner ∧ result), `causativeS` (`=s`, result ∧ ¬manner), `positionalTal` (`-tal`, state ∧ ¬result ∧ ¬manner ∧ ¬cause). Renamed `applicativeT` → `affectiveT` to match Lucy's AFCT label.
+  - **11 Yukatek roots** (`Fragments/Mayan/Yukatek/Roots.lean`) re-encoded directly from @cite{lucy-1994} ex. (1)/(2)/(4)/(7) data, with per-root `_signature` rfl-theorems. Crucially: `haan` is "stop/cease/heal" (patient-salient), *not* the manner+result+cause "eat" reading from a stale Bohnemeyer reference.
+  - **`SalienceClass` + `classOfSignature`** (`Lucy1994.lean`) — predicted class is a function of the B&K-G feature signature alone. Structural theorems: `class_depends_only_on_signature`, plus four iff-orbit characterizations (`agent_iff_orbit_t`, `agentPatient_iff_orbit_zero`, `patient_iff_orbit_s`, `positional_iff_orbit_tal`) proving classOfSignature exactly mirrors the operator orbit.
+  - **`motion_roots_not_separate_class`** captures @cite{lucy-1994}'s central typological point: `luub` "fall" and `ok` "enter" pattern with `kiim` "die" as patient-salient state changes — they do *not* form a Talmy-style "motion" class. Companion theorem `positional_distinct_from_motion` confirms the orthogonal positional class is genuinely distinct.
+
+### Fixed
+- `classOfSignature` originally returned `some .positional` for (state=t, cause=t, manner=f, result=f), but `positionalTal.applies` requires `¬cause` (positional roots are pure stative configurations per @cite{lucy-1994}). Tightened the positional arm to `cause = false`, restoring orbit ↔ class agreement across all 16 signatures.
+- Comment-delimiter bug: docstrings containing the substring `-tal/-lah` were unintentionally opening nested block comments (`/-` inside the `-tal/-` substring). Reworded to `-tal` (allomorph `-lah`) across `Operators.lean`, `Roots.lean`, and `Lucy1994.lean`.
+
+### Removed
+- `Phenomena/LexicalTypology/Studies/BohnemeyerStemClasses.lean` (misattributed; the file's analysis was Lucy 1994's, but with reversed/inverted operator predicates and a noun-shape framing that does not appear in the paper).
+- `Inventory.applicable` (dead code in `Theories/Morphology/Derivation/Operator.lean`).
+
+### Polished (mathlib-style nits)
+- `Root.respectsBifurcation` and `Root.respectsMannerResultComplementarity` now derived as `!violates...`/`!hasMannerAndResult` rather than re-stipulated, removing the trivial `respects_iff_not_violates` wrapper.
+- Added `DecidableEq` to `Root` (`deriving DecidableEq, Repr`).
+- Documented the nullary-asymmetry of `LexEntailment.hasCause`: B&K-G's typology is neutral about *what* causes; cause-type (internal vs external) is carried by `Semantics.Verb.EventStructure.CausationType`.
+
+## [0.229.863] - 2026-04-17
+
+### Added
+- **`MemoryProcess` foundation for lossy-context surprisal (@cite{futrell-gibson-levy-2020}).** Two new files lift the abstract substrate of @cite{futrell-gibson-levy-2020}'s lossy-context surprisal model into a reusable type, with classical surprisal recovered as the lossless special case (the structural identity of their §3.5.1).
+  - `Theories/Processing/Memory/Basic.lean` — `MemoryProcess Voc Mem` bundles `(encode : List Voc → FinitePMF Mem, predict : Mem → FinitePMF (Option Voc))`, formalizing the paper's four claims: incrementality of memory, linguistic knowledge, inaccessibility of context, and the linking hypothesis. `expectedSurprisal` (Eq. 3) is the master cost function; `marginalProb` (Eq. 9) gives the marginal predictive distribution; `IsDirac` characterizes the lossless regime. The structural identity `expectedSurprisal_of_dirac` collapses Eq. 3 to per-state surprisal whenever the encoder is a Dirac.
+  - `Theories/Processing/Memory/LossyContext.lean` — the keystone reduction. `IsLosslessFor mp lm` says `mp` exactly realises `lm`; `expectedSurprisal_eq_surprisal_of_lossless` derives `mp.expectedSurprisal = lm.surprisal` for any lossless realisation. `virtualLM` is the construction-side complement: any Dirac encoder *induces* a language model under which it is lossless. This is the architectural move that demotes classical surprisal from a primitive to a special case — the paper's core claim, made formal.
+
+### Changed
+- **Closed two stubs in `Theories/Processing/MemorySurprisal/Basic.lean`** by replacing `True := trivial` placeholders with real theorems built on top of the new `MemoryProcess` framework.
+  - `MutualInfoProfile.IsLocal p L` (new): all predictive information lies within distance `L` (i.e., `I_t = 0` for `t ≥ L`). The information-theoretic analog of a dependency-length bound.
+  - `MutualInfoProfile.weightedSum_le_of_isLocal` (new): for any `L`-local profile, the weighted memory cost is at most `L · totalInfo`. This is the formal content of "information locality generalizes dependency length minimization": DLM optimizes the structural distance `L`; information locality optimizes the entire I_t profile, of which DLM is the bound-`L` special case. Replaces the prior `information_locality_generalizes_dep_locality : True := by trivial` stub. Proof goes through a private `weightedPrefixSum_local_bound` helper by induction on the profile's values list.
+  - `MutualInfoProfile.weightedSum_le_length_mul_totalInfo` (new): the universal length bound, derived as the vacuous case of `weightedSum_le_of_isLocal`.
+  - `MemoryEncoding.summary` (new): iterate a deterministic single-step `MemoryEncoding` over a history to produce the final memory state. Documented as the bridge to `MemoryProcess`: a `(MemoryEncoding, predictor)` pair induces a Dirac `MemoryProcess` whose `expectedSurprisal` is therefore exactly the LM surprisal under the induced virtual LM.
+
+## [0.229.862] - 2026-04-17
+
+### Added
+- **@cite{clem-deal-2024} "Dependent Case by Agree: Ergative in Shawi"**. Three new artifacts derive the Shawi ergative pattern from the existing `Deal2024.strictlyDescending` grammar:
+  - `references.bib` — new `clem-deal-2024` entry (DOI `10.1162/ling_a_00529`, LI Early Access).
+  - `Fragments/Kawapanan/Shawi/Basic.lean` — first Kawapanan-family fragment. Subject and object agreement paradigms (Tables 1–2), `Phi` bundle, ergative marker `-ri`, OAgr-on-S exponent reusing the object-agreement paradigm, and a `ObjectPosition` (high/low) parameter for 3rd-person objects (the source of `(✓)` optionality in Table 4).
+  - `Phenomena/Agreement/Studies/ClemDeal2024.lean` — maps the Shawi v probe to `Deal2024.strictlyDescending` (DO ≡ object as G1, IO ≡ subject as G2) and proves all 7 cells of Table 4 by `rfl`. `optionality_only_with_3p_object` shows the `(✓)`/`✓` distinction is exactly the high/low ambiguity for 3rd-person objects. `shawi_licit_count` and `high_object_matches_deal2024` derive from existing `Deal2024` theorems. OAgr-on-S correlation stated as a definitional implication (a derivable theorem awaits goal-flagging machinery — flagged in a "Follow-ups" section together with DM Vocabulary Insertion and feature provenance).
+
+## [0.229.861] - 2026-04-17
+
+### Added
+- **B&K-G Phase B: Yukatek operator inventory + Bohnemeyer stem-class derivation**. Four new files wire the Yukatek transitiviser inventory into the @cite{beavers-koontz-garboden-2020} root-features layer, recasting Bohnemeyer's 5-way stem classification as orbits under that inventory.
+  - `Theories/Morphology/Derivation/Operator.lean` — generic `DerivOp` type (`name : String`, `applies : Root → Bool`) and `Inventory := List DerivOp` with `orbit`, `equivalent`, `applicable`. Language-agnostic substrate for orbit-based typology.
+  - `Fragments/Mayan/Yukatek/Roots.lean` — 8 Yukatek roots (meyah, baaxal, balak, kim, luub, haan, kulTal, haats) as B&K-G `LexEntailment` lists, with per-root `featureSignature` rfl theorems. `haan` "eat" recovers the same manner+result+cause profile as English `eat` — the cross-linguistic falsification of Bifurcation + Manner/Result Complementarity.
+  - `Fragments/Mayan/Yukatek/Operators.lean` — @cite{bohnemeyer-2004}'s 4-operator inventory (`=t` applicative, `=s` causative, `∅` zero, `-tal` positional inchoative) with applicability stated structurally over feature signatures, plus per-root orbit theorems.
+  - `Phenomena/LexicalTypology/Studies/BohnemeyerStemClasses.lean` — `predictedStemClass : Root → Option VerbStemClass` derived from orbit. Per-root rfl theorems verify the prediction; cross-checks tie back to the existing `Fragments/Mayan/Yukatek/VerbClasses.lean` stipulations (4 classes recovered exactly; transitive-active vs intransitive-active not yet distinguishable from B&K-G features alone — needs a `contact`-driven inherent-transitivity feature).
+
 ## [0.229.860] - 2026-04-17
 
 ### Changed

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
 import Linglib.Core.PropertyDomain
@@ -383,7 +383,7 @@ end Phenomena.Gradability.Kennedy2007
 
 namespace Phenomena.Gradability.KennedyLicensingBridge
 
-open Semantics.Lexical.Adjective
+open Semantics.Gradability
 open Fragments.English.Predicates.Adjectival
 open Core.Scale
 open Phenomena.Gradability.Kennedy2007

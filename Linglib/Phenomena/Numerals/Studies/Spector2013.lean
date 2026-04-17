@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
-import Linglib.Theories.Semantics.Lexical.Numeral.Embedding
+import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Quantification.Numerals.Embedding
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
@@ -50,7 +50,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 
 namespace Spector2013
 
-open Semantics.Lexical.Numeral
+open Semantics.Quantification.Numerals
 open Exhaustification.InnocentExclusion (exhB ieIndices)
 
 -- ============================================================================

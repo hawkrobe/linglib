@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Cascade
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.PsychLink
-import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Phenomena.ImplicitCausality.Studies.SolstadBott2022
@@ -58,7 +58,7 @@ open Fragments.English.Predicates.Verbal
 open Phenomena.PsychVerbs.Data
 open SolstadBott2022
   (stimExpSubjectProfile stimExpObjectProfile expStimSubjectProfile)
-open Semantics.Lexical.Verb.EntailmentProfile
+open Semantics.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════
 -- § 1. Consistency Predicates

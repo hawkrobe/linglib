@@ -79,7 +79,7 @@ open Core.SocialMeaning
     @cite{ochs-1992} identifies two key poles of *intensity* in Japanese:
     "coarse intensity" (indexed by *ze/zo*) and "delicate intensity"
     (indexed by *wa*). These stance categories are distinct from
-    `Semantics.Lexical.Expressives.OutlookMarker.StanceType`, which
+    `Pragmatics.Expressives.OutlookMarker.StanceType`, which
     classifies evaluative stances in @cite{kubota-2026}'s theory. -/
 inductive Stance where
   /-- Coarse intensity — rough, forceful interactional style.

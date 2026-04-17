@@ -1,6 +1,6 @@
 import Linglib.Theories.Pragmatics.GriceanMaxims
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Fragments.French.Predicates
 
 /-!
@@ -64,7 +64,7 @@ syncretism creates voice ambiguity that speakers must manage.
 namespace MartinSchaeferKastner2025
 
 open Minimalism (VoiceFlavor)
-open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile predictsUnaccusative)
+open Semantics.Verb.EntailmentProfile (EntailmentProfile predictsUnaccusative)
 open Pragmatics.GriceanMaxims (MannerSubmaxim)
 open Fragments.French.Predicates
 

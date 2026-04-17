@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
+import Linglib.Theories.Semantics.Verb.VerbEntry
 import Linglib.Core.Lexical.MorphRule
 
 /-! # Verbal Predicate Lexicon Fragment
@@ -24,10 +24,10 @@ export Core.Verbs (Preferential Attitude PresupTriggerType
 open Core.Verbs
 -- Causative, Implicative already in scope via `open Core.Verbs`
 open Core.Verbs
-open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
+open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
 open Core.Scale (Boundedness)
 open Semantics.Events.Krifka1998 (VerbIncClass)
-open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile)
+open Semantics.Verb.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════
 -- § English Morphophonological Rules

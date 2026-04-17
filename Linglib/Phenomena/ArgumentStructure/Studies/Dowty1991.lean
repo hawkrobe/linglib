@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
-import Linglib.Theories.Semantics.Lexical.Verb.AgentivityLattice
+import Linglib.Theories.Semantics.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Verb.AgentivityLattice
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Phenomena.ArgumentStructure.DiathesisAlternations.Data
 import Linglib.Fragments.English.Predicates.Verbal
@@ -30,7 +30,7 @@ succeed and where they diverge from the modern approach.
 namespace Dowty1991
 
 open Core.Verbs
-open Semantics.Lexical.Verb.EntailmentProfile
+open Semantics.Verb.EntailmentProfile
 open Phenomena.ArgumentStructure.DiathesisAlternations.Data
 open Fragments.English.Predicates.Verbal
 
@@ -346,7 +346,7 @@ theorem run_prediction_matches_fragment :
     verify that Grimm's lattice predictions are consistent with the ASP
     predictions above, and that it also resolves the arrive anomaly. -/
 
-open Semantics.Lexical.Verb.AgentivityLattice
+open Semantics.Verb.AgentivityLattice
 
 /-- Grimm's lattice handles the arrive anomaly: arrive's subject has
     motion but not instigation → not in the NOM/ERG region. Consistent

@@ -1,6 +1,6 @@
 import Linglib.Core.Definiteness
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
 
 /-!
 # Shan Definiteness Fragment
@@ -33,7 +33,7 @@ situation) and add spatial content to the presupposition filter.
 namespace Fragments.Shan.Definiteness
 
 open Core.Definiteness
-open Semantics.Lexical.Noun.Kind
+open Semantics.Noun.Kind
 
 -- ============================================================================
 -- §1: Article Inventory and Blocking

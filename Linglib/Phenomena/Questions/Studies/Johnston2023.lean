@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Plural.Cumulativity
+import Linglib.Theories.Semantics.Plurality.Cumulativity
 import Linglib.Theories.Semantics.Questions.ScopeReadings
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
@@ -63,7 +63,7 @@ and verify predictions against Johnston's data.
 
 namespace Johnston2023
 
-open Semantics.Lexical.Plural.Cumulativity
+open Semantics.Plurality.Cumulativity
 
 -- ============================================================================
 -- § 1. Core types

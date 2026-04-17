@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Gradability.Studies.LassiterGoodman2017
-import Linglib.Theories.Semantics.Lexical.Adjective.Intensification
+import Linglib.Theories.Semantics.Gradability.Intensification
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs
@@ -388,7 +388,7 @@ def unattestedCount : Nat := (allEntries.filter (!·.attested)).length
 
 /-- Look up the Fragment adjective entry for an intensifier's adjectival base. -/
 def IntensifierEntry.fragmentEntry (e : IntensifierEntry) :
-    Option Semantics.Lexical.Adjective.GradableAdjEntry :=
+    Option Semantics.Gradability.GradableAdjEntry :=
   Fragments.English.Predicates.Adjectival.lookup e.adjBase
 
 /-- Bridge: pleasant's Fragment entry has positive evaluative valence,
@@ -609,7 +609,7 @@ abbrev Threshold := Core.Scale.Threshold 6
 
 open Core.Scale (deg thr)
 open Core (EvaluativeValence)
-open Semantics.Lexical.Adjective.Intensification (EvaluativeMeasure)
+open Semantics.Gradability.Intensification (EvaluativeMeasure)
 open Semantics.Degree (positiveMeaning)
 
 /-- ⟦tall⟧(θ)(x) = 1 iff height(x) > θ, specialized to scale 6. -/
@@ -706,8 +706,8 @@ theory-layer `Intensification.muHorrible`.
 theorem meaning_grounded_horribly :
     ∀ (h : Height) (θ θ_e : Threshold),
       meaning .horribly_warm h θ θ_e =
-      Semantics.Lexical.Adjective.Intensification.intensifiedMeaning
-        (Semantics.Lexical.Adjective.Intensification.muHorrible 6) h θ θ_e := by
+      Semantics.Gradability.Intensification.intensifiedMeaning
+        (Semantics.Gradability.Intensification.muHorrible 6) h θ θ_e := by
   native_decide
 
 /--
@@ -718,8 +718,8 @@ theory-layer `Intensification.muPleasant`.
 theorem meaning_grounded_pleasantly :
     ∀ (h : Height) (θ θ_e : Threshold),
       meaning .pleasantly_warm h θ θ_e =
-      Semantics.Lexical.Adjective.Intensification.intensifiedMeaning
-        (Semantics.Lexical.Adjective.Intensification.muPleasant 6) h θ θ_e := by
+      Semantics.Gradability.Intensification.intensifiedMeaning
+        (Semantics.Gradability.Intensification.muPleasant 6) h θ θ_e := by
   native_decide
 
 -- Zwicky Vacuity

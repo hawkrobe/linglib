@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 
 /-!
 # @cite{goldberg-shirtz-2025}: PAL Constructions — Theoretical Analysis
@@ -30,7 +30,7 @@ open ConstructionGrammar
 open Core.Presupposition
 open Core.CommonGround
 open Core.Proposition
-open Semantics.Lexical.Expressives
+open Pragmatics.Expressives
 
 /-! ## Section 1: PAL Construction definitions -/
 
@@ -171,7 +171,7 @@ def palPresupposition (W : Type*) (situationType : BProp W) : PrProp W :=
 - CI: speaker presupposes shared familiarity with the situation type
 
 This connects PAL semantics to the existing `TwoDimProp` from
-`Semantics.Lexical.Expressives.Basic`. -/
+`Pragmatics.Expressives.Basic`. -/
 def palTwoDim (W : Type*) (atIssue : BProp W) (familiar : BProp W) :
     TwoDimProp W :=
   { atIssue := atIssue

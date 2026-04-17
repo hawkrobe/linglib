@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Verb.EntailmentProfile
 
 /-!
 # Linking Theory Interface
@@ -62,7 +62,7 @@ Accounts expressible via this interface (non-exhaustive):
 
 -/
 
-open Semantics.Lexical.Verb.EntailmentProfile
+open Semantics.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 1. Theta Role Labels (derived convenience names)
@@ -92,7 +92,7 @@ inductive ThetaRole where
 -- § 2. EntailmentProfile → ThetaRole (canonical direction)
 -- ════════════════════════════════════════════════════════════════════════
 
-namespace Semantics.Lexical.Verb.EntailmentProfile
+namespace Semantics.Verb.EntailmentProfile
 
 /-- Derive a convenience theta-role label from an entailment profile.
 
@@ -124,7 +124,7 @@ def EntailmentProfile.toRole (p : EntailmentProfile) : Option ThetaRole :=
     else none
   else none
 
-end Semantics.Lexical.Verb.EntailmentProfile
+end Semantics.Verb.EntailmentProfile
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 3. ThetaRole → Canonical Profile (inverse direction)

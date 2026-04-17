@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.StatesBased
+import Linglib.Theories.Semantics.Gradability.StatesBased
 
 /-!
 # Confidence and Certainty as Gradable Attitudes
@@ -43,7 +43,7 @@ It does NOT validate:
 
 namespace Semantics.Attitudes.Confidence
 
-open Semantics.Lexical.Adjective.StatesBased
+open Semantics.Gradability.StatesBased
 open Core.Scale (ComparativeScale Boundedness)
 
 -- ════════════════════════════════════════════════════

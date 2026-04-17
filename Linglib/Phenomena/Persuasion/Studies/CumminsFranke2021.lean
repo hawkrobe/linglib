@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
-import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
+import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -34,7 +34,7 @@ This avoids dependence on log approximations.
 namespace CumminsFranke2021
 
 open RSA.ArgumentativeStrength
-open Semantics.Lexical.Numeral
+open Semantics.Quantification.Numerals
 
 
 -- ============================================================

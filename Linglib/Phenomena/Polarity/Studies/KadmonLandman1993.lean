@@ -4,7 +4,7 @@ import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
-import Linglib.Theories.Semantics.Lexical.Determiner.DomainVagueness
+import Linglib.Theories.Semantics.Quantification.DomainVagueness
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
 
@@ -66,7 +66,7 @@ open Core.NaturalLogic
 open Core.Lexical.PolarityItem (LicensingContext PolarityType)
 open Semantics.Entailment.Polarity
 open Semantics.Entailment.AntiAdditivity
-open Semantics.Lexical.Determiner.DomainVagueness
+open Semantics.Quantification.DomainVagueness
 open Exhaustification (entails)
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)

@@ -23,7 +23,7 @@ algebra approach to too/either (@cite{ahn-2015}).
 -/
 
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
-import Linglib.Theories.Semantics.Lexical.Particle.Additive
+import Linglib.Theories.Pragmatics.Particles.Additive
 
 namespace Thomas2026
 
@@ -259,7 +259,7 @@ section Verification
 
 open Discourse
 open Semantics.Questions.ProbabilisticAnswerhood
-open Semantics.Lexical.Particle.Additive
+open Pragmatics.Particles.Additive
 
 -- § Hotel Room (ex. 1c/14c/65) — felicitous argument-building "too"
 

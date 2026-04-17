@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Aspect.Core
-import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
+import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Fragments.Mayan.Params
 import Linglib.Core.Case
 
@@ -41,7 +41,7 @@ S marked like A (accusative).
 namespace Fragments.Mayan.Yukatek
 
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
-open Semantics.Lexical.Verb.EventStructure (EventType CausationType)
+open Semantics.Verb.EventStructure (EventType CausationType)
 open Fragments.Mayan (MarkerSet)
 
 -- ════════════════════════════════════════════════════
@@ -199,7 +199,7 @@ def haats : YukatekVerb := ⟨"hit", .transitiveActive, .internal⟩
 -- § 5. Bridge to Event Structure Templates
 -- ════════════════════════════════════════════════════
 
-open Semantics.Lexical.Verb.EventStructure (Template)
+open Semantics.Verb.EventStructure (Template)
 
 /-- Map Yukatek verb stem classes to R&H event structure templates.
     This connects the language-specific classification to the

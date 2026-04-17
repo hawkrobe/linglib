@@ -1,7 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Copula
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
-import Linglib.Theories.Semantics.Lexical.Noun.Relational.Barker2011
+import Linglib.Theories.Semantics.Noun.Relational.Barker2011
 
 /-!
 # Myler 2016: Building and Interpreting Possession Sentences
@@ -180,7 +180,7 @@ theorem isHaveVerbLanguage_iff_copulaVI (v : VoiceHead) :
 
 -- ─── Bridge to Barker 2011 (Possession inside DP) ───
 
-open Semantics.Lexical.Noun.Relational.Barker2011 in
+open Semantics.Noun.Relational.Barker2011 in
 
 /-- The relational HAVE reading requires the complement DP to have a
     Pred2 interpretation (either lexically relational or via π-shift).
@@ -196,7 +196,7 @@ theorem relational_have_requires_pred2 :
     NominalInterpType.pred2.hasRelatumSlot = true ∧
     NominalInterpType.pred2.canTakePossessor = true := ⟨rfl, rfl⟩
 
-open Semantics.Lexical.Noun.Relational.Barker2011 in
+open Semantics.Noun.Relational.Barker2011 in
 
 /-- Bare sortals (Pred1, no π) cannot appear in relational HAVE:
     "I have a cloud" requires a contextually supplied relation (π).

@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 
 /-!
 # Evaluativity: Empirical Patterns

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
+import Linglib.Theories.Semantics.Verb.VerbEntry
 
 /-!
 # Romanian Mood-Choice Verb Entries @cite{grano-2024}

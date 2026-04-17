@@ -1,6 +1,6 @@
 import Linglib.Core.Empirical
 import Linglib.Fragments.English.Determiners
-import Linglib.Theories.Semantics.Lexical.Determiner.DomainRestriction
+import Linglib.Theories.Semantics.Quantification.DomainRestriction
 
 /-!
 # Quantifier Universals Bridge
@@ -45,7 +45,7 @@ to the GQ property predicates in `Core.Quantification` and
 - **Concrete denotations**: `Semantics.Quantification.Quantifier` —
   `every_sem`, `some_sem`, `no_sem`, `most_sem`, `few_sem`, `half_sem`
 - **Fragment entries**: `Fragments.English.Determiners.QuantityWord.gqDenotation`
-- **Domain restriction**: `Semantics.Lexical.Determiner.DomainRestriction` —
+- **Domain restriction**: `Semantics.Quantification.DomainRestriction` —
   `DomainRestrictor`, `DDRP`, `conservative_domain_restricted`
 - **Impossibility theorems**: `Core.Quantification.NumberTreeGQ` —
   `no_asymmetric`, `no_strict_partial_order`, `no_euclidean`
@@ -58,7 +58,7 @@ namespace Phenomena.Quantification.Bridge
 open Fragments.English.Determiners (QuantityWord Monotonicity Strength)
 open Core.IntensionalLogic (Frame)
 open Semantics.Quantification.Quantifier
-open Semantics.Lexical.Determiner.DomainRestriction (DomainRestrictor
+open Semantics.Quantification.DomainRestriction (DomainRestrictor
   conservative_domain_restricted)
 
 -- ============================================================================

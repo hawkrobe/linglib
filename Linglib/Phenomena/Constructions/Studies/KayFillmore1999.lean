@@ -2,7 +2,7 @@ import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
@@ -423,7 +423,7 @@ theorem wxdy_presup_projects_neg {W : Type*} (embeddedProp : W → Bool) :
 -- E. Two-dimensional semantics bridge (Expressives/Basic.lean)
 -- ============================================================================
 
-open Semantics.Lexical.Expressives
+open Pragmatics.Expressives
 
 /-- WXDY on the incredulity reading has two-dimensional meaning:
 - At-issue: the embedded proposition (there's a fly in my soup)

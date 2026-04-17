@@ -37,7 +37,7 @@ as `bindingSem`, `groupIdentitySem`, and `reciprocitySem`.
 
 The `groupIdentitySem` definition — bidirectional existential coverage of
 value ranges — is structurally parallel to `cumulativeOp` in
-`Theories.Semantics.Lexical.Plural.Cumulativity`. Both express that two
+`Theories.Semantics.Plurality.Cumulativity`. Both express that two
 pluralities cover the same set of atomic parts. This is not a coincidence:
 reciprocity is a species of cumulativity, as @cite{langendoen-1978}
 first observed and @cite{haug-dalrymple-2020} §1 reaffirms.

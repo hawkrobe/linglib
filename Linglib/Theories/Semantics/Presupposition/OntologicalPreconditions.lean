@@ -36,13 +36,13 @@ Two tests from @cite{roberts-simons-2024} §2.1:
 
 import Linglib.Core.Polarity
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 namespace Semantics.Presupposition.OntologicalPreconditions
 
 open Core.Presupposition
-open Semantics.Lexical.Verb.ChangeOfState
+open Semantics.Verb.ChangeOfState
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 

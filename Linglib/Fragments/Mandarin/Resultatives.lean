@@ -29,7 +29,7 @@ dǎo 倒, wán 完, hǎo 好, diào 掉, zhù 住.
 namespace Fragments.Mandarin.Resultatives
 
 open Semantics.Causation.Resultatives
-open Semantics.Lexical.Verb.ChangeOfState (CoSType)
+open Semantics.Verb.ChangeOfState (CoSType)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Compound Data

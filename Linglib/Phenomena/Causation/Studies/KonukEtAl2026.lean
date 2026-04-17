@@ -1,6 +1,6 @@
 import Linglib.Core.StructuralEquationModel
 import Linglib.Theories.Semantics.Causation.Strength
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Theories.Semantics.Plurality.Distributivity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Data.Fintype.Fin
@@ -103,7 +103,7 @@ every atom satisfies the predicate "is causally active." -/
 theorem compoundSufficient_eq_allSatisfy :
     ∀ f : Fin 2 → Bool,
     (f 0 && f 1) =
-    Semantics.Lexical.Plural.Distributivity.allSatisfy
+    Semantics.Plurality.Distributivity.allSatisfy
       (fun (i : Fin 2) (_ : Unit) => f i) Finset.univ () := by
   native_decide
 
@@ -298,7 +298,7 @@ theorem loss_gap_iff_pluralGap :
     (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
      lossStrong (f 0) (f 1) (f 2) (f 3) = false) ↔
     (lossClassical (f 0) (f 1) (f 2) (f 3) = true ∧
-     Semantics.Lexical.Plural.Distributivity.someSatisfy
+     Semantics.Plurality.Distributivity.someSatisfy
        (fun (i : Fin 4) (_ : Unit) => f i) Finset.univ () = true) := by
   native_decide
 
@@ -412,7 +412,7 @@ theorem triple0_lossStrong_needs_all :
 LOSS_strong is exactly the `noneSatisfy` predicate from @cite{kriz-spector-2021}
 applied to the four causal variables: every individual variable is false.
 
-In `Semantics.Lexical.Plural.Distributivity`, `noneSatisfy P x w = true`
+In `Semantics.Plurality.Distributivity`, `noneSatisfy P x w = true`
 iff `∀ a ∈ x, P a w = false`. LOSS_strong instantiates this with the
 identity predicate "is present" over the four causal variables, connecting
 causal cognition to the homogeneity account of plural negation. -/
@@ -433,7 +433,7 @@ theorem lossStrong_iff_allFalse (f : Fin 4 → Bool) :
 theorem lossStrong_eq_noneSatisfy :
     ∀ f : Fin 4 → Bool,
     lossStrong (f 0) (f 1) (f 2) (f 3) =
-    Semantics.Lexical.Plural.Distributivity.noneSatisfy
+    Semantics.Plurality.Distributivity.noneSatisfy
       (fun (i : Fin 4) (_ : Unit) => f i) Finset.univ () := by
   native_decide
 

@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Composition.Modification
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Theories.Pragmatics.GriceanMaxims
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
-import Linglib.Theories.Semantics.Lexical.Verb.SelectionalPreferences
+import Linglib.Theories.Pragmatics.Expressives.Basic
+import Linglib.Theories.Semantics.Verb.SelectionalPreferences
 
 /-!
 # @cite{ahn-kocab-davidson-2026}
@@ -53,8 +53,8 @@ namespace AhnKocabDavidson2026
 open Semantics.Composition.Modification (predMod truePred predMod_true_left predMod_comm)
 open Core.Discourse.Accessibility (AccessibilityLevel)
 open Pragmatics.GriceanMaxims
-open Semantics.Lexical.Expressives (TwoDimProp)
-open Semantics.Lexical.Verb.SelectionalPreferences (SemClass)
+open Pragmatics.Expressives (TwoDimProp)
+open Semantics.Verb.SelectionalPreferences (SemClass)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Core Types

@@ -331,7 +331,7 @@ theorem pronoun_at_most_as_heavy :
 -- § 10. Cross-Study Bridge: @cite{arnold-wasow-losongco-ginstrom-2000}
 -- ════════════════════════════════════════════════════
 
-open ArnoldEtAl2000
+open ArnoldEtAl2000 Core.Constraint
 
 /-- The goal argument receives a MORE REDUCED referential form than the
     source argument. This derived contrast — not the individual predictions —
@@ -360,16 +360,27 @@ theorem goal_more_reduced_than_source :
     This theorem derives the existence of both paths: the goal/source
     contrast produces different predicted forms (Path 1 input), and
     goals are more predictable than sources (Path 2 input). Arnold et al.
-    confirm that both receiving dimensions independently matter. -/
+    confirm that both receiving dimensions independently matter — bridged
+    via the MaxEnt independence theorems
+    `heaviness_independently_predicts` and `newness_independently_predicts`,
+    instantiated at the heaviness-only and newness-only stimulus contrasts. -/
 theorem dual_path_to_ordering :
     -- Path 1: thematic role creates a form contrast (Rosa & Arnold)
     (transferNextMention .goal).predictedForm ≠
     (transferNextMention .source).predictedForm ∧
     -- Path 2: thematic role creates a predictability contrast (Rosa & Arnold)
     nextMention_goal.percent > (100 - nextMention_goal.percent) ∧
-    -- Both receiving dimensions independently predict ordering (Arnold et al.)
-    daCorpusResult.heavinessSig ∧ daCorpusResult.newnessSig := by
-  refine ⟨by decide, by native_decide, rfl, rfl⟩
+    -- Path 1 (weight) independently predicts in Arnold et al.'s MaxEnt model
+    moreProbable (grammar 1 0)
+      (heavyGoalContrast, .goalLast) (heavyGoalContrast, .themeLast) ∧
+    -- Path 2 (newness) independently predicts in Arnold et al.'s MaxEnt model
+    moreProbable (grammar 0 1)
+      (newThemeContrast, .themeLast) (newThemeContrast, .goalLast) := by
+  refine ⟨by decide, by native_decide, ?_, ?_⟩
+  · -- Path 1: heaviness alone, goal heavier than theme → goal-last more probable
+    exact heavy_goal_predicts_goalLast
+  · -- Path 2: newness alone, theme new + goal given → theme-last more probable
+    exact new_theme_predicts_themeLast
 
 -- ════════════════════════════════════════════════════
 -- § 11. Cross-Study Bridge: @cite{kehler-rohde-2013}

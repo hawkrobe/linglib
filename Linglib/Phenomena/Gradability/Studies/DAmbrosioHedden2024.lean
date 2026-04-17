@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Aggregation
+import Linglib.Theories.Semantics.Gradability.Aggregation
 import Linglib.Phenomena.Gradability.Studies.Sassoon2013
 
 /-!
@@ -36,10 +36,10 @@ DOI: 10.1080/00048402.2023.2277923
 
 namespace DAmbrosioHedden2024
 
-open Semantics.Lexical.Adjective (DimensionBindingType conjunctiveBinding
+open Semantics.Gradability (DimensionBindingType conjunctiveBinding
   disjunctiveBinding)
 open Semantics.Degree.Aggregation
-open Semantics.Lexical.Adjective.Aggregation
+open Semantics.Gradability.Aggregation
 
 -- ════════════════════════════════════════════════════
 -- § 1. Arrow's Constraints

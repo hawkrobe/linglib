@@ -9,7 +9,7 @@ Applies Kennedy's (2015) de-Fregean exact numeral semantics with Partee
 Stuhlmüller (2013). This connection is not made in either paper.
 
 **Data source**: `GoodmanStuhlmuller2013.Data`
-**Theory source**: `Theories.Semantics.Lexical.Numeral.Semantics` (Kennedy 2015)
+**Theory source**: `Theories.Semantics.Quantification.Numerals.Semantics` (Kennedy 2015)
 **Infrastructure reused**: `GoodmanStuhlmuller2013.Bridge` (observation model,
   quality filter, speaker belief)
 

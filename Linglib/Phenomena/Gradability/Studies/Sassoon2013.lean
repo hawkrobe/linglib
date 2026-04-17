@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Core.Scales.Scale
 
@@ -48,7 +48,7 @@ predictions are our addition for verification purposes.
 
 namespace Sassoon2013
 
-open Semantics.Lexical.Adjective (DimensionBindingType conjunctiveBinding
+open Semantics.Gradability (DimensionBindingType conjunctiveBinding
   disjunctiveBinding deMorgan_conjunctive_disjunctive
   deMorgan_disjunctive_conjunctive predictedBinding)
 open Semantics.Degree (interpretiveEconomy)

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
+import Linglib.Theories.Semantics.Verb.VerbEntry
 
 /-!
 # Korean Predicate Lexicon Fragment

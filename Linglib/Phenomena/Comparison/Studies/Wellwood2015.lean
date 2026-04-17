@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Measurement
+import Linglib.Theories.Semantics.Measurement
 import Linglib.Theories.Semantics.Events.ThematicRoles
 import Linglib.Theories.Semantics.Events.Krifka1998
 import Linglib.Theories.Semantics.Degree.Comparative
@@ -267,7 +267,7 @@ def patientPlaygroundDatum : StateModificationDatum :=
 open Semantics.Events (Ev EvPred)
 open Semantics.Events.ThematicRoles (ThematicFrame EventModifier
   modifiedStativeLogicalForm stativeLogicalForm modify modified_stative_is_pm)
-open Semantics.Lexical.Measurement
+open Semantics.Measurement
 open Core.Verbs
 
 /-- Deg' = much_μ + -er: the comparative degree head.
@@ -510,7 +510,7 @@ theorem adjectival_max_reduces {Entity Time : Type*} [LE Time]
 /-- CSW's `statesComparativeSem` is definitionally `μ sb < μ sa`. -/
 theorem statesComparativeSem_is_lt {S D : Type*} [Preorder S] [Preorder D]
     (μ : S → D) (sa sb : S) :
-    Semantics.Lexical.Adjective.StatesBased.statesComparativeSem μ sa sb ↔
+    Semantics.Gradability.StatesBased.statesComparativeSem μ sa sb ↔
       μ sb < μ sa :=
   Iff.rfl
 

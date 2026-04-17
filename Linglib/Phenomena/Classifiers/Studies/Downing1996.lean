@@ -3,7 +3,7 @@ import Linglib.Fragments.Japanese.Classifiers
 import Linglib.Fragments.Japanese.Nouns
 import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Phenomena.Classifiers.Typology
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
 /-!
 # @cite{downing-1996} — Numeral Classifier Systems: The Case of Japanese

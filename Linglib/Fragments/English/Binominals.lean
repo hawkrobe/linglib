@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Binominal
-import Linglib.Theories.Semantics.Lexical.Noun.Binominal
+import Linglib.Theories.Semantics.Noun.Binominal
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
 
 /-!
@@ -23,7 +23,7 @@ a grammaticalization cline:
 ## Integration
 
 - Evaluative and quantizing-bridge semantics live in
-  `Semantics.Lexical.Noun.Binominal` (cross-linguistic theory)
+  `Semantics.Noun.Binominal` (cross-linguistic theory)
 - The constructional network uses `ConstructionGrammar.Constructicon`
 - The three-way `BinominalType` is shared with Spanish binominals
   via `Core.Lexical.Binominal`
@@ -32,7 +32,7 @@ a grammaticalization cline:
 namespace Fragments.English.Binominals
 
 open Core.Lexical.Binominal
-open Semantics.Lexical.Noun.Binominal (ebnpSemantics quantizingToOfBinominal)
+open Semantics.Noun.Binominal (ebnpSemantics quantizingToOfBinominal)
 
 -- ═══════════════════════════════════════════════════════════════
 -- § 1: N₁ Noun Semantic Class

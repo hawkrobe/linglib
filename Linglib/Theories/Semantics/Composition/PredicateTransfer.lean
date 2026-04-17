@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.CovertQuantifier
+import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 
 /-!
 # Predicate Transfer, SHIFT, and Habitual Type-Shifting

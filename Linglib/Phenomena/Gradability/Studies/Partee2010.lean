@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Classification
+import Linglib.Theories.Semantics.Gradability.Classification
 
 /-!
 # Partee (2010): Privative Adjectives: Subsective plus Coercion @cite{partee-2010}
@@ -50,7 +50,7 @@ the Polish data argues it is.
 
 namespace Partee2010
 
-open Semantics.Lexical.Adjective.Classification
+open Semantics.Gradability.Classification
 
 -- ════════════════════════════════════════════════════
 -- § 1. Noun Coercion

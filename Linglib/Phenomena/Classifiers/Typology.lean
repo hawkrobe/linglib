@@ -46,7 +46,7 @@ constraints, @cite{greenberg-1972} classifier–number complementarity.
 - **Noun entries**: `Fragments.{Mandarin,Japanese,French,Italian}.Nouns`
 - **WALS 55A**: `Core.WALS.F55A` — 400-language numeral classifier survey
   (imported in `Phenomena.Numerals.Typology`)
-- **Chierchia bridge**: `Theories.Semantics.Lexical.Noun.Kind.Chierchia1998`
+- **Chierchia bridge**: `Theories.Semantics.Noun.Kind.Chierchia1998`
 -/
 
 namespace Phenomena.Classifiers.Typology

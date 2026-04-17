@@ -1,4 +1,4 @@
-import Linglib.Core.Constraint.OTLimit
+import Linglib.Core.Constraint.Dequantization.OTLimit
 import Linglib.Core.Constraint.MaxEnt
 
 /-!

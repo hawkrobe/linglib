@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
-import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
-import Linglib.Theories.Semantics.Lexical.Verb.LevinTheory
+import Linglib.Theories.Semantics.Verb.EventStructure
+import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Verb.LevinTheory
 
 open Core.Verbs
 
@@ -58,9 +58,9 @@ you nothing about whether it entails change, and vice versa.
   40, 225–276.
 -/
 
-open Semantics.Lexical.Verb.EventStructure
-open Semantics.Lexical.Verb.EntailmentProfile
-open Semantics.Lexical.Verb.ChangeOfState
+open Semantics.Verb.EventStructure
+open Semantics.Verb.EntailmentProfile
+open Semantics.Verb.ChangeOfState
 open Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════

@@ -34,13 +34,13 @@ DirectedMeasure, degree/threshold types for computation). This module adds
 the linguistic interface: gradable predicates, DegP composition, and
 standard-of-comparison structure.
 
-## Relationship to Lexical.Adjective.Theory
+## Relationship to Gradability.Theory
 
 This module uses abstract types (`Entity D : Type*` with `LinearOrder D`)
-for framework-level theorems. `Lexical.Adjective.Theory` uses concrete
+for framework-level theorems. `Gradability.Theory` uses concrete
 `Degree max` (= `Fin (max+1)`) for computation in RSA models and Fragment
 entries. The two serve different clients: this module is imported by
-`Degree/Frameworks/` and `Degree/Comparative.lean`; `Adjective.Theory` is
+`Degree/Frameworks/` and `Degree/Comparative.lean`; `Gradability.Theory` is
 imported by `Fragments/English/` and `Phenomena/Gradability/` bridges.
 
 -/
@@ -133,7 +133,7 @@ def positiveFromScale {Entity D : Type*} [LinearOrder D] [BoundedOrder D]
 -- ════════════════════════════════════════════════════
 
 /-! Computational (`Bool`) versions of threshold comparison using concrete
-    `Degree max` types. Moved from `Lexical.Adjective.Theory` — these are
+    `Degree max` types. Moved from `Gradability.Theory` — these are
     general degree operations, not adjective-specific. -/
 
 /-- Positive form: degree > threshold -/

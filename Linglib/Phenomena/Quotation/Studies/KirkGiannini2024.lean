@@ -54,7 +54,7 @@ set_option autoImplicit false
 namespace KirkGiannini2024
 
 open Semantics.Quotation
-open Semantics.Lexical.Expressives (TwoDimProp)
+open Pragmatics.Expressives (TwoDimProp)
 open Core.Proposition (BProp)
 
 -- ════════════════════════════════════════════════════

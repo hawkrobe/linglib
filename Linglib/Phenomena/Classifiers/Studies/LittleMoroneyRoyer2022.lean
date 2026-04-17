@@ -4,7 +4,7 @@ import Linglib.Core.Tree
 import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Shan.Classifiers
-import Linglib.Theories.Semantics.Lexical.Noun.Classifier
+import Linglib.Theories.Semantics.Noun.Classifier
 
 /-!
 # Little, Moroney & Royer (2022)
@@ -504,10 +504,10 @@ theorem chol_differs_from_chierchia_languages :
     This confirms that the typological enum in `Core.NounCategorization`
     is structurally connected to semantic content, not just a label. -/
 theorem strategy_dispatch_forNoun :
-    Semantics.Lexical.Noun.Classifier.classifierDenot
+    Semantics.Noun.Classifier.classifierDenot
       Core.NounCategorization.ClassifierStrategy.forNoun
       (fun (_ : Finset Dog) => True) (fun _ => 0) 0
-    = Semantics.Lexical.Noun.Classifier.clfForNoun (fun (_ : Finset Dog) => True) := rfl
+    = Semantics.Noun.Classifier.clfForNoun (fun (_ : Finset Dog) => True) := rfl
 
 /-- The local `clfForNumSem` IS `QMOD` from `Core.Mereology`: both compute
     `R(x) ∧ μ(x) = n` with `μ = Finset.card` and `n = 2`. The unified

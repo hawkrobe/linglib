@@ -81,7 +81,7 @@ open Core.Verbs
 open Fragments.Indonesian.VoiceSystem
 open Minimalism (VoiceParams VoiceFlavor ExternalArgSemantics)
 open Beavers2010
-open Semantics.Lexical.Verb.Affectedness (AffectednessDegree)
+open Semantics.Verb.Affectedness (AffectednessDegree)
 open Semantics.Events.ArgumentRealization
 open Interfaces.SyntaxSemantics.VoiceSemantics
 open Core.IntensionalLogic

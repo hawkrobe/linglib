@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
+import Linglib.Theories.Semantics.Verb.DegreeAchievement
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
@@ -25,7 +25,7 @@ that the fragment annotations are consistent with that derivation.
 namespace KennedyLevin2008
 
 open Fragments.English.Predicates.Verbal hiding clean cool warm open_
-open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
+open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
 open Core.Verbs
 open Core.Scale (Boundedness LicensingPipeline MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)

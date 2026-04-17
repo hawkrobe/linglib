@@ -580,7 +580,7 @@ variable {α : Type*} [SemilatticeSup α]
     for the entire mereological analysis. -/
 theorem mandarin_needs_classifiers :
     Fragments.Mandarin.Nouns.mandarinMapping =
-      Semantics.Lexical.Noun.Kind.Chierchia1998.NominalMapping.argOnly :=
+      Semantics.Noun.Kind.Chierchia1998.NominalMapping.argOnly :=
   Chierchia1998.mandarin_mapping
 
 /-- The Chierchia–Borer–Wang&Sun chain for 杯 bēi:
@@ -592,7 +592,7 @@ theorem mandarin_needs_classifiers :
 theorem full_chain (P : α → Prop) (hc : CUM P) :
     -- Chierchia: Mandarin needs classifiers
     Fragments.Mandarin.Nouns.mandarinMapping =
-      Semantics.Lexical.Noun.Kind.Chierchia1998.NominalMapping.argOnly ∧
+      Semantics.Noun.Kind.Chierchia1998.NominalMapping.argOnly ∧
     -- Fragment: bēi can be mensural
     Fragments.Mandarin.Classifiers.bei.isMensural = true ∧
     -- Structural: opposite visibility

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Verb.VerbEntry
+import Linglib.Theories.Semantics.Verb.VerbEntry
 
 /-!
 # French Predicate Lexicon Fragment
@@ -18,7 +18,7 @@ namespace Fragments.French.Predicates
 
 open Core.Verbs
 open Core.Verbs (Causative)
-open Semantics.Lexical.Verb.EntailmentProfile
+open Semantics.Verb.EntailmentProfile
   (EntailmentProfile kickSubjectProfile seeSubjectProfile runSubjectProfile)
 
 /-- French verb entry: extends VerbCore with French inflectional paradigm. -/

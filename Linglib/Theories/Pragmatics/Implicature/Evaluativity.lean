@@ -35,7 +35,7 @@ Why do equatives show asymmetry (marked antonyms evaluative) but comparatives do
 
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 import Mathlib.Data.Rat.Defs
 
 namespace Implicature.Evaluativity
@@ -43,7 +43,7 @@ namespace Implicature.Evaluativity
 open Implicature
 open Implicature.Markedness
 open Semantics.Degree (AdjectivalConstruction)
-open Semantics.Lexical.Adjective
+open Semantics.Gradability
 
 
 /--

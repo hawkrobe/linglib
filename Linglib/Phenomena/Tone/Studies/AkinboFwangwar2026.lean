@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Core.Constraint.System
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
@@ -579,7 +579,7 @@ This challenges @cite{dingemanse-akita-2017}'s prediction that
 grammatical integration inversely correlates with expressiveness.
 -/
 
-open Semantics.Lexical.Expressives
+open Pragmatics.Expressives
 
 /-- Derived ideophonic verbs exhibit all canonical expressive properties:
     independent, nondisplaceable, perspective-dependent, descriptively

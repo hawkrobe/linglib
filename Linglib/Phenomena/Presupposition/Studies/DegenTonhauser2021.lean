@@ -320,7 +320,7 @@ theorem all_predicates_take_clause_complement (p : Predicate) :
     (toPredicateCore p).complementType = .finiteClause ∨
     (toPredicateCore p).altComplementType = some .finiteClause := by
   cases p <;>
-    simp [toPredicateCore, Semantics.Lexical.Adjective.ClauseEmbeddingAdj.toVerbCore,
+    simp [toPredicateCore, Semantics.Gradability.ClauseEmbeddingAdj.toVerbCore,
           beAnnoyed, beRight] <;>
     first | left; rfl | right; rfl
 

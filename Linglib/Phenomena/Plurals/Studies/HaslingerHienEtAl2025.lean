@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
-import Linglib.Theories.Semantics.Lexical.Determiner.ONEModifiers
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
-import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
+import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
+import Linglib.Theories.Semantics.Quantification.ONEModifiers
+import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.German.Distributives
 
@@ -43,9 +43,9 @@ author sets.
 
 namespace HaslingerHienEtAl2025
 
-open Semantics.Lexical.Determiner.UnifiedUniversal
-open Semantics.Lexical.Determiner.ONEModifiers
-open Semantics.Lexical.Plural.Distributivity
+open Semantics.Quantification.UnifiedUniversal
+open Semantics.Quantification.ONEModifiers
+open Semantics.Plurality.Distributivity
 open Mereology
 
 -- ════════════════════════════════════════════════════

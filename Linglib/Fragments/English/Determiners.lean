@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
+import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Tactic.Linarith
@@ -727,7 +727,7 @@ end CanonicalGQDenotations
     the dist/non-dist split from Q_∀ + ONE (see `UnifiedUniversal.lean`,
     `ONEModifiers.lean`, `HaslingerHienEtAl2025.lean`). -/
 
-open Semantics.Lexical.Plural.Distributivity
+open Semantics.Plurality.Distributivity
 
 /-- each: +distributive, +maximal — forces every atom to satisfy P.
     Semantics: `distMaximal`. -/

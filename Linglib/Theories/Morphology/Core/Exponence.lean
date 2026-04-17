@@ -237,7 +237,7 @@ namespace Core.Morphology.Degree
 
     Semantically vacuous at the morphological level — comparative
     semantics (degree quantification) is handled compositionally
-    by `Semantics.Lexical.Adjective.Comparative`. -/
+    by `Semantics.Gradability.Comparative`. -/
 def comparativeRule (σ : Type) (irregularForm : Option String := none) : MorphRule σ :=
   { category := .degree
   , value := "comp"

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 import Linglib.Phenomena.Gradability.Vagueness
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Fintype.Basic
@@ -50,7 +50,7 @@ namespace Fine1975
 
 open Core.Duality (Truth3)
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat)
-open Semantics.Lexical.Adjective (ThresholdPair inGapRegion)
+open Semantics.Gradability (ThresholdPair inGapRegion)
 open Semantics.Supervaluation (SpecSpace superTrue definitely indefinite)
 
 -- ════════════════════════════════════════════════════

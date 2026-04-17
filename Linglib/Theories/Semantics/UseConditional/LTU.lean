@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 
 /-!
 # L_TU: A Logic for Truth-Conditional and Use-Conditional Meaning
@@ -43,7 +43,7 @@ functional expletive, functional shunting, functional mixed).
 namespace Semantics.UseConditional
 
 open Core.Proposition (BProp)
-open Semantics.Lexical.Expressives (TwoDimProp)
+open Pragmatics.Expressives (TwoDimProp)
 
 
 -- ════════════════════════════════════════════════════════════════

@@ -635,7 +635,7 @@ Beta mixtures that capture the qualitative predictions:
 
 The paper reports a model fit of r²(93) = 0.894 on habitual endorsement data.
 
-See also: `Semantics.Lexical.Verb.Habituals.hab_reduces_to_threshold` for
+See also: `Semantics.Verb.Habituals.hab_reduces_to_threshold` for
 the formal bridge from the traditional HAB operator to threshold semantics,
 completing the pipeline: HAB → threshold → uncertain threshold → RSA endorsement.
 -/

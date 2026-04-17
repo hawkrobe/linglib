@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Verb.AgentivityLattice
-import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Verb.AgentivityLattice
+import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Phenomena.Case.Typology
 
 /-!
@@ -36,8 +36,8 @@ object marking profiles in `Phenomena/Case/Typology.lean`.
 
 namespace Grimm2011
 
-open Semantics.Lexical.Verb.AgentivityLattice
-open Semantics.Lexical.Verb.EntailmentProfile
+open Semantics.Verb.AgentivityLattice
+open Semantics.Verb.EntailmentProfile
 open Core.Prominence
 open Phenomena.Case.Typology
 

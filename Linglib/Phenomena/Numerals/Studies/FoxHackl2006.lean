@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
+import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
 
 /-!
 # Numeral MIP Bridge
@@ -29,7 +29,7 @@ density predictions.
 namespace Phenomena.Numerals.MIPBridge
 
 open Core.Scale
-open Semantics.Lexical.Numeral
+open Semantics.Quantification.Numerals
 
 -- ════════════════════════════════════════════════════
 -- § 1. maxMeaning ↔ Core.Scale Degree Properties

@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Composition.PredicateTransfer
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
-import Linglib.Theories.Semantics.Lexical.Verb.Habituals
+import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Verb.Habituals
 import Linglib.Theories.Semantics.Composition.Scope
-import Linglib.Theories.Semantics.Lexical.CovertQuantifier
+import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 
 /-!
 # @cite{cohen-2013}: No Quantification without Reinterpretation
@@ -73,7 +73,7 @@ These connect to `PredicateTransfer.lean` (T_g, γ, SHIFT, `QuantifierSource`),
 namespace Cohen2013
 
 open Semantics.Composition.PredicateTransfer
-open Semantics.Lexical.CovertQuantifier
+open Semantics.Quantification.CovertQuantifier
 open Semantics.Scope (ScopeConfig)
 
 -- ============================================================================

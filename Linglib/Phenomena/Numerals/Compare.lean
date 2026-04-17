@@ -1,10 +1,10 @@
 import Linglib.Core.Scales.Roundness
 import Linglib.Phenomena.Numerals.Studies.WoodinEtAl2024
-import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Theories.Semantics.Quantification.Numerals.Precision
 import Linglib.Theories.Pragmatics.Implicature.Constraints.NumericalExpressions
 import Linglib.Fragments.English.NumeralModifiers
 import Linglib.Phenomena.Numerals.Studies.ClausWalch2024
-import Linglib.Theories.Semantics.Lexical.Numeral.Semantics
+import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Rat.Cast.Order
 import Linglib.Tactics.RSAPredict
@@ -49,7 +49,7 @@ namespace Phenomena.Numerals.Compare
 open Core.Roundness
 open WoodinEtAl2024
 open Implicature.Constraints.NumericalExpressions
-open Semantics.Lexical.Numeral.Precision
+open Semantics.Quantification.Numerals.Precision
 open Core.Scale (HasDegree)
 
 -- ============================================================================
@@ -282,8 +282,8 @@ prove the two representations agree for all five `OrderingRel` variants.
 
 section Bridge8_Degree
 
-open Semantics.Lexical.Numeral
-open Semantics.Lexical.Numeral.Precision
+open Semantics.Quantification.Numerals
+open Semantics.Quantification.Numerals.Precision
 open Core.Scale (HasDegree)
 
 /-- A type with a natural-number cardinality measure. -/
@@ -343,7 +343,7 @@ Reimplements `NumeralTheory.runL1` using `RSAConfig` + `rsa_predict`.
 
 section Bridge9
 
-open Semantics.Lexical.Numeral
+open Semantics.Quantification.Numerals
 
 /-- Finite cardinality type (worlds 0-3). -/
 inductive NCard where
@@ -425,7 +425,7 @@ alternative set theorems using `RSAConfig` + `rsa_predict`.
 
 section Bridge10
 
-open Semantics.Lexical.Numeral
+open Semantics.Quantification.Numerals
 
 /-- Wider cardinality range (0-5) for modified numeral competition. -/
 inductive KCard where

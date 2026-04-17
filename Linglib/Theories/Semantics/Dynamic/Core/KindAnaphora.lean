@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 
@@ -42,7 +42,7 @@ while blocking:
 
 namespace Semantics.Dynamic.Core.KindAnaphora
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (Kind Property IsMass
+open Semantics.Noun.Kind.Chierchia1998 (Kind Property IsMass
   kindAnaphorMass kindAnaphorCount kindAnaphorCount_mass)
 open Semantics.Dynamic.Core (ConceptDRef DRefVal)
 

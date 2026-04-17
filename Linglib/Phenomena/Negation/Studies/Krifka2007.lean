@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Antonymy
+import Linglib.Theories.Semantics.Gradability.Antonymy
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
 import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Core.Logic.OT
@@ -62,9 +62,9 @@ set_option autoImplicit false
 namespace Krifka2007
 
 open Core.Scale (Degree Threshold deg thr)
-open Semantics.Lexical.Adjective (ThresholdPair inGapRegion
+open Semantics.Gradability (ThresholdPair inGapRegion
   positiveMeaning' contraryNegMeaning notContraryNegMeaning contradictoryNeg)
-open Semantics.Lexical.Adjective.Antonymy
+open Semantics.Gradability.Antonymy
 open Semantics.Degree (positiveMeaning)
 open Phenomena.Negation.FlexibleNegation
 open Core.ConstraintEvaluation (superoptimal)

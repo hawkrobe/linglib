@@ -52,7 +52,7 @@ open Semantics.Causation.Resultatives
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency (causallySufficient)
 open Morphology.WordStructure
-open Semantics.Lexical.Verb.ChangeOfState (CoSType priorStatePresup)
+open Semantics.Verb.ChangeOfState (CoSType priorStatePresup)
 open Fragments.Mandarin.Resultatives
 
 -- ════════════════════════════════════════════════════

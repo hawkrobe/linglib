@@ -5,7 +5,7 @@ import Linglib.Core.Inquisitive
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Logic.Truth3
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Homogeneity
@@ -626,7 +626,7 @@ section PluralInstance
 
 variable {Atom W : Type*} [DecidableEq Atom]
 
-open Semantics.Lexical.Plural.Distributivity (pluralTruthValue allSatisfy)
+open Semantics.Plurality.Distributivity (pluralTruthValue allSatisfy)
 
 omit [DecidableEq Atom] in
 /-- `pluralTruthValue` is `supervaluationTV` with atoms as spec points. -/
@@ -656,7 +656,7 @@ end Semantics.Homogeneity
 namespace Phenomena.Plurals.Studies.Kriz2016
 
 open Core.Duality (Truth3)
-open Semantics.Lexical.Plural.Distributivity
+open Semantics.Plurality.Distributivity
 open Semantics.Homogeneity
 
 variable {Atom W : Type*} [DecidableEq Atom]

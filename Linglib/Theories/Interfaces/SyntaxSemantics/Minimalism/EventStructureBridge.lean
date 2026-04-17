@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
-import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
+import Linglib.Theories.Semantics.Verb.EventStructure
 
 /-!
 # Event Structure ↔ Syntactic Heads Bridge
@@ -24,7 +24,7 @@ semantic layer (Semantics.Events/EventStructure) to the syntactic layer
 
 namespace Minimalism.Bridge
 
-open Semantics.Lexical.Verb.EventStructure
+open Semantics.Verb.EventStructure
 open Minimalism
 
 -- ============================================================================

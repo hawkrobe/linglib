@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.ClauseEmbedding
+import Linglib.Theories.Semantics.Gradability.ClauseEmbedding
 
 /-!
 # English Copular Predicate Fragment
@@ -14,7 +14,7 @@ that need a uniform `VerbCore` interface.
 
 namespace Fragments.English.Predicates.Copular
 
-open Semantics.Lexical.Adjective (ClauseEmbeddingAdj)
+open Semantics.Gradability (ClauseEmbeddingAdj)
 open Core.Verbs
 
 /-- "annoyed (that p)" — emotive factive clause-embedding adjective.
@@ -56,8 +56,8 @@ open Core.Verbs in
     The copula contributes "be"; the adjective contributes the semantics.
     This is English-specific — other languages realize clause-embedding
     adjectives differently (zero copula, verbal adjectives, etc.). -/
-def Semantics.Lexical.Adjective.ClauseEmbeddingAdj.toVerbCore
-    (a : Semantics.Lexical.Adjective.ClauseEmbeddingAdj) : VerbCore where
+def Semantics.Gradability.ClauseEmbeddingAdj.toVerbCore
+    (a : Semantics.Gradability.ClauseEmbeddingAdj) : VerbCore where
   form := "be " ++ a.adjForm
   complementType := a.complementType
   presupType := a.presupType

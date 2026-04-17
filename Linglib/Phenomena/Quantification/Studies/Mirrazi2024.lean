@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
+import Linglib.Theories.Semantics.Quantification.ChoiceFunction
 import Linglib.Theories.Semantics.Attitudes.NegRaising
 import Linglib.Fragments.Farsi.Determiners
 
@@ -59,7 +59,7 @@ descriptive content.
 
 namespace Mirrazi2024
 
-open Semantics.Lexical.Determiner.ChoiceFunction
+open Semantics.Quantification.ChoiceFunction
 open Semantics.Attitudes.Doxastic (AccessRel boxAt)
 open Semantics.Attitudes.NegRaising (negRaisesAt)
 open Fragments.Farsi.Determiners (ye candTa doTa PlainIndefiniteEntry)

@@ -1,4 +1,5 @@
 import Linglib.Core.Constraint.Decoder
+import Linglib.Core.Constraint.Dequantization.LogSumExp.Limit
 import Mathlib.Algebra.Tropical.BigOperators
 
 /-!
@@ -33,19 +34,23 @@ of OT coincide.
 The max-plus dual follows by replacing `R` with `OrderDual R`: HG's
 argmax is then the same algebraic operation in the dual semiring.
 
-## What is deferred
+## The dequantized bridge
 
-The log-sum-exp ↔ max-plus correspondence in the `α → ∞` limit is
-the semiring-homomorphism statement of `softmax_argmax_limit`
-(`Core.Agent.RationalAction`). Its full categorical statement —
-log-sum-exp as a one-parameter family of semirings deforming to
-max-plus — requires limit-of-semiring infrastructure not yet built
-out here.
+§ 4 connects `lseFinset` (the warped semiring's additive operator at
+finite temperature, in `Dequantization/LogSumExp/Basic.lean`) to argmax
+via the `α → ∞` limit (`lseFinset_tendsto_sup'` in
+`Dequantization/LogSumExp/Limit.lean`):
+a candidate is an argmax winner exactly when its score equals
+`lim_{α → ∞} lseFinset α cands score`. This is the semiring-level
+statement of MaxEnt → HG: as the inverse temperature sweeps to its
+limit, the soft "log-sum-exp aggregator" deforms to the hard "max
+aggregator", and "this candidate's score equals the aggregate" is
+exactly the argmax condition.
 -/
 
 namespace Core.Constraint
 
-open Tropical
+open Tropical Filter Topology
 
 -- ============================================================================
 -- § 1: Tropical Sum = Inf (Min-Plus / OT)
@@ -112,5 +117,41 @@ Stating this via the existing tropical machinery requires going through
 `argminDecoder ↔ trop_sum` bridge above is the main statement, and the
 HG case is its dual.
 -/
+
+-- ============================================================================
+-- § 4: Dequantized View — Argmax Picks the lse Limit (MaxEnt → HG)
+-- ============================================================================
+
+/-- A candidate `c ∈ cands` is an argmax winner exactly when its score
+    equals the `α → ∞` limit of `lseFinset α cands score`.
+
+    This is the dequantized analogue of `argmin_winner_iff_trop_sum`:
+    the operational notion of "winner" (achieves the maximum) coincides
+    with the algebraic notion (score realises the additive identity of
+    the dequantized warped semiring, i.e., the limit of the soft
+    aggregator). The forward direction uses
+    `lseFinset_tendsto_sup'` (`Dequantization/LogSumExp/Limit.lean`),
+    and the algebraic
+    characterisation reduces to `score c = cands.sup' hne score`. -/
+theorem argmax_winner_iff_lse_max_limit {Cand : Type*}
+    {cands : Finset Cand} (hne : cands.Nonempty)
+    {score : Cand → ℝ} {c : Cand} (hc : c ∈ cands) :
+    (∀ c' ∈ cands, score c' ≤ score c) ↔
+    Tendsto (fun α : ℝ => lseFinset α cands score) atTop (𝓝 (score c)) := by
+  constructor
+  · intro hmax
+    have hsup : cands.sup' hne score = score c := by
+      apply le_antisymm
+      · exact Finset.sup'_le hne score (fun c' hc' => hmax c' hc')
+      · exact Finset.le_sup' (f := score) hc
+    have := lseFinset_tendsto_sup' hne score
+    rwa [hsup] at this
+  · intro htendsto
+    have hsup_tendsto := lseFinset_tendsto_sup' hne score
+    have hscore_eq : score c = cands.sup' hne score :=
+      tendsto_nhds_unique htendsto hsup_tendsto
+    intro c' hc'
+    rw [hscore_eq]
+    exact Finset.le_sup' (f := score) hc'
 
 end Core.Constraint

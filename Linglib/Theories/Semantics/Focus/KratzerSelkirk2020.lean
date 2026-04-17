@@ -34,12 +34,12 @@ are the result of default prosody.
 
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Core.Semantics.Presupposition
 
 open Core.InformationStructure
 open Core.Prosody
-open Semantics.Lexical.Expressives
+open Pragmatics.Expressives
 open Core.Presupposition
 open Core.Proposition
 

@@ -1,6 +1,6 @@
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Conjunction
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Phenomena.Coordination.Typology
 
 /-!
@@ -531,7 +531,7 @@ general case for arbitrary pluralities.
 section MUDistributivity
 
 open Core.IntensionalLogic.Conjunction
-open Semantics.Lexical.Plural.Distributivity
+open Semantics.Plurality.Distributivity
 
 /--
 M&S conjunction = Link's distributive predication for pairs.

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
+import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
 
 /-!
 # German Bare Plural Word Order
@@ -34,7 +34,7 @@ strengthening is vacuous.
 
 namespace Fragments.German.BarePluralWordOrder
 
-open Semantics.Lexical.Noun.Kind.Carlson1977 (PredicateLevel)
+open Semantics.Noun.Kind.Carlson1977 (PredicateLevel)
 
 /-- Position of the bare plural subject relative to *ja doch*. -/
 inductive BPSPosition where

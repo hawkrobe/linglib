@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Classification
+import Linglib.Theories.Semantics.Gradability.Classification
 
 /-!
 # Elbourne (2026): Adjectives without syntactic categories
@@ -43,7 +43,7 @@ construction.
 
 namespace Elbourne2026
 
-open Semantics.Lexical.Adjective.Classification
+open Semantics.Gradability.Classification
   (Property AdjMeaning isIntersective isSubsective)
 
 -- ════════════════════════════════════════════════════════

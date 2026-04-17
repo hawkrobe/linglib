@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Aggregation
-import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
+import Linglib.Theories.Semantics.Gradability.Aggregation
+import Linglib.Theories.Semantics.Verb.DegreeAchievement
 import Linglib.Theories.Semantics.Degree.Core
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Fragments.English.Predicates.Verbal
@@ -57,9 +57,9 @@ namespace Tham2025
 
 open Core.Verbs (LevinClass MeaningComponents)
 open Core.Scale (Boundedness LicensingPipeline)
-open Semantics.Lexical.Adjective (DimensionBindingType GradableAdjEntry
+open Semantics.Gradability (DimensionBindingType GradableAdjEntry
   adjMeasure closedAdj_licensed conjunctiveBinding disjunctiveBinding)
-open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
+open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
 open Core.Verbs
 open Semantics.Degree (PositiveStandard interpretiveEconomy)
 open Fragments.English.Predicates
@@ -484,7 +484,7 @@ theorem sassoon_binding_insufficient :
     different weights to quantity, quality, and positioning. -/
 
 open Semantics.Degree.Aggregation
-open Semantics.Lexical.Adjective.Aggregation
+open Semantics.Gradability.Aggregation
 
 /-- Disturbance adjective dimensions as Bool predicates. -/
 def disturbanceDims (quantity quality positioning : Bool) :

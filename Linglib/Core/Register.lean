@@ -19,7 +19,7 @@ goals, as in @cite{yoon-etal-2020} for politeness).
 * `Core.Pronouns.PronounEntry.register`: pronoun register (T/V/honorific)
 * `Core.Pronouns.AllocutiveEntry.register`: allocutive marker register
 * `Fragments.English.FunctionWords.AuxEntry.register`: modal register
-* `Semantics.Lexical.Expressives.OutlookMarker.ModalCompatibility`: outlook marker selectional restrictions
+* `Pragmatics.Expressives.OutlookMarker.ModalCompatibility`: outlook marker selectional restrictions
 
 Binary T/V systems (Basque, Tamil, Galician, Punjabi) use `.informal`/`.formal`.
 Ternary honorific systems (Hindi, Magahi, Maithili, Korean) use all three levels.

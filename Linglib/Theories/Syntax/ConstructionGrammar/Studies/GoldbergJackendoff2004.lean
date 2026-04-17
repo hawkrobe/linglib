@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
-import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
+import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Core.Empirical
 
@@ -186,7 +186,7 @@ structure templates: causative → accomplishment template, noncausative →
 achievement template. The hasCause/hasBecome features of SubeventDesc
 are exactly Template.hasCause/Template.hasResultState. -/
 
-open Semantics.Lexical.Verb.EventStructure (Template)
+open Semantics.Verb.EventStructure (Template)
 
 /-- Map subconstruction to the constructional subevent's event template. -/
 def ResultativeSubconstruction.constructionalTemplate :

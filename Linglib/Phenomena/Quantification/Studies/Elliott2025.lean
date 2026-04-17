@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.PolarizedIndividuals
+import Linglib.Theories.Semantics.Quantification.PolarizedIndividuals
 
 /-!
 # Split Scope via Polarized Individuals @cite{elliott-2025}
@@ -38,7 +38,7 @@ ignores scope entirely (it only checks the restrictor).
 namespace Elliott2025
 
 open Core.Quantification
-open Semantics.Lexical.Determiner.Polarized
+open Semantics.Quantification.Polarized
 
 variable {α : Type*}
 

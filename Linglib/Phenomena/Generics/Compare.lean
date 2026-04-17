@@ -38,18 +38,18 @@ predict the observed cross-linguistic patterns.
 
 -/
 
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Carlson1977
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Dayal2004
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Krifka2004
+import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
+import Linglib.Theories.Semantics.Noun.Kind.Krifka2004
 import Linglib.Phenomena.Generics.KindReference
 
 namespace Phenomena.Generics.Compare
 
-open Semantics.Lexical.Noun.Kind.Carlson1977
-open Semantics.Lexical.Noun.Kind.Chierchia1998
-open Semantics.Lexical.Noun.Kind.Dayal2004
-open Semantics.Lexical.Noun.Kind.Krifka2004
+open Semantics.Noun.Kind.Carlson1977
+open Semantics.Noun.Kind.Chierchia1998
+open Semantics.Noun.Kind.Dayal2004
+open Semantics.Noun.Kind.Krifka2004
 open Phenomena.Generics.KindReference
 
 -- @cite{carlson-1977}: The Foundation

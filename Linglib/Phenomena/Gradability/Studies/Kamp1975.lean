@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Adjective.Classification
+import Linglib.Theories.Semantics.Gradability.Classification
 import Linglib.Core.Logic.Truth3
 import Mathlib.Data.Set.Basic
 
@@ -45,7 +45,7 @@ motivates the move to supervaluation / probability over completions.
 
 namespace Kamp1975
 
-open Semantics.Lexical.Adjective.Classification
+open Semantics.Gradability.Classification
 
 -- ════════════════════════════════════════════════════
 -- § 1. Bridge to Modification.lean

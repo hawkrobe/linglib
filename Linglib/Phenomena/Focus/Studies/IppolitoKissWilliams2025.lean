@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Particle.DiscourseOnly
+import Linglib.Theories.Pragmatics.Particles.DiscourseOnly
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Phenomena.Focus.DiscourseOnly
@@ -74,7 +74,7 @@ namespace IppolitoKissWilliams2025
 open Discourse
 open Semantics.Questions.ProbabilisticAnswerhood
 open Semantics.Questions.Support
-open Semantics.Lexical.Particle.DiscourseOnly
+open Pragmatics.Particles.DiscourseOnly
 open Phenomena.Focus.DiscourseOnly
 
 -- ============================================================================

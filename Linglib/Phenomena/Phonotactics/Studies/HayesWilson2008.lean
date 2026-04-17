@@ -1,4 +1,4 @@
-import Linglib.Core.Constraint.OTLimit
+import Linglib.Core.Constraint.Dequantization.OTLimit
 import Linglib.Core.Constraint.System
 import Linglib.Core.Constraint.Variation
 import Linglib.Theories.Phonology.Constraints

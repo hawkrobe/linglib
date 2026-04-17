@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Lexical.NounCategorization
 import Linglib.Fragments.Japanese.Classifiers
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
 /-!
 # Japanese Noun Lexicon Fragment
@@ -18,7 +18,7 @@ namespace Fragments.Japanese.Nouns
 
 open Core.NounCategorization (ClassifierEntry)
 open Fragments.Japanese.Classifiers
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
+open Semantics.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
 
 /-- A lexical entry for a Japanese noun. -/
 structure NounEntry where

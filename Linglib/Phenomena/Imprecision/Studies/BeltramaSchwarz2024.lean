@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.Roundness
 import Linglib.Core.SocialMeaning
-import Linglib.Theories.Semantics.Lexical.Numeral.Precision
+import Linglib.Theories.Semantics.Quantification.Numerals.Precision
 import Linglib.Theories.Sociolinguistics.SCM
 import Linglib.Theories.Sociolinguistics.EckertMontague
 import Linglib.Phenomena.Imprecision.Studies.BeltramaSoltBurnett2022
@@ -38,7 +38,7 @@ namespace BeltramaSchwarz2024
 
 open Core.SocialMeaning
 open Sociolinguistics.SCM
-open Semantics.Lexical.Numeral.Precision
+open Semantics.Quantification.Numerals.Precision
 open Sociolinguistics.EckertMontague
 
 -- ============================================================================
@@ -270,7 +270,7 @@ theorem combined_nerdy_task_positive :
 -- ============================================================================
 
 /-- The indexical field for numeral precision, parameterized by
-    `PrecisionMode` from `Semantics.Lexical.Numeral.Precision` rather than
+    `PrecisionMode` from `Semantics.Quantification.Numerals.Precision` rather than
     a study-local type — the sociolinguistic variable whose social meaning
     is under study IS the semantic precision mode. -/
 def precisionField : IndexicalField PrecisionMode SocialDimension :=
@@ -482,7 +482,7 @@ theorem bsb_stim_also_round :
 /-! The core finding of @cite{beltrama-schwarz-2024} — that numeral
 precision is jointly determined by roundness AND speaker identity — is
 captured by `speakerModulatedHalo` in the theory layer
-(`Semantics.Lexical.Numeral.Precision`). Nerdy speakers get narrower
+(`Semantics.Quantification.Numerals.Precision`). Nerdy speakers get narrower
 halos (multiplier < 1), Chill speakers get wider ones (multiplier > 1). -/
 
 /-- A larger multiplier produces a wider halo: the monotonicity that

@@ -1,6 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
-import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Core.Discourse.Coherence
 import Linglib.Fragments.English.Predicates.Verbal
@@ -58,7 +58,7 @@ of grammatical position.
 
 namespace SolstadBott2022
 
-open Semantics.Lexical.Verb.EntailmentProfile
+open Semantics.Verb.EntailmentProfile
 open Core.Discourse.Coherence
 open Fragments.English.Predicates.Verbal
 

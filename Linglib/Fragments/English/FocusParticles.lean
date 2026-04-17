@@ -173,7 +173,7 @@ theorem either_not_truth_functional :
 
 /-- "either" and "too" differ only in form (and polarity, which is
 not captured in the Entry type — polarity licensing is in
-`Theories.Semantics.Lexical.Particle.Additive`). -/
+`Theories.Pragmatics.Particles.Additive`). -/
 theorem either_same_profile_as_too :
     either_.truthFunctional = too_.truthFunctional ∧
     either_.contributionLayer = too_.contributionLayer := ⟨rfl, rfl⟩

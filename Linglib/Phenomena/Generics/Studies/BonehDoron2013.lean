@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Lexical.CovertQuantifier
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
-import Linglib.Theories.Semantics.Lexical.Verb.Habituals
+import Linglib.Theories.Semantics.Quantification.CovertQuantifier
+import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Verb.Habituals
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Core.Genericity
 
@@ -48,9 +48,9 @@ the simple past tense form, the periphrastic *used to*, and *would*.
 
 namespace BonehDoron2013
 
-open Semantics.Lexical.CovertQuantifier
-open Semantics.Lexical.Noun.Kind.Generics (Situation traditionalGEN)
-open Semantics.Lexical.Verb.Habituals (Occasion traditionalHAB)
+open Semantics.Quantification.CovertQuantifier
+open Semantics.Noun.Kind.Generics (Situation traditionalGEN)
+open Semantics.Verb.Habituals (Occasion traditionalHAB)
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 
 -- ═══ Operator Distinction ═══

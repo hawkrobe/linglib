@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Chierchia1998
-import Linglib.Theories.Semantics.Lexical.Noun.Kind.Generics
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
-import Linglib.Theories.Semantics.Lexical.Plural.Cumulativity
+import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
+import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Theories.Semantics.Plurality.Cumulativity
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Generics.Studies.TesslerGoodman2019
@@ -70,10 +70,10 @@ English [+arg, +pred] allows both; Italian [-arg, +pred] forces D.
 
 namespace Guerrini2026
 
-open Semantics.Lexical.Noun.Kind.Chierchia1998 (NominalMapping Kind canDenoteKind
+open Semantics.Noun.Kind.Chierchia1998 (NominalMapping Kind canDenoteKind
   canDenoteProperty downDefinedFor DPP)
 open Core.Duality (Truth3)
-open Semantics.Lexical.Plural.Distributivity (distMaximal pluralTruthValue
+open Semantics.Plurality.Distributivity (distMaximal pluralTruthValue
   allSatisfy noneSatisfy)
 open Phenomena.Generics.KindReference (NominalDenotation)
 
@@ -995,7 +995,7 @@ they are structurally different semantic compositions that yield
 different truth conditions and different pragmatic properties.
 -/
 
-open Semantics.Lexical.Noun.Kind.Generics (traditionalGEN Situation
+open Semantics.Noun.Kind.Generics (traditionalGEN Situation
   NormalcyPredicate Restrictor Scope)
 
 /-- The Bona Fide Generic parse is compositionally an instance of
@@ -1092,7 +1092,7 @@ end Longobardi2001Bridge
 
 section CumulativeKindPred
 
-open Semantics.Lexical.Plural.Cumulativity (cumulativeOp)
+open Semantics.Plurality.Cumulativity (cumulativeOp)
 
 variable {Atom Loc : Type} [DecidableEq Atom] [DecidableEq Loc]
 
@@ -1828,7 +1828,7 @@ open Core.IntensionalLogic (Frame)
 open Core.IntensionalLogic.Variables (Assignment)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
-open Semantics.Lexical.CovertQuantifier (genThreshold dist dpp)
+open Semantics.Quantification.CovertQuantifier (genThreshold dist dpp)
 open Core.Tree
 
 /-- Demo entity domain: three individual lions plus the lion-kind

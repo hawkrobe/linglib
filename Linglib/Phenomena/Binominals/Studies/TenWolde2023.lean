@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Binominal
-import Linglib.Theories.Semantics.Lexical.Noun.Binominal
+import Linglib.Theories.Semantics.Noun.Binominal
 import Linglib.Fragments.English.Binominals
 
 /-!
@@ -31,8 +31,8 @@ and English fragment data to the empirical claims in @cite{ten-wolde-2023}.
 namespace TenWolde2023
 
 open Core.Lexical.Binominal
-open Semantics.Lexical.Noun.Binominal
-open Semantics.Lexical.Noun.GradableNouns (exampleIdiot)
+open Semantics.Noun.Binominal
+open Semantics.Noun.GradableNouns (exampleIdiot)
 open Fragments.English.Binominals
 
 -- ═══════════════════════════════════════════════════════════════
@@ -231,13 +231,13 @@ worked examples from `Theories/Semantics/Lexical/Noun/Binominal`. -/
     BI → EM (proved), but EBNP is independent of EM. -/
 theorem entailment_summary :
     -- BI entails EM (bi_entails_em instantiated)
-    (biSemantics (Semantics.Lexical.Adjective.Intensification.muHorrible 10)
+    (biSemantics (Semantics.Gradability.Intensification.muHorrible 10)
       doctorQuality (Core.Scale.thr 5) (Core.Scale.thr 3) isDoctor .george = true →
-     emSemantics (Semantics.Lexical.Adjective.Intensification.muHorrible 10)
+     emSemantics (Semantics.Gradability.Intensification.muHorrible 10)
       doctorQuality (Core.Scale.thr 3) isDoctor .george = true) ∧
     -- EBNP and EM have different truth conditions
     (ebnpSemantics exampleIdiot isDoctor .sarah = true ∧
-     emSemantics (Semantics.Lexical.Adjective.Intensification.muHorrible 10)
+     emSemantics (Semantics.Gradability.Intensification.muHorrible 10)
       doctorQuality (Core.Scale.thr 3) isDoctor .sarah = false) := by
   constructor
   · exact bi_entails_em _ _ _ _ _ _

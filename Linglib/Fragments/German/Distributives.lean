@@ -1,5 +1,5 @@
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
-import Linglib.Theories.Semantics.Lexical.Plural.CandidateInterpretation
+import Linglib.Theories.Semantics.Plurality.Distributivity
+import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
 
 /-!
 # German Distributive Expressions
@@ -29,7 +29,7 @@ Theory definitions, never stipulating their own meaning functions.
 
 namespace Fragments.German.Distributives
 
-open Semantics.Lexical.Plural.Distributivity
+open Semantics.Plurality.Distributivity
 
 variable {Atom W : Type*} [DecidableEq Atom]
 

@@ -7,7 +7,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
-import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
+import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
 
 /-!
 # Sauerland (2003): A New Semantics for Number
@@ -252,7 +252,7 @@ the restrictor directly — but the results coincide. See
 `je_der_agrees_with_qforall`.
 -/
 
-open Semantics.Lexical.Determiner.UnifiedUniversal (QForall dng_atoms)
+open Semantics.Quantification.UnifiedUniversal (QForall dng_atoms)
 
 /-- **JE** (30b): universal quantifier over atoms of a group individual.
 

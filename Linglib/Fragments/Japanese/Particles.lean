@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Expressives.OutlookMarker
+import Linglib.Theories.Pragmatics.Expressives.OutlookMarker
 
 /-!
 # Japanese Particles
@@ -108,7 +108,7 @@ express the speaker's evaluative stance toward that counterstance.
 
 namespace Fragments.Japanese.OutlookMarkers
 
-open Semantics.Lexical.Expressives.OutlookMarker
+open Pragmatics.Expressives.OutlookMarker
 
 /-- Syntactic category of an outlook marker. -/
 inductive OutlookCat where

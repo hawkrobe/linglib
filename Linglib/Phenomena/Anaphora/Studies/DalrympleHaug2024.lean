@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Reference.Reciprocals
-import Linglib.Theories.Semantics.Lexical.Plural.Distributivity
+import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Wan.Reciprocals
 

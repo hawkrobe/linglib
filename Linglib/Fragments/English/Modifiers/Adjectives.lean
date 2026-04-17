@@ -22,13 +22,13 @@ import Linglib.Core.Lexical.Word
 import Linglib.Core.PropertyDomain
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.DegreeContainment
-import Linglib.Theories.Semantics.Lexical.Adjective.Theory
+import Linglib.Theories.Semantics.Gradability.Theory
 
 namespace Fragments.English.Modifiers.Adjectives
 
-open Semantics.Lexical.Adjective (AntonymRelation)
+open Semantics.Gradability (AntonymRelation)
 open Core.Scale (Boundedness)
-open Semantics.Lexical.Adjective (NegationType)
+open Semantics.Gradability (NegationType)
 
 -- ============================================================================
 -- Adjective Modifier Entry Structure

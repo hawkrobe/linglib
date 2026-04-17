@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Semantics.Events.SpatialTrace
-import Linglib.Theories.Semantics.Lexical.Verb.DegreeAchievement
+import Linglib.Theories.Semantics.Verb.DegreeAchievement
 import Linglib.Phenomena.TenseAspect.Studies.Rothstein2004
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1998
 import Linglib.Phenomena.TenseAspect.Studies.Krifka1989
@@ -38,7 +38,7 @@ open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Krifka1998 (predictsGRAD)
 open Champollion2017 (predictsSSR)
 open Core.Path (PathShape)
-open Semantics.Lexical.Verb.DegreeAchievement (DegreeAchievementScale)
+open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
 
 -- ════════════════════════════════════════════════════
 -- § 1. VendlerClass × VerbIncClass Consistency

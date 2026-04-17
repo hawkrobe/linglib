@@ -1,6 +1,6 @@
-import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
+import Linglib.Theories.Semantics.Quantification.ChoiceFunction
 import Linglib.Theories.Semantics.Definiteness.Basic
-import Linglib.Theories.Semantics.Lexical.Determiner.UnifiedUniversal
+import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
 import Linglib.Core.Definiteness
 
 /-!
@@ -48,9 +48,9 @@ alternative-sensitive scalar operator *ara*.
 
 namespace Fragments.Akan.Determiners
 
-open Semantics.Lexical.Determiner.ChoiceFunction
+open Semantics.Quantification.ChoiceFunction
 open Semantics.Definiteness
-open Semantics.Lexical.Determiner.UnifiedUniversal
+open Semantics.Quantification.UnifiedUniversal
 open Core.Definiteness
 open Core.Presupposition
 

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Causation.Morphological
-import Linglib.Theories.Semantics.Lexical.Verb.EventStructure
+import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Morphology.Core.Monotonicity
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Core.Alternation
@@ -60,7 +60,7 @@ namespace KoontzGarboden2009
 
 open Fragments.Spanish.Predicates
 open Semantics.Causation.Morphological
-open Semantics.Lexical.Verb.EventStructure
+open Semantics.Verb.EventStructure
 open Morphology.Core.Monotonicity
 open Minimalism (VerbHead)
 open Core.Alternation
@@ -180,7 +180,7 @@ def reflexivizationYieldsAnticausative : CauserSpec → Bool
     would carry more structure than K-G's underspecification account
     predicts. -/
 
-open Semantics.Lexical.Verb.EntailmentProfile
+open Semantics.Verb.EntailmentProfile
 
 /-- Derive `CauserSpec` from a proto-role entailment profile.
     Volition is the discriminating feature:

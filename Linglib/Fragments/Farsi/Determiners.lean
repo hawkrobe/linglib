@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Semantics.Lexical.Determiner.ChoiceFunction
+import Linglib.Theories.Semantics.Quantification.ChoiceFunction
 import Mathlib.Data.Rat.Defs
 
 /-! # Farsi Determiner and Indefinite Lexicon
@@ -255,7 +255,7 @@ theorem vreun_root_ungrammatical : getReading vreun_ro rootContext = none := rfl
 -- § Plain Indefinites (Choice Function Semantics)
 -- ════════════════════════════════════════════════════
 
-open Semantics.Lexical.Determiner.ChoiceFunction (IndefType SkolemCF)
+open Semantics.Quantification.ChoiceFunction (IndefType SkolemCF)
 
 /-- Farsi plain indefinite entry, extending `IndefiniteEntry` with
     choice-function properties relevant to @cite{mirrazi-2024}. -/

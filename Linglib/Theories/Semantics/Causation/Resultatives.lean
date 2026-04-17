@@ -2,7 +2,7 @@ import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff200
 import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
-import Linglib.Theories.Semantics.Lexical.Verb.ChangeOfState.Theory
+import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Linglib.Theories.Semantics.Causation.ProductionDependence
 
 /-!
@@ -34,7 +34,7 @@ open ConstructionGrammar
 open ConstructionGrammar.Studies.GoldbergJackendoff2004
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
-open Semantics.Lexical.Verb.ChangeOfState
+open Semantics.Verb.ChangeOfState
 open Core
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency

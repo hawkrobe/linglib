@@ -1,5 +1,5 @@
 import Linglib.Phenomena.ArgumentStructure.Typology
-import Linglib.Theories.Semantics.Lexical.Verb.EntailmentProfile
+import Linglib.Theories.Semantics.Verb.EntailmentProfile
 
 /-!
 # Siloni (2012): Reciprocal Verbs and Symmetry
@@ -39,7 +39,7 @@ embedding.
 namespace Siloni2012
 
 open Phenomena.ArgumentStructure.Typology
-open Semantics.Lexical.Verb.EntailmentProfile (EntailmentProfile)
+open Semantics.Verb.EntailmentProfile (EntailmentProfile)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Three-Way Reciprocal Classification (§2.4)

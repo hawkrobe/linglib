@@ -264,7 +264,7 @@ namespace Phenomena.Causation.Compare
 
 open Minimalism
 open Minimalism.Bridge
-open Semantics.Lexical.Verb.EventStructure
+open Semantics.Verb.EventStructure
 open Semantics.Causation.ProductionDependence
 open Phenomena.Causation.ThickThin
 

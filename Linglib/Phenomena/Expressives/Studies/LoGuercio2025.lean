@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Lexical.Expressives.Basic
+import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Pragmatics.Implicature.ConventionalImplicatures
 
 /-!
