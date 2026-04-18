@@ -164,8 +164,8 @@ import Linglib.Core.VerbCluster
 import Linglib.Core.Case
 import Linglib.Core.AgreementTarget
 import Linglib.Theories.Morphology.Containment
-import Linglib.Theories.Morphology.CaseContainment
-import Linglib.Theories.Morphology.DegreeContainment
+import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
+import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
 import Linglib.Core.Relativization.Basic
 import Linglib.Core.Relativization.Extraction
 import Linglib.Core.Relativization.Hierarchy
@@ -1146,7 +1146,7 @@ import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Linglib.Phenomena.Modality.Studies.DelPinalBassiSauerland2024
-import Linglib.Phenomena.Modality.Studies.Kratzer1981
+import Linglib.Phenomena.Modality.Studies.YingEtAl2025
 import Linglib.Phenomena.Modality.Studies.CiardelliGuerrini2026
 import Linglib.Phenomena.Modality.Studies.ElliottSudo2025
 import Linglib.Phenomena.Modality.Studies.AnandHacquard2013
@@ -1974,6 +1974,7 @@ import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Iatridou
 import Linglib.Theories.Semantics.Conditionals.LeftNested
 import Linglib.Theories.Semantics.Conditionals.Restrictor
+import Linglib.Theories.Semantics.Conditionals.Kratzer.Lumping
 import Linglib.Theories.Semantics.Conditionals.Presuppositional
 import Linglib.Theories.Semantics.Modality.Basic
 import Linglib.Theories.Semantics.Modality.Compare

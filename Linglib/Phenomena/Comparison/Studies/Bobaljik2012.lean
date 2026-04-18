@@ -1,4 +1,4 @@
-import Linglib.Theories.Morphology.DegreeContainment
+import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Semantics.Degree.Superlative
 import Linglib.Fragments.English.Modifiers.Adjectives
@@ -46,7 +46,7 @@ encode empirically observed root-class patterns.
 
 namespace Bobaljik2012
 
-open Morphology.DegreeContainment
+open Interfaces.Morphosyntax.DegreeContainment
 open Fragments.English.Modifiers.Adjectives
 
 -- ============================================================================

@@ -1,6 +1,6 @@
 import Linglib.Core.Case
-import Linglib.Theories.Morphology.CaseContainment
-open Morphology.CaseContainment
+import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
+open Interfaces.Morphosyntax.CaseContainment
 
 /-!
 # Finnish Case Inventory @cite{blake-1994}

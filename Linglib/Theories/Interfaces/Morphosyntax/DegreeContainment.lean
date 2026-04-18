@@ -51,7 +51,7 @@ ordering forces contiguity of suppletive forms. The generic
 contiguity predicate shared by both domains is in `Containment.lean`.
 -/
 
-namespace Morphology.DegreeContainment
+namespace Interfaces.Morphosyntax.DegreeContainment
 
 -- ============================================================================
 -- § 1: Degree Grade
@@ -427,4 +427,4 @@ theorem aba_not_attested : aba.isAttested = false := by native_decide
 /-- *AAB is not attested (fails VI consistency). -/
 theorem aab_not_attested : aab.isAttested = false := by native_decide
 
-end Morphology.DegreeContainment
+end Interfaces.Morphosyntax.DegreeContainment

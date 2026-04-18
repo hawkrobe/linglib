@@ -1,5 +1,5 @@
 import Linglib.Core.Case
-import Linglib.Theories.Morphology.CaseContainment
+import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 import Linglib.Fragments.Russian.Case
 import Linglib.Fragments.Russian.Gender
 
@@ -353,9 +353,9 @@ theorem inst_loc_outside_pesetsky :
     added first; D may be added later). The two views are
     consistent under the inversion. -/
 theorem caha_containment_inverts_pesetsky :
-    Morphology.CaseContainment.containmentRank Core.Case.nom = some 0 ∧
-    Morphology.CaseContainment.containmentRank Core.Case.acc = some 1 ∧
-    Morphology.CaseContainment.containmentRank Core.Case.gen = some 2 := by
+    Interfaces.Morphosyntax.CaseContainment.containmentRank Core.Case.nom = some 0 ∧
+    Interfaces.Morphosyntax.CaseContainment.containmentRank Core.Case.acc = some 1 ∧
+    Interfaces.Morphosyntax.CaseContainment.containmentRank Core.Case.gen = some 2 := by
   refine ⟨?_, ?_, ?_⟩ <;> rfl
 
 /-- Pesetsky's feminizing analysis of *vrač* 'doctor' (Ch. 5) interacts

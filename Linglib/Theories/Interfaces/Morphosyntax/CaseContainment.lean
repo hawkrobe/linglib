@@ -56,7 +56,7 @@ claim about the internal structure of case representations. The two
 are complementary, not competing.
 -/
 
-namespace Morphology.CaseContainment
+namespace Interfaces.Morphosyntax.CaseContainment
 
 open Core
 
@@ -324,4 +324,4 @@ theorem case_violatesABA_eq_generic (p : AllomorphyPattern) :
   simp only [AllomorphyPattern.violatesABA,
     Morphology.Containment.violatesABA_four]
 
-end Morphology.CaseContainment
+end Interfaces.Morphosyntax.CaseContainment

@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.924] - 2026-04-18
+
+### Changed
+- **Caha containment relocated to the Morphosyntax interface layer.** `Theories/Morphology/{Case,Degree}Containment.lean` → `Theories/Interfaces/Morphosyntax/{Case,Degree}Containment.lean` (new directory, parallel to the existing `Interfaces/{PhonologyMorphology,SyntaxPhonology,SyntaxSemantics,...}/`). The architectural rationale: containment is *exactly* the syntax-morphology interface — the fseq is syntactic but the empirical signature (*ABA in syncretism / suppletion) is morphological, and that's the whole point of @cite{caha-2009}'s Nanosyntax. Previously buried in `Morphology/`, where syntactic case consumers wouldn't naturally look. Namespace `Morphology.{Case,Degree}Containment` → `Interfaces.Morphosyntax.{Case,Degree}Containment` throughout. Generic `Morphology/Containment.lean` (`*ABA` pattern detector on `List Nat` — pure list combinatorics) and the `Morphology/Nanosyntax/` subdirectory (Nanosyntax explicitly rejects the syntax/morphology split, so it stays in Morphology to preserve that theoretical commitment) both **left in place**. 12 consumer files updated: `Linglib.lean` import path; `Theories/Morphology/Nanosyntax/Core.lean` import + docstring backticks; `Phenomena/Case/Studies/Pesetsky2013.lean`, `Phenomena/Reference/Studies/Bubnov2026.lean`, `Phenomena/Allomorphy/Studies/Aitha2026.lean`, `Phenomena/Comparison/Studies/Bobaljik2012.lean` (qualified-name calls and opens); `Fragments/{German,Tamil,Finnish,Telugu,Latin}/Case.lean`, `Fragments/Latin/Adjectives.lean`, `Fragments/English/Modifiers/Adjectives.lean` (imports + opens). Build clean (2739 jobs across the 14 directly-affected targets). Sets up Phase 1 of the case-API mathlib reorganization: a `PartialOrder Core.Case` instance + cross-Fragment ABA validation will follow as a separate commit on top of this relocation.
+
+## [0.229.923] - 2026-04-18
+
+### Changed
+- **`Phenomena/Modality/Studies/Kratzer1981.lean` renamed → `YingEtAl2025.lean`** (`git mv`, history preserved). The file's primary contribution is the bridge from the English modal fragment to @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}'s LaBToM threshold semantics ("Understanding Epistemic Language with a Language-Augmented Bayesian Theory of Mind", TACL 13:613–637) — Kratzer 1981's force/flavor framework is referenced but not the paper being formalized. Namespace updated to follow the `Phenomena.{Phenomenon}.Studies.{AuthorYear}` convention: `Phenomena.Modality.EpistemicThresholdBridge` → `Phenomena.Modality.Studies.YingEtAl2025`. Module docstring leads with the correct `@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}` and dependency-direction diagram updated. `Linglib.lean` import path updated; no other callers.
+
 ## [0.229.922] - 2026-04-18
 
 ### Added
