@@ -119,20 +119,25 @@ theorem didAmyLeaveMeaning_isInquisitive : didAmyLeaveMeaning.isInquisitive := b
     apply h2
     rw [h]; exact Set.mem_univ 2
 
-/-! ### Section 3.1: mention-some readings force overlapping alternatives
+/-! ### Mention-some readings force overlapping alternatives
 
 The Janna/Rupert scenario from @cite{george-2011} (cited in
-@cite{theiler-etal-2018} ex. (13)): there are stores selling Italian
-newspapers, and *Janna knows where one can buy an Italian newspaper*
-under a mention-some reading is true if Janna knows of any one such
-store. Critically, in worlds where multiple stores sell, those worlds
-belong to multiple alternatives (one per store) — the alternatives
-**overlap**.
+@cite{theiler-etal-2018} ex. (13)): there are stores Newstopia,
+Paperworld, and Cellulose City; Newstopia and Paperworld sell Italian
+newspapers, Cellulose City does not. *Janna knows where one can buy an
+Italian newspaper* under a mention-some reading is true if Janna knows
+of any one such store. Critically, in worlds where multiple stores
+sell, those worlds belong to multiple alternatives (one per store) —
+the alternatives **overlap**.
 
-We model the irreducible structural feature with three worlds and two
-overlapping alternatives. The forcing theorem
-`mentionSome_not_partition_derived` shows that no `Setoid` on these
-three worlds can generate this content via `fromSetoid`. -/
+The structural feature — non-disjoint alternatives — is what
+@cite{theiler-etal-2018} §2 (Figure 5(b), the non-exhaustive *Who
+left?*) and the broader inquisitive-semantics tradition (e.g.,
+@cite{ciardelli-groenendijk-roelofsen-2018}) use to motivate the move
+beyond partition theory. We model the irreducible structural feature
+with three worlds and two overlapping alternatives. The forcing
+theorem `mentionSome_not_partition_derived` shows that no `Setoid` on
+these three worlds can generate this content via `fromSetoid`. -/
 
 /-- World universe for the mention-some example: three worlds. -/
 abbrev MS : Type := Fin 3
@@ -141,19 +146,19 @@ abbrev MS : Type := Fin 3
     worlds `0` and `1`. -/
 def msNewstopia : Set MS := {0, 1}
 
-/-- Alternative 2: *Cellulose City sells Italian newspapers* — true in
+/-- Alternative 2: *Paperworld sells Italian newspapers* — true in
     worlds `1` and `2`. World `1` is where **both** stores sell, so it
     sits in both alternatives — this is the structural feature that
     a `Setoid` cannot represent. -/
-def msCellulose : Set MS := {1, 2}
+def msPaperworld : Set MS := {1, 2}
 
 /-- The mention-some inquisitive content for *where one can buy an
     Italian newspaper*: a state resolves the issue iff every world in
     it agrees on at least one of the two stores selling. The
-    alternatives are `msNewstopia` and `msCellulose`, which **overlap**
+    alternatives are `msNewstopia` and `msPaperworld`, which **overlap**
     at world `1`. -/
 def mentionSome : InquisitiveContent MS where
-  props := {q | q ⊆ msNewstopia ∨ q ⊆ msCellulose}
+  props := {q | q ⊆ msNewstopia ∨ q ⊆ msPaperworld}
   contains_empty := Or.inl (Set.empty_subset _)
   downward_closed := fun _ hp _ hr => by
     rcases hp with h | h
@@ -164,39 +169,39 @@ def mentionSome : InquisitiveContent MS where
     `InquisitiveContent`). The mention-some content is **not** in the
     image of `fromSetoid` for any `Setoid` on the three worlds.
 
-    Proof: `msNewstopia = {0, 1}` and `msCellulose = {1, 2}` both lie in
-    `mentionSome.props`. If `fromSetoid r = mentionSome`, each must be
-    contained in some equivalence class of `r`. Since both contain
+    Proof: `msNewstopia = {0, 1}` and `msPaperworld = {1, 2}` both lie
+    in `mentionSome.props`. If `fromSetoid r = mentionSome`, each must
+    be contained in some equivalence class of `r`. Since both contain
     world `1`, those classes coincide; so worlds `0`, `1`, and `2` all
     lie in one class. Then `{0, 2}` is also in
     `(fromSetoid r).props = mentionSome.props`, but `{0, 2}` is not a
-    subset of `msNewstopia` (missing `2`) nor of `msCellulose`
+    subset of `msNewstopia` (missing `2`) nor of `msPaperworld`
     (missing `0`) — contradiction.
 
-    This is the standard partition-theory limitation
-    (@cite{theiler-etal-2018} Section 3.1, p. 418, building on
-    @cite{george-2011}): mention-some readings inherently require
-    non-disjoint alternatives. -/
+    This is the standard partition-theory limitation that motivates
+    inquisitive semantics' move to non-disjoint alternatives
+    (@cite{ciardelli-groenendijk-roelofsen-2018}; @cite{theiler-etal-2018}
+    §2 Figure 5(b)). -/
 theorem mentionSome_not_partition_derived (r : Setoid MS) :
     fromSetoid r ≠ mentionSome := by
   intro heq
   have hms1 : msNewstopia ∈ mentionSome.props := Or.inl subset_rfl
-  have hms2 : msCellulose ∈ mentionSome.props := Or.inr subset_rfl
+  have hms2 : msPaperworld ∈ mentionSome.props := Or.inr subset_rfl
   have hms1' : msNewstopia ∈ (fromSetoid r).props := heq ▸ hms1
-  have hms2' : msCellulose ∈ (fromSetoid r).props := heq ▸ hms2
+  have hms2' : msPaperworld ∈ (fromSetoid r).props := heq ▸ hms2
   -- Extract class containment for msNewstopia
   rcases hms1' with hempty | ⟨c1, hc1, hsub1⟩
   · have h0 : (0 : MS) ∈ msNewstopia := by simp [msNewstopia]
     rw [hempty] at h0; exact h0.elim
-  -- Extract class containment for msCellulose
+  -- Extract class containment for msPaperworld
   rcases hms2' with hempty | ⟨c2, hc2, hsub2⟩
-  · have h1 : (1 : MS) ∈ msCellulose := by simp [msCellulose]
+  · have h1 : (1 : MS) ∈ msPaperworld := by simp [msPaperworld]
     rw [hempty] at h1; exact h1.elim
   -- Worlds 0, 1 ∈ c1; worlds 1, 2 ∈ c2
   have h0c1 : (0 : MS) ∈ c1 := hsub1 (by simp [msNewstopia])
   have h1c1 : (1 : MS) ∈ c1 := hsub1 (by simp [msNewstopia])
-  have h1c2 : (1 : MS) ∈ c2 := hsub2 (by simp [msCellulose])
-  have h2c2 : (2 : MS) ∈ c2 := hsub2 (by simp [msCellulose])
+  have h1c2 : (1 : MS) ∈ c2 := hsub2 (by simp [msPaperworld])
+  have h2c2 : (2 : MS) ∈ c2 := hsub2 (by simp [msPaperworld])
   -- c1 = c2 since both contain world 1
   have hcc : c1 = c2 := Setoid.eq_of_mem_classes hc1 h1c1 hc2 h1c2
   -- So world 2 ∈ c1
@@ -212,11 +217,11 @@ theorem mentionSome_not_partition_derived (r : Setoid MS) :
     Or.inr ⟨c1, hc1, h02_sub⟩
   -- By heq, {0, 2} ∈ mentionSome.props
   have h02_ms : ({0, 2} : Set MS) ∈ mentionSome.props := heq ▸ h02_props
-  -- But {0, 2} is not ⊆ msNewstopia (missing 2) nor ⊆ msCellulose (missing 0)
+  -- But {0, 2} is not ⊆ msNewstopia (missing 2) nor ⊆ msPaperworld (missing 0)
   rcases h02_ms with hsub_n | hsub_c
   · have : (2 : MS) ∈ msNewstopia := hsub_n (by simp)
     simp [msNewstopia] at this
-  · have : (0 : MS) ∈ msCellulose := hsub_c (by simp)
-    simp [msCellulose] at this
+  · have : (0 : MS) ∈ msPaperworld := hsub_c (by simp)
+    simp [msPaperworld] at this
 
 end Phenomena.Complementation.Studies.TheilerRoelofsenAloni2018

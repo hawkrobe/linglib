@@ -1,5 +1,6 @@
 import Mathlib.Data.Setoid.Partition
 import Linglib.Core.Mood.InquisitiveContent
+import Linglib.Core.Mood.POSWQ
 
 /-!
 # Partition as Inquiry — Setoid → InquisitiveContent embedding
@@ -100,5 +101,34 @@ theorem isInquisitive_fromSetoid_of_two_classes
     exact hne (Setoid.trans' r h1 (Setoid.symm' r h2))
 
 end InquisitiveContent
+
+/-! ## POSWQ bridge
+
+Lift the partition-based inquiry component of a `POSWQ` to its full
+`InquisitiveContent`. This makes every existing POSWQ-using study
+automatically a consumer of the inquisitive-content API: `info`,
+`alt`, `isInquisitive`, the lattice operations, and the
+mention-some/IE-question forcing arguments all become available
+without rewriting the underlying state. -/
+
+namespace POSWQ
+
+universe u
+variable {W : Type u}
+
+/-- The inquisitive content embedded in a POSWQ via its inquiry
+    partition. Always non-informative (`info = univ`); inquisitive
+    iff the partition has more than one cell. -/
+def inquiryContent (c : POSWQ W) : InquisitiveContent W :=
+  InquisitiveContent.fromSetoid c.inquiry
+
+@[simp] theorem inquiryContent_eq (c : POSWQ W) :
+    c.inquiryContent = InquisitiveContent.fromSetoid c.inquiry := rfl
+
+@[simp] theorem info_inquiryContent (c : POSWQ W) :
+    c.inquiryContent.info = Set.univ :=
+  InquisitiveContent.info_fromSetoid c.inquiry
+
+end POSWQ
 
 end Core.Mood
