@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.974] - 2026-04-18
+
+### Changed
+- **Hausa fragments audit cleanup: verb-example dehallucination + cross-fragment polarity bridge.** (1) `Fragments/Hausa/VerbGrades.lean`: dropped `@cite{parsons-1960}` from the header (no bib entry; replaced with prose attribution to Newman's codification), and replaced three hallucinated/wrong verb examples against @cite{newman-2000} ch. 74 — `aikee` (wrong tone/vowel for gr5) → `sayar` 'sell' (genuine gr5 efferential of `saya` 'buy', minimal pair); `zoo` 'come' (irregular v*, not gr6) → `koomoo` 'return here' (genuine gr6 ventive); `biyu` (numeral, not a verb at all) → `taaru` 'meet' (genuine gr7 sustentative). The §7 example block updated to consume the new names (`taaru.voiceType`, `sayar.tones`). (2) `Fragments/Hausa/Focus.lean`: cite key `green-jaggar-2003` → `jaggar-green-2003` (correct author order); section number `§66.2` (FUNCTION) → `§66.1` (FORM) for the stabilizer agreement claim. (3) New §8 cross-fragment polarity bridge: `Stabilizer.toneAfter (host : ToneFeature) := polarOf host` and `stabilizer_tone_is_polar : s.toneAfter host = polarOf host := rfl` ground the description of *nē/cē* as polar-toned (@cite{newman-2000} §66.1) in the same `Tone.polarOf` operator that handles the genitive linker *-n* — making the two cases instances of one autosegmental operation rather than parallel idiosyncrasies, with `stabilizer_toneAfter_involutive` derived as a one-line corollary of `Tone.polarOf_involutive_on_HL`. Builds clean for all 5 Hausa fragment files (VerbGrades, Tone, TAM, Focus, Gender). Three corresponding `references.bib` entries (`jaggar-2001`, `hartmann-zimmermann-2007`, `jaggar-green-2003`) are appended in the working tree but deferred to a separate commit due to concurrent bib edits.
+
 ## [0.229.973] - 2026-04-18
 
 ### Added
