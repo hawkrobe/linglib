@@ -8,7 +8,7 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.Preorder.Finite
 
 /-!
-# Inquisitive Content
+# Inquisitive Content — core type, lattice, Heyting derivatives
 @cite{ciardelli-groenendijk-roelofsen-2018} @cite{puncochar-2016}
 @cite{puncochar-2019} @cite{theiler-etal-2018}
 
@@ -17,19 +17,22 @@ in the sense of @cite{ciardelli-groenendijk-roelofsen-2018}: a non-empty
 downward-closed family of information states over `W` (where an
 information state is a subset of `W`).
 
-This is the linglib **sibling structure** to `Setoid W` for the inquiry
-component of a discourse context. Where `Setoid W` (used in
-`Core/Mood/POSWQ.lean`) represents partition-based questions, this type
-represents the full @cite{ciardelli-groenendijk-roelofsen-2018}
-inquisitive proposition: a downward-closed family of information states
-with possibly non-disjoint, possibly non-exhaustive alternatives.
-Mention-some, intermediate-exhaustive, and conditional question
-phenomena live here (none representable as a Setoid partition).
+This `Basic` file carries the structural core: the type definition with
+its `SetLike` instance, the `info`/`alt`/`isInformative`/`isInquisitive`/
+`isDeclarative` predicates, the `declarative` constructor, the algebraic
+operations (`conj`, `inqDisj`, `top`, `bot`) packaged into the
+`CompleteDistribLattice` instance, the basic `info`-on-lattice-operations
+API, the `alt`-as-maximal characterization, the existence of alternatives
+under finiteness, the **Resolutions Theorem** (DNF), the
+**principal-ideal characterization** of declaratives, the Heyting
+derivatives (`compl_eq`, `proj`, `nonInfo`, the division law), and the
+LEM-fails witness.
 
-Algebraically (per @cite{puncochar-2019}): declarative propositions are
-the **principal ideals** in the algebra of information states. We expose
-this characterization as `isDeclarative` and prove it equivalent to the
-defining condition `info P ∈ P` via `isDeclarative_iff_eq_declarative_info`.
+For Hamblin constructions (`polar`, `which`), see
+`Core/Inquisitive/Hamblin.lean`. For mention-some / mention-all
+answerhood predicates, see `Core/Inquisitive/Answerhood.lean`. For the
+`Setoid → InquisitiveContent` embedding (used by `POSWQ`), see
+`Core/Mood/PartitionAsInquiry.lean`.
 
 ## Mathlib alignment
 
@@ -39,7 +42,7 @@ defining condition `info P ∈ P` via `isDeclarative_iff_eq_declarative_info`.
   it's the only constraint that matters once downward closure holds
 - `info` returns `Set W` (mathlib-native), not `W → Bool` — for the
   Bool/List computational variants of inquisitive operations, see
-  `Core/Inquisitive.lean`
+  the legacy `Core/Inquisitive.lean` (slated for dissolution)
 - `SetLike (InquisitiveContent W) (Set W)` — auto-derives `Membership`,
   `CoeSort`, and the `ext` machinery. `mem_props` is the canonical
   simp normalization (`q ∈ P.props → q ∈ P`).
@@ -58,22 +61,11 @@ disagree: `LowerSet.⊥ = ∅` (no resolving propositions), while ours is
 constraint (`contains_empty`) is essential to inquisitive semantics
 and is lost in `LowerSet`. We use `SetLike` instead, which gives the
 membership/coercion API without forcing `LowerSet`'s `⊥`.
-
-## Architectural placement
-
-This file sits in `Core/Mood/` next to `POSW.lean` and `POSWQ.lean` as
-the **sibling type** to `Setoid W` for the inquiry component, following
-the prescription in the `POSWQ.lean` "Architectural note" docstring. It
-does *not* replace `POSWQ.inquiry : Setoid W`; the embedding goes the
-other way (`Setoid → InquisitiveContent` in
-`Core/Mood/PartitionAsInquiry.lean`). Mirrors mathlib's `Set`/`Finset`
-and `Filter`/`Ultrafilter` parallel-structures pattern rather than
-collapsing the two types.
 -/
 
-namespace Core.Mood
+namespace Core.Inquisitive
 
-universe u v
+universe u
 
 /-- An inquisitive proposition in the sense of
     @cite{ciardelli-groenendijk-roelofsen-2018}: a non-empty
@@ -194,12 +186,9 @@ it supports both); inquisitive disjunction is `||α ⩒ β|| = ||α|| ∪ ||β||
 (state supports `α ⩒ β` iff it supports either).
 
 Implication `→` and negation `¬` arise as the Heyting `⇨` and `ᶜ` of
-the `CompleteDistribLattice` structure registered below; the
-`InquisitiveContent.imp` and `InquisitiveContent.not` aliases (in the
-"Non-inquisitive projection" section) expose them under their
-linguistic names. The non-inquisitive projection `!P` (collapsing
-inquisitivity) is `proj P`; classical operators are derived via
-projection: `!(P ⩒ Q) = !P ⊔ !Q` etc. -/
+the `CompleteDistribLattice` structure registered below; see the
+"Heyting derivatives" section for the structural identity
+`Pᶜ = declarative (info P)ᶜ` and the derivatives it grounds. -/
 
 /-- **Inquisitive conjunction** `P ∧ Q` (@cite{puncochar-2019} §2 ∧
     clause): `props` is the pointwise intersection. A state resolves
@@ -459,102 +448,6 @@ theorem info_inf_subset (P Q : InquisitiveContent W) :
   rintro _ ⟨q, ⟨hpP, hpQ⟩, hwq⟩
   exact ⟨⟨q, hpP, hwq⟩, ⟨q, hpQ, hwq⟩⟩
 
-/-! ### Polar question via inquisitive disjunction
-
-@cite{puncochar-2019} §2 defines the polar question as
-`?α := α ⩒ ¬α`. For atomic `α` with truth set `p`, the support
-clause for `¬α` reduces to `a ⊆ pᶜ` (= `declarative pᶜ`), so
-`?p` is the inquisitive disjunction of `declarative p` and
-`declarative pᶜ`. We take this as the **definition** of `polar`
-rather than stipulating an independent `props` set and proving
-equivalence after the fact. The basic theorems (`info_polar`,
-`isInquisitive_polar_iff`) then derive from `info_sup`,
-`info_declarative`, and properties of complementation. -/
-
-/-- The **polar interrogative** content of a proposition `p`, defined
-    via @cite{puncochar-2019}'s `?α := α ⩒ ¬α`. Alternatives are `p`
-    and `pᶜ`; non-informative (`info = univ`); inquisitive iff `p` is
-    non-trivial. -/
-def polar (p : Set W) : InquisitiveContent W :=
-  declarative p ⊔ declarative pᶜ
-
-/-- `polar` is, by definition, the inquisitive disjunction of the two
-    declaratives. *Not* `@[simp]`: `polar p` is a meaningful surface
-    primitive (it's the polar interrogative), and unfolding it to its
-    lattice definition disrupts simp lemmas like `info_polar`. Use
-    explicitly when reasoning about the lattice structure. -/
-theorem polar_eq_sup (p : Set W) :
-    polar p = declarative p ⊔ declarative pᶜ := rfl
-
-@[simp] theorem info_polar (p : Set W) : (polar p).info = Set.univ := by
-  rw [polar_eq_sup, info_sup, info_declarative, info_declarative,
-      Set.union_compl_self]
-
-theorem not_isInformative_polar (p : Set W) :
-    ¬ (polar p).isInformative :=
-  fun h => h (info_polar p)
-
-/-- A polar question is **inquisitive** iff its proposition is
-    non-trivial (neither `∅` nor `univ`). The trivial cases collapse to
-    declaratives because `univ ⊆ p` requires `p = univ`. -/
-theorem isInquisitive_polar_iff (p : Set W) :
-    (polar p).isInquisitive ↔ p ≠ ∅ ∧ p ≠ Set.univ := by
-  show (polar p).info ∉ (polar p).props ↔ _
-  rw [info_polar]
-  show (Set.univ : Set W) ∉ (declarative p).props ∪ (declarative pᶜ).props ↔ _
-  simp only [declarative, Set.mem_union, Set.mem_setOf_eq, Set.univ_subset_iff,
-             not_or]
-  refine ⟨?_, ?_⟩
-  · rintro ⟨hnp, hnpc⟩
-    refine ⟨?_, hnp⟩
-    intro he
-    apply hnpc
-    rw [he, Set.compl_empty]
-  · rintro ⟨hne, hnu⟩
-    refine ⟨hnu, ?_⟩
-    intro hpc
-    apply hne
-    rw [← compl_compl p, hpc, Set.compl_univ]
-
-/-! ### Wh-question content via Hamblin alternatives
-
-A wh-question `Which x ∈ D satisfies P x?` (Hamblin) has one alternative
-per element of `D`, given by the proposition `P e` for each `e ∈ D`.
-We define this as the inquisitive disjunction of the principal ideals
-generated by the per-element predicates. -/
-
-/-- The **wh-question** content for "Which x ∈ D satisfies P x?". One
-    alternative per element of `D` (modulo non-maximality of overlapping
-    predicates). The Hamblin construction: `which D P = ⨆ e ∈ D,
-    declarative (P e)`. -/
-def which {E : Type v} (D : Set E) (P : E → Set W) : InquisitiveContent W :=
-  ⨆ e ∈ D, declarative (P e)
-
-/-- A state resolves `which D P` iff it is empty or contained in some
-    `P e` for an `e ∈ D`. -/
-theorem mem_which {E : Type v} {D : Set E} {P : E → Set W} {q : Set W} :
-    q ∈ which D P ↔ q = ∅ ∨ ∃ e ∈ D, q ⊆ P e := by
-  rw [which, mem_biSup_iff]
-  simp only [mem_declarative]
-
-/-- The informative content of `which D P` is the union of the per-element
-    predicates: a world is settled by the question iff it satisfies
-    `P e` for some `e ∈ D`. -/
-@[simp] theorem info_which {E : Type v} (D : Set E) (P : E → Set W) :
-    info (which D P) = ⋃ e ∈ D, P e := by
-  ext w
-  simp only [info, Set.mem_sUnion, Set.mem_iUnion]
-  constructor
-  · rintro ⟨q, hq, hwq⟩
-    rw [show (q ∈ (which D P).props) = (q ∈ which D P) from rfl, mem_which] at hq
-    rcases hq with hempty | ⟨e, heD, hqP⟩
-    · exact (hempty ▸ hwq).elim
-    · exact ⟨e, heD, hqP hwq⟩
-  · rintro ⟨e, heD, hwe⟩
-    refine ⟨P e, ?_, hwe⟩
-    rw [show (P e ∈ (which D P).props) = (P e ∈ which D P) from rfl, mem_which]
-    exact Or.inr ⟨e, heD, Set.Subset.refl _⟩
-
 /-! ### `alt` API and inquisitivity from alternatives
 
 The `alt` (alternatives) selector picks out maximal propositions in
@@ -701,8 +594,8 @@ alternatives exist (finiteness), they fully determine the content.
 This subsumes:
 - Single-alternative case: `P = declarative p` iff `alt P = {p}`
   (the principal-ideal characterization for declaratives).
-- The polar case: `polar p = declarative p ⊔ declarative pᶜ` is
-  literally `⨆ q ∈ {p, pᶜ}, declarative q`.
+- The polar case: `polar p = declarative p ⊔ declarative pᶜ` (in
+  `Hamblin.lean`) is literally `⨆ q ∈ {p, pᶜ}, declarative q`.
 - Setoid-derived inquiries: `fromSetoid r` resolves to the iSup over
   equivalence classes (each class is an alternative).
 
@@ -936,64 +829,6 @@ theorem proj_inf_nonInfo (P : InquisitiveContent W) :
     intro w hwq
     exact ⟨q, hq, hwq⟩
 
-/-! ### Answerhood: mention-some and mention-all
-
-The two basic notions of answerhood from the inquisitive-semantics
-tradition (@cite{ciardelli-groenendijk-roelofsen-2018};
-@cite{theiler-etal-2018}). A **mention-all** answer settles every
-alternative; a **mention-some** answer settles at least one without
-settling all. These are the structural Set-valued analogues of the
-`Discourse.Issue.isMentionSomeAnswer` / `isMentionAllAnswer` predicates
-that the Bool/List shadow exposes — the same definitions, lifted from
-`List`-enumeration to `∀ p ∈ alt P, …`. -/
-
-/-- A state `σ` is a **mention-some** answer to `P`: it settles at least
-    one alternative (`σ ⊆ p` for some `p ∈ alt P`) without settling all
-    of them (some alternative is not contained in `σ`). -/
-def isMentionSomeAnswer (P : InquisitiveContent W) (σ : Set W) : Prop :=
-  (∃ p ∈ alt P, σ ⊆ p) ∧ (∃ p ∈ alt P, ¬ σ ⊆ p)
-
-/-- A state `σ` is a **mention-all** answer to `P`: it settles every
-    alternative. -/
-def isMentionAllAnswer (P : InquisitiveContent W) (σ : Set W) : Prop :=
-  ∀ p ∈ alt P, σ ⊆ p
-
-/-- The only mention-all answer to `⊥` is the empty state. -/
-@[simp] theorem isMentionAllAnswer_bot_iff {σ : Set W} :
-    isMentionAllAnswer (⊥ : InquisitiveContent W) σ ↔ σ = ∅ := by
-  unfold isMentionAllAnswer
-  simp only [alt_bot, Set.mem_singleton_iff, forall_eq, Set.subset_empty_iff]
-
-/-- A mention-all answer to a declarative is precisely a substate of its
-    informative content. -/
-@[simp] theorem isMentionAllAnswer_declarative_iff {p σ : Set W} :
-    isMentionAllAnswer (declarative p) σ ↔ σ ⊆ p := by
-  unfold isMentionAllAnswer
-  simp only [alt_declarative, Set.mem_singleton_iff, forall_eq]
-
-/-! ### Granularity ordering (@cite{deo-thomas-2025})
-
-Two questions on the same informative content can differ in *granularity*:
-how finely they slice the world space into alternatives. The `widerThan`
-relation captures the asymmetric "more granular" ordering used in
-@cite{deo-thomas-2025} for granularity-based question construals. It is
-strictly weaker than question entailment: a wider question's alternatives
-are individually more specific, but no entailment relation generally
-holds between answers. -/
-
-/-- `q'` is **properly contained** in `q`: `q' ⊆ q` and `q' ≠ q`. -/
-def properlyContains (q q' : Set W) : Prop := q' ⊆ q ∧ q' ≠ q
-
-/-- `widerThan P P'` (@cite{deo-thomas-2025}): `P` is a wider, more
-    granular inquiry than `P'` over the same informative content. Three
-    conditions: (a) same `info`; (b) no `P'`-alternative properly
-    contains any `P`-alternative; (c) some `P`-alternative is properly
-    contained in some `P'`-alternative. -/
-def widerThan (P P' : InquisitiveContent W) : Prop :=
-  P.info = P'.info ∧
-  (∀ p₂ ∈ alt P', ∀ p₁ ∈ alt P, ¬ properlyContains p₁ p₂) ∧
-  (∃ p₁ ∈ alt P, ∃ p₂ ∈ alt P', properlyContains p₂ p₁)
-
 /-! ### LEM fails: the lattice is Heyting but not Boolean
 
 A central feature of inquisitive semantics is that the standard logical
@@ -1023,4 +858,4 @@ theorem not_lem_inquisitive_content :
 
 end InquisitiveContent
 
-end Core.Mood
+end Core.Inquisitive

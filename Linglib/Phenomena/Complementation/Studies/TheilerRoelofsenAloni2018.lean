@@ -1,7 +1,8 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Setoid.Basic
 import Mathlib.Data.Setoid.Partition
-import Linglib.Core.Mood.InquisitiveContent
+import Linglib.Core.Inquisitive.Basic
+import Linglib.Core.Inquisitive.Hamblin
 import Linglib.Core.Mood.PartitionAsInquiry
 
 /-!
@@ -13,7 +14,7 @@ import Linglib.Core.Mood.PartitionAsInquiry
 This study formalizes Section 2 of the paper (semantic framework:
 inquisitive sentence meanings) plus the **forcing** mention-some
 example from Section 3.1, which justifies the existence of
-`Core/Mood/InquisitiveContent.lean` as a sibling structure to
+`Core/Inquisitive/Basic.lean` as a sibling structure to
 `Setoid W`.
 
 ## What this file establishes
@@ -54,13 +55,13 @@ This file does **not** formalize the rest of the paper:
 
 The point of this file is the existence theorem for the "more
 expressive than partitions" claim, which is what the
-`InquisitiveContent.lean`/`PartitionAsInquiry.lean` pair was built
-to support.
+`Core/Inquisitive/Basic.lean`/`Core/Mood/PartitionAsInquiry.lean`
+pair was built to support.
 -/
 
 namespace Phenomena.Complementation.Studies.TheilerRoelofsenAloni2018
 
-open Core.Mood InquisitiveContent
+open Core.Inquisitive InquisitiveContent
 
 /-! ### Section 2.1: Figure 2 — Did Amy leave? / Amy left. -/
 

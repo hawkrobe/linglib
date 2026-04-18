@@ -1,5 +1,5 @@
 import Mathlib.Data.Setoid.Partition
-import Linglib.Core.Mood.InquisitiveContent
+import Linglib.Core.Inquisitive.Basic
 import Linglib.Core.Mood.POSWQ
 
 /-!
@@ -48,7 +48,7 @@ forgetful map.
   partition (one class) yields a declarative.
 -/
 
-namespace Core.Mood
+namespace Core.Inquisitive
 
 namespace InquisitiveContent
 
@@ -102,6 +102,8 @@ theorem isInquisitive_fromSetoid_of_two_classes
 
 end InquisitiveContent
 
+end Core.Inquisitive
+
 /-! ## POSWQ bridge
 
 Lift the partition-based inquiry component of a `POSWQ` to its full
@@ -111,7 +113,11 @@ automatically a consumer of the inquisitive-content API: `info`,
 mention-some/IE-question forcing arguments all become available
 without rewriting the underlying state. -/
 
+namespace Core.Mood
+
 namespace POSWQ
+
+open Core.Inquisitive (InquisitiveContent)
 
 universe u
 variable {W : Type u}
