@@ -30,8 +30,11 @@ the type-shift hierarchy, not the article inventory).
 namespace Core.Nominal
 
 open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables
 open Core.Definiteness
+
+-- The structure is declared before `open Core.IntensionalLogic.Variables`
+-- because that namespace introduces a `g[n ↦ x]` notation whose `[`
+-- conflicts with structure instance-field syntax `[name : Type]`.
 
 -- ════════════════════════════════════════════════════════════════
 -- § The Inventory Structure
@@ -77,6 +80,9 @@ attribute [instance] ArticleInventory.decHasIndefinite
   ArticleInventory.decHasDemonstrative
   ArticleInventory.decHasPossessive
 
+-- Now safe to open Variables — structure is already declared.
+open Core.IntensionalLogic.Variables
+
 -- ════════════════════════════════════════════════════════════════
 -- § Constructor-Level Licensing
 -- ════════════════════════════════════════════════════════════════
@@ -107,7 +113,10 @@ instance decLicensesKind {F : Frame} (inv : ArticleInventory) :
   | .bare _              => isTrue trivial
   | .indefinite _        => inv.decHasIndefinite
   | .unique _ _          => inv.decHasUniqueArticle
-  | .anaphoric _ _       => inferInstance
+  | .anaphoric _ _       =>
+      @instDecidableOr _ _ inv.decHasAnaphoricArticle
+        (@instDecidableAnd _ _ inv.decHasUniqueArticle
+          inv.decUniqueAnaphoricSyncretism)
   | .demonstrative ..    => inv.decHasDemonstrative
   | .possessive ..       => inv.decHasPossessive
 

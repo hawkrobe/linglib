@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.920] - 2026-04-18
+
+### Changed
+- **`Core.Nominal.ArticleInventory` Bool→Prop migration.** The six morphological-presence fields (`hasIndefinite`, `hasUniqueArticle`, `hasAnaphoricArticle`, `uniqueAnaphoricSyncretism`, `hasDemonstrative`, `hasPossessive`) migrated from `Bool` to `Prop` with paired `[Decidable …]` instance fields and an `attribute [instance]` declaration to register them globally — aligns the type with mathlib's Prop-with-Decidable convention for propositional positions (see `feedback_bool_migration_scope.md`). `licensesKind` now returns `Prop`; its decidability is derived structurally via `@instDecidableOr`/`@instDecidableAnd` over the field instances. **Parser-conflict workaround**: `open Core.IntensionalLogic.Variables` (which scopes the `g[n ↦ x]` notation) now appears *after* the structure declaration — when in scope, the `[`-prefixed notation token clashes with structure instance-field syntax `[name : Type]`. Five fragment files (`Fragments/{English,German,Thai,Mandarin,Shan}/Definiteness.lean`) updated `:= true/false` → `:= True/False`. Downstream theorem updates: `Phenomena/Definiteness/Studies/Schwarz2009.lean` (§4 `german_two_articles`/`english_syncretic_articles` use direct Prop conjuncts + `⟨trivial, trivial, id⟩` / `⟨trivial, trivial, trivial⟩`); `Phenomena/Definiteness/Studies/Moroney2021.lean` (`blocking_strategy_correspondence`, the five `licensesKind` predictions for shan/english/german, plus `english_mandarin_inventory_distinct` rewritten with `congrArg ArticleInventory.hasUniqueArticle h` to derive `True = False`). `deriving Repr, DecidableEq` dropped from `ArticleInventory` (Prop fields don't admit them); cascading `deriving` removals on `Phenomena/Anaphora/Typology.lean::PronounSystemDatum` (Repr, BEq) and `Phenomena/Anaphora/DonkeyAnaphora.lean::DonkeyArticleDatum` (Repr).
+
 ## [0.229.919] - 2026-04-18
 
 ### Fixed

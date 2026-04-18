@@ -305,7 +305,6 @@ structure DonkeyArticleDatum where
   /-- Morphological article inventory (single source of truth from which
       `articleSystem` is derived). -/
   articleInventory : ArticleInventory
-  deriving Repr
 
 /-- Schwarz `ArticleType` classification, derived from `articleInventory`. -/
 def DonkeyArticleDatum.articleSystem (d : DonkeyArticleDatum) : ArticleType :=

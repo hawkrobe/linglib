@@ -578,27 +578,27 @@ theorem blocking_strategy_correspondence :
     let shanInv    := Fragments.Shan.Definiteness.articleInventory
     -- English: both forms, syncretic → generallyMarked
     (englishInv.toMarkingStrategy = .generallyMarked ∧
-     englishInv.hasUniqueArticle = true ∧
-     englishInv.hasAnaphoricArticle = true ∧
-     englishInv.uniqueAnaphoricSyncretism = true) ∧
+     englishInv.hasUniqueArticle ∧
+     englishInv.hasAnaphoricArticle ∧
+     englishInv.uniqueAnaphoricSyncretism) ∧
     -- German: two different forms → bipartite (weak/strong split)
     (germanInv.toMarkingStrategy = .bipartite ∧
-     germanInv.hasUniqueArticle = true ∧
-     germanInv.hasAnaphoricArticle = true ∧
-     germanInv.uniqueAnaphoricSyncretism = false) ∧
+     germanInv.hasUniqueArticle ∧
+     germanInv.hasAnaphoricArticle ∧
+     ¬ germanInv.uniqueAnaphoricSyncretism) ∧
     -- Thai: only dem → markedAnaphoric, ι^x blocked (dem), ι unblocked (bare)
     (thaiInv.toMarkingStrategy = .markedAnaphoric ∧
-     thaiInv.hasUniqueArticle = false ∧
-     thaiInv.hasAnaphoricArticle = true) ∧
+     ¬ thaiInv.hasUniqueArticle ∧
+     thaiInv.hasAnaphoricArticle) ∧
     -- Shan: no forms → unmarked, nothing blocked, all shifts available
     (shanInv.toMarkingStrategy = .unmarked ∧
-     shanInv.hasUniqueArticle = false ∧
-     shanInv.hasAnaphoricArticle = false ∧
+     ¬ shanInv.hasUniqueArticle ∧
+     ¬ shanInv.hasAnaphoricArticle ∧
      shanBlocking.iotaBlocked = false ∧
      shanBlocking.existsBlocked = false ∧
      shanBlocking.downBlocked = false) :=
-  ⟨⟨rfl, rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl⟩,
-   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩⟩
+  ⟨⟨rfl, trivial, trivial, trivial⟩, ⟨rfl, trivial, trivial, id⟩,
+   ⟨rfl, id, trivial⟩, ⟨rfl, id, id, rfl, rfl, rfl⟩⟩
 
 -- ============================================================================
 -- §12: Demonstrative–Bare Noun Contrast (§2.1.3)
@@ -706,13 +706,14 @@ theorem mandarin_in_markedAnaphoric :
     visible — `.anaphoric` is not licensed by Shan's inventory. -/
 theorem shan_anaphoric_not_licensed_via_article {F : Frame}
     (R : DenotGS F .et) (d : Nat) :
-    shanInv.licensesKind (F := F) (.anaphoric R d) = false := rfl
+    ¬ shanInv.licensesKind (F := F) (.anaphoric R d) := by
+  rintro (h | ⟨h, _⟩) <;> exact h
 
 /-- Bare nominals are licensed for Shan (and every language) — this is the
     morphological substrate for Moroney's analysis: Shan's anaphoric
     definites surface as bare nouns. -/
 theorem shan_bare_licensed {F : Frame} (R : DenotGS F .et) :
-    shanInv.licensesKind (F := F) (.bare R) = true := rfl
+    shanInv.licensesKind (F := F) (.bare R) := trivial
 
 /-- Demonstratives are licensed in Shan (the *nâj*/*nân* paradigm).
     Combined with `shan_bare_licensed`, this gives the morphological
@@ -720,21 +721,22 @@ theorem shan_bare_licensed {F : Frame} (R : DenotGS F .et) :
 theorem shan_demonstrative_licensed {F : Frame}
     (R : DenotGS F .et) (deictic : Core.Deixis.Feature) (sIdx d : Nat) :
     shanInv.licensesKind (F := F)
-      (.demonstrative R deictic sIdx d) = true := rfl
+      (.demonstrative R deictic sIdx d) := trivial
 
 /-- English licenses `.anaphoric` via the syncretic *the* (uniqueArticle ∧
     syncretism), *without* an independent strong article. Contrasts with
     Shan (no licensing form at all) and German (independent strong form). -/
 theorem english_anaphoric_licensed_via_syncretism {F : Frame}
     (R : DenotGS F .et) (d : Nat) :
-    englishInv.licensesKind (F := F) (.anaphoric R d) = true := rfl
+    englishInv.licensesKind (F := F) (.anaphoric R d) :=
+  Or.inr ⟨trivial, trivial⟩
 
 /-- German licenses `.anaphoric` via its independent strong article (no
     syncretism). The unique vs anaphoric distinction is morphologically
     marked. -/
 theorem german_anaphoric_licensed_via_strong_article {F : Frame}
     (R : DenotGS F .et) (d : Nat) :
-    germanInv.licensesKind (F := F) (.anaphoric R d) = true := rfl
+    germanInv.licensesKind (F := F) (.anaphoric R d) := Or.inl trivial
 
 /-- The English and Mandarin inventories both collapse to `ArticleType.weakOnly`,
     witnessing the lossiness of `ArticleType` relative to `DefMarkingStrategy`:
@@ -745,9 +747,13 @@ theorem english_mandarin_articleType_collapse :
     englishInv.toArticleType = mandarinInv.toArticleType := rfl
 
 /-- The English and Mandarin inventories themselves are distinct, even
-    though their `ArticleType` classifications collide. -/
+    though their `ArticleType` classifications collide. They differ on
+    `hasUniqueArticle` (English `True`, Mandarin `False`). -/
 theorem english_mandarin_inventory_distinct :
-    englishInv ≠ mandarinInv := by decide
+    englishInv ≠ mandarinInv := by
+  intro h
+  have hEq : True = False := congrArg ArticleInventory.hasUniqueArticle h
+  exact hEq ▸ trivial
 
 /-- Shan-specific consequence of `Core.Nominal.interpret_bare_eq_unique`:
     a bare definite description and a uniqueness definite over the same

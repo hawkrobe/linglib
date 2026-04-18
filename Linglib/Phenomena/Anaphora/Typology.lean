@@ -110,7 +110,6 @@ structure PronounSystemDatum where
   demLicensing : List DEMLicensingContext
   /-- Whether DEM pronouns are productive (freely usable) as 3rd-person reference -/
   demProductive : Bool
-  deriving Repr, BEq
 
 /-- Schwarz/Patel-Grosz–Grosz `ArticleType` classification, derived from the
     morphological inventory. Not stipulated — this is the projection of the

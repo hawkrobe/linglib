@@ -166,18 +166,18 @@ bool. -/
 /-- German has both articles overtly, with no syncretism — the structural
     @cite{schwarz-2009} contrast is morphologically visible. -/
 theorem german_two_articles :
-    Fragments.German.Definiteness.articleInventory.hasUniqueArticle = true ∧
-    Fragments.German.Definiteness.articleInventory.hasAnaphoricArticle = true ∧
-    Fragments.German.Definiteness.articleInventory.uniqueAnaphoricSyncretism
-      = false := ⟨rfl, rfl, rfl⟩
+    Fragments.German.Definiteness.articleInventory.hasUniqueArticle ∧
+    Fragments.German.Definiteness.articleInventory.hasAnaphoricArticle ∧
+    ¬ Fragments.German.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
+  ⟨trivial, trivial, id⟩
 
 /-- English has both articles, but they are syncretic — *the* covers both.
     The @cite{schwarz-2009} contrast is real but morphologically invisible. -/
 theorem english_syncretic_articles :
-    Fragments.English.Definiteness.articleInventory.hasUniqueArticle = true ∧
-    Fragments.English.Definiteness.articleInventory.hasAnaphoricArticle = true ∧
-    Fragments.English.Definiteness.articleInventory.uniqueAnaphoricSyncretism
-      = true := ⟨rfl, rfl, rfl⟩
+    Fragments.English.Definiteness.articleInventory.hasUniqueArticle ∧
+    Fragments.English.Definiteness.articleInventory.hasAnaphoricArticle ∧
+    Fragments.English.Definiteness.articleInventory.uniqueAnaphoricSyncretism :=
+  ⟨trivial, trivial, trivial⟩
 
 /-- The morphological discriminator: German is `.bipartite` (two distinct
     forms), English is `.generallyMarked` (one syncretic form). Both
