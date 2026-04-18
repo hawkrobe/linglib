@@ -808,6 +808,7 @@ import Linglib.Phenomena.Assertion.Studies.BringGunlogson2000
 import Linglib.Phenomena.Assertion.Studies.Krifka2015
 import Linglib.Phenomena.Case.Data
 import Linglib.Phenomena.Case.Typology
+import Linglib.Phenomena.Case.CahaContainmentValidation
 import Linglib.Phenomena.Case.Studies.Ozaki2026
 import Linglib.Phenomena.Case.DependentCaseDerivations
 import Linglib.Phenomena.Case.Studies.Aissen2003
@@ -935,6 +936,7 @@ import Linglib.Phenomena.Complementation.Studies.Grano2024
 import Linglib.Phenomena.Complementation.Studies.Karttunen1971
 import Linglib.Phenomena.Causation.Studies.Nadathur2024
 import Linglib.Phenomena.Complementation.Studies.Osborne2019Control
+import Linglib.Phenomena.Complementation.Studies.TheilerRoelofsenAloni2018
 import Linglib.Phenomena.Control.Studies.Chierchia1984
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Control.Studies.Ostrove2026
@@ -1146,6 +1148,7 @@ import Linglib.Phenomena.Modality.Studies.Aloni2022
 import Linglib.Phenomena.Modality.Studies.PhillipsBrown2025
 import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Linglib.Phenomena.Modality.Studies.DelPinalBassiSauerland2024
+import Linglib.Phenomena.Modality.Studies.Kratzer1977
 import Linglib.Phenomena.Modality.Studies.YingEtAl2025
 import Linglib.Phenomena.Modality.Studies.CiardelliGuerrini2026
 import Linglib.Phenomena.Modality.Studies.ElliottSudo2025
@@ -1300,8 +1303,7 @@ import Linglib.Phenomena.Questions.Exhaustivity
 import Linglib.Phenomena.Questions.FocusAnswer
 import Linglib.Phenomena.Questions.MentionSome
 import Linglib.Phenomena.Questions.MultipleWh
-import Linglib.Phenomena.Questions.NandaoQs
-import Linglib.Phenomena.Questions.NandaoQsAnalysis
+import Linglib.Phenomena.Questions.Studies.Zheng2025
 import Linglib.Phenomena.Questions.Studies.RomeroHan2004
 import Linglib.Phenomena.Questions.PolarAnswers
 import Linglib.Phenomena.Questions.PolarAnswerStructure
