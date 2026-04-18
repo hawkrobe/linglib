@@ -50,6 +50,19 @@ extensions; they do not appear in @cite{portner-2018}.
   discriminating ≤ less discriminating.
 - `extends POSW W` mirrors `Group extends Monoid`: a POSWQ *is* a POSW
   (via the auto-generated `POSWQ.toPOSW`) plus extra structure.
+
+## Three-lattice unification (third corner)
+
+The POSWQ `?`-update is the third corner of the linglib lattice
+unification described in `Mood/POSW.lean`'s "Lattice unification"
+docstring: each of `cs`, `le`, `inquiry` carries a mathlib lattice,
+and each of `+`, `⋆`, `?` is meet in its component's lattice. The
+`inquiry` corner uses `Setoid.completeLattice α` (mathlib), so the
+`?`-update inherits not just `inf` but `iInf` over arbitrary index
+sets — reading off "asking the conjunction of a family of questions"
+as `iInf` is then a one-line consequence. The `?`-update inherits
+`inf_assoc`, `inf_idem`, and `inf_comm` directly (`inquire_inquire_self`
+in §7 is a one-liner via `inf_assoc + inf_idem`).
 -/
 
 namespace Core.Mood
@@ -132,6 +145,12 @@ def inquire (c : POSWQ W) (q : Setoid W) : POSWQ W :=
     (c.inquire q).le = c.le := rfl
 
 theorem inquire_inquiry (c : POSWQ W) (q : Setoid W) :
+    (c.inquire q).inquiry = c.inquiry ⊓ q := rfl
+
+/-- `?`-update is meet in `Setoid.completeLattice W`. The inquiry-side
+    analogue of `POSW.plus_cs_eq_inf` (meet in `W → Prop`) and
+    `POSW.star_le_eq_inf` (meet in `W → W → Prop`). Definitional. -/
+@[simp] theorem inquire_inquiry_eq_inf (c : POSWQ W) (q : Setoid W) :
     (c.inquire q).inquiry = c.inquiry ⊓ q := rfl
 
 /-! ## §3. The third modal: `boxAns` (informational answerhood) -/

@@ -1,4 +1,6 @@
 import Mathlib.Order.Basic
+import Mathlib.Order.PropInstances
+import Mathlib.Order.Lattice
 
 /-!
 # Partially Ordered Set of Worlds (POSW)
@@ -61,6 +63,28 @@ mathematical core of Portner's unification thesis.
   `cs`-membership, so behaviour outside `cs` is irrelevant.
 - We use a reflexive partial preorder `le` matching the partition /
   `Setoid` lattice convention (finer ≤ coarser).
+
+## Lattice unification (linglib extension)
+
+@cite{portner-2018} writes eq. (2a) as set intersection and eq. (2b)
+via Condoravdi-Lauer ordering refinement; the `?`-update (our
+extension) is naturally a `Setoid` meet. All three updates turn out
+to be **`inf` in three parallel mathlib lattices**, none of which
+appear in @cite{portner-2018}:
+
+| update | acts on | lattice                    | identity                                       |
+|--------|---------|----------------------------|------------------------------------------------|
+| `+`    | `cs`    | `Pi.instLattice` over Prop | `(c + p).cs = c.cs ⊓ p` (`plus_cs_eq_inf`)     |
+| `⋆`    | `le`    | `Pi.instLattice` over Prop | `(c ⋆ p).le = c.le ⊓ promote p` (`star_le_eq_inf`) |
+| `?`    | `inquiry` | `Setoid.completeLattice` | `(c ? q).inquiry = c.inquiry ⊓ q` (POSWQ)       |
+
+The unified picture: each of the three POSW(Q) components carries an
+already-mathlib'd lattice, and each update is meet in its component's
+lattice. Commutativity (`star_star_comm_le`), idempotency
+(`star_star_self_le`), and the corresponding theorems on the other
+two updates all collapse to one-line invocations of `inf_right_comm`
+/ `inf_idem` in the appropriate lattice. The `K`-axiom for `boxCs` /
+`boxLe` (§8) is the universal-quantification-preserves-inf pattern.
 -/
 
 namespace Core.Mood
@@ -160,6 +184,21 @@ abbrev boxLt (c : POSW W) (p : W → Prop) : Prop := c.boxLe p
 
 @[simp] theorem star_le (c : POSW W) (p : W → Prop) (w v : W) :
     (c.star p).le w v ↔ c.le w v ∧ (p v → p w) := Iff.rfl
+
+/-! ### Lattice characterization of `+`-update
+
+`+`-update on `cs` *is* meet in the Heyting algebra `W → Prop`: the new
+context set is the pointwise conjunction of the old context set and the
+asserted proposition. The identity is definitional — no proof obligation.
+This puts the @cite{portner-2018} eq. (2a) "`c + ϕ = ⟨cs_c ∩ ⟦ϕ⟧^c, <_c⟩`"
+on the same algebraic footing as the `Setoid` meet that defines
+`POSWQ.inquire` and the relation meet that defines `star` (§6). The
+mathlib instance chain is `Prop.instDistribLattice` → `Pi.instLattice`. -/
+
+/-- `+`-update on `cs` is meet in `W → Prop`. The Heyting characterization
+    of @cite{portner-2018} eq. (2a) — `c + ϕ` intersects `cs` with `ϕ`. -/
+@[simp] theorem plus_cs_eq_inf (c : POSW W) (p : W → Prop) :
+    (c.plus p).cs = c.cs ⊓ p := rfl
 
 /-- **Portner's central insight**: the two updates target *disjoint*
     POSW components. `+` revises `cs` and leaves `le` alone; `⋆`
@@ -302,26 +341,31 @@ instance instPreorderSubtype (c : POSW W) : Preorder {w // c.cs w} where
   le_refl w := c.le_refl w.1 w.2
   le_trans w u v := c.le_trans w.1 u.1 v.1 w.2 u.2 v.2
 
-/-! ## §6. The `promote` preorder and `⋆`-update algebra
+/-! ## §6. The `promote` preorder and `⋆`-update as relation meet
 
-`⋆`-update has a clean lattice-theoretic identity: it is the
-intersection of the existing preorder with the **promotion preorder**
-of `p`, where `promote p w v` says "if `p` holds at the lower world it
-holds at the higher one too". This factors out the algebraic content of
-`star` and makes its commutativity and idempotency one-line corollaries
-of `∧`-commutativity and `∧`-idempotency.
+`⋆`-update has a clean lattice-theoretic identity: it is meet in the
+relation lattice `W → W → Prop` of the existing preorder with the
+**promotion preorder** of `p`, where `promote p w v` says "if `p`
+holds at the lower world it holds at the higher one too". This is
+the relation-side analogue of `plus_cs_eq_inf` (§3): `+`-update is
+meet in `W → Prop`, `⋆`-update is meet in `W → W → Prop`. Both reduce
+their respective updates to the same mathematical operation —
+`Pi.instLattice` over `Prop.instDistribLattice` — and inherit
+`inf_comm`, `inf_assoc`, `inf_idem` for free, which closes the
+commutativity / idempotency theorems below in one line each.
 
-This identity also explains why `⋆`-update is *not* a literal monoid
-action of `(W → Prop, ∧, ⊤)` on `POSW W`: `promote (p ∧ q)` is in
-general strictly finer than `promote p ⊓ promote q` (a world where
-`p` holds and `q` doesn't witnesses the gap). What we get is weaker
-than a monoid action, but strong enough for the commutativity /
-idempotency theorems below. -/
+The relation-meet identity also explains why `⋆`-update is *not* a
+literal monoid action of `(W → Prop, ∧, ⊤)` on `POSW W`: `promote
+(p ∧ q)` is in general strictly finer than `promote p ⊓ promote q`
+(a world where `p` holds and `q` doesn't witnesses the gap). What we
+get is weaker than a monoid action, but the relation-lattice meet is
+exactly the right level of abstraction for the algebraic theorems
+below. -/
 
 /-- The **promotion preorder** of a proposition: `w` is at least as
     `p`-good as `v` iff `p`-truth at `v` carries to `p`-truth at `w`.
     The structural content of `⋆`-update on the ordering: one
-    `⋆`-application intersects `c.le` with `promote p`. -/
+    `⋆`-application meets `c.le` with `promote p` in `W → W → Prop`. -/
 def promote (p : W → Prop) (w v : W) : Prop := p v → p w
 
 theorem promote_refl (p : W → Prop) (w : W) : promote p w w :=
@@ -331,29 +375,31 @@ theorem promote_trans (p : W → Prop) (w u v : W) :
     promote p w u → promote p u v → promote p w v :=
   fun h₁ h₂ hp => h₁ (h₂ hp)
 
-/-- `⋆`-update is intersection of `c.le` with `promote p`. The
-    structural identity that makes the algebra of `⋆` transparent:
-    `(c ⋆ p).le = c.le ⊓ promote p`. -/
+/-- `⋆`-update is meet in `W → W → Prop`: `(c ⋆ p).le = c.le ⊓ promote p`.
+    The relation-side analogue of `plus_cs_eq_inf` — both updates are
+    `inf` in the appropriate `Pi`-over-`Prop` lattice. Definitional. -/
+@[simp] theorem star_le_eq_inf (c : POSW W) (p : W → Prop) :
+    (c.star p).le = c.le ⊓ promote p := rfl
+
+/-- Pointwise restatement of `star_le_eq_inf`. -/
 @[simp] theorem star_le_eq (c : POSW W) (p : W → Prop) (w v : W) :
     (c.star p).le w v ↔ c.le w v ∧ promote p w v := Iff.rfl
 
-/-- **`⋆`-update commutes with itself**: applying two `⋆`-updates in
-    either order produces the same ordering. Falls out of `∧`-commutativity
-    on `(c.le w v) ∧ promote p w v ∧ promote q w v`. -/
-theorem star_star_comm_le (c : POSW W) (p q : W → Prop) (w v : W) :
-    ((c.star p).star q).le w v ↔ ((c.star q).star p).le w v := by
-  simp only [star_le_eq]
-  exact ⟨fun ⟨⟨h, hp⟩, hq⟩ => ⟨⟨h, hq⟩, hp⟩,
-         fun ⟨⟨h, hq⟩, hp⟩ => ⟨⟨h, hp⟩, hq⟩⟩
+/-- **`⋆`-update commutes with itself** (relation level): applying two
+    `⋆`-updates in either order produces the same ordering relation.
+    One-line corollary of `inf_right_comm` in `W → W → Prop`. -/
+theorem star_star_comm_le (c : POSW W) (p q : W → Prop) :
+    ((c.star p).star q).le = ((c.star q).star p).le := by
+  show c.le ⊓ promote p ⊓ promote q = c.le ⊓ promote q ⊓ promote p
+  rw [inf_right_comm]
 
-/-- **`⋆`-update is idempotent**: applying the same `⋆`-update twice
-    produces the same ordering as applying it once. Falls out of
-    `∧`-idempotency on `promote p`. -/
-theorem star_star_self_le (c : POSW W) (p : W → Prop) (w v : W) :
-    ((c.star p).star p).le w v ↔ (c.star p).le w v := by
-  simp only [star_le_eq]
-  exact ⟨fun ⟨⟨h, hp⟩, _⟩ => ⟨h, hp⟩,
-         fun ⟨h, hp⟩ => ⟨⟨h, hp⟩, hp⟩⟩
+/-- **`⋆`-update is idempotent** (relation level): applying the same
+    `⋆`-update twice produces the same ordering as once. One-line
+    corollary of `inf_assoc` + `inf_idem` in `W → W → Prop`. -/
+theorem star_star_self_le (c : POSW W) (p : W → Prop) :
+    ((c.star p).star p).le = (c.star p).le := by
+  show c.le ⊓ promote p ⊓ promote p = c.le ⊓ promote p
+  rw [inf_assoc, inf_idem]
 
 /-! ## §7. Farkas-style update fixed-point
 
@@ -383,9 +429,13 @@ theorem le_plus_iff_boxCs (c : POSW W) (p : W → Prop) :
 
 `boxCs` and `boxLe` are both **normal modalities** in the sense of
 modal logic: each satisfies necessitation (`□⊤`) and the K-axiom
-(`□(p→q) → □p → □q`). This is because each is a universal
-quantification over a `W`-subset (`c.cs` and `c.best` respectively),
-and the universal-on-subset modality satisfies N + K trivially.
+(`□(p→q) → □p → □q`). The K-axiom is one shape of the general
+**inf-preservation** pattern that `∀` over any subset enjoys:
+`(∀ w ∈ S, p w → q w) ∧ (∀ w ∈ S, p w) → (∀ w ∈ S, q w)`. So both
+`boxCs` (= `∀_{c.cs}`) and `boxLe` (= `∀_{c.best}`) inherit
+normality from `Pi.instLattice` on `Prop` — the same lattice that
+underlies `+` and `⋆` updates (cf. file docstring "Lattice
+unification" table).
 
 The third modal `boxAns` is *not* normal — it does not satisfy K.
 A counterexample: with `cs = {a, b, c}`, inquiry partition
