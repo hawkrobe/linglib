@@ -25,11 +25,11 @@ section InterpretationState
 
 /-- Semantic interpretation state: current assignment + pending abstractions. -/
 structure InterpState (F : Frame) where
-  assignment : Assignment F
+  assignment : Core.Assignment F.Entity
   abstractionStack : List Nat
 
 /-- Initial interpretation state with a given assignment. -/
-def InterpState.initial {F : Frame} (g : Assignment F) : InterpState F :=
+def InterpState.initial {F : Frame} (g : Core.Assignment F.Entity) : InterpState F :=
   { assignment := g, abstractionStack := [] }
 
 /-- Push an abstraction index onto the stack. -/
@@ -60,7 +60,7 @@ def bindingWellFormed {F : Frame}
 
 /-- Interpret a binding configuration as a semantic check. -/
 def interpretBindingConfig {F : Frame}
-    (bc : BindingConfig) (_g : Assignment F) : Bool :=
+    (bc : BindingConfig) (_g : Core.Assignment F.Entity) : Bool :=
   -- All bindings must have consistent indices
   bc.wellFormed
 
@@ -76,7 +76,7 @@ example : W (λ x y => x == y) 5 = true := rfl
 
 /-- H&K interpretation of binding. -/
 def hkBinding {F : Frame} (n : Nat) (body : F.Entity → Bool)
-    (binder : F.Entity) (g : Assignment F) : Bool :=
+    (binder : F.Entity) (g : Core.Assignment F.Entity) : Bool :=
   body (g[n ↦ binder] n)
 
 /-- B&S interpretation of binding (continuation-based). -/
@@ -87,7 +87,7 @@ def bsBinding {Entity : Type} (body : Entity → Entity → Bool)
 /-- H&K and B&S agree for reflexive binding: both produce `body(binder, binder)`. -/
 theorem hk_bs_reflexive_equiv {F : Frame} (n : Nat)
     (body : F.Entity → F.Entity → Bool)
-    (binder : F.Entity) (g : Assignment F) :
+    (binder : F.Entity) (g : Core.Assignment F.Entity) :
     body (g[n ↦ binder] n) (g[n ↦ binder] n) = W body binder := by
   simp only [W, update_same]
 
@@ -200,7 +200,7 @@ theorem binder_scope_is_existsClosure {F : Frame} (n : Nat)
     (∃ x : F.Entity, body { state with assignment := state.assignment[n ↦ x] }) ↔
     existsClosure n
       (fun g => body { state with assignment := g }) state.assignment := by
-  simp only [existsClosure, Assignment.update]
+  simp only [existsClosure, Core.Assignment.update]
 
 /-- Binding links pronoun κ to binder l by substituting g(l) for g(κ).
 
@@ -208,14 +208,14 @@ After binding, `g(κ) = g(l)`, which is the diagonal element `Dκl`.
 The semantic effect on a predicate φ is `φ(g[κ↦g(l)])`, which is
 cylindric substitution `σ^κ_l(φ)`. -/
 theorem binding_eq_resolve {F : Frame} (κ l : Nat)
-    (φ : Assignment F → Prop) (g : Assignment F) :
+    (φ : Core.Assignment F.Entity → Prop) (g : Core.Assignment F.Entity) :
     φ (g[κ ↦ g l]) = resolve κ l φ g := rfl
 
 /-- After binding, the bound pronoun and its binder agree:
 `(g[κ↦g(l)])(κ) = (g[κ↦g(l)])(l)`. This is the diagonal condition
 `Dκl` that cylindric substitution enforces. -/
 theorem binding_establishes_diagonal {F : Frame} (κ l : Nat)
-    (g : Assignment F) (h : κ ≠ l) :
+    (g : Core.Assignment F.Entity) (h : κ ≠ l) :
     diag κ l (g[κ ↦ g l]) := by
   simp [diag, update_same, update_other g κ l (g l) (Ne.symm h)]
 

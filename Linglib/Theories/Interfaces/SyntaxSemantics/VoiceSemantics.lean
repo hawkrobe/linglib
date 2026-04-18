@@ -104,7 +104,7 @@ def berSemG {F : Frame} {τ : Ty} (n : ℕ)
 
 /-- `berSemG` at a specific assignment is just `suppressArg` with `g(n)`. -/
 theorem berSemG_eq_suppressArg {F : Frame} {τ : Ty} (n : ℕ)
-    (vp : DenotG F (.e ⇒ τ)) (g : Assignment F) :
+    (vp : DenotG F (.e ⇒ τ)) (g : Core.Assignment F.Entity) :
     berSemG n vp g = suppressArg (g n) (vp g) := rfl
 
 -- ============================================================================
@@ -124,7 +124,7 @@ theorem berSemG_eq_suppressArg {F : Frame} {τ : Ty} (n : ℕ)
     explicit) while ber- middles do not (the variable is unbound). -/
 def diSemProp {F : Frame} (n : ℕ)
     (vp : DenotG F (.e ⇒ .e ⇒ .t))
-    : Assignment F → F.Entity → Prop :=
+    : Core.Assignment F.Entity → F.Entity → Prop :=
   fun g patient => ∃ x : F.Entity, vp (g[n ↦ x]) x patient
 
 -- ============================================================================
@@ -216,7 +216,7 @@ theorem incorporate_preserves_arity {F : Frame}
     (coreferent or disjoint), but the operation itself is agnostic. -/
 theorem berSemG_assignment_agnostic {F : Frame} {τ : Ty} (n : ℕ)
     (vp : DenotG F (.e ⇒ τ))
-    (g₁ g₂ : Assignment F) (h : g₁ n = g₂ n)
+    (g₁ g₂ : Core.Assignment F.Entity) (h : g₁ n = g₂ n)
     (hvp : vp g₁ = vp g₂) :
     berSemG n vp g₁ = berSemG n vp g₂ := by
   simp only [berSemG, h, hvp]

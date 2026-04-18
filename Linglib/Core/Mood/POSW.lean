@@ -2,37 +2,41 @@ import Mathlib.Order.Basic
 
 /-!
 # Partially Ordered Set of Worlds (POSW)
-@cite{portner-2018} @cite{kratzer-1981}
+@cite{portner-2018} @cite{kratzer-1981} @cite{stalnaker-1978} @cite{farkas-2003} @cite{condoravdi-lauer-2012}
 
 @cite{portner-2018} (Ch. 4) argues that the apparently disparate "mood"
 phenomena — verbal mood (indicative/subjunctive selection by attitudes),
 sentence mood (declarative/imperative/interrogative force), and modal
 flavor (epistemic/deontic/bouletic) — all share a single mathematical
 substrate: a **partially ordered set of worlds** that the relevant
-linguistic objects update or quantify over.
+linguistic objects update or quantify over. The pair-of-information-and-
+ordering structure with `+`/`⋆` updates predates @cite{portner-2018};
+@cite{farkas-2003} introduces it for assertion-vs-direction, and the
+Stalnakerian context-set/Kratzerian ordering-source decomposition behind
+it goes back to @cite{stalnaker-1978} and @cite{kratzer-1981}.
+@cite{condoravdi-lauer-2012} works out the preferential-modal side
+(desire predicates over orderings) in detail.
 
-A POSW is a pair `c = ⟨cs_c, <_c⟩` (Portner 2018, eq. 1) where:
+A POSW is a pair `c = ⟨cs_c, <_c⟩` where:
 - `cs_c ⊆ W` is a non-empty set of worlds (the "context set" — the
   informational component, à la @cite{stalnaker-1978});
-- `<_c` is a strict partial preorder on `cs_c` (the "ordering
+- `<_c` is a (reflexive transitive) preorder on `cs_c` (the "ordering
   source" component, à la @cite{kratzer-1981}).
 
 There are two canonical updates:
-- **`+`-update** (eq. 2a) refines `cs` by intersection: `c + p` keeps
-  only `cs`-worlds where `p` holds. Targets the *informational*
-  component.
-- **`⋆`-update** (eq. 2b) refines `<` by promoting `p`-worlds: in
-  `c ⋆ p`, the ordering on `cs` is the original ordering plus the
-  constraint that any world satisfying `p` is at least as good as one
-  that doesn't. Targets the *preferential* component.
+- **`+`-update** refines `cs` by intersection: `c + p` keeps only
+  `cs`-worlds where `p` holds. Targets the *informational* component.
+- **`⋆`-update** refines `<` by promoting `p`-worlds: in `c ⋆ p`,
+  the ordering on `cs` is the original ordering plus the constraint
+  that any world satisfying `p` is at least as good as one that
+  doesn't. Targets the *preferential* component.
 
-There are two canonical necessity modals (eq. 3):
+There are two canonical necessity modals:
 - `□_cs p` — informational necessity: `p` holds at every world in `cs`.
 - `□_< p` — preferential necessity: `p` holds at every `<`-best world
   in `cs`.
 
-Portner's central architectural insight (eq. 8 — sentence mood, eq. 5 —
-verbal mood, eq. 9 — modal flavor) is that *what differs across
+Portner's central architectural insight is that *what differs across
 mood-and-modality phenomena is which POSW component is targeted*, not
 the substrate itself. Belief vs. desire is `□_cs` vs. `□_<` over the
 same agent's POSW; assertion vs. directive is `+` vs. `⋆` over the
@@ -48,9 +52,9 @@ mathematical core of Portner's unification thesis.
   (decidable propositions) because POSW is the foundational substrate;
   decidability concerns belong downstream.
 - We use a *reflexive* partial preorder `lt` (so `lt w w` for `w ∈ cs`),
-  matching @cite{portner-2018}'s usage where `<` includes the
-  "as-good-as" reading. A genuinely strict variant can be added later
-  if needed.
+  matching @cite{portner-2018}'s "at-least-as-good" reading of `<`.
+  (The name `lt` is kept for parallelism with @cite{portner-2018}'s `<`
+  notation; mathematically it is a reflexive `≤`.)
 -/
 
 namespace Core.Mood
@@ -59,7 +63,8 @@ universe u
 
 /-- A **partially ordered set of worlds** (POSW): a non-empty subset
     `cs` of worlds equipped with a reflexive transitive ordering `lt`
-    on `cs`. @cite{portner-2018} (Ch. 4, eq. 1).
+    on `cs`. @cite{portner-2018} (Ch. 4); the underlying pair structure
+    appears already in @cite{farkas-2003}.
 
     Non-emptiness is not enforced at the type level — empty POSWs are
     pathological but algebraically permitted (e.g., the result of
@@ -82,8 +87,8 @@ variable {W : Type u}
 
 /-! ## §1. Updates: `+` and `⋆` -/
 
-/-- **`+`-update** (@cite{portner-2018}, eq. 2a): refine `cs` by
-    intersection with `p`. Leaves `<` untouched.
+/-- **`+`-update** (@cite{portner-2018}, Ch. 4 §4.1; @cite{farkas-2003}):
+    refine `cs` by intersection with `p`. Leaves `<` untouched.
 
     Used by assertion (Stalnakerian context-set update) and by `□_cs`
     modals' restriction. -/
@@ -93,13 +98,13 @@ def plus (c : POSW W) (p : W → Prop) : POSW W where
   lt_refl  := fun w hw => c.lt_refl w hw.1
   lt_trans := fun w u v hw hu hv => c.lt_trans w u v hw.1 hu.1 hv.1
 
-/-- **`⋆`-update** (@cite{portner-2018}, eq. 2b): refine `<` by
-    promoting `p`-worlds. The new ordering keeps the old ordering and
-    additionally requires that whenever the upper world satisfies `p`,
-    the lower world does too.
+/-- **`⋆`-update** (@cite{portner-2018}, Ch. 4 §4.1; @cite{farkas-2003}):
+    refine `<` by promoting `p`-worlds. The new ordering keeps the old
+    ordering and additionally requires that whenever the upper world
+    satisfies `p`, the lower world does too.
 
     Used by directives (To-Do List update à la @cite{portner-2004})
-    and by `□_<` modals' refinement. -/
+    and by `□_<` modals' refinement (@cite{condoravdi-lauer-2012}). -/
 def star (c : POSW W) (p : W → Prop) : POSW W where
   cs := c.cs
   lt := fun w v => c.lt w v ∧ (p v → p w)
@@ -110,21 +115,21 @@ def star (c : POSW W) (p : W → Prop) : POSW W where
 /-! ## §2. Modals: `□_cs` and `□_<` -/
 
 /-- A world is **best** in `c` if it is in `cs` and at least as good
-    as every other `cs`-world. @cite{portner-2018} (eq. 3b
-    quantification domain). -/
+    as every other `cs`-world. The quantification domain of
+    @cite{portner-2018}'s preferential necessity modal `□_<`. -/
 def best (c : POSW W) (w : W) : Prop :=
   c.cs w ∧ ∀ v, c.cs v → c.lt v w
 
-/-- **Informational necessity** `□_cs` (@cite{portner-2018}, eq. 3a):
+/-- **Informational necessity** `□_cs` (@cite{portner-2018}, Ch. 4 §4.1):
     `p` holds at every world in the context set. The semantics of
     `believe` and the Stalnakerian context-set entailment. -/
 def boxCs (c : POSW W) (p : W → Prop) : Prop :=
   ∀ w, c.cs w → p w
 
-/-- **Preferential necessity** `□_<` (@cite{portner-2018}, eq. 3b):
+/-- **Preferential necessity** `□_<` (@cite{portner-2018}, Ch. 4 §4.1):
     `p` holds at every `<`-best world in the context set. The
     semantics of `want` and Kratzerian deontic/bouletic modals
-    (@cite{kratzer-1981}). -/
+    (@cite{kratzer-1981}, @cite{condoravdi-lauer-2012}). -/
 def boxLt (c : POSW W) (p : W → Prop) : Prop :=
   ∀ w, c.best w → p w
 
@@ -178,8 +183,7 @@ theorem boxLt_mono (c : POSW W) (p q : W → Prop)
 
 /-- After `+`-updating with `p`, `p` becomes informationally necessary.
     The Stalnakerian assertion principle: asserting `p` makes `p`
-    common ground. @cite{stalnaker-1978}, @cite{portner-2018} (eq. 2a
-    + eq. 3a). -/
+    common ground. @cite{stalnaker-1978}, @cite{portner-2018} (Ch. 4). -/
 theorem boxCs_plus_self (c : POSW W) (p : W → Prop) :
     (c.plus p).boxCs p :=
   fun _ hw => hw.2
@@ -199,7 +203,13 @@ informative POSW (smaller `cs`, smaller `lt`) sits below.
 
 The `boxCs_anti` lemma gives the modal counterpart: refining the POSW
 *strengthens* informational necessity. `boxLt` admits no parallel
-result in general — refinement can change which worlds are best. -/
+result in general — refinement can change which worlds are best.
+
+(The componentwise refinement preorder is not stated in
+@cite{portner-2018}; it is our linglib addition, packaging the
+"update means refine" intuition into a `Preorder` instance so the
+update lemmas factor through `≤` and downstream `Setoid`-style
+machinery composes.) -/
 
 /-- Refinement order on POSWs: `c₁ ≤ c₂` iff `c₁` is at least as
     constrained as `c₂` — its context set is a subset of `c₂`'s,

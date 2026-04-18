@@ -142,7 +142,7 @@ def ip_johnReadTrace : DenotG readModel .t :=
 /--
 Verify IP meaning: it's true iff the trace's value was read by John
 -/
-theorem ip_meaning_correct (g : Assignment readModel) :
+theorem ip_meaning_correct (g : Core.Assignment readModel.Entity) :
     ip_johnReadTrace g = read_sem (g 1) john := rfl
 
 /--
@@ -159,7 +159,7 @@ def cp_relativeClause : DenotG readModel (.e ⇒ .t) :=
 /--
 Verify CP meaning: λx. read(j, x)
 -/
-theorem cp_meaning_correct (g : Assignment readModel) (x : ReadEntity) :
+theorem cp_meaning_correct (g : Core.Assignment readModel.Entity) (x : ReadEntity) :
     cp_relativeClause g x = read_sem x john := by
   simp only [cp_relativeClause, predicateAbstraction, lambdaAbsG,
              ip_johnReadTrace, applyG, vp_readTrace, constDenot, john_sem,
@@ -184,7 +184,7 @@ def np_bookThatJohnRead : DenotG readModel (.e ⇒ .t) :=
 /--
 The NP meaning is the intersection of "book" and "things John read"
 -/
-theorem np_meaning_correct (g : Assignment readModel) (x : ReadEntity) :
+theorem np_meaning_correct (g : Core.Assignment readModel.Entity) (x : ReadEntity) :
     np_bookThatJohnRead g x = (book_sem x ∧ read_sem x john) := by
   simp only [np_bookThatJohnRead, relativePM, predicateModification,
              book_denot, constDenot, predicateAbstraction, lambdaAbsG,
@@ -215,7 +215,7 @@ def allEntities : List ReadEntity := [.john, .mary, .book1, .book2, .newspaper]
 This is the unique entity satisfying:
   book(x) ∧ read(j, x)
 -/
-def the_book_that_john_read (_g : Assignment readModel) : Option ReadEntity :=
+def the_book_that_john_read (_g : Core.Assignment readModel.Entity) : Option ReadEntity :=
   iota allEntities (λ x => decide (book_sem x ∧ read_sem x john))
 
 /--
@@ -227,7 +227,7 @@ This shows the compositional derivation yields the correct result:
 - No other book was read by John
 - Therefore ιx[book(x) ∧ read(j,x)] = book1
 -/
-theorem the_book_correct (g : Assignment readModel) :
+theorem the_book_correct (g : Core.Assignment readModel.Entity) :
     the_book_that_john_read g = some ReadEntity.book1 := by
   simp only [the_book_that_john_read]
   native_decide
@@ -240,7 +240,7 @@ theorem the_book_correct (g : Assignment readModel) :
 The relative clause creates the right predicate:
 it's true of exactly the things John read.
 -/
-theorem relClause_extension (g : Assignment readModel) :
+theorem relClause_extension (g : Core.Assignment readModel.Entity) :
     (cp_relativeClause g book1) ∧
     (¬ cp_relativeClause g book2) ∧
     (¬ cp_relativeClause g newspaper) := by
@@ -250,7 +250,7 @@ theorem relClause_extension (g : Assignment readModel) :
 /--
 The modified NP is true of exactly book1.
 -/
-theorem np_extension (g : Assignment readModel) :
+theorem np_extension (g : Core.Assignment readModel.Entity) :
     (np_bookThatJohnRead g book1) ∧
     (¬ np_bookThatJohnRead g book2) ∧
     (¬ np_bookThatJohnRead g john) := by
@@ -261,7 +261,7 @@ theorem np_extension (g : Assignment readModel) :
 Assignment independence: the final NP meaning doesn't depend on
 the assignment (all variables are bound).
 -/
-theorem np_assignment_independent (g₁ g₂ : Assignment readModel) :
+theorem np_assignment_independent (g₁ g₂ : Core.Assignment readModel.Entity) :
     np_bookThatJohnRead g₁ = np_bookThatJohnRead g₂ := by
   funext x
   simp only [np_meaning_correct]
@@ -278,7 +278,7 @@ def np_bookThatJohnRead' : DenotG readModel (.e ⇒ .t) :=
   relativePM 1 (constDenot book_sem) (applyG (λ g subj => read_sem (g 1) subj) (constDenot john))
 
 /-- The two formulations are equivalent -/
-theorem np_formulations_equiv (g : Assignment readModel) :
+theorem np_formulations_equiv (g : Core.Assignment readModel.Entity) :
     np_bookThatJohnRead g = np_bookThatJohnRead' g := by
   funext x
   simp only [np_bookThatJohnRead, np_bookThatJohnRead', relativePM,

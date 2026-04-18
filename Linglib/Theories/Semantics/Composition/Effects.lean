@@ -431,7 +431,7 @@ theorem adj_counit_yields_W (κ : ι → ι → β) (x : ι) :
     `hk_bs_reflexive_equiv` theorem in `Binding.lean`. -/
 theorem adj_binding_agrees_with_hk {F : Frame} (n : Nat)
     (body : F.Entity → F.Entity → Prop)
-    (binder : F.Entity) (g : Assignment F) :
+    (binder : F.Entity) (g : Core.Assignment F.Entity) :
     adj_ε (body binder, binder) = body (g[n ↦ binder] n) (g[n ↦ binder] n) := by
   show body binder binder = body (g[n ↦ binder] n) (g[n ↦ binder] n)
   simp only [update_same]
@@ -838,7 +838,7 @@ theorem john_sees_himself_via_C :
 
     This connects adjunction mechanism
     to @cite{heim-kratzer-1998}'s predicate abstraction. -/
-theorem binding_C_agrees_with_hk (g : Assignment toyModel) :
+theorem binding_C_agrees_with_hk (g : Core.Assignment toyModel.Entity) :
     counitApp ba' (store ToyEntity.john)
       (λ i => ToyLexicon.sees_sem i) =
     ToyLexicon.sees_sem (g[1 ↦ ToyEntity.john] 1)
@@ -849,7 +849,7 @@ theorem binding_C_agrees_with_hk (g : Assignment toyModel) :
   simp only [update_same]
 
 /-- C and H&K agree for Mary as well: `C(<) ▷(m) (λi. sees i) = sees m m`. -/
-theorem binding_C_agrees_with_hk_mary (g : Assignment toyModel) :
+theorem binding_C_agrees_with_hk_mary (g : Core.Assignment toyModel.Entity) :
     counitApp ba' (store ToyEntity.mary)
       (λ i => ToyLexicon.sees_sem i) =
     ToyLexicon.sees_sem (g[2 ↦ ToyEntity.mary] 2)
@@ -956,7 +956,7 @@ theorem cont_pure_is_fa {A : Type} (f : A → R) (x : A) :
     not in what they *compute*. -/
 theorem qr_cont_structural_agreement {F : Frame}
     (q : (F.Entity → Prop) → Prop)
-    (body : DenotG F .t) (n : Nat) (g : Assignment F) :
+    (body : DenotG F .t) (n : Nat) (g : Core.Assignment F.Entity) :
     q (lambdaAbsG n body g) =
     Cont.lower (Cont.bind q (fun x => Cont.pure (body (g[n ↦ x])))) := rfl
 
@@ -997,7 +997,7 @@ theorem w_three_way {E A : Type} (f : E → E → A) (e : E) :
 /-- Specialization for Montague assignments: `denotGJoin` = `W` = `adj_ε`
     when applied to assignment-dependent meanings. -/
 theorem binding_unification {F : Frame} {A : Type}
-    (f : Assignment F → Assignment F → A) (g : Assignment F) :
+    (f : Core.Assignment F.Entity → Core.Assignment F.Entity → A) (g : Core.Assignment F.Entity) :
     denotGJoin f g = W f g ∧ W f g = adj_ε (f g, g) := ⟨rfl, rfl⟩
 
 /-- Closing the triangle directly: `denotGJoin` = `adj_ε ∘ ⟨f·, ·⟩`.
@@ -1011,7 +1011,7 @@ theorem binding_unification {F : Frame} {A : Type}
                    adj_ε ∘ ⟨f·, ·⟩
     ``` -/
 theorem binding_triangle {F : Frame} {A : Type}
-    (f : Assignment F → Assignment F → A) (g : Assignment F) :
+    (f : Core.Assignment F.Entity → Core.Assignment F.Entity → A) (g : Core.Assignment F.Entity) :
     denotGJoin f g = adj_ε (f g, g) := rfl
 
 end BindingUnification

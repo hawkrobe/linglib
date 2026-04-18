@@ -1825,7 +1825,7 @@ truth value.
 section CompositionalTreeDemo
 
 open Core.IntensionalLogic (Frame)
-open Core.IntensionalLogic.Variables (Assignment)
+-- (open removed: Assignment alias eliminated upstream)
 open Semantics.Montague (Lexicon)
 open Semantics.Composition.Tree
 open Semantics.Quantification.CovertQuantifier (genThreshold dist dpp)
@@ -1866,7 +1866,7 @@ private noncomputable def guerriniLex : Lexicon demoModel := fun s =>
   | "DPP"    => some (dpp demoModel demoAtoms)
   | _        => none
 
-private def g₀ : Assignment demoModel :=
+private def g₀ : Core.Assignment demoModel.Entity :=
   fun _ => DemoEntity.simba
 
 /-- BFG parse: Gen(lion, hunt) — @cite{guerrini-2026}, structure (29). -/

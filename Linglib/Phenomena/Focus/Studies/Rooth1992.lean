@@ -399,7 +399,7 @@ theorem bridge_qa_incongruent :
     run once per world to yield a world-indexed proposition. -/
 
 open Core.IntensionalLogic
-open Core.IntensionalLogic.Variables (Assignment)
+-- (open removed: Assignment alias eliminated upstream)
 open Semantics.Montague (Lexicon)
 open Core.Tree
 open Semantics.Composition.Tree
@@ -450,7 +450,7 @@ def tree_fredAteRice : Tree Unit String :=
   .bin (.leaf "Fred") (.bin (.leaf "ate") (.leaf "rice"))
 
 /-- Default assignment for binding-free trees. -/
-private def g₀ : Assignment focusModel := λ _ => E.fred
+private def g₀ : Core.Assignment focusModel.Entity := λ _ => E.fred
 
 /-- Extract the Prop truth value from a tree interpretation.
     Returns `none` if the tree is uninterpretable or has non-`t` type. -/

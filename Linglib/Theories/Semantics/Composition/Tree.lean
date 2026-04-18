@@ -153,7 +153,7 @@ The category parameter `C` is ignored during interpretation — composition
 is type-driven, not category-driven. This means the same function works
 for `Tree Cat String` (UD-grounded), `Tree Unit String` (category-free),
 or any other category system. -/
-def interp (F : Frame) (lex : Lexicon F) (g : Assignment F)
+def interp (F : Frame) (lex : Lexicon F) (g : Core.Assignment F.Entity)
     : Tree C String → Option (TypedDenot F)
   | .terminal _ w => interpTerminal F lex w
   | .node _ (t :: []) => (interp F lex g t).map interpNonBranching
@@ -172,7 +172,7 @@ def interp (F : Frame) (lex : Lexicon F) (g : Assignment F)
 
 /-- Extract truth value from tree interpretation. -/
 def evalTree {F : Frame} [∀ (p : F.Denot .t), Decidable p]
-    (lex : Lexicon F) (g : Assignment F) (t : Tree C String)
+    (lex : Lexicon F) (g : Core.Assignment F.Entity) (t : Tree C String)
     : Option Bool :=
   match interp F lex g t with
   | some ⟨.t, b⟩ => some (decide b)
@@ -185,7 +185,7 @@ def evalTree {F : Frame} [∀ (p : F.Denot .t), Decidable p]
     or other propositional operators. Evaluate the result at a
     specific world to get a truth value. -/
 def evalTreeProp {F : Frame} [∀ (p : F.Denot .t), Decidable p]
-    (lex : Lexicon F) (g : Assignment F) (t : Tree C String)
+    (lex : Lexicon F) (g : Core.Assignment F.Entity) (t : Tree C String)
     : Option (F.Index → Bool) :=
   match interp F lex g t with
   | some ⟨.intens .t, p⟩ => some (λ w => decide (p w))

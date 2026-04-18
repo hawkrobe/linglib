@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.229.911] - 2026-04-18
+
+### Added
+- **Mood-arc cleanup PR (Stage 9, follow-up to PR J).** (1) Citation hallucinations corrected in `POSW.lean`, `POSWQ.lean`, `VerbalMood.lean`, `POSWTarget.lean`: removed unverified equation references, attributed substrate components to `@cite{farkas-2003}`, `@cite{condoravdi-lauer-2012}`, `@cite{stalnaker-1978}`. (2) `POSWQ ↔ POSWTarget` overlap resolved via cross-link in module docstrings plus a typed projection `POSWTarget.boxOn : POSWTarget → POSWQ W → (W → Prop) → Prop` that delegates to `boxCs`/`boxLt`/`boxAns` — the typeclass is now operationally meaningful, not just a label. `mood_alignment_decl_ind` renamed to `decl_ind_target_match` with a `@[deprecated]` alias; section docstring rewritten to clarify the Indicative Principle is a one-way conditional, not a target-equality. (3) `QuestionEmbedder` enum (`.factive | .nonfactive`) added in `VerbalMood.lean` with `toVerbalMood := fun _ => .interrogative`, closing the `.interrogative`-unreachable gap left by `MoodSelector` and pair-covering the verbal-mood operator space. (4) Closure theorems `boxAns_or` and `boxAns_imp` added to POSWQ. (5) `polarSetoid` moved from `Scoreboard.lean` (where it was a local definition) to `POSWQ.lean` (where it belongs as the inquiry-component constructor); added `polarSetoid_r`/`polarSetoid_top` simp lemmas; generalized via `Setoid.ofProp`. (6) Wired one downstream consumer: `Grano2024.lean` now exercises `want_verbalMood`/`hope_verbalMood`/`want_target` via `native_decide` at a complement-selection site. New `interp_eq_target_boxOn` on `VerbalMood` proves verbal-mood interpretation factors through `POSWTarget.boxOn`. New §7 in POSWQ adds `POSWQ.plus`/`POSWQ.star` lifted operations with pairwise commutativity proofs.
+
+### Fixed
+- Completed concurrent session's `Assignment` alias migration in `Core/IntensionalLogic/Variables.lean` (the `abbrev Assignment (F : Frame) := Core.Assignment F.Entity` wrapper was removed upstream, leaving 11 downstream call sites with `Unknown identifier Assignment` errors). Migrated all `Assignment F` usages to `Core.Assignment F.Entity` in `Composition/Tree.lean`, `Composition/Effects.lean`, `Composition/QuantifierComposition.lean`, `Composition/Glue.lean`, `Interfaces/SyntaxSemantics/VoiceSemantics.lean`, `Interfaces/SyntaxSemantics/Minimalism/Interface.lean`, `Reference/Binding.lean` (also `Assignment.update` → `Core.Assignment.update`), `Anaphora/Studies/Charlow2018.lean`, `Focus/Studies/Rooth1992.lean`, `Generics/Studies/Guerrini2026.lean`, `Syntax/Minimalism/RelativeClauses.lean`. Build clean.
+
 ## [0.229.909] - 2026-04-18
 
 ### Changed

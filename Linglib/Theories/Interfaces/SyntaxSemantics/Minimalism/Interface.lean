@@ -122,7 +122,7 @@ When we apply a predicate-abstracted meaning to an entity,
 that entity becomes the value of all traces with the same index.
 -/
 theorem binding_correct {F : Frame} (n : ℕ) (body : DenotG F .t)
-    (x : F.Entity) (g : Assignment F)
+    (x : F.Entity) (g : Core.Assignment F.Entity)
     : (predicateAbstraction n body g) x = body (g[n ↦ x]) := rfl
 
 -- ============================================================================
@@ -133,7 +133,7 @@ theorem binding_correct {F : Frame} (n : ℕ) (body : DenotG F .t)
 A semantic interpretation context pairs a model with an assignment.
 -/
 structure InterpContext (F : Frame) where
-  assignment : Assignment F
+  assignment : Core.Assignment F.Entity
 
 /--
 The semantic type corresponding to a syntactic object.
@@ -179,7 +179,7 @@ theorem trace_index_determines_meaning {F : Frame} (n : ℕ)
 Different indices yield independent interpretations.
 -/
 theorem trace_indices_independent {F : Frame} (n₁ n₂ : ℕ) (h : n₁ ≠ n₂)
-    (x : F.Entity) (g : Assignment F)
+    (x : F.Entity) (g : Core.Assignment F.Entity)
     : interpTrace n₁ (g[n₂ ↦ x]) = interpTrace n₁ g := by
   simp only [interpTrace, interpPronoun]
   exact update_other g n₂ n₁ x h
@@ -189,7 +189,7 @@ Predicate abstraction creates the right binding:
 the abstracted variable is bound, other variables are free.
 -/
 theorem abstraction_binds_correct_variable {F : Frame} (n : ℕ)
-    (g : Assignment F) (x : F.Entity)
+    (g : Core.Assignment F.Entity) (x : F.Entity)
     : interpTrace n (g[n ↦ x]) = x := by
   simp only [interpTrace, interpPronoun]
   exact update_same g n x
@@ -217,7 +217,7 @@ def relativePM {F : Frame} (n : ℕ)
 theorem relativePM_comm {F : Frame} (n : ℕ)
     (headNoun : DenotG F (.e ⇒ .t))
     (relClauseBody : DenotG F .t)
-    (g : Assignment F)
+    (g : Core.Assignment F.Entity)
     : relativePM n headNoun relClauseBody g =
       predicateModification (predicateAbstraction n relClauseBody g) (headNoun g) := by
   simp only [relativePM, predicateModification_comm]

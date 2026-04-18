@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Mood.Basic
+import Linglib.Theories.Semantics.Mood.VerbalMood
 import Linglib.Theories.Semantics.Attitudes.RationalAttitude
 import Linglib.Phenomena.Complementation.Studies.Noonan2007
 import Linglib.Fragments.Greek.MoodChoice
@@ -491,6 +492,41 @@ theorem intend_moodPrediction_agrees :
 theorem causative_moodPrediction_agrees :
     DepartureKind.eventualityAbstraction.moodPrediction =
       deriveMoodSelector Fragments.English.Predicates.Verbal.make := by native_decide
+
+-- ════════════════════════════════════════════════════════════════
+-- § 8b. Bridge: deriveMoodSelector → VerbalMoodOp
+-- ════════════════════════════════════════════════════════════════
+
+/-! Per-verb closure of `deriveMoodSelector` under
+`MoodSelector.toVerbalMood`. The cross-linguistic mood-choice
+data (§3) flows through `deriveMoodSelector` (§3) and into the
+POSWQ-typed verbal-mood operator (`VerbalMood.lean`). For
+robustly subjunctive predicates, the projection lands in
+`some .subjunctive`; for cross-linguistically variable predicates,
+in `none`. The chain `verb → MoodSelector → VerbalMoodOp` makes
+the lexical-class commitment of @cite{grano-2024} operationally
+ready to feed POSWQ-side glosses (`POSW.boxLt` for subjunctive,
+`POSW.boxCs` for indicative). -/
+
+/-- 'want' lifts to the subjunctive POSWQ operator. -/
+theorem want_verbalMood :
+    (deriveMoodSelector want).toVerbalMood = some .subjunctive := by
+  native_decide
+
+/-- 'hope' is cross-linguistically variable, so it lifts to `none`. -/
+theorem hope_verbalMood :
+    (deriveMoodSelector hope).toVerbalMood = none := by
+  native_decide
+
+/-- The robust subjunctive predicates (e.g. 'want') project to the
+    `preferential` POSW component — they quantify over the best-ranked
+    subset of the POSWQ via `POSW.boxLt`. The composed projection
+    (`MoodSelector → VerbalMoodOp → POSWTarget`) makes the operational
+    target explicit. -/
+theorem want_target :
+    Option.map (Core.Mood.target ·) (deriveMoodSelector want).toVerbalMood
+      = some .preferential := by
+  native_decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 9. Cross-Linguistic Fragment Integration

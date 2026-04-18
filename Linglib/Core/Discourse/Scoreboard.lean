@@ -403,26 +403,15 @@ is the meet of these binary partitions in the `Setoid W` lattice.
 Together these three bridges complete the @cite{portner-2018} 3×3
 unification on the discourse-update side. -/
 
-/-- The **polar Setoid** of a yes/no question: two worlds are
-    equivalent iff they agree on `q`. The smallest piece of partition
-    structure a single proposition can contribute to inquiry. -/
-def polarSetoid (q : W → Prop) : Setoid W where
-  r w v := q w ↔ q v
-  iseqv :=
-    { refl := fun _ => Iff.rfl
-      symm := fun h => h.symm
-      trans := fun h₁ h₂ => h₁.trans h₂ }
-
-@[simp] theorem polarSetoid_r (q : W → Prop) (w v : W) :
-    (polarSetoid q).r w v ↔ (q w ↔ q v) := Iff.rfl
-
 /-- The inquiry partition projected from the QUD stack: the meet of
     the polar Setoids of every question on the stack, with the trivial
     inquiry (`⊤`) as identity. The fold convention places the new
     head's polar Setoid on the *right* of `⊓` so that consing reduces
-    definitionally to the `inquire` update on `POSWQ`. -/
+    definitionally to the `inquire` update on `POSWQ`.
+    `polarSetoid` lives in `Core/Mood/POSWQ.lean` (the natural
+    primitive site — it is the partition substrate). -/
 def qudInquiry (K : Scoreboard W) : Setoid W :=
-  K.qud.foldr (fun q s => s ⊓ polarSetoid q) ⊤
+  K.qud.foldr (fun q s => s ⊓ Core.Mood.POSWQ.polarSetoid q) ⊤
 
 @[simp] theorem qudInquiry_nil (K : Scoreboard W) (h : K.qud = []) :
     K.qudInquiry = (⊤ : Setoid W) := by
@@ -431,7 +420,8 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
 @[simp] theorem qudInquiry_cons (K : Scoreboard W) (q : W → Prop)
     (rest : List (W → Prop)) (h : K.qud = q :: rest) :
     K.qudInquiry =
-      (rest.foldr (fun q s => s ⊓ polarSetoid q) ⊤) ⊓ polarSetoid q := by
+      (rest.foldr (fun q s => s ⊓ Core.Mood.POSWQ.polarSetoid q) ⊤) ⊓
+        Core.Mood.POSWQ.polarSetoid q := by
   simp [qudInquiry, h]
 
 /-- Interrogation update preserves goal contents (since it doesn't
@@ -464,7 +454,7 @@ def toPOSWQ (K : Scoreboard W) : Core.Mood.POSWQ W :=
 theorem toPOSWQ_interrogation_eq_inquire (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).toPOSWQ.inquiry =
-      (K.toPOSWQ.inquire (polarSetoid q)).inquiry := rfl
+      (K.toPOSWQ.inquire (Core.Mood.POSWQ.polarSetoid q)).inquiry := rfl
 
 /-- **Question-strengthening principle** (the inquiry analogue of
     `boxCs_after_assertion` and `direction_demotes_violators`):

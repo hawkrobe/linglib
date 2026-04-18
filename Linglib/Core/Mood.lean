@@ -3,6 +3,7 @@ import Linglib.Core.Mood.IllocutionaryMood
 import Linglib.Core.Mood.ClauseType
 import Linglib.Core.Mood.POSW
 import Linglib.Core.Mood.POSWQ
+import Linglib.Core.Mood.POSWTarget
 
 /-!
 # Core.Mood — re-export hub

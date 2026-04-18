@@ -71,7 +71,7 @@ def quantLex : Lexicon toyModel := λ word =>
   | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
   | _ => none
 
-def g₀ : Assignment toyModel := λ _ => .john
+def g₀ : Core.Assignment toyModel.Entity := λ _ => .john
 
 -- ════════════════════════════════════════════════════════════════════
 -- § Basic: "Every student sleeps"

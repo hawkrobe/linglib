@@ -5,25 +5,27 @@ import Linglib.Core.Mood.POSW
 # POSW with Inquiry Partition (POSWQ)
 @cite{portner-2018} @cite{groenendijk-stokhof-1984} @cite{roberts-2012}
 
-@cite{portner-2018} (Ch. 3) shows that the same POSW substrate that
-unifies declarative/imperative force and indicative/subjunctive
-selection extends to **interrogative** force as well. The dynamic
-treatment of questions adds a third component to the discourse object
-— an **inquiry partition** on the context set whose cells are "what
-counts as the same answer". @cite{groenendijk-stokhof-1984}'s
-partition theory makes this component explicit (eq. 66: `∀ w ∈ p,
-Q(w) = p`); @cite{roberts-2012}'s QUD architecture treats it as a
-separate stack alongside the common ground (eq. 71); inquisitive
+This file is **our extension** of @cite{portner-2018}'s POSW substrate
+to interrogative force, by way of a third component recording the open
+question. It is not the extension Portner himself works out.
+Portner's interrogative variant — **PPOSW** — replaces `cs` with a
+*partition* of `cs`, so the "informational" and "inquisitive"
+components are fused. We instead keep `cs` intact and add `inquiry :
+Setoid W` as a separate third coordinate; this preserves Portner's
+disjoint-target story (`+`, `⋆`, `?` each touch one component) and
+lets the inquiry partition compose orthogonally with `cs`-refinement
+and `<`-refinement.
+
+The third-component idea is grounded in the dynamic-question tradition:
+@cite{groenendijk-stokhof-1984}'s partition theory takes the meaning of
+a question to be an equivalence relation on worlds; @cite{roberts-2012}
+maintains a QUD stack alongside the common ground; inquisitive
 semantics (Ciardelli et al. 2013) folds it into a single
-informative/inquisitive content.
+informative/inquisitive content. The Setoid representation makes the
+partition view directly available via mathlib's `CompleteLattice
+(Setoid W)`.
 
-This file takes the partition route. A `POSWQ W` is a `POSW W` (the
-@cite{portner-2018} substrate) extended with an `inquiry : Setoid W`
-whose equivalence classes are the open question's possible answers.
-The trivial inquiry (`⊤` in the `Setoid` lattice) is "no question
-under discussion".
-
-## The 3×3 Portner unification
+## The 3×3 Portner-style unification
 
 | layer            | declarative      | imperative       | interrogative      |
 |------------------|------------------|------------------|--------------------|
@@ -33,8 +35,9 @@ under discussion".
 
 The columns are the three POSW components (`cs`, `lt`, `inquiry`); the
 rows are the operations on each component (refining update,
-quantification). Refinement of the inquiry partition (`?`-update) is
-the partition-side analogue of `+`/`⋆`-update.
+quantification). Refinement of the inquiry partition (`?`-update),
+the modal `boxAns`, and the third column entries are this library's
+extensions; they do not appear in @cite{portner-2018}.
 
 ## Mathlib alignment
 
@@ -54,9 +57,12 @@ namespace Core.Mood
 universe u
 
 /-- A **POSW with an inquiry partition** (POSWQ): the @cite{portner-2018}
-    substrate enriched with a third component recording the open
+    POSW substrate enriched with a third component recording the open
     question. The `inquiry : Setoid W` partitions worlds into
-    "answers"; its `⊤` element is "no question". -/
+    "answers"; its `⊤` element is "no question". This three-coordinate
+    extension is ours and is distinct from @cite{portner-2018}'s own
+    PPOSW (which replaces `cs` with a partition rather than adding a
+    third field). -/
 structure POSWQ (W : Type u) extends POSW W where
   /-- The inquiry partition: `inquiry.r w v` means worlds `w` and `v`
       are indistinguishable answers to the open question. -/
@@ -78,12 +84,37 @@ def ofPOSW (c : POSW W) : POSWQ W :=
 @[simp] theorem ofPOSW_inquiry (c : POSW W) :
     (ofPOSW c).inquiry = (⊤ : Setoid W) := rfl
 
+/-- The **polar Setoid** of a proposition `q : W → Prop`: two worlds
+    are equivalent iff they agree on `q`. The smallest piece of
+    partition structure a single proposition can contribute to an
+    inquiry. The `Setoid` lattice's `⊤` is the trivial inquiry
+    (`q = ⊤`), and meeting two polar Setoids gives the polar
+    Setoid for the conjunction (up to logical equivalence).
+
+    Distinct from mathlib's `Setoid.ker q`, which uses `=` on
+    propositions rather than `↔`; we keep `↔` to make
+    `polarSetoid_r` definitionally `Iff.rfl`. -/
+def polarSetoid (q : W → Prop) : Setoid W where
+  r w v := q w ↔ q v
+  iseqv :=
+    { refl := fun _ => Iff.rfl
+      symm := fun h => h.symm
+      trans := fun h₁ h₂ => h₁.trans h₂ }
+
+@[simp] theorem polarSetoid_r (q : W → Prop) (w v : W) :
+    (polarSetoid q).r w v ↔ (q w ↔ q v) := Iff.rfl
+
+@[simp] theorem polarSetoid_top : polarSetoid (W := W) (fun _ => True) = ⊤ := by
+  ext w v
+  simp
+
 /-! ## §2. The third update: `?` (inquiry refinement) -/
 
-/-- **`?`-update**: refine the inquiry partition by meet with `q`.
-    The partition-side analogue of `+`-update on `cs` and `⋆`-update
-    on `lt`: it constrains the third POSW component without touching
-    the other two.
+/-- **`?`-update** (our extension; not in @cite{portner-2018}): refine
+    the inquiry partition by meet with `q`. The partition-side
+    analogue of `+`-update on `cs` and `⋆`-update on `lt`: it
+    constrains the third POSW component without touching the other
+    two.
 
     The meet of two equivalence relations on `W` is "agree on both";
     refining the inquiry by `q` shrinks each cell down to its
@@ -105,16 +136,18 @@ theorem inquire_inquiry (c : POSWQ W) (q : Setoid W) :
 
 /-! ## §3. The third modal: `boxAns` (informational answerhood) -/
 
-/-- **Informational answerhood**: `p` is *settled by the question* at
-    `c` iff `p` has a constant truth value within every cell of
-    `c.inquiry` (restricted to the context set). The answerhood
-    counterpart of @cite{portner-2018}'s `boxCs` (truth throughout
-    `cs`) and `boxLt` (truth at every best world).
+/-- **Informational answerhood** (our extension): `p` is *settled by the
+    question* at `c` iff `p` has a constant truth value within every
+    cell of `c.inquiry` (restricted to the context set). The
+    answerhood counterpart of @cite{portner-2018}'s `boxCs` (truth
+    throughout `cs`) and `boxLt` (truth at every best world); the
+    formulation is closest in spirit to @cite{groenendijk-stokhof-1984}
+    answerhood.
 
     Unlike `boxCs` and `boxLt`, `boxAns` is *not* upward-monotone in
     `p`: a strengthening of `p` can break the constant-truth property
     on a cell. The natural monotonicity for `boxAns` is *anti*-monotone
-    in the inquiry partition (`boxAns_anti_inquiry` below). -/
+    in the inquiry partition (`boxAns_anti` below). -/
 def boxAns (c : POSWQ W) (p : W → Prop) : Prop :=
   ∀ w v, c.cs w → c.cs v → c.inquiry.r w v → (p w ↔ p v)
 
@@ -186,6 +219,76 @@ theorem boxAns_and (c : POSWQ W) (p q : W → Prop) :
   fun hp hq w v hw hv hwv =>
     ⟨fun ⟨hpw, hqw⟩ => ⟨(hp w v hw hv hwv).mp hpw, (hq w v hw hv hwv).mp hqw⟩,
      fun ⟨hpv, hqv⟩ => ⟨(hp w v hw hv hwv).mpr hpv, (hq w v hw hv hwv).mpr hqv⟩⟩
+
+/-- Disjunction preserves answerhood. -/
+theorem boxAns_or (c : POSWQ W) (p q : W → Prop) :
+    c.boxAns p → c.boxAns q → c.boxAns (fun w => p w ∨ q w) :=
+  fun hp hq w v hw hv hwv =>
+    ⟨fun hpqw => hpqw.elim
+      (fun hpw => Or.inl ((hp w v hw hv hwv).mp hpw))
+      (fun hqw => Or.inr ((hq w v hw hv hwv).mp hqw)),
+     fun hpqv => hpqv.elim
+      (fun hpv => Or.inl ((hp w v hw hv hwv).mpr hpv))
+      (fun hqv => Or.inr ((hq w v hw hv hwv).mpr hqv))⟩
+
+/-- Material implication preserves answerhood. Follows from the
+    Boolean-algebra closure of constant-on-cell propositions. -/
+theorem boxAns_imp (c : POSWQ W) (p q : W → Prop) :
+    c.boxAns p → c.boxAns q → c.boxAns (fun w => p w → q w) :=
+  fun hp hq w v hw hv hwv =>
+    ⟨fun himp hpv => (hq w v hw hv hwv).mp (himp ((hp w v hw hv hwv).mpr hpv)),
+     fun himp hpw => (hq w v hw hv hwv).mpr (himp ((hp w v hw hv hwv).mp hpw))⟩
+
+/-! ## §7. Three-component update disjointness
+
+The three updates `+`, `⋆`, `?` touch disjoint POSWQ components, so
+they pairwise commute when lifted to act on `POSWQ`. The lifts are
+defined here because `POSW.plus` and `POSW.star` strip the inquiry
+field; `POSWQ.plus` and `POSWQ.star` are the inquiry-preserving
+counterparts. -/
+
+/-- POSWQ-side `+`-update: refine `cs` while preserving the inquiry
+    partition. The inquiry-preserving lift of `POSW.plus`. -/
+def plus (c : POSWQ W) (p : W → Prop) : POSWQ W :=
+  { c.toPOSW.plus p with inquiry := c.inquiry }
+
+/-- POSWQ-side `⋆`-update: refine `lt` while preserving the inquiry
+    partition. The inquiry-preserving lift of `POSW.star`. -/
+def star (c : POSWQ W) (p : W → Prop) : POSWQ W :=
+  { c.toPOSW.star p with inquiry := c.inquiry }
+
+@[simp] theorem plus_toPOSW (c : POSWQ W) (p : W → Prop) :
+    (c.plus p).toPOSW = c.toPOSW.plus p := rfl
+
+@[simp] theorem plus_inquiry (c : POSWQ W) (p : W → Prop) :
+    (c.plus p).inquiry = c.inquiry := rfl
+
+@[simp] theorem star_toPOSW (c : POSWQ W) (p : W → Prop) :
+    (c.star p).toPOSW = c.toPOSW.star p := rfl
+
+@[simp] theorem star_inquiry (c : POSWQ W) (p : W → Prop) :
+    (c.star p).inquiry = c.inquiry := rfl
+
+/-- `+` and `⋆` commute on POSWQ: applying `+`-then-`⋆` and `⋆`-then-`+`
+    produces the same POSWQ. The components never interact. -/
+@[simp] theorem plus_star_comm (c : POSWQ W) (p q : W → Prop) :
+    (c.plus p).star q = (c.star q).plus p := rfl
+
+/-- `+` and `?` commute on POSWQ: each touches a different component. -/
+@[simp] theorem plus_inquire_comm (c : POSWQ W) (p : W → Prop) (s : Setoid W) :
+    (c.plus p).inquire s = (c.inquire s).plus p := rfl
+
+/-- `⋆` and `?` commute on POSWQ: each touches a different component. -/
+@[simp] theorem star_inquire_comm (c : POSWQ W) (p : W → Prop) (s : Setoid W) :
+    (c.star p).inquire s = (c.inquire s).star p := rfl
+
+/-- `?`-update is idempotent on the same partition: refining inquiry
+    by `s` twice equals refining once. The Setoid-meet is idempotent
+    in the `CompleteLattice (Setoid W)`. -/
+theorem inquire_inquire_self (c : POSWQ W) (s : Setoid W) :
+    ((c.inquire s).inquire s).inquiry = (c.inquire s).inquiry := by
+  show (c.inquiry ⊓ s) ⊓ s = c.inquiry ⊓ s
+  rw [inf_assoc, inf_idem]
 
 /-! ## §7. Distinctness witness: `boxAns` ≠ `boxCs` ∘ projection
 

@@ -441,7 +441,7 @@ private def bridgeLex : Lexicon toyModel := λ word =>
   | "sees" => some ⟨.e ⇒ .e ⇒ .t, ToyLexicon.sees_sem⟩
   | _ => none
 
-private def g₀ : Assignment toyModel := λ _ => .john
+private def g₀ : Core.Assignment toyModel.Entity := λ _ => .john
 
 /-- Surface scope QR tree (∀>∃):
     `[S [DP every person] [1 [S [DP some person] [2 [S t₁ [VP sees t₂]]]]]]` -/
