@@ -1,27 +1,27 @@
 import Mathlib.Data.Setoid.Partition
-import Linglib.Core.Inquisitive.Basic
+import Linglib.Core.Issue.Basic
 import Linglib.Core.Mood.POSWQ
 
 /-!
-# Partition as Inquiry — Setoid → InquisitiveContent embedding
+# Partition as Inquiry — Setoid → Issue embedding
 @cite{ciardelli-groenendijk-roelofsen-2018} @cite{theiler-etal-2018}
 @cite{puncochar-2019}
 
 The faithful embedding of partition-based inquiry (`Setoid W` — what
 `POSWQ.inquiry` carries) into the more general inquisitive-content
-representation (`InquisitiveContent W` — downward-closed nonempty
+representation (`Issue W` — downward-closed nonempty
 families of information states).
 
 ## Architectural placement
 
 This file implements the embedding direction prescribed in the
-"Architectural note: Setoid vs. InquisitiveContent" section of
+"Architectural note: Setoid vs. Issue" section of
 `POSWQ.lean` (added 0.229.922): we keep `inquiry : Setoid W` as the
 field of `POSWQ` (partitions are the right shape for the propositional-
 discourse use cases that currently exist), and provide a *one-way*
-embedding `Setoid → InquisitiveContent`. The embedding goes this way
+embedding `Setoid → Issue`. The embedding goes this way
 and not the other because every Setoid-based partition can be expressed
-as an InquisitiveContent (each equivalence class becomes a maximal
+as an Issue (each equivalence class becomes a maximal
 proposition / alternative), but the reverse fails — mention-some,
 intermediate-exhaustive, and conditional question alternatives are
 non-disjoint or non-exhaustive and so are not representable as the
@@ -34,7 +34,7 @@ forgetful map.
 
 ## What this gives us
 
-- `fromSetoid r : InquisitiveContent W` — the inquisitive content whose
+- `fromSetoid r : Issue W` — the inquisitive content whose
   alternatives are the equivalence classes of `r`. Concretely,
   `props = {q | q = ∅ ∨ ∃ c ∈ r.classes, q ⊆ c}`: a non-empty information
   state `q` resolves the issue iff it is contained in some equivalence
@@ -44,23 +44,23 @@ forgetful map.
   information. (This matches the standard partition-semantics view.)
 - `isInquisitive_fromSetoid_of_two_classes` — if `r` has at least two
   distinct equivalence classes, the resulting content is inquisitive
-  (in `InquisitiveContent`'s sense: `info ∉ props`). The trivial
+  (in `Issue`'s sense: `info ∉ props`). The trivial
   partition (one class) yields a declarative.
 -/
 
-namespace Core.Inquisitive
+namespace Core
 
-namespace InquisitiveContent
+namespace Issue
 
 universe u
 variable {W : Type u}
 
-/-- The InquisitiveContent associated with a setoid `r` on `W`: a
+/-- The Issue associated with a setoid `r` on `W`: a
     proposition `q` resolves the issue iff `q = ∅` or `q` is contained
     in some `r`-equivalence class (i.e., everything in `q` agrees on the
     `r`-question). The maximal such propositions are the equivalence
     classes themselves. -/
-def fromSetoid (r : Setoid W) : InquisitiveContent W where
+def fromSetoid (r : Setoid W) : Issue W where
   props := {q | q = ∅ ∨ ∃ c ∈ r.classes, q ⊆ c}
   contains_empty := Or.inl rfl
   downward_closed := fun p hp q hq => by
@@ -100,14 +100,14 @@ theorem isInquisitive_fromSetoid_of_two_classes
     have h2 : r w₂ v := hsub (Set.mem_univ w₂)
     exact hne (Setoid.trans' r h1 (Setoid.symm' r h2))
 
-end InquisitiveContent
+end Issue
 
-end Core.Inquisitive
+end Core
 
 /-! ## POSWQ bridge
 
 Lift the partition-based inquiry component of a `POSWQ` to its full
-`InquisitiveContent`. This makes every existing POSWQ-using study
+`Issue`. This makes every existing POSWQ-using study
 automatically a consumer of the inquisitive-content API: `info`,
 `alt`, `isInquisitive`, the lattice operations, and the
 mention-some/IE-question forcing arguments all become available
@@ -117,7 +117,7 @@ namespace Core.Mood
 
 namespace POSWQ
 
-open Core.Inquisitive (InquisitiveContent)
+open Core (Issue)
 
 universe u
 variable {W : Type u}
@@ -125,15 +125,15 @@ variable {W : Type u}
 /-- The inquisitive content embedded in a POSWQ via its inquiry
     partition. Always non-informative (`info = univ`); inquisitive
     iff the partition has more than one cell. -/
-def inquiryContent (c : POSWQ W) : InquisitiveContent W :=
-  InquisitiveContent.fromSetoid c.inquiry
+def inquiryContent (c : POSWQ W) : Issue W :=
+  Issue.fromSetoid c.inquiry
 
 @[simp] theorem inquiryContent_eq (c : POSWQ W) :
-    c.inquiryContent = InquisitiveContent.fromSetoid c.inquiry := rfl
+    c.inquiryContent = Issue.fromSetoid c.inquiry := rfl
 
 @[simp] theorem info_inquiryContent (c : POSWQ W) :
     c.inquiryContent.info = Set.univ :=
-  InquisitiveContent.info_fromSetoid c.inquiry
+  Issue.info_fromSetoid c.inquiry
 
 end POSWQ
 

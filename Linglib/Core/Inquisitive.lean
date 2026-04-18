@@ -1,84 +1,34 @@
+import Linglib.Core.InfoState
 import Linglib.Core.QUD.Basic
 
 /-!
-# Inquisitive Semantics: Information States and Issues
+# Inquisitive Semantics: Hamblin Issues (Bool/List)
 @cite{ciardelli-groenendijk-roelofsen-2018}
 
-The intensional side of question semantics: propositions as sets of worlds,
-questions as sets of propositions (alternatives).
+The Bool/List finite-alternative counterpart to `Core.Issue` (which lives
+at `Core/Issue/Basic.lean` and uses downward-closed `Set (Set W)`
+propositions). The two representations serve complementary purposes:
 
-`InfoState W = W → Bool` characterises a set of compatible worlds; an
-`Issue W` packages a list of maximal resolving info states (alternatives).
-This file defines the basic InfoState/Issue algebra: support, entailment,
-issue construction (`polar`, `which`, `ofAlternatives`), issue operations
-(`inter`, `union`), the bridge to `QUD` partitions (`Issue.toQUD`), and the
-`widerThan` granularity ordering (@cite{deo-thomas-2025}).
+- `Core.Issue W` (Set-based): the inquisitive-content lattice, used for
+  formal reasoning about propositions, mention-some/all answerhood, and
+  the partition embedding (`Core/Mood/PartitionAsInquiry.lean`).
+- `Discourse.Issue W` (this file, Bool/List): a finite Hamblin-style
+  alternative-list representation, used by the Roberts 2012 relevance
+  machinery (`Core/QUD/Relevance.lean`, `Core/Discourse/Strategy.lean`,
+  `Core/Partition.lean`) and by dialogue/study files that compute over
+  finite world enumerations (the Focus studies, KOS, additive particles).
 
-Roberts 2012 entailment/relevance (`questionEntails`, `partiallyAnswers`,
-`isSubquestion`, `moveRelevant`) lives in `Core/QUD/Relevance.lean`.
+The InfoState/propEntails/supports propositional algebra these depend on
+lives in `Core/InfoState.lean`.
 
-The connection: a `QUD M` induces an `Issue W` when we fix a world type W
-and a denotation function M → (W → Bool). Each equivalence class of the
-QUD maps to an alternative of the Issue. `QUD.refines` (Core/Partition.lean)
-corresponds to `questionEntails`: if Q refines q at the partition level,
-then Q entails q at the issue level.
+The connection: a `QUD M` induces a `Discourse.Issue W` when we fix a
+world type W and a denotation function M → (W → Bool). Each equivalence
+class of the QUD maps to an alternative of the Issue. `QUD.refines`
+(Core/Partition.lean) corresponds to `questionEntails`: if Q refines q at
+the partition level, then Q entails q at the issue level.
 -/
 
 namespace Discourse
-
--- Information States
-
-/-- An information state: worlds compatible with current information.
-
-In standard Inquisitive Semantics, an info state is a SET of worlds.
-Here we represent it as a characteristic function σ : W → Bool.
-
-Semantically: σ w = true means "world w is compatible with the information".
-The empty info state (σ = λ_ => false) represents inconsistent information. -/
-abbrev InfoState (W : Type*) := W → Bool
-
-/-- The absurd/inconsistent info state: no worlds are compatible. -/
-def absurdState {W : Type*} : InfoState W := λ _ => false
-
-/-- The trivial info state: all worlds are compatible (total ignorance). -/
-def trivialState {W : Type*} : InfoState W := λ _ => true
-
-/-- Check if an info state is empty (inconsistent). -/
-def InfoState.isEmpty {W : Type*} (σ : InfoState W) (worlds : List W) : Bool :=
-  !worlds.any σ
-
-/-- Check if an info state is non-empty. -/
-def InfoState.isNonEmpty {W : Type*} (σ : InfoState W) (worlds : List W) : Bool :=
-  worlds.any σ
-
-/-- Info state σ is a subset of σ' (σ ⊆ σ'). -/
-def InfoState.subset {W : Type*} (σ σ' : InfoState W) (worlds : List W) : Bool :=
-  worlds.all λ w => σ w → σ' w
-
-/-- Intersection of two info states. -/
-def InfoState.inter {W : Type*} (σ σ' : InfoState W) : InfoState W :=
-  λ w => σ w && σ' w
-
-/-- Union of two info states. -/
-def InfoState.union {W : Type*} (σ σ' : InfoState W) : InfoState W :=
-  λ w => σ w || σ' w
-
--- Support and Entailment
-
-/-- Info state σ supports proposition p iff σ ⊆ ⟦p⟧.
-
-This is the fundamental relation in Inquisitive Semantics:
-σ ⊨ p (σ supports p) iff every world in σ makes p true.
-
-If σ is empty, it supports every proposition (ex falso quodlibet). -/
-def supports {W : Type*} (σ : InfoState W) (p : W → Bool) (worlds : List W) : Bool :=
-  worlds.all λ w => σ w → p w
-
-/-- Propositional entailment: p entails q iff every p-world is a q-world.
-
-Equivalently: the info state ⟦p⟧ supports ⟦q⟧ over all worlds. -/
-def propEntails {W : Type*} (p q : W → Bool) (worlds : List W) : Bool :=
-  worlds.all λ w => !p w || q w
 
 -- Issues (Questions in Inquisitive Semantics)
 
@@ -220,12 +170,6 @@ abbrev Issue.highlighted {W : Type*} (q : Issue W) : W → Bool :=
 
 -- Width Relation (@cite{deo-thomas-2025})
 
-/-- Proper containment of info states over a finite world list.
-    `properlyContains σ σ' worlds` holds when σ' ⊆ σ and σ ∖ σ' ≠ ∅. -/
-def properlyContains {W : Type*} (σ σ' : InfoState W) (worlds : List W) : Bool :=
-  worlds.all (λ w => !σ' w || σ w) &&
-  worlds.any (λ w => σ w && !σ' w)
-
 /-- The width relation between questions (@cite{deo-thomas-2025} (32)).
 
     `q1.widerThan q2 worlds` holds when q1 is wider (more inquisitive) than q2:
@@ -257,103 +201,10 @@ theorem polar_is_inquisitive {W : Type*} (p : W → Bool) :
 theorem empty_not_inquisitive {W : Type*} :
     (Issue.empty : Issue W).isInquisitive = false := rfl
 
--- Pointwise unfolds for the trivial constructors.
-
-@[simp] theorem absurdState_apply {W : Type*} (w : W) :
-    (absurdState : InfoState W) w = false := rfl
-
-@[simp] theorem trivialState_apply {W : Type*} (w : W) :
-    (trivialState : InfoState W) w = true := rfl
-
-@[simp] theorem InfoState.inter_apply {W : Type*} (σ σ' : InfoState W) (w : W) :
-    InfoState.inter σ σ' w = (σ w && σ' w) := rfl
-
-@[simp] theorem InfoState.union_apply {W : Type*} (σ σ' : InfoState W) (w : W) :
-    InfoState.union σ σ' w = (σ w || σ' w) := rfl
-
--- Bool/Prop characterizations of the basic predicates.
-
-theorem propEntails_iff {W : Type*} (p q : W → Bool) (worlds : List W) :
-    propEntails p q worlds = true ↔ ∀ w ∈ worlds, p w = true → q w = true := by
-  unfold propEntails
-  rw [List.all_eq_true]
-  refine forall_congr' fun w => forall_congr' fun _ => ?_
-  cases p w <;> simp
-
-theorem supports_iff {W : Type*} (σ : InfoState W) (p : W → Bool) (worlds : List W) :
-    supports σ p worlds = true ↔ ∀ w ∈ worlds, σ w = true → p w = true := by
-  unfold supports
-  rw [List.all_eq_true]
-  refine forall_congr' fun w => forall_congr' fun _ => ?_
-  cases σ w <;> simp
-
-theorem InfoState.subset_iff {W : Type*} (σ σ' : InfoState W) (worlds : List W) :
-    σ.subset σ' worlds = true ↔ ∀ w ∈ worlds, σ w = true → σ' w = true := by
-  unfold InfoState.subset
-  rw [List.all_eq_true]
-  refine forall_congr' fun w => forall_congr' fun _ => ?_
-  cases σ w <;> simp
-
-theorem InfoState.isEmpty_iff {W : Type*} (σ : InfoState W) (worlds : List W) :
-    σ.isEmpty worlds = true ↔ ∀ w ∈ worlds, σ w = false := by
-  simp only [InfoState.isEmpty, Bool.not_eq_true', List.any_eq_false, Bool.not_eq_true]
-
-theorem InfoState.isNonEmpty_iff {W : Type*} (σ : InfoState W) (worlds : List W) :
-    σ.isNonEmpty worlds = true ↔ ∃ w ∈ worlds, σ w = true := by
-  simp only [InfoState.isNonEmpty, List.any_eq_true]
-
 theorem Issue.isPartition_iff {W : Type*} (q : Issue W) (worlds : List W) :
     q.isPartition worlds = true ↔
     ∀ w ∈ worlds, (q.alternatives.filter (· w)).length = 1 := by
   simp only [Issue.isPartition, List.all_eq_true, beq_iff_eq]
-
--- Reflexivity / basic identities.
-
-/-- Propositional entailment is reflexive. -/
-theorem propEntails_refl {W : Type*} (p : W → Bool) (worlds : List W) :
-    propEntails p p worlds = true := by
-  rw [propEntails_iff]; intros; assumption
-
-theorem supports_trivialState {W : Type*} (p : W → Bool) (worlds : List W)
-    (h : ∀ w ∈ worlds, p w = true) :
-    supports trivialState p worlds = true := by
-  rw [supports_iff]; intros w hw _; exact h w hw
-
-theorem supports_absurdState {W : Type*} (p : W → Bool) (worlds : List W) :
-    supports absurdState p worlds = true := by
-  rw [supports_iff]; intros _ _ h; cases h
-
--- InfoState algebra.
-
-theorem InfoState.inter_comm {W : Type*} (σ σ' : InfoState W) :
-    σ.inter σ' = σ'.inter σ := by funext w; simp [Bool.and_comm]
-
-theorem InfoState.union_comm {W : Type*} (σ σ' : InfoState W) :
-    σ.union σ' = σ'.union σ := by funext w; simp [Bool.or_comm]
-
-@[simp] theorem InfoState.inter_self {W : Type*} (σ : InfoState W) :
-    σ.inter σ = σ := by funext w; simp
-
-@[simp] theorem InfoState.union_self {W : Type*} (σ : InfoState W) :
-    σ.union σ = σ := by funext w; simp
-
-@[simp] theorem InfoState.inter_absurd {W : Type*} (σ : InfoState W) :
-    σ.inter absurdState = absurdState := by funext w; simp
-
-@[simp] theorem InfoState.absurd_inter {W : Type*} (σ : InfoState W) :
-    absurdState.inter σ = absurdState := by funext w; simp
-
-@[simp] theorem InfoState.inter_trivial {W : Type*} (σ : InfoState W) :
-    σ.inter trivialState = σ := by funext w; simp
-
-@[simp] theorem InfoState.trivial_inter {W : Type*} (σ : InfoState W) :
-    trivialState.inter σ = σ := by funext w; simp
-
-@[simp] theorem InfoState.union_absurd {W : Type*} (σ : InfoState W) :
-    σ.union absurdState = σ := by funext w; simp
-
-@[simp] theorem InfoState.union_trivial {W : Type*} (σ : InfoState W) :
-    σ.union trivialState = trivialState := by funext w; simp
 
 -- Issue cardinality.
 

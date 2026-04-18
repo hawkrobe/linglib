@@ -72,10 +72,11 @@ import Linglib.Core.SelectionFunction
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
 import Linglib.Core.QUD.Relevance
+import Linglib.Core.InfoState
 import Linglib.Core.Inquisitive
-import Linglib.Core.Inquisitive.Basic
-import Linglib.Core.Inquisitive.Hamblin
-import Linglib.Core.Inquisitive.Answerhood
+import Linglib.Core.Issue.Basic
+import Linglib.Core.Issue.Hamblin
+import Linglib.Core.Issue.Answerhood
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Discourse.Goal

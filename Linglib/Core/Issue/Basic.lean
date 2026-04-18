@@ -8,14 +8,20 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.Preorder.Finite
 
 /-!
-# Inquisitive Content — core type, lattice, Heyting derivatives
+# Issue — core type, lattice, Heyting derivatives
 @cite{ciardelli-groenendijk-roelofsen-2018} @cite{puncochar-2016}
 @cite{puncochar-2019} @cite{theiler-etal-2018}
 
-A bundled `InquisitiveContent W` representing an inquisitive proposition
-in the sense of @cite{ciardelli-groenendijk-roelofsen-2018}: a non-empty
-downward-closed family of information states over `W` (where an
-information state is a subset of `W`).
+A bundled `Issue W` — a non-empty downward-closed family of information
+states over `W` (where an information state is a subset of `W`). This is
+mathematically a non-empty `LowerSet (Set W)`; in linguistic terms it is
+the umbrella structure for question-flavored content: it subsumes
+Hamblin alternative sets (`polar`, `which`), partition-style questions
+(via `Core/Mood/PartitionAsInquiry.lean`), and the inquisitive
+propositions of @cite{ciardelli-groenendijk-roelofsen-2018}. The name
+"Issue" follows the decision-theoretic / discourse-semantic tradition
+(van Rooij, Westera) — neutral as to whether the consumer is doing
+inquisitive theorizing.
 
 This `Basic` file carries the structural core: the type definition with
 its `SetLike` instance, the `info`/`alt`/`isInformative`/`isInquisitive`/
@@ -29,9 +35,9 @@ derivatives (`compl_eq`, `proj`, `nonInfo`, the division law), and the
 LEM-fails witness.
 
 For Hamblin constructions (`polar`, `which`), see
-`Core/Inquisitive/Hamblin.lean`. For mention-some / mention-all
-answerhood predicates, see `Core/Inquisitive/Answerhood.lean`. For the
-`Setoid → InquisitiveContent` embedding (used by `POSWQ`), see
+`Core/Issue/Hamblin.lean`. For mention-some / mention-all
+answerhood predicates, see `Core/Issue/Answerhood.lean`. For the
+`Setoid → Issue` embedding (used by `POSWQ`), see
 `Core/Mood/PartitionAsInquiry.lean`.
 
 ## Mathlib alignment
@@ -40,13 +46,11 @@ answerhood predicates, see `Core/Inquisitive/Answerhood.lean`. For the
 - `contains_empty` is logically equivalent to `Nonempty props` together
   with downward closure — we expose it as the field directly because
   it's the only constraint that matters once downward closure holds
-- `info` returns `Set W` (mathlib-native), not `W → Bool` — for the
-  Bool/List computational variants of inquisitive operations, see
-  the legacy `Core/Inquisitive.lean` (slated for dissolution)
-- `SetLike (InquisitiveContent W) (Set W)` — auto-derives `Membership`,
+- `info` returns `Set W` (mathlib-native), not `W → Bool`
+- `SetLike (Issue W) (Set W)` — auto-derives `Membership`,
   `CoeSort`, and the `ext` machinery. `mem_props` is the canonical
   simp normalization (`q ∈ P.props → q ∈ P`).
-- `CompleteDistribLattice (InquisitiveContent W)` — registered via
+- `CompleteDistribLattice (Issue W)` — registered via
   `CompleteDistribLattice.ofMinimalAxioms` from two pointwise
   inequalities, giving `Frame`, `Coframe`, `HeytingAlgebra`, and
   `BiheytingAlgebra` for free. Mirrors `Filter`'s registration pattern.
@@ -54,7 +58,7 @@ answerhood predicates, see `Core/Inquisitive/Answerhood.lean`. For the
 ### Why a bundled structure rather than `LowerSet (Set W)`?
 
 A downward-closed family of propositions on `W` is, abstractly, a
-`LowerSet (Set W)`. We considered registering `InquisitiveContent`
+`LowerSet (Set W)`. We considered registering `Issue`
 as a `LowerSet` synonym, but rejected it because the `⊥` elements
 disagree: `LowerSet.⊥ = ∅` (no resolving propositions), while ours is
 `{∅}` (only the inconsistent state resolves). The non-emptiness
@@ -63,7 +67,7 @@ and is lost in `LowerSet`. We use `SetLike` instead, which gives the
 membership/coercion API without forcing `LowerSet`'s `⊥`.
 -/
 
-namespace Core.Inquisitive
+namespace Core
 
 universe u
 
@@ -71,7 +75,7 @@ universe u
     @cite{ciardelli-groenendijk-roelofsen-2018}: a non-empty
     downward-closed family of information states over `W`. The states in
     `props` are the ones that *resolve* the issue raised by the sentence. -/
-structure InquisitiveContent (W : Type u) where
+structure Issue (W : Type u) where
   /-- The set of propositions resolving the issue. -/
   props : Set (Set W)
   /-- Contains the empty proposition (= the inconsistent information
@@ -82,67 +86,67 @@ structure InquisitiveContent (W : Type u) where
       strengthened). -/
   downward_closed : ∀ p ∈ props, ∀ q : Set W, q ⊆ p → q ∈ props
 
-namespace InquisitiveContent
+namespace Issue
 
 variable {W : Type u}
 
-/-- `SetLike` instance: an `InquisitiveContent W` coerces to its underlying
+/-- `SetLike` instance: an `Issue W` coerces to its underlying
     `Set (Set W)` of resolving propositions. Auto-derives `Membership`
     (`q ∈ P` means `q ∈ P.props`), `CoeSort`, and the standard `ext`
     machinery. Mirrors mathlib's pattern for `Submonoid`, `Subgroup`,
     `LowerSet`, etc. -/
-instance : SetLike (InquisitiveContent W) (Set W) where
+instance : SetLike (Issue W) (Set W) where
   coe := props
   coe_injective' P Q h := by cases P; cases Q; congr
 
 /-- Membership normalization: `q ∈ P.props` rewrites to `q ∈ P`. Mirrors
     mathlib's `mem_carrier` pattern (`SetLike.Basic` line 92). -/
-@[simp] theorem mem_props {P : InquisitiveContent W} {q : Set W} :
+@[simp] theorem mem_props {P : Issue W} {q : Set W} :
     q ∈ P.props ↔ q ∈ P := Iff.rfl
 
 @[simp, norm_cast] theorem coe_mk (s : Set (Set W)) (h₁ h₂) :
-    ((⟨s, h₁, h₂⟩ : InquisitiveContent W) : Set (Set W)) = s := rfl
+    ((⟨s, h₁, h₂⟩ : Issue W) : Set (Set W)) = s := rfl
 
-/-- Two `InquisitiveContent`s are equal when their `props` agree. -/
+/-- Two `Issue`s are equal when their `props` agree. -/
 @[ext]
-theorem ext {P Q : InquisitiveContent W} (h : ∀ q, q ∈ P ↔ q ∈ Q) : P = Q :=
+theorem ext {P Q : Issue W} (h : ∀ q, q ∈ P ↔ q ∈ Q) : P = Q :=
   SetLike.ext h
 
 /-- The **alternatives** of an inquisitive content
     (@cite{ciardelli-groenendijk-roelofsen-2018}): the maximal
     propositions in `props`. These are the "answers" — the strongest
     information states that resolve the issue. -/
-def alt (P : InquisitiveContent W) : Set (Set W) :=
+def alt (P : Issue W) : Set (Set W) :=
   {p ∈ P.props | ∀ q ∈ P.props, p ⊆ q → p = q}
 
 /-- The **informative content** of an inquisitive content
     (@cite{ciardelli-groenendijk-roelofsen-2018}): the union of all
     propositions in `props`. The information any utterance with this
     meaning provides — the actual world must lie in `info P`. -/
-def info (P : InquisitiveContent W) : Set W :=
+def info (P : Issue W) : Set W :=
   ⋃₀ P.props
 
 /-- A sentence is **informative** iff its informative content excludes
     at least one possible world. -/
-def isInformative (P : InquisitiveContent W) : Prop :=
+def isInformative (P : Issue W) : Prop :=
   info P ≠ Set.univ
 
 /-- A sentence is **inquisitive** iff resolving the issue it raises
     requires more than the information it provides — equivalently, iff
     `info P` itself is not in `props` (so no single proposition in
     `props` covers all of `info P`). -/
-def isInquisitive (P : InquisitiveContent W) : Prop :=
+def isInquisitive (P : Issue W) : Prop :=
   info P ∉ P.props
 
 /-- A sentence is **declarative** iff it is not inquisitive —
     equivalently, iff `info P ∈ props`. Algebraic characterization
     (@cite{puncochar-2019}): `props` is a principal ideal in the algebra
     of information states; see `isDeclarative_iff_eq_declarative_info`. -/
-def isDeclarative (P : InquisitiveContent W) : Prop :=
+def isDeclarative (P : Issue W) : Prop :=
   info P ∈ P.props
 
 /-- Declarative and inquisitive are exact negations of each other. -/
-theorem isDeclarative_iff_not_isInquisitive (P : InquisitiveContent W) :
+theorem isDeclarative_iff_not_isInquisitive (P : Issue W) :
     P.isDeclarative ↔ ¬ P.isInquisitive :=
   not_not.symm
 
@@ -151,7 +155,7 @@ theorem isDeclarative_iff_not_isInquisitive (P : InquisitiveContent W) :
 /-- The **declarative** content of a proposition `p`: the principal
     ideal `{q | q ⊆ p}`. Single alternative `p`; non-inquisitive;
     informative iff `p ≠ univ`. -/
-def declarative (p : Set W) : InquisitiveContent W where
+def declarative (p : Set W) : Issue W where
   props := {q | q ⊆ p}
   contains_empty := Set.empty_subset p
   downward_closed := fun _ hq _ hr => hr.trans hq
@@ -193,7 +197,7 @@ the `CompleteDistribLattice` structure registered below; see the
 /-- **Inquisitive conjunction** `P ∧ Q` (@cite{puncochar-2019} §2 ∧
     clause): `props` is the pointwise intersection. A state resolves
     `P ∧ Q` iff it resolves both `P` and `Q`. -/
-def conj (P Q : InquisitiveContent W) : InquisitiveContent W where
+def conj (P Q : Issue W) : Issue W where
   props := P.props ∩ Q.props
   contains_empty := ⟨P.contains_empty, Q.contains_empty⟩
   downward_closed := fun p hp q hq =>
@@ -204,7 +208,7 @@ def conj (P Q : InquisitiveContent W) : InquisitiveContent W where
     `P ⩒ Q` iff it resolves `P` or `Q`. Distinct from classical
     disjunction `∨`, whose support clause involves splitting the state
     across two substates. -/
-def inqDisj (P Q : InquisitiveContent W) : InquisitiveContent W where
+def inqDisj (P Q : Issue W) : Issue W where
   props := P.props ∪ Q.props
   contains_empty := Or.inl P.contains_empty
   downward_closed := fun p hp q hq => by
@@ -214,14 +218,14 @@ def inqDisj (P Q : InquisitiveContent W) : InquisitiveContent W where
 
 /-- The **top** inquisitive content: every set of worlds resolves the
     issue. The trivial inquiry that demands nothing. -/
-def top : InquisitiveContent W where
+def top : Issue W where
   props := Set.univ
   contains_empty := Set.mem_univ _
   downward_closed := fun _ _ _ _ => Set.mem_univ _
 
 /-- The **bottom** inquisitive content: only the inconsistent state
     (`∅`) resolves the issue. The unsatisfiable inquiry. -/
-def bot : InquisitiveContent W where
+def bot : Issue W where
   props := {∅}
   contains_empty := rfl
   downward_closed := fun p hp q hq => by
@@ -234,7 +238,7 @@ def bot : InquisitiveContent W where
 
 We package the algebraic operations into mathlib's order/lattice
 typeclasses: the entailment order `P ≤ Q := P.props ⊆ Q.props` makes
-`InquisitiveContent W` into a **bounded distributive complete lattice**
+`Issue W` into a **bounded distributive complete lattice**
 with `⊓ = conj`, `⊔ = inqDisj`, `⊥ = bot`, `⊤ = top`, plus arbitrary
 suprema and infima.
 
@@ -252,7 +256,7 @@ distributivity on the underlying `Set (Set W)`, and falls out of the
 
 /-- The arbitrary supremum: a state resolves `sSup S` iff it resolves
     some `P ∈ S` (or is the empty state, which always resolves). -/
-def sSupContent (S : Set (InquisitiveContent W)) : InquisitiveContent W where
+def sSupContent (S : Set (Issue W)) : Issue W where
   props := {q | q = ∅ ∨ ∃ P ∈ S, q ∈ P.props}
   contains_empty := Or.inl rfl
   downward_closed := fun p hp q hq => by
@@ -262,18 +266,18 @@ def sSupContent (S : Set (InquisitiveContent W)) : InquisitiveContent W where
 
 /-- The arbitrary infimum: a state resolves `sInf S` iff it resolves
     every `P ∈ S`. (When `S = ∅`, this is `Set.univ`, recovering `⊤`.) -/
-def sInfContent (S : Set (InquisitiveContent W)) : InquisitiveContent W where
+def sInfContent (S : Set (Issue W)) : Issue W where
   props := {q | ∀ P ∈ S, q ∈ P.props}
   contains_empty := fun P _ => P.contains_empty
   downward_closed := fun p hp q hq P hPS => P.downward_closed p (hp P hPS) q hq
 
-instance : SupSet (InquisitiveContent W) := ⟨sSupContent⟩
-instance : InfSet (InquisitiveContent W) := ⟨sInfContent⟩
+instance : SupSet (Issue W) := ⟨sSupContent⟩
+instance : InfSet (Issue W) := ⟨sInfContent⟩
 
-/-- The complete lattice structure on `InquisitiveContent W`. Provides
+/-- The complete lattice structure on `Issue W`. Provides
     `Lattice`, `BoundedOrder`, `SupSet`, `InfSet`, plus `iSup`/`iInf`
     for the entire mathlib API. -/
-instance : CompleteLattice (InquisitiveContent W) where
+instance : CompleteLattice (Issue W) where
   le P Q := P.props ⊆ Q.props
   le_refl _ := Set.Subset.refl _
   le_trans _ _ _ := Set.Subset.trans
@@ -309,7 +313,7 @@ instance : CompleteLattice (InquisitiveContent W) where
 
 /-! ### Distributivity
 
-`InquisitiveContent W` is a complete distributive lattice (in mathlib's
+`Issue W` is a complete distributive lattice (in mathlib's
 sense: both a `Frame` and a `Coframe`). This subsumes finite
 distributivity, gives a `HeytingAlgebra` (and `BiheytingAlgebra`)
 structure for free, and follows from a single fact about the underlying
@@ -321,14 +325,14 @@ needs only the two inequalities `inf_sSup ≤ iSup_inf` and
 `iInf_sup ≤ sup_sInf`. -/
 
 /-- Frame inequality: `P ⊓ sSup S ≤ ⨆ R ∈ S, P ⊓ R`. -/
-private theorem inf_sSup_le_iSup_inf_aux (P : InquisitiveContent W)
-    (S : Set (InquisitiveContent W)) :
+private theorem inf_sSup_le_iSup_inf_aux (P : Issue W)
+    (S : Set (Issue W)) :
     P ⊓ sSup S ≤ ⨆ R ∈ S, P ⊓ R := by
   intro q hq
   obtain ⟨hqP, hqS⟩ := hq
   rcases hqS with hempty | ⟨R, hRS, hqR⟩
-  · -- q = ∅: lies in every InquisitiveContent
-    have h0 : ∅ ∈ (⨆ R ∈ S, P ⊓ R : InquisitiveContent W).props :=
+  · -- q = ∅: lies in every Issue
+    have h0 : ∅ ∈ (⨆ R ∈ S, P ⊓ R : Issue W).props :=
       (⨆ R ∈ S, P ⊓ R).contains_empty
     rw [hempty]; exact h0
   · -- q ∈ P ⊓ R for some R ∈ S; use le_iSup₂ to embed in the iSup
@@ -336,8 +340,8 @@ private theorem inf_sSup_le_iSup_inf_aux (P : InquisitiveContent W)
     exact (le_iSup₂ (f := fun R (_ : R ∈ S) => P ⊓ R) R hRS) hPR
 
 /-- Coframe inequality: `⨅ R ∈ S, P ⊔ R ≤ P ⊔ sInf S`. -/
-private theorem iInf_sup_le_sup_sInf_aux (P : InquisitiveContent W)
-    (S : Set (InquisitiveContent W)) :
+private theorem iInf_sup_le_sup_sInf_aux (P : Issue W)
+    (S : Set (Issue W)) :
     ⨅ R ∈ S, P ⊔ R ≤ P ⊔ sInf S := by
   intro q hq
   -- q ∈ ⨅ R ∈ S, P ⊔ R means: for every R ∈ S, q ∈ P.props ∨ q ∈ R.props
@@ -359,35 +363,35 @@ private theorem iInf_sup_le_sup_sInf_aux (P : InquisitiveContent W)
     `⊔` distributes over `⨅`. Subsumes binary distributivity and
     auto-provides `HeytingAlgebra`, `CoheytingAlgebra`, and
     `BiheytingAlgebra` instances via `ofMinimalAxioms`. -/
-instance : CompleteDistribLattice (InquisitiveContent W) :=
+instance : CompleteDistribLattice (Issue W) :=
   CompleteDistribLattice.ofMinimalAxioms
-    { __ := (inferInstance : CompleteLattice (InquisitiveContent W))
+    { __ := (inferInstance : CompleteLattice (Issue W))
       inf_sSup_le_iSup_inf := inf_sSup_le_iSup_inf_aux
       iInf_sup_le_sup_sInf := iInf_sup_le_sup_sInf_aux }
 
-theorem le_def {P Q : InquisitiveContent W} : P ≤ Q ↔ P.props ⊆ Q.props :=
+theorem le_def {P Q : Issue W} : P ≤ Q ↔ P.props ⊆ Q.props :=
   Iff.rfl
 
-theorem inf_eq_conj (P Q : InquisitiveContent W) : P ⊓ Q = conj P Q := rfl
+theorem inf_eq_conj (P Q : Issue W) : P ⊓ Q = conj P Q := rfl
 
-theorem sup_eq_inqDisj (P Q : InquisitiveContent W) : P ⊔ Q = inqDisj P Q := rfl
+theorem sup_eq_inqDisj (P Q : Issue W) : P ⊔ Q = inqDisj P Q := rfl
 
-theorem sSup_eq (S : Set (InquisitiveContent W)) : sSup S = sSupContent S := rfl
+theorem sSup_eq (S : Set (Issue W)) : sSup S = sSupContent S := rfl
 
-theorem sInf_eq (S : Set (InquisitiveContent W)) : sInf S = sInfContent S := rfl
+theorem sInf_eq (S : Set (Issue W)) : sInf S = sInfContent S := rfl
 
-theorem top_eq : (⊤ : InquisitiveContent W) = top := rfl
-theorem bot_eq : (⊥ : InquisitiveContent W) = bot := rfl
+theorem top_eq : (⊤ : Issue W) = top := rfl
+theorem bot_eq : (⊥ : Issue W) = bot := rfl
 
-@[simp] theorem mem_sSup_props {S : Set (InquisitiveContent W)} {q : Set W} :
+@[simp] theorem mem_sSup_props {S : Set (Issue W)} {q : Set W} :
     q ∈ (sSup S).props ↔ q = ∅ ∨ ∃ P ∈ S, q ∈ P.props := Iff.rfl
 
-@[simp] theorem mem_sInf_props {S : Set (InquisitiveContent W)} {q : Set W} :
+@[simp] theorem mem_sInf_props {S : Set (Issue W)} {q : Set W} :
     q ∈ (sInf S).props ↔ ∀ P ∈ S, q ∈ P.props := Iff.rfl
 
 /-- Membership in an indexed `iSup` of inquisitive contents. The `q = ∅`
     disjunct is structural: `∅` lies in every content's `props`. -/
-theorem mem_iSup_iff {ι : Sort*} {f : ι → InquisitiveContent W} {q : Set W} :
+theorem mem_iSup_iff {ι : Sort*} {f : ι → Issue W} {q : Set W} :
     q ∈ (⨆ i, f i) ↔ q = ∅ ∨ ∃ i, q ∈ f i := by
   change q ∈ (sSup (Set.range f)).props ↔ _
   rw [mem_sSup_props]
@@ -399,7 +403,7 @@ theorem mem_iSup_iff {ι : Sort*} {f : ι → InquisitiveContent W} {q : Set W} 
 /-- Membership in a bounded indexed `iSup`. Used pervasively for
     Hamblin-style wh-question alternatives (`which`) and for any
     `⨆ i ∈ I, declarative (P i)` construction. -/
-theorem mem_biSup_iff {ι : Type*} {I : Set ι} {f : ι → InquisitiveContent W}
+theorem mem_biSup_iff {ι : Type*} {I : Set ι} {f : ι → Issue W}
     {q : Set W} :
     q ∈ (⨆ i ∈ I, f i) ↔ q = ∅ ∨ ∃ i ∈ I, q ∈ f i := by
   constructor
@@ -418,32 +422,32 @@ theorem mem_biSup_iff {ι : Type*} {I : Set ι} {f : ι → InquisitiveContent W
       rw [mem_iSup_iff]
       exact Or.inr ⟨hiI, hq⟩
 
-instance : Inhabited (InquisitiveContent W) := ⟨⊤⟩
+instance : Inhabited (Issue W) := ⟨⊤⟩
 
 /-! ### Basic API for `info` on the lattice operations
 
-`info` is a monotone map from `(InquisitiveContent W, ≤)` to
+`info` is a monotone map from `(Issue W, ≤)` to
 `(Set W, ⊆)` and commutes with `⊔` (and `⊥`/`⊤`). The story for `⊓`
 is one-sided: `info` distributes over union but only sub-distributes
 over intersection (the same asymmetry as `⋃₀` over `Set` operations). -/
 
 /-- `info` is monotone in the entailment order: a stronger inquiry has
     no more informative content than a weaker one. -/
-theorem info_mono {P Q : InquisitiveContent W} (h : P ≤ Q) :
+theorem info_mono {P Q : Issue W} (h : P ≤ Q) :
     P.info ⊆ Q.info := fun _ ⟨q, hq, hwq⟩ => ⟨q, h hq, hwq⟩
 
-@[simp] theorem info_top : info (⊤ : InquisitiveContent W) = Set.univ := by
+@[simp] theorem info_top : info (⊤ : Issue W) = Set.univ := by
   rw [Set.eq_univ_iff_forall]
   exact fun w => ⟨Set.univ, Set.mem_univ _, Set.mem_univ w⟩
 
-@[simp] theorem info_bot : info (⊥ : InquisitiveContent W) = ∅ :=
+@[simp] theorem info_bot : info (⊥ : Issue W) = ∅ :=
   Set.sUnion_singleton _
 
-@[simp] theorem info_sup (P Q : InquisitiveContent W) :
+@[simp] theorem info_sup (P Q : Issue W) :
     info (P ⊔ Q) = info P ∪ info Q :=
   Set.sUnion_union P.props Q.props
 
-theorem info_inf_subset (P Q : InquisitiveContent W) :
+theorem info_inf_subset (P Q : Issue W) :
     info (P ⊓ Q) ⊆ info P ∩ info Q := by
   rintro _ ⟨q, ⟨hpP, hpQ⟩, hwq⟩
   exact ⟨⟨q, hpP, hwq⟩, ⟨q, hpQ, hwq⟩⟩
@@ -463,13 +467,13 @@ on finiteness. -/
     `mem_alt_iff_maximal` is preferred because it connects to mathlib's
     `Maximal` API. Use this lemma when destructuring is more convenient
     than going through `Maximal`. -/
-theorem mem_alt {P : InquisitiveContent W} {p : Set W} :
+theorem mem_alt {P : Issue W} {p : Set W} :
     p ∈ alt P ↔ p ∈ P.props ∧ ∀ q ∈ P.props, p ⊆ q → p = q := Iff.rfl
 
-theorem alt_subset_props (P : InquisitiveContent W) : alt P ⊆ P.props :=
+theorem alt_subset_props (P : Issue W) : alt P ⊆ P.props :=
   fun _ hp => hp.1
 
-theorem sUnion_alt_subset_info (P : InquisitiveContent W) :
+theorem sUnion_alt_subset_info (P : Issue W) :
     ⋃₀ alt P ⊆ info P := by
   rintro w ⟨q, hq, hwq⟩
   exact ⟨q, alt_subset_props P hq, hwq⟩
@@ -480,7 +484,7 @@ theorem sUnion_alt_subset_info (P : InquisitiveContent W) :
     order-theoretic `Maximal`, so that mathlib's `Maximal` API
     (`maximal_iff`, `Maximal.eq_of_ge`, etc.) applies directly to
     inquisitive alternatives. -/
-@[simp] theorem mem_alt_iff_maximal {P : InquisitiveContent W} {p : Set W} :
+@[simp] theorem mem_alt_iff_maximal {P : Issue W} {p : Set W} :
     p ∈ alt P ↔ Maximal (· ∈ P.props) p := by
   refine ⟨?_, ?_⟩
   · rintro ⟨hp, hmax⟩
@@ -507,12 +511,12 @@ theorem sUnion_alt_subset_info (P : InquisitiveContent W) :
     exact Set.Subset.antisymm hpr hr
 
 /-- The unique alternative of `⊤` is `Set.univ`. -/
-@[simp] theorem alt_top : alt (⊤ : InquisitiveContent W) = {Set.univ} := by
+@[simp] theorem alt_top : alt (⊤ : Issue W) = {Set.univ} := by
   ext q
   simp only [mem_alt_iff_maximal, Set.mem_singleton_iff]
   constructor
   · intro hmax
-    have huniv : (Set.univ : Set W) ∈ (⊤ : InquisitiveContent W).props :=
+    have huniv : (Set.univ : Set W) ∈ (⊤ : Issue W).props :=
       Set.mem_univ _
     exact (hmax.eq_of_ge huniv (fun _ _ => Set.mem_univ _)).symm
   · rintro rfl
@@ -521,12 +525,12 @@ theorem sUnion_alt_subset_info (P : InquisitiveContent W) :
     exact fun _ _ => Set.mem_univ _
 
 /-- The unique alternative of `⊥` is `∅`. -/
-@[simp] theorem alt_bot : alt (⊥ : InquisitiveContent W) = {∅} := by
+@[simp] theorem alt_bot : alt (⊥ : Issue W) = {∅} := by
   ext q
   simp only [mem_alt_iff_maximal, Set.mem_singleton_iff]
   constructor
   · intro hmax
-    have hq : q ∈ (⊥ : InquisitiveContent W).props := hmax.1
+    have hq : q ∈ (⊥ : Issue W).props := hmax.1
     change q ∈ ({∅} : Set (Set W)) at hq
     rwa [Set.mem_singleton_iff] at hq
   · rintro rfl
@@ -538,7 +542,7 @@ theorem sUnion_alt_subset_info (P : InquisitiveContent W) :
 
 /-- If `P` has two distinct alternatives, then `P` is inquisitive: no
     single proposition (in particular, not `info P`) can equal both. -/
-theorem isInquisitive_of_two_alternatives (P : InquisitiveContent W)
+theorem isInquisitive_of_two_alternatives (P : Issue W)
     {p₁ p₂ : Set W} (h₁ : p₁ ∈ alt P) (h₂ : p₂ ∈ alt P) (hne : p₁ ≠ p₂) :
     P.isInquisitive := by
   intro hinfo
@@ -556,7 +560,7 @@ proposition extends to a maximal one. This gives the dual half of
 
 Without finiteness, alternatives need not exist — a downward-closed
 family with no maximal element (e.g. `{q ⊊ Set.univ | q.Finite}`
-on infinite `W`) is a valid `InquisitiveContent` with `alt P = ∅`
+on infinite `W`) is a valid `Issue` with `alt P = ∅`
 even though `info P ≠ ∅`. -/
 
 /-- **Existence of alternatives** under finiteness: every proposition
@@ -567,7 +571,7 @@ even though `info P ≠ ∅`. -/
     `Finite (Set W)` and `P.props ⊆ Set W`), but `P.props.Finite` can
     hold even on infinite worlds (e.g., a content with finitely many
     alternatives over an infinite world space). -/
-theorem exists_alt_above (P : InquisitiveContent W) (hP : P.props.Finite)
+theorem exists_alt_above (P : Issue W) (hP : P.props.Finite)
     {p : Set W} (hp : p ∈ P.props) : ∃ q ∈ alt P, p ⊆ q := by
   obtain ⟨q, hpq, hmax⟩ := hP.exists_le_maximal hp
   exact ⟨q, mem_alt_iff_maximal.mpr hmax, hpq⟩
@@ -575,7 +579,7 @@ theorem exists_alt_above (P : InquisitiveContent W) (hP : P.props.Finite)
 /-- Under finiteness of `P.props`, `info P` is exactly the union of
     alternatives: every world in some resolving proposition lies in some
     maximal resolving proposition. -/
-theorem info_eq_sUnion_alt (P : InquisitiveContent W) (hP : P.props.Finite) :
+theorem info_eq_sUnion_alt (P : Issue W) (hP : P.props.Finite) :
     info P = ⋃₀ alt P := by
   apply Set.Subset.antisymm _ (sUnion_alt_subset_info P)
   rintro w ⟨p, hp, hwp⟩
@@ -584,7 +588,7 @@ theorem info_eq_sUnion_alt (P : InquisitiveContent W) (hP : P.props.Finite) :
 
 /-! ### The Resolutions Theorem (DNF for inquisitive content)
 
-The deepest theorem about `InquisitiveContent`: under finiteness, every
+The deepest theorem about `Issue`: under finiteness, every
 inquisitive content equals the inquisitive disjunction of the
 declaratives generated by its alternatives. This is the
 inquisitive-semantics analogue of disjunctive normal form, justifying
@@ -605,7 +609,7 @@ but the **inequality** `⨆ p ∈ alt P, declarative p ≤ P` holds always. -/
 /-- The lower bound (always holds): the inquisitive disjunction of the
     declarative principal ideals of `P`'s alternatives is contained in
     `P` itself. -/
-theorem iSup_declarative_alt_le (P : InquisitiveContent W) :
+theorem iSup_declarative_alt_le (P : Issue W) :
     ⨆ p ∈ alt P, declarative p ≤ P := by
   rw [← sSup_image]
   rw [le_def]
@@ -619,7 +623,7 @@ theorem iSup_declarative_alt_le (P : InquisitiveContent W) :
     inquisitive content is the inquisitive disjunction of the
     declaratives generated by its alternatives. The DNF analogue for
     inquisitive semantics. -/
-theorem eq_iSup_declarative_alt (P : InquisitiveContent W)
+theorem eq_iSup_declarative_alt (P : Issue W)
     (hP : P.props.Finite) : P = ⨆ p ∈ alt P, declarative p := by
   apply le_antisymm _ (iSup_declarative_alt_le P)
   rw [← sSup_image, le_def]
@@ -642,7 +646,7 @@ characterization via alternatives: `P` is declarative iff
 /-- **Principal-ideal characterization** (@cite{puncochar-2019}): an
     inquisitive content is declarative iff it equals the principal ideal
     generated by its informative content. -/
-theorem isDeclarative_iff_eq_declarative_info (P : InquisitiveContent W) :
+theorem isDeclarative_iff_eq_declarative_info (P : Issue W) :
     P.isDeclarative ↔ P = declarative P.info := by
   constructor
   · intro h
@@ -662,7 +666,7 @@ theorem isDeclarative_iff_eq_declarative_info (P : InquisitiveContent W) :
     declarative iff its alternatives are exactly `{info P}` — i.e., iff
     its informative content is itself the unique maximal resolving
     state. -/
-theorem isDeclarative_iff_alt_eq_singleton (P : InquisitiveContent W) :
+theorem isDeclarative_iff_alt_eq_singleton (P : Issue W) :
     P.isDeclarative ↔ alt P = {P.info} := by
   constructor
   · intro h
@@ -710,7 +714,7 @@ general — see `not_lem_inquisitive_content` below. -/
     declarative principal ideal of the complemented informative content.
     This is the structural identity that grounds all subsequent Heyting
     derivatives. -/
-theorem compl_eq (P : InquisitiveContent W) :
+theorem compl_eq (P : Issue W) :
     Pᶜ = declarative (P.info)ᶜ := by
   apply le_antisymm
   · intro q hq
@@ -728,7 +732,7 @@ theorem compl_eq (P : InquisitiveContent W) :
       rw [Set.mem_singleton_iff] at hx
       exact hx ▸ hwp
     have h3 : ({w} : Set W) ∈ P ⊓ Pᶜ := ⟨h2, h1⟩
-    have h4 : ({w} : Set W) ∈ (⊥ : InquisitiveContent W) := by
+    have h4 : ({w} : Set W) ∈ (⊥ : Issue W) := by
       rw [← inf_compl_self P]; exact h3
     have h5 : ({w} : Set W) = ∅ := by
       change ({w} : Set W) ∈ ({∅} : Set (Set W)) at h4
@@ -747,7 +751,7 @@ theorem compl_eq (P : InquisitiveContent W) :
 /-- **`info` commutes with complement**: even though the lattice of
     contents is only Heyting, the underlying informative content is a
     Boolean Set, and `info` respects complementation. -/
-@[simp] theorem info_compl (P : InquisitiveContent W) :
+@[simp] theorem info_compl (P : Issue W) :
     info Pᶜ = (info P)ᶜ := by
   rw [compl_eq, info_declarative]
 
@@ -759,7 +763,7 @@ theorem compl_eq (P : InquisitiveContent W) :
 
     Used to define classical (non-inquisitive) operators in inquisitive
     semantics: classical disjunction is `!(P ⩒ Q) = !P ⊔ !Q`, etc. -/
-def proj (P : InquisitiveContent W) : InquisitiveContent W :=
+def proj (P : Issue W) : Issue W :=
   declarative P.info
 
 /-- `!P = Pᶜᶜ`: the non-inquisitive projection coincides with the
@@ -767,23 +771,23 @@ def proj (P : InquisitiveContent W) : InquisitiveContent W :=
     Together with `compl_eq`, this means every inquisitive operator
     derivable from the Heyting structure is, at the level of `info`, a
     Boolean operator on `Set W`. -/
-theorem proj_eq_compl_compl (P : InquisitiveContent W) : proj P = Pᶜᶜ := by
+theorem proj_eq_compl_compl (P : Issue W) : proj P = Pᶜᶜ := by
   rw [compl_eq Pᶜ, info_compl, compl_compl]
   rfl
 
-@[simp] theorem info_proj (P : InquisitiveContent W) : P.proj.info = P.info :=
+@[simp] theorem info_proj (P : Issue W) : P.proj.info = P.info :=
   info_declarative P.info
 
-theorem isDeclarative_proj (P : InquisitiveContent W) : P.proj.isDeclarative :=
+theorem isDeclarative_proj (P : Issue W) : P.proj.isDeclarative :=
   isDeclarative_declarative P.info
 
 /-- `proj` is idempotent: projecting twice = projecting once. -/
-@[simp] theorem proj_proj (P : InquisitiveContent W) : P.proj.proj = P.proj := by
+@[simp] theorem proj_proj (P : Issue W) : P.proj.proj = P.proj := by
   unfold proj
   rw [info_declarative]
 
 /-- Projection fixes declarative contents (`!P = P` iff `P` is declarative). -/
-theorem proj_eq_self_iff (P : InquisitiveContent W) :
+theorem proj_eq_self_iff (P : Issue W) :
     P.proj = P ↔ P.isDeclarative := by
   refine ⟨?_, ?_⟩
   · intro h
@@ -797,9 +801,9 @@ theorem proj_eq_self_iff (P : InquisitiveContent W) :
     (@cite{ciardelli-groenendijk-roelofsen-2018}). The "inquisitive
     question" operator: takes any content and returns its non-informative
     counterpart with the same inquisitive structure. -/
-def nonInfo (P : InquisitiveContent W) : InquisitiveContent W := P ⊔ Pᶜ
+def nonInfo (P : Issue W) : Issue W := P ⊔ Pᶜ
 
-theorem nonInfo_eq_sup_compl (P : InquisitiveContent W) :
+theorem nonInfo_eq_sup_compl (P : Issue W) :
     nonInfo P = P ⊔ Pᶜ := rfl
 
 /-- **Division law** (@cite{ciardelli-groenendijk-roelofsen-2018}):
@@ -807,7 +811,7 @@ theorem nonInfo_eq_sup_compl (P : InquisitiveContent W) :
     non-inquisitive projection and its non-informative projection. This
     is the fundamental decomposition theorem of inquisitive semantics —
     it says the lattice "factors through" `(info, alternatives)`. -/
-theorem proj_inf_nonInfo (P : InquisitiveContent W) :
+theorem proj_inf_nonInfo (P : Issue W) :
     proj P ⊓ nonInfo P = P := by
   unfold nonInfo
   rw [inf_sup_left]
@@ -843,11 +847,11 @@ state in `props`). The witness below uses the polar-question shape
     with `P ⊔ Pᶜ ≠ ⊤`. This is what makes the lattice Heyting rather
     than Boolean. -/
 theorem not_lem_inquisitive_content :
-    ∃ (W : Type) (P : InquisitiveContent W), P ⊔ Pᶜ ≠ ⊤ := by
+    ∃ (W : Type) (P : Issue W), P ⊔ Pᶜ ≠ ⊤ := by
   refine ⟨Bool, declarative {true}, ?_⟩
   intro h
   rw [compl_eq, info_declarative] at h
-  have huniv : (Set.univ : Set Bool) ∈ (⊤ : InquisitiveContent Bool) :=
+  have huniv : (Set.univ : Set Bool) ∈ (⊤ : Issue Bool) :=
     Set.mem_univ _
   rw [← h] at huniv
   rcases huniv with h1 | h1
@@ -856,6 +860,6 @@ theorem not_lem_inquisitive_content :
   · have : true ∈ ({true} : Set Bool)ᶜ := h1 (Set.mem_univ true)
     simp at this
 
-end InquisitiveContent
+end Issue
 
-end Core.Inquisitive
+end Core
