@@ -915,6 +915,20 @@
   role      = {formalized},
   sources   = {Phenomena/Gradability/Studies/Beltrama2025.lean}
 }
+@article{belth-2026,
+  author    = {Belth, Caleb},
+  year      = {2026},
+  title     = {A Learning-Based Account of Phonological Tiers},
+  journal   = {Linguistic Inquiry},
+  volume    = {57},
+  number    = {2},
+  pages     = {229--265},
+  doi       = {10.1162/ling_a_00530},
+  subfield  = {phonology},
+  role      = {cited},
+  validated = {true},
+  sources   = {Core/StringHom.lean;Theories/Phonology/Tier.lean;Theories/Phonology/Constraints.lean}
+}
 @article{beltrama-schwarz-2024,
   author    = {Beltrama, Andrea and Schwarz, Florian},
   year      = {2024},
@@ -5816,8 +5830,51 @@
   url       = {https://ojs.lib.uwo.ca/index.php/wpl_clw/article/view/13693},
   subfield  = {semantics/reference},
   validated = {true},
+  role      = {formalized},
+  sources   = {Phenomena/Control/Studies/Allotey2021.lean, Fragments/Ga/Basic.lean, Fragments/Ga/Predicates.lean}
+}% REF: Szabolcsi, A. (2009). Overt nominative subjects in infinitival complements
+%      cross-linguistically. Source of the Long Distance Agree analysis adopted by
+%      Allotey (2021). Venue/page numbers unverified — included as a stub.
+@article{szabolcsi-2009,
+  author    = {Szabolcsi, Anna},
+  year      = {2009},
+  title     = {Overt Nominative Subjects in Infinitival Complements Cross-Linguistically: Data, Diagnostics, and Preliminary Analyses},
+  journal   = {NYU Working Papers in Linguistics},
+  volume    = {2},
+  subfield  = {syntax},
   role      = {cited},
-  sources   = {Phenomena/Control/Studies/Ostrove2026.lean}
+  sources   = {Theories/Syntax/Minimalism/LongDistanceAgree.lean, Phenomena/Control/Studies/Allotey2021.lean}
+}% REF: Satik, D. (2019). Cited by Allotey (2021) for the LDA analysis of
+%      infinitival overt pronouns. Exact venue/title unverified.
+@misc{satik-2019,
+  author    = {Satik, Deniz},
+  year      = {2019},
+  title     = {Long Distance Agree and Infinitival Overt Subjects},
+  note      = {Cited by @cite{allotey-2021}; exact venue unverified},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Theories/Syntax/Minimalism/LongDistanceAgree.lean, Phenomena/Control/Studies/Allotey2021.lean}
+}% REF: Dakubu, M. E. K. (2004). Gã grammar work. Cited by Allotey (2021) for
+%      the subjunctive analysis of the high-tone marker that Allotey argues
+%      against. Exact title/venue unverified.
+@misc{dakubu-2004,
+  author    = {Dakubu, M. E. Kropp},
+  year      = {2004},
+  title     = {The {Gã} High-Tone Verbal Marker as Subjunctive},
+  note      = {Cited by @cite{allotey-2021}; exact title/venue unverified},
+  subfield  = {comparative},
+  role      = {cited},
+  sources   = {Phenomena/Control/Studies/Allotey2021.lean}
+}% REF: Campbell, A. (2017). A Grammar of Gã. Cited by Allotey (2021) alongside
+%      Dakubu for the subjunctive analysis. Title approximate.
+@phdthesis{campbell-2017,
+  author    = {Campbell, Akua},
+  year      = {2017},
+  title     = {A Grammar of {Gã}},
+  note      = {Cited by @cite{allotey-2021}; thesis institution unverified},
+  subfield  = {comparative},
+  role      = {cited},
+  sources   = {Phenomena/Control/Studies/Allotey2021.lean}
 }% REF: Sulemana, A.-R. (2021). Non-finite complementation: A case study of Büli.
 @phdthesis{sulemana-2021,
   author    = {Sulemana, Abdul-Razak},
@@ -6581,6 +6638,17 @@
   validated = {true},
   role      = {cited},
   sources   = {Core/Discourse/Goals.lean;Phenomena/Directives/Studies/Roberts2023.lean}
+}
+@book{portner-2018,
+  author    = {Portner, Paul},
+  year      = {2018},
+  title     = {Mood},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  series    = {Oxford Surveys in Semantics and Pragmatics},
+  subfield  = {semantics/modality},
+  role      = {foundational},
+  sources   = {Core/Mood/POSW.lean}
 }
 @book{bratman-1987,
   author    = {Bratman, Michael E.},
@@ -8955,6 +9023,19 @@
   role      = {cited},
   validated = {true},
   sources   = {Phenomena/Numerals/Embedding.lean;Theories/Semantics/Lexical/Numeral/Embedding.lean}
+}% REF: Coppock, E. & Beaver, D. (2015). Definiteness and determinacy.
+@article{coppock-beaver-2015,
+  author    = {Coppock, Elizabeth and Beaver, David},
+  year      = {2015},
+  title     = {Definiteness and determinacy},
+  journal   = {Linguistics and Philosophy},
+  volume    = {38},
+  number    = {5},
+  pages     = {377--435},
+  doi       = {10.1007/s10988-015-9178-8},
+  subfield  = {semantics/nominal},
+  role      = {formalized},
+  sources   = {Core/Nominal/Maximality.lean;Core/Nominal/Description.lean;Core/Nominal/Interpret.lean;Phenomena/Definiteness/Studies/CoppockBeaver2015.lean}
 }% REF: Coppock, E. & Beaver, D. (2014). Principles of the exclusive muddle.
 @article{coppock-beaver-2014,
   author    = {Coppock, E. and Beaver, D. I.},
@@ -11485,6 +11566,17 @@
   validated = {true},
   role      = {cited},
   sources   = {Comparisons/CaseTheories.lean;Theories/Syntax/Minimalism/Core/CaseFilter.lean}
+}% REF: Baier, N. B. (2018). Anti-agreement.
+@phdthesis{baier-2018,
+  author    = {Baier, Nicholas Bowen},
+  year      = {2018},
+  title     = {Anti-Agreement},
+  school    = {University of California, Berkeley},
+  url       = {https://escholarship.org/uc/item/49t9t8h5},
+  subfield  = {syntax},
+  role      = {cited},
+  validated = {true},
+  sources   = {Core/NullSubject/Defs.lean}
 }% REF: Baker, M. C. & Vinokurova, N. (2010). Two modalities of case assignment: Case in Sakha.
 @article{baker-vinokurova-2010,
   author    = {Baker, Mark C. and Vinokurova, Nadya},
@@ -11666,6 +11758,18 @@
   validated = {true},
   role      = {cited},
   sources   = {Phenomena/Ellipsis/NPEllipsis.lean}
+}
+@article{richards-2013,
+  author    = {Richards, Norvin},
+  year      = {2013},
+  title     = {Lardil ``Case Stacking'' and the Timing of Case Assignment},
+  journal   = {Syntax},
+  volume    = {16},
+  number    = {1},
+  pages     = {42--76},
+  subfield  = {syntax},
+  role      = {cited},
+  sources   = {Phenomena/Case/Studies/Pesetsky2013.lean}
 }
 @book{lobeck-1995,
   author    = {Lobeck, Anne},
@@ -18788,6 +18892,19 @@
   subfield  = {semantics/modality},
   role      = {cited},
   sources   = {Phenomena/Modality/Studies/CiardelliGuerrini2026.lean}
+}
+@article{hanink-2021,
+  author    = {Hanink, Emily A.},
+  year      = {2021},
+  title     = {{DP} structure and internally headed relatives in {W}{\'a}·{\v{s}}iw},
+  journal   = {Natural Language \& Linguistic Theory},
+  volume    = {39},
+  number    = {2},
+  pages     = {505--554},
+  doi       = {10.1007/s11049-020-09483-x},
+  subfield  = {semantics/nominal},
+  role      = {formalized},
+  sources   = {Core/Nominal/Description.lean;Core/Nominal/Interpret.lean;Phenomena/Definiteness/Studies/Hanink2021.lean}
 }
 @article{hanink-koontz-garboden-2025,
   author    = {Hanink, Emily A. and Koontz-Garboden, Andrew},
