@@ -11,7 +11,7 @@ are interpreted precisely. This is the "pragmatic halo" effect.
 
 -/
 
-namespace Semantics.Quantification.Numerals.Precision
+namespace Semantics.Numerals.Precision
 
 /-- Precision mode for numeral interpretation. -/
 inductive PrecisionMode where
@@ -127,4 +127,4 @@ def inSpeakerHalo (multiplier : ℚ) (stated actual : Nat) : Bool :=
   decide ((actual : ℚ) ≥ (stated : ℚ) - hw ∧
           (actual : ℚ) ≤ (stated : ℚ) + hw)
 
-end Semantics.Quantification.Numerals.Precision
+end Semantics.Numerals.Precision

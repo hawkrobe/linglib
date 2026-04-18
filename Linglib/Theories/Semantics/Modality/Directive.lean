@@ -69,12 +69,12 @@ theorem combine_empty_right (g : OrderingSource W) (w : W) :
 
 /-- **Strong necessity** ("must φ"): standard Kratzer necessity. -/
 def strongNecessity (f : ModalBase W) (g : OrderingSource W)
-    (p : W → Bool) (w : W) : Prop :=
+    (p : W → Prop) (w : W) : Prop :=
   necessity f g p w
 
 /-- **Weak necessity** ("ought φ"): Kratzer necessity under refined ordering g ∪ g'. -/
 def weakNecessity (f : ModalBase W) (g g' : OrderingSource W)
-    (p : W → Bool) (w : W) : Prop :=
+    (p : W → Prop) (w : W) : Prop :=
   necessity f (combineOrdering g g') p w
 
 /-! ## Ordering extension lemma -/
@@ -106,7 +106,7 @@ theorem best_refines (f : ModalBase W) (g g' : OrderingSource W) (w : W) :
 
 /-- **Strong entails weak**: if "must φ" holds, then "ought φ" holds. -/
 theorem strong_entails_weak (f : ModalBase W) (g g' : OrderingSource W)
-    (p : W → Bool) (w : W)
+    (p : W → Prop) [DecidablePred p] (w : W)
     (h : strongNecessity f g p w) :
     weakNecessity f g g' p w := by
   rw [strongNecessity, necessity_iff_all] at h
@@ -120,10 +120,10 @@ theorem strong_entails_weak (f : ModalBase W) (g g' : OrderingSource W)
 
     Counterexample: worlds are a 3-element type. g-best = {a, b} (tied).
     g' distinguishes them (b wins). Under g∪g', best = {b}.
-    If p(b) = true but p(a) = false, weak necessity holds but strong fails. -/
+    If p(b) holds but p(a) fails, weak necessity holds but strong fails. -/
 theorem weak_not_entails_strong :
     ¬(∀ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-        (f : ModalBase W) (g g' : OrderingSource W) (p : W → Bool) (w : W),
+        (f : ModalBase W) (g g' : OrderingSource W) (p : W → Prop) (_ : DecidablePred p) (w : W),
         weakNecessity f g g' p w → strongNecessity f g p w) := by
   intro h
   -- Use Bool as a 2-element world type
@@ -131,18 +131,19 @@ theorem weak_not_entails_strong :
     (fun _ => [])  -- empty modal base: all worlds accessible
     (fun _ => [fun w => w == true || w == false])  -- trivial ordering: all tied
     (fun _ => [fun w => w])  -- secondary ordering: true > false
-    (fun w => w)  -- p = id
+    (fun w => w = true)  -- p: holds at true
+    (by intro w; cases w <;> infer_instance)
     true
   rw [weakNecessity, necessity_iff_all] at this
   rw [strongNecessity, necessity_iff_all] at this
   have hWeak : ∀ w' ∈ bestWorlds (emptyBackground (W := Bool))
     (combineOrdering (fun _ => [fun w => w == true || w == false])
       (fun _ => [fun w => w])) true,
-    (fun w => w) w' = true := by decide
+    w' = true := by decide
   have hStrong := this hWeak
   have : ¬ ∀ w' ∈ bestWorlds (emptyBackground (W := Bool))
     (fun _ => [fun w => w == true || w == false]) true,
-    (fun w => w) w' = true := by decide
+    w' = true := by decide
   exact this hStrong
 
 /-! ## Deontic application -/
@@ -152,27 +153,27 @@ structure DeonticStrength (W : Type*) where
   secondaryNorms : OrderingSource W
 
 def DeonticStrength.must (d : DeonticStrength W)
-    (p : W → Bool) (w : W) : Prop :=
+    (p : W → Prop) (w : W) : Prop :=
   strongNecessity d.primary.circumstances d.primary.norms p w
 
 def DeonticStrength.ought (d : DeonticStrength W)
-    (p : W → Bool) (w : W) : Prop :=
+    (p : W → Prop) (w : W) : Prop :=
   weakNecessity d.primary.circumstances d.primary.norms d.secondaryNorms p w
 
 theorem deontic_must_eq_kratzer (d : DeonticFlavor W)
-    (p : W → Bool) (w : W) :
+    (p : W → Prop) (w : W) :
     necessity d.circumstances d.norms p w ↔
     strongNecessity d.circumstances d.norms p w :=
   Iff.rfl
 
 theorem deontic_must_entails_ought (d : DeonticStrength W)
-    (p : W → Bool) (w : W)
+    (p : W → Prop) [DecidablePred p] (w : W)
     (h : d.must p w) :
     d.ought p w :=
   strong_entails_weak d.primary.circumstances d.primary.norms d.secondaryNorms p w h
 
 theorem weak_eq_strong_no_secondary (f : ModalBase W) (g : OrderingSource W)
-    (p : W → Bool) (w : W) :
+    (p : W → Prop) (w : W) :
     weakNecessity f g (emptyBackground (W := W)) p w ↔
     strongNecessity f g p w := by
   simp only [weakNecessity, strongNecessity, necessity_iff_all]

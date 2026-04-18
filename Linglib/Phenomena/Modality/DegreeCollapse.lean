@@ -34,7 +34,7 @@ open Phenomena.Modality.ConditionalModality
     This captures Kratzer's graded modality: the ordering source modulates
     modal strength between bare possibility and necessity. -/
 def modalStrength (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World) : ℚ :=
+    (p : (World → Bool)) (w : World) : ℚ :=
   let best := bestWorlds f g w
   if best = ∅ then 0
   else (best.filter p).card / best.card
@@ -61,7 +61,7 @@ theorem strength_without_normalcy (w : World) :
 
 /-- **Strength 1 ↔ necessity** (when best worlds are nonempty). -/
 theorem strength_one_iff_necessity (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World)
+    (p : (World → Bool)) (w : World)
     (hNonempty : (bestWorlds f g w).Nonempty) :
     modalStrength f g p w = 1 ↔ necessity f g p w := by
   rw [necessity_iff_all]
@@ -86,7 +86,7 @@ theorem strength_one_iff_necessity (f : ModalBase World) (g : OrderingSource Wor
 
 /-- **Positive strength ↔ possibility** (when best worlds are nonempty). -/
 theorem strength_pos_iff_possibility (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World)
+    (p : (World → Bool)) (w : World)
     (hNonempty : (bestWorlds f g w).Nonempty) :
     modalStrength f g p w > 0 ↔ possibility f g p w := by
   rw [possibility_iff_any]
@@ -112,7 +112,7 @@ theorem strength_pos_iff_possibility (f : ModalBase World) (g : OrderingSource W
     exact div_pos (by exact_mod_cast hFilterPos) hCast_pos
 
 /-- **Empty ordering gives strength = proportion of all accessible worlds.** -/
-theorem empty_ordering_strength (f : ModalBase World) (p : BProp World) (w : World)
+theorem empty_ordering_strength (f : ModalBase World) (p : (World → Bool)) (w : World)
     (hNe : (accessibleWorlds f w).Nonempty) :
     modalStrength f (λ _ => []) p w =
     ↑((accessibleWorlds f w).filter p).card / ↑(accessibleWorlds f w).card := by

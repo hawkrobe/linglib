@@ -2,7 +2,7 @@ import Linglib.Core.Distributions
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Quantities
-import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Numerals.Basic
 
 /-!
 # @cite{goodman-stuhlmuller-2013}: Empirical Data
@@ -294,7 +294,7 @@ The model reproduces all 11 findings. All proofs use `rsa_predict`.
 **Data source**: `GoodmanStuhlmuller2013.Data`
 **Theories used**: `Pragmatics.RSA.Core.Config`,
   `Pragmatics.RSA.Quantities`,
-  `Theories.Semantics.Quantification.Numerals.Semantics`
+  `Theories.Semantics.Numerals.Basic`
 
 -/
 
@@ -487,7 +487,7 @@ theorem quantifier_meaning_grounded (u : QUtt) (s : WorldState) :
 /-- Lower-bound numeral meaning derives from NumeralTheory.meaning. -/
 theorem lb_meaning_grounded (u : NumUtt) (s : WorldState) :
     lbMeaning u s =
-    Semantics.Quantification.Numerals.LowerBound.meaning
+    Semantics.Numerals.LowerBound.meaning
       (match u with | .one => .one | .two => .two | .three => .three)
       s.toNat := by
   cases u <;> cases s <;> rfl

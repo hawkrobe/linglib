@@ -2,7 +2,7 @@ import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
 import Linglib.Core.Mood.Basic
-import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Theories.Semantics.Tense.CounterfactualTense
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
@@ -46,7 +46,7 @@ namespace Semantics.Conditionals.Iatridou
 
 open Core.Context (KContext ContextTower ContextShift temporalShift)
 open Semantics.Tense.CounterfactualTense (PastMorphologyUse CounterfactualDistance)
-open Semantics.Tense.BranchingTime (WorldHistory historicalBase)
+open Core.Modality.HistoricalAlternatives (WorldHistory historicalBase)
 open Semantics.Mood (subjShift)
 open Core.Verbs
 

@@ -1,4 +1,5 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 import Linglib.Core.Constraint.System
 import Linglib.Theories.Phonology.Syllable.Foot
@@ -743,16 +744,17 @@ theorem weak_is_outward_sensitive :
 -- § 8: Integration with Core Infrastructure
 -- ============================================================================
 
-/-- Telugu's `hasACC` exactly mirrors `Core.Case.isNonnom` via `toCore`.
+/-- Telugu's `hasACC` exactly mirrors `Core.Case.IsNonnominative` via `toCore`.
     This confirms the study's case-feature assignments are consistent with
     the containment hierarchy infrastructure. -/
 theorem hasACC_eq_isNonnom (c : TeluguCase) :
-    c.hasACC = isNonnom c.toCore := by
+    c.hasACC = decide (Core.Case.IsNonnominative c.toCore) := by
   cases c <;> rfl
 
 -- The Telugu 5-case inventory is contiguous on Blake's typological
 -- hierarchy (@cite{blake-1994}).
-#guard Core.validInventory [.nom, .acc, .gen, .dat, .loc]
+example : Core.Case.IsValidInventory ({.nom, .acc, .gen, .dat, .loc} : Finset Core.Case) := by
+  decide
 
 /-- The strong alternation pattern derived from VI output matches the
     `strongAllomorphyPattern` used for the *ABA check.

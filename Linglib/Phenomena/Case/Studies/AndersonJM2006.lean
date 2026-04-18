@@ -1,4 +1,6 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.FeatureBundle
+import Linglib.Core.Case.Hierarchy
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
 import Linglib.Fragments.English.Predicates.Verbal
@@ -68,11 +70,12 @@ open Fragments.English.Predicates.Verbal
     The three-feature system makes finer distinctions than the old
     two-feature version: experiencer ({src, loc}) is now SEPARATE from
     agent ({src}). -/
-def CaseRelation.canonicalTheta : CaseRelation → Option ThetaRole
-  | ⟨_, true, true⟩   => some .experiencer  -- srcLoc, absSrcLoc
-  | ⟨_, true, false⟩  => some .agent        -- ergative, srcAbs
-  | ⟨true, false, _⟩  => some .patient      -- absolutive, absLoc
-  | ⟨false, false, _⟩ => none               -- neutral, locative
+def CaseRelation.canonicalTheta (cr : CaseRelation) : Option ThetaRole :=
+  if Core.CaseFeature.src ∈ cr then
+    if Core.CaseFeature.loc ∈ cr then some .experiencer  -- srcLoc, absSrcLoc
+    else some .agent                                     -- ergative, srcAbs
+  else if Core.CaseFeature.abs ∈ cr then some .patient   -- absolutive, absLoc
+  else none                                              -- neutral, locative
 
 /-- Reverse mapping: from the Fragment's 8-role inventory to Anderson's
     case relations.

@@ -175,6 +175,7 @@ import Linglib.Core.StringHom
 import Linglib.Core.VerbCluster
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Order
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Split
 import Linglib.Core.Case.Grammaticalization

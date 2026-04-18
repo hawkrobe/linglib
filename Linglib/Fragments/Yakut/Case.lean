@@ -1,4 +1,4 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
 import Linglib.Theories.Syntax.Case.Dependent
 
 /-!
@@ -50,8 +50,8 @@ theorem yakut_gen_agree     : yakutCaseConfig.genMode  = .agreeD     := rfl
     and PART, plus the relational/derivational GEN that surfaces on
     DP-internal possessors. The traditional eight-case system is
     accusative-aligned with no ABS/ERG distinction. -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .abl, .inst, .com, .part]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .abl, .inst, .com, .part}
 
 -- ============================================================================
 -- § 3: Contrast with Mongolian

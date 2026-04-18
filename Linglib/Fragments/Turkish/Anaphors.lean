@@ -95,7 +95,6 @@ def experimentalCases : List Core.Case :=
 
 /-- All experimental cases are in the Turkish case inventory -/
 theorem experimental_cases_valid :
-    experimentalCases.all (Fragments.Turkish.Case.caseInventory.contains ·) = true := by
-  native_decide
+    ∀ c ∈ experimentalCases, c ∈ Fragments.Turkish.Case.caseInventory := by decide
 
 end Fragments.Turkish.Anaphors

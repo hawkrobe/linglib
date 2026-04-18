@@ -53,13 +53,16 @@ the correspondence.
 
 The chain structure deliberately does NOT place all TOs on a single time
 line. Non-adjacent TOs have no asserted relation, which is how Declerck
-captures temporal vagueness (ch. 6 §1.5, ch. 7 §6–7).
+captures temporal vagueness (the future-perfect / conditional cases
+where TO_sit's relation to t₀ is genuinely underspecified).
 
 ### The E = R invariant
 
-Declerck's universal principle is TS = TO_sit (ch. 6 §1.4). Since we map
-both R and E to TO_sit in the Reichenbach projection, every Declercian
-frame has E = R. This means `isPerfect` (E < R) can never hold for a
+Declerck's universal principle is TS = TO_sit (every tense represents
+its situation time as coinciding with some orientation time, never as
+standing in a non-trivial Allen relation to it). Since we map both R
+and E to TO_sit in the Reichenbach projection, every Declercian frame
+has E = R. This means `isPerfect` (E < R) can never hold for a
 Declercian projection — the "perfect" lives in the chain structure
 (TO_sit before TO₂), not in the Reichenbach E/R relation.
 
@@ -67,7 +70,7 @@ Declercian projection — the "perfect" lives in the chain structure
 
 namespace Semantics.Tense.TOChain
 
-open Core.Time (TemporalRelation)
+open Core.Time (TemporalRelation Domain NamedTO TO OrientationTime)
 open Core.Reichenbach (ReichenbachFrame)
 
 
@@ -75,7 +78,7 @@ open Core.Reichenbach (ReichenbachFrame)
 -- § Time-Spheres
 -- ════════════════════════════════════════════════════════════════
 
-/-- The two time-spheres of English (@cite{declerck-1991} ch. 2 §3).
+/-- The two time-spheres of English (@cite{declerck-1991}, @cite{declerck-2006}).
 
     The tense system partitions linguistic time into two spheres:
     - **past**: wholly before t₀, containing the preterit, past perfect,
@@ -96,20 +99,24 @@ inductive TimeSphere where
 -- § TO-Chain Architecture
 -- ════════════════════════════════════════════════════════════════
 
-/-- A single link in a TO chain: a named Time of Orientation related to
-    the next TO inward by a temporal relation.
+/-- A single link in a TO chain: a `Core.Time.OrientationTime`-labelled
+    Time of Orientation related to the next TO inward by a temporal
+    relation.
 
     Example: in the past perfect schema `TS simul TO_sit before TO₂ before TO₁`,
-    the link for TO₂ is `⟨"TO₂",.before, t₂⟩` — meaning TO₂ stands in the
-    `before` relation to the next TO outward (TO₁). -/
+    the link for TO₂ is `⟨.sub 0, .before, t₂⟩` — meaning TO₂ (= `.sub 0`,
+    one step out from the binding TO₁ = `.perspective`) stands in the
+    `before` relation to the next TO outward. The `.situation` role
+    labels TO_sit. -/
 structure TOLink (Time : Type*) where
-  /-- Identifier (e.g., "TO_sit", "TO₂", "TO₃") -/
-  name : String
+  /-- The orientation-time role of this link (`.situation` for TO_sit;
+      `.sub n` for an intermediate TO). -/
+  name : OrientationTime
   /-- How this TO relates to the next TO inward toward TO₁.
       `before` = this TO precedes the next; `after` = this TO follows it;
       `overlapping` = simultaneous. -/
   relation : TemporalRelation
-  /-- The resolved time value -/
+  /-- The resolved time value. -/
   time : Time
 
 /-- Declerck's tense schema: a chain of TOs from TO₁ outward to TO_sit,
@@ -117,9 +124,9 @@ structure TOLink (Time : Type*) where
 
     The `chain` runs from TO₁ (innermost, adjacent to t₀) outward through
     intermediate TOs to TO_sit. The situation time TS is always simultaneous
-    with TO_sit (Declerck ch. 6 §1.4: every tense represents TS as coinciding
-    with some TO), so there is no separate `ts` field — both E and R in the
-    Reichenbach projection are derived from TO_sit.
+    with TO_sit (Declerck's universal principle: every tense represents TS
+    as coinciding with some TO), so there is no separate `ts` field — both
+    E and R in the Reichenbach projection are derived from TO_sit.
 
     The chain captures only adjacent relations. Non-adjacent TOs (e.g.,
     TO_sit and TO₁ in the conditional tense) have no asserted relation —
@@ -191,7 +198,7 @@ section Schemata
 
 variable {Time : Type*} [LinearOrder Time]
 
-/-- **Preterit** (ch. 7 §1): TS simul TO_sit, TO_sit before TO₁.
+/-- **Preterit**: TS simul TO_sit, TO_sit before TO₁.
     Past time-sphere. Two TOs in the chain.
 
     Example: "John was ill yesterday."
@@ -201,10 +208,10 @@ variable {Time : Type*} [LinearOrder Time]
 def preterit (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨"TO_sit", .before, toSit⟩]
+  chain := [⟨.situation, .before, toSit⟩]
   timeSphere := .past
 
-/-- **Present tense** (ch. 7 §2): TS simul TO_sit, TO_sit includes t₀.
+/-- **Present tense**: TS simul TO_sit, TO_sit includes t₀.
     Present time-sphere. Two TOs in the chain.
 
     Declerck's key insight: the present tense does NOT assert `TO_sit = t₀`
@@ -219,10 +226,10 @@ def preterit (t0 toSit : Time) : DeclercianSchema Time where
 def present (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨"TO_sit", .overlapping, toSit⟩]
+  chain := [⟨.situation, .overlapping, toSit⟩]
   timeSphere := .present
 
-/-- **Present perfect** (ch. 7 §3): TS simul TO_sit, TO_sit before TO₁.
+/-- **Present perfect**: TS simul TO_sit, TO_sit before TO₁.
     Present time-sphere (the crucial difference from the preterit).
 
     Declerck's distinctive claim: the present perfect and preterit differ
@@ -238,10 +245,10 @@ def present (t0 toSit : Time) : DeclercianSchema Time where
 def presentPerfect (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨"TO_sit", .before, toSit⟩]
+  chain := [⟨.situation, .before, toSit⟩]
   timeSphere := .present
 
-/-- **Past perfect** (ch. 7 §4): TS simul TO_sit, TO_sit before TO₂, TO₂ before TO₁.
+/-- **Past perfect**: TS simul TO_sit, TO_sit before TO₂, TO₂ before TO₁.
     Past time-sphere. Three TOs in the chain.
 
     The past perfect is either "the past of the preterit" or "the past of the
@@ -256,10 +263,10 @@ def presentPerfect (t0 toSit : Time) : DeclercianSchema Time where
 def pastPerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨"TO₂", .before, to2⟩, ⟨"TO_sit", .before, toSit⟩]
+  chain := [⟨.sub 0, .before, to2⟩, ⟨.situation, .before, toSit⟩]
   timeSphere := .past
 
-/-- **Future tense** (ch. 7 §5): TS simul TO_sit, TO_sit after TO₁.
+/-- **Future tense**: TS simul TO_sit, TO_sit after TO₁.
     Present time-sphere. Two TOs in the chain.
 
     The future locates TO_sit either wholly after t₀ or from t₀ onwards.
@@ -272,10 +279,10 @@ def pastPerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
 def future (t0 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨"TO_sit", .after, toSit⟩]
+  chain := [⟨.situation, .after, toSit⟩]
   timeSphere := .present
 
-/-- **Future perfect** (ch. 7 §6): TS simul TO_sit, TO_sit before TO₂, TO₂ after TO₁.
+/-- **Future perfect**: TS simul TO_sit, TO_sit before TO₂, TO₂ after TO₁.
     Present time-sphere. Three TOs in the chain.
 
     The future perfect is vague about the relation between TO_sit and TO₁:
@@ -290,10 +297,10 @@ def future (t0 toSit : Time) : DeclercianSchema Time where
 def futurePerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨"TO₂", .after, to2⟩, ⟨"TO_sit", .before, toSit⟩]
+  chain := [⟨.sub 0, .after, to2⟩, ⟨.situation, .before, toSit⟩]
   timeSphere := .present
 
-/-- **Conditional tense** (ch. 7 §7): TS simul TO_sit, TO_sit after TO₂, TO₂ before TO₁.
+/-- **Conditional tense**: TS simul TO_sit, TO_sit after TO₂, TO₂ before TO₁.
     Past time-sphere (for TO₂). Three TOs in the chain.
 
     The conditional is the mirror image of the future perfect: "future in
@@ -308,10 +315,10 @@ def futurePerfect (t0 to2 toSit : Time) : DeclercianSchema Time where
 def conditional (t0 to2 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨"TO₂", .before, to2⟩, ⟨"TO_sit", .after, toSit⟩]
+  chain := [⟨.sub 0, .before, to2⟩, ⟨.situation, .after, toSit⟩]
   timeSphere := .past
 
-/-- **Conditional perfect** (ch. 7 §8): TS simul TO_sit, TO_sit before TO₃,
+/-- **Conditional perfect**: TS simul TO_sit, TO_sit before TO₃,
     TO₃ after TO₂, TO₂ before TO₁. Past time-sphere. Four TOs in the chain.
 
     The most intricate English tense: "past in the future in the past."
@@ -325,7 +332,7 @@ def conditional (t0 to2 toSit : Time) : DeclercianSchema Time where
 def conditionalPerfect (t0 to2 to3 toSit : Time) : DeclercianSchema Time where
   t0 := t0
   to1 := t0
-  chain := [⟨"TO₂", .before, to2⟩, ⟨"TO₃", .after, to3⟩, ⟨"TO_sit", .before, toSit⟩]
+  chain := [⟨.sub 0, .before, to2⟩, ⟨.sub 1, .after, to3⟩, ⟨.situation, .before, toSit⟩]
   timeSphere := .past
 
 end Schemata
@@ -446,7 +453,8 @@ theorem presentPerfect_frame_isPast (t0 toSit : ℤ) (h : toSit < t0) :
 
 /-- Preterit and present perfect produce identical Reichenbach frames for
     the same times — they differ ONLY in time-sphere. This is Declerck's
-    central thesis about the perfect/preterit distinction (ch. 7 §1,3). -/
+    central thesis about the perfect/preterit distinction: the contrast
+    is sphere membership, not R/P configuration. -/
 theorem preterit_presentPerfect_same_frame (t0 toSit : ℤ) :
     (preterit t0 toSit).toFrame = (presentPerfect t0 toSit).toFrame := by
   simp [preterit, presentPerfect, DeclercianSchema.toFrame, DeclercianSchema.toSit]
@@ -494,8 +502,9 @@ end Bridge
     TOs, their relation is genuinely unspecified.
 
     The future perfect and conditional tense are both vague about
-    the relation between TO_sit and TO₁. Reichenbach incorrectly
-    treats this as three-way ambiguity (ch. 5 §1.2). -/
+    the relation between TO_sit and TO₁. @cite{reichenbach-1947}
+    incorrectly treats this as three-way ambiguity (S–R–E, R–S–E,
+    R–E–S as distinct schemata for the conditional). -/
 
 /-- The future perfect is vague about TO_sit's relation to t₀:
     the chain relates TO_sit to TO₂ and TO₂ to TO₁, but NOT
@@ -699,5 +708,200 @@ theorem conditionalPerfect_tower_depth (t0 to2 to3 toSit : Time) {E P : Type*}
              conditionalPerfect, List.length_map, List.length_cons, List.length_nil]
 
 end TowerBridge
+
+-- ════════════════════════════════════════════════════════════════
+-- § Domain Bridge: TO-Chain as Core.Time.Domain
+-- ════════════════════════════════════════════════════════════════
+
+/-! Re-express `DeclercianSchema` via the framework-agnostic
+    `Core.Time.Domain` substrate (central TO + list of sub-TOs, with
+    Allen relations computed on demand from the underlying linear
+    order). The `toDomain` builder lifts the chain structure into a
+    `Domain Time OrientationTime` whose central TO is the utterance
+    time (T₀) and whose sub-TOs are the perspective TO (TO₁) followed
+    by every chain link as a point interval.
+
+    This is **additive**: the `DeclercianSchema` structure and all the
+    named-tense constructors stay unchanged. Domain-level tooling can
+    now work uniformly with
+    `s.toDomain.relatedByName precedesSet .situation .perspective`,
+    while existing Reichenbach-projecting code continues to use
+    `s.toFrame`. -/
+
+section DomainBridge
+
+variable {Time : Type*} [LinearOrder Time]
+
+/-- The schema as a `Core.Time.Domain` over the universal
+    `OrientationTime` role vocabulary: central = `.utterance` (T₀, the
+    temporal zero-point), sub-TOs = `.perspective` (TO₁) followed by
+    every chain link as a point interval.
+
+    The Allen relations between any pair of TOs are **computed** from
+    the underlying `LinearOrder Time` via `Interval.allenRel`; nothing
+    is stored. The chain's `relation` field encodes the *intended*
+    Declercian temporal relation but is not consulted here — its job is
+    to constrain admissible time assignments at the call site, not to
+    reproduce information already implicit in the linear order. -/
+def DeclercianSchema.toDomain (s : DeclercianSchema Time) :
+    Domain Time OrientationTime where
+  central := NamedTO.ofPoint .utterance s.t0
+  subTOs := NamedTO.ofPoint .perspective s.to1 ::
+            s.chain.map (fun link => NamedTO.ofPoint link.name link.time)
+
+@[simp] theorem DeclercianSchema.toDomain_central (s : DeclercianSchema Time) :
+    s.toDomain.central = NamedTO.ofPoint .utterance s.t0 := rfl
+
+@[simp] theorem DeclercianSchema.toDomain_subTOs (s : DeclercianSchema Time) :
+    s.toDomain.subTOs = NamedTO.ofPoint .perspective s.to1 ::
+      s.chain.map (fun link => NamedTO.ofPoint link.name link.time) := rfl
+
+/-- The schema's domain labels: utterance first, then perspective, then
+    every chain link's role. Useful for stating role-set invariants. -/
+theorem DeclercianSchema.toDomain_labels (s : DeclercianSchema Time) :
+    s.toDomain.labels =
+      OrientationTime.utterance :: .perspective :: s.chain.map TOLink.name := by
+  simp [DeclercianSchema.toDomain, Domain.labels, Domain.all,
+        NamedTO.ofPoint, List.map_cons, List.map_map, Function.comp]
+
+end DomainBridge
+
+-- ════════════════════════════════════════════════════════════════
+-- § Zone Classifier
+-- ════════════════════════════════════════════════════════════════
+
+/-! The `Zone` enum encodes Declerck's six principal temporal sectors
+    — two time-spheres (`past`, `present`) crossed with three positions
+    (anterior `pre-`, central, posterior `post-`). Each English tense
+    locates its situation time in one of these zones. The
+    `DeclercianSchema.zoneOf` classifier projects a schema to its zone
+    based on `(timeSphere, last chain-link relation)` — the relation of
+    `TO_sit` to its outer anchor, plus the sphere membership of that
+    anchor.
+
+    For **simple tenses** (chain length 1, anchor = `TO₁` = `t₀`):
+    - `(past, before)` → `past` (preterit)
+    - `(present, before)` → `prePresent` (present perfect)
+    - `(present, overlapping)` → `present` (present)
+    - `(present, after)` → `postPresent` (future)
+
+    For **compound tenses** (chain length ≥ 2, anchor = `TO₂` etc.):
+    - `(past, before)` → `prePast` (past perfect, conditional perfect)
+    - `(past, after)` → `postPast` (conditional)
+    - `(present, before)` → `prePresent` (future perfect's TO_sit, anterior)
+    - `(present, after)` → `postPresent`
+
+    The classifier is **not** the inverse of the chain — vague tenses
+    (future perfect, conditional) under-determine `TO_sit`'s zone, and
+    the classifier returns the zone of the immediate anchor. The
+    `zone_of_*` `rfl`-theorems below verify each named tense classifies
+    to its expected zone. -/
+
+/-- The six principal Declercian zones: two time-spheres crossed with
+    three sphere-internal positions. -/
+inductive Zone where
+  | prePast
+  | past
+  | postPast
+  | prePresent
+  | present
+  | postPresent
+  deriving DecidableEq, Repr
+
+namespace DeclercianSchema
+
+variable {Time : Type*}
+
+/-- Classify a schema's TO_sit by zone, based on `(timeSphere, last
+    chain link's relation)`. See the section docstring for the mapping.
+    Defaults to the sphere's center for empty chains and odd cases. -/
+def zoneOf (s : DeclercianSchema Time) : Zone :=
+  let lastRel := (s.chain.getLast?).map TOLink.relation
+  let nLinks := s.chain.length
+  match s.timeSphere, nLinks, lastRel with
+  | .past,    1, some .before      => .past         -- preterit
+  | .past,    1, some .overlapping => .past
+  | .past,    1, some .after       => .postPast
+  | .present, 1, some .before      => .prePresent   -- present perfect
+  | .present, 1, some .overlapping => .present      -- present
+  | .present, 1, some .after       => .postPresent  -- future
+  | .past,    _, some .before      => .prePast      -- past perfect, conditional perfect
+  | .past,    _, some .overlapping => .past
+  | .past,    _, some .after       => .postPast     -- conditional
+  | .present, _, some .before      => .prePresent   -- future perfect (TO_sit before TO₂)
+  | .present, _, some .overlapping => .present
+  | .present, _, some .after       => .postPresent
+  | .past,    _, _                 => .past
+  | .present, _, _                 => .present
+
+end DeclercianSchema
+
+-- ── Per-tense zone theorems (each named English tense in its expected zone) ──
+
+section ZoneClassification
+
+variable {Time : Type*}
+
+theorem preterit_zone (t0 toSit : Time) :
+    (preterit t0 toSit).zoneOf = .past := rfl
+
+theorem present_zone (t0 toSit : Time) :
+    (present t0 toSit).zoneOf = .present := rfl
+
+theorem presentPerfect_zone (t0 toSit : Time) :
+    (presentPerfect t0 toSit).zoneOf = .prePresent := rfl
+
+theorem future_zone (t0 toSit : Time) :
+    (future t0 toSit).zoneOf = .postPresent := rfl
+
+theorem pastPerfect_zone (t0 to2 toSit : Time) :
+    (pastPerfect t0 to2 toSit).zoneOf = .prePast := rfl
+
+theorem conditional_zone (t0 to2 toSit : Time) :
+    (conditional t0 to2 toSit).zoneOf = .postPast := rfl
+
+theorem futurePerfect_zone (t0 to2 toSit : Time) :
+    (futurePerfect t0 to2 toSit).zoneOf = .prePresent := rfl
+
+theorem conditionalPerfect_zone (t0 to2 to3 toSit : Time) :
+    (conditionalPerfect t0 to2 to3 toSit).zoneOf = .prePast := rfl
+
+end ZoneClassification
+
+/-- Preterit and present perfect classify to **different zones** (`past`
+    vs `prePresent`) despite projecting to identical Reichenbach frames
+    (`preterit_presentPerfect_same_frame`). This is exactly Declerck's
+    central claim about the perfect/preterit distinction: the difference
+    lives in the time-sphere/zone, not in the underlying R/P
+    configuration. The Zone classifier surfaces what `toFrame` flattens. -/
+theorem preterit_presentPerfect_differ_zone {Time : Type*} (t0 toSit : Time) :
+    (preterit t0 toSit).zoneOf ≠ (presentPerfect t0 toSit).zoneOf := by
+  simp [preterit, presentPerfect, DeclercianSchema.zoneOf]
+
+-- ════════════════════════════════════════════════════════════════
+-- § TenseSystem and AspectSystem Instances
+-- ════════════════════════════════════════════════════════════════
+
+/-! Declerck's `DeclercianSchema` as a `Core.Time.TenseSystem`
+    (anchor = `.perspective` for TO₁, situation = `.situation` for
+    TO_sit) and `Core.Time.AspectSystem` instance. The aspect instance
+    collapses event and reference roles both to `.situation` —
+    Declerck's universal `TS = TO_sit` principle means E = R always
+    holds, so the generic `isPerfective` is trivially satisfied for
+    every Declercian schema, and `isPerfect` can never hold. The
+    "perfect" lives in the chain structure (TO_sit before `.sub 0`),
+    not in the E/R relation — exactly Declerck's claim. -/
+
+instance declercianSchema_tenseSystem {Time : Type*} [LinearOrder Time] :
+    Core.Time.TenseSystem (DeclercianSchema Time) Time OrientationTime where
+  toDomain := DeclercianSchema.toDomain
+  anchor := .perspective
+  situation := .situation
+
+instance declercianSchema_aspectSystem {Time : Type*} [LinearOrder Time] :
+    Core.Time.AspectSystem (DeclercianSchema Time) Time OrientationTime where
+  toDomain := DeclercianSchema.toDomain
+  event := .situation
+  reference := .situation
 
 end Semantics.Tense.TOChain

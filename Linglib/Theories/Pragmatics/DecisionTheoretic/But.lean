@@ -40,7 +40,7 @@ open DTS
 (ii) B is negatively relevant to H,
 (iii) A∧B is negatively relevant to H (B "wins"). -/
 def butFelicitous {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (a b : BProp W) : Prop :=
+    (ctx : DTSContext W) (a b : (W → Bool)) : Prop :=
   posRelevant ctx a ∧ negRelevant ctx b ∧
   negRelevant ctx (Decidable.pand W a b)
 
@@ -57,7 +57,7 @@ This captures a cross-linguistic universal: properties are positively
 correlated across instances (knowing one dog is friendly makes it more
 likely another is). -/
 def NNIR {W : Type*} [Fintype W] (E : Type*)
-    (prior : W → ℚ) (Q : E → BProp W) : Prop :=
+    (prior : W → ℚ) (Q : E → (W → Bool)) : Prop :=
   ∀ (a b : E), condProb prior (Q b) (Q a) ≥ margProb prior (Q b)
 
 -- ============================================================
@@ -69,11 +69,11 @@ but-clause itself (H = B).
 
 Merin argues this is the preferred interpretation when no explicit
 issue is provided. -/
-def defaultBut {W : Type*} (b : BProp W) : Issue W :=
+def defaultBut {W : Type*} (b : (W → Bool)) : Issue W :=
   ⟨b⟩
 
 /-- Context for default-but: issue is B itself. -/
-def defaultButCtx {W : Type*} (prior : W → ℚ) (b : BProp W) : DTSContext W :=
+def defaultButCtx {W : Type*} (prior : W → ℚ) (b : (W → Bool)) : DTSContext W :=
   ⟨defaultBut b, prior⟩
 
 -- ============================================================
@@ -86,20 +86,20 @@ variable {W : Type*} [Fintype W]
 
 -- Helper lemmas for probSum with repeated/contradictory propositions
 
-private lemma probSum_pand_self (prior : W → ℚ) (b : BProp W) :
+private lemma probSum_pand_self (prior : W → ℚ) (b : (W → Bool)) :
     probSum prior (Decidable.pand W b b) = probSum prior b := by
   simp [probSum, Decidable.pand, Bool.and_self]
 
-private lemma probSum_pand_assoc_self (prior : W → ℚ) (a b : BProp W) :
+private lemma probSum_pand_assoc_self (prior : W → ℚ) (a b : (W → Bool)) :
     probSum prior (Decidable.pand W (Decidable.pand W a b) b) =
     probSum prior (Decidable.pand W a b) := by
   congr 1; funext w; simp [Decidable.pand]
 
-private lemma probSum_pand_pnot_zero (prior : W → ℚ) (b : BProp W) :
+private lemma probSum_pand_pnot_zero (prior : W → ℚ) (b : (W → Bool)) :
     probSum prior (Decidable.pand W b (Decidable.pnot W b)) = 0 := by
   simp [probSum, Decidable.pand, Decidable.pnot, Bool.and_not_self]
 
-private lemma probSum_pand_pand_pnot_zero (prior : W → ℚ) (a b : BProp W) :
+private lemma probSum_pand_pand_pnot_zero (prior : W → ℚ) (a b : (W → Bool)) :
     probSum prior (Decidable.pand W (Decidable.pand W a b) (Decidable.pnot W b)) = 0 := by
   simp only [probSum, Decidable.pand, Decidable.pnot]
   apply Finset.sum_eq_zero
@@ -109,18 +109,18 @@ private lemma probSum_pand_pand_pnot_zero (prior : W → ℚ) (a b : BProp W) :
   simp [this]
 
 /-- condProb of b given ¬b is always 0: P(B|¬B) = 0. -/
-private lemma condProb_self_given_not (prior : W → ℚ) (b : BProp W) :
+private lemma condProb_self_given_not (prior : W → ℚ) (b : (W → Bool)) :
     condProb prior b (Decidable.pnot W b) = 0 := by
   simp [condProb, probSum_pand_pnot_zero]
 
 /-- BF_B(B) ≥ 1: B is never negatively relevant to itself. -/
-private lemma bayesFactor_self_ge_one (prior : W → ℚ) (b : BProp W) :
+private lemma bayesFactor_self_ge_one (prior : W → ℚ) (b : (W → Bool)) :
     bayesFactor (defaultButCtx prior b) b ≥ 1 := by
   simp only [bayesFactor, defaultButCtx, defaultBut, condProb_self_given_not]
   simp; split <;> linarith
 
 /-- Total probability: probSum(A) = probSum(A∧B) + probSum(A∧¬B). -/
-private lemma probSum_pand_split (prior : W → ℚ) (a b : BProp W) :
+private lemma probSum_pand_split (prior : W → ℚ) (a b : (W → Bool)) :
     probSum prior a =
     probSum prior (Decidable.pand W a b) +
     probSum prior (Decidable.pand W a (Decidable.pnot W b)) := by
@@ -132,7 +132,7 @@ private lemma probSum_pand_split (prior : W → ℚ) (a b : BProp W) :
   simp [ha, hb]
 
 /-- probSum(B) + probSum(¬B) = probSum(⊤). -/
-private lemma probSum_add_pnot (prior : W → ℚ) (b : BProp W) :
+private lemma probSum_add_pnot (prior : W → ℚ) (b : (W → Bool)) :
     probSum prior b + probSum prior (Decidable.pnot W b) =
     probSum prior (Decidable.top W) := by
   simp only [probSum, ← Finset.sum_add_distrib]
@@ -141,22 +141,22 @@ private lemma probSum_add_pnot (prior : W → ℚ) (b : BProp W) :
   rcases Bool.eq_false_or_eq_true (b w) with hb | hb <;> simp [hb]
 
 /-- pand is commutative at the probSum level. -/
-private lemma probSum_pand_comm (prior : W → ℚ) (a b : BProp W) :
+private lemma probSum_pand_comm (prior : W → ℚ) (a b : (W → Bool)) :
     probSum prior (Decidable.pand W a b) = probSum prior (Decidable.pand W b a) := by
   congr 1; funext w; simp [Decidable.pand, Bool.and_comm]
 
 /-- probSum(pand A top) = probSum A. -/
-private lemma probSum_pand_top (prior : W → ℚ) (a : BProp W) :
+private lemma probSum_pand_top (prior : W → ℚ) (a : (W → Bool)) :
     probSum prior (Decidable.pand W a (Decidable.top W)) = probSum prior a := by
   congr 1; funext w; simp [Decidable.pand, Decidable.top, Bool.and_true]
 
 /-- probSum is non-negative when prior is non-negative. -/
-private lemma probSum_nonneg' (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0) (p : BProp W) :
+private lemma probSum_nonneg' (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0) (p : (W → Bool)) :
     0 ≤ probSum prior p := by
   unfold probSum; apply Finset.sum_nonneg; intro w _; split <;> linarith [hP w]
 
 /-- CIP in probSum form: P(A∧B∧H)·P(H) = P(A∧H)·P(B∧H). -/
-private lemma cip_probSum (prior : W → ℚ) (a b h : BProp W)
+private lemma cip_probSum (prior : W → ℚ) (a b h : (W → Bool))
     (hh : probSum prior h ≠ 0)
     (hcip : condProb prior (Decidable.pand W a b) h =
       condProb prior a h * condProb prior b h) :
@@ -174,7 +174,7 @@ private lemma cross_product_factorization (aH anH bH bnH pH pnH : ℚ)
   subst this; ring
 
 /-- negRelevant implies condProb(e|¬H) ≠ 0. -/
-private lemma negRelevant_condProb_ne (ctx : DTSContext W) (e : BProp W)
+private lemma negRelevant_condProb_ne (ctx : DTSContext W) (e : (W → Bool))
     (hNeg : negRelevant ctx e) :
     condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) ≠ 0 := by
   intro h
@@ -184,7 +184,7 @@ private lemma negRelevant_condProb_ne (ctx : DTSContext W) (e : BProp W)
 
 /-- posRelevant implies the cross-product sign: P(E∧H)·P(¬H) > P(E∧¬H)·P(H).
     When condProb(E|¬H) = 0, reduces to showing P(E∧H) > 0. -/
-private lemma posRelevant_cross (ctx : DTSContext W) (e : BProp W)
+private lemma posRelevant_cross (ctx : DTSContext W) (e : (W → Bool))
     (hPrior : ∀ w, ctx.prior w ≥ 0)
     (hpos : posRelevant ctx e)
     (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
@@ -235,7 +235,7 @@ private lemma posRelevant_cross (ctx : DTSContext W) (e : BProp W)
     linarith
 
 /-- negRelevant implies the cross-product sign: P(E∧H)·P(¬H) < P(E∧¬H)·P(H). -/
-private lemma negRelevant_cross (ctx : DTSContext W) (e : BProp W)
+private lemma negRelevant_cross (ctx : DTSContext W) (e : (W → Bool))
     (hPrior : ∀ w, ctx.prior w ≥ 0)
     (hneg : negRelevant ctx e)
     (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
@@ -273,7 +273,7 @@ And P(B) = P(B|H)·P(H) + P(B|¬H)·P(¬H).
 So P(B|A) - P(B) = (P(B|H) - P(B|¬H))·(P(H|A) - P(H)).
 Contrariness makes the two factors have opposite signs, giving P(B|A) < P(B). -/
 theorem cip_contrariness_implies_unexpectedness (ctx : DTSContext W)
-    (a b : BProp W)
+    (a b : (W → Bool))
     (hPrior : ∀ w, ctx.prior w ≥ 0)
     (hNorm : probSum ctx.prior (Decidable.top W) = 1)
     (hcip : CIP ctx a b)
@@ -362,7 +362,7 @@ theorem cip_contrariness_implies_unexpectedness (ctx : DTSContext W)
 
 P(A∧B|B) = P(A|B)·P(B|B) because B∧(A∧B) = A∧B and B∧B = B.
 P(A∧B|¬B) = P(A|¬B)·P(B|¬B) because (A∧B)∧¬B = ⊥ and B∧¬B = ⊥. -/
-theorem topic_eq_b_satisfies_cip (prior : W → ℚ) (a b : BProp W) :
+theorem topic_eq_b_satisfies_cip (prior : W → ℚ) (a b : (W → Bool)) :
     CIP (defaultButCtx prior b) a b := by
   constructor
   · -- P(A∧B|B) = P(A|B) · P(B|B)
@@ -388,7 +388,7 @@ P(A|B)/P(A|¬B) < 1, so P(A∧B)·P(¬B) < P(A∧¬B)·P(B).
 By total probability P(A) = P(A∧B) + P(A∧¬B) and normalization
 P(B) + P(¬B) = 1, this yields P(A∧B) < P(A)·P(B),
 hence P(B|A) = P(A∧B)/P(A) < P(B) = margProb(B). -/
-theorem default_but_properties (prior : W → ℚ) (a b : BProp W)
+theorem default_but_properties (prior : W → ℚ) (a b : (W → Bool))
     (hPrior : ∀ w, prior w ≥ 0)
     (hNorm : probSum prior (Decidable.top W) = 1)
     (hNegA : negRelevant (defaultButCtx prior b) a)
@@ -445,7 +445,7 @@ interpretation. When H = Q(b), the Bayes factor BF_{Q(b)}(Q(b)) is
 P(Q(b)|Q(b))/P(Q(b)|¬Q(b)) = 1/0 ≥ 1, so Q(b) cannot be negatively
 relevant to itself, violating the butFelicitous requirement. -/
 theorem harris_universal {E : Type*} (prior : W → ℚ)
-    (Q : E → BProp W) (a b : E)
+    (Q : E → (W → Bool)) (a b : E)
     (_hnnir : NNIR E prior Q) :
     ¬ butFelicitous (defaultButCtx prior (Q b)) (Q a) (Q b) := by
   intro ⟨_, hNeg, _⟩

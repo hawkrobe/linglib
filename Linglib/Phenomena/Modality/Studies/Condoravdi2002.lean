@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.AT
-import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Core.Modality.HistoricalAlternatives
 
 /-!
 # @cite{condoravdi-2002}: Temporal Interpretation of Modals
@@ -38,7 +38,7 @@ open Core.Time
 open Core.Verbs (Dynamicity)
 open Semantics.Tense.Aspect.Core
 open Semantics.Tense.AT
-open Semantics.Tense.BranchingTime
+open Core.Modality.HistoricalAlternatives
 
 variable {W Time : Type*} [LinearOrder Time]
 

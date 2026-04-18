@@ -13,13 +13,13 @@ with *world-dependent credence* and *nested thresholds* for epistemic modals.
 The split between these directories mirrors a real theoretical distinction:
 
 - **`Attitudes/EpistemicThreshold`**: flat (world-independent) threshold
-  semantics for attitude verbs. `AgentCredence E W = E → BProp W → ℚ`.
+  semantics for attitude verbs. `AgentCredence E W = E → (W → Bool) → ℚ`.
   The agent's credence in φ is a single number, regardless of which world
   we evaluate at. Handles: *believes*, *knows*, *is certain that*.
 
 - **`Modality/EpistemicProbability` (this file)**: world-dependent threshold semantics
   for epistemic modals, especially nested/complex expressions.
-  `WorldCredence E W = E → W → BProp W → ℚ`. The agent's credence in φ
+  `WorldCredence E W = E → W → (W → Bool) → ℚ`. The agent's credence in φ
   can vary across worlds (reflecting different information states). Handles:
   *probably*, *certainly*, *certainly likely*, *might be possible*.
 
@@ -44,7 +44,7 @@ probability ≥ b₁ to φ." In our formalization, this becomes:
     nestedThreshold wcr θ₂ i (nestedThreshold wcr θ₁ j φ)
 
 The compositional structure is captured by the type: `nestedThreshold`
-takes a `BProp W` and returns a `BProp W`, so it can be iterated.
+takes a `(W → Bool)` and returns a `(W → Bool)`, so it can be iterated.
 
 ## Connection to Kratzer
 
@@ -79,7 +79,7 @@ open Core.Proposition
     pair induces a different belief distribution over urn states, so
     the agent's credence in "RED is probable" depends on which world
     (= which observation) they are in. -/
-abbrev WorldCredence (E W : Type*) := E → W → BProp W → ℚ
+abbrev WorldCredence (E W : Type*) := E → W → (W → Bool) → ℚ
 
 /-- Lift world-independent credence to world-dependent credence.
 
@@ -96,21 +96,21 @@ def liftCredence {E W : Type*}
 -- ============================================================================
 
 /-- Nested threshold: agent `a`'s credence in `φ` meets threshold `θ`
-    *at world `w`*. Returns a `BProp W` that can be nested further.
+    *at world `w`*. Returns a `(W → Bool)` that can be nested further.
 
     This is the core compositional operator for complex probability
     expressions. Each application adds one layer of threshold evaluation:
 
     ```
-    nestedThreshold wcr θ_prob a RED         -- ⟦probably(RED)⟧ : BProp W
-    nestedThreshold wcr θ_cert a             -- ⟦certainly(·)⟧ : BProp W → BProp W
-      (nestedThreshold wcr θ_prob a RED)     -- ⟦certainly(probably(RED))⟧ : BProp W
+    nestedThreshold wcr θ_prob a RED         -- ⟦probably(RED)⟧ : (W → Bool)
+    nestedThreshold wcr θ_cert a             -- ⟦certainly(·)⟧ : (W → Bool) → (W → Bool)
+      (nestedThreshold wcr θ_prob a RED)     -- ⟦certainly(probably(RED))⟧ : (W → Bool)
     ```
 
-    The output type `BProp W = W → Bool` is the same as the input
+    The output type `(W → Bool) = W → Bool` is the same as the input
     proposition type, so nesting is well-typed by construction. -/
 def nestedThreshold {E W : Type*} (wcr : WorldCredence E W)
-    (θ : ℚ) (a : E) (φ : BProp W) : BProp W :=
+    (θ : ℚ) (a : E) (φ : (W → Bool)) : (W → Bool) :=
   fun w => decide (wcr a w φ ≥ θ)
 
 /-- Negated nested threshold: agent `a`'s credence in `φ` falls below
@@ -120,7 +120,7 @@ def nestedThreshold {E W : Type*} (wcr : WorldCredence E W)
     ⟦certainly not(p)⟧ = {s ∈ S | s/10 < 1 − θ_certainly}
     ⟦probably not(p)⟧  = {s ∈ S | s/10 < 1 − θ_probably} -/
 def nestedThresholdNeg {E W : Type*} (wcr : WorldCredence E W)
-    (θ : ℚ) (a : E) (φ : BProp W) : BProp W :=
+    (θ : ℚ) (a : E) (φ : (W → Bool)) : (W → Bool) :=
   fun w => decide (wcr a w φ < 1 - θ)
 
 /-- Complex expressions compose: the result of one `nestedThreshold`
@@ -129,7 +129,7 @@ def nestedThresholdNeg {E W : Type*} (wcr : WorldCredence E W)
     Example (@cite{herbstritt-franke-2019}):
     `certainly(probably(RED))` = `nestedThreshold θ_cert (nestedThreshold θ_prob RED)` -/
 def complexExpression {E W : Type*} (wcr : WorldCredence E W)
-    (θ_outer θ_inner : ℚ) (a : E) (φ : BProp W) : BProp W :=
+    (θ_outer θ_inner : ℚ) (a : E) (φ : (W → Bool)) : (W → Bool) :=
   nestedThreshold wcr θ_outer a (nestedThreshold wcr θ_inner a φ)
 
 -- ============================================================================
@@ -143,7 +143,7 @@ def complexExpression {E W : Type*} (wcr : WorldCredence E W)
     generalizes the flat framework. First-order expressions give the
     same interpretation either way. -/
 theorem nestedThreshold_const_iff {E W : Type*}
-    (cr : AgentCredence E W) (θ : ℚ) (a : E) (φ : BProp W) (w : W) :
+    (cr : AgentCredence E W) (θ : ℚ) (a : E) (φ : (W → Bool)) (w : W) :
     (nestedThreshold (liftCredence cr) θ a φ) w = true ↔
     meetsThreshold cr θ a φ := by
   simp only [nestedThreshold, liftCredence, meetsThreshold, decide_eq_true_eq]

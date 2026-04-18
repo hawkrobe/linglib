@@ -255,13 +255,20 @@ inductive NegModalScope where
   deriving DecidableEq, Repr
 
 /-- Evaluate NOT(MODAL(P)) at world w. -/
-def evalNegOverModal (T : ModalTheory) (force : ModalForce) (p : Proposition) (w : World) : Bool :=
-  !(T.eval force p w)
+def evalNegOverModal (T : ModalTheory) (force : ModalForce) (p : World → Prop) (w : World) : Prop :=
+  ¬ T.eval force p w
+
+instance (T : ModalTheory) (force : ModalForce) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (evalNegOverModal T force p w) := by
+  unfold evalNegOverModal; infer_instance
 
 /-- Evaluate MODAL(NOT(P)) at world w. -/
-def evalModalOverNeg (T : ModalTheory) (force : ModalForce) (p : Proposition) (w : World) : Bool :=
-  let notP : Proposition := λ w' => !p w'
-  T.eval force notP w
+def evalModalOverNeg (T : ModalTheory) (force : ModalForce) (p : World → Prop) (w : World) : Prop :=
+  T.eval force (fun w' => ¬ p w') w
+
+instance (T : ModalTheory) (force : ModalForce) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (evalModalOverNeg T force p w) := by
+  unfold evalModalOverNeg; infer_instance
 
 /-- The scope pattern for a contracted negative auxiliary.
 
@@ -303,26 +310,31 @@ disagree, making ◇P and ◇¬P both true while ¬◇P is false. -/
 private def kripkeT : ModalTheory where
   name := "Kripke countermodel"
   citation := ""
-  eval := λ force p w =>
+  eval := fun force p w =>
     match force, w with
-    | .necessity, .w0 | .weakNecessity, .w0 => p .w1 && p .w2
+    | .necessity, .w0 | .weakNecessity, .w0 => p .w1 ∧ p .w2
     | .necessity, .w1 | .weakNecessity, .w1 => p .w1
     | .necessity, .w2 | .weakNecessity, .w2 => p .w2
     | .necessity, .w3 | .weakNecessity, .w3 => p .w3
-    | .possibility, .w0 => p .w1 || p .w2
+    | .possibility, .w0 => p .w1 ∨ p .w2
     | .possibility, .w1 => p .w1
     | .possibility, .w2 => p .w2
     | .possibility, .w3 => p .w3
+  decEval := fun force p _ w => by cases force <;> cases w <;> infer_instance
 
 /-- Duality holds for Kripke models by De Morgan on the accessibility set. -/
 private theorem kripkeT_normal : kripkeT.isNormal := by
   intro p w
+  classical
   simp only [ModalTheory.dualityHolds, ModalTheory.necessity, ModalTheory.possibility, kripkeT]
-  cases w <;> cases hp1 : p .w1 <;> cases hp2 : p .w2 <;> cases hp3 : p .w3 <;> rfl
+  cases w <;> tauto
 
 /-- Witness proposition: true at w0/w1, false at w2/w3. -/
-private def witnessP : Proposition := λ w =>
-  match w with | .w0 | .w1 => true | .w2 | .w3 => false
+private def witnessP : World → Prop := fun w =>
+  match w with | .w0 | .w1 => True | .w2 | .w3 => False
+
+private instance : DecidablePred witnessP := fun w => by
+  unfold witnessP; cases w <;> infer_instance
 
 /-- NOT(CAN(P)) and CAN(NOT(P)) are not equivalent in general.
 
@@ -331,8 +343,8 @@ accesses worlds where P differs, ◇P and ◇¬P are both true, so
 ¬◇P = false but ◇¬P = true. -/
 theorem neg_over_poss_ne_poss_over_neg :
     ∃ (T : ModalTheory), T.isNormal ∧
-    ¬(∀ (p : Proposition) (w : World),
-      evalNegOverModal T .possibility p w =
+    ¬(∀ (p : World → Prop) (w : World),
+      evalNegOverModal T .possibility p w ↔
       evalModalOverNeg T .possibility p w) := by
   refine ⟨kripkeT, kripkeT_normal, ?_⟩
   intro h
@@ -346,8 +358,8 @@ necessary (¬□P = true when P fails at w2) is weaker than being
 necessarily false (□¬P = false when P holds at w1). -/
 theorem neg_over_nec_ne_nec_over_neg :
     ∃ (T : ModalTheory), T.isNormal ∧
-    ¬(∀ (p : Proposition) (w : World),
-      evalNegOverModal T .necessity p w =
+    ¬(∀ (p : World → Prop) (w : World),
+      evalNegOverModal T .necessity p w ↔
       evalModalOverNeg T .necessity p w) := by
   refine ⟨kripkeT, kripkeT_normal, ?_⟩
   intro h

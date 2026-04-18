@@ -1,6 +1,7 @@
 import Linglib.Phenomena.Comparison.Typology
 import Linglib.Phenomena.ClauseChaining.Data
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.FeatureBundle
 import Linglib.Fragments.Japanese.Comparison
 import Linglib.Fragments.Korean.Comparison
 import Linglib.Fragments.Turkish.Comparison

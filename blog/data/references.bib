@@ -5001,7 +5001,7 @@
   subfield  = {semantics/modality},
   validated = {true},
   role      = {formalized},
-  sources   = {Phenomena/Modality/Studies/Condoravdi2002.lean;Theories/Semantics/Tense/AT.lean;Theories/Semantics/Tense/BranchingTime.lean}
+  sources   = {Phenomena/Modality/Studies/Condoravdi2002.lean;Theories/Semantics/Tense/AT.lean;Core/Modality/HistoricalAlternatives.lean}
 }
 @article{alonso-ovalle-menendez-benito-2010,
   author    = {Alonso-Ovalle, Luis and Men\'{e}ndez-Benito, Paula},
@@ -7761,7 +7761,7 @@
   subfield  = {semantics/tense},
   role      = {cited},
   validated = {true},
-  sources   = {Theories/Semantics/Tense/BranchingTime.lean;Theories/Semantics/Tense/TemporalConnectives/BeaverCondoravdi.lean}
+  sources   = {Core/Modality/HistoricalAlternatives.lean;Theories/Semantics/Tense/TemporalConnectives/BeaverCondoravdi.lean}
 }% REF: Comrie, B. (1985). Tense. Cambridge University Press.
 @book{comrie-1985,
   author    = {Comrie, Bernard},
@@ -7797,17 +7797,15 @@
   sources   = {Theories/Semantics/Events/Agentivity.lean;Theories/Semantics/Events/Basic.lean;Theories/Semantics/Events/ThematicRoles.lean;Theories/Semantics/Tense/TemporalConnectives/EventBridge.lean}
 }% REF: Declerck, R. (1991). *Tense in English: Its Structure and Use in Discourse*. Routledge.
 @book{declerck-1991,
-  author    = {Jackman, Henry},
+  author    = {Declerck, Renaat},
   year      = {1991},
   title     = {Tense in English: Its Structure and Use in Discourse},
-  doi       = {10.2307/416558},
-  volume    = {69},
-  number    = {2},
-  pages     = {412--413},
+  publisher = {Routledge},
+  address   = {London},
   subfield  = {semantics/tense},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/TenseAspect/Data.lean;Theories/Semantics/Tense/Declerck.lean}
+  sources   = {Phenomena/TenseAspect/Data.lean;Theories/Semantics/Tense/TOChain.lean}
 }% REF: Pustejovsky, J. (1991). The syntax of event structure.
 @book{bybee-perkins-pagliuca-1994,
   author    = {Bybee, Joan and Perkins, Revere and Pagliuca, William},
@@ -7860,15 +7858,18 @@
   sources   = {Phenomena/TenseAspect/DiagnosticsBridge.lean}
 }% REF: Declerck, R. (2006). *The Grammar of the English Tense System*. Mouton.
 @book{declerck-2006,
-  author    = {Declerck, Renaat},
+  author    = {Declerck, Renaat and Reed, Susan and Cappelle, Bert},
   year      = {2006},
-  title     = {The Grammar of the English Tense System},
+  title     = {The Grammar of the English Verb Phrase, Volume 1: The Grammar of the English Tense System},
+  series    = {Topics in English Linguistics},
+  number    = {60-1},
   doi       = {10.1515/9783110199888},
   publisher = {Mouton de Gruyter},
+  address   = {Berlin},
   subfield  = {semantics/tense},
   role      = {cited},
   validated = {true},
-  sources   = {Phenomena/TenseAspect/Data.lean;Theories/Semantics/Tense/Declerck.lean}
+  sources   = {Phenomena/TenseAspect/Data.lean;Theories/Semantics/Tense/TOChain.lean}
 }% REF: Beavers, John. (2010). The structure of lexical meaning: Why semantics really matters. Language 86(4), 821-864.
 @misc{beavers-2023-sag-lectures,
   author    = {Beavers, John},
@@ -8444,6 +8445,20 @@
   validated = {true},
   role      = {cited},
   sources   = {Theories/Semantics/Lexical/Adjective/Theory.lean}
+}
+@article{cariani-santorio-2018,
+  author    = {Cariani, Fabrizio and Santorio, Paolo},
+  year      = {2018},
+  title     = {Will done Better: Selection Semantics, Future Credence, and Indeterminacy},
+  journal   = {Mind},
+  volume    = {127},
+  number    = {505},
+  pages     = {129--165},
+  doi       = {10.1093/mind/fzw004},
+  subfield  = {semantics/modality},
+  validated = {true},
+  role      = {formalized},
+  sources   = {Theories/Semantics/Modality/Selectional.lean;Phenomena/Modality/Studies/CarianiSantorio2018.lean}
 }
 @article{cariani-santorio-wellwood-2024,
   author    = {Cariani, Fabrizio and Santorio, Paolo and Wellwood, Alexis},
@@ -19079,6 +19094,19 @@
   role      = {formalized},
   validated = {true},
   sources   = {Core/Morphology/Wordhood.lean;Core/Morphology/FormMeaningMapping.lean;Theories/Morphology/TheorySpace.lean;Theories/Morphology/Core/WordhoodBridge.lean}
+}
+@article{kalin-2018,
+  author    = {Kalin, Laura},
+  year      = {2018},
+  title     = {Licensing and Differential Object Marking: The View from Neo-Aramaic},
+  journal   = {Syntax},
+  volume    = {21},
+  number    = {2},
+  pages     = {112--159},
+  doi       = {10.1111/synt.12153},
+  subfield  = {syntax},
+  role      = {formalized},
+  validated = {true}
 }
 @book{stump-2001,
   author    = {Stump, Gregory T.},

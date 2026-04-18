@@ -128,21 +128,21 @@ entailment chain via the proven theorems in `Directive.lean`. -/
 theorem must_entails_ought_kratzer :
     ∀ (f : Semantics.Modality.Kratzer.ModalBase World)
       (g g' : Semantics.Modality.Kratzer.OrderingSource World)
-      (p : Core.Proposition.BProp Semantics.Attitudes.Intensional.World)
+      (p : Semantics.Attitudes.Intensional.World → Prop) (_ : DecidablePred p)
       (w : Semantics.Attitudes.Intensional.World),
     strongNecessity f g p w →
     weakNecessity f g g' p w :=
-  fun f g g' p w => strong_entails_weak f g g' p w
+  fun f g g' p _ w => strong_entails_weak f g g' p w
 
 /-- Re-export: the converse fails (Directive.lean). -/
 theorem ought_not_entails_must_kratzer :
     ¬(∀ {W : Type} [DecidableEq W] [Fintype W]
         (f : Semantics.Modality.Kratzer.ModalBase W)
         (g g' : Semantics.Modality.Kratzer.OrderingSource W)
-        (p : W → Bool) (w : W),
+        (p : W → Prop) (_ : DecidablePred p) (w : W),
       weakNecessity f g g' p w →
       strongNecessity f g p w) :=
-  fun h => weak_not_entails_strong fun _ _ _ f g g' p w hw => h f g g' p w hw
+  fun h => weak_not_entails_strong fun _ _ _ f g g' p hp w hw => h f g g' p hp w hw
 
 -- ============================================================================
 -- §4. Variable Force Typology (§3.2)

@@ -1,4 +1,5 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 open Interfaces.Morphosyntax.CaseContainment
 
@@ -31,22 +32,22 @@ namespace Fragments.Telugu.Case
 /-- Telugu 5-case core inventory.
     ACC, GEN, DAT are inflectional suffixes within the prosodic word;
     LOC is realized by a postposition (-lō) in a separate prosodic word. -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .loc]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .loc}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 3).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 2: Containment Properties
 -- ============================================================================
 
 /-- All nonnominative Telugu cases bear the ACC feature. -/
-theorem acc_nonnom : isNonnom .acc = true := rfl
-theorem gen_nonnom : isNonnom .gen = true := rfl
-theorem dat_nonnom : isNonnom .dat = true := rfl
-theorem loc_nonnom : isNonnom .loc = true := rfl
-theorem nom_not_nonnom : isNonnom .nom = false := rfl
+theorem acc_nonnom : Core.Case.IsNonnominative .acc := by decide
+theorem gen_nonnom : Core.Case.IsNonnominative .gen := by decide
+theorem dat_nonnom : Core.Case.IsNonnominative .dat := by decide
+theorem loc_nonnom : Core.Case.IsNonnominative .loc := by decide
+theorem nom_not_nonnom : ¬ Core.Case.IsNonnominative .nom := by decide
 
 /-- Telugu's NOM-vs-oblique split is an ABB pattern — contiguous on the
     containment hierarchy, consistent with case-conditioned VI. -/
@@ -60,7 +61,7 @@ theorem nom_vs_oblique_contiguous :
 /-- Telugu and Tamil share the same core case spine on Blake's hierarchy.
     Both have NOM, ACC, GEN, DAT, LOC (Tamil additionally has ABL, INST, COM). -/
 theorem telugu_subset_tamil :
-    caseInventory.all (fun c => [Core.Case.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com].elem c)
-      = true := by native_decide
+    caseInventory ⊆ ({.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com} : Finset Core.Case) := by
+  decide
 
 end Fragments.Telugu.Case

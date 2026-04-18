@@ -51,7 +51,7 @@ namespace Implicature.Constraints.Wang2025
 
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
-open Core.Proposition (BProp FiniteWorlds)
+open Core.Proposition (FiniteWorlds)
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
 of the speaker-K operator. The Prop-valued canonical version lives in
@@ -197,7 +197,7 @@ epistemic stance. It scopes relative to exh_mx:
 Uses a local Bool-valued accessibility relation; for the Prop-valued
 canonical Kripke semantics see `Core.IntensionalLogic.RestrictedModality.boxR`.
 -/
-def speakerK [FiniteWorlds W] (R : BAccessRel W) (φ : BProp W) : BProp W :=
+def speakerK [FiniteWorlds W] (R : BAccessRel W) (φ : (W → Bool)) : (W → Bool) :=
   fun w => (FiniteWorlds.worlds.filter (R w)).all φ
 
 
@@ -258,10 +258,10 @@ is satisfied at all CG worlds.
 
 This connects the constraint-based analysis to the CI bifurcation approach
 for de re presupposition. Takes the Bool presupposition directly since
-`ciLift` operates on `BProp` (Bool-valued) functions.
+`ciLift` operates on `W → Bool` functions.
 -/
-theorem ciLift_felicitous_when_fp_holds (presupBool assertionBool : BProp W)
-    (cg : BProp W) (hfp : ∀ w, cg w = true → presupBool w = true) :
+theorem ciLift_felicitous_when_fp_holds (presupBool assertionBool : (W → Bool))
+    (cg : (W → Bool)) (hfp : ∀ w, cg w = true → presupBool w = true) :
     ∀ w, cg w = true → (ciLift presupBool assertionBool).ci w = true := by
   intro w hw
   exact hfp w hw

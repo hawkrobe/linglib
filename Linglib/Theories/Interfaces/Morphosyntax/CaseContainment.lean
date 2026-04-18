@@ -1,5 +1,9 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.FeatureBundle
+import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Order
 import Linglib.Theories.Morphology.Containment
+import Mathlib.Order.BoundedOrder.Basic
 
 /-!
 # Case Containment and Syncretism
@@ -59,88 +63,16 @@ are complementary, not competing.
 namespace Interfaces.Morphosyntax.CaseContainment
 
 open Core
+open Core.Case (containmentRank)
+
+-- The Caha containment rank, the `≤`-based containment relation, the
+-- `IsNonnominative` natural class, and the `PartialOrder Case` instance
+-- all live in `Core.Case.Order` (they are foundational and theory-neutral).
+-- This file builds on top of them with allomorphy / syncretism / inventory
+-- predicates that are specific to morphology–syntax interface theorizing.
 
 -- ============================================================================
--- § 1: Containment Rank
--- ============================================================================
-
-/-- Caha's containment rank (@cite{caha-2009}). Cases higher on the
-    containment hierarchy have representations that include all lower cases.
-
-    [[[[[ NOM ] ACC ] GEN ] DAT ] P ]
-
-    The P(ostpositional) layer includes LOC and other spatial cases whose
-    representations contain the full case spine.
-
-    Returns `none` for cases not on the containment hierarchy
-    (e.g., ERG/ABS in ergative systems, or minor cases whose containment
-    structure is less well established). -/
-def containmentRank : Case → Option Nat
-  | .nom => some 0
-  | .acc => some 1
-  | .gen => some 2
-  | .dat => some 3
-  | .loc => some 4
-  | _ => none
-
-/-- Does case `inner` have a representation contained within case `outer`?
-    True when `inner.containmentRank ≤ outer.containmentRank`. -/
-def containedIn (inner outer : Case) : Bool :=
-  match containmentRank inner, containmentRank outer with
-  | some ri, some ro => ri ≤ ro
-  | _, _ => false
-
--- ============================================================================
--- § 2: Containment Theorems
--- ============================================================================
-
-/-- NOM is contained in every case on the hierarchy. -/
-theorem nom_contained_in_acc : containedIn .nom .acc = true := rfl
-theorem nom_contained_in_gen : containedIn .nom .gen = true := rfl
-theorem nom_contained_in_dat : containedIn .nom .dat = true := rfl
-theorem nom_contained_in_loc : containedIn .nom .loc = true := rfl
-
-/-- ACC is contained in GEN, DAT, and LOC but not NOM. -/
-theorem acc_contained_in_gen : containedIn .acc .gen = true := rfl
-theorem acc_contained_in_dat : containedIn .acc .dat = true := rfl
-theorem acc_contained_in_loc : containedIn .acc .loc = true := rfl
-theorem acc_not_in_nom : containedIn .acc .nom = false := rfl
-
-/-- Every case contains itself. -/
-theorem containment_reflexive (c : Case) (h : (containmentRank c).isSome = true) :
-    containedIn c c = true := by
-  simp only [containedIn]
-  cases c <;> simp_all [containmentRank, Option.isSome]
-
-/-- Containment is transitive. -/
-theorem containment_transitive (a b c : Case)
-    (hab : containedIn a b = true)
-    (hbc : containedIn b c = true) :
-    containedIn a c = true := by
-  simp only [containedIn] at *
-  cases a <;> cases b <;> cases c <;> simp_all [containmentRank]
-
--- ============================================================================
--- § 3: Nonnominative as a Natural Class
--- ============================================================================
-
-/-- The set of nonnominative cases on the containment hierarchy:
-    those whose representation contains ACC.
-
-    @cite{mcfadden-2018} argues this is the key natural class for stem
-    allomorphy: a VI rule conditioned on [ACC] captures the
-    NOM-vs-oblique split found cross-linguistically. -/
-def isNonnom (c : Case) : Bool :=
-  containedIn .acc c
-
-theorem acc_is_nonnom : isNonnom .acc = true := rfl
-theorem gen_is_nonnom : isNonnom .gen = true := rfl
-theorem dat_is_nonnom : isNonnom .dat = true := rfl
-theorem loc_is_nonnom : isNonnom .loc = true := rfl
-theorem nom_not_nonnom : isNonnom .nom = false := rfl
-
--- ============================================================================
--- § 4: The *ABA Constraint
+-- § 1: The *ABA Constraint
 -- ============================================================================
 
 /-- An allomorphy pattern over the four core cases (NOM, ACC, GEN, DAT),
@@ -167,7 +99,7 @@ def AllomorphyPattern.isContiguous (p : AllomorphyPattern) : Bool :=
   !p.violatesABA
 
 -- ============================================================================
--- § 5: *ABA Verification
+-- § 2: *ABA Verification
 -- ============================================================================
 
 def abbPattern : AllomorphyPattern := ⟨0, 1, 1, 1⟩
@@ -194,7 +126,7 @@ def uniformPattern : AllomorphyPattern := ⟨0, 0, 0, 0⟩
 theorem uniform_contiguous : uniformPattern.isContiguous = true := by decide
 
 -- ============================================================================
--- § 6: Containment vs. Typological Hierarchy
+-- § 3: Containment vs. Typological Hierarchy
 -- ============================================================================
 
 /-- Containment rank preserves Blake's typological ordering on the core
@@ -208,7 +140,7 @@ theorem containment_refines_blake :
     Case.hierarchyRank .gen ≥ Case.hierarchyRank .dat := by decide
 
 -- ============================================================================
--- § 7: Syncretism
+-- § 4: Syncretism
 -- ============================================================================
 
 /-- A syncretism pattern: two cases share a morphological exponent. -/
@@ -226,14 +158,14 @@ def hierarchyAdjacent (c1 c2 : Case) : Bool :=
 
 /-- Relaxed adjacency: no case in the inventory falls strictly between
     the two syncretic cases on the hierarchy. -/
-def inventoryAdjacent (inv : List Case) (c1 c2 : Case) : Bool :=
+def inventoryAdjacent (inv : Finset Case) (c1 c2 : Case) : Bool :=
   let lo := min c1.hierarchyRank c2.hierarchyRank
   let hi := max c1.hierarchyRank c2.hierarchyRank
-  !inv.any fun c =>
-    c != c1 && c != c2 && c.hierarchyRank > lo && c.hierarchyRank < hi
+  decide (∀ c ∈ inv,
+    c = c1 ∨ c = c2 ∨ c.hierarchyRank ≤ lo ∨ c.hierarchyRank ≥ hi)
 
 -- ============================================================================
--- § 8: Well-Known Syncretism Patterns
+-- § 5: Well-Known Syncretism Patterns
 -- ============================================================================
 
 def nomAccSyncretism : Syncretism :=
@@ -243,7 +175,7 @@ def comInstSyncretism : Syncretism :=
   ⟨.com, .inst, by decide⟩
 
 -- ============================================================================
--- § 9: Adjacency Theorems
+-- § 6: Adjacency Theorems
 -- ============================================================================
 
 theorem nom_acc_adjacent : hierarchyAdjacent .nom .acc = true := by decide
@@ -258,7 +190,8 @@ theorem erg_inst_not_strictly_adjacent :
 
 /-- But ERG/INST IS inventory-adjacent in a system with only {ERG, ABS, INST}. -/
 theorem erg_inst_inv_adjacent :
-    inventoryAdjacent [.erg, .abs, .inst] .erg .inst = true := by decide
+    inventoryAdjacent ({.erg, .abs, .inst} : Finset Case) .erg .inst = true := by
+  decide
 
 /-- Same-tier cases are always strictly adjacent. -/
 theorem same_tier_adjacent (c1 c2 : Case)
@@ -267,7 +200,7 @@ theorem same_tier_adjacent (c1 c2 : Case)
   simp [hierarchyAdjacent, h]
 
 -- ============================================================================
--- § 10: *ABA and Syncretism
+-- § 7: *ABA and Syncretism
 -- ============================================================================
 
 theorem neuter_syncretism_contiguous :
@@ -286,29 +219,29 @@ theorem nom_dat_syncretism_violates_aba :
     (AllomorphyPattern.mk 0 1 1 0).violatesABA = true := by decide
 
 -- ============================================================================
--- § 11: Anderson's Features Explain Syncretism
+-- § 8: Anderson's Features Explain Syncretism
 -- ============================================================================
 
 /-- ERG/INST syncretism: both share the {src} feature despite hierarchy
     non-adjacency. -/
 theorem erg_inst_share_src :
-    (Case.toCaseRelation .erg).map CaseRelation.src = some true ∧
-    (Case.toCaseRelation .inst).map CaseRelation.src = some true ∧
+    (Case.toCaseRelation .erg).any (CaseFeature.src ∈ ·) ∧
+    (Case.toCaseRelation .inst).any (CaseFeature.src ∈ ·) ∧
     hierarchyAdjacent .erg .inst = false :=
-  ⟨rfl, rfl, by decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 /-- NOM/ACC syncretism (neuter nouns): both contain the abs feature. -/
 theorem nom_acc_share_abs :
-    (Case.toCaseRelation .nom).map CaseRelation.abs = some true ∧
-    (Case.toCaseRelation .acc).map CaseRelation.abs = some true :=
-  ⟨rfl, rfl⟩
+    (Case.toCaseRelation .nom).any (CaseFeature.abs ∈ ·) ∧
+    (Case.toCaseRelation .acc).any (CaseFeature.abs ∈ ·) :=
+  ⟨by decide, by decide⟩
 
 /-- ABL/LOC syncretism: both map to {loc}. -/
 theorem abl_loc_same_case_relation :
     Case.toCaseRelation .abl = Case.toCaseRelation .loc := rfl
 
 -- ============================================================================
--- § 12: Bridge to Generic Containment
+-- § 9: Bridge to Generic Containment
 -- ============================================================================
 
 /-- Case-specific `violatesABA` is the generic contiguity checker
@@ -323,5 +256,28 @@ theorem case_violatesABA_eq_generic (p : AllomorphyPattern) :
       Morphology.Containment.violatesABA [p.nom, p.acc, p.gen, p.dat] := by
   simp only [AllomorphyPattern.violatesABA,
     Morphology.Containment.violatesABA_four]
+
+-- ============================================================================
+-- § 10: Inventory Contiguity Predicate
+-- ============================================================================
+
+/-- Does an inventory respect Caha's containment hierarchy? True iff the
+    on-hierarchy ranks present in the inventory form a contiguous prefix
+    `[0, 1, …, k]` starting at NOM.
+
+    The hierarchy has exactly 5 ranks (NOM=0, ACC=1, GEN=2, DAT=3, LOC=4),
+    so we hardcode the four implications: presence of rank `r > 0` requires
+    presence of rank `r - 1`. Off-hierarchy cases (ERG, ABS, INST, COM, …)
+    are silently ignored — Caha is silent on them, and that silence is
+    preserved here just as it is by the partial-order structure.
+
+    Per-Fragment instantiation lives in
+    `Phenomena/Case/Studies/Caha2009.lean`. -/
+def respectsCahaContainment (inv : Finset Case) : Bool :=
+  let hasRank (r : Nat) : Bool := decide (∃ c ∈ inv, containmentRank c = some r)
+  (!hasRank 1 || hasRank 0) &&
+  (!hasRank 2 || hasRank 1) &&
+  (!hasRank 3 || hasRank 2) &&
+  (!hasRank 4 || hasRank 3)
 
 end Interfaces.Morphosyntax.CaseContainment

@@ -68,7 +68,7 @@ C-distributivity ⟹ P-to-Q Entailment
 
 /-- C-distributivity implies P-to-Q Entailment (re-exported from CDistributivity.lean). -/
 theorem constraint_hierarchy_cdist_ptoq {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool)
     (hCD : IsCDistributive V_prop V_question) :
     IsPtoQEntailing V_question :=
@@ -213,7 +213,7 @@ Constituent interrogatives highlight ALL alternatives, preserving triviality.
 /-- Polar interrogatives: hope-whether reduces to hope-that (not trivial). -/
 theorem hope_whether_not_trivial {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (p neg_p : BProp W) (C : QuestionDen W) :
+    (x : E) (p neg_p : (W → Bool)) (C : QuestionDen W) :
     hopeHighlightSemantics μ θ .polarInterrogative x [p, neg_p] C =
     decide (μ x p > θ C) :=
   hope_highlight_polar_equiv μ θ x p neg_p C
@@ -510,7 +510,7 @@ to violate P-to-Q Entailment:
 
 -- Re-export knopinion verification from CDistributivity
 example {W E : Type*} (believes : E → (W → Bool) → Bool)
-    (x : E) (p q : BProp W) (w : W) (hp : believes x p = true) (hpq : p ≠ q) :
+    (x : E) (p q : (W → Bool)) (w : W) (hp : believes x p = true) (hpq : p ≠ q) :
     ¬IsPtoQEntailing (knopinion believes) :=
   knopinion_violates_ptoq believes x p q w hp hpq
 

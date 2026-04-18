@@ -392,18 +392,18 @@ Boolean and FC holds universally (via `diamond_eq_kripkeEval_classical`).
 
 /-- Holliday & Mandelkern: FC holds at full uncertainty (x₃). -/
 theorem hollidayMandelkern_fc_at_uncertainty :
-    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x3 = true →
+    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x3 →
     conj (diamond epistemicScale propP)
-         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 = true :=
+         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 :=
   free_choice_at_x3
 
 /-- Holliday & Mandelkern: FC FAILS at knowledge (x₁). The non-Boolean
     ortholattice selectively blocks FC where the agent's epistemic state
     rules out one disjunct. -/
 theorem hollidayMandelkern_fc_fails_at_knowledge :
-    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x1 = true ∧
-    conj (diamond epistemicScale propP)
-         (diamond epistemicScale (orthoNeg pathFrame propP)) .x1 = false :=
+    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x1 ∧
+    ¬ conj (diamond epistemicScale propP)
+           (diamond epistemicScale (orthoNeg pathFrame propP)) .x1 :=
   free_choice_fails_at_x1
 
 -- ============================================================================

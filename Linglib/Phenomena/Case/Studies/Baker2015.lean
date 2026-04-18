@@ -6,30 +6,58 @@ import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 
 /-!
-# Dependent Case Derivations
+# Baker (2015) — Case: Its Principles and Its Parameters
+@cite{baker-2015} @cite{marantz-1991} @cite{baker-vinokurova-2010}
 
-Runs the dependent case algorithm (`assignCases`) on representative
-languages and verifies the output against fragment inventories.
+@cite{baker-2015}'s monograph takes the dependent case algorithm
+originally proposed by @cite{marantz-1991} and refined by
+@cite{baker-vinokurova-2010} for Sakha and develops it as a *cross-
+linguistic* theory of morphological case, sweeping accusative,
+ergative, and split-ergative systems under one assignment mechanism.
+The algorithm:
+
+1. **Lexical case** assigned by selecting heads (highest priority)
+2. **Dependent case** assigned to one of two distinct caseless NPs in
+   the same domain — ACC to the lower NP in accusative alignment,
+   ERG to the higher NP in ergative alignment
+3. **Unmarked case** assigned to remaining caseless NPs — NOM in
+   accusative, ABS in ergative
+4. **Default case** as last resort (not modeled here)
+
+This study file runs `Theories/Syntax/Case/Dependent.lean`'s
+`assignCases` over representative languages from each of Baker's
+typological columns and proves the output matches the surface case
+patterns documented in the Fragment inventories.
 
 ## Structure
 
-- **§ 1**: Split-ergative syncretism (Hindi, Georgian) — the ABS/NOM
-  identity in languages that realize absolutive as nominative
+- **§ 1**: Split-ergative syncretism (Hindi, Georgian) — the abstract
+  ABS that the algorithm produces realizes morphologically as NOM in
+  these languages.
 - **§ 2**: Concrete derivations for accusative (German, Turkish),
-  ergative (Basque), and split-ergative (Hindi, Georgian) languages
+  ergative (Basque), and split-ergative (Hindi, Georgian) languages.
 
 ## The ABS/NOM Mismatch in Split-Ergative Languages
 
-The dependent case algorithm assigns ABS (`Core.Case.abs`) as the unmarked
-case in ergative alignment. However, Hindi and Georgian realize this
-function morphologically as NOM (no overt marker), not as a distinct ABS
-form. Their inventories contain ERG (the dependent case) but not ABS.
-This is a well-known typological fact: many split-ergative languages have
-a **syncretic** unmarked case that serves both the nominative (accusative
-frames) and absolutive (ergative frames) functions.
+The dependent case algorithm assigns ABS (`Core.Case.abs`) as the
+unmarked case in ergative alignment. Hindi and Georgian, however,
+realize this function morphologically as NOM (no overt marker), not
+as a distinct ABS form — their inventories contain ERG (the dependent
+case) but not ABS. @cite{baker-2015} treats this as the canonical
+abstract-vs-morphological case distinction inherited from
+@cite{marantz-1991}: many split-ergative languages have a syncretic
+unmarked case serving both nominative (accusative frames) and
+absolutive (ergative frames) functions.
+
+@cite{baker-vinokurova-2010}'s Sakha analysis is the empirical
+foundation of one of Baker's columns; that paper's full derivations
+live in `Phenomena/Case/Studies/BakerVinokurova2010.lean` and are not
+duplicated here. Marantz's original abstract-vs-morphological case
+distinction and its Georgian application live in
+`Phenomena/Case/Studies/Marantz1991.lean`.
 -/
 
-namespace Phenomena.Case.DependentCaseDerivations
+namespace Phenomena.Case.Studies.Baker2015
 
 open Syntax.Case
 
@@ -47,44 +75,35 @@ open Syntax.Case
 
 -- Hindi: perfective = ergative, imperfective = accusative
 theorem hindi_accusative_coverage :
-    (structuralCasesFor .accusative).all
-      (λ cv => Fragments.Hindi.Case.caseInventory.any (· == cv)) = true := by
-  native_decide
+    ∀ cv ∈ structuralCasesFor .accusative, cv ∈ Fragments.Hindi.Case.caseInventory := by
+  decide
 
 theorem hindi_erg_in_inventory :
-    Fragments.Hindi.Case.caseInventory.any (· == Core.Case.erg) = true := by
+    Core.Case.erg ∈ Fragments.Hindi.Case.caseInventory := by
   native_decide
 
 /-- ABS is not in Hindi's inventory: the absolutive function (unmarked S/P
     in perfective) is morphologically NOM. -/
 theorem hindi_abs_not_in_inventory :
-    Fragments.Hindi.Case.caseInventory.any (· == Core.Case.abs) = false := by
-  native_decide
+    Core.Case.abs ∉ Fragments.Hindi.Case.caseInventory := by decide
 
 /-- But NOM IS in the inventory, documenting the ABS → NOM syncretism. -/
 theorem hindi_nom_covers_abs_function :
-    Fragments.Hindi.Case.caseInventory.any (· == Core.Case.nom) = true := by
-  native_decide
+    Core.Case.nom ∈ Fragments.Hindi.Case.caseInventory := by decide
 
 -- Georgian: aorist = ergative, present/evidential = accusative-like
 theorem georgian_erg_in_inventory :
-    Fragments.Georgian.Agreement.fullCaseInventory.any
-      (· == Core.Case.erg) = true := by
-  native_decide
+    Core.Case.erg ∈ Fragments.Georgian.Agreement.fullCaseInventory := by decide
 
 /-- ABS is not in Georgian's inventory: the absolutive function is
     morphologically NOM in both aorist (ergative) and present (accusative)
     frames. -/
 theorem georgian_abs_not_in_inventory :
-    Fragments.Georgian.Agreement.fullCaseInventory.any
-      (· == Core.Case.abs) = false := by
-  native_decide
+    Core.Case.abs ∉ Fragments.Georgian.Agreement.fullCaseInventory := by decide
 
 /-- NOM covers the absolutive function in Georgian. -/
 theorem georgian_nom_covers_abs_function :
-    Fragments.Georgian.Agreement.fullCaseInventory.any
-      (· == Core.Case.nom) = true := by
-  native_decide
+    Core.Case.nom ∈ Fragments.Georgian.Agreement.fullCaseInventory := by decide
 
 -- ============================================================================
 -- § 2: Concrete Derivation Examples
@@ -120,15 +139,13 @@ theorem german_intransitive_subject_nom :
 
 /-- All cases in the German transitive derivation are in German's inventory. -/
 theorem german_transitive_in_inventory :
-    (assignCases .accusative germanTransitiveNPs).all
-      (λ np => Fragments.German.Case.caseInventory.any (· == np.case)) = true := by
-  native_decide
+    ∀ np ∈ assignCases .accusative germanTransitiveNPs,
+      np.case ∈ Fragments.German.Case.caseInventory := by decide
 
 /-- All cases in the German intransitive derivation are in German's inventory. -/
 theorem german_intransitive_in_inventory :
-    (assignCases .accusative germanIntransitiveNPs).all
-      (λ np => Fragments.German.Case.caseInventory.any (· == np.case)) = true := by
-  native_decide
+    ∀ np ∈ assignCases .accusative germanIntransitiveNPs,
+      np.case ∈ Fragments.German.Case.caseInventory := by decide
 
 /-! ## Turkish Derivations
 
@@ -154,9 +171,8 @@ theorem turkish_intransitive_case :
   native_decide
 
 theorem turkish_transitive_in_inventory :
-    (assignCases .accusative turkishTransitiveNPs).all
-      (λ np => Fragments.Turkish.Case.caseInventory.any (· == np.case)) = true := by
-  native_decide
+    ∀ np ∈ assignCases .accusative turkishTransitiveNPs,
+      np.case ∈ Fragments.Turkish.Case.caseInventory := by decide
 
 /-! ## Basque Derivations (Ergative)
 
@@ -186,17 +202,13 @@ theorem basque_intransitive_subject_abs :
 
 /-- All cases in the Basque transitive derivation are in Basque's inventory. -/
 theorem basque_transitive_in_inventory :
-    (assignCases .ergative basqueTransitiveNPs).all
-      (λ np => Fragments.Basque.Agreement.fullCaseInventory.any
-        (· == np.case)) = true := by
-  native_decide
+    ∀ np ∈ assignCases .ergative basqueTransitiveNPs,
+      np.case ∈ Fragments.Basque.Agreement.fullCaseInventory := by decide
 
 /-- All cases in the Basque intransitive derivation are in Basque's inventory. -/
 theorem basque_intransitive_in_inventory :
-    (assignCases .ergative basqueIntransitiveNPs).all
-      (λ np => Fragments.Basque.Agreement.fullCaseInventory.any
-        (· == np.case)) = true := by
-  native_decide
+    ∀ np ∈ assignCases .ergative basqueIntransitiveNPs,
+      np.case ∈ Fragments.Basque.Agreement.fullCaseInventory := by decide
 
 /-! ## Hindi Split-Ergative Derivations
 
@@ -222,9 +234,8 @@ theorem hindi_imperfective_patient_acc :
   native_decide
 
 theorem hindi_imperfective_in_inventory :
-    (assignCases .accusative hindiTransitiveNPs).all
-      (λ np => Fragments.Hindi.Case.caseInventory.any (· == np.case)) = true := by
-  native_decide
+    ∀ np ∈ assignCases .accusative hindiTransitiveNPs,
+      np.case ∈ Fragments.Hindi.Case.caseInventory := by decide
 
 -- Perfective: ergative alignment
 theorem hindi_perfective_agent_erg :
@@ -240,7 +251,7 @@ theorem hindi_perfective_patient_abs :
     correctly predicted; the patient case (ABS → NOM) requires the
     morphological identity documented in § 1. -/
 theorem hindi_perfective_erg_in_inventory :
-    Fragments.Hindi.Case.caseInventory.any (· == Core.Case.erg) = true := by
+    Core.Case.erg ∈ Fragments.Hindi.Case.caseInventory := by
   native_decide
 
 /-! ## Georgian Split-Ergative Derivations
@@ -271,9 +282,8 @@ theorem georgian_aorist_patient_abs :
 
 /-- The agent ERG in the aorist is in Georgian's inventory. -/
 theorem georgian_aorist_erg_in_inventory :
-    Fragments.Georgian.Agreement.fullCaseInventory.any
-      (· == Core.Case.erg) = true := by
-  native_decide
+    Core.Case.erg ∈ Fragments.Georgian.Agreement.fullCaseInventory := by
+  decide
 
 -- Present: accusative-like alignment with lexical DAT on patient
 theorem georgian_present_agent_nom :
@@ -288,9 +298,8 @@ theorem georgian_present_patient_dat :
     ACC: the agent gets NOM (no case competitor) and the patient gets
     DAT (lexical from V). Both are in Georgian's inventory. -/
 theorem georgian_present_in_inventory :
-    (assignCases .accusative georgianPresentNPs).all
-      (λ np => Fragments.Georgian.Agreement.fullCaseInventory.any
-        (· == np.case)) = true := by
-  native_decide
+    ∀ np ∈ assignCases .accusative georgianPresentNPs,
+      np.case ∈ Fragments.Georgian.Agreement.fullCaseInventory := by
+  decide
 
-end Phenomena.Case.DependentCaseDerivations
+end Phenomena.Case.Studies.Baker2015

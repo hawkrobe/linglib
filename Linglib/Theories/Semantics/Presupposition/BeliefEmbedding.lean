@@ -81,7 +81,7 @@ def beliefState (Dox : DoxasticAccessibility W Agent) (agent : Agent) (w : W) : 
 An agent believes a proposition at a world iff the proposition holds at all
 doxastically accessible worlds.
 -/
-def believes (Dox : DoxasticAccessibility W Agent) (agent : Agent) (p : BProp W) (w : W) : Prop :=
+def believes (Dox : DoxasticAccessibility W Agent) (agent : Agent) (p : (W → Bool)) (w : W) : Prop :=
   ∀ w', Dox agent w w' → p w' = true
 
 
@@ -252,7 +252,7 @@ The expressive content is evaluated in the speaker's context, ignoring
 the belief embedding.
 -/
 def expressiveProjectsToSpeaker (globalCtx : ContextSet W)
-    (expressiverContent : BProp W) : Prop :=
+    (expressiverContent : (W → Bool)) : Prop :=
   -- The content must be entailed by the global (speaker's) context
   ContextSet.entails globalCtx expressiverContent
 
@@ -287,8 +287,7 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
 ### Bridging Agent-Indexed Accessibility into `DoxasticAccessibility`
 @cite{hintikka-1962}
 
-`EpistemicLogic` uses Prop-valued `AgentAccessRel W E = E → W → W → Prop`
-(since the `BProp` dissolution).
+`EpistemicLogic` uses Prop-valued `AgentAccessRel W E = E → W → W → Prop`.
 `BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`
 where `ContextSet W = W → Prop`.
 

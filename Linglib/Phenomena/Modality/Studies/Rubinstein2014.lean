@@ -78,7 +78,6 @@ namespace Rubinstein2014
 open Semantics.Modality.Kratzer
 open Semantics.Modality.Directive
 open Semantics.Attitudes.Intensional (World)
-open Core.Proposition (BProp)
 open Core.Modality (ModalForce)
 
 -- ============================================================================
@@ -493,9 +492,9 @@ We model this with two propositions:
 - reportInternational: a negotiable ideal promoted by the speaker (in g)
 - reportAll: the conjunction (the prejacent of should/have-to) -/
 
-private def reportDomestic : BProp World := λ w => w == .w0 || w == .w1
-private def reportInternational : BProp World := λ w => w == .w0 || w == .w2
-private def reportAll : BProp World := λ w => reportDomestic w && reportInternational w
+private def reportDomestic : (World → Bool) := λ w => w == .w0 || w == .w1
+private def reportInternational : (World → Bool) := λ w => w == .w0 || w == .w2
+private def reportAll : (World → Bool) := λ w => reportDomestic w && reportInternational w
 
 /-- **Scenario A** (ex. 45/51a): "We should report all our revenue."
     Domestic reporting is non-negotiable; international is negotiable. -/

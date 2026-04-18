@@ -102,7 +102,7 @@ open Core.Proposition
     the agent's credence by marginalizing over inferred belief states.
     In the abstract theory, it is any function from agents and propositions
     to rationals satisfying basic ordering axioms. -/
-abbrev AgentCredence (E W : Type*) := E → BProp W → ℚ
+abbrev AgentCredence (E W : Type*) := E → (W → Bool) → ℚ
 
 -- ============================================================================
 -- §2. Epistemic Lexicon
@@ -176,7 +176,7 @@ variable {E W : Type*}
     Structurally identical to `Degree.positiveSem μ θ x`: both are
     `measure(entity) ≥ threshold`. -/
 def meetsThreshold (cr : AgentCredence E W) (θ : ℚ)
-    (a : E) (φ : BProp W) : Prop :=
+    (a : E) (φ : (W → Bool)) : Prop :=
   cr a φ ≥ θ
 
 /-- Reversed threshold: agent `a`'s credence in `φ` is strictly BELOW `θ`.
@@ -184,7 +184,7 @@ def meetsThreshold (cr : AgentCredence E W) (θ : ℚ)
     Used for `uncertain` and `unlikely`: uncertain_if(A, φ, ψ) holds iff
     Pr(A, φ) < θ_uncertain ∧ Pr(A, ψ) < θ_uncertain (Table 1(a)). -/
 def failsThreshold (cr : AgentCredence E W) (θ : ℚ)
-    (a : E) (φ : BProp W) : Prop :=
+    (a : E) (φ : (W → Bool)) : Prop :=
   cr a φ < θ
 
 /-- Full epistemic evaluation: credence meets threshold, plus factivity.
@@ -192,25 +192,25 @@ def failsThreshold (cr : AgentCredence E W) (θ : ℚ)
     - `believes(A, φ, w)` = Pr(A, φ) ≥ 0.75
     - `knows(A, φ, w)` = Pr(A, φ) ≥ 0.75 ∧ φ(w) = true -/
 def holdsAt (cr : AgentCredence E W) (entry : EpistemicEntry)
-    (a : E) (φ : BProp W) (w : W) : Prop :=
+    (a : E) (φ : (W → Bool)) (w : W) : Prop :=
   meetsThreshold cr entry.θ a φ ∧ (entry.factive = true → φ w = true)
 
 -- ── Structural operators from Table 1(a) ──
 
 /-- `knows_if(A, φ)` = knows_that(A, φ) ∨ knows_that(A, ¬φ).
     The agent knows the answer to the yes/no question ?φ. -/
-def knowsIf (cr : AgentCredence E W) (a : E) (φ : BProp W) (w : W) : Prop :=
+def knowsIf (cr : AgentCredence E W) (a : E) (φ : (W → Bool)) (w : W) : Prop :=
   holdsAt cr .knows_ a φ w ∨
   holdsAt cr .knows_ a (fun w' => !φ w') w
 
 /-- `not_knows_that(A, φ)` = ¬believes(A, φ) ∧ φ.
     False belief: φ is true but the agent doesn't believe it. -/
-def notKnowsThat (cr : AgentCredence E W) (a : E) (φ : BProp W) (w : W) : Prop :=
+def notKnowsThat (cr : AgentCredence E W) (a : E) (φ : (W → Bool)) (w : W) : Prop :=
   ¬meetsThreshold cr EpistemicEntry.believes_.θ a φ ∧ φ w = true
 
 /-- `uncertain_if(A, φ, ψ)` = Pr(A, φ) < θ_uncertain ∧ Pr(A, ψ) < θ_uncertain.
     The agent is uncertain between two alternatives. -/
-def uncertainIf (cr : AgentCredence E W) (a : E) (φ ψ : BProp W) : Prop :=
+def uncertainIf (cr : AgentCredence E W) (a : E) (φ ψ : (W → Bool)) : Prop :=
   failsThreshold cr EpistemicEntry.uncertain_.θ a φ ∧
   failsThreshold cr EpistemicEntry.uncertain_.θ a ψ
 
@@ -219,7 +219,7 @@ def uncertainIf (cr : AgentCredence E W) (a : E) (φ ψ : BProp W) : Prop :=
 /-- `degree(likely, A, φ)` = Pr(A, φ).
     The raw credence, used as input to comparative and superlative
     constructions. This IS the measure function on the epistemic scale. -/
-def degree (cr : AgentCredence E W) (a : E) (φ : BProp W) : ℚ :=
+def degree (cr : AgentCredence E W) (a : E) (φ : (W → Bool)) : ℚ :=
   cr a φ
 
 /-- Comparative credence: `more(P, φ, ψ)` = degree(P, A, φ) > degree(P, A, ψ).
@@ -227,13 +227,13 @@ def degree (cr : AgentCredence E W) (a : E) (φ : BProp W) : ℚ :=
     The agent's credence in φ strictly exceeds credence in ψ. Mirrors the
     comparative from `Confidence.lean` and from `Degree/Core.lean`. -/
 def moreCredent (cr : AgentCredence E W)
-    (a : E) (φ ψ : BProp W) : Prop :=
+    (a : E) (φ ψ : (W → Bool)) : Prop :=
   cr a ψ < cr a φ
 
 /-- Superlative: `most_str(P, φ)` = degree(P, A, φ) ≥ α_most · θ_P.
     Strengthened superlative with multiplier α_most = 1.5 (Table 1(b)). -/
 def mostStr (cr : AgentCredence E W) (entry : EpistemicEntry)
-    (a : E) (φ : BProp W) : Prop :=
+    (a : E) (φ : (W → Bool)) : Prop :=
   cr a φ ≥ EpistemicEntry.α_most * entry.θ
 
 -- ============================================================================
@@ -246,7 +246,7 @@ def mostStr (cr : AgentCredence E W) (entry : EpistemicEntry)
     a lower threshold θ₁ ≤ θ₂ also holds. This derives the entailment
     patterns of epistemic vocabulary from the threshold ordering alone. -/
 theorem threshold_monotone (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) {θ₁ θ₂ : ℚ} (h : θ₁ ≤ θ₂) :
+    (a : E) (φ : (W → Bool)) {θ₁ θ₂ : ℚ} (h : θ₁ ≤ θ₂) :
     meetsThreshold cr θ₂ a φ → meetsThreshold cr θ₁ a φ :=
   fun h₂ => le_trans h h₂
 
@@ -255,7 +255,7 @@ theorem threshold_monotone (cr : AgentCredence E W)
     Since `knows` and `believes` share the same threshold (0.75) and
     `knows` only adds factivity, the credence condition carries over. -/
 theorem knows_entails_believes (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) (w : W) :
+    (a : E) (φ : (W → Bool)) (w : W) :
     holdsAt cr .knows_ a φ w → holdsAt cr .believes_ a φ w := by
   intro ⟨hcr, _⟩
   exact ⟨hcr, by simp [EpistemicEntry.believes_]⟩
@@ -266,13 +266,13 @@ theorem knows_entails_believes (cr : AgentCredence E W)
     predicates entail their complement. In ELoT, veridicality is the
     `factive = true` flag. -/
 theorem knows_is_veridical (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) (w : W) :
+    (a : E) (φ : (W → Bool)) (w : W) :
     holdsAt cr .knows_ a φ w → φ w = true :=
   fun ⟨_, h⟩ => h rfl
 
 /-- `certain` entails `believes`: θ_certain = 19/20 ≥ θ_believes = 3/4. -/
 theorem certain_entails_believes (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) (w : W) :
+    (a : E) (φ : (W → Bool)) (w : W) :
     holdsAt cr .certain_ a φ w → holdsAt cr .believes_ a φ w := by
   intro ⟨hcr, _⟩
   exact ⟨le_trans (by norm_num : (3 : ℚ)/4 ≤ 19/20) hcr,
@@ -280,7 +280,7 @@ theorem certain_entails_believes (cr : AgentCredence E W)
 
 /-- `must` entails `should`: θ_must = 19/20 ≥ θ_should = 4/5. -/
 theorem must_entails_should (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) (w : W) :
+    (a : E) (φ : (W → Bool)) (w : W) :
     holdsAt cr .must_ a φ w → holdsAt cr .should_ a φ w := by
   intro ⟨hcr, _⟩
   exact ⟨le_trans (by norm_num : (4 : ℚ)/5 ≤ 19/20) hcr,
@@ -288,7 +288,7 @@ theorem must_entails_should (cr : AgentCredence E W)
 
 /-- `should` entails `likely`: θ_should = 4/5 ≥ θ_likely = 7/10. -/
 theorem should_entails_likely (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) (w : W) :
+    (a : E) (φ : (W → Bool)) (w : W) :
     holdsAt cr .should_ a φ w → holdsAt cr .likely_ a φ w := by
   intro ⟨hcr, _⟩
   exact ⟨le_trans (by norm_num : (7 : ℚ)/10 ≤ 4/5) hcr,
@@ -299,7 +299,7 @@ theorem should_entails_likely (cr : AgentCredence E W)
     θ_must = 19/20 ≥ θ_might = 1/5. This is the epistemic modal
     analogue of □φ → ◇φ. -/
 theorem must_entails_might (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) (w : W) :
+    (a : E) (φ : (W → Bool)) (w : W) :
     holdsAt cr .must_ a φ w → holdsAt cr .might_ a φ w := by
   intro ⟨hcr, _⟩
   exact ⟨le_trans (by norm_num : (1 : ℚ)/5 ≤ 19/20) hcr,
@@ -307,7 +307,7 @@ theorem must_entails_might (cr : AgentCredence E W)
 
 /-- `believes` entails `may`: θ_believes = 3/4 ≥ θ_may = 3/10. -/
 theorem believes_entails_may (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) (w : W) :
+    (a : E) (φ : (W → Bool)) (w : W) :
     holdsAt cr .believes_ a φ w → holdsAt cr .may_ a φ w := by
   intro ⟨hcr, _⟩
   exact ⟨le_trans (by norm_num : (3 : ℚ)/10 ≤ 3/4) hcr,
@@ -321,7 +321,7 @@ theorem believes_entails_may (cr : AgentCredence E W)
 
     Mirrors `comparative_transitive` in `Confidence.lean` (CSW (54)). -/
 theorem moreCredent_transitive (cr : AgentCredence E W)
-    (a : E) (φ ψ χ : BProp W)
+    (a : E) (φ ψ χ : (W → Bool))
     (h₁ : moreCredent cr a φ ψ) (h₂ : moreCredent cr a ψ χ) :
     moreCredent cr a φ χ :=
   lt_trans h₂ h₁
@@ -332,7 +332,7 @@ theorem moreCredent_transitive (cr : AgentCredence E W)
     then the agent believes ψ. This is the credence-based analogue of
     `confidence_upward_monotone` in `Confidence.lean` (CSW (53)). -/
 theorem credence_upward_monotone (cr : AgentCredence E W)
-    (θ : ℚ) (a : E) (φ ψ : BProp W)
+    (θ : ℚ) (a : E) (φ ψ : (W → Bool))
     (h_bel : meetsThreshold cr θ a φ) (h_more : cr a φ ≤ cr a ψ) :
     meetsThreshold cr θ a ψ :=
   le_trans h_bel h_more
@@ -354,7 +354,7 @@ different empirical predictions about conjunction fallacy data.
 -/
 
 /-- A probabilistic credence function is `Monotone` (from Mathlib) in
-    the pointwise Bool ordering on `BProp W`: if φ ⊆ ψ then
+    the pointwise Bool ordering on `(W → Bool)`: if φ ⊆ ψ then
     Pr(A, φ) ≤ Pr(A, ψ).
 
     This is the axiom that separates LaBToM's probabilistic credence
@@ -365,7 +365,7 @@ different empirical predictions about conjunction fallacy data.
     Conjunction elimination (`isProbabilistic_conj_elim`) is a
     consequence: since `φ ∧ ψ ≤ φ` pointwise, monotonicity gives
     `Pr(A, φ ∧ ψ) ≤ Pr(A, φ)`. In fact the two are equivalent on
-    `BProp W` (a `SemilatticeInf`), since `a ≤ b ↔ a ⊓ b = a`.
+    `(W → Bool)` (a `SemilatticeInf`), since `a ≤ b ↔ a ⊓ b = a`.
 
     By using Mathlib's `Monotone`, this connects to the same abstract
     notion used throughout linglib: `IsUpwardEntailing = Monotone`
@@ -378,7 +378,7 @@ def isProbabilistic (cr : AgentCredence E W) : Prop :=
     `φ ∧ ψ ≤ φ` in the pointwise Bool ordering, monotonicity gives
     `Pr(A, φ ∧ ψ) ≤ Pr(A, φ)`. -/
 theorem isProbabilistic_conj_elim (cr : AgentCredence E W)
-    (h_prob : isProbabilistic cr) (a : E) (φ ψ : BProp W) :
+    (h_prob : isProbabilistic cr) (a : E) (φ ψ : (W → Bool)) :
     cr a (fun w => φ w && ψ w) ≤ cr a φ :=
   h_prob a (fun {v} => Bool.and_le_left (φ v) (ψ v))
 
@@ -388,7 +388,7 @@ theorem isProbabilistic_conj_elim (cr : AgentCredence E W)
     the agent believes φ. This fails for CSW's non-probabilistic ordering
     (conjunction fallacy). -/
 theorem prob_conjunction_elim (cr : AgentCredence E W)
-    (h_prob : isProbabilistic cr) (θ : ℚ) (a : E) (φ ψ : BProp W)
+    (h_prob : isProbabilistic cr) (θ : ℚ) (a : E) (φ ψ : (W → Bool))
     (h_bel : meetsThreshold cr θ a (fun w => φ w && ψ w)) :
     meetsThreshold cr θ a φ :=
   le_trans h_bel (isProbabilistic_conj_elim cr h_prob a φ ψ)
@@ -430,7 +430,7 @@ open Core.BToM in
 /-- Agent credence derived from BToM belief-marginal inference.
 
     Given a BToM model with belief type `B` and an evaluation function
-    `eval : B → BProp W → F` that computes how belief state `b` rates
+    `eval : B → (W → Bool) → F` that computes how belief state `b` rates
     proposition `φ`, the observer estimates the agent's credence after
     observing action `a`:
 
@@ -450,8 +450,8 @@ noncomputable def btomCredence
     {A P B D S M W : Type*}
     [Fintype P] [Fintype B] [Fintype D] [Fintype S] [Fintype M] [Fintype W]
     (model : BToMModel F A P B D S M W)
-    (eval : B → BProp W → F)
-    (a : A) (φ : BProp W) : F :=
+    (eval : B → (W → Bool) → F)
+    (a : A) (φ : (W → Bool)) : F :=
   model.beliefExpectation (λ b => eval b φ) a
 
 section IdentityPerception
@@ -513,7 +513,7 @@ theorem btomCredence_eq_world_expectation
     (model : BToMModel F A W W D S M W)
     (h_percept : ∀ w p, model.perceptModel w p = if p = w then 1 else 0)
     (h_belief : ∀ p b, model.beliefModel p b = if b = p then 1 else 0)
-    (eval : W → BProp W → F) (a : A) (φ : BProp W) :
+    (eval : W → (W → Bool) → F) (a : A) (φ : (W → Bool)) :
     btomCredence model eval a φ =
     ∑ w : W, model.worldMarginal a w * eval w φ := by
   simp only [btomCredence, BToMModel.beliefExpectation]
@@ -564,7 +564,7 @@ def epistemicBoundedness : Core.Scale.Boundedness := .closed
 /-- An epistemic gradable predicate: an `EpistemicEntry` viewed as a
     `GradablePredicate` on the probability scale.
 
-    The entity type is `E × BProp W` (agent–proposition pairs), and the
+    The entity type is `E × (W → Bool)` (agent–proposition pairs), and the
     measure function is agent credence `cr`. This makes the structural
     identity with degree semantics explicit and type-checked.
 
@@ -572,7 +572,7 @@ def epistemicBoundedness : Core.Scale.Boundedness := .closed
     (upward monotone: higher credence → more likely to satisfy). Reversed
     entries (`uncertain`, `unlikely`) are negative (downward monotone). -/
 def epistemicAsGradable (cr : AgentCredence E W) (entry : EpistemicEntry)
-    : Semantics.Degree.GradablePredicate (E × BProp W) ℚ where
+    : Semantics.Degree.GradablePredicate (E × (W → Bool)) ℚ where
   form := entry.name
   μ := fun ⟨a, φ⟩ => cr a φ
   boundedness := epistemicBoundedness
@@ -583,9 +583,9 @@ def epistemicAsGradable (cr : AgentCredence E W) (entry : EpistemicEntry)
     This is the formal statement that epistemic threshold semantics IS
     degree semantics with credence as the measure function. -/
 theorem meetsThreshold_eq_positiveSem (cr : AgentCredence E W) (θ : ℚ)
-    (a : E) (φ : BProp W) :
+    (a : E) (φ : (W → Bool)) :
     meetsThreshold cr θ a φ ↔
-    Semantics.Degree.positiveSem (fun (p : E × BProp W) => cr p.1 p.2) θ (a, φ) := by
+    Semantics.Degree.positiveSem (fun (p : E × (W → Bool)) => cr p.1 p.2) θ (a, φ) := by
   rfl
 
 /-- The epistemic scale is licensed: closed → admits absolute standards.
@@ -636,7 +636,7 @@ satisfies System FA (and hence all of W ⊂ F ⊂ FA).
     observation that epistemic modals form a Horn scale ordered by
     threshold strength. -/
 theorem threshold_upwardMonotone (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) :
+    (a : E) (φ : (W → Bool)) :
     ∀ (θ₁ θ₂ : ℚ), θ₁ ≤ θ₂ →
     meetsThreshold cr θ₂ a φ → meetsThreshold cr θ₁ a φ :=
   fun _ _ h h₂ => le_trans h h₂
@@ -649,7 +649,7 @@ theorem threshold_upwardMonotone (cr : AgentCredence E W)
     Connects to Kennedy's negative adjective pattern (short, cold):
     negative polarity on the same scale. -/
 theorem failsThreshold_downwardMonotone (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) :
+    (a : E) (φ : (W → Bool)) :
     ∀ (θ₁ θ₂ : ℚ), θ₁ ≤ θ₂ →
     failsThreshold cr θ₁ a φ → failsThreshold cr θ₂ a φ :=
   fun _ _ h h₁ => lt_of_lt_of_le h₁ h
@@ -668,7 +668,7 @@ def epistemicComparativeScale : Core.Scale.ComparativeScale ℚ where
     on propositions is induced by the credence measure. The threshold
     entries from Table 1(b) are then points where we cut this ordering. -/
 theorem moreCredent_iff_degree (cr : AgentCredence E W)
-    (a : E) (φ ψ : BProp W) :
+    (a : E) (φ ψ : (W → Bool)) :
     moreCredent cr a φ ψ ↔ degree cr a ψ < degree cr a φ := by
   rfl
 
@@ -713,7 +713,7 @@ the structure of threshold semantics on a linear order.
     @cite{kennedy-2007} §3: the same reduction applies to epistemic
     modals because credence IS a measure function. -/
 theorem comparative_from_positive (cr : AgentCredence E W)
-    (a : E) (φ ψ : BProp W) :
+    (a : E) (φ ψ : (W → Bool)) :
     moreCredent cr a φ ψ ↔
     ∃ θ : ℚ, meetsThreshold cr θ a φ ∧ ¬meetsThreshold cr θ a ψ := by
   constructor
@@ -732,7 +732,7 @@ theorem comparative_from_positive (cr : AgentCredence E W)
     "likely" from "unlikely" (cf. @cite{lassiter-goodman-2017} fn. 8
     for the analogous tall/short case). -/
 theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
-    (θ : ℚ) (a : E) (φ : BProp W) :
+    (θ : ℚ) (a : E) (φ : (W → Bool)) :
     meetsThreshold cr θ a φ ↔ ¬failsThreshold cr θ a φ := by
   simp [meetsThreshold, failsThreshold, not_lt]
 
@@ -750,7 +750,7 @@ theorem meetsThreshold_iff_not_failsThreshold (cr : AgentCredence E W)
     The likely/unlikely pattern parallels @cite{lassiter-goodman-2017}'s
     tall/short (Eqs. 22–23): same scale, reversed polarity. -/
 theorem antonymy_from_polarity (cr : AgentCredence E W)
-    (a : E) (φ ψ : BProp W) :
+    (a : E) (φ ψ : (W → Bool)) :
     moreCredent cr a φ ψ ↔
     ∃ θ : ℚ, meetsThreshold cr θ a φ ∧ failsThreshold cr θ a ψ := by
   rw [comparative_from_positive]
@@ -784,7 +784,7 @@ variable {X : Type*}
     The agent knows, for some contextually relevant entity x, that φ(x).
     Table 1(a): Type ε, Arg Types `A, Φ/O, Φ/O`. -/
 def knowsAbout (cr : AgentCredence E W) (a : E)
-    (C : X → Prop) (φ : X → BProp W) (w : W) : Prop :=
+    (C : X → Prop) (φ : X → (W → Bool)) (w : W) : Prop :=
   ∃ x, C x ∧ holdsAt cr .knows_ a (φ x) w
 
 /-- `certain_about(A, C, φ)` = `∃x. C(x) ∧ Pr(A, φ(x)) ≥ θ_certain`.
@@ -792,7 +792,7 @@ def knowsAbout (cr : AgentCredence E W) (a : E)
     The agent is certain, for some contextually relevant entity, that φ holds.
     Table 1(a). -/
 def certainAbout (cr : AgentCredence E W) (a : E)
-    (C : X → Prop) (φ : X → BProp W) : Prop :=
+    (C : X → Prop) (φ : X → (W → Bool)) : Prop :=
   ∃ x, C x ∧ meetsThreshold cr EpistemicEntry.certain_.θ a (φ x)
 
 /-- `uncertain_about(A, C, φ)` = `∀x. C(x) → Pr(A, φ(x)) < θ_uncertain`.
@@ -802,7 +802,7 @@ def certainAbout (cr : AgentCredence E W) (a : E)
     existential.
     Table 1(a). -/
 def uncertainAbout (cr : AgentCredence E W) (a : E)
-    (C : X → Prop) (φ : X → BProp W) : Prop :=
+    (C : X → Prop) (φ : X → (W → Bool)) : Prop :=
   ∀ x, C x → failsThreshold cr EpistemicEntry.uncertain_.θ a (φ x)
 
 /-- `most_sup(P, O, C, φ)`: the degree of φ(O) is at least as great as
@@ -813,20 +813,20 @@ def uncertainAbout (cr : AgentCredence E W) (a : E)
     relevant boxes x.
     Table 1(a). -/
 def mostSup (cr : AgentCredence E W) (a : E)
-    (o : X) (C : X → Prop) (φ : X → BProp W) : Prop :=
+    (o : X) (C : X → Prop) (φ : X → (W → Bool)) : Prop :=
   ∀ x, C x → cr a (φ x) ≤ cr a (φ o)
 
 -- ── Entailments for quantified operators ──
 
 /-- `knows_about` entails `knows_that` for any witness. -/
 theorem knowsAbout_entails_knowsThat (cr : AgentCredence E W)
-    (a : E) (C : X → Prop) (φ : X → BProp W) (w : W) (x : X) (hC : C x) :
+    (a : E) (C : X → Prop) (φ : X → (W → Bool)) (w : W) (x : X) (hC : C x) :
     holdsAt cr .knows_ a (φ x) w → knowsAbout cr a C φ w :=
   fun h => ⟨x, hC, h⟩
 
 /-- `certain_about` entails that the agent believes the witness proposition. -/
 theorem certainAbout_entails_believes (cr : AgentCredence E W)
-    (a : E) (C : X → Prop) (φ : X → BProp W)
+    (a : E) (C : X → Prop) (φ : X → (W → Bool))
     (h : certainAbout cr a C φ) :
     ∃ x, C x ∧ meetsThreshold cr EpistemicEntry.believes_.θ a (φ x) := by
   obtain ⟨x, hC, hcr⟩ := h
@@ -836,7 +836,7 @@ theorem certainAbout_entails_believes (cr : AgentCredence E W)
     uncertain about all C-entities, there is no C-entity about which the
     agent is certain. -/
 theorem uncertainAbout_contradicts_certainAbout (cr : AgentCredence E W)
-    (a : E) (C : X → Prop) (φ : X → BProp W)
+    (a : E) (C : X → Prop) (φ : X → (W → Bool))
     (h_unc : uncertainAbout cr a C φ)
     (h_cert : certainAbout cr a C φ) : False := by
   obtain ⟨x, hC, hcr⟩ := h_cert
@@ -880,7 +880,7 @@ def believesModal (M : E → Prop) (a : E) : Prop := M a
     modal's threshold. The belief verb contributes nothing beyond
     agent projection. -/
 theorem believesModal_lowers_to_modal_threshold (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) :
+    (a : E) (φ : (W → Bool)) :
     believesModal (fun a' => meetsThreshold cr EpistemicEntry.might_.θ a' φ) a ↔
     meetsThreshold cr EpistemicEntry.might_.θ a φ := by
   rfl
@@ -921,7 +921,7 @@ structural theorems:
     credence. The two coincide when the credence function assigns 1
     iff φ holds universally. -/
 theorem threshold_one_requires_max_credence (cr : AgentCredence E W)
-    (a : E) (φ : BProp W) :
+    (a : E) (φ : (W → Bool)) :
     meetsThreshold cr 1 a φ ↔ 1 ≤ cr a φ := by
   rfl
 
@@ -935,8 +935,8 @@ theorem threshold_one_requires_max_credence (cr : AgentCredence E W)
     (`isProbabilistic_conj_elim`), which CSW's ordering does not
     (`conjunction_fallacy_compatible`). -/
 theorem credence_ordering_is_preorder (cr : AgentCredence E W) (a : E) :
-    (∀ φ : BProp W, cr a φ ≤ cr a φ) ∧
-    (∀ φ ψ χ : BProp W, cr a φ ≤ cr a ψ → cr a ψ ≤ cr a χ → cr a φ ≤ cr a χ) :=
+    (∀ φ : (W → Bool), cr a φ ≤ cr a φ) ∧
+    (∀ φ ψ χ : (W → Bool), cr a φ ≤ cr a ψ → cr a ψ ≤ cr a χ → cr a φ ≤ cr a χ) :=
   ⟨fun _ => le_refl _, fun _ _ _ h₁ h₂ => le_trans h₁ h₂⟩
 
 /-- Probabilistic credence validates conjunction elimination for `meetsThreshold`,
@@ -948,7 +948,7 @@ theorem credence_ordering_is_preorder (cr : AgentCredence E W) (a : E) :
     (conjunction fallacy). -/
 theorem probabilistic_conjunction_elim_for_all_thresholds
     (cr : AgentCredence E W) (h_prob : isProbabilistic cr)
-    (a : E) (φ ψ : BProp W) (θ : ℚ) :
+    (a : E) (φ ψ : (W → Bool)) (θ : ℚ) :
     meetsThreshold cr θ a (fun w => φ w && ψ w) →
     meetsThreshold cr θ a φ :=
   fun h => le_trans h (isProbabilistic_conj_elim cr h_prob a φ ψ)
@@ -957,7 +957,7 @@ theorem probabilistic_conjunction_elim_for_all_thresholds
     credence and threshold, exactly one holds. This is excluded middle
     on the linear order ℚ. -/
 theorem threshold_exhaustive (cr : AgentCredence E W) (θ : ℚ)
-    (a : E) (φ : BProp W) :
+    (a : E) (φ : (W → Bool)) :
     meetsThreshold cr θ a φ ∨ failsThreshold cr θ a φ := by
   simp only [meetsThreshold, failsThreshold, ge_iff_le]
   exact le_or_gt θ (cr a φ)
@@ -982,17 +982,17 @@ open Semantics.Attitudes.Confidence
 
 /-- Credence-induced ordering on propositions: `φ ≤_cr ψ` iff
     `cr a φ ≤ cr a ψ`. Defined as a predicate rather than a `Preorder`
-    instance to avoid clashing with existing `BProp W` instances.
+    instance to avoid clashing with existing `(W → Bool)` instances.
 
     Reflexivity and transitivity follow from `ℚ`'s linear order. -/
-def credenceLe (cr : AgentCredence E W) (a : E) (φ ψ : BProp W) : Prop :=
+def credenceLe (cr : AgentCredence E W) (a : E) (φ ψ : (W → Bool)) : Prop :=
   cr a φ ≤ cr a ψ
 
-theorem credenceLe_refl (cr : AgentCredence E W) (a : E) (φ : BProp W) :
+theorem credenceLe_refl (cr : AgentCredence E W) (a : E) (φ : (W → Bool)) :
     credenceLe cr a φ φ := le_refl _
 
 theorem credenceLe_trans (cr : AgentCredence E W) (a : E)
-    (φ ψ χ : BProp W) (h₁ : credenceLe cr a φ ψ) (h₂ : credenceLe cr a ψ χ) :
+    (φ ψ χ : (W → Bool)) (h₁ : credenceLe cr a φ ψ) (h₂ : credenceLe cr a ψ χ) :
     credenceLe cr a φ χ := le_trans h₁ h₂
 
 /-- The credence-induced ordering is connected (total): for any two
@@ -1003,7 +1003,7 @@ theorem credenceLe_trans (cr : AgentCredence E W) (a : E)
     ordering settles this: probabilistic agents always have connected
     confidence orderings, because `ℚ` is linearly ordered. -/
 theorem credenceLe_connected (cr : AgentCredence E W)
-    (a : E) (φ ψ : BProp W) :
+    (a : E) (φ ψ : (W → Bool)) :
     credenceLe cr a φ ψ ∨ credenceLe cr a ψ φ :=
   le_total (cr a φ) (cr a ψ)
 

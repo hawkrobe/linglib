@@ -1505,7 +1505,7 @@ theorem inalienability_ordering :
     @cite{heine-1997} Table 2.1 identifies eight event schemas from which
     predicative possession constructions arise via grammaticalization.
     The same schemas appear in @cite{heine-2009} Table 29.5 for possessive
-    case grammaticalization; see also `Core.caseExtension` for the broader
+    case grammaticalization; see also `Core.Case.Extends` for the broader
     case extension paths from @cite{heine-2009} Table 29.6. -/
 inductive PossessionSource where
   /-- Action schema: "X takes Y" → 'X has Y'.

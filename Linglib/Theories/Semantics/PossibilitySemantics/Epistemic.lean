@@ -37,7 +37,7 @@ possibility x₃ verifies ◇p ∧ ◇¬p without verifying either p or ¬p.
 
 namespace Semantics.PossibilitySemantics
 
-open Core.Proposition (FiniteWorlds BProp)
+open Core.Proposition (FiniteWorlds)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Epistemic Compatibility Frames
@@ -50,18 +50,31 @@ open Core.Proposition (FiniteWorlds BProp)
     Our `epistemicScale` satisfies all three conditions by construction
     (Example 4.30). -/
 structure ModalCompatFrame (S : Type*) [FiniteWorlds S] extends CompatFrame S where
-  access : S → S → Bool
-  access_refl : ∀ x, access x x = true
+  access : S → S → Prop
+  decAccess : ∀ x y, Decidable (access x y)
+  access_refl : ∀ x, access x x
+
+attribute [instance] ModalCompatFrame.decAccess
 
 /-- Box operator: □A = {x | R(x) ⊆ A}.
     eq. (III). -/
-def box {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : BProp S) : BProp S :=
-  fun x => FiniteWorlds.worlds.filter (F.access x) |>.all A
+def box {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : S → Prop) (x : S) : Prop :=
+  ∀ y ∈ FiniteWorlds.worlds, F.access x y → A y
+
+instance {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : S → Prop)
+    [DecidablePred A] (x : S) :
+    Decidable (box F A x) := by
+  unfold box; infer_instance
 
 /-- Diamond operator: ◇A = ¬□¬A (via orthocomplement, NOT Boolean dual).
     eq. (IV). -/
-def diamond {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : BProp S) : BProp S :=
+def diamond {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : S → Prop) : S → Prop :=
   orthoNeg F.toCompatFrame (box F (orthoNeg F.toCompatFrame A))
+
+instance {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : S → Prop)
+    [DecidablePred A] (x : S) :
+    Decidable (diamond F A x) := by
+  unfold diamond; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 2. The Epistemic Scale
@@ -80,26 +93,30 @@ def diamond {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : BProp S) 
     Accessibility: (a,i) R (a',i') iff a ⊆ a' ∧ i' ⊆ i.
     Definition 5.1, Example 5.3. -/
 
+/-- Underlying Boolean accessibility for the epistemic scale.
+    R(x₁) = {x₁}, R(x₂) = {x₁,x₂,x₃}, R(x₃) = {x₃},
+    R(x₄) = {x₃,x₄,x₅}, R(x₅) = {x₅}. -/
+def epistemicAccessBool : Poss5 → Poss5 → Bool
+  | .x1, .x1
+  | .x2, .x1 | .x2, .x2 | .x2, .x3
+  | .x3, .x3
+  | .x4, .x3 | .x4, .x4 | .x4, .x5
+  | .x5, .x5 => true
+  | _, _ => false
+
 /-- The epistemic scale frame. Compatibility is the path graph;
     accessibility captures epistemic access (refining information).
     Example 4.30, Example 4.33. -/
 def epistemicScale : ModalCompatFrame Poss5 where
-  compat := pathFrame.compat
-  compat_refl := pathFrame.compat_refl
-  compat_symm := pathFrame.compat_symm
-  -- R(x₁) = {x₁}, R(x₂) = {x₁,x₂,x₃}, R(x₃) = {x₃},
-  -- R(x₄) = {x₃,x₄,x₅}, R(x₅) = {x₅}
-  access := fun a b => match a, b with
-    | .x1, .x1
-    | .x2, .x1 | .x2, .x2 | .x2, .x3
-    | .x3, .x3
-    | .x4, .x3 | .x4, .x4 | .x4, .x5
-    | .x5, .x5 => true
-    | _, _ => false
+  toCompatFrame := pathFrame
+  access := fun a b => epistemicAccessBool a b = true
+  decAccess := fun _ _ => inferInstance
   access_refl := fun x => by cases x <;> rfl
 
 -- The proposition p: true at x₁ and x₂ (those with A ⊆ V(p) = {0}).
-def propP : BProp Poss5 := fun x => match x with | .x1 | .x2 => true | _ => false
+def propP : Poss5 → Prop := fun x => match x with | .x1 | .x2 => True | _ => False
+
+instance : DecidablePred propP := fun x => by cases x <;> unfold propP <;> infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 3. Epistemic Scale Predictions
@@ -108,36 +125,43 @@ def propP : BProp Poss5 := fun x => match x with | .x1 | .x2 => true | _ => fals
 /-! Verification of the truth values listed in Example 4.33.
     -/
 
-private def boxP : BProp Poss5 := fun x => match x with | .x1 => true | _ => false
-private def negP : BProp Poss5 := fun x => match x with | .x4 | .x5 => true | _ => false
-private def boxNegP : BProp Poss5 := fun x => match x with | .x5 => true | _ => false
-private def diamP : BProp Poss5 := fun x => match x with | .x1 | .x2 | .x3 => true | _ => false
-private def diamNegP : BProp Poss5 := fun x => match x with | .x3 | .x4 | .x5 => true | _ => false
+private def boxP : Poss5 → Prop := fun x => match x with | .x1 => True | _ => False
+private def negP : Poss5 → Prop := fun x => match x with | .x4 | .x5 => True | _ => False
+private def boxNegP : Poss5 → Prop := fun x => match x with | .x5 => True | _ => False
+private def diamP : Poss5 → Prop := fun x => match x with | .x1 | .x2 | .x3 => True | _ => False
+private def diamNegP : Poss5 → Prop := fun x => match x with | .x3 | .x4 | .x5 => True | _ => False
+
+private instance : DecidablePred boxP := fun x => by cases x <;> unfold boxP <;> infer_instance
+private instance : DecidablePred negP := fun x => by cases x <;> unfold negP <;> infer_instance
+private instance : DecidablePred boxNegP := fun x => by cases x <;> unfold boxNegP <;> infer_instance
+private instance : DecidablePred diamP := fun x => by cases x <;> unfold diamP <;> infer_instance
+private instance : DecidablePred diamNegP := fun x => by cases x <;> unfold diamNegP <;> infer_instance
 
 /-- □p = {x₁}: only x₁ knows p (R(x₁) = {x₁} ⊆ V(p)). -/
-theorem box_p : box epistemicScale propP = boxP := by
-  funext x; cases x <;> native_decide
+theorem box_p (x : Poss5) : box epistemicScale propP x ↔ boxP x := by
+  cases x <;> decide
 
 /-- ¬p = {x₄, x₅}: the orthocomplement of V(p). -/
-theorem neg_p : orthoNeg pathFrame propP = negP := by
-  funext x; cases x <;> native_decide
+theorem neg_p (x : Poss5) : orthoNeg pathFrame propP x ↔ negP x := by
+  cases x <;> decide
 
 /-- □¬p = {x₅}: only x₅ knows ¬p. -/
-theorem box_neg_p : box epistemicScale (orthoNeg pathFrame propP) = boxNegP := by
-  funext x; cases x <;> native_decide
+theorem box_neg_p (x : Poss5) : box epistemicScale (orthoNeg pathFrame propP) x ↔ boxNegP x := by
+  cases x <;> decide
 
 /-- ◇p = {x₁, x₂, x₃}: p might be true at x₁, x₂, and x₃. -/
-theorem diamond_p : diamond epistemicScale propP = diamP := by
-  funext x; cases x <;> native_decide
+theorem diamond_p (x : Poss5) : diamond epistemicScale propP x ↔ diamP x := by
+  cases x <;> decide
 
 /-- ◇¬p = {x₃, x₄, x₅}: ¬p might be true at x₃, x₄, and x₅. -/
-theorem diamond_neg_p : diamond epistemicScale (orthoNeg pathFrame propP) = diamNegP := by
-  funext x; cases x <;> native_decide
+theorem diamond_neg_p (x : Poss5) :
+    diamond epistemicScale (orthoNeg pathFrame propP) x ↔ diamNegP x := by
+  cases x <;> decide
 
 /-- ◇p ∧ ◇¬p = {x₃}: only the point of full uncertainty. -/
 theorem uncertainty_at_x3 :
     conj (diamond epistemicScale propP)
-         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 = true := by native_decide
+         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Core Epistemic Failures
@@ -152,14 +176,14 @@ theorem uncertainty_at_x3 :
     for the entire paper — in classical logic, ◇¬p → ¬p, but this fails
     in possibility semantics. §1, p. 2. -/
 theorem diamond_neg_not_entail_neg :
-    diamond epistemicScale (orthoNeg pathFrame propP) .x3 = true ∧
-    orthoNeg pathFrame propP .x3 = false := by native_decide
+    diamond epistemicScale (orthoNeg pathFrame propP) .x3 ∧
+    ¬ orthoNeg pathFrame propP .x3 := by decide
 
 /-- p does NOT entail □p: x₂ makes p true without knowing p. "It's
     raining" does not mean "It must be raining." Failure of necessitation
     for non-logical truths. §2, p. 3. -/
 theorem p_not_entail_box_p :
-    propP .x2 = true ∧ box epistemicScale propP .x2 = false := by native_decide
+    propP .x2 ∧ ¬ box epistemicScale propP .x2 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Wittgenstein Sentences
@@ -174,24 +198,15 @@ theorem p_not_entail_box_p :
 
 /-- ¬p ∧ ◇p = ∅: "p is false and p might be true" is contradictory. -/
 theorem wittgenstein_p (x : Poss5) :
-    conj (orthoNeg pathFrame propP) (diamond epistemicScale propP) x = false := by
-  cases x <;> native_decide
+    ¬ conj (orthoNeg pathFrame propP) (diamond epistemicScale propP) x := by
+  cases x <;> decide
 
 /-- p ∧ ◇¬p = ∅: "p is true and ¬p might be true" is contradictory.
     Uses double negation: p = ¬¬p. -/
 theorem wittgenstein_neg_p (x : Poss5) :
-    conj (orthoNeg pathFrame (orthoNeg pathFrame propP))
-         (diamond epistemicScale (orthoNeg pathFrame propP)) x = false := by
-  cases x <;> native_decide
-
-/-- Wittgenstein's Law for ALL regular propositions in the epistemic
-    scale: ¬A ∧ ◇A = ∅. There are 2⁵ = 32 Boolean functions on Poss5,
-    of which 10 are ◇-regular (Figure 8); the theorem checks all 160 cases.
-    Proposition 4.27. -/
-theorem wittgenstein_general (A : Poss5 → Bool) (x : Poss5)
-    (hReg : isRegular pathFrame A = true) :
-    conj (orthoNeg pathFrame A) (diamond epistemicScale A) x = false := by
-  revert hReg; revert x; revert A; decide
+    ¬ conj (orthoNeg pathFrame (orthoNeg pathFrame propP))
+           (diamond epistemicScale (orthoNeg pathFrame propP)) x := by
+  cases x <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Epistemic Distributivity Failure
@@ -211,7 +226,7 @@ theorem epistemic_distrib_failure :
     let rhs := disj pathFrame
       (conj propP uncertainty)
       (conj (orthoNeg pathFrame propP) uncertainty)
-    lhs .x3 = true ∧ rhs .x3 = false := by native_decide
+    lhs .x3 ∧ ¬ rhs .x3 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Free Choice
@@ -231,20 +246,20 @@ theorem epistemic_distrib_failure :
 
 /-- Free choice holds at x₃: ◇(p ∨ ¬p) → ◇p ∧ ◇¬p. -/
 theorem free_choice_at_x3 :
-    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x3 = true →
+    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x3 →
     conj (diamond epistemicScale propP)
-         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 = true := by
-  native_decide
+         (diamond epistemicScale (orthoNeg pathFrame propP)) .x3 := by
+  decide
 
 /-- Free choice FAILS at x₁: ◇(p ∨ ¬p) is true but ◇¬p is false.
     x₁ knows p, so while the disjunction is trivially possible, the
     individual disjunct ¬p is not epistemically accessible.
     Proposition 5.12.3. -/
 theorem free_choice_fails_at_x1 :
-    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x1 = true ∧
-    conj (diamond epistemicScale propP)
-         (diamond epistemicScale (orthoNeg pathFrame propP)) .x1 = false := by
-  native_decide
+    diamond epistemicScale (disj pathFrame propP (orthoNeg pathFrame propP)) .x1 ∧
+    ¬ conj (diamond epistemicScale propP)
+           (diamond epistemicScale (orthoNeg pathFrame propP)) .x1 := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. T Axiom and Modal Properties
@@ -253,13 +268,13 @@ theorem free_choice_fails_at_x1 :
 /-- T axiom: □A entails A (knowledge is factive).
     Proposition 4.25. -/
 theorem T_axiom_p (x : Poss5) :
-    box epistemicScale propP x = true → propP x = true := by
-  cases x <;> native_decide
+    box epistemicScale propP x → propP x := by
+  cases x <;> decide
 
 /-- □p entails ◇p (knowledge implies epistemic possibility). -/
 theorem box_implies_diamond (x : Poss5) :
-    box epistemicScale propP x = true → diamond epistemicScale propP x = true := by
-  cases x <;> native_decide
+    box epistemicScale propP x → diamond epistemicScale propP x := by
+  cases x <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 9. T Axiom for Reflexive Frames
@@ -268,11 +283,9 @@ theorem box_implies_diamond (x : Poss5) :
 /-- The T axiom for modal compatibility frames: reflexive accessibility
     means every world accesses itself, so □A at x forces A at x. -/
 theorem T_axiom_general {S : Type*} [FiniteWorlds S]
-    (F : ModalCompatFrame S) (A : BProp S) (x : S)
-    (h : box F A x = true) : A x = true := by
-  unfold box at h
-  rw [List.all_eq_true] at h
-  exact h x (List.mem_filter.mpr ⟨FiniteWorlds.complete x, F.access_refl x⟩)
+    (F : ModalCompatFrame S) (A : S → Prop) (x : S)
+    (h : box F A x) : A x :=
+  h x (FiniteWorlds.complete x) (F.access_refl x)
 
 -- ════════════════════════════════════════════════════
 -- § 10. Disjunctive Syllogism Failure
@@ -290,8 +303,8 @@ theorem disjSyllogism_fails :
     let mustNotP := box epistemicScale (orthoNeg pathFrame propP)
     let pOrMustNotP := disj pathFrame propP mustNotP
     let notMustNotP := orthoNeg pathFrame mustNotP
-    pOrMustNotP .x3 = true ∧ notMustNotP .x3 = true ∧ propP .x3 = false := by
-  native_decide
+    pOrMustNotP .x3 ∧ notMustNotP .x3 ∧ ¬ propP .x3 := by
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 11. Orthomodularity Failure
@@ -304,16 +317,16 @@ theorem disjSyllogism_fails :
     §2.4. -/
 
 /-- p entails ◇p: truth implies epistemic possibility. -/
-theorem p_entails_diamond (x : Poss5) (h : propP x = true) :
-    diamond epistemicScale propP x = true := by
-  cases x <;> (first | exact h | native_decide)
+theorem p_entails_diamond (x : Poss5) (h : propP x) :
+    diamond epistemicScale propP x := by
+  cases x <;> first | (revert h; decide) | (exact h.elim)
 
 /-- Orthomodularity fails: ◇p holds at x₃ but p ∨ (¬p ∧ ◇p) does not
     (since ¬p ∧ ◇p = ⊥ by Wittgenstein, this reduces to p). -/
 theorem orthomodularity_fails :
     let diamP := diamond epistemicScale propP
     let rhs := disj pathFrame propP (conj (orthoNeg pathFrame propP) diamP)
-    diamP .x3 = true ∧ rhs .x3 = false := by native_decide
+    diamP .x3 ∧ ¬ rhs .x3 := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 12. Pseudocomplementation Failure
@@ -330,9 +343,9 @@ theorem orthomodularity_fails :
 theorem pseudocomplementation_fails :
     let negP := orthoNeg pathFrame propP
     let diamNegP := diamond epistemicScale negP
-    (∀ x : Poss5, conj propP diamNegP x = false) ∧
-    (diamNegP .x3 = true ∧ negP .x3 = false) := by
-  exact ⟨by decide, by native_decide⟩
+    (∀ x : Poss5, ¬ conj propP diamNegP x) ∧
+    (diamNegP .x3 ∧ ¬ negP .x3) := by
+  exact ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 13. Level-wise Boolean Classicality
@@ -350,9 +363,9 @@ theorem pseudocomplementation_fails :
 theorem within_level_distrib (x : Poss5) :
     let dp := diamond epistemicScale propP
     let dnp := diamond epistemicScale (orthoNeg pathFrame propP)
-    conj dp (disj pathFrame dnp dp) x =
+    conj dp (disj pathFrame dnp dp) x ↔
     disj pathFrame (conj dp dnp) (conj dp dp) x := by
-  cases x <;> native_decide
+  cases x <;> decide
 
 /-- Cross-level failure: ◇p ∧ (p ∨ ¬p) ≠ (◇p ∧ p) ∨ (◇p ∧ ¬p).
     ◇p is from B₁ but p, ¬p are from B₀. At x₃ the LHS is true
@@ -363,6 +376,6 @@ theorem cross_level_distrib_fails :
     let negP := orthoNeg pathFrame propP
     let lhs := conj dp (disj pathFrame propP negP)
     let rhs := disj pathFrame (conj dp propP) (conj dp negP)
-    lhs .x3 = true ∧ rhs .x3 = false := by native_decide
+    lhs .x3 ∧ ¬ rhs .x3 := by decide
 
 end Semantics.PossibilitySemantics

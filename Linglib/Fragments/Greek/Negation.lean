@@ -23,7 +23,6 @@ distinction that @cite{tsiakmakis-2025} argues is cross-linguistically valid.
 namespace Fragments.Greek.Negation
 
 open Semantics.Modality.Kratzer (ModalBase OrderingSource necessity)
-open Core.Proposition (BProp)
 open Semantics.Attitudes.Intensional (World)
 
 -- ============================================================================
@@ -78,7 +77,7 @@ def dhenSem (p : World → Bool) : World → Bool :=
     ⟦min⟧^g(w) = λp. ∀w' ∈ Best_g(w) : ¬p(w')
     Used in imperatives (*Min pas!* 'Don't go!') and with canonical *dhen*
     (*Fovame min dhen efaye* 'I fear he maybe didn't eat'). -/
-def minNegSem (f : ModalBase World) (g : OrderingSource World) (p : BProp World)
+def minNegSem (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool))
     (w : World) : Prop :=
   necessity f g (λ w' => !p w') w
 
@@ -87,7 +86,7 @@ def minNegSem (f : ModalBase World) (g : OrderingSource World) (p : BProp World)
     Used in fear complements (*Fovame min efaye* 'I fear he maybe ate'),
     conditionals (*Min ksexaso kati* 'If I forget something'), and
     biased questions (*Min efaye?* 'Did he maybe eat?'). -/
-def minExplSem (f : ModalBase World) (g : OrderingSource World) (p : BProp World)
+def minExplSem (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool))
     (w : World) : Prop :=
   necessity f g p w
 

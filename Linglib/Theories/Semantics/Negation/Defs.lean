@@ -23,7 +23,7 @@ coherent architecture with three layers:
 
 - `Core.Negation` — framework-agnostic classification types (ENType, ENStrength,
   PolarityClass, PolarityLicensing) with Mathlib lattice instances
-- `Core.Semantics.Proposition` — `pnot` (both `Prop'` and `BProp`), involution,
+- `Core.Semantics.Proposition` — `pnot` (both `Prop'` and `W → Bool`), involution,
   antitonicity
 - `Core.Logic.NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic),
   `strengthSufficient`
@@ -38,7 +38,6 @@ namespace Semantics.Negation
 open Core (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open Core.NaturalLogic (DEStrength strengthSufficient)
-open Core.Proposition (BProp)
 open Core.Proposition.Decidable (pnot)
 open Semantics.Entailment (World)
 open Semantics.Entailment.Polarity (IsDE IsUE pnot_isDownwardEntailing)
@@ -60,7 +59,7 @@ open Semantics.Entailment.AntiAdditivity (IsAntiAdditive IsAntiMorphic
     then no longer a `NegOp` in this sense. -/
 structure NegOp (W : Type*) where
   /-- The negation function on decidable propositions. -/
-  op : BProp W → BProp W
+  op : (W → Bool) → (W → Bool)
   /-- Involutive: applying negation twice is the identity. -/
   involutive : Function.Involutive op
   /-- Antitone: reverses the entailment ordering (= DE). -/
@@ -79,9 +78,9 @@ def standardNeg (W : Type*) : NegOp W where
 
 /-- A NegOp is anti-additive if it distributes ∨ to ∧:
     `¬(A ∨ B) = ¬A ∧ ¬B` (De Morgan, part 1).
-    Stated directly on the BProp-typed operator. -/
+    Stated directly on the `W → Bool`-typed operator. -/
 def NegOp.isAntiAdditive (n : NegOp World) : Prop :=
-  ∀ p q : BProp World, ∀ w, n.op (Core.Proposition.Decidable.por World p q) w =
+  ∀ p q : (World → Bool), ∀ w, n.op (Core.Proposition.Decidable.por World p q) w =
     (n.op p w && n.op q w)
 
 /-- A NegOp is anti-morphic if it is anti-additive AND distributes ∧ to ∨:
@@ -90,7 +89,7 @@ def NegOp.isAntiAdditive (n : NegOp World) : Prop :=
     of negation in the entailment hierarchy. -/
 def NegOp.isAntiMorphic (n : NegOp World) : Prop :=
   n.isAntiAdditive ∧
-  ∀ p q : BProp World, ∀ w, n.op (Core.Proposition.Decidable.pand World p q) w =
+  ∀ p q : (World → Bool), ∀ w, n.op (Core.Proposition.Decidable.pand World p q) w =
     (n.op p w || n.op q w)
 
 /-- Standard negation is anti-additive (De Morgan part 1). -/

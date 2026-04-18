@@ -31,15 +31,15 @@ open Core.Modality (ModalFlavor)
 /-! ## Propositions -/
 
 /-- The agent reaches Harlem (the goal). -/
-def reachesGoal : BProp World := λ w =>
+def reachesGoal : (World → Bool) := λ w =>
   match w with | .w0 => true | .w1 => true | .w2 => false | .w3 => false
 
 /-- The agent takes the A train. -/
-def takesATrain : BProp World := λ w =>
+def takesATrain : (World → Bool) := λ w =>
   match w with | .w0 => true | .w1 => true | .w2 => false | .w3 => false
 
 /-- No delay (distinguishes w0 from w1). -/
-def noDelay : BProp World := λ w =>
+def noDelay : (World → Bool) := λ w =>
   match w with | .w0 => true | .w1 => false | .w2 => true | .w3 => true
 
 /-! ## Conversational backgrounds -/

@@ -27,9 +27,9 @@ With exact semantics, the asymmetry is unexplained:
 
 -/
 
-import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Numerals.Basic
 
-open Semantics.Quantification.Numerals
+open Semantics.Numerals
 
 namespace Implicature
 

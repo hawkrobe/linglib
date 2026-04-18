@@ -1,4 +1,6 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Grammaticalization
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 open Interfaces.Morphosyntax.CaseContainment
 
@@ -47,8 +49,8 @@ namespace Fragments.Finnish.Case
     - INE/ADE →.loc, ELA/ABL →.abl, ILL/ALL →.all
     - ESS →.ess, TRANSL →.transl, ABESS →.abess
     - INSTR →.inst, COM →.com -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .part, .loc, .abl, .all, .ess, .transl, .abess, .inst, .com]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .part, .loc, .abl, .all, .ess, .transl, .abess, .inst, .com}
 
 /-- Finnish's mapped inventory **fails** strict contiguity: GEN (rank 5)
     and LOC (rank 3) have no DAT (rank 4) between them. Finnish uses
@@ -56,14 +58,14 @@ def caseInventory : List Core.Case :=
 
     This illustrates Blake's hedge: the hierarchy holds "usually" but
     languages like Finnish fill the dative slot with a local case
-    extension (ALL → DAT, formalized in `Core.caseExtension`). -/
+    extension (ALL → DAT, formalized in `Core.Case.Extends`). -/
 theorem inventory_fails_strict :
-    Core.validInventory caseInventory = false := by native_decide
+    ¬ Core.Case.IsValidInventory caseInventory := by decide
 
 /-- The allative-for-dative substitution is exactly the extension path
-    in @cite{heine-2009} Table 29.6, formalized in `Core.caseExtension`. -/
+    in @cite{heine-2009} Table 29.6, formalized in `Core.Case.Extends`. -/
 theorem allative_extends_to_dative :
-    Core.Case.dat ∈ Core.caseExtension .all := by simp [Core.caseExtension]
+    Core.Case.Extends .all .dat := by decide
 
 -- ============================================================================
 -- § 2: Syncretism
@@ -160,7 +162,7 @@ theorem goal_collapses_to_all :
 
 /-- All 6 local cases appear in the full Finnish inventory. -/
 theorem localCases_subset_inventory :
-    allLocalCases.all (fun lc => caseInventory.any (· == lc.coreCase)) = true := by native_decide
+    ∀ lc ∈ allLocalCases, lc.coreCase ∈ caseInventory := by decide
 
 /-- Within each direction, internal and external suffixes differ. -/
 theorem internal_external_distinct (d : Direction) :

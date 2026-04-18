@@ -12,7 +12,7 @@ All types are polymorphic over the world type `W`.
 -/
 
 import Linglib.Theories.Semantics.Modality.Kratzer.Background
-import Linglib.Core.Logic.SatisfactionOrdering
+import Linglib.Core.Order.Satisfaction
 import Mathlib.Order.Basic
 
 namespace Semantics.Modality.Kratzer
@@ -56,46 +56,46 @@ def strictlyBetter (A : List (W → Bool)) (w z : W) : Bool :=
 notation:50 w " <[" A "] " z => strictlyBetter A w z
 
 
-open Core.SatisfactionOrdering
+open Core.Order (SatisfactionOrdering)
 
 /--
 Kratzer's world ordering as a `SatisfactionOrdering`.
 
-A world w satisfies proposition p iff p(w) = true.
+A world `w` satisfies proposition `p` iff `p w = true`.
 This connects Kratzer semantics to the generic ordering framework.
 -/
-def worldOrdering (A : List (W → Bool)) : SatisfactionOrdering W (W → Bool) where
-  satisfies := λ w p => p w
-  criteria := A
+def worldOrdering (A : List (W → Bool)) : SatisfactionOrdering W (W → Bool) :=
+  SatisfactionOrdering.ofCriteria (fun w p => p w) A
 
 omit [DecidableEq W] [Fintype W] in
 /--
-**Kratzer's ordering matches the generic framework.**
+**Kratzer's local Bool ordering matches the generic Prop framework.**
 
-This theorem establishes that `atLeastAsGoodAs` is exactly the
-generic `SatisfactionOrdering.atLeastAsGood` for worlds.
+The local `atLeastAsGoodAs` (Bool-valued) is `true` exactly when the
+generic `(worldOrdering A).le` (Prop-valued) holds.
 -/
-theorem atLeastAsGoodAs_eq_generic (A : List (W → Bool)) (w z : W) :
-    atLeastAsGoodAs A w z = (worldOrdering A).atLeastAsGood w z := by
-  unfold atLeastAsGoodAs worldOrdering SatisfactionOrdering.atLeastAsGood
-         SatisfactionOrdering.satisfiedBy satisfiedPropositions
-  rfl
+theorem atLeastAsGoodAs_iff_generic (A : List (W → Bool)) (w z : W) :
+    atLeastAsGoodAs A w z = true ↔ (worldOrdering A).le w z := by
+  show (A.filter (fun p => p z)).all (fun p => p w) = true ↔
+       ∀ p ∈ A.filter (fun p => p z), p w = true
+  rw [List.all_eq_true]
 
 omit [DecidableEq W] [Fintype W] in
 /-- Reflexivity via generic framework. -/
 theorem ordering_reflexive (A : List (W → Bool)) (w : W) :
-    atLeastAsGoodAs A w w = true := by
-  rw [atLeastAsGoodAs_eq_generic]
-  exact SatisfactionOrdering.atLeastAsGood_refl (worldOrdering A) w
+    atLeastAsGoodAs A w w = true :=
+  (atLeastAsGoodAs_iff_generic A w w).mpr ((worldOrdering A).le_refl w)
 
 omit [DecidableEq W] [Fintype W] in
 /-- Transitivity via generic framework. -/
 theorem ordering_transitive (A : List (W → Bool)) (u v w : W)
     (huv : atLeastAsGoodAs A u v = true)
     (hvw : atLeastAsGoodAs A v w = true) :
-    atLeastAsGoodAs A u w = true := by
-  rw [atLeastAsGoodAs_eq_generic] at *
-  exact SatisfactionOrdering.atLeastAsGood_trans (worldOrdering A) u v w huv hvw
+    atLeastAsGoodAs A u w = true :=
+  (atLeastAsGoodAs_iff_generic A u w).mpr <|
+    (worldOrdering A).le_trans u v w
+      ((atLeastAsGoodAs_iff_generic A u v).mp huv)
+      ((atLeastAsGoodAs_iff_generic A v w).mp hvw)
 
 -- NormalityOrder instance (via generic framework)
 
@@ -109,29 +109,27 @@ def kratzerNormality (A : List (W → Bool)) : Core.Order.NormalityOrder W :=
   (worldOrdering A).toNormalityOrder
 
 /-- Backwards-compatible alias. -/
-@[reducible] def kratzerPreorder (A : List (W → Bool)) : Preorder W where
-  le := (kratzerNormality A).le
-  le_refl := (kratzerNormality A).le_refl
-  le_trans a b c := (kratzerNormality A).le_trans a b c
+@[reducible] def kratzerPreorder (A : List (W → Bool)) : Preorder W :=
+  (worldOrdering A).toPreorder
 
 /-- Equivalence under the ordering (via generic framework). -/
 def orderingEquiv (A : List (W → Bool)) (w z : W) : Prop :=
-  (worldOrdering A).equiv w z
+  (worldOrdering A).equivalent w z
 
 omit [DecidableEq W] [Fintype W] in
 theorem orderingEquiv_refl (A : List (W → Bool)) (w : W) : orderingEquiv A w w :=
-  SatisfactionOrdering.equiv_refl (worldOrdering A) w
+  SatisfactionOrdering.equivalent_refl (worldOrdering A) w
 
 omit [DecidableEq W] [Fintype W] in
 theorem orderingEquiv_symm (A : List (W → Bool)) (w z : W)
     (h : orderingEquiv A w z) : orderingEquiv A z w :=
-  SatisfactionOrdering.equiv_symm (worldOrdering A) w z h
+  SatisfactionOrdering.equivalent_symm (worldOrdering A) h
 
 omit [DecidableEq W] [Fintype W] in
 theorem orderingEquiv_trans (A : List (W → Bool)) (u v w : W)
     (huv : orderingEquiv A u v) (hvw : orderingEquiv A v w) :
     orderingEquiv A u w :=
-  SatisfactionOrdering.equiv_trans (worldOrdering A) u v w huv hvw
+  SatisfactionOrdering.equivalent_trans (worldOrdering A) huv hvw
 
 omit [DecidableEq W] [Fintype W] in
 /--
@@ -149,12 +147,13 @@ theorem empty_ordering_all_equivalent (w z : W) :
 omit [DecidableEq W] [Fintype W] in
 theorem empty_ordering_trivial (w z : W) :
     (kratzerPreorder (W := W) []).le w z :=
-  (empty_ordering_all_equivalent w z).1
+  (atLeastAsGoodAs_iff_generic [] w z).mp (empty_ordering_all_equivalent w z).1
 
 omit [DecidableEq W] [Fintype W] in
 theorem empty_ordering_universal_equiv (w z : W) :
     orderingEquiv (W := W) [] w z :=
-  ⟨(empty_ordering_all_equivalent w z).1, (empty_ordering_all_equivalent w z).2⟩
+  ⟨(atLeastAsGoodAs_iff_generic [] w z).mp (empty_ordering_all_equivalent w z).1,
+   (atLeastAsGoodAs_iff_generic [] z w).mp (empty_ordering_all_equivalent w z).2⟩
 
 /--
 The set of worlds **accessible** from w given modal base f.

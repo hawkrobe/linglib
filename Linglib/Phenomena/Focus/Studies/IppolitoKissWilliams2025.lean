@@ -340,11 +340,11 @@ open DTS.But
 
 A DTS `Issue W` is a single topic H (with ¬H implicit). The corresponding
 inquisitive issue has two alternatives: H and ¬H. -/
-def dtsToInquisitive {W : Type*} (topic : BProp W) : Discourse.Issue W :=
+def dtsToInquisitive {W : Type*} (topic : (W → Bool)) : Discourse.Issue W :=
   Discourse.Issue.polar topic
 
 /-- The DTS issue and inquisitive issue have matching alternatives. -/
-theorem dtsToInquisitive_alternatives {W : Type*} (topic : BProp W) :
+theorem dtsToInquisitive_alternatives {W : Type*} (topic : (W → Bool)) :
     (dtsToInquisitive topic).alternatives = [topic, λ w => !topic w] := rfl
 
 -- ============================================================================
@@ -419,7 +419,7 @@ by P(S) > 0) ↔ P(S∧H)·(1−P(H)) > P(H)·P(S∧¬H) (partition P(S), expand
 ↔ P(S∧H)·P(¬H) > P(H)·P(S∧¬H) (normalization: P(¬H) = 1−P(H))
 ↔ P(S|H) > P(S|¬H) (divide by P(H)P(¬H)) ↔ BF > 1. -/
 theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
-    (prior : Prior W) (topic : BProp W) (evidence : W → Bool)
+    (prior : Prior W) (topic : (W → Bool)) (evidence : W → Bool)
     (hH_pos : probOfProp prior topic > 0)
     (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
     (hS_pos : probOfProp prior evidence > 0)
@@ -474,7 +474,7 @@ stronger than discourse *only*'s.
 By contrapositive: if `probSupports` were true, Bayes' theorem would give
 `posRelevant` (BF > 1), contradicting `negRelevant` (BF < 1). -/
 theorem negRelevant_implies_not_probSupports {W : Type*} [Fintype W]
-    (prior : Prior W) (topic : BProp W) (evidence : W → Bool)
+    (prior : Prior W) (topic : (W → Bool)) (evidence : W → Bool)
     (hH_pos : probOfProp prior topic > 0)
     (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
     (hS_pos : probOfProp prior evidence > 0)
@@ -498,7 +498,7 @@ also fails to probabilistically support H (the *only* condition). This
 formalizes @cite{ippolito-kiss-williams-2025} §6's claim that discourse *only* is strictly weaker
 than *but*. -/
 theorem but_sufficient_for_only {W : Type*} [Fintype W]
-    (prior : Prior W) (topic : BProp W)
+    (prior : Prior W) (topic : (W → Bool))
     (s s' : W → Bool)
     (hH_pos : probOfProp prior topic > 0)
     (hNH_pos : probOfProp prior (λ w => !topic w) > 0)

@@ -52,11 +52,11 @@ structure EpistemicState (W : Type*) where
 
 /-- K operator: speaker knows φ iff φ is true in all epistemically
 possible worlds. -/
-def knows {W : Type*} (e : EpistemicState W) (φ : BProp W) : Bool :=
+def knows {W : Type*} (e : EpistemicState W) (φ : (W → Bool)) : Bool :=
   e.possible.all φ
 
 /-- P operator: speaker considers φ possible. -/
-def possible {W : Type*} (e : EpistemicState W) (φ : BProp W) : Bool :=
+def possible {W : Type*} (e : EpistemicState W) (φ : (W → Bool)) : Bool :=
   e.possible.any φ
 
 private theorem not_not_eq_true (b : Bool) : ((!b) ≠ true) ↔ (b = true) := by
@@ -66,7 +66,7 @@ private theorem not_eq_true_iff (b : Bool) : ((!b) = true) ↔ (b = false) := by
   cases b <;> decide
 
 /-- Standard epistemic duality: ¬K¬φ ↔ Pφ. -/
-theorem duality {W : Type*} (e : EpistemicState W) (φ : BProp W) :
+theorem duality {W : Type*} (e : EpistemicState W) (φ : (W → Bool)) :
     (knows e (λ w => !φ w) = false) ↔ (possible e φ = true) := by
   simp only [knows, possible, Bool.eq_false_iff, ne_eq, List.all_eq_true, List.any_eq_true]
   constructor
@@ -82,11 +82,11 @@ theorem duality {W : Type*} (e : EpistemicState W) (φ : BProp W) :
     contradiction
 
 /-- Secondary implicature: speaker knows the alternative is false. -/
-def hasSecondaryImplicature {W : Type*} (e : EpistemicState W) (ψ : BProp W) : Prop :=
+def hasSecondaryImplicature {W : Type*} (e : EpistemicState W) (ψ : (W → Bool)) : Prop :=
   knows e (λ w => !ψ w) = true
 
 /-- Key insight: if ψ is possible, then K¬ψ is blocked. -/
-theorem secondary_blocked_if_possible {W : Type*} (e : EpistemicState W) (ψ : BProp W) :
+theorem secondary_blocked_if_possible {W : Type*} (e : EpistemicState W) (ψ : (W → Bool)) :
     possible e ψ = true → knows e (λ w => !ψ w) = false := by
   intro hpos
   simp only [possible, List.any_eq_true] at hpos
@@ -104,7 +104,7 @@ theorem secondary_blocked_if_possible {W : Type*} (e : EpistemicState W) (ψ : B
 These are equivalent when the epistemic state corresponds to the support
 of the probability distribution. -/
 theorem primary_possibility_correspondence {W : Type*}
-    (e : EpistemicState W) (ψ : BProp W) :
+    (e : EpistemicState W) (ψ : (W → Bool)) :
     (knows e ψ = false) → (possible e (λ w => !ψ w) = true) := by
   intro h
   simp only [knows, Bool.eq_false_iff, ne_eq, List.all_eq_true] at h
@@ -120,7 +120,7 @@ theorem primary_possibility_correspondence {W : Type*}
 /-- **Blocking Correspondence**:
 Secondary K¬ψ is blocked when Pψ holds. -/
 theorem blocking_correspondence {W : Type*}
-    (e : EpistemicState W) (ψ : BProp W) :
+    (e : EpistemicState W) (ψ : (W → Bool)) :
     possible e ψ = true → ¬hasSecondaryImplicature e ψ := by
   intro hpos hsec
   simp only [hasSecondaryImplicature] at hsec

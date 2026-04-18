@@ -47,7 +47,7 @@ Note: UV(E) for a **single cell** E can be negative even when BF > 1
 namespace DTS.MerinBridge
 
 open Core.DecisionTheory
-open Core.Proposition (World4 BProp)
+open Core.Proposition (World4)
 open DTS
 
 /-! ## Encoding Merin's Issue as a Decision Problem
@@ -87,7 +87,7 @@ UV of a single cell can be negative (@cite{van-rooy-2003}, p. 736).
 The non-negativity result (EVSI ≥ 0) holds for the **expected** UV
 across the full partition {E, ¬E}, not for individual cells (p. 742). -/
 theorem posRelevant_shifts_accept_eu :
-    ∀ (ctx : DTSContext World4) (e : Core.Proposition.BProp World4),
+    ∀ (ctx : DTSContext World4) (e : (World4 → Bool)),
     (∀ w, ctx.prior w = 1/4) →
     -- Non-degeneracy: E, H, ¬H all non-empty
     (∃ w, e w = true) →
@@ -115,7 +115,7 @@ which gives |E∩H|/|H| = |E∩¬H|/|¬H|, hence |E∩H|/|E| = |H|/4.
 So conditionalEU(a|E) = expectedUtility(a) for each action a,
 making valueAfterLearning = dpValue. -/
 theorem irrelevant_implies_zero_uv :
-    ∀ (ctx : DTSContext World4) (e : Core.Proposition.BProp World4),
+    ∀ (ctx : DTSContext World4) (e : (World4 → Bool)),
     (∀ w, ctx.prior w = 1/4) →
     -- Non-degeneracy: E, H, ¬H all non-empty
     (∃ w, e w = true) →

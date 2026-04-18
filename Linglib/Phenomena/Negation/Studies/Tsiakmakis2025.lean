@@ -84,7 +84,6 @@ namespace Tsiakmakis2025
 open JinKoenig2021
   (LicensingCondition TriggerSubclass DualInferenceProfile negativeValenceEntailsDual)
 open Semantics.Attitudes.Intensional (World)
-open Core.Proposition (BProp)
 open Semantics.Modality.Kratzer
   (bestWorlds necessity necessity_iff_all ModalBase OrderingSource)
 open Core.Modality (ModalFlavor)
@@ -123,13 +122,13 @@ def neg1Sem (p : World → Bool) : World → Bool :=
 
     This is exactly Kratzer's `necessity` operator. The ordering source
     varies by host (deontic for fear/forbid, epistemic for doubt/questions). -/
-def neg2Sem (f : ModalBase World) (g : OrderingSource World) (p : BProp World)
+def neg2Sem (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool))
     (w : World) : Prop :=
   necessity f g p w
 
 /-- NEG₂ is formally identical to Kratzer necessity. -/
 theorem neg2_is_kratzer_necessity (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World) :
+    (p : (World → Bool)) (w : World) :
     neg2Sem f g p w ↔ necessity f g p w := Iff.rfl
 
 -- ════════════════════════════════════════════════════
@@ -696,20 +695,20 @@ Equivalently, feeding ¬p to negative *min* cancels the double negation
 and yields expletive *min*'s semantics. -/
 
 /-- Negative *min*: modal necessity over ¬p (eq. 13). -/
-def negativeMinSem (f : ModalBase World) (g : OrderingSource World) (p : BProp World)
+def negativeMinSem (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool))
     (w : World) : Prop :=
   neg2Sem f g (neg1Sem p) w
 
 /-- Negative *min* decomposes as NEG₂ ∘ NEG₁. -/
 theorem negative_min_is_modal_of_negation (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World) :
+    (p : (World → Bool)) (w : World) :
     negativeMinSem f g p w ↔ neg2Sem f g (neg1Sem p) w := Iff.rfl
 
 /-- Expletive *min* = negative *min* with double negation cancelled:
     ⟦NEG₂⟧(p) = negativeMin(¬p). Feeding ¬p into negative *min*
     cancels the inner negation (!!p = p), recovering expletive semantics. -/
 theorem expletive_from_negative_double_neg (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World) :
+    (p : (World → Bool)) (w : World) :
     neg2Sem f g p w ↔ negativeMinSem f g (neg1Sem p) w := by
   simp only [negativeMinSem, neg2Sem]
   have : neg1Sem (neg1Sem p) = p := by

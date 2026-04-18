@@ -1,5 +1,5 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Dargwa (Tanti) Case Inventory @cite{sumbatova-2021}
 
@@ -37,8 +37,8 @@ namespace Fragments.Dargwa.Case
     "being-in-a-state" predicates, analogous to the Finnish essive.
 
     Genitive has two allomorphs: -la and -lla. -/
-def caseInventory : List Core.Case :=
-  [.abs, .erg, .gen, .dat, .com, .ess]
+def caseInventory : Finset Core.Case :=
+  {.abs, .erg, .gen, .dat, .com, .ess}
 
 /-- Dargwa's grammatical case inventory violates strict contiguity
     on Blake's hierarchy: COM (rank 1) and ESS (rank 0) are present
@@ -48,7 +48,7 @@ def caseInventory : List Core.Case :=
     encode in other languages. The grammatical vs. locative split is
     a structural feature of Nakh-Dagestanian languages. -/
 theorem inventory_not_strictly_contiguous :
-    Core.validInventory caseInventory = false := by native_decide
+    ¬ Core.Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 2: Consistent Ergative Alignment
@@ -71,8 +71,8 @@ def patientCase : Core.Case := .abs
 
 /-- The inventory contains both core ergative cases. -/
 theorem has_core_ergative :
-    caseInventory.any (· == .abs) = true ∧
-    caseInventory.any (· == .erg) = true := ⟨by native_decide, by native_decide⟩
+    Core.Case.abs ∈ caseInventory ∧ Core.Case.erg ∈ caseInventory := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- Dargwa is consistently ergative (no split). -/
 theorem consistently_ergative :

@@ -94,12 +94,12 @@ instance : FiniteWorlds W where
   complete := fun w => by cases w <;> simp
 
 /-- Presupposition p: the nation has a king. -/
-def hasKing : BProp W
+def hasKing : (W → Bool)
   | .kingOpens | .kingDoesnt => true
   | _ => false
 
 /-- Presupposition q: the nation has a president. -/
-def hasPresident : BProp W
+def hasPresident : (W → Bool)
   | .presidentConducts | .presidentDoesnt => true
   | _ => false
 
@@ -121,7 +121,7 @@ def presConductsCeremony : PrProp W :=
 -- ══════════════════════════════════════════════════════════
 
 /-- The expected presupposition: the nation has some head of state. -/
-def expectedPresup : BProp W := fun w => hasKing w || hasPresident w
+def expectedPresup : (W → Bool) := fun w => hasKing w || hasPresident w
 
 /-- Observation (2a): the presupposition p ∨ q holds at every world. -/
 theorem presup_universal : ∀ w, expectedPresup w = true := by
@@ -238,12 +238,12 @@ theorem hasPresident_not_supported :
   simp [Update.prop, hasPresident] at this
 
 /-- Bool assertion function for "King opens parliament". -/
-def kingOpensB : BProp W
+def kingOpensB : (W → Bool)
   | .kingOpens => true
   | _ => false
 
 /-- Bool assertion function for "President conducts ceremony". -/
-def presConductsB : BProp W
+def presConductsB : (W → Bool)
   | .presidentConducts => true
   | _ => false
 
@@ -443,7 +443,7 @@ inductive W18 where
   deriving DecidableEq, Repr, Inhabited
 
 /-- "John solved the problem" -/
-def solved : BProp W18
+def solved : (W18 → Bool)
   | .solvedRealized | .solvedNotRealized => true
   | .notSolved => false
 

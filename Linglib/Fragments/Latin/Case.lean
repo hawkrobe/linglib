@@ -1,4 +1,6 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Grammaticalization
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 open Interfaces.Morphosyntax.CaseContainment
 
@@ -31,25 +33,25 @@ namespace Fragments.Latin.Case
 -- ============================================================================
 
 /-- Standard Latin 6-case inventory (NOM ACC GEN DAT ABL VOC). -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .abl, .voc]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .abl, .voc}
 
 /-- The hierarchy-relevant subset (excluding VOC at rank 0). -/
-def coreInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .abl]
+def coreInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .abl}
 
 /-- Latin's 5-case core inventory **fails** strict contiguity: DAT (rank 4)
     and ABL (rank 2) have no LOC (rank 3) between them. -/
 theorem core_inventory_fails_strict :
-    Core.validInventory coreInventory = false := by native_decide
+    ¬ Core.Case.IsValidInventory coreInventory := by decide
 
 /-- With the vestigial locative, contiguous on ranks 6–2.
     VOC (rank 0) creates a gap at rank 1 under strict checking, so
     we validate the hierarchy-relevant subset without it. -/
-def inventoryWithLocative : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .loc, .abl]
+def inventoryWithLocative : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .loc, .abl}
 
-#guard Core.validInventory inventoryWithLocative
+example : Core.Case.IsValidInventory inventoryWithLocative := by decide
 
 -- ============================================================================
 -- § 2: Syncretism Patterns (@cite{blake-1994}, pp. 19–24)
@@ -74,7 +76,7 @@ theorem dat_abl_not_strictly_adjacent :
     hierarchyAdjacent .dat .abl = false := by native_decide
 
 theorem dat_abl_inventory_adjacent :
-    inventoryAdjacent coreInventory .dat .abl = true := by native_decide
+    inventoryAdjacent coreInventory .dat .abl = true := by decide
 
 -- ============================================================================
 -- § 3: Case Extension (@cite{heine-2009}, Table 29.6)
@@ -84,11 +86,11 @@ theorem dat_abl_inventory_adjacent :
     morphological form covers source (ablativus separativus), instrumental
     (ablativus instrumenti), and causal (ablativus causae) functions.
     These are exactly the ablative extension targets in @cite{heine-2009}
-    Table 29.6, formalized in `Core.caseExtension`. -/
+    Table 29.6, formalized in `Core.Case.Extends`. -/
 theorem abl_extends_to_inst :
-    Core.Case.inst ∈ Core.caseExtension .abl := by simp [Core.caseExtension]
+    Core.Case.Extends .abl .inst := by decide
 
 theorem abl_extends_to_caus :
-    Core.Case.caus ∈ Core.caseExtension .abl := by simp [Core.caseExtension]
+    Core.Case.Extends .abl .caus := by decide
 
 end Fragments.Latin.Case

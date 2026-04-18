@@ -161,7 +161,7 @@ We model this as: in all epistemically accessible worlds where the speaker's
 conversational goals are fulfilled, p is in the CG. This is a double universal:
 necessity over epistemic alternatives, then necessity over conversational goals. -/
 def verum (epistemic : ModalBase World) (conversational : OrderingSource World)
-    (cg : BContextSet World) (p : BProp World) (w : World) : Bool :=
+    (cg : BContextSet World) (p : (World → Bool)) (w : World) : Bool :=
   -- For all best epistemic worlds w': in the CG induced at w', p holds
   decide (∀ w' ∈ bestWorlds epistemic conversational w,
     cg w' = true ∧ p w' = true)
@@ -178,7 +178,7 @@ is simply ¬p, while the non-at-issue content (CG-management) expresses
 that p is not to become common ground. -/
 structure FalsumContent where
   /-- At-issue content: ¬p -/
-  atIssue : BProp World
+  atIssue : (World → Bool)
   /-- CG-management: p should not be added to CG.
       Modeled as: the speaker considers it epistemically possible that p,
       but p is not CG-entailed. -/
@@ -186,7 +186,7 @@ structure FalsumContent where
 
 /-- Construct FALSUM content for a proposition p. -/
 def mkFalsum (epistemic : ModalBase World) (conversational : OrderingSource World)
-    (cg : BContextSet World) (p : BProp World) : FalsumContent where
+    (cg : BContextSet World) (p : (World → Bool)) : FalsumContent where
   atIssue := λ w => !p w
   cgManagement := λ w =>
     -- Speaker considers p epistemically possible
@@ -196,7 +196,7 @@ def mkFalsum (epistemic : ModalBase World) (conversational : OrderingSource Worl
 
 /-- FALSUM's at-issue content is propositional negation. -/
 theorem falsum_atIssue_is_negation (ep : ModalBase World) (cv : OrderingSource World)
-    (cg : BContextSet World) (p : BProp World) (w : World) :
+    (cg : BContextSet World) (p : (World → Bool)) (w : World) :
     (mkFalsum ep cv cg p).atIssue w = !p w := rfl
 
 -- ============================================================================
@@ -220,7 +220,7 @@ is compatible with more bias configurations because it only requires
 epistemic possibility, not belief. -/
 structure FalsumCZ where
   /-- At-issue content: ¬p (same as standard FALSUM) -/
-  atIssue : BProp World
+  atIssue : (World → Bool)
   /-- Presupposition: attitude holder considers p epistemically possible.
       This is the definedness condition — the question is defined only if
       the attitude holder considers the positive prejacent possible. -/
@@ -233,7 +233,7 @@ structure FalsumCZ where
 The attitude holder's epistemic state is modeled via the modal base
 (their epistemic alternatives). -/
 def mkFalsumCZ (attitudeEpi : ModalBase World) (ordering : OrderingSource World)
-    (cg : BContextSet World) (p : BProp World) : FalsumCZ where
+    (cg : BContextSet World) (p : (World → Bool)) : FalsumCZ where
   atIssue := λ w => !p w
   definedness := λ w =>
     -- ∃w' ∈ EPI(w). p(w') = true — epistemic possibility
@@ -244,14 +244,14 @@ def mkFalsumCZ (attitudeEpi : ModalBase World) (ordering : OrderingSource World)
 
 /-- FALSUM^CZ at-issue content is still propositional negation. -/
 theorem falsumCZ_atIssue_is_negation (ep : ModalBase World) (cv : OrderingSource World)
-    (cg : BContextSet World) (p : BProp World) (w : World) :
+    (cg : BContextSet World) (p : (World → Bool)) (w : World) :
     (mkFalsumCZ ep cv cg p).atIssue w = !p w := rfl
 
 /-- Standard FALSUM entails FALSUM^CZ definedness: if the speaker *believes* p
 is possible (necessity over goals), then they certainly *consider* it possible.
 This captures why standard FALSUM is a special case of FALSUM^CZ. -/
 theorem standard_falsum_entails_CZ_definedness
-    (ep : ModalBase World) (cv : OrderingSource World) (cg : BContextSet World) (p : BProp World) (w : World)
+    (ep : ModalBase World) (cv : OrderingSource World) (cg : BContextSet World) (p : (World → Bool)) (w : World)
     (hStd : ∃ w' ∈ bestWorlds ep cv w, p w' = true) :
     (mkFalsumCZ ep cv cg p).definedness w :=
   hStd
@@ -279,7 +279,7 @@ making the epistemic possibility condition easier to satisfy.
 This is why náhodou is licensed in contexts where the speaker's evidence
 is weaker — it signals willingness to explore remote possibilities. -/
 theorem nahodou_widens_domain (ep : ModalBase World) (cv cvLoose : OrderingSource World)
-    (cg : BContextSet World) (p : BProp World) (w : World)
+    (cg : BContextSet World) (p : (World → Bool)) (w : World)
     (hSubset : ∀ w', w' ∈ bestWorlds ep cv w → w' ∈ bestWorlds ep cvLoose w) :
     (mkFalsumCZ ep cv cg p).definedness w →
     (mkFalsumCZ ep cvLoose cg p).definedness w := by
@@ -313,17 +313,21 @@ def EvidentialBiasFlavor.toKratzerParams (f : EvidentialBiasFlavor) : KratzerPar
   ordering := f.stereotypical
 
 /-- Evidential necessity: ∀w' ∈ Best(f,g,w). p(w'). -/
-def evidentialNecessity (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :=
-  necessity f.contextBase f.stereotypical p w
+def evidentialNecessity (f : EvidentialBiasFlavor) (p : (World → Bool)) (w : World) : Prop :=
+  necessity f.contextBase f.stereotypical (fun w => p w = true) w
 
 /-- Evidential possibility: ∃w' ∈ Best(f,g,w). p(w'). -/
-def evidentialPossibility (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :=
-  possibility f.contextBase f.stereotypical p w
+def evidentialPossibility (f : EvidentialBiasFlavor) (p : (World → Bool)) (w : World) : Prop :=
+  possibility f.contextBase f.stereotypical (fun w => p w = true) w
 
 /-- □_ev satisfies modal duality. -/
-theorem evidentialBias_duality (f : EvidentialBiasFlavor) (p : BProp World) (w : World) :
-    evidentialNecessity f p w ↔ ¬ evidentialPossibility f (λ w' => !p w') w :=
-  duality f.contextBase f.stereotypical p w
+theorem evidentialBias_duality (f : EvidentialBiasFlavor) (p : (World → Bool)) (w : World) :
+    evidentialNecessity f p w ↔ ¬ evidentialPossibility f (λ w' => !p w') w := by
+  unfold evidentialNecessity evidentialPossibility
+  rw [duality f.contextBase f.stereotypical (fun w => p w = true) w]
+  have heq : (fun w' => ¬ ((fun w => p w = true) w')) = (fun w' => (!p w') = true) := by
+    funext w'; simp [Bool.not_eq_true]
+  rw [heq]
 
 -- ============================================================================
 -- §7: Scope Interactions (Staňková 2026 §3.1)
@@ -332,13 +336,13 @@ theorem evidentialBias_duality (f : EvidentialBiasFlavor) (p : BProp World) (w :
 /-- **Inner negation** scopes under □_ev: □_ev(¬p).
 
 Strong evidential bias: based on the context, it must be that ¬p. -/
-def innerBias (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :=
+def innerBias (f : EvidentialBiasFlavor) (p : (World → Bool)) (w : World) : Prop :=
   evidentialNecessity f (λ w' => !p w') w
 
 /-- **Medial negation** scopes over □_ev: ¬□_ev(p).
 
 Weak evidential bias: it's not the case that p must hold. -/
-def medialBias (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :=
+def medialBias (f : EvidentialBiasFlavor) (p : (World → Bool)) (w : World) : Prop :=
   ¬ evidentialNecessity f p w
 
 /-- Inner bias entails medial bias given seriality (D axiom):
@@ -346,7 +350,7 @@ def medialBias (f : EvidentialBiasFlavor) (p : BProp World) (w : World) : Prop :
 
 TODO: The seriality condition holds whenever the modal base is realistic
 (cf. `Kratzer.realistic_is_serial`). -/
-theorem inner_entails_medial (f : EvidentialBiasFlavor) (p : BProp World) (w : World)
+theorem inner_entails_medial (f : EvidentialBiasFlavor) (p : (World → Bool)) (w : World)
     (hSerial : (bestWorlds f.contextBase f.stereotypical w).card > 0)
     (hInner : innerBias f p w) :
     medialBias f p w := by
@@ -375,12 +379,12 @@ def falsumFocusRequirement : Core.InformationStructure.DiscourseStatus :=
   .focused
 
 /-- FALSUM generates exactly two alternatives (polarity contrast). -/
-def falsumAlternatives (cg : BContextSet World) (p : BProp World) :
+def falsumAlternatives (cg : BContextSet World) (p : (World → Bool)) :
     List (World → Prop) :=
   [ λ _ => ¬(∀ w', cg w' = true → p w' = true)
   , λ _ => ∀ w', cg w' = true → p w' = true ]
 
-theorem falsum_binary_alternatives (cg : BContextSet World) (p : BProp World) :
+theorem falsum_binary_alternatives (cg : BContextSet World) (p : (World → Bool)) :
     (falsumAlternatives cg p).length = 2 := rfl
 
 -- ============================================================================

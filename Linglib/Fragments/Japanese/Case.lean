@@ -1,5 +1,5 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Japanese Case Inventory @cite{blake-1994}
 
@@ -19,10 +19,10 @@ namespace Fragments.Japanese.Case
 /-- Japanese case inventory, mapped from particles to Core.Case:
     -ga → NOM, -o → ACC, -no → GEN, -ni → DAT/LOC/ALL,
     -kara → ABL, -de → INST (also LOC), -to → COM, -e → ALL. -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .loc, .abl, .all, .inst, .com]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .loc, .abl, .all, .inst, .com}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 1, all present).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Japanese.Case

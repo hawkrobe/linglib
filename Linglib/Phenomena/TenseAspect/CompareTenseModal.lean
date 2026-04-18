@@ -36,7 +36,7 @@ namespace Phenomena.TenseAspect.CompareTenseModal
 open Semantics.Tense.Evidential
 open Semantics.Modality
 open Semantics.Attitudes.Intensional (World allWorlds)
-open Core.Proposition (World4 BProp)
+open Core.Proposition (World4)
 open Core.Presupposition (PrProp)
 
 -- ════════════════════════════════════════════════════
@@ -48,11 +48,11 @@ open Core.Presupposition (PrProp)
     w0 = raining, w1 = sprinkler (wet but not rain), w2 = dry, w3 = unknown. -/
 
 /-- Wearing a raincoat: true in w0 (rain) and w1 (sprinkler). -/
-def wearingRaincoat : BProp World := λ w =>
+def wearingRaincoat : (World → Bool) := λ w =>
   match w with | .w0 => true | .w1 => true | _ => false
 
 /-- It is raining: true only in w0. -/
-def isRaining : BProp World := λ w =>
+def isRaining : (World → Bool) := λ w =>
   match w with | .w0 => true | _ => false
 
 /-- The raincoat kernel: K = {wearingRaincoat}. -/
@@ -83,7 +83,7 @@ theorem raincoat_downstream : downstreamEvidence raincoatFrame := by
 /-- The raincoat kernel doesn't settle isRaining: K = {wearingRaincoat},
     and wearingRaincoat neither entails nor excludes isRaining. -/
 theorem raincoat_not_settled :
-    directlySettlesExplicit raincoatK isRaining = false := by native_decide
+    ¬ directlySettlesExplicit raincoatK isRaining := by decide
 
 /-- **Downstream implies must-defined**: in the raincoat scenario, downstream
     evidence (T ≤ A) co-occurs with the kernel not settling the prejacent.
@@ -92,8 +92,8 @@ theorem raincoat_not_settled :
     target event) would require formalizing causation. -/
 theorem downstream_implies_must_defined :
     downstreamEvidence raincoatFrame ∧
-    (kernelMust raincoatK isRaining).presup .w0 := by
-  exact ⟨raincoat_downstream, by simp only [kernelMust, PrProp.ofBool]; native_decide⟩
+    (kernelMust raincoatK isRaining).presup .w0 :=
+  ⟨raincoat_downstream, by simp only [kernelMust]; decide⟩
 
 /-- **Tense–modal evidential parallel**: both Cumming's nonfuture constraint
     and VF&G's `kernelMust` presupposition hold simultaneously for the same
@@ -110,8 +110,9 @@ theorem tense_modal_evidential_parallel :
     -- So must is defined but FALSE — the speaker doesn't have enough evidence
     -- for "must". This is correct: the raincoat alone doesn't prove rain.
     ¬(kernelMust raincoatK isRaining).assertion .w0 := by
-  simp only [kernelMust, PrProp.ofBool]
-  exact ⟨raincoat_downstream, by native_decide, by native_decide⟩
+  refine ⟨raincoat_downstream, ?_, ?_⟩
+  · simp only [kernelMust]; decide
+  · simp only [kernelMust]; decide
 
 /-- **Direct evidence blocks both**: when evidence is direct (the speaker
     saw the rain), the kernel settles the prejacent. Then:
@@ -124,7 +125,7 @@ theorem tense_modal_evidential_parallel :
 theorem direct_evidence_blocks_both :
     let directK : Kernel := ⟨[isRaining]⟩
     -- Direct evidence settles the prejacent
-    directlySettlesExplicit directK isRaining = true ∧
+    directlySettlesExplicit directK isRaining ∧
     -- Therefore must is undefined (presupposition failure)
     ¬(kernelMust directK isRaining).presup .w0 ∧
     -- A direct-observation frame: T = A (saw the rain as it happened)
@@ -132,9 +133,10 @@ theorem direct_evidence_blocks_both :
       { speechTime := 0, perspectiveTime := 0, referenceTime := 0, eventTime := -1, acquisitionTime := -1 }
     -- Downstream constraint trivially satisfied (T = A → T ≤ A)
     downstreamEvidence directFrame := by
-  simp only [kernelMust, PrProp.ofBool]
-  refine ⟨by native_decide, by native_decide, ?_⟩
-  show (-1 : ℤ) ≤ -1; omega
+  refine ⟨?_, ?_, ?_⟩
+  · decide
+  · simp only [kernelMust]; decide
+  · show (-1 : ℤ) ≤ -1; omega
 
 -- ════════════════════════════════════════════════════
 -- § 4. Epistemic Authority Bridge
@@ -151,8 +153,8 @@ theorem strong_assertion_settles :
     strongAssertion.authority = .ego ∧
     -- Concrete witness: direct kernel settles isRaining
     let directK : Kernel := ⟨[isRaining]⟩
-    directlySettlesExplicit directK isRaining = true := by
-  exact ⟨rfl, rfl, by native_decide⟩
+    directlySettlesExplicit directK isRaining :=
+  ⟨rfl, rfl, by decide⟩
 
 /-- Inferential claims (nonparticipant + inference) correspond to non-settling
     kernels with must-defined presuppositions — the canonical 'must' profile. -/
@@ -160,10 +162,11 @@ theorem inferential_claim_must_profile :
     inferentialClaim.source = .inference ∧
     inferentialClaim.authority = .nonparticipant ∧
     -- Concrete witness: raincoat kernel doesn't settle but must is defined
-    directlySettlesExplicit raincoatK isRaining = false ∧
+    ¬ directlySettlesExplicit raincoatK isRaining ∧
     (kernelMust raincoatK isRaining).presup .w0 := by
-  simp only [kernelMust, PrProp.ofBool]
-  exact ⟨rfl, rfl, by native_decide, by native_decide⟩
+  refine ⟨rfl, rfl, ?_, ?_⟩
+  · decide
+  · simp only [kernelMust]; decide
 
 /-- Ego↔direct and nonparticipant↔indirect form natural pairs.
     This is the core glossary insight: epistemic authority and evidential

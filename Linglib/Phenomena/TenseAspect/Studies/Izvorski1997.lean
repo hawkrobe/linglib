@@ -171,17 +171,17 @@ open Core.Proposition (World4)
 
 /-- Izvorski's EV operator (formalization of (17)–(19) + (8ii)). -/
 def izvorskiEv (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) : PrProp World where
+    (p : (World → Bool)) : PrProp World where
   presup := λ w => (accessibleWorlds f w).Nonempty
   assertion := λ w => necessity f g p w
 
-def johnDrank : BProp World
+def johnDrank : (World → Bool)
   | .w0 => true
   | .w1 => true
   | .w2 => false
   | .w3 => false
 
-def bottlesEmpty : BProp World
+def bottlesEmpty : (World → Bool)
   | .w0 => true
   | .w1 => false
   | .w2 => true
@@ -223,18 +223,18 @@ theorem ev_and_must_agree_here (w : World) :
     (necessity mustBase beliefOrdering johnDrank w : Prop) := by
   simp only [izvorskiEv]; cases w <;> native_decide
 
-private def pOnlyW0 : BProp World
+private def pOnlyW0 : (World → Bool)
   | .w0 => true
   | _ => false
 
 theorem izvorski_koev_diverge :
-    ∃ (f : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World),
+    ∃ (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World),
       (izvorskiEv f g p).assertion w ≠ p w := by
   refine ⟨emptyBackground, emptyBackground, pOnlyW0, .w0, ?_⟩
   simp only [izvorskiEv]; native_decide
 
 theorem izvorski_collapses_to_koev_when_realistic
-    (f : ModalBase World) (p : BProp World) (w : World)
+    (f : ModalBase World) (p : (World → Bool)) (w : World)
     (hTotal : accessibleWorlds f w = {w}) :
     (izvorskiEv f emptyBackground p).assertion w ↔ (p w = true) := by
   simp only [izvorskiEv]
@@ -244,7 +244,7 @@ theorem izvorski_collapses_to_koev_when_realistic
   · intro h; exact h w rfl
   · intro h w' hw'; rw [hw']; exact h
 
-theorem izvorski_projection (f : ModalBase World) (g : OrderingSource World) (p : BProp World) :
+theorem izvorski_projection (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) :
     (PrProp.neg (izvorskiEv f g p)).presup = (izvorskiEv f g p).presup :=
   PrProp.neg_presup _
 

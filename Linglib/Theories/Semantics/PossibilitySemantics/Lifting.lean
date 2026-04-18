@@ -83,13 +83,13 @@ def liftedAccess (x y : Poss5) : Bool :=
 
 /-- The epistemic scale's compatibility matches the lifting construction. -/
 theorem compat_from_lifting (x y : Poss5) :
-    epistemicScale.compat x y = liftedCompat x y := by
-  cases x <;> cases y <;> native_decide
+    epistemicScale.compat x y ↔ liftedCompat x y = true := by
+  cases x <;> cases y <;> decide
 
 /-- The epistemic scale's accessibility matches the lifting construction. -/
 theorem access_from_lifting (x y : Poss5) :
-    epistemicScale.access x y = liftedAccess x y := by
-  cases x <;> cases y <;> native_decide
+    epistemicScale.access x y ↔ liftedAccess x y = true := by
+  cases x <;> cases y <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Truth from World Membership (Lemma 5.4)
@@ -103,20 +103,20 @@ theorem access_from_lifting (x y : Poss5) :
     - ◇p x = true     iff  world 0 ∈ A(x)  (some actual world satisfies p)
 -/
 
-/-- Boolean truth from worlds: p holds at x iff the ¬p-world is not actual. -/
+/-- Truth from worlds: p holds at x iff the ¬p-world is not actual. -/
 theorem boolean_truth_from_worlds (x : Poss5) :
-    propP x = !worldlyA1 x := by
-  cases x <;> rfl
+    propP x ↔ worldlyA1 x = false := by
+  cases x <;> decide
 
 /-- Box truth from worlds: □p holds at x iff the ¬p-world is not
     information-accessible. -/
 theorem box_truth_from_worlds (x : Poss5) :
-    box epistemicScale propP x = !worldlyI1 x := by
-  cases x <;> native_decide
+    box epistemicScale propP x ↔ worldlyI1 x = false := by
+  cases x <;> decide
 
 /-- Diamond truth from worlds: ◇p holds at x iff the p-world is actual. -/
 theorem diamond_truth_from_worlds (x : Poss5) :
-    diamond epistemicScale propP x = worldlyA0 x := by
-  cases x <;> native_decide
+    diamond epistemicScale propP x ↔ worldlyA0 x = true := by
+  cases x <;> decide
 
 end Semantics.PossibilitySemantics

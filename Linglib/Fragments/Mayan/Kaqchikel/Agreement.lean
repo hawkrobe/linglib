@@ -2,8 +2,8 @@ import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.Spellout
 import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Kaqchikel Agreement Fragment @cite{preminger-2014}
 
@@ -483,16 +483,15 @@ theorem trans_has_ergative :
 -- ============================================================================
 
 /-- Kaqchikel case inventory, derived from argument position case values. -/
-def caseInventory : List Core.Case := [.erg, .abs]
+def caseInventory : Finset Core.Case := {.erg, .abs}
 
 /-- The inventory covers all argument positions: every position's case
     is in the inventory. -/
 theorem inventory_covers_positions :
-    kaqArgPositions.all (λ p => caseInventory.any (· == p.case)) = true := by
-  native_decide
+    ∀ p ∈ kaqArgPositions, p.case ∈ caseInventory := by decide
 
 -- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy
 -- (both are core cases at rank 6, trivially no gaps).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Mayan.Kaqchikel

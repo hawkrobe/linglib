@@ -50,7 +50,7 @@ def materialImp {W : Type*} (p q : Prop' W) : Prop' W :=
   Classical.pimp W p q
 
 /-- Decidable version of material implication -/
-def materialImpB {W : Type*} (p q : BProp W) : BProp W :=
+def materialImpB {W : Type*} (p q : (W → Bool)) : (W → Bool) :=
   λ w => !p w || q w
 
 -- Strict Conditional
@@ -73,7 +73,7 @@ def strictImp {W : Type*} (access : W → Set W) (p q : Prop' W) : Prop' W :=
   λ w => ∀ w' ∈ access w, p w' → q w'
 
 /-- Strict implication with finite accessibility (for computation) -/
-def strictImpFinite {W : Type*} (access : W → List W) (p q : BProp W) : BProp W :=
+def strictImpFinite {W : Type*} (access : W → List W) (p q : (W → Bool)) : (W → Bool) :=
   λ w => (access w).all λ w' => !p w' || q w'
 
 -- Variably Strict Conditional (@cite{stalnaker-1968}–@cite{lewis-1973})
@@ -554,7 +554,7 @@ rather than stipulate it.
 the world selected by `s` from the p-worlds. This is the common semantic
 core of @cite{stalnaker-1975} indicatives and subjunctives. -/
 def selectionConditional {W : Type*} (s : SelectionFunction W)
-    (p q : BProp W) : BProp W :=
+    (p q : (W → Bool)) : (W → Bool) :=
   λ w => q (s.select w {w' | p w' = true})
 
 /--
@@ -585,7 +585,7 @@ distinct semantic clauses. Replacing two parallel defs (`indicativeConditional`,
 `subjunctiveConditional`) with one mood-keyed wrapper makes Stalnaker's actual
 claim explicit at the type level. -/
 def moodedConditional {W : Type*} (_m : GramMood) (s : SelectionFunction W)
-    (p q : BProp W) : BProp W :=
+    (p q : (W → Bool)) : (W → Bool) :=
   selectionConditional s p q
 
 /--
@@ -622,7 +622,7 @@ For any grammatical mood, the mooded conditional reduces to the bare
 selection conditional. This is the rfl-equation that previously had to be
 stated as `indicative_eq_subjunctive` between two parallel defs. -/
 theorem moodedConditional_eq_selectionConditional {W : Type*} (m : GramMood)
-    (s : SelectionFunction W) (p q : BProp W) :
+    (s : SelectionFunction W) (p q : (W → Bool)) :
     moodedConditional m s p q = selectionConditional s p q := rfl
 
 /--
@@ -646,7 +646,7 @@ Hypotheses encode the "appropriate context" conditions:
 - `h_constraint`: `s` obeys the pragmatic constraint relative to `C`;
 - `h_C_imp`: in the context, the material conditional holds. -/
 theorem selectionConditional_eq_material_within_context {W : Type*}
-    (s : SelectionFunction W) (C : ContextSet W) (p q : BProp W) (w : W)
+    (s : SelectionFunction W) (C : ContextSet W) (p q : (W → Bool)) (w : W)
     (hC_w : C w)
     (h_open_p : ∃ w' ∈ {w' | p w' = true}, C w')
     (h_constraint : pragmaticConstraint s C)
@@ -667,7 +667,7 @@ theorem selectionConditional_eq_material_within_context {W : Type*}
 selection function is admissible, the mooded conditional reduces to the
 material conditional within the context. -/
 theorem moodedConditional_indicative_eq_material_within_context {W : Type*}
-    (s : SelectionFunction W) (C : ContextSet W) (p q : BProp W) (w : W)
+    (s : SelectionFunction W) (C : ContextSet W) (p q : (W → Bool)) (w : W)
     (hC_w : C w)
     (h_open_p : ∃ w' ∈ {w' | p w' = true}, C w')
     (h_admissible : Mood.admissibleSelection .indicative s C)

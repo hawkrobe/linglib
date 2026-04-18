@@ -67,7 +67,7 @@ Create a proposition with no CI content.
 
 Most ordinary expressions have trivial CI content (always satisfied).
 -/
-def ofAtIssue (p : BProp W) : TwoDimProp W :=
+def ofAtIssue (p : (W → Bool)) : TwoDimProp W :=
   { atIssue := p, ci := λ _ => true }
 
 /--
@@ -76,13 +76,13 @@ Create a pure CI (no at-issue contribution).
 Some expressions ONLY contribute CI content.
 Example: "damn" in "the damn dog" doesn't change truth conditions.
 -/
-def pureCI (c : BProp W) : TwoDimProp W :=
+def pureCI (c : (W → Bool)) : TwoDimProp W :=
   { atIssue := λ _ => true, ci := c }
 
 /--
 Combine at-issue content with CI content.
 -/
-def withCI (p : BProp W) (c : BProp W) : TwoDimProp W :=
+def withCI (p : (W → Bool)) (c : (W → Bool)) : TwoDimProp W :=
   { atIssue := p, ci := c }
 
 /--
@@ -275,8 +275,8 @@ Supplementary adverb application.
 Formally: comma₂ : ⟨⟨tᵃ,tᵃ⟩, ⟨tᵃ,tᶜ⟩⟩
 -/
 def supplementaryAdverb {W : Type*}
-    (adverbMeaning : BProp W → BProp W)  -- The adverb's at-issue meaning
-    (prop : BProp W) : TwoDimProp W :=
+    (adverbMeaning : (W → Bool) → (W → Bool))  -- The adverb's at-issue meaning
+    (prop : (W → Bool)) : TwoDimProp W :=
   { atIssue := prop              -- Base proposition unchanged
   , ci := adverbMeaning prop }   -- Adverb meaning becomes CI
 
@@ -368,20 +368,20 @@ Takes Bool functions directly because `TwoDimProp` is Bool-valued.
 To lift a `PrProp` constructed via `PrProp.ofBool`, pass the original
 Bool functions rather than the Prop-wrapped fields.
 -/
-def ciLift {W : Type*} (presupBool assertionBool : BProp W) : TwoDimProp W :=
+def ciLift {W : Type*} (presupBool assertionBool : (W → Bool)) : TwoDimProp W :=
   { atIssue := assertionBool
   , ci := presupBool }
 
 /--
 CI lift preserves the assertion as at-issue content.
 -/
-theorem ciLift_atIssue {W : Type*} (presupBool assertionBool : BProp W) :
+theorem ciLift_atIssue {W : Type*} (presupBool assertionBool : (W → Bool)) :
     (ciLift presupBool assertionBool).atIssue = assertionBool := rfl
 
 /--
 CI lift maps presupposition to CI dimension.
 -/
-theorem ciLift_ci {W : Type*} (presupBool assertionBool : BProp W) :
+theorem ciLift_ci {W : Type*} (presupBool assertionBool : (W → Bool)) :
     (ciLift presupBool assertionBool).ci = presupBool := rfl
 
 /--
@@ -389,9 +389,9 @@ De re reading: when CG entails the presupposition, the CI dimension is satisfied
 at all CG worlds. This means the presupposition is resolved against the CG
 regardless of what is embedded under an attitude verb.
 -/
-theorem deRe_from_ciLift {W : Type*} (presupBool : BProp W)
-    (assertionBool : BProp W)
-    (cg : BProp W)
+theorem deRe_from_ciLift {W : Type*} (presupBool : (W → Bool))
+    (assertionBool : (W → Bool))
+    (cg : (W → Bool))
     (h : ∀ w, cg w = true → presupBool w = true) :
     ∀ w, cg w = true → (ciLift presupBool assertionBool).ci w = true :=
   h
@@ -403,13 +403,13 @@ at-issue content but preserves the presupposition (as CI).
 This matches both Potts' CI projection and standard presupposition projection
 through negation.
 -/
-theorem ciLift_neg_preserves_presup {W : Type*} (presupBool assertionBool : BProp W) :
+theorem ciLift_neg_preserves_presup {W : Type*} (presupBool assertionBool : (W → Bool)) :
     (TwoDimProp.neg (ciLift presupBool assertionBool)).ci = presupBool := rfl
 
 /--
 Round-trip: CI lift then extract components recovers the original Bool functions.
 -/
-theorem ciLift_roundtrip {W : Type*} (presupBool assertionBool : BProp W) :
+theorem ciLift_roundtrip {W : Type*} (presupBool assertionBool : (W → Bool)) :
     (ciLift presupBool assertionBool).ci = presupBool ∧
     (ciLift presupBool assertionBool).atIssue = assertionBool :=
   ⟨rfl, rfl⟩

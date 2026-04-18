@@ -20,12 +20,12 @@ from "up to" (positive), predicting divergent framing effects.
 
 import Linglib.Core.Lexical.Word
 import Linglib.Core.PropertyDomain
-import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Numerals.Basic
 import Mathlib.Data.Rat.Defs
 
 namespace Fragments.English.NumeralModifiers
 
-open Semantics.Quantification.Numerals
+open Semantics.Numerals
 
 /--
 Semantic type of a numeral modifier.

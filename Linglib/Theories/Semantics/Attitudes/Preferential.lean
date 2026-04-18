@@ -129,7 +129,7 @@ Given a Hamblin question and a list of candidate propositions, returns
 those propositions that are answers to the question.
 -/
 def fromHamblin {W : Type*} (hamblinQ : Semantics.Questions.Hamblin.QuestionDen W)
-    (candidates : List (BProp W)) : QuestionDen W :=
+    (candidates : List ((W → Bool))) : QuestionDen W :=
   candidates.filter hamblinQ
 
 -- List ↔ Hamblin Equivalence (for finite worlds)
@@ -137,14 +137,14 @@ def fromHamblin {W : Type*} (hamblinQ : Semantics.Questions.Hamblin.QuestionDen 
 /-!
 ## Representation Equivalence
 
-For finite world sets, our `List (BProp W)` representation is equivalent to
+For finite world sets, our `List ((W → Bool))` representation is equivalent to
 Hamblin's `(W → Bool) → Bool`. This theorem documents the isomorphism,
 enabling future extension to full intensional semantics if needed.
 
 ### The Equivalence
 
 Given a finite set of worlds W and a finite set of propositions P:
-- Any `List (BProp W)` can be converted to `Hamblin.QuestionDen W` via `toHamblin`
+- Any `List ((W → Bool))` can be converted to `Hamblin.QuestionDen W` via `toHamblin`
 - Any `Hamblin.QuestionDen W` can be converted back via `fromHamblin`
 - The round-trip preserves answerhood for propositions in P
 
@@ -167,7 +167,7 @@ and back (using Q as candidates), p remains an answer.
 This shows the List representation loses no information for finite questions.
 -/
 theorem roundtrip_preserves_membership {W : Type*} [BEq W] [DecidableEq (W → Bool)]
-    (Q : QuestionDen W) (worlds : List W) (p : BProp W) (hp : p ∈ Q) :
+    (Q : QuestionDen W) (worlds : List W) (p : (W → Bool)) (hp : p ∈ Q) :
     p ∈ fromHamblin (toHamblin Q worlds) Q := by
   unfold fromHamblin toHamblin
   simp only [List.mem_filter, List.any_eq_true]
@@ -185,7 +185,7 @@ The existential quantification `∃p ∈ Q. φ(p)` that appears in:
 works identically on List (via `List.any`) and Hamblin (via function application
 to the characteristic function of answers satisfying φ).
 -/
-theorem exists_equiv_any {W : Type*} (Q : QuestionDen W) (φ : BProp W → Bool) :
+theorem exists_equiv_any {W : Type*} (Q : QuestionDen W) (φ : (W → Bool) → Bool) :
     (∃ p ∈ Q, φ p = true) ↔ (Q.any φ = true) := by
   simp only [List.any_eq_true]
 
@@ -203,7 +203,7 @@ The triviality condition uses subset + existential, both of which are
 representation-independent for finite cases.
 -/
 theorem triviality_representation_independent {W : Type*}
-    (Q C : QuestionDen W) (φ : BProp W → Bool)
+    (Q C : QuestionDen W) (φ : (W → Bool) → Bool)
     (h_subset : questionSubset Q C)
     (h_exists_Q : Q.any φ = true) :
     C.any φ = true := by
@@ -362,7 +362,7 @@ structure PreferentialPredicate (W E : Type*) where
   /-- Threshold function θ -/
   θ : ThresholdFunction W
   /-- Propositional semantics: ⟦x V p⟧(C) -/
-  propSemantics : E → BProp W → QuestionDen W → Bool
+  propSemantics : E → (W → Bool) → QuestionDen W → Bool
   /-- Question semantics: ⟦x V Q⟧(C) -/
   questionSemantics : E → QuestionDen W → QuestionDen W → Bool
 
@@ -781,7 +781,7 @@ World-sensitive propositional semantics for veridical predicates.
 The truth requirement p(w) is what distinguishes veridical from non-veridical.
 -/
 def PreferentialPredicate.propSemanticsAt {W E : Type*}
-    (V : PreferentialPredicate W E) (x : E) (p : BProp W) (C : QuestionDen W) (w : W) : Bool :=
+    (V : PreferentialPredicate W E) (x : E) (p : (W → Bool)) (C : QuestionDen W) (w : W) : Bool :=
   if V.veridical then
     p w && V.propSemantics x p C
   else
@@ -1100,7 +1100,7 @@ whether μ(x, p) > θ(C). Same as standard hope.
 -/
 theorem hope_highlight_declarative_equiv {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (p : BProp W) (C : QuestionDen W) :
+    (x : E) (p : (W → Bool)) (C : QuestionDen W) :
     hopeHighlightSemantics μ θ .declarative x [p] C =
     decide (μ x p > θ C) := by
   simp [hopeHighlightSemantics, highlightedValue]
@@ -1111,7 +1111,7 @@ singleton {p}. So "hope whether p" ≈ "hope that p" — NOT trivial.
 -/
 theorem hope_highlight_polar_equiv {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (x : E) (p : BProp W) (neg_p : BProp W) (C : QuestionDen W) :
+    (x : E) (p : (W → Bool)) (neg_p : (W → Bool)) (C : QuestionDen W) :
     hopeHighlightSemantics μ θ .polarInterrogative x [p, neg_p] C =
     decide (μ x p > θ C) := by
   simp [hopeHighlightSemantics, highlightedValue]

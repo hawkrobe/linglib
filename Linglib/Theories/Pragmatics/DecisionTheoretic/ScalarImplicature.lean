@@ -46,7 +46,7 @@ an utterance's relevance sign.
 If E is positively relevant, PSM = H.
 If E is negatively relevant, PSM = ¬H.
 Otherwise neutral. -/
-def sgnRelevance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) : RelevanceSign :=
+def sgnRelevance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) : RelevanceSign :=
   let bf := bayesFactor ctx e
   if bf > 1 then .pos
   else if bf < 1 then .neg
@@ -61,12 +61,12 @@ def sgnRelevance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) : Re
 Given a list of alternatives ordered by Bayes factor, the upward cone of σ
 contains all alternatives with BF ≥ BF(σ). -/
 def upwardCone {W : Type*} [Fintype W] (ctx : DTSContext W)
-    (alts : List (BProp W)) (σ : BProp W) : List (BProp W) :=
+    (alts : List ((W → Bool))) (σ : (W → Bool)) : List ((W → Bool)) :=
   alts.filter λ a => bayesFactor ctx a ≥ bayesFactor ctx σ
 
 /-- Downward cone: alternatives at most as relevant as σ. -/
 def downwardCone {W : Type*} [Fintype W] (ctx : DTSContext W)
-    (alts : List (BProp W)) (σ : BProp W) : List (BProp W) :=
+    (alts : List ((W → Bool))) (σ : (W → Bool)) : List ((W → Bool)) :=
   alts.filter λ a => bayesFactor ctx a ≤ bayesFactor ctx σ
 
 /-- Hypothesis 1: Claim/counterclaim structure for scalar alternatives.
@@ -76,11 +76,11 @@ means to convey). The *counterclaim* is the disjunction of downward-cone
 members (what the speaker implicates is false). -/
 structure ScalarInterpretation (W : Type*) where
   /-- The scalar alternative uttered. -/
-  uttered : BProp W
+  uttered : (W → Bool)
   /-- The claim: disjunction of upward cone members. -/
-  claim : BProp W
+  claim : (W → Bool)
   /-- The counterclaim: disjunction of downward cone members. -/
-  counterclaim : BProp W
+  counterclaim : (W → Bool)
 
 -- ============================================================
 -- Section 3: Predictions
@@ -96,7 +96,7 @@ its disjunction in Bayes factor.
 This follows from Theorem 6b direction: XOR (and hence plain disjunction)
 need not track the relevance of individual disjuncts. -/
 theorem not_if_not_indeed_disjunct :
-    ¬ (∀ (ctx : DTSContext World4) (a b : BProp World4),
+    ¬ (∀ (ctx : DTSContext World4) (a b : (World4 → Bool)),
       posRelevant ctx a → posRelevant ctx b →
       bayesFactor ctx a > bayesFactor ctx (Decidable.por World4 a b)) := by
   -- Counterexample: a = b, so a∨b = a and BF(a) = BF(a∨b), not strict >.
@@ -113,7 +113,7 @@ conjunction dominates both conjuncts and disjunction.
 
 This is the core of Merin's scalar implicature account: "A and B" is
 strictly more relevant than "A or B", explaining why "or" implicates ¬∧. -/
-theorem if_not_indeed_conjunction (ctx : DTSContext W) (a b : BProp W)
+theorem if_not_indeed_conjunction (ctx : DTSContext W) (a b : (W → Bool))
     (hcip : CIP ctx a b)
     (hPosA : posRelevant ctx a) (hPosB : posRelevant ctx b)
     (hNonzero : condProb ctx.prior a (Decidable.pnot W ctx.issue.topic) ≠ 0)

@@ -1,5 +1,6 @@
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
-import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Numerals.Basic
+import Linglib.Core.Scales.Roundness
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -34,7 +35,7 @@ This avoids dependence on log approximations.
 namespace CumminsFranke2021
 
 open RSA.ArgumentativeStrength
-open Semantics.Quantification.Numerals
+open Semantics.Numerals
 
 
 -- ============================================================
@@ -268,5 +269,36 @@ theorem h2_groups_consistent :
     h2_powerGroup.citedPreferred + h2_powerGroup.citedNonPreferred + h2_powerGroup.citedNeither
       = h2_powerGroup.groupSize := by native_decide
 
+
+-- ============================================================
+-- Section: Enrichment Width from Roundness Grade
+-- ============================================================
+
+/-! Operationalises @cite{cummins-franke-2021}'s observation that rounder
+numerals admit wider enriched intervals. The wider enrichment for round
+anchors (e.g. 100) admits more non-goal worlds and thereby weakens
+argumentative strength — the formal counterpart of the pragmatic
+"reversal" demonstrated in §2 above. -/
+
+open Core.Roundness in
+
+/-- Predicted pragmatic enrichment range width as a function of
+    `roundnessGrade`. Round anchors (high) → wider enrichment;
+    non-round → minimal. -/
+def enrichmentWidth (n : Nat) : Nat :=
+  match roundnessGrade n with
+  | .high     => 20  -- very round (e.g. 100): ±10
+  | .moderate => 15  -- moderately round (e.g. 50): ±7.5
+  | .low      => 10  -- slightly round (e.g. 110): ±5
+  | .none     => 4   -- non-round (e.g. 7): ±2
+
+/-- 100 (high grade) gets wider enrichment than 110 (low grade): the
+    formal correlate of the C&F reversal direction. -/
+theorem enrichment_100_wider_than_110 :
+    enrichmentWidth 100 > enrichmentWidth 110 := by decide
+
+/-- Non-round numerals receive minimal enrichment (the `.none` branch). -/
+theorem nonround_minimal_enrichment :
+    enrichmentWidth 7 = 4 := by decide
 
 end CumminsFranke2021

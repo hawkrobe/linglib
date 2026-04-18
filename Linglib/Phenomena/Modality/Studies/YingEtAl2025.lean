@@ -2,16 +2,21 @@ import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 
 /-!
-# Epistemic Threshold Bridge
+# Ying et al. (2025) — English-modal bridge to LaBToM threshold semantics
+
+@cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
 
 Connects the English modal fragment (`Fragments.English.FunctionWords`) to
-Ying et al.'s (2025) epistemic threshold semantics
-(`Theories.Semantics.Attitudes.EpistemicThreshold`).
+the epistemic threshold semantics of @cite{ying-zhi-xuan-wong-mansinghka-tenenbaum-2025}
+("Understanding Epistemic Language with a Language-Augmented Bayesian
+Theory of Mind", TACL 13:613–637), formalized in
+`Theories.Semantics.Attitudes.EpistemicThreshold`.
 
 ## The Bridge
 
 Each English epistemic modal auxiliary maps to an `EpistemicEntry` with a
-fitted threshold from Table 1(b). The bridge proves:
+fitted credence threshold (LaBToM's grid-search best-fit values; see the
+table in `EpistemicThreshold.lean`). The bridge proves:
 
 1. **Form agreement**: the Fragment's `form` field matches the Theory's `name`
 2. **Force–threshold consistency**: necessity-force modals have strictly
@@ -25,10 +30,10 @@ fitted threshold from Table 1(b). The bridge proves:
                     ↓
     Theories/Semantics/Attitudes/EpistemicThreshold.lean (EpistemicEntry, θ)
                     ↓
-    Phenomena/Modality/EpistemicThresholdBridge.lean (this file)
+    Phenomena/Modality/Studies/YingEtAl2025.lean (this file)
 -/
 
-namespace Phenomena.Modality.EpistemicThresholdBridge
+namespace Phenomena.Modality.Studies.YingEtAl2025
 
 open Fragments.English.FunctionWords
 open Semantics.Attitudes.EpistemicThreshold (EpistemicEntry)
@@ -145,4 +150,4 @@ theorem may_gt_might : EpistemicEntry.may_.θ > EpistemicEntry.might_.θ := by
 /-- `might` = `could` in threshold (both 0.20). -/
 theorem might_eq_could : EpistemicEntry.might_.θ = EpistemicEntry.could_.θ := rfl
 
-end Phenomena.Modality.EpistemicThresholdBridge
+end Phenomena.Modality.Studies.YingEtAl2025

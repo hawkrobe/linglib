@@ -103,8 +103,8 @@ def ofBool (presup assertion : W → Bool) : PrProp W where
   presup := fun w => presup w = true
   assertion := fun w => assertion w = true
 
-/-- Create a presuppositionless proposition from a BProp. -/
-def ofBProp (p : BProp W) : PrProp W where
+/-- Create a presuppositionless proposition from a `W → Bool`. -/
+def ofBProp (p : (W → Bool)) : PrProp W where
   presup := fun _ => True
   assertion := fun w => p w = true
 
@@ -452,10 +452,10 @@ theorem impFilter_trivializes_presup (p q : PrProp W)
 -- ════════════════════════════════════════════════════════════════
 
 /-- ofBProp creates presuppositionless propositions. -/
-theorem ofBProp_no_presup (p : BProp W) (w : W) : (ofBProp p).presup w := trivial
+theorem ofBProp_no_presup (p : (W → Bool)) (w : W) : (ofBProp p).presup w := trivial
 
 /-- ofBProp preserves assertion (modulo Bool→Prop wrapping). -/
-theorem ofBProp_assertion (p : BProp W) (w : W) :
+theorem ofBProp_assertion (p : (W → Bool)) (w : W) :
     (ofBProp p).assertion w ↔ (p w = true) := Iff.rfl
 
 -- ════════════════════════════════════════════════════════════════

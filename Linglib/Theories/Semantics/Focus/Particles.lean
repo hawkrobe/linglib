@@ -68,19 +68,19 @@ For NPI licensing, only the scalar presupposition matters.
 
 /-- Likelihood ordering over propositions (context-dependent).
     `likelihood a b` holds when `a` is less likely (more surprising) than `b`. -/
-def LikelihoodOrder (World : Type) := BProp World → BProp World → Prop
+def LikelihoodOrder (World : Type) := (World → Bool) → (World → Bool) → Prop
 
 /-- Traditional EVEN semantics -/
 structure TraditionalEven where
   /-- The prejacent proposition -/
-  prejacent : BProp World
+  prejacent : (World → Bool)
   /-- Focus alternatives -/
-  alternatives : List (BProp World)
+  alternatives : List ((World → Bool))
   /-- Likelihood ordering -/
   likelihood : LikelihoodOrder World
 
 /-- EVEN asserts the prejacent -/
-def TraditionalEven.assertion (even : TraditionalEven (World := World)) : BProp World :=
+def TraditionalEven.assertion (even : TraditionalEven (World := World)) : (World → Bool) :=
   even.prejacent
 
 /-- EVEN presupposes prejacent is least likely.
@@ -172,18 +172,18 @@ This is equivalent to EXH with the prejacent as a presupposition.
 /-- Traditional "only" semantics -/
 structure TraditionalOnly where
   /-- The prejacent (the focused element's contribution) -/
-  prejacent : BProp World
+  prejacent : (World → Bool)
   /-- The alternatives (what focus evokes) -/
-  alternatives : List (BProp World)
+  alternatives : List ((World → Bool))
 
 /-- "only" presupposes the prejacent -/
-def TraditionalOnly.presupposition (only : TraditionalOnly (World := World)) : BProp World :=
+def TraditionalOnly.presupposition (only : TraditionalOnly (World := World)) : (World → Bool) :=
   only.prejacent
 
 /-- "only" asserts no alternative is true.
     The alternatives list excludes the prejacent (Roothian focus alternatives
     minus the focused element's contribution). -/
-def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : BProp World :=
+def TraditionalOnly.assertion (only : TraditionalOnly (World := World)) : (World → Bool) :=
   λ w => only.alternatives.all (λ alt => !alt w)
 
 /-- Full "only" meaning -/
@@ -201,8 +201,8 @@ def TraditionalOnly.trueAt (only : TraditionalOnly (World := World)) (w : World)
     This is the bridge between `Theories/Semantics/Entailment/` and
     focus particle semantics — the connection that @cite{lahiri-1998}
     relies on to derive NPI licensing from the cardinality scale. -/
-def LikelihoodMonotone {W : Type} (lessLikely : BProp W → BProp W → Prop) : Prop :=
-  ∀ (p q : BProp W), (∀ w, p w = true → q w = true) → lessLikely p q
+def LikelihoodMonotone {W : Type} (lessLikely : (W → Bool) → (W → Bool) → Prop) : Prop :=
+  ∀ (p q : (W → Bool)), (∀ w, p w = true → q w = true) → lessLikely p q
 
 -- Comparison: EVEN vs EXH vs Only
 

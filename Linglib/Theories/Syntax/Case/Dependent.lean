@@ -1,46 +1,68 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
 /-!
 # Dependent Case Theory
-@cite{marantz-1991} @cite{baker-2015} @cite{deal-2010} @cite{ozaki-2026} @cite{scott-2023}
+@cite{marantz-1991} @cite{baker-2015}
 
-Originally proposed by @cite{marantz-1991} as an alternative to Agree-based
-case assignment; developed into a cross-linguistic algorithm by
-@cite{baker-2015}. Case is determined by the structural configuration of
-NPs within a Spell-Out domain:
+The dependent case algorithm: case is determined by the structural
+configuration of NPs within a Spell-Out domain, applied via a
+disjunctive priority hierarchy:
 
-1. **Lexical case**: Assigned by a particular head (P, V) — highest priority
-2. **Dependent case**: Assigned to an NP that stands in a c-command
+1. **Lexical case**: assigned by a particular head (P, V) — highest priority
+2. **Dependent case**: assigned to an NP that stands in a c-command
    relation with another caseless NP in the same domain
    - Accusative languages: lower NP gets ACC
    - Ergative languages: higher NP gets ERG
    - Tripartite languages: higher NP gets ERG *and* lower gets ACC
-3. **Unmarked case**: Default for any NP still without case
+3. **Unmarked case**: default for any NP still without case
    - Accusative languages: NOM
    - Ergative languages: ABS
    - Tripartite languages: ABS
 
-## Tripartite Alignment
+This file is the *theory* — the language-typology enum, the configural
+rules, and the case-assignment algorithm. Empirical applications,
+cross-linguistic validation, and competing analyses live in
+`Phenomena/Case/Studies/`.
 
-In tripartite systems (e.g., Nez Perce; @cite{deal-2010}), intransitive subjects
-(S), transitive agents (A), and transitive patients (P) each receive
-distinct case. Under dependent case, this follows from applying *both*
-dependent ergative (to the higher NP) and dependent accusative (to the
-lower NP) in the same domain, with ABS as the unmarked default (surfacing
-only when no case competitor exists — i.e., intransitives).
+## Where to Find What
 
-**Note**: Not all tripartite systems use dependent case. SJA Mam
-achieves tripartite alignment via inherent case from Voice (ERG for agents,
-ACC for objects) plus structural case from Infl (ABS for intransitive S).
-See `Fragments.Mayan.Mam.Agreement` for the Agree-based analysis.
+- `Studies/Marantz1991.lean` — the original proposal: abstract vs.
+  morphological case, Georgian split-ergative spellout, the case
+  realization hierarchy as the parallel to the agreement accessibility
+  hierarchy
+- `Studies/Baker2015.lean` — the typological survey: cross-linguistic
+  derivations across accusative (German, Turkish), ergative (Basque),
+  and split-ergative (Hindi, Georgian) columns
+- `Studies/BakerVinokurova2010.lean` — the Sakha case study, including
+  the dependent-case-with-Agree hybrid
+- `Studies/Woolford1997.lean` — four-way case systems (Nez Perce):
+  ERG-as-inherent challenges the dependent-case derivation of ergative
+- `Studies/Scott2023.lean` — voice-based case in Mam: a sibling theory
+  in which Voice and Infl assign case directly by argument position,
+  with `dependent_case_ignores_voice` staging the contrast
+- `Studies/Ozaki2026.lean` — Japanese departure verbs: dependent ACC on
+  the source of dyadic unaccusatives, with lexical ABL from *kara*
+  bleeding dependent case
+- `Studies/Caha2009.lean` — typological prediction at the inventory level,
+  using the `PartialOrder Core.Case` instance from
+  `Theories/Interfaces/Morphosyntax/CaseContainment.lean`. The dependent
+  case algorithm produces values in `Core.Case`; their relative ranking
+  is the canonical containment order, which Caha's *ABA constraint
+  applies to.
 
-## Key Application: @cite{ozaki-2026}
+## Companion Infrastructure
 
-Japanese departure verbs (*hanareru* 'leave', *deru* 'exit') are dyadic
-unaccusatives with two internal arguments and no thematic Voice. Accusative
-*-o* on the source arises from dependent case (not from v/Voice), while
-ablative *kara* is lexical case from an optional P head that bleeds
-dependent accusative.
+- `Theories/Syntax/Minimalism/Core/Voice.lean` — Voice flavors and
+  phase-hood, used by the Agree-based competitor and by Voice-based
+  case (Scott 2023)
+- `Theories/Syntax/Minimalism/Core/CaseFilter.lean` — the Agree-based
+  licensing requirement that every DP must receive Case
+- `Theories/Syntax/Case/Licensing.lean` — Kalin's hybrid licensing
+  framework: one obligatory primary licenser per clause + secondary
+  licensers as a last-resort response to convergence failure, deriving
+  DOM patterns as the surface signature of secondary-licenser activation
+- `Theories/Interfaces/Morphosyntax/CaseContainment.lean` — the
+  containment hierarchy (`PartialOrder Core.Case`) and
+  `respectsCahaContainment` predicate that consume `Core.Case` values
 
 -/
 
@@ -253,31 +275,31 @@ theorem lexical_bleeds_dependent (lang : CaseLanguageType) (c : Core.Case)
 
 /-- ACC variant: source (lower NP) gets dependent accusative. -/
 theorem acc_variant_source_gets_acc :
-    getCaseOf "source" accVariantResult = some .acc := by native_decide
+    getCaseOf "source" accVariantResult = some .acc := by decide
 
 /-- ACC variant: source case is dependent (not lexical or unmarked). -/
 theorem acc_variant_source_is_dependent :
-    getSourceOf "source" accVariantResult = some .dependent := by native_decide
+    getSourceOf "source" accVariantResult = some .dependent := by decide
 
 /-- ACC variant: leaver (higher NP) gets unmarked nominative. -/
 theorem acc_variant_leaver_gets_nom :
-    getCaseOf "leaver" accVariantResult = some .nom := by native_decide
+    getCaseOf "leaver" accVariantResult = some .nom := by decide
 
 /-- ACC variant: leaver case is unmarked. -/
 theorem acc_variant_leaver_is_unmarked :
-    getSourceOf "leaver" accVariantResult = some .unmarked := by native_decide
+    getSourceOf "leaver" accVariantResult = some .unmarked := by decide
 
 /-- ABL variant: source gets lexical ablative (from *kara*). -/
 theorem abl_variant_source_gets_abl :
-    getCaseOf "source" ablVariantResult = some .abl := by native_decide
+    getCaseOf "source" ablVariantResult = some .abl := by decide
 
 /-- ABL variant: source case is lexical (from P head *kara*). -/
 theorem abl_variant_source_is_lexical :
-    getSourceOf "source" ablVariantResult = some .lexical := by native_decide
+    getSourceOf "source" ablVariantResult = some .lexical := by decide
 
 /-- ABL variant: leaver gets unmarked nominative. -/
 theorem abl_variant_leaver_gets_nom :
-    getCaseOf "leaver" ablVariantResult = some .nom := by native_decide
+    getCaseOf "leaver" ablVariantResult = some .nom := by decide
 
 /-- Dependent ACC does not require agentive Voice — it only requires
     two caseless NPs in the same Spell-Out domain. The Voice head's
@@ -288,15 +310,15 @@ theorem no_voice_needed_for_acc :
         { label := "obj", lexicalCase := none } ]
     getCaseOf "obj" (assignCases .accusative nps) = some .acc ∧
     getSourceOf "obj" (assignCases .accusative nps) = some .dependent := by
-  native_decide
+  decide
 
 /-- All NPs receive case in the ACC variant. -/
 theorem acc_variant_all_cased :
-    accVariantResult.length = 2 := by native_decide
+    accVariantResult.length = 2 := by decide
 
 /-- All NPs receive case in the ABL variant. -/
 theorem abl_variant_all_cased :
-    ablVariantResult.length = 2 := by native_decide
+    ablVariantResult.length = 2 := by decide
 
 -- ============================================================================
 -- § 9b: Tripartite Alignment Properties
@@ -315,20 +337,20 @@ theorem tripartite_higher_gets_erg :
     let nps : List NPInDomain :=
       [ { label := "higher", lexicalCase := none },
         { label := "lower", lexicalCase := none } ]
-    getCaseOf "higher" (assignCases .tripartite nps) = some .erg := by native_decide
+    getCaseOf "higher" (assignCases .tripartite nps) = some .erg := by decide
 
 /-- Tripartite transitive: lower NP gets dependent ACC. -/
 theorem tripartite_lower_gets_acc :
     let nps : List NPInDomain :=
       [ { label := "higher", lexicalCase := none },
         { label := "lower", lexicalCase := none } ]
-    getCaseOf "lower" (assignCases .tripartite nps) = some .acc := by native_decide
+    getCaseOf "lower" (assignCases .tripartite nps) = some .acc := by decide
 
 /-- Tripartite intransitive: sole NP gets unmarked ABS. -/
 theorem tripartite_sole_gets_abs :
     let nps : List NPInDomain :=
       [ { label := "sole", lexicalCase := none } ]
-    getCaseOf "sole" (assignCases .tripartite nps) = some .abs := by native_decide
+    getCaseOf "sole" (assignCases .tripartite nps) = some .abs := by decide
 
 /-- All three cases are distinct — the defining property of tripartite.
     ERG ≠ ACC ≠ ABS, derived purely from the algorithm. -/
@@ -340,7 +362,7 @@ theorem tripartite_three_distinct :
           [ { label := "sole", lexicalCase := none } ]
     getCaseOf "higher" tr ≠ getCaseOf "lower" tr ∧
     getCaseOf "higher" tr ≠ getCaseOf "sole" intr ∧
-    getCaseOf "lower" tr ≠ getCaseOf "sole" intr := by native_decide
+    getCaseOf "lower" tr ≠ getCaseOf "sole" intr := by decide
 
 /-- Tripartite subsumes both ergative and accusative dependent case:
     ERG on the higher NP matches pure ergative; ACC on the lower NP
@@ -352,7 +374,7 @@ theorem tripartite_subsumes_both :
     getCaseOf "higher" (assignCases .tripartite nps) =
     getCaseOf "higher" (assignCases .ergative nps) ∧
     getCaseOf "lower" (assignCases .tripartite nps) =
-    getCaseOf "lower" (assignCases .accusative nps) := by native_decide
+    getCaseOf "lower" (assignCases .accusative nps) := by decide
 
 -- ============================================================================
 -- § 10: Deeper Properties
@@ -364,13 +386,13 @@ theorem tripartite_subsumes_both :
     preempts dependent case entirely. -/
 theorem acc_abl_mutually_exclusive :
     getCaseOf "source" accVariantResult = some .acc ∧
-    getCaseOf "source" ablVariantResult = some .abl := by native_decide
+    getCaseOf "source" ablVariantResult = some .abl := by decide
 
 /-- The leaver gets NOM in both variants. The alternation affects only the
     source argument; the subject case is invariant. -/
 theorem leaver_nom_invariant :
     getCaseOf "leaver" accVariantResult = some .nom ∧
-    getCaseOf "leaver" ablVariantResult = some .nom := by native_decide
+    getCaseOf "leaver" ablVariantResult = some .nom := by decide
 
 /-- Ergative mirror: in an ergative language with two caseless NPs, the
     *higher* NP gets dependent ERG and the lower gets unmarked ABS.
@@ -381,7 +403,7 @@ theorem ergative_mirror :
         { label := "lower", lexicalCase := none } ]
     getCaseOf "higher" (assignCases .ergative nps) = some .erg ∧
     getCaseOf "lower" (assignCases .ergative nps) = some .abs := by
-  native_decide
+  decide
 
 /-- A single caseless NP in an accusative language gets NOM — the
     standard intransitive case. No dependent case arises because
@@ -391,14 +413,14 @@ theorem single_np_nom :
       [ { label := "sole", lexicalCase := none } ]
     getCaseOf "sole" (assignCases .accusative nps) = some .nom ∧
     getSourceOf "sole" (assignCases .accusative nps) = some .unmarked := by
-  native_decide
+  decide
 
 /-- Case is purely configural: two NPs with identical labels but different
     lexical case inputs produce different outputs. The algorithm is
     sensitive only to the NP inventory, not to verb type or Voice flavor. -/
 theorem case_is_configural :
     getCaseOf "source" accVariantResult ≠ getCaseOf "source" ablVariantResult := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 11: Structural Case Inventory

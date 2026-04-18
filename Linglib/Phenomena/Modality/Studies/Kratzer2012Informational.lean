@@ -31,11 +31,11 @@ open Core.Evidence
 /-! ## Propositions -/
 
 /-- It is raining. -/
-def raining : BProp World := λ w =>
+def raining : (World → Bool) := λ w =>
   match w with | .w0 => true | .w1 => true | .w2 => false | .w3 => false
 
 /-- The weather report says it is raining. -/
-def reportSaysRain : BProp World := λ w =>
+def reportSaysRain : (World → Bool) := λ w =>
   match w with | .w0 => true | .w1 => false | .w2 => true | .w3 => false
 
 /-! ## Conversational backgrounds -/
@@ -46,7 +46,7 @@ def informationalBg : ModalBase World := λ _ => [reportSaysRain]
 
 /-- Reliability assumption: if the report says rain, it's raining.
     This is a conditional proposition (report → rain). -/
-def reliabilityAssumption : BProp World := λ w => !reportSaysRain w || raining w
+def reliabilityAssumption : (World → Bool) := λ w => !reportSaysRain w || raining w
 
 /-- Strong epistemic base: report + reliability. Accessible = {w0} only. -/
 def strongEpistemicBg : ModalBase World := λ _ => [reportSaysRain, reliabilityAssumption]

@@ -1,5 +1,5 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Comparative
 /-!
 # Korean Comparative Construction @cite{stassen-1985}
 

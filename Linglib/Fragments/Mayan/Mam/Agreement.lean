@@ -1,4 +1,5 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Prominence
 import Linglib.Fragments.Mayan.Params
 
@@ -173,16 +174,15 @@ theorem reduction_eligible_iff_phi_agreed :
 -- ============================================================================
 
 /-- Mam case inventory, derived from argument position case values. -/
-def caseInventory : List Core.Case := [.erg, .acc, .abs]
+def caseInventory : Finset Core.Case := {.erg, .acc, .abs}
 
 /-- The inventory covers all argument positions. -/
 theorem inventory_covers_positions :
-    mamArgPositions.all (λ p => caseInventory.any (· == p.case)) = true := by
-  native_decide
+    ∀ p ∈ mamArgPositions, p.case ∈ caseInventory := by decide
 
 -- Mam's {ERG, ACC, ABS} inventory is valid per Blake's case hierarchy
 -- (all are core cases at rank 6, trivially no gaps).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- § 6: Pronoun Internal Structure (@cite{scott-2023}, ch. 4)

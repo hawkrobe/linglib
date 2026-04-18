@@ -90,8 +90,8 @@ theorem prob_ordering_w0_strict_w1 :
 
 /-- **Necessity under probability ordering**: with skewed P and universal base,
     any proposition true at w0 is necessary (since best = {w0}). -/
-theorem prob_necessity_at_best (p : BProp World) (w : World)
-    (hp : p .w0 = true) :
+theorem prob_necessity_at_best (p : World → Prop) [DecidablePred p] (w : World)
+    (hp : p .w0) :
     necessity emptyBackground (probToOrdering skewedProb) p w := by
   rw [necessity_iff_all, prob_ordering_best_w0]
   intro w' hw'

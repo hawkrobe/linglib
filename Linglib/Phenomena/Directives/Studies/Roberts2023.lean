@@ -46,7 +46,6 @@ and shows the account satisfies all of them. See `section Desiderata` below.
 namespace Roberts2023
 
 open Core.Discourse
-open Core.Proposition (BProp)
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional
 
@@ -95,14 +94,14 @@ def FUT {W T : Type*} [LT T] [DecidableRel (α := T) (· < ·)]
     @cite{roberts-2023} (49): "a goal_i-based ordering source g is a function
     that takes a circumstance ⟨w, t⟩ and yields an ordered set of propositions G
     reflecting x_i's hierarchically organized goals and intentions." -/
-abbrev GoalOrderingSource (W T : Type*) := Circumstance W T → List (BProp W)
+abbrev GoalOrderingSource (W T : Type*) := Circumstance W T → List ((W → Bool))
 
 /-- A **futurate circumstantial modal base** maps circumstances to
     sets of propositions whose intersection gives the accessible worlds.
 
     @cite{roberts-2023} (51): constraints (a) w' = w, (b) t < t',
     (c) preconditions for realizing P hold in a timely fashion. -/
-abbrev CircumstantialModalBase (W T : Type*) := Circumstance W T → List (BProp W)
+abbrev CircumstantialModalBase (W T : Type*) := Circumstance W T → List ((W → Bool))
 
 /-! ## §2.1.2 The Imperative Character -/
 
@@ -128,7 +127,7 @@ structure ImperativeCharacter where
   addressee : Nat
   /-- The prejacent: VP denotation (property the addressee should realize).
       Simplified to a world-predicate (the addressee is implicit). -/
-  prejacent : BProp World
+  prejacent : (World → Bool)
   /-- The modal parameters: futurate circumstantial modal base + goal-based
       ordering source, bundled as a `TeleologicalFlavor`. -/
   flavor : TeleologicalFlavor World
@@ -160,8 +159,9 @@ theorem imperativeCharacter_is_necessity (ic : ImperativeCharacter) (w : World) 
     under the teleological parameters. This connects Roberts' formalization
     directly to the Kratzer infrastructure. -/
 theorem imperativeCharacter_eq_kratzerTheory (ic : ImperativeCharacter) (w : World) :
-    ic.realize w =
+    ic.realize w = true ↔
     (KratzerTheory ic.flavor.toKratzerParams).eval .necessity ic.prejacent w := by
+  simp only [ImperativeCharacter.realize, decide_eq_true_eq]
   rfl
 
 /-- Roberts' imperative uses teleological (circumstantial) flavor.
@@ -329,28 +329,28 @@ theorem desideratum_h_futurate {W T : Type*} [LT T] [DecidableRel (α := T) (· 
     (not CG). The deontic inference arises because G contents are
     reflected in CG as deontic propositions. -/
 theorem desideratum_i_direction_preserves_cg
-    {W : Type*} (K : Scoreboard W) (p : BProp W) (s t : Nat) :
+    {W : Type*} (K : Scoreboard W) (p : (W → Bool)) (s t : Nat) :
     (K.directionUpdate p s t).cg = K.cg := rfl
 
 /-- The three canonical speech acts update orthogonal scoreboard components:
     assertion → CG, interrogation → QUD, direction → G. -/
 theorem desideratum_i_assertion_preserves_goals
-    {W : Type*} (K : Scoreboard W) (p : BProp W) (a : Nat) :
+    {W : Type*} (K : Scoreboard W) (p : (W → Bool)) (a : Nat) :
     (K.assertionUpdate p a).goals = K.goals := rfl
 
 /-- Interrogation preserves CG (only QUD is updated). -/
 theorem desideratum_i_interrogation_preserves_cg
-    {W : Type*} (K : Scoreboard W) (q : BProp W) (a : Nat) :
+    {W : Type*} (K : Scoreboard W) (q : (W → Bool)) (a : Nat) :
     (K.interrogationUpdate q a).cg = K.cg := rfl
 
 /-- Interrogation preserves G (only QUD is updated). -/
 theorem desideratum_i_interrogation_preserves_goals
-    {W : Type*} (K : Scoreboard W) (q : BProp W) (a : Nat) :
+    {W : Type*} (K : Scoreboard W) (q : (W → Bool)) (a : Nat) :
     (K.interrogationUpdate q a).goals = K.goals := rfl
 
 /-- Direction preserves QUD (only G is updated). -/
 theorem desideratum_i_direction_preserves_qud
-    {W : Type*} (K : Scoreboard W) (p : BProp W) (s t : Nat) :
+    {W : Type*} (K : Scoreboard W) (p : (W → Bool)) (s t : Nat) :
     (K.directionUpdate p s t).qud = K.qud := rfl
 
 /-! ## §2.2 The Force Linking Principle -/

@@ -366,25 +366,25 @@ instance : Fintype Button3World where
   complete := fun x => by cases x <;> simp
 
 /-- Button A is pressed. -/
-def pressA : BProp Button3World
+def pressA : (Button3World → Bool)
   | .pressA_plays | .pressA_silent => true
   | _ => false
 
 /-- The target sound plays. -/
-def soundPlays : BProp Button3World
+def soundPlays : (Button3World → Bool)
   | .pressA_plays | .pressB_plays | .pressC_plays => true
   | _ => false
 
 /-- Button A causes the target sound. -/
-def aCausesSound : BProp Button3World
+def aCausesSound : (Button3World → Bool)
   | .pressA_plays => true | _ => false
 
 /-- Button B causes the target sound. -/
-def bCausesSound : BProp Button3World
+def bCausesSound : (Button3World → Bool)
   | .pressB_plays => true | _ => false
 
 /-- Button C causes the target sound. -/
-def cCausesSound : BProp Button3World
+def cCausesSound : (Button3World → Bool)
   | .pressC_plays => true | _ => false
 
 /-- The answer space for the 3-button experimental paradigm.

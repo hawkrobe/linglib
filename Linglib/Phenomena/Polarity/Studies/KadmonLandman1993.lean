@@ -444,7 +444,7 @@ The formal proof is imported from `StrawsonEntailment.conditional_antecedent_DE`
     corresponds to Kratzer's modal base — the implicit restriction that
     is held constant. -/
 theorem conditional_satisfies_strengthening
-    (domain : World → List World) (β : BProp World) :
+    (domain : World → List World) (β : (World → Bool)) :
     IsDownwardEntailing (λ α => condNecessity domain α β) :=
   conditional_antecedent_DE domain β
 
@@ -460,7 +460,7 @@ theorem conditional_satisfies_strengthening
     presupposition), while adversatives are only *Strawson*-DE (factivity
     presupposition blocks classical DE). -/
 theorem conditional_de_on_constant_domain
-    (domain : World → List World) (β : BProp World) :
+    (domain : World → List World) (β : (World → Bool)) :
     IsDE_OnConstant (λ d α => condNecessity d α β) domain :=
   conditional_antecedent_DE domain β
 

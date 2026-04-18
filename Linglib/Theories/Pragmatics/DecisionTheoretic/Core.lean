@@ -25,7 +25,7 @@ relative to a dichotomic issue {H, ¬H}.
 - `posRelevant` / `negRelevant` / `irrelevant` — ordinal relevance predicates
 - `hContrary` — A and B have opposite relevance signs
 - `CIP` — Conditional Independence Presumption
-- `pxor` — exclusive disjunction for BProp
+- `pxor` — exclusive disjunction for `W → Bool`
 
 ## Main Results
 
@@ -48,7 +48,7 @@ open Core.Proposition
 /-- A dichotomic issue {H, ¬H}, the hypothesis under consideration. -/
 structure Issue (W : Type*) where
   /-- The hypothesis H (as a decidable proposition). -/
-  topic : BProp W
+  topic : (W → Bool)
 
 /-- A DTS context: a dichotomic issue plus a prior probability distribution. -/
 structure DTSContext (W : Type*) where
@@ -66,19 +66,19 @@ def swapIssue {W : Type*} (ctx : DTSContext W) : DTSContext W :=
 -- ============================================================
 
 /-- Sum of prior probabilities over worlds satisfying a predicate. -/
-def probSum {W : Type*} [Fintype W] (prior : W → ℚ) (p : BProp W) : ℚ :=
+def probSum {W : Type*} [Fintype W] (prior : W → ℚ) (p : (W → Bool)) : ℚ :=
   ∑ w : W, if p w then prior w else 0
 
 /-- Conditional probability P(E|H) = P(E∧H) / P(H).
 
 Returns 0 when P(H) = 0 (undefined conditioning). -/
-def condProb {W : Type*} [Fintype W] (prior : W → ℚ) (e h : BProp W) : ℚ :=
+def condProb {W : Type*} [Fintype W] (prior : W → ℚ) (e h : (W → Bool)) : ℚ :=
   let pH := probSum prior h
   if pH = 0 then 0
   else probSum prior (Decidable.pand W e h) / pH
 
 /-- Marginal (unconditional) probability P(E) = P(E|⊤). -/
-def margProb {W : Type*} [Fintype W] (prior : W → ℚ) (e : BProp W) : ℚ :=
+def margProb {W : Type*} [Fintype W] (prior : W → ℚ) (e : (W → Bool)) : ℚ :=
   probSum prior e
 
 -- ============================================================
@@ -91,7 +91,7 @@ The pre-log ratio that determines relevance sign and magnitude.
 Division-by-zero convention follows `ArgumentativeStrength.bayesFactor`:
 - P(E|¬H) = 0, P(E|H) > 0 → 1000 (effectively +∞)
 - P(E|¬H) = 0, P(E|H) = 0 → 1 (neutral) -/
-def bayesFactor {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) : ℚ :=
+def bayesFactor {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) : ℚ :=
   let pGivenH := condProb ctx.prior e ctx.issue.topic
   let pGivenNotH := condProb ctx.prior e (Decidable.pnot W ctx.issue.topic)
   if pGivenNotH = 0 then
@@ -100,30 +100,30 @@ def bayesFactor {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) : ℚ
   else pGivenH / pGivenNotH
 
 /-- E is positively relevant to H: BF > 1 (E confirms H). -/
-def posRelevant {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) : Prop :=
+def posRelevant {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) : Prop :=
   bayesFactor ctx e > 1
 
-instance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) :
+instance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) :
     Decidable (posRelevant ctx e) := inferInstanceAs (Decidable (_ > _))
 
 /-- E is negatively relevant to H: BF < 1 (E disconfirms H). -/
-def negRelevant {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) : Prop :=
+def negRelevant {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) : Prop :=
   bayesFactor ctx e < 1
 
-instance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) :
+instance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) :
     Decidable (negRelevant ctx e) := inferInstanceAs (Decidable (_ < _))
 
 /-- E is irrelevant to H: BF = 1 (E neither confirms nor disconfirms). -/
-def irrelevant {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) : Prop :=
+def irrelevant {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) : Prop :=
   bayesFactor ctx e = 1
 
-instance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : BProp W) :
+instance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) :
     Decidable (irrelevant ctx e) := inferInstanceAs (Decidable (_ = _))
 
 /-- A and B have opposite relevance signs w.r.t. H.
 
 Merin's "contrariness": one supports H while the other supports ¬H. -/
-def hContrary {W : Type*} [Fintype W] (ctx : DTSContext W) (a b : BProp W) : Prop :=
+def hContrary {W : Type*} [Fintype W] (ctx : DTSContext W) (a b : (W → Bool)) : Prop :=
   (posRelevant ctx a ∧ negRelevant ctx b) ∨ (negRelevant ctx a ∧ posRelevant ctx b)
 
 -- ============================================================
@@ -134,7 +134,7 @@ def hContrary {W : Type*} [Fintype W] (ctx : DTSContext W) (a b : BProp W) : Pro
 A and B are conditionally independent given both H and ¬H.
 
 P(A∧B|H) = P(A|H)·P(B|H) and P(A∧B|¬H) = P(A|¬H)·P(B|¬H). -/
-def CIP {W : Type*} [Fintype W] (ctx : DTSContext W) (a b : BProp W) : Prop :=
+def CIP {W : Type*} [Fintype W] (ctx : DTSContext W) (a b : (W → Bool)) : Prop :=
   condProb ctx.prior (Decidable.pand W a b) ctx.issue.topic =
     condProb ctx.prior a ctx.issue.topic * condProb ctx.prior b ctx.issue.topic ∧
   condProb ctx.prior (Decidable.pand W a b) (Decidable.pnot W ctx.issue.topic) =
@@ -146,7 +146,7 @@ def CIP {W : Type*} [Fintype W] (ctx : DTSContext W) (a b : BProp W) : Prop :=
 -- ============================================================
 
 /-- Exclusive disjunction (XOR) for decidable propositions. -/
-def pxor {W : Type*} (a b : BProp W) : BProp W := λ w => (a w) ^^ (b w)
+def pxor {W : Type*} (a b : (W → Bool)) : (W → Bool) := λ w => (a w) ^^ (b w)
 
 -- ============================================================
 -- Section 6: Helper Lemmas
@@ -157,7 +157,7 @@ section Helpers
 variable {W : Type*} [Fintype W]
 
 /-- Inclusion-exclusion for `probSum`: P(A∨B) + P(A∧B) = P(A) + P(B). -/
-private lemma probSum_por_add_pand (prior : W → ℚ) (a b : BProp W) :
+private lemma probSum_por_add_pand (prior : W → ℚ) (a b : (W → Bool)) :
     probSum prior (Decidable.por W a b) + probSum prior (Decidable.pand W a b) =
     probSum prior a + probSum prior b := by
   simp only [probSum, ← Finset.sum_add_distrib]
@@ -167,22 +167,22 @@ private lemma probSum_por_add_pand (prior : W → ℚ) (a b : BProp W) :
   rcases Bool.eq_false_or_eq_true (b w) with hb | hb <;>
   simp [ha, hb]
 
-/-- ∧ distributes over ∨ at the BProp level. -/
-private lemma pand_por_distrib (a b h : BProp W) :
+/-- ∧ distributes over ∨ at the (level. → Bool) -/
+private lemma pand_por_distrib (a b h : (W → Bool)) :
     Decidable.pand W (Decidable.por W a b) h =
     Decidable.por W (Decidable.pand W a h) (Decidable.pand W b h) := by
   funext w; simp only [Decidable.pand, Decidable.por]
   cases a w <;> cases b w <;> cases h w <;> rfl
 
 /-- (A∧H) ∧ (B∧H) = (A∧B) ∧ H. -/
-private lemma pand_pand_eq (a b h : BProp W) :
+private lemma pand_pand_eq (a b h : (W → Bool)) :
     Decidable.pand W (Decidable.pand W a h) (Decidable.pand W b h) =
     Decidable.pand W (Decidable.pand W a b) h := by
   funext w; simp only [Decidable.pand]
   cases a w <;> cases b w <;> cases h w <;> rfl
 
 /-- Inclusion-exclusion for probSum conditioned on h. -/
-private lemma probSum_pand_por_eq (prior : W → ℚ) (a b h : BProp W) :
+private lemma probSum_pand_por_eq (prior : W → ℚ) (a b h : (W → Bool)) :
     probSum prior (Decidable.pand W (Decidable.por W a b) h) +
     probSum prior (Decidable.pand W (Decidable.pand W a b) h) =
     probSum prior (Decidable.pand W a h) + probSum prior (Decidable.pand W b h) := by
@@ -190,12 +190,12 @@ private lemma probSum_pand_por_eq (prior : W → ℚ) (a b h : BProp W) :
   exact probSum_por_add_pand prior (Decidable.pand W a h) (Decidable.pand W b h)
 
 /-- Unfold condProb when the conditioning event has nonzero probability. -/
-private lemma condProb_unfold (prior : W → ℚ) (e h : BProp W) (hh : probSum prior h ≠ 0) :
+private lemma condProb_unfold (prior : W → ℚ) (e h : (W → Bool)) (hh : probSum prior h ≠ 0) :
     condProb prior e h = probSum prior (Decidable.pand W e h) / probSum prior h := by
   simp [condProb, hh]
 
 /-- Inclusion-exclusion for condProb: P(A∨B|H) + P(A∧B|H) = P(A|H) + P(B|H). -/
-private lemma condProb_por_add (prior : W → ℚ) (a b h : BProp W)
+private lemma condProb_por_add (prior : W → ℚ) (a b h : (W → Bool))
     (hh : probSum prior h ≠ 0) :
     condProb prior (Decidable.por W a b) h + condProb prior (Decidable.pand W a b) h =
     condProb prior a h + condProb prior b h := by
@@ -205,7 +205,7 @@ private lemma condProb_por_add (prior : W → ℚ) (a b h : BProp W)
   linarith [probSum_pand_por_eq prior a b h]
 
 /-- probSum is non-negative when prior is non-negative. -/
-private lemma probSum_nonneg (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0) (p : BProp W) :
+private lemma probSum_nonneg (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0) (p : (W → Bool)) :
     probSum prior p ≥ 0 := by
   unfold probSum
   apply Finset.sum_nonneg'
@@ -215,7 +215,7 @@ private lemma probSum_nonneg (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0) (p 
 
 /-- probSum is monotone when prior is non-negative. -/
 private lemma probSum_mono (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
-    (p q : BProp W) (hsub : ∀ w, p w = true → q w = true) :
+    (p q : (W → Bool)) (hsub : ∀ w, p w = true → q w = true) :
     probSum prior p ≤ probSum prior q := by
   unfold probSum
   apply Finset.sum_le_sum
@@ -230,7 +230,7 @@ private lemma probSum_mono (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
 /-- condProb is non-negative when prior is non-negative and conditioning event
 has positive probability. -/
 private lemma condProb_nonneg (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
-    (e h : BProp W) (hh : probSum prior h > 0) :
+    (e h : (W → Bool)) (hh : probSum prior h > 0) :
     condProb prior e h ≥ 0 := by
   rw [condProb_unfold _ _ _ (ne_of_gt hh)]
   exact div_nonneg (probSum_nonneg prior hP _) (le_of_lt hh)
@@ -238,14 +238,14 @@ private lemma condProb_nonneg (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
 /-- condProb ≤ 1 when prior is non-negative and conditioning event has
 positive probability. -/
 private lemma condProb_le_one (prior : W → ℚ) (hP : ∀ w, prior w ≥ 0)
-    (e h : BProp W) (hh : probSum prior h > 0) :
+    (e h : (W → Bool)) (hh : probSum prior h > 0) :
     condProb prior e h ≤ 1 := by
   rw [condProb_unfold _ _ _ (ne_of_gt hh)]
   exact (div_le_one hh).mpr (probSum_mono prior hP _ _ (λ w hw => by
     simp only [Decidable.pand] at hw; exact (Bool.and_eq_true_iff.mp hw).2))
 
 /-- Unfold bayesFactor when P(E|¬H) ≠ 0. -/
-private lemma bayesFactor_unfold (ctx : DTSContext W) (e : BProp W)
+private lemma bayesFactor_unfold (ctx : DTSContext W) (e : (W → Bool))
     (hne : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) ≠ 0) :
     bayesFactor ctx e = condProb ctx.prior e ctx.issue.topic /
                          condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
@@ -254,7 +254,7 @@ private lemma bayesFactor_unfold (ctx : DTSContext W) (e : BProp W)
 /-- From posRelevant and nonzero P(E|¬H) with non-negative prior:
 condProb E given H > condProb E given ¬H > 0. -/
 private lemma posRelevant_condProb_ineqs (ctx : DTSContext W)
-    (hP : ∀ w, ctx.prior w ≥ 0) (e : BProp W)
+    (hP : ∀ w, ctx.prior w ≥ 0) (e : (W → Bool))
     (hpos : posRelevant ctx e)
     (hne : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) ≠ 0) :
     condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) > 0 ∧
@@ -287,7 +287,7 @@ private lemma posRelevant_condProb_ineqs (ctx : DTSContext W)
 
 /-- condProb < 1 follows from posRelevant and condProb ≤ 1 and BF > 1. -/
 private lemma condProb_lt_one_of_posRelevant (ctx : DTSContext W)
-    (hP : ∀ w, ctx.prior w ≥ 0) (e : BProp W)
+    (hP : ∀ w, ctx.prior w ≥ 0) (e : (W → Bool))
     (hpos : posRelevant ctx e)
     (hne : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) ≠ 0) :
     condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) < 1 := by
@@ -350,7 +350,7 @@ section Theorems
 
 variable {W : Type*} [Fintype W]
 
-private lemma condProb_pnot_pnot (prior : W → ℚ) (e h : BProp W) :
+private lemma condProb_pnot_pnot (prior : W → ℚ) (e h : (W → Bool)) :
     condProb prior e (Decidable.pnot W (Decidable.pnot W h)) = condProb prior e h := by
   simp [condProb, probSum, Decidable.pand, Decidable.pnot, Bool.not_not]
 
@@ -358,7 +358,7 @@ private lemma condProb_pnot_pnot (prior : W → ℚ) (e h : BProp W) :
 to H iff E is negatively relevant to ¬H.
 
 The ordinal content of r_H(E) = −r_{¬H}(E). -/
-theorem sign_reversal_qual (ctx : DTSContext W) (e : BProp W)
+theorem sign_reversal_qual (ctx : DTSContext W) (e : (W → Bool))
     (hEH : condProb ctx.prior e ctx.issue.topic > 0)
     (hENotH : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) > 0) :
     posRelevant ctx e ↔ negRelevant (swapIssue ctx) e := by
@@ -374,7 +374,7 @@ theorem sign_reversal_qual (ctx : DTSContext W) (e : BProp W)
 /-- **Corollary 3** (quantitative): BF_H(E) · BF_{¬H}(E) = 1.
 
 Exact when conditional probabilities are nonzero. -/
-theorem sign_reversal (ctx : DTSContext W) (e : BProp W)
+theorem sign_reversal (ctx : DTSContext W) (e : (W → Bool))
     (hENotH : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) ≠ 0)
     (hEH : condProb ctx.prior e ctx.issue.topic ≠ 0) :
     bayesFactor ctx e * bayesFactor (swapIssue ctx) e = 1 := by
@@ -395,7 +395,7 @@ theorem relevance_as_differential_inf :
 
 BF(A∧B) = BF(A) · BF(B) when A and B are conditionally independent
 given both H and ¬H. -/
-theorem bayes_factor_multiplicative_under_cip (ctx : DTSContext W) (a b : BProp W)
+theorem bayes_factor_multiplicative_under_cip (ctx : DTSContext W) (a b : (W → Bool))
     (hcip : CIP ctx a b)
     (hNotH : condProb ctx.prior a (Decidable.pnot W ctx.issue.topic) ≠ 0)
     (hNotH' : condProb ctx.prior b (Decidable.pnot W ctx.issue.topic) ≠ 0)
@@ -409,7 +409,7 @@ theorem bayes_factor_multiplicative_under_cip (ctx : DTSContext W) (a b : BProp 
 
 /-- **Theorem 6a** (part 1): Under CIP with both A,B positively relevant,
 conjunction dominates both conjuncts: BF(A∧B) > max(BF(A), BF(B)). -/
-theorem conjunction_dominates_conjuncts (ctx : DTSContext W) (a b : BProp W)
+theorem conjunction_dominates_conjuncts (ctx : DTSContext W) (a b : (W → Bool))
     (hcip : CIP ctx a b)
     (hPosA : posRelevant ctx a) (hPosB : posRelevant ctx b)
     (hNonzero : condProb ctx.prior a (Decidable.pnot W ctx.issue.topic) ≠ 0)
@@ -430,7 +430,7 @@ BF(A∧B) > max(BF(A), BF(B)) > BF(A∨B) > 1.
 
 The disjunction ordering requires inclusion-exclusion on conditional
 probabilities: P(A∨B|X) = P(A|X) + P(B|X) - P(A∧B|X). -/
-theorem conjunction_dominates_disjunction (ctx : DTSContext W) (a b : BProp W)
+theorem conjunction_dominates_disjunction (ctx : DTSContext W) (a b : (W → Bool))
     (hcip : CIP ctx a b)
     (hPosA : posRelevant ctx a) (hPosB : posRelevant ctx b)
     (hNonzero : condProb ctx.prior a (Decidable.pnot W ctx.issue.topic) ≠ 0)
@@ -509,7 +509,7 @@ necessarily positively relevant.
 Counterexample on World4: H={w0}, A={w0,w1}, B={w0,w2}, uniform prior.
 BF(A) = 3, BF(B) = 3, but A⊕B = {w1,w2} has BF = 0 (not pos relevant). -/
 theorem xor_not_necessarily_positive :
-    ∃ (ctx : DTSContext World4) (a b : BProp World4),
+    ∃ (ctx : DTSContext World4) (a b : (World4 → Bool)),
       posRelevant ctx a ∧ posRelevant ctx b ∧
       ¬ posRelevant ctx (pxor a b) := by
   refine ⟨⟨⟨λ w => match w with | .w0 => true | _ => false⟩, λ _ => 1/4⟩,

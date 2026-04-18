@@ -15,7 +15,7 @@ Four worlds with two properties (rain, wet street) and a causal regularity:
 
 Two time points: yesterday (t = −1) and now (t = 0). Rain occurs yesterday;
 wetness holds now. The function `atTime` projects `World → ℤ → Bool` to
-`BProp World` at a specific time, bridging the temporal and modal type systems.
+`(World → Bool)` at a specific time, bridging the temporal and modal type systems.
 
 Reference: Kratzer, A. (2012). Modals and Conditionals. Oxford University Press. Ch. 2 §2.9.
 -/
@@ -28,11 +28,11 @@ open Semantics.Modality.Kratzer
 /-! ## Atemporal propositions -/
 
 /-- It rained: true at w0 (normal rain) and w1 (rain + broken drainage). -/
-def rained : BProp World := λ w =>
+def rained : (World → Bool) := λ w =>
   match w with | .w0 => true | .w1 => true | .w2 => false | .w3 => false
 
 /-- The street is wet: true at w0 (rain → wet) and w2 (sprinkler). -/
-def streetWet : BProp World := λ w =>
+def streetWet : (World → Bool) := λ w =>
   match w with | .w0 => true | .w1 => false | .w2 => true | .w3 => false
 
 /-! ## Temporal propositions and the type bridge -/
@@ -46,9 +46,9 @@ def wetStreetAt : World → ℤ → Bool := λ w t =>
   match t with | 0 => streetWet w | _ => false
 
 /-- **The type bridge**: project a temporal proposition at a specific time
-    to a world proposition `BProp World`. This is what allows a past-tense
+    to a world proposition `(World → Bool)`. This is what allows a past-tense
     antecedent to enter a Kratzer modal base. -/
-def atTime (p : World → ℤ → Bool) (t : ℤ) : BProp World := λ w => p w t
+def atTime (p : World → ℤ → Bool) (t : ℤ) : (World → Bool) := λ w => p w t
 
 /-! ## Conversational backgrounds -/
 

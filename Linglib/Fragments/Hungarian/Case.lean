@@ -1,5 +1,5 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Hungarian Case Inventory @cite{blake-1994}
 
@@ -24,10 +24,10 @@ internal/external/surface local triads like Finnish.
 namespace Fragments.Hungarian.Case
 
 /-- Hungarian case inventory mapped to Core.Case (11 of 18). -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .dat, .gen, .loc, .abl, .all, .inst, .com, .caus]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .dat, .gen, .loc, .abl, .all, .inst, .com, .caus}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 0).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Hungarian.Case

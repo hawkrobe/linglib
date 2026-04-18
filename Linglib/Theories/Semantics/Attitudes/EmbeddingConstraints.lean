@@ -61,7 +61,7 @@ not the Q→P direction.
 -/
 def IsPtoQEntailing {W E : Type*}
     (V : E → QuestionDen W → W → Bool) : Prop :=
-  ∀ (x : E) (Q : QuestionDen W) (w : W) (p : BProp W),
+  ∀ (x : E) (Q : QuestionDen W) (w : W) (p : (W → Bool)),
     p ∈ Q → V x [p] w = true → V x Q w = true
 
 /--
@@ -72,7 +72,7 @@ gives us: V_p(x, p, w) → V_Q(x, Q, w) for any p ∈ Q. Since V_Q(x, [p], w) �
 V_p(x, p, w), this yields P-to-Q entailment.
 -/
 theorem cDistributive_implies_ptoq {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool)
     (hCD : IsCDistributive V_prop V_question) :
     IsPtoQEntailing V_question := by
@@ -113,9 +113,9 @@ presuppositions are met*. This handles `care`, whose presupposition
 (belief that p) blocks the → direction in plain C-distributivity.
 -/
 def IsStrawsonCDistributive {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool)
-    (presupSatisfied : E → BProp W → W → Bool)
+    (presupSatisfied : E → (W → Bool) → W → Bool)
     : Prop :=
   (∀ (x : E) (Q : QuestionDen W) (w : W),
     V_question x Q w = true →
@@ -128,9 +128,9 @@ Plain C-distributivity implies Strawson C-distributivity
 (with any presupposition predicate).
 -/
 theorem cDist_implies_strawson {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool)
-    (presupSatisfied : E → BProp W → W → Bool)
+    (presupSatisfied : E → (W → Bool) → W → Bool)
     (hCD : IsCDistributive V_prop V_question) :
     IsStrawsonCDistributive V_prop V_question presupSatisfied := by
   constructor
@@ -166,7 +166,7 @@ V(x, {p}, w) entails p(w).
 -/
 def IsVeridicalDecl {W E : Type*}
     (V : E → QuestionDen W → W → Bool) : Prop :=
-  ∀ (x : E) (p : BProp W) (w : W),
+  ∀ (x : E) (p : (W → Bool)) (w : W),
     V x [p] w = true → p w = true
 
 /--
@@ -178,7 +178,7 @@ V(x, Q, w) and p(w) with p ∈ Q together entail V(x, {p}, w).
 -/
 def IsVeridicalInterrog {W E : Type*}
     (V : E → QuestionDen W → W → Bool) : Prop :=
-  ∀ (x : E) (Q : QuestionDen W) (p : BProp W) (w : W),
+  ∀ (x : E) (Q : QuestionDen W) (p : (W → Bool)) (w : W),
     V x Q w = true → p ∈ Q → p w = true → V x [p] w = true
 
 /--
@@ -221,7 +221,7 @@ Counterexample: V_question always returns true for any non-empty Q.
 - Not uniform: veridical-interrog but not veridical-decl.
 -/
 theorem cDist_not_implies_veridicalUniformity :
-    ∃ (W E : Type) (V_prop : E → BProp W → W → Bool)
+    ∃ (W E : Type) (V_prop : E → (W → Bool) → W → Bool)
                    (V_question : E → QuestionDen W → W → Bool),
     IsCDistributive V_prop V_question ∧ ¬IsVeridicallyUniform V_question := by
   refine ⟨Unit, Unit,
@@ -348,8 +348,8 @@ theorem ptoQ_not_implies_strawsonCDist :
     ∃ (W E : Type)
       (V_question : E → QuestionDen W → W → Bool),
     IsPtoQEntailing V_question ∧
-    ∀ (V_prop : E → BProp W → W → Bool)
-      (presup : E → BProp W → W → Bool),
+    ∀ (V_prop : E → (W → Bool) → W → Bool)
+      (presup : E → (W → Bool) → W → Bool),
       V_prop = (fun _ _ _ => false) →
       presup = (fun _ _ _ => true) →
       ¬IsStrawsonCDistributive V_prop V_question presup := by
@@ -376,8 +376,8 @@ V_question to violate P-to-Q without constraint from the ← direction.
 -/
 theorem strawsonCDist_not_implies_ptoQ :
     ∃ (W E : Type) (V_question : E → QuestionDen W → W → Bool),
-    (∃ (V_prop : E → BProp W → W → Bool)
-       (presup : E → BProp W → W → Bool),
+    (∃ (V_prop : E → (W → Bool) → W → Bool)
+       (presup : E → (W → Bool) → W → Bool),
        IsStrawsonCDistributive V_prop V_question presup) ∧
     ¬IsPtoQEntailing V_question := by
   -- V_question: returns true iff Q is a singleton
@@ -414,7 +414,7 @@ Counterexample: V always returns false.
 theorem vu_not_implies_cDist :
     ∃ (W E : Type) (V_question : E → QuestionDen W → W → Bool),
     IsVeridicallyUniform V_question ∧
-    ∀ (V_prop : E → BProp W → W → Bool),
+    ∀ (V_prop : E → (W → Bool) → W → Bool),
       V_prop = (fun _ _ _ => true) →
       ¬IsCDistributive V_prop V_question := by
   refine ⟨Unit, Unit, (fun _ _ _ => false), ?_, ?_⟩
@@ -505,7 +505,7 @@ Same V_question as P-to-Q case above (Q.any true), with V_prop = true, presup = 
 -/
 theorem strawsonCDist_not_implies_vu :
     ∃ (W E : Type) (V_question : E → QuestionDen W → W → Bool),
-    (∃ (V_prop : E → BProp W → W → Bool) (presup : E → BProp W → W → Bool),
+    (∃ (V_prop : E → (W → Bool) → W → Bool) (presup : E → (W → Bool) → W → Bool),
        IsStrawsonCDistributive V_prop V_question presup) ∧
     ¬IsVeridicallyUniform V_question := by
   refine ⟨Unit, Unit, (fun _ Q _ => Q.any fun _ => true),
@@ -536,7 +536,7 @@ Counterexample: V_question(Q, w) = Q.all(fun p => p w) — universal.
 theorem vu_not_implies_strawsonCDist :
     ∃ (W E : Type) (V_question : E → QuestionDen W → W → Bool),
     IsVeridicallyUniform V_question ∧
-    ∀ (V_prop : E → BProp W → W → Bool) (presup : E → BProp W → W → Bool),
+    ∀ (V_prop : E → (W → Bool) → W → Bool) (presup : E → (W → Bool) → W → Bool),
       V_prop = (fun _ p w => p w) →
       presup = (fun _ _ _ => true) →
       ¬IsStrawsonCDistributive V_prop V_question presup := by
@@ -609,7 +609,7 @@ def shknow {W E : Type*}
 theorem shknow_violates_ptoq {W E : Type*}
     (believes : E → (W → Bool) → Bool)
     (entertains : E → QuestionDen W → Bool)
-    (x : E) (p q : BProp W) (w : W)
+    (x : E) (p q : (W → Bool)) (w : W)
     (hp_bel : believes x p = true)
     (hpq : p ≠ q) :
     ¬IsPtoQEntailing (shknow believes entertains) := by
@@ -642,7 +642,7 @@ does not entail being compatible with ALL answers in Q.
 -/
 theorem allOpen_violates_ptoq {W E : Type*}
     (believes : E → (W → Bool) → Bool)
-    (x : E) (p q : BProp W) (w : W)
+    (x : E) (p q : (W → Bool)) (w : W)
     (hp_compat : believes x (fun w => !(p w)) = false)
     (hq_incompat : believes x (fun w => !(q w)) = true) :
     ¬IsPtoQEntailing (allOpen believes) := by
@@ -685,7 +685,7 @@ no opinion about Q.
 -/
 theorem knopinion_violates_ptoq {W E : Type*}
     (believes : E → (W → Bool) → Bool)
-    (x : E) (p q : BProp W) (w : W)
+    (x : E) (p q : (W → Bool)) (w : W)
     (hp_bel : believes x p = true)
     (hpq : p ≠ q) :
     ¬IsPtoQEntailing (knopinion believes) := by
@@ -863,7 +863,7 @@ theorem care_satisfies_ptoq {W E : Type*}
     (bou : E → W → BouState W)
     (doxSupports : DoxState W → QuestionDen W → Bool)
     (settled : BouState W → (W → Bool) → Bool)
-    (hMono : ∀ (s : DoxState W) (p : BProp W) (Q : QuestionDen W),
+    (hMono : ∀ (s : DoxState W) (p : (W → Bool)) (Q : QuestionDen W),
       doxSupports s [p] = true → p ∈ Q → doxSupports s Q = true) :
     IsPtoQEntailing (careSem dox bou doxSupports settled) := by
   intro x Q w p hp hSingleton
@@ -963,7 +963,7 @@ theorem wondows_violates_ptoq {W E : Type*}
     (factive : E → W → Bool)
     (doxSupports : E → QuestionDen W → W → Bool)
     (believes : E → (W → Bool) → Bool)
-    (x : E) (p q : BProp W) (w : W)
+    (x : E) (p q : (W → Bool)) (w : W)
     (h_factive : factive x w = true)
     (h_dox_singleton : doxSupports x [p] w = true)
     (_h_dox_pair : doxSupports x [p, q] w = true)

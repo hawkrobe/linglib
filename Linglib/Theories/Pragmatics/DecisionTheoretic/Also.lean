@@ -45,8 +45,8 @@ This is stronger than P(A)=1: it means A is informationally *inert*.
 Formally: P(X|A) = P(X) for all X, which is equivalent to
 P(X|A) = P(X|⊤) for all X. -/
 def presupposedIrrelevant {W : Type*} [Fintype W]
-    (prior : W → ℚ) (a : BProp W) : Prop :=
-  ∀ (x : BProp W), condProb prior x a = condProb prior x (Decidable.top W)
+    (prior : W → ℚ) (a : (W → Bool)) : Prop :=
+  ∀ (x : (W → Bool)), condProb prior x a = condProb prior x (Decidable.top W)
 
 -- ============================================================
 -- Section 2: Topic-Anaphoric Salience (Def. 13)
@@ -63,7 +63,7 @@ D is topic-anaphorically salient for E in context iff:
 This captures the discourse requirement of "also": the antecedent must
 have been relevant before being taken for granted. -/
 structure TopicAnaphoricSalience {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (d e : BProp W) where
+    (ctx : DTSContext W) (d e : (W → Bool)) where
   /-- E is relevant to the current issue. -/
   eRelevant : posRelevant ctx e ∨ negRelevant ctx e
   /-- D is currently presupposed (informationally inert). -/
@@ -84,7 +84,7 @@ For "Q(a) and also Q(b)": Q(a) and Q(b) have the *same* relevance sign
 The `previousSign` field records the relevance sign of Q(a) before it
 was presupposed; `currentSign` is the relevance sign of Q(b) now. -/
 structure AlsoFelicitous {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (qa qb : BProp W) where
+    (ctx : DTSContext W) (qa qb : (W → Bool)) where
   /-- Q(a) is presupposed. -/
   qaPresupposed : presupposedIrrelevant ctx.prior qa
   /-- Q(b) is relevant. -/
@@ -99,7 +99,7 @@ structure AlsoFelicitous {W : Type*} [Fintype W]
 "Q(a) but also Q(b)": Q(a) had the opposite relevance sign from Q(b).
 This combines adversativity ("but") with additivity ("also"). -/
 structure ButAlsoFelicitous {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (qa qb : BProp W) where
+    (ctx : DTSContext W) (qa qb : (W → Bool)) where
   /-- Q(a) is presupposed. -/
   qaPresupposed : presupposedIrrelevant ctx.prior qa
   /-- Q(b) is relevant. -/
@@ -126,7 +126,7 @@ A proposition φ is properly accommodable iff:
 Accommodable propositions are those that can be "taken for granted"
 without affecting the ongoing argumentation. -/
 def properlyAccommodable {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (φ : BProp W) : Prop :=
+    (ctx : DTSContext W) (φ : (W → Bool)) : Prop :=
   0 < margProb ctx.prior φ ∧
   margProb ctx.prior φ < 1 ∧
   irrelevant ctx φ
@@ -140,23 +140,23 @@ section Theorems
 variable {W : Type*} [Fintype W]
 
 -- Helper: condProb unfolds when denominator is nonzero
-private lemma condProb_of_ne_zero (prior : W → ℚ) (e h : BProp W)
+private lemma condProb_of_ne_zero (prior : W → ℚ) (e h : (W → Bool))
     (hne : probSum prior h ≠ 0) :
     condProb prior e h = probSum prior (Decidable.pand W e h) / probSum prior h := by
   simp [condProb, hne]
 
 -- Helper: probSum of pand is commutative
-private lemma probSum_pand_comm (prior : W → ℚ) (a b : BProp W) :
+private lemma probSum_pand_comm (prior : W → ℚ) (a b : (W → Bool)) :
     probSum prior (Decidable.pand W a b) = probSum prior (Decidable.pand W b a) := by
   simp [probSum, Decidable.pand, Bool.and_comm]
 
 -- Helper: probSum of pand with top is identity
-private lemma probSum_pand_top (prior : W → ℚ) (a : BProp W) :
+private lemma probSum_pand_top (prior : W → ℚ) (a : (W → Bool)) :
     probSum prior (Decidable.pand W a (Decidable.top W)) = probSum prior a := by
   simp [probSum, Decidable.pand, Decidable.top, Bool.and_true]
 
 -- Helper: probSum is nonneg with nonneg prior
-private lemma probSum_nonneg (prior : W → ℚ) (p : BProp W)
+private lemma probSum_nonneg (prior : W → ℚ) (p : (W → Bool))
     (hNonneg : ∀ w, prior w ≥ 0) : probSum prior p ≥ 0 := by
   show 0 ≤ probSum prior p
   unfold probSum
@@ -167,7 +167,7 @@ private lemma probSum_nonneg (prior : W → ℚ) (p : BProp W)
   · linarith
 
 -- Helper: P(a∧h) ≤ P(a) with nonneg prior
-private lemma probSum_pand_le (prior : W → ℚ) (a h : BProp W)
+private lemma probSum_pand_le (prior : W → ℚ) (a h : (W → Bool))
     (hNonneg : ∀ w, prior w ≥ 0) :
     probSum prior (Decidable.pand W a h) ≤ probSum prior a := by
   unfold probSum Decidable.pand
@@ -180,7 +180,7 @@ private lemma probSum_pand_le (prior : W → ℚ) (a h : BProp W)
   · linarith
 
 -- Helper: P(a) = 0 + nonneg → P(a∧h) = 0
-private lemma probSum_pand_zero_of_zero (prior : W → ℚ) (a h : BProp W)
+private lemma probSum_pand_zero_of_zero (prior : W → ℚ) (a h : (W → Bool))
     (hNonneg : ∀ w, prior w ≥ 0) (hZero : probSum prior a = 0) :
     probSum prior (Decidable.pand W a h) = 0 := by
   have hle := probSum_pand_le prior a h hNonneg
@@ -188,7 +188,7 @@ private lemma probSum_pand_zero_of_zero (prior : W → ℚ) (a h : BProp W)
   linarith
 
 -- Helper: P(⊤) ≥ P(H) with nonneg prior
-private lemma probSum_top_ge (prior : W → ℚ) (h : BProp W)
+private lemma probSum_top_ge (prior : W → ℚ) (h : (W → Bool))
     (hNonneg : ∀ w, prior w ≥ 0) :
     probSum prior (Decidable.top W) ≥ probSum prior h := by
   show probSum prior h ≤ probSum prior (Decidable.top W)
@@ -208,7 +208,7 @@ Proof: From presupposedIrrelevant with x := H, we get
 P(H|a) = P(H|⊤) = P(H)/P(⊤). By a Bayes swap:
   P(a|H) = P(H∧a)/P(H) = P(a)·P(H)/(P(⊤)·P(H)) = P(a)/P(⊤).
 This is independent of H, so P(a|H) = P(a|¬H), giving BF = 1. -/
-private lemma presup_implies_bf_one (ctx : DTSContext W) (a : BProp W)
+private lemma presup_implies_bf_one (ctx : DTSContext W) (a : (W → Bool))
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
     (hH : probSum ctx.prior ctx.issue.topic > 0)
@@ -279,7 +279,7 @@ relevant (BF > 1 or BF < 1) — contradiction.
 
 Requires nonneg prior and non-degenerate issue (Merin assumes both). -/
 theorem also_nonidentity {E : Type*} [DecidableEq E]
-    (ctx : DTSContext W) (Q : E → BProp W) (a b : E)
+    (ctx : DTSContext W) (Q : E → (W → Bool)) (a b : E)
     (hAlso : AlsoFelicitous ctx (Q a) (Q b))
     (_hInj : ∀ x y, Q x = Q y → x = y)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
@@ -299,7 +299,7 @@ independent of any other proposition given both H and ¬H.
 From presupposedIrrelevant: P(x|a) = P(x) for all x. Instantiating
 x = H and x = b∧H gives the joint factorization P(a∧b∧H) · P(H) =
 P(a∧H) · P(b∧H), which is exactly CIP. -/
-private lemma presup_implies_cip (ctx : DTSContext W) (a b : BProp W)
+private lemma presup_implies_cip (ctx : DTSContext W) (a b : (W → Bool))
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
     (hH : probSum ctx.prior ctx.issue.topic > 0)
@@ -370,7 +370,7 @@ Proof: Presupposition implies CIP (the joint factorizes trivially
 when one factor is informationally inert), and multiplicativity
 follows from CIP by `bayes_factor_multiplicative_under_cip`. -/
 theorem presuppositional_independence_additivity
-    (ctx : DTSContext W) (a b : BProp W)
+    (ctx : DTSContext W) (a b : (W → Bool))
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
     (hH : probSum ctx.prior ctx.issue.topic > 0)

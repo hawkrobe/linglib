@@ -54,7 +54,7 @@ set_option autoImplicit false
 
 namespace Semantics.Modality.KnowledgeProbability
 
-open Core.Proposition (BProp FiniteWorlds)
+open Core.Proposition (FiniteWorlds)
 open Core.IntensionalLogic.RestrictedModality
   (AgentAccessRel AccessRel boxR Refl Eucl refl_eucl_symm refl_eucl_trans)
 open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
@@ -71,7 +71,7 @@ open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
     - `accessRel` = the accessibility relations Kᵢ (information partitions)
     - `worldCredence` = the probability assignment P mapping (i, s) to Pᵢ,ₛ
 
-    The truth assignment π is implicit in our framework (handled by `BProp`).
+    The truth assignment π is implicit in our framework (handled by `W → Bool`).
     Structural conditions (CONS, UNIF, etc.) are separate predicates. -/
 structure KripkeKP (W E : Type*) where
   /-- Agent-indexed accessibility relation (information partition) -/
@@ -99,7 +99,7 @@ structure KripkeKP (W E : Type*) where
     information partition. Without CONS, an agent could assign positive
     probability to worlds they "know" are impossible. -/
 def CONS {W E : Type*} (kp : KripkeKP W E) : Prop :=
-  ∀ (i : E) (w : W) (φ ψ : BProp W),
+  ∀ (i : E) (w : W) (φ ψ : (W → Bool)),
     (∀ v, kp.accessRel i w v → φ v = ψ v) →
     kp.worldCredence i w φ = kp.worldCredence i w ψ
 
@@ -110,7 +110,7 @@ def CONS {W E : Type*} (kp : KripkeKP W E) : Prop :=
     OBJ (p. 350): Pᵢ,ₛ = Pⱼ,ₛ for all
     i, j, and s. Axiomatized by W8. -/
 def OBJ {W E : Type*} (kp : KripkeKP W E) : Prop :=
-  ∀ (i j : E) (w : W) (φ : BProp W),
+  ∀ (i j : E) (w : W) (φ : (W → Bool)),
     kp.worldCredence i w φ = kp.worldCredence j w φ
 
 /-- **UNIF** (Uniformity): agents assign the same probability at
@@ -131,7 +131,7 @@ def OBJ {W E : Type*} (kp : KripkeKP W E) : Prop :=
 def UNIF {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i : E) (w w' : W),
     kp.accessRel i w w' →
-    ∀ (φ : BProp W), kp.worldCredence i w φ = kp.worldCredence i w' φ
+    ∀ (φ : (W → Bool)), kp.worldCredence i w φ = kp.worldCredence i w' φ
 
 /-- **SDP** (State-determined probability): the probability distribution
     is determined by the information set.
@@ -145,7 +145,7 @@ def UNIF {W E : Type*} (kp : KripkeKP W E) : Prop :=
 def SDP {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i j : E) (w w' : W),
     (∀ v, kp.accessRel i w v ↔ kp.accessRel j w' v) →
-    ∀ (φ : BProp W), kp.worldCredence i w φ = kp.worldCredence j w' φ
+    ∀ (φ : (W → Bool)), kp.worldCredence i w φ = kp.worldCredence j w' φ
 
 -- ============================================================================
 -- §3. Knowledge-Probability Bridge
@@ -159,11 +159,11 @@ def Normalized {W E : Type*} (kp : KripkeKP W E) : Prop :=
 /-- Nonnegativity: credences are non-negative.
     This is axiom W1. -/
 def Nonnegative {W E : Type*} (kp : KripkeKP W E) : Prop :=
-  ∀ (i : E) (w : W) (φ : BProp W), 0 ≤ kp.worldCredence i w φ
+  ∀ (i : E) (w : W) (φ : (W → Bool)), 0 ≤ kp.worldCredence i w φ
 
 /-- Measure monotonicity for world-dependent credence: each agent's
     credence function at each world is `Monotone` (from Mathlib) under
-    the pointwise Bool ordering on `BProp W`.
+    the pointwise Bool ordering on `(W → Bool)`.
 
     Since `Bool` is ordered `false ≤ true`, `φ ≤ ψ` in `W → Bool`
     means `∀ v, φ v = true → ψ v = true` — i.e., set inclusion.
@@ -195,7 +195,7 @@ def MeasureMonotone {W E : Type*} (wcr : WorldCredence E W) : Prop :=
 theorem measureMonotone_isProbabilistic {E W : Type*}
     (wcr : WorldCredence E W) (hMono : MeasureMonotone wcr) (w : W) :
     Semantics.Attitudes.EpistemicThreshold.isProbabilistic
-      (fun (i : E) (φ : BProp W) => wcr i w φ) :=
+      (fun (i : E) (φ : (W → Bool)) => wcr i w φ) :=
   fun a => hMono a w
 
 /-- Under CONS + normalization, knowledge implies probability 1.
@@ -210,7 +210,7 @@ theorem measureMonotone_isProbabilistic {E W : Type*}
     K_i φ ⇒ (w_i(φ) = 1). -/
 theorem knows_implies_prob_one {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hCONS : CONS kp) (hNorm : Normalized kp)
-    (i : E) (φ : BProp W) (w : W)
+    (i : E) (φ : (W → Bool)) (w : W)
     (hK : knows kp.accessRel i (fun v => φ v = true) w) :
     kp.worldCredence i w φ = 1 := by
   rw [hCONS i w φ (fun _ => true) (fun v hv => by
@@ -230,7 +230,7 @@ theorem knows_implies_prob_one {W E : Type*} [FiniteWorlds W]
     When b = 1, coincides with Boolean `everyoneKnows` (under CONS).
     This is E_G^b operator (Section 5). -/
 def everyoneProbably {W E : Type*} (wcr : WorldCredence E W)
-    (group : List E) (b : ℚ) (φ : BProp W) (w : W) : Bool :=
+    (group : List E) (b : ℚ) (φ : (W → Bool)) (w : W) : Bool :=
   group.all fun i => nestedThreshold wcr b i φ w
 
 /-- F_G^b iteration for probabilistic common
@@ -246,7 +246,7 @@ def everyoneProbably {W E : Type*} (wcr : WorldCredence E W)
     F_G^b-based C_G^{1/2} p. The F_G^b operator correctly maintains
     φ at each iteration level, preventing this false positive. -/
 def probCKIter {W E : Type*} (wcr : WorldCredence E W)
-    (group : List E) (b : ℚ) (φ : BProp W) : ℕ → BProp W
+    (group : List E) (b : ℚ) (φ : (W → Bool)) : ℕ → (W → Bool)
   | .zero => fun _ => true
   | .succ n => everyoneProbably wcr group b
       (fun w => φ w && probCKIter wcr group b φ n w)
@@ -263,7 +263,7 @@ def probCKIter {W E : Type*} (wcr : WorldCredence E W)
     probability ≥ b to φ, everyone assigns probability ≥ b that everyone
     assigns probability ≥ b to φ, etc. -/
 def commonProbKnowledge {W E : Type*} (wcr : WorldCredence E W)
-    (group : List E) (b : ℚ) (φ : BProp W)
+    (group : List E) (b : ℚ) (φ : (W → Bool))
     (bound : ℕ) (w : W) : Bool :=
   (List.range bound).all fun n => probCKIter wcr group b φ (n + 1) w
 
@@ -281,7 +281,7 @@ def commonProbKnowledge {W E : Type*} (wcr : WorldCredence E W)
 theorem probCKIter_monotone {W E : Type*}
     (wcr : WorldCredence E W)
     (hMono : MeasureMonotone wcr)
-    (group : List E) (b : ℚ) (φ : BProp W) :
+    (group : List E) (b : ℚ) (φ : (W → Bool)) :
     ∀ (k : ℕ) (w : W), probCKIter wcr group b φ (k + 1) w = true →
       probCKIter wcr group b φ k w = true := by
   intro k
@@ -353,7 +353,7 @@ theorem sdp_implies_unif {W E : Type*}
     probabilistic everyone-probably at threshold 1. -/
 theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hCONS : CONS kp) (hNorm : Normalized kp)
-    (group : List E) (φ : BProp W) (w : W)
+    (group : List E) (φ : (W → Bool)) (w : W)
     (h : everyoneKnows kp.accessRel group (fun v => φ v = true) w) :
     everyoneProbably kp.worldCredence group 1 φ w = true := by
   unfold everyoneProbably
@@ -378,7 +378,7 @@ theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [FiniteWorlds W]
     states. -/
 theorem unif_threshold_stable {W E : Type*}
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
-    (i : E) (θ : ℚ) (φ : BProp W) (w w' : W)
+    (i : E) (θ : ℚ) (φ : (W → Bool)) (w w' : W)
     (hAcc : kp.accessRel i w w') :
     nestedThreshold kp.worldCredence θ i φ w =
     nestedThreshold kp.worldCredence θ i φ w' := by
@@ -399,7 +399,7 @@ theorem unif_threshold_stable {W E : Type*}
     lifting Boolean introspection to graded credence. -/
 theorem unif_positive_introspection {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
-    (i : E) (θ : ℚ) (φ : BProp W) (w : W)
+    (i : E) (θ : ℚ) (φ : (W → Bool)) (w : W)
     (h : nestedThreshold kp.worldCredence θ i φ w = true) :
     knows kp.accessRel i (fun v => nestedThreshold kp.worldCredence θ i φ v = true) w := by
   intro v hv
@@ -416,7 +416,7 @@ theorem unif_positive_introspection {W E : Type*} [FiniteWorlds W]
     i-probability formula or its negation is known by agent i. -/
 theorem unif_negative_introspection {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
-    (i : E) (θ : ℚ) (φ : BProp W) (w : W)
+    (i : E) (θ : ℚ) (φ : (W → Bool)) (w : W)
     (h : nestedThreshold kp.worldCredence θ i φ w = false) :
     knows kp.accessRel i (fun v => !(nestedThreshold kp.worldCredence θ i φ v) = true) w := by
   intro v hv
@@ -463,7 +463,7 @@ theorem miller_principle {W E : Type*}
     (hUNIF : UNIF kp) (hCONS : CONS kp)
     (hNorm : Normalized kp) (hNull : NullEmpty kp)
     (hNonneg : Nonnegative kp)
-    (i : E) (b : ℚ) (φ : BProp W) (w : W) :
+    (i : E) (b : ℚ) (φ : (W → Bool)) (w : W) :
     kp.worldCredence i w φ ≥
       b * kp.worldCredence i w (nestedThreshold kp.worldCredence b i φ) := by
   cases h : nestedThreshold kp.worldCredence b i φ w with
@@ -511,7 +511,7 @@ theorem miller_principle {W E : Type*}
     ψ ≤ E_G^b(φ ∧ ψ), we get ψ ≤ (F_G^b)^{k+1}. -/
 theorem probCK_greatest_prefixedpoint {W E : Type*}
     (wcr : WorldCredence E W) (hMono : MeasureMonotone wcr)
-    (group : List E) (b : ℚ) (φ ψ : BProp W)
+    (group : List E) (b : ℚ) (φ ψ : (W → Bool))
     (hPFP : ∀ w, ψ w = true →
       everyoneProbably wcr group b (fun v => φ v && ψ v) w = true) :
     ∀ k w, ψ w = true → probCKIter wcr group b φ k w = true := by
@@ -571,7 +571,7 @@ At s₁:
 section Figure1
 
 /-- Proposition p from Figure 1: true at s₂ (1) and s₃ (2). -/
-private def fig1P : BProp (Fin 4) := fun w =>
+private def fig1P : (Fin 4 → Bool) := fun w =>
   match w.val with
   | 1 | 2 => true
   | _ => false
@@ -597,7 +597,7 @@ private def fig1Group : List (Fin 2) := [0, 1]
     that shows fails for probabilistic CK.
     Compare with `probCKIter` which uses the correct F_G^b operator. -/
 def naiveIter {W E : Type*} (wcr : WorldCredence E W)
-    (group : List E) (b : ℚ) (φ : BProp W) : ℕ → BProp W
+    (group : List E) (b : ℚ) (φ : (W → Bool)) : ℕ → (W → Bool)
   | .zero => φ
   | .succ n => everyoneProbably wcr group b (naiveIter wcr group b φ n)
 

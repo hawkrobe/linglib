@@ -1,4 +1,4 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Core.Lexical.MorphRule
 

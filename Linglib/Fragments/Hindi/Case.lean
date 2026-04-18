@@ -1,5 +1,6 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Split
 /-!
 # Hindi Case Inventory @cite{blake-1994}
 
@@ -31,11 +32,11 @@ namespace Fragments.Hindi.Case
 /-- Hindi case inventory. ACC/DAT share -ko; ABL/INST share -se.
     Both syncretic pairs are included as distinct Core.Case values since
     they occupy different positions on Blake's hierarchy. -/
-def caseInventory : List Core.Case :=
-  [.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst]
+def caseInventory : Finset Core.Case :=
+  {.nom, .erg, .acc, .dat, .gen, .loc, .abl, .inst}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 2, all present).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 -- ============================================================================
 -- Section 2: Syncretism

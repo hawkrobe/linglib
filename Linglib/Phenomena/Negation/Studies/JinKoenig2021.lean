@@ -623,7 +623,7 @@ private theorem all_not_false_any_true {α : Type*} (L : List α) (p : α → Bo
     cases p x <;> simp_all
 
 theorem not_impossible_activates_p (f : ModalBase World) (g : OrderingSource World)
-    (p : Core.Proposition.BProp World) (w : World) :
+    (p : (World → Bool)) (w : World) :
     ¬ necessity f g (λ w' => !p w') w →
     possibility f g p w := by
   rw [necessity_iff_all, possibility_iff_any]
@@ -654,19 +654,19 @@ but NOT in Mandarin or Zarma-Sonrai (which express WITHOUT analytically
 as "q not p", making the negation non-expletive). -/
 
 /-- WITHOUT q p = q ∧ ¬p: the meaning structurally includes ¬. -/
-def withoutSem {W : Type*} (q p : Core.Proposition.BProp W) : Core.Proposition.BProp W :=
+def withoutSem {W : Type*} (q p : (W → Bool)) : (W → Bool) :=
   λ w => q w && !p w
 
 /-- WITHOUT structurally includes negation: if "q without p" holds,
     then p is false. -/
-theorem without_entails_not_p {W : Type*} (q p : Core.Proposition.BProp W) (w : W)
+theorem without_entails_not_p {W : Type*} (q p : (W → Bool)) (w : W)
     (h : withoutSem q p w = true) : p w = false := by
   simp only [withoutSem] at h
   cases hp : p w <;> simp_all
 
 /-- WITHOUT structurally includes the main clause: if "q without p"
     holds, then q is true. -/
-theorem without_entails_q {W : Type*} (q p : Core.Proposition.BProp W) (w : W)
+theorem without_entails_q {W : Type*} (q p : (W → Bool)) (w : W)
     (h : withoutSem q p w = true) : q w = true := by
   simp only [withoutSem] at h
   cases hq : q w <;> simp_all
@@ -694,13 +694,13 @@ open Semantics.Conditionals (materialImpB)
 
 /-- UNLESS q p is definable as material implication with negated
     antecedent: if ¬p then q. The negation is structural. -/
-def unlessSem {W : Type*} (q p : Core.Proposition.BProp W) : Core.Proposition.BProp W :=
+def unlessSem {W : Type*} (q p : (W → Bool)) : (W → Bool) :=
   materialImpB (λ w => !p w) q
 
 /-- UNLESS includes ¬ in its meaning: at any world where ¬p is true
     AND q is true, the conditional holds. Conversely, at any world
     where the conditional holds and ¬p is true, q must be true. -/
-theorem unless_modus_ponens {W : Type*} (q p : Core.Proposition.BProp W) (w : W)
+theorem unless_modus_ponens {W : Type*} (q p : (W → Bool)) (w : W)
     (hcond : unlessSem q p w = true) (hnp : p w = false) : q w = true := by
   simp only [unlessSem, materialImpB] at hcond
   simp only [hnp, Bool.not_false] at hcond

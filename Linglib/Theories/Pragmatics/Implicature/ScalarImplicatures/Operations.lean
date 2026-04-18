@@ -34,9 +34,9 @@ Exact theory: Operations are anomalous (no implicature exists)
 
 -/
 
-import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Numerals.Basic
 
-open Semantics.Quantification.Numerals
+open Semantics.Numerals
 
 namespace Implicature
 

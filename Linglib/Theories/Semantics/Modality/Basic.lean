@@ -4,8 +4,8 @@ Modal Theory Infrastructure.
 Defines `ModalTheory` for comparing derived-accessibility
 semantics with Simple/primitive-accessibility semantics.
 
-- Kratzer, A. (1991). Modality. In Semantics: An International Handbook.
-- Kripke, S. (1963). Semantical Considerations on Modal Logic.
+- @cite{kratzer-1991}
+- @cite{kripke-1963}
 -/
 
 import Linglib.Theories.Semantics.Attitudes.Intensional
@@ -14,69 +14,87 @@ namespace Semantics.Modality
 
 open Semantics.Attitudes.Intensional
 
-section CoreTypes
-
 /-- Modal force: necessity (□) or possibility (◇). Reuses `Core.Modality.ModalForce`. -/
 abbrev ModalForce := Core.Modality.ModalForce
 
-/-- A proposition is a function from worlds to truth values. -/
-abbrev Proposition := BProp World
-
-/-- The set of all worlds (from Attitudes.lean). -/
-def allWorlds' : List World := allWorlds
-
-/-- Modal.Proposition equals Core.Proposition.BProp World. -/
-theorem proposition_eq_bprop : Proposition = Core.Proposition.BProp World := rfl
-
-end CoreTypes
-
-/-- A semantic theory for modal auxiliaries, with eval : ModalForce -> Proposition -> World -> Bool. -/
+/-- A semantic theory for modal auxiliaries. `eval` is `Prop`-valued at the
+generic `World → Prop` proposition type; `decEval` bundles a `Decidable`
+instance parameterized by `[DecidablePred p]` so concrete instantiations
+remain computable via `decide` whenever the proposition is decidable. -/
 structure ModalTheory where
   /-- Name of the theory. -/
   name : String
   /-- Academic citation. -/
   citation : String
-  /-- Core evaluation function: is modal force applied to proposition p true at world w? -/
-  eval : ModalForce → Proposition → World → Bool
+  /-- Core evaluation: does modal force applied to proposition `p` hold at world `w`? -/
+  eval : ModalForce → (World → Prop) → World → Prop
+  /-- Decidability of `eval` whenever the proposition itself is decidable. -/
+  decEval : ∀ (f : ModalForce) (p : World → Prop) [DecidablePred p] (w : World),
+    Decidable (eval f p w)
+
+instance (T : ModalTheory) (f : ModalForce) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (T.eval f p w) := T.decEval f p w
 
 section DerivedNotions
 
 /-- Necessity operator: □p is true at w. -/
-def ModalTheory.necessity (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
+def ModalTheory.necessity (T : ModalTheory) (p : World → Prop) (w : World) : Prop :=
   T.eval .necessity p w
 
+instance (T : ModalTheory) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (T.necessity p w) := by unfold ModalTheory.necessity; infer_instance
+
 /-- Possibility operator: ◇p is true at w. -/
-def ModalTheory.possibility (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
+def ModalTheory.possibility (T : ModalTheory) (p : World → Prop) (w : World) : Prop :=
   T.eval .possibility p w
+
+instance (T : ModalTheory) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (T.possibility p w) := by unfold ModalTheory.possibility; infer_instance
 
 /-- Weak necessity operator: □wφ is true at w.
     **Note**: For Kratzer semantics, weak necessity differs from strong necessity
     in the *ordering source*, not the quantifier. Use `Directive.weakNecessity`
-    (which takes a secondary ordering source) for the proper von Fintel & Iatridou
-    (2008) semantics. Calling `T.eval .weakNecessity` on a `KratzerTheory` returns
+    (which takes a secondary ordering source) for the proper @cite{vonfintel-iatridou-2008}
+    semantics. Calling `T.eval .weakNecessity` on a `KratzerTheory` returns
     the same result as `T.eval .necessity` — the distinction lives in which
     `KratzerParams` you pass, not in the force enum. -/
-def ModalTheory.weakNecessity (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
+def ModalTheory.weakNecessity (T : ModalTheory) (p : World → Prop) (w : World) : Prop :=
   T.eval .weakNecessity p w
 
-/-- Consistency check: □p -> ◇p. -/
-def ModalTheory.necessityEntailsPossibility (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
-  !T.necessity p w || T.possibility p w
+instance (T : ModalTheory) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (T.weakNecessity p w) := by unfold ModalTheory.weakNecessity; infer_instance
+
+/-- Consistency check: □p → ◇p. -/
+def ModalTheory.necessityEntailsPossibility (T : ModalTheory) (p : World → Prop) (w : World) : Prop :=
+  T.necessity p w → T.possibility p w
+
+instance (T : ModalTheory) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (T.necessityEntailsPossibility p w) := by
+  unfold ModalTheory.necessityEntailsPossibility; infer_instance
 
 /-- Duality check: □p ↔ ¬◇¬p at world w. -/
-def ModalTheory.dualityHolds (T : ModalTheory) (p : Proposition) (w : World) : Bool :=
-  let notP : Proposition := λ w' => !p w'
-  let lhs := T.necessity p w
-  let rhs := !T.possibility notP w
-  lhs == rhs
+def ModalTheory.dualityHolds (T : ModalTheory) (p : World → Prop) (w : World) : Prop :=
+  T.necessity p w ↔ ¬ T.possibility (fun w' => ¬ p w') w
+
+instance (T : ModalTheory) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (T.dualityHolds p w) := by
+  unfold ModalTheory.dualityHolds; infer_instance
 
 /-- Check duality across all worlds for a proposition. -/
-def ModalTheory.checkDuality (T : ModalTheory) (p : Proposition) : Bool :=
-  allWorlds'.all λ w => T.dualityHolds p w
+def ModalTheory.checkDuality (T : ModalTheory) (p : World → Prop) : Prop :=
+  ∀ w : World, T.dualityHolds p w
+
+instance (T : ModalTheory) (p : World → Prop) [DecidablePred p] :
+    Decidable (T.checkDuality p) := by
+  unfold ModalTheory.checkDuality; infer_instance
 
 /-- Check consistency across all worlds for a proposition. -/
-def ModalTheory.checkConsistency (T : ModalTheory) (p : Proposition) : Bool :=
-  allWorlds'.all λ w => T.necessityEntailsPossibility p w
+def ModalTheory.checkConsistency (T : ModalTheory) (p : World → Prop) : Prop :=
+  ∀ w : World, T.necessityEntailsPossibility p w
+
+instance (T : ModalTheory) (p : World → Prop) [DecidablePred p] :
+    Decidable (T.checkConsistency p) := by
+  unfold ModalTheory.checkConsistency; infer_instance
 
 end DerivedNotions
 
@@ -84,11 +102,11 @@ section Properties
 
 /-- A theory is normal iff duality holds universally: ∀ p w, □p ↔ ¬◇¬p. -/
 def ModalTheory.isNormal (T : ModalTheory) : Prop :=
-  ∀ (p : Proposition) (w : World), T.dualityHolds p w = true
+  ∀ (p : World → Prop) (w : World), T.dualityHolds p w
 
-/-- A theory is consistent iff □p -> ◇p universally (D axiom / seriality). -/
+/-- A theory is consistent iff □p → ◇p universally (D axiom / seriality). -/
 def ModalTheory.isConsistent (T : ModalTheory) : Prop :=
-  ∀ (p : Proposition) (w : World), T.necessityEntailsPossibility p w = true
+  ∀ (p : World → Prop) (w : World), T.necessityEntailsPossibility p w
 
 end Properties
 

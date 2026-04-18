@@ -36,25 +36,25 @@ variable {W : Type*}
 
 /-- Information-sensitive denotation: ⟦s⟧ⁱ(w).
     Truth value may depend on the epistemic state `i`. -/
-abbrev InfoSensDen (W : Type*) := List W → BProp W
+abbrev InfoSensDen (W : Type*) := List W → (W → Bool)
 
 /-- Lift a plain proposition to an information-insensitive denotation.
     For sentences like "John is dead" whose truth doesn't vary with `i`. -/
-def liftProp (p : BProp W) : InfoSensDen W := λ _ => p
+def liftProp (p : (W → Bool)) : InfoSensDen W := λ _ => p
 
 /-- Simple quantificational semantics for epistemic *might*:
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ i, p(w') = true.
     Truth is insensitive to the evaluation world w.
 
     eq. (25); adapted from @cite{yalcin-2007}. -/
-def mightSimple (p : BProp W) : InfoSensDen W :=
+def mightSimple (p : (W → Bool)) : InfoSensDen W :=
   λ i _ => i.any p
 
 /-- Simple quantificational semantics for epistemic *must*:
     ⟦must-p⟧ⁱ(w) = true iff ∀w' ∈ i, p(w') = true.
 
     Appendix A, eq. (57). -/
-def mustSimple (p : BProp W) : InfoSensDen W :=
+def mustSimple (p : (W → Bool)) : InfoSensDen W :=
   λ i _ => i.all p
 
 /-! ## Part 2: Meta-Intensionalization -/
@@ -96,7 +96,7 @@ def rejectionLicensed (sem : InfoSensDen W) (i_rejector : List W) : Prop :=
     Equivalently, i ⊆ ext(p) — the downward closure of the proposition's extension.
 
     eqs. (22)–(23). -/
-theorem MI_liftProp (p : BProp W) (i : List W) :
+theorem MI_liftProp (p : (W → Bool)) (i : List W) :
     MI (liftProp p) i ↔ ∀ w, w ∈ i → p w = true :=
   Iff.rfl
 
@@ -105,7 +105,7 @@ theorem MI_liftProp (p : BProp W) (i : List W) :
     are insensitive to the evaluation world.
 
     eq. (27b): MI(might-p) = { i : i ∩ p ≠ ∅ }. -/
-theorem MI_mightSimple (p : BProp W) (i : List W) (hi : i ≠ []) :
+theorem MI_mightSimple (p : (W → Bool)) (i : List W) (hi : i ≠ []) :
     MI (mightSimple p) i ↔ i.any p = true := by
   constructor
   · intro h
@@ -119,7 +119,7 @@ theorem MI_mightSimple (p : BProp W) (i : List W) (hi : i ≠ []) :
     over, the two collapse: MI(must-p) = { i : i ⊆ p }.
 
     Appendix A, eq. (58). -/
-theorem MI_mustSimple (p : BProp W) (i : List W) (hi : i ≠ []) :
+theorem MI_mustSimple (p : (W → Bool)) (i : List W) (hi : i ≠ []) :
     MI (mustSimple p) i ↔ ∀ w, w ∈ i → p w = true := by
   constructor
   · intro h
@@ -130,7 +130,7 @@ theorem MI_mustSimple (p : BProp W) (i : List W) (hi : i ≠ []) :
 
 /-- MI(must-p) = MI(p): must has the same meta-intensionalized denotation
     as a non-epistemic assertion of its prejacent. -/
-theorem MI_must_eq_MI_lift (p : BProp W) (i : List W) (hi : i ≠ []) :
+theorem MI_must_eq_MI_lift (p : (W → Bool)) (i : List W) (hi : i ≠ []) :
     MI (mustSimple p) i ↔ MI (liftProp p) i := by
   rw [MI_mustSimple p i hi, MI_liftProp]
 
@@ -140,26 +140,26 @@ theorem MI_must_eq_MI_lift (p : BProp W) (i : List W) (hi : i ≠ []) :
     The most conservative refinement of c that lands in MI(liftProp p).
 
     eq. (24). -/
-def nsfUpdateNonEpistemic (p : BProp W) (c : List W) : List W :=
+def nsfUpdateNonEpistemic (p : (W → Bool)) (c : List W) : List W :=
   c.filter p
 
 /-- NSF update for might-p (simple semantics): consistency test.
     Leave context unchanged if c has p-worlds; anomaly otherwise.
 
     eq. (29). -/
-def nsfUpdateMight (p : BProp W) (c : List W) : List W :=
+def nsfUpdateMight (p : (W → Bool)) (c : List W) : List W :=
   if c.any p then c else []
 
 /-- NSF update for must-p (simple semantics): same as non-epistemic.
 
     Appendix A, eq. (59). -/
-def nsfUpdateMust (p : BProp W) (c : List W) : List W :=
+def nsfUpdateMust (p : (W → Bool)) (c : List W) : List W :=
   c.filter p
 
 /-! ## Part 5: Derivation Theorems -/
 
 /-- If c has p-worlds, it is already in MI(might-p). No refinement needed. -/
-theorem context_in_MI_might (p : BProp W) (c : List W)
+theorem context_in_MI_might (p : (W → Bool)) (c : List W)
     (h : c.any p = true) : MI (mightSimple p) c :=
   λ _ _ => h
 
@@ -170,7 +170,7 @@ theorem context_in_MI_might (p : BProp W) (c : List W)
     This is the key step in deriving Veltman's test semantics from
     the NSF: the "consistency test" behavior of might falls out of
     the monotonicity of refinement. -/
-theorem no_p_worlds_not_compatible (p : BProp W) (c : List W)
+theorem no_p_worlds_not_compatible (p : (W → Bool)) (c : List W)
     (h : c.any p = false) : ¬sCompatible (mightSimple p) c := by
   intro ⟨c', hRef, hMI, hNe⟩
   -- c' is non-empty, so MI gives c'.any p = true
@@ -198,7 +198,7 @@ theorem no_p_worlds_not_compatible (p : BProp W) (c : List W)
     Bridges `nsfUpdateMight` to `Update.might` from UpdateSemantics.
 
     §4.2; cf. @cite{veltman-1996}, @cite{yalcin-2007}. -/
-theorem nsfUpdateMight_spec (p : BProp W) (c : List W) :
+theorem nsfUpdateMight_spec (p : (W → Bool)) (c : List W) :
     nsfUpdateMight p c = (if c.any p then c else []) :=
   rfl
 
@@ -206,7 +206,7 @@ theorem nsfUpdateMight_spec (p : BProp W) (c : List W) :
     Must-p updates identically to a non-epistemic assertion of p.
 
     Appendix A, eq. (59). -/
-theorem nsfUpdateMust_eq_nonEpistemic (p : BProp W) (c : List W) :
+theorem nsfUpdateMust_eq_nonEpistemic (p : (W → Bool)) (c : List W) :
     nsfUpdateMust p c = nsfUpdateNonEpistemic p c :=
   rfl
 
@@ -218,7 +218,7 @@ theorem nsfUpdateMust_eq_nonEpistemic (p : BProp W) (c : List W) :
 
     Bridges `nsfUpdateNonEpistemic` to `ContextSet.update` from CommonGround:
     both compute c ∩ p (filter c to p-worlds). -/
-theorem nsf_recovers_stalnaker (p : BProp W) (c : List W) (w : W) :
+theorem nsf_recovers_stalnaker (p : (W → Bool)) (c : List W) (w : W) :
     w ∈ nsfUpdateNonEpistemic p c ↔ w ∈ c ∧ p w = true := by
   simp [nsfUpdateNonEpistemic, List.mem_filter]
 
@@ -226,7 +226,7 @@ theorem nsf_recovers_stalnaker (p : BProp W) (c : List W) (w : W) :
 
 /-- Rejection of a non-epistemic assertion of p is licensed iff the rejector
     has no p-worlds — i.e., the rejector knows ¬p. -/
-theorem rejection_nonEpistemic (p : BProp W) (i : List W) (_ : i ≠ []) :
+theorem rejection_nonEpistemic (p : (W → Bool)) (i : List W) (_ : i ≠ []) :
     rejectionLicensed (liftProp p) i ↔ ∀ w, w ∈ i → p w = false := by
   unfold rejectionLicensed sCompatible
   constructor
@@ -259,12 +259,12 @@ theorem rejection_nonEpistemic (p : BProp W) (i : List W) (_ : i ≠ []) :
     simultaneously not-judged-false and rejected.
 
     §4.2.1. -/
-theorem rejection_mightSimple (p : BProp W) (i : List W) :
+theorem rejection_mightSimple (p : (W → Bool)) (i : List W) :
     rejectionLicensed (mightSimple p) i ↔ ¬(sCompatible (mightSimple p) i) :=
   Iff.rfl
 
 /-- Rejection of might-p reduces to having no p-worlds. -/
-theorem rejection_might_iff_no_p_worlds (p : BProp W) (i : List W)
+theorem rejection_might_iff_no_p_worlds (p : (W → Bool)) (i : List W)
     (hi : i.any p = false) :
     rejectionLicensed (mightSimple p) i :=
   no_p_worlds_not_compatible p i hi
@@ -287,7 +287,7 @@ structure OrdEpistemicState where
   /-- Modal base: the set of epistemically accessible worlds -/
   base : List World
   /-- Ordering source: propositions ranking accessible worlds -/
-  ordering : List (BProp World)
+  ordering : List ((World → Bool))
 
 /-- BEST worlds: worlds in the modal base not strictly dominated by any other.
     A world w is strictly dominated by w' iff w' satisfies a proper superset
@@ -303,14 +303,14 @@ def OrdEpistemicState.bestWorlds (s : OrdEpistemicState) : List World :=
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ BEST_{b_i,o_i}, p(w') = true.
 
     eq. (45). -/
-def mightOrdering (p : BProp World) (s : OrdEpistemicState) (_ : World) : Bool :=
+def mightOrdering (p : (World → Bool)) (s : OrdEpistemicState) (_ : World) : Bool :=
   s.bestWorlds.any p
 
 /-- MI for ordering-semantic might-p: the set of epistemic states whose
     BEST worlds include at least one p-world.
 
     eq. (54b). -/
-def MI_ord (p : BProp World) (s : OrdEpistemicState) : Prop :=
+def MI_ord (p : (World → Bool)) (s : OrdEpistemicState) : Prop :=
   s.bestWorlds.any p = true
 
 /-- Refinement (ordering version): only the modal base is refined.
@@ -327,7 +327,7 @@ def OrdEpistemicState.refines (c' c : OrdEpistemicState) : Prop :=
     worlds, yielding an informative (non-trivial) update.
 
     eq. (56). -/
-def nsfUpdateMightOrd (p : BProp World) (c : OrdEpistemicState) : OrdEpistemicState :=
+def nsfUpdateMightOrd (p : (World → Bool)) (c : OrdEpistemicState) : OrdEpistemicState :=
   if (c.base.filter p).isEmpty then
     { base := [], ordering := c.ordering }  -- anomaly
   else
@@ -339,7 +339,7 @@ def nsfUpdateMightOrd (p : BProp World) (c : OrdEpistemicState) : OrdEpistemicSt
 
     This is the key step in proving the ordering update is commensurate. -/
 theorem nonPWorld_cannot_dominate_pWorld
-    (A : List (BProp World)) (p : BProp World)
+    (A : List ((World → Bool))) (p : (World → Bool))
     (w z : World) (hw : p w = true) (hz : p z = false) :
     atLeastAsGoodAs (p :: A) z w = false := by
   unfold atLeastAsGoodAs satisfiedPropositions
@@ -370,7 +370,7 @@ private theorem exists_max_by {α : Type*} (f : α → Nat) (l : List α) (hl : 
 
 /-- Filter by a weaker predicate gives a weakly longer result. -/
 private theorem filter_length_le_of_imp
-    (A : List (BProp World)) (w w' : World)
+    (A : List ((World → Bool))) (w w' : World)
     (h : ∀ q, q ∈ A → q w = true → q w' = true) :
     (A.filter (λ q => q w)).length ≤ (A.filter (λ q => q w')).length := by
   induction A with
@@ -387,7 +387,7 @@ private theorem filter_length_le_of_imp
 
 /-- Filter is strictly longer when one predicate strictly implies another. -/
 private theorem filter_length_lt_of_strict
-    (A : List (BProp World)) (w w' : World)
+    (A : List ((World → Bool))) (w w' : World)
     (hsub : ∀ q, q ∈ A → q w = true → q w' = true)
     (hstrict : ∃ q, q ∈ A ∧ q w' = true ∧ q w = false) :
     (A.filter (λ q => q w)).length < (A.filter (λ q => q w')).length := by
@@ -412,7 +412,7 @@ private theorem filter_length_lt_of_strict
 
 /-- Strict domination implies strictly more satisfied propositions. -/
 private theorem strict_dom_more_sat
-    (A : List (BProp World)) (w w' : World)
+    (A : List ((World → Bool))) (w w' : World)
     (h1 : atLeastAsGoodAs A w' w = true)
     (h2 : atLeastAsGoodAs A w w' = false) :
     (satisfiedPropositions A w).length < (satisfiedPropositions A w').length := by
@@ -441,7 +441,7 @@ private theorem strict_dom_more_sat
 
     §5.3, pp. 77–78. -/
 theorem ordering_update_commensurate
-    (c : OrdEpistemicState) (p : BProp World)
+    (c : OrdEpistemicState) (p : (World → Bool))
     (hCompat : c.base.any p = true) :
     MI_ord p (nsfUpdateMightOrd p c) := by
   unfold MI_ord nsfUpdateMightOrd
@@ -494,7 +494,7 @@ theorem ordering_update_commensurate
 
     §5.3. -/
 theorem ordering_update_conservative
-    (c : OrdEpistemicState) (p : BProp World)
+    (c : OrdEpistemicState) (p : (World → Bool))
     (hCompat : c.base.any p = true) :
     (nsfUpdateMightOrd p c).base = c.base := by
   unfold nsfUpdateMightOrd
@@ -511,7 +511,7 @@ theorem ordering_update_conservative
 
     eq. (52). -/
 theorem ordering_nonEpistemic_preserves_ordering
-    (c : OrdEpistemicState) (p : BProp World) :
+    (c : OrdEpistemicState) (p : (World → Bool)) :
     let c' : OrdEpistemicState :=
       { base := c.base.filter p, ordering := c.ordering }
     c'.ordering = c.ordering :=
@@ -523,24 +523,24 @@ theorem ordering_nonEpistemic_preserves_ordering
     ⟦must-p⟧ⁱ(w) = true iff ∀w' ∈ BEST_{b_i,o_i}, p(w') = true.
 
     eq. (60). -/
-def mustOrdering (p : BProp World) (s : OrdEpistemicState) (_ : World) : Bool :=
+def mustOrdering (p : (World → Bool)) (s : OrdEpistemicState) (_ : World) : Bool :=
   s.bestWorlds.all p
 
 /-- MI for ordering-semantic must-p: the set of epistemic states whose
     BEST worlds are all p-worlds.
 
     eq. (61). -/
-def MI_ord_must (p : BProp World) (s : OrdEpistemicState) : Prop :=
+def MI_ord_must (p : (World → Bool)) (s : OrdEpistemicState) : Prop :=
   ∀ w, w ∈ s.bestWorlds → p w = true
 
 /-- MI(must-p) on ordering semantics ↔ BEST ⊆ p. -/
-theorem MI_ord_must_iff (p : BProp World) (s : OrdEpistemicState) :
+theorem MI_ord_must_iff (p : (World → Bool)) (s : OrdEpistemicState) :
     MI_ord_must p s ↔ s.bestWorlds.all p = true := by
   unfold MI_ord_must
   exact Iff.symm List.all_eq_true
 
 /-- A proposition is p-disjoint iff no world satisfies both it and p. -/
-def pDisjoint (p q : BProp World) (base : List World) : Bool :=
+def pDisjoint (p q : (World → Bool)) (base : List World) : Bool :=
   base.all λ w => !(p w && q w)
 
 /-- **NSF update for must-p (ordering semantics).**
@@ -551,7 +551,7 @@ def pDisjoint (p q : BProp World) (base : List World) : Bool :=
     satisfy p.
 
     eq. (64). -/
-def nsfUpdateMustOrd (p : BProp World) (c : OrdEpistemicState) : OrdEpistemicState :=
+def nsfUpdateMustOrd (p : (World → Bool)) (c : OrdEpistemicState) : OrdEpistemicState :=
   if (c.base.filter p).isEmpty then
     { base := [], ordering := c.ordering }  -- anomaly
   else
@@ -560,7 +560,7 @@ def nsfUpdateMustOrd (p : BProp World) (c : OrdEpistemicState) : OrdEpistemicSta
 
 /-- The must ordering update preserves the modal base (when compatible). -/
 theorem nsfUpdateMustOrd_preserves_base
-    (c : OrdEpistemicState) (p : BProp World)
+    (c : OrdEpistemicState) (p : (World → Bool))
     (hCompat : c.base.any p = true) :
     (nsfUpdateMustOrd p c).base = c.base := by
   unfold nsfUpdateMustOrd
@@ -586,7 +586,7 @@ open Semantics.Attitudes.Intensional (World allWorlds)
     where f_i is the epistemic accessibility function determined by i.
 
     eq. (65). -/
-def mightRelational (f : World → List World) (p : BProp World) (w : World) : Bool :=
+def mightRelational (f : World → List World) (p : (World → Bool)) (w : World) : Bool :=
   (f w).any p
 
 /-- Epistemic closure: f maps every world in i to i itself.
@@ -607,7 +607,7 @@ def EpistemicClosure (f : World → List World) (i : List World) : Prop :=
 
     Appendix B1, eq. (69c). -/
 theorem MI_relational_might_eq_domain
-    (f : World → List World) (i : List World) (p : BProp World)
+    (f : World → List World) (i : List World) (p : (World → Bool))
     (hClosed : EpistemicClosure f i) (hi : i ≠ []) :
     (∀ w, w ∈ i → mightRelational f p w = true) ↔ i.any p = true := by
   constructor
@@ -623,7 +623,7 @@ theorem MI_relational_might_eq_domain
     exact hAny
 
 /-- Must on relational semantics: ⟦must-p⟧ⁱ(w) = ∀w' ∈ f_i(w), p(w'). -/
-def mustRelational (f : World → List World) (p : BProp World) (w : World) : Bool :=
+def mustRelational (f : World → List World) (p : (World → Bool)) (w : World) : Bool :=
   (f w).all p
 
 /-- Under epistemic closure, MI(must-p) on relational semantics
@@ -631,7 +631,7 @@ def mustRelational (f : World → List World) (p : BProp World) (w : World) : Bo
 
     Appendix B1 (analogous to eq. 69). -/
 theorem MI_relational_must_eq_domain
-    (f : World → List World) (i : List World) (p : BProp World)
+    (f : World → List World) (i : List World) (p : (World → Bool))
     (hClosed : EpistemicClosure f i) (_hi : i ≠ []) :
     (∀ w, w ∈ i → mustRelational f p w = true) ↔ (∀ w, w ∈ i → p w = true) := by
   constructor
@@ -651,16 +651,16 @@ theorem MI_relational_must_eq_domain
     where g_i maps worlds to ordering sources.
 
     eq. (70). -/
-def mightRelOrd (f : World → List World) (g : World → List (BProp World))
-    (p : BProp World) (w : World) : Bool :=
+def mightRelOrd (f : World → List World) (g : World → List ((World → Bool)))
+    (p : (World → Bool)) (w : World) : Bool :=
   let s : OrdEpistemicState := { base := f w, ordering := g w }
   s.bestWorlds.any p
 
 /-- Ordering closure: g maps every world in b_i to the same ordering o_i.
 
     eq. (71). -/
-def OrderingClosure (g : World → List (BProp World))
-    (base : List World) (ordering : List (BProp World)) : Prop :=
+def OrderingClosure (g : World → List ((World → Bool)))
+    (base : List World) (ordering : List ((World → Bool))) : Prop :=
   ∀ w, w ∈ base → g w = ordering
 
 /-- Under both epistemic and ordering closure, MI(might-p) on the
@@ -669,8 +669,8 @@ def OrderingClosure (g : World → List (BProp World))
 
     Appendix B2, eq. (73). -/
 theorem MI_relOrd_might_eq_domain
-    (f : World → List World) (g : World → List (BProp World))
-    (i : OrdEpistemicState) (p : BProp World)
+    (f : World → List World) (g : World → List ((World → Bool)))
+    (i : OrdEpistemicState) (p : (World → Bool))
     (hfClosed : EpistemicClosure f i.base)
     (hgClosed : OrderingClosure g i.base i.ordering)
     (hi : i.base ≠ []) :
@@ -702,7 +702,7 @@ variable {W : Type*}
 
     This is the standard biconditional relationship. -/
 theorem nonEpistemic_truth_acceptance_biconditional
-    (p : BProp W) (c_assertor c_rejector : List W)
+    (p : (W → Bool)) (c_assertor c_rejector : List W)
     (_h_rej_ne : c_rejector ≠ [])
     (_h_assertor_true : MI (liftProp p) c_assertor)
     (h_rejector_false : ∀ w, w ∈ c_rejector → p w = false) :
@@ -731,7 +731,7 @@ theorem nonEpistemic_truth_acceptance_biconditional
 
     §4.3, bridging §4.2.1. -/
 theorem might_truth_acceptance_dissociate
-    (p : BProp W) (c_assertor c_rejector : List W)
+    (p : (W → Bool)) (c_assertor c_rejector : List W)
     (h_assertor_has_p : c_assertor.any p = true)
     (h_rejector_no_p : c_rejector.any p = false) :
     MI (mightSimple p) c_assertor ∧ rejectionLicensed (mightSimple p) c_rejector :=

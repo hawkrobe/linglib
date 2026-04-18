@@ -39,7 +39,6 @@ set_option autoImplicit false
 namespace Semantics.Quotation
 
 open Pragmatics.Expressives (TwoDimProp)
-open Core.Proposition (BProp)
 
 -- ════════════════════════════════════════════════════
 -- § Quotative Interpretation
@@ -152,7 +151,7 @@ theorem shunt_atIssue_idempotent {W : Type} (p : TwoDimProp W) (w : W) :
     of utterance and world of evaluation collapse. -/
 def diagonalize {W Expr Speaker : Type}
     (interp : QuotInterp Expr Speaker W)
-    (s : Speaker) (q : Expr) : BProp W :=
+    (s : Speaker) (q : Expr) : (W → Bool) :=
   λ w => interp q w s w
 
 /-- Diagonalization collapses world of utterance and evaluation. -/
@@ -241,7 +240,7 @@ theorem metalinguistic_neg_targets_appropriateness {W Expr Speaker Utt : Type}
     (stripping CIs) before being mixed-quoted (adding speaker attribution). -/
 theorem mixed_quot_strips_original_ci {W Expr Speaker Utt : Type}
     (ctx : MQContext W Expr Speaker Utt) (q : Expr)
-    (originalCI : BProp W) (w : W) :
+    (originalCI : (W → Bool)) (w : W) :
     let quoted := TwoDimProp.pureQuote (TwoDimProp.withCI (ctx.interp q ctx.wc ctx.sx) originalCI)
     quoted.ci w = true := rfl
 

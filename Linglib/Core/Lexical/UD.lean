@@ -1,3 +1,5 @@
+import Mathlib.Tactic.DeriveFintype
+
 /-
 # Universal Dependencies Types
 @cite{de-marneffe-zeman-2021}
@@ -121,7 +123,12 @@ inductive Gender where
   | Com    -- common (masc or fem)
   deriving DecidableEq, Repr, Inhabited
 
-/-- Grammatical case -/
+/-- Grammatical case (UD `Case` feature, https://universaldependencies.org/u/feat/Case.html).
+
+    Battle-tested annotation tagset shared across all UD treebanks. The 28
+    constructors below cover the standard UD values; theoretical machinery
+    (Blake hierarchy, Anderson features, Caha containment) lives in
+    `Core/Case.lean` and operates over this same type via `abbrev`. -/
 inductive Case where
   | Nom    -- nominative: subject
   | Acc    -- accusative: direct object
@@ -150,7 +157,44 @@ inductive Case where
   | Tem    -- temporal
   | Cau    -- causative
   | Ben    -- benefactive
-  deriving DecidableEq, Repr, Inhabited
+  | Per    -- perlative: path, motion through
+  | Abe    -- abessive/privative: 'without X'
+  deriving DecidableEq, Repr, Inhabited, Fintype
+
+/-! ### Lowercase abbreviations for `Case`
+
+The `@[match_pattern]` abbrevs below let the same constructor be referenced
+under both naming conventions: PascalCase (`.Nom` — UD treebank style) and
+lowercase (`.nom` — the convention used by `Core/Case.lean`'s theoretical
+infrastructure). This is the unification point: there is **one** `Case`
+type, exposed under two syntactic forms.
+
+The lowercase aliases also cover the two minor spelling differences between
+the UD spec and earlier `Core.Case` (`inst`/`Ins`, `part`/`Par`, `caus`/`Cau`,
+`transl`/`Tra`, `perl`/`Per`, `abess`/`Abe`). -/
+namespace Case
+
+@[match_pattern] abbrev nom    : Case := .Nom
+@[match_pattern] abbrev acc    : Case := .Acc
+@[match_pattern] abbrev erg    : Case := .Erg
+@[match_pattern] abbrev abs    : Case := .Abs
+@[match_pattern] abbrev gen    : Case := .Gen
+@[match_pattern] abbrev dat    : Case := .Dat
+@[match_pattern] abbrev loc    : Case := .Loc
+@[match_pattern] abbrev abl    : Case := .Abl
+@[match_pattern] abbrev all    : Case := .All
+@[match_pattern] abbrev inst   : Case := .Ins
+@[match_pattern] abbrev com    : Case := .Com
+@[match_pattern] abbrev voc    : Case := .Voc
+@[match_pattern] abbrev part   : Case := .Par
+@[match_pattern] abbrev perl   : Case := .Per
+@[match_pattern] abbrev ben    : Case := .Ben
+@[match_pattern] abbrev caus   : Case := .Cau
+@[match_pattern] abbrev ess    : Case := .Ess
+@[match_pattern] abbrev transl : Case := .Tra
+@[match_pattern] abbrev abess  : Case := .Abe
+
+end Case
 
 /-- Definiteness -/
 inductive Definite where

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quantification.Numerals.Polysemy
+import Linglib.Theories.Semantics.Numerals.Polysemy
 
 /-!
 # @cite{snyder-2026}: Number Word Polysemy Data
@@ -19,7 +19,7 @@ directly generates all nine. Any theory must explain how the others arise.
 
 namespace Phenomena.Numerals.Snyder2026
 
-open Semantics.Quantification.Numerals.Polysemy (SemanticFunction)
+open Semantics.Numerals.Polysemy (SemanticFunction)
 
 -- ============================================================================
 -- Section 1: The Nine Semantic Functions (Snyder (1a-f), (76g-j))

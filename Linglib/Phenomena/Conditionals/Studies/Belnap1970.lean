@@ -92,7 +92,7 @@ abbrev condAssert {W : Type*} := @PrProp.condAssert W
 abbrev atomic {W : Type*} := @PrProp.ofBProp W
 
 /-- Atomic sentences are assertive at every world (Belnap's (6)). -/
-theorem atomic_always_assertive {W : Type*} (p : BProp W) (w : W) :
+theorem atomic_always_assertive {W : Type*} (p : (W → Bool)) (w : W) :
     (atomic p).presup w := trivial
 
 -- ════════════════════════════════════════════════════════════════

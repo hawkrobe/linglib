@@ -20,13 +20,10 @@ variable {Atom W : Type*} [DecidableEq Atom]
 
 -- Part 4: Candidate Interpretations
 
-/-- Decidable proposition type -/
-abbrev BProp (W : Type*) := W → Bool
-
 /--
 The candidate proposition for sub-plurality z: "P holds of all atoms in z".
 -/
-def candidateProp (P : Atom → W → Bool) (z : Finset Atom) : BProp W :=
+def candidateProp (P : Atom → W → Bool) (z : Finset Atom) : (W → Bool) :=
   λ w => decide (∀ a ∈ z, P a w = true)
 
 /--
@@ -34,7 +31,7 @@ Full candidate set: all sub-plurality propositions.
 
 This is the set S from @cite{kriz-spector-2021} before relevance filtering.
 -/
-def fullCandidateSet (P : Atom → W → Bool) (x : Finset Atom) : Set (BProp W) :=
+def fullCandidateSet (P : Atom → W → Bool) (x : Finset Atom) : Set ((W → Bool)) :=
   { p | ∃ z ∈ x.powerset, z.Nonempty ∧ p = candidateProp P z }
 
 /--
@@ -47,21 +44,21 @@ The nonemptiness constraint matches `fullCandidateSet` and `distTolerant`:
 empty sub-pluralities would create vacuously true candidates.
 -/
 def candidateSet (P : Atom → W → Bool) (tol : Tolerance Atom)
-    (x : Finset Atom) : Set (BProp W) :=
+    (x : Finset Atom) : Set ((W → Bool)) :=
   { p | ∃ z ∈ x.powerset, z.Nonempty ∧ tol.rel z x = true ∧ p = candidateProp P z }
 
 -- Part 5: Truth on All Readings
 
 /-- All candidates in the set are true at w -/
-def trueOnAll (candidates : Set (BProp W)) (w : W) : Prop :=
+def trueOnAll (candidates : Set ((W → Bool))) (w : W) : Prop :=
   ∀ p ∈ candidates, p w = true
 
 /-- All candidates in the set are false at w -/
-def falseOnAll (candidates : Set (BProp W)) (w : W) : Prop :=
+def falseOnAll (candidates : Set ((W → Bool))) (w : W) : Prop :=
   ∀ p ∈ candidates, p w = false
 
 /-- Some candidates true, some false (the gap) -/
-def gapOnCandidates (candidates : Set (BProp W)) (w : W) : Prop :=
+def gapOnCandidates (candidates : Set ((W → Bool))) (w : W) : Prop :=
   (∃ p ∈ candidates, p w = true) ∧ (∃ p ∈ candidates, p w = false)
 
 -- Part 6: Key Correspondence Theorems
@@ -249,15 +246,15 @@ if two worlds are q-equivalent, then p has the same truth value at both.
 
 This is the key filtering mechanism from @cite{kriz-spector-2021} Section 3.
 -/
-def isStronglyRelevantProp (q : QUD W) (p : BProp W) : Prop :=
+def isStronglyRelevantProp (q : QUD W) (p : (W → Bool)) : Prop :=
   ∀ w1 w2 : W, q.sameAnswer w1 w2 = true → p w1 = p w2
 
 /-- Decidable version -/
-def isStronglyRelevant (q : QUD W) (p : BProp W) : Bool :=
+def isStronglyRelevant (q : QUD W) (p : (W → Bool)) : Bool :=
   decide (∀ w1 w2 : W, q.sameAnswer w1 w2 = true → p w1 = p w2)
 
 /-- Filter candidate set to strongly relevant propositions -/
-def stronglyRelevantSet (q : QUD W) (candidates : Set (BProp W)) : Set (BProp W) :=
+def stronglyRelevantSet (q : QUD W) (candidates : Set ((W → Bool))) : Set ((W → Bool)) :=
   { p ∈ candidates | isStronglyRelevantProp q p }
 
 /--
@@ -266,7 +263,7 @@ Theorem: With exact QUD, all propositions are strongly relevant.
 The exact QUD distinguishes all worlds, so every proposition trivially
 respects the partition.
 -/
-theorem exact_all_relevant [LawfulBEq W] (p : BProp W) :
+theorem exact_all_relevant [LawfulBEq W] (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.exact (M := W)) p := by
   intro w1 w2 h
   simp only [QUD.exact, beq_iff_eq] at h
@@ -275,7 +272,7 @@ theorem exact_all_relevant [LawfulBEq W] (p : BProp W) :
 /--
 Corollary: With exact QUD, the filtered set equals the original set.
 -/
-theorem exact_stronglyRelevantSet_eq [LawfulBEq W] (candidates : Set (BProp W)) :
+theorem exact_stronglyRelevantSet_eq [LawfulBEq W] (candidates : Set ((W → Bool))) :
     stronglyRelevantSet (QUD.exact (M := W)) candidates = candidates := by
   ext p
   simp only [stronglyRelevantSet, Set.mem_sep_iff]
@@ -286,7 +283,7 @@ theorem exact_stronglyRelevantSet_eq [LawfulBEq W] (candidates : Set (BProp W)) 
 /--
 Theorem: With trivial QUD, only constant propositions are strongly relevant.
 -/
-theorem trivial_relevant_iff_constant (p : BProp W) :
+theorem trivial_relevant_iff_constant (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.trivial (M := W)) p ↔ (∀ w1 w2 : W, p w1 = p w2) := by
   simp only [isStronglyRelevantProp, QUD.trivial]
   constructor
@@ -356,7 +353,7 @@ theorem identity_candidateSet_singleton' (P : Atom → W → Bool) (x : Finset A
 /--
 Strong relevance (propositional version): respects QUD partition.
 -/
-theorem stronglyRelevant_iff (q : QUD W) (p : BProp W) :
+theorem stronglyRelevant_iff (q : QUD W) (p : (W → Bool)) :
     isStronglyRelevantProp q p ↔ ∀ w1 w2, q.sameAnswer w1 w2 = true → p w1 = p w2 := by
   rfl
 
@@ -365,7 +362,7 @@ With exact QUD, all propositions are strongly relevant.
 
 The exact QUD distinguishes all worlds, so every proposition aligns with it.
 -/
-theorem exact_all_stronglyRelevant [LawfulBEq W] (p : BProp W) :
+theorem exact_all_stronglyRelevant [LawfulBEq W] (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.exact (M := W)) p := by
   intro w1 w2 h
   simp only [QUD.exact, beq_iff_eq] at h
@@ -377,7 +374,7 @@ With trivial QUD, only constant propositions are strongly relevant.
 The trivial QUD groups all worlds together, so a proposition is relevant
 iff it has the same value at all worlds.
 -/
-theorem trivial_stronglyRelevant_iff (p : BProp W) :
+theorem trivial_stronglyRelevant_iff (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.trivial (M := W)) p ↔ (∀ w1 w2 : W, p w1 = p w2) := by
   simp only [isStronglyRelevantProp, QUD.trivial]
   constructor
@@ -549,7 +546,7 @@ variable {W : Type*}
 
     This is the Prop-level characterization (avoiding Decidable requirements
     on Set-quantified conditions). -/
-theorem candidateConjunction_trichotomy (candidates : Set (BProp W)) (w : W) :
+theorem candidateConjunction_trichotomy (candidates : Set ((W → Bool))) (w : W) :
     trueOnAll candidates w ∨ falseOnAll candidates w ∨
     gapOnCandidates candidates w := by
   by_cases hall : trueOnAll candidates w

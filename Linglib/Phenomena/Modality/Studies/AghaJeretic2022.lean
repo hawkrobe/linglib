@@ -575,7 +575,6 @@ section DirectiveBridge
 
 open Semantics.Modality.Directive (weakNecessity)
 open Semantics.Modality.Kratzer (ModalBase OrderingSource)
-open Core.Proposition (BProp)
 
 /-- `Directive.weakNecessity` is bivalent: as a Prop, it is classically
     true or false — never indeterminate. This contrasts with `shouldEval`,
@@ -583,7 +582,7 @@ open Core.Proposition (BProp)
 theorem directive_bivalent
     (f : ModalBase Semantics.Attitudes.Intensional.World)
     (g g' : OrderingSource Semantics.Attitudes.Intensional.World)
-    (p : BProp Semantics.Attitudes.Intensional.World)
+    (p : (Semantics.Attitudes.Intensional.World → Bool))
     (w : Semantics.Attitudes.Intensional.World) :
     weakNecessity f g g' p w ∨ ¬ weakNecessity f g g' p w :=
   em _

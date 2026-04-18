@@ -71,7 +71,6 @@ namespace Boylan2023
 
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional (World allWorlds)
-open Core.Proposition (BProp)
 
 /-- Computable list of accessible worlds for use in the Boylan framework.
     `accessibleWorlds` returns `Finset World` (noncomputable `.toList`), so
@@ -96,7 +95,7 @@ we parameterize directly over a proposition-level ordering. -/
 /-- A proposition-level ordering: ranks propositions relative to an
     evaluation world. This abstracts over the source of the ordering
     (probability, normality, deontic value, etc.). -/
-abbrev PropOrdering := World → BProp World → BProp World → Bool
+abbrev PropOrdering := World → (World → Bool) → (World → Bool) → Bool
 
 -- ============================================================================
 -- §2. Partition Framework (Appendix, Assumptions 4–6)
@@ -115,7 +114,7 @@ The partition framework corresponds to Assumptions 4 (question-sensitivity),
 /-- A partition of accessible worlds into non-empty pairwise-disjoint cells.
     Models Q|f(w) — the relevance question restricted to the modal base. -/
 structure BoylanPartition (accessible : List World) where
-  cells : List (BProp World)
+  cells : List ((World → Bool))
   /-- Every accessible world belongs to some cell. -/
   cover : ∀ w ∈ accessible, ∃ c ∈ cells, c w = true
   /-- Distinct cells share no accessible world. -/
@@ -126,19 +125,19 @@ structure BoylanPartition (accessible : List World) where
 
 /-- A **partial answer** is a union of cells: if p intersects a cell on
     the accessible worlds, it contains the entire cell. -/
-def BoylanPartition.isPartialAnswer {acc : List World} (Q : BoylanPartition acc) (p : BProp World) : Prop :=
+def BoylanPartition.isPartialAnswer {acc : List World} (Q : BoylanPartition acc) (p : (World → Bool)) : Prop :=
   ∀ c ∈ Q.cells, (∃ w ∈ acc, c w = true ∧ p w = true) →
     ∀ w ∈ acc, c w = true → p w = true
 
 /-- A **complete answer** is a single cell of the partition. -/
-def BoylanPartition.isCompleteAnswer {acc : List World} (Q : BoylanPartition acc) (q : BProp World) : Prop :=
+def BoylanPartition.isCompleteAnswer {acc : List World} (Q : BoylanPartition acc) (q : (World → Bool)) : Prop :=
   q ∈ Q.cells
 
 /-- Every non-empty partial answer contains at least one complete cell.
     Since p is a union of cells and is non-empty, some cell's accessible
     worlds are entirely within p. -/
 theorem BoylanPartition.partial_contains_cell
-    {acc : List World} (Q : BoylanPartition acc) {p : BProp World}
+    {acc : List World} (Q : BoylanPartition acc) {p : (World → Bool)}
     (hp : Q.isPartialAnswer p) (hne : ∃ w ∈ acc, p w = true) :
     ∃ c ∈ Q.cells, ∀ w ∈ acc, c w = true → p w = true := by
   obtain ⟨v, hva, hpv⟩ := hne
@@ -159,7 +158,7 @@ candidate propositions (the partial answers to Q restricted to f(w))
 and filter to those that are undominated under the ordering. -/
 
 /-- Strict betterness between propositions: p is strictly better than q. -/
-def StrictlyBetter (ord : PropOrdering) (w : World) (p q : BProp World) : Prop :=
+def StrictlyBetter (ord : PropOrdering) (w : World) (p q : (World → Bool)) : Prop :=
   ord w p q = true ∧ ¬(ord w q p = true)
 
 /-- PBEST: the propositionally best partial answers.
@@ -167,27 +166,27 @@ def StrictlyBetter (ord : PropOrdering) (w : World) (p q : BProp World) : Prop :
     Given a list of candidate propositions (partial answers to Q
     restricted to f(w)), returns those that are non-empty on the
     accessible worlds and undominated under the ordering. -/
-def PBEST (ord : PropOrdering) (w : World) (candidates : List (BProp World))
-    (acc : List World) : List (BProp World) :=
+def PBEST (ord : PropOrdering) (w : World) (candidates : List ((World → Bool)))
+    (acc : List World) : List ((World → Bool)) :=
   candidates.filter λ p =>
     acc.any p && !candidates.any (λ q => ord w q p && !(ord w p q))
 
 /-! ### PBEST bridge lemmas -/
 
 theorem PBEST_subset {ord : PropOrdering} {w : World}
-    {candidates : List (BProp World)} {acc : List World} {p : BProp World}
+    {candidates : List ((World → Bool))} {acc : List World} {p : (World → Bool)}
     (h : p ∈ PBEST ord w candidates acc) : p ∈ candidates :=
   (List.mem_filter.mp h).1
 
 theorem PBEST_nonempty {ord : PropOrdering} {w : World}
-    {candidates : List (BProp World)} {acc : List World} {p : BProp World}
+    {candidates : List ((World → Bool))} {acc : List World} {p : (World → Bool)}
     (h : p ∈ PBEST ord w candidates acc) : ∃ v ∈ acc, p v = true := by
   have := (List.mem_filter.mp h).2
   simp only [Bool.and_eq_true, List.any_eq_true] at this
   exact this.1
 
 theorem PBEST_undom {ord : PropOrdering} {w : World}
-    {candidates : List (BProp World)} {acc : List World} {p : BProp World}
+    {candidates : List ((World → Bool))} {acc : List World} {p : (World → Bool)}
     (h : p ∈ PBEST ord w candidates acc) :
     ∀ r ∈ candidates, ¬StrictlyBetter ord w r p := by
   have hcond := (List.mem_filter.mp h).2
@@ -201,7 +200,7 @@ theorem PBEST_undom {ord : PropOrdering} {w : World}
   simp [this] at hcond
 
 theorem mem_PBEST {ord : PropOrdering} {w : World}
-    {candidates : List (BProp World)} {acc : List World} {p : BProp World}
+    {candidates : List ((World → Bool))} {acc : List World} {p : (World → Bool)}
     (hmem : p ∈ candidates)
     (hne : ∃ v ∈ acc, p v = true)
     (hund : ∀ r ∈ candidates, ¬StrictlyBetter ord w r p) :
@@ -237,16 +236,16 @@ inconsistent (not everyone can be in while someone is absent). -/
 
 /-- Two propositions are consistent with respect to background information:
     there exists a world satisfying both p, q, and the modal base. -/
-def pairConsistent (p q : BProp World) (accessible : List World) : Bool :=
+def pairConsistent (p q : (World → Bool)) (accessible : List World) : Bool :=
   accessible.any (λ w => p w && q w)
 
 /-- All pairs in a list of propositions are consistent. -/
-def pairwiseConsistent (props : List (BProp World)) (accessible : List World) : Bool :=
+def pairwiseConsistent (props : List ((World → Bool))) (accessible : List World) : Bool :=
   props.all λ p => props.all λ q => pairConsistent p q accessible
 
 /-- Definedness condition for *ought*: PBEST is pairwise consistent. -/
 def oughtDefined (ord : PropOrdering) (w : World)
-    (candidates : List (BProp World)) (accessible : List World) : Bool :=
+    (candidates : List ((World → Bool))) (accessible : List World) : Bool :=
   pairwiseConsistent (PBEST ord w candidates accessible) accessible
 
 -- ============================================================================
@@ -264,8 +263,8 @@ def oughtDefined (ord : PropOrdering) (w : World)
 /-- Boylan's *ought*: existential quantifier over PBEST.
     Returns `none` when the definedness condition fails. -/
 def ought (ord : PropOrdering) (f : ModalBase World)
-    (candidates : List (BProp World))
-    (φ : BProp World) (w : World) : Option Bool :=
+    (candidates : List ((World → Bool)))
+    (φ : (World → Bool)) (w : World) : Option Bool :=
   let accessible := accessibleWorldsList f w
   let best := PBEST ord w candidates accessible
   if pairwiseConsistent best accessible then
@@ -299,15 +298,15 @@ the appendix. -/
     Epistemics violate this: a disjunction can be more probable than any
     disjunct (P(A∨B) > max(P(A), P(B)) when A,B overlap). -/
 def isDeontic (ord : PropOrdering) (w : World)
-    (completeAnswers : List (BProp World)) (acc : List World) : Prop :=
-  ∀ p : BProp World,
+    (completeAnswers : List ((World → Bool))) (acc : List World) : Prop :=
+  ∀ p : (World → Bool),
     (∃ q ∈ completeAnswers, ∀ v ∈ acc, q v = true → p v = true) →
     ∃ q ∈ completeAnswers,
       (∀ v ∈ acc, q v = true → p v = true) ∧ ord w q p = true
 
 /-- Transitivity of the ordering (implicit in Kratzer's framework). -/
 def orderingTransitive (ord : PropOrdering) (w : World) : Prop :=
-  ∀ a b c : BProp World,
+  ∀ a b c : (World → Bool),
     ord w a b = true → ord w b c = true → ord w a c = true
 
 -- ============================================================================
@@ -333,7 +332,7 @@ while epistemic *ought* can fail Agglomeration (Fact 5, §8 below).
     since p is a union of cells, all of q's accessible worlds must be in p
     (by `isPartialAnswer` applied to cell q). Otherwise disjoint. -/
 theorem fact1_partial_complete {acc : List World} (Q : BoylanPartition acc)
-    {p q : BProp World}
+    {p q : (World → Bool)}
     (hp : Q.isPartialAnswer p) (hq : Q.isCompleteAnswer q) :
     (∀ w ∈ acc, q w = true → p w = true) ∨
     (∀ w ∈ acc, ¬(p w = true ∧ q w = true)) := by
@@ -346,7 +345,7 @@ theorem fact1_partial_complete {acc : List World} (Q : BoylanPartition acc)
 /-- Distinct cells of a partition are pairwise inconsistent — they share
     no accessible world. This is the key to uniqueness in Fact 2. -/
 theorem BoylanPartition.cells_pairInconsistent
-    {acc : List World} (Q : BoylanPartition acc) {q₁ q₂ : BProp World}
+    {acc : List World} (Q : BoylanPartition acc) {q₁ q₂ : (World → Bool)}
     (hq₁ : q₁ ∈ Q.cells) (hq₂ : q₂ ∈ Q.cells) (hne : q₁ ≠ q₂) :
     pairConsistent q₁ q₂ acc = false := by
   cases h : pairConsistent q₁ q₂ acc
@@ -363,9 +362,9 @@ theorem BoylanPartition.cells_pairInconsistent
     q ≽ r (from q ≽ p ≽ r), contradicting r ≻ q. So ¬(p ≽ r),
     hence r ≻ p, contradicting p's undominatedness. -/
 theorem undominated_of_geq
-    {ord : PropOrdering} {w : World} {candidates : List (BProp World)}
+    {ord : PropOrdering} {w : World} {candidates : List ((World → Bool))}
     (htrans : orderingTransitive ord w)
-    {p q : BProp World}
+    {p q : (World → Bool)}
     (hp_undom : ∀ r ∈ candidates, ¬StrictlyBetter ord w r p)
     (hq_geq_p : ord w q p = true) :
     ∀ r ∈ candidates, ¬StrictlyBetter ord w r q := by
@@ -392,7 +391,7 @@ non-empty (a cell) and in the candidates, q' ∈ PBEST.
     PBEST contains exactly one complete answer. -/
 theorem fact2_unique_deontic_complete
     {acc : List World} (Q : BoylanPartition acc)
-    {ord : PropOrdering} {w : World} {candidates : List (BProp World)}
+    {ord : PropOrdering} {w : World} {candidates : List ((World → Bool))}
     (htrans : orderingTransitive ord w)
     (hcands_pa : ∀ p ∈ candidates, Q.isPartialAnswer p)
     (hcells_in_cands : ∀ c ∈ Q.cells, c ∈ candidates)
@@ -431,10 +430,10 @@ Kratzer necessity relativized to the unique best complete answer. -/
     all accessible q-worlds satisfy φ. -/
 theorem fact3_deontic_boxy
     {ord : PropOrdering} {f : ModalBase World} {w : World}
-    {candidates : List (BProp World)} {q : BProp World}
+    {candidates : List ((World → Bool))} {q : (World → Bool)}
     (hpbest : PBEST ord w candidates (accessibleWorldsList f w) = [q])
     (hpw : pairwiseConsistent [q] (accessibleWorldsList f w) = true)
-    (φ : BProp World) :
+    (φ : (World → Bool)) :
     ought ord f candidates φ w =
       some ((accessibleWorldsList f w).filter q |>.all φ) := by
   simp only [ought]
@@ -445,7 +444,7 @@ theorem fact3_deontic_boxy
     Agglomeration holds: ⌜ought φ⌝ ∧ ⌜ought ψ⌝ → ⌜ought (φ ∧ ψ)⌝. -/
 theorem fact4_no_agglomeration
     {ord : PropOrdering} {f : ModalBase World} {w : World}
-    {candidates : List (BProp World)} {q : BProp World} {φ ψ : BProp World}
+    {candidates : List ((World → Bool))} {q : (World → Bool)} {φ ψ : (World → Bool)}
     (hpbest : PBEST ord w candidates (accessibleWorldsList f w) = [q])
     (hpw : pairwiseConsistent [q] (accessibleWorldsList f w) = true)
     (hφ : ought ord f candidates φ w = some true)
@@ -465,7 +464,7 @@ theorem fact4_no_agglomeration
     all orderings, modal bases, and candidate sets. Contrastivist accounts
     generally invalidate this (§10). -/
 theorem inheritance {ord : PropOrdering} {f : ModalBase World}
-    {cands : List (BProp World)} {φ ψ : BProp World} {w : World}
+    {cands : List ((World → Bool))} {φ ψ : (World → Bool)} {w : World}
     (hent : ∀ v, φ v = true → ψ v = true)
     (hoφ : ought ord f cands φ w = some true) :
     ought ord f cands ψ w = some true := by
@@ -486,7 +485,7 @@ theorem inheritance {ord : PropOrdering} {f : ModalBase World}
     that would satisfy both φ and ¬φ. This is the key structural advantage
     over the conflict account, which predicts dilemmas in The Office. -/
 theorem no_dilemma {ord : PropOrdering} {f : ModalBase World}
-    {cands : List (BProp World)} {φ : BProp World} {w : World}
+    {cands : List ((World → Bool))} {φ : (World → Bool)} {w : World}
     (h1 : ought ord f cands φ w = some true)
     (h2 : ought ord f cands (fun v => !φ v) w = some true) : False := by
   simp only [ought] at h1 h2
@@ -534,12 +533,12 @@ structure): 3 workers, where exactly one is absent in each non-ideal world.
 section Office
 
 /-- Who is present at work in each world. -/
-def aliceIn : BProp World := λ w => w != .w1
-def bobIn   : BProp World := λ w => w != .w2
-def carolIn : BProp World := λ w => w != .w3
+def aliceIn : (World → Bool) := λ w => w != .w1
+def bobIn   : (World → Bool) := λ w => w != .w2
+def carolIn : (World → Bool) := λ w => w != .w3
 
 /-- Everyone is in the office. -/
-def everyoneIn : BProp World := λ w => aliceIn w && bobIn w && carolIn w
+def everyoneIn : (World → Bool) := λ w => aliceIn w && bobIn w && carolIn w
 
 /-- Epistemic modal base: all worlds epistemically accessible. -/
 def officeBase : ModalBase World := λ _ => []
@@ -563,7 +562,7 @@ def officeOrdering : PropOrdering := λ _ p q =>
     In the full 26-worker model, the best propositions are
     {Alice is in, Bob is in, ..., Zadie is in, Not everyone is in}.
     In our 4-world model: -/
-def officeCandidates : List (BProp World) :=
+def officeCandidates : List ((World → Bool)) :=
   [aliceIn, bobIn, carolIn, everyoneIn, λ w => !everyoneIn w]
 
 /-- PBEST contains exactly 4 propositions (the 3 individual-in props
@@ -608,7 +607,7 @@ theorem not_everyone_should_be_in :
     witnessed by The Office. -/
 theorem epistemic_agglomeration_failure :
     ∃ (ord : PropOrdering) (f : ModalBase World)
-      (cands : List (BProp World)) (φ ψ : BProp World) (w : World),
+      (cands : List ((World → Bool))) (φ ψ : (World → Bool)) (w : World),
       ought ord f cands φ w = some true ∧
       ought ord f cands ψ w = some true ∧
       ought ord f cands (λ v => φ v && ψ v) w = some false :=
@@ -641,13 +640,13 @@ We model this with 4 worlds:
 section Dessert
 
 /-- Propositions for each dessert outcome. -/
-def justPie     : BProp World := λ w => w == .w0
-def justCannoli : BProp World := λ w => w == .w1
-def justCake    : BProp World := λ w => w == .w2
-def noGood      : BProp World := λ w => w == .w3
+def justPie     : (World → Bool) := λ w => w == .w0
+def justCannoli : (World → Bool) := λ w => w == .w1
+def justCake    : (World → Bool) := λ w => w == .w2
+def noGood      : (World → Bool) := λ w => w == .w3
 
 /-- "I have pie or cannoli" — the disjunctive ought. -/
-def pieOrCannoli : BProp World := λ w => justPie w || justCannoli w
+def pieOrCannoli : (World → Bool) := λ w => justPie w || justCannoli w
 
 /-- Deontic ordering: tracks preferences.
     pie ≈ cannoli > cheesecake > nothing.
@@ -662,7 +661,7 @@ def dessertValue : World → Nat
   | .w3 => 0  -- illness/nothing: worst
 
 /-- Worst value among worlds satisfying a proposition. -/
-def worstValue (p : BProp World) : Nat :=
+def worstValue (p : (World → Bool)) : Nat :=
   let satisfying := allWorlds.filter p |>.map dessertValue
   satisfying.foldl min 100  -- 100 as sentinel for empty
 
@@ -678,7 +677,7 @@ def dessertBase : ModalBase World := λ _ => []
     - {pie or cannoli} (best tier)
     - {cheesecake} (second tier)
     - {nothing/illness} (worst tier) -/
-def dessertCandidatesHowGood : List (BProp World) :=
+def dessertCandidatesHowGood : List ((World → Bool)) :=
   [pieOrCannoli, justCake, noGood]
 
 /-- "I ought to have pie or cannoli" is true under *how good?*. -/
@@ -732,7 +731,7 @@ section DeonticBox
 
 /-- Candidates for the *what will I do?* question: each action is its
     own complete answer. -/
-def dessertCandidatesWhat : List (BProp World) :=
+def dessertCandidatesWhat : List ((World → Bool)) :=
   [justPie, justCannoli, justCake, noGood]
 
 /-- Under *what will I do?* with deontic ordering, PBEST contains
@@ -759,14 +758,14 @@ def dessertValueStrict : World → Nat
   | .w2 => 2  -- cheesecake: third
   | .w3 => 0  -- nothing: worst
 
-def worstValueStrict (p : BProp World) : Nat :=
+def worstValueStrict (p : (World → Bool)) : Nat :=
   let satisfying := allWorlds.filter p |>.map dessertValueStrict
   satisfying.foldl min 100
 
 def dessertStrictOrd : PropOrdering := λ _ p q =>
   decide (worstValueStrict p >= worstValueStrict q)
 
-def dessertStrictCandidates : List (BProp World) :=
+def dessertStrictCandidates : List ((World → Bool)) :=
   [justPie, justCannoli, justCake, noGood]
 
 /-- With a unique best option, PBEST is a singleton. -/
@@ -803,7 +802,7 @@ We verify this for the strict dessert scenario. -/
 section DeonticAgglomeration
 
 /-- "I ought to have pie" and "I ought not to have cannoli" — both true. -/
-def notCannoli : BProp World := λ w => !justCannoli w
+def notCannoli : (World → Bool) := λ w => !justCannoli w
 
 theorem strict_ought_pie :
     ought dessertStrictOrd dessertBase dessertStrictCandidates
@@ -838,7 +837,7 @@ that justifies calling deontic *ought* "a box after all" (§7). -/
 /-- The classic Kratzer semantics: ought is a universal quantifier
     over best worlds. Boylan argues this is correct for deontics but
     not epistemics. -/
-def classicOught (f : ModalBase World) (g : OrderingSource World) (φ : BProp World) (w : World) : Prop :=
+def classicOught (f : ModalBase World) (g : OrderingSource World) (φ : (World → Bool)) (w : World) : Prop :=
   necessity f g φ w
 
 /-- **The classic semantics cannot distinguish the epistemic pattern.**
@@ -885,19 +884,19 @@ We formalize the conflict account's prediction and show it diverges from
 Boylan's. -/
 
 /-- A subset of propositions: represented as a Boolean mask on the list. -/
-def subsetWorlds (props : List (BProp World)) (mask : List Bool)
+def subsetWorlds (props : List ((World → Bool))) (mask : List Bool)
     (accessible : List World) : List World :=
   let selected := (props.zip mask).filterMap λ ⟨p, b⟩ => if b then some p else none
   accessible.filter λ w => selected.all (· w)
 
 /-- Whether a mask selects a consistent subset (non-empty intersection). -/
-def maskConsistent (props : List (BProp World)) (mask : List Bool)
+def maskConsistent (props : List ((World → Bool))) (mask : List Bool)
     (accessible : List World) : Bool :=
   !(subsetWorlds props mask accessible).isEmpty
 
 /-- Whether a consistent subset is maximal: no strictly larger consistent
     subset exists (adding any excluded proposition breaks consistency). -/
-def maskMaximal (props : List (BProp World)) (mask : List Bool)
+def maskMaximal (props : List ((World → Bool))) (mask : List Bool)
     (accessible : List World) : Bool :=
   maskConsistent props mask accessible &&
   -- For each excluded proposition, adding it would be inconsistent
@@ -915,8 +914,8 @@ def allMasks : Nat → List (List Bool)
 
 /-- The conflict account (eq. 61): ⟦ought φ⟧ = 1 iff for some
     maximally consistent subset S of g(w), ∀w' ∈ ∩S ∩ f(w): φ(w'). -/
-def conflictOught (bestProps : List (BProp World)) (accessible : List World)
-    (φ : BProp World) : Bool :=
+def conflictOught (bestProps : List ((World → Bool))) (accessible : List World)
+    (φ : (World → Bool)) : Bool :=
   (allMasks bestProps.length).any λ mask =>
     maskMaximal bestProps mask accessible &&
     (subsetWorlds bestProps mask accessible).all φ
@@ -928,7 +927,7 @@ def conflictOught (bestProps : List (BProp World)) (accessible : List World)
 
     Boylan's semantics avoids this: *ought* never produces dilemmas when
     PBEST is pairwise consistent. -/
-def officeBestConflict : List (BProp World) :=
+def officeBestConflict : List ((World → Bool)) :=
   [aliceIn, bobIn, carolIn, λ w => !everyoneIn w]
 
 theorem conflict_predicts_alice_absent :
@@ -965,12 +964,10 @@ pairwise consistency. We bridge back by showing:
 
 /-- Boylan's pairwise consistency agrees with Kratzer's proposition
     consistency when all worlds are accessible (Background.lean, p. 31). -/
-theorem pairConsistent_eq_isConsistent (p q : BProp World) :
-    pairConsistent p q allWorlds = isConsistent [p, q] := by
+theorem pairConsistent_iff_isConsistent (p q : (World → Bool)) :
+    pairConsistent p q allWorlds = true ↔ isConsistent [p, q] := by
   unfold pairConsistent isConsistent propIntersection
-  simp only [List.all_cons, List.all_nil, Bool.and_true]
-  apply Bool.eq_iff_iff.mpr
-  simp only [List.any_eq_true, Bool.not_eq_true', beq_eq_false_iff_ne]
+  simp only [List.all_cons, List.all_nil, Bool.and_true, List.any_eq_true]
   constructor
   · intro ⟨w, _, hw⟩
     exact Finset.ne_empty_of_mem (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hw⟩)

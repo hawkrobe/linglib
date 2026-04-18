@@ -399,16 +399,16 @@ open Semantics.Entailment.Polarity
 open Core.Proposition
 
 /-- Lift He et al. sentences to world-indexed propositions. -/
-def liftToWorlds (s : HKIState) : BProp HKIState :=
+def liftToWorlds (s : HKIState) : (HKIState → Bool) :=
   λ w => w == s
 
 /-- Negative sentence meaning as world-indexed proposition.
     ⟦"A doesn't have B"⟧ = pnot(⟦"A has B"⟧) -/
-def negMeaningW : BProp HKIState :=
+def negMeaningW : (HKIState → Bool) :=
   Decidable.pnot HKIState (liftToWorlds .pos)
 
 /-- Negation reverses entailment (DE property). -/
-theorem pnot_reverses_entailment_HKI (p q : BProp HKIState)
+theorem pnot_reverses_entailment_HKI (p q : (HKIState → Bool))
     (h : ∀ w, p w = true → q w = true) :
     ∀ w, Decidable.pnot HKIState q w = true → Decidable.pnot HKIState p w = true :=
   Decidable.pnot_reverses_entailment p q h

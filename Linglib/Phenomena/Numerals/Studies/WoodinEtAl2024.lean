@@ -1,5 +1,6 @@
 import Linglib.Core.Scales.Roundness
 import Mathlib.Data.Rat.Defs
+import Mathlib.Tactic.NormNum
 
 /-!
 # @cite{woodin-etal-2023}: Numeral Frequency and Roundness
@@ -110,6 +111,32 @@ theorem weighted_50_gt_110 :
 
 theorem weighted_7_eq_zero :
     weightedRoundnessScore 7 = 0 := by native_decide
+
+/-- `weightedRoundnessScore 50 > 0`: 50 has multipleOf5, multipleOf10,
+    2.5-ness, and 5-ness, so its weighted score is the strictly positive
+    sum of those β coefficients. -/
+theorem weighted_50_pos : weightedRoundnessScore 50 > 0 := by
+  unfold weightedRoundnessScore
+  have hp : roundnessProperties 50 =
+      ⟨true, true, false, true, true, false⟩ := by decide
+  rw [hp]
+  simp only [↓reduceIte]
+  unfold β_mult5 β_mult10 β_2_5ness β_5ness
+  norm_num
+
+theorem weighted_50_gt_7 :
+    weightedRoundnessScore 50 > weightedRoundnessScore 7 := by
+  rw [weighted_7_eq_zero]; exact weighted_50_pos
+
+/-- **RSA utterance prior from corpus frequency.** Rounder numerals have
+    higher prior weight, so `weightedRoundnessScore` doubles as an
+    empirically-grounded RSA utterance prior: rounder numerals are more
+    likely to be chosen, all else equal. The strict-monotonicity chain
+    `100 > 50 > 7` realises this on representative cases. -/
+theorem roundness_prior_monotone :
+    weightedRoundnessScore 100 > weightedRoundnessScore 50 ∧
+    weightedRoundnessScore 50 > weightedRoundnessScore 7 :=
+  ⟨weighted_100_gt_50, weighted_50_gt_7⟩
 
 -- ============================================================================
 -- Register effect data

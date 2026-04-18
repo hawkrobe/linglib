@@ -9,7 +9,7 @@ import Mathlib.Order.GaloisConnection.Basic
 # Proposition
 
 Theory-neutral infrastructure for modeling propositions in formal semantics.
-`Prop' W` is classical (W → Prop); `BProp W` is decidable (W → Bool).
+`Prop' W` is classical (W → Prop); decidable propositions use `W → Bool` directly.
 -/
 
 namespace Core.Proposition
@@ -17,11 +17,8 @@ namespace Core.Proposition
 /-- Classical propositions: sets of worlds (standard formal semantics). -/
 @[ont_sort] abbrev Prop' (W : Type*) := W → Prop
 
-/-- Decidable propositions: for computation. -/
-@[ont_sort] abbrev BProp (W : Type*) := W → Bool
-
-/-- Coercion from decidable to classical propositions. -/
-instance bpropToProp' (W : Type*) : Coe (BProp W) (Prop' W) where
+/-- Coercion from `W → Bool` to classical propositions. -/
+instance boolToProp' (W : Type*) : Coe (W → Bool) (Prop' W) where
   coe p := λ w => p w = true
 
 namespace Classical
@@ -99,57 +96,57 @@ end Classical
 namespace Decidable
 
 /-- Propositional negation. -/
-def pnot (W : Type*) (p : BProp W) : BProp W := λ w => !p w
+def pnot (W : Type*) (p : (W → Bool)) : (W → Bool) := λ w => !p w
 
 /-- Propositional conjunction. -/
-def pand (W : Type*) (p q : BProp W) : BProp W := λ w => p w && q w
+def pand (W : Type*) (p q : (W → Bool)) : (W → Bool) := λ w => p w && q w
 
 /-- Propositional disjunction. -/
-def por (W : Type*) (p q : BProp W) : BProp W := λ w => p w || q w
+def por (W : Type*) (p q : (W → Bool)) : (W → Bool) := λ w => p w || q w
 
 /-- The always-true proposition. -/
-def top (W : Type*) : BProp W := λ _ => true
+def top (W : Type*) : (W → Bool) := λ _ => true
 
 /-- The always-false proposition. -/
-def bot (W : Type*) : BProp W := λ _ => false
+def bot (W : Type*) : (W → Bool) := λ _ => false
 
 /-- Decidable entailment given explicit world enumeration. -/
-def entails (W : Type*) (worlds : List W) (p q : BProp W) : Bool :=
+def entails (W : Type*) (worlds : List W) (p q : (W → Bool)) : Bool :=
   worlds.all λ w => !p w || q w
 
 /-- Decidable equivalence given explicit world enumeration. -/
-def equiv (W : Type*) (worlds : List W) (p q : BProp W) : Bool :=
+def equiv (W : Type*) (worlds : List W) (p q : (W → Bool)) : Bool :=
   entails W worlds p q && entails W worlds q p
 
 /-- Decidable consistency: is there a world satisfying all propositions? -/
-def consistent (W : Type*) (worlds : List W) (ps : List (BProp W)) : Bool :=
+def consistent (W : Type*) (worlds : List W) (ps : List ((W → Bool))) : Bool :=
   worlds.any λ w => ps.all λp => p w
 
 /-- Count worlds satisfying a proposition. -/
-def count (W : Type*) (worlds : List W) (p : BProp W) : Nat :=
+def count (W : Type*) (worlds : List W) (p : (W → Bool)) : Nat :=
   worlds.filter p |>.length
 
 /-- Get all worlds satisfying a proposition. -/
-def filter (W : Type*) (worlds : List W) (p : BProp W) : List W :=
+def filter (W : Type*) (worlds : List W) (p : (W → Bool)) : List W :=
   worlds.filter p
 
 /-- Conjunction equals infimum in the Bool lattice. -/
-theorem pand_eq_inf (W : Type*) (p q : BProp W) : pand W p q = p ⊓ q := rfl
+theorem pand_eq_inf (W : Type*) (p q : (W → Bool)) : pand W p q = p ⊓ q := rfl
 
 /-- Disjunction equals supremum in the Bool lattice. -/
-theorem por_eq_sup (W : Type*) (p q : BProp W) : por W p q = p ⊔ q := rfl
+theorem por_eq_sup (W : Type*) (p q : (W → Bool)) : por W p q = p ⊔ q := rfl
 
 /-- Negation equals complement in the Bool Boolean algebra. -/
-theorem pnot_eq_compl (W : Type*) (p : BProp W) : pnot W p = pᶜ := rfl
+theorem pnot_eq_compl (W : Type*) (p : (W → Bool)) : pnot W p = pᶜ := rfl
 
 /-- Top equals lattice top. -/
-theorem top_eq_latticeTop (W : Type*) : top W = (⊤ : BProp W) := rfl
+theorem top_eq_latticeTop (W : Type*) : top W = (⊤ : (W → Bool)) := rfl
 
 /-- Bot equals lattice bot. -/
-theorem bot_eq_latticeBot (W : Type*) : bot W = (⊥ : BProp W) := rfl
+theorem bot_eq_latticeBot (W : Type*) : bot W = (⊥ : (W → Bool)) := rfl
 
 /-- Negation reverses entailment (DE property). -/
-theorem pnot_reverses_entailment {W : Type*} (p q : BProp W)
+theorem pnot_reverses_entailment {W : Type*} (p q : (W → Bool))
     (h : ∀ w, p w = true → q w = true) :
     ∀ w, pnot W q w = true → pnot W p w = true := by
   intro w hnq
@@ -161,7 +158,7 @@ theorem pnot_reverses_entailment {W : Type*} (p q : BProp W)
     simp [hq] at hnq
 
 /-- Double negation elimination for decidable propositions. -/
-theorem pnot_pnot {W : Type*} (p : BProp W) : pnot W (pnot W p) = p := by
+theorem pnot_pnot {W : Type*} (p : (W → Bool)) : pnot W (pnot W p) = p := by
   funext w
   simp [pnot, Bool.not_not]
 
@@ -178,7 +175,7 @@ theorem pnot_antitone {W : Type*} : Antitone (pnot W) := by
 end Decidable
 
 /-- Decidable negation corresponds to Classical negation under coercion. -/
-theorem decidable_pnot_eq_classical {W : Type*} (p : BProp W) :
+theorem decidable_pnot_eq_classical {W : Type*} (p : (W → Bool)) :
     (↑(Decidable.pnot W p) : Prop' W) = Classical.pnot W (↑p : Prop' W) := by
   funext w
   simp only [Decidable.pnot, Classical.pnot]
@@ -186,7 +183,7 @@ theorem decidable_pnot_eq_classical {W : Type*} (p : BProp W) :
   cases hp : p w <;> simp [hp]
 
 /-- Decidable conjunction corresponds to Classical conjunction. -/
-theorem decidable_pand_eq_classical {W : Type*} (p q : BProp W) :
+theorem decidable_pand_eq_classical {W : Type*} (p q : (W → Bool)) :
     (↑(Decidable.pand W p q) : Prop' W) = Classical.pand W (↑p) (↑q) := by
   funext w
   simp only [Decidable.pand, Classical.pand]
@@ -194,7 +191,7 @@ theorem decidable_pand_eq_classical {W : Type*} (p q : BProp W) :
   cases hp : p w <;> cases hq : q w <;> simp [hp, hq]
 
 /-- Decidable disjunction corresponds to Classical disjunction. -/
-theorem decidable_por_eq_classical {W : Type*} (p q : BProp W) :
+theorem decidable_por_eq_classical {W : Type*} (p q : (W → Bool)) :
     (↑(Decidable.por W p q) : Prop' W) = Classical.por W (↑p) (↑q) := by
   funext w
   simp only [Decidable.por, Classical.por]
@@ -203,7 +200,7 @@ theorem decidable_por_eq_classical {W : Type*} (p q : BProp W) :
 
 /-- Transfer theorem: DE property of `Decidable.pnot` implies DE for `Classical.pnot`. -/
 theorem classical_pnot_is_de {W : Type*} :
-    ∀ (p q : BProp W), (∀ w, (↑p : Prop' W) w → (↑q : Prop' W) w) →
+    ∀ (p q : (W → Bool)), (∀ w, (↑p : Prop' W) w → (↑q : Prop' W) w) →
       ∀ w, Classical.pnot W (↑q) w → Classical.pnot W (↑p) w := by
   intro p q hpq w hnq hp
   simp only [Classical.pnot] at *
@@ -237,23 +234,23 @@ class FiniteWorlds (W : Type*) where
 namespace FiniteWorlds
 
 /-- Decidable entailment using the FiniteWorlds instance. -/
-def entails (W : Type*) [FiniteWorlds W] (p q : BProp W) : Bool :=
+def entails (W : Type*) [FiniteWorlds W] (p q : (W → Bool)) : Bool :=
   Decidable.entails W (FiniteWorlds.worlds) p q
 
 /-- Decidable equivalence using the FiniteWorlds instance. -/
-def equiv (W : Type*) [FiniteWorlds W] (p q : BProp W) : Bool :=
+def equiv (W : Type*) [FiniteWorlds W] (p q : (W → Bool)) : Bool :=
   Decidable.equiv W (FiniteWorlds.worlds) p q
 
 /-- Decidable consistency using the FiniteWorlds instance. -/
-def consistent (W : Type*) [FiniteWorlds W] (ps : List (BProp W)) : Bool :=
+def consistent (W : Type*) [FiniteWorlds W] (ps : List ((W → Bool))) : Bool :=
   Decidable.consistent W (FiniteWorlds.worlds) ps
 
 /-- Count satisfying worlds. -/
-def count (W : Type*) [FiniteWorlds W] (p : BProp W) : Nat :=
+def count (W : Type*) [FiniteWorlds W] (p : (W → Bool)) : Nat :=
   Decidable.count W (FiniteWorlds.worlds) p
 
 /-- Filter satisfying worlds. -/
-def filter (W : Type*) [FiniteWorlds W] (p : BProp W) : List W :=
+def filter (W : Type*) [FiniteWorlds W] (p : (W → Bool)) : List W :=
   Decidable.filter W (FiniteWorlds.worlds) p
 
 /-- Build a `FiniteWorlds` instance from `Fintype` + `DecidableEq`.
@@ -272,13 +269,13 @@ noncomputable def toFintype {W : Type*} [fw : FiniteWorlds W] : Fintype W := by
   exact ⟨fw.worlds.toFinset, fun w => List.mem_toFinset.mpr (fw.complete w)⟩
 
 /-- Propositions overlap iff they share at least one world. -/
-def overlap (W : Type*) [FiniteWorlds W] (p q : BProp W) : Bool :=
+def overlap (W : Type*) [FiniteWorlds W] (p q : (W → Bool)) : Bool :=
   FiniteWorlds.worlds.any λ w => p w && q w
 
 end FiniteWorlds
 
 /-- Decidable entailment is sound w.r.t. classical entailment. -/
-theorem entails_sound (W : Type*) [FiniteWorlds W] (p q : BProp W) :
+theorem entails_sound (W : Type*) [FiniteWorlds W] (p q : (W → Bool)) :
     FiniteWorlds.entails W p q = true → Classical.entails W (↑p : Prop' W) ↑q := by
   intro h w hp
   simp only [FiniteWorlds.entails, Decidable.entails, List.all_eq_true] at h
@@ -384,16 +381,16 @@ def gc {W : Type*} :
   fun A b => galois_connection A (ofDual b)
 
 /-- Extension (List-based): compute worlds where all propositions hold. -/
-def extensionL {W : Type*} (worlds : List W) (props : List (BProp W)) : List W :=
+def extensionL {W : Type*} (worlds : List W) (props : List ((W → Bool))) : List W :=
   worlds.filter λ w => props.all λ p => p w
 
 /-- Intension (List-based): filter propositions true at all given worlds. -/
-def intensionL {W : Type*} (worlds : List W) (props : List (BProp W)) : List (BProp W) :=
+def intensionL {W : Type*} (worlds : List W) (props : List ((W → Bool))) : List ((W → Bool)) :=
   props.filter λ p => worlds.all p
 
 /-- Extension is antitone (List version). -/
 theorem extensionL_antitone {W : Type*} (worlds : List W)
-    (A B : List (BProp W)) (w : W)
+    (A B : List ((W → Bool))) (w : W)
     (hSub : ∀ p, p ∈ A → p ∈ B)
     (hw : w ∈ extensionL worlds B) :
     w ∈ extensionL worlds A := by
@@ -404,8 +401,8 @@ theorem extensionL_antitone {W : Type*} (worlds : List W)
     exact hw.2 p (hSub p hp)
 
 /-- Intension is antitone (List version). -/
-theorem intensionL_antitone {W : Type*} (props : List (BProp W))
-    (W1 W2 : List W) (p : BProp W)
+theorem intensionL_antitone {W : Type*} (props : List ((W → Bool)))
+    (W1 W2 : List W) (p : (W → Bool))
     (hSub : ∀ w, w ∈ W1 → w ∈ W2)
     (hp : p ∈ intensionL W2 props) :
     p ∈ intensionL W1 props := by
@@ -416,7 +413,7 @@ theorem intensionL_antitone {W : Type*} (props : List (BProp W))
     exact hp.2 w (hSub w hw)
 
 /-- Closure expanding (List version). -/
-theorem closureL_expanding {W : Type*} (allWorlds : List W) (props : List (BProp W))
+theorem closureL_expanding {W : Type*} (allWorlds : List W) (props : List ((W → Bool)))
     (Ws : List W) (hWs : ∀ w ∈ Ws, w ∈ allWorlds)
     (w : W) (hw : w ∈ Ws) :
     w ∈ extensionL allWorlds (intensionL Ws props) := by
@@ -427,15 +424,15 @@ theorem closureL_expanding {W : Type*} (allWorlds : List W) (props : List (BProp
     exact hp_all w hw
 
 /-- FiniteWorlds version of extension. -/
-def extensionFW (W : Type*) [FiniteWorlds W] (props : List (BProp W)) : List W :=
+def extensionFW (W : Type*) [FiniteWorlds W] (props : List ((W → Bool))) : List W :=
   extensionL FiniteWorlds.worlds props
 
 /-- FiniteWorlds version of intension. -/
-def intensionFW (W : Type*) [FiniteWorlds W] (worlds : List W) (props : List (BProp W)) : List (BProp W) :=
+def intensionFW (W : Type*) [FiniteWorlds W] (worlds : List W) (props : List ((W → Bool))) : List ((W → Bool)) :=
   intensionL worlds props
 
 end GaloisConnection
 
 end Core.Proposition
 
-export Core.Proposition (Prop' BProp)
+export Core.Proposition (Prop')

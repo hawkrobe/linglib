@@ -279,7 +279,7 @@ theorem domain_expansion_avoids_triviality
     as the new domain, which is a superset of the original. -/
 theorem oMarking_hpShift_expanding
     {W : Type*} {T : Type*} [Preorder T]
-    (history : Semantics.Tense.BranchingTime.WorldHistory W T)
+    (history : Core.Modality.HistoricalAlternatives.WorldHistory W T)
     (h_bc : history.backwardsClosed)
     (w₀ : W) (t₀ t' : T) (h_earlier : t' ≤ t₀)
     (D : Set W) (h_domain : D ⊆ history ⟨w₀, t₀⟩) :

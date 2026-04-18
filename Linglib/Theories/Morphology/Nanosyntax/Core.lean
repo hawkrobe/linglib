@@ -281,7 +281,7 @@ end CaseExamples
     containment hierarchy. Returns `none` for cases not on the
     standard fseq (e.g., ERG/ABS). -/
 def caseToRank (c : Core.Case) : Option Nat :=
-  containmentRank c
+  Core.Case.containmentRank c
 
 /-- Spellout a case directly: look up the case's rank, then
     apply phrasal spellout. -/

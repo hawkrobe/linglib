@@ -55,7 +55,6 @@ namespace KirkGiannini2024
 
 open Semantics.Quotation
 open Pragmatics.Expressives (TwoDimProp)
-open Core.Proposition (BProp)
 
 -- ════════════════════════════════════════════════════
 -- § 1. CI Projection Failure (§3)
@@ -118,8 +117,8 @@ def slur_noProject : CIProjectionDatum :=
     proposition; the peripheral content attributes the utterance to the
     embedded subject. Since only at-issue content composes upward, the
     original CI never reaches the speaker. -/
-theorem quotation_blocks_ci_projection (W : Type) (originalCI : BProp W)
-    (atIssue : BProp W) (w : W) :
+theorem quotation_blocks_ci_projection (W : Type) (originalCI : (W → Bool))
+    (atIssue : (W → Bool)) (w : W) :
     let withOrigCI := TwoDimProp.withCI atIssue originalCI
     let quoted := TwoDimProp.pureQuote withOrigCI
     -- After pure quotation, original CI is stripped

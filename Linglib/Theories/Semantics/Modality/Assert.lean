@@ -38,7 +38,6 @@ modal flavors — without lexical ambiguity in the modal.
 namespace Semantics.Modality.Assert
 
 open Semantics.Modality.EventRelativity
-open Core.Proposition (BProp)
 open Core.Modality (ModalFlavor)
 open Core.Mood (IllocutionaryMood)
 
@@ -96,14 +95,14 @@ structure SpeechActEvent (W : Type*) where
   actType : SpeechActType
   /-- CON(e*): the propositional content of the speech event.
   Maps each world to the set of propositions encoding the content. -/
-  content : W → List (BProp W)
+  content : W → List ((W → Bool))
 
 /-- ASSERT: introduce a declarative speech event.
 
 (222) `SPEECH ACT_DECLARATIVE(e*)`:
 The content encodes the speaker's beliefs — worlds compatible with
 what the speaker takes to be true. -/
-def ASSERT {W : Type*} (beliefs : W → List (BProp W)) : SpeechActEvent W where
+def ASSERT {W : Type*} (beliefs : W → List ((W → Bool))) : SpeechActEvent W where
   actType := .declarative
   content := beliefs
 
@@ -111,7 +110,7 @@ def ASSERT {W : Type*} (beliefs : W → List (BProp W)) : SpeechActEvent W where
 
 The content encodes the addressee's to-do list — worlds compatible
 with the addressee fulfilling their obligations. -/
-def DIRECT {W : Type*} (obligations : W → List (BProp W)) : SpeechActEvent W where
+def DIRECT {W : Type*} (obligations : W → List ((W → Bool))) : SpeechActEvent W where
   actType := .imperative
   content := obligations
 
@@ -122,12 +121,12 @@ def DIRECT {W : Type*} (obligations : W → List (BProp W)) : SpeechActEvent W w
 
 /-- A speech act event's content IS a conversational background.
 
-`SpeechActEvent.content : W → List (BProp W)` has the same type as
+`SpeechActEvent.content : W → List ((W → Bool))` has the same type as
 a Kratzer `ConvBackground` and as `anchor f e` from EventRelativity §10.
 The speech event's content is the background that modals in its scope
 access when they bind to e*. -/
 def SpeechActEvent.toBackground {W : Type*}
-    (sa : SpeechActEvent W) : W → List (BProp W) :=
+    (sa : SpeechActEvent W) : W → List ((W → Bool)) :=
   sa.content
 
 /-- Lift a speech act event into an anchoring function.
@@ -142,7 +141,7 @@ provided by ASSERT at the top; the described event anchoring comes
 from the verb's event structure lower in the clause. -/
 def speechActAnchoring {Ev W : Type*}
     (sa : SpeechActEvent W)
-    (describedBg : Ev → W → List (BProp W)) : AnchoringFn (Unit ⊕ Ev) W
+    (describedBg : Ev → W → List ((W → Bool))) : AnchoringFn (Unit ⊕ Ev) W
   | .inl (), w => sa.content w
   | .inr ev, w => describedBg ev w
 
@@ -150,13 +149,13 @@ def speechActAnchoring {Ev W : Type*}
 speech act's content. -/
 theorem speech_slot_is_content {Ev W : Type*}
     (sa : SpeechActEvent W)
-    (bg : Ev → W → List (BProp W)) (w : W) :
+    (bg : Ev → W → List ((W → Bool))) (w : W) :
     speechActAnchoring sa bg (.inl ()) w = sa.content w := rfl
 
 /-- The described event slot passes through to the verb's background. -/
 theorem described_slot_passthrough {Ev W : Type*}
     (sa : SpeechActEvent W)
-    (bg : Ev → W → List (BProp W)) (ev : Ev) (w : W) :
+    (bg : Ev → W → List ((W → Bool))) (ev : Ev) (w : W) :
     speechActAnchoring sa bg (.inr ev) w = bg ev w := rfl
 
 
@@ -182,11 +181,11 @@ theorem all_speech_acts_contentful :
   intro t; cases t <;> rfl
 
 /-- ASSERT produces a contentful event. -/
-theorem assert_contentful {W : Type*} (beliefs : W → List (BProp W)) :
+theorem assert_contentful {W : Type*} (beliefs : W → List ((W → Bool))) :
     hasContent (ASSERT beliefs).actType = true := rfl
 
 /-- DIRECT produces a contentful event. -/
-theorem direct_contentful {W : Type*} (obligations : W → List (BProp W)) :
+theorem direct_contentful {W : Type*} (obligations : W → List ((W → Bool))) :
     hasContent (DIRECT obligations).actType = true := rfl
 
 /-- Speech act contentfulness agrees with `EventBinder.speechAct.hasContent`.
@@ -284,17 +283,17 @@ private def fImpr : AnchoringFn Unit LeaveWorld :=
 /-- Under the declarative, both leaving and staying are possible
 (speaker is uncertain). -/
 theorem declarative_leave_possible :
-    possibility fDecl () allLW (· == .leave) .leave = true := by decide
+    possibility fDecl () allLW (· == .leave) .leave := by decide
 
 theorem declarative_stay_possible :
-    possibility fDecl () allLW (· == .stay) .leave = true := by decide
+    possibility fDecl () allLW (· == .stay) .leave := by decide
 
 /-- Under the imperative, leaving is permitted but staying is NOT. -/
 theorem imperative_leave_permitted :
-    possibility fImpr () allLW (· == .leave) .leave = true := by decide
+    possibility fImpr () allLW (· == .leave) .leave := by decide
 
 theorem imperative_stay_not_permitted :
-    possibility fImpr () allLW (· == .stay) .leave = false := by decide
+    ¬ possibility fImpr () allLW (· == .stay) .leave := by decide
 
 /-- The core contrast: same modal (◇), same proposition (stay),
 same evaluation world — but different speech acts yield different
@@ -302,10 +301,10 @@ truth values. The speech act type, mediated through CON(e*),
 determines the modal domain. -/
 theorem speech_act_modulates_domain :
     -- Declarative: ◇(stay) = true (staying is epistemically possible)
-    possibility fDecl () allLW (· == .stay) .leave = true ∧
+    possibility fDecl () allLW (· == .stay) .leave ∧
     -- Imperative: ◇(stay) = false (staying is not permitted)
-    possibility fImpr () allLW (· == .stay) .leave = false := by
-  constructor <;> decide
+    ¬ possibility fImpr () allLW (· == .stay) .leave := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 
 -- ════════════════════════════════════════════════════

@@ -131,13 +131,13 @@ def alternativeTypeOf (d : NPIDecomposition) : AlternativeType :=
     and their entailment relations model the cardinality scale. -/
 
 /-- At least one entity satisfies the VP. True at w0, w1, w2. -/
-def atLeastOne : BProp World := λ w => w != .w3
+def atLeastOne : (World → Bool) := λ w => w != .w3
 
 /-- At least two entities satisfy the VP. True at w0, w1. -/
-def atLeastTwo : BProp World := λ w => w == .w0 || w == .w1
+def atLeastTwo : (World → Bool) := λ w => w == .w0 || w == .w1
 
 /-- At least three entities satisfy the VP. True at w0 only. -/
-def atLeastThree : BProp World := λ w => w == .w0
+def atLeastThree : (World → Bool) := λ w => w == .w0
 
 -- ============================================================================
 -- §4. Weakness of `one`
@@ -244,11 +244,11 @@ def ekBhiiEvenDE : TraditionalEven (World := World) :=
 
     This is the abstract version of the paper's argument (§7.4, eqs. 68–71). -/
 theorem ekBhii_even_clash_UE
-    (lt : BProp World → BProp World → Prop)
-    (le : BProp World → BProp World → Prop)
+    (lt : (World → Bool) → (World → Bool) → Prop)
+    (le : (World → Bool) → (World → Bool) → Prop)
     (hMono : LikelihoodMonotone le)
-    (hCompat : ∀ (a b : BProp World), lt a b → le b a → False)
-    (alt : BProp World)
+    (hCompat : ∀ (a b : (World → Bool)), lt a b → le b a → False)
+    (alt : (World → Bool))
     (hAlt : alt = atLeastTwo ∨ alt = atLeastThree)
     (hEven : lt atLeastOne alt) :
     False := by
@@ -280,12 +280,12 @@ theorem ekBhii_even_ok_DE :
     to be strictly less likely than each alternative. -/
 theorem even_clash_abstract
     {W : Type}
-    (lt : BProp W → BProp W → Prop)
-    (le : BProp W → BProp W → Prop)
-    (hMono : ∀ (p q : BProp W), (∀ w, p w = true → q w = true) → le p q)
-    (hCompat : ∀ (a b : BProp W), lt a b → le b a → False)
-    (assertion : BProp W)
-    (alt : BProp W)
+    (lt : (W → Bool) → (W → Bool) → Prop)
+    (le : (W → Bool) → (W → Bool) → Prop)
+    (hMono : ∀ (p q : (W → Bool)), (∀ w, p w = true → q w = true) → le p q)
+    (hCompat : ∀ (a b : (W → Bool)), lt a b → le b a → False)
+    (assertion : (W → Bool))
+    (alt : (W → Bool))
     (hEntails : ∀ w, alt w = true → assertion w = true)
     (hEven : lt assertion alt) :
     False :=

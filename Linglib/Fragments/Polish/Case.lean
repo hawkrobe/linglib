@@ -1,5 +1,5 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Polish Case Inventory
 @cite{blake-1994}
@@ -13,9 +13,9 @@ is perfectly contiguous on Blake's hierarchy.
 namespace Fragments.Polish.Case
 
 /-- Polish 6-case core inventory (excluding VOC). -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .loc, .inst]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .loc, .inst}
 
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Polish.Case

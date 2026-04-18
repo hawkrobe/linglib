@@ -104,25 +104,25 @@ def desPass : List (W → Bool) := [pass]
 
 /-- **Nap is true** relative to Q' with beliefs nap↔rested, desires [rested].
 Best in Q'-Bel: n∧r = {w0,w1} entails nap. -/
-theorem nap_true : wantQuestionBased belNapRest desRest qNapRest nap = true := by native_decide
+theorem nap_true : wantQuestionBased belNapRest desRest qNapRest nap := by decide
 
 /-- **Not-nap is true** relative to Q'' with beliefs pass↔¬nap, desires [pass].
 Best in Q''-Bel: ¬n∧p = {w4,w6} entails ¬nap. -/
 theorem not_nap_true :
-    wantQuestionBased belNapPass desPass qNapPass (λ w => !nap w) = true := by native_decide
+    wantQuestionBased belNapPass desPass qNapPass (λ w => !nap w) := by decide
 
 -- Considering Constraint blocks Fail
 
 /-- Fail is NOT considered relative to Q': each cell contains both
 pass-worlds and fail-worlds, so no cell settles whether you fail. -/
-theorem fail_not_considered : isConsidered qNapRest fail = false := by native_decide
+theorem fail_not_considered : ¬ isConsidered qNapRest fail := by decide
 
 /-- Fail is also not predicted true (best answers don't entail fail). -/
 theorem fail_not_true :
-    wantQuestionBased belNapRest desRest qNapRest fail = false := by native_decide
+    ¬ wantQuestionBased belNapRest desRest qNapRest fail := by decide
 
 /-- Q' is diverse w.r.t. nap: both nap-answers and ¬nap-answers exist. -/
-theorem nap_diverse : isDiverse qNapRest nap = true := by native_decide
+theorem nap_diverse : isDiverse qNapRest nap := by decide
 
 -- ============================================================================
 -- §4. Lobster scenario (structural isomorphism with Nap)
@@ -139,11 +139,11 @@ abbrev die : W → Bool := fail
 
 /-- Lobster is true (same computation as Nap). -/
 theorem lobster_true :
-    wantQuestionBased belNapRest desRest qNapRest lobster = true := nap_true
+    wantQuestionBased belNapRest desRest qNapRest lobster := nap_true
 
 /-- Die is not considered in the Lobster context (= Q'). -/
 theorem die_not_considered :
-    isConsidered qNapRest die = false := fail_not_considered
+    ¬ isConsidered qNapRest die := fail_not_considered
 
 /-- Q_c''' = partition by lobster × die. -/
 def qLobDie : List (W → Bool) :=
@@ -157,28 +157,28 @@ def desNotDie : List (W → Bool) := [λ w => !fail w]
 
 /-- **Not-lobster is true** in c''' (considering death, ignoring taste). -/
 theorem not_lobster_true :
-    wantQuestionBased belLobDie desNotDie qLobDie (λ w => !nap w) = true := by native_decide
+    wantQuestionBased belLobDie desNotDie qLobDie (λ w => !nap w) := by decide
 
 /-- **Not-die is also true** in c''' (best answer entails both ¬lobster and ¬die). -/
 theorem not_die_true :
-    wantQuestionBased belLobDie desNotDie qLobDie (λ w => !fail w) = true := by native_decide
+    wantQuestionBased belLobDie desNotDie qLobDie (λ w => !fail w) := by decide
 
 -- ============================================================================
 -- §5. Von Fintel comparison (using generic `wantVF` from Desire.lean)
 -- ============================================================================
 
 /-- VF correctly predicts Nap. -/
-theorem vf_nap_true : wantVF belNapRest desRest nap = true := by native_decide
+theorem vf_nap_true : wantVF belNapRest desRest nap := by decide
 
 /-- VF cannot also predict Not-nap (want is not context-sensitive). -/
 theorem vf_not_nap_false :
-    wantVF belNapRest desRest (λ w => !nap w) = false := by native_decide
+    ¬ wantVF belNapRest desRest (λ w => !nap w) := by decide
 
 /-- VF cannot predict both Nap and Not-nap with any single parameter set. -/
 theorem vf_cannot_predict_both :
-    ¬(wantVF belNapRest desRest nap = true ∧
-      wantVF belNapRest desRest (λ w => !nap w) = true) := by
-  simp only [vf_not_nap_false, Bool.false_eq_true, and_false, not_false_eq_true]
+    ¬(wantVF belNapRest desRest nap ∧
+      wantVF belNapRest desRest (λ w => !nap w)) := by
+  intro ⟨_, h⟩; exact vf_not_nap_false h
 
 -- ============================================================================
 -- §6. Doxastic closure blocking (§4.1)
@@ -194,13 +194,13 @@ Constraint blocks ⟦want(fail)⟧^{Q'} from being defined at all. -/
 
 /-- In the Not-nap context Q'', nap IS considered (every cell settles nap). -/
 theorem nap_considered_in_qNapPass :
-    isConsidered qNapPass nap = true := by native_decide
+    isConsidered qNapPass nap := by decide
 
 /-- Fail IS considered in Q'' (pass is a partition dimension, so fail = ¬pass
 is settled by every cell). But fail is NOT considered in Q' — and that is
 what blocks the doxastic closure inference in the Nap context. -/
 theorem fail_considered_in_qNapPass :
-    isConsidered qNapPass fail = true := by native_decide
+    isConsidered qNapPass fail := by decide
 
 -- ============================================================================
 -- §7. Anti-deckstacking constraint (§3.7)
@@ -233,16 +233,16 @@ def desHappy : List (W → Bool) := [happy]
 /-- The key violation: `happy` is not considered in the deck-stacked Q'''',
 because the `rain` cell contains both happy and unhappy worlds. -/
 theorem happy_not_considered_deckstacked :
-    isConsidered qDeckstacked happy = false := by native_decide
+    ¬ isConsidered qDeckstacked happy := by decide
 
 /-- But `happy` IS entailed by one of the answers (¬r∧h), so a
 happy-answer exists — the deck is stacked in favor of ¬rain. -/
 theorem happy_answer_exists_deckstacked :
-    qDeckstacked.any (λ a => propEntails a happy) = true := by native_decide
+    qDeckstacked.any (λ a => propEntails a happy) = true := by decide
 
 /-- Without the constraint, the semantics wrongly predicts Not-rain. -/
 theorem not_rain_deckstacked_true :
-    wantQuestionBased belLu desHappy qDeckstacked (λ w => !rain w) = true := by native_decide
+    wantQuestionBased belLu desHappy qDeckstacked (λ w => !rain w) := by decide
 
 /-- Q''''' (level playing field): partition by rain × happy. -/
 def qRainHappy : List (W → Bool) :=
@@ -251,12 +251,12 @@ def qRainHappy : List (W → Bool) :=
 
 /-- In the fair question, `happy` IS considered. -/
 theorem happy_considered_fair :
-    isConsidered qRainHappy happy = true := by native_decide
+    isConsidered qRainHappy happy := by decide
 
 /-- With the fair question, Not-rain is correctly predicted false
 (Lu is happy either way, so both r∧h and ¬r∧h are best). -/
 theorem not_rain_false_fair :
-    wantQuestionBased belLu desHappy qRainHappy (λ w => !rain w) = false := by native_decide
+    ¬ wantQuestionBased belLu desHappy qRainHappy (λ w => !rain w) := by decide
 
 /-! **Anti-deckstacking: too strong for finite models.**
 The paper's universal quantification ("for all q, if some answer entails q,
@@ -269,16 +269,16 @@ Anti-deckstacking. -/
 
 /-- qNapRest fails Anti-deckstacking (gerrymandered propositions violate it). -/
 theorem qNapRest_fails_antideckstacking :
-    isAntiDeckstacking qNapRest = false := by native_decide
+    ¬ isAntiDeckstacking qNapRest := by decide
 
 /-- Even the deck-stacked question fails (confirming it catches real violations too). -/
 theorem qDeckstacked_fails_antideckstacking :
-    isAntiDeckstacking qDeckstacked = false := by native_decide
+    ¬ isAntiDeckstacking qDeckstacked := by decide
 
 /-- The fair question also fails (same artifact — any non-coarsening proposition
     that isn't settled by all cells triggers the constraint). -/
 theorem qRainHappy_fails_antideckstacking :
-    isAntiDeckstacking qRainHappy = false := by native_decide
+    ¬ isAntiDeckstacking qRainHappy := by decide
 
 -- ============================================================================
 -- §8. Finest-question simulation (§3.4 metasemantic result)
@@ -296,18 +296,18 @@ def qFinest : List (W → Bool) :=
 
 /-- With the finest question, question-based want = standard vF want for Nap. -/
 theorem finest_simulates_vf_nap :
-    wantQuestionBased belNapRest desRest qFinest nap =
-    wantVF belNapRest desRest nap := by native_decide
+    wantQuestionBased belNapRest desRest qFinest nap ↔
+    wantVF belNapRest desRest nap := by decide
 
 /-- With the finest question, question-based want = standard vF want for ¬Nap. -/
 theorem finest_simulates_vf_not_nap :
-    wantQuestionBased belNapRest desRest qFinest (λ w => !nap w) =
-    wantVF belNapRest desRest (λ w => !nap w) := by native_decide
+    wantQuestionBased belNapRest desRest qFinest (λ w => !nap w) ↔
+    wantVF belNapRest desRest (λ w => !nap w) := by decide
 
 /-- With the finest question, question-based want = standard vF want for Lobster. -/
 theorem finest_simulates_vf_lobster :
-    wantQuestionBased belLobDie desNotDie qFinest (λ w => !nap w) =
-    wantVF belLobDie desNotDie (λ w => !nap w) := by native_decide
+    wantQuestionBased belLobDie desNotDie qFinest (λ w => !nap w) ↔
+    wantVF belLobDie desNotDie (λ w => !nap w) := by decide
 
 -- ============================================================================
 -- §9. PrProp integration: definedness
@@ -315,23 +315,23 @@ theorem finest_simulates_vf_lobster :
 
 /-- Nap is defined in Q' (considered + diverse). -/
 theorem nap_defined_in_qNapRest :
-    wantDefined belNapRest qNapRest nap = true := by native_decide
+    wantDefined belNapRest qNapRest nap := by decide
 
 /-- Fail is NOT defined in Q' (not considered). -/
 theorem fail_not_defined_in_qNapRest :
-    wantDefined belNapRest qNapRest fail = false := by native_decide
+    ¬ wantDefined belNapRest qNapRest fail := by decide
 
 /-- The PrProp wrapper: nap is defined AND true. -/
 theorem nap_prprop_holds :
     (wantPrProp belNapRest desRest qNapRest nap).presup .w0 ∧
     (wantPrProp belNapRest desRest qNapRest nap).assertion .w0 := by
   simp only [wantPrProp]
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 /-- The PrProp wrapper: fail is undefined (presup fails). -/
 theorem fail_prprop_undefined :
     ¬(wantPrProp belNapRest desRest qNapRest fail).presup .w0 := by
-  simp only [wantPrProp]; native_decide
+  simp only [wantPrProp]; decide
 
 -- ============================================================================
 -- §10. Belief-sensitivity: Avoid-war scenario (§4.2)
@@ -360,38 +360,38 @@ def qNuclear : List (W → Bool) :=
 
 /-- Avoiding war entails avoiding nuclear war. -/
 theorem avoidWar_entails_avoidNuclearWar :
-    propEntails avoidWar avoidNuclearWar = true := by native_decide
+    propEntails avoidWar avoidNuclearWar = true := by decide
 
 /-- avoidNuclearWar is considered in Q_nuc (every answer settles it). -/
 theorem avoidNuclearWar_considered :
-    isConsidered qNuclear avoidNuclearWar = true := by native_decide
+    isConsidered qNuclear avoidNuclearWar := by decide
 
 /-- William III: total uncertainty (all worlds compatible). -/
 def belWilliam : W → Bool := λ _ => true
 
 /-- William's beliefs are NOT sensitive to Q_nuc (all answers live). -/
 theorem william_insensitive :
-    isBelSensitive belWilliam qNuclear = false := by native_decide
+    ¬ isBelSensitive belWilliam qNuclear := by decide
 
 /-- avoidNuclearWar is NOT defined for William (belief-sensitivity fails). -/
 theorem avoidNuclearWar_not_defined_william :
-    wantDefined belWilliam qNuclear avoidNuclearWar = false := by native_decide
+    ¬ wantDefined belWilliam qNuclear avoidNuclearWar := by decide
 
 /-- A modern person: beliefs rule out nuclear war (peace ∨ conventional). -/
 def belModern : W → Bool := λ w => nap w || rested w
 
 /-- Modern beliefs ARE sensitive to Q_nuc (nuclear-war answer ruled out). -/
 theorem modern_sensitive :
-    isBelSensitive belModern qNuclear = true := by native_decide
+    isBelSensitive belModern qNuclear := by decide
 
 /-- avoidNuclearWar IS defined for a modern person. -/
 theorem avoidNuclearWar_defined_modern :
-    wantDefined belModern qNuclear avoidNuclearWar = true := by native_decide
+    wantDefined belModern qNuclear avoidNuclearWar := by decide
 
 def desAvoidWar : List (W → Bool) := [nap]
 
 /-- A modern person who wants peace also wants to avoid nuclear war. -/
 theorem modern_wants_avoidNuclearWar :
-    wantQuestionBased belModern desAvoidWar qNuclear avoidNuclearWar = true := by native_decide
+    wantQuestionBased belModern desAvoidWar qNuclear avoidNuclearWar := by decide
 
 end PhillipsBrown2025

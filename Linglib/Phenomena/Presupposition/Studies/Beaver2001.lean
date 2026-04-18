@@ -245,7 +245,7 @@ The local context at position q in `p → q` is
 /-- File Change Semantics update (@cite{heim-1983}) IS `ContextSet.update`.
     The context set c updated with proposition p keeps only worlds where
     p holds. This is the foundation of CCP/dynamic semantics (Ch. 4). -/
-example (c : ContextSet W) (p : BProp W) :
+example (c : ContextSet W) (p : (W → Bool)) :
     ContextSet.update c p = λ w => c w ∧ p w = true := rfl
 
 /-- Static filtering = dynamic local context for conditionals.
@@ -337,7 +337,7 @@ theorem spiff_conditional_filters :
 /-- The actual presupposition people infer is CONDITIONAL:
     "IF Spiff lands on Planet X, his weight > Earth weight."
     This is stronger than what filtering predicts. -/
-def conditionalPresup : BProp SpiffWorld :=
+def conditionalPresup : (SpiffWorld → Bool) :=
   λ w => match w with
     | .onPlanetX_heavy => true
     | .onPlanetX_light => false
@@ -384,7 +384,7 @@ defined at context σ iff `∀ w, σ w → p.presup w = true`. -/
 
 /-- PUL atomic update: intersect context with proposition.
     @cite{beaver-2001} Ch. 6. Equivalent to `ContextSet.update`. -/
-def pulUpdate (p : BProp W) (σ : ContextSet W) : ContextSet W :=
+def pulUpdate (p : (W → Bool)) (σ : ContextSet W) : ContextSet W :=
   ContextSet.update σ p
 
 /-- PUL negation: complement within the input state.
@@ -407,7 +407,7 @@ def pulImpl (φ ψ : ContextSet W → ContextSet W) (σ : ContextSet W) : Contex
   λ w => σ w ∧ ¬ ((φ σ) w ∧ ¬ (ψ (φ σ)) w)
 
 /-- PUL atomic update is `ContextSet.update` (by construction). -/
-theorem pulUpdate_eq (p : BProp W) (σ : ContextSet W) :
+theorem pulUpdate_eq (p : (W → Bool)) (σ : ContextSet W) :
     pulUpdate p σ = ContextSet.update σ p := rfl
 
 /-- PUL negation is eliminative: it only removes worlds. -/
@@ -416,7 +416,7 @@ theorem pulNeg_eliminative (φ : ContextSet W → ContextSet W)
     pulNeg φ σ w → σ w := And.left
 
 /-- PUL conjunction of atomic updates equals iterated context update. -/
-theorem pulConj_update (p q : BProp W) (σ : ContextSet W) :
+theorem pulConj_update (p q : (W → Bool)) (σ : ContextSet W) :
     pulConj (pulUpdate p) (pulUpdate q) σ =
     ContextSet.update (ContextSet.update σ p) q := rfl
 
@@ -425,7 +425,7 @@ theorem pulConj_update (p q : BProp W) (σ : ContextSet W) :
     When φ = pulUpdate p and ψ = pulUpdate q, the conditional
     simplifies to the classical material conditional on the
     proposition values. -/
-theorem pulImpl_atomic (p q : BProp W) (σ : ContextSet W) (w : W) :
+theorem pulImpl_atomic (p q : (W → Bool)) (σ : ContextSet W) (w : W) :
     pulImpl (pulUpdate p) (pulUpdate q) σ w ↔
     σ w ∧ (p w = true → q w = true) := by
   simp only [pulImpl, pulUpdate, ContextSet.update]

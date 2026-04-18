@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Composition.TypeShifting
-import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Numerals.Basic
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
 /-!
@@ -29,7 +29,7 @@ Partee type-shifting.
 
 -/
 
-namespace Semantics.Quantification.Numerals.Polysemy
+namespace Semantics.Numerals.Polysemy
 
 /-- The three polymorphic analyses of number words (Snyder §2, §5). -/
 inductive PolymorphicAnalysis where
@@ -113,4 +113,4 @@ theorem taxonomic_supported :
     contextualistPath .taxonomic = .iotaFromPred ∧
     Noun.Kind.Chierchia1998.MathSystem.all.length ≥ 2 := ⟨rfl, by native_decide⟩
 
-end Semantics.Quantification.Numerals.Polysemy
+end Semantics.Numerals.Polysemy

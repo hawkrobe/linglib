@@ -17,7 +17,7 @@ Type-theoretic foundations for TTR, organized by conceptual role:
   Restriction = Subtype (A11.7), record merges (symmetric = Prod, asymmetric; A11.3),
   StringType, TypeAct.
 
-**Modal Type Systems**: ModalTypeSystem (Bool-valued, Ch1 Def 54), bridge to BProp.
+**Modal Type Systems**: ModalTypeSystem (Bool-valued, Ch1 Def 54), bridge to `W → Bool`.
 
 **Grammar**: Cat, GSign, PSRule, phrase structure rules, lexical signs.
 
@@ -318,15 +318,15 @@ This is structurally a Kripke model: each possibility assigns
 extensions to predicates, just as each world assigns truth values.
 
 We formalize the connection: a modal type system over `W` possibilities
-with Bool-valued predicates is exactly a `BProp W`. -/
+with Bool-valued predicates is exactly a `(W → Bool)`. -/
 
 /-- A modal type system: for each possibility and predicate, whether the
 predicate has witnesses. §1.4.3.5, Def 54. -/
 abbrev ModalTypeSystem (W : Type) (Pred : Type) := W → Pred → Bool
 
-/-- A predicate in a modal type system yields a BProp. -/
+/-- A predicate in a modal type system yields a `W → Bool`. -/
 def ModalTypeSystem.toBProp {W Pred : Type} (mts : ModalTypeSystem W Pred)
-    (P : Pred) : Core.Proposition.BProp W :=
+    (P : Pred) : (W → Bool) :=
   λ w => mts w P
 
 /-- Subtyping in a modal type system: T₁ ⊑ T₂ iff at every possibility

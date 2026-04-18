@@ -1,5 +1,4 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
 /-!
 # Swiss German Case and Verb Subcategorization @cite{shieber-1985}
 
@@ -20,7 +19,7 @@ which is not context-free.
 namespace Fragments.SwissGerman.Case
 
 /-- Swiss German uses the same 4-case inventory as Standard German. -/
-def caseInventory : List Core.Case := [.nom, .acc, .gen, .dat]
+def caseInventory : Finset Core.Case := {.nom, .acc, .gen, .dat}
 
 /-- Verbs that participate in cross-serial subordinate clause constructions.
 

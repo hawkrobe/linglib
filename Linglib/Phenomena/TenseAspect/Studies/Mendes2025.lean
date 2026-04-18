@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations
-import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Core.Modality.HistoricalAlternatives
 
 /-!
 # Mendes (2025): The Subordinate Future
@@ -32,7 +32,7 @@ rather than requiring it globally.
 namespace Mendes2025
 
 open Core.Time
-open Semantics.Tense.BranchingTime
+open Core.Modality.HistoricalAlternatives
 open Semantics.Dynamic.IntensionalCDRT
 open Semantics.Dynamic.IntensionalCDRT.Situations
 

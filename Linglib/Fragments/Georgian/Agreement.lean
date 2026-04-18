@@ -1,6 +1,7 @@
 import Linglib.Core.Prominence
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
+import Linglib.Core.Case.Split
 /-!
 # Georgian Agreement Fragment @cite{just-2024}
 @cite{harris-1981}
@@ -174,18 +175,16 @@ def objectCase : TenseSeries → Core.Case
     and INST (instrumental), yielding {NOM, ERG, GEN, DAT, INST} which
     satisfies contiguity. Here we validate only the agreement-visible
     subset, which also satisfies contiguity (all rank ≥ 4). -/
-def caseInventory : List Core.Case := [.nom, .erg, .dat]
+def caseInventory : Finset Core.Case := {.nom, .erg, .dat}
 
 /-- The inventory covers all tense-series case frames. -/
 def allTenseSeries : List TenseSeries := [.present, .aorist, .evidential]
 
 theorem inventory_covers_subjects :
-    allTenseSeries.all (λ ts =>
-      caseInventory.any (· == subjectCase ts)) = true := by native_decide
+    ∀ ts ∈ allTenseSeries, subjectCase ts ∈ caseInventory := by decide
 
 theorem inventory_covers_objects :
-    allTenseSeries.all (λ ts =>
-      caseInventory.any (· == objectCase ts)) = true := by native_decide
+    ∀ ts ∈ allTenseSeries, objectCase ts ∈ caseInventory := by decide
 
 /-- The agreement-relevant inventory {NOM, ERG, DAT} is valid per Blake's
     hierarchy: NOM/ERG at rank 6, DAT at rank 4, GEN at rank 5 — but
@@ -198,9 +197,9 @@ theorem inventory_covers_objects :
     part of the agreement system.
 
     We validate the full case system instead. -/
-def fullCaseInventory : List Core.Case := [.nom, .erg, .gen, .dat]
+def fullCaseInventory : Finset Core.Case := {.nom, .erg, .gen, .dat}
 
-#guard Core.validInventory fullCaseInventory
+example : Core.Case.IsValidInventory fullCaseInventory := by decide
 
 -- ============================================================================
 -- § 6: Verb Classes (@cite{harris-1981}, @cite{marantz-1991})

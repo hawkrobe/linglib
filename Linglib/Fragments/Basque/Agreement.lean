@@ -1,6 +1,6 @@
 import Linglib.Core.Prominence
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Basque Agreement Fragment @cite{just-2024}
 @cite{laka-1996} @cite{preminger-2014} @cite{blake-1994}
@@ -111,14 +111,14 @@ theorem as_indexing_uniform :
     The full Basque case system has ~12 cases (ERG, ABS, DAT, GEN, LOC,
     ABL, ALL, INST, COM, PERL, BEN, and more), but the agreement system
     only distinguishes these three. -/
-def agreementCaseInventory : List Core.Case := [.erg, .abs, .dat]
+def agreementCaseInventory : Finset Core.Case := {.erg, .abs, .dat}
 
 /-- The full Basque case inventory (representative selection). -/
-def fullCaseInventory : List Core.Case :=
-  [.erg, .abs, .gen, .dat, .loc, .abl, .all, .inst, .com, .perl, .ben]
+def fullCaseInventory : Finset Core.Case :=
+  {.erg, .abs, .gen, .dat, .loc, .abl, .all, .inst, .com, .perl, .ben}
 
 -- The full inventory is valid per Blake's hierarchy (ranks 6 down to 1,
 -- all represented).
-#guard Core.validInventory fullCaseInventory
+example : Core.Case.IsValidInventory fullCaseInventory := by decide
 
 end Fragments.Basque.Agreement

@@ -1,13 +1,17 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Fragments.Mandarin.QuestionParticles
+import Linglib.Theories.Semantics.Modality.Kernel
 
 /-!
-# Nandao-Q Empirical Data
-@cite{zheng-2025}
+# Zheng (2025): Nandao-Q Felicity @cite{zheng-2025}
 
-Theory-neutral data on Mandarin *nandao*-question felicity. The core finding
-is that positive evidential bias is **necessary** for nandao-Q felicity, while
-negative epistemic bias is **neither necessary nor sufficient**.
+Mandarin *nandao*-question felicity. Self-contained study file:
+empirical data, the Mandarin Fragment entry, and bridges to the
+Kernel-theoretic felicity predicate `nandaoFelicitous`.
+
+The core finding is that positive evidential bias is **necessary** for
+nandao-Q felicity, while negative epistemic bias is **neither necessary
+nor sufficient**.
 
 ## Key Generalizations
 
@@ -16,9 +20,25 @@ negative epistemic bias is **neither necessary nor sufficient**.
 3. Evidence must be **unexpected** relative to prior information state
 4. Nandao-Qs can function as pure inquiry (no prior belief required)
 
+## Predictions verified
+
+- `fragment_data_evidential`: Fragment entry's evidential bias requirement
+  matches the empirical generalization
+- `fragment_data_epistemic`: Fragment entry correctly does not require
+  epistemic bias
+- `kernel_requires_evidence`: Kernel `nandaoFelicitous` entails
+  `evidenceSupports`
+
+## Known gaps
+
+- No formalization of the unexpectedness requirement in the Kernel theory
 -/
 
-namespace Phenomena.Questions.NandaoQs
+namespace Phenomena.Questions.Studies.Zheng2025
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- §1 — Empirical Data
+-- ════════════════════════════════════════════════════════════════════════════
 
 /-- A nandao-Q felicity datum. -/
 structure NandaoDatum where
@@ -39,7 +59,7 @@ structure NandaoDatum where
   deriving Repr, DecidableEq
 
 -- ════════════════════════════════════════════════════════════════════════════
--- §1 — Rhetorical, Biased, and Pure Inquiry Uses
+-- §1.1 — Rhetorical, Biased, and Pure Inquiry Uses
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- Ex. 1: Rhetorical use. Lee working on Sunday (evidence) contradicts B's
@@ -76,7 +96,7 @@ def pureInquiry : NandaoDatum where
   felicitous := true
 
 -- ════════════════════════════════════════════════════════════════════════════
--- §2 — Epistemic Bias Not Sufficient
+-- §1.2 — Epistemic Bias Not Sufficient
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- Ex. 4a: Epistemic bias without evidence. Speaker believes room is empty
@@ -91,7 +111,7 @@ def epistemicOnly : NandaoDatum where
   felicitous := false
 
 -- ════════════════════════════════════════════════════════════════════════════
--- §3 — Evidence Without Epistemic Bias
+-- §1.3 — Evidence Without Epistemic Bias
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- Ex. 5 ctx 1: Evidence + no belief → felicitous. -/
@@ -125,7 +145,7 @@ def beliefNoEvidence : NandaoDatum where
   felicitous := false
 
 -- ════════════════════════════════════════════════════════════════════════════
--- §4 — Unexpectedness Required
+-- §1.4 — Unexpectedness Required
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- Ex. 6 ctx 1: Unexpected evidence → felicitous. -/
@@ -149,7 +169,7 @@ def expectedEvidence : NandaoDatum where
   felicitous := false
 
 -- ════════════════════════════════════════════════════════════════════════════
--- Dataset and Generalization Theorems
+-- §1.5 — Dataset and Generalization Theorems
 -- ════════════════════════════════════════════════════════════════════════════
 
 def allData : List NandaoDatum :=
@@ -179,4 +199,34 @@ theorem unexpectedness_necessary :
 /-- 9 data points from 6 examples covering 4 conditions. -/
 theorem dataset_size : allData.length = 9 := by native_decide
 
-end Phenomena.Questions.NandaoQs
+-- ════════════════════════════════════════════════════════════════════════════
+-- §2 — Bridges: Fragment ↔ Data, Theory ↔ Data
+-- ════════════════════════════════════════════════════════════════════════════
+
+open Fragments.Mandarin.QuestionParticles (nandao)
+open Semantics.Modality (Kernel Background nandaoFelicitous)
+open Semantics.Attitudes.Intensional (World)
+
+/-- The nandao Fragment entry's evidential bias requirement matches the
+empirical generalization: all felicitous nandao-Qs have evidential bias. -/
+theorem fragment_data_evidential :
+    nandao.requiresEvidentialBias = true ∧
+    (allData.filter (·.felicitous)).all (·.evidentialBias) = true :=
+  ⟨rfl, by native_decide⟩
+
+/-- The nandao Fragment entry correctly does NOT require epistemic bias,
+matching the empirical finding that some felicitous nandao-Qs lack it. -/
+theorem fragment_data_epistemic :
+    nandao.requiresEpistemicBias = false ∧
+    (allData.filter (λ d => d.felicitous && !d.epistemicBias)).length > 0 :=
+  ⟨rfl, by native_decide⟩
+
+/-- Kernel `nandaoFelicitous` entails `evidenceSupports`, connecting the
+Theory predicate to the Fragment's `requiresEvidentialBias = true` and
+the empirical generalization `evidential_bias_necessary`. -/
+theorem kernel_requires_evidence (k : Kernel) (u : Background) (φ : (World → Bool))
+    (h : nandaoFelicitous k u φ) :
+    k.evidenceSupports φ :=
+  h.1
+
+end Phenomena.Questions.Studies.Zheng2025

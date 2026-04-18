@@ -40,10 +40,10 @@ namespace Semantics.Attitudes.CDistributivity
 -- Basic Types
 
 /-- A Hamblin question denotation: set of possible answers -/
-abbrev QuestionDen (W : Type*) := List (BProp W)
+abbrev QuestionDen (W : Type*) := List ((W → Bool))
 
 /-- Preference/attitude degree function -/
-abbrev DegreeFn (W E : Type*) := E → BProp W → ℚ
+abbrev DegreeFn (W E : Type*) := E → (W → Bool) → ℚ
 
 /-- Contextual threshold function -/
 abbrev ThresholdFn (W : Type*) := QuestionDen W → ℚ
@@ -60,7 +60,7 @@ Formally: V is C-distributive iff
 Where V_p is the propositional semantics and V_Q is the question semantics.
 -/
 def IsCDistributive {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)           -- Propositional semantics
+    (V_prop : E → (W → Bool) → W → Bool)           -- Propositional semantics
     (V_question : E → QuestionDen W → W → Bool)  -- Question semantics
     : Prop :=
   ∀ (x : E) (Q : QuestionDen W) (w : W),
@@ -77,7 +77,7 @@ This is the pattern for hope, fear, expect, wish, etc.
 The degree μ(x, p) measures how strongly x prefers/fears p.
 -/
 def degreeComparisonProp {W E : Type*} (μ : DegreeFn W E) (θ : ThresholdFn W)
-    (C : QuestionDen W) (x : E) (p : BProp W) (_w : W) : Bool :=
+    (C : QuestionDen W) (x : E) (p : (W → Bool)) (_w : W) : Bool :=
   decide (μ x p > θ C)
 
 /--
@@ -153,7 +153,7 @@ Concrete counterexample: question semantics requires global uncertainty
 even when V_prop holds for some answer.
 -/
 theorem exists_nonCDistributive_worry :
-    ∃ (W E : Type) (V_prop : E → BProp W → W → Bool)
+    ∃ (W E : Type) (V_prop : E → (W → Bool) → W → Bool)
                    (V_question : E → QuestionDen W → W → Bool),
     ¬IsCDistributive V_prop V_question := by
   -- Use Bool as a 2-element world/entity type
@@ -170,7 +170,7 @@ Same construction: relevance-based question semantics is not reducible
 to existential quantification over propositional semantics.
 -/
 theorem exists_nonCDistributive_care :
-    ∃ (W E : Type) (V_prop : E → BProp W → W → Bool)
+    ∃ (W E : Type) (V_prop : E → (W → Bool) → W → Bool)
                    (V_question : E → QuestionDen W → W → Bool),
     ¬IsCDistributive V_prop V_question := by
   exact exists_nonCDistributive_worry
@@ -213,7 +213,7 @@ A predicate is "degree-comparison-like" if its question semantics
 is defined as existential quantification over propositional semantics.
 -/
 def isDegreeComparisonLike {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool) : Prop :=
   ∀ x Q w, V_question x Q w = Q.any (λ p => V_prop x p w)
 
@@ -221,7 +221,7 @@ def isDegreeComparisonLike {W E : Type*}
 Degree-comparison-like predicates are automatically C-distributive.
 -/
 theorem degreeComparisonLike_implies_cDistributive {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool)
     (h : isDegreeComparisonLike V_prop V_question) :
     IsCDistributive V_prop V_question := by

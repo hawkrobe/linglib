@@ -1,4 +1,4 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
 import Linglib.Theories.Syntax.Case.Dependent
 import Linglib.Theories.Syntax.Minimalism.Core.LateMerger
 
@@ -103,8 +103,8 @@ inductive BinderRole where
     via postpositions like *deer* 'on'), creating a Blake hierarchy gap
     at rank 3 between DAT (rank 4) and ABL/INST (rank 2). This is a
     known counterexample to strict hierarchy contiguity. -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .abl, .inst, .com]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .abl, .inst, .com}
 
 /-- Mongolian is an accusative language. -/
 def mongolianLangType : CaseLanguageType := .accusative

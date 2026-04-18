@@ -1,5 +1,5 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Czech Case Inventory
 @cite{blake-1994}
@@ -13,10 +13,10 @@ Blake's main hierarchy; the 6-case core is perfectly contiguous.
 namespace Fragments.Czech.Case
 
 /-- Czech 6-case core inventory (excluding VOC). -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .loc, .inst]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .loc, .inst}
 
 -- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 3, 2).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Czech.Case

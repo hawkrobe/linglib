@@ -165,21 +165,21 @@ formalized in `Expressives/Basic.lean`. -/
 
 /-- [FoC] is use-conditional: at-issue content is unchanged.
     Grounded in TwoDimProp from Expressives/Basic.lean. -/
-def focAsTwoDim (atIssue : BProp W) (contrastPresup : BProp W) : TwoDimProp W :=
+def focAsTwoDim (atIssue : (W → Bool)) (contrastPresup : (W → Bool)) : TwoDimProp W :=
   TwoDimProp.withCI atIssue contrastPresup
 
 /-- [G] is use-conditional: at-issue content is unchanged.
     [G] resembles discourse particles (German "ja", "doch") — it places a
     condition on context salience without affecting truth conditions. -/
-def gAsTwoDim (atIssue : BProp W) (givennessPresup : BProp W) : TwoDimProp W :=
+def gAsTwoDim (atIssue : (W → Bool)) (givennessPresup : (W → Bool)) : TwoDimProp W :=
   TwoDimProp.withCI atIssue givennessPresup
 
 /-- [FoC] does not change at-issue content (grounding theorem). -/
-theorem foc_at_issue_unchanged (atIssue contrastPresup : BProp W) :
+theorem foc_at_issue_unchanged (atIssue contrastPresup : (W → Bool)) :
     (focAsTwoDim atIssue contrastPresup).atIssue = atIssue := rfl
 
 /-- [G] does not change at-issue content (grounding theorem). -/
-theorem g_at_issue_unchanged (atIssue givennessPresup : BProp W) :
+theorem g_at_issue_unchanged (atIssue givennessPresup : (W → Bool)) :
     (gAsTwoDim atIssue givennessPresup).atIssue = atIssue := rfl
 
 /-- Both features project their use-conditional content through negation,
@@ -187,12 +187,12 @@ theorem g_at_issue_unchanged (atIssue givennessPresup : BProp W) :
 
     "It's not the case that [ELIZA]_{FoC} mailed the caramels" still
     contrasts Eliza with alternatives. -/
-theorem foc_projects_through_neg (atIssue contrastPresup : BProp W) :
+theorem foc_projects_through_neg (atIssue contrastPresup : (W → Bool)) :
     (TwoDimProp.neg (focAsTwoDim atIssue contrastPresup)).ci
     = (focAsTwoDim atIssue contrastPresup).ci :=
   TwoDimProp.ci_projects_through_neg _
 
-theorem g_projects_through_neg (atIssue givennessPresup : BProp W) :
+theorem g_projects_through_neg (atIssue givennessPresup : (W → Bool)) :
     (TwoDimProp.neg (gAsTwoDim atIssue givennessPresup)).ci
     = (gAsTwoDim atIssue givennessPresup).ci :=
   TwoDimProp.ci_projects_through_neg _
@@ -279,7 +279,7 @@ indirectly via a second occurrence of 𝔠. -/
 /-- Semantics of *only* with explicit contrast set (K&S 56).
     Takes a contrast set 𝔠 and a prejacent proposition p.
     True at w iff every true member of 𝔠 equals p. -/
-def onlySemantics (contrastSet : List (BProp W)) (prejacent : BProp W)
+def onlySemantics (contrastSet : List ((W → Bool))) (prejacent : (W → Bool))
     (w : W) : Bool :=
   contrastSet.all (λ q => !q w || (q w == prejacent w))
 

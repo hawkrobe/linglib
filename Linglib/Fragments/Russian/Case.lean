@@ -1,5 +1,5 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Russian Case Inventory @cite{blake-1994}
 
@@ -17,10 +17,10 @@ cases (NOM=D, ACC=V, GEN=N, DAT=P), see
 namespace Fragments.Russian.Case
 
 /-- Russian 6-case inventory. -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .inst, .loc]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .inst, .loc}
 
 -- Contiguous on Blake's hierarchy (ranks 6, 6, 5, 4, 2, 3).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 end Fragments.Russian.Case

@@ -35,13 +35,13 @@ Mood operators have dynamic counterparts here:
 -/
 
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
-import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Theories.Semantics.Mood.Basic
 
 namespace Semantics.Dynamic.IntensionalCDRT.Situations
 
 open Core.Time
-open Semantics.Tense.BranchingTime
+open Core.Modality.HistoricalAlternatives
 open Semantics.Dynamic.IntensionalCDRT
 open Semantics.Dynamic.Core
 open Semantics.Mood

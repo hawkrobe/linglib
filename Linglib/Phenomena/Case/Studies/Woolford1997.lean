@@ -1,4 +1,5 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 import Linglib.Theories.Syntax.Case.Dependent
 
 /-!
@@ -482,16 +483,16 @@ def WCase.toCore : WCase → Core.Case
 /-- Nez Perce structural case inventory (NOM + ACC/OBJ + ERG).
     Under Blake's hierarchy, these are all core cases (rank 6)
     plus DAT (rank 4), with GEN (rank 5) between. -/
-def npInventory : List Core.Case := [.nom, .acc, .erg]
+def npInventory : Finset Core.Case := {.nom, .acc, .erg}
 
 /-- The core-case subset is valid per Blake's hierarchy
     (all at rank 6, no gaps). -/
-theorem np_core_valid : Core.validInventory npInventory = true := by native_decide
+theorem np_core_valid : Core.Case.IsValidInventory npInventory := by decide
 
 /-- Full inventory including DAT requires GEN for contiguity. -/
-def npFullInventory : List Core.Case := [.nom, .acc, .erg, .gen, .dat]
+def npFullInventory : Finset Core.Case := {.nom, .acc, .erg, .gen, .dat}
 
-theorem np_full_valid : Core.validInventory npFullInventory = true := by native_decide
+theorem np_full_valid : Core.Case.IsValidInventory npFullInventory := by decide
 
 -- ============================================================================
 -- § 14: Bridge to Dependent Case Theory

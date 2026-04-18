@@ -1,4 +1,5 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 open Interfaces.Morphosyntax.CaseContainment
 
@@ -19,11 +20,11 @@ WALS Ch. 52).
 namespace Fragments.Tamil.Case
 
 /-- Tamil 7-case core inventory (excluding VOC). -/
-def caseInventory : List Core.Case :=
-  [.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com]
+def caseInventory : Finset Core.Case :=
+  {.nom, .acc, .gen, .dat, .loc, .abl, .inst, .com}
 
 -- Contiguous on Blake's hierarchy (ranks 6 down to 1).
-#guard Core.validInventory caseInventory
+example : Core.Case.IsValidInventory caseInventory := by decide
 
 /-- Tamil COM/INST syncretism (-ōṭu covers both functions).
     Uses the cross-linguistic pattern from `Core.Case.Syncretism`. -/

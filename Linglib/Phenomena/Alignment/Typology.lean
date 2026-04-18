@@ -1,5 +1,7 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.FeatureBundle
+import Linglib.Core.Case.Split
 import Linglib.Core.Prominence
 import Linglib.Core.WALS.Features.F98A
 import Linglib.Core.WALS.Features.F99A
@@ -1211,9 +1213,9 @@ theorem dargwa_alignment_family_bridge :
 /-- Japanese: Fragment case inventory contains NOM and ACC →
     Typology says accusative NP alignment. -/
 theorem japanese_fragment_bridge :
-    Fragments.Japanese.Case.caseInventory.any (· == .nom) = true ∧
-    Fragments.Japanese.Case.caseInventory.any (· == .acc) = true ∧
-    japanese.npAlignment = .accusative := ⟨by native_decide, by native_decide, rfl⟩
+    Core.Case.nom ∈ Fragments.Japanese.Case.caseInventory ∧
+    Core.Case.acc ∈ Fragments.Japanese.Case.caseInventory ∧
+    japanese.npAlignment = .accusative := ⟨by decide, by decide, rfl⟩
 
 /-- Hindi: Fragment split-ergative system perfective→ERG matches
     Typology's ergative NP alignment (the dominant/WALS-coded pattern). -/

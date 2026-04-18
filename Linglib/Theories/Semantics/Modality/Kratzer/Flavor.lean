@@ -184,24 +184,23 @@ provide `World`-instantiated bridges. -/
 section ModalTheoryBridge
 
 open Semantics.Attitudes.Intensional (World allWorlds)
-open Semantics.Modality (ModalTheory ModalForce Proposition allWorlds')
+open Semantics.Modality (ModalTheory ModalForce)
 
-/-- Wrap `KratzerParams World` as a `ModalTheory` (Bool-valued evaluation).
+/-- Wrap `KratzerParams World` as a `ModalTheory` (Prop-valued evaluation).
     Forces: necessity/weakNecessity use □, possibility uses ◇. -/
 def KratzerTheory (params : KratzerParams World) : ModalTheory where
   name := "Kratzer"
   citation := "Kratzer (1981)"
   eval := fun force p w =>
     match force with
-    | .necessity | .weakNecessity =>
-      decide (Kratzer.necessity params.base params.ordering (fun w' => p w' = true) w)
-    | .possibility =>
-      decide (Kratzer.possibility params.base params.ordering (fun w' => p w' = true) w)
+    | .necessity | .weakNecessity => Kratzer.necessity params.base params.ordering p w
+    | .possibility => Kratzer.possibility params.base params.ordering p w
+  decEval := fun force p _ w => by cases force <;> · unfold Kratzer.necessity Kratzer.possibility <;> infer_instance
 
 /-- `KratzerTheory` evaluates weak necessity with the same quantifier as necessity.
-    For proper von Fintel & Iatridou (2008) weak necessity, use
+    For proper @cite{vonfintel-iatridou-2008} weak necessity, use
     `Directive.weakNecessity`. -/
-theorem kratzerTheory_weakNec_eq_nec (params : KratzerParams World) (p : Proposition) (w : World) :
+theorem kratzerTheory_weakNec_eq_nec (params : KratzerParams World) (p : World → Prop) (w : World) :
     (KratzerTheory params).eval .weakNecessity p w =
     (KratzerTheory params).eval .necessity p w := rfl
 
@@ -209,13 +208,12 @@ theorem kratzerTheory_weakNec_eq_nec (params : KratzerParams World) (p : Proposi
 def KratzerMinimal : ModalTheory := KratzerTheory minimalParams
 
 /-- Duality holds for every `KratzerTheory` instantiation. -/
-theorem kratzerTheory_duality (params : KratzerParams World) (p : Proposition) (w : World) :
-    (KratzerTheory params).dualityHolds p w = true := by
-  unfold ModalTheory.dualityHolds KratzerTheory ModalTheory.necessity ModalTheory.possibility
-  have hp : (fun w' => ¬ p w' = true) = (fun w' => (!p w') = true) := by
-    funext w'; cases p w' <;> simp
-  simp only [Kratzer.duality params.base params.ordering (fun w' => p w' = true) w,
-    decide_not, hp, beq_self_eq_true]
+theorem kratzerTheory_duality (params : KratzerParams World) (p : World → Prop) (w : World) :
+    (KratzerTheory params).dualityHolds p w := by
+  show (KratzerTheory params).necessity p w ↔ ¬ (KratzerTheory params).possibility _ w
+  unfold ModalTheory.necessity ModalTheory.possibility KratzerTheory
+    Kratzer.necessity Kratzer.possibility
+  exact iff_of_eq (Core.IntensionalLogic.RestrictedModality.boxR_neg_diamondR _ p w)
 
 theorem kratzer_isNormal (params : KratzerParams World) : (KratzerTheory params).isNormal :=
   fun p w => kratzerTheory_duality params p w

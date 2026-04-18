@@ -52,7 +52,6 @@ The two universal pragmatic postulates from the Appendix
 namespace Stalnaker1975
 
 open Core.Mood (GramMood)
-open Core.Proposition (BProp)
 open Core.CommonGround (ContextSet)
 open Semantics.Conditionals
 open Pragmatics.Assertion.ReasonableInference
@@ -78,7 +77,7 @@ asserting `A or B` requires both `¬A∧B` and `A∧¬B` to be open in the prior
 context — is what guarantees `h_open_notA` after the update. -/
 theorem direct_argument_reasonable {W : Type*}
     (s : SelectionFunction W) (C : ContextSet W)
-    (notA B AorB : BProp W)
+    (notA B AorB : (W → Bool))
     (h_constraint : pragmaticConstraint s C)
     (h_C_AorB : ∀ w, C w → AorB w = true)
     (h_AorB_decomp : ∀ w, AorB w = true → notA w = true → B w = true)
@@ -102,7 +101,7 @@ disjunction-appropriateness condition guarantees: the pragmatic constraint
 holds, and `¬A` remains open after the update. -/
 theorem direct_argument_reasonableInference {W : Type*}
     (s : SelectionFunction W)
-    (notA B AorB : BProp W)
+    (notA B AorB : (W → Bool))
     (h_AorB_decomp : ∀ w, AorB w = true → notA w = true → B w = true)
     (𝒜 : Appropriateness W)
     (h_𝒜 : ∀ k, 𝒜 AorB k →
@@ -127,10 +126,10 @@ inductive Suspect where
   deriving DecidableEq, Repr
 
 abbrev W3 := Suspect
-def A3 : BProp W3 := λ s => s == .butler
-def B3 : BProp W3 := λ s => s == .gardener
-def AorB3 : BProp W3 := λ s => A3 s || B3 s
-def notA3 : BProp W3 := λ s => !A3 s
+def A3 : (W3 → Bool) := λ s => s == .butler
+def B3 : (W3 → Bool) := λ s => s == .gardener
+def AorB3 : (W3 → Bool) := λ s => A3 s || B3 s
+def notA3 : (W3 → Bool) := λ s => !A3 s
 
 open Classical in
 /-- A "subjunctive" selection function on `W3` that, for any nonempty

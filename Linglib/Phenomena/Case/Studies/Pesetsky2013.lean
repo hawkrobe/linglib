@@ -1,4 +1,4 @@
-import Linglib.Core.Case
+import Linglib.Core.Case.Basic
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 import Linglib.Fragments.Russian.Case
 import Linglib.Fragments.Russian.Gender
@@ -339,7 +339,7 @@ def pesetskyCore : List Core.Case :=
   [POSCat.D, POSCat.V, POSCat.N, POSCat.P].map POSCat.toCase
 
 theorem pesetskyCore_subset_russian_inventory :
-    pesetskyCore.all (· ∈ Fragments.Russian.Case.caseInventory) = true := by decide
+    ∀ c ∈ pesetskyCore, c ∈ Fragments.Russian.Case.caseInventory := by decide
 
 theorem inst_loc_outside_pesetsky :
     Core.Case.inst ∉ pesetskyCore ∧ Core.Case.loc ∉ pesetskyCore := by
@@ -353,9 +353,9 @@ theorem inst_loc_outside_pesetsky :
     added first; D may be added later). The two views are
     consistent under the inversion. -/
 theorem caha_containment_inverts_pesetsky :
-    Interfaces.Morphosyntax.CaseContainment.containmentRank Core.Case.nom = some 0 ∧
-    Interfaces.Morphosyntax.CaseContainment.containmentRank Core.Case.acc = some 1 ∧
-    Interfaces.Morphosyntax.CaseContainment.containmentRank Core.Case.gen = some 2 := by
+    Core.Case.containmentRank Core.Case.nom = some 0 ∧
+    Core.Case.containmentRank Core.Case.acc = some 1 ∧
+    Core.Case.containmentRank Core.Case.gen = some 2 := by
   refine ⟨?_, ?_, ?_⟩ <;> rfl
 
 /-- Pesetsky's feminizing analysis of *vrač* 'doctor' (Ch. 5) interacts

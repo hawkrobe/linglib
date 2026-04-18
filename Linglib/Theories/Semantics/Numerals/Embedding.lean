@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Numerals.Basic
 
 /-!
 # Numeral Embedding Semantics
@@ -26,7 +26,7 @@ sharply in embedded environments. All embedding functions are parameterized by
 
 -/
 
-namespace Semantics.Quantification.Numerals
+namespace Semantics.Numerals
 
 -- ============================================================================
 -- Section 1: BareNumeral Successor (for EXH alternatives)
@@ -525,4 +525,4 @@ theorem divergence_point_count :
     (embeddingDivergences.filter EmbeddingPrediction.diverges).length = 8 := by
   native_decide
 
-end Semantics.Quantification.Numerals
+end Semantics.Numerals

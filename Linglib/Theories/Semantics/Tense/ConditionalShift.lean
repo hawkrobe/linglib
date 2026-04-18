@@ -1,5 +1,5 @@
 import Linglib.Core.Context.Rich
-import Linglib.Theories.Semantics.Tense.BranchingTime
+import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Theories.Semantics.Mood.Basic
 
 /-!
@@ -35,7 +35,7 @@ namespace Semantics.Tense.ConditionalShift
 open Core.Time
 open Core.Context (RichContext KContext ContextTower ContextShift
   hpShift DomainExpanding)
-open Semantics.Tense.BranchingTime
+open Core.Modality.HistoricalAlternatives
 open Semantics.Mood
 
 -- ════════════════════════════════════════════════════════════════
@@ -146,7 +146,7 @@ variable {W : Type*}
     @cite{kratzer-1986}: if-clauses restrict the modal domain rather than
     functioning as binary connectives. This is the Prop-level counterpart
     of `Semantics.Conditionals.Restrictor.conditionalNecessity` (which
-    operates over finite `BProp World` for computation).
+    operates over finite `(World → Bool)` for computation).
 
     Both X-marking and O-marking strategies for Anderson conditionals work
     by expanding D to D⁺ ⊃ D, making this quantification non-trivial. -/

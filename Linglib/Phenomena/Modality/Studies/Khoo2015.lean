@@ -125,7 +125,7 @@ open Semantics.Dynamic.NeoStalnakerian in
     This matches Khoo's finding: speakers reject the might-claim without
     judging it false. -/
 theorem nsf_predicts_khoo_pattern
-    {W : Type*} (p : BProp W) (smith beth : List W)
+    {W : Type*} (p : (W → Bool)) (smith beth : List W)
     (h_smith : smith.any p = true)
     (h_beth : beth.any p = false) :
     MI (mightSimple p) smith ∧ rejectionLicensed (mightSimple p) beth :=

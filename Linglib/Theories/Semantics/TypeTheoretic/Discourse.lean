@@ -151,38 +151,38 @@ def InfoState.pushAgenda {SignT CommT : Type}
 
 /-! ## Bridge to Core.CommonGround -/
 
-/-- Bridge: a BProp-based information state's commitments form a CG. -/
+/-- Bridge: a `W → Bool`-based information state's commitments form a CG. -/
 def InfoState.toCG {W SignT : Type}
-    (s : InfoState SignT (List (Core.Proposition.BProp W))) :
+    (s : InfoState SignT (List ((W → Bool)))) :
     Core.CommonGround.CG W where
   propositions := s.commitments
 
-/-- InfoState with BProp commitments projects to a context set via CG. -/
+/-- InfoState with (commitments → Bool) projects to a context set via CG. -/
 instance {W SignT : Type} :
     Core.CommonGround.HasContextSet
-      (InfoState SignT (List (Core.Proposition.BProp W))) W where
+      (InfoState SignT (List ((W → Bool)))) W where
   toContextSet s := s.toCG.contextSet
 
 /-- Bridge theorem: initial state maps to empty common ground. -/
 theorem infoState_initial_eq_empty_cg (W SignT : Type) :
     (InfoState.initial (SignT := SignT)
-      ([] : List (Core.Proposition.BProp W))).toCG =
+      ([] : List ((W → Bool)))).toCG =
     Core.CommonGround.CG.empty := rfl
 
 /-- Bridge: integrating a commitment = adding to common ground. -/
 theorem integrate_comm_eq_cg_add {W SignT : Type}
-    (s : InfoState SignT (List (Core.Proposition.BProp W)))
-    (utt : SignT) (p : Core.Proposition.BProp W) :
+    (s : InfoState SignT (List ((W → Bool))))
+    (utt : SignT) (p : (W → Bool)) :
     (s.integrate utt (p :: s.commitments)).toCG = s.toCG.add p := rfl
 
 /-! ## Bridge to Semantics.Dynamic.Core.InfoState -/
 
 /-- TTR's InfoState tracks discourse state via agenda/commitments.
 Semantics.Dynamic.Core.InfoState tracks possibilities (world + assignment).
-Bridge: a TTR InfoState with BProp commitments induces a Core InfoState
+Bridge: a TTR InfoState with (commitments → Bool) induces a Core InfoState
 by filtering possibilities that satisfy all commitments. -/
 def InfoState.toCoreInfoState {W E SignT : Type}
-    (s : InfoState SignT (List (Core.Proposition.BProp W))) :
+    (s : InfoState SignT (List ((W → Bool)))) :
     Set (_root_.Semantics.Dynamic.Core.Possibility W E) :=
   { p | s.commitments.Forall (· p.world) }
 
@@ -277,8 +277,8 @@ theorem Parametric.trivial_fg {Content : Type*} (c : Content) (u : Unit) :
 
 /-! ## Bridge: Parametric ↔ PrProp (presupposition/assertion) -/
 
-/-- Convert a Parametric (BProp W) to a PrProp. -/
-def Parametric.toPrProp {W : Type*} (p : Parametric (Core.Proposition.BProp W))
+/-- Convert a Parametric ((W → Bool)) to a PrProp. -/
+def Parametric.toPrProp {W : Type*} (p : Parametric ((W → Bool)))
     (presupTest : W → Bool) (bgWitness : (w : W) → presupTest w = true → p.Bg) :
     Core.Presupposition.PrProp W where
   presup := presupTest
@@ -912,7 +912,7 @@ need not hold.
 `CheckableAustinian` separates the situation from the classifying predicate,
 enabling:
 1. Propositions that can be false (sit doesn't satisfy the type)
-2. A bridge to `BProp W` for `HasContextSet` integration
+2. A bridge to `(W → Bool)` for `HasContextSet` integration
 3. DGB FACTS typed as checkable Austinian propositions -/
 
 /-- A checkable Austinian proposition: situation + classifying predicate.
@@ -945,9 +945,9 @@ structure BCheckableAustinian (S : Type) where
 def BCheckableAustinian.isTrue {S : Type} (p : BCheckableAustinian S) : Bool :=
   p.sitType p.sit
 
-/-- Convert a decidable Austinian to a `BProp`: evaluate at each world/situation. -/
+/-- Convert a decidable Austinian to `S → Bool`: evaluate at each world/situation. -/
 def BCheckableAustinian.toBProp {S : Type} (p : BCheckableAustinian S) :
-    Core.Proposition.BProp S :=
+    (S → Bool) :=
   p.sitType
 
 /-- A true Austinian proposition's `toBProp` holds at its situation. -/

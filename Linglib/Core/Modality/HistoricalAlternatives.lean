@@ -2,23 +2,39 @@ import Linglib.Core.Temporal.Time
 import Linglib.Theories.Semantics.Modality.TemporalConstraint
 
 /-!
-# Branching Time and Temporal Propositions
-@cite{condoravdi-2002} @cite{thomason-1984}
+# Historical Alternatives
+@cite{condoravdi-2002} @cite{thomason-1984} @cite{cariani-santorio-2018}
 
-Theory-specific temporal infrastructure that commits to truth-conditional
-evaluation at situation indices.
-
-The framework-agnostic layer (intervals, situations, temporal relations,
-Reichenbach frames) lives in `Core.Time` and `Core.Reichenbach`.
+Framework-agnostic relational structure on worlds: the **historical
+alternatives** of a world at a time are the worlds that perfectly match
+it in matters of particular fact up to that time
+(@cite{lewis-1979}, @cite{cariani-santorio-2018}). This is the substrate
+of the historical modal base used by metaphysical and future-oriented
+modality.
 
 ## Key Concepts
 
-1. **Historical modal base** for future branching
-2. **Temporal propositions** evaluated at situations
+1. **World history function** — the relation between a ⟨world, time⟩
+   point and the worlds that share its history up to that time.
+2. **Historical/actual/future bases** — the three temporal slices of
+   the historical modal base, indexed by time predicates from
+   `Theories/Semantics/Modality/TemporalConstraint`.
+3. **Historical equivalence** — the equivalence relation `≃_t` of
+   @cite{condoravdi-2002} §4.1.
+4. **Metaphysical modal base** — the equivalence class of the
+   evaluation world under `≃_t`.
 
+## What's not here
+
+This file is foundational: it commits to no specific modal theory
+(Kratzer, Stalnaker selection, etc.). It defines the relational
+substrate that any modal theory referring to "historical
+alternatives" can use. The selectional semantics for *will*
+(@cite{cariani-santorio-2018}) lives in
+`Theories/Semantics/Modality/Selectional.lean`.
 -/
 
-namespace Semantics.Tense.BranchingTime
+namespace Core.Modality.HistoricalAlternatives
 
 open _root_.Core.Time
 
@@ -422,4 +438,4 @@ theorem diverse_of_witnesses
     diverse MB cg t P :=
   ⟨w, hwcg, w', hw', w'', hw'', hP, hnP⟩
 
-end Semantics.Tense.BranchingTime
+end Core.Modality.HistoricalAlternatives

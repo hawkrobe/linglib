@@ -53,7 +53,7 @@ open DTS.But
 The key innovation: "even" marks B as the *more informative* conjunct,
 not merely "surprising" or "unexpected." -/
 def evenFelicitous {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (a b : BProp W) : Prop :=
+    (ctx : DTSContext W) (a b : (W → Bool)) : Prop :=
   posRelevant ctx a ∧ posRelevant ctx b ∧
   bayesFactor ctx b > bayesFactor ctx a ∧
   ctx.issue.topic ≠ b
@@ -71,7 +71,7 @@ variable {W : Type*} [Fintype W]
 "A but even(B)" is never felicitous: `butFelicitous` requires B to be
 negatively relevant (BF < 1), while `evenFelicitous` requires B to be
 positively relevant (BF > 1). These are contradictory. -/
-theorem but_even_incompatible (ctx : DTSContext W) (a b : BProp W) :
+theorem but_even_incompatible (ctx : DTSContext W) (a b : (W → Bool)) :
     butFelicitous ctx a b → ¬ evenFelicitous ctx a b := by
   intro ⟨_, hNegB, _⟩ ⟨_, hPosB, _, _⟩
   simp only [negRelevant, posRelevant] at hNegB hPosB

@@ -115,7 +115,7 @@ state the schema over an arbitrary alternative set. The variant restricted
 to true answers is `IsKarttunenReducibleTrueAnswers` below.
 -/
 def IsKarttunenReducible {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool) : Prop :=
   ∀ (x : E) (Q : QuestionDen W) (w : W),
     V_question x Q w = true ↔ ∀ p ∈ Q, V_prop x p w = true
@@ -125,7 +125,7 @@ The variant restricting `Q` to true answers in `w`, faithful to
 @cite{karttunen-1977}'s original eq. (8).
 -/
 def IsKarttunenReducibleTrueAnswers {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool) : Prop :=
   ∀ (x : E) (Q : QuestionDen W) (w : W),
     V_question x Q w = true ↔ ∀ p ∈ Q, p w = true → V_prop x p w = true
@@ -136,7 +136,7 @@ A Karttunen-reducible predicate, true on a non-empty `Q`, has a witness in
 an existential witness as a corollary.
 -/
 theorem karttunen_implies_witness_nonempty {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool)
     (hKR : IsKarttunenReducible V_prop V_question)
     (x : E) (Q : QuestionDen W) (w : W) (hNE : Q ≠ [])
@@ -162,10 +162,10 @@ F.Denot (Ty.prop ⇒ Ty.t)`, which gives the *characteristic function*
 `λq. (p = q)` of the singleton `{p}`. Both encode the same object: a
 singleton question denotation built from a proposition.
 -/
-def idQ {W : Type*} (p : BProp W) : QuestionDen W := [p]
+def idQ {W : Type*} (p : (W → Bool)) : QuestionDen W := [p]
 
 /-- `idQ p` membership is identity with `p`. -/
-@[simp] theorem mem_idQ {W : Type*} (p q : BProp W) :
+@[simp] theorem mem_idQ {W : Type*} (p q : (W → Bool)) :
     q ∈ idQ p ↔ q = p := by
   simp [idQ]
 
@@ -177,10 +177,10 @@ of @cite{partee-1987}'s `propIdent`: membership in `idQ p` coincides with
 `idQ p = [p]` is the list realisation.
 
 The two live in different type setups (`F.Denot` for `propIdent` versus
-`BProp W` here), so we cannot make them definitionally equal, but they are
+`(W → Bool)` here), so we cannot make them definitionally equal, but they are
 extensionally the same singleton.
 -/
-theorem idQ_realizes_propIdent {W : Type*} (p q : BProp W) :
+theorem idQ_realizes_propIdent {W : Type*} (p q : (W → Bool)) :
     q ∈ idQ p ↔ p = q := by
   rw [mem_idQ]; exact eq_comm
 
@@ -197,10 +197,10 @@ This is the formal expression of "propositional embedding is question
 embedding via ID" — the (→) half of the proposition-to-question architecture.
 -/
 theorem cDist_agrees_on_idQ {W E : Type*}
-    (V_prop : E → BProp W → W → Bool)
+    (V_prop : E → (W → Bool) → W → Bool)
     (V_question : E → QuestionDen W → W → Bool)
     (hCD : IsCDistributive V_prop V_question)
-    (x : E) (p : BProp W) (w : W) :
+    (x : E) (p : (W → Bool)) (w : W) :
     V_question x (idQ p) w = V_prop x p w := by
   cases hVp : V_prop x p w
   · cases hVq : V_question x (idQ p) w
@@ -223,7 +223,7 @@ embeds under `believe` for the belief presupposition of `care`. For a polar
 question `Q = [p, ¬p]`, `disjOf Q` is the tautology `⊤` — which is what
 makes the polar reading licit (see `disjOf_polar_eq_top` below).
 -/
-def disjOf {W : Type*} (Q : QuestionDen W) : BProp W :=
+def disjOf {W : Type*} (Q : QuestionDen W) : (W → Bool) :=
   fun w => Q.any (fun p => p w)
 
 /-- The existence presupposition: some alternative in `Q` is true at `w`. -/
@@ -232,7 +232,7 @@ def existsTrueAnswer {W : Type*} (Q : QuestionDen W) (w : W) : Bool :=
 
 /-- `disjOf` of a singleton is the proposition itself. Enables singleton
 elimination in proofs about Elliott's `care`. -/
-@[simp] theorem disjOf_singleton {W : Type*} (p : BProp W) :
+@[simp] theorem disjOf_singleton {W : Type*} (p : (W → Bool)) :
     disjOf [p] = p := by
   funext w; simp [disjOf]
 
@@ -272,7 +272,7 @@ def elliottCareLex {W E : Type*}
     (dox : E → W → DoxState W)
     (bou : E → W → BouState W)
     (doxSupports : DoxState W → QuestionDen W → Bool)
-    (settled : BouState W → BProp W → Bool)
+    (settled : BouState W → (W → Bool) → Bool)
     : E → QuestionDen W → W → Bool :=
   fun x Q w =>
     existsTrueAnswer Q w &&
@@ -288,14 +288,14 @@ needed — the equality holds by `rfl`.
     (dox : E → W → DoxState W)
     (bou : E → W → BouState W)
     (doxSupports : DoxState W → QuestionDen W → Bool)
-    (settled : BouState W → BProp W → Bool)
+    (settled : BouState W → (W → Bool) → Bool)
     (x : E) (Q : QuestionDen W) (w : W) :
     elliottCareLex dox bou doxSupports settled x Q w =
       (existsTrueAnswer Q w && careSem dox bou doxSupports settled x Q w) :=
   rfl
 
 /-- For polar questions, `disjOf [p, ¬p] = ⊤`. -/
-theorem disjOf_polar_eq_top {W : Type*} (p : BProp W) :
+theorem disjOf_polar_eq_top {W : Type*} (p : (W → Bool)) :
     disjOf [p, Core.Proposition.Decidable.pnot W p] = (fun _ => true) := by
   funext w
   simp only [disjOf, List.any_cons, List.any_nil, Bool.or_false,
@@ -303,7 +303,7 @@ theorem disjOf_polar_eq_top {W : Type*} (p : BProp W) :
   cases p w <;> rfl
 
 /-- For polar questions, the existence presupposition is trivially satisfied. -/
-theorem existsTrueAnswer_polar {W : Type*} (p : BProp W) (w : W) :
+theorem existsTrueAnswer_polar {W : Type*} (p : (W → Bool)) (w : W) :
     existsTrueAnswer [p, Core.Proposition.Decidable.pnot W p] w = true := by
   simp only [existsTrueAnswer, List.any_cons, List.any_nil, Bool.or_false,
              Core.Proposition.Decidable.pnot]
@@ -320,9 +320,9 @@ all hold. The first two encode the existence + belief presuppositions of (4b)
 ("Mary cares that John left" presupposes John left and Mary believes it).
 -/
 def careDec {W E : Type*}
-    (bel : E → BProp W → W → Bool)
-    (relevance_dec : E → BProp W → W → Bool) :
-    E → BProp W → W → Bool :=
+    (bel : E → (W → Bool) → W → Bool)
+    (relevance_dec : E → (W → Bool) → W → Bool) :
+    E → (W → Bool) → W → Bool :=
   fun x p w => p w && bel x p w && relevance_dec x p w
 
 /--
@@ -332,8 +332,8 @@ The presupposition of `careDec(p)(x)` projects through `∀p ∈ Q` to give
 `∀p ∈ Q. Bel(x, p)` — per-alternative belief.
 -/
 def karttunenCareInt {W E : Type*}
-    (bel : E → BProp W → W → Bool)
-    (relevance_dec : E → BProp W → W → Bool) :
+    (bel : E → (W → Bool) → W → Bool)
+    (relevance_dec : E → (W → Bool) → W → Bool) :
     E → QuestionDen W → W → Bool :=
   fun x Q w => Q.all (fun p => careDec bel relevance_dec x p w)
 
@@ -350,9 +350,9 @@ contradicting the empirical felicity of (4a) "Mary cares whether Sue is
 sick".
 -/
 theorem karttunen_polar_requires_inconsistent_belief {W E : Type*}
-    (bel : E → BProp W → W → Bool)
-    (relevance_dec : E → BProp W → W → Bool)
-    (x : E) (p : BProp W) (w : W)
+    (bel : E → (W → Bool) → W → Bool)
+    (relevance_dec : E → (W → Bool) → W → Bool)
+    (x : E) (p : (W → Bool)) (w : W)
     (hConsistent :
         ¬ (bel x p w = true ∧ bel x (Core.Proposition.Decidable.pnot W p) w = true)) :
     karttunenCareInt bel relevance_dec x [p, Core.Proposition.Decidable.pnot W p] w
@@ -382,8 +382,8 @@ theorem elliott_polar_is_licit {W E : Type*}
     (dox : E → W → DoxState W)
     (bou : E → W → BouState W)
     (doxSupports : DoxState W → QuestionDen W → Bool)
-    (settled : BouState W → BProp W → Bool)
-    (x : E) (p : BProp W) (w : W)
+    (settled : BouState W → (W → Bool) → Bool)
+    (x : E) (p : (W → Bool)) (w : W)
     (hCare : careSem dox bou doxSupports settled x
                 [p, Core.Proposition.Decidable.pnot W p] w = true) :
     elliottCareLex dox bou doxSupports settled x
@@ -407,13 +407,13 @@ This is the formal expression of @cite{elliott-etal-2017}'s decisive
 empirical argument from Section 2.
 -/
 theorem elliott_and_karttunen_disagree_on_polar {W E : Type*}
-    (bel : E → BProp W → W → Bool)
-    (relevance_dec : E → BProp W → W → Bool)
+    (bel : E → (W → Bool) → W → Bool)
+    (relevance_dec : E → (W → Bool) → W → Bool)
     (dox : E → W → DoxState W)
     (bou : E → W → BouState W)
     (doxSupports : DoxState W → QuestionDen W → Bool)
-    (settled : BouState W → BProp W → Bool)
-    (x : E) (p : BProp W) (w : W)
+    (settled : BouState W → (W → Bool) → Bool)
+    (x : E) (p : (W → Bool)) (w : W)
     (hConsistent :
         ¬ (bel x p w = true ∧ bel x (Core.Proposition.Decidable.pnot W p) w = true))
     (hCare : careSem dox bou doxSupports settled x
@@ -434,8 +434,8 @@ theorem elliott_and_karttunen_disagree_on_polar {W E : Type*}
 Factive. The `p(w)` factor is the factive presupposition.
 -/
 def knowDec {W E : Type*}
-    (know : E → BProp W → W → Bool) :
-    E → BProp W → W → Bool :=
+    (know : E → (W → Bool) → W → Bool) :
+    E → (W → Bool) → W → Bool :=
   fun x p w => p w && know x p w
 
 /--
@@ -444,7 +444,7 @@ Universal closure of `knowDec` over `Q` *restricted to true answers* — this
 is what @cite{karttunen-1977} actually proposed.
 -/
 def knowKarttunen {W E : Type*}
-    (know : E → BProp W → W → Bool) :
+    (know : E → (W → Bool) → W → Bool) :
     E → QuestionDen W → W → Bool :=
   fun x Q w => Q.all (fun p => !p w || (knowDec know x p w))
 
@@ -458,7 +458,7 @@ true answers. This is the proposition-to-question version — primitive on
 questions, but with the same answer-set extraction as Karttunen.
 -/
 def knowUegaki {W E : Type*}
-    (know : E → BProp W → W → Bool) :
+    (know : E → (W → Bool) → W → Bool) :
     E → QuestionDen W → W → Bool :=
   fun x Q w =>
     existsTrueAnswer Q w && Q.all (fun p => !p w || (knowDec know x p w))
@@ -473,7 +473,7 @@ two is precisely the *belief* component of `care`'s presupposition, absent
 in `know`.
 -/
 theorem know_karttunen_agrees_with_uegaki {W E : Type*}
-    (know : E → BProp W → W → Bool)
+    (know : E → (W → Bool) → W → Bool)
     (x : E) (Q : QuestionDen W) (w : W)
     (hExist : existsTrueAnswer Q w = true) :
     knowKarttunen know x Q w = knowUegaki know x Q w := by
@@ -499,11 +499,11 @@ eq. (9). Combined with `care_satisfies_ptoq` it places `care` in the
 (@cite{roelofsen-uegaki-2020}, @cite{uegaki-2022}).
 -/
 theorem care_violates_cDist :
-    ∃ (W E : Type) (V_prop : E → BProp W → W → Bool)
+    ∃ (W E : Type) (V_prop : E → (W → Bool) → W → Bool)
                    (dox : E → W → DoxState W)
                    (bou : E → W → BouState W)
                    (doxSupports : DoxState W → QuestionDen W → Bool)
-                   (settled : BouState W → BProp W → Bool),
+                   (settled : BouState W → (W → Bool) → Bool),
     ¬ IsCDistributive V_prop (careSem dox bou doxSupports settled) := by
   refine ⟨Bool, Unit,
     (fun _ _ _ => true),    -- V_prop: always true
@@ -529,16 +529,16 @@ theorem care_in_ptoq_minus_cdist :
        (dox : E → W → DoxState W)
        (bou : E → W → BouState W)
        (doxSupports : DoxState W → QuestionDen W → Bool)
-       (settled : BouState W → BProp W → Bool),
-       (∀ (s : DoxState W) (p : BProp W) (Q : QuestionDen W),
+       (settled : BouState W → (W → Bool) → Bool),
+       (∀ (s : DoxState W) (p : (W → Bool)) (Q : QuestionDen W),
           doxSupports s [p] = true → p ∈ Q → doxSupports s Q = true) →
        IsPtoQEntailing (careSem dox bou doxSupports settled)) ∧
     -- C-distributivity is violated (witness above)
-    (∃ (W E : Type) (V_prop : E → BProp W → W → Bool)
+    (∃ (W E : Type) (V_prop : E → (W → Bool) → W → Bool)
                     (dox : E → W → DoxState W)
                     (bou : E → W → BouState W)
                     (doxSupports : DoxState W → QuestionDen W → Bool)
-                    (settled : BouState W → BProp W → Bool),
+                    (settled : BouState W → (W → Bool) → Bool),
        ¬ IsCDistributive V_prop (careSem dox bou doxSupports settled)) :=
   ⟨fun dox bou ds settled hMono => care_satisfies_ptoq dox bou ds settled hMono,
    care_violates_cDist⟩
@@ -561,7 +561,7 @@ any declarative meaning by reduction).
 -/
 def IsSemanticallyRogative {W E : Type*}
     (V_question : E → QuestionDen W → W → Bool) : Prop :=
-  ¬ ∃ (V_prop : E → BProp W → W → Bool), IsKarttunenReducible V_prop V_question
+  ¬ ∃ (V_prop : E → (W → Bool) → W → Bool), IsKarttunenReducible V_prop V_question
 
 /--
 **Elliott's `care` is semantically rogative — strong form.** Given a witness
@@ -588,8 +588,8 @@ theorem care_is_semantically_rogative {W E : Type*}
     (dox : E → W → DoxState W)
     (bou : E → W → BouState W)
     (doxSupports : DoxState W → QuestionDen W → Bool)
-    (settled : BouState W → BProp W → Bool)
-    (x : E) (p : BProp W) (w : W)
+    (settled : BouState W → (W → Bool) → Bool)
+    (x : E) (p : (W → Bool)) (w : W)
     (hCare : careSem dox bou doxSupports settled x
                 [p, Core.Proposition.Decidable.pnot W p] w = true) :
     IsSemanticallyRogative (elliottCareLex dox bou doxSupports settled) := by
@@ -714,7 +714,7 @@ example {W E : Type*}
     (dox : E → W → DoxState W)
     (bou : E → W → BouState W)
     (doxSupports : DoxState W → QuestionDen W → Bool)
-    (settled : BouState W → BProp W → Bool) :
+    (settled : BouState W → (W → Bool) → Bool) :
     E → QuestionDen W → W → Bool :=
   careSem dox bou doxSupports settled
 
@@ -748,7 +748,7 @@ namespace Witness
 abbrev Mary : Unit := ()
 
 /-- "Sue is sick" — the proposition true at world `true`, false at `false`. -/
-def isSick : BProp Bool := id
+def isSick : (Bool → Bool) := id
 
 /-- Finite world set for deciding set-containment via `List.all`. -/
 def worlds : List Bool := [true, false]
@@ -769,18 +769,18 @@ def doxSupports : DoxState Bool → QuestionDen Bool → Bool :=
   fun s Q => worlds.all (fun w' => !(s w') || Q.any (fun p => p w'))
 
 /-- Bouletic settlement: `BOU ⊆ p ∨ BOU ∩ p = ∅`, decided over `worlds`. -/
-def settled : BouState Bool → BProp Bool → Bool :=
+def settled : BouState Bool → (Bool → Bool) → Bool :=
   fun b p =>
     worlds.all (fun w' => !(b w') || p w') ||
     worlds.all (fun w' => !(b w') || !(p w'))
 
 /-- The veridical belief operator (used only for the Karttunen side). -/
-def bel : Unit → BProp Bool → Bool → Bool :=
+def bel : Unit → (Bool → Bool) → Bool → Bool :=
   fun _ p w => p w
 
 /-- Declarative-relevance kernel for `careDec` (used only for the Karttunen
 side). -/
-def relevance_dec : Unit → BProp Bool → Bool → Bool :=
+def relevance_dec : Unit → (Bool → Bool) → Bool → Bool :=
   fun _ _ _ => true
 
 /-- The canonical `careSem` core is satisfied on the polar question for

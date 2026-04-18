@@ -1,5 +1,5 @@
-import Linglib.Core.Case
-
+import Linglib.Core.Case.Basic
+import Linglib.Core.Case.Hierarchy
 /-!
 # Icelandic Case Inventory
 @cite{thrainsson-2007}
@@ -16,10 +16,10 @@ namespace Fragments.Icelandic.Case
 open Core
 
 /-- Icelandic 4-case inventory (@cite{thrainsson-2007} §4.1). -/
-def caseInventory : List Case := [.nom, .acc, .gen, .dat]
+def caseInventory : Finset Case := {.nom, .acc, .gen, .dat}
 
-#guard validInventory caseInventory
+example : Case.IsValidInventory caseInventory := by decide
 
-theorem icelandic_has_four_cases : caseInventory.length = 4 := rfl
+theorem icelandic_has_four_cases : caseInventory.card = 4 := by decide
 
 end Fragments.Icelandic.Case

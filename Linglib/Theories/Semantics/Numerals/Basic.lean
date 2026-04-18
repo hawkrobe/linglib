@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Theories.Semantics.Quantification.Numerals.Precision
+import Linglib.Theories.Semantics.Numerals.Precision
 import Linglib.Theories.Semantics.Quantification.Quantifier
 
 /-!
@@ -26,16 +26,23 @@ Modified numerals are theory-independent — everyone agrees "more than 3" means
 5. Class A/B theorems, anti-Horn-scale argument
 6. Theory parameterization (`NumeralTheory`)
 7. Theory instances (`LowerBound`, `Exact`)
+7b. Type-shifting (Kennedy §3.1)
+7c. EXH-typeshift duality (Spector §6.2)
 8. Derived properties (ambiguity, monotonicity, RSA)
 9. Comparison infrastructure and theorems
 10. GQT bridge theorems
 11. CumminsFranke bridge
 12. Aliases
 13. Verification
+14. Core.Scale Bridge Theorems (Bool ↔ Prop)
+15. Cardinality as ℚ-valued Degree (`HasDegree Nat`)
+16. Numeral Expression Semantics (HasDegree-based)
+17. Measure Predicates (compositional sentence semantics)
+18. Numeral with Precision Mode
 
 -/
 
-namespace Semantics.Quantification.Numerals
+namespace Semantics.Numerals
 
 -- ============================================================================
 -- Section 1: Ordering Relations and Modifier Classification
@@ -197,54 +204,53 @@ def NumeralAlternative.meaning : NumeralAlternative → Nat → Bool
 /-- Class A modifiers EXCLUDE the bare-numeral world. -/
 theorem classA_gt_excludes_bare (m : Nat) :
     maxMeaning .gt m m = false := by
-  simp [maxMeaning]
+  simp only [maxMeaning, gt_iff_lt, Nat.lt_irrefl, decide_false]
 
 theorem classA_lt_excludes_bare (m : Nat) :
     maxMeaning .lt m m = false := by
-  simp [maxMeaning]
+  simp only [maxMeaning, Nat.lt_irrefl, decide_false]
 
 /-- Class B modifiers INCLUDE the bare-numeral world. -/
 theorem classB_ge_includes_bare (m : Nat) :
     maxMeaning .ge m m = true := by
-  simp [maxMeaning]
+  simp only [maxMeaning, ge_iff_le, le_refl, decide_true]
 
 theorem classB_le_includes_bare (m : Nat) :
     maxMeaning .le m m = true := by
-  simp [maxMeaning]
+  simp only [maxMeaning, le_refl, decide_true]
 
 /-- Bare numeral entails "at least n" (Class B ≥). -/
 theorem classB_entailed_by_bare (m n : Nat) :
     bareMeaning m n = true → atLeastMeaning m n = true := by
-  simp [bareMeaning, atLeastMeaning, maxMeaning]
-  intro h; omega
+  simp only [bareMeaning, atLeastMeaning, maxMeaning, beq_iff_eq, ge_iff_le,
+             decide_eq_true_eq]
+  omega
 
 /-- Bare numeral does NOT entail "more than n" (Class A >). -/
 theorem classA_not_entailed_by_bare (m : Nat) :
     bareMeaning m m = true ∧ moreThanMeaning m m = false := by
-  simp [bareMeaning, moreThanMeaning, maxMeaning]
+  refine ⟨?_, ?_⟩
+  · simp only [bareMeaning, maxMeaning, beq_self_eq_true]
+  · exact classA_gt_excludes_bare m
 
 /-- Exact bare numerals are NOT monotonic. -/
 theorem bare_not_monotonic :
-    bareMeaning 3 3 = true ∧ bareMeaning 2 3 = false := by
-  simp [bareMeaning, maxMeaning]
+    bareMeaning 3 3 = true ∧ bareMeaning 2 3 = false := by decide
 
 /-- Bare numerals do not form a traditional Horn scale. -/
 theorem numerals_not_horn_scalar :
     (bareMeaning 3 3 = true ∧ bareMeaning 2 3 = false) ∧
-    (bareMeaning 2 2 = true ∧ bareMeaning 3 2 = false) := by
-  simp [bareMeaning, maxMeaning]
+    (bareMeaning 2 2 = true ∧ bareMeaning 3 2 = false) := by decide
 
 /-- "At least n" is strictly weaker than "bare n" (under bilateral semantics). -/
 theorem atLeast_strictly_weaker_than_bare :
     (bareMeaning 3 3 = true ∧ atLeastMeaning 3 3 = true) ∧
-    (atLeastMeaning 3 4 = true ∧ bareMeaning 3 4 = false) := by
-  simp [bareMeaning, atLeastMeaning, maxMeaning]
+    (atLeastMeaning 3 4 = true ∧ bareMeaning 3 4 = false) := by decide
 
 /-- "More than n" and "bare n" have disjoint denotations. -/
 theorem moreThan_disjoint_from_bare :
     (bareMeaning 3 3 = true ∧ moreThanMeaning 3 3 = false) ∧
-    (bareMeaning 3 4 = false ∧ moreThanMeaning 3 4 = true) := by
-  simp [bareMeaning, moreThanMeaning, maxMeaning]
+    (bareMeaning 3 4 = false ∧ moreThanMeaning 3 4 = true) := by decide
 
 -- ============================================================================
 -- Section 6: Theory Parameterization
@@ -332,11 +338,11 @@ theorem exact_meaning_eq (w : BareNumeral) (n : Nat) :
 
 /-- Lower-bound derives exact from at-least (@cite{horn-1972}; @cite{bylinina-nouwen-2020} §5). -/
 theorem lowerBound_exactFromAtLeast :
-    LowerBound.derivationalDirection = .exactFromAtLeast := by native_decide
+    LowerBound.derivationalDirection = .exactFromAtLeast := by decide
 
 /-- Exact derives at-least from exact (@cite{kennedy-2015}; @cite{bylinina-nouwen-2020} §6). -/
 theorem exact_atLeastFromExact :
-    Exact.derivationalDirection = .atLeastFromExact := by native_decide
+    Exact.derivationalDirection = .atLeastFromExact := by decide
 
 -- ============================================================================
 -- Section 7b: Type-Shifting (@cite{kennedy-2015} §3.1)
@@ -370,7 +376,7 @@ theorem lowerBound_from_exact_typeshift :
     standardWorlds.all λ n =>
       [BareNumeral.one, .two, .three].all λ w =>
         LowerBound.meaning w n == typeLower (maxMeaning .eq) 3 w.toNat n := by
-  native_decide
+  decide
 
 /-- **Why this is the only type-shift**: the equivalence `∃ k ≥ m, n = k ↔ n ≥ m`
     is a tautology of linear orders on ℕ.
@@ -445,7 +451,7 @@ theorem exh_lowerBound_eq_exact :
     standardWorlds.all λ n =>
       [BareNumeral.one, .two, .three].all λ w =>
         exhNumeral 3 w.toNat n == maxMeaning .eq w.toNat n := by
-  native_decide
+  decide
 
 /-- **typeShift(exact) = lower-bound**: Type-shifting the exact meaning
     produces the lower-bound meaning. This is the backward direction.
@@ -454,7 +460,7 @@ theorem typeShift_exact_eq_lowerBound :
     standardWorlds.all λ n =>
       [BareNumeral.one, .two, .three].all λ w =>
         typeLower (maxMeaning .eq) 3 w.toNat n == maxMeaning .ge w.toNat n := by
-  native_decide
+  decide
 
 /-- **The EXH–type-shift round-trip is the identity on exact meanings.**
     `typeShift(EXH(typeShift(exact))) = typeShift(exact) = lower-bound`.
@@ -465,7 +471,7 @@ theorem exh_typeShift_roundtrip :
       [BareNumeral.one, .two, .three].all λ w =>
         exhNumeral 3 w.toNat n == maxMeaning .eq w.toNat n &&
         typeLower (maxMeaning .eq) 3 w.toNat n == maxMeaning .ge w.toNat n := by
-  native_decide
+  decide
 
 /-- **EXH is redundant given type-shifting.** The pair {exact, lower-bound}
     is obtainable from exact alone (via type-shifting) without EXH.
@@ -484,7 +490,7 @@ theorem typeShift_subsumes_exh :
         -- LB + EXH produces the same pair
         (exhNumeral 3 w.toNat n == maxMeaning .eq w.toNat n) &&
         (maxMeaning .ge w.toNat n == maxMeaning .ge w.toNat n) := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- Section 8: Derived Properties
@@ -527,64 +533,64 @@ def NumeralTheory.isScalar (T : NumeralTheory) : Prop :=
 
 /-- "two" is compatible with both 2 and 3 (ambiguity exists). -/
 theorem lowerBound_two_ambiguous :
-    LowerBound.compatibleWorlds .two = [2, 3] := by native_decide
+    LowerBound.compatibleWorlds .two = [2, 3] := by decide
 
 /-- Lower-bound has ambiguity for "two". -/
 theorem lowerBound_two_has_ambiguity :
-    LowerBound.hasAmbiguity .two = true := by native_decide
+    LowerBound.hasAmbiguity .two = true := by decide
 
 /-- "three" entails "two" in lower-bound semantics. -/
 theorem lowerBound_three_stronger_than_two :
-    LowerBound.isStrongerThan .three .two = true := by native_decide
+    LowerBound.isStrongerThan .three .two = true := by decide
 
 /-- "two" entails "one" in lower-bound semantics. -/
 theorem lowerBound_two_stronger_than_one :
-    LowerBound.isStrongerThan .two .one = true := by native_decide
+    LowerBound.isStrongerThan .two .one = true := by decide
 
 /-- Lower-bound semantics is monotonic. -/
 theorem lowerBound_is_monotonic :
-    LowerBound.checkMonotonic = true := by native_decide
+    LowerBound.checkMonotonic = true := by decide
 
-theorem lowerBound_one_count : LowerBound.compatibleCount .one = 3 := by native_decide
-theorem lowerBound_two_count : LowerBound.compatibleCount .two = 2 := by native_decide
-theorem lowerBound_three_count : LowerBound.compatibleCount .three = 1 := by native_decide
+theorem lowerBound_one_count : LowerBound.compatibleCount .one = 3 := by decide
+theorem lowerBound_two_count : LowerBound.compatibleCount .two = 2 := by decide
+theorem lowerBound_three_count : LowerBound.compatibleCount .three = 1 := by decide
 
 -- Exact Properties
 
 /-- "two" is compatible with only world 2 (exact meaning). -/
 theorem exact_two_worlds :
-    Exact.compatibleWorlds .two = [2] := by native_decide
+    Exact.compatibleWorlds .two = [2] := by decide
 
 /-- No ambiguity for bare numerals. -/
 theorem exact_no_ambiguity :
-    Exact.hasAmbiguity .two = false := by native_decide
+    Exact.hasAmbiguity .two = false := by decide
 
 /-- Exact differs from LowerBound on bare numerals. -/
 theorem exact_differs_from_lowerBound :
-    Exact.compatibleWorlds .two ≠ LowerBound.compatibleWorlds .two := by native_decide
+    Exact.compatibleWorlds .two ≠ LowerBound.compatibleWorlds .two := by decide
 
 /-- The key divergence: ambiguity. -/
 theorem ambiguity_differs :
     LowerBound.hasAmbiguity .two = true ∧
-    Exact.hasAmbiguity .two = false := by native_decide
+    Exact.hasAmbiguity .two = false := by decide
 
 /-- Under Exact, only one world compatible. -/
 theorem exact_no_rsa_strengthening_needed :
-    Exact.compatibleCount .two = 1 := by native_decide
+    Exact.compatibleCount .two = 1 := by decide
 
 /-- Exact is not monotonic. -/
 theorem exact_not_monotonic :
-    Exact.checkMonotonic = false := by native_decide
+    Exact.checkMonotonic = false := by decide
 
 theorem exact_three_not_stronger :
-    Exact.isStrongerThan .three .two = false := by native_decide
+    Exact.isStrongerThan .three .two = false := by decide
 
 /-- Summary: Exact vs LowerBound bare numerals. -/
 theorem bare_numeral_summary :
     (Exact.hasAmbiguity .two = false) ∧
     (Exact.compatibleCount .two = 1) ∧
     (LowerBound.hasAmbiguity .two = true) ∧
-    (LowerBound.compatibleCount .two = 2) := by native_decide
+    (LowerBound.compatibleCount .two = 2) := by decide
 
 -- ============================================================================
 -- Section 9: Comparison Infrastructure
@@ -613,54 +619,54 @@ def hasMoreAmbiguity (T₁ T₂ : NumeralTheory) (w : BareNumeral) : Bool :=
 -- Key Divergence Theorems
 
 theorem lowerBound_exact_differ_on_two :
-    LowerBound.meaning .two 3 = true ∧ Exact.meaning .two 3 = false := by native_decide
+    LowerBound.meaning .two 3 = true ∧ Exact.meaning .two 3 = false := by decide
 
 theorem divergence_at_three :
-    divergingWorlds LowerBound Exact .two = [3] := by native_decide
+    divergingWorlds LowerBound Exact .two = [3] := by decide
 
 theorem agreement_at_two :
-    theoriesAgreeAt LowerBound Exact .two 2 = true := by native_decide
+    theoriesAgreeAt LowerBound Exact .two 2 = true := by decide
 
 theorem theories_not_equivalent :
-    theoriesEquivalent LowerBound Exact = false := by native_decide
+    theoriesEquivalent LowerBound Exact = false := by decide
 
 -- Ambiguity Comparison
 
 theorem lowerBound_more_ambiguous_two :
-    hasMoreAmbiguity LowerBound Exact .two = true := by native_decide
+    hasMoreAmbiguity LowerBound Exact .two = true := by decide
 
 theorem ambiguity_count_differs :
-    LowerBound.compatibleCount .two = 2 ∧ Exact.compatibleCount .two = 1 := by native_decide
+    LowerBound.compatibleCount .two = 2 ∧ Exact.compatibleCount .two = 1 := by decide
 
 theorem ambiguity_presence_differs :
-    LowerBound.hasAmbiguity .two = true ∧ Exact.hasAmbiguity .two = false := by native_decide
+    LowerBound.hasAmbiguity .two = true ∧ Exact.hasAmbiguity .two = false := by decide
 
 -- Monotonicity Comparison
 
 theorem monotonicity_differs :
-    LowerBound.checkMonotonic = true ∧ Exact.checkMonotonic = false := by native_decide
+    LowerBound.checkMonotonic = true ∧ Exact.checkMonotonic = false := by decide
 
 -- Implicature Potential
 
 theorem only_lowerBound_supports_implicature :
     (LowerBound.compatibleCount .two > 1 ∧ LowerBound.isStrongerThan .three .two)
     ∧
-    (Exact.compatibleCount .two = 1) := by native_decide
+    (Exact.compatibleCount .two = 1) := by decide
 
 -- Empirical Adjudication (@cite{goodman-stuhlmuller-2013})
 
 theorem lowerBound_consistent_with_cancellation :
-    LowerBound.hasAmbiguity .two = true := by native_decide
+    LowerBound.hasAmbiguity .two = true := by decide
 
 theorem exact_inconsistent_with_cancellation :
-    Exact.hasAmbiguity .two = false := by native_decide
+    Exact.hasAmbiguity .two = false := by decide
 
 theorem summary_comparison :
     (LowerBound.compatibleCount .two = 2 ∧ Exact.compatibleCount .two = 1)
     ∧
     (LowerBound.checkMonotonic = true ∧ Exact.checkMonotonic = false)
     ∧
-    (LowerBound.meaning .two 3 = true ∧ Exact.meaning .two 3 = false) := by native_decide
+    (LowerBound.meaning .two 3 = true ∧ Exact.meaning .two 3 = false) := by decide
 
 -- Class A/B Modified Numeral Comparison
 
@@ -668,15 +674,13 @@ theorem classA_classB_diverge_on_bare_world :
     (maxMeaning .gt 3 3 = false) ∧
     (maxMeaning .ge 3 3 = true) ∧
     (maxMeaning .lt 3 3 = false) ∧
-    (maxMeaning .le 3 3 = true) := by
-  simp [maxMeaning]
+    (maxMeaning .le 3 3 = true) := by decide
 
 theorem classB_strictly_weaker_than_bare :
     (maxMeaning .ge 3 3 = true) ∧
     (maxMeaning .ge 3 4 = true) ∧
     (maxMeaning .eq 3 4 = false) ∧
-    (maxMeaning .gt 3 3 = false) := by
-  simp [maxMeaning]
+    (maxMeaning .gt 3 3 = false) := by decide
 
 -- ============================================================================
 -- Section 10: Grounding Theorems
@@ -713,7 +717,7 @@ theorem gqt_atLeast_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.at_least_n_sem m n R S ↔
     (maxMeaning .ge n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) = true) := by
-  simp [Quantifier.at_least_n_sem, maxMeaning, decide_eq_true_eq]
+  simp only [Quantifier.at_least_n_sem, maxMeaning, decide_eq_true_eq]
 
 open Classical Core.IntensionalLogic Semantics.Quantification in
 /-- GQT "at most n" agrees with `maxMeaning.le` on intersection cardinality. -/
@@ -721,7 +725,7 @@ theorem gqt_atMost_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.at_most_n_sem m n R S ↔
     (maxMeaning .le n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) = true) := by
-  simp [Quantifier.at_most_n_sem, maxMeaning, decide_eq_true_eq]
+  simp only [Quantifier.at_most_n_sem, maxMeaning, decide_eq_true_eq]
 
 open Classical Core.IntensionalLogic Semantics.Quantification in
 /-- GQT "exactly n" agrees with `maxMeaning.eq` on intersection cardinality. -/
@@ -729,7 +733,7 @@ theorem gqt_exactly_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.exactly_n_sem m n R S ↔
     (maxMeaning .eq n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) = true) := by
-  simp [Quantifier.exactly_n_sem, maxMeaning, beq_iff_eq, decide_eq_true_eq]
+  simp only [Quantifier.exactly_n_sem, maxMeaning, beq_iff_eq]
 
 -- ============================================================================
 -- Section 11: CumminsFranke Bridge
@@ -738,7 +742,7 @@ theorem gqt_exactly_agrees (m : Frame) [Fintype m.Entity]
 /-- "More than m" via maximality = `n > m`. -/
 theorem moreThan_eq_cumminsFranke (m n : Nat) :
     moreThanMeaning m n = decide (n > m) := by
-  simp [moreThanMeaning, maxMeaning]
+  simp only [moreThanMeaning, maxMeaning]
 
 -- ============================================================================
 -- Section 12: Aliases (used across NegationScope, Operations, RSA)
@@ -756,23 +760,23 @@ abbrev exactMeaning := bilateralMeaning
 -- Section 13: Verification
 -- ============================================================================
 
-theorem bare_exact_match : bareMeaning 3 3 = true := by native_decide
-theorem bare_rejects_lower : bareMeaning 3 2 = false := by native_decide
-theorem bare_rejects_higher : bareMeaning 3 4 = false := by native_decide
+theorem bare_exact_match : bareMeaning 3 3 = true := by decide
+theorem bare_rejects_lower : bareMeaning 3 2 = false := by decide
+theorem bare_rejects_higher : bareMeaning 3 4 = false := by decide
 
-theorem moreThan_above : moreThanMeaning 3 4 = true := by native_decide
-theorem moreThan_equal : moreThanMeaning 3 3 = false := by native_decide
+theorem moreThan_above : moreThanMeaning 3 4 = true := by decide
+theorem moreThan_equal : moreThanMeaning 3 3 = false := by decide
 
-theorem fewerThan_below : fewerThanMeaning 3 2 = true := by native_decide
-theorem fewerThan_equal : fewerThanMeaning 3 3 = false := by native_decide
+theorem fewerThan_below : fewerThanMeaning 3 2 = true := by decide
+theorem fewerThan_equal : fewerThanMeaning 3 3 = false := by decide
 
-theorem atLeast_equal : atLeastMeaning 3 3 = true := by native_decide
-theorem atLeast_above : atLeastMeaning 3 4 = true := by native_decide
-theorem atLeast_below : atLeastMeaning 3 2 = false := by native_decide
+theorem atLeast_equal : atLeastMeaning 3 3 = true := by decide
+theorem atLeast_above : atLeastMeaning 3 4 = true := by decide
+theorem atLeast_below : atLeastMeaning 3 2 = false := by decide
 
-theorem atMost_equal : atMostMeaning 3 3 = true := by native_decide
-theorem atMost_below : atMostMeaning 3 2 = true := by native_decide
-theorem atMost_above : atMostMeaning 3 4 = false := by native_decide
+theorem atMost_equal : atMostMeaning 3 3 = true := by decide
+theorem atMost_below : atMostMeaning 3 2 = true := by decide
+theorem atMost_above : atMostMeaning 3 4 = false := by decide
 
 -- ============================================================================
 -- Section 14: Core.Scale Bridge Theorems
@@ -793,34 +797,86 @@ open Core.Scale in
 /-- `maxMeaning.ge m n = true` iff `atLeastDeg id m n`. -/
 theorem maxMeaning_ge_iff_atLeastDeg (m n : ℕ) :
     maxMeaning .ge m n = true ↔ atLeastDeg id m n := by
-  simp [maxMeaning, atLeastDeg]
+  simp only [maxMeaning, atLeastDeg, decide_eq_true_eq, id_eq]
 
 open Core.Scale in
 /-- `maxMeaning.gt m n = true` iff `moreThanDeg id m n`. -/
 theorem maxMeaning_gt_iff_moreThanDeg (m n : ℕ) :
     maxMeaning .gt m n = true ↔ moreThanDeg id m n := by
-  simp [maxMeaning, moreThanDeg]
+  simp only [maxMeaning, moreThanDeg, decide_eq_true_eq, id_eq]
 
 open Core.Scale in
 /-- `maxMeaning.eq m n = true` iff `eqDeg id m n`. -/
 theorem maxMeaning_eq_iff_eqDeg (m n : ℕ) :
     maxMeaning .eq m n = true ↔ eqDeg id m n := by
-  simp [maxMeaning, eqDeg]
+  simp only [maxMeaning, eqDeg, beq_iff_eq, id_eq]
 
 open Core.Scale in
 /-- `maxMeaning.le m n = true` iff `atMostDeg id m n`. -/
 theorem maxMeaning_le_iff_atMostDeg (m n : ℕ) :
     maxMeaning .le m n = true ↔ atMostDeg id m n := by
-  simp [maxMeaning, atMostDeg]
+  simp only [maxMeaning, atMostDeg, decide_eq_true_eq, id_eq]
 
 open Core.Scale in
 /-- `maxMeaning.lt m n = true` iff `lessThanDeg id m n`. -/
 theorem maxMeaning_lt_iff_lessThanDeg (m n : ℕ) :
     maxMeaning .lt m n = true ↔ lessThanDeg id m n := by
-  simp [maxMeaning, lessThanDeg]
+  simp only [maxMeaning, lessThanDeg, decide_eq_true_eq, id_eq]
 
 -- ============================================================================
--- Section 14: Numeral Expression Semantics (from HasDegree)
+-- Section 15: Cardinality as ℚ-valued Degree
+-- ============================================================================
+
+/-! Bare cardinalities `(n : ℕ)` participate in the `HasDegree` framework via
+the cast `(· : ℚ)`. The five `maxMeaning_*_from_degree` theorems witness that
+each `maxMeaning` clause agrees with the corresponding ℚ-comparison on the
+cast. Together with `Section 14`, this gives both the `Prop`-level and the
+`Bool`/`decide`-level bridges to `Core.Scale`. -/
+
+open Core.Scale in
+/-- Cardinality (Nat) as a ℚ-valued degree. -/
+instance CardinalityDegree : HasDegree Nat where
+  degree := λ n => (n : ℚ)
+
+open Core.Scale in
+theorem maxMeaning_gt_from_degree (m n : Nat) :
+    moreThanMeaning m n = decide (HasDegree.degree n > (m : ℚ)) := by
+  simp only [moreThanMeaning, maxMeaning, HasDegree.degree]
+  congr 1
+  exact propext (@Nat.cast_lt ℚ _ _ _ _).symm
+
+open Core.Scale in
+theorem maxMeaning_ge_from_degree (m n : Nat) :
+    atLeastMeaning m n = decide (HasDegree.degree n ≥ (m : ℚ)) := by
+  simp only [atLeastMeaning, maxMeaning, HasDegree.degree]
+  congr 1
+  exact propext (@Nat.cast_le ℚ _ _ _ _).symm
+
+open Core.Scale in
+/-- Exact bare numeral meaning equals degree equality (@cite{bylinina-nouwen-2020} §4). -/
+theorem maxMeaning_eq_from_degree (m n : Nat) :
+    bareMeaning m n = decide (HasDegree.degree n = (m : ℚ)) := by
+  simp only [bareMeaning, maxMeaning, HasDegree.degree]
+  by_cases h : n = m <;> simp [h, Nat.cast_inj]
+
+open Core.Scale in
+/-- "Fewer than" bridges to strict degree inequality. -/
+theorem maxMeaning_lt_from_degree (m n : Nat) :
+    fewerThanMeaning m n = decide (HasDegree.degree n < (m : ℚ)) := by
+  simp only [fewerThanMeaning, maxMeaning, HasDegree.degree]
+  congr 1
+  exact propext (@Nat.cast_lt ℚ _ _ _ _).symm
+
+open Core.Scale in
+/-- "At most" bridges to degree ≤. -/
+theorem maxMeaning_le_from_degree (m n : Nat) :
+    atMostMeaning m n = decide (HasDegree.degree n ≤ (m : ℚ)) := by
+  simp only [atMostMeaning, maxMeaning, HasDegree.degree]
+  congr 1
+  exact propext (@Nat.cast_le ℚ _ _ _ _).symm
+
+-- ============================================================================
+-- Section 16: Numeral Expression Semantics (from HasDegree)
 -- ============================================================================
 
 open Core.Scale in
@@ -844,7 +900,7 @@ def numeralApprox {E : Type} [HasDegree E] (stated : ℚ) (tolerance : ℚ) (ent
   (stated - tolerance ≤ actual) && (actual ≤ stated + tolerance)
 
 -- ============================================================================
--- Section 15: Measure Predicates (Compositional Sentence Semantics)
+-- Section 17: Measure Predicates (Compositional Sentence Semantics)
 -- ============================================================================
 
 open Core.Scale in
@@ -910,10 +966,10 @@ theorem measureSentence_fromHasDegree {E : Type} [HasDegree E]
     numeralExact deg.value entity := rfl
 
 -- ============================================================================
--- Section 16: Numeral with Precision Mode
+-- Section 18: Numeral with Precision Mode
 -- ============================================================================
 
-open Semantics.Quantification.Numerals.Precision in
+open Semantics.Numerals.Precision in
 
 /-- Numeral semantics with precision mode.
     "1000 dollars" under exact mode: true iff cost = 1000
@@ -922,4 +978,4 @@ def numeralWithPrecision {E : Type} [Core.Scale.HasDegree E]
     (stated : ℚ) (entity : E) (mode : PrecisionMode) (base : ℚ := 10) : Bool :=
   matchesPrecision mode stated (Core.Scale.HasDegree.degree entity) base
 
-end Semantics.Quantification.Numerals
+end Semantics.Numerals

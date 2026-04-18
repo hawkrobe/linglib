@@ -101,14 +101,14 @@ theorem xMarking_preserves_force (m : PortugueseModal) :
     Follows from `Directive.strong_entails_weak` — the Xg-refined best worlds
     are a subset of the unrefined best worlds. -/
 theorem terQue_entails_dever (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World)
+    (p : (World → Bool)) (w : World)
     (h : sn f g p w) :
     snXg f g p w :=
   sn_entails_snXg f g p w h
 
 /-- *dever* p ⊭ *ter que* p: weak necessity does not entail strong. -/
 theorem dever_not_entails_terQue :
-    ¬(∀ (f : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World),
+    ¬(∀ (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World),
         snXg f g p w → sn f g p w) := by
   intro h
   have := h
@@ -122,7 +122,7 @@ theorem dever_not_entails_terQue :
     the ascending scale *poder* p < *dever* p < *ter que* p.
     Requires seriality (nonempty best worlds) — the D axiom. -/
 theorem dever_entails_poder (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World)
+    (p : (World → Bool)) (w : World)
     (hSerial : (bestWorlds f (xMarkOrdering g p) w).card > 0)
     (h : snXg f g p w) :
     possibility f (xMarkOrdering g p) p w := by
@@ -138,7 +138,7 @@ theorem dever_entails_poder (f : ModalBase World) (g : OrderingSource World)
     the prejacent being false ("Este homem deve ter sido assassinado,
     mas ele pode não ter sido"). -/
 theorem dever_consistent_with_not_p :
-    ∃ (f : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World),
+    ∃ (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World),
       snXg f g p w ∧ p w = false := by
   -- Model: w0 is actual, p false at w0. Best worlds under refined ordering
   -- satisfy p, so weak necessity holds even though p is false at w0.
@@ -155,7 +155,7 @@ theorem dever_consistent_with_not_p :
     if w ∈ ∩f(w) and all best worlds satisfy p, then w satisfies p
     (by the T axiom). -/
 theorem terQue_inconsistent_with_not_p_realistic
-    (f : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World)
+    (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World)
     (hReal : ∀ w, (accessibleWorlds f w) = {w})
     (hSN : sn f g p w) :
     p w = true :=
@@ -172,7 +172,7 @@ theorem terQue_inconsistent_with_not_p_realistic
     applied to the refined ordering: ∗-revision only adds p-worlds, which
     cannot worsen the truth of the prejacent among best worlds. -/
 theorem devia_not_entails_deve :
-    ¬(∀ (f f' : ModalBase World) (g : OrderingSource World) (p : BProp World) (w : World),
+    ¬(∀ (f f' : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World),
         IsStarRevision f f' p →
         snXfg f' g p w → snXg f g p w) := by
   intro h
@@ -211,7 +211,7 @@ structure PortugueseSquare where
   /-- Ordering source -/
   g : OrderingSource World
   /-- Prejacent -/
-  p : BProp World
+  p : (World → Bool)
   /-- fStar is a valid ∗-revision of f for p -/
   hRev : IsStarRevision f fStar p
 

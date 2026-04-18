@@ -1,4 +1,5 @@
 import Mathlib.Data.Rat.Defs
+import Linglib.Fragments.English.NumeralModifiers
 
 /-!
 # @cite{claus-walch-2024}: Evaluative Valence Distinguishes "at most" from "up to"
@@ -193,5 +194,47 @@ theorem atMost_upTo_diverge :
     (exp2_upTo_standard.endorsementRate > exp2_upTo_reversed.endorsementRate) := by
   constructor; · native_decide
   constructor <;> native_decide
+
+-- ============================================================================
+-- Section 4: Valence-Predicts-Framing Bridge (Fragment ↔ Exp2)
+-- ============================================================================
+
+/-! Connect the `evaluativeValence` field on `Fragments.English.NumeralModifiers`
+entries (the lexical claim) to the Exp2 endorsement rates (the empirical
+observation). The bridge witnesses that the lexical valence assignment
+*predicts* the framing direction observed in Exp2, and that the prediction
+divergence is fully explained by valence (truth conditions are held fixed). -/
+
+section ValenceFramingBridge
+
+open Fragments.English.NumeralModifiers
+
+/-- "at most" has negative evaluative valence and shows reversed framing.
+    The lexical valence (`atMost.evaluativeValence = .negative`) and the
+    Exp2 reversal hold simultaneously. -/
+theorem atMost_negative_predicts_reversal :
+    atMost.evaluativeValence = .negative ∧
+    exp2_atMost_reversed.endorsementRate > exp2_atMost_standard.endorsementRate :=
+  ⟨rfl, atMost_reverses_framing⟩
+
+/-- "up to" has positive evaluative valence and shows standard framing. -/
+theorem upTo_positive_predicts_standard :
+    upTo.evaluativeValence = .positive ∧
+    exp2_upTo_standard.endorsementRate > exp2_upTo_reversed.endorsementRate :=
+  ⟨rfl, upTo_standard_framing⟩
+
+/-- **Valence fully explains the framing divergence.** Despite identical
+    truth conditions (both Class B upper-bound: same `modClass` and
+    `boundDir`), "at most" and "up to" diverge on framing precisely because
+    they diverge on `evaluativeValence`. -/
+theorem valence_explains_framing_divergence :
+    atMost.modClass = upTo.modClass ∧
+    atMost.boundDir = upTo.boundDir ∧
+    atMost.evaluativeValence ≠ upTo.evaluativeValence ∧
+    exp2_atMost_reversed.endorsementRate > exp2_atMost_standard.endorsementRate ∧
+    exp2_upTo_standard.endorsementRate > exp2_upTo_reversed.endorsementRate :=
+  ⟨rfl, rfl, by decide, atMost_reverses_framing, upTo_standard_framing⟩
+
+end ValenceFramingBridge
 
 end ClausWalch2024

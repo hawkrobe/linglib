@@ -56,9 +56,14 @@ witness. -/
 def modalComponent {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Bool)
-    (w : W) : Bool :=
-  domain.all λ y => !(P y w) ||
-    possibility f e allW (λ w' => Q y w') w
+    (w : W) : Prop :=
+  ∀ y ∈ domain, P y w = true → possibility f e allW (λ w' => Q y w') w
+
+instance {Ev W Entity : Type*}
+    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) :
+    Decidable (modalComponent f e allW domain P Q w) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- Full modal indefinite denotation (A-@cite{alonso-ovalle-royer-2024}, (59)):
 
@@ -73,9 +78,15 @@ in some accessible world — the free choice / modal variation
 effect. -/
 def modalIndefiniteSat {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) : Bool :=
-  (domain.any λ x => P x w && Q x w) &&
+    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) : Prop :=
+  (∃ x ∈ domain, P x w = true ∧ Q x w = true) ∧
     modalComponent f e allW domain P Q w
+
+instance {Ev W Entity : Type*}
+    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) :
+    Decidable (modalIndefiniteSat f e allW domain P Q w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 
 -- ════════════════════════════════════════════════════
@@ -92,20 +103,24 @@ This is the anti-singleton inference of *algún*. Items like *yalnhej* lack
 this condition and are compatible with all P being Q. -/
 def upperBoundedSat {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) : Bool :=
-  modalIndefiniteSat f e allW domain P Q w &&
-    !(domain.all λ x => !(P x w) || Q x w)
+    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) : Prop :=
+  modalIndefiniteSat f e allW domain P Q w ∧
+    ¬ (∀ x ∈ domain, P x w = true → Q x w = true)
+
+instance {Ev W Entity : Type*}
+    (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
+    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) :
+    Decidable (upperBoundedSat f e allW domain P Q w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Upper-boundedness strengthens the modal indefinite:
 if the UB version holds, the plain MI version holds. -/
 theorem upperBounded_entails_plain {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
     (domain : List Entity) (P Q : Entity → W → Bool) (w : W)
-    (h : upperBoundedSat f e allW domain P Q w = true) :
-    modalIndefiniteSat f e allW domain P Q w = true := by
-  unfold upperBoundedSat at h
-  simp only [Bool.and_eq_true] at h
-  exact h.1
+    (h : upperBoundedSat f e allW domain P Q w) :
+    modalIndefiniteSat f e allW domain P Q w :=
+  h.1
 
 
 -- ════════════════════════════════════════════════════
@@ -155,16 +170,16 @@ private def fEPI : AnchoringFn SpeechOrDescribed BookWorld :=
     ∃x[book(x) ∧ avail(x)] ∧ ∀y[book(y) → ◇_{EPI}(avail(y))]
     Every book is available in some accessible world. -/
 theorem yalnhej_book_abc :
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true := by
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
   decide
 
 /-- Not upper-bounded: in world abc, all three books ARE available,
     yet the MI denotation holds. The anti-singleton condition fails
     (all books satisfy the scope), showing yalnhej is non-UB. -/
 theorem yalnhej_not_upper_bounded_abc :
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true ∧
-    ¬(upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc = true) := by
-  constructor
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc ∧
+    ¬ upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
+  refine ⟨?_, ?_⟩
   · decide
   · decide
 
@@ -192,7 +207,7 @@ even though not every book is available in the actual world. -/
     is not available in ab. This shows yalnhej is compatible with
     not-all-P-being-Q — non-maximality. -/
 theorem yalnhej_nonmaximal_ab :
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab = true := by
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab := by
   decide
 
 /-- Three-way contrast: maximality vs yalnhej vs *algún*.
@@ -203,11 +218,11 @@ theorem yalnhej_nonmaximal_ab :
     *Yalnhej* (non-UB) succeeds in BOTH. -/
 theorem yalnhej_three_way_contrast :
     -- yalnhej OK in abc (all available)
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc = true ∧
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .abc ∧
     -- yalnhej OK in ab (not all available) — non-maximal
-    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab = true ∧
+    modalIndefiniteSat fEPI .speech allBW allBooks isBook isAvailable .ab ∧
     -- UB fails in abc (all satisfy scope → anti-singleton violated)
-    upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc = false := by
+    ¬ upperBoundedSat fEPI .speech allBW allBooks isBook isAvailable .abc := by
   refine ⟨?_, ?_, ?_⟩ <;> decide
 
 
@@ -278,7 +293,7 @@ private def fGrab : AnchoringFn GrabEvent CardWorld
     The modal component ∀y[card(y) → ◇_{local}(grab(y))] fails because
     c2 and c3 are not grabbable in any locally accessible world. -/
 theorem nonharmonic_fails :
-    modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 = false := by
+    ¬ modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 := by
   decide
 
 /-- Harmonic MI succeeds: when the MI's anchor is co-indexed with the
@@ -287,16 +302,16 @@ theorem nonharmonic_fails :
     modal component ∀y[card(y) → ◇_{imperative}(grab(y))] holds.
     This gives the "any card is fine" reading. -/
 theorem harmonic_succeeds :
-    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 = true := by
+    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 := by
   decide
 
 /-- Harmonic ≠ non-harmonic: the two readings are formally distinct.
     Same world of evaluation (.only1), same domain, same predicates —
     only the anchoring event differs. -/
 theorem harmonic_neq_nonharmonic :
-    modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 = false ∧
-    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 = true := by
-  constructor <;> decide
+    ¬ modalIndefiniteSat fGrab .local allCW allCards isCard canGrab .only1 ∧
+    modalIndefiniteSat fGrab .imperative allCW allCards isCard canGrab .only1 := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 
 end Semantics.Modality.ModalIndefinites

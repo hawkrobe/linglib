@@ -55,12 +55,12 @@ theorem allWorlds_complete : ∀ w : W, w ∈ allWorlds := by
 -- ════════════════════════════════════════════════════════════════
 
 /-- "Mia has money" — the presupposition of "proud of her money." -/
-def hasMoney : BProp W
+def hasMoney : (W → Bool)
   | .proudNotLend | .proudLend => true
   | _ => false
 
 /-- "Mia is penniless" — presuppositionless. -/
-def penniless : BProp W
+def penniless : (W → Bool)
   | .pennyNotLend | .pennyLend => true
   | _ => false
 

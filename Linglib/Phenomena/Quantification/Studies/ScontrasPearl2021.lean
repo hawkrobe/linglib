@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Quantification.Numerals.Semantics
+import Linglib.Theories.Semantics.Numerals.Basic
 import Linglib.Theories.Pragmatics.Implicature.NegationScope
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Tactics.RSAPredict
@@ -270,7 +270,7 @@ Convergent evidence for exact semantics from @cite{kennedy-2015}
 (acquisition data — children reject "two" at w=3).
 -/
 
-open Semantics.Quantification.Numerals (maxMeaning OrderingRel)
+open Semantics.Numerals (maxMeaning OrderingRel)
 
 /-- Exact surface: "exactly two didn't jump" (out of 4) ↔ exactly two jumped.
     Matches `maxMeaning.eq 2` applied to the complement count (4 - w). -/
@@ -301,20 +301,20 @@ theorem twoNotAtLeast_inverse_matches_maxMeaning :
 /-- The negation-scope asymmetry collapses under exact semantics:
     internal and external negation of "three" give the same result. -/
 theorem exact_collapses_negation_scope :
-    Implicature.negatedMeaning Semantics.Quantification.Numerals.Exact .three .internal 4 =
-    Implicature.negatedMeaning Semantics.Quantification.Numerals.Exact .three .external 4 := by
+    Implicature.negatedMeaning Semantics.Numerals.Exact .three .internal 4 =
+    Implicature.negatedMeaning Semantics.Numerals.Exact .three .external 4 := by
   native_decide
 
 /-- Lower-bound semantics preserves the negation-scope distinction. -/
 theorem lowerBound_preserves_negation_scope :
-    Implicature.negatedMeaning Semantics.Quantification.Numerals.LowerBound .three .internal 4 ≠
-    Implicature.negatedMeaning Semantics.Quantification.Numerals.LowerBound .three .external 4 := by
+    Implicature.negatedMeaning Semantics.Numerals.LowerBound .three .internal 4 ≠
+    Implicature.negatedMeaning Semantics.Numerals.LowerBound .three .external 4 := by
   native_decide
 
 /-- @cite{kennedy-2015}'s resolution: exact meaning is basic, lower-bound is derived
     via type-shift. Both meanings are grammatically available. -/
 theorem typeshift_resolves_tension :
-    Semantics.Quantification.Numerals.typeLower (maxMeaning .eq) 4 2 2 =
+    Semantics.Numerals.typeLower (maxMeaning .eq) 4 2 2 =
     maxMeaning .ge 2 2 := by native_decide
 
 -- ============================================================================
