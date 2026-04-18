@@ -1,5 +1,14 @@
 # Changelog
 
+## [0.229.919] - 2026-04-18
+
+### Fixed
+- **Post-relocation wiring fixes for `Fragments/Mongolian/Case.lean` and `Phenomena/Anaphora/Studies/Gong2022.lean`.** Discovered during a clean full-library build after the 0.229.918 bulk commit. Both files used `CaseSystemConfig`/`NPInDomain`/`dependentAccusative` transitively through `LateMerger.lean`, which previously re-exported them via its old `import DependentCase`; the relocation broke that chain. Fix: explicit `import Linglib.Theories.Syntax.Case.Dependent` on Mongolian (which uses `CaseSystemConfig`), and `open Syntax.Case` on both files (alongside the existing `open Minimalism` they need for `LateMerger`/`ChainPosition`).
+
+### Documented (retroactive — bundled into 0.229.918)
+- **`CaseVal` (Minimalism's 7-value enum) eliminated; unified onto `Core.Case` (Blake's 19-value typological inventory).** Both types contained the same NOM/ACC/GEN/DAT/ERG/ABS constructors, so the Minimalism layer's redundant `CaseVal` was a separate-stipulation-then-bridge anti-pattern. `Core.Case` is now the single canonical case type across the library. Touched: `Theories/Syntax/Minimalism/Core/{Features,CaseFilter,Modification}.lean` (`FeatureVal.case : CaseVal → ...` → `Core.Case → ...`; `DPFeatures.withCase`; `MAGFeatureType.kappa`); `Fragments/Mayan/{Chol,Qanjobal,Kaqchikel}/Agreement.lean` (Kaqchikel also drops `.toCase` indirection now that the types coincide); `Phenomena/Case/Studies/{Marantz1991,Aissen2003,Woolford1997}.lean` (`getCase!`/`georgianSpellout` retypings; `WCase.toCaseVal` → `WCase.toCoreCase`); `Phenomena/Case/{DependentCaseDerivations,Compare}.lean` (`CaseVal.{erg,abs,nom}.toCase` → `Core.Case.{erg,abs,nom}`; `np.case.toCase` → `np.case`); `Phenomena/Ergativity/Studies/{CoonMateoPedroPreminger2014,Imanishi2020}.lean` (`AbstractCase.toCaseVal` → `AbstractCase.toCoreCase`; `caseVal_bridge_*` → `coreCase_bridge_*`).
+- **`DependentCase.lean` relocated out of `Theories/Syntax/Minimalism/Core/` into `Theories/Syntax/Case/Dependent.lean`.** Dependent case (Marantz/Baker) is a *competing framework* to Agree-based case, not a Minimalist component; the file location now reflects the theoretical commitment. Namespace `Minimalism` → `Syntax.Case`. Import in `Linglib.lean` updated; importers (`Phenomena/Case/Studies/{BakerVinokurova2010,Marantz1991,Aissen2003,Woolford1997,Ozaki2026}.lean`, `Phenomena/Case/{Compare,DependentCaseDerivations}.lean`, `Fragments/Yakut/Case.lean`) swapped to `import Linglib.Theories.Syntax.Case.Dependent` + `open Syntax.Case` (added alongside `open Minimalism` for files that also use Voice/CaseFilter). `LateMerger.lean`'s decorative `import DependentCase` replaced with the actually-needed `import ...Minimalism.Core.Basic`.
+
 ## [0.229.918] - 2026-04-18
 
 ### Changed

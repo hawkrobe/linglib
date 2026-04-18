@@ -1,4 +1,5 @@
 import Linglib.Core.Case
+import Linglib.Theories.Syntax.Case.Dependent
 import Linglib.Theories.Syntax.Minimalism.Core.LateMerger
 
 /-!
@@ -39,6 +40,7 @@ c. DAT is a nonstructural case.
 namespace Fragments.Mongolian.Case
 
 open Minimalism
+open Syntax.Case
 
 -- ============================================================================
 -- S 1: Case System Configuration
