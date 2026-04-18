@@ -137,23 +137,23 @@ theorem upper_classB_strengthened_below_bare :
     kennedyUpperCfg.L1 .atMost3 .c2 > kennedyUpperCfg.L1 .atMost3 .c3 := by rsa_predict
 
 -- ============================================================================
--- § 5: Grounding — inlined meanings agree with `maxMeaning`
+-- § 5: Grounding — inlined meanings agree with the named numeral meanings
 -- ============================================================================
 
-/-- Lower Kennedy meanings agree with the `maxMeaning` family. -/
-theorem kLowerMeaning_eq_maxMeaning (u : KLowerUtt) (w : KCard) :
-    kLowerMeaning u w = match u with
-      | .bare3 => maxMeaning .eq 3 w.toNat
-      | .moreThan3 => maxMeaning .gt 3 w.toNat
-      | .atLeast3 => maxMeaning .ge 3 w.toNat := by
-  cases u <;> cases w <;> rfl
+/-- Lower Kennedy meanings agree with the named numeral meanings. -/
+theorem kLowerMeaning_eq_namedMeaning (u : KLowerUtt) (w : KCard) :
+    kLowerMeaning u w = true ↔ match u with
+      | .bare3 => bareMeaning 3 w.toNat
+      | .moreThan3 => moreThanMeaning 3 w.toNat
+      | .atLeast3 => atLeastMeaning 3 w.toNat := by
+  cases u <;> cases w <;> decide
 
-/-- Upper Kennedy meanings agree with the `maxMeaning` family. -/
-theorem kUpperMeaning_eq_maxMeaning (u : KUpperUtt) (w : KCard) :
-    kUpperMeaning u w = match u with
-      | .bare3 => maxMeaning .eq 3 w.toNat
-      | .fewerThan3 => maxMeaning .lt 3 w.toNat
-      | .atMost3 => maxMeaning .le 3 w.toNat := by
-  cases u <;> cases w <;> rfl
+/-- Upper Kennedy meanings agree with the named numeral meanings. -/
+theorem kUpperMeaning_eq_namedMeaning (u : KUpperUtt) (w : KCard) :
+    kUpperMeaning u w = true ↔ match u with
+      | .bare3 => bareMeaning 3 w.toNat
+      | .fewerThan3 => fewerThanMeaning 3 w.toNat
+      | .atMost3 => atMostMeaning 3 w.toNat := by
+  cases u <;> cases w <;> decide
 
 end Kennedy2015

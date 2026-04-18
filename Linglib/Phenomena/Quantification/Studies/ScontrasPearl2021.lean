@@ -22,7 +22,7 @@ new experiments.
 - §1. Every-not (n=2): `JumpOutcome`, `ScopeReading`, `scopeTruth`
 - §2. Two-not (n=4): `JumpOutcome4`, `NumeralReading`, `twoNotTruth`
 - Scope entailment asymmetry, @cite{musolino-lidz-2003} data, and
-  numeral semantics grounding via `maxMeaning` from `Numeral.Semantics`.
+  numeral semantics grounding via the named meaning functions from `Semantics.Numerals`.
 
 ## Part II: Every-Not RSA Model (§3, `EveryNot` namespace)
 
@@ -257,65 +257,65 @@ theorem numeral_inverse_not_entails_surface :
 -- ============================================================================
 
 /-! Connects S&P's `twoNotTruth` truth conditions to linglib's numeral
-semantics infrastructure (`maxMeaning` in `Numeral.Semantics`).
+semantics infrastructure (named meanings in `Semantics.Numerals`).
 
-The truth conditions in the data file are grounded in `maxMeaning`:
-- Exact surface: "exactly 2 didn't jump" = `maxMeaning.eq 2 (4 - w)`
-- Exact inverse: "¬(exactly 2 jumped)" = `!(maxMeaning.eq 2 w)`
-- At-least surface: "≥2 didn't jump" = `maxMeaning.ge 2 (4 - w)`
-- At-least inverse: "¬(≥2 jumped)" = `!(maxMeaning.ge 2 w)`
+The truth conditions in the data file are grounded in the named meanings:
+- Exact surface: "exactly 2 didn't jump" = `bareMeaning 2 (4 - w)`
+- Exact inverse: "¬(exactly 2 jumped)" = `!(bareMeaning 2 w)`
+- At-least surface: "≥2 didn't jump" = `atLeastMeaning 2 (4 - w)`
+- At-least inverse: "¬(≥2 jumped)" = `!(atLeastMeaning 2 w)`
 
 Convergent evidence for exact semantics from @cite{kennedy-2015}
 (de-Fregean semantics where bare numerals mean =n) and @cite{musolino-2004}
 (acquisition data — children reject "two" at w=3).
 -/
 
-open Semantics.Numerals (maxMeaning OrderingRel)
+open Semantics.Numerals (bareMeaning atLeastMeaning)
 
 /-- Exact surface: "exactly two didn't jump" (out of 4) ↔ exactly two jumped.
-    Matches `maxMeaning.eq 2` applied to the complement count (4 - w). -/
-theorem twoNotExact_surface_matches_maxMeaning :
+    Matches `bareMeaning 2` applied to the complement count (4 - w). -/
+theorem twoNotExact_surface_matches_bareMeaning :
     ∀ w : JumpOutcome4,
-    twoNotTruth .exact .surface w = maxMeaning .eq 2 (4 - w.toNat) := by
-  intro w; cases w <;> rfl
+    twoNotTruth .exact .surface w = true ↔ bareMeaning 2 (4 - w.toNat) := by
+  intro w; cases w <;> decide
 
-/-- Exact inverse: "¬(exactly two jumped)" ↔ `!(maxMeaning.eq 2 w)`. -/
-theorem twoNotExact_inverse_matches_maxMeaning :
+/-- Exact inverse: "¬(exactly two jumped)" ↔ ¬(bareMeaning 2 w). -/
+theorem twoNotExact_inverse_matches_bareMeaning :
     ∀ w : JumpOutcome4,
-    twoNotTruth .exact .inverse w = !(maxMeaning .eq 2 w.toNat) := by
-  intro w; cases w <;> rfl
+    twoNotTruth .exact .inverse w = true ↔ ¬ bareMeaning 2 w.toNat := by
+  intro w; cases w <;> decide
 
 /-- At-least surface: "at least two didn't jump" ↔ at most two jumped.
-    Matches `maxMeaning.ge 2` applied to the complement count. -/
-theorem twoNotAtLeast_surface_matches_maxMeaning :
+    Matches `atLeastMeaning 2` applied to the complement count. -/
+theorem twoNotAtLeast_surface_matches_atLeastMeaning :
     ∀ w : JumpOutcome4,
-    twoNotTruth .atLeast .surface w = maxMeaning .ge 2 (4 - w.toNat) := by
-  intro w; cases w <;> rfl
+    twoNotTruth .atLeast .surface w = true ↔ atLeastMeaning 2 (4 - w.toNat) := by
+  intro w; cases w <;> decide
 
-/-- At-least inverse: "¬(at least two jumped)" ↔ `!(maxMeaning.ge 2 w)`. -/
-theorem twoNotAtLeast_inverse_matches_maxMeaning :
+/-- At-least inverse: "¬(at least two jumped)" ↔ ¬(atLeastMeaning 2 w). -/
+theorem twoNotAtLeast_inverse_matches_atLeastMeaning :
     ∀ w : JumpOutcome4,
-    twoNotTruth .atLeast .inverse w = !(maxMeaning .ge 2 w.toNat) := by
-  intro w; cases w <;> rfl
+    twoNotTruth .atLeast .inverse w = true ↔ ¬ atLeastMeaning 2 w.toNat := by
+  intro w; cases w <;> decide
 
 /-- The negation-scope asymmetry collapses under exact semantics:
     internal and external negation of "three" give the same result. -/
 theorem exact_collapses_negation_scope :
-    Implicature.negatedMeaning Semantics.Numerals.Exact .three .internal 4 =
+    Implicature.negatedMeaning Semantics.Numerals.Exact .three .internal 4 ↔
     Implicature.negatedMeaning Semantics.Numerals.Exact .three .external 4 := by
-  native_decide
+  decide
 
 /-- Lower-bound semantics preserves the negation-scope distinction. -/
 theorem lowerBound_preserves_negation_scope :
-    Implicature.negatedMeaning Semantics.Numerals.LowerBound .three .internal 4 ≠
-    Implicature.negatedMeaning Semantics.Numerals.LowerBound .three .external 4 := by
-  native_decide
+    ¬ (Implicature.negatedMeaning Semantics.Numerals.LowerBound .three .internal 4 ↔
+       Implicature.negatedMeaning Semantics.Numerals.LowerBound .three .external 4) := by
+  decide
 
 /-- @cite{kennedy-2015}'s resolution: exact meaning is basic, lower-bound is derived
     via type-shift. Both meanings are grammatically available. -/
 theorem typeshift_resolves_tension :
-    Semantics.Numerals.typeLower (maxMeaning .eq) 4 2 2 =
-    maxMeaning .ge 2 2 := by native_decide
+    Semantics.Numerals.typeLower bareMeaning 4 2 2 ↔
+    atLeastMeaning 2 2 := by decide
 
 -- ============================================================================
 -- Part II: Every-Not RSA Model (§3)
@@ -947,34 +947,34 @@ theorem rsa_meaning_grounded (nr : NumeralReading) (s : ScopeReading) (w : JumpO
   · exact atLeast_surface_from_at_least_n_sem w
   · exact atLeast_inverse_from_at_least_n_sem w
 
--- maxMeaning ↔ GQT bridge
+-- Named numeral meaning ↔ GQT bridge
 
-/-- The two grounding layers agree: `maxMeaning .eq` (count-based) and
+/-- The two grounding layers agree: `bareMeaning` (count-based) and
     `exactly_n_sem` (GQT compositional) produce the same truth values.
-    Chains `twoNotExact_surface_matches_maxMeaning` with
+    Chains `twoNotExact_surface_matches_bareMeaning` with
     `exact_surface_from_exactly_n_sem` by transitivity. -/
-theorem maxMeaning_agrees_gqt_exact_surface :
-    ∀ w, (maxMeaning .eq 2 (4 - w.toNat) = true) ↔ twoNotExact_surface w := by
+theorem bareMeaning_agrees_gqt_exact_surface :
+    ∀ w, bareMeaning 2 (4 - w.toNat) ↔ twoNotExact_surface w := by
   intro w
-  rw [← twoNotExact_surface_matches_maxMeaning]
+  rw [← twoNotExact_surface_matches_bareMeaning]
   exact exact_surface_from_exactly_n_sem w
 
-theorem maxMeaning_agrees_gqt_exact_inverse :
-    ∀ w, (maxMeaning .eq 2 w.toNat = false) ↔ twoNotExact_inverse w := by
+theorem bareMeaning_agrees_gqt_exact_inverse :
+    ∀ w, ¬ bareMeaning 2 w.toNat ↔ twoNotExact_inverse w := by
   intro w
-  rw [← Bool.not_eq_true', ← twoNotExact_inverse_matches_maxMeaning]
+  rw [← twoNotExact_inverse_matches_bareMeaning]
   exact exact_inverse_from_exactly_n_sem w
 
-theorem maxMeaning_agrees_gqt_atLeast_surface :
-    ∀ w, (maxMeaning .ge 2 (4 - w.toNat) = true) ↔ twoNotAtLeast_surface w := by
+theorem atLeastMeaning_agrees_gqt_atLeast_surface :
+    ∀ w, atLeastMeaning 2 (4 - w.toNat) ↔ twoNotAtLeast_surface w := by
   intro w
-  rw [← twoNotAtLeast_surface_matches_maxMeaning]
+  rw [← twoNotAtLeast_surface_matches_atLeastMeaning]
   exact atLeast_surface_from_at_least_n_sem w
 
-theorem maxMeaning_agrees_gqt_atLeast_inverse :
-    ∀ w, (maxMeaning .ge 2 w.toNat = false) ↔ twoNotAtLeast_inverse w := by
+theorem atLeastMeaning_agrees_gqt_atLeast_inverse :
+    ∀ w, ¬ atLeastMeaning 2 w.toNat ↔ twoNotAtLeast_inverse w := by
   intro w
-  rw [← Bool.not_eq_true', ← twoNotAtLeast_inverse_matches_maxMeaning]
+  rw [← twoNotAtLeast_inverse_matches_atLeastMeaning]
   exact atLeast_inverse_from_at_least_n_sem w
 
 -- Scope Derivation

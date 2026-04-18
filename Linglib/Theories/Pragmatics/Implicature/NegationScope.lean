@@ -62,22 +62,32 @@ Compute the negated meaning under a given scope.
 - Internal: ¬(≥n) = <n (negates lower bound)
 - External: ¬(=n) = ≠n (negates exact reading)
 -/
-def negatedMeaning (T : NumeralTheory) (w : BareNumeral) (scope : NegationScope) (k : Nat) : Bool :=
+def negatedMeaning (T : NumeralTheory) (w : BareNumeral) (scope : NegationScope) (k : Nat) : Prop :=
   match scope with
-  | .internal => !(T.meaning w k)  -- ¬(literal meaning)
-  | .external => k != w.toNat      -- ¬(exact reading), regardless of theory
+  | .internal => ¬ T.meaning w k  -- ¬(literal meaning)
+  | .external => k ≠ w.toNat      -- ¬(exact reading), regardless of theory
+
+instance (T : NumeralTheory) (w : BareNumeral) (scope : NegationScope) (k : Nat) :
+    Decidable (negatedMeaning T w scope k) := by
+  unfold negatedMeaning; cases scope <;> infer_instance
 
 /--
 Internal negation of lower-bound: "not ≥n" = "<n"
 -/
-def lowerBound_internal_neg (w : BareNumeral) (k : Nat) : Bool :=
+def lowerBound_internal_neg (w : BareNumeral) (k : Nat) : Prop :=
   k < w.toNat
+
+instance (w : BareNumeral) (k : Nat) : Decidable (lowerBound_internal_neg w k) := by
+  unfold lowerBound_internal_neg; infer_instance
 
 /--
 External negation targets exact reading: "not =n" = "≠n"
 -/
-def external_neg (w : BareNumeral) (k : Nat) : Bool :=
-  k != w.toNat
+def external_neg (w : BareNumeral) (k : Nat) : Prop :=
+  k ≠ w.toNat
+
+instance (w : BareNumeral) (k : Nat) : Decidable (external_neg w k) := by
+  unfold external_neg; infer_instance
 
 -- Theory Predictions
 
@@ -90,11 +100,11 @@ def external_neg (w : BareNumeral) (k : Nat) : Bool :=
 → compatible with 0, 1, 2
 -/
 theorem lowerBound_internal_three :
-    (negatedMeaning LowerBound .three .internal 0 = true) ∧
-    (negatedMeaning LowerBound .three .internal 1 = true) ∧
-    (negatedMeaning LowerBound .three .internal 2 = true) ∧
-    (negatedMeaning LowerBound .three .internal 3 = false) := by
-  native_decide
+    negatedMeaning LowerBound .three .internal 0 ∧
+    negatedMeaning LowerBound .three .internal 1 ∧
+    negatedMeaning LowerBound .three .internal 2 ∧
+    ¬ negatedMeaning LowerBound .three .internal 3 := by
+  decide
 
 /--
 **Lower-bound external negation gives ≠n**
@@ -104,10 +114,10 @@ theorem lowerBound_internal_three :
 → compatible with 0, 1, 2, 4, 5,...
 -/
 theorem lowerBound_external_three :
-    (negatedMeaning LowerBound .three .external 0 = true) ∧
-    (negatedMeaning LowerBound .three .external 2 = true) ∧
-    (negatedMeaning LowerBound .three .external 3 = false) := by
-  native_decide
+    negatedMeaning LowerBound .three .external 0 ∧
+    negatedMeaning LowerBound .three .external 2 ∧
+    ¬ negatedMeaning LowerBound .three .external 3 := by
+  decide
 
 /--
 **The asymmetry is predicted by lower-bound semantics**
@@ -119,9 +129,9 @@ Internal negation (default) differs from external negation (marked):
 At world 4: internal gives false (4 ≥ 3), external gives true (4 ≠ 3)
 -/
 theorem negation_asymmetry_at_four :
-    negatedMeaning LowerBound .three .internal 4 = false ∧
-    negatedMeaning LowerBound .three .external 4 = true := by
-  native_decide
+    ¬ negatedMeaning LowerBound .three .internal 4 ∧
+    negatedMeaning LowerBound .three .external 4 := by
+  decide
 
 -- Exact Semantics Cannot Explain the Asymmetry
 
@@ -135,10 +145,10 @@ Both scopes collapse to the same meaning.
 -/
 theorem exact_no_distinction :
     -- In exact semantics, internal = external (both negate =n)
-    (negatedMeaning Exact .three .internal 0 = negatedMeaning Exact .three .external 0) ∧
-    (negatedMeaning Exact .three .internal 2 = negatedMeaning Exact .three .external 2) ∧
-    (negatedMeaning Exact .three .internal 4 = negatedMeaning Exact .three .external 4) := by
-  native_decide
+    (negatedMeaning Exact .three .internal 0 ↔ negatedMeaning Exact .three .external 0) ∧
+    (negatedMeaning Exact .three .internal 2 ↔ negatedMeaning Exact .three .external 2) ∧
+    (negatedMeaning Exact .three .internal 4 ↔ negatedMeaning Exact .three .external 4) := by
+  decide
 
 /--
 **The key divergence: world 4**
@@ -151,11 +161,11 @@ This requires the internal/external distinction that only lower-bound provides.
 -/
 theorem divergence_at_world_4 :
     -- Lower-bound distinguishes scopes at world 4
-    (negatedMeaning LowerBound .three .internal 4 ≠ negatedMeaning LowerBound .three .external 4)
+    (¬ (negatedMeaning LowerBound .three .internal 4 ↔ negatedMeaning LowerBound .three .external 4))
     ∧
     -- Exact collapses them
-    (negatedMeaning Exact .three .internal 4 = negatedMeaning Exact .three .external 4) := by
-  native_decide
+    (negatedMeaning Exact .three .internal 4 ↔ negatedMeaning Exact .three .external 4) := by
+  decide
 
 -- Default vs Marked Readings
 
@@ -191,7 +201,7 @@ def interpretNegatedNumeral (_T : NumeralTheory) (_w : BareNumeral) (stressed : 
 Count worlds compatible with negated numeral under given scope.
 -/
 def compatibleUnderNegation (T : NumeralTheory) (w : BareNumeral) (scope : NegationScope) : List Nat :=
-  T.worlds.filter (negatedMeaning T w scope)
+  T.worlds.filter (fun k => decide (negatedMeaning T w scope k))
 
 /--
 **Lower-bound internal: fewer worlds than external**
@@ -202,7 +212,7 @@ def compatibleUnderNegation (T : NumeralTheory) (w : BareNumeral) (scope : Negat
 theorem lowerBound_negation_worlds :
     compatibleUnderNegation LowerBound .three .internal = [0, 1, 2] ∧
     compatibleUnderNegation LowerBound .three .external = [0, 1, 2] := by
-  native_decide
+  decide
 
 -- Note: In standard worlds [0,1,2,3], both give same result.
 -- The difference appears at world 4+.
@@ -219,7 +229,7 @@ Filter extended worlds under negation for a given numeral.
 -/
 def compatibleExtended (w : BareNumeral) (scope : NegationScope) : List Nat :=
   extendedWorlds.filter λ k =>
-    negatedMeaning LowerBound w scope k
+    decide (negatedMeaning LowerBound w scope k)
 
 /--
 **With extended worlds, the asymmetry is clear**
@@ -230,7 +240,7 @@ External "not THREE": {0, 1, 2, 4, 5} (worlds ≠ 3)
 theorem extended_negation_asymmetry :
     compatibleExtended .three .internal = [0, 1, 2] ∧
     compatibleExtended .three .external = [0, 1, 2, 4, 5] := by
-  native_decide
+  decide
 
 -- Summary
 
@@ -250,16 +260,16 @@ This requires a lower bound to negate.
 -/
 theorem negation_summary :
     -- Internal and external differ in lower-bound
-    (negatedMeaning LowerBound .three .internal 4 = false ∧
-     negatedMeaning LowerBound .three .external 4 = true)
+    (¬ negatedMeaning LowerBound .three .internal 4 ∧
+     negatedMeaning LowerBound .three .external 4)
     ∧
     -- They collapse in exact
-    (negatedMeaning Exact .three .internal 4 = true ∧
-     negatedMeaning Exact .three .external 4 = true)
+    (negatedMeaning Exact .three .internal 4 ∧
+     negatedMeaning Exact .three .external 4)
     ∧
     -- Extended worlds show the full pattern
     (compatibleExtended .three .internal = [0, 1, 2] ∧
      compatibleExtended .three .external = [0, 1, 2, 4, 5]) := by
-  native_decide
+  decide
 
 end Implicature

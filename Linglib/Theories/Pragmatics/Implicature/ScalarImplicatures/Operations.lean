@@ -77,23 +77,31 @@ For numerals, this means:
 Lower-bound semantics: Operations are felicitous (ambiguity exists)
 Exact semantics: Operations are infelicitous (no ambiguity)
 -/
-def operationFelicitous (T : NumeralTheory) (w : BareNumeral) (_op : ImplicatureOperation) : Bool :=
+def operationFelicitous (T : NumeralTheory) (w : BareNumeral) (_op : ImplicatureOperation) : Prop :=
   -- Need ambiguity (multiple compatible worlds)
-  T.hasAmbiguity w
-  &&
+  T.hasAmbiguity w ∧
   -- Need a stronger alternative (for assert/suspend to target)
   match w with
-  | .one => T.utterances.contains .two
-  | .two => T.utterances.contains .three
-  | .three => T.utterances.contains .four
-  | .four => T.utterances.contains .five
-  | .five => false  -- No stronger standard numeral
+  | .one => BareNumeral.two ∈ T.utterances
+  | .two => BareNumeral.three ∈ T.utterances
+  | .three => BareNumeral.four ∈ T.utterances
+  | .four => BareNumeral.five ∈ T.utterances
+  | .five => False  -- No stronger standard numeral
+
+instance (T : NumeralTheory) (w : BareNumeral) (op : ImplicatureOperation) :
+    Decidable (operationFelicitous T w op) := by
+  unfold operationFelicitous
+  cases w <;> infer_instance
 
 /--
 Simplified check: is there an implicature to operate on?
 -/
-def hasImplicatureTarget (T : NumeralTheory) (w : BareNumeral) : Bool :=
+def hasImplicatureTarget (T : NumeralTheory) (w : BareNumeral) : Prop :=
   T.hasAmbiguity w
+
+instance (T : NumeralTheory) (w : BareNumeral) :
+    Decidable (hasImplicatureTarget T w) := by
+  unfold hasImplicatureTarget; infer_instance
 
 -- Example Sentences (@cite{horn-1972}, §1.73)
 
@@ -139,10 +147,10 @@ Since "two" means ≥2, it's compatible with both 2 and 3.
 This ambiguity licenses implicature operations.
 -/
 theorem lowerBound_operations_felicitous :
-    operationFelicitous LowerBound .two .assert = true ∧
-    operationFelicitous LowerBound .two .contradict = true ∧
-    operationFelicitous LowerBound .two .suspend = true := by
-  native_decide
+    operationFelicitous LowerBound .two .assert ∧
+    operationFelicitous LowerBound .two .contradict ∧
+    operationFelicitous LowerBound .two .suspend := by
+  decide
 
 /--
 **Exact predicts infelicitous operations**
@@ -151,10 +159,10 @@ Since "two" means =2, it's only compatible with world 2.
 No ambiguity → no implicature → nothing to operate on.
 -/
 theorem exact_operations_infelicitous :
-    operationFelicitous Exact .two .assert = false ∧
-    operationFelicitous Exact .two .contradict = false ∧
-    operationFelicitous Exact .two .suspend = false := by
-  native_decide
+    ¬ operationFelicitous Exact .two .assert ∧
+    ¬ operationFelicitous Exact .two .contradict ∧
+    ¬ operationFelicitous Exact .two .suspend := by
+  decide
 
 /--
 **The decisive contrast**
@@ -281,12 +289,12 @@ in RSA models of numeral interpretation.
 -/
 theorem operations_support_rsa_with_lowerBound :
     -- Lower-bound provides the weak literal meaning RSA needs
-    LowerBound.hasAmbiguity .two = true ∧
+    LowerBound.hasAmbiguity .two ∧
     -- Operations targeting the implicature are felicitous
-    operationFelicitous LowerBound .two .suspend = true ∧
+    operationFelicitous LowerBound .two .suspend ∧
     -- This pattern is impossible with exact semantics
-    (Exact.hasAmbiguity .two = false ∧ operationFelicitous Exact .two .suspend = false) := by
-  native_decide
+    (¬ Exact.hasAmbiguity .two ∧ ¬ operationFelicitous Exact .two .suspend) := by
+  decide
 
 -- Summary
 
@@ -304,14 +312,14 @@ are all felicitous supports the lower-bound analysis.
 -/
 theorem operations_summary :
     -- All operations felicitous for Lower-bound
-    (operationFelicitous LowerBound .two .assert = true ∧
-     operationFelicitous LowerBound .two .contradict = true ∧
-     operationFelicitous LowerBound .two .suspend = true)
+    (operationFelicitous LowerBound .two .assert ∧
+     operationFelicitous LowerBound .two .contradict ∧
+     operationFelicitous LowerBound .two .suspend)
     ∧
     -- No operations felicitous for Exact
-    (operationFelicitous Exact .two .assert = false ∧
-     operationFelicitous Exact .two .contradict = false ∧
-     operationFelicitous Exact .two .suspend = false) := by
-  native_decide
+    (¬ operationFelicitous Exact .two .assert ∧
+     ¬ operationFelicitous Exact .two .contradict ∧
+     ¬ operationFelicitous Exact .two .suspend) := by
+  decide
 
 end Implicature

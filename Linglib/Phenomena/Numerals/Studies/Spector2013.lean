@@ -143,7 +143,7 @@ theorem only_ambiguity_satisfies_all :
     ambiguityEXHPredictions.allSatisfied = true ∧
     neoGriceanPredictions.allSatisfied = false ∧
     underspecPredictions.allSatisfied = false ∧
-    exactlyOnlyPredictions.allSatisfied = false := by native_decide
+    exactlyOnlyPredictions.allSatisfied = false := by decide
 
 -- ============================================================================
 -- § 3. EXH Bridge: exhNumeral ↔ exhB
@@ -166,17 +166,17 @@ def exhDomain : List Nat := [0, 1, 2, 3]
 /-- Numeral alternatives for bare numeral m under LB: {≥0, ≥1, ..., ≥(m+1)}.
     Includes the prejacent and both weaker and stronger alternatives. -/
 def lbAlts (m : Nat) : List (Nat → Bool) :=
-  (List.range (m + 2)).map fun k => fun n => maxMeaning .ge k n
+  (List.range (m + 2)).map fun k => fun n => decide (atLeastMeaning k n)
 
 /-- Prejacent for bare numeral m under LB: ≥m. -/
-def lbMeaning (m : Nat) : Nat → Bool := fun n => maxMeaning .ge m n
+def lbMeaning (m : Nat) : Nat → Bool := fun n => decide (atLeastMeaning m n)
 
 /-- Innocent exclusion identifies the successor as the only innocently
     excludable alternative for each numeral. -/
 theorem ie_numerals :
     ieIndices exhDomain (lbMeaning 1) (lbAlts 1) = [2] ∧
     ieIndices exhDomain (lbMeaning 2) (lbAlts 2) = [3] ∧
-    ieIndices exhDomain (lbMeaning 3) (lbAlts 3) = [4] := by native_decide
+    ieIndices exhDomain (lbMeaning 3) (lbAlts 3) = [4] := by decide
 
 /-- **EXH bridge**: The numeral-specific `exhNumeral` agrees with the
     general `exhB` on the standard domain for all three bare numerals.
@@ -184,18 +184,18 @@ theorem ie_numerals :
     This proves numerals get standard @cite{fox-2007} exhaustification —
     they are not a special case requiring a bespoke operator. -/
 theorem exhNumeral_eq_exhB :
-    (exhDomain.all fun n => exhNumeral 3 1 n == exhB exhDomain (lbAlts 1) (lbMeaning 1) n) ∧
-    (exhDomain.all fun n => exhNumeral 3 2 n == exhB exhDomain (lbAlts 2) (lbMeaning 2) n) ∧
-    (exhDomain.all fun n => exhNumeral 3 3 n == exhB exhDomain (lbAlts 3) (lbMeaning 3) n) := by
-  native_decide
+    (∀ n ∈ exhDomain, exhNumeral 3 1 n ↔ exhB exhDomain (lbAlts 1) (lbMeaning 1) n = true) ∧
+    (∀ n ∈ exhDomain, exhNumeral 3 2 n ↔ exhB exhDomain (lbAlts 2) (lbMeaning 2) n = true) ∧
+    (∀ n ∈ exhDomain, exhNumeral 3 3 n ↔ exhB exhDomain (lbAlts 3) (lbMeaning 3) n = true) := by
+  decide
 
 /-- The EXH bridge also holds for the `exh` function from `Embedding.lean`,
     connecting the `NumeralTheory`-parameterized version to `exhB`. -/
 theorem exh_eq_exhB :
-    (exhDomain.all fun n => exh LowerBound .one n == exhB exhDomain (lbAlts 1) (lbMeaning 1) n) ∧
-    (exhDomain.all fun n => exh LowerBound .two n == exhB exhDomain (lbAlts 2) (lbMeaning 2) n) ∧
-    (exhDomain.all fun n => exh LowerBound .three n == exhB exhDomain (lbAlts 3) (lbMeaning 3) n) := by
-  native_decide
+    (∀ n ∈ exhDomain, exh LowerBound .one n ↔ exhB exhDomain (lbAlts 1) (lbMeaning 1) n = true) ∧
+    (∀ n ∈ exhDomain, exh LowerBound .two n ↔ exhB exhDomain (lbAlts 2) (lbMeaning 2) n = true) ∧
+    (∀ n ∈ exhDomain, exh LowerBound .three n ↔ exhB exhDomain (lbAlts 3) (lbMeaning 3) n = true) := by
+  decide
 
 -- ============================================================================
 -- § 4. Neo-Gricean Failure in DE Contexts
@@ -216,11 +216,11 @@ The neo-Gricean approach has no mechanism to derive this. -/
     not pragmatic strengthening. -/
 theorem exh_cannot_derive_atMost :
     -- EXH(≥3) = =3: narrowing, not broadening
-    (exhNumeral 3 3 3 = true ∧ exhNumeral 3 3 4 = false) ∧
+    (exhNumeral 3 3 3 ∧ ¬ exhNumeral 3 3 4) ∧
     -- Neither ≥3 nor =3 includes world 2 (fewer than 3)
-    (maxMeaning .ge 3 2 = false ∧ maxMeaning .eq 3 2 = false) ∧
+    (¬ atLeastMeaning 3 2 ∧ ¬ bareMeaning 3 2) ∧
     -- Only ≤3 gets world 2
-    maxMeaning .le 3 2 = true := by native_decide
+    atMostMeaning 3 2 := by decide
 
 /-- The indirect scalar implicature problem (@cite{spector-2013} §2.2.2).
     "Peter didn't solve three problems" — the neo-Gricean approach predicts
@@ -228,13 +228,13 @@ theorem exh_cannot_derive_atMost :
     Demonstrated on the small domain {0,1,2,3} with numeral "three". -/
 theorem indirect_si_overgeneration :
     -- Under LB: ¬(≥3) at world 2 = true (fewer than 3)
-    negatedMeaning LowerBound .three 2 = true ∧
+    negatedMeaning LowerBound .three 2 ∧
     -- The scalar alternative "Peter didn't solve two problems" (= ¬(≥2))
     -- is strictly stronger than "didn't solve three" (= ¬(≥3))
     -- Negating this stronger alternative yields: solved ≥2
     -- Combined: ≥2 ∧ ¬(≥3) = exactly 2 — a spurious prediction
-    (maxMeaning .ge 2 2 = true ∧ !(maxMeaning .ge 3 2) = true) := by
-  native_decide
+    (atLeastMeaning 2 2 ∧ ¬ atLeastMeaning 3 2) := by
+  decide
 
 /-- Discourse coherence against exactly-only (@cite{spector-2013} §4.2).
     "I have four chairs. In fact, I have five."
@@ -246,11 +246,11 @@ theorem indirect_si_overgeneration :
     5 ≠ 4. The discourse should be infelicitous, but it isn't. -/
 theorem discourse_coherence_against_exact :
     -- LB: "four" is true at world 5 (5 ≥ 4), so "in fact, five" is coherent
-    LowerBound.meaning .four 5 = true ∧
+    LowerBound.meaning .four 5 ∧
     -- Exact: "four" is false at world 5 (5 ≠ 4), so "in fact, five" contradicts
-    Exact.meaning .four 5 = false ∧
+    ¬ Exact.meaning .four 5 ∧
     -- LB: "five" is also true at world 5 — both claims hold simultaneously
-    LowerBound.meaning .five 5 = true := by native_decide
+    LowerBound.meaning .five 5 := by decide
 
 -- ============================================================================
 -- § 5. Against Underspecification
@@ -269,12 +269,12 @@ view wrongly predicts ≤40 is available. -/
     while ≥40 correctly captures "at least 40" for voting thresholds. -/
 theorem atMost_wrong_for_threshold :
     -- ≤40: age 35 counts as eligible (wrong for Fields)
-    maxMeaning .le 40 35 = true ∧
+    atMostMeaning 40 35 ∧
     -- ≥40: age 35 does NOT count (correct for voting threshold)
-    maxMeaning .ge 40 35 = false ∧
+    ¬ atLeastMeaning 40 35 ∧
     -- The asymmetry: ≥18 for voting works, ≤40 for Fields doesn't
-    maxMeaning .ge 18 19 = true ∧
-    maxMeaning .le 40 45 = false := by simp [maxMeaning]
+    atLeastMeaning 18 19 ∧
+    ¬ atMostMeaning 40 45 := by decide
 
 -- ============================================================================
 -- § 6. Ambiguity via EXH Captures All Three Generalizations
@@ -283,10 +283,10 @@ theorem atMost_wrong_for_threshold :
 /-- (41a) "At least" = base meaning, always present.
     The base ≥n is true at n and above, and survives under all operators. -/
 theorem gen41a_atLeast :
-    LowerBound.meaning .three 3 = true ∧
-    LowerBound.meaning .three 4 = true ∧
+    LowerBound.meaning .three 3 ∧
+    LowerBound.meaning .three 4 ∧
     -- Survives under necessity: □(≥3) at [3,4] = true
-    necessityMeaning LowerBound .three [3, 4] = true := by native_decide
+    necessityMeaning LowerBound .three [3, 4] := by decide
 
 /-- (41b) "Exactly" = EXH(base), available wherever EXH can scope.
     @cite{spector-2013} suggests that numerals may intrinsically activate
@@ -294,12 +294,12 @@ theorem gen41a_atLeast :
     prosodic marking for numerals (unlike "or" in DE contexts). -/
 theorem gen41b_exactly :
     -- EXH produces exact reading
-    exhNumeral 3 3 3 = true ∧ exhNumeral 3 3 4 = false ∧
+    exhNumeral 3 3 3 ∧ ¬ exhNumeral 3 3 4 ∧
     -- EXH available under negation: NOT[EXH(≥3)] = NOT[=3]
-    (!(exhNumeral 3 3 4)) = true ∧
+    ¬ exhNumeral 3 3 4 ∧
     -- EXH available under modals
-    exh LowerBound .three 3 = true ∧
-    exh LowerBound .three 4 = false := by native_decide
+    exh LowerBound .three 3 ∧
+    ¬ exh LowerBound .three 4 := by decide
 
 /-- (41c) "At most" = =n + monotone background knowledge, only in DE.
     Under negation (DE): ¬(=3) is non-directional ({0,1,2,4,5,...}).
@@ -308,13 +308,13 @@ theorem gen41b_exactly :
     so the "at most" reading is unavailable. -/
 theorem gen41c_atMost :
     -- ¬(=3) at world 2 (below): true
-    negatedMeaning Exact .three 2 = true ∧
+    negatedMeaning Exact .three 2 ∧
     -- ¬(=3) at world 4 (above): also true — non-directional
-    negatedMeaning Exact .three 4 = true ∧
+    negatedMeaning Exact .three 4 ∧
     -- Monotone background restricts to ≤3: world 2 passes, world 4 doesn't
-    (negatedMeaning Exact .three 2 && maxMeaning .le 3 2) = true ∧
-    (negatedMeaning Exact .three 4 && maxMeaning .le 3 4) = false := by
-  native_decide
+    (negatedMeaning Exact .three 2 ∧ atMostMeaning 3 2) ∧
+    ¬ (negatedMeaning Exact .three 4 ∧ atMostMeaning 3 4) := by
+  decide
 
 -- ============================================================================
 -- § 7. Intermediate Embedded Implicatures
@@ -343,11 +343,11 @@ wide-scope EXH — is unique to the EXH-ambiguity account. -/
     - EXH(◇(≥2)) = ◇(≥2) ∧ ¬◇(≥3) = false (world 3 makes ◇(≥3) true) -/
 theorem three_readings :
     -- Reading 1: ◇(≥2)
-    possibilityMeaning LowerBound .two [2, 3] = true ∧
+    possibilityMeaning LowerBound .two [2, 3] ∧
     -- Reading 2: ◇(EXH(≥2)) = ◇(=2) — EXH under modal
-    exhUnderPossibility LowerBound .two [2, 3] = true ∧
+    exhUnderPossibility LowerBound .two [2, 3] ∧
     -- Reading 3: EXH(◇(≥2)) — EXH over modal (unique to EXH-ambiguity)
-    exhOverPossibility LowerBound .two [2, 3] = false := by native_decide
+    ¬ exhOverPossibility LowerBound .two [2, 3] := by decide
 
 /-- Lexical ambiguity can only produce readings 1 and 2.
     Reading 3 distinguishes the two accounts. Under lexical ambiguity,
@@ -355,12 +355,12 @@ theorem three_readings :
     from either lexical entry alone. -/
 theorem wide_scope_exh_not_lexical :
     -- ◇(=2) at [2, 3] = true (lexical =n reading)
-    possibilityMeaning Exact .two [2, 3] = true ∧
+    possibilityMeaning Exact .two [2, 3] ∧
     -- EXH(◇(≥2)) at [2, 3] = false (EXH over modal)
-    exhOverPossibility LowerBound .two [2, 3] = false ∧
+    ¬ exhOverPossibility LowerBound .two [2, 3] ∧
     -- These differ: lexical =n ≠ wide-scope EXH
-    possibilityMeaning Exact .two [2, 3] ≠
-      exhOverPossibility LowerBound .two [2, 3] := by native_decide
+    ¬ (possibilityMeaning Exact .two [2, 3] ↔
+        exhOverPossibility LowerBound .two [2, 3]) := by decide
 
 /-- The intermediate reading (§6.2, example (53)):
     □(EXH(≥n)) — "required to do exactly n."
@@ -377,13 +377,13 @@ theorem wide_scope_exh_not_lexical :
     - all three agree: true -/
 theorem intermediate_embedded :
     -- At [3, 4]: base and intermediate diverge from lexical =n
-    necessityMeaning LowerBound .three [3, 4] = true ∧
-    necessityMeaning Exact .three [3, 4] = false ∧
-    ([3, 4].all (exh LowerBound .three)) = false ∧
+    necessityMeaning LowerBound .three [3, 4] ∧
+    ¬ necessityMeaning Exact .three [3, 4] ∧
+    ¬ (∀ n ∈ [3, 4], exh LowerBound .three n) ∧
     -- At [3]: all readings converge
-    necessityMeaning LowerBound .three [3] = true ∧
-    necessityMeaning Exact .three [3] = true ∧
-    ([3].all (exh LowerBound .three)) = true := by native_decide
+    necessityMeaning LowerBound .three [3] ∧
+    necessityMeaning Exact .three [3] ∧
+    (∀ n ∈ [3], exh LowerBound .three n) := by decide
 
 -- ============================================================================
 -- § 8. Summary
@@ -423,15 +423,15 @@ theorem spector2013_summary :
     underspecPredictions.allSatisfied = false ∧
     exactlyOnlyPredictions.allSatisfied = false ∧
     -- EXH bridge: numeral EXH = general EXH (for all three numerals)
-    (exhDomain.all fun n => exhNumeral 3 1 n == exhB exhDomain (lbAlts 1) (lbMeaning 1) n) ∧
-    (exhDomain.all fun n => exhNumeral 3 2 n == exhB exhDomain (lbAlts 2) (lbMeaning 2) n) ∧
-    (exhDomain.all fun n => exhNumeral 3 3 n == exhB exhDomain (lbAlts 3) (lbMeaning 3) n) ∧
+    (∀ n ∈ exhDomain, exhNumeral 3 1 n ↔ exhB exhDomain (lbAlts 1) (lbMeaning 1) n = true) ∧
+    (∀ n ∈ exhDomain, exhNumeral 3 2 n ↔ exhB exhDomain (lbAlts 2) (lbMeaning 2) n = true) ∧
+    (∀ n ∈ exhDomain, exhNumeral 3 3 n ↔ exhB exhDomain (lbAlts 3) (lbMeaning 3) n = true) ∧
     -- EXH derives exact from at-least
-    (exhNumeral 3 3 3 = true ∧ exhNumeral 3 3 4 = false) ∧
+    (exhNumeral 3 3 3 ∧ ¬ exhNumeral 3 3 4) ∧
     -- Discourse coherence refutes exactly-only
-    (LowerBound.meaning .four 5 = true ∧ Exact.meaning .four 5 = false) ∧
+    (LowerBound.meaning .four 5 ∧ ¬ Exact.meaning .four 5) ∧
     -- Three readings for ◇(numeral) — the third is unique to EXH-ambiguity
-    (exhOverPossibility LowerBound .two [2, 3] ≠
-      possibilityMeaning Exact .two [2, 3]) := by native_decide
+    ¬ (exhOverPossibility LowerBound .two [2, 3] ↔
+        possibilityMeaning Exact .two [2, 3]) := by decide
 
 end Spector2013

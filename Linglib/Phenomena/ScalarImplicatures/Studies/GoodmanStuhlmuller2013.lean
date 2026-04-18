@@ -486,11 +486,11 @@ theorem quantifier_meaning_grounded (u : QUtt) (s : WorldState) :
 
 /-- Lower-bound numeral meaning derives from NumeralTheory.meaning. -/
 theorem lb_meaning_grounded (u : NumUtt) (s : WorldState) :
-    lbMeaning u s =
+    lbMeaning u s = true ↔
     Semantics.Numerals.LowerBound.meaning
       (match u with | .one => .one | .two => .two | .three => .three)
       s.toNat := by
-  cases u <;> cases s <;> rfl
+  cases u <;> cases s <;> decide
 
 -- ============================================================================
 -- §10. Experiment 1: "some" x access

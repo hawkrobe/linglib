@@ -46,7 +46,7 @@ def NUtt.toBareNumeral : NUtt → BareNumeral
   | .one => .one | .two => .two | .three => .three
 
 /-- Lower-bound meaning inlined for reification: `n ≥ k`. Avoids the
-    `maxMeaning` indirection that would defeat `rsa_predict`'s definitional
+    `atLeastMeaning` indirection that would defeat `rsa_predict`'s definitional
     unfolder. The grounding theorem below shows it agrees with
     `LowerBound.meaning`. -/
 def lbNuttMeaning : NUtt → NCard → Bool
@@ -57,8 +57,8 @@ def lbNuttMeaning : NUtt → NCard → Bool
 /-- The inlined meaning agrees with `LowerBound.meaning` from
     `Numerals.Basic`. -/
 theorem lbNuttMeaning_eq_lowerBound (u : NUtt) (w : NCard) :
-    lbNuttMeaning u w = LowerBound.meaning u.toBareNumeral w.toNat := by
-  cases u <;> cases w <;> rfl
+    lbNuttMeaning u w = true ↔ LowerBound.meaning u.toBareNumeral w.toNat := by
+  cases u <;> cases w <;> decide
 
 -- ============================================================================
 -- § 2: RSA configuration with belief-based S1

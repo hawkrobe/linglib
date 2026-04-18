@@ -6,14 +6,14 @@ import Linglib.Theories.Semantics.Numerals.Basic
 @cite{fox-hackl-2006} @cite{kennedy-2015}
 
 Surfaces the abstract `Core.Scale` maximal informativity theorems at the
-Phenomena level, connecting numeral semantics (`maxMeaning`) to the
-`HasMaxInf` / `IsMaxInf` infrastructure and the @cite{fox-hackl-2006}
-density predictions.
+Phenomena level, connecting numeral semantics (the named `*Meaning`
+functions) to the `HasMaxInf` / `IsMaxInf` infrastructure and the
+@cite{fox-hackl-2006} density predictions.
 
 ## Bridge Structure
 
-1. **maxMeaning ↔ atLeastDeg**: `maxMeaning.ge` is the decidable
-   restriction of `atLeastDeg id`, proved via `maxMeaning_ge_iff_atLeastDeg`.
+1. **atLeastMeaning ↔ atLeastDeg**: `atLeastMeaning` is the decidable
+   restriction of `atLeastDeg id`, proved via `atLeastMeaning_iff_atLeastDeg`.
 
 2. **HasMaxInf for "at least"**: `atLeast_hasMaxInf` gives the existence
    of a maximally informative element for any "at least" degree property.
@@ -32,18 +32,18 @@ open Core.Scale
 open Semantics.Numerals
 
 -- ════════════════════════════════════════════════════
--- § 1. maxMeaning ↔ Core.Scale Degree Properties
+-- § 1. Named numeral meanings ↔ Core.Scale Degree Properties
 -- ════════════════════════════════════════════════════
 
-/-- `maxMeaning.ge` (numeral "at least") matches `atLeastDeg id`. -/
+/-- `atLeastMeaning` (numeral "at least") matches `atLeastDeg id`. -/
 theorem atLeast_3_is_atLeastDeg :
-    ∀ n, maxMeaning .ge 3 n = true ↔ atLeastDeg id 3 n :=
-  fun n => maxMeaning_ge_iff_atLeastDeg 3 n
+    ∀ n, atLeastMeaning 3 n ↔ atLeastDeg id 3 n :=
+  fun n => atLeastMeaning_iff_atLeastDeg 3 n
 
-/-- `maxMeaning.gt` (numeral "more than") matches `moreThanDeg id`. -/
+/-- `moreThanMeaning` (numeral "more than") matches `moreThanDeg id`. -/
 theorem moreThan_3_is_moreThanDeg :
-    ∀ n, maxMeaning .gt 3 n = true ↔ moreThanDeg id 3 n :=
-  fun n => maxMeaning_gt_iff_moreThanDeg 3 n
+    ∀ n, moreThanMeaning 3 n ↔ moreThanDeg id 3 n :=
+  fun n => moreThanMeaning_iff_moreThanDeg 3 n
 
 -- ════════════════════════════════════════════════════
 -- § 2. HasMaxInf for "at least" (any scale)
