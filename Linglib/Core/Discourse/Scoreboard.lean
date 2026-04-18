@@ -45,6 +45,7 @@ into a single scoreboard and gives G richer internal structure
 namespace Core.Discourse
 
 open Core.Proposition (BProp)
+open Core.Mood (IllocutionaryMood)
 
 variable {W : Type*}
 

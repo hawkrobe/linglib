@@ -152,6 +152,7 @@ import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Core.Genericity
 import Linglib.Core.FormalLanguage
+import Linglib.Core.StringHom
 import Linglib.Core.VerbCluster
 import Linglib.Core.Case
 import Linglib.Core.AgreementTarget
@@ -201,6 +202,7 @@ import Linglib.Core.Inheritance
 import Linglib.Core.Morphology.MorphProfile
 import Linglib.Core.Morphology.Wordhood
 import Linglib.Core.Morphology.FormMeaningMapping
+import Linglib.Core.Morphology.ConsonantalRoot
 import Linglib.Theories.Morphology.Core.Circumfix
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Morphology.Core.MirrorPrinciple
@@ -213,8 +215,8 @@ import Linglib.Core.Discourse.Accessibility
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Core.GrammaticalMood
-import Linglib.Core.ClauseType
+import Linglib.Core.Discourse.Roles
+import Linglib.Core.Mood
 import Linglib.Core.Interval.QInterval
 import Linglib.Core.Interval.PadeExp
 import Linglib.Core.Interval.RpowInterval
@@ -521,6 +523,8 @@ import Linglib.Fragments.Greek.Modals
 import Linglib.Fragments.Greek.MoodChoice
 import Linglib.Fragments.Hebrew.TemporalDeictic
 import Linglib.Fragments.Hebrew.Relativization
+import Linglib.Fragments.Hebrew.ConsonantalRoots
+import Linglib.Fragments.Amharic.ConsonantalRoots
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Urdu.CausativeSystem
 import Linglib.Fragments.Thai.Morph
@@ -893,6 +897,7 @@ import Linglib.Phenomena.Conditionals.Studies.ZaniCiardelliSanfelici2026
 import Linglib.Phenomena.Conditionals.Studies.Belnap1970
 import Linglib.Phenomena.Conditionals.Studies.McKayVanInwagen1977
 import Linglib.Phenomena.Conditionals.Studies.Stalnaker1981
+import Linglib.Phenomena.Conditionals.Studies.Stalnaker1975
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
@@ -1158,6 +1163,7 @@ import Linglib.Phenomena.Morphology.Studies.Adamson2024
 import Linglib.Phenomena.Morphology.Studies.Bhadra2024
 import Linglib.Phenomena.Morphology.Studies.Benz2025
 import Linglib.Phenomena.Morphology.Studies.Wood2023
+import Linglib.Phenomena.TemplaticMorphology.Studies.Faust2026
 import Linglib.Phenomena.Allomorphy.Studies.Stojkovic2026
 import Linglib.Phenomena.Allomorphy.Studies.Aitha2026
 import Linglib.Phenomena.Allomorphy.Studies.Middleton2026
@@ -2153,6 +2159,7 @@ import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Conditionals
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Questions
 import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
 import Linglib.Theories.Pragmatics.Assertion.Stalnaker
+import Linglib.Theories.Pragmatics.Assertion.ReasonableInference
 import Linglib.Theories.Pragmatics.Assertion.FarkasAdapter
 import Linglib.Theories.Pragmatics.Assertion.QuotationFBOntology
 import Linglib.Theories.Pragmatics.Assertion.Krifka
@@ -2172,6 +2179,7 @@ import Linglib.Theories.Phonology.ComplexSegments
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Theories.Phonology.Tier
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
 import Linglib.Theories.Phonology.Harmony.Defs
@@ -2184,6 +2192,7 @@ import Linglib.Theories.Phonology.Moraic.CompensatoryLengthening
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Theories.Phonology.Accent
 import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.Templates
 import Linglib.Theories.Phonology.Correspondence
 import Linglib.Theories.Phonology.OptimalParadigms
 import Linglib.Theories.Phonology.StratalOT

@@ -1,4 +1,5 @@
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
+import Linglib.Theories.Phonology.Tier
 import Linglib.Core.Logic.OT
 
 /-!
@@ -97,9 +98,20 @@ def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
 -- § 3: Tonal Tier Extraction
 -- ============================================================================
 
-/-- Extract the tonal tier from a list of TBUs. -/
+/-- Extract the tonal tier from a list of TBUs.
+
+    Grounded in the unified `Phonology.Tier` abstraction
+    (`Tier.apply Tier.tonal`): an erasing string homomorphism
+    `(TBU S)* → ToneFeature*` in the Kleisli category of `Option`. The
+    tonal tier is the `total` (no-erasure) case @cite{goldsmith-1976}. -/
 def tonalTier {S : Type} (tbus : List (TBU S)) : List ToneFeature :=
-  tbus.map TBU.tone
+  Phonology.Tier.apply Phonology.Tier.tonal tbus
+
+/-- The tonal tier reduces to `List.map TBU.tone` (the historical
+    formulation), via `Tier.total`'s length-preservation property. -/
+@[simp] theorem tonalTier_eq_map {S : Type} (tbus : List (TBU S)) :
+    tonalTier tbus = tbus.map TBU.tone :=
+  Phonology.Tier.apply_tonal tbus
 
 -- ============================================================================
 -- § 4: Matrix-Basemap Correspondence Constraint
@@ -225,7 +237,7 @@ private theorem tonalTier_overwrite_whole {S : Type} [DecidableEq S] [BEq S] [Re
     (host : List (TBU S)) (t : ToneFeature) :
     tonalTier (tonalOverwrite host ⟨"", [t], .whole⟩) =
     host.map (λ _ => t) := by
-  simp only [tonalTier, tonalOverwrite, List.map_map]; congr 1
+  simp only [tonalTier_eq_map, tonalOverwrite, List.map_map]; congr 1
 
 /-- The central theorem of MxBM-C: for replacive-dominant GT with a
     whole-word single-tone melody, the matrix output's tonal tier
@@ -247,7 +259,7 @@ theorem tonalOverwrite_basemap_faithful {S : Type} [DecidableEq S] [BEq S] [Repr
     let spec : Spec := ⟨"", [t], .whole⟩
     tonalTier (tonalOverwrite host spec) =
     tonalTier (basemapOutput host spec defaultTone) := by
-  simp only [tonalTier, basemapOutput, deficientProjection]
+  simp only [tonalTier_eq_map, basemapOutput, deficientProjection]
   rw [tonalOverwrite_whole_eq_map, tonalOverwrite_whole_eq_map]
   simp only [List.map_map]
   congr 1
@@ -266,7 +278,7 @@ theorem basemapOutput_tone_independent_whole {S : Type} [DecidableEq S] [BEq S] 
     let spec : Spec := ⟨"", [t], .whole⟩
     tonalTier (basemapOutput host₁ spec defaultTone) =
     tonalTier (basemapOutput host₂ spec defaultTone) := by
-  simp only [tonalTier, basemapOutput, deficientProjection]
+  simp only [tonalTier_eq_map, basemapOutput, deficientProjection]
   rw [tonalOverwrite_whole_eq_map, tonalOverwrite_whole_eq_map]
   simp only [List.map_map]
   -- Both sides reduce to host.map (f ∘ g ∘ ...), where f ∘ g ∘ ... = (λ _ => t).

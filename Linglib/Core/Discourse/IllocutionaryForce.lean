@@ -1,81 +1,42 @@
 import Linglib.Core.Context.Tower
+import Linglib.Core.Discourse.Roles
+import Linglib.Core.Mood.IllocutionaryMood
 
 /-!
 # Illocutionary Force: F in F(p)
 @cite{searle-1969} @cite{searle-1979} @cite{searle-1983} @cite{lakoff-1970}
 @cite{francik-clark-1985}
 
-The pragmatic-act side of the Searlean parallel: discourse roles, illocutionary
-mood, direction of fit, the five-class taxonomy, and preparatory conditions.
-The Intentional-state counterpart S(r) — psychological mode, sincerity
-conditions, causal self-referentiality, and IntentionalState — lives in
+The pragmatic-act side of the Searlean parallel: direction of fit, the
+five-class taxonomy, and preparatory conditions. The Intentional-state
+counterpart S(r) — psychological mode, sincerity conditions, causal
+self-referentiality, and IntentionalState — lives in
 `Core/Discourse/Intentionality.lean`. Discourse commitments live in
 `Core/Discourse/Commitment.lean`.
 
+The mood-category material that used to live here was split out for
+mathlib-style cleanliness:
+- `Core/Discourse/Roles.lean` — `DiscourseRole`, `resolveRole`
+- `Core/Mood/IllocutionaryMood.lean` — `IllocutionaryMood`, `moodAuthority`
+
+This file extends `IllocutionaryMood` with `searleClass`/`directionOfFit`,
+which depend on the act taxonomy below.
+
 ## Organization
 
-- **§ 1. Discourse Roles**: speaker/addressee (framework-agnostic)
-- **§ 2. Illocutionary Mood**: the pragmatic act classification
-- **§ 3. Direction of Fit**: Searle's key classification principle
-- **§ 4. Illocutionary Taxonomy**: the five classes derived from direction of fit
-- **§ 5. Preparatory Conditions**: Searle's felicity conditions on directives
-- **§ 6. Verification**
+- **§ 1. Direction of Fit**: Searle's key classification principle
+- **§ 2. Illocutionary Taxonomy**: the five classes derived from direction of fit
+- **§ 3. Preparatory Conditions**: Searle's felicity conditions on directives
+- **§ 4. Verification**
 -/
 
 namespace Core.Discourse
 
 open Core.Context
+open Core.Mood (IllocutionaryMood moodAuthority)
 
 -- ════════════════════════════════════════════════════════════════
--- § 1. Discourse Roles
--- ════════════════════════════════════════════════════════════════
-
-/-- The two fundamental discourse participants. `.addressee` matches
-    `KContext.addressee` (not `.listener` as in Semantics.Dynamic). -/
-inductive DiscourseRole where
-  | speaker
-  | addressee
-  deriving DecidableEq, Repr, Inhabited
-
--- ════════════════════════════════════════════════════════════════
--- § 2. Illocutionary Mood
--- ════════════════════════════════════════════════════════════════
-
-/-- Illocutionary mood — the speech-act force of an utterance.
-
-    Distinct from `GramMood` (indicative/subjunctive morphology) and the
-    Minimalist `SAPMood` (configurational). This classifies the pragmatic
-    act performed — the F in F(p). -/
-inductive IllocutionaryMood where
-  | declarative
-  | interrogative
-  | imperative
-  | promissive
-  | exclamative
-  deriving DecidableEq, Repr, Inhabited
-
-/-- Which participant holds epistemic authority for a given illocutionary mood.
-
-    @cite{lakoff-1970}: in declaratives, imperatives, and promissives the speaker is the
-    seat of knowledge; in interrogatives the addressee is. -/
-def moodAuthority : IllocutionaryMood → DiscourseRole
-  | .declarative   => .speaker
-  | .interrogative  => .addressee
-  | .imperative     => .speaker
-  | .promissive     => .speaker
-  | .exclamative    => .speaker
-
-/-- Resolve a discourse role to a concrete entity via a ContextTower,
-    reading from the origin (speech-act context).
-    `.speaker -> tower.origin.agent`, `.addressee -> tower.origin.addressee`. -/
-def resolveRole {W E P T : Type*}
-    (tower : ContextTower (KContext W E P T)) :
-    DiscourseRole → E
-  | .speaker   => tower.origin.agent
-  | .addressee => tower.origin.addressee
-
--- ════════════════════════════════════════════════════════════════
--- § 3. Direction of Fit (@cite{searle-1983}, Ch. 1 §2)
+-- § 1. Direction of Fit (@cite{searle-1983}, Ch. 1 §2)
 -- ════════════════════════════════════════════════════════════════
 
 /-- Direction of fit: how responsibility for matching is distributed
@@ -103,7 +64,7 @@ inductive DirectionOfFit where
   deriving DecidableEq, Repr, Inhabited
 
 -- ════════════════════════════════════════════════════════════════
--- § 4. Illocutionary Taxonomy (@cite{searle-1979})
+-- § 2. Illocutionary Taxonomy (@cite{searle-1979})
 -- ════════════════════════════════════════════════════════════════
 
 /-- @cite{searle-1979}'s five basic categories of illocutionary acts,
@@ -133,9 +94,19 @@ def SearleClass.directionOfFit : SearleClass → DirectionOfFit
   | .declaration  => .double
   | .expressive   => .null
 
+end Core.Discourse
+
+namespace Core.Mood.IllocutionaryMood
+
+open Core.Discourse (SearleClass DirectionOfFit)
+
 /-- Map `IllocutionaryMood` to Searle class. Not injective: both directives
-    (imperative) and commissives (promissive) share world-to-mind fit. -/
-def IllocutionaryMood.searleClass : IllocutionaryMood → SearleClass
+    (imperative) and commissives (promissive) share world-to-mind fit.
+
+    Defined in the `Core.Mood.IllocutionaryMood` namespace so it is
+    available via dot notation, even though the `SearleClass` taxonomy
+    lives in `Core.Discourse`. -/
+def searleClass : IllocutionaryMood → SearleClass
   | .declarative   => .assertive
   | .interrogative  => .directive
   | .imperative     => .directive
@@ -143,11 +114,17 @@ def IllocutionaryMood.searleClass : IllocutionaryMood → SearleClass
   | .exclamative    => .expressive
 
 /-- Direction of fit for an illocutionary mood, derived via Searle class. -/
-def IllocutionaryMood.directionOfFit (m : IllocutionaryMood) : DirectionOfFit :=
+def directionOfFit (m : IllocutionaryMood) : DirectionOfFit :=
   m.searleClass.directionOfFit
 
+end Core.Mood.IllocutionaryMood
+
+namespace Core.Discourse
+
+open Core.Mood (IllocutionaryMood moodAuthority)
+
 -- ════════════════════════════════════════════════════════════════
--- § 5. Preparatory Conditions (@cite{searle-1969} @cite{francik-clark-1985})
+-- § 3. Preparatory Conditions (@cite{searle-1969} @cite{francik-clark-1985})
 -- ════════════════════════════════════════════════════════════════
 
 /-- Preparatory conditions for directive speech acts.
@@ -221,31 +198,16 @@ theorem directive_has_preparatory_conditions :
     SearleClass.directive.directionOfFit = .worldToMind := rfl
 
 -- ════════════════════════════════════════════════════════════════
--- § 6. Verification
+-- § 4. Verification
 -- ════════════════════════════════════════════════════════════════
 
--- Epistemic authority
+-- Epistemic authority (theorems about moodAuthority — moved here so that
+-- `.declarative`/`.interrogative` are visible from the IllocutionaryMood namespace)
 theorem epistemic_authority_declarative :
     moodAuthority .declarative = .speaker := rfl
 
 theorem epistemic_authority_interrogative :
     moodAuthority .interrogative = .addressee := rfl
-
-theorem resolve_speaker_is_agent {W E P T : Type*}
-    (tower : ContextTower (KContext W E P T)) :
-    resolveRole tower .speaker = tower.origin.agent := rfl
-
-theorem resolve_addressee_is_addressee {W E P T : Type*}
-    (tower : ContextTower (KContext W E P T)) :
-    resolveRole tower .addressee = tower.origin.addressee := rfl
-
-/-- Discourse role resolution is invariant under tower push: discourse
-    roles reflect speech-act participants (from origin), not embedded ones. -/
-theorem resolveRole_shift_invariant {W E P T : Type*}
-    (tower : ContextTower (KContext W E P T))
-    (σ : ContextShift (KContext W E P T)) (r : DiscourseRole) :
-    resolveRole (tower.push σ) r = resolveRole tower r := by
-  cases r <;> simp only [resolveRole, ContextTower.push_origin]
 
 -- Direction of fit per Searle class
 theorem assertive_mind_to_world :

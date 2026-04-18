@@ -91,14 +91,23 @@ abbrev MDisjunction (W : Type*) := List (Disjunct W)
 
 /-- A single disjunct is true iff its modal claim holds.
 ◇: ∃w ∈ A, B(w). □: ∀w ∈ A, B(w). -/
-def Disjunct.holds [FiniteWorlds W] (d : Disjunct W) : Bool :=
+def Disjunct.holds (d : Disjunct W) : Prop :=
   match d.force with
-  | .existential => FiniteWorlds.worlds.any (fun w => d.domain w && d.content w)
-  | .universal   => FiniteWorlds.worlds.all (fun w => !d.domain w || d.content w)
+  | .existential => ∃ w, d.domain w = true ∧ d.content w = true
+  | .universal   => ∀ w, d.domain w = true → d.content w = true
+
+instance Disjunct.holds_decidable [Fintype W] (d : Disjunct W) :
+    Decidable d.holds := by
+  unfold Disjunct.holds
+  cases d.force <;> infer_instance
 
 /-- A modal disjunction is true iff every disjunct's modal claim holds. -/
-def MDisjunction.holds [FiniteWorlds W] (disj : MDisjunction W) : Bool :=
-  disj.all (fun d => d.holds)
+def MDisjunction.holds (disj : MDisjunction W) : Prop :=
+  ∀ d ∈ disj, d.holds
+
+instance MDisjunction.holds_decidable [Fintype W] (disj : MDisjunction W) :
+    Decidable disj.holds :=
+  inferInstanceAs (Decidable (∀ d ∈ disj, d.holds))
 
 
 -- ══════════════════════════════════════════════════════════
@@ -133,12 +142,11 @@ holds individually.
 Geurts §3 Case #1/2: "It may be here or it may be there" →
 each individual "may" claim holds. This is immediate from the
 structure: the disjunction IS a conjunction of modal claims. -/
-theorem free_choice [FiniteWorlds W] (disj : MDisjunction W)
-    (h_holds : disj.holds = true)
+theorem free_choice (disj : MDisjunction W)
+    (h_holds : disj.holds)
     (d : Disjunct W) (hd : d ∈ disj) :
-    d.holds = true := by
-  simp [MDisjunction.holds, List.all_eq_true] at h_holds
-  exact h_holds d hd
+    d.holds :=
+  h_holds d hd
 
 /-- Disjointness gives exclusive reading.
 
@@ -174,12 +182,17 @@ def defaultBinding (C : BProp W) (content : List (BProp W)) (f : Force) :
 
 /-- With default binding and existential force, truth = each disjunct
 is possible w.r.t. C. This is the basic free choice structure. -/
-theorem default_existential_holds_iff [FiniteWorlds W]
+theorem default_existential_holds_iff
     (C : BProp W) (bs : List (BProp W)) :
-    (defaultBinding C bs .existential).holds =
-    bs.all (fun b => FiniteWorlds.worlds.any (fun w => C w && b w)) := by
-  simp only [MDisjunction.holds, defaultBinding, List.all_map, Function.comp_def,
-    Disjunct.holds]
+    (defaultBinding C bs .existential).holds ↔
+    ∀ b ∈ bs, ∃ w, C w = true ∧ b w = true := by
+  simp only [MDisjunction.holds, defaultBinding, List.mem_map, Disjunct.holds,
+    forall_exists_index, and_imp]
+  constructor
+  · intro h b hb
+    exact h _ b hb rfl
+  · rintro h _ b hb rfl
+    exact h b hb
 
 
 -- ══════════════════════════════════════════════════════════
@@ -277,7 +290,7 @@ theorem conflicting_presups_disjoint (p q : PrProp W)
 -- ══════════════════════════════════════════════════════════
 
 inductive Loc where | here | there | elsewhere
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 instance : FiniteWorlds Loc where
   worlds := [.here, .there, .elsewhere]
@@ -300,7 +313,7 @@ Exhaustivity+Disjointness force A = {here}, A' = {there}. -/
 def mustHereOrThere : MDisjunction Loc := [dHere, dThere]
 
 /-- The disjunction holds: □(here) over {here} ∧ □(there) over {there}. -/
-theorem mustHereOrThere_holds : mustHereOrThere.holds = true := by decide
+theorem mustHereOrThere_holds : mustHereOrThere.holds := by decide
 
 /-- Exhaustivity: bgHereOrThere ⊆ {here} ∪ {there}. -/
 theorem mustHereOrThere_exhaustive :
@@ -331,18 +344,18 @@ def mayHereOrThere : MDisjunction Loc :=
   defaultBinding bgHereOrThere [isHere, isThere] .existential
 
 /-- The disjunction holds: ◇(here) w.r.t. C ∧ ◇(there) w.r.t. C. -/
-theorem mayHereOrThere_holds : mayHereOrThere.holds = true := by decide
+theorem mayHereOrThere_holds : mayHereOrThere.holds := by decide
 
 /-- Free choice: ◇(here) holds individually. -/
 theorem mayHereOrThere_fc_here :
     Disjunct.holds (W := Loc)
-      { domain := bgHereOrThere, force := .existential, content := isHere } = true := by
+      { domain := bgHereOrThere, force := .existential, content := isHere } := by
   decide
 
 /-- Free choice: ◇(there) holds individually. -/
 theorem mayHereOrThere_fc_there :
     Disjunct.holds (W := Loc)
-      { domain := bgHereOrThere, force := .existential, content := isThere } = true := by
+      { domain := bgHereOrThere, force := .existential, content := isThere } := by
   decide
 
 

@@ -40,7 +40,7 @@ namespace Semantics.Modality.Assert
 open Semantics.Modality.EventRelativity
 open Core.Proposition (BProp)
 open Core.Modality (ModalFlavor)
-open Core.Discourse (IllocutionaryMood)
+open Core.Mood (IllocutionaryMood)
 
 
 -- ════════════════════════════════════════════════════

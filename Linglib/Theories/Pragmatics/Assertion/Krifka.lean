@@ -49,7 +49,7 @@ namespace Pragmatics.Assertion.Krifka
 open Core.Discourse.Commitment (CommitmentSlate)
 open Core.CommonGround (ContextSet)
 open Core.Proposition (BProp)
-open Core.Discourse (IllocutionaryMood)
+open Core.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Clause Layers

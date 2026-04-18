@@ -29,6 +29,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Context.Basic
 import Linglib.Core.Discourse.IllocutionaryForce
+import Linglib.Core.Mood.ClauseType
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Evidence
@@ -84,22 +85,35 @@ def deriveMood (contentFinite hearerCCommandsContent : Bool) : SAPMood :=
   | false, false => .subjunctive
 
 -- ============================================================================
--- Section B2: Bridge to IllocutionaryMood
+-- Section B2: Bridge to ClauseType
 -- ============================================================================
 
-open Core.Discourse (IllocutionaryMood)
+open Core.Mood (IllocutionaryMood ClauseType)
 
-/-- Map configurational mood to framework-agnostic
-    illocutionary mood. The mapping is injective: all four `SAPMood`
-    constructors embed into `IllocutionaryMood`, but `.exclamative`
-    has no `SAPMood` counterpart (exclamatives are not derived in S&T's
-    2×2 matrix). S&T's "subjunctive" maps to the illocutionary
-    `promissive` — both encode [-finite, speaker-oriented] speech acts. -/
-def SAPMood.toIllocutionaryMood : SAPMood → IllocutionaryMood
-  | .declarative   => .declarative
-  | .interrogative  => .interrogative
-  | .imperative     => .imperative
-  | .subjunctive    => .promissive
+/-- Map configurational mood to a framework-agnostic `ClauseType`
+    (illocutionary force × grammatical mood). S&T's `.subjunctive`
+    is configurational [-finite, hearer does NOT c-command content];
+    its closest framework-agnostic match is a declarative-subjunctive
+    clause, NOT the illocutionary `.promissive` (a previous mapping
+    that conflated S&T's terminology with Searle's commissive class).
+
+    The four mappings:
+    - `.declarative`  → ⟨declarative, indicative⟩
+    - `.interrogative` → ⟨interrogative, indicative⟩
+    - `.imperative`   → ⟨imperative, indicative⟩  (mood often neutralized)
+    - `.subjunctive`  → ⟨declarative, subjunctive⟩
+
+    `.exclamative` has no `SAPMood` counterpart (exclamatives are not
+    derived in S&T's 2×2 matrix). -/
+def SAPMood.toClauseType : SAPMood → ClauseType
+  | .declarative    => { force := .declarative,   mood := .indicative }
+  | .interrogative  => { force := .interrogative, mood := .indicative }
+  | .imperative     => { force := .imperative,    mood := .indicative }
+  | .subjunctive    => { force := .declarative,   mood := .subjunctive }
+
+/-- Convenience projection: SAPMood's illocutionary force component. -/
+def SAPMood.toForce (m : SAPMood) : IllocutionaryMood :=
+  m.toClauseType.force
 
 -- ============================================================================
 -- Section C: Seat of Knowledge
@@ -124,14 +138,13 @@ def PRole.toDiscourseRole : PRole → Core.Discourse.DiscourseRole
   | .hearer          => .addressee
   | .seatOfKnowledge => .speaker  -- default; varies by mood
 
-open Core.Discourse (moodAuthority) in
 /-- `seatOfKnowledge` (Speas & Tenny, configurational) agrees with
-    `moodAuthority` (IllocutionaryForce.lean, framework-agnostic) via
-    the `toIllocutionaryMood` bridge. Both encode the same generalization:
+    `ClauseType.authority` (Core/Mood/ClauseType.lean, framework-agnostic)
+    via the `toClauseType` bridge. Both encode the same generalization:
     declarative/imperative/subjunctive → speaker, interrogative → addressee. -/
 theorem seat_of_knowledge_agrees_with_mood_authority (m : SAPMood) :
     (seatOfKnowledge m).toDiscourseRole =
-    moodAuthority m.toIllocutionaryMood := by
+    m.toClauseType.authority := by
   cases m <;> rfl
 
 -- ============================================================================

@@ -1,5 +1,6 @@
 import Linglib.Core.Logic.OT
 import Linglib.Core.Constraint.Weighted
+import Linglib.Core.StringHom
 
 /-!
 # Shared Phonological Constraint Library
@@ -14,6 +15,9 @@ studies with different candidate types:
 - **DEP**: penalizes epenthesis (segment/feature in output but not input)
 - **IDENT**: penalizes featural unfaithfulness
 - **\*STRUC**: penalizes structural complexity (markedness)
+- **ALIGN**: penalizes edge mismatches between morphological and prosodic
+  constituents (@cite{mccarthy-prince-1993} Generalized Alignment, used
+  by @cite{faust-2026} as \*Misalignment)
 
 This module provides generic constructors so that study files can write:
 
@@ -152,6 +156,54 @@ def mkOCP {C α : Type} [BEq α] (name : String) (project : C → List α) :
     NamedConstraint C :=
   mkMarkGrad name (λ c => adjacentIdentical (project c))
 
+/-- Build an OCP constraint from a `Core.Tier` projection. The candidate's
+    raw symbol list is extracted by `extract`, and the tier `T` projects
+    that string onto the relevant tier alphabet (an erasing string
+    homomorphism — see `Core.StringHom`).
+
+    This is the constraint-algebra adapter for the unified `Tier` interface:
+    autosegmental tonal-tier OCP, sibilant-harmony OCP, and learned-tier
+    OCP (à la @cite{belth-2026}) all factor through this constructor.
+
+    @cite{goldsmith-1976} @cite{berent-2026} -/
+def mkOCPOnTier {C α β : Type} [BEq β]
+    (name : String) (T : Core.Tier α β) (extract : C → List α) :
+    NamedConstraint C :=
+  mkOCP name (fun c => Core.Tier.apply T (extract c))
+
+/-- Grounding theorem: the tier-driven OCP equals the generic OCP applied to
+    the explicit projection `Tier.apply T ∘ extract`. By construction. -/
+@[simp] theorem mkOCPOnTier_eq_mkOCP {C α β : Type} [BEq β]
+    (name : String) (T : Core.Tier α β) (extract : C → List α) :
+    mkOCPOnTier name T extract =
+    mkOCP name (fun c => Core.Tier.apply T (extract c)) := rfl
+
+-- ============================================================================
+-- § 2c: Alignment (@cite{mccarthy-prince-1993} Generalized Alignment)
+-- ============================================================================
+
+/-- Build a binary ALIGN constraint (markedness): violated when the candidate's
+    edge configuration is wrong. The Generalized Alignment schema
+    `Align(Cat₁, Edge₁, Cat₂, Edge₂)` (@cite{mccarthy-prince-1993}) is given
+    here in its predicate-based form: the user supplies the predicate
+    `violated c` that fires when the edge configuration is misaligned.
+
+    Specific alignment instances include left/right edge alignment of
+    morphological constituents to prosodic constituents and the
+    \*Misalignment principle of @cite{faust-2026} (root nonfinal element
+    must not be template-final). -/
+def mkAlign {C : Type} (name : String) (violated : C → Bool) : NamedConstraint C :=
+  { name := name
+    family := .markedness
+    eval := fun c => if violated c then 1 else 0 }
+
+/-- Gradient ALIGN: counts edge-mismatch violations (@cite{mccarthy-prince-1993}). -/
+def mkAlignGrad {C : Type} (name : String) (violations : C → Nat) :
+    NamedConstraint C :=
+  { name := name
+    family := .markedness
+    eval := violations }
+
 -- ============================================================================
 -- § 3: Classification Properties
 -- ============================================================================
@@ -177,6 +229,16 @@ theorem mkMaxCtx_is_faithfulness {C : Type} (name : String)
 theorem mkOCP_is_markedness {C α : Type} [BEq α] (name : String)
     (project : C → List α) :
     (mkOCP name project).family = .markedness := rfl
+
+/-- Tier-driven OCP constraints are markedness constraints. -/
+theorem mkOCPOnTier_is_markedness {C α β : Type} [BEq β] (name : String)
+    (T : Core.Tier α β) (extract : C → List α) :
+    (mkOCPOnTier name T extract).family = .markedness := rfl
+
+/-- ALIGN constraints are markedness constraints
+    (@cite{mccarthy-prince-1993}). -/
+theorem mkAlign_is_markedness {C : Type} (name : String) (p : C → Bool) :
+    (mkAlign name p).family = .markedness := rfl
 
 -- ============================================================================
 -- § 4: Violation Bounds

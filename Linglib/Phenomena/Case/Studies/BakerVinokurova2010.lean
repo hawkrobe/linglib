@@ -208,7 +208,13 @@ theorem ditrans_full_pattern :
 
 /-- Elsewhere ordering: in the ditransitive, only ONE NP gets ACC
     despite there being two VP-internal NPs. The (4a) DAT rule bleeds
-    (4b) at the VP cycle. -/
+    (4b) at the VP cycle.
+
+    This is the per-datum verification. The structural reason — that
+    `applyAccRule` cannot overwrite *any* marked NP, regardless of the
+    input — is `applyAccRule_preserves_marked_at` in
+    `DependentCase.lean`, and the full pipeline analogue is
+    `dat_persists_through_assignCasesPhased`. -/
 theorem dat_bleeds_acc_on_vp_cycle :
     (ditransitiveResult.filter (·.case == .acc)).length = 1 ∧
     (ditransitiveResult.filter (·.case == .dat)).length = 1 := by decide
@@ -463,12 +469,12 @@ def pureMarantz : CaseSystemConfig where
   accMode  := .dependent
   genMode  := .nonstructural
 
-/-- Pure Chomsky (Sakha pattern with all cases assigned by Agree).
-    Note: the present algorithm has no `applyAccAgree` pass, so the
-    `.agreeV` setting effectively turns the dependent ACC mechanism
-    off without replacing it. The point of the comparison is precisely
-    that neither pure analysis derives the Sakha NOM/DAT/ACC ditrans
-    pattern. -/
+/-- Pure Chomsky: every structural case assigned by Agree with a
+    functional head. v-Agree marks the lowest CP-visible argumental
+    NP as ACC; T-Agree marks the highest as NOM; D-Agree marks DP-
+    internals as GEN; DAT is purely lexical/inherent
+    (`.nonstructural`). This is the standard
+    @cite{chomsky-2000}/@cite{chomsky-2001} configuration. -/
 def pureChomsky : CaseSystemConfig where
   langType := .accusative
   nomMode  := .agreeT
@@ -495,21 +501,113 @@ theorem sakha_subj_distinct_from_pure_marantz :
 theorem pure_chomsky_no_algorithmic_dat :
     (assignCasesPhased pureChomsky ditransitive).all (·.case ≠ .dat) := by decide
 
+/-- Pure Chomsky's v-Agree fires under `accMode := .agreeV` and marks
+    the theme ACC via Agree (not via the dependent rule). This makes
+    the source-distinction operative, not just the case-distinction:
+    Sakha derives ACC via `.dependent`, pure Chomsky via `.agree`. -/
+theorem pure_chomsky_acc_via_agree :
+    getCaseOf "theme" (assignCasesPhased pureChomsky ditransitive) = some .acc ∧
+    getSourceOf "theme" (assignCasesPhased pureChomsky ditransitive) = some .agree := by
+  decide
+
+/-- The causative cascade is the canonical wedge against any
+    pure-Agree theory of structural case. Adding the lower theme to
+    a transitive-base causative *changes* the case on the causee
+    (ACC → DAT) — but no head's Agree relation has been altered,
+    only the count of NPs in max VP. Pure Chomsky predicts the
+    causee in (23b) surfaces with NOM-by-default, exactly because
+    its v-Agree probe targets the theme; the (4a)/dependent-DAT
+    rule cannot apply without `datMode := .dependent`. -/
+theorem pure_chomsky_misses_causative_cascade :
+    getCaseOf "causee" (assignCasesPhased pureChomsky causativeOfTransitive) ≠
+      some .dat ∧
+    getCaseOf "causee" causTransResult = some .dat := by
+  refine ⟨?_, ?_⟩ <;> decide
+
 /-- The strong two-modality theorem: neither pure modality derives
-    the Sakha pattern (NOM-via-Agree on the subject + DAT on the goal).
-    The two-modality grammar is *required*, not optional. -/
+    the Sakha pattern. Pure Marantz fails the NOM-as-Agree fingerprint
+    (subject NOM source = `.unmarked`). Pure Chomsky fails on DAT —
+    not just on the ditransitive but, more sharply, on the causative
+    cascade where adding an NP changes another NP's case in a way no
+    Agree relation can mediate. The two-modality grammar is
+    *required*, not stipulated. -/
 theorem two_modalities_required :
-    -- Pure Marantz fails on NOM source
+    -- Pure Marantz fails on the NOM source fingerprint
     (getSourceOf "subj" (assignCasesPhased pureMarantz ditransitive) ≠ some .agree) ∧
-    -- Pure Chomsky fails on DAT presence
+    -- Pure Chomsky fails on DAT in the ditransitive
     (¬ ∃ cn ∈ assignCasesPhased pureChomsky ditransitive, cn.case = .dat) ∧
-    -- Sakha succeeds on both
+    -- Pure Chomsky additionally fails on the causative cascade
+    (getCaseOf "causee" (assignCasesPhased pureChomsky causativeOfTransitive) ≠
+       some .dat) ∧
+    -- Sakha succeeds on all three
     (getSourceOf "subj" ditransitiveResult = some .agree) ∧
-    (∃ cn ∈ ditransitiveResult, cn.case = .dat) := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
+    (∃ cn ∈ ditransitiveResult, cn.case = .dat) ∧
+    (getCaseOf "causee" causTransResult = some .dat) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- § 14: Soundness — One Case per NP (Re-export from DependentCase)
+-- § 14: D-Agree GEN — DP-Internal Possessors (paper (5)/(86))
+-- ============================================================================
+
+/-! @cite{baker-vinokurova-2010} (5)/(86): D Agrees with the
+possessor inside DP and values it GEN. The clausal cycles see the DP
+as opaque — its possessor is filtered out of `unmarkedVisible` by
+the `inDP` flag — and `applyGenAgree` runs as the DP-internal
+counterpart to T-Agree. This is the second Agree-modality slot
+(`genMode := .agreeD`) that distinguishes the Sakha grammar from a
+purely Marantzian one. -/
+
+/-- A DP-internal possessor: opaque to clause-level case competition
+    but valued GEN by D-Agree. -/
+def possessor (label : String) : PhasedNP :=
+  { label := label, lexicalCase := none, basePhase := .cp,
+    shifted := false, isArgumental := true, inDP := true }
+
+/-- "Aisen's house [is in town]" — the matrix subject is a DP whose
+    possessor `aisen` is valued GEN by D-Agree. The possessor is
+    invisible to clausal probes; the head noun (`house`) is the
+    subject of T-Agree and surfaces NOM. -/
+def possessedSubject : List PhasedNP := [subj "house", possessor "aisen"]
+
+def possessedResult : List CasedNP :=
+  assignCasesPhased sakhaConfig possessedSubject
+
+theorem possessor_gets_gen_via_agree :
+    getCaseOf "aisen" possessedResult = some .gen ∧
+    getSourceOf "aisen" possessedResult = some .agree := by decide
+
+theorem possessed_head_gets_nom :
+    getCaseOf "house" possessedResult = some .nom ∧
+    getSourceOf "house" possessedResult = some .agree := by decide
+
+/-- The GEN possessor is invisible to (4b)/ACC: in a transitive with
+    a possessed object, the head noun is what receives ACC, not the
+    possessor (which is busy being valued GEN inside its DP). -/
+def transWithPossessedObj : List PhasedNP :=
+  [subj "subj", shiftedVP "book", possessor "aisen"]
+
+def transPossResult : List CasedNP :=
+  assignCasesPhased sakhaConfig transWithPossessedObj
+
+theorem possessor_is_opaque_to_clausal_acc :
+    getCaseOf "aisen" transPossResult = some .gen ∧
+    getCaseOf "book"  transPossResult = some .acc := by decide
+
+/-- The two Agree modalities (T → NOM, D → GEN) coexist with the
+    two dependent modalities (DAT, ACC) in a single derivation —
+    the strongest empirical demonstration of the four-slot
+    parameterization at work. -/
+theorem all_four_modalities_in_one_clause :
+    let cl : List PhasedNP :=
+      [subj "subj", lowVP "goal", shiftedVP "theme", possessor "aisen"]
+    let r := assignCasesPhased sakhaConfig cl
+    getSourceOf "subj"  r = some .agree     ∧  -- T-Agree
+    getSourceOf "aisen" r = some .agree     ∧  -- D-Agree
+    getSourceOf "goal"  r = some .dependent ∧  -- (4a)
+    getSourceOf "theme" r = some .dependent := by decide
+
+-- ============================================================================
+-- § 15: Soundness — One Case per NP (Re-export from DependentCase)
 -- ============================================================================
 
 /-- The phased algorithm is total on every Sakha derivation in this
@@ -523,8 +621,10 @@ theorem all_sakha_derivations_total :
     causIntransResult.length = causativeOfIntransitive.length ∧
     causTransResult.length = causativeOfTransitive.length ∧
     intrAdvResult.length = intransitiveWithAdverb.length ∧
-    transSummerResult.length = transitiveSummerObject.length := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    transSummerResult.length = transitiveSummerObject.length ∧
+    possessedResult.length = possessedSubject.length ∧
+    transPossResult.length = transWithPossessedObj.length := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
     apply assignCasesPhased_length
 
 end Phenomena.Case.Studies.BakerVinokurova2010

@@ -25,11 +25,15 @@ conditionals assert high conditional probability, not material implication.
 -/
 
 import Linglib.Core.Semantics.Proposition
+import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Order.Normality
+import Linglib.Core.Mood.Basic
 
 namespace Semantics.Conditionals
 
 open Core.Proposition
+open Core.CommonGround (ContextSet)
+open Core.Mood (GramMood)
 
 -- Material Conditional
 
@@ -338,44 +342,8 @@ def kratzerConditional {W : Type*} (ctx : KratzerContext W) (p q : Prop' W) : Pr
     -- All p-worlds that are "best" according to the ordering source satisfy q
     ∀ w' ∈ pWorlds, (∀ w'' ∈ pWorlds, kratzerBetter os w' w'' → kratzerBetter os w'' w' → q w'')
 
--- Indicative vs Subjunctive Conditionals
-
-/--
-**Indicative conditional** (epistemic, open).
-
-"If A, then C" in the indicative mood - the standard conditional for
-reasoning about what we expect to be true if A turns out to be true.
-
-This is just the material conditional: ¬A ∨ C.
--/
-def indicativeConditional {W : Type*} (p q : Prop' W) : Prop' W :=
-  materialImp p q
-
-/--
-**Subjunctive conditional** (counterfactual).
-
-"If A were the case, then C would be the case" - the conditional for
-reasoning about non-actual possibilities.
-
-This uses the variably strict semantics: at the closest A-worlds, C holds.
--/
-def subjunctiveConditional {W : Type*} (sim : SimilarityOrdering W)
-    (domain : Set W) (p q : Prop' W) : Prop' W :=
-  variablyStrictImp sim domain p q
-
-/--
-**Subjunctive implies indicative** (when the antecedent holds at the actual world).
-
-If "if p were, then q would" is true at w, and p holds at w, then q holds at w.
-This shows that subjunctive conditionals are stronger than indicatives in this sense.
-
-Requires a centered similarity ordering (the actual world is closest to itself).
--/
-theorem subjunctive_implies_indicative {W : Type*} (sim : SimilarityOrdering W)
-    (domain : Set W) (p q : Prop' W) (w : W) (hw : w ∈ domain) (hp : p w)
-    (h_centered : sim.isCentered) :
-    subjunctiveConditional sim domain p q w → indicativeConditional p q w := by
-  exact variably_strict_implies_material sim domain p q w hw hp h_centered
+-- (Indicative/subjunctive definitions moved below `SelectionFunction`,
+--  see `## Stalnakerian indicative/subjunctive split` further down.)
 
 -- Selection Functions (@cite{stalnaker-1968}, @cite{ramotowska-marty-romoli-santorio-2025})
 
@@ -562,5 +530,150 @@ This is formalized in `Assertability.lean`, where we define:
 The RSA model then explains pragmatic phenomena (conditional perfection,
 missing-link infelicity) through reasoning about assertability.
 -/
+
+-- Stalnakerian indicative/subjunctive split (@cite{stalnaker-1975})
+
+/-!
+## Stalnakerian indicative/subjunctive split
+
+@cite{stalnaker-1975} argues that the indicative/subjunctive distinction is
+*pragmatic*, not semantic: both have the same selection-based truth condition.
+Indicatives require the selection function to obey the **pragmatic constraint**
+(stay inside the context set when possible); subjunctives signal that the
+constraint is suspended.
+
+The previous identification `indicativeConditional := materialImp` was
+inaccurate per @cite{stalnaker-1975} §IV ("This equivalence explains the
+plausibility of the truth-functional analysis ... but it does not justify
+that analysis"). We now derive the equivalence within an appropriate context
+rather than stipulate it.
+-/
+
+/--
+**Selection-based conditional**: "if p, then q" is true at w iff q holds at
+the world selected by `s` from the p-worlds. This is the common semantic
+core of @cite{stalnaker-1975} indicatives and subjunctives. -/
+def selectionConditional {W : Type*} (s : SelectionFunction W)
+    (p q : BProp W) : BProp W :=
+  λ w => q (s.select w {w' | p w' = true})
+
+/--
+**Pragmatic constraint on selection** (@cite{stalnaker-1975} §III).
+
+If the conditional is being evaluated at a context-set world `w`, and some
+antecedent-world is also in the context set, then the selected world must
+be in the context set. Equivalently: context-set worlds are closer to each
+other than to non-context-set worlds whenever a context-set option is
+available.
+
+This is the central new contribution of @cite{stalnaker-1975}: it is what
+makes the indicative inference forms behave the way they do, without
+changing the semantic clause. -/
+def pragmaticConstraint {W : Type*} (s : SelectionFunction W)
+    (C : ContextSet W) : Prop :=
+  ∀ w (A : Set W), C w → (∃ w' ∈ A, C w') → C (s.select w A)
+
+/--
+**Mooded conditional** (@cite{stalnaker-1975}): the truth-conditional clause
+is `selectionConditional` regardless of grammatical mood. The mood index `m`
+is metadata at the call site, documenting whether an indicative or subjunctive
+is being interpreted; the *semantic* mood difference is captured by which
+selection functions are admissible in the context — see `admissibleSelection`.
+
+Single source of truth: indicative and subjunctive conditionals do not have
+distinct semantic clauses. Replacing two parallel defs (`indicativeConditional`,
+`subjunctiveConditional`) with one mood-keyed wrapper makes Stalnaker's actual
+claim explicit at the type level. -/
+def moodedConditional {W : Type*} (_m : GramMood) (s : SelectionFunction W)
+    (p q : BProp W) : BProp W :=
+  selectionConditional s p q
+
+/--
+**Mood-indexed admissibility on selection functions** (@cite{stalnaker-1975}).
+
+Stalnaker's mood distinction lives here, not in the truth-conditional clause:
+- `.indicative` requires the selection function to obey `pragmaticConstraint`
+  on the context — the central new contribution of @cite{stalnaker-1975}.
+- `.subjunctive` imposes no such constraint; the selection function may reach
+  outside the context set, which is precisely what subjunctive mood signals.
+
+This makes "indicative vs subjunctive" a property of the *selection-function /
+context pairing*, not a separate semantic operator. -/
+def Mood.admissibleSelection {W : Type*} (m : GramMood) (s : SelectionFunction W)
+    (C : ContextSet W) : Prop :=
+  match m with
+  | .indicative  => pragmaticConstraint s C
+  | .subjunctive => True
+
+/-- Indicative admissibility unfolds to the pragmatic constraint. -/
+theorem admissibleSelection_indicative {W : Type*} (s : SelectionFunction W)
+    (C : ContextSet W) :
+    Mood.admissibleSelection .indicative s C = pragmaticConstraint s C := rfl
+
+/-- Subjunctive admissibility imposes no constraint. -/
+theorem admissibleSelection_subjunctive {W : Type*} (s : SelectionFunction W)
+    (C : ContextSet W) :
+    Mood.admissibleSelection .subjunctive s C = True := rfl
+
+/--
+**Mood is irrelevant to the truth-conditional clause** (@cite{stalnaker-1975}).
+
+For any grammatical mood, the mooded conditional reduces to the bare
+selection conditional. This is the rfl-equation that previously had to be
+stated as `indicative_eq_subjunctive` between two parallel defs. -/
+theorem moodedConditional_eq_selectionConditional {W : Type*} (m : GramMood)
+    (s : SelectionFunction W) (p q : BProp W) :
+    moodedConditional m s p q = selectionConditional s p q := rfl
+
+/--
+**Selection conditional ≡ material within an appropriate context**
+(@cite{stalnaker-1975} §IV).
+
+In any context `C` evaluated at a context-set world `w`, given that the
+antecedent is open in `C`, the selection function obeys the pragmatic
+constraint, and the material conditional holds throughout `C`, the
+selection conditional is true. This is the contextually-mediated equivalence
+Stalnaker defends in place of the semantic identification.
+
+Specialised to `.indicative` mood, this is exactly the Stalnakerian claim
+that indicative conditionals reduce to the material conditional within an
+appropriate context. The hypothesis `h_constraint` is precisely
+`Mood.admissibleSelection .indicative s C` per `admissibleSelection_indicative`.
+
+Hypotheses encode the "appropriate context" conditions:
+- `hC_w`: `w` is in the context set;
+- `h_open_p`: some context-set world satisfies `p` (antecedent is open);
+- `h_constraint`: `s` obeys the pragmatic constraint relative to `C`;
+- `h_C_imp`: in the context, the material conditional holds. -/
+theorem selectionConditional_eq_material_within_context {W : Type*}
+    (s : SelectionFunction W) (C : ContextSet W) (p q : BProp W) (w : W)
+    (hC_w : C w)
+    (h_open_p : ∃ w' ∈ {w' | p w' = true}, C w')
+    (h_constraint : pragmaticConstraint s C)
+    (h_C_imp : ∀ w', C w' → p w' = true → q w' = true) :
+    selectionConditional s p q w = true := by
+  unfold selectionConditional
+  have h_nonempty : ({w' | p w' = true} : Set W).Nonempty := by
+    obtain ⟨w', hw'_p, _⟩ := h_open_p
+    exact ⟨w', hw'_p⟩
+  have h_sel_C : C (s.select w {w' | p w' = true}) :=
+    h_constraint w {w' | p w' = true} hC_w h_open_p
+  have h_sel_p : p (s.select w {w' | p w' = true}) = true :=
+    s.success w {w' | p w' = true} h_nonempty
+  exact h_C_imp _ h_sel_C h_sel_p
+
+/--
+**Indicative-mood specialisation**: when the mood is indicative and the
+selection function is admissible, the mooded conditional reduces to the
+material conditional within the context. -/
+theorem moodedConditional_indicative_eq_material_within_context {W : Type*}
+    (s : SelectionFunction W) (C : ContextSet W) (p q : BProp W) (w : W)
+    (hC_w : C w)
+    (h_open_p : ∃ w' ∈ {w' | p w' = true}, C w')
+    (h_admissible : Mood.admissibleSelection .indicative s C)
+    (h_C_imp : ∀ w', C w' → p w' = true → q w' = true) :
+    moodedConditional .indicative s p q w = true :=
+  selectionConditional_eq_material_within_context s C p q w hC_w h_open_p
+    h_admissible h_C_imp
 
 end Semantics.Conditionals

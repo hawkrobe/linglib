@@ -47,10 +47,10 @@ thesis — that imperatives have the semantics of deontic necessity modals —
 predicts that deontic necessity declaratives should receive directive force
 as readily as imperatives. Study 2 confirms exactly this.
 
-## Connection to IllocutionaryForce.lean
+## Connection to ClauseType
 
-The paper reveals a gap in the `SAPMood → IllocutionaryMood` mapping:
-`SAPMood.toIllocutionaryMood` treats the mapping as 1-to-1, but indirect
+The paper reveals a gap in the `SAPMood → ClauseType` mapping:
+`SAPMood.toClauseType` treats the mapping as 1-to-1, but indirect
 speech acts involve a mismatch — a declarative or interrogative sentence
 type receiving directive illocutionary force.
 -/
@@ -58,7 +58,7 @@ type receiving directive illocutionary force.
 namespace RuytenbeekEtAl2017
 
 open Core.Modality (ModalFlavor ModalForce)
-open Core.Discourse (IllocutionaryMood)
+open Core.Mood (IllocutionaryMood)
 open Semantics.Modality.Assert (primaryFlavor SpeechActType)
 open Minimalism.Phenomena.SpeechActs (SAPMood)
 
@@ -558,13 +558,13 @@ theorem directive_compatibility_predicts_study2 :
 -- § 7. Bridge: SAPMood ≠ Illocutionary Force
 -- ════════════════════════════════════════════════════
 
-/-! The paper demonstrates that `SAPMood.toIllocutionaryMood` is the
+/-! The paper demonstrates that `SAPMood.toClauseType` is the
     DEFAULT force mapping, not the only possible one. Indirect speech acts
     involve a sentence type receiving a non-default illocutionary force. -/
 
 /-- The default illocutionary force for declaratives is NOT directive. -/
 theorem declarative_default_not_directive :
-    SAPMood.toIllocutionaryMood .declarative ≠ .imperative := by decide
+    (SAPMood.toClauseType .declarative).force ≠ .imperative := by decide
 
 /-- But deontic necessity declaratives CAN receive directive force.
     The force mismatch (declarative sentence type + directive force) is

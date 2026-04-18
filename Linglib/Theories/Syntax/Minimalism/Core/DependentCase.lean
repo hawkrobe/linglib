@@ -568,11 +568,16 @@ inductive CasePhase where
     case-assigning head — only argumental NPs are case competitors
     for rules (4a)/(4b). Bare-NP adverbs (e.g., 'yesterday', 'two
     kilometers') are non-argumental. @cite{baker-vinokurova-2010}
-    (8)–(9) and footnote 5. -/
+    (8)–(9) and footnote 5.
+
+    `inDP` flags NPs that participate only in DP-internal case
+    assignment (possessors): these are skipped by every clausal pass
+    and are valued by `applyGenAgree` when `genMode := .agreeD`. -/
 structure PhasedNP extends NPInDomain where
   basePhase : CasePhase
   shifted : Bool := false
   isArgumental : Bool := true
+  inDP : Bool := false
   deriving DecidableEq, Repr
 
 /-- Visible on the VP cycle: NPs whose basePhase is `vp`.
@@ -610,17 +615,26 @@ def setCaseAt (i : Nat) (c : CaseVal) (src : CaseSource)
   states.zipIdx.map fun (s, j) =>
     if j == i then { s with case := some (c, src) } else s
 
-/-- Indices of unmarked, *argumental* NPs visible on a given cycle, in
-    c-command order (highest first, since list-position encodes height).
-    Non-argumental NPs (bare-NP adverbs) are filtered out per
-    @cite{baker-vinokurova-2010} (8)–(9): rules (4a)/(4b) only apply
-    between argumental NPs. -/
+/-- The eligibility predicate used by `unmarkedVisible`: a state is
+    eligible iff it is visible on the cycle, argumental, not DP-
+    internal, and not yet marked. Factored out so structural proofs
+    (e.g. `applyAccRule_preserves_marked_at`) can manipulate the
+    condition without unfolding pattern lambdas. -/
+def unmarkedEligible (cycle : CasePhase) (s : PhasedState) : Bool :=
+  let visible := match cycle with
+                 | .vp => s.np.visibleOnVP
+                 | .cp => s.np.visibleOnCP
+  visible && s.np.isArgumental && !s.np.inDP && !s.marked
+
+/-- Indices of unmarked, *argumental*, clause-level NPs visible on a
+    given cycle, in c-command order (highest first, since list-position
+    encodes height). Non-argumental NPs (bare-NP adverbs) and DP-
+    internal NPs (possessors) are filtered out: per
+    @cite{baker-vinokurova-2010} (8)–(9), rules (4a)/(4b) apply only
+    between argumental NPs at the clausal level. -/
 def unmarkedVisible (cycle : CasePhase) (states : List PhasedState) : List Nat :=
-  states.zipIdx.filterMap fun (s, i) =>
-    let visible := match cycle with
-                   | .vp => s.np.visibleOnVP
-                   | .cp => s.np.visibleOnCP
-    if visible && s.np.isArgumental && !s.marked then some i else none
+  states.zipIdx.filterMap fun p =>
+    if unmarkedEligible cycle p.1 then some p.2 else none
 
 /-- Apply the DAT rule (4a) on the VP cycle: if there are at least
     two unmarked NPs visible at vP, mark the highest as DAT. -/
@@ -641,16 +655,48 @@ def applyAccRule (cfg : CaseSystemConfig) (cycle : CasePhase)
     | last :: _ :: _ => setCaseAt last .acc .dependent states
     | _ => states
 
+/-- Apply v-Agree: the lowest CP-visible unmarked argumental NP gets
+    ACC via Agree. This is the standard Chomskyan picture
+    (@cite{chomsky-2000}; @cite{chomsky-2001}): v probes downward into
+    its complement and Agrees with the closest goal. The dependent-
+    accusative algorithm (`applyAccRule`) is the alternative to this
+    pass; the two are mutually exclusive on a given grammar via the
+    `accMode` parameter. -/
+def applyAccAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
+    List PhasedState :=
+  match cfg.accMode with
+  | .agreeV =>
+    match (unmarkedVisible .cp states).reverse with
+    | last :: _ => setCaseAt last .acc .agree states
+    | [] => states
+  | .dependent => states
+
 /-- Apply T-Agree (paper (5)/(86)): the highest unmarked NP visible
     on the CP cycle gets NOM via Agree. -/
 def applyNomAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
     List PhasedState :=
   match cfg.nomMode with
   | .agreeT =>
-    match (unmarkedVisible .cp states).head? with
-    | some i => setCaseAt i .nom .agree states
-    | none => states
+    match unmarkedVisible .cp states with
+    | first :: _ => setCaseAt first .nom .agree states
+    | [] => states
   | .unmarkedDefault => states
+
+/-- Apply D-Agree (paper (5)/(86)): every unmarked DP-internal NP
+    (possessor) is valued GEN by its dominating D head. The clausal
+    algorithm sees DP-internals as opaque (filtered from
+    `unmarkedVisible`); this pass is the DP-internal counterpart to
+    `applyNomAgree`. The Russian numeric/partitive GEN, by contrast,
+    is `.nonstructural` and lives in `lexicalCase`. -/
+def applyGenAgree (cfg : CaseSystemConfig) (states : List PhasedState) :
+    List PhasedState :=
+  match cfg.genMode with
+  | .agreeD =>
+    states.map fun s =>
+      if s.np.inDP && !s.marked then
+        { s with case := some (.gen, .agree) }
+      else s
+  | .nonstructural => states
 
 /-- Default case for any NP still unmarked at the end of the
     derivation. Uses `unmarkedCaseFor` from § 6. -/
@@ -666,16 +712,25 @@ def PhasedState.toCased (s : PhasedState) : Option CasedNP :=
   s.case.map fun (c, src) => { label := s.np.label, case := c, source := src }
 
 /-- The B&V phased algorithm: VP cycle (DAT then ACC), CP cycle (ACC),
-    NOM via T-Agree, then a default sweep. -/
+    v-Agree → ACC (only when `accMode := .agreeV`), T-Agree → NOM,
+    D-Agree → GEN, then a default sweep.
+
+    `applyAccRule` and `applyAccAgree` are mutually exclusive on the
+    cases they touch (gated by `accMode`), so their relative order
+    only matters when neither fires. The order chosen — dependent
+    rules first, then Agree — mirrors the standard Chomskyan picture
+    where v probes after VP-internal structure has been built. -/
 def assignCasesPhased (cfg : CaseSystemConfig) (nps : List PhasedNP) :
     List CasedNP :=
   let s0 := initStates nps
   let s1 := applyDatRule cfg s0           -- VP cycle: (4a)
   let s2 := applyAccRule cfg .vp s1       -- VP cycle: (4b), bled if (4a) fired
   let s3 := applyAccRule cfg .cp s2       -- CP cycle: (4b)
-  let s4 := applyNomAgree cfg s3          -- T-Agree → NOM
-  let s5 := applyDefault cfg s4           -- last resort
-  s5.filterMap PhasedState.toCased
+  let s4 := applyAccAgree cfg s3          -- v-Agree → ACC (Chomsky)
+  let s5 := applyNomAgree cfg s4          -- T-Agree → NOM
+  let s6 := applyGenAgree cfg s5          -- D-Agree → GEN (DP-internal)
+  let s7 := applyDefault cfg s6           -- last resort
+  s7.filterMap PhasedState.toCased
 
 -- ============================================================================
 -- § 14: Soundness of the Phased Algorithm
@@ -713,12 +768,28 @@ theorem applyAccRule_length (cfg : CaseSystemConfig) (cycle : CasePhase)
   · rfl
   · split <;> first | rfl | exact setCaseAt_length _ _ _ _
 
+theorem applyAccAgree_length (cfg : CaseSystemConfig)
+    (states : List PhasedState) :
+    (applyAccAgree cfg states).length = states.length := by
+  unfold applyAccAgree
+  split
+  · split <;> first | rfl | exact setCaseAt_length _ _ _ _
+  · rfl
+
 theorem applyNomAgree_length (cfg : CaseSystemConfig)
     (states : List PhasedState) :
     (applyNomAgree cfg states).length = states.length := by
   unfold applyNomAgree
   split
   · split <;> first | rfl | exact setCaseAt_length _ _ _ _
+  · rfl
+
+theorem applyGenAgree_length (cfg : CaseSystemConfig)
+    (states : List PhasedState) :
+    (applyGenAgree cfg states).length = states.length := by
+  unfold applyGenAgree
+  split
+  · rw [List.length_map]
   · rfl
 
 theorem applyDefault_length (cfg : CaseSystemConfig)
@@ -766,7 +837,217 @@ theorem assignCasesPhased_length (cfg : CaseSystemConfig) (nps : List PhasedNP) 
   simp only []
   rw [filterMap_length_of_all_some _ _ (fun s hs => by
         rw [toCased_isSome_iff]; exact applyDefault_all_some _ _ s hs)]
-  rw [applyDefault_length, applyNomAgree_length, applyAccRule_length,
-      applyAccRule_length, applyDatRule_length, initStates_length]
+  rw [applyDefault_length, applyGenAgree_length, applyNomAgree_length,
+      applyAccAgree_length, applyAccRule_length, applyAccRule_length,
+      applyDatRule_length, initStates_length]
+
+-- ============================================================================
+-- § 15: Bleeding by Marking — (4a) DAT Bleeds (4b) ACC, Structurally
+-- ============================================================================
+
+/-! The Elsewhere ordering of (4a) over (4b) on the VP cycle is not a
+stipulated rule-ordering preference: it falls out from the fact that
+`unmarkedVisible` filters out marked NPs, so any pass that only
+modifies indices in `unmarkedVisible` cannot overwrite a previously-
+valued NP. We prove this once for `applyAccRule` (it never overwrites
+a marked state) and use it to derive the bleeding theorem for
+arbitrary inputs. -/
+
+/-- `setCaseAt` at index `i` leaves every other index untouched. -/
+private theorem setCaseAt_get?_ne (i j : Nat) (c : CaseVal) (src : CaseSource)
+    (states : List PhasedState) (h : i ≠ j) :
+    (setCaseAt i c src states)[j]? = states[j]? := by
+  unfold setCaseAt
+  rw [List.getElem?_map, List.getElem?_zipIdx]
+  cases hj : states[j]? with
+  | none => rfl
+  | some s =>
+    simp only [Option.map_some, Nat.zero_add]
+    have : (j == i) = false := by
+      simp only [beq_eq_false_iff_ne, ne_eq]; exact fun heq => h heq.symm
+    rw [this]
+    rfl
+
+/-- Every index in `unmarkedVisible cycle states` corresponds to an
+    unmarked state. -/
+private theorem unmarkedVisible_unmarked (cycle : CasePhase)
+    (states : List PhasedState) (i : Nat)
+    (h : i ∈ unmarkedVisible cycle states) :
+    ∃ s, states[i]? = some s ∧ s.marked = false := by
+  unfold unmarkedVisible at h
+  rw [List.mem_filterMap] at h
+  obtain ⟨⟨s, k⟩, hmem, hcond⟩ := h
+  -- hcond : (if unmarkedEligible cycle s then some k else none) = some i
+  by_cases hg : unmarkedEligible cycle s = true
+  · rw [if_pos hg] at hcond
+    have hki : k = i := Option.some.inj hcond
+    subst hki
+    rw [List.mem_iff_getElem?] at hmem
+    obtain ⟨n, hn⟩ := hmem
+    rw [List.getElem?_zipIdx] at hn
+    cases hsn : states[n]? with
+    | none => rw [hsn] at hn; cases hn
+    | some s' =>
+      rw [hsn] at hn
+      simp only [Option.map_some, Option.some.injEq, Prod.mk.injEq, Nat.zero_add] at hn
+      obtain ⟨hs_eq, hk_eq⟩ := hn
+      subst hs_eq; subst hk_eq
+      refine ⟨s', hsn, ?_⟩
+      unfold unmarkedEligible at hg
+      simp only [Bool.and_eq_true, Bool.not_eq_true'] at hg
+      exact hg.2
+  · rw [if_neg hg] at hcond; cases hcond
+
+/-- Spec for `applyAccRule`: it either leaves states unchanged, or it
+    sets one specific unmarked-visible index to ACC. -/
+private theorem applyAccRule_spec (cfg : CaseSystemConfig) (cycle : CasePhase)
+    (states : List PhasedState) :
+    applyAccRule cfg cycle states = states ∨
+    ∃ last, last ∈ unmarkedVisible cycle states ∧
+      applyAccRule cfg cycle states = setCaseAt last .acc .dependent states := by
+  unfold applyAccRule
+  split
+  · exact Or.inl rfl
+  · split
+    case h_1 last _ _ heq =>
+      refine Or.inr ⟨last, ?_, rfl⟩
+      have : last ∈ (unmarkedVisible cycle states).reverse := by rw [heq]; simp
+      simpa using this
+    case h_2 => exact Or.inl rfl
+
+/-- **(4b) ACC never overwrites a marked NP.** This is the structural
+    content of the Elsewhere ordering: once a state has been valued
+    (lexically, by (4a) DAT, or by Agree), `unmarkedVisible` no
+    longer includes its index, so `applyAccRule` cannot touch it. -/
+theorem applyAccRule_preserves_marked_at (cfg : CaseSystemConfig)
+    (cycle : CasePhase) (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
+    (applyAccRule cfg cycle states)[i]? = some s := by
+  rcases applyAccRule_spec cfg cycle states with heq | ⟨last, hlast, heq⟩
+  · rw [heq]; exact h_get
+  · rw [heq]
+    obtain ⟨s', hs', hs'_unmarked⟩ := unmarkedVisible_unmarked cycle states last hlast
+    have hne : last ≠ i := by
+      intro hidx
+      rw [hidx, h_get] at hs'
+      have : s = s' := (Option.some.injEq _ _).mp hs'
+      rw [this] at h_marked
+      rw [hs'_unmarked] at h_marked
+      cases h_marked
+    rw [setCaseAt_get?_ne _ _ _ _ _ hne]
+    exact h_get
+
+/-- v-Agree, like (4b), only touches `unmarkedVisible` indices and so
+    cannot overwrite a marked NP. -/
+theorem applyAccAgree_preserves_marked_at (cfg : CaseSystemConfig)
+    (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
+    (applyAccAgree cfg states)[i]? = some s := by
+  unfold applyAccAgree
+  split
+  · split
+    case h_1 last _ heq =>
+      have hlast_mem : last ∈ unmarkedVisible .cp states := by
+        have : last ∈ (unmarkedVisible .cp states).reverse := by
+          rw [heq]; exact List.mem_cons_self
+        simpa using this
+      obtain ⟨s', hs', hs'_unmarked⟩ :=
+        unmarkedVisible_unmarked .cp states last hlast_mem
+      have hne : last ≠ i := by
+        intro hidx
+        rw [hidx, h_get] at hs'
+        have : s = s' := (Option.some.injEq _ _).mp hs'
+        rw [this, hs'_unmarked] at h_marked
+        cases h_marked
+      rw [setCaseAt_get?_ne _ _ _ _ _ hne]; exact h_get
+    case h_2 => exact h_get
+  · exact h_get
+
+/-- T-Agree only touches `unmarkedVisible .cp` indices. -/
+theorem applyNomAgree_preserves_marked_at (cfg : CaseSystemConfig)
+    (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
+    (applyNomAgree cfg states)[i]? = some s := by
+  unfold applyNomAgree
+  split
+  · split
+    case h_1 first _ heq =>
+      have hfirst_mem : first ∈ unmarkedVisible .cp states := by
+        rw [heq]; exact List.mem_cons_self
+      obtain ⟨s', hs', hs'_unmarked⟩ :=
+        unmarkedVisible_unmarked .cp states first hfirst_mem
+      have hne : first ≠ i := by
+        intro hidx
+        rw [hidx, h_get] at hs'
+        have : s = s' := (Option.some.injEq _ _).mp hs'
+        rw [this, hs'_unmarked] at h_marked
+        cases h_marked
+      rw [setCaseAt_get?_ne _ _ _ _ _ hne]; exact h_get
+    case h_2 => exact h_get
+  · exact h_get
+
+/-- D-Agree only modifies unmarked DP-internal states. -/
+theorem applyGenAgree_preserves_marked_at (cfg : CaseSystemConfig)
+    (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
+    (applyGenAgree cfg states)[i]? = some s := by
+  unfold applyGenAgree
+  split
+  · rw [List.getElem?_map, h_get]
+    simp only [Option.map_some]
+    have : (s.np.inDP && !s.marked) = false := by
+      rw [h_marked]; simp
+    rw [this]; rfl
+  · exact h_get
+
+/-- The default sweep only modifies unmarked states. -/
+theorem applyDefault_preserves_marked_at (cfg : CaseSystemConfig)
+    (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : states[i]? = some s) (h_marked : s.marked = true) :
+    (applyDefault cfg states)[i]? = some s := by
+  unfold applyDefault
+  rw [List.getElem?_map, h_get]
+  simp only [Option.map_some]
+  rw [h_marked]; rfl
+
+/-- **DAT bleeds ACC on the VP cycle, structurally.** For every input
+    state list, the NP marked DAT by `applyDatRule` keeps its DAT case
+    through the subsequent VP-cycle `applyAccRule` call. -/
+theorem dat_persists_through_vp_acc (cfg : CaseSystemConfig)
+    (states : List PhasedState) (i : Nat) (s : PhasedState)
+    (h_get : (applyDatRule cfg states)[i]? = some s)
+    (h_dat  : s.case = some (.dat, .dependent)) :
+    (applyAccRule cfg .vp (applyDatRule cfg states))[i]? = some s := by
+  apply applyAccRule_preserves_marked_at
+  · exact h_get
+  · unfold PhasedState.marked; rw [h_dat]; rfl
+
+/-- **DAT marking persists all the way through `assignCasesPhased`.**
+    Whatever NP `applyDatRule` values DAT survives every subsequent
+    pass — both ACC cycles, both Agree probes, and the default sweep —
+    because each pass only modifies states it sees as unmarked. The
+    Sakha-specific empirical theorem `ditrans_goal_dat` follows from
+    this structural fact applied to the ditransitive input. -/
+theorem dat_persists_through_assignCasesPhased (cfg : CaseSystemConfig)
+    (nps : List PhasedNP) (i : Nat) (s : PhasedState)
+    (h_get : (applyDatRule cfg (initStates nps))[i]? = some s)
+    (h_dat : s.case = some (.dat, .dependent)) :
+    let s0 := initStates nps
+    let s1 := applyDatRule cfg s0
+    let s2 := applyAccRule cfg .vp s1
+    let s3 := applyAccRule cfg .cp s2
+    let s4 := applyAccAgree cfg s3
+    let s5 := applyNomAgree cfg s4
+    let s6 := applyGenAgree cfg s5
+    let s7 := applyDefault cfg s6
+    s7[i]? = some s := by
+  have h_marked : s.marked = true := by
+    unfold PhasedState.marked; rw [h_dat]; rfl
+  have h2 := applyAccRule_preserves_marked_at cfg .vp _ i s h_get h_marked
+  have h3 := applyAccRule_preserves_marked_at cfg .cp _ i s h2 h_marked
+  have h4 := applyAccAgree_preserves_marked_at cfg _ i s h3 h_marked
+  have h5 := applyNomAgree_preserves_marked_at cfg _ i s h4 h_marked
+  have h6 := applyGenAgree_preserves_marked_at cfg _ i s h5 h_marked
+  exact applyDefault_preserves_marked_at cfg _ i s h6 h_marked
 
 end Minimalism

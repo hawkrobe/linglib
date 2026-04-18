@@ -1,6 +1,7 @@
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
+import Linglib.Core.Mood.Basic
 import Linglib.Theories.Semantics.Tense.BranchingTime
 import Linglib.Theories.Semantics.Tense.CounterfactualTense
 import Linglib.Theories.Semantics.Mood.Basic
@@ -306,5 +307,25 @@ theorem pastCF_tower_depth (c : KContext W E P T) (w' : W) (t' t'' : T) :
     (((ContextTower.root c).push (subjShift w' t')).push (temporalShift t'')
       ).depth = 2 := by
   simp [ContextTower.push, ContextTower.depth, ContextTower.root]
+
+-- ════════════════════════════════════════════════════════════════
+-- § Bridge: CounterfactualType → SubjunctiveType
+-- ════════════════════════════════════════════════════════════════
+
+/-- All three Iatridou counterfactual types collapse to the framework-agnostic
+`Core.Mood.SubjunctiveType.counterfactual` tag.
+
+Per @cite{iatridou-2000}, FLV, PresCF, and PastCF differ in number of ExclFs
+and predicate type, but all are *counterfactual* subjunctives — they all
+require a modal ExclF, which is the unified semantic exponent of
+counterfactuality. The bridge makes this true by construction at the type
+level rather than only at the docstring level. -/
+def CounterfactualType.toSubjunctiveType (_ : CounterfactualType) :
+    Core.Mood.SubjunctiveType :=
+  .counterfactual
+
+/-- Every Iatridou counterfactual type maps to `.counterfactual`. -/
+theorem all_counterfactuals_are_counterfactual (t : CounterfactualType) :
+    t.toSubjunctiveType = .counterfactual := by cases t <;> rfl
 
 end Semantics.Conditionals.Iatridou

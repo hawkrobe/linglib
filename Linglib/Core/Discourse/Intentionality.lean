@@ -34,6 +34,7 @@ in `Core/Discourse/IllocutionaryForce.lean`.
 namespace Core.Discourse
 
 open Core.Proposition (BProp)
+open Core.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Psychological Mode — S(r)

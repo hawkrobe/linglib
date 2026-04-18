@@ -42,7 +42,7 @@ namespace Fragments.French.Modals
 
 open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 open Semantics.Modality.Assert (primaryFlavor)
-open Core.Discourse (IllocutionaryMood)
+open Core.Mood (IllocutionaryMood)
 
 
 -- ════════════════════════════════════════════════════
