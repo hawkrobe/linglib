@@ -414,15 +414,18 @@ theorem unmarked_distinct_from_existing :
 -- §7: Language-Specific Parameters
 -- ============================================================================
 
-/-- Language parameters for the four languages in Table 4.4. -/
+/-- Language parameters for the four languages in Table 4.4. Each is the
+    `toMarkingParams` projection of the corresponding fragment's
+    `articleInventory` — the inventory is the single source of truth and
+    the params are its boolean restriction. -/
 def englishParams : DefMarkingParams :=
-  { hasUniqueForm := true, hasAnaphoricForm := true, sameForm := true }
+  Fragments.English.Definiteness.articleInventory.toMarkingParams
 def germanParams : DefMarkingParams :=
-  { hasUniqueForm := true, hasAnaphoricForm := true, sameForm := false }
+  Fragments.German.Definiteness.articleInventory.toMarkingParams
 def thaiParams : DefMarkingParams :=
-  { hasUniqueForm := false, hasAnaphoricForm := true }
+  Fragments.Thai.Definiteness.articleInventory.toMarkingParams
 def shanParams : DefMarkingParams :=
-  Fragments.Shan.Definiteness.markingParams
+  Fragments.Shan.Definiteness.articleInventory.toMarkingParams
 
 /-- The derivation correctly classifies all four Table 4.4 languages. -/
 theorem derive_all_languages :
@@ -678,17 +681,11 @@ abbrev mandarinInv := Fragments.Mandarin.Definiteness.articleInventory
 abbrev thaiInv     := Fragments.Thai.Definiteness.articleInventory
 abbrev shanInv     := Fragments.Shan.Definiteness.articleInventory
 
-/-- The inventory-derived params agree with the §7 stipulated params for
-    every language in Table 4.4. By construction: `toMarkingParams` projects
-    exactly the three boolean fields that `DefMarkingParams` records. -/
-theorem inventory_agrees_with_params :
-    englishInv.toMarkingParams = englishParams ∧
-    germanInv.toMarkingParams = germanParams ∧
-    thaiInv.toMarkingParams = thaiParams ∧
-    shanInv.toMarkingParams = shanParams := ⟨rfl, rfl, rfl, rfl⟩
-
 /-- Inventory-derived strategies match §7's `derive_all_languages` for the
-    four Table 4.4 languages. The inventory subsumes the params layer. -/
+    four Table 4.4 languages. The inventory subsumes the params layer
+    (the §7 `*Params` defs are now `inv.toMarkingParams` projections, so
+    the agreement theorem that previously lived here is `rfl`-tautological
+    and has been removed). -/
 theorem inventory_derives_all_languages :
     englishInv.toMarkingStrategy = .generallyMarked ∧
     germanInv.toMarkingStrategy = .bipartite ∧

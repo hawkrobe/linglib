@@ -51,23 +51,13 @@ def blocking : Chierchia1998.BlockingPrinciple :=
   , existsBlocked := false
   , downBlocked := false }
 
-/-- Shan marking parameters: no overt forms for either definiteness type. -/
-def markingParams : DefMarkingParams :=
-  { hasUniqueForm := false
-  , hasAnaphoricForm := false }
-
-/-- Shan is classified as unmarked in @cite{moroney-2021}'s typology. -/
-theorem strategy : deriveStrategy markingParams = .unmarked := rfl
-
-/-- Shan maps to ArticleType.none_ (no articles). -/
-theorem articleType :
-    strategyToArticleType (deriveStrategy markingParams) = .none_ := rfl
-
 /-- Shan @cite{moroney-2021}: no overt definite or indefinite article.
     Demonstratives *nâj/nân* are optional in anaphoric contexts; bare nouns
-    can express both unique and anaphoric definiteness. The upstream
-    `Core.Nominal.ArticleInventory` carries strictly more information than
-    `markingParams` (demonstrative + possessive paradigms). -/
+    can express both unique and anaphoric definiteness. `articleInventory`
+    is the canonical upstream object from which both
+    `DefMarkingParams` (boolean triple) and `DefMarkingStrategy` (Moroney
+    cell) are derived via projection — see `toMarkingParams` /
+    `toMarkingStrategy`. -/
 def articleInventory : Core.Nominal.ArticleInventory :=
   { hasIndefinite             := false
     hasUniqueArticle          := false
@@ -75,16 +65,9 @@ def articleInventory : Core.Nominal.ArticleInventory :=
     hasDemonstrative          := true
     hasPossessive             := true }
 
-/-- Shan's inventory derives the `.unmarked` Moroney cell. Agrees with
-    `strategy` above: the inventory is the upstream object from which
-    `markingParams` is the boolean projection. -/
+/-- Shan's inventory projects to the `.unmarked` Moroney cell. -/
 theorem articleInventory_marking :
     articleInventory.toMarkingStrategy = .unmarked := rfl
-
-/-- The inventory's `toMarkingParams` projection agrees with `markingParams`
-    by `rfl` — projections of the same upstream object. -/
-theorem articleInventory_params_agreement :
-    articleInventory.toMarkingParams = markingParams := rfl
 
 -- ============================================================================
 -- §2: Type-Shift Contexts
