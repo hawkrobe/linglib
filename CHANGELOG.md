@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.229.927] - 2026-04-18
+
+### Added
+- **`Core/Mood/PartitionAsInquiry.lean` — faithful `Setoid → InquisitiveContent` embedding.** Stage 2 of the InquisitiveContent line of work (Stage 1 = 0.229.925). `fromSetoid r : InquisitiveContent W` carries `props = {q | q = ∅ ∨ ∃ c ∈ r.classes, q ⊆ c}` — a non-empty information state resolves the issue iff every world in it is `r`-equivalent (i.e., `q` is contained in some equivalence class). The maximal such propositions are exactly the equivalence classes / alternatives. Two characterizing theorems: (1) `info_fromSetoid` — informative content of a partition-derived inquiry is `Set.univ` (every world is in some class), formalizing the standard partition-semantics view that Setoid-based inquiry is **non-informative** (raises an issue, supplies no information); (2) `isInquisitive_fromSetoid_of_two_classes` — if `r` has two `r`-distinct elements, `fromSetoid r` is inquisitive in `InquisitiveContent`'s sense (`info ∉ props`), since `Set.univ` cannot be contained in any single equivalence class. The trivial setoid (one class) yields a declarative — matching the partition-semantics intuition that a one-cell partition raises no real issue. The embedding is faithful but **not surjective** (and we don't claim it is): mention-some, intermediate-exhaustive, and conditional question alternatives are non-disjoint or non-exhaustive and so are not in the image. Mirrors mathlib's `Set.toFinset` / `Filter.principal` / `UniformSpace.toTopologicalSpace` "less general inside more general" pattern. `Core/Mood.lean` re-export hub updated.
+
+## [0.229.926] - 2026-04-18
+
+### Added
+- **`Phenomena/Modality/Studies/Kratzer1977.lean`** — Phenomenon-layer integration test for `Core/IntensionalLogic/Premise.lean`. Formalizes the New Zealand judgments scenario from §1.3 of @cite{kratzer-1977} (= Chapter 1 of @cite{kratzer-2012}), the canonical worked example motivating Kratzer's revision from Defs 5–6 (necessity = consequence; possibility = compatibility) to Defs 7–8 (quantified over consistent sublists). A 4-world `Fin 4` model encodes the two contingent dimensions (`p` = murder is a crime, `q` = deer responsible); the inconsistent premise set `A = [p, q, ¬q]` represents *what the New Zealand judgments provide*. Sentence-by-sentence theorems (`sentence_7_must_p`, `sentence_8_not_must_negP`, `sentence_9_can_q`, `sentence_10_can_negQ`, `sentence_14_not_can_negP`) verify each prediction by `decide`. Two contrast theorems (`def5_vs_def7_negP`, `def6_vs_def8_q`) pin the bug-vs-fix asymmetry: the unrevised `mustInView` trivializes by *ex falso quodlibet* (entails `¬p`), and `canInView` rejects `q` (no world satisfies `A ∪ {q}`) — exactly where the revised `mustInView'` and `canInView'` recover the intuitive predictions. Namespace `Phenomena.Modality.Studies.Kratzer1977`. Wired into `Linglib.lean`. Build clean.
+
 ## [0.229.925] - 2026-04-18
 
 ### Added
