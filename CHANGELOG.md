@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.952] - 2026-04-18
+
+### Added
+- **`Core/Mood/InquisitiveContent.lean`: port `Issue` operations from the Bool/List shadow to the Set-valued mathlib-style API.** First migration step toward dissolving `Core/Inquisitive.lean`. Added the load-bearing `mem_iSup_iff` (membership in an indexed `iSup`: `q ∈ ⨆ i, f i ↔ q = ∅ ∨ ∃ i, q ∈ f i`) by unfolding through `sSup (Set.range f)` and `mem_sSup_props`; the `q = ∅` disjunct is structural since `∅` lies in every content's `props` via `contains_empty`. Bounded version `mem_biSup_iff` derives by composing the two iSups. **Wh-question content**: `which {E} (D : Set E) (P : E → Set W) : InquisitiveContent W := ⨆ e ∈ D, declarative (P e)` is the Hamblin construction with one alternative per element of the domain `D`; the membership characterization `mem_which : q ∈ which D P ↔ q = ∅ ∨ ∃ e ∈ D, q ⊆ P e` and the informative-content identity `info_which : info (which D P) = ⋃ e ∈ D, P e` (@[simp]) match the Bool/List `Discourse.Issue.which` API but operate on arbitrary `Set`-valued predicates without `worlds : List W` or `domain : List E` enumeration parameters. **Answerhood**: `isMentionSomeAnswer` (settles at least one alternative without settling all) and `isMentionAllAnswer` (settles every alternative) replace the `Discourse.Issue.isMentionSomeAnswer`/`isMentionAllAnswer` Bool predicates; the boundary lemmas `isMentionAllAnswer_bot_iff : ↔ σ = ∅` (only `∅` mention-all-answers `⊥` since `alt ⊥ = {∅}`) and `isMentionAllAnswer_declarative_iff : ↔ σ ⊆ p` (a mention-all answer to `declarative p` is exactly a substate of `p`) are both `@[simp]`. **Granularity** (@cite{deo-thomas-2025}): `properlyContains` and `widerThan` capture the asymmetric "more granular than" relation between two questions on the same informative content, used in granularity-based question construals. The universe declaration was widened from `universe u` to `universe u v` to admit the second universe parameter `E : Type v` for `which`. Build clean (961 jobs through `Phenomena/Complementation/Studies/TheilerRoelofsenAloni2018`).
+
 ## [0.229.951] - 2026-04-18
 
 ### Added
