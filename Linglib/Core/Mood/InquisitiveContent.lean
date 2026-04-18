@@ -69,6 +69,11 @@ namespace InquisitiveContent
 
 variable {W : Type u}
 
+/-- Two `InquisitiveContent`s are equal when their `props` agree. -/
+@[ext]
+theorem ext {P Q : InquisitiveContent W} (h : P.props = Q.props) : P = Q := by
+  cases P; cases Q; congr
+
 /-- The **alternatives** of an inquisitive content (@cite{theiler-etal-2018}
     Definition 2): the maximal propositions in `props`. These are the
     "answers" — the strongest information states that resolve the issue. -/
@@ -190,6 +195,147 @@ theorem isInquisitive_polar_iff (p : Set W) :
       have : (Set.univ : Set W) ⊆ pᶜ := h
       rw [Set.univ_subset_iff] at this
       rw [← compl_compl p, this, Set.compl_univ]
+
+/-! ### Algebraic operations (@cite{puncochar-2019} §2)
+
+Following the support-clause definitions in @cite{puncochar-2019} §2
+(p. 299): conjunction is `||α ∧ β|| = ||α|| ∩ ||β||` (state supports
+`α ∧ β` iff it supports both); inquisitive disjunction is
+`||α ⩒ β|| = ||α|| ∪ ||β||` (state supports `α ⩒ β` iff it supports
+either). Classical disjunction `∨`, negation `¬`, and implication `→`
+have more complex support clauses involving quantification over
+information states; we leave them for future development. -/
+
+/-- **Inquisitive conjunction** `P ∧ Q` (@cite{puncochar-2019} §2 ∧
+    clause): `props` is the pointwise intersection. A state resolves
+    `P ∧ Q` iff it resolves both `P` and `Q`. -/
+def conj (P Q : InquisitiveContent W) : InquisitiveContent W where
+  props := P.props ∩ Q.props
+  contains_empty := ⟨P.contains_empty, Q.contains_empty⟩
+  downward_closed := fun p hp q hq =>
+    ⟨P.downward_closed p hp.1 q hq, Q.downward_closed p hp.2 q hq⟩
+
+/-- **Inquisitive disjunction** `P ⩒ Q` (@cite{puncochar-2019} §2 ⩒
+    clause): `props` is the pointwise union. A state resolves
+    `P ⩒ Q` iff it resolves `P` or `Q`. Distinct from classical
+    disjunction `∨`, whose support clause involves splitting the state
+    across two substates. -/
+def inqDisj (P Q : InquisitiveContent W) : InquisitiveContent W where
+  props := P.props ∪ Q.props
+  contains_empty := Or.inl P.contains_empty
+  downward_closed := fun p hp q hq => by
+    rcases hp with hp | hp
+    · exact Or.inl (P.downward_closed p hp q hq)
+    · exact Or.inr (Q.downward_closed p hp q hq)
+
+/-- The **top** inquisitive content: every set of worlds resolves the
+    issue. The trivial inquiry that demands nothing. -/
+def top : InquisitiveContent W where
+  props := Set.univ
+  contains_empty := Set.mem_univ _
+  downward_closed := fun _ _ _ _ => Set.mem_univ _
+
+/-- The **bottom** inquisitive content: only the inconsistent state
+    (`∅`) resolves the issue. The unsatisfiable inquiry. -/
+def bot : InquisitiveContent W where
+  props := {∅}
+  contains_empty := rfl
+  downward_closed := fun p hp q hq => by
+    rw [Set.mem_singleton_iff] at hp
+    rw [hp] at hq
+    rw [Set.mem_singleton_iff]
+    exact Set.subset_empty_iff.mp hq
+
+instance : Top (InquisitiveContent W) := ⟨top⟩
+instance : Bot (InquisitiveContent W) := ⟨bot⟩
+
+/-! ### Entailment order
+
+`P ≤ Q` means *every information state that resolves `P` also resolves
+`Q`* — i.e., `P` entails `Q`. Concretely `P.props ⊆ Q.props`. The
+inconsistent inquiry `bot` (= ⊥) entails everything; `top` (= ⊤) is
+entailed by everything. -/
+
+instance : LE (InquisitiveContent W) where
+  le P Q := P.props ⊆ Q.props
+
+theorem le_def {P Q : InquisitiveContent W} : P ≤ Q ↔ P.props ⊆ Q.props :=
+  Iff.rfl
+
+theorem bot_le (P : InquisitiveContent W) : (⊥ : InquisitiveContent W) ≤ P := by
+  intro p hp
+  rw [show (⊥ : InquisitiveContent W) = bot from rfl] at hp
+  rw [show (bot : InquisitiveContent W).props = {∅} from rfl,
+      Set.mem_singleton_iff] at hp
+  rw [hp]
+  exact P.contains_empty
+
+theorem le_top (P : InquisitiveContent W) : P ≤ (⊤ : InquisitiveContent W) :=
+  fun _ _ => Set.mem_univ _
+
+theorem conj_le_left (P Q : InquisitiveContent W) : conj P Q ≤ P :=
+  fun _ hp => hp.1
+
+theorem conj_le_right (P Q : InquisitiveContent W) : conj P Q ≤ Q :=
+  fun _ hp => hp.2
+
+theorem le_conj {P Q R : InquisitiveContent W} (hPQ : P ≤ Q) (hPR : P ≤ R) :
+    P ≤ conj Q R :=
+  fun _ hp => ⟨hPQ hp, hPR hp⟩
+
+theorem left_le_inqDisj (P Q : InquisitiveContent W) : P ≤ inqDisj P Q :=
+  fun _ hp => Or.inl hp
+
+theorem right_le_inqDisj (P Q : InquisitiveContent W) : Q ≤ inqDisj P Q :=
+  fun _ hp => Or.inr hp
+
+theorem inqDisj_le {P Q R : InquisitiveContent W} (hPR : P ≤ R) (hQR : Q ≤ R) :
+    inqDisj P Q ≤ R :=
+  fun _ hp => by rcases hp with h | h <;> [exact hPR h; exact hQR h]
+
+/-! ### Polar question via inquisitive disjunction
+
+Punčochář's definition of the polar question (@cite{puncochar-2019}
+§2, p. 299): `?α := α ⩒ ¬α`. For atomic `α` with truth set `p`, the
+support clause for `¬α` reduces to `a ⊆ pᶜ` (= `declarative pᶜ`), so
+`?α = inqDisj (declarative p) (declarative pᶜ)`. The next theorem
+shows this matches our `polar p` constructor by construction. -/
+
+/-- The polar interrogative `polar p` is the inquisitive disjunction of
+    `declarative p` and `declarative pᶜ`. This grounds the
+    @cite{theiler-etal-2018} Figure 2(a) constructor in
+    @cite{puncochar-2019}'s `?α := α ⩒ ¬α`. -/
+theorem polar_eq_inqDisj (p : Set W) :
+    polar p = inqDisj (declarative p) (declarative pᶜ) := by
+  ext q
+  simp only [polar, inqDisj, declarative, Set.mem_setOf_eq, Set.mem_union]
+
+/-! ### Principal-ideal characterization of declaratives
+
+@cite{puncochar-2019} p. 298: "declarative propositions are,
+algebraically speaking, principal ideals in the algebra of information
+states." We make this characterization explicit: `P` is declarative
+iff `P` is the principal ideal generated by `info P`. -/
+
+/-- **Principal-ideal characterization** (@cite{puncochar-2019}, p.
+    298): an inquisitive content is declarative iff it equals the
+    principal ideal generated by its informative content. -/
+theorem isDeclarative_iff_eq_declarative_info (P : InquisitiveContent W) :
+    P.isDeclarative ↔ P = declarative P.info := by
+  constructor
+  · intro h
+    apply ext
+    ext q
+    simp only [declarative, Set.mem_setOf_eq]
+    refine ⟨?_, ?_⟩
+    · intro hq w hwq
+      exact ⟨q, hq, hwq⟩
+    · intro hq
+      exact P.downward_closed P.info h q hq
+  · intro h
+    show P.info ∈ P.props
+    rw [h]
+    exact isDeclarative_declarative P.info
 
 end InquisitiveContent
 
