@@ -56,7 +56,7 @@ def evenFelicitous {W : Type*} [Fintype W]
     (ctx : DTSContext W) (a b : (W → Bool)) : Prop :=
   posRelevant ctx a ∧ posRelevant ctx b ∧
   bayesFactor ctx b > bayesFactor ctx a ∧
-  ctx.issue.topic ≠ b
+  ctx.topic ≠ b
 
 -- ============================================================
 -- Section 2: Predictions

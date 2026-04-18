@@ -426,7 +426,7 @@ theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probOfProp prior (fun _ => true) = 1) :
     probSupports prior evidence topic = true →
-    posRelevant ⟨⟨topic⟩, prior.mass⟩ evidence := by
+    posRelevant ⟨topic, prior.mass⟩ evidence := by
   intro hSupp
   simp only [probSupports, isPositiveEvidence, evidentialBoost, decide_eq_true_eq] at hSupp
   rw [show conditionalProb prior evidence topic =
@@ -454,7 +454,7 @@ theorem probSupports_implies_posRelevant_binary {W : Type*} [Fintype W]
     condProb_eq_probOfProp prior evidence topic (ne_of_gt hH_pos)
   have hCondNH : condProb prior.mass evidence (Decidable.pnot W topic) = pENH / pNH :=
     condProb_eq_probOfProp prior evidence (λ w => !(topic w)) (ne_of_gt hNH_pos)
-  show bayesFactor ⟨⟨topic⟩, prior.mass⟩ evidence > 1
+  show bayesFactor ⟨topic, prior.mass⟩ evidence > 1
   simp only [bayesFactor, hCondH, hCondNH]
   by_cases hENH : pENH = 0
   · simp [hENH, show pEH / pH > 0 from div_pos hpEH_pos hH_pos]
@@ -480,7 +480,7 @@ theorem negRelevant_implies_not_probSupports {W : Type*} [Fintype W]
     (hS_pos : probOfProp prior evidence > 0)
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probOfProp prior (fun _ => true) = 1)
-    (hNeg : negRelevant ⟨⟨topic⟩, prior.mass⟩ evidence) :
+    (hNeg : negRelevant ⟨topic, prior.mass⟩ evidence) :
     probSupports prior evidence topic = false := by
   by_contra hContra
   push_neg at hContra
@@ -504,8 +504,8 @@ theorem but_sufficient_for_only {W : Type*} [Fintype W]
     (hNH_pos : probOfProp prior (λ w => !topic w) > 0)
     (_hS_pos : probOfProp prior s > 0)
     (hS'_pos : probOfProp prior s' > 0)
-    (_hSpos : posRelevant ⟨⟨topic⟩, prior.mass⟩ s)
-    (hS'neg : negRelevant ⟨⟨topic⟩, prior.mass⟩ s')
+    (_hSpos : posRelevant ⟨topic, prior.mass⟩ s)
+    (hS'neg : negRelevant ⟨topic, prior.mass⟩ s')
     (hNonneg : ∀ w, prior w ≥ 0)
     (hNorm : probOfProp prior (fun _ => true) = 1) :
     probSupports prior s' topic = false :=
@@ -529,8 +529,8 @@ theorem discOnly_implies_unexpectedness_under_but {W : Type*} [Fintype W]
     (hPrior : ∀ x, w.dtsCtx.prior x ≥ 0)
     (hNorm : probSum w.dtsCtx.prior (Decidable.top W) = 1)
     (hS_pos : 0 < probSum w.dtsCtx.prior w.s)
-    (hH_pos : 0 < probSum w.dtsCtx.prior w.dtsCtx.issue.topic)
-    (hNH_pos : 0 < probSum w.dtsCtx.prior (Decidable.pnot W w.dtsCtx.issue.topic))
+    (hH_pos : 0 < probSum w.dtsCtx.prior w.dtsCtx.topic)
+    (hNH_pos : 0 < probSum w.dtsCtx.prior (Decidable.pnot W w.dtsCtx.topic))
     (hCIP : CIP w.dtsCtx w.s w.s') :
     condProb w.dtsCtx.prior w.s' w.s <
     margProb w.dtsCtx.prior w.s' := by

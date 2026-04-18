@@ -13,7 +13,7 @@ sets H = B, yielding unexpected-B-given-A.
 
 - `butFelicitous` (Hypothesis 4): felicity conditions for "A but B"
 - `NNIR` (Def. 10): Non-Negative Instantial Relevance
-- `defaultBut`: the default interpretation where H = B
+- `defaultButCtx`: the default interpretation where H = B
 
 ## Main Results
 
@@ -64,17 +64,13 @@ def NNIR {W : Type*} [Fintype W] (E : Type*)
 -- Section 3: Default But (H = B)
 -- ============================================================
 
-/-- Default "but" interpretation: the issue is identified with the
+/-- Default "but" context: the issue is identified with the
 but-clause itself (H = B).
 
 Merin argues this is the preferred interpretation when no explicit
 issue is provided. -/
-def defaultBut {W : Type*} (b : (W → Bool)) : Issue W :=
-  ⟨b⟩
-
-/-- Context for default-but: issue is B itself. -/
 def defaultButCtx {W : Type*} (prior : W → ℚ) (b : (W → Bool)) : DTSContext W :=
-  ⟨defaultBut b, prior⟩
+  ⟨b, prior⟩
 
 -- ============================================================
 -- Section 4: Theorems
@@ -116,7 +112,7 @@ private lemma condProb_self_given_not (prior : W → ℚ) (b : (W → Bool)) :
 /-- BF_B(B) ≥ 1: B is never negatively relevant to itself. -/
 private lemma bayesFactor_self_ge_one (prior : W → ℚ) (b : (W → Bool)) :
     bayesFactor (defaultButCtx prior b) b ≥ 1 := by
-  simp only [bayesFactor, defaultButCtx, defaultBut, condProb_self_given_not]
+  simp only [bayesFactor, defaultButCtx, condProb_self_given_not]
   simp; split <;> linarith
 
 /-- Total probability: probSum(A) = probSum(A∧B) + probSum(A∧¬B). -/
@@ -176,7 +172,7 @@ private lemma cross_product_factorization (aH anH bH bnH pH pnH : ℚ)
 /-- negRelevant implies condProb(e|¬H) ≠ 0. -/
 private lemma negRelevant_condProb_ne (ctx : DTSContext W) (e : (W → Bool))
     (hNeg : negRelevant ctx e) :
-    condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) ≠ 0 := by
+    condProb ctx.prior e (Decidable.pnot W ctx.topic) ≠ 0 := by
   intro h
   have hbf : bayesFactor ctx e ≥ 1 := by
     unfold bayesFactor; dsimp only; rw [if_pos h]; split <;> linarith
@@ -187,18 +183,18 @@ private lemma negRelevant_condProb_ne (ctx : DTSContext W) (e : (W → Bool))
 private lemma posRelevant_cross (ctx : DTSContext W) (e : (W → Bool))
     (hPrior : ∀ w, ctx.prior w ≥ 0)
     (hpos : posRelevant ctx e)
-    (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
-    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.issue.topic)) :
-    probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.issue.topic)) *
-      probSum ctx.prior ctx.issue.topic <
-    probSum ctx.prior (Decidable.pand W e ctx.issue.topic) *
-      probSum ctx.prior (Decidable.pnot W ctx.issue.topic) := by
+    (hH_pos : 0 < probSum ctx.prior ctx.topic)
+    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.topic)) :
+    probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.topic)) *
+      probSum ctx.prior ctx.topic <
+    probSum ctx.prior (Decidable.pand W e ctx.topic) *
+      probSum ctx.prior (Decidable.pnot W ctx.topic) := by
   have hH_ne := ne_of_gt hH_pos
   have hNH_ne := ne_of_gt hNH_pos
-  by_cases hcnH : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) = 0
+  by_cases hcnH : condProb ctx.prior e (Decidable.pnot W ctx.topic) = 0
   · -- condProb(E|¬H) = 0 means P(E∧¬H) = 0
-    have hEnH_zero : probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.issue.topic)) = 0 := by
-      have h1 := probSum_nonneg' ctx.prior hPrior (Decidable.pand W e (Decidable.pnot W ctx.issue.topic))
+    have hEnH_zero : probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.topic)) = 0 := by
+      have h1 := probSum_nonneg' ctx.prior hPrior (Decidable.pand W e (Decidable.pnot W ctx.topic))
       unfold condProb at hcnH; rw [if_neg hNH_ne] at hcnH
       rw [div_eq_zero_iff] at hcnH
       cases hcnH with
@@ -206,29 +202,29 @@ private lemma posRelevant_cross (ctx : DTSContext W) (e : (W → Bool))
       | inr h => exact absurd h hNH_ne
     rw [hEnH_zero, zero_mul]
     -- Need P(E∧H) > 0; BF > 1 with condProb(E|¬H) = 0 forces condProb(E|H) > 0
-    have hcH_pos : condProb ctx.prior e ctx.issue.topic > 0 := by
+    have hcH_pos : condProb ctx.prior e ctx.topic > 0 := by
       by_contra hle; push_neg at hle
       have hbf_le : bayesFactor ctx e ≤ 1 := by
         unfold bayesFactor; dsimp only; rw [if_pos hcnH, if_neg (not_lt.mpr hle)]
       exact absurd hbf_le (not_le.mpr hpos)
-    have hEH_pos : 0 < probSum ctx.prior (Decidable.pand W e ctx.issue.topic) := by
+    have hEH_pos : 0 < probSum ctx.prior (Decidable.pand W e ctx.topic) := by
       unfold condProb at hcH_pos; rw [if_neg hH_ne] at hcH_pos
-      have h_nn := probSum_nonneg' ctx.prior hPrior (Decidable.pand W e ctx.issue.topic)
+      have h_nn := probSum_nonneg' ctx.prior hPrior (Decidable.pand W e ctx.topic)
       by_contra hle; push_neg at hle
       have := le_antisymm hle h_nn
       simp [this] at hcH_pos
     positivity
   · -- condProb(E|¬H) ≠ 0: BF = condProb(E|H)/condProb(E|¬H) > 1
-    have hcnH_pos : 0 < condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
-      have h_nn : 0 ≤ condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+    have hcnH_pos : 0 < condProb ctx.prior e (Decidable.pnot W ctx.topic) := by
+      have h_nn : 0 ≤ condProb ctx.prior e (Decidable.pnot W ctx.topic) := by
         unfold condProb; rw [if_neg hNH_ne]
         exact div_nonneg (probSum_nonneg' ctx.prior hPrior _) (le_of_lt hNH_pos)
       exact lt_of_le_of_ne h_nn (Ne.symm hcnH)
-    have hbf_eq : bayesFactor ctx e = condProb ctx.prior e ctx.issue.topic /
-        condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+    have hbf_eq : bayesFactor ctx e = condProb ctx.prior e ctx.topic /
+        condProb ctx.prior e (Decidable.pnot W ctx.topic) := by
       unfold bayesFactor; dsimp only; rw [if_neg hcnH]
-    have hcH_gt : condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) <
-        condProb ctx.prior e ctx.issue.topic := by
+    have hcH_gt : condProb ctx.prior e (Decidable.pnot W ctx.topic) <
+        condProb ctx.prior e ctx.topic := by
       rw [← one_lt_div hcnH_pos, ← hbf_eq]; exact hpos
     unfold condProb at hcH_gt; rw [if_neg hH_ne, if_neg hNH_ne] at hcH_gt
     rw [div_lt_div_iff₀ hNH_pos hH_pos] at hcH_gt
@@ -238,25 +234,25 @@ private lemma posRelevant_cross (ctx : DTSContext W) (e : (W → Bool))
 private lemma negRelevant_cross (ctx : DTSContext W) (e : (W → Bool))
     (hPrior : ∀ w, ctx.prior w ≥ 0)
     (hneg : negRelevant ctx e)
-    (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
-    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.issue.topic)) :
-    probSum ctx.prior (Decidable.pand W e ctx.issue.topic) *
-      probSum ctx.prior (Decidable.pnot W ctx.issue.topic) <
-    probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.issue.topic)) *
-      probSum ctx.prior ctx.issue.topic := by
+    (hH_pos : 0 < probSum ctx.prior ctx.topic)
+    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.topic)) :
+    probSum ctx.prior (Decidable.pand W e ctx.topic) *
+      probSum ctx.prior (Decidable.pnot W ctx.topic) <
+    probSum ctx.prior (Decidable.pand W e (Decidable.pnot W ctx.topic)) *
+      probSum ctx.prior ctx.topic := by
   have hH_ne := ne_of_gt hH_pos
   have hNH_ne := ne_of_gt hNH_pos
   have hcnH_ne := negRelevant_condProb_ne ctx e hneg
-  have hcnH_pos : 0 < condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
-    have h_nn : 0 ≤ condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+  have hcnH_pos : 0 < condProb ctx.prior e (Decidable.pnot W ctx.topic) := by
+    have h_nn : 0 ≤ condProb ctx.prior e (Decidable.pnot W ctx.topic) := by
       unfold condProb; rw [if_neg hNH_ne]
       exact div_nonneg (probSum_nonneg' ctx.prior hPrior _) (le_of_lt hNH_pos)
     exact lt_of_le_of_ne h_nn (Ne.symm hcnH_ne)
-  have hbf_eq : bayesFactor ctx e = condProb ctx.prior e ctx.issue.topic /
-      condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+  have hbf_eq : bayesFactor ctx e = condProb ctx.prior e ctx.topic /
+      condProb ctx.prior e (Decidable.pnot W ctx.topic) := by
     unfold bayesFactor; dsimp only; rw [if_neg hcnH_ne]
-  have hcH_lt : condProb ctx.prior e ctx.issue.topic <
-      condProb ctx.prior e (Decidable.pnot W ctx.issue.topic) := by
+  have hcH_lt : condProb ctx.prior e ctx.topic <
+      condProb ctx.prior e (Decidable.pnot W ctx.topic) := by
     rw [← div_lt_one hcnH_pos, ← hbf_eq]; exact hneg
   unfold condProb at hcH_lt; rw [if_neg hH_ne, if_neg hNH_ne] at hcH_lt
   have := (div_lt_div_iff₀ hH_pos hNH_pos).mp hcH_lt
@@ -279,11 +275,11 @@ theorem cip_contrariness_implies_unexpectedness (ctx : DTSContext W)
     (hcip : CIP ctx a b)
     (hcontr : hContrary ctx a b)
     (hA_pos : 0 < probSum ctx.prior a)
-    (hH_pos : 0 < probSum ctx.prior ctx.issue.topic)
-    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.issue.topic)) :
+    (hH_pos : 0 < probSum ctx.prior ctx.topic)
+    (hNH_pos : 0 < probSum ctx.prior (Decidable.pnot W ctx.topic)) :
     condProb ctx.prior b a < margProb ctx.prior b := by
   set prior := ctx.prior
-  set H := ctx.issue.topic
+  set H := ctx.topic
   set nH := Decidable.pnot W H
   -- Abbreviations for probSum values
   set pH := probSum prior H
@@ -366,13 +362,13 @@ theorem topic_eq_b_satisfies_cip (prior : W → ℚ) (a b : (W → Bool)) :
     CIP (defaultButCtx prior b) a b := by
   constructor
   · -- P(A∧B|B) = P(A|B) · P(B|B)
-    simp only [defaultButCtx, defaultBut, condProb]
+    simp only [defaultButCtx, condProb]
     rw [probSum_pand_assoc_self, probSum_pand_self]
     split
     · simp
     · rename_i h; field_simp
   · -- P(A∧B|¬B) = P(A|¬B) · P(B|¬B)
-    simp only [defaultButCtx, defaultBut, condProb]
+    simp only [defaultButCtx, condProb]
     rw [probSum_pand_pand_pnot_zero, probSum_pand_pnot_zero]
     split
     · simp
@@ -404,7 +400,7 @@ theorem default_but_properties (prior : W → ℚ) (a b : (W → Bool))
   have hcAnB_ne : condProb prior a (Decidable.pnot W b) ≠ 0 := ne_of_gt hcAnB_pos
   -- BF = condProb(A|B)/condProb(A|¬B) < 1
   have hNegBF : bayesFactor (defaultButCtx prior b) a < 1 := hNegA
-  simp only [bayesFactor, defaultButCtx, defaultBut] at hNegBF
+  simp only [bayesFactor, defaultButCtx] at hNegBF
   rw [if_neg hcAnB_ne] at hNegBF
   -- condProb(A|B) < condProb(A|¬B)
   have hcAB_lt := (div_lt_one hcAnB_pos).mp hNegBF

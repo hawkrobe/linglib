@@ -101,7 +101,7 @@ theorem not_if_not_indeed_disjunct :
       bayesFactor ctx a > bayesFactor ctx (Decidable.por World4 a b)) := by
   -- Counterexample: a = b, so a∨b = a and BF(a) = BF(a∨b), not strict >.
   intro h
-  have := h ⟨⟨λ w => match w with | .w0 => true | _ => false⟩, λ _ => 1/4⟩
+  have := h ⟨λ w => match w with | .w0 => true | _ => false, λ _ => 1/4⟩
             (λ w => match w with | .w0 | .w1 => true | _ => false)
             (λ w => match w with | .w0 | .w1 => true | _ => false)
             (by native_decide) (by native_decide)
@@ -116,10 +116,10 @@ strictly more relevant than "A or B", explaining why "or" implicates ¬∧. -/
 theorem if_not_indeed_conjunction (ctx : DTSContext W) (a b : (W → Bool))
     (hcip : CIP ctx a b)
     (hPosA : posRelevant ctx a) (hPosB : posRelevant ctx b)
-    (hNonzero : condProb ctx.prior a (Decidable.pnot W ctx.issue.topic) ≠ 0)
-    (hNonzero' : condProb ctx.prior b (Decidable.pnot W ctx.issue.topic) ≠ 0)
+    (hNonzero : condProb ctx.prior a (Decidable.pnot W ctx.topic) ≠ 0)
+    (hNonzero' : condProb ctx.prior b (Decidable.pnot W ctx.topic) ≠ 0)
     (hABNonzero : condProb ctx.prior (Decidable.pand W a b)
-      (Decidable.pnot W ctx.issue.topic) ≠ 0)
+      (Decidable.pnot W ctx.topic) ≠ 0)
     (hPrior : ∀ w, ctx.prior w ≥ 0) :
     bayesFactor ctx (Decidable.pand W a b) > bayesFactor ctx a ∧
     bayesFactor ctx (Decidable.pand W a b) >

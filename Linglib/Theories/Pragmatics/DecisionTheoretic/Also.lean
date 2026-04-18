@@ -211,10 +211,10 @@ This is independent of H, so P(a|H) = P(a|¬H), giving BF = 1. -/
 private lemma presup_implies_bf_one (ctx : DTSContext W) (a : (W → Bool))
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
-    (hH : probSum ctx.prior ctx.issue.topic > 0)
-    (hNH : probSum ctx.prior (Decidable.pnot W ctx.issue.topic) > 0) :
+    (hH : probSum ctx.prior ctx.topic > 0)
+    (hNH : probSum ctx.prior (Decidable.pnot W ctx.topic) > 0) :
     bayesFactor ctx a = 1 := by
-  set H := ctx.issue.topic
+  set H := ctx.topic
   set prior := ctx.prior
   -- Step 1: P(⊤) > 0
   have hTop : probSum prior (Decidable.top W) > 0 :=
@@ -283,8 +283,8 @@ theorem also_nonidentity {E : Type*} [DecidableEq E]
     (hAlso : AlsoFelicitous ctx (Q a) (Q b))
     (_hInj : ∀ x y, Q x = Q y → x = y)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
-    (hH : probSum ctx.prior ctx.issue.topic > 0)
-    (hNH : probSum ctx.prior (Decidable.pnot W ctx.issue.topic) > 0) :
+    (hH : probSum ctx.prior ctx.topic > 0)
+    (hNH : probSum ctx.prior (Decidable.pnot W ctx.topic) > 0) :
     a ≠ b := by
   intro hab
   subst hab
@@ -302,10 +302,10 @@ P(a∧H) · P(b∧H), which is exactly CIP. -/
 private lemma presup_implies_cip (ctx : DTSContext W) (a b : (W → Bool))
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
-    (hH : probSum ctx.prior ctx.issue.topic > 0)
-    (hNH : probSum ctx.prior (Decidable.pnot W ctx.issue.topic) > 0) :
+    (hH : probSum ctx.prior ctx.topic > 0)
+    (hNH : probSum ctx.prior (Decidable.pnot W ctx.topic) > 0) :
     CIP ctx a b := by
-  set H := ctx.issue.topic
+  set H := ctx.topic
   set prior := ctx.prior
   have hTop : probSum prior (Decidable.top W) > 0 :=
     lt_of_lt_of_le hH (probSum_top_ge prior H hNonneg)
@@ -373,12 +373,12 @@ theorem presuppositional_independence_additivity
     (ctx : DTSContext W) (a b : (W → Bool))
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
-    (hH : probSum ctx.prior ctx.issue.topic > 0)
-    (hNH : probSum ctx.prior (Decidable.pnot W ctx.issue.topic) > 0)
-    (hNotH : condProb ctx.prior a (Decidable.pnot W ctx.issue.topic) ≠ 0)
-    (hNotH' : condProb ctx.prior b (Decidable.pnot W ctx.issue.topic) ≠ 0)
+    (hH : probSum ctx.prior ctx.topic > 0)
+    (hNH : probSum ctx.prior (Decidable.pnot W ctx.topic) > 0)
+    (hNotH : condProb ctx.prior a (Decidable.pnot W ctx.topic) ≠ 0)
+    (hNotH' : condProb ctx.prior b (Decidable.pnot W ctx.topic) ≠ 0)
     (hABNotH : condProb ctx.prior (Decidable.pand W a b)
-      (Decidable.pnot W ctx.issue.topic) ≠ 0) :
+      (Decidable.pnot W ctx.topic) ≠ 0) :
     bayesFactor ctx (Decidable.pand W a b) =
       bayesFactor ctx a * bayesFactor ctx b :=
   bayes_factor_multiplicative_under_cip ctx a b

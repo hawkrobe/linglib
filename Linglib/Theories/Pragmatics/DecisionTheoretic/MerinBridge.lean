@@ -65,9 +65,9 @@ Utility = 1 for correct choice, 0 for incorrect. -/
 def truthDP {W : Type*} (ctx : DTSContext W) : DecisionProblem W Bool where
   utility w a :=
     if a then  -- accept H
-      if ctx.issue.topic w then 1 else 0
+      if ctx.topic w then 1 else 0
     else       -- reject H
-      if ctx.issue.topic w then 0 else 1
+      if ctx.topic w then 0 else 1
   prior := ctx.prior
 
 /-- The action set for the truth DP: accept or reject. -/
@@ -91,14 +91,14 @@ theorem posRelevant_shifts_accept_eu :
     (∀ w, ctx.prior w = 1/4) →
     -- Non-degeneracy: E, H, ¬H all non-empty
     (∃ w, e w = true) →
-    (∃ w, ctx.issue.topic w = true) →
-    (∃ w, ctx.issue.topic w = false) →
+    (∃ w, ctx.topic w = true) →
+    (∃ w, ctx.topic w = false) →
     posRelevant ctx e →
     conditionalEU (truthDP ctx)
       (Finset.univ.filter (fun w => e w = true)) true >
     expectedUtility (truthDP ctx) true := by
   -- Finite verification over World4: 16 topics × 16 evidence props = 256 cases
-  intro ⟨⟨topic⟩, prior⟩ e hPrior hE hH hnotH hPos
+  intro ⟨topic, prior⟩ e hPrior hE hH hnotH hPos
   have hP : prior = fun _ => (1 : ℚ) / 4 := funext hPrior
   subst hP
   revert topic e
@@ -119,13 +119,13 @@ theorem irrelevant_implies_zero_uv :
     (∀ w, ctx.prior w = 1/4) →
     -- Non-degeneracy: E, H, ¬H all non-empty
     (∃ w, e w = true) →
-    (∃ w, ctx.issue.topic w = true) →
-    (∃ w, ctx.issue.topic w = false) →
+    (∃ w, ctx.topic w = true) →
+    (∃ w, ctx.topic w = false) →
     irrelevant ctx e →
     utilityValue (truthDP ctx) truthActions
       (Finset.univ.filter (fun w => e w = true)) = 0 := by
   -- Finite verification over World4: 16 topics × 16 evidence props = 256 cases
-  intro ⟨⟨topic⟩, prior⟩ e hPrior hE hH hnotH hIrr
+  intro ⟨topic, prior⟩ e hPrior hE hH hnotH hIrr
   have hP : prior = fun _ => (1 : ℚ) / 4 := funext hPrior
   subst hP
   revert topic e
@@ -144,20 +144,20 @@ exactly one action has utility 1 and the other has utility 0. -/
 theorem truthDP_complementary {W : Type*} (ctx : DTSContext W) (w : W) :
     (truthDP ctx).utility w true + (truthDP ctx).utility w false = 1 := by
   simp only [truthDP]
-  cases ctx.issue.topic w <;> simp
+  cases ctx.topic w <;> simp
 
 /-- The truth DP's expected utility of "accept H" equals P(H). -/
 theorem truthDP_eu_accept {W : Type*} [Fintype W] [DecidableEq W]
     (ctx : DTSContext W) :
     expectedUtility (truthDP ctx) true = ∑ w : W, ctx.prior w *
-      if ctx.issue.topic w then 1 else 0 := by
+      if ctx.topic w then 1 else 0 := by
   simp only [expectedUtility, truthDP, ite_true]
 
 /-- The truth DP's expected utility of "reject H" equals P(¬H). -/
 theorem truthDP_eu_reject {W : Type*} [Fintype W] [DecidableEq W]
     (ctx : DTSContext W) :
     expectedUtility (truthDP ctx) false = ∑ w : W, ctx.prior w *
-      if ctx.issue.topic w then 0 else 1 := by
+      if ctx.topic w then 0 else 1 := by
   simp [expectedUtility, truthDP]
 
 end DTS.MerinBridge
