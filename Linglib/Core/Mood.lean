@@ -4,6 +4,7 @@ import Linglib.Core.Mood.ClauseType
 import Linglib.Core.Mood.POSW
 import Linglib.Core.Mood.POSWQ
 import Linglib.Core.Mood.POSWTarget
+import Linglib.Core.Mood.InquisitiveContent
 
 /-!
 # Core.Mood — re-export hub

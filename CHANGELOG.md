@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.925] - 2026-04-18
+
+### Added
+- **`Core/Mood/InquisitiveContent.lean` — bundled `InquisitiveContent W` per @cite{theiler-etal-2018} Definition 1.** Stage 1 of the InquisitiveContent line of work prescribed by the @cite{puncochar-2016}/@cite{puncochar-2019}/@cite{ciardelli-groenendijk-roelofsen-2018} architectural note in `POSWQ.lean` (added 0.229.922). The structure carries `props : Set (Set W)` (the propositions resolving the issue) plus the two defining constraints — `contains_empty` (non-emptiness, normalized as `∅ ∈ props` so it composes with downward closure) and `downward_closed` (any subset of a resolving proposition also resolves). Six predicates/accessors: `alt` (maximal propositions = alternatives, @cite{theiler-etal-2018} Def 2), `info` (informative content as `⋃₀ P.props`, mathlib-native `Set W`), `trueAt`, `isInformative`, `isInquisitive`, `isDeclarative`. Two Figure 2 constructors: `declarative p` (the principal ideal `{q | q ⊆ p}` — single alternative `p`, the meaning of *Amy left*) and `polar p` (alternatives are `p` and `pᶜ` — the meaning of *Did Amy leave?*, non-informative). Six theorems aligned to Figure 2: `info_declarative`, `isDeclarative_declarative`, `not_isInquisitive_declarative`, `info_polar`, `not_isInformative_polar`, and `isInquisitive_polar_iff` (polar question is inquisitive iff the proposition is non-trivial — the trivial cases collapse to declaratives). The algebraic characterization from @cite{puncochar-2019} (declarative propositions = principal ideals in the algebra of information states) is exposed directly as `isDeclarative`. Sibling structure to `Setoid W` per the POSWQ architectural note — does **not** replace `POSWQ.inquiry`; the `Setoid → InquisitiveContent` embedding (Stage 2) is forthcoming in `Core/Mood/PartitionAsInquiry.lean`. `Core/Mood.lean` re-export hub updated; build clean.
+
 ## [0.229.924] - 2026-04-18
 
 ### Changed
