@@ -59,7 +59,7 @@ namespace Ostrove2026
 open Syntax.Minimalism.MinimalPronoun
 open Landau2015
 open Minimalism.Tense.InfinitivalTense (InfinitivalTenseClass)
-open Fragments.Mixtec.SMPM (ClauseType clauseProperties)
+open Fragments.Mixtec.SMPM (EmbeddedClauseType clauseProperties)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Clause Type Verification (26)
@@ -102,7 +102,7 @@ theorem finite_no_restructuring :
     these properties: they allow strict readings under VPE (30, 32),
     nonexhaustive binding (tensed subj., fn. 16), and non-local
     antecedents (43, 45). -/
-def smpmOCSignature : ClauseType → OCSignature
+def smpmOCSignature : EmbeddedClauseType → OCSignature
   | .untensedSubjunctive => ocFull
   | .tensedSubjunctive   => ocNone
   | .finiteEmbedded      => ocNone
@@ -132,7 +132,7 @@ theorem finite_not_OC :
     like "believe Julia to be smart") has no SMPM correspondent. SMPM's
     finite embedded clauses have full TAM morphology and freely
     noncoreferential subjects — they are not infinitival. -/
-def wurmbrandToSubjunctive : InfinitivalTenseClass → Option ClauseType
+def wurmbrandToSubjunctive : InfinitivalTenseClass → Option EmbeddedClauseType
   | .futureIrrealis => some .tensedSubjunctive
   | .restructuring  => some .untensedSubjunctive
   | .propositional  => none  -- no SMPM correspondent
@@ -170,7 +170,7 @@ theorem wurmbrand_propositional_no_correspondent :
     | C-subjunctive   | untensed subjunctive   | Yes |
     | F-subjunctive   | tensed subjunctive     | No  |
     | finite          | finite embedded        | No  | -/
-def landauToSMPM : LandauClauseClass → ClauseType
+def landauToSMPM : LandauClauseClass → EmbeddedClauseType
   | .cSubjunctive => .untensedSubjunctive
   | .fSubjunctive => .tensedSubjunctive
   | .finite       => .finiteEmbedded
@@ -521,7 +521,7 @@ open Phenomena.Complementation.Typology
 
     All three are "balanced" in Noonan's terms — SMPM lacks
     morphologically nonfinite predicates entirely. -/
-def smpmToNoonan : ClauseType → NoonanCompType
+def smpmToNoonan : EmbeddedClauseType → NoonanCompType
   | .finiteEmbedded      => .indicative
   | .tensedSubjunctive   => .subjunctive
   | .untensedSubjunctive => .subjunctive
@@ -550,7 +550,7 @@ def smpmToNoonan : ClauseType → NoonanCompType
     - desiderative: like to (kutō)
     - knowledge: know how to (kòni xá kasa), learn how to (sakwā'a)
     - negative: not bother (kò ntaa) -/
-def smpmCTPClass : ClauseType → List CTPClass
+def smpmCTPClass : EmbeddedClauseType → List CTPClass
   | .finiteEmbedded      => [.utterance, .propAttitude, .commentative, .knowledge]
   | .tensedSubjunctive   => [.desiderative]
   | .untensedSubjunctive => [.phasal, .achievement, .modal, .desiderative,

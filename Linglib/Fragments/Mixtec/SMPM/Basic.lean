@@ -123,7 +123,7 @@ def controlledSubjectMustBeClitic : Bool := true
     subjunctive distinction is diagnosed by independent temporal
     adverbs and noncoreferential subject availability, not by overt
     tense morphology. -/
-inductive ClauseType where
+inductive EmbeddedClauseType where
   /-- Finite embedded clause: unrestricted TAM, free subject
       reference, no restructuring.
       Selected by: ka'án 'think', nakanini 'believe', kà'àn 'say',
@@ -152,7 +152,7 @@ structure ClauseProperties where
   restructuring : Bool
   deriving DecidableEq, Repr
 
-def clauseProperties : ClauseType → ClauseProperties
+def clauseProperties : EmbeddedClauseType → ClauseProperties
   | .finiteEmbedded      => ⟨true,  true,  false⟩
   | .tensedSubjunctive   => ⟨false, true,  false⟩
   | .untensedSubjunctive => ⟨false, false, true⟩
@@ -165,7 +165,7 @@ def clauseProperties : ClauseType → ClauseProperties
 structure CTP where
   form : String
   gloss : String
-  selects : ClauseType
+  selects : EmbeddedClauseType
   deriving Repr, DecidableEq
 
 -- Predicates selecting finite embedded clauses (27a)

@@ -55,7 +55,7 @@ inductive LittleVFlavor where
 
 /-- The four clause types in Malayic languages.
     @cite{erlewine-sommerlot-2025} (28), (29). -/
-inductive ClauseType where
+inductive VoiceConstruction where
   /-- Active: agent = subject, *v* = v_ACT, Voice = *me-*/*N-*. -/
   | active
   /-- *di-* passive: theme = subject, *v* = v_PASS, Voice = *di-*. -/
@@ -69,7 +69,7 @@ inductive ClauseType where
   deriving DecidableEq, Repr
 
 /-- The *v* flavor selected by each clause type. -/
-def ClauseType.vFlavor : ClauseType → LittleVFlavor
+def VoiceConstruction.vFlavor : VoiceConstruction → LittleVFlavor
   | .active          => .act
   | .diPassive        => .pass
   | .barePassive      => .pass
@@ -85,9 +85,9 @@ def ClauseType.vFlavor : ClauseType → LittleVFlavor
 structure MalayicVariety where
   name : String
   /-- Exponent of Voice in each clause type. `none` = null (pruned). -/
-  voiceExponent : ClauseType → Option String
+  voiceExponent : VoiceConstruction → Option String
   /-- Exponent of *v* in each clause type. `none` = null. -/
-  vExponent : ClauseType → Option String
+  vExponent : VoiceConstruction → Option String
   /-- Whether Voice has a null allomorph (∅ elsewhere).
       Determines availability of bare passive and object extraction. -/
   hasNullVoice : Bool
@@ -168,7 +168,7 @@ def familiarMadurese : MalayicVariety :=
 /-- Whether a clause type is grammatical in a given variety.
     Bare passives and object extraction require Voice to have a null
     allomorph. @cite{erlewine-sommerlot-2025} §4.3, §5.3. -/
-def MalayicVariety.clauseAvailable (v : MalayicVariety) : ClauseType → Bool
+def MalayicVariety.clauseAvailable (v : MalayicVariety) : VoiceConstruction → Bool
   | .active          => true
   | .diPassive        => true
   | .barePassive      => v.hasNullVoice
@@ -179,15 +179,15 @@ def MalayicVariety.clauseAvailable (v : MalayicVariety) : ClauseType → Bool
 -- ============================================================================
 
 /-- Desa has all four clause types. -/
-theorem desa_all_four (ct : ClauseType) :
+theorem desa_all_four (ct : VoiceConstruction) :
     desa.clauseAvailable ct = true := by cases ct <;> rfl
 
 /-- SI/SM has all four clause types. -/
-theorem sism_all_four (ct : ClauseType) :
+theorem sism_all_four (ct : VoiceConstruction) :
     standardSISM.clauseAvailable ct = true := by cases ct <;> rfl
 
 /-- Polite Madurese has all four clause types. -/
-theorem polite_madurese_all_four (ct : ClauseType) :
+theorem polite_madurese_all_four (ct : VoiceConstruction) :
     politeMadurese.clauseAvailable ct = true := by cases ct <;> rfl
 
 /-- Familiar Madurese lacks bare passive and object extraction. -/
@@ -219,6 +219,6 @@ theorem sism_loses_n_in_extraction :
 
 /-- Object extraction always has v_ACT (not v_PASS). -/
 theorem obj_extraction_uses_vACT :
-    ClauseType.objectExtraction.vFlavor = .act := rfl
+    VoiceConstruction.objectExtraction.vFlavor = .act := rfl
 
 end Fragments.Malayic.VoiceSystem

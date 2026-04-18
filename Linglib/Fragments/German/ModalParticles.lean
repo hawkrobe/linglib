@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.UseConditional.LTU
-import Linglib.Theories.Semantics.Mood.SentenceMoodUCI
+import Linglib.Theories.Semantics.Mood.Gutzmann
+import Linglib.Fragments.German.ClauseTypes
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
@@ -54,7 +55,8 @@ namespace Fragments.German.ModalParticles
 
 open Core.Mood (IllocutionaryMood)
 open Semantics.UseConditional (UCIClass UCExprKind RestrictionKind functionalExpletive)
-open Semantics.Mood.SentenceMoodUCI (GermanClauseType MoodStructure)
+open Semantics.Mood.Gutzmann (MoodStructure)
+open Fragments.German.ClauseTypes (GermanClauseType)
 
 
 /-- A German modal particle lexical entry.
@@ -91,12 +93,12 @@ def ModalParticleEntry.moodOk (mp : ModalParticleEntry) :
 
 /-- Map a German clause type to the distribution field it tests. -/
 def ModalParticleEntry.licensedInClause (mp : ModalParticleEntry) :
-    GermanClauseType → Bool
-  | .dassVL          => false  -- subordinate; MPs generally excluded
-  | .v2Declarative   => mp.declOk
-  | .v2Interrogative => mp.interrogOk
-  | .vlInterrogative => mp.interrogOk
-  | .imperative      => mp.imperOk
+    ∀ {f : ClauseForm}, GermanClauseType f → Bool
+  | _, .dassVL          => false  -- subordinate; MPs generally excluded
+  | _, .v2Declarative   => mp.declOk
+  | _, .v2Interrogative => mp.interrogOk
+  | _, .vlInterrogative => mp.interrogOk
+  | _, .imperative      => mp.imperOk
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -274,10 +276,9 @@ by the presence of EPIS in the clause type's mood structure.
 
 This is the formal content of the selectional restriction analysis:
 wohl modifies EPIS, so it is licensed iff EPIS is present. -/
-theorem wohl_iff_epis :
-    ∀ ct : GermanClauseType,
-      wohl.licensedInClause ct = ct.moodStructure.hasEpistemic := by
-  intro ct; cases ct <;> rfl
+theorem wohl_iff_epis {f : ClauseForm} (ct : GermanClauseType f) :
+    wohl.licensedInClause ct = ct.moodStructure.hasEpistemic := by
+  cases ct <;> rfl
 
 /-- Every MP is excluded from dass-VL clauses (subordinate, no matrix mood). -/
 theorem all_excluded_from_dassVL :
@@ -288,9 +289,8 @@ theorem all_excluded_from_dassVL :
 
 /-- *ja* and *denn* are in complementary distribution: for every clause
 type, at most one of them is licensed. -/
-theorem ja_denn_complementary :
-    ∀ ct : GermanClauseType,
-      ¬(ja.licensedInClause ct = true ∧ denn.licensedInClause ct = true) := by
-  intro ct ⟨hj, hd⟩; cases ct <;> simp_all [ModalParticleEntry.licensedInClause, ja, denn]
+theorem ja_denn_complementary {f : ClauseForm} (ct : GermanClauseType f) :
+    ¬(ja.licensedInClause ct = true ∧ denn.licensedInClause ct = true) := by
+  intro ⟨hj, hd⟩; cases ct <;> simp_all [ModalParticleEntry.licensedInClause, ja, denn]
 
 end Fragments.German.ModalParticles

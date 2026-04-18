@@ -1053,7 +1053,7 @@ The anti-rogativity prediction is preserved for constituent interrogatives
 -/
 
 /-- Clause types relevant to highlighting. -/
-inductive ClauseType where
+inductive HighlightingClauseType where
   | declarative         -- "that p"
   | polarInterrogative  -- "whether/if p"
   | constituentInterrog -- "who/what/which..."
@@ -1069,7 +1069,7 @@ Highlighted propositions of a clause (@cite{pruitt-roelofsen-2011}).
 The key asymmetry: polar and declarative both yield singletons,
 while constituent interrogatives yield the full question.
 -/
-def highlightedValue {W : Type*} (ct : ClauseType) (Q : QuestionDen W) :
+def highlightedValue {W : Type*} (ct : HighlightingClauseType) (Q : QuestionDen W) :
     QuestionDen W :=
   match ct with
   | .declarative => Q.take 1
@@ -1089,7 +1089,7 @@ of the ordinary semantic value.
 -/
 def hopeHighlightSemantics {W E : Type*}
     (μ : PreferenceFunction W E) (θ : ThresholdFunction W)
-    (ct : ClauseType) (x : E) (Q C : QuestionDen W) : Bool :=
+    (ct : HighlightingClauseType) (x : E) (Q C : QuestionDen W) : Bool :=
   let highlighted := highlightedValue ct Q
   highlighted.any fun p => decide (μ x p > θ C)
 

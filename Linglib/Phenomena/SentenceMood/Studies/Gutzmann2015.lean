@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Mood.SentenceMoodUCI
+import Linglib.Theories.Semantics.Mood.Gutzmann
+import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.ModalParticles
 
 /-!
@@ -31,7 +32,8 @@ Oxford University Press.
 
 namespace Gutzmann2015
 
-open Semantics.Mood.SentenceMoodUCI
+open Semantics.Mood.Gutzmann
+open Fragments.German.ClauseTypes
 open Fragments.German.ModalParticles
 
 
@@ -55,9 +57,9 @@ theorem imperative_matches_dassVL :
     GermanClauseType.dassVL.moodStructure := rfl
 
 /-- Every matrix clause has a deontic operator (the root rule). -/
-theorem root_rule :
-    ∀ ct : GermanClauseType, ct.moodStructure.hasDeontic = true :=
-  every_clause_has_deont
+theorem root_rule {f : ClauseForm} (ct : GermanClauseType f) :
+    ct.moodStructure.hasDeontic = true :=
+  every_clause_has_deont ct
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -95,10 +97,9 @@ licensed in a clause type iff that clause type has an epistemic mood
 operator. This is the formal content of the selectional restriction
 analysis — wohl has type `⟨⟨⟨s,t⟩,u⟩, ⟨⟨s,t⟩,u⟩⟩` and modifies EPIS,
 so clause types lacking EPIS produce a type mismatch. -/
-theorem wohl_derived_from_epis :
-    ∀ ct : GermanClauseType,
-      wohl.licensedInClause ct = ct.moodStructure.hasEpistemic :=
-  wohl_iff_epis
+theorem wohl_derived_from_epis {f : ClauseForm} (ct : GermanClauseType f) :
+    wohl.licensedInClause ct = ct.moodStructure.hasEpistemic :=
+  wohl_iff_epis ct
 
 /-- *ja* is restricted to declaratives, matching the clause type with
 deontic + epistemic mood but without the hearer knowledge condition. -/
@@ -111,10 +112,9 @@ theorem denn_interrogative_restriction :
 
 /-- *ja* and *denn* partition clause types: they are never both
 licensed in the same clause type. -/
-theorem ja_denn_partition :
-    ∀ ct : GermanClauseType,
-      ¬(ja.licensedInClause ct = true ∧ denn.licensedInClause ct = true) :=
-  ja_denn_complementary
+theorem ja_denn_partition {f : ClauseForm} (ct : GermanClauseType f) :
+    ¬(ja.licensedInClause ct = true ∧ denn.licensedInClause ct = true) :=
+  ja_denn_complementary ct
 
 /-- The restriction kind for all particles reflects the UCI/UC-modifier
 distinction: UCIs have conflict restrictions, UC-modifiers have

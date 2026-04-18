@@ -93,7 +93,7 @@ open Fragments.Danish (danish)
 /-! Shared types for describing V2 word order variation. -/
 
 /-- Clause types relevant to V2 variation. -/
-inductive ClauseType where
+inductive V2ClauseType where
   | declarative
   | whQuestion
   | yesNoQuestion
@@ -117,7 +117,7 @@ inductive V2Status where
 structure V2Datum where
   sentence : String
   language : String
-  clauseType : ClauseType
+  clauseType : V2ClauseType
   v2Status : V2Status
   description : String := ""
   citation : String := ""

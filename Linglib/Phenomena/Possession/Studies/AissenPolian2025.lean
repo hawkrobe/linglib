@@ -93,7 +93,7 @@ def NominalSize.isSpecific : NominalSize → Bool
   | .nP    => false
 
 -- ============================================================================
--- § 2: Clause Types (Theoretical Classification)
+-- § 2: Argument Structure Classes (Theoretical Classification)
 -- ============================================================================
 
 /-- Clause types in Tseltalan, classified by whether the verb projects
@@ -104,7 +104,7 @@ def NominalSize.isSpecific : NominalSize → Bool
     - Unaccusative: no vP layer (sole argument is complement of V)
     - Transitive: vP layer with agent in Spec,vP
     - Unergative: vP layer with agentive S in Spec,vP -/
-inductive ClauseType where
+inductive ArgumentStructureClass where
   | unaccusative  -- no vP layer (existentials, unaccusatives)
   | transitive    -- vP layer with agent
   | unergative    -- vP layer with agentive intransitive subject
@@ -114,18 +114,18 @@ inductive ClauseType where
     position that could host an intervening DP).
     @cite{aissen-polian-2025} (9): transitives and unergatives have vP;
     unaccusatives do not. -/
-def ClauseType.hasVP : ClauseType → Bool
+def ArgumentStructureClass.hasVP : ArgumentStructureClass → Bool
   | .unaccusative => false
   | .transitive   => true
   | .unergative   => true
 
 /-- Unaccusatives lack a vP layer. -/
-theorem unaccusative_no_vP : ClauseType.unaccusative.hasVP = false := rfl
+theorem unaccusative_no_vP : ArgumentStructureClass.unaccusative.hasVP = false := rfl
 
 /-- Transitives and unergatives both project vP. -/
 theorem vp_distribution :
-    ClauseType.transitive.hasVP = true ∧
-    ClauseType.unergative.hasVP = true := ⟨rfl, rfl⟩
+    ArgumentStructureClass.transitive.hasVP = true ∧
+    ArgumentStructureClass.unergative.hasVP = true := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 3: Probe Types and Selective Opacity
@@ -430,7 +430,7 @@ inductive ψConstruction where
 /-- The clause type associated with each ψ-subject construction.
     All three are structurally unaccusative: no vP layer, the sole
     argument is complement of V. -/
-def ψConstruction.clauseType : ψConstruction → ClauseType
+def ψConstruction.clauseType : ψConstruction → ArgumentStructureClass
   | .predicativePossession   => .unaccusative
   | .experientialCollocation  => .unaccusative
   | .lexicalUnaccusative     => .unaccusative
@@ -498,11 +498,11 @@ inductive DProbeHead where
 /-- Does a clause type have an A-positioned DP that could intervene
     between a given probe and a lower possessor?
 
-    Derived from `ClauseType.hasVP` for T° probes: if there is a vP
+    Derived from `ArgumentStructureClass.hasVP` for T° probes: if there is a vP
     layer, its specifier hosts an A-positioned DP (agent or S_A).
     For Appl° probes, intervention occurs when Spec,ApplP is filled
     by a thematic applied argument (goal, recipient, etc.). -/
-def hasIntervener (head : DProbeHead) (ct : ClauseType)
+def hasIntervener (head : DProbeHead) (ct : ArgumentStructureClass)
     (thematicAppl : Bool) : Bool :=
   match head with
   | .t    => ct.hasVP
@@ -512,7 +512,7 @@ def hasIntervener (head : DProbeHead) (ct : ClauseType)
     between the [EPP:D] probe and the possessor.
     Pied-piping is unaffected: the whole DP moves to Spec,CP via
     wh-probe, bypassing A-positions entirely. -/
-def interventionBlocks (head : DProbeHead) (ct : ClauseType)
+def interventionBlocks (head : DProbeHead) (ct : ArgumentStructureClass)
     (mode : ExtractionMode) (thematicAppl : Bool := false) : Bool :=
   match mode with
   | .stranding  => hasIntervener head ct thematicAppl
@@ -521,7 +521,7 @@ def interventionBlocks (head : DProbeHead) (ct : ClauseType)
 /-- An intervention datum for Table 4. -/
 structure InterventionDatum where
   probe : DProbeHead
-  clauseType : ClauseType
+  clauseType : ArgumentStructureClass
   mode : ExtractionMode
   /-- Is Spec,ApplP filled by a thematic applied argument? -/
   thematicAppl : Bool
@@ -562,19 +562,19 @@ theorem table4_derived :
 
 /-- Pied-piping is never blocked by intervention (Ā-movement
     bypasses A-positions). -/
-theorem piedPiping_never_blocked (head : DProbeHead) (ct : ClauseType)
+theorem piedPiping_never_blocked (head : DProbeHead) (ct : ArgumentStructureClass)
     (ta : Bool) :
     interventionBlocks head ct .piedPiping ta = false := by
   cases head <;> rfl
 
 /-- For T° probes, stranding is blocked iff there is a vP layer. -/
-theorem t_stranding_blocked_iff_vP (ct : ClauseType) :
+theorem t_stranding_blocked_iff_vP (ct : ArgumentStructureClass) :
     interventionBlocks .t ct .stranding = ct.hasVP := by
   cases ct <;> rfl
 
 /-- For Appl° probes, stranding is blocked iff Spec,ApplP is filled
     by a thematic applied argument. -/
-theorem appl_stranding_blocked_iff_thematic (ct : ClauseType) (ta : Bool) :
+theorem appl_stranding_blocked_iff_thematic (ct : ArgumentStructureClass) (ta : Bool) :
     interventionBlocks .appl ct .stranding ta = ta := by
   cases ta <;> rfl
 
@@ -606,7 +606,7 @@ def tseltalanApplSpec : SpecDirection := .right
     effects (§10): is possessor extraction ultimately possible for
     a given nominal size, clause type, and probe? -/
 def canExtractPossessor (size : NominalSize) (head : DProbeHead)
-    (ct : ClauseType) (mode : ExtractionMode)
+    (ct : ArgumentStructureClass) (mode : ExtractionMode)
     (thematicAppl : Bool := false) : Bool :=
   extractionAvailable mode size &&
     !interventionBlocks head ct mode thematicAppl

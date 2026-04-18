@@ -350,19 +350,19 @@ def vFlavorToCore : LittleVFlavor → Minimalism.VoiceFlavor
     phaseHead is always true, following E&S's claim that VoiceP is
     universally a phase. This DIVERGES from Core where passive
     Voice is not a phase head (@cite{chomsky-2001}, @cite{collins-2005}). -/
-def clauseToVoiceHead : ClauseType → Minimalism.VoiceHead
+def clauseToVoiceHead : VoiceConstruction → Minimalism.VoiceHead
   | .active          => { flavor := .agentive, hasD := true, phaseHead := true }
   | .diPassive       => { flavor := .passive,  hasD := true, phaseHead := true }
   | .barePassive     => { flavor := .passive,  hasD := true, phaseHead := true }
   | .objectExtraction => { flavor := .agentive, hasD := true, phaseHead := true }
 
 /-- The VoiceFlavor component is consistent with the v-flavor mapping. -/
-theorem voice_flavor_consistent (ct : ClauseType) :
+theorem voice_flavor_consistent (ct : VoiceConstruction) :
     (clauseToVoiceHead ct).flavor = vFlavorToCore ct.vFlavor := by
   cases ct <;> rfl
 
 /-- All Malayic clause types treat VoiceP as a phase head. -/
-theorem voice_always_phase (ct : ClauseType) :
+theorem voice_always_phase (ct : VoiceConstruction) :
     (clauseToVoiceHead ct).phaseHead = true := by cases ct <;> rfl
 
 /-- Phase divergence: Malayic passives are phases, but Core's default

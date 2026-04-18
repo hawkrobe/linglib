@@ -757,6 +757,7 @@ import Linglib.Fragments.Russian.Indefinites
 import Linglib.Fragments.German.PolarityItems
 import Linglib.Fragments.German.ModalIndefinites
 import Linglib.Fragments.German.QuestionParticles
+import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.ModalParticles
 import Linglib.Fragments.Japanese.PolarityItems
 import Linglib.Fragments.Korean.PolarityItems
@@ -1981,7 +1982,7 @@ import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.ModalIndefinites
 import Linglib.Theories.Semantics.Modality.Narrog
 import Linglib.Theories.Semantics.Mood.Basic
-import Linglib.Theories.Semantics.Mood.SentenceMoodUCI
+import Linglib.Theories.Semantics.Mood.Gutzmann
 import Linglib.Theories.Semantics.UseConditional.LTU
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan
@@ -2180,6 +2181,7 @@ import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Theories.Phonology.Tier
+import Linglib.Theories.Phonology.Alternation
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
 import Linglib.Theories.Phonology.Harmony.Defs

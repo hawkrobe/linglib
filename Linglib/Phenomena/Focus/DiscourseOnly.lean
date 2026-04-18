@@ -55,7 +55,7 @@ Fine-grained enough to capture the key contrasts in IKW §5.2 and §7:
 - Canonical info-seeking questions fail the doxastic condition (DOX_sp ⊄ q)
 - Biased/rhetorical questions satisfy it (DOX_sp ⊆ q for some q)
 - High-negation polar questions pattern with biased questions -/
-inductive ClauseType where
+inductive DiscourseOnlyClauseType where
   | declarative
   | canonicalPolarQ
   | highNegPolarQ
@@ -94,7 +94,7 @@ structure DiscourseOnlyDatum where
   /-- Source reference (section/example number) -/
   source : String
   /-- Clause type of the tested argument -/
-  clauseType : Option ClauseType := none
+  clauseType : Option DiscourseOnlyClauseType := none
   /-- Which argument position is being tested -/
   position : Option ArgPosition := none
   /-- Notes on distributional properties -/
