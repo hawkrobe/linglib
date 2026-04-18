@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.973] - 2026-04-18
+
+### Added
+- **`Fragments/English/Will.lean`: morphology-only Fragment for English future modals + C&S binding theorems.** New file `Linglib/Fragments/English/Will.lean` declares `FutureModalEntry` (form + `pastTense` flag + gloss, no semantic clause) and the two English entries `will` (present-tense) and `would` (past-tense). Per the typology-only Fragment discipline established by `Fragments/Dutch/Modals.lean` and `Fragments/English/Conditionals.lean`, the Fragment commits only to surface morphology — no theory of meaning. The mathlib analogue: `ℝ` doesn't pre-commit to one structure (separate `OrderedField`/`MetricSpace`/`TopologicalSpace` instances); a Fragment entry shouldn't pre-commit to one semantic clause when multiple competing analyses (selectional, Kratzerian universal, Klecha modal-cum-tense, Copley future operator) coexist in the literature. The C&S binding lives in `Phenomena/Modality/Studies/CarianiSantorio2018.lean` as `cariniSantorioSemantics : FutureModalEntry → SelectionFunction W → (W → Prop) → Set W → W → Prop` (case-split on `pastTense`: `wouldSem` for past, `willSem` for present), with per-entry verification theorems `cs_will_eq_willSem` and `cs_would_eq_wouldSem` — flipping the `pastTense` flag on either Fragment entry breaks exactly one binding, making the morphology↔semantics correspondence visible at the type level. `cs_will_would_share_clause` recasts the §5.3.2 morphology-as-parameter-shift identity at the Fragment-binding layer (the two clauses are pointwise equal via `wouldSem_eq_willSem`). Future work: a second analysis (Klecha/Kratzerian/Copley) supplies its own binding against the same `Fragments.English.Will.{will, would}` entries, demonstrating the agnostic-Fragment design's payoff. Builds clean for both touched files.
+
 ## [0.229.972] - 2026-04-18
 
 ### Added

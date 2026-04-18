@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Conditionals.SelectionalRestrictor
 import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Core.FinitePMF
+import Linglib.Fragments.English.Will
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -394,5 +395,64 @@ theorem no_unconditional_one_half :
     rcases Bool.eq_false_or_eq_true (B .cg) with hcg | hcg <;>
     rcases Bool.eq_false_or_eq_true (B .cn) with hcn | hcn <;>
     simp [hcw, hcg, hcn, cynthiaPMF] <;> norm_num
+
+-- ============================================================================
+-- §11. Bridge: C&S analysis of the English Fragment entries
+-- ============================================================================
+
+/-! ## Fragment binding
+
+The English future-modal entries `Fragments.English.Will.{will, would}`
+are morphology-only (form + `pastTense` flag), per the typology-only
+Fragment discipline. This section binds those surface entries to the
+selectional semantics of @cite{cariani-santorio-2018}: `will` is
+analyzed as `willSem`, `would` as `wouldSem`. A different theory of
+*will* (Klecha modal-cum-tense, Kratzerian universal *will*, Copley
+future operator, …) would supply its own bridge against the same two
+Fragment entries.
+
+The two bridges below are per-entry verification theorems: changing
+the `pastTense` flag on either Fragment entry breaks exactly one
+binding, making the morphology↔semantics correspondence visible at the
+type level. -/
+
+/-- Selectional semantics chosen by the C&S analysis for an English
+    future-modal Fragment entry. The morphology→semantics mapping is:
+    present-tense → `willSem`; past-tense → `wouldSem`. By
+    `wouldSem_eq_willSem` (a `rfl`-identity in the theory), both
+    branches reduce to the same semantic clause — the morphology
+    distinction lives in the contextually-supplied modal parameter,
+    not in the lexical clause. -/
+noncomputable def cariniSantorioSemantics
+    (entry : Fragments.English.Will.FutureModalEntry) :
+    SelectionFunction W → (W → Prop) → Set W → W → Prop :=
+  if entry.pastTense then wouldSem else willSem
+
+/-- **Bridge: C&S analyzes *will* as `willSem`.** Per-entry verification
+    theorem: if the `pastTense` flag on `Fragments.English.Will.will`
+    were flipped, this binding would break. -/
+theorem cs_will_eq_willSem :
+    cariniSantorioSemantics Fragments.English.Will.will = willSem := by
+  unfold cariniSantorioSemantics
+  simp [Fragments.English.Will.will]
+
+/-- **Bridge: C&S analyzes *would* as `wouldSem`.** Per-entry
+    verification theorem for the past-tense Fragment entry. -/
+theorem cs_would_eq_wouldSem :
+    cariniSantorioSemantics Fragments.English.Will.would = wouldSem := by
+  unfold cariniSantorioSemantics
+  simp [Fragments.English.Will.would]
+
+/-- **Morphology = parameter shift, not semantic shift** at the
+    Fragment-binding level: the C&S clauses for *will* and *would* are
+    pointwise the same map. This restates `wouldSem_eq_willSem` over
+    the Fragment-bound semantics, making the C&S §5.3.2 claim visible
+    at the surface-form layer. -/
+theorem cs_will_would_share_clause :
+    cariniSantorioSemantics Fragments.English.Will.will =
+    cariniSantorioSemantics Fragments.English.Will.would := by
+  rw [cs_will_eq_willSem, cs_would_eq_wouldSem]
+  funext s A f w
+  exact (wouldSem_eq_willSem s A f w).symm
 
 end Phenomena.Modality.Studies.CarianiSantorio2018

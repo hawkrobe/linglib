@@ -487,6 +487,7 @@ import Linglib.Fragments.English.PropositionalLexemes
 import Linglib.Fragments.English.Scales
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.English.TemporalDeictic
+import Linglib.Fragments.English.Will
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.English.Phonology
@@ -533,6 +534,10 @@ import Linglib.Fragments.German.Indefinites
 import Linglib.Fragments.German.Gender
 import Linglib.Fragments.Hausa.Determiners
 import Linglib.Fragments.Hausa.Gender
+import Linglib.Fragments.Hausa.VerbGrades
+import Linglib.Fragments.Hausa.Tone
+import Linglib.Fragments.Hausa.TAM
+import Linglib.Fragments.Hausa.Focus
 import Linglib.Fragments.Akan.Determiners
 import Linglib.Fragments.Akan.Phonology
 import Linglib.Fragments.SwissGerman.Case
@@ -1339,7 +1344,6 @@ import Linglib.Phenomena.Questions.Studies.GartnerGyuris2017
 import Linglib.Phenomena.Questions.Studies.HawkinsEtAl2025
 import Linglib.Phenomena.Questions.Studies.VanRooy2003
 import Linglib.Phenomena.Questions.WhComplement
-import Linglib.Phenomena.Questions.Studies.TurkHirschInce2026
 import Linglib.Phenomena.Questions.Studies.Xiang2022
 import Linglib.Phenomena.Questions.Studies.Dayal2025
 import Linglib.Phenomena.Questions.Studies.Uegaki2022
@@ -1888,6 +1892,7 @@ import Linglib.Theories.Semantics.Negation.CzechNegation
 import Linglib.Theories.Semantics.Negation.Defs
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
 import Linglib.Phenomena.Focus.Studies.DeoThomas2025
+import Linglib.Phenomena.Focus.Studies.TurkHirsch2026
 import Linglib.Phenomena.Focus.Studies.Francescotti1995
 import Linglib.Phenomena.Focus.Studies.Umbach2004
 import Linglib.Phenomena.Polarity.Studies.TurcoBraunDimroth2014
@@ -2096,10 +2101,13 @@ import Linglib.Theories.Pragmatics.Implicature.ConventionalImplicatures
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Competence
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
+import Linglib.Theories.Semantics.Alternatives.AltMeaning
+import Linglib.Theories.Semantics.Alternatives.Categorical
 import Linglib.Theories.Semantics.Alternatives.ContextualConstraint
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Theories.Semantics.Alternatives.Symmetric
 import Linglib.Theories.Semantics.Alternatives.AtomicConstraint
+import Linglib.Theories.Semantics.Polarity.Operator
 import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
