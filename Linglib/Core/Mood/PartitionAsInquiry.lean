@@ -100,6 +100,62 @@ theorem isInquisitive_fromSetoid_of_two_classes
     have h2 : r w₂ v := hsub (Set.mem_univ w₂)
     exact hne (Setoid.trans' r h1 (Setoid.symm' r h2))
 
+/-! ### Setoid–Issue bridge: refinement = entailment
+
+The `fromSetoid` embedding is **monotone** in mathlib's lattice order on
+`Setoid` (where `r₁ ≤ r₂` iff `r₁` is *finer*: `r₁.Rel x y → r₂.Rel x y`)
+and the entailment order on `Issue` (`P ≤ Q` iff `P.props ⊆ Q.props`).
+The bridge is moreover a **lattice embedding**: `≤` is reflected back.
+
+This is the clean, Set-based replacement for the Bool/List partition
+bridge `refinesOn_iff_questionEntails_of_partition` formerly housed in
+`Core/Partition.lean`. The same content (Groenendijk–Stokhof's
+"partition refinement = question entailment") is here a one-liner over
+`Setoid` and `Core.Issue`, with no `worlds : List W` quantifier and no
+`isPartition` precondition. -/
+
+/-- The `Setoid → Issue` embedding **reflects** the order: a setoid is
+    finer than another iff its inquisitive content is entailed by the
+    other's. The forward direction is monotonicity; the backward
+    direction uses the fact that `r`-equivalent pairs are resolved by
+    the two-element state `{x, y}`, which any cell-membership theorem
+    can recover. -/
+theorem fromSetoid_le_iff (r₁ r₂ : Setoid W) :
+    fromSetoid r₁ ≤ fromSetoid r₂ ↔ r₁ ≤ r₂ := by
+  refine ⟨?_, ?_⟩
+  · -- ≤ on Issue → ≤ on Setoid: take r₁-related x y; the doubleton
+    -- {x, y} resolves fromSetoid r₁, hence resolves fromSetoid r₂.
+    intro hle x y hxy
+    have hpair : ({x, y} : Set W) ∈ fromSetoid r₁ := by
+      refine Or.inr ⟨{z | r₁ z x}, Setoid.mem_classes r₁ x, ?_⟩
+      rintro z (rfl | hz)
+      · exact Setoid.refl' r₁ z
+      · rw [Set.mem_singleton_iff] at hz; subst hz
+        exact Setoid.symm' r₁ hxy
+    have hpair' : ({x, y} : Set W) ∈ fromSetoid r₂ := hle hpair
+    rcases hpair' with hempty | ⟨c, hc, hsub⟩
+    · have : x ∈ ({x, y} : Set W) := Set.mem_insert x _
+      rw [hempty] at this; exact this.elim
+    · obtain ⟨v, _hv, rfl⟩ := hc
+      have hxv : r₂ x v := hsub (Set.mem_insert x _)
+      have hyv : r₂ y v := hsub (Set.mem_insert_of_mem x rfl)
+      exact Setoid.trans' r₂ hxv (Setoid.symm' r₂ hyv)
+  · -- ≤ on Setoid → ≤ on Issue: a state contained in an r₁-cell is
+    -- contained in the surrounding r₂-cell (cells only widen).
+    intro hle q hq
+    rcases hq with hempty | ⟨c, hc, hqc⟩
+    · subst hempty; exact (fromSetoid r₂).contains_empty
+    · obtain ⟨v, _hv, rfl⟩ := hc
+      refine Or.inr ⟨{z | r₂ z v}, Setoid.mem_classes r₂ v, ?_⟩
+      intro z hz
+      exact hle (hqc hz)
+
+/-- Monotonicity of the `fromSetoid` embedding (the easy direction of
+    `fromSetoid_le_iff`). -/
+theorem fromSetoid_mono {r₁ r₂ : Setoid W} (h : r₁ ≤ r₂) :
+    fromSetoid r₁ ≤ fromSetoid r₂ :=
+  (fromSetoid_le_iff r₁ r₂).mpr h
+
 end Issue
 
 end Core

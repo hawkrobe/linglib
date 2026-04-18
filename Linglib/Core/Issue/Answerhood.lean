@@ -49,6 +49,29 @@ def isMentionAllAnswer (P : Issue W) (σ : Set W) : Prop :=
   unfold isMentionAllAnswer
   simp only [alt_declarative, Set.mem_singleton_iff, forall_eq]
 
+/-! ### Partial answerhood (@cite{roberts-2012} Def. 3a) -/
+
+/-- A state `σ` is a **partial answer** to `P`: it settles at least one
+    alternative, either confirming it (`σ ⊆ p`) or ruling it out
+    (`σ ⊆ pᶜ`).
+
+    @cite{roberts-2012} Def. 3a: a partial answer contextually entails
+    the evaluation — either true or false — of at least one element of
+    `q-alt(q)`. The positive-only version misses negative partial
+    answerhood, where `σ` rules out an alternative entirely. -/
+def isPartialAnswer (P : Issue W) (σ : Set W) : Prop :=
+  ∃ p ∈ alt P, σ ⊆ p ∨ σ ⊆ pᶜ
+
+/-- A move (an `Issue` `R`) is **relevant** to `P` modulo a list of
+    subquestions if some alternative of `R` is a partial answer to `P`
+    or to one of the subquestions.
+
+    @cite{roberts-2012} Def. 15 / @cite{ippolito-kiss-williams-2025}
+    assumption iii (p. 225): "S is relevant to QUD if S is either a
+    subquestion of QUD or an answer to a subquestion q of QUD." -/
+def isMoveRelevant (R P : Issue W) (subquestions : Set (Issue W)) : Prop :=
+  ∃ a ∈ alt R, isPartialAnswer P a ∨ ∃ Q ∈ subquestions, isPartialAnswer Q a
+
 end Issue
 
 end Core
