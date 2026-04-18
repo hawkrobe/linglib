@@ -1,4 +1,3 @@
-import Mathlib.Data.Fintype.Powerset
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Lattice
 import Mathlib.Data.SetLike.Basic
@@ -13,10 +12,10 @@ import Mathlib.Order.Preorder.Finite
 @cite{ciardelli-groenendijk-roelofsen-2018} @cite{puncochar-2016}
 @cite{puncochar-2019} @cite{theiler-etal-2018}
 
-A bundled `InquisitiveContent W` representing a sentence meaning in the
-sense of @cite{theiler-etal-2018} Definition 1: a non-empty
-downward-closed set of propositions over `W` (where a proposition is a
-subset of `W`).
+A bundled `InquisitiveContent W` representing an inquisitive proposition
+in the sense of @cite{ciardelli-groenendijk-roelofsen-2018}: a non-empty
+downward-closed family of information states over `W` (where an
+information state is a subset of `W`).
 
 This is the linglib **sibling structure** to `Setoid W` for the inquiry
 component of a discourse context. Where `Setoid W` (used in
@@ -27,9 +26,10 @@ with possibly non-disjoint, possibly non-exhaustive alternatives.
 Mention-some, intermediate-exhaustive, and conditional question
 phenomena live here (none representable as a Setoid partition).
 
-Algebraically (per @cite{puncochar-2019}, p. 298): declarative
-propositions are the **principal ideals** in the algebra of information
-states. We expose this characterization as `isDeclarative`.
+Algebraically (per @cite{puncochar-2019}): declarative propositions are
+the **principal ideals** in the algebra of information states. We expose
+this characterization as `isDeclarative` and prove it equivalent to the
+defining condition `info P ∈ P` via `isDeclarative_iff_eq_declarative_info`.
 
 ## Mathlib alignment
 
@@ -48,10 +48,10 @@ states. We expose this characterization as `isDeclarative`.
   inequalities, giving `Frame`, `Coframe`, `HeytingAlgebra`, and
   `BiheytingAlgebra` for free. Mirrors `Filter`'s registration pattern.
 
-### Why a bundled structure rather than `LowerSet (Set W)ᵒᵈ`?
+### Why a bundled structure rather than `LowerSet (Set W)`?
 
 A downward-closed family of propositions on `W` is, abstractly, a
-`LowerSet (Set W)ᵒᵈ`. We considered registering `InquisitiveContent`
+`LowerSet (Set W)`. We considered registering `InquisitiveContent`
 as a `LowerSet` synonym, but rejected it because the `⊥` elements
 disagree: `LowerSet.⊥ = ∅` (no resolving propositions), while ours is
 `{∅}` (only the inconsistent state resolves). The non-emptiness
@@ -75,10 +75,10 @@ namespace Core.Mood
 
 universe u
 
-/-- A sentence meaning in the inquisitive-semantics sense of
-    @cite{theiler-etal-2018} Definition 1: a non-empty downward-closed
-    set of propositions over `W`. The propositions in `props` are the
-    information states that *resolve* the issue raised by the sentence. -/
+/-- An inquisitive proposition in the sense of
+    @cite{ciardelli-groenendijk-roelofsen-2018}: a non-empty
+    downward-closed family of information states over `W`. The states in
+    `props` are the ones that *resolve* the issue raised by the sentence. -/
 structure InquisitiveContent (W : Type u) where
   /-- The set of propositions resolving the issue. -/
   props : Set (Set W)
@@ -116,22 +116,19 @@ instance : SetLike (InquisitiveContent W) (Set W) where
 theorem ext {P Q : InquisitiveContent W} (h : ∀ q, q ∈ P ↔ q ∈ Q) : P = Q :=
   SetLike.ext h
 
-/-- The **alternatives** of an inquisitive content (@cite{theiler-etal-2018}
-    Definition 2): the maximal propositions in `props`. These are the
-    "answers" — the strongest information states that resolve the issue. -/
+/-- The **alternatives** of an inquisitive content
+    (@cite{ciardelli-groenendijk-roelofsen-2018}): the maximal
+    propositions in `props`. These are the "answers" — the strongest
+    information states that resolve the issue. -/
 def alt (P : InquisitiveContent W) : Set (Set W) :=
   {p ∈ P.props | ∀ q ∈ P.props, p ⊆ q → p = q}
 
 /-- The **informative content** of an inquisitive content
-    (@cite{theiler-etal-2018} Definition 2): the union of all
+    (@cite{ciardelli-groenendijk-roelofsen-2018}): the union of all
     propositions in `props`. The information any utterance with this
     meaning provides — the actual world must lie in `info P`. -/
 def info (P : InquisitiveContent W) : Set W :=
   ⋃₀ P.props
-
-/-- Truth in a world (@cite{theiler-etal-2018} Definition 2): `w ∈ info P`. -/
-def trueAt (P : InquisitiveContent W) (w : W) : Prop :=
-  w ∈ info P
 
 /-- A sentence is **informative** iff its informative content excludes
     at least one possible world. -/
@@ -147,17 +144,21 @@ def isInquisitive (P : InquisitiveContent W) : Prop :=
 
 /-- A sentence is **declarative** iff it is not inquisitive —
     equivalently, iff `info P ∈ props`. Algebraic characterization
-    (@cite{puncochar-2019}, p. 298): `props` is a principal ideal in
-    the algebra of information states. -/
+    (@cite{puncochar-2019}): `props` is a principal ideal in the algebra
+    of information states; see `isDeclarative_iff_eq_declarative_info`. -/
 def isDeclarative (P : InquisitiveContent W) : Prop :=
   info P ∈ P.props
+
+/-- Declarative and inquisitive are exact negations of each other. -/
+theorem isDeclarative_iff_not_isInquisitive (P : InquisitiveContent W) :
+    P.isDeclarative ↔ ¬ P.isInquisitive :=
+  not_not.symm
 
 /-! ### Constructors -/
 
 /-- The **declarative** content of a proposition `p`: the principal
     ideal `{q | q ⊆ p}`. Single alternative `p`; non-inquisitive;
-    informative iff `p ≠ univ`. The meaning of `Amy left.`
-    (@cite{theiler-etal-2018} Figure 2(b)). -/
+    informative iff `p ≠ univ`. -/
 def declarative (p : Set W) : InquisitiveContent W where
   props := {q | q ⊆ p}
   contains_empty := Set.empty_subset p
@@ -165,7 +166,10 @@ def declarative (p : Set W) : InquisitiveContent W where
 
 /-! ### Basic theorems on declarative -/
 
-theorem info_declarative (p : Set W) : (declarative p).info = p := by
+@[simp] theorem mem_declarative {p q : Set W} :
+    q ∈ declarative p ↔ q ⊆ p := Iff.rfl
+
+@[simp] theorem info_declarative (p : Set W) : (declarative p).info = p := by
   ext w
   simp only [info, declarative, Set.mem_sUnion, Set.mem_setOf_eq]
   refine ⟨?_, ?_⟩
@@ -253,10 +257,9 @@ This gives access to the entire mathlib order/lattice API
 `sSup_le_iff`, intervals, lattice homomorphisms, …).
 
 Distributivity (binary) is free: it reduces to the standard set
-distributivity `(A ∪ B) ∩ (A ∪ C) = A ∪ (B ∩ C)` on the underlying
-`Set (Set W)`. We register `DistribLattice` separately, following the
-mathlib pattern (cf. `Filter.instCompleteLatticeFilter` /
-`Filter.instDistribLatticeFilter`). -/
+distributivity on the underlying `Set (Set W)`, and falls out of the
+`CompleteDistribLattice` registration below (no separate
+`DistribLattice` instance needed). -/
 
 /-- The arbitrary supremum: a state resolves `sSup S` iff it resolves
     some `P ∈ S` (or is the empty state, which always resolves). -/
@@ -438,8 +441,7 @@ equivalence after the fact. The basic theorems (`info_polar`,
 /-- The **polar interrogative** content of a proposition `p`, defined
     via @cite{puncochar-2019}'s `?α := α ⩒ ¬α`. Alternatives are `p`
     and `pᶜ`; non-informative (`info = univ`); inquisitive iff `p` is
-    non-trivial. The meaning of `Did Amy leave?`
-    (@cite{theiler-etal-2018} Figure 2(a)). -/
+    non-trivial. -/
 def polar (p : Set W) : InquisitiveContent W :=
   declarative p ⊔ declarative pᶜ
 
@@ -487,7 +489,8 @@ The `alt` (alternatives) selector picks out maximal propositions in
 `P.props`. Two basic facts: alternatives are propositions, and the
 union of alternatives is contained in `info P` (equality requires
 finite-`W` or other guarantees that maximals exist —
-@cite{theiler-etal-2018} footnote 7). The two-alternatives criterion
+@cite{ciardelli-groenendijk-roelofsen-2018} discusses the limit case
+where no maximal element exists). The two-alternatives criterion
 gives a sufficient condition for inquisitivity that does not depend
 on finiteness. -/
 
@@ -538,6 +541,36 @@ theorem sUnion_alt_subset_info (P : InquisitiveContent W) :
     intro r hr hpr
     exact Set.Subset.antisymm hpr hr
 
+/-- The unique alternative of `⊤` is `Set.univ`. -/
+@[simp] theorem alt_top : alt (⊤ : InquisitiveContent W) = {Set.univ} := by
+  ext q
+  simp only [mem_alt_iff_maximal, Set.mem_singleton_iff]
+  constructor
+  · intro hmax
+    have huniv : (Set.univ : Set W) ∈ (⊤ : InquisitiveContent W).props :=
+      Set.mem_univ _
+    exact (hmax.eq_of_ge huniv (fun _ _ => Set.mem_univ _)).symm
+  · rintro rfl
+    refine ⟨Set.mem_univ _, ?_⟩
+    intro q _ _
+    exact fun _ _ => Set.mem_univ _
+
+/-- The unique alternative of `⊥` is `∅`. -/
+@[simp] theorem alt_bot : alt (⊥ : InquisitiveContent W) = {∅} := by
+  ext q
+  simp only [mem_alt_iff_maximal, Set.mem_singleton_iff]
+  constructor
+  · intro hmax
+    have hq : q ∈ (⊥ : InquisitiveContent W).props := hmax.1
+    change q ∈ ({∅} : Set (Set W)) at hq
+    rwa [Set.mem_singleton_iff] at hq
+  · rintro rfl
+    refine ⟨rfl, ?_⟩
+    intro r hr _
+    change r ∈ ({∅} : Set (Set W)) at hr
+    rw [Set.mem_singleton_iff] at hr
+    exact hr.le
+
 /-- If `P` has two distinct alternatives, then `P` is inquisitive: no
     single proposition (in particular, not `info P`) can equal both. -/
 theorem isInquisitive_of_two_alternatives (P : InquisitiveContent W)
@@ -559,7 +592,7 @@ proposition extends to a maximal one. This gives the dual half of
 Without finiteness, alternatives need not exist — a downward-closed
 family with no maximal element (e.g. `{q ⊊ Set.univ | q.Finite}`
 on infinite `W`) is a valid `InquisitiveContent` with `alt P = ∅`
-even though `info P ≠ ∅` (cf. @cite{theiler-etal-2018} fn. 7). -/
+even though `info P ≠ ∅`. -/
 
 /-- **Existence of alternatives** under finiteness: every proposition
     in `P.props` extends to a maximal one (i.e., to an alternative).
@@ -601,9 +634,8 @@ This subsumes:
 - Setoid-derived inquiries: `fromSetoid r` resolves to the iSup over
   equivalence classes (each class is an alternative).
 
-Without finiteness the theorem fails (alternatives may not exist;
-@cite{theiler-etal-2018} fn. 7), but the **inequality**
-`⨆ p ∈ alt P, declarative p ≤ P` holds always. -/
+Without finiteness the theorem fails (alternatives may not exist),
+but the **inequality** `⨆ p ∈ alt P, declarative p ≤ P` holds always. -/
 
 /-- The lower bound (always holds): the inquisitive disjunction of the
     declarative principal ideals of `P`'s alternatives is contained in
@@ -635,14 +667,16 @@ theorem eq_iSup_declarative_alt (P : InquisitiveContent W)
 
 /-! ### Principal-ideal characterization of declaratives
 
-@cite{puncochar-2019} p. 298: "declarative propositions are,
-algebraically speaking, principal ideals in the algebra of information
-states." We make this characterization explicit: `P` is declarative
-iff `P` is the principal ideal generated by `info P`. -/
+@cite{puncochar-2019}: declarative propositions are, algebraically
+speaking, principal ideals in the algebra of information states. We
+make this characterization explicit: `P` is declarative iff `P` is the
+principal ideal generated by `info P`. We also prove the equivalent
+characterization via alternatives: `P` is declarative iff
+`alt P = {info P}`. -/
 
-/-- **Principal-ideal characterization** (@cite{puncochar-2019}, p.
-    298): an inquisitive content is declarative iff it equals the
-    principal ideal generated by its informative content. -/
+/-- **Principal-ideal characterization** (@cite{puncochar-2019}): an
+    inquisitive content is declarative iff it equals the principal ideal
+    generated by its informative content. -/
 theorem isDeclarative_iff_eq_declarative_info (P : InquisitiveContent W) :
     P.isDeclarative ↔ P = declarative P.info := by
   constructor
@@ -659,15 +693,98 @@ theorem isDeclarative_iff_eq_declarative_info (P : InquisitiveContent W) :
     rw [h]
     exact isDeclarative_declarative P.info
 
-/-! ### Non-inquisitive projection, negation, and implication
+/-- **Alternative-set characterization**: an inquisitive content is
+    declarative iff its alternatives are exactly `{info P}` — i.e., iff
+    its informative content is itself the unique maximal resolving
+    state. -/
+theorem isDeclarative_iff_alt_eq_singleton (P : InquisitiveContent W) :
+    P.isDeclarative ↔ alt P = {P.info} := by
+  constructor
+  · intro h
+    ext q
+    simp only [mem_alt_iff_maximal, Set.mem_singleton_iff]
+    constructor
+    · rintro ⟨hqP, hmax⟩
+      have h1 : q ⊆ P.info := fun w hw => ⟨q, hqP, hw⟩
+      have h2 : P.info ⊆ q := hmax h h1
+      exact Set.Subset.antisymm h1 h2
+    · rintro rfl
+      refine ⟨h, ?_⟩
+      intro r hr hr_le w hw
+      exact ⟨r, hr, hw⟩
+  · intro halt
+    show P.info ∈ P
+    have hinfo : P.info ∈ alt P := by rw [halt]; rfl
+    exact hinfo.1
 
-The Heyting algebra structure (from `CompleteDistribLattice`) gives
-`⇨` (Heyting implication) and `ᶜ` (pseudo-complement) on
-`InquisitiveContent`. We expose linguistic-flavored aliases and the
-non-inquisitive projection `!P := declarative (info P)` —
-the operator that "flattens" an inquisitive content to its declarative
-core, used throughout the inquisitive-semantics literature
-(@cite{ciardelli-groenendijk-roelofsen-2018}; @cite{puncochar-2019}). -/
+/-! ### Heyting derivatives: complement, projection, division law
+
+The `CompleteDistribLattice` structure registered above gives us a
+`HeytingAlgebra` for free, so `Pᶜ` (pseudo-complement) and `P ⇨ Q`
+(Heyting implication) come pre-installed with their universal
+properties. The structural fact that drives the inquisitive-specific
+theory is the explicit formula for `Pᶜ`:
+
+    `Pᶜ = declarative (info P)ᶜ`
+
+i.e., complementing `P` is the same as complementing its informative
+content and taking the principal ideal. This single identity
+(`compl_eq`) lets us derive the standard inquisitive operators
+(@cite{ciardelli-groenendijk-roelofsen-2018}; @cite{puncochar-2019}):
+
+- the **non-inquisitive projection** `!P = Pᶜᶜ = declarative (info P)`
+  (`proj_eq_compl_compl`),
+- the **non-informative projection** `?P = P ⊔ Pᶜ`,
+- and the **division law** `!P ⊓ ?P = P` decomposing every content into
+  its informative and inquisitive components (`proj_inf_nonInfo`).
+
+The lattice is **Heyting but not Boolean**: LEM `P ⊔ Pᶜ = ⊤` fails in
+general — see `not_lem_inquisitive_content` below. -/
+
+/-- **Pseudo-complement formula**: the Heyting complement `Pᶜ` is the
+    declarative principal ideal of the complemented informative content.
+    This is the structural identity that grounds all subsequent Heyting
+    derivatives. -/
+theorem compl_eq (P : InquisitiveContent W) :
+    Pᶜ = declarative (P.info)ᶜ := by
+  apply le_antisymm
+  · intro q hq
+    show q ⊆ (info P)ᶜ
+    intro w hwq hw_info
+    have h1 : ({w} : Set W) ∈ Pᶜ := by
+      apply (Pᶜ).downward_closed q hq
+      intro x hx
+      rw [Set.mem_singleton_iff] at hx
+      exact hx ▸ hwq
+    obtain ⟨p, hpP, hwp⟩ := hw_info
+    have h2 : ({w} : Set W) ∈ P := by
+      apply P.downward_closed p hpP
+      intro x hx
+      rw [Set.mem_singleton_iff] at hx
+      exact hx ▸ hwp
+    have h3 : ({w} : Set W) ∈ P ⊓ Pᶜ := ⟨h2, h1⟩
+    have h4 : ({w} : Set W) ∈ (⊥ : InquisitiveContent W) := by
+      rw [← inf_compl_self P]; exact h3
+    have h5 : ({w} : Set W) = ∅ := by
+      change ({w} : Set W) ∈ ({∅} : Set (Set W)) at h4
+      rwa [Set.mem_singleton_iff] at h4
+    exact (h5 ▸ Set.mem_singleton w : w ∈ (∅ : Set W)).elim
+  · rw [← himp_bot]
+    apply le_himp_iff.mpr
+    intro q hq
+    obtain ⟨hq_decl, hq_P⟩ := hq
+    show q ∈ ({∅} : Set (Set W))
+    rw [Set.mem_singleton_iff]
+    have hq_info : q ⊆ P.info := fun w hwq => ⟨q, hq_P, hwq⟩
+    have hsub : q ⊆ ∅ := fun w hw => hq_decl hw (hq_info hw)
+    exact Set.subset_empty_iff.mp hsub
+
+/-- **`info` commutes with complement**: even though the lattice of
+    contents is only Heyting, the underlying informative content is a
+    Boolean Set, and `info` respects complementation. -/
+@[simp] theorem info_compl (P : InquisitiveContent W) :
+    info Pᶜ = (info P)ᶜ := by
+  rw [compl_eq, info_declarative]
 
 /-- **Non-inquisitive projection** `!P`: the declarative content with
     the same informative content as `P` (@cite{ciardelli-groenendijk-roelofsen-2018}).
@@ -679,6 +796,15 @@ core, used throughout the inquisitive-semantics literature
     semantics: classical disjunction is `!(P ⩒ Q) = !P ⊔ !Q`, etc. -/
 def proj (P : InquisitiveContent W) : InquisitiveContent W :=
   declarative P.info
+
+/-- `!P = Pᶜᶜ`: the non-inquisitive projection coincides with the
+    Heyting double-complement (@cite{ciardelli-groenendijk-roelofsen-2018}).
+    Together with `compl_eq`, this means every inquisitive operator
+    derivable from the Heyting structure is, at the level of `info`, a
+    Boolean operator on `Set W`. -/
+theorem proj_eq_compl_compl (P : InquisitiveContent W) : proj P = Pᶜᶜ := by
+  rw [compl_eq Pᶜ, info_compl, compl_compl]
+  rfl
 
 @[simp] theorem info_proj (P : InquisitiveContent W) : P.proj.info = P.info :=
   info_declarative P.info
@@ -702,28 +828,68 @@ theorem proj_eq_self_iff (P : InquisitiveContent W) :
   · intro h
     exact ((isDeclarative_iff_eq_declarative_info P).mp h).symm
 
-/-- **Inquisitive negation** `¬P` (alias for the Heyting pseudo-complement
-    `Pᶜ`). The largest inquisitive content `R` such that `R ⊓ P` is
-    inconsistent (`R ⊓ P = ⊥`). Always declarative
-    (`info(¬P) = (info P)ᶜ`).
+/-- **Non-informative projection** `?P := P ⊔ Pᶜ`
+    (@cite{ciardelli-groenendijk-roelofsen-2018}). The "inquisitive
+    question" operator: takes any content and returns its non-informative
+    counterpart with the same inquisitive structure. -/
+def nonInfo (P : InquisitiveContent W) : InquisitiveContent W := P ⊔ Pᶜ
 
-    In the Punčochář algebraic framework (@cite{puncochar-2019}), this
-    is the Heyting negation `P → ⊥`. -/
-def not (P : InquisitiveContent W) : InquisitiveContent W := Pᶜ
+theorem nonInfo_eq_sup_compl (P : InquisitiveContent W) :
+    nonInfo P = P ⊔ Pᶜ := rfl
 
-@[simp] theorem not_eq_compl (P : InquisitiveContent W) : P.not = Pᶜ := rfl
+/-- **Division law** (@cite{ciardelli-groenendijk-roelofsen-2018}):
+    every inquisitive content decomposes uniquely as the meet of its
+    non-inquisitive projection and its non-informative projection. This
+    is the fundamental decomposition theorem of inquisitive semantics —
+    it says the lattice "factors through" `(info, alternatives)`. -/
+theorem proj_inf_nonInfo (P : InquisitiveContent W) :
+    proj P ⊓ nonInfo P = P := by
+  unfold nonInfo
+  rw [inf_sup_left]
+  have h1 : proj P ⊓ Pᶜ = ⊥ := by
+    rw [compl_eq P]
+    apply le_antisymm _ bot_le
+    intro q ⟨hq1, hq2⟩
+    show q ∈ ({∅} : Set (Set W))
+    rw [Set.mem_singleton_iff]
+    have : q ⊆ info P ∩ (info P)ᶜ := fun w hw => ⟨hq1 hw, hq2 hw⟩
+    rw [Set.inter_compl_self] at this
+    exact Set.subset_empty_iff.mp this
+  rw [h1, sup_bot_eq]
+  apply le_antisymm
+  · exact inf_le_right
+  · refine le_inf ?_ le_rfl
+    intro q hq
+    show q ⊆ info P
+    intro w hwq
+    exact ⟨q, hq, hwq⟩
 
-/-- **Inquisitive implication** `P → Q` (alias for the Heyting
-    implication `P ⇨ Q`). The largest inquisitive content `R` such that
-    `R ⊓ P ≤ Q`.
+/-! ### LEM fails: the lattice is Heyting but not Boolean
 
-    In Punčochář's @cite{puncochar-2019} support semantics, this
-    coincides with the support clause `s ⊨ P → Q` iff `∀ s' ⊆ s,
-    s' ⊨ P → s' ⊨ Q` (true by the Heyting characterization of `⇨`
-    as the largest `R` with `R ⊓ P ≤ Q`). -/
-def imp (P Q : InquisitiveContent W) : InquisitiveContent W := P ⇨ Q
+A central feature of inquisitive semantics is that the standard logical
+laws of a Boolean algebra do not all hold. In particular, the law of
+excluded middle `P ⊔ Pᶜ = ⊤` fails: an inquisitive content `P` and its
+pseudo-complement `Pᶜ` are both *declarative*, so their join is
+declarative too, while `⊤` is the trivially-resolved content (every
+state in `props`). The witness below uses the polar-question shape
+`declarative {true} ⊔ declarative {true}ᶜ` over `Bool`. -/
 
-@[simp] theorem imp_eq_himp (P Q : InquisitiveContent W) : P.imp Q = P ⇨ Q := rfl
+/-- **LEM fails for inquisitive content**: there exists `W` and `P`
+    with `P ⊔ Pᶜ ≠ ⊤`. This is what makes the lattice Heyting rather
+    than Boolean. -/
+theorem not_lem_inquisitive_content :
+    ∃ (W : Type) (P : InquisitiveContent W), P ⊔ Pᶜ ≠ ⊤ := by
+  refine ⟨Bool, declarative {true}, ?_⟩
+  intro h
+  rw [compl_eq, info_declarative] at h
+  have huniv : (Set.univ : Set Bool) ∈ (⊤ : InquisitiveContent Bool) :=
+    Set.mem_univ _
+  rw [← h] at huniv
+  rcases huniv with h1 | h1
+  · have : false ∈ ({true} : Set Bool) := h1 (Set.mem_univ false)
+    simp at this
+  · have : true ∈ ({true} : Set Bool)ᶜ := h1 (Set.mem_univ true)
+    simp at this
 
 end InquisitiveContent
 
