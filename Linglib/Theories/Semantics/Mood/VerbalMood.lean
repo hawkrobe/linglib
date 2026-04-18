@@ -29,9 +29,9 @@ distinguishes indicative from subjunctive complementation:
 @cite{portner-2018}'s unification of these two: *both intuitions are
 correct* because they target two different POSW components. The
 **information component** (`cs`) underwrites Truth-style universal
-quantification (`POSW.boxCs`); the **preference component** (`lt`)
+quantification (`POSW.boxCs`); the **preference component** (`le`)
 underwrites Comparison-style quantification over the best-ranked
-subset (`POSW.boxLt`).
+subset (`POSW.boxLe`).
 
 We add a third operator `.interrogative` for question-embedding
 predicates (`wonder`, `ask`, `investigate`), which select for clauses
@@ -44,7 +44,7 @@ the same POSWQ substrate to give all three operators a uniform type.
 
 This file formalizes the selection as the `interp` function on a
 three-element `VerbalMoodOp`, with signature `POSWQ W → (W → Prop)
-→ Prop`. The split is *type-driven*: `boxCs`, `boxLt`, and `boxAns`
+→ Prop`. The split is *type-driven*: `boxCs`, `boxLe`, and `boxAns`
 operate on the same POSWQ and the same proposition; only which
 component they consult differs.
 
@@ -55,8 +55,8 @@ lives in `Core/Discourse/Scoreboard.lean`:
 
 | layer            | declarative                  | imperative                    | interrogative              |
 |------------------|------------------------------|-------------------------------|----------------------------|
-| sentence mood    | assertion (`+`-update on cs) | direction (`⋆`-update on lt)  | interrogation (`?` on inq) |
-| modal necessity  | `boxCs` (informational)      | `boxLt` (preferential)        | `boxAns` (answerhood)      |
+| sentence mood    | assertion (`+`-update on cs) | direction (`⋆`-update on le)  | interrogation (`?` on inq) |
+| modal necessity  | `boxCs` (informational)      | `boxLe` (preferential)        | `boxAns` (answerhood)      |
 | verbal mood      | `interp .indicative`         | `interp .subjunctive`         | `interp .interrogative`    |
 
 The first two columns are @cite{portner-2018}'s; the third column is
@@ -101,11 +101,11 @@ inductive VerbalMoodOp where
     an embedding POSWQ and an embedded proposition. The three cases
     consult disjoint POSWQ components:
     `.indicative ↦ POSW.boxCs`,
-    `.subjunctive ↦ POSW.boxLt`,
+    `.subjunctive ↦ POSW.boxLe`,
     `.interrogative ↦ POSWQ.boxAns`. -/
 def VerbalMoodOp.interp : VerbalMoodOp → POSWQ W → (W → Prop) → Prop
   | .indicative,    c, p => c.toPOSW.boxCs p
-  | .subjunctive,   c, p => c.toPOSW.boxLt p
+  | .subjunctive,   c, p => c.toPOSW.boxLe p
   | .interrogative, c, p => c.boxAns p
 
 /-! ## §1. Definitional equalities -/
@@ -114,14 +114,14 @@ def VerbalMoodOp.interp : VerbalMoodOp → POSWQ W → (W → Prop) → Prop
     VerbalMoodOp.indicative.interp c p = c.toPOSW.boxCs p := rfl
 
 @[simp] theorem interp_subjunctive (c : POSWQ W) (p : W → Prop) :
-    VerbalMoodOp.subjunctive.interp c p = c.toPOSW.boxLt p := rfl
+    VerbalMoodOp.subjunctive.interp c p = c.toPOSW.boxLe p := rfl
 
 @[simp] theorem interp_interrogative (c : POSWQ W) (p : W → Prop) :
     VerbalMoodOp.interrogative.interp c p = c.boxAns p := rfl
 
 /-! ## §2. Operator-specific monotonicity
 
-`boxCs` and `boxLt` are upward-monotone in the embedded proposition:
+`boxCs` and `boxLe` are upward-monotone in the embedded proposition:
 strengthening the modal base preserves universal truth there.
 `boxAns` is *not* upward-monotone — a strengthening of `p` can break
 the constant-truth-per-cell property. The natural monotonicity for
@@ -141,7 +141,7 @@ theorem interp_indicative_mono (c : POSWQ W) (p q : W → Prop)
 theorem interp_subjunctive_mono (c : POSWQ W) (p q : W → Prop)
     (h : ∀ w, p w → q w) :
     VerbalMoodOp.subjunctive.interp c p → VerbalMoodOp.subjunctive.interp c q :=
-  POSW.boxLt_mono c.toPOSW p q h
+  POSW.boxLe_mono c.toPOSW p q h
 
 /-! ## §3. Distinctness witnesses
 
@@ -150,15 +150,15 @@ a disjoint POSWQ component. We exhibit concrete witnesses showing
 that no operator can be defined in terms of the others on the POSWQ
 substrate alone. -/
 
-/-- Separation POSW: `cs = ⊤` over `Bool`, with `lt w v = (w = false →
+/-- Separation POSW: `cs = ⊤` over `Bool`, with `le w v = (w = false →
     v = false)`. Under this ordering `false` is the unique element
-    `w` such that every `v` satisfies `lt v w`, so `false` is the
+    `w` such that every `v` satisfies `le v w`, so `false` is the
     unique world picked out by `POSW.best`. -/
 def sepPOSW : POSW Bool where
   cs := fun _ => True
-  lt := fun w v => w = false → v = false
-  lt_refl  := fun _ _ h => h
-  lt_trans := fun _ _ _ _ _ _ hwu huv hw => huv (hwu hw)
+  le := fun w v => w = false → v = false
+  le_refl  := fun _ _ h => h
+  le_trans := fun _ _ _ _ _ _ hwu huv hw => huv (hwu hw)
 
 /-- Lift of `sepPOSW` to a POSWQ with trivial inquiry. Used to
     distinguish indicative from subjunctive without engaging the
@@ -235,6 +235,27 @@ instance : Core.Mood.HasPOSWTarget VerbalMoodOp where
     (p : W → Prop) :
     m.interp c p = (Core.Mood.target m).boxOn c p := by
   cases m <;> rfl
+
+/-! ## Verbal-mood biconditional characterization
+
+`VerbalMoodOp` is in bijection with `POSWTarget`: each operator
+*exactly* picks out one POSW component, and conversely each component
+is targeted by *exactly* one operator. The biconditionals below are
+the type-level shadow of @cite{portner-2018}'s Indicative / Subjunctive
+Principles extended to interrogative — at the verbal-mood layer, mood
+selection and POSWQ-component selection are the same thing. -/
+
+theorem verbal_mood_target_informational_iff_indicative (m : VerbalMoodOp) :
+    Core.Mood.target m = .informational ↔ m = .indicative := by
+  cases m <;> decide
+
+theorem verbal_mood_target_preferential_iff_subjunctive (m : VerbalMoodOp) :
+    Core.Mood.target m = .preferential ↔ m = .subjunctive := by
+  cases m <;> decide
+
+theorem verbal_mood_target_partition_iff_interrogative (m : VerbalMoodOp) :
+    Core.Mood.target m = .partition ↔ m = .interrogative := by
+  cases m <;> decide
 
 /-! ## §5. Bridge to `MoodSelector`
 

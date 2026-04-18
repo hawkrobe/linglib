@@ -41,9 +41,9 @@ namespace Core.Mood
     - `informational`: the context set `cs`. Targeted by indicative
       verbal mood and declarative force (assertion via `+`-update,
       belief via `□_cs`).
-    - `preferential`: the ordering `<`. Targeted by subjunctive verbal
+    - `preferential`: the ordering `≤`. Targeted by subjunctive verbal
       mood and imperative force (directive via `⋆`-update,
-      desire via `□_<`). The `.promissive` and `.exclamative`
+      desire via `□_≤`). The `.promissive` and `.exclamative`
       assignments below are extensions of @cite{portner-2018}'s
       core declarative/imperative/interrogative trichotomy and
       should be treated as conjectural.
@@ -70,7 +70,7 @@ export HasPOSWTarget (target)
 
 /-- Verbal mood (@cite{portner-2018}, Ch. 4):
     - indicative selected by `believe`-class attitudes (`□_cs` on agent's POSW)
-    - subjunctive selected by `want`-class attitudes (`□_<` on agent's POSW) -/
+    - subjunctive selected by `want`-class attitudes (`□_≤` on agent's POSW) -/
 instance : HasPOSWTarget GramMood where
   target
     | .indicative  => .informational
@@ -101,15 +101,22 @@ both target the informational component. This is the type-level
 shadow of @cite{portner-2018}'s **Indicative Principle**, which is
 itself stated as a one-way conditional ("if a clause's matrix
 operator is `□_cs`, the clause is indicative") rather than as
-target-equality. We formalize the easier statement here; the full
-conditional principle would require a syntax-side mood-features
-infrastructure that does not yet exist in linglib. -/
+target-equality.
+
+We state both: the target-equality version (`decl_ind_target_match`)
+and the conditional version (`gram_mood_target_iff` and friends below).
+The conditional version captures Portner's principle directly at the
+type level: the GramMood enum is in bijection with the two POSW
+components it can target, so "target = informational" and "mood =
+indicative" are interchangeable (and similarly for subjunctive).
+The full clause-level conditional ("if the matrix operator is `□_cs`,
+the clause is indicative") would additionally require a syntax-side
+mood-features infrastructure mapping operators to mood realizations,
+which does not yet exist in linglib. -/
 
 /-- The canonical declarative-indicative clause has matching
     POSW-target on its force and mood components. The type-level
-    shadow of @cite{portner-2018}'s Indicative Principle (which is
-    itself stated as a conditional, not as target-equality —
-    see the section docstring above). -/
+    shadow of @cite{portner-2018}'s Indicative Principle. -/
 theorem decl_ind_target_match :
     target ClauseType.declInd.force = target ClauseType.declInd.mood := by
   rfl
@@ -127,10 +134,62 @@ theorem mood_misalignment_polar_question :
     target ClauseType.polarQuestion.force ≠ target ClauseType.polarQuestion.mood := by
   decide
 
+/-! ## Indicative / Subjunctive Principles as biconditionals
+
+The conditional form of @cite{portner-2018}'s Indicative Principle
+("if the matrix operator is `□_cs`, the clause is indicative") and its
+subjunctive counterpart, restricted to the verbal-mood layer (`GramMood`).
+Because `GramMood` is in bijection with the two POSW components it
+can target, the conditionals collapse to biconditionals: targeting the
+informational component *exactly* picks out indicative; targeting the
+preferential component *exactly* picks out subjunctive.
+
+These are the strongest type-level statements of Portner's principles
+available without a syntax-side mood-features infrastructure. -/
+
+/-- **Indicative Principle** (@cite{portner-2018}, Ch. 4): a verbal
+    mood targets the informational component iff it is indicative.
+    The biconditional form available at the GramMood layer. -/
+theorem gram_mood_target_informational_iff_indicative (m : GramMood) :
+    target m = .informational ↔ m = .indicative := by
+  cases m <;> decide
+
+/-- **Subjunctive Principle** (@cite{portner-2018}, Ch. 4): a verbal
+    mood targets the preferential component iff it is subjunctive.
+    The biconditional form available at the GramMood layer. -/
+theorem gram_mood_target_preferential_iff_subjunctive (m : GramMood) :
+    target m = .preferential ↔ m = .subjunctive := by
+  cases m <;> decide
+
+/-- A `GramMood` never targets the partition component — the
+    declarative-complement column is closed under the
+    informational/preferential split. The complement of
+    `IllocutionaryMood` (which can target `.partition` via
+    `.interrogative`). -/
+theorem gram_mood_target_ne_partition (m : GramMood) :
+    target m ≠ .partition := by
+  cases m <;> decide
+
+/-! ## §3. Farkas-style alternative: target by update type
+
+@cite{farkas-2003} (eq. 11) characterizes mood selection by the *update
+type* — `+` for indicative, `⋆` for subjunctive — rather than by the
+matrix modal operator. The target equality `decl_ind_target_match`
+above is the type-level shadow of Farkas's principle as well: the
+POSW component refined by the force-side update (`+` refines `cs`,
+`⋆` refines `≤`) coincides with the POSW component quantified by the
+mood-side modal (`boxCs` over `cs`, `boxLe` over best-of-`≤`).
+
+The Farkas alternative and Portner's Indicative/Subjunctive Principles
+agree on the canonical declarative-indicative and imperative-subjunctive
+cases (which is why `decl_ind_target_match` works for both); they
+differ in their predictions about non-canonical pairings, where this
+substrate does not yet take a position. -/
+
 /-! ## §2. Operational projection: from `POSWTarget` to a POSWQ modal
 
 The `POSWTarget` enum is a *typeclass-resolved label*. To turn that
-label into actual semantic work — the `□_cs`/`□_<`/`boxAns` modal
+label into actual semantic work — the `□_cs`/`□_≤`/`boxAns` modal
 that quantifies over the labelled component — we project into a
 function `POSWQ W → (W → Prop) → Prop`. The projection is
 exhaustive and uniformly typed across the three components: the
@@ -150,14 +209,14 @@ variable {W : Type u}
     modal that quantifies over the labelled POSWQ component. -/
 def POSWTarget.boxOn : POSWTarget → POSWQ W → (W → Prop) → Prop
   | .informational, c, p => c.toPOSW.boxCs p
-  | .preferential,  c, p => c.toPOSW.boxLt p
+  | .preferential,  c, p => c.toPOSW.boxLe p
   | .partition,     c, p => c.boxAns p
 
 @[simp] theorem boxOn_informational (c : POSWQ W) (p : W → Prop) :
     POSWTarget.informational.boxOn c p = c.toPOSW.boxCs p := rfl
 
 @[simp] theorem boxOn_preferential (c : POSWQ W) (p : W → Prop) :
-    POSWTarget.preferential.boxOn c p = c.toPOSW.boxLt p := rfl
+    POSWTarget.preferential.boxOn c p = c.toPOSW.boxLe p := rfl
 
 @[simp] theorem boxOn_partition (c : POSWQ W) (p : W → Prop) :
     POSWTarget.partition.boxOn c p = c.boxAns p := rfl

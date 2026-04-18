@@ -240,7 +240,7 @@ The scoreboard's CG and G components project jointly into a
 `Core.Mood.POSW` substrate (@cite{portner-2018}, eq. 1):
 
 - The `cs` component is the scoreboard `contextSet` (∩ of CG).
-- The `lt` component is the **goal-induced preference ordering**:
+- The `le` component is the **goal-induced preference ordering**:
   `w` is at least as good as `v` iff every active goal content (across
   every agent) that holds at `v` also holds at `w`. Equivalently,
   `w` violates no goal that `v` doesn't already violate.
@@ -251,7 +251,7 @@ correspond, by construction, to the two POSW updates of @cite{portner-2018}:
 | scoreboard      | POSW    | informational consequence                  |
 |-----------------|---------|--------------------------------------------|
 | assertionUpdate | `plus`  | `boxCs_plus_self` (Stalnakerian principle) |
-| directionUpdate | `star`  | `lt`-refinement: p-violators demoted       |
+| directionUpdate | `star`  | `le`-refinement: p-violators demoted       |
 
 We *derive* both consequences from `POSW.boxCs_plus_self` and the
 `star`-refinement via the bridge theorems below — not re-stipulate them. -/
@@ -310,22 +310,22 @@ lemma mem_directionUpdate_goalContents (K : Scoreboard W) (p : W → Prop)
     (Nat.zero_le _) (by simpa using hin) q
 
 /-- Project the scoreboard into a POSW substrate. `cs` is the
-    scoreboard's `contextSet`; `lt` is the **goal-induced** ordering —
+    scoreboard's `contextSet`; `le` is the **goal-induced** ordering —
     `w` is at least as good as `v` iff `w` satisfies every goal
     `v` satisfies. The two POSW updates of @cite{portner-2018} target
     these two components (cf. `toPOSW_assertion_eq_plus` and
     `toPOSW_direction_eq_star`). -/
 def toPOSW (K : Scoreboard W) : Core.Mood.POSW W where
   cs := K.contextSet
-  lt := fun w v => ∀ p ∈ K.goalContents, p v → p w
-  lt_refl  := fun _ _ _ _ hp => hp
-  lt_trans := fun _ _ _ _ _ _ hwu huv p hp hpv => hwu p hp (huv p hp hpv)
+  le := fun w v => ∀ p ∈ K.goalContents, p v → p w
+  le_refl  := fun _ _ _ _ hp => hp
+  le_trans := fun _ _ _ _ _ _ hwu huv p hp hpv => hwu p hp (huv p hp hpv)
 
 @[simp] theorem toPOSW_cs (K : Scoreboard W) :
     K.toPOSW.cs = K.contextSet := rfl
 
-@[simp] theorem toPOSW_lt (K : Scoreboard W) (w v : W) :
-    K.toPOSW.lt w v ↔ ∀ p ∈ K.goalContents, p v → p w := Iff.rfl
+@[simp] theorem toPOSW_le (K : Scoreboard W) (w v : W) :
+    K.toPOSW.le w v ↔ ∀ p ∈ K.goalContents, p v → p w := Iff.rfl
 
 /-- **Assertion-as-`+`-update bridge** (@cite{stalnaker-1978},
     @cite{portner-2018} eq. 2a). Asserting `p` against scoreboard `K`
@@ -354,14 +354,14 @@ theorem boxCs_after_assertion (K : Scoreboard W) (p : W → Prop) (a : Nat) :
     `POSW.star` does: the new ordering keeps the old ordering and
     additionally requires that whenever the dominated world satisfies
     `p`, the dominating world does too. The bridge mirrors the
-    assertion bridge — `directionUpdate` is `⋆`-update on the `lt`
+    assertion bridge — `directionUpdate` is `⋆`-update on the `le`
     side, modulo the `t < K.goals.length` precondition (out-of-range
     targets silently drop the directive; that's a stipulated property
     of `directionUpdate`, not of POSW). -/
 theorem toPOSW_direction_eq_star (K : Scoreboard W) (p : W → Prop)
     (s t pr : Nat) (hin : t < K.goals.length) (w v : W) :
-    (K.directionUpdate p s t pr).toPOSW.lt w v ↔ (K.toPOSW.star p).lt w v := by
-  simp only [toPOSW_lt, Core.Mood.POSW.star_lt]
+    (K.directionUpdate p s t pr).toPOSW.le w v ↔ (K.toPOSW.star p).le w v := by
+  simp only [toPOSW_le, Core.Mood.POSW.star_le]
   constructor
   · intro h
     refine ⟨fun q hq => h q ?_, h p ?_⟩
@@ -375,14 +375,14 @@ theorem toPOSW_direction_eq_star (K : Scoreboard W) (p : W → Prop)
 /-- **Goal-violator demotion** (corollary of the `⋆`-bridge):
     after directing `p`, no `p`-violator can dominate a `p`-satisfier
     in the goal-induced ordering. The directive update genuinely
-    refines the preference relation — the analogue, on the `lt` side,
+    refines the preference relation — the analogue, on the `le` side,
     of `boxCs_after_assertion` on the `cs` side. -/
 theorem direction_demotes_violators (K : Scoreboard W) (p : W → Prop)
     (s t pr : Nat) (hin : t < K.goals.length) (w v : W)
     (hpv : p v) (hpw : ¬ p w) :
-    ¬ (K.directionUpdate p s t pr).toPOSW.lt w v := by
+    ¬ (K.directionUpdate p s t pr).toPOSW.le w v := by
   intro hlt
-  have hstar : (K.toPOSW.star p).lt w v :=
+  have hstar : (K.toPOSW.star p).le w v :=
     (toPOSW_direction_eq_star K p s t pr hin w v).mp hlt
   exact hpw (hstar.2 hpv)
 
@@ -397,7 +397,7 @@ is the meet of these binary partitions in the `Setoid W` lattice.
 | scoreboard          | POSWQ               | informational consequence    |
 |---------------------|---------------------|------------------------------|
 | assertionUpdate     | `plus`              | `boxCs_plus_self`            |
-| directionUpdate     | `star`              | `lt`-refinement              |
+| directionUpdate     | `star`              | `le`-refinement              |
 | interrogationUpdate | `inquire` (`?`)     | `boxAns`-strengthening       |
 
 Together these three bridges complete the @cite{portner-2018} 3×3
@@ -426,7 +426,7 @@ def qudInquiry (K : Scoreboard W) : Setoid W :=
 
 /-- Interrogation update preserves goal contents (since it doesn't
     touch G). Needed for the POSWQ bridge — `toPOSWQ` projects both
-    `lt` (from `goalContents`) and `inquiry` (from `qud`), and the
+    `le` (from `goalContents`) and `inquiry` (from `qud`), and the
     interrogation update only refines the latter. -/
 @[simp] theorem interrogation_preserves_goalContents (K : Scoreboard W)
     (q : W → Prop) (a : Nat) :
