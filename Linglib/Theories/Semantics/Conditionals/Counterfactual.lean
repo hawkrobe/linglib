@@ -32,7 +32,10 @@ See `RamotowskaEtAl2025.lean` for experimental evaluation.
 
 import Mathlib.Data.Finset.Card
 import Linglib.Theories.Semantics.Conditionals.Basic
+import Linglib.Theories.Semantics.Conditionals.SelectionalRestrictor
+import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Supervaluation.Basic
+import Linglib.Core.SelectionFunction
 import Linglib.Core.StructuralEquationModel
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.NonBivalence
@@ -832,5 +835,175 @@ theorem distribution_fails_universal :
     λ w => w == 1,            -- B: only w1
     λ w => w == 2,            -- C: only w2
     0, ?_, ?_, ?_⟩ <;> decide
+
+-- ════════════════════════════════════════════════════
+-- Single-Selection-Function Variant (Stalnaker 1968)
+-- ════════════════════════════════════════════════════
+
+/-! ## Single-Selection-Function Variant
+@cite{stalnaker-1968}
+
+Stalnaker's original counterfactual analysis used a single Stalnakerian
+selection function — picking THE closest A-world — without supervaluation
+over ties. This is the same `Core.SelectionFunction` infrastructure that
+@cite{cariani-santorio-2018} reuse for *will* (see
+`Theories/Semantics/Modality/Selectional.lean`); the mechanism is identical,
+only the temporal/modal target differs.
+
+The supervaluation variant (`selectionalCounterfactual` above) generalises
+this to handle ties: each "legitimate" selection function corresponds to a
+choice point, and we supervaluate over them. The bridge below shows that
+when the supervaluation's closest-worlds set is the singleton chosen by a
+selection function, the supervaluation analysis (`Truth3`) reduces to the
+single-function analysis (`Bool`) under `Truth3.ofBool`. -/
+
+/-- **Stalnaker's single-selection-function counterfactual** @cite{stalnaker-1968}.
+    `A □→ B` is true at `w` iff `B` holds at `s(w, ‖A‖)`. This reuses the
+    same `Core.SelectionFunction` infrastructure that @cite{cariani-santorio-2018}
+    apply to *will* — the mechanism is identical across the two papers. -/
+def stalnakerCounterfactual {W : Type*} (s : Core.SelectionFunction W)
+    (A B : W → Bool) (w : W) : Bool :=
+  B (s.sel w {w' | A w' = true})
+
+/-- **Bridge: Stalnaker = supervaluation when closest is a singleton.**
+
+    When the supervaluation's closest-worlds set is the singleton
+    `{s.sel w ‖A‖}`, the supervaluation analysis (`Truth3`) reduces
+    to the single-selection-function analysis (`Bool`) under
+    `Truth3.ofBool`. The supervaluation gap arises only with ties; once
+    ties are resolved by the selection function, both analyses coincide. -/
+theorem stalnaker_eq_selectional_singleton {W : Type*} [DecidableEq W] [Fintype W]
+    (s : Core.SelectionFunction W) (sim : SimilarityOrdering W)
+    (A B : W → Bool) (w : W)
+    (h_singleton : sim.closestWorlds w (Finset.univ.filter (fun w => A w = true))
+                   = {s.sel w {w' | A w' = true}}) :
+    selectionalCounterfactual sim A B w =
+    Truth3.ofBool (stalnakerCounterfactual s A B w) := by
+  unfold selectionalCounterfactual stalnakerCounterfactual
+  rw [h_singleton]
+  by_cases hB : B (s.sel w {w' | A w' = true}) = true
+  · simp [hB, Truth3.ofBool]
+  · rw [Bool.not_eq_true] at hB
+    simp [hB, Truth3.ofBool]
+
+/-! ## Bridge: Stalnaker counterfactual = will-conditional over the universe
+
+@cite{cariani-santorio-2018} §5.3.2 + §5.3.1 unify *will*, *would*,
+will-conditionals, and Stalnaker counterfactuals under a single
+`Core.SelectionFunction` substrate. Each operator differs only in its
+modal parameter `f`:
+
+- `willSem s A f w` — bare *will* with parameter `f`
+- `willConditional s A B f w` — *will* with parameter `f ∩ ‖A‖`
+- `stalnakerCounterfactual s A B w` — *would* with parameter `‖A‖`,
+  i.e. the unrestricted parameter is the whole universe
+
+The bridge below makes this explicit: a Stalnaker counterfactual is
+exactly a will-conditional whose ambient parameter is `Set.univ`. The
+*if*-clause then restricts the universe down to the antecedent's truth
+set, recovering Stalnaker's `s(w, ‖A‖)`. -/
+
+/-- **Stalnaker counterfactual = will-conditional over the universe.**
+
+@cite{cariani-santorio-2018} §5.3.2 + §5.3.1: when the modal parameter
+of the will-conditional is taken to be `Set.univ`, the Kratzer
+restriction `Set.univ ∩ ‖A‖ = ‖A‖` recovers Stalnaker's selection
+target. The Bool-valued `stalnakerCounterfactual` and the Prop-valued
+`willConditional` thus coincide modulo the `· = true` reflection.
+
+This is the formal payoff of the unification: bare *will* (`willSem`),
+will-conditionals (`willConditional`), Stalnaker counterfactuals, and
+*would*-conditionals (`wouldConditional`) all derive from one
+`Core.SelectionFunction` mechanism, differing only in which modal
+parameter the tense morphology supplies. -/
+theorem stalnakerCounterfactual_eq_willConditional_universe
+    {W : Type*} (s : Core.SelectionFunction W) (A B : W → Bool) (w : W) :
+    stalnakerCounterfactual s A B w = true ↔
+    Semantics.Conditionals.SelectionalRestrictor.willConditional
+      s (fun w' => A w' = true) (fun w' => B w' = true) Set.univ w := by
+  unfold stalnakerCounterfactual
+    Semantics.Conditionals.SelectionalRestrictor.willConditional
+    Semantics.Modality.Selectional.willSem
+  rw [Set.univ_inter]
+
+/-- **Stalnaker counterfactual = would-conditional over the universe.**
+
+The same identity restated in *would*-conditional terms, exercising
+the morphological identity `wouldConditional = willConditional`. The
+counterfactual is, on the C&S analysis, a past-tense (would-) form,
+so the would-conditional reading is the more natural surface gloss. -/
+theorem stalnakerCounterfactual_eq_wouldConditional_universe
+    {W : Type*} (s : Core.SelectionFunction W) (A B : W → Bool) (w : W) :
+    stalnakerCounterfactual s A B w = true ↔
+    Semantics.Conditionals.SelectionalRestrictor.wouldConditional
+      s (fun w' => A w' = true) (fun w' => B w' = true) Set.univ w :=
+  stalnakerCounterfactual_eq_willConditional_universe s A B w
+
+/-- A Stalnakerian selection function on `Fin 3` that prefers `1`
+    whenever Centering does not force the centre. Used to witness the
+    Stalnaker/Lewis would divergence below.
+
+    `selFn w S` returns `w` if `w ∈ S` (Centering); otherwise returns
+    `1` if `1 ∈ S`; otherwise picks the unique non-`w` element. -/
+private noncomputable def divergeSel : Core.SelectionFunction (Fin 3) :=
+  open Classical in
+  { sel := fun w S => if w ∈ S then w
+                      else if (1 : Fin 3) ∈ S then 1
+                      else if (0 : Fin 3) ∈ S then 0
+                      else 2
+    inclusion := by
+      intro w S hS
+      by_cases hw : w ∈ S
+      · simp [hw]
+      · by_cases h1 : (1 : Fin 3) ∈ S
+        · simp [hw, h1]
+        · by_cases h0 : (0 : Fin 3) ∈ S
+          · simp [hw, h1, h0]
+          · simp [hw, h1, h0]
+            obtain ⟨x, hx⟩ := hS
+            match x, hx with
+            | 0, hx => exact absurd hx h0
+            | 1, hx => exact absurd hx h1
+            | 2, hx => exact hx
+    centering := by intro w S hw; simp [hw] }
+
+/-- **Stalnaker–Lewis would divergence** @cite{cariani-santorio-2018}
+    §5.3.2 motivation: there exist a world model, a selection function,
+    a similarity ordering, an antecedent `A` and a consequent `B` such
+    that the *Stalnakerian would* (single-selection-function reading)
+    is `true` while the *Lewisian would* (universal over closest
+    A-worlds) is `false`.
+
+    Construction: three worlds with everyone equally close (closer ≡
+    true), antecedent `A = {1, 2}`, consequent `B = {1}`. Lewis's
+    closestWorlds for `A` is the whole of `A = {1, 2}`, and the
+    universal `∀ w ∈ {1, 2}. B w` fails at `w = 2`. Stalnaker's
+    selection (`divergeSel`) picks `1`, where `B` holds. The same
+    structural source — single-valuedness of selection vs. universal
+    quantification over a non-trivial closest set — drives the C&S
+    *will* / `universalWill` split in
+    `Semantics.Modality.Selectional`. -/
+theorem stalnaker_lewis_would_diverge :
+    ∃ (sim : SimilarityOrdering (Fin 3)) (A B : Fin 3 → Bool) (w : Fin 3),
+      stalnakerCounterfactual divergeSel A B w = true ∧
+      universalCounterfactual sim A B w = false := by
+  classical
+  refine ⟨.ofBool (fun _ _ _ => true) (by decide) (by decide),
+          fun w => w == 1 || w == 2,
+          fun w => w == 1,
+          0, ?_, ?_⟩
+  · -- Stalnaker picks `1` from `{w | A w = true} = {1, 2}` (since 0 ∉ S, 1 ∈ S).
+    have h0 : ¬ ((0 : Fin 3) ∈ {w : Fin 3 | (w == 1 || w == 2) = true}) := by
+      decide
+    have h1 : (1 : Fin 3) ∈ {w : Fin 3 | (w == 1 || w == 2) = true} := by
+      decide
+    have hsel : divergeSel.sel 0 {w : Fin 3 | (w == 1 || w == 2) = true} = 1 := by
+      unfold divergeSel
+      simp [Core.SelectionFunction.sel, h0, h1]
+    show (fun w : Fin 3 => w == 1) (divergeSel.sel 0 _) = true
+    rw [hsel]
+    rfl
+  · -- Universal closestWorlds = {1, 2}; the universal fails at w=2.
+    decide
 
 end Semantics.Conditionals.Counterfactual

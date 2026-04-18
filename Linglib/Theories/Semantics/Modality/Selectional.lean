@@ -106,23 +106,26 @@ def willSemBool (s : SelectionFunction W) (A : W → Bool)
 /-- **Negation Swap** @cite{cariani-santorio-2018}: under selectional
     semantics, *will* commutes with negation. `will ¬A ↔ ¬ will A`.
 
-    This follows immediately from the single-valuedness of selection:
-    the selected world either satisfies `A` or it doesn't. -/
+    Derived from `Core.SelectionFunction.sel_neg_swap` — the structural
+    origin is single-valuedness of selection: the selected world either
+    satisfies `A` or it doesn't. -/
 theorem negation_swap (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) (w : W) :
-    willSem s (fun w' => ¬ A w') f w ↔ ¬ willSem s A f w := Iff.rfl
+    willSem s (fun w' => ¬ A w') f w ↔ ¬ willSem s A f w :=
+  s.sel_neg_swap A f w
 
 /-- **Will Excluded Middle** @cite{cariani-santorio-2018}: `will A ∨
     will ¬A` holds at every point of evaluation.
 
-    The classical disjunction holds because `s.sel w f` is a single
-    world, on which `A` is either true or false. This is the
-    selectional analogue of Conditional Excluded Middle for Stalnaker
-    counterfactuals. -/
+    Derived from `Core.SelectionFunction.sel_em` — the disjunction
+    holds because `s.sel w f` is a single world, on which `A` is
+    either true or false. This is the selectional analogue of
+    Conditional Excluded Middle for Stalnaker counterfactuals; both
+    share the same structural origin in `sel_em`. -/
 theorem will_excluded_middle (s : SelectionFunction W) (A : W → Prop)
     (f : Set W) (w : W) :
     willSem s A f w ∨ willSem s (fun w' => ¬ A w') f w :=
-  Classical.em _
+  s.sel_em A f w
 
 /-- **Unembedded collapse** @cite{cariani-santorio-2018} eq. (17):
     when the evaluation world is itself in the modal parameter,
@@ -174,6 +177,52 @@ theorem will_or_eq_will_or_will_on_modalParam (s : SelectionFunction W)
   unfold willSem
   exact Iff.rfl
 
+/-- **Set-level Content Transparency** @cite{cariani-santorio-2018}
+    §8.1: as *propositions* (sets of worlds), `‖will_f A‖` and `‖A‖`
+    coincide on the modal parameter `f`. The cognitive-role argument
+    (paper §8.1) hinges on this set equality, not just on pointwise
+    truth: it is the equality of truth-sets — restricted to `f` — that
+    underwrites `cognitive_role`. -/
+theorem will_inter_modalParam_eq (s : SelectionFunction W) (A : W → Prop)
+    (f : Set W) :
+    {w | willSem s A f w} ∩ f = {w | A w} ∩ f := by
+  ext w
+  simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+  constructor
+  · exact fun ⟨h1, h2⟩ => ⟨(unembedded_collapse s A f w h2).mp h1, h2⟩
+  · exact fun ⟨h1, h2⟩ => ⟨(unembedded_collapse s A f w h2).mpr h1, h2⟩
+
+/-- **Conjunction transparency at the set level** @cite{cariani-santorio-2018}
+    §8.1: on `f`, the truth-set of `will (A ∧ B)` coincides with the
+    intersection of the truth-sets of `will A` and `will B`.
+    Equivalently: `‖will (A ∧ B)‖_f = ‖will A‖_f ∩ ‖will B‖_f`.
+    Follows from single-valuedness of selection: at each world, all three
+    propositions are evaluated at the same point `s.sel w f`. -/
+theorem will_and_inter_modalParam_eq (s : SelectionFunction W)
+    (A B : W → Prop) (f : Set W) :
+    {w | willSem s (fun w' => A w' ∧ B w') f w} ∩ f =
+      ({w | willSem s A f w} ∩ {w | willSem s B f w}) ∩ f := by
+  ext w
+  simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+  constructor
+  · exact fun ⟨⟨hA, hB⟩, hw⟩ => ⟨⟨hA, hB⟩, hw⟩
+  · exact fun ⟨⟨hA, hB⟩, hw⟩ => ⟨⟨hA, hB⟩, hw⟩
+
+/-- **Disjunction transparency at the set level** @cite{cariani-santorio-2018}
+    §8.1: on `f`, the truth-set of `will (A ∨ B)` coincides with the
+    union of the truth-sets of `will A` and `will B`. Selectional `will`
+    distributes over disjunction at the set level — a substantively
+    stronger claim than the universal account, which over-distributes. -/
+theorem will_or_union_modalParam_eq (s : SelectionFunction W)
+    (A B : W → Prop) (f : Set W) :
+    {w | willSem s (fun w' => A w' ∨ B w') f w} ∩ f =
+      ({w | willSem s A f w} ∪ {w | willSem s B f w}) ∩ f := by
+  ext w
+  simp only [Set.mem_inter_iff, Set.mem_union, Set.mem_setOf_eq]
+  constructor
+  · exact fun ⟨h, hw⟩ => ⟨h, hw⟩
+  · exact fun ⟨h, hw⟩ => ⟨h, hw⟩
+
 /-! ## §4. Validity₂ (paper §6)
 
 @cite{cariani-santorio-2018} distinguish *validity₁* (truth at the
@@ -186,6 +235,31 @@ the more interesting ones are validity₂. -/
 def Valid2 (φ : SelectionFunction W → Set W → W → Prop) : Prop :=
   ∀ s f w, φ s f w
 
+/-- **Validity₁** (paper §6): a propositional schema is valid₁ at a
+    given context — fixed selection function `sCtx`, modal parameter
+    `fCtx`, and world `wCtx` determined by the utterance — when it
+    holds at *that* index.
+
+    This is the weaker of the two validity notions @cite{cariani-santorio-2018}
+    distinguish in §6. The postsemantic indeterminacy phenomena live
+    here: a schema can be valid₁ at every context without being valid₂.
+
+    Marked `@[reducible]` so it unfolds automatically at use sites:
+    `Valid1 φ sCtx fCtx wCtx` is just `φ sCtx fCtx wCtx`, and treating
+    it as a wrapper would force every downstream user to `unfold Valid1`. -/
+@[reducible] def Valid1 (φ : SelectionFunction W → Set W → W → Prop)
+    (sCtx : SelectionFunction W) (fCtx : Set W) (wCtx : W) : Prop :=
+  φ sCtx fCtx wCtx
+
+/-- **Validity₂ implies Validity₁ at every context** (paper §6): if a
+    schema holds at every index, it holds in particular at the
+    contextually-determined index. The converse fails — postsemantic
+    indeterminacy is precisely the gap between the two. -/
+theorem valid2_implies_valid1 {φ : SelectionFunction W → Set W → W → Prop}
+    (h : Valid2 φ) (sCtx : SelectionFunction W) (fCtx : Set W) (wCtx : W) :
+    Valid1 φ sCtx fCtx wCtx :=
+  h sCtx fCtx wCtx
+
 /-- Negation Swap is **valid₂** (paper §6). -/
 theorem valid2_negation_swap (A : W → Prop) :
     Valid2 (W := W) fun s f w =>
@@ -197,6 +271,19 @@ theorem valid2_will_excluded_middle (A : W → Prop) :
     Valid2 (W := W) fun s f w =>
       willSem s A f w ∨ willSem s (fun w' => ¬ A w') f w :=
   fun s f w => will_excluded_middle s A f w
+
+/-- **Postsemantic Will Excluded Middle** (paper §7): the disjunction
+    `will A ∨ will ¬A` holds at the context of utterance, derived as
+    a Validity₁ specialization of `valid2_will_excluded_middle`. The
+    paper distinguishes Postsemantic CEM (Validity₁) from Compositional
+    CEM (Validity₂); under a single contextually-fixed selection
+    function, the former follows from the latter. -/
+theorem postsemantic_will_excluded_middle (A : W → Prop)
+    (sCtx : SelectionFunction W) (fCtx : Set W) (wCtx : W) :
+    Valid1 (W := W) (fun s f w =>
+      willSem s A f w ∨ willSem s (fun w' => ¬ A w') f w)
+      sCtx fCtx wCtx :=
+  valid2_implies_valid1 (valid2_will_excluded_middle A) sCtx fCtx wCtx
 
 /-! ## §5. Bridge to historical alternatives
 
@@ -282,5 +369,156 @@ theorem cognitive_role [Fintype W] (s : SelectionFunction W)
   · congr 1
     rw [s.centering w f hw]
   · rw [h_supp w hw]; simp
+
+/-- **Cognitive role for conjunctions** @cite{cariani-santorio-2018}
+    §8.1: the transparency identity lifts to compositional prejacents.
+    `μ(‖will (A ∧ B)‖) = μ(‖A ∧ B‖)`. Direct corollary of
+    `cognitive_role` applied to the pointwise conjunction `fun w => A w && B w`. -/
+theorem cognitive_role_and [Fintype W] (s : SelectionFunction W)
+    (A B : W → Bool) (f : Set W) (μ : FinitePMF W)
+    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
+    μ.probOf (fun w => (A (s.sel w f)) && (B (s.sel w f))) =
+      μ.probOf (fun w => A w && B w) :=
+  cognitive_role s (fun w => A w && B w) f μ h_supp
+
+/-- **Cognitive role for disjunctions** @cite{cariani-santorio-2018}
+    §8.1: `μ(‖will (A ∨ B)‖) = μ(‖A ∨ B‖)`. Direct corollary of
+    `cognitive_role` applied to the pointwise disjunction. -/
+theorem cognitive_role_or [Fintype W] (s : SelectionFunction W)
+    (A B : W → Bool) (f : Set W) (μ : FinitePMF W)
+    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
+    μ.probOf (fun w => (A (s.sel w f)) || (B (s.sel w f))) =
+      μ.probOf (fun w => A w || B w) :=
+  cognitive_role s (fun w => A w || B w) f μ h_supp
+
+/-- **Cognitive role for negations** @cite{cariani-santorio-2018} §8.1:
+    `μ(‖will ¬A‖) = μ(‖¬A‖)`. By Negation Swap and transparency, the
+    credence in *will ¬A* matches the credence in `¬A`. -/
+theorem cognitive_role_not [Fintype W] (s : SelectionFunction W)
+    (A : W → Bool) (f : Set W) (μ : FinitePMF W)
+    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
+    μ.probOf (fun w => !(A (s.sel w f))) = μ.probOf (fun w => !(A w)) :=
+  cognitive_role s (fun w => !(A w)) f μ h_supp
+
+/-! ## §9. Multi-premise validity (paper §6)
+
+@cite{cariani-santorio-2018} §6 distinguishes Validity₁ (truth at the
+context) from Validity₂ (truth at every index). Both notions extend
+to multi-premise consequence: an argument `H₁, …, Hₙ ⊨ C` is valid₂
+when every index that satisfies all premises also satisfies the
+conclusion. -/
+
+/-- **Multi-premise validity₂**: an argument `premises ⊨ conclusion`
+    holds at every ⟨s, f, w⟩ — if all premises are true at the index,
+    the conclusion is too. -/
+def Valid2Arg (premises : List (SelectionFunction W → Set W → W → Prop))
+    (conclusion : SelectionFunction W → Set W → W → Prop) : Prop :=
+  ∀ s f w, (∀ φ ∈ premises, φ s f w) → conclusion s f w
+
+/-- **Multi-premise validity₁** at a context: at the contextually-fixed
+    `⟨sCtx, fCtx, wCtx⟩`, if all premises hold then so does the
+    conclusion. -/
+@[reducible] def Valid1Arg
+    (premises : List (SelectionFunction W → Set W → W → Prop))
+    (conclusion : SelectionFunction W → Set W → W → Prop)
+    (sCtx : SelectionFunction W) (fCtx : Set W) (wCtx : W) : Prop :=
+  (∀ φ ∈ premises, φ sCtx fCtx wCtx) → conclusion sCtx fCtx wCtx
+
+/-- **Validity₂Arg implies Validity₁Arg at every context**: if an
+    argument is valid₂, it is valid₁ at the context of utterance. -/
+theorem valid2Arg_implies_valid1Arg
+    {premises : List (SelectionFunction W → Set W → W → Prop)}
+    {conclusion : SelectionFunction W → Set W → W → Prop}
+    (h : Valid2Arg premises conclusion)
+    (sCtx : SelectionFunction W) (fCtx : Set W) (wCtx : W) :
+    Valid1Arg premises conclusion sCtx fCtx wCtx :=
+  h sCtx fCtx wCtx
+
+/-- **Modus ponens for selectional `will`** is valid₂: from
+    `will A ↔ will B` and `will A`, conclude `will B`. A trivial
+    illustration of the multi-premise architecture. -/
+theorem valid2_will_modus_ponens (A B : W → Prop) :
+    Valid2Arg (W := W)
+      [fun s f w => willSem s A f w ↔ willSem s B f w,
+       fun s f w => willSem s A f w]
+      (fun s f w => willSem s B f w) := by
+  intro s f w hPrem
+  have hIff : willSem s A f w ↔ willSem s B f w :=
+    hPrem (fun s f w => willSem s A f w ↔ willSem s B f w) (by simp)
+  have hA : willSem s A f w :=
+    hPrem (fun s f w => willSem s A f w) (by simp)
+  exact hIff.mp hA
+
+/-! ## §8. *Would* as past-tense morphological derivative of *will*
+@cite{cariani-santorio-2018} §5.3.2
+
+@cite{cariani-santorio-2018} §5.3.2 argues that *would* is not a separate
+modal operator but the past-tense morphological form of *will*. Both
+share the same selectional truth-condition; they differ only in the
+modal parameter `f` made available by tense — present *will*
+parameterises `f` to the historical alternatives at the speech time;
+past *would* parameterises `f` to a counterfactual base, typically
+supplied by an *if*-clause.
+
+The shared truth-condition means every theorem about *will* lifts
+automatically to *would*: Negation Swap, Will Excluded Middle, the
+collapse-on-membership theorem, the cognitive-role prediction. This
+is the formal payoff of analysing *would* as a tense form of *will*
+rather than as an independent operator: the entire §2–§7 architecture
+is reused unchanged. -/
+
+/-- **Selectional `would`** @cite{cariani-santorio-2018} §5.3.2:
+    definitionally identical to `willSem`. The morphological past-tense
+    distinction does not change the semantic clause; it only changes
+    which modal parameter is supplied by context. -/
+def wouldSem (s : SelectionFunction W) (A : W → Prop)
+    (f : Set W) (w : W) : Prop :=
+  willSem s A f w
+
+@[simp] theorem wouldSem_def (s : SelectionFunction W) (A : W → Prop)
+    (f : Set W) (w : W) :
+    wouldSem s A f w ↔ A (s.sel w f) := Iff.rfl
+
+/-- **Past-tense morphology = parameter shift, not semantic shift**
+    @cite{cariani-santorio-2018} §5.3.2: *would* and *will* have the
+    same selectional truth-condition. The difference is purely in the
+    modal parameter `f` supplied by the tense morpheme. -/
+theorem wouldSem_eq_willSem (s : SelectionFunction W) (A : W → Prop)
+    (f : Set W) (w : W) :
+    wouldSem s A f w = willSem s A f w := rfl
+
+/-- **Would Excluded Middle**, lifted from `will_excluded_middle` via
+    the morphological identity. -/
+theorem would_excluded_middle (s : SelectionFunction W) (A : W → Prop)
+    (f : Set W) (w : W) :
+    wouldSem s A f w ∨ wouldSem s (fun w' => ¬ A w') f w :=
+  will_excluded_middle s A f w
+
+/-- **Would Negation Swap**, lifted from `negation_swap`. -/
+theorem would_negation_swap (s : SelectionFunction W) (A : W → Prop)
+    (f : Set W) (w : W) :
+    wouldSem s (fun w' => ¬ A w') f w ↔ ¬ wouldSem s A f w :=
+  negation_swap s A f w
+
+/-- **Would-Centering / unembedded collapse for *would***: when `w` is
+    in the modal parameter, *would A* collapses to `A w`, lifted from
+    `unembedded_collapse`. -/
+theorem would_unembedded_collapse (s : SelectionFunction W) (A : W → Prop)
+    (f : Set W) (w : W) (hw : w ∈ f) :
+    wouldSem s A f w ↔ A w :=
+  unembedded_collapse s A f w hw
+
+/-- **Would Excluded Middle is valid₂**, by the same argument as
+    `valid2_will_excluded_middle`. -/
+theorem valid2_would_excluded_middle (A : W → Prop) :
+    Valid2 (W := W) fun s f w =>
+      wouldSem s A f w ∨ wouldSem s (fun w' => ¬ A w') f w :=
+  fun s f w => would_excluded_middle s A f w
+
+/-- **Would Negation Swap is valid₂**. -/
+theorem valid2_would_negation_swap (A : W → Prop) :
+    Valid2 (W := W) fun s f w =>
+      wouldSem s (fun w' => ¬ A w') f w ↔ ¬ wouldSem s A f w :=
+  fun s f w => would_negation_swap s A f w
 
 end Semantics.Modality.Selectional
