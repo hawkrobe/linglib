@@ -171,6 +171,25 @@ def interrogationUpdate (K : Scoreboard W) (q : W → Prop) (agent : Nat) : Scor
     qud := q :: K.qud
     moves := ⟨.interrogative, q, agent, true⟩ :: K.moves }
 
+/-- Replace the `target`-th goal set in `xs` (walking from index `i`)
+    by adding `g`. Returns `xs` unchanged if `target` is out of range
+    (no implicit list extension). Used by `directionUpdate` and reasoned
+    about by `addGoalAt_out_of_range` and `mem_addGoalAt_flatMap`. -/
+def addGoalAt : List (GoalSet W) → Nat → Nat → Goal W → List (GoalSet W)
+  | [], _, _, _ => []
+  | gs :: rest, target, i, g =>
+      (if i == target then gs.add g else gs) :: addGoalAt rest target (i + 1) g
+
+/-- If the walk is past `target`, `addGoalAt` is the identity. -/
+lemma addGoalAt_out_of_range (xs : List (GoalSet W)) (target i : Nat) (g : Goal W)
+    (h : target < i) : addGoalAt xs target i g = xs := by
+  induction xs generalizing i with
+  | nil => rfl
+  | cons gs rest ih =>
+    have hne : ¬ (i = target) := Nat.ne_of_gt h
+    simp only [addGoalAt, beq_iff_eq, if_neg hne, List.cons.injEq, true_and]
+    exact ih (i + 1) (by omega)
+
 /-- **Direction update** (@cite{roberts-2023} (59)):
     If a targeted property is issued to addressee i and accepted,
     G_i is revised to include the realization of the property in any
@@ -178,12 +197,8 @@ def interrogationUpdate (K : Scoreboard W) (q : W → Prop) (agent : Nat) : Scor
 def directionUpdate (K : Scoreboard W) (p : W → Prop)
     (speaker target : Nat) (priority : Nat := 0) : Scoreboard W :=
   let newGoal : Goal W := { content := p, priority }
-  let rec go : List (GoalSet W) → Nat → List (GoalSet W)
-    | [], _ => []
-    | gs :: rest, i => (if i == target then gs.add newGoal else gs) :: go rest (i + 1)
-  let updatedGoals := go K.goals 0
   { K with
-    goals := updatedGoals
+    goals := addGoalAt K.goals target 0 newGoal
     moves := ⟨.imperative, p, speaker, true⟩ :: K.moves }
 
 /-- Assertion update adds to CG. -/
@@ -220,31 +235,96 @@ def directionUpdate (K : Scoreboard W) (p : W → Prop)
 
 /-! ## POSW Substrate Bridge
 
-The scoreboard's CG component projects into a `Core.Mood.POSW` substrate
-(@cite{portner-2018}, eq. 1) whose `cs` is the scoreboard context set
-and whose `lt` is trivial (we don't yet derive a preference ordering
-from `G`; that wiring belongs with directive update via `POSW.star`).
+The scoreboard's CG and G components project jointly into a
+`Core.Mood.POSW` substrate (@cite{portner-2018}, eq. 1):
 
-This lets us *derive* the Stalnakerian assertion principle
-(@cite{stalnaker-1978}) from `POSW.boxCs_plus_self` rather than
-re-stipulating it: `assertionUpdate` corresponds, on the `cs` side,
-to `POSW.plus`. -/
+- The `cs` component is the scoreboard `contextSet` (∩ of CG).
+- The `lt` component is the **goal-induced preference ordering**:
+  `w` is at least as good as `v` iff every active goal content (across
+  every agent) that holds at `v` also holds at `w`. Equivalently,
+  `w` violates no goal that `v` doesn't already violate.
 
-/-- Project the scoreboard's CG into a POSW substrate. The `cs`
-    component is the scoreboard's `contextSet`; `lt` is the trivial
-    relation (every world is at least as good as every other), pending
-    a preference projection from `G` for directive wiring. -/
+This makes the two scoreboard updates that target the POSW substrate
+correspond, by construction, to the two POSW updates of @cite{portner-2018}:
+
+| scoreboard      | POSW    | informational consequence                  |
+|-----------------|---------|--------------------------------------------|
+| assertionUpdate | `plus`  | `boxCs_plus_self` (Stalnakerian principle) |
+| directionUpdate | `star`  | `lt`-refinement: p-violators demoted       |
+
+We *derive* both consequences from `POSW.boxCs_plus_self` and the
+`star`-refinement via the bridge theorems below — not re-stipulate them. -/
+
+/-- The flat list of goal contents across all agents. The substrate of
+    the goal-induced preference ordering on `toPOSW`. -/
+def goalContents (K : Scoreboard W) : List (W → Prop) :=
+  K.goals.flatMap GoalSet.toPropertyList
+
+@[simp] theorem goalContents_def (K : Scoreboard W) :
+    K.goalContents = K.goals.flatMap GoalSet.toPropertyList := rfl
+
+/-- Assertion update preserves goal contents (since it doesn't touch G). -/
+@[simp] theorem assertion_preserves_goalContents (K : Scoreboard W)
+    (p : W → Prop) (a : Nat) :
+    (K.assertionUpdate p a).goalContents = K.goalContents := rfl
+
+/-- Membership in the flat goal-content list of a `directionUpdate`-modified
+    scoreboard: the directive's content is added; everything else is preserved.
+    Requires the target to be in bounds. -/
+lemma mem_addGoalAt_flatMap (xs : List (GoalSet W)) (target i : Nat) (g : Goal W)
+    (hin : i ≤ target) (hbd : target < i + xs.length) (q : W → Prop) :
+    q ∈ (addGoalAt xs target i g).flatMap GoalSet.toPropertyList ↔
+    q = g.content ∨ q ∈ xs.flatMap GoalSet.toPropertyList := by
+  induction xs generalizing i with
+  | nil => simp at hbd; omega
+  | cons gs rest ih =>
+    by_cases hT : i = target
+    · -- i = target: the new goal is inserted in this slot
+      subst hT
+      have hrest : addGoalAt rest i (i + 1) g = rest :=
+        addGoalAt_out_of_range rest i (i + 1) g (by omega)
+      simp only [addGoalAt, beq_self_eq_true, if_true, hrest,
+        List.flatMap_cons, List.mem_append, GoalSet.toPropertyList,
+        GoalSet.add_goals, List.map_cons, List.mem_cons]
+      tauto
+    · -- i < target: walk past this slot, recurse
+      have hi : ¬ (i = target) := hT
+      have hin' : i + 1 ≤ target := by omega
+      have hbd' : target < (i + 1) + rest.length := by
+        have : i + (gs :: rest).length = (i + 1) + rest.length := by simp; omega
+        omega
+      simp only [addGoalAt, beq_iff_eq, if_neg hi,
+        List.flatMap_cons, List.mem_append]
+      rw [ih (i + 1) hin' hbd']
+      tauto
+
+/-- Membership in the flat goal-content list after `directionUpdate`:
+    the new directive's content joins the existing goal contents. -/
+lemma mem_directionUpdate_goalContents (K : Scoreboard W) (p : W → Prop)
+    (s t pr : Nat) (hin : t < K.goals.length) (q : W → Prop) :
+    q ∈ (K.directionUpdate p s t pr).goalContents ↔
+    q = p ∨ q ∈ K.goalContents := by
+  unfold goalContents directionUpdate
+  exact mem_addGoalAt_flatMap K.goals t 0 ⟨p, fun _ => True, pr⟩
+    (Nat.zero_le _) (by simpa using hin) q
+
+/-- Project the scoreboard into a POSW substrate. `cs` is the
+    scoreboard's `contextSet`; `lt` is the **goal-induced** ordering —
+    `w` is at least as good as `v` iff `w` satisfies every goal
+    `v` satisfies. The two POSW updates of @cite{portner-2018} target
+    these two components (cf. `toPOSW_assertion_eq_plus` and
+    `toPOSW_direction_eq_star`). -/
 def toPOSW (K : Scoreboard W) : Core.Mood.POSW W where
   cs := K.contextSet
-  lt := fun _ _ => True
-  lt_refl  := fun _ _ => trivial
-  lt_trans := fun _ _ _ _ _ _ _ _ => trivial
+  lt := fun w v => ∀ p ∈ K.goalContents, p v → p w
+  lt_refl  := fun _ _ _ _ hp => hp
+  lt_trans := fun _ _ _ _ _ _ hwu huv p hp hpv => hwu p hp (huv p hp hpv)
 
 @[simp] theorem toPOSW_cs (K : Scoreboard W) :
     K.toPOSW.cs = K.contextSet := rfl
 
 @[simp] theorem toPOSW_lt (K : Scoreboard W) (w v : W) :
-    K.toPOSW.lt w v ↔ True := Iff.rfl
+    K.toPOSW.lt w v ↔ ∀ p ∈ K.goalContents, p v → p w := Iff.rfl
 
 /-- **Assertion-as-`+`-update bridge** (@cite{stalnaker-1978},
     @cite{portner-2018} eq. 2a). Asserting `p` against scoreboard `K`
@@ -266,6 +346,44 @@ theorem boxCs_after_assertion (K : Scoreboard W) (p : W → Prop) (a : Nat) :
   intro w hw
   have hplus : (K.toPOSW.plus p).cs w := (toPOSW_assertion_eq_plus K p a w).mp hw
   exact Core.Mood.POSW.boxCs_plus_self K.toPOSW p w hplus
+
+/-- **Direction-as-`⋆`-update bridge** (@cite{portner-2018} eq. 2b,
+    following @cite{portner-2004}). Issuing the directive `p` to a
+    target in bounds refines the projected POSW exactly the way
+    `POSW.star` does: the new ordering keeps the old ordering and
+    additionally requires that whenever the dominated world satisfies
+    `p`, the dominating world does too. The bridge mirrors the
+    assertion bridge — `directionUpdate` is `⋆`-update on the `lt`
+    side, modulo the `t < K.goals.length` precondition (out-of-range
+    targets silently drop the directive; that's a stipulated property
+    of `directionUpdate`, not of POSW). -/
+theorem toPOSW_direction_eq_star (K : Scoreboard W) (p : W → Prop)
+    (s t pr : Nat) (hin : t < K.goals.length) (w v : W) :
+    (K.directionUpdate p s t pr).toPOSW.lt w v ↔ (K.toPOSW.star p).lt w v := by
+  simp only [toPOSW_lt, Core.Mood.POSW.star_lt]
+  constructor
+  · intro h
+    refine ⟨fun q hq => h q ?_, h p ?_⟩
+    · exact (mem_directionUpdate_goalContents K p s t pr hin q).mpr (Or.inr hq)
+    · exact (mem_directionUpdate_goalContents K p s t pr hin p).mpr (Or.inl rfl)
+  · rintro ⟨h1, h2⟩ q hq
+    rcases (mem_directionUpdate_goalContents K p s t pr hin q).mp hq with rfl | hq'
+    · exact h2
+    · exact h1 q hq'
+
+/-- **Goal-violator demotion** (corollary of the `⋆`-bridge):
+    after directing `p`, no `p`-violator can dominate a `p`-satisfier
+    in the goal-induced ordering. The directive update genuinely
+    refines the preference relation — the analogue, on the `lt` side,
+    of `boxCs_after_assertion` on the `cs` side. -/
+theorem direction_demotes_violators (K : Scoreboard W) (p : W → Prop)
+    (s t pr : Nat) (hin : t < K.goals.length) (w v : W)
+    (hpv : p v) (hpw : ¬ p w) :
+    ¬ (K.directionUpdate p s t pr).toPOSW.lt w v := by
+  intro hlt
+  have hstar : (K.toPOSW.star p).lt w v :=
+    (toPOSW_direction_eq_star K p s t pr hin w v).mp hlt
+  exact hpw (hstar.2 hpv)
 
 end Scoreboard
 end Core.Discourse
