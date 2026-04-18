@@ -149,59 +149,7 @@ inductive WeakArticleStrategy where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- §6: Definite Description Structure
--- ============================================================================
-
-/-- A definite description is characterized by two predicates:
-
-1. **restrictor** P: the NP-internal content ("dog", "book", "man drinking
-   a martini"). This is what the definite description is "about."
-
-2. **presupFilter** Q: the discourse-linking content (anaphoric index,
-   familiarity condition). This is what connects the description to
-   prior discourse or the utterance situation.
-
-The presupposition of a definite description is: ∃!x ∈ domain. P(x) ∧ Q(x).
-The assertion is: S(that unique x).
-
-The @cite{schwarz-2009} weak/strong distinction reduces to the triviality
-of Q:
-- **Weak article** (uniqueness): Q = λ _ => true — no discourse-linking
-  requirement. The description succeeds by situational uniqueness alone.
-- **Strong article** (familiarity): Q is a non-trivial anaphoric predicate.
-  The description succeeds only for discourse-familiar entities.
-
-@cite{moroney-2021} §4.3 (anaphoric iota): ι^x P Q = ιx[P(x) ∧ Q(x)]
-is the general form; standard ι P = ι^x P (λ _ => true) is the special
-case. -/
-structure DefiniteDesc (E : Type) where
-  /-- NP-internal content: the restrictor predicate -/
-  restrictor : E → Bool
-  /-- Discourse-linking content: the presupposition filter.
-      Trivial (λ _ => true) for uniqueness; non-trivial for familiarity. -/
-  presupFilter : E → Bool
-
-/-- Construct a uniqueness-based (weak, ι) definite description.
-The presupposition filter is vacuous — any entity in the domain
-that satisfies the restrictor is a candidate. -/
-def DefiniteDesc.unique {E : Type} (restrictor : E → Bool) : DefiniteDesc E :=
-  ⟨restrictor, λ _ => true⟩
-
-/-- Construct an anaphoric (strong, ι^x) definite description.
-The presupposition filter Q further restricts candidates to
-discourse-familiar entities. -/
-def DefiniteDesc.anaphoric {E : Type}
-    (restrictor : E → Bool) (anaphoricQ : E → Bool) : DefiniteDesc E :=
-  ⟨restrictor, anaphoricQ⟩
-
-/-- A uniqueness description is an anaphoric description with trivial Q. -/
-theorem DefiniteDesc.unique_eq_anaphoric_trivial {E : Type}
-    (restrictor : E → Bool) :
-    DefiniteDesc.unique restrictor =
-    DefiniteDesc.anaphoric restrictor (λ _ => true) := rfl
-
--- ============================================================================
--- §7: The Indefinite–Definite Contrast
+-- §6: The Indefinite–Definite Contrast
 -- ============================================================================
 
 /-- The fundamental semantic contrast between indefinite and definite:
@@ -224,7 +172,7 @@ theorem definite_indefinite_exhaustive :
   intro d; cases d <;> simp
 
 -- ============================================================================
--- §8: Definiteness Marking Typology (@cite{jenks-2018} / @cite{moroney-2021})
+-- §7: Definiteness Marking Typology (@cite{jenks-2018} / @cite{moroney-2021})
 -- ============================================================================
 
 /-- Cross-linguistic strategy for marking definiteness, following

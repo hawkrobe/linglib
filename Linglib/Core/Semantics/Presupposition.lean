@@ -848,6 +848,48 @@ theorem forallPr_holds {α : Type*} (S : α → Prop) (φ : α → PrProp W) (w 
       (∀ x, S x → (φ x).presup w) ∧ (∀ x, S x → (φ x).assertion w) :=
   Iff.rfl
 
+-- ════════════════════════════════════════════════════════════════
+-- § Definite-Description Combinator
+-- ════════════════════════════════════════════════════════════════
+
+/-- The canonical definite-description combinator. Given:
+
+- `referent : W → Option E` — a partial selector returning the referent at
+  each world (or `none` when no unique referent is determined),
+- `scope : E → W → Bool` — what is asserted of the chosen referent,
+
+build the `PrProp` that presupposes referent definedness and asserts the
+scope of the referent. This is the single source of truth for all definite
+denotations in the library: uniqueness-based (`russellIotaList domain R`),
+familiarity-based (`russellIotaList dc.salient R`), anaphoric
+(`russellIotaList domain (R ∧ Q)`), and Donnellan's attributive
+(`attributiveContent domain R`) all instantiate the selector slot. -/
+def presupOfReferent {E : Type*} (referent : W → Option E)
+    (scope : E → W → Bool) : PrProp W where
+  presup := fun w => (referent w).isSome
+  assertion := fun w => match referent w with
+    | some e => scope e w
+    | none => false
+
+/-- `presupOfReferent` is defined iff a referent is selected at `w`. -/
+@[simp] theorem presupOfReferent_presup {E : Type*}
+    (referent : W → Option E) (scope : E → W → Bool) (w : W) :
+    (presupOfReferent referent scope).presup w = (referent w).isSome := rfl
+
+/-- When a referent is selected, the assertion is the scope applied to it. -/
+theorem presupOfReferent_assertion_some {E : Type*}
+    (referent : W → Option E) (scope : E → W → Bool) (w : W) (e : E)
+    (h : referent w = some e) :
+    (presupOfReferent referent scope).assertion w = scope e w := by
+  simp [presupOfReferent, h]
+
+/-- Without a referent, the assertion is `false`. -/
+theorem presupOfReferent_assertion_none {E : Type*}
+    (referent : W → Option E) (scope : E → W → Bool) (w : W)
+    (h : referent w = none) :
+    (presupOfReferent referent scope).assertion w = false := by
+  simp [presupOfReferent, h]
+
 end PrProp
 
 end Core.Presupposition

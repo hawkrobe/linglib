@@ -1,5 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Definiteness
+import Linglib.Core.Nominal.Maximality
 import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
@@ -64,10 +65,13 @@ Fragments/English/Pronouns.lean
 namespace Elbourne2013
 
 open Core.Presupposition (PrProp)
+open Core.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
+  presupOfReferent_assertion_some presupOfReferent_assertion_none)
+open Core.Nominal (russellIotaList)
 open Core.Definiteness (DefPresupType)
 open Core.SitVarStatus (SitVarStatus)
-open Semantics.Definiteness (the_uniq_w qforceToPresupType)
-open Semantics.Reference.Donnellan (definitePrProp UseMode)
+open Semantics.Definiteness (qforceToPresupType)
+open Semantics.Reference.Donnellan (definitePrProp UseMode attributiveContent)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -123,66 +127,62 @@ Takes a restrictor (property of entities relative to situations) and a
 situation, presupposes existence+uniqueness *in that situation*, and
 returns the unique satisfier.
 
+Built from the canonical `presupOfReferent` combinator with
+`russellIotaList` as the per-situation referent selector.
+
 The situation parameter `s` may be:
 - **Free** (referential use, Ch 5): mapped to a contextually salient s*
 - **Bound** (attributive use, Ch 5): bound by a higher operator (ς, Σ)
 - **Bound by quantifier** (donkey anaphora, Ch 6): bound by always/GEN -/
-def the_sit (F : SituationFrame) (domain : List F.Ent) [DecidableEq F.Ent]
+def the_sit (F : SituationFrame) (domain : List F.Ent)
     (restrictor : F.Ent → F.Sit → Bool)
     (scope : F.Ent → F.Sit → Bool)
     : PrProp F.Sit :=
-  { presup := λ s =>
-      match domain.filter (λ e => restrictor e s) with
-      | [_] => true
-      | _ => false
-  , assertion := λ s =>
-      match domain.filter (λ e => restrictor e s) with
-      | [e] => scope e s
-      | _ => false }
+  presupOfReferent (fun s => russellIotaList domain (fun e => restrictor e s))
+                   scope
 
-/-- `the_sit` instantiated with bare type parameters (no SituationFrame). -/
-def the_sit' {W E : Type} (domain : List E) [DecidableEq E]
+/-- `the_sit` instantiated with bare type parameters (no SituationFrame).
+    Coincides with `Donnellan.definitePrProp` — the same Russellian iota
+    factored through `presupOfReferent`. -/
+def the_sit' {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
-  { presup := λ s =>
-      match domain.filter (λ e => restrictor e s) with
-      | [_] => true
-      | _ => false
-  , assertion := λ s =>
-      match domain.filter (λ e => restrictor e s) with
-      | [e] => scope e s
-      | _ => false }
+  presupOfReferent (fun w => russellIotaList domain (fun e => restrictor e w))
+                   scope
 
 
 -- ════════════════════════════════════════════════════════════════
--- §3: Bridge to Existing ⟦the⟧ Denotations
+-- §3: Bridge to Donnellan's `definitePrProp`
 -- ════════════════════════════════════════════════════════════════
 
-/-- When situations ARE worlds, `the_sit'` = `the_uniq_w`. -/
-theorem the_sit_at_world_eq_the_uniq_w
-    {W E : Type} (domain : List E) [DecidableEq E]
+/-- `the_sit'` and `Donnellan.definitePrProp` denote the same `PrProp`:
+    both factor through `presupOfReferent` applied to a Russellian iota
+    over the domain. The two names reflect different theoretical lineages
+    (Elbourne's situation semantics vs. Donnellan's attributive use); the
+    denotation is one and the same. -/
+theorem the_sit'_eq_definitePrProp
+    {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) :
-    the_sit' domain restrictor scope = the_uniq_w domain restrictor scope :=
+    the_sit' domain restrictor scope = definitePrProp domain restrictor scope :=
   rfl
 
 /-- The presupposition of `the_sit'` is determined solely by the filter result. -/
 theorem the_sit_presup_depends_on_filter
-    {W E : Type} (domain₁ domain₂ : List E) [DecidableEq E]
+    {W E : Type} (domain₁ domain₂ : List E)
     (restrictor scope : E → W → Bool) (w : W)
     (h : domain₁.filter (λ e => restrictor e w) =
          domain₂.filter (λ e => restrictor e w)) :
     (the_sit' domain₁ restrictor scope).presup w =
     (the_sit' domain₂ restrictor scope).presup w := by
-  simp only [the_sit']
-  rw [h]
+  simp only [the_sit', presupOfReferent_presup, russellIotaList, h]
 
 /-- A true assertion entails a satisfied presupposition. -/
 theorem the_sit_assertion_implies_presup
-    {W E : Type} (domain : List E) [DecidableEq E]
+    {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool)
     (w : W) (h : (the_sit' domain restrictor scope).assertion w = true) :
     (the_sit' domain restrictor scope).presup w = true := by
-  simp only [the_sit'] at h ⊢
-  split at h <;> simp_all
+  simp only [the_sit', presupOfReferent, russellIotaList] at h ⊢
+  split at h <;> simp_all [Option.isSome]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -192,7 +192,7 @@ theorem the_sit_assertion_implies_presup
 /-- Donnellan's attributive semantics IS `the_sit'` with a bound situation
 variable. -/
 theorem attributive_is_the_sit_bound
-    {W E : Type} (domain : List E) [DecidableEq E]
+    {W E : Type} (domain : List E)
     (restrictor : E → W → Bool) (scope : E → W → Bool) :
     definitePrProp domain restrictor scope =
     the_sit' domain restrictor scope := rfl
@@ -214,22 +214,16 @@ structure DonkeyConfig (F : SituationFrame) where
 
 /-- Uniqueness in donkey contexts derives from minimality of situations. -/
 theorem donkey_uniqueness_from_minimality
-    (F : SituationFrame) (domain : List F.Ent) [DecidableEq F.Ent]
+    (F : SituationFrame) (domain : List F.Ent)
     (restrictor : F.Ent → F.Sit → Bool) (scope : F.Ent → F.Sit → Bool)
     (s : F.Sit)
     (h_minimal : F.isMinimal (λ s => match domain.filter (λ e => restrictor e s) with
                                       | [_] => true | _ => false) s) :
     (the_sit F domain restrictor scope).presup s := by
-  -- h_minimal.1 : (match filter ... | [_] => true | _ => false) = true (Bool)
-  -- goal : (the_sit ...).presup s, which is (match filter ... | [_] => true | _ => false) : Prop
-  -- The Bool coercion to Prop means `true` → `True`, `false` → `False`
-  -- We need to show the Prop version given the Bool version
   have hbool := h_minimal.1
-  simp only [the_sit]
-  -- Both the hypothesis and goal match on the same expression
-  -- Split on the filter result
+  simp only [the_sit, presupOfReferent_presup, russellIotaList]
   match hf : domain.filter (fun e => restrictor e s) with
-  | [_] => trivial
+  | [_] => rfl
   | [] => simp [hf] at hbool
   | _ :: _ :: _ => simp [hf] at hbool
 
@@ -306,20 +300,20 @@ structure PronounAsDefinite where
   deriving Repr, BEq
 
 /-- Pronoun denotation: ⟦it⟧ = ⟦the⟧ + NP-deletion. -/
-abbrev pronounDenot {W E : Type} (domain : List E) [DecidableEq E]
+abbrev pronounDenot {W E : Type} (domain : List E)
     (recoveredNP : E → W → Bool) (scope : E → W → Bool) : PrProp W :=
   the_sit' domain recoveredNP scope
 
 /-- Pronouns = definite articles. -/
 theorem pronoun_is_definite_article
-    {W E : Type} (domain : List E) [DecidableEq E]
+    {W E : Type} (domain : List E)
     (restrictor scope : E → W → Bool) :
     pronounDenot domain restrictor scope = the_sit' domain restrictor scope :=
   rfl
 
 /-- Pronoun assertions entail pronoun presuppositions. -/
 theorem pronoun_assertion_implies_presup
-    {W E : Type} (domain : List E) [DecidableEq E]
+    {W E : Type} (domain : List E)
     (recoveredNP : E → W → Bool) (scope : E → W → Bool)
     (w : W) (h : (pronounDenot domain recoveredNP scope).assertion w = true) :
     (pronounDenot domain recoveredNP scope).presup w = true :=
@@ -371,7 +365,13 @@ theorem situation_pronoun_tracks_qud
     (hScope : ∀ e, scope e s = scope e w) :
     (the_sit F domain restrictor scope).assertion s =
     (the_sit F domain restrictor scope).assertion w := by
-  simp only [the_sit, hRestr, hScope]
+  unfold the_sit presupOfReferent
+  have hFilter : (fun e => restrictor e s) = (fun e => restrictor e w) := by
+    funext e; exact hRestr e
+  simp only [hFilter]
+  match h : russellIotaList domain (fun e => restrictor e w) with
+  | some e => simp [hScope e]
+  | none => rfl
 
 theorem qud_refinement_monotone
     (F : SituationFrame) [DecidableEq F.Sit]
@@ -495,7 +495,7 @@ theorem attributive_assertion :
 
 theorem ref_attr_diverge :
     theMurderer.assertion .sCourtroom ≠ theMurderer.assertion .wActual := by
-  simp [theMurderer, the_sit', allEnts, isMurderer, isInsane]
+  rw [referential_assertion, attributive_assertion]; decide
 
 def refSitVar : SitVar := .free
 def attrSitVar : SitVar := .bound 1
@@ -679,7 +679,7 @@ theorem deDicto_assertion : thePresident.assertion .belief = true := rfl
 
 theorem deRe_deDicto_diverge :
     thePresident.assertion .actual ≠ thePresident.assertion .belief := by
-  simp [thePresident, the_sit', bEnts, isPresident, isSpy]
+  rw [deRe_assertion, deDicto_assertion]; decide
 
 theorem deRe_is_free : SitVarStatus.free = useModeToSitVar .referential := rfl
 theorem deDicto_is_bound : SitVarStatus.bound = useModeToSitVar .attributive := rfl

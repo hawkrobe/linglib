@@ -45,6 +45,7 @@ namespace Semantics.Reference.Donnellan
 open Core (Intension)
 open Core.Intension (rigid IsRigid rigid_isRigid)
 open Core.Presupposition (PrProp)
+open Core.Presupposition.PrProp (presupOfReferent)
 open Semantics.Reference.Basic
 
 /-! ## Use Modes -/
@@ -94,18 +95,29 @@ def attributiveContent {W E : Type*} (domain : List E) (restrictor : E → W →
 are presupposed, the assertion is the predicate applied to the unique
 satisfier.
 
-Bridge to `Core.Presupposition.PrProp`: the definite article triggers
-an existence+uniqueness presupposition. -/
+Factored as `presupOfReferent ∘ attributiveContent`: the referent selector
+is `attributiveContent` (Russellian iota at each world), and the canonical
+`PrProp.presupOfReferent` combinator lifts it to a presupposition+assertion
+bundle. This is the single source of truth for definite descriptions in the
+library; familiarity-based, anaphoric, and discourse-restricted variants all
+use `presupOfReferent` with different referent selectors. -/
 def definitePrProp {W E : Type*} (domain : List E) (restrictor : E → W → Bool)
     (predicate : E → W → Bool) : PrProp W :=
-  { presup := λ w =>
-      match domain.filter (λ e => restrictor e w) with
-      | [_] => true
-      | _ => false
-  , assertion := λ w =>
-      match domain.filter (λ e => restrictor e w) with
-      | [e] => predicate e w
-      | _ => false }
+  presupOfReferent (attributiveContent domain restrictor) predicate
+
+/-- Unfolding lemma: `definitePrProp` is `presupOfReferent` applied to
+    `attributiveContent`. By definition. -/
+theorem definitePrProp_eq_presupOfReferent {W E : Type*} (domain : List E)
+    (restrictor : E → W → Bool) (predicate : E → W → Bool) :
+    definitePrProp domain restrictor predicate =
+    presupOfReferent (attributiveContent domain restrictor) predicate := rfl
+
+/-- Direct presupposition characterization: `definitePrProp` presupposes
+    that `attributiveContent` returns `some` referent. -/
+@[simp] theorem definitePrProp_presup {W E : Type*} (domain : List E)
+    (restrictor : E → W → Bool) (predicate : E → W → Bool) (w : W) :
+    (definitePrProp domain restrictor predicate).presup w =
+    (attributiveContent domain restrictor w).isSome := rfl
 
 /-! ## Referential Semantics -/
 

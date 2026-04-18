@@ -1,9 +1,16 @@
 import Linglib.Core.Definiteness
 import Linglib.Core.Mereology
+import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Description
+import Linglib.Core.Nominal.Interpret
 import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Noun.Classifier
+import Linglib.Fragments.English.Definiteness
+import Linglib.Fragments.German.Definiteness
+import Linglib.Fragments.Mandarin.Definiteness
+import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Shan.Definiteness
 
 /-!
@@ -41,7 +48,7 @@ type of definiteness.
 namespace Moroney2021
 
 open Core.Definiteness
-open Fragments.Shan.Definiteness (SpatialRelation)
+open Core.Deixis (Feature)
 
 -- ============================================================================
 -- §1: Definiteness Marking Typology (Table 4.1, extended)
@@ -436,27 +443,31 @@ theorem derive_consistent_with_stipulated :
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §8: Bridge to Theories/Semantics/Definiteness/Basic.lean
+-- §8: Bridge to the canonical referent selector
 -- ============================================================================
 
-open Semantics.Definiteness (the_uniq the_anaphoric
-  the_anaphoric_vacuous_eq_the_uniq)
+open Core.Nominal (russellIotaList)
 
-/-- The type-shift system and the denotational semantics agree:
+/-- The type-shift system and the canonical referent selector agree:
 
-- ι (unique definiteness) corresponds to `the_uniq` in the denotational layer
-- ι^x (anaphoric definiteness) corresponds to `the_anaphoric`
+- ι (unique definiteness) corresponds to `russellIotaList domain R` —
+  the Russellian iota over the bare restrictor
+- ι^x (anaphoric definiteness) corresponds to
+  `russellIotaList domain (R ∧ Q)` — the Russellian iota over the
+  intersection of restrictor and anaphoric filter
 
-When Q is vacuously true, `the_anaphoric` reduces to `the_uniq`
-(via `the_anaphoric_vacuous_eq_the_uniq`), mirroring the type-shift
-relationship where ι^x subsumes ι. -/
-theorem type_shift_denotation_agreement :
-    ∀ (E : Type) (domain : List E) [DecidableEq E]
-      (restrictor scope : E → Bool),
-      the_anaphoric domain restrictor (λ _ => true) scope =
-      the_uniq domain restrictor scope :=
-  fun _E domain _ restrictor scope =>
-    the_anaphoric_vacuous_eq_the_uniq domain restrictor scope
+When Q is vacuously true, the intersected predicate `R ∧ true` equals `R`,
+so ι^x reduces to ι at the referent-selector layer. The denotational
+counterpart (`presupOfReferent` of these selectors) inherits this collapse
+by congruence. -/
+theorem type_shift_referent_agreement :
+    ∀ (E : Type) (domain : List E) (restrictor : E → Bool),
+      russellIotaList domain (fun e => restrictor e && true) =
+      russellIotaList domain restrictor := by
+  intro _ domain restrictor
+  congr 1
+  funext e
+  exact Bool.and_true _
 
 -- ============================================================================
 -- §9: DPP Obligatory Low Scope (Table 2.3 derived)
@@ -588,30 +599,35 @@ theorem blocking_strategy_correspondence :
 -- §12: Demonstrative–Bare Noun Contrast (§2.1.3)
 -- ============================================================================
 
-/-- Shan demonstratives add spatial content to the presupposition filter,
-    while bare definites have a trivial filter. This derives the contrast:
+/-- Shan demonstratives refine the bare definite by adding a spatial
+    filter to the referent selector:
 
-    - Bare noun: any unique satisfier of P_s is a candidate
-    - DEM noun: only spatially-proximal/distal satisfiers of P_s
+    - Bare noun: `russellIotaList domain restrictor` — any unique satisfier
+    - *nâj*: `russellIotaList domain (restrictor && spatialPred .proximal)`
+    - *nân*: `russellIotaList domain (restrictor && spatialPred .distal)`
 
     The demonstrative is always optional in Shan because the bare noun
     already provides a definite reading via unblocked ι. The demonstrative
     adds information (spatial restriction) but never replaces an unavailable
     reading (unlike Thai/Mandarin where demonstratives are required for
-    anaphoric definiteness). -/
+    anaphoric definiteness).
+
+    When the bare definite already selects a referent that satisfies the
+    demonstrative's spatial predicate, the demonstrative agrees with the
+    bare form (handled by `Fragments.Shan.Definiteness.dem_refines_bare`). -/
 theorem demonstrative_adds_spatial_info {E : Type}
-    (restrictor : E → Bool) (spatialPred : SpatialRelation → E → Bool) :
-    -- Bare definite has trivial filter
-    (Fragments.Shan.Definiteness.bareDefinite restrictor).presupFilter =
-      (fun _ => true) ∧
-    -- nâj adds proximal filter
-    (Fragments.Shan.Definiteness.demDenotation
-      Fragments.Shan.Definiteness.naj restrictor spatialPred).presupFilter =
-      spatialPred .proximal ∧
-    -- nân adds distal filter
-    (Fragments.Shan.Definiteness.demDenotation
-      Fragments.Shan.Definiteness.nan restrictor spatialPred).presupFilter =
-      spatialPred .distal :=
+    (domain : List E) (restrictor : E → Bool)
+    (spatialPred : Feature → E → Bool) :
+    Fragments.Shan.Definiteness.demDenotation domain
+      Fragments.Shan.Definiteness.naj restrictor spatialPred =
+      Core.Nominal.russellIotaList domain
+        (fun e => restrictor e && spatialPred .proximal e) ∧
+    Fragments.Shan.Definiteness.demDenotation domain
+      Fragments.Shan.Definiteness.nan restrictor spatialPred =
+      Core.Nominal.russellIotaList domain
+        (fun e => restrictor e && spatialPred .distal e) ∧
+    Fragments.Shan.Definiteness.bareDefinite domain restrictor =
+      Core.Nominal.russellIotaList domain restrictor :=
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -631,5 +647,132 @@ theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
       Core.NounCategorization.ClassifierStrategy.forNoun P
       (fun _ => 0) 0   -- μ and n are unused for CLF-for-N
     = Semantics.Noun.Classifier.clfForNoun P := rfl
+
+-- ============================================================================
+-- §14: Integration with the Core.Nominal API
+-- ============================================================================
+
+/-! The §1–§7 derivation works at the level of `DefMarkingParams` (three
+booleans). `Core.Nominal.ArticleInventory` is the upstream object — it
+records the morphological inventory directly (indefinite article, unique
+article, anaphoric article, syncretism flag, demonstrative paradigm,
+possessive paradigm) and *derives* the `DefMarkingParams` reading.
+
+This section verifies that the inventory-derived classifications agree
+with the parameters used in §7 for all four languages, and connects the
+licensing predicate `ArticleInventory.licensesKind` to Moroney's central
+empirical finding: Shan licenses anaphoric definiteness without any
+anaphoric article. -/
+
+open Core.IntensionalLogic
+open Core.IntensionalLogic.Variables
+open Core.Nominal (ArticleInventory NominalKind)
+
+/-- Shorthand handles for the four Table 4.4 inventories, each defined in
+    its language fragment (`Fragments.{Lang}.Definiteness.articleInventory`).
+    Centralizing the names here keeps the §14 theorems readable without
+    duplicating fragment-level data. -/
+abbrev englishInv  := Fragments.English.Definiteness.articleInventory
+abbrev germanInv   := Fragments.German.Definiteness.articleInventory
+abbrev mandarinInv := Fragments.Mandarin.Definiteness.articleInventory
+abbrev thaiInv     := Fragments.Thai.Definiteness.articleInventory
+abbrev shanInv     := Fragments.Shan.Definiteness.articleInventory
+
+/-- The inventory-derived params agree with the §7 stipulated params for
+    every language in Table 4.4. By construction: `toMarkingParams` projects
+    exactly the three boolean fields that `DefMarkingParams` records. -/
+theorem inventory_agrees_with_params :
+    englishInv.toMarkingParams = englishParams ∧
+    germanInv.toMarkingParams = germanParams ∧
+    thaiInv.toMarkingParams = thaiParams ∧
+    shanInv.toMarkingParams = shanParams := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Inventory-derived strategies match §7's `derive_all_languages` for the
+    four Table 4.4 languages. The inventory subsumes the params layer. -/
+theorem inventory_derives_all_languages :
+    englishInv.toMarkingStrategy = .generallyMarked ∧
+    germanInv.toMarkingStrategy = .bipartite ∧
+    thaiInv.toMarkingStrategy = .markedAnaphoric ∧
+    shanInv.toMarkingStrategy = .unmarked := ⟨rfl, rfl, rfl, rfl⟩
+
+/-- Mandarin is in `.markedAnaphoric` — same cell as Thai. (Not part of
+    Moroney's Table 4.4 but anchors the Jenks 2018 typological backdrop.) -/
+theorem mandarin_in_markedAnaphoric :
+    mandarinInv.toMarkingStrategy = .markedAnaphoric := rfl
+
+/-- Moroney's central observation, stated against the article inventory:
+    Shan has *no* article that licenses an `.anaphoric` `NominalKind`,
+    yet expresses anaphoric definiteness through bare nouns and optional
+    demonstratives. The licensing predicate makes this morphologically
+    visible — `.anaphoric` is not licensed by Shan's inventory. -/
+theorem shan_anaphoric_not_licensed_via_article {F : Frame}
+    (R : DenotGS F .et) (d : Nat) :
+    shanInv.licensesKind (F := F) (.anaphoric R d) = false := rfl
+
+/-- Bare nominals are licensed for Shan (and every language) — this is the
+    morphological substrate for Moroney's analysis: Shan's anaphoric
+    definites surface as bare nouns. -/
+theorem shan_bare_licensed {F : Frame} (R : DenotGS F .et) :
+    shanInv.licensesKind (F := F) (.bare R) = true := rfl
+
+/-- Demonstratives are licensed in Shan (the *nâj*/*nân* paradigm).
+    Combined with `shan_bare_licensed`, this gives the morphological
+    inventory of strategies Shan deploys for definite reference. -/
+theorem shan_demonstrative_licensed {F : Frame}
+    (R : DenotGS F .et) (deictic : Core.Deixis.Feature) (sIdx d : Nat) :
+    shanInv.licensesKind (F := F)
+      (.demonstrative R deictic sIdx d) = true := rfl
+
+/-- English licenses `.anaphoric` via the syncretic *the* (uniqueArticle ∧
+    syncretism), *without* an independent strong article. Contrasts with
+    Shan (no licensing form at all) and German (independent strong form). -/
+theorem english_anaphoric_licensed_via_syncretism {F : Frame}
+    (R : DenotGS F .et) (d : Nat) :
+    englishInv.licensesKind (F := F) (.anaphoric R d) = true := rfl
+
+/-- German licenses `.anaphoric` via its independent strong article (no
+    syncretism). The unique vs anaphoric distinction is morphologically
+    marked. -/
+theorem german_anaphoric_licensed_via_strong_article {F : Frame}
+    (R : DenotGS F .et) (d : Nat) :
+    germanInv.licensesKind (F := F) (.anaphoric R d) = true := rfl
+
+/-- The English and Mandarin inventories both collapse to `ArticleType.weakOnly`,
+    witnessing the lossiness of `ArticleType` relative to `DefMarkingStrategy`:
+    the inventories differ (English has a unique article, Mandarin does not),
+    and the strategies differ (`.generallyMarked` vs `.markedAnaphoric`),
+    yet `toArticleType` collapses both to `.weakOnly`. -/
+theorem english_mandarin_articleType_collapse :
+    englishInv.toArticleType = mandarinInv.toArticleType := rfl
+
+/-- The English and Mandarin inventories themselves are distinct, even
+    though their `ArticleType` classifications collide. -/
+theorem english_mandarin_inventory_distinct :
+    englishInv ≠ mandarinInv := by decide
+
+/-- Shan-specific consequence of `Core.Nominal.interpret_bare_eq_unique`:
+    a bare definite description and a uniqueness definite over the same
+    restrictor select the same referent. This is the Core-API analogue of
+    Moroney's claim that bare nouns in Shan express weak/uniqueness
+    definiteness via unblocked ι. -/
+theorem shan_bare_unique_agreement {F : Frame}
+    (R : DenotGS F .et) (sIdx : Nat)
+    (g : Core.Assignment F.Entity)
+    (gs : SitAssignment F) :
+    Core.Nominal.interpret (.bare R) g gs =
+      Core.Nominal.interpret (.unique R sIdx) g gs := rfl
+
+/-- Shan-specific consequence of `Core.Nominal.interpret_demonstrative_eq_anaphoric`:
+    the demonstrative's deictic feature is a presupposition filter, not a
+    referent selector. Demonstrative- and anaphoric-marked descriptions
+    over the same restrictor and discourse index pick the same entity.
+    This is the type-theoretic correlate of Moroney's claim that *nâj*/*nân*
+    *add* spatial content rather than substituting a different selector. -/
+theorem shan_demonstrative_anaphoric_agreement {F : Frame}
+    (R : DenotGS F .et) (deictic : Core.Deixis.Feature) (sIdx d : Nat)
+    (g : Core.Assignment F.Entity)
+    (gs : SitAssignment F) :
+    Core.Nominal.interpret (.demonstrative R deictic sIdx d) g gs =
+      Core.Nominal.interpret (.anaphoric R d) g gs := rfl
 
 end Moroney2021

@@ -1,5 +1,7 @@
 import Linglib.Phenomena.SyntacticAmbiguity.Basic
 import Linglib.Theories.Semantics.Definiteness.Basic
+import Linglib.Core.Nominal.Maximality
+import Linglib.Core.Semantics.Presupposition
 
 /-!
 # Paape & Vasishth (2026) @cite{paape-vasishth-2026}
@@ -510,8 +512,11 @@ The argument chain:
 
 section UniquenessBridge
 
-open Semantics.Definiteness (the_uniq modifierNecessary evalDefinite)
-open Core.Definiteness (DefiniteDesc)
+open Semantics.Definiteness (modifierNecessary)
+open Core.Presupposition (PrProp)
+open Core.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
+  presupOfReferent_assertion_some presupOfReferent_assertion_none)
+open Core.Nominal (russellIotaList)
 
 /-- Toy discourse entity for the uniqueness worked example. -/
 inductive DiscEntity where
@@ -537,29 +542,37 @@ def rcModifier : DiscEntity → Bool
 /-- Trivial scope for the worked example. -/
 def toldScope : DiscEntity → Bool := fun _ => true
 
+/-- File-local convenience: the uniqueness-based definite as a `PrProp Unit`,
+    built from the canonical `presupOfReferent` combinator with
+    `russellIotaList` as the per-context referent selector. -/
+private def thePresup (domain : List DiscEntity) (restrictor scope : DiscEntity → Bool) :
+    PrProp Unit :=
+  presupOfReferent (fun _ : Unit => russellIotaList domain restrictor)
+                   (fun e _ => scope e)
+
 /-- In non-unique context, bare "the woman" FAILS uniqueness:
-    two entities satisfy the restrictor, so the presupposition
-    of `the_uniq` is not met. -/
+    two entities satisfy the restrictor, so referent selection returns
+    `none` and the presupposition fails. -/
 theorem bare_fails_nonunique :
-    ¬(the_uniq nonUniqueDomain isWoman toldScope).presup () := by
-  simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+    ¬(thePresup nonUniqueDomain isWoman toldScope).presup () := by
+  simp only [thePresup, presupOfReferent_presup, russellIotaList,
     nonUniqueDomain, List.filter, isWoman]; decide
 
 /-- In non-unique context, modified "the woman that he'd risked his
     life for" SUCCEEDS: the RC modifier narrows to one entity. -/
 theorem modified_succeeds_nonunique :
-    (the_uniq nonUniqueDomain
+    (thePresup nonUniqueDomain
       (fun e => isWoman e && rcModifier e) toldScope).presup () := by
-  simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+  simp only [thePresup, presupOfReferent_presup, russellIotaList,
     nonUniqueDomain, List.filter, isWoman, rcModifier,
-    Bool.and_false, Bool.true_and]
+    Bool.and_false, Bool.and_true, Option.isSome_some]
 
 /-- In unique context, bare "the woman" already SUCCEEDS:
     only one entity satisfies the restrictor, so no modifier needed. -/
 theorem bare_succeeds_unique :
-    (the_uniq uniqueDomain isWoman toldScope).presup () := by
-  simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
-    uniqueDomain, List.filter, isWoman]
+    (thePresup uniqueDomain isWoman toldScope).presup () := by
+  simp only [thePresup, presupOfReferent_presup, russellIotaList,
+    uniqueDomain, List.filter, isWoman, Option.isSome_some]
 
 /-- The full argument chain: uniqueness presupposition grounds
     `contextSupports` from `Basic.lean`.
@@ -570,22 +583,22 @@ theorem bare_succeeds_unique :
     4. This is exactly `contextSupports .uniqueReferent .complementClause` -/
 theorem uniqueness_grounds_context_supports :
     -- Non-unique: bare fails, modified succeeds, RC is supported
-    ¬(the_uniq nonUniqueDomain isWoman toldScope).presup () ∧
-    (the_uniq nonUniqueDomain (fun e => isWoman e && rcModifier e)
+    ¬(thePresup nonUniqueDomain isWoman toldScope).presup () ∧
+    (thePresup nonUniqueDomain (fun e => isWoman e && rcModifier e)
       toldScope).presup () ∧
     contextSupports .nonUniqueReferents .relativeClause = true ∧
     -- Unique: bare succeeds, CC is supported
-    (the_uniq uniqueDomain isWoman toldScope).presup () ∧
+    (thePresup uniqueDomain isWoman toldScope).presup () ∧
     contextSupports .uniqueReferent .complementClause = true := by
   refine ⟨?_, ?_, ?_, ?_, ?_⟩
-  · simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+  · simp only [thePresup, presupOfReferent_presup, russellIotaList,
       nonUniqueDomain, List.filter, isWoman]; decide
-  · simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
+  · simp only [thePresup, presupOfReferent_presup, russellIotaList,
       nonUniqueDomain, List.filter, isWoman, rcModifier,
-      Bool.and_false, Bool.true_and]
+      Bool.and_false, Bool.and_true, Option.isSome_some]
   · native_decide
-  · simp only [the_uniq, evalDefinite, DefiniteDesc.unique, Bool.and_true,
-      uniqueDomain, List.filter, isWoman]
+  · simp only [thePresup, presupOfReferent_presup, russellIotaList,
+      uniqueDomain, List.filter, isWoman, Option.isSome_some]
   · native_decide
 
 -- ────────────────────────────────────────────────────

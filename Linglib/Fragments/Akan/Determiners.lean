@@ -2,6 +2,7 @@ import Linglib.Theories.Semantics.Quantification.ChoiceFunction
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
 import Linglib.Core.Definiteness
+import Linglib.Core.Nominal.Maximality
 
 /-!
 # Akan (Kwa) Determiners
@@ -82,17 +83,22 @@ def NoAnalysis.toPresupType : NoAnalysis → DefPresupType
 def preferredAnalysis : NoAnalysis := .weak
 
 /-- ⟦nó⟧ under the familiarity analysis: presupposes a unique salient
-    discourse referent matching the restrictor. Grounded in `the_fam`
-    from `Definite.lean` — the theory-layer denotation for Schwarz's
-    strong article.
+    discourse referent matching the restrictor.
+
+    Built from the canonical `presupOfReferent` combinator with
+    `russellIotaList` over the discourse-salient domain — familiarity
+    is encoded as domain restriction (searching `dc.salient` instead
+    of the full domain).
 
     Under Bombi's preferred uniqueness analysis, the same denotation
     applies but evaluated against a discourse-restricted situation
     rather than the full evaluation world. -/
-def noSem {E : Type} [DecidableEq E]
+def noSem {E : Type}
     (dc : DiscourseContext E)
-    (restrictor : E → Bool) (scope : E → Bool) :=
-  the_fam dc restrictor scope
+    (restrictor : E → Bool) (scope : E → Bool) : PrProp Unit :=
+  PrProp.presupOfReferent
+    (fun _ : Unit => Core.Nominal.russellIotaList dc.salient restrictor)
+    (fun e _ => scope e)
 
 -- ════════════════════════════════════════════════════
 -- § 2. Bare NPs

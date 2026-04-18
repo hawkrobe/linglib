@@ -1,4 +1,8 @@
 import Linglib.Core.Definiteness
+import Linglib.Core.Deixis.Feature
+import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Core.Nominal.Maximality
+import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
 
@@ -33,6 +37,7 @@ situation) and add spatial content to the presupposition filter.
 namespace Fragments.Shan.Definiteness
 
 open Core.Definiteness
+open Core.Presupposition (PrProp)
 open Semantics.Noun.Kind
 
 -- ============================================================================
@@ -57,6 +62,29 @@ theorem strategy : deriveStrategy markingParams = .unmarked := rfl
 /-- Shan maps to ArticleType.none_ (no articles). -/
 theorem articleType :
     strategyToArticleType (deriveStrategy markingParams) = .none_ := rfl
+
+/-- Shan @cite{moroney-2021}: no overt definite or indefinite article.
+    Demonstratives *nâj/nân* are optional in anaphoric contexts; bare nouns
+    can express both unique and anaphoric definiteness. The upstream
+    `Core.Nominal.ArticleInventory` carries strictly more information than
+    `markingParams` (demonstrative + possessive paradigms). -/
+def articleInventory : Core.Nominal.ArticleInventory :=
+  { hasIndefinite             := false
+    hasUniqueArticle          := false
+    hasAnaphoricArticle       := false
+    hasDemonstrative          := true
+    hasPossessive             := true }
+
+/-- Shan's inventory derives the `.unmarked` Moroney cell. Agrees with
+    `strategy` above: the inventory is the upstream object from which
+    `markingParams` is the boolean projection. -/
+theorem articleInventory_marking :
+    articleInventory.toMarkingStrategy = .unmarked := rfl
+
+/-- The inventory's `toMarkingParams` projection agrees with `markingParams`
+    by `rfl` — projections of the same upstream object. -/
+theorem articleInventory_params_agreement :
+    articleInventory.toMarkingParams = markingParams := rfl
 
 -- ============================================================================
 -- §2: Type-Shift Contexts
@@ -104,18 +132,14 @@ theorem all_shifts_available :
 -- §3: Demonstrative Semantics (@cite{moroney-2021} §2.1.3)
 -- ============================================================================
 
-/-- Spatial relation for demonstratives. -/
-inductive SpatialRelation where
-  | proximal  -- close to speaker
-  | distal    -- far from speaker
-  deriving DecidableEq, Repr
-
-/-- Shan demonstrative entry: form, gloss, and spatial content.
-    Demonstratives in Shan appear in the structure [N Clf Dem]. -/
+/-- Shan demonstrative entry: form, gloss, and deictic content.
+    Demonstratives in Shan appear in the structure [N Clf Dem].
+    The `spatial` field reuses the framework-agnostic `Core.Deixis.Feature`
+    (promoted from the former local `SpatialRelation` enum, 0.229.890). -/
 structure ShanDemonstrative where
   form : String
   gloss : String
-  spatial : SpatialRelation
+  spatial : Core.Deixis.Feature
   deriving Repr
 
 /-- *nâj* — proximal demonstrative ('this'). -/
@@ -126,41 +150,51 @@ def naj : ShanDemonstrative :=
 def nan : ShanDemonstrative :=
   { form := "nân", gloss := "that", spatial := .distal }
 
-/-- Demonstrative denotation as a `DefiniteDesc` with spatial presupposition
-    filter.
+/-- Demonstrative denotation as a referent selector with spatial filter.
 
     ⟦DEM⟧(P) = ιx[P(x) ∧ SPATIAL(x)]
 
     The demonstrative combines the restrictor P with a spatial filter
     encoding proximity to the speaker. The cardinality presupposition
-    (|P_s| = 1) is handled by the `evalDefinite` machinery, which
-    requires a unique satisfier. -/
-def demDenotation {E : Type} (dem : ShanDemonstrative)
-    (restrictor : E → Bool) (spatialPred : SpatialRelation → E → Bool) :
-    DefiniteDesc E :=
-  .anaphoric restrictor (spatialPred dem.spatial)
+    (|P_s| = 1) is handled by `Core.Nominal.russellIotaList` returning
+    `none` when no unique satisfier exists. -/
+def demDenotation {E : Type} (domain : List E) (dem : ShanDemonstrative)
+    (restrictor : E → Bool) (spatialPred : Core.Deixis.Feature → E → Bool) :
+    Option E :=
+  Core.Nominal.russellIotaList domain
+    (fun e => restrictor e && spatialPred dem.spatial e)
 
-/-- Demonstrative descriptions are anaphoric (strong article layer). -/
-theorem dem_is_anaphoric (dem : ShanDemonstrative) {E : Type}
-    (restrictor : E → Bool) (spatialPred : SpatialRelation → E → Bool) :
-    (demDenotation dem restrictor spatialPred).presupFilter =
-      spatialPred dem.spatial := rfl
-
-/-- A bare definite description (no demonstrative) uses a trivial filter:
+/-- A bare definite description (no demonstrative) uses no filter:
     any entity satisfying the restrictor is a candidate, regardless of
     spatial location. This is the uniqueness-based (weak) reading. -/
-def bareDefinite {E : Type} (restrictor : E → Bool) : DefiniteDesc E :=
-  .unique restrictor
+def bareDefinite {E : Type} (domain : List E) (restrictor : E → Bool) :
+    Option E :=
+  Core.Nominal.russellIotaList domain restrictor
 
-/-- The demonstrative adds information beyond the bare definite: it
-    restricts candidates to those satisfying the spatial predicate.
-    Bare definites are a special case where the filter is vacuous. -/
-theorem dem_refines_bare {E : Type}
-    (restrictor : E → Bool) (spatialPred : SpatialRelation → E → Bool)
-    (dem : ShanDemonstrative) :
-    (bareDefinite restrictor).presupFilter = (fun _ => true) ∧
-    (demDenotation dem restrictor spatialPred).presupFilter =
-      spatialPred dem.spatial :=
-  ⟨rfl, rfl⟩
+/-- The demonstrative refines the bare definite: when the bare description
+    selects a referent that also satisfies the spatial predicate, both
+    selectors agree; the demonstrative can additionally select among
+    multiple bare-restrictor satisfiers when the spatial filter narrows
+    them to a singleton. -/
+theorem dem_refines_bare {E : Type} (domain : List E)
+    (restrictor : E → Bool) (spatialPred : Core.Deixis.Feature → E → Bool)
+    (dem : ShanDemonstrative) (e : E)
+    (hBare : bareDefinite domain restrictor = some e)
+    (hSpatial : spatialPred dem.spatial e = true) :
+    demDenotation domain dem restrictor spatialPred = some e := by
+  rw [bareDefinite, Core.Nominal.russellIotaList_eq_some_iff] at hBare
+  rw [demDenotation, Core.Nominal.russellIotaList_eq_some_iff]
+  have : domain.filter (fun e' => restrictor e' && spatialPred dem.spatial e') =
+         (domain.filter restrictor).filter (fun e' => spatialPred dem.spatial e') := by
+    rw [List.filter_filter]
+    congr 1; funext e'; exact Bool.and_comm _ _
+  rw [this, hBare]; simp [hSpatial]
+
+/-- Lift a referent selector to a `PrProp Unit` via the canonical
+    `presupOfReferent` combinator. The presupposition is referent
+    definedness; the assertion is the scope applied to the referent. -/
+def liftToPrProp {E : Type} (selector : Option E) (scope : E → Bool) :
+    PrProp Unit :=
+  PrProp.presupOfReferent (fun _ : Unit => selector) (fun e _ => scope e)
 
 end Fragments.Shan.Definiteness
