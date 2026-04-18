@@ -63,6 +63,38 @@ sets — reading off "asking the conjunction of a family of questions"
 as `iInf` is then a one-line consequence. The `?`-update inherits
 `inf_assoc`, `inf_idem`, and `inf_comm` directly (`inquire_inquire_self`
 in §7 is a one-liner via `inf_assoc + inf_idem`).
+
+## Architectural note: Setoid vs. InquisitiveContent
+
+We commit `inquiry : Setoid W` (partition-based questions). The
+state-of-the-art generalization is the algebraic / inquisitive-
+semantics frame of @cite{puncochar-2016} (lattice-of-logics
+characterization, with inquisitive logic as the strongest "G-logic"),
+@cite{puncochar-2019} (information models on substructural bases;
+declarative propositions as principal ideals), and
+@cite{ciardelli-groenendijk-roelofsen-2018} (the textbook), in which
+inquiry would be a downward-closed nonempty set of information states
+rather than a partition. That generalization handles non-partition
+inquiry — mention-some, intermediate-exhaustive, and conditional
+question phenomena — that `Setoid W` provably cannot represent
+(partition cells are disjoint and exhaustive).
+
+We do not lift to `InquisitiveContent W` here. Following mathlib
+discipline, the lift should be triggered by a forcing phenomenon
+study, not built speculatively. The clearest forcing candidate is
+@cite{theiler-etal-2018}'s uniform semantics for declarative and
+interrogative complements, which derives mention-some and
+intermediate-exhaustive readings as theorems and shows that
+@cite{groenendijk-stokhof-1984}'s partition theory provably cannot.
+When that study is formalized in `Phenomena/Attitudes/Studies/`, the
+`InquisitiveContent W` type becomes load-bearing; until then, every
+existing POSWQ use case is partition-based and `Setoid W` is the
+right structure (mathlib already provides its `CompleteLattice`).
+
+The lift, when it happens, should be a **sibling** structure (parallel
+to Setoid, with `Setoid → InquisitiveContent` as a faithful embedding)
+rather than a replacement — mirroring how mathlib keeps `Set`/`Finset`
+and `Filter`/`Ultrafilter` parallel rather than collapsing them.
 -/
 
 namespace Core.Mood

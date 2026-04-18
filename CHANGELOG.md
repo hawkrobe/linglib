@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.229.922] - 2026-04-18
+
+### Added
+- **Two Punčochář bib entries + architectural-direction note in `Core/Mood/POSWQ.lean`.** (1) `puncochar-2016` ("A Generalization of Inquisitive Semantics", *Journal of Philosophical Logic* 45(4): 399–428, doi 10.1007/s10992-015-9379-1) and (2) `puncochar-2019` ("Substructural Inquisitive Logics", *The Review of Symbolic Logic* 12(2): 296–330, doi 10.1017/S1755020319000017) added to `references.bib` with verified DOIs and pages (verified against the actual PDFs). Bibliography regenerated (1563 entries). (3) New "Architectural note: Setoid vs. InquisitiveContent" section in the `POSWQ.lean` file docstring laying out the design choice: we commit `inquiry : Setoid W` (partition-based) and document the algebraic generalization to `InquisitiveContent W` (downward-closed nonempty sets of information states) as the state-of-the-art alternative — citing @cite{puncochar-2016} for the lattice-of-logics characterization, @cite{puncochar-2019} for the substructural information-model frame (declarative propositions = principal ideals), and @cite{ciardelli-groenendijk-roelofsen-2018} for the standard inquisitive-semantics presentation. The note explicitly defers the lift, identifies @cite{theiler-etal-2018} (uniform semantics for declarative + interrogative complements; derives mention-some and intermediate-exhaustive readings that partition theory provably cannot) as the forcing study that would trigger building `InquisitiveContent W`, and prescribes the **sibling-structure** architecture (parallel to Setoid with a faithful embedding) following mathlib's `Set`/`Finset` and `Filter`/`Ultrafilter` precedent rather than collapsing the two.
+
+## [0.229.921] - 2026-04-18
+
+### Added
+- **`Theories/Semantics/Conditionals/Kratzer/Lumping.lean`.** First Kratzer-2012-grounded module in the new `Conditionals/Kratzer/` directory. Sits on top of `Core.IntensionalLogic.Situations` (the `SituationFrame` carrier with `[PartialOrder Index]`). Defines the situation-semantics logical relations (`IsTrue`, `IsValid`, `IsConsistent`, `IsCompatible`, `Follows`, `Equiv` — Kratzer 2012 §5.3.3, p. 118) and the lumping relation `Lumps p q w` per the official definition (p. 118): `p w ∧ ∀ s, s ≤ w → p s → q s`. Basic lemmas: `Lumps.true_left`/`true_right`/`local_impl`/`self`/`trans`/`and`/`of_stronger`/`weaken`/`of_universal`. PWS-reduction theorem `lumps_discrete` shows that under the discrete order from `Frame.toDiscreteSituationFrame`, lumping collapses to joint truth (`Lumps p q w ↔ p w ∧ q w`). Counterfactual machinery of §5.4.4 (admissible Base Sets, Crucial Set, would/might) deferred to a forthcoming sibling file.
+
+### Changed
+- **`Theories/Semantics/Conditionals/Restrictor.lean` polymorphized.** Generalized from hardcoded `World` to `{W : Type*} [DecidableEq W] [Fintype W]`; consequents migrated from `BProp World` (Bool) to `W → Prop`, matching the upstream Prop-based API in `Modality/Kratzer/Operators.lean` (`necessity`/`possibility`/`K_axiom`/`duality`). Antecedents stay `W → Bool` because they are consed onto the modal base (`List (W → Bool)`) by `restrictedBase` — the enumerable factual content stays computable. Removed import of `Theories.Semantics.Attitudes.Intensional`. Two `omit [...] in` clauses added (`kratzer_material_eq_conditional`, `double_restriction`) to silence unused-section-var warnings on theorems that don't need the Fintype/DecidableEq constraints.
+
 ## [0.229.920] - 2026-04-18
 
 ### Changed
