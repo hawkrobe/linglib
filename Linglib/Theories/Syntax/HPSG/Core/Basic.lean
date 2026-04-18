@@ -182,11 +182,11 @@ end InversionConstraint
 section ClauseTypes
 
 /-- Matrix questions require [INV +]. -/
-def matrixQuestionRequiresInv (s : Sign) (ct : ClauseType) : Prop :=
+def matrixQuestionRequiresInv (s : Sign) (ct : ClauseForm) : Prop :=
   ct = .matrixQuestion → s.synsem.head.inv = .plus
 
 /-- Embedded questions require [INV -]. -/
-def embeddedQuestionProhibitsInv (s : Sign) (ct : ClauseType) : Prop :=
+def embeddedQuestionProhibitsInv (s : Sign) (ct : ClauseForm) : Prop :=
   ct = .embeddedQuestion → s.synsem.head.inv = .minus
 
 end ClauseTypes
@@ -201,7 +201,7 @@ structure HPSGGrammar where
 /-- HPSG derivations are signs that satisfy all constraints. -/
 structure HPSGDerivation (g : HPSGGrammar) where
   sign : Sign
-  clauseType : ClauseType
+  clauseType : ClauseForm
   inSign : sign ∈ g.signs
   invOk : satisfiesInversionConstraint sign
   matrixOk : matrixQuestionRequiresInv sign clauseType

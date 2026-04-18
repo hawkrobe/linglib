@@ -1,6 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
 import Linglib.Theories.Syntax.Minimalism.Tense.InfinitivalTense
 import Linglib.Fragments.Mixtec.SMPM.Basic
+import Linglib.Core.NullSubject.Basic
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Complementation.Typology
 
@@ -60,6 +61,7 @@ open Syntax.Minimalism.MinimalPronoun
 open Landau2015
 open Minimalism.Tense.InfinitivalTense (InfinitivalTenseClass)
 open Fragments.Mixtec.SMPM (EmbeddedClauseType clauseProperties)
+open Core.NullSubject (ProDropProfile)
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1: Clause Type Verification (26)
@@ -244,15 +246,6 @@ def quiegolaniInventory : MinPronInventory PronForm where
   items := []
   elsewhere := .pronoun
 
-/-- Gã vocabulary items (inferred from @cite{allotey-2021}).
-
-    Like SMPM: lacks a null allomorph for controlled subjects.
-    Overt PRO in complement clause obligatory control. One of three
-    languages argued to have obligatory pronominal copy control. -/
-def gaInventory : MinPronInventory PronForm where
-  items := [ ⟨.locallyBound, .reflexive⟩ ]
-  elsewhere := .pronoun
-
 /-- Büli vocabulary items (inferred from @cite{sulemana-2021}).
 
     Like SMPM and Gã: lacks a null allomorph for controlled subjects.
@@ -281,10 +274,6 @@ theorem haitian_null_pro :
 /-- Quiegolani Zapotec: controlled subjects are overt pronouns. -/
 theorem quiegolani_overt_pro :
     quiegolaniInventory.controlForm = .pronoun := rfl
-
-/-- Gã: controlled subjects are overt pronouns. -/
-theorem ga_overt_pro :
-    gaInventory.controlForm = .pronoun := rfl
 
 /-- Büli: controlled subjects are overt pronouns. -/
 theorem buli_overt_pro :
@@ -438,73 +427,32 @@ theorem smpm_supports_basegeneration :
 -- § 10: Implicational Universal (54)
 -- ════════════════════════════════════════════════════════════════
 
-/-- A language's pro-drop and overt-PRO profile.
-
-    @cite{ostrove-2026} (54): If a language requires the subject of
-    obligatory control clauses (i.e., PRO) to be overt, then that
-    language will not allow *pro*-drop.
-
-    This is a one-way implicational universal — non-*pro*-drop does
-    not entail overt PRO (English is non-*pro*-drop but has null PRO). -/
-structure ProDropProfile where
-  language : String
-  allowsProDrop : Bool
-  hasOvertPRO : Bool
-  deriving DecidableEq, Repr
-
-/-- The implicational universal: overt PRO → non-*pro*-drop. -/
-def satisfiesImplicational (p : ProDropProfile) : Bool :=
-  !p.hasOvertPRO || !p.allowsProDrop
-
-/-- Whether the inventory produces overt PRO (i.e., controlled form = pronoun). -/
-def hasOvertPRO (inv : MinPronInventory PronForm) : Bool :=
-  inv.controlForm == .pronoun
-
 /-- SMPM profile derived from fragment data and inventory. -/
 def smpmProfile : ProDropProfile :=
-  { language := "SMPM"
-  , allowsProDrop := Fragments.Mixtec.SMPM.allowsProDrop
-  , hasOvertPRO := hasOvertPRO smpmInventory }
+  { allowsProDrop := Fragments.Mixtec.SMPM.allowsProDrop
+  , hasOvertPRO := smpmInventory.hasOvertPRO }
 
 def englishProfile : ProDropProfile :=
-  { language := "English", allowsProDrop := false, hasOvertPRO := hasOvertPRO englishInventory }
+  { allowsProDrop := false
+  , hasOvertPRO := englishInventory.hasOvertPRO }
 
-/-- The universal is satisfied when overt PRO + non-*pro*-drop (consequent true). -/
-theorem overt_pro_non_prodrop_satisfies
-    (p : ProDropProfile)
-    (h_overt : p.hasOvertPRO = true)
-    (h_prodrop : p.allowsProDrop = false) :
-    satisfiesImplicational p = true := by
-  simp [satisfiesImplicational, h_overt, h_prodrop]
-
-/-- The universal is trivially satisfied when PRO is null (antecedent false). -/
-theorem null_pro_satisfies
-    (p : ProDropProfile)
-    (h_null : p.hasOvertPRO = false) :
-    satisfiesImplicational p = true := by
-  simp [satisfiesImplicational, h_null]
+def buliProfile : ProDropProfile :=
+  { allowsProDrop := false
+  , hasOvertPRO := buliInventory.hasOvertPRO }
 
 -- SMPM: overt PRO + non-pro-drop → universal (consequent true)
-theorem smpm_satisfies_universal :
-    satisfiesImplicational smpmProfile = true :=
-  overt_pro_non_prodrop_satisfies smpmProfile rfl rfl
+theorem smpm_satisfies_universal : smpmProfile.Satisfies := by decide
 
 -- English: null PRO → universal trivially (antecedent false)
-theorem english_satisfies_universal :
-    satisfiesImplicational englishProfile = true :=
-  null_pro_satisfies englishProfile rfl
-
--- Gã: overt PRO + non-pro-drop → universal
-theorem ga_satisfies_universal :
-    satisfiesImplicational { language := "Gã", allowsProDrop := false
-                           , hasOvertPRO := hasOvertPRO gaInventory } = true :=
-  overt_pro_non_prodrop_satisfies _ rfl rfl
+theorem english_satisfies_universal : englishProfile.Satisfies := by decide
 
 -- Büli: overt PRO + non-pro-drop → universal
-theorem buli_satisfies_universal :
-    satisfiesImplicational { language := "Büli", allowsProDrop := false
-                           , hasOvertPRO := hasOvertPRO buliInventory } = true :=
-  overt_pro_non_prodrop_satisfies _ rfl rfl
+theorem buli_satisfies_universal : buliProfile.Satisfies := by decide
+
+-- Cell-by-cell typology: each profile lands in its predicted cell.
+theorem smpm_classified : smpmProfile.classify = .overtPRONoProDrop := by decide
+theorem english_classified : englishProfile.classify = .nullPRONoProDrop := by decide
+theorem buli_classified : buliProfile.classify = .overtPRONoProDrop := by decide
 
 -- ════════════════════════════════════════════════════════════════
 -- § 11: Complementation Typology Bridge

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.PIP.Basic
-import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.Semantics.Proposition
 
 /-!
 # PIP Expression Language (Full Static Formulation)
@@ -39,7 +39,6 @@ all `X ≡ φ` definitions regardless of their structural position.
 
 namespace Semantics.PIP
 
-open Core.IntensionalLogic.RestrictedModality (BAccessRel)
 open Core.Proposition (FiniteWorlds)
 
 /-- A finite domain of individuals for PIP quantifier evaluation.

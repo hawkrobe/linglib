@@ -42,18 +42,18 @@ variable {W : Type*} {E : Type*} {P : Type*} {T : Type*}
 -- § Monstrous Say (Bool)
 -- ════════════════════════════════════════════════════════════════
 
-/-- Monstrous attitude verb semantics via tower push (Bool version).
+/-- Monstrous attitude verb semantics via tower push (Prop version).
 
     For each world w' accessible via R, push an attitude shift onto the
     tower (making the holder the agent, w' the world) and evaluate φ.
 
     This is the computable counterpart of `sayMTower` in `Monsters.lean`:
-    same quantificational structure, but `Bool`-valued and over a finite
-    world list, making it compatible with `boxAt`. -/
+    same quantificational structure, but over a finite world list, making
+    it compatible with `boxAt`. -/
 def sayMBool (R : AccessRel W E) (holder : E)
-    (φ : ContextTower (KContext W E P T) → W → Bool)
-    (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) : Bool :=
-  worlds.all fun w' => !R holder w w' || φ (t.push (attitudeShift holder w')) w'
+    (φ : ContextTower (KContext W E P T) → W → Prop)
+    (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) : Prop :=
+  ∀ w' ∈ worlds, R holder w w' → φ (t.push (attitudeShift holder w')) w'
 
 -- ════════════════════════════════════════════════════════════════
 -- § Shift-Generated Contexts
@@ -106,7 +106,7 @@ def ctxFromShift (t : ContextTower (KContext W E P T)) (holder : E) (w' : W) :
     unfold to the same term. The ONLY difference between them is whether
     the meaning function can see the tower. -/
 theorem sayM_reduces_to_box
-    (R : AccessRel W E) (holder : E) (p : W → Bool)
+    (R : AccessRel W E) (holder : E) (p : W → Prop)
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
     sayMBool R holder (fun _ w' => p w') t w worlds
     = boxAt R holder w worlds p := rfl
@@ -123,9 +123,15 @@ theorem sayM_reduces_to_box
     This is @cite{schlenker-2003}'s primitive: attitude verbs quantify
     over contexts ⟨holder, w', t, p⟩, not just worlds w'. -/
 def ctxBox (R : AccessRel W E) (holder : E)
-    (φ : KContext W E P T → Bool)
-    (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) : Bool :=
-  worlds.all fun w' => !R holder w w' || φ (ctxFromShift t holder w')
+    (φ : KContext W E P T → Prop)
+    (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) : Prop :=
+  ∀ w' ∈ worlds, R holder w w' → φ (ctxFromShift t holder w')
+
+instance ctxBox_decidable (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
+    (holder : E) (φ : KContext W E P T → Prop) [DecidablePred φ]
+    (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
+    Decidable (ctxBox R holder φ t w worlds) :=
+  inferInstanceAs (Decidable (∀ w' ∈ worlds, _))
 
 /-- When φ depends only on the world coordinate, context quantification
     reduces to standard Hintikka world quantification (`boxAt`).
@@ -136,7 +142,7 @@ def ctxBox (R : AccessRel W E) (holder : E)
     perspective-dependent expressions, nothing that reads from the
     context beyond the world. -/
 theorem ctxBox_world_only
-    (R : AccessRel W E) (holder : E) (p : W → Bool)
+    (R : AccessRel W E) (holder : E) (p : W → Prop)
     (t : ContextTower (KContext W E P T)) (w : W) (worlds : List W) :
     ctxBox R holder (fun c => p c.world) t w worlds
     = boxAt R holder w worlds p := by
@@ -175,10 +181,10 @@ theorem ctxBox_agent_sensitive
     quantification over world-only propositions, with an additional
     veridicality constraint at the evaluation world. -/
 theorem doxastic_is_ctxBox_world_only
-    (V : Doxastic.DoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (V : Doxastic.DoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W) (t : ContextTower (KContext W E P T)) :
-    V.holdsAt agent p w worlds =
-    (Doxastic.veridicalityHolds V.veridicality p w &&
+    V.holdsAt agent p w worlds ↔
+    (Doxastic.veridicalityHolds V.veridicality p w ∧
      ctxBox V.access agent (fun c => p c.world) t w worlds) := by
   simp only [Doxastic.DoxasticPredicate.holdsAt, ctxBox_world_only]
 
@@ -199,7 +205,7 @@ theorem doxastic_is_ctxBox_world_only
     It fails in @cite{schlenker-2003}'s MEL (Monstrous Egli Language),
     where attitude operators bind context variables that shift indexical
     reference. -/
-def SatisfiesFixity (φ : ContextTower (KContext W E P T) → W → Bool) : Prop :=
+def SatisfiesFixity (φ : ContextTower (KContext W E P T) → W → Prop) : Prop :=
   ∀ (t₁ t₂ : ContextTower (KContext W E P T)) (w : W), φ t₁ w = φ t₂ w
 
 /-- World-only meanings satisfy the Fixity Thesis. These are the
@@ -209,7 +215,7 @@ def SatisfiesFixity (φ : ContextTower (KContext W E P T) → W → Bool) : Prop
 
     This captures the "easy direction" of Claim 2: in a language
     without monsters, every meaning is world-only, so Fixity holds. -/
-theorem fixity_world_only (p : W → Bool) :
+theorem fixity_world_only (p : W → Prop) :
     SatisfiesFixity (W := W) (E := E) (P := P) (T := T)
       (fun _ w => p w) :=
   fun _ _ _ => rfl
@@ -221,7 +227,7 @@ theorem fixity_world_only (p : W → Bool) :
     This is because `ctxBox` with world-only meaning reduces to
     `boxAt` (by `ctxBox_world_only`), which is tower-independent. -/
 theorem ctxBox_fixity (R : AccessRel W E) (holder : E)
-    (p : W → Bool)
+    (p : W → Prop)
     (t₁ t₂ : ContextTower (KContext W E P T))
     (w : W) (worlds : List W) :
     ctxBox R holder (fun c => p c.world) t₁ w worlds =

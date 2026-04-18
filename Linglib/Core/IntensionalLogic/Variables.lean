@@ -12,7 +12,8 @@ built on `Core.IntensionalLogic.Frame`.
 
 ## Main definitions
 
-- `Assignment` — maps variable indices to entities
+- `Assignment` (from `Core/Assignment.lean`) instantiated at
+  `F.Entity` for entity pronouns and `F.Index` for situation pronouns
 - `DenotG` — assignment-relative denotations
 - `applyG`, `lambdaAbsG`, `constDenot` — composition with assignments
 - Applicative functor laws (@cite{charlow-2018})
@@ -23,49 +24,33 @@ namespace Core.IntensionalLogic.Variables
 
 open Core.IntensionalLogic
 
-/-- Assignment function: maps variable indices to entities.
-
-Unified with `Core.Assignment` — this is `Nat → F.Entity`. All variable-binding
-frameworks in the library (Montague, DRT, DPL, CDRT, cylindric algebra) share
-this canonical type, differing only in the entity parameter. -/
-abbrev Assignment (F : Frame) := Core.Assignment F.Entity
-
-namespace Assignment
-
-/-- Modified assignment g[n↦x]. Delegates to `Core.Assignment.update`. -/
-def update {F : Frame} (g : Assignment F) (n : ℕ) (x : F.Entity)
-    : Assignment F :=
-  Core.Assignment.update g n x
-
-end Assignment
-
 scoped notation:max g "[" n " ↦ " x "]" => Assignment.update g n x
 
 @[simp]
-theorem update_same {F : Frame} (g : Assignment F) (n : ℕ) (x : F.Entity)
+theorem update_same {F : Frame} (g : Assignment F.Entity) (n : ℕ) (x : F.Entity)
     : g[n ↦ x] n = x :=
-  Core.Assignment.update_at g n x
+  Assignment.update_at g n x
 
 @[simp]
-theorem update_other {F : Frame} (g : Assignment F) (n i : ℕ) (x : F.Entity)
+theorem update_other {F : Frame} (g : Assignment F.Entity) (n i : ℕ) (x : F.Entity)
     (h : i ≠ n) : g[n ↦ x] i = g i :=
-  Core.Assignment.update_ne g x h
+  Assignment.update_ne g x h
 
-theorem update_update_same {F : Frame} (g : Assignment F) (n : ℕ) (x y : F.Entity)
-    : g[n ↦ x][n ↦ y] = g[n ↦ y] :=
-  Core.Assignment.update_overwrite g n x y
+theorem update_update_same {F : Frame} (g : Assignment F.Entity) (n : ℕ)
+    (x y : F.Entity) : g[n ↦ x][n ↦ y] = g[n ↦ y] :=
+  Assignment.update_overwrite g n x y
 
-theorem update_update_comm {F : Frame} (g : Assignment F) (n₁ n₂ : ℕ)
+theorem update_update_comm {F : Frame} (g : Assignment F.Entity) (n₁ n₂ : ℕ)
     (x₁ x₂ : F.Entity) (h : n₁ ≠ n₂)
     : g[n₁ ↦ x₁][n₂ ↦ x₂] = g[n₂ ↦ x₂][n₁ ↦ x₁] :=
-  Core.Assignment.update_comm g x₁ x₂ h
+  Assignment.update_comm g x₁ x₂ h
 
-theorem update_self {F : Frame} (g : Assignment F) (n : ℕ)
+theorem update_self {F : Frame} (g : Assignment F.Entity) (n : ℕ)
     : g[n ↦ g n] = g :=
-  Core.Assignment.update_self g n
+  Assignment.update_self g n
 
 /-- Denotation depending on assignment function. -/
-def DenotG (F : Frame) (ty : Ty) := Assignment F → F.Denot ty
+def DenotG (F : Frame) (ty : Ty) := Assignment F.Entity → F.Denot ty
 
 /-- Pronoun/variable denotation: ⟦xₙ⟧^g = g(n). -/
 def interpPronoun {F : Frame} (n : ℕ) : DenotG F .e :=
@@ -76,7 +61,7 @@ def constDenot {F : Frame} {ty : Ty} (d : F.Denot ty) : DenotG F ty :=
   λ _ => d
 
 theorem constDenot_independent {F : Frame} {ty : Ty} (d : F.Denot ty)
-    (g₁ g₂ : Assignment F) : constDenot d g₁ = constDenot d g₂ := rfl
+    (g₁ g₂ : Assignment F.Entity) : constDenot d g₁ = constDenot d g₂ := rfl
 
 /-- Function application with assignments. -/
 def applyG {F : Frame} {σ τ : Ty}
@@ -89,12 +74,12 @@ def lambdaAbsG {F : Frame} {τ : Ty} (n : ℕ) (body : DenotG F τ)
   λ g => λ x => body (g[n ↦ x])
 
 theorem lambdaAbsG_apply {F : Frame} {τ : Ty} (n : ℕ) (body : DenotG F τ)
-    (arg : F.Entity) (g : Assignment F)
+    (arg : F.Entity) (g : Assignment F.Entity)
     : (lambdaAbsG n body g) arg = body (g[n ↦ arg]) := rfl
 
 theorem lambdaAbsG_alpha {F : Frame} {τ : Ty} (n₁ n₂ : ℕ) (body : DenotG F τ)
-    (g : Assignment F)
-    (h_fresh : ∀ g' : Assignment F, ∀ x : F.Entity,
+    (g : Assignment F.Entity)
+    (h_fresh : ∀ g' : Assignment F.Entity, ∀ x : F.Entity,
       body (g'[n₁ ↦ x]) = body (g'[n₂ ↦ x]))
     : lambdaAbsG n₁ body g = lambdaAbsG n₂ body g := by
   funext x
@@ -154,21 +139,21 @@ variable {F : Frame}
 Enables higher-order variables: a pronoun anaphoric to an *intension*
 (type `g → g → a`) is flattened to a standard denotation (type `g → a`)
 by evaluating the retrieved intension at the current assignment. -/
-def denotGJoin {A : Type} (ho : Assignment F → Assignment F → A) :
-    Assignment F → A :=
+def denotGJoin {A : Type} (ho : Assignment F.Entity → Assignment F.Entity → A) :
+    Assignment F.Entity → A :=
   fun g => ho g g
 
 /-- **Left identity**: `μ (ρ d) = d`. -/
-theorem denotGJoin_const {A : Type} (d : Assignment F → A) :
+theorem denotGJoin_const {A : Type} (d : Assignment F.Entity → A) :
     denotGJoin (fun _ => d) = d := rfl
 
 /-- **Right identity**: `μ (λg. ρ(d g)) = d`. -/
-theorem denotGJoin_inner_const {A : Type} (d : Assignment F → A) :
+theorem denotGJoin_inner_const {A : Type} (d : Assignment F.Entity → A) :
     denotGJoin (fun g _ => d g) = d := rfl
 
 /-- **Associativity**: `μ ∘ μ = μ ∘ fmap μ`. -/
 theorem denotGJoin_assoc {A : Type}
-    (hho : Assignment F → Assignment F → Assignment F → A) :
+    (hho : Assignment F.Entity → Assignment F.Entity → Assignment F.Entity → A) :
     denotGJoin (denotGJoin hho) =
     denotGJoin (fun g => denotGJoin (hho g)) := rfl
 
@@ -190,20 +175,20 @@ variable {F : Frame}
 
 /-- Existential closure at variable `n`:
     `(∃n.φ)(g) = ∃x. φ(g[n↦x])`. -/
-def existsClosure (n : Nat) (φ : Assignment F → Prop) : Assignment F → Prop :=
+def existsClosure (n : Nat) (φ : Assignment F.Entity → Prop) : Assignment F.Entity → Prop :=
   fun g => ∃ x : F.Entity, φ (g[n ↦ x])
 
 /-- Diagonal element: assignments where variables n and k agree. -/
-def diag (n k : Nat) : Assignment F → Prop :=
+def diag (n k : Nat) : Assignment F.Entity → Prop :=
   fun g => g n = g k
 
 /-- **C₁**: Existential closure of False is False. -/
 theorem existsClosure_bot (n : Nat) :
-    existsClosure n (fun _ : Assignment F => False) = fun _ => False := by
+    existsClosure n (fun _ : Assignment F.Entity => False) = fun _ => False := by
   ext g; simp [existsClosure]
 
 /-- **C₂**: φ implies its existential closure. -/
-theorem le_existsClosure (n : Nat) (φ : Assignment F → Prop) (g : Assignment F) :
+theorem le_existsClosure (n : Nat) (φ : Assignment F.Entity → Prop) (g : Assignment F.Entity) :
     φ g → existsClosure n φ g :=
   fun h => ⟨g n, by rw [update_self]; exact h⟩
 
@@ -213,12 +198,12 @@ theorem diag_refl (n : Nat) :
   ext; simp [diag]
 
 /-- Pronoun resolution: setting variable κ to read from variable l. -/
-def resolve (κ l : Nat) (φ : Assignment F → Prop) : Assignment F → Prop :=
+def resolve (κ l : Nat) (φ : Assignment F.Entity → Prop) : Assignment F.Entity → Prop :=
   fun g => φ (g[κ ↦ g l])
 
 /-- **Substitution = resolution.** -/
-theorem resolve_eq_existsClosure_diag (κ l : Nat) (φ : Assignment F → Prop)
-    (h : κ ≠ l) (g : Assignment F) :
+theorem resolve_eq_existsClosure_diag (κ l : Nat) (φ : Assignment F.Entity → Prop)
+    (h : κ ≠ l) (g : Assignment F.Entity) :
     resolve κ l φ g ↔ existsClosure κ (fun g' => diag κ l g' ∧ φ g') g := by
   simp only [resolve, existsClosure, diag]; constructor
   · intro hφ
@@ -229,7 +214,7 @@ theorem resolve_eq_existsClosure_diag (κ l : Nat) (φ : Assignment F → Prop)
     subst this; exact hφ
 
 /-- Lambda abstraction at n is the "integrand" of existential closure. -/
-theorem existsClosure_eq_exists_lambda (n : Nat) (body : DenotG F .t) (g : Assignment F) :
+theorem existsClosure_eq_exists_lambda (n : Nat) (body : DenotG F .t) (g : Assignment F.Entity) :
     existsClosure n (fun g' => body g') g ↔
     ∃ x : F.Entity, lambdaAbsG n body g x := by
   simp [existsClosure, lambdaAbsG]
@@ -238,15 +223,63 @@ theorem existsClosure_eq_exists_lambda (n : Nat) (body : DenotG F .t) (g : Assig
 
 open Core.CylindricAlgebra
 
-theorem existsClosure_eq_cylindrify (n : Nat) (φ : Assignment F → Prop) :
+theorem existsClosure_eq_cylindrify (n : Nat) (φ : Assignment F.Entity → Prop) :
     existsClosure n φ = cylindrify n φ := rfl
 
 theorem diag_eq_diagonal (n k : Nat) :
     @diag F n k = @diagonal F.Entity n k := rfl
 
-theorem resolve_eq_directSubst (κ l : Nat) (φ : Assignment F → Prop) :
+theorem resolve_eq_directSubst (κ l : Nat) (φ : Assignment F.Entity → Prop) :
     resolve κ l φ = @directSubst F.Entity κ l φ := rfl
 
 end CylindricStructure
+
+-- ════════════════════════════════════════════════════════════════
+-- § Situation Assignment (Hanink-style situation-pronoun binding)
+-- ════════════════════════════════════════════════════════════════
+
+/-! ### Situation pronouns as the type-level dual of entity pronouns
+
+Hanink (2018, 2021), Bondarenko (2022, 2023) and the broader post-Schwarz
+literature on situational vs anaphoric definites argue that a situation
+argument can be a *bound variable* (a "situation pronoun"), not just a free
+parameter handed to an interpretation function.
+
+Type-theoretically this is the dual of entity binding under `Ty.intens`:
+where entity pronouns are interpreted relative to `Assignment F.Entity := ℕ → F.Entity`,
+situation pronouns are interpreted relative to `SitAssignment F := ℕ → F.Index`.
+Both reuse `Core.Assignment` at different instantiations, so
+the update lemmas (`update_at`, `update_ne`, `update_overwrite`, `update_comm`,
+`update_self`) come for free. -/
+
+/-- Situation assignment: maps situation-pronoun indices to frame indices.
+    Reuses `Assignment` at type `F.Index`. -/
+abbrev SitAssignment (F : Frame) := Assignment F.Index
+
+/-- Situation-pronoun denotation: ⟦sₙ⟧^{gs} = gs(n). Parallels `interpPronoun`. -/
+def interpSitPronoun {F : Frame} (n : Nat) : SitAssignment F → F.Index :=
+  fun gs => gs n
+
+/-- Bi-assignment-relative denotation: depends on both an entity assignment
+    and a situation assignment. Used by any module that interprets expressions
+    containing both entity pronouns and situation pronouns (definites,
+    attitude reports, modal scope, world-variable binding). -/
+def DenotGS (F : Frame) (ty : Ty) :=
+  Assignment F.Entity → SitAssignment F → F.Denot ty
+
+/-- Lift a pure entity-assignment-relative denotation to bi-assignment form
+    (ignores the situation assignment). -/
+def DenotGS.ofDenotG {F : Frame} {ty : Ty} (d : DenotG F ty) : DenotGS F ty :=
+  fun g _ => d g
+
+/-- Lift a constant denotation to bi-assignment form (ignores both
+    assignments). -/
+def DenotGS.const {F : Frame} {ty : Ty} (d : F.Denot ty) : DenotGS F ty :=
+  fun _ _ => d
+
+/-- Bi-assignment lift of a pure constant is the same as DenotG-lift of a
+    constant — the two `const` paths agree. -/
+theorem DenotGS.ofDenotG_const {F : Frame} {ty : Ty} (d : F.Denot ty) :
+    DenotGS.ofDenotG (constDenot d) = DenotGS.const d := rfl
 
 end Core.IntensionalLogic.Variables

@@ -345,9 +345,9 @@ theorem highest_agrees_alienable :
 -- § 8: Bridge to SpecificityCondition
 -- ============================================================================
 
-/-- Convergence: both A&P's D-layer shielding and @cite{fiengo-higginbotham-1981}'s
-    Specificity Condition predict that specific DPs resist possessor
-    extraction by stranding/binding into the DP.
+/-- Convergence: both A&P's D-layer shielding and the Specificity Condition
+    (see `Core.SpecificityCondition`) predict that specific DPs resist
+    possessor extraction by stranding/binding into the DP.
 
     Divergence: A&P predict pied-piping IS available for specific DPs
     (whole DP moves, no subextraction); the Specificity Condition blocks

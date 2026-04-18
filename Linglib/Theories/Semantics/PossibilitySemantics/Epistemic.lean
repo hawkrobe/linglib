@@ -262,65 +262,17 @@ theorem box_implies_diamond (x : Poss5) :
   cases x <;> native_decide
 
 -- ════════════════════════════════════════════════════
--- § 9. Bridge to Kripke Semantics
+-- § 9. T Axiom for Reflexive Frames
 -- ════════════════════════════════════════════════════
 
-/-! When the compatibility relation is identity (every possibility is a
-    world), the modal operators reduce to standard Kripke semantics
-    from `Core.IntensionalLogic.RestrictedModality`. The compat relation only affects negation
-    (orthocomplement) — box is Kripke necessity regardless.
-
-    Conceptual parallel to `Semantics.Supervaluation`: supervaluation's
-    D operator is □ with universal access among specification points,
-    and its fidelity theorem shows that singleton specification spaces
-    yield classical logic. Here, when all possibilities are worlds
-    (compat = identity), the ortholattice collapses to a Boolean algebra
-    — the same classical-collapse phenomenon from opposite directions.
-    Remark 4.9. -/
-
-/-- Box = Kripke necessity: the compatibility frame's box operator is
-    definitionally Kripke necessity evaluation. The compat relation
-    only affects negation, not the modal operators themselves. -/
-theorem box_eq_kripkeEval {S : Type*} [FiniteWorlds S]
-    (F : ModalCompatFrame S) (A : BProp S) (x : S) :
-    box F A x = Core.IntensionalLogic.RestrictedModality.kripkeEval F.access .necessity A x := rfl
-
-/-- Diamond = Kripke possibility when compat = identity. The
-    orthocomplement reduces to Boolean negation, so ◇A = ¬□¬A
-    becomes the standard ¬∀¬ = ∃ dual.
-    Remark 4.9. -/
-theorem diamond_eq_kripkeEval_classical {S : Type*} [FiniteWorlds S] [DecidableEq S]
-    (F : ModalCompatFrame S)
-    (hClassical : ∀ x y, F.compat x y = true → x = y)
-    (A : BProp S) (x : S) :
-    diamond F A x = Core.IntensionalLogic.RestrictedModality.kripkeEval F.access .possibility A x := by
-  have inner : orthoNeg F.toCompatFrame A = fun y => !A y :=
-    funext (fun y => orthoNeg_classical F.toCompatFrame hClassical A y)
-  unfold diamond; rw [inner]
-  rw [orthoNeg_classical F.toCompatFrame hClassical (box F (fun y => !A y)) x]
-  -- !(box F (!A) x) = kripkeEval .possibility A x
-  -- Reduce both sides to list operations via rfl
-  have lhs : box F (fun y => !A y) x =
-      (FiniteWorlds.worlds.filter (F.access x)).all (fun y => !A y) := rfl
-  have rhs : Core.IntensionalLogic.RestrictedModality.kripkeEval F.access .possibility A x =
-      (FiniteWorlds.worlds.filter (F.access x)).any A := rfl
-  rw [lhs, rhs]
-  -- !(filter.all (!A)) = filter.any A
-  generalize FiniteWorlds.worlds.filter (F.access x) = ws
-  induction ws with
-  | nil => rfl
-  | cons w ws ih =>
-    have h1 : (w :: ws).all (fun y => !A y) = (!A w && ws.all (fun y => !A y)) := rfl
-    have h2 : (w :: ws).any A = (A w || ws.any A) := rfl
-    rw [h1, h2]; cases A w <;> simp [ih]
-
-/-- The T axiom for modal compatibility frames follows from the general
-    Kripke T axiom (`Core.IntensionalLogic.RestrictedModality.T_of_refl`). Reflexive accessibility
-    + any compat relation → □A entails A. -/
+/-- The T axiom for modal compatibility frames: reflexive accessibility
+    means every world accesses itself, so □A at x forces A at x. -/
 theorem T_axiom_general {S : Type*} [FiniteWorlds S]
     (F : ModalCompatFrame S) (A : BProp S) (x : S)
-    (h : box F A x = true) : A x = true :=
-  Core.IntensionalLogic.RestrictedModality.T_of_refl F.access_refl A x h
+    (h : box F A x = true) : A x = true := by
+  unfold box at h
+  rw [List.all_eq_true] at h
+  exact h x (List.mem_filter.mpr ⟨FiniteWorlds.complete x, F.access_refl x⟩)
 
 -- ════════════════════════════════════════════════════
 -- § 10. Disjunctive Syllogism Failure

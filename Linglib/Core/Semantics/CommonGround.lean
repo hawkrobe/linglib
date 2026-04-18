@@ -123,7 +123,7 @@ end ContextSet
 /-- Common ground as a set of mutually believed propositions. -/
 structure CG (W : Type*) where
   /-- The propositions in the common ground -/
-  propositions : List (BProp W)
+  propositions : List (Prop' W)
 
 namespace CG
 
@@ -131,10 +131,10 @@ variable {W : Type*}
 
 /-- The context set determined by a common ground. -/
 def contextSet (cg : CG W) : ContextSet W :=
-  λ w => cg.propositions.all (λ p => p w)
+  λ w => ∀ p ∈ cg.propositions, p w
 
 /-- Add a proposition to the common ground. -/
-def add (cg : CG W) (p : BProp W) : CG W :=
+def add (cg : CG W) (p : Prop' W) : CG W :=
   { propositions := p :: cg.propositions }
 
 /-- Empty common ground (no shared beliefs). -/
@@ -143,19 +143,20 @@ def empty : CG W := { propositions := [] }
 /-- Empty CG gives trivial context set. -/
 theorem empty_contextSet : (empty : CG W).contextSet = ContextSet.trivial := by
   funext w
-  simp only [contextSet, empty, ContextSet.trivial, List.all_nil]
+  simp only [contextSet, empty, ContextSet.trivial, List.not_mem_nil,
+             false_implies, forall_const]
 
 /-- Adding a proposition restricts the context set. -/
-theorem add_restricts (cg : CG W) (p : BProp W) (w : W) :
+theorem add_restricts (cg : CG W) (p : Prop' W) (w : W) :
     (cg.add p).contextSet w → cg.contextSet w := by
-  simp only [contextSet, add, List.all_cons, Bool.and_eq_true]
-  exact And.right
+  intro h q hq
+  exact h q (List.mem_cons_of_mem p hq)
 
 end CG
 
 /-- Decidable context set: all worlds compatible with common knowledge.
-Transparently unfolds to `BProp W = W → Bool`, enabling computation. -/
-abbrev BContextSet (W : Type*) := BProp W
+Transparently unfolds to `W → Bool`, enabling computation. -/
+abbrev BContextSet (W : Type*) := W → Bool
 
 namespace BContextSet
 
@@ -254,7 +255,7 @@ theorem hasContextSet_CG_eq {W : Type*} (cg : CG W) :
     HasContextSet.toContextSet cg = cg.contextSet := rfl
 
 /-- Adding to CG restricts the HasContextSet extraction. -/
-theorem hasContextSet_add_restricts {W : Type*} (cg : CG W) (p : BProp W) (w : W) :
+theorem hasContextSet_add_restricts {W : Type*} (cg : CG W) (p : Prop' W) (w : W) :
     HasContextSet.toContextSet (cg.add p) w → HasContextSet.toContextSet cg w :=
   CG.add_restricts cg p w
 

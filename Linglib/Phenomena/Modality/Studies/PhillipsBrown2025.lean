@@ -38,7 +38,7 @@ set_option autoImplicit false
 
 namespace PhillipsBrown2025
 
-open Core.Proposition (BProp FiniteWorlds)
+open Core.Proposition (FiniteWorlds)
 open Semantics.Modality.Desire
 
 -- ============================================================================

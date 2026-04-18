@@ -36,7 +36,7 @@ inductive ArgPosition where
 
 /-- Case assignment in perfective (ergative) clauses.
     Standard ergative alignment: A = ERG, S = P = ABS. -/
-def ArgPosition.ergCase : ArgPosition → CaseVal
+def ArgPosition.ergCase : ArgPosition → Core.Case
   | .agent   => .erg
   | .patient => .abs
   | .intranS => .abs
@@ -44,7 +44,7 @@ def ArgPosition.ergCase : ArgPosition → CaseVal
 /-- Case assignment in non-perfective (accusative) clauses.
     Like Chol, the RON does not hold: the subject may appear inside the
     nominalized clause and gets GEN from D. The object receives ABS. -/
-def ArgPosition.accCase : ArgPosition → CaseVal
+def ArgPosition.accCase : ArgPosition → Core.Case
   | .agent   => .gen
   | .patient => .abs
   | .intranS => .gen

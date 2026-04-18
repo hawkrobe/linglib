@@ -196,9 +196,9 @@ theorem must_empty (φ : W → Bool) : mustS ([] : InfoState W) φ = true := by
 /-- Representational attitude embedding: S' = DOX(x,w).
     The doxastic alternatives form the information state that
     embedded epistemics quantify over. -/
-def representationalS {E : Type*} (R : AccessRel W E)
+def representationalS {E : Type*} (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W) : InfoState W :=
-  worlds.filter (R agent w)
+  worlds.filter (fun w' => decide (R agent w w'))
 
 /-- Non-representational attitude embedding: S' = ∅.
     Comparative semantics provides no information state. -/
@@ -207,14 +207,15 @@ def nonRepresentationalS : InfoState W := []
 /-- Representational attitudes yield non-trivial information states
     (when there is at least one accessible world). -/
 theorem representational_nontrivial {E : Type*} (R : AccessRel W E)
+    [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W)
-    (h : ∃ w' ∈ worlds, R agent w w' = true) :
+    (h : ∃ w' ∈ worlds, R agent w w') :
     nonTrivial (representationalS R agent w worlds) = true := by
   obtain ⟨w', hw'_in, hw'_acc⟩ := h
   unfold nonTrivial representationalS
-  have hmem : w' ∈ worlds.filter (R agent w) :=
+  have hmem : w' ∈ worlds.filter (fun w' => decide (R agent w w')) :=
     List.mem_filter.mpr ⟨hw'_in, by simp [hw'_acc]⟩
-  cases hf : worlds.filter (R agent w) with
+  cases hf : worlds.filter (fun w' => decide (R agent w w')) with
   | nil => simp [hf] at hmem
   | cons _ _ => rfl
 
@@ -230,10 +231,17 @@ theorem nonRepresentational_trivial :
 /-- Under a representational attitude, embedded `must p` holds iff
     all doxastic alternatives satisfy p — a non-trivial claim. -/
 theorem believe_must {E : Type*} (R : AccessRel W E)
+    [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W) (p : W → Bool) :
-    mustS (representationalS R agent w worlds) p =
-    boxAt R agent w worlds p := by
-  simp only [mustS, representationalS, boxAt, List.all_filter]
+    mustS (representationalS R agent w worlds) p = true ↔
+    boxAt R agent w worlds (fun w' => p w' = true) := by
+  simp only [mustS, representationalS, boxAt, List.all_eq_true,
+    List.mem_filter, decide_eq_true_eq]
+  constructor
+  · intro h w' hw' hR
+    exact h w' ⟨hw', hR⟩
+  · intro h w' ⟨hw', hR⟩
+    exact h w' hw' hR
 
 /-- Under a non-representational attitude, `must p` is trivially true. -/
 theorem want_must_trivial (p : W → Bool) :

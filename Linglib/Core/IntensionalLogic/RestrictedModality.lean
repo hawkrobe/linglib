@@ -30,9 +30,10 @@ modal logic in linglib. It provides:
    `s5Nec`/`s5Poss` (IL's S5 = universal accessibility). Proves the formal
    embedding: S5 ⊂ Indicial ⊂ All PropOps.
 
-3. **Bool bridge**: `BAccessRel`, `BRefl`/`BSerial`/etc., `liftR`, `kripkeEval`
-   for computational evaluation over finite domains. Following mathlib style:
-   define in Prop, provide Decidable instances, compute with `decide`.
+3. **Decidable instances**: for `Refl`/`Serial`/`Trans`/`Symm`/`Eucl` and
+   `boxR`/`diamondR` over finite worlds with decidable accessibility and
+   propositions. Following mathlib style: define in Prop, provide Decidable
+   instances, compute with `decide`.
 
 4. **Logic lattice**: `Axiom`, `Logic`, standard logics (K, T, D, S4, S5, KD45),
    lattice instances, `frameConditions`.
@@ -474,189 +475,34 @@ theorem indicialNec_emptyR (p : W → Prop) (w : W) :
   intro v hv; exact absurd hv (by simp [emptyR])
 
 -- ════════════════════════════════════════════════════════════════════════
--- § 3. Bool Bridge — Computational Accessibility
+-- § 3. Decidable Instances over Finite Worlds
 -- ════════════════════════════════════════════════════════════════════════
 
-/-! Bool-valued accessibility relations for computation over finite domains.
-Following mathlib conventions: the canonical definitions are Prop-valued
-(§1 above), and Bool versions bridge to them via `= true`. -/
+/-! Following mathlib conventions: definitions are `Prop`-valued (§1 above),
+with `Decidable` instances providing computation. With `[FiniteWorlds W]`,
+`[DecidableRel R]`, and `[DecidablePred p]`, formulas like `boxR R p w` and
+`Refl R` reduce by `decide`. -/
 
--- ────────────────────────────────────────────────────────────────
--- §3.1 Bool Accessibility Relations
--- ────────────────────────────────────────────────────────────────
+open Core.Proposition (FiniteWorlds)
 
-/-- Bool-valued accessibility relation. -/
-abbrev BAccessRel (W : Type*) := W → W → Bool
+/-- `boxR R p w` is decidable when worlds enumerate, accessibility is decidable,
+    and the proposition is decidable. -/
+instance boxR_decidable {W : Type*} [FiniteWorlds W]
+    (R : AccessRel W) (p : W → Prop) (w : W)
+    [∀ v, Decidable (R w v)] [DecidablePred p] :
+    Decidable (boxR R p w) :=
+  decidable_of_iff (∀ v ∈ FiniteWorlds.worlds, R w v → p v)
+    ⟨fun h v hwv => h v (FiniteWorlds.complete v) hwv,
+     fun h v _ hwv => h v hwv⟩
 
-/-- Agent-indexed Bool accessibility relation. -/
-abbrev BAgentAccessRel (W E : Type*) := E → BAccessRel W
-
-/-- Lift a Bool accessibility relation to Prop. -/
-def liftR {W : Type*} (R : BAccessRel W) : AccessRel W := fun w v => R w v = true
-
--- ────────────────────────────────────────────────────────────────
--- §3.2 Bool Frame Conditions
--- ────────────────────────────────────────────────────────────────
-
-def BRefl {W : Type*} (R : BAccessRel W) : Prop := ∀ w : W, R w w = true
-def BSerial {W : Type*} (R : BAccessRel W) : Prop := ∀ w : W, ∃ v : W, R w v = true
-def BTrans {W : Type*} (R : BAccessRel W) : Prop :=
-  ∀ w v u : W, R w v = true → R v u = true → R w u = true
-def BSymm {W : Type*} (R : BAccessRel W) : Prop := ∀ w v : W, R w v = true → R v w = true
-def BEucl {W : Type*} (R : BAccessRel W) : Prop :=
-  ∀ w v u : W, R w v = true → R w u = true → R v u = true
-
--- ────────────────────────────────────────────────────────────────
--- §3.3 Bool ↔ Prop Bridge
--- ────────────────────────────────────────────────────────────────
-
-theorem BRefl_iff_Refl {W : Type*} (R : BAccessRel W) : BRefl R ↔ Refl (liftR R) := Iff.rfl
-theorem BSerial_iff_Serial {W : Type*} (R : BAccessRel W) : BSerial R ↔ Serial (liftR R) := Iff.rfl
-theorem BTrans_iff_Trans {W : Type*} (R : BAccessRel W) : BTrans R ↔ Trans (liftR R) := Iff.rfl
-theorem BSymm_iff_Symm {W : Type*} (R : BAccessRel W) : BSymm R ↔ Symm (liftR R) := Iff.rfl
-theorem BEucl_iff_Eucl {W : Type*} (R : BAccessRel W) : BEucl R ↔ Eucl (liftR R) := Iff.rfl
-
--- ────────────────────────────────────────────────────────────────
--- §3.4 Bool Frame Condition Relationships
--- ────────────────────────────────────────────────────────────────
-
-theorem brefl_serial {R : BAccessRel W} (h : BRefl R) : BSerial R :=
-  fun w => ⟨w, h w⟩
-
-theorem brefl_eucl_symm {R : BAccessRel W} (hR : BRefl R) (hE : BEucl R) : BSymm R :=
-  fun w v hwv => hE w v w hwv (hR w)
-
-theorem brefl_eucl_trans {R : BAccessRel W} (hR : BRefl R) (hE : BEucl R) : BTrans R :=
-  fun w v u hwv hvu => hE v w u (brefl_eucl_symm hR hE w v hwv) hvu
-
-theorem bsymm_trans_eucl {R : BAccessRel W} (hS : BSymm R) (hT : BTrans R) : BEucl R :=
-  fun w v u hwv hwu => hT v w u (hS w v hwv) hwu
-
-/-- S5 Bool frames are equivalence relations. -/
-theorem BS5_equiv {R : BAccessRel W} (hR : BRefl R) (hE : BEucl R) :
-    BRefl R ∧ BSymm R ∧ BTrans R :=
-  ⟨hR, brefl_eucl_symm hR hE, brefl_eucl_trans hR hE⟩
-
-/-- S5 collapse for Bool frames. -/
-theorem BS5_collapse {R : BAccessRel W} (hM : BRefl R) (h5 : BEucl R) :
-    BRefl R ∧ BSerial R ∧ BSymm R ∧ BTrans R ∧ BEucl R :=
-  ⟨hM, brefl_serial hM, brefl_eucl_symm hM h5, brefl_eucl_trans hM h5, h5⟩
-
--- ────────────────────────────────────────────────────────────────
--- §3.5 Standard Bool Frames
--- ────────────────────────────────────────────────────────────────
-
-def universalBR {W : Type*} : BAccessRel W := fun _ _ => true
-def emptyBR {W : Type*} : BAccessRel W := fun _ _ => false
-def identityBR {W : Type*} [DecidableEq W] : BAccessRel W := fun w v => w == v
-
-@[simp] theorem universalBR_refl {W : Type*} : BRefl (universalBR (W := W)) := fun _ => rfl
-@[simp] theorem universalBR_symm {W : Type*} : BSymm (universalBR (W := W)) := fun _ _ _ => rfl
-@[simp] theorem universalBR_trans {W : Type*} : BTrans (universalBR (W := W)) := fun _ _ _ _ _ => rfl
-@[simp] theorem universalBR_eucl {W : Type*} : BEucl (universalBR (W := W)) := fun _ _ _ _ _ => rfl
-@[simp] theorem universalBR_serial {W : Type*} : BSerial (universalBR (W := W)) := fun w => ⟨w, rfl⟩
-
-theorem identityBR_refl {W : Type*} [DecidableEq W] : BRefl (identityBR (W := W)) :=
-  fun w => by simp [identityBR]
-
--- ────────────────────────────────────────────────────────────────
--- §3.6 Kripke Evaluation (Bool computation)
--- ────────────────────────────────────────────────────────────────
-
-open Core.Proposition (FiniteWorlds BProp)
-open Core.Modality (ModalForce)
-
-/-- Bool-valued Kripke evaluation of modal formulas over finite worlds. -/
-def kripkeEval {W : Type*} [FiniteWorlds W] (R : BAccessRel W) (force : ModalForce)
-    (p : BProp W) (w : W) : Bool :=
-  let accessible := FiniteWorlds.worlds.filter (R w)
-  match force with
-  | .necessity => accessible.all p
-  | .weakNecessity => accessible.all p  -- same ∀; the caller passes a
-      -- different (refined) R to model weak necessity — see Directive.lean
-  | .possibility => accessible.any p
-
-theorem kripke_duality {W : Type*} [FiniteWorlds W] (R : BAccessRel W) (p : BProp W) (w : W) :
-    kripkeEval R .necessity p w = !kripkeEval R .possibility (fun v => !p v) w := by
-  unfold kripkeEval
-  induction FiniteWorlds.worlds.filter (R w) with
-  | nil => rfl
-  | cons x xs ih => simp only [List.all_cons, List.any_cons, Bool.not_or, Bool.not_not]
-                    cases p x <;> simp [ih]
-
--- ────────────────────────────────────────────────────────────────
--- §3.7 Bool Frame Correspondence
--- ────────────────────────────────────────────────────────────────
-
-/-- T axiom: □p → p (for Bool accessibility over finite worlds). -/
-theorem T_of_refl {W : Type*} [FiniteWorlds W] {R : BAccessRel W}
-    (hR : BRefl R) (p : BProp W) (w : W)
-    (h : kripkeEval R .necessity p w = true) : p w = true := by
-  unfold kripkeEval at h
-  have hW : w ∈ FiniteWorlds.worlds.filter (R w) := by
-    simp only [List.mem_filter]; exact ⟨FiniteWorlds.complete w, hR w⟩
-  exact List.all_eq_true.mp h w hW
-
-/-- D axiom: □p → ◇p (for Bool accessibility). -/
-theorem D_of_serial {W : Type*} [FiniteWorlds W] {R : BAccessRel W}
-    (hS : BSerial R) (p : BProp W) (w : W)
-    (h : kripkeEval R .necessity p w = true) :
-    kripkeEval R .possibility p w = true := by
-  unfold kripkeEval at h ⊢
-  obtain ⟨v, hRwv⟩ := hS w
-  have hV : v ∈ FiniteWorlds.worlds.filter (R w) := by
-    simp only [List.mem_filter]; exact ⟨FiniteWorlds.complete v, hRwv⟩
-  exact List.any_eq_true.mpr ⟨v, hV, List.all_eq_true.mp h v hV⟩
-
-/-- K axiom: □(p → q) → □p → □q (for Bool accessibility). -/
-theorem K_axiom {W : Type*} [FiniteWorlds W] (R : BAccessRel W) (p q : BProp W) (w : W)
-    (hImp : kripkeEval R .necessity (fun v => !p v || q v) w = true)
-    (hP : kripkeEval R .necessity p w = true) :
-    kripkeEval R .necessity q w = true := by
-  unfold kripkeEval at *
-  apply List.all_eq_true.mpr; intro v hV
-  have := List.all_eq_true.mp hImp v hV
-  have := List.all_eq_true.mp hP v hV
-  cases hp : p v <;> simp_all
-
-/-- 4 axiom: □p → □□p (for Bool accessibility). -/
-theorem four_of_trans {W : Type*} [FiniteWorlds W] {R : BAccessRel W}
-    (hT : BTrans R) (p : BProp W) (w : W)
-    (h : kripkeEval R .necessity p w = true) :
-    kripkeEval R .necessity (kripkeEval R .necessity p) w = true := by
-  unfold kripkeEval at h ⊢
-  apply List.all_eq_true.mpr; intro v hV
-  apply List.all_eq_true.mpr; intro u hU
-  simp only [List.mem_filter] at hV hU
-  have hWU : u ∈ FiniteWorlds.worlds.filter (R w) := by
-    simp only [List.mem_filter]; exact ⟨hU.1, hT w v u hV.2 hU.2⟩
-  exact List.all_eq_true.mp h u hWU
-
-/-- B axiom: p → □◇p (for Bool accessibility). -/
-theorem B_of_symm {W : Type*} [FiniteWorlds W] {R : BAccessRel W}
-    (hS : BSymm R) (p : BProp W) (w : W) (hP : p w = true) :
-    kripkeEval R .necessity (kripkeEval R .possibility p) w = true := by
-  unfold kripkeEval
-  apply List.all_eq_true.mpr; intro v hV
-  apply List.any_eq_true.mpr
-  simp only [List.mem_filter] at hV
-  have hW : w ∈ FiniteWorlds.worlds.filter (R v) := by
-    simp only [List.mem_filter]; exact ⟨FiniteWorlds.complete w, hS w v hV.2⟩
-  exact ⟨w, hW, hP⟩
-
-/-- 5 axiom: ◇p → □◇p (for Bool accessibility). -/
-theorem five_of_eucl {W : Type*} [FiniteWorlds W] {R : BAccessRel W}
-    (hE : BEucl R) (p : BProp W) (w : W)
-    (h : kripkeEval R .possibility p w = true) :
-    kripkeEval R .necessity (kripkeEval R .possibility p) w = true := by
-  unfold kripkeEval at h ⊢
-  obtain ⟨u, hU, hPu⟩ := List.any_eq_true.mp h
-  apply List.all_eq_true.mpr; intro v hV
-  apply List.any_eq_true.mpr
-  simp only [List.mem_filter] at hU hV
-  have hVU : u ∈ FiniteWorlds.worlds.filter (R v) := by
-    simp only [List.mem_filter]; exact ⟨hU.1, hE w v u hV.2 hU.2⟩
-  exact ⟨u, hVU, hPu⟩
+/-- `diamondR R p w` is decidable under the same conditions as `boxR`. -/
+instance diamondR_decidable {W : Type*} [FiniteWorlds W]
+    (R : AccessRel W) (p : W → Prop) (w : W)
+    [∀ v, Decidable (R w v)] [DecidablePred p] :
+    Decidable (diamondR R p w) :=
+  decidable_of_iff (∃ v ∈ FiniteWorlds.worlds, R w v ∧ p v)
+    ⟨fun ⟨v, _, hwv, hpv⟩ => ⟨v, hwv, hpv⟩,
+     fun ⟨v, hwv, hpv⟩ => ⟨v, FiniteWorlds.complete v, hwv, hpv⟩⟩
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 4. Lattice of Normal Modal Logics
@@ -734,15 +580,7 @@ theorem top_all_axioms : top = ⊤ := rfl
 
 def hasAxiom (L : Logic) (a : Axiom) : Bool := a ∈ L.axioms
 
-/-- Frame conditions required by a logic (Bool accessibility). -/
-def bframeConditions {W : Type*} (L : Logic) (R : BAccessRel W) : Prop :=
-  (L.hasAxiom .M → BRefl R) ∧
-  (L.hasAxiom .D → BSerial R) ∧
-  (L.hasAxiom .B → BSymm R) ∧
-  (L.hasAxiom .four → BTrans R) ∧
-  (L.hasAxiom .five → BEucl R)
-
-/-- Frame conditions required by a logic (Prop accessibility). -/
+/-- Frame conditions required by a logic. -/
 def frameConditions {W : Type*} (L : Logic) (R : AccessRel W) : Prop :=
   (L.hasAxiom .M → Refl R) ∧
   (L.hasAxiom .D → Serial R) ∧

@@ -27,11 +27,11 @@ namespace Minimalism
 -- Clause Type Triggers (Inversion-Specific)
 
 /-- Matrix questions trigger T-to-C movement (to check [+Q] on C) -/
-def matrixTriggersTToC (ct : ClauseType) (tPos : TPosition) : Prop :=
+def matrixTriggersTToC (ct : ClauseForm) (tPos : TPosition) : Prop :=
   ct = .matrixQuestion → tPos = .inC
 
 /-- Embedded questions don't trigger T-to-C (C's [+Q] is checked otherwise) -/
-def embeddedNoTToC (ct : ClauseType) (tPos : TPosition) : Prop :=
+def embeddedNoTToC (ct : ClauseForm) (tPos : TPosition) : Prop :=
   ct = .embeddedQuestion → tPos = .inT
 
 -- Derived Word Order Predictions
@@ -57,7 +57,7 @@ theorem embedded_has_subject_before_t (tPos : TPosition)
 structure Clause where
   words : List Word
   tPosition : TPosition
-  clauseType : ClauseType
+  clauseType : ClauseForm
 
 /-- Word order must match the structural prediction -/
 def wordOrderMatchesStructure (c : Clause) : Prop :=
@@ -71,7 +71,7 @@ def wellFormed (c : Clause) : Prop :=
   embeddedNoTToC c.clauseType c.tPosition
 
 /-- A word sequence is licensed for a clause type if some T-position works -/
-def licenses (ws : List Word) (ct : ClauseType) : Prop :=
+def licenses (ws : List Word) (ct : ClauseForm) : Prop :=
   ∃ tPos : TPosition, wellFormed ⟨ws, tPos, ct⟩
 
 -- Licensing Theorems
@@ -150,7 +150,7 @@ example : ¬ licenses [can, john, eat] .embeddedQuestion :=
 /-
 Both frameworks predict the same surface patterns:
 
-| Sentence              | ClauseType     | HPSG           | Minimalism      |
+| Sentence              | ClauseForm     | HPSG           | Minimalism      |
 |-----------------------|----------------|----------------|-----------------|
 | What can John eat?    | matrixQuestion | INV+ → aux<subj| T-to-C → T<Subj |
 | What John can eat?    | matrixQuestion | *needs INV+    | *needs T-to-C   |

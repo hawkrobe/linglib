@@ -171,27 +171,27 @@ def AllomorphyPattern.isContiguous (p : AllomorphyPattern) : Bool :=
 -- ============================================================================
 
 def abbPattern : AllomorphyPattern := ⟨0, 1, 1, 1⟩
-theorem abb_contiguous : abbPattern.isContiguous = true := by native_decide
-theorem abb_no_aba : abbPattern.violatesABA = false := by native_decide
+theorem abb_contiguous : abbPattern.isContiguous = true := by decide
+theorem abb_no_aba : abbPattern.violatesABA = false := by decide
 
 def aabPattern : AllomorphyPattern := ⟨0, 0, 0, 1⟩
-theorem aab_contiguous : aabPattern.isContiguous = true := by native_decide
+theorem aab_contiguous : aabPattern.isContiguous = true := by decide
 
 def aabbPattern : AllomorphyPattern := ⟨0, 0, 1, 1⟩
-theorem aabb_contiguous : aabbPattern.isContiguous = true := by native_decide
+theorem aabb_contiguous : aabbPattern.isContiguous = true := by decide
 
 def ababPattern : AllomorphyPattern := ⟨0, 1, 0, 1⟩
-theorem abab_violates_aba : ababPattern.violatesABA = true := by native_decide
-theorem abab_not_contiguous : ababPattern.isContiguous = false := by native_decide
+theorem abab_violates_aba : ababPattern.violatesABA = true := by decide
+theorem abab_not_contiguous : ababPattern.isContiguous = false := by decide
 
 def abaPattern : AllomorphyPattern := ⟨0, 1, 0, 0⟩
-theorem aba_violates : abaPattern.violatesABA = true := by native_decide
+theorem aba_violates : abaPattern.violatesABA = true := by decide
 
 def babPattern : AllomorphyPattern := ⟨1, 0, 1, 0⟩
-theorem bab_violates : babPattern.violatesABA = true := by native_decide
+theorem bab_violates : babPattern.violatesABA = true := by decide
 
 def uniformPattern : AllomorphyPattern := ⟨0, 0, 0, 0⟩
-theorem uniform_contiguous : uniformPattern.isContiguous = true := by native_decide
+theorem uniform_contiguous : uniformPattern.isContiguous = true := by decide
 
 -- ============================================================================
 -- § 6: Containment vs. Typological Hierarchy
@@ -246,19 +246,19 @@ def comInstSyncretism : Syncretism :=
 -- § 9: Adjacency Theorems
 -- ============================================================================
 
-theorem nom_acc_adjacent : hierarchyAdjacent .nom .acc = true := by native_decide
-theorem com_inst_adjacent : hierarchyAdjacent .com .inst = true := by native_decide
-theorem dat_loc_adjacent : hierarchyAdjacent .dat .loc = true := by native_decide
-theorem gen_dat_adjacent : hierarchyAdjacent .gen .dat = true := by native_decide
+theorem nom_acc_adjacent : hierarchyAdjacent .nom .acc = true := by decide
+theorem com_inst_adjacent : hierarchyAdjacent .com .inst = true := by decide
+theorem dat_loc_adjacent : hierarchyAdjacent .dat .loc = true := by decide
+theorem gen_dat_adjacent : hierarchyAdjacent .gen .dat = true := by decide
 
 /-- ERG/INST syncretism does NOT satisfy strict adjacency (ranks 6, 2) —
     this is Blake's known exception, explained by historical derivation. -/
 theorem erg_inst_not_strictly_adjacent :
-    hierarchyAdjacent .erg .inst = false := by native_decide
+    hierarchyAdjacent .erg .inst = false := by decide
 
 /-- But ERG/INST IS inventory-adjacent in a system with only {ERG, ABS, INST}. -/
 theorem erg_inst_inv_adjacent :
-    inventoryAdjacent [.erg, .abs, .inst] .erg .inst = true := by native_decide
+    inventoryAdjacent [.erg, .abs, .inst] .erg .inst = true := by decide
 
 /-- Same-tier cases are always strictly adjacent. -/
 theorem same_tier_adjacent (c1 c2 : Case)
@@ -271,19 +271,19 @@ theorem same_tier_adjacent (c1 c2 : Case)
 -- ============================================================================
 
 theorem neuter_syncretism_contiguous :
-    (AllomorphyPattern.mk 0 0 1 1).isContiguous = true := by native_decide
+    (AllomorphyPattern.mk 0 0 1 1).isContiguous = true := by decide
 
 theorem nom_gen_without_acc_violates_aba :
-    (AllomorphyPattern.mk 0 1 0 1).violatesABA = true := by native_decide
+    (AllomorphyPattern.mk 0 1 0 1).violatesABA = true := by decide
 
 theorem acc_gen_syncretism_contiguous :
-    (AllomorphyPattern.mk 0 1 1 2).isContiguous = true := by native_decide
+    (AllomorphyPattern.mk 0 1 1 2).isContiguous = true := by decide
 
 theorem gen_dat_syncretism_contiguous :
-    (AllomorphyPattern.mk 0 1 2 2).isContiguous = true := by native_decide
+    (AllomorphyPattern.mk 0 1 2 2).isContiguous = true := by decide
 
 theorem nom_dat_syncretism_violates_aba :
-    (AllomorphyPattern.mk 0 1 1 0).violatesABA = true := by native_decide
+    (AllomorphyPattern.mk 0 1 1 0).violatesABA = true := by decide
 
 -- ============================================================================
 -- § 11: Anderson's Features Explain Syncretism
@@ -295,7 +295,7 @@ theorem erg_inst_share_src :
     (Case.toCaseRelation .erg).map CaseRelation.src = some true ∧
     (Case.toCaseRelation .inst).map CaseRelation.src = some true ∧
     hierarchyAdjacent .erg .inst = false :=
-  ⟨rfl, rfl, by native_decide⟩
+  ⟨rfl, rfl, by decide⟩
 
 /-- NOM/ACC syncretism (neuter nouns): both contain the abs feature. -/
 theorem nom_acc_share_abs :

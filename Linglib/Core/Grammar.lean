@@ -6,7 +6,13 @@ import Linglib.Core.Lexical.Word
 Grammar comparison interface and empirical testing infrastructure.
 
 Defines:
-- `ClauseType` — sentence types (declarative, question variants)
+- `ClauseForm` — surface clause-form distinctions relevant to word
+  order (declarative, matrix/embedded/echo question). Distinct from
+  `Core.Mood.ClauseType` (force × verbal mood) — `ClauseForm` is a
+  syntactic form distinction; `Core.Mood.ClauseType` is a semantic
+  force/mood pairing. The two complement each other: a polar question
+  has `ClauseForm = matrixQuestion` and `Core.Mood.ClauseType =
+  ⟨interrogative, indicative⟩`.
 - `Grammar` typeclass — assigns derivations to strings
 - `MinimalPair` / `PhenomenonData` — word-based grammaticality testing
 - `SentencePair` / `StringPhenomenonData` — theory-neutral string-based testing
@@ -17,7 +23,7 @@ Defines:
 -- V2 Data (Theory-Neutral)
 -- ============================================================================
 
-/-- Theory-neutral V2 data: for each clause type, whether verb movement
+/-- Theory-neutral V2 data: for each clause form, whether verb movement
     to second position is observed. Used by Fragment V2 files for
     descriptive encoding of cross-Germanic V2 variation. -/
 structure V2Data where
@@ -32,11 +38,17 @@ structure V2Data where
   deriving Repr, DecidableEq
 
 -- ============================================================================
--- Clause Types
+-- Clause Forms
 -- ============================================================================
 
-/-- Clause types - determines constraints on word order. -/
-inductive ClauseType where
+/-- Clause forms — surface form distinctions that constrain word order.
+
+    Distinct from `Core.Mood.ClauseForm`, which pairs illocutionary force
+    with verbal (grammatical) mood. `ClauseForm` records the *syntactic*
+    distinction relevant to inversion and other word-order alternations
+    (matrix question vs embedded question vs echo question), independently
+    of force × mood. -/
+inductive ClauseForm where
   | declarative
   | matrixQuestion      -- requires inversion in English
   | embeddedQuestion    -- no inversion in English
@@ -77,10 +89,10 @@ def subjectPrecedesAux (ws : List Word) : Bool :=
 class Grammar (G : Type) where
   /-- The type of derivations/analyses this grammar produces -/
   Derivation : Type
-  /-- Whether a derivation yields a given string with given clause type -/
-  realizes : Derivation → List Word → ClauseType → Prop
+  /-- Whether a derivation yields a given string with given clause form -/
+  realizes : Derivation → List Word → ClauseForm → Prop
   /-- Whether the grammar can produce *some* derivation for a string -/
-  derives : G → List Word → ClauseType → Prop
+  derives : G → List Word → ClauseForm → Prop
 
 -- ============================================================================
 -- Minimal Pairs (Word-Based)
@@ -90,7 +102,7 @@ class Grammar (G : Type) where
 structure MinimalPair where
   grammatical : List Word
   ungrammatical : List Word
-  clauseType : ClauseType
+  clauseType : ClauseForm
   description : String
   citation : Option String := none
 
@@ -147,8 +159,8 @@ structure SentencePair where
   grammatical : String
   /-- The ungrammatical sentence -/
   ungrammatical : String
-  /-- Clause type (declarative, question, etc.) -/
-  clauseType : ClauseType
+  /-- Clause form (declarative, question, etc.) -/
+  clauseType : ClauseForm
   /-- Description of what the pair tests -/
   description : String
   /-- Optional citation for the data -/

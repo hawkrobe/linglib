@@ -51,8 +51,13 @@ namespace Implicature.Constraints.Wang2025
 
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
-open Core.IntensionalLogic.RestrictedModality (BAccessRel kripkeEval)
 open Core.Proposition (BProp FiniteWorlds)
+
+/-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
+of the speaker-K operator. The Prop-valued canonical version lives in
+`Core.IntensionalLogic.RestrictedModality.AccessRel`; lift via
+`fun a b => R a b = true` to bridge. -/
+abbrev BAccessRel (W : Type*) := W → W → Bool
 open Interfaces (FelicityStatus FelicityResult)
 open Implicature.Presuppositions (AltStructure PragConstraint Obligatoriness)
 open Pragmatics.Expressives (ciLift)
@@ -189,10 +194,11 @@ epistemic stance. It scopes relative to exh_mx:
 - K >> exh_mx: preferred for atomic sentences
 - exh_mx >> K: available for complex sentences
 
-Uses the existing Kripke accessibility relation from Core.IntensionalLogic.RestrictedModality.
+Uses a local Bool-valued accessibility relation; for the Prop-valued
+canonical Kripke semantics see `Core.IntensionalLogic.RestrictedModality.boxR`.
 -/
 def speakerK [FiniteWorlds W] (R : BAccessRel W) (φ : BProp W) : BProp W :=
-  kripkeEval R .necessity φ
+  fun w => (FiniteWorlds.worlds.filter (R w)).all φ
 
 
 -- ============================================================================

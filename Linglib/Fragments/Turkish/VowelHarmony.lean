@@ -96,21 +96,21 @@ def o_vowel : Segment := Segment.ofSpecs
 
 /-- Palatal harmony: [back] spreads from the last stem vowel to all suffix
     vowels. Every vowel is both trigger and target; no transparency. -/
-def palatalHarmony : HarmonySystem where
-  feature       := .back
-  isTrigger     := (·.hasValue .syllabic true)
-  isTarget      := (·.hasValue .syllabic true)
-  isTransparent := (λ _ => false)
-  direction     := .rightward
+def palatalHarmony : HarmonySystem :=
+  HarmonySystem.mk' (feature := .back)
+    (isTrigger     := (·.hasValue .syllabic true))
+    (isTarget      := (·.hasValue .syllabic true))
+    (isTransparent := (λ _ => false))
+    (direction     := .rightward)
 
 /-- Labial harmony: [round] spreads from the last stem vowel to high suffix
     vowels only. Every vowel triggers; only [+high] vowels are targets. -/
-def labialHarmony : HarmonySystem where
-  feature       := .round
-  isTrigger     := (·.hasValue .syllabic true)
-  isTarget      := (λ s => s.hasValue .syllabic true && s.hasValue .high true)
-  isTransparent := (λ _ => false)
-  direction     := .rightward
+def labialHarmony : HarmonySystem :=
+  HarmonySystem.mk' (feature := .round)
+    (isTrigger     := (·.hasValue .syllabic true))
+    (isTarget      := (λ s => s.hasValue .syllabic true && s.hasValue .high true))
+    (isTransparent := (λ _ => false))
+    (direction     := .rightward)
 
 -- ============================================================================
 -- § 3: Archiphoneme Resolution

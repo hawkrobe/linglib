@@ -8,6 +8,10 @@ No distinct vocative in standard Russian (unlike Ukrainian, Czech, Polish).
 
 The inventory is perfectly contiguous on Blake's hierarchy.
 
+For @cite{pesetsky-2013}'s POS-as-case reduction over the four core
+cases (NOM=D, ACC=V, GEN=N, DAT=P), see
+`Phenomena.Case.Studies.Pesetsky2013`, which imports this fragment.
+
 -/
 
 namespace Fragments.Russian.Case

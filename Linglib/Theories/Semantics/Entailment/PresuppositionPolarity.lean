@@ -25,12 +25,14 @@ Local context theory unifies presupposition projection and implicature:
 
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.Proposition
+import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
 
 namespace Semantics.Entailment.PresuppositionPolarity
 
+open Core.Proposition (Prop')
 open Core.Presupposition
-open Semantics.Entailment.Polarity
+open Semantics.Entailment
 open Semantics.Entailment.Polarity
 
 variable {W : Type*}
@@ -78,11 +80,11 @@ A presupposition projection context tracks both:
 -/
 structure PresupContext (W : Type*) where
   /-- The semantic context function (for computing entailments) -/
-  context : BProp World -> BProp World
+  context : Prop' World -> Prop' World
   /-- Whether the context is UE or DE -/
   polarity : ContextPolarity
   /-- The presupposition accumulated from outer operators -/
-  accumulatedPresup : BProp W
+  accumulatedPresup : Prop' W
 
 /--
 Compose two presupposition contexts.
@@ -101,7 +103,7 @@ def composePresupContext (outer inner : PresupContext W) : PresupContext W :=
       | .downward, .downward => .upward  -- DE ∘ DE = UE
       | .nonMonotonic, _ => .nonMonotonic
       | _, .nonMonotonic => .nonMonotonic
-  , accumulatedPresup := λ w => outer.accumulatedPresup w && inner.accumulatedPresup w
+  , accumulatedPresup := λ w => outer.accumulatedPresup w ∧ inner.accumulatedPresup w
   }
 
 /--
@@ -110,7 +112,7 @@ The identity presupposition context.
 def identityPresupContext : PresupContext W :=
   { context := id
   , polarity := .upward
-  , accumulatedPresup := λ _ => true
+  , accumulatedPresup := λ _ => True
   }
 
 /--
@@ -119,7 +121,7 @@ Negation context: flips polarity, preserves presupposition.
 def negationPresupContext : PresupContext W :=
   { context := pnot
   , polarity := .downward
-  , accumulatedPresup := λ _ => true
+  , accumulatedPresup := λ _ => True
   }
 
 

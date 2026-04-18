@@ -25,16 +25,16 @@ inductive Animal where
 def allAnimals : List Animal := [.dog1, .dog2, .cat1, .cat2]
 
 /-- Proposition: x is a dog. -/
-def isDog : BProp Animal := λ x => match x with
-  | .dog1 | .dog2 => true
-  | _ => false
+def isDog : Prop' Animal := λ x => match x with
+  | .dog1 | .dog2 => True
+  | _ => False
 
 /-- Proposition: x is an animal (tautology in this domain). -/
-def isAnimal : BProp Animal := λ _ => true
+def isAnimal : Prop' Animal := λ _ => True
 
 /-- dogs subset animals: isDog |= isAnimal. -/
-theorem dogs_subset_animals : ∀ x, isDog x = true → isAnimal x = true := by
-  intro x _; rfl
+theorem dogs_subset_animals : ∀ x, isDog x → isAnimal x := by
+  intro x _; trivial
 
 end TestDomain
 
@@ -42,19 +42,19 @@ section DEVerification
 
 /-- Negation is DE: dogs <= animals implies not-animal <= not-dog. -/
 theorem negation_de_test :
-    ∀ x, Decidable.pnot Animal isAnimal x = true →
-         Decidable.pnot Animal isDog x = true :=
-  Decidable.pnot_reverses_entailment isDog isAnimal dogs_subset_animals
+    ∀ x, Classical.pnot Animal isAnimal x → Classical.pnot Animal isDog x := by
+  intro x hna hd
+  exact hna (dogs_subset_animals x hd)
 
 /-- DE prediction matches `negation_de_valid`. -/
 theorem de_prediction_matches_data :
     negation_de_valid.judgedValid = true := rfl
 
 /-- Negation is not UE: not-dog does not entail not-animal. -/
-example : ∃ x, Decidable.pnot Animal isDog x = true ∧
-               Decidable.pnot Animal isAnimal x = false := by
-  use Animal.cat1
-  simp [Decidable.pnot, isDog, isAnimal]
+example : ∃ x, Classical.pnot Animal isDog x ∧ ¬ Classical.pnot Animal isAnimal x := by
+  refine ⟨Animal.cat1, ?_, ?_⟩
+  · intro h; cases h
+  · intro h; exact h trivial
 
 /-- Not-UE prediction matches `negation_not_ue`. -/
 theorem not_ue_prediction_matches_data :

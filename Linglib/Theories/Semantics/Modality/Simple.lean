@@ -14,7 +14,35 @@ import Linglib.Core.IntensionalLogic.RestrictedModality
 namespace Semantics.Modality
 
 open Semantics.Attitudes.Intensional
-open Core.IntensionalLogic.RestrictedModality (BRefl BSerial BTrans BSymm BEucl)
+
+/-! ## Local Bool-valued Frame Conditions
+
+This file uses Bool-valued accessibility relations `World → World → Bool`
+for computational evaluation. The canonical Prop-valued frame conditions
+live in `Core.IntensionalLogic.RestrictedModality`. We define local Bool
+mirrors here for use with this file's Bool-internal `Simple` theory. -/
+
+/-- Bool-valued reflexivity. -/
+abbrev BRefl (R : World → World → Bool) : Prop := ∀ w, R w w = true
+
+/-- Bool-valued seriality. -/
+abbrev BSerial (R : World → World → Bool) : Prop := ∀ w, ∃ v, R w v = true
+
+/-- Bool-valued transitivity. -/
+abbrev BTrans (R : World → World → Bool) : Prop :=
+  ∀ w v u, R w v = true → R v u = true → R w u = true
+
+/-- Bool-valued symmetry. -/
+abbrev BSymm (R : World → World → Bool) : Prop :=
+  ∀ w v, R w v = true → R v w = true
+
+/-- Bool-valued Euclideanness. -/
+abbrev BEucl (R : World → World → Bool) : Prop :=
+  ∀ w v u, R w v = true → R w u = true → R v u = true
+
+/-- Reflexive implies serial (Bool form). -/
+theorem brefl_serial {R : World → World → Bool} (h : BRefl R) : BSerial R :=
+  fun w => ⟨w, h w⟩
 
 /-- Construct a simple modal theory from accessibility relation R. -/
 def Simple (R : World → World → Bool) : ModalTheory where
@@ -32,16 +60,16 @@ def Simple (R : World → World → Bool) : ModalTheory where
 section AccessibilityRelations
 
 /-- Universal accessibility: every world is accessible from every world.
-Matches `Core.IntensionalLogic.RestrictedModality.universalBR`. -/
-def universalR : World → World → Bool := Core.IntensionalLogic.RestrictedModality.universalBR
+Bool mirror of `Core.IntensionalLogic.RestrictedModality.universalR`. -/
+def universalR : World → World → Bool := fun _ _ => true
 
 /-- Reflexive accessibility: each world is accessible from itself.
-Matches `Core.IntensionalLogic.RestrictedModality.identityBR`. -/
-def reflexiveR : World → World → Bool := Core.IntensionalLogic.RestrictedModality.identityBR
+Bool mirror of `Core.IntensionalLogic.RestrictedModality.identityR`. -/
+def reflexiveR : World → World → Bool := fun w v => decide (w = v)
 
 /-- Empty accessibility: no world is accessible from any world.
-Matches `Core.IntensionalLogic.RestrictedModality.emptyBR`. -/
-def emptyR : World → World → Bool := Core.IntensionalLogic.RestrictedModality.emptyBR
+Bool mirror of `Core.IntensionalLogic.RestrictedModality.emptyR`. -/
+def emptyR : World → World → Bool := fun _ _ => false
 
 /-- Sample epistemic accessibility: w0↔w2, w1↔w3. -/
 def sampleEpistemicR : World → World → Bool := λ w w' =>
@@ -243,12 +271,13 @@ end DAxiom
 
 section ConsistencyFromD
 
-/-- Universal R is serial. Uses `Core.IntensionalLogic.RestrictedModality.universalBR_serial`. -/
-theorem universalR_isSerial : isSerial universalR := Core.IntensionalLogic.RestrictedModality.universalBR_serial
+/-- Universal R is serial. -/
+theorem universalR_isSerial : isSerial universalR :=
+  fun w => ⟨w, rfl⟩
 
 /-- Reflexive R is serial (reflexivity implies seriality). -/
 theorem reflexiveR_isSerial : isSerial reflexiveR :=
-  Core.IntensionalLogic.RestrictedModality.brefl_serial Core.IntensionalLogic.RestrictedModality.identityBR_refl
+  brefl_serial (fun w => by simp [reflexiveR])
 
 /-- Universal accessibility gives consistency via D axiom. -/
 theorem simple_universal_isConsistent_from_D :

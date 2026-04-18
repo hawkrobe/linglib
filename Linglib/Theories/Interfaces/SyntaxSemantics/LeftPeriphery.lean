@@ -261,8 +261,8 @@ open Semantics.Questions.Answerhood
     This is PerspP's not-at-issue presupposition (@cite{dayal-2025}: §2.3).
     Uses `diaAt` from Doxastic.lean and `ans` from Answerhood.lean. -/
 def possibleIgnorance {W E : Type*} (R : AccessRel W E) (center : E)
-    (Q : GSQuestion W) (w : W) (worlds : List W) : Bool :=
-  diaAt R center w worlds (fun w' => !(ans Q w w'))
+    (Q : GSQuestion W) (w : W) (worlds : List W) : Prop :=
+  diaAt R center w worlds (fun w' => ans Q w w' = false)
 
 /-- PerspP as a presuppositional question denotation.
     At-issue: the question Q itself.
@@ -271,7 +271,7 @@ structure PerspPResult (W : Type*) where
   /-- The at-issue question content (unchanged by PerspP) -/
   question : Hamblin.QuestionDen W
   /-- Whether the possible-ignorance presupposition is satisfied -/
-  presupSatisfied : Bool
+  presupSatisfied : Prop
 
 /-- Apply PerspP to a question: checks possible-ignorance presupposition. -/
 def applyPerspP {W E : Type*} (R : AccessRel W E) (center : E)
@@ -292,19 +292,11 @@ in bare (non-negated, non-questioned) contexts.
     If p holds at all accessible worlds, there is no accessible world where ¬p. -/
 theorem box_excludes_dia_neg {W E : Type*}
     (R : AccessRel W E) (agent : E) (w : W) (worlds : List W)
-    (p : W → Bool)
-    (hBox : boxAt R agent w worlds p = true) :
-    diaAt R agent w worlds (fun w' => !p w') = false := by
-  simp only [boxAt, List.all_eq_true, Bool.or_eq_true, Bool.not_eq_true'] at hBox
-  simp only [diaAt, List.any_eq_false]
-  intro w' hw'
-  have h := hBox w' hw'
-  cases hR : R agent w w' with
-  | false => simp
-  | true =>
-    cases h with
-    | inl hNotR => exact absurd hR (by rw [hNotR]; simp)
-    | inr hp => simp [hp]
+    (p : W → Prop)
+    (hBox : boxAt R agent w worlds p) :
+    ¬ diaAt R agent w worlds (fun w' => ¬ p w') := by
+  rintro ⟨w', hw', hR, hNotP⟩
+  exact hNotP (hBox w' hw' hR)
 
 /-- A veridical doxastic predicate entails the subject believes Ans(Q).
     "x knows Q" at w means there exists a true answer p that x box-believes.
@@ -315,11 +307,14 @@ theorem box_excludes_dia_neg {W E : Type*}
     holdsAtQuestion finds *some* true p that x box-believes; since the question
     is a partition, that p determines the same cell as Ans(Q,w). -/
 theorem veridical_question_entails_box_ans {W E : Type*}
-    (V : DoxasticPredicate W E) (hV : V.veridicality = .veridical)
+    (V : DoxasticPredicate W E) (_hV : V.veridicality = .veridical)
     (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
-    (hHolds : boxAt V.access agent w worlds (ans Q w) = true) :
-    diaAt V.access agent w worlds (fun w' => !(ans Q w w')) = false :=
-  box_excludes_dia_neg V.access agent w worlds (ans Q w) hHolds
+    (hHolds : boxAt V.access agent w worlds (fun w' => ans Q w w' = true)) :
+    ¬ diaAt V.access agent w worlds (fun w' => ans Q w w' = false) := by
+  rintro ⟨w', hw', hR, hFalse⟩
+  have hTrue : ans Q w w' = true := hHolds w' hw' hR
+  rw [hFalse] at hTrue
+  exact Bool.false_ne_true hTrue
 
 /-- Therefore PerspP's possible-ignorance presupposition is inconsistent
     with a veridical predicate that box-knows Ans(Q).
@@ -330,10 +325,10 @@ theorem veridical_question_entails_box_ans {W E : Type*}
 theorem veridical_blocks_perspP {W E : Type*}
     (V : DoxasticPredicate W E) (hV : V.veridicality = .veridical)
     (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
-    (hBox : boxAt V.access agent w worlds (ans Q w) = true) :
-    possibleIgnorance V.access agent Q w worlds = false := by
+    (hBox : boxAt V.access agent w worlds (fun w' => ans Q w w' = true)) :
+    ¬ possibleIgnorance V.access agent Q w worlds := by
   simp only [possibleIgnorance]
-  exact box_excludes_dia_neg V.access agent w worlds (ans Q w) hBox
+  exact veridical_question_entails_box_ans V hV agent Q w worlds hBox
 
 /-! ## H4. Bridge theorems
 
@@ -538,9 +533,9 @@ to the abstract epistemic layer used by PerspP. -/
 
 /-- A DoxasticPredicate induces an EpistemicModel at a world. -/
 def doxasticToEpistemicModel {W E : Type*}
-    (V : DoxasticPredicate W E) (agent : E) (w : W)
-    (worlds : List W) : EpistemicModel W where
-  knows := fun p => V.holdsAt agent p w worlds
+    (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
+    (agent : E) (w : W) (worlds : List W) : EpistemicModel W where
+  knows := fun p => decide (V.holdsAt agent (fun w' => p w' = true) w worlds)
 
 /-- A veridical predicate that box-knows Ans(Q) blocks PerspP through
     the epistemic model bridge.
@@ -549,9 +544,10 @@ def doxasticToEpistemicModel {W E : Type*}
     at the answer proposition entails the answer is true at the eval world
     (which follows from veridical_entails_complement + boxAt). -/
 theorem veridical_model_blocks_perspP {W E : Type*}
-    (V : DoxasticPredicate W E) (hV : V.veridicality = .veridical)
+    (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
+    (_hV : V.veridicality = .veridical)
     (agent : E) (Q : GSQuestion W) (w : W) (worlds : List W)
-    (hHolds : V.holdsAt agent (Answerhood.ans Q w) w worlds = true) :
+    (hHolds : V.holdsAt agent (fun w' => Answerhood.ans Q w w' = true) w worlds) :
     perspPPresupComp (doxasticToEpistemicModel V agent w worlds) Q w = false := by
   simp [perspPPresupComp, doxasticToEpistemicModel, hHolds]
 

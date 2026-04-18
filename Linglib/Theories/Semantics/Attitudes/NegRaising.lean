@@ -43,7 +43,6 @@ includes cases where p is false, so strengthening to know(¬p) would require
 
 namespace Semantics.Attitudes.NegRaising
 
-open Core.Proposition (BProp)
 open Core.SquareOfOpposition (Square SquareRelations)
 open Semantics.Attitudes.Doxastic
   (DoxasticPredicate Veridicality boxAt diaAt AccessRel)
@@ -61,35 +60,33 @@ corners of the doxastic square of opposition:
 - I = ◇p: some doxastic alternative satisfies p
 - O = ¬Bel(p): not all doxastic alternatives satisfy p -/
 def doxasticSquare {W E : Type*} (R : AccessRel W E) (agent : E)
-    (worlds : List W) (p : W → Bool) : Square (W → Bool) where
+    (worlds : List W) (p : W → Prop) : Square (W → Prop) where
   A := λ w => boxAt R agent w worlds p
-  E := λ w => boxAt R agent w worlds (λ w' => !p w')
+  E := λ w => boxAt R agent w worlds (λ w' => ¬ p w')
   I := λ w => diaAt R agent w worlds p
-  O := λ w => !(boxAt R agent w worlds p)
+  O := λ w => ¬ boxAt R agent w worlds p
 
 /-- The doxastic square satisfies the A–O contradiction diagonal. -/
 theorem doxasticSquare_contradAO {W E : Type*} (R : AccessRel W E)
-    (agent : E) (worlds : List W) (p : W → Bool) (w : W) :
-    (doxasticSquare R agent worlds p).A w =
-    !(doxasticSquare R agent worlds p).O w := by
-  simp [doxasticSquare, Bool.not_not]
+    (agent : E) (worlds : List W) (p : W → Prop) (w : W) :
+    (doxasticSquare R agent worlds p).A w ↔
+    ¬ (doxasticSquare R agent worlds p).O w := by
+  simp [doxasticSquare]
 
 /-- The doxastic square satisfies the E–I contradiction diagonal.
 
 This requires that `diaAt` is the dual of `boxAt`: ◇p = ¬□¬p.
 We prove this from the definitions. -/
 theorem doxasticSquare_contradEI {W E : Type*} (R : AccessRel W E)
-    (agent : E) (worlds : List W) (p : W → Bool) (w : W) :
-    (doxasticSquare R agent worlds p).E w =
-    !(doxasticSquare R agent worlds p).I w := by
+    (agent : E) (worlds : List W) (p : W → Prop) (w : W) :
+    (doxasticSquare R agent worlds p).E w ↔
+    ¬ (doxasticSquare R agent worlds p).I w := by
   simp only [doxasticSquare, boxAt, diaAt]
-  -- Goal: (worlds.all f) = !(worlds.any g) where f w' = !R || !p, g w' = R && p
-  -- This is list-level De Morgan: all(¬·) = ¬any(·)
-  induction worlds with
-  | nil => rfl
-  | cons hd tl ih =>
-    simp only [List.all_cons, List.any_cons, Bool.not_or, ih]
-    cases R agent w hd <;> cases p hd <;> rfl
+  constructor
+  · rintro h ⟨w', hw', hR, hp⟩
+    exact h w' hw' hR hp
+  · intro h w' hw' hR hp
+    exact h ⟨w', hw', hR, hp⟩
 
 -- ============================================================================
 -- §2 Neg-Raising Predicates
@@ -111,9 +108,9 @@ structure NegRaisingPredicate (W E : Type*) extends DoxasticPredicate W E where
 This is the "excluded middle of belief": when a speaker says "I don't
 think p", they implicate they have a settled opinion, namely Bel(¬p). -/
 def negRaisesAt {W E : Type*} (R : AccessRel W E) (agent : E)
-    (worlds : List W) (p : W → Bool) (w : W) : Prop :=
-  boxAt R agent w worlds p = false →
-  boxAt R agent w worlds (λ w' => !p w') = true
+    (worlds : List W) (p : W → Prop) (w : W) : Prop :=
+  ¬ boxAt R agent w worlds p →
+  boxAt R agent w worlds (λ w' => ¬ p w')
 
 /-- Neg-raising is available exactly when the predicate admits a gap
 between ¬Bel(p) and Bel(¬p) — i.e., when the O→E strengthening is
@@ -186,11 +183,11 @@ theorem negRaising_implies_nonVeridical {W E : Type*}
 
 /-- The doxastic square for "believe" satisfies the contradiction diagonals. -/
 theorem believe_square_contradictions {W E : Type*} (R : AccessRel W E)
-    (agent : E) (worlds : List W) (p : W → Bool) (w : W) :
-    (doxasticSquare R agent worlds p).A w =
-      !(doxasticSquare R agent worlds p).O w ∧
-    (doxasticSquare R agent worlds p).E w =
-      !(doxasticSquare R agent worlds p).I w :=
+    (agent : E) (worlds : List W) (p : W → Prop) (w : W) :
+    ((doxasticSquare R agent worlds p).A w ↔
+      ¬ (doxasticSquare R agent worlds p).O w) ∧
+    ((doxasticSquare R agent worlds p).E w ↔
+      ¬ (doxasticSquare R agent worlds p).I w) :=
   ⟨doxasticSquare_contradAO R agent worlds p w,
    doxasticSquare_contradEI R agent worlds p w⟩
 

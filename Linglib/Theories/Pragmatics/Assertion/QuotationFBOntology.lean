@@ -78,7 +78,7 @@ structure FBPerformance (W : Type*) where
   /-- Sentence form (declarative / interrogative). -/
   form : SentenceForm
   /-- Propositional content. -/
-  content : BProp W
+  content : Prop' W
   /-- Whether the performance is linguistic material. False allows
       modeling non-linguistic gestures (the karate-gestures contrast
       that motivates `LINGMAT`). -/

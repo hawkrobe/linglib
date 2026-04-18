@@ -79,7 +79,7 @@ structure Issue (W : Type*) where
   /-- The form of the sentence that raised this issue -/
   form : SentenceForm
   /-- The proposition(s) at issue -/
-  alternatives : List (BProp W)
+  alternatives : List (Prop' W)
   /-- Who raised this issue -/
   source : Participant := .speaker
 
@@ -96,11 +96,11 @@ answer to each issue on the table.
 -/
 structure DiscourseState (W : Type*) where
   /-- Speaker's discourse commitments (what speaker takes for granted) -/
-  dcS : List (BProp W)
+  dcS : List (Prop' W)
   /-- Listener's discourse commitments -/
-  dcL : List (BProp W)
+  dcL : List (Prop' W)
   /-- Common ground (joint commitments) -/
-  cg : List (BProp W)
+  cg : List (Prop' W)
   /-- The table: stack of issues under discussion -/
   table : List (Issue W)
 
@@ -123,14 +123,14 @@ Convert common ground to a ContextSet (worlds where all cg props hold).
 This bridges to the existing `Core.CommonGround` infrastructure.
 -/
 def toContextSet (ds : DiscourseState W) : ContextSet W :=
-  λ w => ds.cg.all (λ p => p w)
+  λ w => ∀ p ∈ ds.cg, p w
 
 /--
 World compatibility: w is compatible with the discourse state if
 w satisfies all common ground propositions.
 -/
-def compatible (ds : DiscourseState W) (w : W) : Bool :=
-  ds.cg.all (λ p => p w)
+def compatible (ds : DiscourseState W) (w : W) : Prop :=
+  ∀ p ∈ ds.cg, p w
 
 /--
 Check if the table is empty (stable state).
@@ -146,14 +146,14 @@ Check if a world is compatible with speaker's commitments.
 This is what @cite{scontras-tonhauser-2025} call "speakerCredence": the speaker only considers
 worlds compatible with their private assumptions.
 -/
-def speakerCompatible (ds : DiscourseState W) (w : W) : Bool :=
-  ds.dcS.all (λ p => p w)
+def speakerCompatible (ds : DiscourseState W) (w : W) : Prop :=
+  ∀ p ∈ ds.dcS, p w
 
 /--
 Check if a world is compatible with listener's commitments.
 -/
-def listenerCompatible (ds : DiscourseState W) (w : W) : Bool :=
-  ds.dcL.all (λ p => p w)
+def listenerCompatible (ds : DiscourseState W) (w : W) : Prop :=
+  ∀ p ∈ ds.dcL, p w
 
 
 /--
@@ -162,7 +162,7 @@ Add a proposition to the common ground.
 This models acceptance of an assertion: the proposition moves from
 a participant's discourse commitments to the joint common ground.
 -/
-def addToCG (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
+def addToCG (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
   { ds with cg := p :: ds.cg }
 
 /--
@@ -171,13 +171,13 @@ Add a proposition to speaker's discourse commitments.
 This models the speaker asserting a proposition, which commits
 the speaker but doesn't yet affect the common ground.
 -/
-def addToDcS (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
+def addToDcS (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
   { ds with dcS := p :: ds.dcS }
 
 /--
 Add a proposition to listener's discourse commitments.
 -/
-def addToDcL (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
+def addToDcL (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
   { ds with dcL := p :: ds.dcL }
 
 /--
@@ -208,7 +208,7 @@ The listener can then respond by:
 - Rejecting (adds ¬p to dcL, creating a conflict)
 - Neither (leaving p "on the table")
 -/
-def assertDeclarative (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
+def assertDeclarative (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
   let issue : Issue W := { form := .declarative, alternatives := [p], source := .speaker }
   ds.addToDcS p |>.pushIssue issue
 
@@ -219,8 +219,8 @@ Following F&B: a polar question about p:
 1. Pushes the issue {p, ¬p} onto the table
 2. Does not add commitments (questions don't commit)
 -/
-def askPolarQuestion (ds : DiscourseState W) (p : BProp W) : DiscourseState W :=
-  let negP : BProp W := Decidable.pnot W p
+def askPolarQuestion (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
+  let negP : Prop' W := Classical.pnot W p
   let issue : Issue W := { form := .interrogative, alternatives := [p, negP], source := .speaker }
   ds.pushIssue issue
 

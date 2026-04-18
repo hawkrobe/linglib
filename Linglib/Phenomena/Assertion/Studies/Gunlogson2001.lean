@@ -37,7 +37,7 @@ open Phenomena.Assertion
     adds an other-generated commitment to the addressee's slate,
     leaving the speaker's slate unchanged. -/
 theorem rising_is_other_generated {W : Type*}
-    (s : GunlogsonState W) (p : Core.Proposition.BProp W) :
+    (s : GunlogsonState W) (p : Core.Proposition.Prop' W) :
     -- Rising adds other-generated commitment to addressee
     (s.risingDeclarative p).addresseeSlate.commitments.head?.map (·.source) =
       some CommitmentSource.otherGenerated ∧
@@ -51,7 +51,7 @@ theorem rising_is_other_generated {W : Type*}
     `fallingDeclarative` adds a self-generated commitment to the speaker's
     slate. -/
 theorem falling_is_self_generated {W : Type*}
-    (s : GunlogsonState W) (p : Core.Proposition.BProp W) :
+    (s : GunlogsonState W) (p : Core.Proposition.Prop' W) :
     (s.fallingDeclarative p).speakerSlate.commitments.head?.map (·.source) =
       some CommitmentSource.selfGenerated :=
   rfl

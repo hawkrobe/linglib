@@ -38,7 +38,11 @@ variable {W : Type*} [DecidableEq W] [Fintype W]
 /-- Accessibility relation derived from a modal base.
 
     `kratzerR f w w'` iff `w'` satisfies all propositions in `f(w)`,
-    i.e., `w' ∈ ⋂f(w)` in Kratzer's notation. -/
+    i.e., `w' ∈ ⋂f(w)` in Kratzer's notation.
+
+    The modal base `f w : List (W → Bool)` continues to use Bool for the
+    enumerable factual content (so `propIntersection`/`Finset.filter` remain
+    computable); the operator-facing scope arguments are Prop-valued. -/
 def kratzerR (f : ModalBase W) : AccessRel W :=
   fun w w' => ∀ p ∈ f w, p w' = true
 
@@ -71,8 +75,8 @@ instance kratzerBestR_decidable (f : ModalBase W) (g : OrderingSource W) (w w' :
 ⟦must⟧_f(p)(w) = ∀w' ∈ ∩f(w). p(w')
 
 Defined as `boxR` with modal-base accessibility. -/
-def simpleNecessity (f : ModalBase W) (p : W → Bool) (w : W) : Prop :=
-  boxR (kratzerR f) (fun w' => p w' = true) w
+def simpleNecessity (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
+  boxR (kratzerR f) p w
 
 /--
 **Simple f-possibility** (@cite{kratzer-1981} p. 32): p is true at SOME accessible world.
@@ -80,8 +84,8 @@ def simpleNecessity (f : ModalBase W) (p : W → Bool) (w : W) : Prop :=
 ⟦can⟧_f(p)(w) = ∃w' ∈ ∩f(w). p(w')
 
 Defined as `diamondR` with modal-base accessibility. -/
-def simplePossibility (f : ModalBase W) (p : W → Bool) (w : W) : Prop :=
-  diamondR (kratzerR f) (fun w' => p w' = true) w
+def simplePossibility (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
+  diamondR (kratzerR f) p w
 
 /--
 **Necessity with ordering** (@cite{kratzer-1981} p. 40): p is true at ALL best worlds.
@@ -89,8 +93,8 @@ def simplePossibility (f : ModalBase W) (p : W → Bool) (w : W) : Prop :=
 ⟦must⟧_{f,g}(p)(w) = ∀w' ∈ Best(f,g,w). p(w')
 
 Defined as `boxR` with best-world accessibility. -/
-def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Bool) (w : W) : Prop :=
-  boxR (kratzerBestR f g) (fun w' => p w' = true) w
+def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
+  boxR (kratzerBestR f g) p w
 
 /--
 **Possibility with ordering**: p is true at SOME best world.
@@ -98,24 +102,24 @@ def necessity (f : ModalBase W) (g : OrderingSource W) (p : W → Bool) (w : W) 
 ⟦can⟧_{f,g}(p)(w) = ∃w' ∈ Best(f,g,w). p(w')
 
 Defined as `diamondR` with best-world accessibility. -/
-def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Bool) (w : W) : Prop :=
-  diamondR (kratzerBestR f g) (fun w' => p w' = true) w
+def possibility (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) : Prop :=
+  diamondR (kratzerBestR f g) p w
 
-instance (f : ModalBase W) (p : W → Bool) (w : W) :
+instance (f : ModalBase W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (simpleNecessity f p w) :=
-  inferInstanceAs (Decidable (∀ j, kratzerR f w j → p j = true))
+  inferInstanceAs (Decidable (∀ j, kratzerR f w j → p j))
 
-instance (f : ModalBase W) (p : W → Bool) (w : W) :
+instance (f : ModalBase W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (simplePossibility f p w) :=
-  inferInstanceAs (Decidable (∃ j, kratzerR f w j ∧ p j = true))
+  inferInstanceAs (Decidable (∃ j, kratzerR f w j ∧ p j))
 
-instance (f : ModalBase W) (g : OrderingSource W) (p : W → Bool) (w : W) :
+instance (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (necessity f g p w) :=
-  inferInstanceAs (Decidable (∀ j, kratzerBestR f g w j → p j = true))
+  inferInstanceAs (Decidable (∀ j, kratzerBestR f g w j → p j))
 
-instance (f : ModalBase W) (g : OrderingSource W) (p : W → Bool) (w : W) :
+instance (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (possibility f g p w) :=
-  inferInstanceAs (Decidable (∃ j, kratzerBestR f g w j ∧ p j = true))
+  inferInstanceAs (Decidable (∃ j, kratzerBestR f g w j ∧ p j))
 
 -- ════════════════════════════════════════════════════════════════
 -- § Connection to Computational Layer
@@ -150,31 +154,31 @@ theorem kratzerBestR_empty (f : ModalBase W) (w w' : W) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- `simpleNecessity f p w` iff p holds at all accessible worlds. -/
-theorem simpleNecessity_iff_all (f : ModalBase W) (p : W → Bool) (w : W) :
-    simpleNecessity f p w ↔ ∀ w' ∈ accessibleWorlds f w, p w' = true := by
+theorem simpleNecessity_iff_all (f : ModalBase W) (p : W → Prop) (w : W) :
+    simpleNecessity f p w ↔ ∀ w' ∈ accessibleWorlds f w, p w' := by
   simp only [simpleNecessity, boxR]
   exact ⟨fun h j hj => h j ((kratzerR_iff_accessible f w j).mpr hj),
          fun h j hj => h j ((kratzerR_iff_accessible f w j).mp hj)⟩
 
 /-- `simplePossibility f p w` iff p holds at some accessible world. -/
-theorem simplePossibility_iff_any (f : ModalBase W) (p : W → Bool) (w : W) :
-    simplePossibility f p w ↔ ∃ w' ∈ accessibleWorlds f w, p w' = true := by
+theorem simplePossibility_iff_any (f : ModalBase W) (p : W → Prop) (w : W) :
+    simplePossibility f p w ↔ ∃ w' ∈ accessibleWorlds f w, p w' := by
   simp only [simplePossibility, diamondR]
   exact ⟨fun ⟨j, hj, hp⟩ => ⟨j, (kratzerR_iff_accessible f w j).mp hj, hp⟩,
          fun ⟨j, hj, hp⟩ => ⟨j, (kratzerR_iff_accessible f w j).mpr hj, hp⟩⟩
 
 /-- `necessity f g p w` iff p holds at all best worlds. -/
-theorem necessity_iff_all (f : ModalBase W) (g : OrderingSource W) (p : W → Bool) (w : W) :
-    necessity f g p w ↔ ∀ w' ∈ bestWorlds f g w, p w' = true := by
+theorem necessity_iff_all (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
+    necessity f g p w ↔ ∀ w' ∈ bestWorlds f g w, p w' := by
   simp only [necessity, boxR, kratzerBestR]
 
 /-- `possibility f g p w` iff p holds at some best world. -/
-theorem possibility_iff_any (f : ModalBase W) (g : OrderingSource W) (p : W → Bool) (w : W) :
-    possibility f g p w ↔ ∃ w' ∈ bestWorlds f g w, p w' = true := by
+theorem possibility_iff_any (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) (w : W) :
+    possibility f g p w ↔ ∃ w' ∈ bestWorlds f g w, p w' := by
   simp only [possibility, diamondR, kratzerBestR]
 
 /-- Necessity with empty ordering = simple necessity. -/
-theorem necessity_empty_eq_simple (f : ModalBase W) (p : W → Bool) (w : W) :
+theorem necessity_empty_eq_simple (f : ModalBase W) (p : W → Prop) (w : W) :
     necessity f (emptyBackground (W := W)) p w ↔ simpleNecessity f p w := by
   simp only [necessity_iff_all, simpleNecessity_iff_all]
   rw [empty_ordering_emptyBackground]
@@ -265,33 +269,26 @@ property — the modal logic is inherited for free. -/
 
 □p ↔ ¬◇¬p
 -/
-theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Bool) (w : W) :
-    necessity f g p w ↔ ¬ possibility f g (fun w' => !p w') w := by
+theorem duality (f : ModalBase W) (g : OrderingSource W) (p : W → Prop) [DecidablePred p]
+    (w : W) :
+    necessity f g p w ↔ ¬ possibility f g (fun w' => ¬ p w') w := by
   simp only [necessity, possibility, boxR, diamondR]
   constructor
-  · intro h ⟨j, hj, hpj⟩
-    simp only [Bool.not_eq_true'] at hpj
-    exact absurd (h j hj) (by simp [hpj])
+  · intro h ⟨j, hj, hnp⟩
+    exact hnp (h j hj)
   · intro h j hj
     by_contra hc
-    exact h ⟨j, hj, by cases hp : p j <;> simp_all⟩
+    exact h ⟨j, hj, hc⟩
 
 
 /--
 **K Axiom (Distribution)**: □(p → q) → (□p → □q)
 
 Holds for any accessibility relation. -/
-theorem K_axiom (f : ModalBase W) (g : OrderingSource W) (p q : W → Bool) (w : W)
-    (hImpl : necessity f g (fun w' => !p w' || q w') w)
+theorem K_axiom (f : ModalBase W) (g : OrderingSource W) (p q : W → Prop) (w : W)
+    (hImpl : necessity f g (fun w' => p w' → q w') w)
     (hP : necessity f g p w) :
-    necessity f g q w := by
-  intro j hj
-  have hI := hImpl j hj
-  have hPj := hP j hj
-  simp only [Bool.or_eq_true, Bool.not_eq_true'] at hI
-  rcases hI with hpf | hq
-  · exact absurd hpf (by simp [hPj])
-  · exact hq
+    necessity f g q w := fun j hj => hImpl j hj (hP j hj)
 
 
 omit [DecidableEq W] [Fintype W] in
@@ -299,9 +296,9 @@ omit [DecidableEq W] [Fintype W] in
 **T Axiom**: Realistic base → □p → p.
 
 What is necessary is actual. -/
-theorem T_axiom (f : ModalBase W) (p : W → Bool) (w : W)
+theorem T_axiom (f : ModalBase W) (p : W → Prop) (w : W)
     (hReal : isRealistic f)
-    (hNec : simpleNecessity f p w) : p w = true :=
+    (hNec : simpleNecessity f p w) : p w :=
   boxR_T (kratzerR f) (realistic_refl f hReal) _ w hNec
 
 omit [DecidableEq W] [Fintype W] in
@@ -309,7 +306,7 @@ omit [DecidableEq W] [Fintype W] in
 **D Axiom**: Serial accessibility → □p → ◇p.
 
 What is necessary is possible. -/
-theorem D_axiom_simple (f : ModalBase W) (p : W → Bool) (w : W)
+theorem D_axiom_simple (f : ModalBase W) (p : W → Prop) (w : W)
     (hReal : isRealistic f)
     (hNec : simpleNecessity f p w) : simplePossibility f p w :=
   boxR_D (kratzerR f) (refl_serial (realistic_refl f hReal)) _ w hNec
@@ -318,36 +315,33 @@ theorem D_axiom_simple (f : ModalBase W) (p : W → Bool) (w : W)
 **4 Axiom**: Transitive accessibility → □p → □□p.
 
 Positive introspection. -/
-theorem four_axiom (f : ModalBase W) (p : W → Bool) (w : W)
+theorem four_axiom (f : ModalBase W) (p : W → Prop) (w : W)
     (hTrans : isTransitiveAccess f)
     (hNec : simpleNecessity f p w) :
-    simpleNecessity f (fun w' => decide (simpleNecessity f p w')) w := by
+    simpleNecessity f (fun w' => simpleNecessity f p w') w := by
   intro j hj
-  simp only [decide_eq_true_eq]
   exact boxR_four (kratzerR f) (transitive_trans f hTrans) _ w hNec j hj
 
 /--
 **B Axiom**: Symmetric accessibility → p → □◇p.
 
 What is actual is necessarily possible. -/
-theorem B_axiom (f : ModalBase W) (p : W → Bool) (w : W)
+theorem B_axiom (f : ModalBase W) (p : W → Prop) (w : W)
     (hSym : isSymmetricAccess f)
-    (hP : p w = true) :
-    simpleNecessity f (fun w' => decide (simplePossibility f p w')) w := by
+    (hP : p w) :
+    simpleNecessity f (fun w' => simplePossibility f p w') w := by
   intro j hj
-  simp only [decide_eq_true_eq]
   exact boxR_B (kratzerR f) (symmetric_symm f hSym) _ w hP j hj
 
 /--
 **5 Axiom**: Euclidean accessibility → ◇p → □◇p.
 
 Positive possibility introspection. -/
-theorem five_axiom (f : ModalBase W) (p : W → Bool) (w : W)
+theorem five_axiom (f : ModalBase W) (p : W → Prop) (w : W)
     (hEuc : isEuclideanAccess f)
     (hPoss : simplePossibility f p w) :
-    simpleNecessity f (fun w' => decide (simplePossibility f p w')) w := by
+    simpleNecessity f (fun w' => simplePossibility f p w') w := by
   intro j hj
-  simp only [decide_eq_true_eq]
   exact boxR_five (kratzerR f) (euclidean_eucl f hEuc) _ w hPoss j hj
 
 -- ════════════════════════════════════════════════════════════════
@@ -357,8 +351,8 @@ theorem five_axiom (f : ModalBase W) (p : W → Bool) (w : W)
 /-- Totally realistic base implies T axiom for full necessity. -/
 theorem totally_realistic_gives_T (f : ModalBase W) (g : OrderingSource W)
     (hTotal : ∀ w, accessibleWorlds f w = {w})
-    (p : W → Bool) (w : W)
-    (hNec : necessity f g p w) : p w = true := by
+    (p : W → Prop) (w : W)
+    (hNec : necessity f g p w) : p w := by
   have : kratzerBestR f g w w := by
     rw [kratzerBestR_iff_best]
     unfold bestWorlds

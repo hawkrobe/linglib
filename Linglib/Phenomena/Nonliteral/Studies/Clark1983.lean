@@ -729,7 +729,7 @@ def arlenesGoalHierarchy : GoalHierarchy StereosWorld where
     those possessions. The CG determines that people who own phonographs
     are common (which is what she intends *stereos* to convey). -/
 def bombecksCG : CG StereosWorld :=
-  CG.empty.add (λ w => w.ownersCommon)
+  CG.empty.add (λ w => w.ownersCommon = true)
 
 /-- Bombeck's goal hierarchy: innovative use.
     She means "people who possess phonographs are common" — a nonce sense
@@ -778,9 +778,7 @@ theorem conventional_lexicon_fails_bombeck :
 theorem bombeck_cg_determines_meaning :
     ∀ w, bombecksCG.contextSet w → (λ w => w.ownersCommon) w = true := by
   intro w h
-  simp only [bombecksCG, CG.contextSet, CG.add, CG.empty,
-    List.all_cons, List.all_nil, Bool.and_true] at h
-  exact h
+  exact h _ List.mem_cons_self
 
 -- ════════════════════════════════════════════════════════════════
 -- §11. Bridge to Indirect Speech Acts
@@ -808,7 +806,6 @@ constituent maps to a subgoal, and resolving all subgoals resolves the
 speaker's communicative intention. -/
 
 open Core.Discourse (IntentionalState PsychMode)
-open Core.Proposition (BProp)
 
 /-- An indirect speech act gives rise to a goal hierarchy.
 
@@ -963,9 +960,7 @@ end
 private theorem bombecksCG_entails_owners :
     ∀ w, bombecksCG.contextSet w → w.ownersCommon = true := by
   intro w h
-  simp only [bombecksCG, CG.contextSet, CG.add, CG.empty,
-    List.all_cons, List.all_nil, Bool.and_true] at h
-  exact h
+  exact h _ List.mem_cons_self
 
 private theorem emptyCG_not_entails_owners :
     ¬ ∀ w, (CG.empty : CG StereosWorld).contextSet w → w.ownersCommon = true := by

@@ -1218,8 +1218,8 @@ When the complement is `might p`, the doxastic assertion reduces to
 `DOX ∩ p ≠ ∅` by vacuous quantification — identical to the unmodalized
 case. -/
 def EmotiveDoxasticPredicate.doxasticAssertion {W E : Type*}
-    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
-    (w : W) (worlds : List W) : Bool :=
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop)
+    (w : W) (worlds : List W) : Prop :=
   diaAt V.access agent w worlds p
 
 /-- The uncertainty condition: both φ-verifiers and φ-falsifiers exist
@@ -1229,12 +1229,12 @@ This is what blocks epistemic necessity: `must p` under `hope` would
 require ∀w' ∈ DOX: p(w'), which combined with the uncertainty condition
 (∃w' ∈ DOX: ¬p(w')) yields a contradiction. -/
 def EmotiveDoxasticPredicate.uncertaintyCondition {W E : Type*}
-    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
-    (w : W) (worlds : List W) : Bool :=
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop)
+    (w : W) (worlds : List W) : Prop :=
   -- ∃w' ∈ DOX: p(w') — verifiers exist
-  diaAt V.access agent w worlds p &&
+  diaAt V.access agent w worlds p ∧
   -- ∃w' ∈ DOX: ¬p(w') — falsifiers exist
-  diaAt V.access agent w worlds (fun w' => !p w')
+  diaAt V.access agent w worlds (fun w' => ¬ p w')
 
 /-- The preference assertion: φ-verifying doxastic alternatives are
 preferred to φ-falsifying ones.
@@ -1242,9 +1242,9 @@ preferred to φ-falsifying ones.
 For positive valence (hope): μ(x, p) > θ(C) — the agent prefers p.
 For negative valence (fear): μ(x, p) > θ(C) — where μ measures dispreference. -/
 def EmotiveDoxasticPredicate.preferenceAssertion {W E : Type*}
-    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
-    (C : QuestionDen W) : Bool :=
-  decide (V.μ agent p > V.θ C)
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop) [DecidablePred p]
+    (C : QuestionDen W) : Prop :=
+  V.μ agent (fun w => decide (p w)) > V.θ C
 
 /-- Full semantics for an emotive doxastic: all three components must hold.
 
@@ -1260,10 +1260,10 @@ redundant in the conjunction. We include it explicitly for clarity and
 because it is the component responsible for epistemic licensing — it
 provides the information state that embedded epistemics are anaphoric to. -/
 def EmotiveDoxasticPredicate.holdsAt {W E : Type*}
-    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
-    (w : W) (worlds : List W) (C : QuestionDen W) : Bool :=
-  V.uncertaintyCondition agent p w worlds &&
-  V.doxasticAssertion agent p w worlds &&
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop) [DecidablePred p]
+    (w : W) (worlds : List W) (C : QuestionDen W) : Prop :=
+  V.uncertaintyCondition agent p w worlds ∧
+  V.doxasticAssertion agent p w worlds ∧
   V.preferenceAssertion agent p C
 
 /-- Hope: emotive doxastic with positive valence. -/
@@ -1295,13 +1295,12 @@ We model this by showing that the doxastic assertion for `p` and for
 the function `λ w. diaAt R x w worlds p` (= "might p" evaluated at
 the same DOX) are equivalent when the information state is shared. -/
 theorem doxastic_assertion_might_concord {W E : Type*}
-    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W)
-    (h : V.doxasticAssertion agent p w worlds = true) :
+    (h : V.doxasticAssertion agent p w worlds) :
     V.doxasticAssertion agent
-      (fun w' => diaAt V.access agent w worlds p) w worlds = true := by
-  simp only [EmotiveDoxasticPredicate.doxasticAssertion, diaAt,
-    List.any_eq_true, Bool.and_eq_true] at *
+      (fun _ => diaAt V.access agent w worlds p) w worlds := by
+  simp only [EmotiveDoxasticPredicate.doxasticAssertion, diaAt] at *
   obtain ⟨w', hw'_in, hw'_acc, hw'_p⟩ := h
   exact ⟨w', hw'_in, hw'_acc, ⟨w', hw'_in, hw'_acc, hw'_p⟩⟩
 
@@ -1310,24 +1309,12 @@ condition. If ∀w' ∈ DOX: p(w'), then there are no falsifiers in DOX,
 violating the uncertainty condition's requirement that
 ∃w' ∈ DOX: ¬p(w'). -/
 theorem must_contradicts_uncertainty {W E : Type*}
-    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (V : EmotiveDoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W)
-    (h_must : boxAt V.access agent w worlds p = true)
-    (h_accessible : diaAt V.access agent w worlds p = true) :
-    V.uncertaintyCondition agent p w worlds = false := by
-  simp only [EmotiveDoxasticPredicate.uncertaintyCondition, diaAt, boxAt,
-    List.any_eq_true, List.all_eq_true,
-    Bool.and_eq_true, Bool.or_eq_true, Bool.not_eq_true'] at *
-  have h_no_neg : (worlds.any fun w' => V.access agent w w' && !p w') = false := by
-    rw [Bool.eq_false_iff]
-    intro h_any
-    rw [List.any_eq_true] at h_any
-    obtain ⟨w', hw'_in, hw'_both⟩ := h_any
-    rw [Bool.and_eq_true] at hw'_both
-    obtain ⟨hw'_acc, hw'_np⟩ := hw'_both
-    have := h_must w' hw'_in
-    simp [hw'_acc] at this
-    simp [this] at hw'_np
-  rw [h_no_neg, Bool.and_false]
+    (h_must : boxAt V.access agent w worlds p) :
+    ¬ V.uncertaintyCondition agent p w worlds := by
+  simp only [EmotiveDoxasticPredicate.uncertaintyCondition, diaAt, boxAt] at *
+  rintro ⟨_, ⟨w', hw'_in, hw'_acc, hw'_np⟩⟩
+  exact hw'_np (h_must w' hw'_in hw'_acc)
 
 end Semantics.Attitudes.Preferential

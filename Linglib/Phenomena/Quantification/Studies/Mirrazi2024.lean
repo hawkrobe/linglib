@@ -129,10 +129,10 @@ theorem nonNegRaiser_suffices :
     doxastic infrastructure. This connects to the library's `negRaisesAt`
     without claiming neg-raising explains the scope paradox. -/
 theorem think_does_neg_raise {W E : Type*} (R : AccessRel W E)
-    (agent : E) (worlds : List W) (p : W → Bool) (w : W)
-    (hNeg : boxAt R agent w worlds p = false)
+    (agent : E) (worlds : List W) (p : W → Prop) (w : W)
+    (hNeg : ¬ boxAt R agent w worlds p)
     (hExclMiddle : negRaisesAt R agent worlds p w) :
-    boxAt R agent w worlds (λ w' => !p w') = true :=
+    boxAt R agent w worlds (λ w' => ¬ p w') :=
   hExclMiddle hNeg
 
 -- ============================================================================
@@ -158,7 +158,7 @@ def widePseudoDeDictoTC
     (nounProp : W → E → Prop)
     (vp : E → W → Prop)
     (w₀ : W) : Prop :=
-  ∀ w' ∈ worlds, R agent w₀ w' = true →
+  ∀ w' ∈ worlds, R agent w₀ w' →
     ¬vp (f w' (nounProp w')) w'
 
 /-- The truth conditions for the genuine wide scope de re reading.
@@ -174,7 +174,7 @@ def wideDeReTC
     (nounProp : W → E → Prop)
     (vp : E → W → Prop)
     (w₀ : W) : Prop :=
-  ∀ w' ∈ worlds, R agent w₀ w' = true →
+  ∀ w' ∈ worlds, R agent w₀ w' →
     ¬vp (f w₀ (nounProp w₀)) w'
 
 /-- The key structural fact: de re and pseudo-de dicto differ exactly in
@@ -227,7 +227,7 @@ theorem movement_above_neg_forces_deRe
     (nounProp : W → E → Prop) (vp : E → W → Prop) (w₀ : W) :
     -- If the CF is "moved" (evaluated at w₀ for both its world and NP args),
     -- the result is de re, not pseudo-de dicto.
-    (∀ w' ∈ worlds, R agent w₀ w' = true →
+    (∀ w' ∈ worlds, R agent w₀ w' →
       ¬vp (f w₀ (nounProp w₀)) w') ↔
     wideDeReTC W E f R agent worlds nounProp vp w₀ := by
   rfl

@@ -2,7 +2,7 @@ import Linglib.Core.Definiteness
 
 /-!
 # Specificity Condition
-@cite{fiengo-higginbotham-1981} @cite{fiengo-1987} @cite{huang-1982b} @cite{shen-huang-2026}
+@cite{fiengo-1987} @cite{huang-1982b} @cite{shen-huang-2026}
 
 A variable inside a specific DP cannot be bound by an operator outside
 that DP. This is a binding-theoretic constraint on wh-dependencies,
@@ -26,8 +26,7 @@ Fiengo's familiarity-based specificity, not Cheng & Sybesma's.
 
 The Specificity Condition accounts for:
 
-1. Definite island effects in wh-movement (English: @cite{chomsky-1973},
-   @cite{fiengo-higginbotham-1981})
+1. Definite island effects in wh-movement (English: @cite{chomsky-1973})
 2. Definite island effects in wh-in-situ (Mandarin Chinese:
    @cite{huang-1982b}, @cite{shen-huang-2026})
 3. Wh-indefinite sensitivity to demonstratives in Chinese
@@ -88,8 +87,8 @@ inductive ExternalOperator where
 /-- Whether an external operator's binding into a DP is blocked by the
 Specificity Condition.
 
-    @cite{fiengo-higginbotham-1981}: a variable inside a specific DP
-    cannot be bound by an operator outside the DP.
+    A variable inside a specific DP cannot be bound by an operator
+    outside the DP.
 
     @cite{shen-huang-2026}: this condition applies uniformly to both
     overt wh-movement (where the "variable" is a trace) and wh-in-situ

@@ -37,7 +37,7 @@ AGM revision operator (this file: K*1–K*5)
 
 namespace Core.Logic.BeliefRevision
 
-open Core.Proposition (Prop' BProp)
+open Core.Proposition (Prop')
 open Core.Order (PlausibilityOrder PreferentialConsequence NormalityOrder)
 
 -- ══════════════════════════════════════════════════════════════════════
@@ -104,20 +104,22 @@ structure AGMRevision (W : Type*) where
     - Preferential reasoning (System P axioms above)
     - Epistemic likelihood (Core/Scales/EpistemicScale/ via halpernLift) -/
 private lemma filter_sublist_of_imp {α : Type*} (l : List α)
-    (p q : α → Bool) (h : ∀ x ∈ l, p x = true → q x = true) :
-    (l.filter p).Sublist (l.filter q) := by
+    (p q : α → Prop) [DecidablePred p] [DecidablePred q]
+    (h : ∀ x ∈ l, p x → q x) :
+    (l.filter (fun x => decide (p x))).Sublist (l.filter (fun x => decide (q x))) := by
   induction l with
   | nil => exact List.Sublist.slnil
   | cons a t ih =>
     have ih' := ih (fun x hx => h x (List.mem_cons_of_mem a hx))
     simp only [List.filter_cons]
-    by_cases hpa : p a = true
-    · rw [if_pos hpa, if_pos (h a List.mem_cons_self hpa)]
+    by_cases hpa : p a
+    · have hqa : q a := h a List.mem_cons_self hpa
+      rw [if_pos (by simpa using hpa), if_pos (by simpa using hqa)]
       exact ih'.cons₂ a
-    · rw [if_neg hpa]
-      by_cases hqa : q a = true
-      · rw [if_pos hqa]; exact ih'.cons a
-      · rw [if_neg hqa]; exact ih'
+    · rw [if_neg (by simpa using hpa)]
+      by_cases hqa : q a
+      · rw [if_pos (by simpa using hqa)]; exact ih'.cons a
+      · rw [if_neg (by simpa using hqa)]; exact ih'
 
 private lemma sublist_length_lt_of_mem {α : Type*} {l₁ l₂ : List α}
     (hsub : l₁.Sublist l₂) {x : α} (hx : x ∈ l₂) (hnx : x ∉ l₁) :
@@ -126,14 +128,15 @@ private lemma sublist_length_lt_of_mem {α : Type*} {l₁ l₂ : List α}
   · exact h
   · exact absurd (hsub.eq_of_length h ▸ hx) hnx
 
-def kratzerPlausibility {W : Type*} [Fintype W] [DecidableEq W]
-    (orderingSource : List (BProp W)) : PlausibilityOrder W where
+open Classical in
+noncomputable def kratzerPlausibility {W : Type*} [Fintype W] [DecidableEq W]
+    (orderingSource : List (W → Prop)) : PlausibilityOrder W where
   toNormalityOrder := Core.Order.NormalityOrder.fromProps orderingSource
   smooth := fun φ w hφw => by
     classical
-    let sat := fun (v : W) => (orderingSource.filter (fun p => p v)).length
+    let sat := fun (v : W) => (orderingSource.filter (fun p => decide (p v))).length
     let cands := Finset.univ.filter
-      (fun v => φ v ∧ ∀ p ∈ orderingSource, p w = true → p v = true)
+      (fun v => φ v ∧ ∀ p ∈ orderingSource, p w → p v)
     have hw : w ∈ cands := by
       simp only [cands, Finset.mem_filter, Finset.mem_univ, true_and]
       exact ⟨hφw, fun _ _ h => h⟩
@@ -144,17 +147,17 @@ def kratzerPlausibility {W : Type*} [Fintype W] [DecidableEq W]
     refine ⟨v, hv_mem.1, hv_mem.2, ?_⟩
     intro u hφu huv p hp hpu
     by_contra hpv
-    simp only [Bool.not_eq_true] at hpv
     have hu_mem : u ∈ cands := by
       simp only [cands, Finset.mem_filter, Finset.mem_univ, true_and]
       exact ⟨hφu, fun q hq hqw => huv q hq (hv_mem.2 q hq hqw)⟩
-    have hfilt : (orderingSource.filter (fun q => q v)).Sublist
-                 (orderingSource.filter (fun q => q u)) :=
+    have hfilt : (orderingSource.filter (fun q => decide (q v))).Sublist
+                 (orderingSource.filter (fun q => decide (q u))) :=
       filter_sublist_of_imp orderingSource _ _ (fun q hq hqv => huv q hq hqv)
-    have hp_in_u : p ∈ orderingSource.filter (fun q => q u) :=
-      List.mem_filter.mpr ⟨hp, hpu⟩
-    have hp_not_v : p ∉ orderingSource.filter (fun q => q v) := fun h => by
-      rw [List.mem_filter] at h; exact absurd h.2 (by simp [hpv])
+    have hp_in_u : p ∈ orderingSource.filter (fun q => decide (q u)) :=
+      List.mem_filter.mpr ⟨hp, by simpa using hpu⟩
+    have hp_not_v : p ∉ orderingSource.filter (fun q => decide (q v)) := fun h => by
+      rw [List.mem_filter] at h
+      exact absurd (by simpa using h.2) hpv
     have : sat v < sat u := sublist_length_lt_of_mem hfilt hp_in_u hp_not_v
     linarith [hv_max u hu_mem]
 
@@ -162,8 +165,8 @@ def kratzerPlausibility {W : Type*} [Fintype W] [DecidableEq W]
     source: φ |~ ψ iff all most-plausible φ-worlds (given the ordering
     source) satisfy ψ. This is the formal content of Kratzer's claim that
     "modal base + ordering source = conditional". -/
-def kratzerDefault {W : Type*} [Fintype W] [DecidableEq W]
-    (orderingSource : List (BProp W)) : PreferentialConsequence W :=
+noncomputable def kratzerDefault {W : Type*} [Fintype W] [DecidableEq W]
+    (orderingSource : List (W → Prop)) : PreferentialConsequence W :=
   (kratzerPlausibility orderingSource).toPreferential
 
 -- ══════════════════════════════════════════════════════════════════════

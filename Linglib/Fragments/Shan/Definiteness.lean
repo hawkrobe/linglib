@@ -54,16 +54,15 @@ def blocking : Chierchia1998.BlockingPrinciple :=
 /-- Shan @cite{moroney-2021}: no overt definite or indefinite article.
     Demonstratives *nâj/nân* are optional in anaphoric contexts; bare nouns
     can express both unique and anaphoric definiteness. `articleInventory`
-    is the canonical upstream object from which both
-    `DefMarkingParams` (boolean triple) and `DefMarkingStrategy` (Moroney
-    cell) are derived via projection — see `toMarkingParams` /
-    `toMarkingStrategy`. -/
+    is the canonical upstream object from which both `DefMarkingStrategy`
+    (Moroney cell) and `ArticleType` (Schwarz cell) are derived — see
+    `toMarkingStrategy` / `toArticleType`. -/
 def articleInventory : Core.Nominal.ArticleInventory :=
-  { hasIndefinite             := false
-    hasUniqueArticle          := false
-    hasAnaphoricArticle       := false
-    hasDemonstrative          := true
-    hasPossessive             := true }
+  { hasIndefinite             := False
+    hasUniqueArticle          := False
+    hasAnaphoricArticle       := False
+    hasDemonstrative          := True
+    hasPossessive             := True }
 
 /-- Shan's inventory projects to the `.unmarked` Moroney cell. -/
 theorem articleInventory_marking :

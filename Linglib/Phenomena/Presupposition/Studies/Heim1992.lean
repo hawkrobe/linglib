@@ -33,7 +33,7 @@ namespace Heim1992
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
 open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
-open Core.IntensionalLogic.RestrictedModality (BRefl BSerial BEucl BTrans)
+open Core.IntensionalLogic.RestrictedModality (Refl Serial Eucl Trans)
 open Semantics.Presupposition.LocalContext (presupFiltered)
 open Semantics.Presupposition.BeliefEmbedding
 
@@ -58,52 +58,58 @@ inductive Holder where
 
 /-- Knowledge accessibility (S5: reflexive).
     Both worlds access both worlds. -/
-def knowsR : AttWorld → AttWorld → Bool
-  | _, _ => true
+def knowsR : AttWorld → AttWorld → Prop
+  | _, _ => True
 
 /-- Belief accessibility (KD45: serial, not reflexive).
     From `actual`, only `believed` is accessible.
     From `believed`, only `believed` is accessible. -/
-def believesR : AttWorld → AttWorld → Bool
+def believesR : AttWorld → AttWorld → Prop
+  | _, .believed => True
+  | _, .actual => False
+
+/-- Bool-valued mirror of `believesR` for downstream code that needs
+    decidable accessibility (e.g., `MaybeMonad.believe`). -/
+def believesRBool : AttWorld → AttWorld → Bool
   | _, .believed => true
   | _, .actual => false
 
 /-- Knowledge relation is reflexive. -/
-theorem knowsR_refl : BRefl knowsR := fun _ => rfl
+theorem knowsR_refl : Refl knowsR := fun _ => trivial
 
 /-- Belief relation is serial (every world accesses some world). -/
-theorem believesR_serial : BSerial believesR :=
-  fun w => ⟨.believed, by cases w <;> rfl⟩
+theorem believesR_serial : Serial believesR :=
+  fun w => ⟨.believed, by cases w <;> trivial⟩
 
 /-- Belief relation is NOT reflexive (`actual` does not access itself). -/
-theorem believesR_not_refl : ¬ BRefl believesR := by
-  intro h; have := h .actual; simp [believesR] at this
+theorem believesR_not_refl : ¬ Refl believesR := by
+  intro h; exact (h .actual : (False : Prop))
 
 /-- Belief relation is transitive. -/
-theorem believesR_trans : BTrans believesR := by
+theorem believesR_trans : Trans believesR := by
   intro w v u hwv hvu
   cases u with
-  | believed => cases w <;> rfl
-  | actual => simp [believesR] at hvu
+  | believed => cases w <;> trivial
+  | actual => exact hvu.elim
 
 /-- Belief relation is Euclidean. -/
-theorem believesR_eucl : BEucl believesR := by
+theorem believesR_eucl : Eucl believesR := by
   intro w v u hwv hwu
   cases u with
-  | believed => cases v <;> rfl
-  | actual => simp [believesR] at hwu
+  | believed => cases v <;> trivial
+  | actual => exact hwu.elim
 
 /-- R_B ⊆ R_K: belief-accessible worlds are knowledge-accessible. -/
 theorem believes_sub_knows :
-    ∀ (w v : AttWorld), believesR w v = true → knowsR w v = true :=
-  fun _ _ _ => rfl
+    ∀ (w v : AttWorld), believesR w v → knowsR w v :=
+  fun _ _ _ => trivial
 
 /-- The agent-indexed knowledge relation. -/
-def agentKnowsR : Holder → AttWorld → AttWorld → Bool
+def agentKnowsR : Holder → AttWorld → AttWorld → Prop
   | .john => knowsR
 
 /-- The agent-indexed belief relation. -/
-def agentBelievesR : Holder → AttWorld → AttWorld → Bool
+def agentBelievesR : Holder → AttWorld → AttWorld → Prop
   | .john => believesR
 
 /-- The knowledge-belief frame bundling S5 knowledge and KD45 belief. -/
@@ -168,8 +174,8 @@ theorem non_reflexivity_permits_false_presup :
     | believed => trivial
     | actual =>
       exfalso
-      have : agentBelievesR .john .actual .actual = true := hbel
-      simp [agentBelievesR, believesR] at this
+      have : agentBelievesR .john .actual .actual := hbel
+      exact this
   · simp [presup]
 
 /-- The @cite{heim-1992} know/believe asymmetry.

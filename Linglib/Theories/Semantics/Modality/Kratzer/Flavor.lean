@@ -155,24 +155,25 @@ Modal duality holds directly from `necessity`/`possibility` (Prop-based).
 See `Operators.duality` for the proof. -/
 
 /-- Evaluate a `KratzerParams` as necessity (∀ over best worlds). -/
-def KratzerParams.necessity (params : KratzerParams W) (p : W → Bool) (w : W) : Prop :=
+def KratzerParams.necessity (params : KratzerParams W) (p : W → Prop) (w : W) : Prop :=
   Kratzer.necessity params.base params.ordering p w
 
 /-- Evaluate a `KratzerParams` as possibility (∃ over best worlds). -/
-def KratzerParams.possibility (params : KratzerParams W) (p : W → Bool) (w : W) : Prop :=
+def KratzerParams.possibility (params : KratzerParams W) (p : W → Prop) (w : W) : Prop :=
   Kratzer.possibility params.base params.ordering p w
 
-instance (params : KratzerParams W) (p : W → Bool) (w : W) :
+instance (params : KratzerParams W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (params.necessity p w) :=
   inferInstanceAs (Decidable (Kratzer.necessity params.base params.ordering p w))
 
-instance (params : KratzerParams W) (p : W → Bool) (w : W) :
+instance (params : KratzerParams W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (params.possibility p w) :=
   inferInstanceAs (Decidable (Kratzer.possibility params.base params.ordering p w))
 
 /-- Duality: □p ↔ ¬◇¬p for any KratzerParams. -/
-theorem KratzerParams.duality (params : KratzerParams W) (p : W → Bool) (w : W) :
-    params.necessity p w ↔ ¬ params.possibility (fun w' => !p w') w :=
+theorem KratzerParams.duality (params : KratzerParams W) (p : W → Prop) [DecidablePred p]
+    (w : W) :
+    params.necessity p w ↔ ¬ params.possibility (fun w' => ¬ p w') w :=
   Kratzer.duality params.base params.ordering p w
 
 /-! ## Bridge to ModalTheory (World-specific)
@@ -193,9 +194,9 @@ def KratzerTheory (params : KratzerParams World) : ModalTheory where
   eval := fun force p w =>
     match force with
     | .necessity | .weakNecessity =>
-      decide (Kratzer.necessity params.base params.ordering p w)
+      decide (Kratzer.necessity params.base params.ordering (fun w' => p w' = true) w)
     | .possibility =>
-      decide (Kratzer.possibility params.base params.ordering p w)
+      decide (Kratzer.possibility params.base params.ordering (fun w' => p w' = true) w)
 
 /-- `KratzerTheory` evaluates weak necessity with the same quantifier as necessity.
     For proper von Fintel & Iatridou (2008) weak necessity, use
@@ -211,7 +212,10 @@ def KratzerMinimal : ModalTheory := KratzerTheory minimalParams
 theorem kratzerTheory_duality (params : KratzerParams World) (p : Proposition) (w : World) :
     (KratzerTheory params).dualityHolds p w = true := by
   unfold ModalTheory.dualityHolds KratzerTheory ModalTheory.necessity ModalTheory.possibility
-  simp only [Kratzer.duality params.base params.ordering p w, decide_not, beq_self_eq_true]
+  have hp : (fun w' => ¬ p w' = true) = (fun w' => (!p w') = true) := by
+    funext w'; cases p w' <;> simp
+  simp only [Kratzer.duality params.base params.ordering (fun w' => p w' = true) w,
+    decide_not, hp, beq_self_eq_true]
 
 theorem kratzer_isNormal (params : KratzerParams World) : (KratzerTheory params).isNormal :=
   fun p w => kratzerTheory_duality params p w

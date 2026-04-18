@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Case.Dependent
 import Linglib.Theories.Syntax.Minimalism.Core.CaseDiscrimination
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Fragments.Georgian.Agreement
@@ -58,8 +58,8 @@ evidential INFL. The algorithm covers present and aorist only.
 
 ## Abstract Case vs Morphological Case
 
-The dependent case algorithm produces *abstract* case values (`CaseVal`).
-These map to *morphological* surface forms (`Core.Case`) via
+The dependent case algorithm produces *abstract* case values (`Core.Case`).
+These map to *morphological* surface forms (also `Core.Case`) via
 language-specific spell-out at Morphological Structure. In Georgian:
 abstract ACC → morphological DAT (dative and accusative case have fallen
 together), abstract ABS → morphological NOM (unmarked surface form).
@@ -77,6 +77,7 @@ determines case *assignment* priority, the latter determines agreement
 namespace Marantz1991
 
 open Minimalism
+open Syntax.Case
 open Fragments.Georgian.Agreement
 
 -- ============================================================================
@@ -125,10 +126,10 @@ def georgianNPs : VerbClass → List NPInDomain
 def georgianCaseResult (vc : VerbClass) (ts : TenseSeries) : List CasedNP :=
   assignCases (georgianLangType ts) (georgianNPs vc)
 
-private def getCase! (label : String) (results : List CasedNP) : CaseVal :=
+private def getCase! (label : String) (results : List CasedNP) : Core.Case :=
   match getCaseOf label results with
   | some c => c
-  | none   => .obl
+  | none   => .dat  -- placeholder; the algorithm always returns every NP
 
 -- ============================================================================
 -- § 4: Abstract Case → Morphological Case (Georgian Spell-Out)
@@ -144,12 +145,12 @@ private def getCase! (label : String) (results : List CasedNP) : CaseVal :=
       is called "the dative case" — @cite{marantz-1991} p. 12)
     - Abstract ABS → morphological NOM (unmarked surface form)
     - Abstract ERG → morphological ERG -/
-def georgianSpellout : CaseVal → Core.Case
+def georgianSpellout : Core.Case → Core.Case
   | .nom => .nom
   | .acc => .dat   -- Georgian objects surface with the dative suffix
   | .erg => .erg
   | .abs => .nom   -- ABS surfaces as NOM
-  | c    => c.toCase
+  | c    => c
 
 theorem acc_surfaces_as_dat : georgianSpellout .acc = .dat := rfl
 theorem abs_surfaces_as_nom : georgianSpellout .abs = .nom := rfl

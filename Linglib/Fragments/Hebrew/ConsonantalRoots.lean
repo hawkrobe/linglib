@@ -27,6 +27,20 @@ open Core.Morphology
     the verbal template (@cite{faust-2026} (4)). -/
 def klj : Root String := ⟨["k", "l", "j"]⟩
 
+/-- √klt — base of [kalat] PST.3MSG `receive`, [klita] action noun,
+    [kalut] passive participle (@cite{faust-2026} (3a)). The full
+    triradical control case: every radical surfaces in every form,
+    no glide-related issue arises. -/
+def klt : Root String := ⟨["k", "l", "t"]⟩
+
+/-- √kll — base of [kalal] PST.3MSG `include`, [klila] action noun,
+    [kalul] passive participle (@cite{faust-2026} (3b)). The
+    final-radical-of-final-slot case: the second /l/ is the *final*
+    root segment, so its association to the template-final C-slot
+    does NOT violate \*Misalignment. This is the QaTaT pattern that
+    contrasts with the QaTa pattern of (3c) under the same template. -/
+def kll : Root String := ⟨["k", "l", "l"]⟩
+
 /-- √dmj — base of nominal [dimuj] `simile` and the taQTiL noun
     [tadmit] `(public) image` (@cite{faust-2026} (9b)). -/
 def dmj : Root String := ⟨["d", "m", "j"]⟩
@@ -54,6 +68,8 @@ def sbr : Root String := ⟨["ʃ", "b", "r"]⟩
 
 /-- Every Hebrew root in this inventory is triradical. -/
 theorem klj_triradical : klj.triradical = true := rfl
+theorem klt_triradical : klt.triradical = true := rfl
+theorem kll_triradical : kll.triradical = true := rfl
 theorem dmj_triradical : dmj.triradical = true := rfl
 theorem bnj_triradical : bnj.triradical = true := rfl
 theorem ktv_triradical : ktv.triradical = true := rfl
@@ -61,5 +77,14 @@ theorem sbr_triradical : sbr.triradical = true := rfl
 
 /-- The final segment of √klj is the glide [j] (the QaTaT–QaTa trigger). -/
 theorem klj_final_is_j : klj.finalSegment = some "j" := rfl
+
+/-- The final segment of √klt is the consonant [t] — distinguishes the
+    full-triradical control case (3a) from the [j]-final case (3c). -/
+theorem klt_final_is_t : klt.finalSegment = some "t" := rfl
+
+/-- The final segment of √kll is /l/, identical to its medial — but
+    \*Misalignment cares about *root index*, not surface identity, so
+    spreading the final /l/ to template-final is legitimate. -/
+theorem kll_final_is_l : kll.finalSegment = some "l" := rfl
 
 end Fragments.Hebrew

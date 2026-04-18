@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Logic.Basic
 import Linglib.Tactics.OntSort
 
 /-!
@@ -35,8 +35,6 @@ Identity is strictly stronger (§3 below).
 
 namespace Core
 
-open Core.Proposition
-
 -- ════════════════════════════════════════════════════
 -- § 1. The Content Individual Sort
 -- ════════════════════════════════════════════════════
@@ -54,7 +52,7 @@ open Core.Proposition
     the same content (my belief that p ≠ your belief that p). -/
 @[ont_sort] structure ContentIndividual (W : Type*) where
   /-- Propositional content: CONT(c) -/
-  cont : BProp W
+  cont : W → Prop
 
 -- ════════════════════════════════════════════════════
 -- § 2. Basic Operations
@@ -68,11 +66,11 @@ open Core.Proposition
     λw'. R(a, w, w'). Works for doxastic (believe), bouletic (want), and
     perceptual (see) accessibility alike — the sort is the same. -/
 def ContentIndividual.fromAccessibility {W E : Type*}
-    (R : E → W → W → Bool) (agent : E) (w : W) : ContentIndividual W :=
+    (R : E → W → W → Prop) (agent : E) (w : W) : ContentIndividual W :=
   ⟨R agent w⟩
 
 /-- A content individual is true at a world iff its content holds there. -/
-def ContentIndividual.trueAt {W : Type*} (c : ContentIndividual W) (w : W) : Bool :=
+def ContentIndividual.trueAt {W : Type*} (c : ContentIndividual W) (w : W) : Prop :=
   c.cont w
 
 /-- Two content individuals have the same content. -/
@@ -86,17 +84,17 @@ def ContentIndividual.sameContent {W : Type*} (c₁ c₂ : ContentIndividual W) 
 /-- Content entailment: the content of x_c entails proposition p (CONT ⊆ p).
 
     Every world where the content holds, p also holds:
-      ∀w. CONT(x_c)(w) = true → p(w) = true
+      ∀w. CONT(x_c)(w) → p(w)
 
     This is the Hintikka reading of attitude reports: "x believes that p"
     means p follows from x's belief content. @cite{kratzer-2006} and @cite{moulton-2015} use the stronger notion of content *identity* (CONT = p). -/
 def ContentIndividual.entails {W : Type*}
-    (xc : ContentIndividual W) (p : BProp W) : Prop :=
-  ∀ w, xc.cont w = true → p w = true
+    (xc : ContentIndividual W) (p : W → Prop) : Prop :=
+  ∀ w, xc.cont w → p w
 
 /-- Content identity implies content entailment: CONT(x_c) = p → CONT(x_c) ⊆ p. -/
 theorem ContentIndividual.eq_implies_entails {W : Type*}
-    (xc : ContentIndividual W) (p : BProp W) :
+    (xc : ContentIndividual W) (p : W → Prop) :
     xc.cont = p → xc.entails p := by
   intro h w
   rw [h]
@@ -104,20 +102,20 @@ theorem ContentIndividual.eq_implies_entails {W : Type*}
 
 /-- Content entailment does not imply content identity.
 
-    Counterexample: empty content (λ_ => false) entails any proposition p,
+    Counterexample: empty content (λ_ => False) entails any proposition p,
     but CONT ≠ p when p is nonempty.
 
     This is the key semantic distinction:
     - Hintikka: "John believes that p" ⟺ p follows from John's beliefs
     - Kratzer/Moulton: "John believes that p" ⟺ p IS John's belief content -/
 theorem ContentIndividual.entails_not_implies_eq :
-    ¬ ∀ (p : BProp Bool) (xc : ContentIndividual Bool),
+    ¬ ∀ (p : Bool → Prop) (xc : ContentIndividual Bool),
       xc.entails p → xc.cont = p := by
   intro h
-  -- The empty content (λ_ => false) entails everything
-  have := h (fun _ => true) ⟨fun _ => false⟩
+  -- The empty content (λ_ => False) entails everything
+  have heq := h (fun _ => True) ⟨fun _ => False⟩
     (by simp [ContentIndividual.entails])
-  -- But identity would require (λ_ => false) = (λ_ => true)
-  exact absurd (congr_fun this true) Bool.noConfusion
+  -- But identity would require (λ_ => False) = (λ_ => True)
+  exact (iff_of_eq (congr_fun heq true)).mpr trivial
 
 end Core

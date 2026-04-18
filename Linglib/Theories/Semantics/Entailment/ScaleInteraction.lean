@@ -16,7 +16,7 @@ open Alternatives
 theorem scale_alternatives_reverse :
     scalarAlternativesInContext Quantifiers.quantScale .some_ .upward = [.most, .all] ∧
     scalarAlternativesInContext Quantifiers.quantScale .some_ .downward = [.none_] := by
-  native_decide
+  decide
 
 /-- DE blocks "some -> not all" because "all" is not a stronger alternative in DE. -/
 theorem de_blocks_scalar_implicature :
@@ -24,7 +24,7 @@ theorem de_blocks_scalar_implicature :
     scalarAlternativesInContext Quantifiers.quantScale .some_ .upward = [.most, .all] ∧
     -- In DE, alternatives do NOT include "all"
     scalarAlternativesInContext Quantifiers.quantScale .some_ .downward = [.none_] := by
-  native_decide
+  decide
 
 
 end Semantics.Entailment.ScaleInteraction

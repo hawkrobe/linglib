@@ -206,36 +206,13 @@ inductive DefMarkingStrategy where
   | unmarked
   deriving DecidableEq, Repr
 
-/-- Language-specific definiteness parameters: the article inventory and
-what each form expresses. This is the input from which `DefMarkingStrategy`
-is derivable — rather than stipulating the strategy directly, we derive it
-from the language's overt forms and which type-shifts they block.
-
-@cite{moroney-2021} Tables 4.6–4.9: the blocking principle + article
-inventory jointly determine the marking strategy. -/
-structure DefMarkingParams where
-  /-- Does the language have an overt form for unique definiteness? -/
-  hasUniqueForm : Bool
-  /-- Does the language have an overt form for anaphoric definiteness? -/
-  hasAnaphoricForm : Bool
-  /-- If both forms exist, are they the same form? -/
-  sameForm : Bool := false
-  deriving Repr, DecidableEq
-
-/-- Derive the marking strategy from language-specific parameters.
-
-This replaces stipulated classification: instead of manually classifying
-each language, we derive its classification from observable properties
-(article inventory). -/
-def deriveStrategy : DefMarkingParams → DefMarkingStrategy
-  | ⟨true, true, true⟩   => .generallyMarked
-  | ⟨true, true, false⟩  => .bipartite
-  | ⟨false, true, _⟩     => .markedAnaphoric
-  | ⟨true, false, _⟩     => .generallyMarked
-  | ⟨false, false, _⟩    => .unmarked
-
 /-- Map marking strategy to `ArticleType`. Lossy: `.generallyMarked`
-and `.markedAnaphoric` both map to `.weakOnly`. -/
+and `.markedAnaphoric` both map to `.weakOnly`.
+
+Per-language strategy values are *not* stipulated here — they are derived
+from the morphological inventory in `Core.Nominal.ArticleInventory`. This
+function records only the cross-typology coarsening relation (Moroney's
+4-cell strategy → Schwarz's 3-cell `ArticleType`). -/
 def strategyToArticleType : DefMarkingStrategy → ArticleType
   | .generallyMarked  => .weakOnly
   | .bipartite        => .weakAndStrong

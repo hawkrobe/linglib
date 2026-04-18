@@ -627,26 +627,26 @@ theorem af_voice_never_traps (locus : CaseLocus) :
   cases locus <;> rfl
 
 -- ============================================================================
--- § 16: CaseVal Bridge
+-- § 16: Core.Case Bridge
 -- ============================================================================
 
-/-- The paper's `AbstractCase` maps to the framework's `CaseVal`. -/
-def AbstractCase.toCaseVal : AbstractCase → CaseVal
+/-- The paper's `AbstractCase` maps to the framework's `Core.Case`. -/
+def AbstractCase.toCoreCase : AbstractCase → Core.Case
   | .nom => .nom
   | .acc => .acc
   | .erg => .erg
 
 /-- The mapping preserves the assigner structure: ERG comes from v⁰,
     NOM comes from Infl⁰, and the object case depends on the parameter. -/
-theorem caseVal_bridge_object (locus : CaseLocus) :
-    (objectAbstractCase locus).toCaseVal =
+theorem coreCase_bridge_object (locus : CaseLocus) :
+    (objectAbstractCase locus).toCoreCase =
       match locus with
-      | .absNom => CaseVal.nom
-      | .absDef => CaseVal.acc := by
+      | .absNom => Core.Case.nom
+      | .absDef => Core.Case.acc := by
   cases locus <;> rfl
 
-theorem caseVal_bridge_subject (locus : CaseLocus) :
-    (subjectAbstractCase locus).toCaseVal = CaseVal.erg := rfl
+theorem coreCase_bridge_subject (locus : CaseLocus) :
+    (subjectAbstractCase locus).toCoreCase = Core.Case.erg := rfl
 
 -- ============================================================================
 -- § 17: Cross-Language AF Bridge (Q'anjob'al vs Kaqchikel)

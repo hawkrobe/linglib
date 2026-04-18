@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
 # Wholesale Late Merger

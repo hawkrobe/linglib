@@ -233,7 +233,7 @@ theorem shared_ergative :
     ERG and GEN are both realized by set A (they are homophonous in Mayan).
     ABS is realized by set B. The wildcard maps non-Mayan cases (NOM, ACC,
     DAT, etc.) to set A — these should never appear in Mayan fragments. -/
-def caseToMarker : CaseVal → MarkerSet
+def caseToMarker : Core.Case → MarkerSet
   | .erg => .setA
   | .gen => .setA
   | .abs => .setB

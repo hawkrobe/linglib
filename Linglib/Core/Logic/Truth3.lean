@@ -690,9 +690,6 @@ def bot : Prop3 W := λ _ => .false
 /-- Always undefined. -/
 def unk : Prop3 W := λ _ => .indet
 
-/-- Convert BProp to Prop3 (always defined). -/
-def ofBProp (p : W → Bool) : Prop3 W := λ w => Truth3.ofBool (p w)
-
 /-- Pointwise Weak Kleene disjunction. -/
 def orWeak (p q : Prop3 W) : Prop3 W := λ w => Truth3.joinWeak (p w) (q w)
 

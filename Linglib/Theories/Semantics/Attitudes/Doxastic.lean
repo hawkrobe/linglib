@@ -39,7 +39,6 @@ Doxastic attitudes can embed questions via exhaustive interpretation:
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.StructuralEquationModel
@@ -48,37 +47,47 @@ import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Doxastic
 
-open Core.Proposition
 open Core.Verbs (Veridicality)
 export Core.Verbs (Veridicality)
 
 -- Accessibility Relations
 
 /--
-Doxastic accessibility relation type.
+Doxastic accessibility relation type (Prop-valued, mathlib convention).
 
-R(agent, evalWorld, accessibleWorld) = true iff accessibleWorld is compatible
-with what agent believes/knows in evalWorld.
+`R agent evalWorld accessibleWorld` holds iff accessibleWorld is compatible
+with what agent believes/knows in evalWorld. For computational evaluation
+add `[DecidableRel (R agent)]` instances at use sites.
 -/
-abbrev AccessRel (W E : Type*) := Core.IntensionalLogic.RestrictedModality.BAgentAccessRel W E
+abbrev AccessRel (W E : Type*) := E → W → W → Prop
 
 /--
-Universal modal: true at w iff p true at all accessible worlds.
+Universal modal: holds at w iff p holds at all accessible worlds.
 
-⟦□p⟧(w) = ∀w'. R(w,w') → p(w')
+⟦□p⟧(w) = ∀w' ∈ worlds. R(agent, w, w') → p(w')
 -/
 def boxAt {W E : Type*} (R : AccessRel W E) (agent : E) (w : W)
-    (worlds : List W) (p : W → Bool) : Bool :=
-  worlds.all λ w' => !R agent w w' || p w'
+    (worlds : List W) (p : W → Prop) : Prop :=
+  ∀ w' ∈ worlds, R agent w w' → p w'
 
 /--
-Existential modal: true at w iff p true at some accessible world.
+Existential modal: holds at w iff p holds at some accessible world.
 
-⟦◇p⟧(w) = ∃w'. R(w,w') ∧ p(w')
+⟦◇p⟧(w) = ∃w' ∈ worlds. R(agent, w, w') ∧ p(w')
 -/
 def diaAt {W E : Type*} (R : AccessRel W E) (agent : E) (w : W)
-    (worlds : List W) (p : W → Bool) : Bool :=
-  worlds.any λ w' => R agent w w' && p w'
+    (worlds : List W) (p : W → Prop) : Prop :=
+  ∃ w' ∈ worlds, R agent w w' ∧ p w'
+
+instance boxAt_decidable {W E : Type*} (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
+    (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
+    Decidable (boxAt R agent w worlds p) :=
+  inferInstanceAs (Decidable (∀ w' ∈ worlds, _))
+
+instance diaAt_decidable {W E : Type*} (R : AccessRel W E) [∀ a w w', Decidable (R a w w')]
+    (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
+    Decidable (diaAt R agent w worlds p) :=
+  inferInstanceAs (Decidable (∃ w' ∈ worlds, _))
 
 -- ============================================================================
 -- Presuppositional Classification (@cite{glass-2025})
@@ -410,14 +419,18 @@ theorem nonfactive_presup_valid :
 variable {W : Type*}
 
 /--
-Veridicality constraint: if veridical, accessible worlds ⊆ actual world's p-value.
+Veridicality constraint: if veridical, p must hold at the evaluation world.
 
-For "know", we require: p(w) = true for the evaluation world w.
+For "know", we require p(w) at the evaluation world w.
 -/
-def veridicalityHolds {W : Type*} (v : Veridicality) (p : W → Bool) (w : W) : Bool :=
+def veridicalityHolds {W : Type*} (v : Veridicality) (p : W → Prop) (w : W) : Prop :=
   match v with
-  | .veridical => p w  -- Must be true at evaluation world
-  | .nonVeridical => true  -- No constraint
+  | .veridical => p w
+  | .nonVeridical => True
+
+instance veridicalityHolds_decidable {W : Type*} (v : Veridicality) (p : W → Prop)
+    [DecidablePred p] (w : W) : Decidable (veridicalityHolds v p w) := by
+  cases v <;> simp [veridicalityHolds] <;> infer_instance
 
 -- Doxastic Predicate Structure
 
@@ -441,12 +454,18 @@ Semantics for a doxastic predicate taking a proposition.
 
 ⟦x V that p⟧(w) = (veridicalityHolds V p w) ∧ ∀w'. R(x,w,w') → p(w')
 
-For veridical predicates, we also require p(w) = true.
+For veridical predicates, we also require p(w).
 -/
 def DoxasticPredicate.holdsAt {W E : Type*}
-    (V : DoxasticPredicate W E) (agent : E) (p : W → Bool)
-    (w : W) (worlds : List W) : Bool :=
-  veridicalityHolds V.veridicality p w && boxAt V.access agent w worlds p
+    (V : DoxasticPredicate W E) (agent : E) (p : W → Prop)
+    (w : W) (worlds : List W) : Prop :=
+  veridicalityHolds V.veridicality p w ∧ boxAt V.access agent w worlds p
+
+instance DoxasticPredicate.holdsAt_decidable {W E : Type*}
+    (V : DoxasticPredicate W E) [∀ a w w', Decidable (V.access a w w')]
+    (agent : E) (p : W → Prop) [DecidablePred p] (w : W) (worlds : List W) :
+    Decidable (V.holdsAt agent p w worlds) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================================
 -- PrProp Construction: Doxastic Predicates as Partial Propositions
@@ -464,7 +483,7 @@ The decomposition makes the presuppositional structure explicit:
 `holdsAt` computes `presup(w) && assertion(w)` — the same as `PrProp.holds`.
 -/
 def DoxasticPredicate.toPrProp {W E : Type*}
-    (V : DoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (V : DoxasticPredicate W E) (agent : E) (p : W → Prop)
     (worlds : List W) : PrProp W :=
   { presup := λ w => veridicalityHolds V.veridicality p w
   , assertion := λ w => boxAt V.access agent w worlds p }
@@ -472,13 +491,13 @@ def DoxasticPredicate.toPrProp {W E : Type*}
 /-- `toPrProp` decomposes `holdsAt`: the presup field is the veridicality
     check and the assertion field is the modal. -/
 theorem DoxasticPredicate.toPrProp_presup {W E : Type*}
-    (V : DoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (V : DoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W) :
     (V.toPrProp agent p worlds).presup w =
     veridicalityHolds V.veridicality p w := rfl
 
 theorem DoxasticPredicate.toPrProp_assertion {W E : Type*}
-    (V : DoxasticPredicate W E) (agent : E) (p : W → Bool)
+    (V : DoxasticPredicate W E) (agent : E) (p : W → Prop)
     (w : W) (worlds : List W) :
     (V.toPrProp agent p worlds).assertion w =
     boxAt V.access agent w worlds p := rfl
@@ -486,8 +505,8 @@ theorem DoxasticPredicate.toPrProp_assertion {W E : Type*}
 /-- PrProp for a hypothetical contrafactive verb: presupposes ¬p,
     asserts agent believes p. UNATTESTED — see @cite{glass-2025}. -/
 def contrafactivePrProp {W E : Type*} (R : AccessRel W E) (agent : E)
-    (p : W → Bool) (worlds : List W) : PrProp W :=
-  { presup := λ w => !p w
+    (p : W → Prop) (worlds : List W) : PrProp W :=
+  { presup := λ w => ¬ p w
   , assertion := λ w => boxAt R agent w worlds p }
 
 /--
@@ -500,13 +519,13 @@ For non-veridical predicates, we drop the p(w) requirement:
 ⟦x believes Q⟧(w) = ∃p ∈ Q. x believes p
 -/
 def DoxasticPredicate.holdsAtQuestion {W E : Type*}
-    (V : DoxasticPredicate W E) (agent : E) (Q : (W → Bool) → Bool)
-    (w : W) (worlds : List W) (answers : List (W → Bool)) : Bool :=
-  answers.any λ p =>
-    Q p &&  -- p is an answer to Q
+    (V : DoxasticPredicate W E) (agent : E) (Q : (W → Prop) → Prop)
+    (w : W) (worlds : List W) (answers : List (W → Prop)) : Prop :=
+  ∃ p ∈ answers,
+    Q p ∧
     (match V.veridicality with
-     | .veridical => p w  -- For know: p must be true
-     | .nonVeridical => true) &&  -- For believe: no truth requirement
+     | .veridical => p w
+     | .nonVeridical => True) ∧
     boxAt V.access agent w worlds p
 
 -- Standard Doxastic Predicates (Abstract)
@@ -556,10 +575,10 @@ If x knows p at w, then p is true at w.
 -/
 theorem veridical_entails_complement {W E : Type*}
     (V : DoxasticPredicate W E) (hV : V.veridicality = .veridical)
-    (agent : E) (p : W → Bool) (w : W) (worlds : List W)
-    (holds : V.holdsAt agent p w worlds = true) : p w = true := by
+    (agent : E) (p : W → Prop) (w : W) (worlds : List W)
+    (holds : V.holdsAt agent p w worlds) : p w := by
   unfold DoxasticPredicate.holdsAt at holds
-  simp only [hV, veridicalityHolds, Bool.and_eq_true] at holds
+  simp only [hV, veridicalityHolds] at holds
   exact holds.1
 
 /--
@@ -569,10 +588,11 @@ There exist cases where x believes p but p is false.
 -/
 theorem nonVeridical_not_entails {W E : Type*} [Inhabited W] [Inhabited E]
     (V : DoxasticPredicate W E) (hV : V.veridicality = .nonVeridical) :
-    ∃ (agent : E) (p : W → Bool) (w : W) (worlds : List W),
-      V.holdsAt agent p w worlds = true ∧ p w = false :=
-  -- Use empty worlds list: boxAt is vacuously true, p w can be false
-  ⟨default, fun _ => false, default, [], by simp [DoxasticPredicate.holdsAt, hV, veridicalityHolds, boxAt]⟩
+    ∃ (agent : E) (p : W → Prop) (w : W) (worlds : List W),
+      V.holdsAt agent p w worlds ∧ ¬ p w :=
+  -- Use empty worlds list: boxAt is vacuously true, p w can be False
+  ⟨default, fun _ => False, default, [], by
+    simp [DoxasticPredicate.holdsAt, hV, veridicalityHolds, boxAt]⟩
 
 /--
 Doxastic predicates are closed under known implication.
@@ -581,19 +601,13 @@ If x knows p and x knows (p → q), then x knows q.
 (This is the K axiom of modal logic)
 -/
 theorem doxastic_k_axiom {W E : Type*}
-    (V : DoxasticPredicate W E) (agent : E) (p q : W → Bool)
+    (V : DoxasticPredicate W E) (agent : E) (p q : W → Prop)
     (w : W) (worlds : List W)
-    (hp : boxAt V.access agent w worlds p = true)
-    (hpq : boxAt V.access agent w worlds (λ w' => !p w' || q w') = true) :
-    boxAt V.access agent w worlds q = true := by
-  simp only [boxAt, List.all_eq_true, Bool.or_eq_true, Bool.not_eq_true'] at *
-  intro w' hw'
-  cases hR : V.access agent w w'
-  · left; rfl
-  · right
-    have h1 := hp w' hw'; simp [hR] at h1
-    have h2 := hpq w' hw'; simp [hR, h1] at h2
-    exact h2
+    (hp : boxAt V.access agent w worlds p)
+    (hpq : boxAt V.access agent w worlds (λ w' => p w' → q w')) :
+    boxAt V.access agent w worlds q := by
+  intro w' hw' hR
+  exact hpq w' hw' hR (hp w' hw' hR)
 
 -- Substitution and Opacity
 
@@ -617,10 +631,10 @@ happen to have the same extension at the evaluation world.
 -/
 def substitutionMayFail {W E : Type*} (V : DoxasticPredicate W E) : Prop :=
   V.createsOpaqueContext = true →
-  ∃ (agent : E) (p q : W → Bool) (w : W) (worlds : List W),
-    p w = q w ∧  -- Same extension at w
-    p ≠ q ∧      -- Different intensions
-    V.holdsAt agent p w worlds ≠ V.holdsAt agent q w worlds
+  ∃ (agent : E) (p q : W → Prop) (w : W) (worlds : List W),
+    (p w ↔ q w) ∧  -- Same extension at w
+    p ≠ q ∧        -- Different intensions
+    ¬ (V.holdsAt agent p w worlds ↔ V.holdsAt agent q w worlds)
 
 -- De Dicto vs De Re
 
@@ -631,7 +645,7 @@ De dicto reading: quantifier under the attitude.
 John believes ∃x. spy(x)
 -/
 def deDicto {W E : Type*} (V : DoxasticPredicate W E)
-    (agent : E) (p : W → Bool) (w : W) (worlds : List W) : Bool :=
+    (agent : E) (p : W → Prop) (w : W) (worlds : List W) : Prop :=
   V.holdsAt agent p w worlds
 
 /--
@@ -643,9 +657,9 @@ De re reading: quantifier over the attitude.
 Here we need a domain of individuals to quantify over.
 -/
 def deRe {W E D : Type*} (V : DoxasticPredicate W E)
-    (agent : E) (predicate : D → W → Bool) (domain : List D)
-    (w : W) (worlds : List W) : Bool :=
-  domain.any λ x => V.holdsAt agent (predicate x) w worlds
+    (agent : E) (predicate : D → W → Prop) (domain : List D)
+    (w : W) (worlds : List W) : Prop :=
+  ∃ x ∈ domain, V.holdsAt agent (predicate x) w worlds
 
 -- Connection to Scalar Implicature
 

@@ -283,17 +283,17 @@ theorem respects_no_domination (no : NormalityOrder W) (φ : W → Prop)
 
     Equivalent to `atLeastAsGoodAs` in `Modality/Kratzer.lean` (computable)
     and `kratzerPlausibility` in `BeliefRevision.lean` (with smoothness). -/
-def fromProps (props : List (W → Bool)) : NormalityOrder W where
-  le w v := ∀ p ∈ props, p v = true → p w = true
+def fromProps (props : List (W → Prop)) : NormalityOrder W where
+  le w v := ∀ p ∈ props, p v → p w
   le_refl _ _ _ h := h
   le_trans _ _ _ huv hvw p hp hpw := huv p hp (hvw p hp hpw)
 
 /-- The empty ordering source gives the total ordering. -/
-theorem fromProps_nil {w v : W} : (fromProps ([] : List (W → Bool))).le w v :=
+theorem fromProps_nil {w v : W} : (fromProps ([] : List (W → Prop))).le w v :=
   fun _ h => nomatch h
 
 /-- Adding a proposition to the ordering source refines it. -/
-theorem fromProps_cons_le (p : W → Bool) (ps : List (W → Bool))
+theorem fromProps_cons_le (p : W → Prop) (ps : List (W → Prop))
     {w v : W} (h : (fromProps (p :: ps)).le w v) :
     (fromProps ps).le w v :=
   fun q hq => h q (List.mem_cons_of_mem p hq)

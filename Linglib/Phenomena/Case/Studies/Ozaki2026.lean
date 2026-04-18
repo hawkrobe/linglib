@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Case.Dependent
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Passive
@@ -273,6 +273,7 @@ theorem unaccusativity_count : unaccusativityData.length = 3 := rfl
 -- ============================================================================
 
 open Minimalism
+open Syntax.Case
 open Fragments.Japanese.Predicates
 
 /-- Departure verbs predict no external argument: non-thematic Voice

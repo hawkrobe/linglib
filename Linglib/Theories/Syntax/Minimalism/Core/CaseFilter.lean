@@ -39,9 +39,11 @@ def vAssignsAccusative : FeatureBundle :=
   [.unvalued (.case .acc)]
 
 /-- DP needs Case (Case Filter).
-    All DPs have [uCase], must be valued by Agree. -/
+    All DPs have [uCase], must be valued by Agree. The `.dat` value here
+    is a placeholder — `featuresMatch` ignores values for unvalued probes,
+    so any `Core.Case` would work; `.dat` is conventional. -/
 def dpNeedsCase : FeatureBundle :=
-  [.unvalued (.case .obl)]  -- unvalued, will be valued by T or v
+  [.unvalued (.case .dat)]
 
 -- ============================================================================
 -- § 2: DP Feature Structures
@@ -53,12 +55,13 @@ structure DPFeatures where
   caseFeature : GramFeature  -- The Case feature (valued or unvalued)
   deriving Repr
 
-/-- Create DP features with unvalued Case. -/
+/-- Create DP features with unvalued Case. The `.dat` value is a
+    placeholder — see `dpNeedsCase` for the rationale. -/
 def DPFeatures.withUnvaluedCase (phi : List PhiFeature) : DPFeatures :=
-  ⟨phi, .unvalued (.case .obl)⟩
+  ⟨phi, .unvalued (.case .dat)⟩
 
 /-- Create DP features with valued Case. -/
-def DPFeatures.withCase (phi : List PhiFeature) (c : CaseVal) : DPFeatures :=
+def DPFeatures.withCase (phi : List PhiFeature) (c : Core.Case) : DPFeatures :=
   ⟨phi, .valued (.case c)⟩
 
 /-- Does a DP satisfy the Case Filter? (has valued Case) -/

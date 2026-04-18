@@ -205,8 +205,7 @@ This is what tense operators modify.
 
 Note: a Bool-valued counterpart exists at
 `Semantics.Attitudes.SituationDependent.SitProp` for
-computational RSA evaluation. The split follows the `Prop'`/`BProp`
-pattern in `Core/Proposition.lean`.
+computational RSA evaluation.
 -/
 abbrev SitProp (W Time : Type*) := Situation W Time → Prop
 

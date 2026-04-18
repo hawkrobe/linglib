@@ -59,7 +59,7 @@ sequential update = single conjunctive update — apply directly.
 namespace Pragmatics.Assertion.DisjunctiveUpdate
 
 open Core.CommonGround (ContextSet)
-open Core.Proposition (Prop' BProp)
+open Core.Proposition (Prop')
 open Core.Semantics.ParameterizedUpdate
 
 

@@ -33,7 +33,6 @@ in `Core/Discourse/IllocutionaryForce.lean`.
 
 namespace Core.Discourse
 
-open Core.Proposition (BProp)
 open Core.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════════════════
@@ -152,12 +151,12 @@ structure IntentionalState (W : Type*) where
   /-- The psychological mode (belief, desire, intention, ...) -/
   mode : PsychMode
   /-- The representative content -/
-  content : BProp W
+  content : W → Prop
 
 /-- Conditions of satisfaction: what must obtain for the state to be satisfied.
     These are *identical* to the content — not a separate component. -/
 def IntentionalState.conditionsOfSatisfaction {W : Type*}
-    (s : IntentionalState W) : BProp W :=
+    (s : IntentionalState W) : W → Prop :=
   s.content
 
 -- ════════════════════════════════════════════════════════════════

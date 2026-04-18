@@ -24,7 +24,7 @@ def longFormFeatures : List MAGFeatureType :=
   [ .phi (.number .pl), .phi (.number .sg)
   , .phi (.gender 0), .phi (.gender 1), .phi (.gender 2)
   , .kappa .nom, .kappa .acc, .kappa .dat
-  , .kappa .gen, .kappa .abl, .kappa .obl ]
+  , .kappa .gen, .kappa .abl ]
 
 def dpFeatures : List MAGFeatureType := longFormFeatures
 

@@ -25,7 +25,6 @@ type and connected to it via bridge theorems.
 
 namespace Semantics.PIP
 
-open Core.IntensionalLogic.RestrictedModality (BAccessRel)
 open Core.Proposition (FiniteWorlds)
 
 

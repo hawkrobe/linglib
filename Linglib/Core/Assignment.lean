@@ -2,31 +2,39 @@ import Mathlib.Init
 
 /-!
 # Variable Assignments
+@cite{heim-kratzer-1998} @cite{henkin-monk-tarski-1971} @cite{spector-2025}
+@cite{beaver-krahmer-2001} @cite{van-der-berg-1996} @cite{nouwen-2003}
+@cite{brasoveanu-2008}
 
-Framework-neutral variable assignment infrastructure shared by static
-semantics (Montague/Heim & Kratzer), dynamic semantics (DRT, DPL, CDRT),
-and the cylindric algebra formalism.
+The polymorphic assignment substrate shared by every variable-binding framework
+in the library: Tarski-style total assignments, partial assignments (trivalent
+semantics), plural assignments (plural dynamic semantics), and a generic
+`VarAssignment` alias.
 
-An `Assignment E` maps natural number indices to entities of type `E`.
-The `update` operation `g[n↦d]` modifies a single register, leaving
-all others fixed. These operations satisfy the cylindric set algebra
-axioms (@cite{henkin-monk-tarski-1971}).
+`Assignment E := ℕ → E` is **pre-intensional** — pure Tarski variable mapping —
+so it lives at the top of `Core` rather than inside `Core.IntensionalLogic`.
+The intensional substrate (`Frame`, `SitAssignment F := Assignment F.Index`,
+`DenotGS`) builds on this in `Core/IntensionalLogic/`.
 -/
 
 namespace Core
 
-/-- Variable assignment: function from indices to entities.
+-- ════════════════════════════════════════════════════════════════
+-- Total Assignments (Tarski-style; the extensional substrate)
+-- @cite{heim-kratzer-1998} @cite{henkin-monk-tarski-1971}
+-- ════════════════════════════════════════════════════════════════
 
-This is the canonical assignment type used across the library:
-- Montague semantics (static variable binding)
-- DRT, DPL, CDRT (dynamic discourse referents)
-- Cylindric algebra (abstract coordinate functions) -/
+/-- Variable assignment: a function from natural-number indices to values in
+    `E`. Instantiated at `F.Entity` for entity pronouns (Heim & Kratzer
+    1998), at `F.Index` for situation pronouns (Hanink 2021 / Bondarenko 2023),
+    at `Time` for temporal variables, and at any other carrier whenever a
+    framework needs Tarski-style variable interpretation. -/
 abbrev Assignment (E : Type*) := Nat → E
 
 namespace Assignment
 
-/-- Assignment update `g[n↦d]`: set register `n` to value `d`,
-preserving all other registers. -/
+/-- Pointwise update `g[n↦d]`: set register `n` to `d`, leaving all other
+    registers fixed. -/
 def update {E : Type*} (g : Assignment E) (n : Nat) (d : E) : Assignment E :=
   fun m => if m = n then d else g m
 
@@ -52,6 +60,7 @@ end Assignment
 
 -- ════════════════════════════════════════════════════════════════
 -- Partial Assignments
+-- @cite{spector-2025} @cite{beaver-krahmer-2001}
 -- ════════════════════════════════════════════════════════════════
 
 /-- Partial assignment: variables may be undefined (`none`).
@@ -191,8 +200,9 @@ namespace Core.VarAssignment
     Instantiate with `D = Entity` for pronoun interpretation (@cite{heim-kratzer-1998})
     or `D = Time` for temporal variable interpretation.
 
-    This is the same type as `Core.Assignment D` (both are `ℕ → D`). The alias
-    exists for historical reasons; prefer `Core.Assignment` in new code. -/
+    This is the same type as `Core.Assignment D` (both are `ℕ → D`). The
+    alias exists for historical reasons; prefer `Core.Assignment` in new
+    code. -/
 abbrev VarAssignment (D : Type*) := Nat → D
 
 /-- Modified assignment g[n ↦ d]: update index `n` to value `d`. -/

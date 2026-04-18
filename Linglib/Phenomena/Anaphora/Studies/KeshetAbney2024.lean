@@ -47,7 +47,10 @@ namespace KeshetAbney2024
 open Semantics.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity)
 open Semantics.Dynamic.IntensionalCDRT (IContext)
-open Core.IntensionalLogic.RestrictedModality (BAccessRel BRefl kripkeEval)
+-- `BAccessRel` is re-exported by `Semantics.PIP` (opened above);
+-- `BRefl` / `kripkeEval` were Bool-internal modal infrastructure that has
+-- been replaced by the Prop-valued `Refl`/`boxR` API in
+-- `Core.IntensionalLogic.RestrictedModality` and isn't needed here.
 open Core.Proposition (FiniteWorlds)
 open Phenomena.Anaphora
 

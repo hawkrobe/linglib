@@ -248,12 +248,12 @@ theorem island_constructions_are :
     islandConstructions = [.whExclamative, .topicalized] := by native_decide
 
 -- ============================================================================
--- Bridge: Semantic Type ↔ ClauseType
+-- Bridge: Semantic Type ↔ ClauseForm
 -- ============================================================================
 
-/-! ### Connection to `ClauseType` in Core/Basic
+/-! ### Connection to `ClauseForm` in Core/Basic
 
-Sag's semantic types map to the existing `ClauseType` for the clause types
+Sag's semantic types map to the existing `ClauseForm` for the clause types
 that have direct correspondences. -/
 
 /-- Wh-interrogatives correspond to matrixQuestion or embeddedQuestion

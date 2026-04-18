@@ -169,16 +169,26 @@ weak necessity uses world ranking, strong necessity does not. -/
 
     Universal quantification over favored worlds. No ordering source
     is consulted — strong necessity is non-comparative. -/
-def strongNecessityR (pt : PriorityTypology) (p : BProp World) (w : World) : Bool :=
-  decide (∀ w' ∈ favoredWorlds pt w, p w' = true)
+def strongNecessityR (pt : PriorityTypology) (p : World → Prop) [DecidablePred p]
+    (w : World) : Prop :=
+  ∀ w' ∈ favoredWorlds pt w, p w'
 
 /-- **Weak necessity** (definition 42):
     `⟦ought⟧ = λpλe∀w'(w' ∈ BEST(Fav(f, h, e), g(e)) → w' ∈ p)`
 
     Universal quantification over the best favored worlds, where "best"
     is determined by the negotiable ordering source g(e). -/
-def weakNecessityR (pt : PriorityTypology) (p : BProp World) (w : World) : Bool :=
-  decide (∀ w' ∈ bestAmong (favoredWorlds pt w) (pt.negotiable w), p w' = true)
+def weakNecessityR (pt : PriorityTypology) (p : World → Prop) [DecidablePred p]
+    (w : World) : Prop :=
+  ∀ w' ∈ bestAmong (favoredWorlds pt w) (pt.negotiable w), p w'
+
+instance (pt : PriorityTypology) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (strongNecessityR pt p w) :=
+  inferInstanceAs (Decidable (∀ w' ∈ favoredWorlds pt w, p w'))
+
+instance (pt : PriorityTypology) (p : World → Prop) [DecidablePred p] (w : World) :
+    Decidable (weakNecessityR pt p w) :=
+  inferInstanceAs (Decidable (∀ w' ∈ bestAmong (favoredWorlds pt w) (pt.negotiable w), p w'))
 
 -- ============================================================================
 -- §5. Entailment (§1, paper's key asymmetry)
@@ -193,12 +203,9 @@ holds at all best favored worlds. -/
 /-- **Strong necessity entails weak necessity** in Rubinstein's framework.
     Parallel to `Directive.strong_entails_weak`, but derived from the
     subset relation `BEST(Fav, g) ⊆ Fav`. -/
-theorem strong_entails_weak_R (pt : PriorityTypology) (p : BProp World) (w : World)
-    (h : strongNecessityR pt p w = true) :
-    weakNecessityR pt p w = true := by
-  unfold strongNecessityR at h
-  unfold weakNecessityR
-  simp only [decide_eq_true_eq] at h ⊢
+theorem strong_entails_weak_R (pt : PriorityTypology) (p : World → Prop) [DecidablePred p]
+    (w : World) (h : strongNecessityR pt p w) :
+    weakNecessityR pt p w := by
   intro w' hw'
   exact h w' (bestAmong_sub _ _ w' hw')
 
@@ -208,18 +215,20 @@ private def ce_pt : PriorityTypology where
   nonNegotiable := emptyBackground
   negotiable := λ _ => [λ w => w == .w1]
 
-private def ce_p : BProp World := λ w => w == .w1
+private def ce_p : World → Prop := λ w => w = .w1
+
+instance : DecidablePred ce_p := fun w => decEq w .w1
 
 /-- The converse fails: weak necessity does NOT entail strong necessity.
     If p holds at all BEST favored worlds but not at all favored worlds,
     weak necessity holds but strong necessity does not. -/
 theorem weak_not_entails_strong_R :
-    ¬(∀ (pt : PriorityTypology) (p : BProp World) (w : World),
-      weakNecessityR pt p w = true → strongNecessityR pt p w = true) := by
+    ¬(∀ (pt : PriorityTypology) (p : World → Prop) [DecidablePred p] (w : World),
+      weakNecessityR pt p w → strongNecessityR pt p w) := by
   intro h
-  exact absurd
-    (h ce_pt ce_p .w0 (by native_decide))
-    (by native_decide)
+  have : weakNecessityR ce_pt ce_p .w0 := by decide
+  have hns : ¬ strongNecessityR ce_pt ce_p .w0 := by decide
+  exact hns (h ce_pt ce_p .w0 this)
 
 -- ============================================================================
 -- §6. Bridge to Directive.lean
@@ -234,11 +243,12 @@ ordering source. -/
 
 /-- With no promoted priorities, Rubinstein's strong necessity equals
     simple Kratzer necessity (no ordering). -/
-theorem strongR_eq_simpleNecessity (f : ModalBase World) (p : BProp World) (w : World) :
-    (strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w = true) ↔
+theorem strongR_eq_simpleNecessity (f : ModalBase World) (p : World → Prop) [DecidablePred p]
+    (w : World) :
+    strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w ↔
     simpleNecessity f p w := by
   unfold strongNecessityR
-  rw [decide_eq_true_eq, simpleNecessity_iff_all,
+  rw [simpleNecessity_iff_all,
     show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
       accessibleWorlds f w from favored_no_promoted f emptyBackground w]
 
@@ -250,22 +260,22 @@ theorem strongR_eq_simpleNecessity (f : ModalBase World) (p : BProp World) (w : 
     differ structurally: Directive treats all priorities as ordering-source
     material; Rubinstein promotes some to modal-base status. -/
 theorem weakR_eq_necessity (f : ModalBase World) (g : OrderingSource World)
-    (p : BProp World) (w : World) :
-    (weakNecessityR ⟨f, emptyBackground, g⟩ p w = true) ↔
+    (p : World → Prop) [DecidablePred p] (w : World) :
+    weakNecessityR ⟨f, emptyBackground, g⟩ p w ↔
     necessity f g p w := by
   rw [necessity_iff_all]
   unfold weakNecessityR
-  rw [decide_eq_true_eq, show favoredWorlds ⟨f, emptyBackground, g⟩ w =
+  rw [show favoredWorlds ⟨f, emptyBackground, g⟩ w =
     accessibleWorlds f w from favored_no_promoted f g w]
   rfl
 
 /-- When no priorities are promoted AND no negotiable ordering exists,
     strong and weak necessity coincide (both = simple necessity). -/
-theorem strongR_eq_weakR_trivial (f : ModalBase World) (p : BProp World) (w : World) :
-    strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w =
+theorem strongR_eq_weakR_trivial (f : ModalBase World) (p : World → Prop) [DecidablePred p]
+    (w : World) :
+    strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w ↔
     weakNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w := by
   unfold strongNecessityR weakNecessityR
-  congr 1
   rw [show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
       accessibleWorlds f w from favored_no_promoted f emptyBackground w]
   simp only [emptyBackground, bestAmong_empty]

@@ -28,11 +28,11 @@ namespace HPSG
 -- ============================================================================
 
 /-- Matrix questions require [INV +] -/
-def matrixRequiresInvPlus (ct : ClauseType) (inv : Inv) : Prop :=
+def matrixRequiresInvPlus (ct : ClauseForm) (inv : Inv) : Prop :=
   ct = .matrixQuestion → inv = .plus
 
 /-- Embedded questions require [INV -] -/
-def embeddedRequiresInvMinus (ct : ClauseType) (inv : Inv) : Prop :=
+def embeddedRequiresInvMinus (ct : ClauseForm) (inv : Inv) : Prop :=
   ct = .embeddedQuestion → inv = .minus
 
 -- ============================================================================
@@ -63,7 +63,7 @@ theorem embedded_has_subject_before_aux (inv : Inv) (ws : List Word)
 structure Clause where
   words : List Word
   inv : Inv
-  clauseType : ClauseType
+  clauseType : ClauseForm
 
 /-- Word order must match INV feature -/
 def wordOrderMatchesInv (c : Clause) : Prop :=
@@ -77,7 +77,7 @@ def wellFormed (c : Clause) : Prop :=
   embeddedRequiresInvMinus c.clauseType c.inv
 
 /-- A word sequence is licensed for a clause type if some INV value works -/
-def licenses (ws : List Word) (ct : ClauseType) : Prop :=
+def licenses (ws : List Word) (ct : ClauseForm) : Prop :=
   ∃ inv : Inv, wellFormed ⟨ws, inv, ct⟩
 
 -- ============================================================================

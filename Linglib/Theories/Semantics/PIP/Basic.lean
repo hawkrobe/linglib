@@ -49,6 +49,17 @@ namespace Semantics.PIP
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.IntensionalCDRT
 
+/-- Local Bool-valued accessibility for PIP's computational modal evaluation.
+    PIP's modal operators use Bool predicates throughout for `List.all`/`List.any`
+    computation; this is not the parallel-universe pattern (we are not shadowing
+    Prop infrastructure with Bool versions), it is a legitimate Bool-internal
+    framework over which PIP's discourse-update operators compute. The Prop-valued
+    `Core.IntensionalLogic.RestrictedModality.AccessRel` is the canonical type for
+    Kripke-style modal logic; PIP needs the Bool variant for its `List.all`/`List.any`
+    truth-value pipeline. Lifted to Prop via `fun a b => R a b = true` when bridging
+    to `boxR`/`diamondR`. -/
+abbrev BAccessRel (W : Type*) := W → W → Bool
+
 
 -- ============================================================
 -- Formula Labels

@@ -37,7 +37,7 @@ open Semantics.TypeTheoretic (BCheckableAustinian TTRQuestion TTRAnswer Checkabl
 placing it in `Type 1`. Since `DGB` requires `QContent : Type`, we provide
 a decidable variant where the question body is Bool-valued.
 
-The correspondence: `TTRQuestionB R` is to `TTRQuestion R` as `BProp W` is
+The correspondence: `TTRQuestionB R` is to `TTRQuestion R` as `Prop' W` is
 to `Prop' W` — the decidable/computable variant of the same concept. -/
 structure TTRQuestionB (R : Type) where
   /-- The decidable question body -/

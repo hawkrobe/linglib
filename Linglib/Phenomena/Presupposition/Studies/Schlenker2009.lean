@@ -85,7 +85,7 @@ variable {W : Type*} {Agent : Type*}
 
 /-- A projective trigger's behavior characterized by SCF and OLE values. -/
 structure TriggerBehavior (W : Type*) (Agent : Type*) where
-  content : BProp W
+  content : Prop' W
   scf : StrongContextualFelicity
   ole : ObligatoryLocalEffect
 

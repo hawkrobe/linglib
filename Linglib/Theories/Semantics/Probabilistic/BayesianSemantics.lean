@@ -35,14 +35,12 @@ Goodman's result: "threshold semantics + uncertainty = graded semantics".
 
 import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Core.FinitePMF
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.GradedProposition
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
 namespace Semantics.Montague.BayesianSemantics
 
-open Core.Proposition
 open Core.GradedProposition
 open Semantics.Probabilistic.ParamPred
 

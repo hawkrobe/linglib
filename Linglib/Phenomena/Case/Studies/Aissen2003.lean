@@ -1,7 +1,7 @@
 import Linglib.Core.Prominence
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Phenomena.Case.Typology
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Case.Dependent
 
 /-!
 # @cite{aissen-2003}: Differential Object Marking @cite{aissen-2003}
@@ -343,7 +343,7 @@ theorem ranking_counts :
 -- Part II: Dependent Case → DOM Pipeline
 -- ============================================================================
 
-open Minimalism
+open Syntax.Case
 open Phenomena.Case.Typology
 
 -- ============================================================================
@@ -357,7 +357,7 @@ open Phenomena.Case.Typology
     to decide overt realization. -/
 structure ProminentNP where
   label : String
-  lexicalCase : Option CaseVal
+  lexicalCase : Option Core.Case
   animacy : AnimacyLevel
   definiteness : DefinitenessLevel
   deriving DecidableEq, Repr
@@ -381,7 +381,7 @@ def derivation (lang : CaseLanguageType) (tc : TransClause) : List CasedNP :=
   assignCases lang [tc.subject.toNP, tc.object.toNP]
 
 /-- Abstract case assigned to the object. -/
-def objectCase (lang : CaseLanguageType) (tc : TransClause) : Option CaseVal :=
+def objectCase (lang : CaseLanguageType) (tc : TransClause) : Option Core.Case :=
   getCaseOf tc.object.label (derivation lang tc)
 
 /-- Whether the object receives overt case morphology.
@@ -413,14 +413,14 @@ def mkTrans (a : AnimacyLevel) (d : DefinitenessLevel) : TransClause :=
 theorem object_always_acc :
     AnimacyLevel.all.all (λ a =>
       DefinitenessLevel.all.all (λ d =>
-        objectCase .accusative (mkTrans a d) == some CaseVal.acc)) = true := by
+        objectCase .accusative (mkTrans a d) == some Core.Case.acc)) = true := by
   native_decide
 
 /-- The subject always gets NOM (unmarked case). -/
 theorem subject_always_nom :
     AnimacyLevel.all.all (λ a =>
       DefinitenessLevel.all.all (λ d =>
-        getCaseOf "subj" (derivation .accusative (mkTrans a d)) == some CaseVal.nom)) = true := by
+        getCaseOf "subj" (derivation .accusative (mkTrans a d)) == some Core.Case.nom)) = true := by
   native_decide
 
 -- ============================================================================

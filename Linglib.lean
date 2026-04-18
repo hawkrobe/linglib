@@ -41,6 +41,8 @@ import Linglib.Core.IntensionalLogic.Quantification
 import Linglib.Core.IntensionalLogic.Algebra
 import Linglib.Core.IntensionalLogic.CategoryType
 import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Core.IntensionalLogic.Premise
+import Linglib.Core.IntensionalLogic.Situations
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Normality
 import Linglib.Core.Order.Plausibility
@@ -146,6 +148,11 @@ import Linglib.Core.Context.Rich
 import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Core.Definiteness
+import Linglib.Core.Deixis.Feature
+import Linglib.Core.Nominal.Description
+import Linglib.Core.Nominal.Maximality
+import Linglib.Core.Nominal.Interpret
+import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Core.IndefiniteType
 import Linglib.Core.SpecificityCondition
 import Linglib.Core.Prominence
@@ -224,6 +231,9 @@ import Linglib.Core.Interval.LogInterval
 import Linglib.Core.Interval.SqrtInterval
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Core.SubjectProperties
+import Linglib.Core.NullSubject.Basic
+import Linglib.Core.NullSubject.Defs
+import Linglib.Core.NullSubject.Universals
 import Linglib.Core.Subjectivity
 import Linglib.Core.WALS.Datapoint
 import Linglib.Core.WALS.Languages
@@ -437,6 +447,7 @@ import Linglib.Fragments.Dutch.Modals
 import Linglib.Fragments.Dutch.TemporalConnectives
 import Linglib.Fragments.Danish.V2
 import Linglib.Fragments.Norwegian.V2
+import Linglib.Fragments.English.Definiteness
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
@@ -483,6 +494,7 @@ import Linglib.Fragments.Dargwa.Coordination
 import Linglib.Fragments.Farsi.Determiners
 import Linglib.Fragments.Farsi.Phonology
 import Linglib.Fragments.German.Case
+import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.German.Tense
 import Linglib.Fragments.German.TemporalDeictic
 import Linglib.Fragments.German.PolarityMarking
@@ -527,6 +539,7 @@ import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Amharic.ConsonantalRoots
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Urdu.CausativeSystem
+import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Thai.Morph
 import Linglib.Fragments.Indonesian.Morph
 import Linglib.Fragments.Indonesian.VoiceSystem
@@ -599,6 +612,7 @@ import Linglib.Fragments.Japanese.Negation
 import Linglib.Fragments.Japanese.Prosody
 import Linglib.Fragments.Mongolian.Case
 import Linglib.Fragments.Mandarin.Conditionals
+import Linglib.Fragments.Mandarin.Definiteness
 import Linglib.Fragments.Mandarin.DiscourseParticles
 import Linglib.Fragments.Mandarin.Determiners
 import Linglib.Fragments.Mandarin.Modals
@@ -726,6 +740,8 @@ import Linglib.Fragments.Mayan.Mam.Agreement
 import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Kawapanan.Shawi.Basic
 import Linglib.Fragments.Mixtec.SMPM.Basic
+import Linglib.Fragments.Ga.Basic
+import Linglib.Fragments.Ga.Predicates
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Mayan.Kiche.Agreement
@@ -802,6 +818,7 @@ import Linglib.Phenomena.Case.Studies.Karlsson2017
 import Linglib.Phenomena.Case.Studies.AndersonJM2006
 import Linglib.Phenomena.Case.Studies.Woolford1997
 import Linglib.Phenomena.Case.Studies.Marantz1991
+import Linglib.Phenomena.Case.Studies.Pesetsky2013
 import Linglib.Phenomena.Case.Studies.BakerVinokurova2010
 import Linglib.Phenomena.Case.Studies.Comrie1989
 import Linglib.Phenomena.ClauseChaining.Typology
@@ -921,6 +938,7 @@ import Linglib.Phenomena.Complementation.Studies.Osborne2019Control
 import Linglib.Phenomena.Control.Studies.Chierchia1984
 import Linglib.Phenomena.Control.Studies.Landau2015
 import Linglib.Phenomena.Control.Studies.Ostrove2026
+import Linglib.Phenomena.Control.Studies.Allotey2021
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Phenomena.Constructions.Studies.FillmoreKayOConnor1988
 import Linglib.Phenomena.Constructions.Studies.GoldbergShirtz2025
@@ -1215,6 +1233,7 @@ import Linglib.Phenomena.Possession.Studies.HaninkKoontzGarboden2025
 import Linglib.Phenomena.Possession.Studies.Myler2016
 import Linglib.Phenomena.Possession.Studies.AissenPolian2025
 import Linglib.Phenomena.Pronouns.Typology
+import Linglib.Phenomena.Pronouns.ProDropRegistry
 import Linglib.Phenomena.Pronouns.Studies.Arnold2026
 import Linglib.Phenomena.Pronouns.Studies.KonnellyCowper2020
 import Linglib.Phenomena.PsychVerbs.Data
@@ -1638,7 +1657,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
 import Linglib.Theories.Syntax.Minimalism.Core.PConstraint
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
 import Linglib.Theories.Syntax.Minimalism.Core.CaseDiscrimination
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Case.Dependent
 import Linglib.Theories.Syntax.Minimalism.Core.LateMerger
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.DeletionDomain
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.FormalMatching
@@ -1764,6 +1783,7 @@ import Linglib.Theories.Semantics.Gradability.Aggregation
 import Linglib.Theories.Semantics.Gradability.Theory
 import Linglib.Theories.Semantics.Reference.Binding
 import Linglib.Theories.Syntax.Minimalism.MinimalPronoun
+import Linglib.Theories.Syntax.Minimalism.LongDistanceAgree
 import Linglib.Theories.Semantics.Composition.Tree
 import Linglib.Theories.Semantics.Composition.QuantifierComposition
 import Linglib.Theories.Semantics.Composition.Glue

@@ -287,7 +287,6 @@ This section derives:
 section FullFelicity
 
 open Core.Proposition (FiniteWorlds)
-open Core.IntensionalLogic.RestrictedModality (BAccessRel)
 
 variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
 

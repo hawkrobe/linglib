@@ -16,7 +16,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Core.Conjectures
 
-open Core.IntensionalLogic.RestrictedModality (BAgentAccessRel)
+open Core.IntensionalLogic.RestrictedModality (AgentAccessRel)
 open Core (Intension)
 open Core.Intension (IsRigid)
 
@@ -33,16 +33,16 @@ accessibility — but should be two views of the same structure.
 /-- Accessibility = non-zero belief: w' is accessible from w for agent x
 iff x assigns positive credence to w' given w. -/
 def accessibility_iff_positive_credence (W E : Type*)
-    (R : BAgentAccessRel W E) (credence : E → W → W → ℚ) : Prop :=
-  ∀ x w w', R x w w' = true ↔ credence x w w' > 0
+    (R : AgentAccessRel W E) (credence : E → W → W → ℚ) : Prop :=
+  ∀ x w w', R x w w' ↔ credence x w w' > 0
 
 /-- □_x p (agent x believes p) iff P_x(p) = 1.
 Categorical doxastic necessity is the probability-1 limit. -/
 def box_iff_credence_one (W E : Type*)
-    (R : BAgentAccessRel W E) (credence : E → W → W → ℚ) : Prop :=
-  ∀ x w (p : BProp W),
-    (∀ w', R x w w' = true → p w' = true) ↔
-    (∀ w', credence x w w' > 0 → p w' = true)
+    (R : AgentAccessRel W E) (credence : E → W → W → ℚ) : Prop :=
+  ∀ x w (p : W → Prop),
+    (∀ w', R x w w' → p w') ↔
+    (∀ w', credence x w w' > 0 → p w')
 
 /-- Rigid designators = common ground with credence 1.
 An intension is rigid iff every agent in every world assigns it the
@@ -90,9 +90,9 @@ def rsa_fixed_point_unique {U W : Type*}
 /-- Refining lexical meanings (shrinking denotations) can only strengthen
 RSA pragmatic inferences, never weaken them. -/
 def lexicon_refinement_monotone {U W : Type*}
-    (meaning₁ meaning₂ : U → BProp W)
-    (L1 : (U → BProp W) → U → W → ℚ) : Prop :=
-  (∀ u w, meaning₂ u w = true → meaning₁ u w = true) →
+    (meaning₁ meaning₂ : U → W → Prop)
+    (L1 : (U → W → Prop) → U → W → ℚ) : Prop :=
+  (∀ u w, meaning₂ u w → meaning₁ u w) →
     ∀ u w, L1 meaning₂ u w ≤ L1 meaning₁ u w
 
 /-- In the α → ∞ limit, soft-max RSA speaker converges to

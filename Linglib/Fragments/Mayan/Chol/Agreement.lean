@@ -49,7 +49,7 @@ inductive ArgPosition where
 
 /-- Case assignment in perfective (ergative) clauses.
     Standard ergative alignment: A = ERG, S = P = ABS. -/
-def ArgPosition.ergCase : ArgPosition → CaseVal
+def ArgPosition.ergCase : ArgPosition → Core.Case
   | .agent   => .erg
   | .patient => .abs
   | .intranS => .abs
@@ -58,7 +58,7 @@ def ArgPosition.ergCase : ArgPosition → CaseVal
     Since the RON does not hold, the subject appears inside the nominalized
     clause as the highest DP and receives GEN from D. The object receives
     ABS from Voice (low absolutive). -/
-def ArgPosition.accCase : ArgPosition → CaseVal
+def ArgPosition.accCase : ArgPosition → Core.Case
   | .agent   => .gen
   | .patient => .abs
   | .intranS => .gen

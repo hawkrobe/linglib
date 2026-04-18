@@ -27,7 +27,7 @@ overrides the inherited default.
 ## End-to-end chain
 
 ```
-ClauseType → wordClassForClauseType → englishAuxNet → resolveArgStr → satisfiesArgStr
+ClauseForm → wordClassForClauseType → englishAuxNet → resolveArgStr → satisfiesArgStr
 ```
 
 Each tree is licensed (or rejected) by the network, connecting:
@@ -126,7 +126,7 @@ def johnCanEatPizzaTree : DepTree :=
 
 -- ============================================================================
 -- §1: Network Licensing (core chain)
--- Each tree is licensed/rejected via wgLicenses = ClauseType → network → satisfiesArgStr
+-- Each tree is licensed/rejected via wgLicenses = ClauseForm → network → satisfiesArgStr
 -- ============================================================================
 
 /-! ### Intransitive trees (can + sleep) -/
@@ -288,7 +288,7 @@ open Phenomena.WordOrder.SubjectAuxInversion
 ```
 SAI data (ex01..ex05)
     ↕ sentence/judgment validation (#guard)
-ClauseType (.matrixQuestion / .declarative)
+ClauseForm (.matrixQuestion / .declarative)
     ↓ wordClassForClauseType
 Word class ("interrogative_auxiliary" / "auxiliary")
     ↓ resolveArgStr (default inheritance in englishAuxNet)
@@ -299,7 +299,7 @@ Licensed ✓ / Rejected ✗
 
 The DG analysis correctly predicts:
 
-| Sentence              | ClauseType     | Licensed? | SAI datum |
+| Sentence              | ClauseForm     | Licensed? | SAI datum |
 |-----------------------|----------------|-----------|-----------|
 | Can John sleep?       | matrixQuestion | ✓         | —         |
 | John can sleep        | declarative    | ✓         | —         |

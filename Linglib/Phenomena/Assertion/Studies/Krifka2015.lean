@@ -35,14 +35,14 @@ inductive Weather where | rain | noRain
   deriving DecidableEq, Repr, Inhabited
 
 /-- Proposition: it's raining. -/
-private def isRaining : Weather → Bool
-  | .rain => true
-  | .noRain => false
+private def isRaining : Weather → Prop
+  | .rain => True
+  | .noRain => False
 
 /-- Proposition: it's NOT raining. -/
-private def isNotRaining : Weather → Bool
-  | .rain => false
-  | .noRain => true
+private def isNotRaining : Weather → Prop
+  | .rain => False
+  | .noRain => True
 
 /-- Initial discourse state: empty commitments, settled space. -/
 private def s₀ : KrifkaState Weather := KrifkaState.empty
@@ -58,11 +58,16 @@ theorem assert_updates_root :
 
 /-- After assertion, the rain-world is compatible with the CG. -/
 theorem assert_rain_compatible :
-    (s₀.assert isRaining).space.root.all (· .rain) = true := rfl
+    ∀ p ∈ (s₀.assert isRaining).space.root, p .rain := by
+  intro p hp
+  rcases List.mem_singleton.mp hp with rfl
+  trivial
 
 /-- After assertion, the no-rain-world is NOT compatible. -/
 theorem assert_norain_excluded :
-    (s₀.assert isRaining).space.root.all (· .noRain) = false := rfl
+    ¬ ∀ p ∈ (s₀.assert isRaining).space.root, p .noRain := by
+  intro h
+  exact h isRaining List.mem_cons_self
 
 /-- Assertion preserves settledness: asserting into an empty (settled)
     space yields a settled space. -/
@@ -100,9 +105,9 @@ theorem question_makes_unstable :
 
 /-- Both worlds are still compatible with the CG after a question. -/
 theorem question_all_worlds_live :
-    (s₀.question isRaining).space.root.all (· .rain) = true ∧
-    (s₀.question isRaining).space.root.all (· .noRain) = true :=
-  ⟨rfl, rfl⟩
+    (∀ p ∈ (s₀.question isRaining).space.root, p .rain) ∧
+    (∀ p ∈ (s₀.question isRaining).space.root, p .noRain) :=
+  ⟨λ _ h => (List.not_mem_nil h).elim, λ _ h => (List.not_mem_nil h).elim⟩
 
 -- ════════════════════════════════════════════════════
 -- § 4. Accept/Reject Tests
@@ -118,9 +123,11 @@ theorem accept_resettles :
 
 /-- After acceptance, rain-world is compatible, no-rain is excluded. -/
 theorem accept_rain_only :
-    (s₀.question isRaining).acceptContinuation.space.root.all (· .rain) = true ∧
-    (s₀.question isRaining).acceptContinuation.space.root.all (· .noRain) = false :=
-  ⟨rfl, rfl⟩
+    (∀ p ∈ (s₀.question isRaining).acceptContinuation.space.root, p .rain) ∧
+    (¬ ∀ p ∈ (s₀.question isRaining).acceptContinuation.space.root, p .noRain) := by
+  refine ⟨?_, ?_⟩
+  · intro p hp; rcases List.mem_singleton.mp hp with rfl; trivial
+  · intro h; exact h isRaining List.mem_cons_self
 
 /-- Rejecting the question's continuation preserves the original root. -/
 theorem reject_preserves_root :
@@ -132,9 +139,9 @@ theorem reject_resettles :
 
 /-- After rejection, both worlds are still live (we're back to start). -/
 theorem reject_all_worlds_live :
-    (s₀.question isRaining).rejectContinuation.space.root.all (· .rain) = true ∧
-    (s₀.question isRaining).rejectContinuation.space.root.all (· .noRain) = true :=
-  ⟨rfl, rfl⟩
+    (∀ p ∈ (s₀.question isRaining).rejectContinuation.space.root, p .rain) ∧
+    (∀ p ∈ (s₀.question isRaining).rejectContinuation.space.root, p .noRain) :=
+  ⟨λ _ h => (List.not_mem_nil h).elim, λ _ h => (List.not_mem_nil h).elim⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Assert = Question + Accept
@@ -149,11 +156,11 @@ theorem question_accept_eq_assert :
 
 /-- The context sets are extensionally equal: same truth at every world. -/
 theorem question_accept_eq_assert_context :
-    (s₀.question isRaining).acceptContinuation.space.root.all (· .rain) =
-    (s₀.assert isRaining).space.root.all (· .rain) ∧
-    (s₀.question isRaining).acceptContinuation.space.root.all (· .noRain) =
-    (s₀.assert isRaining).space.root.all (· .noRain) :=
-  ⟨rfl, rfl⟩
+    ((∀ p ∈ (s₀.question isRaining).acceptContinuation.space.root, p .rain) ↔
+     ∀ p ∈ (s₀.assert isRaining).space.root, p .rain) ∧
+    ((∀ p ∈ (s₀.question isRaining).acceptContinuation.space.root, p .noRain) ↔
+     ∀ p ∈ (s₀.assert isRaining).space.root, p .noRain) :=
+  ⟨Iff.rfl, Iff.rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 6. Bipolar Questions
@@ -191,9 +198,11 @@ theorem bipolar_first_cont :
 /-- Accepting the first continuation of a bipolar question yields
     a CG where only the no-rain world is compatible. -/
 theorem bipolar_accept_first :
-    bipolarQuestion.acceptContinuation.space.root.all (· .rain) = false ∧
-    bipolarQuestion.acceptContinuation.space.root.all (· .noRain) = true :=
-  ⟨rfl, rfl⟩
+    (¬ ∀ p ∈ bipolarQuestion.acceptContinuation.space.root, p .rain) ∧
+    (∀ p ∈ bipolarQuestion.acceptContinuation.space.root, p .noRain) := by
+  refine ⟨?_, ?_⟩
+  · intro h; exact h isNotRaining List.mem_cons_self
+  · intro p hp; rcases List.mem_singleton.mp hp with rfl; trivial
 
 -- ════════════════════════════════════════════════════
 -- § 7. Question Stacking (Assertion Narrows Continuations)
@@ -221,9 +230,13 @@ theorem assert_after_q_cont_contradictory :
 
 /-- The contradictory continuation has no compatible worlds. -/
 theorem contradictory_cont_empty :
-    [isNotRaining, isRaining].all (· Weather.rain) = false ∧
-    [isNotRaining, isRaining].all (· Weather.noRain) = false :=
-  ⟨by native_decide, by native_decide⟩
+    (¬ ∀ p ∈ ([isNotRaining, isRaining] : List (Weather → Prop)), p Weather.rain) ∧
+    (¬ ∀ p ∈ ([isNotRaining, isRaining] : List (Weather → Prop)), p Weather.noRain) := by
+  refine ⟨?_, ?_⟩
+  · intro h; exact h isNotRaining List.mem_cons_self
+  · intro h
+    have : isRaining Weather.noRain := h isRaining (List.mem_cons_of_mem _ List.mem_cons_self)
+    exact this
 
 -- ════════════════════════════════════════════════════
 -- § 8. Matching Tag: Assert + Question (@cite{krifka-2015}, §5)
@@ -253,11 +266,23 @@ theorem matching_tag_biased :
     as the assertion alone. The question was redundant in terms of
     content — its function is to seek confirmation, not new information. -/
 theorem matching_tag_accept_eq_assert :
-    matchingTagState.acceptContinuation.space.root.all (· .rain) =
-    (s₀.assert isRaining).space.root.all (· .rain) ∧
-    matchingTagState.acceptContinuation.space.root.all (· .noRain) =
-    (s₀.assert isRaining).space.root.all (· .noRain) :=
-  ⟨rfl, rfl⟩
+    ((∀ p ∈ matchingTagState.acceptContinuation.space.root, p .rain) ↔
+     ∀ p ∈ (s₀.assert isRaining).space.root, p .rain) ∧
+    ((∀ p ∈ matchingTagState.acceptContinuation.space.root, p .noRain) ↔
+     ∀ p ∈ (s₀.assert isRaining).space.root, p .noRain) := by
+  refine ⟨?_, ?_⟩
+  · constructor
+    · intro h p hp; rcases List.mem_singleton.mp hp with rfl
+      exact h isRaining (List.mem_cons_of_mem _ List.mem_cons_self)
+    · intro _ p hp
+      rcases List.mem_cons.mp hp with rfl | hp'
+      · trivial
+      · rcases List.mem_singleton.mp hp' with rfl; trivial
+  · constructor
+    · intro h
+      exact absurd (h isRaining List.mem_cons_self) id
+    · intro h
+      exact absurd (h isRaining List.mem_cons_self) id
 
 -- ============================================================================
 -- Part II: Layered Clause Structure (JP/ComP)

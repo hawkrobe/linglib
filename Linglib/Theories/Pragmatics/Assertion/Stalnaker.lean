@@ -30,7 +30,7 @@ The norms are relevant to Krifka's separation of commitment from belief.
 namespace Pragmatics.Assertion.Stalnaker
 
 open Core.CommonGround (CG ContextSet)
-open Core.Proposition (BProp)
+open Core.Proposition (Prop')
 
 -- ════════════════════════════════════════════════════
 -- § 1. State = Common Ground
@@ -45,7 +45,7 @@ def initial {W : Type*} : StalnakerState W := CG.empty
 
 /-- Assert p: add it to the common ground.
     This IS the full effect of assertion — no intermediate step. -/
-def assert {W : Type*} (s : StalnakerState W) (p : BProp W) : StalnakerState W :=
+def assert {W : Type*} (s : StalnakerState W) (p : Prop' W) : StalnakerState W :=
   s.add p
 
 /-- Context set: directly from CG. -/
@@ -65,7 +65,7 @@ theorem initial_trivial {W : Type*} :
     contextSet (initial (W := W)) = ContextSet.trivial := CG.empty_contextSet
 
 /-- Assertion restricts the context set. -/
-theorem assert_restricts {W : Type*} (s : StalnakerState W) (p : BProp W) (w : W) :
+theorem assert_restricts {W : Type*} (s : StalnakerState W) (p : Prop' W) (w : W) :
     contextSet (assert s p) w → contextSet s w :=
   CG.add_restricts s p w
 

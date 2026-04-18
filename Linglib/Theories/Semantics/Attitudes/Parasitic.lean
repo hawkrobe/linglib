@@ -178,16 +178,19 @@ In some worlds, Bill believes Fred was beating his wife.
 -/
 def billBeliefAccess : AccessRel BeatingWorld Unit
   | (), .fredWasBeating_fredStopped, w' => match w' with
-      | .fredWasBeating_fredStopped => true
-      | .fredWasBeating_fredContinues => true
-      | .fredNeverBeat => false
+      | .fredWasBeating_fredStopped => True
+      | .fredWasBeating_fredContinues => True
+      | .fredNeverBeat => False
   | (), .fredWasBeating_fredContinues, w' => match w' with
-      | .fredWasBeating_fredStopped => true
-      | .fredWasBeating_fredContinues => true
-      | .fredNeverBeat => false
+      | .fredWasBeating_fredStopped => True
+      | .fredWasBeating_fredContinues => True
+      | .fredNeverBeat => False
   | (), .fredNeverBeat, w' => match w' with
-      | .fredNeverBeat => true
-      | _ => false
+      | .fredNeverBeat => True
+      | _ => False
+
+instance : ∀ a w w', Decidable (billBeliefAccess a w w') := by
+  intro a w w'; cases a; cases w <;> cases w' <;> simp [billBeliefAccess] <;> infer_instance
 
 /--
 Bill's belief predicate.
@@ -198,10 +201,13 @@ def billBelieve : DoxasticPredicate BeatingWorld Unit :=
 /--
 The presupposition of "Fred stopped": Fred was beating.
 -/
-def fredWasBeatingPresup : BeatingWorld → Bool
-  | .fredWasBeating_fredStopped => true
-  | .fredWasBeating_fredContinues => true
-  | .fredNeverBeat => false
+def fredWasBeatingPresup : BeatingWorld → Prop
+  | .fredWasBeating_fredStopped => True
+  | .fredWasBeating_fredContinues => True
+  | .fredNeverBeat => False
+
+instance : DecidablePred fredWasBeatingPresup := by
+  intro w; cases w <;> simp [fredWasBeatingPresup] <;> infer_instance
 
 /--
 When Bill believes Fred was beating, hope's presupposition
@@ -212,7 +218,7 @@ worlds satisfy the presupposition of "stop".
 -/
 theorem belief_satisfies_hope_presup :
     ∀ w, (w = .fredWasBeating_fredStopped ∨ w = .fredWasBeating_fredContinues) →
-    ∀ w', billBeliefAccess () w w' = true → fredWasBeatingPresup w' = true := by
+    ∀ w', billBeliefAccess () w w' → fredWasBeatingPresup w' := by
   intro w hw w' hw'
   cases hw with
   | inl h => subst h; cases w' <;> simp_all [billBeliefAccess, fredWasBeatingPresup]
@@ -223,8 +229,8 @@ At worlds where Bill doesn't believe Fred was beating,
 the presupposition of "stop" fails in Bill's belief worlds.
 -/
 theorem no_belief_no_filter :
-    ∀ w', billBeliefAccess () .fredNeverBeat w' = true →
-    fredWasBeatingPresup w' = false := by
+    ∀ w', billBeliefAccess () .fredNeverBeat w' →
+    ¬ fredWasBeatingPresup w' := by
   intro w' hw'
   cases w' <;> simp_all [billBeliefAccess, fredWasBeatingPresup]
 
@@ -239,8 +245,8 @@ def parasiticLocalContext {W E : Type*}
     (dox : DoxasticPredicate W E)
     (agent : E)
     (w : W)
-    (globalCtx : W → Bool) : W → Bool :=
-  λ w' => globalCtx w && dox.access agent w w' = true
+    (globalCtx : W → Prop) : W → Prop :=
+  λ w' => globalCtx w ∧ dox.access agent w w'
 
 /--
 A presupposition is filtered in the parasitic local context iff
@@ -250,9 +256,9 @@ def presupFilteredInParasitic {W E : Type*}
     (dox : DoxasticPredicate W E)
     (agent : E)
     (w : W)
-    (presup : W → Bool)
-    (worlds : List W) : Bool :=
-  worlds.all λ w' => !dox.access agent w w' || presup w'
+    (presup : W → Prop)
+    (worlds : List W) : Prop :=
+  ∀ w' ∈ worlds, dox.access agent w w' → presup w'
 
 
 /--

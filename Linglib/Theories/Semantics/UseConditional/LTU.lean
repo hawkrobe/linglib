@@ -42,7 +42,6 @@ functional expletive, functional shunting, functional mixed).
 
 namespace Semantics.UseConditional
 
-open Core.Proposition (BProp)
 open Pragmatics.Expressives (TwoDimProp)
 
 

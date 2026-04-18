@@ -91,10 +91,10 @@ A proposition p echoes the discourse if:
 This captures the requirement that premise conditionals must have their
 antecedent grounded in prior discourse.
 -/
-def echoesDiscourse {W : Type*} (ds : DiscourseState W) (p : BProp W)
-    (worlds : List W) : Bool :=
-  ds.dcS.any (λ q => Decidable.entails W worlds q p) ||
-  ds.cg.any (λ q => Decidable.entails W worlds q p)
+def echoesDiscourse {W : Type*} (ds : DiscourseState W) (p : Prop' W)
+    (worlds : List W) : Prop :=
+  (∃ q ∈ ds.dcS, ∀ w ∈ worlds, q w → p w) ∨
+  (∃ q ∈ ds.cg,  ∀ w ∈ worlds, q w → p w)
 
 /--
 Weaker echo check: proposition is merely consistent with discourse.
@@ -102,9 +102,9 @@ Weaker echo check: proposition is merely consistent with discourse.
 This is a looser condition - the antecedent is at least compatible with
 what's been established, even if not explicitly entailed.
 -/
-def consistentWithDiscourse {W : Type*} (ds : DiscourseState W) (p : BProp W)
-    (worlds : List W) : Bool :=
-  worlds.any λ w => ds.compatible w && p w
+def consistentWithDiscourse {W : Type*} (ds : DiscourseState W) (p : Prop' W)
+    (worlds : List W) : Prop :=
+  ∃ w ∈ worlds, ds.compatible w ∧ p w
 
 -- Felicity Conditions
 
@@ -116,8 +116,8 @@ A PC "if p, then q" is felicitous in discourse state ds iff:
 
 This is the key felicity requirement that distinguishes PC from HC.
 -/
-def pcFelicitous {W : Type*} (ds : DiscourseState W) (antecedent : BProp W)
-    (worlds : List W) : Bool :=
+def pcFelicitous {W : Type*} (ds : DiscourseState W) (antecedent : Prop' W)
+    (worlds : List W) : Prop :=
   echoesDiscourse ds antecedent worlds
 
 /--
@@ -130,8 +130,8 @@ An HC "if p, then q" is felicitous in discourse state ds iff:
 Note: The second condition is captured implicitly - if p were established,
 a PC reading would be preferred.
 -/
-def hcFelicitous {W : Type*} (ds : DiscourseState W) (antecedent : BProp W)
-    (worlds : List W) : Bool :=
+def hcFelicitous {W : Type*} (ds : DiscourseState W) (antecedent : Prop' W)
+    (worlds : List W) : Prop :=
   consistentWithDiscourse ds antecedent worlds
 
 -- Polarity Context for Conditionals
@@ -216,7 +216,7 @@ end ConditionalPolarityContext
 
 This is the defining felicity condition for premise conditionals.
 -/
-theorem pc_felicity {W : Type*} (ds : DiscourseState W) (p : BProp W)
+theorem pc_felicity {W : Type*} (ds : DiscourseState W) (p : Prop' W)
     (worlds : List W) :
     pcFelicitous ds p worlds = echoesDiscourse ds p worlds := rfl
 
@@ -269,9 +269,9 @@ Useful for analyzing how different readings affect discourse update.
 -/
 structure TypedConditional (W : Type*) where
   /-- The antecedent proposition -/
-  antecedent : BProp W
+  antecedent : Prop' W
   /-- The consequent proposition -/
-  consequent : BProp W
+  consequent : Prop' W
   /-- The interpretation type (HC or PC) -/
   condType : ConditionalType
 
@@ -280,12 +280,12 @@ namespace TypedConditional
 variable {W : Type*}
 
 /-- Get the semantic content (same for both HC and PC) -/
-def semantics (tc : TypedConditional W) : BProp W :=
-  materialImpB tc.antecedent tc.consequent
+def semantics (tc : TypedConditional W) : Prop' W :=
+  materialImp tc.antecedent tc.consequent
 
 /-- Check felicity in a given discourse state -/
 def isFelicitous (tc : TypedConditional W) (ds : DiscourseState W)
-    (worlds : List W) : Bool :=
+    (worlds : List W) : Prop :=
   match tc.condType with
   | .hypothetical => hcFelicitous ds tc.antecedent worlds
   | .premise => pcFelicitous ds tc.antecedent worlds
@@ -303,7 +303,7 @@ The distinction is entirely in felicity/discourse conditions, not semantics.
 Both are interpreted via the same conditional semantics (material, strict,
 Kratzer, etc.).
 -/
-theorem hc_pc_same_semantics {W : Type*} (p q : BProp W) :
+theorem hc_pc_same_semantics {W : Type*} (p q : Prop' W) :
     (TypedConditional.mk p q .hypothetical).semantics =
     (TypedConditional.mk p q .premise).semantics := rfl
 

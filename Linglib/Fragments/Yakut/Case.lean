@@ -1,5 +1,5 @@
 import Linglib.Core.Case
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Case.Dependent
 
 /-!
 # Yakut (Sakha) Case System
@@ -19,7 +19,7 @@ records the language-level case inventory and the corresponding
 
 namespace Fragments.Yakut.Case
 
-open Minimalism
+open Syntax.Case
 
 -- ============================================================================
 -- § 1: Case System Configuration

@@ -1,8 +1,16 @@
-/-
-@cite{kratzer-1981} Conversational Backgrounds
+import Linglib.Core.IntensionalLogic.Premise
+
+/-!
+# Conversational Backgrounds @cite{kratzer-1981} @cite{kratzer-2012}
 
 Conversational backgrounds are functions from worlds to sets of propositions.
-The modal base determines accessibility; the ordering source ranks accessible worlds.
+The modal base determines accessibility; the ordering source ranks accessible
+worlds.
+
+The premise-set primitives (`propExtension`, `propIntersection`, `followsFrom`,
+`isConsistent`, `isCompatibleWith`) live in `Core.IntensionalLogic.Premise` and
+are re-exported here so existing call sites continue to resolve them under the
+`Semantics.Modality.Kratzer` namespace.
 
 All types are polymorphic over the world type `W`.
 
@@ -10,34 +18,12 @@ All types are polymorphic over the world type `W`.
 - Kratzer, A. (2012). Modals and Conditionals. Oxford University Press.
 -/
 
-import Mathlib.Data.Finset.Card
-
 namespace Semantics.Modality.Kratzer
 
+export Core.IntensionalLogic.Premise
+  (propExtension propIntersection followsFrom isConsistent isCompatibleWith)
+
 variable {W : Type*} [DecidableEq W] [Fintype W]
-
-/-- Convert to the set of worlds where proposition holds. -/
-def propExtension (p : W → Bool) : Finset W :=
-  Finset.univ.filter (fun w => p w)
-
-/-- The intersection of a set of propositions: worlds satisfying ALL. -/
-def propIntersection (props : List (W → Bool)) : Finset W :=
-  Finset.univ.filter (fun w => props.all fun p => p w)
-
-/-- A proposition p **follows from** a set A iff ∩A ⊆ p (Kratzer p. 31)
-
-In other words: every world satisfying all of A also satisfies p. -/
-def followsFrom (p : W → Bool) (A : List (W → Bool)) : Bool :=
-  decide (∀ w ∈ propIntersection A, p w = true)
-
-/-- A set of propositions is **consistent** iff ∩A ≠ ∅ (Kratzer p. 31) -/
-def isConsistent (A : List (W → Bool)) : Bool :=
-  !(propIntersection A == ∅)
-
-/-- A proposition p is **compatible with** A iff A ∪ {p} is consistent (Kratzer p. 31) -/
-def isCompatibleWith (p : W → Bool) (A : List (W → Bool)) : Bool :=
-  isConsistent (p :: A)
-
 
 /--
 A conversational background maps worlds to sets of propositions.

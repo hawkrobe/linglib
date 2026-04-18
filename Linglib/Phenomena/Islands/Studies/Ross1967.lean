@@ -35,8 +35,8 @@ inductive ConstraintType where
   | subject           -- Subject position blocks dependency
   | sententialSubject -- Sentential subject blocks dependency
   | mannerOfSpeaking  -- MoS verb complement backgrounds content (@cite{lu-pan-degen-2025})
-  | definiteNominal   -- Definite/specific DP blocks dependency (@cite{chomsky-1973},
-                       -- @cite{fiengo-higginbotham-1981}, @cite{shen-huang-2026})
+  | definiteNominal   -- Definite/specific DP blocks dependency
+                       -- (@cite{chomsky-1973}, @cite{shen-huang-2026})
   deriving Repr, DecidableEq
 
 /-- Constraint strength classification -/

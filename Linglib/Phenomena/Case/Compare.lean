@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Case.Dependent
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.CaseFilter
 import Linglib.Fragments.Mayan.Mam.Agreement
@@ -51,6 +51,7 @@ Three competing theories of abstract case assignment in Minimalism:
 namespace Phenomena.Case.Compare
 
 open Minimalism
+open Syntax.Case
 
 -- ============================================================================
 -- § 1: The Divergence Point
@@ -176,12 +177,12 @@ theorem case_filter_example :
   ⟨rfl, rfl⟩
 
 /-- Under dependent case, every NP in a domain receives case — the
-    algorithm always assigns (lexical, dependent, or unmarked). -/
+    algorithm always returns a result for every input NP. -/
 theorem dependent_case_always_assigns :
     let nps : List NPInDomain :=
       [ { label := "subj", lexicalCase := none },
         { label := "obj", lexicalCase := none } ]
-    (assignCases .accusative nps).all (λ np => np.case != .obl) = true := by
+    (assignCases .accusative nps).length = nps.length := by
   native_decide
 
 end Phenomena.Case.Compare

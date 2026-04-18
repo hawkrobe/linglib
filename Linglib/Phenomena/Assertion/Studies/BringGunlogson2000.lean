@@ -39,7 +39,7 @@ open Core.Discourse.Commitment
     shared with polar question bias. The precise version
     is `cbcMet`, which checks the addressee's actual commitment state. -/
 theorem rising_requires_forP {W : Type*}
-    (s : GunlogsonState W) (p : Core.Proposition.BProp W) :
+    (s : GunlogsonState W) (p : Core.Proposition.Prop' W) :
     (s.risingDeclarativeFelicitous p .forP).isSome = true ∧
     (s.risingDeclarativeFelicitous p .neutral).isNone = true ∧
     (s.risingDeclarativeFelicitous p .againstP).isNone = true :=
@@ -55,7 +55,7 @@ theorem rising_requires_forP {W : Type*}
     the speaker — the speaker is biased toward p. This is why
     falling declaratives cannot be used as neutral questions. -/
 theorem declaratives_express_bias {W : Type*}
-    (s : GunlogsonState W) (p : Core.Proposition.BProp W) :
+    (s : GunlogsonState W) (p : Core.Proposition.Prop' W) :
     (s.fallingDeclarative p).speakerSlate.commitments.length =
     s.speakerSlate.commitments.length + 1 := by
   simp only [GunlogsonState.fallingDeclarative, TaggedSlate.add, List.length_cons]
@@ -65,7 +65,7 @@ theorem declaratives_express_bias {W : Type*}
     The speaker's slate is unchanged — directly verified by
     definitional equality. -/
 theorem rising_no_speaker_commitment' {W : Type*}
-    (s : GunlogsonState W) (p : Core.Proposition.BProp W) :
+    (s : GunlogsonState W) (p : Core.Proposition.Prop' W) :
     (s.risingDeclarative p).speakerSlate = s.speakerSlate := rfl
 
 /-- Generalization (10): The CBC.
@@ -75,7 +75,7 @@ theorem rising_no_speaker_commitment' {W : Type*}
     condition, and it's derived (not stipulated) via
     `cbc_from_uninformativeness`. -/
 theorem cbc_derived {W : Type*}
-    (s : GunlogsonState W) (p : Core.Proposition.BProp W)
+    (s : GunlogsonState W) (p : Core.Proposition.Prop' W)
     (hcbc : s.cbcMet p) :
     s.uninformativeForAddressee p :=
   GunlogsonState.cbc_from_uninformativeness s p hcbc
@@ -88,7 +88,7 @@ theorem cbc_derived {W : Type*}
     stability (the other-generated commitment persists). Rejection
     is a no-op (the state stays unstable). -/
 theorem rising_response_dynamics {W : Type*}
-    (p : Core.Proposition.BProp W) :
+    (p : Core.Proposition.Prop' W) :
     let s₀ := GunlogsonState.empty (W := W)
     let s₁ := s₀.risingDeclarative p
     let s₂ := s₁.confirm p
@@ -116,7 +116,7 @@ theorem rising_response_dynamics {W : Type*}
     Gunlogson's `risingDeclarative` returns a `GunlogsonState` with
     a new commitment, not a set of alternative propositions. -/
 theorem rising_is_not_partition {W : Type*}
-    (p : Core.Proposition.BProp W) :
+    (p : Core.Proposition.Prop' W) :
     let s := GunlogsonState.empty.risingDeclarative p
     s.addresseeSlate.commitments.length = 1 :=
   rfl

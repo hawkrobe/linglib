@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Definiteness
+import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Reference.DirectReference
 
@@ -35,6 +36,7 @@ open Phenomena.Anaphora.Coreference
 
 open Core.Definiteness (ArticleType DefiniteUseType BridgingSubtype WeakArticleStrategy
   useTypeToPresupType bridgingPresupType DefPresupType)
+open Core.Nominal (ArticleInventory)
 
 -- ============================================================================
 -- §A: Inductive Types
@@ -89,15 +91,19 @@ structure PronounForm where
 
 /-- Per-language pronoun system datum (@cite{patel-grosz-grosz-2017} + @cite{cardinaletti-starke-1999}).
 
-Each datum records the full 3rd-person pronoun inventory, article system,
-D-layer count, DEM licensing contexts, and DEM productivity. -/
+Each datum records the full 3rd-person pronoun inventory, article inventory,
+D-layer count, DEM licensing contexts, and DEM productivity. The article
+system type (`articleType`) is *derived* from `articleInventory` rather than
+stipulated — `Core.Nominal.ArticleInventory` is the single source of truth
+for definiteness data. -/
 structure PronounSystemDatum where
   language : String
   isoCode : String
   /-- Available 3rd-person pronoun forms -/
   forms : List PronounForm
-  /-- Article system type -/
-  articleType : ArticleType
+  /-- Morphological article inventory (single source of truth from which
+      `articleType` is derived). -/
+  articleInventory : ArticleInventory
   /-- Number of D-layers: 1 = D_det only (PER), 2 = D_deix + D_det (PER+DEM) -/
   dLayers : Nat
   /-- Pragmatic contexts licensing DEM use (empty for PER-only languages) -/
@@ -106,9 +112,45 @@ structure PronounSystemDatum where
   demProductive : Bool
   deriving Repr, BEq
 
+/-- Schwarz/Patel-Grosz–Grosz `ArticleType` classification, derived from the
+    morphological inventory. Not stipulated — this is the projection of the
+    inventory bools through `ArticleInventory.toArticleType`. -/
+def PronounSystemDatum.articleType (d : PronounSystemDatum) : ArticleType :=
+  d.articleInventory.toArticleType
+
 -- ============================================================================
 -- §C: Language Data (~11 languages from @cite{patel-grosz-grosz-2017})
 -- ============================================================================
+
+/-- Inventory shorthand: bipartite (German/Bavarian/Portuguese — distinct
+    weak vs strong articles, no syncretism). Derives `.weakAndStrong`. -/
+private def bipartiteInv : ArticleInventory :=
+  { hasIndefinite := True, hasUniqueArticle := True
+    hasAnaphoricArticle := True, uniqueAnaphoricSyncretism := False
+    hasDemonstrative := True, hasPossessive := True }
+
+/-- Inventory shorthand: syncretic single article (English/Romance — *the*,
+    *le/la*, *il*, *el*, *o/a*, *ell*). Derives `.weakOnly` via
+    `.generallyMarked`. -/
+private def syncreticInv : ArticleInventory :=
+  { hasIndefinite := True, hasUniqueArticle := True
+    hasAnaphoricArticle := True, uniqueAnaphoricSyncretism := True
+    hasDemonstrative := True, hasPossessive := True }
+
+/-- Inventory shorthand: no overt articles (Hebrew/Czech/Finnish — no
+    article paradigm). Derives `.none_` via `.unmarked`. -/
+private def noArticleInv : ArticleInventory :=
+  { hasIndefinite := False, hasUniqueArticle := False
+    hasAnaphoricArticle := False, uniqueAnaphoricSyncretism := False
+    hasDemonstrative := True, hasPossessive := True }
+
+/-- Inventory shorthand: weak only (Kutchi Gujarati — single postnominal
+    definite marker, no separate anaphoric form). Derives `.weakOnly` via
+    `.generallyMarked`. -/
+private def weakOnlyInv : ArticleInventory :=
+  { hasIndefinite := False, hasUniqueArticle := True
+    hasAnaphoricArticle := False, uniqueAnaphoricSyncretism := False
+    hasDemonstrative := True, hasPossessive := True }
 
 def germanData : PronounSystemDatum :=
   { language := "German", isoCode := "de"
@@ -118,7 +160,7 @@ def germanData : PronounSystemDatum :=
              , ⟨"der", .dem, some "m", some .sg, [.strong]⟩
              , ⟨"die", .dem, some "f", some .sg, [.strong]⟩
              , ⟨"das", .dem, some "n", some .sg, [.strong]⟩ ]
-    articleType := .weakAndStrong
+    articleInventory := bipartiteInv
     dLayers := 2
     demLicensing := [.emotivity, .disambiguation, .register, .deixis, .contrast]
     demProductive := true }
@@ -131,7 +173,7 @@ def bavarianData : PronounSystemDatum :=
              , ⟨"der", .dem, some "m", some .sg, [.strong]⟩
              , ⟨"die", .dem, some "f", some .sg, [.strong]⟩
              , ⟨"des", .dem, some "n", some .sg, [.strong]⟩ ]
-    articleType := .weakAndStrong
+    articleInventory := bipartiteInv
     dLayers := 2
     demLicensing := [.emotivity, .disambiguation, .register, .deixis, .contrast]
     demProductive := true }
@@ -142,7 +184,7 @@ def portugueseData : PronounSystemDatum :=
              , ⟨"ela",    .per, some "f", some .sg, [.strong]⟩
              , ⟨"esse",   .dem, some "m", some .sg, [.strong]⟩
              , ⟨"aquele", .dem, some "m", some .sg, [.strong]⟩ ]
-    articleType := .weakAndStrong
+    articleInventory := bipartiteInv
     dLayers := 2
     demLicensing := [.deixis, .contrast]
     demProductive := false }
@@ -153,7 +195,7 @@ def hebrewData : PronounSystemDatum :=
              , ⟨"hi", .per, some "f", some .sg, [.strong]⟩
              , ⟨"ze", .dem, some "m", some .sg, [.strong]⟩
              , ⟨"zo", .dem, some "f", some .sg, [.strong]⟩ ]
-    articleType := .none_
+    articleInventory := noArticleInv
     dLayers := 2
     demLicensing := [.deixis, .disambiguation]
     demProductive := false }
@@ -166,7 +208,7 @@ def czechData : PronounSystemDatum :=
              , ⟨"ten", .dem, some "m", some .sg, [.strong]⟩
              , ⟨"ta",  .dem, some "f", some .sg, [.strong]⟩
              , ⟨"to",  .dem, some "n", some .sg, [.strong]⟩ ]
-    articleType := .none_
+    articleInventory := noArticleInv
     dLayers := 2
     demLicensing := [.emotivity, .disambiguation, .contrast]
     demProductive := false }
@@ -175,7 +217,7 @@ def frenchData : PronounSystemDatum :=
   { language := "French", isoCode := "fr"
     forms := [ ⟨"il",   .per, some "m", some .sg, [.strong, .weak, .clitic]⟩
              , ⟨"elle", .per, some "f", some .sg, [.strong, .weak, .clitic]⟩ ]
-    articleType := .weakOnly
+    articleInventory := syncreticInv
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -184,7 +226,7 @@ def italianData : PronounSystemDatum :=
   { language := "Italian", isoCode := "it"
     forms := [ ⟨"lui", .per, some "m", some .sg, [.strong, .weak, .clitic]⟩
              , ⟨"lei", .per, some "f", some .sg, [.strong, .weak, .clitic]⟩ ]
-    articleType := .weakOnly
+    articleInventory := syncreticInv
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -193,7 +235,7 @@ def spanishData : PronounSystemDatum :=
   { language := "Spanish", isoCode := "es"
     forms := [ ⟨"él",   .per, some "m", some .sg, [.strong, .weak, .clitic]⟩
              , ⟨"ella", .per, some "f", some .sg, [.strong, .weak, .clitic]⟩ ]
-    articleType := .weakOnly
+    articleInventory := syncreticInv
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -202,7 +244,7 @@ def catalanData : PronounSystemDatum :=
   { language := "Catalan", isoCode := "ca"
     forms := [ ⟨"ell",  .per, some "m", some .sg, [.strong, .weak, .clitic]⟩
              , ⟨"ella", .per, some "f", some .sg, [.strong, .weak, .clitic]⟩ ]
-    articleType := .weakOnly
+    articleInventory := syncreticInv
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -211,7 +253,7 @@ def kutchiGujaratiData : PronounSystemDatum :=
   { language := "Kutchi Gujarati", isoCode := "gju"
     forms := [ ⟨"a",  .per, none, some .sg, [.strong]⟩
              , ⟨"ā",  .per, none, some .pl, [.strong]⟩ ]
-    articleType := .weakOnly
+    articleInventory := weakOnlyInv
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -221,7 +263,7 @@ def englishData : PronounSystemDatum :=
     forms := [ ⟨"he",  .per, some "m", some .sg, [.strong]⟩
              , ⟨"she", .per, some "f", some .sg, [.strong]⟩
              , ⟨"it",  .per, some "n", some .sg, [.strong]⟩ ]
-    articleType := .weakOnly
+    articleInventory := syncreticInv
     dLayers := 1
     demLicensing := []
     demProductive := false }
@@ -247,7 +289,7 @@ def finnishData : PronounSystemDatum :=
              , ⟨"se",   .dem, none, some .sg, [.strong]⟩
              , ⟨"tämä", .dem, none, some .sg, [.strong]⟩
              , ⟨"tuo",  .dem, none, some .sg, [.strong]⟩ ]
-    articleType := .none_
+    articleInventory := noArticleInv
     dLayers := 2
     demLicensing := [.deixis, .contrast]
     demProductive := true }

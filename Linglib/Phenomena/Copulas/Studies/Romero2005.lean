@@ -124,9 +124,12 @@ def Dox : E → W → W → Bool
   -- Other agents: trivial
   | _, w, w'  => w == w'
 
-/-- `Dox` is an `AccessRel` — connecting to the theory-layer doxastic
-    infrastructure in `Semantics.Attitudes.Doxastic`. -/
-abbrev DoxRel : AccessRel W E := Dox
+/-- `Dox` lifted to a Prop-valued `AccessRel` — connecting to the theory-layer
+    doxastic infrastructure in `Semantics.Attitudes.Doxastic`. -/
+def DoxRel : AccessRel W E := fun a w w' => Dox a w w' = true
+
+instance : ∀ a w w', Decidable (DoxRel a w w') := by
+  intro a w w'; unfold DoxRel; infer_instance
 
 /-! ## Individual Concepts (Price Functions)
 
@@ -188,7 +191,20 @@ over doxastic alternatives with a specific proposition `y(w') = y(w)`. -/
 
 /-- `know₁` is `boxAt` applied to the identity proposition `y(w') = y(w)`. -/
 theorem know₁_eq_boxAt (y : W → E) (x : E) (w : W) :
-    know₁ y x w = boxAt DoxRel x w worlds (λ w' => y w' == y w) := rfl
+    know₁ y x w = true ↔
+    boxAt DoxRel x w worlds (λ w' => y w' = y w) := by
+  simp only [know₁, boxAt, DoxRel, List.all_eq_true, Bool.or_eq_true,
+    Bool.not_eq_true', beq_iff_eq]
+  constructor
+  · intro h w' hw' hR
+    have := h w' hw'
+    rcases this with hd | heq
+    · exact absurd hR (by simp [hd])
+    · exact heq
+  · intro h w' hw'
+    by_cases hd : Dox x w w' = true
+    · exact Or.inr (h w' hw' hd)
+    · exact Or.inl (by simp [hd])
 
 /-! ### `be₁_spec` and `be₂_spec` (Romero (67a,b))
 

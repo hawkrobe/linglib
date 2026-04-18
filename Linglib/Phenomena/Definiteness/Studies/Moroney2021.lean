@@ -54,9 +54,10 @@ open Core.Deixis (Feature)
 -- §1: Definiteness Marking Typology (Table 4.1, extended)
 -- ============================================================================
 
--- DefMarkingStrategy, DefMarkingParams, deriveStrategy, and
--- strategyToArticleType are defined in Core.Definiteness (promoted
--- from this study file to Core for reuse across phenomena).
+-- `DefMarkingStrategy` and `strategyToArticleType` live in
+-- `Core.Definiteness`. Per-language strategy assignments are derived from
+-- `Core.Nominal.ArticleInventory` via `toMarkingStrategy` (see §7 / §14) —
+-- the inventory is the single source of truth for definiteness data.
 
 -- ============================================================================
 -- §2: Cross-Linguistic Definiteness Expression Data (Table 4.4)
@@ -411,38 +412,33 @@ theorem unmarked_distinct_from_existing :
     DefMarkingStrategy.unmarked ≠ .markedAnaphoric := by decide
 
 -- ============================================================================
--- §7: Language-Specific Parameters
+-- §7: Language-Specific Strategy Derivation
 -- ============================================================================
 
-/-- Language parameters for the four languages in Table 4.4. Each is the
-    `toMarkingParams` projection of the corresponding fragment's
-    `articleInventory` — the inventory is the single source of truth and
-    the params are its boolean restriction. -/
-def englishParams : DefMarkingParams :=
-  Fragments.English.Definiteness.articleInventory.toMarkingParams
-def germanParams : DefMarkingParams :=
-  Fragments.German.Definiteness.articleInventory.toMarkingParams
-def thaiParams : DefMarkingParams :=
-  Fragments.Thai.Definiteness.articleInventory.toMarkingParams
-def shanParams : DefMarkingParams :=
-  Fragments.Shan.Definiteness.articleInventory.toMarkingParams
-
-/-- The derivation correctly classifies all four Table 4.4 languages. -/
+/-- The four Table 4.4 languages classify into the four strategy cells
+    when the strategy is *computed* from each language's
+    `Fragments.{Lang}.Definiteness.articleInventory`. The classification is
+    not stipulated — it is derived by `ArticleInventory.toMarkingStrategy`
+    from the morphological inventory bools. -/
 theorem derive_all_languages :
-    deriveStrategy englishParams = .generallyMarked ∧
-    deriveStrategy germanParams = .bipartite ∧
-    deriveStrategy thaiParams = .markedAnaphoric ∧
-    deriveStrategy shanParams = .unmarked := ⟨rfl, rfl, rfl, rfl⟩
+    Fragments.English.Definiteness.articleInventory.toMarkingStrategy =
+      .generallyMarked ∧
+    Fragments.German.Definiteness.articleInventory.toMarkingStrategy =
+      .bipartite ∧
+    Fragments.Thai.Definiteness.articleInventory.toMarkingStrategy =
+      .markedAnaphoric ∧
+    Fragments.Shan.Definiteness.articleInventory.toMarkingStrategy =
+      .unmarked := ⟨rfl, rfl, rfl, rfl⟩
 
-/-- `deriveStrategy` agrees with `strategyToArticleType` composed with
-`ArticleType` classification. The derivation is consistent with the
-stipulated mapping — but now the strategy is computed from primitives
-rather than assigned by fiat. -/
+/-- The inventory-derived `ArticleType` agrees with Schwarz's stipulated
+    typology for the four Table 4.4 languages. The classification is
+    derived rather than assigned by fiat — `toArticleType` composes
+    `toMarkingStrategy` with the strategy → articleType collapse. -/
 theorem derive_consistent_with_stipulated :
-    strategyToArticleType (deriveStrategy englishParams) = .weakOnly ∧
-    strategyToArticleType (deriveStrategy germanParams) = .weakAndStrong ∧
-    strategyToArticleType (deriveStrategy thaiParams) = .weakOnly ∧
-    strategyToArticleType (deriveStrategy shanParams) = .none_ :=
+    Fragments.English.Definiteness.articleInventory.toArticleType = .weakOnly ∧
+    Fragments.German.Definiteness.articleInventory.toArticleType = .weakAndStrong ∧
+    Fragments.Thai.Definiteness.articleInventory.toArticleType = .weakOnly ∧
+    Fragments.Shan.Definiteness.articleInventory.toArticleType = .none_ :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -567,36 +563,42 @@ theorem isDog_not_gHomogeneous : ¬ Mereology.gHomogeneous isDog := by
 -- ============================================================================
 
 /-- The blocking principle connects article inventory to available type-shifts,
-    and `deriveStrategy` connects article inventory to marking strategy. This
-    theorem shows the full correspondence for the four Table 4.4 languages:
-    the same `DefMarkingParams` that determine the marking strategy also
-    determine which type-shifts are blocked.
+    and `ArticleInventory.toMarkingStrategy` connects inventory to marking
+    strategy. This theorem shows the full correspondence for the four
+    Table 4.4 languages: the same inventory bools that determine the
+    marking strategy also determine which type-shifts are blocked.
 
     This is the structural core of Moroney's analysis: article inventory is the
     single parameter from which both the typological classification AND the
     available interpretations of bare nouns are derived. -/
 theorem blocking_strategy_correspondence :
-    -- English: both forms → generallyMarked, both ι and ∃ blocked
-    (deriveStrategy englishParams = .generallyMarked ∧
-     englishParams.hasUniqueForm = true ∧
-     englishParams.hasAnaphoricForm = true) ∧
-    -- German: two different forms → bipartite, ι split into weak/strong
-    (deriveStrategy germanParams = .bipartite ∧
-     germanParams.hasUniqueForm = true ∧
-     germanParams.hasAnaphoricForm = true ∧
-     germanParams.sameForm = false) ∧
+    let englishInv := Fragments.English.Definiteness.articleInventory
+    let germanInv  := Fragments.German.Definiteness.articleInventory
+    let thaiInv    := Fragments.Thai.Definiteness.articleInventory
+    let shanInv    := Fragments.Shan.Definiteness.articleInventory
+    -- English: both forms, syncretic → generallyMarked
+    (englishInv.toMarkingStrategy = .generallyMarked ∧
+     englishInv.hasUniqueArticle = true ∧
+     englishInv.hasAnaphoricArticle = true ∧
+     englishInv.uniqueAnaphoricSyncretism = true) ∧
+    -- German: two different forms → bipartite (weak/strong split)
+    (germanInv.toMarkingStrategy = .bipartite ∧
+     germanInv.hasUniqueArticle = true ∧
+     germanInv.hasAnaphoricArticle = true ∧
+     germanInv.uniqueAnaphoricSyncretism = false) ∧
     -- Thai: only dem → markedAnaphoric, ι^x blocked (dem), ι unblocked (bare)
-    (deriveStrategy thaiParams = .markedAnaphoric ∧
-     thaiParams.hasUniqueForm = false ∧
-     thaiParams.hasAnaphoricForm = true) ∧
+    (thaiInv.toMarkingStrategy = .markedAnaphoric ∧
+     thaiInv.hasUniqueArticle = false ∧
+     thaiInv.hasAnaphoricArticle = true) ∧
     -- Shan: no forms → unmarked, nothing blocked, all shifts available
-    (deriveStrategy shanParams = .unmarked ∧
-     shanParams.hasUniqueForm = false ∧
-     shanParams.hasAnaphoricForm = false ∧
+    (shanInv.toMarkingStrategy = .unmarked ∧
+     shanInv.hasUniqueArticle = false ∧
+     shanInv.hasAnaphoricArticle = false ∧
      shanBlocking.iotaBlocked = false ∧
      shanBlocking.existsBlocked = false ∧
      shanBlocking.downBlocked = false) :=
-  ⟨⟨rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩⟩
+  ⟨⟨rfl, rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl, rfl⟩, ⟨rfl, rfl, rfl⟩,
+   ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩⟩
 
 -- ============================================================================
 -- §12: Demonstrative–Bare Noun Contrast (§2.1.3)

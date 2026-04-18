@@ -67,8 +67,11 @@ def rootT : ContextTower Ctx := ContextTower.root speechCtx
 /-- Bob's doxastic accessibility: both worlds are compatible with
     what Bob believes. -/
 def bobBel : AccessRel World Person
-  | .bob, _, _ => true
-  | .alice, _, w' => w' == .w0
+  | .bob, _, _ => True
+  | .alice, _, w' => w' = .w0
+
+instance : ∀ a w w', Decidable (bobBel a w w') := by
+  intro a w w'; cases a <;> simp [bobBel] <;> infer_instance
 
 /-- Tower after attitude shift: "Bob said that ..." pushes Bob as
     agent and w1 as the attitude world. -/
@@ -97,44 +100,47 @@ theorem indexicals_diverge :
 -- ════════════════════════════════════════════════════════════════
 
 /-- Happiness predicate: Alice is happy in w0 only; Bob is happy in both. -/
-def isHappy : Person → World → Bool
-  | .alice, .w0 => true
-  | .alice, .w1 => false
-  | .bob, _ => true
+def isHappy : Person → World → Prop
+  | .alice, .w0 => True
+  | .alice, .w1 => False
+  | .bob, _ => True
+
+instance : ∀ p w, Decidable (isHappy p w) := by
+  intro p w; cases p <;> cases w <;> simp [isHappy] <;> infer_instance
 
 /-- English: "Bob said that I am happy" = "Bob said that Alice is happy."
     The meaning is world-only (Alice is fixed by origin-reading "I"),
     so context quantification reduces to standard world quantification. -/
 theorem english_reduces_to_boxAt :
     ctxBox bobBel .bob (fun c => isHappy .alice c.world) rootT .w0 [.w0, .w1] =
-    boxAt bobBel .bob .w0 [.w0, .w1] (isHappy .alice) := by
-  simp only [ctxBox_world_only]
+    boxAt bobBel .bob .w0 [.w0, .w1] (isHappy .alice) :=
+  ctxBox_world_only bobBel .bob (isHappy .alice) rootT .w0 [.w0, .w1]
 
 /-- English version is false: Alice is NOT happy in all of Bob's
     belief worlds (she's unhappy in w1). -/
 theorem english_result :
-    ctxBox bobBel .bob (fun c => isHappy .alice c.world)
-      rootT .w0 [.w0, .w1] = false := by
-  native_decide
+    ¬ ctxBox bobBel .bob (fun c => isHappy .alice c.world)
+      rootT .w0 [.w0, .w1] := by
+  decide
 
 /-- Amharic: "Bob said that I am happy" = "Bob said that Bob is happy."
     The meaning reads the agent from the shifted context (Bob),
     so ctxBox does NOT reduce to boxAt. -/
 theorem amharic_result :
     ctxBox bobBel .bob (fun c => isHappy c.agent c.world)
-      rootT .w0 [.w0, .w1] = true := by
-  native_decide
+      rootT .w0 [.w0, .w1] := by
+  decide
 
 /-- The English and Amharic versions have different truth values:
-    English is false, Amharic is true. This is the formal content of
+    English fails, Amharic holds. This is the formal content of
     @cite{schlenker-2003}'s argument that context quantification is
     strictly more expressive than world quantification. -/
 theorem english_amharic_differ :
-    ctxBox bobBel .bob (fun c => isHappy .alice c.world)
-      rootT .w0 [.w0, .w1] ≠
+    ¬ ctxBox bobBel .bob (fun c => isHappy .alice c.world)
+      rootT .w0 [.w0, .w1] ∧
     ctxBox bobBel .bob (fun c => isHappy c.agent c.world)
-      rootT .w0 [.w0, .w1] := by
-  native_decide
+      rootT .w0 [.w0, .w1] :=
+  ⟨english_result, amharic_result⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § Fixity Thesis

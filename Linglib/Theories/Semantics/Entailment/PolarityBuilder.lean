@@ -219,7 +219,7 @@ theorem atMost2_de_witness : IsDE atMost2_student := atMost_isDE_scope
 /-- "Only" is Strawson-DE (formal proof). -/
 theorem only_strawsonDE_witness :
     IsStrawsonDE (onlyFull (λ w => w == .w0))
-      (λ scope _w => ∃ w', (w' == World.w0) = true ∧ scope w' = true) :=
+      (λ scope _w => ∃ w', (w' == World.w0) = true ∧ scope w') :=
   onlyFull_isStrawsonDE _
 
 /-- "Only" is NOT DE (formal proof). -/

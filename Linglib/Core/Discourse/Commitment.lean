@@ -22,8 +22,6 @@ creates a mind-to-world commitment; promising p creates a world-to-mind one.
 
 namespace Core.Discourse
 
-open Core.Proposition (BProp)
-
 namespace Commitment
 
 -- ════════════════════════════════════════════════════════════════
@@ -44,7 +42,7 @@ namespace Commitment
     responsible if p is unfulfilled). -/
 structure CommitmentSlate (W : Type*) where
   /-- The propositions the agent is publicly committed to -/
-  commitments : List (BProp W)
+  commitments : List (W → Prop)
 
 namespace CommitmentSlate
 
@@ -54,40 +52,34 @@ variable {W : Type*}
 def empty : CommitmentSlate W := ⟨[]⟩
 
 /-- Add a commitment to the slate. -/
-def add (s : CommitmentSlate W) (p : BProp W) : CommitmentSlate W :=
+def add (s : CommitmentSlate W) (p : W → Prop) : CommitmentSlate W :=
   ⟨p :: s.commitments⟩
-
-/-- Retract a commitment (remove first occurrence).
-
-    Not all theories support retraction. Stalnaker's CG model has no
-    retraction mechanism; Krifka and Brandom do. -/
-def retract (s : CommitmentSlate W) (p : BProp W) [BEq (BProp W)] : CommitmentSlate W :=
-  ⟨s.commitments.erase p⟩
 
 /-- Convert commitments to a context set: the worlds compatible with
     all committed propositions. -/
-def toContextSet (s : CommitmentSlate W) : BProp W :=
-  λ w => s.commitments.all (λ p => p w)
+def toContextSet (s : CommitmentSlate W) : W → Prop :=
+  λ w => ∀ p ∈ s.commitments, p w
 
 /-- Check if the slate entails a proposition (holds at all compatible worlds). -/
-def entails (s : CommitmentSlate W) (p : BProp W) (worlds : List W) : Bool :=
-  worlds.all λ w => !s.commitments.all (λ q => q w) || p w
+def entails (s : CommitmentSlate W) (p : W → Prop) : Prop :=
+  ∀ w, (∀ q ∈ s.commitments, q w) → p w
 
 /-- Empty slate is trivial: all worlds are compatible. -/
-theorem empty_trivial (w : W) : (empty : CommitmentSlate W).toContextSet w = true := by
-  simp only [empty, toContextSet, List.all_nil]
+theorem empty_trivial (w : W) : (empty : CommitmentSlate W).toContextSet w := by
+  intro p hp
+  exact absurd hp (List.not_mem_nil)
 
 /-- Adding a commitment restricts the context set. -/
-theorem add_restricts (s : CommitmentSlate W) (p : BProp W) (w : W) :
+theorem add_restricts (s : CommitmentSlate W) (p : W → Prop) (w : W) :
     (s.add p).toContextSet w → s.toContextSet w := by
-  simp only [add, toContextSet, List.all_cons, Bool.and_eq_true]
-  exact And.right
+  intro h q hq
+  exact h q (List.mem_cons_of_mem p hq)
 
 /-- Adding a commitment entails the added proposition. -/
-theorem add_entails (s : CommitmentSlate W) (p : BProp W) (w : W) :
-    (s.add p).toContextSet w → p w = true := by
-  simp only [add, toContextSet, List.all_cons, Bool.and_eq_true]
-  exact And.left
+theorem add_entails (s : CommitmentSlate W) (p : W → Prop) (w : W) :
+    (s.add p).toContextSet w → p w := by
+  intro h
+  exact h p List.mem_cons_self
 
 end CommitmentSlate
 
@@ -111,7 +103,7 @@ inductive CommitmentSource where
 /-- A commitment tagged with its source. -/
 structure TaggedCommitment (W : Type*) where
   /-- The propositional content -/
-  content : BProp W
+  content : W → Prop
   /-- How the commitment was generated -/
   source : CommitmentSource
 
@@ -128,15 +120,15 @@ variable {W : Type*}
 def empty : TaggedSlate W := ⟨[]⟩
 
 /-- Add a tagged commitment. -/
-def add (s : TaggedSlate W) (p : BProp W) (src : CommitmentSource) : TaggedSlate W :=
+def add (s : TaggedSlate W) (p : W → Prop) (src : CommitmentSource) : TaggedSlate W :=
   ⟨⟨p, src⟩ :: s.commitments⟩
 
 /-- Get all self-generated commitments. -/
-def selfGenerated (s : TaggedSlate W) : List (BProp W) :=
+def selfGenerated (s : TaggedSlate W) : List (W → Prop) :=
   s.commitments.filter (·.source == .selfGenerated) |>.map (·.content)
 
 /-- Get all other-generated commitments. -/
-def otherGenerated (s : TaggedSlate W) : List (BProp W) :=
+def otherGenerated (s : TaggedSlate W) : List (W → Prop) :=
   s.commitments.filter (·.source == .otherGenerated) |>.map (·.content)
 
 /-- Convert to a plain (untagged) commitment slate. -/
@@ -144,7 +136,7 @@ def toSlate (s : TaggedSlate W) : CommitmentSlate W :=
   ⟨s.commitments.map (·.content)⟩
 
 /-- Convert to context set (ignoring source tags). -/
-def toContextSet (s : TaggedSlate W) : BProp W :=
+def toContextSet (s : TaggedSlate W) : W → Prop :=
   s.toSlate.toContextSet
 
 end TaggedSlate

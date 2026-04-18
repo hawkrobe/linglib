@@ -173,7 +173,7 @@ def mkOCPOnTier {C α β : Type} [BEq β]
 
 /-- Grounding theorem: the tier-driven OCP equals the generic OCP applied to
     the explicit projection `Tier.apply T ∘ extract`. By construction. -/
-@[simp] theorem mkOCPOnTier_eq_mkOCP {C α β : Type} [BEq β]
+theorem mkOCPOnTier_eq_mkOCP {C α β : Type} [BEq β]
     (name : String) (T : Core.Tier α β) (extract : C → List α) :
     mkOCPOnTier name T extract =
     mkOCP name (fun c => Core.Tier.apply T (extract c)) := rfl

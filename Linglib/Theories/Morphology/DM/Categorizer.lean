@@ -368,6 +368,63 @@ def CatHead.satisfiesLicense (ch : CatHead) (req : Option GenderFeature) : Bool 
   | none => ch.phi.gender.isNone
   | some gf => ch.phi.gender == some gf
 
+/-- Whether a categorizer head licenses templatic [t]-intrusion in the
+    sense of @cite{faust-2026} (11). The intruder is the exponent of
+    `n[+gen]` (Kramer's `n_uFem` and similar): only nominal categorizers
+    bearing a gender feature can host the bound-root /t/ exponent
+    (@cite{lowenstamm-2014} sister-bound-root analysis). Verbal stems
+    are blocked because gender is realized on the higher Agr head
+    (@cite{kramer-2020}; @cite{faust-2026} (11)).
+
+    The predicate is `cat = .n ∧ phi.gender ≠ none`. Used by
+    `Phonology.Templates.RootTemplateMatch.intrusionLicensed` to filter
+    `RootTemplateMatch` candidates with `intruder`-source associations. -/
+def CatHead.licensesIntrusion (ch : CatHead) : Bool :=
+  decide (ch.cat = .n) && ch.phi.gender.isSome
+
+/-! #### Which canonical `CatHead`s license intrusion
+
+Per-head verification of `licensesIntrusion` against Kramer's taxonomy.
+Each theorem breaks if the corresponding canonical `CatHead`'s `cat` or
+`phi.gender` field ever changes — making the licensing predictions of
+@cite{faust-2026} (11) sensitive to the upstream Kramer-2015 data. -/
+
+/-- u[+FEM] n licenses intrusion (canonical Set 1 feminine — Hebrew /t/
+    exponent of taQTiL nouns, Amharic /t/ exponent of gerunds and INFs). -/
+theorem n_uFem_licenses_intrusion :
+    CatHead.n_uFem.licensesIntrusion = true := rfl
+
+/-- i[+FEM] n licenses intrusion (interpretable feminine). -/
+theorem n_iFem_licenses_intrusion :
+    CatHead.n_iFem.licensesIntrusion = true := rfl
+
+/-- i[−FEM] n licenses intrusion (interpretable masculine — Faust's
+    argument is feature-symmetric: any [+gen] specification on n
+    licenses an inherent exponent). -/
+theorem n_iMasc_licenses_intrusion :
+    CatHead.n_iMasc.licensesIntrusion = true := rfl
+
+/-- Plain n (no gender feature) does NOT license intrusion. -/
+theorem n_plain_blocks_intrusion :
+    CatHead.n_plain.licensesIntrusion = false := rfl
+
+/-- Verbal categorizer: never licenses intrusion (gender lives on Agr,
+    not on v — @cite{faust-2026} (11)). -/
+theorem v_plain_blocks_intrusion :
+    CatHead.v_plain.licensesIntrusion = false := rfl
+
+/-- Adjectival categorizer: no inherent gender exponent. -/
+theorem a_plain_blocks_intrusion :
+    CatHead.a_plain.licensesIntrusion = false := rfl
+
+/-- Faust's central morphological prediction: intrusion is well-formed
+    iff the categorizer is `n` AND carries a gender feature. The iff
+    reduces to a Boolean computation on `CatHead.cat` and
+    `CatHead.phi.gender`. -/
+theorem licensesIntrusion_iff_n_and_gen (ch : CatHead) :
+    ch.licensesIntrusion = true ↔ ch.cat = .n ∧ ch.phi.gender.isSome = true := by
+  simp only [CatHead.licensesIntrusion, Bool.and_eq_true, decide_eq_true_eq]
+
 -- ============================================================================
 -- § 1e: Phi-Feature Verification
 -- ============================================================================

@@ -284,28 +284,30 @@ theorem belief_filtering_condition (blc : BeliefLocalCtx W Agent) (p : PrProp W)
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-### Bridging Bool-valued and Prop-valued Accessibility
+### Bridging Agent-Indexed Accessibility into `DoxasticAccessibility`
 @cite{hintikka-1962}
 
-`EpistemicLogic` uses Bool-valued `BAgentAccessRel W E = E → W → W → Bool`.
+`EpistemicLogic` uses Prop-valued `AgentAccessRel W E = E → W → W → Prop`
+(since the `BProp` dissolution).
 `BeliefEmbedding` uses Prop-valued `DoxasticAccessibility W E = E → W → ContextSet W`
 where `ContextSet W = W → Prop`.
 
-Both represent the same concept (agent-indexed world accessibility). The bridge
-converts `R i w v = true` (Bool) to `Dox i w v` (Prop).
+Both represent the same concept (agent-indexed world accessibility). The
+"bridge" is now a definitional reshuffle (currying `i w v ↦ Prop` either as
+`E → W → W → Prop` or `E → W → (W → Prop)`).
 -/
 
 section BoolPropBridge
 
-open Core.IntensionalLogic.RestrictedModality (BAgentAccessRel)
 open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
+open Core.IntensionalLogic.RestrictedModality (AgentAccessRel)
 
 variable {W E : Type*}
 
-/-- Convert a Bool-valued `AgentAccessRel` to a Prop-valued `DoxasticAccessibility`.
-    `R i w v = true` becomes the Prop `Dox i w v`. -/
-def doxOfAccessRel (Rs : BAgentAccessRel W E) : DoxasticAccessibility W E :=
-  fun i w v => Rs i w v = true
+/-- Reinterpret an `AgentAccessRel` as a `DoxasticAccessibility`. Since both are
+    `E → W → W → Prop` up to currying, this is essentially the identity. -/
+def doxOfAccessRel (Rs : AgentAccessRel W E) : DoxasticAccessibility W E :=
+  fun i w v => Rs i w v
 
 /-- Construct a `BeliefLocalCtx` from a `KnowledgeBeliefFrame` using the
     belief relation. This connects the KD45 belief operator from

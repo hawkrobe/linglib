@@ -356,7 +356,7 @@ structure MinimalistGrammar where
 /-- Minimalist derivations link a formal derivation to a clause type. -/
 structure MinDerivation (g : MinimalistGrammar) where
   deriv : FullDerivation
-  clauseType : ClauseType
+  clauseType : ClauseForm
 
 /-- Minimalism Grammar instance.
 

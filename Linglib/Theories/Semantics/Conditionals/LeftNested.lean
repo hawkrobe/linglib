@@ -53,11 +53,11 @@ Example: "If Kripke was there if Strawson was, Anscomb was there"
 -/
 structure LNC (W : Type*) where
   /-- A: The inner antecedent -/
-  innerAntecedent : BProp W
+  innerAntecedent : Prop' W
   /-- B: The inner consequent -/
-  innerConsequent : BProp W
+  innerConsequent : Prop' W
   /-- C: The outer consequent -/
-  outerConsequent : BProp W
+  outerConsequent : Prop' W
 
 namespace LNC
 
@@ -68,16 +68,16 @@ Get the inner conditional "B if A" as a proposition.
 
 This is the outer antecedent of the full LNC.
 -/
-def innerConditional (lnc : LNC W) : BProp W :=
-  materialImpB lnc.innerAntecedent lnc.innerConsequent
+def innerConditional (lnc : LNC W) : Prop' W :=
+  materialImp lnc.innerAntecedent lnc.innerConsequent
 
 /--
 Full LNC semantics using material implication.
 
 "If (B if A), C" = (A → B) → C
 -/
-def semantics (lnc : LNC W) : BProp W :=
-  materialImpB (lnc.innerConditional) lnc.outerConsequent
+def semantics (lnc : LNC W) : Prop' W :=
+  materialImp (lnc.innerConditional) lnc.outerConsequent
 
 /--
 Full LNC semantics using Kratzer-style conditionals.
@@ -134,11 +134,12 @@ Interpret an LNC given discourse context and content type.
 
 The main result of @cite{cao-white-lassiter-2025}: bare LNCs default to PC interpretation.
 -/
-def interpretLNC {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
+noncomputable def interpretLNC {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
     (content : InnerConditionalContent) (worlds : List W) : ConditionalType :=
   if content.allowsHCReading then
     -- Modal/generic/quantAdv: can be either HC or PC
     -- Default to PC if inner conditional echoes discourse
+    open Classical in
     if echoesDiscourse ds lnc.innerConditional worlds then
       .premise
     else
@@ -150,8 +151,8 @@ def interpretLNC {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
 /--
 Check if an LNC is felicitous in a given discourse state.
 -/
-def lncFelicitous {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
-    (content : InnerConditionalContent) (worlds : List W) : Bool :=
+noncomputable def lncFelicitous {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
+    (content : InnerConditionalContent) (worlds : List W) : Prop :=
   match interpretLNC ds lnc content worlds with
   | .hypothetical => hcFelicitous ds lnc.innerConditional worlds
   | .premise => pcFelicitous ds lnc.innerConditional worlds
@@ -178,7 +179,7 @@ as either HC or PC, depending on discourse context.
 -/
 theorem modal_lnc_allows_hc {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
     (worlds : List W)
-    (h_no_echo : echoesDiscourse ds lnc.innerConditional worlds = false) :
+    (h_no_echo : ¬ echoesDiscourse ds lnc.innerConditional worlds) :
     interpretLNC ds lnc .modal worlds = .hypothetical := by
   unfold interpretLNC InnerConditionalContent.allowsHCReading
   simp [h_no_echo]
@@ -188,7 +189,7 @@ theorem modal_lnc_allows_hc {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
 -/
 theorem modal_lnc_prefers_pc {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
     (worlds : List W)
-    (h_echo : echoesDiscourse ds lnc.innerConditional worlds = true) :
+    (h_echo : echoesDiscourse ds lnc.innerConditional worlds) :
     interpretLNC ds lnc .modal worlds = .premise := by
   unfold interpretLNC InnerConditionalContent.allowsHCReading
   simp [h_echo]
@@ -223,17 +224,17 @@ namespace AnnotatedLNC
 variable {W : Type*}
 
 /-- Get interpretation in discourse context -/
-def interpret (alnc : AnnotatedLNC W) (ds : DiscourseState W)
+noncomputable def interpret (alnc : AnnotatedLNC W) (ds : DiscourseState W)
     (worlds : List W) : ConditionalType :=
   interpretLNC ds alnc.lnc alnc.content worlds
 
 /-- Check felicity -/
-def isFelicitous (alnc : AnnotatedLNC W) (ds : DiscourseState W)
-    (worlds : List W) : Bool :=
+noncomputable def isFelicitous (alnc : AnnotatedLNC W) (ds : DiscourseState W)
+    (worlds : List W) : Prop :=
   lncFelicitous ds alnc.lnc alnc.content worlds
 
 /-- Get polarity context for inner conditional antecedent -/
-def innerAntecedentPolarity (alnc : AnnotatedLNC W) (ds : DiscourseState W)
+noncomputable def innerAntecedentPolarity (alnc : AnnotatedLNC W) (ds : DiscourseState W)
     (worlds : List W) : ConditionalPolarityContext :=
   ConditionalPolarityContext.fromConditionalType (alnc.interpret ds worlds)
 
@@ -317,17 +318,17 @@ instance : Core.Proposition.FiniteWorlds PartyWorld where
 
 namespace PartyWorld
 
-def strawsonAttended : BProp PartyWorld
-  | .sOnly | .sk | .sa | .ska => true
-  | _ => false
+def strawsonAttended : Prop' PartyWorld
+  | .sOnly | .sk | .sa | .ska => True
+  | _ => False
 
-def kripkeAttended : BProp PartyWorld
-  | .kOnly | .sk | .ka | .ska => true
-  | _ => false
+def kripkeAttended : Prop' PartyWorld
+  | .kOnly | .sk | .ka | .ska => True
+  | _ => False
 
-def anscombAttended : BProp PartyWorld
-  | .aOnly | .sa | .ka | .ska => true
-  | _ => false
+def anscombAttended : Prop' PartyWorld
+  | .aOnly | .sa | .ka | .ska => True
+  | _ => False
 
 /--
 Gibbard's example LNC:

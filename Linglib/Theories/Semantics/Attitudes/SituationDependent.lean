@@ -33,34 +33,32 @@ situation-dependent types natively, with backward-compat wrappers.
 namespace Semantics.Attitudes.SituationDependent
 
 open Core.Time
-open Core.IntensionalLogic.RestrictedModality (BAgentAccessRel)
 open Semantics.Attitudes.Doxastic
-  (Veridicality DoxasticPredicate boxAt veridicalityHolds)
+  (Veridicality DoxasticPredicate AccessRel boxAt veridicalityHolds)
+
+/-- Local alias for the agent-indexed accessibility relation
+    used by the situation-dependent operators. Aliased to
+    `Semantics.Attitudes.Doxastic.AccessRel` (Prop-valued, mathlib convention). -/
+abbrev BAgentAccessRel (W E : Type*) := AccessRel W E
 
 
 -- ════════════════════════════════════════════════════════════════
 -- § Core Types
 -- ════════════════════════════════════════════════════════════════
 
-/-- Situation-dependent proposition type (von Stechow's s(it), Bool-valued
-    for computational RSA evaluation).
+/-- Situation-dependent proposition type (von Stechow's s(it), Prop-valued).
 
-    Where standard propositions are `W → Bool` (sets of worlds),
-    situation-dependent propositions are `Situation W Time → Bool`
+    Where standard propositions are `W → Prop` (sets of worlds),
+    situation-dependent propositions are `Situation W Time → Prop`
     (sets of world–time pairs). This is the complement type for
-    attitude verbs that support temporal interpretation.
-
-    Note: a Prop-valued counterpart exists at
-    `Semantics.Tense.SitProp` for proof-level
-    temporal reasoning. The split follows the `Prop'`/`BProp`
-    pattern in `Core/Proposition.lean`. -/
-abbrev SitProp (W Time : Type*) := Situation W Time → Bool
+    attitude verbs that support temporal interpretation. -/
+abbrev SitProp (W Time : Type*) := Situation W Time → Prop
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 
-    Generalizes `BAgentAccessRel W E = E → W → W → Bool` to include
+    Generalizes `BAgentAccessRel W E = E → W → W → Prop` to include
     temporal coordinates in both the evaluation and accessible situations. -/
-abbrev SitAccessRel (W Time E : Type*) := E → Situation W Time → Situation W Time → Bool
+abbrev SitAccessRel (W Time E : Type*) := E → Situation W Time → Situation W Time → Prop
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -74,8 +72,8 @@ abbrev SitAccessRel (W Time E : Type*) := E → Situation W Time → Situation W
     Generalizes `Doxastic.boxAt` from worlds to situations. -/
 def sitBoxAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
     (s : Situation W Time) (situations : List (Situation W Time))
-    (p : SitProp W Time) : Bool :=
-  situations.all λ s' => !R agent s s' || p s'
+    (p : SitProp W Time) : Prop :=
+  ∀ s' ∈ situations, R agent s s' → p s'
 
 /-- Situation-dependent existential modal.
 
@@ -84,8 +82,20 @@ def sitBoxAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
     Generalizes `Doxastic.diaAt` from worlds to situations. -/
 def sitDiaAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
     (s : Situation W Time) (situations : List (Situation W Time))
-    (p : SitProp W Time) : Bool :=
-  situations.any λ s' => R agent s s' && p s'
+    (p : SitProp W Time) : Prop :=
+  ∃ s' ∈ situations, R agent s s' ∧ p s'
+
+instance sitBoxAt_decidable {W Time E : Type*} (R : SitAccessRel W Time E)
+    [∀ a s s', Decidable (R a s s')] (agent : E) (s : Situation W Time)
+    (situations : List (Situation W Time)) (p : SitProp W Time) [DecidablePred p] :
+    Decidable (sitBoxAt R agent s situations p) :=
+  inferInstanceAs (Decidable (∀ s' ∈ situations, _))
+
+instance sitDiaAt_decidable {W Time E : Type*} (R : SitAccessRel W Time E)
+    [∀ a s s', Decidable (R a s s')] (agent : E) (s : Situation W Time)
+    (situations : List (Situation W Time)) (p : SitProp W Time) [DecidablePred p] :
+    Decidable (sitDiaAt R agent s situations p) :=
+  inferInstanceAs (Decidable (∃ s' ∈ situations, _))
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -97,7 +107,7 @@ def sitDiaAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
     The lifted proposition ignores the temporal coordinate:
     `liftProp p s = p s.world`. This is the backward-compatibility
     embedding for code that hasn't moved to situation types yet. -/
-def liftProp {W Time : Type*} (p : W → Bool) : SitProp W Time :=
+def liftProp {W Time : Type*} (p : W → Prop) : SitProp W Time :=
   λ s => p s.world
 
 /-- Lift a world-accessibility relation to a situation-accessibility relation.
@@ -124,13 +134,15 @@ def liftAccess {W Time E : Type*} (R : BAgentAccessRel W E) : SitAccessRel W Tim
     identical results when embedded in the situation framework. -/
 theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
     (R : BAgentAccessRel W E) (agent : E) (s : Situation W Time)
-    (sits : List (Situation W Time)) (p : W → Bool) :
-    sitBoxAt (liftAccess R) agent s sits (liftProp p) =
+    (sits : List (Situation W Time)) (p : W → Prop) :
+    sitBoxAt (liftAccess R) agent s sits (liftProp p) ↔
     boxAt R agent s.world (sits.map (·.world)) p := by
-  simp only [sitBoxAt, boxAt, liftAccess, liftProp]
-  induction sits with
-  | nil => rfl
-  | cons s' rest ih => simp only [List.map, List.all_cons, ih]
+  simp only [sitBoxAt, boxAt, liftAccess, liftProp, List.mem_map]
+  constructor
+  · intro h w' ⟨s', hs', heq⟩ hR
+    exact heq ▸ h s' hs' (heq ▸ hR)
+  · intro h s' hs' hR
+    exact h s'.world ⟨s', hs', rfl⟩ hR
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -139,19 +151,24 @@ theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
 
 /-- Veridicality check for situation-dependent propositions.
 
-    For veridical predicates (know), requires p(s) = true at the
+    For veridical predicates (know), requires p(s) at the
     evaluation situation. Mirrors `Doxastic.veridicalityHolds`. -/
 def sitVeridicalityHolds {W Time : Type*} (v : Veridicality)
-    (p : SitProp W Time) (s : Situation W Time) : Bool :=
+    (p : SitProp W Time) (s : Situation W Time) : Prop :=
   match v with
   | .veridical => p s
-  | .nonVeridical => true
+  | .nonVeridical => True
+
+instance sitVeridicalityHolds_decidable {W Time : Type*} (v : Veridicality)
+    (p : SitProp W Time) [DecidablePred p] (s : Situation W Time) :
+    Decidable (sitVeridicalityHolds v p s) := by
+  cases v <;> simp [sitVeridicalityHolds] <;> infer_instance
 
 /-- Lifted veridicality matches world-level veridicality. -/
 theorem sitVeridicalityHolds_lift {W Time : Type*} (v : Veridicality)
-    (p : W → Bool) (s : Situation W Time) :
-    sitVeridicalityHolds v (liftProp p) s = veridicalityHolds v p s.world := by
-  cases v <;> rfl
+    (p : W → Prop) (s : Situation W Time) :
+    sitVeridicalityHolds v (liftProp p) s ↔ veridicalityHolds v p s.world := by
+  cases v <;> simp [sitVeridicalityHolds, veridicalityHolds, liftProp]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -180,8 +197,8 @@ structure SitDoxasticPredicate (W Time E : Type*) where
     Generalizes `DoxasticPredicate.holdsAt` to situations. -/
 def SitDoxasticPredicate.holdsAt {W Time E : Type*}
     (V : SitDoxasticPredicate W Time E) (agent : E) (p : SitProp W Time)
-    (s : Situation W Time) (situations : List (Situation W Time)) : Bool :=
-  sitVeridicalityHolds V.veridicality p s && sitBoxAt V.access agent s situations p
+    (s : Situation W Time) (situations : List (Situation W Time)) : Prop :=
+  sitVeridicalityHolds V.veridicality p s ∧ sitBoxAt V.access agent s situations p
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -203,16 +220,16 @@ def liftDoxastic {W E : Type*} (V : DoxasticPredicate W E)
 /-- The lifted predicate matches the original semantics.
 
     `(liftDoxastic V Time).holdsAt agent (liftProp p) s sits`
-    equals `V.holdsAt agent p s.world (sits.map.world)`.
+    iff `V.holdsAt agent p s.world (sits.map.world)`.
 
     This is the key backward-compatibility theorem: any existing
     analysis using `DoxasticPredicate` can be replayed exactly
     in the situation-dependent framework by lifting. -/
 theorem liftDoxastic_holdsAt_eq {W Time E : Type*}
     (V : DoxasticPredicate W E) (agent : E)
-    (p : W → Bool) (s : Situation W Time)
+    (p : W → Prop) (s : Situation W Time)
     (sits : List (Situation W Time)) :
-    (liftDoxastic V Time).holdsAt agent (liftProp p) s sits =
+    (liftDoxastic V Time).holdsAt agent (liftProp p) s sits ↔
     V.holdsAt agent p s.world (sits.map (·.world)) := by
   simp only [SitDoxasticPredicate.holdsAt, DoxasticPredicate.holdsAt,
     liftDoxastic, sitVeridicalityHolds_lift, sitBoxAt_lift_eq_boxAt]
@@ -229,9 +246,9 @@ theorem sit_veridical_entails_complement {W Time E : Type*}
     (V : SitDoxasticPredicate W Time E) (hV : V.veridicality = .veridical)
     (agent : E) (p : SitProp W Time) (s : Situation W Time)
     (sits : List (Situation W Time))
-    (holds : V.holdsAt agent p s sits = true) : p s = true := by
+    (holds : V.holdsAt agent p s sits) : p s := by
   unfold SitDoxasticPredicate.holdsAt at holds
-  simp only [hV, sitVeridicalityHolds, Bool.and_eq_true] at holds
+  rw [hV] at holds
   exact holds.1
 
 /-- Situation-dependent K axiom: closed under known implication.
@@ -242,17 +259,11 @@ theorem sit_k_axiom {W Time E : Type*}
     (R : SitAccessRel W Time E) (agent : E)
     (p q : SitProp W Time) (s : Situation W Time)
     (sits : List (Situation W Time))
-    (hp : sitBoxAt R agent s sits p = true)
-    (hpq : sitBoxAt R agent s sits (λ s' => !p s' || q s') = true) :
-    sitBoxAt R agent s sits q = true := by
-  simp only [sitBoxAt, List.all_eq_true, Bool.or_eq_true, Bool.not_eq_true'] at *
-  intro s' hs'
-  cases hR : R agent s s'
-  · left; rfl
-  · right
-    have h1 := hp s' hs'; simp [hR] at h1
-    have h2 := hpq s' hs'; simp [hR, h1] at h2
-    exact h2
+    (hp : sitBoxAt R agent s sits p)
+    (hpq : sitBoxAt R agent s sits (λ s' => p s' → q s')) :
+    sitBoxAt R agent s sits q := by
+  intro s' hs' hR
+  exact hpq s' hs' hR (hp s' hs' hR)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -282,16 +293,27 @@ connection between these temporal constraints and SOT readings.
 /-- Temporal binding constraint: accessible situations share the
     evaluation situation's time. This gives the "simultaneous"
     reading in sequence of tense. -/
-def temporallyBound {W Time E : Type*} [DecidableEq Time]
+def temporallyBound {W Time E : Type*}
     (R : BAgentAccessRel W E) : SitAccessRel W Time E :=
-  λ agent s₁ s₂ => R agent s₁.world s₂.world && (s₂.time == s₁.time)
+  λ agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₂.time = s₁.time
+
+instance temporallyBound_decidable {W Time E : Type*} [DecidableEq Time]
+    (R : BAgentAccessRel W E) [∀ a w w', Decidable (R a w w')] :
+    ∀ a s₁ s₂, Decidable (temporallyBound (Time := Time) R a s₁ s₂) := by
+  intro a s₁ s₂; unfold temporallyBound; infer_instance
 
 /-- Future-oriented constraint: accessible situations have times
     at or after the evaluation time. This models forward-looking
     attitudes like "expect" or "intend". -/
-def futureOriented {W Time E : Type*} [LE Time] [DecidableRel (α := Time) (· ≤ ·)]
+def futureOriented {W Time E : Type*} [LE Time]
     (R : BAgentAccessRel W E) : SitAccessRel W Time E :=
-  λ agent s₁ s₂ => R agent s₁.world s₂.world && decide (s₁.time ≤ s₂.time)
+  λ agent s₁ s₂ => R agent s₁.world s₂.world ∧ s₁.time ≤ s₂.time
+
+instance futureOriented_decidable {W Time E : Type*} [LE Time]
+    [DecidableRel (α := Time) (· ≤ ·)]
+    (R : BAgentAccessRel W E) [∀ a w w', Decidable (R a w w')] :
+    ∀ a s₁ s₂, Decidable (futureOriented (Time := Time) R a s₁ s₂) := by
+  intro a s₁ s₂; unfold futureOriented; infer_instance
 
 
 end Semantics.Attitudes.SituationDependent

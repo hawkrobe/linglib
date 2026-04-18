@@ -75,11 +75,12 @@ inductive Force where
 /-- A single disjunct in a modal disjunction: Aᵢ Mᵢ Bᵢ. -/
 structure Disjunct (W : Type*) where
   /-- Modal domain Aᵢ (subset of background, determined by context). -/
-  domain : BProp W
+  domain : Prop' W
   /-- Modal force Mᵢ (from overt modal or covert default). -/
   force : Force
   /-- Descriptive content Bᵢ. -/
-  content : BProp W
+  content : Prop' W
+
 
 /-- A modal disjunction: conjunction of modal propositions. -/
 abbrev MDisjunction (W : Type*) := List (Disjunct W)
@@ -93,10 +94,11 @@ abbrev MDisjunction (W : Type*) := List (Disjunct W)
 ◇: ∃w ∈ A, B(w). □: ∀w ∈ A, B(w). -/
 def Disjunct.holds (d : Disjunct W) : Prop :=
   match d.force with
-  | .existential => ∃ w, d.domain w = true ∧ d.content w = true
-  | .universal   => ∀ w, d.domain w = true → d.content w = true
+  | .existential => ∃ w, d.domain w ∧ d.content w
+  | .universal   => ∀ w, d.domain w → d.content w
 
-instance Disjunct.holds_decidable [Fintype W] (d : Disjunct W) :
+instance Disjunct.holds_decidable [Fintype W] (d : Disjunct W)
+    [DecidablePred d.domain] [DecidablePred d.content] :
     Decidable d.holds := by
   unfold Disjunct.holds
   cases d.force <;> infer_instance
@@ -105,31 +107,27 @@ instance Disjunct.holds_decidable [Fintype W] (d : Disjunct W) :
 def MDisjunction.holds (disj : MDisjunction W) : Prop :=
   ∀ d ∈ disj, d.holds
 
-instance MDisjunction.holds_decidable [Fintype W] (disj : MDisjunction W) :
-    Decidable disj.holds :=
-  inferInstanceAs (Decidable (∀ d ∈ disj, d.holds))
-
 
 -- ══════════════════════════════════════════════════════════
 -- § The three constraints (Geurts §3, p. 395)
 -- ══════════════════════════════════════════════════════════
 
 /-- The "modal cell" of a disjunct: worlds in both domain and content. -/
-def Disjunct.cell (d : Disjunct W) : BProp W := fun w => d.domain w && d.content w
+def Disjunct.cell (d : Disjunct W) : Prop' W := fun w => d.domain w ∧ d.content w
 
 /-- **Exhaustivity**: C ⊆ ∪(Aᵢ ∩ Bᵢ). All background worlds are covered
 by some disjunct's modal cell. -/
-def exhaustivity (C : BProp W) (disj : MDisjunction W) : Prop :=
-  ∀ w, C w = true → disj.any (fun d => d.cell w) = true
+def exhaustivity (C : Prop' W) (disj : MDisjunction W) : Prop :=
+  ∀ w, C w → ∃ d ∈ disj, d.cell w
 
 /-- **Disjointness** for binary disjunctions: cells don't overlap.
 (Aᵢ ∩ Bᵢ) ∩ (Aⱼ ∩ Bⱼ) = ∅ for i ≠ j. -/
 def disjointness₂ (d₁ d₂ : Disjunct W) : Prop :=
-  ∀ w, ¬(d₁.cell w = true ∧ d₂.cell w = true)
+  ∀ w, ¬(d₁.cell w ∧ d₂.cell w)
 
 /-- **Non-triviality**: Aᵢ ≠ ∅. Each modal domain is non-empty. -/
 def nonTriviality [FiniteWorlds W] (disj : MDisjunction W) : Prop :=
-  ∀ d, d ∈ disj → FiniteWorlds.worlds.any d.domain = true
+  ∀ d, d ∈ disj → ∃ w ∈ FiniteWorlds.worlds, d.domain w
 
 
 -- ══════════════════════════════════════════════════════════
@@ -154,18 +152,17 @@ If cells are disjoint and world w is in cell 1, it is not in cell 2.
 This is Geurts §5: exclusive 'or' from Disjointness, NOT scalar implicature. -/
 theorem disjointness_gives_exclusivity (d₁ d₂ : Disjunct W)
     (h_dis : disjointness₂ d₁ d₂) (w : W)
-    (h_in_1 : d₁.cell w = true) :
-    d₂.cell w = false := by
-  by_contra h
-  simp only [Bool.not_eq_false] at h
+    (h_in_1 : d₁.cell w) :
+    ¬ d₂.cell w := by
+  intro h
   exact h_dis w ⟨h_in_1, h⟩
 
 /-- Exhaustivity + Disjointness → each C-world in exactly one cell. -/
-theorem partition_unique (C : BProp W) (d₁ d₂ : Disjunct W)
+theorem partition_unique (C : Prop' W) (d₁ d₂ : Disjunct W)
     (_h_exh : exhaustivity C [d₁, d₂])
     (h_dis : disjointness₂ d₁ d₂)
-    (w : W) (_hw : C w = true) (h1 : d₁.cell w = true) :
-    d₂.cell w = false :=
+    (w : W) (_hw : C w) (h1 : d₁.cell w) :
+    ¬ d₂.cell w :=
   disjointness_gives_exclusivity d₁ d₂ h_dis w h1
 
 
@@ -176,16 +173,16 @@ theorem partition_unique (C : BProp W) (d₁ d₂ : Disjunct W)
 /-- Default domain binding: by default, each modal domain equals
 the background C. The hearer tries A = C first, and only restricts
 if constraints force it (Geurts p. 394). -/
-def defaultBinding (C : BProp W) (content : List (BProp W)) (f : Force) :
+def defaultBinding (C : Prop' W) (content : List (Prop' W)) (f : Force) :
     MDisjunction W :=
   content.map (fun b => { domain := C, force := f, content := b })
 
 /-- With default binding and existential force, truth = each disjunct
 is possible w.r.t. C. This is the basic free choice structure. -/
 theorem default_existential_holds_iff
-    (C : BProp W) (bs : List (BProp W)) :
+    (C : Prop' W) (bs : List (Prop' W)) :
     (defaultBinding C bs .existential).holds ↔
-    ∀ b ∈ bs, ∃ w, C w = true ∧ b w = true := by
+    ∀ b ∈ bs, ∃ w, C w ∧ b w := by
   simp only [MDisjunction.holds, defaultBinding, List.mem_map, Disjunct.holds,
     forall_exists_index, and_imp]
   constructor
@@ -202,51 +199,37 @@ theorem default_existential_holds_iff
 -- ══════════════════════════════════════════════════════════
 
 /-- Construct a Geurts existential disjunction from two presuppositional
-propositions: domains = presuppositions, contents = assertions.
-Requires decidability for the Prop→Bool bridge. -/
-def fromPrProp (p q : PrProp W)
-    [DecidablePred p.presup] [DecidablePred p.assertion]
-    [DecidablePred q.presup] [DecidablePred q.assertion] : MDisjunction W :=
-  [ { domain := fun w => decide (p.presup w), force := .existential,
-      content := fun w => decide (p.assertion w) }
-  , { domain := fun w => decide (q.presup w), force := .existential,
-      content := fun w => decide (q.assertion w) } ]
+propositions: domains = presuppositions, contents = assertions. -/
+def fromPrProp (p q : PrProp W) : MDisjunction W :=
+  [ { domain := p.presup, force := .existential, content := p.assertion }
+  , { domain := q.presup, force := .existential, content := q.assertion } ]
 
 /-- The overall presupposition of a Geurts disjunction from PrProps is
 p.presup ∨ q.presup — matching PrProp.orFlex. -/
-theorem fromPrProp_presup_iff_orFlex (p q : PrProp W) (w : W)
-    [DecidablePred p.presup] [DecidablePred p.assertion]
-    [DecidablePred q.presup] [DecidablePred q.assertion] :
-    (fromPrProp p q).any (fun d => d.domain w) = true ↔
+theorem fromPrProp_presup_iff_orFlex (p q : PrProp W) (w : W) :
+    (∃ d ∈ fromPrProp p q, d.domain w) ↔
     (PrProp.orFlex p q).presup w := by
-  simp [fromPrProp, PrProp.orFlex, List.any_cons, List.any_nil, decide_eq_true_eq]
+  simp [fromPrProp, PrProp.orFlex]
 
 /-- The assertion of a Geurts disjunction from PrProps matches orFlex:
 (p.presup ∧ p.assertion) ∨ (q.presup ∧ q.assertion). -/
-theorem fromPrProp_cell_iff_orFlex (p q : PrProp W) (w : W)
-    [DecidablePred p.presup] [DecidablePred p.assertion]
-    [DecidablePred q.presup] [DecidablePred q.assertion] :
-    (fromPrProp p q).any (fun d => d.cell w) = true ↔
+theorem fromPrProp_cell_iff_orFlex (p q : PrProp W) (w : W) :
+    (∃ d ∈ fromPrProp p q, d.cell w) ↔
     (PrProp.orFlex p q).assertion w := by
-  simp [fromPrProp, Disjunct.cell, PrProp.orFlex, List.any_cons, List.any_nil,
-    Bool.and_eq_true, decide_eq_true_eq]
+  simp [fromPrProp, Disjunct.cell, PrProp.orFlex]
 
 /-- The three-way equivalence: Geurts (modal conjunction) =
 PrProp.orBelnap (conditional assertion, @cite{belnap-1970}).
 Transitivity via `fromPrProp_presup_iff_orFlex` + `orFlex_eq_orBelnap`. -/
-theorem fromPrProp_presup_iff_orBelnap (p q : PrProp W) (w : W)
-    [DecidablePred p.presup] [DecidablePred p.assertion]
-    [DecidablePred q.presup] [DecidablePred q.assertion] :
-    (fromPrProp p q).any (fun d => d.domain w) = true ↔
+theorem fromPrProp_presup_iff_orBelnap (p q : PrProp W) (w : W) :
+    (∃ d ∈ fromPrProp p q, d.domain w) ↔
     (PrProp.orBelnap p q).presup w := by
   rw [fromPrProp_presup_iff_orFlex, ← PrProp.orFlex_eq_orBelnap]
 
 /-- The three-way equivalence (assertion side):
 Geurts cell = orBelnap assertion = orFlex assertion. -/
-theorem fromPrProp_cell_iff_orBelnap (p q : PrProp W) (w : W)
-    [DecidablePred p.presup] [DecidablePred p.assertion]
-    [DecidablePred q.presup] [DecidablePred q.assertion] :
-    (fromPrProp p q).any (fun d => d.cell w) = true ↔
+theorem fromPrProp_cell_iff_orBelnap (p q : PrProp W) (w : W) :
+    (∃ d ∈ fromPrProp p q, d.cell w) ↔
     (PrProp.orBelnap p q).assertion w := by
   rw [fromPrProp_cell_iff_orFlex, ← PrProp.orFlex_eq_orBelnap]
 
@@ -261,26 +244,20 @@ disjunction trivially satisfied. Geurts's exhaustivity constraint makes
 this explicit: it IS the constraint that contexts must be covered by
 disjunct cells. -/
 theorem exhaustivity_implies_uninformative (p q : PrProp W)
-    [DecidablePred p.presup] [DecidablePred p.assertion]
-    [DecidablePred q.presup] [DecidablePred q.assertion]
-    (C : BProp W) (h_exh : exhaustivity C (fromPrProp p q))
-    (w : W) (hw : C w = true) :
+    (C : Prop' W) (h_exh : exhaustivity C (fromPrProp p q))
+    (w : W) (hw : C w) :
     (PrProp.orFlex p q).assertion w := by
   exact (fromPrProp_cell_iff_orFlex p q w).mp (h_exh w hw)
 
 /-- When presuppositions conflict (p ∧ q = ⊥), the Geurts domains are
 automatically disjoint — the Disjointness constraint is satisfied for free. -/
 theorem conflicting_presups_disjoint (p q : PrProp W)
-    [DecidablePred p.presup] [DecidablePred p.assertion]
-    [DecidablePred q.presup] [DecidablePred q.assertion]
     (h_conflict : ∀ w, ¬(p.presup w ∧ q.presup w)) :
     disjointness₂
-      { domain := fun w => decide (p.presup w), force := .existential,
-        content := fun w => decide (p.assertion w) }
-      { domain := fun w => decide (q.presup w), force := .existential,
-        content := fun w => decide (q.assertion w) } := by
+      { domain := p.presup, force := .existential, content := p.assertion }
+      { domain := q.presup, force := .existential, content := q.assertion } := by
   intro w ⟨h1, h2⟩
-  simp [Disjunct.cell, Bool.and_eq_true, decide_eq_true_eq] at h1 h2
+  simp [Disjunct.cell] at h1 h2
   exact h_conflict w ⟨h1.1, h2.1⟩
 
 
@@ -290,17 +267,30 @@ theorem conflicting_presups_disjoint (p q : PrProp W)
 -- ══════════════════════════════════════════════════════════
 
 inductive Loc where | here | there | elsewhere
-  deriving DecidableEq, Repr, Inhabited, Fintype
+  deriving DecidableEq, Repr, Inhabited
+
+instance : Fintype Loc where
+  elems := {.here, .there, .elsewhere}
+  complete := fun w => by cases w <;> decide
 
 instance : FiniteWorlds Loc where
   worlds := [.here, .there, .elsewhere]
   complete := fun w => by cases w <;> simp
 
-def isHere : BProp Loc | .here => true | _ => false
-def isThere : BProp Loc | .there => true | _ => false
+def isHere : Prop' Loc | .here => True | _ => False
+def isThere : Prop' Loc | .there => True | _ => False
+
+instance : DecidablePred isHere := fun w => by
+  cases w <;> simp only [isHere] <;> infer_instance
+
+instance : DecidablePred isThere := fun w => by
+  cases w <;> simp only [isThere] <;> infer_instance
 
 /-- Background C: it's either here or there (not elsewhere). -/
-def bgHereOrThere : BProp Loc | .here => true | .there => true | .elsewhere => false
+def bgHereOrThere : Prop' Loc | .here => True | .there => True | .elsewhere => False
+
+instance : DecidablePred bgHereOrThere := fun w => by
+  cases w <;> simp only [bgHereOrThere] <;> infer_instance
 
 /-- Disjunct 1: □(here) over domain {here}. -/
 def dHere : Disjunct Loc := { domain := isHere, force := .universal, content := isHere }
@@ -313,24 +303,33 @@ Exhaustivity+Disjointness force A = {here}, A' = {there}. -/
 def mustHereOrThere : MDisjunction Loc := [dHere, dThere]
 
 /-- The disjunction holds: □(here) over {here} ∧ □(there) over {there}. -/
-theorem mustHereOrThere_holds : mustHereOrThere.holds := by decide
+theorem mustHereOrThere_holds : mustHereOrThere.holds := by
+  intro d hd
+  simp only [mustHereOrThere, List.mem_cons, List.not_mem_nil, or_false] at hd
+  rcases hd with rfl | rfl
+  · -- dHere : universal force, domain = content = isHere
+    intro w hw; exact hw
+  · -- dThere : universal force, domain = content = isThere
+    intro w hw; exact hw
 
 /-- Exhaustivity: bgHereOrThere ⊆ {here} ∪ {there}. -/
 theorem mustHereOrThere_exhaustive :
     exhaustivity bgHereOrThere mustHereOrThere := by
-  intro w hw; cases w <;> simp_all [bgHereOrThere, mustHereOrThere, dHere, dThere,
-    Disjunct.cell, isHere, isThere, List.any_cons, List.any_nil]
+  intro w hw
+  cases w
+  · exact ⟨dHere, by simp [mustHereOrThere], by simp [Disjunct.cell, dHere, isHere]⟩
+  · exact ⟨dThere, by simp [mustHereOrThere], by simp [Disjunct.cell, dThere, isThere]⟩
+  · simp [bgHereOrThere] at hw
 
 /-- Disjointness: {here} ∩ {there} = ∅. -/
 theorem mustHereOrThere_disjoint : disjointness₂ dHere dThere := by
   intro w ⟨h1, h2⟩
-  simp [Disjunct.cell, dHere, dThere, isHere, isThere] at h1 h2
-  cases w <;> simp_all
+  cases w <;> simp_all [Disjunct.cell, dHere, dThere, isHere, isThere]
 
 /-- Key prediction: "It must be here or it must be there" does NOT entail
 "it must be here". The necessity over the full background fails. -/
 theorem must_here_not_entailed :
-    FiniteWorlds.worlds.all (fun w => !bgHereOrThere w || isHere w) = false := by
+    ¬ ∀ w ∈ FiniteWorlds.worlds (W := Loc), bgHereOrThere w → isHere w := by
   decide
 
 
@@ -344,19 +343,25 @@ def mayHereOrThere : MDisjunction Loc :=
   defaultBinding bgHereOrThere [isHere, isThere] .existential
 
 /-- The disjunction holds: ◇(here) w.r.t. C ∧ ◇(there) w.r.t. C. -/
-theorem mayHereOrThere_holds : mayHereOrThere.holds := by decide
+theorem mayHereOrThere_holds : mayHereOrThere.holds := by
+  intro d hd
+  simp only [mayHereOrThere, defaultBinding, List.map_cons, List.map_nil,
+    List.mem_cons, List.not_mem_nil, or_false] at hd
+  rcases hd with rfl | rfl
+  · exact ⟨.here, trivial, trivial⟩
+  · exact ⟨.there, trivial, trivial⟩
 
 /-- Free choice: ◇(here) holds individually. -/
 theorem mayHereOrThere_fc_here :
     Disjunct.holds (W := Loc)
-      { domain := bgHereOrThere, force := .existential, content := isHere } := by
-  decide
+      { domain := bgHereOrThere, force := .existential, content := isHere } :=
+  ⟨.here, trivial, trivial⟩
 
 /-- Free choice: ◇(there) holds individually. -/
 theorem mayHereOrThere_fc_there :
     Disjunct.holds (W := Loc)
-      { domain := bgHereOrThere, force := .existential, content := isThere } := by
-  decide
+      { domain := bgHereOrThere, force := .existential, content := isThere } :=
+  ⟨.there, trivial, trivial⟩
 
 
 end Semantics.Modality.Disjunction

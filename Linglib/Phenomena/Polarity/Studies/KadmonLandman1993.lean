@@ -347,7 +347,7 @@ open Semantics.Entailment.StrawsonEntailment
     is DE") is captured by the contraposition step in that proof:
     p ≤ q and ¬q(w') implies ¬p(w') at all best worlds. -/
 theorem sorry_licenses_any (bestOf : World → List World) :
-    IsStrawsonDE (sorryFull bestOf) (λ p w => p w = true) :=
+    IsStrawsonDE (sorryFull bestOf) (λ p w => p w) :=
   sorryFull_isStrawsonDE bestOf
 
 /-- **K&L's prediction derived:** *sorry* is NOT classically DE — the
@@ -366,8 +366,8 @@ theorem sorry_not_classically_de :
     particular subset to have members. My wish could be satisfied in
     another way." -/
 theorem glad_does_not_license (bestOf : World → List World) :
-    ∀ p q : BProp World, (∀ w, p w ≤ q w) →
-      ∀ w, gladFull bestOf p w ≤ gladFull bestOf q w :=
+    ∀ p q : Prop' World, (∀ w, p w → q w) →
+      ∀ w, gladFull bestOf p w → gladFull bestOf q w :=
   gladFull_isUE bestOf
 
 /-- K&L's "settle for less" analysis (§3.3.2): *glad* CAN license *any*

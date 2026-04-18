@@ -37,7 +37,7 @@ namespace Pragmatics.Assertion.Lauer
 
 open Core.Discourse.Commitment (CommitmentSlate)
 open Core.CommonGround (ContextSet)
-open Core.Proposition (BProp)
+open Core.Proposition (Prop')
 
 -- ════════════════════════════════════════════════════
 -- § 1. Credence Functions
@@ -51,7 +51,7 @@ open Core.Proposition (BProp)
 structure Credence (W : Type*) where
   /-- Probability assignment for a proposition (given as a list of
       proposition-probability pairs). -/
-  prob : List (BProp W × ℚ)
+  prob : List (Prop' W × ℚ)
   /-- Default credence for propositions not in the list. -/
   defaultProb : ℚ := 1/2
 
@@ -60,7 +60,7 @@ namespace Credence
 variable {W : Type*}
 
 /-- Look up the credence for a proposition. -/
-def lookup (c : Credence W) (p : BProp W) [BEq (BProp W)] : ℚ :=
+def lookup (c : Credence W) (p : Prop' W) [BEq (Prop' W)] : ℚ :=
   match c.prob.find? (λ ⟨q, _⟩ => q == p) with
   | some ⟨_, v⟩ => v
   | none => c.defaultProb
@@ -100,16 +100,16 @@ def empty : LauerState W :=
     Assertability is a precondition (the speaker SHOULD have credence ≥
     threshold), but the operation succeeds regardless — modeling that
     assertion can occur even when the norm is violated (as in lying). -/
-def assert (s : LauerState W) (p : BProp W) : LauerState W :=
+def assert (s : LauerState W) (p : Prop' W) : LauerState W :=
   { s with asserted := s.asserted.add p }
 
 /-- Check if a proposition is assertable (credence ≥ threshold). -/
-def assertable (s : LauerState W) (p : BProp W) [BEq (BProp W)] : Bool :=
+def assertable (s : LauerState W) (p : Prop' W) [BEq (Prop' W)] : Bool :=
   s.credence.lookup p ≥ s.threshold
 
 /-- Context set: worlds compatible with all asserted propositions. -/
 def contextSet (s : LauerState W) : ContextSet W :=
-  λ w => s.asserted.toContextSet w = true
+  λ w => s.asserted.toContextSet w
 
 /-- Stability: always stable (no table mechanism). -/
 def isStable (_ : LauerState W) : Bool := true

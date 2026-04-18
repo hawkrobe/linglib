@@ -10,8 +10,9 @@ import Linglib.Theories.Semantics.Quantification.Quantifier
 
 namespace Semantics.Entailment.Monotonicity
 
+open Core.Proposition (Prop')
 open Semantics.Entailment
-open Semantics.Entailment.Polarity (isUpwardEntailing isDownwardEntailing)
+open Semantics.Entailment.Polarity (IsUpwardEntailing IsDownwardEntailing)
 open Semantics.Quantification.Quantifier
 
 section QuantifierSemantics
@@ -56,54 +57,59 @@ instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePre
     Decidable (no_sem entailmentModel R S) := by
   unfold no_sem; exact inferInstance
 
-/-- "Every A is B" — delegates to canonical `every_sem`, lifting Bool predicates to Prop. -/
-abbrev every (a b : World → Bool) : Bool :=
-  decide (every_sem entailmentModel (fun x => a x = true) (fun x => b x = true))
+/-- "Every A is B" — delegates to canonical `every_sem`. -/
+def every (a b : Prop' World) : Prop :=
+  every_sem entailmentModel a b
 
-/-- "Some A is B" — delegates to canonical `some_sem`, lifting Bool predicates to Prop. -/
-abbrev some' (a b : World → Bool) : Bool :=
-  decide (some_sem entailmentModel (fun x => a x = true) (fun x => b x = true))
+/-- "Some A is B" — delegates to canonical `some_sem`. -/
+def some' (a b : Prop' World) : Prop :=
+  some_sem entailmentModel a b
 
-/-- "No A is B" — delegates to canonical `no_sem`, lifting Bool predicates to Prop. -/
-abbrev no (a b : World → Bool) : Bool :=
-  decide (no_sem entailmentModel (fun x => a x = true) (fun x => b x = true))
+/-- "No A is B" — delegates to canonical `no_sem`. -/
+def no (a b : Prop' World) : Prop :=
+  no_sem entailmentModel a b
 
-def fixedRestr : BProp World := p01
+def fixedRestr : Prop' World := p01
 
 /-- "Every student" as a function of scope. -/
-def every_scope : BProp World → BProp World :=
+def every_scope : Prop' World → Prop' World :=
   λ scope => λ _ => every fixedRestr scope
 
 /-- "Some student" as a function of scope. -/
-def some_scope : BProp World → BProp World :=
+def some_scope : Prop' World → Prop' World :=
   λ scope => λ _ => some' fixedRestr scope
 
 /-- "No student" as a function of scope. -/
-def no_scope : BProp World → BProp World :=
+def no_scope : Prop' World → Prop' World :=
   λ scope => λ _ => no fixedRestr scope
 
 /-- "Every" is UE in scope. -/
-theorem every_scope_UE : isUpwardEntailing every_scope testCases = true := by
-  decide
+theorem every_scope_UE : IsUpwardEntailing every_scope := by
+  intro p q hpq _w h x hr
+  exact hpq x (h x hr)
 
 /-- "Some" is UE in scope. -/
-theorem some_scope_UE : isUpwardEntailing some_scope testCases = true := by
-  decide
+theorem some_scope_UE : IsUpwardEntailing some_scope := by
+  intro p q hpq _w h
+  obtain ⟨x, hr, hp⟩ := h
+  exact ⟨x, hr, hpq x hp⟩
 
 /-- "No" is DE in scope. -/
-theorem no_scope_DE : isDownwardEntailing no_scope testCases = true := by
-  decide
+theorem no_scope_DE : IsDownwardEntailing no_scope := by
+  intro p q hpq _w h x hr hp
+  exact h x hr (hpq x hp)
 
 /-- Fixed scope for testing restrictor monotonicity. -/
-def fixedScope : BProp World := p012
+def fixedScope : Prop' World := p012
 
 /-- "Every ___ smokes" as a function of restrictor. -/
-def every_restr : BProp World → BProp World :=
+def every_restr : Prop' World → Prop' World :=
   λ restr => λ _ => every restr fixedScope
 
 /-- "Every" is DE in restrictor. -/
-theorem every_restr_DE : isDownwardEntailing every_restr testCases = true := by
-  decide
+theorem every_restr_DE : IsDownwardEntailing every_restr := by
+  intro p q hpq _w h x hr
+  exact h x (hpq x hr)
 
 end QuantifierSemantics
 

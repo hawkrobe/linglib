@@ -39,7 +39,6 @@ closure:
 
 namespace Semantics.Attitudes.ContentComposition
 
-open Core.Proposition
 open Core (ContentIndividual)
 
 -- ════════════════════════════════════════════════════
@@ -53,7 +52,7 @@ open Core (ContentIndividual)
 
     This is @cite{moulton-2015} (15). The result is type ⟨e,st⟩ — a predicate
     on content individuals — not a proposition ⟨s,t⟩. -/
-def compC {W : Type*} (p : BProp W) (xc : ContentIndividual W) : Prop :=
+def compC {W : Type*} (p : W → Prop) (xc : ContentIndividual W) : Prop :=
   xc.cont = p
 
 -- ════════════════════════════════════════════════════
@@ -73,14 +72,14 @@ abbrev ContentNoun (W : Type*) := ContentIndividual W → W → Prop
 
     Because both the content noun and the CP are type ⟨e,st⟩, they combine
     by intersection. -/
-def contentNounCP {W : Type*} (noun : ContentNoun W) (p : BProp W)
+def contentNounCP {W : Type*} (noun : ContentNoun W) (p : W → Prop)
     : ContentNoun W :=
   fun xc w => noun xc w ∧ compC p xc
 
 /-- The CP determines the content: if x_c satisfies a content-noun-CP
     combination, then CONT(x_c) = p. -/
 theorem contentNounCP_determines_content {W : Type*}
-    (noun : ContentNoun W) (p : BProp W) (xc : ContentIndividual W) (w : W) :
+    (noun : ContentNoun W) (p : W → Prop) (xc : ContentIndividual W) (w : W) :
     contentNounCP noun p xc w → compC p xc :=
   fun ⟨_, h⟩ => h
 
@@ -104,7 +103,7 @@ abbrev AttitudeVerbCI (W E : Type*) := E → ContentIndividual W → W → Prop
     x_c such that John stands in the belief relation to x_c at w and the
     content of x_c is p. -/
 def existsContentClosure {W E : Type*}
-    (verb : AttitudeVerbCI W E) (agent : E) (p : BProp W) (w : W) : Prop :=
+    (verb : AttitudeVerbCI W E) (agent : E) (p : W → Prop) (w : W) : Prop :=
   ∃ xc : ContentIndividual W, verb agent xc w ∧ compC p xc
 
 -- ════════════════════════════════════════════════════
@@ -123,7 +122,7 @@ def existsContentClosure {W E : Type*}
     canonical content individual per agent-world pair, namely
     `ContentIndividual.fromAccessibility R agent w`. -/
 def hintikkaVerb {W E : Type*}
-    (R : E → W → W → Bool) : AttitudeVerbCI W E :=
+    (R : E → W → W → Prop) : AttitudeVerbCI W E :=
   fun agent xc w => xc.cont = R agent w
 
 /-- Under a Hintikka verb, *identity* closure reduces to propositional
@@ -134,7 +133,7 @@ def hintikkaVerb {W E : Type*}
     The existential is uniquely witnessed by the canonical content individual
     `fromAccessibility R a w`. -/
 theorem hintikka_existsClosure {W E : Type*}
-    (R : E → W → W → Bool) (a : E) (p : BProp W) (w : W) :
+    (R : E → W → W → Prop) (a : E) (p : W → Prop) (w : W) :
     existsContentClosure (hintikkaVerb R) a p w ↔ R a w = p := by
   simp only [existsContentClosure, hintikkaVerb, compC]
   constructor
@@ -154,12 +153,12 @@ theorem hintikka_existsClosure {W E : Type*}
     This is the weaker condition: some content individual of the agent's
     has content that entails p (not necessarily equals p). -/
 def existsContentEntails {W E : Type*}
-    (verb : AttitudeVerbCI W E) (agent : E) (p : BProp W) (w : W) : Prop :=
+    (verb : AttitudeVerbCI W E) (agent : E) (p : W → Prop) (w : W) : Prop :=
   ∃ xc : ContentIndividual W, verb agent xc w ∧ xc.entails p
 
 /-- Identity closure implies entailment closure. -/
 theorem existsClosure_implies_entailsClosure {W E : Type*}
-    (verb : AttitudeVerbCI W E) (agent : E) (p : BProp W) (w : W) :
+    (verb : AttitudeVerbCI W E) (agent : E) (p : W → Prop) (w : W) :
     existsContentClosure verb agent p w → existsContentEntails verb agent p w := by
   rintro ⟨xc, hv, hc⟩
   exact ⟨xc, hv, xc.eq_implies_entails p hc⟩
@@ -168,7 +167,7 @@ theorem existsClosure_implies_entailsClosure {W E : Type*}
     universal modal — the classical Hintikka semantics.
 
     ∃x_c[hintikkaVerb(R)(a, x_c, w) ∧ CONT(x_c) ⊆ p]
-      ⟺ ∀w'. R(a, w, w') = true → p(w') = true
+      ⟺ ∀w'. R(a, w, w') → p(w')
 
     Compare with `hintikka_existsClosure` (§4), where *identity* closure
     reduces to R(a)(w) = p. The two results together make the distinction
@@ -179,9 +178,9 @@ theorem existsClosure_implies_entailsClosure {W E : Type*}
     | Identity     | R(a)(w) = p             | p IS the belief content  |
     | Entailment   | ∀w'. R(a,w,w') → p(w') | p FOLLOWS FROM beliefs   | -/
 theorem hintikka_entailsClosure {W E : Type*}
-    (R : E → W → W → Bool) (a : E) (p : BProp W) (w : W) :
+    (R : E → W → W → Prop) (a : E) (p : W → Prop) (w : W) :
     existsContentEntails (hintikkaVerb R) a p w ↔
-    (∀ w', R a w w' = true → p w' = true) := by
+    (∀ w', R a w w' → p w') := by
   simp only [existsContentEntails, hintikkaVerb, ContentIndividual.entails]
   constructor
   · rintro ⟨xc, heq, hent⟩ w' hw'
@@ -203,14 +202,14 @@ theorem hintikka_entailsClosure {W E : Type*}
     rumor that p* get their denotation: the content noun restricts the
     domain of content individuals and the CP identifies the content. -/
 def existsContentNounCP {W : Type*}
-    (noun : ContentNoun W) (p : BProp W) (w : W) : Prop :=
+    (noun : ContentNoun W) (p : W → Prop) (w : W) : Prop :=
   ∃ xc : ContentIndividual W, contentNounCP noun p xc w
 
 /-- A full attitude report with a content noun:
     "John's belief that p" = ∃x_c. belief(x_c, w) ∧ V(John, x_c, w) ∧ CONT(x_c) = p -/
 def attitudeWithContentNoun {W E : Type*}
     (noun : ContentNoun W) (verb : AttitudeVerbCI W E) (agent : E)
-    (p : BProp W) (w : W) : Prop :=
+    (p : W → Prop) (w : W) : Prop :=
   ∃ xc : ContentIndividual W, noun xc w ∧ verb agent xc w ∧ compC p xc
 
 end Semantics.Attitudes.ContentComposition

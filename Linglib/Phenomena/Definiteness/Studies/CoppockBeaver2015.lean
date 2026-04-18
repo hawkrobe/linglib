@@ -142,23 +142,11 @@ def g₀ : Core.Assignment F.Entity := fun _ => Body.sun
 def gs₀ : SitAssignment F := fun _ => ()
 
 /-- `the sun` (as a `.unique` description with restrictor `theSun`)
-    interprets to `some sun` — the unique-witness case. The Russellian
-    iota's choose witness equals `Body.sun` because Uniqueness forces
-    every satisfier to coincide with `Body.sun`. -/
+    interprets to `some sun` — the unique-witness case. -/
 theorem interpret_theSun :
-    interpret (F := F) (.unique (DenotGS.const theSun) 0) g₀ gs₀ = some Body.sun := by
-  have hExists : (interpret (F := F)
-      (.unique (DenotGS.const theSun) 0) g₀ gs₀).isSome = true := by
-    rw [interpret_unique]
-    exact (russellIota_isSome_iff_existsUnique _).mpr theSun_existsUnique
-  obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hExists
-  rw [he]
-  congr 1
-  have hSat : theSun e := by
-    have : russellIota (fun x => (DenotGS.const theSun) g₀ gs₀ x) = some e := by
-      rw [← interpret_unique]; exact he
-    exact russellIota_witness_satisfies _ e this
-  cases e <;> first | rfl | (simp [theSun] at hSat)
+    interpret (F := F) (.unique (DenotGS.const theSun) 0) g₀ gs₀ = some Body.sun :=
+  interpret_unique_eq_some_of_existsUnique _ 0 g₀ gs₀ Body.sun trivial
+    (fun y hy => by cases y <;> simp_all [theSun, DenotGS.const])
 
 /-- `the King of France` interprets to `none` — Existence failure. The
     Russellian iota collapses the projection structure here, but the

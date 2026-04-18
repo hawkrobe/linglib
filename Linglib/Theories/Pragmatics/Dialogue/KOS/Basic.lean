@@ -167,7 +167,7 @@ public component of a participant's conversational state.
 
 The type parameters make content types explicit:
 - `Participant`: type of participant identifiers (e.g., `String`, `Fin 2`)
-- `Fact`: type of accumulated facts (e.g., `BProp W` for typed CG access)
+- `Fact`: type of accumulated facts (e.g., `Prop' W` for typed CG access)
 - `QContent`: type of QUD entries (e.g., partition-based `QUD W`) -/
 structure DGB (Participant Fact QContent : Type) where
   /-- Current speaker (@cite{ginzburg-2012} ex. 100) -/
@@ -591,25 +591,25 @@ theorem existential_gen_weakens (sk : UttSkeleton) (idx : String) :
 -- ════════════════════════════════════════════════════
 
 open Core.CommonGround in
-open Core.Proposition (BProp) in
-/-- DGB with `BProp W` facts projects to a context set.
+open Core.Proposition (Prop') in
+/-- DGB with `Prop' W` facts projects to a context set.
     @cite{ginzburg-2012} Ch. 4: the DGB's FACTS field IS the common ground. -/
 instance {W Participant QContent : Type} :
-    HasContextSet (DGB Participant (BProp W) QContent) W where
-  toContextSet dgb := λ w => dgb.facts.all (· w)
+    HasContextSet (DGB Participant (Prop' W) QContent) W where
+  toContextSet dgb := λ w => ∀ p ∈ dgb.facts, p w
 
 open Core.CommonGround in
-open Core.Proposition (BProp) in
-/-- TIS with `BProp W` facts inherits the DGB's context set. -/
+open Core.Proposition (Prop') in
+/-- TIS with `Prop' W` facts inherits the DGB's context set. -/
 instance {W Participant QContent : Type} :
-    HasContextSet (TIS Participant (BProp W) QContent) W where
-  toContextSet tis := λ w => tis.dgb.facts.all (· w)
+    HasContextSet (TIS Participant (Prop' W) QContent) W where
+  toContextSet tis := λ w => ∀ p ∈ tis.dgb.facts, p w
 
 open Core.CommonGround in
-open Core.Proposition (BProp) in
+open Core.Proposition (Prop') in
 /-- TIS context set is extracted from the DGB. -/
 theorem tis_contextSet_eq_dgb {W Participant QContent : Type}
-    (tis : TIS Participant (BProp W) QContent) :
+    (tis : TIS Participant (Prop' W) QContent) :
     HasContextSet.toContextSet tis = HasContextSet.toContextSet tis.dgb := rfl
 
 -- ════════════════════════════════════════════════════

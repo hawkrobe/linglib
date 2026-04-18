@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.229.918] - 2026-04-18
+
+### Changed
+- **Bulk concurrent-session WIP committed.** ~170 files across `Core/`, `Fragments/`, `Phenomena/`, `Theories/` plus blog bibliography. Changes were the accumulated working state from concurrent sessions and are bundled here without per-area decomposition; reconstruct context from `git log --follow` or `git diff HEAD~1` per file as needed. Notable additions visible in the file list: `Core/Deixis/`, `Core/NullSubject/`, `Core/Nominal/ArticleInventory|Description|Interpret`, `Core/IntensionalLogic/{Premise,Situations}`, `Fragments/{English,German,Mandarin,Thai}/Definiteness`, `Fragments/Ga/`, `Phenomena/Case/Studies/Pesetsky2013`, `Phenomena/Control/Studies/Allotey2021`, `Phenomena/Definiteness/Studies/Schwarz2009`, `Phenomena/PhonologicalAlternation/Studies/Belth2026`, `Phenomena/Pronouns/ProDropRegistry`, `Theories/Learning/`, `Theories/Phonology/Alternation`, `Theories/Syntax/Minimalism/LongDistanceAgree`.
+
 ## [0.229.917] - 2026-04-18
 
 ### Changed

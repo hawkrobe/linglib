@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.List.Sort
 
 /-!
 # Discourse Goals and Plans
@@ -30,8 +30,6 @@ interface (a `GoalSet` projects to a flat property list).
 
 namespace Core.Discourse
 
-open Core.Proposition (BProp)
-
 variable {W : Type*}
 
 /-- A single goal: a proposition the agent is committed to realizing,
@@ -43,10 +41,10 @@ variable {W : Type*}
     time t' > t." -/
 structure Goal (W : Type*) where
   /-- The content: what the agent aims to bring about -/
-  content : BProp W
+  content : W → Prop
   /-- The condition: circumstances under which this goal is active.
-      `λ _ => true` for unconditional goals. -/
-  condition : BProp W := λ _ => true
+      `λ _ => True` for unconditional goals. -/
+  condition : W → Prop := λ _ => True
   /-- Priority level: 0 = highest priority. @cite{roberts-2023}: goals are
       hierarchically organized to reflect plans and priorities. -/
   priority : Nat := 0
@@ -78,7 +76,7 @@ def add (gs : GoalSet W) (g : Goal W) : GoalSet W :=
     (gs.add g).goals = g :: gs.goals := rfl
 
 /-- Add an unconditional goal with given priority. -/
-def addSimple (gs : GoalSet W) (content : BProp W) (priority : Nat := 0) : GoalSet W :=
+def addSimple (gs : GoalSet W) (content : W → Prop) (priority : Nat := 0) : GoalSet W :=
   gs.add { content, priority }
 
 /-- Remove goals whose content matches a predicate (e.g., realized or abandoned). -/
@@ -88,24 +86,26 @@ def remove (gs : GoalSet W) (shouldRemove : Goal W → Bool) : GoalSet W :=
 @[simp] theorem remove_goals (gs : GoalSet W) (f : Goal W → Bool) :
     (gs.remove f).goals = gs.goals.filter (fun g => !f g) := rfl
 
+open Classical in
 /-- Goals active in circumstance w (condition satisfied). -/
-def activeGoals (gs : GoalSet W) (w : W) : List (Goal W) :=
-  gs.goals.filter (λ g => g.condition w)
+noncomputable def activeGoals (gs : GoalSet W) (w : W) : List (Goal W) :=
+  gs.goals.filter (λ g => decide (g.condition w))
 
 @[simp] theorem activeGoals_empty (w : W) :
     (empty : GoalSet W).activeGoals w = [] := rfl
 
 theorem mem_activeGoals_iff (gs : GoalSet W) (w : W) (g : Goal W) :
-    g ∈ gs.activeGoals w ↔ g ∈ gs.goals ∧ g.condition w = true := by
-  simp only [activeGoals, List.mem_filter]
+    g ∈ gs.activeGoals w ↔ g ∈ gs.goals ∧ g.condition w := by
+  classical
+  simp only [activeGoals, List.mem_filter, decide_eq_true_eq]
 
 /-- Active goal contents at w, sorted by priority (ascending = most important first). -/
-def activeContents (gs : GoalSet W) (w : W) : List (BProp W) :=
+noncomputable def activeContents (gs : GoalSet W) (w : W) : List (W → Prop) :=
   (gs.activeGoals w |>.mergeSort (λ g₁ g₂ => g₁.priority ≤ g₂.priority))
     |>.map Goal.content
 
 /-- Project to a flat list of contents (@cite{portner-2004} ToDo list interface). -/
-def toPropertyList (gs : GoalSet W) : List (BProp W) :=
+def toPropertyList (gs : GoalSet W) : List (W → Prop) :=
   gs.goals.map Goal.content
 
 @[simp] theorem toPropertyList_empty :

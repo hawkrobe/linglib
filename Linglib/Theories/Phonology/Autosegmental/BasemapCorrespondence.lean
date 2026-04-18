@@ -105,7 +105,7 @@ def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
     `(TBU S)* → ToneFeature*` in the Kleisli category of `Option`. The
     tonal tier is the `total` (no-erasure) case @cite{goldsmith-1976}. -/
 def tonalTier {S : Type} (tbus : List (TBU S)) : List ToneFeature :=
-  Phonology.Tier.apply Phonology.Tier.tonal tbus
+  Core.Tier.apply Phonology.Tier.tonal tbus
 
 /-- The tonal tier reduces to `List.map TBU.tone` (the historical
     formulation), via `Tier.total`'s length-preservation property. -/

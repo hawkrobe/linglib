@@ -1,5 +1,5 @@
 import Linglib.Core.Case
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Case.Dependent
 
 /-!
 # @cite{woolford-1997} — Four-Way Case Systems
@@ -50,7 +50,7 @@ with Nez Perce as the primary case study.
 
 ## Integration
 
-- Local `WCase` type adds OBJ (absent from `CaseVal`/`Core.Case`)
+- Local `WCase` type adds OBJ (absent from `Core.Case`)
 - Bridge theorems connect to `Core.Case` hierarchy validation
 - Bridge theorems connect to dependent case algorithm (`DependentCase.lean`)
   showing where the theories agree and diverge
@@ -58,7 +58,7 @@ with Nez Perce as the primary case study.
 
 namespace Woolford1997
 
-open Minimalism
+open Syntax.Case
 
 -- ============================================================================
 -- § 1: Case Inventory (paper's (1)–(2))
@@ -505,8 +505,8 @@ transitives with two caseless NPs. Key disagreement: dependent case has
 no OBJ/ACC distinction — it assigns a single dependent case (ACC) to
 the lower NP, regardless of whether the higher NP has lexical case. -/
 
-/-- Map Woolford's cases to `CaseVal` for comparison with dependent case. -/
-def WCase.toCaseVal : WCase → CaseVal
+/-- Map Woolford's cases to `Core.Case` for comparison with dependent case. -/
+def WCase.toCoreCase : WCase → Core.Case
   | .nom => .nom
   | .obj => .acc   -- dependent case conflates OBJ/ACC
   | .acc => .acc
@@ -519,17 +519,17 @@ theorem agree_on_nom_acc_transitive :
     let depResult := assignCases .accusative
       [ { label := "subj", lexicalCase := none },
         { label := "obj", lexicalCase := none } ]
-    getCaseOf "obj" depResult = some CaseVal.acc ∧
-    (TransPattern.mk .nom .acc).object.toCaseVal = CaseVal.acc := by
+    getCaseOf "obj" depResult = some Core.Case.acc ∧
+    (TransPattern.mk .nom .acc).object.toCoreCase = Core.Case.acc := by
   constructor
   · native_decide
   · rfl
 
 /-- Where they diverge: Woolford distinguishes OBJ from ACC.
-    Under dependent case, both map to the same CaseVal.acc. -/
+    Under dependent case, both map to the same `Core.Case.acc`. -/
 theorem diverge_on_obj_vs_acc :
     WCase.obj ≠ WCase.acc ∧
-    WCase.obj.toCaseVal = WCase.acc.toCaseVal := ⟨by decide, rfl⟩
+    WCase.obj.toCoreCase = WCase.acc.toCoreCase := ⟨by decide, rfl⟩
 
 /-- Dependent case has no analogue of Woolford's agreement asymmetry:
     under dependent case, there is one ACC — it either triggers agreement

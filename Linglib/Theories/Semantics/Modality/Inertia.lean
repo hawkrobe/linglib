@@ -53,12 +53,12 @@ def InertialParams.toKratzer (p : InertialParams) : KratzerParams World where
 
     For intention readings: in all worlds where the experiencer's current
     course of action continues uninterrupted, the intended event obtains. -/
-def inertialNecessity (p : InertialParams) (prop : BProp World) (w : World) : Prop :=
+def inertialNecessity (p : InertialParams) (prop : World → Prop) (w : World) : Prop :=
   necessity p.circumstances p.inertia prop w
 
 /-- Inertial possibility: p holds in some best (most inertial) circumstantially
     accessible world. -/
-def inertialPossibility (p : InertialParams) (prop : BProp World) (w : World) : Prop :=
+def inertialPossibility (p : InertialParams) (prop : World → Prop) (w : World) : Prop :=
   possibility p.circumstances p.inertia prop w
 
 /-- Inertial modality is a normal modal logic (inherits from Kratzer). -/
@@ -68,7 +68,7 @@ theorem inertial_isNormal (p : InertialParams) :
 
 /-- With empty inertial ordering, inertial modality reduces to simple
     circumstantial necessity (no preference among accessible worlds). -/
-theorem empty_inertia_is_simple (circ : ModalBase World) (prop : BProp World) (w : World) :
+theorem empty_inertia_is_simple (circ : ModalBase World) (prop : World → Prop) (w : World) :
     inertialNecessity ⟨circ, emptyBackground⟩ prop w ↔
     simpleNecessity circ prop w := by
   simp only [inertialNecessity, necessity, simpleNecessity,

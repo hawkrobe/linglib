@@ -55,7 +55,7 @@ This abstracts the answerhood relation between accumulated facts
 and QUD entries. Concrete instances connect to:
 - Partition-based answerhood (`QUD M`): a fact determines a unique cell
 - String-based answerhood: pattern matching on content strings
-- Propositional answerhood (`BProp W`): a fact entails a question's answer
+- Propositional answerhood (`Prop' W`): a fact entails a question's answer
 
 Ch. 4: "q is resolved relative to a DGB dgb iff
 the FACTS in dgb contextually entail an answer to q." -/
@@ -443,37 +443,43 @@ resolving questions. The `Answerhood` typeclass above abstracts this.
 Here we connect it to the partition-based `QUD W` from
 `Core/Discourse/QUD.lean` (@cite{groenendijk-stokhof-1984}):
 
-A `BProp W` fact resolves a `QUD W` question when the fact determines
+A `Prop' W` fact resolves a `QUD W` question when the fact determines
 a unique cell — all worlds where the fact holds are in the same
 partition cell. -/
 
-/-- A `BProp W` resolves a `QUD W` if all fact-worlds are in the same
+/-- A `Prop' W` resolves a `QUD W` if all fact-worlds are in the same
 partition cell. -/
-def bpropResolvesQUD {W : Type} [BEq W] (worlds : List W)
-    (fact : Core.Proposition.BProp W) (q : QUD W) : Bool :=
-  let factWorlds := worlds.filter fact
+def propResolvesQUD {W : Type} [BEq W] (worlds : List W)
+    (fact : Core.Proposition.Prop' W) [DecidablePred fact] (q : QUD W) : Bool :=
+  let factWorlds := worlds.filter (fun w => decide (fact w))
   factWorlds.all fun w₁ =>
     factWorlds.all fun w₂ =>
       q.sameAnswer w₁ w₂
 
-/-- Answerhood instance: `BProp W` resolves `QUD W` over a fixed world list. -/
-def answerhoodFromPartition {W : Type} [BEq W] (worlds : List W) :
-    Answerhood (Core.Proposition.BProp W) (QUD W) where
-  resolves := bpropResolvesQUD worlds
+/-- Answerhood instance: `Prop' W` resolves `QUD W` over a fixed world list.
+Decidability of each fact is obtained classically. -/
+@[reducible] noncomputable def answerhoodFromPartition {W : Type} [BEq W] (worlds : List W) :
+    Answerhood (Core.Proposition.Prop' W) (QUD W) where
+  resolves fact q :=
+    have : DecidablePred fact := Classical.decPred fact
+    propResolvesQUD worlds fact q
 
-/-- A `BProp W` resolves a `Discourse.Issue W` if it settles some alternative.
+/-- A `Prop' W` resolves a `Discourse.Issue W` if it settles some alternative.
 
 @cite{ciardelli-groenendijk-roelofsen-2018}: resolving an issue means
 establishing enough information to determine which alternative holds. -/
-def bpropResolvesIssue {W : Type} (worlds : List W)
-    (fact : Core.Proposition.BProp W) (q : Discourse.Issue W) : Bool :=
+def propResolvesIssue {W : Type} (worlds : List W)
+    (fact : Core.Proposition.Prop' W) [DecidablePred fact]
+    (q : Discourse.Issue W) : Bool :=
   q.alternatives.any fun alt =>
-    Discourse.propEntails fact alt worlds
+    Discourse.propEntails (fun w => decide (fact w)) alt worlds
 
-/-- Answerhood instance: `BProp W` resolves `Discourse.Issue W`. -/
-def answerhoodFromIssue {W : Type} (worlds : List W) :
-    Answerhood (Core.Proposition.BProp W) (Discourse.Issue W) where
-  resolves := bpropResolvesIssue worlds
+/-- Answerhood instance: `Prop' W` resolves `Discourse.Issue W`. -/
+@[reducible] noncomputable def answerhoodFromIssue {W : Type} (worlds : List W) :
+    Answerhood (Core.Proposition.Prop' W) (Discourse.Issue W) where
+  resolves fact q :=
+    have : DecidablePred fact := Classical.decPred fact
+    propResolvesIssue worlds fact q
 
 -- ════════════════════════════════════════════════════
 -- § 11. Partition Answerhood Example
@@ -490,40 +496,67 @@ inductive RainWorld where
 def isRainingQ : QUD RainWorld :=
   QUD.ofProject (fun w => match w with | .rainy => true | _ => false) "raining?"
 
+/-- A tagged proposition for the rain example: pairs a `Prop' RainWorld`
+    with a tag enabling decidable equality and Bool-valued resolution. -/
+inductive RainProp where
+  | raining
+  | sunny
+  deriving DecidableEq, Repr
+
+def RainProp.toProp : RainProp → Core.Proposition.Prop' RainWorld
+  | .raining => fun w => w = .rainy
+  | .sunny   => fun w => w = .sunny
+
+instance (rp : RainProp) : DecidablePred rp.toProp := fun w => by
+  cases rp <;> simp only [RainProp.toProp] <;> exact inferInstance
+
 /-- "It is raining" — true only in the rainy world. -/
-def itIsRaining : Core.Proposition.BProp RainWorld :=
-  fun w => match w with | .rainy => true | _ => false
+def itIsRaining : Core.Proposition.Prop' RainWorld := fun w => w = .rainy
+
+instance : DecidablePred itIsRaining := fun w => by
+  unfold itIsRaining; exact inferInstance
 
 /-- "It is sunny" — true only in the sunny world. -/
-def itIsSunny : Core.Proposition.BProp RainWorld :=
-  fun w => match w with | .sunny => true | _ => false
+def itIsSunny : Core.Proposition.Prop' RainWorld := fun w => w = .sunny
+
+instance : DecidablePred itIsSunny := fun w => by
+  unfold itIsSunny; exact inferInstance
 
 private def rainWorlds : List RainWorld := [.sunny, .rainy, .cloudy]
 
 /-- "It is raining" resolves "Is it raining?" -/
 theorem raining_resolves_raining :
-    bpropResolvesQUD rainWorlds itIsRaining isRainingQ = true := by native_decide
+    propResolvesQUD rainWorlds itIsRaining isRainingQ = true := by
+  unfold propResolvesQUD itIsRaining
+  decide
 
 /-- "It is sunny" also resolves "Is it raining?" -/
 theorem sunny_resolves_raining :
-    bpropResolvesQUD rainWorlds itIsSunny isRainingQ = true := by native_decide
+    propResolvesQUD rainWorlds itIsSunny isRainingQ = true := by
+  unfold propResolvesQUD itIsSunny
+  decide
 
-/-- Full inquiry cycle with partition-based answerhood. -/
-private def rainTIS₀ : TIS String (Core.Proposition.BProp RainWorld) (QUD RainWorld) := TIS.initial
+/-- Full inquiry cycle with partition-based answerhood (via `RainProp` tags). -/
+private def rainTIS₀ : TIS String RainProp (QUD RainWorld) := TIS.initial
 
-attribute [local instance] answerhoodFromPartition
+instance rainAnswerhood : Answerhood RainProp (QUD RainWorld) where
+  resolves rp q := propResolvesQUD rainWorlds rp.toProp q
 
-private def rainTIS₁ : TIS String (Core.Proposition.BProp RainWorld) (QUD RainWorld) :=
+private def rainTIS₁ : TIS String RainProp (QUD RainWorld) :=
   rainTIS₀.ask isRainingQ
 
 /-- After asking, QUD has the partition question. -/
 theorem rain_ask_qud : rainTIS₁.dgb.qud = [isRainingQ] := rfl
 
-private def rainTIS₂ : TIS String (Core.Proposition.BProp RainWorld) (QUD RainWorld) :=
-  @TIS.assertRule _ _ _ (answerhoodFromPartition rainWorlds) rainTIS₁ itIsRaining
+private def rainTIS₂ : TIS String RainProp (QUD RainWorld) :=
+  rainTIS₁.assertRule .raining
 
 /-- After asserting "It is raining", QUD is empty (resolved). -/
-theorem rain_assert_resolves : rainTIS₂.dgb.qud = [] := by native_decide
+theorem rain_assert_resolves : rainTIS₂.dgb.qud = [] := by
+  unfold rainTIS₂ rainTIS₁ rainTIS₀ TIS.assertRule TIS.ask DGB.assertFact
+    DGB.addFact DGB.downdateQud DGB.recordMove DGB.pushQud
+  simp only [List.filter, List.any]
+  decide
 
 end PartitionExample
 

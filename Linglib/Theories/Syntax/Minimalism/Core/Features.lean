@@ -62,43 +62,7 @@ inductive PhiFeature where
   deriving Repr, DecidableEq
 
 -- ============================================================================
--- § 2: Case Values
--- ============================================================================
-
-/-- Case values used in the Agree system.
-
-    This is the Minimalism-internal case type, covering the 8 values needed
-    for Agree-based case assignment. For the full cross-linguistic inventory,
-    see `Core.Case`. -/
-inductive CaseVal where
-  | nom    -- nominative (subject)
-  | acc    -- accusative (object)
-  | dat    -- dative
-  | gen    -- genitive
-  | obl    -- oblique (default)
-  | abl    -- ablative (source: Japanese *kara*, Latin *ab*)
-  | erg    -- ergative (transitive subject: Basque, Hindi)
-  | abs    -- absolutive (intransitive subject / transitive object)
-  deriving Repr, DecidableEq
-
-/-- Convert a Minimalist `CaseVal` to the theory-neutral `Core.Case`.
-
-    `obl` (oblique) is a Minimalism-internal category, not a specific case in
-    @cite{blake-1994}'s typology. We map it to `dat` as the highest-ranked
-    peripheral case — this is an approximation, since "oblique" in Minimalism
-    is a cover term for non-core cases, most commonly dative-like. -/
-def CaseVal.toCase : CaseVal → Core.Case
-  | .nom => .nom
-  | .acc => .acc
-  | .dat => .dat
-  | .gen => .gen
-  | .obl => .dat  -- oblique: Minimalism-internal, approx. as highest peripheral
-  | .abl => .abl
-  | .erg => .erg
-  | .abs => .abs
-
--- ============================================================================
--- § 3: Honorific Features
+-- § 2: Honorific Features
 -- ============================================================================
 
 /-- Honorific level: social ordering between speaker and referent.
@@ -111,13 +75,13 @@ inductive HonLevel where
   deriving Repr, DecidableEq
 
 -- ============================================================================
--- § 4: Feature Values
+-- § 3: Feature Values
 -- ============================================================================
 
 /-- Feature values that can be checked via Agree -/
 inductive FeatureVal where
   | phi : PhiFeature → FeatureVal
-  | case : CaseVal → FeatureVal
+  | case : Core.Case → FeatureVal
   | wh : Bool → FeatureVal           -- [±wh]
   | q : Bool → FeatureVal            -- [±Q] (question)
   | epp : Bool → FeatureVal          -- EPP (needs specifier)
@@ -181,7 +145,7 @@ def FeatureVal.sameType : FeatureVal → FeatureVal → Bool
   | _, _ => false
 
 -- ============================================================================
--- § 5: Grammatical Features (Valued / Unvalued)
+-- § 4: Grammatical Features (Valued / Unvalued)
 -- ============================================================================
 
 /-- A grammatical feature: either valued or unvalued.
@@ -225,7 +189,7 @@ def featuresMatch (f1 f2 : GramFeature) : Bool :=
   f1.featureType.sameType f2.featureType
 
 -- ============================================================================
--- § 6: Feature Bundles
+-- § 5: Feature Bundles
 -- ============================================================================
 
 /-- A feature bundle: list of grammatical features -/
@@ -247,7 +211,7 @@ def getValuedFeature (fb : FeatureBundle) (ftype : FeatureVal) : Option GramFeat
   fb.find? λ f => f.isValued && f.featureType.sameType ftype
 
 -- ============================================================================
--- § 7: ±Interpretable Features
+-- § 6: ±Interpretable Features
 -- ============================================================================
 
 /-- Whether a feature is interpretable (contributes to LF) or
@@ -288,8 +252,8 @@ def FeatureVal.inherentInterpretability : FeatureVal → Option Interpretability
   | _ => none  -- host-dependent: phi, wh, q, tense, finite, foc, rel
 
 /-- Case is always uninterpretable. -/
-theorem case_always_uninterpretable (cv : CaseVal) :
-    FeatureVal.inherentInterpretability (.case cv) = some .uninterpretable := rfl
+theorem case_always_uninterpretable (c : Core.Case) :
+    FeatureVal.inherentInterpretability (.case c) = some .uninterpretable := rfl
 
 /-- Categorial [N] is always interpretable. -/
 theorem catN_always_interpretable (b : Bool) :

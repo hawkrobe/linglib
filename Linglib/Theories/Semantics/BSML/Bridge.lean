@@ -217,41 +217,30 @@ theorem neFree_flat (M : BSMLModel W)
 -- §5: BSML–CML Type Bridge
 -- ============================================================================
 
-open Core.IntensionalLogic.RestrictedModality (BAccessRel kripkeEval)
-open Core.Proposition (FiniteWorlds)
+open Core.IntensionalLogic.RestrictedModality (diamondR)
 
 /-!
 ### Accessibility Type Bridge
 
-`BSMLModel.access : W → Finset W` can be converted to `BAccessRel W = W → W → Bool`
-via `fun w v => decide (v ∈ M.access w)`.
+`BSMLModel.access : W → Finset W` can be converted to a Prop-valued
+`AccessRel W = W → W → Prop` via `fun w v => v ∈ M.access w`, which is the
+canonical accessibility-relation type in
+`Core.IntensionalLogic.RestrictedModality`.
 -/
 
-/-- Convert BSML accessibility to a classical accessibility relation. -/
-def BSMLModel.toAccessRel (M : BSMLModel W) : BAccessRel W :=
-  fun w v => decide (v ∈ M.access w)
+/-- Convert BSML accessibility (`Finset`-valued) to a classical Prop-valued
+    accessibility relation. -/
+def BSMLModel.toAccessRel (M : BSMLModel W) :
+    Core.IntensionalLogic.RestrictedModality.AccessRel W :=
+  fun w v => v ∈ M.access w
 
-/-- `classicalEval` of ◇φ agrees with `kripkeEval` at `.possibility`,
+/-- `classicalEval` of ◇φ agrees with `diamondR` (Prop-valued possibility),
     connecting BSML's classical evaluation to the shared modal logic
     infrastructure from `Core.IntensionalLogic.RestrictedModality`. -/
-theorem classicalEval_agrees_kripkeEval_poss
-    [fw : FiniteWorlds W]
-    (M : BSMLModel W) (φ : BSMLFormula) (w : W)
-    (hworlds : ∀ v, v ∈ fw.worlds) :
-    classicalEval M (.poss φ) w =
-    kripkeEval M.toAccessRel .possibility (classicalEval M φ) w := by
-  simp only [classicalEval, kripkeEval]
-  cases h : decide (∃ v ∈ M.access w, classicalEval M φ v = true)
-  · -- No accessible world satisfies φ
-    symm; apply Bool.eq_false_iff.mpr; intro hany
-    obtain ⟨v, hv_mem, hvboth⟩ := List.any_eq_true.mp hany
-    simp only [List.mem_filter, BSMLModel.toAccessRel, decide_eq_true_eq] at hv_mem
-    rw [decide_eq_false_iff_not] at h
-    exact absurd ⟨v, hv_mem.2, hvboth⟩ h
-  · -- Some accessible world satisfies φ
-    obtain ⟨v, hv, hce⟩ := of_decide_eq_true h
-    symm; apply List.any_eq_true.mpr
-    exact ⟨v, List.mem_filter.mpr ⟨hworlds v, by
-      simp only [BSMLModel.toAccessRel, decide_eq_true_eq]; exact hv⟩, hce⟩
+theorem classicalEval_agrees_diamondR_poss
+    (M : BSMLModel W) (φ : BSMLFormula) (w : W) :
+    classicalEval M (.poss φ) w = true ↔
+    diamondR M.toAccessRel (fun v => classicalEval M φ v = true) w := by
+  simp only [classicalEval, decide_eq_true_eq, diamondR, BSMLModel.toAccessRel]
 
 end Semantics.BSML

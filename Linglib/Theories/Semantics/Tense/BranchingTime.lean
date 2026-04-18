@@ -137,11 +137,6 @@ This is the situation-semantic analog of Prop' W.
 abbrev TProp (W Time : Type*) := Situation W Time → Prop
 
 /--
-Decidable temporal proposition (for computation).
--/
-abbrev TBProp (W Time : Type*) := Situation W Time → Bool
-
-/--
 Lift a world proposition to a temporal proposition.
 
 The lifted proposition is true at situation s iff the original

@@ -184,7 +184,7 @@ inductive KaqArgPosition where
 /-- Case assignment in perfective (ergative) clauses: ergative-absolutive alignment.
     Agent gets ERG (from Voice/v); patient and intranS both get ABS
     (from Infl/T). -/
-def KaqArgPosition.case : KaqArgPosition → CaseVal
+def KaqArgPosition.case : KaqArgPosition → Core.Case
   | .agent   => .erg
   | .patient => .abs
   | .intranS => .abs
@@ -196,7 +196,7 @@ def KaqArgPosition.case : KaqArgPosition → CaseVal
     the argument of *ajin* in the matrix clause and receives ABS from matrix
     Infl. The object is the only DP inside the nominalized clause and
     receives GEN from D. -/
-def KaqArgPosition.accCase : KaqArgPosition → CaseVal
+def KaqArgPosition.accCase : KaqArgPosition → Core.Case
   | .agent   => .abs  -- from matrix Infl (argument of ajin)
   | .patient => .gen  -- from D of nominalized clause
   | .intranS => .abs  -- from matrix Infl
@@ -488,7 +488,7 @@ def caseInventory : List Core.Case := [.erg, .abs]
 /-- The inventory covers all argument positions: every position's case
     is in the inventory. -/
 theorem inventory_covers_positions :
-    kaqArgPositions.all (λ p => caseInventory.any (· == p.case.toCase)) = true := by
+    kaqArgPositions.all (λ p => caseInventory.any (· == p.case)) = true := by
   native_decide
 
 -- Kaqchikel's {ERG, ABS} inventory is valid per Blake's case hierarchy

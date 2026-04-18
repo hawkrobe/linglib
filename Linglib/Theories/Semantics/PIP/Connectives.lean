@@ -23,10 +23,10 @@ PIP's modals are generalized quantifiers over worlds (paper Section 2.5):
 - MIGHT^β_w(W₁, W₂) ≜ SOME(β_w ∩ W₁, W₂)
 - MUST^β_w(W₁, W₂) ≜ EVERY(β_w ∩ W₁, W₂)
 
-Our encoding parameterizes by an accessibility relation (`Core.IntensionalLogic.RestrictedModality.BAccessRel`,
+Our encoding parameterizes by an accessibility relation (`Semantics.PIP.BAccessRel`,
 equivalent to a Kratzer modal base β) and quantifies over accessible worlds.
-The grounding theorem `must_truth_agrees_kripkeEval` proves that PIP's `must`
-produces the same truth conditions as `Core.IntensionalLogic.RestrictedModality.kripkeEval .necessity`.
+The grounding theorem `must_truth_agrees_boxR` proves that PIP's `must`
+produces the same truth conditions as `Core.IntensionalLogic.RestrictedModality.boxR`.
 
 -/
 
@@ -34,7 +34,6 @@ namespace Semantics.PIP
 
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.IntensionalCDRT
-open Core.IntensionalLogic.RestrictedModality (BAccessRel)
 
 variable {W E : Type*}
 
@@ -278,69 +277,67 @@ end Properties
 
 
 -- ============================================================
--- Grounding: PIP modals ↔ Core.IntensionalLogic.RestrictedModality.kripkeEval
+-- Grounding: PIP modals ↔ Core.IntensionalLogic.RestrictedModality.boxR/diamondR
 -- ============================================================
 
-open Core.IntensionalLogic.RestrictedModality (kripkeEval BRefl)
+open Core.IntensionalLogic.RestrictedModality (boxR diamondR Refl boxR_T)
 open Core.Proposition (FiniteWorlds)
 
+/-- Lift a Bool-valued accessibility to its Prop-valued equivalent. -/
+private def liftR {W : Type*} (R : BAccessRel W) : W → W → Prop :=
+  fun a b => R a b = true
+
+/-- Lift a Bool-valued world predicate to its Prop-valued equivalent. -/
+private def liftP {W : Type*} (p : W → Bool) : W → Prop :=
+  fun w => p w = true
+
 /--
-PIP's `must` produces the same truth conditions as `Core.IntensionalLogic.RestrictedModality.kripkeEval .necessity`.
+PIP's `must` produces the same truth conditions as `Core.IntensionalLogic.RestrictedModality.boxR`.
 
 Specifically: a pair (g, w₀) survives `must R allWorlds (atom p)` iff
-`kripkeEval R .necessity (p g) w₀ = true` — the body predicate holds at
+`boxR R (fun w => p g w = true) w₀` — the body predicate holds at
 all R-accessible worlds. This connects PIP's discourse-update modals to the
 standard Kripke semantics used throughout `Theories/Semantics/Modality/`.
 -/
-theorem must_truth_agrees_kripkeEval [FiniteWorlds W]
+theorem must_truth_agrees_boxR [FiniteWorlds W]
     (R : BAccessRel W) (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
     ((g, w₀) ∈ (must R FiniteWorlds.worlds (atom p) d).info) ↔
-    (kripkeEval R .necessity (p g) w₀ = true) := by
+    boxR (liftR R) (liftP (p g)) w₀ := by
   constructor
   · intro ⟨_, h⟩
-    unfold kripkeEval
-    apply List.all_eq_true.mpr
-    intro v hv
-    simp only [List.mem_filter] at hv
-    have := h v (FiniteWorlds.complete v) hv.2
+    intro v hRv
+    have hmem : v ∈ FiniteWorlds.worlds.filter (R w₀) := by
+      simp only [List.mem_filter]
+      exact ⟨FiniteWorlds.complete v, hRv⟩
+    have := h v (FiniteWorlds.complete v) hRv
     unfold atom Discourse.mapInfo at this
     exact this.2
-  · intro hk
-    unfold kripkeEval at hk
+  · intro hbox
     refine ⟨hd, ?_⟩
     intro w₁ _hw₁ hacc
     unfold atom Discourse.mapInfo
-    constructor
-    · exact modalExpand_adds_accessible d.info R g w₀ w₁ hd hacc
-    · have : w₁ ∈ FiniteWorlds.worlds.filter (R w₀) := by
-        simp only [List.mem_filter]
-        exact ⟨FiniteWorlds.complete w₁, hacc⟩
-      exact List.all_eq_true.mp hk w₁ this
+    refine ⟨modalExpand_adds_accessible d.info R g w₀ w₁ hd hacc, ?_⟩
+    exact hbox w₁ hacc
 
 /--
-PIP's `might` agrees with `kripkeEval .possibility`.
+PIP's `might` agrees with `diamondR`.
 -/
-theorem might_truth_agrees_kripkeEval [FiniteWorlds W]
+theorem might_truth_agrees_diamondR [FiniteWorlds W]
     (R : BAccessRel W) (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
     ((g, w₀) ∈ (might R FiniteWorlds.worlds (atom p) d).info) ↔
-    (kripkeEval R .possibility (p g) w₀ = true) := by
+    diamondR (liftR R) (liftP (p g)) w₀ := by
   constructor
   · intro ⟨_, w₁, _, hacc, hmem⟩
-    unfold kripkeEval
-    apply List.any_eq_true.mpr
     unfold atom Discourse.mapInfo at hmem
-    exact ⟨w₁, by simp only [List.mem_filter]; exact ⟨FiniteWorlds.complete w₁, hacc⟩, hmem.2⟩
-  · intro hk
-    unfold kripkeEval at hk
-    obtain ⟨v, hv, hpv⟩ := List.any_eq_true.mp hk
-    simp only [List.mem_filter] at hv
-    refine ⟨hd, v, FiniteWorlds.complete v, hv.2, ?_⟩
+    exact ⟨w₁, hacc, hmem.2⟩
+  · intro ⟨v, hRv, hpv⟩
+    refine ⟨hd, v, FiniteWorlds.complete v, hRv, ?_⟩
     unfold atom Discourse.mapInfo
-    exact ⟨modalExpand_adds_accessible d.info R g w₀ v hd hv.2, hpv⟩
+    exact ⟨modalExpand_adds_accessible d.info R g w₀ v hd hRv, hpv⟩
 
 /--
 Realistic modal base (T axiom) for PIP: if R is reflexive and `must R (atom p)`
@@ -348,17 +345,17 @@ holds at (g, w₀), then p g w₀ = true.
 
 This derives PIP's key insight — must allows anaphora because a realistic
 modal base guarantees the description holds at the evaluation world — from
-`Core.IntensionalLogic.RestrictedModality.T_of_refl`.
+`Core.IntensionalLogic.RestrictedModality.boxR_T`.
 -/
 theorem must_realistic_of_refl [FiniteWorlds W]
-    (R : BAccessRel W) (hRefl : BRefl R)
+    (R : BAccessRel W) (hRefl : Refl (liftR R))
     (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info)
     (hmust : (g, w₀) ∈ (must R FiniteWorlds.worlds (atom p) d).info) :
     p g w₀ = true :=
-  Core.IntensionalLogic.RestrictedModality.T_of_refl hRefl (p g) w₀
-    ((must_truth_agrees_kripkeEval R p d g w₀ hd).mp hmust)
+  boxR_T (liftR R) hRefl (liftP (p g)) w₀
+    ((must_truth_agrees_boxR R p d g w₀ hd).mp hmust)
 
 /--
 Pointwise realistic base: if R w₀ w₀ = true and must holds at w₀,

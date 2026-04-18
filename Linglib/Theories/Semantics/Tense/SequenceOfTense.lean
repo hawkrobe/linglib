@@ -93,13 +93,12 @@ open Core (Situation)
 /-- Temporal binding extracts a time-equality constraint from situation
     accessibility. This is the situation-semantic formulation of "the
     embedded tense receives the matrix event time." -/
-theorem temporallyBound_forces_time_eq {W Time E : Type*} [DecidableEq Time]
-    (R : Core.IntensionalLogic.RestrictedModality.BAgentAccessRel W E) (agent : E)
+theorem temporallyBound_forces_time_eq {W Time E : Type*}
+    (R : Semantics.Attitudes.SituationDependent.BAgentAccessRel W E) (agent : E)
     (s₁ s₂ : Situation W Time)
-    (h : temporallyBound R agent s₁ s₂ = true) :
-    s₂.time = s₁.time := by
-  simp only [temporallyBound, Bool.and_eq_true, beq_iff_eq] at h
-  exact h.2
+    (h : temporallyBound R agent s₁ s₂) :
+    s₂.time = s₁.time :=
+  h.2
 
 /-- The time-equality from temporallyBound corresponds to the Reichenbach
     PRESENT relation (R = P) in the embedded frame — i.e., the simultaneous
@@ -108,9 +107,9 @@ theorem temporallyBound_forces_time_eq {W Time E : Type*} [DecidableEq Time]
     This connects the attitude-side formalization (SituationDependent.temporallyBound)
     to the tense-side formalization (simultaneousFrame in IS/Tense/Basic). -/
 theorem temporallyBound_gives_simultaneous {W Time E : Type*} [LinearOrder Time]
-    (R : Core.IntensionalLogic.RestrictedModality.BAgentAccessRel W E) (agent : E)
+    (R : Semantics.Attitudes.SituationDependent.BAgentAccessRel W E) (agent : E)
     (s₁ s₂ : Situation W Time) (speechTime : Time)
-    (h : temporallyBound R agent s₁ s₂ = true) :
+    (h : temporallyBound R agent s₁ s₂) :
     let embFrame : ReichenbachFrame Time :=
       { speechTime, perspectiveTime := s₁.time,
         referenceTime := s₂.time, eventTime := s₂.time }

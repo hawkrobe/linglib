@@ -1,4 +1,5 @@
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
+import Linglib.Core.NullSubject.Universals
 
 /-!
 # Minimal Pronoun Theory
@@ -132,6 +133,59 @@ inductive PronForm where
   /-- Reflexive anaphor (English *-self*, SMPM *mí* + pronoun) -/
   | reflexive
   deriving DecidableEq, Repr
+
+/-- Whether a language's minimal-pronoun inventory realizes the
+    controlled-subject context with an overt form. This is the
+    Minimalism-side bridge to `Core.NullSubject.ProDropProfile.hasOvertPRO`.
+    The typological criterion is non-nullness, not specifically `.pronoun`:
+    @cite{ostrove-2026}'s universal is about overt-vs-null PRO, so an
+    inventory whose controlled-subject form is `.reflexive` would also
+    count as overt PRO. -/
+def MinPronInventory.hasOvertPRO (inv : MinPronInventory PronForm) : Bool :=
+  inv.controlForm != .null
+
+-- ════════════════════════════════════════════════════════════════
+-- § 3.5: Bridge to `Core.NullSubject.SubjectAssignment`
+-- ════════════════════════════════════════════════════════════════
+
+open Core.NullSubject in
+/-- Project a `PronForm` to the framework-agnostic `Exponent` (null vs
+    overt). Both `.pronoun` and `.reflexive` count as overt — the
+    typological criterion in `Core.NullSubject` is non-nullness. -/
+def PronForm.toExponent : PronForm → Core.NullSubject.Exponent
+  | .null      => .null
+  | .pronoun   => .overt
+  | .reflexive => .overt
+
+open Core.NullSubject in
+/-- Project a Minimalist `MinPronInventory` to the framework-agnostic
+    `SubjectAssignment`. The `BVAContext` axis maps `controlled
+    SubjectContext`s to `controlledSubject`; all other contexts get
+    the elsewhere/free realization, since the minimal-pronoun
+    inventory does not directly track person, finiteness, or
+    Ā-status. Refinements (per-person inventories, anti-agreement
+    inventories) extend this projection. -/
+def MinPronInventory.toSubjectAssignment
+    (inv : MinPronInventory PronForm) : SubjectAssignment :=
+  fun ctx =>
+    let bva : BVAContext := match ctx.clauseRole with
+      | .controlSubject => .controlledSubject
+      | _               => .free
+    (inv.realize bva).toExponent
+
+open Core.NullSubject in
+/-- Bridge theorem: the abstract `hasOvertPRO` over the projected
+    assignment agrees with the inventory's own `hasOvertPRO`. This is
+    the Minimalism→Core grounding: changing the inventory propagates
+    to the abstract universal by construction. -/
+theorem MinPronInventory.subjectAssignment_overtPRO_iff
+    (inv : MinPronInventory PronForm) :
+    inv.toSubjectAssignment.hasOvertPRO = inv.hasOvertPRO := by
+  unfold SubjectAssignment.hasOvertPRO MinPronInventory.toSubjectAssignment
+    MinPronInventory.hasOvertPRO MinPronInventory.controlForm
+    SubjectAssignment.hasOvertPROAt
+  simp [thematicPersons, SubjectContext.controlled, PronForm.toExponent]
+  cases h : inv.realize .controlledSubject <;> simp
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4: Obligatory Control Signature

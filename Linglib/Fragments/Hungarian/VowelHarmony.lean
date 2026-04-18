@@ -185,12 +185,12 @@ def classifyVowel (s : Segment) : HarmonyRole :=
     Structurally identical to `finnishHarmony` but with a larger neutral
     class (4 vowels vs 2). @cite{siptar-torkenczy-2000} §3.2.1,
     @cite{rose-walker-2011}. -/
-def hungarianPalatalHarmony : HarmonySystem where
-  feature       := .back
-  isTrigger     := (λ s => s.hasValue .syllabic true && !isNeutral s)
-  isTarget      := (λ s => s.hasValue .syllabic true && !isNeutral s)
-  isTransparent := isNeutral
-  direction     := .rightward
+def hungarianPalatalHarmony : HarmonySystem :=
+  HarmonySystem.mk' (feature := .back)
+    (isTrigger     := (λ s => s.hasValue .syllabic true && !isNeutral s))
+    (isTarget      := (λ s => s.hasValue .syllabic true && !isNeutral s))
+    (isTransparent := isNeutral)
+    (direction     := .rightward)
 
 /-- Hungarian rounding harmony: [round] from the last stem vowel, used to
     resolve three-way suffix alternations (hoz/höz/hez).
@@ -201,12 +201,12 @@ def hungarianPalatalHarmony : HarmonySystem where
 
     The rounding value only matters for front stems (back stems always
     get the back suffix variant regardless of rounding). -/
-def hungarianLabialHarmony : HarmonySystem where
-  feature       := .round
-  isTrigger     := (·.hasValue .syllabic true)
-  isTarget      := (·.hasValue .syllabic true)
-  isTransparent := (λ _ => false)
-  direction     := .rightward
+def hungarianLabialHarmony : HarmonySystem :=
+  HarmonySystem.mk' (feature := .round)
+    (isTrigger     := (·.hasValue .syllabic true))
+    (isTarget      := (·.hasValue .syllabic true))
+    (isTransparent := (λ _ => false))
+    (direction     := .rightward)
 
 -- ============================================================================
 -- § 4: Stem Classes (@cite{siptar-torkenczy-2000} §3.2.2)
@@ -611,7 +611,7 @@ theorem hungarian_finnish_same_feature :
     hungarianPalatalHarmony.feature = Feature.back := rfl
 
 theorem hungarian_finnish_same_direction :
-    hungarianPalatalHarmony.direction = .rightward := rfl
+    hungarianPalatalHarmony.rule.side = .left := rfl
 
 /-- Both Hungarian and Turkish have two-dimensional harmony:
     palatal ([back]) + labial ([round]). -/
@@ -643,15 +643,15 @@ theorem hungarian_turkish_both_twoDim :
     Only /i, í/ are transparent; /e, é/ block spreading.
     @cite{siptar-torkenczy-2000} §3.2.3: /e/ is the least transparent
     neutral vowel (most likely to block). -/
-def palatalHarmony_eBlocks : HarmonySystem where
-  feature       := .back
-  isTrigger     := (λ s => s.hasValue .syllabic true && !isNeutral s)
-  isTarget      := (λ s => s.hasValue .syllabic true && !isNeutral s)
-  isTransparent := (λ s => s.hasValue .syllabic true &&
-    s.hasValue .back false && s.hasValue .round false && s.hasValue .high true)
-  isBlocker     := (λ s => s.hasValue .syllabic true &&
-    s.hasValue .back false && s.hasValue .round false && s.hasValue .high false)
-  direction     := .rightward
+def palatalHarmony_eBlocks : HarmonySystem :=
+  HarmonySystem.mk' (feature := .back)
+    (isTrigger     := (λ s => s.hasValue .syllabic true && !isNeutral s))
+    (isTarget      := (λ s => s.hasValue .syllabic true && !isNeutral s))
+    (isTransparent := (λ s => s.hasValue .syllabic true &&
+      s.hasValue .back false && s.hasValue .round false && s.hasValue .high true))
+    (isBlocker     := (λ s => s.hasValue .syllabic true &&
+      s.hasValue .back false && s.hasValue .round false && s.hasValue .high false))
+    (direction     := .rightward)
 
 /-- With /e/ as blocker: *hotel* /o, e/ → /e/ blocks, domain = [], no trigger.
     Contrast: `hotel_predicted_back` in the transparent model gives `some true`. -/

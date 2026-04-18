@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.DependentCase
+import Linglib.Theories.Syntax.Case.Dependent
 
 /-!
 # Sakha Two-Modality Case Assignment @cite{baker-vinokurova-2010}
@@ -49,7 +49,7 @@ distinguish embedded vs matrix domains.
 
 namespace Phenomena.Case.Studies.BakerVinokurova2010
 
-open Minimalism
+open Syntax.Case
 
 -- ============================================================================
 -- § 1: The Sakha Case System Configuration

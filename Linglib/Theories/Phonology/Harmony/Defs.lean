@@ -1,15 +1,48 @@
 import Linglib.Theories.Phonology.Features
+import Linglib.Theories.Phonology.Alternation
 
 /-!
 # Harmony Systems
-@cite{rose-walker-2011}
+@cite{rose-walker-2011} @cite{belth-2026}
 
-General framework for phonological harmony following @cite{rose-walker-2011}:
-a process by which a distinctive feature value spreads from a **trigger**
-segment to **target** segments, optionally skipping **transparent** segments
-and halting at **blocker** (opaque) segments.
+The @cite{rose-walker-2011} typological lens — a process by which a
+distinctive feature value spreads from a **trigger** segment to **target**
+segments, optionally skipping **transparent** segments and halting at
+**blocker** (opaque) segments.
 
-## Components (§1)
+## Architecture
+
+A `HarmonySystem` is a thin typological wrapper around a *tier-based
+agreement rule* (the formal core, à la @cite{belth-2026} / Heinz-style
+TSL phonology):
+
+```
+HarmonySystem  =  rule      : Phonology.Alternation.TierRule Segment   -- value prediction
+                 isTarget   : Segment → Bool                           -- spreading discipline
+                 isBlocker  : Segment → Bool                           -- iteration halt
+                 feature    : Phonology.Feature                        -- which Feature for harmonizeOne
+```
+
+The `rule` field IS the formal pattern. Its tier projects out transparent
+segments; its context class is the trigger predicate; its relation is
+`.agree` (harmony is by definition assimilatory — dissimilatory tier
+patterns like Latin liquid dissimilation use `Disagree` and live outside
+this typology). `isTarget`/`isBlocker` are the *spreading discipline* —
+which segments accept the predicted value and where iteration halts.
+
+Why this shape: in the modern computational/learnability framing
+(@cite{belth-2026} and the TSL literature), the tier projection plus a
+local rule on it is the central object; the Rose-Walker typological
+decomposition (trigger / target / transparent / blocker / direction) is
+the descriptive lens for cataloguing what languages do, not a separate
+formal primitive. So harmony systems *contain* tier rules rather than
+*reducing to them via a bridge theorem* — the relationship is
+true-by-construction.
+
+## Components (§1) of @cite{rose-walker-2011}
+
+The smart constructor `HarmonySystem.mk'` exposes exactly Rose-Walker's
+six-way decomposition:
 
 1. **Feature**: which distinctive feature spreads ([back], [round], [ATR], ...)
 2. **Trigger**: which segments source the spreading feature value
@@ -18,109 +51,152 @@ and halting at **blocker** (opaque) segments.
 5. **Blocker**: which segments halt spreading (opaque segments)
 6. **Direction**: rightward, leftward, or bidirectional
 
+It compiles these into the underlying `TierRule` plus the application
+fields. After construction, the typology is recoverable: trigger =
+`rule.targetIsContext`, transparency is encoded in `rule.tier`, etc.
+
 ## Operations
 
-- `harmonyDomain`: extract the spreading domain (stem segments not separated
-  from the suffix by a blocker)
-- `triggerValue`: extract the harmony value from the domain (direction-aware)
-- `harmonizeOne`: apply harmony to a single segment
-- `spreadSuffix`: apply harmony through a suffix, halting at blockers
+- `harmonyDomain`: extract the spreading domain (stem segments not
+  separated from the harmonic edge by a blocker)
+- `triggerValue`: dispatch the rule on the harmony domain
+  (true-by-construction equivalent to "find the trigger and read off its
+  feature value")
+- `harmonizeOne`: apply the predicted value to a single segment
+- `spreadSuffix`: walk a suffix list, halting at blockers
+
 ## Instances
 
 - **Turkish palatal harmony**: [back] from last stem vowel → all suffix vowels
 - **Turkish labial harmony**: [round] from last stem vowel → high suffix vowels only
-- **Finnish palatal harmony**: [back] from last harmonic stem vowel → non-neutral
-  suffix vowels; neutral vowels (/e/, /i/) are transparent
-- **Hungarian palatal harmony**: [back] from last harmonic stem vowel → non-neutral
-  suffix vowels; neutral vowels (/i, í, e, é/) are transparent
+- **Finnish palatal harmony**: [back] from last harmonic stem vowel →
+  non-neutral suffix vowels; neutral vowels (/e/, /i/) are transparent
+- **Hungarian palatal harmony**: [back] from last harmonic stem vowel →
+  non-neutral suffix vowels; neutral vowels (/i, í, e, é/) are transparent
 -/
 
 namespace Phonology.Harmony
 
 open Phonology (Segment Feature FeatureVal)
+open Phonology.Alternation
 
 -- ============================================================================
--- § 1: Harmony System Type
+-- § 1: Direction
 -- ============================================================================
 
-/-- Direction of harmony spreading. -/
+/-- Direction of harmony spreading (Rose-Walker typological label). -/
 inductive HarmonyDir where
   | rightward     -- stem → suffix (standard for suffix-controlled VH)
   | leftward      -- suffix → stem (dominant-recessive systems)
   | bidirectional -- both directions from trigger
   deriving DecidableEq, Repr
 
-/-- A parameterized harmony system.
-
-    Following @cite{rose-walker-2011}'s decomposition into trigger, target,
-    domain, and spreading feature. Each language's vowel harmony is an
-    instance of this type.
-
-    The `isBlocker` field (default: no blockers) identifies **opaque**
-    segments that halt spreading. In Hungarian, low neutral vowels like
-    /e/ sometimes block back harmony from passing through — marking /e/
-    as a blocker rather than transparent yields different predictions for
-    stems like *hotel*. -/
-structure HarmonySystem where
-  /-- The distinctive feature that spreads. -/
-  feature       : Feature
-  /-- Trigger predicate: which segments source the feature value. -/
-  isTrigger     : Segment → Bool
-  /-- Target predicate: which segments undergo feature change. -/
-  isTarget      : Segment → Bool
-  /-- Transparency predicate: which segments are skipped during spreading
-      without blocking it. -/
-  isTransparent : Segment → Bool
-  /-- Blocker predicate: which segments halt spreading (opaque).
-      Default: no blockers. -/
-  isBlocker     : Segment → Bool := (λ _ => false)
-  /-- Direction of spreading. -/
-  direction     : HarmonyDir
+/-- Compile a typological direction to the side at which the underlying
+    `TierRule` reads its triggering context. Bidirectional collapses to
+    rightward operationally (the same `harmonyDomain`/`triggerValue`
+    computation handles both); the typological distinction lives only at
+    the smart-constructor argument site. -/
+def HarmonyDir.toSide : HarmonyDir → Side
+  | .rightward | .bidirectional => .left
+  | .leftward => .right
 
 -- ============================================================================
--- § 2: Harmony Domain
+-- § 2: HarmonySystem — TierRule + Spreading Discipline
+-- ============================================================================
+
+/-- A harmony system in the @cite{rose-walker-2011} typological sense.
+
+    Structurally a `TierRule` (the value-prediction half — @cite{belth-2026}'s
+    tier-based AGREE rule) bundled with an application policy (which
+    segments accept the change, which halt iteration). The `feature` field
+    is the `Phonology.Feature` whose value `harmonizeOne`/`spreadSuffix`
+    write into target segments; by convention `rule.featureValue s = s.spec
+    feature` (enforced by the `mk'` smart constructor; not a typed
+    invariant — direct record construction can break it). -/
+structure HarmonySystem where
+  /-- The distinctive feature that spreads. -/
+  feature   : Feature
+  /-- The underlying tier-based AGREE rule (the formal core). -/
+  rule      : TierRule Segment
+  /-- Target predicate: which segments undergo feature change. -/
+  isTarget  : Segment → Bool
+  /-- Blocker predicate: which segments halt spreading (opaque).
+      Default: no blockers. -/
+  isBlocker : Segment → Bool := (λ _ => false)
+
+/-- Smart constructor exposing Rose-Walker's six-way decomposition.
+
+    Compiles directly into the underlying `TierRule`:
+    - tier projects out transparent segments
+    - side is determined by `direction` (rightward/bidirectional ↦ left
+      context; leftward ↦ right context)
+    - context class is the trigger predicate
+    - relation is `.agree` (harmony is assimilatory by definition)
+    - feature value extraction reads `s.spec feature`
+    - default is `none` (no Elsewhere fallback) -/
+def HarmonySystem.mk'
+    (feature : Feature)
+    (isTrigger isTarget isTransparent : Segment → Bool)
+    (direction : HarmonyDir := .rightward)
+    (isBlocker : Segment → Bool := (λ _ => false)) : HarmonySystem where
+  feature := feature
+  rule := {
+    tier := Core.Tier.byClass (fun s => !isTransparent s)
+    side := direction.toSide
+    targetIsContext := isTrigger
+    relation := .agree
+    featureValue := fun s => s.spec feature
+    default := none }
+  isTarget := isTarget
+  isBlocker := isBlocker
+
+-- ============================================================================
+-- § 3: Recovering the Rose-Walker Typology
+-- ============================================================================
+
+/-- The trigger predicate (= the rule's context class). Convenience accessor
+    for the @cite{rose-walker-2011} typological decomposition. -/
+@[inline] def isTrigger (sys : HarmonySystem) (s : Segment) : Bool :=
+  sys.rule.targetIsContext s
+
+-- ============================================================================
+-- § 4: Harmony Domain
 -- ============================================================================
 
 /-- The **harmony domain**: the portion of the stem that governs suffix
-    harmony. For rightward spreading, this is everything after the last
-    blocker; for leftward, everything before the first blocker.
+    harmony. For left-context (rightward / bidirectional) rules, this is
+    everything after the last blocker; for right-context (leftward),
+    everything before the first blocker.
 
     Without blockers, the domain is the full stem.
 
     Example: stem = [a, BLOCKER, i] with rightward spreading →
     domain = [i] (only the suffix-adjacent segment governs). -/
 def harmonyDomain (sys : HarmonySystem) (stem : List Segment) : List Segment :=
-  match sys.direction with
-  | .rightward | .bidirectional =>
-    (stem.reverse.takeWhile (fun s => !sys.isBlocker s)).reverse
-  | .leftward =>
-    stem.takeWhile (fun s => !sys.isBlocker s)
+  match sys.rule.side with
+  | .left  => (stem.reverse.takeWhile (fun s => !sys.isBlocker s)).reverse
+  | .right => stem.takeWhile (fun s => !sys.isBlocker s)
 
 -- ============================================================================
--- § 3: Trigger Value Extraction
+-- § 5: Trigger Value Extraction
 -- ============================================================================
 
-/-- Extract the harmony trigger value from a segment sequence.
+/-- The harmony value predicted at the suffix slot: dispatch the
+    underlying `TierRule` on the harmony domain.
 
-    1. Restrict to the harmony domain (respecting blockers)
-    2. Filter for trigger segments within the domain
-    3. Select the **last** trigger (rightward/bidirectional) or **first**
-       trigger (leftward)
-    4. Return the trigger's value for the harmony feature
-
-    Returns `none` if no trigger is found in the domain (e.g., stems
-    with only neutral vowels, or stems where a blocker separates all
-    triggers from the suffix boundary). -/
+    *True by construction*: this IS the rule's prediction at the
+    suffix-adjacent position, after truncating the stem at the first
+    blocker. No bridge theorem is needed (and none exists) — the
+    typological decomposition was just compiled into the rule's fields by
+    the smart constructor. -/
 def triggerValue (sys : HarmonySystem) (stem : List Segment) : Option Bool :=
   let domain := harmonyDomain sys stem
-  let triggers := domain.filter sys.isTrigger
-  let t := match sys.direction with
-    | .rightward | .bidirectional => triggers.getLast?
-    | .leftward => triggers.head?
-  t.bind (·.spec sys.feature)
+  match sys.rule.side with
+  | .left  => sys.rule.apply domain []
+  | .right => sys.rule.apply [] domain
 
 -- ============================================================================
--- § 4: Segment-Level Harmony
+-- § 6: Segment-Level Harmony
 -- ============================================================================
 
 /-- Apply harmony to a single segment: if the segment is a target, set
@@ -131,14 +207,14 @@ def harmonizeOne (sys : HarmonySystem) (val : Bool) (s : Segment) : Segment :=
   else s
 
 -- ============================================================================
--- § 5: Suffix Spreading
+-- § 7: Suffix Spreading
 -- ============================================================================
 
 /-- Apply harmony through a suffix segment list, respecting blockers.
 
     Walks through segments left-to-right:
-    - **Blocker**: halts spreading — this segment and all subsequent segments
-      are returned unchanged.
+    - **Blocker**: halts spreading — this segment and all subsequent
+      segments are returned unchanged.
     - **Target**: harmonized (feature value set) and spreading continues.
     - **Other** (transparent/inert): returned unchanged and spreading continues.
 
@@ -153,7 +229,7 @@ def spreadSuffix (sys : HarmonySystem) (val : Bool)
     else harmonizeOne sys val s :: spreadSuffix sys val rest
 
 -- ============================================================================
--- § 6: Properties
+-- § 8: Properties
 -- ============================================================================
 
 /-- Non-target segments are unchanged by harmonization. -/
@@ -197,9 +273,8 @@ theorem harmonyDomain_no_blockers (sys : HarmonySystem) (stem : List Segment)
   have hrev : ∀ s ∈ stem.reverse, (!sys.isBlocker s) = true :=
     fun s hs => hpred s (List.mem_reverse.mp hs)
   split
-  · rw [takeWhile_all hrev, List.reverse_reverse]  -- rightward
-  · rw [takeWhile_all hrev, List.reverse_reverse]  -- bidirectional
-  · exact takeWhile_all hpred                       -- leftward
+  · rw [takeWhile_all hrev, List.reverse_reverse]
+  · exact takeWhile_all hpred
 
 /-- Blockers in the suffix halt spreading: segments at and after the first
     blocker are returned unchanged. -/

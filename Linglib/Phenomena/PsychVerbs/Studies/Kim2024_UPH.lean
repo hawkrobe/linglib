@@ -19,14 +19,15 @@ vs internal representation).
 
 ## Architecture
 
-The fragment entries in `Verbal.lean` set four fields independently:
+The fragment entries in `Verbal.lean` set independent fields:
 - `causalSource` (external vs internal)
-- `subjectTheta` (stimulus vs experiencer)
-- `objectTheta` (experiencer vs stimulus)
+- `subjectEntailments` / `objectEntailments` (proto-role profiles —
+  stimulus-on-subject vs experiencer-on-subject derived via
+  `EntailmentProfile.toRole`)
 - `opaqueContext` (true vs false)
 
 @cite{kim-2024}'s theory predicts these fields must covary:
-- All Class II verbs share the same theta grid (UPH)
+- All Class II verbs share the same proto-role profile (UPH)
 - `opaqueContext` is determined by `subjectIntensional` applied to `causalSource`
 - `causalSource` determines temporal and event-structural behavior
 
@@ -88,10 +89,10 @@ def classI_consistent (v : VerbEntry) : Prop :=
 -- § 2. Per-Verb Consistency Verification
 -- ════════════════════════════════════════════════════
 
-/-! Each theorem below connects 4 independently-set fragment fields through
-    Kim's theory. If ANY field on the fragment entry changes (causalSource,
-    subjectTheta, objectTheta, or opaqueContext), the corresponding theorem
-    breaks — ensuring the fields stay in theoretical agreement. -/
+/-! Each theorem below connects independently-set fragment fields through
+    Kim's theory. If `causalSource` or `opaqueContext` on a fragment entry
+    changes, the corresponding theorem breaks — ensuring the fields stay
+    in theoretical agreement. -/
 
 -- Eventive Class II (external causal source, transparent subjects)
 

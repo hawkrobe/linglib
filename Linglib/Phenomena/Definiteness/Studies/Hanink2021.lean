@@ -129,45 +129,17 @@ theorem tableAtSit0_existsUnique_living :
     `tableKitchen`. -/
 theorem theTable_kitchen :
     interpret (F := F) (.unique tableAtSit0 0) g₀ gsKitchen
-      = some Item.tableKitchen := by
-  have hExists : (interpret (F := F) (.unique tableAtSit0 0) g₀ gsKitchen).isSome
-      = true := by
-    rw [interpret_unique]
-    exact (russellIota_isSome_iff_existsUnique _).mpr
-      tableAtSit0_existsUnique_kitchen
-  obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hExists
-  rw [he]
-  congr 1
-  have hSat : tableAtSit0 g₀ gsKitchen e := by
-    have : russellIota (fun x => tableAtSit0 g₀ gsKitchen x) = some e := by
-      rw [← interpret_unique]; exact he
-    exact russellIota_witness_satisfies _ e this
-  cases e <;>
-    first
-      | rfl
-      | (simp [tableAtSit0, tableIn, interpSitPronoun, gsKitchen] at hSat)
+      = some Item.tableKitchen :=
+  interpret_unique_eq_some_of_existsUnique _ 0 g₀ gsKitchen Item.tableKitchen trivial
+    (fun y hy => by cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsKitchen])
 
 /-- Witness extraction for the living-room case: the unique satisfier
     is `tableLiving`. -/
 theorem theTable_living :
     interpret (F := F) (.unique tableAtSit0 0) g₀ gsLiving
-      = some Item.tableLiving := by
-  have hExists : (interpret (F := F) (.unique tableAtSit0 0) g₀ gsLiving).isSome
-      = true := by
-    rw [interpret_unique]
-    exact (russellIota_isSome_iff_existsUnique _).mpr
-      tableAtSit0_existsUnique_living
-  obtain ⟨e, he⟩ := Option.isSome_iff_exists.mp hExists
-  rw [he]
-  congr 1
-  have hSat : tableAtSit0 g₀ gsLiving e := by
-    have : russellIota (fun x => tableAtSit0 g₀ gsLiving x) = some e := by
-      rw [← interpret_unique]; exact he
-    exact russellIota_witness_satisfies _ e this
-  cases e <;>
-    first
-      | rfl
-      | (simp [tableAtSit0, tableIn, interpSitPronoun, gsLiving] at hSat)
+      = some Item.tableLiving :=
+  interpret_unique_eq_some_of_existsUnique _ 0 g₀ gsLiving Item.tableLiving trivial
+    (fun y hy => by cases y <;> simp_all [tableAtSit0, tableIn, interpSitPronoun, gsLiving])
 
 /-- The Hanink payoff: the *same* `.unique` description picks out
     different referents under different situation assignments. The

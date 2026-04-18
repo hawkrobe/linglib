@@ -55,7 +55,8 @@ set_option autoImplicit false
 namespace Semantics.Modality.KnowledgeProbability
 
 open Core.Proposition (BProp FiniteWorlds)
-open Core.IntensionalLogic.RestrictedModality (BAgentAccessRel BAccessRel kripkeEval)
+open Core.IntensionalLogic.RestrictedModality
+  (AgentAccessRel AccessRel boxR Refl Eucl refl_eucl_symm refl_eucl_trans)
 open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
 open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
 
@@ -74,7 +75,7 @@ open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)
     Structural conditions (CONS, UNIF, etc.) are separate predicates. -/
 structure KripkeKP (W E : Type*) where
   /-- Agent-indexed accessibility relation (information partition) -/
-  accessRel : BAgentAccessRel W E
+  accessRel : AgentAccessRel W E
   /-- World-dependent agent credence (probability spaces) -/
   worldCredence : WorldCredence E W
 
@@ -99,7 +100,7 @@ structure KripkeKP (W E : Type*) where
     probability to worlds they "know" are impossible. -/
 def CONS {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i : E) (w : W) (φ ψ : BProp W),
-    (∀ v, kp.accessRel i w v = true → φ v = ψ v) →
+    (∀ v, kp.accessRel i w v → φ v = ψ v) →
     kp.worldCredence i w φ = kp.worldCredence i w ψ
 
 /-- **OBJ** (Objectivity): all agents share the same probability at
@@ -129,7 +130,7 @@ def OBJ {W E : Type*} (kp : KripkeKP W E) : Prop :=
     worlds), the two are equivalent. Axiomatized by W9. -/
 def UNIF {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i : E) (w w' : W),
-    kp.accessRel i w w' = true →
+    kp.accessRel i w w' →
     ∀ (φ : BProp W), kp.worldCredence i w φ = kp.worldCredence i w' φ
 
 /-- **SDP** (State-determined probability): the probability distribution
@@ -143,7 +144,7 @@ def UNIF {W E : Type*} (kp : KripkeKP W E) : Prop :=
     Axiomatized by W10. -/
 def SDP {W E : Type*} (kp : KripkeKP W E) : Prop :=
   ∀ (i j : E) (w w' : W),
-    (∀ v, kp.accessRel i w v = kp.accessRel j w' v) →
+    (∀ v, kp.accessRel i w v ↔ kp.accessRel j w' v) →
     ∀ (φ : BProp W), kp.worldCredence i w φ = kp.worldCredence j w' φ
 
 -- ============================================================================
@@ -210,12 +211,11 @@ theorem measureMonotone_isProbabilistic {E W : Type*}
 theorem knows_implies_prob_one {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hCONS : CONS kp) (hNorm : Normalized kp)
     (i : E) (φ : BProp W) (w : W)
-    (hK : knows kp.accessRel i φ w = true) :
+    (hK : knows kp.accessRel i (fun v => φ v = true) w) :
     kp.worldCredence i w φ = 1 := by
   rw [hCONS i w φ (fun _ => true) (fun v hv => by
-    unfold knows kripkeEval at hK
-    exact List.all_eq_true.mp hK v
-      (List.mem_filter.mpr ⟨FiniteWorlds.complete v, hv⟩))]
+    have : φ v = true := hK v hv
+    simp [this])]
   exact hNorm i w
 
 -- ============================================================================
@@ -317,18 +317,16 @@ theorem probCKIter_monotone {W E : Type*}
     coincide whenever w' is accessible from w. This is the key property
     that makes S5 relations equivalence relations: accessibility classes
     are either identical or disjoint. -/
-private theorem s5_access_eq {W : Type*} {R : BAccessRel W}
-    (hRefl : Core.IntensionalLogic.RestrictedModality.BRefl R) (hEucl : Core.IntensionalLogic.RestrictedModality.BEucl R)
-    {w w' : W} (hAcc : R w w' = true) :
-    ∀ v, R w v = R w' v := by
-  have hSymm := Core.IntensionalLogic.RestrictedModality.brefl_eucl_symm hRefl hEucl
-  have hTrans := Core.IntensionalLogic.RestrictedModality.brefl_eucl_trans hRefl hEucl
+private theorem s5_access_eq {W : Type*} {R : AccessRel W}
+    (hRefl : Refl R) (hEucl : Eucl R)
+    {w w' : W} (hAcc : R w w') :
+    ∀ v, R w v ↔ R w' v := by
+  have hSymm := refl_eucl_symm hRefl hEucl
+  have hTrans := refl_eucl_trans hRefl hEucl
   intro v
-  cases hR : R w v <;> cases hR' : R w' v
-  · rfl
-  · exact absurd (hTrans w w' v hAcc hR') (by simp [hR])
-  · exact absurd (hTrans w' w v (hSymm w w' hAcc) hR) (by simp [hR'])
-  · rfl
+  refine ⟨fun hR => ?_, fun hR' => ?_⟩
+  · exact hTrans w' w v (hSymm w w' hAcc) hR
+  · exact hTrans w w' v hAcc hR'
 
 /-- SDP implies UNIF under S5 accessibility.
 
@@ -342,8 +340,7 @@ private theorem s5_access_eq {W : Type*} {R : BAccessRel W}
 theorem sdp_implies_unif {W E : Type*}
     (kp : KripkeKP W E)
     (hSDP : SDP kp)
-    (hS5 : ∀ i, Core.IntensionalLogic.RestrictedModality.BRefl (kp.accessRel i) ∧
-                  Core.IntensionalLogic.RestrictedModality.BEucl (kp.accessRel i)) :
+    (hS5 : ∀ i, Refl (kp.accessRel i) ∧ Eucl (kp.accessRel i)) :
     UNIF kp := by
   intro i w w' hAcc φ
   exact hSDP i i w w' (s5_access_eq (hS5 i).1 (hS5 i).2 hAcc) φ
@@ -357,14 +354,14 @@ theorem sdp_implies_unif {W E : Type*}
 theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hCONS : CONS kp) (hNorm : Normalized kp)
     (group : List E) (φ : BProp W) (w : W)
-    (h : everyoneKnows kp.accessRel group φ w = true) :
+    (h : everyoneKnows kp.accessRel group (fun v => φ v = true) w) :
     everyoneProbably kp.worldCredence group 1 φ w = true := by
   unfold everyoneProbably
   rw [List.all_eq_true]
   intro i hi
   simp only [nestedThreshold, decide_eq_true_eq]
   linarith [knows_implies_prob_one kp hCONS hNorm i φ w
-    (EpistemicLogic.everyoneKnows_implies_knows kp.accessRel group φ w i hi h)]
+    (EpistemicLogic.everyoneKnows_implies_knows kp.accessRel group _ w i hi h)]
 
 -- ============================================================================
 -- §7. UNIF and Introspection
@@ -382,7 +379,7 @@ theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [FiniteWorlds W]
 theorem unif_threshold_stable {W E : Type*}
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
     (i : E) (θ : ℚ) (φ : BProp W) (w w' : W)
-    (hAcc : kp.accessRel i w w' = true) :
+    (hAcc : kp.accessRel i w w') :
     nestedThreshold kp.worldCredence θ i φ w =
     nestedThreshold kp.worldCredence θ i φ w' := by
   simp only [nestedThreshold]
@@ -404,11 +401,9 @@ theorem unif_positive_introspection {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
     (i : E) (θ : ℚ) (φ : BProp W) (w : W)
     (h : nestedThreshold kp.worldCredence θ i φ w = true) :
-    knows kp.accessRel i (nestedThreshold kp.worldCredence θ i φ) w = true := by
-  unfold knows kripkeEval
-  rw [List.all_eq_true]
+    knows kp.accessRel i (fun v => nestedThreshold kp.worldCredence θ i φ v = true) w := by
   intro v hv
-  rw [← unif_threshold_stable kp hUNIF i θ φ w v (List.mem_filter.mp hv).2]
+  rw [← unif_threshold_stable kp hUNIF i θ φ w v hv]
   exact h
 
 /-- Under UNIF, probabilistic belief is negatively introspective:
@@ -423,12 +418,10 @@ theorem unif_negative_introspection {W E : Type*} [FiniteWorlds W]
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
     (i : E) (θ : ℚ) (φ : BProp W) (w : W)
     (h : nestedThreshold kp.worldCredence θ i φ w = false) :
-    knows kp.accessRel i (fun v => !(nestedThreshold kp.worldCredence θ i φ v)) w = true := by
-  unfold knows kripkeEval
-  rw [List.all_eq_true]
+    knows kp.accessRel i (fun v => !(nestedThreshold kp.worldCredence θ i φ v) = true) w := by
   intro v hv
-  have := unif_threshold_stable kp hUNIF i θ φ w v (List.mem_filter.mp hv).2
-  simp [← this, h]
+  have hStable := unif_threshold_stable kp hUNIF i θ φ w v hv
+  simp [← hStable, h]
 
 -- ============================================================================
 -- §8. Axiom W5 (Null Empty)
@@ -476,7 +469,7 @@ theorem miller_principle {W E : Type*}
   cases h : nestedThreshold kp.worldCredence b i φ w with
   | false =>
     -- threshold is false at w, hence at all accessible worlds (UNIF)
-    have hAgree : ∀ v, kp.accessRel i w v = true →
+    have hAgree : ∀ v, kp.accessRel i w v →
         nestedThreshold kp.worldCredence b i φ v = (fun _ => false) v := by
       intro v hv
       have := unif_threshold_stable kp hUNIF i b φ w v hv
@@ -485,7 +478,7 @@ theorem miller_principle {W E : Type*}
     exact hNonneg i w φ
   | true =>
     -- threshold is true at w, hence at all accessible worlds (UNIF)
-    have hAgree : ∀ v, kp.accessRel i w v = true →
+    have hAgree : ∀ v, kp.accessRel i w v →
         nestedThreshold kp.worldCredence b i φ v = (fun _ => true) v := by
       intro v hv
       have := unif_threshold_stable kp hUNIF i b φ w v hv

@@ -236,7 +236,7 @@ We reuse the world model from @cite{heim-1992} (`AttWorld` with
 `actual` and `believed`) and show that the scope theory derives the
 same empirical predictions via different machinery. -/
 
-open Heim1992 (AttWorld believesR)
+open Heim1992 (AttWorld believesRBool)
 
 /-- The complement "he lost his wetsuit" as an `Iₚ`-typed meaning.
 
@@ -252,7 +252,7 @@ def lostWetsuit : Iₚ AttWorld Bool
     The complement stays in situ; `believe` quantifies over doxastic
     alternatives with the complement evaluated locally. -/
 def believeLocal : Iₚ AttWorld Bool :=
-  believe (λ _ => believesR) [AttWorld.actual, AttWorld.believed]
+  believe (λ _ => believesRBool) [AttWorld.actual, AttWorld.believed]
     lostWetsuit () -- () stands for Theo (single-agent model)
 
 /-- Local reading at `actual`: Theo's only belief-world is `believed`,
@@ -279,7 +279,7 @@ theorem believe_local_always_defined (w : AttWorld) :
     (not within the scope of `believe`). -/
 def believeGlobal : Iₚ AttWorld Bool :=
   λ i => lostWetsuit i >>= (λ b =>
-    believe (λ _ => believesR) [AttWorld.actual, AttWorld.believed]
+    believe (λ _ => believesRBool) [AttWorld.actual, AttWorld.believed]
       (ηI b) () i)
 
 /-- Global reading at `actual`: complement is undefined → `none`.

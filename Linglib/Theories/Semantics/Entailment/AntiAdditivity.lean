@@ -5,6 +5,8 @@ Reference: @cite{chierchia-2013} section 1.4.3, @cite{ladusaw-1980}.
 
 import Mathlib.Order.Monotone.Defs
 import Mathlib.Data.List.Basic
+import Mathlib.Data.Finset.Card
+import Mathlib.Data.Fintype.Basic
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
@@ -12,6 +14,7 @@ import Linglib.Theories.Semantics.Entailment.Polarity
 namespace Semantics.Entailment.AntiAdditivity
 
 open Core.NaturalLogic (DEStrength UEStrength strengthSufficient)
+open Core.Proposition (Prop')
 open Semantics.Entailment
 open Semantics.Entailment.Polarity
 open List (Sublist)
@@ -20,265 +23,186 @@ open List (Sublist)
 section Definitions
 
 /-- Anti-additive: forall A B, f(A | B) = f(A) & f(B). -/
-def IsAntiAdditive (f : BProp World → BProp World) : Prop :=
-  ∀ p q : BProp World, (∀ w, f (por p q) w = (f p w && f q w))
+def IsAntiAdditive (f : Prop' World → Prop' World) : Prop :=
+  ∀ p q : Prop' World, ∀ w, f (por p q) w ↔ f p w ∧ f q w
 
 /--
 Anti-morphic (AM): Anti-additive + distributes ∧ to ∨ in both directions.
-
-`∀ A B, f(A ∧ B) = f(A) ∨ f(B)`
-
-This is the characteristic property of negation (De Morgan's law).
 -/
-def IsAntiMorphic (f : BProp World → BProp World) : Prop :=
+def IsAntiMorphic (f : Prop' World → Prop' World) : Prop :=
   IsAntiAdditive f ∧
-  (∀ p q : BProp World, (∀ w, f (pand p q) w = (f p w || f q w)))
+  (∀ p q : Prop' World, ∀ w, f (pand p q) w ↔ f p w ∨ f q w)
 
 
-/--
-Anti-additive implies DE.
-
-The left-to-right direction of anti-additivity is exactly the DE property.
--/
-theorem antiAdditive_implies_de (f : BProp World → BProp World) (hAA : IsAntiAdditive f) :
+/-- Anti-additive implies DE. -/
+theorem antiAdditive_implies_de (f : Prop' World → Prop' World) (hAA : IsAntiAdditive f) :
     IsDownwardEntailing f := by
-  intro p q hpq
-  intro w
-  -- We need: f q w ≤ f p w
-  -- Key: when p ≤ q, we have por p q = q pointwise
-  have h_por_eq : ∀ w', por p q w' = q w' := by
-    intro w'
-    have hpq_w := hpq w'
-    simp only [por, Core.Proposition.Decidable.por]
-    -- p w' || q w' = q w' when p w' ≤ q w'
-    cases hp : p w' <;> cases hq : q w'
-    · rfl
-    · rfl
-    · -- p w' = true, q w' = false, but hpq_w : true ≤ false, contradiction
-      simp only [hp, hq] at hpq_w
-      -- hpq_w : true ≤ false, derive false = true which is absurd
-      have : false = true := Bool.eq_true_of_true_le hpq_w
-      cases this
-    · rfl
-  -- Now use anti-additivity: f(p ∨ q) = f(p) ∧ f(q)
-  have hAA_w := hAA p q w
-  -- f(p ∨ q) w = f(p) w && f(q) w
-  -- But f(p ∨ q) = f(q) since p ∨ q = q
-  have h_feq : f (por p q) w = f q w := by
-    congr 1
+  intro p q hpq w hfq
+  have hpor_eq : por p q = q := by
     funext w'
-    exact h_por_eq w'
-  -- So f(q) w = f(p) w && f(q) w
-  rw [h_feq] at hAA_w
-  -- This means f(q) w ≤ f(p) w (since x = x && y implies x ≤ y in Bool)
-  cases hfp : f p w <;> cases hfq : f q w <;> simp_all
+    simp only [por, Core.Proposition.Classical.por, eq_iff_iff]
+    exact ⟨fun h => h.elim (hpq w') id, Or.inr⟩
+  have := (hAA p q w).mp (by rw [hpor_eq]; exact hfq)
+  exact this.1
 
-/--
-Anti-morphic implies anti-additive.
-
-By definition, anti-morphic is anti-additive plus the ∧-to-∨ property.
--/
-theorem antiMorphic_implies_antiAdditive (f : BProp World → BProp World) (hAM : IsAntiMorphic f) :
+/-- Anti-morphic implies anti-additive. -/
+theorem antiMorphic_implies_antiAdditive (f : Prop' World → Prop' World) (hAM : IsAntiMorphic f) :
     IsAntiAdditive f :=
   hAM.1
 
-/--
-Anti-morphic implies DE.
-
-Transitive: AM → AA → DE.
--/
-theorem antiMorphic_implies_de (f : BProp World → BProp World) (hAM : IsAntiMorphic f) :
+/-- Anti-morphic implies DE. -/
+theorem antiMorphic_implies_de (f : Prop' World → Prop' World) (hAM : IsAntiMorphic f) :
     IsDownwardEntailing f :=
   antiAdditive_implies_de f (antiMorphic_implies_antiAdditive f hAM)
 
 
-/--
-Negation is anti-additive.
-
-`¬(A ∨ B) = ¬A ∧ ¬B` (De Morgan's law, part 1)
--/
+/-- Negation is anti-additive. -/
 theorem pnot_isAntiAdditive : IsAntiAdditive pnot := by
   intro p q w
-  simp only [pnot, por, Core.Proposition.Decidable.pnot, Core.Proposition.Decidable.por]
-  cases p w <;> cases q w <;> rfl
+  simp only [pnot, por, Core.Proposition.Classical.pnot, Core.Proposition.Classical.por,
+             not_or]
 
-/--
-Negation satisfies the conjunction-to-disjunction property.
-
-`¬(A ∧ B) = ¬A ∨ ¬B` (De Morgan's law, part 2)
--/
-theorem pnot_distributes_and : ∀ p q : BProp World, (∀ w, pnot (pand p q) w = (pnot p w || pnot q w)) := by
+/-- Negation satisfies the conjunction-to-disjunction property. -/
+theorem pnot_distributes_and :
+    ∀ p q : Prop' World, ∀ w, pnot (pand p q) w ↔ pnot p w ∨ pnot q w := by
   intro p q w
-  simp only [pnot, pand, Core.Proposition.Decidable.pnot, Core.Proposition.Decidable.pand]
-  cases p w <;> cases q w <;> rfl
+  simp only [pnot, pand, Core.Proposition.Classical.pnot, Core.Proposition.Classical.pand,
+             not_and_or]
 
-/--
-Negation is anti-morphic.
-
-This is the strongest level in the hierarchy.
--/
+/-- Negation is anti-morphic. -/
 theorem pnot_isAntiMorphic : IsAntiMorphic pnot :=
   ⟨pnot_isAntiAdditive, pnot_distributes_and⟩
 
 
-/--
-"No A is B" = ∀x. A(x) → ¬B(x)
+/-- "No A is B" = ∀x. A(x) → ¬B(x). -/
+def no' (restr : Prop' World) (scope : Prop' World) : Prop' World :=
+  λ _ => ∀ x ∈ allWorlds, ¬ (restr x ∧ scope x)
 
-For a fixed restrictor, "no ___" as a function of scope.
--/
-def no' (restr : BProp World) (scope : BProp World) : BProp World :=
-  λ _ => allWorlds.all λ x => !(restr x && scope x)
+/-- "No student ___" with fixed restrictor. -/
+def no_student : Prop' World → Prop' World := no' p01
 
-/--
-"No student ___" with fixed restrictor.
--/
-def no_student : BProp World → BProp World := no' p01  -- p01 = "students"
-
-/--
-"No" is anti-additive in scope.
-
-`No A (B ∨ C) ⊣⊢ No A B ∧ No A C`
-
-Proof: "No student smokes or drinks" iff "No student smokes and no student drinks"
--/
+/-- "No" is anti-additive in scope. -/
 theorem no_isAntiAdditive_scope : IsAntiAdditive no_student := by
   intro p q _w
-  simp only [no_student, no', por, Core.Proposition.Decidable.por,
-             allWorlds, p01, List.all_cons, List.all_nil]
-  -- After expanding allWorlds and p01, case-split on all variable values
-  -- World has 4 constructors, so we split on p and q at each
-  cases p .w0 <;> cases q .w0 <;> cases p .w1 <;> cases q .w1 <;>
-    cases p .w2 <;> cases q .w2 <;> cases p .w3 <;> cases q .w3 <;> decide
+  simp only [no_student, no', por, Core.Proposition.Classical.por, not_and, not_or]
+  constructor
+  · intro h
+    refine ⟨?_, ?_⟩ <;> intro x hx hr
+    · exact (h x hx hr).1
+    · exact (h x hx hr).2
+  · rintro ⟨h1, h2⟩ x hx hr
+    exact ⟨h1 x hx hr, h2 x hx hr⟩
 
-/--
-"No" is DE in scope.
-
-Follows from anti-additivity.
--/
+/-- "No" is DE in scope. -/
 theorem no_isDE_scope : IsDE no_student :=
   antiAdditive_implies_de no_student no_isAntiAdditive_scope
 
 
-/--
-"At most n A's are B" - true if |A ∩ B| ≤ n.
+/-- "At most n A's are B" - true if at most n worlds satisfy both.
+    Uses an existential over a sublist witness so the def is decidable
+    only when the predicates are decidable, but stays in `Prop`. -/
+def atMost (n : Nat) (restr scope : Prop' World) : Prop :=
+  ∀ ws : List World, ws.Nodup →
+    (∀ w ∈ ws, restr w ∧ scope w) →
+    ws.length ≤ n
 
-We use a simplified version for our 4-world model.
--/
-def atMost (n : Nat) (restr scope : BProp World) : Bool :=
-  (allWorlds.filter λ w => restr w && scope w).length ≤ n
+/-- Monotonicity: if `p ⊆ q` (entailment) and `q` has at most `n` witnesses,
+    so does `p`. -/
+theorem atMost_mono (n : Nat) (restr p q : Prop' World)
+    (hpq : ∀ w, p w → q w) (h : atMost n restr q) :
+    atMost n restr p := by
+  intro ws hnd hall
+  apply h ws hnd
+  intro w hw
+  exact ⟨(hall w hw).1, hpq w (hall w hw).2⟩
 
-/--
-"At most 2 students ___" with fixed restrictor.
--/
-def atMost2_student : BProp World → BProp World :=
+/-- "At most 2 students ___" with fixed restrictor. -/
+def atMost2_student : Prop' World → Prop' World :=
   λ scope => λ _ => atMost 2 p01 scope
 
-/--
-"At most n" is DE in scope.
-
-If P ⊆ Q, then "At most n A's are Q" ⊢ "At most n A's are P"
-
-Because |A ∩ P| ≤ |A ∩ Q| when P ⊆ Q.
--/
+/-- "At most n" is DE in scope. -/
 theorem atMost_isDE_scope : IsDE atMost2_student := by
-  intro p q hpq
-  intro w
-  simp only [atMost2_student, atMost]
-  -- Need: if atMost 2 p01 q then atMost 2 p01 p
-  -- I.e., |p01 ∩ q| ≤ 2 → |p01 ∩ p| ≤ 2
-  -- Since p ≤ q, we have p01 ∩ p ⊆ p01 ∩ q
-  intro h
-  have subset : ∀ x, (p01 x && p x) = true → (p01 x && q x) = true := by
-    intro x hx
-    simp only [Bool.and_eq_true] at hx ⊢
-    exact ⟨hx.1, hpq x hx.2⟩
-  -- The filter for p has elements that are a subset of those for q
-  -- so |filter p| ≤ |filter q| when filtering the same base list
-  have len_le : (allWorlds.filter λ w => p01 w && p w).length ≤
-                (allWorlds.filter λ w => p01 w && q w).length := by
-    -- Use monotone_filter_right: if p a → q a, then l.filter p <+ l.filter q
-    have hsub : Sublist (allWorlds.filter λ w => p01 w && p w)
-                        (allWorlds.filter λ w => p01 w && q w) :=
-      List.monotone_filter_right allWorlds subset
-    exact Sublist.length_le hsub
-  -- h and len_le together imply the goal
-  -- h : (filter for q).length ≤ 2 = true, need: (filter for p).length ≤ 2 = true
-  simp only [decide_eq_true_eq] at h ⊢
-  exact Nat.le_trans len_le h
+  intro p q hpq _w h
+  exact atMost_mono 2 p01 p q (fun w => hpq w) h
 
-/--
-"At most 1 student ___" with fixed restrictor.
-
-Using `atMost 1` (not 2) because with only 2 students in p01,
-`atMost 2` is trivially always true and hence vacuously anti-additive.
--/
-def atMost1_student : BProp World → BProp World :=
+/-- "At most 1 student ___" with fixed restrictor. -/
+def atMost1_student : Prop' World → Prop' World :=
   λ scope => λ _ => atMost 1 p01 scope
 
-/-- "At most 1" is still DE (the DE proof generalizes to any n). -/
+/-- "At most 1" is still DE. -/
 theorem atMost1_isDE_scope : IsDE atMost1_student := by
-  intro p q hpq
-  intro w
-  simp only [atMost1_student, atMost]
-  intro h
-  have subset : ∀ x, (p01 x && p x) = true → (p01 x && q x) = true := by
-    intro x hx
-    simp only [Bool.and_eq_true] at hx ⊢
-    exact ⟨hx.1, hpq x hx.2⟩
-  have len_le : (allWorlds.filter λ w => p01 w && p w).length ≤
-                (allWorlds.filter λ w => p01 w && q w).length := by
-    have hsub : Sublist (allWorlds.filter λ w => p01 w && p w)
-                        (allWorlds.filter λ w => p01 w && q w) :=
-      List.monotone_filter_right allWorlds subset
-    exact Sublist.length_le hsub
-  simp only [decide_eq_true_eq] at h ⊢
-  exact Nat.le_trans len_le h
+  intro p q hpq _w h
+  exact atMost_mono 1 p01 p q (fun w => hpq w) h
 
-/--
-"At most n" is not anti-additive (counterexample).
-
-The right-to-left direction of anti-additivity fails:
-- "At most 1 student smokes" ∧ "At most 1 student drinks"
-  does NOT imply "At most 1 student smokes or drinks"
-
-Counterexample: let p = {w0} (only w0 smokes), q = {w1} (only w1 drinks).
-Then p01 ∩ p = {w0} (1 ≤ 1 ✓), p01 ∩ q = {w1} (1 ≤ 1 ✓),
-but p01 ∩ (p ∨ q) = {w0, w1} (2 > 1 ✗).
--/
+/-- "At most n" is not anti-additive (counterexample). -/
 theorem atMost_not_antiAdditive :
     ¬IsAntiAdditive atMost1_student := by
   intro h
-  -- Witness: p = w0 only, q = w1 only
-  have := h p0 (λ w => w == .w1) .w0
-  simp only [atMost1_student, atMost, por, Core.Proposition.Decidable.por,
-             p0, p01, allWorlds] at this
-  -- After reducing, this gives false = true
-  exact absurd this (by native_decide)
+  let qProp : Prop' World := λ w => w = .w1
+  have key : atMost1_student (por p0 qProp) .w0 ↔
+             atMost1_student p0 .w0 ∧ atMost1_student qProp .w0 := h _ _ _
+  -- p0 has just w0 as a witness; ≤ 1 ✓
+  have hp : atMost1_student p0 .w0 := by
+    intro ws hnd hall
+    -- Every element of ws satisfies p01 ∧ p0, hence equals w0
+    have hall_w0 : ∀ w ∈ ws, w = .w0 := by
+      intro w hw
+      have := (hall w hw).2
+      simpa [p0] using this
+    -- A nodup list whose every element is w0 has length ≤ 1
+    rcases ws with _ | ⟨a, t⟩
+    · simp
+    · rcases t with _ | ⟨b, t'⟩
+      · simp
+      · exfalso
+        have ha : a = .w0 := hall_w0 a (List.mem_cons_self ..)
+        have hb : b = .w0 := hall_w0 b (List.mem_cons_of_mem _ (List.mem_cons_self ..))
+        have : a ≠ b := List.ne_of_not_mem_cons (List.Nodup.notMem hnd)
+        exact this (ha.trans hb.symm)
+  -- qProp has just w1 as a witness; ≤ 1 ✓
+  have hq : atMost1_student qProp .w0 := by
+    intro ws hnd hall
+    have hall_w1 : ∀ w ∈ ws, w = .w1 := by
+      intro w hw
+      have := (hall w hw).2
+      simpa [qProp] using this
+    rcases ws with _ | ⟨a, t⟩
+    · simp
+    · rcases t with _ | ⟨b, t'⟩
+      · simp
+      · exfalso
+        have ha : a = .w1 := hall_w1 a (List.mem_cons_self ..)
+        have hb : b = .w1 := hall_w1 b (List.mem_cons_of_mem _ (List.mem_cons_self ..))
+        have : a ≠ b := List.ne_of_not_mem_cons (List.Nodup.notMem hnd)
+        exact this (ha.trans hb.symm)
+  -- por p0 qProp has both w0 and w1 as witnesses; not ≤ 1
+  have hcontr : ¬ atMost1_student (por p0 qProp) .w0 := by
+    intro hle
+    have : ([World.w0, World.w1]).length ≤ 1 := by
+      apply hle [.w0, .w1]
+      · decide
+      · intro w hw
+        rcases List.mem_cons.mp hw with rfl | hw'
+        · exact ⟨Or.inl rfl, by left; rfl⟩
+        · rcases List.mem_singleton.mp hw' with rfl
+          exact ⟨Or.inr rfl, by right; rfl⟩
+    simp at this
+  exact hcontr (key.mpr ⟨hp, hq⟩)
 
 
-/--
-Weak NPI licensing: Requires DE context.
 
-Examples: ever, any (unstressed), alcun
--/
-def licensesWeakNPI (f : BProp World → BProp World) : Prop := IsDownwardEntailing f
+/-- Weak NPI licensing: requires DE. -/
+def licensesWeakNPI (f : Prop' World → Prop' World) : Prop := IsDownwardEntailing f
 
-/--
-Strong NPI licensing: Requires Anti-Additive context.
+/-- Strong NPI licensing: requires Anti-Additive. -/
+def licensesStrongNPI (f : Prop' World → Prop' World) : Prop := IsAntiAdditive f
 
-Examples: lift a finger, in weeks, until
--/
-def licensesStrongNPI (f : BProp World → BProp World) : Prop := IsAntiAdditive f
-
--- Verify: negation licenses both
 example : licensesWeakNPI pnot := pnot_isDownwardEntailing
 example : licensesStrongNPI pnot := pnot_isAntiAdditive
 
--- Verify: "no" licenses both
 example : licensesWeakNPI no_student := no_isDE_scope
 example : licensesStrongNPI no_student := no_isAntiAdditive_scope
 
--- Verify: "at most n" licenses weak
 example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 
 
@@ -291,16 +215,6 @@ example : licensesWeakNPI atMost2_student := atMost_isDE_scope
 | `.weak` | `IsDE` | few, at most n |
 | `.antiAdditive` | `IsAntiAdditive` | no, nobody, without |
 | `.antiMorphic` | `IsAntiMorphic` | not, never |
-
-### Strong NPIs require `.antiAdditive` or stronger:
-
-- "*Few people lifted a finger" — `few` is only DE, not AA
-- "No one lifted a finger" — `no one` is AA ✓
-
-### Weak NPIs accept `.weak` or stronger:
-
-- "Few people ever complained" — `few` is DE ✓
-- "No one ever complained" — `no one` is AA (≥ weak) ✓
 -/
 
 end Definitions
@@ -312,93 +226,55 @@ end Definitions
 
 section UEDuals
 
-/-- Additive: f(A ∨ B) = f(A) ∨ f(B) and f(⊤) = ⊤.
-    Dual of anti-additive. Preserved by "some" in both arguments. -/
-def IsAdditive (f : BProp World → BProp World) : Prop :=
-  (∀ p q : BProp World, ∀ w, f (por p q) w = (f p w || f q w)) ∧
-  (∀ w, f pAll w = true)
+/-- Additive: f(A ∨ B) = f(A) ∨ f(B) and f(⊤) = ⊤. -/
+def IsAdditive (f : Prop' World → Prop' World) : Prop :=
+  (∀ p q : Prop' World, ∀ w, f (por p q) w ↔ f p w ∨ f q w) ∧
+  (∀ w, f pAll w)
 
-/-- Multiplicative: f(A ∧ B) = f(A) ∧ f(B) and f(⊥) = ⊥.
-    Dual of anti-morphic's ∧-to-∨ clause. Preserved by "every" in scope. -/
-def IsMultiplicative (f : BProp World → BProp World) : Prop :=
-  (∀ p q : BProp World, ∀ w, f (pand p q) w = (f p w && f q w)) ∧
-  (∀ w, f pNone w = false)
+/-- Multiplicative: f(A ∧ B) = f(A) ∧ f(B) and f(⊥) = ⊥. -/
+def IsMultiplicative (f : Prop' World → Prop' World) : Prop :=
+  (∀ p q : Prop' World, ∀ w, f (pand p q) w ↔ f p w ∧ f q w) ∧
+  (∀ w, ¬ f pNone w)
 
-/-- Anti-multiplicative: f(A ∧ B) = f(A) ∨ f(B) and f(⊥) = ⊤.
-    Dual of anti-additive. Characteristic of "not every". -/
-def IsAntiMultiplicative (f : BProp World → BProp World) : Prop :=
-  (∀ p q : BProp World, ∀ w, f (pand p q) w = (f p w || f q w)) ∧
-  (∀ w, f pNone w = true)
+/-- Anti-multiplicative: f(A ∧ B) = f(A) ∨ f(B) and f(⊥) = ⊤. -/
+def IsAntiMultiplicative (f : Prop' World → Prop' World) : Prop :=
+  (∀ p q : Prop' World, ∀ w, f (pand p q) w ↔ f p w ∨ f q w) ∧
+  (∀ w, f pNone w)
 
-/-- Additive implies UE: f distributes over ∨ ⇒ f preserves entailment.
-    Proof mirrors `antiAdditive_implies_de`. -/
-theorem additive_implies_ue (f : BProp World → BProp World) (hAdd : IsAdditive f) :
+/-- Additive implies UE. -/
+theorem additive_implies_ue (f : Prop' World → Prop' World) (hAdd : IsAdditive f) :
     IsUpwardEntailing f := by
-  intro p q hpq w
-  -- p ≤ q ⇒ p ∨ q = q pointwise
-  have h_por_eq : ∀ w', por p q w' = q w' := by
-    intro w'
-    have hpq_w := hpq w'
-    simp only [por, Core.Proposition.Decidable.por]
-    cases hp : p w' <;> cases hq : q w'
-    · rfl
-    · rfl
-    · simp only [hp, hq] at hpq_w
-      have : false = true := Bool.eq_true_of_true_le hpq_w
-      cases this
-    · rfl
-  have hAdd_w := hAdd.1 p q w
-  have h_feq : f (por p q) w = f q w := by
-    congr 1; funext w'; exact h_por_eq w'
-  rw [h_feq] at hAdd_w
-  -- f q w = f p w || f q w ⇒ f p w ≤ f q w
-  cases hfp : f p w <;> cases hfq : f q w <;> simp_all
+  intro p q hpq w hfp
+  have hpor_eq : por p q = q := by
+    funext w'
+    simp only [por, Core.Proposition.Classical.por, eq_iff_iff]
+    exact ⟨fun h => h.elim (hpq w') id, Or.inr⟩
+  have := (hAdd.1 p q w).mpr (Or.inl hfp)
+  rw [hpor_eq] at this
+  exact this
 
 /-- Multiplicative implies UE. -/
-theorem multiplicative_implies_ue (f : BProp World → BProp World) (hMult : IsMultiplicative f) :
+theorem multiplicative_implies_ue (f : Prop' World → Prop' World) (hMult : IsMultiplicative f) :
     IsUpwardEntailing f := by
-  intro p q hpq w
-  -- p ≤ q ⇒ p ∧ q = p pointwise
-  have h_pand_eq : ∀ w', pand p q w' = p w' := by
-    intro w'
-    have hpq_w := hpq w'
-    simp only [pand, Core.Proposition.Decidable.pand]
-    cases hp : p w' <;> cases hq : q w'
-    · rfl
-    · rfl
-    · simp only [hp, hq] at hpq_w
-      have : false = true := Bool.eq_true_of_true_le hpq_w
-      cases this
-    · rfl
-  have hMult_w := hMult.1 p q w
-  have h_feq : f (pand p q) w = f p w := by
-    congr 1; funext w'; exact h_pand_eq w'
-  rw [h_feq] at hMult_w
-  -- f p w = f p w && f q w ⇒ f p w ≤ f q w
-  cases hfp : f p w <;> cases hfq : f q w <;> simp_all
+  intro p q hpq w hfp
+  have hpand_eq : pand p q = p := by
+    funext w'
+    simp only [pand, Core.Proposition.Classical.pand, eq_iff_iff]
+    exact ⟨And.left, fun h => ⟨h, hpq w' h⟩⟩
+  have hfpand : f (pand p q) w := by rw [hpand_eq]; exact hfp
+  exact ((hMult.1 p q w).mp hfpand).2
 
 /-- Anti-multiplicative implies DE. -/
-theorem antiMultiplicative_implies_de (f : BProp World → BProp World) (hAM : IsAntiMultiplicative f) :
+theorem antiMultiplicative_implies_de (f : Prop' World → Prop' World) (hAM : IsAntiMultiplicative f) :
     IsDownwardEntailing f := by
-  intro p q hpq w
-  -- p ≤ q ⇒ p ∧ q = p pointwise
-  have h_pand_eq : ∀ w', pand p q w' = p w' := by
-    intro w'
-    have hpq_w := hpq w'
-    simp only [pand, Core.Proposition.Decidable.pand]
-    cases hp : p w' <;> cases hq : q w'
-    · rfl
-    · rfl
-    · simp only [hp, hq] at hpq_w
-      have : false = true := Bool.eq_true_of_true_le hpq_w
-      cases this
-    · rfl
-  have hAM_w := hAM.1 p q w
-  have h_feq : f (pand p q) w = f p w := by
-    congr 1; funext w'; exact h_pand_eq w'
-  rw [h_feq] at hAM_w
-  -- f p w = f p w || f q w ⇒ f q w ≤ f p w
-  cases hfp : f p w <;> cases hfq : f q w <;> simp_all
+  intro p q hpq w hfq
+  have hpand_eq : pand p q = p := by
+    funext w'
+    simp only [pand, Core.Proposition.Classical.pand, eq_iff_iff]
+    exact ⟨And.left, fun h => ⟨h, hpq w' h⟩⟩
+  have h := (hAM.1 p q w).mpr (Or.inr hfq)
+  rw [hpand_eq] at h
+  exact h
 
 end UEDuals
 

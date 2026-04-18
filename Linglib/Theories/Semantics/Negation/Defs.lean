@@ -78,26 +78,35 @@ def standardNeg (W : Type*) : NegOp W where
 -- ── Additional semantic properties ──
 
 /-- A NegOp is anti-additive if it distributes ∨ to ∧:
-    `¬(A ∨ B) = ¬A ∧ ¬B` (De Morgan, part 1). -/
+    `¬(A ∨ B) = ¬A ∧ ¬B` (De Morgan, part 1).
+    Stated directly on the BProp-typed operator. -/
 def NegOp.isAntiAdditive (n : NegOp World) : Prop :=
-  IsAntiAdditive n.op
+  ∀ p q : BProp World, ∀ w, n.op (Core.Proposition.Decidable.por World p q) w =
+    (n.op p w && n.op q w)
 
 /-- A NegOp is anti-morphic if it is anti-additive AND distributes ∧ to ∨:
     `¬(A ∧ B) = ¬A ∨ ¬B` (De Morgan, part 2).
     This is the full De Morgan property — the characteristic signature
     of negation in the entailment hierarchy. -/
 def NegOp.isAntiMorphic (n : NegOp World) : Prop :=
-  IsAntiMorphic n.op
+  n.isAntiAdditive ∧
+  ∀ p q : BProp World, ∀ w, n.op (Core.Proposition.Decidable.pand World p q) w =
+    (n.op p w || n.op q w)
 
 /-- Standard negation is anti-additive (De Morgan part 1). -/
 theorem standardNeg_isAntiAdditive :
-    (standardNeg World).isAntiAdditive :=
-  pnot_isAntiAdditive
+    (standardNeg World).isAntiAdditive := by
+  intro p q w
+  simp [standardNeg, Core.Proposition.Decidable.pnot,
+        Core.Proposition.Decidable.por, Bool.not_or]
 
 /-- Standard negation is anti-morphic (full De Morgan). -/
 theorem standardNeg_isAntiMorphic :
-    (standardNeg World).isAntiMorphic :=
-  pnot_isAntiMorphic
+    (standardNeg World).isAntiMorphic := by
+  refine ⟨standardNeg_isAntiAdditive, ?_⟩
+  intro p q w
+  simp [standardNeg, Core.Proposition.Decidable.pnot,
+        Core.Proposition.Decidable.pand, Bool.not_and]
 
 -- ════════════════════════════════════════════════════
 -- § 2. DEStrength → PolarityLicensing bridge

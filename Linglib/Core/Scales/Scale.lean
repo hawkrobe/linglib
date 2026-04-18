@@ -324,7 +324,7 @@ structure ScaleRepresentation (S : Type*) [Preorder S] (D : Type*) [Preorder D] 
 
     - `GradablePredicate E D` extends `DirectedMeasure D E` with `form`
     - `kennedyNumeral`, `rouillardETIA`, etc. produce `DirectedMeasure` instances
-    - Epistemic vocabulary: `DirectedMeasure ℚ (E × BProp W)`
+    - Epistemic vocabulary: `DirectedMeasure ℚ (E × (W → Prop))`
 
     The degree property (`atLeastDeg` for positive, `atMostDeg` for
     negative) is **derived** from direction, not stored. This captures

@@ -126,8 +126,8 @@ def ifKP [DecidableEq W] (restriction : List W)
 
 A proposition is CP-acceptable in context `c` iff it is neither
 trivially true nor trivially false in `c`. -/
-def cpAcceptable (c : BProp W) (p : BProp W) : Prop :=
-  (∃ w, c w = true ∧ p w = true) ∧ (∃ w, c w = true ∧ p w = false)
+def cpAcceptable (c : Prop' W) (p : Prop' W) : Prop :=
+  (∃ w, c w ∧ p w) ∧ (∃ w, c w ∧ ¬ p w)
 
 /-- Type-flexible disjunction over properties (Sharvit's `or^{K/P**}`, (142a)).
 

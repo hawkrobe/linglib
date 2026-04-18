@@ -7,47 +7,31 @@ import Linglib.Theories.Syntax.Minimalism.Core.Voice
 @cite{kratzer-1996} @cite{rappaport-hovav-levin-1998}
 
 Two accounts of argument realization make predictions about external
-argument theta roles. This bridge file tests each account's predictions
-independently against hand-annotated `subjectTheta` in the English
-verb fragment. Both are instantiated as `LinkingTheory` (see
+argument theta roles. The Severing vs Lexicalist comparison
+infrastructure now lives in `VoiceTheta.lean` and operates over
+proto-role entailment profiles (`subjectEntailments` /
+`objectEntailments`) rather than the legacy `subjectTheta` /
+`objectTheta` labels (which were removed from `VerbCore`). Both accounts
+are instantiated as `LinkingTheory` (see
 `Theories/Interfaces/SyntaxSemantics/Linking.lean`).
 
 ## Account 1: Severing
 
 Voice flavor determines the theta role: Voice_AG → agent, Voice_CAUSE →
-stimulus. The prediction chain is: verb → Voice selection → theta role.
-`Ctx = VoiceFlavor`; `predict` ignores the verb.
+stimulus. The current Voice typology has only two θ-assigning flavors,
+so it cannot distinguish experiencer from agent or theme from internal-
+arg derivation.
 
-The current Voice typology has only two θ-assigning flavors, so it can
-only distinguish agent from stimulus. It correctly predicts ~71% of verbs
-(all agents + all stimuli), but systematically fails for:
-- **Experiencer subjects** (know, believe, enjoy,...): Voice_AG predicts
-  agent, but the actual role is experiencer. The typology lacks a
-  Voice_EXPERIENCER flavor.
-- **Theme subjects** (arrive, glow, whisper,...): Voice_nonThematic
-  predicts none (no external argument), but the subject IS the internal
-  argument that moved. The severing account correctly predicts no
-  *external* argument; the subject's theta role comes from V, not Voice.
+## Account 2: Lexicalist (@cite{levin-1993}, @cite{rappaport-hovav-levin-1998})
 
-## Account 2: Lexicalist (@cite{levin-1993}, Rappaport @cite{rappaport-hovav-levin-1998})
+The verb's lexical semantics — attitude, causalSource, factivePresup,
+levinClass, unaccusative, controlType, and proto-role entailments —
+determines the theta role, bypassing Voice.
 
-The verb's lexical semantics determines the theta role, bypassing Voice.
-`Ctx = Unit`; `predict` ignores structure. Uses attitude,
-causalSource, objectTheta, factivePresup, levinClass, unaccusative,
-controlType — all verb-internal semantic properties.
-
-Correctly predicts ~93% of verbs. Fails for 6 genuinely irreducible
-cases (sweep, remember, forget, dare, bother, hesitate) and 6 verbs
-with missing annotations.
+This file retains only the causative-alternation tree derivations
+(Part III); per-verb θ-role comparison theorems were removed with the
+`subjectTheta` / `objectTheta` fields.
 -/
-
--- ════════════════════════════════════════════════════════════════════════
--- NOTE: The per-verb θ-role comparison theorems (Parts I–II) have been
--- removed following the removal of `subjectTheta`/`objectTheta` fields
--- from VerbCore. The severing vs. lexicalist linking theory comparison
--- infrastructure lives in VoiceTheta.lean. The causative alternation
--- tree derivations (Part III) remain below.
--- ════════════════════════════════════════════════════════════════════════
 
 namespace Kratzer1996
 

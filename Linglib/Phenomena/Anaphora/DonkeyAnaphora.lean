@@ -1,5 +1,10 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Definiteness
+import Linglib.Core.Nominal.ArticleInventory
+import Linglib.Fragments.German.Definiteness
+import Linglib.Fragments.Thai.Definiteness
+import Linglib.Fragments.Mandarin.Definiteness
+import Linglib.Fragments.Shan.Definiteness
 
 /-!
 # Donkey Anaphora: Empirical Data
@@ -264,6 +269,7 @@ This parallels the general pattern for anaphoric definites in
 
 open Core.Definiteness (DefiniteUseType DefPresupType useTypeToPresupType
   ArticleType)
+open Core.Nominal (ArticleInventory)
 
 /-- Donkey anaphora is classified as its own use type in the definiteness
 typology, distinct from regular anaphora but sharing the same
@@ -286,35 +292,44 @@ theorem donkey_patterns_with_anaphoric :
 
 /-- Cross-linguistic data on how donkey anaphora is expressed
 morphologically. This connects the abstract `DefiniteUseType.donkey`
-to concrete article forms. -/
+to concrete article forms.
+
+The article system (`articleSystem`) is *derived* from the language's
+fragment-level `articleInventory`, not stipulated independently —
+`ArticleInventory` is the single source of truth. -/
 structure DonkeyArticleDatum where
   language : String
   isoCode : String
   /-- Morphological form used for donkey pronouns -/
   form : String
-  /-- Article system of the language -/
-  articleSystem : ArticleType
+  /-- Morphological article inventory (single source of truth from which
+      `articleSystem` is derived). -/
+  articleInventory : ArticleInventory
   deriving Repr
+
+/-- Schwarz `ArticleType` classification, derived from `articleInventory`. -/
+def DonkeyArticleDatum.articleSystem (d : DonkeyArticleDatum) : ArticleType :=
+  d.articleInventory.toArticleType
 
 def germanDonkey : DonkeyArticleDatum :=
   { language := "German", isoCode := "deu"
     form := "strong article (von dem)"
-    articleSystem := .weakAndStrong }
+    articleInventory := Fragments.German.Definiteness.articleInventory }
 
 def thaiDonkey : DonkeyArticleDatum :=
   { language := "Thai", isoCode := "tha"
     form := "demonstrative"
-    articleSystem := .weakOnly }
+    articleInventory := Fragments.Thai.Definiteness.articleInventory }
 
 def mandarinDonkey : DonkeyArticleDatum :=
   { language := "Mandarin", isoCode := "cmn"
     form := "demonstrative"
-    articleSystem := .none_ }
+    articleInventory := Fragments.Mandarin.Definiteness.articleInventory }
 
 def shanDonkey : DonkeyArticleDatum :=
   { language := "Shan", isoCode := "shn"
     form := "bare noun"
-    articleSystem := .none_ }
+    articleInventory := Fragments.Shan.Definiteness.articleInventory }
 
 /-- All cross-linguistic donkey article data. -/
 def donkeyArticleData : List DonkeyArticleDatum :=
