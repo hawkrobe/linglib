@@ -939,6 +939,33 @@ theorem stalnakerCounterfactual_eq_wouldConditional_universe
       s (fun w' => A w' = true) (fun w' => B w' = true) Set.univ w :=
   stalnakerCounterfactual_eq_willConditional_universe s A B w
 
+/-- **Truth3 ↔ would-conditional bridge** @cite{cariani-santorio-2018}
+    §5.3.1 + §5.3.2: composing `stalnaker_eq_selectional_singleton`
+    (Truth3 ↔ Bool stalnakerCounterfactual under singleton-closest) with
+    `stalnakerCounterfactual_eq_wouldConditional_universe` (Bool ↔ Prop
+    would-conditional under universe parameter) gives a direct bridge
+    from the supervaluation-valued `selectionalCounterfactual` to the
+    Prop-valued *would*-conditional of `SelectionalRestrictor`.
+
+    Under the same `h_singleton` hypothesis that resolves the Truth3
+    gap (the closest-worlds set is exactly Stalnaker's selected world),
+    the supervaluation analysis lands at `.true` iff the would-conditional
+    holds. The two layers — Truth3 supervaluation over `Finset` and Prop
+    selection-function over `Set` — collapse to the same content. -/
+theorem selectional_eq_wouldConditional_singleton_universe
+    {W : Type*} [DecidableEq W] [Fintype W]
+    (s : Core.SelectionFunction W) (sim : SimilarityOrdering W)
+    (A B : W → Bool) (w : W)
+    (h_singleton : sim.closestWorlds w (Finset.univ.filter (fun w => A w = true))
+                   = {s.sel w {w' | A w' = true}}) :
+    selectionalCounterfactual sim A B w = .true ↔
+    Semantics.Conditionals.SelectionalRestrictor.wouldConditional
+      s (fun w' => A w' = true) (fun w' => B w' = true) Set.univ w := by
+  rw [stalnaker_eq_selectional_singleton s sim A B w h_singleton]
+  rw [← stalnakerCounterfactual_eq_wouldConditional_universe s A B w]
+  cases h : stalnakerCounterfactual s A B w <;>
+    simp [Truth3.ofBool]
+
 /-- A Stalnakerian selection function on `Fin 3` that prefers `1`
     whenever Centering does not force the centre. Used to witness the
     Stalnaker/Lewis would divergence below.

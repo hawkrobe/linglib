@@ -25,6 +25,14 @@ Theory-neutral cross-linguistic data on counterfactual morphology from
 
 - Tables 1–2 of @cite{iatridou-2000}
 - Example sentences from §2
+
+## See also
+
+- `Phenomena/Modality/Studies/CarianiSantorio2018.lean` — selectional
+  account where past morphology shifts the modal parameter rather than
+  introducing a separate counterfactual operator. C&S §5.3.2 identifies
+  *would* with morphological past *will*, dovetailing with Iatridou's
+  past-morphology-as-modal-shift generalization.
 -/
 
 namespace Iatridou2000

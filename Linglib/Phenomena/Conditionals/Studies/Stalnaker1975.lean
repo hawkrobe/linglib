@@ -47,12 +47,22 @@ The two universal pragmatic postulates from the Appendix
   `Theories/Pragmatics/Assertion/ReasonableInference.lean`.
 * This file: a butler/gardener witness for (4); abstract version of (4)
   parameterised over any constraint-respecting selection function.
+
+## See also
+
+* `Phenomena/Modality/Studies/CarianiSantorio2018.lean` — extends the
+  Stalnaker selection-function mechanism from conditionals to bare
+  *will*. C&S's `Core.SelectionFunction` infrastructure is exactly the
+  one used here for `selectionConditional`; the `would`-conditional /
+  Stalnaker-counterfactual identification in C&S §5.3.2 reuses this
+  paper's selection-function semantics under universe parameter.
 -/
 
 namespace Stalnaker1975
 
 open Core.Mood (GramMood)
 open Core.CommonGround (ContextSet)
+open _root_.Core (SelectionFunction)
 open Semantics.Conditionals
 open Pragmatics.Assertion.ReasonableInference
 
@@ -136,13 +146,13 @@ open Classical in
     antecedent set, picks `someoneElse` first if available — modelling
     selection that reaches outside the natural context set. -/
 noncomputable def s_subj3 : SelectionFunction W3 where
-  select w P :=
+  sel w P :=
     if w ∈ P then w
     else if (Suspect.someoneElse : W3) ∈ P then .someoneElse
     else if (Suspect.gardener : W3) ∈ P then .gardener
     else if (Suspect.butler : W3) ∈ P then .butler
     else w
-  success := by
+  inclusion := by
     intro w P hne
     by_cases hw : w ∈ P
     · rw [if_pos hw]; exact hw
@@ -162,14 +172,14 @@ noncomputable def s_subj3 : SelectionFunction W3 where
 
 /-- **Counterexample to the direct argument as a semantic entailment.**
 
-At `w = butler`, `A∨B = true`, but `s_subj3.select butler {¬A worlds} =
+At `w = butler`, `A∨B = true`, but `s_subj3.sel butler {¬A worlds} =
 someoneElse`, where `B` fails. So `if ¬A, B` is false at `butler` under
 this selection function. -/
 theorem direct_argument_not_entailment :
     AorB3 .butler = true ∧
     moodedConditional .indicative s_subj3 notA3 B3 .butler = false := by
   refine ⟨by decide, ?_⟩
-  show B3 (s_subj3.select Suspect.butler {w | notA3 w = true}) = false
+  show B3 (s_subj3.sel Suspect.butler {w | notA3 w = true}) = false
   have hw : (Suspect.butler : W3) ∉ ({w | notA3 w = true} : Set W3) :=
     fun h => absurd (h : notA3 .butler = true) (by decide)
   have hs : (Suspect.someoneElse : W3) ∈ ({w | notA3 w = true} : Set W3) :=
