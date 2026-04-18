@@ -1,5 +1,7 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Set.Lattice
+import Mathlib.Order.BoundedOrder.Basic
+import Mathlib.Order.Lattice
 
 /-!
 # Inquisitive Content
@@ -246,52 +248,68 @@ def bot : InquisitiveContent W where
     rw [Set.mem_singleton_iff]
     exact Set.subset_empty_iff.mp hq
 
-instance : Top (InquisitiveContent W) := ⟨top⟩
-instance : Bot (InquisitiveContent W) := ⟨bot⟩
+/-! ### Lattice structure
 
-/-! ### Entailment order
+We package the algebraic operations into mathlib's order/lattice
+typeclasses: the entailment order `P ≤ Q := P.props ⊆ Q.props` makes
+`InquisitiveContent W` into a **bounded distributive lattice** with
+`⊓ = conj`, `⊔ = inqDisj`, `⊥ = bot`, `⊤ = top`. This gives access to
+the entire mathlib order-theoretic and lattice-theoretic API
+(`inf_le_left`, `le_sup_right`, `inf_sup_right`, intervals, downsets,
+lattice homomorphisms, …).
 
-`P ≤ Q` means *every information state that resolves `P` also resolves
-`Q`* — i.e., `P` entails `Q`. Concretely `P.props ⊆ Q.props`. The
-inconsistent inquiry `bot` (= ⊥) entails everything; `top` (= ⊤) is
-entailed by everything. -/
+Distributivity is free: it reduces to the standard set distributivity
+`(A ∪ B) ∩ (A ∪ C) = A ∪ (B ∩ C)` on the underlying `Set (Set W)`. -/
 
-instance : LE (InquisitiveContent W) where
+instance : PartialOrder (InquisitiveContent W) where
   le P Q := P.props ⊆ Q.props
+  le_refl _ := Set.Subset.refl _
+  le_trans _ _ _ := Set.Subset.trans
+  le_antisymm _ _ hpq hqp := ext (Set.Subset.antisymm hpq hqp)
 
 theorem le_def {P Q : InquisitiveContent W} : P ≤ Q ↔ P.props ⊆ Q.props :=
   Iff.rfl
 
-theorem bot_le (P : InquisitiveContent W) : (⊥ : InquisitiveContent W) ≤ P := by
-  intro p hp
-  rw [show (⊥ : InquisitiveContent W) = bot from rfl] at hp
-  rw [show (bot : InquisitiveContent W).props = {∅} from rfl,
-      Set.mem_singleton_iff] at hp
-  rw [hp]
-  exact P.contains_empty
+instance : Lattice (InquisitiveContent W) where
+  inf := conj
+  sup := inqDisj
+  inf_le_left _ _ _ hp := hp.1
+  inf_le_right _ _ _ hp := hp.2
+  le_inf _ _ _ hPQ hPR _ hp := ⟨hPQ hp, hPR hp⟩
+  le_sup_left _ _ _ hp := Or.inl hp
+  le_sup_right _ _ _ hp := Or.inr hp
+  sup_le _ _ _ hPR hQR _ hp := by
+    rcases hp with h | h
+    · exact hPR h
+    · exact hQR h
 
-theorem le_top (P : InquisitiveContent W) : P ≤ (⊤ : InquisitiveContent W) :=
-  fun _ _ => Set.mem_univ _
+theorem inf_eq_conj (P Q : InquisitiveContent W) : P ⊓ Q = conj P Q := rfl
 
-theorem conj_le_left (P Q : InquisitiveContent W) : conj P Q ≤ P :=
-  fun _ hp => hp.1
+theorem sup_eq_inqDisj (P Q : InquisitiveContent W) : P ⊔ Q = inqDisj P Q := rfl
 
-theorem conj_le_right (P Q : InquisitiveContent W) : conj P Q ≤ Q :=
-  fun _ hp => hp.2
+instance : DistribLattice (InquisitiveContent W) where
+  le_sup_inf P Q R q hq := by
+    obtain ⟨hPQ, hPR⟩ := hq
+    rcases hPQ with hp | hq2
+    · exact Or.inl hp
+    · rcases hPR with hp | hr
+      · exact Or.inl hp
+      · exact Or.inr ⟨hq2, hr⟩
 
-theorem le_conj {P Q R : InquisitiveContent W} (hPQ : P ≤ Q) (hPR : P ≤ R) :
-    P ≤ conj Q R :=
-  fun _ hp => ⟨hPQ hp, hPR hp⟩
+instance : OrderTop (InquisitiveContent W) where
+  top := top
+  le_top _ _ _ := Set.mem_univ _
 
-theorem left_le_inqDisj (P Q : InquisitiveContent W) : P ≤ inqDisj P Q :=
-  fun _ hp => Or.inl hp
+instance : OrderBot (InquisitiveContent W) where
+  bot := bot
+  bot_le P q hq := by
+    change q ∈ ({∅} : Set (Set W)) at hq
+    rw [Set.mem_singleton_iff] at hq
+    rw [hq]
+    exact P.contains_empty
 
-theorem right_le_inqDisj (P Q : InquisitiveContent W) : Q ≤ inqDisj P Q :=
-  fun _ hp => Or.inr hp
-
-theorem inqDisj_le {P Q R : InquisitiveContent W} (hPR : P ≤ R) (hQR : Q ≤ R) :
-    inqDisj P Q ≤ R :=
-  fun _ hp => by rcases hp with h | h <;> [exact hPR h; exact hQR h]
+theorem top_eq : (⊤ : InquisitiveContent W) = top := rfl
+theorem bot_eq : (⊥ : InquisitiveContent W) = bot := rfl
 
 /-! ### Polar question via inquisitive disjunction
 
