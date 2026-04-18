@@ -1983,6 +1983,7 @@ import Linglib.Theories.Semantics.Modality.ModalIndefinites
 import Linglib.Theories.Semantics.Modality.Narrog
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Theories.Semantics.Mood.Gutzmann
+import Linglib.Theories.Semantics.Mood.VerbalMood
 import Linglib.Theories.Semantics.UseConditional.LTU
 import Linglib.Theories.Semantics.Reference.Basic
 import Linglib.Theories.Semantics.Reference.Kaplan
