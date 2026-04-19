@@ -76,6 +76,7 @@ import Linglib.Core.InfoState
 import Linglib.Core.Inquisitive
 import Linglib.Core.Issue.Basic
 import Linglib.Core.Issue.Hamblin
+import Linglib.Core.Issue.Partition
 import Linglib.Core.Issue.Answerhood
 import Linglib.Core.Issue.Granularity
 import Linglib.Core.Discourse.QUDStack
