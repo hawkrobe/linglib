@@ -180,6 +180,8 @@ import Linglib.Core.Computability.Subregular.StrictlyLocal
 import Linglib.Core.Computability.Subregular.LocallyTestable
 import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Hierarchy
+import Linglib.Core.Computability.Subregular.Piecewise
+import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.StringHom
 import Linglib.Core.VerbCluster
 import Linglib.Core.Case.Basic
