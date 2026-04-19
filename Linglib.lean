@@ -2280,6 +2280,7 @@ import Linglib.Theories.Phonology.OptimalityTheory.OptimalParadigms
 import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
 import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Theories.Phonology.OptimalityTheory.Doubling
+import Linglib.Theories.Phonology.Subregular.TierProjection
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

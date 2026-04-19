@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.230.20] - 2026-04-19
+
+### Added
+- **`Theories/Phonology/Subregular/TierProjection.lean`**: phase G of the mathlib-shaped Phonology regrouping — first new bridge connecting the autosegmental tier formalism (`Core.Tier`, the Kleisli morphism `α → Option β` lifted via `List.filterMap`) to the subregular TSL formalism (`Core.Computability.Subregular.tierProject`, the predicate-filter `xs.filter (decide ∘ T)`). The two are operationally identical in their shared common case — a class-membership tier that keeps symbols of one type without relabeling — and the bridge makes the connection explicit so phonological tiers (autosegmental tonal tier, sibilant tier, nasal tier) can be reused as the segmental tier of a TSL_k grammar without restating the projection. **Main theorem `apply_byClass_eq_tierProject`**: for any `T : α → Prop` `[DecidablePred T]` and `xs : List α`, `Tier.apply (Tier.byClass (decide ∘ T)) xs = tierProject T xs` — both reduce to `List.filter`. **Adapter `TSLGrammar.ofByClass`**: builds a `TSLGrammar k α` from a `Bool` predicate `p : α → Bool` and a permitted-factor set; the resulting tier predicate is `(p · = true)`. **`tierProject_ofByClass` simp lemma**: `tierProject (TSLGrammar.ofByClass k p ∅).tier = Tier.apply (Tier.byClass p)`. New file lives in `Theories/Phonology/Subregular/`, opening the umbrella for follow-up bridges (planned: OCP-as-TSL_2 forbidding adjacent identical interior factors on the projected tier; long-distance vowel/consonant harmony as TSL_2 over a featural tier; word-final neutralization as D_2 from `Subregular/Definite.lean`). 1 new file (~95 lines), 0 sorrys, 0 warnings, builds clean against the full library.
+
 ## [0.230.19] - 2026-04-19
 
 ### Changed
