@@ -52,7 +52,7 @@ basemap-faithful evaluation.
 namespace Phonology.Autosegmental.BasemapCorrespondence
 
 open Phonology.Autosegmental.GrammaticalTone
-open Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (TRN)
 open Core.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
@@ -67,13 +67,13 @@ open Core.OT (NamedConstraint ConstraintFamily)
     The `defaultTone` is the tone assigned to "unvalued" TBUs —
     language-specific (often L in African tone languages). -/
 def deficientProjection {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (defaultTone : ToneFeature) : List (TBU S) :=
+    (host : List (TBU S)) (defaultTone : TRN) : List (TBU S) :=
   host.map (λ tbu => { tbu with tone := defaultTone })
 
 /-- Deficient projection produces uniform tone: every TBU gets the
     default tone. -/
 theorem deficientProjection_uniform {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (defaultTone : ToneFeature) :
+    (host : List (TBU S)) (defaultTone : TRN) :
     (deficientProjection host defaultTone).map TBU.tone =
     host.map (λ _ => defaultTone) := by
   simp only [deficientProjection, List.map_map]; congr 1
@@ -91,7 +91,7 @@ theorem deficientProjection_uniform {S : Type} [DecidableEq S] [BEq S] [Repr S]
     output has the grammatical tune on every TBU. -/
 def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
     (host : List (TBU S)) (spec : Spec)
-    (defaultTone : ToneFeature) : List (TBU S) :=
+    (defaultTone : TRN) : List (TBU S) :=
   tonalOverwrite (deficientProjection host defaultTone) spec
 
 -- ============================================================================
@@ -102,9 +102,9 @@ def basemapOutput {S : Type} [DecidableEq S] [BEq S] [Repr S]
 
     Grounded in the unified `Phonology.Tier` abstraction
     (`Tier.apply Tier.tonal`): an erasing string homomorphism
-    `(TBU S)* → ToneFeature*` in the Kleisli category of `Option`. The
+    `(TBU S)* → TRN*` in the Kleisli category of `Option`. The
     tonal tier is the `total` (no-erasure) case @cite{goldsmith-1976}. -/
-def tonalTier {S : Type} (tbus : List (TBU S)) : List ToneFeature :=
+def tonalTier {S : Type} (tbus : List (TBU S)) : List TRN :=
   Core.Tier.apply Phonology.Tier.tonal tbus
 
 /-- The tonal tier reduces to `List.map TBU.tone` (the historical
@@ -125,7 +125,7 @@ def tonalTier {S : Type} (tbus : List (TBU S)) : List ToneFeature :=
     output to match the basemap, which erases the target's underlying
     tones. Non-dominant triggers leave this constraint low-ranked,
     so underlying tones can surface. -/
-def basemapViolations (tier₁ tier₂ : List ToneFeature) : Nat :=
+def basemapViolations (tier₁ tier₂ : List TRN) : Nat :=
   (tier₁.zip tier₂).foldl
     (λ count (m, b) => if m == b then count else count + 1) 0
 
@@ -134,7 +134,7 @@ theorem basemapViolations_nil : basemapViolations [] [] = 0 := rfl
 
 /-- The fold accumulator in `basemapViolations` never decreases. -/
 private theorem foldl_mismatch_mono
-    (pairs : List (ToneFeature × ToneFeature)) (acc : Nat) :
+    (pairs : List (TRN × TRN)) (acc : Nat) :
     (pairs.foldl (λ count (m, b) => if m == b then count else count + 1) acc) ≥ acc := by
   induction pairs generalizing acc with
   | nil => exact Nat.le_refl acc
@@ -145,28 +145,30 @@ private theorem foldl_mismatch_mono
     exact Nat.le_trans h_step (ih _)
 
 /-- Removing matching heads doesn't change violation count. -/
-private theorem basemapViolations_cons_eq (x : ToneFeature) (xs ys : List ToneFeature) :
+private theorem basemapViolations_cons_eq (x : TRN) (xs ys : List TRN) :
     basemapViolations (x :: xs) (x :: ys) = basemapViolations xs ys := by
   unfold basemapViolations
   rw [List.zip_cons_cons, List.foldl_cons]
-  congr 1
-  cases x <;> rfl
+  have hxx : (x == x) = true := beq_self_eq_true x
+  simp [hxx]
 
 /-- Mismatching heads contribute at least one violation. -/
-private theorem basemapViolations_cons_ne (x y : ToneFeature) (xs ys : List ToneFeature)
+private theorem basemapViolations_cons_ne (x y : TRN) (xs ys : List TRN)
     (hne : x ≠ y) :
     basemapViolations (x :: xs) (y :: ys) ≥ 1 := by
   unfold basemapViolations
   rw [List.zip_cons_cons, List.foldl_cons]
+  have hne' : (x == y) = false := by
+    rw [beq_eq_false_iff_ne]; exact hne
   have : ∀ (acc : Nat), acc ≥ 1 →
       (xs.zip ys).foldl (λ count (m, b) => if m == b then count else count + 1) acc ≥ 1 :=
     fun acc hacc => Nat.le_trans hacc (foldl_mismatch_mono _ _)
   apply this
-  cases x <;> cases y <;> (first | exact absurd rfl hne | decide)
+  simp [hne']
 
 /-- Self-comparison has zero basemap violations: a tonal tier is
     perfectly faithful to itself. -/
-theorem basemapViolations_self_eq_zero (t : List ToneFeature) :
+theorem basemapViolations_self_eq_zero (t : List TRN) :
     basemapViolations t t = 0 := by
   induction t with
   | nil => rfl
@@ -182,7 +184,7 @@ theorem basemapViolations_self_eq_zero (t : List ToneFeature) :
     element-by-element. The equal-length hypothesis is necessary because
     `List.zip` silently drops elements from the longer list. -/
 theorem basemapViolations_eq_zero_imp
-    (t₁ t₂ : List ToneFeature) (hLen : t₁.length = t₂.length)
+    (t₁ t₂ : List TRN) (hLen : t₁.length = t₂.length)
     (hZero : basemapViolations t₁ t₂ = 0) : t₁ = t₂ := by
   induction t₁ generalizing t₂ with
   | nil =>
@@ -214,10 +216,10 @@ theorem basemapViolations_eq_zero_imp
 
     `extractTier` converts a candidate to its tonal tier for comparison.
     This allows the constraint to work with any candidate type, not
-    just raw `List ToneFeature`. -/
+    just raw `List TRN`. -/
 def mkBasemapConstraint {C : Type}
-    (basemapTier : List ToneFeature)
-    (extractTier : C → List ToneFeature) : NamedConstraint C :=
+    (basemapTier : List TRN)
+    (extractTier : C → List TRN) : NamedConstraint C :=
   { name := "BM-FAITH"
   , family := .faithfulness
   , eval := λ c => basemapViolations (extractTier c) basemapTier }
@@ -228,13 +230,13 @@ def mkBasemapConstraint {C : Type}
 
 /-- Helper: whole-word tonalOverwrite reduces to map. -/
 private theorem tonalOverwrite_whole_eq_map {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (t : ToneFeature) :
+    (host : List (TBU S)) (t : TRN) :
     tonalOverwrite host ⟨"", [t], .whole⟩ =
     host.map (λ tbu => { tbu with tone := t }) := rfl
 
 /-- Helper: whole-word tonalOverwrite tonal tier is constant. -/
 private theorem tonalTier_overwrite_whole {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (t : ToneFeature) :
+    (host : List (TBU S)) (t : TRN) :
     tonalTier (tonalOverwrite host ⟨"", [t], .whole⟩) =
     host.map (λ _ => t) := by
   simp only [tonalTier_eq_map, tonalOverwrite, List.map_map]; congr 1
@@ -255,7 +257,7 @@ private theorem tonalTier_overwrite_whole {S : Type} [DecidableEq S] [BEq S] [Re
     replaces all tones regardless of input — and the basemap's
     deficient projection changes input tones before the same overwrite. -/
 theorem tonalOverwrite_basemap_faithful {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (t : ToneFeature) (defaultTone : ToneFeature) :
+    (host : List (TBU S)) (t : TRN) (defaultTone : TRN) :
     let spec : Spec := ⟨"", [t], .whole⟩
     tonalTier (tonalOverwrite host spec) =
     tonalTier (basemapOutput host spec defaultTone) := by
@@ -273,7 +275,7 @@ theorem tonalOverwrite_basemap_faithful {S : Type} [DecidableEq S] [BEq S] [Repr
     (@cite{rolle-2018} Ch 5): the basemap abstracts away from the
     paradigmatic tonal variation of the target. -/
 theorem basemapOutput_tone_independent_whole {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host₁ host₂ : List (TBU S)) (t defaultTone : ToneFeature)
+    (host₁ host₂ : List (TBU S)) (t defaultTone : TRN)
     (hLen : host₁.length = host₂.length) :
     let spec : Spec := ⟨"", [t], .whole⟩
     tonalTier (basemapOutput host₁ spec defaultTone) =

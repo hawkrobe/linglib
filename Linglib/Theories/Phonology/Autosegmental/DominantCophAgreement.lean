@@ -39,7 +39,7 @@ dominant_coph_agrees_with_tonalOverwrite
 namespace Phonology.Autosegmental.DominantCophAgreement
 
 open Phonology.Autosegmental.GrammaticalTone
-open Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Autosegmental.BasemapCorrespondence
 open Phonology.CophonologyTheory (mergeRanking cophonologicalEval)
 open Core.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
@@ -59,8 +59,8 @@ open Core.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_o
     tones (`basemapOutput_tone_independent_whole`). -/
 theorem dominant_coph_selects_basemap_faithful
     {C : Type} [DecidableEq C]
-    (basemapTier : List ToneFeature)
-    (extractTier : C → List ToneFeature)
+    (basemapTier : List TRN)
+    (extractTier : C → List TRN)
     (defaultRanking : List (NamedConstraint C))
     (candidates : List C) (h : candidates ≠ [])
     (hLen : ∀ c ∈ candidates, (extractTier c).length = basemapTier.length)
@@ -103,8 +103,8 @@ theorem dominant_coph_selects_basemap_faithful
     selects exactly the basemap-faithful candidates. -/
 theorem dominant_coph_agrees_with_tonalOverwrite
     {S C : Type} [DecidableEq S] [BEq S] [Repr S] [DecidableEq C]
-    (host : List (TBU S)) (t defaultTone : ToneFeature)
-    (extractTier : C → List ToneFeature)
+    (host : List (TBU S)) (t defaultTone : TRN)
+    (extractTier : C → List TRN)
     (defaultRanking : List (NamedConstraint C))
     (candidates : List C) (h : candidates ≠ [])
     (hLen : ∀ c ∈ candidates,

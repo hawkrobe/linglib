@@ -63,7 +63,7 @@ instantiations live in `Fragments/`; empirical applications in `Phenomena/`.
 
 namespace Phonology.Autosegmental.GrammaticalTone
 
-open Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (TRN)
 
 -- ============================================================================
 -- § 1: Tone-Bearing Units
@@ -73,7 +73,7 @@ open Phonology.Autosegmental.RegisterTier (ToneFeature)
     the segmental content type `S` (syllables, moras, etc.). -/
 structure TBU (S : Type) where
   seg  : S
-  tone : ToneFeature
+  tone : TRN
   deriving DecidableEq, Repr
 
 -- ============================================================================
@@ -188,7 +188,7 @@ inductive GTDominance where
 
       Most cases of "floating tones" in the literature are neutral.
 
-      Examples: Hausa referential -ⁿn (@cite{newman-1986}),
+      Examples: Hausa referential -ⁿn (@cite{newman-2000}),
       Igbo associative construction (@cite{hyman-schuh-1974}). -/
   | neutral
   deriving DecidableEq, Repr
@@ -260,7 +260,7 @@ inductive ExponenceType where
 -- ============================================================================
 
 /-- A tonal melody: a sequence of tones to be associated with TBUs. -/
-abbrev TonalMelody := List ToneFeature
+abbrev TonalMelody := List TRN
 
 /-- Valuation window: the portion of the host that the grammatical tune
     targets. Determines which TBUs are overwritten.
@@ -422,10 +422,10 @@ inductive GTRepair where
 
 /-- Whole-word overwrite with a single tone produces uniform output. -/
 theorem tonalOverwrite_whole_uniform {S : Type} [DecidableEq S] [BEq S] [Repr S]
-    (host : List (TBU S)) (t : ToneFeature) :
+    (host : List (TBU S)) (t : TRN) :
     (tonalOverwrite host ⟨"", [t], .whole⟩).map TBU.tone =
     host.map (λ _ => t) := by
-  simp [tonalOverwrite, List.map_map]
+  simp [tonalOverwrite, List.map_map, Function.comp_def]
 
 /-- Overwrite of an empty host is empty. -/
 theorem tonalOverwrite_nil {S : Type} [DecidableEq S] [BEq S] [Repr S]

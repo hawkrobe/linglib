@@ -14,7 +14,6 @@ import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence
 import Linglib.Core.Logic.ThreeValuedLogic
 import Linglib.Core.Empirical
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.ParameterizedUpdate
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Tree
@@ -2251,6 +2250,7 @@ import Linglib.Theories.Phonology.Features
 import Linglib.Theories.Phonology.FeatureGeometry
 import Linglib.Theories.Phonology.ComplexSegments
 import Linglib.Theories.Phonology.Autosegmental.Defs
+import Linglib.Theories.Phonology.Featural.Bundle
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Theories.Phonology.Tier

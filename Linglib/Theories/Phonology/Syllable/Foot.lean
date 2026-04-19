@@ -93,15 +93,22 @@ def MetricalParse.unparsedCount (p : MetricalParse) : Nat :=
 
 /-- Is a foot degenerate (subminimal)? A monomoraic foot (L) is
     degenerate — it fails to meet the bimoraic minimum. -/
-def isDegenerate (ws : List SyllWeight) : Bool :=
+def isDegenerate (ws : List SyllWeight) : Prop :=
   footMorae ws < 2
 
+instance (ws : List SyllWeight) : Decidable (isDegenerate ws) := by
+  unfold isDegenerate; infer_instance
+
 /-- Is a foot well-formed for the given foot type? -/
-def isWellFormedFoot (ft : FootType) (ws : List SyllWeight) : Bool :=
+def isWellFormedFoot (ft : FootType) (ws : List SyllWeight) : Prop :=
   match ft with
-  | .moraicTrochee => footMorae ws == 2
-  | .syllabicTrochee => ws.length == 2
-  | .iamb => footMorae ws ≥ 1 && footMorae ws ≤ 3 && ws.length ≤ 2
+  | .moraicTrochee => footMorae ws = 2
+  | .syllabicTrochee => ws.length = 2
+  | .iamb => footMorae ws ≥ 1 ∧ footMorae ws ≤ 3 ∧ ws.length ≤ 2
+
+instance (ft : FootType) (ws : List SyllWeight) :
+    Decidable (isWellFormedFoot ft ws) := by
+  unfold isWellFormedFoot; cases ft <;> infer_instance
 
 -- ============================================================================
 -- § 5: OT Metrical Constraints
@@ -162,19 +169,19 @@ theorem superheavy_foot_trimoraic : footMorae [.superheavy] = 3 := rfl
 -- Well-formedness
 
 theorem heavy_wellformed_mt :
-    isWellFormedFoot .moraicTrochee [.heavy] = true := rfl
+    isWellFormedFoot .moraicTrochee [.heavy] := by decide
 
 theorem ll_wellformed_mt :
-    isWellFormedFoot .moraicTrochee [.light, .light] = true := rfl
+    isWellFormedFoot .moraicTrochee [.light, .light] := by decide
 
 theorem l_not_wellformed_mt :
-    isWellFormedFoot .moraicTrochee [.light] = false := rfl
+    ¬ isWellFormedFoot .moraicTrochee [.light] := by decide
 
 -- Degeneracy
 
-theorem light_degenerate : isDegenerate [.light] = true := rfl
-theorem heavy_not_degenerate : isDegenerate [.heavy] = false := rfl
-theorem ll_not_degenerate : isDegenerate [.light, .light] = false := rfl
+theorem light_degenerate : isDegenerate [.light] := by decide
+theorem heavy_not_degenerate : ¬ isDegenerate [.heavy] := by decide
+theorem ll_not_degenerate : ¬ isDegenerate [.light, .light] := by decide
 
 -- Example parses
 

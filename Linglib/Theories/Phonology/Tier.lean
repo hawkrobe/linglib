@@ -18,7 +18,7 @@ namespace Phonology.Tier
     to its tone. Length-preserving (no erasure) — built via `Tier.total`. -/
 def tonal {S : Type} :
     Core.Tier (Phonology.Autosegmental.GrammaticalTone.TBU S)
-              Phonology.Autosegmental.RegisterTier.ToneFeature :=
+              Phonology.Autosegmental.RegisterTier.TRN :=
   Core.Tier.total Phonology.Autosegmental.GrammaticalTone.TBU.tone
 
 /-- The tonal-tier projection equals the historical `List.map TBU.tone`

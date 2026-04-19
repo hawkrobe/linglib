@@ -176,10 +176,14 @@ where
     (@cite{aitha-2026} §5.3), switching from below IDENT-STRESS to
     above it. -/
 def isPromoted {C : Type} (name : String)
-    (r₁ r₂ : List (NamedConstraint C)) : Bool :=
+    (r₁ r₂ : List (NamedConstraint C)) : Prop :=
   match findRank name r₁, findRank name r₂ with
   | some p₁, some p₂ => p₁ < p₂
-  | _, _ => false
+  | _, _ => False
+
+instance {C : Type} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
+    Decidable (isPromoted name r₁ r₂) := by
+  unfold isPromoted; split <;> infer_instance
 
 /-- Is constraint `name` ranked lower in `r₁` than in `r₂`?
     Captures **demotion** across strata.
@@ -188,8 +192,12 @@ def isPromoted {C : Type} (name : String)
     (@cite{aitha-2026} §5.3), allowing consonant retention at phrase
     boundaries. -/
 def isDemoted {C : Type} (name : String)
-    (r₁ r₂ : List (NamedConstraint C)) : Bool :=
+    (r₁ r₂ : List (NamedConstraint C)) : Prop :=
   isPromoted name r₂ r₁
+
+instance {C : Type} (name : String) (r₁ r₂ : List (NamedConstraint C)) :
+    Decidable (isDemoted name r₁ r₂) := by
+  unfold isDemoted; infer_instance
 
 -- ============================================================================
 -- § 5: Ranking Specification
@@ -210,18 +218,26 @@ def isDemoted {C : Type} (name : String)
 abbrev RankingSpec := List (String × String)
 
 /-- Does constraint `a` immediately dominate `b` in the specification? -/
-def immediatelyDominates (spec : RankingSpec) (a b : String) : Bool :=
-  spec.any λ (x, y) => x == a && y == b
+def immediatelyDominates (spec : RankingSpec) (a b : String) : Prop :=
+  ∃ p ∈ spec, p.1 = a ∧ p.2 = b
+
+instance (spec : RankingSpec) (a b : String) :
+    Decidable (immediatelyDominates spec a b) := by
+  unfold immediatelyDominates; infer_instance
 
 /-- Does constraint `a` dominate `b` (reflexive transitive closure,
     depth ≤ 3)? Sufficient for the ranking chains encountered in
     practice (typically 5–8 constraints per stratum). -/
-def dominates (spec : RankingSpec) (a b : String) : Bool :=
-  a == b ||
-  immediatelyDominates spec a b ||
-  spec.any (λ (x, _) => x == a &&
-    spec.any (λ (y, _) => immediatelyDominates spec x y &&
-      (y == b || immediatelyDominates spec y b)))
+def dominates (spec : RankingSpec) (a b : String) : Prop :=
+  a = b ∨
+  immediatelyDominates spec a b ∨
+  ∃ p ∈ spec, p.1 = a ∧
+    ∃ q ∈ spec, immediatelyDominates spec p.1 q.1 ∧
+      (q.1 = b ∨ immediatelyDominates spec q.1 b)
+
+instance (spec : RankingSpec) (a b : String) :
+    Decidable (dominates spec a b) := by
+  unfold dominates; infer_instance
 
 -- ============================================================================
 -- § 6: Cross-Stratal Properties
@@ -237,13 +253,16 @@ def dominates (spec : RankingSpec) (a b : String) : Bool :=
     lengthening is optimal at the Word level (MAX ≫ ALIGN-RIGHT) but
     not at the Phrase level (constraint reranking), producing different
     outputs for the same segmental configuration at different strata. -/
-def isOutputFeeding (s : Stratum) : Stratum → Bool
-  | .stem => s == .stem     -- Stem feeds itself (no prior stratum)
-  | .word => s == .stem     -- Word is fed by Stem
-  | .phrase => s == .word   -- Phrase is fed by Word
+def isOutputFeeding (s : Stratum) : Stratum → Prop
+  | .stem => s = .stem     -- Stem feeds itself (no prior stratum)
+  | .word => s = .stem     -- Word is fed by Stem
+  | .phrase => s = .word   -- Phrase is fed by Word
 
-theorem stem_feeds_word : isOutputFeeding .stem .word = true := rfl
-theorem word_feeds_phrase : isOutputFeeding .word .phrase = true := rfl
-theorem stem_not_feeds_phrase : isOutputFeeding .stem .phrase = false := rfl
+instance (s t : Stratum) : Decidable (isOutputFeeding s t) := by
+  cases t <;> unfold isOutputFeeding <;> infer_instance
+
+theorem stem_feeds_word : isOutputFeeding .stem .word := rfl
+theorem word_feeds_phrase : isOutputFeeding .word .phrase := rfl
+theorem stem_not_feeds_phrase : ¬ isOutputFeeding .stem .phrase := by decide
 
 end Phonology.StratalOT

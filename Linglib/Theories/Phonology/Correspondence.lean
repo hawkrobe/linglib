@@ -127,12 +127,6 @@ def Corr.identViol [BEq α] (c : Corr α) : Nat :=
   ) |>.length
 
 /-- A sorted list of natural numbers is contiguous (no gaps). -/
-def isContiguous : List Nat → Bool
-  | [] | [_] => true
-  | a :: b :: rest => b == a + 1 && isContiguous (b :: rest)
-
-/-- Propositional version of contiguity: a sorted list of natural numbers
-    has no gaps between consecutive elements. -/
 def IsContiguous : List Nat → Prop
   | [] => True
   | [_] => True
@@ -158,7 +152,7 @@ instance (l : List Nat) : Decidable (IsContiguous l) := decIsContiguous l
     deletion: the map **xyz** → **xz** skips y. -/
 def Corr.contigIViol (c : Corr α) : Nat :=
   let dom := (c.pairs.map Prod.fst).mergeSort (· ≤ ·) |>.eraseDups
-  if isContiguous dom then 0 else 1
+  if IsContiguous dom then 0 else 1
 
 /-- **(A.4b) O-CONTIGUITY** — "No Intrusion."
 
@@ -167,7 +161,7 @@ def Corr.contigIViol (c : Corr α) : Nat :=
     epenthesis: the map **xy** → **xyz** intrudes z. -/
 def Corr.contigOViol (c : Corr α) : Nat :=
   let rng := (c.pairs.map Prod.snd).mergeSort (· ≤ ·) |>.eraseDups
-  if isContiguous rng then 0 else 1
+  if IsContiguous rng then 0 else 1
 
 /-- **(A.5) LEFT-ANCHOR** — left-edge correspondence.
 

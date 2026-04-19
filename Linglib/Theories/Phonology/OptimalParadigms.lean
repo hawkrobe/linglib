@@ -110,8 +110,11 @@ def mkOPMaxV {Form : Type} (vowelMismatch : Form → Form → Nat) :
     Under OP, the equivocal member will surface with group A's form,
     because aligning with the larger group minimizes total pairwise
     OP-MAX-V violations. -/
-def majorityRules (groupA groupB : Nat) : Bool :=
+def majorityRules (groupA groupB : Nat) : Prop :=
   groupA > groupB
+
+instance (a b : Nat) : Decidable (majorityRules a b) := by
+  unfold majorityRules; infer_instance
 
 /-- When one group is larger, the equivocal member's OP-MAX-V violations
     are minimized by aligning with the majority.
