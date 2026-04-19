@@ -77,8 +77,10 @@ import Linglib.Core.Inquisitive
 import Linglib.Core.Issue.Basic
 import Linglib.Core.Issue.Hamblin
 import Linglib.Core.Issue.Partition
+import Linglib.Core.Issue.Singleton
 import Linglib.Core.Issue.Answerhood
 import Linglib.Core.Issue.Granularity
+import Linglib.Core.Issue.Relevance
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Discourse.Goal
@@ -470,6 +472,8 @@ import Linglib.Fragments.Danish.V2
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.Definiteness
 import Linglib.Fragments.English.Determiners
+import Linglib.Fragments.English.Auxiliaries
+import Linglib.Fragments.English.Complementizers
 import Linglib.Fragments.English.FocusParticles
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.MeasurePhrases
@@ -485,10 +489,10 @@ import Linglib.Fragments.English.Predicates.Copular
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.PropositionalLexemes
+import Linglib.Fragments.English.QuestionParticles
 import Linglib.Fragments.English.Scales
 import Linglib.Fragments.English.Tense
 import Linglib.Fragments.English.TemporalDeictic
-import Linglib.Fragments.English.Will
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Fragments.English.Conditionals
 import Linglib.Fragments.English.Phonology
@@ -506,6 +510,7 @@ import Linglib.Fragments.Czech.Particles
 import Linglib.Fragments.Czech.Reciprocals
 import Linglib.Fragments.Czech.Negation
 import Linglib.Fragments.Drubea.Prosody
+import Linglib.Fragments.Numee.Prosody
 import Linglib.Fragments.Mwaghavul.Basic
 import Linglib.Fragments.Tarifit.Inventory
 import Linglib.Fragments.Dargwa.Agreement
@@ -585,6 +590,7 @@ import Linglib.Fragments.Hungarian.Reciprocals
 import Linglib.Fragments.Hungarian.Morph
 import Linglib.Fragments.Hungarian.Modals
 import Linglib.Fragments.Hungarian.VowelHarmony
+import Linglib.Fragments.Hungarian.Focus
 import Linglib.Fragments.Wan.Reciprocals
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
 import Linglib.Fragments.Finnish.Case
@@ -1195,6 +1201,7 @@ import Linglib.Fragments.Italian.ExpletiveNegation
 import Linglib.Phenomena.Negation.Studies.JinKoenig2021
 import Linglib.Phenomena.Negation.Studies.Rett2026
 import Linglib.Phenomena.Negation.Studies.Tsiakmakis2025
+import Linglib.Phenomena.Negation.Studies.NapoliNespor1976
 import Linglib.Phenomena.WordOrder.NonProjectivity
 import Linglib.Phenomena.Negation.DoubleNegation
 import Linglib.Phenomena.Negation.Studies.Stakov2026
@@ -1335,6 +1342,7 @@ import Linglib.Phenomena.Questions.MentionSome
 import Linglib.Phenomena.Questions.MultipleWh
 import Linglib.Phenomena.Questions.Studies.Zheng2025
 import Linglib.Phenomena.Questions.Studies.RomeroHan2004
+import Linglib.Phenomena.Questions.Studies.Romero2024
 import Linglib.Phenomena.Questions.PolarAnswers
 import Linglib.Phenomena.Questions.PolarAnswerStructure
 import Linglib.Phenomena.Questions.Studies.Holmberg2016
@@ -1353,6 +1361,8 @@ import Linglib.Phenomena.Questions.Studies.ChanShen2026
 import Linglib.Phenomena.Questions.Studies.AlonsoOvalleMoghiseh2025b
 import Linglib.Phenomena.Questions.Studies.Johnston2023
 import Linglib.Phenomena.Questions.Studies.SeeligerRepp2018
+import Linglib.Phenomena.Questions.Studies.Simik2024
+import Linglib.Phenomena.Questions.Studies.Theiler2021
 import Linglib.Phenomena.Reference.Studies.AnandNevins2004
 import Linglib.Phenomena.Reference.Studies.Ariel2001
 import Linglib.Phenomena.Reference.Studies.CohnGordonEtAl2019
@@ -1637,6 +1647,8 @@ import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Even
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Also
 import Linglib.Theories.Pragmatics.DecisionTheoretic.PartitionAdjunction
+-- Theories: Bias-Conditioned Negation (cross-construction predicate)
+import Linglib.Theories.Pragmatics.Bias
 -- Theories: Gricean Pragmatics
 import Linglib.Theories.Pragmatics.GriceanMaxims
 -- Theories: Bidirectional OT (Blutner 2000)
@@ -1833,10 +1845,10 @@ import Linglib.Theories.Semantics.Composition.Scope
 import Linglib.Phenomena.Entailment.MontagueTruthConditions
 import Linglib.Theories.Semantics.Quantification.Demonstrative.AhnZhu2025
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
-import Linglib.Theories.Semantics.Numerals.Embedding
 import Linglib.Theories.Semantics.Numerals.Polysemy
 import Linglib.Theories.Semantics.Numerals.Precision
 import Linglib.Theories.Semantics.Numerals.Basic
+import Linglib.Theories.Semantics.Numerals.Degree
 import Linglib.Theories.Semantics.Definiteness.Basic
 import Linglib.Theories.Semantics.Quantification.DomainRestriction
 import Linglib.Theories.Semantics.Quantification.DomainVagueness
@@ -1897,11 +1909,13 @@ import Linglib.Phenomena.Focus.Studies.TurkHirsch2026
 import Linglib.Phenomena.Focus.Studies.Francescotti1995
 import Linglib.Phenomena.Focus.Studies.Umbach2004
 import Linglib.Phenomena.Focus.Studies.HartmannZimmermann2007
+import Linglib.Phenomena.Focus.Studies.Kiss1998
 import Linglib.Phenomena.Polarity.Studies.TurcoBraunDimroth2014
 import Linglib.Phenomena.Polarity.MarkingTypology
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Focus.Sensitivity
 import Linglib.Theories.Semantics.Focus.Particles
+import Linglib.Theories.Semantics.Focus.MeaningStructureMapping
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.OntologicalPreconditions
@@ -2133,12 +2147,10 @@ import Linglib.Phenomena.Polarity.Studies.Israel2001
 import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025Closure
-import Linglib.Theories.Pragmatics.Implicature.NegationScope
 import Linglib.Theories.Pragmatics.Implicature.Presuppositions
 import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
 import Linglib.Theories.Pragmatics.Implicature.Constraints.NumericalExpressions
 import Linglib.Theories.Pragmatics.Implicature.Constraints.Wang2025
-import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Operations
 -- Theories: IBR
 import Linglib.Theories.Pragmatics.IBR.Core
 import Linglib.Theories.Pragmatics.IBR.Convergence
@@ -2166,6 +2178,8 @@ import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.RateDistorti
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynamics
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
+import Linglib.Phenomena.ArealTypology.Studies.Haspelmath2001
+import Linglib.Theories.Diachronic.Areal
 import Linglib.Theories.Diachronic.Grammaticalization
 import Linglib.Theories.Diachronic.Lexicalization
 import Linglib.Theories.Diachronic.ModalChange

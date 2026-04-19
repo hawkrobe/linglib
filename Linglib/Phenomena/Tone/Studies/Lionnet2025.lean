@@ -1,5 +1,6 @@
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Fragments.Drubea.Prosody
+import Linglib.Fragments.Numee.Prosody
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 
 /-!
@@ -332,5 +333,76 @@ theorem drubea_register_culminative_not_stress :
     -- Stress accent is absent (Hyman)
     Hyman2006.drubea.hasStressAccent = false :=
   ⟨all_stems_culminative, rfl⟩
+
+-- ============================================================================
+-- § 13: Numèè Boundary Downstep ⁺% (@cite{lionnet-2025} §3.4)
+-- ============================================================================
+
+/-! Numèè shares Drubea's underlying register inventory (registerless vs
+    downstepped morae, no tone features) but diverges at the
+    utterance-final boundary. The phenomenon, formalized in
+    `Fragments/Numee/Prosody.lean`, has three properties worth pinning
+    down here: it applies only to **light CV** finals, only when the
+    **preceding syllable is registerless**, and produces a *stacked*
+    double downstep when the final is itself underlyingly downstepped
+    — preserving the registerless/downstepped contrast utterance-finally. -/
+
+open Fragments.Numee.Prosody
+
+/-- Boundary `⁺%` downsteps a registerless light CV final preceded by
+    a registerless syllable (@cite{lionnet-2025} ex. 24). -/
+theorem numee_registerless_final_single :
+    numeeBoundaryEffect [jaa, niCoconut] = .single := by decide
+
+/-- An *already-downstepped* light CV final receives a *second* downstep
+    at the boundary — the stacked `⁺⁺` that preserves the underlying
+    contrast in final position (@cite{lionnet-2025} ex. 25). The minimal
+    pair `nĩ` 'coconut' (registerless) vs `⁺nĩ` 'breast' (downstepped)
+    is realised utterance-finally as a one-step vs two-step pitch drop
+    on the same surface segments. -/
+theorem numee_downstepped_final_double :
+    numeeBoundaryEffect [jaa, niBreast] = .double := by decide
+
+/-- The boundary distinguishes the minimal pair: `niCoconut` triggers
+    `single`, `niBreast` triggers `double`. This is the empirical
+    signature that the underlying registerless/downstepped contrast
+    survives the boundary process. -/
+theorem numee_minimal_pair_distinguished :
+    numeeBoundaryEffect [jaa, niCoconut] ≠ numeeBoundaryEffect [jaa, niBreast] := by
+  decide
+
+/-- A **heavy CVV** final blocks the boundary downstep — eligibility
+    requires a light (monomoraic) final (@cite{lionnet-2025} ex. 26). -/
+theorem numee_heavy_final_blocks :
+    numeeBoundaryEffect [regCV, mii] = .none := by decide
+
+/-- A **downstepped preceding syllable** blocks the boundary, even
+    when the final is light CV and registerless
+    (@cite{lionnet-2025} ex. 28: `⁺tĩĩ ku` 'three yams'). -/
+theorem numee_after_downstepped_blocks :
+    numeeBoundaryEffect [regCVV, beTii, ku] = .none := by decide
+
+/-- Same blocking pattern with a different downstepped penult and
+    different light CV final (@cite{lionnet-2025} ex. 29: `⁺paa kwɛ̃`
+    'down sand'). -/
+theorem numee_after_downstepped_blocks' :
+    numeeBoundaryEffect [niCoconut, paa, kwe] = .none := by decide
+
+/-- A bare light CV final with no preceding syllable does not trigger
+    the boundary — the rule's structural description requires *two*
+    syllables. -/
+theorem numee_singleton_no_boundary :
+    numeeBoundaryEffect [niCoconut] = .none := by decide
+
+/-- Numèè syllables inherit the same register inventory as Drubea
+    morphemes — the per-mora `RegisterSpec` list `niBreast` carries is
+    `IsCulminative`, just like Drubea stems. The boundary process is
+    *postlexical* and does not feed culminativity, which is a property
+    of underlying lexical specifications. -/
+theorem numee_lexical_culminative :
+    IsCulminative niBreast.specs ∧
+    IsCulminative beTii.specs ∧
+    IsCulminative paa.specs := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 end Lionnet2025
