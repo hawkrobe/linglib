@@ -70,7 +70,6 @@ import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.SelectionFunction
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
 import Linglib.Core.InfoState
 import Linglib.Core.Inquisitive
 import Linglib.Core.Issue.Basic
@@ -2253,11 +2252,11 @@ import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
 import Linglib.Theories.Pragmatics.Dialogue.KOS.TTRBridge
 -- Theories: Phonology
-import Linglib.Theories.Phonology.Features
-import Linglib.Theories.Phonology.FeatureGeometry
-import Linglib.Theories.Phonology.ComplexSegments
-import Linglib.Theories.Phonology.Autosegmental.Defs
+import Linglib.Theories.Phonology.Featural.Features
+import Linglib.Theories.Phonology.Featural.Geometry
+import Linglib.Theories.Phonology.Featural.ComplexSegments
 import Linglib.Theories.Phonology.Featural.Bundle
+import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Theories.Phonology.Tier

@@ -1,5 +1,5 @@
-import Linglib.Theories.Phonology.ComplexSegments
-import Linglib.Theories.Phonology.FeatureGeometry
+import Linglib.Theories.Phonology.Featural.ComplexSegments
+import Linglib.Theories.Phonology.Featural.Geometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.RuleBased.Defs
 

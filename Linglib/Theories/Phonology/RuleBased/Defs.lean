@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Features
+import Linglib.Theories.Phonology.Featural.Features
 
 /-!
 # SPE Phonological Rules

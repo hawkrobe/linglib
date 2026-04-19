@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Features
+import Linglib.Theories.Phonology.Featural.Features
 
 /-!
 # Feature Geometry @cite{clements-1985} @cite{sagey-1986}

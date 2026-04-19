@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Features
+import Linglib.Theories.Phonology.Featural.Features
 import Linglib.Theories.Phonology.RuleBased.Defs
 import Linglib.Theories.Phonology.Harmony.Defs
 

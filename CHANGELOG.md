@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.230.16] - 2026-04-19
+
+### Changed
+- **`Theories/Phonology/Featural/`**: phase C of the mathlib-shaped Phonology regrouping. Three featural-theory files moved from the flat `Theories/Phonology/` top level into the existing `Featural/` subdirectory (which previously contained only `Bundle.lean` from 0.229.949): `Features.lean` → `Featural/Features.lean` (Hayes 26-feature inventory + classification predicates + `Segment` representation @cite{hayes-2009}); `FeatureGeometry.lean` → `Featural/Geometry.lean` (Clements/Sagey hierarchical organization with 8 `GeomNode` constructors + dominance/subsumption theorems @cite{clements-1985} @cite{sagey-1986}); `ComplexSegments.lean` → `Featural/ComplexSegments.lean` (multi-articulator segment classification @cite{sagey-1986}). Renamed `FeatureGeometry.lean` → `Geometry.lean` since the directory name `Featural/` already supplies the prefix. Path-only refactor: namespaces (`Phonology`, `Phonology.FeatureGeometry`, `Phonology.ComplexSegments`) preserved to avoid cascading per-symbol updates across all 17 consumers; namespace alignment to `Phonology.Featural.{Features, Geometry, ComplexSegments}` deferred to a follow-up if/when the tradeoff makes sense. 17 import paths updated across `Theories/Phonology/{Autosegmental, Syllable, Harmony, RuleBased}/` infrastructure files, `Phenomena/{Allomorphy/Studies/Stojkovic2026, Phonology/Studies/Sagey1986}.lean`, and 8 `Fragments/{Korean, Turkish, Farsi, English, Hungarian, Finnish (×2), Akan}/` consumers; `Linglib.lean` reorganized so all 4 Featural files cluster together at the top of the Phonology section. Net effect: `Theories/Phonology/` shrinks from 14 top-level files to 11 (removing the three featural ones); `Featural/` grows from 1 file to 4. Build clean across the whole consumer set.
+
 ## [0.230.15] - 2026-04-19
 
 ### Changed

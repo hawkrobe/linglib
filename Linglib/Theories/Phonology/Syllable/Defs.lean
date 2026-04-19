@@ -1,5 +1,5 @@
 import Mathlib.Order.Nat
-import Linglib.Theories.Phonology.Features
+import Linglib.Theories.Phonology.Featural.Features
 
 /-!
 # Syllable Structure
