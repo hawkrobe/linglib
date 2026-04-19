@@ -4,7 +4,7 @@ import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
-import Linglib.Theories.Phonology.CophonologyTheory
+import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 
 /-!
@@ -57,7 +57,7 @@ at the expected edge of the root morpheme.
 namespace AkinboFwangwar2026
 
 open Core.OT
-open Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (TRN)
 open Fragments.Mwaghavul
 
 -- ============================================================================
@@ -82,7 +82,7 @@ inductive ToneSource where
 /-- An output TBU with correspondence: the surface tone and where it
     came from. -/
 structure OutputTBU where
-  tone   : ToneFeature
+  tone   : TRN
   source : ToneSource
   deriving DecidableEq, Repr
 
@@ -130,15 +130,15 @@ of the candidate, following @cite{akinbo-fwangwar-2026} §4.3 and
 /-- Count L-ANCHOR violations for a given grammatical tone: number of
     TBUs to the left of the leftmost grammatical occurrence of `tone`.
     If the tone is not present, every TBU is a violation (tone not
-    anchored). Parametrized over `ToneFeature` to avoid duplicating
+    anchored). Parametrized over `TRN` to avoid duplicating
     the M and H variants. -/
-def lAnchorViolations (tone : ToneFeature) (tbus : List OutputTBU) : Nat :=
+def lAnchorViolations (tone : TRN) (tbus : List OutputTBU) : Nat :=
   match tbus.findIdx? (λ t => t.source == .gram && t.tone == tone) with
   | none   => tbus.length
   | some i => i
 
 /-- Count R-ANCHOR violations for a given grammatical tone. -/
-def rAnchorViolations (tone : ToneFeature) (tbus : List OutputTBU) : Nat :=
+def rAnchorViolations (tone : TRN) (tbus : List OutputTBU) : Nat :=
   lAnchorViolations tone tbus.reverse
 
 /-- MAX-Tone: count lexical tones that were deleted (overwritten).
@@ -532,7 +532,7 @@ theorem t26_optimal :
     This pattern is attested crosslinguistically in ideophones expressing
     distinguishable identity: reduplicant and base bear different feature
     values (@cite{dingemanse-thompson-2020}, @cite{yliniemi-2024}). -/
-def iconicDisharmony (red base : List ToneFeature) : Bool :=
+def iconicDisharmony (red base : List TRN) : Bool :=
   (red.zip base).all λ (r, b) => r != b
 
 /-- The optimal pluractional verb exhibits iconic disharmony. -/
@@ -659,7 +659,7 @@ theorem mh_only_from_mh_verbalizer :
 /-- All M-tone ideophones produce uniform M output. -/
 theorem m_verbs_all_uniform :
     ∀ i ∈ [zut, diis, kwaaj, vjaar, shweer, wuulash, fooyoop, vjayaap],
-    deriveVerb i = i.tones.map (λ _ => ToneFeature.M) := by decide
+    deriveVerb i = i.tones.map (λ _ => TRN.M) := by decide
 
 /-- Pluractional verbs always use M-H, never M alone.
     This is generalization (13e-f): regardless of whether the

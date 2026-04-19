@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Alternation
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Learning.TolerancePrinciple
 
 /-!

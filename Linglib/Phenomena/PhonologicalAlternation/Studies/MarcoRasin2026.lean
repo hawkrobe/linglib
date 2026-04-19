@@ -1,5 +1,5 @@
-import Linglib.Theories.Phonology.OptimalParadigms
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.OptimalParadigms
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
 import Linglib.Core.Constraint.System
 

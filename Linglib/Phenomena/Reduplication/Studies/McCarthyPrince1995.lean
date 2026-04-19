@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.System
-import Linglib.Theories.Phonology.Correspondence
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Fragments.Akan.Phonology
 
 /-!

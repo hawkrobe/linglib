@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.Variation
 import Linglib.Core.Constraint.System
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Phonology.Prosodic.Syllable.NaturalClass
 import Linglib.Fragments.Tarifit.Inventory
 

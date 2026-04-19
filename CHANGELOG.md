@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.230.18] - 2026-04-19
+
+### Changed
+- **`Theories/Phonology/OptimalityTheory/`**: phase E of the mathlib-shaped Phonology regrouping. Six standalone files moved from the flat `Theories/Phonology/` top level into a new `OptimalityTheory/` umbrella that clusters the OT family: `Constraints.lean` → `OptimalityTheory/Constraints.lean` (markedness/faithfulness primitives + `ConstraintSystem`); `Correspondence.lean` → `OptimalityTheory/Correspondence.lean` (correspondence theory @cite{mccarthy-prince-1995}); `OptimalParadigms.lean` → `OptimalityTheory/OptimalParadigms.lean` (output-output correspondence / paradigm uniformity); `StratalOT.lean` → `OptimalityTheory/StratalOT.lean` (stem/word/phrase strata); `CophonologyTheory.lean` → `OptimalityTheory/CophonologyTheory.lean` (lexical-stratum cophonologies); `Doubling.lean` → `OptimalityTheory/Doubling.lean` (reduplicative doubling). Path-only refactor: namespaces preserved to avoid the per-symbol cascade; consumer imports updated across all 24 affected files (`Phenomena/{PhonologicalAlternation, TemplaticMorphology, Phonology, Allomorphy, Tone, Case, Phonotactics, Reduplication}/Studies/`, `Fragments/{English/TDDeletion, Amharic/ConsonantalRoots}`, `Theories/Phonology/{Autosegmental/DominantCophAgreement, Prosodic/Templates, OptimalityTheory/{OptimalParadigms, Correspondence, Doubling}}`); `Linglib.lean` reorganized so all six OT files cluster contiguously. Net effect: `Theories/Phonology/` shrinks further as the OT-family files migrate under one umbrella; mirrors mathlib's clustering of related infrastructure under thematic subdirectories. Build clean across the moved files and their consumers.
+
 ## [0.230.17] - 2026-04-19
 
 ### Changed

@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Correspondence
+import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 
 /-!
 # Optimal Paradigms

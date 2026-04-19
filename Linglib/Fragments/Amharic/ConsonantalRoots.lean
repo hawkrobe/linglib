@@ -1,5 +1,5 @@
 import Linglib.Core.Morphology.ConsonantalRoot
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 
 /-!
 # Amharic Consonantal Roots

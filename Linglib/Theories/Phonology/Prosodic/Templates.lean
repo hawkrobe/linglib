@@ -1,5 +1,5 @@
 import Linglib.Core.Morphology.ConsonantalRoot
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 
 /-!
 # CV-Skeletal Templates and Root–Template Association

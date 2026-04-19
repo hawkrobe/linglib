@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
-import Linglib.Theories.Phonology.CophonologyTheory
+import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 
 /-!
 # Dominant Cophonology ↔ Tonal Overwrite Agreement

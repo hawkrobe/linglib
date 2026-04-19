@@ -1,6 +1,6 @@
 import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
-import Linglib.Theories.Phonology.Constraints
-import Linglib.Theories.Phonology.Doubling
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Doubling
 import Linglib.Core.Constraint.System
 
 /-!

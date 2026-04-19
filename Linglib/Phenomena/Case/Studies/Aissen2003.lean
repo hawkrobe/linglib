@@ -1,5 +1,5 @@
 import Linglib.Core.Prominence
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Phenomena.Case.Typology
 import Linglib.Theories.Syntax.Case.Dependent
 
@@ -413,14 +413,14 @@ def mkTrans (a : AnimacyLevel) (d : DefinitenessLevel) : TransClause :=
 theorem object_always_acc :
     AnimacyLevel.all.all (λ a =>
       DefinitenessLevel.all.all (λ d =>
-        objectCase .accusative (mkTrans a d) == some Core.Case.acc)) = true := by
+        objectCase .accusative (mkTrans a d) == some .acc)) = true := by
   native_decide
 
 /-- The subject always gets NOM (unmarked case). -/
 theorem subject_always_nom :
     AnimacyLevel.all.all (λ a =>
       DefinitenessLevel.all.all (λ d =>
-        getCaseOf "subj" (derivation .accusative (mkTrans a d)) == some Core.Case.nom)) = true := by
+        getCaseOf "subj" (derivation .accusative (mkTrans a d)) == some .nom)) = true := by
   native_decide
 
 -- ============================================================================

@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.OT
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Core.Morphology.MorphProfile
 
 /-!

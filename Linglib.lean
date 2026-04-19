@@ -2274,12 +2274,12 @@ import Linglib.Theories.Phonology.Prosodic.Accent
 import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Theories.Phonology.Prosodic.Templates
 import Linglib.Theories.Phonology.RuleBased.Defs
-import Linglib.Theories.Phonology.Constraints
-import Linglib.Theories.Phonology.Correspondence
-import Linglib.Theories.Phonology.OptimalParadigms
-import Linglib.Theories.Phonology.StratalOT
-import Linglib.Theories.Phonology.CophonologyTheory
-import Linglib.Theories.Phonology.Doubling
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
+import Linglib.Theories.Phonology.OptimalityTheory.OptimalParadigms
+import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
+import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
+import Linglib.Theories.Phonology.OptimalityTheory.Doubling
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

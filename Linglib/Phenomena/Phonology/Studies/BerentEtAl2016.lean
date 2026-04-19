@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Doubling
+import Linglib.Theories.Phonology.OptimalityTheory.Doubling
 
 /-!
 # Berent, Bat-El, Brentari, Dupuis & Vaknin-Nusbaum (2016) @cite{berent-bat-el-brentari-dupuis-vaknin-nusbaum-2016}

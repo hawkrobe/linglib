@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Constraints
+import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 
 /-!
 # English t/d-Deletion: Cross-Dialectal Data
