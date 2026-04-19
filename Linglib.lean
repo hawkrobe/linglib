@@ -71,7 +71,6 @@ import Linglib.Core.SelectionFunction
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
 import Linglib.Core.InfoState
-import Linglib.Core.Inquisitive
 import Linglib.Core.Issue.Basic
 import Linglib.Core.Issue.Hamblin
 import Linglib.Core.Issue.Partition
@@ -2281,6 +2280,7 @@ import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
 import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Theories.Phonology.OptimalityTheory.Doubling
 import Linglib.Theories.Phonology.Subregular.TierProjection
+import Linglib.Theories.Phonology.Subregular.OCP
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace
 import Linglib.Theories.Sociolinguistics.SCM

@@ -26,10 +26,13 @@ an SL grammar — projection is the identity. This gives the inclusion
 
 ## Note on terminology
 
-The `tier` here is the *segmental* tier of Lambert §3.4 — a subset of the
-alphabet, not an autosegmental melody floating above it. For autosegmental
-tiers (high/low tone, nasal melody, register), see
-`Theories/Phonology/Autosegmental/`.
+The `tier` here is the *segmental* tier in the sense of @cite{lambert-2022}
+Ch 3 (language-theoretic side, §3.2) — a subset of the alphabet, not an
+autosegmental melody floating above it. The TSL definition specializes to
+the case where projection is `List.filter` over a tier predicate
+(equivalently, an erasing string homomorphism that keeps tier symbols and
+deletes off-tier symbols, with no relabeling). For autosegmental tiers
+(high/low tone, nasal melody, register), see `Theories/Phonology/Autosegmental/`.
 -/
 
 namespace Core.Computability.Subregular

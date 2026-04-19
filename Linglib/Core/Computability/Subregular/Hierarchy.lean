@@ -10,8 +10,9 @@ import Linglib.Core.Computability.Subregular.Tier
 # Subregular Hierarchy: Inclusion Theorems
 
 Inclusions between the local subregular classes formalized in this
-directory. This is the language-theoretic skeleton of Lambert (2022)
-Figure 3.1 @cite{lambert-2022}, restricted to the local (factor-based)
+directory. This is the language-theoretic skeleton of @cite{lambert-2022}
+Figure 2.3 (the piecewise-local subregular hierarchy, presented in Ch 2 on
+language-theoretic preliminaries), restricted to the local (factor-based)
 classes:
 
 ```
