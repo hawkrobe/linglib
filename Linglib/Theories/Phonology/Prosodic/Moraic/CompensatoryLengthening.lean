@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Moraic.Defs
+import Linglib.Theories.Phonology.Prosodic.Moraic.Defs
 
 /-!
 # Compensatory Lengthening in Moraic Theory

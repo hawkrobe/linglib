@@ -1,5 +1,5 @@
-import Linglib.Theories.Phonology.Syllable.Defs
-import Linglib.Theories.Phonology.ProsodicWord
+import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
+import Linglib.Theories.Phonology.Prosodic.Word
 
 /-!
 # Moraic Phonology

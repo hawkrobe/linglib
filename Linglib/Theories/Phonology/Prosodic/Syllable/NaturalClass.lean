@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Syllable.Defs
+import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
 
 /-!
 # Natural Classes and the Parker Sonority Scale

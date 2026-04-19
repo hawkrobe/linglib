@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.230.17] - 2026-04-19
+
+### Changed
+- **`Theories/Phonology/Prosodic/`**: phase D of the mathlib-shaped Phonology regrouping. Three standalone files and two subdirectories moved from the flat `Theories/Phonology/` top level into a new `Prosodic/` umbrella that unifies the prosodic hierarchy (mora < syllable < foot < prosodic word): `Accent.lean` → `Prosodic/Accent.lean`; `ProsodicWord.lean` → `Prosodic/Word.lean` (renamed since `Prosodic/` supplies the prefix); `Templates.lean` → `Prosodic/Templates.lean`; `Moraic/` → `Prosodic/Moraic/` (subdir with `Defs.lean` + `CompensatoryLengthening.lean`); `Syllable/` → `Prosodic/Syllable/` (subdir with `Defs.lean` + `Foot.lean` + `NaturalClass.lean`). Path-only refactor: namespaces preserved to avoid the per-symbol cascade; consumer imports updated across all 17 affected files; `Linglib.lean` reorganized so all eight Prosodic files cluster contiguously. Net effect: `Theories/Phonology/` shrinks further as the prosodic-tier files migrate under one umbrella, mirroring how mathlib clusters `Group/`, `Ring/` infrastructure under thematic subdirectories. Build clean across the moved files and their consumers.
+
 ## [0.230.16] - 2026-04-19
 
 ### Changed

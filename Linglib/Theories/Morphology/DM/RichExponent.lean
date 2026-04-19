@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Theories.Phonology.Syllable.Foot
+import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
 
 /-!
 # Rich Phonological Representations for Vocabulary Insertion

@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Templates
+import Linglib.Theories.Phonology.Prosodic.Templates
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Fragments.Hebrew.ConsonantalRoots

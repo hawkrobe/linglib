@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Syllable.Defs
+import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
 import Linglib.Theories.Phonology.Constraints
 import Linglib.Theories.Phonology.Doubling
 import Linglib.Core.Constraint.System

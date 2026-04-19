@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Moraic.CompensatoryLengthening
+import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
 import Linglib.Theories.Phonology.RuleBased.Defs
 
 /-!

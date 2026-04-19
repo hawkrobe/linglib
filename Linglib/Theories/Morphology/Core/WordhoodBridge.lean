@@ -1,7 +1,7 @@
 import Linglib.Core.Morphology.Wordhood
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Theories.Morphology.Core.CliticVsAffix
-import Linglib.Theories.Phonology.ProsodicWord
+import Linglib.Theories.Phonology.Prosodic.Word
 
 /-!
 # Wordhood ↔ Clitic/Affix Diagnostic Bridge

@@ -1,5 +1,5 @@
 import Linglib.Core.Prosody
-import Linglib.Theories.Phonology.Accent
+import Linglib.Theories.Phonology.Prosodic.Accent
 import Linglib.Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
 
 /-!

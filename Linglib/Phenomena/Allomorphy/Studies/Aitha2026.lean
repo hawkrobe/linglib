@@ -2,12 +2,12 @@ import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Theories.Interfaces.Morphosyntax.CaseContainment
 import Linglib.Core.Constraint.System
-import Linglib.Theories.Phonology.Syllable.Foot
+import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Phonology.StratalOT
-import Linglib.Theories.Phonology.ProsodicWord
+import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Theories.Morphology.DM.RichExponent
-import Linglib.Theories.Phonology.Moraic.CompensatoryLengthening
+import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
 open Interfaces.Morphosyntax.CaseContainment
 
 /-!
@@ -242,12 +242,12 @@ def weakAllomorphyPattern : AllomorphyPattern :=
     form. Since GEN's representation contains ACC's on the containment
     hierarchy, this cannot arise from case-conditioned VI. -/
 theorem weak_violates_aba :
-    weakAllomorphyPattern.violatesABA = true := by native_decide
+    weakAllomorphyPattern.ViolatesABA := by decide
 
 /-- Therefore the weak alternation is not contiguous on the case
     containment hierarchy. -/
 theorem weak_not_contiguous :
-    weakAllomorphyPattern.isContiguous = false := by native_decide
+    ¬ weakAllomorphyPattern.IsContiguous := by decide
 
 /-- In contrast, the strong alternation (ABB = NOM vs oblique) is
     contiguous — consistent with case-conditioned VI. -/
@@ -255,7 +255,7 @@ def strongAllomorphyPattern : AllomorphyPattern :=
   { nom := 0, acc := 1, gen := 1, dat := 1 }
 
 theorem strong_contiguous :
-    strongAllomorphyPattern.isContiguous = true := by native_decide
+    strongAllomorphyPattern.IsContiguous := by decide
 
 -- ────────────────────────────────────────────────────────────────────
 -- Formal connection: paradigm data → allomorphy pattern
@@ -730,8 +730,8 @@ end PrWdIntegration
     Condition + ACC feature); the weak alternation depends on linear
     adjacency to a light syllable (phonological locality). -/
 theorem strong_vs_weak_distinction :
-    strongAllomorphyPattern.isContiguous = true ∧
-    weakAllomorphyPattern.isContiguous = false := ⟨by native_decide, by native_decide⟩
+    strongAllomorphyPattern.IsContiguous ∧
+    ¬ weakAllomorphyPattern.IsContiguous := ⟨by decide, by decide⟩
 
 /-- The outward sensitivity of the weak alternation: the form of *n*
     (closer to root) depends on material further from the root (case
@@ -776,12 +776,12 @@ theorem vi_derives_strong_pattern :
     4. THEREFORE: weak alternation is phonological, not morphological -/
 theorem central_argument :
     -- (1) Strong is contiguous
-    strongAllomorphyPattern.isContiguous = true ∧
+    strongAllomorphyPattern.IsContiguous ∧
     -- (2) Weak is non-contiguous
-    weakAllomorphyPattern.isContiguous = false ∧
+    ¬ weakAllomorphyPattern.IsContiguous ∧
     -- (3) Weak is outward-sensitive
     isOutwardSensitive (conditioningPos := 2) (targetPos := 1) = true := by
-  exact ⟨by native_decide, by native_decide, rfl⟩
+  exact ⟨by decide, by decide, rfl⟩
 
 -- ============================================================================
 -- § 9: Connection to Moraic CL Theory (@cite{hayes-1989})
