@@ -2260,11 +2260,8 @@ import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Phonology.Autosegmental.GrammaticalTone
 import Linglib.Theories.Phonology.Tier
-import Linglib.Theories.Phonology.Alternation
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
-import Linglib.Theories.Phonology.Harmony.Defs
-import Linglib.Theories.Phonology.Harmony.OT
 import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
 import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
 import Linglib.Theories.Phonology.Prosodic.Syllable.NaturalClass
@@ -2273,7 +2270,10 @@ import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
 import Linglib.Theories.Phonology.Prosodic.Accent
 import Linglib.Theories.Phonology.Prosodic.Word
 import Linglib.Theories.Phonology.Prosodic.Templates
-import Linglib.Theories.Phonology.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.Alternation
+import Linglib.Theories.Phonology.Process.Harmony.Defs
+import Linglib.Theories.Phonology.Process.Harmony.OT
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Theories.Phonology.OptimalityTheory.OptimalParadigms

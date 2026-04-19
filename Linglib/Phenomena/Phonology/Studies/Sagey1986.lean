@@ -1,7 +1,7 @@
 import Linglib.Theories.Phonology.Featural.ComplexSegments
 import Linglib.Theories.Phonology.Featural.Geometry
 import Linglib.Theories.Phonology.Autosegmental.Defs
-import Linglib.Theories.Phonology.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.RuleBased.Defs
 
 /-!
 # Sagey (1986) @cite{sagey-1986}

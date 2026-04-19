@@ -2,7 +2,7 @@ import Linglib.Core.Constraint.Dequantization.OTLimit
 import Linglib.Core.Constraint.System
 import Linglib.Core.Constraint.Variation
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
-import Linglib.Theories.Phonology.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.RuleBased.Defs
 import Linglib.Fragments.English.Phonology
 
 /-!

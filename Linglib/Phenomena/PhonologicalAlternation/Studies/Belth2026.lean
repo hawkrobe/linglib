@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Alternation
+import Linglib.Theories.Phonology.Process.Alternation
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Learning.TolerancePrinciple
 

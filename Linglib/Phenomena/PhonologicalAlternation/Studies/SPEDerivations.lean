@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.RuleBased.Defs
 import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.Korean.Phonology
 import Linglib.Phenomena.PhonologicalAlternation.Data

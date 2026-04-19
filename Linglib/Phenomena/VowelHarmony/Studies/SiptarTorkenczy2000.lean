@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Harmony.OT
+import Linglib.Theories.Phonology.Process.Harmony.OT
 import Linglib.Core.Constraint.System
 import Linglib.Fragments.Hungarian.VowelHarmony
 

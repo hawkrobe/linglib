@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.Alternation
+import Linglib.Theories.Phonology.Process.Alternation
 
 /-!
 # Harmony Systems

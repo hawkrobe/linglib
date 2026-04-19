@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.230.19] - 2026-04-19
+
+### Changed
+- **`Theories/Phonology/Process/`**: phase F of the mathlib-shaped Phonology regrouping. Two subdirectories and one standalone file moved from the flat `Theories/Phonology/` top level into a new `Process/` umbrella that clusters the derivational/process-oriented machinery: `RuleBased/` → `Process/RuleBased/` (subdir with `Defs.lean`: SPE-style rewrite-rule infrastructure); `Alternation.lean` → `Process/Alternation.lean` (input-output alternation patterns); `Harmony/` → `Process/Harmony/` (subdir with `Defs.lean` + `OT.lean`: vowel/consonant harmony engines, both rule-based and OT-based). Path-only refactor: namespaces preserved to avoid the per-symbol cascade; consumer imports updated across all 16 affected files (`Phenomena/{VowelHarmony, PhonologicalAlternation, CompensatoryLengthening, Phonotactics, Phonology}/Studies/`, `Fragments/{Akan, Finnish (×2), English, Turkish, Hungarian, Korean}/`, `Theories/Phonology/Process/Harmony/{Defs, OT}.lean` self-imports); `Linglib.lean` reorganized so all four Process files cluster contiguously, immediately after the `Prosodic/` block. Net effect: completes the mathlib-shaped regrouping started in 0.230.16 — `Theories/Phonology/` now consists of `Tier.lean` (alone at the top) plus four thematic subdirectories: `Featural/` (4 files), `Autosegmental/` (5 files), `Prosodic/` (8 files including `Moraic/` + `Syllable/` subdirs), `OptimalityTheory/` (6 files), `Process/` (4 files). Build clean across the moved files and their consumers.
+
 ## [0.230.18] - 2026-04-19
 
 ### Changed

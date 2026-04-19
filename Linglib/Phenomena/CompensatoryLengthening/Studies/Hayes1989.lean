@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Prosodic.Moraic.CompensatoryLengthening
-import Linglib.Theories.Phonology.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.RuleBased.Defs
 
 /-!
 # Hayes (1989): Compensatory Lengthening in Moraic Phonology

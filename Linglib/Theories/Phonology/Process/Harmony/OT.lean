@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.Harmony.Defs
+import Linglib.Theories.Phonology.Process.Harmony.Defs
 import Linglib.Core.Logic.OT
 
 /-!

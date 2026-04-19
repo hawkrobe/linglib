@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Featural.Features
-import Linglib.Theories.Phonology.RuleBased.Defs
+import Linglib.Theories.Phonology.Process.RuleBased.Defs
 
 /-!
 # Akan Phonological Inventory (Palatalization-Relevant Segments)
