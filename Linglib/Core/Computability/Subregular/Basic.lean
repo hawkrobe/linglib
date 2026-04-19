@@ -1,3 +1,8 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Mathlib.Computability.Language
 import Mathlib.Data.List.Infix
 
@@ -12,138 +17,67 @@ and their tier-relativized variants build on.
 
 ## Why `Option α` for boundaries
 
-The canonical subregular convention is to extend the alphabet with edge
-markers `⋊` (left) and `⋉` (right) and then study `k`-factors of the
-augmented string `⋊ᵏ⁻¹ · w · ⋉ᵏ⁻¹`. Mathlib's idiomatic way to extend
-an alphabet by a single fresh symbol is `Option α`: `none` is the new
-boundary, `some a` is the original symbol. Two distinct edges are not
-needed — boundary symbols only appear at fixed positions by construction,
-so `(none, a)` reads as "starts with a" and `(b, none)` reads as "ends
-with b" without ambiguity.
-
-This is the same trick `Mathlib.Computability.Language` uses everywhere
-strings live in `List α` over a parametric alphabet, and means a
-subregular grammar is just a `Finset (List (Option α))` of permitted
-`k`-factors — directly comparable with `Language (Option α)` from
-mathlib.
+The canonical subregular convention extends the alphabet with edge markers
+`⋊` (left) and `⋉` (right) and studies `k`-factors of `⋊ᵏ⁻¹ · w · ⋉ᵏ⁻¹`.
+Mathlib's idiomatic way to extend an alphabet by one fresh symbol is
+`Option α`: `none` is the new boundary, `some a` an original symbol. Two
+distinct edges are unnecessary — boundary symbols only appear at fixed
+positions by construction.
 
 ## Main definitions
 
-- `boundary k w : List (Option α)` — augment `w` with `k - 1` boundary
-  symbols on each side.
-- `kFactors k xs : Finset (List (Option α))` — the multiset-as-set of
-  contiguous length-`k` infixes of `xs`.
-- `Augmented α := List (Option α)` — abbreviation for boundary-augmented
-  strings.
-
-## Connection to `Mathlib.Computability.Language`
-
-A subregular language over `α` is a `Language α` whose membership
-predicate factors through `kFactors k ∘ boundary k`. `StrictlyLocal.lean`
-makes this connection explicit.
+* `Augmented α` — abbreviation for `List (Option α)`.
+* `boundary k w` — `w.map some` padded with `k - 1` boundary symbols on
+  each side.
+* `kFactors k xs` — the contiguous length-`k` infixes of `xs`, built as
+  `(xs.tails.filter (k ≤ ·.length)).map (·.take k)`.
 -/
 
 namespace Core.Computability.Subregular
 
-universe u v
-
-variable {α : Type u} {β : Type v}
-
--- ============================================================================
--- § 1: Boundary augmentation
--- ============================================================================
+variable {α β : Type*}
 
 /-- A boundary-augmented string: an alphabet symbol or the boundary marker
-    `none`. Lambert's `⋊` and `⋉` collapse to the single `none` symbol
-    here, since edges only appear at fixed positions by construction. -/
-abbrev Augmented (α : Type u) : Type u := List (Option α)
-
-/-- Lift an unaugmented string into the augmented alphabet. -/
-def lift (w : List α) : Augmented α := w.map some
-
-@[simp] theorem lift_nil : lift ([] : List α) = [] := rfl
-
-@[simp] theorem lift_cons (a : α) (w : List α) :
-    lift (a :: w) = some a :: lift w := rfl
-
-@[simp] theorem length_lift (w : List α) : (lift w).length = w.length :=
-  List.length_map ..
+`none`. Lambert's `⋊` and `⋉` collapse to the single `none` symbol here, since
+edges only appear at fixed positions by construction. -/
+abbrev Augmented (α : Type*) : Type _ := List (Option α)
 
 /-- Boundary-augment a string with `k - 1` boundary markers on each side.
-    For `k = 0` and `k = 1` no padding is added (no `k`-factor can span
-    the edge). -/
+For `k ≤ 1` no padding is added (no `k`-factor can span the edge). -/
 def boundary (k : ℕ) (w : List α) : Augmented α :=
-  List.replicate (k - 1) none ++ lift w ++ List.replicate (k - 1) none
+  List.replicate (k - 1) none ++ w.map some ++ List.replicate (k - 1) none
 
-@[simp] theorem boundary_zero (w : List α) : boundary 0 w = lift w := by
+@[simp] lemma boundary_one (w : List α) : boundary 1 w = w.map some := by
   simp [boundary]
 
-@[simp] theorem boundary_one (w : List α) : boundary 1 w = lift w := by
-  simp [boundary]
-
-theorem length_boundary (k : ℕ) (w : List α) :
+lemma length_boundary (k : ℕ) (w : List α) :
     (boundary k w).length = w.length + 2 * (k - 1) := by
   simp [boundary]; omega
 
--- ============================================================================
--- § 2: `k`-Factors
--- ============================================================================
+/-- The contiguous length-`k` infixes of `xs`. Built by enumerating suffixes
+and taking each one's length-`k` prefix; suffixes shorter than `k` are
+filtered out. -/
+def kFactors (k : ℕ) (xs : List β) : List (List β) :=
+  (xs.tails.filter (k ≤ ·.length)).map (·.take k)
 
-/-- The contiguous length-`k` prefixes-of-suffixes of `xs`. The encoding
-    keeps duplicate factors collapsed at the `Set` level — what matters
-    for SL is which factors *occur*, not how many times. We list every
-    suffix-prefix of length `k`; suffixes shorter than `k` contribute
-    nothing. -/
-def kFactorsList (k : ℕ) : List β → List (List β)
-  | [] => []
-  | x :: xs =>
-      if k ≤ (x :: xs).length
-      then ((x :: xs).take k) :: kFactorsList k xs
-      else kFactorsList k xs
+/-- Every member of `kFactors k xs` has length exactly `k`. -/
+lemma length_of_mem_kFactors {k : ℕ} {f xs : List β}
+    (h : f ∈ kFactors k xs) : f.length = k := by
+  obtain ⟨s, hs, rfl⟩ := List.mem_map.mp h
+  obtain ⟨_, hlen⟩ := List.mem_filter.mp hs
+  exact List.length_take_of_le (by simpa using hlen)
 
-/-- `k`-factor membership as a `Prop` predicate. Decidable when factors
-    have decidable equality (the standard finite-alphabet case). -/
-def IsKFactor (k : ℕ) (f xs : List β) : Prop :=
-  f ∈ kFactorsList k xs
+/-- A `k`-factor of `xs` is a contiguous infix of `xs`. The witness is a
+prefix (`take`) of a suffix (`tails`), and prefix-of-suffix is infix. -/
+lemma isInfix_of_mem_kFactors {k : ℕ} {f xs : List β}
+    (h : f ∈ kFactors k xs) : f <:+: xs := by
+  obtain ⟨s, hs, rfl⟩ := List.mem_map.mp h
+  obtain ⟨hs_tail, _⟩ := List.mem_filter.mp hs
+  have hsuffix : s <:+ xs := (List.mem_tails ..).mp hs_tail
+  exact (List.take_prefix _ s).isInfix.trans hsuffix.isInfix
 
 instance [DecidableEq β] (k : ℕ) (f xs : List β) :
-    Decidable (IsKFactor k f xs) := by
-  unfold IsKFactor; infer_instance
-
-/-- Every `k`-factor has length exactly `k`. -/
-theorem length_of_mem_kFactorsList {k : ℕ} {f xs : List β}
-    (h : f ∈ kFactorsList k xs) : f.length = k := by
-  induction xs with
-  | nil => simp [kFactorsList] at h
-  | cons x xs ih =>
-    rw [kFactorsList] at h
-    by_cases hk : k ≤ (x :: xs).length
-    · rw [if_pos hk] at h
-      rcases List.mem_cons.mp h with heq | hmem
-      · subst heq; exact List.length_take_of_le hk
-      · exact ih hmem
-    · rw [if_neg hk] at h
-      exact ih h
-
-/-- Helper: extending an infix by one symbol on the left. -/
-private theorem isInfix_cons_right {f xs : List β} (a : β) (h : f <:+: xs) :
-    f <:+: (a :: xs) := by
-  obtain ⟨s, t, hst⟩ := h
-  exact ⟨a :: s, t, by simp [← hst]⟩
-
-/-- A `k`-factor of `xs` is a contiguous infix of `xs`. -/
-theorem isInfix_of_mem_kFactorsList {k : ℕ} {f xs : List β}
-    (h : f ∈ kFactorsList k xs) : f <:+: xs := by
-  induction xs with
-  | nil => simp [kFactorsList] at h
-  | cons x xs ih =>
-    rw [kFactorsList] at h
-    by_cases hk : k ≤ (x :: xs).length
-    · rw [if_pos hk] at h
-      rcases List.mem_cons.mp h with heq | hmem
-      · subst heq; exact ⟨[], (x :: xs).drop k, by simp⟩
-      · exact isInfix_cons_right x (ih hmem)
-    · rw [if_neg hk] at h
-      exact isInfix_cons_right x (ih h)
+    Decidable (f ∈ kFactors k xs) := by
+  unfold kFactors; infer_instance
 
 end Core.Computability.Subregular

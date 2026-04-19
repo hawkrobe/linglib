@@ -1,22 +1,28 @@
+/-
+Copyright (c) 2026 Robert Hawkins. All rights reserved.
+Released under Apache 2.0 license as described in the file LICENSE.
+Authors: Robert Hawkins
+-/
 import Linglib.Core.Computability.Subregular.StrictlyLocal
 
 /-!
 # Tier-Based Strictly Local Languages (TSL_k)
 
-A **tier-based strictly `k`-local** (TSL_k) language is one whose membership
-is determined by SL_k membership of its **projection** onto a *tier* — a
-designated decidable subset of the alphabet @cite{heinz-rawal-tabor-2011}
-@cite{lambert-2022}. Symbols outside the tier are erased before the SL test;
-this captures long-distance phonological dependencies (consonant harmony,
-vowel harmony with transparent vowels) where tier-adjacent substrings are
-constrained but the surface realisation may carry arbitrary intervening
-material on other tiers.
+A **tier-based strictly `k`-local** (TSL_k) language is one whose
+membership is determined by SL_k membership of its **projection** onto a
+*tier* — a designated decidable subset of the alphabet
+@cite{heinz-rawal-tabor-2011} @cite{lambert-2022}. Symbols outside the
+tier are erased before the SL test; this captures long-distance
+phonological dependencies (consonant harmony, vowel harmony with
+transparent vowels) where tier-adjacent substrings are constrained but
+the surface realisation may carry arbitrary intervening material on
+other tiers.
 
 ## Connection to SL
 
-A TSL grammar with the universal tier (every symbol on tier) reduces to an
-SL grammar — projection is the identity. This gives SL_k ⊆ TSL_k as a
-special case (proved in `Hierarchy.lean`).
+A TSL grammar with the universal tier (every symbol on tier) reduces to
+an SL grammar — projection is the identity. This gives the inclusion
+`IsStrictlyLocal ⊆ IsTierStrictlyLocal` (proved in `Hierarchy.lean`).
 
 ## Note on terminology
 
@@ -28,53 +34,38 @@ tiers (high/low tone, nasal melody, register), see
 
 namespace Core.Computability.Subregular
 
-universe u
+variable {α : Type*}
 
-variable {α : Type u}
+/-- **Tier projection**: `List.filter` specialized to a `Prop`-valued
+predicate `T`. Keeps symbols satisfying `T`, erases the rest. The
+implementation is exactly `xs.filter (decide ∘ T)`; we expose it under a
+linguistically-named alias to keep the SL/TSL bridge readable. -/
+def tierProject (T : α → Prop) [DecidablePred T] (xs : List α) : List α :=
+  xs.filter (fun x => decide (T x))
 
--- ============================================================================
--- § 1: Tier projection
--- ============================================================================
+@[simp] lemma tierProject_nil (T : α → Prop) [DecidablePred T] :
+    tierProject T ([] : List α) = [] := rfl
 
-/-- **Tier projection**: keep symbols satisfying `T`, erase the rest. This is
-    `List.filter` specialized to a `Prop`-valued predicate; spelled out
-    structurally so the recursion is easy to unfold in proofs. -/
-def project (T : α → Prop) [DecidablePred T] : List α → List α
-  | [] => []
-  | x :: xs => if T x then x :: project T xs else project T xs
-
-@[simp] theorem project_nil (T : α → Prop) [DecidablePred T] :
-    project T ([] : List α) = [] := rfl
-
-@[simp] theorem project_cons_pos {T : α → Prop} [DecidablePred T]
-    {x : α} (h : T x) (xs : List α) :
-    project T (x :: xs) = x :: project T xs := by
-  simp [project, h]
-
-@[simp] theorem project_cons_neg {T : α → Prop} [DecidablePred T]
-    {x : α} (h : ¬ T x) (xs : List α) :
-    project T (x :: xs) = project T xs := by
-  simp [project, h]
+lemma tierProject_cons (T : α → Prop) [DecidablePred T] (x : α) (xs : List α) :
+    tierProject T (x :: xs) =
+      if T x then x :: tierProject T xs else tierProject T xs := by
+  by_cases h : T x <;> simp [tierProject, h]
 
 /-- Projection by the universal tier is the identity. -/
-theorem project_univ (w : List α) :
-    project (fun _ : α => True) w = w := by
-  induction w with
-  | nil => rfl
-  | cons x xs ih => simp [project, ih]
+@[simp] lemma tierProject_univ (w : List α) :
+    tierProject (fun _ : α => True) w = w := by
+  simp [tierProject]
 
--- ============================================================================
--- § 2: TSL_k grammars
--- ============================================================================
-
-/-- A **tier-based strictly `k`-local grammar**: a decidable tier (subset of
-    `α`) plus an SL grammar interpreted on the projected string. -/
-structure TSLGrammar (k : ℕ) (α : Type u) where
-  /-- The decidable membership predicate selecting which symbols stay on the
-      tier. Symbols failing `tier` are erased before the SL test. -/
+/-- A **tier-based strictly `k`-local grammar**: a decidable tier (subset
+of `α`) plus an SL grammar interpreted on the projected string. The tier
+predicate is carried as an instance field via `[DecidablePred tier]` so
+projection at use sites picks up the decidability automatically. -/
+structure TSLGrammar (k : ℕ) (α : Type*) where
+  /-- The membership predicate selecting which symbols stay on the tier.
+  Symbols failing `tier` are erased before the SL test. -/
   tier : α → Prop
   /-- Decidability of `tier`, needed to define projection. -/
-  decTier : DecidablePred tier
+  [decTier : DecidablePred tier]
   /-- The set of permitted `k`-factors of the *projected* string. -/
   permitted : Set (Augmented α)
 
@@ -82,17 +73,23 @@ namespace TSLGrammar
 
 variable {k : ℕ}
 
-/-- The language generated by a TSL grammar: project to the tier, then apply
-    the SL test. -/
-def lang (G : TSLGrammar k α) : Language α := fun w =>
-  have := G.decTier
-  ∀ f ∈ kFactorsList k (boundary k (project G.tier w)), f ∈ G.permitted
+attribute [instance] TSLGrammar.decTier
 
-/-- A language is **tier-based strictly `k`-local** iff some `TSLGrammar k α`
-    generates it. -/
-def IsTSLk (k : ℕ) (L : Language α) : Prop :=
-  ∃ G : TSLGrammar k α, G.lang = L
+/-- The language generated by a TSL grammar: project to the tier, then
+apply the SL test. -/
+def lang (G : TSLGrammar k α) : Language α := fun w =>
+  ∀ f ∈ kFactors k (boundary k (tierProject G.tier w)), f ∈ G.permitted
+
+@[simp] lemma mem_lang (G : TSLGrammar k α) (w : List α) :
+    w ∈ G.lang ↔
+      ∀ f ∈ kFactors k (boundary k (tierProject G.tier w)), f ∈ G.permitted :=
+  Iff.rfl
 
 end TSLGrammar
+
+/-- A language is **tier-based strictly `k`-local** iff some
+`TSLGrammar k α` generates it. -/
+def IsTierStrictlyLocal (k : ℕ) (L : Language α) : Prop :=
+  ∃ G : TSLGrammar k α, G.lang = L
 
 end Core.Computability.Subregular
