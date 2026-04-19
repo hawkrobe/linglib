@@ -97,15 +97,13 @@ def catathesisToRegisterSpecs (aps : List AccentualPhrase) : List RegisterSpec :
 /-- **Catathesis produces terracing** (§3, Fig. 11): a sequence of
     bitonal accents within an ip produces a descending staircase.
     This follows from `realizePitch` applied to the register specs. -/
-theorem catathesis_terracing (n : Nat) :
-    realizePitch n [some .l, some .l] = [n - 1, n - 1 - 1] := by
-  simp [realizePitch]
+theorem catathesis_terracing (n : Int) :
+    realizePitch n [some .l, some .l] = [n - 1, n - 1 - 1] := rfl
 
 /-- Catathesis lowers pitch: after one bitonal accent, the pitch is
-    strictly lower than the starting level (for nonzero baseline). -/
-theorem catathesis_lowers (n : Nat) :
-    (realizePitch n [some .l]).head? = some (n - 1) := by
-  simp [realizePitch]
+    strictly lower than the starting level. -/
+theorem catathesis_lowers (n : Int) :
+    (realizePitch n [some .l]).head? = some (n - 1) := rfl
 
 /-- Count catathesis applications in a sequence of APs. -/
 def catathesisCount (aps : List AccentualPhrase) : Nat :=
@@ -434,26 +432,27 @@ theorem english_foc_may_not_trigger_catathesis :
     a registerless AP with a bitonal-accented one produces pointwise
     lower-or-equal pitch realization. -/
 theorem more_catathesis_lower_pitch :
-    pointwiseLE
+    List.Forall₂ (· ≤ ·)
       (realizePitch 4 [some .l, some .l, none])
       (realizePitch 4 [some .l, none, none]) := by decide
 
-/-- **Catathesis blocking**: realizing the second ip from the original
-    baseline produces pointwise higher pitch than continuing from the
-    compressed level. When an ip boundary resets the register to
-    baseline `n`, subsequent pitches are higher than if catathesis had
-    continued from `n - k`.
+/-- **Catathesis blocking**: realizing an ip from the higher (reset)
+    starting offset produces pointwise higher-or-equal pitch than
+    continuing from a compressed offset. When an ip boundary resets the
+    register to offset `n`, subsequent pitches are at least as high as
+    if catathesis had continued from any lower offset `m ≤ n`.
 
     Direct application of `realizePitch_baseline_mono`. -/
-theorem catathesis_blocking (specs : List RegisterSpec) (n k : Nat) :
-    pointwiseLE (realizePitch (n - k) specs) (realizePitch n specs) :=
-  realizePitch_baseline_mono specs (Nat.sub_le n k)
+theorem catathesis_blocking (specs : List RegisterSpec) {m n : Int}
+    (h : m ≤ n) :
+    List.Forall₂ (· ≤ ·) (realizePitch m specs) (realizePitch n specs) :=
+  realizePitch_baseline_mono specs h
 
-/-- Concrete catathesis blocking: after one downstep from baseline 4,
-    the second ip starting from 4 (reset) produces higher pitches [3, 3]
-    than continuing from 3 (no reset) which gives [2, 2]. -/
+/-- Concrete catathesis blocking: a fresh ip starting from offset 4
+    (reset) yields higher pitches `[3, 3]` than the same specs continued
+    from a compressed offset 3, which give `[2, 2]`. -/
 theorem catathesis_blocking_concrete :
-    pointwiseLE
+    List.Forall₂ (· ≤ ·)
       (realizePitch 3 [some .l, none])
       (realizePitch 4 [some .l, none]) := by decide
 

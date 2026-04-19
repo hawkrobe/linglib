@@ -63,21 +63,21 @@ theorem minimal_pairs_register_contrast :
 /-- Every stem in the Drubea fragment satisfies culminativity:
     at most one `l` feature per stem (@cite{lionnet-2025} §3.10). -/
 theorem all_stems_culminative :
-    allStems.all (fun e => isCulminative e.specs) = true := by
-  native_decide
+    ∀ e ∈ allStems, IsCulminative e.specs := by
+  decide
 
 /-- Culminativity holds structurally for all three patterns at any
     mora count: each pattern places at most one `l`. -/
 theorem pattern_culminative_0 (p : StemPattern) :
-    isCulminative (p.toSpecs 0) = true := by cases p <;> native_decide
+    IsCulminative (p.toSpecs 0) := by cases p <;> decide
 theorem pattern_culminative_1 (p : StemPattern) :
-    isCulminative (p.toSpecs 1) = true := by cases p <;> native_decide
+    IsCulminative (p.toSpecs 1) := by cases p <;> decide
 theorem pattern_culminative_2 (p : StemPattern) :
-    isCulminative (p.toSpecs 2) = true := by cases p <;> native_decide
+    IsCulminative (p.toSpecs 2) := by cases p <;> decide
 theorem pattern_culminative_3 (p : StemPattern) :
-    isCulminative (p.toSpecs 3) = true := by cases p <;> native_decide
+    IsCulminative (p.toSpecs 3) := by cases p <;> decide
 theorem pattern_culminative_4 (p : StemPattern) :
-    isCulminative (p.toSpecs 4) = true := by cases p <;> native_decide
+    IsCulminative (p.toSpecs 4) := by cases p <;> decide
 
 -- ============================================================================
 -- § 3: CV⁺V Three-Way Contrast (mora as RBU)
@@ -117,11 +117,19 @@ theorem monomoraic_two_way :
 /-- Four consecutive downstepped monosyllables produce terracing:
     each is realized one step lower than the preceding
     (cf. ex. 11: /⁺ɲi ⁺mwa ⁺ŋii ⁺me/ 'They said that…';
-    ex. 12: /⁺mwa ⁺ŋii ⁺yoo ⁺ne/ in Figure 7). -/
+    ex. 12: /⁺mwa ⁺ŋii ⁺yoo ⁺ne/ in Figure 7).
+
+    The theory-primary content is the delta sequence `[-1, -2, -3, -4]`:
+    each downstep adds another step of cumulative descent. The offset-4
+    realization below is just an arbitrary anchoring of those deltas. -/
+theorem four_downsteps_deltas :
+    pitchDeltas [some .l, some .l, some .l, some .l] = [-1, -2, -3, -4] := by
+  decide
+
 theorem four_downsteps_terrace :
     realizePitch 4
       [some .l, some .l, some .l, some .l] = [3, 2, 1, 0] := by
-  native_decide
+  decide
 
 /-- Registerless syllables following a downstep maintain the lowered
     register — they are realized at the same pitch as the downstepped
@@ -310,7 +318,7 @@ theorem drubea_quadrant :
 -- ============================================================================
 
 /-- Drubea satisfies register culminativity: every stem in the fragment
-    has at most one `l` feature. This is `isCulminative` from
+    has at most one `l` feature. This is `IsCulminative` from
     RegisterTier, applied to all stems in §2.
 
     This is NOT @cite{hyman-2006}'s stress culminativity (def. 5b),
@@ -320,9 +328,9 @@ theorem drubea_quadrant :
     (see `Hyman2006.CulminativityDomain`). -/
 theorem drubea_register_culminative_not_stress :
     -- Register culminativity holds (Lionnet)
-    allStems.all (fun e => isCulminative e.specs) = true ∧
+    (∀ e ∈ allStems, IsCulminative e.specs) ∧
     -- Stress accent is absent (Hyman)
-    Hyman2006.drubea.hasStressAccent = false := by
-  exact ⟨by native_decide, rfl⟩
+    Hyman2006.drubea.hasStressAccent = false :=
+  ⟨all_stems_culminative, rfl⟩
 
 end Lionnet2025
