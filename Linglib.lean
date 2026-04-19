@@ -175,6 +175,11 @@ import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Core.Genericity
 import Linglib.Core.Computability.FormalLanguage
+import Linglib.Core.Computability.Subregular.Basic
+import Linglib.Core.Computability.Subregular.StrictlyLocal
+import Linglib.Core.Computability.Subregular.LocallyTestable
+import Linglib.Core.Computability.Subregular.Tier
+import Linglib.Core.Computability.Subregular.Hierarchy
 import Linglib.Core.StringHom
 import Linglib.Core.VerbCluster
 import Linglib.Core.Case.Basic
