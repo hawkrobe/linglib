@@ -1,7 +1,7 @@
 import Linglib.Core.Computability.FormalLanguage
 import Linglib.Core.Case.Basic
 import Linglib.Phenomena.WordOrder.CrossSerial
-import Linglib.Theories.FormalLanguageTheory.NonContextFree
+import Linglib.Core.Computability.NonContextFree
 import Linglib.Fragments.SwissGerman.Case
 
 /-!

@@ -1,7 +1,7 @@
 import Linglib.Core.Computability.FormalLanguage
 import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Phenomena.WordOrder.Studies.Shieber1985
-import Linglib.Theories.FormalLanguageTheory.NonContextFree
+import Linglib.Core.Computability.NonContextFree
 
 /-!
 # Pullum & Gazdar (1982) @cite{gazdar-pullum-1982}

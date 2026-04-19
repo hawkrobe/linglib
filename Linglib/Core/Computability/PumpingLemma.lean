@@ -1,4 +1,4 @@
-import Linglib.Theories.FormalLanguageTheory.CFGTree
+import Linglib.Core.Computability.CFGTree
 
 /-!
 # CFL Pumping Lemma

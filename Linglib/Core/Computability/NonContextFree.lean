@@ -1,4 +1,4 @@
-import Linglib.Theories.FormalLanguageTheory.PumpingLemma
+import Linglib.Core.Computability.PumpingLemma
 
 /-!
 # Non-Context-Free Witness Languages

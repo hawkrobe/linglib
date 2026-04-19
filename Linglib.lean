@@ -1491,9 +1491,9 @@ import Linglib.Theories.Syntax.CCG.CrossSerial
 import Linglib.Theories.Syntax.CCG.Gapping
 import Linglib.Phenomena.Entailment.Studies.ScontrasPearl2021
 import Linglib.Theories.Syntax.CCG.Formal.Equivalence
-import Linglib.Theories.FormalLanguageTheory.CFGTree
-import Linglib.Theories.FormalLanguageTheory.PumpingLemma
-import Linglib.Theories.FormalLanguageTheory.NonContextFree
+import Linglib.Core.Computability.CFGTree
+import Linglib.Core.Computability.PumpingLemma
+import Linglib.Core.Computability.NonContextFree
 import Linglib.Theories.Syntax.CCG.Formal.GenerativeCapacity
 import Linglib.Theories.Syntax.CCG.Scope
 import Linglib.Theories.Syntax.CCG.Intonation
