@@ -1,4 +1,4 @@
-import Linglib.Core.FormalLanguage
+import Linglib.Core.Computability.FormalLanguage
 import Linglib.Phenomena.WordOrder.CrossSerial
 import Linglib.Phenomena.WordOrder.Studies.Shieber1985
 import Linglib.Theories.FormalLanguageTheory.NonContextFree

@@ -174,7 +174,7 @@ import Linglib.Core.SpecificityCondition
 import Linglib.Core.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Core.Genericity
-import Linglib.Core.FormalLanguage
+import Linglib.Core.Computability.FormalLanguage
 import Linglib.Core.StringHom
 import Linglib.Core.VerbCluster
 import Linglib.Core.Case.Basic

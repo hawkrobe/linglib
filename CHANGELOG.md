@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.230.6] - 2026-04-19
+
+### Changed
+- **`Core/FormalLanguage.lean` → `Core/Computability/FormalLanguage.lean`**: mathlib-shaped relocation under a new `Core/Computability/` subdirectory mirroring `Mathlib/Computability/` (first step of a phased move that will pull `Theories/FormalLanguageTheory/{PumpingLemma, NonContextFree, CFGTree}.lean` and a fresh `Subregular/` family under the same root). Namespace stays `Core` (the file's `inductive FormalLanguageType` declarations are unchanged). Five import lines updated: `Linglib.lean`, `Theories/Syntax/CCG/Formal/GenerativeCapacity.lean`, `Phenomena/WordOrder/CrossSerial.lean`, `Phenomena/WordOrder/Studies/PullumGazdar1982.lean`, `Phenomena/WordOrder/Studies/Shieber1985.lean`.
+
 ## [0.230.5] - 2026-04-19
 
 ### Added

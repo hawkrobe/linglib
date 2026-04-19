@@ -1,5 +1,5 @@
 import Linglib.Core.VerbCluster
-import Linglib.Core.FormalLanguage
+import Linglib.Core.Computability.FormalLanguage
 
 /-!
 # Cross-Serial Dependencies
