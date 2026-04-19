@@ -1895,6 +1895,7 @@ import Linglib.Phenomena.Focus.Studies.DeoThomas2025
 import Linglib.Phenomena.Focus.Studies.TurkHirsch2026
 import Linglib.Phenomena.Focus.Studies.Francescotti1995
 import Linglib.Phenomena.Focus.Studies.Umbach2004
+import Linglib.Phenomena.Focus.Studies.HartmannZimmermann2007
 import Linglib.Phenomena.Polarity.Studies.TurcoBraunDimroth2014
 import Linglib.Phenomena.Polarity.MarkingTypology
 import Linglib.Theories.Semantics.Focus.Interpretation
