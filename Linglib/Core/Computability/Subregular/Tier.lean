@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Linglib.Core.Computability.Subregular.StrictlyLocal
+import Linglib.Core.StringHom
 
 /-!
 # Tier-Based Strictly Local Languages (TSL_k)
@@ -33,18 +34,37 @@ the case where projection is `List.filter` over a tier predicate
 (equivalently, an erasing string homomorphism that keeps tier symbols and
 deletes off-tier symbols, with no relabeling). For autosegmental tiers
 (high/low tone, nasal melody, register), see `Theories/Phonology/Autosegmental/`.
+
+## Single source of truth: `Core.Tier`
+
+`tierProject` is defined as `Core.Tier.apply (Core.Tier.byClass _)` — the
+class-membership specialization of the autosegmental Kleisli morphism
+`α → Option β`. This commits the codebase to `Core.Tier` (in
+`Core/StringHom.lean`) as the single source of truth for tier projection,
+so the bridge between the autosegmental and subregular formalisms reduces
+to `rfl`.
 -/
 
 namespace Core.Computability.Subregular
 
 variable {α : Type*}
 
-/-- **Tier projection**: `List.filter` specialized to a `Prop`-valued
-predicate `T`. Keeps symbols satisfying `T`, erases the rest. The
-implementation is exactly `xs.filter (decide ∘ T)`; we expose it under a
-linguistically-named alias to keep the SL/TSL bridge readable. -/
+/-- **Tier projection**: the class-membership specialization of
+`Core.Tier.apply` to a `Prop`-valued predicate `T`. Keeps symbols
+satisfying `T`, erases the rest.
+
+Defined as `Core.Tier.apply (Core.Tier.byClass (decide ∘ T))` so the
+bridge to the autosegmental tier formalism is `rfl`. By
+`Tier.apply_byClass` this equals `xs.filter (decide ∘ T)`. -/
 def tierProject (T : α → Prop) [DecidablePred T] (xs : List α) : List α :=
-  xs.filter (fun x => decide (T x))
+  Core.Tier.apply (Core.Tier.byClass (fun x => decide (T x))) xs
+
+/-- `tierProject` reduces to `List.filter` via `Tier.apply_byClass`. This
+is the canonical bridge to Lambert's filter-based formulation
+@cite{lambert-2022}. -/
+lemma tierProject_eq_filter (T : α → Prop) [DecidablePred T] (xs : List α) :
+    tierProject T xs = xs.filter (fun x => decide (T x)) :=
+  Core.Tier.apply_byClass _ _
 
 @[simp] lemma tierProject_nil (T : α → Prop) [DecidablePred T] :
     tierProject T ([] : List α) = [] := rfl
@@ -52,12 +72,13 @@ def tierProject (T : α → Prop) [DecidablePred T] (xs : List α) : List α :=
 lemma tierProject_cons (T : α → Prop) [DecidablePred T] (x : α) (xs : List α) :
     tierProject T (x :: xs) =
       if T x then x :: tierProject T xs else tierProject T xs := by
-  by_cases h : T x <;> simp [tierProject, h]
+  by_cases h : T x <;>
+    simp [tierProject_eq_filter, h]
 
 /-- Projection by the universal tier is the identity. -/
 @[simp] lemma tierProject_univ (w : List α) :
     tierProject (fun _ : α => True) w = w := by
-  simp [tierProject]
+  simp [tierProject_eq_filter]
 
 /-- A **tier-based strictly `k`-local grammar**: a decidable tier (subset
 of `α`) plus an SL grammar interpreted on the projected string. The tier
