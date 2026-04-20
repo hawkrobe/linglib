@@ -135,14 +135,60 @@ theorem mkIntegrity_is_faithfulness {C : Type} (name : String) (p : C → Bool) 
 export Core.Constraint.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
 
 -- ============================================================================
--- § 2b: OCP (Obligatory Contour Principle)
+-- § 2b: Forbidden-Pair Markedness (OCP, sibilant-harmony, …)
 -- ============================================================================
 
-/-- Count adjacent identical pairs in a list.
-    Used by `mkOCP` to evaluate identity violations on a tier. -/
-def adjacentIdentical {α : Type} [BEq α] : List α → Nat
+/-- Count adjacent pairs `(a, b)` in a list satisfying a binary relation `R`.
+    The shared engine behind any "forbidden adjacent pair" markedness
+    constraint over a single segmental tier: OCP (`R := (· = ·)`), agreement
+    constraints (`R := disagree-on-feature-X`), and the like. Stress-based
+    rhythm constraints (\*Lapse, \*Clash) require a syllable-level alphabet,
+    not a segment-level one, and so live in their own constructors. -/
+def countAdjacent {α : Type} (R : α → α → Prop) [DecidableRel R] :
+    List α → Nat
   | [] | [_] => 0
-  | a :: b :: rest => (if a == b then 1 else 0) + adjacentIdentical (b :: rest)
+  | a :: b :: rest => (if R a b then 1 else 0) + countAdjacent R (b :: rest)
+
+/-- Build a markedness constraint penalizing tier-adjacent forbidden pairs.
+    The candidate's raw symbol list is extracted by `extract`, the tier `T`
+    projects it onto the relevant tier alphabet (an erasing string
+    homomorphism — see `Core.StringHom`), and each tier-adjacent pair `(a, b)`
+    with `R a b` contributes one violation.
+
+    Generic markedness constructor for adjacency-based phonological
+    constraints over a single tier. OCP is the case `R := (· = ·)`
+    (`mkOCPOnTier` below). The TSL_2 bridge
+    `Phonology.Subregular.mkForbidPairsOnTier_zero_iff_in_lang` characterizes
+    zero-violation candidates as members of the corresponding tier-based
+    strictly 2-local language for any choice of `R`. -/
+def mkForbidPairsOnTier {C α β : Type} (name : String) (R : β → β → Prop)
+    [DecidableRel R] (T : Core.Tier α β) (extract : C → List α) :
+    NamedConstraint C :=
+  mkMarkGrad name (fun c => countAdjacent R (Core.Tier.apply T (extract c)))
+
+-- ---- SL_1 helper for forbidden singletons ---------------------------------
+
+/-- Build a markedness constraint penalizing tier elements satisfying `P`.
+    The SL_1 sibling of `mkForbidPairsOnTier`: each tier symbol `a` with
+    `P a` contributes one violation. \*Coda — viewed as "no segment in
+    coda position survives the syllable-coda tier" — is the canonical SL_1
+    instance and should use this constructor rather than be shoehorned into
+    the forbidden-*pair* schema. The TSL_1 / SL_1 language-side bridge is
+    not yet wired; the constructor exists to keep SL_1 phenomena from
+    silently masquerading as TSL_2. -/
+def mkForbidSingletonOnTier {C α β : Type} (name : String) (P : β → Prop)
+    [DecidablePred P] (T : Core.Tier α β) (extract : C → List α) :
+    NamedConstraint C :=
+  mkMarkGrad name
+    (fun c => (Core.Tier.apply T (extract c)).countP (fun x => decide (P x)))
+
+-- ---- OCP as the identity-relation instance --------------------------------
+
+/-- Count adjacent identical pairs in a list. Definitional alias for
+    `countAdjacent (· = ·)` — kept under this name because OCP-style
+    constraints read more naturally with the linguistic-domain term. -/
+def adjacentIdentical {α : Type} [DecidableEq α] : List α → Nat :=
+  countAdjacent (· = ·)
 
 /-- Build an OCP constraint: penalizes adjacent identical elements on a tier.
     `project` extracts the relevant tier from a candidate.
@@ -152,7 +198,7 @@ def adjacentIdentical {α : Type} [BEq α] : List α → Nat
     of what kind of features they are. Following @cite{berent-2026}, this
     polymorphism captures the algebraic nature of phonological constraints:
     they generalize to novel feature values by construction. -/
-def mkOCP {C α : Type} [BEq α] (name : String) (project : C → List α) :
+def mkOCP {C α : Type} [DecidableEq α] (name : String) (project : C → List α) :
     NamedConstraint C :=
   mkMarkGrad name (λ c => adjacentIdentical (project c))
 
@@ -166,17 +212,10 @@ def mkOCP {C α : Type} [BEq α] (name : String) (project : C → List α) :
     OCP (à la @cite{belth-2026}) all factor through this constructor.
 
     @cite{goldsmith-1976} @cite{berent-2026} -/
-def mkOCPOnTier {C α β : Type} [BEq β]
+def mkOCPOnTier {C α β : Type} [DecidableEq β]
     (name : String) (T : Core.Tier α β) (extract : C → List α) :
     NamedConstraint C :=
   mkOCP name (fun c => Core.Tier.apply T (extract c))
-
-/-- Grounding theorem: the tier-driven OCP equals the generic OCP applied to
-    the explicit projection `Tier.apply T ∘ extract`. By construction. -/
-theorem mkOCPOnTier_eq_mkOCP {C α β : Type} [BEq β]
-    (name : String) (T : Core.Tier α β) (extract : C → List α) :
-    mkOCPOnTier name T extract =
-    mkOCP name (fun c => Core.Tier.apply T (extract c)) := rfl
 
 -- ============================================================================
 -- § 2c: Alignment (@cite{mccarthy-prince-1993} Generalized Alignment)
@@ -225,13 +264,25 @@ theorem mkMaxCtx_is_faithfulness {C : Type} (name : String)
     (d : C → Bool) (ctx : C → Bool) :
     (mkMaxCtx name d ctx).family = .faithfulness := rfl
 
+/-- Forbidden-pair constraints are markedness constraints. -/
+theorem mkForbidPairsOnTier_is_markedness {C α β : Type} (name : String)
+    (R : β → β → Prop) [DecidableRel R] (T : Core.Tier α β)
+    (extract : C → List α) :
+    (mkForbidPairsOnTier name R T extract).family = .markedness := rfl
+
+/-- Forbidden-singleton constraints are markedness constraints. -/
+theorem mkForbidSingletonOnTier_is_markedness {C α β : Type} (name : String)
+    (P : β → Prop) [DecidablePred P] (T : Core.Tier α β)
+    (extract : C → List α) :
+    (mkForbidSingletonOnTier name P T extract).family = .markedness := rfl
+
 /-- OCP constraints are markedness constraints. -/
-theorem mkOCP_is_markedness {C α : Type} [BEq α] (name : String)
+theorem mkOCP_is_markedness {C α : Type} [DecidableEq α] (name : String)
     (project : C → List α) :
     (mkOCP name project).family = .markedness := rfl
 
 /-- Tier-driven OCP constraints are markedness constraints. -/
-theorem mkOCPOnTier_is_markedness {C α β : Type} [BEq β] (name : String)
+theorem mkOCPOnTier_is_markedness {C α β : Type} [DecidableEq β] (name : String)
     (T : Core.Tier α β) (extract : C → List α) :
     (mkOCPOnTier name T extract).family = .markedness := rfl
 

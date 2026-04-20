@@ -129,18 +129,18 @@ theorem sonority_gradient_abstract (r1 r2 : SonorityRank) :
 -- of features it compares — only whether they are identical.
 
 /-- OCP detects adjacent identity. -/
-theorem ocp_detects_aa {α : Type} [BEq α] [LawfulBEq α]
+theorem ocp_detects_aa {α : Type} [DecidableEq α]
     (a : α) (rest : List α) :
     adjacentIdentical (a :: a :: rest) =
     1 + adjacentIdentical (a :: rest) := by
-  simp [adjacentIdentical]
+  simp [adjacentIdentical, countAdjacent]
 
 /-- OCP passes over non-identical adjacency. -/
-theorem ocp_passes_ab {α : Type} [BEq α] (a b : α) (rest : List α)
-    (h : (a == b) = false) :
+theorem ocp_passes_ab {α : Type} [DecidableEq α] (a b : α) (rest : List α)
+    (h : a ≠ b) :
     adjacentIdentical (a :: b :: rest) =
     adjacentIdentical (b :: rest) := by
-  simp [adjacentIdentical, h]
+  simp [adjacentIdentical, countAdjacent, h]
 
 -- ============================================================================
 -- § 3: The doubling reversal — summary

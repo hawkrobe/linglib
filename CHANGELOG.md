@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.230.50] - 2026-04-19
+
+### Changed
+- **OCP / forbidden-pair review cycle** (mathlib-reviewer + linguistics-domain-expert + linglib-integration-auditor consensus on the OCP↔TSL_2 generalization).
+  - **`Theories/Phonology/OptimalityTheory/Constraints.lean`**: `adjacentIdentical` is now a definitional alias `countAdjacent (· = ·)`; the `adjacentIdentical_eq_countAdjacent_eq` bridge lemma and the `mkOCPOnTier_eq_mkOCP` rfl-noise theorem are deleted. `mkOCP` and `mkOCPOnTier` switch from `[BEq α]` / `[BEq β]` to `[DecidableEq α]` / `[DecidableEq β]` (collapsing the split-brain typeclass story). New SL_1 helper `mkForbidSingletonOnTier` (with `mkForbidSingletonOnTier_is_markedness` rfl theorem) for single-symbol bans (\*Coda, etc.). §2b docstring tightened — \*Lapse / \*Clash explicitly noted as syllable-level SL_2, not segmental TSL_2.
+  - **`Core/Computability/Subregular/ForbiddenPairs.lean`**: `TSLGrammar.forbidPairs` renamed to `TSLGrammar.ofForbiddenPairs` (mathlib `of*` constructor idiom); `mem_forbidPairs_lang_iff_filter_isChain` renamed to `mem_ofForbiddenPairs_lang_iff_filter_isChain`. Docstring tightened to drop \*Lapse / \*Clash / \*Cluster as TSL_2 examples (those are SL_1 or syllable-level), with a forward pointer to `Subregular/ForbiddenSingletons.lean` for the SL_1 helper.
+  - **`Theories/Phonology/Subregular/OCP.lean`**: rewritten on top of the renamed bridge. `[DecidableEq α] [BEq α] [LawfulBEq α]` triple collapsed to `[DecidableEq α]`. Bridge proofs simplify to one-line term-mode derivations from `mkForbidPairsOnTier_zero_iff_isChain` (no `adjacentIdentical_eq_countAdjacent_eq` rewrite needed). Unused simp helpers `ocpCleanPair_none_left/_right` deleted. Citations: dropped unverified `leben-1973` / `heinz-rawal-tabor-2011` / `lambert-2022`; kept `goldsmith-1976`; added `mccarthy-1986` (canonical OCP statement) and `thue-1906` (square-free word combinatorics, the math foundation for adjacent-identity bans).
+  - **`Theories/Phonology/Subregular/ForbidPairs.lean`** and **`Phenomena/Phonology/Studies/Berent2026.lean`**: call-site updates for the `forbidPairs` → `ofForbiddenPairs` rename and the `[BEq α] [LawfulBEq α]` → `[DecidableEq α]` typeclass switch (Berent2026's `ocp_passes_ab` hypothesis becomes `a ≠ b` instead of `(a == b) = false`).
+  - **`blog/data/references.bib`**: added `mccarthy-1986` (Linguistic Inquiry, OCP Effects) and `thue-1906` (Norske Videnskabers Selskabs Skrifter, Über unendliche Zeichenreihen). Per CLAUDE.md hallucination-prevention discipline, both entries use minimum-safe fields (no fabricated DOIs / page ranges).
+
 ## [0.230.49] - 2026-04-19
 
 ### Changed
