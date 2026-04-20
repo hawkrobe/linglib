@@ -4,6 +4,17 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.74] - 2026-04-20
+
+### Changed
+- **`Linglib/Tactics/RSAPredict/Backend/Bounds.lean`**: collapse the
+  five vestigial `namespace Interval ... end Interval` blocks (one per
+  former file) into a single namespace spanning lines 46–1328, and
+  lift the four `open Interval.QInterval` re-opens into a single
+  `open QInterval` after the inner `QInterval` block closes. Pure
+  cleanup of merge cruft — no code semantics change. Build clean
+  (2662 jobs).
+
 ## [0.230.73] - 2026-04-20
 
 ### Removed

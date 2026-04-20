@@ -648,18 +648,10 @@ theorem coarsen_containsReal {I : QInterval} {x : ℝ} (bits : ℕ)
 
 end QInterval
 
-end Interval
+open QInterval
 
 -- ============================================================================
--- PadeExp: Padé approximant for Real.exp
--- ============================================================================
-
-namespace Interval
-
-open Interval.QInterval
-
--- ============================================================================
--- Padé Coefficients
+-- PadeExp: Padé approximant for Real.exp — Padé coefficients
 -- ============================================================================
 
 /-- Padé [4/4] numerator: 1 + x/2 + 3x²/28 + x³/84 + x⁴/1680 (Horner form). -/
@@ -1053,18 +1045,8 @@ theorem expInterval_containsReal {I : QInterval} {x : ℝ}
   · exact le_trans hlo.1 (Real.exp_le_exp_of_le hx.1)
   · exact le_trans (Real.exp_le_exp_of_le hx.2) hhi.2
 
-end Interval
-
 -- ============================================================================
 -- LogInterval: Real.log via bisection against expPoint
--- ============================================================================
-
-namespace Interval
-
-open Interval.QInterval
-
--- ============================================================================
--- Bisection
 -- ============================================================================
 
 /-- Bisection loop: narrow `[lo, hi]` such that `exp(lo) ≤ q ≤ exp(hi)`.
@@ -1276,15 +1258,9 @@ theorem log_zero_containsReal {I : QInterval} {x : ℝ}
   rw [this, Real.log_zero]
   exact QInterval.exact_zero_containsReal
 
-end Interval
-
 -- ============================================================================
 -- SqrtInterval: Real.sqrt = exp(log/2)
 -- ============================================================================
-
-namespace Interval
-
-open Interval.QInterval
 
 /-- Interval square root for positive intervals.
     Uses the identity `√x = exp(log(x) / 2)` for `x > 0`.
@@ -1311,18 +1287,8 @@ theorem sqrtInterval_containsReal {a : QInterval} {x : ℝ}
   push_cast
   constructor <;> nlinarith [hlog.1, hlog.2]
 
-end Interval
-
 -- ============================================================================
 -- rpow specials: nat exponent + edge cases
--- ============================================================================
-
-namespace Interval
-
-open Interval.QInterval
-
--- ============================================================================
--- rpow for natural exponents
 -- ============================================================================
 
 /-- Exact rational power for nonneg intervals: [lo^n, hi^n].
