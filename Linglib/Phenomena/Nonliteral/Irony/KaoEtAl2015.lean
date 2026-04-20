@@ -300,8 +300,8 @@ open RSA.RSAConfig
 /-- Nonliteral interpretation: the listener infers the weather is NOT terrible.
     P(state ≠ terrible | "terrible", pleasant) > P(state = terrible | "terrible", pleasant). -/
 theorem ironic_nonliteral :
-    pleasantCfg.L1_marginal .terrible (fun w => w.1 != .terrible) >
-    pleasantCfg.L1_marginal .terrible (fun w => w.1 == .terrible) := by
+    pleasantCfg.L1_marginal .terrible (fun w => w.1 ≠ .terrible) >
+    pleasantCfg.L1_marginal .terrible (fun w => w.1 = .terrible) := by
   rsa_predict
 
 /-- Valence flip — the hallmark of irony. Despite "terrible" literally
@@ -309,15 +309,15 @@ theorem ironic_nonliteral :
     context infers that the speaker actually feels *positively*.
     This is the paper's central prediction (Figure 5, Figure 6). -/
 theorem ironic_valence_flip :
-    pleasantCfg.L1_marginal .terrible (fun w => w.2.1 == true) >
-    pleasantCfg.L1_marginal .terrible (fun w => w.2.1 == false) := by
+    pleasantCfg.L1_marginal .terrible (fun w => w.2.1 = true) >
+    pleasantCfg.L1_marginal .terrible (fun w => w.2.1 = false) := by
   rsa_predict
 
 /-- Ironic speech carries high arousal — the speaker is emotionally
     engaged, not flat. -/
 theorem ironic_high_arousal :
-    pleasantCfg.L1_marginal .terrible (fun w => w.2.2 == true) >
-    pleasantCfg.L1_marginal .terrible (fun w => w.2.2 == false) := by
+    pleasantCfg.L1_marginal .terrible (fun w => w.2.2 = true) >
+    pleasantCfg.L1_marginal .terrible (fun w => w.2.2 = false) := by
   rsa_predict
 
 -- --------------------------------------------------------------------------
@@ -332,8 +332,8 @@ theorem ironic_high_arousal :
     central argument: arousal is the mechanism that enables the pragmatic
     pathway from negative to positive valence (Table 1). -/
 theorem no_irony_without_arousal :
-    pleasantValenceOnlyCfg.L1_marginal .terrible (fun w => w.2.1 == false) >
-    pleasantValenceOnlyCfg.L1_marginal .terrible (fun w => w.2.1 == true) := by
+    pleasantValenceOnlyCfg.L1_marginal .terrible (fun w => w.2.1 = false) >
+    pleasantValenceOnlyCfg.L1_marginal .terrible (fun w => w.2.1 = true) := by
   rsa_predict
 
 -- --------------------------------------------------------------------------
@@ -344,8 +344,8 @@ theorem no_irony_without_arousal :
     correctly infers the weather IS terrible. The same utterance that is
     ironic in pleasant weather (theorem 1) is literal here. -/
 theorem literal_state :
-    terribleCfg.L1_marginal .terrible (fun w => w.1 == .terrible) >
-    terribleCfg.L1_marginal .terrible (fun w => w.1 != .terrible) := by
+    terribleCfg.L1_marginal .terrible (fun w => w.1 = .terrible) >
+    terribleCfg.L1_marginal .terrible (fun w => w.1 ≠ .terrible) := by
   rsa_predict
 
 /-- In terrible weather, "terrible" does NOT flip valence — the listener
@@ -353,8 +353,8 @@ theorem literal_state :
     `ironic_valence_flip` where the same utterance produces the opposite
     inference in pleasant weather. -/
 theorem literal_no_flip :
-    terribleCfg.L1_marginal .terrible (fun w => w.2.1 == false) >
-    terribleCfg.L1_marginal .terrible (fun w => w.2.1 == true) := by
+    terribleCfg.L1_marginal .terrible (fun w => w.2.1 = false) >
+    terribleCfg.L1_marginal .terrible (fun w => w.2.1 = true) := by
   rsa_predict
 
 end Theorems

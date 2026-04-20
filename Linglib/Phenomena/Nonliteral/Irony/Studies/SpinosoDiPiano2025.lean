@@ -230,8 +230,8 @@ open RSA.RSAConfig
     is being ironic — saying the opposite of what they mean. Matches the
     paper's Figure 3 (right panel). -/
 theorem ironic_reading :
-    terribleCfg.L1_marginal .amazing (fun w => w == .terrible) >
-    terribleCfg.L1_marginal .amazing (fun w => w == .amazing) := by
+    terribleCfg.L1_marginal .amazing (fun w => w = .terrible) >
+    terribleCfg.L1_marginal .amazing (fun w => w = .amazing) := by
   rsa_predict
 
 /-- Literal reading: in pleasant weather, L1 hearing "amazing" infers the
@@ -239,8 +239,8 @@ theorem ironic_reading :
     interpretation — context (the world prior) determines which strategy
     dominates. -/
 theorem literal_reading :
-    pleasantCfg.L1_marginal .amazing (fun w => w == .amazing) >
-    pleasantCfg.L1_marginal .amazing (fun w => w == .terrible) := by
+    pleasantCfg.L1_marginal .amazing (fun w => w = .amazing) >
+    pleasantCfg.L1_marginal .amazing (fun w => w = .terrible) := by
   rsa_predict
 
 -- --------------------------------------------------------------------------
@@ -269,15 +269,15 @@ theorem infer_literal :
     actually amazing — the ironic flip. Analogous to @cite{kao-goodman-2015}'s
     `ironic_valence_flip`, but over weather states rather than valence. -/
 theorem terrible_ironic :
-    pleasantCfg.L1_marginal .terrible (fun w => w == .amazing) >
-    pleasantCfg.L1_marginal .terrible (fun w => w == .terrible) := by
+    pleasantCfg.L1_marginal .terrible (fun w => w = .amazing) >
+    pleasantCfg.L1_marginal .terrible (fun w => w = .terrible) := by
   rsa_predict
 
 /-- In terrible weather, L1 hearing "terrible" infers the weather is
     terrible — literal interpretation. -/
 theorem terrible_literal :
-    terribleCfg.L1_marginal .terrible (fun w => w == .terrible) >
-    terribleCfg.L1_marginal .terrible (fun w => w == .amazing) := by
+    terribleCfg.L1_marginal .terrible (fun w => w = .terrible) >
+    terribleCfg.L1_marginal .terrible (fun w => w = .amazing) := by
   rsa_predict
 
 -- --------------------------------------------------------------------------
@@ -288,15 +288,15 @@ theorem terrible_literal :
     is good (not bad). Tests the antonym mapping on non-endpoint scale
     positions: opposite(bad) = good, so the ironic reading maps to good. -/
 theorem bad_ironic :
-    pleasantCfg.L1_marginal .bad (fun w => w == .good) >
-    pleasantCfg.L1_marginal .bad (fun w => w == .bad) := by
+    pleasantCfg.L1_marginal .bad (fun w => w = .good) >
+    pleasantCfg.L1_marginal .bad (fun w => w = .bad) := by
   rsa_predict
 
 /-- Interior irony: in terrible weather, L1 hearing "good" infers the weather
     is bad (not good). Symmetric to `bad_ironic`: opposite(good) = bad. -/
 theorem good_ironic :
-    terribleCfg.L1_marginal .good (fun w => w == .bad) >
-    terribleCfg.L1_marginal .good (fun w => w == .good) := by
+    terribleCfg.L1_marginal .good (fun w => w = .bad) >
+    terribleCfg.L1_marginal .good (fun w => w = .good) := by
   rsa_predict
 
 -- --------------------------------------------------------------------------
@@ -346,7 +346,7 @@ theorem L1_score_zero_of_no_match (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s
     show (if rhetoricalMeaning l u w then (1 : ℝ) else 0) = 0
     have : rhetoricalMeaning l u w = false := by
       cases l <;> cases u <;> cases w <;>
-        simp_all [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide
+        simp_all [rhetoricalMeaning, Utterance.toWeather, opposite]
     simp [this]
   have hL0 : ∀ l : Strategy, ((cfg wp hw).L0agent l).policy u w = 0 :=
     fun l => Core.RationalAction.policy_eq_zero_of_score_eq_zero _ _ _ (hm l)
@@ -381,7 +381,7 @@ private theorem L0_literal_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 �
   · intro b _ hb
     show (if rhetoricalMeaning .literal u b then (1 : ℝ) else 0) = 0
     have : rhetoricalMeaning .literal u b = false := by
-      cases u <;> cases b <;> simp_all [rhetoricalMeaning, Utterance.toWeather] <;> decide
+      cases u <;> cases b <;> simp_all [rhetoricalMeaning, Utterance.toWeather]
     simp [this]
   · intro h; exact (h (Finset.mem_univ _)).elim
 
@@ -390,7 +390,7 @@ private theorem meaning_literal_match (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ 
     (cfg wp hw).meaning () .literal u u.toWeather = 1 := by
   show (if rhetoricalMeaning .literal u u.toWeather then (1 : ℝ) else 0) = 1
   have : rhetoricalMeaning .literal u u.toWeather = true := by
-    cases u <;> simp [rhetoricalMeaning, Utterance.toWeather] <;> decide
+    cases u <;> simp [rhetoricalMeaning, Utterance.toWeather]
   simp [this]
 
 private theorem L0_literal_policy_one (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
@@ -412,7 +412,7 @@ private theorem S1_literal_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 �
     have hm : (cfg wp hw).meaning () .literal u' u.toWeather = 0 := by
       show (if rhetoricalMeaning .literal u' u.toWeather then (1 : ℝ) else 0) = 0
       have : rhetoricalMeaning .literal u' u.toWeather = false := by
-        cases u <;> cases u' <;> simp_all [rhetoricalMeaning, Utterance.toWeather] <;> decide
+        cases u <;> cases u' <;> simp_all [rhetoricalMeaning, Utterance.toWeather]
       simp [this]
     have : ((cfg wp hw).L0agent .literal).policy u' u.toWeather = 0 :=
       Core.RationalAction.policy_eq_zero_of_score_eq_zero _ _ _ hm
@@ -443,7 +443,7 @@ private theorem L0_ironic_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 �
     show (if rhetoricalMeaning .ironic u b then (1 : ℝ) else 0) = 0
     have : rhetoricalMeaning .ironic u b = false := by
       cases u <;> cases b <;>
-        simp_all [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide
+        simp_all [rhetoricalMeaning, Utterance.toWeather, opposite]
     simp [this]
   · intro h; exact (h (Finset.mem_univ _)).elim
 
@@ -452,7 +452,7 @@ private theorem meaning_ironic_match (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ w
     (cfg wp hw).meaning () .ironic u (opposite u.toWeather) = 1 := by
   show (if rhetoricalMeaning .ironic u (opposite u.toWeather) then (1 : ℝ) else 0) = 1
   have : rhetoricalMeaning .ironic u (opposite u.toWeather) = true := by
-    cases u <;> simp [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide
+    cases u <;> simp [rhetoricalMeaning, Utterance.toWeather, opposite]
   simp [this]
 
 private theorem L0_ironic_policy_one (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
@@ -475,7 +475,7 @@ private theorem S1_ironic_totalScore_eq (wp : Weather → ℝ) (hw : ∀ s, 0 �
       show (if rhetoricalMeaning .ironic u' (opposite u.toWeather) then (1 : ℝ) else 0) = 0
       have : rhetoricalMeaning .ironic u' (opposite u.toWeather) = false := by
         cases u <;> cases u' <;>
-          simp_all [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide
+          simp_all [rhetoricalMeaning, Utterance.toWeather, opposite]
       simp [this]
     have : ((cfg wp hw).L0agent .ironic).policy u' (opposite u.toWeather) = 0 :=
       Core.RationalAction.policy_eq_zero_of_score_eq_zero _ _ _ hm
@@ -501,7 +501,7 @@ private theorem S1_ironic_at_literal_zero (wp : Weather → ℝ) (hw : ∀ s, 0 
   have hm : (cfg wp hw).meaning () .ironic u u.toWeather = 0 := by
     show (if rhetoricalMeaning .ironic u u.toWeather then (1 : ℝ) else 0) = 0
     have : rhetoricalMeaning .ironic u u.toWeather = false := by
-      cases u <;> simp_all [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide
+      cases u <;> simp_all [rhetoricalMeaning, Utterance.toWeather, opposite]
     simp [this]
   have hL0 : ((cfg wp hw).L0agent .ironic).policy u u.toWeather = 0 :=
     Core.RationalAction.policy_eq_zero_of_score_eq_zero _ _ _ hm
@@ -516,7 +516,7 @@ private theorem S1_literal_at_ironic_zero (wp : Weather → ℝ) (hw : ∀ s, 0 
   have hm : (cfg wp hw).meaning () .literal u (opposite u.toWeather) = 0 := by
     show (if rhetoricalMeaning .literal u (opposite u.toWeather) then (1 : ℝ) else 0) = 0
     have : rhetoricalMeaning .literal u (opposite u.toWeather) = false := by
-      cases u <;> simp_all [rhetoricalMeaning, Utterance.toWeather, opposite] <;> decide
+      cases u <;> simp_all [rhetoricalMeaning, Utterance.toWeather, opposite]
     simp [this]
   have hL0 : ((cfg wp hw).L0agent .literal).policy u (opposite u.toWeather) = 0 :=
     Core.RationalAction.policy_eq_zero_of_score_eq_zero _ _ _ hm

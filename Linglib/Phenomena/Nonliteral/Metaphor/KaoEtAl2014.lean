@@ -193,44 +193,44 @@ noncomputable abbrev specificCfg :=
 
 /-- The listener infers the referent is a person, not literally a whale. -/
 theorem nonliteral :
-    vagueCfg.L1_marginal .whale (fun w => w.1 == .person) >
-    vagueCfg.L1_marginal .whale (fun w => w.1 == .whale) := by
+    vagueCfg.L1_marginal .whale (fun w => w.1 = .person) >
+    vagueCfg.L1_marginal .whale (fun w => w.1 = .whale) := by
   rsa_predict
 
 -- Feature elevation: metaphor raises all three features
 
 /-- P(large=T | "whale") > P(large=F | "whale"). -/
 theorem feature_large :
-    vagueCfg.L1_marginal .whale (fun w => w.2.1 == true) >
-    vagueCfg.L1_marginal .whale (fun w => w.2.1 == false) := by
+    vagueCfg.L1_marginal .whale (fun w => w.2.1 = true) >
+    vagueCfg.L1_marginal .whale (fun w => w.2.1 = false) := by
   rsa_predict
 
 /-- P(graceful=T | "whale") > P(graceful=F | "whale"). -/
 theorem feature_graceful :
-    vagueCfg.L1_marginal .whale (fun w => w.2.2.1 == true) >
-    vagueCfg.L1_marginal .whale (fun w => w.2.2.1 == false) := by
+    vagueCfg.L1_marginal .whale (fun w => w.2.2.1 = true) >
+    vagueCfg.L1_marginal .whale (fun w => w.2.2.1 = false) := by
   rsa_predict
 
 /-- P(majestic=T | "whale") > P(majestic=F | "whale"). -/
 theorem feature_majestic :
-    vagueCfg.L1_marginal .whale (fun w => w.2.2.2 == true) >
-    vagueCfg.L1_marginal .whale (fun w => w.2.2.2 == false) := by
+    vagueCfg.L1_marginal .whale (fun w => w.2.2.2 = true) >
+    vagueCfg.L1_marginal .whale (fun w => w.2.2.2 = false) := by
   rsa_predict
 
 -- Context sensitivity: cross-cfg comparison
 
 /-- Under specific QUD, P(large=T | "whale") is higher than under vague QUD. -/
 theorem context_sensitivity :
-    specificCfg.L1_marginal .whale (fun w => w.2.1 == true) >
-    vagueCfg.L1_marginal .whale (fun w => w.2.1 == true) := by
+    specificCfg.L1_marginal .whale (fun w => w.2.1 = true) >
+    vagueCfg.L1_marginal .whale (fun w => w.2.1 = true) := by
   rsa_predict
 
 -- Literal: P(person | "person") > P(whale | "person")
 
 /-- Hearing "person", the listener correctly infers the referent is a person. -/
 theorem literal_correct :
-    vagueCfg.L1_marginal .person (fun w => w.1 == .person) >
-    vagueCfg.L1_marginal .person (fun w => w.1 == .whale) := by
+    vagueCfg.L1_marginal .person (fun w => w.1 = .person) >
+    vagueCfg.L1_marginal .person (fun w => w.1 = .whale) := by
   rsa_predict
 
 -- ============================================================================
@@ -240,23 +240,23 @@ theorem literal_correct :
 /-- Map each empirical finding to the RSA model prediction that accounts for it. -/
 noncomputable def formalize : Finding → Prop
   | .nonliteral =>
-      vagueCfg.L1_marginal .whale (fun w => w.1 == .person) >
-      vagueCfg.L1_marginal .whale (fun w => w.1 == .whale)
+      vagueCfg.L1_marginal .whale (fun w => w.1 = .person) >
+      vagueCfg.L1_marginal .whale (fun w => w.1 = .whale)
   | .feature_large =>
-      vagueCfg.L1_marginal .whale (fun w => w.2.1 == true) >
-      vagueCfg.L1_marginal .whale (fun w => w.2.1 == false)
+      vagueCfg.L1_marginal .whale (fun w => w.2.1 = true) >
+      vagueCfg.L1_marginal .whale (fun w => w.2.1 = false)
   | .feature_graceful =>
-      vagueCfg.L1_marginal .whale (fun w => w.2.2.1 == true) >
-      vagueCfg.L1_marginal .whale (fun w => w.2.2.1 == false)
+      vagueCfg.L1_marginal .whale (fun w => w.2.2.1 = true) >
+      vagueCfg.L1_marginal .whale (fun w => w.2.2.1 = false)
   | .feature_majestic =>
-      vagueCfg.L1_marginal .whale (fun w => w.2.2.2 == true) >
-      vagueCfg.L1_marginal .whale (fun w => w.2.2.2 == false)
+      vagueCfg.L1_marginal .whale (fun w => w.2.2.2 = true) >
+      vagueCfg.L1_marginal .whale (fun w => w.2.2.2 = false)
   | .context_sensitivity =>
-      specificCfg.L1_marginal .whale (fun w => w.2.1 == true) >
-      vagueCfg.L1_marginal .whale (fun w => w.2.1 == true)
+      specificCfg.L1_marginal .whale (fun w => w.2.1 = true) >
+      vagueCfg.L1_marginal .whale (fun w => w.2.1 = true)
   | .literal_correct =>
-      vagueCfg.L1_marginal .person (fun w => w.1 == .person) >
-      vagueCfg.L1_marginal .person (fun w => w.1 == .whale)
+      vagueCfg.L1_marginal .person (fun w => w.1 = .person) >
+      vagueCfg.L1_marginal .person (fun w => w.1 = .whale)
 
 /-- The RSA model accounts for all 6 empirical findings from @cite{kao-etal-2014-hyperbole}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by

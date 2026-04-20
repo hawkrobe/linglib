@@ -1,5 +1,64 @@
 # Changelog
 
+## [0.230.49] - 2026-04-19
+
+### Changed
+- **`Theories/Pragmatics/RSA/Basic.lean`**: `RSAConfig.L0_marginal` and `RSAConfig.L1_marginal` now take `(P : W → Prop) [DecidablePred P]` instead of `(P : W → Bool)`, per `feedback_no_intrinsic_bool.md`. The filter under the sum becomes `Finset.univ.filter P` (relying on the `DecidablePred` instance) instead of `Finset.univ.filter (fun w => P w = true)`. `L1_marginal_gt_of_score_sum_gt` updated correspondingly. The `rsa_predict` tactic infrastructure (`detectL1Marginal`/`tryMarginalDenomCancel`) needed no changes — `mkAppM` auto-resolves the new instance arguments.
+- **`Phenomena/Modality/Studies/Alsop2024.lean`**: `hasExclusiveness`/`hasNotEvery` Bool → Prop (`HasExclusiveness`/`HasNotEvery`) with `DecidablePred` instances. Theorems `strong_characterizes_exclusiveness`, `exclusiveness_eq_allStrict`, `notEvery_eq_not_permBoth` reformulated as `↔` between Prop and Bool sides. `strongMeaningNeg` body bridges back to Bool via `!decide (HasExclusiveness w)`. `permS`/`permP`/`permBoth` kept as Bool (used in `weakMeaning`); call sites wrap as `(fun w => permS w = true)`.
+- **`Phenomena/Modality/Studies/ChampollionAlsopGrosu2019.lean`**: `hasFCI`/`hasEI` Bool → Prop (`HasFCI`/`HasEI`) with `DecidablePred` instances. All call sites including `formalize` and `nullCfg.L1_marginal` migrated.
+- **`Phenomena/Persuasion/Studies/BarnettEtAl2022.lean`**: `isLonger` Bool → Prop (`IsLonger`) with `DecidablePred` instance. 12 call sites updated; the explanatory TODO comment that recorded the planned migration is now removed.
+- **`Phenomena/Modality/FreeChoiceCompare.lean`**: cross-paper bridge theorems updated to consume the new Prop predicates.
+- **`Phenomena/Nonliteral/Metaphor/KaoEtAl2014.lean`**, **`Phenomena/Nonliteral/Hyperbole/KaoEtAl2014.lean`**, **`Phenomena/Nonliteral/Irony/Studies/SpinosoDiPiano2025.lean`**, **`Phenomena/Nonliteral/Irony/KaoEtAl2015.lean`**: `(fun w => w.field == .X)` / `!=` patterns at `L1_marginal` call sites migrated to `=` / `≠` (relying on `DecidableEq`). Bool-context `==` (e.g., inside `if u == w.1 then ... else 0`) preserved. SpinosoDiPiano2025: trailing `<;> decide` clauses on lines that became unreachable after the migration removed.
+- **`Phenomena/Presupposition/Studies/QingGoodmanLassiter2016.lean`**: `(·.now)` / `(fun w => !w.now)` accessor patterns migrated to `(fun w => w.now = true)` / `(fun w => w.now = false)`.
+- **`Phenomena/Presupposition/Studies/ScontrasTonhauser2025.lean`**: `(·.c)` accessor migrated to `(fun w => w.c = true)` (matches the existing `c_filter` lemma's filter form, so explicit `unfold L1_marginal L1` proofs continue to rewrite cleanly).
+
+## [0.230.48] - 2026-04-19
+
+### Changed
+- **`Phenomena/Kinship/Studies/Hudson2010.lean`**: consensus fixes from four-agent review of the Phase 4 Hudson 2010 study (mathlib-reviewer, cross-framework-reconciler, linglib-integration-auditor, linguistics-domain-expert).
+  - `grandparentOf` is now an `abbrev` for mathlib's `Relation.Comp parentOf parentOf` instead of an inline `∃ b, ...` body — the kinship side of Fig 7.6 reuses the mathlib relational-composition primitive.
+  - `RelationTriangle` structure and `TriangleCommutes` predicate **deleted** as redundant: `Relation.Comp` is the same shape, and the kinship-specific witness now lives in `kinship_triangle_commutes` (collapses to `Iff.rfl`) and `kinship_triangle_witness`.
+  - The closing "one network" `example` is now a real paired witness — `Network WordGrammar.WGNode WordGrammar.WGRel × Network KinRole KinRel := (WordGrammar.englishAuxNet, kinshipNet)` — rather than a degenerate `Σ' (α R)` tuple that only mentioned `kinshipNet`. The example now references both syntactic and kinship instances of `Core.Inheritance.Network` directly. Required adding `import Linglib.Theories.Syntax.WordGrammar.Network` and `import Mathlib.Logic.Relation`.
+- **`Theories/Syntax/WordGrammar/Network.lean`**: tightened `open DepGrammar` to an explicit name list `(Dir ArgStr ArgSlot DepTree satisfiesArgStr)` for grep-ability.
+- **`Theories/Syntax/WordGrammar/LexicalRules.lean`**: tightened `open DepGrammar` to `(ArgStr ArgSlot Dir)`; converted the opening `/- ... -/` block into a proper `/-! ... -/` module docstring placed after the `import` line (the original block-comment placement before the import worked but didn't follow the CLAUDE.md docstring convention).
+- **`Linglib.lean`**: WG import block (`WordGrammar.Network`, `WordGrammar.LexicalRules`) moved to follow the `DependencyGrammar.Formal.*` block, so `Formal.HeadCriteria` is no longer visually grouped under the WG section header.
+
+## [0.230.47] - 2026-04-19
+
+### Changed
+- **`Theories/Semantics/Verb/SelectionalPreferences.lean`**: `subclassOf`/`isA` Bool → Prop (`SubclassOf`/`IsA`), per `feedback_no_intrinsic_bool.md`. `IsA` body migrated from `==`/`||`/`&&`/`.any` to `=`/`∨`/`∧`/`∃ c ∈ list, ...`. `Decidable` instances added via `cases <;> ... <;> infer_instance` for `SubclassOf` and via mathlib's `List.decidableBex` (auto-derived) for `IsA`. No external consumers — purely internal cleanup.
+
+## [0.230.46] - 2026-04-19
+
+### Changed
+- **`Theories/Semantics/Noun/Kind/Chierchia1998.lean`**: `canDenoteKind`/`canDenoteProperty` Bool → Prop (`CanDenoteKind`/`CanDenoteProperty`), per `feedback_no_intrinsic_bool.md` — mathlib API everywhere. `CanDenoteKind` now takes `(hasD : Prop) [Decidable hasD]` rather than `Bool`; `True`/`False` literals at call sites replace `true`/`false`. `DecidablePred`/`Decidable` instances added.
+- **`Phenomena/Generics/Studies/Guerrini2026.lean`**: cascade migration — `hasD`/`canDenote`/`lfAvailable` → `HasD`/`CanDenote`/`LFAvailable` (Bool → Prop with `[DecidablePred]`/`Decidable` instances). All ~10 theorems consuming these now use `∧`/`¬`/`trivial`/`id` instead of `= true`/`= false`/`rfl`. `referential_iff_longobardi_kind` restructured from `=` to `↔` pairs (Prop fields can't be compared with `=`). `lfAvailableWithMood`, `lfCompatibleWithAspect`, and `singularKindLFAvailable` left as Bool — independent of the migrated cascade.
+- **`Fragments/Italian/Nouns.lean`**: 3 theorems updated (`definitePluralDenotesKind`/`barePluralCannotDenoteKind`/`barePluralDenotesProperty`) to consume `CanDenoteKind`/`CanDenoteProperty` Prop API with `True`/`False` literals.
+- **`Phenomena/Reference/Studies/Longobardi2001.lean`**: 5 theorems updated (`english_bn_can_denote_kind`/`italian_bn_cannot_denote_kind`/`italian_defpl_can_denote_kind`/`greek_bn_cannot_denote_kind`/`kind_reference_predictions`).
+- **`Phenomena/Agreement/Studies/Corbett2000.lean`**: `general_number_iff_bare_kind` migrated from `native_decide` to a structural `⟨..., ⟨rfl, ...⟩⟩` proof per CLAUDE.md proof-style preference.
+
+## [0.230.45] - 2026-04-19
+
+### Added
+- **`Phenomena/Kinship/Studies/Hudson2010.lean`** (Phase 4 of WG architectural restructuring; per `project_wg_restructuring.md`). New top-level `Phenomena/Kinship/` directory holding the "one network" demonstration: the same `Core.Inheritance.Network` infrastructure that supports `WordGrammar.englishAuxNet` (over linguistic word classes) also supports a kinship taxonomy (over `KinRole` nodes). No bridge theorem is needed — the structural identity is at the type level (`Network α R` parametricity).
+  - **Demo 1 (taxonomy)**: `kinshipNet` with isA links `mother / father → parent`, `grandmother / grandfather → grandparent`, `parent / grandparent → ancestor`. Five `decide`-checked theorems on the inherited `isA` / `ancestors` operations: `mother_isA_parent`, `mother_isA_ancestor`, `grandmother_isA_ancestor`, `mother_not_isA_grandmother`, `ancestor_has_no_proper_ancestors`.
+  - **Demo 2 (Fig 7.6 triangle)**: a `RelationTriangle` structure and `TriangleCommutes` predicate, instantiated for kinship as `grandparentOf := parentOf ∘ parentOf`. The kinship triangle commutes by construction (`kinship_triangle_commutes`); `kinshipTriangle` is the witness constructor that closes the triangle from a chain of two `parentOf` steps. Anchors @cite{hudson-2010} Fig 7.6 (p. 161, "A triangle in syntax and in kinship") and the prose on p. 160 ("my grandmother is someone who is the mother of one of my parents").
+  - The triangle infrastructure (`RelationTriangle`, `TriangleCommutes`) lives inline in the study file rather than in a new `Core/Dependency/Triangle.lean`, per the "graduate to Core only when reused" discipline. If/when raising/control study files need the same shape, it can be promoted.
+
+## [0.230.44] - 2026-04-19
+
+### Changed
+- **`Theories/Syntax/WordGrammar/` extracted** (Phase 3 of WG architectural restructuring; per `project_wg_restructuring.md`). Two files graduate from `Theories/Syntax/DependencyGrammar/Core/` to a sibling `WordGrammar/` directory, and pick up a dedicated `WordGrammar` namespace in the process:
+  - `git mv Theories/Syntax/DependencyGrammar/Core/NetworkIntegration.lean Theories/Syntax/WordGrammar/Network.lean` — `englishAuxNet`, `WGNode`/`WGRel`/`WGNetwork`, `resolveSlot`/`resolveArgStr`, the 9 inversion-via-subtype theorems, and `wgLicenses`. Namespace `DepGrammar.WG` → `WordGrammar`; opens `DepGrammar` for the universal dependency primitives (`Dir`, `ArgStr`, `DepTree`, `satisfiesArgStr`) it consumes from `Core/Dependency/`.
+  - `git mv Theories/Syntax/DependencyGrammar/Core/LexicalRules.lean Theories/Syntax/WordGrammar/LexicalRules.lean` — `LexEntry`, `LexRule`, `auxInversionRule`, `passiveRule`, `argStr_Aux`/`argStr_AuxInv`, `applyRule`, `deriveEntries`. Namespace `DepGrammar` → `WordGrammar`; opens `DepGrammar` for `ArgStr`/`ArgSlot`/`Dir`.
+- **`Linglib.lean`** master index split: the previous "Theories: Dependency Grammar" cluster of three imports becomes "Theories: Dependency Grammar" (just `Core.Nominal`) + a new "Theories: Word Grammar" section listing `WordGrammar.{LexicalRules, Network}`.
+- **`Phenomena/ArgumentStructure/Studies/Osborne2019.lean`** updated: import path `Theories.Syntax.DependencyGrammar.Core.LexicalRules` → `Theories.Syntax.WordGrammar.LexicalRules`; `open DepGrammar Catena` → `open DepGrammar WordGrammar Catena` (Osborne2019's references to `LexEntry`/`LexRule`/`passiveRule` continue to resolve unqualified, just via a different namespace).
+
+### Out of scope (deferred to Phase 3 follow-ups)
+- New stub files for `Landmark.lean`, `Triangle.lean`, `MutualDep.lean`, `Tangling.lean`, `SAI.lean`, `NonCrossing.lean` under `WordGrammar/` — locked plan calls for these to be ground in verified Hudson 2010 figure references; landing them empty risks `@cite{hudson-2010}` claims that aren't anchored at known page numbers.
+- Wiring `Fragments/English/Auxiliaries.lean` to consume `englishAuxNet` directly — Fragments must not import Theories per the layered-grounding discipline; the right home for an "auxiliary entries are licensed by `englishAuxNet`" bridge theorem is a study file under `Phenomena/AuxiliaryVerbs/Studies/` or `Phenomena/WordOrder/Studies/`.
+- HPSG type-hierarchy as a `Core/Inheritance` instance — large cross-cutting refactor; out of Phase 3 scope.
+
 ## [0.230.43] - 2026-04-19
 
 ### Changed

@@ -371,7 +371,7 @@ set_option maxHeartbeats 1600000 in
     L1_marginal(C|u, BEL?) = Σ_{w:C(w)} P(w)·f(u,w.bel) / Σ_w P(w)·f(u,w.bel)
                             = (pC/2)·(f₁+f₀) / ((1/2)·(f₁+f₀)) = pC. -/
 theorem bel_qud_marginal_eq_prior_high (u : Utterance) :
-    cfgBelHigh.L1_marginal u (·.c) = 2/3 := by
+    cfgBelHigh.L1_marginal u (fun w => w.c = true) = 2/3 := by
   have h := ne_of_gt (high_totalScore_pos u)
   unfold RSA.RSAConfig.L1_marginal RSA.RSAConfig.L1
   simp only [Core.RationalAction.policy, h, ↓reduceIte]
@@ -466,7 +466,7 @@ private theorem low_totalScore_expand (u : Utterance) :
 set_option maxHeartbeats 1600000 in
 /-- Same identity for the low-prior configuration: P(C|u, BEL?) = P(C) = 1/3. -/
 theorem bel_qud_marginal_eq_prior_low (u : Utterance) :
-    cfgBelLow.L1_marginal u (·.c) = 1/3 := by
+    cfgBelLow.L1_marginal u (fun w => w.c = true) = 1/3 := by
   have h := ne_of_gt (low_totalScore_pos u)
   unfold RSA.RSAConfig.L1_marginal RSA.RSAConfig.L1
   simp only [Core.RationalAction.policy, h, ↓reduceIte]
@@ -480,8 +480,8 @@ set_option maxHeartbeats 1600000 in
     compatible with C-false worlds, so an informative speaker uses knowNeg
     more often when C is false. Thus thinkNeg preserves P(C) better. -/
 theorem c_qud_thinkNeg_higher :
-    cfgCHigh.L1_marginal .thinkNeg (·.c) >
-    cfgCHigh.L1_marginal .knowNeg (·.c) := by
+    cfgCHigh.L1_marginal .thinkNeg (fun w => w.c = true) >
+    cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true) := by
   rsa_predict
 
 /-! ### Prediction 2a: Utterance Effect (know > think)
@@ -509,8 +509,8 @@ set_option maxHeartbeats 3200000 in
     Under C? QUD, L1 assigns higher probability to C with P(C) = 2/3
     than with P(C) = 1/3. -/
 theorem prediction_2b :
-    cfgCHigh.L1_marginal .knowNeg (·.c) >
-    cfgCLow.L1_marginal .knowNeg (·.c) := by
+    cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true) >
+    cfgCLow.L1_marginal .knowNeg (fun w => w.c = true) := by
   rsa_predict
 
 set_option maxHeartbeats 3200000 in
@@ -519,8 +519,8 @@ set_option maxHeartbeats 3200000 in
     Under C? QUD, the literal semantics of "doesn't know C" (= ¬(BEL∧C))
     lowers P(C) from the prior, so BEL? > C?. -/
 theorem prediction_2c :
-    cfgBelHigh.L1_marginal .knowNeg (·.c) >
-    cfgCHigh.L1_marginal .knowNeg (·.c) := by
+    cfgBelHigh.L1_marginal .knowNeg (fun w => w.c = true) >
+    cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true) := by
   rsa_predict
 
 -- ============================================================================
@@ -685,10 +685,10 @@ theorem assumesCIndicator_classification :
 /-- Predictions (2b) and (2c) match experimental effect directions.
     Prediction (2a) requires cost; see the commentary above. -/
 theorem model_predicts_effects :
-    (cfgCHigh.L1_marginal .knowNeg (·.c) >
-     cfgCLow.L1_marginal .knowNeg (·.c)) ∧
-    (cfgBelHigh.L1_marginal .knowNeg (·.c) >
-     cfgCHigh.L1_marginal .knowNeg (·.c)) ∧
+    (cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true) >
+     cfgCLow.L1_marginal .knowNeg (fun w => w.c = true)) ∧
+    (cfgBelHigh.L1_marginal .knowNeg (fun w => w.c = true) >
+     cfgCHigh.L1_marginal .knowNeg (fun w => w.c = true)) ∧
     directionCorrect .prior = true ∧
     directionCorrect .qud = true :=
   ⟨prediction_2b, prediction_2c,

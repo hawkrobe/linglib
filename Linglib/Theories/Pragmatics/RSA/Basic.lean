@@ -89,10 +89,10 @@ noncomputable def L0 (cfg : RSAConfig U W) (l : cfg.Latent) (u : U) (w : W) : �
   (cfg.L0agent l).policy u w
 
 /-- L0 marginal: P(P|u, l) = Σ_{w : P(w)} L0(w|u, l).
-    Sums the L0 posterior over worlds satisfying a Bool predicate. -/
+    Sums the L0 posterior over worlds satisfying a decidable predicate. -/
 noncomputable def L0_marginal (cfg : RSAConfig U W) (l : cfg.Latent) (u : U)
-    (P : W → Bool) : ℝ :=
-  ∑ w ∈ Finset.univ.filter (fun w => P w = true), cfg.L0 l u w
+    (P : W → Prop) [DecidablePred P] : ℝ :=
+  ∑ w ∈ Finset.univ.filter P, cfg.L0 l u w
 
 -- ============================================================================
 -- S1: Pragmatic Speaker
@@ -212,9 +212,10 @@ theorem L1_latent_gt_of_score_gt (cfg : RSAConfig U W) (u : U)
   exact RationalAction.policy_gt_of_score_gt _ () l₁ l₂ h
 
 /-- L1 marginal: P(P|u) = Σ_{w : P(w)} L1(w|u).
-    Sums the L1 posterior over worlds satisfying a Bool predicate. -/
-noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U) (P : W → Bool) : ℝ :=
-  ∑ w ∈ Finset.univ.filter (fun w => P w = true), cfg.L1 u w
+    Sums the L1 posterior over worlds satisfying a decidable predicate. -/
+noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U)
+    (P : W → Prop) [DecidablePred P] : ℝ :=
+  ∑ w ∈ Finset.univ.filter P, cfg.L1 u w
 
 /-- Score-sum ordering implies L1_marginal ordering. Denominator cancellation
     for marginal comparisons: since all L1(u,w) share the same totalScore(u),
@@ -223,9 +224,9 @@ noncomputable def L1_marginal (cfg : RSAConfig U W) (u : U) (P : W → Bool) : �
     Used by `rsa_predict` to eliminate the shared normalization constant
     when comparing `L1_marginal u P > L1_marginal u Q`. -/
 theorem L1_marginal_gt_of_score_sum_gt (cfg : RSAConfig U W) (u : U)
-    (P Q : W → Bool)
-    (h : (Finset.univ.filter (fun w => P w = true)).sum (cfg.L1agent.score u) >
-         (Finset.univ.filter (fun w => Q w = true)).sum (cfg.L1agent.score u)) :
+    (P Q : W → Prop) [DecidablePred P] [DecidablePred Q]
+    (h : (Finset.univ.filter P).sum (cfg.L1agent.score u) >
+         (Finset.univ.filter Q).sum (cfg.L1agent.score u)) :
     cfg.L1_marginal u P > cfg.L1_marginal u Q := by
   unfold L1_marginal L1
   exact RationalAction.finset_sum_policy_gt_of_sum_score_gt cfg.L1agent u _ _ h

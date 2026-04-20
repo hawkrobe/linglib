@@ -274,8 +274,8 @@ set_option maxHeartbeats 400000 in
 /-- Marginal: notable affect dominates overall for "$10K".
     Σ_s L1(s, notable | "$10K") > Σ_s L1(s, none | "$10K"). -/
 theorem hyperbole_affect :
-    kettleCfg.L1_marginal .s10000 (fun w => w.2 == .notable) >
-    kettleCfg.L1_marginal .s10000 (fun w => w.2 == .none) := by
+    kettleCfg.L1_marginal .s10000 (fun w => w.2 = .notable) >
+    kettleCfg.L1_marginal .s10000 (fun w => w.2 = .none) := by
   rsa_predict
 
 set_option maxHeartbeats 400000 in
@@ -305,8 +305,8 @@ theorem literal_not_hyperbolic :
 
 /-- Sharp "$501" is interpreted more precisely than round "$500". -/
 theorem halo_sharp_500 :
-    kettleCfg.L1_marginal .s501 (fun w => w.1 == .s501) >
-    kettleCfg.L1_marginal .s500 (fun w => w.1 == .s500) := by
+    kettleCfg.L1_marginal .s501 (fun w => w.1 = .s501) >
+    kettleCfg.L1_marginal .s500 (fun w => w.1 = .s500) := by
   rsa_predict
 
 -- ============================================================================
@@ -319,8 +319,8 @@ def formalize : Finding → Prop
       kettleCfg.L1 .s10000 (.s10000, .notable) >
       kettleCfg.L1 .s10000 (.s10000, .none)
   | .affect_marginal =>
-      kettleCfg.L1_marginal .s10000 (fun w => w.2 == .notable) >
-      kettleCfg.L1_marginal .s10000 (fun w => w.2 == .none)
+      kettleCfg.L1_marginal .s10000 (fun w => w.2 = .notable) >
+      kettleCfg.L1_marginal .s10000 (fun w => w.2 = .none)
   | .qud_valence =>
       kettleCfg.L1_latent .s10000 .valence >
       kettleCfg.L1_latent .s10000 .price
@@ -331,8 +331,8 @@ def formalize : Finding → Prop
       kettleCfg.L1 .s50 (.s50, .none) >
       kettleCfg.L1 .s50 (.s10000, .none)
   | .halo_sharp_precise =>
-      kettleCfg.L1_marginal .s501 (fun w => w.1 == .s501) >
-      kettleCfg.L1_marginal .s500 (fun w => w.1 == .s500)
+      kettleCfg.L1_marginal .s501 (fun w => w.1 = .s501) >
+      kettleCfg.L1_marginal .s500 (fun w => w.1 = .s500)
 
 /-- The RSA model accounts for all 6 empirical findings from @cite{kao-etal-2014-hyperbole}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by

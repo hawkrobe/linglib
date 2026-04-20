@@ -116,15 +116,21 @@ instance : Fintype Interp where
 
 /-- Free choice inference: each item is individually permitted.
     ◇(A∧¬B) ∧ ◇(B∧¬A). True at {onlyOne, anyNumber}. -/
-def hasFCI : FCState → Bool
-  | .onlyOne | .anyNumber => true
-  | _ => false
+def HasFCI : FCState → Prop
+  | .onlyOne | .anyNumber => True
+  | _ => False
+
+instance : DecidablePred HasFCI := fun w => by
+  cases w <;> unfold HasFCI <;> infer_instance
 
 /-- Exclusivity inference: taking both is not permitted.
     ¬◇(A∧B). True at {onlyA, onlyB, onlyOne}. -/
-def hasEI : FCState → Bool
-  | .onlyA | .onlyB | .onlyOne => true
-  | _ => false
+def HasEI : FCState → Prop
+  | .onlyA | .onlyB | .onlyOne => True
+  | _ => False
+
+instance : DecidablePred HasEI := fun w => by
+  cases w <;> unfold HasEI <;> infer_instance
 
 -- ============================================================================
 -- §3. Truth Tables (Interpretation Functions)
@@ -227,27 +233,27 @@ noncomputable abbrev biasedCfg :=
     than non-FCI states upon hearing "Or".
     This is the central result of the paper. -/
 theorem fci_derived :
-    uniformCfg.L1_marginal .or_ hasFCI >
-    uniformCfg.L1_marginal .or_ (fun w => !hasFCI w) := by
+    uniformCfg.L1_marginal .or_ HasFCI >
+    uniformCfg.L1_marginal .or_ (fun w => ¬ HasFCI w) := by
   rsa_predict
 
 /-- FCI is robust to prior manipulation: holds even when anyNumber is
     a priori 3× more likely. -/
 theorem fci_robust_to_prior :
-    biasedCfg.L1_marginal .or_ hasFCI >
-    biasedCfg.L1_marginal .or_ (fun w => !hasFCI w) := by
+    biasedCfg.L1_marginal .or_ HasFCI >
+    biasedCfg.L1_marginal .or_ (fun w => ¬ HasFCI w) := by
   rsa_predict
 
 /-- EI holds under uniform prior. -/
 theorem ei_uniform :
-    uniformCfg.L1_marginal .or_ hasEI >
-    uniformCfg.L1_marginal .or_ (fun w => !hasEI w) := by
+    uniformCfg.L1_marginal .or_ HasEI >
+    uniformCfg.L1_marginal .or_ (fun w => ¬ HasEI w) := by
   rsa_predict
 
 /-- EI is prior-sensitive: a prior biased toward anyNumber defeats EI. -/
 theorem ei_prior_sensitive :
-    ¬(biasedCfg.L1_marginal .or_ hasEI >
-      biasedCfg.L1_marginal .or_ (fun w => !hasEI w)) := by
+    ¬(biasedCfg.L1_marginal .or_ HasEI >
+      biasedCfg.L1_marginal .or_ (fun w => ¬ HasEI w)) := by
   rsa_predict
 
 -- ============================================================================
@@ -265,17 +271,17 @@ inductive Finding where
 /-- Map each finding to its RSA formalization. -/
 noncomputable def formalize : Finding → Prop
   | .fci_derived =>
-      uniformCfg.L1_marginal .or_ hasFCI >
-      uniformCfg.L1_marginal .or_ (fun w => !hasFCI w)
+      uniformCfg.L1_marginal .or_ HasFCI >
+      uniformCfg.L1_marginal .or_ (fun w => ¬ HasFCI w)
   | .fci_robust_to_prior =>
-      biasedCfg.L1_marginal .or_ hasFCI >
-      biasedCfg.L1_marginal .or_ (fun w => !hasFCI w)
+      biasedCfg.L1_marginal .or_ HasFCI >
+      biasedCfg.L1_marginal .or_ (fun w => ¬ HasFCI w)
   | .ei_uniform =>
-      uniformCfg.L1_marginal .or_ hasEI >
-      uniformCfg.L1_marginal .or_ (fun w => !hasEI w)
+      uniformCfg.L1_marginal .or_ HasEI >
+      uniformCfg.L1_marginal .or_ (fun w => ¬ HasEI w)
   | .ei_prior_sensitive =>
-      ¬(biasedCfg.L1_marginal .or_ hasEI >
-        biasedCfg.L1_marginal .or_ (fun w => !hasEI w))
+      ¬(biasedCfg.L1_marginal .or_ HasEI >
+        biasedCfg.L1_marginal .or_ (fun w => ¬ HasEI w))
 
 /-- The RSA model accounts for all 4 findings from @cite{champollion-alsop-grosu-2019}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
@@ -344,8 +350,8 @@ noncomputable def nullCfg : RSA.RSAConfig UtteranceWithNull FCState where
     The avoidance mechanism between A/B and Or is sufficient — the
     conjunction alternative is not essential. -/
 theorem fci_without_conjunction :
-    nullCfg.L1_marginal .or_ hasFCI >
-    nullCfg.L1_marginal .or_ (fun w => !hasFCI w) := by
+    nullCfg.L1_marginal .or_ HasFCI >
+    nullCfg.L1_marginal .or_ (fun w => ¬ HasFCI w) := by
   rsa_predict
 
 end RSA.FreeChoice

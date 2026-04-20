@@ -317,8 +317,8 @@ L1 correctly infers the QUD answer: John smokes (now=T). -/
 set_option maxHeartbeats 3200000 in
 /-- **QUD answer inference**: L1 infers now=T from "didn't stop smoking". -/
 theorem qud_answer_now_true :
-    cfgNow.L1_marginal .notStoppedSmoking (·.now) >
-    cfgNow.L1_marginal .notStoppedSmoking (fun w => !w.now) := by
+    cfgNow.L1_marginal .notStoppedSmoking (fun w => w.now = true) >
+    cfgNow.L1_marginal .notStoppedSmoking (fun w => w.now = false) := by
   rsa_predict
 
 /-! ### §8.3 World elimination
@@ -419,8 +419,8 @@ L1 infers the QUD answer is now=F. -/
 set_option maxHeartbeats 3200000 in
 /-- "Stopped smoking" → L1 infers now=F (the assertion). -/
 theorem stopped_qud_answer :
-    cfgNow.L1_marginal .stoppedSmoking (fun w => !w.now) >
-    cfgNow.L1_marginal .stoppedSmoking (·.now) := by
+    cfgNow.L1_marginal .stoppedSmoking (fun w => w.now = false) >
+    cfgNow.L1_marginal .stoppedSmoking (fun w => w.now = true) := by
   rsa_predict
 
 -- ============================================================================

@@ -61,10 +61,6 @@ set_option autoImplicit false
 
 namespace BarnettEtAl2022
 
--- TODO: Bool→Prop cascade to Linglib/Theories/Pragmatics/RSA/Core/Config.lean
--- (`isLonger` flows into `RSAConfig.L0_marginal`/`L1_marginal` and `s1ScoreQ`,
--- which expect `W → Bool`; cannot migrate without changing the RSAConfig API.)
-
 open RSA.ArgumentativeStrength
 open RSA.CombinedUtility
 
@@ -107,16 +103,19 @@ def worldContains : StickWorld → Stick → Bool
 
 /-- A world is "longer" if the average stick length exceeds the midpoint (3).
 Equivalently, sum > 9 for 3 sticks. 4 of 10 worlds qualify. -/
-def isLonger : StickWorld → Bool
-  | .w145 | .w235 | .w245 | .w345 => true
-  | _ => false
+def IsLonger : StickWorld → Prop
+  | .w145 | .w235 | .w245 | .w345 => True
+  | _ => False
+
+instance : DecidablePred IsLonger := fun w => by
+  cases w <;> unfold IsLonger <;> infer_instance
 
 -- ============================================================
 -- §2. RSAConfig (persuasive speaker)
 -- ============================================================
 
 /-- L0(longer|u) as ℚ for each stick. Each stick appears in C(4,2)=6 worlds;
-this gives the fraction where isLonger holds.
+this gives the fraction where IsLonger holds.
 
 - s1: 1/6 (only w145 is longer)
 - s2: 2/6 = 1/3 (w235, w245)
@@ -173,23 +172,23 @@ set_option maxHeartbeats 400000 in
 /-- L0(longer|s5) > L0(¬longer|s5): stick 5 is positive evidence for "longer".
 4 of 6 worlds containing s5 are longer, vs 2 not-longer. -/
 theorem l0_s5_positive :
-    cfg.L0_marginal () .s5 isLonger >
-    cfg.L0_marginal () .s5 (fun w => !isLonger w) := by
+    cfg.L0_marginal () .s5 IsLonger >
+    cfg.L0_marginal () .s5 (fun w => ¬ IsLonger w) := by
   rsa_predict
 
 set_option maxHeartbeats 400000 in
 /-- L0(longer|s5) > L0(longer|s4): stick 5 provides stronger evidence than s4. -/
 theorem l0_s5_strongest :
-    cfg.L0_marginal () .s5 isLonger >
-    cfg.L0_marginal () .s4 isLonger := by
+    cfg.L0_marginal () .s5 IsLonger >
+    cfg.L0_marginal () .s4 IsLonger := by
   rsa_predict
 
 set_option maxHeartbeats 400000 in
 /-- L0(¬longer|s1) > L0(longer|s1): stick 1 is evidence against "longer".
 Only 1 of 6 worlds containing s1 is longer. -/
 theorem l0_s1_negative :
-    cfg.L0_marginal () .s1 (fun w => !isLonger w) >
-    cfg.L0_marginal () .s1 isLonger := by
+    cfg.L0_marginal () .s1 (fun w => ¬ IsLonger w) >
+    cfg.L0_marginal () .s1 IsLonger := by
   rsa_predict
 
 /-- L0(longer|·) is monotonically increasing in stick length. This structural
@@ -215,8 +214,8 @@ The fact that they showed a 4 implies they lacked stronger evidence."
 
 L1 assigns more posterior mass to ¬longer than longer worlds after seeing s4. -/
 theorem weak_evidence_effect :
-    cfg.L1_marginal .s4 (fun w => !isLonger w) >
-    cfg.L1_marginal .s4 isLonger := by
+    cfg.L1_marginal .s4 (fun w => ¬ IsLonger w) >
+    cfg.L1_marginal .s4 IsLonger := by
   rsa_predict
 
 set_option maxHeartbeats 800000 in
@@ -225,8 +224,8 @@ set_option maxHeartbeats 800000 in
 The strongest available evidence is always effective because it cannot
 be "explained away" by the absence of something better. -/
 theorem strong_evidence_works :
-    cfg.L1_marginal .s5 isLonger >
-    cfg.L1_marginal .s5 (fun w => !isLonger w) := by
+    cfg.L1_marginal .s5 IsLonger >
+    cfg.L1_marginal .s5 (fun w => ¬ IsLonger w) := by
   rsa_predict
 
 -- ============================================================
@@ -263,7 +262,7 @@ Stick 4 has positive argStr at L0 (1/2 > 2/5), yet L1 assigns more mass
 to ¬longer than longer after seeing s4. -/
 theorem argStr_positive_but_backfires :
     hasPositiveArgStr (l0LongerQ .s4) priorLonger ∧
-    cfg.L1_marginal .s4 (fun w => !isLonger w) > cfg.L1_marginal .s4 isLonger :=
+    cfg.L1_marginal .s4 (fun w => ¬ IsLonger w) > cfg.L1_marginal .s4 IsLonger :=
   ⟨s4_positive_argStr, weak_evidence_effect⟩
 
 -- ============================================================
@@ -459,7 +458,7 @@ theorem model_predicts_interaction :
     -- Model: L0 (literal) — s4 is positive evidence
     hasPositiveArgStr (l0LongerQ .s4) priorLonger ∧
     -- Model: L1 (pragmatic) — s4 backfires
-    cfg.L1_marginal .s4 (fun w => !isLonger w) > cfg.L1_marginal .s4 isLonger ∧
+    cfg.L1_marginal .s4 (fun w => ¬ IsLonger w) > cfg.L1_marginal .s4 IsLonger ∧
     -- Data: pragmatic group shows backfire
     pragmaticResult.meanSlider < 50 ∧
     -- Data: literal group shows no backfire

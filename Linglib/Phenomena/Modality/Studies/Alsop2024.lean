@@ -118,15 +118,21 @@ def permP_liberal (w : FCIState) : Bool := permP w || permBoth w
 
 /-- Exclusiveness: each item is individually (strictly) permitted.
     ∀x[◇take(x)_strict]. True at {only1, anyNum}. -/
-def hasExclusiveness : FCIState → Bool
-  | .only1 | .anyNum => true
-  | _ => false
+def HasExclusiveness : FCIState → Prop
+  | .only1 | .anyNum => True
+  | _ => False
+
+instance : DecidablePred HasExclusiveness := fun w => by
+  cases w <;> unfold HasExclusiveness <;> infer_instance
 
 /-- Not-every: taking both is not permitted. ¬◇(S∧P).
     True at {onlyS, onlyP, only1}. -/
-def hasNotEvery : FCIState → Bool
-  | .onlyS | .onlyP | .only1 => true
-  | _ => false
+def HasNotEvery : FCIState → Prop
+  | .onlyS | .onlyP | .only1 => True
+  | _ => False
+
+instance : DecidablePred HasNotEvery := fun w => by
+  cases w <;> unfold HasNotEvery <;> infer_instance
 
 -- ============================================================================
 -- §4. Truth Tables (Global Interpretation Functions)
@@ -166,8 +172,8 @@ def interpMeaning : Interp → Utterance → FCIState → Bool
 
 /-- The strong interpretation characterizes exclusiveness exactly. -/
 theorem strong_characterizes_exclusiveness :
-    ∀ w, strongMeaning .mayAny w = hasExclusiveness w := by
-  intro w; cases w <;> rfl
+    ∀ w, strongMeaning .mayAny w = true ↔ HasExclusiveness w := by
+  intro w; cases w <;> simp [strongMeaning, HasExclusiveness]
 
 /-- The weak interpretation is always true for "may any". -/
 theorem weak_mayAny_always_true : ∀ w, weakMeaning .mayAny w = true := by
@@ -175,13 +181,13 @@ theorem weak_mayAny_always_true : ∀ w, weakMeaning .mayAny w = true := by
 
 /-- Exclusiveness = ∀x[◇take(x)_strict]. -/
 theorem exclusiveness_eq_allStrict :
-    ∀ w, hasExclusiveness w = (permS w && permP w) := by
-  intro w; cases w <;> rfl
+    ∀ w, HasExclusiveness w ↔ (permS w = true ∧ permP w = true) := by
+  intro w; cases w <;> simp [HasExclusiveness, permS, permP]
 
 /-- Not-every = ¬permBoth. -/
 theorem notEvery_eq_not_permBoth :
-    ∀ w, hasNotEvery w = !permBoth w := by
-  intro w; cases w <;> rfl
+    ∀ w, HasNotEvery w ↔ permBoth w = false := by
+  intro w; cases w <;> simp [HasNotEvery, permBoth]
 
 /-- The strong interpretation refines the weak for all utterances. -/
 theorem strong_refines_weak :
@@ -234,38 +240,38 @@ noncomputable abbrev biasedCfg :=
 /-- Exclusiveness is derived: L1 assigns more mass to exclusiveness states
     than non-exclusiveness states upon hearing "may any". -/
 theorem exclusiveness_derived :
-    uniformCfg.L1_marginal .mayAny hasExclusiveness >
-    uniformCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w) := by
+    uniformCfg.L1_marginal .mayAny HasExclusiveness >
+    uniformCfg.L1_marginal .mayAny (fun w => ¬ HasExclusiveness w) := by
   rsa_predict
 
 /-- Exclusiveness is robust: holds even under a prior biased toward anyNum. -/
 theorem exclusiveness_robust :
-    biasedCfg.L1_marginal .mayAny hasExclusiveness >
-    biasedCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w) := by
+    biasedCfg.L1_marginal .mayAny HasExclusiveness >
+    biasedCfg.L1_marginal .mayAny (fun w => ¬ HasExclusiveness w) := by
   rsa_predict
 
 /-- Not-every holds under uniform prior. -/
 theorem not_every_uniform :
-    uniformCfg.L1_marginal .mayAny hasNotEvery >
-    uniformCfg.L1_marginal .mayAny (fun w => !hasNotEvery w) := by
+    uniformCfg.L1_marginal .mayAny HasNotEvery >
+    uniformCfg.L1_marginal .mayAny (fun w => ¬ HasNotEvery w) := by
   rsa_predict
 
 /-- Not-every is weakened under biased prior (prior-sensitive). -/
 theorem not_every_weakened :
-    ¬(biasedCfg.L1_marginal .mayAny hasNotEvery >
-      biasedCfg.L1_marginal .mayAny (fun w => !hasNotEvery w)) := by
+    ¬(biasedCfg.L1_marginal .mayAny HasNotEvery >
+      biasedCfg.L1_marginal .mayAny (fun w => ¬ HasNotEvery w)) := by
   rsa_predict
 
 /-- Hearing "may S", the listener infers S is (strictly) permitted. -/
 theorem literal_s_correct :
-    uniformCfg.L1_marginal .mayS (fun w => permS w) >
-    uniformCfg.L1_marginal .mayS (fun w => !permS w) := by
+    uniformCfg.L1_marginal .mayS (fun w => permS w = true) >
+    uniformCfg.L1_marginal .mayS (fun w => permS w = false) := by
   rsa_predict
 
 /-- Hearing "may every", the listener infers both are permitted. -/
 theorem every_permBoth :
-    uniformCfg.L1_marginal .mayEvery (fun w => permBoth w) >
-    uniformCfg.L1_marginal .mayEvery (fun w => !permBoth w) := by
+    uniformCfg.L1_marginal .mayEvery (fun w => permBoth w = true) >
+    uniformCfg.L1_marginal .mayEvery (fun w => permBoth w = false) := by
   rsa_predict
 
 -- ============================================================================
@@ -292,8 +298,8 @@ noncomputable def weakOnlyCfg : RSA.RSAConfig Utterance FCIState where
     "may any" is uninformative and the prior dominates: 2/7 exclusiveness
     states vs 5/7 non-exclusiveness states. -/
 theorem exclusiveness_requires_ambiguity :
-    ¬(weakOnlyCfg.L1_marginal .mayAny hasExclusiveness >
-      weakOnlyCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w)) := by
+    ¬(weakOnlyCfg.L1_marginal .mayAny HasExclusiveness >
+      weakOnlyCfg.L1_marginal .mayAny (fun w => ¬ HasExclusiveness w)) := by
   rsa_predict
 
 -- ============================================================================
@@ -320,14 +326,14 @@ def weakMeaningNeg : UtteranceNeg → FCIState → Bool
   | .mayNotAny, _ => false
 
 /-- Strong meaning extended with negation.
-    "May not any" under strong = ¬∀x[◇take(x)_strict] = ¬hasExclusiveness.
+    "May not any" under strong = ¬∀x[◇take(x)_strict] = ¬HasExclusiveness.
     True at 5 of 7 states (all except only1 and anyNum). -/
 def strongMeaningNeg : UtteranceNeg → FCIState → Bool
   | .mayS, .onlyS => true
   | .mayP, .onlyP => true
   | .mayAny, .only1 | .mayAny, .anyNum => true
   | .mayEvery, .only2 => true
-  | .mayNotAny, w => !hasExclusiveness w
+  | .mayNotAny, w => !decide (HasExclusiveness w)
   | _, _ => false
 
 /-- Combined meaning for the extended model. -/
@@ -352,8 +358,8 @@ noncomputable def negCfg : RSA.RSAConfig UtteranceNeg FCIState where
     the strong interpretation supports only non-exclusiveness states. The
     informativity gap that drives FC in the positive case disappears. -/
 theorem no_fc_under_negation :
-    ¬(negCfg.L1_marginal .mayNotAny hasExclusiveness >
-      negCfg.L1_marginal .mayNotAny (fun w => !hasExclusiveness w)) := by
+    ¬(negCfg.L1_marginal .mayNotAny HasExclusiveness >
+      negCfg.L1_marginal .mayNotAny (fun w => ¬ HasExclusiveness w)) := by
   rsa_predict
 
 -- ============================================================================
@@ -375,29 +381,29 @@ inductive Finding where
 /-- Map each finding to its RSA formalization. -/
 noncomputable def formalize : Finding → Prop
   | .exclusiveness_derived =>
-      uniformCfg.L1_marginal .mayAny hasExclusiveness >
-      uniformCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w)
+      uniformCfg.L1_marginal .mayAny HasExclusiveness >
+      uniformCfg.L1_marginal .mayAny (fun w => ¬ HasExclusiveness w)
   | .exclusiveness_robust =>
-      biasedCfg.L1_marginal .mayAny hasExclusiveness >
-      biasedCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w)
+      biasedCfg.L1_marginal .mayAny HasExclusiveness >
+      biasedCfg.L1_marginal .mayAny (fun w => ¬ HasExclusiveness w)
   | .not_every_uniform =>
-      uniformCfg.L1_marginal .mayAny hasNotEvery >
-      uniformCfg.L1_marginal .mayAny (fun w => !hasNotEvery w)
+      uniformCfg.L1_marginal .mayAny HasNotEvery >
+      uniformCfg.L1_marginal .mayAny (fun w => ¬ HasNotEvery w)
   | .not_every_weakened =>
-      ¬(biasedCfg.L1_marginal .mayAny hasNotEvery >
-        biasedCfg.L1_marginal .mayAny (fun w => !hasNotEvery w))
+      ¬(biasedCfg.L1_marginal .mayAny HasNotEvery >
+        biasedCfg.L1_marginal .mayAny (fun w => ¬ HasNotEvery w))
   | .literal_s_correct =>
-      uniformCfg.L1_marginal .mayS (fun w => permS w) >
-      uniformCfg.L1_marginal .mayS (fun w => !permS w)
+      uniformCfg.L1_marginal .mayS (fun w => permS w = true) >
+      uniformCfg.L1_marginal .mayS (fun w => permS w = false)
   | .every_permBoth =>
-      uniformCfg.L1_marginal .mayEvery (fun w => permBoth w) >
-      uniformCfg.L1_marginal .mayEvery (fun w => !permBoth w)
+      uniformCfg.L1_marginal .mayEvery (fun w => permBoth w = true) >
+      uniformCfg.L1_marginal .mayEvery (fun w => permBoth w = false)
   | .exclusiveness_requires_ambiguity =>
-      ¬(weakOnlyCfg.L1_marginal .mayAny hasExclusiveness >
-        weakOnlyCfg.L1_marginal .mayAny (fun w => !hasExclusiveness w))
+      ¬(weakOnlyCfg.L1_marginal .mayAny HasExclusiveness >
+        weakOnlyCfg.L1_marginal .mayAny (fun w => ¬ HasExclusiveness w))
   | .no_fc_under_negation =>
-      ¬(negCfg.L1_marginal .mayNotAny hasExclusiveness >
-        negCfg.L1_marginal .mayNotAny (fun w => !hasExclusiveness w))
+      ¬(negCfg.L1_marginal .mayNotAny HasExclusiveness >
+        negCfg.L1_marginal .mayNotAny (fun w => ¬ HasExclusiveness w))
 
 /-- The RSA model accounts for all 8 findings from @cite{alsop-2024}. -/
 theorem all_findings_verified : ∀ f : Finding, formalize f := by
