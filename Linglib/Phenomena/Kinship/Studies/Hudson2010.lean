@@ -54,16 +54,14 @@ inductive KinRole where
   | ancestor
   deriving Repr, DecidableEq
 
-/-- The kinship relation labels we attach as property links. Only one
-relation type is needed for the Fig 7.6 demonstration: parental composition. -/
-inductive KinRel where
-  | parentOf
-  deriving Repr, DecidableEq
-
 /-- A small kinship inheritance network. All links are isA edges; the
 taxonomy is `mother / father → parent`, `grandmother / grandfather →
-grandparent`, and `parent / grandparent → ancestor`. -/
-def kinshipNet : Network KinRole KinRel where
+grandparent`, and `parent / grandparent → ancestor`. The relation-label
+type is `Empty`: there are no `prop` links here, only the `isA` backbone,
+so no labels are reachable. The Fig 7.6 triangle below uses an abstract
+`ParentRel α` rather than a network `prop` link, so no kinship-specific
+label type is needed. -/
+def kinshipNet : Network KinRole Empty where
   links :=
     [ ⟨.isA, .mother,      .parent,      none⟩
     , ⟨.isA, .father,      .parent,      none⟩
@@ -163,7 +161,7 @@ identity is at the type level — no Bridge theorem needed.
 This is the formal counterpart of Hudson's §7.7 ("Syntax without modules",
 p. 189): linguistic and non-linguistic conceptual knowledge live in one
 network. -/
-example : Network WordGrammar.WGNode WordGrammar.WGRel × Network KinRole KinRel :=
+example : Network WordGrammar.WGNode WordGrammar.WGRel × Network KinRole Empty :=
   (WordGrammar.englishAuxNet, kinshipNet)
 
 end Phenomena.Kinship.Studies.Hudson2010

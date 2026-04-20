@@ -1,5 +1,16 @@
 # Changelog
 
+## [0.230.57] - 2026-04-20
+
+### Changed
+- **`Core/Inheritance/Basic.lean`**: dropped `Mathlib.Data.Rat.Defs` and `Mathlib.Tactic.Linarith` imports — they were only needed by the now-relocated `Prototype` block. Added `instance Decidable (isAEdge net a b)` (one-liner via `inferInstanceAs`) so consumers can `decide` on the parent edge without re-deriving membership decidability.
+- **`Core/Inheritance/Default.lean`**: `bestFit_local` proof rewritten to drop bare `simp_all` (fragile per CLAUDE.md proof-style discipline) — replaced with `split / contradiction / rfl` structural proof.
+- **`Phenomena/Kinship/Studies/Hudson2010.lean`**: dropped dead `KinRel` inductive — every link in `kinshipNet` uses `label := none`, and the Fig 7.6 triangle uses an abstract `ParentRel α` rather than a network `prop` link, so no kinship-specific label type is needed. `kinshipNet : Network KinRole Empty` (was `Network KinRole KinRel`). Docstring updated to explain the choice.
+- **`Phenomena/Reference/Studies/WesterbeekKoolenMaes2015.lean`**: import `Linglib.Core.Inheritance.Prototype` instead of `Linglib.Core.Inheritance.Basic` (only consumer of `Prototype` outside of unrelated `SemanticPrototype`/`ptPrototype` definitions).
+
+### Added
+- **`Core/Inheritance/Prototype.lean`**: NEW. Hosts the `Prototype α` structure (graded category membership, `category : α` + `typicality : α → ℚ`) plus `atLeastAsTypical`, `moreTypical`, `atLeastAsTypical_refl`, `atLeastAsTypical_trans`. Moved out of `Basic.lean` to keep the network module orthogonal to rationals/linarith — consumers that only need the isA backbone no longer pay for `Mathlib.Data.Rat.Defs`. Single consumer `WesterbeekKoolenMaes2015.lean` switched over.
+
 ## [0.230.55] - 2026-04-20
 
 ### Added

@@ -66,8 +66,10 @@ theorem bestFit_local (net : Network α R) (node : α) (r : R)
     (h : localProps net node r ≠ []) :
     inherited net node r = localProps net node r := by
   unfold inherited inheritedBound
-  split <;> rename_i n
+  split
   · rfl
-  · split <;> simp_all
+  · split
+    · contradiction
+    · rfl
 
 end Core.Inheritance

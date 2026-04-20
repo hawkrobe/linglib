@@ -1,5 +1,3 @@
-import Mathlib.Data.Rat.Defs
-import Mathlib.Tactic.Linarith
 import Mathlib.Logic.Relation
 import Mathlib.Data.List.Defs
 
@@ -35,7 +33,6 @@ This module distinguishes three link kinds at the type level:
 - `parents`, `ancestorsBound`, `ancestors` — computational taxonomy traversal
 - `IsA` — the canonical reflexive-transitive `isA`, defined as
   `Relation.ReflTransGen` of the parent edge
-- `Prototype` — graded category membership
 
 `IsA` is the API; `parents`/`ancestors` are computational evidence producers
 (`b ∈ ancestors net a → IsA net a b` via `IsA.of_mem_ancestors`). Termination
@@ -119,6 +116,9 @@ def ancestors (net : Network α R) (node : α) : List α :=
 /-- The single-step parent relation. -/
 def isAEdge (net : Network α R) (a b : α) : Prop := b ∈ parents net a
 
+instance (net : Network α R) (a b : α) : Decidable (isAEdge net a b) :=
+  inferInstanceAs (Decidable (b ∈ parents net a))
+
 /-- Reflexive-transitive `isA`: `a` inherits from `b` along the chain of isA
 links. Defined as `Relation.ReflTransGen` of the parent edge — the same
 construction mathlib uses for transitive closures elsewhere, so every lemma
@@ -181,36 +181,5 @@ decidable fact `b ∉ ancestors net a` (which says only that the BFS doesn't
 witness the relationship, not that no `ReflTransGen` chain can exist). -/
 
 end NetworkOps
-
--- ============================================================================
--- Prototype Effects
--- ============================================================================
-
-/-- A prototype: a category with graded typicality over instances.
-Higher values = more prototypical @cite{hudson-2010} Ch 2. -/
-structure Prototype (α : Type) where
-  category : α
-  typicality : α → ℚ
-
-/-- Whether `a` is at least as typical as `b` in a prototype. -/
-def Prototype.atLeastAsTypical {α : Type} (proto : Prototype α) (a b : α) : Bool :=
-  proto.typicality a ≥ proto.typicality b
-
-/-- Whether `a` is strictly more typical than `b` in a prototype. -/
-def Prototype.moreTypical {α : Type} (proto : Prototype α) (a b : α) : Bool :=
-  proto.typicality a > proto.typicality b
-
-/-- `atLeastAsTypical` is reflexive. -/
-theorem Prototype.atLeastAsTypical_refl {α : Type} (proto : Prototype α) (a : α) :
-    proto.atLeastAsTypical a a = true := by
-  simp [atLeastAsTypical]
-
-/-- `atLeastAsTypical` is transitive. -/
-theorem Prototype.atLeastAsTypical_trans {α : Type} (proto : Prototype α) (a b c : α)
-    (hab : proto.atLeastAsTypical a b = true)
-    (hbc : proto.atLeastAsTypical b c = true) :
-    proto.atLeastAsTypical a c = true := by
-  simp [atLeastAsTypical] at *
-  linarith
 
 end Core.Inheritance

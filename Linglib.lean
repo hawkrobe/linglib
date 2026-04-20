@@ -235,6 +235,7 @@ import Linglib.Core.Inheritance.Basic
 import Linglib.Core.Inheritance.Choice
 import Linglib.Core.Inheritance.Default
 import Linglib.Core.Inheritance.BestFit
+import Linglib.Core.Inheritance.Prototype
 import Linglib.Core.Dependency.Basic
 import Linglib.Core.Dependency.Projection
 import Linglib.Core.Dependency.Dominance
