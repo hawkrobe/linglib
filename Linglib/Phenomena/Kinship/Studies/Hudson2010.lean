@@ -107,9 +107,12 @@ theorem ancestor_has_no_proper_ancestors :
 -- `LowerSet`/`UpperSet`).
 -- ----------------------------------------------------------------------------
 
-/-- The same fact as `mother_IsA_ancestor` via mathlib's `≤`. -/
+/-- The same fact as `mother_IsA_ancestor` via mathlib's `≤`. The `IsAOrder.mk`
+wrapper tags the nodes as inhabiting the preorder view of `kinshipNet`, so
+instance search picks up the `Preorder (IsAOrder kinshipNet)` instance instead
+of unfolding to `KinRole` and looking for the (nonexistent) `LE KinRole`. -/
 theorem mother_le_ancestor :
-    (KinRole.mother : IsAOrder kinshipNet) ≤ (KinRole.ancestor : IsAOrder kinshipNet) :=
+    IsAOrder.mk kinshipNet .mother ≤ IsAOrder.mk kinshipNet .ancestor :=
   mother_IsA_ancestor
 
 -- ============================================================================

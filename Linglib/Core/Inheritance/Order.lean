@@ -25,7 +25,14 @@ example : Preorder (IsAOrder englishAuxNet) := inferInstance
 
 -- `(a : IsAOrder net) ≤ b` means `IsA net a b`:
 example (a b : IsAOrder net) : a ≤ b ↔ IsA net (a : α) b := Iff.rfl
+
+-- To compare two `α`-valued nodes via the preorder, route through `mk`:
+example (h : IsA net x y) : IsAOrder.mk net x ≤ IsAOrder.mk net y := h
 ```
+
+A bare type ascription `(x : IsAOrder net) ≤ (y : IsAOrder net)` does not work
+because instance synthesis unfolds `IsAOrder net` back to `α` and then fails to
+find `LE α`. The `mk` function-call carries the wrapper through elaboration.
 -/
 
 set_option autoImplicit false
@@ -40,6 +47,15 @@ def IsAOrder (_ : Network α R) : Type := α
 
 namespace IsAOrder
 
+/-- Tag a node as inhabiting the preorder view of `net`. Mirrors mathlib's
+`OrderDual.toDual`: a function-call wrapper avoids the elaboration pitfall
+where `(a : IsAOrder net)` ascription gets unfolded to `α` during instance
+search, leaving `LE α` (which doesn't exist) instead of `LE (IsAOrder net)`. -/
+def mk (net : Network α R) (a : α) : IsAOrder net := a
+
+/-- Forget the preorder view, returning the underlying node. -/
+def val {net : Network α R} (a : IsAOrder net) : α := a
+
 /-- The `Preorder` instance derived from `IsA`'s reflexivity and transitivity. -/
 instance preorder (net : Network α R) : Preorder (IsAOrder net) where
   le a b := IsA net a b
@@ -49,6 +65,9 @@ instance preorder (net : Network α R) : Preorder (IsAOrder net) where
 /-- The wrapper's `≤` unfolds definitionally to `IsA`. -/
 @[simp] theorem le_def (net : Network α R) (a b : IsAOrder net) :
     a ≤ b ↔ IsA net a b := Iff.rfl
+
+/-- `mk` and `val` round-trip definitionally. -/
+@[simp] theorem val_mk (net : Network α R) (a : α) : val (mk net a) = a := rfl
 
 end IsAOrder
 

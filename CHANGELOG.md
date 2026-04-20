@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.230.54] - 2026-04-20
+
+### Changed
+- **`Core/Inheritance/Order.lean`**: added `IsAOrder.mk : (net : Network α R) → α → IsAOrder net` and `IsAOrder.val : IsAOrder net → α` wrapper functions, mirroring mathlib's `OrderDual.toDual` pattern. Without `mk`, the elaboration `(KinRole.mother : IsAOrder kinshipNet) ≤ ...` fails to synthesize `LE` because instance search reduces `IsAOrder kinshipNet` back to the underlying node type during unification. Routing through the function call `IsAOrder.mk kinshipNet .mother` carries the wrapper through elaboration so the `Preorder (IsAOrder net)` instance is found. Docstring updated with the failure mode and the recommended idiom; `val_mk` round-trip lemma added.
+- **`Phenomena/Kinship/Studies/Hudson2010.lean`**: completed the Bool→Prop migration on the consumer side (the Bool API was already removed from `Core/Inheritance/Basic.lean` in 0.230.53's bulk commit). Five `decide`-shaped Bool theorems (`mother_isA_parent`, `mother_isA_ancestor`, `grandmother_isA_ancestor`, `mother_not_isA_grandmother`, `ancestor_has_no_proper_ancestors`) become Prop-form `IsA` theorems built via `IsA.of_mem_ancestors _ (by decide)`. The negative case `mother_not_isA_grandmother` is restated as the strictly weaker, decidable fact `grandmother_not_in_mother_ancestors : .grandmother ∉ ancestors kinshipNet .mother`, with a docstring explaining that the full propositional `¬ IsA` claim requires the path-compression argument tracked in `Core.Inheritance.Basic` (TODO 0.230.50+). `mother_le_ancestor` updated to use `IsAOrder.mk` for the wrapper-tagging fix above.
+- **Mathlib-quality discipline (`feedback_no_intrinsic_bool.md`)**: collapses the parallel Bool/Prop layer Hudson2010 had been carrying. The remaining computational helpers (`parents`, `ancestorsBound`, `ancestors`) are *evidence producers* feeding the Prop API via `IsA.of_mem_ancestors`, not a parallel reasoning surface — they live in the same role as `Finset.carrier : Multiset α` does relative to `Finset.Nonempty : Prop` (mathlib idiom).
+
 ## [0.230.53] - 2026-04-20
 
 ### Changed
