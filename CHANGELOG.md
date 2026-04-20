@@ -4,6 +4,23 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.62] - 2026-04-20
+
+### Changed
+- **`.github/workflows/docs.yml`**: revert the docs build to the
+  doc-gen4 CLI loop (`lake exe doc-gen4 single` per module) but
+  parallelize it with `xargs -I{} -P 4`. The intervening
+  "simplification" to `lake -j 2 build Linglib:docs` was empirically
+  verified to cascade `module_facet docInfo` jobs through the import
+  graph — building docs for a single Linglib module triggered ~2700
+  Mathlib `docInfo` targets, which OOMs the 16 GB runner. The CLI's
+  `single` only writes docs for the named module (imports load into
+  memory but are not documented). With `-P 4` the doc step drops
+  from ~95 min serial to ~25 min, total CI run ~66 min, well under
+  the 2 h cap. doc-gen4's SQLite layer uses WAL + 30-min busy
+  timeout for exactly this multi-writer scenario (mathlib's own docs
+  build is the canonical case), so concurrent writes are safe.
+
 ## [0.230.61] - 2026-04-20
 
 ### Changed

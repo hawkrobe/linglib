@@ -55,18 +55,57 @@ jobs:
 
       - name: Build documentation (Linglib only, skip Mathlib)
         run: |
-          # Use Lake's docs facet directly. `library_facet docs` (defined
-          # in doc-gen4) only documents Linglib's own modules; transitive
-          # Mathlib oleans are loaded into memory for symbol resolution
-          # but not documented. Lake parallelizes per-module `docInfo`
-          # jobs natively. `-j 2` caps concurrency to keep memory under
-          # the 16 GB runner limit (each docInfo job loads the module's
-          # full Mathlib import closure into memory).
-          #
-          # Stale DB cleanup: doc-gen4 schema changes across versions
+          # Use doc-gen4 CLI directly. The Lake `:docs` facet cascades
+          # docInfo jobs into Mathlib (~2700+ targets for any Linglib
+          # module that imports mathlib), which OOMs the runner. The
+          # CLI's `single` only writes docs for the named module — its
+          # imports are loaded into memory but not documented.
+          lake build doc-gen4
+
+          BUILD=.lake/build
+          DOCGEN="lake exe doc-gen4"
+          REPO_URL="https://github.com/${{ github.repository }}"
+          COMMIT="${{ github.sha }}"
+          SRC_URI="$REPO_URL/blob/$COMMIT"
+          DB=api-docs.db
+          export BUILD DOCGEN SRC_URI DB
+
+          # Remove stale DB — schema changes across doc-gen4 versions
           # cause "no such table" errors if an old DB is reused.
-          rm -f .lake/build/api-docs.db api-docs.db
-          lake -j 2 build Linglib:docs
+          rm -f "$BUILD/$DB" "$DB"
+
+          # Bibliography prepass
+          if [ -f docs/references.bib ]; then
+            $DOCGEN bibPrepass --build "$BUILD" docs/references.bib
+          elif [ -f docs/references.json ]; then
+            $DOCGEN bibPrepass --build "$BUILD" --json docs/references.json
+          else
+            $DOCGEN bibPrepass --build "$BUILD" --none
+          fi
+
+          # Document root module (may fail if Linglib.olean missing — non-fatal)
+          $DOCGEN single --build "$BUILD" Linglib "$DB" "$SRC_URI/Linglib.lean" || true
+
+          # Document all Linglib submodules in parallel (-P 4 cores).
+          # Each invocation writes to a shared SQLite db with WAL +
+          # 24h busy timeout (see doc-gen4/Main.lean:walCheckpoint),
+          # and updateModuleDb uses immediate transactions per
+          # 100-module batch, so concurrent writers are safe.
+          # Memory: each `single` peaks ~3-4 GB (mathlib import closure);
+          # 4 in parallel ≈ 12-16 GB on a 16 GB runner. If we OOM,
+          # drop -P to 2.
+          find Linglib -name '*.lean' | sort | \
+            xargs -I{} -P 4 sh -c '
+              f="$1"
+              mod=$(echo "$f" | sed "s|/|.|g; s|\.lean$||")
+              echo "  doc: $mod"
+              $DOCGEN single --build "$BUILD" "$mod" "$DB" "$SRC_URI/$f" || true
+            ' _ {}
+
+          # Generate HTML + search index from database
+          # NOTE: fromDb treats the db arg as a literal path (not relative
+          # to --build), unlike single/genCore which prepend --build.
+          $DOCGEN fromDb --build "$BUILD" "$BUILD/$DB"
 
       - name: Install Hugo
         uses: peaceiris/actions-hugo@v3
