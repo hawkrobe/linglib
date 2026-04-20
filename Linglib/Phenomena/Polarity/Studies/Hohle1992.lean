@@ -25,14 +25,31 @@ namespace Phenomena.Polarity.Studies.Hohle1992
 
 -- Data Structure
 
-/-- A polarity stress datum records prosodic prominence affecting polarity -/
+/-- The element bearing prosodic prominence in a polarity-stress datum.
+    Polarity stress targets `auxiliary` or `negation`; `verb` is rare;
+    `subject`/`object` are the content-focus controls. -/
+inductive StressedElement where
+  | auxiliary
+  | negation
+  | verb
+  | subject
+  | object
+  deriving DecidableEq, Repr
+
+/-- The clause type for a polarity-stress datum. -/
+inductive ClauseType where
+  | declarative
+  | interrogative
+  deriving DecidableEq, Repr
+
+/-- A polarity stress datum records prosodic prominence affecting polarity. -/
 structure PolarityStressDatum where
   /-- The sentence (CAPS marks prosodic prominence) -/
   sentence : String
   /-- What element is stressed -/
-  stressedElement : String  -- "auxiliary", "negation", "verb"
+  stressedElement : StressedElement
   /-- Clause type -/
-  clauseType : String  -- "declarative", "interrogative"
+  clauseType : ClauseType
   /-- Interpretive effect -/
   effect : String
   /-- Notes -/
@@ -46,8 +63,8 @@ structure PolarityStressDatum where
 /-- Emphatic DO in declaratives -/
 def emphaticDoDeclarative : PolarityStressDatum := {
   sentence := "John DOES drink"
-  stressedElement := "auxiliary"
-  clauseType := "declarative"
+  stressedElement := .auxiliary
+  clauseType := .declarative
   effect := "Emphatic affirmation: contrary to expectation or doubt, John drinks"
   notes := "Stress on DO signals polarity emphasis in declaratives"
   source := "@cite{hohle-1992}"
@@ -56,8 +73,8 @@ def emphaticDoDeclarative : PolarityStressDatum := {
 /-- Emphatic negation in declaratives -/
 def emphaticNotDeclarative : PolarityStressDatum := {
   sentence := "John does NOT drink"
-  stressedElement := "negation"
-  clauseType := "declarative"
+  stressedElement := .negation
+  clauseType := .declarative
   effect := "Emphatic negation: contrary to expectation, John doesn't drink"
   notes := "Stress on NOT signals emphatic denial"
   source := "@cite{hohle-1992}"
@@ -66,8 +83,8 @@ def emphaticNotDeclarative : PolarityStressDatum := {
 /-- Emphatic auxiliary with modal -/
 def emphaticCanDeclarative : PolarityStressDatum := {
   sentence := "John CAN swim"
-  stressedElement := "auxiliary"
-  clauseType := "declarative"
+  stressedElement := .auxiliary
+  clauseType := .declarative
   effect := "Emphatic ability claim: despite doubt, John has the ability"
   notes := "Works with modals too"
   source := "@cite{hohle-1992}"
@@ -78,8 +95,8 @@ def emphaticCanDeclarative : PolarityStressDatum := {
 /-- Stressed auxiliary in yes/no question -/
 def auxStressInterrogative : PolarityStressDatum := {
   sentence := "DOES John drink?"
-  stressedElement := "auxiliary"
-  clauseType := "interrogative"
+  stressedElement := .auxiliary
+  clauseType := .interrogative
   effect := "Speaker checking expected positive answer; positive bias"
   notes := "Pitch accent on auxiliary signals checking p (expected true)"
   source := "@cite{hohle-1992}"
@@ -88,8 +105,8 @@ def auxStressInterrogative : PolarityStressDatum := {
 /-- Stressed negation in yes/no question -/
 def notStressInterrogative : PolarityStressDatum := {
   sentence := "Does John NOT drink?"
-  stressedElement := "negation"
-  clauseType := "interrogative"
+  stressedElement := .negation
+  clauseType := .interrogative
   effect := "Speaker checking expected negative answer; negative bias"
   notes := "Pitch accent on NOT signals checking ¬p (expected true)"
   source := "@cite{romero-han-2004}"
@@ -100,8 +117,8 @@ def notStressInterrogative : PolarityStressDatum := {
 /-- Content focus for comparison -/
 def contentFocusSubject : PolarityStressDatum := {
   sentence := "JOHN drinks"
-  stressedElement := "subject"
-  clauseType := "declarative"
+  stressedElement := .subject
+  clauseType := .declarative
   effect := "Identifies who drinks (content focus, not polarity)"
   notes := "Compare: JOHN drinks (who?) vs John DOES drink (whether?)"
   source := "@cite{rooth-1992}"
@@ -110,8 +127,8 @@ def contentFocusSubject : PolarityStressDatum := {
 /-- Content focus on object -/
 def contentFocusObject : PolarityStressDatum := {
   sentence := "John drinks BEER"
-  stressedElement := "object"
-  clauseType := "declarative"
+  stressedElement := .object
+  clauseType := .declarative
   effect := "Identifies what John drinks (content focus, not polarity)"
   notes := "Not about whether John drinks, but what"
   source := "@cite{rooth-1992}"

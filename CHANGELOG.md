@@ -4,6 +4,35 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.77] - 2026-04-20
+
+### Changed
+- **`Linglib/Phenomena/Polarity/Studies/Hohle1992.lean`**: migrate
+  `stressedElement : String` and `clauseType : String` fields of
+  `PolarityStressDatum` to `inductive StressedElement` (auxiliary,
+  negation, verb, subject, object) and `inductive ClauseType`
+  (declarative, interrogative). Eliminates string-typed enum data
+  per the typed-data discipline.
+- **`Linglib/Phenomena/Polarity/Studies/Chierchia2006.lean`**: convert
+  all 7 anonymous-positional-constructor `PSIProfile` instances and
+  10 `FCIObservation` instances to named-field constructor syntax
+  (`{ grain := ..., obligatoryDomainAlts := ..., ... }`). Field-order
+  drift is no longer silent.
+
+### Fixed
+- **`Linglib/Theories/Semantics/Exhaustification/FreeChoice.lean`**:
+  replace 13 dangling references to a non-existent `entails` def
+  (presumably deleted in a prior cleanup) with the surviving `⊆ₚ`
+  notation. Replace 1 `pneg` reference with `∼` (Compl.compl). The
+  `entails p q` Prop spec was the same as `p ⊆ₚ q` definitionally
+  so theorem statements are unchanged in content. Theorems affected:
+  `si_vacuous_in_de`, `wider_domain_weaker_existential`,
+  `widening_strengthens_in_de`, `widening_weakens_in_ue`,
+  `IsStrengthening`, `intervention_negation_not_de`,
+  `entailment_reversal_in_de`, `weak_is_strong_in_de`,
+  `maximize_strength_eq_exhIE`. File now builds; downstream
+  `Phenomena/Polarity/Studies/Chierchia2006` builds clean.
+
 ## [0.230.76] - 2026-04-20
 
 ### Changed

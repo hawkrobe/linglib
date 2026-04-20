@@ -217,8 +217,8 @@ In a DE context, if `strong ⊆ₚ weak`, then the scalar implicature
 This is the formal content of Chierchia's observation that SIs are
 suspended in NPI-licensing environments. -/
 theorem si_vacuous_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Set World), entails p q → entails (C q) (C p))
-    (weak strong : Set World) (h_ent : entails strong weak) :
+    (hDE : ∀ (p q : Set World), (p ⊆ₚ q) → (C q ⊆ₚ C p))
+    (weak strong : Set World) (h_ent : strong ⊆ₚ weak) :
     siVacuous C weak strong := by
   intro w ⟨hCw, hnCs⟩
   have hCws := hDE strong weak h_ent hCw
@@ -266,7 +266,7 @@ def existsInDomain (D : Set Entity) (P : Entity → Set World) : Set World :=
 
 Larger domain = more potential witnesses = weaker existential claim. -/
 theorem wider_domain_weaker_existential (D D' : Set Entity) (P : Entity → Set World)
-    (h : D ⊆ D') : entails (existsInDomain D P) (existsInDomain D' P) := by
+    (h : D ⊆ D') : existsInDomain D P ⊆ₚ existsInDomain D' P := by
   intro w ⟨x, hxD, hPx⟩
   exact ⟨x, h hxD, hPx⟩
 
@@ -277,9 +277,9 @@ the overall claim: C(∃x∈D', Px) ⊆ₚ C(∃x∈D, Px) when D ⊆ D'.
 
 This is why NPIs are licensed in DE contexts: widening is informative. -/
 theorem widening_strengthens_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Set World), entails p q → entails (C q) (C p))
+    (hDE : ∀ (p q : Set World), (p ⊆ₚ q) → (C q ⊆ₚ C p))
     (D D' : Set Entity) (P : Entity → Set World) (h : D ⊆ D') :
-    entails (C (existsInDomain D' P)) (C (existsInDomain D P)) :=
+    C (existsInDomain D' P) ⊆ₚ C (existsInDomain D P) :=
   hDE _ _ (wider_domain_weaker_existential D D' P h)
 
 /-- **Theorem 3b (Widening weakens in UE).**
@@ -290,9 +290,9 @@ C(∃x∈D, Px) ⊆ₚ C(∃x∈D', Px) when D ⊆ D'.
 This is why NPIs are *not* licensed in UE contexts: widening is
 uninformative (violates Maximize Strength). -/
 theorem widening_weakens_in_ue (C : Ctx World)
-    (hUE : ∀ (p q : Set World), entails p q → entails (C p) (C q))
+    (hUE : ∀ (p q : Set World), (p ⊆ₚ q) → (C p ⊆ₚ C q))
     (D D' : Set Entity) (P : Entity → Set World) (h : D ⊆ D') :
-    entails (C (existsInDomain D P)) (C (existsInDomain D' P)) :=
+    C (existsInDomain D P) ⊆ₚ C (existsInDomain D' P) :=
   hUE _ _ (wider_domain_weaker_existential D D' P h)
 
 end DomainWidening
@@ -322,7 +322,7 @@ variable {World : Type*}
 
 /-- An operator S is a *strengthening* operator if S(φ) ⊆ₚ φ for all φ. -/
 def IsStrengthening (S : Ctx World) : Prop :=
-  ∀ φ, entails (S φ) φ
+  ∀ φ, S φ ⊆ₚ φ
 
 /-- **Theorem 4 (Intervention disrupts DE).**
 
@@ -335,15 +335,15 @@ and an NPI disrupts the DE chain. -/
 theorem intervention_negation_not_de
     (S : Ctx World)
     (p q : Set World)
-    (_hpq : entails p q)
+    (_hpq : p ⊆ₚ q)
     -- S is not monotone: it does not preserve p ⊆ₚ q
     (w : World) (hSpw : S p w) (hnSqw : ¬S q w) :
     -- Then ¬ ∘ S is not DE at this pair
-    ¬entails (pneg (S q)) (pneg (S p)) := by
+    ¬(∼(S q) ⊆ₚ ∼(S p)) := by
   intro hDE
-  -- ¬S(q)(w) holds, so pneg(S q)(w) holds
-  have h1 : pneg (S q) w := hnSqw
-  -- By hDE: pneg(S p)(w), i.e., ¬S(p)(w)
+  -- ¬S(q)(w) holds, so (∼(S q))(w) holds
+  have h1 : (∼(S q)) w := hnSqw
+  -- By hDE: (∼(S p))(w), i.e., ¬S(p)(w)
   have h2 := hDE h1
   -- But S(p)(w) holds — contradiction
   exact h2 hSpw
@@ -389,9 +389,9 @@ If `strong ⊆ₚ weak` (strong entails weak) and C is DE, then
 The "stronger" alternative in UE becomes the "weaker" one in DE,
 making the exhaustification move vacuous. -/
 theorem entailment_reversal_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Set World), entails p q → entails (C q) (C p))
-    (weak strong : Set World) (h : entails strong weak) :
-    entails (C weak) (C strong) :=
+    (hDE : ∀ (p q : Set World), (p ⊆ₚ q) → (C q ⊆ₚ C p))
+    (weak strong : Set World) (h : strong ⊆ₚ weak) :
+    C weak ⊆ₚ C strong :=
   hDE strong weak h
 
 /-- **Corollary: In DE, the "weak" scalar term is informationally stronger.**
@@ -400,9 +400,9 @@ theorem entailment_reversal_in_de (C : Ctx World)
 So in "not ___ students came", "some" is the stronger filler.
 This is why "any" (= widened "some") is licensed: it's the strongest. -/
 theorem weak_is_strong_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Set World), entails p q → entails (C q) (C p))
-    (some_ all_ : Set World) (h : entails all_ some_) :
-    entails (C some_) (C all_) :=
+    (hDE : ∀ (p q : Set World), (p ⊆ₚ q) → (C q ⊆ₚ C p))
+    (some_ all_ : Set World) (h : all_ ⊆ₚ some_) :
+    C some_ ⊆ₚ C all_ :=
   hDE all_ some_ h
 
 end ScalarReversal
@@ -575,7 +575,7 @@ variable {World : Type*}
     This is Chierchia's Maximize Strength principle formalized as
     the defining property of exhaustification. -/
 theorem maximize_strength_eq_exhIE (ALT : Set (Set World)) (φ : Set World) :
-    entails (exhIE ALT φ) φ := by
+    exhIE ALT φ ⊆ₚ φ := by
   intro w hw
   have hφ_in_IE : φ ∈ IE ALT φ := by
     intro E hMC

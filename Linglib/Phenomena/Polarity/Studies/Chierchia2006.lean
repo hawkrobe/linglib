@@ -103,30 +103,45 @@ structure PSIProfile where
 /-- Pure NPIs: *alcuno* (Italian), *mai* (Italian), *ever* (English).
     D-MAX, obligatory, weak σ, no scalar. -/
 def pureNPI : PSIProfile :=
-  ⟨.max, true, false, false⟩
+  { grain := .max
+  , obligatoryDomainAlts := true
+  , requiresProperStrengthening := false
+  , hasScalarAlts := false }
 
 /-- NPI/FCIs: English *any*.
     D-MIN, obligatory, weak σ, no scalar.
     NPI in DE (exhaustification vacuous), FCI under modals. -/
 def npiFCI : PSIProfile :=
-  ⟨.min, true, false, false⟩
+  { grain := .min
+  , obligatoryDomainAlts := true
+  , requiresProperStrengthening := false
+  , hasScalarAlts := false }
 
 /-- Pure universal FCIs: Italian *qualsiasi/qualunque*.
     D-MIN, obligatory, presuppositional σ̃, no scalar.
     Positive polarity: proper strengthening fails in DE. -/
 def pureFCI : PSIProfile :=
-  ⟨.min, true, true, false⟩
+  { grain := .min
+  , obligatoryDomainAlts := true
+  , requiresProperStrengthening := true
+  , hasScalarAlts := false }
 
 /-- Existential FCI (NPI/FCI): German *irgendein*.
     D-MIN, obligatory, weak σ, with scalar alts.
     Like *any* but with scalar implicatures; needs rescue mechanisms. -/
 def efciNpiFci : PSIProfile :=
-  ⟨.min, true, false, true⟩
+  { grain := .min
+  , obligatoryDomainAlts := true
+  , requiresProperStrengthening := false
+  , hasScalarAlts := true }
 
 /-- Existential pure FCI: Italian *uno qualsiasi*.
     D-MIN, obligatory, presuppositional σ̃, with scalar alts. -/
 def efciPureFci : PSIProfile :=
-  ⟨.min, true, true, true⟩
+  { grain := .min
+  , obligatoryDomainAlts := true
+  , requiresProperStrengthening := true
+  , hasScalarAlts := true }
 
 -- ============================================================================
 -- §3. Predicted Haspelmath Functions
@@ -220,7 +235,9 @@ theorem all_psi_classes_contiguous :
     DE contexts (D-MAX) and proper strengthening (σ̃) is contradictory,
     since DE contexts are exactly where strengthening fails. -/
 theorem dMax_presuppositional_empty :
-    (PSIProfile.mk .max true true false).predictedFunctions = [] := rfl
+    ({ grain := .max, obligatoryDomainAlts := true,
+       requiresProperStrengthening := true, hasScalarAlts := false
+       : PSIProfile }).predictedFunctions = [] := rfl
 
 -- ============================================================================
 -- §5. Cross-Linguistic Verification (derived from Typology.lean)
@@ -261,7 +278,9 @@ theorem italian_qualsiasi_matches :
 -- Italian: qualcuno = plain indefinite
 theorem italian_qualcuno_matches :
     functionsSubset (seriesFunctions italian "qualcuno")
-      (PSIProfile.mk .max false false false).predictedFunctions = true := by decide
+      ({ grain := .max, obligatoryDomainAlts := false,
+         requiresProperStrengthening := false, hasScalarAlts := false
+         : PSIProfile }).predictedFunctions = true := by decide
 
 -- English: any (NPI) ⊆ NPI/FCI eligible region
 theorem english_anyNPI_matches :
@@ -616,67 +635,107 @@ structure FCIObservation where
 /-- (10a): "Domani interrogherò qualsiasi studente" (future, universal FCI)
     — Both ∀ and ∃ readings available. -/
 def obs_10a : FCIObservation :=
-  ⟨"Domani interrogherò qualsiasi studente", "(10a)",
-   .universal, .future, .ambiguous, .grammatical⟩
+  { sentence := "Domani interrogherò qualsiasi studente"
+  , exampleNum := "(10a)"
+  , fciType := .universal
+  , context := .future
+  , force := .ambiguous
+  , judgment := .grammatical }
 
 /-- (10b): "Domani interrogherò uno studente qualsiasi" (future, existential FCI)
     — Only ∃ reading. -/
 def obs_10b : FCIObservation :=
-  ⟨"Domani interrogherò uno studente qualsiasi", "(10b)",
-   .existential, .future, .existential, .grammatical⟩
+  { sentence := "Domani interrogherò uno studente qualsiasi"
+  , exampleNum := "(10b)"
+  , fciType := .existential
+  , context := .future
+  , force := .existential
+  , judgment := .grammatical }
 
 /-- (10c): "Prendi qualunque dolce" (imperative, universal FCI)
     — Both ∀ and ∃ readings available. -/
 def obs_10c : FCIObservation :=
-  ⟨"Prendi qualunque dolce", "(10c)",
-   .universal, .imperative, .ambiguous, .grammatical⟩
+  { sentence := "Prendi qualunque dolce"
+  , exampleNum := "(10c)"
+  , fciType := .universal
+  , context := .imperative
+  , force := .ambiguous
+  , judgment := .grammatical }
 
 /-- (10d): "Prendi un dolce qualunque" (imperative, existential FCI)
     — Only ∃ reading. -/
 def obs_10d : FCIObservation :=
-  ⟨"Prendi un dolce qualunque", "(10d)",
-   .existential, .imperative, .existential, .grammatical⟩
+  { sentence := "Prendi un dolce qualunque"
+  , exampleNum := "(10d)"
+  , fciType := .existential
+  , context := .imperative
+  , force := .existential
+  , judgment := .grammatical }
 
 -- §2 data: subtrigging
 
 /-- (11a): "Ieri ho parlato con un qualsiasi filosofo" (bare episodic, EFCI)
     — Marginal without modifier. -/
 def obs_11a : FCIObservation :=
-  ⟨"Ieri ho parlato con un qualsiasi filosofo", "(11a)",
-   .existential, .episodic_bare, .existential, .marginal⟩
+  { sentence := "Ieri ho parlato con un qualsiasi filosofo"
+  , exampleNum := "(11a)"
+  , fciType := .existential
+  , context := .episodic_bare
+  , force := .existential
+  , judgment := .marginal }
 
 /-- (11b): "Ieri ho parlato con un qualsiasi filosofo che fosse interessato"
     — Marginal; the paper notes RC "if anything, makes things worse" for
     existential FCIs. Subtrigging does not rescue EFCIs. -/
 def obs_11b : FCIObservation :=
-  ⟨"Ieri ho parlato con un qualsiasi filosofo che fosse interessato", "(11b)",
-   .existential, .episodic_subtrigged, .existential, .marginal⟩
+  { sentence := "Ieri ho parlato con un qualsiasi filosofo che fosse interessato"
+  , exampleNum := "(11b)"
+  , fciType := .existential
+  , context := .episodic_subtrigged
+  , force := .existential
+  , judgment := .marginal }
 
 /-- (11c): "Ieri ho parlato con qualsiasi filosofo" (bare episodic, universal FCI)
     — Marginal without modifier. -/
 def obs_11c : FCIObservation :=
-  ⟨"Ieri ho parlato con qualsiasi filosofo", "(11c)",
-   .universal, .episodic_bare, .universal, .marginal⟩
+  { sentence := "Ieri ho parlato con qualsiasi filosofo"
+  , exampleNum := "(11c)"
+  , fciType := .universal
+  , context := .episodic_bare
+  , force := .universal
+  , judgment := .marginal }
 
 /-- (11d): "Ieri ho parlato con qualsiasi filosofo che fosse interessato"
     — Fully grammatical: subtrigging rescues universal FCIs. -/
 def obs_11d : FCIObservation :=
-  ⟨"Ieri ho parlato con qualsiasi filosofo che fosse interessato", "(11d)",
-   .universal, .episodic_subtrigged, .universal, .grammatical⟩
+  { sentence := "Ieri ho parlato con qualsiasi filosofo che fosse interessato"
+  , exampleNum := "(11d)"
+  , fciType := .universal
+  , context := .episodic_subtrigged
+  , force := .universal
+  , judgment := .grammatical }
 
 -- §5.3 / §2: negation scope
 
 /-- (12)/(73a): "Non leggerò qualunque libro" (negation + bare universal FCI)
     — Only ¬∀ (rhetorical) reading; NOT the NPI ¬∃ reading. -/
 def obs_12 : FCIObservation :=
-  ⟨"Non leggerò qualunque libro", "(12)/(73a)",
-   .universal, .negation_bare, .universal, .grammatical⟩
+  { sentence := "Non leggerò qualunque libro"
+  , exampleNum := "(12)/(73a)"
+  , fciType := .universal
+  , context := .negation_bare
+  , force := .universal
+  , judgment := .grammatical }
 
 /-- (73b): "Non leggerò qualunque libro che mi consiglierà Gianni"
     — With RC under negation: ∀¬ or ¬∃ readings become available. -/
 def obs_73b : FCIObservation :=
-  ⟨"Non leggerò qualunque libro che mi consiglierà Gianni", "(73b)",
-   .universal, .negation_subtrigged, .ambiguous, .grammatical⟩
+  { sentence := "Non leggerò qualunque libro che mi consiglierà Gianni"
+  , exampleNum := "(73b)"
+  , fciType := .universal
+  , context := .negation_subtrigged
+  , force := .ambiguous
+  , judgment := .grammatical }
 
 -- Verification theorems: the judgment data encodes the key contrasts
 
