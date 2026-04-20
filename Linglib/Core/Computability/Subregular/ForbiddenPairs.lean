@@ -146,6 +146,13 @@ instance decidableMemOfForbiddenPairsLang (R : α → α → Prop) [DecidableRel
     Decidable (w ∈ (TSLGrammar.ofForbiddenPairs R p).lang) :=
   decidable_of_iff _ (mem_ofForbiddenPairs_lang_iff_filter_isChain R p w).symm
 
+/-- The empty string is in every forbidden-pair language: there are no
+tier-adjacent pairs to check. -/
+@[simp] lemma nil_mem_ofForbiddenPairs_lang (R : α → α → Prop) [DecidableRel R]
+    (p : α → Prop) [DecidablePred p] :
+    ([] : List α) ∈ (TSLGrammar.ofForbiddenPairs R p).lang :=
+  (mem_ofForbiddenPairs_lang_iff_filter_isChain R p []).mpr List.isChain_nil
+
 /-- **Antitonicity in `R`**: forbidding more pairs (`R ≤ R'`) shrinks the
 language. The chain witness for the larger `R'` immediately yields one for
 the smaller `R` since `¬ R' a b → ¬ R a b`. -/

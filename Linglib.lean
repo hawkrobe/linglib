@@ -1455,7 +1455,9 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.GoodmanStuhlmuller2013
 import Linglib.Phenomena.Phonology.Typology
 import Linglib.Phenomena.Phonology.Studies.Berent2026
 import Linglib.Phenomena.Phonology.Studies.BerentEtAl2016
+import Linglib.Phenomena.Phonology.Studies.Hansson2010
 import Linglib.Phenomena.Phonology.Studies.Kawahara2015
+import Linglib.Phenomena.Phonology.Studies.RoseWalker2004
 import Linglib.Phenomena.Phonology.Studies.Sagey1986
 import Linglib.Phenomena.Reduplication.Studies.McCarthyPrince1995
 import Linglib.Phenomena.VowelHarmony.Studies.SiptarTorkenczy2000

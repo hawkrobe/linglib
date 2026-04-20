@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.230.55] - 2026-04-20
+
+### Added
+- **`Phenomena/Phonology/Studies/RoseWalker2004.lean`**: NEW. @cite{rose-walker-2004} Kikongo nasal harmony as a TSL_2 stringset over `KSeg` `{nasalC, voicedStop, neutralC, vowel}`. Tier predicate `KSeg.onTier` projects nasals + voiced stops; asymmetric forbidden pair `KSeg.forbidNasalStop` bans tier-adjacent (nasal → voiced-stop). `kikongoNasalHarmony` instantiates `TSLGrammar.ofForbiddenPairs`. Three concrete schematic forms (`preHarmonyNasalStop`, `postHarmonyNasalNasal`, `controlNoTrigger`) with `decide`-closed accept/reject theorems via the `decidableMemOfForbiddenPairsLang` instance. OT-side companion `kikongoAgreeNasalCC` (AGREE-[nas]/CC) plus `kikongoAgreeNasalCC_zero_iff_in_TSL` bridge — co-extensiveness of OT markedness and TSL_2 language by construction. Design boundary explicitly disclaims ABC's correspondence apparatus, similarity-scaled correspondence, trigger/target asymmetry, and similarity-graded transparency. Asymmetry of `forbidNasalStop` justified via stem→suffix morphological geometry, not a separately stipulated directionality.
+- **`Phenomena/Phonology/Studies/Hansson2010.lean`**: NEW. @cite{hansson-2010} Navajo sibilant harmony as a TSL_2 stringset over `NSeg` `{antSib, postSib, neutralC, vowel}`. Tier predicate `NSeg.onTier` projects sibilants only; symmetric forbidden pair `NSeg.forbidDisagreement` bans tier-adjacent (antSib, postSib) in either order. `navajoSibilantHarmony` instantiates `TSLGrammar.ofForbiddenPairs`. Four concrete schematic forms (`preSiDze`, `postShiDze`, `controlOnlyAnterior`, `controlNoSibilants`) with `decide`-closed theorems. OT-side companion `navajoAgreeAntCC` (AGREE-[ant]/CC) plus `navajoAgreeAntCC_zero_iff_in_TSL` bridge. Design boundary disclaims correspondence/targeted-constraint architecture, directional-derivation, stem control, similarity scaling, palatal-bias / speech-error claims, and similarity-graded transparency (forward pointer to autosegmental tier representations @cite{sagey-1986}).
+- **`Core/Computability/Subregular/ForbiddenPairs.lean`**: `@[simp] nil_mem_ofForbiddenPairs_lang` — the empty list is always in `(TSLGrammar.ofForbiddenPairs R p).lang`. One-liner via `mem_ofForbiddenPairs_lang_iff_filter_isChain` + `List.isChain_nil`. Replaces per-file `empty_legal` boilerplate that had started accumulating in consumer study files.
+
+### Changed
+- **`blog/data/references.bib`**: added `hansson-2010` (UC Press *University of California Publications in Linguistics* 145, ISBN 978-0-520-09878-7); `mcmullin-2016` `sources` field updated to mark both Hansson2010 and RoseWalker2004 as consumers.
+- **`Linglib.lean`**: import lines for both new study files added under `Phenomena/Phonology/Studies/`.
+- **Mathlib hygiene**: per-theorem `decide`-closures in both new files drop the `rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]` hop — the `decidableMemOfForbiddenPairsLang` instance from 0.230.50 makes membership directly decidable. Data identifiers use camelCase per project convention.
+
 ## [0.230.54] - 2026-04-20
 
 ### Changed
