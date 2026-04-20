@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
@@ -103,7 +104,8 @@ svRSA uses no prior in L0 meaning — QUD projection neutralizes it
 ## Connection to Other Formalizations
 
 - `ExhaustivityLimit.lean`: proves RSA at α→∞ recovers Fox's exh,
-  using the same IE infrastructure (`applyIEBool`) as our `exhMeaning`.
+  using the same IE infrastructure (`Exhaustification.InnocentExclusion.exhB`)
+  as our `exhMeaning`.
 - `FrankeBergen2020.lean`: formalizes four RSA models (vanilla, LU, LI, GI)
   for nested quantifiers, using compositional exhaustification.
 - `ScopeExpressivity.lean`: demonstrates the scope-blind vs scope-sensitive
@@ -173,7 +175,7 @@ theorem AandNotB_only_in_wa : literalTruth .w_a .AandNotB = true ∧ literalTrut
 -- §3. Exhaustification (Innocent Exclusion)
 -- ============================================================================
 
-open Exhaustification (applyIEBool)
+open Exhaustification.InnocentExclusion (exhB)
 
 /-- All worlds for IE enumeration. -/
 def allWorlds : List CWSWorld := [.w_a, .w_ab]
@@ -188,7 +190,7 @@ def alternatives (u : CWSUtterance) : List (CWSWorld → Bool) :=
     IE negates A∧B (the non-entailed stronger alternative to A),
     giving EXH(A) = A ∧ ¬(A∧B) = A ∧ ¬B. -/
 def exhMeaning (w : CWSWorld) (u : CWSUtterance) : Bool :=
-  applyIEBool allWorlds (fun w' => literalTruth w' u) (alternatives u) w
+  exhB allWorlds (alternatives u) (fun w' => literalTruth w' u) w
 
 /-- EXH(A) is only true in w_a — derived from IE, not stipulated. -/
 theorem exhA_only_in_wa : exhMeaning .w_a .A = true ∧ exhMeaning .w_ab .A = false := by

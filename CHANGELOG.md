@@ -4,6 +4,56 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.71] - 2026-04-20
+
+### Changed
+- **`Theories/Semantics/Exhaustification/Operators.lean`**: Wave 2.5 Phase A
+  — delete the duplicate Bool reflection block (`isSatBool`, `entailsBool`,
+  `sublists`, `ieIndicesBool`, `applyIEBool`) which paralleled the
+  authoritative `Exhaustification.InnocentExclusion.exhB`/`ieIndices` Bool
+  implementation. Also delete dead `oMinusB` antiexhaustive Bool block
+  (zero consumers). Mathlib doesn't carry parallel Bool implementations of
+  Prop/Set specs — the canonical pattern is one spec + a `Decidable`
+  instance, with `decide` as the bridge. Migrated single consumer
+  `Phenomena/ScalarImplicatures/Studies/CremersWilcoxSpector2023.lean` to
+  use `InnocentExclusion.exhB` directly (note arg order: `exhB domain
+  alts p` vs deleted `applyIEBool worlds p alts`). `CovertQuantifier.lean`
+  docstring updated to point at the canonical implementation. Phases B
+  (Decidable instance for `exhIE`), C (migrate 17 `InnocentExclusion.exhB`
+  consumers), and D (delete InnocentExclusion Bool block) queued as
+  follow-up tasks.
+
+## [0.230.70] - 2026-04-20
+
+### Added
+- **`Linglib/Phenomena/Morphology/Studies/AlbrightHayes2003.lean`** (new):
+  formalisation of @cite{albright-hayes-2003} as the second consumer of
+  `Paradigms/WugTest.lean` (the first is
+  `Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`). Encodes
+  the 4-way IOR Core wug stem set from the paper's Table 3 / example
+  (14) (`stem_dize`/`fro`/`rife` for both, `bredge`/`gezz`/`nace` for
+  regulars only, `fleep`/`gleed`/`spling` for irregulars only,
+  `gude`/`nung`/`preak` for neither); a `StochasticRule` record with
+  `change`/`contextDescription`/`scope`/`hits` plus `rawConfidence`
+  (Mikheev-style `adjustedConfidence` left as an `opaque` placeholder
+  with a docstring describing its monotonicity property — actual
+  Wilson-interval implementation out of scope). Wires through to the
+  WugTest contract via an `AHWugCell` with `HasAttestation` instance
+  and a new local typeclass `HasIORForRegular` (the binary lens
+  analogue of `HasFrequency`). Adds two paradigm-level predicates
+  `NovelRegularsShowIORGradient` (A&H multi-rule prediction) and
+  `NovelRegularsInvariantInIOR` (single-default-rule dual-mechanism
+  prediction); the discriminator
+  `novelRegularsGradient_inconsistent_with_invariance` shows them
+  structurally incompatible *without* a non-vacuous-frequency-space
+  precondition (the IOR factor is binary). Concrete `ahRegularRating`
+  step-function model + `ah_satisfies_NovelRegularsShowIORGradient`
+  and `ah_excludes_singleDefaultRule` (witness: `cell_bredge`). Bib
+  entry `albright-hayes-2003` `sources` field updated to list both
+  consumers. Build:
+  `lake build Linglib.Phenomena.Morphology.Studies.AlbrightHayes2003`
+  clean (834 jobs).
+
 ## [0.230.69] - 2026-04-20
 
 ### Changed

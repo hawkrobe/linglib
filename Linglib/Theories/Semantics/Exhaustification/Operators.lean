@@ -499,7 +499,6 @@ theorem lemma1_minimal_iff_MCset (u : World) (hu : φ u) :
         have hφv : φ v := hv_sat φ hφE
         -- v satisfies ∼a (since ∼a ∈ E)
         have hna_v : (∼a) v := hv_sat (∼a) hψE
-        rw [Set.mem_compl_iff] at hna_v
         -- So v <_ALT u
         have hv_lt_u : v <[ALT] u := by
           constructor
@@ -511,7 +510,6 @@ theorem lemma1_minimal_iff_MCset (u : World) (hu : φ u) :
               right; exact ⟨b, hb, rfl, hbu⟩
             have hnb_in_E := hXu_sub_E hnb_in_Xu
             have hnb_v : (∼b) v := hv_sat (∼b) hnb_in_E
-            rw [Set.mem_compl_iff] at hnb_v
             exact hnb_v hbv
           · -- ¬(u ≤_ALT v): a(u) = 1 but a(v) = 0
             intro huv
@@ -614,7 +612,6 @@ theorem lemma2_exhMW_iff_satisfies_MCset (u : World) :
       · -- ψ = ∼a: since u satisfies ψ, we have ¬(a u), so ∼a ∈ X(u)
         rw [hψ_eq_na]
         have hna_u : (∼a) u := hu_sat_E (∼a) (hψ_eq_na ▸ hψE)
-        rw [Set.mem_compl_iff] at hna_u
         simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq]
         right; exact ⟨a, ha, rfl, hna_u⟩
     -- X(u) is compatible
@@ -745,7 +742,6 @@ theorem corollary8 (hfin : Set.Finite ALT) :
       have hIE_a : isInnocentlyExcludable ALT φ a :=
         (prop7_IE_iff_exhMW_entails_neg ALT φ a ha).mpr hmw_na
       have hna_u := hie (∼a) hIE_a.2
-      rw [Set.mem_compl_iff] at hna_u
       exact hna_u
   · -- (φ ∧ ⋀{¬a : exh_mw ⊆ ¬a}) ⊆ exh_ie
     -- We need to show: ∀ ψ ∈ IE, ψ u
@@ -805,7 +801,7 @@ theorem theorem9_main (hclosed : closedUnderConj ALT) :
     -- Suppose u is not minimal: ∃v, φ v ∧ v <_ALT u
     by_contra hmw_not
     change ¬ (φ u ∧ ¬∃ v, φ v ∧ (v <[ALT] u)) at hmw_not
-    push_neg at hmw_not
+    push Not at hmw_not
     obtain ⟨v, hφv, hv_lt_u⟩ := hmw_not hu
     -- Define A = {a ∈ ALT : a(u) = 1} (alternatives true at u)
     let A : Set (Set World) := {a ∈ ALT | a u}
@@ -825,7 +821,7 @@ theorem theorem9_main (hclosed : closedUnderConj ALT) :
     have hnot_u_le_v : ¬(u ≤[ALT] v) := hv_lt_u.2
     -- Need to unfold leALT before push_neg can work
     simp only [leALT] at hnot_u_le_v
-    push_neg at hnot_u_le_v
+    push Not at hnot_u_le_v
     obtain ⟨a₀, ha₀_ALT, ha₀_u, hna₀_v⟩ := hnot_u_le_v
     -- a₀ ∈ A (since a₀ ∈ ALT and a₀ u)
     have ha₀_A : a₀ ∈ A := ⟨ha₀_ALT, ha₀_u⟩
@@ -899,7 +895,6 @@ theorem theorem9_main (hclosed : closedUnderConj ALT) :
     -- So ¬(⋀A) ∈ IE. u satisfies IE, so u satisfies ¬(⋀A).
     have hneg_conjA_u : (∼(⋀ A)) u := hie (∼(⋀ A)) hneg_conjA_in_IE
     -- But (⋀A) u is true, contradiction
-    rw [Set.mem_compl_iff] at hneg_conjA_u
     exact hneg_conjA_u hconjA_u
 
 -- SECTION 3.6: Consequences (Spector p.13)
@@ -955,7 +950,6 @@ lemma leALT_disjClosure_eq (ALT' : Set (Set World))
     obtain ⟨X, hX_sub, ha_eq⟩ := ha_ALT'
     -- a = ⋁X, a u means ∃ b ∈ X, b u
     rw [ha_eq] at hau ⊢
-    simp only [Set.mem_sUnion] at hau ⊢
     obtain ⟨b, hb_X, hbu⟩ := hau
     -- b ∈ ALT (since X ⊆ ALT)
     have hb_ALT : b ∈ ALT := hX_sub hb_X
@@ -1695,70 +1689,6 @@ theorem mem_II_of_cell_witness {target : Set World}
   exact ⟨htarget_alt, fun hexc => hwitness.2.1 target hexc htarget⟩
 
 -- ============================================================================
--- SECTION: Decidable IE for finite types
--- ============================================================================
-
-/-!
-## Decidable Innocent Exclusion
-
-The `exhIE` above is a specification: it quantifies over all `Set (Set World)`,
-so it cannot be evaluated computationally. The functions below implement the same
-algorithm over `[Fintype World]` types using `Bool`-valued meanings and explicit
-subset enumeration. This makes them usable by `native_decide` and `rsa_predict`.
--/
-
-section Decidable
-
-variable {W : Type}
-
-/-- Satisfiability check over an explicit list of worlds. -/
-def isSatBool (worlds : List W) (f : W → Bool) : Bool :=
-  worlds.any f
-
-/-- Pointwise entailment over an explicit list of worlds. -/
-def entailsBool (worlds : List W) (f g : W → Bool) : Bool :=
-  worlds.all λ w => !f w || g w
-
-/-- All sublists (subsets) of a list of indices. -/
-def sublists : List Nat → List (List Nat)
-  | [] => [[]]
-  | a :: as => let ss := sublists as; (ss.map (a :: ·)) ++ ss
-
-/-- Innocent Exclusion over `Bool`-valued meanings: find indices of alternatives
-    that appear in every maximal consistent exclusion set.
-    `worlds` must enumerate all inhabitants of `W`. -/
-def ieIndicesBool (worlds : List W) (prejacent : W → Bool)
-    (alts : List (W → Bool)) : List Nat :=
-  let indices := List.range alts.length
-  let nonEnt := indices.filter λ i =>
-    match alts[i]? with
-    | some alt => !entailsBool worlds prejacent alt
-    | _ => false
-  let subsets := sublists nonEnt
-  let consistent := subsets.filter λ s =>
-    isSatBool worlds λ w => prejacent w && s.all λ i =>
-      match alts[i]? with
-      | some alt => !alt w
-      | _ => true
-  let maximal := consistent.filter λ s =>
-    !consistent.any λ t =>
-      s.length < t.length && s.all λ i => t.contains i
-  if maximal.isEmpty then []
-  else nonEnt.filter λ i => maximal.all λ m => m.contains i
-
-/-- Apply Innocent Exclusion: conjoin prejacent with negations of IE alternatives.
-    `worlds` must enumerate all inhabitants of `W`. -/
-def applyIEBool (worlds : List W) (prejacent : W → Bool)
-    (alts : List (W → Bool)) : W → Bool :=
-  let ie := ieIndicesBool worlds prejacent alts
-  λ w => prejacent w && ie.all λ i =>
-    match alts[i]? with
-    | some alt => !alt w
-    | _ => true
-
-end Decidable
-
--- ============================================================================
 -- ANTIEXHAUSTIVE ENRICHMENT (O⁻)
 -- ============================================================================
 
@@ -1812,37 +1742,6 @@ theorem oMinus_entails_alt (C : Set (Set World)) (p : Set World) (q : Set World)
   λ _ ⟨_, hall⟩ => hall q hq
 
 end Antiexhaustive
-
--- ============================================================================
--- ANTIEXHAUSTIVE ENRICHMENT (O⁻) — Computable Bool version
--- ============================================================================
-
-section AntiexhaustiveBool
-
-variable {W : Type}
-
-/-- Computable antiexhaustive operator: assert prejacent + all alternatives.
-
-    @cite{chierchia-2006} (108c): O⁻_C(p)(w) = p(w) ∧ ∀q∈C. q(w)
-
-    This is the Bool version for finite model checking. -/
-def oMinusB (alts : List (W → Bool)) (p : W → Bool) : W → Bool :=
-  λ w => p w && alts.all (· w)
-
-/-- O⁻ entails the prejacent. -/
-theorem oMinusB_entails_prejacent {alts : List (W → Bool)} {p : W → Bool}
-    {w : W} (h : oMinusB alts p w = true) : p w = true := by
-  simp only [oMinusB, Bool.and_eq_true] at h
-  exact h.1
-
-/-- O⁻ entails every alternative. -/
-theorem oMinusB_entails_all {alts : List (W → Bool)} {p : W → Bool}
-    {w : W} (h : oMinusB alts p w = true) :
-    ∀ q ∈ alts, q w = true := by
-  simp only [oMinusB, Bool.and_eq_true, List.all_eq_true] at h
-  exact h.2
-
-end AntiexhaustiveBool
 
 -- ============================================================================
 -- DOMAIN WIDENING ANTIEXHAUSTIVENESS DERIVATION

@@ -191,9 +191,11 @@ def hab (F : Frame) (h : (F.Entity → Prop) → (F.Entity → Prop))
 
     `exhOp` maps a proposition to its exhaustified version — typically
     asserting the prejacent and negating innocently excludable alternatives.
-    Specific implementations (`exhB` from `InnocentExclusion`,
-    `applyIEBool` from `Operators`) are plugged in at lexicon construction
-    time with their alternatives and world domain baked into the closure.
+    The canonical computational implementation is `exhB` from
+    `Exhaustification.InnocentExclusion` (the Set-spec is `exhIE` in
+    `Exhaustification.Operators`). Specific instances are plugged in at
+    lexicon construction time with alternatives and world domain baked
+    into the closure.
 
     Unlike Gen/DIST/Hab (which quantify over entities), EXH operates on
     propositions (`s→t`). Both compose via FA in the same tree — the
