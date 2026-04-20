@@ -36,8 +36,9 @@ The file is organized in dependency order:
   `expPoint`, with bracket bits proportional to `log q`. Includes a `log 0` fall-through.
 * **SqrtInterval** — `√x = exp(log x / 2)` for positive intervals, used by
   Hellinger-distance RSA models (@cite{herbstritt-franke-2019}).
-* **rpow specials** — `rpowNat` thin re-export with `rpowZero`/`rpowOne_containsReal`
-  closures for the dominant RSA case (`α : ℕ`).
+* **rpow specials** — `rpowNat_containsReal` (real-exponent bridge for
+  `QInterval.rpowNat`), `rpowZero`, `rpowOne_containsReal` for the
+  dominant RSA case (`α : ℕ`).
 
 All transcendental routines deliberately stop at `containsReal` rather than
 proving exact bounds: the `rsa_predict` tactic only needs `lo ≤ ⟦e⟧ ≤ hi`.
@@ -1291,18 +1292,12 @@ theorem sqrtInterval_containsReal {a : QInterval} {x : ℝ}
 -- rpow specials: nat exponent + edge cases
 -- ============================================================================
 
-/-- Exact rational power for nonneg intervals: [lo^n, hi^n].
-    Requires 0 ≤ lo (so the interval is nonneg) and n : ℕ.
-    Exact — no approximation error.
-
-    Thin wrapper around `QInterval.rpowNat`; kept under `Interval` namespace so
-    rpow-shaped consumers (RSA reflection backend) call it directly. -/
-def rpowNat (a : QInterval) (n : ℕ) (ha : 0 ≤ a.lo) : QInterval :=
-  a.rpowNat n ha
-
+/-- Real-exponent bridge for `QInterval.rpowNat`: same proof as
+    `QInterval.powNat_containsReal`, but with the goal stated using
+    `Real.rpow` (real-valued exponent) rather than `HPow.hPow` (nat). -/
 theorem rpowNat_containsReal {a : QInterval} {x : ℝ} {n : ℕ}
     (ha : 0 ≤ a.lo) (hx : a.containsReal x) :
-    (rpowNat a n ha).containsReal (x ^ (↑n : ℝ)) := by
+    (a.rpowNat n ha).containsReal (x ^ (↑n : ℝ)) := by
   rw [Real.rpow_natCast]
   exact QInterval.powNat_containsReal n ha hx
 

@@ -4,6 +4,19 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.75] - 2026-04-20
+
+### Removed
+- **`Linglib/Tactics/RSAPredict/Backend/Bounds.lean`**: drop the
+  `Interval.rpowNat` def alias (a one-line shim around
+  `QInterval.rpowNat`). 11 call sites in `Reflection.lean` migrated to
+  dot notation `value.rpowNat n h` (which resolves to
+  `QInterval.rpowNat` since the receiver is a `QInterval`). The
+  surviving real-exponent bridge `rpowNat_containsReal` is now stated
+  directly against `a.rpowNat n ha` rather than the alias. Net: one
+  zero-content def removed; rpow API surface has one canonical name.
+  Build clean (2662 jobs).
+
 ## [0.230.74] - 2026-04-20
 
 ### Changed

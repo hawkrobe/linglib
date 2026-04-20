@@ -127,7 +127,7 @@ def RExpr.eval : RExpr → QInterval
   | .rpow a n =>
     let ra := a.eval
     if n == 0 then Interval.rpowZero
-    else if h : 0 ≤ ra.lo then c (Interval.rpowNat ra n h)
+    else if h : 0 ≤ ra.lo then c (ra.rpowNat n h)
     else ⟨0, 1, by norm_num⟩  -- fallback (guarded by evalValid)
   | .inv a =>
     let ra := a.eval
@@ -154,7 +154,7 @@ def RExpr.eval : RExpr → QInterval
         let xpow :=
           if n == 0 then QInterval.exact 1
           else if n == 1 then rx
-          else Interval.rpowNat rx n (le_of_lt hx)
+          else rx.rpowNat n (le_of_lt hx)
         -- exp(-α * c): at most one Padé call per unique cost value
         let negαc := (rα.mul rc).neg
         let expFactor := c (expInterval negαc)
@@ -298,7 +298,7 @@ def RExpr.evalBoth : RExpr → QInterval × Bool
   | .rpow a n =>
     let (ra, va) := a.evalBoth
     if n == 0 then (Interval.rpowZero, va)
-    else if h : 0 ≤ ra.lo then (c (Interval.rpowNat ra n h), va)
+    else if h : 0 ≤ ra.lo then (c (ra.rpowNat n h), va)
     else (⟨0, 1, by norm_num⟩, false)
   | .inv a =>
     let (ra, va) := a.evalBoth
@@ -329,7 +329,7 @@ def RExpr.evalBoth : RExpr → QInterval × Bool
         let xpow :=
           if n == 0 then QInterval.exact 1
           else if n == 1 then rx
-          else Interval.rpowNat rx n (le_of_lt hx)
+          else rx.rpowNat n (le_of_lt hx)
         let negαc := (rα.mul rc).neg
         let expFactor := c (expInterval negαc)
         if h₁ : 0 ≤ xpow.lo then
@@ -798,7 +798,7 @@ theorem RExpr.eval_sound : ∀ (e : RExpr), e.evalValid = true →
             (QInterval.neg_containsReal (QInterval.mul_containsReal ihα ihc)))
         have h_xpow : ((if (eval α).lo.num.toNat == 0 then QInterval.exact 1
                         else if (eval α).lo.num.toNat == 1 then eval x
-                        else rpowNat (eval x) ((eval α).lo.num.toNat) (le_of_lt hx)
+                        else (eval x).rpowNat ((eval α).lo.num.toNat) (le_of_lt hx)
                        ) : QInterval).containsReal
                        ((denote x) ^ ((eval α).lo.num.toNat : ℝ)) := by
           split
@@ -920,7 +920,7 @@ def RExpr.evalRexpOpt : RExpr → QInterval × Bool
     let (xiv, xv) := x.evalBoth
     if α == 0 then (QInterval.exact 1, xv)
     else if h : 0 < xiv.lo then
-      (c (Interval.rpowNat xiv α (le_of_lt h)), xv)
+      (c (xiv.rpowNat α (le_of_lt h)), xv)
     else
       let (iv, valid) := RExpr.evalBoth (.mul (.nat α) (.rlog x))
       (c (expInterval iv), valid)
@@ -930,7 +930,7 @@ def RExpr.evalRexpOpt : RExpr → QInterval × Bool
     else
       let (base, bv) := body.evalRexpOpt
       if h : 0 ≤ base.lo then
-        (c (Interval.rpowNat base α h), bv)
+        (c (base.rpowNat α h), bv)
       else
         let (iv, valid) := RExpr.evalBoth (.mul (.nat α) body)
         (c (expInterval iv), valid)
@@ -989,7 +989,7 @@ def RExpr.evalBothOpt : RExpr → QInterval × Bool
   | .rpow a n =>
     let (ra, va) := a.evalBothOpt
     if n == 0 then (Interval.rpowZero, va)
-    else if h : 0 ≤ ra.lo then (c (Interval.rpowNat ra n h), va)
+    else if h : 0 ≤ ra.lo then (c (ra.rpowNat n h), va)
     else (⟨0, 1, by norm_num⟩, false)
   | .inv a =>
     let (ra, va) := a.evalBothOpt
@@ -1020,7 +1020,7 @@ def RExpr.evalBothOpt : RExpr → QInterval × Bool
         let xpow :=
           if n == 0 then QInterval.exact 1
           else if n == 1 then rx
-          else Interval.rpowNat rx n (le_of_lt hx)
+          else rx.rpowNat n (le_of_lt hx)
         let negαc := (rα.mul rc).neg
         let expFactor := c (expInterval negαc)
         if h₁ : 0 ≤ xpow.lo then
@@ -1640,7 +1640,7 @@ private unsafe def RExpr.evalBothOptCached (e : @& RExpr)
     | .rpow a n => do
       let (ra, va) ← a.evalBothOptCached cache
       if n == 0 then pure (Interval.rpowZero, va)
-      else if h : 0 ≤ ra.lo then pure (c (Interval.rpowNat ra n h), va)
+      else if h : 0 ≤ ra.lo then pure (c (ra.rpowNat n h), va)
       else pure (⟨0, 1, by norm_num⟩, false)
     | .inv a => do
       let (ra, va) ← a.evalBothOptCached cache
@@ -1671,7 +1671,7 @@ private unsafe def RExpr.evalBothOptCached (e : @& RExpr)
           let xpow :=
             if n == 0 then QInterval.exact 1
             else if n == 1 then rx
-            else Interval.rpowNat rx n (le_of_lt hx)
+            else rx.rpowNat n (le_of_lt hx)
           let negαc := (rα.mul rc).neg
           let expFactor := c (expInterval negαc)
           if h₁ : 0 ≤ xpow.lo then
