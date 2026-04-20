@@ -5,6 +5,9 @@ import Linglib.Theories.Phonology.LexicalFrequency.RepresentationStrength
 import Linglib.Theories.Phonology.LexicalFrequency.IndexedConstraints
 import Linglib.Theories.Phonology.LexicalFrequency.UseListed
 import Linglib.Theories.Phonology.ParadigmUniformity.Defs
+import Linglib.Theories.Phonology.ParadigmUniformity.LexicalConservatism
+import Linglib.Theories.Phonology.ParadigmUniformity.OptimalParadigms
+import Linglib.Paradigms.WugTest
 
 /-!
 # Breiss, Katsuda & Kawahara (2026): Token frequency modulates optional paradigm uniformity in Japanese voiced velar nasalisation
@@ -20,12 +23,13 @@ optionality is **modulated by token frequency** through **two
 opposite-sign channels**:
 
 - High token frequency of **N2 as a free wordform** *decreases* the
-  rate of nasalisation (negative coefficient in Fig. 2). The free-form
-  [g] is a more accessible paradigm exemplar; paradigm-uniformity
-  pressure preserves it, suppressing [ŋ].
+  rate of nasalisation (negative regression coefficient on N2 token
+  frequency). The free-form [g] is a more accessible paradigm exemplar;
+  paradigm-uniformity pressure preserves it, suppressing [ŋ].
 - High token frequency of **the compound itself** *increases* the rate
-  of nasalisation (positive coefficient in Fig. 2). More-attested
-  compounds drift further from their constituent forms.
+  of nasalisation (positive regression coefficient on compound token
+  frequency). More-attested compounds drift further from their
+  constituent forms.
 
 Both effects only apply when N2 is morphologically **free**. When N2 is
 **bound** (occurs only inside compounds — no surface [g] paradigm
@@ -117,7 +121,10 @@ namespace Phenomena.Phonology.Studies.BreissKatsudaKawahara2026
 open Fragments.Japanese.Prosody
 open Phonology.LexicalFrequency
 open Phonology.LexicalFrequency.Scaled (scaledWeight)
-open Phonology.ParadigmUniformity (liftPairwise)
+open Phonology.ParadigmUniformity (liftPairwise lcParadigm mkLCFaith lc_unanchored_zero)
+open Paradigms.WugTest (Attestation HasFactor HasAttestation HasFrequency Rate
+  NovelShowsFreqGradient NovelInvariantInFrequency
+  novelGradient_inconsistent_with_invariance)
 open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 
 -- ============================================================================
@@ -231,27 +238,40 @@ theorem free_zone_freq_independent :
     when N2 is bound. The free/bound split is encoded as **paradigm
     membership** (1 vs. 2 elements), not a separate predicate guard
     on the constraint — that is what makes the bound-case zero
-    structural rather than stipulated. -/
+    structural rather than stipulated.
+
+    Built via `lcParadigm` from
+    `Theories/Phonology/ParadigmUniformity/LexicalConservatism.lean`,
+    making this file a downstream consumer of the LC anchored-paradigm
+    primitive. The anchor-presence channel is exactly what
+    @cite{steriade-2000} introduced, and BKK's bound/free split is the
+    same architectural channel applied to a new domain. -/
 def n2Paradigm (c : JCompound) : List String :=
-  if c.n2.canStandAlone then [c.form, c.n2.form] else [c.form]
+  lcParadigm c.form (if c.n2.canStandAlone then some c.n2.form else none)
 
 /-- Surface mismatch between two strings: 0 on the diagonal, 1
-    off-diagonal. Stands in for a tier-restricted segment-by-segment
-    comparison at the velar position; the qualitative architectural
-    claims do not depend on the specific mismatch metric. -/
-def velarMismatch (a b : String) : Nat := if a = b then 0 else 1
+    off-diagonal. A whole-string identity check; **not** a velar-
+    feature comparison. The architecturally faithful version would
+    be a tier-restricted segment-by-segment comparison at the velar
+    position routed through `Theories/Phonology/Featural/Geometry.lean`,
+    but the qualitative architectural claims (sign of the channel,
+    bound/free split) do not depend on the specific mismatch metric. -/
+def stringMismatch (a b : String) : Nat := if a = b then 0 else 1
 
-@[simp] theorem velarMismatch_self (a : String) : velarMismatch a a = 0 := by
-  simp [velarMismatch]
+@[simp] theorem stringMismatch_self (a : String) : stringMismatch a a = 0 := by
+  unfold stringMismatch; exact if_pos rfl
 
 /-- The PU constraint **as a `NamedConstraint`** — derived from
-    `liftPairwise` from `ParadigmUniformity/Defs.lean`. The structural
-    connection to @cite{mccarthy-2005} (OP) and @cite{steriade-2000}
-    (LC) is by *construction*: the same `liftPairwise` combinator is
-    used; what differs across PU theories is *which forms enter the
-    paradigm*. BKK's anchor is the attested free wordform of N2. -/
+    `mkLCFaith` from
+    `Theories/Phonology/ParadigmUniformity/LexicalConservatism.lean`.
+    The structural connection to @cite{steriade-2000} is by
+    *construction*: BKK's PU pressure IS LC-FAITH on the
+    `lcParadigm`-built paradigm. The architectural difference from
+    @cite{mccarthy-2005} (OP) is that LC's paradigm is anchored on
+    attestation; OP's is symmetric over all members. § 10 below makes
+    that contrast explicit. -/
 def puFaith : NamedConstraint (List String) :=
-  liftPairwise "PU-N2-FAITH" .faithfulness velarMismatch
+  mkLCFaith "PU-N2-FAITH" stringMismatch
 
 /-- Number of PU-FAITH violations on a compound's paradigm. -/
 def cpdPuViolations (c : JCompound) : Nat :=
@@ -265,8 +285,11 @@ def cpdPuViolations (c : JCompound) : Nat :=
 theorem bound_cpdPuViolations_zero (c : JCompound)
     (hbound : c.n2.canStandAlone = false) :
     cpdPuViolations c = 0 := by
-  simp [cpdPuViolations, puFaith, n2Paradigm, hbound, liftPairwise,
-        List.product]
+  have hpar : n2Paradigm c = lcParadigm c.form none := by
+    unfold n2Paradigm; simp [hbound]
+  show puFaith.eval (n2Paradigm c) = 0
+  rw [hpar]
+  exact lc_unanchored_zero "PU-N2-FAITH" stringMismatch stringMismatch_self c.form
 
 /-- A free-N2 paradigm with distinct compound and N2 forms produces
     exactly two off-diagonal pairs, each contributing 1, for a total
@@ -276,8 +299,18 @@ theorem free_cpdPuViolations_eq_two (c : JCompound)
     (hfree : c.n2.canStandAlone = true)
     (hdiff : c.form ≠ c.n2.form) :
     cpdPuViolations c = 2 := by
-  simp [cpdPuViolations, puFaith, n2Paradigm, hfree, liftPairwise,
-        List.product, velarMismatch, hdiff, hdiff.symm]
+  have hpar : n2Paradigm c = [c.form, c.n2.form] := by
+    show lcParadigm c.form (if c.n2.canStandAlone then some c.n2.form else none) = _
+    rw [if_pos hfree]; rfl
+  show puFaith.eval (n2Paradigm c) = 2
+  rw [hpar]
+  show ((List.product [c.form, c.n2.form] [c.form, c.n2.form]).map
+         (fun p => stringMismatch p.1 p.2)).sum = 2
+  simp only [List.product, List.flatMap_cons, List.flatMap_nil, List.map_cons,
+             List.map_nil, List.append_nil, List.cons_append, List.nil_append,
+             stringMismatch, if_true, if_neg hdiff, if_neg hdiff.symm,
+             List.sum_cons, List.sum_nil]
+  rfl
 
 /-- The bound /dokuŋa/ case has zero PU violations — concrete witness. -/
 theorem dokunga_zero_puviolations : cpdPuViolations cpd_dokunga = 0 :=
@@ -295,15 +328,17 @@ theorem dokuga_two_puviolations : cpdPuViolations cpd_dokuga = 2 :=
     violations multiplied by `scaledWeight` of the N2 token
     log-frequency. Higher N2 frequency → stronger weight → stronger
     preservation of [g] → less nasalisation. This is the
-    *negative-on-nasalisation* channel of BKK Fig. 2. -/
+    *negative-on-nasalisation* channel (negative regression coefficient
+    on N2 token frequency in @cite{breiss-katsuda-kawahara-2026}). -/
 noncomputable def puPressure (slope : ℝ) (c : JCompound) : ℝ :=
   (cpdPuViolations c : ℝ) * scaledWeight (baseWeight := 0) (slope := slope) c.n2
 
 /-- The **compound-frequency-weighted markedness pressure** *for*
     nasalisation: linear in compound log-frequency. Higher compound
     frequency → stronger drift away from constituent forms → more
-    nasalisation. This is the *positive-on-nasalisation* channel of
-    BKK Fig. 2.
+    nasalisation. This is the *positive-on-nasalisation* channel
+    (positive regression coefficient on compound token frequency in
+    @cite{breiss-katsuda-kawahara-2026}).
 
     Modelled as a one-parameter linear function of the compound's own
     log-frequency, parallel to `Scaled.scaledWeight` but on the
@@ -326,8 +361,8 @@ noncomputable def nasLogOdds (n2Slope cpdSlope : ℝ) (c : JCompound) : ℝ :=
 /-- **Sign-inversion lemma.** PU pressure enters `nasLogOdds` with a
     negative sign: holding compound markedness fixed, an increase in
     PU pressure strictly decreases the log-odds. This is the formal
-    source of the *negative* coefficient on N2 token frequency in BKK
-    Fig. 2. -/
+    source of the *negative* regression coefficient on N2 token
+    frequency reported in @cite{breiss-katsuda-kawahara-2026}. -/
 theorem nasLogOdds_antitone_in_puPressure (n2Slope cpdSlope : ℝ)
     (c1 c2 : JCompound) (hcpd : c1.compoundLogFreq = c2.compoundLogFreq)
     (hpu : puPressure n2Slope c1 ≤ puPressure n2Slope c2) :
@@ -404,5 +439,241 @@ theorem novel_compounds_show_n2_gradient (slope : ℝ) (hSlope : 0 < slope)
   rw [hviol]
   apply mul_lt_mul_of_pos_left _ hpos2
   linarith [mul_lt_mul_of_pos_left hfreq hSlope]
+
+-- ============================================================================
+-- § 8: Wug paradigm cell — BKK as a `Paradigms/WugTest.lean` consumer
+-- ============================================================================
+
+/-! Experiment 2 of @cite{breiss-katsuda-kawahara-2026} is a wug-style
+study: subjects rate nasalisation on **novel** compounds whose N2 has
+real attestation as a free wordform. The N2-frequency gradient in
+their results is the key evidence against UseListed
+@cite{zuraw-2000}: a novel compound has no listing entry, so any
+frequency-driven modulation must come from the *N2's* lexical
+attestation, not the compound's.
+
+This section wires BKK to the methodological contract in
+`Paradigms/WugTest.lean` (anchored on @cite{berko-1958} and
+@cite{albright-hayes-2003}). The cell type carries:
+
+- a compound (the stimulus),
+- a structural proof that N2 is **free** (so that the LC paradigm has
+  the anchor and PU pressure is non-zero),
+- a structural proof that compound and N2 forms differ (so that
+  `cpdPuViolations = 2` is forced),
+- the wug `Attestation` factor (attested vs. novel),
+- and the N2 token log-frequency.
+
+The first two fields make the cell type non-vacuous in a way that
+discharges the `cpdPuViolations` precondition without per-cell
+hypotheses. Concretely: for every `WugBKKCell`, we *prove* (not
+assume) that PU violations equal 2. -/
+
+structure WugBKKCell where
+  compound : JCompound
+  freeN2 : compound.n2.canStandAlone = true
+  formDistinct : compound.form ≠ compound.n2.form
+  attestation : Attestation
+  n2LogFreq : ℝ
+
+namespace WugBKKCell
+
+/-- Every `WugBKKCell` has exactly two PU violations — a derived
+    consequence of the structural fields, not a stipulation. This is
+    the load-bearing fact that lets `wugBkkRate` exhibit a strict
+    frequency gradient on novel cells without per-cell side
+    conditions. -/
+theorem cpdPuViolations_eq_two (c : WugBKKCell) :
+    cpdPuViolations c.compound = 2 :=
+  free_cpdPuViolations_eq_two c.compound c.freeN2 c.formDistinct
+
+instance : HasAttestation WugBKKCell where
+  factorOf c := c.attestation
+  setFactor a c := { c with attestation := a }
+  factorOf_setFactor := by intros; rfl
+  setFactor_factorOf := by intros; rfl
+  setFactor_setFactor := by intros; rfl
+
+instance : HasFrequency WugBKKCell where
+  factorOf c := c.n2LogFreq
+  setFactor f c := { c with n2LogFreq := f }
+  factorOf_setFactor := by intros; rfl
+  setFactor_factorOf := by intros; rfl
+  setFactor_setFactor := by intros; rfl
+
+end WugBKKCell
+
+-- ============================================================================
+-- § 9: Wug-paradigm rate observable + anti-UseListed discriminator
+-- ============================================================================
+
+/-! `wugBkkRate` is BKK's per-cell numeric prediction expressed in the
+shape `Paradigms/WugTest.lean` requires (`Rate Cell ℝ`). It exhibits
+the N2-frequency gradient on novel cells, satisfying the WugTest
+predicate `NovelShowsFreqGradient` — and hence (by
+`novelGradient_inconsistent_with_invariance`) excluding the UseListed
+prediction `NovelInvariantInFrequency`.
+
+The sign of `wugBkkRate` is monotone increasing in N2 log-frequency
+because it tracks the **PU pressure**, not the surface nasalisation
+rate. PU pressure pushes toward [g] preservation; nasalisation rate
+falls as PU pressure rises. The discriminator from `WugTest` only
+cares about *non-flatness* of the rate function in the frequency
+factor, so the sign is irrelevant to the structural exclusion of
+UseListed. -/
+
+/-- The wug-paradigm rate observable for BKK: PU pressure on the
+    cell's compound, computed via `cpdPuViolations` (= 2 for every
+    `WugBKKCell`) times the N2's frequency-scaled weight. -/
+noncomputable def wugBkkRate (n2Slope : ℝ) (c : WugBKKCell) : ℝ :=
+  (cpdPuViolations c.compound : ℝ) * (n2Slope * c.n2LogFreq)
+
+/-- **BKK satisfies `NovelShowsFreqGradient`.** For any positive
+    N2-frequency slope, `wugBkkRate` is strictly monotone in the
+    frequency factor on novel cells. The proof uses
+    `WugBKKCell.cpdPuViolations_eq_two` to discharge the violation
+    count without per-cell hypotheses.
+
+    This is the structural form of BKK Experiment 2's central
+    finding: even on novel compounds, varying N2 token frequency
+    produces a gradient in the predicted PU pressure. -/
+theorem bkk_satisfies_NovelShowsFreqGradient (n2Slope : ℝ) (hSlope : 0 < n2Slope) :
+    NovelShowsFreqGradient (wugBkkRate n2Slope) := by
+  intro c f₁ f₂ hf
+  unfold wugBkkRate
+  -- The lens `setFactor` calls preserve the structural fields
+  -- freeN2/formDistinct, so cpdPuViolations remains 2.
+  have h1 : cpdPuViolations
+      (HasFactor.setFactor f₁
+        (HasFactor.setFactor Attestation.novel c)).compound = 2 :=
+    WugBKKCell.cpdPuViolations_eq_two _
+  have h2 : cpdPuViolations
+      (HasFactor.setFactor f₂
+        (HasFactor.setFactor Attestation.novel c)).compound = 2 :=
+    WugBKKCell.cpdPuViolations_eq_two _
+  rw [h1, h2]
+  -- Both lens-applied cells have the freshly-set frequency.
+  show ((2 : ℕ) : ℝ) * (n2Slope * f₁) < ((2 : ℕ) : ℝ) * (n2Slope * f₂)
+  have h2pos : (0 : ℝ) < ((2 : ℕ) : ℝ) := by norm_num
+  exact mul_lt_mul_of_pos_left
+    (mul_lt_mul_of_pos_left hf hSlope) h2pos
+
+/-- A concrete non-vacuous `WugBKKCell` witness: /haigan/ "lung
+    cancer" used as a wug stimulus. The structural fields are
+    discharged by `rfl` / `decide`. Required for the discriminator
+    corollary below — `novelGradient_inconsistent_with_invariance`
+    needs distinct frequencies, which it gets from `0 < 1`. -/
+def cell_haigan : WugBKKCell where
+  compound := cpd_haigan
+  freeN2 := rfl
+  formDistinct := by decide
+  attestation := .novel
+  n2LogFreq := 0
+
+/-- **Anti-UseListed discriminator (final form).** Wired through
+    `Paradigms/WugTest.lean`'s structural impossibility theorem: BKK's
+    `wugBkkRate` cannot satisfy `NovelInvariantInFrequency` (the
+    UseListed prediction). Any account on which novel forms have flat
+    PU pressure across N2 frequencies is ruled out by Experiment 2.
+
+    This is `novel_compounds_show_n2_gradient` re-expressed at the
+    paradigm-contract level: instead of a per-pair `puPressure`
+    inequality, we get a structural impossibility on the rate
+    function itself. -/
+theorem bkk_excludes_useListed (n2Slope : ℝ) (hSlope : 0 < n2Slope) :
+    ¬ NovelInvariantInFrequency (wugBkkRate n2Slope) := by
+  intro h_inv
+  exact novelGradient_inconsistent_with_invariance
+    (wugBkkRate n2Slope)
+    (bkk_satisfies_NovelShowsFreqGradient n2Slope hSlope)
+    h_inv cell_haigan 0 1 (by norm_num)
+
+-- ============================================================================
+-- § 10: Engagement with Optimal Paradigms — McCarthy 2005
+-- ============================================================================
+
+/-! BKK's docstring cites OP (@cite{mccarthy-2005}) as a sister PU
+theory; the architectural choice is LC over OP because LC's anchor
+primitive structurally encodes the bound/free split.
+
+**Caveat on the analog.** @cite{mccarthy-2005}'s OP, narrowly
+construed, ranges over the inflected wordforms of a single lexeme —
+not over a compound and its N2 constituent. Applying OP to N1+N2
+compound paradigms is an *extended application* not licensed by the
+2005 paper itself. The point of this section is precisely that
+extending OP straightforwardly to the compound case loses the
+bound/free distinction: a compound and its (free or bound) N2 are not
+in an OP-style inflectional relationship, so the architectural handle
+LC supplies via attestation-anchored paradigm membership has no
+natural OP counterpart. This is part of why BKK choose LC rather than
+OP for the compound domain.
+
+The OP-on-compounds straw-figure formalised below predicts
+**identical** PU violations on bound and free compounds with distinct
+N2 surface forms — losing BKK's categorical bound-case nasalisation as
+a structural prediction. To recover the empirical pattern, an
+extended-OP account would need an auxiliary stipulation (a separate
+constraint, a stratum, or a guard predicate). LC gets it from
+paradigm membership alone. -/
+
+/-- The OP paradigm of a compound: symmetric over all members, no
+    distinguished anchor. Because OP does not condition on
+    attestation, both bound and free N2 contribute to the paradigm. -/
+def n2OpParadigm (c : JCompound) : List String :=
+  [c.form, c.n2.form]
+
+/-- The OP-flavoured PU constraint, built from the same `liftPairwise`
+    combinator. Differs from `puFaith` only in the *paradigm
+    construction* (cf. `lcParadigm` vs. unconditional pair). -/
+def opPuFaith : NamedConstraint (List String) :=
+  liftPairwise "OP-PU-FAITH" .faithfulness stringMismatch
+
+/-- OP-flavoured violation count on a compound. -/
+def cpdOpPuViolations (c : JCompound) : Nat :=
+  opPuFaith.eval (n2OpParadigm c)
+
+/-- **OP gives identical violation counts on bound and free
+    compounds.** Whenever `c.form ≠ c.n2.form`, the OP paradigm
+    `[c.form, c.n2.form]` has two off-diagonal pairs each contributing
+    1, regardless of N2 attestation. This is the structural
+    consequence of OP's anchor-blindness. -/
+theorem op_paradigm_uniform_in_bound_free (c : JCompound)
+    (hdiff : c.form ≠ c.n2.form) :
+    cpdOpPuViolations c = 2 := by
+  show opPuFaith.eval (n2OpParadigm c) = 2
+  show ((List.product [c.form, c.n2.form] [c.form, c.n2.form]).map
+         (fun p => stringMismatch p.1 p.2)).sum = 2
+  simp only [List.product, List.flatMap_cons, List.flatMap_nil, List.map_cons,
+             List.map_nil, List.append_nil, List.cons_append, List.nil_append,
+             stringMismatch, if_true, if_neg hdiff, if_neg hdiff.symm,
+             List.sum_cons, List.sum_nil]
+  rfl
+
+/-- **Extended-OP and LC structurally disagree on bound compounds.**
+    For any bound-N2 compound with distinct compound and N2 forms, the
+    OP-on-compounds analog predicts 2 violations while LC predicts 0.
+    This is the formal incompatibility motivating BKK's choice of LC
+    over an OP-style account in the compound domain — *structural*, not
+    parameter-dependent. The empirical categorical bound-case
+    nasalisation supports LC.
+
+    NB: see the §10 caveat. McCarthy's OP, narrowly construed, is over
+    inflectional paradigms of one lexeme; the disagreement here is
+    with an *extended-OP* that applies the symmetric-paradigm
+    architecture to N1+N2 compounds, which BKK take to be the natural
+    OP-style competitor in this domain. -/
+theorem op_lc_disagree_on_bound (c : JCompound)
+    (hbound : c.n2.canStandAlone = false)
+    (hdiff : c.form ≠ c.n2.form) :
+    cpdOpPuViolations c ≠ cpdPuViolations c := by
+  rw [op_paradigm_uniform_in_bound_free c hdiff,
+      bound_cpdPuViolations_zero c hbound]
+  decide
+
+/-- Concrete witness: /dokuŋa/ "poison fang" instantiates the
+    OP/LC disagreement. OP says 2 violations; LC says 0. -/
+theorem dokunga_op_vs_lc :
+    cpdOpPuViolations cpd_dokunga ≠ cpdPuViolations cpd_dokunga :=
+  op_lc_disagree_on_bound cpd_dokunga rfl (by decide)
 
 end Phenomena.Phonology.Studies.BreissKatsudaKawahara2026

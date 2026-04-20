@@ -4,7 +4,71 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-## [0.230.83] - 2026-04-20
+## [0.230.85] - 2026-04-20
+
+### Changed
+- **`Paradigms/WugTest.lean` — parametric `HasFactor (Cell) (F)` schema.**
+  Replaced separate `HasAttestation` / `HasFrequency` typeclasses with a
+  single parametric `HasFactor (Cell : Type) (F : Type)` lens (get/set
+  + 3 lens laws), specialised via `abbrev HasAttestation := HasFactor _
+  Attestation` and `abbrev HasFrequency := HasFactor _ ℝ`.
+  `NovelShowsFactorGradient` and `NovelInvariantInFactor` are now
+  generic in the factor type `F`; `NovelShowsFreqGradient` /
+  `NovelInvariantInFrequency` retained as `F := ℝ` `abbrev`s for
+  linguist-facing readability. Module docstring documents the
+  architectural relation to `HasTokenFreq` (getter-only fragment
+  class) — the two are not bridged by an automatic instance because
+  their semantics differ (paradigm-cell experimentally-manipulated
+  factor vs. lexicon-intrinsic getter).
+- **`Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`**:
+  migrated to `HasFactor` API. `WugBKKCell` instances use
+  `factorOf` / `setFactor` / lens-law field names. Discriminator-
+  corollary call site `bkk_excludes_useListed` unchanged thanks to
+  `NovelShowsFreqGradient` / `NovelInvariantInFrequency` retained as
+  `abbrev`s. Dropped `noncomputable` on `cell_haigan` (no real-valued
+  computation needed). Three load-bearing list-sum proofs converted
+  from bare `simp` to `simp only` per mathlib discipline:
+  `stringMismatch_self`, `free_cpdPuViolations_eq_two`,
+  `op_paradigm_uniform_in_bound_free` — last two via structured
+  list-product unfolding + `if_neg`/`if_true` rewrite chain.
+- **`Phenomena/Morphology/Studies/AlbrightHayes2003.lean`** —
+  mathlib-quality refactor:
+  - `IORCategory` from 4-element `inductive` enum to a 2×2
+    `structure { iorForRegular : Bool; iorForIrregular : Bool }`. The
+    cells of A&H's 2×2 Core stimulus design *are* the boolean
+    product; the four named cases (`regAndIrreg`, `regOnly`,
+    `irregOnly`, `neither`) survive as `abbrev`s for paper-side
+    terminology. Eliminates the 2 helper `iorForRegular`/`iorForIrregular`
+    accessors as field projections.
+  - `AHWugCell.withinIORForRegular : Bool → Prop` per
+    `feedback_no_intrinsic_bool.md` — IOR-membership is propositional,
+    not data. `HasIORForRegular Cell` redefined as
+    `abbrev HasIORForRegular Cell := HasFactor Cell Prop`.
+    `ahRegularRating` now `noncomputable` and uses `Classical.dec`
+    inside an `if`. The gradient proof handles `Prop`'s `<`
+    (mathlib's derived order: `p < q ↔ (p → q) ∧ ¬(q → p)`) via
+    `by_cases` on each side, eliminating three of four cases by
+    contradicting `h_nle`.
+  - `StochasticRule` gains structural invariant
+    `hits_le_scope : hits ≤ scope` — a real-data property of MGL-
+    extracted rules that makes `rawConfidence ≤ 1` provable as
+    `StochasticRule.rawConfidence_le_one` rather than asserted by
+    convention.
+  - Dropped unused `contextDescription : String` field (never
+    consulted by any consumer).
+  - Dropped unused `deriving Fintype` clauses on `IORCategory`,
+    `PastChange` (no enumeration needed).
+  - `NovelRegularsShowIORGradient` / `NovelRegularsInvariantInIOR`
+    collapsed to `abbrev`s specialising
+    `NovelShowsFactorGradient (F := Prop)` /
+    `NovelInvariantInFactor (F := Prop)`.
+    `ah_excludes_singleDefaultRule` now wires through
+    `WugTest.novelGradient_inconsistent_with_invariance` at
+    `F := Prop` rather than a duplicated A&H-local discriminator.
+  Local `novelRegularsGradient_inconsistent_with_invariance` deleted
+  — superseded by the WugTest discriminator at `F := Prop`.
+
+## [0.230.84] - 2026-04-20
 
 ### Changed
 - **`Phenomena/Polarity/Typology.lean`** (Phase 3 of Polarity overhaul):
@@ -17,6 +81,67 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
   level placement preserved per per-file test: WALS Ch46 grounding +
   Haspelmath ontology used by `Studies/Chierchia2006.lean`. Net −20
   lines (1315 → 1295).
+
+## [0.230.83] - 2026-04-20
+
+### Added
+- **`Core/Typology/Adposition.lean`** (Step 1 of Greenberg-universals
+  pipeline): WALS Ch 85 enum (`AdpositionOrder`: prepositional,
+  postpositional, inpositional, noAdpositions, noDominant) plus
+  `fromWALS85A` converter and `adpositionOfWALS : String → Option
+  AdpositionOrder` ISO lookup. Returns `Option` because absence-from-WALS
+  ≠ no-dominant-order-in-language.
+- **`Core/Typology/LanguageProfile.lean`** (Step 2): aggregate per-
+  language record bundling `wordOrder`, `adposition`, `morph`. Fields are
+  append-only and (apart from `iso`/`name`/`wordOrder`) all optional.
+  Composable builders: `LanguageProfile.empty iso name |>.withWordOrder
+  FromWALS |>.withAdpositionFromWALS |>.withMorph m`, plus convenience
+  `LanguageProfile.ofWALS iso name`. Fragment policy: a Fragment Typology
+  file exists iff it carries an override or `morphProfile`; pure-WALS
+  languages get inlined as `LanguageProfile.ofWALS` directly.
+- **`Core/Typology/Universal.lean`** (Step 4 dependency):
+  `ImplicationalUniversal P Q s` API for Greenbergian implicational
+  universals over `Finset α` samples, plus `ContingencyTable` 2×2
+  tetrachoric struct, `Finset.contingency` constructor, and
+  `implicational_iff_no_typeIV` bridge theorem. `Decidable` instance on
+  `ImplicationalUniversal` derives from `decidableDforallFinset`,
+  letting consumers state and `decide` Greenbergian universals over
+  literal `Finset` samples.
+- **`Phenomena/WordOrder/Typology.lean`** (Steps 3, 4): `fragmentSample :
+  Finset LanguageProfile` curated to 15 languages spanning all six basic-
+  order classes (5 from Fragments — English, Japanese, Mandarin, Korean,
+  Arabic — and 10 inlined as `LanguageProfile.ofWALS`: Welsh, Irish,
+  Turkish, Hindi, Basque, Russian, Swahili, Indonesian, Tzotzil,
+  Hixkaryana). New theorems: `greenberg_universal_3` (VSO →
+  prepositional) and `greenberg_universal_4` (SOV → postpositional)
+  proved as `ImplicationalUniversal` instances.
+- **`Fragments/{English,Japanese,Mandarin,Korean,Arabic}/Typology.lean`**
+  (Step 2 retrofit): per-language aggregate `def typology :
+  LanguageProfile` files using the composable pipeline. Each bundles
+  `morphProfile` (which has hand-coded overrides over WALS).
+- **`Fragments/German/Typology.lean`** (added during Step 5 cleanup):
+  same pipeline; needed by `Westergaard2009` after `germanV2`
+  (BasicOrderProfile) was retired.
+
+### Changed
+- **`Phenomena/WordOrder/Typology.lean`** (Step 5): retired the legacy
+  `BasicOrderProfile` struct, its 21 hand-curated language defs
+  (`japanese`, `turkish`, ..., `warlpiri`), the `basicOrderProfiles`
+  list, and `countByBasicOrder/countBySVOrder/countByOVOrder` helpers.
+  Replaced by `fragmentSample : Finset LanguageProfile`. The 6 cross-
+  chapter consistency theorems (`sov_implies_sv_and_ov` etc.) were
+  reformulated as `∀ p ∈ fragmentSample, p.wordOrder.basicOrder = .sov →
+  ...` over the new sample, testing internal WALS consistency at the
+  per-language level for the 15 curated languages.
+- **`Phenomena/Coordination/Studies/BrueningAlKhalaf2020.lean`**: updated
+  `english_is_vo` and `english_complement_postverbal` to use
+  `Fragments.English.typology.wordOrder` instead of the retired
+  `english : BasicOrderProfile`.
+- **`Phenomena/WordOrder/Studies/Westergaard2009.lean`**: updated
+  `german_noDominant_explained` and `english_svo_explained` to use
+  `Fragments.{German,English}.typology.wordOrder` instead of the retired
+  `germanV2`/`english : BasicOrderProfile`. Added the corresponding
+  fragment Typology imports.
 
 ## [0.230.82] - 2026-04-20
 
