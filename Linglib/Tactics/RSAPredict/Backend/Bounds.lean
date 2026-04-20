@@ -245,31 +245,31 @@ theorem mul_containsReal {a b : QInterval} {x y : ℝ}
           (le_trans (mul_le_mul_of_nonneg_left hylo halo)
                     (mul_le_mul_of_nonneg_right hxlo hy0))
       · -- a.lo*b.hi ≤ 0 ≤ x*y
-        push_neg at halo
+        push Not at halo
         exact le_trans (min_le_of_left_le (min_le_right _ _))
           (le_trans (mul_nonpos_of_nonpos_of_nonneg (le_of_lt halo) (le_trans hy0 hyhi))
                     (mul_nonneg hx0 hy0))
     · -- x ≥ 0, y < 0: a.hi*b.lo ≤ x*b.lo ≤ x*y
-      push_neg at hy0
+      push Not at hy0
       have hblo_np : (↑b.lo : ℝ) ≤ 0 := le_trans hylo (le_of_lt hy0)
       exact le_trans (min_le_of_right_le (min_le_left _ _))
         (le_trans (mul_le_mul_of_nonpos_right hxhi hblo_np)
                   (mul_le_mul_of_nonneg_left hylo hx0))
     · -- x < 0, y ≥ 0: a.lo*b.hi ≤ x*b.hi ≤ x*y
-      push_neg at hx0
+      push Not at hx0
       have hbhi_nn : (0 : ℝ) ≤ ↑b.hi := le_trans hy0 hyhi
       exact le_trans (min_le_of_left_le (min_le_right _ _))
         (le_trans (mul_le_mul_of_nonneg_right hxlo hbhi_nn)
                   (mul_le_mul_of_nonpos_left hyhi (le_of_lt hx0)))
     · -- x < 0, y < 0
-      push_neg at hx0 hy0
+      push Not at hx0 hy0
       by_cases hahi : (↑a.hi : ℝ) ≤ 0
       · -- a.hi*b.hi ≤ a.hi*y ≤ x*y
         exact le_trans (min_le_of_right_le (min_le_right _ _))
           (le_trans (mul_le_mul_of_nonpos_left hyhi hahi)
                     (mul_le_mul_of_nonpos_right hxhi (le_of_lt hy0)))
       · -- a.hi*b.lo ≤ 0 ≤ x*y
-        push_neg at hahi
+        push Not at hahi
         have hblo_np : (↑b.lo : ℝ) ≤ 0 := le_trans hylo (le_of_lt hy0)
         exact le_trans (min_le_of_right_le (min_le_left _ _))
           (le_trans (mul_nonpos_of_nonneg_of_nonpos (le_of_lt hahi) hblo_np)
@@ -282,31 +282,31 @@ theorem mul_containsReal {a b : QInterval} {x y : ℝ}
                   (mul_le_mul_of_nonneg_left hyhi (le_trans hx0 hxhi)))
         (le_max_of_le_right (le_max_right _ _))
     · -- x ≥ 0, y < 0: x*y ≤ x*b.hi ≤ corner
-      push_neg at hy0
+      push Not at hy0
       by_cases hbhi : (0 : ℝ) ≤ ↑b.hi
       · exact le_trans
           (le_trans (mul_le_mul_of_nonneg_left hyhi hx0)
                     (mul_le_mul_of_nonneg_right hxhi hbhi))
           (le_max_of_le_right (le_max_right _ _))
-      · push_neg at hbhi
+      · push Not at hbhi
         exact le_trans
           (le_trans (mul_le_mul_of_nonneg_left hyhi hx0)
                     (mul_le_mul_of_nonpos_right hxlo (le_of_lt hbhi)))
           (le_max_of_le_left (le_max_right _ _))
     · -- x < 0, y ≥ 0: x*y ≤ a.hi*y ≤ corner
-      push_neg at hx0
+      push Not at hx0
       by_cases hahi : (0 : ℝ) ≤ ↑a.hi
       · exact le_trans
           (le_trans (mul_le_mul_of_nonneg_right hxhi hy0)
                     (mul_le_mul_of_nonneg_left hyhi hahi))
           (le_max_of_le_right (le_max_right _ _))
-      · push_neg at hahi
+      · push Not at hahi
         exact le_trans
           (le_trans (mul_le_mul_of_nonneg_right hxhi hy0)
                     (mul_le_mul_of_nonpos_left hylo (le_of_lt hahi)))
           (le_max_of_le_right (le_max_left _ _))
     · -- x < 0, y < 0: x*y ≤ a.lo*y ≤ a.lo*b.lo
-      push_neg at hx0 hy0
+      push Not at hx0 hy0
       exact le_trans
         (le_trans (mul_le_mul_of_nonpos_right hxlo (le_of_lt hy0))
                   (mul_le_mul_of_nonpos_left hylo (le_trans hxlo (le_of_lt hx0))))
@@ -551,7 +551,7 @@ private theorem truncDown_le (q : ℚ) (bits : ℕ) :
   split
   case isTrue => exact le_refl q
   case isFalse h_excess =>
-    push_neg at h_excess
+    push Not at h_excess
     set shift := (2 : ℤ) ^ (max (Int.bitLen q.num) (Nat.log2 q.den + 1) - bits)
     have hS : (0 : ℤ) < shift := by positivity
     have hD : (0 : ℤ) < q.den := Int.ofNat_lt.mpr q.den_pos
@@ -562,7 +562,7 @@ private theorem truncDown_le (q : ℚ) (bits : ℕ) :
       split
       case isTrue => exact le_of_eq (Rat.num_div_den q).symm
       case isFalse hnd =>
-        push_neg at hnd
+        push Not at hnd
         rw [div_le_div_iff₀ (by exact_mod_cast hnd : (0:ℚ) < (↑nd : ℚ))
                             (by exact_mod_cast hD : (0:ℚ) < (↑↑q.den : ℚ))]
         suffices h : (q.num / shift) * (q.den : ℤ) ≤ q.num * nd by exact_mod_cast h
@@ -572,12 +572,12 @@ private theorem truncDown_le (q : ℚ) (bits : ℕ) :
         nlinarith [mul_le_mul_of_nonneg_right h1 (show (0:ℤ) ≤ q.den from hD.le),
                    mul_le_mul_of_nonneg_left h2 hnn]
     case isFalse hneg =>
-      push_neg at hneg
+      push Not at hneg
       set nd := (q.den : ℤ) / shift
       split
       case isTrue => exact le_of_eq (Rat.num_div_den q).symm
       case isFalse hnd =>
-        push_neg at hnd
+        push Not at hnd
         rw [div_le_div_iff₀ (by exact_mod_cast hnd : (0:ℚ) < (↑nd : ℚ))
                             (by exact_mod_cast hD : (0:ℚ) < (↑↑q.den : ℚ))]
         suffices h : (q.num / shift) * (q.den : ℤ) ≤ q.num * nd by exact_mod_cast h
@@ -592,7 +592,7 @@ private theorem le_truncUp (q : ℚ) (bits : ℕ) :
   split
   case isTrue => exact le_refl q
   case isFalse h_excess =>
-    push_neg at h_excess
+    push Not at h_excess
     set shift := (2 : ℤ) ^ (max (Int.bitLen q.num) (Nat.log2 q.den + 1) - bits)
     have hS : (0 : ℤ) < shift := by positivity
     have hD : (0 : ℤ) < q.den := Int.ofNat_lt.mpr q.den_pos
@@ -604,7 +604,7 @@ private theorem le_truncUp (q : ℚ) (bits : ℕ) :
       split
       case isTrue => exact le_of_eq (Rat.num_div_den q)
       case isFalse hnd =>
-        push_neg at hnd
+        push Not at hnd
         rw [div_le_div_iff₀ (by exact_mod_cast hD : (0:ℚ) < (↑↑q.den : ℚ))
                             (by exact_mod_cast hnd : (0:ℚ) < (↑nd : ℚ))]
         suffices h : q.num * nd ≤ cn * (q.den : ℤ) by exact_mod_cast h
@@ -615,12 +615,12 @@ private theorem le_truncUp (q : ℚ) (bits : ℕ) :
         nlinarith [mul_le_mul_of_nonneg_right h2 h3,
                    mul_le_mul_of_nonneg_left h1 hD.le]
     case isFalse hneg =>
-      push_neg at hneg
+      push Not at hneg
       set nd := ((q.den : ℤ) + shift - 1) / shift
       split
       case isTrue => exact le_of_eq (Rat.num_div_den q)
       case isFalse hnd =>
-        push_neg at hnd
+        push Not at hnd
         rw [div_le_div_iff₀ (by exact_mod_cast hD : (0:ℚ) < (↑↑q.den : ℚ))
                             (by exact_mod_cast hnd : (0:ℚ) < (↑nd : ℚ))]
         suffices h : q.num * nd ≤ cn * (q.den : ℤ) by exact_mod_cast h
@@ -918,7 +918,7 @@ private theorem reductionSteps_spec (q : ℚ) :
     simp only [pow_zero, div_one]
     exact abs_le_one_of_natAbs_le_den q ‹_›
   · -- q.num.natAbs > q.den, k = log₂(natAbs) - log₂(den) + 1
-    rename_i hgt; push_neg at hgt
+    rename_i hgt; push Not at hgt
     set k := Nat.log 2 q.num.natAbs - Nat.log 2 q.den + 1
     have hpow_pos : (0 : ℚ) < 2 ^ k := pow_pos (by norm_num : (0 : ℚ) < 2) k
     have hna_le := natAbs_le_den_mul_pow q.den q.num.natAbs q.pos hgt

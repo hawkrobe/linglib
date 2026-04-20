@@ -4,6 +4,15 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.76] - 2026-04-20
+
+### Changed
+- **`Linglib/Tactics/RSAPredict/Backend/Bounds.lean`**: replace 19
+  deprecated `push_neg` invocations with `push Not` per the mathlib
+  deprecation message. All sites are `push_neg at <hyp>`; mechanical
+  rewrite. Build clean (2662 jobs) and no longer emits the 19
+  deprecation warnings.
+
 ## [0.230.75] - 2026-04-20
 
 ### Removed
