@@ -258,11 +258,11 @@ import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Discourse.Roles
 import Linglib.Core.Mood
-import Linglib.Core.Interval.QInterval
-import Linglib.Core.Interval.PadeExp
-import Linglib.Core.Interval.RpowInterval
-import Linglib.Core.Interval.LogInterval
-import Linglib.Core.Interval.SqrtInterval
+import Linglib.Tactics.RSAPredict.Backend.QInterval
+import Linglib.Tactics.RSAPredict.Backend.PadeExp
+import Linglib.Tactics.RSAPredict.Backend.RpowInterval
+import Linglib.Tactics.RSAPredict.Backend.LogInterval
+import Linglib.Tactics.RSAPredict.Backend.SqrtInterval
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Core.SubjectProperties
 import Linglib.Core.NullSubject.Basic
@@ -2160,6 +2160,7 @@ import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.ScalarImplicatures.Studies.Chierchia2004
 import Linglib.Phenomena.ScalarImplicatures.Studies.MontagueExhaustivity
 import Linglib.Phenomena.ScalarImplicatures.Studies.Spector2007
+import Linglib.Phenomena.ScalarImplicatures.Studies.Spector2016
 import Linglib.Phenomena.Polarity.Studies.Israel2001
 import Linglib.Phenomena.Polarity.Studies.KadmonLandman1993
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025

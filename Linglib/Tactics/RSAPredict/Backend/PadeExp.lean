@@ -1,4 +1,4 @@
-import Linglib.Core.Interval.QInterval
+import Linglib.Tactics.RSAPredict.Backend.QInterval
 import Mathlib.Analysis.SpecialFunctions.ExpDeriv
 import Mathlib.Analysis.Complex.ExponentialBounds
 

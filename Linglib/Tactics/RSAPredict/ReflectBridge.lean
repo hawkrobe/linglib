@@ -1,5 +1,5 @@
 import Lean
-import Linglib.Core.Interval.ReflectInterval
+import Linglib.Tactics.RSAPredict.Backend.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify
 import Linglib.Tactics.RSAPredict.RSABuilder

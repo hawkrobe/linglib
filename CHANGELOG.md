@@ -4,6 +4,24 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.64] - 2026-04-20
+
+### Changed
+- **`Linglib/Core/Interval/` → `Linglib/Tactics/RSAPredict/Backend/`**:
+  the entire interval-arithmetic + reflection backend directory moved
+  under the only thing that uses it. Architecturally, `Core/Interval/`
+  pretended to be public framework-agnostic infrastructure, but its
+  sole consumers were 3 files inside `Linglib/Tactics/RSAPredict/`
+  (Helpers, ReflectBridge, RSAPredict.lean itself); zero Theory or
+  Phenomena file imported it directly. Pure `git mv` + import rewrite;
+  no semantic changes, no namespace renames. RSAPredict subtree
+  (2666 jobs) builds clean; spot-checked LassiterGoodman2017 (heavy
+  rsa_predict use, 8854 cache entries), FrankGoodman2012 (canonical
+  RSA), and HerbstrittFranke2019 (the only non-tactic file that
+  mentioned this directory in a docstring — also updated).
+  Phase 2 of the consolidation; `Linglib.lean` re-exports still in
+  place pending Phase 3.
+
 ## [0.230.63] - 2026-04-20
 
 ### Changed

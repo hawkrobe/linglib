@@ -1,5 +1,5 @@
 import Lean
-import Linglib.Core.Interval.ReflectInterval
+import Linglib.Tactics.RSAPredict.Backend.ReflectInterval
 
 set_option autoImplicit false
 

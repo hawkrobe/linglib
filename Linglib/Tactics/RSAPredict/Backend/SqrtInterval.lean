@@ -1,6 +1,6 @@
-import Linglib.Core.Interval.QInterval
-import Linglib.Core.Interval.PadeExp
-import Linglib.Core.Interval.LogInterval
+import Linglib.Tactics.RSAPredict.Backend.QInterval
+import Linglib.Tactics.RSAPredict.Backend.PadeExp
+import Linglib.Tactics.RSAPredict.Backend.LogInterval
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 set_option autoImplicit false

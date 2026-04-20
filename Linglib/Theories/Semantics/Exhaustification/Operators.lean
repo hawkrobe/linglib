@@ -57,55 +57,36 @@ sentence is true."
 
 variable {World : Type*}
 
-/--
-Entailment: φ ⊆ ψ (Spector uses set-theoretic notation)
-"I also adopt the set-theoretic notation φ ⊆ ψ to mean that φ entails ψ."
-Thin alias for `Set.Subset`.
+/-!
+## Paper-mirroring notation
+
+Spector writes `⊆`/`≡`/`¬`/`∧`/`⋀`/`⋁` for entailment, equivalence,
+negation, conjunction, grand conjunction, and grand disjunction of
+propositions (= sets of worlds). We bind subscripted/Spector-flavored
+notations directly to mathlib primitives so paper-mirror code reads
+naturally and the underlying API is just `Set` operations.
 -/
-abbrev entails (φ ψ : Set World) : Prop := φ ⊆ ψ
 
-notation:50 φ " ⊆ₚ " ψ => entails φ ψ
+@[inherit_doc Set.Subset]
+notation:50 φ " ⊆ₚ " ψ => @Set.Subset _ φ ψ
 
-/--
-Equivalence of propositions
--/
-def pequiv (φ ψ : Set World) : Prop := (φ ⊆ₚ ψ) ∧ (ψ ⊆ₚ φ)
+/-- Mutual subset of two propositions; equivalent to `φ = ψ` for `Set`. -/
+abbrev pequiv (φ ψ : Set World) : Prop := (φ ⊆ₚ ψ) ∧ (ψ ⊆ₚ φ)
 
+@[inherit_doc pequiv]
 notation:50 φ " ≡ₚ " ψ => pequiv φ ψ
 
-/--
-Negation of a proposition. Thin alias for `Set.compl`.
--/
-def pneg (φ : Set World) : Set World := φᶜ
+@[inherit_doc Compl.compl]
+prefix:75 "∼" => Compl.compl
 
-prefix:75 "∼" => pneg
+@[inherit_doc Inter.inter]
+infixl:65 " ∧ₚ " => Inter.inter
 
-/--
-Conjunction of two propositions. Thin alias for `Set.inter`.
--/
-def pand (φ ψ : Set World) : Set World := φ ∩ ψ
+@[inherit_doc Set.sInter]
+prefix:110 "⋀" => Set.sInter
 
-infixl:65 " ∧ₚ " => pand
-
-/--
-Conjunction of a set of propositions (grand conjunction ⋀X). Thin alias
-for `Set.sInter`.
-"⋀X refers to the grand conjunction of its members, i.e., the proposition
-that is true in a world u if and only if every member of X is true in u"
--/
-def bigConj (X : Set (Set World)) : Set World := ⋂₀ X
-
-notation "⋀" => bigConj
-
-/--
-Disjunction of a set of propositions (grand disjunction ⋁X). Thin alias
-for `Set.sUnion`.
-"⋁X refers to the grand disjunction of the members of X, i.e., the proposition
-that is true in a world u if and only if at least one member of X is true in u"
--/
-def bigDisj (X : Set (Set World)) : Set World := ⋃₀ X
-
-notation "⋁" => bigDisj
+@[inherit_doc Set.sUnion]
+prefix:110 "⋁" => Set.sUnion
 
 -- DEFINITION 1: The preorder ≤_ALT (Spector p.7)
 
@@ -369,8 +350,8 @@ def X_of_world (u : World) : Set (Set World) :=
   {φ} ∪ {ψ | ∃ a ∈ ALT, ψ = ∼a ∧ ¬(a u)}
 
 /--
-Helper lemma: If ∼a = ∼a' then a = a' (negation is injective on propositions).
-Reduces to `compl_injective` (BooleanAlgebra) after the `pneg = compl` alias.
+Helper lemma: if `∼a = ∼a'` then `a = a'` (negation is injective on
+propositions). Direct use of mathlib's `compl_injective` for `Set`.
 -/
 theorem pneg_injective {a a' : Set World} (h : ∼a = ∼a') : a = a' :=
   compl_injective h
@@ -461,7 +442,7 @@ theorem u_satisfies_X (u : World) (hu : φ u) : ∀ ψ ∈ X_of_world ALT φ u, 
   simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq] at hψ
   rcases hψ with rfl | ⟨a, ha, rfl, hau⟩
   · exact hu
-  · simp only [pneg]; exact hau
+  · exact hau
 
 /--
 X(u) is (ALT, φ)-compatible when φ u holds.
@@ -518,7 +499,7 @@ theorem lemma1_minimal_iff_MCset (u : World) (hu : φ u) :
         have hφv : φ v := hv_sat φ hφE
         -- v satisfies ∼a (since ∼a ∈ E)
         have hna_v : (∼a) v := hv_sat (∼a) hψE
-        simp only [pneg] at hna_v
+        rw [Set.mem_compl_iff] at hna_v
         -- So v <_ALT u
         have hv_lt_u : v <[ALT] u := by
           constructor
@@ -530,7 +511,7 @@ theorem lemma1_minimal_iff_MCset (u : World) (hu : φ u) :
               right; exact ⟨b, hb, rfl, hbu⟩
             have hnb_in_E := hXu_sub_E hnb_in_Xu
             have hnb_v : (∼b) v := hv_sat (∼b) hnb_in_E
-            simp only [pneg] at hnb_v
+            rw [Set.mem_compl_iff] at hnb_v
             exact hnb_v hbv
           · -- ¬(u ≤_ALT v): a(u) = 1 but a(v) = 0
             intro huv
@@ -633,7 +614,7 @@ theorem lemma2_exhMW_iff_satisfies_MCset (u : World) :
       · -- ψ = ∼a: since u satisfies ψ, we have ¬(a u), so ∼a ∈ X(u)
         rw [hψ_eq_na]
         have hna_u : (∼a) u := hu_sat_E (∼a) (hψ_eq_na ▸ hψE)
-        simp only [pneg] at hna_u
+        rw [Set.mem_compl_iff] at hna_u
         simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq]
         right; exact ⟨a, ha, rfl, hna_u⟩
     -- X(u) is compatible
@@ -764,7 +745,7 @@ theorem corollary8 (hfin : Set.Finite ALT) :
       have hIE_a : isInnocentlyExcludable ALT φ a :=
         (prop7_IE_iff_exhMW_entails_neg ALT φ a ha).mpr hmw_na
       have hna_u := hie (∼a) hIE_a.2
-      simp only [pneg] at hna_u
+      rw [Set.mem_compl_iff] at hna_u
       exact hna_u
   · -- (φ ∧ ⋀{¬a : exh_mw ⊆ ¬a}) ⊆ exh_ie
     -- We need to show: ∀ ψ ∈ IE, ψ u
@@ -918,7 +899,7 @@ theorem theorem9_main (hclosed : closedUnderConj ALT) :
     -- So ¬(⋀A) ∈ IE. u satisfies IE, so u satisfies ¬(⋀A).
     have hneg_conjA_u : (∼(⋀ A)) u := hie (∼(⋀ A)) hneg_conjA_in_IE
     -- But (⋀A) u is true, contradiction
-    simp only [pneg] at hneg_conjA_u
+    rw [Set.mem_compl_iff] at hneg_conjA_u
     exact hneg_conjA_u hconjA_u
 
 -- SECTION 3.6: Consequences (Spector p.13)
@@ -946,7 +927,7 @@ lemma subset_disjClosure (ALT' : Set (Set World))
   constructor
   · exact Set.singleton_subset_iff.mpr ha
   · ext w
-    simp only [bigDisj, Set.mem_sUnion, Set.mem_singleton_iff, exists_eq_left]
+    simp only [Set.mem_sUnion, Set.mem_singleton_iff, exists_eq_left]
 
 /--
 Every element of the disjunction closure is a disjunction of ALT elements.
@@ -974,7 +955,7 @@ lemma leALT_disjClosure_eq (ALT' : Set (Set World))
     obtain ⟨X, hX_sub, ha_eq⟩ := ha_ALT'
     -- a = ⋁X, a u means ∃ b ∈ X, b u
     rw [ha_eq] at hau ⊢
-    simp only [bigDisj] at hau ⊢
+    simp only [Set.mem_sUnion] at hau ⊢
     obtain ⟨b, hb_X, hbu⟩ := hau
     -- b ∈ ALT (since X ⊆ ALT)
     have hb_ALT : b ∈ ALT := hX_sub hb_X
@@ -1042,7 +1023,8 @@ theorem theorem10_disj_closure_vacuous (hfin : Set.Finite ALT) (ALT' : Set (Set 
     -- The image of a finite set is finite by Finite.image
     have hsubsets_fin : {X : Set (Set World) | X ⊆ ALT}.Finite := hfin.finite_subsets
     -- The disjunction closure is the image of subsets under bigDisj
-    have heq : {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X} = bigDisj '' {X | X ⊆ ALT} := by
+    have heq : {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X}
+        = Set.sUnion '' {X | X ⊆ ALT} := by
       ext p
       simp only [Set.mem_image, Set.mem_setOf_eq]
       constructor
@@ -1051,7 +1033,7 @@ theorem theorem10_disj_closure_vacuous (hfin : Set.Finite ALT) (ALT' : Set (Set 
       · rintro ⟨X, hX_sub, rfl⟩
         exact ⟨X, hX_sub, rfl⟩
     rw [heq]
-    exact hsubsets_fin.image bigDisj
+    exact hsubsets_fin.image Set.sUnion
   -- Use the Corollary 8 characterization
   have hc8_ALT := corollary8 ALT φ hfin
   have hc8_ALT' := corollary8 ALT' φ hfin'
@@ -1127,471 +1109,6 @@ theorem corollary11 (hfin : Set.Finite ALT)
     have hmw' := h9.2 hie'
     exact hmw_eq.2 hmw'
 
-
--- SECTION 6: WORKED EXAMPLES
--- Concrete derivations demonstrating exhaustivity on classic scales
-
-/-
-## Section 6: Worked Examples
-
-Concrete derivations showing `exhMW` derives classic scalar implicatures:
-1. some/all scale: "Some students passed" → "Not all students passed"
-2. or/and scale: "John sang or danced" → exclusive reading
-
-### Results
-
-- `exhMW_some_at_w1`: exh(some) holds at "some but not all" worlds
-- `exhMW_some_not_w3`: exh(some) excludes "all" worlds
-- `exhMW_or_at_wSang`: exh(or) holds at exclusive-or worlds
-- `exhMW_or_not_wBoth`: exh(or) excludes "both" world
--/
-
--- ----------------------------------------------------------------------------
--- 6.1: SOME/ALL SCALE
--- ----------------------------------------------------------------------------
-
-/-
-### The Classic Case: "Some students passed"
-
-Setup:
-- φ = "some students passed" (literal meaning: at least one)
-- ALT = {some, all}
-- Expected: exh(some) = "some but not all"
-
-World model:
-- World = Fin 4 representing how many students passed (0, 1, 2, or 3 out of 3)
-- φ "some" = true when ≥ 1 passed
-- "all" = true when all 3 passed
--/
-
-/-- Worlds for some/all example: number of students who passed (0 to 3). -/
-abbrev SomeAllWorld := Fin 4
-
-/-- "Some students passed" (at least one). -/
-def someStudents : Set SomeAllWorld := λ w => w.val ≥ 1
-
-/-- "All students passed" (all three). -/
-def allStudents : Set SomeAllWorld := λ w => w.val = 3
-
-/-- Alternative set: {some, all}. -/
-def someAllALT : Set (Set SomeAllWorld) := {someStudents, allStudents}
-
-/-- World where exactly 1 student passed. -/
-def w1 : SomeAllWorld := ⟨1, by omega⟩
-
-/-- World where all 3 students passed. -/
-def w3 : SomeAllWorld := ⟨3, by omega⟩
-
-/-- w=1 satisfies "some students passed". -/
-theorem w1_satisfies_some : someStudents w1 := by
-  simp only [someStudents, w1]
-  decide
-
-/-- w=1 does not satisfy "all students passed". -/
-theorem w1_not_all : ¬(allStudents w1) := by
-  simp only [allStudents, w1]
-  decide
-
-/-- w=3 satisfies both "some" and "all". -/
-theorem w3_satisfies_both : someStudents w3 ∧ allStudents w3 := by
-  simp only [someStudents, allStudents, w3]
-  constructor <;> decide
-
-/-- w=1 ≤_ALT w=3: alternatives true at w=1 are a subset of those at w=3. -/
-theorem w1_leALT_w3 : w1 ≤[someAllALT] w3 := by
-  intro a ha hau
-  simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-  rcases ha with rfl | rfl
-  · -- a = someStudents: 3 ≥ 1
-    simp only [someStudents]
-    decide
-  · -- a = allStudents: w1 doesn't satisfy this, so vacuously true
-    simp only [allStudents, w1] at hau
-    exact absurd hau (by decide)
-
-/-- w=3 does not satisfy ≤_ALT w=1: w=3 satisfies "all" but w=1 does not. -/
-theorem w3_not_leALT_w1 : ¬(w3 ≤[someAllALT] w1) := by
-  intro h
-  have hall_w1 := h allStudents (by simp [someAllALT]) (by simp [allStudents, w3])
-  simp only [allStudents, w1] at hall_w1
-  exact absurd hall_w1 (by decide)
-
-/-- w=1 <_ALT w=3: strict ordering holds. -/
-theorem w1_ltALT_w3 : w1 <[someAllALT] w3 :=
-  ⟨w1_leALT_w3, w3_not_leALT_w1⟩
-
-/-- w=1 is minimal among "some"-worlds relative to <_ALT. -/
-theorem w1_minimal_some : isMinimal someAllALT someStudents w1 := by
-  constructor
-  · exact w1_satisfies_some
-  · intro ⟨v, hv_some, hv_lt_w1⟩
-    obtain ⟨hv_le, hw1_not_le⟩ := hv_lt_w1
-    apply hw1_not_le
-    intro a ha haw1
-    simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-    rcases ha with rfl | rfl
-    · exact hv_some
-    · simp only [allStudents, w1] at haw1
-      exact absurd haw1 (by decide)
-
-/-- w=3 is not minimal because w=1 <_ALT w=3. -/
-theorem w3_not_minimal_some : ¬isMinimal someAllALT someStudents w3 := by
-  intro ⟨_, hmin⟩
-  apply hmin
-  exact ⟨w1, w1_satisfies_some, w1_ltALT_w3⟩
-
-/--
-Main result for some/all: exh_mw(some) holds at w=1.
-
-This captures the scalar implicature: "some but not all".
--/
-theorem exhMW_some_at_w1 : exhMW someAllALT someStudents w1 :=
-  w1_minimal_some
-
-/--
-Corollary: exh_mw(some) does not hold at w=3.
-
-Worlds where "all" holds are excluded by exhaustification.
--/
-theorem exhMW_some_not_w3 : ¬exhMW someAllALT someStudents w3 := by
-  intro ⟨_, hmin⟩
-  apply hmin
-  exact ⟨w1, w1_satisfies_some, w1_ltALT_w3⟩
-
--- ----------------------------------------------------------------------------
--- 6.2: OR/AND SCALE (EXCLUSIVE DISJUNCTION)
--- ----------------------------------------------------------------------------
-
-/-
-### Exclusive Or: "John sang or danced"
-
-Setup:
-- World = four possibilities: neither, only sang, only danced, both
-- φ = "sang or danced" (inclusive)
-- ALT = {or, and}
-- Expected: exh(or) = "or but not both" (exclusive reading)
--/
-
-/-- Four worlds for or/and example. -/
-inductive OrAndWorld where
-  | neither   -- ¬sang ∧ ¬danced
-  | onlySang  -- sang ∧ ¬danced
-  | onlyDanced -- ¬sang ∧ danced
-  | both      -- sang ∧ danced
-  deriving DecidableEq, Repr
-
-/-- "John sang" -/
-def sang : Set OrAndWorld
-  | .neither => False
-  | .onlySang => True
-  | .onlyDanced => False
-  | .both => True
-
-/-- "John danced" -/
-def danced : Set OrAndWorld
-  | .neither => False
-  | .onlySang => False
-  | .onlyDanced => True
-  | .both => True
-
-/-- "John sang or danced" (inclusive) -/
-def sangOrDanced : Set OrAndWorld := λ w => sang w ∨ danced w
-
-/-- "John sang and danced" -/
-def sangAndDanced : Set OrAndWorld := λ w => sang w ∧ danced w
-
-/-- Alternative set: {or, and}. -/
-def orAndALT : Set (Set OrAndWorld) := {sangOrDanced, sangAndDanced}
-
-/-- The "only sang" world. -/
-def wSang : OrAndWorld := .onlySang
-
-/-- The "both" world. -/
-def wBoth : OrAndWorld := .both
-
-/-- wSang satisfies "or". -/
-theorem wSang_satisfies_or : sangOrDanced wSang := by
-  simp only [sangOrDanced, sang, danced, wSang]
-  left; trivial
-
-/-- wSang does not satisfy "and". -/
-theorem wSang_not_and : ¬(sangAndDanced wSang) := by
-  simp only [sangAndDanced, sang, danced, wSang]
-  intro ⟨_, h⟩; exact h
-
-/-- wBoth satisfies both "or" and "and". -/
-theorem wBoth_satisfies_both : sangOrDanced wBoth ∧ sangAndDanced wBoth := by
-  simp only [sangOrDanced, sangAndDanced, sang, danced, wBoth]
-  exact ⟨Or.inl trivial, ⟨trivial, trivial⟩⟩
-
-/-- wSang ≤_ALT wBoth. -/
-theorem wSang_leALT_wBoth : wSang ≤[orAndALT] wBoth := by
-  intro a ha hau
-  simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-  rcases ha with rfl | rfl
-  · exact wBoth_satisfies_both.1
-  · exact absurd hau wSang_not_and
-
-/-- wBoth does not satisfy ≤_ALT wSang. -/
-theorem wBoth_not_leALT_wSang : ¬(wBoth ≤[orAndALT] wSang) := by
-  intro h
-  have := h sangAndDanced (by simp [orAndALT]) wBoth_satisfies_both.2
-  exact wSang_not_and this
-
-/-- wSang <_ALT wBoth. -/
-theorem wSang_ltALT_wBoth : wSang <[orAndALT] wBoth :=
-  ⟨wSang_leALT_wBoth, wBoth_not_leALT_wSang⟩
-
-/-- wSang is minimal among or-worlds. -/
-theorem wSang_minimal : isMinimal orAndALT sangOrDanced wSang := by
-  constructor
-  · exact wSang_satisfies_or
-  · intro ⟨v, hv_or, hv_lt⟩
-    obtain ⟨hv_le, hwSang_not_le⟩ := hv_lt
-    apply hwSang_not_le
-    intro a ha ha_wSang
-    simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-    rcases ha with rfl | rfl
-    · exact hv_or
-    · exact absurd ha_wSang wSang_not_and
-
-/--
-Main result for or/and: exh_mw(or) at wSang (exclusive reading).
--/
-theorem exhMW_or_at_wSang : exhMW orAndALT sangOrDanced wSang :=
-  wSang_minimal
-
-/--
-Corollary: exh_mw(or) excludes the "both" world.
-
-This is the exclusive disjunction reading.
--/
-theorem exhMW_or_not_wBoth : ¬exhMW orAndALT sangOrDanced wBoth := by
-  intro ⟨_, hmin⟩
-  apply hmin
-  exact ⟨wSang, wSang_satisfies_or, wSang_ltALT_wBoth⟩
-
--- ----------------------------------------------------------------------------
--- 6.3: APPLYING THEOREM 9 (exhMW ≡ exhIE)
--- ----------------------------------------------------------------------------
-
-/-
-### Theorem 9 for Horn Scales
-
-Theorem 9 states: When ALT is closed under conjunction, exhMW ≡ exhIE.
-
-For two-element Horn scales {weak, strong} where strong ⊆ weak:
-- ⋀{weak, strong} = weak ∧ strong = strong (since strong ⊆ weak)
-- ⋀{weak} = weak
-- ⋀{strong} = strong
-
-The only issue is ⋀∅ = ⊤, which may not be in ALT. However, we can prove
-the equivalence directly for our scales by showing IE = {¬strong}.
--/
-
-/--
-For the some/all scale, the stronger alternative (all) entails the weaker (some).
--/
-theorem allStudents_entails_someStudents : allStudents ⊆ₚ someStudents := by
-  intro w h
-  show w.val ≥ 1
-  change w.val = 3 at h
-  omega
-
-/--
-For the some/all scale: exhMW ≡ exhIE.
-
-We prove this using Proposition 6 (⊆) and a direct argument for (⊇).
-The key insight: at any exhIE world, the stronger alternative is false,
-which means the world is minimal (no world below it satisfies more alternatives).
--/
-theorem someAll_exhMW_iff_exhIE :
-    exhMW someAllALT someStudents ≡ₚ exhIE someAllALT someStudents := by
-  constructor
-  · -- exhMW ⊆ exhIE: Proposition 6
-    exact prop6_exhMW_entails_exhIE someAllALT someStudents
-  · -- exhIE ⊆ exhMW: Direct proof for this scale
-    intro w hie
-    -- exhIE means w satisfies someStudents and all alternatives in IE
-    -- For ALT = {some, all}, IE contains ¬all (the only excludable alternative)
-    -- So exhIE(some)(w) implies some(w) ∧ ¬all(w)
-    constructor
-    · -- someStudents w: follows from exhIE definition
-      -- someStudents ∈ IE because it's consistent with all MC-sets
-      have hsome_in_IE : someStudents ∈ IE someAllALT someStudents := by
-        intro E hE_mc
-        exact hE_mc.1.1
-      exact hie someStudents hsome_in_IE
-    · -- w is minimal: no v with someStudents v ∧ v <_ALT w
-      intro ⟨v, hv_some, hv_lt_w⟩
-      -- v <_ALT w means v ≤_ALT w and ¬(w ≤_ALT v)
-      obtain ⟨hv_le_w, hw_not_le_v⟩ := hv_lt_w
-      -- ¬(w ≤_ALT v) means ∃ a ∈ ALT, a w ∧ ¬(a v)
-      simp only [leALT] at hw_not_le_v
-      push_neg at hw_not_le_v
-      obtain ⟨a, ha_ALT, ha_w, hna_v⟩ := hw_not_le_v
-      -- a ∈ {someStudents, allStudents}
-      simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha_ALT
-      rcases ha_ALT with rfl | rfl
-      · -- a = someStudents: but v satisfies someStudents, contradiction
-        exact hna_v hv_some
-      · -- a = allStudents: w satisfies allStudents
-        -- exhIE should exclude allStudents. Derive a contradiction.
-        -- If allStudents w, then w = 3 (the only all-world)
-        -- At w = 3, exhIE should not hold (all is not excluded)
-        -- Actually, we need to show ¬allStudents ∈ IE
-        have hneg_all_in_IE : (∼allStudents) ∈ IE someAllALT someStudents := by
-          intro E hE_mc
-          -- We show ∼allStudents ∈ E using maximality of MC-sets
-          -- Strategy: E ∪ {∼allStudents} would be compatible, so by maximality ∼allStudents ∈ E
-          by_contra h_not_in
-          -- Consider E' = E ∪ {∼allStudents}
-          -- Show E' is compatible, contradicting maximality of E
-          let E' := E ∪ {∼allStudents}
-          have hcompat : isCompatible someAllALT someStudents E' := by
-            obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
-            constructor
-            · -- someStudents ∈ E'
-              left; exact hphi
-            constructor
-            · -- Every element is someStudents or ∼(something in ALT)
-              intro ψ hψ
-              rcases hψ with hψ_E | hψ_new
-              · exact hform ψ hψ_E
-              · simp only [Set.mem_singleton_iff] at hψ_new
-                right
-                refine ⟨allStudents, ?_, hψ_new⟩
-                simp [someAllALT]
-            · -- Consistency: witness w1 where some holds and ¬all holds
-              use w1
-              intro ψ hψ
-              rcases hψ with hψ_E | hψ_new
-              · -- ψ ∈ E: analyze what ψ can be
-                rcases hform ψ hψ_E with rfl | ⟨a, ha, rfl⟩
-                · exact w1_satisfies_some
-                · -- ψ = ∼a for some a ∈ ALT
-                  simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-                  rcases ha with rfl | rfl
-                  · -- ψ = ∼someStudents: inconsistent with someStudents in E
-                    exfalso
-                    obtain ⟨u, hu⟩ := hcons
-                    exact hu (∼someStudents) hψ_E (hu someStudents hphi)
-                  · -- ψ = ∼allStudents at w1
-                    exact w1_not_all
-              · -- ψ = ∼allStudents
-                simp only [Set.mem_singleton_iff] at hψ_new
-                rw [hψ_new]
-                exact w1_not_all
-          -- Now E ⊊ E' and both are compatible - contradicts maximality
-          have hsubset : E ⊆ E' := Set.subset_union_left
-          have hE'_not_sub_E : ¬(E' ⊆ E) := by
-            intro hle
-            apply h_not_in
-            exact hle (Set.mem_union_right E (Set.mem_singleton _))
-          exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-        -- Now: hie says w satisfies all of IE, including ∼allStudents
-        have hna_w : ¬(allStudents w) := hie (∼allStudents) hneg_all_in_IE
-        -- But ha_w says allStudents w - contradiction.
-        exact hna_w ha_w
-
-/--
-For the or/and scale, the stronger alternative (and) entails the weaker (or).
--/
-theorem sangAndDanced_entails_sangOrDanced : sangAndDanced ⊆ₚ sangOrDanced := by
-  intro w h
-  change sang w ∧ danced w at h
-  exact Or.inl h.1
-
-/--
-For the or/and scale: exhMW ≡ exhIE.
--/
-theorem orAnd_exhMW_iff_exhIE :
-    exhMW orAndALT sangOrDanced ≡ₚ exhIE orAndALT sangOrDanced := by
-  constructor
-  · exact prop6_exhMW_entails_exhIE orAndALT sangOrDanced
-  · intro w hie
-    constructor
-    · have hor_in_IE : sangOrDanced ∈ IE orAndALT sangOrDanced := λ E hE => hE.1.1
-      exact hie sangOrDanced hor_in_IE
-    · intro ⟨v, hv_or, hv_lt_w⟩
-      obtain ⟨hv_le_w, hw_not_le_v⟩ := hv_lt_w
-      simp only [leALT] at hw_not_le_v
-      push_neg at hw_not_le_v
-      obtain ⟨a, ha_ALT, ha_w, hna_v⟩ := hw_not_le_v
-      simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha_ALT
-      rcases ha_ALT with rfl | rfl
-      · exact hna_v hv_or
-      · have hneg_and_in_IE : (∼sangAndDanced) ∈ IE orAndALT sangOrDanced := by
-          intro E hE_mc
-          -- Same pattern as some/all: use maximality
-          by_contra h_not_in
-          let E' := E ∪ {∼sangAndDanced}
-          have hcompat : isCompatible orAndALT sangOrDanced E' := by
-            obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
-            constructor
-            · left; exact hphi
-            constructor
-            · intro ψ hψ
-              rcases hψ with hψ_E | hψ_new
-              · exact hform ψ hψ_E
-              · simp only [Set.mem_singleton_iff] at hψ_new
-                right
-                refine ⟨sangAndDanced, ?_, hψ_new⟩
-                simp [orAndALT]
-            · -- Consistency: witness wSang where or holds and ¬and holds
-              use wSang
-              intro ψ hψ
-              rcases hψ with hψ_E | hψ_new
-              · rcases hform ψ hψ_E with rfl | ⟨a, ha, rfl⟩
-                · exact wSang_satisfies_or
-                · simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-                  rcases ha with rfl | rfl
-                  · -- ψ = ∼sangOrDanced, inconsistent with sangOrDanced in E
-                    exfalso
-                    obtain ⟨u, hu⟩ := hcons
-                    exact hu (∼sangOrDanced) hψ_E (hu sangOrDanced hphi)
-                  · exact wSang_not_and
-              · simp only [Set.mem_singleton_iff] at hψ_new
-                rw [hψ_new]
-                exact wSang_not_and
-          have hsubset : E ⊆ E' := Set.subset_union_left
-          have hE'_not_sub_E : ¬(E' ⊆ E) := by
-            intro hle
-            apply h_not_in
-            exact hle (Set.mem_union_right E (Set.mem_singleton _))
-          exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-        have hna_w : ¬(sangAndDanced w) := hie (∼sangAndDanced) hneg_and_in_IE
-        exact hna_w ha_w
-
-/--
-Theorem 9 application: At w1, both exhMW and exhIE agree.
--/
-theorem exhIE_some_at_w1 : exhIE someAllALT someStudents w1 :=
-  someAll_exhMW_iff_exhIE.1 exhMW_some_at_w1
-
-/--
-Theorem 9 application: At w3, both exhMW and exhIE agree (both false).
--/
-theorem exhIE_some_not_w3 : ¬exhIE someAllALT someStudents w3 := by
-  intro h
-  exact exhMW_some_not_w3 (someAll_exhMW_iff_exhIE.2 h)
-
-/--
-Theorem 9 application: At wSang, both exhMW and exhIE agree.
--/
-theorem exhIE_or_at_wSang : exhIE orAndALT sangOrDanced wSang :=
-  orAnd_exhMW_iff_exhIE.1 exhMW_or_at_wSang
-
-/--
-Theorem 9 application: At wBoth, both exhMW and exhIE agree (both false).
--/
-theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
-  intro h
-  exact exhMW_or_not_wBoth (orAnd_exhMW_iff_exhIE.2 h)
-
--- ----------------------------------------------------------------------------
--- 6.4: SUMMARY OF DERIVATIONS
--- ----------------------------------------------------------------------------
 
 
 -- SECTION 7: MAXIMIZE STRENGTH PRINCIPLE (@cite{chierchia-2013})
@@ -1693,7 +1210,8 @@ theorem id_context_is_UE : IsUpwardEntailing (id : Context World) := by
 /--
 Negation context is downward entailing.
 -/
-theorem neg_context_is_DE : IsDownwardEntailing (pneg : Context World) := by
+theorem neg_context_is_DE :
+    IsDownwardEntailing ((Compl.compl : Set World → Set World) : Context World) := by
   intro φ ψ h w hNotψ hφ
   exact hNotψ (h hφ)
 
@@ -1775,52 +1293,6 @@ This matches empirical observations:
 - "If some students passed, the teacher is happy" does not implicate
   "If some but not all students passed..."
 -/
-
--- Summary table for documentation
-/--
-Maximize Strength predictions summary:
-
-| Context Type | SI Effect | Prediction | Example |
-|--------------|-----------|------------|---------|
-| Matrix clause (UE) | Strengthens | Compute SI | "some → not all" |
-| Negation scope (DE) | Weakens | No SI | "not some → some or none" |
-| Conditional antecedent (DE) | Weakens | No SI | "if some, then..." |
-| Universal restrictor (DE) | Weakens | No SI | "every... who saw some..." |
-| Question nucleus (NM) | Neither | No SI | "Did some...?" |
--/
-structure MaximizeStrengthExample where
-  description : String
-  contextType : ContextPolarity
-  siComputed : Bool
-  explanation : String
-  deriving Repr
-
-def ms_matrix_clause : MaximizeStrengthExample :=
-  { description := "John saw some students"
-  , contextType := .upward
-  , siComputed := true
-  , explanation := "UE context: SI strengthens assertion" }
-
-def ms_negation : MaximizeStrengthExample :=
-  { description := "John didn't see some students"
-  , contextType := .downward
-  , siComputed := false
-  , explanation := "DE context: SI would weaken to 'saw none or not all'" }
-
-def ms_antecedent : MaximizeStrengthExample :=
-  { description := "If John saw some students, he's happy"
-  , contextType := .downward
-  , siComputed := false
-  , explanation := "Conditional antecedent is DE: SI would weaken" }
-
-def ms_universal_restrictor : MaximizeStrengthExample :=
-  { description := "Everyone who saw some students is happy"
-  , contextType := .downward
-  , siComputed := false
-  , explanation := "Universal restrictor is DE: SI would weaken" }
-
-def maximizeStrengthExamples : List MaximizeStrengthExample :=
-  [ms_matrix_clause, ms_negation, ms_antecedent, ms_universal_restrictor]
 
 
 -- ============================================================================

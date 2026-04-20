@@ -1,4 +1,4 @@
-import Linglib.Core.Interval.PadeExp
+import Linglib.Tactics.RSAPredict.Backend.PadeExp
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 import Mathlib.Data.Nat.Log
 

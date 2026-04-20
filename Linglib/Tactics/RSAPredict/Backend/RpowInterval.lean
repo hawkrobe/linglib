@@ -1,4 +1,4 @@
-import Linglib.Core.Interval.QInterval
+import Linglib.Tactics.RSAPredict.Backend.QInterval
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
 set_option autoImplicit false

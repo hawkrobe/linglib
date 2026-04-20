@@ -40,7 +40,7 @@ because KL-divergence assigns infinite disutility to "true enough" messages
 
 This file uses Hellinger distance in the speaker's utility (Eq. 16),
 which requires `Real.sqrt`. The `rsa_predict` tactic's interval arithmetic
-engine (`Core.Interval.ReflectInterval.RExpr`) supports `exp`, `log`,
+engine (`Tactics.RSAPredict.Backend.ReflectInterval.RExpr`) supports `exp`, `log`,
 `rpow` (ℕ exponent), and basic arithmetic — but NOT `sqrt`. All
 predictions therefore use `sorry`, documenting a concrete gap in
 `rsa_predict`'s coverage. To close these, `RExpr` would need a `.rsqrt`
