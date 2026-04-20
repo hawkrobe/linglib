@@ -289,10 +289,11 @@ inductive InterclauseRelation where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Whether a relation involves temporal ordering. -/
-def InterclauseRelation.isTemporal : InterclauseRelation → Bool
-  | .sequential   => true
-  | .simultaneous => true
-  | _             => false
+def InterclauseRelation.IsTemporal (r : InterclauseRelation) : Prop :=
+  r = .sequential ∨ r = .simultaneous
+
+instance : DecidablePred InterclauseRelation.IsTemporal :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Whether a relation can be encoded purely via SR morphology
     (without a separate connective or adverbial suffix).
@@ -357,15 +358,18 @@ inductive ClauseLinkingStrategy where
 def clauseChainingStrategy : ClauseLinkingStrategy := .cosubordination
 
 /-- Whether the dependent clause is embedded as a syntactic constituent. -/
-def ClauseLinkingStrategy.isEmbedded : ClauseLinkingStrategy → Bool
-  | .subordination => true
-  | _              => false
+def ClauseLinkingStrategy.IsEmbedded (s : ClauseLinkingStrategy) : Prop :=
+  s = .subordination
+
+instance : DecidablePred ClauseLinkingStrategy.IsEmbedded :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- Whether the dependent clause is morphologically reduced (non-independent). -/
-def ClauseLinkingStrategy.isDependentReduced : ClauseLinkingStrategy → Bool
-  | .subordination    => true
-  | .cosubordination  => true
-  | .coordination     => false
+def ClauseLinkingStrategy.IsDependentReduced (s : ClauseLinkingStrategy) : Prop :=
+  s = .subordination ∨ s = .cosubordination
+
+instance : DecidablePred ClauseLinkingStrategy.IsDependentReduced :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 -- ============================================================================
 -- § Language-level parameter bundle
@@ -435,11 +439,11 @@ def ClauseChainingParams.medialVerbForm (p : ClauseChainingParams) : UD.VerbForm
 
 /-- Clause chaining is cosubordination: dependent but not embedded. -/
 theorem chaining_not_embedded :
-    clauseChainingStrategy.isEmbedded = false := rfl
+    ¬ clauseChainingStrategy.IsEmbedded := by decide
 
 /-- Clause chaining involves dependent reduction (unlike coordination). -/
 theorem chaining_is_dependent :
-    clauseChainingStrategy.isDependentReduced = true := rfl
+    clauseChainingStrategy.IsDependentReduced := by decide
 
 /-- Medial-final chains predict head-final word order. -/
 theorem medialFinal_is_headFinal :

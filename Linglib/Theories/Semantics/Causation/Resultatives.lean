@@ -677,11 +677,11 @@ theorem all_have_become :
   native_decide
 
 /-- Inception presupposes ¬P before. -/
-theorem inception_presupposes_not_prior {W : Type*} (P : W → Bool) (w : W) :
-    priorStatePresup .inception P w = !P w := rfl
+theorem inception_presupposes_not_prior {W : Type*} (P : W → Prop) (w : W) :
+    priorStatePresup .inception P w ↔ ¬P w := Iff.rfl
 
 /-- Inception asserts P after. -/
-theorem inception_asserts_result {W : Type*} (P : W → Bool) :
+theorem inception_asserts_result {W : Type*} (P : W → Prop) :
     resultStateAssertion .inception P = P := rfl
 
 /-! ## Müller Decomposability

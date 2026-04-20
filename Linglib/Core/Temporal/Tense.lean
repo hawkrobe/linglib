@@ -260,8 +260,13 @@ def toFrame {Time : Type*} (tp : TensePronoun)
   referenceTime := tp.resolve g
   eventTime := eventTime
 
-def isIndexical (tp : TensePronoun) : Bool := tp.mode == .indexical
-def isBound (tp : TensePronoun) : Bool := tp.mode == .bound
+def isIndexical (tp : TensePronoun) : Prop := tp.mode = .indexical
+instance (tp : TensePronoun) : Decidable tp.isIndexical :=
+  inferInstanceAs (Decidable (tp.mode = .indexical))
+
+def isBound (tp : TensePronoun) : Prop := tp.mode = .bound
+instance (tp : TensePronoun) : Decidable tp.isBound :=
+  inferInstanceAs (Decidable (tp.mode = .bound))
 
 end TensePronoun
 

@@ -119,10 +119,13 @@ def ofBool : Bool → Truth3
   | Bool.false => .false
 
 /-- Check if defined (not indet). -/
-def isDefined : Truth3 → Bool
-  | .true => Bool.true
-  | .false => Bool.true
-  | .indet => Bool.false
+def isDefined : Truth3 → Prop
+  | .true => True
+  | .false => True
+  | .indet => False
+
+instance : DecidablePred isDefined := fun v => by
+  cases v <;> unfold isDefined <;> infer_instance
 
 /-- Convert to Bool if defined, else default to false. -/
 def toBoolOrFalse : Truth3 → Bool
@@ -289,16 +292,16 @@ theorem meetWeak_comm (a b : Truth3) : meetWeak a b = meetWeak b a := by
   cases a <;> cases b <;> rfl
 
 /-- Meta-assertion always produces a defined value. -/
-theorem metaAssert_defined (v : Truth3) : (metaAssert v).isDefined = Bool.true := by
-  cases v <;> rfl
+theorem metaAssert_defined (v : Truth3) : (metaAssert v).isDefined := by
+  cases v <;> trivial
 
 /-- Meta-assertion is idempotent. -/
 theorem metaAssert_idempotent (v : Truth3) : metaAssert (metaAssert v) = metaAssert v := by
   cases v <;> rfl
 
 /-- Meta-assertion preserves defined values. -/
-theorem metaAssert_of_defined (v : Truth3) (h : v.isDefined = Bool.true) : metaAssert v = v := by
-  cases v with | true => rfl | false => rfl | indet => simp [isDefined] at h
+theorem metaAssert_of_defined (v : Truth3) (h : v.isDefined) : metaAssert v = v := by
+  cases v with | true => rfl | false => rfl | indet => exact absurd h id
 
 -- ════════════════════════════════════════════════════════════════
 -- Middle Kleene Connectives
@@ -349,9 +352,9 @@ theorem meetMiddle_not_comm : ¬ ∀ a b : Truth3, meetMiddle a b = meetMiddle b
 
 /-- When the left operand is defined, Middle Kleene conjunction
     equals Strong Kleene conjunction. -/
-theorem meetMiddle_eq_meet_of_left_defined (a b : Truth3) (h : a.isDefined = Bool.true) :
+theorem meetMiddle_eq_meet_of_left_defined (a b : Truth3) (h : a.isDefined) :
     meetMiddle a b = meet a b := by
-  cases a with | true => rfl | false => rfl | indet => simp [isDefined] at h
+  cases a with | true => rfl | false => rfl | indet => exact absurd h id
 
 /-- Middle Kleene disjunction is NOT commutative.
     `joinMiddle true indet = true` but `joinMiddle indet true = indet`. -/
@@ -393,9 +396,9 @@ theorem joinMiddle_ofBool (a b : Bool) :
 
 /-- When the left operand is defined, Middle Kleene disjunction
     equals Strong Kleene disjunction. -/
-theorem joinMiddle_eq_join_of_left_defined (a b : Truth3) (h : a.isDefined = Bool.true) :
+theorem joinMiddle_eq_join_of_left_defined (a b : Truth3) (h : a.isDefined) :
     joinMiddle a b = join a b := by
-  cases a with | true => rfl | false => rfl | indet => simp [isDefined] at h
+  cases a with | true => rfl | false => rfl | indet => exact absurd h id
 
 /-- Weak Kleene refines Middle Kleene disjunction: when Weak Kleene
     gives a defined answer, Middle Kleene agrees. -/

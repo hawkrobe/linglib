@@ -192,6 +192,11 @@ def cmp_3sm_G : PAC :=
 def cmp_3sm_R : PAC :=
   mkRelativePAC ⟨.s3, some .masculine⟩ .completive "yà" trivial
 
+/-- 3sg.F completive, Relative form *ta* (@cite{newman-2000} §70.2,
+    @cite{hartmann-zimmermann-2007} eq. 24). -/
+def cmp_3sf_R : PAC :=
+  mkRelativePAC ⟨.s3, some .feminine⟩ .completive "ta" trivial
+
 /-- 3sg.M continuous, General form *yanā*. -/
 def cont_3sm_G : PAC :=
   mkGeneralPAC ⟨.s3, some .masculine⟩ .continuous "yanā"
@@ -201,6 +206,26 @@ def cont_3sm_G : PAC :=
 def cont_3sm_R : PAC :=
   mkRelativePAC ⟨.s3, some .masculine⟩ .continuous "yake" trivial
 
+/-- 3sg.F continuous, Relative form *takèe*
+    (@cite{hartmann-zimmermann-2007} eq. 22). -/
+def cont_3sf_R : PAC :=
+  mkRelativePAC ⟨.s3, some .feminine⟩ .continuous "takèe" trivial
+
+/-- 1sg completive, General form *naa*
+    (@cite{hartmann-zimmermann-2007} eq. 23). -/
+def cmp_1sg_G : PAC :=
+  mkGeneralPAC ⟨.s1, none⟩ .completive "naa"
+
+/-- 1sg continuous, Relative form *nakèe*
+    (@cite{hartmann-zimmermann-2007} eq. 29). -/
+def cont_1sg_R : PAC :=
+  mkRelativePAC ⟨.s1, none⟩ .continuous "nakèe" trivial
+
+/-- 1sg future *zân* (@cite{hartmann-zimmermann-2007} eqs. 25, 30).
+    No General/Relative contrast in the future TAM. -/
+def fut_1sg : PAC :=
+  mkGeneralPAC ⟨.s1, none⟩ .future "zân"
+
 /-- 3sg.M subjunctive *yà*. No General/Relative contrast in this TAM. -/
 def subj_3sm : PAC :=
   mkGeneralPAC ⟨.s3, some .masculine⟩ .subjunctive "yà"
@@ -209,7 +234,8 @@ def subj_3sm : PAC :=
     (notably `Hausa/Focus.lean`). Every entry is well-formed by
     construction (see `all_representative_PACs_wellFormed`). -/
 def representativePACs : List PAC :=
-  [cmp_3sm_G, cmp_3sm_R, cont_3sm_G, cont_3sm_R, subj_3sm]
+  [cmp_3sm_G, cmp_3sm_R, cmp_3sf_R, cont_3sm_G, cont_3sm_R, cont_3sf_R,
+   cmp_1sg_G, cont_1sg_R, fut_1sg, subj_3sm]
 
 -- ============================================================================
 -- § 5: Universal Theorems
@@ -234,7 +260,7 @@ theorem all_representative_PACs_wellFormed :
     ∀ p ∈ representativePACs, p.WellFormed := by
   intro p hp
   simp only [representativePACs, List.mem_cons, List.not_mem_nil, or_false] at hp
-  rcases hp with rfl | rfl | rfl | rfl | rfl <;> decide
+  rcases hp with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;> decide
 
 /-- **The registry covers both modes for every TAM that admits the
     split.** This is what makes the registry a genuine empirical

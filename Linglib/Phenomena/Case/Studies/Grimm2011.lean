@@ -13,7 +13,7 @@ object marking profiles in `Phenomena/Case/Typology.lean`.
 ## Key results
 
 1. **Russian DOM matches the lattice exactly**: for canonical transitives
-   (quPersBeginning), `domPredictedByLattice` returns true for exactly
+   (quPersBeginning), `DomPredictedByLattice` holds for exactly
    {animate, human} — the same cells Russian marks.
 
 2. **Spanish DOM is a proper subset**: the lattice predicts DOM for
@@ -61,7 +61,7 @@ open Phenomena.Case.Typology
 theorem russian_matches_lattice :
     AnimacyLevel.all.all (λ a =>
       russianDOM.marks a .definite ==
-      domPredictedByLattice a .quPersBeginning) = true := by native_decide
+      decide (DomPredictedByLattice a .quPersBeginning)) = true := by decide
 
 /-- Spanish DOM is a proper subset of the lattice's prediction.
     Both agree on inanimate (no DOM) and human (DOM), but diverge
@@ -69,12 +69,12 @@ theorem russian_matches_lattice :
     dative), but Spanish does not mark animate objects. -/
 theorem spanish_subset_of_lattice :
     -- Agreement on inanimate and human
-    spanishDOM.marks .inanimate .definite = domPredictedByLattice .inanimate .quPersBeginning ∧
-    spanishDOM.marks .human .definite = domPredictedByLattice .human .quPersBeginning ∧
+    spanishDOM.marks .inanimate .definite = decide (DomPredictedByLattice .inanimate .quPersBeginning) ∧
+    spanishDOM.marks .human .definite = decide (DomPredictedByLattice .human .quPersBeginning) ∧
     -- Divergence on animate
     spanishDOM.marks .animate .definite = false ∧
-    domPredictedByLattice .animate .quPersBeginning = true :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+    DomPredictedByLattice .animate .quPersBeginning :=
+  ⟨by decide, by decide, by decide, by decide⟩
 
 /-- Hindi DOM is consistent with the lattice on the animacy dimension:
     inanimate objects are never marked regardless of definiteness, and
@@ -98,8 +98,8 @@ theorem animacy_dom_within_lattice :
     [spanishDOM, russianDOM].all (λ dom =>
       AnimacyLevel.all.all (λ a =>
         if dom.marks a .definite
-        then domPredictedByLattice a .quPersBeginning
-        else true)) = true := by native_decide
+        then decide (DomPredictedByLattice a .quPersBeginning)
+        else true)) = true := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Cross-Framework Monotonicity (Lattice ↔ @cite{aissen-2003})
@@ -112,14 +112,14 @@ theorem animacy_dom_within_lattice :
     Two independent frameworks, same prediction. -/
 
 /-- A DOM profile derived from the lattice's predictions at a fixed
-    persistence level. Since `domPredictedByLattice` is monotone in
+    persistence level. Since `DomPredictedByLattice` is monotone in
     animacy (§21.7 of AgentivityLattice.lean), this profile is
     automatically an upper set on the animacy scale. -/
 def latticeDOM (p : PersistenceLevel) : DOMProfile :=
   { name := "Lattice-derived"
     role := .P
     channel := .flagging
-    marks := λ a _ => domPredictedByLattice a p }
+    marks := λ a _ => decide (DomPredictedByLattice a p) }
 
 /-- Every lattice-derived DOM profile is monotone in
     @cite{aissen-2003}'s sense (upper set in the bidimensional grid).
@@ -132,16 +132,16 @@ def latticeDOM (p : PersistenceLevel) : DOMProfile :=
     3. Once non-⊥, the object stays non-⊥ at higher animacy levels -/
 theorem lattice_dom_always_monotone (p : PersistenceLevel) :
     (latticeDOM p).isMonotone = true := by
-  cases p <;> native_decide
+  cases p <;> decide
 
 /-- The lattice's canonical transitive prediction matches
     @cite{aissen-2003}'s OT Type 2 (Hu + An, not In). Two independent
     theories converge on the Russian pattern. -/
 theorem lattice_matches_aissen_type2 :
-    domPredictedByLattice .human .quPersBeginning = true ∧
-    domPredictedByLattice .animate .quPersBeginning = true ∧
-    domPredictedByLattice .inanimate .quPersBeginning = false :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+    DomPredictedByLattice .human .quPersBeginning ∧
+    DomPredictedByLattice .animate .quPersBeginning ∧
+    ¬ DomPredictedByLattice .inanimate .quPersBeginning :=
+  ⟨by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 3. Case Regions for Canonical Verbs
@@ -263,10 +263,10 @@ theorem die_subject_persistence :
     This is the lattice's version of Tsunoda's observation that contact
     and resultative verbs form the core of transitivity. -/
 theorem transitivity_membership :
-    (GrimmNode.fromObjectProfile kickObjectProfile).inTransitiveRegion = true ∧
-    (GrimmNode.fromObjectProfile eatObjectProfile).inTransitiveRegion = true ∧
-    (GrimmNode.fromObjectProfile buildObjectProfile).inTransitiveRegion = false :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+    (GrimmNode.fromObjectProfile kickObjectProfile).InTransitiveRegion ∧
+    (GrimmNode.fromObjectProfile eatObjectProfile).InTransitiveRegion ∧
+    ¬ (GrimmNode.fromObjectProfile buildObjectProfile).InTransitiveRegion :=
+  ⟨by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Verb Class Effect on DOM (@cite{von-heusinger-2008})
@@ -300,8 +300,8 @@ theorem verb_class_dom_behavior :
     -- Class 2: subject NOT in core agent region
     (GrimmNode.fromSubjectProfile seeSubjectProfile).toCaseRegion ≠ .nomErg ∧
     -- Creation: object outside transitivity region entirely
-    (GrimmNode.fromObjectProfile buildObjectProfile).inTransitiveRegion = false :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+    ¬ (GrimmNode.fromObjectProfile buildObjectProfile).InTransitiveRegion :=
+  ⟨by decide, by decide, by decide, by decide⟩
 
 /-- Creation verb objects are outside the transitivity region at ALL
     animacy levels. DOM is structurally inapplicable — the lattice
@@ -311,8 +311,8 @@ theorem verb_class_dom_behavior :
     creation objects (build a team, invent a character) should not
     trigger DOM, because the object does not exist at event start. -/
 theorem creation_dom_inapplicable (a : AnimacyLevel) :
-    domPredictedByLattice a .exPersEnd = false := by
-  cases a <;> native_decide
+    ¬ DomPredictedByLattice a .exPersEnd := by
+  cases a <;> decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Accusative and Ergative Alignment

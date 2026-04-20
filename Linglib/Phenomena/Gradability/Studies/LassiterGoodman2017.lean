@@ -1,6 +1,6 @@
 import Linglib.Core.Scales.Scale
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Semantics.Gradability.Theory
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.DeriveFintype

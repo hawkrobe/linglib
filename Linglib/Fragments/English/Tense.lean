@@ -87,7 +87,7 @@ def allEntries : List TAMEEntry :=
 
 /-- English nonfuture entries. -/
 def nonfutureEntries : List TAMEEntry :=
-  allEntries.filter (·.isNonfuture)
+  allEntries.filter (decide ·.IsNonfuture)
 
 -- ════════════════════════════════════════════════════
 -- § 4. Tense Perspective Entries (@cite{lakoff-1970})
@@ -185,7 +185,7 @@ def kratzerPresentPerfect : KratzerDecomposition where
 
 /-- English simple past can be deictic (from decomposition). -/
 theorem kratzerSimplePast_deictic :
-    kratzerSimplePast.canBeDeictic = true := rfl
+    kratzerSimplePast.canBeDeictic := by decide
 
 /-- The underlying tense head is PRESENT, not PAST.
     Pastness comes from the PERF aspect head, not the tense. -/

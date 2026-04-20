@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Core.Dependency.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CatenalConstruction
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 

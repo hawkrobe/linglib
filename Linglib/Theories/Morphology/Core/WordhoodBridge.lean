@@ -138,13 +138,13 @@ theorem morphStatus_exhaustive (s : MorphStatus) :
 
 /-- Affixhood (in MorphStatus) is equivalent to ms-boundedness. -/
 theorem affix_iff_ms_bound (s : MorphStatus) :
-    s.isAffix = true ↔ morphStatusToMSBound s = .bound := by
-  cases s <;> simp [MorphStatus.isAffix, morphStatusToMSBound]
+    s.IsAffix ↔ morphStatusToMSBound s = .bound := by
+  cases s <;> simp [MorphStatus.IsAffix, morphStatusToMSBound]
 
 /-- Clitichood (in MorphStatus) implies ms-freedom. -/
-theorem clitic_implies_ms_free (s : MorphStatus) (h : s.isClitic = true) :
+theorem clitic_implies_ms_free (s : MorphStatus) (h : s.IsClitic) :
     morphStatusToMSBound s = .free := by
-  cases s <;> simp_all [MorphStatus.isClitic, morphStatusToMSBound]
+  cases s <;> simp_all [MorphStatus.IsClitic, morphStatusToMSBound]
 
 -- ============================================================================
 -- §6: ProsodicWord → PBoundedness

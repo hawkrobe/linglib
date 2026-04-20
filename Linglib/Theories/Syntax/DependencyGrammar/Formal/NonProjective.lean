@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Dominance
+import Linglib.Core.Dependency.Dominance
 import Linglib.Core.VerbCluster
 
 /-!
@@ -12,7 +12,7 @@ Formalizes the structural theory of non-projectivity from:
 - @cite{kuhlmann-2013}. Mildly Non-Projective Dependency Grammar.
   Computational Linguistics 39(2):355–387.
 - @cite{mueller-2013}. Unifying Everything. Language 89(4):920–950.
-- @cite{hudson-1984}. Word Grammar.
+- @cite{hudson-2010}. An Introduction to Word Grammar.
 
 ## Core Concepts
 

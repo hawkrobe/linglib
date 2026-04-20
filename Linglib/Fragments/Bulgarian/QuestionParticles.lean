@@ -1,17 +1,17 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
-
 /-!
 # Bulgarian Question Particles
 @cite{simik-2024}
 
-Lexical entries for Bulgarian interrogative particles.
+Lexical entries for Bulgarian interrogative particles. The fragment
+commits only to theory-neutral lexical primitives; the left-peripheral
+layer assignment lives in `Phenomena.Questions.Studies.Simik2024`.
 
 ## Particles
 
-| Particle | Romanization | Gloss | Layer | Bias |
-|----------|-------------|-------|-------|------|
-| ли | li | neutral PQ | CP | none |
-| нима | nima | RAZVE (mirative) | PerspP | +evidential |
+| Particle | Romanization | Gloss | Bias |
+|----------|-------------|-------|------|
+| ли | li | neutral PQ | none |
+| нима | nima | RAZVE (mirative) | +evidential |
 
 ## Cross-Module Connections
 
@@ -23,14 +23,11 @@ Lexical entries for Bulgarian interrogative particles.
 
 namespace Fragments.Bulgarian.QuestionParticles
 
-open Semantics.Questions (QParticleLayer)
-
 /-- A Bulgarian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
   romanization : String
   gloss : String
-  layer : QParticleLayer
   polarOk : Bool
   declOk : Bool
   whOk : Bool
@@ -44,7 +41,6 @@ def li : QParticleEntry where
   form := "ли"
   romanization := "li"
   gloss := "PQ (verb-attached neutral)"
-  layer := .cp
   polarOk := true
   declOk := false
   whOk := false
@@ -58,7 +54,6 @@ def nima : QParticleEntry where
   form := "нима"
   romanization := "nima"
   gloss := "RAZVE (mirative/incredulity)"
-  layer := .perspP
   polarOk := true
   declOk := false
   whOk := false

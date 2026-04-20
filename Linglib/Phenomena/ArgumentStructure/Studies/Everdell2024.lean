@@ -623,30 +623,33 @@ theorem no_hypertransitivity (v : OdamVerb)
 /-- Whether a participant type is promotable by the applicative.
     Promotion requires adding an animacy entailment. Instruments
     are categorically inanimate in O'dam, so they cannot be promoted. -/
-def isPromotable : EntailedParticipantType → AnimateCompatibility → Bool
-  | .implicitObject, _           => true
-  | .locative,       .compatible => true
-  | .locative,       .incompatible => false
-  | .instrument,     _           => false
-  | .none,           _           => false
+def isPromotable : EntailedParticipantType → AnimateCompatibility → Prop
+  | .implicitObject, _           => True
+  | .locative,       .compatible => True
+  | .locative,       .incompatible => False
+  | .instrument,     _           => False
+  | .none,           _           => False
+
+instance : ∀ p ac, Decidable (isPromotable p ac) := fun p ac => by
+  cases p <;> cases ac <;> unfold isPromotable <;> infer_instance
 
 /-- Instruments are never promotable. -/
 theorem instruments_never_promotable (ac : AnimateCompatibility) :
-    isPromotable .instrument ac = false := by
-  cases ac <;> rfl
+    ¬ isPromotable .instrument ac := by
+  cases ac <;> exact not_false
 
 /-- Implicit objects are always promotable. -/
 theorem implicit_objects_always_promotable (ac : AnimateCompatibility) :
-    isPromotable .implicitObject ac = true := by
-  cases ac <;> rfl
+    isPromotable .implicitObject ac := by
+  cases ac <;> trivial
 
 /-- Animate-compatible locatives are promotable. -/
 theorem animate_locatives_promotable :
-    isPromotable .locative .compatible = true := rfl
+    isPromotable .locative .compatible := trivial
 
 /-- Inanimate locatives are not promotable. -/
 theorem inanimate_locatives_not_promotable :
-    isPromotable .locative .incompatible = false := rfl
+    ¬ isPromotable .locative .incompatible := not_false
 
 -- ════════════════════════════════════════════════════
 -- § 14. Exceptional Transitive Classification
@@ -658,11 +661,14 @@ theorem inanimate_locatives_not_promotable :
     This captures @cite{naess-2007}'s observation: ingestion/perception
     verbs and lexical middles minimize the affector-affectee distinction,
     making them functionally intransitive. -/
-def isExceptionalTransitive : VerbClass → Bool
-  | .ingestion    => true
-  | .perception   => true
-  | .lexicalMiddle => true
-  | _             => false
+def isExceptionalTransitive : VerbClass → Prop
+  | .ingestion    => True
+  | .perception   => True
+  | .lexicalMiddle => True
+  | _             => False
+
+instance : DecidablePred isExceptionalTransitive := fun x => by
+  cases x <;> unfold isExceptionalTransitive <;> infer_instance
 
 /-- Exceptional transitives are syntactically transitive. -/
 theorem exceptionals_are_transitive :
@@ -689,7 +695,7 @@ theorem predictFunction_depends_only (v w : OdamVerb)
     non-exceptional verb classes. The refinement only changes the
     prediction for ingestion, perception, and lexical middles. -/
 theorem refined_agrees_on_nonexceptional (v : OdamVerb)
-    (h : isExceptionalTransitive v.verbClass = false) :
+    (h : ¬ isExceptionalTransitive v.verbClass) :
     predictFunctionRefined v = predictFunction v := by
   obtain ⟨bf, gl, af, vc, tr, ep, al⟩ := v
   unfold predictFunctionRefined

@@ -57,16 +57,6 @@ inductive MergeType where
   | intSpec
   deriving Repr, DecidableEq
 
-/-- Is this a specifier position (external or via movement)? -/
-def MergeType.isSpec : MergeType → Bool
-  | .extSpec | .intSpec => true
-  | .extComp => false
-
-/-- Was this position created by movement? -/
-def MergeType.isMovement : MergeType → Bool
-  | .intSpec => true
-  | _ => false
-
 -- ============================================================================
 -- § 2: Merge Events
 -- ============================================================================

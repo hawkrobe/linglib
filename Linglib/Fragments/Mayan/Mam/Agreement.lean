@@ -254,9 +254,12 @@ inductive PronounForm where
 /-- Is this person 1st (= [+author])? Only [+author] persons are
     eligible for the impoverishment rule (84) that deletes [±singular]
     and bleeds base morpheme insertion. -/
-def isFirstPerson : Core.Prominence.PersonLevel → Bool
-  | .first => true
-  | _      => false
+def isFirstPerson : Core.Prominence.PersonLevel → Prop
+  | .first => True
+  | _      => False
+
+instance : DecidablePred isFirstPerson := fun p => by
+  cases p <;> unfold isFirstPerson <;> infer_instance
 
 /-- Derive pronoun form from agreement status and person.
 

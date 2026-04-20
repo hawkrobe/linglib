@@ -187,52 +187,64 @@ theorem standardShift_is_eventTime {Time : Type*} (f : ReichenbachFrame Time) :
 -- ════════════════════════════════════════════════════════════════
 
 /-- A phenomenon is a core SOT phenomenon if all theories handle it. -/
-def TensePhenomenon.isCoreSOT : TensePhenomenon → Bool
-  | .pastUnderPast_shifted => true
-  | .pastUnderPast_simultaneous => true
-  | .presentUnderPast_doubleAccess => true
-  | .sotVsNonSOT => true
-  | _ => false
+def TensePhenomenon.IsCoreSOT : TensePhenomenon → Prop
+  | .pastUnderPast_shifted => True
+  | .pastUnderPast_simultaneous => True
+  | .presentUnderPast_doubleAccess => True
+  | .sotVsNonSOT => True
+  | _ => False
+
+instance : DecidablePred TensePhenomenon.IsCoreSOT := fun p => by
+  cases p <;> unfold TensePhenomenon.IsCoreSOT <;> infer_instance
 
 /-- A phenomenon is a distinguishing phenomenon if theories diverge on it. -/
-def TensePhenomenon.isDistinguishing : TensePhenomenon → Bool
-  | .relativeClauseTense => true
-  | .modalTenseInteraction => true
-  | .counterfactualTense => true
-  | .temporalDeRe => true
-  | .deletionVsAmbiguity => true
-  | _ => false
+def TensePhenomenon.IsDistinguishing : TensePhenomenon → Prop
+  | .relativeClauseTense => True
+  | .modalTenseInteraction => True
+  | .counterfactualTense => True
+  | .temporalDeRe => True
+  | .deletionVsAmbiguity => True
+  | _ => False
+
+instance : DecidablePred TensePhenomenon.IsDistinguishing := fun p => by
+  cases p <;> unfold TensePhenomenon.IsDistinguishing <;> infer_instance
 
 /-- A phenomenon is an eventual target — documented with data but not yet
     connected to derivation theorems in the theory files. -/
-def TensePhenomenon.isEventualTarget : TensePhenomenon → Bool
-  | .sotInIndirectQuestions => true
-  | .freeIndirectDiscourse => true
-  | .historicalPresent => true
-  | .perfectTenseInteraction => true
-  | .futureOrientedComplements => true
-  | .adjunctClauseTense => true
-  | .indexicalTenseShift => true
-  | _ => false
+def TensePhenomenon.IsEventualTarget : TensePhenomenon → Prop
+  | .sotInIndirectQuestions => True
+  | .freeIndirectDiscourse => True
+  | .historicalPresent => True
+  | .perfectTenseInteraction => True
+  | .futureOrientedComplements => True
+  | .adjunctClauseTense => True
+  | .indexicalTenseShift => True
+  | _ => False
+
+instance : DecidablePred TensePhenomenon.IsEventualTarget := fun p => by
+  cases p <;> unfold TensePhenomenon.IsEventualTarget <;> infer_instance
 
 /-- A phenomenon is in the extended set added for Zeijlstra/Wurmbrand/Sharvit. -/
-def TensePhenomenon.isExtended : TensePhenomenon → Bool
-  | .embeddedPresentPuzzle => true
-  | .lifetimeEffects => true
-  | .fakePast => true
-  | .optionalSOT => true
-  | .dependentVsIndependentTense => true
-  | .thenPresentIncompatibility => true
-  | .sizeSensitiveSOT => true
-  | _ => false
+def TensePhenomenon.IsExtended : TensePhenomenon → Prop
+  | .embeddedPresentPuzzle => True
+  | .lifetimeEffects => True
+  | .fakePast => True
+  | .optionalSOT => True
+  | .dependentVsIndependentTense => True
+  | .thenPresentIncompatibility => True
+  | .sizeSensitiveSOT => True
+  | _ => False
+
+instance : DecidablePred TensePhenomenon.IsExtended := fun p => by
+  cases p <;> unfold TensePhenomenon.IsExtended <;> infer_instance
 
 /-- Every phenomenon falls into exactly one of the five categories. -/
 theorem phenomenon_coverage (p : TensePhenomenon) :
-    p.isCoreSOT = true ∨ p.isDistinguishing = true ∨
-    p.isEventualTarget = true ∨ p.isExtended = true ∨
+    p.IsCoreSOT ∨ p.IsDistinguishing ∨
+    p.IsEventualTarget ∨ p.IsExtended ∨
     p = .futureUnderPast ∨ p = .upperLimitConstraint := by
-  cases p <;> simp [TensePhenomenon.isCoreSOT, TensePhenomenon.isDistinguishing,
-    TensePhenomenon.isEventualTarget, TensePhenomenon.isExtended]
+  cases p <;> simp [TensePhenomenon.IsCoreSOT, TensePhenomenon.IsDistinguishing,
+    TensePhenomenon.IsEventualTarget, TensePhenomenon.IsExtended]
 
 
 -- ════════════════════════════════════════════════════════════════

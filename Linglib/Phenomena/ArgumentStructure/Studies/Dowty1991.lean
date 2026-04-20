@@ -40,7 +40,7 @@ open Fragments.English.Predicates.Verbal
 
 /-- @cite{dowty-1991}'s original single-argument ASP (flat counting):
     an argument selects for subjecthood iff its P-Agent count exceeds
-    its P-Patient count. Superseded by lattice-based `outranksForSubject`
+    its P-Patient count. Superseded by lattice-based `OutranksForSubject`
     in `EntailmentProfile.lean`. -/
 def flatSelectsSubject (p : EntailmentProfile) : Bool :=
   p.pAgentScore > p.pPatientScore
@@ -88,21 +88,21 @@ def kissObjectProfile : EntailmentProfile :=
 
 /-- The subject outranks the object (lattice: {V,M,IE} ⊃ {M,IE}). -/
 theorem kiss_subject_outranks :
-    outranksForSubject kissSubjectProfile kissObjectProfile = true := by native_decide
+    OutranksForSubject kissSubjectProfile kissObjectProfile := by decide
 
 /-- Same result under Dowty's flat counting. -/
 theorem kiss_subject_outranks_flat :
-    flatOutranksForSubject kissSubjectProfile kissObjectProfile = true := by native_decide
+    flatOutranksForSubject kissSubjectProfile kissObjectProfile = true := by decide
 
 /-- Volition adds exactly 1 to the subject's P-Agent score. -/
 theorem kiss_asymmetry_is_volition :
     kissSubjectProfile.pAgentScore = kissObjectProfile.pAgentScore + 1 := by
-  native_decide
+  decide
 
 /-- The collective intransitive ("Kim and Sandy kissed") is predicted:
     when both participants have symmetric volition, neither outranks. -/
 theorem kiss_collective_alternation :
-    allowsAlternation kissSubjectProfile kissSubjectProfile = true := by native_decide
+    AllowsAlternation kissSubjectProfile kissSubjectProfile := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 2. Psych Verb Doublets (§9.2, pp.579–581)
@@ -115,9 +115,9 @@ theorem kiss_collective_alternation :
 /-- Stative: Experiencer and Stimulus have incomparable P-Agent sets
     ({S,IE} ⊥ {C,IE}) and equal P-Patient (both 0) → alternation. -/
 theorem psychStative_alternation :
-    allowsAlternation
+    AllowsAlternation
       (ThetaRole.canonicalProfile .experiencer)
-      (ThetaRole.canonicalProfile .stimulus) = true := by native_decide
+      (ThetaRole.canonicalProfile .stimulus) := by decide
 
 /-- Under inchoative interpretation, the Experiencer enters a new mental
     state → gains changeOfState (P-Patient entailment a). -/
@@ -130,7 +130,7 @@ def stimProfile : EntailmentProfile := ThetaRole.canonicalProfile .stimulus
     because the Experiencer now has more P-Patient → Experiencer is a
     "better" object → Stimulus is subject. Predicts StimExp frame. -/
 theorem psych_inchoative_stimulus_is_subject :
-    outranksForSubject stimProfile expInchoativeProfile = true := by native_decide
+    OutranksForSubject stimProfile expInchoativeProfile := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Three Verb Classes (§9.3, pp.587–597)
@@ -152,7 +152,7 @@ def sprayLoadLocation : EntailmentProfile :=
   ⟨false, false, false, false, true, true, false, true, true, false⟩
 
 theorem sprayLoad_cos_symmetric :
-    cosSymmetric sprayLoadTheme sprayLoadLocation = true := by native_decide
+    cosSymmetric sprayLoadTheme sprayLoadLocation = true := by decide
 
 theorem sprayLoad_locative_data :
     loc_spray.result = .participates ∧ loc_load.result = .participates := ⟨rfl, rfl⟩
@@ -170,13 +170,13 @@ def breakInstrument : EntailmentProfile :=
   ⟨false, false, false, true, true, false, false, false, false, false⟩
 
 theorem break_cos_asymmetric :
-    cosSymmetric breakDirectObject breakInstrument = false := by native_decide
+    cosSymmetric breakDirectObject breakInstrument = false := by decide
 
 theorem break_DO_more_patient :
-    breakDirectObject.pPatientScore > breakInstrument.pPatientScore := by native_decide
+    breakDirectObject.pPatientScore > breakInstrument.pPatientScore := by decide
 
 theorem break_no_locative :
-    LevinClass.break_.participatesIn .locative = false := by native_decide
+    LevinClass.break_.participatesIn .locative = false := by decide
 
 -- ── hit class ──
 
@@ -187,7 +187,7 @@ def hitArg2 : EntailmentProfile :=
   ⟨false, false, false, true, true, false, false, true, false, false⟩
 
 theorem hit_cos_symmetric :
-    cosSymmetric hitArg1 hitArg2 = true := by native_decide
+    cosSymmetric hitArg1 hitArg2 = true := by decide
 
 theorem hit_no_cos :
     hitArg1.changeOfState = false ∧ hitArg2.changeOfState = false := ⟨rfl, rfl⟩
@@ -232,7 +232,7 @@ theorem run_cell1 :
 
 theorem die_cell4 :
     table1 dieSubjectProfile.volition dieSubjectProfile.changeOfState
-    = .unaccusative := by native_decide
+    = .unaccusative := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Flat Counting vs Modern ASP: The Arrive Anomaly
@@ -246,17 +246,17 @@ theorem die_cell4 :
 
 /-- Flat counting predicts arrive is NOT unaccusative (2 P-Ag > 1 P-Pat). -/
 theorem arrive_flat_wrong :
-    flatPredictsUnaccusative arriveSubjectProfile = false := by native_decide
+    flatPredictsUnaccusative arriveSubjectProfile = false := by decide
 
 /-- Modern priority-based ASP correctly predicts arrive IS unaccusative. -/
 theorem arrive_modern_correct :
-    predictsUnaccusative arriveSubjectProfile = true := by native_decide
+    PredictsUnaccusative arriveSubjectProfile := by decide
 
 /-- Table 1 also correctly predicts arrive as unaccusative
     (non-agentive + telic = cell 4). -/
 theorem arrive_table1_correct :
     table1 arriveSubjectProfile.volition arriveSubjectProfile.changeOfState
-    = .unaccusative := by native_decide
+    = .unaccusative := by decide
 
 /-- Agreement: Table 1 and the modern ASP converge on arrive being
     unaccusative. Flat counting diverges — this is the anomaly that
@@ -266,21 +266,21 @@ theorem arrive_anomaly_summary :
     table1 arriveSubjectProfile.volition arriveSubjectProfile.changeOfState
       = .unaccusative ∧
     -- Modern ASP: unaccusative (correct)
-    predictsUnaccusative arriveSubjectProfile = true ∧
+    PredictsUnaccusative arriveSubjectProfile ∧
     -- Flat counting: NOT unaccusative (WRONG)
     flatPredictsUnaccusative arriveSubjectProfile = false ∧
     -- Fragment annotation: unaccusative (ground truth)
-    arrive.unaccusative = true := ⟨by native_decide, by native_decide, by native_decide, rfl⟩
+    arrive.unaccusative = true := ⟨by decide, by decide, by decide, rfl⟩
 
 /-- Flat counting gets die right (both methods agree). -/
 theorem die_both_agree :
     flatPredictsUnaccusative dieSubjectProfile = true ∧
-    predictsUnaccusative dieSubjectProfile = true := ⟨by native_decide, by native_decide⟩
+    PredictsUnaccusative dieSubjectProfile := ⟨by decide, by decide⟩
 
 /-- Flat counting gets run right (both methods agree). -/
 theorem run_both_agree :
     flatPredictsUnergative runSubjectProfile = true ∧
-    predictsUnergative runSubjectProfile = true := ⟨by native_decide, by native_decide⟩
+    PredictsUnergative runSubjectProfile := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 6. Fragment Bridge: Profiles Match VerbCore Fields
@@ -329,13 +329,13 @@ theorem sweep_instr_subject_profile_matches :
 
 /-- Agreement: arrive prediction matches the fragment annotation. -/
 theorem arrive_prediction_matches_fragment :
-    predictsUnaccusative arriveSubjectProfile =
-    arrive.unaccusative := by native_decide
+    decide (PredictsUnaccusative arriveSubjectProfile) =
+    arrive.unaccusative := by decide
 
 /-- Agreement: run prediction matches the fragment annotation. -/
 theorem run_prediction_matches_fragment :
-    predictsUnaccusative runSubjectProfile =
-    Fragments.English.Predicates.Verbal.run.unaccusative := by native_decide
+    decide (PredictsUnaccusative runSubjectProfile) =
+    Fragments.English.Predicates.Verbal.run.unaccusative := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Cross-Theory: @cite{grimm-2011} Lattice Predictions
@@ -353,7 +353,7 @@ open Semantics.Verb.AgentivityLattice
     with the priority-based ASP and Table 1, but not flat counting. -/
 theorem arrive_grimm_not_nom :
     (GrimmNode.fromSubjectProfile arriveSubjectProfile).toCaseRegion ≠ .nomErg := by
-  native_decide
+  decide
 
 /-- Full cross-theory convergence on arrive: Table 1, modern ASP, and
     @cite{grimm-2011}'s lattice all predict unaccusative/non-agent.
@@ -361,28 +361,28 @@ theorem arrive_grimm_not_nom :
 theorem arrive_cross_theory :
     table1 arriveSubjectProfile.volition arriveSubjectProfile.changeOfState
       = .unaccusative ∧
-    predictsUnaccusative arriveSubjectProfile = true ∧
+    PredictsUnaccusative arriveSubjectProfile ∧
     flatPredictsUnaccusative arriveSubjectProfile = false ∧
     (GrimmNode.fromSubjectProfile arriveSubjectProfile).toCaseRegion ≠ .nomErg ∧
     arrive.unaccusative = true :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide, rfl⟩
+  ⟨by decide, by decide, by decide, by decide, rfl⟩
 
 /-- Kick: ASP outranking and @cite{grimm-2011}'s case regions converge.
     Subject → NOM, object → ACC in an accusative system. -/
 theorem kick_asp_grimm_consistent :
-    outranksForSubject kickSubjectProfile kickObjectProfile = true ∧
+    OutranksForSubject kickSubjectProfile kickObjectProfile ∧
     (GrimmNode.fromSubjectProfile kickSubjectProfile).toCaseRegion.toAccusativeCase
       = .nom ∧
     (GrimmNode.fromObjectProfile kickObjectProfile).toCaseRegion.toAccusativeCase
       = .acc :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 /-- Die: ASP, flat counting, and @cite{grimm-2011} all agree on unaccusative.
     Grimm's lattice maps the sole argument to ACC/ABS (patient region). -/
 theorem die_asp_grimm_consistent :
-    predictsUnaccusative dieSubjectProfile = true ∧
+    PredictsUnaccusative dieSubjectProfile ∧
     flatPredictsUnaccusative dieSubjectProfile = true ∧
     (GrimmNode.fromObjectProfile dieSubjectProfile).toCaseRegion = .accAbs :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 end Dowty1991

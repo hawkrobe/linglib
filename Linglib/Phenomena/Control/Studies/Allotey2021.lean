@@ -279,7 +279,7 @@ theorem ga_has_reflexive :
 /-- Gã profile derived from fragment data and inventory. -/
 def gaProfile : ProDropProfile :=
   { allowsProDrop := Fragments.Ga.allowsProDrop
-  , hasOvertPRO   := gaInventory.hasOvertPRO }
+  , hasOvertPRO   := decide gaInventory.hasOvertPRO }
 
 /-- Gã satisfies the implicational universal — overt PRO + non-*pro*-drop
     means the consequent is true. -/

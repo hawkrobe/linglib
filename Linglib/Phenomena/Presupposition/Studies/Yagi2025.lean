@@ -1,6 +1,7 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.Truth3
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Conflicting Presuppositions in Disjunction
@@ -72,7 +73,6 @@ namespace Yagi2025
 
 open Core.Duality
 open Core.Presupposition
-open Core.Proposition
 
 -- ══════════════════════════════════════════════════════════
 -- § World type
@@ -89,9 +89,9 @@ inductive W where
   | presidentDoesnt   -- has president, president NOT conducting
   deriving DecidableEq, Repr, Inhabited
 
-instance : FiniteWorlds W where
-  worlds := [.kingOpens, .kingDoesnt, .presidentConducts, .presidentDoesnt]
-  complete := fun w => by cases w <;> simp
+instance : Fintype W where
+  elems := {.kingOpens, .kingDoesnt, .presidentConducts, .presidentDoesnt}
+  complete := fun w => by cases w <;> decide
 
 /-- Presupposition p: the nation has a king. -/
 def hasKing : (W → Bool)
@@ -300,7 +300,7 @@ at all (it maps ∗ to 0), so the Strong Kleene disjunction 𝒜φ_p ∨_s ψ_q
 only presupposes ¬𝒜ψ_q → p (Yagi (11)), not the expected p ∨ q.
 
 Violates observation (2a): the disjunction should presuppose p ∨ q. -/
-theorem metaAssert_always_defined : ∀ w, (metaAssertDisj w).isDefined = true := by
+theorem metaAssert_always_defined : ∀ w, (metaAssertDisj w).isDefined := by
   intro w; cases w <;>
     simp [metaAssertDisj, Prop3.or, Prop3.metaAssert, Truth3.metaAssert,
       PrProp.eval, kingOpensParl, presConductsCeremony, PrProp.ofBool,

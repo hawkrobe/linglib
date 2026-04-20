@@ -251,7 +251,7 @@ theorem overtness_classification :
     This connects Kratzer's zero tense analysis to `Core.Tense.Overtness`. -/
 theorem zero_tense_parallels_reflexive (n : ℕ) :
     -- Zero tense: bound + local = zero
-    (kratzerZeroTense n).isBound = true ∧
+    (kratzerZeroTense n).isBound ∧
     Overtness.fromBinding (kratzerZeroTense n).mode true = .zero ∧
     -- Kratzer's English indexical tense: free = overt
     Overtness.fromBinding kratzerEnglishPast.mode true = .overt ∧

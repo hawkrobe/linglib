@@ -302,13 +302,16 @@ inductive HaveComplement where
   deriving DecidableEq, Repr
 
 /-- Is the complement eventive? This conditions Voice alloseme selection. -/
-def HaveComplement.isEventive : HaveComplement → Bool
-  | .saturatedEventiveVoiceP => true
-  | .eventDP                 => true
-  | .freeP                   => true   -- embedded VoiceP is eventive
-  | .possessedDP             => false
-  | .stativeSC               => false
-  | .modalBase               => false
+def HaveComplement.IsEventive : HaveComplement → Prop
+  | .saturatedEventiveVoiceP => True
+  | .eventDP                 => True
+  | .freeP                   => True   -- embedded VoiceP is eventive
+  | .possessedDP             => False
+  | .stativeSC               => False
+  | .modalBase               => False
+
+instance : DecidablePred HaveComplement.IsEventive := fun c => by
+  cases c <;> unfold HaveComplement.IsEventive <;> infer_instance
 
 /-- Is the complement a stative predication (small clause)?
     This is the condition for the holder/causer Voice alloseme:
@@ -318,23 +321,29 @@ def HaveComplement.isEventive : HaveComplement → Bool
     Crucially, possessedDP and modalBase are NOT stative predicates
     from Voice's perspective — the possession relation originates
     DP-internally and Voice is vacuous (expletive). -/
-def HaveComplement.isStativePredicate : HaveComplement → Bool
-  | .stativeSC => true
-  | _          => false
+def HaveComplement.IsStativePredicate (c : HaveComplement) : Prop :=
+  c = .stativeSC
+
+instance : DecidablePred HaveComplement.IsStativePredicate :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- Is the complement a saturated eventive VoiceP?
     This is the most specific environment: a full clause with its own
     agent and event, triggering the engineer alloseme. -/
-def HaveComplement.isSaturatedEventiveVoiceP : HaveComplement → Bool
-  | .saturatedEventiveVoiceP => true
-  | _                        => false
+def HaveComplement.IsSaturatedEventiveVoiceP (c : HaveComplement) : Prop :=
+  c = .saturatedEventiveVoiceP
+
+instance : DecidablePred HaveComplement.IsSaturatedEventiveVoiceP :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- Is the complement an eventive DP (not a full VoiceP)?
     Event-denoting DPs (light-verb HAVE: "had a bath") trigger agentive
     Voice, unlike FreeP (which triggers expletive Voice). -/
-def HaveComplement.isEventDP : HaveComplement → Bool
-  | .eventDP => true
-  | _        => false
+def HaveComplement.IsEventDP (c : HaveComplement) : Prop :=
+  c = .eventDP
+
+instance : DecidablePred HaveComplement.IsEventDP :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 -- ════════════════════════════════════════════════════
 -- § 5. The HAVE Interpretation Table
@@ -369,23 +378,23 @@ inductive HaveReading where
     4. Elsewhere (possessedDP, FreeP, modalBase) → expletive (Voice is vacuous) -/
 def voiceAllosemeForComplement (c : HaveComplement) :
     Morphology.DM.Allosemy.VoiceAlloseme :=
-  if c.isSaturatedEventiveVoiceP then .engineer
-  else if c.isEventDP then .agent
-  else if c.isStativePredicate then .holder
+  if c.IsSaturatedEventiveVoiceP then .engineer
+  else if c.IsEventDP then .agent
+  else if c.IsStativePredicate then .holder
   else .expletive
 
 /-- The non-eventDP cases agree with `VoiceAlloseme.fromComplement`:
     when the complement is not an event-denoting DP, the alloseme can
-    be derived purely from the `isSaturatedEventiveVoiceP` and `isStative`
+    be derived purely from the `IsSaturatedEventiveVoiceP` and `IsStativePredicate`
     properties — which is exactly what `fromComplement` does. -/
 theorem voiceAlloseme_agrees_fromComplement (c : HaveComplement)
-    (hNotEventDP : c.isEventDP = false) :
+    (hNotEventDP : ¬ c.IsEventDP) :
     voiceAllosemeForComplement c =
     Morphology.DM.Allosemy.VoiceAlloseme.fromComplement
-      c.isSaturatedEventiveVoiceP c.isStativePredicate := by
+      c.IsSaturatedEventiveVoiceP c.IsStativePredicate := by
   cases c <;> simp_all [voiceAllosemeForComplement,
-    HaveComplement.isSaturatedEventiveVoiceP, HaveComplement.isEventDP,
-    HaveComplement.isStativePredicate,
+    HaveComplement.IsSaturatedEventiveVoiceP, HaveComplement.IsEventDP,
+    HaveComplement.IsStativePredicate,
     Morphology.DM.Allosemy.VoiceAlloseme.fromComplement]
 
 /-- The predicted reading for each complement type. -/
@@ -438,8 +447,8 @@ theorem agent_blocked_by_stativeSC :
     All other complement types yield a different alloseme. -/
 theorem engineer_only_from_voiceP (c : HaveComplement) :
     voiceAllosemeForComplement c = .engineer → c = .saturatedEventiveVoiceP := by
-  cases c <;> simp [voiceAllosemeForComplement, HaveComplement.isSaturatedEventiveVoiceP,
-    HaveComplement.isEventDP, HaveComplement.isStativePredicate]
+  cases c <;> simp [voiceAllosemeForComplement, HaveComplement.IsSaturatedEventiveVoiceP,
+    HaveComplement.IsEventDP, HaveComplement.IsStativePredicate]
 
 /-- When Voice is expletive (relational, experiencer, modal HAVE),
     the meaning comes entirely from the complement — Voice contributes
@@ -447,8 +456,8 @@ theorem engineer_only_from_voiceP (c : HaveComplement) :
 theorem expletive_voice_complement_determines_meaning (c : HaveComplement) :
     voiceAllosemeForComplement c = .expletive →
     c = .possessedDP ∨ c = .freeP ∨ c = .modalBase := by
-  cases c <;> simp [voiceAllosemeForComplement, HaveComplement.isSaturatedEventiveVoiceP,
-    HaveComplement.isEventDP, HaveComplement.isStativePredicate]
+  cases c <;> simp [voiceAllosemeForComplement, HaveComplement.IsSaturatedEventiveVoiceP,
+    HaveComplement.IsEventDP, HaveComplement.IsStativePredicate]
 
 -- ════════════════════════════════════════════════════
 -- § 6b. Voice Alloseme → Theta Role (via VoiceTheta)

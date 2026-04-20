@@ -2,7 +2,7 @@ import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Attitudes.Intensional
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 
 /-!
 # On Necessity and Comparison
@@ -69,7 +69,7 @@ lower-negation reading, while "I don't think you have to go" does not
   Rubinstein differs by *promoting* some priorities to modal-base status.
 - Under the simplifying assumption that no priorities are promoted (h = ∅),
   Rubinstein's analysis reduces to standard Kratzer necessity (bridge below).
-- `FunctionWords.lean` classifies English *should*/*ought* as `weakNecessity`
+- `Auxiliaries.lean` classifies English *should*/*ought* as `weakNecessity`
   and *must* as `necessity`, matching Rubinstein's force assignments.
 -/
 
@@ -139,7 +139,7 @@ We implement the consistent case, which covers the paper's examples. -/
 /-- **Favored worlds** (definition 40, consistent case):
     worlds satisfying both the factual circumstances f(w) and the
     non-negotiable priorities h(w). -/
-def favoredWorlds (pt : PriorityTypology) (w : World) : Finset World :=
+def favoredWorlds (pt : PriorityTypology) (w : World) : Set World :=
   propIntersection (pt.circumstances w ++ pt.nonNegotiable w)
 
 /-- Favored worlds with no non-negotiable priorities reduce to
@@ -147,7 +147,8 @@ def favoredWorlds (pt : PriorityTypology) (w : World) : Finset World :=
 theorem favored_no_promoted (f : ModalBase World) (g : OrderingSource World) (w : World) :
     favoredWorlds ⟨f, emptyBackground, g⟩ w = accessibleWorlds f w := by
   unfold favoredWorlds accessibleWorlds emptyBackground propIntersection
-  simp
+  ext w'
+  simp [List.append_nil]
 
 -- `bestAmong`, `bestAmong_empty`, and `bestAmong_sub` are imported from
 -- `Kratzer.lean`, where they were promoted as general-purpose operations.
@@ -168,8 +169,7 @@ weak necessity uses world ranking, strong necessity does not. -/
 
     Universal quantification over favored worlds. No ordering source
     is consulted — strong necessity is non-comparative. -/
-def strongNecessityR (pt : PriorityTypology) (p : World → Prop) [DecidablePred p]
-    (w : World) : Prop :=
+def strongNecessityR (pt : PriorityTypology) (p : World → Prop) (w : World) : Prop :=
   ∀ w' ∈ favoredWorlds pt w, p w'
 
 /-- **Weak necessity** (definition 42):
@@ -177,17 +177,8 @@ def strongNecessityR (pt : PriorityTypology) (p : World → Prop) [DecidablePred
 
     Universal quantification over the best favored worlds, where "best"
     is determined by the negotiable ordering source g(e). -/
-def weakNecessityR (pt : PriorityTypology) (p : World → Prop) [DecidablePred p]
-    (w : World) : Prop :=
+def weakNecessityR (pt : PriorityTypology) (p : World → Prop) (w : World) : Prop :=
   ∀ w' ∈ bestAmong (favoredWorlds pt w) (pt.negotiable w), p w'
-
-instance (pt : PriorityTypology) (p : World → Prop) [DecidablePred p] (w : World) :
-    Decidable (strongNecessityR pt p w) :=
-  inferInstanceAs (Decidable (∀ w' ∈ favoredWorlds pt w, p w'))
-
-instance (pt : PriorityTypology) (p : World → Prop) [DecidablePred p] (w : World) :
-    Decidable (weakNecessityR pt p w) :=
-  inferInstanceAs (Decidable (∀ w' ∈ bestAmong (favoredWorlds pt w) (pt.negotiable w), p w'))
 
 -- ============================================================================
 -- §5. Entailment (§1, paper's key asymmetry)
@@ -206,13 +197,13 @@ theorem strong_entails_weak_R (pt : PriorityTypology) (p : World → Prop) [Deci
     (w : World) (h : strongNecessityR pt p w) :
     weakNecessityR pt p w := by
   intro w' hw'
-  exact h w' (bestAmong_sub _ _ w' hw')
+  exact h w' (bestAmong_sub _ _ hw')
 
 /-- Counterexample components for the converse. -/
 private def ce_pt : PriorityTypology where
   circumstances := emptyBackground
   nonNegotiable := emptyBackground
-  negotiable := λ _ => [λ w => w == .w1]
+  negotiable := λ _ => [λ w => w = .w1]
 
 private def ce_p : World → Prop := λ w => w = .w1
 
@@ -220,14 +211,42 @@ instance : DecidablePred ce_p := fun w => decEq w .w1
 
 /-- The converse fails: weak necessity does NOT entail strong necessity.
     If p holds at all BEST favored worlds but not at all favored worlds,
-    weak necessity holds but strong necessity does not. -/
+    weak necessity holds but strong necessity does not.
+
+    Concretely: with `circumstances = nonNegotiable = ∅` and
+    `negotiable = [λw => w = .w1]`, we have
+    `favoredWorlds ce_pt .w0 = Set.univ` and
+    `bestAmong univ [λw => w = .w1] = {.w1}`. Thus `ce_p` (which says
+    `w = .w1`) holds at all best worlds but not at all favored worlds. -/
 theorem weak_not_entails_strong_R :
     ¬(∀ (pt : PriorityTypology) (p : World → Prop) [DecidablePred p] (w : World),
       weakNecessityR pt p w → strongNecessityR pt p w) := by
   intro h
-  have : weakNecessityR ce_pt ce_p .w0 := by decide
-  have hns : ¬ strongNecessityR ce_pt ce_p .w0 := by decide
-  exact hns (h ce_pt ce_p .w0 this)
+  -- Compute favoredWorlds ce_pt .w0 = univ
+  have hFav : favoredWorlds ce_pt .w0 = Set.univ := by
+    unfold favoredWorlds ce_pt emptyBackground propIntersection
+    ext w; simp
+  -- Show weakNecessityR ce_pt ce_p .w0 holds:
+  -- Every world in `bestAmong univ [λw => w = .w1]` satisfies ce_p.
+  have hWeak : weakNecessityR ce_pt ce_p .w0 := by
+    intro w' hw'
+    -- hw' : w' ∈ bestAmong (favoredWorlds ce_pt .w0) (ce_pt.negotiable .w0)
+    obtain ⟨_hMem, hBest⟩ := hw'
+    -- Apply hBest with the test world .w1, which is in favoredWorlds.
+    have hW1Fav : .w1 ∈ favoredWorlds ce_pt .w0 := by rw [hFav]; exact Set.mem_univ _
+    -- The single ordering proposition is (λ w => w = .w1).
+    have hProp : (λ w : World => w = .w1) ∈ ce_pt.negotiable .w0 := by
+      simp [ce_pt]
+    have := hBest .w1 hW1Fav (λ w : World => w = .w1) hProp rfl
+    exact this
+  -- Show strongNecessityR ce_pt ce_p .w0 fails: ce_p .w0 = (.w0 = .w1) is false.
+  have hNotStrong : ¬ strongNecessityR ce_pt ce_p .w0 := by
+    intro hS
+    have hW0Fav : .w0 ∈ favoredWorlds ce_pt .w0 := by rw [hFav]; exact Set.mem_univ _
+    have : ce_p .w0 := hS .w0 hW0Fav
+    -- ce_p .w0 unfolds to `.w0 = .w1`, which is false
+    exact absurd this (by intro h; cases h)
+  exact hNotStrong (h ce_pt ce_p .w0 hWeak)
 
 -- ============================================================================
 -- §6. Bridge to Directive.lean
@@ -246,10 +265,9 @@ theorem strongR_eq_simpleNecessity (f : ModalBase World) (p : World → Prop) [D
     (w : World) :
     strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w ↔
     simpleNecessity f p w := by
+  rw [simpleNecessity_iff_all]
   unfold strongNecessityR
-  rw [simpleNecessity_iff_all,
-    show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
-      accessibleWorlds f w from favored_no_promoted f emptyBackground w]
+  rw [favored_no_promoted f emptyBackground w]
 
 /-- With no promoted priorities, Rubinstein's weak necessity equals
     standard Kratzer necessity under the negotiable ordering.
@@ -264,8 +282,8 @@ theorem weakR_eq_necessity (f : ModalBase World) (g : OrderingSource World)
     necessity f g p w := by
   rw [necessity_iff_all]
   unfold weakNecessityR
-  rw [show favoredWorlds ⟨f, emptyBackground, g⟩ w =
-    accessibleWorlds f w from favored_no_promoted f g w]
+  rw [favored_no_promoted f g w]
+  -- bestAmong (accessibleWorlds f w) (g w) = bestWorlds f g w by definition
   rfl
 
 /-- When no priorities are promoted AND no negotiable ordering exists,
@@ -275,9 +293,13 @@ theorem strongR_eq_weakR_trivial (f : ModalBase World) (p : World → Prop) [Dec
     strongNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w ↔
     weakNecessityR ⟨f, emptyBackground, emptyBackground⟩ p w := by
   unfold strongNecessityR weakNecessityR
-  rw [show favoredWorlds ⟨f, emptyBackground, emptyBackground⟩ w =
-      accessibleWorlds f w from favored_no_promoted f emptyBackground w]
-  simp only [emptyBackground, bestAmong_empty]
+  rw [favored_no_promoted f emptyBackground w]
+  -- After rewriting, the favored set is `accessibleWorlds f w`.
+  -- The negotiable ordering is `emptyBackground .. = []`, so
+  -- `bestAmong (accessibleWorlds f w) [] = accessibleWorlds f w` by `bestAmong_empty`.
+  show (∀ w' ∈ accessibleWorlds f w, p w') ↔
+       ∀ w' ∈ bestAmong (accessibleWorlds f w) [], p w'
+  rw [bestAmong_empty]
 
 -- ============================================================================
 -- §7. The Evaluative Comparative Natural Class (§1, §2.1.3)
@@ -492,9 +514,16 @@ We model this with two propositions:
 - reportInternational: a negotiable ideal promoted by the speaker (in g)
 - reportAll: the conjunction (the prejacent of should/have-to) -/
 
-private def reportDomestic : (World → Bool) := λ w => w == .w0 || w == .w1
-private def reportInternational : (World → Bool) := λ w => w == .w0 || w == .w2
-private def reportAll : (World → Bool) := λ w => reportDomestic w && reportInternational w
+private def reportDomestic : World → Prop := λ w => w = .w0 ∨ w = .w1
+private def reportInternational : World → Prop := λ w => w = .w0 ∨ w = .w2
+private def reportAll : World → Prop := λ w => reportDomestic w ∧ reportInternational w
+
+instance : DecidablePred reportDomestic := fun w => by
+  unfold reportDomestic; exact inferInstance
+instance : DecidablePred reportInternational := fun w => by
+  unfold reportInternational; exact inferInstance
+instance : DecidablePred reportAll := fun w => by
+  unfold reportAll; exact inferInstance
 
 /-- **Scenario A** (ex. 45/51a): "We should report all our revenue."
     Domestic reporting is non-negotiable; international is negotiable. -/
@@ -511,27 +540,80 @@ private def taxScenarioB : PriorityTypology where
   nonNegotiable := λ _ => [reportDomestic, reportInternational]
   negotiable := emptyBackground
 
+/-- In scenario A, the favored worlds are exactly those satisfying
+    `reportDomestic`, namely `{.w0, .w1}`. -/
+private theorem favored_taxScenarioA :
+    favoredWorlds taxScenarioA .w0 = {w | reportDomestic w} := by
+  unfold favoredWorlds taxScenarioA emptyBackground propIntersection
+  ext w
+  simp
+
 /-- In scenario A, weak necessity holds: all BEST favored worlds
     satisfy reportAll (the ordering picks out worlds where international
-    revenue is also reported). -/
+    revenue is also reported).
+
+    The single negotiable ideal `reportInternational` holds at .w0 (which is
+    in favored worlds and satisfies all of `reportInternational`), so any
+    "best" favored world must also satisfy it. The only favored world
+    satisfying both is .w0, so `reportAll` holds at all best favored worlds. -/
 theorem tax_should_holds :
-    weakNecessityR taxScenarioA reportAll .w0 = true := by native_decide
+    weakNecessityR taxScenarioA reportAll .w0 := by
+  intro w' hw'
+  obtain ⟨hFav, hBest⟩ := hw'
+  -- w' ∈ favoredWorlds taxScenarioA .w0, so reportDomestic w'
+  have hDom : reportDomestic w' := by
+    rw [favored_taxScenarioA] at hFav; exact hFav
+  -- .w0 is favored (it's in {.w0, .w1})
+  have hW0Fav : (.w0 : World) ∈ favoredWorlds taxScenarioA .w0 := by
+    rw [favored_taxScenarioA]; show reportDomestic .w0
+    unfold reportDomestic; left; rfl
+  -- .w0 satisfies reportInternational
+  have hW0Int : reportInternational .w0 := by
+    unfold reportInternational; left; rfl
+  -- The ordering proposition `reportInternational` is in negotiable .w0
+  have hPropMem : reportInternational ∈ taxScenarioA.negotiable .w0 := by
+    simp [taxScenarioA]
+  -- So w' must satisfy reportInternational (it's at-least-as-good as .w0)
+  have hInt : reportInternational w' := hBest .w0 hW0Fav reportInternational hPropMem hW0Int
+  exact ⟨hDom, hInt⟩
 
 /-- In scenario A, strong necessity FAILS: not all favored worlds
-    satisfy reportAll (worlds reporting only domestic revenue survive). -/
+    satisfy reportAll (worlds reporting only domestic revenue survive).
+
+    .w1 is favored (satisfies reportDomestic) but does not satisfy
+    reportInternational, so reportAll fails at .w1. -/
 theorem tax_must_fails :
-    strongNecessityR taxScenarioA reportAll .w0 = false := by native_decide
+    ¬ strongNecessityR taxScenarioA reportAll .w0 := by
+  intro h
+  -- .w1 ∈ favoredWorlds (satisfies reportDomestic via the second disjunct)
+  have hW1Fav : (.w1 : World) ∈ favoredWorlds taxScenarioA .w0 := by
+    rw [favored_taxScenarioA]; show reportDomestic .w1
+    unfold reportDomestic; right; rfl
+  have hAll : reportAll .w1 := h .w1 hW1Fav
+  -- reportAll .w1 implies reportInternational .w1, but
+  -- reportInternational .w1 = (.w1 = .w0 ∨ .w1 = .w2), both false
+  obtain ⟨_, hInt⟩ := hAll
+  rcases hInt with h | h <;> cases h
 
 /-- In scenario B (after promotion), strong necessity holds: all
-    favored worlds now satisfy reportAll. -/
+    favored worlds now satisfy reportAll.
+
+    With both `reportDomestic` and `reportInternational` non-negotiable,
+    favored worlds must satisfy both, so `reportAll` holds trivially. -/
 theorem tax_must_holds_after_promotion :
-    strongNecessityR taxScenarioB reportAll .w0 = true := by native_decide
+    strongNecessityR taxScenarioB reportAll .w0 := by
+  intro w' hw'
+  -- hw' : w' ∈ favoredWorlds taxScenarioB .w0 = propIntersection ([] ++ [reportDomestic, reportInternational])
+  -- So w' satisfies both reportDomestic and reportInternational.
+  unfold favoredWorlds taxScenarioB emptyBackground propIntersection at hw'
+  simp at hw'
+  exact ⟨hw'.1, hw'.2⟩
 
 /-- The should→have-to shift: the SAME proposition goes from weak-only
     to strong necessity when the negotiable ideal is promoted. -/
 theorem should_to_haveto_shift :
-    strongNecessityR taxScenarioA reportAll .w0 = false ∧
-    strongNecessityR taxScenarioB reportAll .w0 = true :=
+    ¬ strongNecessityR taxScenarioA reportAll .w0 ∧
+    strongNecessityR taxScenarioB reportAll .w0 :=
   ⟨tax_must_fails, tax_must_holds_after_promotion⟩
 
 -- ============================================================================
@@ -671,56 +753,56 @@ theorem ought_best_better_pairwise :
     betterCapability.picksOverallBest = false := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
--- §13. Bridge to English Fragment (FunctionWords.lean)
+-- §13. Bridge to English Fragment (Auxiliaries.lean)
 -- ============================================================================
 
 /-! ## Fragment-layer verification
 
-The English fragment in `FunctionWords.lean` independently classifies
+The English fragment in `Auxiliaries.lean` independently classifies
 modals by force. We verify that these classifications match Rubinstein's
 force assignments: *should*/*ought* are weak necessity (comparative class),
 *must* is strong necessity (non-comparative). -/
 
-open Fragments.English.FunctionWords
+open Fragments.English.Auxiliaries
 
 /-- The English fragment classifies *should* as weak necessity,
     matching its membership in the evaluative comparative class. -/
 theorem fragment_should_weak :
-    Fragments.English.FunctionWords.should.modalMeaning.any
+    Fragments.English.Auxiliaries.should.modalMeaning.any
       (·.force == .weakNecessity) = true := by native_decide
 
 /-- The English fragment classifies *ought* as weak necessity. -/
 theorem fragment_ought_weak :
-    Fragments.English.FunctionWords.ought.modalMeaning.any
+    Fragments.English.Auxiliaries.ought.modalMeaning.any
       (·.force == .weakNecessity) = true := by native_decide
 
 /-- The English fragment classifies *must* as strong necessity. -/
 theorem fragment_must_strong :
-    Fragments.English.FunctionWords.must.modalMeaning.any
+    Fragments.English.Auxiliaries.must.modalMeaning.any
       (·.force == .necessity) = true := by native_decide
 
 /-- *must* is NOT classified as weak necessity — confirming it is
     outside the evaluative comparative natural class. -/
 theorem fragment_must_not_weak :
-    Fragments.English.FunctionWords.must.modalMeaning.any
+    Fragments.English.Auxiliaries.must.modalMeaning.any
       (·.force == .weakNecessity) = false := by native_decide
 
 /-- *should* is NOT classified as strong necessity — confirming the
     asymmetry: comparative class members have strictly weaker force. -/
 theorem fragment_should_not_strong :
-    Fragments.English.FunctionWords.should.modalMeaning.any
+    Fragments.English.Auxiliaries.should.modalMeaning.any
       (·.force == .necessity) = false := by native_decide
 
 /-- *need* is classified as strong necessity — matching its exclusion
     from the evaluative comparative class (§2.1.2, note 14). -/
 theorem fragment_need_strong :
-    Fragments.English.FunctionWords.need.modalMeaning.any
+    Fragments.English.Auxiliaries.need.modalMeaning.any
       (·.force == .necessity) = true := by native_decide
 
 /-- *need* is NOT classified as weak necessity — confirming it fails
     the scalar tests (examples 16, 18–19). -/
 theorem fragment_need_not_weak :
-    Fragments.English.FunctionWords.need.modalMeaning.any
+    Fragments.English.Auxiliaries.need.modalMeaning.any
       (·.force == .weakNecessity) = false := by native_decide
 
 end Rubinstein2014

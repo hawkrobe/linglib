@@ -1,4 +1,3 @@
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.IntensionalLogic.RestrictedModality
 
 /-!
@@ -45,7 +44,6 @@ argument via an anchoring function.
 
 namespace Semantics.Modality.EventRelativity
 
-open Core.Proposition
 open Core.Modality (ModalFlavor)
 
 
@@ -120,36 +118,35 @@ def accessible {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
 /-- Existential modal: ◇_{f(e)} p at world w.
 True iff some world accessible via f(e) satisfies p. -/
 def possibility {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) : Prop :=
-  ∃ w' ∈ accessible f e allW w, p w' = true
+    (allW : List W) (p : W → Prop) (w : W) : Prop :=
+  ∃ w' ∈ accessible f e allW w, p w'
 
 instance {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) :
+    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (possibility f e allW p w) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- Universal modal: □_{f(e)} p at world w.
 True iff all worlds accessible via f(e) satisfy p. -/
 def necessity {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) : Prop :=
-  ∀ w' ∈ accessible f e allW w, p w' = true
+    (allW : List W) (p : W → Prop) (w : W) : Prop :=
+  ∀ w' ∈ accessible f e allW w, p w'
 
 instance {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) :
+    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (necessity f e allW p w) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- Duality: □_{f(e)} p ↔ ¬◇_{f(e)} ¬p. -/
 theorem duality {Ev W : Type*} (f : AnchoringFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) :
-    necessity f e allW p w ↔ ¬ possibility f e allW (λ w' => !p w') w := by
+    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
+    necessity f e allW p w ↔ ¬ possibility f e allW (λ w' => ¬ p w') w := by
   unfold necessity possibility
   simp only [not_exists, not_and]
   refine ⟨fun h w' hw' hnp => ?_, fun h w' hw' => ?_⟩
-  · rw [h w' hw'] at hnp; exact Bool.noConfusion hnp
-  · cases hp : p w' with
-    | true => rfl
-    | false => exact absurd (by simp [hp]) (h w' hw')
+  · exact hnp (h w' hw')
+  · by_contra hp
+    exact h w' hw' hp
 
 
 -- ════════════════════════════════════════════════════
@@ -676,12 +673,12 @@ def bestAccessible {Ev W : Type*} [DecidableEq W]
     □_{f(e),g(e)} p at world w = ∀w' ∈ Best(f(e),g(e),w). p(w'). -/
 def orderedNecessity {Ev W : Type*} [DecidableEq W]
     (f : AnchoringFn Ev W) (g : OrderingFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) : Prop :=
-  ∀ w' ∈ bestAccessible f g e allW w, p w' = true
+    (allW : List W) (p : W → Prop) (w : W) : Prop :=
+  ∀ w' ∈ bestAccessible f g e allW w, p w'
 
 instance {Ev W : Type*} [DecidableEq W]
     (f : AnchoringFn Ev W) (g : OrderingFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) :
+    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (orderedNecessity f g e allW p w) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
@@ -689,12 +686,12 @@ instance {Ev W : Type*} [DecidableEq W]
     ◇_{f(e),g(e)} p at world w = ∃w' ∈ Best(f(e),g(e),w). p(w'). -/
 def orderedPossibility {Ev W : Type*} [DecidableEq W]
     (f : AnchoringFn Ev W) (g : OrderingFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) : Prop :=
-  ∃ w' ∈ bestAccessible f g e allW w, p w' = true
+    (allW : List W) (p : W → Prop) (w : W) : Prop :=
+  ∃ w' ∈ bestAccessible f g e allW w, p w'
 
 instance {Ev W : Type*} [DecidableEq W]
     (f : AnchoringFn Ev W) (g : OrderingFn Ev W) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) :
+    (allW : List W) (p : W → Prop) [DecidablePred p] (w : W) :
     Decidable (orderedPossibility f g e allW p w) :=
   inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
@@ -702,7 +699,7 @@ instance {Ev W : Type*} [DecidableEq W]
 Reduces to the unordered evaluation in §2. -/
 theorem empty_ordering_reduces {Ev W : Type*} [DecidableEq W]
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (p : (W → Bool)) (w : W) :
+    (p : W → Prop) (w : W) :
     orderedNecessity f (λ _ _ => []) e allW p w ↔
       necessity f e allW p w := by
   unfold orderedNecessity bestAccessible necessity accessible
@@ -773,29 +770,24 @@ quantify over the SAME set of worlds as the attitude verb itself
 theorem doxastic_necessity_eq {Ev W E : Type*}
     (R : E → W → W → Bool)
     (holder : Ev → E) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) :
+    (allW : List W) (p : W → Prop) (w : W) :
     necessity (doxasticAnchoring R holder) e allW p w ↔
-      (allW.all (λ w' => !R (holder e) w w' || p w')) = true := by
+      (∀ w' ∈ allW, R (holder e) w w' = true → p w') := by
   unfold necessity accessible doxasticAnchoring
-  simp only [List.all_cons, List.all_nil, Bool.and_true, List.all_eq_true,
+  simp only [List.all_cons, List.all_nil, Bool.and_true,
     List.mem_filter, and_imp]
-  refine ⟨fun h x hx => ?_, fun h x hx hR => ?_⟩
-  · cases hR : R (holder e) w x with
-    | true => simpa using h x hx hR
-    | false => simp
-  · have := h x hx; rw [hR] at this; simpa using this
 
 /-- Doxastic possibility dually: ◇_{DOX(holder(e))} p at w
 iff some doxastic alternative of holder(e) satisfies p. -/
 theorem doxastic_possibility_eq {Ev W E : Type*}
     (R : E → W → W → Bool)
     (holder : Ev → E) (e : Ev)
-    (allW : List W) (p : (W → Bool)) (w : W) :
+    (allW : List W) (p : W → Prop) (w : W) :
     possibility (doxasticAnchoring R holder) e allW p w ↔
-      (allW.any (λ w' => R (holder e) w w' && p w')) = true := by
+      (∃ w' ∈ allW, R (holder e) w w' = true ∧ p w') := by
   unfold possibility accessible doxasticAnchoring
-  simp only [List.all_cons, List.all_nil, Bool.and_true, List.any_eq_true,
-    List.mem_filter, Bool.and_eq_true]
+  simp only [List.all_cons, List.all_nil, Bool.and_true,
+    List.mem_filter]
   constructor
   · rintro ⟨w', ⟨hw'_in, hR⟩, hp⟩; exact ⟨w', hw'_in, hR, hp⟩
   · rintro ⟨w', hw'_in, hR, hp⟩; exact ⟨w', ⟨hw'_in, hR⟩, hp⟩
@@ -981,14 +973,14 @@ The speaker's evidence is compatible with Jane taking the train.
 `◇_{f(e₀)} (took)` holds because the speaker considers `took` possible. -/
 theorem epistemic_reading_possible :
     possibility fEpistemicTrain .speechAct allTW
-      (· == .took) .took := by decide
+      (· = .took) .took := by decide
 
 /-- Root reading: modal anchored to VP event.
 Given Jane's circumstances, she HAD to take the train.
 `□_{f(e₂)} (took)` holds because only `took` is accessible. -/
 theorem root_reading_necessary :
     necessity fRootTrain .janesTaking allTW
-      (· == .took) .took := by decide
+      (· = .took) .took := by decide
 
 /-- The root anchoring via VP event restricts the accessible worlds
 more than the epistemic anchoring via speech event. Both readings
@@ -1088,15 +1080,15 @@ private def fBelief : AnchoringFn BeliefEvent PregWorld
 Jane's beliefs restrict to the pregnant-world only. Under Jane's
 beliefs, Mary's being pregnant is necessary (Jane is certain). -/
 theorem embedded_epistemic_necessity :
-    necessity fBelief .thinking allPW (· == .pregnant) .notPregnant := by
+    necessity fBelief .thinking allPW (· = .pregnant) .notPregnant := by
   decide
 
 /-- Matrix epistemic: *might* bound to the speech event.
 The speaker considers both worlds possible, so Mary's NOT being
 pregnant is also possible. -/
 theorem matrix_epistemic_both_possible :
-    possibility fBelief .speech allPW (· == .pregnant) .notPregnant ∧
-    possibility fBelief .speech allPW (· == .notPregnant) .notPregnant := by
+    possibility fBelief .speech allPW (· = .pregnant) .notPregnant ∧
+    possibility fBelief .speech allPW (· = .notPregnant) .notPregnant := by
   constructor <;> decide
 
 /-- Same modal (*might*), different event bindings, different epistemic

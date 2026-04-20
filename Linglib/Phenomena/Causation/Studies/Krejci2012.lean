@@ -39,7 +39,7 @@ Texas at Austin.
 
 - `reflexive_is_bieventive` → `IntransitivizationType` (central claim)
 - `eat_is_causativeResult` → `LevinClass.rootEntailments` (root typology)
-- `eat_licenses_accomplishment` → `rootLicensesTemplate` (ArgDerivation)
+- `eat_licenses_accomplishment` → `RootLicensesTemplate` (ArgDerivation)
 - `eat_argTemplate_is_consumption` → `LevinClass.argTemplate` (LevinClassProfiles)
 - `accomplishment_has_variant` → `Template.intransitiveVariant`
 - `anticausative_no_theta` / `middle_no_theta` → `VoiceHead` (Minimalist syntax)
@@ -261,7 +261,7 @@ theorem causativeResult_entails_cause :
 
 /-- eat roots license the accomplishment template. -/
 theorem eat_licenses_accomplishment :
-    rootLicensesTemplate (LevinClass.rootEntailments .eat) .accomplishment = true := rfl
+    RootLicensesTemplate (LevinClass.rootEntailments .eat) .accomplishment := by decide
 
 /-- eat's primary template is accomplishment. -/
 theorem eat_primary_accomplishment :
@@ -291,11 +291,11 @@ theorem eat_root_alternation_possible :
 /-- The intransitive variant retains the result state
     (the BECOME sub-event persists). -/
 theorem alternation_preserves_result :
-    Template.hasResultState .achievement = true := rfl
+    Template.HasResultState .achievement := by decide
 
 /-- The intransitive variant loses CAUSE. -/
 theorem alternation_loses_cause :
-    Template.hasCause .achievement = false := rfl
+    ¬ Template.HasCause .achievement := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to IntransitivizationType

@@ -1,4 +1,5 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
+import Mathlib.Order.Bounds.Basic
 
 /-!
 # Parameterized Update
@@ -58,8 +59,6 @@ both ∃ and ∀ projection.
 
 namespace Core.Semantics.ParameterizedUpdate
 
-open Core.Proposition (Prop')
-
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Fragment Sets
 -- ════════════════════════════════════════════════════════════════
@@ -94,7 +93,7 @@ def fiberwiseFilter (F : FragmentSet P W) (sem : P → W → Prop) :
     This is @cite{caie-2023}'s disjunctive updating and Barker 2002's
     dynamics of vagueness. -/
 def existentialProjection (F : FragmentSet P W) (sem : P → W → Prop) :
-    Prop' W :=
+    Set W :=
   λ w => ∃ p, F p w ∧ sem p w
 
 /-- Universal projection: w survives iff all parameters in F_w make the
@@ -103,7 +102,7 @@ def existentialProjection (F : FragmentSet P W) (sem : P → W → Prop) :
     This is super-truth (Fine 1975): truth under all admissible
     precisifications. -/
 def universalProjection (F : FragmentSet P W) (sem : P → W → Prop) :
-    Prop' W :=
+    Set W :=
   λ w => ∀ p, F p w → sem p w
 
 
@@ -114,15 +113,15 @@ def universalProjection (F : FragmentSet P W) (sem : P → W → Prop) :
 /-- Existential update: restrict to the context set, then ∃-project.
 
     `existentialUpdate cs F sem w ↔ w ∈ cs ∧ ∃ p ∈ F_w, sem(p, w)`. -/
-def existentialUpdate (cs : Prop' W) (F : FragmentSet P W)
-    (sem : P → W → Prop) : Prop' W :=
+def existentialUpdate (cs : Set W) (F : FragmentSet P W)
+    (sem : P → W → Prop) : Set W :=
   λ w => cs w ∧ existentialProjection F sem w
 
 /-- Universal update: restrict to the context set, then ∀-project.
 
     `universalUpdate cs F sem w ↔ w ∈ cs ∧ ∀ p ∈ F_w, sem(p, w)`. -/
-def universalUpdate (cs : Prop' W) (F : FragmentSet P W)
-    (sem : P → W → Prop) : Prop' W :=
+def universalUpdate (cs : Set W) (F : FragmentSet P W)
+    (sem : P → W → Prop) : Set W :=
   λ w => cs w ∧ universalProjection F sem w
 
 
@@ -226,7 +225,7 @@ theorem projections_agree_iff_clear [Preorder P]
     the two-step process (update context set by α, prune parameters
     by α, then update by β) is equivalent to a single update requiring
     both α and β under the same parameter. -/
-theorem sequential_existentialUpdate (cs : Prop' W) (F : FragmentSet P W)
+theorem sequential_existentialUpdate (cs : Set W) (F : FragmentSet P W)
     (sem₁ sem₂ : P → W → Prop) :
     existentialUpdate
       (existentialUpdate cs F sem₁)
@@ -246,7 +245,7 @@ theorem sequential_existentialUpdate (cs : Prop' W) (F : FragmentSet P W)
     The ∀ case works because: if all parameters satisfy α (first step),
     then "pruned parameters" = "all parameters", so requiring β for
     pruned parameters = requiring β for all parameters. -/
-theorem sequential_universalUpdate (cs : Prop' W) (F : FragmentSet P W)
+theorem sequential_universalUpdate (cs : Set W) (F : FragmentSet P W)
     (sem₁ sem₂ : P → W → Prop) :
     universalUpdate
       (universalUpdate cs F sem₁)
@@ -284,13 +283,13 @@ theorem universalProjection_anti (F₁ F₂ : FragmentSet P W)
   λ hall p hF₁ => hall p (h p w hF₁)
 
 /-- ∃-update only removes worlds from the context set. -/
-theorem existentialUpdate_restricts (cs : Prop' W) (F : FragmentSet P W)
+theorem existentialUpdate_restricts (cs : Set W) (F : FragmentSet P W)
     (sem : P → W → Prop) (w : W) :
     existentialUpdate cs F sem w → cs w :=
   And.left
 
 /-- ∀-update only removes worlds from the context set. -/
-theorem universalUpdate_restricts (cs : Prop' W) (F : FragmentSet P W)
+theorem universalUpdate_restricts (cs : Set W) (F : FragmentSet P W)
     (sem : P → W → Prop) (w : W) :
     universalUpdate cs F sem w → cs w :=
   And.left
@@ -303,7 +302,7 @@ theorem fiberwiseFilter_sub (F : FragmentSet P W) (sem : P → W → Prop)
 
 /-- ∀-update implies ∃-update when the fiber is non-empty.
     Super-truth implies disjunctive survival. -/
-theorem universalUpdate_implies_existentialUpdate (cs : Prop' W)
+theorem universalUpdate_implies_existentialUpdate (cs : Set W)
     (F : FragmentSet P W) (sem : P → W → Prop) (w : W)
     (h_ne : ∃ p, F p w) :
     universalUpdate cs F sem w → existentialUpdate cs F sem w :=
@@ -319,7 +318,7 @@ theorem singleton_projections_agree (p₀ : P) (sem : P → W → Prop) (w : W) 
   · intro hall; exact ⟨p₀, rfl, hall p₀ rfl⟩
 
 /-- Singleton ∃-update reduces to propositional filtering. -/
-theorem existentialUpdate_singleton (cs : Prop' W) (p₀ : P)
+theorem existentialUpdate_singleton (cs : Set W) (p₀ : P)
     (sem : P → W → Prop) :
     existentialUpdate cs (λ p _ => p = p₀) sem =
     λ w => cs w ∧ sem p₀ w := by

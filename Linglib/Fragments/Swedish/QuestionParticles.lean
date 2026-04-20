@@ -1,11 +1,11 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
-
 /-!
 # Swedish Question Particles
 @cite{seeliger-repp-2018}
 
 Lexical entries for Swedish modal particles that occur in declarative
-questions.
+questions. The fragment commits only to theory-neutral lexical primitives;
+the left-peripheral layer assignment lives in
+`Phenomena.Questions.Studies.SeeligerRepp2018`.
 
 ## Particles
 
@@ -41,13 +41,10 @@ position, and their clause-initial uses require further investigation.
 
 namespace Fragments.Swedish.QuestionParticles
 
-open Semantics.Questions (QParticleLayer)
-
 /-- A Swedish question/modal particle entry. -/
 structure QParticleEntry where
   form : String
   gloss : String
-  layer : QParticleLayer
   /-- Compatible with polar questions (declarative syntax)? -/
   polarOk : Bool
   /-- Compatible with declarative assertions? -/
@@ -77,7 +74,6 @@ structure QParticleEntry where
 def val : QParticleEntry where
   form := "väl"
   gloss := "MP (question-inducing uncertainty particle)"
-  layer := .perspP
   polarOk := true
   declOk := false  -- väl-declaratives are questions, not assertions
   whOk := false
@@ -93,6 +89,5 @@ theorem val_question_inducing : val.questionInducing = true := rfl
 theorem val_signals_uncertainty : val.signalsEpistemicUncertainty = true := rfl
 theorem val_requires_evidential : val.requiresEvidentialBias = true := rfl
 theorem val_not_assertion : val.declOk = false := rfl
-theorem val_layer : val.layer = .perspP := rfl
 
 end Fragments.Swedish.QuestionParticles

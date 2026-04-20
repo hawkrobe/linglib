@@ -72,11 +72,11 @@ For FC: the II alternatives are ◇p and ◇q, so homogeneity gives ◇p ↔ ◇
 
 /-- Homogeneity: all propositions in a set have the same truth value.
     For the empty set, homogeneity holds vacuously. -/
-def homogeneous (S : Set (Prop' World)) (w : World) : Prop :=
+def homogeneous (S : Set (Set World)) (w : World) : Prop :=
   ∀ α ∈ S, ∀ β ∈ S, (α w ↔ β w)
 
 /-- Homogeneity over a two-element set is biconditional. -/
-theorem homogeneous_pair (p q : Prop' World) (w : World) :
+theorem homogeneous_pair (p q : Set World) (w : World) :
     homogeneous {p, q} w ↔ (p w ↔ q w) := by
   constructor
   · intro h
@@ -87,8 +87,8 @@ theorem homogeneous_pair (p q : Prop' World) (w : World) :
       first | exact Iff.rfl | exact hiff | exact hiff.symm
 
 /-- Homogeneity + at-least-one-holds → all hold. -/
-theorem homogeneous_and_exists_imp_all (S : Set (Prop' World)) (w : World)
-    (hHomog : homogeneous S w) (α : Prop' World) (hα : α ∈ S) (ha : α w) :
+theorem homogeneous_and_exists_imp_all (S : Set (Set World)) (w : World)
+    (hHomog : homogeneous S w) (α : Set World) (hα : α ∈ S) (ha : α w) :
     ∀ β ∈ S, β w :=
   fun β hβ => (hHomog α hα β hβ).mp ha
 
@@ -114,14 +114,14 @@ all alternatives are relevant.
 
 /-- **pex^{IE+II}**: Presuppositional exhaustification with IE and II.
 
-    Unlike `exhIEII` which returns `Prop' World` (flat, fully assertive),
+    Unlike `exhIEII` which returns `Set World` (flat, fully assertive),
     `pexIEII` returns `PrProp World` (assertive + presuppositional).
 
     - **assertion** = φ (the prejacent)
     - **presupposition** = (negation of relevant IE alternatives) ∧
                            (homogeneity of relevant II alternatives) -/
-def pexIEII (ALT : Set (Prop' World)) (φ : Prop' World)
-    (Rc : Set (Prop' World)) : PrProp World where
+def pexIEII (ALT : Set (Set World)) (φ : Set World)
+    (Rc : Set (Set World)) : PrProp World where
   assertion := φ
   presup := fun w =>
     -- (i) all relevant IE alternatives are false
@@ -130,7 +130,7 @@ def pexIEII (ALT : Set (Prop' World)) (φ : Prop' World)
     homogeneous {α ∈ II ALT φ | α ∈ Rc} w
 
 /-- pex with all alternatives relevant (the default case). -/
-def pexIEII_full (ALT : Set (Prop' World)) (φ : Prop' World) : PrProp World :=
+def pexIEII_full (ALT : Set (Set World)) (φ : Set World) : PrProp World :=
   pexIEII ALT φ ALT
 
 -- ============================================================================
@@ -138,24 +138,24 @@ def pexIEII_full (ALT : Set (Prop' World)) (φ : Prop' World) : PrProp World :=
 -- ============================================================================
 
 /-- pex asserts the prejacent. -/
-theorem pex_assertion_eq (ALT : Set (Prop' World)) (φ : Prop' World)
-    (Rc : Set (Prop' World)) :
+theorem pex_assertion_eq (ALT : Set (Set World)) (φ : Set World)
+    (Rc : Set (Set World)) :
     (pexIEII ALT φ Rc).assertion = φ := rfl
 
 /-- The overall meaning of pex (presupposition ∧ assertion) entails φ. -/
-theorem pex_holds_entails_prejacent (ALT : Set (Prop' World)) (φ : Prop' World)
-    (Rc : Set (Prop' World)) (w : World)
+theorem pex_holds_entails_prejacent (ALT : Set (Set World)) (φ : Set World)
+    (Rc : Set (Set World)) (w : World)
     (h : (pexIEII ALT φ Rc).holds w) : φ w :=
   h.2
 
 /-- Negation applies only to the assertive component; presupposition projects. -/
-theorem pex_neg_assertion (ALT : Set (Prop' World)) (φ : Prop' World)
-    (Rc : Set (Prop' World)) :
+theorem pex_neg_assertion (ALT : Set (Set World)) (φ : Set World)
+    (Rc : Set (Set World)) :
     ((pexIEII ALT φ Rc).neg).assertion = fun w => ¬φ w := rfl
 
 /-- Negation preserves the presupposition (projection from under negation). -/
-theorem pex_neg_presup (ALT : Set (Prop' World)) (φ : Prop' World)
-    (Rc : Set (Prop' World)) :
+theorem pex_neg_presup (ALT : Set (Set World)) (φ : Set World)
+    (Rc : Set (Set World)) :
     ((pexIEII ALT φ Rc).neg).presup = (pexIEII ALT φ Rc).presup := rfl
 
 -- ============================================================================
@@ -274,7 +274,7 @@ negative FC, regardless of how IE/II are computed.
     This is the paper's (19a):
     ⟦pex^{IE+II}[¬□[T ∧ B]]⟧ = (¬□T ∨ ¬□B)_{¬□T↔¬□B} ⊨ ¬□T ∧ ¬□B -/
 theorem negative_fc_entailment {W : Type*}
-    (boxP boxQ : Prop' W) (w : W)
+    (boxP boxQ : Set W) (w : W)
     (hassert : ¬(boxP w ∧ boxQ w))
     (hhomog : (¬boxP w) ↔ (¬boxQ w)) :
     ¬boxP w ∧ ¬boxQ w := by
@@ -320,22 +320,22 @@ Consequently, `pexFC` simultaneously derives both positive FC
 
 /-- ¬□p: p is not required (= ◇¬p by duality). Under the isomorphism, this
     is `permB` on `FCWorld`. -/
-abbrev notReqA : Prop' FCWorld := permB
+abbrev notReqA : Set FCWorld := permB
 
 /-- ¬□q: q is not required. Under the isomorphism, this is `permA`. -/
-abbrev notReqB : Prop' FCWorld := permA
+abbrev notReqB : Set FCWorld := permA
 
 /-- ¬□(p∧q): not both required. Under the isomorphism, this is
     `permAorB` = `fcPrejacent`. -/
-abbrev notReqAandB : Prop' FCWorld := permAorB
+abbrev notReqAandB : Set FCWorld := permAorB
 
 /-- ¬□(p∨q): neither required. Under the isomorphism, this is
     `permAandB`. -/
-abbrev notReqAorB : Prop' FCWorld := permAandB
+abbrev notReqAorB : Set FCWorld := permAandB
 
 /-- The alternative set for ¬□(p∧q) is the same set as fcALT. -/
 theorem negNecALT_eq_fcALT :
-    ({notReqAandB, notReqA, notReqB, notReqAorB} : Set (Prop' FCWorld)) = fcALT := by
+    ({notReqAandB, notReqA, notReqB, notReqAorB} : Set (Set FCWorld)) = fcALT := by
   simp only [notReqAandB, notReqA, notReqB, notReqAorB, fcALT]
   ext x; simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
   tauto
@@ -378,8 +378,8 @@ This is the paper's (11a): ⟦pex^{IE+II}(∃)⟧ = ⟦pex^{IE}(∃)⟧ = ∃_{�
 
 /-- For basic scalar sentences (where II ∩ Rc is empty), pex's presupposition
     reduces to just the negated IE alternatives (homogeneity is vacuous). -/
-theorem pex_basic_scalar (ALT : Set (Prop' World)) (φ : Prop' World)
-    (Rc : Set (Prop' World))
+theorem pex_basic_scalar (ALT : Set (Set World)) (φ : Set World)
+    (Rc : Set (Set World))
     (hII_empty : ∀ α, α ∈ II ALT φ → α ∈ Rc → False) (w : World) :
     (pexIEII ALT φ Rc).presup w ↔
       (∀ ψ, isInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → ¬ψ w) := by

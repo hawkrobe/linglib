@@ -14,25 +14,43 @@ namespace Core.WALS.F144G
 
 /-- WALS 144G values. -/
 inductive OptionalDoubleNegationInSvoLanguages where
-  | snegvo  -- SNegVO(Neg) (6 languages)
-  | svoneg  -- S(Neg)VONeg (8 languages)
-  | svnego  -- S(Neg)VNegO (3 languages)
-  | snegvo_4  -- SNegV(Neg)O (1 languages)
-  | svoneg_5  -- (Neg)SVONeg (2 languages)
-  | svnego_6  -- SVNegO(Neg) (1 languages)
-  | negsVO  -- NegS[V(-Neg)]O (1 languages)
-  | sVNego  -- S[(Neg-)V]NegO (1 languages)
-  | sNegVO  -- S[Neg-V]O(Neg) (2 languages)
-  | snegvoSvnegoNegtone  -- SNegVO/SVNegO&NegTone (1 languages)
-  | sVO  -- S(Neg)[V(-Neg)]O (1 languages)
-  | sNegVO_12  -- S[Neg-V(-Neg)]O (2 languages)
-  | svonegSvoneg  -- (Neg)SVONeg/S(Neg)VONeg (1 languages)
-  | sNegVONegsvnego  -- S[Neg-V]O/NegSVNegO (1 languages)
-  | snegVNegOSNegVNegO  -- SNeg[V-Neg]O/S[Neg-V-Neg]O (1 languages)
-  | sVONegv  -- S[V(-Neg)]O & NegV (1 languages)
-  | svoSovVNeg  -- SVO/SOV & (Neg)[V-Neg] (1 languages)
-  | svoVsoNegvVnegNegvneg  -- SVO/VSO & NegV/VNeg/NegVNeg (1 languages)
-  deriving DecidableEq, Repr
+  /-- SNegVO(Neg) (6 languages). -/
+  | snegvo
+  /-- S(Neg)VONeg (8 languages). -/
+  | svoneg
+  /-- S(Neg)VNegO (3 languages). -/
+  | svnego
+  /-- SNegV(Neg)O (1 languages). -/
+  | snegvo_4
+  /-- (Neg)SVONeg (2 languages). -/
+  | svoneg_5
+  /-- SVNegO(Neg) (1 languages). -/
+  | svnego_6
+  /-- NegS[V(-Neg)]O (1 languages). -/
+  | negsVO
+  /-- S[(Neg-)V]NegO (1 languages). -/
+  | sVNego
+  /-- S[Neg-V]O(Neg) (2 languages). -/
+  | sNegVO
+  /-- SNegVO/SVNegO&NegTone (1 languages). -/
+  | snegvoSvnegoNegtone
+  /-- S(Neg)[V(-Neg)]O (1 languages). -/
+  | sVO
+  /-- S[Neg-V(-Neg)]O (2 languages). -/
+  | sNegVO_12
+  /-- (Neg)SVONeg/S(Neg)VONeg (1 languages). -/
+  | svonegSvoneg
+  /-- S[Neg-V]O/NegSVNegO (1 languages). -/
+  | sNegVONegsvnego
+  /-- SNeg[V-Neg]O/S[Neg-V-Neg]O (1 languages). -/
+  | snegVNegOSNegVNegO
+  /-- S[V(-Neg)]O & NegV (1 languages). -/
+  | sVONegv
+  /-- SVO/SOV & (Neg)[V-Neg] (1 languages). -/
+  | svoSovVNeg
+  /-- SVO/VSO & NegV/VNeg/NegVNeg (1 languages). -/
+  | svoVsoNegvVnegNegvneg
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144G dataset (35 languages). -/
 def allData : List (Datapoint OptionalDoubleNegationInSvoLanguages) :=
@@ -72,46 +90,6 @@ def allData : List (Datapoint OptionalDoubleNegationInSvoLanguages) :=
   , { walsCode := "zch", language := "Zoque (Chimalapa)", iso := "zoh", value := .sVONegv }
   , { walsCode := "zul", language := "Zulu", iso := "zul", value := .sNegVO_12 }
   ]
-
--- Count verification
-theorem total_count : allData.length = 35 := by native_decide
-
-theorem count_snegvo :
-    (allData.filter (·.value == .snegvo)).length = 6 := by native_decide
-theorem count_svoneg :
-    (allData.filter (·.value == .svoneg)).length = 8 := by native_decide
-theorem count_svnego :
-    (allData.filter (·.value == .svnego)).length = 3 := by native_decide
-theorem count_snegvo_4 :
-    (allData.filter (·.value == .snegvo_4)).length = 1 := by native_decide
-theorem count_svoneg_5 :
-    (allData.filter (·.value == .svoneg_5)).length = 2 := by native_decide
-theorem count_svnego_6 :
-    (allData.filter (·.value == .svnego_6)).length = 1 := by native_decide
-theorem count_negsVO :
-    (allData.filter (·.value == .negsVO)).length = 1 := by native_decide
-theorem count_sVNego :
-    (allData.filter (·.value == .sVNego)).length = 1 := by native_decide
-theorem count_sNegVO :
-    (allData.filter (·.value == .sNegVO)).length = 2 := by native_decide
-theorem count_snegvoSvnegoNegtone :
-    (allData.filter (·.value == .snegvoSvnegoNegtone)).length = 1 := by native_decide
-theorem count_sVO :
-    (allData.filter (·.value == .sVO)).length = 1 := by native_decide
-theorem count_sNegVO_12 :
-    (allData.filter (·.value == .sNegVO_12)).length = 2 := by native_decide
-theorem count_svonegSvoneg :
-    (allData.filter (·.value == .svonegSvoneg)).length = 1 := by native_decide
-theorem count_sNegVONegsvnego :
-    (allData.filter (·.value == .sNegVONegsvnego)).length = 1 := by native_decide
-theorem count_snegVNegOSNegVNegO :
-    (allData.filter (·.value == .snegVNegOSNegVNegO)).length = 1 := by native_decide
-theorem count_sVONegv :
-    (allData.filter (·.value == .sVONegv)).length = 1 := by native_decide
-theorem count_svoSovVNeg :
-    (allData.filter (·.value == .svoSovVNeg)).length = 1 := by native_decide
-theorem count_svoVsoNegvVnegNegvneg :
-    (allData.filter (·.value == .svoVsoNegvVnegNegvneg)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

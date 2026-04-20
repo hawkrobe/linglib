@@ -1,5 +1,5 @@
 import Linglib.Core.PropertyDomain
-import Linglib.Theories.Pragmatics.RSA.Core.Noise
+import Linglib.Theories.Pragmatics.RSA.Channel
 import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
 import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006

@@ -128,13 +128,19 @@ inductive SyntacticObject where
 
 namespace SyntacticObject
 
-def isLeaf : SyntacticObject → Bool
-  | .leaf _ => true
-  | .node _ _ => false
+def isLeaf : SyntacticObject → Prop
+  | .leaf _ => True
+  | .node _ _ => False
 
-def isNode : SyntacticObject → Bool
-  | .leaf _ => false
-  | .node _ _ => true
+instance : DecidablePred isLeaf := fun so => by
+  cases so <;> unfold isLeaf <;> infer_instance
+
+def isNode : SyntacticObject → Prop
+  | .leaf _ => False
+  | .node _ _ => True
+
+instance : DecidablePred isNode := fun so => by
+  cases so <;> unfold isNode <;> infer_instance
 
 def getLIToken : SyntacticObject → Option LIToken
   | .leaf tok => some tok
@@ -263,11 +269,11 @@ def terminalNodes : SyntacticObject → List SyntacticObject
 
 /-- Every terminal node is a leaf. -/
 theorem terminalNodes_are_leaves {so t : SyntacticObject}
-    (h : t ∈ terminalNodes so) : t.isLeaf = true := by
+    (h : t ∈ terminalNodes so) : t.isLeaf := by
   induction so with
   | leaf _ =>
     simp only [terminalNodes] at h
-    exact List.mem_singleton.mp h ▸ rfl
+    exact List.mem_singleton.mp h ▸ trivial
   | node l r ihl ihr =>
     simp only [terminalNodes, List.mem_append] at h
     exact h.elim ihl ihr

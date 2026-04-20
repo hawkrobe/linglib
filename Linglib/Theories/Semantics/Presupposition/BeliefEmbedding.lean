@@ -51,7 +51,6 @@ import Linglib.Theories.Semantics.Modality.EpistemicLogic
 namespace Semantics.Presupposition.BeliefEmbedding
 
 open Core.Presupposition
-open Core.Proposition
 open Core.CommonGround
 open Core.PresuppositionContext
 open Semantics.Presupposition.LocalContext
@@ -252,7 +251,7 @@ The expressive content is evaluated in the speaker's context, ignoring
 the belief embedding.
 -/
 def expressiveProjectsToSpeaker (globalCtx : ContextSet W)
-    (expressiverContent : (W → Bool)) : Prop :=
+    (expressiverContent : W → Prop) : Prop :=
   -- The content must be entailed by the global (speaker's) context
   ContextSet.entails globalCtx expressiverContent
 
@@ -350,7 +349,7 @@ theorem knowledge_filtered_implies_belief_filtered
     ContextSet.entails ((knowledgeLocalCtxOfFrame frame ctx i).atWorld w_star) p.presup →
     ContextSet.entails ((beliefLocalCtxOfFrame frame ctx i).atWorld w_star) p.presup := by
   intro h_know w h_bel
-  exact h_know w (beliefLocal_sub_knowledgeLocal frame ctx i w_star w h_bel)
+  exact h_know (beliefLocal_sub_knowledgeLocal frame ctx i w_star w h_bel)
 
 end BoolPropBridge
 
@@ -397,11 +396,11 @@ def transparentProjection (globalCtx : ContextSet W) (p : PrProp W) : Prop :=
     This grounds the `negFactive` combinator in the projection theory.
     @cite{heim-1992}, @cite{delpinal-bassi-sauerland-2024} §3.2 -/
 theorem negFactive_entails_transparent (complement : PrProp W)
-    (believes : Prop' W → Prop' W) (globalCtx : ContextSet W)
+    (believes : Set W → Set W) (globalCtx : ContextSet W)
     (h : ContextSet.entails globalCtx (PrProp.negFactive complement believes).presup) :
     transparentProjection globalCtx complement := by
   intro w hw
-  exact (h w hw).1
+  exact (h hw).1
 
 /-- Under S5 knowledge (reflexive accessibility), opaque projection implies
     transparent projection.
@@ -415,7 +414,7 @@ theorem opaque_implies_transparent_when_reflexive
     (hOpaque : presupAttributedToHolder blc p) :
     transparentProjection blc.globalCtx p := by
   intro w hw
-  exact hOpaque w hw w ⟨hw, hReflexive w hw⟩
+  exact hOpaque w hw ⟨hw, hReflexive w hw⟩
 
 end OpaqueTransparent
 

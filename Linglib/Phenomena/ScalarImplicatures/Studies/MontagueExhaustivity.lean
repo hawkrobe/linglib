@@ -23,6 +23,8 @@ This grounds the NeoGricean analysis in compositional semantics.
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Exhaustification.Operators
 import Mathlib.Tactic.FinCases
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 namespace MontagueExhaustivity
 
@@ -115,14 +117,14 @@ example : ¬allPassedMontague ⟨2, by omega⟩ := by
 example : allPassedMontague ⟨3, by omega⟩ := by
   simp only [allPassedMontague, every_sem, isStudent, passedAt]; intros x _; cases x <;> trivial
 
-/-- "Some students passed" as Prop' (Fin 4) -/
-def somePassed_Prop : Prop' (Fin 4) := somePassedMontague
+/-- "Some students passed" as Set (Fin 4) -/
+def somePassed_Prop : Set (Fin 4) := somePassedMontague
 
-/-- "All students passed" as Prop' (Fin 4) -/
-def allPassed_Prop : Prop' (Fin 4) := allPassedMontague
+/-- "All students passed" as Set (Fin 4) -/
+def allPassed_Prop : Set (Fin 4) := allPassedMontague
 
 /-- Alternative set for exhaustivity -/
-def someAllALT_Montague : Set (Prop' (Fin 4)) := {somePassed_Prop, allPassed_Prop}
+def someAllALT_Montague : Set (Set (Fin 4)) := {somePassed_Prop, allPassed_Prop}
 
 
 /-
@@ -133,10 +135,10 @@ hand-crafted definitions from Operators.lean Section 6.
 -/
 
 /-- someStudents from Operators.lean -/
-def someStudents_handcrafted : Prop' (Fin 4) := λ w => w.val ≥ 1
+def someStudents_handcrafted : Set (Fin 4) := λ w => w.val ≥ 1
 
 /-- allStudents from Operators.lean -/
-def allStudents_handcrafted : Prop' (Fin 4) := λ w => w.val = 3
+def allStudents_handcrafted : Set (Fin 4) := λ w => w.val = 3
 
 /-- Helper: passedAt w alice is True iff w.val ≥ 1 -/
 private theorem passedAt_alice (w : Fin 4) : passedAt w .alice ↔ w.val ≥ 1 := by
@@ -264,7 +266,7 @@ theorem montague_exhMW_entails_exhIE :
 -/
 theorem exhIE_somePassed_at_w1 :
     exhIE someAllALT_Montague somePassed_Prop w1_montague :=
-  montague_exhMW_entails_exhIE w1_montague exhMW_somePassed_at_w1
+  montague_exhMW_entails_exhIE exhMW_somePassed_at_w1
 
 -- SUMMARY
 
@@ -275,7 +277,7 @@ theorem exhIE_somePassed_at_w1 :
 
 1. **World-indexed models**: Each world w determines which students passed
 2. **Compositional semantics**: `some_sem`, `every_sem` compute truth at each world
-3. **Prop' conversion**: Boolean truth values become `Prop' World` for exhaustivity
+3. **Set conversion**: Boolean truth values become `Set World` for exhaustivity
 4. **Grounding theorem**: Compositional = hand-crafted (`somePassed_eq_handcrafted`)
 
 ### Results

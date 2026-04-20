@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
+import Linglib.Theories.Pragmatics.RSA.InformationTheory
 import Linglib.Theories.Processing.Cost.Profile
 import Linglib.Theories.Processing.PredictiveUncertainty.Config
 

@@ -430,15 +430,15 @@ theorem smpm_supports_basegeneration :
 /-- SMPM profile derived from fragment data and inventory. -/
 def smpmProfile : ProDropProfile :=
   { allowsProDrop := Fragments.Mixtec.SMPM.allowsProDrop
-  , hasOvertPRO := smpmInventory.hasOvertPRO }
+  , hasOvertPRO := decide smpmInventory.hasOvertPRO }
 
 def englishProfile : ProDropProfile :=
   { allowsProDrop := false
-  , hasOvertPRO := englishInventory.hasOvertPRO }
+  , hasOvertPRO := decide englishInventory.hasOvertPRO }
 
 def buliProfile : ProDropProfile :=
   { allowsProDrop := false
-  , hasOvertPRO := buliInventory.hasOvertPRO }
+  , hasOvertPRO := decide buliInventory.hasOvertPRO }
 
 -- SMPM: overt PRO + non-pro-drop → universal (consequent true)
 theorem smpm_satisfies_universal : smpmProfile.Satisfies := by decide

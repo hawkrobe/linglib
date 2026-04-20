@@ -48,7 +48,6 @@ namespace Pragmatics.Assertion.Krifka
 
 open Core.Discourse.Commitment (CommitmentSlate)
 open Core.CommonGround (ContextSet)
-open Core.Proposition (Prop')
 open Core.Mood (IllocutionaryMood)
 
 -- ════════════════════════════════════════════════════
@@ -129,7 +128,7 @@ theorem strength_ordering :
     uses `IllocutionaryMood` from `Core/Discourse/IllocutionaryForce.lean`. -/
 structure LayeredAssertion (W : Type*) where
   /-- TP: the propositional content -/
-  content : Prop' W
+  content : Set W
   /-- JP: the speaker's epistemic status toward the content -/
   epistemicStatus : CommitmentStrength := .standard
   /-- ComP: the strength of the speaker's public commitment -/
@@ -175,11 +174,11 @@ def KAgent.toDiscourseRole : KAgent → Core.Discourse.DiscourseRole
     add continuations (the CG is preserved until acceptance). -/
 structure CommitmentSpace (W : Type*) where
   /-- Root commitment state √C: propositions currently in the CG -/
-  root : List (Prop' W)
+  root : List (Set W)
   /-- Proposed future states. Questions add these; acceptance promotes
       one to root. Each continuation is a list of propositions that
       extends (narrows) the root. -/
-  continuations : List (List (Prop' W))
+  continuations : List (List (Set W))
 
 namespace CommitmentSpace
 
@@ -194,7 +193,7 @@ def empty : CommitmentSpace W := ⟨[], []⟩
 
     Adds φ to the root AND all continuations. Any accepted
     continuation will also entail φ. -/
-def assert (cs : CommitmentSpace W) (φ : Prop' W) : CommitmentSpace W :=
+def assert (cs : CommitmentSpace W) (φ : Set W) : CommitmentSpace W :=
   { root := φ :: cs.root
     continuations := cs.continuations.map (φ :: ·) }
 
@@ -206,15 +205,18 @@ def assert (cs : CommitmentSpace W) (φ : Prop' W) : CommitmentSpace W :=
     added (root narrowed by φ), and existing continuations are also
     narrowed by φ. The addressee can accept (promote continuation to
     root) or reject (prune it). -/
-def question (cs : CommitmentSpace W) (φ : Prop' W) : CommitmentSpace W :=
+def question (cs : CommitmentSpace W) (φ : Set W) : CommitmentSpace W :=
   { root := cs.root
     continuations := (φ :: cs.root) :: cs.continuations.map (φ :: ·) }
 
 /-- The space is settled: no open continuations.
     A settled space has no unresolved proposals. -/
-def isSettled : CommitmentSpace W → Bool
-  | ⟨_, []⟩ => true
-  | ⟨_, _ :: _⟩ => false
+def isSettled : CommitmentSpace W → Prop
+  | ⟨_, []⟩ => True
+  | ⟨_, _ :: _⟩ => False
+
+instance : DecidablePred (@isSettled W) := fun cs => by
+  cases cs with | mk _ conts => cases conts <;> (unfold isSettled; infer_instance)
 
 /-- Accept the first continuation: it becomes the new root.
     The CG is updated to the accepted proposal's content. -/
@@ -233,41 +235,41 @@ def toContextSet (cs : CommitmentSpace W) : ContextSet W :=
   λ w => ∀ p ∈ cs.root, p w
 
 /-- Empty space is settled. -/
-theorem empty_settled : (empty : CommitmentSpace W).isSettled = true := rfl
+theorem empty_settled : (empty : CommitmentSpace W).isSettled := True.intro
 
 /-- Assertion preserves settledness. -/
-theorem assert_preserves_settled (cs : CommitmentSpace W) (φ : Prop' W)
-    (h : cs.isSettled = true) :
-    (cs.assert φ).isSettled = true := by
+theorem assert_preserves_settled (cs : CommitmentSpace W) (φ : Set W)
+    (h : cs.isSettled) :
+    (cs.assert φ).isSettled := by
   cases cs with | mk r conts =>
   cases conts with
-  | nil => rfl
-  | cons _ _ => simp [isSettled] at h
+  | nil => exact True.intro
+  | cons _ _ => exact h.elim
 
 /-- Question makes a settled space unsettled (adds a continuation). -/
-theorem question_unsettles (cs : CommitmentSpace W) (φ : Prop' W)
-    (h : cs.isSettled = true) :
-    (cs.question φ).isSettled = false := by
+theorem question_unsettles (cs : CommitmentSpace W) (φ : Set W)
+    (h : cs.isSettled) :
+    ¬ (cs.question φ).isSettled := by
   cases cs with | mk r conts =>
   cases conts with
-  | nil => rfl
-  | cons _ _ => simp [isSettled] at h
+  | nil => exact id
+  | cons _ _ => exact h.elim
 
 /-- Accepting a simple question's sole continuation re-settles. -/
-theorem accept_resettles_simple (cs : CommitmentSpace W) (φ : Prop' W)
-    (h : cs.isSettled = true) :
-    (cs.question φ).acceptFirst.isSettled = true := by
+theorem accept_resettles_simple (cs : CommitmentSpace W) (φ : Set W)
+    (h : cs.isSettled) :
+    (cs.question φ).acceptFirst.isSettled := by
   cases cs with | mk r conts =>
   cases conts with
-  | nil => rfl
-  | cons _ _ => simp [isSettled] at h
+  | nil => exact True.intro
+  | cons _ _ => exact h.elim
 
 /-- Root after assertion contains the asserted proposition. -/
-theorem assert_in_root (cs : CommitmentSpace W) (φ : Prop' W) :
+theorem assert_in_root (cs : CommitmentSpace W) (φ : Set W) :
     φ ∈ (cs.assert φ).root := by simp [assert]
 
 /-- Question preserves root commitments. -/
-theorem question_preserves_root (cs : CommitmentSpace W) (φ : Prop' W) :
+theorem question_preserves_root (cs : CommitmentSpace W) (φ : Set W) :
     (cs.question φ).root = cs.root := rfl
 
 end CommitmentSpace
@@ -297,23 +299,23 @@ def empty : KrifkaState W :=
 
 /-- Krifka's commitment operator `+ S₁⊢p` (@cite{krifka-2015}, (9)):
     speaker commits to p, narrowing the entire space. -/
-def commitOp (s : KrifkaState W) (p : Prop' W) : KrifkaState W :=
+def commitOp (s : KrifkaState W) (p : Set W) : KrifkaState W :=
   { s with
     speakerCS := s.speakerCS.add p
     space := s.space.assert p }
 
 /-- Accept: addressee also commits to p (after speaker's assertion). -/
-def accept (s : KrifkaState W) (p : Prop' W) : KrifkaState W :=
+def accept (s : KrifkaState W) (p : Set W) : KrifkaState W :=
   { s with addresseeCS := s.addresseeCS.add p }
 
 /-- Assert = commit (@cite{krifka-2015}: assertion IS commitment).
     The space is narrowed immediately; the CG reflects the assertion. -/
-def assert (s : KrifkaState W) (p : Prop' W) : KrifkaState W :=
+def assert (s : KrifkaState W) (p : Set W) : KrifkaState W :=
   s.commitOp p
 
 /-- Question: speaker proposes φ as a continuation (@cite{krifka-2015}, (14)).
     The CG (root) is unchanged; a new continuation is added. -/
-def question (s : KrifkaState W) (p : Prop' W) : KrifkaState W :=
+def question (s : KrifkaState W) (p : Set W) : KrifkaState W :=
   { s with space := s.space.question p }
 
 /-- Accept the first continuation: it becomes the new CG. -/
@@ -329,8 +331,10 @@ def contextSet (s : KrifkaState W) : ContextSet W :=
   s.space.toContextSet
 
 /-- Stability: the space is settled (no open proposals). -/
-def isStable (s : KrifkaState W) : Bool :=
+def isStable (s : KrifkaState W) : Prop :=
   s.space.isSettled
+
+instance : DecidablePred (@isStable W) := fun s => inferInstanceAs (Decidable s.space.isSettled)
 
 end KrifkaState
 
@@ -358,7 +362,7 @@ theorem jp_comp_independent {W : Type*}
 
 /-- Krifka's ActP layer directly uses `IllocutionaryMood`, grounding
     the clause-type distinction in the speech act classification. -/
-theorem actp_declarative_default {W : Type*} (p : Prop' W) :
+theorem actp_declarative_default {W : Type*} (p : Set W) :
     ({ content := p : LayeredAssertion W }).actType = .declarative := rfl
 
 -- ════════════════════════════════════════════════════
@@ -388,9 +392,9 @@ inductive UpdateType where
 
 /-- Informative update: restrict context set to worlds satisfying φ.
     @cite{krifka-2020}, (7): `c + ·φ = {i | i ∈ c ∧ φ(i)}` -/
-def informativeUpdate {W : Type*} (cs : List W) (φ : Prop' W)
+def informativeUpdate {W : Type*} (cs : List W) (φ : Set W)
     [DecidablePred φ] : List W :=
-  cs.filter (λ w => decide (φ w))
+  cs.filter (fun w => φ w)
 
 /-- A fully specified assertion with update type. -/
 structure TypedAssertion (W : Type*) extends LayeredAssertion W where
@@ -398,7 +402,7 @@ structure TypedAssertion (W : Type*) extends LayeredAssertion W where
   updateType : UpdateType := .informative
 
 /-- Default assertions are informative (the common case). -/
-theorem default_assertion_informative {W : Type*} (p : Prop' W) :
+theorem default_assertion_informative {W : Type*} (p : Set W) :
     ({ content := p : TypedAssertion W }).updateType = .informative := rfl
 
 /-- Commitment Closure (@cite{krifka-2020}, (25)): assertion immediately
@@ -407,11 +411,11 @@ theorem default_assertion_informative {W : Type*} (p : Prop' W) :
 
     In the tree model, this is definitional: `assert` adds φ to
     all nodes including the root. -/
-theorem commitment_closure {W : Type*} (s : KrifkaState W) (p : Prop' W) :
+theorem commitment_closure {W : Type*} (s : KrifkaState W) (p : Set W) :
     (s.assert p).space.root = p :: s.space.root := rfl
 
 /-- Questions don't change the CG: the root is preserved. -/
-theorem question_preserves_cg {W : Type*} (s : KrifkaState W) (p : Prop' W) :
+theorem question_preserves_cg {W : Type*} (s : KrifkaState W) (p : Set W) :
     (s.question p).space.root = s.space.root := rfl
 
 /-- Question then accept ≈ assert (on the root): accepting a question's
@@ -421,14 +425,14 @@ theorem question_preserves_cg {W : Type*} (s : KrifkaState W) (p : Prop' W) :
     imposes) and question-then-accept (speaker proposes, addressee
     accepts). The roots match because both produce φ :: root₀. -/
 theorem question_accept_eq_assert_root {W : Type*}
-    (s : KrifkaState W) (p : Prop' W) (h : s.space.isSettled = true) :
+    (s : KrifkaState W) (p : Set W) (h : s.space.isSettled) :
     (s.question p).acceptContinuation.space.root =
     (s.assert p).space.root := by
   cases s with | mk sCS aCS space =>
   cases space with | mk r conts =>
   cases conts with
   | nil => rfl
-  | cons _ _ => simp [CommitmentSpace.isSettled] at h
+  | cons _ _ => exact h.elim
 
 -- ════════════════════════════════════════════════════
 -- § 8. Actor vs Committer (@cite{krifka-2015}, §6)
@@ -478,7 +482,7 @@ theorem actor_committer_diverge :
     The 2020 paper refines this to ActP > ComP > JP > TP. -/
 structure SpeechAct (W : Type*) where
   /-- Propositional content (TP layer) -/
-  content : Prop' W
+  content : Set W
   /-- Speech act type: assertion (.) or question (?) -/
   actType : IllocutionaryMood := .declarative
   /-- Actor/committer assignment -/
@@ -496,7 +500,7 @@ structure SpeechAct (W : Type*) where
 
     Monopolar questions are inherently biased toward the proposed
     continuation. -/
-def monopolarQuestion {W : Type*} (φ : Prop' W) : SpeechAct W :=
+def monopolarQuestion {W : Type*} (φ : Set W) : SpeechAct W :=
   { content := φ, actType := .interrogative, roles := questionRoles }
 
 /-- Complex speech act: conjunction or disjunction of atomic acts.
@@ -528,7 +532,7 @@ def ComplexSpeechAct.components {W : Type*} : ComplexSpeechAct W → List (Speec
     "It's raining, isn't it?" = speaker asserts rain AND asks addressee
     to confirm. The speaker has already committed, so the question is
     biased toward the asserted content. -/
-def matchingTag {W : Type*} (φ : Prop' W) : ComplexSpeechAct W :=
+def matchingTag {W : Type*} (φ : Set W) : ComplexSpeechAct W :=
   .conj
     { content := φ, actType := .declarative, roles := assertionRoles }
     (monopolarQuestion φ)
@@ -538,26 +542,26 @@ def matchingTag {W : Type*} (φ : Prop' W) : ComplexSpeechAct W :=
 
     "It's raining, or isn't it?" = speaker offers two continuations.
     The addressee picks one. -/
-def reverseTag {W : Type*} (φ negφ : Prop' W) : ComplexSpeechAct W :=
+def reverseTag {W : Type*} (φ negφ : Set W) : ComplexSpeechAct W :=
   .disj
     { content := φ, actType := .declarative, roles := assertionRoles }
     (monopolarQuestion negφ)
 
 /-- In a matching tag, the assertion and question share content. -/
-theorem matching_tag_shared_content {W : Type*} (φ : Prop' W) :
+theorem matching_tag_shared_content {W : Type*} (φ : Set W) :
     (matchingTag φ).components.map SpeechAct.content = [φ, φ] := rfl
 
 /-- In a matching tag, the speaker is actor in both acts. -/
-theorem matching_tag_same_actor {W : Type*} (φ : Prop' W) :
+theorem matching_tag_same_actor {W : Type*} (φ : Set W) :
     (matchingTag φ).components.map (·.roles.actor) = [.speaker, .speaker] := rfl
 
 /-- In a matching tag, the committers differ: speaker for assertion,
     addressee for question. -/
-theorem matching_tag_committers_diverge {W : Type*} (φ : Prop' W) :
+theorem matching_tag_committers_diverge {W : Type*} (φ : Set W) :
     (matchingTag φ).components.map (·.roles.committer) = [.speaker, .addressee] := rfl
 
 /-- Matching tags are conjunctions, reverse tags are disjunctions. -/
-theorem tag_type_distinction {W : Type*} (φ negφ : Prop' W) :
+theorem tag_type_distinction {W : Type*} (φ negφ : Set W) :
     (∃ a b, matchingTag φ = .conj a b) ∧
     (∃ a b, reverseTag φ negφ = .disj a b) :=
   ⟨⟨_, _, rfl⟩, ⟨_, _, rfl⟩⟩

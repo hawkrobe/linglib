@@ -89,19 +89,19 @@ theorem pray_is_preferential :
 
 /-- *think*'s attitude blocks circumstantial modal base. -/
 theorem think_blocks_cir :
-    (Attitude.doxastic .nonVeridical).permitsCircumstantial = false := rfl
+    ¬ (Attitude.doxastic .nonVeridical).PermitsCircumstantial := fun h => h.elim
 
 /-- *believe*'s attitude blocks circumstantial modal base. -/
 theorem believe_blocks_cir :
-    (Attitude.doxastic .nonVeridical).permitsCircumstantial = false := rfl
+    ¬ (Attitude.doxastic .nonVeridical).PermitsCircumstantial := fun h => h.elim
 
 /-- *hope*'s attitude permits circumstantial modal base. -/
 theorem hope_permits_cir :
-    (Attitude.preferential (.degreeComparison .positive)).permitsCircumstantial = true := rfl
+    (Attitude.preferential (.degreeComparison .positive)).PermitsCircumstantial := trivial
 
 /-- *pray*'s attitude permits circumstantial modal base. -/
 theorem pray_permits_cir :
-    (Attitude.preferential (.degreeComparison .positive)).permitsCircumstantial = true := rfl
+    (Attitude.preferential (.degreeComparison .positive)).PermitsCircumstantial := trivial
 
 
 -- ════════════════════════════════════════════════════════════════

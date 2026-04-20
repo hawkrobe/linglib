@@ -155,11 +155,14 @@ def fillerVerbPattern : SentenceType → NestingPattern
 Under the gap-free analysis (no empty categories), the definition
 simplifies: a construction is nested iff its filler-verb associations
 are nested. This collapse is the central result. -/
-def isNestedConstruction : SentenceType → Bool
-  | .engMultiSubjRel    => false
-  | .engMultiObjRel     => true
-  | .gerMultiSubjRel    => true
-  | .engMultiPiedPiping => false
+def isNestedConstruction : SentenceType → Prop
+  | .engMultiSubjRel    => False
+  | .engMultiObjRel     => True
+  | .gerMultiSubjRel    => True
+  | .engMultiPiedPiping => False
+
+instance : DecidablePred isNestedConstruction := fun x => by
+  cases x <;> unfold isNestedConstruction <;> infer_instance
 
 /-- **Table 2 correspondence** (p. 246): under the gap-free analysis,
 the filler-verb pattern directly determines construction nestedness.
@@ -169,7 +172,7 @@ gap-verb pattern, construction type) with no systematic relationship.
 Table 2 collapses to two identical columns. -/
 theorem table2_correspondence :
     ∀ s : SentenceType,
-    (fillerVerbPattern s = .nested) ↔ (isNestedConstruction s = true) := by
+    (fillerVerbPattern s = .nested) ↔ isNestedConstruction s := by
   intro s; cases s <;> simp [fillerVerbPattern, isNestedConstruction]
 
 /-- Gap-free processing prediction: nested filler-verb associations are
@@ -228,7 +231,7 @@ with disjoint filler-gap associations — the columns disagree. -/
 theorem table1_columns_disagree :
     fillerGapPattern .gerMultiSubjRel = .disjoint ∧
     gapVerbPattern .gerMultiSubjRel = .nested ∧
-    isNestedConstruction .gerMultiSubjRel = true := ⟨rfl, rfl, rfl⟩
+    isNestedConstruction .gerMultiSubjRel := ⟨rfl, rfl, trivial⟩
 
 -- ============================================================================
 -- §5: Bridges

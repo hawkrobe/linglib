@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Typology
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Tlingit.Modals
 import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.Gitksan.Modals
@@ -190,7 +190,7 @@ theorem hungarian_size : hungarian.size = 8 := by native_decide
 -- §9: English (Indo-European) — derived from Fragment
 -- ============================================================================
 
-open Fragments.English.FunctionWords (AuxEntry can could will would shall should may might must)
+open Fragments.English.Auxiliaries (AuxEntry can could will would shall should may might must)
 
 /-- English modal inventory, derived from the Fragment (single source of truth).
     Uses `ModalInventory.fromAuxEntries` to extract modals from `AuxEntry` data. -/

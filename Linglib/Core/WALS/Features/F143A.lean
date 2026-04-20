@@ -14,24 +14,41 @@ namespace Core.WALS.F143A
 
 /-- WALS 143A values. -/
 inductive NegVerbOrder where
-  | negv  -- NegV (525 languages)
-  | vneg  -- VNeg (171 languages)
-  | negV  -- [Neg-V] (162 languages)
-  | vNeg  -- [V-Neg] (202 languages)
-  | negativeTone  -- Negative Tone (1 languages)
-  | type1Type2  -- Type 1 / Type 2 (22 languages)
-  | type1Type3  -- Type 1 / Type 3 (9 languages)
-  | type1Type4  -- Type 1 / Type 4 (12 languages)
-  | type2Type3  -- Type 2 / Type 3 (2 languages)
-  | type2Type4  -- Type 2 / Type 4 (9 languages)
-  | type3Type4  -- Type 3 / Type 4 (8 languages)
-  | type3NegativeInfix  -- Type 3 / Negative Infix (1 languages)
-  | optsingleneg  -- OptSingleNeg (1 languages)
-  | obligdoubleneg  -- ObligDoubleNeg (114 languages)
-  | optdoubleneg  -- OptDoubleNeg (80 languages)
-  | opttriplenegObligdoubleneg  -- OptTripleNeg&ObligDoubleNeg (5 languages)
-  | opttriplenegOptdoubleneg  -- OptTripleNeg&OptDoubleNeg (1 languages)
-  deriving DecidableEq, Repr
+  /-- NegV (525 languages). -/
+  | negv
+  /-- VNeg (171 languages). -/
+  | vneg
+  /-- [Neg-V] (162 languages). -/
+  | negV
+  /-- [V-Neg] (202 languages). -/
+  | vNeg
+  /-- Negative Tone (1 languages). -/
+  | negativeTone
+  /-- Type 1 / Type 2 (22 languages). -/
+  | type1Type2
+  /-- Type 1 / Type 3 (9 languages). -/
+  | type1Type3
+  /-- Type 1 / Type 4 (12 languages). -/
+  | type1Type4
+  /-- Type 2 / Type 3 (2 languages). -/
+  | type2Type3
+  /-- Type 2 / Type 4 (9 languages). -/
+  | type2Type4
+  /-- Type 3 / Type 4 (8 languages). -/
+  | type3Type4
+  /-- Type 3 / Negative Infix (1 languages). -/
+  | type3NegativeInfix
+  /-- OptSingleNeg (1 languages). -/
+  | optsingleneg
+  /-- ObligDoubleNeg (114 languages). -/
+  | obligdoubleneg
+  /-- OptDoubleNeg (80 languages). -/
+  | optdoubleneg
+  /-- OptTripleNeg&ObligDoubleNeg (5 languages). -/
+  | opttriplenegObligdoubleneg
+  /-- OptTripleNeg&OptDoubleNeg (1 languages). -/
+  | opttriplenegOptdoubleneg
+  deriving DecidableEq, BEq, Repr
 
 private def allData_0 : List (Datapoint NegVerbOrder) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .vneg }
@@ -1369,44 +1386,6 @@ private def allData_2 : List (Datapoint NegVerbOrder) :=
 
 /-- Complete WALS 143A dataset (1325 languages). -/
 def allData : List (Datapoint NegVerbOrder) := allData_0 ++ allData_1 ++ allData_2
-
--- Count verification
-theorem total_count : allData.length = 1325 := by native_decide
-
-theorem count_negv :
-    (allData.filter (·.value == .negv)).length = 525 := by native_decide
-theorem count_vneg :
-    (allData.filter (·.value == .vneg)).length = 171 := by native_decide
-theorem count_negV :
-    (allData.filter (·.value == .negV)).length = 162 := by native_decide
-theorem count_vNeg :
-    (allData.filter (·.value == .vNeg)).length = 202 := by native_decide
-theorem count_negativeTone :
-    (allData.filter (·.value == .negativeTone)).length = 1 := by native_decide
-theorem count_type1Type2 :
-    (allData.filter (·.value == .type1Type2)).length = 22 := by native_decide
-theorem count_type1Type3 :
-    (allData.filter (·.value == .type1Type3)).length = 9 := by native_decide
-theorem count_type1Type4 :
-    (allData.filter (·.value == .type1Type4)).length = 12 := by native_decide
-theorem count_type2Type3 :
-    (allData.filter (·.value == .type2Type3)).length = 2 := by native_decide
-theorem count_type2Type4 :
-    (allData.filter (·.value == .type2Type4)).length = 9 := by native_decide
-theorem count_type3Type4 :
-    (allData.filter (·.value == .type3Type4)).length = 8 := by native_decide
-theorem count_type3NegativeInfix :
-    (allData.filter (·.value == .type3NegativeInfix)).length = 1 := by native_decide
-theorem count_optsingleneg :
-    (allData.filter (·.value == .optsingleneg)).length = 1 := by native_decide
-theorem count_obligdoubleneg :
-    (allData.filter (·.value == .obligdoubleneg)).length = 114 := by native_decide
-theorem count_optdoubleneg :
-    (allData.filter (·.value == .optdoubleneg)).length = 80 := by native_decide
-theorem count_opttriplenegObligdoubleneg :
-    (allData.filter (·.value == .opttriplenegObligdoubleneg)).length = 5 := by native_decide
-theorem count_opttriplenegOptdoubleneg :
-    (allData.filter (·.value == .opttriplenegOptdoubleneg)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

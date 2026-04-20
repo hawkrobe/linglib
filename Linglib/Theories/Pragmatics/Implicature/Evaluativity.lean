@@ -68,9 +68,11 @@ Is this polarity marked?
 
 Negative-polar adjectives are marked (require more contextual support).
 -/
-def Polarity.isMarked : Polarity → Bool
-  | .positive => false
-  | .negative => true
+def Polarity.IsMarked (p : Polarity) : Prop :=
+  p = .negative
+
+instance : DecidablePred Polarity.IsMarked :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /--
 Production cost associated with polarity.
@@ -364,7 +366,7 @@ Derive R-implicature for equatives/questions.
 -/
 def deriveRImplicature (c : AdjectivalConstruction) (p : Polarity) : RImplicatureDerivation :=
   let isPolarInvariant := polarVariance c == .invariant
-  let isMarked := p.isMarked
+  let isMarked := decide p.IsMarked
   { construction := c
   , polarity := p
   , unmarkedAlternativeExists := isPolarInvariant

@@ -175,7 +175,7 @@ open Core.Person
     - Realization: Cl₁ = me/te (from [±AUTHOR]), Cl₂ = le (invariable) -/
 def spanishFissionRule : FissionRule Category where
   contextOk := isInchoative
-  personOk := fissionApplicable
+  personOk := fun p => decide (IsFissionApplicable p)
   realize := fun p => {
     cl1Form := if p.toFeatures.hasAuthor then "me" else "te"
     cl2Form := "le"
@@ -203,29 +203,28 @@ def spanishFissionSatisfiesPF (p : Category) (heads : List VerbHead) : Bool :=
 /-- Fission applies only to 1SG and 2SG.
     DERIVED from [+PARTICIPANT, +SINGULAR] feature condition. -/
 theorem fission_person_restriction :
-    fissionApplicable .s1 = true ∧
-    fissionApplicable .s2 = true ∧
-    fissionApplicable .s3 = false ∧
-    fissionApplicable .minIncl = false ∧
-    fissionApplicable .augIncl = false ∧
-    fissionApplicable .excl = false ∧
-    fissionApplicable .secondGrp = false ∧
-    fissionApplicable .thirdGrp = false :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    IsFissionApplicable .s1 ∧
+    IsFissionApplicable .s2 ∧
+    ¬ IsFissionApplicable .s3 ∧
+    ¬ IsFissionApplicable .minIncl ∧
+    ¬ IsFissionApplicable .augIncl ∧
+    ¬ IsFissionApplicable .excl ∧
+    ¬ IsFissionApplicable .secondGrp ∧
+    ¬ IsFissionApplicable .thirdGrp := by decide
 
 /-- The person restriction matches the empirical data:
     Fission applies ↔ stylistic LE is grammatical. -/
 theorem person_restriction_matches_data :
     -- 1SG: Fission applies, data says grammatical
-    fissionApplicable .s1 = true ∧
+    IsFissionApplicable .s1 ∧
     person_1sg.acceptability = .grammatical ∧
     -- 2SG: Fission applies, data says grammatical
-    fissionApplicable .s2 = true ∧
+    IsFissionApplicable .s2 ∧
     person_2sg.acceptability = .grammatical ∧
     -- 3SG: Fission blocked, data says ungrammatical
-    fissionApplicable .s3 = false ∧
-    person_3sg.acceptability = .ungrammatical :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ IsFissionApplicable .s3 ∧
+    person_3sg.acceptability = .ungrammatical := by
+  refine ⟨?_, rfl, ?_, rfl, ?_, rfl⟩ <;> decide
 
 -- ============================================================================
 -- § 8: Bridge — Inchoative Requirement (Prediction 2)

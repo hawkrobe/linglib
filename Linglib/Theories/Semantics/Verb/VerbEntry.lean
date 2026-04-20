@@ -410,7 +410,7 @@ Get the CoS semantics for a verb (if it's a CoS verb).
 Returns `some (cosSemantics t P)` if the verb has a CoS type,
 where `P` is the activity predicate (complement denotation).
 -/
-def VerbCore.getCoSSemantics {W : Type*} (v : VerbCore) (P : W → Bool) :
+def VerbCore.getCoSSemantics {W : Type*} (v : VerbCore) (P : W → Prop) :
     Option (PrProp W) :=
   v.cosType.map λ t => cosSemantics t P
 

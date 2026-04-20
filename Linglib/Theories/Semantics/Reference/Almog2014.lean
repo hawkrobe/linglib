@@ -235,7 +235,7 @@ the same property at every world, their unstructured propositions are
 identical but their singular propositions are distinct.
 
 Bridge to `Kaplan.SingularProposition.structured_distinguishes_unstructured`. -/
-theorem frege_puzzle {W E : Type*} (a b : E) (P : E → W → Bool) (hab : a ≠ b)
+theorem frege_puzzle {W E : Type*} (a b : E) (P : E → W → Prop) (hab : a ≠ b)
     (hflat : (SingularProposition.mk a P).flatten =
              (SingularProposition.mk b P).flatten) :
     -- Same unstructured content...
@@ -269,7 +269,7 @@ Substitution failure in attitude reports requires an independent theory
 of attitudinal verb semantics (see `Attitudes.Doxastic.substitutionMayFail`
 for the formal framework). -/
 theorem structured_content_distinguishes {W E : Type*} :
-    ∀ (a b : E) (P : E → W → Bool), a ≠ b →
+    ∀ (a b : E) (P : E → W → Prop), a ≠ b →
     SingularProposition.mk a P ≠ SingularProposition.mk b P := by
   intro a b P hab heq
   have := congrArg SingularProposition.individual heq
@@ -318,11 +318,11 @@ KDthat encodes the three-stage model of referential use (Ch 3, §1.2):
 `loaded` is the individual from stage 1 (object-contact). `guide` is the
 description used to communicate (stage 3). The guide plays no role in
 determining reference. -/
-def kdthat {W E : Type*} (loaded : E) (_guide : E → W → Bool) : Intension W E :=
+def kdthat {W E : Type*} (loaded : E) (_guide : E → W → Prop) : Intension W E :=
   rigid loaded
 
 /-- KDthat is rigid (trivially — reference was already fixed). -/
-theorem kdthat_isRigid {W E : Type*} (loaded : E) (guide : E → W → Bool) :
+theorem kdthat_isRigid {W E : Type*} (loaded : E) (guide : E → W → Prop) :
     IsRigid (kdthat loaded guide) :=
   rigid_isRigid loaded
 
@@ -331,7 +331,7 @@ This is the formal content of outside-in thesis:
 reference is fixed at object-contact (stage 1), not at communication
 (stage 3). -/
 theorem kdthat_guide_irrelevant {W E : Type*}
-    (loaded : E) (guide₁ guide₂ : E → W → Bool) :
+    (loaded : E) (guide₁ guide₂ : E → W → Prop) :
     kdthat loaded guide₁ = kdthat loaded guide₂ :=
   rfl
 
@@ -344,7 +344,7 @@ This is the formal core of argument that Donnellan's
 referential use is a genuinely different mechanism from Kaplan's
 rigidification-by-description. -/
 theorem kdthat_dthat_diverge {W E : Type*}
-    (loaded : E) (guide : E → W → Bool)
+    (loaded : E) (guide : E → W → Prop)
     (desc : Intension W E) (cW : W)
     (hMisfit : desc cW ≠ loaded) :
     kdthat loaded guide ≠ dthatW desc cW := by
@@ -361,7 +361,7 @@ the expression's linguistic type. Per §2.12, Donnellan gives a
 
 Contrast with `dthatExpression`, which has `dthatProfile` ⟨T, F, F⟩:
 dthat is de jure rigid by linguistic mechanism, without referential use. -/
-def kdthatExpression {C W E : Type*} (loaded : E) (guide : E → W → Bool) :
+def kdthatExpression {C W E : Type*} (loaded : E) (guide : E → W → Prop) :
     ReferringExpression C W E :=
   { character := λ _ => kdthat loaded guide
   , profile := refDescProfile }
@@ -375,7 +375,7 @@ linguistic mechanism + designation=true). KDthat is de facto rigid
 (rigid content + designation=false). This formalizes the core of
 distinction between designation and referential use
 as independent sources of world-invariance. -/
-theorem kdthat_deFactoRigid {C W E : Type*} (loaded : E) (guide : E → W → Bool)
+theorem kdthat_deFactoRigid {C W E : Type*} (loaded : E) (guide : E → W → Prop)
     (c : C) :
     Semantics.Reference.Basic.IsDeFactoRigid
       (kdthatExpression (C := C) loaded guide) c :=
@@ -505,7 +505,7 @@ This is the bottom square of the commutativity diagram. The outside-in
 mechanism *projects* the loaded entity (ignoring the guide), then
 *rigidifies*. The factorization is trivial because `kdthat` is defined
 as `rigid loaded`. -/
-theorem kdthat_factors {W E : Type*} (loaded : E) (guide : E → W → Bool) :
+theorem kdthat_factors {W E : Type*} (loaded : E) (guide : E → W → Prop) :
     kdthat loaded guide = rigid loaded :=
   rfl
 
@@ -524,7 +524,7 @@ is a coequalizer of the two mechanism paths, but the projection
 distinguishes the two paths. The profile is genuinely new information
 not recoverable from the content. -/
 theorem mechanism_content_orthogonality {C W E : Type*}
-    (loaded : E) (desc : Intension W E) (guide : E → W → Bool) (cW : W)
+    (loaded : E) (desc : Intension W E) (guide : E → W → Prop) (cW : W)
     (hMatch : desc cW = loaded) :
     -- Content square commutes (same intension)...
     (dthatExpression (C := C) desc cW).character =

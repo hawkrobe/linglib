@@ -18,7 +18,7 @@ This derives the word order asymmetry between matrix and embedded questions.
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Theories.Syntax.HPSG.Core.Basic
 
 namespace HPSG
@@ -131,7 +131,7 @@ theorem not_licenses_embedded_aux_first (ws : List Word)
 -- ============================================================================
 
 private abbrev what := Fragments.English.Pronouns.what.toWord
-private abbrev can := Fragments.English.FunctionWords.can.toWord
+private abbrev can := Fragments.English.Auxiliaries.can.toWord
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg

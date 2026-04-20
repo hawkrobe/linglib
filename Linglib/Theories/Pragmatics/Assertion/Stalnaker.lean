@@ -30,7 +30,6 @@ The norms are relevant to Krifka's separation of commitment from belief.
 namespace Pragmatics.Assertion.Stalnaker
 
 open Core.CommonGround (CG ContextSet)
-open Core.Proposition (Prop')
 
 -- ════════════════════════════════════════════════════
 -- § 1. State = Common Ground
@@ -45,7 +44,7 @@ def initial {W : Type*} : StalnakerState W := CG.empty
 
 /-- Assert p: add it to the common ground.
     This IS the full effect of assertion — no intermediate step. -/
-def assert {W : Type*} (s : StalnakerState W) (p : Prop' W) : StalnakerState W :=
+def assert {W : Type*} (s : StalnakerState W) (p : Set W) : StalnakerState W :=
   s.add p
 
 /-- Context set: directly from CG. -/
@@ -54,7 +53,10 @@ def contextSet {W : Type*} (s : StalnakerState W) : ContextSet W :=
 
 /-- Stalnaker states are always stable: there is no "table" or
     pending issue mechanism. Assertion is immediate. -/
-def isStable {W : Type*} (_ : StalnakerState W) : Bool := true
+def isStable {W : Type*} (_ : StalnakerState W) : Prop := True
+
+instance {W : Type*} (s : StalnakerState W) : Decidable (isStable s) :=
+  inferInstanceAs (Decidable True)
 
 -- ════════════════════════════════════════════════════
 -- § 2. Verification
@@ -65,11 +67,11 @@ theorem initial_trivial {W : Type*} :
     contextSet (initial (W := W)) = ContextSet.trivial := CG.empty_contextSet
 
 /-- Assertion restricts the context set. -/
-theorem assert_restricts {W : Type*} (s : StalnakerState W) (p : Prop' W) (w : W) :
-    contextSet (assert s p) w → contextSet s w :=
-  CG.add_restricts s p w
+theorem assert_restricts {W : Type*} (s : StalnakerState W) (p : Set W) :
+    contextSet (assert s p) ⊆ contextSet s :=
+  CG.add_restricts s p
 
 /-- Stalnaker states are always stable. -/
-theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s = true := rfl
+theorem always_stable {W : Type*} (s : StalnakerState W) : isStable s := trivial
 
 end Pragmatics.Assertion.Stalnaker

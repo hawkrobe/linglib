@@ -24,16 +24,18 @@ conditionals assert high conditional probability, not material implication.
 
 -/
 
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Finset.Filter
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Order.Normality
 import Linglib.Core.Mood.Basic
+import Linglib.Core.SelectionFunction
 
 namespace Semantics.Conditionals
 
-open Core.Proposition
 open Core.CommonGround (ContextSet)
 open Core.Mood (GramMood)
+open _root_.Core (SelectionFunction selectionPrefers)
 
 -- Material Conditional
 
@@ -43,15 +45,11 @@ Material conditional: p → q ≡ ¬p ∨ q
 This is the classical truth-functional conditional.
 True whenever the antecedent is false or the consequent is true.
 
-Note: The material conditional is already defined in Core.Proposition as `pimp`.
-We re-export it here for convenience.
+Equivalent to `pᶜ ∪ q` in mathlib's `Set` algebra; written here in
+set-builder form to keep the conditional name discourse-meaningful.
 -/
-def materialImp {W : Type*} (p q : Prop' W) : Prop' W :=
-  Classical.pimp W p q
-
-/-- Decidable version of material implication -/
-def materialImpB {W : Type*} (p q : (W → Bool)) : (W → Bool) :=
-  λ w => !p w || q w
+def materialImp {W : Type*} (p q : Set W) : Set W :=
+  {w | p w → q w}
 
 -- Strict Conditional
 
@@ -69,12 +67,8 @@ Parameters:
 - `p`: The antecedent proposition
 - `q`: The consequent proposition
 -/
-def strictImp {W : Type*} (access : W → Set W) (p q : Prop' W) : Prop' W :=
+def strictImp {W : Type*} (access : W → Set W) (p q : Set W) : Set W :=
   λ w => ∀ w' ∈ access w, p w' → q w'
-
-/-- Strict implication with finite accessibility (for computation) -/
-def strictImpFinite {W : Type*} (access : W → List W) (p q : (W → Bool)) : (W → Bool) :=
-  λ w => (access w).all λ w' => !p w' || q w'
 
 -- Variably Strict Conditional (@cite{stalnaker-1968}–@cite{lewis-1973})
 
@@ -135,7 +129,7 @@ This captures the intuition that conditionals quantify over "nearby" worlds
 where the antecedent holds.
 -/
 def variablyStrictImp {W : Type*} (sim : SimilarityOrdering W)
-    (allWorlds : Set W) (p q : Prop' W) : Prop' W :=
+    (allWorlds : Set W) (p q : Set W) : Set W :=
   λ w =>
     let pWorlds := { w' ∈ allWorlds | p w' }
     -- Vacuously true if no p-worlds
@@ -151,24 +145,24 @@ Conditional perfection: the inference from "if A then C" to "if not A then not C
 This is NOT valid for material conditionals but IS observed pragmatically.
 The RSA model in GrusdtLassiterFranke2022 derives this as an implicature.
 -/
-def conditionalPerfection {W : Type*} (p q : Prop' W) : Prop' W :=
-  materialImp (Classical.pnot W p) (Classical.pnot W q)
+def conditionalPerfection {W : Type*} (p q : Set W) : Set W :=
+  materialImp pᶜ qᶜ
 
 /--
 Modus ponens: from (p → q) and p, derive q.
 -/
-theorem modus_ponens {W : Type*} (p q : Prop' W) (w : W)
+theorem modus_ponens {W : Type*} (p q : Set W) (w : W)
     (h_imp : materialImp p q w) (h_p : p w) : q w := by
-  unfold materialImp Classical.pimp at h_imp
+  unfold materialImp at h_imp
   exact h_imp h_p
 
 /--
 Contraposition: (p → q) entails (¬q → ¬p).
 -/
-theorem contraposition {W : Type*} (p q : Prop' W) :
-    Classical.entails W (materialImp p q) (materialImp (Classical.pnot W q) (Classical.pnot W p)) := by
+theorem contraposition {W : Type*} (p q : Set W) :
+    materialImp p q ⊆ materialImp qᶜ pᶜ := by
   intro w h_imp h_nq h_p
-  unfold materialImp Classical.pimp at h_imp
+  unfold materialImp at h_imp
   have h_q := h_imp h_p
   exact h_nq h_q
 
@@ -182,7 +176,7 @@ not a semantic entailment.
 Counterexample: World where p is false, q is true.
 Then (p → q) is vacuously true, but (¬p → ¬q) = (true → false) = false.
 -/
-theorem perfection_not_entailed : ∃ (W : Type) (p q : Prop' W) (w : W),
+theorem perfection_not_entailed : ∃ (W : Type) (p q : Set W) (w : W),
     materialImp p q w ∧ ¬(conditionalPerfection p q w) := by
   -- Use a simple 2-world type
   use Bool
@@ -196,7 +190,7 @@ theorem perfection_not_entailed : ∃ (W : Type) (p q : Prop' W) (w : W),
     -- h : false = true, which is absurd
     cases h
   · -- ¬(¬p → ¬q)(false) = ¬(¬(false = true) → ¬True)
-    simp only [conditionalPerfection, materialImp, Classical.pimp, Classical.pnot]
+    simp only [conditionalPerfection, materialImp, Set.mem_setOf_eq, Set.mem_compl_iff]
     intro h
     -- h : ¬(false = true) → ¬True, i.e., True → False
     have hnot_false_eq_true : ¬(false = true) := Bool.false_ne_true
@@ -216,7 +210,7 @@ but perfection fails (¬p(false) is true but ¬q(false) is false).
 -/
 theorem perfection_not_entailed_variablyStrict :
     ∃ (W : Type) (sim : SimilarityOrdering W) (domain : Set W)
-      (p q : Prop' W) (w : W),
+      (p q : Set W) (w : W),
       variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w) := by
   use Bool
   exact ⟨⟨fun _ _ _ => True, fun _ _ => trivial, fun _ _ _ _ _ _ => trivial,
@@ -230,7 +224,7 @@ theorem perfection_not_entailed_variablyStrict :
 
 If w is accessible from itself (reflexive accessibility), then □(p → q) at w implies (p → q) at w.
 -/
-theorem strict_implies_material {W : Type*} (R : W → Set W) (p q : Prop' W) (w : W) :
+theorem strict_implies_material {W : Type*} (R : W → Set W) (p q : Set W) (w : W) :
     w ∈ R w → strictImp R p q w → materialImp p q w := by
   intro h_refl h_strict h_p
   exact h_strict w h_refl h_p
@@ -253,7 +247,7 @@ The centering axiom ensures that if p holds at w, then w is the unique closest p
 to itself, so q must hold at w.
 -/
 theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W)
-    (domain : Set W) (p q : Prop' W) (w : W) (hw : w ∈ domain) (hp : p w)
+    (domain : Set W) (p q : Set W) (w : W) (hw : w ∈ domain) (hp : p w)
     (h_centered : sim.isCentered) :
     variablyStrictImp sim domain p q w → materialImp p q w := by
   intro h_variably _h_p'
@@ -300,7 +294,7 @@ Both use the same CORRECT subset-based ordering from @cite{kratzer-1981}:
 /--
 Kratzer's semantics for conditionals uses:
 1. A modal base f : W → Set W (epistemic, circumstantial, etc.)
-2. An ordering source g : W → Set (Prop' W) (stereotypical, deontic, etc.)
+2. An ordering source g : W → Set (Set W) (stereotypical, deontic, etc.)
 
 The conditional "if p, then q" is true at w iff
 q holds at the "best" p-worlds according to the ordering.
@@ -309,7 +303,7 @@ structure KratzerContext (W : Type*) where
   /-- Modal base: accessible worlds from w -/
   modalBase : W → Set W
   /-- Ordering source: propositions that induce a preference -/
-  orderingSource : W → Set (Prop' W)
+  orderingSource : W → Set (Set W)
 
 /--
 Kratzer's ordering relation (Set-based version for proofs).
@@ -322,7 +316,7 @@ Equivalent to `atLeastAsGoodAs` in `Kratzer.lean` (which uses Lists for computat
 
 **NOT** a counting-based ordering (which would be incorrect).
 -/
-def kratzerBetter {W : Type*} (os : Set (Prop' W)) (w₁ w₂ : W) : Prop :=
+def kratzerBetter {W : Type*} (os : Set (Set W)) (w₁ w₂ : W) : Prop :=
   { p ∈ os | p w₂ } ⊆ { p ∈ os | p w₁ }
 
 /--
@@ -334,7 +328,7 @@ according to the ordering source), q holds.
 Best worlds are those maximal under `kratzerBetter`: w' is best if
 for all w'' in pWorlds, if w' ≤ w'' then w'' ≤ w' (i.e., they're equivalent).
 -/
-def kratzerConditional {W : Type*} (ctx : KratzerContext W) (p q : Prop' W) : Prop' W :=
+def kratzerConditional {W : Type*} (ctx : KratzerContext W) (p q : Set W) : Set W :=
   λ w =>
     let accessible := ctx.modalBase w
     let pWorlds := { w' ∈ accessible | p w' }
@@ -362,22 +356,11 @@ This is formalized for use in @cite{ramotowska-marty-romoli-santorio-2025} analy
 counterfactual force under quantifiers.
 -/
 
-/--
-A **selection function** picks the unique closest antecedent-world.
-
-`s w A` returns the closest A-world to w, or w itself if no A-worlds exist.
-
-Constraints (from @cite{stalnaker-1968}):
-1. Success: If A is non-empty, s(w, A) ∈ A
-2. Strong Centering: If w ∈ A, then s(w, A) = w
--/
-structure SelectionFunction (W : Type*) where
-  /-- The selection function -/
-  select : W → Set W → W
-  /-- Success: selected world is in the antecedent (if nonempty) -/
-  success : ∀ w A, A.Nonempty → select w A ∈ A
-  /-- Strong centering: if actual world satisfies antecedent, select it -/
-  centering : ∀ w A, w ∈ A → select w A = w
+/-! `SelectionFunction` — defined in `Core/SelectionFunction.lean` and
+opened above. Field name is `sel`; axioms are `inclusion` (Stalnaker's
+"Success") and `centering`. The same selection-function infrastructure
+underlies @cite{cariani-santorio-2018}'s selectional *will*; unifying
+the two avoids a duplicate type. -/
 
 /--
 **Candidate selection functions** induced by a comparative similarity ordering.
@@ -454,26 +437,11 @@ A selection function induces a comparative similarity relation that is
   rationalizable by a total preorder on worlds. See `isCoherent` below.
 -/
 
-/--
-**Pairwise preference induced by a selection function.**
-
-`w₁` is preferred to `w₂` from center `w₀` iff when choosing between
-just the two of them, the selection function picks `w₁`. -/
-def selectionPrefers {W : Type*} (s : SelectionFunction W)
-    (w₀ w₁ w₂ : W) : Prop :=
-  s.select w₀ {w₁, w₂} = w₁
-
-/--
-**A selection function is coherent** iff its induced pairwise preference
-is transitive. This is the content of @cite{stalnaker-1981}'s claim that
-selection functions determine a *well-ordering* of possible worlds.
-
-Not all selection functions satisfying `success` + `centering` are
-coherent — coherence is an additional rationality constraint. -/
-def SelectionFunction.isCoherent {W : Type*} (s : SelectionFunction W) : Prop :=
-  ∀ w₀ w₁ w₂ w₃ : W,
-    selectionPrefers s w₀ w₁ w₂ → selectionPrefers s w₀ w₂ w₃ →
-    selectionPrefers s w₀ w₁ w₃
+/-! `selectionPrefers` and `SelectionFunction.isCoherent` —
+pairwise preference and the @cite{stalnaker-1981} rationality
+constraint — are defined in `Core/SelectionFunction.lean` since they
+depend only on the selection-function structure, not on conditional
+semantics. They are re-exported via the `open _root_.Core` above. -/
 
 /--
 **Coherent selection functions induce similarity orderings.**
@@ -486,14 +454,14 @@ def coherentSelectionToSimilarity {W : Type*} [DecidableEq W]
     (h_coherent : s.isCoherent) : SimilarityOrdering W where
   closer := selectionPrefers s
   closer_refl w₀ w := by
-    show s.select w₀ {w, w} = w
+    show s.sel w₀ {w, w} = w
     have h_eq : ({w, w} : Set W) = {w} := Set.insert_eq_of_mem (Set.mem_singleton w)
     rw [h_eq]
     have h_ne : ({w} : Set W).Nonempty := ⟨w, Set.mem_singleton w⟩
-    have h_in := s.success w₀ {w} h_ne
+    have h_in := s.inclusion w₀ {w} h_ne
     exact Set.mem_singleton_iff.mp h_in
   closer_trans w₀ w₁ w₂ w₃ := h_coherent w₀ w₁ w₂ w₃
-  closerDec w₀ w₁ w₂ := inferInstanceAs (Decidable (s.select w₀ {w₁, w₂} = w₁))
+  closerDec w₀ w₁ w₂ := inferInstanceAs (Decidable (s.sel w₀ {w₁, w₂} = w₁))
 
 -- Connection to Causal Models
 
@@ -554,8 +522,14 @@ rather than stipulate it.
 the world selected by `s` from the p-worlds. This is the common semantic
 core of @cite{stalnaker-1975} indicatives and subjunctives. -/
 def selectionConditional {W : Type*} (s : SelectionFunction W)
-    (p q : (W → Bool)) : (W → Bool) :=
-  λ w => q (s.select w {w' | p w' = true})
+    (p q : W → Prop) : W → Prop :=
+  λ w => q (s.sel w {w' | p w'})
+
+/-- `selectionConditional` is decidable when its consequent is. -/
+instance selectionConditional_decidable {W : Type*} (s : SelectionFunction W)
+    (p q : W → Prop) [DecidablePred q] (w : W) :
+    Decidable (selectionConditional s p q w) :=
+  inferInstanceAs (Decidable (q _))
 
 /--
 **Pragmatic constraint on selection** (@cite{stalnaker-1975} §III).
@@ -571,7 +545,7 @@ makes the indicative inference forms behave the way they do, without
 changing the semantic clause. -/
 def pragmaticConstraint {W : Type*} (s : SelectionFunction W)
     (C : ContextSet W) : Prop :=
-  ∀ w (A : Set W), C w → (∃ w' ∈ A, C w') → C (s.select w A)
+  ∀ w (A : Set W), C w → (∃ w' ∈ A, C w') → C (s.sel w A)
 
 /--
 **Mooded conditional** (@cite{stalnaker-1975}): the truth-conditional clause
@@ -585,8 +559,14 @@ distinct semantic clauses. Replacing two parallel defs (`indicativeConditional`,
 `subjunctiveConditional`) with one mood-keyed wrapper makes Stalnaker's actual
 claim explicit at the type level. -/
 def moodedConditional {W : Type*} (_m : GramMood) (s : SelectionFunction W)
-    (p q : (W → Bool)) : (W → Bool) :=
+    (p q : W → Prop) : W → Prop :=
   selectionConditional s p q
+
+/-- `moodedConditional` is decidable when its consequent is. -/
+instance moodedConditional_decidable {W : Type*} (m : GramMood)
+    (s : SelectionFunction W) (p q : W → Prop) [DecidablePred q] (w : W) :
+    Decidable (moodedConditional m s p q w) :=
+  inferInstanceAs (Decidable (selectionConditional s p q w))
 
 /--
 **Mood-indexed admissibility on selection functions** (@cite{stalnaker-1975}).
@@ -622,7 +602,7 @@ For any grammatical mood, the mooded conditional reduces to the bare
 selection conditional. This is the rfl-equation that previously had to be
 stated as `indicative_eq_subjunctive` between two parallel defs. -/
 theorem moodedConditional_eq_selectionConditional {W : Type*} (m : GramMood)
-    (s : SelectionFunction W) (p q : (W → Bool)) :
+    (s : SelectionFunction W) (p q : W → Prop) :
     moodedConditional m s p q = selectionConditional s p q := rfl
 
 /--
@@ -646,20 +626,20 @@ Hypotheses encode the "appropriate context" conditions:
 - `h_constraint`: `s` obeys the pragmatic constraint relative to `C`;
 - `h_C_imp`: in the context, the material conditional holds. -/
 theorem selectionConditional_eq_material_within_context {W : Type*}
-    (s : SelectionFunction W) (C : ContextSet W) (p q : (W → Bool)) (w : W)
+    (s : SelectionFunction W) (C : ContextSet W) (p q : W → Prop) (w : W)
     (hC_w : C w)
-    (h_open_p : ∃ w' ∈ {w' | p w' = true}, C w')
+    (h_open_p : ∃ w' ∈ {w' | p w'}, C w')
     (h_constraint : pragmaticConstraint s C)
-    (h_C_imp : ∀ w', C w' → p w' = true → q w' = true) :
-    selectionConditional s p q w = true := by
+    (h_C_imp : ∀ w', C w' → p w' → q w') :
+    selectionConditional s p q w := by
   unfold selectionConditional
-  have h_nonempty : ({w' | p w' = true} : Set W).Nonempty := by
+  have h_nonempty : ({w' | p w'} : Set W).Nonempty := by
     obtain ⟨w', hw'_p, _⟩ := h_open_p
     exact ⟨w', hw'_p⟩
-  have h_sel_C : C (s.select w {w' | p w' = true}) :=
-    h_constraint w {w' | p w' = true} hC_w h_open_p
-  have h_sel_p : p (s.select w {w' | p w' = true}) = true :=
-    s.success w {w' | p w' = true} h_nonempty
+  have h_sel_C : C (s.sel w {w' | p w'}) :=
+    h_constraint w {w' | p w'} hC_w h_open_p
+  have h_sel_p : p (s.sel w {w' | p w'}) :=
+    s.inclusion w {w' | p w'} h_nonempty
   exact h_C_imp _ h_sel_C h_sel_p
 
 /--
@@ -667,12 +647,12 @@ theorem selectionConditional_eq_material_within_context {W : Type*}
 selection function is admissible, the mooded conditional reduces to the
 material conditional within the context. -/
 theorem moodedConditional_indicative_eq_material_within_context {W : Type*}
-    (s : SelectionFunction W) (C : ContextSet W) (p q : (W → Bool)) (w : W)
+    (s : SelectionFunction W) (C : ContextSet W) (p q : W → Prop) (w : W)
     (hC_w : C w)
-    (h_open_p : ∃ w' ∈ {w' | p w' = true}, C w')
+    (h_open_p : ∃ w' ∈ {w' | p w'}, C w')
     (h_admissible : Mood.admissibleSelection .indicative s C)
-    (h_C_imp : ∀ w', C w' → p w' = true → q w' = true) :
-    moodedConditional .indicative s p q w = true :=
+    (h_C_imp : ∀ w', C w' → p w' → q w') :
+    moodedConditional .indicative s p q w :=
   selectionConditional_eq_material_within_context s C p q w hC_w h_open_p
     h_admissible h_C_imp
 

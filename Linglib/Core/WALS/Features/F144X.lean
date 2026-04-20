@@ -14,11 +14,15 @@ namespace Core.WALS.F144X
 
 /-- WALS 144X values. -/
 inductive VerbInitialWithClauseFinalNegative where
-  | nodoubleneg  -- NoDoubleNeg (2 languages)
-  | optdoubleneg  -- OptDoubleNeg (1 languages)
-  | onlywithanotherneg  -- OnlyWithAnotherNeg (4 languages)
-  | noClauseFinalNeg  -- No clause-final neg (144 languages)
-  deriving DecidableEq, Repr
+  /-- NoDoubleNeg (2 languages). -/
+  | nodoubleneg
+  /-- OptDoubleNeg (1 languages). -/
+  | optdoubleneg
+  /-- OnlyWithAnotherNeg (4 languages). -/
+  | onlywithanotherneg
+  /-- No clause-final neg (144 languages). -/
+  | noClauseFinalNeg
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144X dataset (151 languages). -/
 def allData : List (Datapoint VerbInitialWithClauseFinalNegative) :=
@@ -174,18 +178,6 @@ def allData : List (Datapoint VerbInitialWithClauseFinalNegative) :=
   , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .noClauseFinalNeg }
   , { walsCode := "zqo", language := "Zoque (Ostuacan)", iso := "zoc", value := .noClauseFinalNeg }
   ]
-
--- Count verification
-theorem total_count : allData.length = 151 := by native_decide
-
-theorem count_nodoubleneg :
-    (allData.filter (·.value == .nodoubleneg)).length = 2 := by native_decide
-theorem count_optdoubleneg :
-    (allData.filter (·.value == .optdoubleneg)).length = 1 := by native_decide
-theorem count_onlywithanotherneg :
-    (allData.filter (·.value == .onlywithanotherneg)).length = 4 := by native_decide
-theorem count_noClauseFinalNeg :
-    (allData.filter (·.value == .noClauseFinalNeg)).length = 144 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

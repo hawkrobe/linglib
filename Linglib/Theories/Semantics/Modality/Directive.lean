@@ -43,7 +43,7 @@ namespace Semantics.Modality.Directive
 
 open Semantics.Modality.Kratzer
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*}
 
 /-! ## Combined ordering sources -/
 
@@ -52,13 +52,11 @@ variable {W : Type*} [DecidableEq W] [Fintype W]
 def combineOrdering (g₁ g₂ : OrderingSource W) : OrderingSource W :=
   λ w => g₁ w ++ g₂ w
 
-omit [DecidableEq W] [Fintype W] in
 /-- The primary ordering is contained in the combined one. -/
 theorem primary_sub_combined (g g' : OrderingSource W) (w : W) :
     ∀ p, p ∈ g w → p ∈ combineOrdering g g' w :=
   λ _ hp => List.mem_append_left _ hp
 
-omit [DecidableEq W] [Fintype W] in
 /-- Combining with empty ordering preserves the original. -/
 theorem combine_empty_right (g : OrderingSource W) (w : W) :
     combineOrdering g (emptyBackground (W := W)) w = g w := by
@@ -79,15 +77,10 @@ def weakNecessity (f : ModalBase W) (g g' : OrderingSource W)
 
 /-! ## Ordering extension lemma -/
 
-omit [DecidableEq W] [Fintype W] in
-private theorem ordering_extension_mono (A extra : List (W → Bool)) (w z : W)
-    (h : atLeastAsGoodAs (A ++ extra) w z = true) :
-    atLeastAsGoodAs A w z = true := by
-  unfold atLeastAsGoodAs satisfiedPropositions at h ⊢
-  rw [List.filter_append, List.all_append] at h
-  cases hA : (A.filter (λ p => p z)).all (λ p => p w) with
-  | true => rfl
-  | false => simp [hA] at h
+private theorem ordering_extension_mono (A extra : List (W → Prop)) (w z : W)
+    (h : atLeastAsGoodAs (A ++ extra) w z) :
+    atLeastAsGoodAs A w z :=
+  fun p hp hpz => h p (List.mem_append_left _ hp) hpz
 
 /-! ## Best worlds monotonicity -/
 
@@ -96,17 +89,14 @@ theorem best_refines (f : ModalBase W) (g g' : OrderingSource W) (w : W) :
     ∀ w', w' ∈ bestWorlds f (combineOrdering g g') w →
           w' ∈ bestWorlds f g w := by
   intro w' hw'
-  unfold bestWorlds at hw' ⊢
-  unfold combineOrdering at hw'
-  simp only [Finset.mem_filter, decide_eq_true_eq] at hw' ⊢
-  exact ⟨hw'.1, fun w'' hw'' =>
-    ordering_extension_mono (g w) (g' w) w' w'' (hw'.2 w'' hw'')⟩
+  refine ⟨hw'.1, fun w'' hw'' => ?_⟩
+  exact ordering_extension_mono (g w) (g' w) w' w'' (hw'.2 w'' hw'')
 
 /-! ## Main entailment -/
 
 /-- **Strong entails weak**: if "must φ" holds, then "ought φ" holds. -/
 theorem strong_entails_weak (f : ModalBase W) (g g' : OrderingSource W)
-    (p : W → Prop) [DecidablePred p] (w : W)
+    (p : W → Prop) (w : W)
     (h : strongNecessity f g p w) :
     weakNecessity f g g' p w := by
   rw [strongNecessity, necessity_iff_all] at h
@@ -118,33 +108,41 @@ theorem strong_entails_weak (f : ModalBase W) (g g' : OrderingSource W)
 
 /-- Weak necessity does NOT entail strong necessity.
 
-    Counterexample: worlds are a 3-element type. g-best = {a, b} (tied).
-    g' distinguishes them (b wins). Under g∪g', best = {b}.
-    If p(b) holds but p(a) fails, weak necessity holds but strong fails. -/
+    Counterexample: W = Bool. g is the trivial ordering (all worlds tied);
+    g' identifies `true`. Under g, both `true` and `false` are best; under
+    g∪g', only `true` is best. With p = (· = true), weakNecessity holds
+    (only `true` ∈ best), but strongNecessity fails (`false` ∈ best, p false). -/
 theorem weak_not_entails_strong :
-    ¬(∀ (W : Type) (_ : DecidableEq W) (_ : Fintype W)
-        (f : ModalBase W) (g g' : OrderingSource W) (p : W → Prop) (_ : DecidablePred p) (w : W),
+    ¬(∀ (W : Type)
+        (f : ModalBase W) (g g' : OrderingSource W) (p : W → Prop) (w : W),
         weakNecessity f g g' p w → strongNecessity f g p w) := by
   intro h
-  -- Use Bool as a 2-element world type
-  have := h Bool instDecidableEqBool inferInstance
-    (fun _ => [])  -- empty modal base: all worlds accessible
-    (fun _ => [fun w => w == true || w == false])  -- trivial ordering: all tied
-    (fun _ => [fun w => w])  -- secondary ordering: true > false
-    (fun w => w = true)  -- p: holds at true
-    (by intro w; cases w <;> infer_instance)
-    true
-  rw [weakNecessity, necessity_iff_all] at this
-  rw [strongNecessity, necessity_iff_all] at this
-  have hWeak : ∀ w' ∈ bestWorlds (emptyBackground (W := Bool))
-    (combineOrdering (fun _ => [fun w => w == true || w == false])
-      (fun _ => [fun w => w])) true,
-    w' = true := by decide
-  have hStrong := this hWeak
-  have : ¬ ∀ w' ∈ bestWorlds (emptyBackground (W := Bool))
-    (fun _ => [fun w => w == true || w == false]) true,
-    w' = true := by decide
-  exact this hStrong
+  let f : ModalBase Bool := emptyBackground
+  let g : OrderingSource Bool := fun _ => [fun _ => True]
+  let g' : OrderingSource Bool := fun _ => [fun w => w = true]
+  let p : Bool → Prop := fun w => w = true
+  -- All worlds are accessible (empty modal base).
+  have hAcc : ∀ w' : Bool, w' ∈ accessibleWorlds f true := by
+    intro w'
+    intro q hq
+    cases hq
+  -- Weak necessity holds: only `true` is best under g∪g'.
+  have hWeak : weakNecessity f g g' p true := by
+    intro w' hw'
+    obtain ⟨_, hBest⟩ := hw'
+    have hIdent : (fun w : Bool => w = true) ∈ combineOrdering g g' true := by
+      simp [combineOrdering, g, g']
+    exact hBest true (hAcc true) (fun w => w = true) hIdent rfl
+  -- Strong necessity fails: `false` is best under g (trivial), but p false is false.
+  have hNot : ¬ strongNecessity f g p true := by
+    intro hStrong
+    have hFalseBest : false ∈ bestWorlds f g true := by
+      refine ⟨hAcc false, fun w'' _ q hq _ => ?_⟩
+      simp [g] at hq
+      rw [hq]
+      trivial
+    exact Bool.false_ne_true (hStrong false hFalseBest)
+  exact hNot (h Bool f g g' p true hWeak)
 
 /-! ## Deontic application -/
 
@@ -167,7 +165,7 @@ theorem deontic_must_eq_kratzer (d : DeonticFlavor W)
   Iff.rfl
 
 theorem deontic_must_entails_ought (d : DeonticStrength W)
-    (p : W → Prop) [DecidablePred p] (w : W)
+    (p : W → Prop) (w : W)
     (h : d.must p w) :
     d.ought p w :=
   strong_entails_weak d.primary.circumstances d.primary.norms d.secondaryNorms p w h

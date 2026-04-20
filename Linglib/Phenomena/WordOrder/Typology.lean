@@ -243,14 +243,17 @@ def singleWordExceptions : List SingleWordException :=
 
 /-- These exceptions all involve dependents that are typically single words
     (leaves in the dependency tree), not recursive phrases. -/
-def isSingleWordDependent : SingleWordException → Bool
-  | .adjN => true        -- adjectives are typically leaves
-  | .demN => true        -- demonstratives are single words
-  | .intensAdj => true   -- intensifiers like "very" are single words
-  | .negVerb => true     -- negation markers are single words
+def isSingleWordDependent : SingleWordException → Prop
+  | .adjN => True        -- adjectives are typically leaves
+  | .demN => True        -- demonstratives are single words
+  | .intensAdj => True   -- intensifiers like "very" are single words
+  | .negVerb => True     -- negation markers are single words
+
+instance : DecidablePred isSingleWordDependent := fun x => by
+  cases x <;> unfold isSingleWordDependent <;> infer_instance
 
 theorem all_exceptions_single_word :
-    singleWordExceptions.all isSingleWordDependent = true := by decide
+    ∀ e ∈ singleWordExceptions, isSingleWordDependent e := by decide
 
 -- ============================================================================
 -- WALS Distribution Data — derived from generated modules
@@ -258,17 +261,7 @@ theorem all_exceptions_single_word :
 -- Full per-language data lives in Core.WALS.Features.F{81A,82A,83A}.
 -- Aggregate counts are derived from the generated data by filtering.
 
-/-- Ch 81 total: 1376 languages. -/
-theorem ch81_total : Core.WALS.F81A.allData.length = 1376 :=
-  Core.WALS.F81A.total_count
-
-/-- Ch 82 total: 1496 languages. -/
-theorem ch82_total : Core.WALS.F82A.allData.length = 1496 :=
-  Core.WALS.F82A.total_count
-
-/-- Ch 83 total: 1518 languages. -/
-theorem ch83_total : Core.WALS.F83A.allData.length = 1518 :=
-  Core.WALS.F83A.total_count
+-- Ch 81: 1376 languages, Ch 82: 1496, Ch 83: 1518 (counts in F{81,82,83}A docstrings).
 
 -- ============================================================================
 -- Chapter 81: Basic Order of Subject, Object, and Verb
@@ -947,10 +940,6 @@ theorem warlpiri_ov_wals :
 -- Chapter 84: Order of Object, Oblique, and Verb
 -- ============================================================================
 
-/-- Ch 84 total: 500 languages. -/
-theorem ch84_total : ch84.length = 500 :=
-  Core.WALS.F84A.total_count
-
 /-- Convert WALS 84A value to a pair of head-direction options for O-V and X-V.
     The six-way classification encodes relative order of Object (O), Oblique (X),
     and Verb (V). Returns `none` for "no dominant order" since no single direction
@@ -1060,10 +1049,6 @@ private def fromWALS85A : Core.WALS.F85A.AdpositionNPOrder → Option HeadDirect
   | .noDominantOrder => none
   | .noAdpositions => none
 
-/-- Ch 85 total: 1184 languages. -/
-theorem ch85_total : ch85.length = 1184 :=
-  Core.WALS.F85A.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 85
 theorem ch85_count_postpositions :
@@ -1168,10 +1153,6 @@ private def fromWALS86A : Core.WALS.F86A.GenitiveNounOrder → Option HeadDirect
   | .nounGenitive => some .headInitial
   | .noDominantOrder => none
 
-/-- Ch 86 total: 1249 languages. -/
-theorem ch86_total : ch86.length = 1249 :=
-  Core.WALS.F86A.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 86
 theorem ch86_count_genitiveNoun :
@@ -1273,10 +1254,6 @@ private def fromWALS87A : Core.WALS.F87A.AdjectiveNounOrder → Option HeadDirec
   | .nounAdjective => some .headInitial
   | .noDominantOrder => none
   | .onlyInternallyHeadedRelativeClauses => none
-
-/-- Ch 87 total: 1367 languages. -/
-theorem ch87_total : ch87.length = 1367 :=
-  Core.WALS.F87A.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 87
@@ -1392,10 +1369,6 @@ private def fromWALS88A : Core.WALS.F88A.DemonstrativeNounOrder → Option HeadD
   | .demonstrativeSuffix => none
   | .demonstrativeBeforeAndAfterNoun => none
   | .mixed => none
-
-/-- Ch 88 total: 1225 languages. -/
-theorem ch88_total : ch88.length = 1225 :=
-  Core.WALS.F88A.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 88
@@ -1514,10 +1487,6 @@ private def fromWALS89A : Core.WALS.F89A.NumeralNounOrder → Option HeadDirecti
   | .noDominantOrder => none
   | .numeralOnlyModifiesVerb => none
 
-/-- Ch 89 total: 1154 languages. -/
-theorem ch89_total : ch89.length = 1154 :=
-  Core.WALS.F89A.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 89
 theorem ch89_count_numeralNoun :
@@ -1624,10 +1593,6 @@ private def fromWALS90A : Core.WALS.F90A.RelClauseNounOrder → Option HeadDirec
   | .adjoined => none
   | .doublyHeaded => none
   | .mixed => none
-
-/-- Ch 90 total: 824 languages. -/
-theorem ch90_total : ch90.length = 824 :=
-  Core.WALS.F90A.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 90
@@ -1750,10 +1715,6 @@ private def fromWALS91A : Core.WALS.F91A.OrderOfDegreeWordAndAdjective → Optio
   | .adjectiveDegreeWord => some .headInitial
   | .noDominantOrder => none
 
-/-- Ch 91 total: 481 languages. -/
-theorem ch91_total : ch91.length = 481 :=
-  Core.WALS.F91A.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 91
 theorem ch91_count_degreeWordAdjective :
@@ -1830,10 +1791,6 @@ theorem indonesian_ch91 :
 -- WALS Ch 94: Adverbial subordinator position relative to the clause.
 -- No clean mapping to HeadDirection since this involves clause-level ordering
 -- with multiple structural strategies (word vs suffix). We use the raw WALS type.
-
-/-- Ch 94 total: 659 languages. -/
-theorem ch94_total : ch94.length = 659 :=
-  Core.WALS.F94A.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 94
@@ -1946,10 +1903,6 @@ theorem turkish_ch94 :
 
 -- WALS Ch 95: Cross-tabulation of O-V order with adposition order.
 -- This is the "harmonic pair" test for VO/Prep vs OV/Postp.
-
-/-- Ch 95 total: 1142 languages. -/
-theorem ch95_total : ch95.length = 1142 :=
-  Core.WALS.F95A.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 95
@@ -2064,10 +2017,6 @@ theorem welsh_ch95 :
 -- WALS Ch 96: Cross-tabulation of O-V order with relative clause order.
 -- Another harmonic pair test: OV+RelN vs VO+NRel.
 
-/-- Ch 96 total: 879 languages. -/
-theorem ch96_total : ch96.length = 879 :=
-  Core.WALS.F96A.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 96
 theorem ch96_count_ovAndReln :
@@ -2177,10 +2126,6 @@ theorem welsh_ch96 :
 -- WALS Ch 97: Cross-tabulation of O-V order with adjective-noun order.
 -- Unlike Ch 95 and 96, this pairing shows weaker correlation because
 -- adjectives are typically single words (a single-word exception).
-
-/-- Ch 97 total: 1316 languages. -/
-theorem ch97_total : ch97.length = 1316 :=
-  Core.WALS.F97A.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 97
@@ -2297,10 +2242,6 @@ theorem welsh_ch97 :
 -- dominant patterns. SOV-or-SVO is the most common dual-order combination,
 -- consistent with the general dominance of subject-first orders.
 
-/-- Ch 81B total: 67 languages. -/
-theorem ch81B_total : ch81B.length = 67 :=
-  Core.WALS.F81B.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 81B
 theorem ch81B_count_sovOrSvo :
@@ -2345,10 +2286,6 @@ theorem hungarian_ch81B :
 
 -- WALS Ch 90B sub-feature: classifies languages that have prenominal (RelN)
 -- relative clauses, distinguishing dominant RelN from mixed strategies.
-
-/-- Ch 90B total: 191 languages. -/
-theorem ch90B_total : ch90B.length = 191 :=
-  Core.WALS.F90B.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 90B
@@ -2417,10 +2354,6 @@ theorem hungarian_ch90B :
 -- WALS Ch 90C sub-feature: classifies languages that have postnominal (NRel)
 -- relative clauses. This is the largest Ch 90 sub-feature (620 languages),
 -- reflecting the cross-linguistic dominance of postnominal relative clauses.
-
-/-- Ch 90C total: 620 languages. -/
-theorem ch90C_total : ch90C.length = 620 :=
-  Core.WALS.F90C.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 90C
@@ -2511,10 +2444,6 @@ theorem hungarian_ch90C :
 -- WALS Ch 90D sub-feature: classifies languages that have internally-headed
 -- relative clauses. Japanese and Korean have this strategy as a nondominant type.
 
-/-- Ch 90D total: 63 languages. -/
-theorem ch90D_total : ch90D.length = 63 :=
-  Core.WALS.F90D.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 90D
 theorem ch90D_count_internallyHeadedRelativeClauseDominant :
@@ -2569,10 +2498,6 @@ theorem tagalog_ch90D :
 -- WALS Ch 90E sub-feature: classifies languages that have correlative relative
 -- clauses. Hindi is the canonical example with dominant correlative strategy.
 
-/-- Ch 90E total: 23 languages. -/
-theorem ch90E_total : ch90E.length = 23 :=
-  Core.WALS.F90E.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 90E
 theorem ch90E_count_correlativeRelativeClauseDominant :
@@ -2616,25 +2541,21 @@ theorem hindiUrdu_ch90E :
 -- WALS Ch 90F sub-feature: classifies languages that have adjoined relative
 -- clauses. Warlpiri is the canonical example (dominant adjoined strategy).
 
-/-- Ch 90F total: 10 languages. -/
-theorem ch90F_total : ch90F.length = 10 :=
-  Core.WALS.F90F.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 90F
 theorem ch90F_count_adjoinedRelativeClauseDominant :
-    (ch90F.filter (·.value == .adjoinedRelativeClauseDominant)).length = 8 := by decide
+    (ch90F.filter (·.value == .relativeClauseDominant)).length = 8 := by decide
 
 set_option maxRecDepth 4096 in
 theorem ch90F_count_adjoinedOrCorrelative :
-    (ch90F.filter (·.value == .adjoinedOrCorrelative)).length = 2 := by decide
+    (ch90F.filter (·.value == .orCorrelative)).length = 2 := by decide
 
 set_option maxRecDepth 4096 in
 -- Per-language grounding: Ch 90F
 -- Warlpiri has dominant adjoined relative clauses (consistent with Ch 90A coding).
 theorem warlpiri_ch90F :
     (Core.WALS.F90F.lookup "wrl").map (·.value) =
-    some .adjoinedRelativeClauseDominant := by decide
+    some .relativeClauseDominant := by decide
 
 -- ============================================================================
 -- Chapter 90G: Double-headed relative clauses
@@ -2643,26 +2564,22 @@ theorem warlpiri_ch90F :
 -- WALS Ch 90G sub-feature: classifies languages that have double-headed
 -- relative clauses. Only 5 languages in the sample; none overlap with our profiles.
 
-/-- Ch 90G total: 5 languages. -/
-theorem ch90G_total : ch90G.length = 5 :=
-  Core.WALS.F90G.total_count
-
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 90G
 theorem ch90G_count_doubleHeadedDominant :
-    (ch90G.filter (·.value == .doubleHeadedDominant)).length = 1 := by decide
+    (ch90G.filter (·.value == .dominant)).length = 1 := by decide
 
 set_option maxRecDepth 4096 in
 theorem ch90G_count_doubleHeadedOrReln :
-    (ch90G.filter (·.value == .doubleHeadedOrReln)).length = 1 := by decide
+    (ch90G.filter (·.value == .orReln)).length = 1 := by decide
 
 set_option maxRecDepth 4096 in
 theorem ch90G_count_doubleHeadedOrInternallyHeaded :
-    (ch90G.filter (·.value == .doubleHeadedOrInternallyHeaded)).length = 1 := by decide
+    (ch90G.filter (·.value == .orInternallyHeaded)).length = 1 := by decide
 
 set_option maxRecDepth 4096 in
 theorem ch90G_count_doubleHeadedAsNondominantType :
-    (ch90G.filter (·.value == .doubleHeadedAsNondominantType)).length = 2 := by decide
+    (ch90G.filter (·.value == .asNondominantType)).length = 2 := by decide
 
 -- ============================================================================
 -- Chapter 60: Genitives, Adjectives and Relative Clauses
@@ -2672,10 +2589,6 @@ theorem ch90G_count_doubleHeadedAsNondominantType :
 -- genitives, adjectives, and relative clauses within a language. "Highly
 -- differentiated" means the three categories have clearly distinct syntax;
 -- "weakly differentiated" means they overlap significantly.
-
-/-- Ch 60 total: 138 languages. -/
-theorem ch60_total : ch60.length = 138 :=
-  Core.WALS.F60A.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 60
@@ -2780,10 +2693,6 @@ theorem hungarian_ch60 :
 -- WALS Ch 61A classifies how a language forms headless adjective phrases
 -- (e.g., "the tall one" in English). Some languages use bare adjectives,
 -- others require overt morphological or syntactic marking.
-
-/-- Ch 61 total: 124 languages. -/
-theorem ch61_total : ch61.length = 124 :=
-  Core.WALS.F61A.total_count
 
 set_option maxRecDepth 4096 in
 -- Distribution counts for Ch 61

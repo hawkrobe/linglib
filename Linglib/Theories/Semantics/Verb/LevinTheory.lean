@@ -183,27 +183,27 @@ def LevinClass.rootEntailments : LevinClass → RootEntailments
 
 /-! ### Well-formedness verification -/
 
-theorem break_root_wf : (LevinClass.rootEntailments .break_).wellFormed = true := rfl
-theorem cut_root_wf : (LevinClass.rootEntailments .cut).wellFormed = true := rfl
-theorem hit_root_wf : (LevinClass.rootEntailments .hit).wellFormed = true := rfl
-theorem touch_root_wf : (LevinClass.rootEntailments .touch).wellFormed = true := rfl
-theorem give_root_wf : (LevinClass.rootEntailments .give).wellFormed = true := rfl
-theorem destroy_root_wf : (LevinClass.rootEntailments .destroy).wellFormed = true := rfl
-theorem murder_root_wf : (LevinClass.rootEntailments .murder).wellFormed = true := rfl
-theorem poison_root_wf : (LevinClass.rootEntailments .poison).wellFormed = true := rfl
+theorem break_root_wf : (LevinClass.rootEntailments .break_).WellFormed := by decide
+theorem cut_root_wf : (LevinClass.rootEntailments .cut).WellFormed := by decide
+theorem hit_root_wf : (LevinClass.rootEntailments .hit).WellFormed := by decide
+theorem touch_root_wf : (LevinClass.rootEntailments .touch).WellFormed := by decide
+theorem give_root_wf : (LevinClass.rootEntailments .give).WellFormed := by decide
+theorem destroy_root_wf : (LevinClass.rootEntailments .destroy).WellFormed := by decide
+theorem murder_root_wf : (LevinClass.rootEntailments .murder).WellFormed := by decide
+theorem poison_root_wf : (LevinClass.rootEntailments .poison).WellFormed := by decide
 
 /-! ### MRC violation verification -/
 
 theorem cut_violates_MRC :
-    (LevinClass.rootEntailments .cut).violatesMRC = true := rfl
+    (LevinClass.rootEntailments .cut).ViolatesMRC := by decide
 theorem cooking_violates_MRC :
-    (LevinClass.rootEntailments .cooking).violatesMRC = true := rfl
+    (LevinClass.rootEntailments .cooking).ViolatesMRC := by decide
 theorem poison_violates_MRC :
-    (LevinClass.rootEntailments .poison).violatesMRC = true := rfl
+    (LevinClass.rootEntailments .poison).ViolatesMRC := by decide
 theorem break_respects_MRC :
-    (LevinClass.rootEntailments .break_).violatesMRC = false := rfl
+    ¬ (LevinClass.rootEntailments .break_).ViolatesMRC := by decide
 theorem hit_respects_MRC :
-    (LevinClass.rootEntailments .hit).violatesMRC = false := rfl
+    ¬ (LevinClass.rootEntailments .hit).ViolatesMRC := by decide
 
 /-! ### VOC–root entailment theorems -/
 
@@ -375,29 +375,22 @@ These hold for ALL 78 LevinClass constructors and are proved by
 exhaustive case analysis. -/
 
 /-- Levin spec implies B&KG manner. -/
-def LevinClass.specImpliesManner (c : LevinClass) : Bool :=
-  !(c.meaningComponents.mannerSpec || c.meaningComponents.instrumentSpec) ||
-  c.rootEntailments.manner
-
-theorem levin_spec_implies_bkg_manner :
-    ∀ c : LevinClass, c.specImpliesManner = true := by
-  intro c; cases c <;> decide
+theorem levin_spec_implies_bkg_manner (c : LevinClass) :
+    c.meaningComponents.mannerSpec = true ∨ c.meaningComponents.instrumentSpec = true →
+    c.rootEntailments.manner = true := by
+  cases c <;> decide
 
 /-- CausativeResult roots always have changeOfState. -/
-def LevinClass.causativeResultImpliesCos (c : LevinClass) : Bool :=
-  !(c.rootEntailments == .causativeResult) || c.meaningComponents.changeOfState
-
-theorem causativeResult_always_cos :
-    ∀ c : LevinClass, c.causativeResultImpliesCos = true := by
-  intro c; cases c <;> decide
+theorem causativeResult_always_cos (c : LevinClass) :
+    c.rootEntailments = .causativeResult →
+    c.meaningComponents.changeOfState = true := by
+  cases c <;> decide
 
 /-- Root cause implies either event causation or non-detachable causation. -/
-def LevinClass.causeImpliesCausationOrNonDetach (c : LevinClass) : Bool :=
-  !c.rootEntailments.cause || c.meaningComponents.causation ||
-  c.causationSource == .rootNonDetachable
-
-theorem root_cause_accounted_for :
-    ∀ c : LevinClass, c.causeImpliesCausationOrNonDetach = true := by
-  intro c; cases c <;> decide
+theorem root_cause_accounted_for (c : LevinClass) :
+    c.rootEntailments.cause = true →
+    c.meaningComponents.causation = true ∨
+    c.causationSource = .rootNonDetachable := by
+  cases c <;> decide
 
 end Core.Verbs

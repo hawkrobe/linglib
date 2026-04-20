@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.PIP.Expr
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # PIP Felicity Conditions (Propositional Fragment)
@@ -286,9 +287,7 @@ This section derives:
 
 section FullFelicity
 
-open Core.Proposition (FiniteWorlds)
-
-variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+variable {W D : Type*} [FiniteDomain D] [Fintype W]
 
 
 -- ======== Prop-level iff characterizations ========
@@ -326,7 +325,7 @@ theorem mustF_felicitous_iff (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
   constructor
   · intro h w' hw'
     exact List.all_eq_true.mp h w'
-      (List.mem_filter.mpr ⟨FiniteWorlds.complete w', hw'⟩)
+      (List.mem_filter.mpr ⟨Finset.mem_toList.mpr (Finset.mem_univ w'), hw'⟩)
   · intro h
     exact List.all_eq_true.mpr (λ w' hw' => h w' (List.mem_filter.mp hw').2)
 
@@ -339,7 +338,7 @@ theorem mightF_felicitous_iff (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
   constructor
   · intro h w' hw'
     exact List.all_eq_true.mp h w'
-      (List.mem_filter.mpr ⟨FiniteWorlds.complete w', hw'⟩)
+      (List.mem_filter.mpr ⟨Finset.mem_toList.mpr (Finset.mem_univ w'), hw'⟩)
   · intro h
     exact List.all_eq_true.mpr (λ w' hw' => h w' (List.mem_filter.mp hw').2)
 

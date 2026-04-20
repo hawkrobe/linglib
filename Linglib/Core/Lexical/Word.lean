@@ -43,17 +43,10 @@ end Number
     (no compatibility aliases needed - names match) -/
 abbrev Person := UD.Person
 
-/-- Grammatical case. Aliased to UD.Case for cross-linguistic compatibility. -/
+/-- Grammatical case. Aliased to UD.Case for cross-linguistic compatibility.
+    Lowercase `match_pattern` constructor aliases (`.nom`, `.acc`, `.gen`,
+    `.dat`, `.loc`, …) live in `UD.lean` and apply directly. -/
 abbrev Case := UD.Case
-
-namespace Case
-/-- Nominative (compatibility alias) -/
-abbrev nom : Case := .Nom
-/-- Accusative (compatibility alias) -/
-abbrev acc : Case := .Acc
-/-- Genitive (compatibility alias) -/
-abbrev gen : Case := .Gen
-end Case
 
 /-- Voice: active vs passive. Aliased to UD.Voice. -/
 abbrev Voice := UD.Voice

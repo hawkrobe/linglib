@@ -233,7 +233,7 @@ theorem assertability_monotone (ws : WorldState) (θ₁ θ₂ : ℚ) :
 
 The assertability score (conditional probability when defined) is always between 0 and 1.
 -/
-theorem assertability_score_bounded (ws : WorldState) (h : ws.IsValid) :
+theorem assertability_score_bounded (ws : WorldState) (h : ws.isValid) :
     0 ≤ assertabilityScore ws ∧ assertabilityScore ws ≤ 1 := by
   simp only [assertabilityScore]
   split
@@ -247,7 +247,7 @@ theorem assertability_score_bounded (ws : WorldState) (h : ws.IsValid) :
 /--
 **Conditional probability is bounded** when the antecedent is possible.
 -/
-theorem conditional_probability_bounded (ws : WorldState) (h : ws.IsValid) (hA : 0 < ws.pA) :
+theorem conditional_probability_bounded (ws : WorldState) (h : ws.isValid) (hA : 0 < ws.pA) :
     0 ≤ conditionalProbability ws ∧ conditionalProbability ws ≤ 1 := by
   simp only [conditionalProbability]
   exact WorldState.valid_implies_pCGivenA_bounded ws h hA

@@ -29,7 +29,6 @@ worlds to drop from the ∃-reading's quantification domain.
 namespace Sharvit2025
 
 open Core.Presupposition
-open Core.Proposition
 
 -- ════════════════════════════════════════════════════════════════
 -- § World type (Sharvit's Mia/Sue scenario)

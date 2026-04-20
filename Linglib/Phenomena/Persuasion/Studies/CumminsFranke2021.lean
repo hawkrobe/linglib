@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
+import Linglib.Theories.Pragmatics.RSA.ArgumentativeStrength
 import Linglib.Theories.Semantics.Numerals.Basic
 import Linglib.Core.Scales.Roundness
 import Mathlib.Data.Rat.Defs
@@ -51,21 +51,18 @@ canonical `moreThanMeaning` from Numeral.Semantics. The conference
 scenario (§2) uses probability counts directly for tractability, but
 the underlying denotation is the same. -/
 theorem moreThan_from_lowerBound_zero (n : Nat) :
-    moreThanMeaning 0 n ↔ LowerBound.meaning .one n := by
-  simp only [moreThanMeaning, atLeastMeaning, NumeralTheory.meaning, LowerBound,
-             BareNumeral.toNat, ge_iff_le]
+    moreThanMeaning 0 n ↔ atLeastMeaning 1 n := by
+  unfold moreThanMeaning atLeastMeaning Core.Scale.moreThanDeg Core.Scale.atLeastDeg
   omega
 
 theorem moreThan_from_lowerBound_one (n : Nat) :
-    moreThanMeaning 1 n ↔ LowerBound.meaning .two n := by
-  simp only [moreThanMeaning, atLeastMeaning, NumeralTheory.meaning, LowerBound,
-             BareNumeral.toNat, ge_iff_le]
+    moreThanMeaning 1 n ↔ atLeastMeaning 2 n := by
+  unfold moreThanMeaning atLeastMeaning Core.Scale.moreThanDeg Core.Scale.atLeastDeg
   omega
 
 theorem moreThan_from_lowerBound_two (n : Nat) :
-    moreThanMeaning 2 n ↔ LowerBound.meaning .three n := by
-  simp only [moreThanMeaning, atLeastMeaning, NumeralTheory.meaning, LowerBound,
-             BareNumeral.toNat, ge_iff_le]
+    moreThanMeaning 2 n ↔ atLeastMeaning 3 n := by
+  unfold moreThanMeaning atLeastMeaning Core.Scale.moreThanDeg Core.Scale.atLeastDeg
   omega
 
 

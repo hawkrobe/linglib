@@ -88,16 +88,20 @@ inductive ThickThinClass where
   deriving DecidableEq, Repr
 
 /-- Is the verb thick (encodes manner of causing)? -/
-def ThickThinClass.isThick : ThickThinClass → Bool
-  | .thickManner | .thickState => true
-  | .thin => false
+def ThickThinClass.IsThick (c : ThickThinClass) : Prop :=
+  c = .thickManner ∨ c = .thickState
+
+instance : DecidablePred ThickThinClass.IsThick :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Is the verb a causative manner verb (@cite{embick-2009} break-class)?
     These are the thick verbs whose root is an event predicate,
     compatible with strong adjectival resultatives. -/
-def ThickThinClass.isCausativeMannerVerb : ThickThinClass → Bool
-  | .thickManner => true
-  | _ => false
+def ThickThinClass.IsCausativeMannerVerb (c : ThickThinClass) : Prop :=
+  c = .thickManner
+
+instance : DecidablePred ThickThinClass.IsCausativeMannerVerb :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-! ## Asymmetric Entailment: P-CAUSE → D-CAUSE
 
@@ -171,7 +175,7 @@ This is a pragmatic constraint arising from competition between the lexical
     the manner information makes P-CAUSE a salient alternative, and the
     more specific lexical form specializes in the more specific meaning. -/
 def productionConstraint (cls : ThickThinClass) : CausationType :=
-  if cls.isThick then .production else .dependence
+  if cls.IsThick then .production else .dependence
 
 /-- Thick verbs prefer production causation. -/
 theorem thick_prefers_production :

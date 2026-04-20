@@ -1,6 +1,6 @@
 /-
 # Lexical Rules for Dependency Grammar
-@cite{hudson-1984}
+@cite{hudson-2010}
 
 Lexical rules derive new lexical entries from existing ones.
 Following Word Grammar and HPSG.
@@ -15,7 +15,7 @@ References:
 - @cite{pollard-sag-1994} "Head-Driven Phrase Structure Grammar"
 -/
 
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Core.Dependency.Basic
 
 namespace DepGrammar
 

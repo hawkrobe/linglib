@@ -431,7 +431,7 @@ open Pragmatics.Expressives
 
 This mirrors @cite{potts-2005}'s analysis of expressives: the expressive
 content is independent of at-issue truth. -/
-def wxdyTwoDim {W : Type*} (embeddedProp unexpectedness : W → Bool) : TwoDimProp W :=
+def wxdyTwoDim {W : Type*} (embeddedProp unexpectedness : W → Prop) : TwoDimProp W :=
   TwoDimProp.withCI embeddedProp unexpectedness
 
 /-- WXDY's CI properties: perspective-dependent (speaker-oriented), not
@@ -451,19 +451,19 @@ def wxdyCIProperties : SecondaryMeaningProperties :=
 /-- CI projects through negation: the unexpectedness meaning
 survives under negation. Delegates to `TwoDimProp.ci_projects_through_neg`. -/
 theorem wxdy_ci_projects_through_neg {W : Type*}
-    (embeddedProp unexpectedness : W → Bool) :
+    (embeddedProp unexpectedness : W → Prop) :
     (TwoDimProp.neg (wxdyTwoDim embeddedProp unexpectedness)).ci = unexpectedness := by
   simp [wxdyTwoDim, TwoDimProp.withCI, TwoDimProp.neg]
 
 /-- CI is independent of at-issue truth: the unexpectedness holds regardless
 of whether the embedded proposition is true or false. -/
 theorem wxdy_ci_independent {W : Type*}
-    (embeddedProp unexpectedness : W → Bool) (w : W)
-    (h_ci : unexpectedness w = true) :
-    ((wxdyTwoDim embeddedProp unexpectedness).atIssue w = true →
-      (wxdyTwoDim embeddedProp unexpectedness).ci w = true) ∧
-    ((wxdyTwoDim embeddedProp unexpectedness).atIssue w = false →
-      (wxdyTwoDim embeddedProp unexpectedness).ci w = true) := by
+    (embeddedProp unexpectedness : W → Prop) (w : W)
+    (h_ci : unexpectedness w) :
+    ((wxdyTwoDim embeddedProp unexpectedness).atIssue w →
+      (wxdyTwoDim embeddedProp unexpectedness).ci w) ∧
+    (¬ (wxdyTwoDim embeddedProp unexpectedness).atIssue w →
+      (wxdyTwoDim embeddedProp unexpectedness).ci w) := by
   exact ⟨λ _ => h_ci, λ _ => h_ci⟩
 
 -- ============================================================================
@@ -558,9 +558,9 @@ For "What's this fly doing in my soup?", the CG must already entail
 that there is a fly in the soup (the speaker sees it). -/
 theorem wxdy_presup_requires_cg {W : Type*}
     (c : ContextSet W) (embeddedProp : W → Bool)
-    (h : c ⊧ embeddedProp) (w : W) (hw : c w) :
+    (h : c ⊧ (wxdyPresup embeddedProp).presup) (w : W) (hw : c w) :
     (wxdyPresup embeddedProp).presup w :=
-  h w hw
+  h hw
 
 -- ============================================================================
 -- I. Aspect bridge (Semantics.Montague/Verb/Aspect.lean + Diagnostics)

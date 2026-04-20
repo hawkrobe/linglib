@@ -588,6 +588,9 @@ private lemma card_subtype_bool [Fintype α] (f : α → Bool) :
     Fintype.card {x : α // f x} = (univ.filter fun x => f x).card := by
   rw [Fintype.card_subtype]
 
+/-- Lift a Bool predicate to a Prop predicate via `(· = true)`. -/
+private abbrev liftP (f : α → Bool) : α → Prop := fun x => f x = true
+
 /-- CONSERV + QUANT GQs agree on any two pairs (A, B) and (A', B') with
     matching `|A∩B|` and `|A\B|` cardinalities. The proof decomposes the
     domain into 4 cells via conservativity (collapsing B to A∧B),
@@ -600,8 +603,8 @@ private theorem gq_depends_on_card [Fintype α] [DecidableEq α]
             (univ.filter (fun x => A' x && B' x)).card)
     (h_anb : (univ.filter (fun x => A x && !(B x))).card =
              (univ.filter (fun x => A' x && !(B' x))).card) :
-    q A B = q A' B' := by
-  rw [hCons A B, hCons A' B']
+    q (liftP A) (liftP B) ↔ q (liftP A') (liftP B') := by
+  rw [hCons (liftP A) (liftP B), hCons (liftP A') (liftP B')]
   -- Cell simplification: relate each (b₁, b₂) cell to a simple filter
   have cell_TT (R S : α → Bool) :
       (univ.filter fun x => R x == true && (R x && S x) == true).card =
@@ -640,9 +643,28 @@ private theorem gq_depends_on_card [Fintype α] [DecidableEq α]
     · rw [cell_TF, cell_TF, h_anb]
     · rw [cell_TT, cell_TT, h_ab]
   let f := cellBijection A (fun x => A x && B x) A' (fun x => A' x && B' x) h_card
-  exact hQ A (fun x => A x && B x) A' (fun x => A' x && B' x) f f.bijective
-    (fun x => (cellBijection_spec _ _ _ _ h_card x).1)
-    (fun x => (cellBijection_spec _ _ _ _ h_card x).2)
+  -- Goal: q (liftP A) (fun x => liftP A x ∧ liftP B x) ↔
+  --       q (liftP A') (fun x => liftP A' x ∧ liftP B' x).
+  -- Reduce the conjoined scopes to the lifted Bool intersection, then
+  -- apply QuantityInvariant via the cell bijection.
+  have hAndA : (fun x => liftP A x ∧ liftP B x) = liftP (fun x => A x && B x) := by
+    funext x; exact propext ⟨fun ⟨h1, h2⟩ => by simp [liftP, h1, h2],
+      fun h => by simp [liftP, Bool.and_eq_true] at h; exact ⟨h.1, h.2⟩⟩
+  have hAndA' : (fun x => liftP A' x ∧ liftP B' x) = liftP (fun x => A' x && B' x) := by
+    funext x; exact propext ⟨fun ⟨h1, h2⟩ => by simp [liftP, h1, h2],
+      fun h => by simp [liftP, Bool.and_eq_true] at h; exact ⟨h.1, h.2⟩⟩
+  rw [hAndA, hAndA']
+  exact hQ (liftP A) (liftP (fun x => A x && B x))
+    (liftP A') (liftP (fun x => A' x && B' x)) f f.bijective
+    (fun x => by
+      have h := (cellBijection_spec _ _ _ _ h_card x).1
+      show (A (f x) = true) ↔ (A' x = true); rw [h])
+    (fun x => by
+      have h := (cellBijection_spec _ _ _ _ h_card x).2
+      show ((A (f x) && B (f x)) = true) ↔ ((A' x && B' x) = true); rw [h])
+
+section ToNumberTree
+open Classical
 
 /-- Extract the number-tree representation of a CONSERV+QUANT quantifier.
     Under conservativity and quantity-invariance, Q(A,B) depends only on
@@ -656,23 +678,25 @@ noncomputable def toNumberTree [Fintype α] (q : GQ α) : NumberTreeGQ :=
     if h : ∃ (A B : α → Bool),
       (Finset.univ.filter (λ x => A x && B x)).card = a ∧
       (Finset.univ.filter (λ x => A x && !(B x))).card = b
-    then q h.choose h.choose_spec.choose
+    then decide (q (liftP h.choose) (liftP h.choose_spec.choose))
     else false
 
 /-- The number-tree representation faithfully reflects the GQ on
-    realizable coordinates: for any A, B, the GQ's truth value equals
-    the number-tree value at (|A∩B|, |A\B|).
+    realizable coordinates: for any A, B, the GQ holds iff the
+    number-tree value at (|A∩B|, |A\B|) is `true`.
 
     Proof: A and B themselves witness the existential in `toNumberTree`,
     so the `dite` takes the positive branch. The chosen witness pair has
     matching `|A∩B|` and `|A\B|` cardinalities, so `gq_depends_on_card`
-    (via cell-preserving bijection) gives `q A B = q A_chosen B_chosen`. -/
+    (via cell-preserving bijection) gives the GQ-level Iff between
+    `q A B` and `q A_chosen B_chosen`. -/
 theorem toNumberTree_spec [Fintype α] [DecidableEq α] (q : GQ α)
     (hCons : Conservative q) (hQ : QuantityInvariant q) :
     ∀ (A B : α → Bool),
-      q A B = toNumberTree q
-        (Finset.univ.filter (λ x => A x && B x)).card
-        (Finset.univ.filter (λ x => A x && !(B x))).card := by
+      q (liftP A) (liftP B) ↔
+        toNumberTree q
+          (Finset.univ.filter (λ x => A x && B x)).card
+          (Finset.univ.filter (λ x => A x && !(B x))).card = true := by
   intro A B
   have hexists : ∃ (A' B' : α → Bool),
       (univ.filter (fun x => A' x && B' x)).card =
@@ -683,7 +707,10 @@ theorem toNumberTree_spec [Fintype α] [DecidableEq α] (q : GQ α)
   unfold toNumberTree
   rw [dif_pos hexists]
   have hspec := hexists.choose_spec.choose_spec
-  exact gq_depends_on_card q hCons hQ A B _ _ hspec.1.symm hspec.2.symm
+  have hIff := gq_depends_on_card q hCons hQ A B _ _ hspec.1.symm hspec.2.symm
+  rw [hIff, decide_eq_true_iff]
+
+end ToNumberTree
 
 end NumberTreeBridge
 

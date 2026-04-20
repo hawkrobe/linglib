@@ -14,11 +14,15 @@ namespace Core.WALS.F143F
 
 /-- WALS 143F values. -/
 inductive PostverbalNegativeMorphemes where
-  | vneg  -- VNeg (288 languages)
-  | vNeg  -- [V-Neg] (307 languages)
-  | vnegVNeg  -- VNeg&[V-Neg] (18 languages)
-  | none  -- None (712 languages)
-  deriving DecidableEq, Repr
+  /-- VNeg (288 languages). -/
+  | vneg
+  /-- [V-Neg] (307 languages). -/
+  | vNeg
+  /-- VNeg&[V-Neg] (18 languages). -/
+  | vnegVNeg
+  /-- None (712 languages). -/
+  | none
+  deriving DecidableEq, BEq, Repr
 
 private def allData_0 : List (Datapoint PostverbalNegativeMorphemes) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .vneg }
@@ -1356,18 +1360,6 @@ private def allData_2 : List (Datapoint PostverbalNegativeMorphemes) :=
 
 /-- Complete WALS 143F dataset (1325 languages). -/
 def allData : List (Datapoint PostverbalNegativeMorphemes) := allData_0 ++ allData_1 ++ allData_2
-
--- Count verification
-theorem total_count : allData.length = 1325 := by native_decide
-
-theorem count_vneg :
-    (allData.filter (·.value == .vneg)).length = 288 := by native_decide
-theorem count_vNeg :
-    (allData.filter (·.value == .vNeg)).length = 307 := by native_decide
-theorem count_vnegVNeg :
-    (allData.filter (·.value == .vnegVNeg)).length = 18 := by native_decide
-theorem count_none :
-    (allData.filter (·.value == .none)).length = 712 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

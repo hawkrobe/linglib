@@ -59,7 +59,6 @@ sequential update = single conjunctive update — apply directly.
 namespace Pragmatics.Assertion.DisjunctiveUpdate
 
 open Core.CommonGround (ContextSet)
-open Core.Proposition (Prop')
 open Core.Semantics.ParameterizedUpdate
 
 
@@ -118,7 +117,7 @@ abbrev InterpAssignment.toFragmentSet (I : InterpAssignment C W) :
     degenerate case where the proposition is fixed across worlds (no
     diagonalization needed). This definition makes the compositional
     context parameter explicit. -/
-def standardUpdate (cs : Prop' W) (c_w : W → C) (sem : C → W → Prop) : Prop' W :=
+def standardUpdate (cs : Set W) (c_w : W → C) (sem : C → W → Prop) : Set W :=
   λ w => cs w ∧ sem (c_w w) w
 
 
@@ -137,8 +136,8 @@ def standardUpdate (cs : Prop' W) (c_w : W → C) (sem : C → W → Prop) : Pro
 
     @cite{caie-2023}: "The result of updating the context given the assertion
     is C^φ = {w ∈ C_φ : w ∈ ⟦φ⟧^c, for some c ∈ I^φ_w}." -/
-abbrev disjunctiveUpdate (cs : Prop' W) (I : InterpAssignment C W)
-    (sem : C → W → Prop) : Prop' W :=
+abbrev disjunctiveUpdate (cs : Set W) (I : InterpAssignment C W)
+    (sem : C → W → Prop) : Set W :=
   existentialUpdate cs I.toFragmentSet sem
 
 
@@ -179,17 +178,17 @@ abbrev prune (I : InterpAssignment C W) (sem : C → W → Prop) :
     compositional context and a world, and call the fragmentation of C_φ
     the set of context fragments ⟨c, w⟩ such that w ∈ C_φ and c interprets
     φ in w." -/
-def fragmentation (cs : Prop' W) (I : InterpAssignment C W) :
+def fragmentation (cs : Set W) (I : InterpAssignment C W) :
     ContextFragment C W → Prop :=
   λ f => cs f.world ∧ I f.world f.ctx
 
 /-- Project fragments to their world components. -/
-def fragmentWorlds (frags : ContextFragment C W → Prop) : Prop' W :=
+def fragmentWorlds (frags : ContextFragment C W → Prop) : Set W :=
   λ w => ∃ c, frags ⟨c, w⟩
 
 /-- Disjunctive updating is equivalent to updating the fragmentation and
     projecting to worlds. -/
-theorem disjunctiveUpdate_eq_fragmentWorlds (cs : Prop' W)
+theorem disjunctiveUpdate_eq_fragmentWorlds (cs : Set W)
     (I : InterpAssignment C W) (sem : C → W → Prop) :
     disjunctiveUpdate cs I sem =
     fragmentWorlds (λ f => fragmentation cs I f ∧ sem f.ctx f.world) := by
@@ -208,7 +207,7 @@ theorem disjunctiveUpdate_eq_fragmentWorlds (cs : Prop' W)
 /-- Standard Updating is the singleton case of Disjunctive Updating.
     When the interpretation set at each world is {c_w}, the existential
     in Disjunctive Updating collapses to a single check. -/
-theorem standard_eq_disjunctive_singleton (cs : Prop' W)
+theorem standard_eq_disjunctive_singleton (cs : Set W)
     (c_w : W → C) (sem : C → W → Prop) :
     standardUpdate cs c_w sem =
     disjunctiveUpdate cs (λ w c => c = c_w w) sem := by
@@ -220,7 +219,7 @@ theorem standard_eq_disjunctive_singleton (cs : Prop' W)
     λ ⟨hw, _, hc, hs⟩ => by subst hc; exact ⟨hw, hs⟩⟩
 
 /-- Expanding interpretation sets can only add worlds to the result. -/
-theorem disjunctiveUpdate_mono_interp (cs : Prop' W)
+theorem disjunctiveUpdate_mono_interp (cs : Set W)
     (I₁ I₂ : InterpAssignment C W) (sem : C → W → Prop)
     (h : ∀ w c, I₁ w c → I₂ w c) (w : W) :
     disjunctiveUpdate cs I₁ sem w → disjunctiveUpdate cs I₂ sem w :=
@@ -238,7 +237,7 @@ theorem disjunctiveUpdate_mono_interp (cs : Prop' W)
     This witnesses the fact that `ContextSet.update` is the degenerate case
     of Disjunctive Updating where context sensitivity plays no role: the
     same proposition is expressed at every world. -/
-theorem disjunctiveUpdate_constant (cs : Prop' W) (c₀ : C)
+theorem disjunctiveUpdate_constant (cs : Set W) (c₀ : C)
     (sem : C → W → Prop) :
     disjunctiveUpdate cs (λ _ c => c = c₀) sem = λ w => cs w ∧ sem c₀ w := by
   funext w
@@ -253,7 +252,7 @@ theorem disjunctiveUpdate_constant (cs : Prop' W) (c₀ : C)
     This explicitly connects the general framework to the infrastructure in
     `CommonGround.lean`: context-insensitive assertions (same proposition at
     every world) update via ordinary propositional filtering. -/
-theorem disjunctiveUpdate_eq_contextSet_update (cs : Prop' W) (c₀ : C)
+theorem disjunctiveUpdate_eq_contextSet_update (cs : Set W) (c₀ : C)
     (sem : C → W → Prop) :
     disjunctiveUpdate cs (λ _ c => c = c₀) sem =
     ContextSet.update cs (sem c₀) := by
@@ -291,13 +290,13 @@ theorem generalized_preservation
 
 /-- A discourse step: update the context set and prune interpretation sets.
     Returns the new context set and the narrowed interpretation assignment. -/
-def discourseStep (cs : Prop' W) (I : InterpAssignment C W)
-    (sem : C → W → Prop) : Prop' W × InterpAssignment C W :=
+def discourseStep (cs : Set W) (I : InterpAssignment C W)
+    (sem : C → W → Prop) : Set W × InterpAssignment C W :=
   (disjunctiveUpdate cs I sem, prune I sem)
 
 /-- Sequential discourse steps are monotonically restrictive in both
     the context set and interpretation sets. -/
-theorem discourseStep_restricts (cs : Prop' W) (I : InterpAssignment C W)
+theorem discourseStep_restricts (cs : Set W) (I : InterpAssignment C W)
     (sem : C → W → Prop) :
     let ⟨cs', I'⟩ := discourseStep cs I sem
     (∀ w, cs' w → cs w) ∧ (∀ w c, I' w c → I w c) :=
@@ -310,7 +309,7 @@ theorem discourseStep_restricts (cs : Prop' W) (I : InterpAssignment C W)
 
     This is @cite{caie-2023}'s central mechanism, obtained for free from
     `sequential_existentialUpdate` in `ParameterizedUpdate.lean`. -/
-theorem contextual_pruning_sequential (cs : Prop' W)
+theorem contextual_pruning_sequential (cs : Set W)
     (I : InterpAssignment C W) (sem₁ sem₂ : C → W → Prop) :
     disjunctiveUpdate
       (disjunctiveUpdate cs I sem₁)
@@ -371,23 +370,40 @@ namespace SarahsSocks
 
 /-- "Tim likes both of them": true when the intension picks the kind
     of pairs Tim likes. -/
-def likes : DressInt → TimPref → Bool
-  | .matching, .likesMatching => true
-  | .mixed,    .likesMixed    => true
-  | _,         _              => false
+def likes : DressInt → TimPref → Prop
+  | .matching, .likesMatching => True
+  | .mixed,    .likesMixed    => True
+  | _,         _              => False
+
+instance : ∀ (c : DressInt) (w : TimPref), Decidable (likes c w)
+  | .matching, .likesMatching => isTrue trivial
+  | .matching, .likesMixed    => isFalse (fun h => h)
+  | .mixed,    .likesMatching => isFalse (fun h => h)
+  | .mixed,    .likesMixed    => isTrue trivial
 
 /-- "Tim dislikes both of them": complement of `likes`. -/
-def dislikes (c : DressInt) (w : TimPref) : Bool := !likes c w
+def dislikes (c : DressInt) (w : TimPref) : Prop := ¬ likes c w
+
+instance (c : DressInt) (w : TimPref) : Decidable (dislikes c w) :=
+  inferInstanceAs (Decidable (¬ _))
 
 /-- "Both of them are matching": true under matching intension. -/
-def isMatching : DressInt → TimPref → Bool
-  | .matching, _ => true
-  | .mixed,    _ => false
+def isMatching : DressInt → TimPref → Prop
+  | .matching, _ => True
+  | .mixed,    _ => False
+
+instance : ∀ (c : DressInt) (w : TimPref), Decidable (isMatching c w)
+  | .matching, _ => isTrue trivial
+  | .mixed,    _ => isFalse (fun h => h)
 
 /-- "Both of them are mixed": true under mixed intension. -/
-def isMixed : DressInt → TimPref → Bool
-  | .mixed,    _ => true
-  | .matching, _ => false
+def isMixed : DressInt → TimPref → Prop
+  | .mixed,    _ => True
+  | .matching, _ => False
+
+instance : ∀ (c : DressInt) (w : TimPref), Decidable (isMixed c w)
+  | .mixed,    _ => isTrue trivial
+  | .matching, _ => isFalse (fun h => h)
 
 -- ──── Discourse composition ────
 
@@ -400,63 +416,84 @@ def isMixed : DressInt → TimPref → Bool
     such that `likes c w` (surviving (2)) AND `isMatching c w` (surviving (3)).
     The conjunction arises from Contextual Pruning: only contexts that made
     (2) true are available to interpret (3). -/
-def timLikesMatchingResult (w : TimPref) : Bool :=
+def timLikesMatchingResult (w : TimPref) : Prop :=
   -- ∃ c ∈ {matching, mixed}, likes c w ∧ isMatching c w
-  (likes .matching w && isMatching .matching w) ||
-  (likes .mixed w && isMatching .mixed w)
+  (likes .matching w ∧ isMatching .matching w) ∨
+  (likes .mixed w ∧ isMatching .mixed w)
+
+instance (w : TimPref) : Decidable (timLikesMatchingResult w) :=
+  inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Tim Dislikes Mixed result: w survives iff ∃ c, dislikes c w ∧ isMixed c w. -/
-def timDislikesMixedResult (w : TimPref) : Bool :=
-  (dislikes .matching w && isMixed .matching w) ||
-  (dislikes .mixed w && isMixed .mixed w)
+def timDislikesMixedResult (w : TimPref) : Prop :=
+  (dislikes .matching w ∧ isMixed .matching w) ∨
+  (dislikes .mixed w ∧ isMixed .mixed w)
+
+instance (w : TimPref) : Decidable (timDislikesMixedResult w) :=
+  inferInstanceAs (Decidable (_ ∨ _))
 
 -- ──── Verification ────
 
 /-- Tim Likes Matching keeps the matching-preference world. -/
-theorem tlm_keeps_matching : timLikesMatchingResult .likesMatching = true := rfl
+theorem tlm_keeps_matching : timLikesMatchingResult .likesMatching := by decide
 
 /-- Tim Likes Matching eliminates the mixed-preference world. -/
-theorem tlm_eliminates_mixed : timLikesMatchingResult .likesMixed = false := rfl
+theorem tlm_eliminates_mixed : ¬ timLikesMatchingResult .likesMixed := by decide
 
 /-- Tim Dislikes Mixed keeps the matching-preference world. -/
-theorem tdm_keeps_matching : timDislikesMixedResult .likesMatching = true := rfl
+theorem tdm_keeps_matching : timDislikesMixedResult .likesMatching := by decide
 
 /-- Tim Dislikes Mixed eliminates the mixed-preference world. -/
-theorem tdm_eliminates_mixed : timDislikesMixedResult .likesMixed = false := rfl
+theorem tdm_eliminates_mixed : ¬ timDislikesMixedResult .likesMixed := by decide
 
 /-- Both discourses yield the same result. -/
-theorem discourses_agree :
-    timLikesMatchingResult = timDislikesMixedResult := by
-  funext w; cases w <;> rfl
+theorem discourses_agree (w : TimPref) :
+    timLikesMatchingResult w ↔ timDislikesMixedResult w := by
+  cases w
+  · exact ⟨fun _ => tdm_keeps_matching, fun _ => tlm_keeps_matching⟩
+  · exact ⟨fun h => (tlm_eliminates_mixed h).elim,
+           fun h => (tdm_eliminates_mixed h).elim⟩
 
 -- ──── Safe Information ────
 
 /-- The set of fact-worlds: those where Tim likes matching and dislikes mixed. -/
-def facts (w : TimPref) : Bool :=
-  match w with | .likesMatching => true | .likesMixed => false
+def facts (w : TimPref) : Prop :=
+  match w with | .likesMatching => True | .likesMixed => False
+
+instance : ∀ (w : TimPref), Decidable (facts w)
+  | .likesMatching => isTrue trivial
+  | .likesMixed    => isFalse (fun h => h)
 
 /-- Safe Information condition (i): the update result is a subset of
     the fact-worlds. Under Disjunctive Updating, asserting Tim Likes
     Matching eliminates all non-fact worlds. -/
 theorem safe_info_i_tlm (w : TimPref) :
-    timLikesMatchingResult w = true → facts w = true := by
-  cases w <;> simp [timLikesMatchingResult, facts, likes, isMatching]
+    timLikesMatchingResult w → facts w := by
+  cases w
+  · intro _; trivial
+  · intro h; exact (tlm_eliminates_mixed h).elim
 
 /-- Safe Information condition (ii): every fact-world where the discourse
     occurs is retained. -/
 theorem safe_info_ii_tlm (w : TimPref) :
-    facts w = true → timLikesMatchingResult w = true := by
-  cases w <;> simp [timLikesMatchingResult, facts, likes, isMatching]
+    facts w → timLikesMatchingResult w := by
+  cases w
+  · intro _; exact tlm_keeps_matching
+  · intro h; exact h.elim
 
 /-- Safe Information condition (i) for Tim Dislikes Mixed. -/
 theorem safe_info_i_tdm (w : TimPref) :
-    timDislikesMixedResult w = true → facts w = true := by
-  cases w <;> simp [timDislikesMixedResult, facts, dislikes, likes, isMixed]
+    timDislikesMixedResult w → facts w := by
+  cases w
+  · intro _; trivial
+  · intro h; exact (tdm_eliminates_mixed h).elim
 
 /-- Safe Information condition (ii) for Tim Dislikes Mixed. -/
 theorem safe_info_ii_tdm (w : TimPref) :
-    facts w = true → timDislikesMixedResult w = true := by
-  cases w <;> simp [timDislikesMixedResult, facts, dislikes, likes, isMixed]
+    facts w → timDislikesMixedResult w := by
+  cases w
+  · intro _; exact tdm_keeps_matching
+  · intro h; exact h.elim
 
 -- ──── Negative results: why Standard Updating fails ────
 
@@ -467,14 +504,14 @@ theorem safe_info_ii_tdm (w : TimPref) :
     sentence (1) in both discourses (at fact-worlds w₁ and w₂ that
     agree on all pre-assertion facts). Under Preservation, c persists
     to interpret later sentences. Safe Information (ii) then requires:
-    - `likes c w = true` (for TLM to retain a fact-world)
-    - `dislikes c w = true` (for TDM to retain a fact-world)
+    - `likes c w` (for TLM to retain a fact-world)
+    - `dislikes c w` (for TDM to retain a fact-world)
     But `dislikes = ¬likes`, so no intension c satisfies both.
 
     This is the paper's central argument against Standard Updating. -/
 theorem standard_update_incompatible (c : DressInt) (w : TimPref) :
-    ¬(likes c w = true ∧ dislikes c w = true) := by
-  cases c <;> cases w <;> decide
+    ¬(likes c w ∧ dislikes c w) := by
+  rintro ⟨hl, hd⟩; exact hd hl
 
 /-- @cite{caie-2023} §2.2, second Claim: Standard Updating + Uniform Charity
     → ¬Safe Information (condition i).
@@ -489,74 +526,78 @@ theorem standard_update_incompatible (c : DressInt) (w : TimPref) :
     (Tim likes mixed pairs in that world) and sentence (3) is true under
     matching intension. Yet `.likesMixed` is not a fact-world. -/
 theorem uniform_charity_retains_nonfact :
-    (∃ c : DressInt, likes c .likesMixed = true) ∧
-    (∃ c : DressInt, isMatching c .likesMixed = true) ∧
-    facts .likesMixed = false :=
-  ⟨⟨.mixed, rfl⟩, ⟨.matching, rfl⟩, rfl⟩
+    (∃ c : DressInt, likes c .likesMixed) ∧
+    (∃ c : DressInt, isMatching c .likesMixed) ∧
+    ¬ facts .likesMixed :=
+  ⟨⟨.mixed, trivial⟩, ⟨.matching, trivial⟩, fun h => h⟩
 
 -- ──── Connection to general framework ────
 
-/-- The Bool-valued Tim Likes Matching result agrees with the Prop-valued
+/-- The hand-computed Tim Likes Matching result agrees with the Prop-valued
     `disjunctiveUpdate` applied via `discourseStep`.
 
     This connects the hand-computed verification above to the
     general theory. -/
 theorem tlm_agrees_with_framework (w : TimPref) :
-    timLikesMatchingResult w = true ↔
+    timLikesMatchingResult w ↔
     (disjunctiveUpdate
       (disjunctiveUpdate (λ _ => True) (λ _ _ => True)
-        (λ c w => likes c w = true))
-      (prune (λ _ _ => True) (λ c w => likes c w = true))
-      (λ c w => isMatching c w = true)) w := by
+        (λ c w => likes c w))
+      (prune (λ _ _ => True) (λ c w => likes c w))
+      (λ c w => isMatching c w)) w := by
   cases w with
   | likesMatching =>
     constructor
     · intro _
-      exact ⟨⟨trivial, .matching, trivial, rfl⟩,
-             .matching, ⟨trivial, rfl⟩, rfl⟩
-    · intro _; rfl
+      exact ⟨⟨trivial, .matching, trivial, trivial⟩,
+             .matching, ⟨trivial, trivial⟩, trivial⟩
+    · intro _; exact tlm_keeps_matching
   | likesMixed =>
     constructor
-    · intro h; simp [timLikesMatchingResult, likes, isMatching] at h
+    · intro h; exact (tlm_eliminates_mixed h).elim
     · intro ⟨_, c, ⟨_, hlikes⟩, hmatch⟩
       cases c with
-      | matching => exact absurd hlikes (by decide)
-      | mixed => exact absurd hmatch (by decide)
+      | matching => exact hlikes.elim
+      | mixed => exact hmatch.elim
 
-/-- The Bool-valued Tim Dislikes Mixed result agrees with the Prop-valued
+/-- The hand-computed Tim Dislikes Mixed result agrees with the Prop-valued
     framework. Mirror of `tlm_agrees_with_framework`. -/
 theorem tdm_agrees_with_framework (w : TimPref) :
-    timDislikesMixedResult w = true ↔
+    timDislikesMixedResult w ↔
     (disjunctiveUpdate
       (disjunctiveUpdate (λ _ => True) (λ _ _ => True)
-        (λ c w => dislikes c w = true))
-      (prune (λ _ _ => True) (λ c w => dislikes c w = true))
-      (λ c w => isMixed c w = true)) w := by
+        (λ c w => dislikes c w))
+      (prune (λ _ _ => True) (λ c w => dislikes c w))
+      (λ c w => isMixed c w)) w := by
   cases w with
   | likesMatching =>
     constructor
     · intro _
-      exact ⟨⟨trivial, .mixed, trivial, rfl⟩,
-             .mixed, ⟨trivial, rfl⟩, rfl⟩
-    · intro _; rfl
+      refine ⟨⟨trivial, .mixed, trivial, ?_⟩,
+              .mixed, ⟨trivial, ?_⟩, trivial⟩
+      · intro h; exact h.elim
+      · intro h; exact h.elim
+    · intro _; exact tdm_keeps_matching
   | likesMixed =>
     constructor
-    · intro h; simp [timDislikesMixedResult, dislikes, likes, isMixed] at h
+    · intro h; exact (tdm_eliminates_mixed h).elim
     · intro ⟨_, c, ⟨_, hdis⟩, hmix⟩
       cases c with
-      | matching => exact absurd hmix (by decide)
-      | mixed => exact absurd hdis (by decide)
+      | matching => exact hmix.elim
+      | mixed => exact (hdis trivial).elim
 
 -- ──── Complement and agreement properties ────
 
 /-- Dislikes is the complement of likes. -/
 theorem dislikes_eq_not_likes (c : DressInt) (w : TimPref) :
-    dislikes c w = !likes c w := rfl
+    dislikes c w ↔ ¬ likes c w := Iff.rfl
 
 /-- isMatching and isMixed are complements. -/
 theorem matching_mixed_compl (c : DressInt) (w : TimPref) :
-    isMatching c w = !isMixed c w := by
-  cases c <;> rfl
+    isMatching c w ↔ ¬ isMixed c w := by
+  cases c
+  · exact ⟨fun _ h => h.elim, fun _ => trivial⟩
+  · exact ⟨fun h => h.elim, fun h => (h trivial).elim⟩
 
 end SarahsSocks
 

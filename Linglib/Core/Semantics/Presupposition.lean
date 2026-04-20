@@ -1,5 +1,5 @@
 import Linglib.Core.Logic.Truth3
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Finset.Basic
 
 /-!
 # Partial Propositions
@@ -8,7 +8,7 @@ import Linglib.Core.Semantics.Proposition
 Partial propositions — propositions that may be undefined at some evaluation
 points.
 
-**`PrProp W`**: `presup : Prop' W`, `assertion : Prop' W`. The canonical type
+**`PrProp W`**: `presup : W → Prop`, `assertion : W → Prop`. The canonical type
 for partial propositions. Following the Mathlib convention, fields are
 Prop-valued; use `open Classical` + `by_cases` for case splits. For
 computational evaluation with concrete Bool values, use `PrProp.ofBool` to
@@ -38,7 +38,6 @@ classical, filtering (Karttunen), Belnap, flexible, Weak Kleene, K&P.
 namespace Core.Presupposition
 
 open Core.Duality
-open Core.Proposition
 
 /-- A presupposed value: a value that is only defined when its
 presupposition holds.
@@ -82,9 +81,9 @@ end PrValue
 @[ext]
 structure PrProp (W : Type*) where
   /-- The presupposition (must hold for definedness). -/
-  presup : Prop' W
+  presup : W → Prop
   /-- The at-issue content (assertion). -/
-  assertion : Prop' W
+  assertion : W → Prop
 
 namespace PrProp
 
@@ -108,8 +107,8 @@ def ofBProp (p : (W → Bool)) : PrProp W where
   presup := fun _ => True
   assertion := fun w => p w = true
 
-/-- Create a presuppositionless proposition from a Prop'. -/
-def ofProp' (p : Prop' W) : PrProp W where
+/-- Create a presuppositionless proposition from a `W → Prop`. -/
+def ofProp' (p : W → Prop) : PrProp W where
   presup := fun _ => True
   assertion := p
 
@@ -136,7 +135,7 @@ noncomputable def toPrValue (p : PrProp W) : PrValue W Bool where
     Assertive_w iff A is true at w; what is asserted = B.
     @cite{belnap-1970}, (3): "(A/B) is assertive_w just in case
     A is true_w. (A/B)_w = B_w." -/
-def condAssert (A B : Prop' W) : PrProp W where
+def condAssert (A B : W → Prop) : PrProp W where
   presup := A
   assertion := B
 
@@ -317,7 +316,7 @@ def andFlex (p q : PrProp W) : PrProp W where
 
 /-- Alias for `presup` under the Belnap reading: whether the proposition
     is **assertive** at w (asserts something, vs nonassertive/silent). -/
-abbrev assertive (p : PrProp W) : Prop' W := p.presup
+abbrev assertive (p : PrProp W) : W → Prop := p.presup
 
 /-- Belnap conjunction: assertive iff at least one conjunct is assertive.
     What it asserts = conjunction of assertive conjuncts' content.
@@ -394,11 +393,11 @@ def genuineness (p q : PrProp W) (s : Finset W) : Prop :=
 -- Projections
 -- ════════════════════════════════════════════════════════════════
 
-/-- Presupposition projection: get the presupposition as a Prop'. -/
-def projectPresup (p : PrProp W) : Prop' W := p.presup
+/-- Presupposition projection: get the presupposition as a `W → Prop`. -/
+def projectPresup (p : PrProp W) : W → Prop := p.presup
 
-/-- Assertion extraction: get the assertion as a Prop'. -/
-def projectAssertion (p : PrProp W) : Prop' W := p.assertion
+/-- Assertion extraction: get the assertion as a `W → Prop`. -/
+def projectAssertion (p : PrProp W) : W → Prop := p.assertion
 
 -- ════════════════════════════════════════════════════════════════
 -- Extensionality
@@ -464,13 +463,13 @@ theorem ofBProp_assertion (p : (W → Bool)) (w : W) :
 
 /-- Evaluation is defined iff presupposition holds. -/
 theorem eval_isDefined (p : PrProp W) (w : W) :
-    (p.eval w).isDefined = true ↔ p.presup w := by
+    (p.eval w).isDefined ↔ p.presup w := by
   simp only [eval]
   by_cases hp : p.presup w
   · simp only [if_pos hp]
     by_cases ha : p.assertion w
-    · simp only [if_pos ha]; exact iff_of_true rfl hp
-    · simp only [if_neg ha]; exact iff_of_true rfl hp
+    · simp only [if_pos ha]; exact iff_of_true trivial hp
+    · simp only [if_neg ha]; exact iff_of_true trivial hp
   · simp only [if_neg hp]; exact iff_of_false (by decide) hp
 
 /-- Negation evaluation. -/
@@ -772,7 +771,7 @@ theorem genuineness_comm (p q : PrProp W) (s : Finset W) :
 
     This is the standard projection rule for presuppositions in the second
     disjunct of a disjunction. @cite{karttunen-1973}, @cite{heim-1983} -/
-def disjFilterLeft (firstDisjunct : Prop' W) (second : PrProp W) :
+def disjFilterLeft (firstDisjunct : W → Prop) (second : PrProp W) :
     PrProp W where
   assertion := fun w => firstDisjunct w ∨ second.assertion w
   presup := fun w => ¬firstDisjunct w → second.presup w
@@ -790,13 +789,13 @@ def disjFilterLeft (firstDisjunct : Prop' W) (second : PrProp W) :
     solve the presupposed FC puzzle — the homogeneity presupposition
     projects through the factive independently of the belief content. -/
 def negFactive (complement : PrProp W)
-    (believes : Prop' W → Prop' W) : PrProp W where
+    (believes : (W → Prop) → (W → Prop)) : PrProp W where
   assertion := fun w => ¬(believes complement.assertion w)
   presup := fun w => complement.holds w
 
 /-- When the first disjunct is false, `disjFilterLeft` recovers full
     satisfaction of the second disjunct. -/
-theorem disjFilterLeft_recovers (firstDisjunct : Prop' W) (sp : PrProp W)
+theorem disjFilterLeft_recovers (firstDisjunct : W → Prop) (sp : PrProp W)
     (w : W) (hFirst : ¬firstDisjunct w)
     (hFiltered : (disjFilterLeft firstDisjunct sp).holds w) :
     sp.holds w := by
@@ -805,7 +804,7 @@ theorem disjFilterLeft_recovers (firstDisjunct : Prop' W) (sp : PrProp W)
 
 /-- Presupposition of `negFactive` is full satisfaction of the complement. -/
 theorem negFactive_presup_eq (complement : PrProp W)
-    (believes : Prop' W → Prop' W) :
+    (believes : (W → Prop) → (W → Prop)) :
     (negFactive complement believes).presup = complement.holds := rfl
 
 /-- Universal presupposition projection: presuppositions project

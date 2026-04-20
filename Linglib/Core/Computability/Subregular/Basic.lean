@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
 import Mathlib.Computability.Language
+import Mathlib.Data.List.Chain
 import Mathlib.Data.List.Infix
 
 /-!
@@ -79,5 +80,60 @@ lemma isInfix_of_mem_kFactors {k : ℕ} {f xs : List β}
 instance [DecidableEq β] (k : ℕ) (f xs : List β) :
     Decidable (f ∈ kFactors k xs) := by
   unfold kFactors; infer_instance
+
+/-- The 2-factors of `a :: b :: rest` are `[a, b]` followed by the 2-factors
+of `b :: rest`. Specialization of `kFactors` to `k = 2` for the inductive
+step in chain-based characterizations of SL_2 and TSL_2 languages. -/
+lemma kFactors_two_cons_cons (a b : β) (rest : List β) :
+    kFactors 2 (a :: b :: rest) = [a, b] :: kFactors 2 (b :: rest) := by
+  simp [kFactors, List.tails, List.filter, List.take]
+
+/-- A relation on `Option α` is **boundary-vacuous** when the boundary marker
+`none` satisfies it on either side: `R none u` and `R u none` always hold.
+Equivalently, only `(some a, some b)` pairs can witness a violation.
+
+Boundary-vacuity captures the property of subregular constraints that hold
+trivially at string edges — the OCP relation, the no-clash relation, the
+no-lapse relation all share this shape. The chain-membership of a
+boundary-padded augmented string is then equivalent to the chain-membership
+of the unpadded core (`isChain_boundary_two_iff`). -/
+structure IsBoundaryVacuous (R : Option α → Option α → Prop) : Prop where
+  none_left : ∀ u, R none u
+  none_right : ∀ u, R u none
+
+namespace IsBoundaryVacuous
+
+variable {R : Option α → Option α → Prop}
+
+/-- Prepending `none` to a list preserves chain-membership for any
+boundary-vacuous relation. -/
+lemma isChain_none_cons_iff (hR : IsBoundaryVacuous R) (xs : Augmented α) :
+    (none :: xs).IsChain R ↔ xs.IsChain R := by
+  cases xs with
+  | nil => exact ⟨fun _ => List.isChain_nil, fun _ => List.isChain_singleton _⟩
+  | cons u rest =>
+    rw [List.isChain_cons_cons]
+    exact ⟨And.right, fun h => ⟨hR.none_left _, h⟩⟩
+
+/-- Appending `[none]` to a list preserves chain-membership for any
+boundary-vacuous relation. -/
+lemma isChain_append_singleton_none_iff (hR : IsBoundaryVacuous R)
+    (xs : Augmented α) :
+    (xs ++ [none]).IsChain R ↔ xs.IsChain R := by
+  rw [List.isChain_append]
+  refine ⟨And.left, fun h => ⟨h, List.isChain_singleton _, ?_⟩⟩
+  intro x _ y hy
+  simp only [List.head?_cons, Option.mem_some_iff] at hy
+  subst hy
+  exact hR.none_right _
+
+/-- The 2-boundary padding `[none] · _ · [none]` preserves chain-membership
+for any boundary-vacuous relation. -/
+lemma isChain_boundary_two_iff (hR : IsBoundaryVacuous R) (ys : List α) :
+    (boundary 2 ys).IsChain R ↔ (ys.map some).IsChain R := by
+  show (none :: (ys.map some ++ [none])).IsChain R ↔ _
+  rw [hR.isChain_none_cons_iff, hR.isChain_append_singleton_none_iff]
+
+end IsBoundaryVacuous
 
 end Core.Computability.Subregular

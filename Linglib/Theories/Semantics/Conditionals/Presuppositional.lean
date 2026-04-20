@@ -44,7 +44,6 @@ namespace Semantics.Conditionals.Presuppositional
 
 open Semantics.Conditionals
 open Core.Presupposition
-open Core.Proposition
 
 variable {W : Type*}
 
@@ -126,8 +125,8 @@ def ifKP [DecidableEq W] (restriction : List W)
 
 A proposition is CP-acceptable in context `c` iff it is neither
 trivially true nor trivially false in `c`. -/
-def cpAcceptable (c : Prop' W) (p : Prop' W) : Prop :=
-  (∃ w, c w ∧ p w) ∧ (∃ w, c w ∧ ¬ p w)
+def cpAcceptable (c : Set W) (p : Set W) : Prop :=
+  (c ∩ p).Nonempty ∧ (c ∩ pᶜ).Nonempty
 
 /-- Type-flexible disjunction over properties (Sharvit's `or^{K/P**}`, (142a)).
 
@@ -146,7 +145,7 @@ def orProperties {E : Type*} [DecidableEq (E → Bool)]
 
 Used in `orPresup`: the CLOS-based disjunction checks presuppositions at
 closest worlds where the OTHER disjunct is defined-and-false. -/
-def definedFalse (p : PrProp W) : Prop' W :=
+def definedFalse (p : PrProp W) : Set W :=
   fun w => p.presup w ∧ ¬p.assertion w
 
 /-- K/P* presuppositional conjunction (@cite{sharvit-2025}, (127)).

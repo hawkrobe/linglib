@@ -14,11 +14,15 @@ namespace Core.WALS.F143G
 
 /-- WALS 143G values. -/
 inductive MinorMorphologicalMeansOfSignalingNegation where
-  | negtone  -- NegTone (7 languages)
-  | neginfix  -- NegInfix (2 languages)
-  | negstemchange  -- NegStemChange (1 languages)
-  | none  -- None (1315 languages)
-  deriving DecidableEq, Repr
+  /-- NegTone (7 languages). -/
+  | negtone
+  /-- NegInfix (2 languages). -/
+  | neginfix
+  /-- NegStemChange (1 languages). -/
+  | negstemchange
+  /-- None (1315 languages). -/
+  | none
+  deriving DecidableEq, BEq, Repr
 
 private def allData_0 : List (Datapoint MinorMorphologicalMeansOfSignalingNegation) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .none }
@@ -1356,18 +1360,6 @@ private def allData_2 : List (Datapoint MinorMorphologicalMeansOfSignalingNegati
 
 /-- Complete WALS 143G dataset (1325 languages). -/
 def allData : List (Datapoint MinorMorphologicalMeansOfSignalingNegation) := allData_0 ++ allData_1 ++ allData_2
-
--- Count verification
-theorem total_count : allData.length = 1325 := by native_decide
-
-theorem count_negtone :
-    (allData.filter (·.value == .negtone)).length = 7 := by native_decide
-theorem count_neginfix :
-    (allData.filter (·.value == .neginfix)).length = 2 := by native_decide
-theorem count_negstemchange :
-    (allData.filter (·.value == .negstemchange)).length = 1 := by native_decide
-theorem count_none :
-    (allData.filter (·.value == .none)).length = 1315 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

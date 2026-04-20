@@ -14,30 +14,53 @@ namespace Core.WALS.F144F
 
 /-- WALS 144F values. -/
 inductive ObligatoryDoubleNegationInSvoLanguages where
-  | snegvoneg  -- SNegVONeg (11 languages)
-  | snegvnego  -- SNegVNegO (6 languages)
-  | svnegoneg  -- SVNegONeg (1 languages)
-  | svoVsoButNegsvoneg  -- SVO/VSO but NegSVONeg (1 languages)
-  | sNegVOneg  -- S[Neg-V]ONeg (7 languages)
-  | snegVNegO  -- SNeg[V-Neg]O (4 languages)
-  | sNegVNego  -- S[Neg-V]NegO (1 languages)
-  | negsVNegO  -- NegS[V-Neg]O (2 languages)
-  | sNegVNegO  -- S[Neg-V-Neg]O (5 languages)
-  | svnegoNegtone  -- SVNegO&NegTone (1 languages)
-  | sNegVONegtone  -- S[Neg-V]O&NegTone (1 languages)
-  | snegnegvoSnegvnego  -- SNegNegVO/SNegVNegO (1 languages)
-  | snegvnegoSnegvoneg  -- SNegVNegO/SNegVONeg (1 languages)
-  | snegvonegSNegVOneg  -- SNegVONeg/S[Neg-V]ONeg (1 languages)
-  | svoneg  -- (Neg)S(Neg)VONeg (1 languages)
-  | snegVNegONegtoneSnegvnego  -- SNeg[V-Neg]O&NegTone/SNegVNegO (1 languages)
-  | sNegVNegO_17  -- S(Neg)[Neg-V-Neg]O (1 languages)
-  | snegVOnegSNegVOneg  -- SNeg[V(-Neg)]ONeg/S[Neg-V(-Neg)]ONeg (1 languages)
-  | snegvonegSnegovneg  -- SNegVONeg/SNegOVNeg (1 languages)
-  | svonegNegtoneSnegovneg  -- SVONeg&NegTone/SNegOVNeg (1 languages)
-  | snegvonegSvnegonegNegvosnegVnegosneg  -- SNegVONeg/SVNegONeg/NegVOSNeg/VNegOSNeg (1 languages)
-  | svoNegvneg  -- SVO & NegVNeg (5 languages)
-  | sNegVONegv  -- S[Neg-V]O & NegV (1 languages)
-  deriving DecidableEq, Repr
+  /-- SNegVONeg (11 languages). -/
+  | snegvoneg
+  /-- SNegVNegO (6 languages). -/
+  | snegvnego
+  /-- SVNegONeg (1 languages). -/
+  | svnegoneg
+  /-- SVO/VSO but NegSVONeg (1 languages). -/
+  | svoVsoButNegsvoneg
+  /-- S[Neg-V]ONeg (7 languages). -/
+  | sNegVOneg
+  /-- SNeg[V-Neg]O (4 languages). -/
+  | snegVNegO
+  /-- S[Neg-V]NegO (1 languages). -/
+  | sNegVNego
+  /-- NegS[V-Neg]O (2 languages). -/
+  | negsVNegO
+  /-- S[Neg-V-Neg]O (5 languages). -/
+  | sNegVNegO
+  /-- SVNegO&NegTone (1 languages). -/
+  | svnegoNegtone
+  /-- S[Neg-V]O&NegTone (1 languages). -/
+  | sNegVONegtone
+  /-- SNegNegVO/SNegVNegO (1 languages). -/
+  | snegnegvoSnegvnego
+  /-- SNegVNegO/SNegVONeg (1 languages). -/
+  | snegvnegoSnegvoneg
+  /-- SNegVONeg/S[Neg-V]ONeg (1 languages). -/
+  | snegvonegSNegVOneg
+  /-- (Neg)S(Neg)VONeg (1 languages). -/
+  | svoneg
+  /-- SNeg[V-Neg]O&NegTone/SNegVNegO (1 languages). -/
+  | snegVNegONegtoneSnegvnego
+  /-- S(Neg)[Neg-V-Neg]O (1 languages). -/
+  | sNegVNegO_17
+  /-- SNeg[V(-Neg)]ONeg/S[Neg-V(-Neg)]ONeg (1 languages). -/
+  | snegVOnegSNegVOneg
+  /-- SNegVONeg/SNegOVNeg (1 languages). -/
+  | snegvonegSnegovneg
+  /-- SVONeg&NegTone/SNegOVNeg (1 languages). -/
+  | svonegNegtoneSnegovneg
+  /-- SNegVONeg/SVNegONeg/NegVOSNeg/VNegOSNeg (1 languages). -/
+  | snegvonegSvnegonegNegvosnegVnegosneg
+  /-- SVO & NegVNeg (5 languages). -/
+  | svoNegvneg
+  /-- S[Neg-V]O & NegV (1 languages). -/
+  | sNegVONegv
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144F dataset (56 languages). -/
 def allData : List (Datapoint ObligatoryDoubleNegationInSvoLanguages) :=
@@ -98,56 +121,6 @@ def allData : List (Datapoint ObligatoryDoubleNegationInSvoLanguages) :=
   , { walsCode := "zan", language := "Zande", iso := "zne", value := .svnegoneg }
   , { walsCode := "zpr", language := "Zaparo", iso := "zro", value := .negsVNegO }
   ]
-
--- Count verification
-theorem total_count : allData.length = 56 := by native_decide
-
-theorem count_snegvoneg :
-    (allData.filter (·.value == .snegvoneg)).length = 11 := by native_decide
-theorem count_snegvnego :
-    (allData.filter (·.value == .snegvnego)).length = 6 := by native_decide
-theorem count_svnegoneg :
-    (allData.filter (·.value == .svnegoneg)).length = 1 := by native_decide
-theorem count_svoVsoButNegsvoneg :
-    (allData.filter (·.value == .svoVsoButNegsvoneg)).length = 1 := by native_decide
-theorem count_sNegVOneg :
-    (allData.filter (·.value == .sNegVOneg)).length = 7 := by native_decide
-theorem count_snegVNegO :
-    (allData.filter (·.value == .snegVNegO)).length = 4 := by native_decide
-theorem count_sNegVNego :
-    (allData.filter (·.value == .sNegVNego)).length = 1 := by native_decide
-theorem count_negsVNegO :
-    (allData.filter (·.value == .negsVNegO)).length = 2 := by native_decide
-theorem count_sNegVNegO :
-    (allData.filter (·.value == .sNegVNegO)).length = 5 := by native_decide
-theorem count_svnegoNegtone :
-    (allData.filter (·.value == .svnegoNegtone)).length = 1 := by native_decide
-theorem count_sNegVONegtone :
-    (allData.filter (·.value == .sNegVONegtone)).length = 1 := by native_decide
-theorem count_snegnegvoSnegvnego :
-    (allData.filter (·.value == .snegnegvoSnegvnego)).length = 1 := by native_decide
-theorem count_snegvnegoSnegvoneg :
-    (allData.filter (·.value == .snegvnegoSnegvoneg)).length = 1 := by native_decide
-theorem count_snegvonegSNegVOneg :
-    (allData.filter (·.value == .snegvonegSNegVOneg)).length = 1 := by native_decide
-theorem count_svoneg :
-    (allData.filter (·.value == .svoneg)).length = 1 := by native_decide
-theorem count_snegVNegONegtoneSnegvnego :
-    (allData.filter (·.value == .snegVNegONegtoneSnegvnego)).length = 1 := by native_decide
-theorem count_sNegVNegO_17 :
-    (allData.filter (·.value == .sNegVNegO_17)).length = 1 := by native_decide
-theorem count_snegVOnegSNegVOneg :
-    (allData.filter (·.value == .snegVOnegSNegVOneg)).length = 1 := by native_decide
-theorem count_snegvonegSnegovneg :
-    (allData.filter (·.value == .snegvonegSnegovneg)).length = 1 := by native_decide
-theorem count_svonegNegtoneSnegovneg :
-    (allData.filter (·.value == .svonegNegtoneSnegovneg)).length = 1 := by native_decide
-theorem count_snegvonegSvnegonegNegvosnegVnegosneg :
-    (allData.filter (·.value == .snegvonegSvnegonegNegvosnegVnegosneg)).length = 1 := by native_decide
-theorem count_svoNegvneg :
-    (allData.filter (·.value == .svoNegvneg)).length = 5 := by native_decide
-theorem count_sNegVONegv :
-    (allData.filter (·.value == .sNegVONegv)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

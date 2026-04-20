@@ -1,10 +1,10 @@
-import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Hurford
+import Linglib.Phenomena.ScalarImplicatures.Hurford
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # Bridge: RSA Hurford Constraint → Phenomena
 
-Connects the RSA Hurford constraint model (`RSA.Hurford`) to empirical
+Connects the RSA Hurford constraint model (`Phenomena.ScalarImplicatures.Hurford`) to empirical
 data from `Phenomena.ScalarImplicatures.Basic`.
 
 ## Bridge content

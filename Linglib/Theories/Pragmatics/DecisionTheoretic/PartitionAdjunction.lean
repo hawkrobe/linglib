@@ -231,7 +231,7 @@ private def counterexDP : DecisionProblem GW GA where
 /-- w₁ and w₂ are NOT equivalent in the sufficient partition. -/
 theorem counterex_not_equiv :
     (sufficientPartition counterexDP [.a, .b]).sameAnswer GW.w₁ GW.w₂ = false := by
-  native_decide
+  decide
 
 /-- But trivial doesn't separate them. -/
 theorem counterex_trivial_identifies :

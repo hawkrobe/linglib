@@ -274,21 +274,21 @@ open Phenomena.Causation.ThickThin
     with agentive Voice. -/
 theorem accomplishment_has_agentive_voice :
     -- Semantic: accomplishment has external causer
-    Template.hasExternalCauser .accomplishment = true ∧
+    Template.HasExternalCauser .accomplishment ∧
     -- Syntactic: maps to causative heads (vDO + vCAUSE + vGO + vBE)
     isCausative (templateToHeads .accomplishment) = true ∧
     -- Voice: agentive Voice assigns θ-role
-    voiceAgent.assignsTheta = true := ⟨rfl, by native_decide, rfl⟩
+    voiceAgent.assignsTheta = true := ⟨by decide, by native_decide, rfl⟩
 
 /-- Achievement templates (no external cause) map to inchoative structure
     with non-thematic Voice. -/
 theorem achievement_has_nonthematic_voice :
     -- Semantic: achievement lacks external causer
-    Template.hasExternalCauser .achievement = false ∧
+    ¬ Template.HasExternalCauser .achievement ∧
     -- Syntactic: maps to inchoative heads (vCAUSE + vGO + vBE)
     isInchoative (templateToHeads .achievement) = true ∧
     -- Voice: non-thematic Voice has no semantics
-    voiceAnticausative.hasSemantics = false := ⟨rfl, by native_decide, rfl⟩
+    voiceAnticausative.hasSemantics = false := ⟨by decide, by native_decide, rfl⟩
 
 -- § 2: Thick/Thin ↔ Causation Type ↔ Voice
 

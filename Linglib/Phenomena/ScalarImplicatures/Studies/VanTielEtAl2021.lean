@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Quantities
+import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Mathlib.Data.Rat.Defs
 
@@ -301,7 +301,7 @@ to demonstrate the key theoretical insights computably.
 
 namespace RSAModel
 
-open VanTielQuantity
+open Phenomena.ScalarImplicatures.VanTielQuantity
 
 /-- Domain size (simplified from 432 to 10) -/
 abbrev domainSize : Nat := 10
@@ -309,19 +309,19 @@ abbrev domainSize : Nat := 10
 /-- Intersection set sizes (simplified from 0-432 to 0-10) -/
 abbrev WorldState := Fin 11
 
-def allWorlds : List WorldState := VanTielQuantity.allWorlds domainSize
+def allWorlds : List WorldState := Phenomena.ScalarImplicatures.VanTielQuantity.allWorlds domainSize
 
 def modelTotalSetSize : Nat := 10
 
--- Re-export types from VanTielQuantity for backwards compatibility
-abbrev ModelQuantityWord := VanTielQuantity.Utterance
+-- Re-export types from Phenomena.ScalarImplicatures.VanTielQuantity for backwards compatibility
+abbrev ModelQuantityWord := Phenomena.ScalarImplicatures.VanTielQuantity.Utterance
 
-def allModelQuantityWords : List ModelQuantityWord := VanTielQuantity.allUtterances
+def allModelQuantityWords : List ModelQuantityWord := Phenomena.ScalarImplicatures.VanTielQuantity.allUtterances
 
 -- Re-export monotonicity
-abbrev ModelMonotonicity := VanTielQuantity.Monotonicity
+abbrev ModelMonotonicity := Phenomena.ScalarImplicatures.VanTielQuantity.Monotonicity
 
-def modelMonotonicity := VanTielQuantity.monotonicity
+def modelMonotonicity := Phenomena.ScalarImplicatures.VanTielQuantity.monotonicity
 
 -- GQT Semantics (using unified Determiners infrastructure)
 
@@ -331,7 +331,7 @@ def threshold (m : ModelQuantityWord) : Nat :=
 
 /-- GQT meaning: binary truth based on threshold -/
 def gqtMeaning (m : ModelQuantityWord) (t : WorldState) : Bool :=
-  VanTielQuantity.gqtMeaning domainSize m t
+  Phenomena.ScalarImplicatures.VanTielQuantity.gqtMeaning domainSize m t
 
 /-- GQT meaning as rational -/
 def gqtMeaningRat (m : ModelQuantityWord) (t : WorldState) : ℚ :=
@@ -402,7 +402,7 @@ end RSAModel
 monotonicity classifications. -/
 
 /-- Convert RSA model's QuantityWord to empirical data type. -/
-def toDataWord : VanTielQuantity.Utterance → QuantityWord
+def toDataWord : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance → QuantityWord
   | .none_ => .none_
   | .few   => .few
   | .some_ => .some_
@@ -414,13 +414,13 @@ def toDataWord : VanTielQuantity.Utterance → QuantityWord
 
 Note: "half" is classified as nonMonotone in the three-way system but as
 "increasing" in the binary empirical classification. -/
-theorem monotonicity_matches_data_increasing (q : VanTielQuantity.Utterance) :
+theorem monotonicity_matches_data_increasing (q : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance) :
     q ≠ .half →
     (RSAModel.modelMonotonicity q = Fragments.English.Determiners.Monotonicity.increasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.increasing) := by
   cases q <;> native_decide
 
-theorem monotonicity_matches_data_decreasing (q : VanTielQuantity.Utterance) :
+theorem monotonicity_matches_data_decreasing (q : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance) :
     (RSAModel.modelMonotonicity q = Fragments.English.Determiners.Monotonicity.decreasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.decreasing) := by
   cases q <;> native_decide

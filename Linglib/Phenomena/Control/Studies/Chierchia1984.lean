@@ -250,11 +250,12 @@ structure ModalControl (Args : Type) where
     The CP follows from reflexivity. -/
 def ModalControl.toControlVerb (m : ModalControl E Args) :
     ControlVerb E Args where
-  sem P args w := decide (∀ w' ∈ bestWorlds m.base m.ordering w, P (m.controller args) = true)
+  -- Since `P (m.controller args)` does not depend on the bound world, the
+  -- universal quantification ∀ w' ∈ bestWorlds, P (controller args) = true
+  -- collapses to `P (controller args)` (bestWorlds is nonempty by reflexivity).
+  sem P args _w := P (m.controller args)
   controller := m.controller
-  entails P args w h := by
-    simp only [decide_eq_true_eq] at h
-    exact h _ (m.reflexive w)
+  entails _P _args _w h := h
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Visser's and Bach's Generalizations

@@ -97,7 +97,7 @@ example : verbToSelStack Fragments.English.Predicates.Verbal.eat = [.D] := rfl
 example : verbToSelStack Fragments.English.Predicates.Verbal.give = [.D, .D] := rfl
 
 -- Verify noun categories
-example : (nounToSO Fragments.English.Nouns.john 1).isLeaf = true := rfl
-example : (nounToSO Fragments.English.Nouns.cat 1).isLeaf = true := rfl
+example : (nounToSO Fragments.English.Nouns.john 1).isLeaf := by decide
+example : (nounToSO Fragments.English.Nouns.cat 1).isLeaf := by decide
 
 end Minimalism.Core.FromFragments

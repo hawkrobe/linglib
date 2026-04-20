@@ -108,8 +108,8 @@ theorem russian_no_containment :
     is NOT. This asymmetry supports @cite{bubnov-2026}'s claim that
     nanosyntax is the right tool for case but not for indefinites. -/
 theorem case_has_containment_indefinites_dont :
-    (Core.Case.nom : Core.Case) ≤ Core.Case.acc ∧
-    (Core.Case.acc : Core.Case) ≤ Core.Case.gen ∧
+    (.nom : Core.Case) ≤ .acc ∧
+    (.acc : Core.Case) ≤ .gen ∧
     morphContains "-to" "-nibud'" = false ∧
     morphContains "koe-" "-to" = false :=
   ⟨by decide, by decide, by native_decide, by native_decide⟩
@@ -366,8 +366,8 @@ theorem aadaruu_matches_nonSpecific :
 theorem irgend_compatible_classifications :
     irgend.specType = .epistemic ∧
     irgendeinEntry.status = .notAtIssue ∧
-    irgendeinEntry.hasEpistemic = true := by
-  exact ⟨rfl, rfl, by native_decide⟩
+    irgendeinEntry.hasEpistemic := by
+  exact ⟨rfl, rfl, by decide⟩
 
 -- ============================================================================
 -- §8. The Broader Claim: Coexpression ≠ Syncretism

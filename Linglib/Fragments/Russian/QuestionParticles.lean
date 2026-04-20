@@ -1,18 +1,19 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
-
 /-!
 # Russian Question Particles
 @cite{esipova-romero-2023} @cite{simik-2024}
 
 Lexical entries for Russian interrogative particles with distributional
-properties and bias profiles.
+properties and bias profiles. The fragment commits only to theory-neutral
+lexical primitives (form, gloss, distribution, bias profile); the
+left-peripheral layer assignment lives in
+`Phenomena.Questions.Studies.Simik2024`.
 
 ## Particles
 
-| Particle | Romanization | Gloss | Layer | Bias |
-|----------|-------------|-------|-------|------|
-| ли | li | neutral PQ | CP | none |
-| разве | razve | RAZVE (mirative) | PerspP | +evidential |
+| Particle | Romanization | Gloss | Bias |
+|----------|-------------|-------|------|
+| ли | li | neutral PQ | none |
+| разве | razve | RAZVE (mirative) | +evidential |
 
 ## Cross-Module Connections
 
@@ -24,14 +25,11 @@ properties and bias profiles.
 
 namespace Fragments.Russian.QuestionParticles
 
-open Semantics.Questions (QParticleLayer)
-
 /-- A Russian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
   romanization : String
   gloss : String
-  layer : QParticleLayer
   polarOk : Bool
   declOk : Bool
   whOk : Bool
@@ -41,13 +39,11 @@ structure QParticleEntry where
 
 /-- ли li — neutral polar question particle (formal register).
 Verb-attached enclitic, cliticizes onto the focused constituent.
-Rare in spoken Russian (only 6/500 PQs in Onoeva & Staňková corpus).
-CP-layer: basic clause-typing function. -/
+Rare in spoken Russian (only 6/500 PQs in Onoeva & Staňková corpus). -/
 def li : QParticleEntry where
   form := "ли"
   romanization := "li"
   gloss := "PQ (neutral polar question particle)"
-  layer := .cp
   polarOk := true
   declOk := false
   whOk := false
@@ -61,7 +57,6 @@ def razve_ : QParticleEntry where
   form := "разве"
   romanization := "razve"
   gloss := "RAZVE (mirative/dubitative Q-particle)"
-  layer := .perspP
   polarOk := true
   declOk := false
   whOk := false

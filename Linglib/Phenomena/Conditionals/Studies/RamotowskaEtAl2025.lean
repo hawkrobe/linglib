@@ -209,7 +209,13 @@ strength is the dominant factor. -/
 theorem strength_effect_verified :
     experiment2MixedResults.all (λ d =>
       if d.quantifier.isStrong then d.meanRating < 5
-      else d.meanRating > 80) = true := by native_decide
+      else d.meanRating > 80) = true := by
+  rw [List.all_eq_true]
+  intro d hd
+  unfold experiment2MixedResults at hd
+  simp only [List.mem_cons, List.not_mem_nil, or_false] at hd
+  rcases hd with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp [Quantifier.isStrong, Quantifier.strength] <;> norm_num
 
 /--
 **QUD has no effect on counterfactuals**: within each quantifier,
@@ -289,7 +295,11 @@ theorem homogeneity_wrong_count :
     (experiment2MixedResults.filter λ d =>
       let predictedHigh := homogeneityPredictedHigh d.quantifier d.qud
       (predictedHigh && d.meanRating < 50) || (!predictedHigh && d.meanRating > 50)
-    ).length = 4 := by native_decide
+    ).length = 4 := by
+  unfold experiment2MixedResults
+  simp only [List.filter_cons, List.filter_nil, homogeneityPredictedHigh,
+    Quantifier.isPositive, decide_eq_true_eq]
+  norm_num
 
 -- ════════════════════════════════════════════════════════════════
 -- Statistical Results

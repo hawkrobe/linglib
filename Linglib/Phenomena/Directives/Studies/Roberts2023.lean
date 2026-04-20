@@ -127,7 +127,7 @@ structure ImperativeCharacter where
   addressee : Nat
   /-- The prejacent: VP denotation (property the addressee should realize).
       Simplified to a world-predicate (the addressee is implicit). -/
-  prejacent : (World → Bool)
+  prejacent : World → Prop
   /-- The modal parameters: futurate circumstantial modal base + goal-based
       ordering source, bundled as a `TeleologicalFlavor`. -/
   flavor : TeleologicalFlavor World
@@ -146,23 +146,20 @@ abbrev ImperativeCharacter.orderingSource (ic : ImperativeCharacter) : OrderingS
 
     This is a **necessity** claim: ∀w' ∈ Best(f, g, w). P(w').
     The modal force is universal (not deontic — circumstantial). -/
-def ImperativeCharacter.realize (ic : ImperativeCharacter) (w : World) : Bool :=
-  decide (necessity ic.modalBase ic.orderingSource ic.prejacent w)
+def ImperativeCharacter.realize (ic : ImperativeCharacter) (w : World) : Prop :=
+  necessity ic.modalBase ic.orderingSource ic.prejacent w
 
 /-- The imperative character yields a Kratzer necessity over the
     futurate circumstantial modal base. -/
 theorem imperativeCharacter_is_necessity (ic : ImperativeCharacter) (w : World) :
-    (ic.realize w = true) ↔ necessity ic.modalBase ic.orderingSource ic.prejacent w := by
-  simp only [ImperativeCharacter.realize, decide_eq_true_eq]
+    ic.realize w ↔ necessity ic.modalBase ic.orderingSource ic.prejacent w := Iff.rfl
 
 /-- The imperative character evaluates as `KratzerTheory` necessity
     under the teleological parameters. This connects Roberts' formalization
     directly to the Kratzer infrastructure. -/
 theorem imperativeCharacter_eq_kratzerTheory (ic : ImperativeCharacter) (w : World) :
-    ic.realize w = true ↔
-    (KratzerTheory ic.flavor.toKratzerParams).eval .necessity ic.prejacent w := by
-  simp only [ImperativeCharacter.realize, decide_eq_true_eq]
-  rfl
+    ic.realize w ↔
+    (KratzerTheory ic.flavor.toKratzerParams).eval .necessity ic.prejacent w := Iff.rfl
 
 /-- Roberts' imperative uses teleological (circumstantial) flavor.
     This is the structural encoding of her central claim:
@@ -235,7 +232,7 @@ theorem desideratum_d_different_updates :
     assumption of semantic modality in imperatives. -/
 theorem desideratum_e_conditional :
     ∀ (ic : ImperativeCharacter),
-    ic.realize = λ w => decide (necessity ic.modalBase ic.orderingSource ic.prejacent w) :=
+    ic.realize = λ w => necessity ic.modalBase ic.orderingSource ic.prejacent w :=
   λ _ => rfl
 
 /-- **(f) Range of modal flavors** (@cite{roberts-2023} Table 1, §1):
@@ -329,28 +326,28 @@ theorem desideratum_h_futurate {W T : Type*} [LT T] [DecidableRel (α := T) (· 
     (not CG). The deontic inference arises because G contents are
     reflected in CG as deontic propositions. -/
 theorem desideratum_i_direction_preserves_cg
-    {W : Type*} (K : Scoreboard W) (p : (W → Bool)) (s t : Nat) :
+    {W : Type*} (K : Scoreboard W) (p : W → Prop) (s t : Nat) :
     (K.directionUpdate p s t).cg = K.cg := rfl
 
 /-- The three canonical speech acts update orthogonal scoreboard components:
     assertion → CG, interrogation → QUD, direction → G. -/
 theorem desideratum_i_assertion_preserves_goals
-    {W : Type*} (K : Scoreboard W) (p : (W → Bool)) (a : Nat) :
+    {W : Type*} (K : Scoreboard W) (p : W → Prop) (a : Nat) :
     (K.assertionUpdate p a).goals = K.goals := rfl
 
 /-- Interrogation preserves CG (only QUD is updated). -/
 theorem desideratum_i_interrogation_preserves_cg
-    {W : Type*} (K : Scoreboard W) (q : (W → Bool)) (a : Nat) :
+    {W : Type*} (K : Scoreboard W) (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).cg = K.cg := rfl
 
 /-- Interrogation preserves G (only QUD is updated). -/
 theorem desideratum_i_interrogation_preserves_goals
-    {W : Type*} (K : Scoreboard W) (q : (W → Bool)) (a : Nat) :
+    {W : Type*} (K : Scoreboard W) (q : W → Prop) (a : Nat) :
     (K.interrogationUpdate q a).goals = K.goals := rfl
 
 /-- Direction preserves QUD (only G is updated). -/
 theorem desideratum_i_direction_preserves_qud
-    {W : Type*} (K : Scoreboard W) (p : (W → Bool)) (s t : Nat) :
+    {W : Type*} (K : Scoreboard W) (p : W → Prop) (s t : Nat) :
     (K.directionUpdate p s t).qud = K.qud := rfl
 
 /-! ## §2.2 The Force Linking Principle -/
@@ -416,11 +413,14 @@ theorem roberts_disagrees_with_assert :
     prejacent holds at all worlds. -/
 def moveExample : ImperativeCharacter where
   addressee := 0
-  prejacent := λ _w => true  -- MOVE simplified to always-true
+  prejacent := λ _w => True  -- MOVE simplified to always-true
   flavor := ⟨emptyBackground, emptyBackground⟩
 
-theorem move_trivial : moveExample.realize = λ _ => true := by
-  funext w; cases w <;> rfl
+theorem move_trivial : ∀ w, moveExample.realize w := by
+  intro w
+  show necessity _ _ _ _
+  rw [necessity_iff_all]
+  intro _ _; trivial
 
 /-- Example: "Nobody move!" (@cite{roberts-2023} (42), attributed to
     @cite{veltman-2018})
@@ -431,15 +431,22 @@ theorem move_trivial : moveExample.realize = λ _ => true := by
     a property. -/
 def nobodyMoveExample : ImperativeCharacter where
   addressee := 0
-  prejacent := λ _w => false  -- ¬MOVE: nobody moves
+  prejacent := λ _w => False  -- ¬MOVE: nobody moves
   flavor := ⟨emptyBackground, emptyBackground⟩
 
 /-- "Nobody move!" with trivial modality: the prejacent (¬MOVE)
     must hold at all worlds → nobody moves in any applicable
     circumstance. -/
 theorem nobody_move_total_prohibition :
-    nobodyMoveExample.realize = λ _ => false := by
-  funext w; cases w <;> rfl
+    ∀ w, ¬ nobodyMoveExample.realize w := by
+  intro w h
+  have h' : necessity (W := World) emptyBackground emptyBackground (λ _ => False) w := h
+  rw [necessity_iff_all] at h'
+  have hAcc : w ∈ accessibleWorlds (emptyBackground (W := World)) w := by
+    rw [empty_base_universal_access]; exact Set.mem_univ _
+  have hBest : w ∈ bestWorlds emptyBackground emptyBackground (W := World) w :=
+    ⟨hAcc, fun w'' _ q hq _ => by simp [emptyBackground] at hq⟩
+  exact h' w hBest
 
 /-! ## Weak Imperatives: Suggestions and Advice
 
@@ -474,10 +481,9 @@ open Semantics.Modality.Directive in
     quantification over a *refined* best set is logically weaker. -/
 theorem strong_imperative_entails_suggestion
     (ic : ImperativeCharacter) (secondaryGoals : OrderingSource World) (w : World)
-    (h : ic.realize w = true) :
+    (h : ic.realize w) :
     ic.weakRealize secondaryGoals w :=
-  strong_entails_weak ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w
-    (by simp only [ImperativeCharacter.realize, decide_eq_true_eq] at h; exact h)
+  strong_entails_weak ic.modalBase ic.orderingSource secondaryGoals ic.prejacent w h
 
 /-- Example: "Have a cookie." (@cite{roberts-2023} §3, (60))
 
@@ -487,13 +493,21 @@ theorem strong_imperative_entails_suggestion
     obligation), and the secondary ordering favors cookie-eating worlds. -/
 def haveCookieExample : ImperativeCharacter where
   addressee := 0
-  prejacent := λ w => w == .w0  -- EAT-COOKIE holds at w0
+  prejacent := λ w => w = .w0  -- EAT-COOKIE holds at w0
   flavor := ⟨emptyBackground, emptyBackground⟩
 
 /-- The invitation "Have a cookie" is NOT a strong command: with
     empty ordering, the prejacent fails at some best worlds. -/
 theorem cookie_not_command :
-    haveCookieExample.realize .w1 = false := by rfl
+    ¬ haveCookieExample.realize .w1 := by
+  intro h
+  have h' : necessity (W := World) emptyBackground emptyBackground (λ w => w = .w0) .w1 := h
+  rw [necessity_iff_all] at h'
+  have hAcc : .w1 ∈ accessibleWorlds (emptyBackground (W := World)) .w1 := by
+    rw [empty_base_universal_access]; exact Set.mem_univ _
+  have hBest : .w1 ∈ bestWorlds emptyBackground emptyBackground (W := World) .w1 :=
+    ⟨hAcc, fun w'' _ q hq _ => by simp [emptyBackground] at hq⟩
+  exact absurd (h' .w1 hBest) (by decide)
 
 open Semantics.Modality.Directive in
 /-- But "Have a cookie" IS a weak suggestion when the secondary
@@ -501,9 +515,24 @@ open Semantics.Modality.Directive in
     tied, cookie-eating worlds are preferred. -/
 theorem cookie_is_suggestion :
     haveCookieExample.weakRealize
-      (λ _ => [λ w => w == .w0])  -- secondary: favor cookie-eating
+      (λ _ => [λ w => w = .w0])  -- secondary: favor cookie-eating
       .w0 := by
-  unfold ImperativeCharacter.weakRealize weakNecessity
-  decide
+  show necessity _ _ _ _
+  rw [necessity_iff_all]
+  intro w hw
+  -- w must be in bestWorlds; under combined ordering w must satisfy the secondary
+  -- ordering (favor `w = .w0`). Since `.w0` is in the accessible set and beats all
+  -- non-w0 worlds, the only best world is `.w0`.
+  rcases hw with ⟨hAcc, hBest⟩
+  by_contra hne
+  -- Case-split on w; only w0 satisfies prejacent
+  have : w ≠ .w0 := hne
+  have hw0Acc : .w0 ∈ accessibleWorlds (emptyBackground (W := World)) .w0 := by
+    rw [empty_base_universal_access]; exact Set.mem_univ _
+  -- Use hBest with w'' = .w0, q = the secondary goal
+  have hgoal : (λ w' : World => w' = .w0) .w0 := rfl
+  have hweq : w = .w0 := hBest .w0 hw0Acc (λ w' : World => w' = .w0)
+    (by simp [combineOrdering]) hgoal
+  exact hne hweq
 
 end Roberts2023

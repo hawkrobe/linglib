@@ -1,26 +1,26 @@
 import Linglib.Theories.Semantics.Modality.BiasedPQ
-import Linglib.Theories.Semantics.Questions.QParticleLayer
 
 /-!
 # Mandarin Question Particles
 @cite{zheng-2025}
 
 Lexical entries for Mandarin interrogative particles with distributional
-properties and bias profiles.
+properties and bias profiles. The fragment commits only to theory-neutral
+lexical primitives; the left-peripheral layer assignment lives in
+`Phenomena.Questions.Studies.Zheng2025`.
 
 ## Particles
 
-| Particle | Gloss | Evidential | Epistemic | Layer | Restriction |
-|----------|-------|-----------|-----------|-------|-------------|
-| 吗 ma | PQ marker | ± | ± | CP | polar + wh |
-| 吧 ba | TAG/confirm | ± | +forP | PerspP | polar only |
-| 难道 nándào | NANDAO | +forP | ± | PerspP | polar only |
+| Particle | Gloss | Evidential | Epistemic | Restriction |
+|----------|-------|-----------|-----------|-------------|
+| 吗 ma | PQ marker | ± | ± | polar + wh |
+| 吧 ba | TAG/confirm | ± | +forP | polar only |
+| 难道 nándào | NANDAO | +forP | ± | polar only |
 
 ## Cross-Module Connections
 
 - `BiasedPQ.OriginalBias`: ba requires `.forP`; nandao/ma compatible with `.neutral`
 - `BiasedPQ.ContextualEvidence`: nandao requires `.forP`; ma/ba do not
-- `Typology.QParticleLayer`: ma is CP, ba and nandao are PerspP
 - `Kernel.nandaoFelicitous`: formal felicity conditions for nandao
 
 -/
@@ -28,15 +28,12 @@ properties and bias profiles.
 namespace Fragments.Mandarin.QuestionParticles
 
 open Semantics.Modality.BiasedPQ (OriginalBias ContextualEvidence)
-open Semantics.Questions (QParticleLayer)
 
 /-- A Mandarin interrogative particle entry. -/
 structure QuestionParticleEntry where
   hanzi : String
   pinyin : String
   gloss : String
-  /-- Left-peripheral layer (approximate for adverbial particles). -/
-  layer : QParticleLayer
   /-- Compatible with polar questions? -/
   polarOk : Bool
   /-- Compatible with declaratives? -/
@@ -55,13 +52,11 @@ structure QuestionParticleEntry where
 
 /-- 吗 ma — unmarked polar question particle.
 Sentence-final particle that turns a declarative into a yes/no question.
-No bias requirements; compatible with all contexts. CP-layer: appears in
-matrix, subordinated, and quasi-subordinated positions. -/
+No bias requirements; compatible with all contexts. -/
 def ma : QuestionParticleEntry where
   hanzi := "吗"
   pinyin := "ma"
   gloss := "PQ (basic polar question marker)"
-  layer := .cp
   polarOk := true
   declOk := false
   whOk := true
@@ -80,7 +75,6 @@ def ba : QuestionParticleEntry where
   hanzi := "吧"
   pinyin := "ba"
   gloss := "TAG (confirmation-seeking)"
-  layer := .perspP
   polarOk := true
   declOk := false
   whOk := false
@@ -99,7 +93,6 @@ def nandao : QuestionParticleEntry where
   hanzi := "难道"
   pinyin := "nándào"
   gloss := "NANDAO (evidential Q-particle)"
-  layer := .perspP
   polarOk := true
   declOk := false
   whOk := false
@@ -118,9 +111,6 @@ def allQuestionParticles : List QuestionParticleEntry := [ma, ba, nandao]
 theorem ma_no_bias :
     ma.requiresEvidentialBias = false ∧ ma.requiresEpistemicBias = false :=
   ⟨rfl, rfl⟩
-
-/-- ma is CP-layer: widest distribution. -/
-theorem ma_layer : ma.layer = .cp := rfl
 
 /-- ma is compatible with wh-questions (unlike ba and nandao). -/
 theorem ma_wh_ok : ma.whOk = true := rfl
@@ -153,9 +143,6 @@ theorem nandao_bias_profile :
 theorem nandao_neutral_bias_ok :
     nandao.requiresEpistemicBias = false := rfl
 
-/-- nandao is at the PerspP layer. -/
-theorem nandao_layer : nandao.layer = .perspP := rfl
-
 -- ============================================================================
 -- Cross-Particle Contrast Theorems
 -- ============================================================================
@@ -171,11 +158,6 @@ theorem bias_contrast_triple :
 /-- Only ma is compatible with wh-questions. -/
 theorem only_ma_allows_wh :
     allQuestionParticles.filter (·.whOk) = [ma] := by native_decide
-
-/-- ba and nandao are PerspP; ma is CP (wider distribution). -/
-theorem layer_contrast :
-    ma.layer = .cp ∧ ba.layer = .perspP ∧ nandao.layer = .perspP :=
-  ⟨rfl, rfl, rfl⟩
 
 /-- No particle requires BOTH evidential and epistemic bias. -/
 theorem no_double_bias :

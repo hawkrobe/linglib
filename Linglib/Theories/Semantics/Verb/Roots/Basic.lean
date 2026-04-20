@@ -65,24 +65,32 @@ inductive LexEntailment where
 namespace LexEntailment
 
 /-- Is the atom a state-attribution? -/
-def isState : LexEntailment → Bool
-  | hasState _ => true
-  | _ => false
+def isState : LexEntailment → Prop
+  | hasState _ => True
+  | _ => False
+
+instance : DecidablePred isState := fun a => by unfold isState; cases a <;> infer_instance
 
 /-- Is the atom a manner specification? -/
-def isManner : LexEntailment → Bool
-  | hasManner _ => true
-  | _ => false
+def isManner : LexEntailment → Prop
+  | hasManner _ => True
+  | _ => False
+
+instance : DecidablePred isManner := fun a => by unfold isManner; cases a <;> infer_instance
 
 /-- Is the atom a change-of-state entailment? -/
-def isBecome : LexEntailment → Bool
-  | becomesState _ => true
-  | _ => false
+def isBecome : LexEntailment → Prop
+  | becomesState _ => True
+  | _ => False
+
+instance : DecidablePred isBecome := fun a => by unfold isBecome; cases a <;> infer_instance
 
 /-- Is the atom a causation entailment? -/
-def isCause : LexEntailment → Bool
-  | hasCause => true
-  | _ => false
+def isCause : LexEntailment → Prop
+  | hasCause => True
+  | _ => False
+
+instance : DecidablePred isCause := fun a => by unfold isCause; cases a <;> infer_instance
 
 end LexEntailment
 
@@ -104,16 +112,16 @@ structure Root where
 namespace Root
 
 /-- The root entails attribution of some state. -/
-def hasState  (r : Root) : Bool := r.entailments.any LexEntailment.isState
+def hasState  (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.isState ·)
 
 /-- The root specifies some manner. -/
-def hasManner (r : Root) : Bool := r.entailments.any LexEntailment.isManner
+def hasManner (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.isManner ·)
 
 /-- The root entails some change of state (B&K-G "result"). -/
-def hasResult (r : Root) : Bool := r.entailments.any LexEntailment.isBecome
+def hasResult (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.isBecome ·)
 
 /-- The root entails causation. -/
-def hasCause  (r : Root) : Bool := r.entailments.any LexEntailment.isCause
+def hasCause  (r : Root) : Bool := r.entailments.any (decide <| LexEntailment.isCause ·)
 
 end Root
 

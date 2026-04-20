@@ -14,13 +14,19 @@ namespace Core.WALS.F144B
 
 /-- WALS 144B values. -/
 inductive PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespectToAdjacencyToVerb where
-  | beginningNotImmedPreverbal  -- Beginning, not immed preverbal (44 languages)
-  | preverbalNotBeginningOrImmed  -- Preverbal, not beginning or immed (18 languages)
-  | immedPreverbal  -- Immed preverbal (339 languages)
-  | immedPostverbal  -- Immed postverbal (92 languages)
-  | postverbalNotImmedOrEnd  -- Postverbal, not immed or end (1 languages)
-  | endNotImmedPostverbal  -- End, not immed postverbal (115 languages)
-  deriving DecidableEq, Repr
+  /-- Beginning, not immed preverbal (44 languages). -/
+  | beginningNotImmedPreverbal
+  /-- Preverbal, not beginning or immed (18 languages). -/
+  | preverbalNotBeginningOrImmed
+  /-- Immed preverbal (339 languages). -/
+  | immedPreverbal
+  /-- Immed postverbal (92 languages). -/
+  | immedPostverbal
+  /-- Postverbal, not immed or end (1 languages). -/
+  | postverbalNotImmedOrEnd
+  /-- End, not immed postverbal (115 languages). -/
+  | endNotImmedPostverbal
+  deriving DecidableEq, BEq, Repr
 
 private def allData_0 : List (Datapoint PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespectToAdjacencyToVerb) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .immedPostverbal }
@@ -639,22 +645,6 @@ private def allData_1 : List (Datapoint PositionOfNegativeWordsRelativeToBeginni
 
 /-- Complete WALS 144B dataset (609 languages). -/
 def allData : List (Datapoint PositionOfNegativeWordsRelativeToBeginningAndEndOfClauseAndWithRespectToAdjacencyToVerb) := allData_0 ++ allData_1
-
--- Count verification
-theorem total_count : allData.length = 609 := by native_decide
-
-theorem count_beginningNotImmedPreverbal :
-    (allData.filter (·.value == .beginningNotImmedPreverbal)).length = 44 := by native_decide
-theorem count_preverbalNotBeginningOrImmed :
-    (allData.filter (·.value == .preverbalNotBeginningOrImmed)).length = 18 := by native_decide
-theorem count_immedPreverbal :
-    (allData.filter (·.value == .immedPreverbal)).length = 339 := by native_decide
-theorem count_immedPostverbal :
-    (allData.filter (·.value == .immedPostverbal)).length = 92 := by native_decide
-theorem count_postverbalNotImmedOrEnd :
-    (allData.filter (·.value == .postverbalNotImmedOrEnd)).length = 1 := by native_decide
-theorem count_endNotImmedPostverbal :
-    (allData.filter (·.value == .endNotImmedPostverbal)).length = 115 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

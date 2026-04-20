@@ -184,7 +184,7 @@ theorem all_constructional_have_become_derived (sc : ResultativeSubconstruction)
 G&J's constructional subevent maps to Rappaport Hovav & Levin's event
 structure templates: causative → accomplishment template, noncausative →
 achievement template. The hasCause/hasBecome features of SubeventDesc
-are exactly Template.hasCause/Template.hasResultState. -/
+are exactly Template.HasCause/Template.HasResultState. -/
 
 open Semantics.Verb.EventStructure (Template)
 
@@ -196,14 +196,14 @@ def ResultativeSubconstruction.constructionalTemplate :
   | .noncausativeProperty => .achievement
   | .noncausativePath     => .achievement
 
-/-- The derived hasCause agrees with Template.hasCause. -/
+/-- The derived hasCause agrees with Template.HasCause. -/
 theorem constructional_cause_matches_template (sc : ResultativeSubconstruction) :
-    sc.constructionalDesc.hasCause = sc.constructionalTemplate.hasCause := by
+    sc.constructionalDesc.hasCause = decide sc.constructionalTemplate.HasCause := by
   cases sc <;> rfl
 
-/-- The derived hasBecome agrees with Template.hasResultState. -/
+/-- The derived hasBecome agrees with Template.HasResultState. -/
 theorem constructional_become_matches_template (sc : ResultativeSubconstruction) :
-    sc.constructionalDesc.hasBecome = sc.constructionalTemplate.hasResultState := by
+    sc.constructionalDesc.hasBecome = decide sc.constructionalTemplate.HasResultState := by
   cases sc <;> rfl
 
 /-! ## Boundedness and aspect -/

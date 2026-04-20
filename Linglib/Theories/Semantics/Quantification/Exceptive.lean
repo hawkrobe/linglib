@@ -45,8 +45,8 @@ variable {α : Type*}
 
     The second conjunct asserts that the exception *matters*: without
     removing E, the quantified claim would be false. -/
-def ExcI (Q : GQ α) (A E B : α → Bool) : Bool :=
-  Q (λ x => A x && !E x) B && !Q A B
+def ExcI (Q : GQ α) (A E B : α → Prop) : Prop :=
+  Q (λ x => A x ∧ ¬ E x) B ∧ ¬ Q A B
 
 /-- Exclusive exceptive (@cite{von-fintel-1993}): Q(A \ E, B) ∧ complement condition on E.
 
@@ -54,8 +54,8 @@ def ExcI (Q : GQ α) (A E B : α → Bool) : Bool :=
       no(student \ {John}, passed) ∧ John passed
 
     The complement condition requires that all excepted elements satisfy B. -/
-def ExcE [Fintype α] [DecidableEq α] (Q : GQ α) (A E B : α → Bool) : Bool :=
-  Q (λ x => A x && !E x) B && decide (∀ x, E x = true → A x = true → B x = true)
+def ExcE (Q : GQ α) (A E B : α → Prop) : Prop :=
+  Q (λ x => A x ∧ ¬ E x) B ∧ (∀ x, E x → A x → B x)
 
 -- ============================================================================
 -- §2 Peters & Westerståhl (2006) Exceptive Operators
@@ -71,15 +71,15 @@ def ExcE [Fintype α] [DecidableEq α] (Q : GQ α) (A E B : α → Bool) : Bool 
     would be an element of A ∩ B. We handle this via `IsExceptionNeg`.
 
     @cite{peters-westerstahl-2006} Ch 8, p299. -/
-def IsException (a : α) (A B : α → Bool) : Bool :=
-  A a && !B a
+def IsException (a : α) (A B : α → Prop) : Prop :=
+  A a ∧ ¬ B a
 
 /-- Whether an element is an "exception" for a negative generalization:
     an element of A that IS in B (a counterexample to "no A is B").
 
     @cite{peters-westerstahl-2006} Ch 8, p299. -/
-def IsExceptionNeg (a : α) (A B : α → Bool) : Bool :=
-  A a && B a
+def IsExceptionNeg (a : α) (A B : α → Prop) : Prop :=
+  A a ∧ B a
 
 /-- Weak exceptive (@cite{peters-westerstahl-2006} Ch 8, (8.31)):
 
@@ -90,9 +90,9 @@ def IsExceptionNeg (a : α) (A B : α → Bool) : Bool :=
     = every(student \ {John}, passed) ∧ John didn't pass
 
     The weak version only requires SOME excepted element to be an actual exception. -/
-def ExcW [Fintype α] [DecidableEq α] (Q₁ : GQ α) (C A B : α → Bool) : Bool :=
-  Q₁ (λ x => A x && !C x) B &&
-  decide (∃ x, A x = true ∧ C x = true ∧ IsException x A B = true)
+def ExcW (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
+  Q₁ (λ x => A x ∧ ¬ C x) B ∧
+  (∃ x, A x ∧ C x ∧ IsException x A B)
 
 /-- Strong exceptive (@cite{peters-westerstahl-2006} Ch 8, (8.33)):
 
@@ -107,10 +107,10 @@ def ExcW [Fintype α] [DecidableEq α] (Q₁ : GQ α) (C A B : α → Bool) : Bo
 
     P&W argue this is the correct analysis: the UC (Uniqueness Condition)
     follows from Exc_s but not from Exc_w. -/
-def ExcS [Fintype α] [DecidableEq α] (Q₁ : GQ α) (C A B : α → Bool) : Bool :=
-  Q₁ (λ x => A x && !C x) B &&
-  decide (∃ x, A x = true ∧ C x = true) &&
-  decide (∀ x, A x = true → C x = true → IsException x A B = true)
+def ExcS (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
+  Q₁ (λ x => A x ∧ ¬ C x) B ∧
+  (∃ x, A x ∧ C x) ∧
+  (∀ x, A x → C x → IsException x A B)
 
 /-- Weak exceptive for negative quantifiers (@cite{peters-westerstahl-2006} Ch 8, (8.31)):
 
@@ -118,9 +118,9 @@ def ExcS [Fintype α] [DecidableEq α] (Q₁ : GQ α) (C A B : α → Bool) : Bo
 
     "No student but John passed" (weak reading):
     = no(student \ {John}, passed) ∧ John passed -/
-def ExcWNeg [Fintype α] [DecidableEq α] (Q₁ : GQ α) (C A B : α → Bool) : Bool :=
-  Q₁ (λ x => A x && !C x) B &&
-  decide (∃ x, A x = true ∧ C x = true ∧ IsExceptionNeg x A B = true)
+def ExcWNeg (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
+  Q₁ (λ x => A x ∧ ¬ C x) B ∧
+  (∃ x, A x ∧ C x ∧ IsExceptionNeg x A B)
 
 /-- Strong exceptive for negative quantifiers (@cite{peters-westerstahl-2006} Ch 8, (8.33)):
 
@@ -128,44 +128,54 @@ def ExcWNeg [Fintype α] [DecidableEq α] (Q₁ : GQ α) (C A B : α → Bool) :
 
     "No student but John passed" (strong reading):
     = no(student \ {John}, passed) ∧ John is a student ∧ John passed -/
-def ExcSNeg [Fintype α] [DecidableEq α] (Q₁ : GQ α) (C A B : α → Bool) : Bool :=
-  Q₁ (λ x => A x && !C x) B &&
-  decide (∃ x, A x = true ∧ C x = true) &&
-  decide (∀ x, A x = true → C x = true → IsExceptionNeg x A B = true)
+def ExcSNeg (Q₁ : GQ α) (C A B : α → Prop) : Prop :=
+  Q₁ (λ x => A x ∧ ¬ C x) B ∧
+  (∃ x, A x ∧ C x) ∧
+  (∀ x, A x → C x → IsExceptionNeg x A B)
 
 -- ============================================================================
 -- §3 Compatibility (von Fintel 1993)
 -- ============================================================================
 
 /-- A quantifier is exceptive-compatible iff there exist A, E, B such that
-    ExcI(Q, A, E, B) = true. @cite{von-fintel-1993}: only (variants of)
+    ExcI(Q, A, E, B). @cite{von-fintel-1993}: only (variants of)
     every and no are compatible. -/
 def ExceptiveCompatible (Q : GQ α) : Prop :=
-  ∃ (A E B : α → Bool), ExcI Q A E B = true
+  ∃ (A E B : α → Prop), ExcI Q A E B
 
 /-- PositiveStrong quantifiers can yield non-trivial inclusive exceptives.
 
     For "every": every(A\E, B) can be true (all non-excepted As are Bs)
     while every(A, B) is false (the excepted elements fail B).
     @cite{von-fintel-1993}, @cite{peters-westerstahl-2006} Ch 8. -/
-theorem positiveStrong_exceptive [Fintype α] [DecidableEq α]
+theorem positiveStrong_exceptive
     (Q : GQ α) (hCons : Conservative Q) (hPS : PositiveStrong Q)
-    (hNontriv : ∃ A B, Q A B = false) :
+    (hNontriv : ∃ A B, ¬ Q A B) :
     ExceptiveCompatible Q := by
   obtain ⟨A, B, hFalse⟩ := hNontriv
   -- Take E = A \ B (elements of A not in B)
   -- Then A \ E = A ∩ B
-  refine ⟨A, (λ x => A x && !B x), B, ?_⟩
-  -- ExcI Q A E B = Q(A \ E, B) && !Q(A, B)
-  -- A \ E = A ∩ B (since E = A \ B)
-  simp only [ExcI]
-  have hSimpl : (λ x => A x && !(A x && !B x)) = (λ x => A x && B x) := by
-    funext x; cases A x <;> cases B x <;> rfl
-  rw [hSimpl, hCons]
-  have hSimpl2 : (λ x => (A x && B x) && B x) = (λ x => A x && B x) := by
-    funext x; cases A x <;> cases B x <;> rfl
+  refine ⟨A, (λ x => A x ∧ ¬ B x), B, ?_, hFalse⟩
+  -- Goal: Q (λ x => A x ∧ ¬ (A x ∧ ¬ B x)) B
+  have hSimpl : (λ x => A x ∧ ¬ (A x ∧ ¬ B x)) = (λ x => A x ∧ B x) := by
+    funext x
+    apply propext
+    constructor
+    · rintro ⟨hA, h⟩
+      refine ⟨hA, ?_⟩
+      by_contra hNB
+      exact h ⟨hA, hNB⟩
+    · rintro ⟨hA, hB⟩
+      refine ⟨hA, ?_⟩
+      rintro ⟨_, hNB⟩
+      exact hNB hB
+  rw [hSimpl]
+  -- Goal: Q (λ x => A x ∧ B x) B; use conservativity then PS
+  rw [hCons (λ x => A x ∧ B x) B]
+  have hSimpl2 : (λ x => (A x ∧ B x) ∧ B x) = (λ x => A x ∧ B x) := by
+    funext x; apply propext; tauto
   rw [hSimpl2]
-  rw [hPS, hFalse]; rfl
+  exact hPS _
 
 /-- Symmetric quantifiers are NOT exceptive-compatible (under CONSERV + PS).
 
@@ -179,14 +189,12 @@ theorem symmetric_not_exceptive (Q : GQ α)
     (hCons : Conservative Q) (hSym : QSymmetric Q)
     (hPS : PositiveStrong Q) :
     ¬ExceptiveCompatible Q := by
-  intro ⟨A, E, B, hExc⟩
-  simp only [ExcI, Bool.and_eq_true, Bool.not_eq_true'] at hExc
-  obtain ⟨hQAEB, hQABf⟩ := hExc
+  rintro ⟨A, _E, B, _hQAEB, hQABf⟩
+  apply hQABf
   have hInt := (conserv_symm_iff_int Q hCons).mp hSym
-  have hQAB : Q A B = true := by
-    have h1 := hInt A B (λ x => A x && B x) (λ x => A x && B x)
-      (λ x => by simp only [Bool.and_self])
-    rw [h1]; exact hPS _
-  rw [hQAB] at hQABf; exact absurd hQABf (by decide)
+  have h1 := hInt A B (λ x => A x ∧ B x) (λ x => A x ∧ B x)
+    (λ x => by tauto)
+  rw [h1]
+  exact hPS _
 
 end Semantics.Quantification.Exceptive

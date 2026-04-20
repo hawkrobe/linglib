@@ -106,9 +106,11 @@ structure BiasProfile where
 /-- Whether a bias value is a "plus" value (active bias) or not.
     RQs require plus values in both dimensions; DQs have a minus
     value in the epistemic dimension. -/
-def BiasValue.isPlus : BiasValue → Bool
-  | .plusPos | .plusNeg => true
-  | _ => false
+def BiasValue.IsPlus (b : BiasValue) : Prop :=
+  b = .plusPos ∨ b = .plusNeg
+
+instance : DecidablePred BiasValue.IsPlus :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Whether a bias value targets p (positive polarity) or not-p. -/
 def BiasValue.targetsPositive : BiasValue → Option Bool
@@ -339,12 +341,12 @@ theorem dq_biases_compatible :
     DQ epistemic bias is always "minus" (non-commitment).
     This is the defining difference between the two classes. -/
 theorem rq_epistemic_is_plus :
-    DeclQuestionType.PRQ.biasProfile.epistemic.isPlus = true ∧
-    DeclQuestionType.NRQ.biasProfile.epistemic.isPlus = true := ⟨rfl, rfl⟩
+    DeclQuestionType.PRQ.biasProfile.epistemic.IsPlus ∧
+    DeclQuestionType.NRQ.biasProfile.epistemic.IsPlus := ⟨by decide, by decide⟩
 
 theorem dq_epistemic_is_not_plus :
-    DeclQuestionType.PDQ.biasProfile.epistemic.isPlus = false ∧
-    DeclQuestionType.NDQ.biasProfile.epistemic.isPlus = false := ⟨rfl, rfl⟩
+    ¬ DeclQuestionType.PDQ.biasProfile.epistemic.IsPlus ∧
+    ¬ DeclQuestionType.NDQ.biasProfile.epistemic.IsPlus := ⟨by decide, by decide⟩
 
 /-- NRQ is a subset of PDQ contexts: both require +positive evidential
     bias, but NRQs additionally require the speaker to have assumed ¬p

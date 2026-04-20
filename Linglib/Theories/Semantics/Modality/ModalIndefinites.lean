@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Modality.EventRelativity
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Modal Indefinite Semantics
@@ -36,7 +37,6 @@ readings. Non-harmonic anchoring gives "a random X" readings.
 
 namespace Semantics.Modality.ModalIndefinites
 
-open Core.Proposition
 open Semantics.Modality.EventRelativity
 
 
@@ -55,13 +55,14 @@ to event e₁) where y satisfies scope predicate Q. This is the
 witness. -/
 def modalComponent {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool)
+    (domain : List Entity) (P Q : Entity → W → Prop)
     (w : W) : Prop :=
-  ∀ y ∈ domain, P y w = true → possibility f e allW (λ w' => Q y w') w
+  ∀ y ∈ domain, P y w → possibility f e allW (λ w' => Q y w') w
 
 instance {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) :
+    (domain : List Entity) (P Q : Entity → W → Prop)
+    [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
     Decidable (modalComponent f e allW domain P Q w) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
@@ -78,13 +79,14 @@ in some accessible world — the free choice / modal variation
 effect. -/
 def modalIndefiniteSat {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) : Prop :=
-  (∃ x ∈ domain, P x w = true ∧ Q x w = true) ∧
+    (domain : List Entity) (P Q : Entity → W → Prop) (w : W) : Prop :=
+  (∃ x ∈ domain, P x w ∧ Q x w) ∧
     modalComponent f e allW domain P Q w
 
 instance {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) :
+    (domain : List Entity) (P Q : Entity → W → Prop)
+    [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
     Decidable (modalIndefiniteSat f e allW domain P Q w) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -103,13 +105,14 @@ This is the anti-singleton inference of *algún*. Items like *yalnhej* lack
 this condition and are compatible with all P being Q. -/
 def upperBoundedSat {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) : Prop :=
+    (domain : List Entity) (P Q : Entity → W → Prop) (w : W) : Prop :=
   modalIndefiniteSat f e allW domain P Q w ∧
-    ¬ (∀ x ∈ domain, P x w = true → Q x w = true)
+    ¬ (∀ x ∈ domain, P x w → Q x w)
 
 instance {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W) :
+    (domain : List Entity) (P Q : Entity → W → Prop)
+    [∀ y, DecidablePred (P y)] [∀ y, DecidablePred (Q y)] (w : W) :
     Decidable (upperBoundedSat f e allW domain P Q w) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -117,7 +120,7 @@ instance {Ev W Entity : Type*}
 if the UB version holds, the plain MI version holds. -/
 theorem upperBounded_entails_plain {Ev W Entity : Type*}
     (f : AnchoringFn Ev W) (e : Ev) (allW : List W)
-    (domain : List Entity) (P Q : Entity → W → Bool) (w : W)
+    (domain : List Entity) (P Q : Entity → W → Prop) (w : W)
     (h : upperBoundedSat f e allW domain P Q w) :
     modalIndefiniteSat f e allW domain P Q w :=
   h.1
@@ -138,25 +141,36 @@ inductive BookWorld where
   | ac    -- only a, c available
   deriving DecidableEq, Repr, Inhabited
 
-instance : Core.Proposition.FiniteWorlds BookWorld where
-  worlds := [.abc, .ab, .ac]
-  complete := λ w => by cases w <;> simp
+instance : Fintype BookWorld where
+  elems := {.abc, .ab, .ac}
+  complete := λ w => by cases w <;> decide
 
 private def allBooks : List Book := [.a, .b, .c]
 private def allBW : List BookWorld := [.abc, .ab, .ac]
 
 /-- "is a book": always true for our domain. -/
-private def isBook : Book → BookWorld → Bool := λ _ _ => true
+private def isBook : Book → BookWorld → Prop := λ _ _ => True
+
+instance (book : Book) : DecidablePred (isBook book) := fun _ => instDecidableTrue
 
 /-- "is available": varies by world. -/
-private def isAvailable : Book → BookWorld → Bool
-  | .a, _ => true           -- book a always available
-  | .b, .abc => true
-  | .b, .ab => true
-  | .b, .ac => false
-  | .c, .abc => true
-  | .c, .ab => false
-  | .c, .ac => true
+private def isAvailable : Book → BookWorld → Prop
+  | .a, _ => True            -- book a always available
+  | .b, .abc => True
+  | .b, .ab => True
+  | .b, .ac => False
+  | .c, .abc => True
+  | .c, .ab => False
+  | .c, .ac => True
+
+instance : ∀ (book : Book), DecidablePred (isAvailable book)
+  | .a, _ => instDecidableTrue
+  | .b, .abc => instDecidableTrue
+  | .b, .ab => instDecidableTrue
+  | .b, .ac => instDecidableFalse
+  | .c, .abc => instDecidableTrue
+  | .c, .ab => instDecidableFalse
+  | .c, .ac => instDecidableTrue
 
 /-- A speech event and a described event. -/
 inductive SpeechOrDescribed where | speech | described
@@ -259,19 +273,32 @@ private def allCards : List Card := [.c1, .c2, .c3]
 private def allCW : List CardWorld := [.all, .only1, .only2]
 
 /-- "is a card": always true in our domain. -/
-private def isCard : Card → CardWorld → Bool := λ _ _ => true
+private def isCard : Card → CardWorld → Prop := λ _ _ => True
+
+instance (c : Card) : DecidablePred (isCard c) := fun _ => instDecidableTrue
 
 /-- "can grab": which cards are grabbable in which worlds. -/
-private def canGrab : Card → CardWorld → Bool
-  | .c1, .all   => true
-  | .c1, .only1 => true
-  | .c1, .only2 => false
-  | .c2, .all   => true
-  | .c2, .only1 => false
-  | .c2, .only2 => true
-  | .c3, .all   => true
-  | .c3, .only1 => false
-  | .c3, .only2 => false
+private def canGrab : Card → CardWorld → Prop
+  | .c1, .all   => True
+  | .c1, .only1 => True
+  | .c1, .only2 => False
+  | .c2, .all   => True
+  | .c2, .only1 => False
+  | .c2, .only2 => True
+  | .c3, .all   => True
+  | .c3, .only1 => False
+  | .c3, .only2 => False
+
+instance : ∀ (c : Card), DecidablePred (canGrab c)
+  | .c1, .all   => instDecidableTrue
+  | .c1, .only1 => instDecidableTrue
+  | .c1, .only2 => instDecidableFalse
+  | .c2, .all   => instDecidableTrue
+  | .c2, .only1 => instDecidableFalse
+  | .c2, .only2 => instDecidableTrue
+  | .c3, .all   => instDecidableTrue
+  | .c3, .only1 => instDecidableFalse
+  | .c3, .only2 => instDecidableFalse
 
 /-- Three event types: speech, local (described), imperative. -/
 inductive GrabEvent where | speech | local | imperative

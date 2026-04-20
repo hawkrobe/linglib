@@ -246,9 +246,9 @@ def ch72Counts : List WALSCount :=
 /-- Chapter 73 distribution: optative presence (N = 319). -/
 def ch73Counts : List WALSCount :=
   [ ⟨"Inflectional optative present",
-      (f73.filter (·.value == .inflectionalOptativePresent)).length⟩
+      (f73.filter (·.value == .present)).length⟩
   , ⟨"Inflectional optative absent",
-      (f73.filter (·.value == .inflectionalOptativeAbsent)).length⟩ ]
+      (f73.filter (·.value == .absent)).length⟩ ]
 
 -- ============================================================================
 -- Aggregate Total Verification
@@ -762,8 +762,8 @@ theorem maximal_more_common_than_minimal :
     Only 48/319 (15.0%) have one. Optatives outnumbered by non-optatives
     more than 5:1. -/
 theorem optative_minority :
-    (f73.filter (·.value == .inflectionalOptativeAbsent)).length >
-    (f73.filter (·.value == .inflectionalOptativePresent)).length * 5 := by native_decide
+    (f73.filter (·.value == .absent)).length >
+    (f73.filter (·.value == .present)).length * 5 := by native_decide
 
 -- ============================================================================
 -- Typological Generalization 5: Extended Paradigms Correlate with
@@ -1013,8 +1013,8 @@ private def fromWALS72A : Core.WALS.F72A.ImperativeHortativeSystems → Option I
 
 /-- Convert F73A (optative presence) to `OptativePresence`. One-to-one. -/
 private def fromWALS73A : Core.WALS.F73A.Optative → OptativePresence
-  | .inflectionalOptativePresent => .present
-  | .inflectionalOptativeAbsent => .absent
+  | .present => .present
+  | .absent => .absent
 
 -- ============================================================================
 -- WALS Dataset Size Verification

@@ -448,7 +448,7 @@ variable {E : Type} [DecidableEq E]
 
 open Core.Quantification
 
-/-! #### Bridge: witness-based → GQ (Bool)
+/-! #### Bridge: witness-based → GQ
 
 Every witness set type induces a classical GQ by existentially
 quantifying over witness sets. This is the fundamental connection
@@ -456,14 +456,14 @@ between Cooper's type-theoretic quantifiers and Barwise & Cooper's
 set-theoretic ones. -/
 
 /-- The GQ induced by existential witness sets.
-    exist(A,B) = true iff some element satisfies both A and B. -/
-def witnessGQ_exist [Fintype E] : GQ E :=
-  λ A B => decide (∃ x : E, A x = true ∧ B x = true)
+    exist(A,B) iff some element satisfies both A and B. -/
+def witnessGQ_exist : GQ E :=
+  λ A B => ∃ x : E, A x ∧ B x
 
 /-- The GQ induced by universal witness sets.
-    every(A,B) = true iff every A-element also satisfies B. -/
-def witnessGQ_every [Fintype E] : GQ E :=
-  λ A B => decide (∀ x : E, A x = true → B x = true)
+    every(A,B) iff every A-element also satisfies B. -/
+def witnessGQ_every : GQ E :=
+  λ A B => ∀ x : E, A x → B x
 
 /-! #### Conservativity from witness structure
 
@@ -485,22 +485,20 @@ open Core.Quantification
 /-- Conservativity of witnessGQ_exist: follows from the subset condition
     in IsExistW. Cooper's key argument: conservativity is structural,
     not stipulated. -/
-theorem witnessGQ_exist_conservative [Fintype E] :
+theorem witnessGQ_exist_conservative :
     Conservative (α := E) witnessGQ_exist := by
   intro R S
   simp only [witnessGQ_exist]
-  congr 1
-  exact propext ⟨λ ⟨x, hR, hS⟩ => ⟨x, hR, by simp [hR, hS]⟩,
-                 λ ⟨x, hR, hRS⟩ => ⟨x, hR, by simp_all⟩⟩
+  exact ⟨λ ⟨x, hR, hS⟩ => ⟨x, hR, hR, hS⟩,
+         λ ⟨x, hR, _, hS⟩ => ⟨x, hR, hS⟩⟩
 
 /-- Conservativity of witnessGQ_every. -/
-theorem witnessGQ_every_conservative [Fintype E] :
+theorem witnessGQ_every_conservative :
     Conservative (α := E) witnessGQ_every := by
   intro R S
   simp only [witnessGQ_every]
-  congr 1
-  exact propext ⟨λ h x hR => by simp [hR, h x hR],
-                 λ h x hR => by have := h x hR; simp_all⟩
+  exact ⟨λ h x hR => ⟨hR, h x hR⟩,
+         λ h x hR => (h x hR).2⟩
 
 end ConservativityTheorems
 
@@ -521,35 +519,33 @@ open Core.Quantification
 
 /-- TTR's structured particular witness condition is equivalent to the
     existential GQ being true. This is the key grounding theorem:
-    `ParticularWC_Exist P Q` is inhabited iff `witnessGQ_exist` returns true. -/
-theorem particular_exist_iff_witnessGQ [Fintype E]
-    (P Q : E → Prop) [DecidablePred P] [DecidablePred Q] :
-    (∃ x, P x ∧ Q x) ↔
-    (witnessGQ_exist (λ x => decide (P x)) (λ x => decide (Q x)) = true) := by
-  simp [witnessGQ_exist]
+    `ParticularWC_Exist P Q` is inhabited iff `witnessGQ_exist` holds. -/
+theorem particular_exist_iff_witnessGQ
+    (P Q : E → Prop) :
+    (∃ x, P x ∧ Q x) ↔ witnessGQ_exist P Q :=
+  Iff.rfl
 
 /-- The universal condition is equivalent to the universal GQ being true. -/
-theorem universal_iff_witnessGQ [Fintype E]
-    (P Q : E → Prop) [DecidablePred P] [DecidablePred Q] :
-    (∀ x, P x → Q x) ↔
-    (witnessGQ_every (λ x => decide (P x)) (λ x => decide (Q x)) = true) := by
-  simp [witnessGQ_every]
+theorem universal_iff_witnessGQ
+    (P Q : E → Prop) :
+    (∀ x, P x → Q x) ↔ witnessGQ_every P Q :=
+  Iff.rfl
 
 /-- TTR's `ParticularWC_Exist` gives a constructive witness for the existential GQ. -/
-theorem particularWC_to_witnessGQ [Fintype E] [DecidableEq E]
+theorem particularWC_to_witnessGQ [DecidableEq E]
     {P Q : Ppty E} (w : ParticularWC_Exist P Q)
-    (Pd Qd : E → Prop) [DecidablePred Pd] [DecidablePred Qd]
+    (Pd Qd : E → Prop)
     (hP : ∀ a, Pd a ↔ Nonempty (P a)) (hQ : ∀ a, Qd a ↔ Nonempty (Q a)) :
-    witnessGQ_exist (λ x => decide (Pd x)) (λ x => decide (Qd x)) = true := by
+    witnessGQ_exist Pd Qd := by
   rw [← particular_exist_iff_witnessGQ]
   exact ⟨w.x, (hP w.x).mpr ⟨w.pWit⟩, (hQ w.x).mpr ⟨w.qWit⟩⟩
 
 /-- TTR's `ParticularWC_No` implies the universal GQ with negated scope. -/
-theorem particularWC_no_to_witnessGQ [Fintype E] [DecidableEq E]
+theorem particularWC_no_to_witnessGQ [DecidableEq E]
     {P Q : Ppty E} (w : ParticularWC_No P Q)
-    (Pd Qd : E → Prop) [DecidablePred Pd] [DecidablePred Qd]
+    (Pd Qd : E → Prop)
     (hP : ∀ a, Pd a ↔ Nonempty (P a)) (hQ : ∀ a, Qd a ↔ Nonempty (Q a)) :
-    witnessGQ_every (λ x => decide (Pd x)) (λ x => decide (¬ Qd x)) = true := by
+    witnessGQ_every Pd (λ x => ¬ Qd x) := by
   rw [← universal_iff_witnessGQ]
   intro x hPx hQx
   have hP' := (hP x).mp hPx

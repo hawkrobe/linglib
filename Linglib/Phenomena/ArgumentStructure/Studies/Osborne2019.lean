@@ -1,6 +1,7 @@
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Theories.Syntax.DependencyGrammar.Core.LexicalRules
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Catena
@@ -67,7 +68,7 @@ private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg
 
 -- Determiner, auxiliary, preposition (from Fragments/English/)
 private abbrev the_ := Fragments.English.Determiners.the.toWord
-private abbrev was_ := Fragments.English.FunctionWords.was.toWord
+private abbrev was_ := Fragments.English.Auxiliaries.was.toWord
 private abbrev by_ := Fragments.English.FunctionWords.by_.toWord
 
 -- Active verbs in 3sg present (valence from Fragment complementType)

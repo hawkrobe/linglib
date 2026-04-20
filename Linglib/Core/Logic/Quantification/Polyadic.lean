@@ -34,7 +34,7 @@ variable {α : Type*}
     = every(student, λx. some(book, λy. read(x,y)))
 
     @cite{peters-westerstahl-2006} Ch 10. -/
-def iterate (Q₁ Q₂ : GQ α) (A B : α → Bool) (R : α → α → Bool) : Bool :=
+def iterate (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   Q₁ A (λ x => Q₂ B (λ y => R x y))
 
 /-- Resumption: one quantifier binding two argument positions.
@@ -45,7 +45,7 @@ def iterate (Q₁ Q₂ : GQ α) (A B : α → Bool) (R : α → α → Bool) : B
 
     Resumption only accesses the diagonal of R.
     @cite{peters-westerstahl-2006} Ch 10. -/
-def resume (Q : GQ α) (A : α → Bool) (R : α → α → Bool) : Bool :=
+def resume (Q : GQ α) (A : α → Prop) (R : α → α → Prop) : Prop :=
   Q A (λ x => R x x)
 
 /-- Branching (Hintikka) quantifier: Q₁ and Q₂ are evaluated independently
@@ -61,10 +61,10 @@ def resume (Q : GQ α) (A : α → Bool) (R : α → α → Bool) : Bool :=
     branch(Q₁, A, Q₂, B)(R) ↔ ∃f g. Q₁(A, λx. R(x, f(x))) ∧ Q₂(B, λy. R(g(y), y))
 
     @cite{hintikka-1996} @cite{peters-westerstahl-2006} Ch 10. -/
-def branch (Q₁ Q₂ : GQ α) (A B : α → Bool) (R : α → α → Bool) : Prop :=
+def branch (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   ∃ (f g : α → α),
-    Q₁ A (λ x => B (f x) && R x (f x)) = true ∧
-    Q₂ B (λ y => A (g y) && R (g y) y) = true
+    Q₁ A (λ x => B (f x) ∧ R x (f x)) ∧
+    Q₂ B (λ y => A (g y) ∧ R (g y) y)
 
 -- ============================================================================
 -- §2 Scope Order and Iteration
@@ -74,10 +74,10 @@ def branch (Q₁ Q₂ : GQ α) (A B : α → Bool) (R : α → α → Bool) : Pr
     Inverse scope = iterate(Q₂, B, Q₁, A)(flip R).
     These are the two "linear" readings of a two-quantifier sentence.
     @cite{peters-westerstahl-2006} Ch 10. -/
-def surfaceScope (Q₁ Q₂ : GQ α) (A B : α → Bool) (R : α → α → Bool) : Bool :=
+def surfaceScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   iterate Q₁ Q₂ A B R
 
-def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Bool) (R : α → α → Bool) : Bool :=
+def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Prop) (R : α → α → Prop) : Prop :=
   iterate Q₂ Q₁ B A (λ y x => R x y)
 
 -- ============================================================================
@@ -87,24 +87,24 @@ def inverseScope (Q₁ Q₂ : GQ α) (A B : α → Bool) (R : α → α → Bool
 /-- Iteration preserves scope monotonicity: if both Q₁ and Q₂ are Mon↑,
     then iterate(Q₁, A, Q₂, B) is monotone in R (pointwise).
     @cite{peters-westerstahl-2006} Ch 10. -/
-theorem iterate_mono_in_R (Q₁ Q₂ : GQ α) (A B : α → Bool)
-    (R R' : α → α → Bool)
+theorem iterate_mono_in_R (Q₁ Q₂ : GQ α) (A B : α → Prop)
+    (R R' : α → α → Prop)
     (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeUpwardMono Q₂)
-    (hR : ∀ x y, R x y = true → R' x y = true)
-    (hIt : iterate Q₁ Q₂ A B R = true) :
-    iterate Q₁ Q₂ A B R' = true := by
+    (hR : ∀ x y, R x y → R' x y)
+    (hIt : iterate Q₁ Q₂ A B R) :
+    iterate Q₁ Q₂ A B R' := by
   unfold iterate at *
   apply h₁ A _ _ _ hIt
   intro x hx
   exact h₂ B _ _ (λ y => hR x y) hx
 
 /-- Resumption preserves scope monotonicity. -/
-theorem resume_mono_in_R (Q : GQ α) (A : α → Bool)
-    (R R' : α → α → Bool)
+theorem resume_mono_in_R (Q : GQ α) (A : α → Prop)
+    (R R' : α → α → Prop)
     (hUp : ScopeUpwardMono Q)
-    (hR : ∀ x, R x x = true → R' x x = true)
-    (hRes : resume Q A R = true) :
-    resume Q A R' = true := by
+    (hR : ∀ x, R x x → R' x x)
+    (hRes : resume Q A R) :
+    resume Q A R' := by
   unfold resume at *
   exact hUp A _ _ hR hRes
 

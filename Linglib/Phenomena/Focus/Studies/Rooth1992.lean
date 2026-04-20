@@ -1,4 +1,5 @@
 import Linglib.Core.InformationStructure
+import Linglib.Theories.Semantics.Alternatives.AltMeaning
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 import Linglib.Theories.Semantics.Composition.Tree
@@ -58,6 +59,7 @@ Fragments/English/Nouns ──▷ Montague Lexicon ──▷ Tree
 namespace Phenomena.Focus.Rooth1992Bridge
 
 open Core.InformationStructure
+open Semantics.Alternatives
 open Semantics.FocusInterpretation (fip)
 open Semantics.Questions.Hamblin
 

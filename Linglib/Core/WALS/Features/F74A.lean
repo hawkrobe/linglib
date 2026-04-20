@@ -14,258 +14,251 @@ namespace Core.WALS.F74A
 
 /-- WALS 74A values. -/
 inductive SituationalPossibility where
-  | affixesOnVerbs  -- Affixes on verbs (63 languages)
-  | verbalConstructions  -- Verbal constructions (158 languages)
-  | otherKindsOfMarkers  -- Other kinds of markers (13 languages)
-  deriving DecidableEq, Repr
+  /-- Affixes on verbs (63 languages). -/
+  | affixesOnVerbs
+  /-- Verbal constructions (158 languages). -/
+  | verbalConstructions
+  /-- Other kinds of markers (13 languages). -/
+  | otherKindsOfMarkers
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 74A dataset (234 languages). -/
 def allData : List (Datapoint SituationalPossibility) :=
-  [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .verbalConstructions }
-  , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .verbalConstructions }
-  , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .affixesOnVerbs }
-  , { walsCode := "ain", language := "Ainu", iso := "ain", value := .verbalConstructions }
-  , { walsCode := "akn", language := "Akan", iso := "aka", value := .verbalConstructions }
-  , { walsCode := "alb", language := "Albanian", iso := "sqi", value := .verbalConstructions }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .otherKindsOfMarkers }
-  , { walsCode := "amh", language := "Amharic", iso := "amh", value := .verbalConstructions }
-  , { walsCode := "apu", language := "Apurinã", iso := "apu", value := .verbalConstructions }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .verbalConstructions }
-  , { walsCode := "arg", language := "Arabic (Gulf)", iso := "afb", value := .verbalConstructions }
-  , { walsCode := "amr", language := "Arabic (Moroccan)", iso := "ary", value := .verbalConstructions }
-  , { walsCode := "ana", language := "Araona", iso := "aro", value := .affixesOnVerbs }
-  , { walsCode := "arm", language := "Armenian (Eastern)", iso := "hye", value := .verbalConstructions }
-  , { walsCode := "asm", language := "Asmat", iso := "cns", value := .affixesOnVerbs }
-  , { walsCode := "awp", language := "Awa Pit", iso := "kwi", value := .affixesOnVerbs }
-  , { walsCode := "aym", language := "Aymara (Central)", iso := "ayr", value := .verbalConstructions }
-  , { walsCode := "bab", language := "Babungo", iso := "bav", value := .verbalConstructions }
-  , { walsCode := "bag", language := "Bagirmi", iso := "bmi", value := .verbalConstructions }
-  , { walsCode := "bal", language := "Balinese", iso := "ban", value := .verbalConstructions }
-  , { walsCode := "bam", language := "Bambara", iso := "bam", value := .verbalConstructions }
-  , { walsCode := "brs", language := "Barasano", iso := "bsn", value := .verbalConstructions }
-  , { walsCode := "bsq", language := "Basque", iso := "eus", value := .affixesOnVerbs }
-  , { walsCode := "bkr", language := "Batak (Karo)", iso := "btx", value := .affixesOnVerbs }
-  , { walsCode := "baw", language := "Bawm", iso := "bgr", value := .verbalConstructions }
-  , { walsCode := "bej", language := "Beja", iso := "bej", value := .verbalConstructions }
-  , { walsCode := "bma", language := "Berber (Middle Atlas)", iso := "tzm", value := .verbalConstructions }
-  , { walsCode := "brh", language := "Brahui", iso := "brh", value := .affixesOnVerbs }
-  , { walsCode := "brm", language := "Burmese", iso := "mya", value := .otherKindsOfMarkers }
-  , { walsCode := "cnt", language := "Cantonese", iso := "yue", value := .verbalConstructions }
-  , { walsCode := "ctl", language := "Catalan", iso := "cat", value := .verbalConstructions }
-  , { walsCode := "cyv", language := "Cayuvava", iso := "cyb", value := .verbalConstructions }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .affixesOnVerbs }
-  , { walsCode := "cle", language := "Chinantec (Lealao)", iso := "cle", value := .verbalConstructions }
-  , { walsCode := "chk", language := "Chukchi", iso := "ckt", value := .otherKindsOfMarkers }
-  , { walsCode := "chv", language := "Chuvash", iso := "chv", value := .affixesOnVerbs }
-  , { walsCode := "cre", language := "Cree (Plains)", iso := "crk", value := .verbalConstructions }
-  , { walsCode := "dag", language := "Daga", iso := "dgz", value := .affixesOnVerbs }
-  , { walsCode := "dni", language := "Dani (Lower Grand Valley)", iso := "dni", value := .affixesOnVerbs }
-  , { walsCode := "dsh", language := "Danish", iso := "dan", value := .verbalConstructions }
-  , { walsCode := "dio", language := "Diola-Fogny", iso := "dyo", value := .affixesOnVerbs }
-  , { walsCode := "dre", language := "Drehu", iso := "dhv", value := .verbalConstructions }
-  , { walsCode := "dut", language := "Dutch", iso := "nld", value := .verbalConstructions }
-  , { walsCode := "eka", language := "Ekari", iso := "ekg", value := .affixesOnVerbs }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .verbalConstructions }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .affixesOnVerbs }
-  , { walsCode := "ewe", language := "Ewe", iso := "ewe", value := .verbalConstructions }
-  , { walsCode := "far", language := "Faroese", iso := "fao", value := .verbalConstructions }
-  , { walsCode := "fij", language := "Fijian", iso := "fij", value := .verbalConstructions }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .verbalConstructions }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .verbalConstructions }
-  , { walsCode := "fua", language := "Fulfulde (Adamawa)", iso := "fub", value := .affixesOnVerbs }
-  , { walsCode := "fue", language := "Futuna (East)", iso := "fud", value := .verbalConstructions }
-  , { walsCode := "gdk", language := "Gadaba (Kondekor)", iso := "gdb", value := .affixesOnVerbs }
-  , { walsCode := "gar", language := "Garo", iso := "grt", value := .affixesOnVerbs }
-  , { walsCode := "geo", language := "Georgian", iso := "kat", value := .verbalConstructions }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .verbalConstructions }
-  , { walsCode := "goj", language := "Gojri", iso := "gju", value := .affixesOnVerbs }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .verbalConstructions }
-  , { walsCode := "grw", language := "Greenlandic (West)", iso := "kal", value := .affixesOnVerbs }
-  , { walsCode := "hai", language := "Haida", iso := "hai", value := .affixesOnVerbs }
-  , { walsCode := "ham", language := "Hamtai", iso := "hmt", value := .affixesOnVerbs }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .verbalConstructions }
-  , { walsCode := "haw", language := "Hawaiian", iso := "haw", value := .verbalConstructions }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .verbalConstructions }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .verbalConstructions }
-  , { walsCode := "hmo", language := "Hmong Njua", iso := "hnj", value := .verbalConstructions }
-  , { walsCode := "hmi", language := "Huitoto (Minica)", iso := "hto", value := .affixesOnVerbs }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .affixesOnVerbs }
-  , { walsCode := "hzb", language := "Hunzib", iso := "huz", value := .verbalConstructions }
-  , { walsCode := "ice", language := "Icelandic", iso := "isl", value := .verbalConstructions }
-  , { walsCode := "igb", language := "Igbo", iso := "ibo", value := .verbalConstructions }
-  , { walsCode := "ika", language := "Ika", iso := "arh", value := .affixesOnVerbs }
-  , { walsCode := "imo", language := "Imonda", iso := "imn", value := .affixesOnVerbs }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .affixesOnVerbs }
-  , { walsCode := "ing", language := "Ingush", iso := "inh", value := .verbalConstructions }
-  , { walsCode := "irq", language := "Iraqw", iso := "irk", value := .verbalConstructions }
-  , { walsCode := "iri", language := "Irish", iso := "gle", value := .verbalConstructions }
-  , { walsCode := "ita", language := "Italian", iso := "ita", value := .verbalConstructions }
-  , { walsCode := "jak", language := "Jakaltek", iso := "jac", value := .affixesOnVerbs }
-  , { walsCode := "jpn", language := "Japanese", iso := "jpn", value := .affixesOnVerbs }
-  , { walsCode := "kam", language := "Kambera", iso := "xbr", value := .verbalConstructions }
-  , { walsCode := "knd", language := "Kannada", iso := "kan", value := .verbalConstructions }
-  , { walsCode := "knr", language := "Kanuri", iso := "knc", value := .verbalConstructions }
-  , { walsCode := "kas", language := "Kashmiri", iso := "kas", value := .verbalConstructions }
-  , { walsCode := "kyl", language := "Kayah Li (Eastern)", iso := "eky", value := .otherKindsOfMarkers }
-  , { walsCode := "kay", language := "Kayardild", iso := "gyd", value := .affixesOnVerbs }
-  , { walsCode := "ker", language := "Kera", iso := "ker", value := .verbalConstructions }
-  , { walsCode := "ket", language := "Ket", iso := "ket", value := .verbalConstructions }
-  , { walsCode := "kha", language := "Khalkha", iso := "khk", value := .verbalConstructions }
-  , { walsCode := "kty", language := "Khanty", iso := "kca", value := .verbalConstructions }
-  , { walsCode := "khs", language := "Khasi", iso := "kha", value := .verbalConstructions }
-  , { walsCode := "khm", language := "Khmer", iso := "khm", value := .verbalConstructions }
-  , { walsCode := "kmu", language := "Khmu'", iso := "kjg", value := .verbalConstructions }
-  , { walsCode := "klv", language := "Kilivila", iso := "kij", value := .affixesOnVerbs }
-  , { walsCode := "kio", language := "Kiowa", iso := "kio", value := .affixesOnVerbs }
-  , { walsCode := "krb", language := "Kiribati", iso := "gil", value := .verbalConstructions }
-  , { walsCode := "koa", language := "Koasati", iso := "cku", value := .affixesOnVerbs }
-  , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .affixesOnVerbs }
-  , { walsCode := "kol", language := "Kolami", iso := "kfb", value := .verbalConstructions }
-  , { walsCode := "kon", language := "Kongo", iso := "kng", value := .verbalConstructions }
-  , { walsCode := "kor", language := "Korean", iso := "kor", value := .otherKindsOfMarkers }
-  , { walsCode := "kfe", language := "Koromfe", iso := "kfz", value := .verbalConstructions }
-  , { walsCode := "kse", language := "Koyraboro Senni", iso := "ses", value := .verbalConstructions }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .verbalConstructions }
-  , { walsCode := "kui", language := "Kui (in India)", iso := "kxu", value := .verbalConstructions }
-  , { walsCode := "knm", language := "Kunama", iso := "kun", value := .verbalConstructions }
-  , { walsCode := "kut", language := "Kutenai", iso := "kut", value := .otherKindsOfMarkers }
-  , { walsCode := "lad", language := "Ladakhi", iso := "lbj", value := .affixesOnVerbs }
-  , { walsCode := "lak", language := "Lak", iso := "lbe", value := .verbalConstructions }
-  , { walsCode := "lkt", language := "Lakhota", iso := "lkt", value := .verbalConstructions }
-  , { walsCode := "lan", language := "Lango", iso := "laj", value := .verbalConstructions }
-  , { walsCode := "lat", language := "Latvian", iso := "lav", value := .verbalConstructions }
-  , { walsCode := "lav", language := "Lavukaleve", iso := "lvk", value := .affixesOnVerbs }
-  , { walsCode := "lep", language := "Lepcha", iso := "lep", value := .verbalConstructions }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .verbalConstructions }
-  , { walsCode := "lin", language := "Lingala", iso := "lin", value := .verbalConstructions }
-  , { walsCode := "lit", language := "Lithuanian", iso := "lit", value := .verbalConstructions }
-  , { walsCode := "mcd", language := "Macedonian", iso := "mkd", value := .verbalConstructions }
-  , { walsCode := "mai", language := "Maithili", iso := "mai", value := .verbalConstructions }
-  , { walsCode := "mak", language := "Makah", iso := "myh", value := .verbalConstructions }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .verbalConstructions }
-  , { walsCode := "mym", language := "Malayalam", iso := "mal", value := .verbalConstructions }
-  , { walsCode := "mlt", language := "Maltese", iso := "mlt", value := .verbalConstructions }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .verbalConstructions }
-  , { walsCode := "myi", language := "Mangarrayi", iso := "mpc", value := .affixesOnVerbs }
-  , { walsCode := "mns", language := "Mansi", iso := "mns", value := .verbalConstructions }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .verbalConstructions }
-  , { walsCode := "map", language := "Mapudungun", iso := "arn", value := .verbalConstructions }
-  , { walsCode := "mku", language := "Maranungku", iso := "zmr", value := .verbalConstructions }
-  , { walsCode := "mhi", language := "Marathi", iso := "mar", value := .verbalConstructions }
-  , { walsCode := "mrd", language := "Marind", iso := "mrz", value := .affixesOnVerbs }
-  , { walsCode := "mau", language := "Maung", iso := "mph", value := .affixesOnVerbs }
-  , { walsCode := "may", language := "Maybrat", iso := "ayz", value := .verbalConstructions }
-  , { walsCode := "meh", language := "Mehri", iso := "gdq", value := .verbalConstructions }
-  , { walsCode := "mde", language := "Mende", iso := "men", value := .verbalConstructions }
-  , { walsCode := "mie", language := "Mien", iso := "ium", value := .verbalConstructions }
-  , { walsCode := "mss", language := "Miwok (Southern Sierra)", iso := "skd", value := .affixesOnVerbs }
-  , { walsCode := "mxc", language := "Mixtec (Chalcatongo)", iso := "mig", value := .verbalConstructions }
-  , { walsCode := "mok", language := "Mokilese", iso := "mkj", value := .verbalConstructions }
-  , { walsCode := "mna", language := "Muna", iso := "mnb", value := .verbalConstructions }
-  , { walsCode := "mdg", language := "Mundang", iso := "mua", value := .verbalConstructions }
-  , { walsCode := "mun", language := "Mundari", iso := "unr", value := .verbalConstructions }
-  , { walsCode := "mrl", language := "Murle", iso := "mur", value := .verbalConstructions }
-  , { walsCode := "nma", language := "Naga (Mao)", iso := "nbi", value := .otherKindsOfMarkers }
-  , { walsCode := "ngt", language := "Naga (Tangkhul)", iso := "nmf", value := .affixesOnVerbs }
-  , { walsCode := "nht", language := "Nahuatl (Tetelcingo)", iso := "nhg", value := .otherKindsOfMarkers }
-  , { walsCode := "kho", language := "Nama", iso := "naq", value := .verbalConstructions }
-  , { walsCode := "nav", language := "Navajo", iso := "nav", value := .affixesOnVerbs }
-  , { walsCode := "ndy", language := "Ndyuka", iso := "djk", value := .verbalConstructions }
-  , { walsCode := "ntu", language := "Nenets", iso := "yrk", value := .verbalConstructions }
-  , { walsCode := "nez", language := "Nez Perce", iso := "nez", value := .affixesOnVerbs }
-  , { walsCode := "ngi", language := "Ngiyambaa", iso := "wyb", value := .verbalConstructions }
-  , { walsCode := "niv", language := "Nivkh", iso := "niv", value := .verbalConstructions }
-  , { walsCode := "nko", language := "Nkore-Kiga", iso := "cgg", value := .verbalConstructions }
-  , { walsCode := "nbd", language := "Nubian (Dongolese)", iso := "dgl", value := .otherKindsOfMarkers }
-  , { walsCode := "nug", language := "Nunggubuyu", iso := "nuy", value := .affixesOnVerbs }
-  , { walsCode := "ond", language := "Oneida", iso := "one", value := .verbalConstructions }
-  , { walsCode := "orh", language := "Oromo (Harar)", iso := "hae", value := .verbalConstructions }
-  , { walsCode := "otm", language := "Otomí (Mezquital)", iso := "ote", value := .verbalConstructions }
-  , { walsCode := "pai", language := "Paiwan", iso := "pwn", value := .affixesOnVerbs }
-  , { walsCode := "pan", language := "Panjabi", iso := "pan", value := .verbalConstructions }
-  , { walsCode := "psm", language := "Passamaquoddy-Maliseet", iso := "pqm", value := .verbalConstructions }
-  , { walsCode := "pau", language := "Paumarí", iso := "pad", value := .verbalConstructions }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .verbalConstructions }
-  , { walsCode := "pba", language := "Pima Bajo", iso := "pia", value := .verbalConstructions }
-  , { walsCode := "pit", language := "Pitjantjatjara", iso := "pjt", value := .affixesOnVerbs }
-  , { walsCode := "pol", language := "Polish", iso := "pol", value := .verbalConstructions }
-  , { walsCode := "pso", language := "Pomo (Southeastern)", iso := "pom", value := .affixesOnVerbs }
-  , { walsCode := "por", language := "Portuguese", iso := "por", value := .verbalConstructions }
-  , { walsCode := "qim", language := "Quechua (Imbabura)", iso := "qvi", value := .verbalConstructions }
-  , { walsCode := "rap", language := "Rapanui", iso := "rap", value := .verbalConstructions }
-  , { walsCode := "rka", language := "Romani (Kalderash)", iso := "rmy", value := .verbalConstructions }
-  , { walsCode := "rom", language := "Romanian", iso := "ron", value := .verbalConstructions }
-  , { walsCode := "run", language := "Runga", iso := "rou", value := .affixesOnVerbs }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .verbalConstructions }
-  , { walsCode := "sno", language := "Saami (Northern)", iso := "sme", value := .verbalConstructions }
-  , { walsCode := "smt", language := "Sahaptin (Umatilla)", iso := "uma", value := .affixesOnVerbs }
-  , { walsCode := "san", language := "Sango", iso := "sag", value := .verbalConstructions }
-  , { walsCode := "snm", language := "Sanuma", iso := "xsu", value := .verbalConstructions }
-  , { walsCode := "sel", language := "Selknam", iso := "ona", value := .verbalConstructions }
-  , { walsCode := "sml", language := "Semelai", iso := "sza", value := .verbalConstructions }
-  , { walsCode := "scr", language := "Serbian-Croatian", iso := "hbs", value := .verbalConstructions }
-  , { walsCode := "shk", language := "Shipibo-Konibo", iso := "shp", value := .verbalConstructions }
-  , { walsCode := "sla", language := "Slave", iso := "den", value := .otherKindsOfMarkers }
-  , { walsCode := "slo", language := "Slovene", iso := "slv", value := .verbalConstructions }
-  , { walsCode := "som", language := "Somali", iso := "som", value := .verbalConstructions }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .verbalConstructions }
-  , { walsCode := "squ", language := "Squamish", iso := "squ", value := .affixesOnVerbs }
-  , { walsCode := "sue", language := "Suena", iso := "sue", value := .verbalConstructions }
-  , { walsCode := "sup", language := "Supyire", iso := "spp", value := .verbalConstructions }
-  , { walsCode := "swa", language := "Swahili", iso := "swh", value := .affixesOnVerbs }
-  , { walsCode := "swe", language := "Swedish", iso := "swe", value := .verbalConstructions }
-  , { walsCode := "tab", language := "Taba", iso := "mky", value := .verbalConstructions }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .affixesOnVerbs }
-  , { walsCode := "tal", language := "Talinga", iso := "tlj", value := .affixesOnVerbs }
-  , { walsCode := "tml", language := "Tamil", iso := "tam", value := .affixesOnVerbs }
-  , { walsCode := "tvo", language := "Tatar", iso := "tat", value := .verbalConstructions }
-  , { walsCode := "tel", language := "Telugu", iso := "tel", value := .verbalConstructions }
-  , { walsCode := "tha", language := "Thai", iso := "tha", value := .verbalConstructions }
-  , { walsCode := "tgr", language := "Tigré", iso := "tig", value := .verbalConstructions }
-  , { walsCode := "tja", language := "Tiipay (Jamul)", iso := "dih", value := .verbalConstructions }
-  , { walsCode := "tli", language := "Tlingit", iso := "tli", value := .affixesOnVerbs }
-  , { walsCode := "tor", language := "Toratán", iso := "rth", value := .verbalConstructions }
-  , { walsCode := "tru", language := "Trumai", iso := "tpy", value := .verbalConstructions }
-  , { walsCode := "tbu", language := "Tubu", iso := "", value := .verbalConstructions }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .verbalConstructions }
-  , { walsCode := "tun", language := "Tunica", iso := "tun", value := .verbalConstructions }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .affixesOnVerbs }
-  , { walsCode := "tvl", language := "Tuvaluan", iso := "tvl", value := .verbalConstructions }
-  , { walsCode := "tuv", language := "Tuvan", iso := "tyv", value := .verbalConstructions }
-  , { walsCode := "udh", language := "Udihe", iso := "ude", value := .verbalConstructions }
-  , { walsCode := "una", language := "Una", iso := "mtg", value := .affixesOnVerbs }
-  , { walsCode := "ung", language := "Ungarinjin", iso := "ung", value := .otherKindsOfMarkers }
-  , { walsCode := "usa", language := "Usan", iso := "wnu", value := .affixesOnVerbs }
-  , { walsCode := "uzb", language := "Uzbek", iso := "", value := .affixesOnVerbs }
-  , { walsCode := "vie", language := "Vietnamese", iso := "vie", value := .verbalConstructions }
-  , { walsCode := "vot", language := "Votic", iso := "vot", value := .verbalConstructions }
-  , { walsCode := "wam", language := "Wambaya", iso := "wmb", value := .otherKindsOfMarkers }
-  , { walsCode := "wra", language := "Warao", iso := "wba", value := .affixesOnVerbs }
-  , { walsCode := "wel", language := "Welsh", iso := "cym", value := .verbalConstructions }
-  , { walsCode := "wic", language := "Wichita", iso := "wic", value := .verbalConstructions }
-  , { walsCode := "wch", language := "Wichí", iso := "mzh", value := .verbalConstructions }
-  , { walsCode := "wlf", language := "Wolof", iso := "wol", value := .verbalConstructions }
-  , { walsCode := "yaq", language := "Yaqui", iso := "yaq", value := .verbalConstructions }
-  , { walsCode := "yim", language := "Yimas", iso := "yee", value := .affixesOnVerbs }
-  , { walsCode := "yor", language := "Yoruba", iso := "yor", value := .verbalConstructions }
-  , { walsCode := "yuc", language := "Yuchi", iso := "yuc", value := .affixesOnVerbs }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .verbalConstructions }
-  , { walsCode := "ypk", language := "Yup'ik (Central)", iso := "esu", value := .affixesOnVerbs }
-  , { walsCode := "yur", language := "Yurok", iso := "yur", value := .otherKindsOfMarkers }
-  , { walsCode := "zya", language := "Zapotec (Yatzachi)", iso := "zav", value := .verbalConstructions }
-  , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .verbalConstructions }
-  , { walsCode := "zul", language := "Zulu", iso := "zul", value := .affixesOnVerbs }
+  [ { walsCode := "abk", iso := "abk", value := .verbalConstructions }
+  , { walsCode := "ace", iso := "ace", value := .verbalConstructions }
+  , { walsCode := "aco", iso := "kjq", value := .affixesOnVerbs }
+  , { walsCode := "ain", iso := "ain", value := .verbalConstructions }
+  , { walsCode := "akn", iso := "aka", value := .verbalConstructions }
+  , { walsCode := "alb", iso := "sqi", value := .verbalConstructions }
+  , { walsCode := "ame", iso := "aey", value := .otherKindsOfMarkers }
+  , { walsCode := "amh", iso := "amh", value := .verbalConstructions }
+  , { walsCode := "apu", iso := "apu", value := .verbalConstructions }
+  , { walsCode := "aeg", iso := "arz", value := .verbalConstructions }
+  , { walsCode := "arg", iso := "afb", value := .verbalConstructions }
+  , { walsCode := "amr", iso := "ary", value := .verbalConstructions }
+  , { walsCode := "ana", iso := "aro", value := .affixesOnVerbs }
+  , { walsCode := "arm", iso := "hye", value := .verbalConstructions }
+  , { walsCode := "asm", iso := "cns", value := .affixesOnVerbs }
+  , { walsCode := "awp", iso := "kwi", value := .affixesOnVerbs }
+  , { walsCode := "aym", iso := "ayr", value := .verbalConstructions }
+  , { walsCode := "bab", iso := "bav", value := .verbalConstructions }
+  , { walsCode := "bag", iso := "bmi", value := .verbalConstructions }
+  , { walsCode := "bal", iso := "ban", value := .verbalConstructions }
+  , { walsCode := "bam", iso := "bam", value := .verbalConstructions }
+  , { walsCode := "brs", iso := "bsn", value := .verbalConstructions }
+  , { walsCode := "bsq", iso := "eus", value := .affixesOnVerbs }
+  , { walsCode := "bkr", iso := "btx", value := .affixesOnVerbs }
+  , { walsCode := "baw", iso := "bgr", value := .verbalConstructions }
+  , { walsCode := "bej", iso := "bej", value := .verbalConstructions }
+  , { walsCode := "bma", iso := "tzm", value := .verbalConstructions }
+  , { walsCode := "brh", iso := "brh", value := .affixesOnVerbs }
+  , { walsCode := "brm", iso := "mya", value := .otherKindsOfMarkers }
+  , { walsCode := "cnt", iso := "yue", value := .verbalConstructions }
+  , { walsCode := "ctl", iso := "cat", value := .verbalConstructions }
+  , { walsCode := "cyv", iso := "cyb", value := .verbalConstructions }
+  , { walsCode := "cha", iso := "cha", value := .affixesOnVerbs }
+  , { walsCode := "cle", iso := "cle", value := .verbalConstructions }
+  , { walsCode := "chk", iso := "ckt", value := .otherKindsOfMarkers }
+  , { walsCode := "chv", iso := "chv", value := .affixesOnVerbs }
+  , { walsCode := "cre", iso := "crk", value := .verbalConstructions }
+  , { walsCode := "dag", iso := "dgz", value := .affixesOnVerbs }
+  , { walsCode := "dni", iso := "dni", value := .affixesOnVerbs }
+  , { walsCode := "dsh", iso := "dan", value := .verbalConstructions }
+  , { walsCode := "dio", iso := "dyo", value := .affixesOnVerbs }
+  , { walsCode := "dre", iso := "dhv", value := .verbalConstructions }
+  , { walsCode := "dut", iso := "nld", value := .verbalConstructions }
+  , { walsCode := "eka", iso := "ekg", value := .affixesOnVerbs }
+  , { walsCode := "eng", iso := "eng", value := .verbalConstructions }
+  , { walsCode := "eve", iso := "evn", value := .affixesOnVerbs }
+  , { walsCode := "ewe", iso := "ewe", value := .verbalConstructions }
+  , { walsCode := "far", iso := "fao", value := .verbalConstructions }
+  , { walsCode := "fij", iso := "fij", value := .verbalConstructions }
+  , { walsCode := "fin", iso := "fin", value := .verbalConstructions }
+  , { walsCode := "fre", iso := "fra", value := .verbalConstructions }
+  , { walsCode := "fua", iso := "fub", value := .affixesOnVerbs }
+  , { walsCode := "fue", iso := "fud", value := .verbalConstructions }
+  , { walsCode := "gdk", iso := "gdb", value := .affixesOnVerbs }
+  , { walsCode := "gar", iso := "grt", value := .affixesOnVerbs }
+  , { walsCode := "geo", iso := "kat", value := .verbalConstructions }
+  , { walsCode := "ger", iso := "deu", value := .verbalConstructions }
+  , { walsCode := "goj", iso := "gju", value := .affixesOnVerbs }
+  , { walsCode := "grk", iso := "ell", value := .verbalConstructions }
+  , { walsCode := "grw", iso := "kal", value := .affixesOnVerbs }
+  , { walsCode := "hai", iso := "hai", value := .affixesOnVerbs }
+  , { walsCode := "ham", iso := "hmt", value := .affixesOnVerbs }
+  , { walsCode := "hau", iso := "hau", value := .verbalConstructions }
+  , { walsCode := "haw", iso := "haw", value := .verbalConstructions }
+  , { walsCode := "heb", iso := "heb", value := .verbalConstructions }
+  , { walsCode := "hin", iso := "hin", value := .verbalConstructions }
+  , { walsCode := "hmo", iso := "hnj", value := .verbalConstructions }
+  , { walsCode := "hmi", iso := "hto", value := .affixesOnVerbs }
+  , { walsCode := "hun", iso := "hun", value := .affixesOnVerbs }
+  , { walsCode := "hzb", iso := "huz", value := .verbalConstructions }
+  , { walsCode := "ice", iso := "isl", value := .verbalConstructions }
+  , { walsCode := "igb", iso := "ibo", value := .verbalConstructions }
+  , { walsCode := "ika", iso := "arh", value := .affixesOnVerbs }
+  , { walsCode := "imo", iso := "imn", value := .affixesOnVerbs }
+  , { walsCode := "ind", iso := "ind", value := .affixesOnVerbs }
+  , { walsCode := "ing", iso := "inh", value := .verbalConstructions }
+  , { walsCode := "irq", iso := "irk", value := .verbalConstructions }
+  , { walsCode := "iri", iso := "gle", value := .verbalConstructions }
+  , { walsCode := "ita", iso := "ita", value := .verbalConstructions }
+  , { walsCode := "jak", iso := "jac", value := .affixesOnVerbs }
+  , { walsCode := "jpn", iso := "jpn", value := .affixesOnVerbs }
+  , { walsCode := "kam", iso := "xbr", value := .verbalConstructions }
+  , { walsCode := "knd", iso := "kan", value := .verbalConstructions }
+  , { walsCode := "knr", iso := "knc", value := .verbalConstructions }
+  , { walsCode := "kas", iso := "kas", value := .verbalConstructions }
+  , { walsCode := "kyl", iso := "eky", value := .otherKindsOfMarkers }
+  , { walsCode := "kay", iso := "gyd", value := .affixesOnVerbs }
+  , { walsCode := "ker", iso := "ker", value := .verbalConstructions }
+  , { walsCode := "ket", iso := "ket", value := .verbalConstructions }
+  , { walsCode := "kha", iso := "khk", value := .verbalConstructions }
+  , { walsCode := "kty", iso := "kca", value := .verbalConstructions }
+  , { walsCode := "khs", iso := "kha", value := .verbalConstructions }
+  , { walsCode := "khm", iso := "khm", value := .verbalConstructions }
+  , { walsCode := "kmu", iso := "kjg", value := .verbalConstructions }
+  , { walsCode := "klv", iso := "kij", value := .affixesOnVerbs }
+  , { walsCode := "kio", iso := "kio", value := .affixesOnVerbs }
+  , { walsCode := "krb", iso := "gil", value := .verbalConstructions }
+  , { walsCode := "koa", iso := "cku", value := .affixesOnVerbs }
+  , { walsCode := "kob", iso := "kpw", value := .affixesOnVerbs }
+  , { walsCode := "kol", iso := "kfb", value := .verbalConstructions }
+  , { walsCode := "kon", iso := "kng", value := .verbalConstructions }
+  , { walsCode := "kor", iso := "kor", value := .otherKindsOfMarkers }
+  , { walsCode := "kfe", iso := "kfz", value := .verbalConstructions }
+  , { walsCode := "kse", iso := "ses", value := .verbalConstructions }
+  , { walsCode := "kro", iso := "kgo", value := .verbalConstructions }
+  , { walsCode := "kui", iso := "kxu", value := .verbalConstructions }
+  , { walsCode := "knm", iso := "kun", value := .verbalConstructions }
+  , { walsCode := "kut", iso := "kut", value := .otherKindsOfMarkers }
+  , { walsCode := "lad", iso := "lbj", value := .affixesOnVerbs }
+  , { walsCode := "lak", iso := "lbe", value := .verbalConstructions }
+  , { walsCode := "lkt", iso := "lkt", value := .verbalConstructions }
+  , { walsCode := "lan", iso := "laj", value := .verbalConstructions }
+  , { walsCode := "lat", iso := "lav", value := .verbalConstructions }
+  , { walsCode := "lav", iso := "lvk", value := .affixesOnVerbs }
+  , { walsCode := "lep", iso := "lep", value := .verbalConstructions }
+  , { walsCode := "lez", iso := "lez", value := .verbalConstructions }
+  , { walsCode := "lin", iso := "lin", value := .verbalConstructions }
+  , { walsCode := "lit", iso := "lit", value := .verbalConstructions }
+  , { walsCode := "mcd", iso := "mkd", value := .verbalConstructions }
+  , { walsCode := "mai", iso := "mai", value := .verbalConstructions }
+  , { walsCode := "mak", iso := "myh", value := .verbalConstructions }
+  , { walsCode := "mal", iso := "plt", value := .verbalConstructions }
+  , { walsCode := "mym", iso := "mal", value := .verbalConstructions }
+  , { walsCode := "mlt", iso := "mlt", value := .verbalConstructions }
+  , { walsCode := "mnd", iso := "cmn", value := .verbalConstructions }
+  , { walsCode := "myi", iso := "mpc", value := .affixesOnVerbs }
+  , { walsCode := "mns", iso := "mns", value := .verbalConstructions }
+  , { walsCode := "mao", iso := "mri", value := .verbalConstructions }
+  , { walsCode := "map", iso := "arn", value := .verbalConstructions }
+  , { walsCode := "mku", iso := "zmr", value := .verbalConstructions }
+  , { walsCode := "mhi", iso := "mar", value := .verbalConstructions }
+  , { walsCode := "mrd", iso := "mrz", value := .affixesOnVerbs }
+  , { walsCode := "mau", iso := "mph", value := .affixesOnVerbs }
+  , { walsCode := "may", iso := "ayz", value := .verbalConstructions }
+  , { walsCode := "meh", iso := "gdq", value := .verbalConstructions }
+  , { walsCode := "mde", iso := "men", value := .verbalConstructions }
+  , { walsCode := "mie", iso := "ium", value := .verbalConstructions }
+  , { walsCode := "mss", iso := "skd", value := .affixesOnVerbs }
+  , { walsCode := "mxc", iso := "mig", value := .verbalConstructions }
+  , { walsCode := "mok", iso := "mkj", value := .verbalConstructions }
+  , { walsCode := "mna", iso := "mnb", value := .verbalConstructions }
+  , { walsCode := "mdg", iso := "mua", value := .verbalConstructions }
+  , { walsCode := "mun", iso := "unr", value := .verbalConstructions }
+  , { walsCode := "mrl", iso := "mur", value := .verbalConstructions }
+  , { walsCode := "nma", iso := "nbi", value := .otherKindsOfMarkers }
+  , { walsCode := "ngt", iso := "nmf", value := .affixesOnVerbs }
+  , { walsCode := "nht", iso := "nhg", value := .otherKindsOfMarkers }
+  , { walsCode := "kho", iso := "naq", value := .verbalConstructions }
+  , { walsCode := "nav", iso := "nav", value := .affixesOnVerbs }
+  , { walsCode := "ndy", iso := "djk", value := .verbalConstructions }
+  , { walsCode := "ntu", iso := "yrk", value := .verbalConstructions }
+  , { walsCode := "nez", iso := "nez", value := .affixesOnVerbs }
+  , { walsCode := "ngi", iso := "wyb", value := .verbalConstructions }
+  , { walsCode := "niv", iso := "niv", value := .verbalConstructions }
+  , { walsCode := "nko", iso := "cgg", value := .verbalConstructions }
+  , { walsCode := "nbd", iso := "dgl", value := .otherKindsOfMarkers }
+  , { walsCode := "nug", iso := "nuy", value := .affixesOnVerbs }
+  , { walsCode := "ond", iso := "one", value := .verbalConstructions }
+  , { walsCode := "orh", iso := "hae", value := .verbalConstructions }
+  , { walsCode := "otm", iso := "ote", value := .verbalConstructions }
+  , { walsCode := "pai", iso := "pwn", value := .affixesOnVerbs }
+  , { walsCode := "pan", iso := "pan", value := .verbalConstructions }
+  , { walsCode := "psm", iso := "pqm", value := .verbalConstructions }
+  , { walsCode := "pau", iso := "pad", value := .verbalConstructions }
+  , { walsCode := "prs", iso := "pes", value := .verbalConstructions }
+  , { walsCode := "pba", iso := "pia", value := .verbalConstructions }
+  , { walsCode := "pit", iso := "pjt", value := .affixesOnVerbs }
+  , { walsCode := "pol", iso := "pol", value := .verbalConstructions }
+  , { walsCode := "pso", iso := "pom", value := .affixesOnVerbs }
+  , { walsCode := "por", iso := "por", value := .verbalConstructions }
+  , { walsCode := "qim", iso := "qvi", value := .verbalConstructions }
+  , { walsCode := "rap", iso := "rap", value := .verbalConstructions }
+  , { walsCode := "rka", iso := "rmy", value := .verbalConstructions }
+  , { walsCode := "rom", iso := "ron", value := .verbalConstructions }
+  , { walsCode := "run", iso := "rou", value := .affixesOnVerbs }
+  , { walsCode := "rus", iso := "rus", value := .verbalConstructions }
+  , { walsCode := "sno", iso := "sme", value := .verbalConstructions }
+  , { walsCode := "smt", iso := "uma", value := .affixesOnVerbs }
+  , { walsCode := "san", iso := "sag", value := .verbalConstructions }
+  , { walsCode := "snm", iso := "xsu", value := .verbalConstructions }
+  , { walsCode := "sel", iso := "ona", value := .verbalConstructions }
+  , { walsCode := "sml", iso := "sza", value := .verbalConstructions }
+  , { walsCode := "scr", iso := "hbs", value := .verbalConstructions }
+  , { walsCode := "shk", iso := "shp", value := .verbalConstructions }
+  , { walsCode := "sla", iso := "den", value := .otherKindsOfMarkers }
+  , { walsCode := "slo", iso := "slv", value := .verbalConstructions }
+  , { walsCode := "som", iso := "som", value := .verbalConstructions }
+  , { walsCode := "spa", iso := "spa", value := .verbalConstructions }
+  , { walsCode := "squ", iso := "squ", value := .affixesOnVerbs }
+  , { walsCode := "sue", iso := "sue", value := .verbalConstructions }
+  , { walsCode := "sup", iso := "spp", value := .verbalConstructions }
+  , { walsCode := "swa", iso := "swh", value := .affixesOnVerbs }
+  , { walsCode := "swe", iso := "swe", value := .verbalConstructions }
+  , { walsCode := "tab", iso := "mky", value := .verbalConstructions }
+  , { walsCode := "tag", iso := "tgl", value := .affixesOnVerbs }
+  , { walsCode := "tal", iso := "tlj", value := .affixesOnVerbs }
+  , { walsCode := "tml", iso := "tam", value := .affixesOnVerbs }
+  , { walsCode := "tvo", iso := "tat", value := .verbalConstructions }
+  , { walsCode := "tel", iso := "tel", value := .verbalConstructions }
+  , { walsCode := "tha", iso := "tha", value := .verbalConstructions }
+  , { walsCode := "tgr", iso := "tig", value := .verbalConstructions }
+  , { walsCode := "tja", iso := "dih", value := .verbalConstructions }
+  , { walsCode := "tli", iso := "tli", value := .affixesOnVerbs }
+  , { walsCode := "tor", iso := "rth", value := .verbalConstructions }
+  , { walsCode := "tru", iso := "tpy", value := .verbalConstructions }
+  , { walsCode := "tbu", iso := "", value := .verbalConstructions }
+  , { walsCode := "tuk", iso := "", value := .verbalConstructions }
+  , { walsCode := "tun", iso := "tun", value := .verbalConstructions }
+  , { walsCode := "tur", iso := "tur", value := .affixesOnVerbs }
+  , { walsCode := "tvl", iso := "tvl", value := .verbalConstructions }
+  , { walsCode := "tuv", iso := "tyv", value := .verbalConstructions }
+  , { walsCode := "udh", iso := "ude", value := .verbalConstructions }
+  , { walsCode := "una", iso := "mtg", value := .affixesOnVerbs }
+  , { walsCode := "ung", iso := "ung", value := .otherKindsOfMarkers }
+  , { walsCode := "usa", iso := "wnu", value := .affixesOnVerbs }
+  , { walsCode := "uzb", iso := "", value := .affixesOnVerbs }
+  , { walsCode := "vie", iso := "vie", value := .verbalConstructions }
+  , { walsCode := "vot", iso := "vot", value := .verbalConstructions }
+  , { walsCode := "wam", iso := "wmb", value := .otherKindsOfMarkers }
+  , { walsCode := "wra", iso := "wba", value := .affixesOnVerbs }
+  , { walsCode := "wel", iso := "cym", value := .verbalConstructions }
+  , { walsCode := "wic", iso := "wic", value := .verbalConstructions }
+  , { walsCode := "wch", iso := "mzh", value := .verbalConstructions }
+  , { walsCode := "wlf", iso := "wol", value := .verbalConstructions }
+  , { walsCode := "yaq", iso := "yaq", value := .verbalConstructions }
+  , { walsCode := "yim", iso := "yee", value := .affixesOnVerbs }
+  , { walsCode := "yor", iso := "yor", value := .verbalConstructions }
+  , { walsCode := "yuc", iso := "yuc", value := .affixesOnVerbs }
+  , { walsCode := "yko", iso := "yux", value := .verbalConstructions }
+  , { walsCode := "ypk", iso := "esu", value := .affixesOnVerbs }
+  , { walsCode := "yur", iso := "yur", value := .otherKindsOfMarkers }
+  , { walsCode := "zya", iso := "zav", value := .verbalConstructions }
+  , { walsCode := "zqc", iso := "zoc", value := .verbalConstructions }
+  , { walsCode := "zul", iso := "zul", value := .affixesOnVerbs }
   ]
-
--- Count verification
-theorem total_count : allData.length = 234 := by native_decide
-
-theorem count_affixesOnVerbs :
-    (allData.filter (·.value == .affixesOnVerbs)).length = 63 := by native_decide
-theorem count_verbalConstructions :
-    (allData.filter (·.value == .verbalConstructions)).length = 158 := by native_decide
-theorem count_otherKindsOfMarkers :
-    (allData.filter (·.value == .otherKindsOfMarkers)).length = 13 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

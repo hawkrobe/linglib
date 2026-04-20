@@ -37,8 +37,6 @@ possibility x₃ verifies ◇p ∧ ◇¬p without verifying either p or ¬p.
 
 namespace Semantics.PossibilitySemantics
 
-open Core.Proposition (FiniteWorlds)
-
 -- ════════════════════════════════════════════════════
 -- § 1. Epistemic Compatibility Frames
 -- ════════════════════════════════════════════════════
@@ -49,7 +47,7 @@ open Core.Proposition (FiniteWorlds)
     epistemic compatibility frame (Definition 4.26) adds Knowability.
     Our `epistemicScale` satisfies all three conditions by construction
     (Example 4.30). -/
-structure ModalCompatFrame (S : Type*) [FiniteWorlds S] extends CompatFrame S where
+structure ModalCompatFrame (S : Type*) [Fintype S] extends CompatFrame S where
   access : S → S → Prop
   decAccess : ∀ x y, Decidable (access x y)
   access_refl : ∀ x, access x x
@@ -58,20 +56,20 @@ attribute [instance] ModalCompatFrame.decAccess
 
 /-- Box operator: □A = {x | R(x) ⊆ A}.
     eq. (III). -/
-def box {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : S → Prop) (x : S) : Prop :=
-  ∀ y ∈ FiniteWorlds.worlds, F.access x y → A y
+def box {S : Type*} [Fintype S] (F : ModalCompatFrame S) (A : S → Prop) (x : S) : Prop :=
+  ∀ y : S, F.access x y → A y
 
-instance {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : S → Prop)
+instance {S : Type*} [Fintype S] (F : ModalCompatFrame S) (A : S → Prop)
     [DecidablePred A] (x : S) :
     Decidable (box F A x) := by
   unfold box; infer_instance
 
 /-- Diamond operator: ◇A = ¬□¬A (via orthocomplement, NOT Boolean dual).
     eq. (IV). -/
-def diamond {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : S → Prop) : S → Prop :=
+def diamond {S : Type*} [Fintype S] (F : ModalCompatFrame S) (A : S → Prop) : S → Prop :=
   orthoNeg F.toCompatFrame (box F (orthoNeg F.toCompatFrame A))
 
-instance {S : Type*} [FiniteWorlds S] (F : ModalCompatFrame S) (A : S → Prop)
+instance {S : Type*} [Fintype S] (F : ModalCompatFrame S) (A : S → Prop)
     [DecidablePred A] (x : S) :
     Decidable (diamond F A x) := by
   unfold diamond; infer_instance
@@ -282,10 +280,10 @@ theorem box_implies_diamond (x : Poss5) :
 
 /-- The T axiom for modal compatibility frames: reflexive accessibility
     means every world accesses itself, so □A at x forces A at x. -/
-theorem T_axiom_general {S : Type*} [FiniteWorlds S]
+theorem T_axiom_general {S : Type*} [Fintype S]
     (F : ModalCompatFrame S) (A : S → Prop) (x : S)
     (h : box F A x) : A x :=
-  h x (FiniteWorlds.complete x) (F.access_refl x)
+  h x (F.access_refl x)
 
 -- ════════════════════════════════════════════════════
 -- § 10. Disjunctive Syllogism Failure

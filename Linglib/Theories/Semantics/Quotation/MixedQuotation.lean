@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.Expressives.Basic
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
 
 /-!
 # Mixed Quotation
@@ -52,14 +52,14 @@ open Pragmatics.Expressives (TwoDimProp)
 
     `⟦⟨*⟩⟧(q, w₁, s, w₂) = χ` where `χ` is the extension at `w₂` of
     the intension contributed by an utterance of `q` by `s` at `w₁`. -/
-abbrev QuotInterp (Expr Speaker W : Type) := Expr → W → Speaker → W → Bool
+abbrev QuotInterp (Expr Speaker W : Type) := Expr → W → Speaker → W → Prop
 
 /-- The utterance relation R.
 
-    `R(s, u, q, w) = true` iff speaker `s` produced utterance `u` of
+    `R(s, u, q, w)` holds iff speaker `s` produced utterance `u` of
     expression `q` at world `w`. Introduced peripherally by 𝔐 and
     resolved as a discourse anaphor. -/
-abbrev UttRel (Speaker Utt Expr W : Type) := Speaker → Utt → Expr → W → Bool
+abbrev UttRel (Speaker Utt Expr W : Type) := Speaker → Utt → Expr → W → Prop
 
 -- ════════════════════════════════════════════════════
 -- § The Mixed Quotation Operator 𝔐
@@ -116,21 +116,21 @@ def MQContext.applyMQ {W Expr Speaker Utt : Type} (ctx : MQContext W Expr Speake
     into the value via conjunction (see `runCIWriter` and
     `runCIWriter_twoDim` in `Theories.Semantics.Composition.Effects`). -/
 def shunt {W : Type} (p : TwoDimProp W) : TwoDimProp W :=
-  { atIssue := λ w => p.atIssue w && p.ci w
-  , ci := λ _ => true }
+  { atIssue := λ w => p.atIssue w ∧ p.ci w
+  , ci := λ _ => True }
 
 /-- Shunting conjoins both dimensions into at-issue. -/
 theorem shunt_atIssue {W : Type} (p : TwoDimProp W) (w : W) :
-    (shunt p).atIssue w = (p.atIssue w && p.ci w) := rfl
+    (shunt p).atIssue w ↔ (p.atIssue w ∧ p.ci w) := Iff.rfl
 
 /-- Shunting trivializes peripheral content. -/
 theorem shunt_ci {W : Type} (p : TwoDimProp W) (w : W) :
-    (shunt p).ci w = true := rfl
+    (shunt p).ci w := trivial
 
 /-- Shunting is idempotent on the at-issue dimension: once peripheral
     content has been consumed, shunting again has no effect. -/
 theorem shunt_atIssue_idempotent {W : Type} (p : TwoDimProp W) (w : W) :
-    (shunt (shunt p)).atIssue w = (shunt p).atIssue w := by
+    (shunt (shunt p)).atIssue w ↔ (shunt p).atIssue w := by
   simp [shunt]
 
 -- ════════════════════════════════════════════════════
@@ -151,7 +151,7 @@ theorem shunt_atIssue_idempotent {W : Type} (p : TwoDimProp W) (w : W) :
     of utterance and world of evaluation collapse. -/
 def diagonalize {W Expr Speaker : Type}
     (interp : QuotInterp Expr Speaker W)
-    (s : Speaker) (q : Expr) : (W → Bool) :=
+    (s : Speaker) (q : Expr) : W → Prop :=
   λ w => interp q w s w
 
 /-- Diagonalization collapses world of utterance and evaluation. -/
@@ -171,7 +171,7 @@ theorem diag_collapses_worlds {W Expr Speaker : Type}
     This is the semantic content of the appropriateness modal ◆ in
     Kirk-Giannini's system. The modal quantifies over an accessibility
     relation, but for finite models we represent the result directly. -/
-abbrev AppropStandard (Speaker Expr W : Type) := Speaker → Expr → W → Bool
+abbrev AppropStandard (Speaker Expr W : Type) := Speaker → Expr → W → Prop
 
 /-- The appropriateness operator 𝔄: replaces the peripheral content of a
     mixed-quoted expression with appropriateness content.
@@ -214,7 +214,7 @@ theorem metalinguistic_neg_truth_conditions {W Expr Speaker Utt : Type}
     (approp : AppropStandard Speaker Expr W)
     (q : Expr) (w : W) :
     (TwoDimProp.neg (shunt (applyApprop approp ctx.sx q (ctx.applyMQ q)))).atIssue w
-    = !(ctx.interp q ctx.wc ctx.sx w && approp ctx.sx q w) := rfl
+    ↔ ¬(ctx.interp q ctx.wc ctx.sx w ∧ approp ctx.sx q w) := Iff.rfl
 
 /-- The affirmed conjunct in metalinguistic negation.
 
@@ -226,10 +226,11 @@ theorem metalinguistic_neg_targets_appropriateness {W Expr Speaker Utt : Type}
     (ctx : MQContext W Expr Speaker Utt)
     (approp : AppropStandard Speaker Expr W)
     (q : Expr) (w : W)
-    (h_true : ctx.interp q ctx.wc ctx.sx w = true)
-    (h_inapprop : approp ctx.sx q w = false) :
-    (TwoDimProp.neg (shunt (applyApprop approp ctx.sx q (ctx.applyMQ q)))).atIssue w = true := by
-  simp [TwoDimProp.neg, shunt, applyApprop, MQContext.applyMQ, h_true, h_inapprop]
+    (h_true : ctx.interp q ctx.wc ctx.sx w)
+    (h_inapprop : ¬approp ctx.sx q w) :
+    (TwoDimProp.neg (shunt (applyApprop approp ctx.sx q (ctx.applyMQ q)))).atIssue w := by
+  intro ⟨_, h⟩
+  exact h_inapprop h
 
 /-- Pure quotation composes with 𝔐: the expression is first purely
     quoted (stripping its original CI content), then 𝔐 re-introduces
@@ -240,9 +241,9 @@ theorem metalinguistic_neg_targets_appropriateness {W Expr Speaker Utt : Type}
     (stripping CIs) before being mixed-quoted (adding speaker attribution). -/
 theorem mixed_quot_strips_original_ci {W Expr Speaker Utt : Type}
     (ctx : MQContext W Expr Speaker Utt) (q : Expr)
-    (originalCI : (W → Bool)) (w : W) :
+    (originalCI : W → Prop) (w : W) :
     let quoted := TwoDimProp.pureQuote (TwoDimProp.withCI (ctx.interp q ctx.wc ctx.sx) originalCI)
-    quoted.ci w = true := rfl
+    quoted.ci w := trivial
 
 -- ════════════════════════════════════════════════════
 -- § Two-Layer Peripheral Content
@@ -282,16 +283,16 @@ The key structural results:
     Refines `TwoDimProp` by separating the R-dimension (utterance
     attribution) from the ◆-dimension (appropriateness), each with
     different projection and interaction behavior. -/
-private theorem bool_and_comm_middle :
-    ∀ (a b c : Bool), ((a && c) && b && true) = (a && b && c) := by decide
+private theorem and_comm_middle :
+    ∀ (a b c : Prop), ((a ∧ c) ∧ b ∧ True) ↔ (a ∧ b ∧ c) := by intros; tauto
 
 structure MQProp (W : Type) where
   /-- At-issue (truth-conditional) content -/
-  atIssue : W → Bool
+  atIssue : W → Prop
   /-- R-peripheral: utterance attribution. Projects universally. -/
-  rContent : W → Bool
+  rContent : W → Prop
   /-- ◆-peripheral: appropriateness. Shuntable into at-issue. -/
-  appropContent : W → Bool
+  appropContent : W → Prop
 
 namespace MQProp
 
@@ -306,7 +307,7 @@ variable {W Expr Speaker Utt : Type}
 @[reducible] def applyMQ (ctx : MQContext W Expr Speaker Utt) (q : Expr) : MQProp W :=
   { atIssue := ctx.interp q ctx.wc ctx.sx
   , rContent := ctx.uttRel ctx.sx ctx.ux q
-  , appropContent := λ _ => true }
+  , appropContent := λ _ => True }
 
 /-- 𝔄 on the two-layer type: writes to the ◆-layer only. R-content
     and at-issue are preserved — no log replacement. -/
@@ -314,19 +315,19 @@ variable {W Expr Speaker Utt : Type}
     (sx : Speaker) (q : Expr) (p : MQProp W) : MQProp W :=
   { atIssue := p.atIssue
   , rContent := p.rContent
-  , appropContent := λ w => p.appropContent w && approp sx q w }
+  , appropContent := λ w => p.appropContent w ∧ approp sx q w }
 
 /-- ↓ on the two-layer type: conjoins ◆-content into at-issue.
     R-content is preserved — shunting is selective. -/
 @[reducible] def shunt (p : MQProp W) : MQProp W :=
-  { atIssue := λ w => p.atIssue w && p.appropContent w
+  { atIssue := λ w => p.atIssue w ∧ p.appropContent w
   , rContent := p.rContent
-  , appropContent := λ _ => true }
+  , appropContent := λ _ => True }
 
 /-- Negation on the two-layer type: negates at-issue only.
     Both peripheral layers are preserved. -/
 @[reducible] def neg (p : MQProp W) : MQProp W :=
-  { atIssue := λ w => !p.atIssue w
+  { atIssue := λ w => ¬p.atIssue w
   , rContent := p.rContent
   , appropContent := p.appropContent }
 
@@ -382,9 +383,9 @@ theorem full_chain_preserves_rContent
     information (negation inverts at-issue, but that's intentional
     semantic content, not information loss). -/
 theorem shunt_conserves (p : MQProp W) (w : W) :
-    (p.shunt.atIssue w && p.shunt.rContent w && p.shunt.appropContent w)
-    = (p.atIssue w && p.rContent w && p.appropContent w) :=
-  Semantics.Quotation.bool_and_comm_middle
+    (p.shunt.atIssue w ∧ p.shunt.rContent w ∧ p.shunt.appropContent w)
+    ↔ (p.atIssue w ∧ p.rContent w ∧ p.appropContent w) :=
+  Semantics.Quotation.and_comm_middle
     (p.atIssue w) (p.rContent w) (p.appropContent w)
 
 -- ────────────────────────────────────────────────────
@@ -408,9 +409,12 @@ theorem flat_agreement_atIssue
     (ctx : MQContext W Expr Speaker Utt)
     (approp : AppropStandard Speaker Expr W) (q : Expr) (w : W) :
     ((MQProp.applyMQ ctx q).applyApprop approp ctx.sx q |>.shunt |>.neg).atIssue w
-    = (TwoDimProp.neg (Semantics.Quotation.shunt
+    ↔ (TwoDimProp.neg (Semantics.Quotation.shunt
         (Semantics.Quotation.applyApprop approp ctx.sx q
-          (ctx.applyMQ q)))).atIssue w := rfl
+          (ctx.applyMQ q)))).atIssue w := by
+  simp [MQProp.applyMQ, MQProp.applyApprop, MQProp.shunt, MQProp.neg,
+        TwoDimProp.neg, Semantics.Quotation.shunt, Semantics.Quotation.applyApprop,
+        MQContext.applyMQ]
 
 /-- What the flat model loses: R-content is present in the layered
     model but absent in the flat projection.

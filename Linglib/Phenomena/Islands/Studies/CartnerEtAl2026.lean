@@ -120,8 +120,11 @@ A violation occurs when a focused filler is extracted from a backgrounded
 domain. This is exactly `extractionISClash` from `Core/InformationStructure.lean`,
 which unifies this constraint with @cite{erteschik-shir-1973}'s Dominance
 Condition on Extraction. -/
-def fbcPredictsIsland (c : FGDConstruction) : Bool :=
+def fbcPredictsIsland (c : FGDConstruction) : Prop :=
   extractionISClash (fillerIS c) (subjectIS c)
+
+instance (c : FGDConstruction) : Decidable (fbcPredictsIsland c) :=
+  inferInstanceAs (Decidable (extractionISClash _ _))
 
 -- ============================================================================
 -- §2b. Revised FBC (@cite{winckel-et-al-2025})
@@ -135,13 +138,19 @@ def fbcPredictsIsland (c : FGDConstruction) : Bool :=
 This is gradient: the greater the focus difference between filler and
 governor, the more degraded the dependency. Uses `DiscourseStatus.rank`
 from `Core/Discourse/InformationStructure.lean`. -/
-def fbcRevisedViolation (extractedStatus governorStatus : DiscourseStatus) : Bool :=
+def fbcRevisedViolation (extractedStatus governorStatus : DiscourseStatus) : Prop :=
   extractedStatus.rank > governorStatus.rank
+
+instance (a b : DiscourseStatus) : Decidable (fbcRevisedViolation a b) :=
+  inferInstanceAs (Decidable (a.rank > b.rank))
 
 /-- Revised FBC predicts a subject island effect for a given construction
 iff the filler is more focused than the subject governor. -/
-def fbcRevisedPredictsIsland (c : FGDConstruction) : Bool :=
+def fbcRevisedPredictsIsland (c : FGDConstruction) : Prop :=
   fbcRevisedViolation (fillerIS c) (subjectIS c)
+
+instance (c : FGDConstruction) : Decidable (fbcRevisedPredictsIsland c) :=
+  inferInstanceAs (Decidable (fbcRevisedViolation _ _))
 
 -- ============================================================================
 -- §3. FBC Predictions (Both Versions)
@@ -150,29 +159,30 @@ def fbcRevisedPredictsIsland (c : FGDConstruction) : Bool :=
 /-- The FBC predicts a subject island effect for wh-questions:
 the wh-phrase is focused, the subject is backgrounded → clash. -/
 theorem fbc_predicts_whq_island :
-    fbcPredictsIsland .whQuestion = true := rfl
+    fbcPredictsIsland .whQuestion := by decide
 
 /-- The FBC predicts NO subject island effect for relative clauses. -/
 theorem fbc_predicts_no_rc_island :
-    fbcPredictsIsland .relativeClause = false := rfl
+    ¬ fbcPredictsIsland .relativeClause := by decide
 
 /-- The FBC predicts NO subject island effect for topicalization. -/
 theorem fbc_predicts_no_top_island :
-    fbcPredictsIsland .topicalization = false := rfl
+    ¬ fbcPredictsIsland .topicalization := by decide
 
 /-- The revised FBC makes the same predictions as the original. -/
 theorem both_fbcs_same_predictions :
-    (fbcPredictsIsland .whQuestion = fbcRevisedPredictsIsland .whQuestion) ∧
-    (fbcPredictsIsland .relativeClause = fbcRevisedPredictsIsland .relativeClause) ∧
-    (fbcPredictsIsland .topicalization = fbcRevisedPredictsIsland .topicalization) := by
-  exact ⟨rfl, rfl, rfl⟩
+    (fbcPredictsIsland .whQuestion ↔ fbcRevisedPredictsIsland .whQuestion) ∧
+    (fbcPredictsIsland .relativeClause ↔ fbcRevisedPredictsIsland .relativeClause) ∧
+    (fbcPredictsIsland .topicalization ↔ fbcRevisedPredictsIsland .topicalization) := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- Both FBCs predict construction-dependent island effects:
 only WHQs should show subject islands. -/
 theorem fbc_predicts_construction_dependence :
-    fbcPredictsIsland .whQuestion = true ∧
-    fbcPredictsIsland .relativeClause = false ∧
-    fbcPredictsIsland .topicalization = false := ⟨rfl, rfl, rfl⟩
+    fbcPredictsIsland .whQuestion ∧
+    ¬ fbcPredictsIsland .relativeClause ∧
+    ¬ fbcPredictsIsland .topicalization := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- §4. Super-Additive Experimental Design (@cite{sprouse-2007}, @cite{sprouse-et-al-2012})
@@ -270,23 +280,23 @@ theorem island_effect_invariance :
 /-- **The FBC is falsified for RCs**: It predicts no island effect for
 relative clauses, but the data shows a robust subject island effect. -/
 theorem fbc_falsified_for_rc :
-    fbcPredictsIsland .relativeClause = false ∧
-    islandEffect .relativeClause > 0 := ⟨rfl, by native_decide⟩
+    ¬ fbcPredictsIsland .relativeClause ∧
+    islandEffect .relativeClause > 0 := ⟨by decide, by native_decide⟩
 
 /-- **The FBC is falsified for TOPs**: It predicts no island effect for
 topicalization, but the data shows a robust subject island effect. -/
 theorem fbc_falsified_for_top :
-    fbcPredictsIsland .topicalization = false ∧
-    islandEffect .topicalization > 0 := ⟨rfl, by native_decide⟩
+    ¬ fbcPredictsIsland .topicalization ∧
+    islandEffect .topicalization > 0 := ⟨by decide, by native_decide⟩
 
 /-- The revised FBC (@cite{winckel-et-al-2025}) is equally falsified. -/
 theorem fbc_revised_falsified_for_rc :
-    fbcRevisedPredictsIsland .relativeClause = false ∧
-    islandEffect .relativeClause > 0 := ⟨rfl, by native_decide⟩
+    ¬ fbcRevisedPredictsIsland .relativeClause ∧
+    islandEffect .relativeClause > 0 := ⟨by decide, by native_decide⟩
 
 theorem fbc_revised_falsified_for_top :
-    fbcRevisedPredictsIsland .topicalization = false ∧
-    islandEffect .topicalization > 0 := ⟨rfl, by native_decide⟩
+    ¬ fbcRevisedPredictsIsland .topicalization ∧
+    islandEffect .topicalization > 0 := ⟨by decide, by native_decide⟩
 
 -- ============================================================================
 -- §8. Limits of Falsification: BCI Is NOT Falsified
@@ -454,12 +464,12 @@ theorem argument_chain :
     subjectIS .relativeClause = subjectIS .topicalization ∧
     fillerIS .whQuestion ≠ fillerIS .relativeClause ∧
     -- FBC predictions (original and revised agree)
-    fbcPredictsIsland .whQuestion = true ∧
-    fbcPredictsIsland .relativeClause = false ∧
-    fbcPredictsIsland .topicalization = false ∧
-    fbcPredictsIsland .whQuestion = fbcRevisedPredictsIsland .whQuestion ∧
-    fbcPredictsIsland .relativeClause = fbcRevisedPredictsIsland .relativeClause ∧
-    fbcPredictsIsland .topicalization = fbcRevisedPredictsIsland .topicalization ∧
+    fbcPredictsIsland .whQuestion ∧
+    ¬ fbcPredictsIsland .relativeClause ∧
+    ¬ fbcPredictsIsland .topicalization ∧
+    (fbcPredictsIsland .whQuestion ↔ fbcRevisedPredictsIsland .whQuestion) ∧
+    (fbcPredictsIsland .relativeClause ↔ fbcRevisedPredictsIsland .relativeClause) ∧
+    (fbcPredictsIsland .topicalization ↔ fbcRevisedPredictsIsland .topicalization) ∧
     -- Data: all three show island effect
     islandEffect .whQuestion > 0 ∧
     islandEffect .relativeClause > 0 ∧
@@ -470,9 +480,15 @@ theorem argument_chain :
     predictsInvariance .discourse = false ∧
     -- Scope: BCI not tested
     cartnerTestsTheory .directBackgroundedness = false := by
-  refine ⟨rfl, rfl, ?_, rfl, rfl, rfl, rfl, rfl, rfl,
+  refine ⟨rfl, rfl, ?_, ?_, ?_, ?_, ?_, ?_, ?_,
           ?_, ?_, ?_, rfl, rfl, rfl, rfl⟩
   · simp [fillerIS]
+  · decide
+  · decide
+  · decide
+  · decide
+  · decide
+  · decide
   · native_decide
   · native_decide
   · native_decide

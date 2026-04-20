@@ -40,13 +40,11 @@ Belief-Predicate Test (for OLE):
 -/
 
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Discourse.AtIssueness
 
 namespace Phenomena.Presupposition.ProjectiveContent
 
 open Core.Presupposition
-open Core.Proposition
 open Core.Discourse.AtIssueness
 
 
@@ -234,9 +232,9 @@ structure ProjectiveItem (W : Type*) where
   /-- The trigger type -/
   trigger : ProjectiveTrigger
   /-- The projective content as a proposition -/
-  content : W → Bool
+  content : W → Prop
   /-- The at-issue content (if any) -/
-  atIssue : W → Bool := λ _ => true
+  atIssue : W → Prop := λ _ => True
   /-- Gradient projectivity degree (TBD2018), if empirically measured -/
   projectivityDegree : Option ℚ := none
   /-- Gradient at-issueness degree (TBD2018), if empirically measured -/

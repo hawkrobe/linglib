@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Numerals.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs
 
@@ -14,11 +14,10 @@ the lower-bound view (`bare n` = `≥n`; @cite{horn-1972}) and the exact view
 L0→S1→L1 RSA cascade with bare numerals over a 0–3 cardinality domain
 strengthens "two" from `≥2` to peak at `w=2`, and analogously for "one".
 
-The construction reuses the `LowerBound.meaning` semantics from
-`Theories/Semantics/Quantification/Numerals/Semantics.lean` via a small
-finite domain wrapper (`NCard`, `NUtt`) suited to `rsa_predict` reification.
-The `lbNuttMeaning_eq_lowerBound` grounding theorem witnesses that the
-inlined meaning is the same one defined there.
+The construction reuses `atLeastMeaning` from `Theories/Semantics/Numerals/Basic.lean`
+via a small finite domain wrapper (`NCard`, `NUtt`) suited to `rsa_predict` reification.
+The `lbNuttMeaning_eq_atLeastMeaning` grounding theorem witnesses that the inlined
+meaning is the same one defined there.
 -/
 
 namespace BylininaNouwen2020
@@ -47,17 +46,15 @@ def NUtt.toBareNumeral : NUtt → BareNumeral
 
 /-- Lower-bound meaning inlined for reification: `n ≥ k`. Avoids the
     `atLeastMeaning` indirection that would defeat `rsa_predict`'s definitional
-    unfolder. The grounding theorem below shows it agrees with
-    `LowerBound.meaning`. -/
+    unfolder. The grounding theorem below shows it agrees with `atLeastMeaning`. -/
 def lbNuttMeaning : NUtt → NCard → Bool
   | .one,   w => w.toNat ≥ 1
   | .two,   w => w.toNat ≥ 2
   | .three, w => w.toNat ≥ 3
 
-/-- The inlined meaning agrees with `LowerBound.meaning` from
-    `Numerals.Basic`. -/
-theorem lbNuttMeaning_eq_lowerBound (u : NUtt) (w : NCard) :
-    lbNuttMeaning u w = true ↔ LowerBound.meaning u.toBareNumeral w.toNat := by
+/-- The inlined meaning agrees with `atLeastMeaning` from `Numerals.Basic`. -/
+theorem lbNuttMeaning_eq_atLeastMeaning (u : NUtt) (w : NCard) :
+    lbNuttMeaning u w = true ↔ atLeastMeaning u.toBareNumeral.toNat w.toNat := by
   cases u <;> cases w <;> decide
 
 -- ============================================================================

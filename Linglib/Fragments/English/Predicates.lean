@@ -45,6 +45,6 @@ theorem english_voice_count :
     englishVoiceSystem.voiceCount = 2 := rfl
 
 theorem english_is_active_passive :
-    englishVoiceSystem.isActivePassive = true := rfl
+    englishVoiceSystem.isActivePassive := by decide
 
 end Fragments.English.Predicates

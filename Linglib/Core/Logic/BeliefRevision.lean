@@ -1,6 +1,7 @@
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Scales.EpistemicScale.Conditional
 import Linglib.Core.Logic.RankingFunction
+import Mathlib.Data.Set.Basic
 
 /-!
 # Belief Revision and Preferential Reasoning
@@ -37,7 +38,6 @@ AGM revision operator (this file: K*1–K*5)
 
 namespace Core.Logic.BeliefRevision
 
-open Core.Proposition (Prop')
 open Core.Order (PlausibilityOrder PreferentialConsequence NormalityOrder)
 
 -- ══════════════════════════════════════════════════════════════════════
@@ -46,7 +46,7 @@ open Core.Order (PlausibilityOrder PreferentialConsequence NormalityOrder)
 
 /-- A belief set: a deductively closed set of propositions.
     Represented as a predicate on propositions (K is a theory). -/
-abbrev BeliefSet (W : Type*) := Set (Prop' W)
+abbrev BeliefSet (W : Type*) := Set (Set W)
 
 /-- An AGM revision operator with fixed prior beliefs.
 
@@ -63,7 +63,7 @@ structure AGMRevision (W : Type*) where
   beliefs : BeliefSet W
 
   /-- The revision operation: φ ↦ K * φ -/
-  revise : Prop' W → BeliefSet W
+  revise : Set W → BeliefSet W
 
   /-- K*2 (success): φ ∈ K * φ (when φ is satisfiable) -/
   success : ∀ φ, (∃ w, φ w) → φ ∈ revise φ
@@ -298,10 +298,10 @@ open Core.Scale in
     If P(ψ|φ) = P(⊤|φ) and w satisfies all probability-1 beliefs and φ,
     then w satisfies ψ. -/
 private theorem revised_entails {W : Type*}
-    (m : Core.Scale.RegularCondMeasure W) (ψ φ : Prop' W)
+    (m : Core.Scale.RegularCondMeasure W) (ψ φ : Set W)
     (hrev : m.condMu (fun w => ψ w : Set W) (fun w => φ w : Set W) =
             m.condMu Set.univ (fun w => φ w : Set W))
-    (w : W) (hbeliefs : ∀ (χ : Prop' W), m.mu (fun w => χ w : Set W) = 1 → χ w)
+    (w : W) (hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w)
     (hφ : φ w) : ψ w := by
   by_contra hnψ
   have hsat : ∃ v, φ v := ⟨w, hφ⟩
@@ -381,7 +381,7 @@ noncomputable def Core.Scale.RegularCondMeasure.toAGM {W : Type*}
       by_contra h_pos; push_neg at h_pos
       have h_pos' : 0 < m.mu ({w} : Set W) :=
         lt_of_le_of_ne (m.nonneg _) (Ne.symm h_pos)
-      have hbeliefs : ∀ (χ : Prop' W), m.mu (fun w => χ w : Set W) = 1 → χ w :=
+      have hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w :=
         fun χ hχ => mem_of_mu_singleton_pos m.toFinAddMeasure w _ h_pos' hχ
       exact hnψ (hent w hbeliefs hφ)
     rw [hdiff_zero] at hchain
@@ -399,7 +399,7 @@ noncomputable def Core.Scale.RegularCondMeasure.toAGM {W : Type*}
       by_contra h_pos; push_neg at h_pos
       have h_pos' : 0 < m.mu ({w} : Set W) :=
         lt_of_le_of_ne (m.nonneg _) (Ne.symm h_pos)
-      have hbeliefs : ∀ (χ : Prop' W), m.mu (fun w => χ w : Set W) = 1 → χ w :=
+      have hbeliefs : ∀ (χ : Set W), m.mu (fun w => χ w : Set W) = 1 → χ w :=
         fun χ hχ => mem_of_mu_singleton_pos m.toFinAddMeasure w _ h_pos' hχ
       obtain ⟨ψ, hψ, hnψ⟩ := hall w
       exact hnψ (revised_entails m ψ φ hψ w hbeliefs hw)
@@ -417,7 +417,7 @@ attribute [local instance] Classical.propDecidable
 /-- The revision operation for a ranking function: K*φ = beliefs of
     κ revised by φ when both φ and ¬φ are satisfiable, K otherwise. -/
 private noncomputable def rankingReviseSet {W : Type*} [Fintype W] [DecidableEq W]
-    (κ : RankingFunction W) (φ : Prop' W) : BeliefSet W :=
+    (κ : RankingFunction W) (φ : Set W) : BeliefSet W :=
   if h : (∃ w, φ w) ∧ (∃ w, ¬φ w) then (κ.revise φ h.1 h.2).beliefSet
   else κ.beliefSet
 

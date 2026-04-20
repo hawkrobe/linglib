@@ -1,7 +1,5 @@
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.InformationStructure
@@ -85,8 +83,12 @@ structure VerbDecomp where
 /-- A verb has **manner weight** if it has either a lexical manner component
 (MoS verbs) or a manner adverb ("say softly"). This is the property that
 determines default QUD selection and therefore backgroundedness. -/
-def VerbDecomp.hasMannerWeight (v : VerbDecomp) : Bool :=
-  v.manner.isSome || v.mannerAdverb.isSome
+def VerbDecomp.hasMannerWeight (v : VerbDecomp) : Prop :=
+  v.manner ≠ none ∨ v.mannerAdverb ≠ none
+
+instance VerbDecomp.instDecidableHasMannerWeight (v : VerbDecomp) :
+    Decidable v.hasMannerWeight :=
+  inferInstanceAs (Decidable (v.manner ≠ none ∨ v.mannerAdverb ≠ none))
 
 -- Canonical decompositions
 
@@ -377,11 +379,11 @@ Uses `extractionISClash` from `Core/InformationStructure.lean`, which
 unifies @cite{abeille-et-al-2020}'s FBC with @cite{erteschik-shir-1973}'s
 Dominance Condition. -/
 theorem backgrounded_extraction_clashes :
-    extractionISClash extractedFillerStatus .given = true := rfl
+    extractionISClash extractedFillerStatus .given := ⟨rfl, rfl⟩
 
 /-- Extraction from an at-issue clause does NOT create a clash. -/
 theorem atissue_extraction_compatible :
-    extractionISClash extractedFillerStatus .new = false := rfl
+    ¬ extractionISClash extractedFillerStatus .new := by decide
 
 
 /-! ## §5. Default QUD Selection: From Verbs to Backgroundedness
@@ -431,14 +433,14 @@ ordinal ranking consistent with this derivation.
 -/
 
 /-- **MoS Island Effect**: MoS verbs default-background their complements. -/
-theorem mos_island_effect (v : VerbDecomp) (h : v.hasMannerWeight = true) :
+theorem mos_island_effect (v : VerbDecomp) (h : v.hasMannerWeight) :
     complementStatus (defaultDimension v) = .given := by
-  simp only [defaultDimension, h, ite_true, complementStatus]
+  simp only [defaultDimension, if_pos h, complementStatus]
 
 /-- **Bridge Verb Transparency**: Bridge verbs default to the content QUD. -/
-theorem bridge_verb_transparent (v : VerbDecomp) (h : v.hasMannerWeight = false) :
+theorem bridge_verb_transparent (v : VerbDecomp) (h : ¬ v.hasMannerWeight) :
     complementStatus (defaultDimension v) = .new := by
-  simp only [defaultDimension, h, Bool.false_eq_true, ite_false, complementStatus]
+  simp only [defaultDimension, if_neg h, complementStatus]
 
 /-- **QUD conflict** (§4 Route 2): the extraction QUD and the verb's default
 QUD assign incompatible statuses to the complement content.
@@ -447,24 +449,25 @@ QUD assign incompatible statuses to the complement content.
 
 The IS clash arises because the verb's manner QUD backgrounds the entire
 complement, but extraction needs the filler to be focused within it. -/
-theorem qud_conflict (v : VerbDecomp) (h : v.hasMannerWeight = true) :
+theorem qud_conflict (v : VerbDecomp) (h : v.hasMannerWeight) :
     -- Under the verb's default QUD: complement is backgrounded
     complementStatus (defaultDimension v) = .given ∧
     -- Under the extraction QUD: complement content is at-issue
     complementStatus .content = .new :=
-  ⟨by simp [defaultDimension, h, complementStatus], rfl⟩
+  ⟨by simp only [defaultDimension, if_pos h, complementStatus], rfl⟩
 
 /-- MoS verbs trigger the information-structural clash (§4 Route 2):
 filler is [FoC] (derived via `extractedFillerStatus`), complement is [G]. -/
-theorem mos_extraction_clashes (v : VerbDecomp) (h : v.hasMannerWeight = true) :
-    extractionISClash extractedFillerStatus (complementStatus (defaultDimension v)) = true := by
-  simp only [defaultDimension, h, ite_true, complementStatus, extractedFillerStatus]; rfl
+theorem mos_extraction_clashes (v : VerbDecomp) (h : v.hasMannerWeight) :
+    extractionISClash extractedFillerStatus (complementStatus (defaultDimension v)) := by
+  simp only [defaultDimension, if_pos h, complementStatus, extractedFillerStatus]
+  exact ⟨rfl, rfl⟩
 
 /-- Bridge verbs do NOT trigger the clash: complement is [new], not [G]. -/
-theorem bridge_no_extraction_clash (v : VerbDecomp) (h : v.hasMannerWeight = false) :
-    extractionISClash extractedFillerStatus (complementStatus (defaultDimension v)) = false := by
-  simp only [defaultDimension, h, Bool.false_eq_true, ite_false, complementStatus,
-             extractedFillerStatus]; rfl
+theorem bridge_no_extraction_clash (v : VerbDecomp) (h : ¬ v.hasMannerWeight) :
+    ¬ extractionISClash extractedFillerStatus (complementStatus (defaultDimension v)) := by
+  simp only [defaultDimension, if_neg h, complementStatus, extractedFillerStatus]
+  decide
 
 /-- `DiscourseStatus.rank` is injective: distinct statuses have distinct ranks.
 Subsumes the pairwise chain `backgrounded_lt_new` / `new_lt_focused`. -/
@@ -512,29 +515,32 @@ theorem focused_complement_not_backgrounded (v : VerbDecomp) :
 embedded focus, the complement is [new] (not [G]), so the filler's [FoC]
 status no longer clashes. This is why prosodic amelioration works. -/
 theorem prosodic_focus_resolves_clash (v : VerbDecomp) :
-    extractionISClash extractedFillerStatus (complementStatus (activeDimension v true)) = false := by
-  simp only [activeDimension, ite_true, complementStatus, extractedFillerStatus]; rfl
+    ¬ extractionISClash extractedFillerStatus (complementStatus (activeDimension v true)) := by
+  simp only [activeDimension, ite_true, complementStatus, extractedFillerStatus]
+  decide
 
 /-- Without prosodic focus, MoS verb complements ARE backgrounded. -/
 theorem unfocused_mos_complement_backgrounded
-    (v : VerbDecomp) (h : v.hasMannerWeight = true) :
+    (v : VerbDecomp) (h : v.hasMannerWeight) :
     complementStatus (activeDimension v false) = .given := by
-  simp [activeDimension, defaultDimension, h, complementStatus]
+  show complementStatus (defaultDimension v) = .given
+  simp only [defaultDimension, if_pos h, complementStatus]
 
 /-- **Amelioration improves extraction**: Extraction from prosodically focused
 complement is better than extraction from default-backgrounded complement. -/
 theorem amelioration_improves_extraction :
     (complementStatus .content).rank >
     (complementStatus .manner).rank := by
-  native_decide
+  decide
 
 /-- **Focus sensitivity for MoS verbs**: Prosodic focus changes the extraction
 prediction for MoS verbs from degraded (backgrounded) to acceptable (new). -/
-theorem mos_focus_sensitivity (v : VerbDecomp) (h : v.hasMannerWeight = true) :
+theorem mos_focus_sensitivity (v : VerbDecomp) (h : v.hasMannerWeight) :
     (complementStatus (activeDimension v true)).rank >
     (complementStatus (activeDimension v false)).rank := by
-  simp [activeDimension, defaultDimension, h, complementStatus]
-  native_decide
+  unfold activeDimension defaultDimension
+  simp only [↓reduceIte, if_pos h, complementStatus]
+  decide
 
 /-! ## §8. Say + Adverb Replication (Experiment 3)
 
@@ -552,16 +558,16 @@ This uniquely distinguishes the backgroundedness account:
 -/
 
 /-- *say* has no manner weight. -/
-theorem say_no_manner_weight : sayDecomp.hasMannerWeight = false := rfl
+theorem say_no_manner_weight : ¬ sayDecomp.hasMannerWeight := by decide
 
 /-- *say softly* has manner weight (from the adverb). -/
-theorem say_softly_has_manner_weight : saySoftlyDecomp.hasMannerWeight = true := rfl
+theorem say_softly_has_manner_weight : saySoftlyDecomp.hasMannerWeight := by decide
 
 /-- *whisper* has manner weight (from lexical decomposition). -/
-theorem whisper_has_manner_weight : whisperDecomp.hasMannerWeight = true := rfl
+theorem whisper_has_manner_weight : whisperDecomp.hasMannerWeight := by decide
 
 /-- *shout* has manner weight (from lexical decomposition). -/
-theorem shout_has_manner_weight : shoutDecomp.hasMannerWeight = true := rfl
+theorem shout_has_manner_weight : shoutDecomp.hasMannerWeight := by decide
 
 /-- **Say+Adverb Replication Theorem**: Adding a manner adverb to *say*
 produces the same complement backgroundedness as MoS verbs.
@@ -576,22 +582,19 @@ theorem say_adverb_replicates_mos :
 theorem say_vs_say_softly_status :
     complementStatus (defaultDimension sayDecomp) ≠
     complementStatus (defaultDimension saySoftlyDecomp) := by
-  simp [defaultDimension, VerbDecomp.hasMannerWeight, sayDecomp, saySoftlyDecomp,
-        complementStatus]
+  decide
 
 /-- *say* extraction is better than *say softly* extraction. -/
 theorem say_vs_say_softly_acceptability :
     (complementStatus (defaultDimension sayDecomp)).rank >
     (complementStatus (defaultDimension saySoftlyDecomp)).rank := by
-  native_decide
+  decide
 
 /-- The say+adverb island is also focus-sensitive (like the MoS island). -/
 theorem say_adverb_focus_sensitive :
     (complementStatus (activeDimension saySoftlyDecomp true)).rank >
     (complementStatus (activeDimension saySoftlyDecomp false)).rank := by
-  simp [activeDimension, defaultDimension, VerbDecomp.hasMannerWeight,
-        saySoftlyDecomp, complementStatus]
-  native_decide
+  decide
 
 /-! ## §9. Theory Comparison
 
@@ -660,21 +663,21 @@ def accountScore (a : MoSAccount) : Nat :=
 
 /-- **The backgroundedness account matches all empirical results (3/3).** -/
 theorem backgroundedness_perfect_score :
-    accountScore .backgroundedness = 3 := by native_decide
+    accountScore .backgroundedness = 3 := by decide
 
 /-- **The subjacency account scores 1/3** (only no-frequency-correlation). -/
 theorem subjacency_score :
-    accountScore .subjacency = 1 := by native_decide
+    accountScore .subjacency = 1 := by decide
 
 /-- **The frequency account scores 0/3** (all predictions wrong). -/
 theorem frequency_score :
-    accountScore .verbFrameFrequency = 0 := by native_decide
+    accountScore .verbFrameFrequency = 0 := by decide
 
 /-- **The backgroundedness account strictly dominates both alternatives.** -/
 theorem backgroundedness_dominates :
     accountScore .backgroundedness > accountScore .subjacency ∧
     accountScore .backgroundedness > accountScore .verbFrameFrequency := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-! ## §10. Grounding in Linglib Infrastructure
 
@@ -793,12 +796,13 @@ theorem MannerWeightSource.rank_injective (a b : MannerWeightSource)
     (h : a.rank = b.rank) : a = b := by
   cases a <;> cases b <;> simp_all [MannerWeightSource.rank]
 
-/-- Any manner weight (lexical or compositional) yields `hasMannerWeight = true`.
+/-- Any manner weight (lexical or compositional) yields `hasMannerWeight`.
 The binary and gradient models are consistent. -/
 theorem manner_weight_source_consistent (v : VerbDecomp) :
-    (v.mannerWeightSource ≠ .none) ↔ (v.hasMannerWeight = true) := by
+    (v.mannerWeightSource ≠ .none) ↔ v.hasMannerWeight := by
   simp only [VerbDecomp.mannerWeightSource, VerbDecomp.hasMannerWeight]
-  cases v.manner.isSome <;> cases v.mannerAdverb.isSome <;> simp
+  cases hm : v.manner <;> cases ha : v.mannerAdverb <;>
+    simp [Option.isSome]
 
 /-! ## §12. Backgroundedness–Projectivity Dissociation
 
@@ -889,28 +893,32 @@ falls within negation scope. The negation test is thus a consequence of
 the QUD-determined backgroundedness, not an independent diagnostic. -/
 
 /-- Whether content projects under sentential negation, based on discourse status. -/
-def projectsUnderNegation : DiscourseStatus → Bool
-  | .given   => true   -- backgrounded: negation targets the verb, not the complement
-  | .new     => false  -- at-issue: negation can target the complement
-  | .focused => false  -- focused: negation directly targets this constituent
+def projectsUnderNegation : DiscourseStatus → Prop
+  | .given   => True    -- backgrounded: negation targets the verb, not the complement
+  | .new     => False   -- at-issue: negation can target the complement
+  | .focused => False   -- focused: negation directly targets this constituent
+
+instance instDecidableProjectsUnderNegation (s : DiscourseStatus) :
+    Decidable (projectsUnderNegation s) := by
+  cases s <;> unfold projectsUnderNegation <;> exact inferInstance
 
 /-- MoS verb complements project under negation. -/
 theorem mos_complement_projects_under_negation (v : VerbDecomp)
-    (h : v.hasMannerWeight = true) :
-    projectsUnderNegation (complementStatus (defaultDimension v)) = true := by
-  simp only [defaultDimension, h, ite_true, complementStatus, projectsUnderNegation]
+    (h : v.hasMannerWeight) :
+    projectsUnderNegation (complementStatus (defaultDimension v)) := by
+  simp only [defaultDimension, if_pos h, complementStatus, projectsUnderNegation]
 
 /-- Bridge verb complements do NOT project under negation. -/
 theorem bridge_complement_in_negation_scope (v : VerbDecomp)
-    (h : v.hasMannerWeight = false) :
-    projectsUnderNegation (complementStatus (defaultDimension v)) = false := by
-  simp only [defaultDimension, h, Bool.false_eq_true, ite_false, complementStatus,
-             projectsUnderNegation]
+    (h : ¬ v.hasMannerWeight) :
+    ¬ projectsUnderNegation (complementStatus (defaultDimension v)) := by
+  simp only [defaultDimension, if_neg h, complementStatus, projectsUnderNegation,
+             not_false_eq_true]
 
 /-- Prosodic focus overrides: with embedded focus, even MoS verb complements
 fall within negation scope (complement becomes at-issue). -/
 theorem prosodic_focus_overrides_negation (v : VerbDecomp) :
-    projectsUnderNegation (complementStatus (activeDimension v true)) = false := by
+    ¬ projectsUnderNegation (complementStatus (activeDimension v true)) := by
   simp [activeDimension, complementStatus, projectsUnderNegation]
 
 
@@ -1041,7 +1049,7 @@ Complements below threshold are backgrounded (islands); those above are
 at-issue (transparent to extraction). -/
 def predictIsland (d : AtIssuenessDegree)
     (θ : AtIssuenessThreshold := defaultThreshold) : IslandPrediction where
-  isIsland := !isAtIssue d θ
+  isIsland := !decide (isAtIssue d θ)
   status := if isAtIssue d θ then .new else .given
   rank := (if isAtIssue d θ then DiscourseStatus.new else DiscourseStatus.given).rank
 
@@ -1050,34 +1058,63 @@ backgrounded qua presupposition, but the *propositional content* is at-issue
 — the complement of "know" addresses the QUD). -/
 def factiveComplementAI : AtIssuenessDegree := ⟨3/4, by norm_num, by norm_num⟩
 
+-- ── Bridge lemmas: kernel-friendly reductions for `isAtIssue` ──────────
+-- The kernel cannot reduce `Rat.instDecidableLt` over arbitrary rationals,
+-- so we prove these as small `norm_num`/`decide` lemmas and use them to
+-- discharge the `predictIsland` theorems below.
+
+private theorem isAtIssue_lexical :
+    ¬ isAtIssue (complementAtIssueness .lexical) defaultThreshold := by
+  simp only [isAtIssue, Core.Scale.Rat01.exceeds, complementAtIssueness,
+             defaultThreshold, Core.Scale.Rat01.half, not_lt]
+  norm_num
+
+private theorem isAtIssue_none :
+    isAtIssue (complementAtIssueness .none) defaultThreshold := by
+  simp only [isAtIssue, Core.Scale.Rat01.exceeds, complementAtIssueness,
+             defaultThreshold, Core.Scale.Rat01.half]
+  norm_num
+
+private theorem isAtIssue_factive :
+    isAtIssue factiveComplementAI defaultThreshold := by
+  simp only [isAtIssue, Core.Scale.Rat01.exceeds, factiveComplementAI,
+             defaultThreshold, Core.Scale.Rat01.half]
+  norm_num
+
 -- ── Known-case recovery ──────────────────────────────────────────────
 
 /-- MoS verbs (lexical manner weight) predict islands. -/
 theorem predict_mos :
     (predictIsland (complementAtIssueness .lexical)).isIsland = true := by
-  native_decide
+  simp only [predictIsland, decide_eq_false isAtIssue_lexical, Bool.not_false]
 
 /-- Bridge verbs (no manner weight) predict no island. -/
 theorem predict_bridge :
     (predictIsland (complementAtIssueness .none)).isIsland = false := by
-  native_decide
+  simp only [predictIsland, decide_eq_true isAtIssue_none, Bool.not_true]
 
 /-- Factive complements (at-issueness 3/4 > threshold 1/2) predict no island. -/
 theorem predict_factive :
     (predictIsland factiveComplementAI).isIsland = false := by
-  native_decide
+  simp only [predictIsland, decide_eq_true isAtIssue_factive, Bool.not_true]
 
 -- ── Cross-domain ordering ────────────────────────────────────────────
 
 /-- MoS extraction rank ≤ factive extraction rank. -/
 theorem mos_rank_le_factive :
     (predictIsland (complementAtIssueness .lexical)).rank ≤
-    (predictIsland factiveComplementAI).rank := by native_decide
+    (predictIsland factiveComplementAI).rank := by
+  simp only [predictIsland, if_neg isAtIssue_lexical, if_pos isAtIssue_factive,
+             DiscourseStatus.rank]
+  decide
 
 /-- Factive extraction rank ≤ bridge extraction rank. -/
 theorem factive_rank_le_bridge :
     (predictIsland factiveComplementAI).rank ≤
-    (predictIsland (complementAtIssueness .none)).rank := by native_decide
+    (predictIsland (complementAtIssueness .none)).rank := by
+  simp only [predictIsland, if_pos isAtIssue_factive, if_pos isAtIssue_none,
+             DiscourseStatus.rank]
+  decide
 
 -- ── Monotonicity ─────────────────────────────────────────────────────
 
@@ -1090,11 +1127,11 @@ theorem predictIsland_monotone (d₁ d₂ : AtIssuenessDegree)
     (θ : AtIssuenessThreshold) (h : d₁.val ≤ d₂.val) :
     (predictIsland d₁ θ).rank ≤ (predictIsland d₂ θ).rank := by
   simp only [predictIsland, DiscourseStatus.rank]
-  cases h₁ : isAtIssue d₁ θ <;> cases h₂ : isAtIssue d₂ θ <;>
-    simp
+  by_cases h₁ : isAtIssue d₁ θ <;> by_cases h₂ : isAtIssue d₂ θ <;>
+    simp [h₁, h₂]
   -- Contradictory case: d₁ at-issue but d₂ not, yet d₁.val ≤ d₂.val
   unfold isAtIssue Core.Scale.Rat01.exceeds at h₁ h₂
-  simp only [decide_eq_true_eq, decide_eq_false_iff_not, not_lt] at h₁ h₂
+  rw [not_lt] at h₂
   exact absurd (lt_of_lt_of_le h₁ (le_trans h h₂)) (lt_irrefl _)
 
 -- ── §12 ExtractionProfile consistency ───────────────────────────────
@@ -1102,16 +1139,19 @@ theorem predictIsland_monotone (d₁ d₂ : AtIssuenessDegree)
 /-- MoS profile consistent with predictIsland: both say island. -/
 theorem mos_profile_consistent :
     (predictIsland (complementAtIssueness .lexical)).isIsland =
-    mosComplementProfile.resistsExtraction := by native_decide
+    mosComplementProfile.resistsExtraction := by
+  rw [predict_mos]; rfl
 
 /-- Factive profile consistent with predictIsland: both say no island. -/
 theorem factive_profile_consistent :
     (predictIsland factiveComplementAI).isIsland =
-    factiveComplementProfile.resistsExtraction := by native_decide
+    factiveComplementProfile.resistsExtraction := by
+  rw [predict_factive]; rfl
 
 /-- Bridge profile consistent with predictIsland: both say no island. -/
 theorem bridge_profile_consistent :
     (predictIsland (complementAtIssueness .none)).isIsland =
-    bridgeComplementProfile.resistsExtraction := by native_decide
+    bridgeComplementProfile.resistsExtraction := by
+  rw [predict_bridge]; rfl
 
 end Semantics.Focus.BackgroundedIslands

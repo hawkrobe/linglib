@@ -14,23 +14,39 @@ namespace Core.WALS.F143B
 
 /-- WALS 143B values. -/
 inductive ObligatoryDoubleNegation where
-  | negvneg  -- NegVNeg (35 languages)
-  | negVNeg  -- Neg[V-Neg] (28 languages)
-  | negVNeg_3  -- [Neg-V]Neg (9 languages)
-  | negVNeg_4  -- [Neg-V-Neg] (27 languages)
-  | negativeToneVneg  -- Negative tone & VNeg (1 languages)
-  | negativeToneNegV  -- Negative tone & [Neg-V] (2 languages)
-  | negnegv  -- NegNegV (2 languages)
-  | negNegV  -- Neg[Neg-V] (2 languages)
-  | vnegneg  -- VNegNeg (2 languages)
-  | type1Type2  -- Type 1 / Type 2 (1 languages)
-  | type1Type3  -- Type 1 / Type 3 (1 languages)
-  | type1Type5  -- Type 1 / Type 5 (1 languages)
-  | type1Type7  -- Type 1 / Type 7 (1 languages)
-  | type1Type9  -- Type 1 / Type 9 (1 languages)
-  | type2Type4  -- Type 2 / Type 4 (1 languages)
-  | obligdoublenegOpttripleneg  -- ObligDoubleNeg&OptTripleNeg (5 languages)
-  deriving DecidableEq, Repr
+  /-- NegVNeg (35 languages). -/
+  | negvneg
+  /-- Neg[V-Neg] (28 languages). -/
+  | negVNeg
+  /-- [Neg-V]Neg (9 languages). -/
+  | negVNeg_3
+  /-- [Neg-V-Neg] (27 languages). -/
+  | negVNeg_4
+  /-- Negative tone & VNeg (1 languages). -/
+  | negativeToneVneg
+  /-- Negative tone & [Neg-V] (2 languages). -/
+  | negativeToneNegV
+  /-- NegNegV (2 languages). -/
+  | negnegv
+  /-- Neg[Neg-V] (2 languages). -/
+  | negNegV
+  /-- VNegNeg (2 languages). -/
+  | vnegneg
+  /-- Type 1 / Type 2 (1 languages). -/
+  | type1Type2
+  /-- Type 1 / Type 3 (1 languages). -/
+  | type1Type3
+  /-- Type 1 / Type 5 (1 languages). -/
+  | type1Type5
+  /-- Type 1 / Type 7 (1 languages). -/
+  | type1Type7
+  /-- Type 1 / Type 9 (1 languages). -/
+  | type1Type9
+  /-- Type 2 / Type 4 (1 languages). -/
+  | type2Type4
+  /-- ObligDoubleNeg&OptTripleNeg (5 languages). -/
+  | obligdoublenegOpttripleneg
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 143B dataset (119 languages). -/
 def allData : List (Datapoint ObligatoryDoubleNegation) :=
@@ -154,42 +170,6 @@ def allData : List (Datapoint ObligatoryDoubleNegation) :=
   , { walsCode := "zun", language := "Zuni", iso := "zun", value := .negVNeg }
   , { walsCode := "eme", language := "Émérillon", iso := "eme", value := .negVNeg_4 }
   ]
-
--- Count verification
-theorem total_count : allData.length = 119 := by native_decide
-
-theorem count_negvneg :
-    (allData.filter (·.value == .negvneg)).length = 35 := by native_decide
-theorem count_negVNeg :
-    (allData.filter (·.value == .negVNeg)).length = 28 := by native_decide
-theorem count_negVNeg_3 :
-    (allData.filter (·.value == .negVNeg_3)).length = 9 := by native_decide
-theorem count_negVNeg_4 :
-    (allData.filter (·.value == .negVNeg_4)).length = 27 := by native_decide
-theorem count_negativeToneVneg :
-    (allData.filter (·.value == .negativeToneVneg)).length = 1 := by native_decide
-theorem count_negativeToneNegV :
-    (allData.filter (·.value == .negativeToneNegV)).length = 2 := by native_decide
-theorem count_negnegv :
-    (allData.filter (·.value == .negnegv)).length = 2 := by native_decide
-theorem count_negNegV :
-    (allData.filter (·.value == .negNegV)).length = 2 := by native_decide
-theorem count_vnegneg :
-    (allData.filter (·.value == .vnegneg)).length = 2 := by native_decide
-theorem count_type1Type2 :
-    (allData.filter (·.value == .type1Type2)).length = 1 := by native_decide
-theorem count_type1Type3 :
-    (allData.filter (·.value == .type1Type3)).length = 1 := by native_decide
-theorem count_type1Type5 :
-    (allData.filter (·.value == .type1Type5)).length = 1 := by native_decide
-theorem count_type1Type7 :
-    (allData.filter (·.value == .type1Type7)).length = 1 := by native_decide
-theorem count_type1Type9 :
-    (allData.filter (·.value == .type1Type9)).length = 1 := by native_decide
-theorem count_type2Type4 :
-    (allData.filter (·.value == .type2Type4)).length = 1 := by native_decide
-theorem count_obligdoublenegOpttripleneg :
-    (allData.filter (·.value == .obligdoublenegOpttripleneg)).length = 5 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

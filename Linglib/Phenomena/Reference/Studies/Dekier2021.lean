@@ -260,7 +260,7 @@ theorem no_aba_in_sample :
 /-- The ABA pattern itself is unattested cross-linguistically.
     This aligns with the *ABA generalization of @cite{bobaljik-2012}. -/
 theorem aba_unattested_pattern :
-    (classifyTriple "A" "B" "A").isAttested = false := by native_decide
+    ¬ (classifyTriple "A" "B" "A").IsAttested := by native_decide
 
 -- ============================================================================
 -- §6. Paradigm Gaps
@@ -505,7 +505,7 @@ theorem pChinese_matches_spellout :
 theorem sample_no_aba :
     fullParadigms.all (fun p =>
       match p.nsForm, p.suForm, p.skForm with
-      | some ns, some su, some sk => (classifyTriple ns su sk).isAttested
+      | some ns, some su, some sk => decide (classifyTriple ns su sk).IsAttested
       | _, _, _ => true) = true := by native_decide
 
 /-- All paradigm-gap languages have gaps at the TOP of the hierarchy,

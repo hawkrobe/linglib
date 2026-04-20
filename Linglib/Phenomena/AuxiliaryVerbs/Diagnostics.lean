@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Phenomena.Polarity.Stress
 
@@ -32,7 +32,7 @@ acceptability breaks the prediction theorems.
 
 namespace Phenomena.AuxiliaryVerbs.Diagnostics
 
-open Fragments.English.FunctionWords (AuxEntry AuxType)
+open Fragments.English.Auxiliaries (AuxEntry AuxType)
 
 /-! ## Types -/
 
@@ -83,7 +83,7 @@ def fullNICE (e : AuxEntry) : NICEProfile :=
   , negation := true, inversion := true, code := true, emphasis := true }
 
 section FragmentBridge
-open Fragments.English.FunctionWords
+open Fragments.English.Auxiliaries
 
 /-- Contracted negation: whether the Fragment entry has a `negForm`.
     Paradigm gaps (`may`, `am`) lack contracted forms. -/

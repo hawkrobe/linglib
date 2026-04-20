@@ -553,13 +553,13 @@ section CIBridge
 
 variable {W : Type}
 
-/-- A `TwoDimProp` embeds into a `Writer (W → Bool) (W → Bool)`:
+/-- A `TwoDimProp` embeds into a `Writer (W → Prop) (W → Prop)`:
     the at-issue content is the value, the CI is the log.
 
     This connects @cite{potts-2005}'s two-dimensional semantics to
     Writer effect (their W constructor
     in Table 2). -/
-def twoDimToWriter (p : TwoDimProp W) : Writer (W → Bool) (W → Bool) :=
+def twoDimToWriter (p : TwoDimProp W) : Writer (W → Prop) (W → Prop) :=
   ⟨p.atIssue, [p.ci]⟩
 
 -- ────────────────────────────────────────────────────
@@ -577,7 +577,7 @@ def twoDimToWriter (p : TwoDimProp W) : Writer (W → Bool) (W → Bool) :=
 
     Specializes to `twoDim_neg_ci_via_writer` when `f = fun p w => !p w`. -/
 theorem ci_projection_universal {W A B : Type}
-    (f : A → B) (m : Writer (W → Bool) A) :
+    (f : A → B) (m : Writer (W → Prop) A) :
     (Writer.map f m).log = m.log := rfl
 
 /-- CI projection through negation follows from the Writer architecture:
@@ -587,7 +587,7 @@ theorem twoDim_neg_ci_via_writer (p : TwoDimProp W) :
 
 /-- The at-issue content of negation is pointwise negation of the original. -/
 theorem twoDim_neg_val_via_writer (p : TwoDimProp W) :
-    (twoDimToWriter (TwoDimProp.neg p)).val = λ w => !p.atIssue w := rfl
+    (twoDimToWriter (TwoDimProp.neg p)).val = λ w => ¬ p.atIssue w := rfl
 
 -- ────────────────────────────────────────────────────
 -- Running the CI Writer (shunting)
@@ -607,26 +607,26 @@ theorem twoDim_neg_val_via_writer (p : TwoDimProp W) :
 
     For multi-CI Writers (e.g., "that bastard John met that jerk Pete"
     with two CI entries), this conjoins all CIs into at-issue content. -/
-def runCIWriter {W : Type} (m : Writer (W → Bool) (W → Bool)) : TwoDimProp W :=
-  { atIssue := λ w => m.log.foldl (λ acc ci => acc && ci w) (m.val w)
-  , ci := λ _ => true }
+def runCIWriter {W : Type} (m : Writer (W → Prop) (W → Prop)) : TwoDimProp W :=
+  { atIssue := λ w => m.log.foldl (λ acc ci => acc ∧ ci w) (m.val w)
+  , ci := λ _ => True }
 
 /-- Running a CI Writer consumes the log: the result has trivial CI. -/
-theorem runCIWriter_trivial_ci {W : Type} (m : Writer (W → Bool) (W → Bool)) (w : W) :
-    (runCIWriter m).ci w = true := rfl
+theorem runCIWriter_trivial_ci {W : Type} (m : Writer (W → Prop) (W → Prop)) (w : W) :
+    (runCIWriter m).ci w ↔ True := Iff.rfl
 
 /-- Running a Writer with an empty log preserves the value unchanged. -/
-theorem runCIWriter_empty_log {W : Type} (val : W → Bool) (w : W) :
+theorem runCIWriter_empty_log {W : Type} (val : W → Prop) (w : W) :
     (runCIWriter ⟨val, []⟩).atIssue w = val w := rfl
 
 /-- Running a Writer with a trivially-true log entry preserves the
     value unchanged.
 
-    Pure quotation = clearing the log to `[λ _ => true]`. Running
+    Pure quotation = clearing the log to `[λ _ => True]`. Running
     such a Writer recovers the original at-issue content. -/
-theorem runCIWriter_trivial_log {W : Type} (val : W → Bool) (w : W) :
-    (runCIWriter ⟨val, [λ _ => true]⟩).atIssue w = val w := by
-  simp [runCIWriter, Bool.and_true]
+theorem runCIWriter_trivial_log {W : Type} (val : W → Prop) (w : W) :
+    (runCIWriter ⟨val, [λ _ => True]⟩).atIssue w ↔ val w := by
+  simp [runCIWriter]
 
 -- ────────────────────────────────────────────────────
 -- Single-CI round-trip (TwoDimProp ↔ Writer)
@@ -639,12 +639,12 @@ theorem runCIWriter_trivial_log {W : Type} (val : W → Bool) (w : W) :
     This is definitionally equal to `shunt` from
     `Semantics.Quotation.MixedQuotation`. -/
 theorem runCIWriter_twoDim {W : Type} (p : TwoDimProp W) (w : W) :
-    (runCIWriter (twoDimToWriter p)).atIssue w = (p.atIssue w && p.ci w) := rfl
+    (runCIWriter (twoDimToWriter p)).atIssue w ↔ (p.atIssue w ∧ p.ci w) := Iff.rfl
 
 /-- Function-level version: the round-trip is shunting as a function,
     not just at a single world. -/
 theorem runCIWriter_twoDim_fn {W : Type} (p : TwoDimProp W) :
-    (runCIWriter (twoDimToWriter p)).atIssue = λ w => p.atIssue w && p.ci w := rfl
+    (runCIWriter (twoDimToWriter p)).atIssue = λ w => p.atIssue w ∧ p.ci w := rfl
 
 -- ────────────────────────────────────────────────────
 -- Multi-CI compositionality
@@ -660,9 +660,9 @@ theorem runCIWriter_twoDim_fn {W : Type} (p : TwoDimProp W) :
 
     Follows from `List.foldl_append`. -/
 theorem runCIWriter_log_append {W : Type}
-    (val : W → Bool) (cis₁ cis₂ : List (W → Bool)) (w : W) :
+    (val : W → Prop) (cis₁ cis₂ : List (W → Prop)) (w : W) :
     (runCIWriter ⟨val, cis₁ ++ cis₂⟩).atIssue w =
-    cis₂.foldl (λ acc ci => acc && ci w)
+    cis₂.foldl (λ acc ci => acc ∧ ci w)
       ((runCIWriter ⟨val, cis₁⟩).atIssue w) := by
   simp [runCIWriter, List.foldl_append]
 
@@ -675,10 +675,10 @@ theorem runCIWriter_log_append {W : Type}
     This is the retraction property: `runCIWriter ∘ twoDimToWriter` is
     idempotent on the image of `runCIWriter`. -/
 theorem runCIWriter_idempotent {W : Type}
-    (m : Writer (W → Bool) (W → Bool)) (w : W) :
-    (runCIWriter (twoDimToWriter (runCIWriter m))).atIssue w =
+    (m : Writer (W → Prop) (W → Prop)) (w : W) :
+    (runCIWriter (twoDimToWriter (runCIWriter m))).atIssue w ↔
     (runCIWriter m).atIssue w := by
-  simp [runCIWriter, twoDimToWriter, Bool.and_true]
+  simp [runCIWriter, twoDimToWriter]
 
 end CIBridge
 

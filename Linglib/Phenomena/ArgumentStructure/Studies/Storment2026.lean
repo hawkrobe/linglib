@@ -263,16 +263,16 @@ def mosSubjectProfile : EntailmentProfile where
   dependentExistence := false
 
 theorem mos_predicts_unergative :
-    predictsUnergative mosSubjectProfile = true := by native_decide
+    PredictsUnergative mosSubjectProfile := by decide
 
 theorem mos_not_unaccusative_by_counting :
-    predictsUnaccusative mosSubjectProfile = false := by native_decide
+    ¬ PredictsUnaccusative mosSubjectProfile := by decide
 
 /-- Divergence: Dowty predicts MoS subjects are unergative,
     but QI classifies them as unaccusative. -/
 theorem whisper_dowty_diverges :
-    predictsUnergative mosSubjectProfile = true ∧
-    whisper.unaccusative = true := ⟨by native_decide, rfl⟩
+    PredictsUnergative mosSubjectProfile ∧
+    whisper.unaccusative = true := ⟨by decide, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 8. Smuggling Bridge (@cite{collins-2005} → @cite{storment-2026})
@@ -601,62 +601,62 @@ theorem vp_smuggling_ordering :
 /-- arrive (§51.1 inherentlyDirectedMotion) → predicted + empirically unaccusative. -/
 theorem arrive_levin_agrees :
     arrive.levinClass = some .inherentlyDirectedMotion
-    ∧ LevinClass.predictsUnaccusative .inherentlyDirectedMotion = true
-    ∧ arrive.unaccusative = true := ⟨rfl, rfl, rfl⟩
+    ∧ LevinClass.PredictsUnaccusative .inherentlyDirectedMotion
+    ∧ arrive.unaccusative = true := ⟨rfl, by decide, rfl⟩
 
 /-- run (§51.3 mannerOfMotion) → predicted + empirically unergative. -/
 theorem run_levin_agrees :
     run.levinClass = some .mannerOfMotion
-    ∧ LevinClass.predictsUnaccusative .mannerOfMotion = false
-    ∧ run.unaccusative = false := ⟨rfl, rfl, rfl⟩
+    ∧ ¬ LevinClass.PredictsUnaccusative .mannerOfMotion
+    ∧ run.unaccusative = false := ⟨rfl, by decide, rfl⟩
 
 /-- exist (§47) → predicted + empirically unaccusative. -/
 theorem exist_levin_agrees :
     exist.levinClass = some .exist
-    ∧ LevinClass.predictsUnaccusative .exist = true
-    ∧ exist.unaccusative = true := ⟨rfl, rfl, rfl⟩
+    ∧ LevinClass.PredictsUnaccusative .exist
+    ∧ exist.unaccusative = true := ⟨rfl, by decide, rfl⟩
 
 /-- appear (§48) → predicted + empirically unaccusative. -/
 theorem appear_levin_agrees :
     appear.levinClass = some .appear
-    ∧ LevinClass.predictsUnaccusative .appear = true
-    ∧ appear.unaccusative = true := ⟨rfl, rfl, rfl⟩
+    ∧ LevinClass.PredictsUnaccusative .appear
+    ∧ appear.unaccusative = true := ⟨rfl, by decide, rfl⟩
 
 /-- glow (§43.1 lightEmission) → predicted + empirically unaccusative. -/
 theorem glow_levin_agrees :
     glow.levinClass = some .lightEmission
-    ∧ LevinClass.predictsUnaccusative .lightEmission = true
-    ∧ glow.unaccusative = true := ⟨rfl, rfl, rfl⟩
+    ∧ LevinClass.PredictsUnaccusative .lightEmission
+    ∧ glow.unaccusative = true := ⟨rfl, by decide, rfl⟩
 
 /-- buzz (§43.2 soundEmission) → predicted + empirically unaccusative. -/
 theorem buzz_levin_agrees :
     buzz.levinClass = some .soundEmission
-    ∧ LevinClass.predictsUnaccusative .soundEmission = true
-    ∧ buzz.unaccusative = true := ⟨rfl, rfl, rfl⟩
+    ∧ LevinClass.PredictsUnaccusative .soundEmission
+    ∧ buzz.unaccusative = true := ⟨rfl, by decide, rfl⟩
 
 /-- bleed (§43.4 substanceEmission) → predicted + empirically unaccusative. -/
 theorem bleed_levin_agrees :
     bleed.levinClass = some .substanceEmission
-    ∧ LevinClass.predictsUnaccusative .substanceEmission = true
-    ∧ bleed.unaccusative = true := ⟨rfl, rfl, rfl⟩
+    ∧ LevinClass.PredictsUnaccusative .substanceEmission
+    ∧ bleed.unaccusative = true := ⟨rfl, by decide, rfl⟩
 
 /-- rust (§45.5 entitySpecificCoS) → predicted + empirically unaccusative. -/
 theorem rust_levin_agrees :
     rust.levinClass = some .entitySpecificCoS
-    ∧ LevinClass.predictsUnaccusative .entitySpecificCoS = true
-    ∧ rust.unaccusative = true := ⟨rfl, rfl, rfl⟩
+    ∧ LevinClass.PredictsUnaccusative .entitySpecificCoS
+    ∧ rust.unaccusative = true := ⟨rfl, by decide, rfl⟩
 
 /-- fidget (§49 bodyInternalMotion) → predicted + empirically unergative. -/
 theorem fidget_levin_agrees :
     fidget.levinClass = some .bodyInternalMotion
-    ∧ LevinClass.predictsUnaccusative .bodyInternalMotion = false
-    ∧ fidget.unaccusative = false := ⟨rfl, rfl, rfl⟩
+    ∧ ¬ LevinClass.PredictsUnaccusative .bodyInternalMotion
+    ∧ fidget.unaccusative = false := ⟨rfl, by decide, rfl⟩
 
 /-- kick (§18.1 hit) → predicted + empirically not unaccusative. -/
 theorem kick_levin_agrees :
     kick.levinClass = some .hit
-    ∧ LevinClass.predictsUnaccusative .hit = false
-    ∧ kick.unaccusative = false := ⟨rfl, rfl, rfl⟩
+    ∧ ¬ LevinClass.PredictsUnaccusative .hit
+    ∧ kick.unaccusative = false := ⟨rfl, by decide, rfl⟩
 
 -- The MoS divergence: Levin class predicts unergative, but empirically unaccusative
 
@@ -665,11 +665,11 @@ theorem kick_levin_agrees :
     diagnostic). This divergence motivates Storment's syntactic analysis
     (smuggling) over a purely lexical-semantic account of unaccusativity. -/
 theorem mos_levin_diverges :
-    LevinClass.predictsUnaccusative .mannerOfSpeaking = false
+    ¬ LevinClass.PredictsUnaccusative .mannerOfSpeaking
     ∧ whisper.levinClass = some .mannerOfSpeaking
     ∧ whisper.unaccusative = true
     ∧ speak.levinClass = some .mannerOfSpeaking
-    ∧ speak.unaccusative = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    ∧ speak.unaccusative = false := ⟨by decide, rfl, rfl, rfl, rfl⟩
 
 /-- The MoS split: both whisper and speak are §37.3 mannerOfSpeaking,
     but they diverge on unaccusativity. Levin class membership alone
@@ -689,8 +689,8 @@ theorem mos_within_class_split :
 theorem break_causativeInchoative_unaccusative :
     break_.levinClass = some .break_
     ∧ LevinClass.break_.participatesIn .causativeInchoative = true
-    ∧ LevinClass.predictsUnaccusative .break_ = true
+    ∧ LevinClass.PredictsUnaccusative .break_
     ∧ break_.unaccusative = false  -- Fragment entry is the transitive form
-    := ⟨rfl, rfl, rfl, rfl⟩
+    := ⟨rfl, rfl, by decide, rfl⟩
 
 end Phenomena.ArgumentStructure.Unaccusativity.Bridge

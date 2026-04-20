@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.PIP.Basic
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # PIP Expression Language (Full Static Formulation)
@@ -39,10 +40,7 @@ all `X ≡ φ` definitions regardless of their structural position.
 
 namespace Semantics.PIP
 
-open Core.Proposition (FiniteWorlds)
-
-/-- A finite domain of individuals for PIP quantifier evaluation.
-    Mirrors `Core.Proposition.FiniteWorlds` for world types. -/
+/-- A finite domain of individuals for PIP quantifier evaluation. -/
 class FiniteDomain (D : Type*) where
   elements : List D
   complete : ∀ d : D, d ∈ elements
@@ -103,10 +101,10 @@ PIP truth conditions are classical: presuppositions play no role
 in determining truth values. Quantifiers and modals evaluate as
 standard first-order quantification over domains and worlds.
 
-Requires `[Fintype D]` for quantifier evaluation and `[FiniteWorlds W]`
+Requires `[Fintype D]` for quantifier evaluation and `[Fintype W]`
 for modal evaluation.
 -/
-def PIPExprF.truth {W D : Type*} [FiniteDomain D] [FiniteWorlds W] :
+noncomputable def PIPExprF.truth {W D : Type*} [FiniteDomain D] [Fintype W] :
     PIPExprF W D → (W → Bool)
   | .pred p => p
   | .conj φ ψ => λ w => φ.truth w && ψ.truth w
@@ -118,9 +116,9 @@ def PIPExprF.truth {W D : Type*} [FiniteDomain D] [FiniteWorlds W] :
   | .forall_ body => λ w => FiniteDomain.elements.all (λ d => (body d).truth w)
   | .labelDef _label φ => φ.truth  -- label defs are tautological wrt truth
   | .must R φ => λ w =>
-      (FiniteWorlds.worlds.filter (R w)).all φ.truth
+      (((Finset.univ : Finset W).toList.filter (R w))).all φ.truth
   | .might R φ => λ w =>
-      (FiniteWorlds.worlds.filter (R w)).any φ.truth
+      (((Finset.univ : Finset W).toList.filter (R w))).any φ.truth
 
 
 -- ============================================================
@@ -141,7 +139,7 @@ The universal quantification in the quantifier/modal felicity clauses is
 the key insight: an expression is felicitous only if its presuppositions
 are met for EVERY possible witness/world, not just some.
 -/
-def PIPExprF.felicitous {W D : Type*} [FiniteDomain D] [FiniteWorlds W] :
+noncomputable def PIPExprF.felicitous {W D : Type*} [FiniteDomain D] [Fintype W] :
     PIPExprF W D → (W → Bool)
   -- F(P(α₁,...,αₙ)) = true (atoms are always felicitous)
   | .pred _ => λ _ => true
@@ -163,10 +161,10 @@ def PIPExprF.felicitous {W D : Type*} [FiniteDomain D] [FiniteWorlds W] :
   | .labelDef _label φ => φ.felicitous
   -- F(□φ) iff ∀w'.Fφ  [item 47: felicity universal over accessible worlds]
   | .must R φ => λ w =>
-      (FiniteWorlds.worlds.filter (R w)).all φ.felicitous
+      (((Finset.univ : Finset W).toList.filter (R w))).all φ.felicitous
   -- F(◇φ) iff ∀w'.Fφ  [item 47: felicity universal, NOT existential]
   | .might R φ => λ w =>
-      (FiniteWorlds.worlds.filter (R w)).all φ.felicitous
+      (((Finset.univ : Finset W).toList.filter (R w))).all φ.felicitous
 
 
 -- ============================================================
@@ -203,7 +201,7 @@ def PIPExprF.labelDefs {W D : Type*} : PIPExprF W D → List (FLabel × PIPExprF
 
 section Properties
 
-variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+variable {W D : Type*} [FiniteDomain D] [Fintype W]
 
 /-- F(¬φ) iff Fφ — negation preserves felicity. -/
 theorem felicitousF_neg (φ : PIPExprF W D) (w : W) :
@@ -238,7 +236,7 @@ theorem felicitousF_exists (body : D → PIPExprF W D) (w : W) :
 /-- Modal necessity felicity is universal over accessible worlds. -/
 theorem felicitousF_must (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).felicitous w =
-    (FiniteWorlds.worlds.filter (R w)).all φ.felicitous := rfl
+    (((Finset.univ : Finset W).toList.filter (R w))).all φ.felicitous := rfl
 
 end Properties
 

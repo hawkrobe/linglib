@@ -88,7 +88,6 @@ import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 namespace Semantics.Presupposition.TonhauserDerivation
 
 open Core.Presupposition
-open Core.Proposition
 open Core.CommonGround
 open Core.PresuppositionContext
 open Semantics.Presupposition.LocalContext
@@ -126,7 +125,7 @@ yet the trigger's use is still felicitous (via accommodation).
 -/
 structure SCF_Allows (W : Type*) where
   /-- The projective content -/
-  content : (W → Bool)
+  content : Set W
   /-- Accommodation is possible: there exist contexts where content is
       informative (not entailed) yet use is felicitous -/
   accommodable : ∃ (c : ContextSet W), ContextSet.nonEmpty c ∧
@@ -139,7 +138,7 @@ OLE=yes means: under belief embedding, the local context is the attitude
 holder's belief state. The projective content is attributed to the holder.
 -/
 def OLE_Obligatory (Dox : DoxasticAccessibility W Agent)
-    (content : (W → Bool)) : Prop :=
+    (content : Set W) : Prop :=
   ∀ (c : ContextSet W) (agent : Agent) (w_star : W),
     c w_star →
     let blc : BeliefLocalCtx W Agent := { globalCtx := c, dox := Dox, agent := agent }
@@ -157,7 +156,7 @@ but NOT in the attitude holder's beliefs. The content is "speaker-anchored"
 Class B triggers (expressives) and Class D triggers exhibit this behavior.
 -/
 def OLE_NotObligatory (Dox : DoxasticAccessibility W Agent)
-    (content : (W → Bool)) : Prop :=
+    (content : Set W) : Prop :=
   ∃ (c : ContextSet W) (agent : Agent) (w_star : W),
     c w_star ∧
     ContextSet.entails c content ∧

@@ -1,5 +1,5 @@
 import Lean
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.Interval.ReflectInterval
 import Linglib.Tactics.RSAPredict.Helpers
 import Linglib.Tactics.RSAPredict.Reify

@@ -201,11 +201,11 @@ theorem doxastic_selects_dox (v : Core.Verbs.Veridicality) :
 theorem preferential_selects_cir (k : Core.Verbs.Preferential) :
     Attitude.toModalBaseKind (.preferential k) = ModalBaseKind.circumstantial := rfl
 
-/-- `permitsCircumstantial` ↔ `toModalBaseKind = .circumstantial`. -/
+/-- `PermitsCircumstantial` ↔ `toModalBaseKind = .circumstantial`. -/
 theorem permitsCirc_iff_cir (a : Core.Verbs.Attitude) :
-    a.permitsCircumstantial = true ↔
+    a.PermitsCircumstantial ↔
     Attitude.toModalBaseKind a = ModalBaseKind.circumstantial := by
-  cases a <;> simp [Core.Verbs.Attitude.permitsCircumstantial, Attitude.toModalBaseKind]
+  cases a <;> simp [Core.Verbs.Attitude.PermitsCircumstantial, Attitude.toModalBaseKind]
 
 
 /-! ## ModalFlavor → ModalBaseKind bridge

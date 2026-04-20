@@ -544,9 +544,9 @@ theorem cut_no_resultative_break_resultative :
     it predicts unaccusativity for the inchoative alternant. -/
 theorem causativeInchoative_implies_unaccusative :
     LevinClass.break_.participatesIn .causativeInchoative = true
-    ∧ LevinClass.predictsUnaccusative .break_ = true
+    ∧ LevinClass.PredictsUnaccusative .break_
     ∧ LevinClass.otherCoS.participatesIn .causativeInchoative = true
-    ∧ LevinClass.predictsUnaccusative .otherCoS = true := ⟨rfl, rfl, rfl, rfl⟩
+    ∧ LevinClass.PredictsUnaccusative .otherCoS := ⟨rfl, trivial, rfl, trivial⟩
 
 /-! ### Family classification theorems -/
 
@@ -595,12 +595,13 @@ theorem existence_locativeInversion :
 
 /-- There-insertion and locative inversion align with unaccusativity. -/
 theorem unaccusative_diagnostics_align :
-    LevinClass.predictsUnaccusative .exist = true
+    LevinClass.PredictsUnaccusative .exist
     ∧ LevinClass.exist.participatesIn .thereInsertion = true
     ∧ LevinClass.exist.participatesIn .locativeInversion = true
-    ∧ LevinClass.predictsUnaccusative .appear = true
+    ∧ LevinClass.PredictsUnaccusative .appear
     ∧ LevinClass.appear.participatesIn .thereInsertion = true
-    ∧ LevinClass.appear.participatesIn .locativeInversion = true := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ∧ LevinClass.appear.participatesIn .locativeInversion = true :=
+  ⟨trivial, rfl, rfl, trivial, rfl, rfl⟩
 
 /-- Instrument subject alternation is predicted by external causation. -/
 theorem break_instrumentSubject_cut_blocked :

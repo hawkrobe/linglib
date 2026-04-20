@@ -780,23 +780,29 @@ inductive MRCDiagnostic where
   deriving DecidableEq, Repr
 
 /-- Whether a diagnostic tests for result entailment. -/
-def MRCDiagnostic.testsResult : MRCDiagnostic → Bool
-  | .denialOfResult => true
-  | .objectDeletion => true
-  | .restrictedResultatives => true
-  | _ => false
+def MRCDiagnostic.TestsResult : MRCDiagnostic → Prop
+  | .denialOfResult => True
+  | .objectDeletion => True
+  | .restrictedResultatives => True
+  | _ => False
+
+instance : DecidablePred MRCDiagnostic.TestsResult := fun d => by
+  cases d <;> unfold MRCDiagnostic.TestsResult <;> infer_instance
 
 /-- Whether a diagnostic tests for manner entailment. -/
-def MRCDiagnostic.testsManner : MRCDiagnostic → Bool
-  | .selectionalRestriction => true
-  | .denialOfAction => true
-  | .actorParaphrase => true
-  | _ => false
+def MRCDiagnostic.TestsManner : MRCDiagnostic → Prop
+  | .selectionalRestriction => True
+  | .denialOfAction => True
+  | .actorParaphrase => True
+  | _ => False
+
+instance : DecidablePred MRCDiagnostic.TestsManner := fun d => by
+  cases d <;> unfold MRCDiagnostic.TestsManner <;> infer_instance
 
 /-- Each diagnostic tests for exactly one of manner or result. -/
 theorem diagnostic_exclusive (d : MRCDiagnostic) :
-    d.testsResult = !d.testsManner := by
-  cases d <;> rfl
+    d.TestsResult ↔ ¬ d.TestsManner := by
+  cases d <;> simp [MRCDiagnostic.TestsResult, MRCDiagnostic.TestsManner]
 
 /-- A verb's diagnostic profile: which of the six diagnostics it passes.
     B&KG (2020 §§4.2–4.3) survey these for each verb class. -/
@@ -846,18 +852,18 @@ theorem drown_MRC_violation : drownDiagnostics.showsMRCViolation = true := rfl
 
 /-- Cut is MRC-violating by BOTH diagnostics AND RootEntailments. -/
 theorem cut_diagnostics_match_entailments :
-    cutDiagnostics.showsMRCViolation =
-    (LevinClass.rootEntailments .cut).violatesMRC := rfl
+    cutDiagnostics.showsMRCViolation = true ↔
+    (LevinClass.rootEntailments .cut).ViolatesMRC := by decide
 
 /-- Break is MRC-respecting by BOTH diagnostics AND RootEntailments. -/
 theorem break_diagnostics_match_entailments :
-    breakDiagnostics.showsMRCViolation =
-    (LevinClass.rootEntailments .break_).violatesMRC := rfl
+    breakDiagnostics.showsMRCViolation = true ↔
+    (LevinClass.rootEntailments .break_).ViolatesMRC := by decide
 
 /-- Hit is MRC-respecting by BOTH diagnostics AND RootEntailments. -/
 theorem hit_diagnostics_match_entailments :
-    hitDiagnostics.showsMRCViolation =
-    (LevinClass.rootEntailments .hit).violatesMRC := rfl
+    hitDiagnostics.showsMRCViolation = true ↔
+    (LevinClass.rootEntailments .hit).ViolatesMRC := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to EntailmentProfile.changeOfState (ProtoRoles §8)
@@ -875,12 +881,12 @@ def rootTypeFromChangeEntailment (p : EntailmentProfile) : RootType :=
 /-- A result root's object has changeOfState = true. -/
 theorem result_object_has_changeOfState :
     (rootTypeFromChangeEntailment kickObjectProfile) = .result := by
-  native_decide
+  decide
 
 /-- Die subject undergoes change → result-type pattern. -/
 theorem die_result_pattern :
     (rootTypeFromChangeEntailment dieSubjectProfile) = .result := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 9. Bridge to Template / BECOME (EventStructure §2)
@@ -1007,7 +1013,7 @@ def RootType.againReadings : RootType → List AgainReading
 /-- PC roots have strictly more 'again' readings than result roots. -/
 theorem pc_more_again_readings :
     (RootType.againReadings .propertyConcept).length >
-    (RootType.againReadings .result).length := by native_decide
+    (RootType.againReadings .result).length := by decide
 
 /-- Result roots lack the restitutive reading. -/
 theorem result_no_restitutive :
@@ -1444,7 +1450,7 @@ def FullRootSpec.semanticallyCoherent (s : FullRootSpec) : Bool :=
 /-- Full well-formedness: entailment constraints + position licensing +
     semantic coherence. -/
 def FullRootSpec.wellFormed (s : FullRootSpec) : Bool :=
-  s.entailments.wellFormed && s.positionLicensed && s.semanticallyCoherent
+  decide s.entailments.WellFormed && s.positionLicensed && s.semanticallyCoherent
 
 /-! ### Attested cells of Table 12 -/
 
@@ -1588,7 +1594,7 @@ theorem heads_monotone :
     RootEntailments.pureResult.entailedHeads.length ≤
     RootEntailments.causativeResult.entailedHeads.length ∧
     RootEntailments.causativeResult.entailedHeads.length ≤
-    RootEntailments.fullSpec.entailedHeads.length := ⟨by native_decide, by native_decide⟩
+    RootEntailments.fullSpec.entailedHeads.length := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 19. Gap Predictions (B&@cite{beavers-koontz-garboden-2020} §5.4.1, Table 12)
@@ -1647,10 +1653,10 @@ theorem gap_manner_state_no_result_adj :
 
 /-- Gap type 3: well-formedness violations. -/
 theorem gap_result_no_state :
-    (RootEntailments.mk false false true false).wellFormed = false := rfl
+    ¬ (RootEntailments.mk false false true false).WellFormed := by decide
 
 theorem gap_cause_no_result :
-    (RootEntailments.mk true false false true).wellFormed = false := rfl
+    ¬ (RootEntailments.mk true false false true).WellFormed := by decide
 
 /-! ### Attested cells are well-formed and recognized -/
 

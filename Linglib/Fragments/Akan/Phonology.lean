@@ -78,34 +78,34 @@ def seg_i : Segment := Segment.ofSpecs
 -- ============================================================================
 
 /-- /k/ is [−coronal] — the target of palatalization. -/
-theorem k_minus_coronal : seg_k.hasValue Feature.coronal false = true := by native_decide
+theorem k_minus_coronal : seg_k.HasValue Feature.coronal false = true := by native_decide
 
 /-- /tɕ/ is [+coronal] — the output of palatalization. -/
-theorem tc_plus_coronal : seg_tc.hasValue Feature.coronal true = true := by native_decide
+theorem tc_plus_coronal : seg_tc.HasValue Feature.coronal true = true := by native_decide
 
 /-- /k/ is [+dorsal]. -/
-theorem k_plus_dorsal : seg_k.hasValue Feature.dorsal true = true := by native_decide
+theorem k_plus_dorsal : seg_k.HasValue Feature.dorsal true = true := by native_decide
 
 /-- /tɕ/ is [+dorsal] — corono-dorsal complex segment. -/
-theorem tc_plus_dorsal : seg_tc.hasValue Feature.dorsal true = true := by native_decide
+theorem tc_plus_dorsal : seg_tc.HasValue Feature.dorsal true = true := by native_decide
 
 /-- /ɪ/ is [+front] — the trigger for palatalization. -/
-theorem i_plus_front : seg_i.hasValue Feature.front true = true := by native_decide
+theorem i_plus_front : seg_i.HasValue Feature.front true = true := by native_decide
 
 /-- /a/ is [−front] — does not trigger palatalization. -/
-theorem a_minus_front : seg_a.hasValue Feature.front false = true := by native_decide
+theorem a_minus_front : seg_a.HasValue Feature.front false = true := by native_decide
 
 /-- Palatalization is a [coronal] feature change: /k/ is [−cor], /tɕ/ is [+cor].
     The OT constraints IDENT-IO(−cor) and IDENT-BR(−cor) penalize exactly
     this feature difference. -/
 theorem palatalization_is_coronal_change :
-    seg_k.hasValue Feature.coronal false = true ∧
-    seg_tc.hasValue Feature.coronal true = true := ⟨by native_decide, by native_decide⟩
+    seg_k.HasValue Feature.coronal false = true ∧
+    seg_tc.HasValue Feature.coronal true = true := ⟨by native_decide, by native_decide⟩
 
 /-- OCP(+cor) targets segments that are [+coronal]. /tɕ/ violates OCP
     when adjacent to another [+coronal] segment. /k/ does not. -/
 theorem ocp_targets_palatalized :
-    seg_tc.hasValue Feature.coronal true = true ∧
-    seg_k.hasValue Feature.coronal true = false := ⟨by native_decide, by native_decide⟩
+    seg_tc.HasValue Feature.coronal true = true ∧
+    seg_k.HasValue Feature.coronal true = false := ⟨by native_decide, by native_decide⟩
 
 end Fragments.Akan.Phonology

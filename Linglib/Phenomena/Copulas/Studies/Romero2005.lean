@@ -1,5 +1,4 @@
 import Linglib.Core.IntensionalLogic.Rigidity
-import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
@@ -59,13 +58,16 @@ an inquisitive-semantics approach to the same unification.
 
 namespace Romero2005
 
-open Core.Proposition (World4)
 open Core (Intension)
 open Semantics.Attitudes.Doxastic (AccessRel boxAt)
 
 /-! ## World and Entity Setup -/
 
-abbrev W := World4
+/-- A simple 4-world type for the Romero examples. -/
+inductive W where
+  | w0 | w1 | w2 | w3
+  deriving DecidableEq, Repr, Inhabited
+
 abbrev E := Fin 4
 
 /-- All worlds in the model. -/

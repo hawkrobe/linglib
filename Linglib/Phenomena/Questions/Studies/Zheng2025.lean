@@ -1,6 +1,9 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Theories.Semantics.Modality.Kernel
+import Linglib.Theories.Semantics.Questions.QParticleLayer
+import Linglib.Core.Issue.Singleton
+import Linglib.Phenomena.Questions.Studies.BhattDayal2020
 
 /-!
 # Zheng (2025): Nandao-Q Felicity @cite{zheng-2025}
@@ -28,6 +31,12 @@ nor sufficient**.
   epistemic bias
 - `kernel_requires_evidence`: Kernel `nandaoFelicitous` entails
   `evidenceSupports`
+- `nandaoFullFelicity`: integrated two-layer felicity (singleton sister
+  presupposition ∧ Kernel-bias check) — §5
+- `biasedUse_integrated_felicity`: dripping-raincoat scenario satisfies
+  integrated felicity at the §5 level — §6
+- `biasedUse_witnesses_integrated_felicity`: §1 datum (ex. 2) ↔ §6
+  theoretical prediction
 
 ## Known gaps
 
@@ -224,9 +233,198 @@ theorem fragment_data_epistemic :
 /-- Kernel `nandaoFelicitous` entails `evidenceSupports`, connecting the
 Theory predicate to the Fragment's `requiresEvidentialBias = true` and
 the empirical generalization `evidential_bias_necessary`. -/
-theorem kernel_requires_evidence (k : Kernel) (u : Background) (φ : (World → Bool))
-    (h : nandaoFelicitous k u φ) :
+theorem kernel_requires_evidence (k : Kernel) (u : Background) (φ : (World → Prop))
+    [DecidablePred φ] (h : nandaoFelicitous k u φ) :
     k.evidenceSupports φ :=
   h.1
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- §3 — Left-Peripheral Layer Assignments (@cite{dayal-2025} cartography)
+-- ════════════════════════════════════════════════════════════════════════════
+
+open Semantics.Questions (QParticleLayer)
+open Fragments.Mandarin.QuestionParticles (QuestionParticleEntry ma ba)
+
+/-- Zheng's layer assignments for the three Mandarin Q-particles in the
+    @cite{dayal-2025} cartography `[SAP [PerspP [CP ...]]]`. The `_`
+    argument is unused: the layer is a theoretical overlay on the
+    fragment particle, not a computed property of its lexical fields. -/
+def ma_layer     (_ : QuestionParticleEntry) : QParticleLayer := .cp
+def ba_layer     (_ : QuestionParticleEntry) : QParticleLayer := .perspP
+def nandao_layer (_ : QuestionParticleEntry) : QParticleLayer := .perspP
+
+/-- *ma* is the unmarked CP-layer particle: widest distribution
+    (matrix, subordinated, quasi-subordinated). -/
+theorem ma_is_CP : ma_layer ma = .cp := rfl
+
+/-- *ba* and *nandao* are PerspP-layer biased particles: matrix +
+    quasi-subordinated only. -/
+theorem ba_nandao_PerspP :
+    ba_layer ba = .perspP ∧ nandao_layer nandao = .perspP := ⟨rfl, rfl⟩
+
+/-- The layer split mirrors the bias-profile split: the unbiased
+    particle is CP, the biased ones are PerspP. -/
+theorem layer_correlates_with_bias :
+    ma_layer ma = .cp ∧
+    ma.requiresEvidentialBias = false ∧ ma.requiresEpistemicBias = false ∧
+    ba_layer ba = .perspP ∧ ba.requiresEpistemicBias = true ∧
+    nandao_layer nandao = .perspP ∧ nandao.requiresEvidentialBias = true :=
+  ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- §4 — Singleton-Alternative Presupposition (parallel to kya:)
+-- ════════════════════════════════════════════════════════════════════════════
+
+/-! @cite{bhatt-dayal-2020} fn. 11 explicitly cites the parallel
+Mandarin *nandao* analysis as the model for their kya: proposal.
+At the algebraic level, both particles share the same singleton
+presupposition: their sister question must denote a singleton-cell
+issue (@cite{bhatt-dayal-2020} eq. 23). The cross-particle
+generalization is captured by inheriting the same
+`Core.Issue.IsSingleton` predicate — both kya: and nandao take a
+`SingletonIssue W` as well-typed sister content. -/
+
+open Core.Issue (IsSingleton SingletonIssue declarative
+  isSingleton_declarative)
+
+universe u
+variable {W : Type u}
+
+/-- nandao is felicitous on a one-cell ("highlighted") polar — same
+    canonical good-input case as kya:. The proof reduces to
+    `isSingleton_declarative`, identical to the kya: side. -/
+theorem nandao_felicitous_declarative (p : Set W) :
+    IsSingleton (declarative (W := W) p) :=
+  isSingleton_declarative p
+
+/-- **Cross-particle agreement**: the felicity conditions for kya: and
+    nandao on a one-cell polar are *the same theorem* — both reduce to
+    `isSingleton_declarative`. The convergence noted in
+    @cite{bhatt-dayal-2020} fn. 11 holds by construction. -/
+theorem nandao_kya_share_felicity (p : Set W) :
+    nandao_felicitous_declarative (W := W) p =
+      Phenomena.Questions.TypologyBridge.kya_felicitous_declarative
+        (W := W) p := rfl
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- §5 — Integrated Felicity: §2 (Kernel-bias) ∧ §4 (Issue-singleton)
+-- ════════════════════════════════════════════════════════════════════════════
+
+/-! Bridge §2 and §4. Nandao's full felicity has two independent layers:
+
+  - **Layer 1** (Issue-level, §4): the sister content `Q : Core.Issue World`
+    is *singleton* — `alt Q = {p}` for some unique witness `p`. This is the
+    @cite{bhatt-dayal-2020} eq. 23 presupposition: nandao requires a
+    one-cell sister, not a two-cell Hamblin polar.
+  - **Layer 2** (Kernel-level, §2): the Kernel-bias check
+    `nandaoFelicitous k u p` holds for the witness — the evidence in `K`
+    raises `P(p)`, `K` is incompatible with the prior `U`, and `p` is
+    not directly settled.
+
+These layers are independent concerns: Layer 1 is about semantic
+well-formedness of the sister content, Layer 2 is about discourse
+felicity in context. The integrated predicate composes them into a
+single statement, and the bridges below show that Layer 1 failure
+(e.g. a non-trivial two-cell polar) blocks felicity at the integrated
+level regardless of `(k, u)`. -/
+
+open Core.Issue (alt polar
+  not_isSingleton_polar_of_nontrivial alt_polar_of_nontrivial
+  alt_declarative)
+
+/-- **Integrated nandao felicity**: the conjunction of Layer 1
+    (singleton presupposition: `alt Q = {p}`) and Layer 2 (Kernel-bias
+    check on the witness). The witness `p` is supplied externally so
+    decidability is concrete; for the noncomputable choice from a
+    `SingletonIssue` use `SingletonIssue.witness`. -/
+def nandaoFullFelicity (Q : Core.Issue World) (k : Kernel) (u : Background)
+    (p : Set World) [DecidablePred p] : Prop :=
+  alt Q = {p} ∧ nandaoFelicitous k u p
+
+/-- **Layer-1 projection**: integrated felicity entails the §4
+    singleton presupposition. -/
+theorem nandaoFullFelicity_isSingleton {Q : Core.Issue World} {k : Kernel}
+    {u : Background} {p : Set World} [DecidablePred p]
+    (h : nandaoFullFelicity Q k u p) :
+    Core.Issue.IsSingleton Q :=
+  ⟨p, h.1⟩
+
+/-- **Layer-2 projection**: integrated felicity entails the §2
+    Kernel-bias check on the witness. -/
+theorem nandaoFullFelicity_kernel {Q : Core.Issue World} {k : Kernel}
+    {u : Background} {p : Set World} [DecidablePred p]
+    (h : nandaoFullFelicity Q k u p) :
+    nandaoFelicitous k u p :=
+  h.2
+
+/-- **Layer-1 obstruction**: a two-cell Hamblin polar `polar p₀` (with
+    non-trivial `p₀`) admits no integrated-felicity witness. No
+    Kernel + Background can rescue it: the §4 type-level barrier
+    propagates upward through the `alt Q = {p}` requirement. The
+    structural reason `polar` two-cell questions are universally
+    blocked from nandao licensing. -/
+theorem nandao_polar_no_witness {p₀ : Set World}
+    (hne : p₀ ≠ ∅) (hnu : p₀ ≠ Set.univ)
+    (k : Kernel) (u : Background) :
+    ¬ ∃ (p : Set World) (_ : DecidablePred p),
+        nandaoFullFelicity (polar p₀) k u p := by
+  rintro ⟨p, _, hfull, _⟩
+  exact not_isSingleton_polar_of_nontrivial hne hnu ⟨p, hfull⟩
+
+/-- **Declarative reduction**: on a one-cell sister `declarative p`,
+    integrated felicity is exactly the §2 Kernel-bias check on `p`.
+    The Layer-1 component holds trivially because `alt (declarative p)
+    = {p}` (`alt_declarative`). This makes the §2 ↔ §5 connection
+    explicit on the canonical felicitous case. -/
+theorem nandaoFullFelicity_declarative_iff {p : Set World} [DecidablePred p]
+    (k : Kernel) (u : Background) :
+    nandaoFullFelicity (Core.Issue.declarative p) k u p ↔
+      nandaoFelicitous k u p := by
+  unfold nandaoFullFelicity
+  rw [alt_declarative]
+  exact ⟨fun h => h.2, fun h => ⟨rfl, h⟩⟩
+
+-- ════════════════════════════════════════════════════════════════════════════
+-- §6 — Empirical Closure: §1 datum (biasedUse) ↔ §5 integrated felicity
+-- ════════════════════════════════════════════════════════════════════════════
+
+/-! Apply §5 to the canonical biased-use scenario from @cite{zheng-2025} ex. 2:
+
+  - K = `[wearingRaincoat]` — direct evidence (B enters with dripping coat)
+  - U = `[expectDry]` — A's prior expectation it is not raining
+  - p = `isRaining` — the question content
+
+The Kernel-side bias check is `raincoat_nandao_felicitous` (proven in
+`Theories/Semantics/Modality/Kernel.lean` from explicit cardinality
+counts on `World4`). Pairing it with the singleton presupposition
+yields integrated felicity at the §5 level. The §1 datum `biasedUse`
+records the same scenario as empirical data (`evidentialBias = true`,
+`epistemicBias = true`, `felicitous = true`); the bridge below makes
+the data ↔ theory correspondence explicit. -/
+
+open Semantics.Modality (raincoatK dryU isRaining raincoat_nandao_felicitous)
+
+/-- **§1 ex. 2 ↔ §5 integrated felicity**: in the dripping-raincoat
+    scenario with sister `declarative isRaining`, both layers of nandao
+    felicity hold simultaneously. Reduces to `raincoat_nandao_felicitous`
+    via `nandaoFullFelicity_declarative_iff`. -/
+theorem biasedUse_integrated_felicity :
+    nandaoFullFelicity (Core.Issue.declarative isRaining) raincoatK dryU
+      isRaining := by
+  rw [nandaoFullFelicity_declarative_iff]
+  exact raincoat_nandao_felicitous
+
+/-- **Data ↔ theory bridge**: the §1 datum `biasedUse` is felicitous and
+    has both bias profiles set; the §5 integrated felicity holds for the
+    matching Kernel scenario. The shared scaffold is the dripping-raincoat
+    setup of @cite{zheng-2025} ex. 2 — empirical observation on the data
+    side, derived prediction on the theory side. -/
+theorem biasedUse_witnesses_integrated_felicity :
+    biasedUse.felicitous = true ∧
+    biasedUse.evidentialBias = true ∧
+    biasedUse.epistemicBias = true ∧
+    nandaoFullFelicity (Core.Issue.declarative isRaining) raincoatK dryU
+      isRaining :=
+  ⟨rfl, rfl, rfl, biasedUse_integrated_felicity⟩
 
 end Phenomena.Questions.Studies.Zheng2025

@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
 import Linglib.Core.Scales.EpistemicScale
 import Linglib.Core.Agent.BToM
 import Linglib.Theories.Semantics.Degree.Core
@@ -88,8 +88,6 @@ to the pragmatic listener's interpretation of epistemic language.
 
 namespace Semantics.Attitudes.EpistemicThreshold
 
-open Core.Proposition
-
 -- ============================================================================
 -- §1. Agent Credence
 -- ============================================================================
@@ -153,9 +151,16 @@ def uncertain_ : EpistemicEntry := ⟨"uncertain", 7/10, false⟩
 def unlikely_  : EpistemicEntry := ⟨"unlikely", 2/5, false⟩
 
 /-- The full threshold scale (Table 1(b)) is strictly decreasing:
-    must = certain > should > believes > likely = uncertain > unlikely > may > might = could. -/
+    must = certain > should > believes > likely = uncertain > unlikely > may > might = could.
+
+    Proven by reducing `IsChain` on the explicit list to a conjunction of
+    pairwise inequalities, then closing each by `norm_num`. -/
 theorem epistemic_scale_sorted :
-    [19/20, 4/5, 3/4, 7/10, 2/5, 3/10, (1 : ℚ)/5].IsChain (· > ·) := by native_decide
+    [19/20, 4/5, 3/4, 7/10, 2/5, 3/10, (1 : ℚ)/5].IsChain (· > ·) := by
+  refine .cons_cons (by norm_num) (.cons_cons (by norm_num)
+    (.cons_cons (by norm_num) (.cons_cons (by norm_num)
+      (.cons_cons (by norm_num) (.cons_cons (by norm_num)
+        (.singleton _))))))
 
 /-- The superlative multiplier α_most = 1.5 (Table 1(b)). -/
 def α_most : ℚ := 3/2

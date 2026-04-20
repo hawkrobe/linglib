@@ -1,17 +1,17 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
-
 /-!
 # Polish Question Particles
 @cite{simik-2024}
 
-Lexical entries for Polish interrogative particles.
+Lexical entries for Polish interrogative particles. The fragment
+commits only to theory-neutral lexical primitives; the left-peripheral
+layer assignment lives in `Phenomena.Questions.Studies.Simik2024`.
 
 ## Particles
 
-| Particle | Gloss | Layer | Bias |
-|----------|-------|-------|------|
-| czy | neutral PQ | CP | none |
-| czyżby | RAZVE (mirative) | PerspP | +evidential |
+| Particle | Gloss | Bias |
+|----------|-------|------|
+| czy | neutral PQ | none |
+| czyżby | RAZVE (mirative) | +evidential |
 
 ## Cross-Module Connections
 
@@ -22,13 +22,10 @@ Lexical entries for Polish interrogative particles.
 
 namespace Fragments.Polish.QuestionParticles
 
-open Semantics.Questions (QParticleLayer)
-
 /-- A Polish interrogative particle entry. -/
 structure QParticleEntry where
   form : String
   gloss : String
-  layer : QParticleLayer
   polarOk : Bool
   declOk : Bool
   whOk : Bool
@@ -41,7 +38,6 @@ Verb-initial PQs possible but unacceptable in quiz scenarios. -/
 def czy : QParticleEntry where
   form := "czy"
   gloss := "PQ (clause-initial neutral)"
-  layer := .cp
   polarOk := true
   declOk := false
   whOk := true
@@ -53,7 +49,6 @@ Polish member of the cross-Slavic razve family. -/
 def czyzby : QParticleEntry where
   form := "czyżby"
   gloss := "RAZVE (mirative/dubitative)"
-  layer := .perspP
   polarOk := true
   declOk := false
   whOk := false

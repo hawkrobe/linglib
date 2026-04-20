@@ -32,6 +32,6 @@ def tamilComInstSync : Syncretism := comInstSyncretism
 
 /-- COM/INST are strictly adjacent (ranks 1, 2). -/
 theorem com_inst_adjacent :
-    hierarchyAdjacent .com .inst = true := by native_decide
+    HierarchyAdjacent .com .inst := by decide
 
 end Fragments.Tamil.Case

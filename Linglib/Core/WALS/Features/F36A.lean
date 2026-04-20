@@ -14,263 +14,255 @@ namespace Core.WALS.F36A
 
 /-- WALS 36A values. -/
 inductive AssociativePlural where
-  | associativeSameAsAdditivePlural  -- Associative same as additive plural (104 languages)
-  | uniqueAffixalAssociativePlural  -- Unique affixal associative plural (48 languages)
-  | uniquePeriphrasticAssociativePlural  -- Unique periphrastic associative plural (47 languages)
-  | noAssociativePlural  -- No associative plural (37 languages)
-  deriving DecidableEq, Repr
+  /-- Associative same as additive plural (104 languages). -/
+  | associativeSameAsAdditivePlural
+  /-- Unique affixal associative plural (48 languages). -/
+  | uniqueAffixalAssociativePlural
+  /-- Unique periphrastic associative plural (47 languages). -/
+  | uniquePeriphrasticAssociativePlural
+  /-- No associative plural (37 languages). -/
+  | noAssociativePlural
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 36A dataset (236 languages). -/
 def allData : List (Datapoint AssociativePlural) :=
-  [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .noAssociativePlural }
-  , { walsCode := "adt", language := "Adyghe (Temirgoy)", iso := "ady", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "afr", language := "Afrikaans", iso := "afr", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "agl", language := "Aghul", iso := "agx", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ain", language := "Ainu", iso := "ain", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "akn", language := "Akan", iso := "aka", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "alb", language := "Albanian", iso := "sqi", value := .noAssociativePlural }
-  , { walsCode := "alu", language := "Alutor", iso := "alr", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .noAssociativePlural }
-  , { walsCode := "amh", language := "Amharic", iso := "amh", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "apl", language := "Apalaí", iso := "apy", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "apu", language := "Apurinã", iso := "apu", value := .noAssociativePlural }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .noAssociativePlural }
-  , { walsCode := "ana", language := "Araona", iso := "aro", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "arp", language := "Arapesh (Mountain)", iso := "ape", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "arm", language := "Armenian (Eastern)", iso := "hye", value := .noAssociativePlural }
-  , { walsCode := "asm", language := "Asmat", iso := "cns", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "awt", language := "Awtuw", iso := "kmn", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "bgv", language := "Bagvalal", iso := "kva", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "bam", language := "Bambara", iso := "bam", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "bnd", language := "Bandi", iso := "bza", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "bnw", language := "Baniwa", iso := "bwi", value := .noAssociativePlural }
-  , { walsCode := "brs", language := "Barasano", iso := "bsn", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "bae", language := "Baré", iso := "bae", value := .noAssociativePlural }
-  , { walsCode := "bsk", language := "Bashkir", iso := "bak", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "bsq", language := "Basque", iso := "eus", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "bel", language := "Belhare", iso := "byw", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ben", language := "Bengali", iso := "ben", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "bdc", language := "Berbice Dutch Creole", iso := "brc", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "brh", language := "Brahui", iso := "brh", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "bul", language := "Bulgarian", iso := "bul", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "but", language := "Buriat", iso := "bxm", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "brm", language := "Burmese", iso := "mya", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "buu", language := "Buru", iso := "mhs", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "cnt", language := "Cantonese", iso := "yue", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "chm", language := "Chamalal", iso := "cji", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "chn", language := "Chantyal", iso := "chx", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "chc", language := "Chechen", iso := "che", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "chk", language := "Chukchi", iso := "ckt", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "chv", language := "Chuvash", iso := "chv", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "cmn", language := "Comanche", iso := "com", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "cre", language := "Cree (Plains)", iso := "crk", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "cri", language := "Crimean Tatar", iso := "crh", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "dni", language := "Dani (Lower Grand Valley)", iso := "dni", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "drg", language := "Dargwa", iso := "dar", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "des", language := "Desano", iso := "des", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "dut", language := "Dutch", iso := "nld", value := .noAssociativePlural }
-  , { walsCode := "dyi", language := "Dyirbal", iso := "dbl", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .noAssociativePlural }
-  , { walsCode := "est", language := "Estonian", iso := "ekk", value := .noAssociativePlural }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ewe", language := "Ewe", iso := "ewe", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .noAssociativePlural }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .noAssociativePlural }
-  , { walsCode := "fri", language := "Frisian", iso := "fry", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "fua", language := "Fulfulde (Adamawa)", iso := "fub", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "gag", language := "Gagauz", iso := "gag", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "gar", language := "Garo", iso := "grt", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "gbb", language := "Gbeya Bossangoa", iso := "gbp", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "geo", language := "Georgian", iso := "kat", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "goo", language := "Gooniyandi", iso := "gni", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .noAssociativePlural }
-  , { walsCode := "grw", language := "Greenlandic (West)", iso := "kal", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "gua", language := "Guaraní", iso := "gug", value := .noAssociativePlural }
-  , { walsCode := "gud", language := "Gude", iso := "gde", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "gji", language := "Gurindji", iso := "gue", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "haw", language := "Hawaiian", iso := "haw", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "hwc", language := "Hawaiian Creole", iso := "hwc", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "hay", language := "Hayu", iso := "vay", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .noAssociativePlural }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .noAssociativePlural }
-  , { walsCode := "hix", language := "Hixkaryana", iso := "hix", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "ice", language := "Icelandic", iso := "isl", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "ifu", language := "Ifugao (Batad)", iso := "ifb", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "ik", language := "Ik", iso := "ikx", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "iir", language := "Indonesian (Papuan)", iso := "pmy", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "ing", language := "Ingush", iso := "inh", value := .noAssociativePlural }
-  , { walsCode := "iri", language := "Irish", iso := "gle", value := .noAssociativePlural }
-  , { walsCode := "ita", language := "Italian", iso := "ita", value := .noAssociativePlural }
-  , { walsCode := "jcr", language := "Jamaican Creole", iso := "jam", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "jpn", language := "Japanese", iso := "jpn", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kab", language := "Kabardian", iso := "kbd", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kls", language := "Kalispel", iso := "fla", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "knd", language := "Kannada", iso := "kan", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "knr", language := "Kanuri", iso := "knc", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "krc", language := "Karachay-Balkar", iso := "krc", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "ktz", language := "Kati (in Afghanistan)", iso := "bsh", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "kyl", language := "Kayah Li (Eastern)", iso := "eky", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "kay", language := "Kayardild", iso := "gyd", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "kaz", language := "Kazakh", iso := "kaz", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ker", language := "Kera", iso := "ker", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "khk", language := "Khakas", iso := "kjh", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kha", language := "Khalkha", iso := "khk", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kty", language := "Khanty", iso := "kca", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "krb", language := "Kiribati", iso := "gil", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "kop", language := "Komi-Permyak", iso := "koi", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kzy", language := "Komi-Zyrian", iso := "kpv", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kon", language := "Kongo", iso := "kng", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "kor", language := "Korean", iso := "kor", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kry", language := "Koryak", iso := "kpy", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kse", language := "Koyraboro Senni", iso := "ses", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kyn", language := "Koyukon", iso := "koy", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kpe", language := "Kpelle", iso := "xpe", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kfc", language := "Kriol (Fitzroy Crossing)", iso := "rop", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "knq", language := "Kriol (Ngukurr)", iso := "rop", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "klg", language := "Kulung", iso := "kle", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kuq", language := "Kumyk", iso := "kum", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "kut", language := "Kutenai", iso := "kut", value := .noAssociativePlural }
-  , { walsCode := "lah", language := "Lahu", iso := "lhu", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "lak", language := "Lak", iso := "lbe", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "lkt", language := "Lakhota", iso := "lkt", value := .noAssociativePlural }
-  , { walsCode := "lan", language := "Lango", iso := "laj", value := .noAssociativePlural }
-  , { walsCode := "lao", language := "Lao", iso := "lao", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "lav", language := "Lavukaleve", iso := "lvk", value := .noAssociativePlural }
-  , { walsCode := "lep", language := "Lepcha", iso := "lep", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "lcr", language := "Lesser Antillean French Creole", iso := "", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "lim", language := "Limbu", iso := "lif", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "lok", language := "Loko", iso := "lok", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "lma", language := "Loma", iso := "lom", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "lda", language := "Luganda", iso := "lug", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "lug", language := "Lugbara", iso := "lgg", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "luv", language := "Luvale", iso := "lue", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mag", language := "Magar", iso := "mgp", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mak", language := "Makah", iso := "myh", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mym", language := "Malayalam", iso := "mal", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mlt", language := "Maltese", iso := "mlt", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "mds", language := "Manadonese", iso := "xmm", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "mbu", language := "Manambu", iso := "mle", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mnc", language := "Manchu", iso := "mnc", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "mdk", language := "Mandinka", iso := "mnk", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mmb", language := "Mangap-Mbula", iso := "mna", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "myi", language := "Mangarrayi", iso := "mpc", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "mrg", language := "Margi", iso := "mrt", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mme", language := "Mari (Meadow)", iso := "mhr", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "mrd", language := "Marind", iso := "mrz", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "mrt", language := "Martuthunira", iso := "vma", value := .noAssociativePlural }
-  , { walsCode := "msk", language := "Masakin", iso := "jle", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "mcr", language := "Mauritian Creole", iso := "mfe", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mei", language := "Meithei", iso := "mni", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "mxc", language := "Mixtec (Chalcatongo)", iso := "mig", value := .noAssociativePlural }
-  , { walsCode := "moe", language := "Mordvin (Erzya)", iso := "myv", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "mna", language := "Muna", iso := "mnb", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "mup", language := "Mupun", iso := "sur", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "mwo", language := "Mwotlap", iso := "mlv", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "mce", language := "Mískito Coast English Creole", iso := "bzk", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "kho", language := "Nama", iso := "naq", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "nai", language := "Nanai", iso := "gld", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ndy", language := "Ndyuka", iso := "djk", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "nep", language := "Nepali", iso := "npi", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "nwd", language := "Newar (Dolakha)", iso := "new", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "new", language := "Newari (Kathmandu)", iso := "new", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ngg", language := "Ngan'gityemerri", iso := "nam", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "nga", language := "Nganasan", iso := "nio", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ngi", language := "Ngiyambaa", iso := "wyb", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "nia", language := "Nias", iso := "nia", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "niv", language := "Nivkh", iso := "niv", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "nob", language := "Nobiin", iso := "fia", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "nor", language := "Norwegian", iso := "nor", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "nug", language := "Nunggubuyu", iso := "nuy", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "nyi", language := "Nyimang", iso := "nyi", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "ond", language := "Oneida", iso := "one", value := .noAssociativePlural }
-  , { walsCode := "orc", language := "Oroch", iso := "oac", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "oss", language := "Ossetic", iso := "oss", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "otm", language := "Otomí (Mezquital)", iso := "ote", value := .noAssociativePlural }
-  , { walsCode := "plk", language := "Palikur", iso := "plu", value := .noAssociativePlural }
-  , { walsCode := "pan", language := "Panjabi", iso := "pan", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "pap", language := "Papiamentu", iso := "pap", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "pau", language := "Paumarí", iso := "pad", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "pol", language := "Polish", iso := "pol", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "pmc", language := "Pomo (Central)", iso := "poo", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "por", language := "Portuguese", iso := "por", value := .noAssociativePlural }
-  , { walsCode := "fma", language := "Pulaar", iso := "fuc", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "qim", language := "Quechua (Imbabura)", iso := "qvi", value := .noAssociativePlural }
-  , { walsCode := "rap", language := "Rapanui", iso := "rap", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .noAssociativePlural }
-  , { walsCode := "rut", language := "Rutul", iso := "rut", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "sno", language := "Saami (Northern)", iso := "sme", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "san", language := "Sango", iso := "sag", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "ses", language := "Sesotho", iso := "sot", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "sht", language := "Shatt", iso := "shj", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "rsh", language := "Shughni", iso := "sgh", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "sil", language := "Sila", iso := "dau", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "snh", language := "Sinhala", iso := "sin", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "sla", language := "Slave", iso := "den", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .noAssociativePlural }
-  , { walsCode := "sup", language := "Supyire", iso := "spp", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "swa", language := "Swahili", iso := "swh", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "tbs", language := "Tabassaran", iso := "tab", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "tkl", language := "Takelma", iso := "tkm", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "tam", language := "Tamang (Eastern)", iso := "taj", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "tar", language := "Tariana", iso := "tae", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "tmu", language := "Tat (Muslim)", iso := "ttt", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "tvo", language := "Tatar", iso := "tat", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "tlf", language := "Telefol", iso := "tlf", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "tha", language := "Thai", iso := "tha", value := .noAssociativePlural }
-  , { walsCode := "tlo", language := "Tobelo", iso := "tlb", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "tof", language := "Tofa", iso := "kim", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "tpi", language := "Tok Pisin", iso := "tpi", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "tms", language := "Tommo So", iso := "dto", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "toq", language := "Toqabaqita", iso := "mlu", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "tsz", language := "Tsez", iso := "ddo", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "tuc", language := "Tucano", iso := "tuo", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "tvl", language := "Tuvaluan", iso := "tvl", value := .uniquePeriphrasticAssociativePlural }
-  , { walsCode := "udh", language := "Udihe", iso := "ude", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "udm", language := "Udmurt", iso := "udm", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "urk", language := "Urubú-Kaapor", iso := "urb", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "uyg", language := "Uyghur", iso := "uig", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "uzb", language := "Uzbek", iso := "", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "vie", language := "Vietnamese", iso := "vie", value := .noAssociativePlural }
-  , { walsCode := "wrd", language := "Wardaman", iso := "wrr", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "wrk", language := "Warekena", iso := "gae", value := .noAssociativePlural }
-  , { walsCode := "wic", language := "Wichita", iso := "wic", value := .noAssociativePlural }
-  , { walsCode := "wch", language := "Wichí", iso := "mzh", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "yag", language := "Yagua", iso := "yad", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "yaq", language := "Yaqui", iso := "yaq", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "yid", language := "Yidiny", iso := "yii", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "yor", language := "Yoruba", iso := "yor", value := .associativeSameAsAdditivePlural }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "ypk", language := "Yup'ik (Central)", iso := "esu", value := .uniqueAffixalAssociativePlural }
-  , { walsCode := "zul", language := "Zulu", iso := "zul", value := .associativeSameAsAdditivePlural }
+  [ { walsCode := "abk", iso := "abk", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "aco", iso := "kjq", value := .noAssociativePlural }
+  , { walsCode := "adt", iso := "ady", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "afr", iso := "afr", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "agl", iso := "agx", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ain", iso := "ain", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "akn", iso := "aka", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ala", iso := "amp", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "alb", iso := "sqi", value := .noAssociativePlural }
+  , { walsCode := "alu", iso := "alr", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ame", iso := "aey", value := .noAssociativePlural }
+  , { walsCode := "amh", iso := "amh", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "apl", iso := "apy", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "apu", iso := "apu", value := .noAssociativePlural }
+  , { walsCode := "aeg", iso := "arz", value := .noAssociativePlural }
+  , { walsCode := "ana", iso := "aro", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "arp", iso := "ape", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "arm", iso := "hye", value := .noAssociativePlural }
+  , { walsCode := "asm", iso := "cns", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "awt", iso := "kmn", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "bgv", iso := "kva", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "bam", iso := "bam", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "bnd", iso := "bza", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "bnw", iso := "bwi", value := .noAssociativePlural }
+  , { walsCode := "brs", iso := "bsn", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "bae", iso := "bae", value := .noAssociativePlural }
+  , { walsCode := "bsk", iso := "bak", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "bsq", iso := "eus", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "bel", iso := "byw", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ben", iso := "ben", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "bdc", iso := "brc", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "brh", iso := "brh", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "bul", iso := "bul", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "but", iso := "bxm", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "brm", iso := "mya", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "buu", iso := "mhs", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "cnt", iso := "yue", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "chm", iso := "cji", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "cha", iso := "cha", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "chn", iso := "chx", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "chc", iso := "che", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "chk", iso := "ckt", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "chv", iso := "chv", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "cmn", iso := "com", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "cre", iso := "crk", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "cri", iso := "crh", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "dni", iso := "dni", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "drg", iso := "dar", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "des", iso := "des", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "dut", iso := "nld", value := .noAssociativePlural }
+  , { walsCode := "dyi", iso := "dbl", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "eng", iso := "eng", value := .noAssociativePlural }
+  , { walsCode := "est", iso := "ekk", value := .noAssociativePlural }
+  , { walsCode := "eve", iso := "evn", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ewe", iso := "ewe", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "fin", iso := "fin", value := .noAssociativePlural }
+  , { walsCode := "fre", iso := "fra", value := .noAssociativePlural }
+  , { walsCode := "fri", iso := "fry", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "fua", iso := "fub", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "gag", iso := "gag", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "gar", iso := "grt", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "gbb", iso := "gbp", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "geo", iso := "kat", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "ger", iso := "deu", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "goo", iso := "gni", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "grk", iso := "ell", value := .noAssociativePlural }
+  , { walsCode := "grw", iso := "kal", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "gua", iso := "gug", value := .noAssociativePlural }
+  , { walsCode := "gud", iso := "gde", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "gji", iso := "gue", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "hau", iso := "hau", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "haw", iso := "haw", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "hwc", iso := "hwc", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "hay", iso := "vay", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "heb", iso := "heb", value := .noAssociativePlural }
+  , { walsCode := "hin", iso := "hin", value := .noAssociativePlural }
+  , { walsCode := "hix", iso := "hix", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "hun", iso := "hun", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "ice", iso := "isl", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "ifu", iso := "ifb", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "ik", iso := "ikx", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "ind", iso := "ind", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "iir", iso := "pmy", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "ing", iso := "inh", value := .noAssociativePlural }
+  , { walsCode := "iri", iso := "gle", value := .noAssociativePlural }
+  , { walsCode := "ita", iso := "ita", value := .noAssociativePlural }
+  , { walsCode := "jcr", iso := "jam", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "jpn", iso := "jpn", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kab", iso := "kbd", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kls", iso := "fla", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "knd", iso := "kan", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "knr", iso := "knc", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "krc", iso := "krc", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "ktz", iso := "bsh", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "kyl", iso := "eky", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "kay", iso := "gyd", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "kaz", iso := "kaz", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ker", iso := "ker", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "khk", iso := "kjh", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kha", iso := "khk", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kty", iso := "kca", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "krb", iso := "gil", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "kop", iso := "koi", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kzy", iso := "kpv", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kon", iso := "kng", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "kor", iso := "kor", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kry", iso := "kpy", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kse", iso := "ses", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kyn", iso := "koy", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kpe", iso := "xpe", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kfc", iso := "rop", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "knq", iso := "rop", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "kro", iso := "kgo", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "klg", iso := "kle", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kuq", iso := "kum", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "kut", iso := "kut", value := .noAssociativePlural }
+  , { walsCode := "lah", iso := "lhu", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "lak", iso := "lbe", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "lkt", iso := "lkt", value := .noAssociativePlural }
+  , { walsCode := "lan", iso := "laj", value := .noAssociativePlural }
+  , { walsCode := "lao", iso := "lao", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "lav", iso := "lvk", value := .noAssociativePlural }
+  , { walsCode := "lep", iso := "lep", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "lcr", iso := "", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "lez", iso := "lez", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "lim", iso := "lif", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "lok", iso := "lok", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "lma", iso := "lom", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "lda", iso := "lug", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "lug", iso := "lgg", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "luv", iso := "lue", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mag", iso := "mgp", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mak", iso := "myh", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mal", iso := "plt", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mym", iso := "mal", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mlt", iso := "mlt", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "mds", iso := "xmm", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "mbu", iso := "mle", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mnc", iso := "mnc", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mnd", iso := "cmn", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "mdk", iso := "mnk", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mmb", iso := "mna", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "myi", iso := "mpc", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "mao", iso := "mri", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "mrg", iso := "mrt", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mme", iso := "mhr", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "mrd", iso := "mrz", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "mrt", iso := "vma", value := .noAssociativePlural }
+  , { walsCode := "msk", iso := "jle", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "mcr", iso := "mfe", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mei", iso := "mni", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "mxc", iso := "mig", value := .noAssociativePlural }
+  , { walsCode := "moe", iso := "myv", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "mna", iso := "mnb", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "mup", iso := "sur", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "mwo", iso := "mlv", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "mce", iso := "bzk", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "kho", iso := "naq", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "nai", iso := "gld", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ndy", iso := "djk", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "nep", iso := "npi", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "nwd", iso := "new", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "new", iso := "new", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ngg", iso := "nam", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "nga", iso := "nio", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ngi", iso := "wyb", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "nia", iso := "nia", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "niv", iso := "niv", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "nob", iso := "fia", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "nor", iso := "nor", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "nug", iso := "nuy", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "nyi", iso := "nyi", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "ond", iso := "one", value := .noAssociativePlural }
+  , { walsCode := "orc", iso := "oac", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "oss", iso := "oss", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "otm", iso := "ote", value := .noAssociativePlural }
+  , { walsCode := "plk", iso := "plu", value := .noAssociativePlural }
+  , { walsCode := "pan", iso := "pan", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "pap", iso := "pap", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "pau", iso := "pad", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "prs", iso := "pes", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "pol", iso := "pol", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "pmc", iso := "poo", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "por", iso := "por", value := .noAssociativePlural }
+  , { walsCode := "fma", iso := "fuc", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "qim", iso := "qvi", value := .noAssociativePlural }
+  , { walsCode := "rap", iso := "rap", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "rus", iso := "rus", value := .noAssociativePlural }
+  , { walsCode := "rut", iso := "rut", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "sno", iso := "sme", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "san", iso := "sag", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "ses", iso := "sot", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "sht", iso := "shj", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "rsh", iso := "sgh", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "sil", iso := "dau", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "snh", iso := "sin", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "sla", iso := "den", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "spa", iso := "spa", value := .noAssociativePlural }
+  , { walsCode := "sup", iso := "spp", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "swa", iso := "swh", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "tbs", iso := "tab", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "tag", iso := "tgl", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "tkl", iso := "tkm", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "tam", iso := "taj", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "tar", iso := "tae", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "tmu", iso := "ttt", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "tvo", iso := "tat", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "tlf", iso := "tlf", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "tha", iso := "tha", value := .noAssociativePlural }
+  , { walsCode := "tlo", iso := "tlb", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "tof", iso := "kim", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "tpi", iso := "tpi", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "tms", iso := "dto", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "toq", iso := "mlu", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "tsz", iso := "ddo", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "tuc", iso := "tuo", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "tuk", iso := "", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "tur", iso := "tur", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "tvl", iso := "tvl", value := .uniquePeriphrasticAssociativePlural }
+  , { walsCode := "udh", iso := "ude", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "udm", iso := "udm", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "urk", iso := "urb", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "uyg", iso := "uig", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "uzb", iso := "", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "vie", iso := "vie", value := .noAssociativePlural }
+  , { walsCode := "wrd", iso := "wrr", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "wrk", iso := "gae", value := .noAssociativePlural }
+  , { walsCode := "wic", iso := "wic", value := .noAssociativePlural }
+  , { walsCode := "wch", iso := "mzh", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "yag", iso := "yad", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "yaq", iso := "yaq", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "yid", iso := "yii", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "yor", iso := "yor", value := .associativeSameAsAdditivePlural }
+  , { walsCode := "yko", iso := "yux", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "ypk", iso := "esu", value := .uniqueAffixalAssociativePlural }
+  , { walsCode := "zul", iso := "zul", value := .associativeSameAsAdditivePlural }
   ]
-
--- Count verification
-theorem total_count : allData.length = 236 := by native_decide
-
-theorem count_associativeSameAsAdditivePlural :
-    (allData.filter (·.value == .associativeSameAsAdditivePlural)).length = 104 := by native_decide
-theorem count_uniqueAffixalAssociativePlural :
-    (allData.filter (·.value == .uniqueAffixalAssociativePlural)).length = 48 := by native_decide
-theorem count_uniquePeriphrasticAssociativePlural :
-    (allData.filter (·.value == .uniquePeriphrasticAssociativePlural)).length = 47 := by native_decide
-theorem count_noAssociativePlural :
-    (allData.filter (·.value == .noAssociativePlural)).length = 37 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

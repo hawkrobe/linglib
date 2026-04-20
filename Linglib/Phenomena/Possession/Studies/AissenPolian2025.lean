@@ -87,10 +87,13 @@ def NominalSize.highestProjection : NominalSize → NominalPosition
 
 /-- Specific nominals project to DP; non-specific nominals do not.
     @cite{aissen-polian-2025} §3.2. -/
-def NominalSize.isSpecific : NominalSize → Bool
-  | .dp    => true
-  | .possP => false
-  | .nP    => false
+def NominalSize.IsSpecific : NominalSize → Prop
+  | .dp    => True
+  | .possP => False
+  | .nP    => False
+
+instance : DecidablePred NominalSize.IsSpecific := fun n => by
+  cases n <;> unfold NominalSize.IsSpecific <;> infer_instance
 
 -- ============================================================================
 -- § 2: Argument Structure Classes (Theoretical Classification)
@@ -114,18 +117,21 @@ inductive ArgumentStructureClass where
     position that could host an intervening DP).
     @cite{aissen-polian-2025} (9): transitives and unergatives have vP;
     unaccusatives do not. -/
-def ArgumentStructureClass.hasVP : ArgumentStructureClass → Bool
-  | .unaccusative => false
-  | .transitive   => true
-  | .unergative   => true
+def ArgumentStructureClass.HasVP : ArgumentStructureClass → Prop
+  | .unaccusative => False
+  | .transitive   => True
+  | .unergative   => True
+
+instance : DecidablePred ArgumentStructureClass.HasVP := fun c => by
+  cases c <;> unfold ArgumentStructureClass.HasVP <;> infer_instance
 
 /-- Unaccusatives lack a vP layer. -/
-theorem unaccusative_no_vP : ArgumentStructureClass.unaccusative.hasVP = false := rfl
+theorem unaccusative_no_vP : ¬ ArgumentStructureClass.unaccusative.HasVP := id
 
 /-- Transitives and unergatives both project vP. -/
 theorem vp_distribution :
-    ArgumentStructureClass.transitive.hasVP = true ∧
-    ArgumentStructureClass.unergative.hasVP = true := ⟨rfl, rfl⟩
+    ArgumentStructureClass.transitive.HasVP ∧
+    ArgumentStructureClass.unergative.HasVP := ⟨trivial, trivial⟩
 
 -- ============================================================================
 -- § 3: Probe Types and Selective Opacity
@@ -152,21 +158,26 @@ inductive ProbeType where
     depends on the probe type, not on nominal size.
 
     `[wh]_{C°} -|| N` (A&P's (33)) -/
-def selectivelyOpaque (probe : ProbeType) : Bool :=
-  match probe with
-  | .whProbe => true   -- nominals always opaque to wh-probes
-  | .dProbe  => false  -- nominals transparent to D-probes
+def SelectivelyOpaque : ProbeType → Prop
+  | .whProbe => True   -- nominals always opaque to wh-probes
+  | .dProbe  => False  -- nominals transparent to D-probes
 
-theorem wh_probes_blocked : selectivelyOpaque .whProbe = true := rfl
-theorem d_probes_pass : selectivelyOpaque .dProbe = false := rfl
+instance : DecidablePred SelectivelyOpaque := fun p => by
+  cases p <;> unfold SelectivelyOpaque <;> infer_instance
+
+theorem wh_probes_blocked : SelectivelyOpaque .whProbe := trivial
+theorem d_probes_pass : ¬ SelectivelyOpaque .dProbe := id
 
 /-- Ā-subextraction from within any nominal is impossible. Derived
     from selective opacity: wh-probes cannot see into nominals. -/
-def canĀSubextract (_size : NominalSize) : Bool :=
-  !selectivelyOpaque .whProbe
+def CanĀSubextract (_size : NominalSize) : Prop :=
+  ¬ SelectivelyOpaque .whProbe
+
+instance : DecidablePred CanĀSubextract := fun s => by
+  unfold CanĀSubextract; infer_instance
 
 theorem subextraction_impossible (size : NominalSize) :
-    canĀSubextract size = false := rfl
+    ¬ CanĀSubextract size := fun h => h trivial
 
 -- ────────────────────────────────────────────────────────────────
 -- ProbeType ↔ ProbeProfile bridge
@@ -219,13 +230,16 @@ theorem probe_type_keine_consistency :
     nominals (selectivelyOpaque .dProbe = false), but D° intervenes
     when present.
 
-    Derived from `isSpecific`: D-layer shielding ↔ specificity. -/
-def dLayerShields (size : NominalSize) : Bool :=
-  size.isSpecific
+    Derived from `IsSpecific`: D-layer shielding ↔ specificity. -/
+def DLayerShields (size : NominalSize) : Prop :=
+  size.IsSpecific
 
-theorem dp_shields : dLayerShields .dp = true := rfl
-theorem possP_no_shield : dLayerShields .possP = false := rfl
-theorem nP_no_shield : dLayerShields .nP = false := rfl
+instance : DecidablePred DLayerShields := fun s => by
+  unfold DLayerShields; infer_instance
+
+theorem dp_shields : DLayerShields .dp := trivial
+theorem possP_no_shield : ¬ DLayerShields .possP := id
+theorem nP_no_shield : ¬ DLayerShields .nP := id
 
 -- ============================================================================
 -- § 5: Extraction Modes
@@ -255,39 +269,47 @@ inductive ExtractionMode where
       opacity doesn't apply), but D° intervenes in specific DPs.
 
     @cite{aissen-polian-2025} §3.2. -/
-def extractionAvailable (mode : ExtractionMode) (size : NominalSize) : Bool :=
+def ExtractionAvailable (mode : ExtractionMode) (size : NominalSize) : Prop :=
   match mode with
-  | .piedPiping => size.isSpecific       -- only DPs can undergo wh-movement
-  | .stranding  => !dLayerShields size   -- no D-layer → possessor reachable
+  | .piedPiping => size.IsSpecific      -- only DPs can undergo wh-movement
+  | .stranding  => ¬ DLayerShields size  -- no D-layer → possessor reachable
+
+instance : ∀ m s, Decidable (ExtractionAvailable m s) := fun m s => by
+  cases m <;> unfold ExtractionAvailable <;> infer_instance
 
 /-- Pied-piping requires specificity (D projection). -/
 theorem piedPiping_requires_specific :
-    extractionAvailable .piedPiping .dp = true ∧
-    extractionAvailable .piedPiping .possP = false ∧
-    extractionAvailable .piedPiping .nP = false := ⟨rfl, rfl, rfl⟩
+    ExtractionAvailable .piedPiping .dp ∧
+    ¬ ExtractionAvailable .piedPiping .possP ∧
+    ¬ ExtractionAvailable .piedPiping .nP := ⟨trivial, id, id⟩
 
 /-- Stranding requires non-specificity (no D-layer shielding). -/
 theorem stranding_requires_nonspecific :
-    extractionAvailable .stranding .dp = false ∧
-    extractionAvailable .stranding .possP = true ∧
-    extractionAvailable .stranding .nP = true := ⟨rfl, rfl, rfl⟩
+    ¬ ExtractionAvailable .stranding .dp ∧
+    ExtractionAvailable .stranding .possP ∧
+    ExtractionAvailable .stranding .nP :=
+  ⟨fun h => h trivial, id, id⟩
 
 /-- Every nominal size admits at least one extraction mode.
     Possessor extraction is never fully blocked — the available
     strategy depends on specificity. -/
 theorem extraction_always_possible (size : NominalSize) :
-    extractionAvailable .piedPiping size = true ∨
-    extractionAvailable .stranding size = true := by
-  cases size <;> simp [extractionAvailable, dLayerShields]
+    ExtractionAvailable .piedPiping size ∨
+    ExtractionAvailable .stranding size := by
+  cases size
+  · exact Or.inl trivial
+  · exact Or.inr id
+  · exact Or.inr id
 
 /-- **Complementary distribution**: pied-piping and stranding are
     mutually exclusive — exactly one is available for each nominal size.
     Specific nominals admit only pied-piping; non-specific nominals
-    admit only stranding. Both reduce to `isSpecific`. -/
+    admit only stranding. Both reduce to `IsSpecific`. -/
 theorem extraction_complementary (size : NominalSize) :
-    extractionAvailable .piedPiping size =
-    !extractionAvailable .stranding size := by
-  cases size <;> simp [extractionAvailable, dLayerShields]
+    ExtractionAvailable .piedPiping size ↔
+    ¬ ExtractionAvailable .stranding size := by
+  cases size <;>
+    simp [ExtractionAvailable, DLayerShields, NominalSize.IsSpecific]
 
 -- ============================================================================
 -- § 6: External Possession (Derived from Selective Opacity)
@@ -305,9 +327,10 @@ theorem extraction_complementary (size : NominalSize) :
     of Ā-movement. This is A&P's claim (3): "An extracted possessor
     in Tseltalan is always an external possessor." -/
 theorem extracted_always_external :
-    canĀSubextract .dp = false ∧
-    canĀSubextract .possP = false ∧
-    canĀSubextract .nP = false := ⟨rfl, rfl, rfl⟩
+    ¬ CanĀSubextract .dp ∧
+    ¬ CanĀSubextract .possP ∧
+    ¬ CanĀSubextract .nP :=
+  ⟨fun h => h trivial, fun h => h trivial, fun h => h trivial⟩
 
 -- ============================================================================
 -- § 7: Bridge to NominalStructure
@@ -355,12 +378,14 @@ theorem highest_agrees_alienable :
     at different levels — D-layer shielding targets A-movement (D-probes),
     the Specificity Condition targets operator-variable binding. -/
 theorem specificity_convergence_on_stranding :
-    extractionAvailable .stranding .dp = false ∧
-    Core.SpecificityCondition.blocked .whTrace .definite = true := ⟨rfl, rfl⟩
+    ¬ ExtractionAvailable .stranding .dp ∧
+    Core.SpecificityCondition.blocked .whTrace .definite :=
+  ⟨fun h => h trivial, rfl⟩
 
 theorem specificity_divergence_on_piedpiping :
-    extractionAvailable .piedPiping .dp = true ∧
-    Core.SpecificityCondition.blocked .whTrace .definite = true := ⟨rfl, rfl⟩
+    ExtractionAvailable .piedPiping .dp ∧
+    Core.SpecificityCondition.blocked .whTrace .definite :=
+  ⟨trivial, rfl⟩
 
 -- ============================================================================
 -- § 9: Categorical Judgment (ψ-Subject)
@@ -386,10 +411,10 @@ theorem ψSubject_is_absolutive :
     ψSubjectMarkerSet = .setB := rfl
 
 theorem categorical_has_ψSubject :
-    JudgmentType.categorical.hasψSubject = true := rfl
+    JudgmentType.categorical.HasψSubject := rfl
 
 theorem thetic_no_ψSubject :
-    JudgmentType.thetic.hasψSubject = false := rfl
+    ¬ JudgmentType.thetic.HasψSubject := by decide
 
 /-- A ψ-subject must be specific (= project to DP) to raise to Spec,TP.
     @cite{aissen-polian-2025} §5.1, p. 85: "the subject of a clause
@@ -400,14 +425,17 @@ theorem thetic_no_ψSubject :
     T°'s domain is non-specific (PossP/nP), it is not a DP, and T°'s
     probe passes over it. Only a specific DP satisfies the [EPP:D]
     requirement and raises to Spec,TP as ψ-subject. -/
-def canBeψSubject (size : NominalSize) : Bool :=
-  size.isSpecific
+def CanBeψSubject (size : NominalSize) : Prop :=
+  size.IsSpecific
 
-theorem specific_can_be_ψSubject : canBeψSubject .dp = true := rfl
+instance : DecidablePred CanBeψSubject := fun s => by
+  unfold CanBeψSubject; infer_instance
+
+theorem specific_can_be_ψSubject : CanBeψSubject .dp := trivial
 theorem nonspecific_cannot_be_ψSubject_possP :
-    canBeψSubject .possP = false := rfl
+    ¬ CanBeψSubject .possP := id
 theorem nonspecific_cannot_be_ψSubject_nP :
-    canBeψSubject .nP = false := rfl
+    ¬ CanBeψSubject .nP := id
 
 -- ============================================================================
 -- § 10: ψ-Subject Constructions
@@ -444,17 +472,20 @@ def ψConstruction.clauseType : ψConstruction → ArgumentStructureClass
 
     In lexical unaccusatives (§5.4, (62a/62b)), the entire possessive
     phrase IS the internal argument and can be pied-piped. -/
-def ψConstruction.piedPipingPossible : ψConstruction → Bool
-  | .predicativePossession  => false  -- (48b): *[Mach'u x-chitom] oy t?
-  | .experientialCollocation => false  -- (55b): *[Much'u s-jol] kap-em t?
-  | .lexicalUnaccusative    => true   -- (62a): [Mach'a s-tak'in] ch'ay t?
+def ψConstruction.PiedPipingPossible : ψConstruction → Prop
+  | .predicativePossession  => False  -- (48b): *[Mach'u x-chitom] oy t?
+  | .experientialCollocation => False  -- (55b): *[Much'u s-jol] kap-em t?
+  | .lexicalUnaccusative    => True   -- (62a): [Mach'a s-tak'in] ch'ay t?
+
+instance : DecidablePred ψConstruction.PiedPipingPossible := fun c => by
+  cases c <;> unfold ψConstruction.PiedPipingPossible <;> infer_instance
 
 theorem pred_poss_no_piedpiping :
-    ψConstruction.predicativePossession.piedPipingPossible = false := rfl
+    ¬ ψConstruction.predicativePossession.PiedPipingPossible := id
 theorem exp_coll_no_piedpiping :
-    ψConstruction.experientialCollocation.piedPipingPossible = false := rfl
+    ¬ ψConstruction.experientialCollocation.PiedPipingPossible := id
 theorem lex_unacc_piedpiping_ok :
-    ψConstruction.lexicalUnaccusative.piedPipingPossible = true := rfl
+    ψConstruction.lexicalUnaccusative.PiedPipingPossible := trivial
 
 /-- All ψ-subject constructions are structurally unaccusative. -/
 theorem ψ_constructions_unaccusative (c : ψConstruction) :
@@ -462,7 +493,7 @@ theorem ψ_constructions_unaccusative (c : ψConstruction) :
 
 /-- All ψ-subject constructions lack a vP layer. -/
 theorem ψ_constructions_no_vP (c : ψConstruction) :
-    c.clauseType.hasVP = false := by cases c <;> rfl
+    ¬ c.clauseType.HasVP := by cases c <;> exact id
 
 /-- The grammatical function of the ψ-subject in each construction.
     All three involve an unaccusative S_O that raises to Spec,TP.
@@ -498,25 +529,31 @@ inductive DProbeHead where
 /-- Does a clause type have an A-positioned DP that could intervene
     between a given probe and a lower possessor?
 
-    Derived from `ArgumentStructureClass.hasVP` for T° probes: if there is a vP
+    Derived from `ArgumentStructureClass.HasVP` for T° probes: if there is a vP
     layer, its specifier hosts an A-positioned DP (agent or S_A).
     For Appl° probes, intervention occurs when Spec,ApplP is filled
     by a thematic applied argument (goal, recipient, etc.). -/
-def hasIntervener (head : DProbeHead) (ct : ArgumentStructureClass)
-    (thematicAppl : Bool) : Bool :=
+def HasIntervener (head : DProbeHead) (ct : ArgumentStructureClass)
+    (thematicAppl : Bool) : Prop :=
   match head with
-  | .t    => ct.hasVP
-  | .appl => thematicAppl
+  | .t    => ct.HasVP
+  | .appl => thematicAppl = true
+
+instance : ∀ h c ta, Decidable (HasIntervener h c ta) := fun h c ta => by
+  cases h <;> unfold HasIntervener <;> infer_instance
 
 /-- Possessor stranding is blocked when an A-positioned DP intervenes
     between the [EPP:D] probe and the possessor.
     Pied-piping is unaffected: the whole DP moves to Spec,CP via
     wh-probe, bypassing A-positions entirely. -/
-def interventionBlocks (head : DProbeHead) (ct : ArgumentStructureClass)
-    (mode : ExtractionMode) (thematicAppl : Bool := false) : Bool :=
+def InterventionBlocks (head : DProbeHead) (ct : ArgumentStructureClass)
+    (mode : ExtractionMode) (thematicAppl : Bool := false) : Prop :=
   match mode with
-  | .stranding  => hasIntervener head ct thematicAppl
-  | .piedPiping => false
+  | .stranding  => HasIntervener head ct thematicAppl
+  | .piedPiping => False
+
+instance : ∀ h c m ta, Decidable (InterventionBlocks h c m ta) := fun h c m ta => by
+  cases m <;> unfold InterventionBlocks <;> infer_instance
 
 /-- An intervention datum for Table 4. -/
 structure InterventionDatum where
@@ -554,29 +591,29 @@ def table4 : List InterventionDatum :=
   , ⟨.appl, .transitive, .piedPiping, true, false⟩
   , ⟨.appl, .transitive, .stranding,  true, true⟩ ]
 
-/-- Table 4 is derivable: every cell matches `interventionBlocks`. -/
+/-- Table 4 is derivable: every cell matches `InterventionBlocks`. -/
 theorem table4_derived :
     table4.all (λ d => d.blocked ==
-      interventionBlocks d.probe d.clauseType d.mode d.thematicAppl)
+      decide (InterventionBlocks d.probe d.clauseType d.mode d.thematicAppl))
     = true := by decide
 
 /-- Pied-piping is never blocked by intervention (Ā-movement
     bypasses A-positions). -/
 theorem piedPiping_never_blocked (head : DProbeHead) (ct : ArgumentStructureClass)
     (ta : Bool) :
-    interventionBlocks head ct .piedPiping ta = false := by
-  cases head <;> rfl
+    ¬ InterventionBlocks head ct .piedPiping ta := id
 
 /-- For T° probes, stranding is blocked iff there is a vP layer. -/
 theorem t_stranding_blocked_iff_vP (ct : ArgumentStructureClass) :
-    interventionBlocks .t ct .stranding = ct.hasVP := by
-  cases ct <;> rfl
+    InterventionBlocks .t ct .stranding ↔ ct.HasVP := by
+  cases ct <;>
+    simp [InterventionBlocks, HasIntervener, ArgumentStructureClass.HasVP]
 
 /-- For Appl° probes, stranding is blocked iff Spec,ApplP is filled
     by a thematic applied argument. -/
 theorem appl_stranding_blocked_iff_thematic (ct : ArgumentStructureClass) (ta : Bool) :
-    interventionBlocks .appl ct .stranding ta = ta := by
-  cases ta <;> rfl
+    InterventionBlocks .appl ct .stranding ta ↔ ta = true := by
+  cases ta <;> simp [InterventionBlocks, HasIntervener]
 
 -- ============================================================================
 -- § 12: Specifier Directionality
@@ -605,45 +642,44 @@ def tseltalanApplSpec : SpecDirection := .right
 /-- Combining extraction mode availability (§4) with intervention
     effects (§10): is possessor extraction ultimately possible for
     a given nominal size, clause type, and probe? -/
-def canExtractPossessor (size : NominalSize) (head : DProbeHead)
+def CanExtractPossessor (size : NominalSize) (head : DProbeHead)
     (ct : ArgumentStructureClass) (mode : ExtractionMode)
-    (thematicAppl : Bool := false) : Bool :=
-  extractionAvailable mode size &&
-    !interventionBlocks head ct mode thematicAppl
+    (thematicAppl : Bool := false) : Prop :=
+  ExtractionAvailable mode size ∧
+    ¬ InterventionBlocks head ct mode thematicAppl
+
+instance : ∀ s h c m ta, Decidable (CanExtractPossessor s h c m ta) :=
+  fun _ _ _ _ _ => by unfold CanExtractPossessor; infer_instance
 
 /-- In unaccusative clauses via T°, both modes are available. -/
 theorem unaccusative_both_modes :
-    canExtractPossessor .dp .t .unaccusative .piedPiping = true ∧
-    canExtractPossessor .possP .t .unaccusative .stranding = true ∧
-    canExtractPossessor .nP .t .unaccusative .stranding = true :=
-  ⟨rfl, rfl, rfl⟩
+    CanExtractPossessor .dp .t .unaccusative .piedPiping ∧
+    CanExtractPossessor .possP .t .unaccusative .stranding ∧
+    CanExtractPossessor .nP .t .unaccusative .stranding := by decide
 
 /-- In transitive clauses via T°, only pied-piping works. -/
 theorem transitive_only_piedpiping :
-    canExtractPossessor .dp .t .transitive .piedPiping = true ∧
-    canExtractPossessor .possP .t .transitive .stranding = false ∧
-    canExtractPossessor .nP .t .transitive .stranding = false :=
-  ⟨rfl, rfl, rfl⟩
+    CanExtractPossessor .dp .t .transitive .piedPiping ∧
+    ¬ CanExtractPossessor .possP .t .transitive .stranding ∧
+    ¬ CanExtractPossessor .nP .t .transitive .stranding := by decide
 
 /-- Via Appl° raising applicative (no thematic arg), stranding works. -/
 theorem raising_appl_stranding :
-    canExtractPossessor .possP .appl .transitive .stranding false = true ∧
-    canExtractPossessor .nP .appl .transitive .stranding false = true :=
-  ⟨rfl, rfl⟩
+    CanExtractPossessor .possP .appl .transitive .stranding false ∧
+    CanExtractPossessor .nP .appl .transitive .stranding false := by decide
 
 /-- Via Appl° thematic applicative (Goal fills Spec,ApplP), blocked. -/
 theorem thematic_appl_blocked :
-    canExtractPossessor .possP .appl .transitive .stranding true = false ∧
-    canExtractPossessor .nP .appl .transitive .stranding true = false :=
-  ⟨rfl, rfl⟩
+    ¬ CanExtractPossessor .possP .appl .transitive .stranding true ∧
+    ¬ CanExtractPossessor .nP .appl .transitive .stranding true := by decide
 
 /-- ψ-subject constructions (all unaccusative) permit both extraction
     modes via T°. -/
 theorem ψ_constructions_permit_both_modes (c : ψConstruction) :
-    canExtractPossessor .dp .t c.clauseType .piedPiping = true ∧
-    canExtractPossessor .possP .t c.clauseType .stranding = true ∧
-    canExtractPossessor .nP .t c.clauseType .stranding = true := by
-  cases c <;> exact ⟨rfl, rfl, rfl⟩
+    CanExtractPossessor .dp .t c.clauseType .piedPiping ∧
+    CanExtractPossessor .possP .t c.clauseType .stranding ∧
+    CanExtractPossessor .nP .t c.clauseType .stranding := by
+  cases c <;> decide
 
 -- ============================================================================
 -- § 14: Table 2 — Psr-S_O vs Psr-O Extraction Asymmetry

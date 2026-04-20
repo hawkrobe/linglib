@@ -1,5 +1,5 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.CausalBayesNet
 import Linglib.Theories.Semantics.Conditionals.Assertability
 import Linglib.Theories.Semantics.Causation.Sufficiency

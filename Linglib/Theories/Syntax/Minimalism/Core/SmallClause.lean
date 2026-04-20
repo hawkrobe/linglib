@@ -93,10 +93,11 @@ def SCPredCategory.constructionName : SCPredCategory → String
 
     High applicatives relate the applied argument to the event, not
     to the theme — they are NOT affixal particles. -/
-def ApplType.isAffixalParticle : ApplType → Bool
-  | .lowRecipient => true   -- Low Appl = P head (transfer/possession SC)
-  | .lowSource    => true   -- Low Appl = P head (source/possession SC)
-  | .high         => false  -- High Appl = event-level, not SC predication
+def ApplType.IsAffixalParticle (a : ApplType) : Prop :=
+  a = .lowRecipient ∨ a = .lowSource
+
+instance : DecidablePred ApplType.IsAffixalParticle :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Map low applicatives to SC predicate category P.
     Low Appl mediates the same structural relation as a particle:
@@ -107,13 +108,13 @@ def ApplType.toSCPredCategory : ApplType → Option SCPredCategory
   | .high         => none
 
 /-- Low recipient applicatives are affixal particles. -/
-theorem low_recipient_appl_is_particle : ApplType.isAffixalParticle .lowRecipient = true := rfl
+theorem low_recipient_appl_is_particle : ApplType.IsAffixalParticle .lowRecipient := by decide
 
 /-- Low source applicatives are affixal particles. -/
-theorem low_source_appl_is_particle : ApplType.isAffixalParticle .lowSource = true := rfl
+theorem low_source_appl_is_particle : ApplType.IsAffixalParticle .lowSource := by decide
 
 /-- High applicatives are NOT affixal particles. -/
-theorem high_appl_not_particle : ApplType.isAffixalParticle .high = false := rfl
+theorem high_appl_not_particle : ¬ ApplType.IsAffixalParticle .high := by decide
 
 /-- Low recipient applicatives map to SC predicate category P. -/
 theorem low_recipient_appl_is_P : ApplType.toSCPredCategory .lowRecipient = some .P := rfl

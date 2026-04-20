@@ -197,15 +197,18 @@ inductive GTDominance where
     whether the target is valued or unvalued, the output is the same.
     This property is what @cite{rolle-2018} calls **dominance as
     transparadigmatic uniformity**. -/
-def GTDominance.isDominant : GTDominance → Bool
-  | .replaciveDominant   => true
-  | .subtractiveDominant => true
-  | .recessive           => false
-  | .neutral             => false
+def GTDominance.IsDominant (d : GTDominance) : Prop :=
+  d = .replaciveDominant ∨ d = .subtractiveDominant
+
+instance : DecidablePred GTDominance.IsDominant :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Non-dominant GT preserves the lexical tonal contrast: the output
     differs depending on whether the target is valued or unvalued. -/
-def GTDominance.isNonDominant (d : GTDominance) : Bool := !d.isDominant
+def GTDominance.IsNonDominant (d : GTDominance) : Prop := ¬ d.IsDominant
+
+instance : DecidablePred GTDominance.IsNonDominant :=
+  fun _ => inferInstanceAs (Decidable (¬ _))
 
 open Core.Prosody (ProsodicDominance)
 
@@ -219,8 +222,9 @@ def GTDominance.toProsodicDominance : GTDominance → ProsodicDominance
 
 /-- The collapse preserves the dominant/non-dominant boundary. -/
 theorem GTDominance.toProsodicDominance_preserves_isDominant (d : GTDominance) :
-    d.toProsodicDominance.isDominant = d.isDominant := by
-  cases d <;> rfl
+    d.toProsodicDominance.IsDominant ↔ d.IsDominant := by
+  cases d <;> simp [ProsodicDominance.IsDominant, GTDominance.IsDominant,
+                    GTDominance.toProsodicDominance]
 
 -- ============================================================================
 -- § 5: GT Level (@cite{hyman-etal-2021})
@@ -435,19 +439,19 @@ theorem tonalOverwrite_nil {S : Type} [DecidableEq S] [BEq S] [Repr S]
 
 /-- Replacive-dominant GT is dominant (sanity check on the classification). -/
 theorem replaciveDominant_isDominant :
-    GTDominance.isDominant .replaciveDominant = true := rfl
+    GTDominance.IsDominant .replaciveDominant := by decide
 
 /-- Subtractive-dominant GT is dominant. -/
 theorem subtractiveDominant_isDominant :
-    GTDominance.isDominant .subtractiveDominant = true := rfl
+    GTDominance.IsDominant .subtractiveDominant := by decide
 
 /-- Recessive GT is non-dominant. -/
 theorem recessive_isNonDominant :
-    GTDominance.isNonDominant .recessive = true := rfl
+    GTDominance.IsNonDominant .recessive := by decide
 
 /-- Neutral GT is non-dominant. -/
 theorem neutral_isNonDominant :
-    GTDominance.isNonDominant .neutral = true := rfl
+    GTDominance.IsNonDominant .neutral := by decide
 
 /-- The dominant GT asymmetry holds for a typical case: dependent trigger
     targeting a lexical head. -/

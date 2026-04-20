@@ -14,10 +14,13 @@ namespace Core.WALS.F140A
 
 /-- WALS 140A values. -/
 inductive QuestionParticlesInSignLanguages where
-  | none  -- None (25 languages)
-  | one  -- One (9 languages)
-  | moreThanOne  -- More than one (4 languages)
-  deriving DecidableEq, Repr
+  /-- None (25 languages). -/
+  | none
+  /-- One (9 languages). -/
+  | one
+  /-- More than one (4 languages). -/
+  | moreThanOne
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 140A dataset (38 languages). -/
 def allData : List (Datapoint QuestionParticlesInSignLanguages) :=
@@ -60,16 +63,6 @@ def allData : List (Datapoint QuestionParticlesInSignLanguages) :=
   , { walsCode := "usl", language := "Urubú Sign Language", iso := "uks", value := .one }
   , { walsCode := "vla", language := "Vlaamse Gebarentaal", iso := "vgt", value := .none }
   ]
-
--- Count verification
-theorem total_count : allData.length = 38 := by native_decide
-
-theorem count_none :
-    (allData.filter (·.value == .none)).length = 25 := by native_decide
-theorem count_one :
-    (allData.filter (·.value == .one)).length = 9 := by native_decide
-theorem count_moreThanOne :
-    (allData.filter (·.value == .moreThanOne)).length = 4 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

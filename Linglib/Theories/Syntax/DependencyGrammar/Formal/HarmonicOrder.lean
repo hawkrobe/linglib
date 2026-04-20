@@ -52,20 +52,43 @@ def chainTDL : List Nat → Nat
   | a :: b :: rest => (max a b - min a b) + chainTDL (b :: rest)
 
 /-- A list is monotone ascending. -/
-def isAscending : List Nat → Bool
-  | [] => true
-  | [_] => true
-  | a :: b :: rest => a ≤ b && isAscending (b :: rest)
+def isAscending : List Nat → Prop
+  | [] => True
+  | [_] => True
+  | a :: b :: rest => a ≤ b ∧ isAscending (b :: rest)
+
+instance : DecidablePred isAscending := fun l => by
+  induction l with
+  | nil => unfold isAscending; infer_instance
+  | cons a rest ih =>
+    cases rest with
+    | nil => unfold isAscending; infer_instance
+    | cons b rest' =>
+      unfold isAscending
+      exact @instDecidableAnd _ _ (Nat.decLe a b) ih
 
 /-- A list is monotone descending. -/
-def isDescending : List Nat → Bool
-  | [] => true
-  | [_] => true
-  | a :: b :: rest => a ≥ b && isDescending (b :: rest)
+def isDescending : List Nat → Prop
+  | [] => True
+  | [_] => True
+  | a :: b :: rest => a ≥ b ∧ isDescending (b :: rest)
+
+instance : DecidablePred isDescending := fun l => by
+  induction l with
+  | nil => unfold isDescending; infer_instance
+  | cons a rest ih =>
+    cases rest with
+    | nil => unfold isDescending; infer_instance
+    | cons b rest' =>
+      unfold isDescending
+      exact @instDecidableAnd _ _ (Nat.decLe b a) ih
 
 /-- A list is monotone if it is all ascending or all descending. -/
-def isMonotone (l : List Nat) : Bool :=
-  isAscending l || isDescending l
+def isMonotone (l : List Nat) : Prop :=
+  isAscending l ∨ isDescending l
+
+instance : DecidablePred isMonotone := fun l => by
+  unfold isMonotone; infer_instance
 
 /-- The span of a list: max - min. For a chain of k+1 positions spanning
     k dependencies, this is the minimum possible TDL. -/
@@ -120,13 +143,13 @@ private theorem foldl_min_assoc (l : List Nat) (a b : Nat) :
     exact ih a (min b c)
 
 private theorem isAscending_cons2 (a b : Nat) (rest : List Nat)
-    (h : isAscending (a :: b :: rest) = true) :
-    a ≤ b ∧ isAscending (b :: rest) = true := by
-  simp only [isAscending, Bool.and_eq_true, decide_eq_true_eq] at h
+    (h : isAscending (a :: b :: rest)) :
+    a ≤ b ∧ isAscending (b :: rest) := by
+  simp only [isAscending] at h
   exact h
 
 private theorem ascending_all_ge_head (a : Nat) (l : List Nat)
-    (h : isAscending (a :: l) = true) :
+    (h : isAscending (a :: l)) :
     ∀ x ∈ l, a ≤ x := by
   induction l with
   | nil => simp
@@ -135,12 +158,12 @@ private theorem ascending_all_ge_head (a : Nat) (l : List Nat)
     have ⟨hab, hrest⟩ := isAscending_cons2 a b rest h
     rcases List.mem_cons.mp hx with heq | hxr
     · omega
-    · have : isAscending (a :: rest) = true := by
+    · have : isAscending (a :: rest) := by
         cases rest with
         | nil => simp [isAscending]
         | cons c rs =>
           have ⟨hbc, hcrs⟩ := isAscending_cons2 b c rs hrest
-          simp only [isAscending, Bool.and_eq_true, decide_eq_true_eq]
+          simp only [isAscending]
           exact ⟨by omega, hcrs⟩
       exact ih this x hxr
 
@@ -197,7 +220,7 @@ theorem chain_tdl_ge_span (l : List Nat) :
 /-- Monotone (ascending) chain achieves TDL = span.
     For ascending lists, each step contributes exactly `b - a` and the
     span decomposes as `(b - a) + span(tail)`. -/
-theorem monotone_ascending_achieves_span (l : List Nat) (h : isAscending l = true) :
+theorem monotone_ascending_achieves_span (l : List Nat) (h : isAscending l) :
     chainTDL l = listSpan l := by
   induction l with
   | nil => simp [chainTDL, listSpan]

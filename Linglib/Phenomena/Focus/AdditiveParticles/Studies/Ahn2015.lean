@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
+import Mathlib.Data.Set.Basic
 
 /-!
 # Ahn (2015): The Semantics of Additive *Either*
@@ -29,7 +30,7 @@ limit").
 
 ## NPI Distribution via Boolean Algebra
 
-`Prop' World` is a `BooleanAlgebra` (via Mathlib's pointwise instances),
+`Set World` is a `BooleanAlgebra` (via Mathlib's pointwise instances),
 and the entire NPI asymmetry falls out of the ⊓/⊔ duality:
 
 - **⊓ entails its components** (`inf_le_left`, `inf_le_right`), so
@@ -65,20 +66,20 @@ variable {World : Type*}
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- ⟦**too**⟧(q)(p) = q ⊓ p — meet in the Boolean algebra of propositions. -/
-abbrev tooDenotation (q p : Prop' World) : Prop' World := q ⊓ p
+abbrev tooDenotation (q p : Set World) : Set World := q ⊓ p
 
 /-- ⟦**either**⟧(q)(p) = q ⊔ p — join in the Boolean algebra of propositions. -/
-abbrev eitherDenotation (q p : Prop' World) : Prop' World := q ⊔ p
+abbrev eitherDenotation (q p : Set World) : Set World := q ⊔ p
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- De Morgan: negation-scope interactions
 -- ═══════════════════════════════════════════════════════════════════════════
 
 /-- ¬(q ⊓ p) = qᶜ ⊔ pᶜ — De Morgan for *too*. -/
-theorem too_demorgan (q p : Prop' World) : (tooDenotation q p)ᶜ = qᶜ ⊔ pᶜ := compl_inf
+theorem too_demorgan (q p : Set World) : (tooDenotation q p)ᶜ = qᶜ ⊔ pᶜ := compl_inf
 
 /-- ¬(q ⊔ p) = qᶜ ⊓ pᶜ — De Morgan for *either*. -/
-theorem either_demorgan (q p : Prop' World) : (eitherDenotation q p)ᶜ = qᶜ ⊓ pᶜ := compl_sup
+theorem either_demorgan (q p : Set World) : (eitherDenotation q p)ᶜ = qᶜ ⊓ pᶜ := compl_sup
 
 -- ═══════════════════════════════════════════════════════════════════════════
 -- NPI asymmetry: ⊓ entails components, ⊔ does not
@@ -86,20 +87,20 @@ theorem either_demorgan (q p : Prop' World) : (eitherDenotation q p)ᶜ = qᶜ �
 
 /-- *Too* entails all alternatives — exhaustification always vacuous (not NPI).
     q ⊓ p ≤ q, q ⊓ p ≤ p, q ⊓ p ≤ q ⊔ p. -/
-theorem too_entails_all_alts (q p : Prop' World) :
+theorem too_entails_all_alts (q p : Set World) :
     tooDenotation q p ≤ q ∧ tooDenotation q p ≤ p
       ∧ tooDenotation q p ≤ eitherDenotation q p :=
   ⟨inf_le_left, inf_le_right, inf_le_left.trans le_sup_left⟩
 
 /-- *Either* in positive context: O_ALT(q ⊔ p) = (q ⊔ p) ⊓ qᶜ ⊓ pᶜ = ⊥.
     By De Morgan, qᶜ ⊓ pᶜ = (q ⊔ p)ᶜ, so this is a ⊓ aᶜ = ⊥. -/
-theorem either_positive_contradiction (q p : Prop' World) :
+theorem either_positive_contradiction (q p : Set World) :
     eitherDenotation q p ⊓ qᶜ ⊓ pᶜ = ⊥ := by
   rw [inf_assoc, ← compl_sup, inf_compl_eq_bot]
 
 /-- *Either* under negation: all alternatives entailed (vacuous).
     (q ⊔ p)ᶜ ≤ qᶜ ⊓ pᶜ ⊓ (q ⊓ p)ᶜ by `compl_le_compl`. -/
-theorem either_negative_vacuous (q p : Prop' World) :
+theorem either_negative_vacuous (q p : Set World) :
     (eitherDenotation q p)ᶜ ≤ qᶜ ⊓ pᶜ ⊓ (q ⊓ p)ᶜ :=
   le_inf (le_inf (compl_le_compl le_sup_left) (compl_le_compl le_sup_right))
     (compl_le_compl (inf_le_left.trans le_sup_left))
@@ -112,7 +113,7 @@ theorem either_negative_vacuous (q p : Prop' World) :
     SI–NPI generalization: for any antitone (DE) context C,
     C(q ⊔ p) ∧ ¬C(q ⊓ p) is vacuous. -/
 theorem either_npi_via_chierchia (C : FreeChoice.Ctx World)
-    (hDE : Antitone C) (q p : Prop' World) :
+    (hDE : Antitone C) (q p : Set World) :
     FreeChoice.siVacuous C (eitherDenotation q p) (q ⊓ p) :=
   FreeChoice.si_vacuous_in_de C hDE _ _
     (inf_le_left.trans le_sup_left : q ⊓ p ≤ q ⊔ p)

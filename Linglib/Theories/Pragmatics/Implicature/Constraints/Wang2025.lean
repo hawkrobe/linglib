@@ -1,3 +1,4 @@
+import Mathlib.Data.Fintype.Basic
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.IntensionalLogic.RestrictedModality
@@ -51,7 +52,6 @@ namespace Implicature.Constraints.Wang2025
 
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
-open Core.Proposition (FiniteWorlds)
 
 /-- Local Bool-valued accessibility used by Wang2025 for `List.all` evaluation
 of the speaker-K operator. The Prop-valued canonical version lives in
@@ -197,8 +197,8 @@ epistemic stance. It scopes relative to exh_mx:
 Uses a local Bool-valued accessibility relation; for the Prop-valued
 canonical Kripke semantics see `Core.IntensionalLogic.RestrictedModality.boxR`.
 -/
-def speakerK [FiniteWorlds W] (R : BAccessRel W) (φ : (W → Bool)) : (W → Bool) :=
-  fun w => (FiniteWorlds.worlds.filter (R w)).all φ
+noncomputable def speakerK [Fintype W] (R : BAccessRel W) (φ : (W → Bool)) : (W → Bool) :=
+  fun w => ((Finset.univ : Finset W).toList.filter (R w)).all φ
 
 
 -- ============================================================================
@@ -252,17 +252,16 @@ theorem IC_violation_always_blocks (input : WangInput W) (hIC : input.ic = false
 -- ============================================================================
 
 /--
-When CG entails the Bool presupposition, the CI-lifted form yields a
+When CG entails the presupposition, the CI-lifted form yields a
 felicitous two-dimensional meaning where the CI content (presupposition)
 is satisfied at all CG worlds.
 
 This connects the constraint-based analysis to the CI bifurcation approach
-for de re presupposition. Takes the Bool presupposition directly since
-`ciLift` operates on `W → Bool` functions.
+for de re presupposition.
 -/
-theorem ciLift_felicitous_when_fp_holds (presupBool assertionBool : (W → Bool))
-    (cg : (W → Bool)) (hfp : ∀ w, cg w = true → presupBool w = true) :
-    ∀ w, cg w = true → (ciLift presupBool assertionBool).ci w = true := by
+theorem ciLift_felicitous_when_fp_holds (presup assertion : W → Prop)
+    (cg : W → Prop) (hfp : ∀ w, cg w → presup w) :
+    ∀ w, cg w → (ciLift presup assertion).ci w := by
   intro w hw
   exact hfp w hw
 

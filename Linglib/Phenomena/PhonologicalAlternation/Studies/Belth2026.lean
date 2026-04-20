@@ -1,5 +1,6 @@
 import Linglib.Theories.Phonology.Process.Alternation
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
+import Linglib.Theories.Phonology.Subregular.OCP
 import Linglib.Theories.Learning.TolerancePrinciple
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Computability.Subregular.Tier
@@ -96,9 +97,12 @@ namespace LatSeg
     is `/l/`, not `/v/`). `L` is `[+cons]` — the underspecified `/L/`
     projects onto the consonant tier even though its `[lat]` value is
     not yet fixed. -/
-def isCons : LatSeg → Bool
-  | .a | .e | .i | .o | .u | .v => false
-  | _ => true
+def IsCons : LatSeg → Prop
+  | .a | .e | .i | .o | .u | .v => False
+  | _ => True
+
+instance : DecidablePred IsCons := fun seg => by
+  cases seg <;> unfold IsCons <;> infer_instance
 
 /-- `[+lat]` per @cite{cser-2010}: only `l` is lateral, and `L` is
     *underspecified* for `[lat]`. Returning `Option Bool` rather than
@@ -111,7 +115,7 @@ def isLat : LatSeg → Option Bool
 
 /-- The consonantal tier (Belth's learned tier for Latin, rule 54).
     Every `[+cons]` segment projects. -/
-def consTier : Tier LatSeg LatSeg := Tier.byClass isCons
+def consTier : Tier LatSeg LatSeg := Tier.byClass IsCons
 
 end LatSeg
 
@@ -124,7 +128,7 @@ end LatSeg
 def latinDissimRule : TierRule LatSeg where
   tier := LatSeg.consTier
   side := .left
-  targetIsContext := LatSeg.isCons
+  targetIsContext := LatSeg.IsCons
   relation := .disagree
   featureValue := LatSeg.isLat
   default := none
@@ -219,10 +223,8 @@ theorem navalis_popularis_minimal_pair :
     `/lun-a/` is the nasal `/n/`, which is `[−lat]`, so Disagree
     outputs `[+lat]`). This is the wrong prediction — the surface form
     is `[r]`. @cite{belth-2026} reports this as one of the ~3% of
-    errors the Tolerance Principle tolerates (§5.3, p. 254); D2L does
-    not refine the tier further on this dataset. The descriptive
-    generalisation that intervening nasals fail to block dissimilation
-    in `lun-` is discussed in @cite{cser-2010}. -/
+    errors the Tolerance Principle tolerates; D2L does not refine the
+    tier further on this dataset. -/
 theorem lunaris_predicts_l_INCORRECT :
     predicted lunaris_ur lunaris_lPos = some true := by decide
 
@@ -288,20 +290,21 @@ theorem latinDissimRule_tolerated_on_examples :
 
 /-- The consonant tier projection equals the canonical
     `tierProject` from the TSL formalism in `Core/Computability/Subregular/`.
-    By construction (`Tier.apply (Tier.byClass _) = List.filter` and
-    `tierProject T = Tier.apply (Tier.byClass (decide ∘ T))`), the
-    autosegmental and language-theoretic tiers coincide. This grounds
-    Belth's tier in the TSL_k subregular hierarchy. -/
+    By construction both reduce to `List.filter` on the `[+cons]` predicate,
+    so the autosegmental and language-theoretic tiers coincide. This
+    grounds Belth's tier in the TSL_k subregular hierarchy. -/
 theorem consTier_apply_eq_tierProject (xs : List LatSeg) :
     LatSeg.consTier.apply xs =
-      Core.Computability.Subregular.tierProject
-        (fun seg => LatSeg.isCons seg = true) xs := by
-  rw [Core.Computability.Subregular.tierProject_eq_filter,
-      show LatSeg.consTier = Tier.byClass LatSeg.isCons from rfl,
-      Tier.apply_byClass]
-  congr 1
-  funext seg
-  cases LatSeg.isCons seg <;> rfl
+      Core.Computability.Subregular.tierProject LatSeg.IsCons xs :=
+  rfl
+
+/-- The TSL_2 grammar witnessing the Latin allomorphy pattern as a
+    tier-based subregular language: project to the `[+cons]` tier, then
+    forbid adjacent identical symbols. Lambert's @cite{lambert-2022}
+    TSL_k schema, instantiated with `IsCons` as the tier predicate and
+    the OCP forbidden 2-factor `[some x, some x]`. -/
+def latinTSLGrammar : Core.Computability.Subregular.TSLGrammar 2 LatSeg :=
+  Phonology.Subregular.TSLGrammar.ocp LatSeg.IsCons
 
 -- ============================================================================
 -- § 9: OCP-on-Tier Bridge and OT Tableau (@cite{goldsmith-1976})
@@ -320,6 +323,16 @@ def latinOCP : Core.Constraint.OT.NamedConstraint (List LatSeg) :=
 theorem latinOCP_is_markedness :
     latinOCP.family = Core.Constraint.OT.ConstraintFamily.markedness :=
   Phonology.Constraints.mkOCPOnTier_is_markedness _ _ _
+
+/-- The OCP-on-tier evaluation of `latinOCP` on a candidate is zero iff
+    that candidate is in `latinTSLGrammar.lang`. Specialization of
+    `Phonology.Subregular.mkOCPOnTier_zero_iff_in_ocp_lang` to the Latin
+    grammar. The two perspectives — markedness constraint with zero
+    violations and TSL_2 grammar membership — coincide. -/
+theorem latinOCP_zero_iff_in_TSL (c : List LatSeg) :
+    latinOCP.eval c = 0 ↔ c ∈ latinTSLGrammar.lang :=
+  Phonology.Subregular.mkOCPOnTier_zero_iff_in_ocp_lang
+    "OCP/[+cons]" LatSeg.IsCons id c
 
 /-! The OT analysis uses a minimal two-constraint inventory:
 
@@ -352,6 +365,33 @@ def latinRanking : List (NamedConstraint (List LatSeg)) :=
 /-- The two surface candidates for an underlying form. -/
 def latCands (ur : List LatSeg) : List (List LatSeg) :=
   [substL .l ur, substL .r ur]
+
+-- ---- TSL_2 membership witnesses (the empirical payoff of the bridge) ------
+
+/-- Membership in `latinTSLGrammar.lang` is decidable: the bridge to the
+    integer-valued OCP score (`latinOCP_zero_iff_in_TSL`) transports the
+    `Decidable (c.eval = 0)` instance to language membership. -/
+instance (c : List LatSeg) : Decidable (c ∈ latinTSLGrammar.lang) :=
+  decidable_of_iff _ (latinOCP_zero_iff_in_TSL c)
+
+/-- The empirically expected TSL_2 membership table for the Belth Latin
+    inventory: each row pairs a candidate with whether the OCP-on-tier
+    grammar should admit it. *pluvalis* and *floralis* are the
+    discriminating cases (one candidate excluded for tier-adjacent
+    identicals); *navalis* admits both (no adjacency); *lunaris* admits
+    both (the OCP-on-tier grammar's empirical limit — the dissimilation
+    rule fires even though only one tier-lateral is adjacent). -/
+def latinTSLExpected : List (List LatSeg × Bool) :=
+  [(substL .r pluvalis_ur, true), (substL .l pluvalis_ur, false),
+   (substL .l floralis_ur, true), (substL .r floralis_ur, false),
+   (substL .l navalis_ur,  true), (substL .r navalis_ur,  true),
+   (substL .l lunaris_ur,  true), (substL .r lunaris_ur,  true)]
+
+/-- The OCP-on-tier TSL_2 grammar agrees with the expected membership table
+    on every row of `latinTSLExpected`: the empirical payoff of the
+    `latinOCP_zero_iff_in_TSL` bridge in one shot. -/
+theorem latinTSL_correct :
+    ∀ p ∈ latinTSLExpected, (p.1 ∈ latinTSLGrammar.lang) = p.2 := by decide
 
 /-- *popularis*: OCP fires once on `[p,o,p,u,l,a,l,i,s]` (the tier-adjacent
     `(l, l)`). Only \*r-once on the [r]-candidate — but OCP outranks, so

@@ -1,10 +1,8 @@
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Semantics.Exhaustification.Operators
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Tactics.RSAPredict

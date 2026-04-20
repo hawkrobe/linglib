@@ -6,26 +6,31 @@ w ≤_A z iff {p ∈ A : z ∈ p} ⊆ {p ∈ A : w ∈ p}.
 
 Best worlds are those maximal under this ordering among accessible worlds.
 
-All types are polymorphic over the world type `W`.
+All types are polymorphic over the world type `W`. Propositions are
+`W → Prop` (mathlib-native); reasoning is classical.
 
 - Kratzer, A. (1981). The Notional Category of Modality. de Gruyter. pp. 38-74.
 -/
 
 import Linglib.Theories.Semantics.Modality.Kratzer.Background
-import Linglib.Core.Order.Satisfaction
+import Linglib.Core.Order.Normality
 import Mathlib.Order.Basic
+import Mathlib.Data.Set.Basic
 
 namespace Semantics.Modality.Kratzer
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*}
 
 /--
-The set of propositions from A that world w satisfies.
+The list of propositions from A that world w satisfies.
 
-This is {p ∈ A : w ∈ p} in Kratzer's notation.
+This is `{p ∈ A : w ∈ p}` in Kratzer's notation. We use classical
+decidability to filter the list, so this definition is noncomputable —
+downstream uses are about lengths/membership, not evaluation.
 -/
-def satisfiedPropositions (A : List (W → Bool)) (w : W) : List (W → Bool) :=
-  A.filter (λ p => p w)
+noncomputable def satisfiedPropositions (A : List (W → Prop)) (w : W) : List (W → Prop) :=
+  haveI : DecidablePred (fun p : W → Prop => p w) := fun p => Classical.propDecidable (p w)
+  A.filter (fun p => p w)
 
 /--
 Kratzer's ordering relation: w ≤_A z
@@ -35,14 +40,11 @@ Definition (p. 39): "For all worlds w and z ∈ W:
 
 Intuitively: w is at least as good as z (w.r.t. ideal A) iff every
 ideal proposition that z satisfies, w also satisfies.
-
-Note: This is the CORRECT definition using subset inclusion,
-NOT counting (which would be incorrect).
 -/
-def atLeastAsGoodAs (A : List (W → Bool)) (w z : W) : Bool :=
-  -- Every proposition in A satisfied by z is also satisfied by w
-  (satisfiedPropositions A z).all λ p => p w
+def atLeastAsGoodAs (A : List (W → Prop)) (w z : W) : Prop :=
+  ∀ p ∈ A, p z → p w
 
+@[inherit_doc]
 notation:50 w " ≤[" A "] " z => atLeastAsGoodAs A w z
 
 /--
@@ -50,124 +52,92 @@ Strict ordering: w <_A z iff w ≤_A z but not z ≤_A w.
 
 This means w satisfies strictly more ideal propositions than z.
 -/
-def strictlyBetter (A : List (W → Bool)) (w z : W) : Bool :=
-  atLeastAsGoodAs A w z && !atLeastAsGoodAs A z w
+def strictlyBetter (A : List (W → Prop)) (w z : W) : Prop :=
+  atLeastAsGoodAs A w z ∧ ¬ atLeastAsGoodAs A z w
 
+@[inherit_doc]
 notation:50 w " <[" A "] " z => strictlyBetter A w z
 
+/-- Reflexivity. -/
+theorem ordering_reflexive (A : List (W → Prop)) (w : W) :
+    atLeastAsGoodAs A w w :=
+  fun _ _ hp => hp
 
-open Core.Order (SatisfactionOrdering)
-
-/--
-Kratzer's world ordering as a `SatisfactionOrdering`.
-
-A world `w` satisfies proposition `p` iff `p w = true`.
-This connects Kratzer semantics to the generic ordering framework.
--/
-def worldOrdering (A : List (W → Bool)) : SatisfactionOrdering W (W → Bool) :=
-  SatisfactionOrdering.ofCriteria (fun w p => p w) A
-
-omit [DecidableEq W] [Fintype W] in
-/--
-**Kratzer's local Bool ordering matches the generic Prop framework.**
-
-The local `atLeastAsGoodAs` (Bool-valued) is `true` exactly when the
-generic `(worldOrdering A).le` (Prop-valued) holds.
--/
-theorem atLeastAsGoodAs_iff_generic (A : List (W → Bool)) (w z : W) :
-    atLeastAsGoodAs A w z = true ↔ (worldOrdering A).le w z := by
-  show (A.filter (fun p => p z)).all (fun p => p w) = true ↔
-       ∀ p ∈ A.filter (fun p => p z), p w = true
-  rw [List.all_eq_true]
-
-omit [DecidableEq W] [Fintype W] in
-/-- Reflexivity via generic framework. -/
-theorem ordering_reflexive (A : List (W → Bool)) (w : W) :
-    atLeastAsGoodAs A w w = true :=
-  (atLeastAsGoodAs_iff_generic A w w).mpr ((worldOrdering A).le_refl w)
-
-omit [DecidableEq W] [Fintype W] in
-/-- Transitivity via generic framework. -/
-theorem ordering_transitive (A : List (W → Bool)) (u v w : W)
-    (huv : atLeastAsGoodAs A u v = true)
-    (hvw : atLeastAsGoodAs A v w = true) :
-    atLeastAsGoodAs A u w = true :=
-  (atLeastAsGoodAs_iff_generic A u w).mpr <|
-    (worldOrdering A).le_trans u v w
-      ((atLeastAsGoodAs_iff_generic A u v).mp huv)
-      ((atLeastAsGoodAs_iff_generic A v w).mp hvw)
-
--- NormalityOrder instance (via generic framework)
+/-- Transitivity. -/
+theorem ordering_transitive (A : List (W → Prop)) (u v w : W)
+    (huv : atLeastAsGoodAs A u v)
+    (hvw : atLeastAsGoodAs A v w) :
+    atLeastAsGoodAs A u w :=
+  fun p hp hpw => huv p hp (hvw p hp hpw)
 
 /--
-**Kratzer's ordering as a `NormalityOrder`.**
+Kratzer's world ordering as a `Preorder` on worlds.
 
-Connects Kratzer's ordering source to the default reasoning infrastructure,
-enabling `optimal`, `refine`, `respects`, and CR1–CR4 for modal semantics.
+The induced order is `≤[A]`. Used by Phillips-Brown desire semantics
+and other consumers via `letI := kratzerPreorder A`.
 -/
-def kratzerNormality (A : List (W → Bool)) : Core.Order.NormalityOrder W :=
-  (worldOrdering A).toNormalityOrder
+@[reducible] def kratzerPreorder (A : List (W → Prop)) : Preorder W where
+  le := atLeastAsGoodAs A
+  le_refl := ordering_reflexive A
+  le_trans u v w := ordering_transitive A u v w
 
-/-- Backwards-compatible alias. -/
-@[reducible] def kratzerPreorder (A : List (W → Bool)) : Preorder W :=
-  (worldOrdering A).toPreorder
+/-- Kratzer's ordering as a `NormalityOrder`: connects to default reasoning
+    infrastructure (`optimal`, `refine`, `respects`, CR1–CR4). -/
+def kratzerNormality (A : List (W → Prop)) : Core.Order.NormalityOrder W where
+  le := atLeastAsGoodAs A
+  le_refl := ordering_reflexive A
+  le_trans u v w := ordering_transitive A u v w
 
-/-- Equivalence under the ordering (via generic framework). -/
-def orderingEquiv (A : List (W → Bool)) (w z : W) : Prop :=
-  (worldOrdering A).equivalent w z
+/-- Equivalence under the ordering. -/
+def orderingEquiv (A : List (W → Prop)) (w z : W) : Prop :=
+  atLeastAsGoodAs A w z ∧ atLeastAsGoodAs A z w
 
-omit [DecidableEq W] [Fintype W] in
-theorem orderingEquiv_refl (A : List (W → Bool)) (w : W) : orderingEquiv A w w :=
-  SatisfactionOrdering.equivalent_refl (worldOrdering A) w
+theorem orderingEquiv_refl (A : List (W → Prop)) (w : W) : orderingEquiv A w w :=
+  ⟨ordering_reflexive A w, ordering_reflexive A w⟩
 
-omit [DecidableEq W] [Fintype W] in
-theorem orderingEquiv_symm (A : List (W → Bool)) (w z : W)
+theorem orderingEquiv_symm (A : List (W → Prop)) (w z : W)
     (h : orderingEquiv A w z) : orderingEquiv A z w :=
-  SatisfactionOrdering.equivalent_symm (worldOrdering A) h
+  ⟨h.2, h.1⟩
 
-omit [DecidableEq W] [Fintype W] in
-theorem orderingEquiv_trans (A : List (W → Bool)) (u v w : W)
+theorem orderingEquiv_trans (A : List (W → Prop)) (u v w : W)
     (huv : orderingEquiv A u v) (hvw : orderingEquiv A v w) :
     orderingEquiv A u w :=
-  SatisfactionOrdering.equivalent_trans (worldOrdering A) huv hvw
+  ⟨ordering_transitive A u v w huv.1 hvw.1,
+   ordering_transitive A w v u hvw.2 huv.2⟩
 
-omit [DecidableEq W] [Fintype W] in
 /--
 **Theorem 2: Empty ordering makes all worlds equivalent.**
 
 If A = ∅, then for all w, z: w ≤_A z and z ≤_A w.
 
-Proof: The set of propositions in ∅ satisfied by any world is ∅.
-Vacuously, ∅ ⊆ ∅.
+Proof: There are no propositions in `[]` to satisfy, so the universal is vacuous.
 -/
 theorem empty_ordering_all_equivalent (w z : W) :
-    atLeastAsGoodAs [] w z = true ∧ atLeastAsGoodAs [] z w = true := by
-  constructor <;> (unfold atLeastAsGoodAs satisfiedPropositions; simp)
+    atLeastAsGoodAs ([] : List (W → Prop)) w z ∧
+    atLeastAsGoodAs ([] : List (W → Prop)) z w := by
+  refine ⟨?_, ?_⟩ <;> intro p hp <;> cases hp
 
-omit [DecidableEq W] [Fintype W] in
 theorem empty_ordering_trivial (w z : W) :
     (kratzerPreorder (W := W) []).le w z :=
-  (atLeastAsGoodAs_iff_generic [] w z).mp (empty_ordering_all_equivalent w z).1
+  (empty_ordering_all_equivalent w z).1
 
-omit [DecidableEq W] [Fintype W] in
 theorem empty_ordering_universal_equiv (w z : W) :
     orderingEquiv (W := W) [] w z :=
-  ⟨(atLeastAsGoodAs_iff_generic [] w z).mp (empty_ordering_all_equivalent w z).1,
-   (atLeastAsGoodAs_iff_generic [] z w).mp (empty_ordering_all_equivalent w z).2⟩
+  ⟨(empty_ordering_all_equivalent w z).1, (empty_ordering_all_equivalent w z).2⟩
 
 /--
 The set of worlds **accessible** from w given modal base f.
 
-These are exactly the worlds in ∩f(w) - worlds compatible with all facts in f(w).
+These are exactly the worlds in ⋂f(w) — worlds compatible with all facts in f(w).
 -/
-def accessibleWorlds (f : ModalBase W) (w : W) : Finset W :=
+def accessibleWorlds (f : ModalBase W) (w : W) : Set W :=
   propIntersection (f w)
 
 /--
-**Accessibility predicate**: w' is accessible from w iff w' ∈ ∩f(w).
+**Accessibility predicate**: w' is accessible from w iff w' ∈ ⋂f(w).
 -/
-def accessibleFrom (f : ModalBase W) (w w' : W) : Bool :=
-  (f w).all (λ p => p w')
+def accessibleFrom (f : ModalBase W) (w w' : W) : Prop :=
+  ∀ p ∈ f w, p w'
 
 /--
 The **best** worlds among accessible worlds, according to ordering source g.
@@ -177,11 +147,9 @@ worlds w' such that for all accessible w'', w' ≤_{g(w)} w''.
 
 When g(w) = ∅, all accessible worlds are best (by Theorem 2).
 -/
-def bestWorlds (f : ModalBase W) (g : OrderingSource W) (w : W) : Finset W :=
-  let accessible := accessibleWorlds f w
-  let ordering := g w
-  accessible.filter λ w' =>
-    decide (∀ w'' ∈ accessible, atLeastAsGoodAs ordering w' w'' = true)
+def bestWorlds (f : ModalBase W) (g : OrderingSource W) (w : W) : Set W :=
+  {w' | w' ∈ accessibleWorlds f w ∧
+        ∀ w'' ∈ accessibleWorlds f w, atLeastAsGoodAs (g w) w' w''}
 
 /--
 **Theorem 3: Empty ordering source reduces to simple accessibility.**
@@ -189,15 +157,12 @@ def bestWorlds (f : ModalBase W) (g : OrderingSource W) (w : W) : Finset W :=
 When g(w) = ∅, bestWorlds = accessibleWorlds.
 -/
 theorem empty_ordering_simple (f : ModalBase W) (w : W) :
-    bestWorlds f (λ _ => []) w = accessibleWorlds f w := by
-  unfold bestWorlds accessibleWorlds
+    bestWorlds f (fun _ => []) w = accessibleWorlds f w := by
   ext w'
-  simp only [Finset.mem_filter, decide_eq_true_eq, and_iff_left_iff_imp]
-  intro _
-  exact fun w'' _ => (empty_ordering_all_equivalent w' w'').1
+  refine ⟨fun h => h.1, fun h => ⟨h, fun w'' _ => ?_⟩⟩
+  exact (empty_ordering_all_equivalent w' w'').1
 
-/-- Variant of `empty_ordering_simple` matching `emptyBackground` by name.
-    Avoids the `unfold emptyBackground` workaround needed before `rw [empty_ordering_simple]`. -/
+/-- Variant of `empty_ordering_simple` matching `emptyBackground` by name. -/
 theorem empty_ordering_emptyBackground (f : ModalBase W) (w : W) :
     bestWorlds f emptyBackground w = accessibleWorlds f w := by
   unfold emptyBackground
@@ -205,39 +170,34 @@ theorem empty_ordering_emptyBackground (f : ModalBase W) (w : W) :
 
 /-- The best worlds among a given set, ranked by an ordering.
     Unlike `bestWorlds` which computes accessible worlds from a modal base,
-    `bestAmong` takes a precomputed world list. This is needed when the
+    `bestAmong` takes a precomputed world set. This is needed when the
     domain has already been restricted (e.g., by promoted priorities in
     @cite{rubinstein-2014}'s favored worlds). -/
-def bestAmong (worlds : Finset W) (ordering : List (W → Bool)) : Finset W :=
-  worlds.filter λ w' =>
-    decide (∀ w'' ∈ worlds, atLeastAsGoodAs ordering w' w'' = true)
+def bestAmong (worlds : Set W) (ordering : List (W → Prop)) : Set W :=
+  {w' | w' ∈ worlds ∧ ∀ w'' ∈ worlds, atLeastAsGoodAs ordering w' w''}
 
 /-- With empty ordering, all worlds are best (Kratzer's theorem 2). -/
-theorem bestAmong_empty (worlds : Finset W) :
+theorem bestAmong_empty (worlds : Set W) :
     bestAmong worlds [] = worlds := by
-  unfold bestAmong
   ext w
-  simp only [Finset.mem_filter, decide_eq_true_eq, and_iff_left_iff_imp]
-  intro _
-  exact fun w' _ => (empty_ordering_all_equivalent w w').1
+  refine ⟨fun h => h.1, fun h => ⟨h, fun w' _ => ?_⟩⟩
+  exact (empty_ordering_all_equivalent w w').1
 
 /-- bestAmong is a subset of the input worlds. -/
-theorem bestAmong_sub (worlds : Finset W) (ordering : List (W → Bool)) :
-    ∀ w, w ∈ bestAmong worlds ordering → w ∈ worlds :=
-  λ _ hw => Finset.mem_of_mem_filter _ hw
+theorem bestAmong_sub (worlds : Set W) (ordering : List (W → Prop)) :
+    bestAmong worlds ordering ⊆ worlds :=
+  fun _ hw => hw.1
 
 /-- Best worlds in a superset that belong to a subset are best in the subset.
 
     If w' beats every world in a larger set, it certainly beats every world
     in any subset. This is the key lemma for showing that star-revision
     (domain widening) preserves strong necessity. -/
-theorem bestAmong_superset {sub sup : Finset W} {ordering : List (W → Bool)} {w' : W}
-    (hSub : ∀ v, v ∈ sub → v ∈ sup)
+theorem bestAmong_superset {sub sup : Set W} {ordering : List (W → Prop)} {w' : W}
+    (hSub : sub ⊆ sup)
     (hBest : w' ∈ bestAmong sup ordering)
     (hMem : w' ∈ sub) :
-    w' ∈ bestAmong sub ordering := by
-  unfold bestAmong at hBest ⊢
-  simp only [Finset.mem_filter, decide_eq_true_eq] at hBest ⊢
-  exact ⟨hMem, λ v hv => hBest.2 v (hSub v hv)⟩
+    w' ∈ bestAmong sub ordering :=
+  ⟨hMem, fun v hv => hBest.2 v (hSub hv)⟩
 
 end Semantics.Modality.Kratzer

@@ -1,3 +1,4 @@
+import Mathlib.Data.Fintype.Basic
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.IntensionalLogic.Rigidity
 

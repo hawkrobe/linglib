@@ -713,7 +713,7 @@ theorem kratzer_english_chain :
     -- (1) Fragment: underlying tense = PRESENT
     kratzerSimplePast.tensePronoun.constraint = GramTense.present ∧
     -- (2) Fragment: deictic-compatible
-    kratzerSimplePast.canBeDeictic = true ∧
+    kratzerSimplePast.canBeDeictic ∧
     -- (3) Theory: English simple past has PERF
     kratzerSimplePast.hasPerfect = true ∧
     -- (4) Pipeline: present time-sphere (R = P)
@@ -721,8 +721,8 @@ theorem kratzer_english_chain :
     -- (5) Data: can be used out of the blue
     englishSimplePastDatum.outOfTheBlue = true ∧
     -- (6) Data–Fragment agreement: deictic ↔ indexical mode
-    (englishSimplePastDatum.underlyingMode == .indexical) = kratzerSimplePast.canBeDeictic :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ((englishSimplePastDatum.underlyingMode = .indexical) ↔ kratzerSimplePast.canBeDeictic) := by
+  refine ⟨rfl, ?_, rfl, rfl, rfl, ?_⟩ <;> decide
 
 /-- **German Preterit full chain**: Fragment → Theory → Pipeline → Data.
 
@@ -736,7 +736,7 @@ theorem kratzer_german_preterit_chain :
     -- (1) Fragment: underlying tense = PAST
     kratzerPreterit.tensePronoun.constraint = GramTense.past ∧
     -- (2) Fragment: NOT deictic
-    kratzerPreterit.canBeDeictic = false ∧
+    ¬ kratzerPreterit.canBeDeictic ∧
     -- (3) Theory: no PERF
     kratzerPreterit.hasPerfect = false ∧
     -- (4) Pipeline: past time-sphere (R < P)
@@ -744,8 +744,11 @@ theorem kratzer_german_preterit_chain :
     -- (5) Data: cannot be used out of the blue
     germanPreteritDatum.outOfTheBlue = false ∧
     -- (6) Data–Fragment agreement
-    (germanPreteritDatum.underlyingMode == .indexical) = kratzerPreterit.canBeDeictic :=
-  ⟨rfl, rfl, rfl, by simp [ReichenbachFrame.isPast, preteritVisitedParis], rfl, rfl⟩
+    ((germanPreteritDatum.underlyingMode = .indexical) ↔ kratzerPreterit.canBeDeictic) := by
+  refine ⟨rfl, ?_, rfl, ?_, rfl, ?_⟩
+  · decide
+  · simp [ReichenbachFrame.isPast, preteritVisitedParis]
+  · decide
 
 /-- **German Perfekt chain**: same underlying decomposition as English
     simple past (PRESENT + PERFECT), predicting deictic compatibility.
@@ -755,7 +758,7 @@ theorem kratzer_german_perfekt_chain :
     -- Fragment: PRESENT tense head (like English simple past)
     kratzerPerfekt.tensePronoun.constraint = GramTense.present ∧
     -- Fragment: deictic-compatible (like English simple past)
-    kratzerPerfekt.canBeDeictic = true ∧
+    kratzerPerfekt.canBeDeictic ∧
     -- Fragment: has PERF (like English simple past)
     kratzerPerfekt.hasPerfect = true ∧
     -- Data: CAN be used out of the blue
@@ -763,8 +766,9 @@ theorem kratzer_german_perfekt_chain :
     -- Cross-linguistic: same decomposition as English simple past
     kratzerPerfekt.tensePronoun.constraint =
       kratzerSimplePast.tensePronoun.constraint ∧
-    kratzerPerfekt.hasPerfect = kratzerSimplePast.hasPerfect :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    kratzerPerfekt.hasPerfect = kratzerSimplePast.hasPerfect := by
+  refine ⟨rfl, ?_, rfl, rfl, rfl, rfl⟩
+  decide
 
 /-- **Zero tense chain**: the SOT simultaneous reading connects
     Kratzer's zero tense to the existing SOT deletion mechanism.

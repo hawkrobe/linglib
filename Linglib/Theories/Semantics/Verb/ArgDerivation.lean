@@ -76,60 +76,64 @@ open Semantics.Verb.EntailmentProfile
       provides state for the caused result
     - **motionContact** `[x MOVE y] WHILE [x CONTACT y]`: root must
       describe manner (motion + contact are manner-based) -/
-def rootLicensesTemplate (re : RootEntailments) : Template → Bool
-  | .state         => re.state
-  | .activity      => re.manner
-  | .achievement   => re.state
-  | .accomplishment => re.state
-  | .motionContact => re.manner
+def RootLicensesTemplate (re : RootEntailments) : Template → Prop
+  | .state         => re.state = true
+  | .activity      => re.manner = true
+  | .achievement   => re.state = true
+  | .accomplishment => re.state = true
+  | .motionContact => re.manner = true
+
+instance (re : RootEntailments) (t : Template) :
+    Decidable (RootLicensesTemplate re t) := by
+  cases t <;> unfold RootLicensesTemplate <;> infer_instance
 
 /-- All templates licensed by a root (captures alternation). -/
 def licensedTemplates (re : RootEntailments) : List Template :=
   [.state, .activity, .achievement, .accomplishment, .motionContact].filter
-    (rootLicensesTemplate re)
+    (λ t => decide (RootLicensesTemplate re t))
 
 -- § 1a. Licensing verification for canonical root types
 
 /-- PC roots (FLAT) license state, achievement, accomplishment —
     the three state-based templates. Not activity (no manner). -/
 theorem pc_licenses :
-    rootLicensesTemplate .propertyConcept .state = true ∧
-    rootLicensesTemplate .propertyConcept .achievement = true ∧
-    rootLicensesTemplate .propertyConcept .accomplishment = true ∧
-    rootLicensesTemplate .propertyConcept .activity = false := ⟨rfl, rfl, rfl, rfl⟩
+    RootLicensesTemplate .propertyConcept .state ∧
+    RootLicensesTemplate .propertyConcept .achievement ∧
+    RootLicensesTemplate .propertyConcept .accomplishment ∧
+    ¬ RootLicensesTemplate .propertyConcept .activity := by decide
 
 /-- Pure manner roots (JOG) license activity and motionContact only.
     Not state-based templates (no state entailment). -/
 theorem pureManner_licenses :
-    rootLicensesTemplate .pureManner .activity = true ∧
-    rootLicensesTemplate .pureManner .motionContact = true ∧
-    rootLicensesTemplate .pureManner .state = false ∧
-    rootLicensesTemplate .pureManner .achievement = false ∧
-    rootLicensesTemplate .pureManner .accomplishment = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    RootLicensesTemplate .pureManner .activity ∧
+    RootLicensesTemplate .pureManner .motionContact ∧
+    ¬ RootLicensesTemplate .pureManner .state ∧
+    ¬ RootLicensesTemplate .pureManner .achievement ∧
+    ¬ RootLicensesTemplate .pureManner .accomplishment := by decide
 
 /-- Pure result roots (BLOSSOM) license state, achievement,
     accomplishment — same as PC roots, since both have state. -/
 theorem pureResult_licenses :
-    rootLicensesTemplate .pureResult .state = true ∧
-    rootLicensesTemplate .pureResult .achievement = true ∧
-    rootLicensesTemplate .pureResult .accomplishment = true ∧
-    rootLicensesTemplate .pureResult .activity = false := ⟨rfl, rfl, rfl, rfl⟩
+    RootLicensesTemplate .pureResult .state ∧
+    RootLicensesTemplate .pureResult .achievement ∧
+    RootLicensesTemplate .pureResult .accomplishment ∧
+    ¬ RootLicensesTemplate .pureResult .activity := by decide
 
 /-- Causative result roots (BREAK) license state-based templates. -/
 theorem causativeResult_licenses :
-    rootLicensesTemplate .causativeResult .state = true ∧
-    rootLicensesTemplate .causativeResult .achievement = true ∧
-    rootLicensesTemplate .causativeResult .accomplishment = true ∧
-    rootLicensesTemplate .causativeResult .activity = false := ⟨rfl, rfl, rfl, rfl⟩
+    RootLicensesTemplate .causativeResult .state ∧
+    RootLicensesTemplate .causativeResult .achievement ∧
+    RootLicensesTemplate .causativeResult .accomplishment ∧
+    ¬ RootLicensesTemplate .causativeResult .activity := by decide
 
 /-- Full-spec roots (CUT) license ALL five templates — they have
     both state and manner, so they can fill any structural position. -/
 theorem fullSpec_licenses :
-    rootLicensesTemplate .fullSpec .state = true ∧
-    rootLicensesTemplate .fullSpec .activity = true ∧
-    rootLicensesTemplate .fullSpec .achievement = true ∧
-    rootLicensesTemplate .fullSpec .accomplishment = true ∧
-    rootLicensesTemplate .fullSpec .motionContact = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    RootLicensesTemplate .fullSpec .state ∧
+    RootLicensesTemplate .fullSpec .activity ∧
+    RootLicensesTemplate .fullSpec .achievement ∧
+    RootLicensesTemplate .fullSpec .accomplishment ∧
+    RootLicensesTemplate .fullSpec .motionContact := by decide
 
 -- § 1b. Alternation predictions
 
@@ -222,12 +226,11 @@ theorem fullSpec_primary :
 
 /-- For canonical root types, the primary template is licensed. -/
 theorem primary_licensed_canonical :
-    (primaryTemplate .propertyConcept).any (rootLicensesTemplate .propertyConcept) = true ∧
-    (primaryTemplate .pureResult).any (rootLicensesTemplate .pureResult) = true ∧
-    (primaryTemplate .causativeResult).any (rootLicensesTemplate .causativeResult) = true ∧
-    (primaryTemplate .pureManner).any (rootLicensesTemplate .pureManner) = true ∧
-    (primaryTemplate .fullSpec).any (rootLicensesTemplate .fullSpec) = true := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl⟩
+    RootLicensesTemplate .propertyConcept .state ∧
+    RootLicensesTemplate .pureResult .achievement ∧
+    RootLicensesTemplate .causativeResult .accomplishment ∧
+    RootLicensesTemplate .pureManner .activity ∧
+    RootLicensesTemplate .fullSpec .accomplishment := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. Full Pipeline
@@ -531,9 +534,10 @@ theorem root_typology_hierarchy :
     -- result implies state
     RootEntailments.pureResult.state = true ∧
     -- well-formedness enforces the hierarchy
-    RootEntailments.causativeResult.wellFormed = true ∧
-    RootEntailments.pureResult.wellFormed = true ∧
-    RootEntailments.propertyConcept.wellFormed = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    RootEntailments.causativeResult.WellFormed ∧
+    RootEntailments.pureResult.WellFormed ∧
+    RootEntailments.propertyConcept.WellFormed := by
+  refine ⟨rfl, rfl, ?_, ?_, ?_⟩ <;> decide
 
 /-- PC and result roots differ in licensing predictions:
     PC roots can fill stative templates (simple statives exist);
@@ -541,11 +545,11 @@ theorem root_typology_hierarchy :
     change, so the "stative" use still presupposes prior change. -/
 theorem pc_result_stative_difference :
     -- Both license the state template
-    rootLicensesTemplate .propertyConcept .state = true ∧
-    rootLicensesTemplate .pureResult .state = true ∧
+    RootLicensesTemplate .propertyConcept .state ∧
+    RootLicensesTemplate .pureResult .state ∧
     -- But result roots entail change (root-level, not template-level)
     RootEntailments.propertyConcept.result = false ∧
-    RootEntailments.pureResult.result = true := ⟨rfl, rfl, rfl, rfl⟩
+    RootEntailments.pureResult.result = true := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Summary: Where the Pipeline is Informative

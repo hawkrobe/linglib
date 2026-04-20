@@ -1,4 +1,4 @@
-import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
+import Linglib.Theories.Pragmatics.RSA.Limits
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Mathlib.Analysis.SpecialFunctions.Pow.Real

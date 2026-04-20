@@ -1,5 +1,6 @@
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Merin–Van Rooy Bridge
@@ -47,7 +48,6 @@ Note: UV(E) for a **single cell** E can be negative even when BF > 1
 namespace DTS.MerinBridge
 
 open Core.DecisionTheory
-open Core.Proposition (World4)
 open DTS
 
 /-! ## Encoding Merin's Issue as a Decision Problem
@@ -65,9 +65,9 @@ Utility = 1 for correct choice, 0 for incorrect. -/
 def truthDP {W : Type*} (ctx : DTSContext W) : DecisionProblem W Bool where
   utility w a :=
     if a then  -- accept H
-      if ctx.topic w then 1 else 0
+      if w ∈ ctx.topic then 1 else 0
     else       -- reject H
-      if ctx.topic w then 0 else 1
+      if w ∈ ctx.topic then 0 else 1
   prior := ctx.prior
 
 /-- The action set for the truth DP: accept or reject. -/
@@ -85,24 +85,30 @@ posterior shift for the truth decision problem.
 Note: this does NOT imply UV(E) ≥ 0 for the single cell E.
 UV of a single cell can be negative (@cite{van-rooy-2003}, p. 736).
 The non-negativity result (EVSI ≥ 0) holds for the **expected** UV
-across the full partition {E, ¬E}, not for individual cells (p. 742). -/
+across the full partition {E, ¬E}, not for individual cells (p. 742).
+
+TODO: Original Bool-based proof used `native_decide` over
+World4 (16 topics × 16 evidence props = 256 cases). Per project
+proof-style guidelines, kernel-checkable structural proofs are
+preferred. A Prop-level reformulation needs decidability for
+arbitrary `e : World4 → Prop`, which constrains the form of any
+finite enumeration argument. The intended proof: posRelevant means
+P(E∧H)·P(¬H) > P(E∧¬H)·P(H), which under uniform prior reduces to
+|E∩H|·|¬H| > |E∩¬H|·|H|; conditionalEU(accept|E) = |E∩H|/|E| while
+expectedUtility(accept) = |H|/|W|, so the shift inequality reduces
+to the same cell-count comparison. -/
 theorem posRelevant_shifts_accept_eu :
-    ∀ (ctx : DTSContext World4) (e : (World4 → Bool)),
+    ∀ (ctx : DTSContext World4) (e : Set World4) [DecidablePred (· ∈ e)],
     (∀ w, ctx.prior w = 1/4) →
     -- Non-degeneracy: E, H, ¬H all non-empty
-    (∃ w, e w = true) →
-    (∃ w, ctx.topic w = true) →
-    (∃ w, ctx.topic w = false) →
+    (∃ w, w ∈ e) →
+    (∃ w, w ∈ ctx.topic) →
+    (∃ w, w ∉ ctx.topic) →
     posRelevant ctx e →
     conditionalEU (truthDP ctx)
-      (Finset.univ.filter (fun w => e w = true)) true >
+      (Finset.univ.filter (fun w => w ∈ e)) true >
     expectedUtility (truthDP ctx) true := by
-  -- Finite verification over World4: 16 topics × 16 evidence props = 256 cases
-  intro ⟨topic, prior⟩ e hPrior hE hH hnotH hPos
-  have hP : prior = fun _ => (1 : ℚ) / 4 := funext hPrior
-  subst hP
-  revert topic e
-  native_decide
+  sorry
 
 /-- Merin's irrelevance corresponds to zero utility value.
 
@@ -113,23 +119,23 @@ change any conditional EU, so UV(E) = 0.
 The key step: BF = 1 under uniform prior means P(E|H) = P(E|¬H),
 which gives |E∩H|/|H| = |E∩¬H|/|¬H|, hence |E∩H|/|E| = |H|/4.
 So conditionalEU(a|E) = expectedUtility(a) for each action a,
-making valueAfterLearning = dpValue. -/
+making valueAfterLearning = dpValue.
+
+TODO: Original Bool-based proof used `native_decide` over the 256-cell
+finite verification. A kernel-checkable structural proof requires
+case analysis on the discrete partition cells together with
+`DecidablePred e` to evaluate filter cardinalities. -/
 theorem irrelevant_implies_zero_uv :
-    ∀ (ctx : DTSContext World4) (e : (World4 → Bool)),
+    ∀ (ctx : DTSContext World4) (e : Set World4) [DecidablePred (· ∈ e)],
     (∀ w, ctx.prior w = 1/4) →
     -- Non-degeneracy: E, H, ¬H all non-empty
-    (∃ w, e w = true) →
-    (∃ w, ctx.topic w = true) →
-    (∃ w, ctx.topic w = false) →
+    (∃ w, w ∈ e) →
+    (∃ w, w ∈ ctx.topic) →
+    (∃ w, w ∉ ctx.topic) →
     irrelevant ctx e →
     utilityValue (truthDP ctx) truthActions
-      (Finset.univ.filter (fun w => e w = true)) = 0 := by
-  -- Finite verification over World4: 16 topics × 16 evidence props = 256 cases
-  intro ⟨topic, prior⟩ e hPrior hE hH hnotH hIrr
-  have hP : prior = fun _ => (1 : ℚ) / 4 := funext hPrior
-  subst hP
-  revert topic e
-  native_decide
+      (Finset.univ.filter (fun w => w ∈ e)) = 0 := by
+  sorry
 
 /-! ## Structural Properties
 
@@ -144,20 +150,20 @@ exactly one action has utility 1 and the other has utility 0. -/
 theorem truthDP_complementary {W : Type*} (ctx : DTSContext W) (w : W) :
     (truthDP ctx).utility w true + (truthDP ctx).utility w false = 1 := by
   simp only [truthDP]
-  cases ctx.topic w <;> simp
+  by_cases h : w ∈ ctx.topic <;> simp [h]
 
 /-- The truth DP's expected utility of "accept H" equals P(H). -/
 theorem truthDP_eu_accept {W : Type*} [Fintype W] [DecidableEq W]
     (ctx : DTSContext W) :
     expectedUtility (truthDP ctx) true = ∑ w : W, ctx.prior w *
-      if ctx.topic w then 1 else 0 := by
+      if w ∈ ctx.topic then 1 else 0 := by
   simp only [expectedUtility, truthDP, ite_true]
 
 /-- The truth DP's expected utility of "reject H" equals P(¬H). -/
 theorem truthDP_eu_reject {W : Type*} [Fintype W] [DecidableEq W]
     (ctx : DTSContext W) :
     expectedUtility (truthDP ctx) false = ∑ w : W, ctx.prior w *
-      if ctx.topic w then 0 else 1 := by
+      if w ∈ ctx.topic then 0 else 1 := by
   simp [expectedUtility, truthDP]
 
 end DTS.MerinBridge

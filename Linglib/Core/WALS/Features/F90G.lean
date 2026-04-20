@@ -14,32 +14,24 @@ namespace Core.WALS.F90G
 
 /-- WALS 90G values. -/
 inductive DoubleHeadedRelativeClauses where
-  | doubleHeadedDominant  -- Double-headed dominant (1 languages)
-  | doubleHeadedOrReln  -- Double-headed or RelN (1 languages)
-  | doubleHeadedOrInternallyHeaded  -- Double-headed or internally-headed (1 languages)
-  | doubleHeadedAsNondominantType  -- Double-headed as nondominant type (2 languages)
-  deriving DecidableEq, Repr
+  /-- Double-headed dominant (1 languages). -/
+  | dominant
+  /-- Double-headed or RelN (1 languages). -/
+  | orReln
+  /-- Double-headed or internally-headed (1 languages). -/
+  | orInternallyHeaded
+  /-- Double-headed as nondominant type (2 languages). -/
+  | asNondominantType
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 90G dataset (5 languages). -/
 def allData : List (Datapoint DoubleHeadedRelativeClauses) :=
-  [ { walsCode := "jms", language := "Jamsay", iso := "djm", value := .doubleHeadedOrInternallyHeaded }
-  , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .doubleHeadedOrReln }
-  , { walsCode := "kmb", language := "Kombai", iso := "", value := .doubleHeadedDominant }
-  , { walsCode := "hna", language := "Mina", iso := "hna", value := .doubleHeadedAsNondominantType }
-  , { walsCode := "ygr", language := "Yagaria", iso := "ygr", value := .doubleHeadedAsNondominantType }
+  [ { walsCode := "jms", iso := "djm", value := .orInternallyHeaded }
+  , { walsCode := "kob", iso := "kpw", value := .orReln }
+  , { walsCode := "kmb", iso := "", value := .dominant }
+  , { walsCode := "hna", iso := "hna", value := .asNondominantType }
+  , { walsCode := "ygr", iso := "ygr", value := .asNondominantType }
   ]
-
--- Count verification
-theorem total_count : allData.length = 5 := by native_decide
-
-theorem count_doubleHeadedDominant :
-    (allData.filter (·.value == .doubleHeadedDominant)).length = 1 := by native_decide
-theorem count_doubleHeadedOrReln :
-    (allData.filter (·.value == .doubleHeadedOrReln)).length = 1 := by native_decide
-theorem count_doubleHeadedOrInternallyHeaded :
-    (allData.filter (·.value == .doubleHeadedOrInternallyHeaded)).length = 1 := by native_decide
-theorem count_doubleHeadedAsNondominantType :
-    (allData.filter (·.value == .doubleHeadedAsNondominantType)).length = 2 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

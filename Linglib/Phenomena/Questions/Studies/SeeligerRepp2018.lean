@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Questions.DeclarativeQuestions
+import Linglib.Theories.Semantics.Questions.QParticleLayer
 import Linglib.Fragments.Swedish.QuestionParticles
 import Linglib.Fragments.German.QuestionParticles
 import Linglib.Fragments.German.PolarityMarking
@@ -107,8 +108,8 @@ theorem dochWohl_not_assertion :
 theorem dochWohl_both_biases_active :
     dochWohl.requiresEvidentialBias = true ∧
     dochWohl.requiresEpistemicBias = true ∧
-    DeclQuestionType.PRQ.biasProfile.epistemic.isPlus = true ∧
-    DeclQuestionType.NRQ.biasProfile.epistemic.isPlus = true := ⟨rfl, rfl, rfl, rfl⟩
+    DeclQuestionType.PRQ.biasProfile.epistemic.IsPlus ∧
+    DeclQuestionType.NRQ.biasProfile.epistemic.IsPlus := ⟨rfl, rfl, by decide, by decide⟩
 
 -- ============================================================================
 -- S 3: Cross-linguistic comparison
@@ -240,5 +241,26 @@ theorem rq_vs_dq_romero_coverage :
     (evidentialToContextualEvidence DeclQuestionType.PRQ.biasProfile.evidential).isSome = true ∧
     (epistemicToOriginalBias DeclQuestionType.PRQ.biasProfile.epistemic).isSome = true ∧
     (epistemicToOriginalBias DeclQuestionType.PDQ.biasProfile.epistemic).isNone = true := ⟨rfl, rfl, rfl⟩
+
+-- ============================================================================
+-- S 7: Left-Peripheral Layer Assignments (@cite{dayal-2025} cartography)
+-- ============================================================================
+
+open Semantics.Questions (QParticleLayer)
+
+/-- Layer assignments for the question-inducing modal particles
+    discussed by @cite{seeliger-repp-2018}, placed in the
+    @cite{dayal-2025} cartography `[SAP [PerspP [CP ...]]]`. The `_`
+    argument is unused: the layer is a theoretical overlay on the
+    fragment particle, not a computed property of its lexical fields. -/
+def val_layer      (_ : Fragments.Swedish.QuestionParticles.QParticleEntry) : QParticleLayer := .perspP
+def dochWohl_layer (_ : Fragments.German.QuestionParticles.QParticleEntry)  : QParticleLayer := .perspP
+
+/-- Both modal-particle complexes that mark RQs/DQs in this study sit
+    at PerspP — the layer for biased, matrix-only question particles. -/
+theorem rq_markers_are_PerspP :
+    val_layer Fragments.Swedish.QuestionParticles.val = .perspP ∧
+    dochWohl_layer Fragments.German.QuestionParticles.dochWohl = .perspP :=
+  ⟨rfl, rfl⟩
 
 end SeeligerRepp2018

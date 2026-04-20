@@ -23,7 +23,7 @@ namespace SagWasowBender2003
 open Phenomena.WordOrder.SubjectAuxInversion
 
 private abbrev what := Fragments.English.Pronouns.what.toWord
-private abbrev can := Fragments.English.FunctionWords.can.toWord
+private abbrev can := Fragments.English.Auxiliaries.can.toWord
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev eat := Fragments.English.Predicates.Verbal.eat.toWordPl
 private abbrev pizza := Fragments.English.Nouns.pizza.toWordSg

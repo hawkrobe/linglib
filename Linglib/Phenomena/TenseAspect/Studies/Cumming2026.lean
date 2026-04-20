@@ -41,36 +41,36 @@ def allParadigms : List TAMEEntry :=
 
 /-- Nonfuture paradigm entries (across all languages). -/
 def nonfutureParadigms : List TAMEEntry :=
-  allParadigms.filter (·.isNonfuture)
+  allParadigms.filter (decide ·.IsNonfuture)
 
 /-- Future paradigm entries (across all languages). -/
 def futureParadigms : List TAMEEntry :=
-  allParadigms.filter (!·.isNonfuture)
+  allParadigms.filter (decide ¬ ·.IsNonfuture)
 
 -- ════════════════════════════════════════════════════
--- § 2. Per-Entry isNonfuture Verification
+-- § 2. Per-Entry IsNonfuture Verification
 -- ════════════════════════════════════════════════════
 
 /-- English simple past is nonfuture (EP = downstream). -/
-theorem simplePast_nonfuture : simplePast.isNonfuture = true := rfl
+theorem simplePast_nonfuture : simplePast.IsNonfuture := by decide
 
 /-- English present progressive is nonfuture (EP = downstream). -/
-theorem presentProg_nonfuture : presentProg.isNonfuture = true := rfl
+theorem presentProg_nonfuture : presentProg.IsNonfuture := by decide
 
 /-- Korean -te PAST is nonfuture (EP = strictDownstream). -/
-theorem tePast_nonfuture : tePast.isNonfuture = true := rfl
+theorem tePast_nonfuture : tePast.IsNonfuture := by decide
 
 /-- Korean -te PRESENT is nonfuture (EP = contemporaneous). -/
-theorem tePresent_nonfuture : tePresent.isNonfuture = true := rfl
+theorem tePresent_nonfuture : tePresent.IsNonfuture := by decide
 
 /-- Korean -ney PAST is nonfuture (EP = strictDownstream). -/
-theorem neyPast_nonfuture : neyPast.isNonfuture = true := rfl
+theorem neyPast_nonfuture : neyPast.IsNonfuture := by decide
 
 /-- Korean -ney PRESENT is nonfuture (EP = contemporaneous). -/
-theorem neyPresent_nonfuture : neyPresent.isNonfuture = true := rfl
+theorem neyPresent_nonfuture : neyPresent.IsNonfuture := by decide
 
 /-- Bulgarian NFUT + -l is nonfuture (EP = downstream). -/
-theorem nfutL_nonfuture : nfutL.isNonfuture = true := rfl
+theorem nfutL_nonfuture : nfutL.IsNonfuture := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 3. Master Downstream Theorem
@@ -80,7 +80,7 @@ theorem nfutL_nonfuture : nfutL.isNonfuture = true := rfl
     whose EP constraint is nonfuture entails T ≤ A (downstream evidence).
     Delegates to `EPCondition.nonfuture_implies_downstream`. -/
 theorem nonfuture_downstream (p : TAMEEntry) (f : EvidentialFrame ℤ)
-    (h_nf : p.isNonfuture = true) (h_ep : p.epConstraint f) :
+    (h_nf : p.IsNonfuture) (h_ep : p.epConstraint f) :
     downstreamEvidence f :=
   EPCondition.nonfuture_implies_downstream p.ep f h_nf h_ep
 
@@ -91,37 +91,37 @@ theorem nonfuture_downstream (p : TAMEEntry) (f : EvidentialFrame ℤ)
 /-- English simple past EP entails downstream evidence. -/
 theorem simplePast_downstream (f : EvidentialFrame ℤ) :
     simplePast.epConstraint f → downstreamEvidence f :=
-  EPCondition.nonfuture_implies_downstream .downstream f rfl
+  EPCondition.nonfuture_implies_downstream .downstream f (by decide)
 
 /-- English present progressive EP entails downstream evidence. -/
 theorem presentProg_downstream (f : EvidentialFrame ℤ) :
     presentProg.epConstraint f → downstreamEvidence f :=
-  EPCondition.nonfuture_implies_downstream .downstream f rfl
+  EPCondition.nonfuture_implies_downstream .downstream f (by decide)
 
 /-- Korean -te PAST EP entails downstream evidence. -/
 theorem tePast_downstream (f : EvidentialFrame ℤ) :
     tePast.epConstraint f → downstreamEvidence f :=
-  EPCondition.nonfuture_implies_downstream .strictDownstream f rfl
+  EPCondition.nonfuture_implies_downstream .strictDownstream f (by decide)
 
 /-- Korean -te PRESENT EP entails downstream evidence. -/
 theorem tePresent_downstream (f : EvidentialFrame ℤ) :
     tePresent.epConstraint f → downstreamEvidence f :=
-  EPCondition.nonfuture_implies_downstream .contemporaneous f rfl
+  EPCondition.nonfuture_implies_downstream .contemporaneous f (by decide)
 
 /-- Korean -ney PAST EP entails downstream evidence. -/
 theorem neyPast_downstream (f : EvidentialFrame ℤ) :
     neyPast.epConstraint f → downstreamEvidence f :=
-  EPCondition.nonfuture_implies_downstream .strictDownstream f rfl
+  EPCondition.nonfuture_implies_downstream .strictDownstream f (by decide)
 
 /-- Korean -ney PRESENT EP entails downstream evidence. -/
 theorem neyPresent_downstream (f : EvidentialFrame ℤ) :
     neyPresent.epConstraint f → downstreamEvidence f :=
-  EPCondition.nonfuture_implies_downstream .contemporaneous f rfl
+  EPCondition.nonfuture_implies_downstream .contemporaneous f (by decide)
 
 /-- Bulgarian NFUT + -l EP entails downstream evidence. -/
 theorem nfutL_downstream (f : EvidentialFrame ℤ) :
     nfutL.epConstraint f → downstreamEvidence f :=
-  EPCondition.nonfuture_implies_downstream .downstream f rfl
+  EPCondition.nonfuture_implies_downstream .downstream f (by decide)
 
 -- ════════════════════════════════════════════════════
 -- § 5. Future Counterexample

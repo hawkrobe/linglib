@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.XMarking
 import Linglib.Fragments.Portuguese.Modals
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
+import Mathlib.Data.Set.Basic
 
 /-!
 # Ferreira (2023): A square of necessities
@@ -47,7 +48,6 @@ open Semantics.Modality.Kratzer.XMarking
 open Semantics.Modality.Directive
 open Semantics.Attitudes.Intensional
 open Core.Modality
-open Core.Proposition
 
 /-! ## Portuguese modal typology -/
 
@@ -101,35 +101,58 @@ theorem xMarking_preserves_force (m : PortugueseModal) :
     Follows from `Directive.strong_entails_weak` — the Xg-refined best worlds
     are a subset of the unrefined best worlds. -/
 theorem terQue_entails_dever (f : ModalBase World) (g : OrderingSource World)
-    (p : (World → Bool)) (w : World)
+    (p : (World → Prop)) (w : World)
     (h : sn f g p w) :
     snXg f g p w :=
   sn_entails_snXg f g p w h
 
 /-- *dever* p ⊭ *ter que* p: weak necessity does not entail strong. -/
 theorem dever_not_entails_terQue :
-    ¬(∀ (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World),
+    ¬(∀ (f : ModalBase World) (g : OrderingSource World) (p : (World → Prop)) (w : World),
         snXg f g p w → sn f g p w) := by
   intro h
-  have := h
-    (fun _ => [fun w => w == .w0 || w == .w1])
+  -- Counterexample: f is universal access (emptyBackground), p = (· = .w0).
+  -- xMarkOrdering favors p-worlds, so best = {.w0}; snXg holds (p .w0 = True).
+  -- But sn fails: .w1 is best under empty ordering, p .w1 = False.
+  have hCE := h
     (emptyBackground (W := World))
-    (fun w => w == .w0)
+    (emptyBackground (W := World))
+    (fun w : World => w = .w0)
     .w0
-  exact absurd (this (by decide)) (by decide)
+  -- Establish snXg
+  have hAcc : ∀ w' : World, w' ∈ accessibleWorlds (emptyBackground (W := World)) .w0 := by
+    intro w'; rw [empty_base_universal_access]; exact Set.mem_univ _
+  have hSnXg : snXg (emptyBackground (W := World)) (emptyBackground (W := World))
+                 (fun w : World => w = .w0) .w0 := by
+    intro w' hw'
+    obtain ⟨_, hBest⟩ := hw'
+    have hIdent : (fun w : World => w = .w0) ∈
+        xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = .w0) .w0 := by
+      simp [xMarkOrdering, combineOrdering, emptyBackground]
+    exact hBest .w0 (hAcc .w0) (fun w : World => w = .w0) hIdent rfl
+  -- snXg → sn would force w1 = w0, contradiction
+  have hSn := hCE hSnXg
+  rw [sn, necessity_iff_all] at hSn
+  have hW1Best : (.w1 : World) ∈
+      bestWorlds (emptyBackground (W := World)) (emptyBackground (W := World)) .w0 := by
+    refine ⟨hAcc .w1, ?_⟩
+    intro w'' _ q hq _
+    simp [emptyBackground] at hq
+  have : (.w1 : World) = .w0 := hSn .w1 hW1Best
+  exact World.noConfusion this
 
 /-- *dever* p ⊨ *poder* p: weak necessity entails possibility, completing
     the ascending scale *poder* p < *dever* p < *ter que* p.
     Requires seriality (nonempty best worlds) — the D axiom. -/
 theorem dever_entails_poder (f : ModalBase World) (g : OrderingSource World)
-    (p : (World → Bool)) (w : World)
-    (hSerial : (bestWorlds f (xMarkOrdering g p) w).card > 0)
+    (p : (World → Prop)) (w : World)
+    (hSerial : (bestWorlds f (xMarkOrdering g p) w).Nonempty)
     (h : snXg f g p w) :
     possibility f (xMarkOrdering g p) p w := by
   unfold snXg at h
   rw [necessity_iff_all] at h
   rw [possibility_iff_any]
-  obtain ⟨w', hw'⟩ := Finset.card_pos.mp hSerial
+  obtain ⟨w', hw'⟩ := hSerial
   exact ⟨w', hw', h w' hw'⟩
 
 /-! ## Consistency judgments (§2) -/
@@ -138,27 +161,36 @@ theorem dever_entails_poder (f : ModalBase World) (g : OrderingSource World)
     the prejacent being false ("Este homem deve ter sido assassinado,
     mas ele pode não ter sido"). -/
 theorem dever_consistent_with_not_p :
-    ∃ (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World),
-      snXg f g p w ∧ p w = false := by
-  -- Model: w0 is actual, p false at w0. Best worlds under refined ordering
-  -- satisfy p, so weak necessity holds even though p is false at w0.
+    ∃ (f : ModalBase World) (g : OrderingSource World) (p : (World → Prop)) (w : World),
+      snXg f g p w ∧ ¬ p w := by
+  -- Model: f = universal access, g = empty, p = (· = .w1).
+  -- xMarkOrdering favors p-worlds, so best = {.w1}; snXg holds.
+  -- p .w0 = False, so the conjunction is satisfiable.
   refine ⟨emptyBackground,
-         λ _ => [λ w => w == .w0 || w == .w1],
-         λ w => w == .w1,
+         emptyBackground,
+         (fun w : World => w = .w1),
          .w0,
-         ?_, by decide⟩
-  unfold snXg
-  rw [necessity_iff_all]
-  decide
+         ?_, ?_⟩
+  · -- snXg: every best world satisfies p
+    intro w' hw'
+    obtain ⟨_, hBest⟩ := hw'
+    have hAcc1 : (.w1 : World) ∈ accessibleWorlds (emptyBackground (W := World)) .w0 := by
+      rw [empty_base_universal_access]; exact Set.mem_univ _
+    have hIdent : (fun w : World => w = .w1) ∈
+        xMarkOrdering (emptyBackground (W := World)) (fun w : World => w = .w1) .w0 := by
+      simp [xMarkOrdering, combineOrdering, emptyBackground]
+    exact hBest .w1 hAcc1 (fun w : World => w = .w1) hIdent rfl
+  · -- ¬ p .w0
+    intro h; exact World.noConfusion h
 
 /-- *ter que* p ∧ ¬p is contradictory when the base is realistic:
     if w ∈ ∩f(w) and all best worlds satisfy p, then w satisfies p
     (by the T axiom). -/
 theorem terQue_inconsistent_with_not_p_realistic
-    (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World)
+    (f : ModalBase World) (g : OrderingSource World) (p : (World → Prop)) (w : World)
     (hReal : ∀ w, (accessibleWorlds f w) = {w})
     (hSN : sn f g p w) :
-    p w = true :=
+    p w :=
   totally_realistic_gives_T f g hReal p w hSN
 
 /-! ## Non-entailment between present and past forms (§3) -/
@@ -172,27 +204,57 @@ theorem terQue_inconsistent_with_not_p_realistic
     applied to the refined ordering: ∗-revision only adds p-worlds, which
     cannot worsen the truth of the prejacent among best worlds. -/
 theorem devia_not_entails_deve :
-    ¬(∀ (f f' : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World),
+    ¬(∀ (f f' : ModalBase World) (g : OrderingSource World) (p : (World → Prop)) (w : World),
         IsStarRevision f f' p →
         snXfg f' g p w → snXg f g p w) := by
   intro h
-  have hRev : IsStarRevision (W := World)
-      (fun _ => [fun w => w == .w1])
-      (fun _ => [fun w => w == .w0 || w == .w1])
-      (fun w => w == .w0) := by
-    constructor
-    · intro w w' hw'
-      simp only [accessibleWorlds, propIntersection, Finset.mem_filter, Finset.mem_univ,
-                  true_and, List.all_cons, List.all_nil, Bool.and_true] at hw' ⊢
-      cases w' <;> simp_all
+  -- Counterexample: f narrow = {.w1}, f' wide = {.w0, .w1}, p = (· = .w0).
+  -- Under f' (wide), best worlds favor p, so snXfg holds.
+  -- Under f (narrow), only .w1 is accessible, p .w1 = False, so snXg fails.
+  let fNarrow : ModalBase World := fun _ => [fun w => w = .w1]
+  let fWide : ModalBase World := fun _ => [fun w => w = .w0 ∨ w = .w1]
+  let p : World → Prop := fun w => w = .w0
+  have hNarrowAcc : ∀ w' : World, w' ∈ accessibleWorlds fNarrow .w0 ↔ w' = .w1 := by
+    intro w'
+    refine ⟨fun hw' => hw' (fun z => z = .w1) (by simp [fNarrow]), ?_⟩
+    intro heq q hq; simp [fNarrow] at hq; subst hq; exact heq
+  have hWideAcc : ∀ w' : World, w' ∈ accessibleWorlds fWide .w0 ↔ (w' = .w0 ∨ w' = .w1) := by
+    intro w'
+    refine ⟨fun hw' => hw' (fun z => z = .w0 ∨ z = .w1) (by simp [fWide]), ?_⟩
+    intro heq q hq; simp [fWide] at hq; subst hq; exact heq
+  have hRev : IsStarRevision fNarrow fWide p := by
+    refine ⟨?_, ?_⟩
+    · intro w w' hw' q hq
+      have hw'1 : w' = .w1 := hw' (fun z => z = .w1) (by simp [fNarrow])
+      simp [fWide] at hq; subst hq; exact Or.inr hw'1
     · intro w w' hw' hnew
-      simp only [accessibleWorlds, propIntersection, Finset.mem_filter, Finset.mem_univ,
-                  true_and, List.all_cons, List.all_nil, Bool.and_true] at hw' hnew
-      cases w' <;> simp_all
-  exact absurd
-    (h _ _
-      (fun _ => [fun w => w == .w1]) _ .w0 hRev (by decide))
-    (by decide)
+      have hWide' : w' = .w0 ∨ w' = .w1 := hw' (fun z => z = .w0 ∨ z = .w1) (by simp [fWide])
+      have hNotW1 : w' ≠ .w1 := by
+        intro heq; apply hnew
+        intro q hq; simp [fNarrow] at hq; subst hq; exact heq
+      rcases hWide' with hw0 | hw1
+      · exact hw0
+      · exact absurd hw1 hNotW1
+  have hSnXfg : snXfg fWide (emptyBackground (W := World)) p .w0 := by
+    intro w' hw'
+    obtain ⟨_, hBest⟩ := hw'
+    have hAcc0 : (.w0 : World) ∈ accessibleWorlds fWide .w0 := (hWideAcc .w0).mpr (Or.inl rfl)
+    have hPMem : p ∈ xMarkOrdering (emptyBackground (W := World)) p .w0 := by
+      simp [xMarkOrdering, combineOrdering, emptyBackground]
+    exact hBest .w0 hAcc0 p hPMem rfl
+  have hNotSnXg : ¬ snXg fNarrow (emptyBackground (W := World)) p .w0 := by
+    intro hSn
+    have hAcc1 : (.w1 : World) ∈ accessibleWorlds fNarrow .w0 := (hNarrowAcc .w1).mpr rfl
+    have hBest1 : (.w1 : World) ∈
+        bestWorlds fNarrow (xMarkOrdering (emptyBackground (W := World)) p) .w0 := by
+      refine ⟨hAcc1, ?_⟩
+      intro w'' hw''
+      have hw''1 : w'' = .w1 := (hNarrowAcc w'').mp hw''
+      subst hw''1
+      exact ordering_reflexive _ (.w1 : World)
+    have hPw1 : p .w1 := hSn .w1 hBest1
+    exact World.noConfusion hPw1
+  exact hNotSnXg (h fNarrow fWide (emptyBackground (W := World)) p .w0 hRev hSnXfg)
 
 /-! ## Square instantiation: Portuguese occupies all four vertices -/
 
@@ -211,7 +273,7 @@ structure PortugueseSquare where
   /-- Ordering source -/
   g : OrderingSource World
   /-- Prejacent -/
-  p : (World → Bool)
+  p : (World → Prop)
   /-- fStar is a valid ∗-revision of f for p -/
   hRev : IsStarRevision f fStar p
 
@@ -300,23 +362,25 @@ Note: *should* carries `tense := .Past` (morphological past = X-marking),
 while *ought* carries no tense marking. Both are semantically present-tense
 weak necessity in their default readings. -/
 
-open Fragments.English in
+open Fragments.English.Auxiliaries in
 /-- English *should* and *ought* share Portuguese *dever*'s modal force
     (`.weakNecessity`), placing them at the SN_Xg vertex. -/
 theorem english_portuguese_weakNecessity_correspondence :
-    FunctionWords.should.modalMeaning.all (·.force == .weakNecessity) = true ∧
-    FunctionWords.ought.modalMeaning.all (·.force == .weakNecessity) = true ∧
+    Fragments.English.Auxiliaries.should.modalMeaning.all
+        (·.force == .weakNecessity) = true ∧
+    Fragments.English.Auxiliaries.ought.modalMeaning.all
+        (·.force == .weakNecessity) = true ∧
     PortugueseModal.dever.force = .weakNecessity := by
   exact ⟨by decide, by decide, rfl⟩
 
-open Fragments.English in
+open Fragments.English.Auxiliaries in
 /-- English *should* has morphological past tense (X-marking), but *ought* does not.
     This reflects Iatridou's generalization: X-marking in English is realized as
     past morphology. Portuguese makes this overt: *deve* (unmarked) vs *devia*
     (past imperfect = X-marked). -/
 theorem english_should_has_xmarking_morphology :
-    FunctionWords.should.tense = some .Past ∧
-    FunctionWords.ought.tense = none := by
+    Fragments.English.Auxiliaries.should.tense = some UD.Tense.Past ∧
+    Fragments.English.Auxiliaries.ought.tense = none := by
   exact ⟨rfl, rfl⟩
 
 end Ferreira2023

@@ -31,16 +31,25 @@ open Core.Modality (ModalFlavor)
 /-! ## Propositions -/
 
 /-- The agent reaches Harlem (the goal). -/
-def reachesGoal : (World → Bool) := λ w =>
-  match w with | .w0 => true | .w1 => true | .w2 => false | .w3 => false
+def reachesGoal : World → Prop := λ w =>
+  match w with | .w0 => True | .w1 => True | .w2 => False | .w3 => False
+
+instance : DecidablePred reachesGoal :=
+  fun w => by cases w <;> unfold reachesGoal <;> infer_instance
 
 /-- The agent takes the A train. -/
-def takesATrain : (World → Bool) := λ w =>
-  match w with | .w0 => true | .w1 => true | .w2 => false | .w3 => false
+def takesATrain : World → Prop := λ w =>
+  match w with | .w0 => True | .w1 => True | .w2 => False | .w3 => False
+
+instance : DecidablePred takesATrain :=
+  fun w => by cases w <;> unfold takesATrain <;> infer_instance
 
 /-- No delay (distinguishes w0 from w1). -/
-def noDelay : (World → Bool) := λ w =>
-  match w with | .w0 => true | .w1 => false | .w2 => true | .w3 => true
+def noDelay : World → Prop := λ w =>
+  match w with | .w0 => True | .w1 => False | .w2 => True | .w3 => True
+
+instance : DecidablePred noDelay :=
+  fun w => by cases w <;> unfold noDelay <;> infer_instance
 
 /-! ## Conversational backgrounds -/
 
@@ -64,27 +73,65 @@ def harlemTeleological : TeleologicalFlavor World where
 
 /-- Every world that reaches the goal also takes the A train. -/
 theorem goal_worlds_all_take_a :
-    allWorlds.all (λ w => !reachesGoal w || takesATrain w) = true := by native_decide
+    ∀ w ∈ allWorlds, reachesGoal w → takesATrain w := by decide
 
 /-! ## Derivation theorems -/
+
+/-- Every world is accessible under the (empty) circumstantial base. -/
+private theorem all_accessible (w w' : World) :
+    w' ∈ accessibleWorlds circumstantialBase w := by
+  show w' ∈ accessibleWorlds emptyBackground w
+  rw [empty_base_universal_access]
+  exact Set.mem_univ _
 
 /-- **Teleological necessity**: Given the goal ordering, the A train is necessary.
     Best worlds = {w0, w1} (goal-reaching), both take the A train. -/
 theorem teleological_necessity (w : World) :
     necessity circumstantialBase goalOrdering takesATrain w := by
-  cases w <;> decide
+  rw [necessity_iff_all]
+  intro w' hw'
+  obtain ⟨_, hBest⟩ := hw'
+  have hReachW0 : reachesGoal .w0 := by decide
+  have hReachW' : reachesGoal w' :=
+    hBest .w0 (all_accessible w .w0) reachesGoal
+      (by simp [goalOrdering]) hReachW0
+  cases w' with
+  | w0 => decide
+  | w1 => decide
+  | w2 => exact hReachW'.elim
+  | w3 => exact hReachW'.elim
 
 /-- **Without goal restriction, A train is not necessary.**
     With empty ordering, all worlds are best, and w2/w3 don't take the A train. -/
 theorem unrestricted_not_necessary (w : World) :
     ¬ necessity circumstantialBase emptyBackground takesATrain w := by
-  cases w <;> decide
+  rw [necessity_iff_all]
+  intro h
+  have hBestW2 : (.w2 : World) ∈ bestWorlds circumstantialBase emptyBackground w := by
+    rw [empty_ordering_emptyBackground]
+    exact all_accessible w .w2
+  exact (h .w2 hBestW2).elim
 
 /-- **Efficiency refines**: Adding a no-delay criterion still yields necessity.
     Best worlds = {w0} (goal + no delay), and w0 takes the A train. -/
 theorem efficiency_refines (w : World) :
     necessity circumstantialBase efficiencyOrdering takesATrain w := by
-  cases w <;> decide
+  rw [necessity_iff_all]
+  intro w' hw'
+  obtain ⟨_, hBest⟩ := hw'
+  have hReachW0 : reachesGoal .w0 := by decide
+  have hNoDelayW0 : noDelay .w0 := by decide
+  have hReachW' : reachesGoal w' :=
+    hBest .w0 (all_accessible w .w0) reachesGoal
+      (by simp [efficiencyOrdering]) hReachW0
+  have hNoDelayW' : noDelay w' :=
+    hBest .w0 (all_accessible w .w0) noDelay
+      (by simp [efficiencyOrdering]) hNoDelayW0
+  cases w' with
+  | w0 => decide
+  | w1 => exact hNoDelayW'.elim
+  | w2 => exact hReachW'.elim
+  | w3 => exact hReachW'.elim
 
 /-- **Teleological uses circumstantial flavor tag.** -/
 theorem harlem_uses_teleological :

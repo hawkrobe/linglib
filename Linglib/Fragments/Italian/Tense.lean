@@ -173,7 +173,7 @@ def kratzerPassatoProssimo : KratzerDecomposition where
 
 /-- Italian passato prossimo can be deictic (from decomposition). -/
 theorem kratzerPassatoProssimo_deictic :
-    kratzerPassatoProssimo.canBeDeictic = true := rfl
+    kratzerPassatoProssimo.canBeDeictic := by decide
 
 /-- The underlying tense head is PRESENT, not PAST.
     Pastness comes from the PERF aspect head. -/

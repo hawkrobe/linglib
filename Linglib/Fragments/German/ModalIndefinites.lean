@@ -40,8 +40,8 @@ def irgendeinEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem irgendein_not_at_issue : irgendeinEntry.status = .notAtIssue := rfl
-theorem irgendein_has_epistemic : irgendeinEntry.hasEpistemic = true := rfl
-theorem irgendein_has_rc : irgendeinEntry.hasCircumstantial = true := rfl
+theorem irgendein_has_epistemic : irgendeinEntry.hasEpistemic := by decide
+theorem irgendein_has_rc : irgendeinEntry.hasCircumstantial := by decide
 theorem irgendein_not_ub : irgendeinEntry.upperBounded = false := rfl
 theorem irgendein_has_unremarkable : irgendeinEntry.hasUnremarkableReading = true := rfl
 theorem irgendein_no_anchor : irgendeinEntry.anchorConstraint = none := rfl

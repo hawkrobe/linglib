@@ -4,8 +4,6 @@ import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 
@@ -450,7 +448,7 @@ partition cell. -/
 /-- A `Prop' W` resolves a `QUD W` if all fact-worlds are in the same
 partition cell. -/
 def propResolvesQUD {W : Type} [BEq W] (worlds : List W)
-    (fact : Core.Proposition.Prop' W) [DecidablePred fact] (q : QUD W) : Bool :=
+    (fact : Set W) [DecidablePred fact] (q : QUD W) : Bool :=
   let factWorlds := worlds.filter (fun w => decide (fact w))
   factWorlds.all fun w₁ =>
     factWorlds.all fun w₂ =>
@@ -459,27 +457,10 @@ def propResolvesQUD {W : Type} [BEq W] (worlds : List W)
 /-- Answerhood instance: `Prop' W` resolves `QUD W` over a fixed world list.
 Decidability of each fact is obtained classically. -/
 @[reducible] noncomputable def answerhoodFromPartition {W : Type} [BEq W] (worlds : List W) :
-    Answerhood (Core.Proposition.Prop' W) (QUD W) where
+    Answerhood (Set W) (QUD W) where
   resolves fact q :=
     have : DecidablePred fact := Classical.decPred fact
     propResolvesQUD worlds fact q
-
-/-- A `Prop' W` resolves a `Discourse.Issue W` if it settles some alternative.
-
-@cite{ciardelli-groenendijk-roelofsen-2018}: resolving an issue means
-establishing enough information to determine which alternative holds. -/
-def propResolvesIssue {W : Type} (worlds : List W)
-    (fact : Core.Proposition.Prop' W) [DecidablePred fact]
-    (q : Discourse.Issue W) : Bool :=
-  q.alternatives.any fun alt =>
-    Discourse.propEntails (fun w => decide (fact w)) alt worlds
-
-/-- Answerhood instance: `Prop' W` resolves `Discourse.Issue W`. -/
-@[reducible] noncomputable def answerhoodFromIssue {W : Type} (worlds : List W) :
-    Answerhood (Core.Proposition.Prop' W) (Discourse.Issue W) where
-  resolves fact q :=
-    have : DecidablePred fact := Classical.decPred fact
-    propResolvesIssue worlds fact q
 
 -- ════════════════════════════════════════════════════
 -- § 11. Partition Answerhood Example
@@ -503,7 +484,7 @@ inductive RainProp where
   | sunny
   deriving DecidableEq, Repr
 
-def RainProp.toProp : RainProp → Core.Proposition.Prop' RainWorld
+def RainProp.toProp : RainProp → Set RainWorld
   | .raining => fun w => w = .rainy
   | .sunny   => fun w => w = .sunny
 
@@ -511,13 +492,13 @@ instance (rp : RainProp) : DecidablePred rp.toProp := fun w => by
   cases rp <;> simp only [RainProp.toProp] <;> exact inferInstance
 
 /-- "It is raining" — true only in the rainy world. -/
-def itIsRaining : Core.Proposition.Prop' RainWorld := fun w => w = .rainy
+def itIsRaining : Set RainWorld := fun w => w = .rainy
 
 instance : DecidablePred itIsRaining := fun w => by
   unfold itIsRaining; exact inferInstance
 
 /-- "It is sunny" — true only in the sunny world. -/
-def itIsSunny : Core.Proposition.Prop' RainWorld := fun w => w = .sunny
+def itIsSunny : Set RainWorld := fun w => w = .sunny
 
 instance : DecidablePred itIsSunny := fun w => by
   unfold itIsSunny; exact inferInstance

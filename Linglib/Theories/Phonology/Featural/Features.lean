@@ -83,38 +83,56 @@ abbrev FeatureVal := Option Bool
 -- ============================================================================
 
 /-- Is this a manner / root feature? -/
-def Feature.isMajorClass : Feature → Bool
+def Feature.IsMajorClass : Feature → Prop
   | .syllabic | .consonantal | .sonorant | .approximant
   | .continuant | .delayedRelease | .nasal | .lateral
-  | .strident | .tap | .trill => true
-  | _ => false
+  | .strident | .tap | .trill => True
+  | _ => False
+
+instance : DecidablePred Feature.IsMajorClass := fun f => by
+  cases f <;> unfold Feature.IsMajorClass <;> infer_instance
 
 /-- Is this a laryngeal feature? -/
-def Feature.isLaryngeal : Feature → Bool
-  | .voice | .spreadGlottis | .constrGlottis => true
-  | _ => false
+def Feature.IsLaryngeal : Feature → Prop
+  | .voice | .spreadGlottis | .constrGlottis => True
+  | _ => False
+
+instance : DecidablePred Feature.IsLaryngeal := fun f => by
+  cases f <;> unfold Feature.IsLaryngeal <;> infer_instance
 
 /-- Is this a place feature (any articulator node)? -/
-def Feature.isPlace : Feature → Bool
+def Feature.IsPlace : Feature → Prop
   | .labial | .round | .labiodental
   | .coronal | .anterior | .distributed
-  | .dorsal | .high | .low | .front | .back | .tense => true
-  | _ => false
+  | .dorsal | .high | .low | .front | .back | .tense => True
+  | _ => False
+
+instance : DecidablePred Feature.IsPlace := fun f => by
+  cases f <;> unfold Feature.IsPlace <;> infer_instance
 
 /-- Is this a labial place feature? -/
-def Feature.isLabial : Feature → Bool
-  | .labial | .round | .labiodental => true
-  | _ => false
+def Feature.IsLabial : Feature → Prop
+  | .labial | .round | .labiodental => True
+  | _ => False
+
+instance : DecidablePred Feature.IsLabial := fun f => by
+  cases f <;> unfold Feature.IsLabial <;> infer_instance
 
 /-- Is this a coronal place feature? -/
-def Feature.isCoronal : Feature → Bool
-  | .coronal | .anterior | .distributed => true
-  | _ => false
+def Feature.IsCoronal : Feature → Prop
+  | .coronal | .anterior | .distributed => True
+  | _ => False
+
+instance : DecidablePred Feature.IsCoronal := fun f => by
+  cases f <;> unfold Feature.IsCoronal <;> infer_instance
 
 /-- Is this a dorsal place feature? -/
-def Feature.isDorsal : Feature → Bool
-  | .dorsal | .high | .low | .front | .back | .tense => true
-  | _ => false
+def Feature.IsDorsal : Feature → Prop
+  | .dorsal | .high | .low | .front | .back | .tense => True
+  | _ => False
+
+instance : DecidablePred Feature.IsDorsal := fun f => by
+  cases f <;> unfold Feature.IsDorsal <;> infer_instance
 
 -- ============================================================================
 -- § 3: Segment Representation
@@ -126,12 +144,19 @@ structure Segment where
   spec : Feature → FeatureVal
 
 /-- Is feature `f` specified (either [+F] or [−F])? -/
-def Segment.specified (s : Segment) (f : Feature) : Bool :=
-  s.spec f |>.isSome
+def Segment.Specified (s : Segment) (f : Feature) : Prop :=
+  (s.spec f).isSome = true
+
+instance (s : Segment) : DecidablePred (Segment.Specified s) := fun _ =>
+  inferInstanceAs (Decidable (_ = true))
 
 /-- Does feature `f` have value `v`? -/
-def Segment.hasValue (s : Segment) (f : Feature) (v : Bool) : Bool :=
-  s.spec f == some v
+def Segment.HasValue (s : Segment) (f : Feature) (v : Bool) : Prop :=
+  s.spec f = some v
+
+instance (s : Segment) (f : Feature) (v : Bool) :
+    Decidable (Segment.HasValue s f v) :=
+  inferInstanceAs (Decidable (_ = _))
 
 -- ============================================================================
 -- § 4: Exhaustive Feature List

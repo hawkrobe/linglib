@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.TonhauserDerivation
 import Linglib.Phenomena.Presupposition.ProjectiveContent
+import Mathlib.Data.Set.Basic
 
 /-!
 # Belief Embedding -> Projective Content Taxonomy
@@ -76,7 +77,6 @@ example : ProjectiveTrigger.appositive.toClass.ole = .notObligatory := rfl
 from the SCF x OLE feature space. -/
 
 open Core.Presupposition
-open Core.Proposition
 open Core.CommonGround
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.TonhauserDerivation
@@ -85,7 +85,7 @@ variable {W : Type*} {Agent : Type*}
 
 /-- A projective trigger's behavior characterized by SCF and OLE values. -/
 structure TriggerBehavior (W : Type*) (Agent : Type*) where
-  content : Prop' W
+  content : Set W
   scf : StrongContextualFelicity
   ole : ObligatoryLocalEffect
 

@@ -54,15 +54,14 @@ conversation."
 Demonstrative-marked DPs are specific; indefinite DPs (introduced with
 *a/an*, *one-CL*) are nonspecific. This is the extraction-relevant notion,
 not @cite{cheng-sybesma-1999}'s predicate-dependent specificity. -/
-def isSpecific (d : Definiteness) : Bool :=
-  match d with
-  | .definite   => true
-  | .indefinite => false
+def isSpecific (d : Definiteness) : Prop := d = .definite
+
+instance (d : Definiteness) : Decidable (isSpecific d) :=
+  inferInstanceAs (Decidable (d = .definite))
 
 /-- Demonstratives project the familiarity/strong-article layer, hence
 are always specific for purposes of the Specificity Condition. -/
-theorem demonstratives_are_specific :
-    isSpecific .definite = true := rfl
+theorem demonstratives_are_specific : isSpecific .definite := rfl
 
 -- ============================================================================
 -- §2. The Specificity Condition
@@ -95,24 +94,26 @@ Specificity Condition.
     (where the "variable" is the in-situ wh-phrase itself, bound by
     a covert question operator).
 
-    Returns `true` when binding is BLOCKED. -/
-def blocked (_op : ExternalOperator) (dpSpecificity : Definiteness) : Bool :=
+    Holds when binding is BLOCKED. -/
+def blocked (_op : ExternalOperator) (dpSpecificity : Definiteness) : Prop :=
   isSpecific dpSpecificity
 
+instance (op : ExternalOperator) (d : Definiteness) : Decidable (blocked op d) :=
+  inferInstanceAs (Decidable (isSpecific d))
+
 /-- Specificity Condition blocks binding into definite DPs. -/
-theorem blocks_definite (op : ExternalOperator) :
-    blocked op .definite = true := rfl
+theorem blocks_definite (op : ExternalOperator) : blocked op .definite := rfl
 
 /-- Specificity Condition allows binding into indefinite DPs. -/
 theorem allows_indefinite (op : ExternalOperator) :
-    blocked op .indefinite = false := rfl
+    ¬ blocked op .indefinite := fun h => Definiteness.noConfusion h
 
 /-- The Specificity Condition is insensitive to operator type — it blocks
 all external operators equally when the DP is specific. This is the
 key prediction that distinguishes it from the PIC, which is sensitive
 to movement type. -/
 theorem operator_insensitive (op₁ op₂ : ExternalOperator) (d : Definiteness) :
-    blocked op₁ d = blocked op₂ d := rfl
+    blocked op₁ d ↔ blocked op₂ d := Iff.rfl
 
 -- ============================================================================
 -- §3. Interaction with wh-indefinites (@cite{li-1992})
@@ -131,9 +132,9 @@ inside a demonstrative-marked (specific) DP.
 @cite{shen-huang-2026} Experiment 3 confirms this contrast experimentally
 (β = −0.48, s.e. = 0.15, t = −3.32, p < 0.01). -/
 theorem wh_indefinite_blocked_in_specific_dp :
-    blocked .existentialClosure .definite = true := rfl
+    blocked .existentialClosure .definite := rfl
 
 theorem wh_indefinite_allowed_in_nonspecific_dp :
-    blocked .existentialClosure .indefinite = false := rfl
+    ¬ blocked .existentialClosure .indefinite := by decide
 
 end Core.SpecificityCondition

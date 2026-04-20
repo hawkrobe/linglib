@@ -66,11 +66,11 @@ open Exhaustification
 variable {World : Type*}
 
 /-- Binary disjunction for `Prop'`. -/
-private def por (φ ψ : Prop' World) : Prop' World := fun w => φ w ∨ ψ w
+private def por (φ ψ : Set World) : Set World := fun w => φ w ∨ ψ w
 
 /-- A continuation context represents "the rest of the sentence"
     after a parse point. -/
-abbrev Continuation (World : Type*) := Prop' World → Prop' World
+abbrev Continuation (World : Type*) := Set World → Set World
 
 /-- Negation continuation. -/
 def negCont : Continuation World := pneg
@@ -78,8 +78,8 @@ def negCont : Continuation World := pneg
 /-- A parse point: a proposition with alternatives and possible
     continuations. -/
 structure ParsePoint (World : Type*) where
-  prop : Prop' World
-  alts : Set (Prop' World)
+  prop : Set World
+  alts : Set (Set World)
   continuations : Set (Continuation World)
 
 
@@ -89,21 +89,21 @@ structure ParsePoint (World : Type*) where
 
 /-- Incremental vacuity: `exh` makes no difference for ANY
     continuation. -/
-def isIncrementallyVacuous (ALT : Set (Prop' World)) (φ : Prop' World)
+def isIncrementallyVacuous (ALT : Set (Set World)) (φ : Set World)
     (conts : Set (Continuation World)) : Prop :=
   ∀ C ∈ conts, ∀ w : World, C (exhIE ALT φ) w ↔ C φ w
 
 /-- Incremental weakening: `exh` weakens the meaning for ALL
     continuations. In DE contexts, local strengthening = global
     weakening. -/
-def isIncrementallyWeakening (ALT : Set (Prop' World)) (φ : Prop' World)
+def isIncrementallyWeakening (ALT : Set (Set World)) (φ : Set World)
     (conts : Set (Continuation World)) : Prop :=
   ∀ C ∈ conts, C φ ⊆ₚ C (exhIE ALT φ)
 
 /-- **Economy Condition on Exhaustification** (definition 63):
     `exh(φ)` is licensed only if it is neither incrementally
     vacuous nor incrementally weakening. -/
-def economyConditionMet (ALT : Set (Prop' World)) (φ : Prop' World)
+def economyConditionMet (ALT : Set (Set World)) (φ : Set World)
     (conts : Set (Continuation World)) : Prop :=
   ¬isIncrementallyVacuous ALT φ conts ∧
   ¬isIncrementallyWeakening ALT φ conts
@@ -123,7 +123,7 @@ Economy bans adding alternatives that only weaken the result.
 
 /-- Global weakening (definition 84): `exh` is globally weakening
     if the sentence without `exh` entails the sentence with `exh`. -/
-def isGloballyWeakening (ALT : Set (Prop' World)) (φ : Prop' World)
+def isGloballyWeakening (ALT : Set (Set World)) (φ : Set World)
     (S : Continuation World) : Prop :=
   ∀ w, S φ w → S (exhIE ALT φ) w
 
@@ -131,9 +131,9 @@ def isGloballyWeakening (ALT : Set (Prop' World)) (φ : Prop' World)
     globally weakening if there exists C' with strictly fewer IE
     alternatives such that S(exh_{C'}(A)) entails S(exh_C(A)).
     Using fewer alternatives gives a stronger result. -/
-def isGloballyWeakeningGen (ALT : Set (Prop' World)) (φ : Prop' World)
+def isGloballyWeakeningGen (ALT : Set (Set World)) (φ : Set World)
     (S : Continuation World) : Prop :=
-  ∃ ALT' : Set (Prop' World),
+  ∃ ALT' : Set (Set World),
     IE ALT' φ ⊂ IE ALT φ ∧
     ∀ w, S (exhIE ALT' φ) w → S (exhIE ALT φ) w
 
@@ -152,23 +152,23 @@ Fox & Spector derive this from economy rather than stipulating it.
 -/
 
 /-- Hurford violation: one disjunct entails the other. -/
-def hurfordViolation (A B : Prop' World) : Prop :=
+def hurfordViolation (A B : Set World) : Prop :=
   (A ⊆ₚ B) ∨ (B ⊆ₚ A)
 
 /-- A disjunction satisfies Hurford's Constraint if neither
     disjunct entails the other. -/
-def satisfiesHC (A B : Prop' World) : Prop :=
+def satisfiesHC (A B : Set World) : Prop :=
   ¬(A ⊆ₚ B) ∧ ¬(B ⊆ₚ A)
 
 /-- A Hurford disjunction can be rescued by embedding `exh` in the
     weaker disjunct if the exhaustified disjunct no longer entails
     the stronger one. -/
-def isRescuedByExh (ALT : Set (Prop' World)) (A B : Prop' World) :
+def isRescuedByExh (ALT : Set (Set World)) (A B : Set World) :
     Prop :=
   ¬(exhIE ALT A ⊆ₚ B)
 
 /-- The disjunction continuation: (λp. A ∨ p). -/
-def disjCont (A : Prop' World) : Continuation World :=
+def disjCont (A : Set World) : Continuation World :=
   fun p => por A p
 
 /-- **Hurford from Economy**: if B ⊆ A and `exh(B)` cannot break
@@ -177,7 +177,7 @@ def disjCont (A : Prop' World) : Continuation World :=
 
     This derives Hurford's Constraint from economy rather than
     stipulating it as a surface filter. -/
-theorem hurford_from_economy (ALT : Set (Prop' World)) (A B : Prop' World)
+theorem hurford_from_economy (ALT : Set (Set World)) (A B : Set World)
     (hBA : B ⊆ₚ A) (_hstill : exhIE ALT B ⊆ₚ A) :
     isIncrementallyWeakening ALT B {disjCont A} := by
   intro C hC w hCBw
@@ -186,7 +186,7 @@ theorem hurford_from_economy (ALT : Set (Prop' World)) (A B : Prop' World)
   simp only [disjCont, por] at hCBw ⊢
   rcases hCBw with hAw | hBw
   · left; exact hAw
-  · left; exact hBA w hBw
+  · left; exact hBA hBw
 
 
 -- ============================================================
@@ -210,8 +210,8 @@ vacuous (nothing to exclude).
     The hypothesis `h_excludes` says there is a world where the
     weak disjunct holds but neither the exhaustified weak nor the
     strong holds — this witnesses non-vacuity. -/
-theorem singh_weak_exh_nonvacuous (ALT : Set (Prop' World))
-    (weak strong : Prop' World)
+theorem singh_weak_exh_nonvacuous (ALT : Set (Set World))
+    (weak strong : Set World)
     (h_excludes : ∃ w, weak w ∧ ¬exhIE ALT weak w ∧ ¬strong w) :
     ¬isIncrementallyVacuous ALT weak {disjCont strong} := by
   intro hvacuous
@@ -231,7 +231,7 @@ theorem singh_weak_exh_nonvacuous (ALT : Set (Prop' World))
     The proof constructs {strong} as the unique MC-set: adding
     ¬weak or ¬strong to the exclusion set makes it inconsistent
     (since strong entails weak, every strong-world is a weak-world). -/
-theorem singh_strong_exh_vacuous (weak strong : Prop' World)
+theorem singh_strong_exh_vacuous (weak strong : Set World)
     (h_entails : strong ⊆ₚ weak) :
     exhIE {weak, strong} strong ≡ₚ strong := by
   constructor
@@ -260,7 +260,7 @@ theorem singh_strong_exh_vacuous (weak strong : Prop' World)
         · rw [ha_weak] at hψ'_neg
           have hneg_weak_u := hu ψ' hψ'_E'
           rw [hψ'_neg] at hneg_weak_u
-          exact hneg_weak_u (h_entails u hstrong_u)
+          exact hneg_weak_u (h_entails hstrong_u)
         · rw [ha_strong] at hψ'_neg
           have hneg_strong_u := hu ψ' hψ'_E'
           rw [hψ'_neg] at hneg_strong_u
@@ -294,7 +294,7 @@ the right alternatives for the inner `exh` — this derives the IFG.
 /-- A continuation is **downward-entailing** if it reverses
     entailment. -/
 def isDECont (S : Continuation World) : Prop :=
-  ∀ (p q : Prop' World), (∀ w, p w → q w) → ∀ w, S q w → S p w
+  ∀ (p q : Set World), (∀ w, p w → q w) → ∀ w, S q w → S p w
 
 /-- Negation is DE. -/
 theorem negCont_is_DE : isDECont (pneg (World := World)) := by
@@ -303,14 +303,14 @@ theorem negCont_is_DE : isDECont (pneg (World := World)) := by
 
 /-- The prejacent is always in IE (it belongs to every compatible
     set by definition, hence every MC-set). -/
-theorem prejacent_mem_IE (ALT : Set (Prop' World)) (φ : Prop' World) :
+theorem prejacent_mem_IE (ALT : Set (Set World)) (φ : Set World) :
     φ ∈ IE ALT φ :=
   fun _E hE => hE.1.1
 
 /-- `exhIE` always entails its prejacent: exhaustification can
     only strengthen, never weaken. -/
-theorem exhIE_entails_prejacent (ALT : Set (Prop' World))
-    (φ : Prop' World) : exhIE ALT φ ⊆ₚ φ :=
+theorem exhIE_entails_prejacent (ALT : Set (Set World))
+    (φ : Set World) : exhIE ALT φ ⊆ₚ φ :=
   fun _w h => h φ (prejacent_mem_IE ALT φ)
 
 /-- **`exh` is always globally weakening under DE**: since
@@ -320,8 +320,8 @@ theorem exhIE_entails_prejacent (ALT : Set (Prop' World))
     This is the core observation behind the IFG: embedded `exh`
     under DE operators is blocked by economy unless focus provides
     the right alternative set (via a two-level exh mechanism). -/
-theorem exh_weakening_under_de (ALT : Set (Prop' World))
-    (φ : Prop' World) (S_cont : Continuation World)
+theorem exh_weakening_under_de (ALT : Set (Set World))
+    (φ : Set World) (S_cont : Continuation World)
     (hDE : isDECont S_cont) :
     isGloballyWeakening ALT φ S_cont :=
   fun w => hDE (exhIE ALT φ) φ (exhIE_entails_prejacent ALT φ) w
@@ -329,8 +329,8 @@ theorem exh_weakening_under_de (ALT : Set (Prop' World))
 /-- More IE alternatives means a stronger exhaustified meaning:
     if IE(ALT') ⊆ IE(ALT), then exhIE ALT φ ⊆ₚ exhIE ALT' φ.
     More requirements to satisfy → fewer satisfying worlds. -/
-theorem exhIE_stronger_of_more_IE (ALT ALT' : Set (Prop' World))
-    (φ : Prop' World) (hIE : IE ALT' φ ⊆ IE ALT φ) :
+theorem exhIE_stronger_of_more_IE (ALT ALT' : Set (Set World))
+    (φ : Set World) (hIE : IE ALT' φ ⊆ IE ALT φ) :
     exhIE ALT φ ⊆ₚ exhIE ALT' φ :=
   fun _w hexh ψ hψ => hexh ψ (hIE hψ)
 
@@ -343,8 +343,8 @@ theorem exhIE_stronger_of_more_IE (ALT ALT' : Set (Prop' World))
     two-level exh structure `exh_{OP(S)}(OP[exh_C(S)])`, but this
     lemma is the key step. -/
 theorem de_weakening_of_more_IE (S_cont : Continuation World)
-    (hDE : isDECont S_cont) (ALT ALT' : Set (Prop' World))
-    (φ : Prop' World) (hIE : IE ALT' φ ⊆ IE ALT φ) :
+    (hDE : isDECont S_cont) (ALT ALT' : Set (Set World))
+    (φ : Set World) (hIE : IE ALT' φ ⊆ IE ALT φ) :
     ∀ w, S_cont (exhIE ALT' φ) w → S_cont (exhIE ALT φ) w :=
   fun w => hDE _ _ (exhIE_stronger_of_more_IE ALT ALT' φ hIE) w
 
@@ -444,18 +444,18 @@ Economy and structural complexity are **complementary**:
     produce pointwise-equivalent outputs) holds for all natural
     language continuations: negation, quantifier restrictors,
     coordination, etc. -/
-theorem vacuous_violates_economy (ALT : Set (Prop' World))
-    (φ : Prop' World) (conts : Set (Continuation World))
+theorem vacuous_violates_economy (ALT : Set (Set World))
+    (φ : Set World) (conts : Set (Continuation World))
     (_hne : conts.Nonempty)
     (hvac : exhIE ALT φ ≡ₚ φ)
-    (hext : ∀ C ∈ conts, ∀ (p q : Prop' World),
+    (hext : ∀ C ∈ conts, ∀ (p q : Set World),
       (∀ w, p w ↔ q w) → ∀ w, C p w ↔ C q w) :
     ¬economyConditionMet ALT φ conts := by
   intro ⟨hnv, _⟩
   apply hnv
   intro C hC w
   exact hext C hC (exhIE ALT φ) φ
-    (fun w' => ⟨hvac.1 w', hvac.2 w'⟩) w
+    (fun _ => ⟨fun h => hvac.1 h, fun h => hvac.2 h⟩) w
 
 
 end Implicature.FoxSpector2018

@@ -94,16 +94,16 @@ end SonorityRank
     type. The SSP and other grammatical constraints operate on `SonorityRank`
     directly — they do not inspect articulatory features. -/
 def sonorityOf (s : Segment) : SonorityRank :=
-  if s.hasValue .sonorant false then
+  if s.HasValue .sonorant false then
     -- Obstruent: stop vs fricative (@cite{clements-1990} refinement)
-    if s.hasValue .continuant true then .fricative else .stop
-  else if s.hasValue .approximant false then
+    if s.HasValue .continuant true then .fricative else .stop
+  else if s.HasValue .approximant false then
     -- Nasal ([+sonorant, −approximant])
     .nasal
-  else if s.hasValue .consonantal true then
+  else if s.HasValue .consonantal true then
     -- Liquid ([+sonorant, +approximant, +consonantal])
     .liquid
-  else if s.hasValue .syllabic true then
+  else if s.HasValue .syllabic true then
     -- Vowel ([+sonorant, +approximant, −consonantal, +syllabic])
     .vowel
   else

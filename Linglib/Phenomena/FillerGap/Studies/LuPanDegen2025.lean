@@ -173,10 +173,10 @@ discourse-sourced from syntax/processing-sourced islands. -/
 properties but does not affect which dimension of the communication event is
 foregrounded. The manner QUD remains active regardless of filler complexity. -/
 theorem dlinking_does_not_change_backgroundedness (v : VerbDecomp)
-    (h : v.hasMannerWeight = true) :
+    (h : v.hasMannerWeight) :
     -- D-linking is irrelevant: complement status depends only on verb, not filler
     complementStatus (defaultDimension v) = .given := by
-  simp only [defaultDimension, h, ite_true, complementStatus]
+  simp only [defaultDimension, if_pos h, complementStatus]
 
 /-- **Differential amelioration prediction**: D-linking ameliorates structural
 weak islands but NOT MoS islands, while prosodic focus ameliorates MoS islands

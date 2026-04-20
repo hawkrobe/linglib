@@ -1,10 +1,10 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Phenomena.Reference.Studies.DaleReiter1995
+import Linglib.Theories.Pragmatics.RSA.Incremental
+import Linglib.Paradigms.VisualWorld
+import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
 
 /-!
 # @cite{cohn-gordon-goodman-potts-2019} — Incremental Iterated Response Model
-@cite{dale-reiter-1995}
 
 Cohn-Gordon, R., Goodman, N. D., & Potts, C. (2019). An Incremental Iterated
 Response Model of Pragmatics. *Proceedings of the Society for Computation in
@@ -28,18 +28,22 @@ L0 uses **extension-based incremental semantics** (§2.2): given prefix c,
 
 where U is the set of complete utterances and ⊑ is the prefix relation.
 
-## Formalization
+## Formalization via the `IncrementalSemantics` bundle
 
-This is the first formalization to use `RSAConfig`'s sequential infrastructure:
+Each scene in this file is a single value of `RSA.IncrementalSemantics U W`
+(in `Theories/Pragmatics/RSA/Incremental.lean`), specifying just the lexicon
+(`wordApplies`), the closed set of complete utterances, and the world set.
+The bundle's `toRSAConfig` builder produces the full `RSAConfig` with chain-
+rule speaker, α = 1, no cost, uniform priors, and extension-based L0 — so
+the three scenes (Figure 1, the @cite{sedivy-2007} reference game, the
+@cite{rubio-fernandez-2016} display) share machinery rather than duplicating it.
 
-- `Ctx = List Word` — the prefix produced so far
-- `transition ctx w = ctx ++ [w]` — append the new word
-- `initial = []` — start with empty prefix
-- `meaning ctx _ w r` = extension-based incremental semantics of `ctx ++ [w]`
-
-The domain is Figure 1 from the paper: 3 referents (red dress, blue dress,
-red hat), 3 words (red, dress, object), 3 complete utterances (dress,
-red dress, red object). Costs are 0 for all words.
+The bundle exposes a single deep theorem, `l0Utt_ge_inv_card`, proving
+the §2.4 weakly-informative bound generically: any complete utterance true
+of `r ∈ worlds` yields a literal posterior at least `1 / worlds.length`.
+The Figure 1 application (`greedyUnroll_weakly_informative`) below
+discharges only the `r ∈ worlds` and `uttSem utt r = true` premises;
+the bound follows.
 
 ## Findings
 
@@ -77,81 +81,38 @@ inductive Referent where
   deriving DecidableEq, Fintype, Repr
 
 -- ============================================================================
--- §2. Boolean Semantics
+-- §2. The Figure 1 bundle
 -- ============================================================================
 
-/-- Whether a word is veridically true of a referent. -/
-def wordApplies : Word → Referent → Bool
-  | .red,    .redDress  => true
-  | .red,    .redHat    => true
-  | .dress,  .redDress  => true
-  | .dress,  .blueDress => true
-  | .object, _          => true
-  | _,       _          => false
-
-/-- The three complete utterances in the scene (Figure 1a):
-    "dress", "red dress", "red object". -/
-def completeUtterances : List (List Word) :=
-  [[.dress], [.red, .dress], [.red, .object]]
-
-/-- Utterance-level Boolean semantics: conjunction of word applicability. -/
-def uttSem (utt : List Word) (r : Referent) : Bool :=
-  utt.all (fun w => wordApplies w r)
+/-- The Figure 1 reference scene as an `IncrementalSemantics` bundle:
+    three words ("red", "dress", "object"), three complete utterances
+    ("dress", "red dress", "red object"), three referents (R1, R2, R3). -/
+def figureOne : IncrementalSemantics Word Referent where
+  wordApplies
+    | .red,    .redDress  => true
+    | .red,    .redHat    => true
+    | .dress,  .redDress  => true
+    | .dress,  .blueDress => true
+    | .object, _          => true
+    | _,       _          => false
+  completeUtterances :=
+    [[.dress], [.red, .dress], [.red, .object]]
+  worlds := [.redDress, .blueDress, .redHat]
 
 -- ============================================================================
--- §3. Extension-Based Incremental Semantics (§2.2)
--- ============================================================================
-
-/-- Count of complete utterance extensions of `pfx` that are true of `r`. -/
-def trueExtCount (pfx : List Word) (r : Referent) : ℕ :=
-  (completeUtterances.filter (fun u =>
-    pfx.isPrefixOf u && uttSem u r)).length
-
-/-- Count of viable extensions: complete utterances extending `pfx` that are
-    true of at least one referent. -/
-def viableExtCount (pfx : List Word) : ℕ :=
-  (completeUtterances.filter (fun u =>
-    pfx.isPrefixOf u &&
-    ([Referent.redDress, .blueDress, .redHat].any (fun r => uttSem u r)))).length
-
-/-- Extension-based incremental semantics (§2.2):
-
-    ⟦pfx⟧(r) = trueExtCount(pfx, r) / viableExtCount(pfx) -/
-noncomputable def incrementalSem (pfx : List Word) (r : Referent) : ℝ :=
-  (trueExtCount pfx r : ℝ) / (viableExtCount pfx : ℝ)
-
--- ============================================================================
--- §4. RSAConfig
+-- §3. RSAConfig
 -- ============================================================================
 
 /-- Incremental RSA for the Figure 1 reference game.
 
-    This is the first `RSAConfig` to use the sequential infrastructure
-    (`Ctx`, `transition`, `initial`). The model produces referring expressions
-    word-by-word, with each step choosing the next word to maximize L0's
-    posterior for the target referent.
-
-    Architecture:
-    - L0_at(ctx): literal listener given prefix ctx + next word
-    - S1_at(ctx): speaker choosing next word given prefix ctx
-    - trajectoryProb: chain-rule product of S1_at probabilities
-
-    Parameters: α = 1, cost = 0 for all words, uniform priors. -/
-noncomputable def incRSA : RSAConfig Word Referent where
-  Ctx := List Word
-  meaning ctx _ u w := incrementalSem (ctx ++ [u]) w
-  meaning_nonneg _ _ _ _ := div_nonneg (Nat.cast_nonneg _) (Nat.cast_nonneg _)
-  s1Score l0 _ _ w u := l0 u w
-  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
-  α := 1
-  α_pos := one_pos
-  transition ctx w := ctx ++ [w]
-  initial := []
-  latentPrior_nonneg _ _ := by norm_num
-  worldPrior_nonneg _ := by norm_num
+    Built directly from `figureOne` via the bundle's `toRSAConfig` builder.
+    Produces a sequential `RSAConfig` with `Ctx = List Word`, chain-rule
+    speaker (`s1Score = L0`, α = 1, no cost), and extension-based L0
+    meaning (§2.2). -/
+noncomputable def incRSA : RSAConfig Word Referent := figureOne.toRSAConfig
 
 -- ============================================================================
--- §5. Findings
+-- §4. Findings
 -- ============================================================================
 
 /-- Qualitative findings from the incremental RSA model. -/
@@ -181,7 +142,7 @@ inductive Finding where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- §6. Predictions
+-- §5. Predictions
 -- ============================================================================
 
 -- ---------- Figure 1c: S1^WORD incremental speaker ----------
@@ -257,8 +218,9 @@ theorem uniform_after_red_for_r2 (w : Word) (hw : w ≠ .red) :
     This is an anticipatory implicature: "red" is the ONLY word available
     for R3 (S1(red|[],R3) = 1), so hearing "red" raises R3's probability.
     For R1, the speaker could have said "dress" instead, so "red" is less
-    diagnostic. This foreshadows @cite{sedivy-etal-1999}'s finding that
-    listeners draw contrastive inferences from prenominal adjectives. -/
+    diagnostic. We pick this up below as a structural foreshadowing of
+    @cite{sedivy-etal-1999}'s contrastive-inference findings; CG themselves
+    cite @cite{sedivy-2007} for the same effect. -/
 theorem listener_anticipation :
     incRSA.L1 .red .redHat > incRSA.L1 .red .redDress := by
   rsa_predict
@@ -280,7 +242,7 @@ theorem incremental_prefers_bare_noun :
   rsa_predict
 
 -- ============================================================================
--- §7. Verification
+-- §6. Verification
 -- ============================================================================
 
 /-- Map each finding to the model prediction that accounts for it. -/
@@ -319,40 +281,387 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
   · exact incremental_prefers_bare_noun
 
 -- ============================================================================
--- §8. Bridge: D&R Incremental Algorithm Connection
+-- §6b. §2.4 Weakly-Informative Greedy Unrolling
 -- ============================================================================
 
-/-! The incremental RSA model and @cite{dale-reiter-1995}'s Incremental
-Algorithm (IA) solve the same problem — generating referring expressions
-for a target among distractors — via structurally parallel mechanisms:
+/-! @cite{cohn-gordon-goodman-potts-2019} §2.4 establishes a *weakly
+informative* lower bound on greedy unrolling: even though the
+incremental speaker has no global view of the utterance space, the
+greedy choice at each step yields a complete utterance under which the
+literal listener's posterior for the target is at least 1 / |W|. The
+bound itself — `l0Utt_ge_inv_card` — is proved generically over the
+`IncrementalSemantics` bundle in `Theories/Pragmatics/RSA/Incremental.lean`.
+What's left for this study is to (i) define the greedy unroller for
+Figure 1's three referents and (ii) verify that each output is a complete
+utterance true of the target; the §2.4 bound then follows. -/
 
-| Property         | D&R IA                          | Incremental RSA               |
-|------------------|---------------------------------|-------------------------------|
-| Processing       | Sequential (attribute-by-attr)  | Sequential (word-by-word)     |
-| Selection        | Deterministic (fixed order)     | Probabilistic (soft-max)      |
-| Q2/Cost          | None (No Brevity)               | None (s1Score = L0)           |
-| State            | Remaining distractors           | Ctx = word prefix             |
-| Termination      | All distractors ruled out       | Chain rule product over words |
+/-- Greedy unrolling for Figure 1's scene: at each step pick the word
+    maximizing L0(r | ctx ++ [w]); stop when ctx is a complete utterance.
+    Tabulated by case for the three Figure 1 referents. -/
+def greedyUnroll : Referent → List Word
+  | .redDress  => [.red, .dress]
+  | .blueDress => [.dress]
+  | .redHat    => [.red, .object]
 
-Both operate in the No-Brevity regime: D&R's IA includes any
-discriminating attribute without brevity optimization; the incremental
-RSA's `s1Score l0 _ _ w u := l0 u w` has no cost term. D&R's fixed
-`PreferredAttributes` order is generalized by RSA's probabilistic
-ranking, which emerges from the L0 semantics at each step.
+/-- §2.4 weakly informative bound, instantiated for Figure 1.
 
-The key difference: D&R is deterministic and may produce non-minimal
-descriptions (as shown in `DaleReiter1995.cups_non_minimal`), while
-the incremental RSA is probabilistic and assigns lower total probability
-to longer utterances via the chain rule product (Finding 3:
-`incremental_prefers_bare_noun`). -/
+    Each of the three greedy outputs is a complete utterance true of its
+    target referent, so the generic `l0Utt_ge_inv_card` theorem from
+    `Incremental.lean` immediately gives the 1/|worlds| = 1/3 bound. The
+    actual values for this scene are 1, 1/2, 1/2 — the bound is loose here
+    by design: it certifies architectural sanity, not optimality. -/
+theorem greedyUnroll_weakly_informative (r : Referent) :
+    figureOne.l0Utt (greedyUnroll r) r ≥ 1 / 3 := by
+  have hlen_nat : figureOne.worlds.length = 3 := by decide
+  have hlen : (figureOne.worlds.length : ℝ) = 3 := by exact_mod_cast hlen_nat
+  have hr_mem : r ∈ figureOne.worlds := by cases r <;> decide
+  have htrue : figureOne.uttSem (greedyUnroll r) r = true := by
+    cases r <;> decide
+  calc figureOne.l0Utt (greedyUnroll r) r
+      ≥ 1 / (figureOne.worlds.length : ℝ) :=
+        figureOne.l0Utt_ge_inv_card _ _ hr_mem htrue
+    _ = 1 / 3 := by rw [hlen]
 
-/-- Both the incremental RSA and @cite{dale-reiter-1995}'s Incremental
-    Algorithm operate in the No-Brevity regime (strength = 0) — the
-    weakest Q2 interpretation. Both enforce Q1 (each word/attribute
-    must contribute to identifying the referent) without Q2 (brevity)
-    pressure. D&R's deterministic fixed-order selection is generalized
-    by the incremental RSA's probabilistic word-by-word production. -/
-theorem incremental_rsa_is_no_brevity :
-    DaleReiter1995.BrevityInterpretation.noBrevity.strength = 0 := rfl
+-- ============================================================================
+-- §7. Global RSA Model + Divergence (§2.4)
+-- ============================================================================
+
+/-! The global RSA model treats each complete utterance as an atomic
+option, normalizing over the whole utterance space rather than chaining
+word-by-word. The divergence between global and incremental predictions
+for R1 is a central result of @cite{cohn-gordon-goodman-potts-2019} §2.4:
+the global model prefers the more-informative "red dress" over the bare
+"dress" (standard RSA Q-implicature), but the incremental model prefers
+"dress" because chain-rule products penalize longer trajectories
+(Finding 7, `incremental_prefers_bare_noun`). -/
+
+/-- The three complete utterances of Figure 1, treated as atomic options
+    for the global RSA model. -/
+inductive Utterance where
+  | dress | redDress | redObject
+  deriving DecidableEq, Fintype, Repr
+
+/-- Boolean truth of a complete utterance for a referent. -/
+def uttApplies : Utterance → Referent → Bool
+  | .dress,     .redDress  => true
+  | .dress,     .blueDress => true
+  | .redDress,  .redDress  => true
+  | .redObject, .redDress  => true
+  | .redObject, .redHat    => true
+  | _,          _          => false
+
+/-- Global RSA model for the Figure 1 reference game: U = full utterances,
+    one-shot normalization, α = 1 with no cost term. The same model class
+    @cite{frank-goodman-2012} would write for a non-incremental speaker. -/
+noncomputable def globalRSA : RSAConfig Utterance Referent where
+  meaning _ _ u r := if uttApplies u r then 1 else 0
+  meaning_nonneg _ _ u r := by split <;> norm_num
+  s1Score l0 _ _ w u := l0 u w
+  s1Score_nonneg _ _ _ _ _ hl _ := hl _ _
+  α := 1
+  α_pos := one_pos
+  latentPrior_nonneg _ _ := by norm_num
+  worldPrior_nonneg _ := by norm_num
+
+/-- **Divergence from incremental** (§2.4): the global RSA prefers the
+    fully-modified "red dress" over the bare "dress" for R1, because
+    "red dress" uniquely identifies R1 while "dress" leaves R1/R2
+    ambiguous. Compare Finding 7 (`incremental_prefers_bare_noun`),
+    where the incremental trajectory probability has the opposite
+    preference: chain-rule products discount longer trajectories enough
+    to flip the ordering. This is the central empirical wedge between
+    the two architectures the paper articulates. -/
+theorem global_prefers_red_dress :
+    globalRSA.S1 () .redDress .redDress > globalRSA.S1 () .redDress .dress := by
+  rsa_predict
+
+-- ============================================================================
+-- §8. Sedivy §3.2 Bridge (Anticipatory Contrastive Inference)
+-- ============================================================================
+
+/-! @cite{cohn-gordon-goodman-potts-2019} §3.2 reanalyses
+@cite{sedivy-2007}'s review of contrastive-inference findings within the
+incremental RSA framework. The scene contains a target tall cup, a
+contrasting short cup (same category, opposite scale pole), a tall
+pitcher (cross-category competitor at the same scale pole), and an
+unrelated key. After the listener hears just "tall", the pragmatic
+listener L1 prefers the tall cup over the tall pitcher — even though
+extension semantics treats both as equally compatible — because a
+speaker referring to the pitcher would have said "pitcher" alone (no
+need for "tall" to disambiguate from the only other pitcher: there
+isn't one). The "tall" is therefore diagnostic of the cup with a
+same-category contrast.
+
+The original empirical effect is from @cite{sedivy-etal-1999}; CG cite
+the @cite{sedivy-2007} review article that summarizes it.
+
+This file formalises both contrast cells. The contrast scene is the
+five-word, four-referent `sedivyBundle` from CG's text. The no-contrast
+scene is a four-word, three-referent companion bundle
+(`SedivyScene_NoContrast.bundle`) — `.short` is omitted because the
+shortCup referent it would describe is absent from the display, leaving
+the speaker with no scene-anchored use for the word. The two scenes
+share a `Referent` type so a single Cell-typed
+`LookProportion SedivyEtAl1999.Cell ℝ` projection can read off both. -/
+
+namespace SedivyScene
+
+/-- Sedivy scene words: scalar adjectives (tall, short) and category
+    nouns (cup, pitcher, key). -/
+inductive Word where
+  | tall | short | cup | pitcher | key
+  deriving DecidableEq, Fintype, Repr
+
+/-- Sedivy scene referents: the four objects in the visual display. -/
+inductive Referent where
+  | tallCup | shortCup | tallPitcher | key
+  deriving DecidableEq, Fintype, Repr
+
+/-- The Sedivy scene as an `IncrementalSemantics` bundle: 5 words,
+    6 complete utterances (3 adj+noun phrases + 3 bare nouns; the
+    bare-noun option is essential — without it "tall" is no longer
+    diagnostic of the cup), 4 referents. -/
+def sedivyBundle : IncrementalSemantics Word Referent where
+  wordApplies
+    | .tall,    .tallCup     => true
+    | .tall,    .tallPitcher => true
+    | .short,   .shortCup    => true
+    | .cup,     .tallCup     => true
+    | .cup,     .shortCup    => true
+    | .pitcher, .tallPitcher => true
+    | .key,     .key         => true
+    | _,        _            => false
+  completeUtterances :=
+    [[.tall, .cup], [.short, .cup], [.tall, .pitcher],
+     [.cup], [.pitcher], [.key]]
+  worlds := [.tallCup, .shortCup, .tallPitcher, .key]
+
+/-- Incremental RSA on the Sedivy scene, derived from `sedivyBundle`. -/
+noncomputable def incRSA_sedivy : RSAConfig Word Referent := sedivyBundle.toRSAConfig
+
+end SedivyScene
+
+-- ============================================================================
+-- §8b. No-contrast companion scene
+-- ============================================================================
+
+/-! **No-contrast variant** of the Sedivy scene, sharing
+`SedivyScene.Referent` but with a smaller word inventory. Empirically
+this is the no-contrast cell of @cite{sedivy-etal-1999}'s 2 × 2 × 2
+design: the same-category contrast object (the short cup) is removed
+from the visual display.
+
+The companion bundle drops `.short` from `Word` and the `[short, cup]`
+utterance from `completeUtterances`. Justification: with no shortCup
+in the display, a cooperative speaker has no scene-anchored use for
+`.short`, and CG's `IncrementalSemantics` is a *scene-specific*
+production model rather than a lexicon-wide one. (The listener's
+standing mental lexicon still contains `short`; the bundle here is a
+model of speaker production for *this scene*, not of mental
+inventories.)
+
+Why the fresh `Word` type rather than a `{sedivyBundle with worlds := …}`
+update? Keeping `.short` in the lexicon while removing all of its
+referents leaves `incrementalSem [.short] _ = 0/0`, which mathlib treats
+as `0` but which the `rsa_predict` reflection evaluator cannot reduce.
+The fresh type sidesteps the divide-by-zero pattern at the cost of mild
+bundle duplication. -/
+
+namespace SedivyScene_NoContrast
+
+inductive Word where
+  | tall | cup | pitcher | key
+  deriving DecidableEq, Fintype, Repr
+
+def bundle : IncrementalSemantics Word SedivyScene.Referent where
+  wordApplies
+    | .tall,    .tallCup     => true
+    | .tall,    .tallPitcher => true
+    | .cup,     .tallCup     => true
+    | .pitcher, .tallPitcher => true
+    | .key,     .key         => true
+    | _,        _            => false
+  completeUtterances :=
+    [[.tall, .cup], [.tall, .pitcher], [.cup], [.pitcher], [.key]]
+  worlds := [.tallCup, .tallPitcher, .key]
+
+noncomputable def incRSA_sedivy_noContrast : RSAConfig Word SedivyScene.Referent :=
+  bundle.toRSAConfig
+
+end SedivyScene_NoContrast
+
+open SedivyScene in
+/-- **Cohn-Gordon §3.2 prediction**: after hearing "tall", L1 favours
+    the tall cup over the tall pitcher (3/5 vs 2/5). The mechanism is
+    the contrastive inference: a speaker referring to the pitcher would
+    use "pitcher" alone (S1(pitcher | tallPitcher) = 2/3); the only
+    referent for which "tall" is the speaker's preferred first word is
+    the tall cup, where "cup" alone leaves shortCup ambiguous.
+
+    This formalises @cite{sedivy-2007}'s anticipatory contrast effect
+    within the incremental RSA framework (and indirectly captures the
+    @cite{sedivy-etal-1999} empirical pattern Sedivy 2007 reviews).
+    The paradigm-level statement (Sedivy Pattern 2,
+    `Paradigms.VisualWorld.ContrastReducesCompetitorLooks`) requires a
+    contrast vs no-contrast comparison; this theorem captures the
+    contrast-condition direction only. -/
+theorem sedivy_contrast_inference :
+    SedivyScene.incRSA_sedivy.L1 .tall .tallCup >
+    SedivyScene.incRSA_sedivy.L1 .tall .tallPitcher := by
+  rsa_predict
+
+open Paradigms.VisualWorld SedivyEtAl1999 in
+/-- **Cell-typed look projection** for the Sedivy paradigm under the
+    incremental-RSA model.
+
+    ## Linking hypothesis (load-bearing, editorial)
+
+    The incremental RSA model produces a *posterior* over referents,
+    `L1 : Word → Referent → ℝ`. Visual-world data are *fixation
+    proportions*. Mapping the former to the latter requires a linking
+    hypothesis. This file makes the simplest one explicit:
+
+      *Bayesian posterior linking hypothesis* — the proportion of looks
+      to an object equals the listener's posterior probability of that
+      object being the referent at the same point in the unfolding
+      utterance.
+
+    @cite{cohn-gordon-goodman-potts-2019} do not state this assumption;
+    they discuss the contrastive-inference effect at the level of L1
+    posteriors and treat empirical contact with @cite{sedivy-2007}'s
+    look data informally. The Bayesian linking hypothesis used here is
+    the strongest natural choice given a single normalised posterior.
+    A weaker alternative would be a Luce-choice rule over a
+    monotone-in-posterior activation; that weakening preserves the
+    qualitative inequality patterns this file proves. If a second linking hypothesis enters the codebase, the
+    paradigm contract should grow a typed `LinkingHypothesis` API and
+    the bridge theorem statement should mention which hypothesis is
+    in force.
+
+    ## Construction
+
+    `cgSedivyLooks role c` selects the appropriate scene config based on
+    `c.contrast` (`incRSA_sedivy` for the contrast cell;
+    `SedivyScene_NoContrast.incRSA_sedivy_noContrast` for the no-contrast
+    cell) and reads off `L1 .tall ·` at the referent corresponding to
+    `role`. Other factors of the cell (typicality, task) are ignored —
+    the incremental RSA model has no internal representation of
+    typicality or task, so the projection is constant in those factors.
+
+    Cells in the contrast condition cover four roles; cells in the
+    no-contrast condition omit `.contrastingObject` (no shortCup is on
+    display) and so collapse to `0` for that role. -/
+noncomputable def cgSedivyLooks : LookProportion SedivyEtAl1999.Cell ℝ :=
+  fun role c =>
+    match c.contrast, role with
+    | .contrast,   .target                  => SedivyScene.incRSA_sedivy.L1 .tall .tallCup
+    | .contrast,   .crossCategoryCompetitor => SedivyScene.incRSA_sedivy.L1 .tall .tallPitcher
+    | .contrast,   .contrastingObject       => SedivyScene.incRSA_sedivy.L1 .tall .shortCup
+    | .contrast,   .distractor              => SedivyScene.incRSA_sedivy.L1 .tall .key
+    | .noContrast, .target                  =>
+        SedivyScene_NoContrast.incRSA_sedivy_noContrast.L1 .tall .tallCup
+    | .noContrast, .crossCategoryCompetitor =>
+        SedivyScene_NoContrast.incRSA_sedivy_noContrast.L1 .tall .tallPitcher
+    | .noContrast, .distractor              =>
+        SedivyScene_NoContrast.incRSA_sedivy_noContrast.L1 .tall .key
+    | _,           _                        => 0
+
+open Paradigms.VisualWorld SedivyEtAl1999 in
+/-- **Paradigm Pattern 2 verified** for Cohn-Gordon's incremental RSA:
+    swapping the contrast factor from `contrast` to `noContrast`
+    strictly increases looks to the cross-category competitor (the tall
+    pitcher), under the Bayesian posterior linking hypothesis stated on
+    `cgSedivyLooks`.
+
+    Mechanism: in the contrast scene, `L1(.tall, tallPitcher) = 2/5`
+    because a speaker referring to the pitcher would prefer "pitcher"
+    alone (the shortCup distractor pulls "tall" toward the cup). In
+    the no-contrast scene there is no shortCup, "tall" is uninformative
+    between the two extant scale-pole objects, and `L1(.tall, tallPitcher)
+    = 1/2`.
+
+    Discharges
+    `SedivyEtAl1999.SatisfiesSedivyPattern.contrast_reduces_competitor_looks`
+    for this model. The proof reduces — via the `HasContrastCondition`
+    lens applied to a destructured cell — to the per-cell L1 inequality,
+    dispatched by `rsa_predict`. -/
+theorem cgSedivyLooks_satisfy_contrast_reduces_competitor :
+    ContrastReducesCompetitorLooks (Cell := SedivyEtAl1999.Cell) (R := ℝ) cgSedivyLooks := by
+  intro c
+  obtain ⟨_, _, _⟩ := c
+  show SedivyScene_NoContrast.incRSA_sedivy_noContrast.L1 .tall .tallPitcher >
+       SedivyScene.incRSA_sedivy.L1 .tall .tallPitcher
+  rsa_predict
+
+
+-- ============================================================================
+-- §9. Rubio-Fernández §3.1 Bridge (English Over-Modification, STOP token)
+-- ============================================================================
+
+/-! @cite{cohn-gordon-goodman-potts-2019} §3.1 reanalyses
+@cite{rubio-fernandez-2016}'s finding that English speakers
+over-modify (saying "the red dress" when "the dress" suffices in a
+display with one dress). The mechanism: an explicit `STOP` token
+marks the end of the utterance, so trajectories of different lengths
+(`[dress, STOP]` vs `[red, dress, STOP]`) become directly comparable
+under the chain rule. Without `STOP`, the chain rule penalizes longer
+trajectories monotonically (Finding 7); with `STOP` and a per-word
+cost the over-modification preference can emerge in the right cost
+regime.
+
+This formalisation establishes the model's lexicon and complete-
+utterance set with `STOP`, and proves the structural invariants
+(every complete utterance ends in `STOP`; `STOP` does not apply
+mid-utterance). The cost-dependent comparison theorem
+`S1^UTT-IP(red dress, STOP | R1) > S1^UTT-IP(dress, STOP | R1)` is
+left as future work — formalising it requires `Real.exp` over a cost
+schedule and a quantitative argument that does not reduce via
+`rsa_predict`. -/
+
+namespace RubioFernandezScene
+
+/-- English lexicon for the Rubio-Fernández display: type nouns and
+    colour adjectives, plus a `stop` token marking utterance termination. -/
+inductive Word where
+  | dress | hat | red | blue | stop
+  deriving DecidableEq, Fintype, Repr
+
+/-- Display referents: a red dress and a blue hat, the canonical
+    minimal pair from @cite{rubio-fernandez-2016}'s display. -/
+inductive Referent where
+  | redDress | blueHat
+  deriving DecidableEq, Fintype, Repr
+
+/-- The Rubio-Fernández scene as an `IncrementalSemantics` bundle:
+    five words including `stop`, four complete utterances all ending
+    in `stop`, two referents. `stop` does not apply to any referent —
+    it is a structural marker, not a content word. -/
+def rfBundle : IncrementalSemantics Word Referent where
+  wordApplies
+    | .dress, .redDress => true
+    | .hat,   .blueHat  => true
+    | .red,   .redDress => true
+    | .blue,  .blueHat  => true
+    | _,      _         => false
+  completeUtterances :=
+    [[.dress, .stop], [.red, .dress, .stop],
+     [.hat, .stop],   [.blue, .hat, .stop]]
+  worlds := [.redDress, .blueHat]
+
+/-- Every complete utterance terminates with `stop`. This is the
+    structural invariant the STOP machinery enforces. -/
+theorem completeUtterances_terminate_in_stop :
+    ∀ u ∈ rfBundle.completeUtterances, u.getLast? = some .stop := by
+  decide
+
+/-- `stop` never applies to any referent — it is a structural marker,
+    not a content word. This is what makes a STOP-augmented utterance
+    `u ++ [.stop]` veridically equivalent to the underlying content
+    sequence `u`. -/
+theorem stop_never_applies :
+    ∀ r : Referent, rfBundle.wordApplies .stop r = false := by
+  decide
+
+end RubioFernandezScene
 
 end CohnGordonEtAl2019

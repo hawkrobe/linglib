@@ -160,7 +160,10 @@ instance : Repr Rat01 where
 def half : Rat01 := ⟨1/2, by norm_num, by norm_num⟩
 
 /-- Does the value strictly exceed a threshold? -/
-def exceeds (d θ : Rat01) : Bool := decide (θ.val < d.val)
+def exceeds (d θ : Rat01) : Prop := θ.val < d.val
+
+instance (d θ : Rat01) : Decidable (exceeds d θ) :=
+  inferInstanceAs (Decidable (θ.val < d.val))
 
 /-- Closed-bounded: both 0 and 1 are attained. -/
 def boundedness : Boundedness := .closed
@@ -569,9 +572,9 @@ theorem open_notLicensed : Boundedness.open_.isLicensed = false := rfl
 /-! ### Degree properties for comparison relations
 
 Five degree properties covering all comparison relations, parameterized by
-a measure function `μ : W → α`. These are the building blocks for numeral
-semantics (`Numeral.Semantics.maxMeaning`) and degree questions
-(`DegreeQuestion`).
+a measure function `μ : W → α`. These are the building blocks for the named
+numeral meanings (`Semantics.Numerals.atLeastMeaning` etc.) and degree
+questions (`DegreeQuestion`).
 
 - `atLeastDeg`: closed `≥`, always has max⊨
 - `moreThanDeg`: open `>`, fails on dense scales
@@ -744,6 +747,46 @@ theorem maxOnScale_gt_closedInterval {α : Type*} [LinearOrder α]
 def isAmbidirectional {α : Type*} (f : Set α → Prop) (B : Set α) : Prop :=
   f B ↔ f Bᶜ
 
+/-- A predicate `f` is **MAX_R-determined** iff its value depends only on
+    `maxOnScale R` of its argument: any two sets with the same `MAX_R`
+    yield the same `f`-verdict. The before/until/comparative theorems all
+    establish exactly this: *before* relates A to `MAX₍<₎` of B, the
+    comparative *than*-clause to `MAX₍≥₎` of the degree set, etc. -/
+def IsMaxDetermined {α : Type*} (R : α → α → Prop) (f : Set α → Prop) : Prop :=
+  ∀ B₁ B₂ : Set α, maxOnScale R B₁ = maxOnScale R B₂ → (f B₁ ↔ f B₂)
+
+/-- **Shared informative bound** ⇒ ambidirectionality. The general
+    template behind Rett's typology: if a construction is `MAX_R`-determined
+    and `B` and `Bᶜ` share their `MAX_R`-bound, then the construction is
+    truth-conditionally insensitive to negation of B.
+
+    Each per-construction ambidirectionality theorem in the library is an
+    instance of this template — they prove the shared-bound side condition
+    for a specific `f` and a class of `B`'s, then this lemma packages the
+    result. See `Semantics.Tense.TemporalConnectives.before_preEvent_ambidirectional`
+    for the canonical instance. -/
+theorem ambidirectional_of_shared_max {α : Type*} {R : α → α → Prop}
+    (f : Set α → Prop) (hf : IsMaxDetermined R f) (B : Set α)
+    (hshared : maxOnScale R B = maxOnScale R Bᶜ) :
+    isAmbidirectional f B :=
+  hf B Bᶜ hshared
+
+/-- **Converse**: an ambidirectional construction must share its `MAX_R`
+    bound between B and Bᶜ — but only when MAX_R alone *witnesses* the
+    distinction. Stated as a contrapositive to make the empirical content
+    explicit: if MAX_R differs between B and Bᶜ but the construction
+    cannot tell them apart by any *other* means (i.e. MAX_R-determined),
+    then the construction is non-ambidirectional. The full converse
+    requires assuming `f` separates sets with distinct MAX_R values, so
+    we instead expose this as a derived fact only under that assumption. -/
+theorem not_ambidirectional_of_distinct_max_separated {α : Type*}
+    {R : α → α → Prop} (f : Set α → Prop) (B : Set α)
+    (hsep : ∀ B₁ B₂ : Set α,
+      maxOnScale R B₁ ≠ maxOnScale R B₂ → ¬ (f B₁ ↔ f B₂))
+    (hdiff : maxOnScale R B ≠ maxOnScale R Bᶜ) :
+    ¬ isAmbidirectional f B :=
+  hsep B Bᶜ hdiff
+
 /-- **Bridge**: `maxOnScale (· ≥ ·)` applied to the "at least" degree set
     `{d | d ≤ μ(w)}` yields `{μ(w)}` — the singleton containing the true
     value. This connects the relational MAX to `IsMaxInf`.
@@ -769,6 +812,54 @@ theorem maxOnScale_atLeast_singleton {W : Type*} (μ : W → α) (w : W) :
 theorem maxOnScale_ge_atMost (b : α) :
     maxOnScale (· ≥ ·) {d | d ≤ b} = {b} :=
   maxOnScale_atLeast_singleton id b
+
+-- ════════════════════════════════════════════════════
+-- § 6c. Existential Lowering (Type-Shifting)
+-- ════════════════════════════════════════════════════
+
+/-! ## Existential lowering: exact → "at least"
+
+@cite{partee-1987}'s BE + iota + existential closure, applied to a degree
+property: from an exact reading `exact d w` ("the measure equals `d`"),
+existentially close to `∃ d' ≥ d, exact d' w`. On any reflexive linear
+order this collapses to `atLeastDeg μ d w` — witness `d' := μ w`.
+
+This is the formal content of @cite{kennedy-2015}'s "de-Fregean" derivation
+of the lower-bound numeral reading from the exact reading. The collapse
+generalizes Numeral type-shifting to arbitrary scales. -/
+
+/-- Existentially lower an exact-style degree property to its lower-bound
+    counterpart: there exists some `d' ≥ d` such that the exact property
+    holds at `d'`. -/
+def typeLower {W : Type*} (exact : α → W → Prop) (d : α) (w : W) : Prop :=
+  ∃ d', d' ≥ d ∧ exact d' w
+
+/-- **Type-shift collapse**: `typeLower (eqDeg μ) = atLeastDeg μ`. -/
+theorem typeLower_eqDeg_iff {W : Type*} (μ : W → α) (d : α) (w : W) :
+    typeLower (eqDeg μ) d w ↔ atLeastDeg μ d w := by
+  refine ⟨?_, fun h => ⟨μ w, h, rfl⟩⟩
+  rintro ⟨d', hd', heq⟩
+  -- heq : eqDeg μ d' w  unfolds to  μ w = d'
+  have heq' : μ w = d' := heq
+  show μ w ≥ d
+  exact heq'.symm ▸ hd'
+
+instance atLeastDeg.decidable {W : Type*} [DecidableLE α] (μ : W → α)
+    (d : α) (w : W) : Decidable (atLeastDeg μ d w) := by
+  unfold atLeastDeg; infer_instance
+
+instance typeLower_eqDeg.decidable {W : Type*} (μ : W → α) (d : α) (w : W) :
+    Decidable (typeLower (eqDeg μ) d w) :=
+  decidable_of_iff _ (typeLower_eqDeg_iff μ d w).symm
+
+/-- Universal closure (the alternative to existential closure) is
+    unsatisfiable when the closure range contains two distinct values:
+    no single `x` can equal two different `k`s. This rules out the
+    universal-closure reading of Partee's iota generally. -/
+theorem distinct_no_universal_witness {α : Type*} (k₁ k₂ : α) (hne : k₁ ≠ k₂) :
+    ¬ ∃ x, ∀ k, k = k₁ ∨ k = k₂ → x = k := by
+  rintro ⟨x, h⟩
+  exact hne ((h k₁ (Or.inl rfl)).symm.trans (h k₂ (Or.inr rfl)))
 
 -- ════════════════════════════════════════════════════
 -- § 7. "At most" Symmetry (Rouillard's direction)
@@ -1027,8 +1118,14 @@ instance {max : Nat} : PositiveRegion (Degree max) (Threshold max) where
 -- ════════════════════════════════════════════════════
 
 /-- Typeclass for entities that have a degree/magnitude on some scale.
-    This is the formal semantics "measure function" μ : Entity → Degree. -/
-class HasDegree (E : Type) where
-  degree : E → ℚ
+    This is the formal semantics "measure function" μ : Entity → Degree.
+
+    The codomain `α` is polymorphic — heights might use ℚ (cm, exact),
+    physical heights ℝ, durations ℕ (ticks), prices ℚ (USD), etc. `α` is
+    an `outParam` so it can be inferred from the entity type via the
+    instance. The canonical `Nat → ℚ` instance lives in
+    `Theories/Semantics/Numerals/Basic.lean` (`CardinalityDegree`). -/
+class HasDegree (E : Type) (α : outParam Type) where
+  degree : E → α
 
 end Core.Scale

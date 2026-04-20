@@ -1,4 +1,5 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Tactic.Push
+import Mathlib.Tactic.Use
 
 /-!
 # Sauerland-RSA Correspondence
@@ -40,7 +41,6 @@ proved in `IBR/RSABridge.lean` (`rsa_speaker_to_ibr`).
 
 namespace Phenomena.ScalarImplicatures.EpistemicBlocking
 
-open Core.Proposition
 
 /-- An epistemic state represents what the speaker knows.
 We model this as a set of worlds the speaker considers possible. -/
@@ -71,7 +71,7 @@ theorem duality {W : Type*} (e : EpistemicState W) (φ : (W → Bool)) :
   simp only [knows, possible, Bool.eq_false_iff, ne_eq, List.all_eq_true, List.any_eq_true]
   constructor
   · intro h
-    push_neg at h
+    push Not at h
     obtain ⟨w, hw, hneg⟩ := h
     use w, hw
     exact (not_not_eq_true (φ w)).mp hneg
@@ -109,7 +109,7 @@ theorem primary_possibility_correspondence {W : Type*}
   intro h
   simp only [knows, Bool.eq_false_iff, ne_eq, List.all_eq_true] at h
   simp only [possible, List.any_eq_true]
-  push_neg at h
+  push Not at h
   obtain ⟨w, hw, hψ⟩ := h
   use w, hw
   rw [not_eq_true_iff]

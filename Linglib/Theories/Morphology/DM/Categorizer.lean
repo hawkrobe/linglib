@@ -176,14 +176,18 @@ structure GenderFeature where
   deriving DecidableEq, Repr
 
 /-- Whether a gender feature is interpretable (natural). -/
-def GenderFeature.isNatural : GenderFeature → Bool
-  | ⟨.i, _⟩ => true
-  | ⟨.u, _⟩ => false
+def GenderFeature.IsNatural (g : GenderFeature) : Prop :=
+  g.interp = .i
+
+instance : DecidablePred GenderFeature.IsNatural :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- Whether a gender feature is uninterpretable (arbitrary). -/
-def GenderFeature.isArbitrary : GenderFeature → Bool
-  | ⟨.i, _⟩ => false
-  | ⟨.u, _⟩ => true
+def GenderFeature.IsArbitrary (g : GenderFeature) : Prop :=
+  g.interp = .u
+
+instance : DecidablePred GenderFeature.IsArbitrary :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- Number feature on the n head (@cite{kramer-2015} §3.5).
 
@@ -446,21 +450,21 @@ theorem four_n_types_distinct :
 
 /-- Natural gender features are interpretable. -/
 theorem natural_gender_interpretable :
-    (GenderFeature.mk .i ⟨.fem, .pos⟩).isNatural = true ∧
-    (GenderFeature.mk .i ⟨.fem, .neg⟩).isNatural = true :=
+    (GenderFeature.mk .i ⟨.fem, .pos⟩).IsNatural ∧
+    (GenderFeature.mk .i ⟨.fem, .neg⟩).IsNatural :=
   ⟨rfl, rfl⟩
 
 /-- Arbitrary gender features are uninterpretable. -/
 theorem arbitrary_gender_uninterpretable :
-    (GenderFeature.mk .u ⟨.fem, .pos⟩).isArbitrary = true := rfl
+    (GenderFeature.mk .u ⟨.fem, .pos⟩).IsArbitrary := rfl
 
 /-- Plain n has no gender feature — it is the default/unmarked case. -/
 theorem plain_n_no_gender : CatHead.n_plain.phi.gender = none := rfl
 
 /-- Natural and arbitrary gender are mutually exclusive on any feature. -/
 theorem natural_arbitrary_exclusive (gf : GenderFeature) :
-    ¬(gf.isNatural = true ∧ gf.isArbitrary = true) := by
-  cases gf with | mk interp val => cases interp <;> simp [GenderFeature.isNatural, GenderFeature.isArbitrary]
+    ¬(gf.IsNatural ∧ gf.IsArbitrary) := by
+  cases gf with | mk interp val => cases interp <;> simp [GenderFeature.IsNatural, GenderFeature.IsArbitrary]
 
 /-- Interpretable gender is semantically licensed; uninterpretable gender
     is arbitrarily licensed (@cite{kramer-2015} §3.4.1). -/
@@ -469,14 +473,14 @@ def GenderFeature.licensingType : GenderFeature → LicensingType
   | ⟨.u, _⟩ => .arbitrary
 
 /-- Natural gender → semantic licensing. -/
-theorem natural_semantic_licensing (gf : GenderFeature) (h : gf.isNatural = true) :
+theorem natural_semantic_licensing (gf : GenderFeature) (h : gf.IsNatural) :
     gf.licensingType = .semantic := by
-  cases gf with | mk interp val => cases interp <;> simp_all [GenderFeature.isNatural, GenderFeature.licensingType]
+  cases gf with | mk interp val => cases interp <;> simp_all [GenderFeature.IsNatural, GenderFeature.licensingType]
 
 /-- Arbitrary gender → arbitrary licensing. -/
-theorem arbitrary_arbitrary_licensing (gf : GenderFeature) (h : gf.isArbitrary = true) :
+theorem arbitrary_arbitrary_licensing (gf : GenderFeature) (h : gf.IsArbitrary) :
     gf.licensingType = .arbitrary := by
-  cases gf with | mk interp val => cases interp <;> simp_all [GenderFeature.isArbitrary, GenderFeature.licensingType]
+  cases gf with | mk interp val => cases interp <;> simp_all [GenderFeature.IsArbitrary, GenderFeature.licensingType]
 
 -- ============================================================================
 -- § 1e-bridge: DM Gender → Minimalist Feature System

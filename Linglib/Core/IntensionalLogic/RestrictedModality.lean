@@ -1,8 +1,8 @@
 import Linglib.Core.IntensionalLogic.Quantification
 import Linglib.Core.IntensionalLogic.Algebra
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Modality.ModalTypes
 import Mathlib.Data.Finset.Basic
+import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 
@@ -479,30 +479,28 @@ theorem indicialNec_emptyR (p : W → Prop) (w : W) :
 -- ════════════════════════════════════════════════════════════════════════
 
 /-! Following mathlib conventions: definitions are `Prop`-valued (§1 above),
-with `Decidable` instances providing computation. With `[FiniteWorlds W]`,
+with `Decidable` instances providing computation. With `[Fintype W]`,
 `[DecidableRel R]`, and `[DecidablePred p]`, formulas like `boxR R p w` and
 `Refl R` reduce by `decide`. -/
 
-open Core.Proposition (FiniteWorlds)
-
 /-- `boxR R p w` is decidable when worlds enumerate, accessibility is decidable,
     and the proposition is decidable. -/
-instance boxR_decidable {W : Type*} [FiniteWorlds W]
+instance boxR_decidable {W : Type*} [Fintype W]
     (R : AccessRel W) (p : W → Prop) (w : W)
     [∀ v, Decidable (R w v)] [DecidablePred p] :
     Decidable (boxR R p w) :=
-  decidable_of_iff (∀ v ∈ FiniteWorlds.worlds, R w v → p v)
-    ⟨fun h v hwv => h v (FiniteWorlds.complete v) hwv,
+  decidable_of_iff (∀ v ∈ (Finset.univ : Finset W), R w v → p v)
+    ⟨fun h v hwv => h v (Finset.mem_univ v) hwv,
      fun h v _ hwv => h v hwv⟩
 
 /-- `diamondR R p w` is decidable under the same conditions as `boxR`. -/
-instance diamondR_decidable {W : Type*} [FiniteWorlds W]
+instance diamondR_decidable {W : Type*} [Fintype W]
     (R : AccessRel W) (p : W → Prop) (w : W)
     [∀ v, Decidable (R w v)] [DecidablePred p] :
     Decidable (diamondR R p w) :=
-  decidable_of_iff (∃ v ∈ FiniteWorlds.worlds, R w v ∧ p v)
+  decidable_of_iff (∃ v ∈ (Finset.univ : Finset W), R w v ∧ p v)
     ⟨fun ⟨v, _, hwv, hpv⟩ => ⟨v, hwv, hpv⟩,
-     fun ⟨v, hwv, hpv⟩ => ⟨v, FiniteWorlds.complete v, hwv, hpv⟩⟩
+     fun ⟨v, hwv, hpv⟩ => ⟨v, Finset.mem_univ v, hwv, hpv⟩⟩
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 4. Lattice of Normal Modal Logics

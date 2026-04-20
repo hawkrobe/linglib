@@ -39,8 +39,8 @@ def unQualsiasiEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem unQualsiasi_at_issue : unQualsiasiEntry.status = .atIssue := rfl
-theorem unQualsiasi_rc : unQualsiasiEntry.hasCircumstantial = true := rfl
-theorem unQualsiasi_no_epistemic : unQualsiasiEntry.hasEpistemic = false := rfl
+theorem unQualsiasi_rc : unQualsiasiEntry.hasCircumstantial := by decide
+theorem unQualsiasi_no_epistemic : ¬ unQualsiasiEntry.hasEpistemic := by decide
 theorem unQualsiasi_not_ub : unQualsiasiEntry.upperBounded = false := rfl
 theorem unQualsiasi_unrestricted : unQualsiasiEntry.anchorConstraint = some .unrestricted := rfl
 

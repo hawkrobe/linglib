@@ -18,6 +18,7 @@ an enum name; constructor names are derived from the WALS value labels.
 """
 
 import csv
+import json
 import re
 import sys
 from pathlib import Path
@@ -319,6 +320,101 @@ def feature_name_to_enum(name):
     return result
 
 
+def split_camel_words(name):
+    """Split a camelCase identifier into word tokens.
+
+    Tokens are runs of lowercase, single-uppercase + lowercase, or
+    digit/underscore. This preserves things like `cases6_7` and
+    `categoriesPerWord10_11` as splittable units.
+
+    Examples:
+        "noDominantOrder" → ["no", "Dominant", "Order"]
+        "cases6_7"        → ["cases", "6_7"]
+        "sov"             → ["sov"]
+    """
+    return re.findall(r'[a-z]+|[A-Z][a-z]*|[0-9_]+', name)
+
+
+# Lean 4 reserved keywords / common identifiers we must not produce as constructor names.
+# Stripping a prefix from e.g. `internallyHeadedExists` to `exists` would collide with
+# Lean's `∃` keyword and break the inductive declaration.
+LEAN_RESERVED = {
+    "exists", "forall", "fun", "let", "have", "match", "with", "where",
+    "do", "if", "then", "else", "by", "from", "show", "suffices",
+    "in", "out", "for", "while", "return", "break", "continue",
+    "namespace", "section", "end", "import", "open", "instance",
+    "theorem", "lemma", "def", "structure", "inductive", "class",
+    "true", "false", "this",
+}
+
+
+def strip_common_camel_prefix(ctors):
+    """Drop a shared leading word prefix from a set of camelCase names.
+
+    Returns a dict mapping each input name to its stripped form, or
+    `{c: c for c in ctors}` (no-op) if no useful prefix exists.
+
+    The prefix is meaningful only if:
+      * at least 2 ctors are present
+      * at least one shared word at the start (case-insensitive on first letter)
+      * shared prefix is ≥ 4 characters
+      * stripping leaves every ctor with at least one remaining word
+      * no stripped name would collide with an existing one or each other
+
+    The first letter of each stripped name is lowercased so the result
+    remains a valid Lean identifier in lowerCamelCase.
+    """
+    if len(ctors) < 2:
+        return {c: c for c in ctors}
+
+    word_lists = {c: split_camel_words(c) for c in ctors}
+    if any(not ws for ws in word_lists.values()):
+        return {c: c for c in ctors}
+
+    # Find longest shared word-prefix length (case-insensitive).
+    min_len = min(len(ws) for ws in word_lists.values())
+    shared_n = 0
+    for i in range(min_len):
+        firsts = {ws[i].lower() for ws in word_lists.values()}
+        if len(firsts) == 1:
+            shared_n = i + 1
+        else:
+            break
+
+    if shared_n == 0 or shared_n == min_len:
+        return {c: c for c in ctors}
+
+    # Prefix must be substantive (≥ 4 chars) — otherwise stripping `no` etc.
+    # produces noisier names than it removes.
+    sample_words = next(iter(word_lists.values()))
+    prefix_str = ''.join(sample_words[:shared_n])
+    if len(prefix_str) < 4:
+        return {c: c for c in ctors}
+
+    rename = {}
+    for c, ws in word_lists.items():
+        rest = ws[shared_n:]
+        # Lowercase the first letter to keep lowerCamelCase.
+        head = rest[0]
+        head = head[0].lower() + head[1:]
+        rename[c] = head + ''.join(rest[1:])
+
+    # Reject if any stripped name collides or is empty.
+    new_names = list(rename.values())
+    if len(set(new_names)) != len(new_names):
+        return {c: c for c in ctors}
+    if any(not n for n in new_names):
+        return {c: c for c in ctors}
+    # Reject if any stripped name starts with a non-letter (e.g. digit-only rest).
+    if any(not n[0].isalpha() for n in new_names):
+        return {c: c for c in ctors}
+    # Reject if any stripped name collides with a Lean keyword.
+    if any(n in LEAN_RESERVED for n in new_names):
+        return {c: c for c in ctors}
+
+    return rename
+
+
 def resolve_feature(feature_id, codes, params):
     """Resolve a feature config — from FEATURES if curated, else auto-generate.
 
@@ -336,7 +432,7 @@ def resolve_feature(feature_id, codes, params):
         return None  # No codes at all — skip
 
     # Auto-generate values from codes.csv
-    values = {}
+    raw_values = {}
     seen_ctors = set()
     for num in sorted(feat_codes):
         label = feat_codes[num]
@@ -345,7 +441,17 @@ def resolve_feature(feature_id, codes, params):
         if ctor in seen_ctors:
             ctor = f"{ctor}_{num}"
         seen_ctors.add(ctor)
-        values[num] = (ctor, label)
+        raw_values[num] = (ctor, label)
+
+    # Strip shared word prefix if present (e.g. inflectionalOptative{Present,Absent}
+    # → present/absent). Curated FEATURES are exempt — their constructor names are
+    # hand-chosen and shouldn't be auto-stripped.
+    raw_ctors = [c for c, _ in raw_values.values()]
+    rename = strip_common_camel_prefix(raw_ctors)
+    values = {num: (rename[c], label) for num, (c, label) in raw_values.items()}
+    # Stash the rename map so callers can rewrite consumer files. Only entries
+    # where the name actually changed are kept.
+    nontrivial_rename = {old: new for old, new in rename.items() if old != new}
 
     # Determine enum name: from AUTO_FEATURES if present, else derived from feature name
     if auto:
@@ -361,6 +467,7 @@ def resolve_feature(feature_id, codes, params):
         "enum": enum_name,
         "author": author,
         "values": values,
+        "_rename": nontrivial_rename,
     }
 
 
@@ -432,7 +539,8 @@ def generate_feature(feature_id, cfg, langs):
     lines.append(f'inductive {cfg["enum"]} where')
     for num in sorted(cfg["values"]):
         ctor, desc = cfg["values"][num]
-        lines.append(f'  | {ctor}  -- {desc} ({counts.get(num, 0)} languages)')
+        lines.append(f'  /-- {desc} ({counts.get(num, 0)} languages). -/')
+        lines.append(f'  | {ctor}')
     lines.append(f'  deriving DecidableEq, BEq, Repr')
     lines.append(f'')
 
@@ -444,12 +552,11 @@ def generate_feature(feature_id, cfg, langs):
         lines.append(f'def allData : List ({dp_type}) :=')
         for i, entry in enumerate(entries):
             lang = langs.get(entry["language_id"], {})
-            name = lean_safe_string(lang.get("name", "?"))
             iso = lang.get("iso", "")
             wals_code = entry["language_id"]
             ctor, _ = cfg["values"][entry["value"]]
             prefix = "  [" if i == 0 else "  ,"
-            lines.append(f'{prefix} {{ walsCode := "{wals_code}", language := "{name}", iso := "{iso}", value := .{ctor} }}')
+            lines.append(f'{prefix} {{ walsCode := "{wals_code}", iso := "{iso}", value := .{ctor} }}')
         lines.append(f'  ]')
     else:
         n_chunks = (len(entries) + CHUNK - 1) // CHUNK
@@ -458,12 +565,11 @@ def generate_feature(feature_id, cfg, langs):
             lines.append(f'private def allData_{ci} : List ({dp_type}) :=')
             for i, entry in enumerate(chunk):
                 lang = langs.get(entry["language_id"], {})
-                name = lean_safe_string(lang.get("name", "?"))
                 iso = lang.get("iso", "")
                 wals_code = entry["language_id"]
                 ctor, _ = cfg["values"][entry["value"]]
                 prefix = "  [" if i == 0 else "  ,"
-                lines.append(f'{prefix} {{ walsCode := "{wals_code}", language := "{name}", iso := "{iso}", value := .{ctor} }}')
+                lines.append(f'{prefix} {{ walsCode := "{wals_code}", iso := "{iso}", value := .{ctor} }}')
             lines.append(f'  ]')
             lines.append(f'')
         chunk_refs = ' ++ '.join(f'allData_{i}' for i in range(n_chunks))
@@ -471,20 +577,12 @@ def generate_feature(feature_id, cfg, langs):
         lines.append(f'def allData : List ({dp_type}) := {chunk_refs}')
     lines.append(f'')
 
-    # Count verification theorems
-    lines.append(f'-- Count verification')
-    lines.append(f'theorem total_count : allData.length = {len(entries)} := by native_decide')
-    lines.append(f'')
-    for num in sorted(cfg["values"]):
-        ctor, desc = cfg["values"][num]
-        count = counts.get(num, 0)
-        lines.append(
-            f'theorem count_{ctor} :'
-        )
-        lines.append(
-            f'    (allData.filter (·.value == .{ctor})).length = {count} := by native_decide'
-        )
-    lines.append(f'')
+    # Count claims live in the docstring and per-constructor `/-- ... (N languages). -/`
+    # comments. We don't emit `total_count`/`count_*` theorems because proving
+    # `List.length [a, b, …, z] = N` for a hand-listed N-element list is a
+    # tautological internal-consistency check — the count and the list come from
+    # the same CSV pass in this generator, so they cannot disagree. The integrity
+    # property worth checking ("Lean file matches WALS CSV") lives outside Lean.
 
     # Lookup wrappers (delegate to generic Datapoint.lookup / Datapoint.lookupISO)
     lines.append(f'/-- Look up a language by WALS code. -/')
@@ -565,9 +663,14 @@ def generate_languages(langs, used_ids):
     lines.append('def findLanguage (code : String) : Option Language :=')
     lines.append('  languages.find? (·.walsCode == code)')
     lines.append('')
-    lines.append('/-- Look up a language by ISO 639-3 code. -/')
+    lines.append('/-- Look up a language by ISO 639-3 code.')
+    lines.append('')
+    lines.append('Returns `none` for empty queries: WALS marks a handful of languages with an')
+    lines.append('empty `iso` field, and a naive `find?` on `""` would return one of those')
+    lines.append('entries arbitrarily. -/')
     lines.append('def findByIso (iso : String) : Option Language :=')
-    lines.append('  languages.find? (·.iso == iso)')
+    lines.append('  if iso.isEmpty then none')
+    lines.append('  else languages.find? (·.iso == iso)')
     lines.append('')
     lines.append('end Core.WALS')
     lines.append('')
@@ -625,6 +728,19 @@ def main():
     out_path = OUT / "Languages.lean"
     out_path.write_text(content, encoding="utf-8")
     print(f"  → {out_path.relative_to(ROOT)} ({len(used_language_ids)} languages)")
+
+    # Emit per-feature constructor rename map for downstream consumer rewriting.
+    # Curated FEATURES never get a rename entry (their _rename is absent).
+    rename_map = {
+        fid: cfg["_rename"]
+        for fid, cfg in resolved.items()
+        if cfg.get("_rename")
+    }
+    rename_path = OUT / ".ctor_renames.json"
+    rename_path.write_text(json.dumps(rename_map, indent=2, sort_keys=True), encoding="utf-8")
+    n_features = len(rename_map)
+    n_ctors = sum(len(m) for m in rename_map.values())
+    print(f"  → {rename_path.relative_to(ROOT)} ({n_features} features, {n_ctors} renamed constructors)")
 
     print("Done.")
 

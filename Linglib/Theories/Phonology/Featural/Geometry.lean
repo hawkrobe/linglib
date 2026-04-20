@@ -80,14 +80,10 @@ def GeomNode.depth : GeomNode → Nat
 
 /-- Does node `n` dominate node `m`? Reflexive-transitive closure of the
     parent relation, unrolled to depth 3 (the tree's maximum depth). -/
-def GeomNode.dominates (n m : GeomNode) : Bool :=
-  n == m || match m.parent with
-    | none => false
-    | some p => n == p || match p.parent with
-      | none => false
-      | some pp => n == pp || match pp.parent with
-        | none => false
-        | some ppp => n == ppp
+@[reducible] def GeomNode.Dominates (n m : GeomNode) : Prop :=
+  n = m ∨ m.parent = some n ∨
+    (m.parent.bind GeomNode.parent) = some n ∨
+    ((m.parent.bind GeomNode.parent).bind GeomNode.parent) = some n
 
 end Phonology.FeatureGeometry
 
@@ -120,8 +116,8 @@ def Feature.node : Feature → GeomNode
 
 open FeatureGeometry in
 /-- Does node `n` dominate the node that feature `f` belongs to? -/
-def Feature.dominatedBy (f : Feature) (n : GeomNode) : Bool :=
-  n.dominates f.node
+@[reducible] def Feature.DominatedBy (f : Feature) (n : GeomNode) : Prop :=
+  GeomNode.Dominates n f.node
 
 end Phonology
 
@@ -134,7 +130,7 @@ namespace Phonology.FeatureGeometry
 /-- Features dominated by node `n` — a natural class in the feature-geometric
     sense: the features that pattern together under processes targeting `n`. -/
 def GeomNode.features (n : GeomNode) : List Feature :=
-  Feature.allFeatures.filter (λ f => n.dominates f.node)
+  Feature.allFeatures.filter (λ f => decide (GeomNode.Dominates n f.node))
 
 -- ============================================================================
 -- § 6: Verification Theorems
@@ -186,37 +182,37 @@ theorem dorsal_features_count : GeomNode.dorsal.features.length = 6 := by native
 -- isMajorClass has no single geometric counterpart: its features are
 -- distributed across root, supralaryngeal, softPalate, and coronal.
 
-theorem isLaryngeal_iff_laryngeal_dominates (f : Feature) :
-    f.isLaryngeal = f.dominatedBy .laryngeal := by
-  cases f <;> rfl
+theorem IsLaryngeal_iff_laryngeal_DominatedBy (f : Feature) :
+    f.IsLaryngeal ↔ f.DominatedBy .laryngeal := by
+  cases f <;> decide
 
-theorem isDorsal_iff_dorsal_dominates (f : Feature) :
-    f.isDorsal = f.dominatedBy .dorsal := by
-  cases f <;> rfl
+theorem IsDorsal_iff_dorsal_DominatedBy (f : Feature) :
+    f.IsDorsal ↔ f.DominatedBy .dorsal := by
+  cases f <;> decide
 
--- isPlace is a strict subset of geometric place dominance
--- (isMajorClass features like lateral and strident are geometrically under coronal)
-theorem isPlace_implies_place_dominates (f : Feature) :
-    f.isPlace = true → f.dominatedBy .place = true := by
+-- IsPlace is a strict subset of geometric place dominance
+-- (IsMajorClass features like lateral and strident are geometrically under coronal)
+theorem IsPlace_implies_place_DominatedBy (f : Feature) :
+    f.IsPlace → f.DominatedBy .place := by
   cases f <;> decide
 
 theorem lateral_geometrically_under_place :
-    Feature.lateral.dominatedBy .place = true := by rfl
+    Feature.lateral.DominatedBy .place := by decide
 
 theorem strident_geometrically_under_place :
-    Feature.strident.dominatedBy .place = true := by rfl
+    Feature.strident.DominatedBy .place := by decide
 
 -- ============================================================================
 -- § 7: Spreading / Delinking Predicates
 -- ============================================================================
 
 /-- Can feature `f` spread under node `n`? True when `f` is dominated by `n`. -/
-def canSpreadUnder (n : GeomNode) (f : Feature) : Bool :=
-  n.dominates f.node
+@[reducible] def CanSpreadUnder (n : GeomNode) (f : Feature) : Prop :=
+  GeomNode.Dominates n f.node
 
 /-- Does delinking node `n` remove feature `f`? True when `n` dominates `f`'s
     node and `n` is not Root (delinking Root = deleting the segment). -/
-def delinkedBy (n : GeomNode) (f : Feature) : Bool :=
-  n.dominates f.node && n != .root
+@[reducible] def DelinkedBy (n : GeomNode) (f : Feature) : Prop :=
+  GeomNode.Dominates n f.node ∧ n ≠ .root
 
 end Phonology.FeatureGeometry

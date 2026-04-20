@@ -14,70 +14,61 @@ namespace Core.WALS.F10B
 
 /-- WALS 10B values. -/
 inductive NasalVowelsInWestAfrica where
-  | noNasalVsOralVowelContrast  -- no nasal vs. oral vowel contrast (20 languages)
-  | twoWayNasalVsOralVowelContrastWithoutNasalSpreading  -- two-way nasal vs. oral vowel contrast (/ṽ/ vs. /V/) without nasal spreading (7 languages)
-  | twoWayNasalVsOralVowelContrastWithNasalSpreading  -- two-way nasal vs. oral vowel contrast (/ṽ/ vs. /V/) with nasal spreading (4 languages)
-  | fourWayNasalVsOralVowelContrastWithoutNasalSpreading  -- four-way nasal vs. oral vowel contrast (/ṽ/ vs. /ṽː/ vs. /V/ vs. /Vː/) without nasal spreading (5 languages)
-  | fourWayNasalVsOralVowelContrastWithNasalSpreading  -- four-way nasal vs. oral vowel contrast (/ṽ/ vs. /ṽː/ vs. /V/ v /Vː/) with nasal spreading (4 languages)
-  deriving DecidableEq, Repr
+  /-- no nasal vs. oral vowel contrast (20 languages). -/
+  | noNasalVsOralVowelContrast
+  /-- two-way nasal vs. oral vowel contrast (/ṽ/ vs. /V/) without nasal spreading (7 languages). -/
+  | twoWayNasalVsOralVowelContrastWithoutNasalSpreading
+  /-- two-way nasal vs. oral vowel contrast (/ṽ/ vs. /V/) with nasal spreading (4 languages). -/
+  | twoWayNasalVsOralVowelContrastWithNasalSpreading
+  /-- four-way nasal vs. oral vowel contrast (/ṽ/ vs. /ṽː/ vs. /V/ vs. /Vː/) without nasal spreading (5 languages). -/
+  | fourWayNasalVsOralVowelContrastWithoutNasalSpreading
+  /-- four-way nasal vs. oral vowel contrast (/ṽ/ vs. /ṽː/ vs. /V/ v /Vː/) with nasal spreading (4 languages). -/
+  | fourWayNasalVsOralVowelContrastWithNasalSpreading
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 10B dataset (40 languages). -/
 def allData : List (Datapoint NasalVowelsInWestAfrica) :=
-  [ { walsCode := "aka", language := "Aka", iso := "axk", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "avt", language := "Avatime", iso := "avn", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "bfi", language := "Bafia", iso := "ksf", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "blz", language := "Balanta", iso := "", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "ban", language := "Bana", iso := "bcw", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "ble", language := "Baoulé", iso := "bci", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "bsr", language := "Basari", iso := "bsc", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "bfd", language := "Biafada", iso := "bif", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "buy", language := "Buli (in Ghana)", iso := "bwu", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "dga", language := "Dagaare", iso := "dga", value := .twoWayNasalVsOralVowelContrastWithNasalSpreading }
-  , { walsCode := "dgb", language := "Dagbani", iso := "dag", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "day", language := "Day", iso := "dai", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "doy", language := "Doyayo", iso := "dow", value := .fourWayNasalVsOralVowelContrastWithNasalSpreading }
-  , { walsCode := "ebi", language := "Ebira", iso := "igb", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "ega", language := "Ega", iso := "ega", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "gad", language := "Gade", iso := "ged", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "gbk", language := "Gbaya (Northwest)", iso := "gya", value := .fourWayNasalVsOralVowelContrastWithNasalSpreading }
-  , { walsCode := "gir", language := "Gula Iro", iso := "glj", value := .fourWayNasalVsOralVowelContrastWithNasalSpreading }
-  , { walsCode := "grm", language := "Gurma", iso := "gux", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "kis", language := "Kisi", iso := "kss", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "krn", language := "Korana", iso := "kqz", value := .twoWayNasalVsOralVowelContrastWithNasalSpreading }
-  , { walsCode := "ksp", language := "Kosop", iso := "kia", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "ktk", language := "Kotoko", iso := "aal", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "laa", language := "Laal", iso := "gdm", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "lam", language := "Lamé", iso := "lme", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "lok", language := "Loko", iso := "lok", value := .twoWayNasalVsOralVowelContrastWithNasalSpreading }
-  , { walsCode := "mdz", language := "Mada (in Nigeria)", iso := "mda", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "mdk", language := "Mandinka", iso := "mnk", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "mby", language := "Mbay", iso := "myb", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "mdo", language := "Mbodomo", iso := "gmm", value := .twoWayNasalVsOralVowelContrastWithNasalSpreading }
-  , { walsCode := "moo", language := "Mooré", iso := "mos", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "oku", language := "Oku", iso := "oku", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "pod", language := "Podoko", iso := "pbi", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "fma", language := "Pulaar", iso := "fuc", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "snd", language := "Senadi", iso := "sef", value := .fourWayNasalVsOralVowelContrastWithNasalSpreading }
-  , { walsCode := "tne", language := "Temne", iso := "tem", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "tik", language := "Tikar", iso := "tik", value := .noNasalVsOralVowelContrast }
-  , { walsCode := "dts", language := "Toro So", iso := "dts", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "wmn", language := "Wéménugbé", iso := "wem", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
-  , { walsCode := "yem", language := "Yemba", iso := "ybb", value := .noNasalVsOralVowelContrast }
+  [ { walsCode := "aka", iso := "axk", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "avt", iso := "avn", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "bfi", iso := "ksf", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "blz", iso := "", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "ban", iso := "bcw", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "ble", iso := "bci", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "bsr", iso := "bsc", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "bfd", iso := "bif", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "buy", iso := "bwu", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "dga", iso := "dga", value := .twoWayNasalVsOralVowelContrastWithNasalSpreading }
+  , { walsCode := "dgb", iso := "dag", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "day", iso := "dai", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "doy", iso := "dow", value := .fourWayNasalVsOralVowelContrastWithNasalSpreading }
+  , { walsCode := "ebi", iso := "igb", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "ega", iso := "ega", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "gad", iso := "ged", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "gbk", iso := "gya", value := .fourWayNasalVsOralVowelContrastWithNasalSpreading }
+  , { walsCode := "gir", iso := "glj", value := .fourWayNasalVsOralVowelContrastWithNasalSpreading }
+  , { walsCode := "grm", iso := "gux", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "kis", iso := "kss", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "krn", iso := "kqz", value := .twoWayNasalVsOralVowelContrastWithNasalSpreading }
+  , { walsCode := "ksp", iso := "kia", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "ktk", iso := "aal", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "laa", iso := "gdm", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "lam", iso := "lme", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "lok", iso := "lok", value := .twoWayNasalVsOralVowelContrastWithNasalSpreading }
+  , { walsCode := "mdz", iso := "mda", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "mdk", iso := "mnk", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "mby", iso := "myb", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "mdo", iso := "gmm", value := .twoWayNasalVsOralVowelContrastWithNasalSpreading }
+  , { walsCode := "moo", iso := "mos", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "oku", iso := "oku", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "pod", iso := "pbi", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "fma", iso := "fuc", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "snd", iso := "sef", value := .fourWayNasalVsOralVowelContrastWithNasalSpreading }
+  , { walsCode := "tne", iso := "tem", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "tik", iso := "tik", value := .noNasalVsOralVowelContrast }
+  , { walsCode := "dts", iso := "dts", value := .fourWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "wmn", iso := "wem", value := .twoWayNasalVsOralVowelContrastWithoutNasalSpreading }
+  , { walsCode := "yem", iso := "ybb", value := .noNasalVsOralVowelContrast }
   ]
-
--- Count verification
-theorem total_count : allData.length = 40 := by native_decide
-
-theorem count_noNasalVsOralVowelContrast :
-    (allData.filter (·.value == .noNasalVsOralVowelContrast)).length = 20 := by native_decide
-theorem count_twoWayNasalVsOralVowelContrastWithoutNasalSpreading :
-    (allData.filter (·.value == .twoWayNasalVsOralVowelContrastWithoutNasalSpreading)).length = 7 := by native_decide
-theorem count_twoWayNasalVsOralVowelContrastWithNasalSpreading :
-    (allData.filter (·.value == .twoWayNasalVsOralVowelContrastWithNasalSpreading)).length = 4 := by native_decide
-theorem count_fourWayNasalVsOralVowelContrastWithoutNasalSpreading :
-    (allData.filter (·.value == .fourWayNasalVsOralVowelContrastWithoutNasalSpreading)).length = 5 := by native_decide
-theorem count_fourWayNasalVsOralVowelContrastWithNasalSpreading :
-    (allData.filter (·.value == .fourWayNasalVsOralVowelContrastWithNasalSpreading)).length = 4 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Conditionals.SelectionalRestrictor
 import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Core.FinitePMF
-import Linglib.Fragments.English.Will
+import Linglib.Fragments.English.Auxiliaries
 import Mathlib.Tactic.DeriveFintype
 
 /-!
@@ -397,62 +397,66 @@ theorem no_unconditional_one_half :
     simp [hcw, hcg, hcn, cynthiaPMF] <;> norm_num
 
 -- ============================================================================
--- §11. Bridge: C&S analysis of the English Fragment entries
+-- §11. Morphological preconditions of the C&S analysis (Fragment binding)
 -- ============================================================================
 
 /-! ## Fragment binding
 
-The English future-modal entries `Fragments.English.Will.{will, would}`
-are morphology-only (form + `pastTense` flag), per the typology-only
-Fragment discipline. This section binds those surface entries to the
-selectional semantics of @cite{cariani-santorio-2018}: `will` is
-analyzed as `willSem`, `would` as `wouldSem`. A different theory of
-*will* (Klecha modal-cum-tense, Kratzerian universal *will*, Copley
-future operator, …) would supply its own bridge against the same two
-Fragment entries.
+C&S analyse the English auxiliaries `Fragments.English.Auxiliaries.will`
+and `Fragments.English.Auxiliaries.would`. The Fragment is the source
+of truth for those entries' morphology; this section records the
+morphological facts the C&S analysis depends on, as per-entry `rfl`
+preconditions. If anyone later changes the morphological classification
+of *will* or *would* in the Fragment (e.g., flips the `tense` field
+on `would` away from `some .Past`), the corresponding precondition
+theorem here breaks — making the cascading consequence for C&S visible
+at compile time.
 
-The two bridges below are per-entry verification theorems: changing
-the `pastTense` flag on either Fragment entry breaks exactly one
-binding, making the morphology↔semantics correspondence visible at the
-type level. -/
+The Auxiliaries Fragment is a hub: other studies that analyse the
+same entries (@cite{condoravdi-2002}, @cite{kratzer-1981}, etc.) record
+their own morphological preconditions parallel to these. To enumerate
+every analysis that touches a given entry, grep for
+`Fragments.English.Auxiliaries.<entry>` across `Phenomena/`.
 
-/-- Selectional semantics chosen by the C&S analysis for an English
-    future-modal Fragment entry. The morphology→semantics mapping is:
-    present-tense → `willSem`; past-tense → `wouldSem`. By
-    `wouldSem_eq_willSem` (a `rfl`-identity in the theory), both
-    branches reduce to the same semantic clause — the morphology
-    distinction lives in the contextually-supplied modal parameter,
-    not in the lexical clause. -/
-noncomputable def cariniSantorioSemantics
-    (entry : Fragments.English.Will.FutureModalEntry) :
-    SelectionFunction W → (W → Prop) → Set W → W → Prop :=
-  if entry.pastTense then wouldSem else willSem
+This section records *morphological* preconditions only. The C&S
+semantic clauses (`willSem`, `wouldSem`) and their downstream theorems
+live in the rest of this file and in
+`Theories/Semantics/Modality/Selectional.lean`. The signature mismatch
+between C&S's atemporal-propositional `willSem` and Condoravdi's
+time-indexed-eventive `woll` means their predictions cannot be
+compared by direct equation; a divergence-witness theorem against
+@cite{condoravdi-2002} is left for follow-up. -/
 
-/-- **Bridge: C&S analyzes *will* as `willSem`.** Per-entry verification
-    theorem: if the `pastTense` flag on `Fragments.English.Will.will`
-    were flipped, this binding would break. -/
-theorem cs_will_eq_willSem :
-    cariniSantorioSemantics Fragments.English.Will.will = willSem := by
-  unfold cariniSantorioSemantics
-  simp [Fragments.English.Will.will]
+/-- **C&S precondition**: the Fragment classifies *will* as a modal
+    auxiliary. C&S's selectional analysis presupposes modal status —
+    constraint #1 (modal character) requires *will* to embed, scope,
+    and interact with negation/quantifiers. -/
+theorem cs_assumes_will_is_modal_aux :
+    Fragments.English.Auxiliaries.will.auxType =
+      Fragments.English.Auxiliaries.AuxType.modal := rfl
 
-/-- **Bridge: C&S analyzes *would* as `wouldSem`.** Per-entry
-    verification theorem for the past-tense Fragment entry. -/
-theorem cs_would_eq_wouldSem :
-    cariniSantorioSemantics Fragments.English.Will.would = wouldSem := by
-  unfold cariniSantorioSemantics
-  simp [Fragments.English.Will.would]
+/-- **C&S precondition**: the Fragment marks *will* as morphologically
+    non-past (`tense = none`). C&S analyse *will* as the present-tense
+    member of the future-modal pair; the `wouldSem`-as-past-shifted-
+    `willSem` argument (§5.3.2) presumes this. -/
+theorem cs_assumes_will_no_past_morph :
+    Fragments.English.Auxiliaries.will.tense = none := rfl
 
-/-- **Morphology = parameter shift, not semantic shift** at the
-    Fragment-binding level: the C&S clauses for *will* and *would* are
-    pointwise the same map. This restates `wouldSem_eq_willSem` over
-    the Fragment-bound semantics, making the C&S §5.3.2 claim visible
-    at the surface-form layer. -/
-theorem cs_will_would_share_clause :
-    cariniSantorioSemantics Fragments.English.Will.will =
-    cariniSantorioSemantics Fragments.English.Will.would := by
-  rw [cs_will_eq_willSem, cs_would_eq_wouldSem]
-  funext s A f w
-  exact (wouldSem_eq_willSem s A f w).symm
+/-- **C&S precondition**: the Fragment marks *would* as morphologically
+    past (`tense = some .Past`). C&S §5.3.2 derives the *would* clause
+    by past-shifting the modal parameter on *will*; if the Fragment
+    later reclassified *would* as non-past, the §5.3.2 argument would
+    no longer apply at the surface-form level. -/
+theorem cs_assumes_would_past_morph :
+    Fragments.English.Auxiliaries.would.tense =
+      some UD.Tense.Past := rfl
+
+/-- **C&S precondition**: *will* and *would* are morphologically
+    distinguished by their `tense` fields. The selectional analysis
+    would collapse vacuously if the Fragment treated them as
+    morphologically identical. -/
+theorem cs_will_would_morph_distinct :
+    Fragments.English.Auxiliaries.will.tense ≠
+      Fragments.English.Auxiliaries.would.tense := by decide
 
 end Phenomena.Modality.Studies.CarianiSantorio2018

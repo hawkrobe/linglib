@@ -203,34 +203,34 @@ theorem die_subject_toRole : dieSubjectProfile.toRole = some .patient := by rfl
 
 /-- Agent outranks patient for subjecthood (lattice: {V,S,C,M,IE} ⊃ {}). -/
 theorem agent_outranks_patient :
-    outranksForSubject
+    OutranksForSubject
       (ThetaRole.canonicalProfile .agent)
-      (ThetaRole.canonicalProfile .patient) = true := by rfl
+      (ThetaRole.canonicalProfile .patient) := by decide
 
 /-- Agent outranks instrument (lattice: {V,S,C,M,IE} ⊃ {C,IE}). -/
 theorem agent_outranks_instrument :
-    outranksForSubject
+    OutranksForSubject
       (ThetaRole.canonicalProfile .agent)
-      (ThetaRole.canonicalProfile .instrument) = true := by rfl
+      (ThetaRole.canonicalProfile .instrument) := by decide
 
 /-- Agent outranks experiencer (lattice: {V,S,C,M,IE} ⊃ {S,IE}). -/
 theorem agent_outranks_experiencer :
-    outranksForSubject
+    OutranksForSubject
       (ThetaRole.canonicalProfile .agent)
-      (ThetaRole.canonicalProfile .experiencer) = true := by rfl
+      (ThetaRole.canonicalProfile .experiencer) := by decide
 
 /-- Experiencer and instrument have incomparable P-Agent sets ({S,IE} ⊥ {C,IE}),
     but also equal P-Patient (both 0) → alternation predicted. -/
 theorem experiencer_instrument_alternation :
-    allowsAlternation
+    AllowsAlternation
       (ThetaRole.canonicalProfile .experiencer)
-      (ThetaRole.canonicalProfile .instrument) = true := by rfl
+      (ThetaRole.canonicalProfile .instrument) := by decide
 
 /-- Experiencer and stimulus have equal profiles → alternation (like/please). -/
 theorem experiencer_stimulus_alternation :
-    allowsAlternation
+    AllowsAlternation
       (ThetaRole.canonicalProfile .experiencer)
-      (ThetaRole.canonicalProfile .stimulus) = true := by rfl
+      (ThetaRole.canonicalProfile .stimulus) := by decide
 
 /-- Agent is maximally proto-agentive and minimally proto-patientive —
     the archetype at one end of Dowty's continuum. -/
@@ -247,8 +247,8 @@ theorem patient_maximal_pPatient :
 /-- All canonical profiles satisfy the well-formedness constraint:
     volition entails sentience. -/
 theorem canonical_profiles_wellformed (r : ThetaRole) :
-    (r.canonicalProfile).wellFormedInternal = true := by
-  cases r <;> rfl
+    (r.canonicalProfile).WellFormedInternal := by
+  cases r <;> decide
 
 -- ════════════════════════════════════════════════════════════════════════
 -- § 6. Argument position

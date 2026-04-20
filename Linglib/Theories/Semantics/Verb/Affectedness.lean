@@ -91,10 +91,6 @@ def strength : AffectednessDegree → Nat
   | .potential    => 1
   | .unspecified  => 0
 
-/-- The hierarchy ordering: stronger degrees entail weaker ones. -/
-def ge (a b : AffectednessDegree) : Bool :=
-  a.strength ≥ b.strength
-
 instance : LE AffectednessDegree where
   le a b := b.strength ≥ a.strength
 
@@ -103,25 +99,21 @@ instance (a b : AffectednessDegree) : Decidable (a ≤ b) :=
 
 /-- Each degree entails all weaker degrees (implicational hierarchy). -/
 theorem quantized_entails_nonquantized :
-    ge .quantized .nonquantized = true := rfl
+    AffectednessDegree.nonquantized ≤ .quantized := by decide
 
 theorem nonquantized_entails_potential :
-    ge .nonquantized .potential = true := rfl
+    AffectednessDegree.potential ≤ .nonquantized := by decide
 
 theorem potential_entails_unspecified :
-    ge .potential .unspecified = true := rfl
+    AffectednessDegree.unspecified ≤ .potential := by decide
 
 /-- Transitivity: quantized entails potential. -/
 theorem quantized_entails_potential :
-    ge .quantized .potential = true := rfl
+    AffectednessDegree.potential ≤ .quantized := by decide
 
 /-- Transitivity: quantized entails unspecified. -/
 theorem quantized_entails_unspecified :
-    ge .quantized .unspecified = true := rfl
-
-/-- Reflexivity. -/
-theorem ge_refl (a : AffectednessDegree) : ge a a = true := by
-  cases a <;> rfl
+    AffectednessDegree.unspecified ≤ .quantized := by decide
 
 end AffectednessDegree
 

@@ -77,8 +77,11 @@ structure AgentivityNode where
 
 /-- Validity constraint: volition presupposes sentience
     (p.521, following @cite{dowty-1991} p.607). -/
-def AgentivityNode.valid (a : AgentivityNode) : Bool :=
-  !a.volition || a.sentience
+def AgentivityNode.Valid (a : AgentivityNode) : Prop :=
+  a.volition = true → a.sentience = true
+
+instance (a : AgentivityNode) : Decidable a.Valid := by
+  unfold AgentivityNode.Valid; infer_instance
 
 /-- Number of positive agentivity features (= height in the lattice). -/
 def AgentivityNode.featureCount (a : AgentivityNode) : Nat :=
@@ -281,17 +284,26 @@ structure GrimmNode where
   deriving DecidableEq, Repr
 
 /-- The agentivity constraint: volition → sentience. -/
-def GrimmNode.agentivityValid (n : GrimmNode) : Bool :=
-  n.agentivity.valid
+def GrimmNode.AgentivityValid (n : GrimmNode) : Prop :=
+  n.agentivity.Valid
+
+instance (n : GrimmNode) : Decidable n.AgentivityValid := by
+  unfold GrimmNode.AgentivityValid; infer_instance
 
 /-- The cross-lattice constraint: if the argument does not exist at the
     beginning of the event, it cannot have any agentivity properties. -/
-def GrimmNode.crossValid (n : GrimmNode) : Bool :=
-  n.persistence.exPersB || n.agentivity == ⊥
+def GrimmNode.CrossValid (n : GrimmNode) : Prop :=
+  n.persistence.exPersB = true ∨ n.agentivity = ⊥
+
+instance (n : GrimmNode) : Decidable n.CrossValid := by
+  unfold GrimmNode.CrossValid; infer_instance
 
 /-- Full validity: both constraints satisfied. -/
-def GrimmNode.valid (n : GrimmNode) : Bool :=
-  n.agentivityValid && n.crossValid
+def GrimmNode.Valid (n : GrimmNode) : Prop :=
+  n.AgentivityValid ∧ n.CrossValid
+
+instance (n : GrimmNode) : Decidable n.Valid := by
+  unfold GrimmNode.Valid; infer_instance
 
 /-- Total feature count (agentivity + persistence). -/
 def GrimmNode.featureCount (n : GrimmNode) : Nat :=
@@ -372,8 +384,11 @@ def recipientNode : GrimmNode :=
     The transitivity region excludes totalNonPersistence and exPersEnd
     because the prototypical transitive event requires both participants
     to exist at the beginning (p.529–530). -/
-def GrimmNode.inTransitiveRegion (n : GrimmNode) : Bool :=
-  n.persistence.exPersB
+def GrimmNode.InTransitiveRegion (n : GrimmNode) : Prop :=
+  n.persistence.exPersB = true
+
+instance (n : GrimmNode) : Decidable n.InTransitiveRegion := by
+  unfold GrimmNode.InTransitiveRegion; infer_instance
 
 /-- Tsunoda's transitivity hierarchy (§3, example 8).
 
@@ -554,10 +569,10 @@ theorem maximalAgent_eq_top : maximalAgent = ⊤ := by native_decide
 
 -- Validity
 
-theorem maximalAgent_valid : maximalAgent.valid = true := by native_decide
-theorem maximalPatient_valid : maximalPatient.valid = true := by native_decide
-theorem effectorAgent_valid : effectorAgent.valid = true := by native_decide
-theorem experiencerNode_valid : experiencerNode.valid = true := by native_decide
+theorem maximalAgent_valid : maximalAgent.Valid := by decide
+theorem maximalPatient_valid : maximalPatient.Valid := by decide
+theorem effectorAgent_valid : effectorAgent.Valid := by decide
+theorem experiencerNode_valid : experiencerNode.Valid := by decide
 
 -- Maximal agent is at the top, maximal patient is lower
 
@@ -576,10 +591,10 @@ theorem maximalAgent_not_le_maximalPatient :
 -- Maximal agent and patient are in the transitivity region
 
 theorem maximalAgent_in_transitiveRegion :
-    maximalAgent.inTransitiveRegion = true := by native_decide
+    maximalAgent.InTransitiveRegion := by decide
 
 theorem maximalPatient_in_transitiveRegion :
-    maximalPatient.inTransitiveRegion = true := by native_decide
+    maximalPatient.InTransitiveRegion := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Transitivity Hierarchy Verification (§3)
@@ -587,20 +602,20 @@ theorem maximalPatient_in_transitiveRegion :
 
 /-- Class I patients (break) are in the transitivity region. -/
 theorem classI_patient_in_region :
-    (TransitivityClass.resultativeEffective.patientNode).inTransitiveRegion
-    = true := by native_decide
+    (TransitivityClass.resultativeEffective.patientNode).InTransitiveRegion :=
+  by decide
 
 /-- Class II patients (shoot) are in the transitivity region. -/
 theorem classII_patient_in_region :
-    (TransitivityClass.contact.patientNode).inTransitiveRegion
-    = true := by native_decide
+    (TransitivityClass.contact.patientNode).InTransitiveRegion :=
+  by decide
 
 /-- Class III patients (search) are OUTSIDE the transitivity region.
     This captures Tsunoda's observation that pursuit verbs deviate most
     strongly from the prototypical transitive paradigm. -/
 theorem classIII_patient_outside_region :
-    (TransitivityClass.pursuit.patientNode).inTransitiveRegion
-    = false := by native_decide
+    ¬ (TransitivityClass.pursuit.patientNode).InTransitiveRegion :=
+  by decide
 
 /-- Class I patient (break: exPersBeginning) has lower persistence than
     Class II patient (shoot: quPersBeginning). The Class I object is
@@ -732,7 +747,7 @@ theorem sweep_lexicalization_increases :
 -- ════════════════════════════════════════════════════
 
 /-- Grimm's agentivity lattice ordering is consistent with Dowty's
-    pAgentDominates: if Grimm a ≤ Grimm b on agentivity, then
+    PAgentDominates: if Grimm a ≤ Grimm b on agentivity, then
     Dowty a dominates Dowty b on P-Agent features.
 
     This holds because the feature-to-feature mapping is a bijection
@@ -962,9 +977,10 @@ theorem canonical_verb_chain :
 
 /-- All canonical verb positions satisfy volition → sentience. -/
 theorem canonical_verbs_valid :
-    sitAgentivity.valid = true ∧ knowAgentivity.valid = true ∧
-    discoverAgentivity.valid = true ∧ lookAtAgentivity.valid = true ∧
-    assassinateAgentivity.valid = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    sitAgentivity.Valid ∧ knowAgentivity.Valid ∧
+    discoverAgentivity.Valid ∧ lookAtAgentivity.Valid ∧
+    assassinateAgentivity.Valid :=
+  ⟨by decide, by decide, by decide, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 20. Persistence Covering Relations (Fig. 2)
@@ -1005,7 +1021,7 @@ theorem persistence_chain :
        objects shift from ACC/ABS into the DATIVE region.
 
     3. This is NOT a DOM-specific definition — it reuses `toCaseRegion`
-       (§6) and `inTransitiveRegion` (§5), both defined for general
+       (§6) and `InTransitiveRegion` (§5), both defined for general
        case theory. The DOM prediction is a CONSEQUENCE of case theory.
 
     The verb class effect (@cite{von-heusinger-2008}) also falls out:
@@ -1038,8 +1054,8 @@ def animacyToAgentivity : AnimacyLevel → AgentivityNode
 
 /-- All animacy-derived nodes satisfy volition → sentience. -/
 theorem animacy_all_valid (a : AnimacyLevel) :
-    (animacyToAgentivity a).valid = true := by
-  cases a <;> native_decide
+    (animacyToAgentivity a).Valid := by
+  cases a <;> decide
 
 /-- The mapping is monotone: higher animacy → higher agentivity.
     This is a structural property of the feature-subset ordering,
@@ -1088,40 +1104,44 @@ theorem human_object_in_dative :
     but its nominal agentivity pushes it outside the ACC/ABS case
     region. Both conditions use infrastructure defined for general
     case theory (§5, §6), not for DOM. -/
-def domPredictedByLattice (animacy : AnimacyLevel)
-    (verbPersistence : PersistenceLevel) : Bool :=
+def DomPredictedByLattice (animacy : AnimacyLevel)
+    (verbPersistence : PersistenceLevel) : Prop :=
   let node := objectNodeWithAnimacy animacy verbPersistence
-  node.inTransitiveRegion && node.toCaseRegion != .accAbs
+  node.InTransitiveRegion ∧ node.toCaseRegion ≠ .accAbs
+
+instance (a : AnimacyLevel) (p : PersistenceLevel) :
+    Decidable (DomPredictedByLattice a p) := by
+  unfold DomPredictedByLattice; infer_instance
 
 /-- Inanimate objects of canonical transitives: in ACC/ABS, no DOM. -/
 theorem inanimate_canonical_no_dom :
-    domPredictedByLattice .inanimate .quPersBeginning = false := by
-  native_decide
+    ¬ DomPredictedByLattice .inanimate .quPersBeginning := by
+  decide
 
 /-- Animate objects of canonical transitives: outside ACC/ABS, DOM
     predicted. The lattice reason: sentience pushes the object into
     the dative region (Fig. 7). -/
 theorem animate_canonical_dom :
-    domPredictedByLattice .animate .quPersBeginning = true := by
-  native_decide
+    DomPredictedByLattice .animate .quPersBeginning := by
+  decide
 
 /-- Human objects: also outside ACC/ABS, DOM predicted. -/
 theorem human_canonical_dom :
-    domPredictedByLattice .human .quPersBeginning = true := by
-  native_decide
+    DomPredictedByLattice .human .quPersBeginning := by
+  decide
 
 -- ── §21.4 Resultative transitives (exPersBeginning) ──
 
 /-- The same pattern holds for resultative verbs (break, destroy):
     inanimate objects stay in ACC/ABS, animate/human objects do not. -/
 theorem inanimate_resultative_no_dom :
-    domPredictedByLattice .inanimate .exPersBeginning = false := by
-  native_decide
+    ¬ DomPredictedByLattice .inanimate .exPersBeginning := by
+  decide
 
 theorem animate_resultative_dom :
-    domPredictedByLattice .animate .exPersBeginning = true ∧
-    domPredictedByLattice .human .exPersBeginning = true :=
-  ⟨by native_decide, by native_decide⟩
+    DomPredictedByLattice .animate .exPersBeginning ∧
+    DomPredictedByLattice .human .exPersBeginning :=
+  ⟨by decide, by decide⟩
 
 -- ── §21.5 Creation verbs: outside transitivity entirely ──
 
@@ -1130,8 +1150,8 @@ theorem animate_resultative_dom :
     exist at event start, so it cannot "intrude" on the agent's role.
     DOM is inapplicable, not merely unnecessary. -/
 theorem creation_outside_transitivity (a : AnimacyLevel) :
-    (objectNodeWithAnimacy a .exPersEnd).inTransitiveRegion = false := by
-  cases a <;> native_decide
+    ¬ (objectNodeWithAnimacy a .exPersEnd).InTransitiveRegion := by
+  cases a <;> decide
 
 -- ── §21.6 Verb class effect: subject case region ──
 
@@ -1143,23 +1163,26 @@ theorem creation_outside_transitivity (a : AnimacyLevel) :
     @cite{von-heusinger-2008}: *matar* 'kill' (Class 1, subject →
     NOM/ERG) regularized DOM centuries before *ver* 'see' (Class 2,
     subject → oblique). -/
-def subjectInAgentRegion (subjProfile : EntailmentProfile) : Bool :=
-  (GrimmNode.fromSubjectProfile subjProfile).toCaseRegion == .nomErg
+def SubjectInAgentRegion (subjProfile : EntailmentProfile) : Prop :=
+  (GrimmNode.fromSubjectProfile subjProfile).toCaseRegion = .nomErg
+
+instance (p : EntailmentProfile) : Decidable (SubjectInAgentRegion p) := by
+  unfold SubjectInAgentRegion; infer_instance
 
 /-- Kick subject → NOM/ERG: maximal verbal contrast.
     Corresponds to *matar* 'kill' — DOM regularized early. -/
 theorem kick_subject_in_agent_region :
-    subjectInAgentRegion kickSubjectProfile = true := by native_decide
+    SubjectInAgentRegion kickSubjectProfile := by decide
 
 /-- See subject → NOT NOM/ERG: insufficient verbal contrast.
     Corresponds to *ver* 'see' — DOM remained variable. -/
 theorem see_subject_not_in_agent_region :
-    subjectInAgentRegion seeSubjectProfile = false := by native_decide
+    ¬ SubjectInAgentRegion seeSubjectProfile := by decide
 
 /-- Build subject → NOM/ERG: high verbal contrast, but moot because
     the object is outside the transitivity region (§21.5). -/
 theorem build_subject_in_agent_region :
-    subjectInAgentRegion buildSubjectProfile = true := by native_decide
+    SubjectInAgentRegion buildSubjectProfile := by decide
 
 -- ── §21.7 Monotonicity: Aissen's staircase from lattice structure ──
 
@@ -1172,13 +1195,13 @@ theorem build_subject_in_agent_region :
     2. `toCaseRegion` maps ⊥ agentivity to accAbs, non-⊥ to dative/oblique
     3. Once agentivity is non-⊥, adding features keeps it non-⊥ -/
 theorem dom_monotone_inanimate_animate (p : PersistenceLevel) :
-    domPredictedByLattice .inanimate p = true →
-    domPredictedByLattice .animate p = true := by
+    DomPredictedByLattice .inanimate p →
+    DomPredictedByLattice .animate p := by
   cases p <;> decide
 
 theorem dom_monotone_animate_human (p : PersistenceLevel) :
-    domPredictedByLattice .animate p = true →
-    domPredictedByLattice .human p = true := by
+    DomPredictedByLattice .animate p →
+    DomPredictedByLattice .human p := by
   cases p <;> decide
 
 -- ── §21.8 Limitation: totalPersistence ──
@@ -1186,12 +1209,12 @@ theorem dom_monotone_animate_human (p : PersistenceLevel) :
 /-! For totalPersistence objects (perception verbs: see, hear, know),
     `toCaseRegion` maps `⟨⊥, totalPersistence⟩` to oblique, not accAbs,
     because totalPersistence is not in {exPersBeginning, quPersBeginning}.
-    This means `domPredictedByLattice` returns true for ALL animacy levels,
+    This means `DomPredictedByLattice` returns true for ALL animacy levels,
     including inanimate — overpredicting DOM for perception verb objects.
 
     This reflects a genuine theoretical point: Grimm's system treats
     perception verb objects as non-prototypical patients (they are not
-    affected or changed). But it means `domPredictedByLattice` is most
+    affected or changed). But it means `DomPredictedByLattice` is most
     informative for verbs in the transitivity region's core: contact
     (quPersBeginning) and resultative effective (exPersBeginning) verbs. -/
 theorem totalPersistence_all_outside_accAbs (a : AnimacyLevel) :
@@ -1254,14 +1277,14 @@ theorem fromEntailmentProfile_drops_patient :
     (IE=true but DE=false). The Grimm system cannot detect this. -/
 theorem wellFormedPair_not_preserved_by_grimm :
     ∃ s₁ o₁ s₂ o₂ : EntailmentProfile,
-    wellFormedPair s₁ o₁ = true ∧ wellFormedPair s₂ o₂ = false ∧
+    WellFormedPair s₁ o₁ ∧ ¬ WellFormedPair s₂ o₂ ∧
     GrimmNode.fromSubjectProfile s₁ = GrimmNode.fromSubjectProfile s₂ ∧
     GrimmNode.fromObjectProfile o₁ = GrimmNode.fromObjectProfile o₂ :=
   ⟨⟨false, false, true, false, false, false, false, false, false, false⟩,
    ⟨false, false, false, false, false, true, false, false, false, false⟩,
    ⟨false, false, true, false, true, false, false, false, false, false⟩,
    ⟨false, false, false, false, false, true, false, false, false, false⟩,
-   rfl, rfl, rfl, rfl⟩
+   by decide, by decide, rfl, rfl⟩
 
 -- ════════════════════════════════════════════════════
 -- § 24. ArgTemplate → GrimmNode Bridge
@@ -1317,13 +1340,13 @@ theorem selfMotion_no_object :
     creation/consumption (quantized) > resultChange (nonquantized)
     > mannerContact (potential) > perception (unspecified). -/
 theorem template_affectedness_hierarchy :
-    AffectednessDegree.ge .quantized .nonquantized = true ∧
-    AffectednessDegree.ge .nonquantized .potential = true ∧
+    AffectednessDegree.nonquantized ≤ .quantized ∧
+    AffectednessDegree.potential ≤ .nonquantized ∧
     creation.objectAffectedness = some AffectednessDegree.quantized ∧
     resultChange.objectAffectedness = some AffectednessDegree.nonquantized ∧
     mannerContact.objectAffectedness = some AffectednessDegree.potential ∧
     perception.objectAffectedness = some AffectednessDegree.unspecified :=
-  ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  ⟨by decide, by decide, rfl, rfl, rfl, rfl⟩
 
 -- ── Cross-projection consistency: affectedness vs. persistence ──
 

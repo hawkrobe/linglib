@@ -14,325 +14,318 @@ namespace Core.WALS.F64A
 
 /-- WALS 64A values. -/
 inductive NominalAndVerbalConjunction where
-  | identity  -- Identity (161 languages)
-  | differentiation  -- Differentiation (125 languages)
-  | bothExpressedByJuxtaposition  -- Both expressed by juxtaposition (15 languages)
-  deriving DecidableEq, Repr
+  /-- Identity (161 languages). -/
+  | identity
+  /-- Differentiation (125 languages). -/
+  | differentiation
+  /-- Both expressed by juxtaposition (15 languages). -/
+  | bothExpressedByJuxtaposition
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 64A dataset (301 languages). -/
 def allData : List (Datapoint NominalAndVerbalConjunction) :=
-  [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .identity }
-  , { walsCode := "abu", language := "Abun", iso := "kgr", value := .identity }
-  , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .identity }
-  , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .identity }
-  , { walsCode := "aga", language := "Agarabi", iso := "agd", value := .differentiation }
-  , { walsCode := "ain", language := "Ainu", iso := "ain", value := .differentiation }
-  , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .differentiation }
-  , { walsCode := "aly", language := "Alyawarra", iso := "aly", value := .differentiation }
-  , { walsCode := "aml", language := "Ambae (Lolovoli Northeast)", iso := "omb", value := .identity }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .differentiation }
-  , { walsCode := "apu", language := "Apurinã", iso := "apu", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .identity }
-  , { walsCode := "ana", language := "Araona", iso := "aro", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "alk", language := "Arop-Lokep", iso := "apr", value := .identity }
-  , { walsCode := "amp", language := "Arrernte (Mparntwe)", iso := "aer", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "bab", language := "Babungo", iso := "bav", value := .differentiation }
-  , { walsCode := "bdm", language := "Badimaya", iso := "bia", value := .differentiation }
-  , { walsCode := "bag", language := "Bagirmi", iso := "bmi", value := .differentiation }
-  , { walsCode := "bak", language := "Baka (in Cameroon)", iso := "bkc", value := .differentiation }
-  , { walsCode := "bvi", language := "Bali-Vitu", iso := "", value := .differentiation }
-  , { walsCode := "bnn", language := "Banoni", iso := "bcm", value := .differentiation }
-  , { walsCode := "bsq", language := "Basque", iso := "eus", value := .identity }
-  , { walsCode := "bkr", language := "Batak (Karo)", iso := "btx", value := .identity }
-  , { walsCode := "baw", language := "Bawm", iso := "bgr", value := .identity }
-  , { walsCode := "bma", language := "Berber (Middle Atlas)", iso := "tzm", value := .differentiation }
-  , { walsCode := "bbw", language := "Bininj Gun-Wok", iso := "gup", value := .identity }
-  , { walsCode := "boz", language := "Bozo (Tigemaxo)", iso := "boz", value := .identity }
-  , { walsCode := "brh", language := "Brahui", iso := "brh", value := .identity }
-  , { walsCode := "bkt", language := "Brokskat", iso := "bkk", value := .differentiation }
-  , { walsCode := "bud", language := "Buduma", iso := "bdm", value := .differentiation }
-  , { walsCode := "bum", language := "Buma", iso := "tkw", value := .identity }
-  , { walsCode := "bur", language := "Burushaski", iso := "bsk", value := .identity }
-  , { walsCode := "bus", language := "Busa", iso := "bqp", value := .differentiation }
-  , { walsCode := "cah", language := "Cahuilla", iso := "chl", value := .identity }
-  , { walsCode := "cnl", language := "Canela", iso := "ram", value := .differentiation }
-  , { walsCode := "cnt", language := "Cantonese", iso := "yue", value := .differentiation }
-  , { walsCode := "cyg", language := "Cayuga", iso := "cay", value := .differentiation }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .identity }
-  , { walsCode := "chc", language := "Chechen", iso := "che", value := .identity }
-  , { walsCode := "cmh", language := "Chemehuevi", iso := "ute", value := .differentiation }
-  , { walsCode := "cic", language := "Chichewa", iso := "nya", value := .identity }
-  , { walsCode := "cch", language := "Chocho", iso := "coz", value := .differentiation }
-  , { walsCode := "chk", language := "Chukchi", iso := "ckt", value := .identity }
-  , { walsCode := "coa", language := "Coahuilteco", iso := "xcw", value := .identity }
-  , { walsCode := "coo", language := "Coos (Hanis)", iso := "csz", value := .identity }
-  , { walsCode := "cop", language := "Coptic", iso := "cop", value := .differentiation }
-  , { walsCode := "dgb", language := "Dagbani", iso := "dag", value := .differentiation }
-  , { walsCode := "drg", language := "Dargwa", iso := "dar", value := .identity }
-  , { walsCode := "deg", language := "Degema", iso := "deg", value := .differentiation }
-  , { walsCode := "dha", language := "Dhaasanac", iso := "dsh", value := .differentiation }
-  , { walsCode := "dhi", language := "Dhivehi", iso := "div", value := .differentiation }
-  , { walsCode := "dja", language := "Djabugay", iso := "dyy", value := .differentiation }
-  , { walsCode := "doy", language := "Doyayo", iso := "dow", value := .differentiation }
-  , { walsCode := "dre", language := "Drehu", iso := "dhv", value := .differentiation }
-  , { walsCode := "dug", language := "Dullay (Gollango)", iso := "gwd", value := .identity }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .identity }
-  , { walsCode := "err", language := "Erromangan", iso := "erg", value := .identity }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .identity }
-  , { walsCode := "ewo", language := "Ewondo", iso := "ewo", value := .differentiation }
-  , { walsCode := "fij", language := "Fijian", iso := "fij", value := .differentiation }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .identity }
-  , { walsCode := "fon", language := "Fongbe", iso := "fon", value := .differentiation }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .identity }
-  , { walsCode := "gap", language := "Gapapaiwa", iso := "pwg", value := .identity }
-  , { walsCode := "gar", language := "Garo", iso := "grt", value := .identity }
-  , { walsCode := "geo", language := "Georgian", iso := "kat", value := .identity }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .identity }
-  , { walsCode := "gol", language := "Gola", iso := "gol", value := .identity }
-  , { walsCode := "goo", language := "Gooniyandi", iso := "gni", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .identity }
-  , { walsCode := "grw", language := "Greenlandic (West)", iso := "kal", value := .identity }
-  , { walsCode := "gua", language := "Guaraní", iso := "gug", value := .identity }
-  , { walsCode := "guj", language := "Gujarati", iso := "guj", value := .identity }
-  , { walsCode := "gnb", language := "Gunbalang", iso := "wlg", value := .identity }
-  , { walsCode := "grg", language := "Gurr-goni", iso := "gge", value := .identity }
-  , { walsCode := "hai", language := "Haida", iso := "hai", value := .differentiation }
-  , { walsCode := "ham", language := "Hamtai", iso := "hmt", value := .differentiation }
-  , { walsCode := "hat", language := "Hatam", iso := "had", value := .differentiation }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .differentiation }
-  , { walsCode := "haw", language := "Hawaiian", iso := "haw", value := .identity }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .identity }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .identity }
-  , { walsCode := "hix", language := "Hixkaryana", iso := "hix", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "hmo", language := "Hmong Njua", iso := "hnj", value := .identity }
-  , { walsCode := "hoa", language := "Hoava", iso := "hoa", value := .differentiation }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .identity }
-  , { walsCode := "hzb", language := "Hunzib", iso := "huz", value := .identity }
-  , { walsCode := "ika", language := "Ika", iso := "arh", value := .differentiation }
-  , { walsCode := "imo", language := "Imonda", iso := "imn", value := .differentiation }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .identity }
-  , { walsCode := "irq", language := "Iraqw", iso := "irk", value := .identity }
-  , { walsCode := "ita", language := "Italian", iso := "ita", value := .identity }
-  , { walsCode := "itz", language := "Itzaj", iso := "itz", value := .identity }
-  , { walsCode := "jab", language := "Jabêm", iso := "jae", value := .identity }
-  , { walsCode := "jak", language := "Jakaltek", iso := "jac", value := .differentiation }
-  , { walsCode := "jam", language := "Jaminjung", iso := "djd", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "jpn", language := "Japanese", iso := "jpn", value := .differentiation }
-  , { walsCode := "juh", language := "Ju|'hoan", iso := "ktz", value := .differentiation }
-  , { walsCode := "krr", language := "Kairiru", iso := "kxa", value := .differentiation }
-  , { walsCode := "kgu", language := "Kalkatungu", iso := "ktg", value := .identity }
-  , { walsCode := "kma", language := "Kamaiurá", iso := "kay", value := .differentiation }
-  , { walsCode := "kam", language := "Kambera", iso := "xbr", value := .identity }
-  , { walsCode := "kan", language := "Kana", iso := "ogo", value := .differentiation }
-  , { walsCode := "knd", language := "Kannada", iso := "kan", value := .differentiation }
-  , { walsCode := "knr", language := "Kanuri", iso := "knc", value := .differentiation }
-  , { walsCode := "kpw", language := "Karen (Pwo)", iso := "kjp", value := .identity }
-  , { walsCode := "krk", language := "Karok", iso := "kyh", value := .differentiation }
-  , { walsCode := "kas", language := "Kashmiri", iso := "kas", value := .identity }
-  , { walsCode := "ker", language := "Kera", iso := "ker", value := .identity }
-  , { walsCode := "ket", language := "Ket", iso := "ket", value := .identity }
-  , { walsCode := "kmh", language := "Kham", iso := "kjl", value := .identity }
-  , { walsCode := "kty", language := "Khanty", iso := "kca", value := .differentiation }
-  , { walsCode := "khs", language := "Khasi", iso := "kha", value := .identity }
-  , { walsCode := "kmu", language := "Khmu'", iso := "kjg", value := .differentiation }
-  , { walsCode := "krb", language := "Kiribati", iso := "gil", value := .differentiation }
-  , { walsCode := "koa", language := "Koasati", iso := "cku", value := .differentiation }
-  , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .differentiation }
-  , { walsCode := "kol", language := "Kolami", iso := "kfb", value := .identity }
-  , { walsCode := "kmb", language := "Kombai", iso := "", value := .differentiation }
-  , { walsCode := "kor", language := "Korean", iso := "kor", value := .differentiation }
-  , { walsCode := "kku", language := "Korku", iso := "kfq", value := .identity }
-  , { walsCode := "kfe", language := "Koromfe", iso := "kfz", value := .differentiation }
-  , { walsCode := "krw", language := "Korowai", iso := "khe", value := .identity }
-  , { walsCode := "kse", language := "Koyraboro Senni", iso := "ses", value := .differentiation }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .differentiation }
-  , { walsCode := "knc", language := "Kugu Nganhcara", iso := "uwa", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "kuk", language := "Kukú", iso := "bfa", value := .identity }
-  , { walsCode := "kuo", language := "Kuot", iso := "kto", value := .identity }
-  , { walsCode := "kut", language := "Kutenai", iso := "kut", value := .identity }
-  , { walsCode := "kwa", language := "Kwaio", iso := "kwd", value := .identity }
-  , { walsCode := "kat", language := "Kâte", iso := "kmg", value := .identity }
-  , { walsCode := "lai", language := "Lai", iso := "cnh", value := .differentiation }
-  , { walsCode := "lak", language := "Lak", iso := "lbe", value := .identity }
-  , { walsCode := "lkt", language := "Lakhota", iso := "lkt", value := .identity }
-  , { walsCode := "lmg", language := "Lamang", iso := "hia", value := .differentiation }
-  , { walsCode := "lan", language := "Lango", iso := "laj", value := .differentiation }
-  , { walsCode := "lat", language := "Latvian", iso := "lav", value := .identity }
-  , { walsCode := "lav", language := "Lavukaleve", iso := "lvk", value := .identity }
-  , { walsCode := "laz", language := "Laz", iso := "lzz", value := .identity }
-  , { walsCode := "lel", language := "Lele", iso := "lln", value := .differentiation }
-  , { walsCode := "lep", language := "Lepcha", iso := "lep", value := .differentiation }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .identity }
-  , { walsCode := "lil", language := "Lillooet", iso := "lil", value := .differentiation }
-  , { walsCode := "ara", language := "Lokono", iso := "arw", value := .identity }
-  , { walsCode := "lgu", language := "Longgu", iso := "lgu", value := .identity }
-  , { walsCode := "lug", language := "Lugbara", iso := "lgg", value := .differentiation }
-  , { walsCode := "luv", language := "Luvale", iso := "lue", value := .differentiation }
-  , { walsCode := "mad", language := "Ma'di", iso := "mhi", value := .differentiation }
-  , { walsCode := "mle", language := "Maale", iso := "mdy", value := .differentiation }
-  , { walsCode := "mdr", language := "Madurese", iso := "mad", value := .identity }
-  , { walsCode := "mai", language := "Maithili", iso := "mai", value := .identity }
-  , { walsCode := "mym", language := "Malayalam", iso := "mal", value := .identity }
-  , { walsCode := "mam", language := "Mam", iso := "mam", value := .identity }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .differentiation }
-  , { walsCode := "myi", language := "Mangarrayi", iso := "mpc", value := .differentiation }
-  , { walsCode := "mgg", language := "Mangghuer", iso := "mjg", value := .differentiation }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .differentiation }
-  , { walsCode := "map", language := "Mapudungun", iso := "arn", value := .identity }
-  , { walsCode := "mhi", language := "Marathi", iso := "mar", value := .identity }
-  , { walsCode := "mar", language := "Maricopa", iso := "mrc", value := .differentiation }
-  , { walsCode := "mrq", language := "Marquesan", iso := "", value := .differentiation }
-  , { walsCode := "myr", language := "Matsés", iso := "mcf", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "may", language := "Maybrat", iso := "ayz", value := .identity }
-  , { walsCode := "mby", language := "Mbay", iso := "myb", value := .differentiation }
-  , { walsCode := "mbi", language := "Mbili", iso := "baw", value := .differentiation }
-  , { walsCode := "mei", language := "Meithei", iso := "mni", value := .differentiation }
-  , { walsCode := "mid", language := "Midob", iso := "mei", value := .differentiation }
-  , { walsCode := "mxc", language := "Mixtec (Chalcatongo)", iso := "mig", value := .identity }
-  , { walsCode := "miy", language := "Miya", iso := "mkf", value := .differentiation }
-  , { walsCode := "mcv", language := "Mocoví", iso := "moc", value := .identity }
-  , { walsCode := "moh", language := "Mohawk", iso := "moh", value := .identity }
-  , { walsCode := "mbo", language := "Monumbo", iso := "mxk", value := .identity }
-  , { walsCode := "mos", language := "Mosetén", iso := "cas", value := .identity }
-  , { walsCode := "mun", language := "Mundari", iso := "unr", value := .identity }
-  , { walsCode := "mup", language := "Mupun", iso := "sur", value := .differentiation }
-  , { walsCode := "mgu", language := "Musgu", iso := "mug", value := .differentiation }
-  , { walsCode := "mus", language := "Mussau", iso := "emi", value := .identity }
-  , { walsCode := "nab", language := "Nabak", iso := "naf", value := .identity }
-  , { walsCode := "nag", language := "Nagatman", iso := "nce", value := .differentiation }
-  , { walsCode := "nmi", language := "Nahuatl (Mecayapan Isthmus)", iso := "nhx", value := .identity }
-  , { walsCode := "nht", language := "Nahuatl (Tetelcingo)", iso := "nhg", value := .identity }
-  , { walsCode := "kho", language := "Nama", iso := "naq", value := .identity }
-  , { walsCode := "nmb", language := "Nambikuára (Southern)", iso := "nab", value := .identity }
-  , { walsCode := "nav", language := "Navajo", iso := "nav", value := .identity }
-  , { walsCode := "ndb", language := "Ndebele", iso := "nde", value := .identity }
-  , { walsCode := "ndj", language := "Ndjébbana", iso := "djj", value := .identity }
-  , { walsCode := "nel", language := "Nelemwa", iso := "nee", value := .identity }
-  , { walsCode := "nep", language := "Nepali", iso := "npi", value := .identity }
-  , { walsCode := "nwd", language := "Newar (Dolakha)", iso := "new", value := .differentiation }
-  , { walsCode := "nez", language := "Nez Perce", iso := "nez", value := .differentiation }
-  , { walsCode := "ngl", language := "Ngalakan", iso := "nig", value := .identity }
-  , { walsCode := "nha", language := "Nhanda", iso := "nha", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "nia", language := "Nias", iso := "nia", value := .identity }
-  , { walsCode := "nsg", language := "Nisgha", iso := "ncg", value := .differentiation }
-  , { walsCode := "nif", language := "Niuafo'ou", iso := "num", value := .identity }
-  , { walsCode := "niu", language := "Niuean", iso := "niu", value := .identity }
-  , { walsCode := "niv", language := "Nivkh", iso := "niv", value := .differentiation }
-  , { walsCode := "nko", language := "Nkore-Kiga", iso := "cgg", value := .differentiation }
-  , { walsCode := "nse", language := "Nsenga", iso := "nse", value := .differentiation }
-  , { walsCode := "nua", language := "Nuaulu", iso := "nxl", value := .identity }
-  , { walsCode := "ood", language := "O'odham", iso := "ood", value := .identity }
-  , { walsCode := "obo", language := "Obolo", iso := "ann", value := .identity }
-  , { walsCode := "oji", language := "Ojibwa (Eastern)", iso := "", value := .identity }
-  , { walsCode := "orh", language := "Oromo (Harar)", iso := "hae", value := .differentiation }
-  , { walsCode := "otm", language := "Otomí (Mezquital)", iso := "ote", value := .identity }
-  , { walsCode := "pms", language := "Paamese", iso := "pma", value := .differentiation }
-  , { walsCode := "pno", language := "Paiute (Northern)", iso := "pao", value := .differentiation }
-  , { walsCode := "pai", language := "Paiwan", iso := "pwn", value := .differentiation }
-  , { walsCode := "pal", language := "Palauan", iso := "pau", value := .identity }
-  , { walsCode := "psm", language := "Passamaquoddy-Maliseet", iso := "pqm", value := .identity }
-  , { walsCode := "pec", language := "Pech", iso := "pay", value := .differentiation }
-  , { walsCode := "per", language := "Pero", iso := "pip", value := .differentiation }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .identity }
-  , { walsCode := "prh", language := "Pirahã", iso := "myp", value := .identity }
-  , { walsCode := "pit", language := "Pitjantjatjara", iso := "pjt", value := .identity }
-  , { walsCode := "pop", language := "Popoloca (Metzontla)", iso := "pbe", value := .identity }
-  , { walsCode := "pul", language := "Puluwat", iso := "puw", value := .identity }
-  , { walsCode := "pur", language := "Purépecha", iso := "tsz", value := .identity }
-  , { walsCode := "pae", language := "Páez", iso := "pbb", value := .differentiation }
-  , { walsCode := "qaf", language := "Qafar", iso := "aar", value := .differentiation }
-  , { walsCode := "qia", language := "Qiang", iso := "", value := .identity }
-  , { walsCode := "qhu", language := "Quechua (Huallaga)", iso := "qub", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "qim", language := "Quechua (Imbabura)", iso := "qvi", value := .identity }
-  , { walsCode := "ret", language := "Retuarã", iso := "tnc", value := .differentiation }
-  , { walsCode := "rot", language := "Rotuman", iso := "rtm", value := .identity }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .identity }
-  , { walsCode := "ski", language := "Saami (Kildin)", iso := "sjd", value := .identity }
-  , { walsCode := "sno", language := "Saami (Northern)", iso := "sme", value := .identity }
-  , { walsCode := "syu", language := "Salt-Yui", iso := "sll", value := .differentiation }
-  , { walsCode := "san", language := "Sango", iso := "sag", value := .identity }
-  , { walsCode := "sgu", language := "Sangu", iso := "snq", value := .differentiation }
-  , { walsCode := "snm", language := "Sanuma", iso := "xsu", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "skp", language := "Selkup", iso := "sel", value := .identity }
-  , { walsCode := "snt", language := "Sentani", iso := "set", value := .differentiation }
-  , { walsCode := "sho", language := "Shoshone", iso := "shh", value := .differentiation }
-  , { walsCode := "sir", language := "Siar", iso := "sjr", value := .identity }
-  , { walsCode := "siu", language := "Siuslaw", iso := "sis", value := .identity }
-  , { walsCode := "sla", language := "Slave", iso := "den", value := .differentiation }
-  , { walsCode := "so", language := "So", iso := "teu", value := .differentiation }
-  , { walsCode := "som", language := "Somali", iso := "som", value := .differentiation }
-  , { walsCode := "sea", language := "Southeast Ambrym", iso := "tvk", value := .differentiation }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .identity }
-  , { walsCode := "squ", language := "Squamish", iso := "squ", value := .identity }
-  , { walsCode := "sud", language := "Sudest", iso := "tgo", value := .identity }
-  , { walsCode := "sue", language := "Suena", iso := "sue", value := .identity }
-  , { walsCode := "sun", language := "Sundanese", iso := "sun", value := .identity }
-  , { walsCode := "sup", language := "Supyire", iso := "spp", value := .differentiation }
-  , { walsCode := "tab", language := "Taba", iso := "mky", value := .identity }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .identity }
-  , { walsCode := "taf", language := "Taiof", iso := "sps", value := .identity }
-  , { walsCode := "tmm", language := "Tamabo", iso := "mla", value := .differentiation }
-  , { walsCode := "tml", language := "Tamil", iso := "tam", value := .differentiation }
-  , { walsCode := "tao", language := "Tarao", iso := "tro", value := .differentiation }
-  , { walsCode := "tau", language := "Tauya", iso := "tya", value := .differentiation }
-  , { walsCode := "tps", language := "Tepehuan (Southeastern)", iso := "stp", value := .identity }
-  , { walsCode := "trb", language := "Teribe", iso := "tfr", value := .differentiation }
-  , { walsCode := "ttn", language := "Tetun", iso := "tet", value := .identity }
-  , { walsCode := "tha", language := "Thai", iso := "tha", value := .identity }
-  , { walsCode := "tho", language := "Thompson", iso := "thp", value := .identity }
-  , { walsCode := "tis", language := "Tibetan (Shigatse)", iso := "bod", value := .identity }
-  , { walsCode := "tid", language := "Tidore", iso := "tvo", value := .identity }
-  , { walsCode := "tig", language := "Tigrinya", iso := "tir", value := .differentiation }
-  , { walsCode := "tik", language := "Tikar", iso := "tik", value := .identity }
-  , { walsCode := "tin", language := "Tinrin", iso := "cir", value := .identity }
-  , { walsCode := "tiw", language := "Tiwi", iso := "tiw", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "tlo", language := "Tobelo", iso := "tlb", value := .identity }
-  , { walsCode := "tms", language := "Tommo So", iso := "dto", value := .differentiation }
-  , { walsCode := "txj", language := "Totonac (Xicotepec de Juárez)", iso := "too", value := .identity }
-  , { walsCode := "tru", language := "Trumai", iso := "tpy", value := .differentiation }
-  , { walsCode := "tst", language := "Tsat", iso := "huq", value := .differentiation }
-  , { walsCode := "tgn", language := "Tugun", iso := "tzn", value := .identity }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .identity }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .identity }
-  , { walsCode := "tvl", language := "Tuvaluan", iso := "tvl", value := .differentiation }
-  , { walsCode := "tzu", language := "Tzutujil", iso := "tzj", value := .identity }
-  , { walsCode := "udh", language := "Udihe", iso := "ude", value := .identity }
-  , { walsCode := "udm", language := "Udmurt", iso := "udm", value := .identity }
-  , { walsCode := "uli", language := "Ulithian", iso := "uli", value := .identity }
-  , { walsCode := "uku", language := "Upper Kuskokwim", iso := "kuu", value := .differentiation }
-  , { walsCode := "urk", language := "Urubú-Kaapor", iso := "urb", value := .differentiation }
-  , { walsCode := "usa", language := "Usan", iso := "wnu", value := .identity }
-  , { walsCode := "vaf", language := "Vafsi", iso := "vaf", value := .identity }
-  , { walsCode := "vie", language := "Vietnamese", iso := "vie", value := .identity }
-  , { walsCode := "wal", language := "Walman", iso := "van", value := .identity }
-  , { walsCode := "wra", language := "Warao", iso := "wba", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "wrd", language := "Wardaman", iso := "wrr", value := .differentiation }
-  , { walsCode := "war", language := "Wari'", iso := "pav", value := .identity }
-  , { walsCode := "wch", language := "Wichí", iso := "mzh", value := .differentiation }
-  , { walsCode := "wlf", language := "Wolof", iso := "wol", value := .differentiation }
-  , { walsCode := "yag", language := "Yagua", iso := "yad", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "yaq", language := "Yaqui", iso := "yaq", value := .identity }
-  , { walsCode := "ywl", language := "Yawelmani", iso := "yok", value := .identity }
-  , { walsCode := "ywr", language := "Yawuru", iso := "ywr", value := .identity }
-  , { walsCode := "yid", language := "Yidiny", iso := "yii", value := .differentiation }
-  , { walsCode := "yim", language := "Yimas", iso := "yee", value := .bothExpressedByJuxtaposition }
-  , { walsCode := "yor", language := "Yoruba", iso := "yor", value := .differentiation }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .differentiation }
-  , { walsCode := "zaq", language := "Zapotec (Quiegolani)", iso := "zpi", value := .identity }
-  , { walsCode := "zch", language := "Zoque (Chimalapa)", iso := "zoh", value := .identity }
-  , { walsCode := "zul", language := "Zulu", iso := "zul", value := .differentiation }
-  , { walsCode := "zun", language := "Zuni", iso := "zun", value := .differentiation }
+  [ { walsCode := "abk", iso := "abk", value := .identity }
+  , { walsCode := "abu", iso := "kgr", value := .identity }
+  , { walsCode := "ace", iso := "ace", value := .identity }
+  , { walsCode := "aco", iso := "kjq", value := .identity }
+  , { walsCode := "aga", iso := "agd", value := .differentiation }
+  , { walsCode := "ain", iso := "ain", value := .differentiation }
+  , { walsCode := "ala", iso := "amp", value := .differentiation }
+  , { walsCode := "aly", iso := "aly", value := .differentiation }
+  , { walsCode := "aml", iso := "omb", value := .identity }
+  , { walsCode := "ame", iso := "aey", value := .differentiation }
+  , { walsCode := "apu", iso := "apu", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "aeg", iso := "arz", value := .identity }
+  , { walsCode := "ana", iso := "aro", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "alk", iso := "apr", value := .identity }
+  , { walsCode := "amp", iso := "aer", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "bab", iso := "bav", value := .differentiation }
+  , { walsCode := "bdm", iso := "bia", value := .differentiation }
+  , { walsCode := "bag", iso := "bmi", value := .differentiation }
+  , { walsCode := "bak", iso := "bkc", value := .differentiation }
+  , { walsCode := "bvi", iso := "", value := .differentiation }
+  , { walsCode := "bnn", iso := "bcm", value := .differentiation }
+  , { walsCode := "bsq", iso := "eus", value := .identity }
+  , { walsCode := "bkr", iso := "btx", value := .identity }
+  , { walsCode := "baw", iso := "bgr", value := .identity }
+  , { walsCode := "bma", iso := "tzm", value := .differentiation }
+  , { walsCode := "bbw", iso := "gup", value := .identity }
+  , { walsCode := "boz", iso := "boz", value := .identity }
+  , { walsCode := "brh", iso := "brh", value := .identity }
+  , { walsCode := "bkt", iso := "bkk", value := .differentiation }
+  , { walsCode := "bud", iso := "bdm", value := .differentiation }
+  , { walsCode := "bum", iso := "tkw", value := .identity }
+  , { walsCode := "bur", iso := "bsk", value := .identity }
+  , { walsCode := "bus", iso := "bqp", value := .differentiation }
+  , { walsCode := "cah", iso := "chl", value := .identity }
+  , { walsCode := "cnl", iso := "ram", value := .differentiation }
+  , { walsCode := "cnt", iso := "yue", value := .differentiation }
+  , { walsCode := "cyg", iso := "cay", value := .differentiation }
+  , { walsCode := "cha", iso := "cha", value := .identity }
+  , { walsCode := "chc", iso := "che", value := .identity }
+  , { walsCode := "cmh", iso := "ute", value := .differentiation }
+  , { walsCode := "cic", iso := "nya", value := .identity }
+  , { walsCode := "cch", iso := "coz", value := .differentiation }
+  , { walsCode := "chk", iso := "ckt", value := .identity }
+  , { walsCode := "coa", iso := "xcw", value := .identity }
+  , { walsCode := "coo", iso := "csz", value := .identity }
+  , { walsCode := "cop", iso := "cop", value := .differentiation }
+  , { walsCode := "dgb", iso := "dag", value := .differentiation }
+  , { walsCode := "drg", iso := "dar", value := .identity }
+  , { walsCode := "deg", iso := "deg", value := .differentiation }
+  , { walsCode := "dha", iso := "dsh", value := .differentiation }
+  , { walsCode := "dhi", iso := "div", value := .differentiation }
+  , { walsCode := "dja", iso := "dyy", value := .differentiation }
+  , { walsCode := "doy", iso := "dow", value := .differentiation }
+  , { walsCode := "dre", iso := "dhv", value := .differentiation }
+  , { walsCode := "dug", iso := "gwd", value := .identity }
+  , { walsCode := "eng", iso := "eng", value := .identity }
+  , { walsCode := "err", iso := "erg", value := .identity }
+  , { walsCode := "eve", iso := "evn", value := .identity }
+  , { walsCode := "ewo", iso := "ewo", value := .differentiation }
+  , { walsCode := "fij", iso := "fij", value := .differentiation }
+  , { walsCode := "fin", iso := "fin", value := .identity }
+  , { walsCode := "fon", iso := "fon", value := .differentiation }
+  , { walsCode := "fre", iso := "fra", value := .identity }
+  , { walsCode := "gap", iso := "pwg", value := .identity }
+  , { walsCode := "gar", iso := "grt", value := .identity }
+  , { walsCode := "geo", iso := "kat", value := .identity }
+  , { walsCode := "ger", iso := "deu", value := .identity }
+  , { walsCode := "gol", iso := "gol", value := .identity }
+  , { walsCode := "goo", iso := "gni", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "grk", iso := "ell", value := .identity }
+  , { walsCode := "grw", iso := "kal", value := .identity }
+  , { walsCode := "gua", iso := "gug", value := .identity }
+  , { walsCode := "guj", iso := "guj", value := .identity }
+  , { walsCode := "gnb", iso := "wlg", value := .identity }
+  , { walsCode := "grg", iso := "gge", value := .identity }
+  , { walsCode := "hai", iso := "hai", value := .differentiation }
+  , { walsCode := "ham", iso := "hmt", value := .differentiation }
+  , { walsCode := "hat", iso := "had", value := .differentiation }
+  , { walsCode := "hau", iso := "hau", value := .differentiation }
+  , { walsCode := "haw", iso := "haw", value := .identity }
+  , { walsCode := "heb", iso := "heb", value := .identity }
+  , { walsCode := "hin", iso := "hin", value := .identity }
+  , { walsCode := "hix", iso := "hix", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "hmo", iso := "hnj", value := .identity }
+  , { walsCode := "hoa", iso := "hoa", value := .differentiation }
+  , { walsCode := "hun", iso := "hun", value := .identity }
+  , { walsCode := "hzb", iso := "huz", value := .identity }
+  , { walsCode := "ika", iso := "arh", value := .differentiation }
+  , { walsCode := "imo", iso := "imn", value := .differentiation }
+  , { walsCode := "ind", iso := "ind", value := .identity }
+  , { walsCode := "irq", iso := "irk", value := .identity }
+  , { walsCode := "ita", iso := "ita", value := .identity }
+  , { walsCode := "itz", iso := "itz", value := .identity }
+  , { walsCode := "jab", iso := "jae", value := .identity }
+  , { walsCode := "jak", iso := "jac", value := .differentiation }
+  , { walsCode := "jam", iso := "djd", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "jpn", iso := "jpn", value := .differentiation }
+  , { walsCode := "juh", iso := "ktz", value := .differentiation }
+  , { walsCode := "krr", iso := "kxa", value := .differentiation }
+  , { walsCode := "kgu", iso := "ktg", value := .identity }
+  , { walsCode := "kma", iso := "kay", value := .differentiation }
+  , { walsCode := "kam", iso := "xbr", value := .identity }
+  , { walsCode := "kan", iso := "ogo", value := .differentiation }
+  , { walsCode := "knd", iso := "kan", value := .differentiation }
+  , { walsCode := "knr", iso := "knc", value := .differentiation }
+  , { walsCode := "kpw", iso := "kjp", value := .identity }
+  , { walsCode := "krk", iso := "kyh", value := .differentiation }
+  , { walsCode := "kas", iso := "kas", value := .identity }
+  , { walsCode := "ker", iso := "ker", value := .identity }
+  , { walsCode := "ket", iso := "ket", value := .identity }
+  , { walsCode := "kmh", iso := "kjl", value := .identity }
+  , { walsCode := "kty", iso := "kca", value := .differentiation }
+  , { walsCode := "khs", iso := "kha", value := .identity }
+  , { walsCode := "kmu", iso := "kjg", value := .differentiation }
+  , { walsCode := "krb", iso := "gil", value := .differentiation }
+  , { walsCode := "koa", iso := "cku", value := .differentiation }
+  , { walsCode := "kob", iso := "kpw", value := .differentiation }
+  , { walsCode := "kol", iso := "kfb", value := .identity }
+  , { walsCode := "kmb", iso := "", value := .differentiation }
+  , { walsCode := "kor", iso := "kor", value := .differentiation }
+  , { walsCode := "kku", iso := "kfq", value := .identity }
+  , { walsCode := "kfe", iso := "kfz", value := .differentiation }
+  , { walsCode := "krw", iso := "khe", value := .identity }
+  , { walsCode := "kse", iso := "ses", value := .differentiation }
+  , { walsCode := "kro", iso := "kgo", value := .differentiation }
+  , { walsCode := "knc", iso := "uwa", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "kuk", iso := "bfa", value := .identity }
+  , { walsCode := "kuo", iso := "kto", value := .identity }
+  , { walsCode := "kut", iso := "kut", value := .identity }
+  , { walsCode := "kwa", iso := "kwd", value := .identity }
+  , { walsCode := "kat", iso := "kmg", value := .identity }
+  , { walsCode := "lai", iso := "cnh", value := .differentiation }
+  , { walsCode := "lak", iso := "lbe", value := .identity }
+  , { walsCode := "lkt", iso := "lkt", value := .identity }
+  , { walsCode := "lmg", iso := "hia", value := .differentiation }
+  , { walsCode := "lan", iso := "laj", value := .differentiation }
+  , { walsCode := "lat", iso := "lav", value := .identity }
+  , { walsCode := "lav", iso := "lvk", value := .identity }
+  , { walsCode := "laz", iso := "lzz", value := .identity }
+  , { walsCode := "lel", iso := "lln", value := .differentiation }
+  , { walsCode := "lep", iso := "lep", value := .differentiation }
+  , { walsCode := "lez", iso := "lez", value := .identity }
+  , { walsCode := "lil", iso := "lil", value := .differentiation }
+  , { walsCode := "ara", iso := "arw", value := .identity }
+  , { walsCode := "lgu", iso := "lgu", value := .identity }
+  , { walsCode := "lug", iso := "lgg", value := .differentiation }
+  , { walsCode := "luv", iso := "lue", value := .differentiation }
+  , { walsCode := "mad", iso := "mhi", value := .differentiation }
+  , { walsCode := "mle", iso := "mdy", value := .differentiation }
+  , { walsCode := "mdr", iso := "mad", value := .identity }
+  , { walsCode := "mai", iso := "mai", value := .identity }
+  , { walsCode := "mym", iso := "mal", value := .identity }
+  , { walsCode := "mam", iso := "mam", value := .identity }
+  , { walsCode := "mnd", iso := "cmn", value := .differentiation }
+  , { walsCode := "myi", iso := "mpc", value := .differentiation }
+  , { walsCode := "mgg", iso := "mjg", value := .differentiation }
+  , { walsCode := "mao", iso := "mri", value := .differentiation }
+  , { walsCode := "map", iso := "arn", value := .identity }
+  , { walsCode := "mhi", iso := "mar", value := .identity }
+  , { walsCode := "mar", iso := "mrc", value := .differentiation }
+  , { walsCode := "mrq", iso := "", value := .differentiation }
+  , { walsCode := "myr", iso := "mcf", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "may", iso := "ayz", value := .identity }
+  , { walsCode := "mby", iso := "myb", value := .differentiation }
+  , { walsCode := "mbi", iso := "baw", value := .differentiation }
+  , { walsCode := "mei", iso := "mni", value := .differentiation }
+  , { walsCode := "mid", iso := "mei", value := .differentiation }
+  , { walsCode := "mxc", iso := "mig", value := .identity }
+  , { walsCode := "miy", iso := "mkf", value := .differentiation }
+  , { walsCode := "mcv", iso := "moc", value := .identity }
+  , { walsCode := "moh", iso := "moh", value := .identity }
+  , { walsCode := "mbo", iso := "mxk", value := .identity }
+  , { walsCode := "mos", iso := "cas", value := .identity }
+  , { walsCode := "mun", iso := "unr", value := .identity }
+  , { walsCode := "mup", iso := "sur", value := .differentiation }
+  , { walsCode := "mgu", iso := "mug", value := .differentiation }
+  , { walsCode := "mus", iso := "emi", value := .identity }
+  , { walsCode := "nab", iso := "naf", value := .identity }
+  , { walsCode := "nag", iso := "nce", value := .differentiation }
+  , { walsCode := "nmi", iso := "nhx", value := .identity }
+  , { walsCode := "nht", iso := "nhg", value := .identity }
+  , { walsCode := "kho", iso := "naq", value := .identity }
+  , { walsCode := "nmb", iso := "nab", value := .identity }
+  , { walsCode := "nav", iso := "nav", value := .identity }
+  , { walsCode := "ndb", iso := "nde", value := .identity }
+  , { walsCode := "ndj", iso := "djj", value := .identity }
+  , { walsCode := "nel", iso := "nee", value := .identity }
+  , { walsCode := "nep", iso := "npi", value := .identity }
+  , { walsCode := "nwd", iso := "new", value := .differentiation }
+  , { walsCode := "nez", iso := "nez", value := .differentiation }
+  , { walsCode := "ngl", iso := "nig", value := .identity }
+  , { walsCode := "nha", iso := "nha", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "nia", iso := "nia", value := .identity }
+  , { walsCode := "nsg", iso := "ncg", value := .differentiation }
+  , { walsCode := "nif", iso := "num", value := .identity }
+  , { walsCode := "niu", iso := "niu", value := .identity }
+  , { walsCode := "niv", iso := "niv", value := .differentiation }
+  , { walsCode := "nko", iso := "cgg", value := .differentiation }
+  , { walsCode := "nse", iso := "nse", value := .differentiation }
+  , { walsCode := "nua", iso := "nxl", value := .identity }
+  , { walsCode := "ood", iso := "ood", value := .identity }
+  , { walsCode := "obo", iso := "ann", value := .identity }
+  , { walsCode := "oji", iso := "", value := .identity }
+  , { walsCode := "orh", iso := "hae", value := .differentiation }
+  , { walsCode := "otm", iso := "ote", value := .identity }
+  , { walsCode := "pms", iso := "pma", value := .differentiation }
+  , { walsCode := "pno", iso := "pao", value := .differentiation }
+  , { walsCode := "pai", iso := "pwn", value := .differentiation }
+  , { walsCode := "pal", iso := "pau", value := .identity }
+  , { walsCode := "psm", iso := "pqm", value := .identity }
+  , { walsCode := "pec", iso := "pay", value := .differentiation }
+  , { walsCode := "per", iso := "pip", value := .differentiation }
+  , { walsCode := "prs", iso := "pes", value := .identity }
+  , { walsCode := "prh", iso := "myp", value := .identity }
+  , { walsCode := "pit", iso := "pjt", value := .identity }
+  , { walsCode := "pop", iso := "pbe", value := .identity }
+  , { walsCode := "pul", iso := "puw", value := .identity }
+  , { walsCode := "pur", iso := "tsz", value := .identity }
+  , { walsCode := "pae", iso := "pbb", value := .differentiation }
+  , { walsCode := "qaf", iso := "aar", value := .differentiation }
+  , { walsCode := "qia", iso := "", value := .identity }
+  , { walsCode := "qhu", iso := "qub", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "qim", iso := "qvi", value := .identity }
+  , { walsCode := "ret", iso := "tnc", value := .differentiation }
+  , { walsCode := "rot", iso := "rtm", value := .identity }
+  , { walsCode := "rus", iso := "rus", value := .identity }
+  , { walsCode := "ski", iso := "sjd", value := .identity }
+  , { walsCode := "sno", iso := "sme", value := .identity }
+  , { walsCode := "syu", iso := "sll", value := .differentiation }
+  , { walsCode := "san", iso := "sag", value := .identity }
+  , { walsCode := "sgu", iso := "snq", value := .differentiation }
+  , { walsCode := "snm", iso := "xsu", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "skp", iso := "sel", value := .identity }
+  , { walsCode := "snt", iso := "set", value := .differentiation }
+  , { walsCode := "sho", iso := "shh", value := .differentiation }
+  , { walsCode := "sir", iso := "sjr", value := .identity }
+  , { walsCode := "siu", iso := "sis", value := .identity }
+  , { walsCode := "sla", iso := "den", value := .differentiation }
+  , { walsCode := "so", iso := "teu", value := .differentiation }
+  , { walsCode := "som", iso := "som", value := .differentiation }
+  , { walsCode := "sea", iso := "tvk", value := .differentiation }
+  , { walsCode := "spa", iso := "spa", value := .identity }
+  , { walsCode := "squ", iso := "squ", value := .identity }
+  , { walsCode := "sud", iso := "tgo", value := .identity }
+  , { walsCode := "sue", iso := "sue", value := .identity }
+  , { walsCode := "sun", iso := "sun", value := .identity }
+  , { walsCode := "sup", iso := "spp", value := .differentiation }
+  , { walsCode := "tab", iso := "mky", value := .identity }
+  , { walsCode := "tag", iso := "tgl", value := .identity }
+  , { walsCode := "taf", iso := "sps", value := .identity }
+  , { walsCode := "tmm", iso := "mla", value := .differentiation }
+  , { walsCode := "tml", iso := "tam", value := .differentiation }
+  , { walsCode := "tao", iso := "tro", value := .differentiation }
+  , { walsCode := "tau", iso := "tya", value := .differentiation }
+  , { walsCode := "tps", iso := "stp", value := .identity }
+  , { walsCode := "trb", iso := "tfr", value := .differentiation }
+  , { walsCode := "ttn", iso := "tet", value := .identity }
+  , { walsCode := "tha", iso := "tha", value := .identity }
+  , { walsCode := "tho", iso := "thp", value := .identity }
+  , { walsCode := "tis", iso := "bod", value := .identity }
+  , { walsCode := "tid", iso := "tvo", value := .identity }
+  , { walsCode := "tig", iso := "tir", value := .differentiation }
+  , { walsCode := "tik", iso := "tik", value := .identity }
+  , { walsCode := "tin", iso := "cir", value := .identity }
+  , { walsCode := "tiw", iso := "tiw", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "tlo", iso := "tlb", value := .identity }
+  , { walsCode := "tms", iso := "dto", value := .differentiation }
+  , { walsCode := "txj", iso := "too", value := .identity }
+  , { walsCode := "tru", iso := "tpy", value := .differentiation }
+  , { walsCode := "tst", iso := "huq", value := .differentiation }
+  , { walsCode := "tgn", iso := "tzn", value := .identity }
+  , { walsCode := "tuk", iso := "", value := .identity }
+  , { walsCode := "tur", iso := "tur", value := .identity }
+  , { walsCode := "tvl", iso := "tvl", value := .differentiation }
+  , { walsCode := "tzu", iso := "tzj", value := .identity }
+  , { walsCode := "udh", iso := "ude", value := .identity }
+  , { walsCode := "udm", iso := "udm", value := .identity }
+  , { walsCode := "uli", iso := "uli", value := .identity }
+  , { walsCode := "uku", iso := "kuu", value := .differentiation }
+  , { walsCode := "urk", iso := "urb", value := .differentiation }
+  , { walsCode := "usa", iso := "wnu", value := .identity }
+  , { walsCode := "vaf", iso := "vaf", value := .identity }
+  , { walsCode := "vie", iso := "vie", value := .identity }
+  , { walsCode := "wal", iso := "van", value := .identity }
+  , { walsCode := "wra", iso := "wba", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "wrd", iso := "wrr", value := .differentiation }
+  , { walsCode := "war", iso := "pav", value := .identity }
+  , { walsCode := "wch", iso := "mzh", value := .differentiation }
+  , { walsCode := "wlf", iso := "wol", value := .differentiation }
+  , { walsCode := "yag", iso := "yad", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "yaq", iso := "yaq", value := .identity }
+  , { walsCode := "ywl", iso := "yok", value := .identity }
+  , { walsCode := "ywr", iso := "ywr", value := .identity }
+  , { walsCode := "yid", iso := "yii", value := .differentiation }
+  , { walsCode := "yim", iso := "yee", value := .bothExpressedByJuxtaposition }
+  , { walsCode := "yor", iso := "yor", value := .differentiation }
+  , { walsCode := "yko", iso := "yux", value := .differentiation }
+  , { walsCode := "zaq", iso := "zpi", value := .identity }
+  , { walsCode := "zch", iso := "zoh", value := .identity }
+  , { walsCode := "zul", iso := "zul", value := .differentiation }
+  , { walsCode := "zun", iso := "zun", value := .differentiation }
   ]
-
--- Count verification
-theorem total_count : allData.length = 301 := by native_decide
-
-theorem count_identity :
-    (allData.filter (·.value == .identity)).length = 161 := by native_decide
-theorem count_differentiation :
-    (allData.filter (·.value == .differentiation)).length = 125 := by native_decide
-theorem count_bothExpressedByJuxtaposition :
-    (allData.filter (·.value == .bothExpressedByJuxtaposition)).length = 15 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

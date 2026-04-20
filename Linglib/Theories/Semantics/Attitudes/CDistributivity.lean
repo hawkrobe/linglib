@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
 
 /-!
 # C-Distributivity: Derivation from Compositional Semantics

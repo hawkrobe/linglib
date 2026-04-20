@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.RSA.Core.Noise
+import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Theories.Pragmatics.RSA.Channel
 
 /-!
 # @cite{schlotterbeck-wang-2023} — Incremental RSA for Adjective Ordering

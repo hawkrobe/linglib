@@ -1,17 +1,17 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
-
 /-!
 # Serbian Question Particles
 @cite{simik-2024}
 
-Lexical entries for Serbian interrogative particles.
+Lexical entries for Serbian interrogative particles. The fragment
+commits only to theory-neutral lexical primitives; the left-peripheral
+layer assignment lives in `Phenomena.Questions.Studies.Simik2024`.
 
 ## Particles
 
-| Particle | Gloss | Layer | Bias |
-|----------|-------|-------|------|
-| da li | neutral PQ | CP | none |
-| zar | RAZVE (mirative) | PerspP | +evidential |
+| Particle | Gloss | Bias |
+|----------|-------|------|
+| da li | neutral PQ | none |
+| zar | RAZVE (mirative) | +evidential |
 
 ## Cross-Module Connections
 
@@ -23,13 +23,10 @@ Lexical entries for Serbian interrogative particles.
 
 namespace Fragments.Serbian.QuestionParticles
 
-open Semantics.Questions (QParticleLayer)
-
 /-- A Serbian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
   gloss : String
-  layer : QParticleLayer
   polarOk : Bool
   declOk : Bool
   whOk : Bool
@@ -42,7 +39,6 @@ Particle + verb movement. Neutral baseline. -/
 def daLi : QParticleEntry where
   form := "da li"
   gloss := "PQ (particle + movement)"
-  layer := .cp
   polarOk := true
   declOk := false
   whOk := false
@@ -54,7 +50,6 @@ Compatible with both outer and inner negation (like Russian razve). -/
 def zar_ : QParticleEntry where
   form := "zar"
   gloss := "RAZVE (mirative/dubitative)"
-  layer := .perspP
   polarOk := true
   declOk := false
   whOk := false

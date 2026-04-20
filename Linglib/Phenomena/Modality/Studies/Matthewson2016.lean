@@ -76,9 +76,9 @@ theorem both_epistemic_subtypes :
     is the diagnostic that separates the two epistemic subtypes:
     St'át'imcets k'a (factual) vs lákw7a (content). -/
 theorem disbelief_distinguishes_epistemics :
-    BackgroundClass.factualEvidential.allowsSpeakerDisbelief = false ∧
-    BackgroundClass.contentEvidential.allowsSpeakerDisbelief = true := by
-  exact ⟨rfl, rfl⟩
+    ¬ BackgroundClass.factualEvidential.AllowsSpeakerDisbelief ∧
+    BackgroundClass.contentEvidential.AllowsSpeakerDisbelief := by
+  exact ⟨by decide, by decide⟩
 
 /-- The traditional circumstantial class is uniformly factual (Table 18.2). -/
 theorem circumstantial_is_factual :
@@ -151,17 +151,17 @@ theorem nez_perce_strengthened :
 
 /-- Both analyses agree: the modals lack duals. -/
 theorem no_duals :
-    ForceAnalysis.variableForce.hasDual = false ∧
-    (ForceAnalysis.strengthened .possibility).hasDual = false := by
-  exact ⟨rfl, rfl⟩
+    ¬ ForceAnalysis.variableForce.HasDual ∧
+    ¬ (ForceAnalysis.strengthened .possibility).HasDual := by
+  refine ⟨?_, ?_⟩ <;> intro h <;> exact h.elim
 
 /-- Despite lacking duals, both admit necessity and possibility readings. -/
 theorem both_forces_available :
-    ForceAnalysis.variableForce.admitsNecessity = true ∧
-    ForceAnalysis.variableForce.admitsPossibility = true ∧
-    (ForceAnalysis.strengthened .possibility).admitsNecessity = true ∧
-    (ForceAnalysis.strengthened .possibility).admitsPossibility = true := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+    ForceAnalysis.variableForce.AdmitsNecessity ∧
+    ForceAnalysis.variableForce.AdmitsPossibility ∧
+    (ForceAnalysis.strengthened .possibility).AdmitsNecessity ∧
+    (ForceAnalysis.strengthened .possibility).AdmitsPossibility := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-! ### Force analysis consistency
 

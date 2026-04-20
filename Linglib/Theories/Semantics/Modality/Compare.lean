@@ -15,6 +15,7 @@ namespace Semantics.Modality
 
 open Semantics.Attitudes.Intensional
 open Semantics.Modality.Kratzer
+open Core.IntensionalLogic.RestrictedModality
 
 section TestFixtures
 
@@ -34,7 +35,7 @@ def concreteEpistemicParams : KratzerParams World where
   base := concreteEpistemicBase
   ordering := emptyBackground
 
-def KratzerEpistemic : ModalTheory := KratzerTheory concreteEpistemicParams
+noncomputable def KratzerEpistemic : ModalTheory := KratzerTheory concreteEpistemicParams
 
 def concreteCircumstantialBase : ModalBase World := fun _ => []
 def concreteDeonticOrdering : OrderingSource World := fun _ => [johnHome]
@@ -43,7 +44,7 @@ def concreteDeonticParams : KratzerParams World where
   base := concreteCircumstantialBase
   ordering := concreteDeonticOrdering
 
-def KratzerDeontic : ModalTheory := KratzerTheory concreteDeonticParams
+noncomputable def KratzerDeontic : ModalTheory := KratzerTheory concreteDeonticParams
 
 end TestFixtures
 
@@ -53,23 +54,9 @@ section ComparisonFunctions
 def theoriesAgreeAt (T₁ T₂ : ModalTheory) (f : ModalForce) (p : World → Prop) (w : World) : Prop :=
   T₁.eval f p w ↔ T₂.eval f p w
 
-instance (T₁ T₂ : ModalTheory) (f : ModalForce) (p : World → Prop) [DecidablePred p] (w : World) :
-    Decidable (theoriesAgreeAt T₁ T₂ f p w) := by
-  unfold theoriesAgreeAt; infer_instance
-
 /-- Do two theories agree on modal force `f` for proposition `p` across all worlds? -/
 def theoriesAgreeOn (T₁ T₂ : ModalTheory) (f : ModalForce) (p : World → Prop) : Prop :=
   ∀ w : World, theoriesAgreeAt T₁ T₂ f p w
-
-instance (T₁ T₂ : ModalTheory) (f : ModalForce) (p : World → Prop) [DecidablePred p] :
-    Decidable (theoriesAgreeOn T₁ T₂ f p) := by
-  unfold theoriesAgreeOn; infer_instance
-
-/-- Find worlds where two theories diverge. -/
-def divergingWorlds (T₁ T₂ : ModalTheory) (f : ModalForce) (p : World → Prop) [DecidablePred p] :
-    List World :=
-  Core.Proposition.FiniteWorlds.worlds.filter
-    (fun w => !decide (theoriesAgreeAt T₁ T₂ f p w))
 
 /-- Do two theories agree on all modal forces for proposition `p`? -/
 def theoriesAgreeOnProposition (T₁ T₂ : ModalTheory) (p : World → Prop) : Prop :=
@@ -77,38 +64,78 @@ def theoriesAgreeOnProposition (T₁ T₂ : ModalTheory) (p : World → Prop) : 
   theoriesAgreeOn T₁ T₂ .weakNecessity p ∧
   theoriesAgreeOn T₁ T₂ .possibility p
 
-instance (T₁ T₂ : ModalTheory) (p : World → Prop) [DecidablePred p] :
-    Decidable (theoriesAgreeOnProposition T₁ T₂ p) := by
-  unfold theoriesAgreeOnProposition; infer_instance
-
 end ComparisonFunctions
 
 section CoreEquivalence
 
+/-- KratzerMinimal necessity reduces to ∀-quantification over all worlds. -/
+private theorem kratzerMinimal_necessity_iff (p : World → Prop) (w : World) :
+    KratzerMinimal.eval .necessity p w ↔ ∀ w' : World, p w' := by
+  show Kratzer.necessity (W := World) emptyBackground emptyBackground p w ↔ _
+  rw [Kratzer.necessity_iff_all, Kratzer.empty_ordering_emptyBackground,
+      Kratzer.empty_base_universal_access]
+  exact ⟨fun h w' => h w' (Set.mem_univ _), fun h w' _ => h w'⟩
+
+/-- KratzerMinimal possibility reduces to ∃-quantification over all worlds. -/
+private theorem kratzerMinimal_possibility_iff (p : World → Prop) (w : World) :
+    KratzerMinimal.eval .possibility p w ↔ ∃ w' : World, p w' := by
+  show Kratzer.possibility (W := World) emptyBackground emptyBackground p w ↔ _
+  rw [Kratzer.possibility_iff_any, Kratzer.empty_ordering_emptyBackground,
+      Kratzer.empty_base_universal_access]
+  exact ⟨fun ⟨w', _, h⟩ => ⟨w', h⟩, fun ⟨w', h⟩ => ⟨w', Set.mem_univ _, h⟩⟩
+
+/-- KratzerMinimal weak-necessity coincides with necessity. -/
+private theorem kratzerMinimal_weakNec_iff (p : World → Prop) (w : World) :
+    KratzerMinimal.eval .weakNecessity p w ↔ ∀ w' : World, p w' :=
+  kratzerMinimal_necessity_iff p w
+
 /-- Minimal Kratzer = Universal Simple for necessity on raining. -/
 theorem minimal_kratzer_equals_universal_simple_necessity :
-    ∀ (w : World), KratzerMinimal.eval .necessity raining w ↔ SimpleUniversal.eval .necessity raining w := by
-  intro w
-  cases w <;> decide
+    ∀ (w : World), KratzerMinimal.eval .necessity raining w ↔
+      SimpleUniversal.eval .necessity raining w := fun w =>
+  (kratzerMinimal_necessity_iff raining w).trans (simple_universal_necessity raining w).symm
 
 theorem minimal_kratzer_equals_universal_simple_possibility :
-    ∀ (w : World), KratzerMinimal.eval .possibility raining w ↔ SimpleUniversal.eval .possibility raining w := by
-  intro w
-  cases w <;> decide
+    ∀ (w : World), KratzerMinimal.eval .possibility raining w ↔
+      SimpleUniversal.eval .possibility raining w := fun w =>
+  (kratzerMinimal_possibility_iff raining w).trans (simple_universal_possibility raining w).symm
 
 /-- Agreement on trivially true. -/
 theorem agree_on_trivially_true :
     theoriesAgreeOnProposition KratzerMinimal SimpleUniversal triviallyTrue := by
-  decide
+  refine ⟨?_, ?_, ?_⟩ <;> intro w <;> show _ ↔ _
+  · exact (kratzerMinimal_necessity_iff _ w).trans (simple_universal_necessity _ w).symm
+  · exact (kratzerMinimal_weakNec_iff _ w).trans (simple_universal_necessity _ w).symm
+  · exact (kratzerMinimal_possibility_iff _ w).trans (simple_universal_possibility _ w).symm
 
 /-- Agreement on trivially false. -/
 theorem agree_on_trivially_false :
     theoriesAgreeOnProposition KratzerMinimal SimpleUniversal triviallyFalse := by
-  decide
+  refine ⟨?_, ?_, ?_⟩ <;> intro w <;> show _ ↔ _
+  · exact (kratzerMinimal_necessity_iff _ w).trans (simple_universal_necessity _ w).symm
+  · exact (kratzerMinimal_weakNec_iff _ w).trans (simple_universal_necessity _ w).symm
+  · exact (kratzerMinimal_possibility_iff _ w).trans (simple_universal_possibility _ w).symm
 
 end CoreEquivalence
 
 section Divergence
+
+/-- KratzerEpistemic necessity reduces to ∀-quantification over groundWet worlds. -/
+private theorem kratzerEpistemic_necessity_iff (p : World → Prop) (w : World) :
+    KratzerEpistemic.eval .necessity p w ↔ ∀ w' : World, groundWet w' → p w' := by
+  show Kratzer.necessity (W := World) concreteEpistemicBase emptyBackground p w ↔ _
+  rw [Kratzer.necessity_iff_all, Kratzer.empty_ordering_emptyBackground]
+  constructor
+  · intro h w' hw
+    apply h w'
+    intro q hq
+    simp [concreteEpistemicBase] at hq
+    rcases hq with rfl
+    exact hw
+  · intro h w' hw'
+    apply h w'
+    have : groundWet ∈ concreteEpistemicBase w := by simp [concreteEpistemicBase]
+    exact hw' groundWet this
 
 /-- Epistemic and minimal Kratzer differ on some proposition and world. -/
 theorem epistemic_vs_minimal_differ :
@@ -116,15 +143,21 @@ theorem epistemic_vs_minimal_differ :
     KratzerEpistemic.eval .necessity p w ≠ KratzerMinimal.eval .necessity p w := by
   refine ⟨groundWet, .w0, ?_⟩
   intro h
-  have h1 : KratzerEpistemic.eval .necessity groundWet .w0 := by decide
-  have h2 : ¬ KratzerMinimal.eval .necessity groundWet .w0 := by decide
+  have h1 : KratzerEpistemic.eval .necessity groundWet .w0 :=
+    (kratzerEpistemic_necessity_iff _ _).mpr (fun _ hw => hw)
+  have h2 : ¬ KratzerMinimal.eval .necessity groundWet .w0 := by
+    intro hAll
+    exact (kratzerMinimal_necessity_iff _ _).mp hAll .w2
   exact h2 (h ▸ h1)
 
 /-- Different conversational backgrounds yield different truth values. -/
 theorem kratzer_context_dependence :
     KratzerEpistemic.eval .necessity groundWet .w0 ∧
     ¬ KratzerMinimal.eval .necessity groundWet .w0 := by
-  decide
+  refine ⟨?_, ?_⟩
+  · exact (kratzerEpistemic_necessity_iff _ _).mpr (fun _ hw => hw)
+  · intro hAll
+    exact (kratzerMinimal_necessity_iff _ _).mp hAll .w2
 
 end Divergence
 
@@ -146,18 +179,18 @@ section SpecificExamples
 
 /-- Agreement: Minimal Kratzer and Universal Simple agree on necessity for trivially true. -/
 theorem agree_on_trivially_true_necessity :
-    theoriesAgreeOn KratzerMinimal SimpleUniversal .necessity triviallyTrue := by
-  decide
+    theoriesAgreeOn KratzerMinimal SimpleUniversal .necessity triviallyTrue := fun w =>
+  (kratzerMinimal_necessity_iff _ w).trans (simple_universal_necessity _ w).symm
 
 /-- Agreement: Both agree on possibility for trivially true. -/
 theorem agree_on_trivially_true_possibility :
-    theoriesAgreeOn KratzerMinimal SimpleUniversal .possibility triviallyTrue := by
-  decide
+    theoriesAgreeOn KratzerMinimal SimpleUniversal .possibility triviallyTrue := fun w =>
+  (kratzerMinimal_possibility_iff _ w).trans (simple_universal_possibility _ w).symm
 
 /-- Agreement: Both agree on necessity for trivially false. -/
 theorem agree_on_trivially_false_necessity :
-    theoriesAgreeOn KratzerMinimal SimpleUniversal .necessity triviallyFalse := by
-  decide
+    theoriesAgreeOn KratzerMinimal SimpleUniversal .necessity triviallyFalse := fun w =>
+  (kratzerMinimal_necessity_iff _ w).trans (simple_universal_necessity _ w).symm
 
 end SpecificExamples
 

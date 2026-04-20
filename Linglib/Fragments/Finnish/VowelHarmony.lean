@@ -101,19 +101,19 @@ def i_vowel : Segment := Segment.ofSpecs
 
 /-- Is a segment a back vowel? [+syll, +back]. -/
 def isBackVowel (s : Segment) : Bool :=
-  s.hasValue .syllabic true && s.hasValue .back true
+  s.HasValue .syllabic true && s.HasValue .back true
 
 /-- Is a segment a front vowel? [+syll, −back]. -/
 def isFrontVowel (s : Segment) : Bool :=
-  s.hasValue .syllabic true && s.hasValue .back false
+  s.HasValue .syllabic true && s.HasValue .back false
 
 /-- Is a segment a neutral vowel? Front vowels /e/ and /i/ that are
     transparent to harmony: [+syll, −back, −round, −low]. -/
 def isNeutral (s : Segment) : Bool :=
-  s.hasValue .syllabic true &&
-  s.hasValue .back false &&
-  s.hasValue .round false &&
-  s.hasValue .low false
+  s.HasValue .syllabic true &&
+  s.HasValue .back false &&
+  s.HasValue .round false &&
+  s.HasValue .low false
 
 /-- The harmony class of a vowel: back, front, or neutral. -/
 inductive HarmonyClass where
@@ -135,8 +135,8 @@ def classifyVowel (s : Segment) : HarmonyClass :=
     transparent — they neither trigger nor undergo harmony. -/
 def finnishHarmony : HarmonySystem :=
   HarmonySystem.mk' (feature := .back)
-    (isTrigger     := (λ s => s.hasValue .syllabic true && !isNeutral s))
-    (isTarget      := (λ s => s.hasValue .syllabic true && !isNeutral s))
+    (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
+    (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTransparent := isNeutral)
     (direction     := .rightward)
 
@@ -192,8 +192,8 @@ theorem a_ä_dorsal_disagree :
 
 /-- Dorsal agreement holds between /a/ and /o/ (both [+back]). -/
 theorem a_o_dorsal_agree_on_back :
-    a_vowel.hasValue .back true = true ∧
-    o_vowel.hasValue .back true = true := by
+    a_vowel.HasValue .back true = true ∧
+    o_vowel.HasValue .back true = true := by
   exact ⟨by native_decide, by native_decide⟩
 
 end Fragments.Finnish.VowelHarmony

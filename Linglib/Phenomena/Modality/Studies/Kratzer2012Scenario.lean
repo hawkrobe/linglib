@@ -14,8 +14,8 @@ Four worlds with two properties (rain, wet street) and a causal regularity:
 | w3    | no   | no         | Normal non-rain            |
 
 Two time points: yesterday (t = −1) and now (t = 0). Rain occurs yesterday;
-wetness holds now. The function `atTime` projects `World → ℤ → Bool` to
-`(World → Bool)` at a specific time, bridging the temporal and modal type systems.
+wetness holds now. The function `atTime` projects `World → ℤ → Prop` to
+`(World → Prop)` at a specific time, bridging the temporal and modal type systems.
 
 Reference: Kratzer, A. (2012). Modals and Conditionals. Oxford University Press. Ch. 2 §2.9.
 -/
@@ -28,51 +28,55 @@ open Semantics.Modality.Kratzer
 /-! ## Atemporal propositions -/
 
 /-- It rained: true at w0 (normal rain) and w1 (rain + broken drainage). -/
-def rained : (World → Bool) := λ w =>
-  match w with | .w0 => true | .w1 => true | .w2 => false | .w3 => false
+def rained : World → Prop := λ w =>
+  match w with | .w0 => True | .w1 => True | .w2 => False | .w3 => False
+
+instance : DecidablePred rained := fun w => by cases w <;> unfold rained <;> infer_instance
 
 /-- The street is wet: true at w0 (rain → wet) and w2 (sprinkler). -/
-def streetWet : (World → Bool) := λ w =>
-  match w with | .w0 => true | .w1 => false | .w2 => true | .w3 => false
+def streetWet : World → Prop := λ w =>
+  match w with | .w0 => True | .w1 => False | .w2 => True | .w3 => False
+
+instance : DecidablePred streetWet := fun w => by cases w <;> unfold streetWet <;> infer_instance
 
 /-! ## Temporal propositions and the type bridge -/
 
 /-- Rain as a temporal proposition: it rained yesterday (t = −1). -/
-def rainedAt : World → ℤ → Bool := λ w t =>
-  match t with | -1 => rained w | _ => false
+def rainedAt : World → ℤ → Prop := λ w t =>
+  match t with | -1 => rained w | _ => False
 
 /-- Wet street as a temporal proposition: the street is wet now (t = 0). -/
-def wetStreetAt : World → ℤ → Bool := λ w t =>
-  match t with | 0 => streetWet w | _ => false
+def wetStreetAt : World → ℤ → Prop := λ w t =>
+  match t with | 0 => streetWet w | _ => False
 
 /-- **The type bridge**: project a temporal proposition at a specific time
-    to a world proposition `(World → Bool)`. This is what allows a past-tense
+    to a world proposition `(World → Prop)`. This is what allows a past-tense
     antecedent to enter a Kratzer modal base. -/
-def atTime (p : World → ℤ → Bool) (t : ℤ) : (World → Bool) := λ w => p w t
+def atTime (p : World → ℤ → Prop) (t : ℤ) : World → Prop := λ w => p w t
 
 /-! ## Conversational backgrounds -/
 
 /-- Totally realistic modal base: ∩f(w) = {w} for each world.
     Each world's fact set contains the proposition "being exactly that world." -/
-def totallyRealisticBg : ModalBase World := λ w => [λ w' => w' == w]
+def totallyRealisticBg : ModalBase World := λ w => [λ w' => w' = w]
 
 /-- Normalcy ordering source: ranks worlds where rain-without-wet-street is
     abnormal. The ordering proposition penalizes w1 (rained ∧ ¬streetWet). -/
-def normalcySource : OrderingSource World := λ _ => [λ w' => !(rained w' && !streetWet w')]
+def normalcySource : OrderingSource World := λ _ => [λ w' => ¬ (rained w' ∧ ¬ streetWet w')]
 
 /-! ## Theory-neutral facts -/
 
-theorem w0_rained_wet : rained .w0 = true ∧ streetWet .w0 = true := ⟨rfl, rfl⟩
-theorem w1_rained_dry : rained .w1 = true ∧ streetWet .w1 = false := ⟨rfl, rfl⟩
-theorem w2_dry_wet    : rained .w2 = false ∧ streetWet .w2 = true := ⟨rfl, rfl⟩
-theorem w3_dry_dry    : rained .w3 = false ∧ streetWet .w3 = false := ⟨rfl, rfl⟩
+theorem w0_rained_wet : rained .w0 ∧ streetWet .w0 := ⟨trivial, trivial⟩
+theorem w1_rained_dry : rained .w1 ∧ ¬ streetWet .w1 := ⟨trivial, id⟩
+theorem w2_dry_wet    : ¬ rained .w2 ∧ streetWet .w2 := ⟨id, trivial⟩
+theorem w3_dry_dry    : ¬ rained .w3 ∧ ¬ streetWet .w3 := ⟨id, id⟩
 
 /-- Temporal projection at yesterday recovers the atemporal `rained`. -/
 theorem atTime_rainedAt_yesterday : atTime rainedAt (-1) = rained := by
-  funext w; simp [atTime, rainedAt]
+  funext w; rfl
 
 /-- Temporal projection at now recovers the atemporal `streetWet`. -/
 theorem atTime_wetStreetAt_now : atTime wetStreetAt 0 = streetWet := by
-  funext w; simp [atTime, wetStreetAt]
+  funext w; rfl
 
 end Phenomena.Modality.ConditionalModality

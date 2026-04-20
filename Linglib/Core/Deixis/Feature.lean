@@ -60,13 +60,14 @@ inductive Feature where
 
 /-- A demonstrative encodes a distance contrast iff its feature is one of
     proximal/medial/distal (not `unspecified`). -/
-def Feature.encodesDistance : Feature → Bool
-  | .unspecified => false
-  | _            => true
+def Feature.EncodesDistance (f : Feature) : Prop :=
+  f ≠ .unspecified
+
+instance : DecidablePred Feature.EncodesDistance :=
+  fun _ => inferInstanceAs (Decidable (_ ≠ _))
 
 /-- Distance-encoding features are exactly the non-`unspecified` ones. -/
 theorem encodesDistance_iff (f : Feature) :
-    f.encodesDistance = true ↔ f ≠ .unspecified := by
-  cases f <;> simp [Feature.encodesDistance]
+    f.EncodesDistance ↔ f ≠ .unspecified := Iff.rfl
 
 end Core.Deixis

@@ -25,12 +25,18 @@ def AHPosition.rank : AHPosition → Nat
   | .objComparison  => 1
 
 /-- Position p1 is at least as accessible as p2 on the hierarchy. -/
-def AHPosition.atLeastAsAccessible (p1 p2 : AHPosition) : Bool :=
-  p1.rank >= p2.rank
+def AHPosition.atLeastAsAccessible (p1 p2 : AHPosition) : Prop :=
+  p1.rank ≥ p2.rank
+
+instance (p1 p2 : AHPosition) : Decidable (p1.atLeastAsAccessible p2) :=
+  inferInstanceAs (Decidable (_ ≥ _))
 
 /-- Position p1 is strictly more accessible than p2. -/
-def AHPosition.moreAccessible (p1 p2 : AHPosition) : Bool :=
+def AHPosition.moreAccessible (p1 p2 : AHPosition) : Prop :=
   p1.rank > p2.rank
+
+instance (p1 p2 : AHPosition) : Decidable (p1.moreAccessible p2) :=
+  inferInstanceAs (Decidable (_ > _))
 
 /-- All AH positions in descending order of accessibility. -/
 def AHPosition.all : List AHPosition :=
@@ -81,13 +87,13 @@ theorem ah_rank_bounded (p : AHPosition) : 1 ≤ p.rank ∧ p.rank ≤ 6 := by
   cases p <;> simp [AHPosition.rank]
 
 /-- Accessibility is reflexive (follows from `≥` on ℕ). -/
-theorem ah_reflexive (p : AHPosition) : p.atLeastAsAccessible p = true := by
+theorem ah_reflexive (p : AHPosition) : p.atLeastAsAccessible p := by
   simp [AHPosition.atLeastAsAccessible]
 
 /-- Accessibility is transitive (follows from `≥` on ℕ). -/
 theorem ah_transitive (a b c : AHPosition)
-    (h1 : a.atLeastAsAccessible b = true) (h2 : b.atLeastAsAccessible c = true) :
-    a.atLeastAsAccessible c = true := by
+    (h1 : a.atLeastAsAccessible b) (h2 : b.atLeastAsAccessible c) :
+    a.atLeastAsAccessible c := by
   simp [AHPosition.atLeastAsAccessible] at *; omega
 
 -- ============================================================================

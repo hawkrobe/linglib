@@ -326,10 +326,10 @@ theorem subject_object_same_inner (n : String) :
 /-- The Russian 4-case spine NOM/ACC/GEN/OBL is precisely
     the image of `POSCat` in `Core.Case`. -/
 theorem pos_image_in_core :
-    POSCat.toCase .N = Core.Case.gen ∧
-    POSCat.toCase .D = Core.Case.nom ∧
-    POSCat.toCase .V = Core.Case.acc ∧
-    POSCat.toCase .P = Core.Case.dat := ⟨rfl, rfl, rfl, rfl⟩
+    POSCat.toCase .N = .gen ∧
+    POSCat.toCase .D = .nom ∧
+    POSCat.toCase .V = .acc ∧
+    POSCat.toCase .P = .dat := ⟨rfl, rfl, rfl, rfl⟩
 
 /-- The four POS-as-case primitives, lifted into `Core.Case` —
     Pesetsky's reduction yields exactly NOM, ACC, GEN, DAT, the core
@@ -342,7 +342,7 @@ theorem pesetskyCore_subset_russian_inventory :
     ∀ c ∈ pesetskyCore, c ∈ Fragments.Russian.Case.caseInventory := by decide
 
 theorem inst_loc_outside_pesetsky :
-    Core.Case.inst ∉ pesetskyCore ∧ Core.Case.loc ∉ pesetskyCore := by
+    .inst ∉ pesetskyCore ∧ .loc ∉ pesetskyCore := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- Caha's containment rank for the three core cases that POSCat covers
@@ -353,9 +353,9 @@ theorem inst_loc_outside_pesetsky :
     added first; D may be added later). The two views are
     consistent under the inversion. -/
 theorem caha_containment_inverts_pesetsky :
-    Core.Case.containmentRank Core.Case.nom = some 0 ∧
-    Core.Case.containmentRank Core.Case.acc = some 1 ∧
-    Core.Case.containmentRank Core.Case.gen = some 2 := by
+    Core.Case.containmentRank .nom = some 0 ∧
+    Core.Case.containmentRank .acc = some 1 ∧
+    Core.Case.containmentRank .gen = some 2 := by
   refine ⟨?_, ?_, ?_⟩ <;> rfl
 
 /-- Pesetsky's feminizing analysis of *vrač* 'doctor' (Ch. 5) interacts

@@ -34,7 +34,6 @@ relevant than A to the current issue."
 
 namespace DTS.Even
 
-open Core.Proposition
 open DTS
 open DTS.But
 
@@ -53,7 +52,8 @@ open DTS.But
 The key innovation: "even" marks B as the *more informative* conjunct,
 not merely "surprising" or "unexpected." -/
 def evenFelicitous {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (a b : (W → Bool)) : Prop :=
+    (ctx : DTSContext W) (a b : Set W) [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)] :
+    Prop :=
   posRelevant ctx a ∧ posRelevant ctx b ∧
   bayesFactor ctx b > bayesFactor ctx a ∧
   ctx.topic ≠ b
@@ -71,7 +71,8 @@ variable {W : Type*} [Fintype W]
 "A but even(B)" is never felicitous: `butFelicitous` requires B to be
 negatively relevant (BF < 1), while `evenFelicitous` requires B to be
 positively relevant (BF > 1). These are contradictory. -/
-theorem but_even_incompatible (ctx : DTSContext W) (a b : (W → Bool)) :
+theorem but_even_incompatible (ctx : DTSContext W) (a b : Set W)
+    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)] :
     butFelicitous ctx a b → ¬ evenFelicitous ctx a b := by
   intro ⟨_, hNegB, _⟩ ⟨_, hPosB, _, _⟩
   simp only [negRelevant, posRelevant] at hNegB hPosB
@@ -90,9 +91,15 @@ end Predictions
     traditional EVEN presupposition framework in `Semantics.FocusParticles`.
 
     @cite{merin-1999} subsumes @cite{francescotti-1995}'s "surprise" and
-    @cite{kay-1990}'s "informativeness" as special cases of signed relevance. -/
+    @cite{kay-1990}'s "informativeness" as special cases of signed relevance.
+
+    Note: `LikelihoodOrder` operates on `World → Bool` functions (the
+    upstream Focus.Particles interface). We embed each Bool predicate
+    into a Prop predicate via `· = true` to apply `bayesFactor`. -/
 def dtsLikelihood {W : Type} [Fintype W] (ctx : DTSContext W) :
     Semantics.FocusParticles.LikelihoodOrder W :=
-  fun a b => bayesFactor ctx a > bayesFactor ctx b
+  fun a b =>
+    bayesFactor ctx ({w | a w = true} : Set W) >
+      bayesFactor ctx ({w | b w = true} : Set W)
 
 end DTS.Even

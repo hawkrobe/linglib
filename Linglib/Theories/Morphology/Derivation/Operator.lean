@@ -28,13 +28,18 @@ open Semantics.Verb.Roots (Root)
 /-- A morphological operator: a name and a structural condition on
     roots specifying when the operator can apply.
 
-    The condition is a Boolean predicate over `Root`, typically phrased
-    in terms of B&K-G feature signatures. Whether such conditions are
+    The condition is a propositional predicate over `Root`, typically
+    phrased in terms of B&K-G feature signatures, with a bundled
+    `DecidablePred` instance so the predicate can drive `List.filter`
+    and other computational uses. Whether such conditions are
     descriptively adequate is itself an empirical question — encoding
     them this way exposes the choice. -/
 structure DerivOp where
   name : String
-  applies : Root → Bool
+  applies : Root → Prop
+  decApplies : DecidablePred applies
+
+attribute [instance] DerivOp.decApplies
 
 /-- An inventory: a finite list of derivational operators. -/
 abbrev Inventory := List DerivOp
@@ -44,11 +49,15 @@ namespace Inventory
 /-- The orbit of a root under an inventory: the names of operators
     that apply to it. -/
 def orbit (inv : Inventory) (r : Root) : List String :=
-  (inv.filter (·.applies r)).map (·.name)
+  (inv.filter (fun op => decide (op.applies r))).map (·.name)
 
-/-- Two roots are inventory-equivalent iff they have the same orbit. -/
-def equivalent (inv : Inventory) (r₁ r₂ : Root) : Bool :=
-  inv.all (λ op => op.applies r₁ == op.applies r₂)
+/-- Two roots are inventory-equivalent iff every operator in the
+    inventory either applies to both or neither. -/
+def Equivalent (inv : Inventory) (r₁ r₂ : Root) : Prop :=
+  ∀ op ∈ inv, op.applies r₁ ↔ op.applies r₂
+
+instance (inv : Inventory) (r₁ r₂ : Root) : Decidable (Equivalent inv r₁ r₂) := by
+  unfold Equivalent; infer_instance
 
 end Inventory
 

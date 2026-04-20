@@ -1,5 +1,5 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Prod

@@ -17,7 +17,7 @@ and distinct syntactic frames.
 - `motionContact_variable_agentivity` → `sweepBasicSubjectProfile` (proto-roles)
 - `contact_determines_implies_effector_subject` → `isEffector` (proto-roles)
 - `lexicalize_increases_agentivity` → `pAgentScore` ordering (proto-roles)
-- `hasResultState` → bieventive sub-event boundary (@cite{krejci-2012}; @cite{dowty-1979})
+- `HasResultState` → bieventive sub-event boundary (@cite{krejci-2012}; @cite{dowty-1979})
 - `cause_implies_resultState` → CAUSE entails result state
 - `intransitiveVariant` → causative/inchoative alternation (@cite{krejci-2012}; @cite{rappaport-hovav-levin-1998})
 
@@ -53,14 +53,20 @@ inductive Template where
 -- ════════════════════════════════════════════════════
 
 /-- Does the template involve CAUSE? -/
-def Template.hasCause : Template → Bool
-  | .accomplishment => true
-  | _ => false
+def Template.HasCause : Template → Prop
+  | .accomplishment => True
+  | _ => False
+
+instance (t : Template) : Decidable t.HasCause := by
+  cases t <;> unfold Template.HasCause <;> infer_instance
 
 /-- Does the template have an external causer position? -/
-def Template.hasExternalCauser : Template → Bool
-  | .accomplishment => true
-  | _ => false
+def Template.HasExternalCauser : Template → Prop
+  | .accomplishment => True
+  | _ => False
+
+instance (t : Template) : Decidable t.HasExternalCauser := by
+  cases t <;> unfold Template.HasExternalCauser <;> infer_instance
 
 /-- How many grammatically relevant predicates? -/
 def Template.predicateCount : Template → Nat
@@ -94,14 +100,14 @@ def Template.vendlerClass (t : Template) : VendlerClass :=
     At the template level, three diagnostics from @cite{dowty-1979} reduce
     to two structural properties already defined above:
 
-    1. ***again*/*re-* ambiguity** tracks `hasResultState`: templates
+    1. ***again*/*re-* ambiguity** tracks `HasResultState`: templates
        embedding [BECOME [STATE]] allow restitutive readings where a
        scopal modifier targets just the result sub-event.
     2. **Negation over CAUSE** (@cite{koontz-garboden-2009}) tracks
-       `hasCause`: negation can scope narrowly over CAUSE, denying
+       `HasCause`: negation can scope narrowly over CAUSE, denying
        the causal link while maintaining the result.
     3. **"By itself" licensing** (@cite{koontz-garboden-2009}) also tracks
-       `hasCause`: "without outside help" requires CAUSE in the meaning.
+       `HasCause`: "without outside help" requires CAUSE in the meaning.
 
     @cite{krejci-2012}'s insight is that some verbs assigned simpler templates
     (eat, wash, dress, learn) nonetheless pass all three diagnostics — evidence
@@ -112,15 +118,18 @@ def Template.vendlerClass (t : Template) : VendlerClass :=
 /-- Does the template embed a result state under BECOME?
     Templates with [BECOME [STATE]] have a sub-event boundary that
     scopal modifiers (*again*, *re-*, *almost*) can target independently. -/
-def Template.hasResultState : Template → Bool
-  | .achievement => true      -- [BECOME [x ⟨STATE⟩]]
-  | .accomplishment => true   -- [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]
-  | _ => false
+def Template.HasResultState : Template → Prop
+  | .achievement => True      -- [BECOME [x ⟨STATE⟩]]
+  | .accomplishment => True   -- [[x ACT] CAUSE [BECOME [y ⟨STATE⟩]]]
+  | _ => False
+
+instance (t : Template) : Decidable t.HasResultState := by
+  cases t <;> unfold Template.HasResultState <;> infer_instance
 
 /-- CAUSE implies a result state (accomplishment embeds BECOME). -/
 theorem cause_implies_resultState (t : Template) :
-    t.hasCause = true → t.hasResultState = true := by
-  cases t <;> simp [Template.hasCause, Template.hasResultState]
+    t.HasCause → t.HasResultState := by
+  cases t <;> decide
 
 /-! ### Causative/Inchoative Alternation
 
@@ -157,16 +166,16 @@ def Template.intransitiveVariant : Template → Option Template
 /-- The intransitive variant retains the result state
     (BECOME STATE survives stripping of ACT CAUSE). -/
 theorem intransitive_has_resultState (t t' : Template) :
-    t.intransitiveVariant = some t' → t'.hasResultState = true := by
-  cases t <;> simp [Template.intransitiveVariant, Template.hasResultState]
-  rintro rfl; rfl
+    t.intransitiveVariant = some t' → t'.HasResultState := by
+  cases t <;> simp [Template.intransitiveVariant]
+  rintro rfl; decide
 
 /-- The intransitive variant loses CAUSE (on the deletion analysis).
     @cite{koontz-garboden-2009} disputes this — see `AnticausativeAnalysis`. -/
 theorem intransitive_no_cause (t t' : Template) :
-    t.intransitiveVariant = some t' → t'.hasCause = false := by
-  cases t <;> simp [Template.intransitiveVariant, Template.hasCause]
-  rintro rfl; rfl
+    t.intransitiveVariant = some t' → ¬ t'.HasCause := by
+  cases t <;> simp [Template.intransitiveVariant]
+  rintro rfl; decide
 
 /-- Only accomplishments have an intransitive variant
     (only templates with CAUSE can undergo the alternation). -/
@@ -238,12 +247,12 @@ inductive DeterminingPredicate where
     effector (movement + IE → external argument). This yields the simple
     transitive frame: "The wind swept the deck". -/
 theorem contact_determines_implies_effector_subject :
-    isEffector (Template.subjectProfile .motionContact) = true := by native_decide
+    IsEffector (Template.subjectProfile .motionContact) := by decide
 
 /-- The motionContact object profile exists and is a force recipient. -/
 theorem motionContact_object_is_forceRecipient :
     ∃ p, Template.objectProfile .motionContact = some p ∧
-    isForceRecipient p = true := ⟨_, rfl, rfl⟩
+    IsForceRecipient p := ⟨_, rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 6. Instrument Lexicalization (@cite{rappaport-hovav-levin-2024} §3.5)
@@ -334,16 +343,22 @@ inductive CausationType where
 
     This determines whether derived inchoatives (on the reflexivization
     analysis) retain a CAUSE operator. -/
-def CausationType.hasCauseInLSR : CausationType → Bool
-  | .external => true
-  | .internal => false
+def CausationType.HasCauseInLSR : CausationType → Prop
+  | .external => True
+  | .internal => False
+
+instance (c : CausationType) : Decidable c.HasCauseInLSR := by
+  cases c <;> unfold CausationType.HasCauseInLSR <;> infer_instance
 
 /-- *por sí solo* / *by itself* is licensed iff CAUSE is present in the
     LSR (@cite{koontz-garboden-2009} §4.1). Stative predicates and
     internally caused COS verbs reject it. -/
-def CausationType.licensesBySelf : CausationType → Bool
-  | .external => true
-  | .internal => false
+def CausationType.LicensesBySelf : CausationType → Prop
+  | .external => True
+  | .internal => False
+
+instance (c : CausationType) : Decidable c.LicensesBySelf := by
+  cases c <;> unfold CausationType.LicensesBySelf <;> infer_instance
 
 end Semantics.Verb.EventStructure
 
@@ -518,15 +533,15 @@ theorem fuse_vendler_class_shift (v c : MeaningComponents)
     restitutive readings (@cite{dowty-1979}). -/
 theorem fuse_cos_caus_has_result_state (v c : MeaningComponents)
     (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
-    (v.fuse c).predictedTemplate.hasResultState = true := by
-  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; rfl
+    (v.fuse c).predictedTemplate.HasResultState := by
+  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; decide
 
 /-- Fusion with CoS + causation yields CAUSE structure, enabling
     negation-over-CAUSE readings and *by itself* modification
     (@cite{koontz-garboden-2009}). -/
 theorem fuse_cos_caus_has_cause (v c : MeaningComponents)
     (hCoS : c.changeOfState = true) (hCaus : c.causation = true) :
-    (v.fuse c).predictedTemplate.hasCause = true := by
-  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; rfl
+    (v.fuse c).predictedTemplate.HasCause := by
+  rw [fuse_cos_caus_yields_accomplishment v c hCoS hCaus]; decide
 
 end Semantics.Verb.EventStructure

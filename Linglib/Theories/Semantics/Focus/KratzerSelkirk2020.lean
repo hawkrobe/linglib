@@ -36,12 +36,13 @@ import Linglib.Core.InformationStructure
 import Linglib.Core.Prosody
 import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Core.Semantics.Presupposition
+import Linglib.Theories.Semantics.Alternatives.AltMeaning
 
 open Core.InformationStructure
+open Semantics.Alternatives
 open Core.Prosody
 open Pragmatics.Expressives
 open Core.Presupposition
-open Core.Proposition
 
 namespace Semantics.Focus.KratzerSelkirk2020
 
@@ -110,10 +111,17 @@ not on truth conditions.
 
     Intuitively: the alternatives set has collapsed to a single salient entity,
     meaning there's nothing to contrast — the content is already "in the air". -/
-def isGiven {α : Type} [BEq α] (aValue : List α) (referent : α) : Bool :=
+def isGiven {α : Type} [DecidableEq α] (aValue : List α) (referent : α) : Prop :=
   match aValue with
-  | [a] => a == referent
-  | _ => false
+  | [a] => a = referent
+  | _ => False
+
+instance instDecidableIsGiven {α : Type} [DecidableEq α] (aValue : List α) (referent : α) :
+    Decidable (isGiven aValue referent) :=
+  match aValue with
+  | [a] => (inferInstance : Decidable (a = referent))
+  | [] => (inferInstance : Decidable False)
+  | _ :: _ :: _ => (inferInstance : Decidable False)
 
 /-- Apply [G] to a meaning: both values unchanged, but adds a definedness
     condition (the expression must be Given w.r.t. some discourse referent).
@@ -143,14 +151,13 @@ No semantic domain is both maximal and a singleton (assuming |D_τ| > 1). -/
     (singleton) simultaneously, when the domain has more than one element.
 
     K&S (58, first part): follows from the incompatibility of A-value conditions. -/
-theorem foc_g_exclusion {α : Type} [BEq α] (domain : List α) (referent : α)
+theorem foc_g_exclusion {α : Type} [DecidableEq α] (domain : List α) (referent : α)
     (h_domain : domain.length > 1) :
-    ¬(isGiven domain referent = true) := by
-  simp only [isGiven]
+    ¬ isGiven domain referent := by
   match domain, h_domain with
   | [], h => simp at h
   | [_], h => simp at h
-  | _ :: _ :: _, _ => simp
+  | _ :: _ :: _, _ => intro h; simp only [isGiven] at h
 
 variable {W : Type*} {Entity : Type}
 
@@ -165,21 +172,21 @@ formalized in `Expressives/Basic.lean`. -/
 
 /-- [FoC] is use-conditional: at-issue content is unchanged.
     Grounded in TwoDimProp from Expressives/Basic.lean. -/
-def focAsTwoDim (atIssue : (W → Bool)) (contrastPresup : (W → Bool)) : TwoDimProp W :=
+def focAsTwoDim (atIssue : W → Prop) (contrastPresup : W → Prop) : TwoDimProp W :=
   TwoDimProp.withCI atIssue contrastPresup
 
 /-- [G] is use-conditional: at-issue content is unchanged.
     [G] resembles discourse particles (German "ja", "doch") — it places a
     condition on context salience without affecting truth conditions. -/
-def gAsTwoDim (atIssue : (W → Bool)) (givennessPresup : (W → Bool)) : TwoDimProp W :=
+def gAsTwoDim (atIssue : W → Prop) (givennessPresup : W → Prop) : TwoDimProp W :=
   TwoDimProp.withCI atIssue givennessPresup
 
 /-- [FoC] does not change at-issue content (grounding theorem). -/
-theorem foc_at_issue_unchanged (atIssue contrastPresup : (W → Bool)) :
+theorem foc_at_issue_unchanged (atIssue contrastPresup : W → Prop) :
     (focAsTwoDim atIssue contrastPresup).atIssue = atIssue := rfl
 
 /-- [G] does not change at-issue content (grounding theorem). -/
-theorem g_at_issue_unchanged (atIssue givennessPresup : (W → Bool)) :
+theorem g_at_issue_unchanged (atIssue givennessPresup : W → Prop) :
     (gAsTwoDim atIssue givennessPresup).atIssue = atIssue := rfl
 
 /-- Both features project their use-conditional content through negation,
@@ -187,12 +194,12 @@ theorem g_at_issue_unchanged (atIssue givennessPresup : (W → Bool)) :
 
     "It's not the case that [ELIZA]_{FoC} mailed the caramels" still
     contrasts Eliza with alternatives. -/
-theorem foc_projects_through_neg (atIssue contrastPresup : (W → Bool)) :
+theorem foc_projects_through_neg (atIssue contrastPresup : W → Prop) :
     (TwoDimProp.neg (focAsTwoDim atIssue contrastPresup)).ci
     = (focAsTwoDim atIssue contrastPresup).ci :=
   TwoDimProp.ci_projects_through_neg _
 
-theorem g_projects_through_neg (atIssue givennessPresup : (W → Bool)) :
+theorem g_projects_through_neg (atIssue givennessPresup : W → Prop) :
     (TwoDimProp.neg (gAsTwoDim atIssue givennessPresup)).ci
     = (gAsTwoDim atIssue givennessPresup).ci :=
   TwoDimProp.ci_projects_through_neg _
@@ -210,7 +217,7 @@ Condition (iii) prevents over-FoCusing. -/
 /-- Conditions (i) and (ii) of Contrast (K&S 49).
     Condition (iii) — the minimality condition — is structural and requires
     checking FoC/G-variants, which we leave to the prosodic spellout layer. -/
-structure Contrast (α : Type) [BEq α] where
+structure Contrast (α : Type) where
   /-- The expression's A-value (alternatives) -/
   aValue : List α
   /-- The expression's O-value (ordinary denotation) -/
@@ -220,7 +227,7 @@ structure Contrast (α : Type) [BEq α] where
   /-- (i): referent is among the alternatives -/
   ref_in_alts : referent ∈ aValue
   /-- (ii): referent differs from the O-value -/
-  ref_ne_oValue : (referent == oValue) = false
+  ref_ne_oValue : referent ≠ oValue
 
 /-! ## §8 (53-54). The ~ Operator
 
@@ -242,7 +249,7 @@ direct relation to FoCus. -/
 
     If defined, ⟦~_𝔠 α⟧_{O,C} = ⟦α⟧_{O,C}
     A-values: ⟦~_𝔠 α⟧_{A,C} = {⟦α⟧_{O,C}} (singleton — alternatives consumed). -/
-structure ContrastOperator (α : Type) [BEq α] where
+structure ContrastOperator (α : Type) where
   /-- The expression's meaning -/
   meaning : AltMeaning α
   /-- The contrasting discourse referent(s) -/
@@ -250,19 +257,19 @@ structure ContrastOperator (α : Type) [BEq α] where
   /-- Each antecedent is in the alternatives -/
   antecedents_in_alts : ∀ a ∈ antecedents, a ∈ meaning.aValue
   /-- Each antecedent differs from the O-value -/
-  antecedents_ne_oValue : ∀ a ∈ antecedents, (a == meaning.oValue) = false
+  antecedents_ne_oValue : ∀ a ∈ antecedents, a ≠ meaning.oValue
 
 /-- The ~ operator consumes alternatives: result A-value is singleton. -/
-def ContrastOperator.result {α : Type} [BEq α]
+def ContrastOperator.result {α : Type}
     (op : ContrastOperator α) : AltMeaning α :=
   { oValue := op.meaning.oValue, aValue := [op.meaning.oValue] }
 
 /-- ~ preserves O-value. -/
-theorem squiggle_preserves_oValue {α : Type} [BEq α] (op : ContrastOperator α) :
+theorem squiggle_preserves_oValue {α : Type} (op : ContrastOperator α) :
     op.result.oValue = op.meaning.oValue := rfl
 
 /-- ~ collapses A-value to singleton. -/
-theorem squiggle_singleton_aValue {α : Type} [BEq α] (op : ContrastOperator α) :
+theorem squiggle_singleton_aValue {α : Type} (op : ContrastOperator α) :
     op.result.aValue = [op.meaning.oValue] := rfl
 
 /-! ## §8 (56). The Semantics of *only*
@@ -279,9 +286,9 @@ indirectly via a second occurrence of 𝔠. -/
 /-- Semantics of *only* with explicit contrast set (K&S 56).
     Takes a contrast set 𝔠 and a prejacent proposition p.
     True at w iff every true member of 𝔠 equals p. -/
-def onlySemantics (contrastSet : List ((W → Bool))) (prejacent : (W → Bool))
-    (w : W) : Bool :=
-  contrastSet.all (λ q => !q w || (q w == prejacent w))
+def onlySemantics (contrastSet : List (W → Prop)) (prejacent : W → Prop)
+    (w : W) : Prop :=
+  ∀ q ∈ contrastSet, q w → (q w ↔ prejacent w)
 
 /-! ## §8 (58). [G] Containing [FoC] Requires Alternatives Consumption
 
@@ -299,11 +306,12 @@ the alternatives before they reach the VP level. -/
 
 /-- After ~ consumption, the result A-value is a singleton,
     which is the precondition for [G]-marking. -/
-theorem consumed_alts_enable_g {α : Type} [BEq α] [LawfulBEq α]
+theorem consumed_alts_enable_g {α : Type} [DecidableEq α]
     (op : ContrastOperator α) :
-    isGiven op.result.aValue op.meaning.oValue = true := by
-  show isGiven [op.meaning.oValue] op.meaning.oValue = true
-  simp [isGiven]
+    isGiven op.result.aValue op.meaning.oValue := by
+  show isGiven [op.meaning.oValue] op.meaning.oValue
+  unfold isGiven
+  rfl
 
 /-! ## §7. Prosodic Spellout
 
@@ -491,21 +499,28 @@ condition was too weak — Schwarzschild noted it was trivially satisfiable
 for universal quantifiers (every cat is a complainer → trivially A-Given). -/
 
 /-- Schwarzschild's A-Givenness: some referent is in the alternatives set. -/
-def isAGiven {α : Type} [BEq α] (aValue : List α) (referent : α) : Bool :=
-  aValue.any (· == referent)
+def isAGiven {α : Type} (aValue : List α) (referent : α) : Prop :=
+  referent ∈ aValue
+
+instance instDecidableIsAGiven {α : Type} [DecidableEq α] (aValue : List α) (referent : α) :
+    Decidable (isAGiven aValue referent) :=
+  inferInstanceAs (Decidable (referent ∈ aValue))
 
 /-- K&S Givenness entails Schwarzschild A-Givenness.
     If the alternatives set is a singleton {a}, then certainly a ∈ alternatives. -/
-theorem givenness_entails_aGivenness {α : Type} [BEq α] [LawfulBEq α]
+theorem givenness_entails_aGivenness {α : Type} [DecidableEq α]
     (aValue : List α) (referent : α)
-    (h : isGiven aValue referent = true) :
-    isAGiven aValue referent = true := by
+    (h : isGiven aValue referent) :
+    isAGiven aValue referent := by
   cases aValue with
-  | nil => simp [isGiven] at h
+  | nil => simp only [isGiven] at h
   | cons a tl =>
     cases tl with
-    | nil => simp [isGiven] at h; simp [isAGiven, List.any]; exact h
-    | cons _ _ => simp [isGiven] at h
+    | nil =>
+      simp only [isGiven] at h
+      simp only [isAGiven, List.mem_cons, List.not_mem_nil, or_false]
+      exact h.symm
+    | cons _ _ => simp only [isGiven] at h
 
 /-- The converse fails: A-Givenness does NOT entail K&S Givenness.
     A non-singleton alternatives set can satisfy A-Givenness but not Givenness.
@@ -514,7 +529,7 @@ theorem givenness_entails_aGivenness {α : Type} [BEq α] [LawfulBEq α]
     "Every cat is a complainer" is trivially A-Given because ∃P[every P
     is a complainer] is always true. K&S's singleton condition avoids this. -/
 theorem aGivenness_not_sufficient : ∃ (aValue : List Nat) (referent : Nat),
-    isAGiven aValue referent = true ∧ isGiven aValue referent = false := by
-  exact ⟨[1, 2], 1, by native_decide, by native_decide⟩
+    isAGiven aValue referent ∧ ¬ isGiven aValue referent := by
+  exact ⟨[1, 2], 1, by decide, by decide⟩
 
 end Semantics.Focus.KratzerSelkirk2020

@@ -179,34 +179,44 @@ def all : List Category :=
 theorem all_length : all.length = 8 := by decide
 
 /-- Is this a singular (individual) category? -/
-def isSingular : Category → Bool
-  | .s1 | .s2 | .s3 => true
-  | _ => false
+def IsSingular (c : Category) : Prop :=
+  c = .s1 ∨ c = .s2 ∨ c = .s3
+
+instance : DecidablePred IsSingular := fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Is this a group (non-singular) category? -/
-def isGroup : Category → Bool
-  | .minIncl | .augIncl | .excl | .secondGrp | .thirdGrp => true
-  | _ => false
+def IsGroup (c : Category) : Prop :=
+  c = .minIncl ∨ c = .augIncl ∨ c = .excl ∨ c = .secondGrp ∨ c = .thirdGrp
 
-/-- Is this part of the first person complex (contains speaker)? -/
-def isFirstPersonComplex : Category → Bool
-  | .minIncl | .augIncl | .excl => true
-  | _ => false
+instance : DecidablePred IsGroup := fun _ => inferInstanceAs (Decidable (_ ∨ _))
+
+/-- Is this part of the first person complex (contains speaker as part of a group)? -/
+def IsFirstPersonComplex (c : Category) : Prop :=
+  c = .minIncl ∨ c = .augIncl ∨ c = .excl
+
+instance : DecidablePred IsFirstPersonComplex :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Is this an inclusive category (contains both speaker and addressee)? -/
-def isInclusive : Category → Bool
-  | .minIncl | .augIncl => true
-  | _ => false
+def IsInclusive (c : Category) : Prop :=
+  c = .minIncl ∨ c = .augIncl
+
+instance : DecidablePred IsInclusive :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Does this category include the speaker? -/
-def includesSpeaker : Category → Bool
-  | .s1 | .minIncl | .augIncl | .excl => true
-  | _ => false
+def IncludesSpeaker (c : Category) : Prop :=
+  c = .s1 ∨ c = .minIncl ∨ c = .augIncl ∨ c = .excl
+
+instance : DecidablePred IncludesSpeaker :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Does this category include the addressee? -/
-def includesAddressee : Category → Bool
-  | .s2 | .minIncl | .augIncl | .secondGrp => true
-  | _ => false
+def IncludesAddressee (c : Category) : Prop :=
+  c = .s2 ∨ c = .minIncl ∨ c = .augIncl ∨ c = .secondGrp
+
+instance : DecidablePred IncludesAddressee :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 end Category
 
@@ -275,14 +285,15 @@ def Category.toFeatures : Category → Features
   | .secondGrp => ⟨true, false⟩
   | .thirdGrp  => ⟨false, false⟩
 
-/-- `hasAuthor` = `includesSpeaker` for all categories. -/
-theorem toFeatures_author_eq_speaker (p : Category) :
-    p.toFeatures.hasAuthor = p.includesSpeaker := by cases p <;> rfl
+/-- `hasAuthor` ↔ `IncludesSpeaker` for all categories. -/
+theorem toFeatures_author_iff_speaker (p : Category) :
+    p.toFeatures.hasAuthor = true ↔ p.IncludesSpeaker := by
+  cases p <;> simp [Category.toFeatures, Category.IncludesSpeaker]
 
-/-- `hasParticipant` = `includesSpeaker ∨ includesAddressee` for all categories. -/
-theorem toFeatures_participant_eq_sap (p : Category) :
-    p.toFeatures.hasParticipant = (p.includesSpeaker || p.includesAddressee) := by
-  cases p <;> rfl
+/-- `hasParticipant` ↔ `IncludesSpeaker ∨ IncludesAddressee` for all categories. -/
+theorem toFeatures_participant_iff_sap (p : Category) :
+    p.toFeatures.hasParticipant = true ↔ p.IncludesSpeaker ∨ p.IncludesAddressee := by
+  cases p <;> simp [Category.toFeatures, Category.IncludesSpeaker, Category.IncludesAddressee]
 
 /-- All 8 categories yield well-formed features. -/
 theorem toFeatures_wellFormed (p : Category) :
@@ -319,22 +330,21 @@ theorem personLevel_roundtrip (p : Core.Prominence.PersonLevel) :
     [−participant, −author]. This unifies the Category decomposition
     in `Spanish/PersonFeatures.lean` with `PersonGeometry.decomposePerson`. -/
 theorem includesSpeaker_iff_author :
-    (Category.s1.includesSpeaker = true) ∧
-    (Category.s2.includesSpeaker = false) ∧
-    (Category.s3.includesSpeaker = false) := ⟨rfl, rfl, rfl⟩
+    Category.s1.IncludesSpeaker ∧
+    ¬ Category.s2.IncludesSpeaker ∧
+    ¬ Category.s3.IncludesSpeaker := by decide
 
 theorem includesAddressee_iff_participant_not_author :
-    (Category.s1.includesAddressee = false) ∧
-    (Category.s2.includesAddressee = true) ∧
-    (Category.s3.includesAddressee = false) := ⟨rfl, rfl, rfl⟩
+    ¬ Category.s1.IncludesAddressee ∧
+    Category.s2.IncludesAddressee ∧
+    ¬ Category.s3.IncludesAddressee := by decide
 
-/-- SAP (speech-act participant) = includesSpeaker ∨ includesAddressee
-    for singular categories. This matches PersonLevel.isSAP. -/
+/-- SAP (speech-act participant) = `IncludesSpeaker ∨ IncludesAddressee`
+    for singular categories. This matches `PersonLevel.isSAP`. -/
 theorem singular_sap_match :
-    (Category.s1.includesSpeaker || Category.s1.includesAddressee) = true ∧
-    (Category.s2.includesSpeaker || Category.s2.includesAddressee) = true ∧
-    (Category.s3.includesSpeaker || Category.s3.includesAddressee) = false :=
-  ⟨rfl, rfl, rfl⟩
+    (Category.s1.IncludesSpeaker ∨ Category.s1.IncludesAddressee) ∧
+    (Category.s2.IncludesSpeaker ∨ Category.s2.IncludesAddressee) ∧
+    ¬ (Category.s3.IncludesSpeaker ∨ Category.s3.IncludesAddressee) := by decide
 
 -- ============================================================================
 -- § 10: Category Consistency

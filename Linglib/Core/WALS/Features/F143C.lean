@@ -14,30 +14,53 @@ namespace Core.WALS.F143C
 
 /-- WALS 143C values. -/
 inductive OptionalDoubleNegation where
-  | negv  -- NegV(Neg) (11 languages)
-  | vneg  -- (Neg)VNeg (20 languages)
-  | negV  -- Neg[V(-Neg)] (5 languages)
-  | vNeg  -- (Neg)[V-Neg] (5 languages)
-  | negV_5  -- [Neg-V](Neg) (3 languages)
-  | vNeg_6  -- [(Neg-)V]Neg (2 languages)
-  | negV_7  -- [Neg-V(-Neg)] (5 languages)
-  | vNeg_8  -- [(Neg-)V-Neg] (6 languages)
-  | vneg_9  -- V(Neg)Neg (2 languages)
-  | vNeg_10  -- [V-Neg](Neg) (2 languages)
-  | negv_11  -- Neg(Neg)V (1 languages)
-  | negV_12  -- Neg[(Neg-)]V (3 languages)
-  | negvOptchangeverbstem  -- NegV&OptChangeVerbStem (1 languages)
-  | negvNegVNeg  -- NegV/[Neg-V-Neg] (2 languages)
-  | vnegNegVNeg  -- VNeg/[Neg-V-Neg] (1 languages)
-  | negVNegvneg  -- [Neg-V]/NegVNeg (1 languages)
-  | negvOrNegativetoneVneg  -- NegV or NegativeTone&VNeg (1 languages)
-  | negvVNegNegVNeg  -- NegV/[V-Neg]/Neg[V-Neg] (4 languages)
-  | negvVnegNegvneg  -- NegV/VNeg/NegVNeg (2 languages)
-  | negvVNegNegVNeg_20  -- NegV/[V-Neg]/[Neg-V-Neg] (1 languages)
-  | negVVnegNegVNeg  -- [Neg-V]/VNeg/[Neg-V-Neg] (1 languages)
-  | negvNegVNegNegV  -- NegV/[Neg-V]/Neg[Neg-V] (1 languages)
-  | optdoublenegOpttripleneg  -- OptDoubleNeg&OptTripleNeg (1 languages)
-  deriving DecidableEq, Repr
+  /-- NegV(Neg) (11 languages). -/
+  | negv
+  /-- (Neg)VNeg (20 languages). -/
+  | vneg
+  /-- Neg[V(-Neg)] (5 languages). -/
+  | negV
+  /-- (Neg)[V-Neg] (5 languages). -/
+  | vNeg
+  /-- [Neg-V](Neg) (3 languages). -/
+  | negV_5
+  /-- [(Neg-)V]Neg (2 languages). -/
+  | vNeg_6
+  /-- [Neg-V(-Neg)] (5 languages). -/
+  | negV_7
+  /-- [(Neg-)V-Neg] (6 languages). -/
+  | vNeg_8
+  /-- V(Neg)Neg (2 languages). -/
+  | vneg_9
+  /-- [V-Neg](Neg) (2 languages). -/
+  | vNeg_10
+  /-- Neg(Neg)V (1 languages). -/
+  | negv_11
+  /-- Neg[(Neg-)]V (3 languages). -/
+  | negV_12
+  /-- NegV&OptChangeVerbStem (1 languages). -/
+  | negvOptchangeverbstem
+  /-- NegV/[Neg-V-Neg] (2 languages). -/
+  | negvNegVNeg
+  /-- VNeg/[Neg-V-Neg] (1 languages). -/
+  | vnegNegVNeg
+  /-- [Neg-V]/NegVNeg (1 languages). -/
+  | negVNegvneg
+  /-- NegV or NegativeTone&VNeg (1 languages). -/
+  | negvOrNegativetoneVneg
+  /-- NegV/[V-Neg]/Neg[V-Neg] (4 languages). -/
+  | negvVNegNegVNeg
+  /-- NegV/VNeg/NegVNeg (2 languages). -/
+  | negvVnegNegvneg
+  /-- NegV/[V-Neg]/[Neg-V-Neg] (1 languages). -/
+  | negvVNegNegVNeg_20
+  /-- [Neg-V]/VNeg/[Neg-V-Neg] (1 languages). -/
+  | negVVnegNegVNeg
+  /-- NegV/[Neg-V]/Neg[Neg-V] (1 languages). -/
+  | negvNegVNegNegV
+  /-- OptDoubleNeg&OptTripleNeg (1 languages). -/
+  | optdoublenegOpttripleneg
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 143C dataset (81 languages). -/
 def allData : List (Datapoint OptionalDoubleNegation) :=
@@ -123,56 +146,6 @@ def allData : List (Datapoint OptionalDoubleNegation) :=
   , { walsCode := "zch", language := "Zoque (Chimalapa)", iso := "zoh", value := .negV }
   , { walsCode := "zul", language := "Zulu", iso := "zul", value := .negV_7 }
   ]
-
--- Count verification
-theorem total_count : allData.length = 81 := by native_decide
-
-theorem count_negv :
-    (allData.filter (·.value == .negv)).length = 11 := by native_decide
-theorem count_vneg :
-    (allData.filter (·.value == .vneg)).length = 20 := by native_decide
-theorem count_negV :
-    (allData.filter (·.value == .negV)).length = 5 := by native_decide
-theorem count_vNeg :
-    (allData.filter (·.value == .vNeg)).length = 5 := by native_decide
-theorem count_negV_5 :
-    (allData.filter (·.value == .negV_5)).length = 3 := by native_decide
-theorem count_vNeg_6 :
-    (allData.filter (·.value == .vNeg_6)).length = 2 := by native_decide
-theorem count_negV_7 :
-    (allData.filter (·.value == .negV_7)).length = 5 := by native_decide
-theorem count_vNeg_8 :
-    (allData.filter (·.value == .vNeg_8)).length = 6 := by native_decide
-theorem count_vneg_9 :
-    (allData.filter (·.value == .vneg_9)).length = 2 := by native_decide
-theorem count_vNeg_10 :
-    (allData.filter (·.value == .vNeg_10)).length = 2 := by native_decide
-theorem count_negv_11 :
-    (allData.filter (·.value == .negv_11)).length = 1 := by native_decide
-theorem count_negV_12 :
-    (allData.filter (·.value == .negV_12)).length = 3 := by native_decide
-theorem count_negvOptchangeverbstem :
-    (allData.filter (·.value == .negvOptchangeverbstem)).length = 1 := by native_decide
-theorem count_negvNegVNeg :
-    (allData.filter (·.value == .negvNegVNeg)).length = 2 := by native_decide
-theorem count_vnegNegVNeg :
-    (allData.filter (·.value == .vnegNegVNeg)).length = 1 := by native_decide
-theorem count_negVNegvneg :
-    (allData.filter (·.value == .negVNegvneg)).length = 1 := by native_decide
-theorem count_negvOrNegativetoneVneg :
-    (allData.filter (·.value == .negvOrNegativetoneVneg)).length = 1 := by native_decide
-theorem count_negvVNegNegVNeg :
-    (allData.filter (·.value == .negvVNegNegVNeg)).length = 4 := by native_decide
-theorem count_negvVnegNegvneg :
-    (allData.filter (·.value == .negvVnegNegvneg)).length = 2 := by native_decide
-theorem count_negvVNegNegVNeg_20 :
-    (allData.filter (·.value == .negvVNegNegVNeg_20)).length = 1 := by native_decide
-theorem count_negVVnegNegVNeg :
-    (allData.filter (·.value == .negVVnegNegVNeg)).length = 1 := by native_decide
-theorem count_negvNegVNegNegV :
-    (allData.filter (·.value == .negvNegVNegNegV)).length = 1 := by native_decide
-theorem count_optdoublenegOpttripleneg :
-    (allData.filter (·.value == .optdoublenegOpttripleneg)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

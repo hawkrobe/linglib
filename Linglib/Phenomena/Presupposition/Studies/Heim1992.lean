@@ -152,11 +152,10 @@ def beliefLocal : BeliefLocalCtx AttWorld Holder :=
 theorem reflexivity_forces_actual_truth
     (h : ContextSet.entails (knowledgeLocal.atWorld .actual) presup.presup) :
     presup.presup .actual := by
-  apply h
-  constructor
-  · trivial
-  · show doxOfAccessRel frame.knowsRel .john .actual .actual
-    simp [doxOfAccessRel, frame, agentKnowsR, knowsR]
+  refine @h .actual ?_
+  refine ⟨trivial, ?_⟩
+  show doxOfAccessRel frame.knowsRel .john .actual .actual
+  simp [doxOfAccessRel, frame, agentKnowsR, knowsR]
 
 /-- KD45 non-reflexivity permits false presuppositions under belief embedding.
 

@@ -51,12 +51,12 @@ See `CiardelliGuerrini2026`.
 
 -/
 
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 import Linglib.Core.Semantics.Presupposition
 
 namespace Semantics.Modality.Disjunction
 
-open Core.Proposition
 open Core.Presupposition
 
 variable {W : Type*}
@@ -75,11 +75,11 @@ inductive Force where
 /-- A single disjunct in a modal disjunction: Aᵢ Mᵢ Bᵢ. -/
 structure Disjunct (W : Type*) where
   /-- Modal domain Aᵢ (subset of background, determined by context). -/
-  domain : Prop' W
+  domain : Set W
   /-- Modal force Mᵢ (from overt modal or covert default). -/
   force : Force
   /-- Descriptive content Bᵢ. -/
-  content : Prop' W
+  content : Set W
 
 
 /-- A modal disjunction: conjunction of modal propositions. -/
@@ -113,11 +113,11 @@ def MDisjunction.holds (disj : MDisjunction W) : Prop :=
 -- ══════════════════════════════════════════════════════════
 
 /-- The "modal cell" of a disjunct: worlds in both domain and content. -/
-def Disjunct.cell (d : Disjunct W) : Prop' W := fun w => d.domain w ∧ d.content w
+def Disjunct.cell (d : Disjunct W) : Set W := d.domain ∩ d.content
 
 /-- **Exhaustivity**: C ⊆ ∪(Aᵢ ∩ Bᵢ). All background worlds are covered
 by some disjunct's modal cell. -/
-def exhaustivity (C : Prop' W) (disj : MDisjunction W) : Prop :=
+def exhaustivity (C : Set W) (disj : MDisjunction W) : Prop :=
   ∀ w, C w → ∃ d ∈ disj, d.cell w
 
 /-- **Disjointness** for binary disjunctions: cells don't overlap.
@@ -126,8 +126,8 @@ def disjointness₂ (d₁ d₂ : Disjunct W) : Prop :=
   ∀ w, ¬(d₁.cell w ∧ d₂.cell w)
 
 /-- **Non-triviality**: Aᵢ ≠ ∅. Each modal domain is non-empty. -/
-def nonTriviality [FiniteWorlds W] (disj : MDisjunction W) : Prop :=
-  ∀ d, d ∈ disj → ∃ w ∈ FiniteWorlds.worlds, d.domain w
+def nonTriviality (disj : MDisjunction W) : Prop :=
+  ∀ d, d ∈ disj → ∃ w : W, d.domain w
 
 
 -- ══════════════════════════════════════════════════════════
@@ -158,7 +158,7 @@ theorem disjointness_gives_exclusivity (d₁ d₂ : Disjunct W)
   exact h_dis w ⟨h_in_1, h⟩
 
 /-- Exhaustivity + Disjointness → each C-world in exactly one cell. -/
-theorem partition_unique (C : Prop' W) (d₁ d₂ : Disjunct W)
+theorem partition_unique (C : Set W) (d₁ d₂ : Disjunct W)
     (_h_exh : exhaustivity C [d₁, d₂])
     (h_dis : disjointness₂ d₁ d₂)
     (w : W) (_hw : C w) (h1 : d₁.cell w) :
@@ -173,14 +173,14 @@ theorem partition_unique (C : Prop' W) (d₁ d₂ : Disjunct W)
 /-- Default domain binding: by default, each modal domain equals
 the background C. The hearer tries A = C first, and only restricts
 if constraints force it (Geurts p. 394). -/
-def defaultBinding (C : Prop' W) (content : List (Prop' W)) (f : Force) :
+def defaultBinding (C : Set W) (content : List (Set W)) (f : Force) :
     MDisjunction W :=
   content.map (fun b => { domain := C, force := f, content := b })
 
 /-- With default binding and existential force, truth = each disjunct
 is possible w.r.t. C. This is the basic free choice structure. -/
 theorem default_existential_holds_iff
-    (C : Prop' W) (bs : List (Prop' W)) :
+    (C : Set W) (bs : List (Set W)) :
     (defaultBinding C bs .existential).holds ↔
     ∀ b ∈ bs, ∃ w, C w ∧ b w := by
   simp only [MDisjunction.holds, defaultBinding, List.mem_map, Disjunct.holds,
@@ -216,7 +216,10 @@ theorem fromPrProp_presup_iff_orFlex (p q : PrProp W) (w : W) :
 theorem fromPrProp_cell_iff_orFlex (p q : PrProp W) (w : W) :
     (∃ d ∈ fromPrProp p q, d.cell w) ↔
     (PrProp.orFlex p q).assertion w := by
-  simp [fromPrProp, Disjunct.cell, PrProp.orFlex]
+  simp only [fromPrProp, Disjunct.cell, PrProp.orFlex,
+             List.mem_cons, List.not_mem_nil, or_false,
+             exists_eq_or_imp, exists_eq_left]
+  rfl
 
 /-- The three-way equivalence: Geurts (modal conjunction) =
 PrProp.orBelnap (conditional assertion, @cite{belnap-1970}).
@@ -244,7 +247,7 @@ disjunction trivially satisfied. Geurts's exhaustivity constraint makes
 this explicit: it IS the constraint that contexts must be covered by
 disjunct cells. -/
 theorem exhaustivity_implies_uninformative (p q : PrProp W)
-    (C : Prop' W) (h_exh : exhaustivity C (fromPrProp p q))
+    (C : Set W) (h_exh : exhaustivity C (fromPrProp p q))
     (w : W) (hw : C w) :
     (PrProp.orFlex p q).assertion w := by
   exact (fromPrProp_cell_iff_orFlex p q w).mp (h_exh w hw)
@@ -273,12 +276,8 @@ instance : Fintype Loc where
   elems := {.here, .there, .elsewhere}
   complete := fun w => by cases w <;> decide
 
-instance : FiniteWorlds Loc where
-  worlds := [.here, .there, .elsewhere]
-  complete := fun w => by cases w <;> simp
-
-def isHere : Prop' Loc | .here => True | _ => False
-def isThere : Prop' Loc | .there => True | _ => False
+def isHere : Set Loc := fun w => match w with | .here => True | _ => False
+def isThere : Set Loc := fun w => match w with | .there => True | _ => False
 
 instance : DecidablePred isHere := fun w => by
   cases w <;> simp only [isHere] <;> infer_instance
@@ -287,7 +286,8 @@ instance : DecidablePred isThere := fun w => by
   cases w <;> simp only [isThere] <;> infer_instance
 
 /-- Background C: it's either here or there (not elsewhere). -/
-def bgHereOrThere : Prop' Loc | .here => True | .there => True | .elsewhere => False
+def bgHereOrThere : Set Loc := fun w => match w with
+  | .here => True | .there => True | .elsewhere => False
 
 instance : DecidablePred bgHereOrThere := fun w => by
   cases w <;> simp only [bgHereOrThere] <;> infer_instance
@@ -329,7 +329,7 @@ theorem mustHereOrThere_disjoint : disjointness₂ dHere dThere := by
 /-- Key prediction: "It must be here or it must be there" does NOT entail
 "it must be here". The necessity over the full background fails. -/
 theorem must_here_not_entailed :
-    ¬ ∀ w ∈ FiniteWorlds.worlds (W := Loc), bgHereOrThere w → isHere w := by
+    ¬ ∀ w : Loc, bgHereOrThere w → isHere w := by
   decide
 
 

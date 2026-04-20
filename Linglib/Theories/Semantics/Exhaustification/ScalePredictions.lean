@@ -31,13 +31,13 @@ Allows proving when exhaustification rescues the violation.
 -/
 structure HurfordSemantic (World : Type*) where
   /-- First disjunct meaning -/
-  disjunctA : Prop' World
+  disjunctA : Set World
   /-- Second disjunct meaning -/
-  disjunctB : Prop' World
+  disjunctB : Set World
   /-- The entailment that creates the violation -/
   entailment : (disjunctA ⊆ₚ disjunctB) ∨ (disjunctB ⊆ₚ disjunctA)
   /-- Alternative set for exhaustification -/
-  alts : Set (Prop' World)
+  alts : Set (Set World)
 
 /--
 A Hurford violation is rescued iff after exhaustifying the weaker disjunct,
@@ -62,13 +62,13 @@ Semantic structure for Singh configurations.
 -/
 structure SinghSemantic (World : Type*) where
   /-- Weaker disjunct meaning -/
-  weaker : Prop' World
+  weaker : Set World
   /-- Stronger disjunct meaning -/
-  stronger : Prop' World
+  stronger : Set World
   /-- Stronger entails weaker -/
   entailment : stronger ⊆ₚ weaker
   /-- Alternative set -/
-  alts : Set (Prop' World)
+  alts : Set (Set World)
   /-- Is weaker mentioned first? -/
   weakerFirst : Bool
 
@@ -110,7 +110,7 @@ theorem someAll_implicature :
         · simp only [Set.mem_singleton_iff] at hψ_new
           right
           refine ⟨allQ, ?_, hψ_new⟩
-          simp [someAllScale, SemanticScale.alts]
+          exact Set.mem_insert_of_mem _ rfl
       · use ⟨1, by omega⟩
         intro ψ hψ
         rcases hψ with hψ_E | hψ_new
@@ -121,10 +121,10 @@ theorem someAll_implicature :
             · exfalso
               obtain ⟨u, hu⟩ := hcons
               exact hu (∼someQ) hψ_E (hu someQ hphi)
-            · simp only [pneg, allQ]; omega
+            · intro h; have : (1 : Nat) = 3 := h; omega
         · simp only [Set.mem_singleton_iff] at hψ_new
           rw [hψ_new]
-          simp only [pneg, allQ]; omega
+          intro h; have : (1 : Nat) = 3 := h; omega
     have hsubset : E ⊆ E' := Set.subset_union_left
     have hE'_not_sub_E : ¬(E' ⊆ E) := by
       intro hle
@@ -132,7 +132,6 @@ theorem someAll_implicature :
       exact hle (Set.mem_union_right E (Set.mem_singleton _))
     exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
   have hneg_all_w : (∼allQ) w := hexh (∼allQ) hie_neg_all
-  simp only [pneg] at hneg_all_w
   exact hneg_all_w hall
 
 /--
@@ -154,7 +153,7 @@ theorem orAnd_implicature :
         · simp only [Set.mem_singleton_iff] at hψ_new
           right
           refine ⟨andConn, ?_, hψ_new⟩
-          simp [orAndScale, SemanticScale.alts]
+          exact Set.mem_insert_of_mem _ rfl
       · use ConnWorld.onlyA
         intro ψ hψ
         rcases hψ with hψ_E | hψ_new
@@ -165,10 +164,10 @@ theorem orAnd_implicature :
             · exfalso
               obtain ⟨u, hu⟩ := hcons
               exact hu (∼orConn) hψ_E (hu orConn hphi)
-            · simp only [pneg, andConn]; tauto
+            · intro h; exact h
         · simp only [Set.mem_singleton_iff] at hψ_new
           rw [hψ_new]
-          simp only [pneg, andConn]; tauto
+          intro h; exact h
     have hsubset : E ⊆ E' := Set.subset_union_left
     have hE'_not_sub_E : ¬(E' ⊆ E) := by
       intro hle
@@ -176,7 +175,6 @@ theorem orAnd_implicature :
       exact hle (Set.mem_union_right E (Set.mem_singleton _))
     exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
   have hneg_and_w : (∼andConn) w := hexh (∼andConn) hie_neg_and
-  simp only [pneg] at hneg_and_w
   exact hneg_and_w hand
 
 /--
@@ -198,7 +196,7 @@ theorem possibleNecessary_implicature :
         · simp only [Set.mem_singleton_iff] at hψ_new
           right
           refine ⟨necessaryP, ?_, hψ_new⟩
-          simp [possibleNecessaryScale, SemanticScale.alts]
+          exact Set.mem_insert_of_mem _ rfl
       · use ModalWorld.some
         intro ψ hψ
         rcases hψ with hψ_E | hψ_new
@@ -209,10 +207,10 @@ theorem possibleNecessary_implicature :
             · exfalso
               obtain ⟨u, hu⟩ := hcons
               exact hu (∼possibleP) hψ_E (hu possibleP hphi)
-            · simp only [pneg, necessaryP]; tauto
+            · intro h; exact h
         · simp only [Set.mem_singleton_iff] at hψ_new
           rw [hψ_new]
-          simp only [pneg, necessaryP]; tauto
+          intro h; exact h
     have hsubset : E ⊆ E' := Set.subset_union_left
     have hE'_not_sub_E : ¬(E' ⊆ E) := by
       intro hle
@@ -220,7 +218,6 @@ theorem possibleNecessary_implicature :
       exact hle (Set.mem_union_right E (Set.mem_singleton _))
     exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
   have hneg_nec_w : (∼necessaryP) w := hexh (∼necessaryP) hie_neg_nec
-  simp only [pneg] at hneg_nec_w
   exact hneg_nec_w hnec
 
 /--
@@ -261,32 +258,28 @@ theorem someOrAll_is_rescued : someOrAll_semantic.isRescued := by
       constructor
       · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
         · intro ψ' hψ'
-          simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ'
           rcases hψ' with rfl | rfl
           · left; rfl
           · right; exact ⟨allQ, Or.inr (Set.mem_singleton _), rfl⟩
         · use ⟨1, by omega⟩
           intro ψ' hψ'
-          simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ'
           rcases hψ' with rfl | rfl
           · simp [someQ]
-          · simp only [pneg, allQ]; omega
+          · intro h; have : (1 : Nat) = 3 := h; omega
       · intro E' hE'_compat hsubset ψ' hψ'_E'
         rcases hE'_compat.2.1 ψ' hψ'_E' with rfl | ⟨a, ha, rfl⟩
         · exact Or.inl rfl
-        · simp only [someOrAll_semantic, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-          rcases ha with rfl | rfl
+        · rcases ha with rfl | rfl
           · exfalso
             obtain ⟨u, hu⟩ := hE'_compat.2.2
             have hsomeQ := hE'_compat.1
             exact hu (∼someQ) hψ'_E' (hu someQ hsomeQ)
           · exact Or.inr rfl
-    have hψ_in_MC : ψ ∈ ({someQ, ∼allQ} : Set (Prop' SemQuantWorld)) := hψ_IE _ hMC
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ_in_MC
+    have hψ_in_MC : ψ ∈ ({someQ, ∼allQ} : Set (Set SemQuantWorld)) := hψ_IE _ hMC
     rcases hψ_in_MC with rfl | rfl
     · simp [someQ]
-    · simp only [pneg, allQ]; omega
-  have hall_w1 : allQ ⟨1, by omega⟩ := h_entails ⟨1, by omega⟩ hw1
+    · intro h; have : (1 : Nat) = 3 := h; omega
+  have hall_w1 : allQ ⟨1, by omega⟩ := h_entails hw1
   simp [allQ] at hall_w1
 
 
@@ -302,14 +295,14 @@ inductive HyponymWorld where
   deriving DecidableEq, Repr
 
 /-- "American" predicate -/
-def americanP : Prop' HyponymWorld := λ w =>
+def americanP : Set HyponymWorld := λ w =>
   match w with
   | .notAmerican => False
   | .americanOnly => True
   | .californian => True
 
 /-- "Californian" predicate -/
-def californianP : Prop' HyponymWorld := λ w =>
+def californianP : Set HyponymWorld := λ w =>
   match w with
   | .californian => True
   | _ => False
@@ -317,7 +310,10 @@ def californianP : Prop' HyponymWorld := λ w =>
 /-- Californian entails American (hyponymy) -/
 theorem californian_entails_american : californianP ⊆ₚ americanP := by
   intro w hcal
-  cases w <;> simp [californianP, americanP] at *
+  cases w
+  · exact hcal.elim
+  · exact hcal.elim
+  · trivial
 
 /--
 Semantic structure for "American or Californian" (true Hurford violation).
@@ -339,7 +335,7 @@ theorem exh_californian_entails_american :
     apply hexh californianP
     intro E hmc
     exact hmc.1.1
-  exact californian_entails_american w hcal
+  exact californian_entails_american hcal
 
 /--
 Prediction: "American or Californian" is not rescued.
@@ -389,31 +385,27 @@ theorem orAnd_exh_breaks_entailment :
       constructor
       · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
         · intro ψ' hψ'
-          simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ'
           rcases hψ' with rfl | rfl
           · left; rfl
           · right; exact ⟨andConn, Or.inr (Set.mem_singleton _), rfl⟩
         · use ConnWorld.onlyA
           intro ψ' hψ'
-          simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ'
           rcases hψ' with rfl | rfl
           · simp [orConn]
-          · simp only [pneg, andConn]; tauto
+          · intro h; exact h
       · intro E' hE'_compat hsubset ψ' hψ'_E'
         rcases hE'_compat.2.1 ψ' hψ'_E' with rfl | ⟨a, ha, rfl⟩
         · exact Or.inl rfl
-        · simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at ha
-          rcases ha with rfl | rfl
+        · rcases ha with rfl | rfl
           · exfalso
             obtain ⟨u, hu⟩ := hE'_compat.2.2
             exact hu (∼orConn) hψ'_E' (hu orConn hE'_compat.1)
           · exact Or.inr rfl
-    have hψ_in : ψ ∈ ({orConn, ∼andConn} : Set (Prop' ConnWorld)) := hψ_IE _ hMC
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hψ_in
+    have hψ_in : ψ ∈ ({orConn, ∼andConn} : Set (Set ConnWorld)) := hψ_IE _ hMC
     rcases hψ_in with rfl | rfl
     · simp [orConn]
-    · simp only [pneg, andConn]; tauto
-  have hand : andConn ConnWorld.onlyA := h ConnWorld.onlyA hexh
+    · intro h; exact h
+  have hand : andConn ConnWorld.onlyA := h hexh
   simp [andConn] at hand
 
 /--

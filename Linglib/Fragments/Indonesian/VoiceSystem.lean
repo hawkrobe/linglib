@@ -119,8 +119,8 @@ def berParams : VoiceParams :=
 theorem voice_count : indonesianVoiceSystem.voiceCount = 3 := rfl
 
 /-- The system promotes both agent and patient roles. -/
-theorem promotes_agent : indonesianVoiceSystem.promotesRole .agent = true := rfl
-theorem promotes_patient : indonesianVoiceSystem.promotesRole .patient = true := rfl
+theorem promotes_agent : indonesianVoiceSystem.promotesRole .agent := by decide
+theorem promotes_patient : indonesianVoiceSystem.promotesRole .patient := by decide
 
 /-- *meN-* is fully specified; *ber-* is not. -/
 theorem men_fully_specified : menParams.isFullySpecified = true := rfl

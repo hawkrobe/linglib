@@ -151,40 +151,40 @@ def InfoState.pushAgenda {SignT CommT : Type}
 
 /-! ## Bridge to Core.CommonGround -/
 
-/-- Bridge: a `W → Bool`-based information state's commitments form a CG. -/
+/-- Bridge: a `Set W`-based information state's commitments form a CG. -/
 def InfoState.toCG {W SignT : Type}
-    (s : InfoState SignT (List ((W → Bool)))) :
+    (s : InfoState SignT (List (Set W))) :
     Core.CommonGround.CG W where
   propositions := s.commitments
 
-/-- InfoState with (commitments → Bool) projects to a context set via CG. -/
+/-- InfoState with `Set W` commitments projects to a context set via CG. -/
 instance {W SignT : Type} :
     Core.CommonGround.HasContextSet
-      (InfoState SignT (List ((W → Bool)))) W where
+      (InfoState SignT (List (Set W))) W where
   toContextSet s := s.toCG.contextSet
 
 /-- Bridge theorem: initial state maps to empty common ground. -/
 theorem infoState_initial_eq_empty_cg (W SignT : Type) :
     (InfoState.initial (SignT := SignT)
-      ([] : List ((W → Bool)))).toCG =
+      ([] : List (Set W))).toCG =
     Core.CommonGround.CG.empty := rfl
 
 /-- Bridge: integrating a commitment = adding to common ground. -/
 theorem integrate_comm_eq_cg_add {W SignT : Type}
-    (s : InfoState SignT (List ((W → Bool))))
-    (utt : SignT) (p : (W → Bool)) :
+    (s : InfoState SignT (List (Set W)))
+    (utt : SignT) (p : Set W) :
     (s.integrate utt (p :: s.commitments)).toCG = s.toCG.add p := rfl
 
 /-! ## Bridge to Semantics.Dynamic.Core.InfoState -/
 
 /-- TTR's InfoState tracks discourse state via agenda/commitments.
 Semantics.Dynamic.Core.InfoState tracks possibilities (world + assignment).
-Bridge: a TTR InfoState with (commitments → Bool) induces a Core InfoState
+Bridge: a TTR InfoState with `Set W` commitments induces a Core InfoState
 by filtering possibilities that satisfy all commitments. -/
 def InfoState.toCoreInfoState {W E SignT : Type}
-    (s : InfoState SignT (List ((W → Bool)))) :
+    (s : InfoState SignT (List (Set W))) :
     Set (_root_.Semantics.Dynamic.Core.Possibility W E) :=
-  { p | s.commitments.Forall (· p.world) }
+  { p | s.commitments.Forall (p.world ∈ ·) }
 
 -- ============================================================================
 -- Information State Phenomena
@@ -277,18 +277,19 @@ theorem Parametric.trivial_fg {Content : Type*} (c : Content) (u : Unit) :
 
 /-! ## Bridge: Parametric ↔ PrProp (presupposition/assertion) -/
 
-/-- Convert a Parametric ((W → Bool)) to a PrProp. -/
-def Parametric.toPrProp {W : Type*} (p : Parametric ((W → Bool)))
-    (presupTest : W → Bool) (bgWitness : (w : W) → presupTest w = true → p.Bg) :
+/-- Convert a Parametric `(W → Prop)` to a PrProp. -/
+noncomputable def Parametric.toPrProp {W : Type*} (p : Parametric (W → Prop))
+    (presupTest : W → Prop) [DecidablePred presupTest]
+    (bgWitness : (w : W) → presupTest w → p.Bg) :
     Core.Presupposition.PrProp W where
   presup := presupTest
   assertion := λ w =>
-    if h : presupTest w = true then p.fg (bgWitness w h) w else false
+    if h : presupTest w then p.fg (bgWitness w h) w else False
 
 /-- Convert a PrProp back to a Parametric. -/
 def _root_.Core.Presupposition.PrProp.toParametric {W : Type*}
     (p : Core.Presupposition.PrProp W) :
-    Parametric (Core.Proposition.Prop' W) where
+    Parametric (Set W) where
   Bg := { w : W // p.presup w }
   fg := λ _ => p.assertion
 
@@ -299,12 +300,13 @@ theorem toParametric_toPrProp_assertion {W : Type*} (p : Core.Presupposition.PrP
     p.toParametric.fg ⟨w, hp⟩ w ↔ p.assertion w := by
   simp only [Core.Presupposition.PrProp.toParametric]
 
-/-- When a Parametric has a Bool-valued background, it directly maps to PrProp. -/
-def Parametric.toPrPropSimple {W : Type*}
-    (presup : W → Bool) (assertion : (w : W) → presup w = true → Bool) :
+/-- When a Parametric has a Prop-valued background, it directly maps to PrProp. -/
+noncomputable def Parametric.toPrPropSimple {W : Type*}
+    (presup : W → Prop) [DecidablePred presup]
+    (assertion : (w : W) → presup w → Prop) :
     Core.Presupposition.PrProp W where
   presup := presup
-  assertion := λ w => if h : presup w = true then assertion w h else false
+  assertion := λ w => if h : presup w then assertion w h else False
 
 -- ============================================================================
 -- Reference & Mental States (§4.3–4.7)

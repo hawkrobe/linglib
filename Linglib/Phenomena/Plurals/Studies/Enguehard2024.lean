@@ -673,7 +673,7 @@ theorem constant_presup_satisfied_iff_satisfiable
   constructor
   · intro hsat
     obtain ⟨w, hw⟩ := hne
-    exact ⟨w, hw, hsat w hw⟩
+    exact ⟨w, hw, hsat hw⟩
   · intro ⟨_, _, hdef⟩
     intro _ _
     exact hdef

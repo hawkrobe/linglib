@@ -50,7 +50,7 @@ inchoatives have CAUSE.
 ## Bridges
 
 - `CauserSpec` (Spanish fragment) — EFFECTOR vs AGENT verb taxonomy
-- `CausationType.hasCauseInLSR` — internally vs externally caused distinction
+- `CausationType.HasCauseInLSR` — internally vs externally caused distinction
 - `IntransitivizationType` — competing structural analysis (@cite{krejci-2012})
 - `reflexivization` / `decausativization` — valency alternation types
 - `AnticausativeAnalysis` — parameterization of competing analyses
@@ -212,8 +212,8 @@ theorem agent_has_volition :
       (fun v => v.subjectEntailments.map (·.volition) == some true) = true := by
   native_decide
 
-/-- Both EFFECTOR and AGENT verbs satisfy `isEffector` (movement ∨ IE
-    with causation). This is why `isEffector` alone cannot distinguish
+/-- Both EFFECTOR and AGENT verbs satisfy `IsEffector` (movement ∨ IE
+    with causation). This is why `IsEffector` alone cannot distinguish
     them — it's a necessary but not sufficient condition for K-G's
     EFFECTOR. The AGENT/EFFECTOR split requires checking volition. -/
 theorem both_satisfy_causation :
@@ -309,20 +309,20 @@ theorem causative_does_not_entail_inchoative :
 /-- Externally caused COS verbs have CAUSE in their LSR and
     license *por sí solo*. -/
 theorem external_has_cause :
-    CausationType.hasCauseInLSR .external = true := rfl
+    CausationType.HasCauseInLSR .external := by decide
 
 /-- Internally caused COS verbs lack CAUSE and reject *por sí solo*. -/
 theorem internal_no_cause :
-    CausationType.hasCauseInLSR .internal = false := rfl
+    ¬ CausationType.HasCauseInLSR .internal := by decide
 
 /-- The Albanian "feel like" construction (§4.2) provides independent
     evidence: its "unintended cause" reading (Kallulli 2006b) is
     available only for verbs with CAUSE in their LSR. COS verbs
     like *break* get the reading; non-causative verbs like *eat* do not.
-    This is the same structural property that `hasCauseInLSR` tests. -/
+    This is the same structural property that `HasCauseInLSR` tests. -/
 theorem feel_like_requires_cause :
-    CausationType.hasCauseInLSR .external = true ∧
-    CausationType.hasCauseInLSR .internal = false := ⟨rfl, rfl⟩
+    CausationType.HasCauseInLSR .external ∧
+    ¬ CausationType.HasCauseInLSR .internal := ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 7. Monotonicity Hypothesis (§1, §4)

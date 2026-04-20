@@ -201,9 +201,11 @@ about **compset accessibility**, which we derive here. -/
 
 open Semantics.TypeTheoretic (DogWorld)
 
-/-- Bool version of `isDog` for decidable sieving. -/
-def isDogB : DogWorld → Bool
-  | .fido => true | .rex => true | .spot => true | .luna => false
+/-- Prop version of `isDog` for decidable sieving. -/
+def isDogB : DogWorld → Prop
+  | .fido => True | .rex => True | .spot => True | .luna => False
+
+instance : DecidablePred isDogB := fun x => by unfold isDogB; cases x <;> infer_instance
 
 /-- Bool version of `doesBark`. -/
 def doesBarkB : DogWorld → Bool

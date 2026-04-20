@@ -215,11 +215,13 @@ Numerals are NOT represented as a `HornScale` here because:
    and do NOT form a Horn scale at all. The relevant alternatives are
    {bare n, Class A n, Class B n}, not other numerals.
 
-Both cases are handled properly in
-`Theories/Semantics.Montague/Determiner/Numeral/Semantics.lean`:
-- `NumeralTheory.isStrongerThan` computes strength for any theory
-- `NumeralAlternative` represents Kennedy's alternative sets
-- `lowerBound_monotonic` / `bilateral_not_monotonic` prove the key contrast
+Both cases are handled in `Theories/Semantics/Numerals/Basic.lean`:
+- The five Prop meaning functions (`bareMeaning`, `atLeastMeaning`, ...)
+  expose theory disagreement directly via the choice of bare-numeral semantics
+- `lowerAlternatives` / `upperAlternatives` (lists of `NumeralExpr`) are
+  Kennedy's alternative sets
+- `bare_not_upward_monotone` / `bare_not_downward_monotone` /
+  `atLeast_strictly_weaker_than_bare` prove the key contrast
 -/
 
 namespace Number

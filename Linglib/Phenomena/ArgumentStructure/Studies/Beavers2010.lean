@@ -261,18 +261,21 @@ def allContrasts : List AlternationContrast :=
 -- ════════════════════════════════════════════════════
 
 /-- MAP holds for a single contrast: direct ≥ oblique. -/
-def mapHolds (c : AlternationContrast) : Bool :=
-  AffectednessDegree.ge c.directDegree c.obliqueDegree
+def MapHolds (c : AlternationContrast) : Prop :=
+  c.obliqueDegree ≤ c.directDegree
+
+instance (c : AlternationContrast) : Decidable (MapHolds c) := by
+  unfold MapHolds; infer_instance
 
 -- ── Per-contrast MAP verification ──
 
-theorem MAP_eat_conative : mapHolds eatConative = true := rfl
-theorem MAP_cut_conative : mapHolds cutConative = true := rfl
-theorem MAP_hit_conative : mapHolds hitConative = true := rfl
-theorem MAP_load_location : mapHolds loadLocation = true := rfl
-theorem MAP_load_theme : mapHolds loadTheme = true := rfl
-theorem MAP_cut_location : mapHolds cutLocation = true := rfl
-theorem MAP_cut_theme : mapHolds cutTheme = true := rfl
+theorem MAP_eat_conative : MapHolds eatConative := by decide
+theorem MAP_cut_conative : MapHolds cutConative := by decide
+theorem MAP_hit_conative : MapHolds hitConative := by decide
+theorem MAP_load_location : MapHolds loadLocation := by decide
+theorem MAP_load_theme : MapHolds loadTheme := by decide
+theorem MAP_cut_location : MapHolds cutLocation := by decide
+theorem MAP_cut_theme : MapHolds cutTheme := by decide
 
 /-- **The deepest theorem**: the MAP holds for ALL attested alternation
     contrasts. Every direct realization has truth conditions at least as
@@ -285,7 +288,7 @@ theorem MAP_cut_theme : mapHolds cutTheme = true := rfl
 
     Any change to the affectedness assignments breaks this theorem. -/
 theorem MAP_holds_all_alternations :
-    allContrasts.all mapHolds = true := rfl
+    ∀ c ∈ allContrasts, MapHolds c := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Minimal Contrast Verification
@@ -331,15 +334,15 @@ def impossibleLocative : AlternationContrast :=
   ⟨"impossible", .locative, .quantized, .potential⟩
 
 -- This one is fine (direct ≥ oblique)
-theorem possible_locative_ok : mapHolds impossibleLocative = true := rfl
+theorem possible_locative_ok : MapHolds impossibleLocative := by decide
 
 -- Reversed direction violates the MAP
 def reversedConative : AlternationContrast :=
   ⟨"reversed", .conative, .unspecified, .potential⟩
 
-theorem reversed_violates_MAP : mapHolds reversedConative = false := rfl
+theorem reversed_violates_MAP : ¬ MapHolds reversedConative := by decide
 
-theorem impossible_violates_MAP : mapHolds impossibleConative = false := rfl
+theorem impossible_violates_MAP : ¬ MapHolds impossibleConative := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to Existing Data and EntailmentProfile
@@ -392,14 +395,14 @@ theorem locative_data_attested :
     direct vs. oblique objects. -/
 theorem asp_and_map_orthogonal :
     -- ASP: kick subject outranks object for subjecthood
-    outranksForSubject kickSubjectProfile kickObjectProfile = true ∧
+    OutranksForSubject kickSubjectProfile kickObjectProfile ∧
     -- MAP: kick object has nonquantized affectedness (CoS, not incremental)
     profileToDegree kickObjectProfile = .nonquantized ∧
     -- The two operate on different dimensions
     -- (subjecthood is about P-Agent; alternation is about P-Patient strength)
     kickSubjectProfile.pAgentScore > 0 ∧
     kickObjectProfile.pPatientScore > 0 :=
-  ⟨by native_decide, rfl, by native_decide, by native_decide⟩
+  ⟨by decide, rfl, by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 10. Bridge to @cite{grimm-2011} Persistence Lattice

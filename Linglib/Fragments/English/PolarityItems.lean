@@ -468,15 +468,15 @@ def lookup (form : String) : Option PolarityItemEntry :=
 -- ============================================================================
 
 -- "any" is both NPI and FCI
-#guard any.isNPI
-#guard any.isFCI
+example : any.isNPI := by decide
+example : any.isFCI := by decide
 
 -- "ever" is NPI but not FCI
-#guard ever.isNPI
-#guard !ever.isFCI
+example : ever.isNPI := by decide
+example : ¬ ever.isFCI := by decide
 
 -- "whatever" is FCI but not (plain) NPI
-#guard whatever.isFCI
+example : whatever.isFCI := by decide
 #guard whatever.polarityType == .fci
 
 -- PPIs have empty licensing contexts
@@ -517,7 +517,7 @@ def lookup (form : String) : Option PolarityItemEntry :=
 #guard utterly.canonicity == .canonical
 
 -- All classified items have consistent canonicity predictions
-#guard allPolarityItems.all (·.canonicityConsistent)
+example : ∀ p ∈ allPolarityItems, p.canonicityConsistent := by decide
 
 -- ============================================================================
 -- Summary

@@ -70,17 +70,20 @@ namespace RelationOrigin
     and inherited contextual relations. Tense, aspect, adverbial, and
     stipulated relations are non-defeasible (their content is
     encoded/asserted). -/
-def isDefeasible : RelationOrigin → Bool
-  | .puti => true
-  | .context => true
-  | _ => false
+def isDefeasible : RelationOrigin → Prop
+  | .puti => True
+  | .context => True
+  | _ => False
 
-@[simp] theorem puti_defeasible : RelationOrigin.puti.isDefeasible = true := rfl
-@[simp] theorem context_defeasible : RelationOrigin.context.isDefeasible = true := rfl
-@[simp] theorem tense_not_defeasible : RelationOrigin.tense.isDefeasible = false := rfl
-@[simp] theorem aspect_not_defeasible : RelationOrigin.aspect.isDefeasible = false := rfl
-@[simp] theorem adverbial_not_defeasible : RelationOrigin.adverbial.isDefeasible = false := rfl
-@[simp] theorem stipulated_not_defeasible : RelationOrigin.stipulated.isDefeasible = false := rfl
+instance : DecidablePred isDefeasible := fun r => by
+  cases r <;> unfold isDefeasible <;> infer_instance
+
+@[simp] theorem puti_defeasible : RelationOrigin.puti.isDefeasible := trivial
+@[simp] theorem context_defeasible : RelationOrigin.context.isDefeasible := trivial
+@[simp] theorem tense_not_defeasible : ¬ RelationOrigin.tense.isDefeasible := id
+@[simp] theorem aspect_not_defeasible : ¬ RelationOrigin.aspect.isDefeasible := id
+@[simp] theorem adverbial_not_defeasible : ¬ RelationOrigin.adverbial.isDefeasible := id
+@[simp] theorem stipulated_not_defeasible : ¬ RelationOrigin.stipulated.isDefeasible := id
 
 end RelationOrigin
 
@@ -113,7 +116,10 @@ def Compatible (r₁ r₂ : OriginTaggedRelation) : Prop :=
   ∃ a, a ∈ r₁.atoms ∧ a ∈ r₂.atoms
 
 /-- A relation is **defeasible** if its origin is. -/
-def isDefeasible (r : OriginTaggedRelation) : Bool := r.origin.isDefeasible
+def isDefeasible (r : OriginTaggedRelation) : Prop := r.origin.isDefeasible
+
+instance : DecidablePred isDefeasible := fun r => by
+  unfold isDefeasible; infer_instance
 
 end OriginTaggedRelation
 
@@ -170,7 +176,7 @@ theorem puti_lemma (b₁ b₂ : SituationBoundedness) :
 
 /-- PUTI defaults are always defeasible. -/
 @[simp] theorem puti_default_defeasible (b₁ b₂ : SituationBoundedness) :
-    (putiTaggedRelation b₁ b₂).isDefeasible = true := rfl
+    (putiTaggedRelation b₁ b₂).isDefeasible := trivial
 
 -- ── Per-case PUTI defaults (for clarity at call sites) ──
 

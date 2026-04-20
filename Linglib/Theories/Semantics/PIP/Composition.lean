@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.PIP.Expr
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # PIP Compositional Operations
@@ -25,8 +26,6 @@ type and connected to it via bridge theorems.
 
 namespace Semantics.PIP
 
-open Core.Proposition (FiniteWorlds)
-
 
 -- ============================================================
 -- §1: Sigma Evaluation (paper's Σ operator and ZF expansion)
@@ -34,7 +33,7 @@ open Core.Proposition (FiniteWorlds)
 
 section Sigma
 
-variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+variable {W D : Type*} [FiniteDomain D] [Fintype W]
 
 /--
 Sigma evaluation: Σxφ = {d ∈ D | ⟦φ(d)⟧^w = 1}.
@@ -182,7 +181,7 @@ theorem gq_duality (R S : Set α) :
 
 -- Sigma bridge: connecting set-based GQs to PIPExprF quantifiers
 
-variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+variable {W D : Type*} [FiniteDomain D] [Fintype W]
 
 /-- EVERY over sigma sets ↔ pointwise universal implication. -/
 theorem setEvery_sigma (body_R body_S : D → PIPExprF W D) (w : W) :
@@ -263,21 +262,21 @@ def accessRelToBase (R : BAccessRel W) (w : W) : Set W :=
   { w' | R w w' = true }
 
 /-- `PIPExprF.must R φ` truth agrees with three-argument `mustBase`. -/
-theorem must_truth_iff_mustBase {D : Type*} [FiniteDomain D] [FiniteWorlds W]
+theorem must_truth_iff_mustBase {D : Type*} [FiniteDomain D] [Fintype W]
     (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.must R φ).truth w = true ↔
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def, Set.mem_setOf_eq]
   constructor
   · intro h w' hw'
-    exact List.all_eq_true.mp h w' (List.mem_filter.mpr ⟨FiniteWorlds.complete w', hw'⟩)
+    exact List.all_eq_true.mp h w' (List.mem_filter.mpr ⟨Finset.mem_toList.mpr (Finset.mem_univ w'), hw'⟩)
   · intro h
     apply List.all_eq_true.mpr
     intro w' hw'
     exact h w' (List.mem_filter.mp hw').2
 
 /-- `PIPExprF.might R φ` truth agrees with three-argument `mightBase`. -/
-theorem might_truth_iff_mightBase {D : Type*} [FiniteDomain D] [FiniteWorlds W]
+theorem might_truth_iff_mightBase {D : Type*} [FiniteDomain D] [Fintype W]
     (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     (PIPExprF.might R φ).truth w = true ↔
     mightBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } := by
@@ -289,7 +288,7 @@ theorem might_truth_iff_mightBase {D : Type*} [FiniteDomain D] [FiniteWorlds W]
     exact ⟨w', (List.mem_filter.mp hw'_mem).2, hw'_sat⟩
   · intro ⟨w', hw'R, hw'φ⟩
     apply List.any_eq_true.mpr
-    exact ⟨w', List.mem_filter.mpr ⟨FiniteWorlds.complete w', hw'R⟩, hw'φ⟩
+    exact ⟨w', List.mem_filter.mpr ⟨Finset.mem_toList.mpr (Finset.mem_univ w'), hw'R⟩, hw'φ⟩
 
 end ThreeArgModals
 
@@ -379,7 +378,7 @@ denotation = `sigmaEval` by the paper's own analysis.
 
 section Subordination
 
-variable {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+variable {W D : Type*} [FiniteDomain D] [Fintype W]
 
 /-- Sigma is monotone: stronger body conditions produce smaller sets. -/
 theorem sigma_monotone (φ ψ : D → PIPExprF W D) (w : W)

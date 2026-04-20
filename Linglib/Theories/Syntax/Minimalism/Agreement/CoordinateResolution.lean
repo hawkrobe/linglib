@@ -129,7 +129,7 @@ def canonicalResolve (a b : Category) : Category :=
   match a.exactCard, b.exactCard with
   | some na, some nb => Category.fromCard (na + nb)
   | _, _ =>
-    if a.isMinAug && b.isMinAug then .augmented
+    if a.isMinAug ∧ b.isMinAug then .augmented
     else .plural
 
 /-- Canonical resolution is commutative: x ⊔ y = y ⊔ x. -/

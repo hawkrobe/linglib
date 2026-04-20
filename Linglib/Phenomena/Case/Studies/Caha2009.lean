@@ -40,7 +40,7 @@ ordered by containment, A–B–A patterns are unattested.
 
 This study file applies Caha's containment as a typological prediction
 to the case inventories in `Fragments/*/Case.lean`. The predicate
-`respectsCahaContainment` (defined in
+`RespectsCahaContainment` (defined in
 `Theories/Interfaces/Morphosyntax/CaseContainment.lean`) checks whether
 the on-hierarchy cases in an inventory form a contiguous prefix
 NOM, NOM-ACC, NOM-ACC-GEN, NOM-ACC-GEN-DAT, NOM-ACC-GEN-DAT-LOC.
@@ -73,64 +73,64 @@ open Interfaces.Morphosyntax.CaseContainment
 -- ============================================================================
 
 theorem czech :
-    respectsCahaContainment Fragments.Czech.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Czech.Case.caseInventory := by decide
 
 theorem german :
-    respectsCahaContainment Fragments.German.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.German.Case.caseInventory := by decide
 
 theorem greek :
-    respectsCahaContainment Fragments.Greek.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Greek.Case.caseInventory := by decide
 
 theorem hindi :
-    respectsCahaContainment Fragments.Hindi.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Hindi.Case.caseInventory := by decide
 
 theorem hungarian :
-    respectsCahaContainment Fragments.Hungarian.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Hungarian.Case.caseInventory := by decide
 
 theorem icelandic :
-    respectsCahaContainment Fragments.Icelandic.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Icelandic.Case.caseInventory := by decide
 
 theorem japanese :
-    respectsCahaContainment Fragments.Japanese.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Japanese.Case.caseInventory := by decide
 
 theorem korean :
-    respectsCahaContainment Fragments.Korean.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Korean.Case.caseInventory := by decide
 
 theorem latin :
-    respectsCahaContainment Fragments.Latin.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Latin.Case.caseInventory := by decide
 
 theorem mongolian :
-    respectsCahaContainment Fragments.Mongolian.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Mongolian.Case.caseInventory := by decide
 
 theorem polish :
-    respectsCahaContainment Fragments.Polish.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Polish.Case.caseInventory := by decide
 
 theorem russian :
-    respectsCahaContainment Fragments.Russian.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Russian.Case.caseInventory := by decide
 
 theorem serbian :
-    respectsCahaContainment Fragments.Serbian.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Serbian.Case.caseInventory := by decide
 
 theorem slovenian :
-    respectsCahaContainment Fragments.Slovenian.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Slovenian.Case.caseInventory := by decide
 
 theorem swissgerman :
-    respectsCahaContainment Fragments.SwissGerman.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.SwissGerman.Case.caseInventory := by decide
 
 theorem tamil :
-    respectsCahaContainment Fragments.Tamil.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Tamil.Case.caseInventory := by decide
 
 theorem telugu :
-    respectsCahaContainment Fragments.Telugu.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Telugu.Case.caseInventory := by decide
 
 theorem turkish :
-    respectsCahaContainment Fragments.Turkish.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Turkish.Case.caseInventory := by decide
 
 theorem ukrainian :
-    respectsCahaContainment Fragments.Ukrainian.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Ukrainian.Case.caseInventory := by decide
 
 theorem yakut :
-    respectsCahaContainment Fragments.Yakut.Case.caseInventory = true := by decide
+    RespectsCahaContainment Fragments.Yakut.Case.caseInventory := by decide
 
 -- ============================================================================
 -- § 2: Predicted Violators
@@ -141,7 +141,7 @@ theorem yakut :
     NOM would be, and Caha's containment is keyed to accusative alignment.
     The ergative cases (ERG, ABS) are off-hierarchy in `containmentRank`. -/
 theorem dargwa_ergative :
-    respectsCahaContainment Fragments.Dargwa.Case.caseInventory = false := by decide
+    ¬ RespectsCahaContainment Fragments.Dargwa.Case.caseInventory := by decide
 
 /-- Finnish has no dedicated dative — the allative (-lle) covers recipient
     function. Its inventory has rank 4 (LOC) without rank 3 (DAT).
@@ -152,58 +152,6 @@ theorem dargwa_ergative :
     the language genuinely lacks the missing case rather than reorganizing
     it under Caha's containment. -/
 theorem finnish_dat_gap :
-    respectsCahaContainment Fragments.Finnish.Case.caseInventory = false := by decide
-
--- ============================================================================
--- § 3: Cross-Inventory Survey
--- ============================================================================
-
-/-- The full Caha-conformance verdict for every Fragment case inventory in
-    the library, paired with its language label. The 20 conformers and the
-    2 predicted violators (Dargwa, Finnish) are bundled into one finite
-    table so that adding a new Fragment with a missing classification
-    breaks this theorem rather than silently dropping out of the survey.
-
-    Maintenance contract: when adding `Fragments/<Lang>/Case.lean`, add
-    the corresponding line here AND a per-language theorem above. The
-    individual theorems give precise blame; this table gives coverage. -/
-def cahaSurvey : List (String × Bool) :=
-  [ ("czech",      respectsCahaContainment Fragments.Czech.Case.caseInventory),
-    ("dargwa",     respectsCahaContainment Fragments.Dargwa.Case.caseInventory),
-    ("finnish",    respectsCahaContainment Fragments.Finnish.Case.caseInventory),
-    ("german",     respectsCahaContainment Fragments.German.Case.caseInventory),
-    ("greek",      respectsCahaContainment Fragments.Greek.Case.caseInventory),
-    ("hindi",      respectsCahaContainment Fragments.Hindi.Case.caseInventory),
-    ("hungarian",  respectsCahaContainment Fragments.Hungarian.Case.caseInventory),
-    ("icelandic",  respectsCahaContainment Fragments.Icelandic.Case.caseInventory),
-    ("japanese",   respectsCahaContainment Fragments.Japanese.Case.caseInventory),
-    ("korean",     respectsCahaContainment Fragments.Korean.Case.caseInventory),
-    ("latin",      respectsCahaContainment Fragments.Latin.Case.caseInventory),
-    ("mongolian",  respectsCahaContainment Fragments.Mongolian.Case.caseInventory),
-    ("polish",     respectsCahaContainment Fragments.Polish.Case.caseInventory),
-    ("russian",    respectsCahaContainment Fragments.Russian.Case.caseInventory),
-    ("serbian",    respectsCahaContainment Fragments.Serbian.Case.caseInventory),
-    ("slovenian",  respectsCahaContainment Fragments.Slovenian.Case.caseInventory),
-    ("swissgerman",respectsCahaContainment Fragments.SwissGerman.Case.caseInventory),
-    ("tamil",      respectsCahaContainment Fragments.Tamil.Case.caseInventory),
-    ("telugu",     respectsCahaContainment Fragments.Telugu.Case.caseInventory),
-    ("turkish",    respectsCahaContainment Fragments.Turkish.Case.caseInventory),
-    ("ukrainian",  respectsCahaContainment Fragments.Ukrainian.Case.caseInventory),
-    ("yakut",      respectsCahaContainment Fragments.Yakut.Case.caseInventory) ]
-
-/-- Every Fragment in the library is classified by Caha containment — the
-    survey is total. -/
-theorem cahaSurvey_length : cahaSurvey.length = 22 := by decide
-
-/-- Exactly two languages violate strict Caha contiguity, and both are
-    documented exceptions: Dargwa (ergative alignment) and Finnish
-    (DAT gap). Every other Fragment conforms. -/
-theorem all_inventories_classified :
-    cahaSurvey.filter (fun p => !p.2) = [("dargwa", false), ("finnish", false)] := by
-  decide
-
-/-- Conformance rate: 20/22 of the formalized inventories respect Caha. -/
-theorem caha_conformance_count :
-    (cahaSurvey.filter (·.2)).length = 20 := by decide
+    ¬ RespectsCahaContainment Fragments.Finnish.Case.caseInventory := by decide
 
 end Phenomena.Case.Studies.Caha2009

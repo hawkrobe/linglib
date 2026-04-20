@@ -117,12 +117,12 @@ def slur_noProject : CIProjectionDatum :=
     proposition; the peripheral content attributes the utterance to the
     embedded subject. Since only at-issue content composes upward, the
     original CI never reaches the speaker. -/
-theorem quotation_blocks_ci_projection (W : Type) (originalCI : (W → Bool))
-    (atIssue : (W → Bool)) (w : W) :
+theorem quotation_blocks_ci_projection (W : Type) (originalCI : W → Prop)
+    (atIssue : W → Prop) (w : W) :
     let withOrigCI := TwoDimProp.withCI atIssue originalCI
     let quoted := TwoDimProp.pureQuote withOrigCI
     -- After pure quotation, original CI is stripped
-    quoted.ci w = true := rfl
+    quoted.ci w := trivial
 
 /-- Concrete model for CI projection failure in indirect speech.
 
@@ -138,12 +138,12 @@ inductive GDWorld where | actual deriving DecidableEq, Repr, Inhabited
 /-- 'Goddamned keys' denotes: Jones spent an hour looking for his keys.
     The at-issue content is independent of speaker. -/
 def gdInterp : QuotInterp GDExpr GDSpeaker GDWorld
-  | .goddamnedKeys, _, _, _ => true
+  | .goddamnedKeys, _, _, _ => True
 
 /-- Utterance relation: Jones produced the utterance, the reporter did not. -/
 def gdUttRel : UttRel GDSpeaker Unit GDExpr GDWorld
-  | .jones,    _, .goddamnedKeys, _ => true
-  | .reporter, _, .goddamnedKeys, _ => false
+  | .jones,    _, .goddamnedKeys, _ => True
+  | .reporter, _, .goddamnedKeys, _ => False
 
 /-- Jones is the attitude holder — 𝔐 attributes the utterance to Jones. -/
 def gdCtx : MQContext GDWorld GDExpr GDSpeaker Unit :=
@@ -159,11 +159,11 @@ theorem ci_replaced_by_attribution :
 /-- The reporter is NOT attributed the utterance — the expressive CI
     ('goddamned') does not project to the reporter. -/
 theorem reporter_not_attributed :
-    gdUttRel .reporter () .goddamnedKeys .actual = false := rfl
+    ¬ gdUttRel .reporter () .goddamnedKeys .actual := id
 
 /-- At-issue content is preserved: Jones spent an hour looking for his keys. -/
 theorem atIssue_preserved :
-    (gdCtx.applyMQ .goddamnedKeys).atIssue .actual = true := rfl
+    (gdCtx.applyMQ .goddamnedKeys).atIssue .actual := trivial
 
 end CIProjection
 
@@ -198,15 +198,15 @@ inductive PlutoSpeaker where
 
     For simplicity we just track whether Pluto is in the extension. -/
 def plutoPlanetInterp : QuotInterp PlutoExpr PlutoSpeaker PlutoWorld
-  | .planet, .pre2006,  .english, _ => true   -- Pluto IS a planet under old conventions
-  | .planet, .post2006, .english, _ => false   -- Pluto is NOT under new conventions
+  | .planet, .pre2006,  .english, _ => True   -- Pluto IS a planet under old conventions
+  | .planet, .post2006, .english, _ => False  -- Pluto is NOT under new conventions
 
 /-- Without diagonalization: ⟨planet⟩(wc)(s)(w) evaluates 'planet'
     relative to conventions at the world of context wc.
 
     If wc = post2006 (actual world), Pluto is not a planet at any w. -/
 theorem without_diag_post2006 (w : PlutoWorld) :
-    plutoPlanetInterp .planet .post2006 .english w = false := rfl
+    ¬ plutoPlanetInterp .planet .post2006 .english w := id
 
 /-- With diagonalization: ⟨planet⟩(w)(s)(w) evaluates 'planet' relative
     to conventions at the world of evaluation w.
@@ -216,10 +216,10 @@ theorem without_diag_post2006 (w : PlutoWorld) :
     counterfactual accesses worlds where conventions still classify
     Pluto as a planet. -/
 theorem with_diag_pre2006 :
-    diagonalize plutoPlanetInterp .english .planet .pre2006 = true := rfl
+    diagonalize plutoPlanetInterp .english .planet .pre2006 := trivial
 
 theorem with_diag_post2006 :
-    diagonalize plutoPlanetInterp .english .planet .post2006 = false := rfl
+    ¬ diagonalize plutoPlanetInterp .english .planet .post2006 := id
 
 /-- (4): "Pluto could have easily been a planet."
 
@@ -230,8 +230,8 @@ theorem with_diag_post2006 :
     because † shifts which conventions are consulted, not the context. -/
 theorem pluto_counterfactual_true :
     -- ∃ world where the diagonalized reading makes Pluto a planet
-    ∃ w : PlutoWorld, diagonalize plutoPlanetInterp .english .planet w = true :=
-  ⟨.pre2006, rfl⟩
+    ∃ w : PlutoWorld, diagonalize plutoPlanetInterp .english .planet w :=
+  ⟨.pre2006, trivial⟩
 
 end CMonsters
 
@@ -259,18 +259,18 @@ inductive MNSpeaker where
 /-- Both 'mongeese' and 'mongooses' pick out the same property
     (being a mongoose) — they have identical at-issue content. -/
 def mnInterp : QuotInterp MNExpr MNSpeaker MNWorld
-  | .mongeese,  _, _, _ => true   -- mongoose property (same extension)
-  | .mongooses, _, _, _ => true   -- mongoose property (same extension)
+  | .mongeese,  _, _, _ => True   -- mongoose property (same extension)
+  | .mongooses, _, _, _ => True   -- mongoose property (same extension)
 
 /-- Appropriateness: 'mongooses' is appropriate; 'mongeese' is not. -/
 def mnApprop : AppropStandard MNSpeaker MNExpr MNWorld
-  | _, .mongooses, _ => true
-  | _, .mongeese,  _ => false
+  | _, .mongooses, _ => True
+  | _, .mongeese,  _ => False
 
 /-- The mixed quotation context for metalinguistic negation. -/
 def mnCtx : MQContext MNWorld MNExpr MNSpeaker Unit :=
   { interp := mnInterp
-  , uttRel := λ _ _ _ _ => true  -- utterance attribution is not load-bearing here
+  , uttRel := λ _ _ _ _ => True  -- utterance attribution is not load-bearing here
   , sx := .genericEnglish
   , ux := ()
   , wc := .actual }
@@ -284,16 +284,17 @@ def mnCtx : MQContext MNWorld MNExpr MNSpeaker Unit :=
 
     Compositional chain: 𝔐 → 𝔄 → ↓ → ¬. -/
 theorem mongeese_metalinguistic_neg :
-    (TwoDimProp.neg (shunt (applyApprop mnApprop mnCtx.sx .mongeese (mnCtx.applyMQ .mongeese)))).atIssue .actual
-    = true := rfl
+    (TwoDimProp.neg (shunt (applyApprop mnApprop mnCtx.sx .mongeese (mnCtx.applyMQ .mongeese)))).atIssue .actual := by
+  intro ⟨_, h⟩
+  exact h
 
 /-- "I managed to trap two MONGOOSES"
 
     The correcting clause: at-issue content is true AND it's appropriate
     to use 'mongooses'. Compositional chain: 𝔐 → 𝔄 → ↓. -/
 theorem mongooses_appropriate :
-    (shunt (applyApprop mnApprop mnCtx.sx .mongooses (mnCtx.applyMQ .mongooses))).atIssue .actual
-    = true := rfl
+    (shunt (applyApprop mnApprop mnCtx.sx .mongooses (mnCtx.applyMQ .mongooses))).atIssue .actual :=
+  ⟨trivial, trivial⟩
 
 /-- Key prediction: the metalinguistic negation reading targets
     appropriateness, not truth conditions. Both expressions have the
@@ -330,19 +331,19 @@ inductive AthSpeaker where
 /-- Both speakers agree on the at-issue content: Secretariat has the
     relevant physical properties (broad athleticism). -/
 def athInterp : QuotInterp AthExpr AthSpeaker AthWorld
-  | .athlete, _, _, _ => true  -- Secretariat instantiates broad athleticism
+  | .athlete, _, _, _ => True  -- Secretariat instantiates broad athleticism
 
 /-- A's appropriateness standard: it IS appropriate to call a horse 'athlete'. -/
 def athAppropA : AppropStandard AthSpeaker AthExpr AthWorld
-  | _, .athlete, _ => true
+  | _, .athlete, _ => True
 
 /-- B's appropriateness standard: it is NOT appropriate to call a horse 'athlete'. -/
 def athAppropB : AppropStandard AthSpeaker AthExpr AthWorld
-  | _, .athlete, _ => false
+  | _, .athlete, _ => False
 
 /-- A's mixed quotation context. -/
 def athCtxA : MQContext AthWorld AthExpr AthSpeaker Unit :=
-  { interp := athInterp, uttRel := λ _ _ _ _ => true
+  { interp := athInterp, uttRel := λ _ _ _ _ => True
   , sx := .speakerA, ux := (), wc := .broad }
 
 /-- (6) A: "Secretariat is an athlete."
@@ -351,8 +352,8 @@ def athCtxA : MQContext AthWorld AthExpr AthSpeaker Unit :=
     (Secretariat has broad athleticism) ∧ (appropriate to use 'athlete').
     Under A's appropriateness standard, both conjuncts hold. -/
 theorem speakerA_assertion :
-    (shunt (applyApprop athAppropA athCtxA.sx .athlete (athCtxA.applyMQ .athlete))).atIssue .broad
-    = true := rfl
+    (shunt (applyApprop athAppropA athCtxA.sx .athlete (athCtxA.applyMQ .athlete))).atIssue .broad :=
+  ⟨trivial, trivial⟩
 
 /-- (6) B: "No, Secretariat is not an athlete."
 
@@ -361,16 +362,17 @@ theorem speakerA_assertion :
     appropriateness conjunct is false, so the negation is true —
     even though B agrees Secretariat has broad athleticism. -/
 theorem speakerB_denial :
-    (TwoDimProp.neg (shunt (applyApprop athAppropB athCtxA.sx .athlete (athCtxA.applyMQ .athlete)))).atIssue .broad
-    = true := rfl
+    (TwoDimProp.neg (shunt (applyApprop athAppropB athCtxA.sx .athlete (athCtxA.applyMQ .athlete)))).atIssue .broad := by
+  intro ⟨_, h⟩
+  exact h
 
-/-- The disagreement is genuine: A's assertion and B's denial have
-    incompatible truth values, because they operate under different
+/-- The disagreement is genuine: A's assertion at-issue holds while B's
+    denial at-issue holds, because they operate under different
     appropriateness standards for the same expression. -/
 theorem genuine_disagreement :
-    (shunt (applyApprop athAppropA athCtxA.sx .athlete (athCtxA.applyMQ .athlete))).atIssue .broad
-    ≠ (shunt (applyApprop athAppropB athCtxA.sx .athlete (athCtxA.applyMQ .athlete))).atIssue .broad := by
-  decide
+    (shunt (applyApprop athAppropA athCtxA.sx .athlete (athCtxA.applyMQ .athlete))).atIssue .broad ∧
+    (TwoDimProp.neg (shunt (applyApprop athAppropB athCtxA.sx .athlete (athCtxA.applyMQ .athlete)))).atIssue .broad :=
+  ⟨speakerA_assertion, speakerB_denial⟩
 
 end MetalinguisticNegotiation
 
@@ -403,14 +405,14 @@ inductive VirWorld where
     Biologist: viruses are alive (genetic material criterion)
     Layperson: viruses are not alive (5 kingdoms criterion) -/
 def virInterp : QuotInterp VirExpr VirSpeaker VirWorld
-  | .alive, _, .biologist, _ => true   -- alive under biological criterion
-  | .alive, _, .layperson, _ => false  -- not alive under folk criterion
+  | .alive, _, .biologist, _ => True   -- alive under biological criterion
+  | .alive, _, .layperson, _ => False  -- not alive under folk criterion
 
 /-- MQ context parameterized by speaker — "in a sense" quantifies over
     the speaker variable of 𝔐, binding its free discourse anaphor. -/
 def virMQCtx (s : VirSpeaker) : MQContext VirWorld VirExpr VirSpeaker Unit :=
   { interp := virInterp
-  , uttRel := λ _ _ _ _ => true
+  , uttRel := λ _ _ _ _ => True
   , sx := s
   , ux := ()
   , wc := .actual }
@@ -425,19 +427,18 @@ def virMQCtx (s : VirSpeaker) : MQContext VirWorld VirExpr VirSpeaker Unit :=
     The biologist provides the witness: under their use of 'alive',
     viruses are alive. -/
 theorem in_a_sense_alive :
-    ∃ s : VirSpeaker, ((virMQCtx s).applyMQ .alive).atIssue .actual = true :=
-  ⟨.biologist, rfl⟩
+    ∃ s : VirSpeaker, ((virMQCtx s).applyMQ .alive).atIssue .actual :=
+  ⟨.biologist, trivial⟩
 
 /-- The layperson's use of 'alive' does not include viruses. -/
 theorem not_alive_layperson :
-    ((virMQCtx .layperson).applyMQ .alive).atIssue .actual = false := rfl
+    ¬ ((virMQCtx .layperson).applyMQ .alive).atIssue .actual := id
 
 /-- Not ALL senses make viruses alive — the existential is non-trivial. -/
 theorem not_all_senses :
-    ¬ (∀ s : VirSpeaker, ((virMQCtx s).applyMQ .alive).atIssue .actual = true) := by
+    ¬ (∀ s : VirSpeaker, ((virMQCtx s).applyMQ .alive).atIssue .actual) := by
   intro h
-  have := h .layperson
-  simp [virMQCtx, MQContext.applyMQ, virInterp] at this
+  exact not_alive_layperson (h .layperson)
 
 end InASense
 

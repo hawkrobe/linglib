@@ -50,7 +50,6 @@ open Semantics.Quotation.Demonstration
 open Pragmatics.Assertion.QuotationFBOntology
 open Semantics.Dynamic.State
 open Semantics.Events
-open Core.Proposition
 
 -- ════════════════════════════════════════════════════
 -- § 1. Empirical Taxonomy

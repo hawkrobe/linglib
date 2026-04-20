@@ -52,18 +52,26 @@ inductive Raven where
   deriving DecidableEq, Repr
 
 /-- All entities are ravens. -/
-def isRaven : Raven → Bool := λ _ => true
+def isRaven : Raven → Prop := fun _ => True
+
+instance : DecidablePred isRaven := fun _ => isTrue trivial
 
 /-- Only the albino raven is an albino raven. -/
-def isAlbinoRaven : Raven → Bool
-  | .albino => true
-  | _ => false
+def isAlbinoRaven : Raven → Prop
+  | .albino => True
+  | _ => False
+
+instance : DecidablePred isAlbinoRaven :=
+  fun e => by cases e <;> unfold isAlbinoRaven <;> infer_instance
 
 /-- Normal ravens are black; the albino is not. -/
-def isBlack : Raven → Bool
-  | .normal1 => true
-  | .normal2 => true
-  | .albino => false
+def isBlack : Raven → Prop
+  | .normal1 => True
+  | .normal2 => True
+  | .albino => False
+
+instance : DecidablePred isBlack :=
+  fun e => by cases e <;> unfold isBlack <;> infer_instance
 
 /-- Normal ravens for the "raven" restrictor class: the non-albino ones.
     These are the output of `NormalityOrder.optimal` applied to ravens. -/
@@ -82,7 +90,7 @@ def ravensAreBlack : GenericSentence Raven :=
 
 /-- "Albino ravens aren't black" -/
 def albinoRavensArentBlack : GenericSentence Raven :=
-  ⟨isAlbinoRaven, λ e => !isBlack e, normalAlbinoRavens⟩
+  ⟨isAlbinoRaven, fun e => ¬ isBlack e, normalAlbinoRavens⟩
 
 
 -- ═══ Sobel Sequence ═══
@@ -91,20 +99,8 @@ def albinoRavensArentBlack : GenericSentence Raven :=
 def sobelSequence : List (GenericSentence Raven) :=
   [ravensAreBlack, albinoRavensArentBlack]
 
--- Step 1: "Ravens are black" against empty horizon.
--- Horizon is empty → expand with normal ravens [normal1, normal2].
--- All ravens on horizon are black → TRUE.
-#guard (evalGeneric [] ravensAreBlack).2 = true
-
--- Step 2: "Albino ravens aren't black" against [normal1, normal2].
--- No albino ravens on horizon → expand with [albino].
--- albino is not black → TRUE.
-#guard (evalGeneric [.normal1, .normal2] albinoRavensArentBlack).2 = true
-
 -- The full Sobel sequence is consistent.
-#guard isConsistent sobelSequence = true
-
-theorem sobel_consistent : isConsistent sobelSequence = true := by native_decide
+theorem sobel_consistent : isConsistent sobelSequence := by decide
 
 
 -- ═══ Reverse Sobel Sequence ═══
@@ -113,23 +109,11 @@ theorem sobel_consistent : isConsistent sobelSequence = true := by native_decide
 def reverseSobelSequence : List (GenericSentence Raven) :=
   [albinoRavensArentBlack, ravensAreBlack]
 
--- Step 1: "Albino ravens aren't black" against empty horizon.
--- No albino ravens → expand with [albino].
--- albino is not black → TRUE.
-#guard (evalGeneric [] albinoRavensArentBlack).2 = true
-
--- Step 2: "Ravens are black" against [albino].
--- albino IS a raven → hasRestrictor = true → NO expansion.
--- Is albino black? NO → FALSE.
 -- This is the key prediction: the albino raven, made salient by the
 -- first generic, poisons the evaluation of the second generic.
-#guard (evalGeneric [.albino] ravensAreBlack).2 = false
-
--- The reverse Sobel sequence is inconsistent.
-#guard isConsistent reverseSobelSequence = false
 
 theorem reverse_sobel_inconsistent :
-    isConsistent reverseSobelSequence = false := by native_decide
+    ¬ isConsistent reverseSobelSequence := by decide
 
 
 -- ═══ Mixed Generic Sequences ═══
@@ -140,25 +124,31 @@ inductive Animal where
   | maleLion | femaleLion
   deriving DecidableEq, Repr
 
-def hasMane : Animal → Bool
-  | .maleLion => true
-  | .femaleLion => false
+def hasMane : Animal → Prop
+  | .maleLion => True
+  | .femaleLion => False
 
-def givesLiveBirth : Animal → Bool
-  | .maleLion => false
-  | .femaleLion => true
+instance : DecidablePred hasMane :=
+  fun e => by cases e <;> unfold hasMane <;> infer_instance
+
+def givesLiveBirth : Animal → Prop
+  | .maleLion => False
+  | .femaleLion => True
+
+instance : DecidablePred givesLiveBirth :=
+  fun e => by cases e <;> unfold givesLiveBirth <;> infer_instance
 
 /-- "Lions have manes" — restrictor incorporates Kirkpatrick's contextual
     variable C = alternatives to having a mane (sexually-selected traits).
     Only male lions are in the domain of "mane alternatives." -/
 def lionsHaveManes : GenericSentence Animal :=
-  ⟨λ e => e == .maleLion, hasMane, [.maleLion]⟩
+  ⟨fun e => e = .maleLion, hasMane, [.maleLion]⟩
 
 /-- "Lions give birth to live young" — restrictor incorporates C =
     alternatives to giving birth (modes of reproduction).
     Only female lions are in the domain of "reproduction alternatives." -/
 def lionsGiveBirth : GenericSentence Animal :=
-  ⟨λ e => e == .femaleLion, givesLiveBirth, [.femaleLion]⟩
+  ⟨fun e => e = .femaleLion, givesLiveBirth, [.femaleLion]⟩
 
 /-- Mixed sequence: both generics use different contextual variables C,
     so the first generic's salient individuals don't satisfy the second
@@ -166,17 +156,15 @@ def lionsGiveBirth : GenericSentence Animal :=
 def mixedSequence : List (GenericSentence Animal) :=
   [lionsHaveManes, lionsGiveBirth]
 
-#guard isConsistent mixedSequence = true
-
 /-- Mixed generic sequences are consistent: the two generics don't
     interfere because they have non-overlapping restrictors (different
     contextual variables C). -/
-theorem mixed_consistent : isConsistent mixedSequence = true := by native_decide
+theorem mixed_consistent : isConsistent mixedSequence := by decide
 
 /-- The reverse mixed sequence is also consistent — mixed sequences
     are symmetric because the restrictors don't overlap. -/
 theorem mixed_reverse_consistent :
-    isConsistent [lionsGiveBirth, lionsHaveManes] = true := by native_decide
+    isConsistent [lionsGiveBirth, lionsHaveManes] := by decide
 
 
 -- ═══ General Theorem Instantiations ═══
@@ -185,17 +173,17 @@ theorem mixed_reverse_consistent :
     This derives `sobel_consistent` from the paper's general argument (§5.1)
     rather than finite model checking. -/
 theorem sobel_consistent_general :
-    isConsistent sobelSequence = true :=
+    isConsistent sobelSequence :=
   sobel_pair_consistent ravensAreBlack albinoRavensArentBlack
     (by decide) (by decide) (by decide) (by decide)
 
 /-- The raven reverse Sobel pair satisfies the general inconsistency theorem.
     This derives `reverse_sobel_inconsistent` from the general argument (§5.2). -/
 theorem reverse_sobel_inconsistent_general :
-    isConsistent reverseSobelSequence = false :=
+    ¬ isConsistent reverseSobelSequence :=
   reverse_sobel_pair_inconsistent ravensAreBlack albinoRavensArentBlack
-    (by decide) (by decide)
-    (by intro e; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack, isAlbinoRaven, isRaven])
+    (by decide) (by intro e he; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack,
+        isAlbinoRaven, isRaven] at he ⊢)
     (by decide) (by decide)
 
 
@@ -207,29 +195,34 @@ inductive Person where
   | goodTeacher1 | goodTeacher2 | badTeacher
   deriving DecidableEq, Repr
 
-def isTeacher : Person → Bool := fun _ => true
-def isBadTeacher : Person → Bool
-  | .badTeacher => true
-  | _ => false
-def caresForStudents : Person → Bool
-  | .goodTeacher1 => true
-  | .goodTeacher2 => true
-  | .badTeacher => false
+def isTeacher : Person → Prop := fun _ => True
+
+instance : DecidablePred isTeacher := fun _ => isTrue trivial
+
+def isBadTeacher : Person → Prop
+  | .badTeacher => True
+  | _ => False
+
+instance : DecidablePred isBadTeacher :=
+  fun e => by cases e <;> unfold isBadTeacher <;> infer_instance
+
+def caresForStudents : Person → Prop
+  | .goodTeacher1 => True
+  | .goodTeacher2 => True
+  | .badTeacher => False
+
+instance : DecidablePred caresForStudents :=
+  fun e => by cases e <;> unfold caresForStudents <;> infer_instance
 
 def teachersCare : GenericSentence Person :=
   ⟨isTeacher, caresForStudents, [.goodTeacher1, .goodTeacher2]⟩
 def badTeachersDontCare : GenericSentence Person :=
-  ⟨isBadTeacher, fun e => !caresForStudents e, [.badTeacher]⟩
-
--- (4a) "Teachers care for their students; but bad teachers don't." — felicitous
-#guard isConsistent [teachersCare, badTeachersDontCare] = true
--- (4b) "#Bad teachers don't care for their students; but teachers do." — infelicitous
-#guard isConsistent [badTeachersDontCare, teachersCare] = false
+  ⟨isBadTeacher, fun e => ¬ caresForStudents e, [.badTeacher]⟩
 
 theorem teachers_sobel_consistent :
-    isConsistent [teachersCare, badTeachersDontCare] = true := by native_decide
+    isConsistent [teachersCare, badTeachersDontCare] := by decide
 theorem teachers_reverse_inconsistent :
-    isConsistent [badTeachersDontCare, teachersCare] = false := by native_decide
+    ¬ isConsistent [badTeachersDontCare, teachersCare] := by decide
 
 
 -- ═══ Static-Dynamic Bridge ═══
@@ -242,22 +235,23 @@ theorem teachers_reverse_inconsistent :
     The dynamic theory diverges from statics only in multi-sentence
     discourse, where prior generics have expanded the horizon. -/
 theorem static_both_true_independently :
-    (evalGeneric [] ravensAreBlack).2 = true ∧
-    (evalGeneric [] albinoRavensArentBlack).2 = true := by
-  exact ⟨by native_decide, by native_decide⟩
+    (evalGeneric [] ravensAreBlack).2 ∧
+    (evalGeneric [] albinoRavensArentBlack).2 := by
+  exact ⟨by decide, by decide⟩
 
 /-- The static-dynamic bridge instantiated for the raven model:
-    discourse-initial evaluation of "Ravens are black" equals the
-    static truth condition (all normal ravens satisfy the scope). -/
+    discourse-initial evaluation of "Ravens are black" reduces to a
+    restricted universal over normal ravens. -/
 theorem ravens_static_dynamic_bridge :
-    (evalGeneric [] ravensAreBlack).2 =
-    (normalRavens.filter isRaven).all isBlack :=
+    (evalGeneric [] ravensAreBlack).2 ↔
+    ∀ e ∈ ravensAreBlack.normalInstances,
+      ravensAreBlack.restrictor e → ravensAreBlack.scope e :=
   evalGeneric_empty_eq_static ravensAreBlack
 
 /-- Yet the order matters for the dynamic evaluation. -/
 theorem order_matters :
-    isConsistent sobelSequence ≠ isConsistent reverseSobelSequence := by
-  native_decide
+    isConsistent sobelSequence ∧ ¬ isConsistent reverseSobelSequence := by
+  exact ⟨by decide, by decide⟩
 
 
 -- ═══ Horizon Evolution: Raven Model ═══
@@ -278,8 +272,8 @@ theorem raven_reverse_horizons :
     normalAlbinoRavens :=
   sobel_reverse_horizons ravensAreBlack albinoRavensArentBlack
     (by decide)
-    (by intro e; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack,
-         isAlbinoRaven, isRaven])
+    (by intro e he; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack,
+         isAlbinoRaven, isRaven] at he ⊢)
     (by decide)
 
 /-- The raven model witnesses horizon non-commutativity:
@@ -290,8 +284,8 @@ theorem raven_horizon_noncommutative :
     horizonStep ravensAreBlack (horizonStep albinoRavensArentBlack []) :=
   sobel_horizon_noncommutative ravensAreBlack albinoRavensArentBlack
     (by decide) (by decide)
-    (by intro e; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack,
-         isAlbinoRaven, isRaven])
+    (by intro e he; cases e <;> simp [albinoRavensArentBlack, ravensAreBlack,
+         isAlbinoRaven, isRaven] at he ⊢)
     (by decide) (by decide)
 
 
@@ -314,8 +308,8 @@ theorem albino_idempotent (horizon : List Raven) :
 /-- The mixed lion sequence derives from the structural non-interference
     theorem rather than finite model checking. -/
 theorem mixed_consistent_structural :
-    isConsistent [lionsHaveManes, lionsGiveBirth] = true ∧
-    isConsistent [lionsGiveBirth, lionsHaveManes] = true :=
+    isConsistent [lionsHaveManes, lionsGiveBirth] ∧
+    isConsistent [lionsGiveBirth, lionsHaveManes] :=
   disjoint_pair_consistent lionsHaveManes lionsGiveBirth
     (by decide) (by decide) (by decide) (by decide) (by decide) (by decide)
 
@@ -348,41 +342,47 @@ def allRavens : List Raven := [.normal1, .normal2, .albino]
     normality intuition that @cite{kirkpatrick-2024}'s theory relies on:
     normal-colored ravens are the "default" for raven-kind.
 
-    `ravenNormality e₁ e₂ = true` means `e₁` is at least as normal as `e₂`. -/
-def ravenNormality : Raven → Raven → Bool
-  | .albino, .normal1 => false
-  | .albino, .normal2 => false
-  | _, _ => true
+    `ravenNormality e₁ e₂` means `e₁` is at least as normal as `e₂`. -/
+def ravenNormality : Raven → Raven → Prop
+  | .albino, .normal1 => False
+  | .albino, .normal2 => False
+  | _, _ => True
+
+instance : DecidableRel ravenNormality :=
+  fun a b => by cases a <;> cases b <;> unfold ravenNormality <;> infer_instance
 
 /-- The stipulated `normalRavens` are exactly the optimal ravens under
     `ravenNormality`. This grounds the raven model: the normal instances
     are derived from a normality ordering, not ad hoc. -/
 theorem ravensAreBlack_grounded :
     (GenericSentence.fromOrder isRaven isBlack allRavens ravenNormality).normalInstances =
-    normalRavens := by native_decide
+    normalRavens := by decide
 
 /-- The stipulated `normalAlbinoRavens` are the optimal albino ravens.
     Within the albino-restricted domain, the albino raven is trivially
     optimal (it's the only member). -/
 theorem albinoRavensArentBlack_grounded :
-    (GenericSentence.fromOrder isAlbinoRaven (fun e => !isBlack e)
+    (GenericSentence.fromOrder isAlbinoRaven (fun e => ¬ isBlack e)
       allRavens ravenNormality).normalInstances =
-    normalAlbinoRavens := by native_decide
+    normalAlbinoRavens := by decide
 
 
 -- ═══ Binary Normalcy Grounding (fromPredicate) ═══
 
 /-- Binary normalcy predicate: normal ravens are not albino. -/
-def isNormalRaven : Raven → Bool
-  | .albino => false
-  | _ => true
+def isNormalRaven : Raven → Prop
+  | .albino => False
+  | _ => True
+
+instance : DecidablePred isNormalRaven :=
+  fun e => by cases e <;> unfold isNormalRaven <;> infer_instance
 
 /-- `fromPredicate` constructs the same generic sentence as the hand-stipulated
     `ravensAreBlack`, grounding `normalInstances` via a binary normalcy predicate
     rather than a normality ordering. -/
 theorem ravensAreBlack_fromPredicate :
     (GenericSentence.fromPredicate isRaven isBlack allRavens isNormalRaven).normalInstances =
-    normalRavens := by native_decide
+    normalRavens := by decide
 
 /-- `fromPredicate` and `fromOrder` agree on the raven model: both constructors
     derive the same normal instances from their respective primitives.
@@ -393,7 +393,7 @@ theorem ravensAreBlack_fromPredicate :
 theorem fromPredicate_agrees_fromOrder :
     (GenericSentence.fromPredicate isRaven isBlack allRavens isNormalRaven).normalInstances =
     (GenericSentence.fromOrder isRaven isBlack allRavens ravenNormality).normalInstances := by
-  native_decide
+  decide
 
 
 -- ═══ Static Theory Impossibility (§3) ═══
@@ -412,9 +412,9 @@ determined independently of discourse position is trivially commutative. -/
 
 /-- Any state-independent evaluation assigns the same conjunction
     truth value regardless of presentation order. -/
-theorem static_order_irrelevant {α : Type} (truth : α → Bool) (g₁ g₂ : α) :
-    (truth g₁ && truth g₂) = (truth g₂ && truth g₁) := by
-  cases truth g₁ <;> simp
+theorem static_order_irrelevant {α : Type} (truth : α → Prop) (g₁ g₂ : α) :
+    (truth g₁ ∧ truth g₂) ↔ (truth g₂ ∧ truth g₁) :=
+  And.comm
 
 /-- Both raven generics are true when evaluated discourse-initially
     (= statically), yet the dynamic theory distinguishes the orders.
@@ -424,13 +424,13 @@ theorem static_order_irrelevant {α : Type} (truth : α → Bool) (g₁ g₂ : �
     theory captures via horizon expansion and blocking. -/
 theorem static_vs_dynamic_divergence :
     -- Both true in isolation (static prediction: both orders felicitous)
-    (evalGeneric [] ravensAreBlack).2 = true ∧
-    (evalGeneric [] albinoRavensArentBlack).2 = true ∧
+    (evalGeneric [] ravensAreBlack).2 ∧
+    (evalGeneric [] albinoRavensArentBlack).2 ∧
     -- Dynamic: forward Sobel is consistent
-    isConsistent sobelSequence = true ∧
+    isConsistent sobelSequence ∧
     -- Dynamic: reverse Sobel is inconsistent
-    isConsistent reverseSobelSequence = false :=
-  ⟨by native_decide, by native_decide, by native_decide, by native_decide⟩
+    ¬ isConsistent reverseSobelSequence :=
+  ⟨by decide, by decide, by decide, by decide⟩
 
 
 end Kirkpatrick2024

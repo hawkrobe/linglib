@@ -31,12 +31,11 @@ Following @cite{karttunen-1973} and @cite{heim-1983}:
 -/
 
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Fintype.Basic
 
 namespace Phenomena.Presupposition
 
 open Core.Presupposition
-open Core.Proposition
 
 
 /--
@@ -51,9 +50,9 @@ inductive KingWorld where
   | noKing : KingWorld
   deriving DecidableEq, Repr, Inhabited
 
-instance : FiniteWorlds KingWorld where
-  worlds := [.kingExists, .noKing]
-  complete := λ w => by cases w <;> simp
+instance : Fintype KingWorld where
+  elems := {.kingExists, .noKing}
+  complete := λ w => by cases w <;> decide
 
 /--
 "The king exists" — a presuppositionless assertion.
@@ -122,9 +121,9 @@ inductive RainWorld where
   | notRaining         -- It's not raining
   deriving DecidableEq, Repr, Inhabited
 
-instance : FiniteWorlds RainWorld where
-  worlds := [.rainingBelieved, .rainingNotBelieved, .notRaining]
-  complete := λ w => by cases w <;> simp
+instance : Fintype RainWorld where
+  elems := {.rainingBelieved, .rainingNotBelieved, .notRaining}
+  complete := λ w => by cases w <;> decide
 
 /--
 "It's raining" — no presupposition.
@@ -175,9 +174,9 @@ inductive SmokingWorld where
   | neverSmoked       -- John never smoked
   deriving DecidableEq, Repr, Inhabited
 
-instance : FiniteWorlds SmokingWorld where
-  worlds := [.usedToNowQuit, .usedToStillDoes, .neverSmoked]
-  complete := λ w => by cases w <;> simp
+instance : Fintype SmokingWorld where
+  elems := {.usedToNowQuit, .usedToStillDoes, .neverSmoked}
+  complete := λ w => by cases w <;> decide
 
 /--
 "John stopped smoking" — presupposes prior smoking.

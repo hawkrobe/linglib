@@ -31,12 +31,13 @@ that can be genuinely supposed without prior discourse.
 
 -/
 
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 namespace Semantics.Conditionals
 
-open Core.Proposition
 open Semantics.Dynamic.State
 
 -- Left-Nested Conditional Structure
@@ -53,11 +54,11 @@ Example: "If Kripke was there if Strawson was, Anscomb was there"
 -/
 structure LNC (W : Type*) where
   /-- A: The inner antecedent -/
-  innerAntecedent : Prop' W
+  innerAntecedent : Set W
   /-- B: The inner consequent -/
-  innerConsequent : Prop' W
+  innerConsequent : Set W
   /-- C: The outer consequent -/
-  outerConsequent : Prop' W
+  outerConsequent : Set W
 
 namespace LNC
 
@@ -68,7 +69,7 @@ Get the inner conditional "B if A" as a proposition.
 
 This is the outer antecedent of the full LNC.
 -/
-def innerConditional (lnc : LNC W) : Prop' W :=
+def innerConditional (lnc : LNC W) : Set W :=
   materialImp lnc.innerAntecedent lnc.innerConsequent
 
 /--
@@ -76,7 +77,7 @@ Full LNC semantics using material implication.
 
 "If (B if A), C" = (A → B) → C
 -/
-def semantics (lnc : LNC W) : Prop' W :=
+def semantics (lnc : LNC W) : Set W :=
   materialImp (lnc.innerConditional) lnc.outerConsequent
 
 /--
@@ -85,7 +86,7 @@ Full LNC semantics using Kratzer-style conditionals.
 The outer conditional uses the Kratzer semantics with modal base and
 ordering source, while the inner conditional is the restrictor.
 -/
-def kratzerSemantics (ctx : KratzerContext W) (lnc : LNC W) : Prop' W :=
+def kratzerSemantics (ctx : KratzerContext W) (lnc : LNC W) : Set W :=
   kratzerConditional ctx lnc.innerConditional lnc.outerConsequent
 
 end LNC
@@ -312,21 +313,21 @@ inductive PartyWorld where
   | none_      -- No one attended
   deriving DecidableEq, Repr, Inhabited
 
-instance : Core.Proposition.FiniteWorlds PartyWorld where
-  worlds := [.sOnly, .kOnly, .aOnly, .sk, .sa, .ka, .ska, .none_]
-  complete := λ w => by cases w <;> simp
+instance : Fintype PartyWorld where
+  elems := {.sOnly, .kOnly, .aOnly, .sk, .sa, .ka, .ska, .none_}
+  complete := λ w => by cases w <;> decide
 
 namespace PartyWorld
 
-def strawsonAttended : Prop' PartyWorld
+def strawsonAttended : Set PartyWorld
   | .sOnly | .sk | .sa | .ska => True
   | _ => False
 
-def kripkeAttended : Prop' PartyWorld
+def kripkeAttended : Set PartyWorld
   | .kOnly | .sk | .ka | .ska => True
   | _ => False
 
-def anscombAttended : Prop' PartyWorld
+def anscombAttended : Set PartyWorld
   | .aOnly | .sa | .ka | .ska => True
   | _ => False
 

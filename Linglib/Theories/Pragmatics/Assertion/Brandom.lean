@@ -38,7 +38,6 @@ namespace Pragmatics.Assertion.Brandom
 
 open Core.Discourse.Commitment (CommitmentSlate)
 open Core.CommonGround (ContextSet CG)
-open Core.Proposition (Prop')
 
 -- ════════════════════════════════════════════════════
 -- § 1. Normative Status
@@ -65,11 +64,11 @@ def empty : NormativeStatus W :=
   ⟨CommitmentSlate.empty, CommitmentSlate.empty⟩
 
 /-- Add a commitment (the agent publicly commits to p). -/
-def addCommitment (ns : NormativeStatus W) (p : Prop' W) : NormativeStatus W :=
+def addCommitment (ns : NormativeStatus W) (p : Set W) : NormativeStatus W :=
   { ns with commitments := ns.commitments.add p }
 
 /-- Add an entitlement (the agent has grounds for p). -/
-def addEntitlement (ns : NormativeStatus W) (p : Prop' W) : NormativeStatus W :=
+def addEntitlement (ns : NormativeStatus W) (p : Set W) : NormativeStatus W :=
   { ns with entitlements := ns.entitlements.add p }
 
 end NormativeStatus
@@ -133,7 +132,7 @@ def empty : BrandomState W := ⟨Scorecard.empty⟩
     @cite{brandom-1994}: asserting p has two effects:
     1. The speaker undertakes commitment to p
     2. The speaker authorizes others to re-assert p (default entitlement) -/
-def assert (s : BrandomState W) (p : Prop' W) : BrandomState W :=
+def assert (s : BrandomState W) (p : Set W) : BrandomState W :=
   let card' := λ keeper scorer =>
     if keeper == .speaker && scorer == .speaker then
       (s.scorecard.card keeper scorer).addCommitment p |>.addEntitlement p
@@ -159,10 +158,13 @@ def effectiveContextSet (s : BrandomState W) : ContextSet W :=
 
 /-- Stability: the state is stable when all commitments have
     matching entitlements (no ungrounded assertions). -/
-def isStable (s : BrandomState W) : Bool :=
+def isStable (s : BrandomState W) : Prop :=
   let spkrStatus := s.scorecard.card .speaker .speaker
   spkrStatus.commitments.commitments.length ≤
     spkrStatus.entitlements.commitments.length
+
+instance (s : BrandomState W) : Decidable (isStable s) :=
+  inferInstanceAs (Decidable (_ ≤ _))
 
 end BrandomState
 
@@ -179,7 +181,7 @@ structure Challenge (W : Type*) where
   /-- Who issues the challenge -/
   challenger : BAgent
   /-- The proposition challenged -/
-  proposition : Prop' W
+  proposition : Set W
 
 -- ════════════════════════════════════════════════════
 -- § 5. Inferential Closure
@@ -193,7 +195,7 @@ structure Challenge (W : Type*) where
 
     TODO: full closure requires a fixpoint computation. -/
 def inferentialClosure {W : Type*} (cs : CommitmentSlate W)
-    (rules : List (Prop' W × Prop' W)) : CommitmentSlate W :=
+    (rules : List (Set W × Set W)) : CommitmentSlate W :=
   rules.foldl (λ acc ⟨_antecedent, consequent⟩ => acc.add consequent) cs
 
 -- ════════════════════════════════════════════════════

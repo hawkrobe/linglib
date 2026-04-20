@@ -496,6 +496,15 @@ theorem sUnion_alt_subset_info (P : Issue W) :
     intro q hq hpq
     exact Set.Subset.antisymm hpq (hmax hq hpq)
 
+/-- **Membership in `alt (P ⊓ Q)`**: the alternatives of the
+    inquisitive conjunction are exactly the maximal elements of
+    `P.props ∩ Q.props`. Direct corollary of `mem_alt_iff_maximal` and
+    the pointwise definition of `⊓` on `props`. -/
+theorem mem_alt_inf_iff {P Q : Issue W} {q : Set W} :
+    q ∈ alt (P ⊓ Q) ↔ Maximal (fun p => p ∈ P.props ∧ p ∈ Q.props) q := by
+  rw [mem_alt_iff_maximal]
+  rfl
+
 /-- A `declarative p` content has exactly one alternative — `p`
     itself, the unique maximal subset of `p`. -/
 @[simp] theorem alt_declarative (p : Set W) : alt (declarative p) = {p} := by

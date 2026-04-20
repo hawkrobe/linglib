@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 
 /-!
 # Modal Concord Bridge — @cite{rotter-liu-2025}
@@ -32,7 +32,7 @@ patterns with negative concord (solidarity), necessity MC contrasts (competence)
 namespace Phenomena.Modality.ModalConcord.LiuRotter2025.Bridge
 
 open Phenomena.Modality.ModalConcord.LiuRotter2025
-open Fragments.English.FunctionWords
+open Fragments.English.Auxiliaries
 open Core.Modality (ModalForce ModalItem ConcordType ConcordType.fromModalForce)
 open Core.Register (SocialIndex)
 
@@ -89,11 +89,11 @@ theorem all_pairs_share_force :
     they share the same register level. Concord here is not register mixing
     but force agreement between syntactically distinct categories. -/
 theorem must_certainly_same_register :
-    must.toModalItem.areRegisterVariants certainly.toModalItem = false := by native_decide
+    ¬ must.toModalItem.areRegisterVariants certainly.toModalItem := by decide
 
 /-- *may* (neutral) and *possibly* (neutral) are also not register variants. -/
 theorem may_possibly_same_register :
-    may.toModalItem.areRegisterVariants possibly.toModalItem = false := by native_decide
+    ¬ may.toModalItem.areRegisterVariants possibly.toModalItem := by decide
 
 /-! ## Section B: Force determines commitment direction
 

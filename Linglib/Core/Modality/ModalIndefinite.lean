@@ -126,11 +126,17 @@ structure ModalIndefiniteEntry where
   source : String := ""
   deriving Repr
 
-def ModalIndefiniteEntry.hasEpistemic (e : ModalIndefiniteEntry) : Bool :=
-  e.flavors.any (· == .epistemic)
+def ModalIndefiniteEntry.hasEpistemic (e : ModalIndefiniteEntry) : Prop :=
+  .epistemic ∈ e.flavors
 
-def ModalIndefiniteEntry.hasCircumstantial (e : ModalIndefiniteEntry) : Bool :=
-  e.flavors.any (· == .circumstantial)
+instance (e : ModalIndefiniteEntry) : Decidable e.hasEpistemic :=
+  inferInstanceAs (Decidable (_ ∈ _))
+
+def ModalIndefiniteEntry.hasCircumstantial (e : ModalIndefiniteEntry) : Prop :=
+  .circumstantial ∈ e.flavors
+
+instance (e : ModalIndefiniteEntry) : Decidable e.hasCircumstantial :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
 
 end Core.ModalIndefinite

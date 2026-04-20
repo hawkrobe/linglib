@@ -109,14 +109,16 @@ def AlignmentType.marksPatient : AlignmentType → Bool
   | _           => false
 
 /-- Whether this alignment groups S with A (nominative-accusative pattern). -/
-def AlignmentType.isNomAcc : AlignmentType → Bool
-  | .accusative => true
-  | _           => false
+def AlignmentType.IsNomAcc (a : AlignmentType) : Prop := a = .accusative
+
+instance : DecidablePred AlignmentType.IsNomAcc :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- Whether this alignment groups S with P (absolutive-ergative pattern). -/
-def AlignmentType.isAbsErg : AlignmentType → Bool
-  | .ergative => true
-  | _         => false
+def AlignmentType.IsAbsErg (a : AlignmentType) : Prop := a = .ergative
+
+instance : DecidablePred AlignmentType.IsAbsErg :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 -- ============================================================================
 -- WALS Converter Functions
@@ -1213,8 +1215,8 @@ theorem dargwa_alignment_family_bridge :
 /-- Japanese: Fragment case inventory contains NOM and ACC →
     Typology says accusative NP alignment. -/
 theorem japanese_fragment_bridge :
-    Core.Case.nom ∈ Fragments.Japanese.Case.caseInventory ∧
-    Core.Case.acc ∈ Fragments.Japanese.Case.caseInventory ∧
+    .nom ∈ Fragments.Japanese.Case.caseInventory ∧
+    .acc ∈ Fragments.Japanese.Case.caseInventory ∧
     japanese.npAlignment = .accusative := ⟨by decide, by decide, rfl⟩
 
 /-- Hindi: Fragment split-ergative system perfective→ERG matches

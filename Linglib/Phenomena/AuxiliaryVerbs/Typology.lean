@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.UD
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Finnish.Negation
 import Linglib.Fragments.Doyayo.AuxiliaryVerbs
 import Linglib.Fragments.Gorum.AuxiliaryVerbs
@@ -219,10 +219,10 @@ theorem lexHeaded_lv_finite :
     InflPattern.lexHeaded.lvVerbForm = UD.VerbForm.Fin := rfl
 
 /-! ## Bridge to FunctionWords -/
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- English modals are aux-headed: they take AuxType.modal and the LV is bare. -/
 theorem english_modals_are_aux_type :
-    Fragments.English.FunctionWords.can.auxType = AuxType.modal := rfl
+    Fragments.English.Auxiliaries.can.auxType = AuxType.modal := rfl
 
 /-! ## Per-datum verification
 

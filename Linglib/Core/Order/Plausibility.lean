@@ -1,5 +1,5 @@
 import Linglib.Core.Order.Normality
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
 
 /-!
 # Plausibility Orderings and Preferential Consequence
@@ -33,8 +33,6 @@ Core/Logic/SystemZ.lean
 
 namespace Core.Order
 
-open Core.Proposition (Prop')
-
 -- ══════════════════════════════════════════════════════════════════════
 -- § 1. Preferential Consequence (System P)
 -- ══════════════════════════════════════════════════════════════════════
@@ -48,7 +46,7 @@ open Core.Proposition (Prop')
     at all most-plausible φ-worlds. -/
 structure PreferentialConsequence (W : Type*) where
   /-- The default consequence relation: `default φ ψ` means φ |~ ψ -/
-  default : Prop' W → Prop' W → Prop
+  default : Set W → Set W → Prop
 
   /-- Reflexivity: φ |~ φ -/
   refl : ∀ φ, default φ φ
@@ -81,7 +79,7 @@ structure PreferentialConsequence (W : Type*) where
     it corresponds to ranked (well-ordered) plausibility models, not
     merely preferential ones. -/
 def rationalMonotonicity {W : Type*} (pc : PreferentialConsequence W) : Prop :=
-  ∀ φ ψ χ : Prop' W,
+  ∀ φ ψ χ : Set W,
     pc.default φ χ → ¬pc.default φ (fun w => ¬ψ w) →
     pc.default (fun w => φ w ∧ ψ w) χ
 
@@ -100,7 +98,7 @@ def rationalMonotonicity {W : Type*} (pc : PreferentialConsequence W) : Prop :=
     "stopperedness". -/
 structure PlausibilityOrder (W : Type*) extends NormalityOrder W where
   /-- Smoothness: every satisfiable φ has a minimal element -/
-  smooth : ∀ (φ : Prop' W) (w : W), φ w →
+  smooth : ∀ (φ : Set W) (w : W), φ w →
     ∃ v, φ v ∧ le v w ∧ ∀ u, φ u → le u v → le v u
 
 /-- The most plausible worlds satisfying φ: those with no strictly
@@ -109,7 +107,7 @@ structure PlausibilityOrder (W : Type*) extends NormalityOrder W where
     This is the same as `NormalityOrder.optimal` applied to the set
     `{w | φ w}`, but stated with `Prop'` for the System P interface. -/
 def PlausibilityOrder.minimal {W : Type*} (po : PlausibilityOrder W)
-    (φ : Prop' W) : Prop' W :=
+    (φ : Set W) : Set W :=
   fun w => φ w ∧ ∀ v, φ v → po.le v w → po.le w v
 
 /-- A plausibility ordering induces a preferential consequence relation:

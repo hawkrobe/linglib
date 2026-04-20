@@ -126,10 +126,10 @@ The presupposition triggered by a CoS type, given the activity predicate P.
 - inception: presupposes ¬P (the activity wasn't happening)
 - continuation: presupposes P (the activity was happening)
 -/
-def priorStatePresup (t : CoSType) (P : W → Bool) : W → Bool :=
+def priorStatePresup (t : CoSType) (P : W → Prop) : W → Prop :=
   match t with
   | .cessation => P           -- stop P presupposes P was true
-  | .inception => λ w => !P w  -- start P presupposes P was false
+  | .inception => λ w => ¬P w  -- start P presupposes P was false
   | .continuation => P        -- continue P presupposes P was true
 
 /--
@@ -139,9 +139,9 @@ The assertion made by a CoS type, given the activity predicate P.
 - inception: asserts P (the activity is now happening)
 - continuation: asserts P (the activity is still happening)
 -/
-def resultStateAssertion (t : CoSType) (P : W → Bool) : W → Bool :=
+def resultStateAssertion (t : CoSType) (P : W → Prop) : W → Prop :=
   match t with
-  | .cessation => λ w => !P w  -- stop P asserts P is now false
+  | .cessation => λ w => ¬P w  -- stop P asserts P is now false
   | .inception => P              -- start P asserts P is now true
   | .continuation => P           -- continue P asserts P is still true
 
@@ -155,14 +155,14 @@ Given an activity predicate P, returns a `PrProp` with:
 This is the core semantic contribution: CoS predicates are presupposition
 triggers that constrain both the prior and current states.
 -/
-def cosSemantics (t : CoSType) (P : W → Bool) : PrProp W :=
+def cosSemantics (t : CoSType) (P : W → Prop) : PrProp W :=
   { presup := priorStatePresup t P
   , assertion := resultStateAssertion t P }
 
 /--
 Semantics for a lexical entry applied to an activity predicate.
 -/
-def entrySemantics (e : CoSEntry) (P : W → Bool) : PrProp W :=
+def entrySemantics (e : CoSEntry) (P : W → Prop) : PrProp W :=
   cosSemantics e.cosType P
 
 -- Key Theorems
@@ -177,7 +177,7 @@ This is a defining property of presupposition triggers and enables the
 classic test: if the presupposition projects through negation, it's a
 presupposition, not an entailment.
 -/
-theorem negation_preserves_presup (t : CoSType) (P : W → Bool) :
+theorem negation_preserves_presup (t : CoSType) (P : W → Prop) :
     (cosSemantics t P).presup =
     (PrProp.neg (cosSemantics t P)).presup := by
   simp only [PrProp.neg]
@@ -188,11 +188,12 @@ Cessation and inception have complementary presuppositions.
 - "stop P" presupposes P
 - "start P" presupposes ¬P
 
-These are exact complements: at any world, exactly one presupposition is satisfied.
+These are exact complements: at any world, the cessation presupposition
+holds iff the inception presupposition fails.
 -/
-theorem cessation_inception_complementary (P : W → Bool) (w : W) :
-    priorStatePresup .cessation P w = !priorStatePresup .inception P w := by
-  simp only [priorStatePresup, Bool.not_not]
+theorem cessation_inception_complementary (P : W → Prop) (w : W) :
+    priorStatePresup .cessation P w ↔ ¬priorStatePresup .inception P w := by
+  simp [priorStatePresup]
 
 /--
 Cessation and continuation have the same presupposition.
@@ -200,7 +201,7 @@ Cessation and continuation have the same presupposition.
 Both "stop P" and "continue P" presuppose that P was happening.
 The difference is only in the assertion about the result state.
 -/
-theorem cessation_continuation_same_presup (P : W → Bool) :
+theorem cessation_continuation_same_presup (P : W → Prop) :
     priorStatePresup .cessation P = priorStatePresup .continuation P := rfl
 
 /--
@@ -209,8 +210,8 @@ For cessation, the assertion is the negation of the presupposition.
 "stop P" presupposes P and asserts ¬P.
 This captures the change: from P being true to P being false.
 -/
-theorem cessation_assertion_negates_presup (P : W → Bool) (w : W) :
-    resultStateAssertion .cessation P w = !priorStatePresup .cessation P w := rfl
+theorem cessation_assertion_negates_presup (P : W → Prop) (w : W) :
+    resultStateAssertion .cessation P w ↔ ¬priorStatePresup .cessation P w := Iff.rfl
 
 /--
 For inception, the assertion is the negation of the presupposition.
@@ -218,9 +219,9 @@ For inception, the assertion is the negation of the presupposition.
 "start P" presupposes ¬P and asserts P.
 This captures the change: from P being false to P being true.
 -/
-theorem inception_assertion_negates_presup (P : W → Bool) (w : W) :
-    resultStateAssertion .inception P w = !priorStatePresup .inception P w := by
-  simp only [resultStateAssertion, priorStatePresup, Bool.not_not]
+theorem inception_assertion_negates_presup (P : W → Prop) (w : W) :
+    resultStateAssertion .inception P w ↔ ¬priorStatePresup .inception P w := by
+  simp [resultStateAssertion, priorStatePresup]
 
 /--
 For continuation, the assertion equals the presupposition.
@@ -228,7 +229,7 @@ For continuation, the assertion equals the presupposition.
 "continue P" presupposes P and asserts P.
 No change occurs; the predicate reports persistence.
 -/
-theorem continuation_assertion_equals_presup (P : W → Bool) :
+theorem continuation_assertion_equals_presup (P : W → Prop) :
     resultStateAssertion .continuation P = priorStatePresup .continuation P := rfl
 
 -- Class C Property

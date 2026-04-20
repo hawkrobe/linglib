@@ -216,9 +216,11 @@ inductive ProsodicDominance where
   deriving Repr, DecidableEq
 
 /-- Dominant morphemes override the prosodic specification of their base. -/
-def ProsodicDominance.isDominant : ProsodicDominance → Bool
-  | .dominant => true
-  | .recessive | .neutral => false
+def ProsodicDominance.IsDominant (d : ProsodicDominance) : Prop :=
+  d = .dominant
+
+instance : DecidablePred ProsodicDominance.IsDominant :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- Combine a base accent with a suffix's prosodic dominance.
 

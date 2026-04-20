@@ -29,7 +29,6 @@ namespace ConstructionGrammar.Studies.GoldbergShirtz2025
 open ConstructionGrammar
 open Core.Presupposition
 open Core.CommonGround
-open Core.Proposition
 open Pragmatics.Expressives
 
 /-! ## Section 1: PAL Construction definitions -/
@@ -162,8 +161,8 @@ Core.CommonGround infrastructure. -/
 The presupposition is the situation type proposition itself:
 if the PAL is "grab-and-go", the presupposition is that grab-and-go
 situations are a recognized category for both speaker and addressee. -/
-def palPresupposition (W : Type*) (situationType : (W → Bool)) : PrProp W :=
-  PrProp.ofBool situationType (λ _ => true)
+def palPresupposition (W : Type*) (situationType : W → Prop) : PrProp W :=
+  { presup := situationType, assertion := λ _ => True }
 
 /-- PAL two-dimensional meaning (@cite{potts-2005} two-dimensional semantics).
 
@@ -172,7 +171,7 @@ def palPresupposition (W : Type*) (situationType : (W → Bool)) : PrProp W :=
 
 This connects PAL semantics to the existing `TwoDimProp` from
 `Pragmatics.Expressives.Basic`. -/
-def palTwoDim (W : Type*) (atIssue : (W → Bool)) (familiar : (W → Bool)) :
+def palTwoDim (W : Type*) (atIssue : W → Prop) (familiar : W → Prop) :
     TwoDimProp W :=
   { atIssue := atIssue
   , ci := familiar }
@@ -180,7 +179,7 @@ def palTwoDim (W : Type*) (atIssue : (W → Bool)) (familiar : (W → Bool)) :
 /-- When the situation type is in the common ground, the PAL's presupposition
 is satisfied. -/
 theorem pal_presup_satisfied_by_cg (W : Type*)
-    (situationType : (W → Bool)) (c : ContextSet W)
+    (situationType : W → Prop) (c : ContextSet W)
     (h : c ⊧ situationType) :
     ∀ w, c w → (palPresupposition W situationType).presup w :=
   h
@@ -189,7 +188,7 @@ theorem pal_presup_satisfied_by_cg (W : Type*)
 
 "It's not a grab-and-go lunch" still conveys familiarity with grab-and-go. -/
 theorem pal_ci_projects_through_neg (W : Type*)
-    (atIssue familiar : (W → Bool)) :
+    (atIssue familiar : W → Prop) :
     (TwoDimProp.neg (palTwoDim W atIssue familiar)).ci = familiar := rfl
 
 /-! ## Section 3: Core theoretical claims
@@ -215,8 +214,8 @@ theorem claim_form_motivates_function_holds : claim_form_motivates_function := b
 Supported by Studies 1a (common knowledge) and 1b (shared background):
 PALs are preferred when the situation type is mutually known. -/
 def claim_pal_presupposes_familiarity : Prop :=
-  ∀ (W : Type*) (sitType : (W → Bool)) (w : W),
-    (palPresupposition W sitType).presup w ↔ (sitType w = true)
+  ∀ (W : Type*) (sitType : W → Prop) (w : W),
+    (palPresupposition W sitType).presup w ↔ sitType w
 
 /-- Claim 2 holds by definition of palPresupposition. -/
 theorem claim_pal_presupposes_familiarity_holds :

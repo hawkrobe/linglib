@@ -1,11 +1,8 @@
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.FelicityTypes
-import Linglib.Core.Semantics.Proposition
 import Linglib.Phenomena.ScalarImplicatures.Basic
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
 import Linglib.Theories.Semantics.Questions.Denotation.Partition

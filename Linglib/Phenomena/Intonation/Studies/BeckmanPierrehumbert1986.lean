@@ -91,19 +91,19 @@ def AccentualPhrase.isAccented (ap : AccentualPhrase) : Bool :=
     This bridges catathesis to @cite{snider-1999}'s RegisterTier: the
     descending staircase in catathesis chains (Fig. 11) is the same
     terracing effect produced by cumulative register `l` features. -/
-def catathesisToRegisterSpecs (aps : List AccentualPhrase) : List RegisterSpec :=
-  aps.map (λ ap => if ap.accent.isBitonal then some .l else none)
+def catathesisToRegisterSpecs (aps : List AccentualPhrase) : List TRN :=
+  aps.map (λ ap => if ap.accent.isBitonal then TRN.downstep else TRN.empty)
 
 /-- **Catathesis produces terracing** (§3, Fig. 11): a sequence of
     bitonal accents within an ip produces a descending staircase.
     This follows from `realizePitch` applied to the register specs. -/
 theorem catathesis_terracing (n : Int) :
-    realizePitch n [some .l, some .l] = [n - 1, n - 1 - 1] := rfl
+    realizePitch n [TRN.downstep, TRN.downstep] = [n - 1, n - 1 - 1] := rfl
 
 /-- Catathesis lowers pitch: after one bitonal accent, the pitch is
     strictly lower than the starting level. -/
 theorem catathesis_lowers (n : Int) :
-    (realizePitch n [some .l]).head? = some (n - 1) := rfl
+    (realizePitch n [TRN.downstep]).head? = some (n - 1) := rfl
 
 /-- Count catathesis applications in a sequence of APs. -/
 def catathesisCount (aps : List AccentualPhrase) : Nat :=
@@ -179,7 +179,7 @@ def IntonationPhrase.terminalContour (ip : IntonationPhrase) : TerminalContour :
   ⟨lastIp.phraseAccent, ip.boundaryTone⟩
 
 /-- Register specs within a single ip: catathesis chains. -/
-def ipRegisterSpecs (ip : IntermediatePhrase) : List RegisterSpec :=
+def ipRegisterSpecs (ip : IntermediatePhrase) : List TRN :=
   catathesisToRegisterSpecs ip.aps
 
 /-- Register specs across an IP: each ip resets the register.
@@ -189,7 +189,7 @@ def ipRegisterSpecs (ip : IntermediatePhrase) : List RegisterSpec :=
     Each ip gets independent register specs — the `l` features from
     one ip do not propagate into the next. -/
 def ipRegisterSpecsAcrossIps (ips : List IntermediatePhrase)
-    : List (List RegisterSpec) :=
+    : List (List TRN) :=
   ips.map ipRegisterSpecs
 
 
@@ -306,7 +306,7 @@ def twoAP_ip : IntermediatePhrase :=
 
 /-- The register specs for this ip show one downstep. -/
 theorem twoAP_ip_specs :
-    ipRegisterSpecs twoAP_ip = [some .l, none] := rfl
+    ipRegisterSpecs twoAP_ip = [TRN.downstep, TRN.empty] := rfl
 
 /-- Pitch realization: from baseline 4, the accented AP is at 3
     (downstepped by catathesis) and the unaccented AP stays at 3. -/
@@ -319,7 +319,7 @@ def threeAP_ip : IntermediatePhrase :=
 
 /-- Two downsteps produce a two-level staircase. -/
 theorem threeAP_ip_specs :
-    ipRegisterSpecs threeAP_ip = [some .l, some .l, none] := rfl
+    ipRegisterSpecs threeAP_ip = [TRN.downstep, TRN.downstep, TRN.empty] := rfl
 
 /-- Pitch realization: 4 → 3 → 2 → 2 (descending staircase). -/
 theorem threeAP_ip_pitch :
@@ -333,7 +333,7 @@ def split_ips : List IntermediatePhrase :=
 
 /-- The register specs are independent per ip. -/
 theorem split_ips_specs :
-    ipRegisterSpecsAcrossIps split_ips = [[some .l], [some .l, none]] := rfl
+    ipRegisterSpecsAcrossIps split_ips = [[TRN.downstep], [TRN.downstep, TRN.empty]] := rfl
 
 /-- Each ip starts from its own baseline — catathesis does not leak
     across the ip boundary. The first ip has pitch [3] (from baseline 4);
@@ -433,8 +433,8 @@ theorem english_foc_may_not_trigger_catathesis :
     lower-or-equal pitch realization. -/
 theorem more_catathesis_lower_pitch :
     List.Forall₂ (· ≤ ·)
-      (realizePitch 4 [some .l, some .l, none])
-      (realizePitch 4 [some .l, none, none]) := by decide
+      (realizePitch 4 [TRN.downstep, TRN.downstep, TRN.empty])
+      (realizePitch 4 [TRN.downstep, TRN.empty, TRN.empty]) := by decide
 
 /-- **Catathesis blocking**: realizing an ip from the higher (reset)
     starting offset produces pointwise higher-or-equal pitch than
@@ -443,7 +443,7 @@ theorem more_catathesis_lower_pitch :
     if catathesis had continued from any lower offset `m ≤ n`.
 
     Direct application of `realizePitch_baseline_mono`. -/
-theorem catathesis_blocking (specs : List RegisterSpec) {m n : Int}
+theorem catathesis_blocking (specs : List TRN) {m n : Int}
     (h : m ≤ n) :
     List.Forall₂ (· ≤ ·) (realizePitch m specs) (realizePitch n specs) :=
   realizePitch_baseline_mono specs h
@@ -453,15 +453,15 @@ theorem catathesis_blocking (specs : List RegisterSpec) {m n : Int}
     from a compressed offset 3, which give `[2, 2]`. -/
 theorem catathesis_blocking_concrete :
     List.Forall₂ (· ≤ ·)
-      (realizePitch 3 [some .l, none])
-      (realizePitch 4 [some .l, none]) := by decide
+      (realizePitch 3 [TRN.downstep, TRN.empty])
+      (realizePitch 4 [TRN.downstep, TRN.empty]) := by decide
 
-/-- Catathesis register specs only contain `none` (maintain) or `some .l`
-    (lower) — never `some .h` (raise). This ensures catathesis is
-    monotonically compressive. -/
+/-- Catathesis register specs only contain `TRN.empty` (maintain) or
+    `TRN.downstep` (lower) — never `TRN.upstep` (raise). This ensures
+    catathesis is monotonically compressive. -/
 theorem catathesis_specs_no_raising (aps : List AccentualPhrase)
-    (s : RegisterSpec) (hs : s ∈ catathesisToRegisterSpecs aps) :
-    s = none ∨ s = some .l := by
+    (s : TRN) (hs : s ∈ catathesisToRegisterSpecs aps) :
+    s = TRN.empty ∨ s = TRN.downstep := by
   simp only [catathesisToRegisterSpecs, List.mem_map] at hs
   obtain ⟨ap, _, rfl⟩ := hs
   rcases Bool.eq_false_or_eq_true (ap.accent.isBitonal) with h | h <;> simp [h]

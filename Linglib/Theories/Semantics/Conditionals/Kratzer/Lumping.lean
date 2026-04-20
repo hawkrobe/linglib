@@ -1,5 +1,5 @@
+import Mathlib.Data.Set.Basic
 import Linglib.Core.IntensionalLogic.Situations
-import Linglib.Core.Semantics.Proposition
 
 /-!
 # Lumping
@@ -45,7 +45,6 @@ reason about lumping at intermediate situations. Combine with `IsWorld w`
 namespace Semantics.Conditionals.Kratzer.Lumping
 
 open Core.IntensionalLogic
-open Core.Proposition (Prop')
 
 variable {F : SituationFrame}
 
@@ -58,32 +57,32 @@ worlds part of `F.Index`. -/
 
 /-- Truth at a situation: `p` is true at `s` iff `p s`. Trivial by
     definition; named for parity with Kratzer 2012 §5.3.3. -/
-@[simp] def IsTrue (p : Prop' F.Index) (s : F.Index) : Prop := p s
+@[simp] def IsTrue (p : Set F.Index) (s : F.Index) : Prop := p s
 
 /-- **Validity**: `p` holds at every world. -/
-def IsValid (p : Prop' F.Index) : Prop := ∀ w, IsWorld w → p w
+def IsValid (p : Set F.Index) : Prop := ∀ w, IsWorld w → p w
 
 /-- **Consistency**: a set of propositions is consistent iff some world
     satisfies every member. -/
-def IsConsistent (A : Set (Prop' F.Index)) : Prop :=
+def IsConsistent (A : Set (Set F.Index)) : Prop :=
   ∃ w, IsWorld w ∧ ∀ p ∈ A, p w
 
 /-- **Compatibility**: `p` is compatible with `A` iff `A ∪ {p}` is
     consistent. -/
-def IsCompatible (p : Prop' F.Index) (A : Set (Prop' F.Index)) : Prop :=
+def IsCompatible (p : Set F.Index) (A : Set (Set F.Index)) : Prop :=
   IsConsistent (insert p A)
 
 /-- **Logical consequence**: `q` follows from `A` iff every world that
     satisfies all of `A` also satisfies `q`. -/
-def Follows (A : Set (Prop' F.Index)) (q : Prop' F.Index) : Prop :=
+def Follows (A : Set (Set F.Index)) (q : Set F.Index) : Prop :=
   ∀ w, IsWorld w → (∀ p ∈ A, p w) → q w
 
 /-- **Logical equivalence**: `p` and `q` agree at every world. -/
-def Equiv (p q : Prop' F.Index) : Prop :=
+def Equiv (p q : Set F.Index) : Prop :=
   ∀ w, IsWorld w → (p w ↔ q w)
 
 /-- A premise in a set is a logical consequence of the set. -/
-theorem Follows.of_mem {A : Set (Prop' F.Index)} {p : Prop' F.Index}
+theorem Follows.of_mem {A : Set (Set F.Index)} {p : Set F.Index}
     (hp : p ∈ A) : Follows A p :=
   fun _ _ h => h p hp
 
@@ -101,42 +100,42 @@ with `IsWorld w` for the standard reading. -/
 /-- **Lumps**: `p` lumps `q` at `w` iff (i) `p` is true at `w`, and
     (ii) every part of `w` at which `p` is true is also a part at which
     `q` is true. -/
-def Lumps (p q : Prop' F.Index) (w : F.Index) : Prop :=
+def Lumps (p q : Set F.Index) (w : F.Index) : Prop :=
   p w ∧ ∀ s, s ≤ w → p s → q s
 
 /-! ### Basic lumping properties -/
 
 /-- The "truth" condition extracted: if `p` lumps `q` at `w`, then `p`
     is true at `w`. -/
-theorem Lumps.true_left {p q : Prop' F.Index} {w : F.Index}
+theorem Lumps.true_left {p q : Set F.Index} {w : F.Index}
     (h : Lumps p q w) : p w := h.1
 
 /-- The "local implication" condition extracted. -/
-theorem Lumps.local_impl {p q : Prop' F.Index} {w : F.Index}
+theorem Lumps.local_impl {p q : Set F.Index} {w : F.Index}
     (h : Lumps p q w) {s : F.Index} (hs : s ≤ w) (hps : p s) : q s :=
   h.2 s hs hps
 
 /-- Setting `s = w` in the local-implication conjunct: `q` is true at `w`
     too. So lumping at `w` is at least as strong as joint truth at `w`. -/
-theorem Lumps.true_right {p q : Prop' F.Index} {w : F.Index}
+theorem Lumps.true_right {p q : Set F.Index} {w : F.Index}
     (h : Lumps p q w) : q w :=
   h.2 w le_rfl h.1
 
 /-- Lumping is reflexive (when truth holds): a true proposition lumps
     itself. -/
-theorem Lumps.self {p : Prop' F.Index} {w : F.Index} (hp : p w) :
+theorem Lumps.self {p : Set F.Index} {w : F.Index} (hp : p w) :
     Lumps p p w :=
   ⟨hp, fun _ _ h => h⟩
 
 /-- **Transitivity (right)**: if `p` lumps `q` and `q` lumps `r` at `w`,
     then `p` lumps `r` at `w`. -/
-theorem Lumps.trans {p q r : Prop' F.Index} {w : F.Index}
+theorem Lumps.trans {p q r : Set F.Index} {w : F.Index}
     (hpq : Lumps p q w) (hqr : Lumps q r w) : Lumps p r w :=
   ⟨hpq.1, fun s hs hps => hqr.2 s hs (hpq.2 s hs hps)⟩
 
 /-- **Conjunction**: if `p` lumps both `q` and `r` at `w`, then `p` lumps
     their conjunction at `w`. -/
-theorem Lumps.and {p q r : Prop' F.Index} {w : F.Index}
+theorem Lumps.and {p q r : Set F.Index} {w : F.Index}
     (hq : Lumps p q w) (hr : Lumps p r w) :
     Lumps p (fun s => q s ∧ r s) w :=
   ⟨hq.1, fun s hs hps => ⟨hq.2 s hs hps, hr.2 s hs hps⟩⟩
@@ -144,20 +143,20 @@ theorem Lumps.and {p q r : Prop' F.Index} {w : F.Index}
 /-- **Strengthening the lumping proposition**: if `p'` is pointwise
     stronger than `p` and `p'` is true at `w`, then `p lumps q` lifts to
     `p' lumps q` at `w`. -/
-theorem Lumps.of_stronger {p p' q : Prop' F.Index} {w : F.Index}
+theorem Lumps.of_stronger {p p' q : Set F.Index} {w : F.Index}
     (hpp' : ∀ s, p' s → p s) (hp'w : p' w) (h : Lumps p q w) :
     Lumps p' q w :=
   ⟨hp'w, fun s hs hps => h.2 s hs (hpp' s hps)⟩
 
 /-- **Weakening the lumped proposition**: if `q` pointwise entails `q'`,
     then `p lumps q` upgrades to `p lumps q'`. -/
-theorem Lumps.weaken {p q q' : Prop' F.Index} {w : F.Index}
+theorem Lumps.weaken {p q q' : Set F.Index} {w : F.Index}
     (hqq' : ∀ s, q s → q' s) (h : Lumps p q w) : Lumps p q' w :=
   ⟨h.1, fun s hs hps => hqq' s (h.2 s hs hps)⟩
 
 /-- A proposition true at every situation is lumped by every proposition
     true at `w`. -/
-theorem Lumps.of_universal {p q : Prop' F.Index} {w : F.Index}
+theorem Lumps.of_universal {p q : Set F.Index} {w : F.Index}
     (hp : p w) (hq : ∀ s, q s) : Lumps p q w :=
   ⟨hp, fun s _ _ => hq s⟩
 
@@ -171,7 +170,7 @@ formal sense in which possible-worlds semantics flattens the
 distinctions Kratzer's lumping is designed to capture. -/
 
 theorem lumps_discrete (F : Frame)
-    (p q : Prop' F.Index) (w : F.Index) :
+    (p q : Set F.Index) (w : F.Index) :
     @Lumps F.toDiscreteSituationFrame p q w ↔ (p w ∧ q w) := by
   unfold Lumps
   refine ⟨fun ⟨hp, h⟩ => ⟨hp, h w le_rfl hp⟩, fun ⟨hp, hq⟩ => ⟨hp, ?_⟩⟩

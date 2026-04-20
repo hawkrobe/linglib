@@ -84,8 +84,14 @@ protected def id : Tier α α := some
 def empty : Tier α β := fun _ => none
 
 /-- Tier defined by a class predicate: keep symbols satisfying `p`, erase
-    the rest. The standard form for autosegmental tonal/featural tiers. -/
-def byClass (p : α → Bool) : Tier α α := fun x => if p x then some x else none
+    the rest. The standard form for autosegmental tonal/featural tiers.
+
+    Following mathlib's `Finset.filter` / `Multiset.filter` convention,
+    `p` is `Prop`-valued with `[DecidablePred]`, so call sites can pass
+    structural predicates (`fun x => x = .l`, `fun x => IsCons x`)
+    without inserting `decide` wrappers. -/
+def byClass (p : α → Prop) [DecidablePred p] : Tier α α :=
+  fun x => if p x then some x else none
 
 /-- Tier defined by a total function: every symbol projects to its image. -/
 def total (f : α → β) : Tier α β := some ∘ f
@@ -120,11 +126,21 @@ def apply (T : Tier α β) : List α → List β := List.filterMap T
     show List.filterMap (fun _ => none) (_ :: _) = []
     rw [List.filterMap_cons]; exact ih
 
-/-- A class-predicate tier acts as `List.filter`. -/
-theorem apply_byClass (p : α → Bool) (xs : List α) :
-    apply (Tier.byClass p) xs = xs.filter p := by
-  show List.filterMap (Option.guard (fun x => p x)) xs = xs.filter p
-  rw [List.filterMap_eq_filter]
+/-- A class-predicate tier acts as `List.filter`. The right-hand side
+    inserts `decide` because `List.filter` is `Bool`-valued; consumers
+    that already work in `Bool` should use this lemma directly. -/
+theorem apply_byClass (p : α → Prop) [DecidablePred p] (xs : List α) :
+    apply (Tier.byClass p) xs = xs.filter (fun x => decide (p x)) := by
+  show List.filterMap (Tier.byClass p) xs = _
+  induction xs with
+  | nil => rfl
+  | cons x rest ih =>
+    rw [List.filterMap_cons, List.filter_cons]
+    by_cases hpx : p x
+    · have hbc : Tier.byClass p x = some x := by simp [Tier.byClass, hpx]
+      rw [hbc, ih, decide_eq_true hpx]; rfl
+    · have hbc : Tier.byClass p x = none := by simp [Tier.byClass, hpx]
+      rw [hbc, ih, decide_eq_false hpx]; rfl
 
 /-- A total-function tier acts as `List.map`. -/
 @[simp] theorem apply_total (f : α → β) (xs : List α) :
@@ -141,13 +157,15 @@ theorem apply_byClass (p : α → Bool) (xs : List α) :
 /-- The last (rightmost) projected symbol of `xs` satisfying `q`. The
     standard "preceding tier-adjacent context" lookup for rules like
     @cite{belth-2026}'s `Disagree(A, F) / C __ ∘ proj(·, T)`. -/
-def lastWith (T : Tier α β) (q : β → Bool) (xs : List α) : Option β :=
-  ((apply T xs).filter q).getLast?
+def lastWith (T : Tier α β) (q : β → Prop) [DecidablePred q]
+    (xs : List α) : Option β :=
+  ((apply T xs).filter (fun y => decide (q y))).getLast?
 
 /-- The first (leftmost) projected symbol of `xs` satisfying `q`. The
     symmetric right-context lookup for `C / __ C ∘ proj(·, T)` rules. -/
-def firstWith (T : Tier α β) (q : β → Bool) (xs : List α) : Option β :=
-  ((apply T xs).filter q).head?
+def firstWith (T : Tier α β) (q : β → Prop) [DecidablePred q]
+    (xs : List α) : Option β :=
+  ((apply T xs).filter (fun y => decide (q y))).head?
 
 end Tier
 

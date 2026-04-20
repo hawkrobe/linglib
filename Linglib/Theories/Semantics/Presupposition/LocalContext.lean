@@ -39,7 +39,6 @@ import Linglib.Core.Context.Tower
 namespace Semantics.Presupposition.LocalContext
 
 open Core.Presupposition
-open Core.Proposition
 open Core.CommonGround
 open Core.PresuppositionContext
 
@@ -154,7 +153,7 @@ theorem conditional_projects_when_not_entailed (c : LocalCtx W) (p q : PrProp W)
     presupProjects (localCtxConsequent c p) q := by
   obtain ⟨w, hw_in, hp_true, hq_false⟩ := h
   intro hfilter
-  exact hq_false (hfilter w ⟨hw_in, hp_true⟩)
+  exact hq_false (hfilter ⟨hw_in, hp_true⟩)
 
 /--
 Negation doesn't filter presuppositions.
@@ -207,7 +206,7 @@ theorem king_conditional_filters (c : ContextSet KingWorld')
   obtain ⟨_, hw_assert⟩ := hw
   cases w with
   | kingExists => exact trivial
-  | noKing => exact absurd hw_assert (by simp [kingExists'])
+  | noKing => exact hw_assert.elim
 
 
 /--
@@ -246,7 +245,7 @@ theorem local_context_matches_disjFilterLeft (c : ContextSet W)
     presupFiltered (localCtxSecondDisjunct (initialLocalCtx c) firstDisjunct) second ↔
     (∀ w, c w → (PrProp.disjFilterLeft firstDisjunct.assertion second).presup w) := by
   constructor
-  · intro h w hc hn; exact h w ⟨hc, hn⟩
+  · intro h w hc hn; exact h ⟨hc, hn⟩
   · intro h w ⟨hc, hn⟩; exact h w hc hn
 
 -- ════════════════════════════════════════════════════════════════

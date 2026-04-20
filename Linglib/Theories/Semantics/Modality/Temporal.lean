@@ -11,8 +11,8 @@ with time-indexed conversational backgrounds and derives the static
 
 ## Core Extension
 
-Kratzer.lean defines `ConvBackground W := W → List (W → Bool)`.
-@cite{kratzer-2012} Ch. 4 argues that this should be `W → Time → List (W → Bool)`:
+Kratzer.lean defines `ConvBackground W := W → List (W → Prop)`.
+@cite{kratzer-2012} Ch. 4 argues that this should be `W → Time → List (W → Prop)`:
 the modal base and ordering source can vary with the temporal perspective.
 
 This distinction matters for:
@@ -34,7 +34,7 @@ namespace Semantics.Modality.Temporal
 
 open Semantics.Modality.Kratzer
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*}
 
 /-! ## Time-indexed conversational backgrounds -/
 
@@ -43,7 +43,7 @@ variable {W : Type*} [DecidableEq W] [Fintype W]
 
     At different times, the same world may yield different sets of relevant
     facts (modal base) or normative standards (ordering source). -/
-abbrev TemporalConvBackground (W : Type*) (Time : Type*) := W → Time → List (W → Bool)
+abbrev TemporalConvBackground (W : Type*) (Time : Type*) := W → Time → List (W → Prop)
 
 /-- Time-indexed modal base: what facts are relevant at (w, t). -/
 abbrev TemporalModalBase (W : Type*) (Time : Type*) := TemporalConvBackground W Time
@@ -64,7 +64,6 @@ def ConvBackground.liftTemporal {Time : Type*}
     (f : ConvBackground W) : TemporalConvBackground W Time :=
   λ w _ => f w
 
-omit [DecidableEq W] [Fintype W] in
 /-- Lifting then fixing at any time recovers the original background. -/
 theorem lift_atTime_id {Time : Type*} (f : ConvBackground W) (t : Time) :
     (ConvBackground.liftTemporal f).atTime t = f := rfl
@@ -100,7 +99,7 @@ theorem temporal_eq_static {Time : Type*}
 /-- Temporal duality: □ₜp ↔ ¬◇ₜ¬p. -/
 theorem temporal_duality {Time : Type*}
     (f : TemporalModalBase W Time) (g : TemporalOrderingSource W Time)
-    (t : Time) (p : W → Prop) [DecidablePred p] (w : W) :
+    (t : Time) (p : W → Prop) (w : W) :
     temporalNecessity f g t p w ↔
     ¬ temporalPossibility f g t (λ w' => ¬ p w') w :=
   duality (f.atTime t) (g.atTime t) p w
@@ -119,17 +118,17 @@ def historicalNecessity {Time : Type*}
     (history : TemporalConvBackground W Time)
     (t : Time) (p : W → Prop) (w : W) : Prop :=
   temporalNecessity history
-    (λ _ _ => ([] : List (W → Bool))) t p w
+    (λ _ _ => ([] : List (W → Prop))) t p w
 
 /-- With empty history (no shared past), all worlds are accessible:
-    historical necessity collapses to necessity over `Finset.univ`. -/
+    historical necessity collapses to necessity over the universal set. -/
 theorem empty_history_universal {Time : Type*}
     (t : Time) (p : W → Prop) (w : W) :
-    historicalNecessity (λ (_ : W) (_ : Time) => ([] : List (W → Bool)))
+    historicalNecessity (λ (_ : W) (_ : Time) => ([] : List (W → Prop)))
       t p w ↔ ∀ w' : W, p w' := by
   show necessity emptyBackground emptyBackground p w ↔ _
   rw [necessity_iff_all, empty_ordering_emptyBackground, empty_base_universal_access]
-  simp [Finset.mem_univ]
+  simp
 
 /-! ## Epistemic change over time -/
 
@@ -142,17 +141,13 @@ theorem evidence_monotone {Time : Type*}
     (f : TemporalModalBase W Time) (t₁ t₂ : Time)
     (p : W → Prop) (w : W)
     (hSub : ∀ q, q ∈ f w t₁ → q ∈ f w t₂)
-    (hNec : temporalNecessity f (λ _ _ => ([] : List (W → Bool))) t₁ p w) :
-    temporalNecessity f (λ _ _ => ([] : List (W → Bool))) t₂ p w := by
+    (hNec : temporalNecessity f (λ _ _ => ([] : List (W → Prop))) t₁ p w) :
+    temporalNecessity f (λ _ _ => ([] : List (W → Prop))) t₂ p w := by
   change necessity (f.atTime t₂) emptyBackground p w
   change necessity (f.atTime t₁) emptyBackground p w at hNec
   intro w' hBest₂
   apply hNec w'
-  -- More propositions in the modal base → stronger filtering → subset of accessible worlds
   rw [kratzerBestR_empty] at hBest₂ ⊢
-  rw [kratzerR_iff_accessible] at hBest₂ ⊢
-  simp only [accessibleWorlds, propIntersection, TemporalConvBackground.atTime,
-    Finset.mem_filter, Finset.mem_univ, true_and, List.all_eq_true] at hBest₂ ⊢
   intro q hq
   exact hBest₂ q (hSub q hq)
 

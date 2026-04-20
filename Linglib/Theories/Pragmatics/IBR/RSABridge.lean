@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.IBR.Core
-import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
+import Linglib.Theories.Pragmatics.RSA.Limits
 
 /-!
 # RSA–IBR Bridge: Softmax → Argmax Limit

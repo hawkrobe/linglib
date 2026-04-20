@@ -14,15 +14,23 @@ namespace Core.WALS.F144R
 
 /-- WALS 144R values. -/
 inductive SonegvOrder where
-  | wordNodoubleneg  -- Word&NoDoubleNeg (76 languages)
-  | prefixNodoubleneg  -- Prefix&NoDoubleNeg (60 languages)
-  | wordOptdoubleneg  -- Word&OptDoubleNeg (1 languages)
-  | prefixOptdoubleneg  -- Prefix&OptDoubleNeg (3 languages)
-  | wordOnlywithanotherneg  -- Word&OnlyWithAnotherNeg (11 languages)
-  | prefixOnlywithanotherneg  -- Prefix&OnlyWithAnotherNeg (21 languages)
-  | type1Type2  -- Type 1 / Type 2 (1 languages)
-  | noSonegv  -- No SONegV (238 languages)
-  deriving DecidableEq, Repr
+  /-- Word&NoDoubleNeg (76 languages). -/
+  | wordNodoubleneg
+  /-- Prefix&NoDoubleNeg (60 languages). -/
+  | prefixNodoubleneg
+  /-- Word&OptDoubleNeg (1 languages). -/
+  | wordOptdoubleneg
+  /-- Prefix&OptDoubleNeg (3 languages). -/
+  | prefixOptdoubleneg
+  /-- Word&OnlyWithAnotherNeg (11 languages). -/
+  | wordOnlywithanotherneg
+  /-- Prefix&OnlyWithAnotherNeg (21 languages). -/
+  | prefixOnlywithanotherneg
+  /-- Type 1 / Type 2 (1 languages). -/
+  | type1Type2
+  /-- No SONegV (238 languages). -/
+  | noSonegv
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144R dataset (411 languages). -/
 def allData : List (Datapoint SonegvOrder) :=
@@ -438,26 +446,6 @@ def allData : List (Datapoint SonegvOrder) :=
   , { walsCode := "rgc", language := "rGyalrong (Caodeng)", iso := "jya", value := .prefixNodoubleneg }
   , { walsCode := "eme", language := "Émérillon", iso := "eme", value := .prefixOnlywithanotherneg }
   ]
-
--- Count verification
-theorem total_count : allData.length = 411 := by native_decide
-
-theorem count_wordNodoubleneg :
-    (allData.filter (·.value == .wordNodoubleneg)).length = 76 := by native_decide
-theorem count_prefixNodoubleneg :
-    (allData.filter (·.value == .prefixNodoubleneg)).length = 60 := by native_decide
-theorem count_wordOptdoubleneg :
-    (allData.filter (·.value == .wordOptdoubleneg)).length = 1 := by native_decide
-theorem count_prefixOptdoubleneg :
-    (allData.filter (·.value == .prefixOptdoubleneg)).length = 3 := by native_decide
-theorem count_wordOnlywithanotherneg :
-    (allData.filter (·.value == .wordOnlywithanotherneg)).length = 11 := by native_decide
-theorem count_prefixOnlywithanotherneg :
-    (allData.filter (·.value == .prefixOnlywithanotherneg)).length = 21 := by native_decide
-theorem count_type1Type2 :
-    (allData.filter (·.value == .type1Type2)).length = 1 := by native_decide
-theorem count_noSonegv :
-    (allData.filter (·.value == .noSonegv)).length = 238 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

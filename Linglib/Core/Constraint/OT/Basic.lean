@@ -1,24 +1,24 @@
-import Linglib.Core.Logic.ConstraintEvaluation
+import Linglib.Core.Constraint.Evaluation
 
 /-!
 # Optimality Theory — Core Vocabulary
 
-OT-specific vocabulary layered on `Core.Logic.ConstraintEvaluation`. Provides
+OT-specific vocabulary layered on `Core.Constraint.Evaluation`. Provides
 named constraints with a faithfulness/markedness distinction, convenience
 constructors for building tableaux from ranked constraint lists, and factorial
 typology computation.
 
-## Connection to ConstraintEvaluation
+## Connection to Evaluation
 
-`ConstraintEvaluation` provides the generic engine (`LexLE`, `Tableau`,
+`Core.Constraint.Evaluation` provides the generic engine (`LexLE`, `Tableau`,
 `Tableau.optimal`). This module adds OT-specific structure: constraint
 families, named constraints, `mkTableau` for building tableaux from ranked
 constraint lists, and factorial typology computation.
 -/
 
-namespace Core.OT
+namespace Core.Constraint.OT
 
-open Core.ConstraintEvaluation
+open Core.Constraint.Evaluation
 
 -- ============================================================================
 -- § 1: Named Constraints
@@ -303,4 +303,4 @@ def mkFactorialTypologySize {C : Type} [DecidableEq C]
     (h : candidates ≠ [] := by decide) : Nat :=
   (mkFactorialOptima candidates constraints h).length
 
-end Core.OT
+end Core.Constraint.OT

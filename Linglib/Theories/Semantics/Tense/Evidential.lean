@@ -98,12 +98,11 @@ def EPCondition.toConstraint : EPCondition → EvidentialFrame ℤ → Prop
 
 /-- Is this EP constraint nonfuture? Downstream, strict downstream, and
     contemporaneous all entail T ≤ A; prospective and unconstrained do not. -/
-def EPCondition.isNonfuture : EPCondition → Bool
-  | .downstream => true
-  | .strictDownstream => true
-  | .contemporaneous => true
-  | .prospective => false
-  | .unconstrained => false
+def EPCondition.IsNonfuture (e : EPCondition) : Prop :=
+  e = .downstream ∨ e = .strictDownstream ∨ e = .contemporaneous
+
+instance : DecidablePred EPCondition.IsNonfuture :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Map EP constraint shapes to `EvidentialPerspective` where applicable.
     Unconstrained has no single perspective. -/
@@ -164,8 +163,11 @@ structure TAMEEntry where
   mirative : Option Core.Evidence.MirativityValue := none
 
 /-- Is this a nonfuture tense? Derived from the EP constraint. -/
-def TAMEEntry.isNonfuture (p : TAMEEntry) : Bool :=
-  p.ep.isNonfuture
+def TAMEEntry.IsNonfuture (p : TAMEEntry) : Prop :=
+  p.ep.IsNonfuture
+
+instance : DecidablePred TAMEEntry.IsNonfuture :=
+  fun p => inferInstanceAs (Decidable p.ep.IsNonfuture)
 
 /-- The EP constraint as a predicate over `EvidentialFrame ℤ`. -/
 def TAMEEntry.epConstraint (p : TAMEEntry) :
@@ -195,14 +197,14 @@ def downstreamEvidence (f : EvidentialFrame ℤ) : Prop :=
     respectively; the two non-nonfuture cases are eliminated by `h_nf`. -/
 theorem EPCondition.nonfuture_implies_downstream
     (ep : EPCondition) (f : EvidentialFrame ℤ)
-    (h_nf : ep.isNonfuture = true) (h_ep : ep.toConstraint f) :
+    (h_nf : ep.IsNonfuture) (h_ep : ep.toConstraint f) :
     downstreamEvidence f := by
   cases ep with
   | downstream => exact h_ep
   | strictDownstream => exact le_of_lt h_ep
   | contemporaneous => exact le_of_eq h_ep
-  | prospective => simp [isNonfuture] at h_nf
-  | unconstrained => simp [isNonfuture] at h_nf
+  | prospective => simp [IsNonfuture] at h_nf
+  | unconstrained => simp [IsNonfuture] at h_nf
 
 -- ════════════════════════════════════════════════════
 -- § 7. Presuppositional Nonfuture Meaning

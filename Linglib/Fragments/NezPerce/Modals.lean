@@ -69,15 +69,15 @@ def forceAnalysis : ModalExpression → ForceAnalysis
   | _ => .strengthened .possibility
 
 /-- o'qa has no lexical dual. -/
-theorem oqa_no_dual : (forceAnalysis oqa).hasDual = false := rfl
+theorem oqa_no_dual : ¬ (forceAnalysis oqa).HasDual := fun h => h.elim
 
 /-- o'qa admits necessity readings (via strengthening). -/
 theorem oqa_admits_necessity :
-    (forceAnalysis oqa).admitsNecessity = true := rfl
+    (forceAnalysis oqa).AdmitsNecessity := by decide
 
 /-- o'qa admits possibility readings (base semantics). -/
 theorem oqa_admits_possibility :
-    (forceAnalysis oqa).admitsPossibility = true := rfl
+    (forceAnalysis oqa).AdmitsPossibility := by decide
 
 /-! ## Background classification -/
 

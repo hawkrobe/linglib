@@ -1,7 +1,7 @@
 import Linglib.Core.Distributions
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.RSA.Quantities
+import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
 import Linglib.Theories.Semantics.Numerals.Basic
 
 /-!
@@ -293,7 +293,7 @@ The model reproduces all 11 findings. All proofs use `rsa_predict`.
 
 **Data source**: `GoodmanStuhlmuller2013.Data`
 **Theories used**: `Pragmatics.RSA.Core.Config`,
-  `Pragmatics.RSA.Quantities`,
+  `Phenomena.ScalarImplicatures.QuantityDomain`,
   `Theories.Semantics.Numerals.Basic`
 
 -/
@@ -479,16 +479,16 @@ noncomputable abbrev gsCfgN := gsCfg lbMeaning
 /-- Quantifier meaning derives from Montague semantics (not stipulated). -/
 theorem quantifier_meaning_grounded (u : QUtt) (s : WorldState) :
     qMeaning u s =
-    RSA.Domains.Quantity.meaning 3
+    Phenomena.ScalarImplicatures.QuantityDomain.meaning 3
       (match u with | .none_ => .none_ | .some_ => .some_ | .all => .all)
       ⟨s.toNat, by cases u <;> cases s <;> decide⟩ := by
   cases u <;> cases s <;> native_decide
 
-/-- Lower-bound numeral meaning derives from NumeralTheory.meaning. -/
+/-- Lower-bound numeral meaning agrees with `atLeastMeaning`. -/
 theorem lb_meaning_grounded (u : NumUtt) (s : WorldState) :
     lbMeaning u s = true ↔
-    Semantics.Numerals.LowerBound.meaning
-      (match u with | .one => .one | .two => .two | .three => .three)
+    Semantics.Numerals.atLeastMeaning
+      (match u with | .one => 1 | .two => 2 | .three => 3)
       s.toNat := by
   cases u <;> cases s <;> decide
 

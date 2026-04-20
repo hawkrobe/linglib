@@ -141,8 +141,11 @@ inductive PronForm where
     @cite{ostrove-2026}'s universal is about overt-vs-null PRO, so an
     inventory whose controlled-subject form is `.reflexive` would also
     count as overt PRO. -/
-def MinPronInventory.hasOvertPRO (inv : MinPronInventory PronForm) : Bool :=
-  inv.controlForm != .null
+def MinPronInventory.hasOvertPRO (inv : MinPronInventory PronForm) : Prop :=
+  inv.controlForm ≠ .null
+
+instance (inv : MinPronInventory PronForm) : Decidable inv.hasOvertPRO :=
+  inferInstanceAs (Decidable (_ ≠ _))
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3.5: Bridge to `Core.NullSubject.SubjectAssignment`
@@ -180,7 +183,7 @@ open Core.NullSubject in
     to the abstract universal by construction. -/
 theorem MinPronInventory.subjectAssignment_overtPRO_iff
     (inv : MinPronInventory PronForm) :
-    inv.toSubjectAssignment.hasOvertPRO = inv.hasOvertPRO := by
+    inv.toSubjectAssignment.hasOvertPRO ↔ inv.hasOvertPRO := by
   unfold SubjectAssignment.hasOvertPRO MinPronInventory.toSubjectAssignment
     MinPronInventory.hasOvertPRO MinPronInventory.controlForm
     SubjectAssignment.hasOvertPROAt

@@ -1,6 +1,6 @@
 /-
 # Word Grammar Analysis of Coordination
-@cite{de-marneffe-nivre-2019} @cite{hudson-1984}
+@cite{de-marneffe-nivre-2019} @cite{hudson-2010}
 
 Word Grammar analysis of coordination structures.
 Coordination is represented directly using DepTree (basic) and DepGraph (enhanced).
@@ -16,7 +16,7 @@ import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.FunctionWords
 import Linglib.Fragments.English.Modifiers.Adjectives
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Core.Dependency.Basic
 
 namespace DepGrammar.Coordination
 

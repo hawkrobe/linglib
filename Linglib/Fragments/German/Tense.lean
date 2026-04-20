@@ -57,11 +57,11 @@ def kratzerPerfekt : KratzerDecomposition where
 
 /-- German Preterit cannot be deictic. -/
 theorem preterit_not_deictic :
-    kratzerPreterit.canBeDeictic = false := rfl
+    ¬ kratzerPreterit.canBeDeictic := by decide
 
 /-- German Perfekt CAN be deictic. -/
 theorem perfekt_deictic :
-    kratzerPerfekt.canBeDeictic = true := rfl
+    kratzerPerfekt.canBeDeictic := by decide
 
 /-- The Preterit–Perfekt contrast: different underlying tense heads.
     Preterit has a PAST head (anaphoric); Perfekt has PRESENT + PERF (indexical).
@@ -70,9 +70,9 @@ theorem perfekt_deictic :
 theorem preterit_perfekt_contrast :
     kratzerPreterit.tensePronoun.constraint = GramTense.past ∧
     kratzerPerfekt.tensePronoun.constraint = GramTense.present ∧
-    kratzerPreterit.canBeDeictic = false ∧
-    kratzerPerfekt.canBeDeictic = true :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    ¬ kratzerPreterit.canBeDeictic ∧
+    kratzerPerfekt.canBeDeictic := by
+  refine ⟨rfl, rfl, ?_, ?_⟩ <;> decide
 
 /-- German Preterit is always overt (anaphoric = free). -/
 theorem preterit_always_overt (localDomain : Bool) :

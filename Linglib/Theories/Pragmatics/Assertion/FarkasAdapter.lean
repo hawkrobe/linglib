@@ -29,7 +29,6 @@ namespace Pragmatics.Assertion.FarkasAdapter
 
 open Semantics.Dynamic.State
 open Core.CommonGround (ContextSet)
-open Core.Proposition (Prop')
 
 -- ════════════════════════════════════════════════════
 -- § 1. Bridge Theorems
@@ -38,29 +37,29 @@ open Core.Proposition (Prop')
 /-- Assertion adds to dcS, not directly to cg.
     This is the key F&B insight: assertion first commits the speaker,
     then the listener can accept (moving to cg) or reject. -/
-theorem assert_adds_to_dcS {W : Type*} (ds : DiscourseState W) (p : Prop' W) :
+theorem assert_adds_to_dcS {W : Type*} (ds : DiscourseState W) (p : Set W) :
     (ds.assertDeclarative p).dcS = p :: ds.dcS := rfl
 
 /-- Assertion does not immediately change the common ground. -/
-theorem assert_preserves_cg {W : Type*} (ds : DiscourseState W) (p : Prop' W) :
+theorem assert_preserves_cg {W : Type*} (ds : DiscourseState W) (p : Set W) :
     (ds.assertDeclarative p).cg = ds.cg := rfl
 
 /-- Assertion is not stable: it pushes an issue onto the table. -/
-theorem assert_not_stable {W : Type*} (ds : DiscourseState W) (p : Prop' W) :
+theorem assert_not_stable {W : Type*} (ds : DiscourseState W) (p : Set W) :
     (ds.assertDeclarative p).isStable = false := by
   simp only [DiscourseState.assertDeclarative, DiscourseState.pushIssue,
              DiscourseState.addToDcS, DiscourseState.isStable]
   rfl
 
 /-- Acceptance moves the proposition to the common ground. -/
-theorem accept_adds_to_cg {W : Type*} (ds : DiscourseState W) (p : Prop' W) :
+theorem accept_adds_to_cg {W : Type*} (ds : DiscourseState W) (p : Set W) :
     ((ds.assertDeclarative p).acceptTop).cg = p :: ds.cg := by
   simp only [DiscourseState.assertDeclarative, DiscourseState.pushIssue,
              DiscourseState.addToDcS, DiscourseState.acceptTop]
   rfl
 
 /-- After acceptance, the state returns to stable (table is popped). -/
-theorem accept_restores_stability {W : Type*} (ds : DiscourseState W) (p : Prop' W)
+theorem accept_restores_stability {W : Type*} (ds : DiscourseState W) (p : Set W)
     (hStable : ds.isStable = true) :
     ((ds.assertDeclarative p).acceptTop).isStable = true := by
   simp only [DiscourseState.assertDeclarative, DiscourseState.pushIssue,

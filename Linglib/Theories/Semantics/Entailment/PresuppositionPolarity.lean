@@ -23,14 +23,13 @@ Local context theory unifies presupposition projection and implicature:
 
 -/
 
+import Mathlib.Data.Set.Basic
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
 
 namespace Semantics.Entailment.PresuppositionPolarity
 
-open Core.Proposition (Prop')
 open Core.Presupposition
 open Semantics.Entailment
 open Semantics.Entailment.Polarity
@@ -48,7 +47,7 @@ This function captures that basic behavior.
 More complex interactions (e.g., presupposition strengthening under
 negation) would require extending this.
 -/
-def presupProjectsAt (_ctx : ContextPolarity) (p : PrProp W) : Prop' W :=
+def presupProjectsAt (_ctx : ContextPolarity) (p : PrProp W) : Set W :=
   p.presup
 
 /--
@@ -80,11 +79,11 @@ A presupposition projection context tracks both:
 -/
 structure PresupContext (W : Type*) where
   /-- The semantic context function (for computing entailments) -/
-  context : Prop' World -> Prop' World
+  context : Set World -> Set World
   /-- Whether the context is UE or DE -/
   polarity : ContextPolarity
   /-- The presupposition accumulated from outer operators -/
-  accumulatedPresup : Prop' W
+  accumulatedPresup : Set W
 
 /--
 Compose two presupposition contexts.

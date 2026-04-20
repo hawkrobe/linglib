@@ -31,6 +31,8 @@ namespace Phonology.Subregular
 open Phonology.Constraints
 open Core Core.Computability.Subregular
 
+-- `α : Type` (rather than `Type*`) is forced by `Phonology.Constraints`
+-- and `Core.Constraint.eval`, which are monomorphic in universe 0.
 variable {α : Type}
 
 /-- Forbidden 2-factors for the OCP: pairs `[some x, some x]` of two identical
@@ -41,12 +43,12 @@ def ocpForbidden (α : Type) : Set (Augmented α) :=
   { f | ∃ x : α, f = [some x, some x] }
 
 /-- The TSL_2 grammar capturing "no two adjacent identical symbols on the
-tier defined by the Bool predicate `p`". This is the OCP @cite{leben-1973}
+tier defined by the predicate `p`". This is the OCP @cite{leben-1973}
 @cite{goldsmith-1976} expressed as a tier-based subregular language: tier
 projection (via `Tier.byClass p`) followed by the SL_2 ban on `[some x, some x]`
 substrings. -/
-def TSLGrammar.ocp (p : α → Bool) : TSLGrammar 2 α where
-  tier := fun x => p x = true
+def TSLGrammar.ocp (p : α → Prop) [DecidablePred p] : TSLGrammar 2 α where
+  tier := p
   permitted := (ocpForbidden α)ᶜ
 
 /-- `adjacentIdentical xs = 0` iff no two consecutive elements of `xs` are
@@ -76,31 +78,108 @@ This is the relational/chain side of the OCP-as-TSL_2 correspondence; the
 full language characterization (`mkOCPOnTier_zero_iff_in_ocp_lang`) layers
 the boundary/kFactors decomposition on top. -/
 theorem mkOCPOnTier_zero_iff_isChain [BEq α] [LawfulBEq α] {C : Type}
-    (name : String) (p : α → Bool) (extract : C → List α) (c : C) :
+    (name : String) (p : α → Prop) [DecidablePred p]
+    (extract : C → List α) (c : C) :
     (mkOCPOnTier name (Tier.byClass p) extract).eval c = 0 ↔
-      ((extract c).filter p).IsChain (· ≠ ·) := by
+      ((extract c).filter (fun x => decide (p x))).IsChain (· ≠ ·) := by
   show adjacentIdentical (Tier.apply (Tier.byClass p) (extract c)) = 0 ↔ _
   rw [Tier.apply_byClass]
   exact adjacentIdentical_eq_zero_iff_isChain _
 
+-- ---- Language-form bridge ------------------------------------------------
+
+/-- The OCP relation on `Option α`: two augmented symbols are *OCP-clean as
+a pair* iff they are not both `some` of the same value. Boundary symbols
+are vacuously admitted on either side, so this is `IsBoundaryVacuous`
+(`OCPCleanPair.isBoundaryVacuous`).
+
+Used as the chain relation characterizing OCP-clean strings:
+`xs.IsChain OCPCleanPair` iff no two adjacent `some` symbols of `xs`
+are identical. -/
+def OCPCleanPair : Option α → Option α → Prop
+  | some a, some b => a ≠ b
+  | _, _ => True
+
+@[simp] lemma ocpCleanPair_none_left (u : Option α) :
+    OCPCleanPair (none : Option α) u := by cases u <;> exact True.intro
+
+@[simp] lemma ocpCleanPair_none_right (u : Option α) :
+    OCPCleanPair u (none : Option α) := by cases u <;> exact True.intro
+
+lemma ocpCleanPair_some_some (a b : α) :
+    OCPCleanPair (some a) (some b) ↔ a ≠ b := Iff.rfl
+
+/-- The OCP relation is boundary-vacuous: `none` always satisfies it on
+either side. Inherits the generic chain-on-boundary lemmas from
+`Core.Computability.Subregular.IsBoundaryVacuous`. -/
+lemma OCPCleanPair.isBoundaryVacuous :
+    IsBoundaryVacuous (OCPCleanPair (α := α)) :=
+  ⟨ocpCleanPair_none_left, ocpCleanPair_none_right⟩
+
+/-- A list of `Option α` has no `[some x, some x]` 2-factor iff it is a
+chain for `OCPCleanPair`. The factor-membership/chain-membership bridge:
+`OCPCleanPair a b` is by definition `[a, b] ∉ ocpForbidden α`. -/
+lemma forall_kFactors_two_not_ocpForbidden_iff_isChain (xs : List (Option α)) :
+    (∀ f ∈ kFactors 2 xs, f ∉ ocpForbidden α) ↔
+      xs.IsChain OCPCleanPair := by
+  induction xs with
+  | nil =>
+    refine ⟨fun _ => List.isChain_nil, ?_⟩
+    intro _ f hf
+    simp [kFactors] at hf
+  | cons a rest ih =>
+    cases rest with
+    | nil =>
+      refine ⟨fun _ => List.isChain_singleton _, ?_⟩
+      intro _ f hf
+      simp [kFactors] at hf
+    | cons b rest' =>
+      rw [kFactors_two_cons_cons, List.forall_mem_cons, List.isChain_cons_cons,
+          ih]
+      refine and_congr_left' ?_
+      constructor
+      · intro h1
+        cases a with
+        | none => exact ocpCleanPair_none_left _
+        | some a' =>
+          cases b with
+          | none => exact ocpCleanPair_none_right _
+          | some b' =>
+            rw [ocpCleanPair_some_some]
+            intro hab
+            exact h1 ⟨a', by rw [hab]⟩
+      · intro h1
+        rintro ⟨z, hz⟩
+        simp only [List.cons.injEq, and_true] at hz
+        obtain ⟨rfl, rfl⟩ := hz
+        exact h1 rfl
+
+/-- The OCP-language membership reduces to an `IsChain (· ≠ ·)` check on the
+projected string. Composes (i) the factor/chain bridge
+`forall_kFactors_two_not_ocpForbidden_iff_isChain`, (ii) the boundary-vacuity
+of `OCPCleanPair`, and (iii) `List.isChain_map` to drop the `some`. -/
+lemma mem_ocp_lang_iff_filter_isChain (p : α → Prop) [DecidablePred p]
+    (w : List α) :
+    w ∈ (TSLGrammar.ocp p).lang ↔
+      (w.filter (fun x => decide (p x))).IsChain (· ≠ ·) := by
+  rw [TSLGrammar.mem_lang]
+  simp only [TSLGrammar.ocp, Set.mem_compl_iff]
+  rw [forall_kFactors_two_not_ocpForbidden_iff_isChain,
+      OCPCleanPair.isBoundaryVacuous.isChain_boundary_two_iff,
+      tierProject_eq_filter, List.isChain_map]
+  rfl
+
 /-- **Bridge** (full TSL_2 language form): a candidate's OCP score is zero iff
 its raw string is in the language of the TSL_2 grammar `TSLGrammar.ocp p`.
 The two perspectives on the OCP — optimality-theoretic constraint and
-subregular-complexity class — are co-extensive.
-
-The chain'-form bridge `mkOCPOnTier_zero_iff_chain'` is already proved above;
-the remaining step is to characterize `kFactors 2 (boundary 2 ys)` and show
-that no factor lies in `ocpForbidden α` iff `ys.IsChain (· ≠ ·)`. The interior
-2-factors of `boundary 2 ys` are exactly the consecutive `[some y_i, some y_{i+1}]`
-pairs; boundary-adjacent factors `[none, some y]` and `[some y, none]` never
-match `[some x, some x]`. -/
+subregular-complexity class — are co-extensive. Composes the relational
+bridge `mkOCPOnTier_zero_iff_isChain` with the carrier-level language
+characterisation `mem_ocp_lang_iff_filter_isChain`. -/
 theorem mkOCPOnTier_zero_iff_in_ocp_lang [BEq α] [LawfulBEq α] {C : Type}
-    (name : String) (p : α → Bool) (extract : C → List α) (c : C) :
+    (name : String) (p : α → Prop) [DecidablePred p]
+    (extract : C → List α) (c : C) :
     (mkOCPOnTier name (Tier.byClass p) extract).eval c = 0 ↔
       extract c ∈ (TSLGrammar.ocp p).lang := by
-  -- TODO: prove `(w ∈ (TSLGrammar.ocp p).lang) ↔ ((w.filter p).IsChain (· ≠ ·))`
-  -- by inducting on `w.filter p` and analyzing `kFactors 2 (boundary 2 _)`.
-  -- Then `rw` it and apply `mkOCPOnTier_zero_iff_chain'`.
-  sorry
+  rw [mkOCPOnTier_zero_iff_isChain, mem_ocp_lang_iff_filter_isChain]
 
 end Phonology.Subregular

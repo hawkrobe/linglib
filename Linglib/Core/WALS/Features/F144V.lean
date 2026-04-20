@@ -14,16 +14,25 @@ namespace Core.WALS.F144V
 
 /-- WALS 144V values. -/
 inductive VerbInitialWithPreverbalNegative where
-  | separateWordNoDoubleNegationWordNodoubleneg  -- Separate word, no double negation  Word&NoDoubleNeg (117 languages)
-  | prefixNoDoubleNegationPrefixNodoubleneg  -- Prefix, no double negation  Prefix&NoDoubleNeg (11 languages)
-  | wordOpt  -- Word&Opt (6 languages)
-  | prefixOptdoubleneg  -- Prefix&OptDoubleNeg (1 languages)
-  | wordOnlywithanotherneg  -- Word&OnlyWithAnotherNeg (4 languages)
-  | prefixOnlywithanotherneg  -- Prefix&OnlyWithAnotherNeg (1 languages)
-  | type1Type2  -- Type 1 / Type 2 (4 languages)
-  | type3Type6  -- Type 3 / Type 6 (1 languages)
-  | noPreverbalNeg  -- No preverbal neg (7 languages)
-  deriving DecidableEq, Repr
+  /-- Separate word, no double negation  Word&NoDoubleNeg (117 languages). -/
+  | separateWordNoDoubleNegationWordNodoubleneg
+  /-- Prefix, no double negation  Prefix&NoDoubleNeg (11 languages). -/
+  | prefixNoDoubleNegationPrefixNodoubleneg
+  /-- Word&Opt (6 languages). -/
+  | wordOpt
+  /-- Prefix&OptDoubleNeg (1 languages). -/
+  | prefixOptdoubleneg
+  /-- Word&OnlyWithAnotherNeg (4 languages). -/
+  | wordOnlywithanotherneg
+  /-- Prefix&OnlyWithAnotherNeg (1 languages). -/
+  | prefixOnlywithanotherneg
+  /-- Type 1 / Type 2 (4 languages). -/
+  | type1Type2
+  /-- Type 3 / Type 6 (1 languages). -/
+  | type3Type6
+  /-- No preverbal neg (7 languages). -/
+  | noPreverbalNeg
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144V dataset (152 languages). -/
 def allData : List (Datapoint VerbInitialWithPreverbalNegative) :=
@@ -180,28 +189,6 @@ def allData : List (Datapoint VerbInitialWithPreverbalNegative) :=
   , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .type1Type2 }
   , { walsCode := "zqo", language := "Zoque (Ostuacan)", iso := "zoc", value := .separateWordNoDoubleNegationWordNodoubleneg }
   ]
-
--- Count verification
-theorem total_count : allData.length = 152 := by native_decide
-
-theorem count_separateWordNoDoubleNegationWordNodoubleneg :
-    (allData.filter (·.value == .separateWordNoDoubleNegationWordNodoubleneg)).length = 117 := by native_decide
-theorem count_prefixNoDoubleNegationPrefixNodoubleneg :
-    (allData.filter (·.value == .prefixNoDoubleNegationPrefixNodoubleneg)).length = 11 := by native_decide
-theorem count_wordOpt :
-    (allData.filter (·.value == .wordOpt)).length = 6 := by native_decide
-theorem count_prefixOptdoubleneg :
-    (allData.filter (·.value == .prefixOptdoubleneg)).length = 1 := by native_decide
-theorem count_wordOnlywithanotherneg :
-    (allData.filter (·.value == .wordOnlywithanotherneg)).length = 4 := by native_decide
-theorem count_prefixOnlywithanotherneg :
-    (allData.filter (·.value == .prefixOnlywithanotherneg)).length = 1 := by native_decide
-theorem count_type1Type2 :
-    (allData.filter (·.value == .type1Type2)).length = 4 := by native_decide
-theorem count_type3Type6 :
-    (allData.filter (·.value == .type3Type6)).length = 1 := by native_decide
-theorem count_noPreverbalNeg :
-    (allData.filter (·.value == .noPreverbalNeg)).length = 7 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

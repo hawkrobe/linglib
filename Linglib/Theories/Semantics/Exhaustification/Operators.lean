@@ -60,55 +60,56 @@ variable {World : Type*}
 /--
 Entailment: φ ⊆ ψ (Spector uses set-theoretic notation)
 "I also adopt the set-theoretic notation φ ⊆ ψ to mean that φ entails ψ."
+Thin alias for `Set.Subset`.
 -/
-abbrev entails (φ ψ : Prop' World) : Prop := φ ≤ ψ
+abbrev entails (φ ψ : Set World) : Prop := φ ⊆ ψ
 
 notation:50 φ " ⊆ₚ " ψ => entails φ ψ
 
 /--
 Equivalence of propositions
 -/
-def pequiv (φ ψ : Prop' World) : Prop := (φ ⊆ₚ ψ) ∧ (ψ ⊆ₚ φ)
+def pequiv (φ ψ : Set World) : Prop := (φ ⊆ₚ ψ) ∧ (ψ ⊆ₚ φ)
 
 notation:50 φ " ≡ₚ " ψ => pequiv φ ψ
 
 /--
-Negation of a proposition
+Negation of a proposition. Thin alias for `Set.compl`.
 -/
-def pneg (φ : Prop' World) : Prop' World := λ w => ¬(φ w)
+def pneg (φ : Set World) : Set World := φᶜ
 
 prefix:75 "∼" => pneg
 
 /--
-Conjunction of two propositions
+Conjunction of two propositions. Thin alias for `Set.inter`.
 -/
-def pand (φ ψ : Prop' World) : Prop' World := λ w => φ w ∧ ψ w
+def pand (φ ψ : Set World) : Set World := φ ∩ ψ
 
 infixl:65 " ∧ₚ " => pand
 
 /--
-Conjunction of a set of propositions (grand conjunction ⋀X)
+Conjunction of a set of propositions (grand conjunction ⋀X). Thin alias
+for `Set.sInter`.
 "⋀X refers to the grand conjunction of its members, i.e., the proposition
 that is true in a world u if and only if every member of X is true in u"
 -/
-def bigConj (X : Set (Prop' World)) : Prop' World :=
-  λ w => ∀ φ ∈ X, φ w
+def bigConj (X : Set (Set World)) : Set World := ⋂₀ X
 
 notation "⋀" => bigConj
 
 /--
-Disjunction of a set of propositions (grand disjunction ⋁X)
+Disjunction of a set of propositions (grand disjunction ⋁X). Thin alias
+for `Set.sUnion`.
 "⋁X refers to the grand disjunction of the members of X, i.e., the proposition
 that is true in a world u if and only if at least one member of X is true in u"
 -/
-def bigDisj (X : Set (Prop' World)) : Prop' World :=
-  λ w => ∃ φ ∈ X, φ w
+def bigDisj (X : Set (Set World)) : Set World := ⋃₀ X
 
 notation "⋁" => bigDisj
 
 -- DEFINITION 1: The preorder ≤_ALT (Spector p.7)
 
-variable (ALT : Set (Prop' World))
+variable (ALT : Set (Set World))
 
 /--
 Definition 1.1: Given a set of alternatives ALT, ≤_ALT is the preorder
@@ -147,7 +148,7 @@ theorem leALT_trans (u v w : World) (huv : u ≤[ALT] v) (hvw : v ≤[ALT] w) : 
 
 -- DEFINITION 2: exh_mw (Spector p.7)
 
-variable (φ : Prop' World)
+variable (φ : Set World)
 
 /--
 Definition 2: Exhaustivity operator based on minimal worlds (exh_mw)
@@ -160,7 +161,7 @@ Equivalently: exh_mw(ALT, φ) = φ ∩ {u : ¬∃v(φ(v) = 1 ∧ v <_ALT u)}
 
 "The set of φ-worlds that are minimal relative to <_ALT"
 -/
-def exhMW : Prop' World :=
+def exhMW : Set World :=
   λ u => φ u ∧ ¬∃ v, φ v ∧ (v <[ALT] u)
 
 /--
@@ -179,7 +180,7 @@ theorem exhMW_entails : exhMW ALT φ ⊆ₚ φ :=
 Definition 3.1: A set of propositions X is consistent if there exists
 a world u in which every member of X is true.
 -/
-def SetConsistent (X : Set (Prop' World)) : Prop :=
+def SetConsistent (X : Set (Set World)) : Prop :=
   ∃ u, ∀ ψ ∈ X, ψ u
 
 /--
@@ -189,7 +190,7 @@ a) φ ∈ E
 b) every member of E distinct from φ is the negation of a member of ALT
 c) E is consistent
 -/
-def isCompatible (E : Set (Prop' World)) : Prop :=
+def isCompatible (E : Set (Set World)) : Prop :=
   φ ∈ E ∧
   (∀ ψ ∈ E, ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a) ∧
   SetConsistent E
@@ -201,7 +202,7 @@ A set is maximal (ALT, φ)-compatible (MC_(ALT,φ)-set for short) if it is
 (ALT, φ)-compatible and is not properly included in any other
 (ALT, φ)-compatible set.
 -/
-def isMCSet (E : Set (Prop' World)) : Prop :=
+def isMCSet (E : Set (Set World)) : Prop :=
   isCompatible ALT φ E ∧
   ∀ E', isCompatible ALT φ E' → E ⊆ E' → E' ⊆ E
 
@@ -212,14 +213,14 @@ Definition 3.4: IE_(ALT,φ) = {ψ : ψ belongs to every MC_(ALT,φ)-set}
 innocently excludable alternatives, but rather the set that contains φ and all
 the negations of innocently excludable alternatives."
 -/
-def IE : Set (Prop' World) :=
+def IE : Set (Set World) :=
   {ψ | ∀ E, isMCSet ALT φ E → ψ ∈ E}
 
 /--
 Definition 3.5: An alternative a is innocently excludable given ALT and φ
 if and only if ¬a ∈ IE_(ALT,φ).
 -/
-def isInnocentlyExcludable (a : Prop' World) : Prop :=
+def isInnocentlyExcludable (a : Set World) : Prop :=
   a ∈ ALT ∧ (∼a) ∈ IE ALT φ
 
 -- DEFINITION 4: exh_ie (Spector p.8)
@@ -234,7 +235,7 @@ Equivalently: exh_ie(ALT, φ) = ⋀ IE_(ALT,φ)
 Equivalently: exh_ie(ALT, φ) = φ ∧ ⋀{¬a : a is a member of ALT that is
                                        innocently excludable given ALT and φ}
 -/
-def exhIE : Prop' World :=
+def exhIE : Set World :=
   λ u => ∀ ψ ∈ IE ALT φ, ψ u
 
 -- DEFINITION 5: Closure under conjunction/disjunction (Spector p.11)
@@ -246,14 +247,14 @@ A set ALT is closed under conjunction if for any subset X of ALT,
 (Definition 5 in Spector)
 -/
 def closedUnderConj : Prop :=
-  ∀ X : Set (Prop' World), X ⊆ ALT → (⋀ X) ∈ ALT
+  ∀ X : Set (Set World), X ⊆ ALT → (⋀ X) ∈ ALT
 
 /--
 A set ALT is closed under disjunction if for any subset X of ALT,
 ⋁X ∈ ALT.
 -/
 def closedUnderDisj : Prop :=
-  ∀ X : Set (Prop' World), X ⊆ ALT → (⋁ X) ∈ ALT
+  ∀ X : Set (Set World), X ⊆ ALT → (⋁ X) ∈ ALT
 
 -- MC-SET EXISTENCE (via Minimal Worlds - Spector's approach)
 
@@ -287,9 +288,9 @@ theorem ltALT_wf_of_finite (hfin : Set.Finite ALT) : WellFounded (ltALT ALT) := 
   -- Since ALT is finite, these are finite sets, and ⊂ on finite sets is well-founded.
   classical
   -- Define f(w) = {a ∈ ALT | a w} as a Finset
-  let trueAt : World → Set (Prop' World) := λ w => {a ∈ ALT | a w}
+  let trueAt : World → Set (Set World) := λ w => {a ∈ ALT | a w}
   have hfin_trueAt : ∀ w, (trueAt w).Finite := λ w => hfin.subset λ a h => h.1
-  let f : World → Finset (Prop' World) := λ w => (hfin_trueAt w).toFinset
+  let f : World → Finset (Set World) := λ w => (hfin_trueAt w).toFinset
   -- Membership characterization
   have hmem : ∀ w a, a ∈ f w ↔ a ∈ ALT ∧ a w := λ w a =>
     Set.Finite.mem_toFinset (hfin_trueAt w)
@@ -322,7 +323,7 @@ theorem ltALT_wf_of_finite (hfin : Set.Finite ALT) : WellFounded (ltALT ALT) := 
       apply hne
       exact Finset.Subset.antisymm hsub hsub'
   -- Use well-foundedness of ⊂ on Finset via InvImage
-  have hwf : WellFounded (λ (s t : Finset (Prop' World)) => s ⊂ t) := IsWellFounded.wf
+  have hwf : WellFounded (λ (s t : Finset (Set World)) => s ⊂ t) := IsWellFounded.wf
   have : ltALT ALT = InvImage (λ s t => s ⊂ t) f := by
     ext u v
     exact hf_lt u v
@@ -364,14 +365,15 @@ alternatives that are false at u.
 
 "XALT,φ(u) = {φ} ∪ {¬a: a ∈ ALT ∧ a(u) = 0}"
 -/
-def X_of_world (u : World) : Set (Prop' World) :=
+def X_of_world (u : World) : Set (Set World) :=
   {φ} ∪ {ψ | ∃ a ∈ ALT, ψ = ∼a ∧ ¬(a u)}
 
 /--
 Helper lemma: If ∼a = ∼a' then a = a' (negation is injective on propositions).
+Reduces to `compl_injective` (BooleanAlgebra) after the `pneg = compl` alias.
 -/
-theorem pneg_injective {a a' : Prop' World} (h : ∼a = ∼a') : a = a' := by
-  funext w; apply eq_iff_iff.mpr; exact not_iff_not.mp (eq_iff_iff.mp (congrFun h w))
+theorem pneg_injective {a a' : Set World} (h : ∼a = ∼a') : a = a' :=
+  compl_injective h
 
 /--
 Key equivalence (from proof of Lemma 1):
@@ -444,7 +446,7 @@ theorem X_contains_phi (u : World) : φ ∈ X_of_world ALT φ u := by
 /--
 Every element of X(u) is either φ or the negation of some alternative.
 -/
-theorem X_elements (u : World) (ψ : Prop' World) (hψ : ψ ∈ X_of_world ALT φ u) :
+theorem X_elements (u : World) (ψ : Set World) (hψ : ψ ∈ X_of_world ALT φ u) :
     ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a := by
   simp only [X_of_world, Set.mem_union, Set.mem_singleton_iff, Set.mem_setOf_eq] at hψ
   rcases hψ with rfl | ⟨a, ha, rfl, _⟩
@@ -584,7 +586,7 @@ This follows from the structure of compatible sets.
 
 Note: Requires finite ALT to ensure MC-sets exist.
 -/
-theorem IE_structure (hfin : Set.Finite ALT) (ψ : Prop' World) (hψ : ψ ∈ IE ALT φ)
+theorem IE_structure (hfin : Set.Finite ALT) (ψ : Set World) (hψ : ψ ∈ IE ALT φ)
     (hsat : ∃ w, φ w) : ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a := by
   -- Since an MC-set exists (by exists_MCset), ψ is in some MC-set
   obtain ⟨E, hE_mc⟩ := exists_MCset ALT φ hfin hsat
@@ -686,7 +688,7 @@ a is innocently excludable given ALT and φ if and only if exh_mw(ALT, φ) entai
 
 This characterizes innocent exclusion in terms of the minimal-worlds operator.
 -/
-theorem prop7_IE_iff_exhMW_entails_neg (a : Prop' World) (ha : a ∈ ALT) :
+theorem prop7_IE_iff_exhMW_entails_neg (a : Set World) (ha : a ∈ ALT) :
     isInnocentlyExcludable ALT φ a ↔ (exhMW ALT φ ⊆ₚ ∼a) := by
   constructor
   · -- Forward: a is IE → exh_mw ⊆ ∼a
@@ -712,7 +714,7 @@ theorem prop7_IE_iff_exhMW_entails_neg (a : Prop' World) (ha : a ∈ ALT) :
       have hmw_v : exhMW ALT φ v :=
         (lemma2_exhMW_iff_satisfies_MCset ALT φ v).mpr ⟨E, hE_mc, hv_sat_E⟩
       -- By hypothesis, exh_mw ⊆ ∼a, so (∼a) v
-      have hna_v : (∼a) v := hmw_entails_na v hmw_v
+      have hna_v : (∼a) v := hmw_entails_na hmw_v
       -- E ∪ {∼a} is consistent (witnessed by v)
       have hE_union_consistent : SetConsistent (E ∪ {∼a}) := by
         use v
@@ -821,11 +823,11 @@ theorem theorem9_main (hclosed : closedUnderConj ALT) :
     -- We show u is minimal by contradiction
     -- Suppose u is not minimal: ∃v, φ v ∧ v <_ALT u
     by_contra hmw_not
-    simp only [exhMW] at hmw_not
+    change ¬ (φ u ∧ ¬∃ v, φ v ∧ (v <[ALT] u)) at hmw_not
     push_neg at hmw_not
     obtain ⟨v, hφv, hv_lt_u⟩ := hmw_not hu
     -- Define A = {a ∈ ALT : a(u) = 1} (alternatives true at u)
-    let A : Set (Prop' World) := {a ∈ ALT | a u}
+    let A : Set (Set World) := {a ∈ ALT | a u}
     -- Since v <_ALT u, there exists a ∈ A with ¬(a v)
     -- (i.e., alternatives true at u but not all true at v)
     have hA_sub_ALT : A ⊆ ALT := λ a ha => ha.1
@@ -926,17 +928,17 @@ theorem theorem9_main (hclosed : closedUnderConj ALT) :
 /--
 De Morgan for big disjunction: ¬(⋁X) at w iff ∀ a ∈ X, ¬a at w
 -/
-lemma neg_bigDisj_iff (X : Set (Prop' World)) (w : World) :
+lemma neg_bigDisj_iff (X : Set (Set World)) (w : World) :
     (∼(⋁ X)) w ↔ ∀ a ∈ X, (∼a) w := by
-  simp only [pneg, bigDisj]
-  push_neg
+  show ¬ (∃ a ∈ X, w ∈ a) ↔ ∀ a ∈ X, w ∉ a
+  push Not
   rfl
 
 /--
 The disjunction closure contains the original set (via singleton disjunctions).
 -/
-lemma subset_disjClosure (ALT' : Set (Prop' World))
-    (h : ALT' = {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X}) :
+lemma subset_disjClosure (ALT' : Set (Set World))
+    (h : ALT' = {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X}) :
     ALT ⊆ ALT' := by
   intro a ha
   rw [h]
@@ -944,14 +946,14 @@ lemma subset_disjClosure (ALT' : Set (Prop' World))
   constructor
   · exact Set.singleton_subset_iff.mpr ha
   · ext w
-    simp only [bigDisj, Set.mem_singleton_iff, exists_eq_left]
+    simp only [bigDisj, Set.mem_sUnion, Set.mem_singleton_iff, exists_eq_left]
 
 /--
 Every element of the disjunction closure is a disjunction of ALT elements.
 -/
-lemma mem_disjClosure_iff (ALT' : Set (Prop' World))
-    (h : ALT' = {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X}) (p : Prop' World) :
-    p ∈ ALT' ↔ ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X := by
+lemma mem_disjClosure_iff (ALT' : Set (Set World))
+    (h : ALT' = {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X}) (p : Set World) :
+    p ∈ ALT' ↔ ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X := by
   rw [h]; rfl
 
 /--
@@ -962,8 +964,8 @@ If ALT' is the disjunction closure of ALT, then u ≤_{ALT} v ↔ u ≤_{ALT'} v
 Proof: If a disjunction (⋁X) is true at u where X ⊆ ALT, then some b ∈ X is true at u.
 If u ≤_{ALT} v, then b is true at v, so (⋁X) is true at v.
 -/
-lemma leALT_disjClosure_eq (ALT' : Set (Prop' World))
-    (h : ALT' = {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X}) (u v : World) :
+lemma leALT_disjClosure_eq (ALT' : Set (Set World))
+    (h : ALT' = {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X}) (u v : World) :
     leALT ALT u v ↔ leALT ALT' u v := by
   constructor
   · -- ALT ≤ implies ALT' ≤
@@ -988,34 +990,28 @@ lemma leALT_disjClosure_eq (ALT' : Set (Prop' World))
 /--
 Corollary: The strict ordering <_ALT is unchanged by disjunction closure.
 -/
-lemma ltALT_disjClosure_eq (ALT' : Set (Prop' World))
-    (h : ALT' = {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X}) (u v : World) :
+lemma ltALT_disjClosure_eq (ALT' : Set (Set World))
+    (h : ALT' = {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X}) (u v : World) :
     ltALT ALT u v ↔ ltALT ALT' u v := by
   simp only [ltALT, leALT_disjClosure_eq ALT ALT' h]
 
 /--
 Corollary: exh_mw is unchanged by disjunction closure.
 -/
-lemma exhMW_disjClosure_eq (ALT' : Set (Prop' World))
-    (h : ALT' = {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X}) :
+lemma exhMW_disjClosure_eq (ALT' : Set (Set World))
+    (h : ALT' = {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X}) :
     exhMW ALT φ ≡ₚ exhMW ALT' φ := by
   constructor
   · intro u hmw
-    simp only [exhMW] at hmw ⊢
-    constructor
-    · exact hmw.1
-    · intro ⟨v, hφv, hlt_ALT'⟩
-      apply hmw.2
-      use v, hφv
-      exact (ltALT_disjClosure_eq ALT ALT' h v u).mpr hlt_ALT'
+    refine ⟨hmw.1, ?_⟩
+    intro ⟨v, hφv, hlt_ALT'⟩
+    apply hmw.2
+    exact ⟨v, hφv, (ltALT_disjClosure_eq ALT ALT' h v u).mpr hlt_ALT'⟩
   · intro u hmw'
-    simp only [exhMW] at hmw' ⊢
-    constructor
-    · exact hmw'.1
-    · intro ⟨v, hφv, hlt_ALT⟩
-      apply hmw'.2
-      use v, hφv
-      exact (ltALT_disjClosure_eq ALT ALT' h v u).mp hlt_ALT
+    refine ⟨hmw'.1, ?_⟩
+    intro ⟨v, hφv, hlt_ALT⟩
+    apply hmw'.2
+    exact ⟨v, hφv, (ltALT_disjClosure_eq ALT ALT' h v u).mp hlt_ALT⟩
 
 /--
 Theorem 10 (Spector p.13): For any proposition φ and any alternative set ALT,
@@ -1032,8 +1028,8 @@ Proof strategy: Use Corollary 8's characterization:
 Since exhMW is unchanged by disjunction closure, we just need to check that
 the extra conditions for ALT' (disjunctions) are implied by the ALT conditions.
 -/
-theorem theorem10_disj_closure_vacuous (hfin : Set.Finite ALT) (ALT' : Set (Prop' World))
-    (h : ALT' = {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X}) :
+theorem theorem10_disj_closure_vacuous (hfin : Set.Finite ALT) (ALT' : Set (Set World))
+    (h : ALT' = {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X}) :
     exhIE ALT φ ≡ₚ exhIE ALT' φ := by
   -- First, note that exhMW ALT φ = exhMW ALT' φ
   have hmw_eq := exhMW_disjClosure_eq ALT φ ALT' h
@@ -1044,9 +1040,9 @@ theorem theorem10_disj_closure_vacuous (hfin : Set.Finite ALT) (ALT' : Set (Prop
     -- The disjunction closure is the image of {X | X ⊆ ALT} under bigDisj
     -- {X | X ⊆ ALT} is finite by Finite.finite_subsets
     -- The image of a finite set is finite by Finite.image
-    have hsubsets_fin : {X : Set (Prop' World) | X ⊆ ALT}.Finite := hfin.finite_subsets
+    have hsubsets_fin : {X : Set (Set World) | X ⊆ ALT}.Finite := hfin.finite_subsets
     -- The disjunction closure is the image of subsets under bigDisj
-    have heq : {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X} = bigDisj '' {X | X ⊆ ALT} := by
+    have heq : {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X} = bigDisj '' {X | X ⊆ ALT} := by
       ext p
       simp only [Set.mem_image, Set.mem_setOf_eq]
       constructor
@@ -1064,52 +1060,39 @@ theorem theorem10_disj_closure_vacuous (hfin : Set.Finite ALT) (ALT' : Set (Prop
   · -- exhIE ALT φ ⊆ exhIE ALT' φ
     intro u hie
     -- By Corollary 8 for ALT: φ u ∧ ∀ a ∈ ALT, (exhMW ⊆ ∼a) → ¬(a u)
-    have ⟨hφu, hALT_cond⟩ := hc8_ALT.1 u hie
+    have ⟨hφu, hALT_cond⟩ := hc8_ALT.1 hie
     -- Need to show Corollary 8 for ALT': φ u ∧ ∀ a ∈ ALT', (exhMW' ⊆ ∼a) → ¬(a u)
-    apply hc8_ALT'.2 u
-    constructor
-    · exact hφu
-    · intro a ha_ALT' hexhMW'_sub_neg_a
-      -- a ∈ ALT', so a = ⋁X for some X ⊆ ALT
-      rw [h] at ha_ALT'
-      obtain ⟨X, hX_sub, ha_eq⟩ := ha_ALT'
-      -- exhMW ALT' φ ⊆ₚ ∼a means ∀ w, exhMW ALT' φ w → (∼a) w
-      -- Since a = ⋁X, (∼a) = ∼(⋁X), and (∼(⋁X)) w ↔ ∀ b ∈ X, (∼b) w
-      -- So exhMW ALT' φ ⊆ₚ ∼a means ∀ w, exhMW ALT' φ w → ∀ b ∈ X, ¬(b w)
-      -- Since exhMW ALT φ = exhMW ALT' φ (by hmw_eq), this means:
-      -- ∀ b ∈ X, exhMW ALT φ ⊆ₚ ∼b
-      have hb_conds : ∀ b ∈ X, exhMW ALT φ ⊆ₚ ∼b := by
-        intro b hb_X w hmw
-        -- hmw : exhMW ALT φ w
-        -- Need: (∼b) w, i.e., ¬(b w)
-        have hmw' : exhMW ALT' φ w := hmw_eq.1 w hmw
-        have : (∼a) w := hexhMW'_sub_neg_a w hmw'
-        rw [ha_eq] at this
-        exact (neg_bigDisj_iff X w).mp this b hb_X
-      -- By hALT_cond, for each b ∈ X: ¬(b u)
-      have hb_not_u : ∀ b ∈ X, ¬(b u) := λ b hb => hALT_cond b (hX_sub hb) (hb_conds b hb)
-      -- Therefore ¬(a u) = ¬((⋁X) u)
-      rw [ha_eq]
-      simp only [bigDisj]
-      push_neg
-      exact hb_not_u
+    refine hc8_ALT'.2 ⟨hφu, ?_⟩
+    intro a ha_ALT' hexhMW'_sub_neg_a
+    -- a ∈ ALT', so a = ⋁X for some X ⊆ ALT
+    rw [h] at ha_ALT'
+    obtain ⟨X, hX_sub, ha_eq⟩ := ha_ALT'
+    have hb_conds : ∀ b ∈ X, exhMW ALT φ ⊆ₚ ∼b := by
+      intro b hb_X w hmw
+      have hmw' : exhMW ALT' φ w := hmw_eq.1 hmw
+      have : (∼a) w := hexhMW'_sub_neg_a hmw'
+      rw [ha_eq] at this
+      exact (neg_bigDisj_iff X w).mp this b hb_X
+    have hb_not_u : ∀ b ∈ X, ¬(b u) := λ b hb => hALT_cond b (hX_sub hb) (hb_conds b hb)
+    rw [ha_eq]
+    show ¬ ∃ b ∈ X, u ∈ b
+    push Not
+    exact hb_not_u
   · -- exhIE ALT' φ ⊆ exhIE ALT φ
     intro u hie'
     -- By Corollary 8 for ALT': φ u ∧ ∀ a ∈ ALT', (exhMW' ⊆ ∼a) → ¬(a u)
-    have ⟨hφu, hALT'_cond⟩ := hc8_ALT'.1 u hie'
+    have ⟨hφu, hALT'_cond⟩ := hc8_ALT'.1 hie'
     -- Need to show Corollary 8 for ALT: φ u ∧ ∀ a ∈ ALT, (exhMW ⊆ ∼a) → ¬(a u)
-    apply hc8_ALT.2 u
-    constructor
-    · exact hφu
-    · intro a ha_ALT hexhMW_sub_neg_a
-      -- a ∈ ALT ⊆ ALT'
-      have ha_ALT' : a ∈ ALT' := subset_disjClosure ALT ALT' h ha_ALT
-      -- exhMW ALT φ ⊆ₚ ∼a, and exhMW ALT' φ = exhMW ALT φ
-      have hexhMW'_sub : exhMW ALT' φ ⊆ₚ ∼a := by
-        intro w hmw'
-        have hmw : exhMW ALT φ w := hmw_eq.2 w hmw'
-        exact hexhMW_sub_neg_a w hmw
-      exact hALT'_cond a ha_ALT' hexhMW'_sub
+    refine hc8_ALT.2 ⟨hφu, ?_⟩
+    intro a ha_ALT hexhMW_sub_neg_a
+    -- a ∈ ALT ⊆ ALT'
+    have ha_ALT' : a ∈ ALT' := subset_disjClosure ALT ALT' h ha_ALT
+    -- exhMW ALT φ ⊆ₚ ∼a, and exhMW ALT' φ = exhMW ALT φ
+    have hexhMW'_sub : exhMW ALT' φ ⊆ₚ ∼a := by
+      intro w hmw'
+      have hmw : exhMW ALT φ w := hmw_eq.2 hmw'
+      exact hexhMW_sub_neg_a hmw
+    exact hALT'_cond a ha_ALT' hexhMW'_sub
 
 /--
 Corollary 11 (Spector p.13): For any proposition φ and any alternative set ALT,
@@ -1119,11 +1102,11 @@ if ALT∨ = ALT∨∧, then exh_mw(ALT, φ) = exh_ie(ALT, φ).
 applying exh_mw and exh_ie give rise to equivalent results."
 -/
 theorem corollary11 (hfin : Set.Finite ALT)
-    (hcond : closedUnderConj {p | ∃ Y : Set (Prop' World), Y ⊆ ALT ∧ p = ⋁ Y}) :
+    (hcond : closedUnderConj {p | ∃ Y : Set (Set World), Y ⊆ ALT ∧ p = ⋁ Y}) :
     exhMW ALT φ ≡ₚ exhIE ALT φ := by
   -- Let ALT∨ be the disjunction closure of ALT
-  let ALT' : Set (Prop' World) := {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X}
-  have hALT' : ALT' = {p | ∃ X : Set (Prop' World), X ⊆ ALT ∧ p = ⋁ X} := rfl
+  let ALT' : Set (Set World) := {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X}
+  have hALT' : ALT' = {p | ∃ X : Set (Set World), X ⊆ ALT ∧ p = ⋁ X} := rfl
   -- Step 1: exh_mw(ALT) = exh_mw(ALT∨) (disjunction closure is vacuous for exh_mw)
   have hmw_eq : exhMW ALT φ ≡ₚ exhMW ALT' φ := exhMW_disjClosure_eq ALT φ ALT' hALT'
   -- Step 2: exh_ie(ALT) = exh_ie(ALT∨) (Theorem 10)
@@ -1135,14 +1118,14 @@ theorem corollary11 (hfin : Set.Finite ALT)
   constructor
   · -- exhMW ALT ⊆ exhIE ALT
     intro u hmw
-    have hmw' := hmw_eq.1 u hmw
-    have hie' := h9.1 u hmw'
-    exact hie_eq.2 u hie'
+    have hmw' := hmw_eq.1 hmw
+    have hie' := h9.1 hmw'
+    exact hie_eq.2 hie'
   · -- exhIE ALT ⊆ exhMW ALT
     intro u hie
-    have hie' := hie_eq.1 u hie
-    have hmw' := h9.2 u hie'
-    exact hmw_eq.2 u hmw'
+    have hie' := hie_eq.1 hie
+    have hmw' := h9.2 hie'
+    exact hmw_eq.2 hmw'
 
 
 -- SECTION 6: WORKED EXAMPLES
@@ -1185,13 +1168,13 @@ World model:
 abbrev SomeAllWorld := Fin 4
 
 /-- "Some students passed" (at least one). -/
-def someStudents : Prop' SomeAllWorld := λ w => w.val ≥ 1
+def someStudents : Set SomeAllWorld := λ w => w.val ≥ 1
 
 /-- "All students passed" (all three). -/
-def allStudents : Prop' SomeAllWorld := λ w => w.val = 3
+def allStudents : Set SomeAllWorld := λ w => w.val = 3
 
 /-- Alternative set: {some, all}. -/
-def someAllALT : Set (Prop' SomeAllWorld) := {someStudents, allStudents}
+def someAllALT : Set (Set SomeAllWorld) := {someStudents, allStudents}
 
 /-- World where exactly 1 student passed. -/
 def w1 : SomeAllWorld := ⟨1, by omega⟩
@@ -1298,27 +1281,27 @@ inductive OrAndWorld where
   deriving DecidableEq, Repr
 
 /-- "John sang" -/
-def sang : Prop' OrAndWorld
+def sang : Set OrAndWorld
   | .neither => False
   | .onlySang => True
   | .onlyDanced => False
   | .both => True
 
 /-- "John danced" -/
-def danced : Prop' OrAndWorld
+def danced : Set OrAndWorld
   | .neither => False
   | .onlySang => False
   | .onlyDanced => True
   | .both => True
 
 /-- "John sang or danced" (inclusive) -/
-def sangOrDanced : Prop' OrAndWorld := λ w => sang w ∨ danced w
+def sangOrDanced : Set OrAndWorld := λ w => sang w ∨ danced w
 
 /-- "John sang and danced" -/
-def sangAndDanced : Prop' OrAndWorld := λ w => sang w ∧ danced w
+def sangAndDanced : Set OrAndWorld := λ w => sang w ∧ danced w
 
 /-- Alternative set: {or, and}. -/
-def orAndALT : Set (Prop' OrAndWorld) := {sangOrDanced, sangAndDanced}
+def orAndALT : Set (Set OrAndWorld) := {sangOrDanced, sangAndDanced}
 
 /-- The "only sang" world. -/
 def wSang : OrAndWorld := .onlySang
@@ -1411,9 +1394,9 @@ For the some/all scale, the stronger alternative (all) entails the weaker (some)
 -/
 theorem allStudents_entails_someStudents : allStudents ⊆ₚ someStudents := by
   intro w h
-  simp only [allStudents] at h
-  simp only [someStudents, h]
-  decide
+  show w.val ≥ 1
+  change w.val = 3 at h
+  omega
 
 /--
 For the some/all scale: exhMW ≡ exhIE.
@@ -1516,7 +1499,7 @@ For the or/and scale, the stronger alternative (and) entails the weaker (or).
 -/
 theorem sangAndDanced_entails_sangOrDanced : sangAndDanced ⊆ₚ sangOrDanced := by
   intro w h
-  simp only [sangAndDanced] at h
+  change sang w ∧ danced w at h
   exact Or.inl h.1
 
 /--
@@ -1584,27 +1567,27 @@ theorem orAnd_exhMW_iff_exhIE :
 Theorem 9 application: At w1, both exhMW and exhIE agree.
 -/
 theorem exhIE_some_at_w1 : exhIE someAllALT someStudents w1 :=
-  someAll_exhMW_iff_exhIE.1 w1 exhMW_some_at_w1
+  someAll_exhMW_iff_exhIE.1 exhMW_some_at_w1
 
 /--
 Theorem 9 application: At w3, both exhMW and exhIE agree (both false).
 -/
 theorem exhIE_some_not_w3 : ¬exhIE someAllALT someStudents w3 := by
   intro h
-  exact exhMW_some_not_w3 (someAll_exhMW_iff_exhIE.2 w3 h)
+  exact exhMW_some_not_w3 (someAll_exhMW_iff_exhIE.2 h)
 
 /--
 Theorem 9 application: At wSang, both exhMW and exhIE agree.
 -/
 theorem exhIE_or_at_wSang : exhIE orAndALT sangOrDanced wSang :=
-  orAnd_exhMW_iff_exhIE.1 wSang exhMW_or_at_wSang
+  orAnd_exhMW_iff_exhIE.1 exhMW_or_at_wSang
 
 /--
 Theorem 9 application: At wBoth, both exhMW and exhIE agree (both false).
 -/
 theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
   intro h
-  exact exhMW_or_not_wBoth (orAnd_exhMW_iff_exhIE.2 wBoth h)
+  exact exhMW_or_not_wBoth (orAnd_exhMW_iff_exhIE.2 h)
 
 -- ----------------------------------------------------------------------------
 -- 6.4: SUMMARY OF DERIVATIONS
@@ -1664,19 +1647,19 @@ This principle unifies several phenomena:
 /--
 A context is a function that embeds a proposition into a larger structure.
 -/
-def Context (World : Type*) := Prop' World → Prop' World
+def Context (World : Type*) := Set World → Set World
 
 /--
 A context is upward entailing (monotone) if φ ⊆ ψ implies C(φ) ⊆ C(ψ).
 -/
 def IsUpwardEntailing (C : Context World) : Prop :=
-  ∀ φ ψ : Prop' World, (φ ⊆ₚ ψ) → (C φ ⊆ₚ C ψ)
+  ∀ φ ψ : Set World, (φ ⊆ₚ ψ) → (C φ ⊆ₚ C ψ)
 
 /--
 A context is downward entailing (antitone) if φ ⊆ ψ implies C(ψ) ⊆ C(φ).
 -/
 def IsDownwardEntailing (C : Context World) : Prop :=
-  ∀ φ ψ : Prop' World, (φ ⊆ₚ ψ) → (C ψ ⊆ₚ C φ)
+  ∀ φ ψ : Set World, (φ ⊆ₚ ψ) → (C ψ ⊆ₚ C φ)
 
 -- ----------------------------------------------------------------------------
 -- 7.2: Maximize Strength Theorems
@@ -1687,7 +1670,7 @@ In a UE context, exhaustification strengthens the embedded proposition.
 That is: C(exh(φ)) ⊆ C(φ) when C is UE and exh(φ) ⊆ φ.
 -/
 theorem exh_in_ue_strengthens (C : Context World) (hUE : IsUpwardEntailing C)
-    (φ : Prop' World) (exhφ : Prop' World) (hExhStronger : exhφ ⊆ₚ φ) :
+    (φ : Set World) (exhφ : Set World) (hExhStronger : exhφ ⊆ₚ φ) :
     C exhφ ⊆ₚ C φ :=
   hUE exhφ φ hExhStronger
 
@@ -1696,7 +1679,7 @@ In a DE context, exhaustification weakens the overall sentence.
 That is: C(φ) ⊆ C(exh(φ)) when C is DE and exh(φ) ⊆ φ.
 -/
 theorem exh_in_de_weakens (C : Context World) (hDE : IsDownwardEntailing C)
-    (φ : Prop' World) (exhφ : Prop' World) (hExhStronger : exhφ ⊆ₚ φ) :
+    (φ : Set World) (exhφ : Set World) (hExhStronger : exhφ ⊆ₚ φ) :
     C φ ⊆ₚ C exhφ :=
   hDE exhφ φ hExhStronger
 
@@ -1712,7 +1695,7 @@ Negation context is downward entailing.
 -/
 theorem neg_context_is_DE : IsDownwardEntailing (pneg : Context World) := by
   intro φ ψ h w hNotψ hφ
-  exact hNotψ (h w hφ)
+  exact hNotψ (h hφ)
 
 -- ----------------------------------------------------------------------------
 -- 7.3: Maximize Strength Decision Procedure
@@ -1724,8 +1707,8 @@ Maximize Strength: compute SI iff context is UE (strengthening).
 This is the core principle: only apply exhaustification when it results
 in strengthening of the overall assertion.
 -/
-def maximizeStrength (φ : Prop' World) (exhφ : Prop' World)
-    (polarity : ContextPolarity) : Prop' World :=
+def maximizeStrength (φ : Set World) (exhφ : Set World)
+    (polarity : ContextPolarity) : Set World :=
   match polarity with
   | .upward => exhφ        -- Exhaustify: strengthens
   | .downward => φ         -- Don't exhaustify: would weaken
@@ -1734,8 +1717,8 @@ def maximizeStrength (φ : Prop' World) (exhφ : Prop' World)
 /--
 Maximize Strength with explicit context.
 -/
-def maximizeStrengthCtx (C : Context World) (φ : Prop' World) (exhφ : Prop' World)
-    (hUE : Bool) : Prop' World :=
+def maximizeStrengthCtx (C : Context World) (φ : Set World) (exhφ : Set World)
+    (hUE : Bool) : Set World :=
   if hUE then C exhφ else C φ
 
 -- ----------------------------------------------------------------------------
@@ -1745,7 +1728,7 @@ def maximizeStrengthCtx (C : Context World) (φ : Prop' World) (exhφ : Prop' Wo
 /--
 exh_mw strengthens the proposition by conjoining negations of excludable alternatives.
 -/
-theorem exhMW_strengthens (ALT : Set (Prop' World)) (φ : Prop' World) :
+theorem exhMW_strengthens (ALT : Set (Set World)) (φ : Set World) :
     exhMW ALT φ ⊆ₚ φ := by
   intro w ⟨hφ, _⟩
   exact hφ
@@ -1754,7 +1737,7 @@ theorem exhMW_strengthens (ALT : Set (Prop' World)) (φ : Prop' World) :
 In a UE context, exh_mw results in a stronger overall sentence.
 -/
 theorem exhMW_strengthens_in_UE (C : Context World) (hUE : IsUpwardEntailing C)
-    (ALT : Set (Prop' World)) (φ : Prop' World) :
+    (ALT : Set (Set World)) (φ : Set World) :
     C (exhMW ALT φ) ⊆ₚ C φ :=
   exh_in_ue_strengthens C hUE φ (exhMW ALT φ) (exhMW_strengthens ALT φ)
 
@@ -1763,7 +1746,7 @@ In a DE context, applying exh_mw weakens the overall sentence.
 Hence, Maximize Strength predicts no scalar implicature in DE contexts.
 -/
 theorem exhMW_weakens_in_DE (C : Context World) (hDE : IsDownwardEntailing C)
-    (ALT : Set (Prop' World)) (φ : Prop' World) :
+    (ALT : Set (Set World)) (φ : Set World) :
     C φ ⊆ₚ C (exhMW ALT φ) :=
   exh_in_de_weakens C hDE φ (exhMW ALT φ) (exhMW_strengthens ALT φ)
 
@@ -1864,7 +1847,7 @@ per MC-set—capturing ambiguity in presuppositional alternatives.
 
 section ExhMX
 
-variable {World : Type*} (ALT : Set (Prop' World)) (φ : Prop' World)
+variable {World : Type*} (ALT : Set (Set World)) (φ : Set World)
 
 /--
 An `exh_mx` reading for a specific MC-set E: the conjunction of E.
@@ -1876,7 +1859,7 @@ alternatives to exclude, `exh_mx` captures the resulting ambiguity.
 @cite{wang-2025} Ch4: "exh_mx(ALT, φ, w) = φ(w) ∧ ∀q ∈ Max(φ, ALT)[¬q(w)]"
 where Max is a specific maximal consistent subset.
 -/
-def exhMXReading (E : Set (Prop' World)) : Prop' World :=
+def exhMXReading (E : Set (Set World)) : Set World :=
   λ u => ∀ ψ ∈ E, ψ u
 
 /--
@@ -1885,7 +1868,7 @@ The set of all `exh_mx` readings: one per MC-set.
 This is the *set of propositions*, not a single proposition.
 Each reading corresponds to a different way of consistently excluding alternatives.
 -/
-def exhMXReadings : Set (Prop' World) :=
+def exhMXReadings : Set (Set World) :=
   {p | ∃ E, isMCSet ALT φ E ∧ p = exhMXReading E}
 
 /--
@@ -1916,7 +1899,7 @@ Every `exh_mx` reading entails `exh_ie`.
 Since `exh_ie` is the intersection of all MC-sets and each `exh_mx` reading
 is a single MC-set, each reading is at least as strong as `exh_ie`.
 -/
-theorem exhMXReading_entails_exhIE (E : Set (Prop' World)) (hmc : isMCSet ALT φ E) :
+theorem exhMXReading_entails_exhIE (E : Set (Set World)) (hmc : isMCSet ALT φ E) :
     exhMXReading E ⊆ₚ exhIE ALT φ := by
   intro u hread ψ hψIE
   exact hread ψ (hψIE E hmc)
@@ -1953,7 +1936,7 @@ theorem exhOperators_coincide_under_closure (hclosed : closedUnderConj ALT) :
     exhIE ALT φ ≡ₚ (λ u => ∃ p ∈ exhMXReadings ALT φ, p u) := by
   have h9 := theorem9_main ALT φ hclosed
   have hbig := exhMW_eq_bigDisj_exhMX ALT φ
-  exact ⟨λ u hie => hbig.1 u (h9.2 u hie), λ u hex => h9.1 u (hbig.2 u hex)⟩
+  exact ⟨λ _u hie => hbig.1 (h9.2 hie), λ _u hex => h9.1 (hbig.2 hex)⟩
 
 /--
 When there is a unique MC-set, all `exh_mx` readings are equivalent.
@@ -1963,7 +1946,7 @@ It holds when ALT has additional structural properties (e.g., symmetric
 closure under both conjunction and disjunction, per @cite{spector-2016}).
 -/
 theorem exhMX_unique_when_unique_MCset
-    {p q : Prop' World}
+    {p q : Set World}
     (hp : p ∈ exhMXReadings ALT φ) (hq : q ∈ exhMXReadings ALT φ)
     (huniq : ∀ E₁ E₂, isMCSet ALT φ E₁ → isMCSet ALT φ E₂ → E₁ = E₂) :
     p ≡ₚ q := by
@@ -2006,15 +1989,15 @@ each alternative set in S.
 
 Uses a total choice function restricted to S to avoid dependent types.
 -/
-def flat (S : Set (Set (Prop' World))) : Set (Prop' World) :=
-  {p | ∃ (f : Set (Prop' World) → Prop' World),
+def flat (S : Set (Set (Set World))) : Set (Set World) :=
+  {p | ∃ (f : Set (Set World) → Set World),
     (∀ A ∈ S, f A ∈ A) ∧
     p = λ u => ∀ A ∈ S, f A u}
 
 /--
 FLAT of a singleton is the set itself.
 -/
-theorem flat_singleton (A : Set (Prop' World)) :
+theorem flat_singleton (A : Set (Set World)) :
     flat {A} = A := by
   ext p; constructor
   · rintro ⟨f, hf, heq⟩
@@ -2033,7 +2016,7 @@ theorem flat_singleton (A : Set (Prop' World)) :
 /--
 FLAT of the empty family is the tautology set.
 -/
-theorem flat_empty : flat (∅ : Set (Set (Prop' World))) = {λ _ => True} := by
+theorem flat_empty : flat (∅ : Set (Set (Set World))) = {λ _ => True} := by
   ext p; constructor
   · rintro ⟨_, -, rfl⟩
     show _ = λ _ => True
@@ -2067,8 +2050,8 @@ An alternative is innocently includable iff it appears in ALL such maximal sets.
 -/
 
 variable {World : Type*}
-variable (ALT : Set (Prop' World))
-variable (φ : Prop' World)
+variable (ALT : Set (Set World))
+variable (φ : Set World)
 
 /--
 **Definition (II-compatible set)**: A set of propositions R is (ALT, φ, IE)-compatible
@@ -2076,7 +2059,7 @@ for inclusion if:
 a) R ⊆ ALT
 b) {r : r ∈ R} ∪ {φ} ∪ {¬q : q ∈ IE(ALT, φ)} is consistent
 -/
-def isIICompatible (R : Set (Prop' World)) : Prop :=
+def isIICompatible (R : Set (Set World)) : Prop :=
   R ⊆ ALT ∧
   SetConsistent ({φ} ∪ {ψ | ∃ q, isInnocentlyExcludable ALT φ q ∧ ψ = ∼q} ∪ R)
 
@@ -2085,7 +2068,7 @@ def isIICompatible (R : Set (Prop' World)) : Prop :=
 A set R is maximally (ALT, φ, IE)-compatible if it is II-compatible
 and not properly included in any other II-compatible set.
 -/
-def isMISet (R : Set (Prop' World)) : Prop :=
+def isMISet (R : Set (Set World)) : Prop :=
   isIICompatible ALT φ R ∧
   ∀ R', isIICompatible ALT φ R' → R ⊆ R' → R' ⊆ R
 
@@ -2094,14 +2077,14 @@ def isMISet (R : Set (Prop' World)) : Prop :=
 
 An alternative r is innocently includable iff it belongs to every MI-set.
 -/
-def II : Set (Prop' World) :=
+def II : Set (Set World) :=
   {r ∈ ALT | ∀ R, isMISet ALT φ R → r ∈ R}
 
 /--
 An alternative a is innocently includable given ALT and φ
 if and only if a ∈ II(ALT, φ).
 -/
-def isInnocentlyIncludable (a : Prop' World) : Prop :=
+def isInnocentlyIncludable (a : Set World) : Prop :=
   a ∈ II ALT φ
 
 /--
@@ -2114,7 +2097,7 @@ def isInnocentlyIncludable (a : Prop' World) : Prop :=
 
 This is Bar-Lev & Fox's key operator that derives free choice.
 -/
-def exhIEII : Prop' World := λ w =>
+def exhIEII : Set World := λ w =>
   φ w ∧
   (∀ q, isInnocentlyExcludable ALT φ q → ¬q w) ∧
   (∀ r, isInnocentlyIncludable ALT φ r → r w)
@@ -2126,7 +2109,7 @@ def exhIEII : Prop' World := λ w =>
 /-!
 ## Decidable Innocent Exclusion
 
-The `exhIE` above is a specification: it quantifies over all `Set (Prop' World)`,
+The `exhIE` above is a specification: it quantifies over all `Set (Set World)`,
 so it cannot be evaluated computationally. The functions below implement the same
 algorithm over `[Fintype World]` types using `Bool`-valued meanings and explicit
 subset enumeration. This makes them usable by `native_decide` and `rsa_predict`.
@@ -2223,16 +2206,16 @@ variable {World : Type*}
     of them yields: for every subdomain D' of D, ∃x∈D'.P(x). This is
     antiexhaustive — it distributes the existential across all subdomains,
     producing universal-like force. -/
-def oMinus (C : Set (Prop' World)) (p : Prop' World) : Prop' World :=
+def oMinus (C : Set (Set World)) (p : Set World) : Set World :=
   λ w => p w ∧ ∀ q ∈ C, q w
 
 /-- O⁻ is a strengthening operation: O⁻_C(p) ⊆ₚ p. -/
-theorem oMinus_entails (C : Set (Prop' World)) (p : Prop' World) :
+theorem oMinus_entails (C : Set (Set World)) (p : Set World) :
     oMinus C p ⊆ₚ p :=
   λ _ ⟨hp, _⟩ => hp
 
 /-- O⁻ is at least as strong as any individual alternative. -/
-theorem oMinus_entails_alt (C : Set (Prop' World)) (p : Prop' World) (q : Prop' World)
+theorem oMinus_entails_alt (C : Set (Set World)) (p : Set World) (q : Set World)
     (hq : q ∈ C) : oMinus C p ⊆ₚ q :=
   λ _ ⟨_, hall⟩ => hall q hq
 
@@ -2288,11 +2271,11 @@ section UniversalFromAntiexh
 variable {Entity : Type*} {World : Type*}
 
 /-- An existential over a finite domain (list-based for computability). -/
-def existsIn (D : List Entity) (P : Entity → Prop' World) : Prop' World :=
+def existsIn (D : List Entity) (P : Entity → Set World) : Set World :=
   λ w => ∃ x ∈ D, P x w
 
 /-- D-MIN alternatives: existentials over all sublists (subdomains). -/
-def dMinAlts (D : List Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
+def dMinAlts (D : List Entity) (P : Entity → Set World) : Set (Set World) :=
   {q | ∃ D' : List Entity, (∀ x ∈ D', x ∈ D) ∧ q = existsIn D' P}
 
 /-- **Antiexhaustiveness yields universal distribution.**
@@ -2303,7 +2286,7 @@ def dMinAlts (D : List Entity) (P : Entity → Prop' World) : Set (Prop' World) 
     This is Chierchia 2006's key formal result: the "birth of universal
     readings" (§5.1) from antiexhaustive enrichment of an existential base. -/
 theorem antiexh_yields_universal
-    (D : List Entity) (P : Entity → Prop' World) (w : World)
+    (D : List Entity) (P : Entity → Set World) (w : World)
     (h : oMinus (dMinAlts D P) (existsIn D P) w) :
     ∀ a ∈ D, P a w := by
   intro a ha

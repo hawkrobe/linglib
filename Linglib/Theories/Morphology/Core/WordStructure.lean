@@ -184,24 +184,36 @@ def MorphWord.boundaryPositions : MorphWord → List Nat
 -- ============================================================================
 
 /-- Is this word a bare root (single morpheme)? -/
-def MorphWord.isSimple : MorphWord → Bool
-  | .root _ => true
-  | _ => false
+def MorphWord.IsSimple : MorphWord → Prop
+  | .root _ => True
+  | _ => False
+
+instance : DecidablePred MorphWord.IsSimple := fun w => by
+  cases w <;> unfold MorphWord.IsSimple <;> infer_instance
 
 /-- Is this word a compound? -/
-def MorphWord.isCompound : MorphWord → Bool
-  | .compound _ _ => true
-  | _ => false
+def MorphWord.IsCompound : MorphWord → Prop
+  | .compound _ _ => True
+  | _ => False
+
+instance : DecidablePred MorphWord.IsCompound := fun w => by
+  cases w <;> unfold MorphWord.IsCompound <;> infer_instance
 
 /-- Does this word involve reduplication? -/
-def MorphWord.isReduplicated : MorphWord → Bool
-  | .reduplicated _ _ => true
-  | _ => false
+def MorphWord.IsReduplicated : MorphWord → Prop
+  | .reduplicated _ _ => True
+  | _ => False
+
+instance : DecidablePred MorphWord.IsReduplicated := fun w => by
+  cases w <;> unfold MorphWord.IsReduplicated <;> infer_instance
 
 /-- Is this word derived by conversion (zero affixation)? -/
-def MorphWord.isConverted : MorphWord → Bool
-  | .converted _ => true
-  | _ => false
+def MorphWord.IsConverted : MorphWord → Prop
+  | .converted _ => True
+  | _ => False
+
+instance : DecidablePred MorphWord.IsConverted := fun w => by
+  cases w <;> unfold MorphWord.IsConverted <;> infer_instance
 
 /-- Morphological depth: number of derivational steps from the root(s). -/
 def MorphWord.depth : MorphWord → Nat

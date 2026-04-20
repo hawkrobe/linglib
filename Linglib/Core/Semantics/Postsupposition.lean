@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.List.Basic
 
 /-!
 # Postsuppositions

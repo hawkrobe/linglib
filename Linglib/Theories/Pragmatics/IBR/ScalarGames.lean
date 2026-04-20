@@ -90,12 +90,12 @@ theorem scalar_minimal_messages_weaker (G : InterpGame) (hScalar : isScalarGame 
 -- SECTION 2: Alternative Set Bridge
 
 /-- Convert interpretation game to alternative set for exhaustification.
-    Converts Bool meaning to Prop' by using equality with true. -/
-def toAlternatives (G : InterpGame) : Set (Prop' G.State) :=
+    Converts Bool meaning to Set by using equality with true. -/
+def toAlternatives (G : InterpGame) : Set (Set G.State) :=
   { λ s => G.meaning m s = true | m : G.Message }
 
 /-- The prejacent proposition for a message (Bool → Prop conversion) -/
-def prejacent (G : InterpGame) (m : G.Message) : Prop' G.State :=
+def prejacent (G : InterpGame) (m : G.Message) : Set G.State :=
   λ s => G.meaning m s = true
 
 -- SECTION 3: ALT ordering bridges

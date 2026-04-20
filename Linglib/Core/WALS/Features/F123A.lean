@@ -14,142 +14,133 @@ namespace Core.WALS.F123A
 
 /-- WALS 123A values. -/
 inductive ObliqueRelativization where
-  | relativePronoun  -- Relative pronoun (13 languages)
-  | nonReduction  -- Non-reduction (14 languages)
-  | pronounRetention  -- Pronoun-retention (20 languages)
-  | gap  -- Gap (55 languages)
-  | notPossible  -- Not possible (10 languages)
-  deriving DecidableEq, Repr
+  /-- Relative pronoun (13 languages). -/
+  | relativePronoun
+  /-- Non-reduction (14 languages). -/
+  | nonReduction
+  /-- Pronoun-retention (20 languages). -/
+  | pronounRetention
+  /-- Gap (55 languages). -/
+  | gap
+  /-- Not possible (10 languages). -/
+  | notPossible
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 123A dataset (112 languages). -/
 def allData : List (Datapoint ObliqueRelativization) :=
-  [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .gap }
-  , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .gap }
-  , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .relativePronoun }
-  , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .gap }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .nonReduction }
-  , { walsCode := "any", language := "Anywa", iso := "anu", value := .pronounRetention }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .pronounRetention }
-  , { walsCode := "bab", language := "Babungo", iso := "bav", value := .pronounRetention }
-  , { walsCode := "bag", language := "Bagirmi", iso := "bmi", value := .pronounRetention }
-  , { walsCode := "bak", language := "Baka (in Cameroon)", iso := "bkc", value := .pronounRetention }
-  , { walsCode := "bam", language := "Bambara", iso := "bam", value := .nonReduction }
-  , { walsCode := "brs", language := "Barasano", iso := "bsn", value := .gap }
-  , { walsCode := "bsq", language := "Basque", iso := "eus", value := .notPossible }
-  , { walsCode := "bkr", language := "Batak (Karo)", iso := "btx", value := .notPossible }
-  , { walsCode := "bma", language := "Berber (Middle Atlas)", iso := "tzm", value := .gap }
-  , { walsCode := "bob", language := "Bobangi", iso := "bni", value := .gap }
-  , { walsCode := "blq", language := "Bole", iso := "bol", value := .pronounRetention }
-  , { walsCode := "bul", language := "Bulgarian", iso := "bul", value := .relativePronoun }
-  , { walsCode := "brm", language := "Burmese", iso := "mya", value := .gap }
-  , { walsCode := "cnl", language := "Canela", iso := "ram", value := .nonReduction }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .gap }
-  , { walsCode := "cle", language := "Chinantec (Lealao)", iso := "cle", value := .gap }
-  , { walsCode := "die", language := "Diegueño (Mesa Grande)", iso := "dih", value := .nonReduction }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .relativePronoun }
-  , { walsCode := "epe", language := "Epena Pedee", iso := "sja", value := .nonReduction }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .gap }
-  , { walsCode := "ewa", language := "Ewe (Anlo)", iso := "ewe", value := .pronounRetention }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .relativePronoun }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .relativePronoun }
-  , { walsCode := "fur", language := "Fur", iso := "fvr", value := .gap }
-  , { walsCode := "gae", language := "Gaelic (Scots)", iso := "gla", value := .pronounRetention }
-  , { walsCode := "geo", language := "Georgian", iso := "kat", value := .relativePronoun }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .relativePronoun }
-  , { walsCode := "goo", language := "Gooniyandi", iso := "gni", value := .nonReduction }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .relativePronoun }
-  , { walsCode := "grw", language := "Greenlandic (West)", iso := "kal", value := .gap }
-  , { walsCode := "gua", language := "Guaraní", iso := "gug", value := .pronounRetention }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .pronounRetention }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .pronounRetention }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .nonReduction }
-  , { walsCode := "hix", language := "Hixkaryana", iso := "hix", value := .nonReduction }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .relativePronoun }
-  , { walsCode := "hzb", language := "Hunzib", iso := "huz", value := .gap }
-  , { walsCode := "ika", language := "Ika", iso := "arh", value := .nonReduction }
-  , { walsCode := "imo", language := "Imonda", iso := "imn", value := .gap }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .gap }
-  , { walsCode := "ing", language := "Ingush", iso := "inh", value := .gap }
-  , { walsCode := "iri", language := "Irish", iso := "gle", value := .pronounRetention }
-  , { walsCode := "ita", language := "Italian", iso := "ita", value := .relativePronoun }
-  , { walsCode := "jak", language := "Jakaltek", iso := "jac", value := .gap }
-  , { walsCode := "jpn", language := "Japanese", iso := "jpn", value := .gap }
-  , { walsCode := "kam", language := "Kambera", iso := "xbr", value := .gap }
-  , { walsCode := "knd", language := "Kannada", iso := "kan", value := .gap }
-  , { walsCode := "krc", language := "Karachay-Balkar", iso := "krc", value := .gap }
-  , { walsCode := "kyl", language := "Kayah Li (Eastern)", iso := "eky", value := .pronounRetention }
-  , { walsCode := "kay", language := "Kayardild", iso := "gyd", value := .gap }
-  , { walsCode := "kha", language := "Khalkha", iso := "khk", value := .gap }
-  , { walsCode := "khm", language := "Khmer", iso := "khm", value := .gap }
-  , { walsCode := "klv", language := "Kilivila", iso := "kij", value := .gap }
-  , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .gap }
-  , { walsCode := "kor", language := "Korean", iso := "kor", value := .gap }
-  , { walsCode := "kfe", language := "Koromfe", iso := "kfz", value := .gap }
-  , { walsCode := "kch", language := "Koyra Chiini", iso := "khq", value := .gap }
-  , { walsCode := "kse", language := "Koyraboro Senni", iso := "ses", value := .gap }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .pronounRetention }
-  , { walsCode := "knm", language := "Kunama", iso := "kun", value := .gap }
-  , { walsCode := "kxo", language := "Kxoe", iso := "xuu", value := .gap }
-  , { walsCode := "lkt", language := "Lakhota", iso := "lkt", value := .nonReduction }
-  , { walsCode := "lan", language := "Lango", iso := "laj", value := .pronounRetention }
-  , { walsCode := "lat", language := "Latvian", iso := "lav", value := .relativePronoun }
-  , { walsCode := "lav", language := "Lavukaleve", iso := "lvk", value := .nonReduction }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .gap }
-  , { walsCode := "lin", language := "Lingala", iso := "lin", value := .pronounRetention }
-  , { walsCode := "luo", language := "Luo", iso := "luo", value := .pronounRetention }
-  , { walsCode := "mle", language := "Maale", iso := "mdy", value := .gap }
-  , { walsCode := "maa", language := "Maasai", iso := "mas", value := .gap }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .notPossible }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .gap }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .gap }
-  , { walsCode := "map", language := "Mapudungun", iso := "arn", value := .gap }
-  , { walsCode := "mrt", language := "Martuthunira", iso := "vma", value := .notPossible }
-  , { walsCode := "may", language := "Maybrat", iso := "ayz", value := .gap }
-  , { walsCode := "mei", language := "Meithei", iso := "mni", value := .gap }
-  , { walsCode := "mxc", language := "Mixtec (Chalcatongo)", iso := "mig", value := .gap }
-  , { walsCode := "miy", language := "Miya", iso := "mkf", value := .pronounRetention }
-  , { walsCode := "mna", language := "Muna", iso := "mnb", value := .gap }
-  , { walsCode := "nbb", language := "Nambas (Big)", iso := "nmb", value := .gap }
-  , { walsCode := "ndy", language := "Ndyuka", iso := "djk", value := .gap }
-  , { walsCode := "ngi", language := "Ngiyambaa", iso := "wyb", value := .gap }
-  , { walsCode := "nug", language := "Nunggubuyu", iso := "nuy", value := .gap }
-  , { walsCode := "orh", language := "Oromo (Harar)", iso := "hae", value := .gap }
-  , { walsCode := "pms", language := "Paamese", iso := "pma", value := .pronounRetention }
-  , { walsCode := "per", language := "Pero", iso := "pip", value := .gap }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .pronounRetention }
-  , { walsCode := "prh", language := "Pirahã", iso := "myp", value := .notPossible }
-  , { walsCode := "pit", language := "Pitjantjatjara", iso := "pjt", value := .gap }
-  , { walsCode := "qim", language := "Quechua (Imbabura)", iso := "qvi", value := .gap }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .relativePronoun }
-  , { walsCode := "see", language := "Seediq", iso := "trv", value := .notPossible }
-  , { walsCode := "sla", language := "Slave", iso := "den", value := .nonReduction }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .relativePronoun }
-  , { walsCode := "sup", language := "Supyire", iso := "spp", value := .nonReduction }
-  , { walsCode := "swa", language := "Swahili", iso := "swh", value := .notPossible }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .notPossible }
-  , { walsCode := "tha", language := "Thai", iso := "tha", value := .gap }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .gap }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .gap }
-  , { walsCode := "ung", language := "Ungarinjin", iso := "ung", value := .gap }
-  , { walsCode := "usa", language := "Usan", iso := "wnu", value := .nonReduction }
-  , { walsCode := "wra", language := "Warao", iso := "wba", value := .notPossible }
-  , { walsCode := "war", language := "Wari'", iso := "pav", value := .gap }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .notPossible }
+  [ { walsCode := "abk", iso := "abk", value := .gap }
+  , { walsCode := "ace", iso := "ace", value := .gap }
+  , { walsCode := "aco", iso := "kjq", value := .relativePronoun }
+  , { walsCode := "ala", iso := "amp", value := .gap }
+  , { walsCode := "ame", iso := "aey", value := .nonReduction }
+  , { walsCode := "any", iso := "anu", value := .pronounRetention }
+  , { walsCode := "aeg", iso := "arz", value := .pronounRetention }
+  , { walsCode := "bab", iso := "bav", value := .pronounRetention }
+  , { walsCode := "bag", iso := "bmi", value := .pronounRetention }
+  , { walsCode := "bak", iso := "bkc", value := .pronounRetention }
+  , { walsCode := "bam", iso := "bam", value := .nonReduction }
+  , { walsCode := "brs", iso := "bsn", value := .gap }
+  , { walsCode := "bsq", iso := "eus", value := .notPossible }
+  , { walsCode := "bkr", iso := "btx", value := .notPossible }
+  , { walsCode := "bma", iso := "tzm", value := .gap }
+  , { walsCode := "bob", iso := "bni", value := .gap }
+  , { walsCode := "blq", iso := "bol", value := .pronounRetention }
+  , { walsCode := "bul", iso := "bul", value := .relativePronoun }
+  , { walsCode := "brm", iso := "mya", value := .gap }
+  , { walsCode := "cnl", iso := "ram", value := .nonReduction }
+  , { walsCode := "cha", iso := "cha", value := .gap }
+  , { walsCode := "cle", iso := "cle", value := .gap }
+  , { walsCode := "die", iso := "dih", value := .nonReduction }
+  , { walsCode := "eng", iso := "eng", value := .relativePronoun }
+  , { walsCode := "epe", iso := "sja", value := .nonReduction }
+  , { walsCode := "eve", iso := "evn", value := .gap }
+  , { walsCode := "ewa", iso := "ewe", value := .pronounRetention }
+  , { walsCode := "fin", iso := "fin", value := .relativePronoun }
+  , { walsCode := "fre", iso := "fra", value := .relativePronoun }
+  , { walsCode := "fur", iso := "fvr", value := .gap }
+  , { walsCode := "gae", iso := "gla", value := .pronounRetention }
+  , { walsCode := "geo", iso := "kat", value := .relativePronoun }
+  , { walsCode := "ger", iso := "deu", value := .relativePronoun }
+  , { walsCode := "goo", iso := "gni", value := .nonReduction }
+  , { walsCode := "grk", iso := "ell", value := .relativePronoun }
+  , { walsCode := "grw", iso := "kal", value := .gap }
+  , { walsCode := "gua", iso := "gug", value := .pronounRetention }
+  , { walsCode := "hau", iso := "hau", value := .pronounRetention }
+  , { walsCode := "heb", iso := "heb", value := .pronounRetention }
+  , { walsCode := "hin", iso := "hin", value := .nonReduction }
+  , { walsCode := "hix", iso := "hix", value := .nonReduction }
+  , { walsCode := "hun", iso := "hun", value := .relativePronoun }
+  , { walsCode := "hzb", iso := "huz", value := .gap }
+  , { walsCode := "ika", iso := "arh", value := .nonReduction }
+  , { walsCode := "imo", iso := "imn", value := .gap }
+  , { walsCode := "ind", iso := "ind", value := .gap }
+  , { walsCode := "ing", iso := "inh", value := .gap }
+  , { walsCode := "iri", iso := "gle", value := .pronounRetention }
+  , { walsCode := "ita", iso := "ita", value := .relativePronoun }
+  , { walsCode := "jak", iso := "jac", value := .gap }
+  , { walsCode := "jpn", iso := "jpn", value := .gap }
+  , { walsCode := "kam", iso := "xbr", value := .gap }
+  , { walsCode := "knd", iso := "kan", value := .gap }
+  , { walsCode := "krc", iso := "krc", value := .gap }
+  , { walsCode := "kyl", iso := "eky", value := .pronounRetention }
+  , { walsCode := "kay", iso := "gyd", value := .gap }
+  , { walsCode := "kha", iso := "khk", value := .gap }
+  , { walsCode := "khm", iso := "khm", value := .gap }
+  , { walsCode := "klv", iso := "kij", value := .gap }
+  , { walsCode := "kob", iso := "kpw", value := .gap }
+  , { walsCode := "kor", iso := "kor", value := .gap }
+  , { walsCode := "kfe", iso := "kfz", value := .gap }
+  , { walsCode := "kch", iso := "khq", value := .gap }
+  , { walsCode := "kse", iso := "ses", value := .gap }
+  , { walsCode := "kro", iso := "kgo", value := .pronounRetention }
+  , { walsCode := "knm", iso := "kun", value := .gap }
+  , { walsCode := "kxo", iso := "xuu", value := .gap }
+  , { walsCode := "lkt", iso := "lkt", value := .nonReduction }
+  , { walsCode := "lan", iso := "laj", value := .pronounRetention }
+  , { walsCode := "lat", iso := "lav", value := .relativePronoun }
+  , { walsCode := "lav", iso := "lvk", value := .nonReduction }
+  , { walsCode := "lez", iso := "lez", value := .gap }
+  , { walsCode := "lin", iso := "lin", value := .pronounRetention }
+  , { walsCode := "luo", iso := "luo", value := .pronounRetention }
+  , { walsCode := "mle", iso := "mdy", value := .gap }
+  , { walsCode := "maa", iso := "mas", value := .gap }
+  , { walsCode := "mal", iso := "plt", value := .notPossible }
+  , { walsCode := "mnd", iso := "cmn", value := .gap }
+  , { walsCode := "mao", iso := "mri", value := .gap }
+  , { walsCode := "map", iso := "arn", value := .gap }
+  , { walsCode := "mrt", iso := "vma", value := .notPossible }
+  , { walsCode := "may", iso := "ayz", value := .gap }
+  , { walsCode := "mei", iso := "mni", value := .gap }
+  , { walsCode := "mxc", iso := "mig", value := .gap }
+  , { walsCode := "miy", iso := "mkf", value := .pronounRetention }
+  , { walsCode := "mna", iso := "mnb", value := .gap }
+  , { walsCode := "nbb", iso := "nmb", value := .gap }
+  , { walsCode := "ndy", iso := "djk", value := .gap }
+  , { walsCode := "ngi", iso := "wyb", value := .gap }
+  , { walsCode := "nug", iso := "nuy", value := .gap }
+  , { walsCode := "orh", iso := "hae", value := .gap }
+  , { walsCode := "pms", iso := "pma", value := .pronounRetention }
+  , { walsCode := "per", iso := "pip", value := .gap }
+  , { walsCode := "prs", iso := "pes", value := .pronounRetention }
+  , { walsCode := "prh", iso := "myp", value := .notPossible }
+  , { walsCode := "pit", iso := "pjt", value := .gap }
+  , { walsCode := "qim", iso := "qvi", value := .gap }
+  , { walsCode := "rus", iso := "rus", value := .relativePronoun }
+  , { walsCode := "see", iso := "trv", value := .notPossible }
+  , { walsCode := "sla", iso := "den", value := .nonReduction }
+  , { walsCode := "spa", iso := "spa", value := .relativePronoun }
+  , { walsCode := "sup", iso := "spp", value := .nonReduction }
+  , { walsCode := "swa", iso := "swh", value := .notPossible }
+  , { walsCode := "tag", iso := "tgl", value := .notPossible }
+  , { walsCode := "tha", iso := "tha", value := .gap }
+  , { walsCode := "tuk", iso := "", value := .gap }
+  , { walsCode := "tur", iso := "tur", value := .gap }
+  , { walsCode := "ung", iso := "ung", value := .gap }
+  , { walsCode := "usa", iso := "wnu", value := .nonReduction }
+  , { walsCode := "wra", iso := "wba", value := .notPossible }
+  , { walsCode := "war", iso := "pav", value := .gap }
+  , { walsCode := "yko", iso := "yux", value := .notPossible }
   ]
-
--- Count verification
-theorem total_count : allData.length = 112 := by native_decide
-
-theorem count_relativePronoun :
-    (allData.filter (·.value == .relativePronoun)).length = 13 := by native_decide
-theorem count_nonReduction :
-    (allData.filter (·.value == .nonReduction)).length = 14 := by native_decide
-theorem count_pronounRetention :
-    (allData.filter (·.value == .pronounRetention)).length = 20 := by native_decide
-theorem count_gap :
-    (allData.filter (·.value == .gap)).length = 55 := by native_decide
-theorem count_notPossible :
-    (allData.filter (·.value == .notPossible)).length = 10 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

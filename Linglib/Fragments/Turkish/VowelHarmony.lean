@@ -98,8 +98,8 @@ def o_vowel : Segment := Segment.ofSpecs
     vowels. Every vowel is both trigger and target; no transparency. -/
 def palatalHarmony : HarmonySystem :=
   HarmonySystem.mk' (feature := .back)
-    (isTrigger     := (·.hasValue .syllabic true))
-    (isTarget      := (·.hasValue .syllabic true))
+    (isTrigger     := (·.HasValue .syllabic true))
+    (isTarget      := (·.HasValue .syllabic true))
     (isTransparent := (λ _ => false))
     (direction     := .rightward)
 
@@ -107,8 +107,8 @@ def palatalHarmony : HarmonySystem :=
     vowels only. Every vowel triggers; only [+high] vowels are targets. -/
 def labialHarmony : HarmonySystem :=
   HarmonySystem.mk' (feature := .round)
-    (isTrigger     := (·.hasValue .syllabic true))
-    (isTarget      := (λ s => s.hasValue .syllabic true && s.hasValue .high true))
+    (isTrigger     := (·.HasValue .syllabic true))
+    (isTarget      := (λ s => s.HasValue .syllabic true && s.HasValue .high true))
     (isTransparent := (λ _ => false))
     (direction     := .rightward)
 
@@ -135,18 +135,18 @@ def resolveI : Bool → Bool → Segment
 -- ============================================================================
 
 -- Back/front classification
-theorem a_is_back : a_vowel.hasValue .back true = true := by native_decide
-theorem e_is_front : e_vowel.hasValue .back false = true := by native_decide
-theorem ö_is_front : ö_vowel.hasValue .back false = true := by native_decide
-theorem u_is_back : u_vowel.hasValue .back true = true := by native_decide
+theorem a_is_back : a_vowel.HasValue .back true = true := by native_decide
+theorem e_is_front : e_vowel.HasValue .back false = true := by native_decide
+theorem ö_is_front : ö_vowel.HasValue .back false = true := by native_decide
+theorem u_is_back : u_vowel.HasValue .back true = true := by native_decide
 
 -- Rounding
-theorem ü_is_round : ü_vowel.hasValue .round true = true := by native_decide
-theorem ı_is_unround : ı_vowel.hasValue .round false = true := by native_decide
+theorem ü_is_round : ü_vowel.HasValue .round true = true := by native_decide
+theorem ı_is_unround : ı_vowel.HasValue .round false = true := by native_decide
 
 -- Height
-theorem i_is_high : i_vowel.hasValue .high true = true := by native_decide
-theorem a_is_low : a_vowel.hasValue .low true = true := by native_decide
+theorem i_is_high : i_vowel.HasValue .high true = true := by native_decide
+theorem a_is_low : a_vowel.HasValue .low true = true := by native_decide
 
 -- Archiphoneme resolution
 theorem resolveA_back : resolveA true = a_vowel := rfl
@@ -188,7 +188,7 @@ theorem a_e_dorsal_disagree :
 
 -- Same-backness: a and o agree on [back]
 theorem a_o_same_back :
-    a_vowel.hasValue .back true = true ∧
-    o_vowel.hasValue .back true = true := ⟨by native_decide, by native_decide⟩
+    a_vowel.HasValue .back true = true ∧
+    o_vowel.HasValue .back true = true := ⟨by native_decide, by native_decide⟩
 
 end Fragments.Turkish.VowelHarmony

@@ -1,4 +1,3 @@
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Mathlib.Data.Rat.Defs
@@ -396,22 +395,24 @@ theorem house_doesnt_have_bathroom : ¬ negMeaning .house .bathroom := fun h => 
 theorem classroom_doesnt_have_stove : negMeaning .classroom .stove := id
 
 open Semantics.Entailment.Polarity
-open Core.Proposition
 
 /-- Lift He et al. sentences to world-indexed propositions. -/
 def liftToWorlds (s : HKIState) : (HKIState → Bool) :=
   λ w => w == s
 
 /-- Negative sentence meaning as world-indexed proposition.
-    ⟦"A doesn't have B"⟧ = pnot(⟦"A has B"⟧) -/
+    ⟦"A doesn't have B"⟧ = !⟦"A has B"⟧ pointwise. -/
 def negMeaningW : (HKIState → Bool) :=
-  Decidable.pnot HKIState (liftToWorlds .pos)
+  fun w => !(liftToWorlds .pos) w
 
 /-- Negation reverses entailment (DE property). -/
 theorem pnot_reverses_entailment_HKI (p q : (HKIState → Bool))
     (h : ∀ w, p w = true → q w = true) :
-    ∀ w, Decidable.pnot HKIState q w = true → Decidable.pnot HKIState p w = true :=
-  Decidable.pnot_reverses_entailment p q h
+    ∀ w, (!q w) = true → (!p w) = true := by
+  intro w hq
+  cases hp : p w
+  · rfl
+  · exact absurd (h w hp) (by simpa using hq)
 
 /-- The grounded polarity from Entailment.Polarity (uses `pnot`). -/
 def negSentencePolarity : GroundedPolarity := negationPolarity

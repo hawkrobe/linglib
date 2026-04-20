@@ -10,7 +10,6 @@ import Linglib.Theories.Semantics.Quantification.Quantifier
 
 namespace Semantics.Entailment.Monotonicity
 
-open Core.Proposition (Prop')
 open Semantics.Entailment
 open Semantics.Entailment.Polarity (IsUpwardEntailing IsDownwardEntailing)
 open Semantics.Quantification.Quantifier
@@ -58,58 +57,58 @@ instance (R S : entailmentModel.Entity → Prop) [DecidablePred R] [DecidablePre
   unfold no_sem; exact inferInstance
 
 /-- "Every A is B" — delegates to canonical `every_sem`. -/
-def every (a b : Prop' World) : Prop :=
+def every (a b : Set World) : Prop :=
   every_sem entailmentModel a b
 
 /-- "Some A is B" — delegates to canonical `some_sem`. -/
-def some' (a b : Prop' World) : Prop :=
+def some' (a b : Set World) : Prop :=
   some_sem entailmentModel a b
 
 /-- "No A is B" — delegates to canonical `no_sem`. -/
-def no (a b : Prop' World) : Prop :=
+def no (a b : Set World) : Prop :=
   no_sem entailmentModel a b
 
-def fixedRestr : Prop' World := p01
+def fixedRestr : Set World := p01
 
 /-- "Every student" as a function of scope. -/
-def every_scope : Prop' World → Prop' World :=
+def every_scope : Set World → Set World :=
   λ scope => λ _ => every fixedRestr scope
 
 /-- "Some student" as a function of scope. -/
-def some_scope : Prop' World → Prop' World :=
+def some_scope : Set World → Set World :=
   λ scope => λ _ => some' fixedRestr scope
 
 /-- "No student" as a function of scope. -/
-def no_scope : Prop' World → Prop' World :=
+def no_scope : Set World → Set World :=
   λ scope => λ _ => no fixedRestr scope
 
 /-- "Every" is UE in scope. -/
 theorem every_scope_UE : IsUpwardEntailing every_scope := by
   intro p q hpq _w h x hr
-  exact hpq x (h x hr)
+  exact hpq (h x hr)
 
 /-- "Some" is UE in scope. -/
 theorem some_scope_UE : IsUpwardEntailing some_scope := by
   intro p q hpq _w h
   obtain ⟨x, hr, hp⟩ := h
-  exact ⟨x, hr, hpq x hp⟩
+  exact ⟨x, hr, hpq hp⟩
 
 /-- "No" is DE in scope. -/
 theorem no_scope_DE : IsDownwardEntailing no_scope := by
   intro p q hpq _w h x hr hp
-  exact h x hr (hpq x hp)
+  exact h x hr (hpq hp)
 
 /-- Fixed scope for testing restrictor monotonicity. -/
-def fixedScope : Prop' World := p012
+def fixedScope : Set World := p012
 
 /-- "Every ___ smokes" as a function of restrictor. -/
-def every_restr : Prop' World → Prop' World :=
+def every_restr : Set World → Set World :=
   λ restr => λ _ => every restr fixedScope
 
 /-- "Every" is DE in restrictor. -/
 theorem every_restr_DE : IsDownwardEntailing every_restr := by
   intro p q hpq _w h x hr
-  exact h x (hpq x hr)
+  exact h x (hpq hr)
 
 end QuantifierSemantics
 

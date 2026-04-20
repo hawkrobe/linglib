@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Semantics.Numerals.Basic
+import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Theories.Semantics.Numerals.Degree
 import Linglib.Theories.Semantics.Numerals.Precision
 import Linglib.Tactics.RSAPredict
 
@@ -55,7 +55,7 @@ set_option autoImplicit false
 namespace Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
 
 open Core.Scale (HasDegree)
-open Semantics.Numerals (MeasurePredicate DegreePhrase measureSentence numeralExact)
+open Semantics.Numerals (numeralExact)
 open Real (exp log exp_pos)
 
 -- ============================================================================
@@ -109,7 +109,7 @@ def PriceState.value : PriceState → ℚ
   | .s1000 => 1000 | .s1001 => 1001 | .s5000 => 5000 | .s5001 => 5001
   | .s10000 => 10000 | .s10001 => 10001
 
-instance : HasDegree PriceState where degree := PriceState.value
+instance : HasDegree PriceState ℚ where degree := PriceState.value
 
 /-- Affect: no affect vs notable affect. -/
 inductive Affect where
@@ -182,26 +182,14 @@ noncomputable def cost : PriceState → ℝ
   | u => if u.isRound then 0 else 1
 
 -- ============================================================================
--- §4. Compositional Literal Semantics
+-- §4. Literal Semantics
 -- ============================================================================
-
-def costPredicate : MeasurePredicate PriceState :=
-  MeasurePredicate.fromHasDegree PriceState "price (USD)"
-
-def literalCompositional (u : PriceState) (world : PriceState) : Bool :=
-  measureSentence costPredicate world (DegreePhrase.ofRat u.value "dollars")
 
 def literal (u : PriceState) (world : PriceState) : Bool :=
   numeralExact u.value world
 
-theorem literal_eq_compositional (u world : PriceState) :
-    literal u world = literalCompositional u world := rfl
-
 theorem literal_uses_degree (u world : PriceState) :
     literal u world = (HasDegree.degree world == u.value) := rfl
-
-theorem costPredicate_is_hasDegree :
-    costPredicate.μ = HasDegree.degree := rfl
 
 -- ============================================================================
 -- §5. Meaning & QUD Projection

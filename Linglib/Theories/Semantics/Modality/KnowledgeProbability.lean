@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Modality.EpistemicLogic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Knowledge-Probability Structures
@@ -54,7 +55,6 @@ set_option autoImplicit false
 
 namespace Semantics.Modality.KnowledgeProbability
 
-open Core.Proposition (FiniteWorlds)
 open Core.IntensionalLogic.RestrictedModality
   (AgentAccessRel AccessRel boxR Refl Eucl refl_eucl_symm refl_eucl_trans)
 open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
@@ -208,7 +208,7 @@ theorem measureMonotone_isProbabilistic {E W : Type*}
 
     This is axiom W7:
     K_i φ ⇒ (w_i(φ) = 1). -/
-theorem knows_implies_prob_one {W E : Type*} [FiniteWorlds W]
+theorem knows_implies_prob_one {W E : Type*} [Fintype W]
     (kp : KripkeKP W E) (hCONS : CONS kp) (hNorm : Normalized kp)
     (i : E) (φ : (W → Bool)) (w : W)
     (hK : knows kp.accessRel i (fun v => φ v = true) w) :
@@ -351,7 +351,7 @@ theorem sdp_implies_unif {W E : Type*}
 
 /-- Under CONS + normalization, Boolean everyone-knows implies
     probabilistic everyone-probably at threshold 1. -/
-theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [FiniteWorlds W]
+theorem everyoneKnows_implies_everyoneProbOne {W E : Type*} [Fintype W]
     (kp : KripkeKP W E) (hCONS : CONS kp) (hNorm : Normalized kp)
     (group : List E) (φ : (W → Bool)) (w : W)
     (h : everyoneKnows kp.accessRel group (fun v => φ v = true) w) :
@@ -397,7 +397,7 @@ theorem unif_threshold_stable {W E : Type*}
 
     This is the probabilistic analogue of KD45 axiom 4 (Bφ → BBφ),
     lifting Boolean introspection to graded credence. -/
-theorem unif_positive_introspection {W E : Type*} [FiniteWorlds W]
+theorem unif_positive_introspection {W E : Type*} [Fintype W]
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
     (i : E) (θ : ℚ) (φ : (W → Bool)) (w : W)
     (h : nestedThreshold kp.worldCredence θ i φ w = true) :
@@ -414,7 +414,7 @@ theorem unif_positive_introspection {W E : Type*} [FiniteWorlds W]
     Together with `unif_positive_introspection`, this completes
     axiom W9: under UNIF, every
     i-probability formula or its negation is known by agent i. -/
-theorem unif_negative_introspection {W E : Type*} [FiniteWorlds W]
+theorem unif_negative_introspection {W E : Type*} [Fintype W]
     (kp : KripkeKP W E) (hUNIF : UNIF kp)
     (i : E) (θ : ℚ) (φ : (W → Bool)) (w : W)
     (h : nestedThreshold kp.worldCredence θ i φ w = false) :

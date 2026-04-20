@@ -37,12 +37,12 @@ deletes off-tier symbols, with no relabeling). For autosegmental tiers
 
 ## Single source of truth: `Core.Tier`
 
-`tierProject` is defined as `Core.Tier.apply (Core.Tier.byClass _)` — the
+`tierProject` is the alias `Core.Tier.apply (Core.Tier.byClass T)` — the
 class-membership specialization of the autosegmental Kleisli morphism
-`α → Option β`. This commits the codebase to `Core.Tier` (in
-`Core/StringHom.lean`) as the single source of truth for tier projection,
-so the bridge between the autosegmental and subregular formalisms reduces
-to `rfl`.
+`α → Option β`. After the `Tier.byClass` migration to `Prop`+`Decidable`
+predicates, the alias contains *no* `decide` wrapper and the bridge to
+the autosegmental formalism is the identity, available either as
+`rfl` or via `tierProject_eq_apply_byClass` below.
 -/
 
 namespace Core.Computability.Subregular
@@ -53,11 +53,19 @@ variable {α : Type*}
 `Core.Tier.apply` to a `Prop`-valued predicate `T`. Keeps symbols
 satisfying `T`, erases the rest.
 
-Defined as `Core.Tier.apply (Core.Tier.byClass (decide ∘ T))` so the
-bridge to the autosegmental tier formalism is `rfl`. By
-`Tier.apply_byClass` this equals `xs.filter (decide ∘ T)`. -/
+Defined as `Core.Tier.apply (Core.Tier.byClass T)` so the bridge to the
+autosegmental tier formalism is `rfl`. By `Tier.apply_byClass` this
+equals `xs.filter (decide ∘ T)`. -/
 def tierProject (T : α → Prop) [DecidablePred T] (xs : List α) : List α :=
-  Core.Tier.apply (Core.Tier.byClass (fun x => decide (T x))) xs
+  Core.Tier.apply (Core.Tier.byClass T) xs
+
+/-- **Bridge identity** to the autosegmental tier formalism: `tierProject`
+is by definition `Tier.apply (Tier.byClass T)`. Since the migration of
+`Tier.byClass` to `Prop`+`Decidable` predicates, this is `rfl` with no
+`decide` plumbing. -/
+lemma tierProject_eq_apply_byClass (T : α → Prop) [DecidablePred T]
+    (xs : List α) :
+    tierProject T xs = Core.Tier.apply (Core.Tier.byClass T) xs := rfl
 
 /-- `tierProject` reduces to `List.filter` via `Tier.apply_byClass`. This
 is the canonical bridge to Lambert's filter-based formulation

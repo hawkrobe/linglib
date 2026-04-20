@@ -1,26 +1,25 @@
-import Linglib.Core.Inheritance
+import Linglib.Core.Inheritance.Basic
+import Linglib.Core.Inheritance.Default
 import Linglib.Core.Grammar
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Core.Dependency.Basic
 
 /-!
 # WG Network Integration
 
 Connects `Core.Inheritance` (Hudson's isA/prop network model) to the
 dependency grammar module so that word classes and their argument structures
-live in a single WG network. @cite{hudson-1984} @cite{hudson-2010}
+live in a single WG network. @cite{hudson-2010}
 
 Argument structures are inherited via default inheritance: a transitive verb
 inherits from verb, but a passive can override locally (the most specific
-value wins — what @cite{hudson-2010} later calls the "Best Fit Principle").
+value wins — what @cite{hudson-2010} calls the "Best Fit Principle").
 
 Subject-auxiliary inversion is modeled as subtype inheritance: the
-interrogative auxiliary is a subtype of auxiliary that locally overrides the
-subject's direction from left to right. This faithfully follows
-@cite{hudson-1984} pp. 117-118, where the inverted auxiliary is treated as a
-special subtype of "auxiliary" with its own word-order requirements:
-
-> model (interrogative): auxiliary and tensed
-> subject (interrogative): s, interrogative < s
+inverted auxiliary (Hudson uses both "inverted" and "interrogative" for
+the same word-class subtype, viewed from form vs. semantic side — see
+§11.6.1, p. 308) is a subtype of auxiliary that locally overrides the
+subject's direction from left to right, following @cite{hudson-2010}'s
+treatment of inversion as a word-class subtype rather than a movement rule.
 -/
 
 set_option autoImplicit false
@@ -41,7 +40,7 @@ inductive WGNode where
   deriving Repr, DecidableEq
 
 /-- Relation labels for property links in a WG network.
-In @cite{hudson-1984}'s terms, these are the named relations that connect
+In @cite{hudson-2010}'s terms, these are the named relations that connect
 word-class nodes to their syntactic properties. -/
 inductive WGRel where
   | argSlot (idx : Nat)     -- the idx-th argument slot (target = depRel)
@@ -103,20 +102,20 @@ def resolveArgStr (net : WGNetwork) (wc : String)
 -- ============================================================================
 
 /-- A WG network encoding the English auxiliary word-class hierarchy,
-following @cite{hudson-1984} Ch. 3:
+following @cite{hudson-2010}:
 
 - `verb` has slot 0 = nsubj/left (subject precedes verb by default)
 - `transitive` isA `verb`, adds slot 1 = obj/right
 - `passive` isA `transitive`, overrides slot 1 to obl/right (by-phrase)
 - `auxiliary` isA `verb`, adds slot 1 = aux/right (main verb)
-- `interrogative_auxiliary` isA `auxiliary`, overrides slot 0 direction
+- `inverted_auxiliary` isA `auxiliary`, overrides slot 0 direction
   to right — the subject follows the auxiliary in questions
 
-The last point is the key to subject-auxiliary inversion: the interrogative
+The last point is the key to subject-auxiliary inversion: the inverted
 auxiliary is a *subtype* of auxiliary that locally overrides the subject's
-position. Default inheritance does the rest — the interrogative auxiliary
+position. Default inheritance does the rest — the inverted auxiliary
 inherits nsubj from `verb` (via `auxiliary`) but gets direction = right
-from its own local specification. (@cite{hudson-1984} pp. 117-118)
+from its own local specification.
 -/
 def englishAuxNet : WGNetwork := {
   links := [
@@ -124,7 +123,7 @@ def englishAuxNet : WGNetwork := {
     isALink "transitive" "verb",
     isALink "auxiliary" "verb",
     isALink "passive" "transitive",
-    isALink "interrogative_auxiliary" "auxiliary",
+    isALink "inverted_auxiliary" "auxiliary",
 
     -- verb: slot 0 = nsubj/left (subject precedes by default)
     argSlotLink "verb" 0 .nsubj,
@@ -142,9 +141,9 @@ def englishAuxNet : WGNetwork := {
     argSlotLink "auxiliary" 1 .aux,
     slotDirLink "auxiliary" 1 .right,
 
-    -- interrogative_auxiliary: override slot 0 direction to right
+    -- inverted_auxiliary: override slot 0 direction to right
     -- (subject follows auxiliary in questions)
-    slotDirLink "interrogative_auxiliary" 0 .right
+    slotDirLink "inverted_auxiliary" 0 .right
   ]
 }
 
@@ -157,68 +156,68 @@ locally — the network-derived argStr matches the manual `argStr_VN`
 (modulo optional fields that default). -/
 theorem network_transitive_slot0 :
     resolveSlot englishAuxNet "transitive" 0 =
-      some { depType := .nsubj, dir := .left } := by native_decide
+      some { depType := .nsubj, dir := .left } := by decide
 
 theorem network_transitive_slot1 :
     resolveSlot englishAuxNet "transitive" 1 =
-      some { depType := .obj, dir := .right } := by native_decide
+      some { depType := .obj, dir := .right } := by decide
 
 /-- A passive verb's locally specified slot 1 (obl/right) overrides the
 inherited transitive slot 1 (obj/right) — default inheritance in action. -/
 theorem bestFit_passive_overrides :
     resolveSlot englishAuxNet "passive" 1 =
-      some { depType := .obl, dir := .right } := by native_decide
+      some { depType := .obl, dir := .right } := by decide
 
 /-- The non-inverted auxiliary inherits nsubj/left from `verb` for slot 0. -/
 theorem network_aux_slot0 :
     resolveSlot englishAuxNet "auxiliary" 0 =
-      some { depType := .nsubj, dir := .left } := by native_decide
+      some { depType := .nsubj, dir := .left } := by decide
 
 /-- The network-derived arg structure for a transitive verb has the same
 slots as the manually defined `argStr_VN`. -/
 theorem network_argStr_matches_manual :
     (resolveArgStr englishAuxNet "transitive").slots =
       [{ depType := .nsubj, dir := .left },
-       { depType := .obj, dir := .right }] := by native_decide
+       { depType := .obj, dir := .right }] := by decide
 
 -- ============================================================================
 -- Theorems: Subject-Auxiliary Inversion via Subtype Inheritance
 -- ============================================================================
 
-/-- The interrogative auxiliary inherits nsubj from `verb` (via `auxiliary`)
+/-- The interrogative/inverted auxiliary inherits nsubj from `verb` (via `auxiliary`)
 but its locally specified direction (right) overrides the inherited
-direction (left). This is Hudson's subtype analysis of inversion:
-the interrogative auxiliary is not a separate lexical rule — it's a
-word-class subtype. -/
+direction (left). This is Hudson's subtype analysis of inversion
+(@cite{hudson-2010} §11.6.1, Fig 11.13): the inverted auxiliary is not
+a separate lexical rule — it's a word-class subtype. -/
 theorem inversion_by_subtype :
     -- Non-inverted: auxiliary gets nsubj/left (inherited from verb)
     resolveSlot englishAuxNet "auxiliary" 0 =
       some { depType := .nsubj, dir := .left } ∧
-    -- Inverted: interrogative_auxiliary overrides direction to right
-    resolveSlot englishAuxNet "interrogative_auxiliary" 0 =
+    -- Inverted: inverted_auxiliary overrides direction to right
+    resolveSlot englishAuxNet "inverted_auxiliary" 0 =
       some { depType := .nsubj, dir := .right } := by
-  constructor <;> native_decide
+  constructor <;> decide
 
-/-- The interrogative auxiliary inherits its main-verb slot (aux/right)
+/-- The inverted auxiliary inherits its main-verb slot (aux/right)
 from `auxiliary` without overriding it — only the subject direction
 changes. -/
-theorem interrogative_aux_inherits_main_verb_slot :
-    resolveSlot englishAuxNet "interrogative_auxiliary" 1 =
-      some { depType := .aux, dir := .right } := by native_decide
+theorem inverted_aux_inherits_main_verb_slot :
+    resolveSlot englishAuxNet "inverted_auxiliary" 1 =
+      some { depType := .aux, dir := .right } := by decide
 
 /-- The full argument structure for the non-inverted auxiliary:
 nsubj/left (inherited from verb) + aux/right (local). -/
 theorem network_aux_argStr :
     (resolveArgStr englishAuxNet "auxiliary").slots =
       [{ depType := .nsubj, dir := .left },
-       { depType := .aux, dir := .right }] := by native_decide
+       { depType := .aux, dir := .right }] := by decide
 
-/-- The full argument structure for the interrogative (inverted) auxiliary:
+/-- The full argument structure for the inverted auxiliary:
 nsubj/right (local override) + aux/right (inherited from auxiliary). -/
-theorem network_interrogative_aux_argStr :
-    (resolveArgStr englishAuxNet "interrogative_auxiliary").slots =
+theorem network_inverted_aux_argStr :
+    (resolveArgStr englishAuxNet "inverted_auxiliary").slots =
       [{ depType := .nsubj, dir := .right },
-       { depType := .aux, dir := .right }] := by native_decide
+       { depType := .aux, dir := .right }] := by decide
 
 -- ============================================================================
 -- Clause-Type → Word-Class Mapping and Network Licensing
@@ -228,7 +227,7 @@ theorem network_interrogative_aux_argStr :
 context. Matrix questions require an interrogative auxiliary (subject follows);
 all other clause types use the default auxiliary (subject precedes). -/
 def wordClassForClauseType : ClauseForm → String
-  | .matrixQuestion => "interrogative_auxiliary"
+  | .matrixQuestion => "inverted_auxiliary"
   | _ => "auxiliary"
 
 /-- License a dependency tree via the WG network: look up the word class

@@ -58,7 +58,6 @@ namespace Pragmatics.Assertion.QuotationFBOntology
 
 open Semantics.Dynamic.State
 open Semantics.Quotation.Demonstration
-open Core.Proposition
 
 -- ════════════════════════════════════════════════════
 -- § 1. FBPerformance: the data of an F&B utterance
@@ -78,7 +77,7 @@ structure FBPerformance (W : Type*) where
   /-- Sentence form (declarative / interrogative). -/
   form : SentenceForm
   /-- Propositional content. -/
-  content : Prop' W
+  content : Set W
   /-- Whether the performance is linguistic material. False allows
       modeling non-linguistic gestures (the karate-gestures contrast
       that motivates `LINGMAT`). -/

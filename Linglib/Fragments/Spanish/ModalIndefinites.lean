@@ -60,14 +60,14 @@ def unoCualquieraEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem algún_not_at_issue : algúnEntry.status = .notAtIssue := rfl
-theorem algún_epistemic : algúnEntry.hasEpistemic = true := rfl
-theorem algún_no_rc : algúnEntry.hasCircumstantial = false := rfl
+theorem algún_epistemic : algúnEntry.hasEpistemic := by decide
+theorem algún_no_rc : ¬ algúnEntry.hasCircumstantial := by decide
 theorem algún_ub : algúnEntry.upperBounded = true := rfl
 theorem algún_no_anchor : algúnEntry.anchorConstraint = none := rfl
 
 theorem unoCualquiera_at_issue : unoCualquieraEntry.status = .atIssue := rfl
-theorem unoCualquiera_rc : unoCualquieraEntry.hasCircumstantial = true := rfl
-theorem unoCualquiera_no_epistemic : unoCualquieraEntry.hasEpistemic = false := rfl
+theorem unoCualquiera_rc : unoCualquieraEntry.hasCircumstantial := by decide
+theorem unoCualquiera_no_epistemic : ¬ unoCualquieraEntry.hasEpistemic := by decide
 theorem unoCualquiera_ub : unoCualquieraEntry.upperBounded = true := rfl
 theorem unoCualquiera_volitional : unoCualquieraEntry.anchorConstraint = some .volitionalOnly := rfl
 

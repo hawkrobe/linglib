@@ -272,18 +272,24 @@ inductive EllipsisType where
   deriving DecidableEq, Repr
 
 /-- Is the ellipsis type syntactically mediated (vs purely anaphoric)? -/
-def isSyntacticallyMediated : EllipsisType → Bool
-  | .gapping => true
-  | .stripping => true
-  | .vpEllipsis => false
-  | .sluicing => false
+def isSyntacticallyMediated : EllipsisType → Prop
+  | .gapping => True
+  | .stripping => True
+  | .vpEllipsis => False
+  | .sluicing => False
+
+instance : DecidablePred isSyntacticallyMediated := fun x => by
+  cases x <;> unfold isSyntacticallyMediated <;> infer_instance
 
 /-- Does the ellipsis type exhibit word-order constraints? -/
-def hasWordOrderConstraints : EllipsisType → Bool
-  | .gapping => true
-  | .stripping => true
-  | .vpEllipsis => false  -- Same pattern in all languages
-  | .sluicing => false    -- Same pattern in all languages
+def HasWordOrderConstraints : EllipsisType → Prop
+  | .gapping => True
+  | .stripping => True
+  | .vpEllipsis => False  -- Same pattern in all languages
+  | .sluicing => False    -- Same pattern in all languages
+
+instance : DecidablePred HasWordOrderConstraints := fun x => by
+  cases x <;> unfold HasWordOrderConstraints <;> infer_instance
 
 -- Verification: Ross's Predictions
 

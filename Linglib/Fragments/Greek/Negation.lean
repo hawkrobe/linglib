@@ -77,16 +77,16 @@ def dhenSem (p : World → Bool) : World → Bool :=
     ⟦min⟧^g(w) = λp. ∀w' ∈ Best_g(w) : ¬p(w')
     Used in imperatives (*Min pas!* 'Don't go!') and with canonical *dhen*
     (*Fovame min dhen efaye* 'I fear he maybe didn't eat'). -/
-def minNegSem (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool))
+def minNegSem (f : ModalBase World) (g : OrderingSource World) (p : World → Prop)
     (w : World) : Prop :=
-  necessity f g (λ w' => !p w') w
+  necessity f g (λ w' => ¬p w') w
 
 /-- Semantics of expletive *min*: modal without negation.
     ⟦min_expletive⟧^g(w) = λp. ∀w' ∈ Best_g(w) : p(w')
     Used in fear complements (*Fovame min efaye* 'I fear he maybe ate'),
     conditionals (*Min ksexaso kati* 'If I forget something'), and
     biased questions (*Min efaye?* 'Did he maybe eat?'). -/
-def minExplSem (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool))
+def minExplSem (f : ModalBase World) (g : OrderingSource World) (p : World → Prop)
     (w : World) : Prop :=
   necessity f g p w
 

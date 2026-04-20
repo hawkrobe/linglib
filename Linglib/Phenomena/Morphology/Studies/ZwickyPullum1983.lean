@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.Core.CliticVsAffix
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Theories.Semantics.Modality.Basic
 
 /-!
@@ -31,7 +31,7 @@ namespace Phenomena.Morphology.ZwickyPullum1983
 
 open Morphology.Diagnostics
 open Core.Morphology (MorphStatus SelectionDegree)
-open Fragments.English.FunctionWords (AuxEntry)
+open Fragments.English.Auxiliaries (AuxEntry)
 
 -- ============================================================================
 -- §1: Diagnostic Profiles
@@ -174,11 +174,11 @@ theorem clitics_unambiguous :
 
 /-! Verify that the paradigm gaps in Table 1 are encoded in the Fragment data. -/
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- *may* has no contracted negative form (*mayn't is a paradigm gap). -/
 theorem may_gap : may.negForm = none := rfl
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- *am* has no contracted negative form (*amn't is a paradigm gap). -/
 theorem am_gap : am.negForm = none := rfl
 
@@ -188,27 +188,27 @@ theorem am_gap : am.negForm = none := rfl
 
 /-! Verify that the phonologically irregular forms are flagged in Fragment data. -/
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- *won't* is phonologically irregular (not *willn't*). -/
 theorem wont_irregular : will.negIrregular = true := rfl
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- *can't* is phonologically irregular. -/
 theorem cant_irregular : can.negIrregular = true := rfl
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- *don't* is phonologically irregular (not *don't* [dunt]). -/
 theorem dont_irregular : do_.negIrregular = true := rfl
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- *shan't* is phonologically irregular (not *shalln't*). -/
 theorem shant_irregular : shall.negIrregular = true := rfl
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- *mustn't* shows [t]-deletion: [mʌsnt] not *[mʌstnt]. -/
 theorem mustnt_irregular : must.negIrregular = true := rfl
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- Regular forms: *couldn't*, *wouldn't*, *shouldn't* show no irregularity. -/
 theorem regular_negatives :
     could.negIrregular = false ∧
@@ -375,7 +375,7 @@ end ScopeBridge
 /-! *-n't* attaches only to finite auxiliaries. Verify that the host set
 matches the auxiliary inventory from `Fragments/English/FunctionWords`. -/
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- Every auxiliary in the inventory is either a modal, do-support, be, or have. -/
 theorem aux_hosts_are_closed_class :
     allAuxiliaries.all (λ a => a.auxType == .modal
@@ -383,22 +383,22 @@ theorem aux_hosts_are_closed_class :
       || a.auxType == .be
       || a.auxType == .have) = true := by native_decide
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- The number of auxiliaries with contracted negative forms
     (= the productive range of *-n't*). -/
 def ntHostCount : Nat :=
   allAuxiliaries.filter (λ a => a.negForm.isSome) |>.length
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- The number of paradigm gaps (auxiliaries without *-n't*). -/
 def ntGapCount : Nat :=
   allAuxiliaries.filter (λ a => a.negForm.isNone) |>.length
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- Most auxiliaries have a contracted negative form, but there are gaps. -/
 theorem nt_has_gaps : ntGapCount > 0 := by native_decide
 
-open Fragments.English.FunctionWords in
+open Fragments.English.Auxiliaries in
 /-- At least five auxiliaries show phonological irregularity in their
 contracted negative form (Z&P criterion C). -/
 theorem nt_has_irregulars :

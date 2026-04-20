@@ -78,14 +78,20 @@ namespace Category
 /-- A number category is determinate iff its cardinality boundary is fixed.
     Minimal and unit augmented are indeterminate: they depend on the
     composition of the group, not a fixed cardinality. -/
-def isDeterminate : Category → Bool
-  | .singular | .dual | .trial => true
-  | _ => false
+def isDeterminate : Category → Prop
+  | .singular | .dual | .trial => True
+  | _ => False
+
+instance : DecidablePred isDeterminate := fun c => by
+  cases c <;> unfold isDeterminate <;> infer_instance
 
 /-- A number category participates in the number system (is not general). -/
-def isInSystem : Category → Bool
-  | .general => false
-  | _ => true
+def isInSystem : Category → Prop
+  | .general => False
+  | _ => True
+
+instance : DecidablePred isInSystem := fun c => by
+  cases c <;> unfold isInSystem <;> infer_instance
 
 /-- Exact referent-set cardinality for determinate number categories.
 
@@ -106,9 +112,12 @@ def exactCard : Category → Option Nat
     [±atomic]). In such systems, minimal = atoms ∪ minimal non-atoms,
     and augmented = everything else. Returns `none` for categories
     outside the MIN/AUG system. -/
-def isMinAug : Category → Bool
-  | .minimal | .augmented => true
-  | _ => false
+def isMinAug : Category → Prop
+  | .minimal | .augmented => True
+  | _ => False
+
+instance : DecidablePred isMinAug := fun c => by
+  cases c <;> unfold isMinAug <;> infer_instance
 
 /-- Map a referent-set cardinality back to the finest determinate category.
     1 → singular, 2 → dual, 3 → trial, 4+ → greaterPlural. -/

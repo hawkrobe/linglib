@@ -613,8 +613,8 @@ theorem algún_entry_not_at_issue :
     the Modal Variation inference concerns the SPEAKER's beliefs, mediated
     by ASSERT ((20)). The fragment entry records epistemic-only flavor. -/
 theorem algún_entry_epistemic_only :
-    algúnEntry.hasEpistemic = true ∧ algúnEntry.hasCircumstantial = false := by
-  constructor <;> native_decide
+    algúnEntry.hasEpistemic ∧ ¬ algúnEntry.hasCircumstantial := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 
 end AlonsoOvalleMenendezBenito2010

@@ -141,9 +141,9 @@ def HarmonySystem.mk'
     (isBlocker : Segment → Bool := (λ _ => false)) : HarmonySystem where
   feature := feature
   rule := {
-    tier := Core.Tier.byClass (fun s => !isTransparent s)
+    tier := Core.Tier.byClass (fun s => !isTransparent s = true)
     side := direction.toSide
-    targetIsContext := isTrigger
+    targetIsContext := fun s => isTrigger s = true
     relation := .agree
     featureValue := fun s => s.spec feature
     default := none }
@@ -155,9 +155,12 @@ def HarmonySystem.mk'
 -- ============================================================================
 
 /-- The trigger predicate (= the rule's context class). Convenience accessor
-    for the @cite{rose-walker-2011} typological decomposition. -/
+    for the @cite{rose-walker-2011} typological decomposition. Returns
+    `Bool` via `decide` since the underlying `TierRule` predicate is
+    `Prop`-valued; the smart constructor `HarmonySystem.mk'` ensures
+    decidability is in scope. -/
 @[inline] def isTrigger (sys : HarmonySystem) (s : Segment) : Bool :=
-  sys.rule.targetIsContext s
+  decide (sys.rule.targetIsContext s)
 
 -- ============================================================================
 -- § 4: Harmony Domain

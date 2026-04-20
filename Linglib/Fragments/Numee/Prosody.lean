@@ -27,7 +27,7 @@ This fragment models syllable structure explicitly (the `Drubea`
 fragment works at the morpheme/spec-list level), because the Numèè
 boundary phenomenon's eligibility conditions reference syllable weight
 (light CV vs CVV) and the immediately preceding syllable's register
-status — neither expressible in a flat `List RegisterSpec`.
+status — neither expressible in a flat `List TRN`.
 -/
 
 namespace Fragments.Numee.Prosody
@@ -39,18 +39,18 @@ open Phonology.Autosegmental.RegisterTier
 -- ============================================================================
 
 /-- A Numèè syllable: surface form (segmental, no register marks) plus
-    one `RegisterSpec` per mora. The mora is the register-bearing unit
+    one `TRN` per mora. The mora is the register-bearing unit
     (@cite{lionnet-2025} §4.2), so light CV is monomoraic and CVV is
     bimoraic. A downstep mark `⁺` on the leftmost mora of a syllable
     surfaces as `some .l` at the corresponding `specs` index. -/
 structure Syllable where
   form  : String
-  specs : List RegisterSpec
+  specs : List TRN
   deriving Repr, DecidableEq
 
 namespace Syllable
 
-/-- Number of morae in this syllable (one `RegisterSpec` per mora). -/
+/-- Number of morae in this syllable (one `TRN` per mora). -/
 def morae (s : Syllable) : Nat := s.specs.length
 
 /-- Light CV: a monomoraic short syllable (e.g. `ku`, `nĩ`, `kwɛ̃`).
@@ -60,10 +60,10 @@ def isLightCV (s : Syllable) : Bool := s.morae == 1
 /-- All morae of this syllable are registerless (no `l` or `h`). The
     Numèè `⁺%` boundary requires the *preceding* syllable to satisfy
     this. -/
-def isRegisterless (s : Syllable) : Bool := s.specs.all (· == none)
+def isRegisterless (s : Syllable) : Bool := s.specs.all (· == TRN.empty)
 
 /-- The syllable carries an underlying downstep `l` on at least one mora. -/
-def isDownstepped (s : Syllable) : Bool := s.specs.any (· == some .l)
+def isDownstepped (s : Syllable) : Bool := s.specs.any (· == TRN.downstep)
 
 end Syllable
 
@@ -113,40 +113,40 @@ def numeeBoundaryEffect : Utterance → BoundaryEffect := fun utt =>
 -- ============================================================================
 
 /-- /jaa/ 'juice' — bimoraic CVV, registerless (ex. 24, 25). -/
-def jaa : Syllable := ⟨"jaa", [none, none]⟩
+def jaa : Syllable := ⟨"jaa", [TRN.empty, TRN.empty]⟩
 
 /-- /nĩ/ 'coconut' — monomoraic CV, registerless (ex. 24). -/
-def niCoconut : Syllable := ⟨"nĩ", [none]⟩
+def niCoconut : Syllable := ⟨"nĩ", [TRN.empty]⟩
 
 /-- /⁺nĩ/ 'breast' — monomoraic CV, downstepped (ex. 25). The
     minimal-pair partner of `niCoconut`. -/
-def niBreast : Syllable := ⟨"nĩ", [some .l]⟩
+def niBreast : Syllable := ⟨"nĩ", [TRN.downstep]⟩
 
 /-- /mii/ 'low' — bimoraic CVV, registerless (ex. 26). Heavy finals
     block the boundary downstep. -/
-def mii : Syllable := ⟨"mii", [none, none]⟩
+def mii : Syllable := ⟨"mii", [TRN.empty, TRN.empty]⟩
 
 /-- /ku/ 'yam' — monomoraic CV, registerless (ex. 28). Light, but in
     ex. 28 it is preceded by a downstepped syllable, so the boundary
     is blocked. -/
-def ku : Syllable := ⟨"ku", [none]⟩
+def ku : Syllable := ⟨"ku", [TRN.empty]⟩
 
 /-- /⁺tĩĩ/ 'three' — bimoraic CVV, downstep on first mora (ex. 28).
     Whether or not light, what matters here is that it counts as
     *downstepped* and so blocks the boundary on the following `ku`. -/
-def beTii : Syllable := ⟨"tĩĩ", [some .l, none]⟩
+def beTii : Syllable := ⟨"tĩĩ", [TRN.downstep, TRN.empty]⟩
 
 /-- /kwɛ̃/ 'sand' — monomoraic CV, registerless (ex. 29). Like `ku`,
     light but preceded by a downstepped syllable in its example. -/
-def kwe : Syllable := ⟨"kwɛ̃", [none]⟩
+def kwe : Syllable := ⟨"kwɛ̃", [TRN.empty]⟩
 
 /-- /⁺paa/ 'down' — bimoraic CVV with downstep on first mora (ex. 29). -/
-def paa : Syllable := ⟨"paa", [some .l, none]⟩
+def paa : Syllable := ⟨"paa", [TRN.downstep, TRN.empty]⟩
 
 /-- A registerless filler syllable used to pad utterances (`a`, `nõ`,
     `dɛŋo`, etc. in the §3.4 examples — segmental detail varies but
-    the prosodic content is just `[none]` or `[none, none]`). -/
-def regCV  : Syllable := ⟨"σ", [none]⟩
-def regCVV : Syllable := ⟨"σː", [none, none]⟩
+    the prosodic content is just `[TRN.empty]` or `[TRN.empty, TRN.empty]`). -/
+def regCV  : Syllable := ⟨"σ", [TRN.empty]⟩
+def regCVV : Syllable := ⟨"σː", [TRN.empty, TRN.empty]⟩
 
 end Fragments.Numee.Prosody

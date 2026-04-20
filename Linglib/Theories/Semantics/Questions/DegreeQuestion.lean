@@ -151,13 +151,13 @@ theorem existentialModal_preserves_upMono
     Examples:
     - "You're only required to read more than 30 books" ✓
     - "*You're only allowed to smoke more than 30 cigarettes" ✗ -/
-def obviatesMaxViolation : ModalForce → Bool
-  | .necessity     => true
-  | .weakNecessity => true
-  | .possibility   => false
+def obviatesMaxViolation : ModalForce → Prop
+  | .necessity     => True
+  | .weakNecessity => True
+  | .possibility   => False
 
-theorem necessity_obviates : obviatesMaxViolation .necessity = true := rfl
-theorem weakNecessity_obviates : obviatesMaxViolation .weakNecessity = true := rfl
-theorem possibility_fails : obviatesMaxViolation .possibility = false := rfl
+theorem necessity_obviates : obviatesMaxViolation .necessity := trivial
+theorem weakNecessity_obviates : obviatesMaxViolation .weakNecessity := trivial
+theorem possibility_fails : ¬ obviatesMaxViolation .possibility := id
 
 end Semantics.Questions.DegreeQuestion

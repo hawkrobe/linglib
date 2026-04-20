@@ -6,14 +6,15 @@ import Linglib.Theories.Pragmatics.Expressives.OutlookMarker
 
 ## Part 1: Interrogative Particles
 
-Q-morphemes and related particles in Japanese, following @cite{dayal-2025}.
+Q-morphemes and related particles in Japanese. The fragment commits only to
+theory-neutral lexical primitives (clause-internal distribution); the
+left-peripheral layer assignment lives in
+`Phenomena.Questions.Studies.BhattDayal2020`.
 
-Japanese has a three-way distinction in interrogative particles that maps
-directly onto the three layers of the left periphery:
-
-1. *ka/no*: Clause-typing particle (CP) — obligatory in subordinated interrogatives
-2. *koto*: Appears in declaratives (contrast with *ka* in interrogatives)
-3. *kke*: Meta question particle (MQP, SAP) — only in matrix and quotation
+1. *ka/no*: Clause-typing Q-morphemes — appear in subordinated interrogatives
+2. *koto*: Declarative complementizer (contrast with *ka* in interrogatives)
+3. *kke*: Meta question particle — only in matrix and quotation
+4. *daroo*: Conjectural/epistemic copula
 
 ## Part 2: Outlook Markers
 
@@ -24,16 +25,10 @@ discourse stances, following @cite{kubota-2026}.
 
 namespace Fragments.Japanese.Particles
 
-/-- Layer of the left periphery that a particle occupies. -/
-inductive Layer where
-  | cp | perspP | sap
-  deriving DecidableEq, Repr
-
 /-- A Japanese particle entry. -/
 structure ParticleEntry where
   form : String
   romaji : String
-  layer : Layer
   /-- Does this particle appear in subordinated interrogatives? -/
   inSubordinated : Bool
   /-- Does this particle appear in quasi-subordinated interrogatives? -/
@@ -46,13 +41,11 @@ structure ParticleEntry where
     optional in matrix (can be dropped). Marks CP as +WH. -/
 def ka : ParticleEntry :=
   { form := "か", romaji := "ka"
-  , layer := .cp
   , inSubordinated := true, inQuasiSub := true, inMatrix := true }
 
 /-- *no* — clause-typing particle for questions (informal). -/
 def no_ : ParticleEntry :=
   { form := "の", romaji := "no"
-  , layer := .cp
   , inSubordinated := true, inQuasiSub := true, inMatrix := true }
 
 /-- *koto* — complementizer for declarative clauses. Contrast with *ka*:
@@ -60,7 +53,6 @@ def no_ : ParticleEntry :=
     while *koto* marks a declarative (@cite{dayal-2025}: (15)). -/
 def koto : ParticleEntry :=
   { form := "こと", romaji := "koto"
-  , layer := .cp
   , inSubordinated := true, inQuasiSub := false, inMatrix := false }
 
 /-- *kke* — meta question particle (MQP). Only in matrix questions and quotations.
@@ -68,10 +60,9 @@ def koto : ParticleEntry :=
     the addressee knows it. -/
 def kke : ParticleEntry :=
   { form := "っけ", romaji := "kke"
-  , layer := .sap
   , inSubordinated := false, inQuasiSub := false, inMatrix := true }
 
-/-- *daroo* (だろう) — conjectural/epistemic copula at PerspP layer.
+/-- *daroo* (だろう) — conjectural/epistemic copula.
     With declarative complement: "x thinks p" (⟦daroo⟧({p})(x) = INQ_x ⊆ {p}↓).
     With interrogative complement: "x wonders Q" (⟦daroo⟧(Q)(x) = INQ_x ⊆ Q).
     The dual reading arises from the absence of an ignorance component,
@@ -80,7 +71,6 @@ def kke : ParticleEntry :=
     interrogatives (which use *ka*). -/
 def daroo : ParticleEntry :=
   { form := "だろう", romaji := "daroo"
-  , layer := .perspP
   , inSubordinated := false, inQuasiSub := true, inMatrix := true }
 
 def allParticles : List ParticleEntry := [ka, no_, koto, kke, daroo]

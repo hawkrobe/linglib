@@ -332,11 +332,10 @@ theorem ppi_targets_composite_ue_env :
 
 /-- The NPIs tested are classified as NPIs in the Fragment lexicon. -/
 theorem tested_npis_are_npis :
-    any.isNPI = true ∧ ever.isNPI = true ∧ atAll.isNPI = true :=
-  ⟨rfl, rfl, rfl⟩
+    any.isNPI ∧ ever.isNPI ∧ atAll.isNPI := by decide
 
 /-- The PPI tested is classified as a PPI in the Fragment lexicon. -/
-theorem tested_ppi_is_ppi : some_ppi.isPPI = true := rfl
+theorem tested_ppi_is_ppi : some_ppi.isPPI := rfl
 
 /-- The tested NPIs are all strengthening (@cite{israel-2001} Figure 1)
     but have heterogeneous semantic bases — the mechanism isn't

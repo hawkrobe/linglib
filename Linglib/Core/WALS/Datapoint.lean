@@ -12,10 +12,15 @@ by `python3 scripts/gen_wals.py`.
 
 namespace Core.WALS
 
-/-- A single WALS datapoint, parameterized by the feature value type `V`. -/
+/-- A single WALS datapoint, parameterized by the feature value type `V`.
+
+The human-readable language name is intentionally absent from this struct —
+each entry already references a `walsCode`, and `Core.WALS.Languages.findLanguage`
+is the canonical lookup for human names. Storing the name in every per-feature
+entry duplicates ~2660 strings across 192 feature files for no consumer benefit
+and inflates Lean elaboration time. -/
 structure Datapoint (V : Type) where
   walsCode : String
-  language : String
   iso : String
   value : V
   deriving Repr, DecidableEq
@@ -25,9 +30,14 @@ def Datapoint.lookup {V : Type} [BEq V] (data : List (Datapoint V))
     (code : String) : Option (Datapoint V) :=
   data.find? (·.walsCode == code)
 
-/-- Look up a language by ISO 639-3 code. -/
+/-- Look up a language by ISO 639-3 code.
+
+Returns `none` for empty queries: WALS marks a handful of languages with an
+empty `iso` field (e.g. WALS code `tbu`, `aze`), and a naive `find?` on `""`
+would return one of those entries arbitrarily. -/
 def Datapoint.lookupISO {V : Type} [BEq V] (data : List (Datapoint V))
     (iso : String) : Option (Datapoint V) :=
-  data.find? (·.iso == iso)
+  if iso.isEmpty then none
+  else data.find? (·.iso == iso)
 
 end Core.WALS

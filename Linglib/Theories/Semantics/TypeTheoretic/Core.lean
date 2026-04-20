@@ -1,4 +1,4 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
 import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Grammar
@@ -282,18 +282,18 @@ embedding a `Prop` into `Type` (e.g., `propT (x = y)` instead of `PLift (x = y)`
 /-- Lift a proposition to a type. Alias for `PLift`. -/
 abbrev propT (p : Prop) : Type := PLift p
 
-/-! ## Bridge to Core.Proposition
+/-! ## Bridge to Set
 
 Cooper's world-indexed propositions: at each world `w`, a proposition
 corresponds to a type that may or may not be inhabited. This is exactly
-`Prop' W = W → Prop` — at each world, we get a `Prop`, which in CIC
+`Set W = W → Prop` — at each world, we get a `Prop`, which in CIC
 *is* a type (in `Sort 0`).
 
-The bridge: `Prop' W` is a family of TTR types indexed by "possibilities"
+The bridge: `Set W` is a family of TTR types indexed by "possibilities"
 (worlds). The proposition is true at `w` iff the type `p w` is inhabited. -/
 
-/-- A `Prop' W` proposition is TTR-true at world `w` iff the Prop is inhabited. -/
-theorem prop'_true_iff_inhabited {W : Type*} (p : Core.Proposition.Prop' W) (w : W) :
+/-- A `Set W` proposition is TTR-true at world `w` iff the Prop is inhabited. -/
+theorem prop'_true_iff_inhabited {W : Type*} (p : Set W) (w : W) :
     p w ↔ Nonempty (propT (p w)) :=
   ⟨λ h => ⟨PLift.up h⟩, λ ⟨⟨h⟩⟩ => h⟩
 
@@ -306,7 +306,7 @@ TTR proposition. -/
 
 /-- An intension of Prop is a world-indexed family of TTR propositions. -/
 theorem intension_prop_is_ttr_prop (W : Type*) :
-    Core.Intension W Prop = Core.Proposition.Prop' W := rfl
+    Core.Intension W Prop = Set W := rfl
 
 /-! ## Modal type systems (Cooper Def 54)
 
@@ -340,9 +340,8 @@ def ModalTypeSystem.subtypeBProp {W Pred : Type} (mts : ModalTypeSystem W Pred)
 theorem modal_subtype_eq_entailment {W Pred : Type}
     (mts : ModalTypeSystem W Pred) (P₁ P₂ : Pred) :
     mts.subtypeBProp P₁ P₂ ↔
-    Core.Proposition.Classical.entails W
-      (↑(mts.toBProp P₁) : Core.Proposition.Prop' W)
-      (↑(mts.toBProp P₂)) := by
+    ({w | mts.toBProp P₁ w = true} : Set W) ⊆
+      {w | mts.toBProp P₂ w = true} := by
   rfl
 
 /-! ## Bridge: IType + ModalTypeSystem → Core.Intension
@@ -1021,31 +1020,31 @@ end DerivationPhenomena
 -- Proposition Granularity Hierarchy
 -- ============================================================================
 
-/-! ## Proposition granularity: Prop' W vs TTR types
+/-! ## Proposition granularity: Set W vs TTR types
 
 @cite{chatzikyriakidis-etal-2025} §2 argue that the choice of proposition
 type determines what distinctions a semantic theory can make. We formalize
 the granularity hierarchy:
 
-  `IType` (finest) > `Type` (medium) > `Prop' W` (coarsest)
+  `IType` (finest) > `Type` (medium) > `Set W` (coarsest)
 
-- `Prop' W` identifies all propositions with the same truth conditions
+- `Set W` identifies all propositions with the same truth conditions
 - TTR types distinguish propositions that are merely co-extensional
 - `IType` adds intensional identity (name-based distinction)
 
 The key consequence: attitude verbs that need to distinguish Hesperus-beliefs
-from Phosphorus-beliefs cannot use `Prop' W` — they need `IType`. -/
+from Phosphorus-beliefs cannot use `Set W` — they need `IType`. -/
 
 /-- Possible-worlds propositions collapse TTR distinctions:
 two ITypes with different names but same carrier map to the same Prop.
-This is why Prop' W is too coarse for attitude reports. -/
+This is why Set W is too coarse for attitude reports. -/
 theorem prop_collapses_intensional_distinctions (W : Type*) :
     ∃ T₁ T₂ : IType,
       -- Intensionally distinct in TTR
       ¬ T₁.intEq T₂ ∧
-      -- But indistinguishable as Prop' W propositions
+      -- But indistinguishable as Set W propositions
       -- (both map to the same truth value at every world)
-      (∀ (embed : IType → Core.Proposition.Prop' W),
+      (∀ (embed : IType → Set W),
         (∀ T w, embed T w ↔ Nonempty T.carrier) →
         ∀ w, embed T₁ w ↔ embed T₂ w) := by
   refine ⟨⟨Unit, "hesperus_rises"⟩, ⟨Unit, "phosphorus_rises"⟩,
@@ -1057,18 +1056,18 @@ theorem prop_collapses_intensional_distinctions (W : Type*) :
   · intro h; exact (hembed ⟨Unit, "hesperus_rises"⟩ w).mpr
       ((hembed ⟨Unit, "phosphorus_rises"⟩ w).mp h)
 
-/-- TTR types are strictly finer than Prop' W:
-there exist types that TTR distinguishes but Prop' W cannot.
+/-- TTR types are strictly finer than Set W:
+there exist types that TTR distinguishes but Set W cannot.
 (This is `ext_equiv_not_implies_int_eq` restated in terms of the
 granularity hierarchy.) -/
 theorem ttr_strictly_finer_than_worlds :
     -- TTR can distinguish types that are co-extensional
     (∃ T₁ T₂ : IType, T₁.extEquiv T₂ ∧ ¬ T₁.intEq T₂) ∧
-    -- But Prop' identifies co-extensional propositions
-    (∀ (W : Type) (p q : Core.Proposition.Prop' W),
-      Core.Proposition.Classical.equiv W p q → ∀ w, p w ↔ q w) :=
+    -- But Set identifies co-extensional propositions
+    (∀ (W : Type) (p q : Set W),
+      p = q → ∀ w, p w ↔ q w) :=
   ⟨⟨⟨Unit, "groundhog"⟩, ⟨Unit, "woodchuck"⟩,
     ⟨Equiv.refl Unit⟩, by simp [IType.intEq]⟩,
-   λ _ _ _ ⟨hpq, hqp⟩ w => ⟨hpq w, hqp w⟩⟩
+   λ _ _ _ heq w => by rw [heq]⟩
 
 end Semantics.TypeTheoretic

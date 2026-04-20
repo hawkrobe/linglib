@@ -171,9 +171,9 @@ theorem tb_voice_count :
     tbVoiceSystem.voiceCount = 2 := rfl
 
 theorem tb_is_active_passive :
-    tbVoiceSystem.isActivePassive = true := rfl
+    tbVoiceSystem.isActivePassive := by decide
 
 theorem tb_promotes_agent :
-    tbVoiceSystem.promotesRole .agent = true := rfl
+    tbVoiceSystem.promotesRole .agent := by decide
 
 end Fragments.TobaBatak

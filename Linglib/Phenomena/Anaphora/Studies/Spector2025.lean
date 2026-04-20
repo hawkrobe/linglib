@@ -88,18 +88,18 @@ def valuedT3 (g : PartialAssign D) (x : Nat) : Truth3 :=
 
 /-- `U(x)` is never undefined. -/
 theorem valuedT3_defined (g : PartialAssign D) (x : Nat) :
-    (valuedT3 g x).isDefined = true := by
-  simp [valuedT3, PartialAssign.valued]
-  cases g x <;> rfl
+    (valuedT3 g x).isDefined := by
+  simp [valuedT3, PartialAssign.valued, Truth3.isDefined]
+  cases g x <;> trivial
 
 /-- When `g` values `x`, evaluating a predicate at `x` is bivalent. -/
 theorem evalPred_valued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : W)
     (h : g.valued x = true) :
-    (evalPred I g x w).isDefined = true := by
+    (evalPred I g x w).isDefined := by
   simp [evalPred, PartialAssign.valued] at *
   cases hg : g x with
   | none => simp [hg] at h
-  | some d => simp [Truth3.ofBool]; cases I w d <;> rfl
+  | some d => simp [Truth3.ofBool, Truth3.isDefined]; cases I w d <;> trivial
 
 /-- When `g` does not value `x`, evaluating a predicate at `x` is undefined. -/
 theorem evalPred_unvalued (I : Interp W D) (g : PartialAssign D) (x : Nat) (w : W)
@@ -605,8 +605,11 @@ noncomputable def atomicT3 (G : PluralAssign D) (x : Nat) : Truth3 :=
 
 /-- `atomic(x)` is always defined (bivalent). -/
 theorem atomicT3_defined (G : PluralAssign D) (x : Nat) :
-    (atomicT3 G x).isDefined = true := by
-  simp only [atomicT3]; split <;> rfl
+    (atomicT3 G x).isDefined := by
+  unfold atomicT3
+  by_cases h : G.singular x
+  · simp [h, Truth3.isDefined]
+  · simp [h, Truth3.isDefined]
 
 /-- Plural existential quantifier with witness condition.
     §6.2:

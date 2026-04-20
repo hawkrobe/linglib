@@ -139,12 +139,6 @@ inductive ScopeEntailment where
   | equivalent             -- readings are extensionally identical
   deriving DecidableEq, Repr, Inhabited
 
-/-- Diagnostic scope pairs allow contexts where exactly one reading is true.
-    Only independent pairs are diagnostic; nested or equivalent pairs are not. -/
-def ScopeEntailment.isDiagnostic : ScopeEntailment → Bool
-  | .independent => true
-  | _ => false
-
 /-- Classify scope entailment from truth-value functions over a world list. -/
 def classifyScopeEntailment {W : Type}
     (worlds : List W) (surface inverse : W → Bool) : ScopeEntailment :=

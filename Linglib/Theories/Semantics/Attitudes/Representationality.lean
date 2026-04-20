@@ -85,16 +85,22 @@ inductive Representationality where
 
 /-- An attitude with a representational component provides an information
     state that epistemics can quantify over. -/
-def hasInformationState : Representationality → Bool
-  | .representational => true
-  | .nonRepresentational => false
-  | .hybrid => true
+def HasInformationState : Representationality → Prop
+  | .representational => True
+  | .nonRepresentational => False
+  | .hybrid => True
+
+instance : DecidablePred HasInformationState := fun r => by
+  cases r <;> unfold HasInformationState <;> infer_instance
 
 /-- An attitude with a preference component uses comparative semantics. -/
-def hasPreferenceComponent : Representationality → Bool
-  | .representational => false
-  | .nonRepresentational => true
-  | .hybrid => true
+def HasPreferenceComponent : Representationality → Prop
+  | .representational => False
+  | .nonRepresentational => True
+  | .hybrid => True
+
+instance : DecidablePred HasPreferenceComponent := fun r => by
+  cases r <;> unfold HasPreferenceComponent <;> infer_instance
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Epistemic Licensing
@@ -113,11 +119,14 @@ inductive EpistemicForce where
     - Non-representational: licenses neither (S = ∅, trivial modal base)
     - Hybrid: licenses might but not must (S = DOX, but uncertainty
       condition contradicts universal quantification) -/
-def licensesEpistemic : Representationality → EpistemicForce → Bool
-  | .representational,    _             => true
-  | .nonRepresentational, _             => false
-  | .hybrid,              .possibility  => true
-  | .hybrid,              .necessity    => false
+def LicensesEpistemic : Representationality → EpistemicForce → Prop
+  | .representational,    _             => True
+  | .nonRepresentational, _             => False
+  | .hybrid,              .possibility  => True
+  | .hybrid,              .necessity    => False
+
+instance : ∀ r f, Decidable (LicensesEpistemic r f) := fun r f => by
+  cases r <;> cases f <;> unfold LicensesEpistemic <;> infer_instance
 
 -- ════════════════════════════════════════════════════════════════
 -- § 3. Verification Theorems
@@ -125,25 +134,25 @@ def licensesEpistemic : Representationality → EpistemicForce → Bool
 
 /-- Representational attitudes license all epistemics. -/
 theorem representational_licenses_all (f : EpistemicForce) :
-    licensesEpistemic .representational f = true := by
-  cases f <;> rfl
+    LicensesEpistemic .representational f := by
+  cases f <;> trivial
 
 /-- Non-representational attitudes block all epistemics. -/
 theorem nonRepresentational_blocks_all (f : EpistemicForce) :
-    licensesEpistemic .nonRepresentational f = false := by
-  cases f <;> rfl
+    ¬ LicensesEpistemic .nonRepresentational f := by
+  cases f <;> exact id
 
 /-- Hybrids license possibility but not necessity. -/
 theorem hybrid_possibility_only :
-    licensesEpistemic .hybrid .possibility = true ∧
-    licensesEpistemic .hybrid .necessity = false :=
-  ⟨rfl, rfl⟩
+    LicensesEpistemic .hybrid .possibility ∧
+    ¬ LicensesEpistemic .hybrid .necessity :=
+  ⟨trivial, id⟩
 
 /-- Epistemic licensing requires an information state. -/
 theorem licensing_requires_information_state (r : Representationality)
-    (f : EpistemicForce) (h : licensesEpistemic r f = true) :
-    hasInformationState r = true := by
-  cases r <;> simp [licensesEpistemic, hasInformationState] at * <;> exact h
+    (f : EpistemicForce) (h : LicensesEpistemic r f) :
+    HasInformationState r := by
+  cases r <;> cases f <;> trivial
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Mood Selection Correlation
@@ -206,9 +215,12 @@ def AttitudeClass.representationality : AttitudeClass → Representationality
   | .dubitative      => .hybrid
 
 /-- Derived epistemic licensing for attitude classes. -/
-def AttitudeClass.licensesEpistemic (c : AttitudeClass)
-    (f : EpistemicForce) : Bool :=
-  Representationality.licensesEpistemic c.representationality f
+def AttitudeClass.LicensesEpistemic (c : AttitudeClass)
+    (f : EpistemicForce) : Prop :=
+  Representationality.LicensesEpistemic c.representationality f
+
+instance : ∀ c f, Decidable (AttitudeClass.LicensesEpistemic c f) := fun c f => by
+  unfold AttitudeClass.LicensesEpistemic; infer_instance
 
 -- ════════════════════════════════════════════════════════════════
 -- § 6. The Table 3 Data as Verification Theorems
@@ -216,25 +228,25 @@ def AttitudeClass.licensesEpistemic (c : AttitudeClass)
 
 /-! Per-cell verification of @cite{anand-hacquard-2013} Table 3. -/
 
-theorem doxastic_might : AttitudeClass.licensesEpistemic .doxastic .possibility = true := rfl
-theorem doxastic_must  : AttitudeClass.licensesEpistemic .doxastic .necessity = true := rfl
+theorem doxastic_might : AttitudeClass.LicensesEpistemic .doxastic .possibility := trivial
+theorem doxastic_must  : AttitudeClass.LicensesEpistemic .doxastic .necessity := trivial
 
-theorem argumentative_might : AttitudeClass.licensesEpistemic .argumentative .possibility = true := rfl
-theorem argumentative_must  : AttitudeClass.licensesEpistemic .argumentative .necessity = true := rfl
+theorem argumentative_might : AttitudeClass.LicensesEpistemic .argumentative .possibility := trivial
+theorem argumentative_must  : AttitudeClass.LicensesEpistemic .argumentative .necessity := trivial
 
-theorem semifactive_might : AttitudeClass.licensesEpistemic .semifactive .possibility = true := rfl
-theorem semifactive_must  : AttitudeClass.licensesEpistemic .semifactive .necessity = true := rfl
+theorem semifactive_might : AttitudeClass.LicensesEpistemic .semifactive .possibility := trivial
+theorem semifactive_must  : AttitudeClass.LicensesEpistemic .semifactive .necessity := trivial
 
-theorem desiderative_might : AttitudeClass.licensesEpistemic .desiderative .possibility = false := rfl
-theorem desiderative_must  : AttitudeClass.licensesEpistemic .desiderative .necessity = false := rfl
+theorem desiderative_might : ¬ AttitudeClass.LicensesEpistemic .desiderative .possibility := id
+theorem desiderative_must  : ¬ AttitudeClass.LicensesEpistemic .desiderative .necessity := id
 
-theorem directive_might : AttitudeClass.licensesEpistemic .directive .possibility = false := rfl
-theorem directive_must  : AttitudeClass.licensesEpistemic .directive .necessity = false := rfl
+theorem directive_might : ¬ AttitudeClass.LicensesEpistemic .directive .possibility := id
+theorem directive_must  : ¬ AttitudeClass.LicensesEpistemic .directive .necessity := id
 
-theorem emotiveDoxastic_might : AttitudeClass.licensesEpistemic .emotiveDoxastic .possibility = true := rfl
-theorem emotiveDoxastic_must  : AttitudeClass.licensesEpistemic .emotiveDoxastic .necessity = false := rfl
+theorem emotiveDoxastic_might : AttitudeClass.LicensesEpistemic .emotiveDoxastic .possibility := trivial
+theorem emotiveDoxastic_must  : ¬ AttitudeClass.LicensesEpistemic .emotiveDoxastic .necessity := id
 
-theorem dubitative_might : AttitudeClass.licensesEpistemic .dubitative .possibility = true := rfl
-theorem dubitative_must  : AttitudeClass.licensesEpistemic .dubitative .necessity = false := rfl
+theorem dubitative_might : AttitudeClass.LicensesEpistemic .dubitative .possibility := trivial
+theorem dubitative_must  : ¬ AttitudeClass.LicensesEpistemic .dubitative .necessity := id
 
 end Semantics.Attitudes.Representationality

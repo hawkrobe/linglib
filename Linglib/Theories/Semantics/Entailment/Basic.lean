@@ -4,11 +4,10 @@ A |= B iff every model satisfying A also satisfies B.
 Reference: @cite{van-benthem-1986}, @cite{ladusaw-1980}, @cite{barwise-cooper-1981}.
 -/
 
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 namespace Semantics.Entailment
-
-open Core.Proposition (Prop')
 
 section FiniteWorldSemantics
 
@@ -27,72 +26,70 @@ end FiniteWorldSemantics
 
 section Entailment
 
-/-- Semantic entailment: p entails q iff q is true whenever p is true. -/
-def entails (p q : Prop' World) : Prop :=
-  ∀ w, p w → q w
+/-- Semantic entailment: thin alias for `Set` inclusion (`p ⊆ q`).
+The discourse-meaningful name is kept; the body is mathlib's subset relation. -/
+def entails : Set World → Set World → Prop := (· ⊆ ·)
 
-instance (p q : Prop' World) [DecidablePred p] [DecidablePred q] :
+instance (p q : Set World) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] :
     Decidable (entails p q) :=
-  inferInstanceAs (Decidable (∀ w, p w → q w))
+  Fintype.decidableForallFintype
 
 end Entailment
 
 section PropositionalOperations
 
-/-- Negation. -/
-def pnot (p : Prop' World) : Prop' World := Core.Proposition.Classical.pnot World p
+/-- Negation: thin alias for set complement. -/
+def pnot : Set World → Set World := compl
 
-/-- Conjunction. -/
-def pand (p q : Prop' World) : Prop' World := Core.Proposition.Classical.pand World p q
+/-- Conjunction: thin alias for set intersection. -/
+def pand : Set World → Set World → Set World := (· ∩ ·)
 
-/-- Disjunction. -/
-def por (p q : Prop' World) : Prop' World := Core.Proposition.Classical.por World p q
+/-- Disjunction: thin alias for set union. -/
+def por : Set World → Set World → Set World := (· ∪ ·)
 
-instance (p : Prop' World) [DecidablePred p] : DecidablePred (pnot p) :=
-  fun w => inferInstanceAs (Decidable (¬ p w))
+instance (p : Set World) [DecidablePred (· ∈ p)] : DecidablePred (· ∈ pnot p) :=
+  fun w => inferInstanceAs (Decidable (¬ w ∈ p))
 
-instance (p q : Prop' World) [DecidablePred p] [DecidablePred q] :
-    DecidablePred (pand p q) :=
-  fun w => inferInstanceAs (Decidable (p w ∧ q w))
+instance (p q : Set World) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] :
+    DecidablePred (· ∈ pand p q) :=
+  fun w => inferInstanceAs (Decidable (w ∈ p ∧ w ∈ q))
 
-instance (p q : Prop' World) [DecidablePred p] [DecidablePred q] :
-    DecidablePred (por p q) :=
-  fun w => inferInstanceAs (Decidable (p w ∨ q w))
+instance (p q : Set World) [DecidablePred (· ∈ p)] [DecidablePred (· ∈ q)] :
+    DecidablePred (· ∈ por p q) :=
+  fun w => inferInstanceAs (Decidable (w ∈ p ∨ w ∈ q))
 
 /-- Negation reverses entailment. -/
-theorem pnot_reverses_entailment (p q : Prop' World)
-    (h : ∀ w, p w → q w) :
-    ∀ w, pnot q w → pnot p w := by
-  intro w hnq hp
-  exact hnq (h w hp)
+theorem pnot_reverses_entailment {p q : Set World} (h : entails p q) :
+    entails (pnot q) (pnot p) :=
+  Set.compl_subset_compl.mpr h
 
 end PropositionalOperations
 
 section TestPropositions
 
 /-- Proposition true only in w0. -/
-def p0 : Prop' World := λ w => w = .w0
+def p0 : Set World := {.w0}
 
 /-- Proposition true in w0 and w1. -/
-def p01 : Prop' World := λ w => w = .w0 ∨ w = .w1
+def p01 : Set World := {.w0, .w1}
 
 /-- Proposition true in w0, w1, w2. -/
-def p012 : Prop' World := λ w => w = .w0 ∨ w = .w1 ∨ w = .w2
+def p012 : Set World := {.w0, .w1, .w2}
 
 /-- Proposition true everywhere. -/
-def pAll : Prop' World := λ _ => True
+def pAll : Set World := Set.univ
 
 /-- Proposition false everywhere. -/
-def pNone : Prop' World := λ _ => False
+def pNone : Set World := ∅
 
-instance : DecidablePred p0 := fun w => by unfold p0; infer_instance
-instance : DecidablePred p01 := fun w => by unfold p01; infer_instance
-instance : DecidablePred p012 := fun w => by unfold p012; infer_instance
-instance : DecidablePred pAll := fun _ => isTrue trivial
-instance : DecidablePred pNone := fun _ => isFalse not_false
+instance : DecidablePred (· ∈ p0) := fun w => by unfold p0; infer_instance
+instance : DecidablePred (· ∈ p01) := fun w => by unfold p01; infer_instance
+instance : DecidablePred (· ∈ p012) := fun w => by unfold p012; infer_instance
+instance : DecidablePred (· ∈ pAll) := fun _ => isTrue trivial
+instance : DecidablePred (· ∈ pNone) := fun _ => isFalse not_false
 
 /-- Test cases for monotonicity: pairs where first entails second. -/
-def testCases : List (Prop' World × Prop' World) :=
+def testCases : List (Set World × Set World) :=
   [(p0, p01), (p01, p012), (p012, pAll), (p0, pAll)]
 
 /-- p0 entails p01. -/

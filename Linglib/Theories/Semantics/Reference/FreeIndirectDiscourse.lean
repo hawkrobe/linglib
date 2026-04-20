@@ -88,10 +88,10 @@ def resolve (p : FIDProfile) (t : ContextTower (KContext W E P T)) :
   , position := p.resolvePosition t }
 
 /-- A profile is uniform iff all coordinates read from the same depth. -/
-def isUniform (p : FIDProfile) : Bool :=
-  p.agentDepth == p.timeDepth &&
-  p.timeDepth == p.worldDepth &&
-  p.worldDepth == p.positionDepth
+def isUniform (p : FIDProfile) : Prop :=
+  p.agentDepth = p.timeDepth ∧
+  p.timeDepth = p.worldDepth ∧
+  p.worldDepth = p.positionDepth
 
 end FIDProfile
 
@@ -140,13 +140,15 @@ def indirectSpeech : FIDProfile :=
 -- ════════════════════════════════════════════════════════════════
 
 /-- Direct speech is uniform: all coordinates read from the same depth. -/
-theorem directSpeech_uniform : directSpeech.isUniform = true := rfl
+theorem directSpeech_uniform : directSpeech.isUniform := ⟨rfl, rfl, rfl⟩
 
 /-- Indirect speech is uniform: all coordinates read from the same depth. -/
-theorem indirectSpeech_uniform : indirectSpeech.isUniform = true := rfl
+theorem indirectSpeech_uniform : indirectSpeech.isUniform := ⟨rfl, rfl, rfl⟩
 
 /-- FID is NOT uniform: agent reads from a different depth than time. -/
-theorem classicFID_not_uniform : classicFID.isUniform = false := rfl
+theorem classicFID_not_uniform : ¬ classicFID.isUniform := by
+  intro ⟨h, _, _⟩
+  exact absurd h nofun
 
 /-- FID is mixed: it is neither pure origin-access nor pure local-access.
     The agent comes from origin but time comes from local. -/

@@ -103,13 +103,13 @@ The circumstantial domain has a dual pair (maeke/lata), but the
 epistemic domain does not — liga covers both forces. -/
 
 /-- liga lacks a dual: no contrasting epistemic necessity or possibility modal. -/
-theorem liga_no_dual : (forceAnalysis liga).hasDual = false := rfl
+theorem liga_no_dual : ¬ (forceAnalysis liga).HasDual := fun h => h.elim
 
 /-- maeke has a dual (lata). -/
-theorem maeke_has_dual : (forceAnalysis maeke).hasDual = true := rfl
+theorem maeke_has_dual : (forceAnalysis maeke).HasDual := trivial
 
 /-- lata has a dual (maeke). -/
-theorem lata_has_dual : (forceAnalysis lata).hasDual = true := rfl
+theorem lata_has_dual : (forceAnalysis lata).HasDual := trivial
 
 /-! ## Typological properties -/
 

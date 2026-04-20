@@ -14,356 +14,347 @@ namespace Core.WALS.F46A
 
 /-- WALS 46A values. -/
 inductive IndefinitePronouns where
-  | interrogativeBased  -- Interrogative-based (194 languages)
-  | genericNounBased  -- Generic-noun-based (85 languages)
-  | special  -- Special (22 languages)
-  | mixed  -- Mixed (23 languages)
-  | existentialConstruction  -- Existential construction (2 languages)
-  deriving DecidableEq, Repr
+  /-- Interrogative-based (194 languages). -/
+  | interrogativeBased
+  /-- Generic-noun-based (85 languages). -/
+  | genericNounBased
+  /-- Special (22 languages). -/
+  | special
+  /-- Mixed (23 languages). -/
+  | mixed
+  /-- Existential construction (2 languages). -/
+  | existentialConstruction
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 46A dataset (326 languages). -/
 def allData : List (Datapoint IndefinitePronouns) :=
-  [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .special }
-  , { walsCode := "abu", language := "Abun", iso := "kgr", value := .genericNounBased }
-  , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .interrogativeBased }
-  , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .interrogativeBased }
-  , { walsCode := "ain", language := "Ainu", iso := "ain", value := .interrogativeBased }
-  , { walsCode := "abm", language := "Alabama", iso := "akz", value := .interrogativeBased }
-  , { walsCode := "aso", language := "Altai (Southern)", iso := "alt", value := .interrogativeBased }
-  , { walsCode := "aly", language := "Alyawarra", iso := "aly", value := .interrogativeBased }
-  , { walsCode := "aml", language := "Ambae (Lolovoli Northeast)", iso := "omb", value := .genericNounBased }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .genericNounBased }
-  , { walsCode := "amu", language := "Amuesha", iso := "ame", value := .interrogativeBased }
-  , { walsCode := "agt", language := "Anguthimri", iso := "awg", value := .interrogativeBased }
-  , { walsCode := "ano", language := "Anong", iso := "nun", value := .genericNounBased }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .genericNounBased }
-  , { walsCode := "ana", language := "Araona", iso := "aro", value := .interrogativeBased }
-  , { walsCode := "amp", language := "Arrernte (Mparntwe)", iso := "aer", value := .genericNounBased }
-  , { walsCode := "ass", language := "Assamese", iso := "asm", value := .interrogativeBased }
-  , { walsCode := "atc", language := "Atchin", iso := "upv", value := .interrogativeBased }
-  , { walsCode := "awp", language := "Awa Pit", iso := "kwi", value := .interrogativeBased }
-  , { walsCode := "aze", language := "Azerbaijani", iso := "", value := .interrogativeBased }
-  , { walsCode := "bab", language := "Babungo", iso := "bav", value := .genericNounBased }
-  , { walsCode := "bdm", language := "Badimaya", iso := "bia", value := .interrogativeBased }
-  , { walsCode := "bag", language := "Bagirmi", iso := "bmi", value := .genericNounBased }
-  , { walsCode := "bak", language := "Baka (in Cameroon)", iso := "bkc", value := .genericNounBased }
-  , { walsCode := "bam", language := "Bambara", iso := "bam", value := .genericNounBased }
-  , { walsCode := "bao", language := "Bao'an", iso := "peh", value := .interrogativeBased }
-  , { walsCode := "bsk", language := "Bashkir", iso := "bak", value := .interrogativeBased }
-  , { walsCode := "bsq", language := "Basque", iso := "eus", value := .interrogativeBased }
-  , { walsCode := "baw", language := "Bawm", iso := "bgr", value := .interrogativeBased }
-  , { walsCode := "blr", language := "Belorussian", iso := "bel", value := .interrogativeBased }
-  , { walsCode := "bbw", language := "Bininj Gun-Wok", iso := "gup", value := .mixed }
-  , { walsCode := "boz", language := "Bozo (Tigemaxo)", iso := "boz", value := .mixed }
-  , { walsCode := "brh", language := "Brahui", iso := "brh", value := .special }
-  , { walsCode := "bud", language := "Buduma", iso := "bdm", value := .genericNounBased }
-  , { walsCode := "bug", language := "Bugis", iso := "bug", value := .interrogativeBased }
-  , { walsCode := "bul", language := "Bulgarian", iso := "bul", value := .interrogativeBased }
-  , { walsCode := "but", language := "Buriat", iso := "bxm", value := .interrogativeBased }
-  , { walsCode := "bur", language := "Burushaski", iso := "bsk", value := .interrogativeBased }
-  , { walsCode := "cah", language := "Cahuilla", iso := "chl", value := .interrogativeBased }
-  , { walsCode := "cnl", language := "Canela", iso := "ram", value := .interrogativeBased }
-  , { walsCode := "cnt", language := "Cantonese", iso := "yue", value := .special }
-  , { walsCode := "chn", language := "Chantyal", iso := "chx", value := .interrogativeBased }
-  , { walsCode := "cic", language := "Chichewa", iso := "nya", value := .genericNounBased }
-  , { walsCode := "ctm", language := "Chitimacha", iso := "ctm", value := .interrogativeBased }
-  , { walsCode := "cch", language := "Chocho", iso := "coz", value := .interrogativeBased }
-  , { walsCode := "chk", language := "Chukchi", iso := "ckt", value := .interrogativeBased }
-  , { walsCode := "chv", language := "Chuvash", iso := "chv", value := .interrogativeBased }
-  , { walsCode := "cmn", language := "Comanche", iso := "com", value := .interrogativeBased }
-  , { walsCode := "coo", language := "Coos (Hanis)", iso := "csz", value := .interrogativeBased }
-  , { walsCode := "crk", language := "Creek", iso := "mus", value := .interrogativeBased }
-  , { walsCode := "cri", language := "Crimean Tatar", iso := "crh", value := .mixed }
-  , { walsCode := "dgb", language := "Dagbani", iso := "dag", value := .genericNounBased }
-  , { walsCode := "diy", language := "Diyari", iso := "dif", value := .interrogativeBased }
-  , { walsCode := "dja", language := "Djabugay", iso := "dyy", value := .interrogativeBased }
-  , { walsCode := "djp", language := "Djapu", iso := "dwu", value := .interrogativeBased }
-  , { walsCode := "djr", language := "Djaru", iso := "ddj", value := .interrogativeBased }
-  , { walsCode := "dji", language := "Djingili", iso := "jig", value := .interrogativeBased }
-  , { walsCode := "doy", language := "Doyayo", iso := "dow", value := .genericNounBased }
-  , { walsCode := "dut", language := "Dutch", iso := "nld", value := .special }
-  , { walsCode := "dyi", language := "Dyirbal", iso := "dbl", value := .interrogativeBased }
-  , { walsCode := "ene", language := "Enets", iso := "", value := .interrogativeBased }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .genericNounBased }
-  , { walsCode := "err", language := "Erromangan", iso := "erg", value := .genericNounBased }
-  , { walsCode := "est", language := "Estonian", iso := "ekk", value := .interrogativeBased }
-  , { walsCode := "evn", language := "Even", iso := "eve", value := .interrogativeBased }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .interrogativeBased }
-  , { walsCode := "ewe", language := "Ewe", iso := "ewe", value := .genericNounBased }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .special }
-  , { walsCode := "fon", language := "Fongbe", iso := "fon", value := .genericNounBased }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .genericNounBased }
-  , { walsCode := "ful", language := "Fulniô", iso := "fun", value := .interrogativeBased }
-  , { walsCode := "fue", language := "Futuna (East)", iso := "fud", value := .genericNounBased }
-  , { walsCode := "gaa", language := "Gaagudju", iso := "gbu", value := .interrogativeBased }
-  , { walsCode := "gag", language := "Gagauz", iso := "gag", value := .interrogativeBased }
-  , { walsCode := "gam", language := "Gamo", iso := "gmv", value := .genericNounBased }
-  , { walsCode := "gar", language := "Garo", iso := "grt", value := .interrogativeBased }
-  , { walsCode := "gbb", language := "Gbeya Bossangoa", iso := "gbp", value := .genericNounBased }
-  , { walsCode := "geo", language := "Georgian", iso := "kat", value := .interrogativeBased }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .mixed }
-  , { walsCode := "goa", language := "Goajiro", iso := "guc", value := .interrogativeBased }
-  , { walsCode := "gol", language := "Gola", iso := "gol", value := .genericNounBased }
-  , { walsCode := "goo", language := "Gooniyandi", iso := "gni", value := .interrogativeBased }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .interrogativeBased }
-  , { walsCode := "grw", language := "Greenlandic (West)", iso := "kal", value := .interrogativeBased }
-  , { walsCode := "gua", language := "Guaraní", iso := "gug", value := .mixed }
-  , { walsCode := "gum", language := "Gumbaynggir", iso := "kgs", value := .interrogativeBased }
-  , { walsCode := "grg", language := "Gurr-goni", iso := "gge", value := .interrogativeBased }
-  , { walsCode := "guu", language := "Guugu Yimidhirr", iso := "kky", value := .interrogativeBased }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .genericNounBased }
-  , { walsCode := "hay", language := "Hayu", iso := "vay", value := .interrogativeBased }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .interrogativeBased }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .special }
-  , { walsCode := "hmo", language := "Hmong Njua", iso := "hnj", value := .interrogativeBased }
-  , { walsCode := "htc", language := "Huastec", iso := "hus", value := .interrogativeBased }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .interrogativeBased }
-  , { walsCode := "hzb", language := "Hunzib", iso := "huz", value := .interrogativeBased }
-  , { walsCode := "hup", language := "Hupa", iso := "hup", value := .interrogativeBased }
-  , { walsCode := "ibi", language := "Ibibio", iso := "ibb", value := .genericNounBased }
-  , { walsCode := "ice", language := "Icelandic", iso := "isl", value := .interrogativeBased }
-  , { walsCode := "ilo", language := "Ilocano", iso := "ilo", value := .genericNounBased }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .genericNounBased }
-  , { walsCode := "irq", language := "Iraqw", iso := "irk", value := .genericNounBased }
-  , { walsCode := "iri", language := "Irish", iso := "gle", value := .genericNounBased }
-  , { walsCode := "ita", language := "Italian", iso := "ita", value := .genericNounBased }
-  , { walsCode := "itz", language := "Itzaj", iso := "itz", value := .interrogativeBased }
-  , { walsCode := "jak", language := "Jakaltek", iso := "jac", value := .interrogativeBased }
-  , { walsCode := "jam", language := "Jaminjung", iso := "djd", value := .interrogativeBased }
-  , { walsCode := "jpn", language := "Japanese", iso := "jpn", value := .interrogativeBased }
-  , { walsCode := "jaq", language := "Jaqaru", iso := "jqr", value := .interrogativeBased }
-  , { walsCode := "kng", language := "Kaingang", iso := "kgp", value := .interrogativeBased }
-  , { walsCode := "klq", language := "Kalam", iso := "kmh", value := .genericNounBased }
-  , { walsCode := "kgu", language := "Kalkatungu", iso := "ktg", value := .special }
-  , { walsCode := "kma", language := "Kamaiurá", iso := "kay", value := .interrogativeBased }
-  , { walsCode := "kan", language := "Kana", iso := "ogo", value := .genericNounBased }
-  , { walsCode := "knd", language := "Kannada", iso := "kan", value := .interrogativeBased }
-  , { walsCode := "krc", language := "Karachay-Balkar", iso := "krc", value := .interrogativeBased }
-  , { walsCode := "krm", language := "Karaim", iso := "kdr", value := .interrogativeBased }
-  , { walsCode := "kkp", language := "Karakalpak", iso := "kaa", value := .special }
-  , { walsCode := "krl", language := "Karelian", iso := "krl", value := .interrogativeBased }
-  , { walsCode := "krk", language := "Karok", iso := "kyh", value := .interrogativeBased }
-  , { walsCode := "kas", language := "Kashmiri", iso := "kas", value := .special }
-  , { walsCode := "kay", language := "Kayardild", iso := "gyd", value := .interrogativeBased }
-  , { walsCode := "kaz", language := "Kazakh", iso := "kaz", value := .mixed }
-  , { walsCode := "krq", language := "Kerek", iso := "krk", value := .special }
-  , { walsCode := "ket", language := "Ket", iso := "ket", value := .interrogativeBased }
-  , { walsCode := "khk", language := "Khakas", iso := "kjh", value := .interrogativeBased }
-  , { walsCode := "kmh", language := "Kham", iso := "kjl", value := .interrogativeBased }
-  , { walsCode := "kty", language := "Khanty", iso := "kca", value := .interrogativeBased }
-  , { walsCode := "khs", language := "Khasi", iso := "kha", value := .interrogativeBased }
-  , { walsCode := "khm", language := "Khmer", iso := "khm", value := .mixed }
-  , { walsCode := "kmu", language := "Khmu'", iso := "kjg", value := .special }
-  , { walsCode := "klv", language := "Kilivila", iso := "kij", value := .mixed }
-  , { walsCode := "kio", language := "Kiowa", iso := "kio", value := .interrogativeBased }
-  , { walsCode := "kgz", language := "Kirghiz", iso := "kir", value := .interrogativeBased }
-  , { walsCode := "koa", language := "Koasati", iso := "cku", value := .interrogativeBased }
-  , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .genericNounBased }
-  , { walsCode := "kod", language := "Kodava", iso := "kfa", value := .interrogativeBased }
-  , { walsCode := "kop", language := "Komi-Permyak", iso := "koi", value := .interrogativeBased }
-  , { walsCode := "kzy", language := "Komi-Zyrian", iso := "kpv", value := .interrogativeBased }
-  , { walsCode := "kor", language := "Korean", iso := "kor", value := .interrogativeBased }
-  , { walsCode := "kku", language := "Korku", iso := "kfq", value := .interrogativeBased }
-  , { walsCode := "kfe", language := "Koromfe", iso := "kfz", value := .genericNounBased }
-  , { walsCode := "kry", language := "Koryak", iso := "kpy", value := .interrogativeBased }
-  , { walsCode := "kse", language := "Koyraboro Senni", iso := "ses", value := .genericNounBased }
-  , { walsCode := "ksi", language := "Ksingmul", iso := "puo", value := .interrogativeBased }
-  , { walsCode := "knc", language := "Kugu Nganhcara", iso := "uwa", value := .interrogativeBased }
-  , { walsCode := "kya", language := "Kuku-Yalanji", iso := "gvn", value := .genericNounBased }
-  , { walsCode := "kji", language := "Kurmanji", iso := "kmr", value := .genericNounBased }
-  , { walsCode := "kut", language := "Kutenai", iso := "kut", value := .interrogativeBased }
-  , { walsCode := "kwr", language := "Kwamera", iso := "tnk", value := .genericNounBased }
-  , { walsCode := "kyk", language := "Kyaka", iso := "kyc", value := .genericNounBased }
-  , { walsCode := "kat", language := "Kâte", iso := "kmg", value := .genericNounBased }
-  , { walsCode := "lak", language := "Lak", iso := "lbe", value := .interrogativeBased }
-  , { walsCode := "lkt", language := "Lakhota", iso := "lkt", value := .interrogativeBased }
-  , { walsCode := "lan", language := "Lango", iso := "laj", value := .genericNounBased }
-  , { walsCode := "lat", language := "Latvian", iso := "lav", value := .interrogativeBased }
-  , { walsCode := "lav", language := "Lavukaleve", iso := "lvk", value := .genericNounBased }
-  , { walsCode := "lel", language := "Lele", iso := "lln", value := .genericNounBased }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .interrogativeBased }
-  , { walsCode := "lil", language := "Lillooet", iso := "lil", value := .interrogativeBased }
-  , { walsCode := "lml", language := "Limilngan", iso := "lmc", value := .interrogativeBased }
-  , { walsCode := "lit", language := "Lithuanian", iso := "lit", value := .interrogativeBased }
-  , { walsCode := "lgu", language := "Longgu", iso := "lgu", value := .genericNounBased }
-  , { walsCode := "lug", language := "Lugbara", iso := "lgg", value := .genericNounBased }
-  , { walsCode := "mle", language := "Maale", iso := "mdy", value := .genericNounBased }
-  , { walsCode := "mac", language := "Macushi", iso := "mbc", value := .interrogativeBased }
-  , { walsCode := "mai", language := "Maithili", iso := "mai", value := .interrogativeBased }
-  , { walsCode := "mak", language := "Makah", iso := "myh", value := .special }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .genericNounBased }
-  , { walsCode := "mlk", language := "Malakmalak", iso := "mpb", value := .interrogativeBased }
-  , { walsCode := "mym", language := "Malayalam", iso := "mal", value := .interrogativeBased }
-  , { walsCode := "mlg", language := "Malgwa", iso := "", value := .mixed }
-  , { walsCode := "mlt", language := "Maltese", iso := "mlt", value := .genericNounBased }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .mixed }
-  , { walsCode := "myi", language := "Mangarrayi", iso := "mpc", value := .interrogativeBased }
-  , { walsCode := "mns", language := "Mansi", iso := "mns", value := .special }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .mixed }
-  , { walsCode := "mra", language := "Mara", iso := "mec", value := .interrogativeBased }
-  , { walsCode := "mhi", language := "Marathi", iso := "mar", value := .interrogativeBased }
-  , { walsCode := "mrg", language := "Margi", iso := "mrt", value := .genericNounBased }
-  , { walsCode := "mah", language := "Mari (Hill)", iso := "mrj", value := .interrogativeBased }
-  , { walsCode := "mme", language := "Mari (Meadow)", iso := "mhr", value := .interrogativeBased }
-  , { walsCode := "mar", language := "Maricopa", iso := "mrc", value := .interrogativeBased }
-  , { walsCode := "mrh", language := "Marrithiyel", iso := "mfr", value := .interrogativeBased }
-  , { walsCode := "msh", language := "Marshallese", iso := "mah", value := .genericNounBased }
-  , { walsCode := "mrt", language := "Martuthunira", iso := "vma", value := .interrogativeBased }
-  , { walsCode := "sum", language := "Mayangna", iso := "yan", value := .genericNounBased }
-  , { walsCode := "may", language := "Maybrat", iso := "ayz", value := .genericNounBased }
-  , { walsCode := "mby", language := "Mbay", iso := "myb", value := .genericNounBased }
-  , { walsCode := "mbi", language := "Mbili", iso := "baw", value := .genericNounBased }
-  , { walsCode := "mei", language := "Meithei", iso := "mni", value := .interrogativeBased }
-  , { walsCode := "mde", language := "Mende", iso := "men", value := .genericNounBased }
-  , { walsCode := "mic", language := "Micmac", iso := "mic", value := .interrogativeBased }
-  , { walsCode := "mis", language := "Miskito", iso := "miq", value := .genericNounBased }
-  , { walsCode := "mss", language := "Miwok (Southern Sierra)", iso := "skd", value := .interrogativeBased }
-  , { walsCode := "mcv", language := "Mocoví", iso := "moc", value := .existentialConstruction }
-  , { walsCode := "moe", language := "Mordvin (Erzya)", iso := "myv", value := .interrogativeBased }
-  , { walsCode := "mmo", language := "Mordvin (Moksha)", iso := "mdf", value := .interrogativeBased }
-  , { walsCode := "mos", language := "Mosetén", iso := "cas", value := .mixed }
-  , { walsCode := "mun", language := "Mundari", iso := "unr", value := .interrogativeBased }
-  , { walsCode := "mrw", language := "Muruwari", iso := "zmu", value := .interrogativeBased }
-  , { walsCode := "mgu", language := "Musgu", iso := "mug", value := .genericNounBased }
-  , { walsCode := "nht", language := "Nahuatl (Tetelcingo)", iso := "nhg", value := .interrogativeBased }
-  , { walsCode := "nai", language := "Nanai", iso := "gld", value := .interrogativeBased }
-  , { walsCode := "nav", language := "Navajo", iso := "nav", value := .interrogativeBased }
-  , { walsCode := "ndb", language := "Ndebele", iso := "nde", value := .genericNounBased }
-  , { walsCode := "ndj", language := "Ndjébbana", iso := "djj", value := .interrogativeBased }
-  , { walsCode := "neg", language := "Negidal", iso := "neg", value := .interrogativeBased }
-  , { walsCode := "nel", language := "Nelemwa", iso := "nee", value := .special }
-  , { walsCode := "ntu", language := "Nenets", iso := "yrk", value := .interrogativeBased }
-  , { walsCode := "nwd", language := "Newar (Dolakha)", iso := "new", value := .interrogativeBased }
-  , { walsCode := "nez", language := "Nez Perce", iso := "nez", value := .interrogativeBased }
-  , { walsCode := "nga", language := "Nganasan", iso := "nio", value := .interrogativeBased }
-  , { walsCode := "ngn", language := "Ngandi", iso := "nid", value := .interrogativeBased }
-  , { walsCode := "ngk", language := "Ngankikurungkurr", iso := "nam", value := .interrogativeBased }
-  , { walsCode := "nti", language := "Ngiti", iso := "niy", value := .genericNounBased }
-  , { walsCode := "ngi", language := "Ngiyambaa", iso := "wyb", value := .interrogativeBased }
-  , { walsCode := "nha", language := "Nhanda", iso := "nha", value := .interrogativeBased }
-  , { walsCode := "nro", language := "Nharo", iso := "nhr", value := .mixed }
-  , { walsCode := "nia", language := "Nias", iso := "nia", value := .mixed }
-  , { walsCode := "nsg", language := "Nisgha", iso := "ncg", value := .interrogativeBased }
-  , { walsCode := "niu", language := "Niuean", iso := "niu", value := .genericNounBased }
-  , { walsCode := "niv", language := "Nivkh", iso := "niv", value := .interrogativeBased }
-  , { walsCode := "nko", language := "Nkore-Kiga", iso := "cgg", value := .genericNounBased }
-  , { walsCode := "nog", language := "Noghay", iso := "nog", value := .mixed }
-  , { walsCode := "nto", language := "Ntomba", iso := "nto", value := .genericNounBased }
-  , { walsCode := "nbd", language := "Nubian (Dongolese)", iso := "dgl", value := .genericNounBased }
-  , { walsCode := "nug", language := "Nunggubuyu", iso := "nuy", value := .interrogativeBased }
-  , { walsCode := "ood", language := "O'odham", iso := "ood", value := .special }
-  , { walsCode := "oji", language := "Ojibwa (Eastern)", iso := "", value := .special }
-  , { walsCode := "orl", language := "Orokolo", iso := "oro", value := .genericNounBased }
-  , { walsCode := "orh", language := "Oromo (Harar)", iso := "hae", value := .genericNounBased }
-  , { walsCode := "oss", language := "Ossetic", iso := "oss", value := .interrogativeBased }
-  , { walsCode := "pkn", language := "Paakantyi", iso := "drl", value := .interrogativeBased }
-  , { walsCode := "pms", language := "Paamese", iso := "pma", value := .genericNounBased }
-  , { walsCode := "pno", language := "Paiute (Northern)", iso := "pao", value := .interrogativeBased }
-  , { walsCode := "pal", language := "Palauan", iso := "pau", value := .genericNounBased }
-  , { walsCode := "pan", language := "Panjabi", iso := "pan", value := .special }
-  , { walsCode := "pny", language := "Panyjima", iso := "pnw", value := .interrogativeBased }
-  , { walsCode := "psh", language := "Pashto", iso := "pst", value := .interrogativeBased }
-  , { walsCode := "psm", language := "Passamaquoddy-Maliseet", iso := "pqm", value := .interrogativeBased }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .genericNounBased }
-  , { walsCode := "prh", language := "Pirahã", iso := "myp", value := .mixed }
-  , { walsCode := "ppi", language := "Pitta Pitta", iso := "pit", value := .interrogativeBased }
-  , { walsCode := "pol", language := "Polish", iso := "pol", value := .interrogativeBased }
-  , { walsCode := "por", language := "Portuguese", iso := "por", value := .mixed }
-  , { walsCode := "pur", language := "Purépecha", iso := "tsz", value := .interrogativeBased }
-  , { walsCode := "pae", language := "Páez", iso := "pbb", value := .interrogativeBased }
-  , { walsCode := "qia", language := "Qiang", iso := "", value := .genericNounBased }
-  , { walsCode := "qhu", language := "Quechua (Huallaga)", iso := "qub", value := .interrogativeBased }
-  , { walsCode := "qim", language := "Quechua (Imbabura)", iso := "qvi", value := .interrogativeBased }
-  , { walsCode := "rom", language := "Romanian", iso := "ron", value := .interrogativeBased }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .interrogativeBased }
-  , { walsCode := "ski", language := "Saami (Kildin)", iso := "sjd", value := .interrogativeBased }
-  , { walsCode := "sno", language := "Saami (Northern)", iso := "sme", value := .interrogativeBased }
-  , { walsCode := "sam", language := "Samoan", iso := "smo", value := .genericNounBased }
-  , { walsCode := "san", language := "Sango", iso := "sag", value := .genericNounBased }
-  , { walsCode := "stl", language := "Santali", iso := "sat", value := .interrogativeBased }
-  , { walsCode := "see", language := "Seediq", iso := "trv", value := .genericNounBased }
-  , { walsCode := "skp", language := "Selkup", iso := "sel", value := .interrogativeBased }
-  , { walsCode := "sml", language := "Semelai", iso := "sza", value := .mixed }
-  , { walsCode := "scr", language := "Serbian-Croatian", iso := "hbs", value := .interrogativeBased }
-  , { walsCode := "shk", language := "Shipibo-Konibo", iso := "shp", value := .interrogativeBased }
-  , { walsCode := "shr", language := "Shor", iso := "cjs", value := .interrogativeBased }
-  , { walsCode := "sho", language := "Shoshone", iso := "shh", value := .interrogativeBased }
-  , { walsCode := "siu", language := "Siuslaw", iso := "sis", value := .interrogativeBased }
-  , { walsCode := "sla", language := "Slave", iso := "den", value := .genericNounBased }
-  , { walsCode := "som", language := "Somali", iso := "som", value := .genericNounBased }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .special }
-  , { walsCode := "squ", language := "Squamish", iso := "squ", value := .interrogativeBased }
-  , { walsCode := "swa", language := "Swahili", iso := "swh", value := .genericNounBased }
-  , { walsCode := "swe", language := "Swedish", iso := "swe", value := .special }
-  , { walsCode := "tab", language := "Taba", iso := "mky", value := .interrogativeBased }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .existentialConstruction }
-  , { walsCode := "taj", language := "Tajik", iso := "tgk", value := .interrogativeBased }
-  , { walsCode := "tkl", language := "Takelma", iso := "tkm", value := .interrogativeBased }
-  , { walsCode := "tml", language := "Tamil", iso := "tam", value := .interrogativeBased }
-  , { walsCode := "tmu", language := "Tat (Muslim)", iso := "ttt", value := .genericNounBased }
-  , { walsCode := "tvo", language := "Tatar", iso := "tat", value := .interrogativeBased }
-  , { walsCode := "tpn", language := "Tepehuan (Northern)", iso := "ntp", value := .mixed }
-  , { walsCode := "tps", language := "Tepehuan (Southeastern)", iso := "stp", value := .interrogativeBased }
-  , { walsCode := "tha", language := "Thai", iso := "tha", value := .interrogativeBased }
-  , { walsCode := "tis", language := "Tibetan (Shigatse)", iso := "bod", value := .genericNounBased }
-  , { walsCode := "tid", language := "Tidore", iso := "tvo", value := .genericNounBased }
-  , { walsCode := "tja", language := "Tiipay (Jamul)", iso := "dih", value := .interrogativeBased }
-  , { walsCode := "tiw", language := "Tiwi", iso := "tiw", value := .interrogativeBased }
-  , { walsCode := "tms", language := "Tommo So", iso := "dto", value := .genericNounBased }
-  , { walsCode := "ton", language := "Tonkawa", iso := "tqw", value := .interrogativeBased }
-  , { walsCode := "txj", language := "Totonac (Xicotepec de Juárez)", iso := "too", value := .interrogativeBased }
-  , { walsCode := "tru", language := "Trumai", iso := "tpy", value := .genericNounBased }
-  , { walsCode := "tst", language := "Tsat", iso := "huq", value := .interrogativeBased }
-  , { walsCode := "tun", language := "Tunica", iso := "tun", value := .interrogativeBased }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .genericNounBased }
-  , { walsCode := "tkm", language := "Turkmen", iso := "tuk", value := .mixed }
-  , { walsCode := "tvl", language := "Tuvaluan", iso := "tvl", value := .genericNounBased }
-  , { walsCode := "tuv", language := "Tuvan", iso := "tyv", value := .interrogativeBased }
-  , { walsCode := "udh", language := "Udihe", iso := "ude", value := .interrogativeBased }
-  , { walsCode := "udm", language := "Udmurt", iso := "udm", value := .interrogativeBased }
-  , { walsCode := "ukr", language := "Ukrainian", iso := "ukr", value := .interrogativeBased }
-  , { walsCode := "uku", language := "Upper Kuskokwim", iso := "kuu", value := .interrogativeBased }
-  , { walsCode := "urk", language := "Urubú-Kaapor", iso := "urb", value := .mixed }
-  , { walsCode := "usa", language := "Usan", iso := "wnu", value := .genericNounBased }
-  , { walsCode := "uzb", language := "Uzbek", iso := "", value := .interrogativeBased }
-  , { walsCode := "vie", language := "Vietnamese", iso := "vie", value := .interrogativeBased }
-  , { walsCode := "wam", language := "Wambaya", iso := "wmb", value := .interrogativeBased }
-  , { walsCode := "wra", language := "Warao", iso := "wba", value := .mixed }
-  , { walsCode := "wry", language := "Waray (in Australia)", iso := "wrz", value := .interrogativeBased }
-  , { walsCode := "wrd", language := "Wardaman", iso := "wrr", value := .interrogativeBased }
-  , { walsCode := "wrn", language := "Warndarang", iso := "wnd", value := .interrogativeBased }
-  , { walsCode := "wic", language := "Wichita", iso := "wic", value := .interrogativeBased }
-  , { walsCode := "wmu", language := "Wik Munkan", iso := "wim", value := .interrogativeBased }
-  , { walsCode := "yag", language := "Yagua", iso := "yad", value := .special }
-  , { walsCode := "ykt", language := "Yakut", iso := "sah", value := .interrogativeBased }
-  , { walsCode := "ynk", language := "Yankuntjatjara", iso := "kdd", value := .mixed }
-  , { walsCode := "yap", language := "Yapese", iso := "yap", value := .genericNounBased }
-  , { walsCode := "yaq", language := "Yaqui", iso := "yaq", value := .interrogativeBased }
-  , { walsCode := "ywr", language := "Yawuru", iso := "ywr", value := .special }
-  , { walsCode := "yid", language := "Yidiny", iso := "yii", value := .interrogativeBased }
-  , { walsCode := "yin", language := "Yindjibarndi", iso := "yij", value := .interrogativeBased }
-  , { walsCode := "yng", language := "Yingkarta", iso := "yia", value := .interrogativeBased }
-  , { walsCode := "yor", language := "Yoruba", iso := "yor", value := .genericNounBased }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .interrogativeBased }
-  , { walsCode := "ypk", language := "Yup'ik (Central)", iso := "esu", value := .interrogativeBased }
-  , { walsCode := "yuw", language := "Yuwaalaraay", iso := "kld", value := .interrogativeBased }
-  , { walsCode := "zaz", language := "Zazaki", iso := "diq", value := .special }
-  , { walsCode := "zun", language := "Zuni", iso := "zun", value := .interrogativeBased }
+  [ { walsCode := "abk", iso := "abk", value := .special }
+  , { walsCode := "abu", iso := "kgr", value := .genericNounBased }
+  , { walsCode := "ace", iso := "ace", value := .interrogativeBased }
+  , { walsCode := "aco", iso := "kjq", value := .interrogativeBased }
+  , { walsCode := "ain", iso := "ain", value := .interrogativeBased }
+  , { walsCode := "abm", iso := "akz", value := .interrogativeBased }
+  , { walsCode := "aso", iso := "alt", value := .interrogativeBased }
+  , { walsCode := "aly", iso := "aly", value := .interrogativeBased }
+  , { walsCode := "aml", iso := "omb", value := .genericNounBased }
+  , { walsCode := "ame", iso := "aey", value := .genericNounBased }
+  , { walsCode := "amu", iso := "ame", value := .interrogativeBased }
+  , { walsCode := "agt", iso := "awg", value := .interrogativeBased }
+  , { walsCode := "ano", iso := "nun", value := .genericNounBased }
+  , { walsCode := "aeg", iso := "arz", value := .genericNounBased }
+  , { walsCode := "ana", iso := "aro", value := .interrogativeBased }
+  , { walsCode := "amp", iso := "aer", value := .genericNounBased }
+  , { walsCode := "ass", iso := "asm", value := .interrogativeBased }
+  , { walsCode := "atc", iso := "upv", value := .interrogativeBased }
+  , { walsCode := "awp", iso := "kwi", value := .interrogativeBased }
+  , { walsCode := "aze", iso := "", value := .interrogativeBased }
+  , { walsCode := "bab", iso := "bav", value := .genericNounBased }
+  , { walsCode := "bdm", iso := "bia", value := .interrogativeBased }
+  , { walsCode := "bag", iso := "bmi", value := .genericNounBased }
+  , { walsCode := "bak", iso := "bkc", value := .genericNounBased }
+  , { walsCode := "bam", iso := "bam", value := .genericNounBased }
+  , { walsCode := "bao", iso := "peh", value := .interrogativeBased }
+  , { walsCode := "bsk", iso := "bak", value := .interrogativeBased }
+  , { walsCode := "bsq", iso := "eus", value := .interrogativeBased }
+  , { walsCode := "baw", iso := "bgr", value := .interrogativeBased }
+  , { walsCode := "blr", iso := "bel", value := .interrogativeBased }
+  , { walsCode := "bbw", iso := "gup", value := .mixed }
+  , { walsCode := "boz", iso := "boz", value := .mixed }
+  , { walsCode := "brh", iso := "brh", value := .special }
+  , { walsCode := "bud", iso := "bdm", value := .genericNounBased }
+  , { walsCode := "bug", iso := "bug", value := .interrogativeBased }
+  , { walsCode := "bul", iso := "bul", value := .interrogativeBased }
+  , { walsCode := "but", iso := "bxm", value := .interrogativeBased }
+  , { walsCode := "bur", iso := "bsk", value := .interrogativeBased }
+  , { walsCode := "cah", iso := "chl", value := .interrogativeBased }
+  , { walsCode := "cnl", iso := "ram", value := .interrogativeBased }
+  , { walsCode := "cnt", iso := "yue", value := .special }
+  , { walsCode := "chn", iso := "chx", value := .interrogativeBased }
+  , { walsCode := "cic", iso := "nya", value := .genericNounBased }
+  , { walsCode := "ctm", iso := "ctm", value := .interrogativeBased }
+  , { walsCode := "cch", iso := "coz", value := .interrogativeBased }
+  , { walsCode := "chk", iso := "ckt", value := .interrogativeBased }
+  , { walsCode := "chv", iso := "chv", value := .interrogativeBased }
+  , { walsCode := "cmn", iso := "com", value := .interrogativeBased }
+  , { walsCode := "coo", iso := "csz", value := .interrogativeBased }
+  , { walsCode := "crk", iso := "mus", value := .interrogativeBased }
+  , { walsCode := "cri", iso := "crh", value := .mixed }
+  , { walsCode := "dgb", iso := "dag", value := .genericNounBased }
+  , { walsCode := "diy", iso := "dif", value := .interrogativeBased }
+  , { walsCode := "dja", iso := "dyy", value := .interrogativeBased }
+  , { walsCode := "djp", iso := "dwu", value := .interrogativeBased }
+  , { walsCode := "djr", iso := "ddj", value := .interrogativeBased }
+  , { walsCode := "dji", iso := "jig", value := .interrogativeBased }
+  , { walsCode := "doy", iso := "dow", value := .genericNounBased }
+  , { walsCode := "dut", iso := "nld", value := .special }
+  , { walsCode := "dyi", iso := "dbl", value := .interrogativeBased }
+  , { walsCode := "ene", iso := "", value := .interrogativeBased }
+  , { walsCode := "eng", iso := "eng", value := .genericNounBased }
+  , { walsCode := "err", iso := "erg", value := .genericNounBased }
+  , { walsCode := "est", iso := "ekk", value := .interrogativeBased }
+  , { walsCode := "evn", iso := "eve", value := .interrogativeBased }
+  , { walsCode := "eve", iso := "evn", value := .interrogativeBased }
+  , { walsCode := "ewe", iso := "ewe", value := .genericNounBased }
+  , { walsCode := "fin", iso := "fin", value := .special }
+  , { walsCode := "fon", iso := "fon", value := .genericNounBased }
+  , { walsCode := "fre", iso := "fra", value := .genericNounBased }
+  , { walsCode := "ful", iso := "fun", value := .interrogativeBased }
+  , { walsCode := "fue", iso := "fud", value := .genericNounBased }
+  , { walsCode := "gaa", iso := "gbu", value := .interrogativeBased }
+  , { walsCode := "gag", iso := "gag", value := .interrogativeBased }
+  , { walsCode := "gam", iso := "gmv", value := .genericNounBased }
+  , { walsCode := "gar", iso := "grt", value := .interrogativeBased }
+  , { walsCode := "gbb", iso := "gbp", value := .genericNounBased }
+  , { walsCode := "geo", iso := "kat", value := .interrogativeBased }
+  , { walsCode := "ger", iso := "deu", value := .mixed }
+  , { walsCode := "goa", iso := "guc", value := .interrogativeBased }
+  , { walsCode := "gol", iso := "gol", value := .genericNounBased }
+  , { walsCode := "goo", iso := "gni", value := .interrogativeBased }
+  , { walsCode := "grk", iso := "ell", value := .interrogativeBased }
+  , { walsCode := "grw", iso := "kal", value := .interrogativeBased }
+  , { walsCode := "gua", iso := "gug", value := .mixed }
+  , { walsCode := "gum", iso := "kgs", value := .interrogativeBased }
+  , { walsCode := "grg", iso := "gge", value := .interrogativeBased }
+  , { walsCode := "guu", iso := "kky", value := .interrogativeBased }
+  , { walsCode := "hau", iso := "hau", value := .genericNounBased }
+  , { walsCode := "hay", iso := "vay", value := .interrogativeBased }
+  , { walsCode := "heb", iso := "heb", value := .interrogativeBased }
+  , { walsCode := "hin", iso := "hin", value := .special }
+  , { walsCode := "hmo", iso := "hnj", value := .interrogativeBased }
+  , { walsCode := "htc", iso := "hus", value := .interrogativeBased }
+  , { walsCode := "hun", iso := "hun", value := .interrogativeBased }
+  , { walsCode := "hzb", iso := "huz", value := .interrogativeBased }
+  , { walsCode := "hup", iso := "hup", value := .interrogativeBased }
+  , { walsCode := "ibi", iso := "ibb", value := .genericNounBased }
+  , { walsCode := "ice", iso := "isl", value := .interrogativeBased }
+  , { walsCode := "ilo", iso := "ilo", value := .genericNounBased }
+  , { walsCode := "ind", iso := "ind", value := .genericNounBased }
+  , { walsCode := "irq", iso := "irk", value := .genericNounBased }
+  , { walsCode := "iri", iso := "gle", value := .genericNounBased }
+  , { walsCode := "ita", iso := "ita", value := .genericNounBased }
+  , { walsCode := "itz", iso := "itz", value := .interrogativeBased }
+  , { walsCode := "jak", iso := "jac", value := .interrogativeBased }
+  , { walsCode := "jam", iso := "djd", value := .interrogativeBased }
+  , { walsCode := "jpn", iso := "jpn", value := .interrogativeBased }
+  , { walsCode := "jaq", iso := "jqr", value := .interrogativeBased }
+  , { walsCode := "kng", iso := "kgp", value := .interrogativeBased }
+  , { walsCode := "klq", iso := "kmh", value := .genericNounBased }
+  , { walsCode := "kgu", iso := "ktg", value := .special }
+  , { walsCode := "kma", iso := "kay", value := .interrogativeBased }
+  , { walsCode := "kan", iso := "ogo", value := .genericNounBased }
+  , { walsCode := "knd", iso := "kan", value := .interrogativeBased }
+  , { walsCode := "krc", iso := "krc", value := .interrogativeBased }
+  , { walsCode := "krm", iso := "kdr", value := .interrogativeBased }
+  , { walsCode := "kkp", iso := "kaa", value := .special }
+  , { walsCode := "krl", iso := "krl", value := .interrogativeBased }
+  , { walsCode := "krk", iso := "kyh", value := .interrogativeBased }
+  , { walsCode := "kas", iso := "kas", value := .special }
+  , { walsCode := "kay", iso := "gyd", value := .interrogativeBased }
+  , { walsCode := "kaz", iso := "kaz", value := .mixed }
+  , { walsCode := "krq", iso := "krk", value := .special }
+  , { walsCode := "ket", iso := "ket", value := .interrogativeBased }
+  , { walsCode := "khk", iso := "kjh", value := .interrogativeBased }
+  , { walsCode := "kmh", iso := "kjl", value := .interrogativeBased }
+  , { walsCode := "kty", iso := "kca", value := .interrogativeBased }
+  , { walsCode := "khs", iso := "kha", value := .interrogativeBased }
+  , { walsCode := "khm", iso := "khm", value := .mixed }
+  , { walsCode := "kmu", iso := "kjg", value := .special }
+  , { walsCode := "klv", iso := "kij", value := .mixed }
+  , { walsCode := "kio", iso := "kio", value := .interrogativeBased }
+  , { walsCode := "kgz", iso := "kir", value := .interrogativeBased }
+  , { walsCode := "koa", iso := "cku", value := .interrogativeBased }
+  , { walsCode := "kob", iso := "kpw", value := .genericNounBased }
+  , { walsCode := "kod", iso := "kfa", value := .interrogativeBased }
+  , { walsCode := "kop", iso := "koi", value := .interrogativeBased }
+  , { walsCode := "kzy", iso := "kpv", value := .interrogativeBased }
+  , { walsCode := "kor", iso := "kor", value := .interrogativeBased }
+  , { walsCode := "kku", iso := "kfq", value := .interrogativeBased }
+  , { walsCode := "kfe", iso := "kfz", value := .genericNounBased }
+  , { walsCode := "kry", iso := "kpy", value := .interrogativeBased }
+  , { walsCode := "kse", iso := "ses", value := .genericNounBased }
+  , { walsCode := "ksi", iso := "puo", value := .interrogativeBased }
+  , { walsCode := "knc", iso := "uwa", value := .interrogativeBased }
+  , { walsCode := "kya", iso := "gvn", value := .genericNounBased }
+  , { walsCode := "kji", iso := "kmr", value := .genericNounBased }
+  , { walsCode := "kut", iso := "kut", value := .interrogativeBased }
+  , { walsCode := "kwr", iso := "tnk", value := .genericNounBased }
+  , { walsCode := "kyk", iso := "kyc", value := .genericNounBased }
+  , { walsCode := "kat", iso := "kmg", value := .genericNounBased }
+  , { walsCode := "lak", iso := "lbe", value := .interrogativeBased }
+  , { walsCode := "lkt", iso := "lkt", value := .interrogativeBased }
+  , { walsCode := "lan", iso := "laj", value := .genericNounBased }
+  , { walsCode := "lat", iso := "lav", value := .interrogativeBased }
+  , { walsCode := "lav", iso := "lvk", value := .genericNounBased }
+  , { walsCode := "lel", iso := "lln", value := .genericNounBased }
+  , { walsCode := "lez", iso := "lez", value := .interrogativeBased }
+  , { walsCode := "lil", iso := "lil", value := .interrogativeBased }
+  , { walsCode := "lml", iso := "lmc", value := .interrogativeBased }
+  , { walsCode := "lit", iso := "lit", value := .interrogativeBased }
+  , { walsCode := "lgu", iso := "lgu", value := .genericNounBased }
+  , { walsCode := "lug", iso := "lgg", value := .genericNounBased }
+  , { walsCode := "mle", iso := "mdy", value := .genericNounBased }
+  , { walsCode := "mac", iso := "mbc", value := .interrogativeBased }
+  , { walsCode := "mai", iso := "mai", value := .interrogativeBased }
+  , { walsCode := "mak", iso := "myh", value := .special }
+  , { walsCode := "mal", iso := "plt", value := .genericNounBased }
+  , { walsCode := "mlk", iso := "mpb", value := .interrogativeBased }
+  , { walsCode := "mym", iso := "mal", value := .interrogativeBased }
+  , { walsCode := "mlg", iso := "", value := .mixed }
+  , { walsCode := "mlt", iso := "mlt", value := .genericNounBased }
+  , { walsCode := "mnd", iso := "cmn", value := .mixed }
+  , { walsCode := "myi", iso := "mpc", value := .interrogativeBased }
+  , { walsCode := "mns", iso := "mns", value := .special }
+  , { walsCode := "mao", iso := "mri", value := .mixed }
+  , { walsCode := "mra", iso := "mec", value := .interrogativeBased }
+  , { walsCode := "mhi", iso := "mar", value := .interrogativeBased }
+  , { walsCode := "mrg", iso := "mrt", value := .genericNounBased }
+  , { walsCode := "mah", iso := "mrj", value := .interrogativeBased }
+  , { walsCode := "mme", iso := "mhr", value := .interrogativeBased }
+  , { walsCode := "mar", iso := "mrc", value := .interrogativeBased }
+  , { walsCode := "mrh", iso := "mfr", value := .interrogativeBased }
+  , { walsCode := "msh", iso := "mah", value := .genericNounBased }
+  , { walsCode := "mrt", iso := "vma", value := .interrogativeBased }
+  , { walsCode := "sum", iso := "yan", value := .genericNounBased }
+  , { walsCode := "may", iso := "ayz", value := .genericNounBased }
+  , { walsCode := "mby", iso := "myb", value := .genericNounBased }
+  , { walsCode := "mbi", iso := "baw", value := .genericNounBased }
+  , { walsCode := "mei", iso := "mni", value := .interrogativeBased }
+  , { walsCode := "mde", iso := "men", value := .genericNounBased }
+  , { walsCode := "mic", iso := "mic", value := .interrogativeBased }
+  , { walsCode := "mis", iso := "miq", value := .genericNounBased }
+  , { walsCode := "mss", iso := "skd", value := .interrogativeBased }
+  , { walsCode := "mcv", iso := "moc", value := .existentialConstruction }
+  , { walsCode := "moe", iso := "myv", value := .interrogativeBased }
+  , { walsCode := "mmo", iso := "mdf", value := .interrogativeBased }
+  , { walsCode := "mos", iso := "cas", value := .mixed }
+  , { walsCode := "mun", iso := "unr", value := .interrogativeBased }
+  , { walsCode := "mrw", iso := "zmu", value := .interrogativeBased }
+  , { walsCode := "mgu", iso := "mug", value := .genericNounBased }
+  , { walsCode := "nht", iso := "nhg", value := .interrogativeBased }
+  , { walsCode := "nai", iso := "gld", value := .interrogativeBased }
+  , { walsCode := "nav", iso := "nav", value := .interrogativeBased }
+  , { walsCode := "ndb", iso := "nde", value := .genericNounBased }
+  , { walsCode := "ndj", iso := "djj", value := .interrogativeBased }
+  , { walsCode := "neg", iso := "neg", value := .interrogativeBased }
+  , { walsCode := "nel", iso := "nee", value := .special }
+  , { walsCode := "ntu", iso := "yrk", value := .interrogativeBased }
+  , { walsCode := "nwd", iso := "new", value := .interrogativeBased }
+  , { walsCode := "nez", iso := "nez", value := .interrogativeBased }
+  , { walsCode := "nga", iso := "nio", value := .interrogativeBased }
+  , { walsCode := "ngn", iso := "nid", value := .interrogativeBased }
+  , { walsCode := "ngk", iso := "nam", value := .interrogativeBased }
+  , { walsCode := "nti", iso := "niy", value := .genericNounBased }
+  , { walsCode := "ngi", iso := "wyb", value := .interrogativeBased }
+  , { walsCode := "nha", iso := "nha", value := .interrogativeBased }
+  , { walsCode := "nro", iso := "nhr", value := .mixed }
+  , { walsCode := "nia", iso := "nia", value := .mixed }
+  , { walsCode := "nsg", iso := "ncg", value := .interrogativeBased }
+  , { walsCode := "niu", iso := "niu", value := .genericNounBased }
+  , { walsCode := "niv", iso := "niv", value := .interrogativeBased }
+  , { walsCode := "nko", iso := "cgg", value := .genericNounBased }
+  , { walsCode := "nog", iso := "nog", value := .mixed }
+  , { walsCode := "nto", iso := "nto", value := .genericNounBased }
+  , { walsCode := "nbd", iso := "dgl", value := .genericNounBased }
+  , { walsCode := "nug", iso := "nuy", value := .interrogativeBased }
+  , { walsCode := "ood", iso := "ood", value := .special }
+  , { walsCode := "oji", iso := "", value := .special }
+  , { walsCode := "orl", iso := "oro", value := .genericNounBased }
+  , { walsCode := "orh", iso := "hae", value := .genericNounBased }
+  , { walsCode := "oss", iso := "oss", value := .interrogativeBased }
+  , { walsCode := "pkn", iso := "drl", value := .interrogativeBased }
+  , { walsCode := "pms", iso := "pma", value := .genericNounBased }
+  , { walsCode := "pno", iso := "pao", value := .interrogativeBased }
+  , { walsCode := "pal", iso := "pau", value := .genericNounBased }
+  , { walsCode := "pan", iso := "pan", value := .special }
+  , { walsCode := "pny", iso := "pnw", value := .interrogativeBased }
+  , { walsCode := "psh", iso := "pst", value := .interrogativeBased }
+  , { walsCode := "psm", iso := "pqm", value := .interrogativeBased }
+  , { walsCode := "prs", iso := "pes", value := .genericNounBased }
+  , { walsCode := "prh", iso := "myp", value := .mixed }
+  , { walsCode := "ppi", iso := "pit", value := .interrogativeBased }
+  , { walsCode := "pol", iso := "pol", value := .interrogativeBased }
+  , { walsCode := "por", iso := "por", value := .mixed }
+  , { walsCode := "pur", iso := "tsz", value := .interrogativeBased }
+  , { walsCode := "pae", iso := "pbb", value := .interrogativeBased }
+  , { walsCode := "qia", iso := "", value := .genericNounBased }
+  , { walsCode := "qhu", iso := "qub", value := .interrogativeBased }
+  , { walsCode := "qim", iso := "qvi", value := .interrogativeBased }
+  , { walsCode := "rom", iso := "ron", value := .interrogativeBased }
+  , { walsCode := "rus", iso := "rus", value := .interrogativeBased }
+  , { walsCode := "ski", iso := "sjd", value := .interrogativeBased }
+  , { walsCode := "sno", iso := "sme", value := .interrogativeBased }
+  , { walsCode := "sam", iso := "smo", value := .genericNounBased }
+  , { walsCode := "san", iso := "sag", value := .genericNounBased }
+  , { walsCode := "stl", iso := "sat", value := .interrogativeBased }
+  , { walsCode := "see", iso := "trv", value := .genericNounBased }
+  , { walsCode := "skp", iso := "sel", value := .interrogativeBased }
+  , { walsCode := "sml", iso := "sza", value := .mixed }
+  , { walsCode := "scr", iso := "hbs", value := .interrogativeBased }
+  , { walsCode := "shk", iso := "shp", value := .interrogativeBased }
+  , { walsCode := "shr", iso := "cjs", value := .interrogativeBased }
+  , { walsCode := "sho", iso := "shh", value := .interrogativeBased }
+  , { walsCode := "siu", iso := "sis", value := .interrogativeBased }
+  , { walsCode := "sla", iso := "den", value := .genericNounBased }
+  , { walsCode := "som", iso := "som", value := .genericNounBased }
+  , { walsCode := "spa", iso := "spa", value := .special }
+  , { walsCode := "squ", iso := "squ", value := .interrogativeBased }
+  , { walsCode := "swa", iso := "swh", value := .genericNounBased }
+  , { walsCode := "swe", iso := "swe", value := .special }
+  , { walsCode := "tab", iso := "mky", value := .interrogativeBased }
+  , { walsCode := "tag", iso := "tgl", value := .existentialConstruction }
+  , { walsCode := "taj", iso := "tgk", value := .interrogativeBased }
+  , { walsCode := "tkl", iso := "tkm", value := .interrogativeBased }
+  , { walsCode := "tml", iso := "tam", value := .interrogativeBased }
+  , { walsCode := "tmu", iso := "ttt", value := .genericNounBased }
+  , { walsCode := "tvo", iso := "tat", value := .interrogativeBased }
+  , { walsCode := "tpn", iso := "ntp", value := .mixed }
+  , { walsCode := "tps", iso := "stp", value := .interrogativeBased }
+  , { walsCode := "tha", iso := "tha", value := .interrogativeBased }
+  , { walsCode := "tis", iso := "bod", value := .genericNounBased }
+  , { walsCode := "tid", iso := "tvo", value := .genericNounBased }
+  , { walsCode := "tja", iso := "dih", value := .interrogativeBased }
+  , { walsCode := "tiw", iso := "tiw", value := .interrogativeBased }
+  , { walsCode := "tms", iso := "dto", value := .genericNounBased }
+  , { walsCode := "ton", iso := "tqw", value := .interrogativeBased }
+  , { walsCode := "txj", iso := "too", value := .interrogativeBased }
+  , { walsCode := "tru", iso := "tpy", value := .genericNounBased }
+  , { walsCode := "tst", iso := "huq", value := .interrogativeBased }
+  , { walsCode := "tun", iso := "tun", value := .interrogativeBased }
+  , { walsCode := "tur", iso := "tur", value := .genericNounBased }
+  , { walsCode := "tkm", iso := "tuk", value := .mixed }
+  , { walsCode := "tvl", iso := "tvl", value := .genericNounBased }
+  , { walsCode := "tuv", iso := "tyv", value := .interrogativeBased }
+  , { walsCode := "udh", iso := "ude", value := .interrogativeBased }
+  , { walsCode := "udm", iso := "udm", value := .interrogativeBased }
+  , { walsCode := "ukr", iso := "ukr", value := .interrogativeBased }
+  , { walsCode := "uku", iso := "kuu", value := .interrogativeBased }
+  , { walsCode := "urk", iso := "urb", value := .mixed }
+  , { walsCode := "usa", iso := "wnu", value := .genericNounBased }
+  , { walsCode := "uzb", iso := "", value := .interrogativeBased }
+  , { walsCode := "vie", iso := "vie", value := .interrogativeBased }
+  , { walsCode := "wam", iso := "wmb", value := .interrogativeBased }
+  , { walsCode := "wra", iso := "wba", value := .mixed }
+  , { walsCode := "wry", iso := "wrz", value := .interrogativeBased }
+  , { walsCode := "wrd", iso := "wrr", value := .interrogativeBased }
+  , { walsCode := "wrn", iso := "wnd", value := .interrogativeBased }
+  , { walsCode := "wic", iso := "wic", value := .interrogativeBased }
+  , { walsCode := "wmu", iso := "wim", value := .interrogativeBased }
+  , { walsCode := "yag", iso := "yad", value := .special }
+  , { walsCode := "ykt", iso := "sah", value := .interrogativeBased }
+  , { walsCode := "ynk", iso := "kdd", value := .mixed }
+  , { walsCode := "yap", iso := "yap", value := .genericNounBased }
+  , { walsCode := "yaq", iso := "yaq", value := .interrogativeBased }
+  , { walsCode := "ywr", iso := "ywr", value := .special }
+  , { walsCode := "yid", iso := "yii", value := .interrogativeBased }
+  , { walsCode := "yin", iso := "yij", value := .interrogativeBased }
+  , { walsCode := "yng", iso := "yia", value := .interrogativeBased }
+  , { walsCode := "yor", iso := "yor", value := .genericNounBased }
+  , { walsCode := "yko", iso := "yux", value := .interrogativeBased }
+  , { walsCode := "ypk", iso := "esu", value := .interrogativeBased }
+  , { walsCode := "yuw", iso := "kld", value := .interrogativeBased }
+  , { walsCode := "zaz", iso := "diq", value := .special }
+  , { walsCode := "zun", iso := "zun", value := .interrogativeBased }
   ]
-
--- Count verification
-theorem total_count : allData.length = 326 := by native_decide
-
-theorem count_interrogativeBased :
-    (allData.filter (·.value == .interrogativeBased)).length = 194 := by native_decide
-theorem count_genericNounBased :
-    (allData.filter (·.value == .genericNounBased)).length = 85 := by native_decide
-theorem count_special :
-    (allData.filter (·.value == .special)).length = 22 := by native_decide
-theorem count_mixed :
-    (allData.filter (·.value == .mixed)).length = 23 := by native_decide
-theorem count_existentialConstruction :
-    (allData.filter (·.value == .existentialConstruction)).length = 2 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

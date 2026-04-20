@@ -21,56 +21,15 @@ live in `Theories/Semantics/Focus/KratzerSelkirk2020.lean`.
 
 -/
 
+/-! ## Migrated content
+
+The Rooth/K&S `AltMeaning` structure now lives in
+`Theories/Semantics/Alternatives/AltMeaning.lean`; the @cite{fox-katzir-2011}
+`CatItem` / `typeTheoAlts` / `categoryMatchAlts` machinery now lives in
+`Theories/Semantics/Alternatives/Categorical.lean`. Consumers should
+import those modules directly. -/
+
 namespace Core.InformationStructure
-
--- ════════════════════════════════════════════════════
--- § Alternative Semantics (@cite{rooth-1992}, @cite{kratzer-selkirk-2020})
--- ════════════════════════════════════════════════════
-
-/-- Two-dimensional meaning in Alternatives Semantics.
-    Every expression has an O-value and an A-value.
-
-    @cite{kratzer-selkirk-2020} §3, §8. -/
-structure AltMeaning (α : Type) where
-  /-- O(rdinary)-value: the actual denotation -/
-  oValue : α
-  /-- A(lternatives)-value: the set of alternatives (including oValue) -/
-  aValue : List α
-
-/-- The O-value of a non-featured expression equals its ordinary denotation.
-    The A-value of a non-featured expression is a singleton containing
-    its O-value (no alternatives evoked). -/
-def AltMeaning.unfeatured {α : Type} (x : α) : AltMeaning α :=
-  { oValue := x, aValue := [x] }
-
--- Category-Gated Alternatives (@cite{fox-katzir-2011})
-
-/-- A denotation tagged with its UPOS category.
-    Pairs a semantic value with a UD part-of-speech tag, enabling
-    category-gated alternative computation.
-
-    Fox & Katzir argue that @cite{rooth-1985} type-theoretic
-    alternative computation (D_τ) over-generates: any expression of the
-    same semantic type counts as an alternative. Category match restricts
-    alternatives to expressions sharing the same UPOS tag. -/
-structure CatItem (α : Type) where
-  /-- The UPOS category of this lexical item -/
-  cat : UD.UPOS
-  /-- The semantic denotation -/
-  den : α
-  deriving Repr
-
-/-- Category-match alternatives: only denotations with the same UPOS tag
-    count as alternatives.
-
-    This is strictly more restrictive than Rooth's D_τ computation. -/
-def categoryMatchAlts {α : Type} (target : UD.UPOS) (lexicon : List (CatItem α)) : List α :=
-  (lexicon.filter (·.cat == target)).map (·.den)
-
-/-- Type-theoretic alternatives: all denotations regardless of category
-    (@cite{rooth-1985}/1992 D_τ computation). -/
-def typeTheoAlts {α : Type} (lexicon : List (CatItem α)) : List α :=
-  lexicon.map (·.den)
 
 -- Theme and Rheme
 
@@ -399,21 +358,25 @@ Both parameters are free, enabling use in:
 - MoS islands: `extractionISClash .focused domainStatus` (filler always focused)
 - Subject islands: `extractionISClash (fillerIS c) (subjectIS c)` (filler varies by construction)
 - General FBC: `extractionISClash extractedStatus governorStatus` -/
-def extractionISClash (fillerStatus domainStatus : DiscourseStatus) : Bool :=
-  fillerStatus == .focused && domainStatus == .given
+def extractionISClash (fillerStatus domainStatus : DiscourseStatus) : Prop :=
+  fillerStatus = .focused ∧ domainStatus = .given
+
+instance (fillerStatus domainStatus : DiscourseStatus) :
+    Decidable (extractionISClash fillerStatus domainStatus) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Extraction of a focused element from a backgrounded domain clashes. -/
 theorem extractionISClash_focused_given :
-    extractionISClash .focused .given = true := rfl
+    extractionISClash .focused .given := ⟨rfl, rfl⟩
 
 /-- Extraction from an at-issue domain does not clash. -/
 theorem extractionISClash_focused_new :
-    extractionISClash .focused .new = false := rfl
+    ¬ extractionISClash .focused .new := by decide
 
 /-- Non-focused extraction from a backgrounded domain does not clash
 (e.g., relative clause heads, topics). -/
 theorem extractionISClash_given_given :
-    extractionISClash .given .given = false := rfl
+    ¬ extractionISClash .given .given := by decide
 
 /-! ## Categorical vs Thetic Judgment (@cite{kuroda-1972})
 
@@ -438,9 +401,11 @@ inductive JudgmentType where
 
 /-- Does this judgment type place a subject of predication (ψ-subject)
     in a dedicated syntactic position (e.g., Spec,TP)? -/
-def JudgmentType.hasψSubject : JudgmentType → Bool
-  | .categorical => true
-  | .thetic      => false
+def JudgmentType.HasψSubject (j : JudgmentType) : Prop :=
+  j = .categorical
+
+instance : DecidablePred JudgmentType.HasψSubject :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 end Core.InformationStructure
 

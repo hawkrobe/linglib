@@ -52,8 +52,8 @@ set_option autoImplicit false
 namespace AlonsoOvalleMoghiseh2025b
 
 open Core.Quantification (NPQ conjGQ disjGQ conjGQs disjGQs nonemptySubsets
-  conjGQ_eq_all disjGQ_eq_any conjGQ_le_individual individual_le_disjGQ
-  conjGQ_le_disjGQ' bool_le_iff_imp individual)
+  conjGQ_iff_forall disjGQ_iff_exists conjGQ_le_individual individual_le_disjGQ
+  conjGQ_le_disjGQ' individual)
 
 -- ============================================================================
 -- § 1. Model
@@ -73,9 +73,11 @@ def allWorlds : List World := [.w1, .w2, .w12]
 
 /-- Mereological atom predicate. Corresponds to `[+atomic]` in
     @cite{harbour-2014} (`Core.Number`) and `Mereology.Atom`. -/
-def isAtom : Entity → Bool
-  | .t1 | .t2 => true
-  | .t12 => false
+def isAtom : Entity → Prop
+  | .t1 | .t2 => True
+  | .t12 => False
+
+instance : DecidablePred isAtom := fun x => by unfold isAtom; cases x <;> infer_instance
 
 /-- Distributive predicate: `bought(e, roya, w)`.
     Distributivity: `bought t12 w = bought t1 w ∧ bought t2 w`. -/
@@ -106,9 +108,14 @@ theorem bought_distributive (w : World) :
 /-- Hamblin set: propositions from applying each GQ in ⊓(dom) ∪ ⊔(dom)
     to the VP `bought`. Implements eq. (29) for the buy predicate.
 
-    ⟦Q⟧(dom) = {λw. Q(λe. bought(e, w)) | Q ∈ ⊓(dom) ∪ ⊔(dom)} -/
+    ⟦Q⟧(dom) = {λw. Q(λe. bought(e, w)) | Q ∈ ⊓(dom) ∪ ⊔(dom)}
+
+    Since `NPQ Entity = (Entity → Prop) → Prop`, we use the propositional
+    characterization `conjGQ_iff_forall` / `disjGQ_iff_exists` to compute
+    a Bool result from the Bool predicate `bought`. -/
 def hamblinSet (dom : List Entity) : List (World → Bool) :=
-  (conjGQs dom ++ disjGQs dom).map (λ Q => λ w => Q (λ e => bought e w))
+  (nonemptySubsets dom).map (λ X w => X.all (λ e => bought e w)) ++
+  (nonemptySubsets dom).map (λ X w => X.any (λ e => bought e w))
 
 /-- Hamblin set with *-ro*: restricted to singleton subsets (eq. 52).
     *-ro* imposes |f(P)| = 1, so each entity contributes exactly one
@@ -157,7 +164,7 @@ def biDomain : List Entity := allEntities
 /-- CI domain: atoms only. ⟦SING⟧ = λP.λx: ATOM(x). P(x) (eq. 42,
     @cite{scontras-2022}). Implements the semantic content of singular
     marking on CIs. -/
-def ciDomain : List Entity := allEntities.filter isAtom
+def ciDomain : List Entity := allEntities.filter (fun e => decide (isAtom e))
 
 
 -- ============================================================================
@@ -197,32 +204,38 @@ def ciDomain : List Entity := allEntities.filter isAtom
     infrastructure to the study's propositional entailment relation. -/
 private theorem npq_le_entails {Q₁ Q₂ : NPQ Entity}
     {p₁ p₂ : World → Bool}
-    (hp₁ : ∀ w, p₁ w = Q₁ (λ e => bought e w))
-    (hp₂ : ∀ w, p₂ w = Q₂ (λ e => bought e w))
+    (hp₁ : ∀ w, p₁ w = true ↔ Q₁ (λ e => bought e w = true))
+    (hp₂ : ∀ w, p₂ w = true ↔ Q₂ (λ e => bought e w = true))
     (h : Q₁ ≤ Q₂) :
     entails p₁ p₂ = true := by
   simp only [entails, allWorlds, List.all_eq_true]
   intro w _
-  rw [hp₁, hp₂]
-  have hle := h (λ e => bought e w)
-  revert hle; cases Q₁ (λ e => bought e w) <;> simp [bool_le_iff_imp]
+  rcases Bool.eq_false_or_eq_true (p₁ w) with hp1 | hp1
+  · have hQ₁ := (hp₁ w).mp hp1
+    have hQ₂ := h _ hQ₁
+    have hp2 := (hp₂ w).mpr hQ₂
+    rw [hp1, hp2]; rfl
+  · rw [hp1]; rfl
 
 /-- B(t1)∧B(t2) = ⊓({t1,t2})(bought): the conjunction proposition is
     the conjGQ of atoms applied to the buy predicate. -/
-private theorem conj_eq_conjGQ (w : World) :
-    (bought .t1 w && bought .t2 w) = conjGQ [.t1, .t2] (λ e => bought e w) := by
-  cases w <;> native_decide
+private theorem conj_eq_conjGQ_iff (w : World) :
+    (bought .t1 w && bought .t2 w) = true ↔
+    conjGQ [.t1, .t2] (λ e => bought e w = true) := by
+  cases w <;> simp [conjGQ_iff_forall]
 
 /-- B(t1)∨B(t2) = ⊔({t1,t2})(bought): the disjunction proposition is
     the disjGQ of atoms applied to the buy predicate. -/
-private theorem disj_t1t2_eq_disjGQ (w : World) :
-    (bought .t1 w || bought .t2 w) = disjGQ [.t1, .t2] (λ e => bought e w) := by
-  cases w <;> native_decide
+private theorem disj_t1t2_eq_disjGQ_iff (w : World) :
+    (bought .t1 w || bought .t2 w) = true ↔
+    disjGQ [.t1, .t2] (λ e => bought e w = true) := by
+  cases w <;> simp [disjGQ_iff_exists]
 
 /-- B(t1)∨B(t12) = ⊔({t1,t12})(bought). -/
-private theorem disj_t1t12_eq_disjGQ (w : World) :
-    (bought .t1 w || bought .t12 w) = disjGQ [.t1, .t12] (λ e => bought e w) := by
-  cases w <;> native_decide
+private theorem disj_t1t12_eq_disjGQ_iff (w : World) :
+    (bought .t1 w || bought .t12 w) = true ↔
+    disjGQ [.t1, .t12] (λ e => bought e w = true) := by
+  cases w <;> simp [disjGQ_iff_exists]
 
 /-- B(t1) and B(t2) are logically independent.
     - w1 witnesses B(t1) ⊬ B(t2): Roya bought t1 but not t2
@@ -241,9 +254,9 @@ theorem atoms_independent :
 theorem conj_entails_atoms :
     entails (λ w => bought .t1 w && bought .t2 w) (bought .t1) = true ∧
     entails (λ w => bought .t1 w && bought .t2 w) (bought .t2) = true :=
-  ⟨npq_le_entails conj_eq_conjGQ (fun _ => rfl)
+  ⟨npq_le_entails conj_eq_conjGQ_iff (fun _ => Iff.rfl)
     (conjGQ_le_individual .t1 _ (List.mem_cons_self ..)),
-   npq_le_entails conj_eq_conjGQ (fun _ => rfl)
+   npq_le_entails conj_eq_conjGQ_iff (fun _ => Iff.rfl)
     (conjGQ_le_individual .t2 _ (List.mem_cons.mpr (Or.inr (List.mem_cons_self ..))))⟩
 
 /-- B(t1) entails any disjunction containing it (disjunction introduction).
@@ -252,9 +265,9 @@ theorem conj_entails_atoms :
 theorem atom_entails_containing_disj :
     entails (bought .t1) (λ w => bought .t1 w || bought .t2 w) = true ∧
     entails (bought .t1) (λ w => bought .t1 w || bought .t12 w) = true :=
-  ⟨npq_le_entails (fun _ => rfl) disj_t1t2_eq_disjGQ
+  ⟨npq_le_entails (fun _ => Iff.rfl) disj_t1t2_eq_disjGQ_iff
     (individual_le_disjGQ .t1 _ (List.mem_cons_self ..)),
-   npq_le_entails (fun _ => rfl) disj_t1t12_eq_disjGQ
+   npq_le_entails (fun _ => Iff.rfl) disj_t1t12_eq_disjGQ_iff
     (individual_le_disjGQ .t1 _ (List.mem_cons_self ..))⟩
 
 /-- The conjunction also entails the disjunction of its conjuncts.
@@ -265,7 +278,7 @@ theorem atom_entails_containing_disj :
 theorem conj_entails_disj :
     entails (λ w => bought .t1 w && bought .t2 w)
             (λ w => bought .t1 w || bought .t2 w) = true :=
-  npq_le_entails conj_eq_conjGQ disj_t1t2_eq_disjGQ
+  npq_le_entails conj_eq_conjGQ_iff disj_t1t2_eq_disjGQ_iff
     (conjGQ_le_disjGQ' (by decide))
 
 /-- EP holds at w12 for GQ-ranging over atoms: ⊓({t1,t2}) = B(t1) ∧ B(t2)
@@ -489,7 +502,7 @@ theorem full_paradigm :
 
 /-- CI domain = atom filter of all entities. Connects SING (eq. 42) to
     `Core.Number.Category.singular` ([+atomic]). -/
-theorem ciDomain_is_atoms : ciDomain = allEntities.filter isAtom := rfl
+theorem ciDomain_is_atoms : ciDomain = allEntities.filter (fun e => decide (isAtom e)) := rfl
 
 /-- The Farsi/English SCI divergence in one theorem.
     Both use atoms-only domain (SING). The difference: Farsi ranges over
@@ -528,20 +541,15 @@ theorem ro_eliminates_disjunction :
     generators in `Core.Logic.Quantification.Generators`. -/
 theorem hamblinSet_decomposition (dom : List Entity) (w : World) :
     ∀ p ∈ hamblinSet dom, ∃ X ∈ nonemptySubsets dom,
-      (p w = conjGQ X (λ e => bought e w)) ∨
-      (p w = disjGQ X (λ e => bought e w)) := by
+      (p w = true ↔ conjGQ X (λ e => bought e w = true)) ∨
+      (p w = true ↔ disjGQ X (λ e => bought e w = true)) := by
   intro p hp
-  simp only [hamblinSet, List.mem_map, List.mem_append] at hp
-  obtain ⟨Q, hQ, rfl⟩ := hp
-  cases hQ with
-  | inl hconj =>
-    simp only [conjGQs, List.mem_map] at hconj
-    obtain ⟨X, hX, rfl⟩ := hconj
-    exact ⟨X, hX, Or.inl rfl⟩
-  | inr hdisj =>
-    simp only [disjGQs, List.mem_map] at hdisj
-    obtain ⟨X, hX, rfl⟩ := hdisj
-    exact ⟨X, hX, Or.inr rfl⟩
+  simp only [hamblinSet, List.mem_append, List.mem_map] at hp
+  rcases hp with ⟨X, hX, rfl⟩ | ⟨X, hX, rfl⟩
+  · refine ⟨X, hX, Or.inl ?_⟩
+    simp [List.all_eq_true, conjGQ_iff_forall]
+  · refine ⟨X, hX, Or.inr ?_⟩
+    simp [List.any_eq_true, disjGQ_iff_exists]
 
 /-- B(t12) is extensionally equivalent to B(t1) ∧ B(t2): the mereological
     join's predicate equals the conjunction of its parts.

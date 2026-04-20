@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Modality.ModalConcord.Data
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Core.Register
 import Linglib.Theories.Semantics.Modality.Typology
 
@@ -39,7 +39,7 @@ confirms the register approach.
 namespace Phenomena.Modality.ModalConcord.Bridge
 
 open Phenomena.Modality.ModalConcord
-open Fragments.English.FunctionWords
+open Fragments.English.Auxiliaries
 open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 open Core.Register (Level areVariants)
 open Semantics.Modality.Typology (satisfiesIFF satisfiesSAV)
@@ -98,7 +98,7 @@ theorem haveTo_is_informal : haveTo.register = Level.informal := rfl
 
 /-- **Register opposition**: *must* and *have to* are register variants —
     they differ in register level. Derived from the fragment entries. -/
-theorem register_opposition : areVariants must.register haveTo.register = true := by native_decide
+theorem register_opposition : areVariants must.register haveTo.register := by decide
 
 /-- **Register ordering**: *have to* < *must* on the formality scale
     (informal < formal). -/

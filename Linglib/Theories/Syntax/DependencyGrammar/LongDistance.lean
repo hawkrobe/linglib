@@ -1,6 +1,6 @@
 /-
 # Word Grammar Analysis of Long-Distance Dependencies
-@cite{de-marneffe-nivre-2019} @cite{hudson-1984}
+@cite{de-marneffe-nivre-2019} @cite{hudson-2010}
 
 Word Grammar analysis using SLASH features and filler-gap tracking.
 Long-distance dependencies are represented directly using DepTree (basic) and DepGraph
@@ -14,8 +14,9 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Fragments.English.FunctionWords
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Projection
+import Linglib.Fragments.English.Auxiliaries
+import Linglib.Fragments.English.Complementizers
+import Linglib.Core.Dependency.Projection
 
 namespace DepGrammar.LongDistance
 
@@ -23,7 +24,7 @@ open DepGrammar
 
 private abbrev what := Fragments.English.Pronouns.what.toWord
 private abbrev who := Fragments.English.Pronouns.who.toWord
-private abbrev did := Fragments.English.FunctionWords.did.toWord
+private abbrev did := Fragments.English.Auxiliaries.did.toWord
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev mary := Fragments.English.Nouns.mary.toWordSg
 private abbrev see := Fragments.English.Predicates.Verbal.see.toWordPl
@@ -36,7 +37,7 @@ private abbrev wonder := Fragments.English.Predicates.Verbal.wonder.toWordPl
 private abbrev the := Fragments.English.Determiners.the.toWord
 private abbrev book := Fragments.English.Nouns.book.toWordSg
 private abbrev that := Fragments.English.Determiners.that.toWord
-private abbrev if_ := Fragments.English.FunctionWords.if_.toWord
+private abbrev if_ := Fragments.English.Complementizers.if_.toWord
 
 -- ============================================================================
 -- SLASH Features and Gap Types

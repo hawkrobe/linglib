@@ -268,7 +268,7 @@ theorem kiche_asymmetrical :
 /-- K'iche' is NOT a simple active/passive system (it has 5 voices,
     not 2). -/
 theorem kiche_not_simple_active_passive :
-    kicheVoiceSystem.isActivePassive = false := by native_decide
+    ¬ kicheVoiceSystem.isActivePassive := by decide
 
 -- ============================================================================
 -- § 10: DTV Voice Marker Verification

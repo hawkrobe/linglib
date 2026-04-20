@@ -404,8 +404,8 @@ theorem whindef_in_indefinite_acceptable :
 /-- The Specificity Condition predicts this: existential closure
 (binding a wh-indefinite) is blocked inside specific DPs. -/
 theorem specificity_predicts_exp3 :
-    blocked .existentialClosure .definite = true ∧
-    blocked .existentialClosure .indefinite = false := ⟨rfl, rfl⟩
+    blocked .existentialClosure .definite ∧
+    ¬ blocked .existentialClosure .indefinite := ⟨rfl, by decide⟩
 
 -- ============================================================================
 -- §8. Connection to VOC Levin classes

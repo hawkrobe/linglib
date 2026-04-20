@@ -1,17 +1,21 @@
-import Linglib.Core.Inquisitive
+import Linglib.Core.Issue.Basic
 
 /-!
 # QUD Stack: Ordered Accepted-Unanswered Questions
 @cite{roberts-2012}
 
-A `QUDStack W` models the discourse-state component of Roberts 2012 §2:
+A `QUDStack W` models the discourse-state component of @cite{roberts-2012} §2:
 the ordered list of questions that have been accepted as worth answering
 but have not yet been resolved. Subquestions are pushed on top; answers
 pop the immediate QUD. Strategies of inquiry (`Core/Discourse/Strategy.lean`)
 are the rose-tree counterpart.
+
+Parameterized by `Core.Issue W` — the Set-based inquisitive-content lattice.
 -/
 
 namespace Discourse
+
+open Core
 
 /-- A QUD stack: ordered list of accepted, unanswered questions.
     The head is the immediate QUD (most recently accepted question).

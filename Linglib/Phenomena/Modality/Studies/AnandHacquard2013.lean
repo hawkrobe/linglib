@@ -120,7 +120,7 @@ def observedAcceptability : AttitudeClass → EpistemicForce → Acceptability
 from the representationality classification. -/
 def predictedAcceptability (att : AttitudeClass) (force : EpistemicForce) :
     Acceptability :=
-  if att.licensesEpistemic force then .acceptable else .degraded
+  if att.LicensesEpistemic force then .acceptable else .degraded
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Theory Matches Data
@@ -163,31 +163,42 @@ abbrev InfoState (W : Type*) := List W
 
 /-- Epistemic possibility over information state S:
     ⟦might φ⟧_S = ∃w' ∈ S: φ(w') -/
-def mightS (S : InfoState W) (φ : W → Bool) : Bool :=
-  S.any φ
+def mightS (S : InfoState W) (φ : W → Prop) : Prop :=
+  ∃ w ∈ S, φ w
+
+instance {S : InfoState W} {φ : W → Prop} [DecidablePred φ] :
+    Decidable (mightS S φ) := by
+  unfold mightS; infer_instance
 
 /-- Epistemic necessity over information state S:
     ⟦must φ⟧_S = ∀w' ∈ S: φ(w') -/
-def mustS (S : InfoState W) (φ : W → Bool) : Bool :=
-  S.all φ
+def mustS (S : InfoState W) (φ : W → Prop) : Prop :=
+  ∀ w ∈ S, φ w
+
+instance {S : InfoState W} {φ : W → Prop} [DecidablePred φ] :
+    Decidable (mustS S φ) := by
+  unfold mustS; infer_instance
 
 /-- Non-triviality presupposition (@cite{geurts-2005}):
     epistemics presuppose their modal base is non-trivial. -/
-def nonTrivial (S : InfoState W) : Bool := !S.isEmpty
+def nonTrivial (S : InfoState W) : Prop := S ≠ []
+
+instance {S : InfoState W} : Decidable (nonTrivial S) := by
+  unfold nonTrivial; infer_instance
 
 /-- Epistemic possibility is defined (non-trivial) whenever S ≠ ∅. -/
-theorem might_defined_iff_nontrivial (S : InfoState W) (φ : W → Bool)
-    (h : nonTrivial S = true) :
-    mightS S φ = true ∨ mightS S φ = false := by
-  cases mightS S φ <;> simp
+theorem might_defined_iff_nontrivial (S : InfoState W) (φ : W → Prop) [DecidablePred φ]
+    (_h : nonTrivial S) :
+    mightS S φ ∨ ¬ mightS S φ := by
+  exact Decidable.em _
 
 /-- With empty S, might is trivially false — yielding infelicity. -/
-theorem might_empty (φ : W → Bool) : mightS ([] : InfoState W) φ = false := by
+theorem might_empty (φ : W → Prop) : ¬ mightS ([] : InfoState W) φ := by
   simp [mightS]
 
 /-- With empty S, must is trivially true — yielding infelicity. -/
-theorem must_empty (φ : W → Bool) : mustS ([] : InfoState W) φ = true := by
-  simp [mustS, List.all_eq_true]
+theorem must_empty (φ : W → Prop) : mustS ([] : InfoState W) φ := by
+  simp [mustS]
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Attitude Embedding: S-Update
@@ -210,18 +221,18 @@ theorem representational_nontrivial {E : Type*} (R : AccessRel W E)
     [∀ a w w', Decidable (R a w w')]
     (agent : E) (w : W) (worlds : List W)
     (h : ∃ w' ∈ worlds, R agent w w') :
-    nonTrivial (representationalS R agent w worlds) = true := by
+    nonTrivial (representationalS R agent w worlds) := by
   obtain ⟨w', hw'_in, hw'_acc⟩ := h
   unfold nonTrivial representationalS
+  intro hempty
   have hmem : w' ∈ worlds.filter (fun w' => decide (R agent w w')) :=
     List.mem_filter.mpr ⟨hw'_in, by simp [hw'_acc]⟩
-  cases hf : worlds.filter (fun w' => decide (R agent w w')) with
-  | nil => simp [hf] at hmem
-  | cons _ _ => rfl
+  rw [hempty] at hmem
+  cases hmem
 
 /-- Non-representational attitudes yield trivial information states. -/
 theorem nonRepresentational_trivial :
-    nonTrivial (nonRepresentationalS : InfoState W) = false := by
+    ¬ nonTrivial (nonRepresentationalS : InfoState W) := by
   simp [nonTrivial, nonRepresentationalS]
 
 -- ════════════════════════════════════════════════════════════════
@@ -232,10 +243,10 @@ theorem nonRepresentational_trivial :
     all doxastic alternatives satisfy p — a non-trivial claim. -/
 theorem believe_must {E : Type*} (R : AccessRel W E)
     [∀ a w w', Decidable (R a w w')]
-    (agent : E) (w : W) (worlds : List W) (p : W → Bool) :
-    mustS (representationalS R agent w worlds) p = true ↔
-    boxAt R agent w worlds (fun w' => p w' = true) := by
-  simp only [mustS, representationalS, boxAt, List.all_eq_true,
+    (agent : E) (w : W) (worlds : List W) (p : W → Prop) [DecidablePred p] :
+    mustS (representationalS R agent w worlds) p ↔
+    boxAt R agent w worlds p := by
+  simp only [mustS, representationalS, boxAt,
     List.mem_filter, decide_eq_true_eq]
   constructor
   · intro h w' hw' hR
@@ -244,13 +255,13 @@ theorem believe_must {E : Type*} (R : AccessRel W E)
     exact h w' hw' hR
 
 /-- Under a non-representational attitude, `must p` is trivially true. -/
-theorem want_must_trivial (p : W → Bool) :
-    mustS (nonRepresentationalS : InfoState W) p = true := by
-  simp [mustS, nonRepresentationalS, List.all_eq_true]
+theorem want_must_trivial (p : W → Prop) :
+    mustS (nonRepresentationalS : InfoState W) p := by
+  simp [mustS, nonRepresentationalS]
 
 /-- Under a non-representational attitude, `might p` is trivially false. -/
-theorem want_might_trivial (p : W → Bool) :
-    mightS (nonRepresentationalS : InfoState W) p = false := by
+theorem want_might_trivial (p : W → Prop) :
+    ¬ mightS (nonRepresentationalS : InfoState W) p := by
   simp [mightS, nonRepresentationalS]
 
 -- ════════════════════════════════════════════════════════════════
@@ -281,10 +292,13 @@ inductive RainWorld where
   | raining₁ | notRaining | raining₂
   deriving DecidableEq, Repr
 
-def isRaining : RainWorld → Bool
-  | .raining₁ => true
-  | .notRaining => false
-  | .raining₂ => true
+def isRaining : RainWorld → Prop
+  | .raining₁ => True
+  | .notRaining => False
+  | .raining₂ => True
+
+instance : DecidablePred isRaining := fun w => by
+  cases w <;> unfold isRaining <;> infer_instance
 
 /-- John's doxastic accessibility: worlds w₁ and w₂ are doxastically
 accessible (he's uncertain), w₃ is not. -/
@@ -299,22 +313,22 @@ def allRainWorlds : List RainWorld := [.raining₁, .notRaining, .raining₂]
 def johnS : InfoState RainWorld :=
   allRainWorlds.filter johnDox
 
-theorem johnS_eq : johnS = [.raining₁, .notRaining] := by native_decide
+theorem johnS_eq : johnS = [.raining₁, .notRaining] := by decide
 
 /-- John's DOX is non-trivial (he has beliefs). -/
-theorem john_nontrivial : nonTrivial johnS = true := by native_decide
+theorem john_nontrivial : nonTrivial johnS := by decide
 
 /-- "might be raining" is true in John's DOX — there's a raining world. -/
-theorem john_might_rain : mightS johnS isRaining = true := by native_decide
+theorem john_might_rain : mightS johnS isRaining := by decide
 
 /-- "must be raining" is false in John's DOX — there's a non-raining world. -/
-theorem john_must_rain : mustS johnS isRaining = false := by native_decide
+theorem john_must_rain : ¬ mustS johnS isRaining := by decide
 
 /-- Uncertainty: both raining and non-raining worlds in DOX. -/
 theorem john_uncertain :
-    mightS johnS isRaining = true ∧
-    mightS johnS (fun w => !isRaining w) = true := by
-  exact ⟨by native_decide, by native_decide⟩
+    mightS johnS isRaining ∧
+    mightS johnS (fun w => ¬ isRaining w) := by
+  exact ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 7. BToM Connection: Prospective Emotions = Emotive Doxastics

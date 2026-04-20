@@ -39,7 +39,7 @@ this pattern. Data from @cite{akinbo-fwangwar-2026} and
 
 namespace Fragments.Mwaghavul
 
-open Phonology.Autosegmental.RegisterTier (ToneFeature TBUKind
+open Phonology.Autosegmental.RegisterTier (TRN TBUKind
   WordProsodicType)
 open Phonology.Autosegmental.GrammaticalTone (TBU Spec ValuationWindow)
 
@@ -90,7 +90,7 @@ def verbMH : Spec :=
 structure Ideophone where
   form     : String
   gloss    : String
-  tones    : List ToneFeature
+  tones    : List TRN
   verbType : VerbalizerChoice
   deriving Repr
 
@@ -138,12 +138,12 @@ structure Syl where
 abbrev TSyl := TBU Syl
 
 /-- Build a toned syllable from IPA and tone. -/
-def mkTSyl (ipa : String) (t : ToneFeature) : TSyl :=
+def mkTSyl (ipa : String) (t : TRN) : TSyl :=
   ⟨⟨ipa⟩, t⟩
 
 /-- Derive a verb from an ideophone using its verbaliser spec.
     Returns the output tonal pattern. -/
-def deriveVerb (base : Ideophone) : List ToneFeature :=
+def deriveVerb (base : Ideophone) : List TRN :=
   let spec := match base.verbType with
     | .m  => verbM
     | .mh => verbMH
@@ -174,10 +174,10 @@ theorem jalpat_verb : deriveVerb jalpat = [.M, .H] := by native_decide
 
 /-- All M-tone derived verbs produce uniform M across all TBUs (13a). -/
 theorem m_verb_uniform (i : Ideophone) (h : i.verbType = .m) :
-    deriveVerb i = i.tones.map (λ _ => ToneFeature.M) := by
+    deriveVerb i = i.tones.map (λ _ => TRN.M) := by
   simp [deriveVerb, h, verbM,
     Phonology.Autosegmental.GrammaticalTone.tonalOverwrite,
-    List.map_map]
+    List.map_map, Function.comp_def]
 
 /-- M-H derived verbs have M on nonfinal TBUs and H on the final TBU.
     Verified on bisyllabic bases. -/

@@ -163,10 +163,10 @@ def lowApplType : ApplType := .lowRecipient
 def highApplType : ApplType := .high
 
 /-- The ditransitive uses a low applicative. -/
-theorem ditransitive_appl_is_low : lowApplType.isLow = true := rfl
+theorem ditransitive_appl_is_low : lowApplType.IsLow := by decide
 
 /-- The benefactive uses a high applicative. -/
-theorem benefactive_appl_is_high : highApplType.isLow = false := rfl
+theorem benefactive_appl_is_high : ¬ highApplType.IsLow := by decide
 
 -- ============================================================================
 -- § 5: Cross-linguistic Applicative Typology (Table 2.1)
@@ -199,7 +199,7 @@ def diagnosticPredictsHigh (d : ApplClassification) : Bool :=
 
 /-- Diagnostic prediction is consistent with the annotated classification. -/
 def diagnosticsConsistent (d : ApplClassification) : Bool :=
-  diagnosticPredictsHigh d == !d.applType.isLow
+  diagnosticPredictsHigh d == !decide d.applType.IsLow
 
 -- Language data (§2.1.2–§2.1.4)
 

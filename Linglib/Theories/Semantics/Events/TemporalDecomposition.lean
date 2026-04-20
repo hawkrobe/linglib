@@ -104,9 +104,12 @@ def resultPhase : TemporalDecomposition Time → Option (Interval Time)
   | .complex _ phases _ _ => some phases.resultTrace
 
 /-- Is this a complex (phased) decomposition? -/
-def isComplex : TemporalDecomposition Time → Bool
-  | .simple _ => false
-  | .complex _ _ _ _ => true
+def isComplex : TemporalDecomposition Time → Prop
+  | .simple _ => False
+  | .complex _ _ _ _ => True
+
+instance : DecidablePred (@isComplex Time _) :=
+  fun d => by unfold isComplex; cases d <;> infer_instance
 
 end TemporalDecomposition
 
@@ -117,17 +120,20 @@ end TemporalDecomposition
 /-- Telic Vendler classes (accomplishment, achievement) have complex temporal
     structure with distinguishable activity and result phases. Atelic classes
     (state, activity) are temporally simple. -/
-def hasComplexDecomposition : VendlerClass → Bool
-  | .accomplishment => true
-  | .achievement => true
-  | .state => false
-  | .activity => false
-  | .semelfactive => false
+def HasComplexDecomposition : VendlerClass → Prop
+  | .accomplishment => True
+  | .achievement => True
+  | .state => False
+  | .activity => False
+  | .semelfactive => False
+
+instance : DecidablePred HasComplexDecomposition := fun c => by
+  cases c <;> unfold HasComplexDecomposition <;> infer_instance
 
 /-- Complex decomposition ↔ telicity. -/
 theorem hasComplexDecomposition_iff_telic (c : VendlerClass) :
-    hasComplexDecomposition c = (c.telicity == .telic) := by
-  cases c <;> rfl
+    HasComplexDecomposition c ↔ c.telicity = .telic := by
+  cases c <;> simp [HasComplexDecomposition, VendlerClass.telicity]
 
 -- ════════════════════════════════════════════════════
 -- § 4. Ev with Decomposition
@@ -364,9 +370,12 @@ def toProfile : MoensSteedmanClass → MoensSteedmanProfile
   | .point => { achievementProfile with hasConsequentState := false }
 
 /-- Whether the event is atomic (instantaneous). -/
-def isAtomic : MoensSteedmanClass → Bool
-  | .culmination | .point => true
-  | .state | .process | .culminatedProcess => false
+def isAtomic : MoensSteedmanClass → Prop
+  | .culmination | .point => True
+  | .state | .process | .culminatedProcess => False
+
+instance : DecidablePred isAtomic :=
+  fun c => by unfold isAtomic; cases c <;> infer_instance
 
 /-- Points and culminations share a Vendler class (achievement) but differ
     in ±consequent state — exactly the conflation Moens & Steedman identify. -/
@@ -383,8 +392,15 @@ theorem point_telic_without_consState :
 
 /-- Atomicity matches Vendler's punctuality for dynamic classes. -/
 theorem isAtomic_iff_punctual (c : MoensSteedmanClass) (h : c ≠ .state) :
-    c.isAtomic = (c.toProfile.duration == .punctual) := by
-  cases c <;> first | exact absurd rfl h | rfl
+    c.isAtomic ↔ c.toProfile.duration = .punctual := by
+  cases c
+  · exact absurd rfl h
+  all_goals
+    constructor
+    · intro h₁
+      first | rfl | exact (h₁ : False).elim
+    · intro h₁
+      first | trivial | exact absurd h₁ (by decide)
 
 end MoensSteedmanClass
 

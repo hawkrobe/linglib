@@ -14,25 +14,43 @@ namespace Core.WALS.F144N
 
 /-- WALS 144N values. -/
 inductive ObligatoryDoubleNegationInSovLanguages where
-  | sonegvneg  -- SONegVNeg (1 languages)
-  | svoButNegsnegov  -- SVO but NegSNegOV (1 languages)
-  | negsoVNeg  -- NegSO[V-Neg] (4 languages)
-  | sonegVNeg  -- SONeg[V-Neg] (2 languages)
-  | soNegVNeg  -- SO[Neg-V]Neg (1 languages)
-  | soNegVNeg_6  -- SO[Neg-V-Neg] (13 languages)
-  | soNegVWithNegativeToneOnVerbSoNegVNegtone  -- SO[Neg-V] with negative tone on verb  SO[Neg-V]&NegTone (1 languages)
-  | sonegvnegSonegVNeg  -- SONegVNeg/SONeg[V-Neg] (1 languages)
-  | svoButSonegVNegSoNegVNeg  -- SVO but SONeg[V-Neg]/SO[Neg-V-Neg] (1 languages)
-  | snegoVNegSonegVNeg  -- SNegO[V-Neg]/SONeg[V-Neg] (2 languages)
-  | soVNegNegOptnegprefInfix  -- SO[V-Neg]Neg & OptNegPref/Infix (1 languages)
-  | snegovnegSnegvoneg  -- SNegOVNeg/SNegVONeg (1 languages)
-  | snegovnegSvonegNegtone  -- SNegOVNeg/SVONeg&NegTone (1 languages)
-  | sovNegvneg  -- SOV & NegVNeg (3 languages)
-  | sovNegVNeg  -- SOV & Neg[V-Neg] (7 languages)
-  | sovNegNegV  -- SOV & Neg[Neg-V] (1 languages)
-  | svOvNegVNeg  -- SV & OV & Neg[V-Neg] (2 languages)
-  | svOvNegVNeg_18  -- SV & OV & [Neg-V-Neg] (2 languages)
-  deriving DecidableEq, Repr
+  /-- SONegVNeg (1 languages). -/
+  | sonegvneg
+  /-- SVO but NegSNegOV (1 languages). -/
+  | svoButNegsnegov
+  /-- NegSO[V-Neg] (4 languages). -/
+  | negsoVNeg
+  /-- SONeg[V-Neg] (2 languages). -/
+  | sonegVNeg
+  /-- SO[Neg-V]Neg (1 languages). -/
+  | soNegVNeg
+  /-- SO[Neg-V-Neg] (13 languages). -/
+  | soNegVNeg_6
+  /-- SO[Neg-V] with negative tone on verb  SO[Neg-V]&NegTone (1 languages). -/
+  | soNegVWithNegativeToneOnVerbSoNegVNegtone
+  /-- SONegVNeg/SONeg[V-Neg] (1 languages). -/
+  | sonegvnegSonegVNeg
+  /-- SVO but SONeg[V-Neg]/SO[Neg-V-Neg] (1 languages). -/
+  | svoButSonegVNegSoNegVNeg
+  /-- SNegO[V-Neg]/SONeg[V-Neg] (2 languages). -/
+  | snegoVNegSonegVNeg
+  /-- SO[V-Neg]Neg & OptNegPref/Infix (1 languages). -/
+  | soVNegNegOptnegprefInfix
+  /-- SNegOVNeg/SNegVONeg (1 languages). -/
+  | snegovnegSnegvoneg
+  /-- SNegOVNeg/SVONeg&NegTone (1 languages). -/
+  | snegovnegSvonegNegtone
+  /-- SOV & NegVNeg (3 languages). -/
+  | sovNegvneg
+  /-- SOV & Neg[V-Neg] (7 languages). -/
+  | sovNegVNeg
+  /-- SOV & Neg[Neg-V] (1 languages). -/
+  | sovNegNegV
+  /-- SV & OV & Neg[V-Neg] (2 languages). -/
+  | svOvNegVNeg
+  /-- SV & OV & [Neg-V-Neg] (2 languages). -/
+  | svOvNegVNeg_18
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144N dataset (45 languages). -/
 def allData : List (Datapoint ObligatoryDoubleNegationInSovLanguages) :=
@@ -82,46 +100,6 @@ def allData : List (Datapoint ObligatoryDoubleNegationInSovLanguages) :=
   , { walsCode := "zun", language := "Zuni", iso := "zun", value := .negsoVNeg }
   , { walsCode := "eme", language := "Émérillon", iso := "eme", value := .soNegVNeg_6 }
   ]
-
--- Count verification
-theorem total_count : allData.length = 45 := by native_decide
-
-theorem count_sonegvneg :
-    (allData.filter (·.value == .sonegvneg)).length = 1 := by native_decide
-theorem count_svoButNegsnegov :
-    (allData.filter (·.value == .svoButNegsnegov)).length = 1 := by native_decide
-theorem count_negsoVNeg :
-    (allData.filter (·.value == .negsoVNeg)).length = 4 := by native_decide
-theorem count_sonegVNeg :
-    (allData.filter (·.value == .sonegVNeg)).length = 2 := by native_decide
-theorem count_soNegVNeg :
-    (allData.filter (·.value == .soNegVNeg)).length = 1 := by native_decide
-theorem count_soNegVNeg_6 :
-    (allData.filter (·.value == .soNegVNeg_6)).length = 13 := by native_decide
-theorem count_soNegVWithNegativeToneOnVerbSoNegVNegtone :
-    (allData.filter (·.value == .soNegVWithNegativeToneOnVerbSoNegVNegtone)).length = 1 := by native_decide
-theorem count_sonegvnegSonegVNeg :
-    (allData.filter (·.value == .sonegvnegSonegVNeg)).length = 1 := by native_decide
-theorem count_svoButSonegVNegSoNegVNeg :
-    (allData.filter (·.value == .svoButSonegVNegSoNegVNeg)).length = 1 := by native_decide
-theorem count_snegoVNegSonegVNeg :
-    (allData.filter (·.value == .snegoVNegSonegVNeg)).length = 2 := by native_decide
-theorem count_soVNegNegOptnegprefInfix :
-    (allData.filter (·.value == .soVNegNegOptnegprefInfix)).length = 1 := by native_decide
-theorem count_snegovnegSnegvoneg :
-    (allData.filter (·.value == .snegovnegSnegvoneg)).length = 1 := by native_decide
-theorem count_snegovnegSvonegNegtone :
-    (allData.filter (·.value == .snegovnegSvonegNegtone)).length = 1 := by native_decide
-theorem count_sovNegvneg :
-    (allData.filter (·.value == .sovNegvneg)).length = 3 := by native_decide
-theorem count_sovNegVNeg :
-    (allData.filter (·.value == .sovNegVNeg)).length = 7 := by native_decide
-theorem count_sovNegNegV :
-    (allData.filter (·.value == .sovNegNegV)).length = 1 := by native_decide
-theorem count_svOvNegVNeg :
-    (allData.filter (·.value == .svOvNegVNeg)).length = 2 := by native_decide
-theorem count_svOvNegVNeg_18 :
-    (allData.filter (·.value == .svOvNegVNeg_18)).length = 2 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

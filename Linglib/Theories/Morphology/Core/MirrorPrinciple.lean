@@ -198,7 +198,7 @@ theorem agreement_restriction_count :
        ⟨.inner, .surface⟩, ⟨.outer, .surface⟩] :
        List AgreementPattern).filter (·.isAttested)).length
     = 2 := by
-  native_decide
+  decide
 
 /-- The two attested patterns are (27a) and (27d). -/
 theorem attested_are_27a_and_27d :
@@ -206,7 +206,7 @@ theorem attested_are_27a_and_27d :
       ⟨.inner, .surface⟩, ⟨.outer, .surface⟩] :
       List AgreementPattern).filter (·.isAttested)
     = [⟨.inner, .semantic⟩, ⟨.outer, .surface⟩] := by
-  native_decide
+  decide
 
 /-- The derived reference always produces an attested pattern.
     With `isAttested` defined via `deriveReference`, this reduces
@@ -287,6 +287,6 @@ def MorphDomain.inScope : MorphDomain → Bool
     @cite{baker-1985} (27), @cite{bybee-1985}. -/
 theorem gfRule_inside_agreement (r : GFRuleType) :
     r.toMorphCategory.relevanceRank < MorphCategory.agreement.relevanceRank := by
-  cases r <;> native_decide
+  cases r <;> decide
 
 end Morphology.MirrorPrinciple

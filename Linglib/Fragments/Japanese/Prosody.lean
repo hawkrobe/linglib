@@ -196,10 +196,10 @@ def si_suffix : JSuffixAccent :=
   { form := "-si", gloss := "氏 Mr.", dominance := .recessive }
 
 /-- Deaccenting suffixes are dominant. -/
-theorem teki_is_dominant : teki_suffix.dominance.isDominant = true := rfl
+theorem teki_is_dominant : teki_suffix.dominance.IsDominant := by decide
 
 /-- Non-deaccenting suffixes are not dominant. -/
-theorem si_is_not_dominant : si_suffix.dominance.isDominant = false := rfl
+theorem si_is_not_dominant : ¬ si_suffix.dominance.IsDominant := by decide
 
 -- ============================================================================
 -- § 6: Accent Combination (@cite{kawahara-2015})

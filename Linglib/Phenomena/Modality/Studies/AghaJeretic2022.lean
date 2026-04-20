@@ -3,7 +3,7 @@ import Linglib.Core.Logic.Truth3
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Plurality.Distributivity
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.French.Modals
 
@@ -582,7 +582,7 @@ open Semantics.Modality.Kratzer (ModalBase OrderingSource)
 theorem directive_bivalent
     (f : ModalBase Semantics.Attitudes.Intensional.World)
     (g g' : OrderingSource Semantics.Attitudes.Intensional.World)
-    (p : (Semantics.Attitudes.Intensional.World → Bool))
+    (p : (Semantics.Attitudes.Intensional.World → Prop))
     (w : Semantics.Attitudes.Intensional.World) :
     weakNecessity f g g' p w ∨ ¬ weakNecessity f g g' p w :=
   em _
@@ -622,7 +622,7 @@ theorem domain_restriction_wrong :
 Verify that the English fragment classifies *should*/*ought* as weak
 necessity and *must* as strong necessity, matching the paper's §2.1. -/
 
-open Fragments.English.FunctionWords
+open Fragments.English.Auxiliaries
 
 /-- *should* is classified as weak necessity in the English fragment. -/
 theorem should_is_weak :

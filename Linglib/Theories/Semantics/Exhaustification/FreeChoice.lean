@@ -53,13 +53,13 @@ section FreeChoice
 variable {World : Type*}
 
 /-- Possibility modal: ◇p holds iff p is true at some accessible world. -/
-def diamond (p : Prop' World) : Prop := ∃ w, p w
+def diamond (p : Set World) : Prop := ∃ w, p w
 
 /-- Necessity modal: □p holds iff p is true at all accessible worlds. -/
-def box (p : Prop' World) : Prop := ∀ w, p w
+def box (p : Set World) : Prop := ∀ w, p w
 
-/-- Disjunction of propositions. -/
-def pdisj (p q : Prop' World) : Prop' World := λ w => p w ∨ q w
+/-- Disjunction of propositions (thin alias for `Set.union`). -/
+def pdisj (p q : Set World) : Set World := p ∪ q
 
 /-- The alternative set for ◇(p ∨ q) consists of {◇p, ◇q, ◇(p ∧ q)}.
 
@@ -67,8 +67,8 @@ This is the standard alternative set: subdomain alternatives ◇p, ◇q
 (restricting the disjunction) and the conjunction alternative ◇(p ∧ q)
 (strengthening the disjunction). -/
 structure FCAltSet (World : Type*) where
-  p : Prop' World
-  q : Prop' World
+  p : Set World
+  q : Set World
 
 namespace FCAltSet
 
@@ -199,14 +199,14 @@ section SINPIGeneralization
 variable {World : Type*}
 
 /-- A context function mapping propositions to propositions. -/
-abbrev Ctx (World : Type*) := Prop' World → Prop' World
+abbrev Ctx (World : Type*) := Set World → Set World
 
 /-- Exhaustification in context: assert `C(weak)` and negate `C(strong)`. -/
-def exhInCtx (C : Ctx World) (weak strong : Prop' World) : Prop' World :=
+def exhInCtx (C : Ctx World) (weak strong : Set World) : Set World :=
   C weak ∧ₚ ∼(C strong)
 
 /-- The SI is vacuous: the exhaustified meaning entails ⊥ (is empty). -/
-def siVacuous (C : Ctx World) (weak strong : Prop' World) : Prop :=
+def siVacuous (C : Ctx World) (weak strong : Set World) : Prop :=
   ∀ w, ¬(exhInCtx C weak strong w)
 
 /-- **Theorem 2 (SI–NPI Generalization, one direction).**
@@ -217,18 +217,18 @@ In a DE context, if `strong ⊆ₚ weak`, then the scalar implicature
 This is the formal content of Chierchia's observation that SIs are
 suspended in NPI-licensing environments. -/
 theorem si_vacuous_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Prop' World), entails p q → entails (C q) (C p))
-    (weak strong : Prop' World) (h_ent : entails strong weak) :
+    (hDE : ∀ (p q : Set World), entails p q → entails (C q) (C p))
+    (weak strong : Set World) (h_ent : entails strong weak) :
     siVacuous C weak strong := by
   intro w ⟨hCw, hnCs⟩
-  have hCws := hDE strong weak h_ent w hCw
+  have hCws := hDE strong weak h_ent hCw
   exact hnCs hCws
 
 /-- **Theorem 2 (converse direction).**
 
 If the SI is non-vacuous, there must be some world where it fires. -/
 theorem si_active_witness (C : Ctx World)
-    (weak strong : Prop' World)
+    (weak strong : Set World)
     (h_witness : ∃ w, C weak w ∧ ¬C strong w) :
     ¬siVacuous C weak strong := by
   intro hvac
@@ -259,13 +259,13 @@ section DomainWidening
 variable {World : Type*} {Entity : Type*}
 
 /-- An existential statement over a domain D: ∃ x ∈ D, P x. -/
-def existsInDomain (D : Set Entity) (P : Entity → Prop' World) : Prop' World :=
+def existsInDomain (D : Set Entity) (P : Entity → Set World) : Set World :=
   λ w => ∃ x ∈ D, P x w
 
 /-- Widening the domain is weakening: if D ⊆ D', then (∃x∈D, Px) ⊆ₚ (∃x∈D', Px).
 
 Larger domain = more potential witnesses = weaker existential claim. -/
-theorem wider_domain_weaker_existential (D D' : Set Entity) (P : Entity → Prop' World)
+theorem wider_domain_weaker_existential (D D' : Set Entity) (P : Entity → Set World)
     (h : D ⊆ D') : entails (existsInDomain D P) (existsInDomain D' P) := by
   intro w ⟨x, hxD, hPx⟩
   exact ⟨x, h hxD, hPx⟩
@@ -277,8 +277,8 @@ the overall claim: C(∃x∈D', Px) ⊆ₚ C(∃x∈D, Px) when D ⊆ D'.
 
 This is why NPIs are licensed in DE contexts: widening is informative. -/
 theorem widening_strengthens_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Prop' World), entails p q → entails (C q) (C p))
-    (D D' : Set Entity) (P : Entity → Prop' World) (h : D ⊆ D') :
+    (hDE : ∀ (p q : Set World), entails p q → entails (C q) (C p))
+    (D D' : Set Entity) (P : Entity → Set World) (h : D ⊆ D') :
     entails (C (existsInDomain D' P)) (C (existsInDomain D P)) :=
   hDE _ _ (wider_domain_weaker_existential D D' P h)
 
@@ -290,8 +290,8 @@ C(∃x∈D, Px) ⊆ₚ C(∃x∈D', Px) when D ⊆ D'.
 This is why NPIs are *not* licensed in UE contexts: widening is
 uninformative (violates Maximize Strength). -/
 theorem widening_weakens_in_ue (C : Ctx World)
-    (hUE : ∀ (p q : Prop' World), entails p q → entails (C p) (C q))
-    (D D' : Set Entity) (P : Entity → Prop' World) (h : D ⊆ D') :
+    (hUE : ∀ (p q : Set World), entails p q → entails (C p) (C q))
+    (D D' : Set Entity) (P : Entity → Set World) (h : D ⊆ D') :
     entails (C (existsInDomain D P)) (C (existsInDomain D' P)) :=
   hUE _ _ (wider_domain_weaker_existential D D' P h)
 
@@ -334,7 +334,7 @@ Exh, a non-monotone strengthening operator) between an NPI licensor
 and an NPI disrupts the DE chain. -/
 theorem intervention_negation_not_de
     (S : Ctx World)
-    (p q : Prop' World)
+    (p q : Set World)
     (_hpq : entails p q)
     -- S is not monotone: it does not preserve p ⊆ₚ q
     (w : World) (hSpw : S p w) (hnSqw : ¬S q w) :
@@ -344,7 +344,7 @@ theorem intervention_negation_not_de
   -- ¬S(q)(w) holds, so pneg(S q)(w) holds
   have h1 : pneg (S q) w := hnSqw
   -- By hDE: pneg(S p)(w), i.e., ¬S(p)(w)
-  have h2 := hDE w h1
+  have h2 := hDE h1
   -- But S(p)(w) holds — contradiction
   exact h2 hSpw
 
@@ -353,7 +353,7 @@ theorem intervention_negation_not_de
 Exh is strengthening (exh(φ) ⊆ₚ φ) and not monotone
 (∃ p ⊆ₚ q with exh(p) ⊄ exh(q)). So Exh inserted between a
 DE licensor and an NPI disrupts the DE property. -/
-theorem exh_is_strengthening (ALT : Set (Prop' World)) :
+theorem exh_is_strengthening (ALT : Set (Set World)) :
     IsStrengthening (exhMW ALT) := by
   intro φ w ⟨hφw, _⟩
   exact hφw
@@ -389,8 +389,8 @@ If `strong ⊆ₚ weak` (strong entails weak) and C is DE, then
 The "stronger" alternative in UE becomes the "weaker" one in DE,
 making the exhaustification move vacuous. -/
 theorem entailment_reversal_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Prop' World), entails p q → entails (C q) (C p))
-    (weak strong : Prop' World) (h : entails strong weak) :
+    (hDE : ∀ (p q : Set World), entails p q → entails (C q) (C p))
+    (weak strong : Set World) (h : entails strong weak) :
     entails (C weak) (C strong) :=
   hDE strong weak h
 
@@ -400,8 +400,8 @@ theorem entailment_reversal_in_de (C : Ctx World)
 So in "not ___ students came", "some" is the stronger filler.
 This is why "any" (= widened "some") is licensed: it's the strongest. -/
 theorem weak_is_strong_in_de (C : Ctx World)
-    (hDE : ∀ (p q : Prop' World), entails p q → entails (C q) (C p))
-    (some_ all_ : Prop' World) (h : entails all_ some_) :
+    (hDE : ∀ (p q : Set World), entails p q → entails (C q) (C p))
+    (some_ all_ : Set World) (h : entails all_ some_) :
     entails (C some_) (C all_) :=
   hDE all_ some_ h
 
@@ -428,14 +428,14 @@ section FCDuality
 variable {World : Type*}
 
 /-- A modal operator: maps a proposition about worlds to a truth value. -/
-abbrev ModalOp (World : Type*) := Prop' World → Prop
+abbrev ModalOp (World : Type*) := Set World → Prop
 
 /-- The FC alt set parameterized by modal operator M:
     Assertion M(p ∨ q), alternatives M(p), M(q), M(p ∧ q). -/
 structure ModalFCAltSet (World : Type*) where
   M : ModalOp World
-  p : Prop' World
-  q : Prop' World
+  p : Set World
+  q : Set World
 
 namespace ModalFCAltSet
 
@@ -483,7 +483,7 @@ theorem fc_duality_forward (a : ModalFCAltSet World)
     | inr hq => exact hnq hq
 
 /-- **Corollary: ◇ satisfies the distributivity condition.** -/
-theorem diamond_distributes (p q : Prop' World) :
+theorem diamond_distributes (p q : Set World) :
     diamond (pdisj p q) → diamond p ∨ diamond q := by
   intro ⟨w, hw⟩
   cases hw with
@@ -491,7 +491,7 @@ theorem diamond_distributes (p q : Prop' World) :
   | inr hq => exact Or.inr ⟨w, hq⟩
 
 /-- Reverse: ◇A ∨ ◇B → ◇(A ∨ B). -/
-theorem diamond_collects (p q : Prop' World) :
+theorem diamond_collects (p q : Set World) :
     diamond p ∨ diamond q → diamond (pdisj p q) := by
   intro h
   cases h with
@@ -502,7 +502,7 @@ theorem diamond_collects (p q : Prop' World) :
     vacuous in standard modal logic. Central to @cite{ciardelli-guerrini-2026}'s
     reductionist thesis: the difference between narrow-scope ◇(A ∨ B) and
     wide-scope ◇A ∨ ◇B matters only for pragmatic enrichment. -/
-theorem diamond_distributes_iff (p q : Prop' World) :
+theorem diamond_distributes_iff (p q : Set World) :
     diamond (pdisj p q) ↔ diamond p ∨ diamond q :=
   ⟨diamond_distributes p q, diamond_collects p q⟩
 
@@ -527,25 +527,25 @@ variable {World : Type*}
 
 /-- Double negation restores UE: "Nobody doubts that..." is UE.
     DE ∘ DE = UE, from Mathlib's `Antitone.comp`. -/
-theorem double_negation_ue {f g : Prop' World → Prop' World}
+theorem double_negation_ue {f g : Set World → Set World}
     (hf : Antitone f) (hg : Antitone g) : Monotone (f ∘ g) :=
   hf.comp hg
 
 /-- DE under UE stays DE: "It's true that nobody..." is DE.
     UE ∘ DE = DE -/
-theorem ue_under_de {f g : Prop' World → Prop' World}
+theorem ue_under_de {f g : Set World → Set World}
     (hf : Monotone f) (hg : Antitone g) : Antitone (f ∘ g) :=
   hf.comp_antitone hg
 
 /-- UE under DE stays DE: "Nobody said..." is DE when "said" is UE.
     DE ∘ UE = DE -/
-theorem de_under_ue {f g : Prop' World → Prop' World}
+theorem de_under_ue {f g : Set World → Set World}
     (hf : Antitone f) (hg : Monotone g) : Antitone (f ∘ g) :=
   hf.comp_monotone hg
 
 /-- UE under UE stays UE: "Somebody said..." is UE.
     UE ∘ UE = UE -/
-theorem ue_under_ue {f g : Prop' World → Prop' World}
+theorem ue_under_ue {f g : Set World → Set World}
     (hf : Monotone f) (hg : Monotone g) : Monotone (f ∘ g) :=
   hf.comp hg
 
@@ -574,7 +574,7 @@ variable {World : Type*}
     the plain meaning — it is a strengthening operation.
     This is Chierchia's Maximize Strength principle formalized as
     the defining property of exhaustification. -/
-theorem maximize_strength_eq_exhIE (ALT : Set (Prop' World)) (φ : Prop' World) :
+theorem maximize_strength_eq_exhIE (ALT : Set (Set World)) (φ : Set World) :
     entails (exhIE ALT φ) φ := by
   intro w hw
   have hφ_in_IE : φ ∈ IE ALT φ := by

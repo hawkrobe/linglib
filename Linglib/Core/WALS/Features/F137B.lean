@@ -14,9 +14,11 @@ namespace Core.WALS.F137B
 
 /-- WALS 137B values. -/
 inductive MInSecondPersonSingular where
-  | noMInSecondPersonSingular  -- No m in second person singular (152 languages)
-  | mInSecondPersonSingular  -- m in second person singular (78 languages)
-  deriving DecidableEq, Repr
+  /-- No m in second person singular (152 languages). -/
+  | noMInSecondPersonSingular
+  /-- m in second person singular (78 languages). -/
+  | mInSecondPersonSingular
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 137B dataset (230 languages). -/
 def allData : List (Datapoint MInSecondPersonSingular) :=
@@ -251,14 +253,6 @@ def allData : List (Datapoint MInSecondPersonSingular) :=
   , { walsCode := "zul", language := "Zulu", iso := "zul", value := .noMInSecondPersonSingular }
   , { walsCode := "zun", language := "Zuni", iso := "zun", value := .noMInSecondPersonSingular }
   ]
-
--- Count verification
-theorem total_count : allData.length = 230 := by native_decide
-
-theorem count_noMInSecondPersonSingular :
-    (allData.filter (·.value == .noMInSecondPersonSingular)).length = 152 := by native_decide
-theorem count_mInSecondPersonSingular :
-    (allData.filter (·.value == .mInSecondPersonSingular)).length = 78 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

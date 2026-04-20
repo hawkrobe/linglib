@@ -3,6 +3,7 @@ import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.Accommodation
 import Linglib.Phenomena.Modality.FreeChoice
+import Mathlib.Data.Set.Basic
 
 /-!
 # @cite{delpinal-bassi-sauerland-2024} — Free Choice and Presuppositional Exhaustification
@@ -331,7 +332,7 @@ theorem existential_fc {Student : Type*}
     `forallPr` combinator from `Core.Semantics.Presupposition`. -/
 theorem forallPr_fc {Student W : Type*}
     (S : Student → Prop) (pexPerStudent : Student → PrProp W) (w : W)
-    (projA projB : Student → Prop' W)
+    (projA projB : Student → Set W)
     (hFC : ∀ x, S x → (pexPerStudent x).holds w →
       projA x w ∧ projB x w)
     (hHolds : (PrProp.forallPr S pexPerStudent).holds w) :
@@ -348,7 +349,7 @@ theorem forallPr_fc {Student W : Type*}
     `existsPrUniv` combinator from `Core.Semantics.Presupposition`. -/
 theorem existsPrUniv_fc {Student W : Type*}
     (S : Student → Prop) (pexPerStudent : Student → PrProp W) (w : W)
-    (projA projB : Student → Prop' W)
+    (projA projB : Student → Set W)
     (hFC : ∀ x, S x → (pexPerStudent x).holds w →
       projA x w ∧ projB x w)
     (hHolds : (PrProp.existsPrUniv S pexPerStudent).holds w) :
@@ -373,7 +374,7 @@ theorem existsPrUniv_fc {Student W : Type*}
     These are exactly the inputs to `universal_negative_fc`. -/
 theorem negExistsPr_negative_fc {Student W : Type*}
     (S : Student → Prop) (pexPerStudent : Student → PrProp W) (w : W)
-    (reqA reqB : Student → Prop' W)
+    (reqA reqB : Student → Set W)
     (hAssertEq : ∀ x, S x → ((pexPerStudent x).assertion w ↔
       (reqA x w ∧ reqB x w)))
     (hHomog : ∀ x, S x → (pexPerStudent x).presup w →
@@ -502,7 +503,7 @@ disjunction via Karttunen filtering.
 
 /-- **Flat exh output**: exh^{IE+II}(◇(p∨q)) is fully assertive —
     no presuppositional component. -/
-def flatExhFC : Prop' FCWorld := exhIEII fcALT fcPrejacent
+def flatExhFC : Set FCWorld := exhIEII fcALT fcPrejacent
 
 /-- Negative factive embedding of FLAT exh.
     "S is unaware that exh(◇(L∨A))":
@@ -611,7 +612,7 @@ theorem filtering_grounded_in_schlenker (c : ContextSet FCWorld)
       (localCtxSecondDisjunct (initialLocalCtx c) firstDisjunct) pexFC)
     (hassert : pexFC.assertion w) :
     permA w ∧ permB w :=
-  pex_fc w ⟨hSchlenkerFiltered w ⟨hc, hFirst⟩, hassert⟩
+  pex_fc w ⟨hSchlenkerFiltered ⟨hc, hFirst⟩, hassert⟩
 
 /-- Presupposed FC is grounded in transparent projection.
 
@@ -634,7 +635,7 @@ theorem presupposed_fc_grounded_in_transparent
   have hTransparent : transparentProjection globalCtx pexFC :=
     negFactive_entails_transparent pexFC believes globalCtx hNegFactive
   -- Step 2: transparent projection provides the presup; negFactive provides the assertion
-  exact pex_fc w ⟨hTransparent w hGlobal, (hNegFactive w hGlobal).2⟩
+  exact pex_fc w ⟨hTransparent hGlobal, (hNegFactive w hGlobal).2⟩
 
 /-- Opaque FC under belief embedding: when pex's presupposition is attributed
     to the attitude holder (opaque projection), the agent *believes* FC.
@@ -653,7 +654,7 @@ theorem opaque_fc_under_belief
     (hassert : ∀ v, blc.atWorld w_star v → pexFC.assertion v) :
     ∀ v, blc.atWorld w_star v → permA v ∧ permB v := by
   intro v hv
-  exact pex_fc v ⟨hOpaque w_star hw_star v hv, hassert v hv⟩
+  exact pex_fc v ⟨hOpaque w_star hw_star hv, hassert v hv⟩
 
 /-- Double prohibition is grounded in negation transparency.
 

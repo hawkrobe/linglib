@@ -55,14 +55,14 @@ section BindingConditions
 
 /-- A binding is semantically well-formed if the binder's scope includes the bindee. -/
 def bindingWellFormed {F : Frame}
-    (state : InterpState F) (varIdx : Nat) : Bool :=
+    (state : InterpState F) (varIdx : Nat) : Prop :=
   varIdx ∈ state.abstractionStack
 
 /-- Interpret a binding configuration as a semantic check. -/
 def interpretBindingConfig {F : Frame}
-    (bc : BindingConfig) (_g : Core.Assignment F.Entity) : Bool :=
+    (bc : BindingConfig) (_g : Core.Assignment F.Entity) : Prop :=
   -- All bindings must have consistent indices
-  bc.wellFormed
+  bc.wellFormed = true
 
 
 end BindingConditions
@@ -72,21 +72,21 @@ section Continuations
 /-- Duplicator combinator `W = λκ λx. κ x x`. -/
 def W {A B : Type} (κ : A → A → B) (x : A) : B := κ x x
 
-example : W (λ x y => x == y) 5 = true := rfl
+example : W (λ x y => x = y) 5 = (5 = 5) := rfl
 
 /-- H&K interpretation of binding. -/
-def hkBinding {F : Frame} (n : Nat) (body : F.Entity → Bool)
-    (binder : F.Entity) (g : Core.Assignment F.Entity) : Bool :=
+def hkBinding {F : Frame} (n : Nat) (body : F.Entity → Prop)
+    (binder : F.Entity) (g : Core.Assignment F.Entity) : Prop :=
   body (g[n ↦ binder] n)
 
 /-- B&S interpretation of binding (continuation-based). -/
-def bsBinding {Entity : Type} (body : Entity → Entity → Bool)
-    (binder : Entity) : Bool :=
+def bsBinding {Entity : Type} (body : Entity → Entity → Prop)
+    (binder : Entity) : Prop :=
   W body binder
 
 /-- H&K and B&S agree for reflexive binding: both produce `body(binder, binder)`. -/
 theorem hk_bs_reflexive_equiv {F : Frame} (n : Nat)
-    (body : F.Entity → F.Entity → Bool)
+    (body : F.Entity → F.Entity → Prop)
     (binder : F.Entity) (g : Core.Assignment F.Entity) :
     body (g[n ↦ binder] n) (g[n ↦ binder] n) = W body binder := by
   simp only [W, update_same]
@@ -106,11 +106,11 @@ def cpsTransform {E A R : Type} (f : Reader E A) : (A → R) → E → R :=
   λ k e => k (f e)
 
 /-- CPS transform preserves binding semantics. -/
-theorem cps_preserves_semantics {E A : Type} (f : Reader E A) (e : E) (k : A → Bool) :
+theorem cps_preserves_semantics {E A : Type} (f : Reader E A) (e : E) (k : A → Prop) :
     cpsTransform f k e = k (f e) := rfl
 
 /-- W is the semantic content of binding in both frameworks. -/
-theorem binding_is_contraction {A : Type} (rel : A → A → Bool) (x : A) :
+theorem binding_is_contraction {A : Type} (rel : A → A → Prop) (x : A) :
     (λ _ : Unit => rel x x) () = W rel x := rfl
 
 end CategoricalPerspective
@@ -125,12 +125,12 @@ structure EvalContext (Entity : Type) where
   deriving Repr
 
 /-- A pronoun can be bound only if its binder is active. -/
-def canBind {Entity : Type} [DecidableEq Entity]
-    (ctx : EvalContext Entity) (binder : Entity) : Bool :=
+def canBind {Entity : Type}
+    (ctx : EvalContext Entity) (binder : Entity) : Prop :=
   binder ∈ ctx.activeBinders
 
 /-- Crossover: pronoun position < binder position → binding fails. -/
-def crossover (pronounPos binderPos : Nat) : Bool :=
+def crossover (pronounPos binderPos : Nat) : Prop :=
   pronounPos < binderPos
 
 
@@ -140,29 +140,29 @@ section VPEllipsis
 
 /-- Strict reading: pronoun resolves to original antecedent. -/
 def strictReading {Entity : Type}
-    (vp : Entity → Entity → Bool)
+    (vp : Entity → Entity → Prop)
     (antecedent : Entity)
     (ellipsisSite : Entity)
-    : Bool :=
+    : Prop :=
   vp ellipsisSite antecedent
 
 /-- Sloppy reading: pronoun re-binds to new subject. -/
 def sloppyReading {Entity : Type}
-    (vp : Entity → Entity → Bool)
+    (vp : Entity → Entity → Prop)
     (ellipsisSite : Entity)
-    : Bool :=
+    : Prop :=
   W vp ellipsisSite
 
 /-- VPE ambiguity: both readings available. -/
 structure VPEAmbiguity (Entity : Type) where
-  vp : Entity → Entity → Bool
+  vp : Entity → Entity → Prop
   antecedentSubj : Entity
   ellipsisSite : Entity
 
-def VPEAmbiguity.strictValue {Entity : Type} (a : VPEAmbiguity Entity) : Bool :=
+def VPEAmbiguity.strictValue {Entity : Type} (a : VPEAmbiguity Entity) : Prop :=
   strictReading a.vp a.antecedentSubj a.ellipsisSite
 
-def VPEAmbiguity.sloppyValue {Entity : Type} (a : VPEAmbiguity Entity) : Bool :=
+def VPEAmbiguity.sloppyValue {Entity : Type} (a : VPEAmbiguity Entity) : Prop :=
   sloppyReading a.vp a.ellipsisSite
 
 

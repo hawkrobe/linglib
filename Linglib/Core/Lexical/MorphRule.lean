@@ -133,22 +133,19 @@ inductive MorphStatus where
   | derivAffix
   deriving DecidableEq, Repr
 
-/-- Is this form bound (i.e., not a free word)? -/
-def MorphStatus.isBound : MorphStatus → Bool
-  | .freeWord => false
-  | _ => true
-
 /-- Is this an affix (inflectional or derivational)? -/
-def MorphStatus.isAffix : MorphStatus → Bool
-  | .inflAffix => true
-  | .derivAffix => true
-  | _ => false
+def MorphStatus.IsAffix (s : MorphStatus) : Prop :=
+  s = .inflAffix ∨ s = .derivAffix
+
+instance : DecidablePred MorphStatus.IsAffix :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Is this a clitic (simple or special)? -/
-def MorphStatus.isClitic : MorphStatus → Bool
-  | .simpleClitic => true
-  | .specialClitic => true
-  | _ => false
+def MorphStatus.IsClitic (s : MorphStatus) : Prop :=
+  s = .simpleClitic ∨ s = .specialClitic
+
+instance : DecidablePred MorphStatus.IsClitic :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 -- ============================================================================
 -- §4: Paradigm Cells
@@ -169,12 +166,18 @@ structure ParadigmCell (F : Type) where
   deriving Repr, BEq
 
 /-- Does this cell represent a paradigm gap? -/
-def ParadigmCell.isGap {F : Type} (c : ParadigmCell F) : Bool :=
-  c.form.isNone
+def ParadigmCell.isGap {F : Type} (c : ParadigmCell F) : Prop :=
+  c.form = none
+
+instance {F : Type} (c : ParadigmCell F) : Decidable c.isGap :=
+  inferInstanceAs (Decidable (c.form = none))
 
 /-- Does this cell show irregularity (suppletion or unpredictable allomorphy)? -/
-def ParadigmCell.isIrregular {F : Type} (c : ParadigmCell F) : Bool :=
-  !c.regular && c.form.isSome
+def ParadigmCell.isIrregular {F : Type} (c : ParadigmCell F) : Prop :=
+  c.regular = false ∧ c.form ≠ none
+
+instance {F : Type} (c : ParadigmCell F) : Decidable c.isIrregular :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================================
 -- §5: @cite{bybee-1985} Relevance Hierarchy

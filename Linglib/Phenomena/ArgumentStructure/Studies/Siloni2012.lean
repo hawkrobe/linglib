@@ -190,14 +190,18 @@ theorem properties_complementary :
     axiomatizes the same property: *meet* has `¬ SDR_univ agentOf meet`
     — it does not distribute over atomic agents, because the event is
     necessarily collective/atomic. -/
-def isSymmetricVerb : RecipFormation → Bool
-  | .lexical  => true
-  | .syntactic => false
+def isSymmetricVerb : RecipFormation → Prop
+  | .lexical  => True
+  | .syntactic => False
+
+instance : DecidablePred isSymmetricVerb := fun x => by
+  cases x <;> unfold isSymmetricVerb <;> infer_instance
 
 theorem symmetric_iff_singular :
     ∀ f : RecipFormation,
-      isSymmetricVerb f = (predictedProperties f).singularEvent := by
-  intro f; cases f <;> rfl
+      isSymmetricVerb f ↔ (predictedProperties f).singularEvent = true := by
+  intro f; cases f <;> simp [isSymmetricVerb, predictedProperties,
+    lexicalProperties, syntacticProperties]
 
 -- ════════════════════════════════════════════════════
 -- § 4. θ-Role Bundling (§4.1)
@@ -320,13 +324,13 @@ theorem syntactic_count :
 
 /-- All lexical-formation languages produce symmetric verbs. -/
 theorem lexical_are_symmetric :
-    (siloniSample.filter (·.formation == .lexical)).all
-      (fun l => isSymmetricVerb l.formation) := by native_decide
+    ∀ l ∈ siloniSample.filter (·.formation == .lexical),
+      isSymmetricVerb l.formation := by decide
 
 /-- All syntactic-formation languages produce non-symmetric verbs. -/
 theorem syntactic_not_symmetric :
-    (siloniSample.filter (·.formation == .syntactic)).all
-      (fun l => !isSymmetricVerb l.formation) := by native_decide
+    ∀ l ∈ siloniSample.filter (·.formation == .syntactic),
+      ¬ isSymmetricVerb l.formation := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Derivation: Formation Locus → "I" Reading (§3.5 → §4.3)

@@ -12,16 +12,18 @@ functions) to the `HasMaxInf` / `IsMaxInf` infrastructure and the
 
 ## Bridge Structure
 
-1. **atLeastMeaning ↔ atLeastDeg**: `atLeastMeaning` is the decidable
-   restriction of `atLeastDeg id`, proved via `atLeastMeaning_iff_atLeastDeg`.
+The named numeral meanings (`atLeastMeaning`, `moreThanMeaning`, ...) are
+`abbrev`s over `Core.Scale.{atLeastDeg, moreThanDeg, ...} id` in
+`Theories/Semantics/Numerals/Basic.lean` §2 — the connection holds by
+construction, no bridge lemma needed.
 
-2. **HasMaxInf for "at least"**: `atLeast_hasMaxInf` gives the existence
+1. **HasMaxInf for "at least"**: `atLeast_hasMaxInf` gives the existence
    of a maximally informative element for any "at least" degree property.
 
-3. **Discrete "more than"**: on ℕ, `moreThan_nat_hasMaxInf` shows
+2. **Discrete "more than"**: on ℕ, `moreThan_nat_hasMaxInf` shows
    "more than" also has max⊨, recovering the Fox & Hackl asymmetry.
 
-4. **MIP derives exact meaning**: `isMaxInf_atLeast_iff_eq` proves
+3. **MIP derives exact meaning**: `isMaxInf_atLeast_iff_eq` proves
    max⊨ of "at least n" at world w iff μ(w) = n.
 
 -/
@@ -32,21 +34,7 @@ open Core.Scale
 open Semantics.Numerals
 
 -- ════════════════════════════════════════════════════
--- § 1. Named numeral meanings ↔ Core.Scale Degree Properties
--- ════════════════════════════════════════════════════
-
-/-- `atLeastMeaning` (numeral "at least") matches `atLeastDeg id`. -/
-theorem atLeast_3_is_atLeastDeg :
-    ∀ n, atLeastMeaning 3 n ↔ atLeastDeg id 3 n :=
-  fun n => atLeastMeaning_iff_atLeastDeg 3 n
-
-/-- `moreThanMeaning` (numeral "more than") matches `moreThanDeg id`. -/
-theorem moreThan_3_is_moreThanDeg :
-    ∀ n, moreThanMeaning 3 n ↔ moreThanDeg id 3 n :=
-  fun n => moreThanMeaning_iff_moreThanDeg 3 n
-
--- ════════════════════════════════════════════════════
--- § 2. HasMaxInf for "at least" (any scale)
+-- § 1. HasMaxInf for "at least" (any scale)
 -- ════════════════════════════════════════════════════
 
 /-- "At least n" always has a maximally informative element.
@@ -61,7 +49,7 @@ theorem atLeast_has_maxInf_general (n : ℕ) :
   atLeast_hasMaxInf id n
 
 -- ════════════════════════════════════════════════════
--- § 3. Discrete "more than" recovers MaxInf (F&H asymmetry)
+-- § 2. Discrete "more than" recovers MaxInf (F&H asymmetry)
 -- ════════════════════════════════════════════════════
 
 /-- On ℕ, "more than 2" has a maximally informative element at world 3.
@@ -75,7 +63,7 @@ theorem moreThan_has_maxInf_nat :
     simp [moreThanDeg])
 
 -- ════════════════════════════════════════════════════
--- § 4. MIP Derives Exact Meaning
+-- § 3. MIP Derives Exact Meaning
 -- ════════════════════════════════════════════════════
 
 /-- max⊨ of "at least n" at world w ↔ the true value equals n.
@@ -86,7 +74,7 @@ theorem mip_derives_exact (m n : ℕ) :
   isMaxInf_atLeast_iff_eq id m n Function.surjective_id
 
 -- ════════════════════════════════════════════════════
--- § 5. Fox & Hackl Asymmetry Data
+-- § 4. Fox & Hackl Asymmetry Data
 -- ════════════════════════════════════════════════════
 
 /-- The @cite{fox-hackl-2006} implicature asymmetry prediction:

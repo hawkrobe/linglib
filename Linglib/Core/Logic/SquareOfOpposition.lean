@@ -156,14 +156,14 @@ theorem subaltern_from_contradictions {W : Type*} (sq : Square (W → Bool))
   exact hEI_w
 
 /-- From the outer/inner negation structure, the contradiction diagonals
-hold definitionally: A = ¬(outerNeg A) and innerNeg A = ¬(dual A). -/
-theorem outerNeg_contradiction {α : Type*} (q : GQ α) (R S : α → Bool) :
-    q R S = !(outerNeg q R S) := by
-  simp [outerNeg, Bool.not_not]
+hold definitionally: A ↔ ¬(outerNeg A) and innerNeg A ↔ ¬(dual A). -/
+theorem outerNeg_contradiction {α : Type*} (q : GQ α) (R S : α → Prop) :
+    q R S ↔ ¬ (outerNeg q R S) := by
+  simp [outerNeg, Classical.not_not]
 
-theorem innerNeg_dual_contradiction {α : Type*} (q : GQ α) (R S : α → Bool) :
-    innerNeg q R S = !(dualQ q R S) := by
-  simp [dualQ, outerNeg, innerNeg, Bool.not_not]
+theorem innerNeg_dual_contradiction {α : Type*} (q : GQ α) (R S : α → Prop) :
+    innerNeg q R S ↔ ¬ (dualQ q R S) := by
+  simp [dualQ, outerNeg, innerNeg, Classical.not_not]
 
 -- ============================================================================
 -- §5 The Propositional Operator Square

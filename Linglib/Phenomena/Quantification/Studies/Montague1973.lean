@@ -290,14 +290,18 @@ def toyPTQModel : PTQModel where
   Index := Unit  -- Single index for simplicity
 
 /-- Predicate: is a man -/
-def isMan : ToyEntity → Bool
-  | .m1 | .m2 => true
-  | _ => false
+def isMan : ToyEntity → Prop
+  | .m1 | .m2 => True
+  | _ => False
+
+instance : DecidablePred isMan := fun x => by unfold isMan; cases x <;> infer_instance
 
 /-- Predicate: is a woman -/
-def isWoman : ToyEntity → Bool
-  | .w1 | .w2 => true
-  | _ => false
+def isWoman : ToyEntity → Prop
+  | .w1 | .w2 => True
+  | _ => False
+
+instance : DecidablePred isWoman := fun x => by unfold isWoman; cases x <;> infer_instance
 
 /-- All entities -/
 def allEntities : List ToyEntity := [.m1, .m2, .w1, .w2]
@@ -328,8 +332,8 @@ Surface scope reading: ∀x[man(x) → ∃y[woman(y) ∧ love(x,y)]]
 "For every man, there exists a woman that he loves."
 -/
 def surfaceScopeTrue (love : ToyEntity → ToyEntity → Bool) : Bool :=
-  allEntities.filter isMan |>.all λ x =>
-    allEntities.filter isWoman |>.any λ y => love x y
+  allEntities.filter (fun x => decide (isMan x)) |>.all λ x =>
+    allEntities.filter (fun y => decide (isWoman y)) |>.any λ y => love x y
 
 /--
 Inverse scope reading: ∃y[woman(y) ∧ ∀x[man(x) → love(x,y)]]
@@ -337,8 +341,8 @@ Inverse scope reading: ∃y[woman(y) ∧ ∀x[man(x) → love(x,y)]]
 "There exists a woman such that every man loves her."
 -/
 def inverseScopeTrue (love : ToyEntity → ToyEntity → Bool) : Bool :=
-  allEntities.filter isWoman |>.any λ y =>
-    allEntities.filter isMan |>.all λ x => love x y
+  allEntities.filter (fun y => decide (isWoman y)) |>.any λ y =>
+    allEntities.filter (fun x => decide (isMan x)) |>.all λ x => love x y
 
 -- Section 9: Key Theorems
 

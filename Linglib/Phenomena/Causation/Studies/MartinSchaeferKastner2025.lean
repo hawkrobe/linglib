@@ -64,7 +64,7 @@ syncretism creates voice ambiguity that speakers must manage.
 namespace MartinSchaeferKastner2025
 
 open Minimalism (VoiceFlavor)
-open Semantics.Verb.EntailmentProfile (EntailmentProfile predictsUnaccusative)
+open Semantics.Verb.EntailmentProfile (EntailmentProfile PredictsUnaccusative)
 open Pragmatics.GriceanMaxims (MannerSubmaxim)
 open Fragments.French.Predicates
 
@@ -327,10 +327,10 @@ theorem choice_only_with_plusMinusSe (m : SeMarking) :
     This is expected: anticausative subjects are derived internal
     arguments. -/
 theorem cos_profile_unaccusative :
-    predictsUnaccusative cosSubjectProfile = true := by native_decide
+    PredictsUnaccusative cosSubjectProfile := by decide
 
 theorem motion_cos_profile_unaccusative :
-    predictsUnaccusative motionCosSubjectProfile = true := by native_decide
+    PredictsUnaccusative motionCosSubjectProfile := by decide
 
 -- ============================================================================
 -- § 9: Against the Causation Claim

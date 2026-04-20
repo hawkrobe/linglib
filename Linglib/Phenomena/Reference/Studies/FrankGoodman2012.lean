@@ -1,5 +1,5 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Pragmatics.GriceanMaxims
 import Linglib.Theories.Semantics.Composition.Modification
 import Mathlib.Analysis.SpecialFunctions.Log.Basic

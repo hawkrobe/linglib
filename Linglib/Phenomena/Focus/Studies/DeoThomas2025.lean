@@ -16,10 +16,9 @@ alternatives, explaining why it substitutes in only 2 of the 9 flavors.
 
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
-import Linglib.Core.Discourse.QUDStack
-import Linglib.Core.Discourse.Strategy
+import Linglib.Core.Issue.Basic
+import Linglib.Core.Issue.Granularity
+import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Phenomena.Focus.Exclusives
 import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
 import Linglib.Theories.Semantics.Degree.Granularity
@@ -27,7 +26,7 @@ import Linglib.Theories.Semantics.Degree.Granularity
 namespace DeoThomas2025
 
 open Phenomena.Focus.Exclusives
-open Discourse (Issue)
+open Core (Issue)
 
 -- ============================================================================
 -- A. Alternative Source
@@ -96,16 +95,14 @@ def answerable (ctx : DiscourseContext W) (q : Issue W) : Bool :=
     `q` is the widest answerable construal: it is answerable, it is in the
     construal set, and no strictly wider answerable construal exists.
 
-    Width is measured by `Issue.widerThan` ((32)), the paper's comparison of
-    question inquisitivity — explicitly weaker than G&S question entailment
+    Width is measured by `Core.Issue.widerThan` ((32)), the paper's comparison
+    of question inquisitivity — explicitly weaker than G&S question entailment
     (fn. 20), because granularity-based construals generally cannot be ordered
     by entailment strength. -/
-def isWidestAnswerable (ctx : DiscourseContext W) (q : Issue W)
-    (worlds : List W) : Prop :=
+def isWidestAnswerable (ctx : DiscourseContext W) (q : Issue W) : Prop :=
   q ∈ ctx.construals ∧
   answerable ctx q = true ∧
-  ∀ q' ∈ ctx.construals, answerable ctx q' = true →
-    q'.widerThan q worlds = true → False
+  ∀ q' ∈ ctx.construals, answerable ctx q' = true → ¬ q'.widerThan q
 
 /-- Classify a discourse context by WHY the widest answerable construal
     is optimal. Connects to `Phenomena.Focus.Exclusives.ContextType`.
@@ -236,144 +233,106 @@ theorem wxdy_incongruity_is_counterexpectational :
 
 The paper's central formal insight: finer granularity produces wider questions.
 At the partition level, "finer" is `QUD.refines` (every fine cell ⊆ some coarse
-cell). At the issue level, "wider" is `Issue.widerThan` (@cite{deo-thomas-2025}
-(32): same cover, no coarse answer ⊂ fine answer, some fine answer ⊂ coarse
-answer). The bridge: `toIssue` preserves this relationship. -/
+cell), equivalently `q.toSetoid ≤ q'.toSetoid` in mathlib's `Setoid` lattice.
+At the issue level, "wider" is `Core.Issue.widerThan` (@cite{deo-thomas-2025}
+(32): same `info`, no coarse answer ⊊ fine answer, some fine answer ⊊ coarse
+answer). The bridge: `toIssue := Core.Issue.fromSetoid ∘ QUD.toSetoid`
+preserves this relationship.
+
+The proof is an order-theoretic one-liner over `Setoid`: every alternative
+of `Core.Issue.fromSetoid r` is either `∅` or an equivalence class of `r`
+(`alt_fromSetoid_subset_classes`), and the q-class of `w₀` is contained in
+the q'-class of `w₀` by refinement, with `v₀` witnessing strict containment.
+This replaces a 100-line Bool/List proof that managed indices into
+`worlds : List W` and case-split on `properlyContains`. -/
 
 open Semantics.Questions.Inquisitive (toIssue)
 
-/-- Fine cell membership implies coarse cell membership when `q` refines `q'`.
-    Connects through an intermediate world `w₀` that belongs to both cells:
-    `q.sameAnswer s w = true → q'.sameAnswer r w = true` via the chain
-    w →_q s →_q w₀ →_{q'} r (symmetry + transitivity + refinement). -/
-private theorem cell_containment {W : Type*} (q q' : QUD W)
-    (s r w₀ : W) (hRefines : QUD.refines q q')
-    (hsw₀ : q.sameAnswer s w₀ = true) (hrw₀ : q'.sameAnswer r w₀ = true)
-    (w : W) (hsw : q.sameAnswer s w = true) : q'.sameAnswer r w = true := by
-  have hws : q.sameAnswer w s = true := by rw [q.symm w s]; exact hsw
-  have hww₀ : q.sameAnswer w w₀ = true := q.trans w s w₀ hws hsw₀
-  have hw₀r : q'.sameAnswer w₀ r = true := by rw [q'.symm w₀ r]; exact hrw₀
-  have hwr : q'.sameAnswer w r = true :=
-    q'.trans w w₀ r (hRefines w w₀ hww₀) hw₀r
-  rw [q'.symm r w]; exact hwr
-
 /-- Strict partition refinement implies issue width.
 
-    If `q` strictly refines `q'` (finer partition), then converting both to
-    issues via `toIssue` yields `q`-issue wider than `q'`-issue.
+    If `q` (strictly) refines `q'` (`q` is the finer partition), then
+    `toIssue q` is wider than `toIssue q'` as `Core.Issue`s.
 
-    The strictness witnesses `w₀, v₀` must be in `worlds`: they share a
-    coarse cell (`q'.sameAnswer w₀ v₀ = true`) but not a fine cell
-    (`q.sameAnswer w₀ v₀ = false`), providing the element that separates
-    a coarse cell from the fine cell it properly contains.
+    The strictness witnesses `w₀, v₀ : W` share a coarse cell
+    (`q'.sameAnswer w₀ v₀ = true`) but not a fine cell
+    (`q.sameAnswer w₀ v₀ = false`); they witness condition (c).
 
-    The proof establishes the three conditions of width (32):
-    - (a) Same cover: both partitions cover `worlds` identically
-      (`QUD.toCells_covers`)
-    - (b) No coarse answer ⊂ fine answer: if coarse ⊆ fine, then fine ⊆ coarse
-      too (by `cell_containment`), so proper containment is impossible
-    - (c) Some fine answer ⊂ coarse answer: the fine cell of `w₀` is properly
-      contained in its coarse cell, witnessed by `v₀` -/
+    The proof establishes the three conditions of `Core.Issue.widerThan`:
+    - (a) Same `info`: both `fromSetoid`-derived issues have `info = univ`.
+    - (b) No q'-alternative is properly contained in any q-alternative:
+      alternatives are classes (or `∅`); under refinement, classes only
+      widen as we go from the finer to the coarser setoid, so the
+      reverse containment is impossible.
+    - (c) Some q-alternative properly contained in some q'-alternative:
+      witnessed by the q-class and q'-class of `w₀`, with `v₀` showing
+      the inclusion is strict. -/
 theorem refinement_implies_wider {W : Type*}
-    (q q' : QUD W) (worlds : List W)
+    (q q' : QUD W)
     (hRefines : QUD.refines q q')
-    (w₀ v₀ : W) (hw₀ : w₀ ∈ worlds) (hv₀ : v₀ ∈ worlds)
+    (w₀ v₀ : W)
     (hCoarse : q'.sameAnswer w₀ v₀ = true)
     (hFine : q.sameAnswer w₀ v₀ = false) :
-    (toIssue q worlds).widerThan (toIssue q' worlds) worlds = true := by
-  simp only [Semantics.Questions.Inquisitive.toIssue,
-             Semantics.Questions.Inquisitive.issueOfPartition,
-             Discourse.Issue.widerThan, Bool.and_eq_true]
-  refine ⟨⟨?_, ?_⟩, ?_⟩
-  -- (a) Same cover: every w ∈ worlds is in some cell of each partition
-  · rw [List.all_eq_true]
-    intro w hw
-    simp only [Discourse.Issue.infoContent]
-    obtain ⟨c₁, hc₁, h₁⟩ := QUD.toCells_covers q worlds w hw
-    obtain ⟨c₂, hc₂, h₂⟩ := QUD.toCells_covers q' worlds w hw
-    have h1 : (q.toCells worlds).any (fun alt => alt w) = true := by
-      rw [List.any_eq_true]; exact ⟨c₁, hc₁, h₁⟩
-    have h2 : (q'.toCells worlds).any (fun alt => alt w) = true := by
-      rw [List.any_eq_true]; exact ⟨c₂, hc₂, h₂⟩
-    simp [h1, h2]
-  -- (b) No coarse cell properly contained in any fine cell
-  · rw [List.all_eq_true]
-    intro p2 hp2
-    obtain ⟨r, hr, hr_eq⟩ := QUD.toCells_exists_rep q' worlds p2 hp2
-    -- Case split: if any fine cell properly contains p2, derive contradiction
-    by_cases hany : (q.toCells worlds).any
-        (fun p1 => Discourse.properlyContains p1 p2 worlds) = true
-    · exfalso
-      obtain ⟨p1, hp1, hpc⟩ := List.any_eq_true.mp hany
-      obtain ⟨s, _, hs_eq⟩ := QUD.toCells_exists_rep q worlds p1 hp1
-      simp only [Discourse.properlyContains, Bool.and_eq_true,
-                 List.all_eq_true, List.any_eq_true] at hpc
-      obtain ⟨hsub, w₁, hw₁, hdiff⟩ := hpc
-      -- p2 r = true (refl), so from p2 ⊆ p1, p1 r = true
-      have hp2r : p2 r = true := by rw [hr_eq]; exact q'.refl r
-      have hsub_r := hsub r hr
-      rw [hp2r] at hsub_r; simp at hsub_r
-      -- q.sameAnswer s r = true
-      have hsr : q.sameAnswer s r = true := by rw [← hs_eq]; exact hsub_r
-      -- p1 w₁ = true and !p2 w₁ = true (from the difference witness)
-      have hp1w₁ : p1 w₁ = true := by
-        revert hdiff; cases p1 w₁ <;> simp
-      have hp2w₁_neg : !p2 w₁ = true := by
-        revert hdiff; cases p1 w₁ <;> cases p2 w₁ <;> simp
-      have hsw₁ : q.sameAnswer s w₁ = true := by rw [← hs_eq]; exact hp1w₁
-      -- By cell_containment, p1 ⊆ p2 — so p2 w₁ = true, contradicting hp2w₁_neg
-      have : q'.sameAnswer r w₁ = true :=
-        cell_containment q q' s r r hRefines hsr (q'.refl r) w₁ hsw₁
-      have hp2w₁ : p2 w₁ = true := by rw [hr_eq]; exact this
-      rw [hp2w₁] at hp2w₁_neg; simp at hp2w₁_neg
-    · -- The any is false, so !false = true
-      cases h : (q.toCells worlds).any
-          (fun p1 => Discourse.properlyContains p1 p2 worlds) <;> simp_all
-  -- (c) Some fine cell properly contained in coarse cell
-  · obtain ⟨cf, hcf, hcf_w₀⟩ := QUD.toCells_covers q worlds w₀ hw₀
-    obtain ⟨cc, hcc, hcc_w₀⟩ := QUD.toCells_covers q' worlds w₀ hw₀
-    obtain ⟨sf, _, hsf_eq⟩ := QUD.toCells_exists_rep q worlds cf hcf
-    obtain ⟨rc, _, hrc_eq⟩ := QUD.toCells_exists_rep q' worlds cc hcc
-    have hsfw₀ : q.sameAnswer sf w₀ = true := by rw [← hsf_eq]; exact hcf_w₀
-    have hrcw₀ : q'.sameAnswer rc w₀ = true := by rw [← hrc_eq]; exact hcc_w₀
-    rw [List.any_eq_true]
-    refine ⟨cf, hcf, List.any_eq_true.mpr ⟨cc, hcc, ?_⟩⟩
-    -- properlyContains cc cf worlds = true (coarse properly contains fine)
-    simp only [Discourse.properlyContains, Bool.and_eq_true]
-    constructor
-    · -- cf ⊆ cc over worlds
-      rw [List.all_eq_true]; intro w hw
-      by_cases hcfw : cf w = true
-      · -- cf w = true → cc w = true (by cell_containment through w₀)
-        have hsfw : q.sameAnswer sf w = true := by rw [← hsf_eq]; exact hcfw
-        have hccw : cc w = true := by
-          rw [hrc_eq]; exact cell_containment q q' sf rc w₀ hRefines hsfw₀ hrcw₀ w hsfw
-        simp [hcfw, hccw]
-      · -- cf w ≠ true → cf w = false
-        have hcfw_false : cf w = false := by
-          cases h : cf w with
-          | true => exfalso; exact absurd h hcfw
-          | false => rfl
-        simp [hcfw_false]
-    · -- cc \ cf ≠ ∅: v₀ is in cc but not cf
-      rw [List.any_eq_true]
-      refine ⟨v₀, hv₀, ?_⟩
-      simp only [Bool.and_eq_true]
-      constructor
-      · -- cc v₀ = true (coarse cell of w₀ contains v₀, since w₀ and v₀ share a coarse cell)
-        rw [hrc_eq]; exact q'.trans rc w₀ v₀ hrcw₀ hCoarse
-      · -- !cf v₀ = true (v₀ is NOT in the fine cell of w₀)
-        have hsfv₀ : q.sameAnswer sf v₀ = false := by
-          by_contra h
-          have hsfv₀_true : q.sameAnswer sf v₀ = true := by
-            cases hval : q.sameAnswer sf v₀ with
-            | true => rfl
-            | false => exfalso; exact absurd hval h
-          have hw₀sf : q.sameAnswer w₀ sf = true := by rw [q.symm w₀ sf]; exact hsfw₀
-          have : q.sameAnswer w₀ v₀ = true := q.trans w₀ sf v₀ hw₀sf hsfv₀_true
-          rw [this] at hFine; exact absurd hFine (by decide)
-        have : cf v₀ = false := by rw [hsf_eq]; exact hsfv₀
-        simp [this]
+    (toIssue q).widerThan (toIssue q') := by
+  -- Refinement reads as `q.toSetoid ≤ q'.toSetoid` in mathlib's lattice
+  have hle : ∀ {x y : W}, q.toSetoid x y → q'.toSetoid x y :=
+    fun {x y} hxy => hRefines x y hxy
+  -- The q-class and q'-class of w₀
+  let C₁ : Set W := {x | q.toSetoid x w₀}
+  let C₂ : Set W := {x | q'.toSetoid x w₀}
+  have hC₁_class : C₁ ∈ q.toSetoid.classes := Setoid.mem_classes q.toSetoid w₀
+  have hC₂_class : C₂ ∈ q'.toSetoid.classes := Setoid.mem_classes q'.toSetoid w₀
+  have hC₁_alt : C₁ ∈ Core.Issue.alt (Core.Issue.fromSetoid q.toSetoid) :=
+    Core.Issue.class_mem_alt_fromSetoid _ hC₁_class
+  have hC₂_alt : C₂ ∈ Core.Issue.alt (Core.Issue.fromSetoid q'.toSetoid) :=
+    Core.Issue.class_mem_alt_fromSetoid _ hC₂_class
+  refine ⟨?_, ?_, ?_⟩
+  -- (a) Same info: both reduce to Set.univ
+  · simp only [toIssue, Core.Issue.info_fromSetoid]
+  -- (b) No q'-alternative properly contained in any q-alternative
+  · intro p₂ hp₂ p₁ hp₁ hssub
+    rcases Core.Issue.alt_fromSetoid_subset_classes _ hp₂ with hp₂_empty | hp₂_class
+    · -- p₂ = ∅ but the q'-class of w₀ contains w₀, so ∅ ∉ alt — contradiction
+      have hC₂_props : C₂ ∈ (Core.Issue.fromSetoid q'.toSetoid).props :=
+        Or.inr ⟨C₂, hC₂_class, subset_rfl⟩
+      have hp_sub : p₂ ⊆ C₂ := by rw [hp₂_empty]; exact Set.empty_subset _
+      have heq : p₂ = C₂ := hp₂.2 C₂ hC₂_props hp_sub
+      have hw₀_in : w₀ ∈ p₂ := by rw [heq]; exact Setoid.refl' q'.toSetoid w₀
+      rw [hp₂_empty] at hw₀_in
+      exact hw₀_in.elim
+    · rcases Core.Issue.alt_fromSetoid_subset_classes _ hp₁ with hp₁_empty | hp₁_class
+      · -- p₁ = ∅, so p₂ ⊊ ∅: p₂ ⊆ ∅ AND ¬ ∅ ⊆ p₂. The latter is vacuously false.
+        rw [hp₁_empty] at hssub
+        exact hssub.2 (Set.empty_subset _)
+      · -- Both classes; refinement forces p₁ ⊆ p₂, contradicting p₂ ⊊ p₁
+        obtain ⟨w, hp₂_eq⟩ := hp₂_class
+        obtain ⟨v, hp₁_eq⟩ := hp₁_class
+        -- p₂ = {x | q'.toSetoid x w}, p₁ = {x | q.toSetoid x v}
+        have hsub : p₁ ⊆ p₂ := by
+          rw [hp₁_eq, hp₂_eq]
+          intro x (hxv : q.toSetoid x v)
+          have hxv' : q'.toSetoid x v := hle hxv
+          -- w ∈ p₂ (refl), so w ∈ p₁ (by ⊆); thus q.toSetoid w v
+          have hw_in_p₂ : w ∈ p₂ := by
+            rw [hp₂_eq]; exact Setoid.refl' q'.toSetoid w
+          have hw_in_p₁ : w ∈ p₁ := hssub.1 hw_in_p₂
+          have hwv_q : q.toSetoid w v := by rw [hp₁_eq] at hw_in_p₁; exact hw_in_p₁
+          have hwv_q' : q'.toSetoid w v := hle hwv_q
+          have hvw : q'.toSetoid v w := Setoid.symm' q'.toSetoid hwv_q'
+          exact Setoid.trans' q'.toSetoid hxv' hvw
+        exact hssub.2 hsub
+  -- (c) C₁ ⊊ C₂: the q-class of w₀ is properly contained in the q'-class
+  · refine ⟨C₁, hC₁_alt, C₂, hC₂_alt, ?_, ?_⟩
+    · intro x (hx : q.toSetoid x w₀); exact hle hx
+    · intro hCsub
+      -- v₀ ∈ C₂ (from hCoarse + symm) but v₀ ∉ C₁ (from hFine)
+      have hv₀_C₂ : v₀ ∈ C₂ := by
+        change q'.toSetoid v₀ w₀
+        exact Setoid.symm' q'.toSetoid hCoarse
+      have hv₀_C₁ : v₀ ∈ C₁ := hCsub hv₀_C₂
+      have hv₀_q : q.sameAnswer v₀ w₀ = true := hv₀_C₁
+      rw [q.symm v₀ w₀] at hv₀_q
+      rw [hv₀_q] at hFine
+      exact absurd hFine (by decide)
 
 -- ============================================================================
 -- G. Granularity–Question Composition (§3.1.2 + §3.2)
@@ -403,15 +362,13 @@ open Semantics.Degree.Granularity (granQUD finer_granularity_refines)
     scale satisfies the width relation when grain widths are divisible. -/
 theorem finer_granularity_implies_wider (n ε₁ ε₂ : Nat)
     (hdvd : ε₁ ∣ ε₂)
-    (worlds : List (Fin n))
-    (w₀ v₀ : Fin n) (hw₀ : w₀ ∈ worlds) (hv₀ : v₀ ∈ worlds)
+    (w₀ v₀ : Fin n)
     (hCoarse : (granQUD n ε₂).sameAnswer w₀ v₀ = true)
     (hFine : (granQUD n ε₁).sameAnswer w₀ v₀ = false) :
-    (toIssue (granQUD n ε₁) worlds).widerThan
-      (toIssue (granQUD n ε₂) worlds) worlds = true :=
-  refinement_implies_wider _ _ worlds
+    (toIssue (granQUD n ε₁)).widerThan (toIssue (granQUD n ε₂)) :=
+  refinement_implies_wider _ _
     (finer_granularity_refines n ε₁ ε₂ hdvd)
-    w₀ v₀ hw₀ hv₀ hCoarse hFine
+    w₀ v₀ hCoarse hFine
 
 -- ============================================================================
 -- H. Concrete Verification: Figure 1
@@ -450,12 +407,10 @@ theorem fig1_strict_refinement :
     Witnessed by worlds 0 and 2: they share a coarse cell (0/4 = 2/4 = 0)
     but not a fine cell (0/2 = 0 ≠ 2/2 = 1). -/
 theorem fig1_finer_is_wider :
-    (toIssue fineQ fig1Worlds).widerThan
-      (toIssue coarseQ fig1Worlds) fig1Worlds = true := by
+    (toIssue fineQ).widerThan (toIssue coarseQ) := by
   rw [coarseQ_is_granQUD, fineQ_is_granQUD]
   exact finer_granularity_implies_wider 8 2 4 ⟨2, rfl⟩
-    fig1Worlds 0 2
-    (by simp [fig1Worlds]) (by simp [fig1Worlds])
+    0 2
     (by native_decide) (by native_decide)
 
 end DeoThomas2025

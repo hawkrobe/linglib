@@ -1,6 +1,6 @@
 import Linglib.Core.Negation
-import Linglib.Core.Semantics.Proposition
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
+import Mathlib.Order.Monotone.Basic
 
 /-!
 # Semantic Negation: Unified Foundations
@@ -23,8 +23,8 @@ coherent architecture with three layers:
 
 - `Core.Negation` — framework-agnostic classification types (ENType, ENStrength,
   PolarityClass, PolarityLicensing) with Mathlib lattice instances
-- `Core.Semantics.Proposition` — `pnot` (both `Prop'` and `W → Bool`), involution,
-  antitonicity
+- `Mathlib.Data.Set.Basic` — set complement (`pᶜ`) replaces the old
+  `Core.Semantics.Proposition.pnot`
 - `Core.Logic.NaturalLogic` — `DEStrength` (weak/antiAdditive/antiMorphic),
   `strengthSufficient`
 - `Theories.Semantics.Entailment.Polarity` — `IsDE = Antitone`,
@@ -38,11 +38,13 @@ namespace Semantics.Negation
 open Core (ENType ENStrength PolarityLicensing PolarityClass
            weakENProfile strongENProfile standardNegProfile)
 open Core.NaturalLogic (DEStrength strengthSufficient)
-open Core.Proposition.Decidable (pnot)
 open Semantics.Entailment (World)
 open Semantics.Entailment.Polarity (IsDE IsUE pnot_isDownwardEntailing)
 open Semantics.Entailment.AntiAdditivity (IsAntiAdditive IsAntiMorphic
   pnot_isAntiAdditive pnot_isAntiMorphic)
+
+/-- Pointwise Bool negation on `W → Bool`. -/
+private def boolPnot (W : Type*) : (W → Bool) → (W → Bool) := fun p w => !p w
 
 -- ════════════════════════════════════════════════════
 -- § 1. NegOp — semantic negation operator
@@ -56,7 +58,12 @@ open Semantics.Entailment.AntiAdditivity (IsAntiAdditive IsAntiMorphic
 
     Standard sentential negation (`pnot`) satisfies both. Expletive
     negation that has lost its scope may fail antitonicity — it is
-    then no longer a `NegOp` in this sense. -/
+    then no longer a `NegOp` in this sense.
+
+    TODO: NegOp should operate on `Set W` not `W → Bool` — separate cleanup
+    pass per the Bool→Prop migration. The whole structure (and `boolPnot`,
+    `standardNeg`, `isAntiAdditive`, `isAntiMorphic`) lives in the Bool layer
+    and is out of scope for the current `Prop'` → `Set` migration. -/
 structure NegOp (W : Type*) where
   /-- The negation function on decidable propositions. -/
   op : (W → Bool) → (W → Bool)
@@ -70,9 +77,16 @@ structure NegOp (W : Type*) where
     It satisfies involution (`pnot_pnot`), antitonicity
     (`pnot_antitone`), and additionally anti-morphism (De Morgan). -/
 def standardNeg (W : Type*) : NegOp W where
-  op := pnot W
-  involutive := Core.Proposition.Decidable.pnot_pnot
-  antitone := Core.Proposition.Decidable.pnot_antitone
+  op := boolPnot W
+  involutive := by
+    intro p
+    funext w
+    simp [boolPnot]
+  antitone := by
+    intro p q hpq w
+    simp only [boolPnot]
+    have := hpq w
+    cases hpw : p w <;> cases hqw : q w <;> simp_all
 
 -- ── Additional semantic properties ──
 
@@ -80,7 +94,7 @@ def standardNeg (W : Type*) : NegOp W where
     `¬(A ∨ B) = ¬A ∧ ¬B` (De Morgan, part 1).
     Stated directly on the `W → Bool`-typed operator. -/
 def NegOp.isAntiAdditive (n : NegOp World) : Prop :=
-  ∀ p q : (World → Bool), ∀ w, n.op (Core.Proposition.Decidable.por World p q) w =
+  ∀ p q : (World → Bool), ∀ w, n.op (fun w => p w || q w) w =
     (n.op p w && n.op q w)
 
 /-- A NegOp is anti-morphic if it is anti-additive AND distributes ∧ to ∨:
@@ -89,23 +103,21 @@ def NegOp.isAntiAdditive (n : NegOp World) : Prop :=
     of negation in the entailment hierarchy. -/
 def NegOp.isAntiMorphic (n : NegOp World) : Prop :=
   n.isAntiAdditive ∧
-  ∀ p q : (World → Bool), ∀ w, n.op (Core.Proposition.Decidable.pand World p q) w =
+  ∀ p q : (World → Bool), ∀ w, n.op (fun w => p w && q w) w =
     (n.op p w || n.op q w)
 
 /-- Standard negation is anti-additive (De Morgan part 1). -/
 theorem standardNeg_isAntiAdditive :
     (standardNeg World).isAntiAdditive := by
   intro p q w
-  simp [standardNeg, Core.Proposition.Decidable.pnot,
-        Core.Proposition.Decidable.por, Bool.not_or]
+  simp [standardNeg, boolPnot, Bool.not_or]
 
 /-- Standard negation is anti-morphic (full De Morgan). -/
 theorem standardNeg_isAntiMorphic :
     (standardNeg World).isAntiMorphic := by
   refine ⟨standardNeg_isAntiAdditive, ?_⟩
   intro p q w
-  simp [standardNeg, Core.Proposition.Decidable.pnot,
-        Core.Proposition.Decidable.pand, Bool.not_and]
+  simp [standardNeg, boolPnot, Bool.not_and]
 
 -- ════════════════════════════════════════════════════
 -- § 2. DEStrength → PolarityLicensing bridge

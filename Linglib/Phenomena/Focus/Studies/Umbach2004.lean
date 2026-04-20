@@ -2,8 +2,8 @@ import Linglib.Core.InformationStructure
 import Linglib.Core.Discourse.Coherence
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
+import Linglib.Core.Issue.Answerhood
+import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Theories.Semantics.Focus.Interpretation
@@ -48,7 +48,7 @@ three levels at which "contrast" appears:
 ## Connection to existing formalization
 
 - Focus alternatives & FIP: `Semantics.FocusInterpretation` (@cite{rooth-1992})
-- QUD / implicit questions: `Discourse.Issue`, `Discourse.partiallyAnswers` (@cite{roberts-2012})
+- QUD / implicit questions: `Core.Issue`, `Core.Issue.isPartialAnswer` (@cite{roberts-2012})
 - DTS "but": `DTS.But` (@cite{merin-1999})
 - Coherence relations: `Core.Discourse.Coherence` (@cite{kehler-2002})
 - Focus particles: `Fragments.English.FocusParticles`
@@ -319,34 +319,43 @@ theorem room_dishes_independent :
 /-! @cite{umbach-2004} §3.1 formulates confirm+deny in terms of implicit
 questions (QUDs): "A but B" responds to an implicit conjunctive question
 "Did X do A, and did X do B?" where one sub-answer confirms and the other
-denies. This connects to `Discourse.Issue.polar` from @cite{roberts-2012}. -/
+denies. This connects to `Core.Issue.fromSetoid` (@cite{roberts-2012}):
+the implicit conjunctive question is the partition by joint
+(room, dishes) values, and confirm+deny picks one cell. -/
+
+/-- Equivalence: two worlds agree on both `cleanedRoom` and `washedDishes`.
+    The four cells of this partition are the four combinations of yes/no
+    answers to the conjunctive question. -/
+def roomDishesEquiv : Setoid CDWorld :=
+  Setoid.ker (fun w => (cleanedRoom w, washedDishes w))
 
 /-- The implicit conjunctive question behind a *but*-sentence:
     "Did John clean his room? And did he wash the dishes?"
-    Each sub-question is a polar question in the sense of
-    @cite{roberts-2012}. -/
-def roomDishesQUD : Discourse.Issue CDWorld :=
-  { alternatives :=
-    [ fun w => cleanedRoom w && washedDishes w     -- yes to both
-    , fun w => cleanedRoom w && !washedDishes w    -- room yes, dishes no
-    , fun w => !cleanedRoom w && washedDishes w    -- room no, dishes yes
-    , fun w => !cleanedRoom w && !washedDishes w ] -- no to both
-  }
+    Built as the inquisitive content of the (room, dishes) partition. -/
+def roomDishesQUD : Core.Issue CDWorld :=
+  Core.Issue.fromSetoid roomDishesEquiv
 
 /-- The implicit question behind CONTRAST is genuinely inquisitive:
-    it has multiple alternatives (all four combinations). -/
-theorem roomDishes_inquisitive :
-    roomDishesQUD.isInquisitive = true := rfl
+    it has multiple alternatives (all four combinations are nontrivial). -/
+theorem roomDishes_inquisitive : roomDishesQUD.isInquisitive :=
+  Core.Issue.isInquisitive_fromSetoid_of_two_classes roomDishesEquiv
+    .roomOnly .dishesOnly (fun h => by
+      have : (true, false) = (false, true) := h
+      exact absurd this (by decide))
+
+/-- The "room yes, dishes no" cell — the equivalence class of `.roomOnly`
+    under `roomDishesEquiv`. -/
+def roomYesDishesNo : Set CDWorld := {x | roomDishesEquiv x .roomOnly}
 
 /-- The "room yes, dishes no" alternative partially answers the QUD:
     the confirm+deny pattern corresponds to one cell of the implicit
     conjunctive question. -/
 theorem confirm_deny_is_partial_answer :
-    Discourse.partiallyAnswers
-      (fun w => cleanedRoom w && !washedDishes w)
-      roomDishesQUD
-      [CDWorld.roomOnly, CDWorld.dishesOnly, CDWorld.both, CDWorld.neither] = true := by
-  native_decide
+    Core.Issue.isPartialAnswer roomDishesQUD roomYesDishesNo :=
+  ⟨roomYesDishesNo,
+   Core.Issue.class_mem_alt_fromSetoid roomDishesEquiv
+     (Setoid.mem_classes roomDishesEquiv .roomOnly),
+   Or.inl subset_rfl⟩
 
 -- ─────────────────────────────────────────────────────────────────────
 -- §5c  Simple vs double contrast (@cite{umbach-2004} §3.1)

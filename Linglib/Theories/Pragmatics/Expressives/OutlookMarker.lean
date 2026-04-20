@@ -118,9 +118,9 @@ For an outlook marker OM applied to prejacent p:
 - `stance`: the speaker's evaluative orientation toward Q vis-à-vis p -/
 structure OutlookMeaning (W : Type*) where
   /-- At-issue content: same as the prejacent without the marker. -/
-  prejacent : W → Bool
+  prejacent : W → Prop
   /-- Presuppositional component: a salient counterstance exists in the discourse. -/
-  counterstance : W → Bool
+  counterstance : W → Prop
   /-- The type of evaluative stance expressed. -/
   stance : StanceType
 namespace OutlookMeaning

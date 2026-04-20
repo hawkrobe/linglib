@@ -1,6 +1,6 @@
 import Linglib.Core.Distributions
 import Linglib.Core.Divergence
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
 
 /-!
@@ -227,7 +227,7 @@ theorem probably_subset_possibly :
 
     posteriorProb(access, obs, φ) = Σ_{s∈⟦φ⟧} P_rat.bel(s | obs, access) -/
 def posteriorProb (access obs : ℕ) (φ : UrnState → Bool) : ℚ :=
-  ((Finset.univ : Finset UrnState).filter φ).sum (speakerBeliefQ access obs)
+  ((Finset.univ : Finset UrnState).filter (φ · = true)).sum (speakerBeliefQ access obs)
 
 /-- The three inner expressions from Experiment 3 (Eq. 22).
 

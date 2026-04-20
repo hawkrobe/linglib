@@ -167,7 +167,7 @@ public component of a participant's conversational state.
 
 The type parameters make content types explicit:
 - `Participant`: type of participant identifiers (e.g., `String`, `Fin 2`)
-- `Fact`: type of accumulated facts (e.g., `Prop' W` for typed CG access)
+- `Fact`: type of accumulated facts (e.g., `Set W` for typed CG access)
 - `QContent`: type of QUD entries (e.g., partition-based `QUD W`) -/
 structure DGB (Participant Fact QContent : Type) where
   /-- Current speaker (@cite{ginzburg-2012} ex. 100) -/
@@ -591,25 +591,22 @@ theorem existential_gen_weakens (sk : UttSkeleton) (idx : String) :
 -- ════════════════════════════════════════════════════
 
 open Core.CommonGround in
-open Core.Proposition (Prop') in
-/-- DGB with `Prop' W` facts projects to a context set.
+/-- DGB with `Set W` facts projects to a context set.
     @cite{ginzburg-2012} Ch. 4: the DGB's FACTS field IS the common ground. -/
 instance {W Participant QContent : Type} :
-    HasContextSet (DGB Participant (Prop' W) QContent) W where
+    HasContextSet (DGB Participant (Set W) QContent) W where
   toContextSet dgb := λ w => ∀ p ∈ dgb.facts, p w
 
 open Core.CommonGround in
-open Core.Proposition (Prop') in
-/-- TIS with `Prop' W` facts inherits the DGB's context set. -/
+/-- TIS with `Set W` facts inherits the DGB's context set. -/
 instance {W Participant QContent : Type} :
-    HasContextSet (TIS Participant (Prop' W) QContent) W where
+    HasContextSet (TIS Participant (Set W) QContent) W where
   toContextSet tis := λ w => ∀ p ∈ tis.dgb.facts, p w
 
 open Core.CommonGround in
-open Core.Proposition (Prop') in
 /-- TIS context set is extracted from the DGB. -/
 theorem tis_contextSet_eq_dgb {W Participant QContent : Type}
-    (tis : TIS Participant (Prop' W) QContent) :
+    (tis : TIS Participant (Set W) QContent) :
     HasContextSet.toContextSet tis = HasContextSet.toContextSet tis.dgb := rfl
 
 -- ════════════════════════════════════════════════════

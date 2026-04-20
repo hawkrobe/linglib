@@ -342,6 +342,6 @@ theorem kaq_both_promote_agent :
 /-- Kaqchikel is NOT an active/passive system: it lacks a
     patient-promoting voice. -/
 theorem kaq_not_active_passive :
-    kaqVoiceSystem.isActivePassive = false := rfl
+    ¬ kaqVoiceSystem.isActivePassive := by decide
 
 end Fragments.Mayan.Kaqchikel

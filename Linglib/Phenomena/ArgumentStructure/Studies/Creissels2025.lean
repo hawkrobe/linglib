@@ -165,7 +165,7 @@ theorem english_is_asymmetrical :
     englishVoiceSystem.symmetry = .asymmetrical := rfl
 
 theorem english_is_active_passive :
-    englishVoiceSystem.isActivePassive = true := rfl
+    englishVoiceSystem.isActivePassive := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Passivization vs Decausativization (§8.3.1.2 vs §8.3.2.1)

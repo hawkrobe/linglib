@@ -305,10 +305,10 @@ theorem chuj_voice_count :
 
 /-- Chuj is NOT a simple active/passive: it has 4 voices, not 2. -/
 theorem chuj_not_simple_active_passive :
-    chujVoiceSystem.isActivePassive = false := rfl
+    ¬ chujVoiceSystem.isActivePassive := by decide
 
 theorem chuj_no_oblique_pivots :
-    chujVoiceSystem.distinguishesObliques = false := rfl
+    ¬ chujVoiceSystem.distinguishesObliques := by decide
 
 -- ============================================================================
 -- § 10: Root Lexicon (Table (5), p. 39)

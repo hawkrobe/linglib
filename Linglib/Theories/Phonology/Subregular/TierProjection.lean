@@ -12,9 +12,9 @@ import Linglib.Core.Computability.Subregular.Tier
 The autosegmental tier formalism (`Core.Tier`, the Kleisli morphism
 `α → Option β` lifted via `List.filterMap`) and the subregular TSL
 formalism (`Core.Computability.Subregular.tierProject`) share a single
-underlying primitive: as of the 0.230.x consolidation, `tierProject` is
-literally `Core.Tier.apply (Core.Tier.byClass (decide ∘ T))`, so the
-two reduce to one another by definition.
+underlying primitive: `tierProject T` is literally
+`Core.Tier.apply (Core.Tier.byClass T)`, so the two reduce to one
+another by definition.
 
 This file records the resulting `rfl` identity and provides a thin
 adapter for building a TSL_k grammar directly from a `Bool`-valued
@@ -37,18 +37,20 @@ open Core Core.Computability.Subregular
 
 variable {α : Type*}
 
-/-- **Bridge identity** (definitional): `tierProject` is by definition
-`Tier.apply (Tier.byClass (decide ∘ T))`. After the 0.230.x
-consolidation onto `Core.Tier`, this is `rfl`. -/
+/-- **Bridge identity** (definitional): `tierProject T` is by definition
+`Tier.apply (Tier.byClass T)`. After the 0.230.x consolidation onto
+`Core.Tier` and the subsequent `Tier.byClass` migration to
+`Prop`+`Decidable`, this is `rfl`. -/
 theorem apply_byClass_eq_tierProject (T : α → Prop) [DecidablePred T]
     (xs : List α) :
-    Tier.apply (Tier.byClass (fun x => decide (T x))) xs =
-      tierProject T xs := rfl
+    Tier.apply (Tier.byClass T) xs = tierProject T xs := rfl
 
 /-- **Adapter**: build a TSL_k grammar from a class-membership autosegmental
-tier (a `Bool` predicate). The TSL tier predicate is `(p · = true)`,
-giving the TSL projection that matches `Tier.apply (Tier.byClass p)`
-on every input. -/
+tier given as a `Bool` predicate. The TSL tier predicate is `(p · = true)`,
+giving the TSL projection that matches `Tier.apply (Tier.byClass p)` on
+every input. Provided as a convenience for callers whose class predicates
+arise from `FeatureSpec`-style Bool lookups; native `Prop`-valued
+predicates can construct `TSLGrammar` records directly. -/
 def TSLGrammar.ofByClass (k : ℕ) (p : α → Bool)
     (permitted : Set (Augmented α)) :
     TSLGrammar k α where
@@ -59,8 +61,8 @@ def TSLGrammar.ofByClass (k : ℕ) (p : α → Bool)
 `Tier.apply (Tier.byClass p)`. -/
 @[simp] theorem tierProject_ofByClass (k : ℕ) (p : α → Bool) (xs : List α) :
     tierProject (TSLGrammar.ofByClass (α := α) k p ∅).tier xs =
-      Tier.apply (Tier.byClass p) xs := by
-  rw [tierProject_eq_filter, Tier.apply_byClass]
+      xs.filter p := by
+  rw [tierProject_eq_filter]
   congr 1
   funext x
   show decide (p x = true) = p x

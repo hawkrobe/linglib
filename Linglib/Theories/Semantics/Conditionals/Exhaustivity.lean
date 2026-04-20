@@ -1,8 +1,6 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Theories.Semantics.Exhaustification.Operators
@@ -32,8 +30,6 @@ triggers exhaustification over alternative antecedents. @cite{evcen-bale-barner-
 
 namespace Semantics.Conditionals.Exhaustivity
 
-open Core.Proposition
-
 -- ============================================================================
 -- Section A: Answer-Level Alternatives
 -- ============================================================================
@@ -57,13 +53,13 @@ structure AnswerSpace (Trigger W : Type*) where
 /-- The proposition "trigger t causes C (at world w)."
 This is the answer to the antecedent-focus QUD for trigger t. -/
 def answerProp {Trigger W : Type*} (as : AnswerSpace Trigger W)
-    (t : Trigger) : Prop' W :=
+    (t : Trigger) : Set W :=
   λ w => as.causes t w
 
 /-- The set of alternative answers: {"t' causes C" | t' ∈ triggers, t' ≠ t}.
 These are the answers that compete with "t causes C" under exhaustification. -/
 def answerAlternatives {Trigger W : Type*} (as : AnswerSpace Trigger W)
-    (t : Trigger) : Set (Prop' W) :=
+    (t : Trigger) : Set (Set W) :=
   {p | ∃ t' ∈ as.triggers, t' ≠ t ∧ p = answerProp as t'}
 
 -- ============================================================================
@@ -102,7 +98,7 @@ At the propositional level, `EXH(¬A∨C, {¬B∨C})` gives `A ∧ B ∧ ¬C`.
 At the answer level, `EXH("A causes C", {"B causes C"})` gives
 "A causes C and B does not cause C" — which with coverage yields perfection. -/
 def exhaustifiedAnswer {Trigger W : Type*} (as : AnswerSpace Trigger W)
-    (t : Trigger) : Prop' W :=
+    (t : Trigger) : Set W :=
   Exhaustification.exhIE (answerAlternatives as t) (answerProp as t)
 
 -- ============================================================================
@@ -236,8 +232,8 @@ concrete scenarios with a single competing alternative — the typical
 case in conditional perfection with two triggers. -/
 theorem singleton_alt_innocently_excludable
     {World : Type*}
-    (ALT : Set (Core.Proposition.Prop' World))
-    (φ a : Core.Proposition.Prop' World)
+    (ALT : Set (Set World))
+    (φ a : Set World)
     (h_mem : a ∈ ALT)
     (h_all_eq : ∀ a' ∈ ALT, a' = a)
     (h_consist : ∃ w, φ w ∧ ¬(a w))
@@ -249,14 +245,14 @@ theorem singleton_alt_innocently_excludable
     intro E hE_mc
     -- The candidate superset: {φ, ∼a}
     -- Step 1: E ⊆ {φ, ∼a} (by compatibility + singleton condition)
-    have h_sub : E ⊆ ({φ, ∼a} : Set (Prop' World)) := by
+    have h_sub : E ⊆ ({φ, ∼a} : Set (Set World)) := by
       intro ψ hψ
       rcases hE_mc.1.2.1 ψ hψ with h | ⟨a', ha'_mem, ha'_eq⟩
       · exact Set.mem_insert_iff.mpr (Or.inl h)
       · rw [h_all_eq a' ha'_mem] at ha'_eq
         exact Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr ha'_eq))
     -- Step 2: {φ, ∼a} is compatible
-    have h_compat : isCompatible ALT φ ({φ, ∼a} : Set (Prop' World)) := by
+    have h_compat : isCompatible ALT φ ({φ, ∼a} : Set (Set World)) := by
       refine ⟨Set.mem_insert φ _, ?_, ?_⟩
       · -- Every element is φ or ∼a' for some a' ∈ ALT
         intro ψ hψ
@@ -270,7 +266,7 @@ theorem singleton_alt_innocently_excludable
           · rw [h]; exact hw_phi
           · rw [Set.mem_singleton_iff.mp h]; exact hw_not_a⟩
     -- Step 3: By maximality of E, {φ, ∼a} ⊆ E
-    have h_sup : ({φ, ∼a} : Set (Prop' World)) ⊆ E := hE_mc.2 _ h_compat h_sub
+    have h_sup : ({φ, ∼a} : Set (Set World)) ⊆ E := hE_mc.2 _ h_compat h_sub
     -- Step 4: ∼a ∈ E
     exact h_sup (Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr rfl)))
 
@@ -295,8 +291,8 @@ triggers — e.g., 3 buttons in @cite{evcen-bale-barner-2026}'s experimental
 paradigm. -/
 theorem all_alt_innocently_excludable
     {World : Type*}
-    (ALT : Set (Core.Proposition.Prop' World))
-    (φ : Core.Proposition.Prop' World)
+    (ALT : Set (Set World))
+    (φ : Set World)
     (h_consist : ∃ w, φ w ∧ ∀ a ∈ ALT, ¬(a w))
     : ∀ a ∈ ALT, Exhaustification.isInnocentlyExcludable ALT φ a := by
   open Exhaustification in
@@ -307,7 +303,7 @@ theorem all_alt_innocently_excludable
     intro E hE_mc
     -- S_max = {ψ | ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a} (= {φ} ∪ {∼a | a ∈ ALT})
     -- Defined as a predicate so membership unfolds directly.
-    let S_max : Set (Prop' World) := fun ψ => ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a
+    let S_max : Set (Set World) := fun ψ => ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a
     -- Step 1: E ⊆ S_max (from compatibility: every element is φ or ∼a')
     have h_sub : E ⊆ S_max := by
       intro ψ hψ

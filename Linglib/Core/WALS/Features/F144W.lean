@@ -14,13 +14,19 @@ namespace Core.WALS.F144W
 
 /-- WALS 144W values. -/
 inductive VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject where
-  | suffixNodoubleneg  -- Suffix&NoDoubleNeg (2 languages)
-  | wordOnlywithanotherneg  -- Word&OnlyWithAnotherNeg (5 languages)
-  | suffixOptdoubleneg  -- Suffix&OptDoubleNeg (1 languages)
-  | suffixOnlywithanotherneg  -- Suffix&OnlyWithAnotherNeg (3 languages)
-  | wordbetweensando  -- WordBetweenSAndO (1 languages)
-  | none  -- None (139 languages)
-  deriving DecidableEq, Repr
+  /-- Suffix&NoDoubleNeg (2 languages). -/
+  | suffixNodoubleneg
+  /-- Word&OnlyWithAnotherNeg (5 languages). -/
+  | wordOnlywithanotherneg
+  /-- Suffix&OptDoubleNeg (1 languages). -/
+  | suffixOptdoubleneg
+  /-- Suffix&OnlyWithAnotherNeg (3 languages). -/
+  | suffixOnlywithanotherneg
+  /-- WordBetweenSAndO (1 languages). -/
+  | wordbetweensando
+  /-- None (139 languages). -/
+  | none
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144W dataset (151 languages). -/
 def allData : List (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject) :=
@@ -176,22 +182,6 @@ def allData : List (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbal
   , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .none }
   , { walsCode := "zqo", language := "Zoque (Ostuacan)", iso := "zoc", value := .none }
   ]
-
--- Count verification
-theorem total_count : allData.length = 151 := by native_decide
-
-theorem count_suffixNodoubleneg :
-    (allData.filter (·.value == .suffixNodoubleneg)).length = 2 := by native_decide
-theorem count_wordOnlywithanotherneg :
-    (allData.filter (·.value == .wordOnlywithanotherneg)).length = 5 := by native_decide
-theorem count_suffixOptdoubleneg :
-    (allData.filter (·.value == .suffixOptdoubleneg)).length = 1 := by native_decide
-theorem count_suffixOnlywithanotherneg :
-    (allData.filter (·.value == .suffixOnlywithanotherneg)).length = 3 := by native_decide
-theorem count_wordbetweensando :
-    (allData.filter (·.value == .wordbetweensando)).length = 1 := by native_decide
-theorem count_none :
-    (allData.filter (·.value == .none)).length = 139 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

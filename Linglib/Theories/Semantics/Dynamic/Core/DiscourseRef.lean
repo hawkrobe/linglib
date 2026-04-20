@@ -88,9 +88,11 @@ def liftPred₂ (p : E → E → Bool) : Entity E → Entity E → Bool
 def inject (e : E) : Entity E := .some e
 
 /-- Is this a real entity (not ⋆)? -/
-def isSome : Entity E → Bool
-  | .some _ => true
-  | .star => false
+def isSome : Entity E → Prop
+  | .some _ => True
+  | .star => False
+
+instance : DecidablePred (@isSome E) := fun e => by unfold isSome; cases e <;> infer_instance
 
 /-- Extract entity if present -/
 def toOption : Entity E → Option E
@@ -203,9 +205,12 @@ def getIndex : DRefVal W E → Option W
   | _ => none
 
 /-- Is this index in the domain of the assignment? -/
-def isDefined : DRefVal W E → Bool
-  | .undef => false
-  | _ => true
+def isDefined : DRefVal W E → Prop
+  | .undef => False
+  | _ => True
+
+instance : DecidablePred (@isDefined W E) :=
+  fun d => by unfold isDefined; cases d <;> infer_instance
 
 /-- Lift a predicate on entities to DRefVal (false for non-entities). -/
 def liftEntityPred (p : E → Bool) : DRefVal W E → Bool

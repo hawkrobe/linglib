@@ -24,6 +24,7 @@ algebra approach to too/either (@cite{ahn-2015}).
 
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Theories.Pragmatics.Particles.Additive
+import Mathlib.Algebra.BigOperators.Fin
 
 namespace Thomas2026
 
@@ -253,13 +254,21 @@ all four felicity conditions:
 - **Pizza/spaghetti** (felicitous, standard): mention-all partition question
 - **Happy/ecstatic** (infelicitous): Def. 64c.i non-triviality failure
 - **Instrument/cello** (infelicitous): Def. 64c.ii maximality failure
-- **Cross-product** (infelicitous): Def. 64b Conjunction Condition failure -/
+- **Cross-product** (infelicitous): Def. 64b Conjunction Condition failure
+
+After the Set/Prop migration, the felicity predicates are `noncomputable`
+and `Prop`-valued. Each scenario provides per-set `DecidablePred` instances
++ named probability/conditional-probability lemmas (computed via
+`Fin.sum_univ_four`) + an `alt`-characterisation lemma
+(`Issue.alt_polar_of_nontrivial` for polar contexts;
+`Issue.alt_ofList_of_pairwise_disjoint_nonempty` for partition contexts);
+felicity proofs then reduce to `convert`-bridged inequalities. -/
 
 section Verification
 
-open Discourse
 open Semantics.Questions.ProbabilisticAnswerhood
 open Pragmatics.Particles.Additive
+open Core
 
 -- § Hotel Room (ex. 1c/14c/65) — felicitous argument-building "too"
 
@@ -273,9 +282,9 @@ open Pragmatics.Particles.Additive
 | w₃    |               |       |            |
 
 Prior: w₀ = 3/8, w₁ = 1/8, w₂ = 2/8, w₃ = 2/8 (room availability more likely). -/
-def roomAvail : Fin 4 → Bool := fun w => w.val == 0 || w.val == 1
-def fancyH : Fin 4 → Bool := fun w => w.val == 0 || w.val == 2
-def goodHotel : Fin 4 → Bool := fun w => w.val == 0
+def roomAvail : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
+def fancyH : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 2}
+def goodHotel : Set (Fin 4) := {w | w.val = 0}
 
 /-- Non-uniform prior: room availability (w₀, w₁) more likely. -/
 def hotelPrior : Prior (Fin 4) where
@@ -284,17 +293,148 @@ def hotelPrior : Prior (Fin 4) where
   mass_sum_one := by native_decide
 
 def hotelCtx : AdditiveContext (Fin 4) :=
-  { resolvedQuestion := Issue.polar goodHotel
+  { resolvedQuestion := Core.Issue.polar goodHotel
   , antecedent := roomAvail
   , prior := hotelPrior }
 
+instance instRoomAvailDec : DecidablePred (· ∈ roomAvail) := fun w =>
+  inferInstanceAs (Decidable (w.val = 0 ∨ w.val = 1))
+instance instFancyHDec : DecidablePred (· ∈ fancyH) := fun w =>
+  inferInstanceAs (Decidable (w.val = 0 ∨ w.val = 2))
+instance instGoodHotelDec : DecidablePred (· ∈ goodHotel) := fun w =>
+  inferInstanceAs (Decidable (w.val = 0))
+
+private lemma goodHotel_ne_empty : goodHotel ≠ ∅ := by
+  intro h; exact (h ▸ (rfl : (0 : Fin 4).val = 0) : (0 : Fin 4) ∈ (∅ : Set (Fin 4)))
+
+private lemma goodHotel_ne_univ : goodHotel ≠ Set.univ := by
+  intro h
+  exact absurd (h ▸ Set.mem_univ (1 : Fin 4) : (1 : Fin 4) ∈ goodHotel) (by decide)
+
+private lemma hotel_prob_room : hotelPrior.probOfSet roomAvail = 1/2 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [hotelPrior, roomAvail]; norm_num
+
+private lemma hotel_prob_good : hotelPrior.probOfSet goodHotel = 3/8 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [hotelPrior, goodHotel]
+
+private lemma hotel_prob_room_inter_good :
+    hotelPrior.probOfSet (roomAvail ∩ goodHotel) = 3/8 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [hotelPrior, roomAvail, goodHotel]
+
+private lemma hotel_prob_room_inter_goodC :
+    hotelPrior.probOfSet (roomAvail ∩ goodHotelᶜ) = 1/8 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [hotelPrior, roomAvail, goodHotel, Set.mem_inter_iff, Set.mem_compl_iff]
+
+private lemma hotel_prob_roomFancy :
+    hotelPrior.probOfSet (roomAvail ∩ fancyH) = 3/8 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [hotelPrior, roomAvail, fancyH, Set.mem_inter_iff]
+
+private lemma hotel_prob_roomFancy_inter_good :
+    hotelPrior.probOfSet (roomAvail ∩ fancyH ∩ goodHotel) = 3/8 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [hotelPrior, roomAvail, fancyH, goodHotel, Set.mem_inter_iff]
+
+private lemma hotel_prob_roomFancy_inter_goodC :
+    hotelPrior.probOfSet (roomAvail ∩ fancyH ∩ goodHotelᶜ) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [roomAvail, fancyH, goodHotel, Set.mem_inter_iff, Set.mem_compl_iff]
+
+private lemma hotel_cond_room_good :
+    hotelPrior.condProbSet roomAvail goodHotel = 3/4 := by
+  rw [hotelPrior.condProbSet_of_pos roomAvail goodHotel
+        (by rw [hotel_prob_room]; norm_num),
+      hotel_prob_room_inter_good, hotel_prob_room]
+  norm_num
+
+private lemma hotel_cond_room_goodC :
+    hotelPrior.condProbSet roomAvail goodHotelᶜ = 1/4 := by
+  rw [hotelPrior.condProbSet_of_pos roomAvail goodHotelᶜ
+        (by rw [hotel_prob_room]; norm_num),
+      hotel_prob_room_inter_goodC, hotel_prob_room]
+  norm_num
+
+private lemma hotel_cond_roomFancy_good :
+    hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotel = 1 := by
+  rw [hotelPrior.condProbSet_of_pos (roomAvail ∩ fancyH) goodHotel
+        (by rw [hotel_prob_roomFancy]; norm_num),
+      hotel_prob_roomFancy_inter_good, hotel_prob_roomFancy]
+  norm_num
+
+private lemma hotel_cond_roomFancy_goodC :
+    hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotelᶜ = 0 := by
+  rw [hotelPrior.condProbSet_of_pos (roomAvail ∩ fancyH) goodHotelᶜ
+        (by rw [hotel_prob_roomFancy]; norm_num),
+      hotel_prob_roomFancy_inter_goodC, hotel_prob_roomFancy]
+  norm_num
+
 /-- Hotel room "too" is felicitous: all four conditions of Def. 64 hold.
-- **Antecedent Condition**: P(good | room) = 3/4 ≠ P(good) = 3/8
+- **Antecedent Condition**: P(good | room) = 3/4 > P(good) = 3/8
 - **Conjunction Condition**: P(good | room ∧ fancy) = 1 > P(good | room) = 3/4
 - **Non-triviality**: fancy includes w₂ which is not a good hotel
-- **Maximality**: every ANT ∧ good world is also a fancy world -/
-theorem hotel_too_felicitous :
-    tooFelicitousWith hotelCtx fancyH (List.finRange 4) = true := by native_decide
+- **Maximality**: every ANT ∧ good world (w₀) is also fancy. -/
+theorem hotel_too_felicitous : tooFelicitous hotelCtx fancyH := by
+  have hCtxAnt : hotelCtx.antecedent = roomAvail := rfl
+  have hCtxRQ : hotelCtx.resolvedQuestion = Issue.polar goodHotel := rfl
+  have hCtxPrior : hotelCtx.prior = hotelPrior := rfl
+  have hAltMem : goodHotel ∈ Issue.alt (Issue.polar goodHotel) := by
+    rw [Issue.alt_polar_of_nontrivial goodHotel_ne_empty goodHotel_ne_univ]
+    exact Set.mem_insert _ _
+  refine ⟨?ant, ⟨?conjA, ?conjS⟩, ?nontrv, ?max⟩
+  · show probAnswersS hotelCtx.antecedent hotelCtx.resolvedQuestion hotelCtx.prior
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    refine ⟨goodHotel, hAltMem, ?_⟩
+    have h : hotelPrior.condProbSet roomAvail goodHotel >
+             hotelPrior.probOfSet goodHotel := by
+      rw [hotel_cond_room_good, hotel_prob_good]; norm_num
+    convert h
+  · show probAnswersS (hotelCtx.antecedent ∩ fancyH) hotelCtx.resolvedQuestion
+         hotelCtx.prior
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    refine ⟨goodHotel, hAltMem, ?_⟩
+    have h : hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotel >
+             hotelPrior.probOfSet goodHotel := by
+      rw [hotel_cond_roomFancy_good, hotel_prob_good]; norm_num
+    convert h
+  · show someResolutionStrengthenedS hotelCtx.antecedent fancyH
+         hotelCtx.resolvedQuestion hotelCtx.prior
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    refine ⟨goodHotel, hAltMem, ?_⟩
+    have h : hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotel >
+             hotelPrior.condProbSet roomAvail goodHotel := by
+      rw [hotel_cond_roomFancy_good, hotel_cond_room_good]; norm_num
+    convert h
+  · show nonTrivialityCondition hotelCtx fancyH
+    unfold nonTrivialityCondition
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    refine ⟨goodHotel, hAltMem, ?_, ?_⟩
+    · intro hsub
+      exact absurd (hsub (Or.inr rfl : (2 : Fin 4) ∈ fancyH)) (by decide)
+    · have h : hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotel >
+               hotelPrior.condProbSet roomAvail goodHotel := by
+        rw [hotel_cond_roomFancy_good, hotel_cond_room_good]; norm_num
+      convert h
+  · show maximalityCondition hotelCtx fancyH
+    unfold maximalityCondition
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    intro a haAlt hStrengthen w _ _ haW
+    rw [Issue.alt_polar_of_nontrivial goodHotel_ne_empty goodHotel_ne_univ] at haAlt
+    rcases haAlt with rfl | haAlt
+    · have : w = 0 := Fin.ext (haW : w.val = 0)
+      rw [this]; exact Or.inl rfl
+    · rw [Set.mem_singleton_iff] at haAlt
+      subst haAlt
+      have hno : ¬ (hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotelᶜ >
+                    hotelPrior.condProbSet roomAvail goodHotelᶜ) := by
+        rw [hotel_cond_roomFancy_goodC, hotel_cond_room_goodC]; norm_num
+      exact absurd (by convert hStrengthen) hno
 
 -- § Happy/Ecstatic (ex. 11/29a/73) — infelicitous: non-triviality failure
 
@@ -308,15 +448,16 @@ theorem hotel_too_felicitous :
 | w₃    |          |                     | ✓         |
 
 Prior: uniform 1/4. -/
-def happyE : Fin 4 → Bool := fun w => w.val == 0 || w.val == 1
-def ecstaticE : Fin 4 → Bool := fun w => w.val == 0
+def happyE : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
+def ecstaticE : Set (Fin 4) := {w | w.val = 0}
 
 /-- "What is Sam's emotional state?" — three-way partition. -/
-def emotionRQ : Issue (Fin 4) :=
-  ⟨[ fun w => w.val == 0               -- ecstatic
-   , fun w => w.val == 1               -- happy but not ecstatic
-   , fun w => w.val == 2 || w.val == 3 -- not happy
-   ]⟩
+def emotionRQ : Core.Issue (Fin 4) :=
+  Core.Issue.ofList
+    [ {w | w.val = 0}                    -- ecstatic
+    , {w | w.val = 1}                    -- happy but not ecstatic
+    , {w | w.val = 2 ∨ w.val = 3}        -- not happy
+    ]
 
 def emotionPrior : Prior (Fin 4) where
   mass := fun _ => 1/4
@@ -328,12 +469,129 @@ def emotionCtx : AdditiveContext (Fin 4) :=
   , antecedent := happyE
   , prior := emotionPrior }
 
+instance instEmCellEDec : DecidablePred (· ∈ ({w : Fin 4 | w.val = 0} : Set (Fin 4))) :=
+  fun w => inferInstanceAs (Decidable (w.val = 0))
+instance instEmCellHDec : DecidablePred (· ∈ ({w : Fin 4 | w.val = 1} : Set (Fin 4))) :=
+  fun w => inferInstanceAs (Decidable (w.val = 1))
+instance instEmCellNDec :
+    DecidablePred (· ∈ ({w : Fin 4 | w.val = 2 ∨ w.val = 3} : Set (Fin 4))) :=
+  fun w => inferInstanceAs (Decidable (w.val = 2 ∨ w.val = 3))
+instance instHappyEDec : DecidablePred (· ∈ happyE) :=
+  fun w => inferInstanceAs (Decidable (w.val = 0 ∨ w.val = 1))
+instance instEcstaticEDec : DecidablePred (· ∈ ecstaticE) :=
+  fun w => inferInstanceAs (Decidable (w.val = 0))
+
+private lemma em_prob_happy : emotionPrior.probOfSet happyE = 1/2 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [emotionPrior, happyE]; norm_num
+
+private lemma em_prob_happy_ecst :
+    emotionPrior.probOfSet (happyE ∩ ecstaticE) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [emotionPrior, happyE, ecstaticE, Set.mem_inter_iff]
+
+private lemma em_prob_happy_inter_h :
+    emotionPrior.probOfSet (happyE ∩ {w | w.val = 1}) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [emotionPrior, happyE, Set.mem_inter_iff]
+
+private lemma em_prob_happyEcst_inter_h :
+    emotionPrior.probOfSet (happyE ∩ ecstaticE ∩ {w | w.val = 1}) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [happyE, ecstaticE, Set.mem_inter_iff]
+
+private lemma em_prob_happy_inter_n :
+    emotionPrior.probOfSet (happyE ∩ {w | w.val = 2 ∨ w.val = 3}) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [happyE, Set.mem_inter_iff]
+
+private lemma em_prob_happyEcst_inter_n :
+    emotionPrior.probOfSet (happyE ∩ ecstaticE ∩ {w | w.val = 2 ∨ w.val = 3}) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [happyE, ecstaticE, Set.mem_inter_iff]
+
+private lemma em_cond_happy_h :
+    emotionPrior.condProbSet happyE {w | w.val = 1} = 1/2 := by
+  rw [emotionPrior.condProbSet_of_pos happyE _
+        (by rw [em_prob_happy]; norm_num),
+      em_prob_happy_inter_h, em_prob_happy]
+  norm_num
+
+private lemma em_cond_happyEcst_h :
+    emotionPrior.condProbSet (happyE ∩ ecstaticE) {w | w.val = 1} = 0 := by
+  rw [emotionPrior.condProbSet_of_pos (happyE ∩ ecstaticE) _
+        (by rw [em_prob_happy_ecst]; norm_num),
+      em_prob_happyEcst_inter_h, em_prob_happy_ecst]
+  norm_num
+
+private lemma em_cond_happy_n :
+    emotionPrior.condProbSet happyE {w | w.val = 2 ∨ w.val = 3} = 0 := by
+  rw [emotionPrior.condProbSet_of_pos happyE _
+        (by rw [em_prob_happy]; norm_num),
+      em_prob_happy_inter_n, em_prob_happy]
+  norm_num
+
+private lemma em_cond_happyEcst_n :
+    emotionPrior.condProbSet (happyE ∩ ecstaticE) {w | w.val = 2 ∨ w.val = 3} = 0 := by
+  rw [emotionPrior.condProbSet_of_pos (happyE ∩ ecstaticE) _
+        (by rw [em_prob_happy_ecst]; norm_num),
+      em_prob_happyEcst_inter_n, em_prob_happy_ecst]
+  norm_num
+
+private lemma emotion_alt :
+    Issue.alt emotionRQ =
+    {p | p ∈ ([{w | w.val = 0}, {w | w.val = 1}, {w | w.val = 2 ∨ w.val = 3}]
+              : List (Set (Fin 4)))} := by
+  apply Issue.alt_ofList_of_pairwise_disjoint_nonempty
+  · decide
+  · intro p₁ hp₁ p₂ hp₂ hne
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hp₁ hp₂
+    rcases hp₁ with rfl | rfl | rfl <;> rcases hp₂ with rfl | rfl | rfl <;>
+      first
+      | exact absurd rfl hne
+      | (rw [Set.disjoint_left]; intro w hw1 hw2;
+         simp only [Set.mem_setOf_eq] at hw1 hw2; omega)
+  · intro p hp
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    rcases hp with rfl | rfl | rfl
+    · intro h
+      exact absurd (h ▸ (rfl : (0 : Fin 4).val = 0) :
+        (0 : Fin 4) ∈ (∅ : Set (Fin 4))) (by simp)
+    · intro h
+      exact absurd (h ▸ (rfl : (1 : Fin 4).val = 1) :
+        (1 : Fin 4) ∈ (∅ : Set (Fin 4))) (by simp)
+    · intro h
+      exact absurd (h ▸ (Or.inl rfl : (2 : Fin 4).val = 2 ∨ (2 : Fin 4).val = 3) :
+        (2 : Fin 4) ∈ (∅ : Set (Fin 4))) (by simp)
+
 /-- "Sam is happy. #He's ecstatic, too." is infelicitous.
-Def. 64c.i (non-triviality) fails: the strengthened resolution is
-{w₀} = "ecstatic", and ⟦π⟧ = "ecstatic" = {w₀} entails it,
-making the conjunction informationally redundant with respect to RQ. -/
-theorem ecstatic_too_infelicitous :
-    tooFelicitousWith emotionCtx ecstaticE (List.finRange 4) = false := by native_decide
+Def. 64c.i (non-triviality) fails: the only strengthened resolution is
+{w₀} = "ecstatic", and ⟦π⟧ = "ecstatic" = {w₀} entails it. -/
+theorem ecstatic_too_infelicitous : ¬ tooFelicitous emotionCtx ecstaticE := by
+  have hCtxAnt : emotionCtx.antecedent = happyE := rfl
+  have hCtxRQ : emotionCtx.resolvedQuestion = emotionRQ := rfl
+  have hCtxPrior : emotionCtx.prior = emotionPrior := rfl
+  intro hFel
+  obtain ⟨_, _, hNT, _⟩ := hFel
+  have hNT' : nonTrivialityCondition emotionCtx ecstaticE := hNT
+  unfold nonTrivialityCondition at hNT'
+  rw [hCtxAnt, hCtxRQ, hCtxPrior] at hNT'
+  obtain ⟨a, haAlt, hNotSub, hStr⟩ := hNT'
+  rw [emotion_alt] at haAlt
+  simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false] at haAlt
+  rcases haAlt with rfl | rfl | rfl
+  · exact hNotSub (fun _ h => h)
+  · have hno : ¬ (emotionPrior.condProbSet (happyE ∩ ecstaticE) {w | w.val = 1} >
+                  emotionPrior.condProbSet happyE {w | w.val = 1}) := by
+      rw [em_cond_happyEcst_h, em_cond_happy_h]; norm_num
+    exact hno (by convert hStr)
+  · have hno : ¬ (emotionPrior.condProbSet (happyE ∩ ecstaticE)
+                    {w | w.val = 2 ∨ w.val = 3} >
+                  emotionPrior.condProbSet happyE {w | w.val = 2 ∨ w.val = 3}) := by
+      rw [em_cond_happyEcst_n, em_cond_happy_n]; norm_num
+    exact hno (by convert hStr)
 
 -- § Pizza/Spaghetti (ex. 5a/10/21) — felicitous standard "too"
 
@@ -347,21 +605,17 @@ theorem ecstatic_too_infelicitous :
 | w₃    |           |                | neither        |
 
 Prior: uniform 1/4. ANT = "I like pizza", π = "I like spaghetti".
-RQ = "What do you like?" as a mention-all question with 4-cell partition.
-
-The strengthened resolution under ANT ∧ π is "both" = {w₀}, which π
-(= {w₀,w₂}) does NOT entail. This is why standard use passes
-non-triviality: the partition cell "both" is strictly stronger than π. -/
-def likePizza : Fin 4 → Bool := fun w => w.val == 0 || w.val == 1
-def likeSpaghetti : Fin 4 → Bool := fun w => w.val == 0 || w.val == 2
+RQ = "What do you like?" as a mention-all question with 4-cell partition. -/
+def likePizza : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
+def likeSpaghetti : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 2}
 
 /-- "What do you like?" — mention-all partition. -/
-def foodRQ : Issue (Fin 4) :=
-  Issue.ofAlternatives
-    [ fun w => w.val == 0  -- both
-    , fun w => w.val == 1  -- pizza only
-    , fun w => w.val == 2  -- spaghetti only
-    , fun w => w.val == 3  -- neither
+def foodRQ : Core.Issue (Fin 4) :=
+  Core.Issue.ofList
+    [ {w | w.val = 0}    -- both
+    , {w | w.val = 1}    -- pizza only
+    , {w | w.val = 2}    -- spaghetti only
+    , {w | w.val = 3}    -- neither
     ]
 
 def foodPrior : Prior (Fin 4) where
@@ -374,13 +628,233 @@ def foodCtx : AdditiveContext (Fin 4) :=
   , antecedent := likePizza
   , prior := foodPrior }
 
+instance instLikePizzaDec : DecidablePred (· ∈ likePizza) :=
+  fun w => inferInstanceAs (Decidable (w.val = 0 ∨ w.val = 1))
+instance instLikeSpaghettiDec : DecidablePred (· ∈ likeSpaghetti) :=
+  fun w => inferInstanceAs (Decidable (w.val = 0 ∨ w.val = 2))
+instance instFood0Dec : DecidablePred (· ∈ ({w : Fin 4 | w.val = 0} : Set (Fin 4))) :=
+  fun w => inferInstanceAs (Decidable (w.val = 0))
+instance instFood1Dec : DecidablePred (· ∈ ({w : Fin 4 | w.val = 1} : Set (Fin 4))) :=
+  fun w => inferInstanceAs (Decidable (w.val = 1))
+instance instFood2Dec : DecidablePred (· ∈ ({w : Fin 4 | w.val = 2} : Set (Fin 4))) :=
+  fun w => inferInstanceAs (Decidable (w.val = 2))
+instance instFood3Dec : DecidablePred (· ∈ ({w : Fin 4 | w.val = 3} : Set (Fin 4))) :=
+  fun w => inferInstanceAs (Decidable (w.val = 3))
+
+private lemma fd_prob_pizza : foodPrior.probOfSet likePizza = 1/2 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [foodPrior, likePizza]; norm_num
+
+private lemma fd_prob_pizza_spag :
+    foodPrior.probOfSet (likePizza ∩ likeSpaghetti) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [foodPrior, likePizza, likeSpaghetti, Set.mem_inter_iff]
+
+private lemma fd_prob_0 : foodPrior.probOfSet {w : Fin 4 | w.val = 0} = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [foodPrior]
+
+private lemma fd_prob_pizza_inter_0 :
+    foodPrior.probOfSet (likePizza ∩ {w | w.val = 0}) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [foodPrior, likePizza, Set.mem_inter_iff]
+
+private lemma fd_prob_pizzaSpag_inter_0 :
+    foodPrior.probOfSet (likePizza ∩ likeSpaghetti ∩ {w | w.val = 0}) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [foodPrior, likePizza, likeSpaghetti, Set.mem_inter_iff]
+
+private lemma fd_prob_pizza_inter_1 :
+    foodPrior.probOfSet (likePizza ∩ {w | w.val = 1}) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [foodPrior, likePizza, Set.mem_inter_iff]
+
+private lemma fd_prob_pizzaSpag_inter_1 :
+    foodPrior.probOfSet (likePizza ∩ likeSpaghetti ∩ {w | w.val = 1}) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [likePizza, likeSpaghetti, Set.mem_inter_iff]
+
+private lemma fd_prob_pizza_inter_2 :
+    foodPrior.probOfSet (likePizza ∩ {w | w.val = 2}) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [likePizza, Set.mem_inter_iff]
+
+private lemma fd_prob_pizzaSpag_inter_2 :
+    foodPrior.probOfSet (likePizza ∩ likeSpaghetti ∩ {w | w.val = 2}) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [likePizza, likeSpaghetti, Set.mem_inter_iff]
+
+private lemma fd_prob_pizza_inter_3 :
+    foodPrior.probOfSet (likePizza ∩ {w | w.val = 3}) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [likePizza, Set.mem_inter_iff]
+
+private lemma fd_prob_pizzaSpag_inter_3 :
+    foodPrior.probOfSet (likePizza ∩ likeSpaghetti ∩ {w | w.val = 3}) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [likePizza, likeSpaghetti, Set.mem_inter_iff]
+
+private lemma fd_cond_pizza_0 :
+    foodPrior.condProbSet likePizza {w | w.val = 0} = 1/2 := by
+  rw [foodPrior.condProbSet_of_pos likePizza _
+        (by rw [fd_prob_pizza]; norm_num),
+      fd_prob_pizza_inter_0, fd_prob_pizza]
+  norm_num
+
+private lemma fd_cond_pizzaSpag_0 :
+    foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 0} = 1 := by
+  rw [foodPrior.condProbSet_of_pos (likePizza ∩ likeSpaghetti) _
+        (by rw [fd_prob_pizza_spag]; norm_num),
+      fd_prob_pizzaSpag_inter_0, fd_prob_pizza_spag]
+  norm_num
+
+private lemma fd_cond_pizza_1 :
+    foodPrior.condProbSet likePizza {w | w.val = 1} = 1/2 := by
+  rw [foodPrior.condProbSet_of_pos likePizza _
+        (by rw [fd_prob_pizza]; norm_num),
+      fd_prob_pizza_inter_1, fd_prob_pizza]
+  norm_num
+
+private lemma fd_cond_pizzaSpag_1 :
+    foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 1} = 0 := by
+  rw [foodPrior.condProbSet_of_pos (likePizza ∩ likeSpaghetti) _
+        (by rw [fd_prob_pizza_spag]; norm_num),
+      fd_prob_pizzaSpag_inter_1, fd_prob_pizza_spag]
+  norm_num
+
+private lemma fd_cond_pizza_2 :
+    foodPrior.condProbSet likePizza {w | w.val = 2} = 0 := by
+  rw [foodPrior.condProbSet_of_pos likePizza _
+        (by rw [fd_prob_pizza]; norm_num),
+      fd_prob_pizza_inter_2, fd_prob_pizza]
+  norm_num
+
+private lemma fd_cond_pizzaSpag_2 :
+    foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 2} = 0 := by
+  rw [foodPrior.condProbSet_of_pos (likePizza ∩ likeSpaghetti) _
+        (by rw [fd_prob_pizza_spag]; norm_num),
+      fd_prob_pizzaSpag_inter_2, fd_prob_pizza_spag]
+  norm_num
+
+private lemma fd_cond_pizza_3 :
+    foodPrior.condProbSet likePizza {w | w.val = 3} = 0 := by
+  rw [foodPrior.condProbSet_of_pos likePizza _
+        (by rw [fd_prob_pizza]; norm_num),
+      fd_prob_pizza_inter_3, fd_prob_pizza]
+  norm_num
+
+private lemma fd_cond_pizzaSpag_3 :
+    foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 3} = 0 := by
+  rw [foodPrior.condProbSet_of_pos (likePizza ∩ likeSpaghetti) _
+        (by rw [fd_prob_pizza_spag]; norm_num),
+      fd_prob_pizzaSpag_inter_3, fd_prob_pizza_spag]
+  norm_num
+
+private lemma food_alt :
+    Issue.alt foodRQ =
+    {p | p ∈ ([{w | w.val = 0}, {w | w.val = 1}, {w | w.val = 2}, {w | w.val = 3}]
+              : List (Set (Fin 4)))} := by
+  apply Issue.alt_ofList_of_pairwise_disjoint_nonempty
+  · decide
+  · intro p₁ hp₁ p₂ hp₂ hne
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hp₁ hp₂
+    rcases hp₁ with rfl | rfl | rfl | rfl <;>
+      rcases hp₂ with rfl | rfl | rfl | rfl <;>
+      first
+      | exact absurd rfl hne
+      | (rw [Set.disjoint_left]; intro w hw1 hw2;
+         simp only [Set.mem_setOf_eq] at hw1 hw2; omega)
+  · intro p hp
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hp
+    rcases hp with rfl | rfl | rfl | rfl
+    · intro h
+      exact absurd (h ▸ (rfl : (0 : Fin 4).val = 0) :
+        (0 : Fin 4) ∈ (∅ : Set (Fin 4))) (by simp)
+    · intro h
+      exact absurd (h ▸ (rfl : (1 : Fin 4).val = 1) :
+        (1 : Fin 4) ∈ (∅ : Set (Fin 4))) (by simp)
+    · intro h
+      exact absurd (h ▸ (rfl : (2 : Fin 4).val = 2) :
+        (2 : Fin 4) ∈ (∅ : Set (Fin 4))) (by simp)
+    · intro h
+      exact absurd (h ▸ (rfl : (3 : Fin 4).val = 3) :
+        (3 : Fin 4) ∈ (∅ : Set (Fin 4))) (by simp)
+
 /-- Standard "too" is felicitous: "I like pizza. I like spaghetti, too."
-- **Antecedent Condition**: P("both" | pizza) = 1/2 > P("both") = 1/4
-- **Conjunction Condition**: P("both" | pizza ∧ spaghetti) = 1 > P("both" | pizza) = 1/2
-- **Non-triviality**: spaghetti = {w₀,w₂} ⊄ "both" = {w₀}
-- **Maximality**: every pizza ∧ "both" world (= {w₀}) has spaghetti true -/
-theorem pizza_spaghetti_too_felicitous :
-    tooFelicitousWith foodCtx likeSpaghetti (List.finRange 4) = true := by native_decide
+- **Antecedent Condition**: P({w₀} | likePizza) = 1/2 > P({w₀}) = 1/4
+- **Conjunction Condition**: P({w₀} | likePizza ∩ likeSpaghetti) = 1 > 1/2
+- **Non-triviality**: π = likeSpaghetti contains w₂ ∉ {w₀}
+- **Maximality**: only {w₀} is strengthened, and ANT ∩ {w₀} = {w₀} ⊆ π. -/
+theorem pizza_spaghetti_too_felicitous : tooFelicitous foodCtx likeSpaghetti := by
+  have hCtxAnt : foodCtx.antecedent = likePizza := rfl
+  have hCtxRQ : foodCtx.resolvedQuestion = foodRQ := rfl
+  have hCtxPrior : foodCtx.prior = foodPrior := rfl
+  have hAltMem0 : ({w : Fin 4 | w.val = 0}) ∈ Issue.alt foodRQ := by
+    rw [food_alt]; exact List.mem_cons_self
+  refine ⟨?ant, ⟨?conjA, ?conjS⟩, ?nontrv, ?max⟩
+  · show probAnswersS foodCtx.antecedent foodCtx.resolvedQuestion foodCtx.prior
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    refine ⟨{w | w.val = 0}, hAltMem0, ?_⟩
+    have h : foodPrior.condProbSet likePizza {w | w.val = 0} >
+             foodPrior.probOfSet {w | w.val = 0} := by
+      rw [fd_cond_pizza_0, fd_prob_0]; norm_num
+    convert h
+  · show probAnswersS (foodCtx.antecedent ∩ likeSpaghetti)
+         foodCtx.resolvedQuestion foodCtx.prior
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    refine ⟨{w | w.val = 0}, hAltMem0, ?_⟩
+    have h : foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 0} >
+             foodPrior.probOfSet {w | w.val = 0} := by
+      rw [fd_cond_pizzaSpag_0, fd_prob_0]; norm_num
+    convert h
+  · show someResolutionStrengthenedS foodCtx.antecedent likeSpaghetti
+         foodCtx.resolvedQuestion foodCtx.prior
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    refine ⟨{w | w.val = 0}, hAltMem0, ?_⟩
+    have h : foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 0} >
+             foodPrior.condProbSet likePizza {w | w.val = 0} := by
+      rw [fd_cond_pizzaSpag_0, fd_cond_pizza_0]; norm_num
+    convert h
+  · show nonTrivialityCondition foodCtx likeSpaghetti
+    unfold nonTrivialityCondition
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    refine ⟨{w | w.val = 0}, hAltMem0, ?_, ?_⟩
+    · intro hsub
+      have h2 : (2 : Fin 4) ∈ likeSpaghetti := Or.inr rfl
+      exact absurd (hsub h2) (by decide)
+    · have h : foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 0} >
+               foodPrior.condProbSet likePizza {w | w.val = 0} := by
+        rw [fd_cond_pizzaSpag_0, fd_cond_pizza_0]; norm_num
+      convert h
+  · show maximalityCondition foodCtx likeSpaghetti
+    unfold maximalityCondition
+    rw [hCtxAnt, hCtxRQ, hCtxPrior]
+    intro a haAlt hStr w _ _ hwA
+    rw [food_alt] at haAlt
+    simp only [Set.mem_setOf_eq, List.mem_cons, List.not_mem_nil, or_false] at haAlt
+    rcases haAlt with rfl | rfl | rfl | rfl
+    · have : w = 0 := Fin.ext (hwA : w.val = 0)
+      rw [this]; exact Or.inl rfl
+    · exfalso
+      have hno : ¬ (foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 1} >
+                    foodPrior.condProbSet likePizza {w | w.val = 1}) := by
+        rw [fd_cond_pizzaSpag_1, fd_cond_pizza_1]; norm_num
+      exact hno (by convert hStr)
+    · exfalso
+      have hno : ¬ (foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 2} >
+                    foodPrior.condProbSet likePizza {w | w.val = 2}) := by
+        rw [fd_cond_pizzaSpag_2, fd_cond_pizza_2]; norm_num
+      exact hno (by convert hStr)
+    · exfalso
+      have hno : ¬ (foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 3} >
+                    foodPrior.condProbSet likePizza {w | w.val = 3}) := by
+        rw [fd_cond_pizzaSpag_3, fd_cond_pizza_3]; norm_num
+      exact hno (by convert hStr)
 
 -- § Instrument/Cello (ex. 30/74) — infelicitous: maximality failure
 
@@ -395,15 +869,10 @@ theorem pizza_spaghetti_too_felicitous :
 
 Prior: uniform 1/4. ANT = "Avery plays an instrument".
 π = "Bailey plays the cello". RQ = "Who plays an instrument?"
-(polar: does Bailey play?).
-
-Maximality fails: "Bailey plays an instrument" (S ⊃ π) gives the
-same evidential boost as "Bailey plays the cello" (π), since both
-make P(Bailey plays | ANT ∧ ·) = 1. The specific instrument is
-irrelevant to RQ. -/
-def averyPlays : Fin 4 → Bool := fun w => w.val == 0 || w.val == 1 || w.val == 2
-def baileyPlaysCello : Fin 4 → Bool := fun w => w.val == 0
-def baileyPlays : Fin 4 → Bool := fun w => w.val == 0 || w.val == 1
+(polar: does Bailey play?). -/
+def averyPlays : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1 ∨ w.val = 2}
+def baileyPlaysCello : Set (Fin 4) := {w | w.val = 0}
+def baileyPlays : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
 
 def instrumentPrior : Prior (Fin 4) where
   mass := fun _ => 1/4
@@ -411,16 +880,83 @@ def instrumentPrior : Prior (Fin 4) where
   mass_sum_one := by native_decide
 
 def instrumentCtx : AdditiveContext (Fin 4) :=
-  { resolvedQuestion := Issue.polar baileyPlays
+  { resolvedQuestion := Core.Issue.polar baileyPlays
   , antecedent := averyPlays
   , prior := instrumentPrior }
 
+instance instAveryPlaysDec : DecidablePred (· ∈ averyPlays) := fun w =>
+  inferInstanceAs (Decidable (w.val = 0 ∨ w.val = 1 ∨ w.val = 2))
+instance instBaileyPlaysCelloDec : DecidablePred (· ∈ baileyPlaysCello) := fun w =>
+  inferInstanceAs (Decidable (w.val = 0))
+instance instBaileyPlaysDec : DecidablePred (· ∈ baileyPlays) := fun w =>
+  inferInstanceAs (Decidable (w.val = 0 ∨ w.val = 1))
+
+private lemma baileyPlays_ne_empty : baileyPlays ≠ ∅ := by
+  intro h; exact (h ▸ (Or.inl rfl) : (0 : Fin 4) ∈ (∅ : Set (Fin 4)))
+
+private lemma baileyPlays_ne_univ : baileyPlays ≠ Set.univ := by
+  intro h
+  exact absurd (h ▸ Set.mem_univ (2 : Fin 4) : (2 : Fin 4) ∈ baileyPlays) (by decide)
+
+private lemma instr_prob_avery : instrumentPrior.probOfSet averyPlays = 3/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [instrumentPrior, averyPlays]; norm_num
+
+private lemma instr_prob_avery_inter_bplays :
+    instrumentPrior.probOfSet (averyPlays ∩ baileyPlays) = 1/2 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [instrumentPrior, averyPlays, baileyPlays, Set.mem_inter_iff]; norm_num
+
+private lemma instr_prob_avery_cello :
+    instrumentPrior.probOfSet (averyPlays ∩ baileyPlaysCello) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [instrumentPrior, averyPlays, baileyPlaysCello]
+
+private lemma instr_prob_avery_cello_inter_bplays :
+    instrumentPrior.probOfSet (averyPlays ∩ baileyPlaysCello ∩ baileyPlays) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [instrumentPrior, averyPlays, baileyPlaysCello, baileyPlays]
+
+private lemma instr_cond_avery_cello_bplays :
+    instrumentPrior.condProbSet (averyPlays ∩ baileyPlaysCello) baileyPlays = 1 := by
+  rw [instrumentPrior.condProbSet_of_pos (averyPlays ∩ baileyPlaysCello) baileyPlays
+        (by rw [instr_prob_avery_cello]; norm_num),
+      instr_prob_avery_cello_inter_bplays, instr_prob_avery_cello]
+  norm_num
+
 /-- "Avery plays an instrument. #Bailey plays the cello, too." is infelicitous.
-Def. 64c.ii (maximality) fails: w₁ is an ANT ∧ baileyPlays world but
-not a baileyPlaysCello world, so a weaker proposition (baileyPlays)
-gives the same evidential boost to RQ. -/
-theorem cello_too_infelicitous :
-    tooFelicitousWith instrumentCtx baileyPlaysCello (List.finRange 4) = false := by native_decide
+Maximality (Def. 64c.ii) fails: the strengthened resolution is `baileyPlays`
+({w₀, w₁}); world `w₁ ∈ averyPlays ∩ baileyPlays` has positive prior but
+`w₁ ∉ baileyPlaysCello`, so prejacent does not capture all witnesses. -/
+theorem cello_too_infelicitous : ¬ tooFelicitous instrumentCtx baileyPlaysCello := by
+  have hCtxAnt : instrumentCtx.antecedent = averyPlays := rfl
+  have hCtxRQ : instrumentCtx.resolvedQuestion = Issue.polar baileyPlays := rfl
+  have hCtxPrior : instrumentCtx.prior = instrumentPrior := rfl
+  intro hFel
+  obtain ⟨_, _, _, hMax⟩ := hFel
+  have hMax' : maximalityCondition instrumentCtx baileyPlaysCello := hMax
+  unfold maximalityCondition at hMax'
+  rw [hCtxAnt, hCtxRQ, hCtxPrior] at hMax'
+  have hAltMem : baileyPlays ∈ Issue.alt (Issue.polar baileyPlays) := by
+    rw [Issue.alt_polar_of_nontrivial baileyPlays_ne_empty baileyPlays_ne_univ]
+    exact Set.mem_insert _ _
+  have hStr : instrumentPrior.condProbSet (averyPlays ∩ baileyPlaysCello) baileyPlays >
+              instrumentPrior.condProbSet averyPlays baileyPlays := by
+    rw [instr_cond_avery_cello_bplays,
+        instrumentPrior.condProbSet_of_pos averyPlays baileyPlays
+          (by rw [instr_prob_avery]; norm_num),
+        instr_prob_avery, instr_prob_avery_inter_bplays]
+    norm_num
+  have h1in : (1 : Fin 4) ∈ averyPlays := Or.inr (Or.inl rfl)
+  have h1bp : (1 : Fin 4) ∈ baileyPlays := Or.inr rfl
+  have hPos : instrumentPrior.mass 1 > 0 := by show (1/4 : ℚ) > 0; norm_num
+  have h1bpc : (1 : Fin 4) ∈ baileyPlaysCello := by
+    refine hMax' baileyPlays hAltMem ?_ 1 hPos h1in h1bp
+    convert hStr
+  exact absurd h1bpc (by decide)
 
 -- § Cross-Product Question (ex. 13/40/75) — infelicitous: Conjunction Condition failure
 
@@ -433,16 +969,9 @@ theorem cello_too_infelicitous :
 | w₂    | spaghetti  | pizza        |
 | w₃    | spaghetti  | spaghetti    |
 
-Prior: uniform 1/4. ANT = "Avery ate pizza", π = "Bailey ate spaghetti".
-
-@cite{thomas-2026} §5.5.1 (pp. 40-41) argues that for "Who ate what?",
-no single RQ simultaneously satisfies both the Antecedent and Conjunction
-Conditions. We verify this for RQ = "What did Avery eat?" ((76a)):
-ANT already determines the resolution (P(Avery pizza | ANT) = 1), so
-learning π = "Bailey ate spaghetti" adds nothing about Avery — the
-Conjunction Condition fails because no alternative is strengthened. -/
-def averyPizzaCP : Fin 4 → Bool := fun w => w.val == 0 || w.val == 1
-def baileySpaghetti : Fin 4 → Bool := fun w => w.val == 1 || w.val == 3
+Prior: uniform 1/4. ANT = "Avery ate pizza", π = "Bailey ate spaghetti". -/
+def averyPizzaCP : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
+def baileySpaghetti : Set (Fin 4) := {w | w.val = 1 ∨ w.val = 3}
 
 def crossPrior : Prior (Fin 4) where
   mass := fun _ => 1/4
@@ -451,16 +980,111 @@ def crossPrior : Prior (Fin 4) where
 
 /-- RQ = "What did Avery eat?" (polar: did Avery eat pizza?). -/
 def crossCtx : AdditiveContext (Fin 4) :=
-  { resolvedQuestion := Issue.polar averyPizzaCP
+  { resolvedQuestion := Core.Issue.polar averyPizzaCP
   , antecedent := averyPizzaCP
   , prior := crossPrior }
 
-/-- "Avery ate pizza. #Bailey ate spaghetti, too." is infelicitous
-when RQ = "What did Avery eat?"
-Conjunction Condition fails: P(Avery pizza | ANT∩π) = 1 = P(Avery pizza | ANT),
-so π provides no additional evidence about what Avery ate. -/
+instance instAveryPizzaCPDec : DecidablePred (· ∈ averyPizzaCP) := fun w =>
+  inferInstanceAs (Decidable (w.val = 0 ∨ w.val = 1))
+instance instBaileySpaghettiDec : DecidablePred (· ∈ baileySpaghetti) := fun w =>
+  inferInstanceAs (Decidable (w.val = 1 ∨ w.val = 3))
+
+private lemma averyPizzaCP_ne_empty : averyPizzaCP ≠ ∅ := by
+  intro h; exact (h ▸ (Or.inl rfl) : (0 : Fin 4) ∈ (∅ : Set (Fin 4)))
+
+private lemma averyPizzaCP_ne_univ : averyPizzaCP ≠ Set.univ := by
+  intro h
+  exact absurd (h ▸ Set.mem_univ (2 : Fin 4) : (2 : Fin 4) ∈ averyPizzaCP) (by decide)
+
+private lemma cross_prob_apc : crossPrior.probOfSet averyPizzaCP = 1/2 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]; simp [crossPrior, averyPizzaCP]; norm_num
+
+private lemma cross_prob_apc_inter_bs :
+    crossPrior.probOfSet (averyPizzaCP ∩ baileySpaghetti) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [crossPrior, averyPizzaCP, baileySpaghetti, Set.mem_inter_iff]
+
+private lemma cross_prob_apc_inter_bs_inter_apc :
+    crossPrior.probOfSet (averyPizzaCP ∩ baileySpaghetti ∩ averyPizzaCP) = 1/4 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [crossPrior, averyPizzaCP, baileySpaghetti, Set.mem_inter_iff]
+
+private lemma cross_prob_apc_inter_bs_inter_apcC :
+    crossPrior.probOfSet (averyPizzaCP ∩ baileySpaghetti ∩ averyPizzaCPᶜ) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [averyPizzaCP, baileySpaghetti, Set.mem_inter_iff, Set.mem_compl_iff]
+
+private lemma cross_prob_apc_inter_apc :
+    crossPrior.probOfSet (averyPizzaCP ∩ averyPizzaCP) = 1/2 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [crossPrior, averyPizzaCP, Set.mem_inter_iff]; norm_num
+
+private lemma cross_prob_apc_inter_apcC :
+    crossPrior.probOfSet (averyPizzaCP ∩ averyPizzaCPᶜ) = 0 := by
+  show (∑ w : Fin 4, _) = _
+  rw [Fin.sum_univ_four]
+  simp [averyPizzaCP, Set.mem_inter_iff, Set.mem_compl_iff]
+
+private lemma cross_cond_apc_apc :
+    crossPrior.condProbSet averyPizzaCP averyPizzaCP = 1 := by
+  rw [crossPrior.condProbSet_of_pos averyPizzaCP averyPizzaCP
+        (by rw [cross_prob_apc]; norm_num), cross_prob_apc_inter_apc, cross_prob_apc]
+  norm_num
+
+private lemma cross_cond_apc_apcC :
+    crossPrior.condProbSet averyPizzaCP averyPizzaCPᶜ = 0 := by
+  rw [crossPrior.condProbSet_of_pos averyPizzaCP averyPizzaCPᶜ
+        (by rw [cross_prob_apc]; norm_num), cross_prob_apc_inter_apcC, cross_prob_apc]
+  norm_num
+
+private lemma cross_cond_apcbs_apc :
+    crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCP = 1 := by
+  rw [crossPrior.condProbSet_of_pos (averyPizzaCP ∩ baileySpaghetti) averyPizzaCP
+        (by rw [cross_prob_apc_inter_bs]; norm_num),
+      cross_prob_apc_inter_bs_inter_apc, cross_prob_apc_inter_bs]
+  norm_num
+
+private lemma cross_cond_apcbs_apcC :
+    crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCPᶜ = 0 := by
+  rw [crossPrior.condProbSet_of_pos (averyPizzaCP ∩ baileySpaghetti) averyPizzaCPᶜ
+        (by rw [cross_prob_apc_inter_bs]; norm_num),
+      cross_prob_apc_inter_bs_inter_apcC, cross_prob_apc_inter_bs]
+  norm_num
+
+/-- "Avery ate pizza. #Bailey ate spaghetti, too." is infelicitous.
+Conjunction Condition (Def. 64b, strengthening half) fails: no resolution
+of the polar question is strengthened by adding `baileySpaghetti` to
+`averyPizzaCP`. For `averyPizzaCP` itself the conditional probability
+stays at 1; for its complement it stays at 0. -/
 theorem cross_product_too_infelicitous :
-    tooFelicitousWith crossCtx baileySpaghetti (List.finRange 4) = false := by native_decide
+    ¬ tooFelicitous crossCtx baileySpaghetti := by
+  have hCtxAnt : crossCtx.antecedent = averyPizzaCP := rfl
+  have hCtxRQ : crossCtx.resolvedQuestion = Issue.polar averyPizzaCP := rfl
+  have hCtxPrior : crossCtx.prior = crossPrior := rfl
+  intro hFel
+  obtain ⟨_, ⟨_, hStr⟩, _, _⟩ := hFel
+  have hStr' : someResolutionStrengthenedS crossCtx.antecedent baileySpaghetti
+                 crossCtx.resolvedQuestion crossCtx.prior := hStr
+  unfold someResolutionStrengthenedS at hStr'
+  rw [hCtxAnt, hCtxRQ, hCtxPrior] at hStr'
+  obtain ⟨a, haAlt, hgt⟩ := hStr'
+  rw [Issue.alt_polar_of_nontrivial averyPizzaCP_ne_empty averyPizzaCP_ne_univ] at haAlt
+  rcases haAlt with rfl | haAlt
+  · have hno : ¬ (crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCP >
+                  crossPrior.condProbSet averyPizzaCP averyPizzaCP) := by
+      rw [cross_cond_apcbs_apc, cross_cond_apc_apc]; norm_num
+    exact absurd (by convert hgt) hno
+  · rw [Set.mem_singleton_iff] at haAlt
+    subst haAlt
+    have hno : ¬ (crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCPᶜ >
+                  crossPrior.condProbSet averyPizzaCP averyPizzaCPᶜ) := by
+      rw [cross_cond_apcbs_apcC, cross_cond_apc_apcC]; norm_num
+    exact absurd (by convert hgt) hno
 
 end Verification
 

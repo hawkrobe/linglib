@@ -1,7 +1,5 @@
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Scales.Scale
@@ -63,12 +61,20 @@ abbrev ProjectivityThreshold := Rat01
 
 /-- Content is at-issue when its at-issueness degree exceeds the threshold.
     Mirrors `positiveMeaning` from `Adjective/Theory.lean`. -/
-def isAtIssue (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : Bool :=
+def isAtIssue (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) : Prop :=
   Rat01.exceeds d θ
 
+instance (d : AtIssuenessDegree) (θ : AtIssuenessThreshold) :
+    Decidable (isAtIssue d θ) :=
+  inferInstanceAs (Decidable (Rat01.exceeds d θ))
+
 /-- Content is projective when its projectivity degree exceeds the threshold. -/
-def isProjective (d : ProjectivityDegree) (θ : ProjectivityThreshold) : Bool :=
+def isProjective (d : ProjectivityDegree) (θ : ProjectivityThreshold) : Prop :=
   Rat01.exceeds d θ
+
+instance (d : ProjectivityDegree) (θ : ProjectivityThreshold) :
+    Decidable (isProjective d θ) :=
+  inferInstanceAs (Decidable (Rat01.exceeds d θ))
 
 -- ════════════════════════════════════════════════════
 -- § Classical Recovery

@@ -124,10 +124,15 @@ def exp2_goal_competitor : JudgmentResult :=
 -- § Experiment 3: Eye-Tracking (§4, N = 48)
 -- ============================================================================
 
-/-- Reuse ANOVA result structure from @cite{sedivy-etal-1999}. Both
-    studies use by-subjects (F₁) and by-items (F₂) ANOVAs on
-    eye-tracking data. -/
-abbrev AnovaResult := SedivyEtAl1999.AnovaResult
+/-- Eye-tracking ANOVA result with by-subjects (F₁) and by-items (F₂)
+    statistics. -/
+structure AnovaResult where
+  F1 : Float
+  df1 : Nat
+  F2 : Float
+  df2 : Nat
+  significant : Bool
+  deriving Repr
 
 /-- Eye-tracking reading measure with mean values and ANOVA. -/
 structure ReadingMeasure where
@@ -225,14 +230,15 @@ theorem speakers_distinguish_necessity :
       slowing head-noun reading and increasing regressions.
 
     Both effects are significant, confirming that the comprehension system
-    is sensitive to modifier presence and its pragmatic licensing. -/
+    is sensitive to modifier presence and its pragmatic licensing. The
+    Sedivy side of this complementarity is encoded in
+    `SedivyEtAl1999.SatisfiesSedivyPattern`; here we record only the
+    Engelhardt-side significance claims. -/
 theorem complementary_eye_tracking :
-    -- Sedivy: necessary modifiers trigger contrastive inference
-    SedivyEtAl1999.exp1_competitor_contrast.significant ∧
     -- This study: unnecessary modifiers cause processing cost
     exp3_headNoun_firstPass.anova.significant ∧
     exp3_postNoun_regressions.anova.significant :=
-  ⟨rfl, rfl, rfl⟩
+  ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § Bridge: Moderately Gricean

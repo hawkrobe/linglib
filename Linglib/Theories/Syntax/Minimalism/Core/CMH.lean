@@ -82,10 +82,13 @@ def MergeBundle.toList (b : MergeBundle) : List MergeFeature :=
 -- ============================================================================
 
 /-- Whether a category is a verbal head in the CMH sense. -/
-def isVerbalHead : Cat → Bool
-  | .V => true
-  | .v => true
-  | _  => false
+def isVerbalHead : Cat → Prop
+  | .V => True
+  | .v => True
+  | _  => False
+
+instance : DecidablePred isVerbalHead := fun c => by
+  cases c <;> unfold isVerbalHead <;> infer_instance
 
 /-- A CMH-compliant verbal head: a V or v with a Merge feature bundle.
 

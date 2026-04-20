@@ -38,7 +38,7 @@ result-state equivalence.
 - `ForceTransmissionClass` refines `AffectednessDegree.potential` into PFC vs IE
 - `LevinClass.forceTransmissionClass` bridges @cite{levin-1993} classes to @cite{bhadra-2024}
 - `RootType.result` roots have singleton outcomes; `RootType.propertyConcept` is orthogonal
-- `Template.hasResultState` is necessary but not sufficient for *un-*/*re-* (must also
+- `Template.HasResultState` is necessary but not sufficient for *un-*/*re-* (must also
   check outcome cardinality)
 -/
 
@@ -270,10 +270,11 @@ theorem noforce_disallows_both :
     template) but coil (9.6) does not (putting template lacks BECOME). Both are
     PFC — outcome cardinality captures a different dimension than template shape. -/
 theorem pfc_orthogonal_to_hasResultState :
-    (LevinClass.eventTemplate .bend).hasResultState = true ∧
-    (LevinClass.eventTemplate .coil).hasResultState = false ∧
+    (LevinClass.eventTemplate .bend).HasResultState ∧
+    ¬ (LevinClass.eventTemplate .coil).HasResultState ∧
     LevinClass.forceTransmissionClass .bend = .potentialForChange ∧
-    LevinClass.forceTransmissionClass .coil = .potentialForChange := ⟨rfl, rfl, rfl, rfl⟩
+    LevinClass.forceTransmissionClass .coil = .potentialForChange := by
+  refine ⟨?_, ?_, rfl, rfl⟩ <;> decide
 
 /-- reclassifies bend (45.2) from COS to PFC despite
     Levin's CoS=true meaning components. This is the central refinement. -/

@@ -5,6 +5,7 @@ import Linglib.Theories.Semantics.PIP.Composition
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Plurality.Link1983
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # PIP Integration Bridges
@@ -41,7 +42,6 @@ open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity)
 open Semantics.Dynamic.IntensionalCDRT (IContext)
 open Core.IntensionalLogic.RestrictedModality (Refl)
 open Core.IntensionalLogic.RestrictedModality.Logic (frameConditions)
-open Core.Proposition (FiniteWorlds)
 
 
 -- ============================================================
@@ -404,7 +404,7 @@ The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ w' = true}` ↔
 `boxR (fun a b => R a b = true) (fun w' => φ w' = true) w`. Both express
 "the body holds at every R-accessible world from w".
 -/
-theorem mustBase_agrees_boxR {W D : Type*} [FiniteDomain D] [FiniteWorlds W]
+theorem mustBase_agrees_boxR {W D : Type*} [FiniteDomain D] [Fintype W]
     (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } ↔
     Core.IntensionalLogic.RestrictedModality.boxR

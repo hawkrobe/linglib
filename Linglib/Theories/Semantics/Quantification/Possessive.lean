@@ -50,8 +50,8 @@ variable {α : Type*}
     Used to narrow the possessor restrictor to those who actually possess
     an A-thing.
     @cite{peters-westerstahl-2006} Ch 7, p235, (7.101). -/
-def domR [Fintype α] [DecidableEq α] (A : α → Bool) (R : α → α → Bool) : α → Bool :=
-  λ a => decide (∃ b, A b = true ∧ R a b = true)
+def domR (A : α → Prop) (R : α → α → Prop) : α → Prop :=
+  λ a => ∃ b, A b ∧ R a b
 
 -- ============================================================================
 -- §2 Possessive Operators
@@ -65,8 +65,8 @@ def domR [Fintype α] [DecidableEq α] (A : α → Bool) (R : α → α → Bool
     possessor domain to those who actually possess A-things.
 
     @cite{peters-westerstahl-2006} Ch 7, Poss^w. -/
-def PossW (Q₁ Q₂ : GQ α) (C : α → Bool) (R : α → α → Bool) : GQ α :=
-  λ A B => Q₁ C (λ x => Q₂ (λ y => R x y && A y) B)
+def PossW (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop) : GQ α :=
+  λ A B => Q₁ C (λ x => Q₂ (λ y => R x y ∧ A y) B)
 
 /-- Possessive quantifier with domain narrowing.
 
@@ -77,9 +77,8 @@ def PossW (Q₁ Q₂ : GQ α) (C : α → Bool) (R : α → α → Bool) : GQ α
     contextually appropriate.
 
     @cite{peters-westerstahl-2006} Ch 7 Def 1. -/
-def Poss [Fintype α] [DecidableEq α]
-    (Q₁ Q₂ : GQ α) (C : α → Bool) (R : α → α → Bool) : GQ α :=
-  λ A B => Q₁ (λ x => C x && domR A R x) (λ x => Q₂ (λ y => A y && R x y) B)
+def Poss (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop) : GQ α :=
+  λ A B => Q₁ (λ x => C x ∧ domR A R x) (λ x => Q₂ (λ y => A y ∧ R x y) B)
 
 -- ============================================================================
 -- §3 Monotonicity Inheritance
@@ -93,7 +92,7 @@ def Poss [Fintype α] [DecidableEq α]
     and Q₁ Mon↑ in scope gives the result.
 
     @cite{peters-westerstahl-2006} Ch 7. -/
-theorem possW_scopeUpMono (Q₁ Q₂ : GQ α) (C : α → Bool) (R : α → α → Bool)
+theorem possW_scopeUpMono (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop)
     (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeUpwardMono Q₂) :
     ScopeUpwardMono (PossW Q₁ Q₂ C R) := by
   intro A B B' hBB' hQ
@@ -110,7 +109,7 @@ theorem possW_scopeUpMono (Q₁ Q₂ : GQ α) (C : α → Bool) (R : α → α �
     Then Q₁ scope-↑ gives Q₁(C, inner_B') → Q₁(C, inner_B).
 
     @cite{peters-westerstahl-2006} Ch 7. -/
-theorem possW_scopeDownMono (Q₁ Q₂ : GQ α) (C : α → Bool) (R : α → α → Bool)
+theorem possW_scopeDownMono (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop)
     (h₁ : ScopeUpwardMono Q₁) (h₂ : ScopeDownwardMono Q₂) :
     ScopeDownwardMono (PossW Q₁ Q₂ C R) := by
   intro A B B' hBB' hQ
@@ -124,12 +123,27 @@ theorem possW_scopeDownMono (Q₁ Q₂ : GQ α) (C : α → Bool) (R : α → α
     at the inner level, though PossW itself is not CONSERV as a GQ
     (it has a complex restrictor-scope interaction).
     @cite{peters-westerstahl-2006} Ch 7. -/
-theorem possW_inner_conservative (Q₁ Q₂ : GQ α) (C : α → Bool) (R : α → α → Bool)
-    (hCons₂ : Conservative Q₂) (A B : α → Bool) :
-    PossW Q₁ Q₂ C R A B =
-      Q₁ C (λ x => Q₂ (λ y => R x y && A y) (λ z => (R x z && A z) && B z)) := by
+theorem possW_inner_conservative (Q₁ Q₂ : GQ α) (C : α → Prop) (R : α → α → Prop)
+    (hCons₂ : Conservative Q₂) (A B : α → Prop) :
+    PossW Q₁ Q₂ C R A B ↔
+      Q₁ C (λ x => Q₂ (λ y => R x y ∧ A y) (λ z => (R x z ∧ A z) ∧ B z)) := by
   unfold PossW
-  congr 1; funext x
-  exact hCons₂ _ B
+  constructor
+  · intro h
+    refine (?_ : Q₁ C _ → Q₁ C _) h
+    intro hQ
+    have hEq : (λ x => Q₂ (λ y => R x y ∧ A y) B) =
+               (λ x => Q₂ (λ y => R x y ∧ A y) (λ z => (R x z ∧ A z) ∧ B z)) := by
+      funext x
+      exact propext (hCons₂ _ B)
+    rw [hEq] at hQ
+    exact hQ
+  · intro h
+    have hEq : (λ x => Q₂ (λ y => R x y ∧ A y) (λ z => (R x z ∧ A z) ∧ B z)) =
+               (λ x => Q₂ (λ y => R x y ∧ A y) B) := by
+      funext x
+      exact propext (hCons₂ _ B).symm
+    rw [hEq] at h
+    exact h
 
 end Semantics.Quantification.Possessive

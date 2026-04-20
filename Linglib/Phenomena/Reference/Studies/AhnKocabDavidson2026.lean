@@ -648,15 +648,15 @@ theorem aHelpB_correct :
     contribute CI content that projects through all operators. -/
 def introducingUse (predicate : Entity → Bool) (R : Entity → Locus → Bool)
     (loc : Locus) : TwoDimProp Entity :=
-  { atIssue := predicate
-  , ci := fun x => R x loc }
+  { atIssue := fun x => predicate x = true
+  , ci := fun x => R x loc = true }
 
 /-- Anaphoric use: the spatial restriction IS at-issue (it picks out
     the unique entity associated with the locus). CI is trivial. -/
 def anaphoricUse (R : Entity → Locus → Bool) (loc : Locus)
     (P : Entity → Bool) : TwoDimProp Entity :=
-  { atIssue := ixModified R loc P
-  , ci := fun _ => true }
+  { atIssue := fun x => ixModified R loc P x = true
+  , ci := fun _ => True }
 
 /-- The introducing use's CI projects through negation: negating
     "JIN₍ₐ₎ DANCE" negates the dancing but preserves the locus
@@ -671,6 +671,6 @@ theorem introducing_ci_projects (pred : Entity → Bool)
     already introduced. -/
 theorem anaphoric_ci_trivial (R : Entity → Locus → Bool) (loc : Locus)
     (P : Entity → Bool) (x : Entity) :
-    (anaphoricUse R loc P).ci x = true := rfl
+    (anaphoricUse R loc P).ci x := trivial
 
 end AhnKocabDavidson2026

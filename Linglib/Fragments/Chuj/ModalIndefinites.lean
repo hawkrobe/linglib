@@ -72,24 +72,24 @@ def komonEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem yalnhej_at_issue : yalnhejEntry.status = .atIssue := rfl
-theorem yalnhej_has_epistemic : yalnhejEntry.hasEpistemic = true := rfl
-theorem yalnhej_has_rc : yalnhejEntry.hasCircumstantial = true := rfl
+theorem yalnhej_has_epistemic : yalnhejEntry.hasEpistemic := by decide
+theorem yalnhej_has_rc : yalnhejEntry.hasCircumstantial := by decide
 theorem yalnhej_not_ub : yalnhejEntry.upperBounded = false := rfl
 theorem yalnhej_pos_sensitive : yalnhejEntry.positionSensitive = true := rfl
 theorem yalnhej_unrestricted : yalnhejEntry.anchorConstraint = some .unrestricted := rfl
 theorem yalnhej_number_neutral : yalnhejEntry.numberNeutral = true := rfl
 
 theorem komon_at_issue : komonEntry.status = .atIssue := rfl
-theorem komon_rc_only : komonEntry.hasEpistemic = false ∧ komonEntry.hasCircumstantial = true :=
-  ⟨rfl, rfl⟩
+theorem komon_rc_only : ¬ komonEntry.hasEpistemic ∧ komonEntry.hasCircumstantial := by
+  refine ⟨?_, ?_⟩ <;> decide
 theorem komon_not_ub : komonEntry.upperBounded = false := rfl
 theorem komon_unrestricted : komonEntry.anchorConstraint = some .unrestricted := rfl
 
 /-- *yalnhej* and *komon* differ in flavor inventory: *yalnhej* has
     epistemic + RC, *komon* has RC only. -/
 theorem yalnhej_komon_flavor_difference :
-    yalnhejEntry.hasEpistemic = true ∧ komonEntry.hasEpistemic = false :=
-  ⟨rfl, rfl⟩
+    yalnhejEntry.hasEpistemic ∧ ¬ komonEntry.hasEpistemic := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 
 end Fragments.Chuj.ModalIndefinites

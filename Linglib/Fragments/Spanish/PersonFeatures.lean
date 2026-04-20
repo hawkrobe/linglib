@@ -28,32 +28,35 @@ open Core.Person
 /-- Fission applies iff [+PARTICIPANT, +SINGULAR].
     This derives the person restriction on stylistic applicatives:
     only 1SG and 2SG trigger Fission, not 3SG or any plural. -/
-def fissionApplicable (p : Category) : Bool :=
-  p.toFeatures.hasParticipant && p.isSingular
+def IsFissionApplicable (p : Category) : Prop :=
+  p.toFeatures.hasParticipant = true ∧ p.IsSingular
+
+instance : DecidablePred IsFissionApplicable :=
+  fun _ => inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================================
 -- § 2: Verification Theorems
 -- ============================================================================
 
 /-- Fission applies to 1SG. -/
-theorem fission_1sg : fissionApplicable .s1 = true := rfl
+theorem fission_1sg : IsFissionApplicable .s1 := by decide
 
 /-- Fission applies to 2SG. -/
-theorem fission_2sg : fissionApplicable .s2 = true := rfl
+theorem fission_2sg : IsFissionApplicable .s2 := by decide
 
 /-- Fission does NOT apply to 3SG (not a participant). -/
-theorem fission_not_3sg : fissionApplicable .s3 = false := rfl
+theorem fission_not_3sg : ¬ IsFissionApplicable .s3 := by decide
 
 /-- Fission does NOT apply to group categories (not singular). -/
 theorem fission_not_groups :
-    fissionApplicable .minIncl = false ∧
-    fissionApplicable .augIncl = false ∧
-    fissionApplicable .excl = false ∧
-    fissionApplicable .secondGrp = false ∧
-    fissionApplicable .thirdGrp = false := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    ¬ IsFissionApplicable .minIncl ∧
+    ¬ IsFissionApplicable .augIncl ∧
+    ¬ IsFissionApplicable .excl ∧
+    ¬ IsFissionApplicable .secondGrp ∧
+    ¬ IsFissionApplicable .thirdGrp := by decide
 
 /-- Exactly 2 of the 8 person categories trigger Fission. -/
 theorem fission_count :
-    (Category.all.filter fissionApplicable).length = 2 := by native_decide
+    (Category.all.filter (decide <| IsFissionApplicable ·)).length = 2 := by decide
 
 end Fragments.Spanish.PersonFeatures

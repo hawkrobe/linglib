@@ -193,7 +193,7 @@ theorem eTIA_licensing_from_fragment :
 
 /-- G-TIA NPI status from Fragment: G-TIA is an NPI, E-TIA is not. -/
 theorem npi_status_from_fragment :
-    inGTIA.isNPI = true ∧ inETIA.isNPI = false := by native_decide
+    inGTIA.isNPI ∧ ¬ inETIA.isNPI := by native_decide
 
 /-- Stacking constraint from Fragment: E-TIA is event-level (inner),
     G-TIA is perfect-level (outer). The syntactic positions determine

@@ -117,7 +117,7 @@ theorem dynamicProjection_static {W : Type*} {T : Type*} {E : Type*} {P : Type*}
     ⟦P^π⟧ = λx. ⟦P⟧(x) = 1 and proj(x, s(π), t, w) = P -/
 structure ClassifierPred (E : Type*) (P : Type*) where
   /-- The logical predicate (e.g., tree', pole', person') -/
-  logical : E → Bool
+  logical : E → Prop
   /-- The iconic projection function -/
   projects : E → StaticViewpoint P → Bool
   /-- The viewpoint variable this classifier is evaluated relative to -/
@@ -126,12 +126,12 @@ structure ClassifierPred (E : Type*) (P : Type*) where
   label : String
 
 /-- Evaluate a classifier predicate at a dynamic viewpoint.
-    Returns true iff the logical predicate holds AND the object
-    projects to the classifier from the viewpoint at (w, t). -/
+    Holds iff the logical predicate holds AND the object projects to
+    the classifier from the viewpoint at (w, t). -/
 def ClassifierPred.eval {E : Type*} {P : Type*} {W : Type*} {T : Type*}
     (cl : ClassifierPred E P) (d : E)
-    (vp : DynamicViewpoint W T P) (w : W) (t : T) : Bool :=
-  cl.logical d && dynamicProjection cl.projects d vp w t
+    (vp : DynamicViewpoint W T P) (w : W) (t : T) : Prop :=
+  cl.logical d ∧ dynamicProjection cl.projects d vp w t = true
 
 /-- At a static viewpoint, classifier evaluation is time-invariant. -/
 theorem ClassifierPred.eval_static {E : Type*} {P : Type*} {W : Type*} {T : Type*}

@@ -1,5 +1,5 @@
-import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
-import Linglib.Theories.Pragmatics.RSA.Quantities
+import Linglib.Theories.Pragmatics.RSA.ArgumentativeStrength
+import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Mathlib.Data.Rat.Defs
 
@@ -49,7 +49,7 @@ from speaker-oriented argStr to a situation-oriented difficulty measure.
 namespace MacuchSilvaEtAl2024
 
 open RSA.ArgumentativeStrength
-open RSA.Domains.Quantity
+open Phenomena.ScalarImplicatures.QuantityDomain
 
 
 -- ============================================================

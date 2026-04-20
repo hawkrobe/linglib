@@ -39,8 +39,8 @@ def nimporteQuelEntry : ModalIndefiniteEntry where
 -- ════════════════════════════════════════════════════
 
 theorem nimporteQuel_at_issue : nimporteQuelEntry.status = .atIssue := rfl
-theorem nimporteQuel_rc : nimporteQuelEntry.hasCircumstantial = true := rfl
-theorem nimporteQuel_no_epistemic : nimporteQuelEntry.hasEpistemic = false := rfl
+theorem nimporteQuel_rc : nimporteQuelEntry.hasCircumstantial := by decide
+theorem nimporteQuel_no_epistemic : ¬ nimporteQuelEntry.hasEpistemic := by decide
 theorem nimporteQuel_not_ub : nimporteQuelEntry.upperBounded = false := rfl
 theorem nimporteQuel_unrestricted : nimporteQuelEntry.anchorConstraint = some .unrestricted := rfl
 

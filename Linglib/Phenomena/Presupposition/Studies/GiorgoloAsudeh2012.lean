@@ -331,12 +331,12 @@ variable {W : Type*}
 /-- Project the CI channel to a TwoDimProp.
     The at-issue value becomes `atIssue`; the conjoined CI log becomes `ci`.
     Presuppositional content is discarded (it lives in a separate dimension). -/
-def twoChannelToTwoDim (m : TwoChannel (W → Bool) (W → Bool) (W → Bool))
+def twoChannelToTwoDim (m : TwoChannel (W → Prop) (W → Prop) (W → Prop))
     : TwoDimProp W :=
   { atIssue := m.val
-  , ci := λ w => m.ciLog.all (· w) }
+  , ci := λ w => ∀ p ∈ m.ciLog, p w }
 
-theorem bridge_preserves_atIssue (m : TwoChannel (W → Bool) (W → Bool) (W → Bool)) :
+theorem bridge_preserves_atIssue (m : TwoChannel (W → Prop) (W → Prop) (W → Prop)) :
     (twoChannelToTwoDim m).atIssue = m.val := rfl
 
 end Bridge

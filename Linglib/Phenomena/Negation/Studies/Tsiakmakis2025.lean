@@ -124,12 +124,12 @@ def neg1Sem (p : World → Bool) : World → Bool :=
     varies by host (deontic for fear/forbid, epistemic for doubt/questions). -/
 def neg2Sem (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool))
     (w : World) : Prop :=
-  necessity f g p w
+  necessity f g (fun w' => p w' = true) w
 
 /-- NEG₂ is formally identical to Kratzer necessity. -/
 theorem neg2_is_kratzer_necessity (f : ModalBase World) (g : OrderingSource World)
     (p : (World → Bool)) (w : World) :
-    neg2Sem f g p w ↔ necessity f g p w := Iff.rfl
+    neg2Sem f g p w ↔ necessity f g (fun w' => p w' = true) w := Iff.rfl
 
 -- ════════════════════════════════════════════════════
 -- § 2. Diagnostics

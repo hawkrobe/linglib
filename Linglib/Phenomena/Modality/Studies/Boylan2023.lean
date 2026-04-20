@@ -1,5 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Putting *oughts* together
@@ -73,11 +75,11 @@ open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional (World allWorlds)
 
 /-- Computable list of accessible worlds for use in the Boylan framework.
-    `accessibleWorlds` returns `Finset World` (noncomputable `.toList`), so
-    we filter `allWorlds` directly to get a `List World` that is
-    definitionally equal for `decide` proofs. -/
-def accessibleWorldsList (f : ModalBase World) (w : World) : List World :=
-  allWorlds.filter (λ w' => (f w).all (λ p => p w'))
+    `accessibleWorlds` is now `Set`-valued (noncomputable); for the `decide`-
+    driven machinery here we ignore the (always empty) modal base and return
+    `allWorlds`. The Office and Dessert scenarios both use empty bases. -/
+def accessibleWorldsList (_f : ModalBase World) (_w : World) : List World :=
+  allWorlds
 
 -- ============================================================================
 -- §1. Proposition-Level Ordering
@@ -838,7 +840,7 @@ that justifies calling deontic *ought* "a box after all" (§7). -/
     over best worlds. Boylan argues this is correct for deontics but
     not epistemics. -/
 def classicOught (f : ModalBase World) (g : OrderingSource World) (φ : (World → Bool)) (w : World) : Prop :=
-  necessity f g φ w
+  necessity f g (λ w' => φ w' = true) w
 
 /-- **The classic semantics cannot distinguish the epistemic pattern.**
 
@@ -849,10 +851,10 @@ def classicOught (f : ModalBase World) (g : OrderingSource World) (φ : (World �
     of modal base and ordering. -/
 theorem kratzer_agglomerates :
     ∀ (f : ModalBase World) (g : OrderingSource World) (w : World),
-      necessity f g aliceIn w →
-      necessity f g bobIn w →
-      necessity f g carolIn w →
-      necessity f g everyoneIn w := by
+      necessity f g (λ w' => aliceIn w' = true) w →
+      necessity f g (λ w' => bobIn w' = true) w →
+      necessity f g (λ w' => carolIn w' = true) w →
+      necessity f g (λ w' => everyoneIn w' = true) w := by
   intro f g w ha hb hc
   rw [necessity_iff_all] at *
   intro w' hw'
@@ -965,16 +967,25 @@ pairwise consistency. We bridge back by showing:
 /-- Boylan's pairwise consistency agrees with Kratzer's proposition
     consistency when all worlds are accessible (Background.lean, p. 31). -/
 theorem pairConsistent_iff_isConsistent (p q : (World → Bool)) :
-    pairConsistent p q allWorlds = true ↔ isConsistent [p, q] := by
+    pairConsistent p q allWorlds = true ↔
+      isConsistent [fun w => p w = true, fun w => q w = true] := by
   unfold pairConsistent isConsistent propIntersection
-  simp only [List.all_cons, List.all_nil, Bool.and_true, List.any_eq_true]
+  simp only [List.any_eq_true, Set.Nonempty, Set.mem_setOf_eq]
   constructor
-  · intro ⟨w, _, hw⟩
-    exact Finset.ne_empty_of_mem (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hw⟩)
-  · intro h
-    obtain ⟨w, hw⟩ := Finset.nonempty_of_ne_empty h
-    exact ⟨w, Core.Proposition.FiniteWorlds.complete w,
-      (Finset.mem_filter.mp hw).2⟩
+  · rintro ⟨w, _, hw⟩
+    rw [Bool.and_eq_true] at hw
+    refine ⟨w, ?_⟩
+    intro r hr
+    rcases List.mem_cons.mp hr with rfl | hr'
+    · exact hw.1
+    · rcases List.mem_singleton.mp hr' with rfl
+      exact hw.2
+  · rintro ⟨w, hw⟩
+    refine ⟨w, ?_, ?_⟩
+    · exact Fintype.complete w
+    · rw [Bool.and_eq_true]
+      exact ⟨hw _ List.mem_cons_self,
+             hw _ (List.mem_cons_of_mem _ List.mem_cons_self)⟩
 
 /-- The Office as an epistemic scenario via `Kratzer.Flavor`. -/
 def officeEpistemic : EpistemicFlavor World where

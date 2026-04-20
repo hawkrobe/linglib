@@ -160,7 +160,7 @@ theorem finnish_voice_count :
     finnishVoiceSystem.voiceCount = 2 := rfl
 
 theorem finnish_is_active_passive :
-    finnishVoiceSystem.isActivePassive = true := rfl
+    finnishVoiceSystem.isActivePassive := by decide
 
 -- ============================================================================
 -- § 6: Finnish Implicative Verbs (@cite{nadathur-2024})

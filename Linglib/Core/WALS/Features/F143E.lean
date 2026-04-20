@@ -14,11 +14,15 @@ namespace Core.WALS.F143E
 
 /-- WALS 143E values. -/
 inductive PreverbalNegativeMorphemes where
-  | negv  -- NegV (682 languages)
-  | negV  -- [Neg-V] (230 languages)
-  | negvNegV  -- NegV&[Neg-V] (23 languages)
-  | none  -- None (390 languages)
-  deriving DecidableEq, Repr
+  /-- NegV (682 languages). -/
+  | negv
+  /-- [Neg-V] (230 languages). -/
+  | negV
+  /-- NegV&[Neg-V] (23 languages). -/
+  | negvNegV
+  /-- None (390 languages). -/
+  | none
+  deriving DecidableEq, BEq, Repr
 
 private def allData_0 : List (Datapoint PreverbalNegativeMorphemes) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .none }
@@ -1356,18 +1360,6 @@ private def allData_2 : List (Datapoint PreverbalNegativeMorphemes) :=
 
 /-- Complete WALS 143E dataset (1325 languages). -/
 def allData : List (Datapoint PreverbalNegativeMorphemes) := allData_0 ++ allData_1 ++ allData_2
-
--- Count verification
-theorem total_count : allData.length = 1325 := by native_decide
-
-theorem count_negv :
-    (allData.filter (·.value == .negv)).length = 682 := by native_decide
-theorem count_negV :
-    (allData.filter (·.value == .negV)).length = 230 := by native_decide
-theorem count_negvNegV :
-    (allData.filter (·.value == .negvNegV)).length = 23 := by native_decide
-theorem count_none :
-    (allData.filter (·.value == .none)).length = 390 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

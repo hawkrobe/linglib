@@ -11,7 +11,7 @@ This file is the algebraic core: the `QUD` structure, its `Setoid` view,
 constructors (`trivial`, `compose`, `ofProject`, `ofDecEq`, `exact`),
 equivalence-class cells, and the `ProductQUD` projections. Inquisitive
 content (`Issue`, `InfoState`) lives in `Core/Inquisitive.lean`; Roberts 2012
-relevance machinery in `Core/QUD/Relevance.lean`.
+relevance machinery in `Core/Issue/Relevance.lean` (Set/Prop API on `Core.Issue`).
 -/
 
 /-- A QUD partitions the meaning space via an equivalence relation.

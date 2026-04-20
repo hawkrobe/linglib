@@ -18,7 +18,7 @@ We use Mathlib's order-theoretic infrastructure:
 - `Monotone f` (from `Mathlib.Order.Monotone.Basic`): `∀ a b, a ≤ b → f a ≤ f b`
 - `Antitone f`: `∀ a b, a ≤ b → f b ≤ f a`
 
-For `Prop' World = World → Prop`, the ordering is pointwise: `p ≤ q ↔ ∀ w, p w → q w`.
+For `Set World = World → Prop`, the ordering is pointwise: `p ≤ q ↔ ∀ w, p w → q w`.
 
 Mathlib provides composition lemmas for free:
 - `Monotone.comp`: UE ∘ UE = UE
@@ -40,36 +40,35 @@ namespace Semantics.Entailment.Polarity
 export Core.NaturalLogic (ContextPolarity)
 
 open Semantics.Entailment
-open Core.Proposition (Prop')
 
 /--
 IsUpwardEntailing is an abbreviation for `Monotone`.
 
-A context function `f : Prop' World → Prop' World` is upward entailing if
+A context function `f : Set World → Set World` is upward entailing if
 it preserves the ordering: If p ≤ q, then f(p) ≤ f(q).
 -/
-abbrev IsUpwardEntailing (f : Prop' World → Prop' World) := Monotone f
+abbrev IsUpwardEntailing (f : Set World → Set World) := Monotone f
 
 /--
 IsDownwardEntailing is an abbreviation for `Antitone`.
 
-A context function `f : Prop' World → Prop' World` is downward entailing if
+A context function `f : Set World → Set World` is downward entailing if
 it reverses the ordering: If p ≤ q, then f(q) ≤ f(p).
 -/
-abbrev IsDownwardEntailing (f : Prop' World → Prop' World) := Antitone f
+abbrev IsDownwardEntailing (f : Set World → Set World) := Antitone f
 
 abbrev IsUE := IsUpwardEntailing
 abbrev IsDE := IsDownwardEntailing
 
 
 /-- Identity is UE. -/
-theorem id_isUpwardEntailing : IsUpwardEntailing (id : Prop' World → Prop' World) :=
+theorem id_isUpwardEntailing : IsUpwardEntailing (id : Set World → Set World) :=
   monotone_id
 
 /-- Negation is DE. -/
 theorem pnot_isDownwardEntailing : IsDownwardEntailing pnot := by
-  intro p q hpq w hnq hp
-  exact hnq (hpq w hp)
+  intro p q hpq
+  exact Set.compl_subset_compl.mpr hpq
 
 /-- Double negation is UE. -/
 theorem pnot_pnot_isUpwardEntailing : IsUpwardEntailing (pnot ∘ pnot) :=
@@ -77,41 +76,41 @@ theorem pnot_pnot_isUpwardEntailing : IsUpwardEntailing (pnot ∘ pnot) :=
 
 
 /-- UE ∘ UE = UE -/
-theorem ue_comp_ue {f g : Prop' World → Prop' World}
+theorem ue_comp_ue {f g : Set World → Set World}
     (hf : IsUpwardEntailing f) (hg : IsUpwardEntailing g) :
     IsUpwardEntailing (f ∘ g) :=
   hf.comp hg
 
 /-- DE ∘ DE = UE (double negation). -/
-theorem de_comp_de {f g : Prop' World → Prop' World}
+theorem de_comp_de {f g : Set World → Set World}
     (hf : IsDownwardEntailing f) (hg : IsDownwardEntailing g) :
     IsUpwardEntailing (f ∘ g) :=
   hf.comp hg
 
 /-- UE ∘ DE = DE -/
-theorem ue_comp_de {f g : Prop' World → Prop' World}
+theorem ue_comp_de {f g : Set World → Set World}
     (hf : IsUpwardEntailing f) (hg : IsDownwardEntailing g) :
     IsDownwardEntailing (f ∘ g) :=
   hf.comp_antitone hg
 
 /-- DE ∘ UE = DE -/
-theorem de_comp_ue {f g : Prop' World → Prop' World}
+theorem de_comp_ue {f g : Set World → Set World}
     (hf : IsDownwardEntailing f) (hg : IsUpwardEntailing g) :
     IsDownwardEntailing (f ∘ g) :=
   hf.comp_monotone hg
 
 
 /-- Check if f is upward entailing on given test cases (decidable approximation). -/
-def isUpwardEntailing (f : Prop' World → Prop' World)
-    [∀ p : Prop' World, [DecidablePred p] → DecidablePred (f p)]
-    (tests : List (Prop' World × Prop' World)) : Prop :=
+def isUpwardEntailing (f : Set World → Set World)
+    [∀ p : Set World, [DecidablePred p] → DecidablePred (f p)]
+    (tests : List (Set World × Set World)) : Prop :=
   ∀ pq ∈ tests, ∀ _ : DecidablePred pq.1, ∀ _ : DecidablePred pq.2,
     entails pq.1 pq.2 → entails (f pq.1) (f pq.2)
 
 /-- Check if f is downward entailing on given test cases (decidable approximation). -/
-def isDownwardEntailing (f : Prop' World → Prop' World)
-    [∀ p : Prop' World, [DecidablePred p] → DecidablePred (f p)]
-    (tests : List (Prop' World × Prop' World)) : Prop :=
+def isDownwardEntailing (f : Set World → Set World)
+    [∀ p : Set World, [DecidablePred p] → DecidablePred (f p)]
+    (tests : List (Set World × Set World)) : Prop :=
   ∀ pq ∈ tests, ∀ _ : DecidablePred pq.1, ∀ _ : DecidablePred pq.2,
     entails pq.1 pq.2 → entails (f pq.2) (f pq.1)
 
@@ -129,30 +128,30 @@ theorem de_reverses_strength :
 
 
 /-- Material conditional with fixed consequent: "If _, then c" -/
-def materialCond (c : Prop' World) : Prop' World → Prop' World :=
+def materialCond (c : Set World) : Set World → Set World :=
   λ p => λ w => p w → c w
 
 /-- Conditional antecedent is DE. -/
-theorem materialCond_antecedent_DE (c : Prop' World) :
+theorem materialCond_antecedent_DE (c : Set World) :
     IsDownwardEntailing (materialCond c) := by
   intro p q hpq w hpc hp
-  exact hpc (hpq w hp)
+  exact hpc (hpq hp)
 
 /-- Conditional consequent is UE. -/
-theorem materialCond_consequent_UE (a : Prop' World) :
+theorem materialCond_consequent_UE (a : Set World) :
     IsUpwardEntailing (λ c => materialCond c a) := by
   intro p q hpq w hap ha
-  exact hpq w (hap ha)
+  exact hpq (hap ha)
 
 
 /-- A grounded UE polarity carries proof that a context function is monotone. -/
 structure GroundedUE where
-  context : Prop' World → Prop' World
+  context : Set World → Set World
   witness : Monotone context
 
 /-- A grounded DE polarity carries proof that a context function is antitone. -/
 structure GroundedDE where
-  context : Prop' World → Prop' World
+  context : Set World → Set World
   witness : Antitone context
 
 /-- A grounded polarity is either UE or DE, with proof. -/
@@ -165,10 +164,10 @@ def GroundedPolarity.toContextPolarity : GroundedPolarity → ContextPolarity
   | .ue _ => .upward
   | .de _ => .downward
 
-def mkUpward (ctx : Prop' World → Prop' World) (h : Monotone ctx) : GroundedPolarity :=
+def mkUpward (ctx : Set World → Set World) (h : Monotone ctx) : GroundedPolarity :=
   .ue ⟨ctx, h⟩
 
-def mkDownward (ctx : Prop' World → Prop' World) (h : Antitone ctx) : GroundedPolarity :=
+def mkDownward (ctx : Set World → Set World) (h : Antitone ctx) : GroundedPolarity :=
   .de ⟨ctx, h⟩
 
 /-- The identity context is grounded UE. -/
@@ -202,7 +201,7 @@ theorem composePolarity_agrees (outer inner : GroundedPolarity) :
     | de i => rfl
 
 /-- Double DE gives UE (grounded version). -/
-theorem double_de_is_ue_grounded (f g : Prop' World → Prop' World)
+theorem double_de_is_ue_grounded (f g : Set World → Set World)
     (hf : Antitone f) (hg : Antitone g) :
     (composePolarity (mkDownward f hf) (mkDownward g hg)).toContextPolarity = .upward := by
   rfl

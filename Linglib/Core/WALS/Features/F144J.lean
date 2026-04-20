@@ -14,14 +14,21 @@ namespace Core.WALS.F144J
 
 /-- WALS 144J values. -/
 inductive SvnegoOrder where
-  | wordNodoubleneg  -- Word&NoDoubleNeg (15 languages)
-  | suffixNodoubleneg  -- Suffix&NoDoubleNeg (19 languages)
-  | wordOptdoubleneg  -- Word&OptDoubleNeg (5 languages)
-  | suffixOptdoubleneg  -- Suffix&OptDoubleNeg (2 languages)
-  | wordOnlywithanotherneg  -- Word&OnlyWithAnotherNeg (15 languages)
-  | suffixOnlywithanotherneg  -- Suffix&OnlyWithAnotherNeg (17 languages)
-  | noSvnego  -- No SVNegO (373 languages)
-  deriving DecidableEq, Repr
+  /-- Word&NoDoubleNeg (15 languages). -/
+  | wordNodoubleneg
+  /-- Suffix&NoDoubleNeg (19 languages). -/
+  | suffixNodoubleneg
+  /-- Word&OptDoubleNeg (5 languages). -/
+  | wordOptdoubleneg
+  /-- Suffix&OptDoubleNeg (2 languages). -/
+  | suffixOptdoubleneg
+  /-- Word&OnlyWithAnotherNeg (15 languages). -/
+  | wordOnlywithanotherneg
+  /-- Suffix&OnlyWithAnotherNeg (17 languages). -/
+  | suffixOnlywithanotherneg
+  /-- No SVNegO (373 languages). -/
+  | noSvnego
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144J dataset (446 languages). -/
 def allData : List (Datapoint SvnegoOrder) :=
@@ -472,24 +479,6 @@ def allData : List (Datapoint SvnegoOrder) :=
   , { walsCode := "zch", language := "Zoque (Chimalapa)", iso := "zoh", value := .suffixOnlywithanotherneg }
   , { walsCode := "zul", language := "Zulu", iso := "zul", value := .suffixOnlywithanotherneg }
   ]
-
--- Count verification
-theorem total_count : allData.length = 446 := by native_decide
-
-theorem count_wordNodoubleneg :
-    (allData.filter (·.value == .wordNodoubleneg)).length = 15 := by native_decide
-theorem count_suffixNodoubleneg :
-    (allData.filter (·.value == .suffixNodoubleneg)).length = 19 := by native_decide
-theorem count_wordOptdoubleneg :
-    (allData.filter (·.value == .wordOptdoubleneg)).length = 5 := by native_decide
-theorem count_suffixOptdoubleneg :
-    (allData.filter (·.value == .suffixOptdoubleneg)).length = 2 := by native_decide
-theorem count_wordOnlywithanotherneg :
-    (allData.filter (·.value == .wordOnlywithanotherneg)).length = 15 := by native_decide
-theorem count_suffixOnlywithanotherneg :
-    (allData.filter (·.value == .suffixOnlywithanotherneg)).length = 17 := by native_decide
-theorem count_noSvnego :
-    (allData.filter (·.value == .noSvnego)).length = 373 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

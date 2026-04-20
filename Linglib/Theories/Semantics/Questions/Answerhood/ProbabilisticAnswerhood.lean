@@ -1,8 +1,9 @@
 import Linglib.Core.FinitePMF
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
+import Linglib.Core.Issue.Basic
+import Linglib.Core.Issue.Hamblin
+import Linglib.Core.Issue.Relevance
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Mathlib.Algebra.Order.Field.Basic
@@ -36,18 +37,16 @@ EvidencesMoreStrongly(R, R', A) ≡ P(A|info(R)) > P(A|info(R'))
 These probabilistic notions of answerhood are central to Thomas's analysis
 of additive particles like "too", "also", "either".
 
-## Connection to Mention-Some
+## API surface (Set/Prop)
 
-Probabilistic answerhood generalizes the mention-some/mention-all distinction:
-- Under uniform priors, probabilistic answerhood reduces to standard partial answerhood
-- Non-uniform priors allow context-sensitive answerhood
-
+All predicates operate on `Core.Issue W` (the mathlib-aligned downward-closed
+inquisitive lattice) and `Set W` (with `[DecidablePred]` for computability),
+in line with project-wide mathlib discipline.
 -/
 
 namespace Semantics.Questions.ProbabilisticAnswerhood
 
 open Semantics.Questions
-open Discourse
 
 -- Conditional Probability Infrastructure
 
@@ -58,476 +57,204 @@ via `Core.FinitePMF`. Use `prior w` to access the mass at world `w`
 (via `CoeFun`). -/
 abbrev Prior (W : Type*) [Fintype W] := Core.FinitePMF W
 
-/-- Compute P(φ) - probability that φ is true.
+/-! ## Set/Prop API — full mathlib alignment
 
-Delegates to `Core.FinitePMF.probOf`. -/
-def probOfProp {W : Type*} [Fintype W]
-    (prior : Prior W) (φ : W → Bool) : ℚ :=
-  prior.probOf φ
+Predicates operate on `Core.Issue W` (with `[HasAltList]` for finiteness witness)
+and `Set W` (with `[DecidablePred]`) as the canonical types.
 
-/-- Compute P(A | C) - conditional probability of A given C.
+The relationship to FinitePMF:
+- `prior.probOfSet (s : Set W) [DecidablePred (· ∈ s)]` — P(s)
+- `prior.condProbSet (cond target : Set W) [...] [...]` — P(target | cond)
+-/
 
-Delegates to `Core.FinitePMF.condProb`. -/
-def conditionalProb {W : Type*} [Fintype W]
-    (prior : Prior W) (condition : W → Bool) (target : W → Bool) : ℚ :=
-  prior.condProb condition target
+open Classical in
+/-- Probabilistic relevance: `s` changes the probability of some alternative
+of `q`. @cite{thomas-2026} Def. 61. -/
+noncomputable def relevantS {W : Type*} [Fintype W]
+    (s : Set W) (q : Core.Issue W) (prior : Prior W) : Prop :=
+  ∃ a ∈ Core.Issue.alt q, prior.condProbSet s a ≠ prior.probOfSet a
 
-/-- Probability of an info state being actual.
+open Classical in
+/-- Probabilistic answerhood: `s` raises the probability of some alternative
+of `q`. @cite{thomas-2026} Def. 62 condition (a). -/
+noncomputable def probAnswersS {W : Type*} [Fintype W]
+    (s : Set W) (q : Core.Issue W) (prior : Prior W) : Prop :=
+  ∃ a ∈ Core.Issue.alt q, prior.condProbSet s a > prior.probOfSet a
 
-P(σ) = probability that the actual world is in σ.
-
-This is identical to `probOfProp` — a convenience alias using info state
-vocabulary rather than proposition vocabulary. -/
-abbrev probOfState {W : Type*} [Fintype W]
-    (prior : Prior W) (σ : InfoState W) : ℚ :=
-  probOfProp prior σ
-
--- Definition 61: Relevance
-
-/-- Relevance: P changes the probability of some alternative in Q.
-
-Simplified from @cite{thomas-2026} Definition 61 for the case where R is a
-declarative (single alternative P). Thomas's full definition quantifies
-over alternatives of both R and S: ∃A ∈ alt(R), A' ∈ alt(S) s.t.
-P_L(A'|A) ≠ P_L(A'). For declarative R with a single alternative P,
-this reduces to: ∃A' ∈ alt(Q): P(A'|P) ≠ P(A'). -/
-def relevant {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
-  q.alternatives.any λ alt =>
-    let condProb := conditionalProb prior p alt
-    let priorProb := probOfState prior alt
-    condProb != priorProb
-
--- Definition 62: Probabilistic Answerhood
-
-/-- Probabilistic answerhood (simplified): P raises the probability of some alternative.
-
-Simplified from @cite{thomas-2026} Definition 62, which additionally requires
-that the witnessed resolution is raised MORE than any other (in ratio terms):
-(b) for all A' ⊂ alt(Q), if ∩A' ⊉ ∩A, then P(∩A|info(R))/P(∩A) > P(∩A'|info(R))/P(∩A').
-
-This implementation captures only condition (a): ∃A ∈ Q: P(A|P) > P(A).
-The full definition is stronger — it requires the supported answer to be
-*maximally* supported. For the cases we use (binary QUDs, single-alternative
-declaratives), the simplified version suffices. -/
-def probAnswers {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
-  q.alternatives.any λ alt =>
-    let condProb := conditionalProb prior p alt
-    let priorProb := probOfState prior alt
-    condProb > priorProb
-
-/-- Intersection of a list of propositions.
-
-Empty intersection is trivialState (all worlds), per the convention
-that the empty conjunction is ⊤. -/
-private def intersectAlts {W : Type*} (alts : List (W → Bool)) : W → Bool :=
-  alts.foldl (fun acc alt w => acc w && alt w) trivialState
-
-/-- Full probabilistic answerhood per @cite{thomas-2026} Definition 62.
-
-R ANSWERS Q iff ∃ nonempty A ⊆ alt(Q) s.t.
-(a) P(∩A | info(R)) > P(∩A)
-(b) ∀A' ⊆ alt(Q), ∩A' ⊄ ∩A → P(∩A|info(R))/P(∩A) > P(∩A'|info(R))/P(∩A')
-
-Condition (b) ensures that A is the *maximally* supported resolution: no
-other resolution whose intersection isn't already contained in ∩A has a
-higher Bayes factor. This prevents a proposition from "answering" a question
-by accidentally raising two unrelated alternatives equally.
-
-For binary QUDs (|alt(Q)| = 2), conditions (a) and (b) coincide with
-`probAnswers`: raising P(H) necessarily lowers P(¬H), so the Bayes factor
-condition is automatic. See `probAnswersFull_eq_simple_binary`. -/
-def probAnswersFull {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : Bool :=
-  let nonemptySubsets := q.alternatives.sublists.filter fun l => !l.isEmpty
-  nonemptySubsets.any fun a =>
-    let interA := intersectAlts a
-    let pA := probOfProp prior interA
-    let condA := conditionalProb prior p interA
-    -- (a) P(∩A | p) > P(∩A)
-    condA > pA &&
-    -- (b) A's Bayes factor dominates all non-contained subsets
-    pA > 0 &&
-    nonemptySubsets.all fun a' =>
-      let interA' := intersectAlts a'
-      let pA' := probOfProp prior interA'
-      -- ∩A' ⊆ ∩A → condition vacuously satisfied
-      let contained := decide (∀ w : W, interA' w = true → interA w = true)
-      if contained then true
-      else if pA' > 0 then
-        condA / pA > conditionalProb prior p interA' / pA'
-      else true  -- P(∩A') = 0 → ratio undefined, vacuous
-
--- ============================================================================
--- Helpers for probAnswersFull_eq_simple_binary
--- ============================================================================
-
-private lemma probOfProp_complement_add' {W : Type*} [Fintype W]
-    (prior : Prior W) (f : W → Bool) :
-    probOfProp prior f + probOfProp prior (fun w => !f w) = 1 :=
-  prior.probOf_complement_add f
-
-private lemma probOfProp_nonneg' {W : Type*} [Fintype W]
-    (prior : Prior W) (f : W → Bool) : 0 ≤ probOfProp prior f :=
-  prior.probOf_nonneg f
-
-private lemma probOfProp_and_le' {W : Type*} [Fintype W]
-    (prior : Prior W) (f g : W → Bool) :
-    probOfProp prior (fun w => g w && f w) ≤ probOfProp prior f :=
-  prior.probOf_and_le g f
-
-private lemma pp_pos_of_cond_gt' {W : Type*} [Fintype W]
-    (prior : Prior W) (f g : W → Bool)
-    (hGt : conditionalProb prior g f > probOfProp prior f) :
-    probOfProp prior g > 0 :=
-  prior.probOf_pos_of_condProb_gt g f hGt
-
-private lemma pf_pos_of_cond_gt' {W : Type*} [Fintype W]
-    (prior : Prior W) (f g : W → Bool)
-    (hGt : conditionalProb prior g f > probOfProp prior f) :
-    probOfProp prior f > 0 :=
-  prior.probOf_target_pos_of_condProb_gt g f hGt
-
-private lemma probOfProp_and_complement_split' {W : Type*} [Fintype W]
-    (prior : Prior W) (g f : W → Bool) :
-    probOfProp prior (fun w => g w && f w) +
-    probOfProp prior (fun w => g w && !f w) = probOfProp prior g :=
-  (prior.probOf_partition g f).symm
-
-private lemma condProb_complement_sum' {W : Type*} [Fintype W]
-    (prior : Prior W) (g f : W → Bool)
-    (hPg : probOfProp prior g > 0) :
-    conditionalProb prior g f + conditionalProb prior g (fun w => !f w) = 1 :=
-  prior.condProb_complement_sum g f hPg
-
-private lemma cond_complement_lt' {W : Type*} [Fintype W]
-    (prior : Prior W) (p f : W → Bool)
-    (hGt : conditionalProb prior p f > probOfProp prior f) :
-    conditionalProb prior p (fun w => !f w) < probOfProp prior (fun w => !f w) := by
-  have hPp := pp_pos_of_cond_gt' prior f p hGt
-  linarith [condProb_complement_sum' prior p f hPp,
-            probOfProp_complement_add' prior f]
-
-private lemma bayes_factor_dominates' {W : Type*} [Fintype W]
-    (prior : Prior W) (p f : W → Bool)
-    (hGt : conditionalProb prior p f > probOfProp prior f)
-    (hNfPos : probOfProp prior (fun w => !f w) > 0) :
-    conditionalProb prior p f / probOfProp prior f >
-    conditionalProb prior p (fun w => !f w) / probOfProp prior (fun w => !f w) := by
-  have hfPos := pf_pos_of_cond_gt' prior f p hGt
-  have hCondLt := cond_complement_lt' prior p f hGt
-  linarith [(one_lt_div hfPos).mpr hGt, (div_lt_one hNfPos).mpr hCondLt]
-
-private lemma and_and_iff_or {a b x c d y : Bool}
-    (hab : a = true → b = true) (hax : a = true → x = true)
-    (hcd : c = true → d = true) (hcy : c = true → y = true) :
-    ((a && b) && x || (c && d) && y) = (a || c) := by
-  cases a <;> cases c <;> simp_all
-
-/-- The simplified `probAnswers` (condition (a) only) is equivalent to the
-full Thomas (62) `probAnswersFull` for binary QUDs, **under a normalized
-probability distribution**.
-
-For binary {H, ¬H}, raising P(H) necessarily lowers P(¬H) (since
-P(H|p) + P(¬H|p) = 1 = P(H) + P(¬H)), so the Bayes factor for H
-automatically exceeds the Bayes factor for ¬H. The only nonempty subsets
-with non-trivial intersections are {H} and {¬H} (since
-∩{H,¬H} = H ∩ ¬H = ∅ has P(∅) = 0).
-
-Without normalization, the theorem is false: if ∑ prior < 1, both
-alternatives can have their probability raised simultaneously with equal
-Bayes factors, making `probAnswersFull` false while `probAnswers` is true. -/
-theorem probAnswersFull_eq_simple_binary {W : Type*} [Fintype W]
-    (p : W → Bool) (h : W → Bool) (prior : Prior W) :
-    probAnswersFull p (Issue.polar h) prior =
-    probAnswers p (Issue.polar h) prior := by
-  -- Both are Bool; prove they agree by showing true ↔ true
-  -- Step 1: Establish what probAnswers checks
-  -- probAnswers checks: ∃ alt ∈ [h, ¬h], P(alt|p) > P(alt)
-  -- Step 2: Establish what probAnswersFull checks
-  -- sublists [h, ¬h] = [[], [h], [¬h], [h, ¬h]]
-  -- nonempty subsets = [[h], [¬h], [h, ¬h]]
-  -- For each A: intersectAlts A, then check (a)(b)(c)
-  -- [h,¬h] always fails (P(⊥) = 0)
-  -- So: probAnswersFull = check([h]) || check([¬h])
-  -- Under normalization, check([h]) ↔ P(h|p) > P(h)
-  -- Step 3: show equivalence
-
-  -- Convert to ↔ at the Prop level
-  -- Establish the concrete sublists for polar {h, ¬h}
-  -- sublists [h, ¬h] filtered nonempty = [[h], [¬h], [h, ¬h]]
-  have h_subs : ([h, fun w => !h w] : List (W → Bool)).sublists.filter
-      (fun l => !l.isEmpty) = [[h], [fun w => !h w], [h, fun w => !h w]] := rfl
-  unfold probAnswersFull probAnswers
-  dsimp only [Issue.polar]
-  simp only [h_subs, List.any_cons, List.any_nil, Bool.or_false, probOfState]
-  simp only [List.all_cons, List.all_nil, Bool.and_true]
-  simp only [intersectAlts, List.foldl, trivialState, Bool.true_and]
-  -- Key facts about ⊥ = h ∧ ¬h
-  have h_bot : ∀ w : W, (h w && !h w) = false := fun w => by cases h w <;> rfl
-  have pP_bot : probOfProp prior (fun w => h w && !h w) = 0 := by
-    unfold probOfProp; apply Finset.sum_eq_zero; intro w _
-    simp [h_bot]
-  -- Simplify decidable containment checks (self-implications and vacuous implications)
-  have dec_hh : decide (∀ w : W, h w = true → h w = true) = true :=
-    decide_eq_true_eq.mpr fun _ a => a
-  have dec_nhnh : decide (∀ w : W, (!h w) = true → (!h w) = true) = true :=
-    decide_eq_true_eq.mpr fun _ a => a
-  have dec_both : decide (∀ w : W, (h w && !h w) = true → (h w && !h w) = true) = true :=
-    decide_eq_true_eq.mpr fun _ a => a
-  have dec_bot_h : decide (∀ w : W, (h w && !h w) = true → h w = true) = true :=
-    decide_eq_true_eq.mpr fun w hw => absurd (by rw [h_bot] at hw; exact hw) Bool.false_ne_true
-  have dec_bot_nh : decide (∀ w : W, (h w && !h w) = true → (!h w) = true) = true :=
-    decide_eq_true_eq.mpr fun w hw => absurd (by rw [h_bot] at hw; exact hw) Bool.false_ne_true
-  simp only [dec_hh, dec_nhnh, dec_both, dec_bot_h, dec_bot_nh,
-             pP_bot, gt_iff_lt, lt_irrefl, decide_false,
-             Bool.true_and, Bool.and_true, Bool.false_and, Bool.and_false,
-             Bool.or_false, ite_true]
-  -- Eta-normalize: fun w => h w → h (definitionally equal)
-  conv_lhs => simp only [show (fun w : W => h w) = h from rfl]
-  -- Goal: ((dH && dB) && bayesH || (dNH && dD) && bayesNH) = (dH || dNH)
-  -- Apply Bool helper: suffices to show dH → dB ∧ bayesH and dNH → dD ∧ bayesNH
-  apply and_and_iff_or
-  · -- dH = true → dB (prior positivity) = true
-    intro hA; rw [decide_eq_true_eq] at hA ⊢
-    exact pf_pos_of_cond_gt' prior h p hA
-  · -- dH = true → bayesCheck_h = true
-    intro hA; rw [decide_eq_true_eq] at hA
-    split
-    · rfl  -- containment check ¬h ⊆ h passed (vacuous)
-    · split
-      · -- P(¬h) > 0: Bayes factor dominates under normalization
-        rename_i _ hNhPos; rw [decide_eq_true_eq]
-        exact bayes_factor_dominates' prior p h hA hNhPos
-      · rfl  -- P(¬h) = 0: vacuous
-  · -- dNH = true → dD (prior positivity) = true
-    intro hC; rw [decide_eq_true_eq] at hC ⊢
-    exact pf_pos_of_cond_gt' prior (fun w => !h w) p hC
-  · -- dNH = true → bayesCheck_nh = true
-    intro hC; rw [decide_eq_true_eq] at hC
-    split
-    · rfl  -- containment check h ⊆ ¬h passed (vacuous)
-    · split
-      · -- P(h) > 0: Bayes factor via complement argument
-        rename_i _ hHPos; rw [decide_eq_true_eq]
-        have hPp := pp_pos_of_cond_gt' prior (fun w => !h w) p hC
-        have hComp := condProb_complement_sum' prior p h hPp
-        have hAdd := probOfProp_complement_add' prior h
-        have pos_nh := pf_pos_of_cond_gt' prior (fun w => !h w) p hC
-        have cp_h_lt : conditionalProb prior p h < probOfProp prior h := by
-          linarith [hComp, hAdd]
-        linarith [(div_lt_one hHPos).mpr cp_h_lt, (one_lt_div pos_nh).mpr hC]
-      · rfl  -- P(h) = 0: vacuous
-
-/-- Which alternative(s) are supported by P.
-
-Returns the alternatives whose probability is raised by learning P. -/
-def supportedAlternatives {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : List (InfoState W) :=
-  q.alternatives.filter λ alt =>
-    let condProb := conditionalProb prior p alt
-    let priorProb := probOfState prior alt
-    condProb > priorProb
-
--- Definition 63: Evidences More Strongly
-
-/-- Informational content of a resolving state.
-
-For a single info state σ (representing a potential resolution),
-info(σ) is just σ itself - the proposition that the actual world is in σ.
-
-For multiple resolving states, info({σ₁,..., σₙ}) is their union. -/
-def infoContent {W : Type*} (states : List (InfoState W)) : W → Bool :=
-  λ w => states.any λ σ => σ w
-
-/-- Evidences more strongly: R evidences A more strongly than R' does.
-
-Definition 63 from @cite{thomas-2026}:
-```
-EvidencesMoreStrongly(R, R', A) ≡ P(A|info(R)) > P(A|info(R'))
-```
-
-Used in the felicity conditions for additive particles: the prejacent
-combined with the antecedent must evidence some resolution more strongly
-than the antecedent alone. -/
-def evidencesMoreStrongly {W : Type*} [Fintype W]
-    (r r' : List (InfoState W)) (a : InfoState W)
-    (prior : Prior W) : Bool :=
-  let infoR := infoContent r
-  let infoR' := infoContent r'
-  let probGivenR := conditionalProb prior infoR a
-  let probGivenR' := conditionalProb prior infoR' a
-  probGivenR > probGivenR'
-
-/-- Simpler version: single propositions instead of state lists.
-
-Compares conditional probabilities P(A|R) > P(A|R'). This is equivalent
-to comparing Bayes factors P(A|R)/P(A) > P(A|R')/P(A), since the
-denominator P(A) is the same on both sides and cancels. -/
-def evidencesMoreStronglyProp {W : Type*} [Fintype W]
-    (evidence evidence' : W → Bool) (conclusion : W → Bool)
-    (prior : Prior W) : Bool :=
-  let probGivenEvidence := conditionalProb prior evidence conclusion
-  let probGivenEvidence' := conditionalProb prior evidence' conclusion
-  probGivenEvidence > probGivenEvidence'
-
--- Strength of Evidence
-
-/-- Compute how much evidence raises the probability of a conclusion.
-
-This is P(A|E) - P(A), measuring the "boost" from learning E. -/
-def evidentialBoost {W : Type*} [Fintype W]
-    (evidence : W → Bool) (conclusion : W → Bool)
-    (prior : Prior W) : ℚ :=
-  let condProb := conditionalProb prior evidence conclusion
-  let priorProb := probOfProp prior conclusion
-  condProb - priorProb
-
-/-- Evidence is positive if it raises the probability of the conclusion. -/
-def isPositiveEvidence {W : Type*} [Fintype W]
-    (evidence : W → Bool) (conclusion : W → Bool)
-    (prior : Prior W) : Bool :=
-  evidentialBoost evidence conclusion prior > 0
-
-/-- Evidence is negative if it lowers the probability of the conclusion. -/
-def isNegativeEvidence {W : Type*} [Fintype W]
-    (evidence : W → Bool) (conclusion : W → Bool)
-    (prior : Prior W) : Bool :=
-  evidentialBoost evidence conclusion prior < 0
-
--- Connection to Standard Answerhood
+/-- Probabilistic answerhood implies relevance. -/
+theorem probAnswersS_implies_relevantS {W : Type*} [Fintype W]
+    (s : Set W) (q : Core.Issue W) (prior : Prior W)
+    (h : probAnswersS s q prior) : relevantS s q prior := by
+  obtain ⟨a, ha, hgt⟩ := h
+  exact ⟨a, ha, ne_of_gt hgt⟩
 
 /-- Entailing an alternative guarantees probabilistic answerhood.
 
-If P entails some alternative A (every P-world is an A-world) and A is not
-already certain, then learning P raises A's probability to 1, which exceeds
-the prior P(A) < 1. This gives probAnswers (not just relevance).
+If `s ⊆ a` for some alternative `a` of `q`, and `s` has positive prior and
+`a` is not already certain, then learning `s` raises `a`'s probability to
+1, exceeding `P(a) < 1`. The Classical instances baked into `probAnswersS`
+agree with user-supplied `[DecidablePred]` instances by `Subsingleton`. -/
+theorem probAnswersS_when_entailing {W : Type*} [Fintype W] [DecidableEq W]
+    (s : Set W) (q : Core.Issue W) (prior : Prior W) (a : Set W)
+    [DecidablePred (· ∈ s)] [DecidablePred (· ∈ a)]
+    (hAltMem : a ∈ Core.Issue.alt q)
+    (hEntails : s ⊆ a)
+    (hPosS : prior.probOfSet s > 0)
+    (hNotCertain : prior.probOfSet a < 1) :
+    probAnswersS s q prior := by
+  refine ⟨a, hAltMem, ?_⟩
+  -- s ⊆ a ⟹ s ∩ a = s, so condProbSet s a = probOfSet s / probOfSet s = 1 > probOfSet a.
+  have hSA : prior.probOfSet (s ∩ a) = prior.probOfSet s := by
+    unfold Core.FinitePMF.probOfSet
+    refine Finset.sum_congr rfl (fun w _ => ?_)
+    by_cases hw : w ∈ s
+    · simp [hw, Set.mem_inter_iff, hEntails hw]
+    · simp [hw, Set.mem_inter_iff]
+  have hCond : prior.condProbSet s a = 1 := by
+    rw [prior.condProbSet_of_pos s a hPosS, hSA]
+    exact div_self (ne_of_gt hPosS)
+  have hGt : prior.condProbSet s a > prior.probOfSet a := by
+    rw [hCond]; exact hNotCertain
+  convert hGt
 
-Note: the weaker condition of mere consistency (P ∩ A ≠ ∅) does NOT suffice —
-a proposition balanced across alternatives (e.g., W={0,1,2,3}, Q={{0,1},{2,3}},
-P={0,2}) can be consistent with every alternative without changing any
-conditional probability. -/
-theorem probAnswers_when_entailing {W : Type*} [Fintype W] [DecidableEq W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W)
-    (alt : W → Bool)
-    (hAltMem : alt ∈ q.alternatives)
-    (hEntails : ∀ w, p w = true → alt w = true)
-    (hPosP : probOfProp prior p > 0)
-    (hNotCertain : probOfState prior alt < 1) :
-    probAnswers p q prior = true := by
-  simp only [probAnswers, List.any_eq_true, decide_eq_true_eq]
-  refine ⟨alt, hAltMem, ?_⟩
-  -- Show conditionalProb prior p alt = 1
-  have hConj : probOfProp prior (λ w => p w && alt w) = probOfProp prior p := by
-    unfold probOfProp
-    congr 1; funext w
-    cases hp : p w with
-    | false => simp
-    | true => simp [hEntails w hp]
-  have hCond : conditionalProb prior p alt = 1 := by
-    rw [show conditionalProb prior p alt =
-          probOfProp prior (fun w => p w && alt w) / probOfProp prior p from
-      Core.FinitePMF.condProb_of_pos prior p alt hPosP, hConj]
-    exact div_self (ne_of_gt hPosP)
-  -- conditionalProb = 1 > probOfState prior alt
-  rw [hCond]
-  exact hNotCertain
+/-- Evidential boost: how much `evidence` raises the probability of `conclusion`.
+Returns ℚ. -/
+def evidentialBoostS {W : Type*} [Fintype W]
+    (evidence conclusion : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] : ℚ :=
+  prior.condProbSet evidence conclusion - prior.probOfSet conclusion
 
--- Combined Evidence (for Additive Particles)
+/-- Evidence is positive iff its boost is strictly positive. -/
+def isPositiveEvidenceS {W : Type*} [Fintype W]
+    (evidence conclusion : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] : Prop :=
+  evidentialBoostS evidence conclusion prior > 0
 
-/-- Check if conjunction of two propositions provides stronger evidence
-than the first proposition alone.
+/-- Evidence is negative iff its boost is strictly negative. -/
+def isNegativeEvidenceS {W : Type*} [Fintype W]
+    (evidence conclusion : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] : Prop :=
+  evidentialBoostS evidence conclusion prior < 0
 
-This is the core of Thomas's analysis of additive particles:
-TOO(π) requires that ANT ∧ π evidences some resolution more strongly
-than ANT alone. -/
-def conjunctionStrengthens {W : Type*} [Fintype W]
-    (p1 p2 : W → Bool) (conclusion : W → Bool)
-    (prior : Prior W) : Bool :=
-  evidencesMoreStronglyProp (λ w => p1 w && p2 w) p1 conclusion prior
+instance {W : Type*} [Fintype W] (evidence conclusion : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] :
+    Decidable (isPositiveEvidenceS evidence conclusion prior) :=
+  inferInstanceAs (Decidable (_ > _))
 
-/-- Find resolutions that the conjunction evidences more strongly. -/
-def strengthenedResolutions {W : Type*} [Fintype W]
-    (p1 p2 : W → Bool) (q : Issue W)
-    (prior : Prior W) : List (InfoState W) :=
-  q.alternatives.filter λ alt =>
-    conjunctionStrengthens p1 p2 alt prior
+instance {W : Type*} [Fintype W] (evidence conclusion : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] :
+    Decidable (isNegativeEvidenceS evidence conclusion prior) :=
+  inferInstanceAs (Decidable (_ < _))
 
-/-- Check if there exists some resolution that is strengthened. -/
-def someResolutionStrengthened {W : Type*} [Fintype W]
-    (p1 p2 : W → Bool) (q : Issue W)
-    (prior : Prior W) : Bool :=
-  (strengthenedResolutions p1 p2 q prior).length > 0
+/-- Evidence-strength comparison: `r` evidences `a` more strongly than `r'`
+iff `P(a | r) > P(a | r')`. @cite{thomas-2026} Def. 63. -/
+def evidencesMoreStronglyS {W : Type*} [Fintype W]
+    (r r' a : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ r)] [DecidablePred (· ∈ r')] [DecidablePred (· ∈ a)] :
+    Prop :=
+  prior.condProbSet r a > prior.condProbSet r' a
 
--- Theorems
+instance {W : Type*} [Fintype W] (r r' a : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ r)] [DecidablePred (· ∈ r')] [DecidablePred (· ∈ a)] :
+    Decidable (evidencesMoreStronglyS r r' a prior) :=
+  inferInstanceAs (Decidable (_ > _))
 
-/-- Probabilistic answerhood implies relevance.
+/-! ### Conjunction strengthening
 
-If P raises the probability of some alternative, then P changes
-the probability of that alternative. -/
-theorem probAnswers_implies_relevant {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) :
-    probAnswers p q prior = true → relevant p q prior = true := by
-  intro h
-  simp only [probAnswers, relevant] at *
-  simp only [List.any_eq_true, decide_eq_true_eq] at *
-  obtain ⟨alt, hmem, hgt⟩ := h
-  refine ⟨alt, hmem, ?_⟩
-  simp only [bne_iff_ne, ne_eq]
-  exact ne_of_gt hgt
+The core notion in @cite{thomas-2026}'s analysis of additive particles:
+the conjunction `p1 ∩ p2` evidences `conclusion` more strongly than `p1`
+alone. -/
 
-/-- Stronger evidence is positive evidence.
+/-- Conjunction `p1 ∩ p2` evidences `conclusion` more strongly than `p1`. -/
+def conjunctionStrengthensS {W : Type*} [Fintype W]
+    (p1 p2 conclusion : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ p1)] [DecidablePred (· ∈ p2)]
+    [DecidablePred (· ∈ conclusion)] : Prop :=
+  haveI : DecidablePred (· ∈ (p1 ∩ p2)) := by
+    intro w; exact inferInstanceAs (Decidable (_ ∧ _))
+  evidencesMoreStronglyS (p1 ∩ p2) p1 conclusion prior
 
-If R evidences A more strongly than R', then R is positive evidence for A
-relative to R'. -/
-theorem strongerEvidence_is_positive {W : Type*} [Fintype W]
-    (r r' : List (InfoState W)) (a : InfoState W)
-    (prior : Prior W) :
-    evidencesMoreStrongly r r' a prior = true →
-    conditionalProb prior (infoContent r) a >
-    conditionalProb prior (infoContent r') a := by
-  intro h
-  simp only [evidencesMoreStrongly, decide_eq_true_eq] at h
-  exact h
+instance {W : Type*} [Fintype W] (p1 p2 conclusion : Set W) (prior : Prior W)
+    [DecidablePred (· ∈ p1)] [DecidablePred (· ∈ p2)]
+    [DecidablePred (· ∈ conclusion)] :
+    Decidable (conjunctionStrengthensS p1 p2 conclusion prior) := by
+  unfold conjunctionStrengthensS
+  exact inferInstance
 
--- Resolution Evidenced by R (Q|_R)
+open Classical in
+/-- Some alternative of `q` is strengthened by adding `p2` to `p1`.
 
-/-- The resolution of Q evidenced by R — Q|_R from @cite{thomas-2026} Def. 62.
+Spec uses `Classical.dec` for per-alternative decidability so the predicate
+body is well-typed without an `[∀ a, DecidablePred (· ∈ a)]` hypothesis.
+For computable `Decidable` instances at concrete consumers, supply the
+per-alternative `[DecidablePred]` and use `decide` directly. -/
+noncomputable def someResolutionStrengthenedS {W : Type*} [Fintype W]
+    (p1 p2 : Set W) (q : Core.Issue W) (prior : Prior W) : Prop :=
+  ∃ a ∈ Core.Issue.alt q, prior.condProbSet (p1 ∩ p2) a > prior.condProbSet p1 a
 
-Returns the alternative A ∈ alt(Q) that maximizes the Bayes factor
-P(A|info(R)) / P(A). This is the ∩A from Definition 62 such that
-A's Bayes factor strictly dominates all non-contained alternatives.
+/-! ### Witness constructors — Classical/structural Decidable bridge
 
-For single-alternative resolutions (the common case), this reduces
-to the alternative with the highest conditional probability increase. -/
-def evidencedResolution {W : Type*} [Fintype W]
-    (p : W → Bool) (q : Issue W) (prior : Prior W) : Option (InfoState W) :=
-  let candidates := q.alternatives.filterMap fun alt =>
-    let pAlt := probOfProp prior alt
-    if pAlt > 0 then
-      let bayesFactor := conditionalProb prior p alt / pAlt
-      if bayesFactor > 1 then some (alt, bayesFactor) else none
-    else none
-  match candidates with
-  | [] => none
-  | (best, _) :: _ =>
-    -- Find the candidate with the highest Bayes factor
-    let winner := candidates.foldl (fun (acc : InfoState W × ℚ) (cur : InfoState W × ℚ) =>
-      if cur.2 > acc.2 then cur else acc) (best, 0)
-    some winner.1
+The three predicates above are `noncomputable` and use `open Classical in`
+so that the spec body type-checks without per-alternative `[DecidablePred]`
+hypotheses. Concrete consumers compute probability values with their own
+structural `[DecidablePred]` instances; the two instance choices agree
+because `Decidable` is a `Subsingleton`.
 
-/-!
-## ℚ↔ℝ Probability Bridge
+These `of_witness` lemmas absorb the `convert h` boilerplate that
+otherwise appears at every consumer site. The pattern at the call site is:
 
-ProbabilisticAnswerhood uses `Prior W := W → ℚ` (exact rational arithmetic),
-while EntropyNPIs uses `W → ℝ` (for Mathlib's `negMulLog`/`Real.log`). To
-connect the two, cast via `fun w => (prior w : ℝ)`. The identity
-`probOfProp prior φ` cast to `ℝ` equals `∑ w, if φ w then (prior w : ℝ) else 0`
-follows from `Rat.cast_sum`.
+```lean
+refine probAnswersS.of_witness s q prior a hAltMem ?_
+rw [my_cond_lemma, my_prob_lemma]; norm_num
+```
 
-A formal bridge theorem (`probOfProp_cast_eq_cellProb`) is deferred until
-both modules share an import of `Mathlib.Data.Real.Basic`.
--/
+instead of the more verbose:
+
+```lean
+refine ⟨a, hAltMem, ?_⟩
+have h : prior.condProbSet s a > prior.probOfSet a := by
+  rw [my_cond_lemma, my_prob_lemma]; norm_num
+convert h
+```
+
+For destructuring (the negative direction in infelicity proofs), the
+`convert hStr` idiom remains: the destructured hypothesis carries
+Classical instances and must be bridged back to user-supplied structural
+instances at use sites. -/
+
+/-- Constructive witness for `relevantS`: produce an alternative `a` and a
+    probability shift, computed using user-supplied `[DecidablePred]`
+    instances. The Classical instances inside the spec match by
+    `Subsingleton (Decidable _)`. -/
+lemma relevantS.of_witness {W : Type*} [Fintype W]
+    (s : Set W) (q : Core.Issue W) (prior : Prior W) (a : Set W)
+    [DecidablePred (· ∈ s)] [DecidablePred (· ∈ a)]
+    (hAltMem : a ∈ Core.Issue.alt q)
+    (h : prior.condProbSet s a ≠ prior.probOfSet a) :
+    relevantS s q prior :=
+  ⟨a, hAltMem, by convert h⟩
+
+/-- Constructive witness for `probAnswersS`: produce an alternative `a`
+    that is strictly raised by `s`. -/
+lemma probAnswersS.of_witness {W : Type*} [Fintype W]
+    (s : Set W) (q : Core.Issue W) (prior : Prior W) (a : Set W)
+    [DecidablePred (· ∈ s)] [DecidablePred (· ∈ a)]
+    (hAltMem : a ∈ Core.Issue.alt q)
+    (h : prior.condProbSet s a > prior.probOfSet a) :
+    probAnswersS s q prior :=
+  ⟨a, hAltMem, by convert h⟩
+
+/-- Constructive witness for `someResolutionStrengthenedS`: produce an
+    alternative `a` whose conditional probability strictly increases when
+    `p2` is added to `p1`. -/
+lemma someResolutionStrengthenedS.of_witness {W : Type*} [Fintype W]
+    (p1 p2 : Set W) (q : Core.Issue W) (prior : Prior W) (a : Set W)
+    [DecidablePred (· ∈ p1)] [DecidablePred (· ∈ p2)] [DecidablePred (· ∈ a)]
+    (hAltMem : a ∈ Core.Issue.alt q)
+    (h : prior.condProbSet (p1 ∩ p2) a > prior.condProbSet p1 a) :
+    someResolutionStrengthenedS p1 p2 q prior := by
+  haveI : DecidablePred (· ∈ p1 ∩ p2) :=
+    fun w => inferInstanceAs (Decidable (_ ∧ _))
+  exact ⟨a, hAltMem, by convert h⟩
 
 end Semantics.Questions.ProbabilisticAnswerhood

@@ -259,7 +259,7 @@ theorem aci_grounded_in_mcis {W : Type*}
     (φ ψ : TwoDimProp W)
     (h_ci_stronger : ciStrongerThan ψ φ)  -- ψ has stronger CI
     : -- Then ACI arises: ∃ world where φ's CI holds but ψ's does not
-      ∃ w : W, φ.ci w = true ∧ ψ.ci w = false :=
+      ∃ w : W, φ.ci w ∧ ¬ψ.ci w :=
   h_ci_stronger.2
 
 end Implicature.ConventionalImplicatures

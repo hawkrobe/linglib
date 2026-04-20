@@ -33,6 +33,7 @@ import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Set.Finite.Basic
+import Mathlib.Data.Set.Basic
 
 namespace AlonsoOvalleMoghiseh2025
 
@@ -56,7 +57,7 @@ An EFCI alternative with its type and whether it's pre-exhaustified.
 -/
 structure EFCIAlternative (World : Type*) where
   /-- The propositional content -/
-  content : Prop' World
+  content : Set World
   /-- The type of alternative -/
   altType : AlternativeType
   /-- Is this a pre-exhaustified domain alternative? -/
@@ -93,14 +94,14 @@ def singletonSubdomains (D : Domain Entity) : Set (Domain Entity) :=
 The existential assertion over a domain.
 ∃x∈D. P(x) holds at world w iff some entity in D satisfies P at w.
 -/
-def existsInDomain (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
+def existsInDomain (D : Domain Entity) (P : Entity → Set World) : Set World :=
   λ w => ∃ d ∈ D, P d w
 
 /--
 A singleton domain alternative.
 ∃x∈{d}. P(x) = P(d)
 -/
-def singletonAlt (d : Entity) (P : Entity → Prop' World) : Prop' World :=
+def singletonAlt (d : Entity) (P : Entity → Set World) : Set World :=
   P d
 
 
@@ -123,13 +124,13 @@ Pre-exhaustify a singleton domain alternative.
 P(d) becomes: P(d) ∧ ∀y∈D, y≠d → ¬P(y)
 "d is the unique satisfier in D"
 -/
-def preExhaustify (D : Domain Entity) (d : Entity) (P : Entity → Prop' World) : Prop' World :=
+def preExhaustify (D : Domain Entity) (d : Entity) (P : Entity → Set World) : Set World :=
   λ w => P d w ∧ ∀ y ∈ D, y ≠ d → ¬(P y w)
 
 /--
 The set of pre-exhaustified domain alternatives.
 -/
-def preExhDomainAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
+def preExhDomainAlts (D : Domain Entity) (P : Entity → Set World) : Set (Set World) :=
   { φ | ∃ d ∈ D, φ = preExhaustify D d P }
 
 
@@ -145,13 +146,13 @@ In DE contexts: ∃ is stronger than ∀
 /--
 The universal (scalar) alternative to an existential.
 -/
-def universalAlt (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
+def universalAlt (D : Domain Entity) (P : Entity → Set World) : Set World :=
   λ w => ∀ d ∈ D, P d w
 
 /--
 The scalar alternative set for an existential.
 -/
-def scalarAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
+def scalarAlts (D : Domain Entity) (P : Entity → Set World) : Set (Set World) :=
   { universalAlt D P }
 
 
@@ -161,21 +162,21 @@ The full EFCI alternative set combines:
 2. Scalar alternatives (universal)
 3. Pre-exhaustified domain alternatives
 -/
-def efciAlternatives (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
+def efciAlternatives (D : Domain Entity) (P : Entity → Set World) : Set (Set World) :=
   {existsInDomain D P} ∪ scalarAlts D P ∪ preExhDomainAlts D P
 
 /--
 Alternative set with only scalar alternatives (pruned domain).
 Used when partial exhaustification prunes domain alternatives.
 -/
-def scalarOnlyAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
+def scalarOnlyAlts (D : Domain Entity) (P : Entity → Set World) : Set (Set World) :=
   {existsInDomain D P} ∪ scalarAlts D P
 
 /--
 Alternative set with only domain alternatives (pruned scalar).
 Used when partial exhaustification prunes scalar alternatives.
 -/
-def domainOnlyAlts (D : Domain Entity) (P : Entity → Prop' World) : Set (Prop' World) :=
+def domainOnlyAlts (D : Domain Entity) (P : Entity → Set World) : Set (Set World) :=
   {existsInDomain D P} ∪ preExhDomainAlts D P
 
 
@@ -196,7 +197,7 @@ An alternative ψ is innocently excludable if:
 Simple exhaustification: negate all stronger alternatives.
 This is a simplified version; full IE requires MC-set computation.
 -/
-def simpleExh (ALT : Set (Prop' World)) (φ : Prop' World) : Prop' World :=
+def simpleExh (ALT : Set (Set World)) (φ : Set World) : Set World :=
   λ w => φ w ∧ ∀ ψ ∈ ALT, (∀ v, φ v → ψ v) → ψ ≠ φ → ¬(ψ w)
 
 
@@ -228,7 +229,7 @@ This is why EFCIs need rescue mechanisms.
 /--
 Check if an alternative set leads to contradiction when exhaustified.
 -/
-def isContradictory (ALT : Set (Prop' World)) (φ : Prop' World) : Prop :=
+def isContradictory (ALT : Set (Set World)) (φ : Set World) : Prop :=
   ∀ w, ¬(simpleExh ALT φ w)
 
 
@@ -252,13 +253,13 @@ No contradiction!
 /--
 Covert epistemic modal (possibility).
 -/
-def covertEpi (φ : Prop' World) : Prop' World :=
+def covertEpi (φ : Set World) : Set World :=
   λ _ => ∃ w, φ w
 
 /--
 Modal insertion: wrap existential in covert epistemic.
 -/
-def withModalInsertion (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
+def withModalInsertion (D : Domain Entity) (P : Entity → Set World) : Set World :=
   covertEpi (existsInDomain D P)
 
 /-!
@@ -280,14 +281,14 @@ Option B: Prune scalar alts → only domain exh
 Partial exhaustification with pruned scalar alternatives.
 Only domain alternatives are exhaustified.
 -/
-def partialExhDomainOnly (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
+def partialExhDomainOnly (D : Domain Entity) (P : Entity → Set World) : Set World :=
   simpleExh (domainOnlyAlts D P) (existsInDomain D P)
 
 /--
 Partial exhaustification with pruned domain alternatives.
 Only scalar alternatives are exhaustified.
 -/
-def partialExhScalarOnly (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
+def partialExhScalarOnly (D : Domain Entity) (P : Entity → Set World) : Set World :=
   simpleExh (scalarOnlyAlts D P) (existsInDomain D P)
 
 

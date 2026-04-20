@@ -1,16 +1,16 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
-
 /-!
 # Slovenian Question Particles
 @cite{simik-2024}
 
-Lexical entries for Slovenian interrogative particles.
+Lexical entries for Slovenian interrogative particles. The fragment
+commits only to theory-neutral lexical primitives; the left-peripheral
+layer assignment lives in `Phenomena.Questions.Studies.Simik2024`.
 
 ## Particles
 
-| Particle | Gloss | Layer | Bias |
-|----------|-------|-------|------|
-| ali | neutral PQ | CP | none |
+| Particle | Gloss | Bias |
+|----------|-------|------|
+| ali | neutral PQ | none |
 
 *ali* is a clause-initial particle, optional in default PQs.
 Incompatible with DeclPQs (@cite{simik-2024} ex. 28).
@@ -23,13 +23,10 @@ Incompatible with DeclPQs (@cite{simik-2024} ex. 28).
 
 namespace Fragments.Slovenian.QuestionParticles
 
-open Semantics.Questions (QParticleLayer)
-
 /-- A Slovenian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
   gloss : String
-  layer : QParticleLayer
   polarOk : Bool
   declOk : Bool
   whOk : Bool
@@ -42,7 +39,6 @@ Optional; incompatible with DeclPQs. No bias requirements. -/
 def ali : QParticleEntry where
   form := "ali"
   gloss := "PQ (clause-initial neutral)"
-  layer := .cp
   polarOk := true
   declOk := false
   whOk := false

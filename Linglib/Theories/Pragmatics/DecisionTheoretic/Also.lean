@@ -29,7 +29,6 @@ antecedent D must have been relevant before becoming presupposed.
 
 namespace DTS.Also
 
-open Core.Proposition
 open Core.Presupposition
 open DTS
 open DTS.ScalarImplicature (sgnRelevance RelevanceSign)
@@ -45,8 +44,9 @@ This is stronger than P(A)=1: it means A is informationally *inert*.
 Formally: P(X|A) = P(X) for all X, which is equivalent to
 P(X|A) = P(X|⊤) for all X. -/
 def presupposedIrrelevant {W : Type*} [Fintype W]
-    (prior : W → ℚ) (a : (W → Bool)) : Prop :=
-  ∀ (x : (W → Bool)), condProb prior x a = condProb prior x (Decidable.top W)
+    (prior : W → ℚ) (a : Set W) [DecidablePred (· ∈ a)] : Prop :=
+  ∀ (x : Set W) [DecidablePred (· ∈ x)],
+    condProb prior x a = condProb prior x (Set.univ : Set W)
 
 -- ============================================================
 -- Section 2: Topic-Anaphoric Salience (Def. 13)
@@ -63,7 +63,8 @@ D is topic-anaphorically salient for E in context iff:
 This captures the discourse requirement of "also": the antecedent must
 have been relevant before being taken for granted. -/
 structure TopicAnaphoricSalience {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (d e : (W → Bool)) where
+    (ctx : DTSContext W) (d e : Set W)
+    [DecidablePred (· ∈ d)] [DecidablePred (· ∈ e)] where
   /-- E is relevant to the current issue. -/
   eRelevant : posRelevant ctx e ∨ negRelevant ctx e
   /-- D is currently presupposed (informationally inert). -/
@@ -84,7 +85,8 @@ For "Q(a) and also Q(b)": Q(a) and Q(b) have the *same* relevance sign
 The `previousSign` field records the relevance sign of Q(a) before it
 was presupposed; `currentSign` is the relevance sign of Q(b) now. -/
 structure AlsoFelicitous {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (qa qb : (W → Bool)) where
+    (ctx : DTSContext W) (qa qb : Set W)
+    [DecidablePred (· ∈ qa)] [DecidablePred (· ∈ qb)] where
   /-- Q(a) is presupposed. -/
   qaPresupposed : presupposedIrrelevant ctx.prior qa
   /-- Q(b) is relevant. -/
@@ -99,7 +101,8 @@ structure AlsoFelicitous {W : Type*} [Fintype W]
 "Q(a) but also Q(b)": Q(a) had the opposite relevance sign from Q(b).
 This combines adversativity ("but") with additivity ("also"). -/
 structure ButAlsoFelicitous {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (qa qb : (W → Bool)) where
+    (ctx : DTSContext W) (qa qb : Set W)
+    [DecidablePred (· ∈ qa)] [DecidablePred (· ∈ qb)] where
   /-- Q(a) is presupposed. -/
   qaPresupposed : presupposedIrrelevant ctx.prior qa
   /-- Q(b) is relevant. -/
@@ -126,7 +129,7 @@ A proposition φ is properly accommodable iff:
 Accommodable propositions are those that can be "taken for granted"
 without affecting the ongoing argumentation. -/
 def properlyAccommodable {W : Type*} [Fintype W]
-    (ctx : DTSContext W) (φ : (W → Bool)) : Prop :=
+    (ctx : DTSContext W) (φ : Set W) [DecidablePred (· ∈ φ)] : Prop :=
   0 < margProb ctx.prior φ ∧
   margProb ctx.prior φ < 1 ∧
   irrelevant ctx φ
@@ -140,63 +143,77 @@ section Theorems
 variable {W : Type*} [Fintype W]
 
 -- Helper: condProb unfolds when denominator is nonzero
-private lemma condProb_of_ne_zero (prior : W → ℚ) (e h : (W → Bool))
+private lemma condProb_of_ne_zero (prior : W → ℚ) (e h : Set W)
+    [DecidablePred (· ∈ e)] [DecidablePred (· ∈ h)]
     (hne : probSum prior h ≠ 0) :
-    condProb prior e h = probSum prior (Decidable.pand W e h) / probSum prior h := by
-  simp [condProb, hne]
+    condProb prior e h = probSum prior (e ∩ h) / probSum prior h := by
+  unfold condProb
+  dsimp only
+  rw [if_neg hne]
 
 -- Helper: probSum of pand is commutative
-private lemma probSum_pand_comm (prior : W → ℚ) (a b : (W → Bool)) :
-    probSum prior (Decidable.pand W a b) = probSum prior (Decidable.pand W b a) := by
-  simp [probSum, Decidable.pand, Bool.and_comm]
+private lemma probSum_pand_comm (prior : W → ℚ) (a b : Set W)
+    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)] :
+    probSum prior (a ∩ b) = probSum prior (b ∩ a) := by
+  unfold probSum
+  refine Finset.sum_congr rfl (fun w _ => ?_)
+  by_cases ha : w ∈ a <;> by_cases hb : w ∈ b <;>
+    simp [ha, hb]
 
 -- Helper: probSum of pand with top is identity
-private lemma probSum_pand_top (prior : W → ℚ) (a : (W → Bool)) :
-    probSum prior (Decidable.pand W a (Decidable.top W)) = probSum prior a := by
-  simp [probSum, Decidable.pand, Decidable.top, Bool.and_true]
+private lemma probSum_pand_top (prior : W → ℚ) (a : Set W)
+    [DecidablePred (· ∈ a)] :
+    probSum prior (a ∩ (Set.univ : Set W)) = probSum prior a := by
+  unfold probSum
+  refine Finset.sum_congr rfl (fun w _ => ?_)
+  by_cases ha : w ∈ a <;>
+    simp [ha]
 
 -- Helper: probSum is nonneg with nonneg prior
-private lemma probSum_nonneg (prior : W → ℚ) (p : (W → Bool))
+private lemma probSum_nonneg (prior : W → ℚ) (p : Set W) [DecidablePred (· ∈ p)]
     (hNonneg : ∀ w, prior w ≥ 0) : probSum prior p ≥ 0 := by
   show 0 ≤ probSum prior p
   unfold probSum
   apply Finset.sum_nonneg
   intro w _
-  split_ifs
-  · linarith [hNonneg w]
-  · linarith
+  by_cases hp : w ∈ p
+  · simp [hp]; exact hNonneg w
+  · simp [hp]
 
 -- Helper: P(a∧h) ≤ P(a) with nonneg prior
-private lemma probSum_pand_le (prior : W → ℚ) (a h : (W → Bool))
+private lemma probSum_pand_le (prior : W → ℚ) (a h : Set W)
+    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ h)]
     (hNonneg : ∀ w, prior w ≥ 0) :
-    probSum prior (Decidable.pand W a h) ≤ probSum prior a := by
-  unfold probSum Decidable.pand
-  apply Finset.sum_le_sum
-  intro w _
-  split_ifs with h1 h2
-  · linarith
-  · simp only [Bool.and_eq_true] at h1; exact absurd h1.1 h2
-  · linarith [hNonneg w]
-  · linarith
-
--- Helper: P(a) = 0 + nonneg → P(a∧h) = 0
-private lemma probSum_pand_zero_of_zero (prior : W → ℚ) (a h : (W → Bool))
-    (hNonneg : ∀ w, prior w ≥ 0) (hZero : probSum prior a = 0) :
-    probSum prior (Decidable.pand W a h) = 0 := by
-  have hle := probSum_pand_le prior a h hNonneg
-  have hge := probSum_nonneg prior (Decidable.pand W a h) hNonneg
-  linarith
-
--- Helper: P(⊤) ≥ P(H) with nonneg prior
-private lemma probSum_top_ge (prior : W → ℚ) (h : (W → Bool))
-    (hNonneg : ∀ w, prior w ≥ 0) :
-    probSum prior (Decidable.top W) ≥ probSum prior h := by
-  show probSum prior h ≤ probSum prior (Decidable.top W)
+    probSum prior (a ∩ h) ≤ probSum prior a := by
   unfold probSum
   apply Finset.sum_le_sum
   intro w _
-  simp only [Decidable.top]
-  split_ifs <;> linarith [hNonneg w]
+  by_cases ha : w ∈ a
+  · by_cases hh : w ∈ h
+    · simp [ha, hh]
+    · simp [ha, hh]; exact hNonneg w
+  · simp [ha]
+
+-- Helper: P(a) = 0 + nonneg → P(a∧h) = 0
+private lemma probSum_pand_zero_of_zero (prior : W → ℚ) (a h : Set W)
+    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ h)]
+    (hNonneg : ∀ w, prior w ≥ 0) (hZero : probSum prior a = 0) :
+    probSum prior (a ∩ h) = 0 := by
+  have hle := probSum_pand_le prior a h hNonneg
+  have hge := probSum_nonneg prior (a ∩ h) hNonneg
+  linarith
+
+-- Helper: P(⊤) ≥ P(H) with nonneg prior
+private lemma probSum_top_ge (prior : W → ℚ) (h : Set W) [DecidablePred (· ∈ h)]
+    (hNonneg : ∀ w, prior w ≥ 0) :
+    probSum prior (Set.univ : Set W) ≥ probSum prior h := by
+  show probSum prior h ≤ probSum prior (Set.univ : Set W)
+  unfold probSum
+  apply Finset.sum_le_sum
+  intro w _
+  by_cases hh : w ∈ h
+  · simp [hh]
+  · simp [hh]; exact hNonneg w
 
 /-- Presupposition implies the Bayes factor equals 1.
 
@@ -208,64 +225,74 @@ Proof: From presupposedIrrelevant with x := H, we get
 P(H|a) = P(H|⊤) = P(H)/P(⊤). By a Bayes swap:
   P(a|H) = P(H∧a)/P(H) = P(a)·P(H)/(P(⊤)·P(H)) = P(a)/P(⊤).
 This is independent of H, so P(a|H) = P(a|¬H), giving BF = 1. -/
-private lemma presup_implies_bf_one (ctx : DTSContext W) (a : (W → Bool))
+private lemma presup_implies_bf_one (ctx : DTSContext W) (a : Set W)
+    [DecidablePred (· ∈ a)]
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
     (hH : probSum ctx.prior ctx.topic > 0)
-    (hNH : probSum ctx.prior (Decidable.pnot W ctx.topic) > 0) :
+    (hNH : probSum ctx.prior (ctx.topicᶜ) > 0) :
     bayesFactor ctx a = 1 := by
-  set H := ctx.topic
-  set prior := ctx.prior
   -- Step 1: P(⊤) > 0
-  have hTop : probSum prior (Decidable.top W) > 0 :=
-    lt_of_lt_of_le hH (probSum_top_ge prior H hNonneg)
+  have hTop : probSum ctx.prior (Set.univ : Set W) > 0 :=
+    lt_of_lt_of_le hH (probSum_top_ge ctx.prior ctx.topic hNonneg)
   -- Step 2: P(a) ≠ 0 (forced by presupposition + nonneg + P(H) > 0)
   -- If P(a) = 0, then condProb prior H a = 0, but
   -- condProb prior H (⊤) = P(H)/P(⊤) > 0, contradicting presupposition.
-  have hPA : probSum prior a ≠ 0 := by
+  have hPA : probSum ctx.prior a ≠ 0 := by
     intro hZero
-    have hPres := hPresup H
-    -- condProb prior H a = condProb prior H (top)
-    -- With P(a) = 0: LHS = 0. RHS = P(H)/P(⊤) > 0. Contradiction.
-    simp only [condProb, hZero, ↓reduceIte] at hPres
+    have hPres := hPresup ctx.topic
+    unfold condProb at hPres
+    dsimp only at hPres
+    rw [if_pos hZero] at hPres
     rw [probSum_pand_top, if_neg (ne_of_gt hTop)] at hPres
-    have : probSum prior H / probSum prior (Decidable.top W) > 0 :=
+    have : probSum ctx.prior ctx.topic / probSum ctx.prior (Set.univ : Set W) > 0 :=
       div_pos hH hTop
     linarith
   -- Step 3: From presupposition, derive the joint probability equation
   -- presup with x gives: probSum(x∧a)/probSum(a) = probSum(x)/probSum(⊤)
   -- ↔ probSum(x∧a) = probSum(a) · probSum(x) / probSum(⊤)
-  have hJoint : ∀ x, probSum prior (Decidable.pand W x a) =
-      probSum prior a * probSum prior x / probSum prior (Decidable.top W) := by
-    intro x
+  have hJoint : ∀ (x : Set W) [DecidablePred (· ∈ x)],
+      probSum ctx.prior (x ∩ a) =
+      probSum ctx.prior a * probSum ctx.prior x / probSum ctx.prior (Set.univ : Set W) := by
+    intro x _
     have hPx := hPresup x
-    simp only [condProb, hPA, ↓reduceIte] at hPx
-    rw [probSum_pand_top, if_neg (ne_of_gt hTop)] at hPx
+    unfold condProb at hPx
+    dsimp only at hPx
+    rw [if_neg hPA, if_neg (ne_of_gt hTop)] at hPx
+    rw [probSum_pand_top] at hPx
     -- hPx: probSum(x∧a)/probSum(a) = probSum(x)/probSum(⊤)
-    have hPA_pos : (probSum prior a : ℚ) ≠ 0 := hPA
-    have hTop_pos : (probSum prior (Decidable.top W) : ℚ) ≠ 0 := ne_of_gt hTop
+    have hPA_pos : (probSum ctx.prior a : ℚ) ≠ 0 := hPA
+    have hTop_pos : (probSum ctx.prior (Set.univ : Set W) : ℚ) ≠ 0 := ne_of_gt hTop
     field_simp at hPx ⊢
     linarith
   -- Step 4: Derive P(a|H) = P(a|¬H) = P(a)/P(⊤)
-  have hComm := probSum_pand_comm prior a H
-  have hCommNH := probSum_pand_comm prior a (Decidable.pnot W H)
+  have hComm := probSum_pand_comm ctx.prior a ctx.topic
+  have hCommNH := probSum_pand_comm ctx.prior a (ctx.topicᶜ)
   -- P(a|H) = P(a∧H)/P(H) = P(H∧a)/P(H) = P(a)/P(⊤)
-  have hcpH : condProb prior a H = probSum prior a /
-      probSum prior (Decidable.top W) := by
-    simp only [condProb, ne_of_gt hH, ↓reduceIte]
-    rw [hComm, hJoint H]; field_simp
-  have hcpNH : condProb prior a (Decidable.pnot W H) = probSum prior a /
-      probSum prior (Decidable.top W) := by
-    simp only [condProb, ne_of_gt hNH, ↓reduceIte]
-    rw [hCommNH, hJoint (Decidable.pnot W H)]; field_simp
+  have hcpH : condProb ctx.prior a ctx.topic = probSum ctx.prior a /
+      probSum ctx.prior (Set.univ : Set W) := by
+    unfold condProb
+    dsimp only
+    rw [if_neg (ne_of_gt hH)]
+    rw [hComm, hJoint ctx.topic]
+    field_simp
+  have hcpNH : condProb ctx.prior a (ctx.topicᶜ) =
+      probSum ctx.prior a / probSum ctx.prior (Set.univ : Set W) := by
+    unfold condProb
+    dsimp only
+    rw [if_neg (ne_of_gt hNH)]
+    rw [hCommNH, hJoint (ctx.topicᶜ)]
+    field_simp
   -- Step 5: BF = P(a|H)/P(a|¬H) = 1
-  simp only [bayesFactor]
-  have hEq : condProb prior a H = condProb prior a (Decidable.pnot W H) := by
+  unfold bayesFactor
+  dsimp only
+  have hEq : condProb ctx.prior a ctx.topic =
+      condProb ctx.prior a (ctx.topicᶜ) := by
     rw [hcpH, hcpNH]
-  by_cases hZ : condProb prior a (Decidable.pnot W H) = 0
+  by_cases hZ : condProb ctx.prior a (ctx.topicᶜ) = 0
   · rw [if_pos hZ]
-    have : ¬ condProb prior a H > 0 := by rw [hEq, hZ]; linarith
-    rw [if_neg this]
+    have hnpos : ¬ condProb ctx.prior a ctx.topic > 0 := by rw [hEq, hZ]; linarith
+    rw [if_neg hnpos]
   · rw [if_neg hZ, hEq]; exact div_self hZ
 
 /-- **Corollary 15**: "Also" requires non-identity.
@@ -279,12 +306,13 @@ relevant (BF > 1 or BF < 1) — contradiction.
 
 Requires nonneg prior and non-degenerate issue (Merin assumes both). -/
 theorem also_nonidentity {E : Type*} [DecidableEq E]
-    (ctx : DTSContext W) (Q : E → (W → Bool)) (a b : E)
+    (ctx : DTSContext W) (Q : E → Set W) [∀ e, DecidablePred (· ∈ Q e)]
+    (a b : E)
     (hAlso : AlsoFelicitous ctx (Q a) (Q b))
     (_hInj : ∀ x y, Q x = Q y → x = y)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
     (hH : probSum ctx.prior ctx.topic > 0)
-    (hNH : probSum ctx.prior (Decidable.pnot W ctx.topic) > 0) :
+    (hNH : probSum ctx.prior (ctx.topicᶜ) > 0) :
     a ≠ b := by
   intro hab
   subst hab
@@ -299,59 +327,73 @@ independent of any other proposition given both H and ¬H.
 From presupposedIrrelevant: P(x|a) = P(x) for all x. Instantiating
 x = H and x = b∧H gives the joint factorization P(a∧b∧H) · P(H) =
 P(a∧H) · P(b∧H), which is exactly CIP. -/
-private lemma presup_implies_cip (ctx : DTSContext W) (a b : (W → Bool))
+private lemma presup_implies_cip (ctx : DTSContext W) (a b : Set W)
+    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)]
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
     (hH : probSum ctx.prior ctx.topic > 0)
-    (hNH : probSum ctx.prior (Decidable.pnot W ctx.topic) > 0) :
+    (hNH : probSum ctx.prior (ctx.topicᶜ) > 0) :
     CIP ctx a b := by
-  set H := ctx.topic
-  set prior := ctx.prior
-  have hTop : probSum prior (Decidable.top W) > 0 :=
-    lt_of_lt_of_le hH (probSum_top_ge prior H hNonneg)
-  have hPA : probSum prior a ≠ 0 := by
+  have hTop : probSum ctx.prior (Set.univ : Set W) > 0 :=
+    lt_of_lt_of_le hH (probSum_top_ge ctx.prior ctx.topic hNonneg)
+  have hPA : probSum ctx.prior a ≠ 0 := by
     intro hZero
-    have hPres := hPresup H
-    simp only [condProb, hZero, ↓reduceIte] at hPres
+    have hPres := hPresup ctx.topic
+    unfold condProb at hPres
+    dsimp only at hPres
+    rw [if_pos hZero] at hPres
     rw [probSum_pand_top, if_neg (ne_of_gt hTop)] at hPres
-    have : probSum prior H / probSum prior (Decidable.top W) > 0 := div_pos hH hTop
+    have : probSum ctx.prior ctx.topic / probSum ctx.prior (Set.univ : Set W) > 0 :=
+      div_pos hH hTop
     linarith
   -- Key equation from presupposition: P(x∧a) = P(a)·P(x)/P(⊤)
-  have hJoint : ∀ x, probSum prior (Decidable.pand W x a) =
-      probSum prior a * probSum prior x / probSum prior (Decidable.top W) := by
-    intro x
+  have hJoint : ∀ (x : Set W) [DecidablePred (· ∈ x)],
+      probSum ctx.prior (x ∩ a) =
+      probSum ctx.prior a * probSum ctx.prior x / probSum ctx.prior (Set.univ : Set W) := by
+    intro x _
     have hPx := hPresup x
-    simp only [condProb, hPA, ↓reduceIte] at hPx
-    rw [probSum_pand_top, if_neg (ne_of_gt hTop)] at hPx
+    unfold condProb at hPx
+    dsimp only at hPx
+    rw [if_neg hPA, if_neg (ne_of_gt hTop)] at hPx
+    rw [probSum_pand_top] at hPx
     field_simp at hPx ⊢
     linarith
   -- Helper equations
-  have h_aH : probSum prior (Decidable.pand W a H) =
-      probSum prior a * probSum prior H / probSum prior (Decidable.top W) := by
-    rw [probSum_pand_comm]; exact hJoint H
-  have h_aNH : probSum prior (Decidable.pand W a (Decidable.pnot W H)) =
-      probSum prior a * probSum prior (Decidable.pnot W H) /
-      probSum prior (Decidable.top W) := by
-    rw [probSum_pand_comm]; exact hJoint (Decidable.pnot W H)
-  have h_abH : probSum prior (Decidable.pand W (Decidable.pand W a b) H) =
-      probSum prior a * probSum prior (Decidable.pand W b H) /
-      probSum prior (Decidable.top W) := by
-    have : probSum prior (Decidable.pand W (Decidable.pand W a b) H) =
-        probSum prior (Decidable.pand W (Decidable.pand W b H) a) := by
-      congr 1; funext w; simp [Decidable.pand]
-      cases a w <;> cases b w <;> cases H w <;> rfl
-    rw [this]; exact hJoint (Decidable.pand W b H)
-  have h_abNH : probSum prior (Decidable.pand W (Decidable.pand W a b) (Decidable.pnot W H)) =
-      probSum prior a * probSum prior (Decidable.pand W b (Decidable.pnot W H)) /
-      probSum prior (Decidable.top W) := by
-    have : probSum prior (Decidable.pand W (Decidable.pand W a b) (Decidable.pnot W H)) =
-        probSum prior (Decidable.pand W (Decidable.pand W b (Decidable.pnot W H)) a) := by
-      congr 1; funext w; simp [Decidable.pand, Decidable.pnot]
-      cases a w <;> cases b w <;> cases H w <;> rfl
-    rw [this]; exact hJoint (Decidable.pand W b (Decidable.pnot W H))
+  have h_aH : probSum ctx.prior (a ∩ ctx.topic) =
+      probSum ctx.prior a * probSum ctx.prior ctx.topic /
+      probSum ctx.prior (Set.univ : Set W) := by
+    rw [probSum_pand_comm]; exact hJoint ctx.topic
+  have h_aNH : probSum ctx.prior (a ∩ (ctx.topicᶜ)) =
+      probSum ctx.prior a * probSum ctx.prior (ctx.topicᶜ) /
+      probSum ctx.prior (Set.univ : Set W) := by
+    rw [probSum_pand_comm]; exact hJoint (ctx.topicᶜ)
+  have h_abH : probSum ctx.prior ((a ∩ b) ∩ ctx.topic) =
+      probSum ctx.prior a * probSum ctx.prior (b ∩ ctx.topic) /
+      probSum ctx.prior (Set.univ : Set W) := by
+    have hperm :
+        probSum ctx.prior ((a ∩ b) ∩ ctx.topic) =
+        probSum ctx.prior ((b ∩ ctx.topic) ∩ a) := by
+      unfold probSum
+      refine Finset.sum_congr rfl (fun w _ => ?_)
+      by_cases ha : w ∈ a <;> by_cases hb : w ∈ b <;> by_cases hh : ctx.topic w <;>
+        simp [ha, hb, hh]
+    rw [hperm]; exact hJoint (b ∩ ctx.topic)
+  have h_abNH :
+      probSum ctx.prior ((a ∩ b) ∩ (ctx.topicᶜ)) =
+      probSum ctx.prior a *
+        probSum ctx.prior (b ∩ (ctx.topicᶜ)) /
+      probSum ctx.prior (Set.univ : Set W) := by
+    have hperm :
+        probSum ctx.prior ((a ∩ b) ∩ (ctx.topicᶜ)) =
+        probSum ctx.prior (((b ∩ (ctx.topicᶜ)) ∩ a)) := by
+      unfold probSum
+      refine Finset.sum_congr rfl (fun w _ => ?_)
+      by_cases ha : w ∈ a <;> by_cases hb : w ∈ b <;> by_cases hh : ctx.topic w <;>
+        simp [ha, hb, hh]
+    rw [hperm]; exact hJoint (b ∩ (ctx.topicᶜ))
   have hHne := ne_of_gt hH
   have hNHne := ne_of_gt hNH
-  constructor
+  refine ⟨?_, ?_⟩
   · -- CIP for H: P(a∧b|H) = P(a|H)·P(b|H)
     rw [condProb_of_ne_zero _ _ _ hHne, condProb_of_ne_zero _ _ _ hHne,
         condProb_of_ne_zero _ _ _ hHne]
@@ -370,16 +412,17 @@ Proof: Presupposition implies CIP (the joint factorizes trivially
 when one factor is informationally inert), and multiplicativity
 follows from CIP by `bayes_factor_multiplicative_under_cip`. -/
 theorem presuppositional_independence_additivity
-    (ctx : DTSContext W) (a b : (W → Bool))
+    (ctx : DTSContext W) (a b : Set W)
+    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)]
     (hPresup : presupposedIrrelevant ctx.prior a)
     (hNonneg : ∀ w, ctx.prior w ≥ 0)
     (hH : probSum ctx.prior ctx.topic > 0)
-    (hNH : probSum ctx.prior (Decidable.pnot W ctx.topic) > 0)
-    (hNotH : condProb ctx.prior a (Decidable.pnot W ctx.topic) ≠ 0)
-    (hNotH' : condProb ctx.prior b (Decidable.pnot W ctx.topic) ≠ 0)
-    (hABNotH : condProb ctx.prior (Decidable.pand W a b)
-      (Decidable.pnot W ctx.topic) ≠ 0) :
-    bayesFactor ctx (Decidable.pand W a b) =
+    (hNH : probSum ctx.prior (ctx.topicᶜ) > 0)
+    (hNotH : condProb ctx.prior a (ctx.topicᶜ) ≠ 0)
+    (hNotH' : condProb ctx.prior b (ctx.topicᶜ) ≠ 0)
+    (hABNotH : condProb ctx.prior (a ∩ b)
+      (ctx.topicᶜ) ≠ 0) :
+    bayesFactor ctx (a ∩ b) =
       bayesFactor ctx a * bayesFactor ctx b :=
   bayes_factor_multiplicative_under_cip ctx a b
     (presup_implies_cip ctx a b hPresup hNonneg hH hNH) hNotH hNotH' hABNotH

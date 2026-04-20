@@ -520,14 +520,14 @@ theorem agree_on_nom_acc_transitive :
     let depResult := assignCases .accusative
       [ { label := "subj", lexicalCase := none },
         { label := "obj", lexicalCase := none } ]
-    getCaseOf "obj" depResult = some Core.Case.acc ∧
-    (TransPattern.mk .nom .acc).object.toCoreCase = Core.Case.acc := by
+    getCaseOf "obj" depResult = some .acc ∧
+    (TransPattern.mk .nom .acc).object.toCoreCase = .acc := by
   constructor
   · native_decide
   · rfl
 
 /-- Where they diverge: Woolford distinguishes OBJ from ACC.
-    Under dependent case, both map to the same `Core.Case.acc`. -/
+    Under dependent case, both map to the same `.acc`. -/
 theorem diverge_on_obj_vs_acc :
     WCase.obj ≠ WCase.acc ∧
     WCase.obj.toCoreCase = WCase.acc.toCoreCase := ⟨by decide, rfl⟩

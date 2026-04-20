@@ -1,6 +1,7 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Logic.SquareOfOpposition
 import Linglib.Theories.Semantics.Quantification.Quantifier
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Belnap 1970: Conditional Assertion and Restricted Quantification
@@ -71,7 +72,6 @@ namespace Belnap1970
 
 open Core.Presupposition (PrProp)
 open Core.Duality (Truth3)
-open Core.Proposition
 open Core.SquareOfOpposition (Square SquareRelations)
 open Semantics.Quantification.Quantifier
 open Core.IntensionalLogic (Frame)

@@ -1,4 +1,5 @@
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Possibility Semantics
@@ -33,8 +34,6 @@ departure from classical logic and the source of linguistic applications
 
 namespace Semantics.PossibilitySemantics
 
-open Core.Proposition (FiniteWorlds)
-
 -- ════════════════════════════════════════════════════
 -- § 1. Compatibility Frames
 -- ════════════════════════════════════════════════════
@@ -59,10 +58,10 @@ attribute [instance] CompatFrame.decCompat
     A possibility x makes ¬A true iff no compatible possibility makes A
     true — i.e., x's information *settles* ¬A.
     @cite{holliday-mandelkern-2024} Proposition 4.8, eq. (I). -/
-def orthoNeg {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (A : S → Prop) (x : S) : Prop :=
-  ∀ y ∈ FiniteWorlds.worlds, F.compat x y → ¬ A y
+def orthoNeg {S : Type*} [Fintype S] (F : CompatFrame S) (A : S → Prop) (x : S) : Prop :=
+  ∀ y : S, F.compat x y → ¬ A y
 
-instance {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (A : S → Prop) [DecidablePred A] (x : S) :
+instance {S : Type*} [Fintype S] (F : CompatFrame S) (A : S → Prop) [DecidablePred A] (x : S) :
     Decidable (orthoNeg F A x) := by
   unfold orthoNeg; infer_instance
 
@@ -78,10 +77,10 @@ instance {S : Type*} (A B : S → Prop) [DecidablePred A] [DecidablePred B] (x :
     every y compatible with x is itself compatible with some z that makes
     A or B true.
     @cite{holliday-mandelkern-2024} eq. (II). -/
-def disj {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (A B : S → Prop) : S → Prop :=
+def disj {S : Type*} [Fintype S] (F : CompatFrame S) (A B : S → Prop) : S → Prop :=
   orthoNeg F (conj (orthoNeg F A) (orthoNeg F B))
 
-instance {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (A B : S → Prop)
+instance {S : Type*} [Fintype S] (F : CompatFrame S) (A B : S → Prop)
     [DecidablePred A] [DecidablePred B] (x : S) :
     Decidable (disj F A B x) := by
   unfold disj; infer_instance
@@ -95,12 +94,10 @@ instance {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (A B : S → Prop)
     Regularity = "indeterminacy implies compatibility with falsity."
     Only regular sets count as propositions.
     @cite{holliday-mandelkern-2024} Definition 4.3. -/
-def isRegular {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (A : S → Prop) : Prop :=
-  ∀ x ∈ FiniteWorlds.worlds,
-    A x ∨ ∃ y ∈ FiniteWorlds.worlds,
-      F.compat x y ∧ ∀ z ∈ FiniteWorlds.worlds, F.compat y z → ¬ A z
+def isRegular {S : Type*} [Fintype S] (F : CompatFrame S) (A : S → Prop) : Prop :=
+  ∀ x : S, A x ∨ ∃ y : S, F.compat x y ∧ ∀ z : S, F.compat y z → ¬ A z
 
-instance {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (A : S → Prop) [DecidablePred A] :
+instance {S : Type*} [Fintype S] (F : CompatFrame S) (A : S → Prop) [DecidablePred A] :
     Decidable (isRegular F A) := by
   unfold isRegular; infer_instance
 
@@ -111,20 +108,20 @@ instance {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (A : S → Prop) [Deci
 /-- Refinement: y ⊑ x iff every possibility compatible with y is also
     compatible with x. A refinement carries at least as much information.
     @cite{holliday-mandelkern-2024} Lemma 4.4, condition 2. -/
-def refines {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (y x : S) : Prop :=
-  ∀ z ∈ FiniteWorlds.worlds, F.compat y z → F.compat x z
+def refines {S : Type*} [Fintype S] (F : CompatFrame S) (y x : S) : Prop :=
+  ∀ z : S, F.compat y z → F.compat x z
 
-instance {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (y x : S) :
+instance {S : Type*} [Fintype S] (F : CompatFrame S) (y x : S) :
     Decidable (refines F y x) := by
   unfold refines; infer_instance
 
 /-- A world is a possibility that refines everything it is compatible
     with — the most informative kind of possibility.
     @cite{holliday-mandelkern-2024} Definition 4.6. -/
-def isWorld {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (w : S) : Prop :=
-  ∀ x ∈ FiniteWorlds.worlds, F.compat w x → refines F w x
+def isWorld {S : Type*} [Fintype S] (F : CompatFrame S) (w : S) : Prop :=
+  ∀ x : S, F.compat w x → refines F w x
 
-instance {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (w : S) :
+instance {S : Type*} [Fintype S] (F : CompatFrame S) (w : S) :
     Decidable (isWorld F w) := by
   unfold isWorld; infer_instance
 
@@ -138,10 +135,6 @@ instance {S : Type*} [FiniteWorlds S] (F : CompatFrame S) (w : S) :
 inductive Poss5 where
   | x1 | x2 | x3 | x4 | x5
   deriving DecidableEq, Repr, Inhabited
-
-instance : FiniteWorlds Poss5 where
-  worlds := [.x1, .x2, .x3, .x4, .x5]
-  complete := fun w => by cases w <;> simp
 
 instance : Fintype Poss5 where
   elems := {.x1, .x2, .x3, .x4, .x5}
@@ -248,14 +241,12 @@ theorem regular_left : isRegular pathFrame pLeft := by decide
 theorem regular_right : isRegular pathFrame pRight := by decide
 theorem regular_mid : isRegular pathFrame pMid := by decide
 
-private def pEmpty : Poss5 → Prop := fun _ => False
-private def pFull : Poss5 → Prop := fun _ => True
-
-private instance : DecidablePred pEmpty := fun _ => isFalse (fun h => h)
-private instance : DecidablePred pFull := fun _ => isTrue trivial
-
-theorem regular_empty : isRegular pathFrame pEmpty := by decide
-theorem regular_full : isRegular pathFrame pFull := by decide
+theorem regular_empty : isRegular pathFrame (∅ : Set Poss5) := by
+  intro x
+  exact Or.inr ⟨x, pathFrame.compat_refl x, fun _ _ h => h⟩
+theorem regular_full : isRegular pathFrame (Set.univ : Set Poss5) := by
+  intro x
+  exact Or.inl trivial
 
 -- ════════════════════════════════════════════════════
 -- § 8. Classical Collapse
@@ -266,7 +257,7 @@ theorem regular_full : isRegular pathFrame pFull := by decide
     Boolean. This is the sense in which possible-world semantics is a
     special case of possibility semantics.
     @cite{holliday-mandelkern-2024} Remark 4.9. -/
-theorem orthoNeg_classical {S : Type*} [FiniteWorlds S] [DecidableEq S]
+theorem orthoNeg_classical {S : Type*} [Fintype S] [DecidableEq S]
     (F : CompatFrame S)
     (hClassical : ∀ x y, F.compat x y → x = y)
     (A : S → Prop) (x : S) :
@@ -274,8 +265,8 @@ theorem orthoNeg_classical {S : Type*} [FiniteWorlds S] [DecidableEq S]
   unfold orthoNeg
   constructor
   · intro h hAx
-    exact h x (FiniteWorlds.complete x) (F.compat_refl x) hAx
-  · intro hNotA y _ hcompat hAy
+    exact h x (F.compat_refl x) hAx
+  · intro hNotA y hcompat hAy
     have heq := hClassical x y hcompat
     subst heq; exact hNotA hAy
 
@@ -287,7 +278,7 @@ def identityFrame {S : Type*} [DecidableEq S] : CompatFrame S where
   compat_symm := fun _ _ => eq_comm
 
 /-- In the identity frame, orthoNeg is pointwise negation. -/
-theorem identityFrame_classical {S : Type*} [FiniteWorlds S] [DecidableEq S]
+theorem identityFrame_classical {S : Type*} [Fintype S] [DecidableEq S]
     (A : S → Prop) (x : S) :
     orthoNeg (identityFrame (S := S)) A x ↔ ¬ A x :=
   orthoNeg_classical identityFrame (fun _ _ h => h) A x

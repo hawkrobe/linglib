@@ -37,7 +37,6 @@ namespace Pragmatics.Assertion.Lauer
 
 open Core.Discourse.Commitment (CommitmentSlate)
 open Core.CommonGround (ContextSet)
-open Core.Proposition (Prop')
 
 -- ════════════════════════════════════════════════════
 -- § 1. Credence Functions
@@ -51,7 +50,7 @@ open Core.Proposition (Prop')
 structure Credence (W : Type*) where
   /-- Probability assignment for a proposition (given as a list of
       proposition-probability pairs). -/
-  prob : List (Prop' W × ℚ)
+  prob : List (Set W × ℚ)
   /-- Default credence for propositions not in the list. -/
   defaultProb : ℚ := 1/2
 
@@ -60,7 +59,7 @@ namespace Credence
 variable {W : Type*}
 
 /-- Look up the credence for a proposition. -/
-def lookup (c : Credence W) (p : Prop' W) [BEq (Prop' W)] : ℚ :=
+def lookup (c : Credence W) (p : Set W) [BEq (Set W)] : ℚ :=
   match c.prob.find? (λ ⟨q, _⟩ => q == p) with
   | some ⟨_, v⟩ => v
   | none => c.defaultProb
@@ -100,19 +99,25 @@ def empty : LauerState W :=
     Assertability is a precondition (the speaker SHOULD have credence ≥
     threshold), but the operation succeeds regardless — modeling that
     assertion can occur even when the norm is violated (as in lying). -/
-def assert (s : LauerState W) (p : Prop' W) : LauerState W :=
+def assert (s : LauerState W) (p : Set W) : LauerState W :=
   { s with asserted := s.asserted.add p }
 
 /-- Check if a proposition is assertable (credence ≥ threshold). -/
-def assertable (s : LauerState W) (p : Prop' W) [BEq (Prop' W)] : Bool :=
+def assertable (s : LauerState W) (p : Set W) [BEq (Set W)] : Prop :=
   s.credence.lookup p ≥ s.threshold
+
+instance (s : LauerState W) (p : Set W) [BEq (Set W)] : Decidable (assertable s p) :=
+  inferInstanceAs (Decidable (_ ≥ _))
 
 /-- Context set: worlds compatible with all asserted propositions. -/
 def contextSet (s : LauerState W) : ContextSet W :=
   λ w => s.asserted.toContextSet w
 
 /-- Stability: always stable (no table mechanism). -/
-def isStable (_ : LauerState W) : Bool := true
+def isStable (_ : LauerState W) : Prop := True
+
+instance (s : LauerState W) : Decidable (isStable s) :=
+  inferInstanceAs (Decidable True)
 
 end LauerState
 
@@ -142,6 +147,6 @@ This lifts RSA's world-level prior to Lauer's proposition-level credence.
 
 /-- Lauer is always stable (no pending issues mechanism). -/
 theorem always_stable {W : Type*} (s : LauerState W) :
-    LauerState.isStable s = true := rfl
+    LauerState.isStable s := trivial
 
 end Pragmatics.Assertion.Lauer

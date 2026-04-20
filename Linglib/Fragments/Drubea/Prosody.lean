@@ -42,13 +42,13 @@ inductive StemPattern where
     - ∅: `[∅, ∅, …]`
     - l: `[l, ∅, …]`
     - ∅l: `[∅, l, ∅, …]` -/
-def StemPattern.toSpecs (p : StemPattern) (nMorae : Nat) : List RegisterSpec :=
+def StemPattern.toSpecs (p : StemPattern) (nMorae : Nat) : List TRN :=
   match p with
-  | .registerless => List.replicate nMorae none
-  | .σ1_downstepped => some .l :: List.replicate (nMorae - 1) none
+  | .registerless => List.replicate nMorae TRN.empty
+  | .σ1_downstepped => TRN.downstep :: List.replicate (nMorae - 1) TRN.empty
   | .σ2_downstepped =>
-      if nMorae > 1 then none :: some .l :: List.replicate (nMorae - 2) none
-      else List.replicate nMorae none
+      if nMorae > 1 then TRN.empty :: TRN.downstep :: List.replicate (nMorae - 2) TRN.empty
+      else List.replicate nMorae TRN.empty
 
 -- ============================================================================
 -- § 2: Lexical Data
@@ -63,7 +63,7 @@ structure StemEntry where
   deriving Repr
 
 /-- Register specification derived from a stem entry. -/
-def StemEntry.specs (e : StemEntry) : List RegisterSpec :=
+def StemEntry.specs (e : StemEntry) : List TRN :=
   e.pattern.toSpecs e.nMorae
 
 /-- Monosyllabic CV minimal pairs: segmentally identical stems
@@ -154,14 +154,14 @@ inductive BoundaryFeature where
     restriction on l%, or the preceding-context condition (Numèè l%
     only applies after registerless syllables; @cite{lionnet-2025}
     §§3.3–3.4, §4.8). -/
-def applyBoundary (specs : List RegisterSpec)
-    (boundary : BoundaryFeature) : List RegisterSpec :=
-  let feature : RegisterSpec := match boundary with
-    | .h_pct => some RegisterFeature.h
-    | .l_pct => some RegisterFeature.l
-  let rec go : List RegisterSpec → List RegisterSpec
+def applyBoundary (specs : List TRN)
+    (boundary : BoundaryFeature) : List TRN :=
+  let feature : TRN := match boundary with
+    | .h_pct => TRN.upstep
+    | .l_pct => TRN.downstep
+  let rec go : List TRN → List TRN
     | [] => []
-    | [none] => [feature]
+    | [TRN.empty] => [feature]
     | x :: rest => x :: go rest
   go specs
 

@@ -1,16 +1,18 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
-
 /-!
 # German Question Particles
 @cite{theiler-2021} @cite{zheng-2025}
 
-Lexical entries for German interrogative/flavoring particles.
+Lexical entries for German interrogative/flavoring particles. The fragment
+commits only to theory-neutral lexical primitives; the left-peripheral
+layer assignment lives in `Phenomena.Questions.Studies.Theiler2021`
+(*denn*) and `Phenomena.Questions.Studies.SeeligerRepp2018` (*doch wohl*).
 
 ## Particles
 
-| Particle | Gloss | Layer | Bias |
-|----------|-------|-------|------|
-| denn | highlighting-sensitive flavoring particle | PerspP | +evidential |
+| Particle | Gloss | Bias |
+|----------|-------|------|
+| denn | highlighting-sensitive flavoring particle | +evidential |
+| doch wohl | non-compositional RQ marker | +evidential, +epistemic |
 
 German *denn* parallels Mandarin *nandao*: both require contextual evidence
 prompting the question. Key difference: *denn* is compatible with wh-questions, while *nandao* is restricted to polar questions.
@@ -29,13 +31,10 @@ it merely signals informational need.
 
 namespace Fragments.German.QuestionParticles
 
-open Semantics.Questions (QParticleLayer)
-
 /-- A German interrogative/flavoring particle entry. -/
 structure QParticleEntry where
   form : String
   gloss : String
-  layer : QParticleLayer
   polarOk : Bool
   declOk : Bool
   whOk : Bool
@@ -49,7 +48,6 @@ Compatible with both polar and wh-questions (unlike nandao). -/
 def denn : QParticleEntry where
   form := "denn"
   gloss := "DENN (highlighting-sensitive flavoring particle)"
-  layer := .perspP
   polarOk := true
   declOk := false
   whOk := true
@@ -82,7 +80,6 @@ def denn : QParticleEntry where
 def dochWohl : QParticleEntry where
   form := "doch wohl"
   gloss := "MP+MP (non-compositional RQ marker)"
-  layer := .perspP
   polarOk := true
   declOk := false  -- doch wohl in RQs marks questions, not assertions
   whOk := false

@@ -362,7 +362,7 @@ def decentClass : AdjectiveClass := .mildlyPositive
 
 /-- MPAs are neither relative nor absolute in the Kennedy 2007 sense. -/
 theorem mpa_not_relative :
-    decentClass.isRelative = false := rfl
+    ¬ decentClass.IsRelative := by decide
 
 -- ============================================================================
 -- § 10. Integration: Kennedy 2007 Licensing Pipeline

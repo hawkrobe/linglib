@@ -34,30 +34,11 @@ abbrev Case := UD.Case
 -- Fintype Case follows from Fintype UD.Case (derived in Core/Lexical/UD.lean).
 deriving instance Fintype for Case
 
-/-! Lowercase abbrevs in the `Core.Case` namespace, mirroring the UD ones.
-    Lets `Core.Case.nom` (qualified access) resolve, in addition to the
-    `UD.Case.nom`-namespace abbrevs already exposed via the abbrev type. -/
-namespace Case
-@[match_pattern] abbrev nom    : Case := UD.Case.Nom
-@[match_pattern] abbrev acc    : Case := UD.Case.Acc
-@[match_pattern] abbrev erg    : Case := UD.Case.Erg
-@[match_pattern] abbrev abs    : Case := UD.Case.Abs
-@[match_pattern] abbrev gen    : Case := UD.Case.Gen
-@[match_pattern] abbrev dat    : Case := UD.Case.Dat
-@[match_pattern] abbrev loc    : Case := UD.Case.Loc
-@[match_pattern] abbrev abl    : Case := UD.Case.Abl
-@[match_pattern] abbrev all    : Case := UD.Case.All
-@[match_pattern] abbrev inst   : Case := UD.Case.Ins
-@[match_pattern] abbrev com    : Case := UD.Case.Com
-@[match_pattern] abbrev voc    : Case := UD.Case.Voc
-@[match_pattern] abbrev part   : Case := UD.Case.Par
-@[match_pattern] abbrev perl   : Case := UD.Case.Per
-@[match_pattern] abbrev ben    : Case := UD.Case.Ben
-@[match_pattern] abbrev caus   : Case := UD.Case.Cau
-@[match_pattern] abbrev ess    : Case := UD.Case.Ess
-@[match_pattern] abbrev transl : Case := UD.Case.Tra
-@[match_pattern] abbrev abess  : Case := UD.Case.Abe
-end Case
+/-! Lowercase `match_pattern` constructor aliases (`.nom`, `.acc`, …) live
+    in the canonical `UD.Case` namespace (`Core/Lexical/UD.lean`). Since
+    `Core.Case = UD.Case`, dot-notation `(.nom : Core.Case)` resolves
+    through that single source of truth — no separate `Core.Case.*` aliases
+    are needed. -/
 
 /-- The 28 UD case constructors are exhaustive. -/
 theorem Case.card_univ : (Finset.univ : Finset Case).card = 28 := by decide

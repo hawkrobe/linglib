@@ -52,7 +52,7 @@ theorem nom_not_nonnom : ¬ Core.Case.IsNonnominative .nom := by decide
 /-- Telugu's NOM-vs-oblique split is an ABB pattern — contiguous on the
     containment hierarchy, consistent with case-conditioned VI. -/
 theorem nom_vs_oblique_contiguous :
-    (AllomorphyPattern.mk 0 1 1 1).isContiguous = true := by native_decide
+    (AllomorphyPattern.mk 0 1 1 1).IsContiguous := by decide
 
 -- ============================================================================
 -- § 3: Cross-Dravidian Connection

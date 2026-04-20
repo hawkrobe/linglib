@@ -1,5 +1,5 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.Agent.Learning
 import Linglib.Core.Semantics.CommonGround
 

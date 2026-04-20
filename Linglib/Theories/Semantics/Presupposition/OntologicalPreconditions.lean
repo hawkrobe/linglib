@@ -57,11 +57,11 @@ An event decomposed into temporal phases:
 -/
 structure EventPhase (W : Type*) where
   /-- Precondition: must hold before the event for it to be possible -/
-  precondition : W → Bool
+  precondition : W → Prop
   /-- The event actually occurs -/
-  eventOccurs : W → Bool
+  eventOccurs : W → Prop
   /-- Consequence: holds after the event (result state) -/
-  consequence : W → Bool
+  consequence : W → Prop
 
 /--
 Well-formed event: precondition enables the event.
@@ -73,42 +73,42 @@ def EventPhase.wellFormed (e : EventPhase W) : Prop :=
 
 
 /-- "Stop P" as an event phase -/
-def stopAsEventPhase (P : W → Bool) : EventPhase W where
+def stopAsEventPhase (P : W → Prop) : EventPhase W where
   precondition := P
   eventOccurs := P
-  consequence := λ w => !P w
+  consequence := λ w => ¬ P w
 
 /-- "Start P" as an event phase -/
-def startAsEventPhase (P : W → Bool) : EventPhase W where
-  precondition := λ w => !P w
-  eventOccurs := λ w => !P w
+def startAsEventPhase (P : W → Prop) : EventPhase W where
+  precondition := λ w => ¬ P w
+  eventOccurs := λ w => ¬ P w
   consequence := P
 
 /-- "Continue P" as an event phase -/
-def continueAsEventPhase (P : W → Bool) : EventPhase W where
+def continueAsEventPhase (P : W → Prop) : EventPhase W where
   precondition := P
   eventOccurs := P
   consequence := P
 
 
 /-- Event phase precondition = CoS presupposition. -/
-theorem stop_precondition_is_presup (P : W → Bool) :
+theorem stop_precondition_is_presup (P : W → Prop) :
     (stopAsEventPhase P).precondition = priorStatePresup .cessation P := rfl
 
-theorem start_precondition_is_presup (P : W → Bool) :
+theorem start_precondition_is_presup (P : W → Prop) :
     (startAsEventPhase P).precondition = priorStatePresup .inception P := rfl
 
-theorem continue_precondition_is_presup (P : W → Bool) :
+theorem continue_precondition_is_presup (P : W → Prop) :
     (continueAsEventPhase P).precondition = priorStatePresup .continuation P := rfl
 
 /-- Event phase consequence = CoS assertion. -/
-theorem stop_consequence_is_assertion (P : W → Bool) :
+theorem stop_consequence_is_assertion (P : W → Prop) :
     (stopAsEventPhase P).consequence = resultStateAssertion .cessation P := rfl
 
-theorem start_consequence_is_assertion (P : W → Bool) :
+theorem start_consequence_is_assertion (P : W → Prop) :
     (startAsEventPhase P).consequence = resultStateAssertion .inception P := rfl
 
-theorem continue_consequence_is_assertion (P : W → Bool) :
+theorem continue_consequence_is_assertion (P : W → Prop) :
     (continueAsEventPhase P).consequence = resultStateAssertion .continuation P := rfl
 
 
@@ -157,17 +157,17 @@ The assertion made by a sentence depends on polarity.
 - Affirmed: The event occurred (consequence holds)
 - Negated: The event didn't occur (consequence doesn't hold)
 -/
-def EventSentence.assertion (s : EventSentence W) : W → Bool :=
+def EventSentence.assertion (s : EventSentence W) : W → Prop :=
   match s.polarity with
   | .positive => s.eventType.consequence
-  | .negative => λ w => !s.eventType.consequence w
+  | .negative => λ w => ¬ s.eventType.consequence w
 
 /--
 The presupposition comes from aboutness, not from the assertion.
 
 Presuppositions are tied to event reference, not to the claim being made.
 -/
-def EventSentence.presupposition (s : EventSentence W) : W → Bool :=
+def EventSentence.presupposition (s : EventSentence W) : W → Prop :=
   s.aboutness.precondition
 
 /--
@@ -208,7 +208,7 @@ While presuppositions are shared, assertions differ:
 the negative asserts the opposite of the affirmative.
 -/
 theorem assertion_differs (e : EventPhase W) (w : W) :
-    (negative e).assertion w = !(affirmative e).assertion w := rfl
+    (negative e).assertion w ↔ ¬ (affirmative e).assertion w := Iff.rfl
 
 /--
 Presupposition is independent of assertion content.
@@ -279,14 +279,14 @@ Under the aboutness view, both sentences refer to the stopping event.
 The stopping event has precondition P (was smoking).
 Therefore, both sentences presuppose P.
 -/
-theorem aboutness_predicts_projection (P : W → Bool) :
+theorem aboutness_predicts_projection (P : W → Prop) :
     (affirmative (stopAsEventPhase P)).presupposition =
     (negative (stopAsEventPhase P)).presupposition := rfl
 
 /--
 The shared presupposition IS the precondition of the event type.
 -/
-theorem shared_presupposition_is_precondition (P : W → Bool) :
+theorem shared_presupposition_is_precondition (P : W → Prop) :
     (affirmative (stopAsEventPhase P)).presupposition = P := rfl
 
 /--
@@ -295,7 +295,7 @@ For "stop P", both affirmative and negative presuppose P.
 This is the core empirical prediction that the aboutness view explains
 and the assertion-only view cannot.
 -/
-theorem stop_presupposes_P (P : W → Bool) (pol : Polarity) :
+theorem stop_presupposes_P (P : W → Prop) (pol : Polarity) :
     ({ eventType := stopAsEventPhase P, polarity := pol } : EventSentence W).presupposition = P := rfl
 
 
@@ -342,8 +342,7 @@ If the consequence is true at w, affirmative says true and negative says false.
 If the consequence is false at w, affirmative says false and negative says true.
 -/
 theorem assertions_differ_at_definite_worlds (e : EventPhase W) (w : W) :
-    (negative e).assertion w = !(affirmative e).assertion w := by
-  simp [affirmative, negative, EventSentence.assertion]
+    (negative e).assertion w ↔ ¬ (affirmative e).assertion w := Iff.rfl
 
 /--
 Presuppositions are constant across polarity; assertions vary with polarity.
@@ -353,10 +352,10 @@ not to the claim (which varies).
 -/
 theorem presupposition_constant_assertion_varies (e : EventPhase W) (w : W) :
     -- Presupposition is the same for both polarities
-    (affirmative e).presupposition w = (negative e).presupposition w ∧
+    ((affirmative e).presupposition w ↔ (negative e).presupposition w) ∧
     -- Assertion is negated
-    (negative e).assertion w = !(affirmative e).assertion w := by
-  constructor <;> rfl
+    ((negative e).assertion w ↔ ¬ (affirmative e).assertion w) :=
+  ⟨Iff.rfl, Iff.rfl⟩
 
 
 /--
@@ -372,10 +371,10 @@ accommodating consequences is only consistent with affirmation.
 theorem negation_preserves_precondition_denies_consequence
     (e : EventPhase W) (w : W) :
     -- Precondition survives negation (it IS the presupposition)
-    (negative e).presupposition w = e.precondition w ∧
+    ((negative e).presupposition w ↔ e.precondition w) ∧
     -- Consequence is denied under negation
-    (negative e).assertion w = !e.consequence w := by
-  constructor <;> rfl
+    ((negative e).assertion w ↔ ¬ e.consequence w) :=
+  ⟨Iff.rfl, Iff.rfl⟩
 
 /--
 The converse: under affirmation, precondition survives AND consequence
@@ -384,9 +383,9 @@ consequences are consistent with only one.
 -/
 theorem affirmation_preserves_precondition_asserts_consequence
     (e : EventPhase W) (w : W) :
-    (affirmative e).presupposition w = e.precondition w ∧
-    (affirmative e).assertion w = e.consequence w := by
-  constructor <;> rfl
+    ((affirmative e).presupposition w ↔ e.precondition w) ∧
+    ((affirmative e).assertion w ↔ e.consequence w) :=
+  ⟨Iff.rfl, Iff.rfl⟩
 
 
 /--
@@ -407,18 +406,22 @@ def EventPhase.isAtelic (e : EventPhase W) : Prop :=
   ∀ w, e.precondition w = e.consequence w
 
 /-- "Stop P" is telic: state changes from P to ¬P -/
-theorem stop_is_telic (P : W → Bool) (w : W) (hP : P w) :
+theorem stop_is_telic (P : W → Prop) (w : W) (hP : P w) :
     (stopAsEventPhase P).precondition w ≠ (stopAsEventPhase P).consequence w := by
-  simp [stopAsEventPhase, hP]
+  unfold stopAsEventPhase
+  intro h
+  exact (cast h hP) hP
 
 /-- "Continue P" is atelic: no state change -/
-theorem continue_is_atelic (P : W → Bool) : (continueAsEventPhase P).isAtelic := by
-  intro w; simp [continueAsEventPhase]
+theorem continue_is_atelic (P : W → Prop) : (continueAsEventPhase P).isAtelic := by
+  intro w; rfl
 
 /-- "Start P" is telic: state changes from ¬P to P -/
-theorem start_is_telic (P : W → Bool) (w : W) (hNotP : P w = false) :
+theorem start_is_telic (P : W → Prop) (w : W) (hNotP : ¬ P w) :
     (startAsEventPhase P).precondition w ≠ (startAsEventPhase P).consequence w := by
-  simp [startAsEventPhase, hNotP]
+  unfold startAsEventPhase
+  intro h
+  exact hNotP (cast h hNotP)
 
 
 /--
@@ -500,19 +503,19 @@ of the associated eventuality — not a semantically encoded presupposition.
 /-- "Know C" as an event phase: stative, atelic.
     Precondition: C is true. The knowing state cannot exist without its object.
     The state persists without change, so consequence = precondition = C. -/
-def knowAsEventPhase (BEL C : W → Bool) : EventPhase W where
+def knowAsEventPhase (BEL C : W → Prop) : EventPhase W where
   precondition := C
-  eventOccurs := λ w => BEL w && C w
+  eventOccurs := λ w => BEL w ∧ C w
   consequence := C  -- stative: no state change
 
 /-- "Discover C" as an event phase: telic, achievement.
     Two preconditions: C is true AND the agent was previously ignorant.
     The discovery transitions from ignorance to knowledge.
     Consequence: C is (still) true and the agent is no longer ignorant. -/
-def discoverAsEventPhase (IGNORANT C : W → Bool) : EventPhase W where
-  precondition := λ w => C w && IGNORANT w
-  eventOccurs := λ w => C w && !IGNORANT w
-  consequence := λ w => C w && !IGNORANT w  -- post-state: knows C
+def discoverAsEventPhase (IGNORANT C : W → Prop) : EventPhase W where
+  precondition := λ w => C w ∧ IGNORANT w
+  eventOccurs := λ w => C w ∧ ¬ IGNORANT w
+  consequence := λ w => C w ∧ ¬ IGNORANT w  -- post-state: knows C
 
 /-- "Regret p" as an event phase: emotive factive.
     Precondition: agent believes p (the emotion ontologically
@@ -522,47 +525,49 @@ def discoverAsEventPhase (IGNORANT C : W → Bool) : EventPhase W where
     a *pragmatic default to veridicality* — in the absence of an explicit
     claim that the agent is mistaken, emotive attitudes are taken to be
     veridical. The ontological precondition is belief, not truth. -/
-def regretAsEventPhase (BEL : W → Bool) : EventPhase W where
+def regretAsEventPhase (BEL : W → Prop) : EventPhase W where
   precondition := BEL
   eventOccurs := BEL
   consequence := BEL
 
 /-- Know is atelic: no state change (precondition = consequence). -/
-theorem know_is_atelic (BEL C : W → Bool) : (knowAsEventPhase BEL C).isAtelic := by
-  intro w; simp [knowAsEventPhase]
+theorem know_is_atelic (BEL C : W → Prop) : (knowAsEventPhase BEL C).isAtelic := by
+  intro w; rfl
 
 /-- Discover is telic: state change from ignorant to knowing. -/
-theorem discover_is_telic (IGNORANT C : W → Bool) (w : W)
-    (hC : C w = true) (hIgn : IGNORANT w = true) :
+theorem discover_is_telic (IGNORANT C : W → Prop) (w : W)
+    (hC : C w) (hIgn : IGNORANT w) :
     (discoverAsEventPhase IGNORANT C).precondition w ≠
     (discoverAsEventPhase IGNORANT C).consequence w := by
-  simp [discoverAsEventPhase, hC, hIgn]
+  unfold discoverAsEventPhase
+  intro h
+  have h2 : C w ∧ ¬ IGNORANT w := cast h ⟨hC, hIgn⟩
+  exact h2.2 hIgn
 
 /-- Both know and discover have C as (part of) their precondition.
     This is the shared factivity: complement truth is ontologically required. -/
-theorem factive_precondition_entails_complement (IGNORANT C : W → Bool) (w : W) :
-    (discoverAsEventPhase IGNORANT C).precondition w = true → C w = true := by
-  simp [discoverAsEventPhase]; intro h _; exact h
+theorem factive_precondition_entails_complement (IGNORANT C : W → Prop) (w : W) :
+    (discoverAsEventPhase IGNORANT C).precondition w → C w := by
+  intro h; exact h.1
 
 /-- Discover's precondition additionally requires prior ignorance.
     This extra precondition (ignorance of C) explains why discover
     has weaker projection than know in conditional antecedents:
     in "If I discover p", the speaker's ignorance of p is salient,
     suppressing projection of C (@cite{roberts-simons-2024} §3.2.2). -/
-theorem discover_precondition_requires_ignorance (IGNORANT C : W → Bool) (w : W) :
-    (discoverAsEventPhase IGNORANT C).precondition w = true → IGNORANT w = true := by
-  simp [discoverAsEventPhase]
+theorem discover_precondition_requires_ignorance (IGNORANT C : W → Prop) (w : W) :
+    (discoverAsEventPhase IGNORANT C).precondition w → IGNORANT w := by
+  intro h; exact h.2
 
 /-- Continue has a precondition (prior activity) but involves NO state change.
     @cite{roberts-simons-2024} (p. 734): "continue V-ing is atelic, without a
     pre-state" in the CoS sense. The `CoSType.continuation` classification is
     a convenience; the key structural fact is `isAtelic`. -/
-theorem continue_has_precondition_without_state_change (P : W → Bool) :
+theorem continue_has_precondition_without_state_change (P : W → Prop) :
     (continueAsEventPhase P).precondition = P ∧
     (continueAsEventPhase P).isAtelic := by
-  constructor
-  · rfl
-  · intro w; simp [continueAsEventPhase]
+  refine ⟨rfl, ?_⟩
+  intro w; rfl
 
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -588,18 +593,18 @@ under a single mechanism: ontological precondition → pragmatic projection.
 
 /-- A selectional restriction as an event phase.
     The `requirement` is an ontological precondition of the event. -/
-def selectionalEventPhase (requirement event : W → Bool) : EventPhase W where
+def selectionalEventPhase (requirement event : W → Prop) : EventPhase W where
   precondition := requirement
   eventOccurs := event
   consequence := event
 
 /-- Selectional restrictions are well-formed: the event entails the requirement. -/
-theorem selectional_wellFormed (requirement event : W → Bool)
-    (h : ∀ w, event w = true → requirement w = true) :
+theorem selectional_wellFormed (requirement event : W → Prop)
+    (h : ∀ w, event w → requirement w) :
     (selectionalEventPhase requirement event).wellFormed := h
 
 /-- Selectional restrictions project through negation (same aboutness mechanism). -/
-theorem selectional_projects (requirement event : W → Bool) :
+theorem selectional_projects (requirement event : W → Prop) :
     (affirmative (selectionalEventPhase requirement event)).presupposition =
     (negative (selectionalEventPhase requirement event)).presupposition := rfl
 

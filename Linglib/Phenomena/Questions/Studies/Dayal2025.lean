@@ -95,9 +95,10 @@ theorem particle_layer_predicts_embedding :
       (d.layer = .perspP → d.inSubordinated = false) ∧
       (d.layer = .sap → d.inQuasiSub = false) := by
   intro d hd
-  simp [allQParticleData] at hd
-  rcases hd with rfl | rfl | rfl | rfl <;>
-    simp [japanese_ka, hindi_urdu_kya, japanese_kke, english_quick]
+  refine ⟨?_, ?_, ?_⟩
+  · exact cp_particles_in_subordination d hd
+  · exact perspP_particles_not_in_subordination d hd
+  · exact sap_particles_not_in_quasi_sub d hd
 
 -- ============================================================================
 -- H. Cross-layer agreement (moved from LeftPeriphery sections H-I)

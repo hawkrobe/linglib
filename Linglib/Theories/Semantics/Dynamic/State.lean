@@ -31,14 +31,13 @@ with existing RSA infrastructure.
 
 -/
 
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
 import Linglib.Core.Semantics.CommonGround
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
 
 namespace Semantics.Dynamic.State
 
-open Core.Proposition
 open Core.CommonGround
 
 
@@ -79,7 +78,7 @@ structure Issue (W : Type*) where
   /-- The form of the sentence that raised this issue -/
   form : SentenceForm
   /-- The proposition(s) at issue -/
-  alternatives : List (Prop' W)
+  alternatives : List (Set W)
   /-- Who raised this issue -/
   source : Participant := .speaker
 
@@ -96,11 +95,11 @@ answer to each issue on the table.
 -/
 structure DiscourseState (W : Type*) where
   /-- Speaker's discourse commitments (what speaker takes for granted) -/
-  dcS : List (Prop' W)
+  dcS : List (Set W)
   /-- Listener's discourse commitments -/
-  dcL : List (Prop' W)
+  dcL : List (Set W)
   /-- Common ground (joint commitments) -/
-  cg : List (Prop' W)
+  cg : List (Set W)
   /-- The table: stack of issues under discussion -/
   table : List (Issue W)
 
@@ -120,17 +119,17 @@ def empty : DiscourseState W := ⟨[], [], [], []⟩
 /--
 Convert common ground to a ContextSet (worlds where all cg props hold).
 
-This bridges to the existing `Core.CommonGround` infrastructure.
+Bridges to the existing `Core.CommonGround` infrastructure as the
+fold-intersection of the cg list.
 -/
 def toContextSet (ds : DiscourseState W) : ContextSet W :=
-  λ w => ∀ p ∈ ds.cg, p w
+  ds.cg.foldr (· ∩ ·) Set.univ
 
 /--
-World compatibility: w is compatible with the discourse state if
-w satisfies all common ground propositions.
+World compatibility: thin alias for membership in `toContextSet`.
 -/
 def compatible (ds : DiscourseState W) (w : W) : Prop :=
-  ∀ p ∈ ds.cg, p w
+  w ∈ ds.toContextSet
 
 /--
 Check if the table is empty (stable state).
@@ -162,7 +161,7 @@ Add a proposition to the common ground.
 This models acceptance of an assertion: the proposition moves from
 a participant's discourse commitments to the joint common ground.
 -/
-def addToCG (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
+def addToCG (ds : DiscourseState W) (p : Set W) : DiscourseState W :=
   { ds with cg := p :: ds.cg }
 
 /--
@@ -171,13 +170,13 @@ Add a proposition to speaker's discourse commitments.
 This models the speaker asserting a proposition, which commits
 the speaker but doesn't yet affect the common ground.
 -/
-def addToDcS (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
+def addToDcS (ds : DiscourseState W) (p : Set W) : DiscourseState W :=
   { ds with dcS := p :: ds.dcS }
 
 /--
 Add a proposition to listener's discourse commitments.
 -/
-def addToDcL (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
+def addToDcL (ds : DiscourseState W) (p : Set W) : DiscourseState W :=
   { ds with dcL := p :: ds.dcL }
 
 /--
@@ -208,7 +207,7 @@ The listener can then respond by:
 - Rejecting (adds ¬p to dcL, creating a conflict)
 - Neither (leaving p "on the table")
 -/
-def assertDeclarative (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
+def assertDeclarative (ds : DiscourseState W) (p : Set W) : DiscourseState W :=
   let issue : Issue W := { form := .declarative, alternatives := [p], source := .speaker }
   ds.addToDcS p |>.pushIssue issue
 
@@ -219,8 +218,8 @@ Following F&B: a polar question about p:
 1. Pushes the issue {p, ¬p} onto the table
 2. Does not add commitments (questions don't commit)
 -/
-def askPolarQuestion (ds : DiscourseState W) (p : Prop' W) : DiscourseState W :=
-  let negP : Prop' W := Classical.pnot W p
+def askPolarQuestion (ds : DiscourseState W) (p : Set W) : DiscourseState W :=
+  let negP : Set W := pᶜ
   let issue : Issue W := { form := .interrogative, alternatives := [p, negP], source := .speaker }
   ds.pushIssue issue
 

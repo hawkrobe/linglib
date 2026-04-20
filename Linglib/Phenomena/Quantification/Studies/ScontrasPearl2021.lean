@@ -1,6 +1,5 @@
 import Linglib.Theories.Semantics.Numerals.Basic
-import Linglib.Theories.Pragmatics.Implicature.NegationScope
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Semantics.Composition.Scope
@@ -299,22 +298,21 @@ theorem twoNotAtLeast_inverse_matches_atLeastMeaning :
   intro w; cases w <;> decide
 
 /-- The negation-scope asymmetry collapses under exact semantics:
-    internal and external negation of "three" give the same result. -/
+    internal negation `¬(=3)` and external negation `≠3` agree at world 4. -/
 theorem exact_collapses_negation_scope :
-    Implicature.negatedMeaning Semantics.Numerals.Exact .three .internal 4 ↔
-    Implicature.negatedMeaning Semantics.Numerals.Exact .three .external 4 := by
+    (¬ bareMeaning 3 4) ↔ (4 ≠ 3) := by
   decide
 
-/-- Lower-bound semantics preserves the negation-scope distinction. -/
+/-- Lower-bound semantics preserves the negation-scope distinction:
+    internal negation `¬(≥3)` and external negation `≠3` diverge at world 4. -/
 theorem lowerBound_preserves_negation_scope :
-    ¬ (Implicature.negatedMeaning Semantics.Numerals.LowerBound .three .internal 4 ↔
-       Implicature.negatedMeaning Semantics.Numerals.LowerBound .three .external 4) := by
+    ¬ ((¬ atLeastMeaning 3 4) ↔ (4 ≠ 3)) := by
   decide
 
 /-- @cite{kennedy-2015}'s resolution: exact meaning is basic, lower-bound is derived
     via type-shift. Both meanings are grammatically available. -/
 theorem typeshift_resolves_tension :
-    Semantics.Numerals.typeLower bareMeaning 4 2 2 ↔
+    Core.Scale.typeLower bareMeaning 2 2 ↔
     atLeastMeaning 2 2 := by decide
 
 -- ============================================================================

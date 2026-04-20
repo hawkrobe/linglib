@@ -19,7 +19,7 @@ AM < AA < DE < Strawson-DE (weakest level of negative strength)
 ## World-relativized definedness
 
 The `defined` predicate in `IsStrawsonDE` is world-relativized:
-`defined : Prop' World → World → Prop`. This correctly captures von Fintel's
+`defined : Set World → World → Prop`. This correctly captures von Fintel's
 Definition 14, where "f(x) is defined" means the presupposition of f(x) is
 satisfied *at the world of evaluation*. For "only" the presupposition is
 world-independent (existential), but for factive attitudes the factivity
@@ -35,7 +35,6 @@ import Linglib.Core.Semantics.Presupposition
 
 namespace Semantics.Entailment.StrawsonEntailment
 
-open Core.Proposition (Prop')
 open Semantics.Entailment
 open Semantics.Entailment.Polarity
 open Semantics.Entailment.AntiAdditivity
@@ -47,7 +46,7 @@ open Semantics.Entailment.AntiAdditivity
 /--
 **Strawson-DE** (@cite{von-fintel-1999}, Definition 14).
 
-A function `f : Prop' World → Prop' World` is Strawson-DE with respect to a
+A function `f : Set World → Set World` is Strawson-DE with respect to a
 world-relativized definedness predicate `defined` iff: for all p ≤ q, at
 every world w where `defined p w` holds (i.e. the presupposition of f(p) is
 satisfied at w), we have f(q)(w) ≤ f(p)(w).
@@ -57,8 +56,8 @@ world-relative: "sorry that p" presupposes p at the evaluation world, not
 at all worlds. For "only" the presupposition happens to be world-independent,
 but the type must accommodate factive attitudes.
 -/
-def IsStrawsonDE (f : Prop' World → Prop' World) (defined : Prop' World → World → Prop) : Prop :=
-  ∀ p q : Prop' World, (∀ w, p w → q w) → ∀ w, defined p w → f q w → f p w
+def IsStrawsonDE (f : Set World → Set World) (defined : Set World → World → Prop) : Prop :=
+  ∀ p q : Set World, (∀ w, p w → q w) → ∀ w, defined p w → f q w → f p w
 
 /--
 **Strawson-valid inference** (@cite{von-fintel-1999}, Definition 19).
@@ -67,7 +66,7 @@ An inference from premises to conclusion is Strawson-valid iff it is
 classically valid once we add the premise that all presuppositions of the
 conclusion are satisfied.
 -/
-def StrawsonValid (premises : List (Prop' World)) (conclusion : Prop' World)
+def StrawsonValid (premises : List (Set World)) (conclusion : Set World)
     (presupSatisfied : Prop) : Prop :=
   presupSatisfied →
     (∀ w, (∀ p ∈ premises, p w) → conclusion w)
@@ -84,17 +83,17 @@ gives us f(q) ≤ f(p) unconditionally.
 
 This establishes: DE ⊆ Strawson-DE.
 -/
-theorem de_implies_strawsonDE (f : Prop' World → Prop' World) (hDE : IsDownwardEntailing f)
-    (defined : Prop' World → World → Prop) : IsStrawsonDE f defined :=
-  λ _p _q hpq w _hdef => hDE hpq w
+theorem de_implies_strawsonDE (f : Set World → Set World) (hDE : IsDownwardEntailing f)
+    (defined : Set World → World → Prop) : IsStrawsonDE f defined :=
+  λ _p _q hpq _w _hdef hfqw => hDE hpq hfqw
 
 /--
 Every anti-additive function is Strawson-DE.
 
 Via: AA → DE → Strawson-DE.
 -/
-theorem antiAdditive_implies_strawsonDE (f : Prop' World → Prop' World)
-    (hAA : IsAntiAdditive f) (defined : Prop' World → World → Prop) :
+theorem antiAdditive_implies_strawsonDE (f : Set World → Set World)
+    (hAA : IsAntiAdditive f) (defined : Set World → World → Prop) :
     IsStrawsonDE f defined :=
   de_implies_strawsonDE f (antiAdditive_implies_de f hAA) defined
 
@@ -103,8 +102,8 @@ Every anti-morphic function is Strawson-DE.
 
 Via: AM → AA → DE → Strawson-DE.
 -/
-theorem antiMorphic_implies_strawsonDE (f : Prop' World → Prop' World)
-    (hAM : IsAntiMorphic f) (defined : Prop' World → World → Prop) :
+theorem antiMorphic_implies_strawsonDE (f : Set World → Set World)
+    (hAM : IsAntiMorphic f) (defined : Set World → World → Prop) :
     IsStrawsonDE f defined :=
   de_implies_strawsonDE f (antiMorphic_implies_de f hAM) defined
 
@@ -113,14 +112,14 @@ The full hierarchy chain: AM → AA → DE → Strawson-DE.
 
 Given an anti-morphic proof, we can derive all weaker properties.
 -/
-structure FullHierarchy (f : Prop' World → Prop' World) (defined : Prop' World → World → Prop) where
+structure FullHierarchy (f : Set World → Set World) (defined : Set World → World → Prop) where
   am : IsAntiMorphic f
   aa : IsAntiAdditive f := am.1
   de : IsDownwardEntailing f := antiAdditive_implies_de f aa
   strawsonDE : IsStrawsonDE f defined := de_implies_strawsonDE f de defined
 
 /-- Negation satisfies the full hierarchy. -/
-def pnot_fullHierarchy (defined : Prop' World → World → Prop) : FullHierarchy pnot defined :=
+def pnot_fullHierarchy (defined : Set World → World → Prop) : FullHierarchy pnot defined :=
   { am := pnot_isAntiMorphic }
 
 -- ============================================================================
@@ -156,7 +155,7 @@ But with presupposition satisfied:
 Uses `Core.Presupposition.PrProp` directly, making the presupposition/assertion
 split structural rather than ad-hoc.
 -/
-def onlyPrProp (x : World → Bool) (scope : Prop' World) : Core.Presupposition.PrProp World where
+def onlyPrProp (x : World → Bool) (scope : Set World) : Core.Presupposition.PrProp World where
   presup := λ _ => ∃ y ∈ allWorlds, x y = true ∧ scope y
   assertion := λ _ => ∀ y ∈ allWorlds, x y = true ∨ ¬ scope y
 
@@ -166,12 +165,12 @@ The full "only" meaning: presupposition + assertion combined.
 "Only x VP" is true at w iff x satisfies VP AND no one else does.
 Equivalent to `(onlyPrProp x scope).presup w ∧ (onlyPrProp x scope).assertion w`.
 -/
-def onlyFull (x : World → Bool) (scope : Prop' World) : Prop' World :=
+def onlyFull (x : World → Bool) (scope : Set World) : Set World :=
   λ _w => (∃ y ∈ allWorlds, x y = true ∧ scope y) ∧
           (∀ y ∈ allWorlds, x y = true ∨ ¬ scope y)
 
 /-- `onlyFull` equals the conjunction of `onlyPrProp`'s components. -/
-theorem onlyFull_eq_prprop (x : World → Bool) (scope : Prop' World) (w : World) :
+theorem onlyFull_eq_prprop (x : World → Bool) (scope : Set World) (w : World) :
     onlyFull x scope w ↔
     (onlyPrProp x scope).presup w ∧ (onlyPrProp x scope).assertion w := Iff.rfl
 
@@ -186,15 +185,15 @@ theorem onlyFull_not_de : ¬IsDownwardEntailing (onlyFull (λ w => w == .w0)) :=
   intro hDE
   -- Counterexample: p = ⊥ (no one eats kale), q = {w0} (only John eats vegetables)
   -- p → q trivially. onlyFull(q)(w0) holds, onlyFull(p)(w0) fails.
-  let p : Prop' World := λ _ => False
-  let q : Prop' World := λ w => w = .w0
+  let p : Set World := λ _ => False
+  let q : Set World := λ w => w = .w0
   -- Build the antitone hypothesis in pointwise form
   have hle : p ≤ q := fun _ h => h.elim
   have hq_only : onlyFull (λ w => w == .w0) q World.w0 := by
     refine ⟨⟨World.w0, by decide, by decide, rfl⟩, ?_⟩
     intro y _hy
     cases y <;> simp [q]
-  have h := hDE hle World.w0 hq_only
+  have h : onlyFull (λ w => w == .w0) p World.w0 := @hDE p q hle World.w0 hq_only
   rcases h with ⟨⟨_, _, _, hp_y⟩, _⟩
   exact hp_y
 
@@ -265,7 +264,7 @@ Unlike the assertion-only version (which would be trivially DE by
 contraposition), this full operator includes the positive factivity
 component, which is what blocks classical DE.
 -/
-def sorryFull (bestOf : World → List World) (p : Prop' World) : Prop' World :=
+def sorryFull (bestOf : World → List World) (p : Set World) : Set World :=
   λ w => p w ∧ ∀ w' ∈ bestOf w, ¬ p w'
 
 /--
@@ -274,7 +273,7 @@ def sorryFull (bestOf : World → List World) (p : Prop' World) : Prop' World :=
 "α is glad that p" = p holds at w (factivity) AND in α's preferred
 worlds, p IS true (congruent preference).
 -/
-def gladFull (bestOf : World → List World) (p : Prop' World) : Prop' World :=
+def gladFull (bestOf : World → List World) (p : Set World) : Set World :=
   λ w => p w ∧ ∀ w' ∈ bestOf w, p w'
 
 /--
@@ -290,15 +289,15 @@ DE would require true ≤ false.
 -/
 theorem sorryFull_not_de : ¬IsDownwardEntailing (sorryFull (λ _ => [World.w1])) := by
   intro hDE
-  let p : Prop' World := λ _ => False
-  let q : Prop' World := λ w => w = .w0
+  let p : Set World := λ _ => False
+  let q : Set World := λ w => w = .w0
   have hle : p ≤ q := fun _ h => h.elim
   have hq_sorry : sorryFull (λ _ => [World.w1]) q World.w0 := by
     refine ⟨rfl, ?_⟩
     intro w' hw'
     rcases List.mem_singleton.mp hw' with rfl
     intro h; cases h
-  have h := hDE hle World.w0 hq_sorry
+  have h : sorryFull (λ _ => [World.w1]) p World.w0 := @hDE p q hle World.w0 hq_sorry
   exact h.1
 
 /--
@@ -341,7 +340,7 @@ This is the adversative/non-adversative asymmetry that von Fintel §3.3
 identifies as the key to NPI licensing in attitude complements.
 -/
 theorem gladFull_isUE (bestOf : World → List World) :
-    ∀ p q : Prop' World, (∀ w, p w → q w) →
+    ∀ p q : Set World, (∀ w, p w → q w) →
       ∀ w, gladFull bestOf p w → gladFull bestOf q w := by
   intro p q hpq w h
   obtain ⟨hpw, hAll⟩ := h
@@ -370,7 +369,7 @@ Presupposition of superlative: subject satisfies the domain predicate.
 The world argument is unused: this presupposition is world-independent
 (it's about whether the subject satisfies the restriction at any world).
 -/
-def superlativePresup (subject : World → Bool) (restriction : Prop' World)
+def superlativePresup (subject : World → Bool) (restriction : Set World)
     (_w : World) : Prop :=
   ∃ w', subject w' = true ∧ restriction w'
 
@@ -381,7 +380,7 @@ satisfying the restriction.
 Simplified model: the "tallest who VP" at w checks that no one else
 in the restriction exceeds the subject.
 -/
-def superlativeAssert (subject : World → Bool) (restriction : Prop' World) : Prop' World :=
+def superlativeAssert (subject : World → Bool) (restriction : Set World) : Set World :=
   λ _w => (∃ y ∈ allWorlds, subject y = true ∧ restriction y) ∧
           (∀ y ∈ allWorlds, subject y = true ∨ ¬ restriction y ∨
              ¬ ∃ z ∈ allWorlds, subject z = false ∧ restriction z)
@@ -448,7 +447,7 @@ Conditional necessity via domain restriction.
 `domain w` returns accessible worlds — intended to be instantiated with
 `Kratzer.accessibleWorlds f` from `Modality/Kratzer.lean`.
 -/
-def condNecessity (domain : World → List World) (α β : Prop' World) : Prop' World :=
+def condNecessity (domain : World → List World) (α β : Set World) : Set World :=
   λ w => ∀ w' ∈ domain w, α w' → β w'
 
 /--
@@ -458,16 +457,16 @@ If α₁ ⊆ α₂, then "if α₂, must β" entails "if α₁, must β": the α
 are a subset of the α₂-worlds, so the `.all β` check passes on the smaller
 set whenever it passes on the larger.
 -/
-theorem conditional_antecedent_DE (domain : World → List World) (β : Prop' World) :
+theorem conditional_antecedent_DE (domain : World → List World) (β : Set World) :
     IsDownwardEntailing (λ α => condNecessity domain α β) := by
   intro α₁ α₂ hle w h w' hw'_mem hw'_α₁
-  exact h w' hw'_mem (hle w' hw'_α₁)
+  exact h w' hw'_mem (hle hw'_α₁)
 
 /--
 Conditional antecedent is Strawson-DE (trivially, since it is classically DE).
 -/
-theorem conditional_antecedent_strawsonDE (domain : World → List World) (β : Prop' World)
-    (defined : Prop' World → World → Prop) :
+theorem conditional_antecedent_strawsonDE (domain : World → List World) (β : Set World)
+    (defined : Set World → World → Prop) :
     IsStrawsonDE (λ α => condNecessity domain α β) defined :=
   de_implies_strawsonDE _ (conditional_antecedent_DE domain β) defined
 
@@ -490,28 +489,28 @@ Bridge: `IsDE` (= `Antitone`) implies `IsStrawsonDE` for any definedness.
 This is just `de_implies_strawsonDE` but using the `IsDE` abbreviation
 from `Polarity.lean`.
 -/
-theorem isDE_implies_strawsonDE (f : Prop' World → Prop' World) (hDE : IsDE f)
-    (defined : Prop' World → World → Prop) : IsStrawsonDE f defined :=
+theorem isDE_implies_strawsonDE (f : Set World → Set World) (hDE : IsDE f)
+    (defined : Set World → World → Prop) : IsStrawsonDE f defined :=
   de_implies_strawsonDE f hDE defined
 
 /--
 Negation is Strawson-DE (trivially, since it's anti-morphic).
 -/
-theorem pnot_isStrawsonDE (defined : Prop' World → World → Prop) :
+theorem pnot_isStrawsonDE (defined : Set World → World → Prop) :
     IsStrawsonDE pnot defined :=
   de_implies_strawsonDE pnot pnot_isDownwardEntailing defined
 
 /--
 "No student" is Strawson-DE (trivially, since it's anti-additive → DE).
 -/
-theorem no_student_isStrawsonDE (defined : Prop' World → World → Prop) :
+theorem no_student_isStrawsonDE (defined : Set World → World → Prop) :
     IsStrawsonDE no_student defined :=
   de_implies_strawsonDE no_student no_isDE_scope defined
 
 /--
 "At most 2 students" is Strawson-DE (trivially, since it's DE).
 -/
-theorem atMost2_isStrawsonDE (defined : Prop' World → World → Prop) :
+theorem atMost2_isStrawsonDE (defined : Set World → World → Prop) :
     IsStrawsonDE atMost2_student defined :=
   de_implies_strawsonDE atMost2_student atMost_isDE_scope defined
 

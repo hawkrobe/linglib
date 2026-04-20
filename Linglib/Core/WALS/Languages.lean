@@ -16,7 +16,7 @@ structure Language where
   iso : String
   family : String
   genus : String
-  deriving Repr, DecidableEq
+  deriving Repr, BEq, DecidableEq
 
 private def languages_0 : List Language :=
   [ { walsCode := "xun", name := "!Xun (Ekoka)", iso := "knw", family := "Kxa", genus := "Ju-Kung" }
@@ -2703,8 +2703,13 @@ def languages : List Language := languages_0 ++ languages_1 ++ languages_2 ++ la
 def findLanguage (code : String) : Option Language :=
   languages.find? (·.walsCode == code)
 
-/-- Look up a language by ISO 639-3 code. -/
+/-- Look up a language by ISO 639-3 code.
+
+Returns `none` for empty queries: WALS marks a handful of languages with an
+empty `iso` field, and a naive `find?` on `""` would return one of those
+entries arbitrarily. -/
 def findByIso (iso : String) : Option Language :=
-  languages.find? (·.iso == iso)
+  if iso.isEmpty then none
+  else languages.find? (·.iso == iso)
 
 end Core.WALS

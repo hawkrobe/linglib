@@ -107,12 +107,10 @@ The `fromSetoid` embedding is **monotone** in mathlib's lattice order on
 and the entailment order on `Issue` (`P ≤ Q` iff `P.props ⊆ Q.props`).
 The bridge is moreover a **lattice embedding**: `≤` is reflected back.
 
-This is the clean, Set-based replacement for the Bool/List partition
-bridge `refinesOn_iff_questionEntails_of_partition` formerly housed in
-`Core/Partition.lean`. The same content (Groenendijk–Stokhof's
-"partition refinement = question entailment") is here a one-liner over
-`Setoid` and `Core.Issue`, with no `worlds : List W` quantifier and no
-`isPartition` precondition. -/
+This is the Set-based form of Groenendijk–Stokhof's "partition refinement
+= question entailment", formulated as a one-liner over `Setoid` and
+`Core.Issue` with no `worlds : List W` quantifier and no `isPartition`
+precondition. -/
 
 /-- The `Setoid → Issue` embedding **reflects** the order: a setoid is
     finer than another iff its inquisitive content is entailed by the
@@ -155,6 +153,46 @@ theorem fromSetoid_le_iff (r₁ r₂ : Setoid W) :
 theorem fromSetoid_mono {r₁ r₂ : Setoid W} (h : r₁ ≤ r₂) :
     fromSetoid r₁ ≤ fromSetoid r₂ :=
   (fromSetoid_le_iff r₁ r₂).mpr h
+
+/-! ### Equivalence classes are alternatives -/
+
+/-- Conversely, every alternative of `fromSetoid r` is either the empty
+    state or an equivalence class of `r`. The empty case can only occur
+    when `W` is empty (otherwise some class is in `props` and strictly
+    contains `∅`, displacing it from maximality). -/
+theorem alt_fromSetoid_subset_classes (r : Setoid W) {p : Set W}
+    (hp : p ∈ alt (fromSetoid r)) : p = ∅ ∨ p ∈ r.classes := by
+  obtain ⟨hp_props, hmax⟩ := hp
+  rcases hp_props with hempty | ⟨c, hc, hpc⟩
+  · exact Or.inl hempty
+  · -- p ⊆ c, but c is itself in props (Or.inr ⟨c, hc, subset_rfl⟩),
+    -- so by maximality p = c, hence p is the class c.
+    have hc_props : c ∈ (fromSetoid r).props :=
+      Or.inr ⟨c, hc, subset_rfl⟩
+    have heq : p = c := hmax c hc_props hpc
+    exact Or.inr (heq ▸ hc)
+
+/-- Each equivalence class of `r` is a maximal element (alternative) of
+    `fromSetoid r`. The proof uses (i) classes are nonempty (so they
+    aren't displaced by `∅`), and (ii) classes are pairwise disjoint or
+    equal — so a class can only be properly contained in itself. -/
+theorem class_mem_alt_fromSetoid (r : Setoid W) {c : Set W}
+    (hc : c ∈ r.classes) : c ∈ alt (fromSetoid r) := by
+  refine ⟨Or.inr ⟨c, hc, subset_rfl⟩, ?_⟩
+  obtain ⟨v, _hv, rfl⟩ := hc
+  intro q hq hcq
+  rcases hq with hempty | ⟨c', hc', hqc'⟩
+  · -- q = ∅, but v ∈ class is contained in q
+    have hv : v ∈ ({x | r x v} : Set W) := Setoid.refl' r v
+    rw [hempty] at hcq
+    exact (hcq hv).elim
+  · -- q ⊆ c'; since {x | r x v} ⊆ q ⊆ c', the two classes coincide
+    obtain ⟨v', _hv', rfl⟩ := hc'
+    have hvv' : r v v' := hqc' (hcq (Setoid.refl' r v))
+    apply Set.Subset.antisymm hcq
+    intro x hxq
+    have hxv' : r x v' := hqc' hxq
+    exact Setoid.trans' r hxv' (Setoid.symm' r hvv')
 
 end Issue
 

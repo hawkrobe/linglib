@@ -240,30 +240,39 @@ Check if a context licenses a polarity item.
 
 An item is licensed if the context is explicitly listed in `licensingContexts`.
 -/
-def isLicensedIn (item : PolarityItemEntry) (ctx : LicensingContext) : Bool :=
-  item.licensingContexts.contains ctx
+def isLicensedIn (item : PolarityItemEntry) (ctx : LicensingContext) : Prop :=
+  ctx ∈ item.licensingContexts
+
+instance (item : PolarityItemEntry) (ctx : LicensingContext) :
+    Decidable (isLicensedIn item ctx) :=
+  inferInstanceAs (Decidable (ctx ∈ item.licensingContexts))
 
 /--
 Check if an item is an NPI (weak or strong).
 -/
-def PolarityItemEntry.isNPI (p : PolarityItemEntry) : Bool :=
-  match p.polarityType with
-  | .npiWeak | .npiStrong | .npi_fci => true
-  | _ => false
+def PolarityItemEntry.isNPI (p : PolarityItemEntry) : Prop :=
+  p.polarityType = .npiWeak ∨ p.polarityType = .npiStrong ∨ p.polarityType = .npi_fci
+
+instance (p : PolarityItemEntry) : Decidable p.isNPI :=
+  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 /--
 Check if an item is an FCI.
 -/
-def PolarityItemEntry.isFCI (p : PolarityItemEntry) : Bool :=
-  match p.polarityType with
-  | .fci | .npi_fci => true
-  | _ => false
+def PolarityItemEntry.isFCI (p : PolarityItemEntry) : Prop :=
+  p.polarityType = .fci ∨ p.polarityType = .npi_fci
+
+instance (p : PolarityItemEntry) : Decidable p.isFCI :=
+  inferInstanceAs (Decidable (_ ∨ _))
 
 /--
 Check if an item is a PPI.
 -/
-def PolarityItemEntry.isPPI (p : PolarityItemEntry) : Bool :=
-  p.polarityType == .ppi
+def PolarityItemEntry.isPPI (p : PolarityItemEntry) : Prop :=
+  p.polarityType = .ppi
+
+instance (p : PolarityItemEntry) : Decidable p.isPPI :=
+  inferInstanceAs (Decidable (_ = _))
 
 /--
 Israel's prediction (@cite{israel-2001} §4): canonical/inverted is determined
@@ -283,11 +292,14 @@ def predictCanonicity (le : LikelihoodEffect) (pt : PolarityType) : Canonicity :
   | .unknown, _ => .unknown
 
 /-- Check if a polarity item's stated canonicity agrees with the prediction.
-    Returns true if canonicity or likelihood effect is unknown (insufficient data),
+    Holds if canonicity or likelihood effect is unknown (insufficient data),
     or if the stated canonicity matches the prediction from likelihood effect. -/
-def PolarityItemEntry.canonicityConsistent (p : PolarityItemEntry) : Bool :=
-  p.canonicity == .unknown ||
-  p.likelihoodEffect == .unknown ||
-  p.canonicity == predictCanonicity p.likelihoodEffect p.polarityType
+def PolarityItemEntry.canonicityConsistent (p : PolarityItemEntry) : Prop :=
+  p.canonicity = .unknown ∨
+  p.likelihoodEffect = .unknown ∨
+  p.canonicity = predictCanonicity p.likelihoodEffect p.polarityType
+
+instance (p : PolarityItemEntry) : Decidable p.canonicityConsistent :=
+  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 end Core.Lexical.PolarityItem

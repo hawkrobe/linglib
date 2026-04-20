@@ -39,7 +39,7 @@ patterns documented in the Fragment inventories.
 
 ## The ABS/NOM Mismatch in Split-Ergative Languages
 
-The dependent case algorithm assigns ABS (`Core.Case.abs`) as the
+The dependent case algorithm assigns ABS (`.abs`) as the
 unmarked case in ergative alignment. Hindi and Georgian, however,
 realize this function morphologically as NOM (no overt marker), not
 as a distinct ABS form — their inventories contain ERG (the dependent
@@ -79,31 +79,31 @@ theorem hindi_accusative_coverage :
   decide
 
 theorem hindi_erg_in_inventory :
-    Core.Case.erg ∈ Fragments.Hindi.Case.caseInventory := by
+    .erg ∈ Fragments.Hindi.Case.caseInventory := by
   native_decide
 
 /-- ABS is not in Hindi's inventory: the absolutive function (unmarked S/P
     in perfective) is morphologically NOM. -/
 theorem hindi_abs_not_in_inventory :
-    Core.Case.abs ∉ Fragments.Hindi.Case.caseInventory := by decide
+    .abs ∉ Fragments.Hindi.Case.caseInventory := by decide
 
 /-- But NOM IS in the inventory, documenting the ABS → NOM syncretism. -/
 theorem hindi_nom_covers_abs_function :
-    Core.Case.nom ∈ Fragments.Hindi.Case.caseInventory := by decide
+    .nom ∈ Fragments.Hindi.Case.caseInventory := by decide
 
 -- Georgian: aorist = ergative, present/evidential = accusative-like
 theorem georgian_erg_in_inventory :
-    Core.Case.erg ∈ Fragments.Georgian.Agreement.fullCaseInventory := by decide
+    .erg ∈ Fragments.Georgian.Agreement.fullCaseInventory := by decide
 
 /-- ABS is not in Georgian's inventory: the absolutive function is
     morphologically NOM in both aorist (ergative) and present (accusative)
     frames. -/
 theorem georgian_abs_not_in_inventory :
-    Core.Case.abs ∉ Fragments.Georgian.Agreement.fullCaseInventory := by decide
+    .abs ∉ Fragments.Georgian.Agreement.fullCaseInventory := by decide
 
 /-- NOM covers the absolutive function in Georgian. -/
 theorem georgian_nom_covers_abs_function :
-    Core.Case.nom ∈ Fragments.Georgian.Agreement.fullCaseInventory := by decide
+    .nom ∈ Fragments.Georgian.Agreement.fullCaseInventory := by decide
 
 -- ============================================================================
 -- § 2: Concrete Derivation Examples
@@ -251,7 +251,7 @@ theorem hindi_perfective_patient_abs :
     correctly predicted; the patient case (ABS → NOM) requires the
     morphological identity documented in § 1. -/
 theorem hindi_perfective_erg_in_inventory :
-    Core.Case.erg ∈ Fragments.Hindi.Case.caseInventory := by
+    .erg ∈ Fragments.Hindi.Case.caseInventory := by
   native_decide
 
 /-! ## Georgian Split-Ergative Derivations
@@ -282,7 +282,7 @@ theorem georgian_aorist_patient_abs :
 
 /-- The agent ERG in the aorist is in Georgian's inventory. -/
 theorem georgian_aorist_erg_in_inventory :
-    Core.Case.erg ∈ Fragments.Georgian.Agreement.fullCaseInventory := by
+    .erg ∈ Fragments.Georgian.Agreement.fullCaseInventory := by
   decide
 
 -- Present: accusative-like alignment with lexical DAT on patient

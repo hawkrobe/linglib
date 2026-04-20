@@ -110,29 +110,41 @@ def EntailmentProfile.pPatientScore (p : EntailmentProfile) : Nat :=
 
 /-- P-Agent feature dominance: `p` has every P-Agent feature that `q` has.
     This is the subset ordering on P-Agent feature sets. -/
-def pAgentDominates (p q : EntailmentProfile) : Bool :=
-  (!q.volition || p.volition) &&
-  (!q.sentience || p.sentience) &&
-  (!q.causation || p.causation) &&
-  (!q.movement || p.movement) &&
-  (!q.independentExistence || p.independentExistence)
+def PAgentDominates (p q : EntailmentProfile) : Prop :=
+  (q.volition = true → p.volition = true) ∧
+  (q.sentience = true → p.sentience = true) ∧
+  (q.causation = true → p.causation = true) ∧
+  (q.movement = true → p.movement = true) ∧
+  (q.independentExistence = true → p.independentExistence = true)
+
+instance (p q : EntailmentProfile) : Decidable (PAgentDominates p q) := by
+  unfold PAgentDominates; infer_instance
 
 /-- P-Patient feature dominance: `p` has every P-Patient feature that `q` has. -/
-def pPatientDominates (p q : EntailmentProfile) : Bool :=
-  (!q.changeOfState || p.changeOfState) &&
-  (!q.incrementalTheme || p.incrementalTheme) &&
-  (!q.causallyAffected || p.causallyAffected) &&
-  (!q.stationary || p.stationary) &&
-  (!q.dependentExistence || p.dependentExistence)
+def PPatientDominates (p q : EntailmentProfile) : Prop :=
+  (q.changeOfState = true → p.changeOfState = true) ∧
+  (q.incrementalTheme = true → p.incrementalTheme = true) ∧
+  (q.causallyAffected = true → p.causallyAffected = true) ∧
+  (q.stationary = true → p.stationary = true) ∧
+  (q.dependentExistence = true → p.dependentExistence = true)
+
+instance (p q : EntailmentProfile) : Decidable (PPatientDominates p q) := by
+  unfold PPatientDominates; infer_instance
 
 /-- Strict P-Agent dominance: `p` dominates `q` but not vice versa.
     Means `p` has a strict superset of `q`'s P-Agent features. -/
-def pAgentStrictlyDominates (p q : EntailmentProfile) : Bool :=
-  pAgentDominates p q && !pAgentDominates q p
+def PAgentStrictlyDominates (p q : EntailmentProfile) : Prop :=
+  PAgentDominates p q ∧ ¬ PAgentDominates q p
+
+instance (p q : EntailmentProfile) : Decidable (PAgentStrictlyDominates p q) := by
+  unfold PAgentStrictlyDominates; infer_instance
 
 /-- Strict P-Patient dominance. -/
-def pPatientStrictlyDominates (p q : EntailmentProfile) : Bool :=
-  pPatientDominates p q && !pPatientDominates q p
+def PPatientStrictlyDominates (p q : EntailmentProfile) : Prop :=
+  PPatientDominates p q ∧ ¬ PPatientDominates q p
+
+instance (p q : EntailmentProfile) : Decidable (PPatientStrictlyDominates p q) := by
+  unfold PPatientStrictlyDominates; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 4. Argument Selection Principle (lattice-based)
@@ -149,15 +161,21 @@ def pPatientStrictlyDominates (p q : EntailmentProfile) : Bool :=
     comparison (@cite{grimm-2011}, @cite{davis-koenig-2000}). Priority
     of causation is captured structurally: {causation, IE} ⊃ {IE} but
     {causation, IE} ⊥ {sentience, IE} (incomparable). -/
-def outranksForSubject (subj obj : EntailmentProfile) : Bool :=
-  pAgentStrictlyDominates subj obj ||
-  (!pAgentStrictlyDominates subj obj && !pAgentStrictlyDominates obj subj &&
-   pPatientStrictlyDominates obj subj)
+def OutranksForSubject (subj obj : EntailmentProfile) : Prop :=
+  PAgentStrictlyDominates subj obj ∨
+  (¬ PAgentStrictlyDominates subj obj ∧ ¬ PAgentStrictlyDominates obj subj ∧
+   PPatientStrictlyDominates obj subj)
+
+instance (subj obj : EntailmentProfile) : Decidable (OutranksForSubject subj obj) := by
+  unfold OutranksForSubject; infer_instance
 
 /-- Corollary 1 (@cite{dowty-1991} p.579): Neither argument outranks
     the other → alternation is possible (buy/sell, like/please). -/
-def allowsAlternation (arg1 arg2 : EntailmentProfile) : Bool :=
-  !outranksForSubject arg1 arg2 && !outranksForSubject arg2 arg1
+def AllowsAlternation (arg1 arg2 : EntailmentProfile) : Prop :=
+  ¬ OutranksForSubject arg1 arg2 ∧ ¬ OutranksForSubject arg2 arg1
+
+instance (arg1 arg2 : EntailmentProfile) : Decidable (AllowsAlternation arg1 arg2) := by
+  unfold AllowsAlternation; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 5. Unaccusativity (priority-based)
@@ -172,15 +190,21 @@ def allowsAlternation (arg1 arg2 : EntailmentProfile) : Bool :=
 
     @cite{davis-koenig-2000}: causation and volition are the priority
     P-Agent entailments. Their absence signals non-agentivity. -/
-def predictsUnaccusative (p : EntailmentProfile) : Bool :=
-  !p.volition && !p.causation && p.pPatientScore > 0
+def PredictsUnaccusative (p : EntailmentProfile) : Prop :=
+  p.volition = false ∧ p.causation = false ∧ p.pPatientScore > 0
+
+instance (p : EntailmentProfile) : Decidable (PredictsUnaccusative p) := by
+  unfold PredictsUnaccusative; infer_instance
 
 /-- Predicts unergative for intransitive verbs.
 
     An intransitive subject is unergative iff it has at least one core
     agentive feature (volition or causation) and no P-Patient features. -/
-def predictsUnergative (p : EntailmentProfile) : Bool :=
-  (p.volition || p.causation) && p.pPatientScore == 0
+def PredictsUnergative (p : EntailmentProfile) : Prop :=
+  (p.volition = true ∨ p.causation = true) ∧ p.pPatientScore = 0
+
+instance (p : EntailmentProfile) : Decidable (PredictsUnergative p) := by
+  unfold PredictsUnergative; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 6. Well-Formedness Constraints (@cite{levin-2019}, @cite{davis-koenig-2000})
@@ -189,8 +213,11 @@ def predictsUnergative (p : EntailmentProfile) : Bool :=
 /-- Intra-profile well-formedness: volition presupposes sentience.
     Only sentient entities can be volitional (@cite{dowty-1991} p.607,
     @cite{levin-2019} §2.1). -/
-def EntailmentProfile.wellFormedInternal (p : EntailmentProfile) : Bool :=
-  !p.volition || p.sentience
+def EntailmentProfile.WellFormedInternal (p : EntailmentProfile) : Prop :=
+  p.volition = true → p.sentience = true
+
+instance (p : EntailmentProfile) : Decidable p.WellFormedInternal := by
+  unfold EntailmentProfile.WellFormedInternal; infer_instance
 
 /-- Inter-argument well-formedness (@cite{davis-koenig-2000},
     @cite{primus-1999}): three P-Agent entailments are paired with
@@ -199,10 +226,13 @@ def EntailmentProfile.wellFormedInternal (p : EntailmentProfile) : Bool :=
     - causation (subject) → changeOfState (object)
     - movement (subject) → stationary (object)
     - independentExistence (subject) → dependentExistence (object) -/
-def wellFormedPair (subj obj : EntailmentProfile) : Bool :=
-  (!subj.causation || obj.changeOfState) &&
-  (!subj.movement || obj.stationary) &&
-  (!subj.independentExistence || obj.dependentExistence)
+def WellFormedPair (subj obj : EntailmentProfile) : Prop :=
+  (subj.causation = true → obj.changeOfState = true) ∧
+  (subj.movement = true → obj.stationary = true) ∧
+  (subj.independentExistence = true → obj.dependentExistence = true)
+
+instance (subj obj : EntailmentProfile) : Decidable (WellFormedPair subj obj) := by
+  unfold WellFormedPair; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 7. Do-Test (@cite{cruse-1973} via @cite{dowty-1991})
@@ -216,16 +246,11 @@ inductive DoTestSource where
 
 /-- The do-test passes (semantically) iff at least one of
     {volition, causation, movement} holds. -/
-def passesDoTestFromProfile (p : EntailmentProfile) : Bool :=
-  p.volition || p.causation || p.movement
+def PassesDoTestFromProfile (p : EntailmentProfile) : Prop :=
+  p.volition = true ∨ p.causation = true ∨ p.movement = true
 
-/-- Passing the do-test is equivalent to having at least one
-    P-Agent entailment from {volition, causation, movement}. -/
-theorem doTest_from_profile_iff_hasAgentEntailment
-    (p : EntailmentProfile) :
-    passesDoTestFromProfile p = true ↔
-    (p.volition = true ∨ p.causation = true ∨ p.movement = true) := by
-  simp [passesDoTestFromProfile, Bool.or_eq_true, or_assoc]
+instance (p : EntailmentProfile) : Decidable (PassesDoTestFromProfile p) := by
+  unfold PassesDoTestFromProfile; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 8. Effector / Force Recipient
@@ -233,18 +258,23 @@ theorem doTest_from_profile_iff_hasAgentEntailment
 
 /-- An effector (@cite{van-valin-wilkins-1996}) is a self-energetic force
     bearer: movement + independent existence. Realized as external argument. -/
-def isEffector (p : EntailmentProfile) : Bool :=
-  p.movement && p.independentExistence
+def IsEffector (p : EntailmentProfile) : Prop :=
+  p.movement = true ∧ p.independentExistence = true
+
+instance (p : EntailmentProfile) : Decidable (IsEffector p) := by
+  unfold IsEffector; infer_instance
 
 /-- A force recipient is causally affected or stationary.
     Realized as internal argument. -/
-def isForceRecipient (p : EntailmentProfile) : Bool :=
-  p.causallyAffected || p.stationary
+def IsForceRecipient (p : EntailmentProfile) : Prop :=
+  p.causallyAffected = true ∨ p.stationary = true
+
+instance (p : EntailmentProfile) : Decidable (IsForceRecipient p) := by
+  unfold IsForceRecipient; infer_instance
 
 /-- Effectors have at least 2 P-Agent entailments (movement + IE). -/
-theorem effector_has_pAgent (p : EntailmentProfile) (h : isEffector p = true) :
+theorem effector_has_pAgent (p : EntailmentProfile) (h : IsEffector p) :
     p.pAgentScore ≥ 2 := by
-  simp [isEffector, Bool.and_eq_true] at h
   obtain ⟨hm, hie⟩ := h
   simp [EntailmentProfile.pAgentScore, hm, hie]
 
@@ -320,11 +350,11 @@ def sweepBroomSubjectProfile : EntailmentProfile :=
 -- Dominance is reflexive
 
 theorem pAgentDominates_refl (p : EntailmentProfile) :
-    pAgentDominates p p = true := by
-  simp [pAgentDominates]
+    PAgentDominates p p :=
+  ⟨id, id, id, id, id⟩
 
 theorem pPatientDominates_refl (p : EntailmentProfile) :
-    pPatientDominates p p = true := by
-  simp [pPatientDominates]
+    PPatientDominates p p :=
+  ⟨id, id, id, id, id⟩
 
 end Semantics.Verb.EntailmentProfile

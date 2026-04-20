@@ -153,8 +153,8 @@ def ParadigmaticStructure.firstPersonComplexType
 
 /-- Whether a paradigm has horizontal homophony (singular = non-singular). -/
 def ParadigmaticStructure.hasHorizontalHomophony (s : ParadigmaticStructure) : Bool :=
-  Category.all.filter (·.isSingular) |>.any λ sg =>
-    Category.all.filter (·.isGroup) |>.any λ grp =>
+  Category.all.filter (decide ·.IsSingular) |>.any λ sg =>
+    Category.all.filter (decide ·.IsGroup) |>.any λ grp =>
       s.homophonous sg grp
 
 /-- Whether a paradigm has singular homophony (between singular categories). -/
@@ -640,8 +640,8 @@ inductive NumberStage where
 /-- Classify a paradigm's number stage by checking singular/group opposition. -/
 def ParadigmaticStructure.numberStage (s : ParadigmaticStructure) : NumberStage :=
   -- Check if there's any singular ≠ group distinction at all
-  let hasSgGrpOpposition := Category.all.filter (·.isSingular) |>.any λ sg =>
-    Category.all.filter (·.isGroup) |>.any λ grp =>
+  let hasSgGrpOpposition := Category.all.filter (decide ·.IsSingular) |>.any λ sg =>
+    Category.all.filter (decide ·.IsGroup) |>.any λ grp =>
       !(s.homophonous sg grp)
   if !hasSgGrpOpposition then .N1
   else .N2  -- N3/N4 require dual/paucal data not in our 8-cell grid

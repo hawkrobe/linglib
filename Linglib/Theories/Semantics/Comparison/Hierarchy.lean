@@ -64,7 +64,7 @@ open Core.Scale (HasDegree)
 
 /-- Every measure function induces a degree assignment.
     This is `MeasureFn.toHasDegree` — restated here for the hierarchy. -/
-def measure_to_degree {E : Type} (μ : MeasureFn E) : HasDegree E :=
+def measure_to_degree {E : Type} (μ : MeasureFn E) : HasDegree E ℚ :=
   μ.toHasDegree
 
 -- ════════════════════════════════════════════════════

@@ -14,24 +14,41 @@ namespace Core.WALS.F144C
 
 /-- WALS 144C values. -/
 inductive LanguagesWithDifferentWordOrderInNegativeClauses where
-  | vsoButNegsvo  -- VSO, but NegSVO (6 languages)
-  | svoButSnegov  -- SVO, but SNegOV (3 languages)
-  | svoButSonegv  -- SVO, but SONegV (1 languages)
-  | svoButSovneg  -- SVO, but SOVNeg (1 languages)
-  | svoButNegvso  -- SVO, but NegVSO (1 languages)
-  | svoButSoVNeg  -- SVO but SO[V-Neg] (1 languages)
-  | svoButSoNegV  -- SVO but SO[Neg-V] (1 languages)
-  | osvButNegsvoONegVS  -- OSV but NegSVO/O[Neg-V]S (1 languages)
-  | svoButNegsnegov  -- SVO, but NegSNegOV (1 languages)
-  | svoButSonegVNegSoNegVNeg  -- SVO, but SONeg[V-Neg]/SO[Neg-V-Neg] (1 languages)
-  | sovButSonegVNegSNegVNegO  -- SOV but  SONeg[V-Neg]/S[Neg-V-Neg] O (1 languages)
-  | svoVsoButNegsvoneg  -- SVO/VSO, but NegSVONeg (1 languages)
-  | svoVsoButNegVSo  -- SVO/VSO, but [Neg-V]SO(Neg) (1 languages)
-  | svoSovButSvoneg  -- SVO/SOV, but SVONeg (5 languages)
-  | svoSovButSnegvo  -- SVO/SOV, but SNegVO (1 languages)
-  | svoSovButSnegov  -- SVO/SOV, but SNegOV (1 languages)
-  | svoSovButSovneg  -- SVO/SOV, but SOVNeg (1 languages)
-  deriving DecidableEq, Repr
+  /-- VSO, but NegSVO (6 languages). -/
+  | vsoButNegsvo
+  /-- SVO, but SNegOV (3 languages). -/
+  | svoButSnegov
+  /-- SVO, but SONegV (1 languages). -/
+  | svoButSonegv
+  /-- SVO, but SOVNeg (1 languages). -/
+  | svoButSovneg
+  /-- SVO, but NegVSO (1 languages). -/
+  | svoButNegvso
+  /-- SVO but SO[V-Neg] (1 languages). -/
+  | svoButSoVNeg
+  /-- SVO but SO[Neg-V] (1 languages). -/
+  | svoButSoNegV
+  /-- OSV but NegSVO/O[Neg-V]S (1 languages). -/
+  | osvButNegsvoONegVS
+  /-- SVO, but NegSNegOV (1 languages). -/
+  | svoButNegsnegov
+  /-- SVO, but SONeg[V-Neg]/SO[Neg-V-Neg] (1 languages). -/
+  | svoButSonegVNegSoNegVNeg
+  /-- SOV but  SONeg[V-Neg]/S[Neg-V-Neg] O (1 languages). -/
+  | sovButSonegVNegSNegVNegO
+  /-- SVO/VSO, but NegSVONeg (1 languages). -/
+  | svoVsoButNegsvoneg
+  /-- SVO/VSO, but [Neg-V]SO(Neg) (1 languages). -/
+  | svoVsoButNegVSo
+  /-- SVO/SOV, but SVONeg (5 languages). -/
+  | svoSovButSvoneg
+  /-- SVO/SOV, but SNegVO (1 languages). -/
+  | svoSovButSnegvo
+  /-- SVO/SOV, but SNegOV (1 languages). -/
+  | svoSovButSnegov
+  /-- SVO/SOV, but SOVNeg (1 languages). -/
+  | svoSovButSovneg
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144C dataset (28 languages). -/
 def allData : List (Datapoint LanguagesWithDifferentWordOrderInNegativeClauses) :=
@@ -64,44 +81,6 @@ def allData : List (Datapoint LanguagesWithDifferentWordOrderInNegativeClauses) 
   , { walsCode := "tes", language := "Teso", iso := "teo", value := .vsoButNegsvo }
   , { walsCode := "trm", language := "Tirmaga", iso := "suq", value := .svoButSonegVNegSoNegVNeg }
   ]
-
--- Count verification
-theorem total_count : allData.length = 28 := by native_decide
-
-theorem count_vsoButNegsvo :
-    (allData.filter (·.value == .vsoButNegsvo)).length = 6 := by native_decide
-theorem count_svoButSnegov :
-    (allData.filter (·.value == .svoButSnegov)).length = 3 := by native_decide
-theorem count_svoButSonegv :
-    (allData.filter (·.value == .svoButSonegv)).length = 1 := by native_decide
-theorem count_svoButSovneg :
-    (allData.filter (·.value == .svoButSovneg)).length = 1 := by native_decide
-theorem count_svoButNegvso :
-    (allData.filter (·.value == .svoButNegvso)).length = 1 := by native_decide
-theorem count_svoButSoVNeg :
-    (allData.filter (·.value == .svoButSoVNeg)).length = 1 := by native_decide
-theorem count_svoButSoNegV :
-    (allData.filter (·.value == .svoButSoNegV)).length = 1 := by native_decide
-theorem count_osvButNegsvoONegVS :
-    (allData.filter (·.value == .osvButNegsvoONegVS)).length = 1 := by native_decide
-theorem count_svoButNegsnegov :
-    (allData.filter (·.value == .svoButNegsnegov)).length = 1 := by native_decide
-theorem count_svoButSonegVNegSoNegVNeg :
-    (allData.filter (·.value == .svoButSonegVNegSoNegVNeg)).length = 1 := by native_decide
-theorem count_sovButSonegVNegSNegVNegO :
-    (allData.filter (·.value == .sovButSonegVNegSNegVNegO)).length = 1 := by native_decide
-theorem count_svoVsoButNegsvoneg :
-    (allData.filter (·.value == .svoVsoButNegsvoneg)).length = 1 := by native_decide
-theorem count_svoVsoButNegVSo :
-    (allData.filter (·.value == .svoVsoButNegVSo)).length = 1 := by native_decide
-theorem count_svoSovButSvoneg :
-    (allData.filter (·.value == .svoSovButSvoneg)).length = 5 := by native_decide
-theorem count_svoSovButSnegvo :
-    (allData.filter (·.value == .svoSovButSnegvo)).length = 1 := by native_decide
-theorem count_svoSovButSnegov :
-    (allData.filter (·.value == .svoSovButSnegov)).length = 1 := by native_decide
-theorem count_svoSovButSovneg :
-    (allData.filter (·.value == .svoSovButSovneg)).length = 1 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

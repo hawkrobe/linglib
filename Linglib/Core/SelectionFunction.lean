@@ -51,6 +51,47 @@ theorem sel_mem (s : SelectionFunction W) (w : W) (A : Set W)
     (hA : A.Nonempty) : s.sel w A ∈ A :=
   s.inclusion w A hA
 
+/-- **Selection Excluded Middle** — the structural origin of @cite{stalnaker-1968}'s
+    Conditional Excluded Middle and @cite{cariani-santorio-2018}'s Will
+    Excluded Middle. Because `sel w f` is a *single* world, every
+    predicate evaluated there satisfies excluded middle. The selection
+    function reduces a quantificational question over a set to a
+    propositional question at one point. -/
+theorem sel_em (s : SelectionFunction W) (A : W → Prop) (f : Set W)
+    (w : W) :
+    A (s.sel w f) ∨ ¬ A (s.sel w f) :=
+  Classical.em _
+
+/-- **Selection Negation Swap** — negation commutes through evaluation
+    at the selected world: applying a pointwise-negated predicate to
+    `sel w f` is the same as negating the application. This is the
+    structural origin of @cite{cariani-santorio-2018}'s Negation Swap
+    for *will*. The equivalence is `Iff.rfl` once the prejacent has
+    been reduced to a propositional question at the selected point. -/
+theorem sel_neg_swap (s : SelectionFunction W) (A : W → Prop) (f : Set W)
+    (w : W) :
+    (fun w' => ¬ A w') (s.sel w f) ↔ ¬ A (s.sel w f) := Iff.rfl
+
 end SelectionFunction
+
+/-- **Pairwise preference induced by a selection function.**
+
+`w₁` is preferred to `w₂` from center `w₀` iff when choosing between
+just the two of them, the selection function picks `w₁`. -/
+def selectionPrefers {W : Type*} (s : SelectionFunction W)
+    (w₀ w₁ w₂ : W) : Prop :=
+  s.sel w₀ {w₁, w₂} = w₁
+
+/-- **A selection function is coherent** iff its induced pairwise
+preference is transitive. This is the content of @cite{stalnaker-1981}'s
+claim that selection functions determine a *well-ordering* of possible
+worlds.
+
+Not all selection functions satisfying `inclusion` + `centering` are
+coherent — coherence is an additional rationality constraint. -/
+def SelectionFunction.isCoherent {W : Type*} (s : SelectionFunction W) : Prop :=
+  ∀ w₀ w₁ w₂ w₃ : W,
+    selectionPrefers s w₀ w₁ w₂ → selectionPrefers s w₀ w₂ w₃ →
+    selectionPrefers s w₀ w₁ w₃
 
 end Core

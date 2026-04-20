@@ -76,7 +76,7 @@ theorem indexical_character_varies {W E : Type*} [Inhabited W]
 
 /-- A singular proposition: a structured pair ⟨individual, property⟩.
 
-Where unstructured propositions are sets of worlds (W → Bool), singular
+Where unstructured propositions are sets of worlds (W → Prop), singular
 propositions retain the identity of the individual. This is essential
 for solving the Frege puzzle: ⟨Hesperus, bright⟩ ≠ ⟨Phosphorus, bright⟩
 even when "Hesperus is bright" and "Phosphorus is bright" are true at
@@ -85,27 +85,27 @@ structure SingularProposition (W : Type*) (E : Type*) where
   /-- The individual the proposition is about -/
   individual : E
   /-- The property predicated of the individual -/
-  property : E → W → Bool
+  property : E → W → Prop
 
 namespace SingularProposition
 
 variable {W E : Type*}
 
 /-- Evaluate a singular proposition at a world. -/
-def eval (sp : SingularProposition W E) (w : W) : Bool :=
+def eval (sp : SingularProposition W E) (w : W) : Prop :=
   sp.property sp.individual w
 
-/-- Flatten a singular proposition to an unstructured proposition (W → Bool). -/
-def flatten (sp : SingularProposition W E) : W → Bool :=
+/-- Flatten a singular proposition to an unstructured proposition (W → Prop). -/
+def flatten (sp : SingularProposition W E) : W → Prop :=
   λ w => sp.property sp.individual w
 
 /-- Two singular propositions with the same property but different individuals
 produce the same unstructured content iff the property can't distinguish them.
 
 This is the formal Frege puzzle: ⟨a, P⟩ and ⟨b, P⟩ may flatten to the same
-W → Bool, yet remain distinct as structured propositions because a ≠ b. -/
+W → Prop, yet remain distinct as structured propositions because a ≠ b. -/
 theorem structured_distinguishes_unstructured
-    (a b : E) (P : E → W → Bool) (hab : a ≠ b)
+    (a b : E) (P : E → W → Prop) (hab : a ≠ b)
     (_hflat : (SingularProposition.mk a P).flatten = (SingularProposition.mk b P).flatten) :
     (SingularProposition.mk a P) ≠ (SingularProposition.mk b P) := by
   intro heq
@@ -135,9 +135,9 @@ It is NOT necessary — there are worlds where the agent is elsewhere.
 This distinguishes logical truth (true at every context) from
 necessity (true at every world). -/
 theorem i_am_here_now_logically_true {W E : Type*}
-    (here : Context W E → E → W → Bool)
-    (hCtx : ∀ c : Context W E, here c c.agent c.world = true) :
-    ∀ c : Context W E, here c c.agent c.world = true :=
+    (here : Context W E → E → W → Prop)
+    (hCtx : ∀ c : Context W E, here c c.agent c.world) :
+    ∀ c : Context W E, here c c.agent c.world :=
   hCtx
 
 /-! ## Indexicals as Tower Access Patterns

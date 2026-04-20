@@ -9,7 +9,10 @@ Reference: Phillips-Brown, M. (2025). Some-things-considered desire. S&P.
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Core.Semantics.Presupposition
+import Linglib.Core.Order.Satisfaction
 import Mathlib.Order.Basic
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 -- ============================================================================
 -- §1. Generic question-based desire semantics
@@ -17,23 +20,47 @@ import Mathlib.Order.Basic
 
 namespace Semantics.Modality.Desire
 
-open Core.Proposition (FiniteWorlds)
 open Core.Presupposition (PrProp)
 open Core.Order (SatisfactionOrdering)
 
 section Generic
 
-variable {W : Type*} [FiniteWorlds W] [DecidableEq W]
+variable {W : Type*} [Fintype W] [DecidableEq W]
 
-/-- p entails q iff every p-world is a q-world.
-    Delegates to `FiniteWorlds.entails` from `Core/Semantics/Proposition.lean`. -/
-abbrev propEntails (p q : (W → Bool)) : Bool :=
-  FiniteWorlds.entails W p q
+/-- A decidable proposition: a `Set W` bundled with its `DecidablePred`
+    instance. Used as the element type of partition cells (answers) and
+    desire lists, which need decidability for `decide`-based reasoning
+    while keeping their semantic content `Prop`-valued.
 
-/-- Propositions overlap iff they share at least one world.
-    Delegates to `FiniteWorlds.overlap` from `Core/Semantics/Proposition.lean`. -/
-abbrev propOverlap (p q : (W → Bool)) : Bool :=
-  FiniteWorlds.overlap W p q
+    Defined as a structure (rather than a subtype) because `DecidablePred`
+    lives in `Type`, not `Prop`. -/
+structure DecProp (W : Type*) where
+  /-- The underlying `Prop`-valued proposition. -/
+  prop : Set W
+  /-- Decidability witness. -/
+  dec : DecidablePred prop
+
+/-- Smart constructor for a `DecProp` from a `Set W` whose decidability
+    can be inferred. -/
+@[reducible] def mkDec (p : Set W) [h : DecidablePred p] : DecProp W := ⟨p, h⟩
+
+instance (a : DecProp W) : DecidablePred a.prop := a.dec
+
+/-- p entails q iff every world satisfies p → q (Prop-valued).
+
+    Decidability follows from `Fintype W` + `DecidablePred p` + `DecidablePred q`
+    via `Fintype.decidableForallFintype`. -/
+def propEntails (p q : Set W) : Prop :=
+  ∀ w, p w → q w
+
+instance (p q : Set W) [DecidablePred p] [DecidablePred q] : Decidable (propEntails p q) :=
+  Fintype.decidableForallFintype
+
+/-- Propositions overlap iff some world satisfies both. -/
+def propOverlap (p q : Set W) : Prop := ∃ w, p w ∧ q w
+
+instance (p q : Set W) [DecidablePred p] [DecidablePred q] : Decidable (propOverlap p q) :=
+  Fintype.decidableExistsFintype
 
 -- ============================================================================
 -- §1a. Satisfaction orderings
@@ -44,41 +71,47 @@ abbrev propOverlap (p q : (W → Bool)) : Bool :=
     answer a is at least as preferred as a' iff a satisfies every desire
     that a' satisfies (subset inclusion on satisfied desires).
 
-    Parallel to `Kratzer.worldOrdering` but for propositions rather than worlds. -/
-def propositionOrdering (GS : List ((W → Bool))) : SatisfactionOrdering ((W → Bool)) ((W → Bool)) :=
-  SatisfactionOrdering.ofCriteria (fun a p => propEntails a p) GS
+    Parallel to `Kratzer.worldOrdering` but for propositions rather than worlds.
+
+    The `SatisfactionOrdering` framework requires a `Bool`-valued `satisfies`
+    relation, so we feed in `decide (propEntails …)` using the `DecidablePred`
+    instance carried by each `DecProp`. -/
+def propositionOrdering (GS : List (DecProp W)) :
+    SatisfactionOrdering (DecProp W) (DecProp W) :=
+  SatisfactionOrdering.ofCriteria (fun a p => decide (propEntails a.prop p.prop)) GS
 
 /-- World ordering as a `SatisfactionOrdering`. Parallels `Kratzer.worldOrdering`
-    but generic over any `[FiniteWorlds W]`. A world w satisfies proposition p
-    iff p(w) = true. -/
-def worldSatisfactionOrdering (GS : List ((W → Bool))) :
-    SatisfactionOrdering W ((W → Bool)) :=
-  SatisfactionOrdering.ofCriteria (fun w p => p w) GS
+    but generic over any `[Fintype W]`. A world w satisfies proposition p
+    iff p w. -/
+def worldSatisfactionOrdering (GS : List (DecProp W)) :
+    SatisfactionOrdering W (DecProp W) :=
+  SatisfactionOrdering.ofCriteria (fun w p => decide (p.prop w)) GS
 
 -- ============================================================================
 -- §1b. Derived definitions (thin wrappers over satisfaction orderings)
 -- ============================================================================
 
 /-- Desires from G_S that proposition a satisfies (a entails p). -/
-abbrev satisfiedBy (GS : List ((W → Bool))) (a : (W → Bool)) : List ((W → Bool)) :=
+abbrev satisfiedBy (GS : List (DecProp W)) (a : DecProp W) : List (DecProp W) :=
   (propositionOrdering GS).satisfiedBy a
 
 /-- a ≥ a' iff a satisfies all desires that a' satisfies. -/
-abbrev atLeastAsPreferred (GS : List ((W → Bool))) (a a' : (W → Bool)) : Prop :=
+abbrev atLeastAsPreferred (GS : List (DecProp W)) (a a' : DecProp W) : Prop :=
   (propositionOrdering GS).le a a'
 
 /-- Kratzer-style world ordering: w at least as good as z iff w satisfies
     every ordering source proposition that z satisfies. -/
-abbrev worldAtLeastAsGood (GS : List ((W → Bool))) (w z : W) : Prop :=
+abbrev worldAtLeastAsGood (GS : List (DecProp W)) (w z : W) : Prop :=
   (worldSatisfactionOrdering GS).le w z
 
 /-- Q-Bel_S: answers compatible with S's beliefs. -/
-def questionRelativeBelief (answers : List ((W → Bool))) (belS : (W → Bool)) : List ((W → Bool)) :=
-  answers.filter λ a => propOverlap a belS
+def questionRelativeBelief (answers : List (DecProp W))
+    (belS : Set W) [DecidablePred belS] : List (DecProp W) :=
+  answers.filter fun a => decide (propOverlap a.prop belS)
 
 /-- Best answers: those not strictly dominated (Pareto frontier).
     Derived from `SatisfactionOrdering.undominated`. -/
-abbrev bestAnswers (GS : List ((W → Bool))) (answers : List ((W → Bool))) : List ((W → Bool)) :=
+abbrev bestAnswers (GS answers : List (DecProp W)) : List (DecProp W) :=
   (propositionOrdering GS).undominated answers
 
 -- ============================================================================
@@ -86,31 +119,37 @@ abbrev bestAnswers (GS : List ((W → Bool))) (answers : List ((W → Bool))) : 
 -- ============================================================================
 
 /-- ⟦S wants p⟧ = all best answers in Q-Bel_S entail p. -/
-def wantQuestionBased (belS : (W → Bool)) (GS : List ((W → Bool)))
-    (answers : List ((W → Bool))) (p : (W → Bool)) : Prop :=
+def wantQuestionBased (belS : Set W) [DecidablePred belS]
+    (GS answers : List (DecProp W)) (p : Set W) [DecidablePred p] : Prop :=
   let qBelS := questionRelativeBelief answers belS
   let best := bestAnswers GS qBelS
-  ∀ a ∈ best, propEntails a p = true
+  ∀ a ∈ best, propEntails a.prop p
 
-instance (belS : (W → Bool)) (GS answers : List ((W → Bool))) (p : (W → Bool)) :
+instance (belS : Set W) [DecidablePred belS]
+    (GS answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
     Decidable (wantQuestionBased belS GS answers p) :=
-  inferInstanceAs (Decidable (∀ a ∈ _, _))
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- Standard von Fintel semantics (not question-based):
     ⟦S wants p⟧ = all best worlds in Bel_S are p-worlds.
     Best = undominated under Kratzer ordering.
 
+    A world is "best" iff it is in Bel_S and no other Bel_S world strictly
+    dominates it under the world satisfaction ordering induced by `GS`.
+
     This is the baseline that the question-based semantics generalizes:
     when Q_c is the finest question (singleton cells), `wantQuestionBased`
     reduces to `wantVF`. -/
-def wantVF (belS : (W → Bool)) (GS : List ((W → Bool))) (p : (W → Bool)) : Prop :=
-  let belWorlds := FiniteWorlds.worlds.filter belS
-  let best := (worldSatisfactionOrdering GS).undominated belWorlds
-  ∀ w ∈ best, p w = true
+def wantVF (belS : Set W) [DecidablePred belS]
+    (GS : List (DecProp W)) (p : Set W) [DecidablePred p] : Prop :=
+  ∀ w, belS w →
+    (∀ w', belS w' → ¬ (worldSatisfactionOrdering GS).strictlyBetter w' w) →
+    p w
 
-instance (belS : (W → Bool)) (GS : List ((W → Bool))) (p : (W → Bool)) :
+instance (belS : Set W) [DecidablePred belS]
+    (GS : List (DecProp W)) (p : Set W) [DecidablePred p] :
     Decidable (wantVF belS GS p) :=
-  inferInstanceAs (Decidable (∀ w ∈ _, _))
+  inferInstanceAs (Decidable (∀ _, _))
 
 -- ============================================================================
 -- §2. Metasemantic constraints
@@ -119,18 +158,22 @@ instance (belS : (W → Bool)) (GS : List ((W → Bool))) (p : (W → Bool)) :
 /-- p is *considered* relative to Q iff every answer settles p.
 **Considering Constraint** (§3.6): ⟦S wants p⟧^c is defined only if p is
 considered relative to Q_c. -/
-def isConsidered (answers : List ((W → Bool))) (p : (W → Bool)) : Prop :=
-  ∀ a ∈ answers, propEntails a p = true ∨ propEntails a (λ w => !p w) = true
+def isConsidered (answers : List (DecProp W))
+    (p : Set W) [DecidablePred p] : Prop :=
+  ∀ a ∈ answers, propEntails a.prop p ∨ propEntails a.prop (fun w => ¬ p w)
 
-instance (answers : List ((W → Bool))) (p : (W → Bool)) : Decidable (isConsidered answers p) :=
+instance (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
+    Decidable (isConsidered answers p) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- **Diversity** (§3.7): Q_c must contain both p-answers and ¬p-answers. -/
-def isDiverse (answers : List ((W → Bool))) (p : (W → Bool)) : Prop :=
-  (∃ a ∈ answers, propEntails a p = true) ∧
-  (∃ a ∈ answers, propEntails a (λ w => !p w) = true)
+def isDiverse (answers : List (DecProp W))
+    (p : Set W) [DecidablePred p] : Prop :=
+  (∃ a ∈ answers, propEntails a.prop p) ∧
+  (∃ a ∈ answers, propEntails a.prop (fun w => ¬ p w))
 
-instance (answers : List ((W → Bool))) (p : (W → Bool)) : Decidable (isDiverse answers p) :=
+instance (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
+    Decidable (isDiverse answers p) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- **Anti-deckstacking Constraint** (§3.7): for all q, if some answer to Q_c
@@ -138,18 +181,21 @@ is a q-answer, then q must be considered relative to Q_c. This prevents
 questions from "stacking the deck" by letting one side of q entail a
 desirable proposition that the other side cannot.
 
-Implementation: enumerate all propositions (power set of worlds) and check
-each one. For finite world types this is decidable. -/
-def isAntiDeckstacking (answers : List ((W → Bool))) : Prop :=
-  -- Generate all 2^|W| propositions as characteristic functions of subsets
-  let allProps := FiniteWorlds.worlds.foldr
-    (λ w acc => acc.flatMap λ q => [q, λ w' => q w' || (w' == w)])
-    [λ _ => false]
+Implementation: enumerate all subsets of an explicit world list as decidable
+characteristic predicates and check each one. The world enumeration is taken
+explicitly (rather than via `Finset.univ.toList`) so that `decide` can reduce
+through it for concrete `Fintype` instances built from `{...}` literals. -/
+def isAntiDeckstacking (worlds : List W) (answers : List (DecProp W)) : Prop :=
+  let allBoolProps : List (W → Bool) := worlds.foldr
+    (fun w acc => acc.flatMap fun q => [q, fun w' => q w' || decide (w' = w)])
+    [fun _ => false]
+  let allProps : List (DecProp W) :=
+    allBoolProps.map fun q => ⟨fun w => q w = true, fun _ => inferInstance⟩
   ∀ q ∈ allProps,
-    -- If some answer entails q, then q must be considered
-    (∀ a ∈ answers, propEntails a q ≠ true) ∨ isConsidered answers q
+    (∀ a ∈ answers, ¬ propEntails a.prop q.prop) ∨ isConsidered answers q.prop
 
-instance (answers : List ((W → Bool))) : Decidable (isAntiDeckstacking answers) :=
+instance (worlds : List W) (answers : List (DecProp W)) :
+    Decidable (isAntiDeckstacking worlds answers) :=
   inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
 /-- **Belief-sensitivity Constraint** (§4.2): S's beliefs must be sensitive
@@ -159,13 +205,14 @@ don't, or the agent's beliefs distinguish among answers.
 
 This blocks inferences like Avoid-war ⊭ Avoid-nuclear-war when the agent
 lacks the conceptual resources to grasp nuclear war. -/
-def isBelSensitive (belS : (W → Bool)) (answers : List ((W → Bool))) : Prop :=
+def isBelSensitive (belS : Set W) [DecidablePred belS]
+    (answers : List (DecProp W)) : Prop :=
   -- Q_c-Bel_S is nonempty (agent's beliefs are compatible with some answer)
   -- AND Q_c-Bel_S ≠ Q_c (agent's beliefs rule out at least one answer)
   let live := questionRelativeBelief answers belS
   live ≠ [] ∧ live.length ≠ answers.length
 
-instance (belS : (W → Bool)) (answers : List ((W → Bool))) :
+instance (belS : Set W) [DecidablePred belS] (answers : List (DecProp W)) :
     Decidable (isBelSensitive belS answers) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -174,10 +221,12 @@ Conjunction of Considering (§3.6), Diversity (§3.7), and Belief-sensitivity
 (§4.2). Anti-deckstacking is omitted because the paper's universal
 quantification over all propositions is too strong for finite models
 (see study file §7 for discussion). -/
-def wantDefined (belS : (W → Bool)) (answers : List ((W → Bool))) (p : (W → Bool)) : Prop :=
+def wantDefined (belS : Set W) [DecidablePred belS]
+    (answers : List (DecProp W)) (p : Set W) [DecidablePred p] : Prop :=
   isConsidered answers p ∧ isDiverse answers p ∧ isBelSensitive belS answers
 
-instance (belS : (W → Bool)) (answers : List ((W → Bool))) (p : (W → Bool)) :
+instance (belS : Set W) [DecidablePred belS]
+    (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
     Decidable (wantDefined belS answers p) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -196,8 +245,8 @@ and S's beliefs must be sensitive to Q_c).
 The presupposition and assertion are world-independent because the
 question-based semantics is evaluated at a fixed contextual question Q_c
 — the world parameter is vestigial (needed only for `PrProp W`'s type). -/
-def wantPrProp (belS : (W → Bool)) (GS : List ((W → Bool)))
-    (answers : List ((W → Bool))) (p : (W → Bool)) : PrProp W where
+def wantPrProp (belS : Set W) [DecidablePred belS]
+    (GS answers : List (DecProp W)) (p : Set W) [DecidablePred p] : PrProp W where
   presup _ := wantDefined belS answers p
   assertion _ := wantQuestionBased belS GS answers p
 
@@ -207,7 +256,7 @@ def wantPrProp (belS : (W → Bool)) (GS : List ((W → Bool)))
 
 omit [DecidableEq W] in
 /-- Preference between answers is transitive (delegates to framework). -/
-theorem prefer_answer_transitive (GS : List ((W → Bool))) (a a' a'' : (W → Bool))
+theorem prefer_answer_transitive (GS : List (DecProp W)) (a a' a'' : DecProp W)
     (h1 : atLeastAsPreferred GS a a')
     (h2 : atLeastAsPreferred GS a' a'') :
     atLeastAsPreferred GS a a'' :=
@@ -215,20 +264,22 @@ theorem prefer_answer_transitive (GS : List ((W → Bool))) (a a' a'' : (W → B
 
 omit [DecidableEq W] in
 /-- Empty desires make all answers equivalent (delegates to framework). -/
-theorem empty_desires_indifferent (a a' : (W → Bool)) :
-    atLeastAsPreferred ([] : List ((W → Bool))) a a' :=
+theorem empty_desires_indifferent (a a' : DecProp W) :
+    atLeastAsPreferred ([] : List (DecProp W)) a a' :=
   SatisfactionOrdering.ofCriteria_empty_le _ a a'
 
 omit [DecidableEq W] in
 /-- With empty desires, want reduces to belief compatibility.
     Delegates to `ofCriteria_empty_undominated` from the framework. -/
-theorem empty_desires_belief_only (belS : (W → Bool)) (answers : List ((W → Bool))) (p : (W → Bool)) :
+theorem empty_desires_belief_only (belS : Set W) [DecidablePred belS]
+    (answers : List (DecProp W)) (p : Set W) [DecidablePred p] :
     wantQuestionBased belS [] answers p ↔
-    ∀ a ∈ questionRelativeBelief answers belS, propEntails a p = true := by
+    ∀ a ∈ questionRelativeBelief answers belS, propEntails a.prop p := by
   unfold wantQuestionBased
-  show (∀ a ∈ (propositionOrdering ([] : List ((W → Bool)))).undominated _, _) ↔ _
-  rw [show propositionOrdering ([] : List ((W → Bool))) =
-        SatisfactionOrdering.ofCriteria (fun a p => propEntails a p) [] from rfl,
+  show (∀ a ∈ (propositionOrdering ([] : List _)).undominated _, _) ↔ _
+  rw [show propositionOrdering ([] : List (DecProp W)) =
+        SatisfactionOrdering.ofCriteria
+          (fun a p => decide (propEntails a.prop p.prop)) [] from rfl,
       SatisfactionOrdering.ofCriteria_empty_undominated]
 
 -- ============================================================================
@@ -237,7 +288,7 @@ theorem empty_desires_belief_only (belS : (W → Bool)) (answers : List ((W → 
 
 /-- The proposition preference ordering as a `NormalityOrder`.
     Connects desire semantics to the default reasoning infrastructure. -/
-def propositionNormality (GS : List ((W → Bool))) : Core.Order.NormalityOrder ((W → Bool)) :=
+def propositionNormality (GS : List (DecProp W)) : Core.Order.NormalityOrder (DecProp W) :=
   (propositionOrdering GS).toNormalityOrder
 
 /-- The proposition preference ordering as a Mathlib `Preorder`.
@@ -245,77 +296,19 @@ def propositionNormality (GS : List ((W → Bool))) : Core.Order.NormalityOrder 
 
     This enables Mathlib's order-theoretic lemmas (monotonicity, chains,
     `le_trans`, etc.) for the desire preference relation. -/
-@[reducible] def propositionPreorder (GS : List ((W → Bool))) : Preorder ((W → Bool)) :=
+@[reducible] def propositionPreorder (GS : List (DecProp W)) : Preorder (DecProp W) :=
   (propositionOrdering GS).toPreorder
 
-/-- The world ordering as a `NormalityOrder` (generic over `[FiniteWorlds W]`).
+/-- The world ordering as a `NormalityOrder` (generic over `[Fintype W]`).
     Parallel to `Kratzer.kratzerNormality` but not restricted to `World4`. -/
-def worldNormality (GS : List ((W → Bool))) : Core.Order.NormalityOrder W :=
+def worldNormality (GS : List (DecProp W)) : Core.Order.NormalityOrder W :=
   (worldSatisfactionOrdering GS).toNormalityOrder
 
-/-- The world ordering as a Mathlib `Preorder` (generic over `[FiniteWorlds W]`). -/
-@[reducible] def worldPreorder (GS : List ((W → Bool))) : Preorder W :=
+/-- The world ordering as a Mathlib `Preorder` (generic over `[Fintype W]`). -/
+@[reducible] def worldPreorder (GS : List (DecProp W)) : Preorder W :=
   (worldSatisfactionOrdering GS).toPreorder
 
 end Generic
-
-end Semantics.Modality.Desire
-
--- ============================================================================
--- §5. BouleticFlavor Extension (specialized to World = World4)
--- ============================================================================
-
-namespace Semantics.Modality.Kratzer.BouleticFlavor
-
-open Semantics.Attitudes.Intensional
-open Semantics.Modality.Kratzer
-open Semantics.Modality.Desire
-open Core.Order (SatisfactionOrdering)
-
-/-- Question-based desire: ⟦S wants p⟧ = all best answers in Q-Bel_S entail p. -/
-def evalWant (self : BouleticFlavor World) (w : World)
-    (belS : (World → Bool)) (question : List ((World → Bool))) (p : (World → Bool)) : Prop :=
-  wantQuestionBased belS (self.desires w) question p
-
-instance (self : BouleticFlavor World) (w : World)
-    (belS : (World → Bool)) (question : List ((World → Bool))) (p : (World → Bool)) :
-    Decidable (self.evalWant w belS question p) :=
-  inferInstanceAs (Decidable (wantQuestionBased _ _ _ _))
-
-/-- Preference ordering on propositions at world w. -/
-def preferenceOrdering (self : BouleticFlavor World) (w : World) :
-    SatisfactionOrdering ((World → Bool)) ((World → Bool)) :=
-  Desire.propositionOrdering (self.desires w)
-
-/-- Best answers according to S's desires at world w. -/
-def getBestAnswers (self : BouleticFlavor World) (w : World) (answers : List ((World → Bool))) :
-    List ((World → Bool)) :=
-  bestAnswers (self.desires w) answers
-
-/-- Answers compatible with S's beliefs. -/
-def liveAnswers (_self : BouleticFlavor World) (question : List ((World → Bool))) (belS : (World → Bool)) :
-    List ((World → Bool)) :=
-  questionRelativeBelief question belS
-
-end Semantics.Modality.Kratzer.BouleticFlavor
-
-namespace Semantics.Modality.Desire
-
-open Semantics.Attitudes.Intensional
-open Semantics.Modality.Kratzer
-open Core.Order (SatisfactionOrdering)
-
-/-- BouleticFlavor.evalWant = wantQuestionBased (definitionally equal). -/
-theorem bouletic_evalWant_eq (flavor : BouleticFlavor World) (w : World)
-    (belS : (World → Bool)) (question : List ((World → Bool))) (p : (World → Bool)) :
-    flavor.evalWant w belS question p ↔
-    wantQuestionBased belS (flavor.desires w) question p := Iff.rfl
-
-/-- Empty bouletic desires → no proposition strictly dominates another. -/
-theorem empty_bouletic_no_strict_preference (w : World) (a a' : (World → Bool)) :
-    ¬ (propositionOrdering (emptyBackground w)).strictlyBetter a a' := by
-  rintro ⟨_, hnle⟩
-  exact hnle (by unfold emptyBackground; exact empty_desires_indifferent a' a)
 
 -- Summary
 
@@ -324,7 +317,11 @@ theorem empty_bouletic_no_strict_preference (w : World) (a a' : (World → Bool)
 
 ### Architecture
 
-All preference and ordering definitions derive from `SatisfactionOrdering`:
+All propositions are `Set W = W → Prop`. Where decidability is needed
+(partition cells, desire lists), propositions are bundled with a
+`DecidablePred` witness via `DecProp W := { p : Set W // DecidablePred p }`.
+Bare proposition arguments use the ambient `[DecidablePred p]` typeclass.
+Preference and ordering definitions derive from `SatisfactionOrdering`:
 
 ```
 SatisfactionOrdering (generic framework)
@@ -333,7 +330,7 @@ SatisfactionOrdering (generic framework)
   │   ├── .atLeastAsGood a a'    = atLeastAsPreferred GS a a'
   │   ├── .undominated answers   = bestAnswers GS answers
   │   ├── .toNormalityOrder      = propositionNormality GS
-  │   └── propositionPreorder GS : Preorder ((W → Bool))
+  │   └── propositionPreorder GS : Preorder (DecProp W)
   │
   └── worldSatisfactionOrdering GS — worlds ranked by proposition satisfaction
       ├── .atLeastAsGood w z     = worldAtLeastAsGood GS w z
@@ -342,7 +339,7 @@ SatisfactionOrdering (generic framework)
       └── worldPreorder GS      : Preorder W
 ```
 
-### Core Functions (generic over `[FiniteWorlds W]`)
+### Core Functions (generic over `[Fintype W]`)
 - `wantQuestionBased belS GS answers p`: main semantics
 - `wantVF belS GS p`: standard von Fintel baseline
 
@@ -360,17 +357,6 @@ SatisfactionOrdering (generic framework)
 - Empty desires → indifference (`empty_desires_indifferent`)
 - `Preorder` instances for both proposition and world orderings
 - Automatically inherits from Kratzer's `BouleticFlavor`
-
-### The Unified Framework
-
-| Concept | Kratzer (Worlds) | Phillips-Brown (Props) | Generic |
-|---------|-----------------|------------------------|---------|
-| Type | `World` | `(W → Bool)` | `α` |
-| Ideals | `List ((W → Bool))` | `List ((W → Bool))` | `List Criterion` |
-| Satisfies | `p w` | `propEntails a p` | `o.satisfies` |
-| Ordering | `worldAtLeastAsGood` | `atLeastAsPreferred` | `atLeastAsGood` |
-| Best | `wantVF` (undominated) | `bestAnswers` (undominated) | `undominated` |
-| Preorder | `worldPreorder` | `propositionPreorder` | `toNormalityOrder` |
 -/
 
 end Semantics.Modality.Desire

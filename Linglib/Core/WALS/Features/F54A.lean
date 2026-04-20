@@ -14,287 +14,276 @@ namespace Core.WALS.F54A
 
 /-- WALS 54A values. -/
 inductive DistributiveNumerals where
-  | noDistributiveNumerals  -- No distributive numerals (62 languages)
-  | markedByReduplication  -- Marked by reduplication (85 languages)
-  | markedByPrefix  -- Marked by prefix (23 languages)
-  | markedBySuffix  -- Marked by suffix (32 languages)
-  | markedByPrecedingWord  -- Marked by preceding word (21 languages)
-  | markedByFollowingWord  -- Marked by following word (5 languages)
-  | markedByMixedOrOtherStrategies  -- Marked by mixed or other strategies (23 languages)
-  deriving DecidableEq, Repr
+  /-- No distributive numerals (62 languages). -/
+  | noDistributiveNumerals
+  /-- Marked by reduplication (85 languages). -/
+  | markedByReduplication
+  /-- Marked by prefix (23 languages). -/
+  | markedByPrefix
+  /-- Marked by suffix (32 languages). -/
+  | markedBySuffix
+  /-- Marked by preceding word (21 languages). -/
+  | markedByPrecedingWord
+  /-- Marked by following word (5 languages). -/
+  | markedByFollowingWord
+  /-- Marked by mixed or other strategies (23 languages). -/
+  | markedByMixedOrOtherStrategies
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 54A dataset (251 languages). -/
 def allData : List (Datapoint DistributiveNumerals) :=
-  [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "afr", language := "Afrikaans", iso := "afr", value := .noDistributiveNumerals }
-  , { walsCode := "agl", language := "Aghul", iso := "agx", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "ain", language := "Ainu", iso := "ain", value := .markedByFollowingWord }
-  , { walsCode := "akn", language := "Akan", iso := "aka", value := .markedByReduplication }
-  , { walsCode := "alx", language := "Alas", iso := "btz", value := .markedByReduplication }
-  , { walsCode := "alb", language := "Albanian", iso := "sqi", value := .markedByPrecedingWord }
-  , { walsCode := "ale", language := "Aleut", iso := "ale", value := .markedBySuffix }
-  , { walsCode := "aml", language := "Ambae (Lolovoli Northeast)", iso := "omb", value := .markedByReduplication }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .noDistributiveNumerals }
-  , { walsCode := "amh", language := "Amharic", iso := "amh", value := .markedByReduplication }
-  , { walsCode := "ami", language := "Amis", iso := "ami", value := .noDistributiveNumerals }
-  , { walsCode := "anx", language := "Andi", iso := "ani", value := .markedByReduplication }
-  , { walsCode := "agm", language := "Angami", iso := "njm", value := .markedByReduplication }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .noDistributiveNumerals }
-  , { walsCode := "ako", language := "Arabic (Kormakiti)", iso := "acy", value := .noDistributiveNumerals }
-  , { walsCode := "ars", language := "Arabic (San'ani)", iso := "ayn", value := .noDistributiveNumerals }
-  , { walsCode := "arm", language := "Armenian (Eastern)", iso := "hye", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "ass", language := "Assamese", iso := "asm", value := .markedByReduplication }
-  , { walsCode := "ata", language := "Atayal", iso := "tay", value := .noDistributiveNumerals }
-  , { walsCode := "bgv", language := "Bagvalal", iso := "kva", value := .markedByReduplication }
-  , { walsCode := "bal", language := "Balinese", iso := "ban", value := .markedByReduplication }
-  , { walsCode := "bsk", language := "Bashkir", iso := "bak", value := .markedBySuffix }
-  , { walsCode := "bsq", language := "Basque", iso := "eus", value := .markedBySuffix }
-  , { walsCode := "bat", language := "Batak", iso := "bya", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "bkr", language := "Batak (Karo)", iso := "btx", value := .noDistributiveNumerals }
-  , { walsCode := "beg", language := "Begak-Ida'an", iso := "dbj", value := .noDistributiveNumerals }
-  , { walsCode := "ben", language := "Bengali", iso := "ben", value := .markedByReduplication }
-  , { walsCode := "bez", language := "Bezhta", iso := "kap", value := .markedByReduplication }
-  , { walsCode := "biq", language := "Bilaan (Koronadal)", iso := "bpr", value := .markedByPrefix }
-  , { walsCode := "bkd", language := "Binukid", iso := "bkd", value := .markedByPrefix }
-  , { walsCode := "bok", language := "Boko", iso := "bqc", value := .markedByReduplication }
-  , { walsCode := "btk", language := "Bontok", iso := "lbk", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "brh", language := "Brahui", iso := "brh", value := .markedByReduplication }
-  , { walsCode := "bug", language := "Bugis", iso := "bug", value := .markedByPrefix }
-  , { walsCode := "bul", language := "Bulgarian", iso := "bul", value := .markedByPrecedingWord }
-  , { walsCode := "bpa", language := "Bura-Pabir", iso := "bwr", value := .markedByReduplication }
-  , { walsCode := "but", language := "Buriat", iso := "bxm", value := .markedBySuffix }
-  , { walsCode := "brm", language := "Burmese", iso := "mya", value := .markedBySuffix }
-  , { walsCode := "bur", language := "Burushaski", iso := "bsk", value := .markedByReduplication }
-  , { walsCode := "cah", language := "Cahuilla", iso := "chl", value := .markedByReduplication }
-  , { walsCode := "cnt", language := "Cantonese", iso := "yue", value := .noDistributiveNumerals }
-  , { walsCode := "cyv", language := "Cayuvava", iso := "cyb", value := .markedBySuffix }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "chx", language := "Chontal (Huamelultec Oaxaca)", iso := "clo", value := .noDistributiveNumerals }
-  , { walsCode := "chk", language := "Chukchi", iso := "ckt", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "chv", language := "Chuvash", iso := "chv", value := .markedBySuffix }
-  , { walsCode := "cmn", language := "Comanche", iso := "com", value := .markedByReduplication }
-  , { walsCode := "cze", language := "Czech", iso := "ces", value := .markedByPrecedingWord }
-  , { walsCode := "drg", language := "Dargwa", iso := "dar", value := .markedByReduplication }
-  , { walsCode := "dgi", language := "Dogri", iso := "dgo", value := .markedByReduplication }
-  , { walsCode := "dut", language := "Dutch", iso := "nld", value := .noDistributiveNumerals }
-  , { walsCode := "dbr", language := "Dutch (Brabantic)", iso := "nld", value := .noDistributiveNumerals }
-  , { walsCode := "dli", language := "Dutch (Limburg)", iso := "nld", value := .noDistributiveNumerals }
-  , { walsCode := "duz", language := "Dutch (Zeeuws)", iso := "zea", value := .noDistributiveNumerals }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .noDistributiveNumerals }
-  , { walsCode := "err", language := "Erromangan", iso := "erg", value := .markedBySuffix }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .markedBySuffix }
-  , { walsCode := "fij", language := "Fijian", iso := "fij", value := .markedByPrefix }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .noDistributiveNumerals }
-  , { walsCode := "fox", language := "Fox", iso := "sac", value := .markedByReduplication }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .noDistributiveNumerals }
-  , { walsCode := "fue", language := "Futuna (East)", iso := "fud", value := .markedByPrefix }
-  , { walsCode := "gag", language := "Gagauz", iso := "gag", value := .markedBySuffix }
-  , { walsCode := "gar", language := "Garo", iso := "grt", value := .markedByReduplication }
-  , { walsCode := "gav", language := "Gavião", iso := "gvo", value := .noDistributiveNumerals }
-  , { walsCode := "geo", language := "Georgian", iso := "kat", value := .markedByReduplication }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .markedByPrecedingWord }
-  , { walsCode := "gpz", language := "German (Appenzell)", iso := "gsw", value := .markedByPrecedingWord }
-  , { walsCode := "gba", language := "German (Bavarian)", iso := "bar", value := .noDistributiveNumerals }
-  , { walsCode := "gbl", language := "German (Berlin)", iso := "deu", value := .noDistributiveNumerals }
-  , { walsCode := "gbe", language := "German (Bern)", iso := "gsw", value := .markedByPrecedingWord }
-  , { walsCode := "gha", language := "German (Hannover)", iso := "deu", value := .noDistributiveNumerals }
-  , { walsCode := "gma", language := "German (Mansfeldisch)", iso := "deu", value := .noDistributiveNumerals }
-  , { walsCode := "gos", language := "German (Ostschweiz)", iso := "gsw", value := .markedByPrecedingWord }
-  , { walsCode := "grp", language := "German (Ripuarian)", iso := "ksh", value := .noDistributiveNumerals }
-  , { walsCode := "gtg", language := "German (Thurgau)", iso := "gsw", value := .markedByPrecedingWord }
-  , { walsCode := "gth", language := "German (Thuringian)", iso := "deu", value := .noDistributiveNumerals }
-  , { walsCode := "gti", language := "German (Timisoara)", iso := "deu", value := .markedByPrecedingWord }
-  , { walsCode := "gau", language := "German (Upper Austrian)", iso := "bar", value := .noDistributiveNumerals }
-  , { walsCode := "gwe", language := "German (Westphalian)", iso := "wep", value := .noDistributiveNumerals }
-  , { walsCode := "gzu", language := "German (Zurich)", iso := "gsw", value := .markedByPrecedingWord }
-  , { walsCode := "goo", language := "Gooniyandi", iso := "gni", value := .noDistributiveNumerals }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .markedByPrecedingWord }
-  , { walsCode := "gdf", language := "Guduf", iso := "gdf", value := .markedByReduplication }
-  , { walsCode := "ga", language := "Gã", iso := "gaa", value := .markedByReduplication }
-  , { walsCode := "hai", language := "Haida", iso := "hai", value := .markedBySuffix }
-  , { walsCode := "hnn", language := "Hanunóo", iso := "hnn", value := .markedByPrefix }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .markedByReduplication }
-  , { walsCode := "haw", language := "Hawaiian", iso := "haw", value := .markedByPrefix }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .noDistributiveNumerals }
-  , { walsCode := "hil", language := "Hiligaynon", iso := "hil", value := .markedByPrefix }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .markedByReduplication }
-  , { walsCode := "hix", language := "Hixkaryana", iso := "hix", value := .noDistributiveNumerals }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .markedByReduplication }
-  , { walsCode := "hzb", language := "Hunzib", iso := "huz", value := .markedByReduplication }
-  , { walsCode := "hpd", language := "Hup", iso := "jup", value := .noDistributiveNumerals }
-  , { walsCode := "ibn", language := "Ibanag", iso := "ibg", value := .markedByPrefix }
-  , { walsCode := "imo", language := "Imonda", iso := "imn", value := .noDistributiveNumerals }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .noDistributiveNumerals }
-  , { walsCode := "ing", language := "Ingush", iso := "inh", value := .markedByReduplication }
-  , { walsCode := "irq", language := "Iraqw", iso := "irk", value := .markedByReduplication }
-  , { walsCode := "ish", language := "Ishkashimi", iso := "isk", value := .markedBySuffix }
-  , { walsCode := "isn", language := "Isnag", iso := "isd", value := .markedByPrefix }
-  , { walsCode := "itu", language := "Italian (Turinese)", iso := "pms", value := .noDistributiveNumerals }
-  , { walsCode := "iva", language := "Ivatan", iso := "ivb", value := .markedByPrefix }
-  , { walsCode := "jpn", language := "Japanese", iso := "jpn", value := .markedBySuffix }
-  , { walsCode := "jav", language := "Javanese", iso := "jav", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "kab", language := "Kabardian", iso := "kbd", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "kbi", language := "Kabui", iso := "nbu", value := .markedByReduplication }
-  , { walsCode := "klq", language := "Kalam", iso := "kmh", value := .noDistributiveNumerals }
-  , { walsCode := "knd", language := "Kannada", iso := "kan", value := .markedByReduplication }
-  , { walsCode := "kyo", language := "Kanyok", iso := "kny", value := .markedByReduplication }
-  , { walsCode := "kas", language := "Kashmiri", iso := "kas", value := .markedByReduplication }
-  , { walsCode := "kay", language := "Kayardild", iso := "gyd", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "kef", language := "Kefa", iso := "kbr", value := .markedByReduplication }
-  , { walsCode := "ket", language := "Ket", iso := "ket", value := .markedBySuffix }
-  , { walsCode := "khk", language := "Khakas", iso := "kjh", value := .markedBySuffix }
-  , { walsCode := "kha", language := "Khalkha", iso := "khk", value := .markedBySuffix }
-  , { walsCode := "kty", language := "Khanty", iso := "kca", value := .markedBySuffix }
-  , { walsCode := "khr", language := "Kharia", iso := "khr", value := .markedByReduplication }
-  , { walsCode := "kmu", language := "Khmu'", iso := "kjg", value := .noDistributiveNumerals }
-  , { walsCode := "klv", language := "Kilivila", iso := "kij", value := .noDistributiveNumerals }
-  , { walsCode := "kgz", language := "Kirghiz", iso := "kir", value := .markedBySuffix }
-  , { walsCode := "krb", language := "Kiribati", iso := "gil", value := .markedByPrefix }
-  , { walsCode := "kod", language := "Kodava", iso := "kfa", value := .markedByReduplication }
-  , { walsCode := "koi", language := "Koiari", iso := "kbk", value := .markedByReduplication }
-  , { walsCode := "kmb", language := "Kombai", iso := "", value := .noDistributiveNumerals }
-  , { walsCode := "kon", language := "Kongo", iso := "kng", value := .markedByReduplication }
-  , { walsCode := "kor", language := "Korean", iso := "kor", value := .markedBySuffix }
-  , { walsCode := "kku", language := "Korku", iso := "kfq", value := .markedByReduplication }
-  , { walsCode := "kch", language := "Koyra Chiini", iso := "khq", value := .markedByReduplication }
-  , { walsCode := "krd", language := "Kurdish (Central)", iso := "ckb", value := .markedByReduplication }
-  , { walsCode := "kur", language := "Kurukh", iso := "kru", value := .markedByReduplication }
-  , { walsCode := "kuy", language := "Kutai", iso := "vkt", value := .markedByReduplication }
-  , { walsCode := "kut", language := "Kutenai", iso := "kut", value := .noDistributiveNumerals }
-  , { walsCode := "kwk", language := "Kwakw'ala", iso := "kwk", value := .markedByReduplication }
-  , { walsCode := "lch", language := "Lachi", iso := "lbt", value := .noDistributiveNumerals }
-  , { walsCode := "lak", language := "Lak", iso := "lbe", value := .markedByReduplication }
-  , { walsCode := "lat", language := "Latvian", iso := "lav", value := .markedByPrecedingWord }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .markedByReduplication }
-  , { walsCode := "lit", language := "Lithuanian", iso := "lit", value := .markedByPrecedingWord }
-  , { walsCode := "lov", language := "Loven", iso := "lbo", value := .noDistributiveNumerals }
-  , { walsCode := "luo", language := "Luo", iso := "luo", value := .markedByReduplication }
-  , { walsCode := "myn", language := "Ma'anyan", iso := "mhy", value := .markedByReduplication }
-  , { walsCode := "mgn", language := "Magindanao", iso := "mdh", value := .markedBySuffix }
-  , { walsCode := "mne", language := "Maidu (Northeast)", iso := "nmu", value := .markedByReduplication }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .markedByFollowingWord }
-  , { walsCode := "mmu", language := "Malay (Ulu Muar)", iso := "zmi", value := .markedByReduplication }
-  , { walsCode := "mym", language := "Malayalam", iso := "mal", value := .markedByReduplication }
-  , { walsCode := "mnc", language := "Manchu", iso := "mnc", value := .markedBySuffix }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .noDistributiveNumerals }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .markedByPrefix }
-  , { walsCode := "mhi", language := "Marathi", iso := "mar", value := .markedByReduplication }
-  , { walsCode := "mrg", language := "Margi", iso := "mrt", value := .markedByReduplication }
-  , { walsCode := "mar", language := "Maricopa", iso := "mrc", value := .markedBySuffix }
-  , { walsCode := "msh", language := "Marshallese", iso := "mah", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "mrt", language := "Martuthunira", iso := "vma", value := .noDistributiveNumerals }
-  , { walsCode := "may", language := "Maybrat", iso := "ayz", value := .noDistributiveNumerals }
-  , { walsCode := "mei", language := "Meithei", iso := "mni", value := .markedByReduplication }
-  , { walsCode := "mde", language := "Mende", iso := "men", value := .markedByReduplication }
-  , { walsCode := "hok", language := "Min (Southern)", iso := "nan", value := .noDistributiveNumerals }
-  , { walsCode := "min", language := "Minangkabau", iso := "min", value := .markedByReduplication }
-  , { walsCode := "mit", language := "Mituku", iso := "zmq", value := .markedByReduplication }
-  , { walsCode := "mlm", language := "Mlabri (Minor)", iso := "mra", value := .noDistributiveNumerals }
-  , { walsCode := "moe", language := "Mordvin (Erzya)", iso := "myv", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "mmo", language := "Mordvin (Moksha)", iso := "mdf", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "mun", language := "Mundari", iso := "unr", value := .markedByReduplication }
-  , { walsCode := "nhn", language := "Nahuatl (North Puebla)", iso := "ncj", value := .markedByReduplication }
-  , { walsCode := "nau", language := "Nauruan", iso := "nau", value := .markedByPrefix }
-  , { walsCode := "nel", language := "Nelemwa", iso := "nee", value := .noDistributiveNumerals }
-  , { walsCode := "ntu", language := "Nenets", iso := "yrk", value := .markedBySuffix }
-  , { walsCode := "nga", language := "Nganasan", iso := "nio", value := .markedBySuffix }
-  , { walsCode := "nia", language := "Nias", iso := "nia", value := .markedByReduplication }
-  , { walsCode := "nca", language := "Nicobarese (Car)", iso := "caq", value := .markedByPrefix }
-  , { walsCode := "nsg", language := "Nisgha", iso := "ncg", value := .markedByPrefix }
-  , { walsCode := "niv", language := "Nivkh", iso := "niv", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "nvs", language := "Nivkh (South Sakhalin)", iso := "niv", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "nbd", language := "Nubian (Dongolese)", iso := "dgl", value := .markedByReduplication }
-  , { walsCode := "nku", language := "Nubian (Kunuz)", iso := "xnz", value := .markedByReduplication }
-  , { walsCode := "nyl", language := "Nyelâyu", iso := "yly", value := .noDistributiveNumerals }
-  , { walsCode := "ork", language := "Orok", iso := "oaa", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "oss", language := "Ossetic", iso := "oss", value := .markedBySuffix }
-  , { walsCode := "pte", language := "Paite", iso := "pck", value := .markedByReduplication }
-  , { walsCode := "pnn", language := "Pangasinan", iso := "pag", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "psh", language := "Pashto", iso := "pst", value := .markedByReduplication }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .noDistributiveNumerals }
-  , { walsCode := "pip", language := "Pipil", iso := "ppl", value := .markedByReduplication }
-  , { walsCode := "pol", language := "Polish", iso := "pol", value := .markedByPrecedingWord }
-  , { walsCode := "fma", language := "Pulaar", iso := "fuc", value := .noDistributiveNumerals }
-  , { walsCode := "qcu", language := "Quechua (Cuzco)", iso := "quz", value := .markedBySuffix }
-  , { walsCode := "qhu", language := "Quechua (Huallaga)", iso := "qub", value := .markedByFollowingWord }
-  , { walsCode := "ren", language := "Rendille", iso := "rel", value := .markedByReduplication }
-  , { walsCode := "rom", language := "Romanian", iso := "ron", value := .markedByPrecedingWord }
-  , { walsCode := "rot", language := "Rotuman", iso := "rtm", value := .noDistributiveNumerals }
-  , { walsCode := "rru", language := "Runyoro-Rutooro", iso := "nyo", value := .markedByReduplication }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .markedByPrecedingWord }
-  , { walsCode := "ski", language := "Saami (Kildin)", iso := "sjd", value := .markedByReduplication }
-  , { walsCode := "slr", language := "Salar", iso := "slr", value := .noDistributiveNumerals }
-  , { walsCode := "sam", language := "Samoan", iso := "smo", value := .markedByPrefix }
-  , { walsCode := "stl", language := "Santali", iso := "sat", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "skp", language := "Selkup", iso := "sel", value := .markedByFollowingWord }
-  , { walsCode := "sml", language := "Semelai", iso := "sza", value := .noDistributiveNumerals }
-  , { walsCode := "ssh", language := "Shinassha", iso := "bwo", value := .markedByReduplication }
-  , { walsCode := "shk", language := "Shipibo-Konibo", iso := "shp", value := .noDistributiveNumerals }
-  , { walsCode := "sdh", language := "Sindhi", iso := "snd", value := .markedByReduplication }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .noDistributiveNumerals }
-  , { walsCode := "sup", language := "Supyire", iso := "spp", value := .markedByReduplication }
-  , { walsCode := "swa", language := "Swahili", iso := "swh", value := .markedByReduplication }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "tgb", language := "Tagbanwa (Aborlan)", iso := "tbw", value := .markedByPrefix }
-  , { walsCode := "tml", language := "Tamil", iso := "tam", value := .markedByReduplication }
-  , { walsCode := "tvo", language := "Tatar", iso := "tat", value := .markedBySuffix }
-  , { walsCode := "tsg", language := "Tausug", iso := "tsg", value := .markedByReduplication }
-  , { walsCode := "taw", language := "Tawala", iso := "tbo", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "tpn", language := "Tepehuan (Northern)", iso := "ntp", value := .markedByReduplication }
-  , { walsCode := "ttn", language := "Tetun", iso := "tet", value := .markedByReduplication }
-  , { walsCode := "thd", language := "Thadou", iso := "tcz", value := .markedByReduplication }
-  , { walsCode := "tha", language := "Thai", iso := "tha", value := .noDistributiveNumerals }
-  , { walsCode := "tib", language := "Tibetan (Standard Spoken)", iso := "bod", value := .markedByReduplication }
-  , { walsCode := "tiw", language := "Tiwi", iso := "tiw", value := .markedBySuffix }
-  , { walsCode := "tla", language := "Tolai", iso := "ksd", value := .markedByReduplication }
-  , { walsCode := "tng", language := "Tongan", iso := "ton", value := .markedByPrefix }
-  , { walsCode := "tsa", language := "Tsakhur", iso := "tkr", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .markedByPrefix }
-  , { walsCode := "tso", language := "Tsou", iso := "tsu", value := .markedByPrefix }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .noDistributiveNumerals }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .markedBySuffix }
-  , { walsCode := "tvl", language := "Tuvaluan", iso := "tvl", value := .markedByPrecedingWord }
-  , { walsCode := "tuv", language := "Tuvan", iso := "tyv", value := .markedByReduplication }
-  , { walsCode := "udh", language := "Udihe", iso := "ude", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "ukr", language := "Ukrainian", iso := "ukr", value := .markedByPrecedingWord }
-  , { walsCode := "uyg", language := "Uyghur", iso := "uig", value := .markedBySuffix }
-  , { walsCode := "vie", language := "Vietnamese", iso := "vie", value := .noDistributiveNumerals }
-  , { walsCode := "wai", language := "Wai Wai", iso := "waw", value := .markedByFollowingWord }
-  , { walsCode := "wll", language := "Wallisian", iso := "wls", value := .markedByPrefix }
-  , { walsCode := "wra", language := "Warao", iso := "wba", value := .noDistributiveNumerals }
-  , { walsCode := "war", language := "Wari'", iso := "pav", value := .noDistributiveNumerals }
-  , { walsCode := "was", language := "Washo", iso := "was", value := .markedByReduplication }
-  , { walsCode := "wly", language := "Wolaytta", iso := "wal", value := .markedByReduplication }
-  , { walsCode := "ygn", language := "Yaghnobi", iso := "yai", value := .markedBySuffix }
-  , { walsCode := "ykt", language := "Yakut", iso := "sah", value := .markedBySuffix }
-  , { walsCode := "ymi", language := "Yami", iso := "tao", value := .markedByPrefix }
-  , { walsCode := "yms", language := "Yemsa", iso := "jnj", value := .markedByReduplication }
-  , { walsCode := "yes", language := "Yessan-Mayo", iso := "yss", value := .markedByMixedOrOtherStrategies }
-  , { walsCode := "ydb", language := "Yiddish (Bessarabian)", iso := "ydd", value := .markedByPrecedingWord }
-  , { walsCode := "ylt", language := "Yiddish (Lithuanian)", iso := "ydd", value := .markedByPrecedingWord }
-  , { walsCode := "ydl", language := "Yiddish (Lodz)", iso := "ydd", value := .markedByPrecedingWord }
-  , { walsCode := "yim", language := "Yimas", iso := "yee", value := .noDistributiveNumerals }
-  , { walsCode := "yor", language := "Yoruba", iso := "yor", value := .markedByReduplication }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .noDistributiveNumerals }
+  [ { walsCode := "abk", iso := "abk", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "afr", iso := "afr", value := .noDistributiveNumerals }
+  , { walsCode := "agl", iso := "agx", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "ain", iso := "ain", value := .markedByFollowingWord }
+  , { walsCode := "akn", iso := "aka", value := .markedByReduplication }
+  , { walsCode := "alx", iso := "btz", value := .markedByReduplication }
+  , { walsCode := "alb", iso := "sqi", value := .markedByPrecedingWord }
+  , { walsCode := "ale", iso := "ale", value := .markedBySuffix }
+  , { walsCode := "aml", iso := "omb", value := .markedByReduplication }
+  , { walsCode := "ame", iso := "aey", value := .noDistributiveNumerals }
+  , { walsCode := "amh", iso := "amh", value := .markedByReduplication }
+  , { walsCode := "ami", iso := "ami", value := .noDistributiveNumerals }
+  , { walsCode := "anx", iso := "ani", value := .markedByReduplication }
+  , { walsCode := "agm", iso := "njm", value := .markedByReduplication }
+  , { walsCode := "aeg", iso := "arz", value := .noDistributiveNumerals }
+  , { walsCode := "ako", iso := "acy", value := .noDistributiveNumerals }
+  , { walsCode := "ars", iso := "ayn", value := .noDistributiveNumerals }
+  , { walsCode := "arm", iso := "hye", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "ass", iso := "asm", value := .markedByReduplication }
+  , { walsCode := "ata", iso := "tay", value := .noDistributiveNumerals }
+  , { walsCode := "bgv", iso := "kva", value := .markedByReduplication }
+  , { walsCode := "bal", iso := "ban", value := .markedByReduplication }
+  , { walsCode := "bsk", iso := "bak", value := .markedBySuffix }
+  , { walsCode := "bsq", iso := "eus", value := .markedBySuffix }
+  , { walsCode := "bat", iso := "bya", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "bkr", iso := "btx", value := .noDistributiveNumerals }
+  , { walsCode := "beg", iso := "dbj", value := .noDistributiveNumerals }
+  , { walsCode := "ben", iso := "ben", value := .markedByReduplication }
+  , { walsCode := "bez", iso := "kap", value := .markedByReduplication }
+  , { walsCode := "biq", iso := "bpr", value := .markedByPrefix }
+  , { walsCode := "bkd", iso := "bkd", value := .markedByPrefix }
+  , { walsCode := "bok", iso := "bqc", value := .markedByReduplication }
+  , { walsCode := "btk", iso := "lbk", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "brh", iso := "brh", value := .markedByReduplication }
+  , { walsCode := "bug", iso := "bug", value := .markedByPrefix }
+  , { walsCode := "bul", iso := "bul", value := .markedByPrecedingWord }
+  , { walsCode := "bpa", iso := "bwr", value := .markedByReduplication }
+  , { walsCode := "but", iso := "bxm", value := .markedBySuffix }
+  , { walsCode := "brm", iso := "mya", value := .markedBySuffix }
+  , { walsCode := "bur", iso := "bsk", value := .markedByReduplication }
+  , { walsCode := "cah", iso := "chl", value := .markedByReduplication }
+  , { walsCode := "cnt", iso := "yue", value := .noDistributiveNumerals }
+  , { walsCode := "cyv", iso := "cyb", value := .markedBySuffix }
+  , { walsCode := "cha", iso := "cha", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "chx", iso := "clo", value := .noDistributiveNumerals }
+  , { walsCode := "chk", iso := "ckt", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "chv", iso := "chv", value := .markedBySuffix }
+  , { walsCode := "cmn", iso := "com", value := .markedByReduplication }
+  , { walsCode := "cze", iso := "ces", value := .markedByPrecedingWord }
+  , { walsCode := "drg", iso := "dar", value := .markedByReduplication }
+  , { walsCode := "dgi", iso := "dgo", value := .markedByReduplication }
+  , { walsCode := "dut", iso := "nld", value := .noDistributiveNumerals }
+  , { walsCode := "dbr", iso := "nld", value := .noDistributiveNumerals }
+  , { walsCode := "dli", iso := "nld", value := .noDistributiveNumerals }
+  , { walsCode := "duz", iso := "zea", value := .noDistributiveNumerals }
+  , { walsCode := "eng", iso := "eng", value := .noDistributiveNumerals }
+  , { walsCode := "err", iso := "erg", value := .markedBySuffix }
+  , { walsCode := "eve", iso := "evn", value := .markedBySuffix }
+  , { walsCode := "fij", iso := "fij", value := .markedByPrefix }
+  , { walsCode := "fin", iso := "fin", value := .noDistributiveNumerals }
+  , { walsCode := "fox", iso := "sac", value := .markedByReduplication }
+  , { walsCode := "fre", iso := "fra", value := .noDistributiveNumerals }
+  , { walsCode := "fue", iso := "fud", value := .markedByPrefix }
+  , { walsCode := "gag", iso := "gag", value := .markedBySuffix }
+  , { walsCode := "gar", iso := "grt", value := .markedByReduplication }
+  , { walsCode := "gav", iso := "gvo", value := .noDistributiveNumerals }
+  , { walsCode := "geo", iso := "kat", value := .markedByReduplication }
+  , { walsCode := "ger", iso := "deu", value := .markedByPrecedingWord }
+  , { walsCode := "gpz", iso := "gsw", value := .markedByPrecedingWord }
+  , { walsCode := "gba", iso := "bar", value := .noDistributiveNumerals }
+  , { walsCode := "gbl", iso := "deu", value := .noDistributiveNumerals }
+  , { walsCode := "gbe", iso := "gsw", value := .markedByPrecedingWord }
+  , { walsCode := "gha", iso := "deu", value := .noDistributiveNumerals }
+  , { walsCode := "gma", iso := "deu", value := .noDistributiveNumerals }
+  , { walsCode := "gos", iso := "gsw", value := .markedByPrecedingWord }
+  , { walsCode := "grp", iso := "ksh", value := .noDistributiveNumerals }
+  , { walsCode := "gtg", iso := "gsw", value := .markedByPrecedingWord }
+  , { walsCode := "gth", iso := "deu", value := .noDistributiveNumerals }
+  , { walsCode := "gti", iso := "deu", value := .markedByPrecedingWord }
+  , { walsCode := "gau", iso := "bar", value := .noDistributiveNumerals }
+  , { walsCode := "gwe", iso := "wep", value := .noDistributiveNumerals }
+  , { walsCode := "gzu", iso := "gsw", value := .markedByPrecedingWord }
+  , { walsCode := "goo", iso := "gni", value := .noDistributiveNumerals }
+  , { walsCode := "grk", iso := "ell", value := .markedByPrecedingWord }
+  , { walsCode := "gdf", iso := "gdf", value := .markedByReduplication }
+  , { walsCode := "ga", iso := "gaa", value := .markedByReduplication }
+  , { walsCode := "hai", iso := "hai", value := .markedBySuffix }
+  , { walsCode := "hnn", iso := "hnn", value := .markedByPrefix }
+  , { walsCode := "hau", iso := "hau", value := .markedByReduplication }
+  , { walsCode := "haw", iso := "haw", value := .markedByPrefix }
+  , { walsCode := "heb", iso := "heb", value := .noDistributiveNumerals }
+  , { walsCode := "hil", iso := "hil", value := .markedByPrefix }
+  , { walsCode := "hin", iso := "hin", value := .markedByReduplication }
+  , { walsCode := "hix", iso := "hix", value := .noDistributiveNumerals }
+  , { walsCode := "hun", iso := "hun", value := .markedByReduplication }
+  , { walsCode := "hzb", iso := "huz", value := .markedByReduplication }
+  , { walsCode := "hpd", iso := "jup", value := .noDistributiveNumerals }
+  , { walsCode := "ibn", iso := "ibg", value := .markedByPrefix }
+  , { walsCode := "imo", iso := "imn", value := .noDistributiveNumerals }
+  , { walsCode := "ind", iso := "ind", value := .noDistributiveNumerals }
+  , { walsCode := "ing", iso := "inh", value := .markedByReduplication }
+  , { walsCode := "irq", iso := "irk", value := .markedByReduplication }
+  , { walsCode := "ish", iso := "isk", value := .markedBySuffix }
+  , { walsCode := "isn", iso := "isd", value := .markedByPrefix }
+  , { walsCode := "itu", iso := "pms", value := .noDistributiveNumerals }
+  , { walsCode := "iva", iso := "ivb", value := .markedByPrefix }
+  , { walsCode := "jpn", iso := "jpn", value := .markedBySuffix }
+  , { walsCode := "jav", iso := "jav", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "kab", iso := "kbd", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "kbi", iso := "nbu", value := .markedByReduplication }
+  , { walsCode := "klq", iso := "kmh", value := .noDistributiveNumerals }
+  , { walsCode := "knd", iso := "kan", value := .markedByReduplication }
+  , { walsCode := "kyo", iso := "kny", value := .markedByReduplication }
+  , { walsCode := "kas", iso := "kas", value := .markedByReduplication }
+  , { walsCode := "kay", iso := "gyd", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "kef", iso := "kbr", value := .markedByReduplication }
+  , { walsCode := "ket", iso := "ket", value := .markedBySuffix }
+  , { walsCode := "khk", iso := "kjh", value := .markedBySuffix }
+  , { walsCode := "kha", iso := "khk", value := .markedBySuffix }
+  , { walsCode := "kty", iso := "kca", value := .markedBySuffix }
+  , { walsCode := "khr", iso := "khr", value := .markedByReduplication }
+  , { walsCode := "kmu", iso := "kjg", value := .noDistributiveNumerals }
+  , { walsCode := "klv", iso := "kij", value := .noDistributiveNumerals }
+  , { walsCode := "kgz", iso := "kir", value := .markedBySuffix }
+  , { walsCode := "krb", iso := "gil", value := .markedByPrefix }
+  , { walsCode := "kod", iso := "kfa", value := .markedByReduplication }
+  , { walsCode := "koi", iso := "kbk", value := .markedByReduplication }
+  , { walsCode := "kmb", iso := "", value := .noDistributiveNumerals }
+  , { walsCode := "kon", iso := "kng", value := .markedByReduplication }
+  , { walsCode := "kor", iso := "kor", value := .markedBySuffix }
+  , { walsCode := "kku", iso := "kfq", value := .markedByReduplication }
+  , { walsCode := "kch", iso := "khq", value := .markedByReduplication }
+  , { walsCode := "krd", iso := "ckb", value := .markedByReduplication }
+  , { walsCode := "kur", iso := "kru", value := .markedByReduplication }
+  , { walsCode := "kuy", iso := "vkt", value := .markedByReduplication }
+  , { walsCode := "kut", iso := "kut", value := .noDistributiveNumerals }
+  , { walsCode := "kwk", iso := "kwk", value := .markedByReduplication }
+  , { walsCode := "lch", iso := "lbt", value := .noDistributiveNumerals }
+  , { walsCode := "lak", iso := "lbe", value := .markedByReduplication }
+  , { walsCode := "lat", iso := "lav", value := .markedByPrecedingWord }
+  , { walsCode := "lez", iso := "lez", value := .markedByReduplication }
+  , { walsCode := "lit", iso := "lit", value := .markedByPrecedingWord }
+  , { walsCode := "lov", iso := "lbo", value := .noDistributiveNumerals }
+  , { walsCode := "luo", iso := "luo", value := .markedByReduplication }
+  , { walsCode := "myn", iso := "mhy", value := .markedByReduplication }
+  , { walsCode := "mgn", iso := "mdh", value := .markedBySuffix }
+  , { walsCode := "mne", iso := "nmu", value := .markedByReduplication }
+  , { walsCode := "mal", iso := "plt", value := .markedByFollowingWord }
+  , { walsCode := "mmu", iso := "zmi", value := .markedByReduplication }
+  , { walsCode := "mym", iso := "mal", value := .markedByReduplication }
+  , { walsCode := "mnc", iso := "mnc", value := .markedBySuffix }
+  , { walsCode := "mnd", iso := "cmn", value := .noDistributiveNumerals }
+  , { walsCode := "mao", iso := "mri", value := .markedByPrefix }
+  , { walsCode := "mhi", iso := "mar", value := .markedByReduplication }
+  , { walsCode := "mrg", iso := "mrt", value := .markedByReduplication }
+  , { walsCode := "mar", iso := "mrc", value := .markedBySuffix }
+  , { walsCode := "msh", iso := "mah", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "mrt", iso := "vma", value := .noDistributiveNumerals }
+  , { walsCode := "may", iso := "ayz", value := .noDistributiveNumerals }
+  , { walsCode := "mei", iso := "mni", value := .markedByReduplication }
+  , { walsCode := "mde", iso := "men", value := .markedByReduplication }
+  , { walsCode := "hok", iso := "nan", value := .noDistributiveNumerals }
+  , { walsCode := "min", iso := "min", value := .markedByReduplication }
+  , { walsCode := "mit", iso := "zmq", value := .markedByReduplication }
+  , { walsCode := "mlm", iso := "mra", value := .noDistributiveNumerals }
+  , { walsCode := "moe", iso := "myv", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "mmo", iso := "mdf", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "mun", iso := "unr", value := .markedByReduplication }
+  , { walsCode := "nhn", iso := "ncj", value := .markedByReduplication }
+  , { walsCode := "nau", iso := "nau", value := .markedByPrefix }
+  , { walsCode := "nel", iso := "nee", value := .noDistributiveNumerals }
+  , { walsCode := "ntu", iso := "yrk", value := .markedBySuffix }
+  , { walsCode := "nga", iso := "nio", value := .markedBySuffix }
+  , { walsCode := "nia", iso := "nia", value := .markedByReduplication }
+  , { walsCode := "nca", iso := "caq", value := .markedByPrefix }
+  , { walsCode := "nsg", iso := "ncg", value := .markedByPrefix }
+  , { walsCode := "niv", iso := "niv", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "nvs", iso := "niv", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "nbd", iso := "dgl", value := .markedByReduplication }
+  , { walsCode := "nku", iso := "xnz", value := .markedByReduplication }
+  , { walsCode := "nyl", iso := "yly", value := .noDistributiveNumerals }
+  , { walsCode := "ork", iso := "oaa", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "oss", iso := "oss", value := .markedBySuffix }
+  , { walsCode := "pte", iso := "pck", value := .markedByReduplication }
+  , { walsCode := "pnn", iso := "pag", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "psh", iso := "pst", value := .markedByReduplication }
+  , { walsCode := "prs", iso := "pes", value := .noDistributiveNumerals }
+  , { walsCode := "pip", iso := "ppl", value := .markedByReduplication }
+  , { walsCode := "pol", iso := "pol", value := .markedByPrecedingWord }
+  , { walsCode := "fma", iso := "fuc", value := .noDistributiveNumerals }
+  , { walsCode := "qcu", iso := "quz", value := .markedBySuffix }
+  , { walsCode := "qhu", iso := "qub", value := .markedByFollowingWord }
+  , { walsCode := "ren", iso := "rel", value := .markedByReduplication }
+  , { walsCode := "rom", iso := "ron", value := .markedByPrecedingWord }
+  , { walsCode := "rot", iso := "rtm", value := .noDistributiveNumerals }
+  , { walsCode := "rru", iso := "nyo", value := .markedByReduplication }
+  , { walsCode := "rus", iso := "rus", value := .markedByPrecedingWord }
+  , { walsCode := "ski", iso := "sjd", value := .markedByReduplication }
+  , { walsCode := "slr", iso := "slr", value := .noDistributiveNumerals }
+  , { walsCode := "sam", iso := "smo", value := .markedByPrefix }
+  , { walsCode := "stl", iso := "sat", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "skp", iso := "sel", value := .markedByFollowingWord }
+  , { walsCode := "sml", iso := "sza", value := .noDistributiveNumerals }
+  , { walsCode := "ssh", iso := "bwo", value := .markedByReduplication }
+  , { walsCode := "shk", iso := "shp", value := .noDistributiveNumerals }
+  , { walsCode := "sdh", iso := "snd", value := .markedByReduplication }
+  , { walsCode := "spa", iso := "spa", value := .noDistributiveNumerals }
+  , { walsCode := "sup", iso := "spp", value := .markedByReduplication }
+  , { walsCode := "swa", iso := "swh", value := .markedByReduplication }
+  , { walsCode := "tag", iso := "tgl", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "tgb", iso := "tbw", value := .markedByPrefix }
+  , { walsCode := "tml", iso := "tam", value := .markedByReduplication }
+  , { walsCode := "tvo", iso := "tat", value := .markedBySuffix }
+  , { walsCode := "tsg", iso := "tsg", value := .markedByReduplication }
+  , { walsCode := "taw", iso := "tbo", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "tpn", iso := "ntp", value := .markedByReduplication }
+  , { walsCode := "ttn", iso := "tet", value := .markedByReduplication }
+  , { walsCode := "thd", iso := "tcz", value := .markedByReduplication }
+  , { walsCode := "tha", iso := "tha", value := .noDistributiveNumerals }
+  , { walsCode := "tib", iso := "bod", value := .markedByReduplication }
+  , { walsCode := "tiw", iso := "tiw", value := .markedBySuffix }
+  , { walsCode := "tla", iso := "ksd", value := .markedByReduplication }
+  , { walsCode := "tng", iso := "ton", value := .markedByPrefix }
+  , { walsCode := "tsa", iso := "tkr", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "tsi", iso := "tsi", value := .markedByPrefix }
+  , { walsCode := "tso", iso := "tsu", value := .markedByPrefix }
+  , { walsCode := "tuk", iso := "", value := .noDistributiveNumerals }
+  , { walsCode := "tur", iso := "tur", value := .markedBySuffix }
+  , { walsCode := "tvl", iso := "tvl", value := .markedByPrecedingWord }
+  , { walsCode := "tuv", iso := "tyv", value := .markedByReduplication }
+  , { walsCode := "udh", iso := "ude", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "ukr", iso := "ukr", value := .markedByPrecedingWord }
+  , { walsCode := "uyg", iso := "uig", value := .markedBySuffix }
+  , { walsCode := "vie", iso := "vie", value := .noDistributiveNumerals }
+  , { walsCode := "wai", iso := "waw", value := .markedByFollowingWord }
+  , { walsCode := "wll", iso := "wls", value := .markedByPrefix }
+  , { walsCode := "wra", iso := "wba", value := .noDistributiveNumerals }
+  , { walsCode := "war", iso := "pav", value := .noDistributiveNumerals }
+  , { walsCode := "was", iso := "was", value := .markedByReduplication }
+  , { walsCode := "wly", iso := "wal", value := .markedByReduplication }
+  , { walsCode := "ygn", iso := "yai", value := .markedBySuffix }
+  , { walsCode := "ykt", iso := "sah", value := .markedBySuffix }
+  , { walsCode := "ymi", iso := "tao", value := .markedByPrefix }
+  , { walsCode := "yms", iso := "jnj", value := .markedByReduplication }
+  , { walsCode := "yes", iso := "yss", value := .markedByMixedOrOtherStrategies }
+  , { walsCode := "ydb", iso := "ydd", value := .markedByPrecedingWord }
+  , { walsCode := "ylt", iso := "ydd", value := .markedByPrecedingWord }
+  , { walsCode := "ydl", iso := "ydd", value := .markedByPrecedingWord }
+  , { walsCode := "yim", iso := "yee", value := .noDistributiveNumerals }
+  , { walsCode := "yor", iso := "yor", value := .markedByReduplication }
+  , { walsCode := "yko", iso := "yux", value := .noDistributiveNumerals }
   ]
-
--- Count verification
-theorem total_count : allData.length = 251 := by native_decide
-
-theorem count_noDistributiveNumerals :
-    (allData.filter (·.value == .noDistributiveNumerals)).length = 62 := by native_decide
-theorem count_markedByReduplication :
-    (allData.filter (·.value == .markedByReduplication)).length = 85 := by native_decide
-theorem count_markedByPrefix :
-    (allData.filter (·.value == .markedByPrefix)).length = 23 := by native_decide
-theorem count_markedBySuffix :
-    (allData.filter (·.value == .markedBySuffix)).length = 32 := by native_decide
-theorem count_markedByPrecedingWord :
-    (allData.filter (·.value == .markedByPrecedingWord)).length = 21 := by native_decide
-theorem count_markedByFollowingWord :
-    (allData.filter (·.value == .markedByFollowingWord)).length = 5 := by native_decide
-theorem count_markedByMixedOrOtherStrategies :
-    (allData.filter (·.value == .markedByMixedOrOtherStrategies)).length = 23 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

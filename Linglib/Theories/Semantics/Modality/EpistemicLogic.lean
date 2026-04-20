@@ -1,4 +1,3 @@
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.Scales.EpistemicScale.Defs

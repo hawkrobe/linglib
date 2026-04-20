@@ -1,33 +1,34 @@
 import Linglib.Theories.Semantics.Tense.AT
 import Linglib.Core.Modality.HistoricalAlternatives
+import Linglib.Fragments.English.Auxiliaries
 
 /-!
 # @cite{condoravdi-2002}: Temporal Interpretation of Modals
 
 Condoravdi, C. (2002). Temporal Interpretation of Modals: Modals for the
 Present and for the Past. In D. Beaver, S. Kaufmann, B. Clark, & L. Casillas
-(Eds.), *The Construction of Meaning* (pp. 59–88). CSLI Publications.
+(Eds.), *The Construction of Meaning*. CSLI Publications.
 
-## Core Claims
+## Core claims
 
 1. **Uniform modal semantics**: modals for the present and modals for the
    past share a single meaning. No implicit tense under the modal.
-2. **Decompositional analysis**: "might have" = MAY(PERF(φ)), not a
-   single lexical item MIGHT-HAVE.
-3. **Temporal expansion**: modals expand evaluation to `[t,_)` rather
-   than shifting it. Forward orientation follows from this for eventive
-   predicates; present-or-future for stative predicates.
-4. **Scope–modality correlation**: MODAL > PERF → epistemic reading;
-   PERF > MODAL → counterfactual (metaphysical) reading. This follows
-   from the **diversity condition** [45]: metaphysical modal bases
-   require non-settledness, which the past cannot provide.
+2. **Decompositional analysis**: "might have" parses as MAY(PERF(φ)),
+   not as a single lexical item MIGHT-HAVE.
+3. **Temporal expansion**: modals expand evaluation to a forward interval
+   rather than shifting it. Forward orientation follows from this for
+   eventive predicates; present-or-future for stative predicates.
+4. **Scope–modality correlation**: MODAL > PERF yields the epistemic
+   reading; PERF > MODAL yields the counterfactual (metaphysical)
+   reading. This follows from the diversity condition: metaphysical
+   modal bases require non-settledness, which the past cannot provide.
 
 ## Architecture
 
-- Theory-layer primitives (`AT`, `atForward`) live in
+- The `AT` and `atForward` primitives live in
   `Theories/Semantics/Tense/AT.lean`.
-- Branching time, settledness, diversity live in
-  `Theories/Semantics/Tense/BranchingTime.lean`.
+- Branching-time, settledness, and diversity live in
+  `Core/Modality/HistoricalAlternatives.lean`.
 - This file composes them into Condoravdi's specific operators and
   derives the paper's predictions.
 -/
@@ -40,200 +41,157 @@ open Semantics.Tense.Aspect.Core
 open Semantics.Tense.AT
 open Core.Modality.HistoricalAlternatives
 
+/-! ## Operators -/
+
+section Operators
 variable {W Time : Type*} [LinearOrder Time]
 
-/-! ## Condoravdi's Operators -/
-
-/-- PRES [20]: present tense instantiates a property at `now`.
-    `λPλw[AT(now, w, P)]` — the temporal anchor is the utterance time. -/
-def presC (sort : Dynamicity) (P : EventPred W Time) (now : Time)
+/-- Present tense: instantiates a property at the utterance time. The
+    temporal anchor is a single point. -/
+def pres (sort : Dynamicity) (P : EventPred W Time) (t : Time)
     (w : W) : Prop :=
-  at' sort P w (Interval.point now)
+  at' sort P w (Interval.point t)
 
-/-- PERF [21]: the perfect shifts evaluation to a prior time.
-    `λPλwλt∃t'[t' ≺ t ∧ AT(t', w, P)]` -/
-def perfC (sort : Dynamicity) (P : EventPred W Time) (w : W)
+/-- Perfect: shifts evaluation to a prior time. There is some `t' < t` at
+    which the property holds. -/
+def perf (sort : Dynamicity) (P : EventPred W Time) (w : W)
     (t : Time) : Prop :=
   ∃ t' : Time, t' < t ∧ at' sort P w (Interval.point t')
 
-/-- MAY/MIGHT [22]: existential quantification over the modal base with
-    forward temporal expansion.
-    `λPλwλt∃w'[w' ∈ MB(w,t) ∧ AT([t,_), w', P)]` -/
-def mayC (MB : W → Time → Set W) (sort : Dynamicity)
+/-- MAY/MIGHT: existential quantification over the modal base, with
+    forward temporal expansion. -/
+def may (MB : W → Time → Set W) (sort : Dynamicity)
     (P : EventPred W Time) (w : W) (t : Time) : Prop :=
   ∃ w' ∈ MB w t, atForward sort P w' t
 
-/-- WOLL [23]: universal quantification over the modal base with forward
-    temporal expansion. The untensed modal underlying `will`.
-    `λPλwλt∀w'[w' ∈ MB(w,t) → AT([t,_), w', P)]` -/
-def wollC (MB : W → Time → Set W) (sort : Dynamicity)
+/-- WOLL: universal quantification over the modal base, with forward
+    temporal expansion. The untensed modal underlying *will* / *would*;
+    contrasts with @cite{cariani-santorio-2018}'s atemporal-propositional
+    `willSem`. -/
+def woll (MB : W → Time → Set W) (sort : Dynamicity)
     (P : EventPred W Time) (w : W) (t : Time) : Prop :=
   ∀ w' ∈ MB w t, atForward sort P w' t
 
-@[simp] theorem presC_eq (sort : Dynamicity) (P : EventPred W Time)
-    (now : Time) (w : W) :
-    presC sort P now w = at' sort P w (Interval.point now) := rfl
+/-! ## Composed scope readings
 
-@[simp] theorem perfC_eq (sort : Dynamicity) (P : EventPred W Time)
-    (w : W) (t : Time) :
-    perfC sort P w t =
-      (∃ t' : Time, t' < t ∧ at' sort P w (Interval.point t')) := rfl
+The two scope orderings of MAY and PERF that derive epistemic vs.
+counterfactual modality. The trivial single-operator examples
+("He might run", "He might be here") are inlined as docstrings on
+`may` rather than given separate names. -/
 
-@[simp] theorem mayC_eq (MB : W → Time → Set W) (sort : Dynamicity)
-    (P : EventPred W Time) (w : W) (t : Time) :
-    mayC MB sort P w t = (∃ w' ∈ MB w t, atForward sort P w' t) := rfl
+/-- "He may have won" — *epistemic* reading. The modal scopes over the
+    perfect (PRES > MAY > PERF). Modal base evaluated at `t`; the
+    perfect back-shifts inside the modal's scope. -/
+def mayEpistemic (MB : W → Time → Set W) (P : EventPred W Time)
+    (t : Time) (w : W) : Prop :=
+  ∃ w' ∈ MB w t, perf .dynamic P w' t
 
-@[simp] theorem wollC_eq (MB : W → Time → Set W) (sort : Dynamicity)
-    (P : EventPred W Time) (w : W) (t : Time) :
-    wollC MB sort P w t = (∀ w' ∈ MB w t, atForward sort P w' t) := rfl
+/-- "He might have won" — *counterfactual* reading. The perfect scopes
+    over the modal (PRES > PERF > MAY). The perfect shifts the modal
+    base's evaluation point to a past `t'`; the modal then quantifies
+    over worlds compatible with the past, with the property in
+    `[t', _)`. -/
+def mightCounterfactual (MB : W → Time → Set W) (P : EventPred W Time)
+    (t : Time) (w : W) : Prop :=
+  ∃ t' : Time, t' < t ∧ may MB .dynamic P w t'
 
-/-! ## Composed Readings -/
+end Operators
 
-/-- "He might be here" [25]: PRES(MIGHT(stative P)).
-    Present perspective, stative predicate: the state overlaps `[now,_)`,
-    so it may extend into the past or future of utterance time. -/
-def mightBeHere (MB : W → Time → Set W) (P : EventPred W Time)
-    (now : Time) (w : W) : Prop :=
-  mayC MB .stative P w now
-
-/-- "He might run" [26]: PRES(MIGHT(eventive P)).
-    Present perspective, eventive predicate: the event is contained
-    in `[now,_)`, so it must occur in the future. -/
-def mightRun (MB : W → Time → Set W) (P : EventPred W Time)
-    (now : Time) (w : W) : Prop :=
-  mayC MB .dynamic P w now
-
-/-- "He may have won" — epistemic reading [27]:
-    PRES(MAY(PERF(eventive P))). The modal scopes over the perfect.
-
-    The relevant modal base is evaluated at `now` (present perspective).
-    PERF back-shifts: ∃t'≺now such that the event is AT t'. -/
-def mayHaveEpistemic (MB : W → Time → Set W) (P : EventPred W Time)
-    (now : Time) (w : W) : Prop :=
-  ∃ w' ∈ MB w now, perfC .dynamic P w' now
-
-/-- "He might have won" — counterfactual reading [33]:
-    PRES(PERF(MIGHT(eventive P))). The perfect scopes over the modal.
-
-    PERF shifts perspective to past time t': ∃t'≺now such that at t',
-    the modal base (evaluated at t') contains a world where the event
-    occurs in `[t',_)`. -/
-def mightHaveCF (MB : W → Time → Set W) (P : EventPred W Time)
-    (now : Time) (w : W) : Prop :=
-  ∃ t' : Time, t' < now ∧ mayC MB .dynamic P w t'
-
-/-! ## Perspective × Orientation Table [9] -/
+/-! ## Reading classification -/
 
 /-- Temporal perspective: the time at which the modal base is evaluated. -/
 inductive Perspective where
-  /-- Present: modal base evaluated at utterance time -/
+  /-- Modal base evaluated at the utterance time. -/
   | present
-  /-- Past: modal base evaluated at a prior time (via PERF > MODAL) -/
+  /-- Modal base evaluated at a prior time (via PERF > MODAL). -/
   | past
   deriving DecidableEq, Repr
 
 /-- Temporal orientation: the direction of temporal reference for the
     property in the modal's scope. -/
 inductive Orientation where
-  /-- Future: property instantiated after the perspective time -/
+  /-- Property instantiated at or after the perspective time. -/
   | future
-  /-- Past: property instantiated before the perspective time -/
+  /-- Property instantiated before the perspective time. -/
   | past
   deriving DecidableEq, Repr
 
-/-- A classified modal temporal reading. -/
-structure ModalReading where
-  perspective : Perspective
-  orientation : Orientation
+/-- The three attested readings of an English modal-perfect string. The
+    fourth combination (past perspective + past orientation) is
+    unattested and excluded by construction. -/
+inductive ModalReading where
+  /-- "He might win." Future-oriented from a present perspective. -/
+  | present
+  /-- "He may have already won." Past-oriented from a present
+      perspective (PRES > MAY > PERF). -/
+  | epistemic
+  /-- "He might still have won." Future-oriented from a past
+      perspective (PRES > PERF > MAY). -/
+  | counterfactual
   deriving DecidableEq, Repr
 
-/-- Modals for the present: present perspective, future orientation.
-    "He might win the game." -/
-def modalsForPresent : ModalReading :=
-  ⟨.present, .future⟩
+/-- Modal-base evaluation time of a reading. -/
+def ModalReading.perspective : ModalReading → Perspective
+  | .present | .epistemic => .present
+  | .counterfactual       => .past
 
-/-- Modals for the past, epistemic reading: present perspective, past
-    orientation. "He might have (already) won the game." -/
-def modalsForPastEpistemic : ModalReading :=
-  ⟨.present, .past⟩
-
-/-- Modals for the past, counterfactual reading: past perspective, future
-    orientation. "He might (still) have won the game." -/
-def modalsForPastCF : ModalReading :=
-  ⟨.past, .future⟩
-
-/-- The attested readings are exactly these three. -/
-def attestedReadings : List ModalReading :=
-  [modalsForPresent, modalsForPastEpistemic, modalsForPastCF]
-
-/-- Past perspective + past orientation is unattested: no modal has both
-    a shifted-back perspective and a further-back-shifted orientation. -/
-theorem no_past_past :
-    (⟨.past, .past⟩ : ModalReading) ∉ attestedReadings := by decide
-
-/-- Each attested reading is distinct. -/
-theorem readings_distinct :
-    attestedReadings.Nodup := by decide
+/-- Direction of temporal reference of a reading. -/
+def ModalReading.orientation : ModalReading → Orientation
+  | .present | .counterfactual => .future
+  | .epistemic                 => .past
 
 /-! ## Bridge to Klein's PERF -/
 
-/-- Condoravdi's `perfC` for eventive predicates entails Klein's
-    `perfSimple`: if there is a prior time at which the event is
-    instantiated (at a point), then the PTS-based perfect holds with a
-    degenerate PTS `[t', t']` right-bounded at `t`. -/
-theorem perfC_eventive_implies_perfSimple
+section KleinBridge
+variable {W Time : Type*} [LinearOrder Time]
+
+/-- Condoravdi's eventive `perf` entails Klein's `perfSimple`: a prior
+    point of instantiation gives a degenerate PTS `[t', t']`
+    right-bounded at `t`. -/
+theorem perf_eventive_implies_perfSimple
     (P : EventPred W Time) (w : W) (t : Time)
-    (h : perfC .dynamic P w t) : perfSimple P ⟨w, t⟩ := by
+    (h : perf .dynamic P w t) : perfSimple P ⟨w, t⟩ := by
   obtain ⟨t', hlt, e, hP, hSub⟩ := h
-  -- hSub : e.runtime.subinterval (Interval.point t')
-  -- i.e. t' ≤ e.runtime.start ∧ e.runtime.finish ≤ t'
-  -- Construct PTS = [t', t] with RB at t
   exact ⟨⟨t', t, le_of_lt hlt⟩, rfl, e,
     ⟨hSub.1, le_trans hSub.2 (le_of_lt hlt)⟩, hP⟩
 
-/-! ## Scope–Modality Correlation -/
+end KleinBridge
 
-/-! The central empirical observation: the relative scope of MODAL and
-    PERF correlates with the kind of modality expressed.
+/-! ## Scope–modality correlation
 
-    - MODAL > PERF (epistemic reading [27]): the modal's perspective is
-      present. The property it applies to is instantiated in the past
-      (via PERF). Since past properties are settled, the diversity
-      condition blocks a metaphysical modal base. The modal base must
-      be epistemic.
+The relative scope of MODAL and PERF correlates with the kind of
+modality expressed:
 
-    - PERF > MODAL (counterfactual reading [33]): the modal's perspective
-      is a past time t' (set by PERF). The property it applies to is
-      instantiated in the future of t'. Since future properties are not
-      settled, the diversity condition is satisfiable. A metaphysical
-      modal base is available.
+- **MODAL > PERF (epistemic)**: the modal's perspective is present; the
+  property under it is back-shifted past. Past properties are settled,
+  so the diversity condition blocks a metaphysical base — only
+  epistemic modality remains available.
+- **PERF > MODAL (counterfactual)**: the modal's perspective is a past
+  time; the property is in that past's future. Future properties are
+  not settled, so a metaphysical base is available. -/
 
-    The theorem below captures the first direction: epistemic-only
-    when the modal scopes over PERF. -/
+section ScopeCorrelation
+variable {W Time : Type*} [LinearOrder Time]
 
-/-- When the modal scopes over PERF (epistemic reading), the property
-    under the modal is "there was a prior event of type P." If this
-    property is settled in the common ground (as past properties always
-    are), then a metaphysical modal base cannot satisfy diversity.
-
-    This derives the restriction to epistemic modality for
-    MODAL > PERF configurations. -/
+/-- When MAY scopes over PERF, the property under the modal is *back-
+    shifted past*. If this property is settled in the common ground (as
+    past properties are), then a metaphysical modal base cannot satisfy
+    diversity — restricting MODAL > PERF to epistemic modality. -/
 theorem modal_over_perf_blocks_metaphysical
     (history : WorldHistory W Time)
     (MB : W → Time → Set W)
     (cg : Set W) (now : Time)
     (P : EventPred W Time)
     (hMB : ∀ w ∈ cg, ∀ w' ∈ MB w now, histEquiv history now w w')
-    (hSettled : settled history cg now (λ w => perfC .dynamic P w now)) :
-    ¬ diverse MB cg now (λ w => perfC .dynamic P w now) :=
+    (hSettled : settled history cg now (λ w => perf .dynamic P w now)) :
+    ¬ diverse MB cg now (λ w => perf .dynamic P w now) :=
   settled_not_diverse history MB cg now _ hMB hSettled
 
-/-- @cite{condoravdi-2002} §4.2: when PERF > MODAL with a metaphysical
-    modal base, the accessible worlds at past time `t'` are a superset
-    of those at `now`. The modal at `t'` quantifies over worlds that
-    have since diverged from the actual history — worlds outside the
-    common ground's ≃_{now}-classes. This is the structural source of
-    the counterfactual reading. -/
+/-- When PERF scopes over MAY (counterfactual reading), the metaphysical
+    base at the past perspective `t' ≤ now` is a superset of the one at
+    `now`: backwards-closure of historical equivalence makes the past
+    base wider. This is the structural source of the counterfactual
+    reading's "could have been otherwise" force. -/
 theorem counterfactual_widens_domain
     (history : WorldHistory W Time)
     (hBC : history.backwardsClosed) (w : W)
@@ -241,122 +199,125 @@ theorem counterfactual_widens_domain
     metaphysicalBase history w now ⊆ metaphysicalBase history w t' :=
   metaphysicalBase_antitone hBC w hle
 
-/-! ## Adverb Compatibility
+end ScopeCorrelation
 
-@cite{condoravdi-2002} [1]–[2]: frame adverbials restrict the temporal
-reference of the sentence. The compatibility patterns are **derived from**
-the AT relation, not stipulated: the sort-dependent temporal constraint
-(⊆ for events, ∘ for states) determines which temporal regions the modal
-can reach, and compatibility holds when the adverb selects a reachable
-region. -/
+/-! ## Adverb compatibility
 
-/-- The temporal region a frame adverb selects. -/
-inductive TemporalRegion where
-  | past    -- before the perspective time (e.g. "yesterday")
-  | present -- at the perspective time (e.g. "now")
-  | future  -- after the perspective time (e.g. "tomorrow")
-  deriving DecidableEq, Repr
+Frame adverbials are intersective predicate modifiers: they restrict
+temporal reference to a period relative to the reference time. A frame
+adverb is *compatible* with a modal reading exactly when its selected
+period intersects the temporal region the modal projects. The eight
+(in)compat theorems below follow from `lt_irrefl`/`lt_of_lt_of_le`/
+`le_refl` rather than a lookup table. -/
 
-/-- Frame adverb temporal restriction. -/
-inductive FrameAdverb where
-  | yesterday
-  | now_
-  | tomorrow
-  deriving DecidableEq, Repr
+section Adverbs
+variable {Time : Type*} [LinearOrder Time]
 
-/-- The temporal region selected by a frame adverb. -/
-def FrameAdverb.region : FrameAdverb → TemporalRegion
-  | .yesterday => .past
-  | .now_ => .present
-  | .tomorrow => .future
+/-- A frame adverb selects a period of times relative to a reference
+    time. -/
+structure FrameAdverb (Time : Type*) where
+  name : String
+  period : Time → Set Time
 
-/-- The temporal reference direction imposed by a modal's orientation and
-    the predicate sort, derived from the AT relation:
+namespace FrameAdverb
 
-    - `atEventForward` requires `now ≤ e.start` → event in the future.
-    - `atStateForward` requires `now ≤ e.finish` → state extends through
-      present or into future.
-    - `perfC` requires `t' < now` → prior instantiation. -/
-inductive ReferenceDirection where
-  /-- Eventive + forward: `atEventForward` requires `t ≤ e.start`, so
-      the event is located strictly after the perspective time. -/
-  | futureOnly
-  /-- Stative + forward: `atStateForward` requires `t ≤ e.finish`, so
-      the state persists through or past the perspective time. -/
-  | presentOrFuture
-  /-- Via PERF: `perfC` requires `t' < t`, so the property is
-      instantiated before the perspective time. -/
-  | pastOnly
-  deriving DecidableEq, Repr
+/-- Strictly before the reference time. -/
+def yesterday : FrameAdverb Time :=
+  { name := "yesterday", period := fun now => {t | t < now} }
 
-/-- Derive the reference direction from a modal orientation and predicate
-    sort. This is the factored core of the compatibility relation. -/
-def referenceDirection : Orientation → Dynamicity → ReferenceDirection
-  | .future, .dynamic => .futureOnly
-  | .future, .stative => .presentOrFuture
-  | .past, _ => .pastOnly
+/-- The reference time itself. -/
+def now_ : FrameAdverb Time :=
+  { name := "now", period := fun now => {now} }
 
-/-- Whether a reference direction can reach a temporal region.
-    Follows from the AT relation's temporal constraints:
-    - `futureOnly` reaches only future (from `atEventForward`)
-    - `presentOrFuture` reaches present and future (from `atStateForward`)
-    - `pastOnly` reaches only past (from `perfC`) -/
-def ReferenceDirection.reaches : ReferenceDirection → TemporalRegion → Bool
-  | .futureOnly, .future => true
-  | .presentOrFuture, .present => true
-  | .presentOrFuture, .future => true
-  | .pastOnly, .past => true
-  | _, _ => false
+/-- Strictly after the reference time. -/
+def tomorrow : FrameAdverb Time :=
+  { name := "tomorrow", period := fun now => {t | now < t} }
 
-/-- Compatibility of a frame adverb with a modal reading at a given sort:
-    the adverb's temporal region must be reachable by the reference
-    direction derived from the AT relation. -/
-def compatible (adv : FrameAdverb) (reading : ModalReading)
-    (sort : Dynamicity) : Bool :=
-  (referenceDirection reading.orientation sort).reaches adv.region
+end FrameAdverb
 
--- ── Eventive modals for the present ──
+/-- The temporal region in which a modal evaluates its scope, read off
+    the AT relation:
 
-/-- [1a]: "He may get sick tomorrow" — eventive, future orientation. -/
-theorem tomorrow_eventive_present_compat :
-    compatible .tomorrow modalsForPresent .dynamic = true := by decide
+    - **Future orientation**: `atForward` requires the property's
+      temporal anchor to lie at or after the reference time. Projected
+      region: `[now, ∞)`.
+    - **Past orientation**: `perf` requires a strictly earlier
+      instantiation time. Projected region: `(-∞, now)`.
 
-/-- [1a]: "*He may get sick yesterday" — eventive, future orientation. -/
-theorem yesterday_eventive_present_incompat :
-    compatible .yesterday modalsForPresent .dynamic = false := by decide
+    Note: the eventive/stative distinction is *not* recorded here. The
+    AT relation permits `now = e.start` for `atEventForward`, so the
+    table-style "now is incompatible with eventive future" prediction
+    of the original paper is a pragmatic event-duration fact that
+    `compatible` does not formally exclude. -/
+def projectedRegion (orient : Orientation) (now : Time) : Set Time :=
+  match orient with
+  | .future => {t | now ≤ t}
+  | .past   => {t | t < now}
 
-/-- [1a]: "??He may get sick now" — eventive, future orientation.
-    `atEventForward` requires `now ≤ e.start`, so the event must start
-    at or after now; "now" as a point leaves no room for an event. -/
-theorem now_eventive_present_incompat :
-    compatible .now_ modalsForPresent .dynamic = false := by decide
+/-- Compatibility: the adverb's selected period overlaps the modal's
+    projected region. -/
+def compatible (adv : FrameAdverb Time) (reading : ModalReading)
+    (now : Time) : Prop :=
+  ∃ t, t ∈ adv.period now ∧ t ∈ projectedRegion reading.orientation now
 
--- ── Stative modals for the present ──
+-- ── Modals for the present (future orientation) ──
 
-/-- [1c]: "He may be sick now" — stative, future orientation.
-    `atStateForward` requires `now ≤ e.finish`, which is satisfied by
-    a state extending through the present. -/
-theorem now_stative_present_compat :
-    compatible .now_ modalsForPresent .stative = true := by decide
+/-- "He may get sick tomorrow." Future-oriented modal accepts a future
+    adverb (witnessed via `NoMaxOrder`). -/
+theorem tomorrow_present_compat [NoMaxOrder Time] (now : Time) :
+    compatible (FrameAdverb.tomorrow (Time := Time)) .present now := by
+  obtain ⟨t, ht⟩ := exists_gt now
+  exact ⟨t, ht, le_of_lt ht⟩
 
-/-- [1c]: "He may be sick tomorrow" — stative, future orientation. -/
-theorem tomorrow_stative_present_compat :
-    compatible .tomorrow modalsForPresent .stative = true := by decide
+/-- "*He may get sick yesterday." Future-oriented modal rejects a past
+    adverb: any witness would satisfy `t < now ∧ now ≤ t`,
+    contradicting `lt_irrefl`. -/
+theorem yesterday_present_incompat (now : Time) :
+    ¬ compatible (FrameAdverb.yesterday (Time := Time)) .present now := by
+  rintro ⟨t, ht1, ht2⟩
+  exact absurd (lt_of_lt_of_le ht1 ht2) (lt_irrefl _)
 
-/-- [1c]: "*He may be sick yesterday" — stative, future orientation. -/
-theorem yesterday_stative_present_incompat :
-    compatible .yesterday modalsForPresent .stative = false := by decide
+/-- "He may be sick now." The reference time witnesses overlap of `{now}`
+    with `[now, ∞)` via `le_refl`. The eventive variant ("??He may get
+    sick now") is marginal in the paper for pragmatic event-duration
+    reasons; see the `projectedRegion` docstring. -/
+theorem now_present_compat (now : Time) :
+    compatible (FrameAdverb.now_ (Time := Time)) .present now :=
+  ⟨now, rfl, le_refl now⟩
 
--- ── Modals for the past (epistemic) ──
+-- ── Modals for the past (past orientation, epistemic reading) ──
 
-/-- [2a]: "He may have gotten sick yesterday" — past orientation. -/
-theorem yesterday_past_epistemic_compat :
-    compatible .yesterday modalsForPastEpistemic .dynamic = true := by
-  decide
+/-- "He may have gotten sick yesterday." Past-oriented modal accepts a
+    past adverb (witnessed via `NoMinOrder`). -/
+theorem yesterday_epistemic_compat [NoMinOrder Time] (now : Time) :
+    compatible (FrameAdverb.yesterday (Time := Time)) .epistemic now := by
+  obtain ⟨t, ht⟩ := exists_lt now
+  exact ⟨t, ht, ht⟩
 
-/-- [2a]: "*He may have gotten sick tomorrow" — past orientation. -/
-theorem tomorrow_past_epistemic_incompat :
-    compatible .tomorrow modalsForPastEpistemic .dynamic = false := by
-  decide
+/-- "*He may have gotten sick tomorrow." Past-oriented modal rejects a
+    future adverb: `now < t ∧ t < now` contradicts `lt_irrefl` via
+    `lt_trans`. -/
+theorem tomorrow_epistemic_incompat (now : Time) :
+    ¬ compatible (FrameAdverb.tomorrow (Time := Time)) .epistemic now := by
+  rintro ⟨t, ht1, ht2⟩
+  exact absurd (lt_trans ht2 ht1) (lt_irrefl _)
+
+end Adverbs
+
+/-! ## Fragment binding -/
+
+/-- *Might* and perfect *have* are distinct aux heads in the English
+    Fragment. The decomposition "might have" = MAY(PERF(...)) and the
+    scope permutation deriving the epistemic vs counterfactual reading
+    both require the Fragment to classify them under different
+    `auxType`s — if they ever fused (e.g., a single `might-have` modal
+    entry), the analysis would not apply at the surface-form level.
+
+    Co-binders of these entries (e.g., @cite{cariani-santorio-2018} on
+    *will*/*would*) are discoverable by greping
+    `Fragments.English.Auxiliaries.<entry>` across `Phenomena/`. -/
+theorem might_have_distinct_aux_types :
+    Fragments.English.Auxiliaries.might.auxType ≠
+      Fragments.English.Auxiliaries.have_.auxType := by decide
 
 end Condoravdi2002

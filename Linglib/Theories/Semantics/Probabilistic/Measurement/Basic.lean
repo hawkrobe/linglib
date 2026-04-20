@@ -151,10 +151,10 @@ measure functions. Their type is ⟨n, ⟨e,t⟩⟩ — they take a numeral
 and return a predicate.
 
 The `rel` field allows different interpretations: exact (=), at-least (≥),
-or at-most (≤), matching the numeral semantics infrastructure in
-`Numeral.Semantics.OrderingRel`. By default, measure terms denote exact
-measurement (= n), and pragmatic strengthening (if needed) happens at
-the numeral level, not the measure term level. -/
+or at-most (≤), matching the named numeral meanings (`bareMeaning`,
+`atLeastMeaning`, `atMostMeaning`) in `Semantics.Numerals`. By default,
+measure terms denote exact measurement (= n), and pragmatic strengthening
+(if needed) happens at the numeral level, not the measure term level. -/
 structure MeasureTermSem (E : Type*) where
   /-- The measure function this term names. -/
   measureFn : MeasureFn E
@@ -252,7 +252,7 @@ Note: `HasDegree` is a single-measure typeclass (one degree per entity type).
 For entities with multiple measurable dimensions (a box has weight AND volume),
 use `MeasureFn` directly — `HasDegree` is the specialization for when a
 single dimension is contextually salient. -/
-def MeasureFn.toHasDegree {E : Type} (μ : MeasureFn E) : Core.Scale.HasDegree E :=
+def MeasureFn.toHasDegree {E : Type} (μ : MeasureFn E) : Core.Scale.HasDegree E ℚ :=
   { degree := μ.apply }
 
 -- ============================================================================

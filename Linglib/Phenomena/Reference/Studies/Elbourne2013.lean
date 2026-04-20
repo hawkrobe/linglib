@@ -4,8 +4,6 @@ import Linglib.Core.Nominal.Maximality
 import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.QUD.Basic
 import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.QUD.Relevance
-import Linglib.Core.Inquisitive
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Theories.Semantics.Definiteness.Basic
@@ -461,6 +459,13 @@ def voldemortExample : PronounAsDefinite :=
 -- ════════════════════════════════════════════════════════════════
 
 section RefAttr
+
+-- TODO: Bool→Prop migration of isMurderer/isInsane/isTable/isCoveredWithBooks/
+-- isDonkey/isBeaten/isPresident/isSpy/isGhost/isQuiet cascades to
+-- Linglib/Core/Semantics/Presupposition.lean (presupOfReferent : (W → Option E) → ...)
+-- and Linglib/Core/Nominal/Maximality.lean (russellIotaList : List E → (E → Bool) → Option E).
+-- These predicates feed into the_sit'/the_sit/definitePrProp which require E → W → Bool.
+-- Migration deferred until those external Core APIs migrate to Prop with [DecidablePred].
 
 inductive Sit where
   | sCourtroom | sOffice | wActual

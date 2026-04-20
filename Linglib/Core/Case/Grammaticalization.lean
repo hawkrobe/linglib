@@ -115,12 +115,12 @@ abbrev Case.ExtensionReachable : Case → Case → Prop :=
 
 /-- Accusative is reachable from allative via dative (chain 2b). -/
 theorem acc_reachable_from_all : Case.ExtensionReachable .all .acc :=
-  .tail (.single (a := Case.all) (b := Case.dat) (by decide))
+  .tail (.single (a := (.all : Case)) (b := (.dat : Case)) (by decide))
     (show Case.Extends .dat .acc by decide)
 
 /-- Instrumental is reachable from locative via comitative (chain 2c). -/
 theorem inst_reachable_from_loc : Case.ExtensionReachable .loc .inst :=
-  .tail (.single (a := Case.loc) (b := Case.com) (by decide))
+  .tail (.single (a := (.loc : Case)) (b := (.com : Case)) (by decide))
     (show Case.Extends .com .inst by decide)
 
 end Core

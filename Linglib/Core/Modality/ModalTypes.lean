@@ -177,8 +177,11 @@ structure ModalItem where
   deriving Repr, BEq
 
 /-- Two modal items are register variants if they differ in register. -/
-def ModalItem.areRegisterVariants (a b : ModalItem) : Bool :=
+def ModalItem.areRegisterVariants (a b : ModalItem) : Prop :=
   Core.Register.areVariants a.register b.register
+
+instance (a b : ModalItem) : Decidable (a.areRegisterVariants b) :=
+  inferInstanceAs (Decidable (Core.Register.areVariants _ _))
 
 -- ============================================================================
 -- §5. Concord Types
@@ -374,19 +377,21 @@ def BackgroundClass.projectionMode : BackgroundClass → ProjectionMode
   | .contentEvidential => .content
 
 /-- Whether the background class encodes an information source. -/
-def BackgroundClass.encodesInfoSource : BackgroundClass → Bool
-  | .factualCircumstantial => false
-  | .factualEvidential => true
-  | .contentEvidential => true
+def BackgroundClass.EncodesInfoSource (b : BackgroundClass) : Prop :=
+  b = .factualEvidential ∨ b = .contentEvidential
+
+instance : DecidablePred BackgroundClass.EncodesInfoSource :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Whether the speaker can disbelieve the prejacent under this class.
     Only content-mode backgrounds allow speaker disbelief —
     factual modes commit the speaker to the prejacent being compatible
     with reality. -/
-def BackgroundClass.allowsSpeakerDisbelief : BackgroundClass → Bool
-  | .factualCircumstantial => false
-  | .factualEvidential => false
-  | .contentEvidential => true
+def BackgroundClass.AllowsSpeakerDisbelief (b : BackgroundClass) : Prop :=
+  b = .contentEvidential
+
+instance : DecidablePred BackgroundClass.AllowsSpeakerDisbelief :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- The traditional epistemic/circumstantial classification that the
     three-way split refines. -/
@@ -401,14 +406,14 @@ theorem circumstantial_always_factual :
 
 /-- Content-mode backgrounds always encode an information source. -/
 theorem content_encodes_info :
-    BackgroundClass.contentEvidential.encodesInfoSource = true := rfl
+    BackgroundClass.contentEvidential.EncodesInfoSource := by decide
 
 /-- Speaker disbelief distinguishes the two epistemic subtypes. -/
 theorem factual_epistemic_no_disbelief :
-    BackgroundClass.factualEvidential.allowsSpeakerDisbelief = false := rfl
+    ¬ BackgroundClass.factualEvidential.AllowsSpeakerDisbelief := by decide
 
 theorem content_epistemic_allows_disbelief :
-    BackgroundClass.contentEvidential.allowsSpeakerDisbelief = true := rfl
+    BackgroundClass.contentEvidential.AllowsSpeakerDisbelief := by decide
 
 -- ============================================================================
 -- §9. Force Analysis (how modal force arises)
@@ -434,25 +439,28 @@ inductive ForceAnalysis where
   deriving DecidableEq, Repr
 
 /-- Whether the modal has a necessity reading (semantically or pragmatically). -/
-def ForceAnalysis.admitsNecessity : ForceAnalysis → Bool
-  | .fixed .necessity | .fixed .weakNecessity => true
-  | .variableForce => true
-  | .strengthened _ => true   -- via pragmatic strengthening
-  | _ => false
+def ForceAnalysis.AdmitsNecessity (a : ForceAnalysis) : Prop :=
+  a ≠ .fixed .possibility
+
+instance : DecidablePred ForceAnalysis.AdmitsNecessity :=
+  fun _ => inferInstanceAs (Decidable (_ ≠ _))
 
 /-- Whether the modal has a possibility reading. -/
-def ForceAnalysis.admitsPossibility : ForceAnalysis → Bool
-  | .fixed .possibility => true
-  | .variableForce => true
-  | .strengthened .possibility => true
-  | _ => false
+def ForceAnalysis.AdmitsPossibility (a : ForceAnalysis) : Prop :=
+  a = .fixed .possibility ∨ a = .variableForce ∨ a = .strengthened .possibility
+
+instance : DecidablePred ForceAnalysis.AdmitsPossibility :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Whether the modal has a lexical dual (contrasting force partner).
     @cite{matthewson-2016} §18.3.2: modals without duals do not come
     in necessity–possibility pairs. -/
-def ForceAnalysis.hasDual : ForceAnalysis → Bool
-  | .fixed _ => true        -- presumes a dual exists in the language
-  | .variableForce => false -- variable-force modals lack duals by definition
-  | .strengthened _ => false -- strengthened precisely because no dual exists
+def ForceAnalysis.HasDual : ForceAnalysis → Prop
+  | .fixed _ => True        -- presumes a dual exists in the language
+  | .variableForce => False -- variable-force modals lack duals by definition
+  | .strengthened _ => False -- strengthened precisely because no dual exists
+
+instance : DecidablePred ForceAnalysis.HasDual := fun a => by
+  cases a <;> unfold ForceAnalysis.HasDual <;> infer_instance
 
 end Core.Modality

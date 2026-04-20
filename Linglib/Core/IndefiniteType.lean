@@ -162,11 +162,13 @@ def classifyTriple (nsForm suForm skForm : String) : SyncretismPattern :=
     account. Under nanosyntax: the Superset Principle prevents it.
     Under the semantic account: it would require dep(∅,x) ∧ var(v,x),
     which is contradictory (type vi). -/
-def SyncretismPattern.isAttested : SyncretismPattern → Bool
-  | .ABA => false
-  | _    => true
+def SyncretismPattern.IsAttested (s : SyncretismPattern) : Prop :=
+  s ≠ .ABA
 
-theorem aba_unattested : SyncretismPattern.isAttested .ABA = false := rfl
+instance : DecidablePred SyncretismPattern.IsAttested :=
+  fun _ => inferInstanceAs (Decidable (_ ≠ _))
+
+theorem aba_unattested : ¬ SyncretismPattern.IsAttested .ABA := by decide
 
 -- ============================================================================
 -- §5. Pattern Classification Verification

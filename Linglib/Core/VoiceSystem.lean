@@ -104,21 +104,31 @@ def VoiceSystemProfile.voiceCount (p : VoiceSystemProfile) : Nat :=
   p.voices.length
 
 /-- Does any voice in this system promote a given role? -/
-def VoiceSystemProfile.promotesRole (p : VoiceSystemProfile) (r : PivotTarget) : Bool :=
-  p.voices.any (·.promotes == r)
+def VoiceSystemProfile.promotesRole (p : VoiceSystemProfile) (r : PivotTarget) : Prop :=
+  ∃ v ∈ p.voices, v.promotes = r
+
+instance (p : VoiceSystemProfile) (r : PivotTarget) :
+    Decidable (p.promotesRole r) :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- Does this system distinguish among oblique pivots (locative,
     instrumental, benefactive, circumstantial)? -/
-def VoiceSystemProfile.distinguishesObliques (p : VoiceSystemProfile) : Bool :=
-  p.voices.any (λ v => match v.promotes with
-    | .locative | .instrumental | .benefactive | .circumstantial => true
-    | _ => false)
+def VoiceSystemProfile.distinguishesObliques (p : VoiceSystemProfile) : Prop :=
+  ∃ v ∈ p.voices,
+    v.promotes = .locative ∨ v.promotes = .instrumental ∨
+    v.promotes = .benefactive ∨ v.promotes = .circumstantial
+
+instance (p : VoiceSystemProfile) : Decidable p.distinguishesObliques :=
+  inferInstanceAs (Decidable (∃ _ ∈ _, _))
 
 /-- Is this a simple active/passive system (exactly agent + patient)? -/
-def VoiceSystemProfile.isActivePassive (p : VoiceSystemProfile) : Bool :=
-  p.voiceCount == 2 &&
-  p.promotesRole .agent &&
+def VoiceSystemProfile.isActivePassive (p : VoiceSystemProfile) : Prop :=
+  p.voiceCount = 2 ∧
+  p.promotesRole .agent ∧
   p.promotesRole .patient
+
+instance (p : VoiceSystemProfile) : Decidable p.isActivePassive :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 /-- The set of roles promotable to pivot in this system. -/
 def VoiceSystemProfile.promotableRoles (p : VoiceSystemProfile) : List PivotTarget :=

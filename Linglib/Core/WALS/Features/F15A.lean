@@ -14,539 +14,527 @@ namespace Core.WALS.F15A
 
 /-- WALS 15A values. -/
 inductive WeightSensitiveStress where
-  | leftEdgeFirstOrSecond  -- Left-edge: First or second (37 languages)
-  | leftOrientedOneOfTheFirstThree  -- Left-oriented: One of the first three (2 languages)
-  | rightEdgeUltimateOrPenultimate  -- Right-edge: Ultimate or penultimate (65 languages)
-  | rightOrientedOneOfTheLastThree  -- Right-oriented: One of the last three (27 languages)
-  | unboundedStressCanBeAnywhere  -- Unbounded: Stress can be anywhere (54 languages)
-  | combinedRightEdgeAndUnbounded  -- Combined: Right-edge and unbounded (8 languages)
-  | notPredictable  -- Not predictable (26 languages)
-  | fixedStress  -- Fixed stress (no weight-sensitivity) (281 languages)
-  deriving DecidableEq, Repr
+  /-- Left-edge: First or second (37 languages). -/
+  | leftEdgeFirstOrSecond
+  /-- Left-oriented: One of the first three (2 languages). -/
+  | leftOrientedOneOfTheFirstThree
+  /-- Right-edge: Ultimate or penultimate (65 languages). -/
+  | rightEdgeUltimateOrPenultimate
+  /-- Right-oriented: One of the last three (27 languages). -/
+  | rightOrientedOneOfTheLastThree
+  /-- Unbounded: Stress can be anywhere (54 languages). -/
+  | unboundedStressCanBeAnywhere
+  /-- Combined: Right-edge and unbounded (8 languages). -/
+  | combinedRightEdgeAndUnbounded
+  /-- Not predictable (26 languages). -/
+  | notPredictable
+  /-- Fixed stress (no weight-sensitivity) (281 languages). -/
+  | fixedStress
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 15A dataset (500 languages). -/
 def allData : List (Datapoint WeightSensitiveStress) :=
-  [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .notPredictable }
-  , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .fixedStress }
-  , { walsCode := "acg", language := "Achagua", iso := "aca", value := .fixedStress }
-  , { walsCode := "agu", language := "Aguacatec", iso := "agu", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "akl", language := "Aklanon", iso := "akl", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .combinedRightEdgeAndUnbounded }
-  , { walsCode := "alw", language := "Alawa", iso := "alh", value := .fixedStress }
-  , { walsCode := "aln", language := "Alune", iso := "alp", value := .fixedStress }
-  , { walsCode := "atq", language := "Alutiiq", iso := "ems", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "aly", language := "Alyawarra", iso := "aly", value := .fixedStress }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "agt", language := "Anguthimri", iso := "awg", value := .fixedStress }
-  , { walsCode := "apu", language := "Apurinã", iso := "apu", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "ahs", language := "Arabic (Bani-Hassan)", iso := "mey", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "abe", language := "Arabic (Beirut)", iso := "apc", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "ael", language := "Arabic (Eastern Libyan)", iso := "ayl", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "arg", language := "Arabic (Gulf)", iso := "afb", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "arh", language := "Arabic (Hijazi)", iso := "acw", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "arl", language := "Arabic (Lebanese)", iso := "apc", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "arv", language := "Arabic (Negev)", iso := "ajp", value := .combinedRightEdgeAndUnbounded }
-  , { walsCode := "apa", language := "Arabic (Palestinian)", iso := "ajp", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "asy", language := "Arabic (Syrian)", iso := "apc", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "atb", language := "Aralle-Tabulahan", iso := "atq", value := .fixedStress }
-  , { walsCode := "ana", language := "Araona", iso := "aro", value := .fixedStress }
-  , { walsCode := "arp", language := "Arapesh (Mountain)", iso := "ape", value := .fixedStress }
-  , { walsCode := "arc", language := "Archi", iso := "aqc", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "arm", language := "Armenian (Eastern)", iso := "hye", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "aro", language := "Arosi", iso := "aia", value := .fixedStress }
-  , { walsCode := "awe", language := "Arrernte (Western)", iso := "are", value := .fixedStress }
-  , { walsCode := "asm", language := "Asmat", iso := "cns", value := .fixedStress }
-  , { walsCode := "au", language := "Au", iso := "avt", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "ava", language := "Avar", iso := "ava", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "awd", language := "Awadhi", iso := "awa", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "awt", language := "Awtuw", iso := "kmn", value := .fixedStress }
-  , { walsCode := "aym", language := "Aymara (Central)", iso := "ayr", value := .fixedStress }
-  , { walsCode := "bdm", language := "Badimaya", iso := "bia", value := .fixedStress }
-  , { walsCode := "bag", language := "Bagirmi", iso := "bmi", value := .fixedStress }
-  , { walsCode := "bgv", language := "Bagvalal", iso := "kva", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "blk", language := "Balantak", iso := "blz", value := .fixedStress }
-  , { walsCode := "bal", language := "Balinese", iso := "ban", value := .fixedStress }
-  , { walsCode := "bbm", language := "Bambam", iso := "ptu", value := .fixedStress }
-  , { walsCode := "bna", language := "Banawá", iso := "jaa", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "bwa", language := "Bandjalang (Waalubal)", iso := "bdy", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "bgg", language := "Banggai", iso := "bgz", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "bnl", language := "Banggarla", iso := "bjb", value := .fixedStress }
-  , { walsCode := "bnt", language := "Bantik", iso := "bnq", value := .fixedStress }
-  , { walsCode := "bae", language := "Baré", iso := "bae", value := .fixedStress }
-  , { walsCode := "bsk", language := "Bashkir", iso := "bak", value := .fixedStress }
-  , { walsCode := "bqi", language := "Basque (Basaburua and Imoz)", iso := "eus", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "bqb", language := "Basque (Bidasoa Valley)", iso := "eus", value := .fixedStress }
-  , { walsCode := "bqg", language := "Basque (Gernica)", iso := "eus", value := .notPredictable }
-  , { walsCode := "bqh", language := "Basque (Hondarribia)", iso := "eus", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "bql", language := "Basque (Lekeitio)", iso := "eus", value := .fixedStress }
-  , { walsCode := "bqn", language := "Basque (Northern High Navarrese)", iso := "eus", value := .fixedStress }
-  , { walsCode := "bqo", language := "Basque (Oñati)", iso := "eus", value := .fixedStress }
-  , { walsCode := "bqr", language := "Basque (Roncalese)", iso := "eus", value := .fixedStress }
-  , { walsCode := "bqs", language := "Basque (Sakana)", iso := "eus", value := .fixedStress }
-  , { walsCode := "bso", language := "Basque (Souletin)", iso := "eus", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "bqz", language := "Basque (Zeberio)", iso := "eus", value := .notPredictable }
-  , { walsCode := "bkr", language := "Batak (Karo)", iso := "btx", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "bto", language := "Batak (Toba)", iso := "bbc", value := .fixedStress }
-  , { walsCode := "baw", language := "Bawm", iso := "bgr", value := .fixedStress }
-  , { walsCode := "bej", language := "Beja", iso := "bej", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "ben", language := "Bengali", iso := "ben", value := .fixedStress }
-  , { walsCode := "bma", language := "Berber (Middle Atlas)", iso := "tzm", value := .fixedStress }
-  , { walsCode := "bho", language := "Bhojpuri", iso := "bho", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "bik", language := "Biak", iso := "bhw", value := .fixedStress }
-  , { walsCode := "bkl", language := "Bikol", iso := "bcl", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "bim", language := "Bima", iso := "bhp", value := .fixedStress }
-  , { walsCode := "bbw", language := "Bininj Gun-Wok", iso := "gup", value := .fixedStress }
-  , { walsCode := "bre", language := "Breton", iso := "bre", value := .fixedStress }
-  , { walsCode := "bug", language := "Bugis", iso := "bug", value := .fixedStress }
-  , { walsCode := "bui", language := "Buli (in Indonesia)", iso := "bzq", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "bua", language := "Burarra", iso := "bvr", value := .fixedStress }
-  , { walsCode := "buu", language := "Buru", iso := "mhs", value := .fixedStress }
-  , { walsCode := "bur", language := "Burushaski", iso := "bsk", value := .notPredictable }
-  , { walsCode := "cah", language := "Cahuilla", iso := "chl", value := .fixedStress }
-  , { walsCode := "cpa", language := "Campa Pajonal Asheninca", iso := "cjo", value := .notPredictable }
-  , { walsCode := "cnl", language := "Canela", iso := "ram", value := .fixedStress }
-  , { walsCode := "cap", language := "Capanahua", iso := "kaq", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "car", language := "Carib", iso := "car", value := .combinedRightEdgeAndUnbounded }
-  , { walsCode := "ctl", language := "Catalan", iso := "cat", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "cav", language := "Cavineña", iso := "cav", value := .fixedStress }
-  , { walsCode := "cyg", language := "Cayuga", iso := "cay", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "cyv", language := "Cayuvava", iso := "cyb", value := .fixedStress }
-  , { walsCode := "ceb", language := "Cebuano", iso := "ceb", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "cya", language := "Chatino (Yaitepec)", iso := "ctp", value := .fixedStress }
-  , { walsCode := "cpn", language := "Chepang", iso := "cdm", value := .fixedStress }
-  , { walsCode := "cle", language := "Chinantec (Lealao)", iso := "cle", value := .notPredictable }
-  , { walsCode := "cct", language := "Choctaw", iso := "cho", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "chk", language := "Chukchi", iso := "ckt", value := .fixedStress }
-  , { walsCode := "chv", language := "Chuvash", iso := "chv", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "cmn", language := "Comanche", iso := "com", value := .fixedStress }
-  , { walsCode := "coo", language := "Coos (Hanis)", iso := "csz", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "crn", language := "Cornish", iso := "cor", value := .fixedStress }
-  , { walsCode := "cre", language := "Cree (Plains)", iso := "crk", value := .fixedStress }
-  , { walsCode := "crk", language := "Creek", iso := "mus", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "cub", language := "Cubeo", iso := "cub", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "cup", language := "Cupeño", iso := "cup", value := .fixedStress }
-  , { walsCode := "cze", language := "Czech", iso := "ces", value := .fixedStress }
-  , { walsCode := "daa", language := "Da'a", iso := "kzf", value := .fixedStress }
-  , { walsCode := "dak", language := "Dakota", iso := "dak", value := .fixedStress }
-  , { walsCode := "dni", language := "Dani (Lower Grand Valley)", iso := "dni", value := .fixedStress }
-  , { walsCode := "dsh", language := "Danish", iso := "dan", value := .combinedRightEdgeAndUnbounded }
-  , { walsCode := "dri", language := "Dari", iso := "prs", value := .fixedStress }
-  , { walsCode := "des", language := "Desano", iso := "des", value := .notPredictable }
-  , { walsCode := "dhw", language := "Dharawal", iso := "tbh", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "dhu", language := "Dhurga", iso := "dhu", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "die", language := "Diegueño (Mesa Grande)", iso := "dih", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "dio", language := "Diola-Fogny", iso := "dyo", value := .fixedStress }
-  , { walsCode := "diy", language := "Diyari", iso := "dif", value := .fixedStress }
-  , { walsCode := "djr", language := "Djaru", iso := "ddj", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "dji", language := "Djingili", iso := "jig", value := .fixedStress }
-  , { walsCode := "dob", language := "Dobel", iso := "kvo", value := .fixedStress }
-  , { walsCode := "dou", language := "Doutai", iso := "tds", value := .fixedStress }
-  , { walsCode := "dre", language := "Drehu", iso := "dhv", value := .fixedStress }
-  , { walsCode := "dut", language := "Dutch", iso := "nld", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "dyi", language := "Dyirbal", iso := "dbl", value := .fixedStress }
-  , { walsCode := "eka", language := "Ekari", iso := "ekg", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "emc", language := "Embera Chami", iso := "cmi", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "eno", language := "Enggano", iso := "eno", value := .fixedStress }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "epe", language := "Epena Pedee", iso := "sja", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "ese", language := "Ese Ejja", iso := "ese", value := .fixedStress }
-  , { walsCode := "est", language := "Estonian", iso := "ekk", value := .fixedStress }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "far", language := "Faroese", iso := "fao", value := .fixedStress }
-  , { walsCode := "fij", language := "Fijian", iso := "fij", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .fixedStress }
-  , { walsCode := "frd", language := "Fordata", iso := "frd", value := .fixedStress }
-  , { walsCode := "for", language := "Fore", iso := "for", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "glp", language := "Gaalpu", iso := "dhg", value := .fixedStress }
-  , { walsCode := "gae", language := "Gaelic (Scots)", iso := "gla", value := .fixedStress }
-  , { walsCode := "gll", language := "Galela", iso := "gbi", value := .fixedStress }
-  , { walsCode := "grr", language := "Garrwa", iso := "wrk", value := .fixedStress }
-  , { walsCode := "gay", language := "Gayo", iso := "gay", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "geo", language := "Georgian", iso := "kat", value := .fixedStress }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "gid", language := "Gidabal", iso := "gih", value := .fixedStress }
-  , { walsCode := "god", language := "Godoberi", iso := "gdo", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "goo", language := "Gooniyandi", iso := "gni", value := .fixedStress }
-  , { walsCode := "gor", language := "Gorowa", iso := "gow", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "grb", language := "Grebo", iso := "grj", value := .notPredictable }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .fixedStress }
-  , { walsCode := "grw", language := "Greenlandic (West)", iso := "kal", value := .fixedStress }
-  , { walsCode := "gua", language := "Guaraní", iso := "gug", value := .fixedStress }
-  , { walsCode := "gug", language := "Gugada", iso := "ktd", value := .fixedStress }
-  , { walsCode := "guj", language := "Gujarati", iso := "guj", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "guu", language := "Guugu Yimidhirr", iso := "kky", value := .fixedStress }
-  , { walsCode := "hno", language := "Haida (Northern)", iso := "hdn", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "hln", language := "Halang", iso := "hal", value := .fixedStress }
-  , { walsCode := "hnn", language := "Hanunóo", iso := "hnn", value := .fixedStress }
-  , { walsCode := "haw", language := "Hawaiian", iso := "haw", value := .fixedStress }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .fixedStress }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "hix", language := "Hixkaryana", iso := "hix", value := .notPredictable }
-  , { walsCode := "hop", language := "Hopi", iso := "hop", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "htc", language := "Huastec", iso := "hus", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "hmu", language := "Huitoto (Muinane)", iso := "hux", value := .fixedStress }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .fixedStress }
-  , { walsCode := "hzb", language := "Hunzib", iso := "huz", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "iaa", language := "Iaai", iso := "iai", value := .fixedStress }
-  , { walsCode := "ice", language := "Icelandic", iso := "isl", value := .fixedStress }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .fixedStress }
-  , { walsCode := "iga", language := "Inga", iso := "inb", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "ing", language := "Ingush", iso := "inh", value := .fixedStress }
-  , { walsCode := "irq", language := "Iraqw", iso := "irk", value := .combinedRightEdgeAndUnbounded }
-  , { walsCode := "irr", language := "Irarutu", iso := "irh", value := .fixedStress }
-  , { walsCode := "iri", language := "Irish", iso := "gle", value := .fixedStress }
-  , { walsCode := "irm", language := "Irish (Munster)", iso := "gle", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "ita", language := "Italian", iso := "ita", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "jak", language := "Jakaltek", iso := "jac", value := .fixedStress }
-  , { walsCode := "jaq", language := "Jaqaru", iso := "jqr", value := .fixedStress }
-  , { walsCode := "jav", language := "Javanese", iso := "jav", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "jum", language := "Júma", iso := "jua", value := .fixedStress }
-  , { walsCode := "kli", language := "Kaili", iso := "lew", value := .fixedStress }
-  , { walsCode := "kaw", language := "Kaiwá", iso := "kgk", value := .fixedStress }
-  , { walsCode := "kal", language := "Kalami", iso := "gwc", value := .fixedStress }
-  , { walsCode := "klp", language := "Kalapuya", iso := "kyl", value := .fixedStress }
-  , { walsCode := "kgu", language := "Kalkatungu", iso := "ktg", value := .fixedStress }
-  , { walsCode := "kam", language := "Kambera", iso := "xbr", value := .fixedStress }
-  , { walsCode := "kra", language := "Kara (in Papua New Guinea)", iso := "leu", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "krl", language := "Karelian", iso := "krl", value := .fixedStress }
-  , { walsCode := "krk", language := "Karok", iso := "kyh", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "ksh", language := "Kashaya", iso := "kju", value := .leftOrientedOneOfTheFirstThree }
-  , { walsCode := "kaj", language := "Kaure", iso := "bpp", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "kws", language := "Kawaiisu", iso := "xaw", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "kay", language := "Kayardild", iso := "gyd", value := .fixedStress }
-  , { walsCode := "kei", language := "Kei", iso := "kei", value := .fixedStress }
-  , { walsCode := "kap", language := "Kela (Apoze)", iso := "kcl", value := .fixedStress }
-  , { walsCode := "ker", language := "Kera", iso := "ker", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "ktn", language := "Ketengban", iso := "xte", value := .notPredictable }
-  , { walsCode := "kew", language := "Kewa", iso := "kew", value := .notPredictable }
-  , { walsCode := "kha", language := "Khalkha", iso := "khk", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "khs", language := "Khasi", iso := "kha", value := .fixedStress }
-  , { walsCode := "khm", language := "Khmer", iso := "khm", value := .fixedStress }
-  , { walsCode := "kmu", language := "Khmu'", iso := "kjg", value := .fixedStress }
-  , { walsCode := "klv", language := "Kilivila", iso := "kij", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "ksr", language := "Kisar", iso := "kje", value := .fixedStress }
-  , { walsCode := "kit", language := "Kitsai", iso := "kii", value := .notPredictable }
-  , { walsCode := "klm", language := "Klamath", iso := "kla", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "koa", language := "Koasati", iso := "cku", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .fixedStress }
-  , { walsCode := "koo", language := "Kola", iso := "kvv", value := .fixedStress }
-  , { walsCode := "kop", language := "Komi-Permyak", iso := "koi", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "kon", language := "Kongo", iso := "kng", value := .fixedStress }
-  , { walsCode := "kjo", language := "Konjo", iso := "kjc", value := .fixedStress }
-  , { walsCode := "kfe", language := "Koromfe", iso := "kfz", value := .fixedStress }
-  , { walsCode := "koy", language := "Koya", iso := "kff", value := .fixedStress }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "kya", language := "Kuku-Yalanji", iso := "gvn", value := .fixedStress }
-  , { walsCode := "kuz", language := "Kulamanen", iso := "mbt", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "knm", language := "Kunama", iso := "kun", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "kjn", language := "Kunjen", iso := "kjn", value := .fixedStress }
-  , { walsCode := "kut", language := "Kutenai", iso := "kut", value := .fixedStress }
-  , { walsCode := "kuu", language := "Kuuku Ya'u", iso := "kuy", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "kwa", language := "Kwaio", iso := "kwd", value := .fixedStress }
-  , { walsCode := "kwk", language := "Kwakw'ala", iso := "kwk", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "lmh", language := "Lamaholot", iso := "slp", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "lmp", language := "Lampung", iso := "ljp", value := .fixedStress }
-  , { walsCode := "lla", language := "Lamu-Lamu", iso := "lby", value := .fixedStress }
-  , { walsCode := "lan", language := "Lango", iso := "laj", value := .fixedStress }
-  , { walsCode := "lar", language := "Laragia", iso := "lrg", value := .leftOrientedOneOfTheFirstThree }
-  , { walsCode := "lrk", language := "Larike", iso := "alo", value := .fixedStress }
-  , { walsCode := "lat", language := "Latvian", iso := "lav", value := .fixedStress }
-  , { walsCode := "lje", language := "Lauje", iso := "law", value := .fixedStress }
-  , { walsCode := "lav", language := "Lavukaleve", iso := "lvk", value := .fixedStress }
-  , { walsCode := "len", language := "Lenakel", iso := "tnl", value := .fixedStress }
-  , { walsCode := "let", language := "Leti", iso := "lti", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "lit", language := "Lithuanian", iso := "lit", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "liv", language := "Liv", iso := "liv", value := .fixedStress }
-  , { walsCode := "ara", language := "Lokono", iso := "arw", value := .fixedStress }
-  , { walsCode := "lui", language := "Luiseño", iso := "lui", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "luv", language := "Luvale", iso := "lue", value := .fixedStress }
-  , { walsCode := "myn", language := "Ma'anyan", iso := "mhy", value := .fixedStress }
-  , { walsCode := "mcd", language := "Macedonian", iso := "mkd", value := .fixedStress }
-  , { walsCode := "mac", language := "Macushi", iso := "mbc", value := .fixedStress }
-  , { walsCode := "mdm", language := "Madimadi", iso := "dmd", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "mae", language := "Mae", iso := "mmw", value := .fixedStress }
-  , { walsCode := "mne", language := "Maidu (Northeast)", iso := "nmu", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "mrs", language := "Mairasi", iso := "zrs", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "mai", language := "Maithili", iso := "mai", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "mak", language := "Makah", iso := "myh", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "mks", language := "Makassar", iso := "mak", value := .fixedStress }
-  , { walsCode := "mlc", language := "Malacca Creole", iso := "mcm", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .fixedStress }
-  , { walsCode := "mlk", language := "Malakmalak", iso := "mpb", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "mly", language := "Malay", iso := "zsm", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "mym", language := "Malayalam", iso := "mal", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "mlt", language := "Maltese", iso := "mlt", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "mam", language := "Mam", iso := "mam", value := .combinedRightEdgeAndUnbounded }
-  , { walsCode := "mms", language := "Mamasa", iso := "mqj", value := .fixedStress }
-  , { walsCode := "mnm", language := "Manam", iso := "mva", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .notPredictable }
-  , { walsCode := "myi", language := "Mangarrayi", iso := "mpc", value := .fixedStress }
-  , { walsCode := "mng", language := "Manggarai", iso := "mqy", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "mns", language := "Mansi", iso := "mns", value := .fixedStress }
-  , { walsCode := "mnj", language := "Mantjiltjara", iso := "mpj", value := .fixedStress }
-  , { walsCode := "mnx", language := "Manx", iso := "glv", value := .fixedStress }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "map", language := "Mapudungun", iso := "arn", value := .fixedStress }
-  , { walsCode := "mku", language := "Maranungku", iso := "zmr", value := .fixedStress }
-  , { walsCode := "mny", language := "Margany", iso := "zmc", value := .fixedStress }
-  , { walsCode := "mah", language := "Mari (Hill)", iso := "mrj", value := .combinedRightEdgeAndUnbounded }
-  , { walsCode := "mme", language := "Mari (Meadow)", iso := "mhr", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "mar", language := "Maricopa", iso := "mrc", value := .fixedStress }
-  , { walsCode := "mrd", language := "Marind", iso := "mrz", value := .fixedStress }
-  , { walsCode := "mrt", language := "Martuthunira", iso := "vma", value := .fixedStress }
-  , { walsCode := "mau", language := "Maung", iso := "mph", value := .fixedStress }
-  , { walsCode := "may", language := "Maybrat", iso := "ayz", value := .fixedStress }
-  , { walsCode := "myy", language := "Mayi-Yapi", iso := "xyj", value := .fixedStress }
-  , { walsCode := "mbb", language := "Mbabaram", iso := "vmb", value := .fixedStress }
-  , { walsCode := "meb", language := "Melayu Betawi", iso := "bew", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "men", language := "Menomini", iso := "mez", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "mnt", language := "Mentawai", iso := "mwv", value := .fixedStress }
-  , { walsCode := "mta", language := "Mentuh Tapuh", iso := "sdo", value := .fixedStress }
-  , { walsCode := "mea", language := "Meyah", iso := "mej", value := .notPredictable }
-  , { walsCode := "min", language := "Minangkabau", iso := "min", value := .fixedStress }
-  , { walsCode := "mis", language := "Miskito", iso := "miq", value := .fixedStress }
-  , { walsCode := "mcs", language := "Miwok (Central Sierra)", iso := "csm", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "mwn", language := "Miwok (Northern Sierra)", iso := "nsq", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "mss", language := "Miwok (Southern Sierra)", iso := "skd", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "moh", language := "Mohawk", iso := "moh", value := .fixedStress }
-  , { walsCode := "mgd", language := "Mongondow", iso := "mog", value := .fixedStress }
-  , { walsCode := "mmo", language := "Mordvin (Moksha)", iso := "mdf", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "mna", language := "Muna", iso := "mnb", value := .fixedStress }
-  , { walsCode := "mun", language := "Mundari", iso := "unr", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "mse", language := "Munsee", iso := "umu", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "mrk", language := "Murik", iso := "mtf", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "mrl", language := "Murle", iso := "mur", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "mrw", language := "Muruwari", iso := "zmu", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "nht", language := "Nahuatl (Tetelcingo)", iso := "nhg", value := .fixedStress }
-  , { walsCode := "nbb", language := "Nambas (Big)", iso := "nmb", value := .fixedStress }
-  , { walsCode := "nmb", language := "Nambikuára (Southern)", iso := "nab", value := .fixedStress }
-  , { walsCode := "npu", language := "Napu", iso := "npy", value := .fixedStress }
-  , { walsCode := "ndy", language := "Ndyuka", iso := "djk", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "ntu", language := "Nenets", iso := "yrk", value := .fixedStress }
-  , { walsCode := "nne", language := "Nengone", iso := "nen", value := .fixedStress }
-  , { walsCode := "naj", language := "Neo-Aramaic (Arbel Jewish)", iso := "aij", value := .fixedStress }
-  , { walsCode := "nsy", language := "Neo-Aramaic (Assyrian)", iso := "aii", value := .fixedStress }
-  , { walsCode := "nep", language := "Nepali", iso := "npi", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "nez", language := "Nez Perce", iso := "nez", value := .notPredictable }
-  , { walsCode := "ngd", language := "Ngad'a", iso := "nxg", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "ngl", language := "Ngalakan", iso := "nig", value := .fixedStress }
-  , { walsCode := "nkb", language := "Ngalkbun", iso := "ngk", value := .fixedStress }
-  , { walsCode := "ngr", language := "Ngarinyeri", iso := "nay", value := .fixedStress }
-  , { walsCode := "ngi", language := "Ngiyambaa", iso := "wyb", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "nia", language := "Nias", iso := "nia", value := .fixedStress }
-  , { walsCode := "nin", language := "Ningil", iso := "niz", value := .fixedStress }
-  , { walsCode := "niv", language := "Nivkh", iso := "niv", value := .fixedStress }
-  , { walsCode := "nor", language := "Norwegian", iso := "nor", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "nua", language := "Nuaulu", iso := "nxl", value := .fixedStress }
-  , { walsCode := "nbd", language := "Nubian (Dongolese)", iso := "dgl", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "nug", language := "Nunggubuyu", iso := "nuy", value := .fixedStress }
-  , { walsCode := "nbo", language := "Nyambo", iso := "now", value := .fixedStress }
-  , { walsCode := "nya", language := "Nyawaygi", iso := "nyt", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "nju", language := "Nyungar", iso := "nys", value := .fixedStress }
-  , { walsCode := "obk", language := "Obokuitai", iso := "afz", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "occ", language := "Occitan", iso := "oci", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "olm", language := "Oloh Mangtangai", iso := "nij", value := .fixedStress }
-  , { walsCode := "ond", language := "Oneida", iso := "one", value := .fixedStress }
-  , { walsCode := "ono", language := "Ono", iso := "ons", value := .fixedStress }
-  , { walsCode := "orc", language := "Oroch", iso := "oac", value := .fixedStress }
-  , { walsCode := "oss", language := "Ossetic", iso := "oss", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "oto", language := "Oto", iso := "iow", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "pkn", language := "Paakantyi", iso := "drl", value := .fixedStress }
-  , { walsCode := "pms", language := "Paamese", iso := "pma", value := .fixedStress }
-  , { walsCode := "pad", language := "Padoe", iso := "pdo", value := .fixedStress }
-  , { walsCode := "pag", language := "Pagu", iso := "pgu", value := .fixedStress }
-  , { walsCode := "put", language := "Paiute (Southern)", iso := "ute", value := .fixedStress }
-  , { walsCode := "pai", language := "Paiwan", iso := "pwn", value := .fixedStress }
-  , { walsCode := "pna", language := "Pamona", iso := "pmf", value := .fixedStress }
-  , { walsCode := "psh", language := "Pashto", iso := "pst", value := .notPredictable }
-  , { walsCode := "psm", language := "Passamaquoddy-Maliseet", iso := "pqm", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "plh", language := "Paulohi", iso := "plh", value := .fixedStress }
-  , { walsCode := "pau", language := "Paumarí", iso := "pad", value := .fixedStress }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .fixedStress }
-  , { walsCode := "pin", language := "Pintupi", iso := "piu", value := .fixedStress }
-  , { walsCode := "prh", language := "Pirahã", iso := "myp", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "pir", language := "Piro", iso := "pib", value := .fixedStress }
-  , { walsCode := "pit", language := "Pitjantjatjara", iso := "pjt", value := .fixedStress }
-  , { walsCode := "ppi", language := "Pitta Pitta", iso := "pit", value := .fixedStress }
-  , { walsCode := "pkm", language := "Pokomchí", iso := "poh", value := .fixedStress }
-  , { walsCode := "plb", language := "Polabian", iso := "pox", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "pol", language := "Polish", iso := "pol", value := .fixedStress }
-  , { walsCode := "pme", language := "Pomo (Eastern)", iso := "peb", value := .fixedStress }
-  , { walsCode := "por", language := "Portuguese", iso := "por", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "plp", language := "Pulopetak", iso := "nij", value := .fixedStress }
-  , { walsCode := "pul", language := "Puluwat", iso := "puw", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "pur", language := "Purépecha", iso := "tsz", value := .fixedStress }
-  , { walsCode := "que", language := "Quechan", iso := "yum", value := .fixedStress }
-  , { walsCode := "qay", language := "Quechua (Ayacucho)", iso := "quy", value := .fixedStress }
-  , { walsCode := "qim", language := "Quechua (Imbabura)", iso := "qvi", value := .fixedStress }
-  , { walsCode := "qch", language := "Quiché", iso := "quc", value := .fixedStress }
-  , { walsCode := "ram", language := "Rama", iso := "rma", value := .notPredictable }
-  , { walsCode := "rap", language := "Rapanui", iso := "rap", value := .fixedStress }
-  , { walsCode := "rit", language := "Ritharngu", iso := "rit", value := .fixedStress }
-  , { walsCode := "rnr", language := "Romani (North Russian)", iso := "rml", value := .fixedStress }
-  , { walsCode := "rom", language := "Romanian", iso := "ron", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "rsm", language := "Romansch (Surmeiran)", iso := "roh", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "ror", language := "Roro", iso := "rro", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "rti", language := "Roti", iso := "twu", value := .fixedStress }
-  , { walsCode := "rot", language := "Rotuman", iso := "rtm", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "sno", language := "Saami (Northern)", iso := "sme", value := .fixedStress }
-  , { walsCode := "sao", language := "Saho", iso := "ssy", value := .notPredictable }
-  , { walsCode := "sah", language := "Sahu", iso := "saj", value := .fixedStress }
-  , { walsCode := "sak", language := "Sakao", iso := "sku", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "sps", language := "Salish (Southern Puget Sound)", iso := "slh", value := .notPredictable }
-  , { walsCode := "sbg", language := "Sama (Balangingi)", iso := "sse", value := .fixedStress }
-  , { walsCode := "sgr", language := "Sangir", iso := "sxn", value := .fixedStress }
-  , { walsCode := "snm", language := "Sanuma", iso := "xsu", value := .fixedStress }
-  , { walsCode := "srd", language := "Sardinian", iso := "sro", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "swi", language := "Sawai", iso := "szw", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "sed", language := "Sedang", iso := "sed", value := .fixedStress }
-  , { walsCode := "sru", language := "Selaru", iso := "slu", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "sly", language := "Selayar", iso := "sly", value := .fixedStress }
-  , { walsCode := "slp", language := "Selepet", iso := "spl", value := .fixedStress }
-  , { walsCode := "skp", language := "Selkup", iso := "sel", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "sml", language := "Semelai", iso := "sza", value := .fixedStress }
-  , { walsCode := "snc", language := "Seneca", iso := "see", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "snt", language := "Sentani", iso := "set", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "scr", language := "Serbian-Croatian", iso := "hbs", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "ser", language := "Seri", iso := "sei", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "shk", language := "Shipibo-Konibo", iso := "shp", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "shi", language := "Shiriana", iso := "shb", value := .fixedStress }
-  , { walsCode := "skr", language := "Sikaritai", iso := "tty", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "skl", language := "Sikule", iso := "skh", value := .fixedStress }
-  , { walsCode := "sdh", language := "Sindhi", iso := "snd", value := .combinedRightEdgeAndUnbounded }
-  , { walsCode := "sio", language := "Sio", iso := "xsi", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "sro", language := "Siroi", iso := "ssd", value := .fixedStress }
-  , { walsCode := "sla", language := "Slave", iso := "den", value := .notPredictable }
-  , { walsCode := "svk", language := "Slovak", iso := "slk", value := .fixedStress }
-  , { walsCode := "slo", language := "Slovene", iso := "slv", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "svc", language := "Slovincian", iso := "csb", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "srb", language := "Sorbian", iso := "", value := .fixedStress }
-  , { walsCode := "sea", language := "Southeast Ambrym", iso := "tvk", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "spo", language := "Spokane", iso := "spo", value := .notPredictable }
-  , { walsCode := "squ", language := "Squamish", iso := "squ", value := .fixedStress }
-  , { walsCode := "sto", language := "Stoney", iso := "sto", value := .fixedStress }
-  , { walsCode := "sun", language := "Sundanese", iso := "sun", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "sup", language := "Supyire", iso := "spp", value := .fixedStress }
-  , { walsCode := "swa", language := "Swahili", iso := "swh", value := .fixedStress }
-  , { walsCode := "swe", language := "Swedish", iso := "swe", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "tab", language := "Taba", iso := "mky", value := .fixedStress }
-  , { walsCode := "tbr", language := "Tabaru", iso := "tby", value := .fixedStress }
-  , { walsCode := "tbl", language := "Tabla", iso := "tnm", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "tac", language := "Tacana", iso := "tna", value := .fixedStress }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .fixedStress }
-  , { walsCode := "tah", language := "Tahitian", iso := "tah", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "taj", language := "Tajik", iso := "tgk", value := .fixedStress }
-  , { walsCode := "tld", language := "Talaud", iso := "tld", value := .fixedStress }
-  , { walsCode := "tns", language := "Tanna (Southwest)", iso := "nwi", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "tgw", language := "Tarangan (West)", iso := "txn", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "tas", language := "Tashlhiyt", iso := "shi", value := .fixedStress }
-  , { walsCode := "taw", language := "Tawala", iso := "tbo", value := .fixedStress }
-  , { walsCode := "teh", language := "Tehuelche", iso := "teh", value := .fixedStress }
-  , { walsCode := "tps", language := "Tepehuan (Southeastern)", iso := "stp", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "thp", language := "Thaypan", iso := "typ", value := .fixedStress }
-  , { walsCode := "tib", language := "Tibetan (Standard Spoken)", iso := "bod", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "tgk", language := "Tigak", iso := "tgc", value := .fixedStress }
-  , { walsCode := "tse", language := "Timorese", iso := "aoz", value := .fixedStress }
-  , { walsCode := "tmc", language := "Timucua", iso := "tjm", value := .fixedStress }
-  , { walsCode := "try", language := "Tiruray", iso := "tiy", value := .fixedStress }
-  , { walsCode := "tiw", language := "Tiwi", iso := "tiw", value := .fixedStress }
-  , { walsCode := "tlo", language := "Tobelo", iso := "tlb", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "tol", language := "Tol", iso := "jic", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "tla", language := "Tolai", iso := "ksd", value := .fixedStress }
-  , { walsCode := "tno", language := "Tondano", iso := "tdn", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "tng", language := "Tongan", iso := "ton", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "tnt", language := "Tontemboan", iso := "tnt", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "trd", language := "Toraja", iso := "sda", value := .fixedStress }
-  , { walsCode := "tor", language := "Toratán", iso := "rth", value := .fixedStress }
-  , { walsCode := "tru", language := "Trumai", iso := "tpy", value := .fixedStress }
-  , { walsCode := "tsa", language := "Tsakhur", iso := "tkr", value := .fixedStress }
-  , { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .fixedStress }
-  , { walsCode := "tua", language := "Tuamotuan", iso := "pmt", value := .fixedStress }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .fixedStress }
-  , { walsCode := "tun", language := "Tunica", iso := "tun", value := .fixedStress }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "tzo", language := "Tzotzil", iso := "tzo", value := .fixedStress }
-  , { walsCode := "tbb", language := "Tübatulabal", iso := "tub", value := .fixedStress }
-  , { walsCode := "tsh", language := "Tümpisa Shoshone", iso := "par", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "uli", language := "Ulithian", iso := "uli", value := .notPredictable }
-  , { walsCode := "uma", language := "Uma", iso := "ppk", value := .fixedStress }
-  , { walsCode := "unm", language := "Unami", iso := "unm", value := .rightOrientedOneOfTheLastThree }
-  , { walsCode := "ung", language := "Ungarinjin", iso := "ung", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "uhi", language := "Uradhi", iso := "urf", value := .fixedStress }
-  , { walsCode := "urk", language := "Urubú-Kaapor", iso := "urb", value := .fixedStress }
-  , { walsCode := "usa", language := "Usan", iso := "wnu", value := .notPredictable }
-  , { walsCode := "uzn", language := "Uzbek (Northern)", iso := "uzn", value := .fixedStress }
-  , { walsCode := "vot", language := "Votic", iso := "vot", value := .fixedStress }
-  , { walsCode := "wah", language := "Wahgi", iso := "", value := .fixedStress }
-  , { walsCode := "wlm", language := "Walmatjari", iso := "wmt", value := .fixedStress }
-  , { walsCode := "wam", language := "Wambaya", iso := "wmb", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "wbn", language := "Wambon", iso := "wms", value := .fixedStress }
-  , { walsCode := "wan", language := "Wangkumara", iso := "xwk", value := .fixedStress }
-  , { walsCode := "wao", language := "Waorani", iso := "auc", value := .fixedStress }
-  , { walsCode := "wra", language := "Warao", iso := "wba", value := .fixedStress }
-  , { walsCode := "wrd", language := "Wardaman", iso := "wrr", value := .fixedStress }
-  , { walsCode := "war", language := "Wari'", iso := "pav", value := .fixedStress }
-  , { walsCode := "wrl", language := "Warlpiri", iso := "wbp", value := .fixedStress }
-  , { walsCode := "wrg", language := "Warrgamay", iso := "wgy", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "wel", language := "Welsh", iso := "cym", value := .fixedStress }
-  , { walsCode := "wer", language := "Weri", iso := "wer", value := .fixedStress }
-  , { walsCode := "wet", language := "Wetan", iso := "lex", value := .fixedStress }
-  , { walsCode := "wic", language := "Wichita", iso := "wic", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "wch", language := "Wichí", iso := "mzh", value := .fixedStress }
-  , { walsCode := "wnb", language := "Winnebago", iso := "win", value := .fixedStress }
-  , { walsCode := "wiy", language := "Wiyot", iso := "wiy", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "woi", language := "Woisika", iso := "woi", value := .notPredictable }
-  , { walsCode := "wlo", language := "Wolio", iso := "wlo", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "ymd", language := "Yamdena", iso := "jmd", value := .fixedStress }
-  , { walsCode := "yan", language := "Yana", iso := "ynn", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "yny", language := "Yanyuwa", iso := "jao", value := .fixedStress }
-  , { walsCode := "yap", language := "Yapese", iso := "yap", value := .rightEdgeUltimateOrPenultimate }
-  , { walsCode := "yaq", language := "Yaqui", iso := "yaq", value := .fixedStress }
-  , { walsCode := "ywl", language := "Yawelmani", iso := "yok", value := .fixedStress }
-  , { walsCode := "yzv", language := "Yazva", iso := "kpv", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "yel", language := "Yelî Dnye", iso := "yle", value := .fixedStress }
-  , { walsCode := "yid", language := "Yidiny", iso := "yii", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "yil", language := "Yil", iso := "yll", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "yim", language := "Yimas", iso := "yee", value := .fixedStress }
-  , { walsCode := "yin", language := "Yindjibarndi", iso := "yij", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "yir", language := "Yir Yoront", iso := "yyr", value := .fixedStress }
-  , { walsCode := "yuc", language := "Yuchi", iso := "yuc", value := .notPredictable }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "ypk", language := "Yup'ik (Central)", iso := "esu", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "ych", language := "Yup'ik (Chevak)", iso := "esu", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "yun", language := "Yup'ik (Norton Sound)", iso := "esu", value := .leftEdgeFirstOrSecond }
-  , { walsCode := "ysl", language := "Yupik (St. Lawrence Island)", iso := "ess", value := .notPredictable }
-  , { walsCode := "yuw", language := "Yuwaalaraay", iso := "kld", value := .unboundedStressCanBeAnywhere }
-  , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .fixedStress }
-  , { walsCode := "zul", language := "Zulu", iso := "zul", value := .fixedStress }
-  , { walsCode := "zun", language := "Zuni", iso := "zun", value := .fixedStress }
+  [ { walsCode := "abk", iso := "abk", value := .notPredictable }
+  , { walsCode := "ace", iso := "ace", value := .fixedStress }
+  , { walsCode := "acg", iso := "aca", value := .fixedStress }
+  , { walsCode := "agu", iso := "agu", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "akl", iso := "akl", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "ala", iso := "amp", value := .combinedRightEdgeAndUnbounded }
+  , { walsCode := "alw", iso := "alh", value := .fixedStress }
+  , { walsCode := "aln", iso := "alp", value := .fixedStress }
+  , { walsCode := "atq", iso := "ems", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "aly", iso := "aly", value := .fixedStress }
+  , { walsCode := "ame", iso := "aey", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "agt", iso := "awg", value := .fixedStress }
+  , { walsCode := "apu", iso := "apu", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "ahs", iso := "mey", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "abe", iso := "apc", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "ael", iso := "ayl", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "aeg", iso := "arz", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "arg", iso := "afb", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "arh", iso := "acw", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "arl", iso := "apc", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "arv", iso := "ajp", value := .combinedRightEdgeAndUnbounded }
+  , { walsCode := "apa", iso := "ajp", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "asy", iso := "apc", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "atb", iso := "atq", value := .fixedStress }
+  , { walsCode := "ana", iso := "aro", value := .fixedStress }
+  , { walsCode := "arp", iso := "ape", value := .fixedStress }
+  , { walsCode := "arc", iso := "aqc", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "arm", iso := "hye", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "aro", iso := "aia", value := .fixedStress }
+  , { walsCode := "awe", iso := "are", value := .fixedStress }
+  , { walsCode := "asm", iso := "cns", value := .fixedStress }
+  , { walsCode := "au", iso := "avt", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "ava", iso := "ava", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "awd", iso := "awa", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "awt", iso := "kmn", value := .fixedStress }
+  , { walsCode := "aym", iso := "ayr", value := .fixedStress }
+  , { walsCode := "bdm", iso := "bia", value := .fixedStress }
+  , { walsCode := "bag", iso := "bmi", value := .fixedStress }
+  , { walsCode := "bgv", iso := "kva", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "blk", iso := "blz", value := .fixedStress }
+  , { walsCode := "bal", iso := "ban", value := .fixedStress }
+  , { walsCode := "bbm", iso := "ptu", value := .fixedStress }
+  , { walsCode := "bna", iso := "jaa", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "bwa", iso := "bdy", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "bgg", iso := "bgz", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "bnl", iso := "bjb", value := .fixedStress }
+  , { walsCode := "bnt", iso := "bnq", value := .fixedStress }
+  , { walsCode := "bae", iso := "bae", value := .fixedStress }
+  , { walsCode := "bsk", iso := "bak", value := .fixedStress }
+  , { walsCode := "bqi", iso := "eus", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "bqb", iso := "eus", value := .fixedStress }
+  , { walsCode := "bqg", iso := "eus", value := .notPredictable }
+  , { walsCode := "bqh", iso := "eus", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "bql", iso := "eus", value := .fixedStress }
+  , { walsCode := "bqn", iso := "eus", value := .fixedStress }
+  , { walsCode := "bqo", iso := "eus", value := .fixedStress }
+  , { walsCode := "bqr", iso := "eus", value := .fixedStress }
+  , { walsCode := "bqs", iso := "eus", value := .fixedStress }
+  , { walsCode := "bso", iso := "eus", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "bqz", iso := "eus", value := .notPredictable }
+  , { walsCode := "bkr", iso := "btx", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "bto", iso := "bbc", value := .fixedStress }
+  , { walsCode := "baw", iso := "bgr", value := .fixedStress }
+  , { walsCode := "bej", iso := "bej", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "ben", iso := "ben", value := .fixedStress }
+  , { walsCode := "bma", iso := "tzm", value := .fixedStress }
+  , { walsCode := "bho", iso := "bho", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "bik", iso := "bhw", value := .fixedStress }
+  , { walsCode := "bkl", iso := "bcl", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "bim", iso := "bhp", value := .fixedStress }
+  , { walsCode := "bbw", iso := "gup", value := .fixedStress }
+  , { walsCode := "bre", iso := "bre", value := .fixedStress }
+  , { walsCode := "bug", iso := "bug", value := .fixedStress }
+  , { walsCode := "bui", iso := "bzq", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "bua", iso := "bvr", value := .fixedStress }
+  , { walsCode := "buu", iso := "mhs", value := .fixedStress }
+  , { walsCode := "bur", iso := "bsk", value := .notPredictable }
+  , { walsCode := "cah", iso := "chl", value := .fixedStress }
+  , { walsCode := "cpa", iso := "cjo", value := .notPredictable }
+  , { walsCode := "cnl", iso := "ram", value := .fixedStress }
+  , { walsCode := "cap", iso := "kaq", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "car", iso := "car", value := .combinedRightEdgeAndUnbounded }
+  , { walsCode := "ctl", iso := "cat", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "cav", iso := "cav", value := .fixedStress }
+  , { walsCode := "cyg", iso := "cay", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "cyv", iso := "cyb", value := .fixedStress }
+  , { walsCode := "ceb", iso := "ceb", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "cha", iso := "cha", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "cya", iso := "ctp", value := .fixedStress }
+  , { walsCode := "cpn", iso := "cdm", value := .fixedStress }
+  , { walsCode := "cle", iso := "cle", value := .notPredictable }
+  , { walsCode := "cct", iso := "cho", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "chk", iso := "ckt", value := .fixedStress }
+  , { walsCode := "chv", iso := "chv", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "cmn", iso := "com", value := .fixedStress }
+  , { walsCode := "coo", iso := "csz", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "crn", iso := "cor", value := .fixedStress }
+  , { walsCode := "cre", iso := "crk", value := .fixedStress }
+  , { walsCode := "crk", iso := "mus", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "cub", iso := "cub", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "cup", iso := "cup", value := .fixedStress }
+  , { walsCode := "cze", iso := "ces", value := .fixedStress }
+  , { walsCode := "daa", iso := "kzf", value := .fixedStress }
+  , { walsCode := "dak", iso := "dak", value := .fixedStress }
+  , { walsCode := "dni", iso := "dni", value := .fixedStress }
+  , { walsCode := "dsh", iso := "dan", value := .combinedRightEdgeAndUnbounded }
+  , { walsCode := "dri", iso := "prs", value := .fixedStress }
+  , { walsCode := "des", iso := "des", value := .notPredictable }
+  , { walsCode := "dhw", iso := "tbh", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "dhu", iso := "dhu", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "die", iso := "dih", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "dio", iso := "dyo", value := .fixedStress }
+  , { walsCode := "diy", iso := "dif", value := .fixedStress }
+  , { walsCode := "djr", iso := "ddj", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "dji", iso := "jig", value := .fixedStress }
+  , { walsCode := "dob", iso := "kvo", value := .fixedStress }
+  , { walsCode := "dou", iso := "tds", value := .fixedStress }
+  , { walsCode := "dre", iso := "dhv", value := .fixedStress }
+  , { walsCode := "dut", iso := "nld", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "dyi", iso := "dbl", value := .fixedStress }
+  , { walsCode := "eka", iso := "ekg", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "emc", iso := "cmi", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "eno", iso := "eno", value := .fixedStress }
+  , { walsCode := "eng", iso := "eng", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "epe", iso := "sja", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "ese", iso := "ese", value := .fixedStress }
+  , { walsCode := "est", iso := "ekk", value := .fixedStress }
+  , { walsCode := "eve", iso := "evn", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "far", iso := "fao", value := .fixedStress }
+  , { walsCode := "fij", iso := "fij", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "fin", iso := "fin", value := .fixedStress }
+  , { walsCode := "frd", iso := "frd", value := .fixedStress }
+  , { walsCode := "for", iso := "for", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "fre", iso := "fra", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "glp", iso := "dhg", value := .fixedStress }
+  , { walsCode := "gae", iso := "gla", value := .fixedStress }
+  , { walsCode := "gll", iso := "gbi", value := .fixedStress }
+  , { walsCode := "grr", iso := "wrk", value := .fixedStress }
+  , { walsCode := "gay", iso := "gay", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "geo", iso := "kat", value := .fixedStress }
+  , { walsCode := "ger", iso := "deu", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "gid", iso := "gih", value := .fixedStress }
+  , { walsCode := "god", iso := "gdo", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "goo", iso := "gni", value := .fixedStress }
+  , { walsCode := "gor", iso := "gow", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "grb", iso := "grj", value := .notPredictable }
+  , { walsCode := "grk", iso := "ell", value := .fixedStress }
+  , { walsCode := "grw", iso := "kal", value := .fixedStress }
+  , { walsCode := "gua", iso := "gug", value := .fixedStress }
+  , { walsCode := "gug", iso := "ktd", value := .fixedStress }
+  , { walsCode := "guj", iso := "guj", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "guu", iso := "kky", value := .fixedStress }
+  , { walsCode := "hno", iso := "hdn", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "hln", iso := "hal", value := .fixedStress }
+  , { walsCode := "hnn", iso := "hnn", value := .fixedStress }
+  , { walsCode := "haw", iso := "haw", value := .fixedStress }
+  , { walsCode := "heb", iso := "heb", value := .fixedStress }
+  , { walsCode := "hin", iso := "hin", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "hix", iso := "hix", value := .notPredictable }
+  , { walsCode := "hop", iso := "hop", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "htc", iso := "hus", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "hmu", iso := "hux", value := .fixedStress }
+  , { walsCode := "hun", iso := "hun", value := .fixedStress }
+  , { walsCode := "hzb", iso := "huz", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "iaa", iso := "iai", value := .fixedStress }
+  , { walsCode := "ice", iso := "isl", value := .fixedStress }
+  , { walsCode := "ind", iso := "ind", value := .fixedStress }
+  , { walsCode := "iga", iso := "inb", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "ing", iso := "inh", value := .fixedStress }
+  , { walsCode := "irq", iso := "irk", value := .combinedRightEdgeAndUnbounded }
+  , { walsCode := "irr", iso := "irh", value := .fixedStress }
+  , { walsCode := "iri", iso := "gle", value := .fixedStress }
+  , { walsCode := "irm", iso := "gle", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "ita", iso := "ita", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "jak", iso := "jac", value := .fixedStress }
+  , { walsCode := "jaq", iso := "jqr", value := .fixedStress }
+  , { walsCode := "jav", iso := "jav", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "jum", iso := "jua", value := .fixedStress }
+  , { walsCode := "kli", iso := "lew", value := .fixedStress }
+  , { walsCode := "kaw", iso := "kgk", value := .fixedStress }
+  , { walsCode := "kal", iso := "gwc", value := .fixedStress }
+  , { walsCode := "klp", iso := "kyl", value := .fixedStress }
+  , { walsCode := "kgu", iso := "ktg", value := .fixedStress }
+  , { walsCode := "kam", iso := "xbr", value := .fixedStress }
+  , { walsCode := "kra", iso := "leu", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "krl", iso := "krl", value := .fixedStress }
+  , { walsCode := "krk", iso := "kyh", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "ksh", iso := "kju", value := .leftOrientedOneOfTheFirstThree }
+  , { walsCode := "kaj", iso := "bpp", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "kws", iso := "xaw", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "kay", iso := "gyd", value := .fixedStress }
+  , { walsCode := "kei", iso := "kei", value := .fixedStress }
+  , { walsCode := "kap", iso := "kcl", value := .fixedStress }
+  , { walsCode := "ker", iso := "ker", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "ktn", iso := "xte", value := .notPredictable }
+  , { walsCode := "kew", iso := "kew", value := .notPredictable }
+  , { walsCode := "kha", iso := "khk", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "khs", iso := "kha", value := .fixedStress }
+  , { walsCode := "khm", iso := "khm", value := .fixedStress }
+  , { walsCode := "kmu", iso := "kjg", value := .fixedStress }
+  , { walsCode := "klv", iso := "kij", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "ksr", iso := "kje", value := .fixedStress }
+  , { walsCode := "kit", iso := "kii", value := .notPredictable }
+  , { walsCode := "klm", iso := "kla", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "koa", iso := "cku", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "kob", iso := "kpw", value := .fixedStress }
+  , { walsCode := "koo", iso := "kvv", value := .fixedStress }
+  , { walsCode := "kop", iso := "koi", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "kon", iso := "kng", value := .fixedStress }
+  , { walsCode := "kjo", iso := "kjc", value := .fixedStress }
+  , { walsCode := "kfe", iso := "kfz", value := .fixedStress }
+  , { walsCode := "koy", iso := "kff", value := .fixedStress }
+  , { walsCode := "kro", iso := "kgo", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "kya", iso := "gvn", value := .fixedStress }
+  , { walsCode := "kuz", iso := "mbt", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "knm", iso := "kun", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "kjn", iso := "kjn", value := .fixedStress }
+  , { walsCode := "kut", iso := "kut", value := .fixedStress }
+  , { walsCode := "kuu", iso := "kuy", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "kwa", iso := "kwd", value := .fixedStress }
+  , { walsCode := "kwk", iso := "kwk", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "lmh", iso := "slp", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "lmp", iso := "ljp", value := .fixedStress }
+  , { walsCode := "lla", iso := "lby", value := .fixedStress }
+  , { walsCode := "lan", iso := "laj", value := .fixedStress }
+  , { walsCode := "lar", iso := "lrg", value := .leftOrientedOneOfTheFirstThree }
+  , { walsCode := "lrk", iso := "alo", value := .fixedStress }
+  , { walsCode := "lat", iso := "lav", value := .fixedStress }
+  , { walsCode := "lje", iso := "law", value := .fixedStress }
+  , { walsCode := "lav", iso := "lvk", value := .fixedStress }
+  , { walsCode := "len", iso := "tnl", value := .fixedStress }
+  , { walsCode := "let", iso := "lti", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "lez", iso := "lez", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "lit", iso := "lit", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "liv", iso := "liv", value := .fixedStress }
+  , { walsCode := "ara", iso := "arw", value := .fixedStress }
+  , { walsCode := "lui", iso := "lui", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "luv", iso := "lue", value := .fixedStress }
+  , { walsCode := "myn", iso := "mhy", value := .fixedStress }
+  , { walsCode := "mcd", iso := "mkd", value := .fixedStress }
+  , { walsCode := "mac", iso := "mbc", value := .fixedStress }
+  , { walsCode := "mdm", iso := "dmd", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "mae", iso := "mmw", value := .fixedStress }
+  , { walsCode := "mne", iso := "nmu", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "mrs", iso := "zrs", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "mai", iso := "mai", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "mak", iso := "myh", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "mks", iso := "mak", value := .fixedStress }
+  , { walsCode := "mlc", iso := "mcm", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "mal", iso := "plt", value := .fixedStress }
+  , { walsCode := "mlk", iso := "mpb", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "mly", iso := "zsm", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "mym", iso := "mal", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "mlt", iso := "mlt", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "mam", iso := "mam", value := .combinedRightEdgeAndUnbounded }
+  , { walsCode := "mms", iso := "mqj", value := .fixedStress }
+  , { walsCode := "mnm", iso := "mva", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "mnd", iso := "cmn", value := .notPredictable }
+  , { walsCode := "myi", iso := "mpc", value := .fixedStress }
+  , { walsCode := "mng", iso := "mqy", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "mns", iso := "mns", value := .fixedStress }
+  , { walsCode := "mnj", iso := "mpj", value := .fixedStress }
+  , { walsCode := "mnx", iso := "glv", value := .fixedStress }
+  , { walsCode := "mao", iso := "mri", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "map", iso := "arn", value := .fixedStress }
+  , { walsCode := "mku", iso := "zmr", value := .fixedStress }
+  , { walsCode := "mny", iso := "zmc", value := .fixedStress }
+  , { walsCode := "mah", iso := "mrj", value := .combinedRightEdgeAndUnbounded }
+  , { walsCode := "mme", iso := "mhr", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "mar", iso := "mrc", value := .fixedStress }
+  , { walsCode := "mrd", iso := "mrz", value := .fixedStress }
+  , { walsCode := "mrt", iso := "vma", value := .fixedStress }
+  , { walsCode := "mau", iso := "mph", value := .fixedStress }
+  , { walsCode := "may", iso := "ayz", value := .fixedStress }
+  , { walsCode := "myy", iso := "xyj", value := .fixedStress }
+  , { walsCode := "mbb", iso := "vmb", value := .fixedStress }
+  , { walsCode := "meb", iso := "bew", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "men", iso := "mez", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "mnt", iso := "mwv", value := .fixedStress }
+  , { walsCode := "mta", iso := "sdo", value := .fixedStress }
+  , { walsCode := "mea", iso := "mej", value := .notPredictable }
+  , { walsCode := "min", iso := "min", value := .fixedStress }
+  , { walsCode := "mis", iso := "miq", value := .fixedStress }
+  , { walsCode := "mcs", iso := "csm", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "mwn", iso := "nsq", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "mss", iso := "skd", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "moh", iso := "moh", value := .fixedStress }
+  , { walsCode := "mgd", iso := "mog", value := .fixedStress }
+  , { walsCode := "mmo", iso := "mdf", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "mna", iso := "mnb", value := .fixedStress }
+  , { walsCode := "mun", iso := "unr", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "mse", iso := "umu", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "mrk", iso := "mtf", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "mrl", iso := "mur", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "mrw", iso := "zmu", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "nht", iso := "nhg", value := .fixedStress }
+  , { walsCode := "nbb", iso := "nmb", value := .fixedStress }
+  , { walsCode := "nmb", iso := "nab", value := .fixedStress }
+  , { walsCode := "npu", iso := "npy", value := .fixedStress }
+  , { walsCode := "ndy", iso := "djk", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "ntu", iso := "yrk", value := .fixedStress }
+  , { walsCode := "nne", iso := "nen", value := .fixedStress }
+  , { walsCode := "naj", iso := "aij", value := .fixedStress }
+  , { walsCode := "nsy", iso := "aii", value := .fixedStress }
+  , { walsCode := "nep", iso := "npi", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "nez", iso := "nez", value := .notPredictable }
+  , { walsCode := "ngd", iso := "nxg", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "ngl", iso := "nig", value := .fixedStress }
+  , { walsCode := "nkb", iso := "ngk", value := .fixedStress }
+  , { walsCode := "ngr", iso := "nay", value := .fixedStress }
+  , { walsCode := "ngi", iso := "wyb", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "nia", iso := "nia", value := .fixedStress }
+  , { walsCode := "nin", iso := "niz", value := .fixedStress }
+  , { walsCode := "niv", iso := "niv", value := .fixedStress }
+  , { walsCode := "nor", iso := "nor", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "nua", iso := "nxl", value := .fixedStress }
+  , { walsCode := "nbd", iso := "dgl", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "nug", iso := "nuy", value := .fixedStress }
+  , { walsCode := "nbo", iso := "now", value := .fixedStress }
+  , { walsCode := "nya", iso := "nyt", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "nju", iso := "nys", value := .fixedStress }
+  , { walsCode := "obk", iso := "afz", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "occ", iso := "oci", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "olm", iso := "nij", value := .fixedStress }
+  , { walsCode := "ond", iso := "one", value := .fixedStress }
+  , { walsCode := "ono", iso := "ons", value := .fixedStress }
+  , { walsCode := "orc", iso := "oac", value := .fixedStress }
+  , { walsCode := "oss", iso := "oss", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "oto", iso := "iow", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "pkn", iso := "drl", value := .fixedStress }
+  , { walsCode := "pms", iso := "pma", value := .fixedStress }
+  , { walsCode := "pad", iso := "pdo", value := .fixedStress }
+  , { walsCode := "pag", iso := "pgu", value := .fixedStress }
+  , { walsCode := "put", iso := "ute", value := .fixedStress }
+  , { walsCode := "pai", iso := "pwn", value := .fixedStress }
+  , { walsCode := "pna", iso := "pmf", value := .fixedStress }
+  , { walsCode := "psh", iso := "pst", value := .notPredictable }
+  , { walsCode := "psm", iso := "pqm", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "plh", iso := "plh", value := .fixedStress }
+  , { walsCode := "pau", iso := "pad", value := .fixedStress }
+  , { walsCode := "prs", iso := "pes", value := .fixedStress }
+  , { walsCode := "pin", iso := "piu", value := .fixedStress }
+  , { walsCode := "prh", iso := "myp", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "pir", iso := "pib", value := .fixedStress }
+  , { walsCode := "pit", iso := "pjt", value := .fixedStress }
+  , { walsCode := "ppi", iso := "pit", value := .fixedStress }
+  , { walsCode := "pkm", iso := "poh", value := .fixedStress }
+  , { walsCode := "plb", iso := "pox", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "pol", iso := "pol", value := .fixedStress }
+  , { walsCode := "pme", iso := "peb", value := .fixedStress }
+  , { walsCode := "por", iso := "por", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "plp", iso := "nij", value := .fixedStress }
+  , { walsCode := "pul", iso := "puw", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "pur", iso := "tsz", value := .fixedStress }
+  , { walsCode := "que", iso := "yum", value := .fixedStress }
+  , { walsCode := "qay", iso := "quy", value := .fixedStress }
+  , { walsCode := "qim", iso := "qvi", value := .fixedStress }
+  , { walsCode := "qch", iso := "quc", value := .fixedStress }
+  , { walsCode := "ram", iso := "rma", value := .notPredictable }
+  , { walsCode := "rap", iso := "rap", value := .fixedStress }
+  , { walsCode := "rit", iso := "rit", value := .fixedStress }
+  , { walsCode := "rnr", iso := "rml", value := .fixedStress }
+  , { walsCode := "rom", iso := "ron", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "rsm", iso := "roh", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "ror", iso := "rro", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "rti", iso := "twu", value := .fixedStress }
+  , { walsCode := "rot", iso := "rtm", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "rus", iso := "rus", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "sno", iso := "sme", value := .fixedStress }
+  , { walsCode := "sao", iso := "ssy", value := .notPredictable }
+  , { walsCode := "sah", iso := "saj", value := .fixedStress }
+  , { walsCode := "sak", iso := "sku", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "sps", iso := "slh", value := .notPredictable }
+  , { walsCode := "sbg", iso := "sse", value := .fixedStress }
+  , { walsCode := "sgr", iso := "sxn", value := .fixedStress }
+  , { walsCode := "snm", iso := "xsu", value := .fixedStress }
+  , { walsCode := "srd", iso := "sro", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "swi", iso := "szw", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "sed", iso := "sed", value := .fixedStress }
+  , { walsCode := "sru", iso := "slu", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "sly", iso := "sly", value := .fixedStress }
+  , { walsCode := "slp", iso := "spl", value := .fixedStress }
+  , { walsCode := "skp", iso := "sel", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "sml", iso := "sza", value := .fixedStress }
+  , { walsCode := "snc", iso := "see", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "snt", iso := "set", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "scr", iso := "hbs", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "ser", iso := "sei", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "shk", iso := "shp", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "shi", iso := "shb", value := .fixedStress }
+  , { walsCode := "skr", iso := "tty", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "skl", iso := "skh", value := .fixedStress }
+  , { walsCode := "sdh", iso := "snd", value := .combinedRightEdgeAndUnbounded }
+  , { walsCode := "sio", iso := "xsi", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "sro", iso := "ssd", value := .fixedStress }
+  , { walsCode := "sla", iso := "den", value := .notPredictable }
+  , { walsCode := "svk", iso := "slk", value := .fixedStress }
+  , { walsCode := "slo", iso := "slv", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "svc", iso := "csb", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "srb", iso := "", value := .fixedStress }
+  , { walsCode := "sea", iso := "tvk", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "spa", iso := "spa", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "spo", iso := "spo", value := .notPredictable }
+  , { walsCode := "squ", iso := "squ", value := .fixedStress }
+  , { walsCode := "sto", iso := "sto", value := .fixedStress }
+  , { walsCode := "sun", iso := "sun", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "sup", iso := "spp", value := .fixedStress }
+  , { walsCode := "swa", iso := "swh", value := .fixedStress }
+  , { walsCode := "swe", iso := "swe", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "tab", iso := "mky", value := .fixedStress }
+  , { walsCode := "tbr", iso := "tby", value := .fixedStress }
+  , { walsCode := "tbl", iso := "tnm", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "tac", iso := "tna", value := .fixedStress }
+  , { walsCode := "tag", iso := "tgl", value := .fixedStress }
+  , { walsCode := "tah", iso := "tah", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "taj", iso := "tgk", value := .fixedStress }
+  , { walsCode := "tld", iso := "tld", value := .fixedStress }
+  , { walsCode := "tns", iso := "nwi", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "tgw", iso := "txn", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "tas", iso := "shi", value := .fixedStress }
+  , { walsCode := "taw", iso := "tbo", value := .fixedStress }
+  , { walsCode := "teh", iso := "teh", value := .fixedStress }
+  , { walsCode := "tps", iso := "stp", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "thp", iso := "typ", value := .fixedStress }
+  , { walsCode := "tib", iso := "bod", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "tgk", iso := "tgc", value := .fixedStress }
+  , { walsCode := "tse", iso := "aoz", value := .fixedStress }
+  , { walsCode := "tmc", iso := "tjm", value := .fixedStress }
+  , { walsCode := "try", iso := "tiy", value := .fixedStress }
+  , { walsCode := "tiw", iso := "tiw", value := .fixedStress }
+  , { walsCode := "tlo", iso := "tlb", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "tol", iso := "jic", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "tla", iso := "ksd", value := .fixedStress }
+  , { walsCode := "tno", iso := "tdn", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "tng", iso := "ton", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "tnt", iso := "tnt", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "trd", iso := "sda", value := .fixedStress }
+  , { walsCode := "tor", iso := "rth", value := .fixedStress }
+  , { walsCode := "tru", iso := "tpy", value := .fixedStress }
+  , { walsCode := "tsa", iso := "tkr", value := .fixedStress }
+  , { walsCode := "tsi", iso := "tsi", value := .fixedStress }
+  , { walsCode := "tua", iso := "pmt", value := .fixedStress }
+  , { walsCode := "tuk", iso := "", value := .fixedStress }
+  , { walsCode := "tun", iso := "tun", value := .fixedStress }
+  , { walsCode := "tur", iso := "tur", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "tzo", iso := "tzo", value := .fixedStress }
+  , { walsCode := "tbb", iso := "tub", value := .fixedStress }
+  , { walsCode := "tsh", iso := "par", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "uli", iso := "uli", value := .notPredictable }
+  , { walsCode := "uma", iso := "ppk", value := .fixedStress }
+  , { walsCode := "unm", iso := "unm", value := .rightOrientedOneOfTheLastThree }
+  , { walsCode := "ung", iso := "ung", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "uhi", iso := "urf", value := .fixedStress }
+  , { walsCode := "urk", iso := "urb", value := .fixedStress }
+  , { walsCode := "usa", iso := "wnu", value := .notPredictable }
+  , { walsCode := "uzn", iso := "uzn", value := .fixedStress }
+  , { walsCode := "vot", iso := "vot", value := .fixedStress }
+  , { walsCode := "wah", iso := "", value := .fixedStress }
+  , { walsCode := "wlm", iso := "wmt", value := .fixedStress }
+  , { walsCode := "wam", iso := "wmb", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "wbn", iso := "wms", value := .fixedStress }
+  , { walsCode := "wan", iso := "xwk", value := .fixedStress }
+  , { walsCode := "wao", iso := "auc", value := .fixedStress }
+  , { walsCode := "wra", iso := "wba", value := .fixedStress }
+  , { walsCode := "wrd", iso := "wrr", value := .fixedStress }
+  , { walsCode := "war", iso := "pav", value := .fixedStress }
+  , { walsCode := "wrl", iso := "wbp", value := .fixedStress }
+  , { walsCode := "wrg", iso := "wgy", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "wel", iso := "cym", value := .fixedStress }
+  , { walsCode := "wer", iso := "wer", value := .fixedStress }
+  , { walsCode := "wet", iso := "lex", value := .fixedStress }
+  , { walsCode := "wic", iso := "wic", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "wch", iso := "mzh", value := .fixedStress }
+  , { walsCode := "wnb", iso := "win", value := .fixedStress }
+  , { walsCode := "wiy", iso := "wiy", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "woi", iso := "woi", value := .notPredictable }
+  , { walsCode := "wlo", iso := "wlo", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "ymd", iso := "jmd", value := .fixedStress }
+  , { walsCode := "yan", iso := "ynn", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "yny", iso := "jao", value := .fixedStress }
+  , { walsCode := "yap", iso := "yap", value := .rightEdgeUltimateOrPenultimate }
+  , { walsCode := "yaq", iso := "yaq", value := .fixedStress }
+  , { walsCode := "ywl", iso := "yok", value := .fixedStress }
+  , { walsCode := "yzv", iso := "kpv", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "yel", iso := "yle", value := .fixedStress }
+  , { walsCode := "yid", iso := "yii", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "yil", iso := "yll", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "yim", iso := "yee", value := .fixedStress }
+  , { walsCode := "yin", iso := "yij", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "yir", iso := "yyr", value := .fixedStress }
+  , { walsCode := "yuc", iso := "yuc", value := .notPredictable }
+  , { walsCode := "yko", iso := "yux", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "ypk", iso := "esu", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "ych", iso := "esu", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "yun", iso := "esu", value := .leftEdgeFirstOrSecond }
+  , { walsCode := "ysl", iso := "ess", value := .notPredictable }
+  , { walsCode := "yuw", iso := "kld", value := .unboundedStressCanBeAnywhere }
+  , { walsCode := "zqc", iso := "zoc", value := .fixedStress }
+  , { walsCode := "zul", iso := "zul", value := .fixedStress }
+  , { walsCode := "zun", iso := "zun", value := .fixedStress }
   ]
-
--- Count verification
-theorem total_count : allData.length = 500 := by native_decide
-
-theorem count_leftEdgeFirstOrSecond :
-    (allData.filter (·.value == .leftEdgeFirstOrSecond)).length = 37 := by native_decide
-theorem count_leftOrientedOneOfTheFirstThree :
-    (allData.filter (·.value == .leftOrientedOneOfTheFirstThree)).length = 2 := by native_decide
-theorem count_rightEdgeUltimateOrPenultimate :
-    (allData.filter (·.value == .rightEdgeUltimateOrPenultimate)).length = 65 := by native_decide
-theorem count_rightOrientedOneOfTheLastThree :
-    (allData.filter (·.value == .rightOrientedOneOfTheLastThree)).length = 27 := by native_decide
-theorem count_unboundedStressCanBeAnywhere :
-    (allData.filter (·.value == .unboundedStressCanBeAnywhere)).length = 54 := by native_decide
-theorem count_combinedRightEdgeAndUnbounded :
-    (allData.filter (·.value == .combinedRightEdgeAndUnbounded)).length = 8 := by native_decide
-theorem count_notPredictable :
-    (allData.filter (·.value == .notPredictable)).length = 26 := by native_decide
-theorem count_fixedStress :
-    (allData.filter (·.value == .fixedStress)).length = 281 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

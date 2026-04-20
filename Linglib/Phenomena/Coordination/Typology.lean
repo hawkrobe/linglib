@@ -707,7 +707,7 @@ def englishWALS : CoordinationProfile :=
   { language := "English"
   , iso := "eng"
   , family := "Indo-European"
-  , conjQuant := some .formallySimilarWithoutInterrogative
+  , conjQuant := some .similarWithoutInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'and' for both NP and VP coordination; " ++
@@ -739,7 +739,7 @@ def frenchWALS : CoordinationProfile :=
   { language := "French"
   , iso := "fra"
   , family := "Indo-European"
-  , conjQuant := some .formallyDifferent
+  , conjQuant := some .different
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'et' for both NP and VP; formally distinct from " ++
@@ -789,7 +789,7 @@ def japaneseWALS : CoordinationProfile :=
   { language := "Japanese"
   , iso := "jpn"
   , family := "Japonic"
-  , conjQuant := some .formallySimilarWithInterrogative
+  , conjQuant := some .similarWithInterrogative
   , conjComitative := some .andIdenticalToWith
   , nomVerbalConj := some .differentiation
   , walsNotes := "'mo' links conjunction, universal quantifier, and " ++
@@ -807,7 +807,7 @@ def mandarinWALS : CoordinationProfile :=
   { language := "Mandarin"
   , iso := "cmn"
   , family := "Sino-Tibetan"
-  , conjQuant := some .formallySimilarWithInterrogative
+  , conjQuant := some .similarWithInterrogative
   , conjComitative := some .andIdenticalToWith
   , nomVerbalConj := some .differentiation
   , walsNotes := "NP conjunction 'he/gen' doubles as comitative; " ++
@@ -841,7 +841,7 @@ def turkishWALS : CoordinationProfile :=
   { language := "Turkish"
   , iso := "tur"
   , family := "Turkic"
-  , conjQuant := some .formallyDifferent
+  , conjQuant := some .different
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'ve' for both NP and VP coordination; formally " ++
@@ -858,7 +858,7 @@ def finnishWALS : CoordinationProfile :=
   { language := "Finnish"
   , iso := "fin"
   , family := "Uralic"
-  , conjQuant := some .formallySimilarWithInterrogative
+  , conjQuant := some .similarWithInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'ja' for both NP and VP; comitative expressed by " ++
@@ -876,7 +876,7 @@ def hungarianWALS : CoordinationProfile :=
   { language := "Hungarian"
   , iso := "hun"
   , family := "Uralic"
-  , conjQuant := some .formallySimilarWithoutInterrogative
+  , conjQuant := some .similarWithoutInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'és' for both NP and VP; distinct from comitative " ++
@@ -893,7 +893,7 @@ def hindiWALS : CoordinationProfile :=
   { language := "Hindi"
   , iso := "hin"
   , family := "Indo-European"
-  , conjQuant := some .formallySimilarWithInterrogative
+  , conjQuant := some .similarWithInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'aur' for both NP and VP coordination; distinct from " ++
@@ -943,7 +943,7 @@ def tagalogWALS : CoordinationProfile :=
   { language := "Tagalog"
   , iso := "tgl"
   , family := "Austronesian"
-  , conjQuant := some .formallySimilarWithInterrogative
+  , conjQuant := some .similarWithInterrogative
   , conjComitative := some .andDifferentFromWith
   , nomVerbalConj := some .identity
   , walsNotes := "'at' for both NP and VP coordination; distinct from " ++
@@ -1094,11 +1094,11 @@ theorem wals_f56a_total : ch56.length = 116 := by native_decide
 
 /-- F56A distribution: conjunctions and universal quantifiers. -/
 theorem wals_f56a_formallyDifferent :
-    (ch56.filter (·.value == .formallyDifferent)).length = 40 := by native_decide
+    (ch56.filter (·.value == .different)).length = 40 := by native_decide
 theorem wals_f56a_similarNoInterrogative :
-    (ch56.filter (·.value == .formallySimilarWithoutInterrogative)).length = 33 := by native_decide
+    (ch56.filter (·.value == .similarWithoutInterrogative)).length = 33 := by native_decide
 theorem wals_f56a_similarWithInterrogative :
-    (ch56.filter (·.value == .formallySimilarWithInterrogative)).length = 43 := by native_decide
+    (ch56.filter (·.value == .similarWithInterrogative)).length = 43 := by native_decide
 
 /-- F63A total: 234 languages. -/
 theorem wals_f63a_total : ch63.length = 234 := by native_decide

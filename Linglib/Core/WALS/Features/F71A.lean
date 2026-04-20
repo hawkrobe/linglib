@@ -14,523 +14,515 @@ namespace Core.WALS.F71A
 
 /-- WALS 71A values. -/
 inductive Prohibitive where
-  | normalImperativeNormalNegative  -- Normal imperative + normal negative (113 languages)
-  | normalImperativeSpecialNegative  -- Normal imperative + special negative (182 languages)
-  | specialImperativeNormalNegative  -- Special imperative + normal negative (55 languages)
-  | specialImperativeSpecialNegative  -- Special imperative + special negative (146 languages)
-  deriving DecidableEq, Repr
+  /-- Normal imperative + normal negative (113 languages). -/
+  | normalImperativeNormalNegative
+  /-- Normal imperative + special negative (182 languages). -/
+  | normalImperativeSpecialNegative
+  /-- Special imperative + normal negative (55 languages). -/
+  | specialImperativeNormalNegative
+  /-- Special imperative + special negative (146 languages). -/
+  | specialImperativeSpecialNegative
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 71A dataset (496 languages). -/
 def allData : List (Datapoint Prohibitive) :=
-  [ { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .specialImperativeNormalNegative }
-  , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .normalImperativeSpecialNegative }
-  , { walsCode := "acl", language := "Acholi", iso := "ach", value := .specialImperativeSpecialNegative }
-  , { walsCode := "acu", language := "Achuar", iso := "acu", value := .specialImperativeSpecialNegative }
-  , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .normalImperativeSpecialNegative }
-  , { walsCode := "aga", language := "Agarabi", iso := "agd", value := .normalImperativeSpecialNegative }
-  , { walsCode := "agu", language := "Aguacatec", iso := "agu", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ain", language := "Ainu", iso := "ain", value := .normalImperativeSpecialNegative }
-  , { walsCode := "akn", language := "Akan", iso := "aka", value := .normalImperativeNormalNegative }
-  , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .specialImperativeSpecialNegative }
-  , { walsCode := "alb", language := "Albanian", iso := "sqi", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .specialImperativeSpecialNegative }
-  , { walsCode := "amh", language := "Amharic", iso := "amh", value := .specialImperativeSpecialNegative }
-  , { walsCode := "amo", language := "Amo", iso := "amo", value := .specialImperativeNormalNegative }
-  , { walsCode := "ago", language := "Angolar", iso := "aoa", value := .normalImperativeNormalNegative }
-  , { walsCode := "anu", language := "Anufo", iso := "cko", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ao", language := "Ao", iso := "njo", value := .normalImperativeSpecialNegative }
-  , { walsCode := "apl", language := "Apalaí", iso := "apy", value := .normalImperativeNormalNegative }
-  , { walsCode := "apt", language := "Apatani", iso := "apt", value := .specialImperativeSpecialNegative }
-  , { walsCode := "abb", language := "Arabic (Chadian)", iso := "shu", value := .specialImperativeNormalNegative }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .specialImperativeNormalNegative }
-  , { walsCode := "arg", language := "Arabic (Gulf)", iso := "afb", value := .normalImperativeSpecialNegative }
-  , { walsCode := "amr", language := "Arabic (Moroccan)", iso := "ary", value := .specialImperativeNormalNegative }
-  , { walsCode := "anl", language := "Arabic (North Levantine Spoken)", iso := "apc", value := .specialImperativeNormalNegative }
-  , { walsCode := "apa", language := "Arabic (Palestinian)", iso := "ajp", value := .normalImperativeNormalNegative }
-  , { walsCode := "ars", language := "Arabic (San'ani)", iso := "ayn", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ark", language := "Araki", iso := "akr", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ana", language := "Araona", iso := "aro", value := .specialImperativeSpecialNegative }
-  , { walsCode := "arp", language := "Arapesh (Mountain)", iso := "ape", value := .normalImperativeSpecialNegative }
-  , { walsCode := "arm", language := "Armenian (Eastern)", iso := "hye", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ath", language := "Athpare", iso := "aph", value := .specialImperativeNormalNegative }
-  , { walsCode := "au", language := "Au", iso := "avt", value := .normalImperativeNormalNegative }
-  , { walsCode := "ava", language := "Avar", iso := "ava", value := .normalImperativeSpecialNegative }
-  , { walsCode := "awp", language := "Awa Pit", iso := "kwi", value := .specialImperativeSpecialNegative }
-  , { walsCode := "aym", language := "Aymara (Central)", iso := "ayr", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ayr", language := "Ayoreo", iso := "ayo", value := .normalImperativeNormalNegative }
-  , { walsCode := "azi", language := "Azari (Iranian)", iso := "azb", value := .normalImperativeNormalNegative }
-  , { walsCode := "bbl", language := "Babole", iso := "bvx", value := .specialImperativeNormalNegative }
-  , { walsCode := "bab", language := "Babungo", iso := "bav", value := .specialImperativeSpecialNegative }
-  , { walsCode := "baf", language := "Bafut", iso := "bfd", value := .normalImperativeSpecialNegative }
-  , { walsCode := "bag", language := "Bagirmi", iso := "bmi", value := .normalImperativeNormalNegative }
-  , { walsCode := "baj", language := "Bajau (Sama)", iso := "bdl", value := .normalImperativeSpecialNegative }
-  , { walsCode := "bam", language := "Bambara", iso := "bam", value := .specialImperativeSpecialNegative }
-  , { walsCode := "brs", language := "Barasano", iso := "bsn", value := .normalImperativeNormalNegative }
-  , { walsCode := "bae", language := "Baré", iso := "bae", value := .normalImperativeSpecialNegative }
-  , { walsCode := "bsk", language := "Bashkir", iso := "bak", value := .normalImperativeNormalNegative }
-  , { walsCode := "bsq", language := "Basque", iso := "eus", value := .normalImperativeNormalNegative }
-  , { walsCode := "bkr", language := "Batak (Karo)", iso := "btx", value := .normalImperativeSpecialNegative }
-  , { walsCode := "baw", language := "Bawm", iso := "bgr", value := .normalImperativeSpecialNegative }
-  , { walsCode := "bej", language := "Beja", iso := "bej", value := .normalImperativeSpecialNegative }
-  , { walsCode := "bem", language := "Bemba", iso := "bem", value := .specialImperativeSpecialNegative }
-  , { walsCode := "bfg", language := "Berber (Figuig)", iso := "grr", value := .normalImperativeNormalNegative }
-  , { walsCode := "bma", language := "Berber (Middle Atlas)", iso := "tzm", value := .specialImperativeNormalNegative }
-  , { walsCode := "ber", language := "Berta", iso := "wti", value := .specialImperativeSpecialNegative }
-  , { walsCode := "bhu", language := "Bhumij", iso := "unr", value := .specialImperativeSpecialNegative }
-  , { walsCode := "bii", language := "Biri", iso := "bzr", value := .normalImperativeNormalNegative }
-  , { walsCode := "brz", language := "Birri", iso := "bvq", value := .normalImperativeNormalNegative }
-  , { walsCode := "brr", language := "Bororo", iso := "bor", value := .specialImperativeSpecialNegative }
-  , { walsCode := "bri", language := "Bribri", iso := "bzd", value := .specialImperativeSpecialNegative }
-  , { walsCode := "bdk", language := "Budukh", iso := "bdk", value := .specialImperativeSpecialNegative }
-  , { walsCode := "bud", language := "Buduma", iso := "bdm", value := .specialImperativeNormalNegative }
-  , { walsCode := "buk", language := "Bukusu", iso := "bxk", value := .specialImperativeSpecialNegative }
-  , { walsCode := "bul", language := "Bulgarian", iso := "bul", value := .specialImperativeSpecialNegative }
-  , { walsCode := "brm", language := "Burmese", iso := "mya", value := .normalImperativeSpecialNegative }
-  , { walsCode := "bur", language := "Burushaski", iso := "bsk", value := .normalImperativeNormalNegative }
-  , { walsCode := "cah", language := "Cahuilla", iso := "chl", value := .specialImperativeNormalNegative }
-  , { walsCode := "cml", language := "Camling", iso := "rab", value := .specialImperativeSpecialNegative }
-  , { walsCode := "cnl", language := "Canela", iso := "ram", value := .normalImperativeNormalNegative }
-  , { walsCode := "cnt", language := "Cantonese", iso := "yue", value := .normalImperativeSpecialNegative }
-  , { walsCode := "csh", language := "Cashinahua", iso := "cbs", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ctl", language := "Catalan", iso := "cat", value := .specialImperativeNormalNegative }
-  , { walsCode := "cay", language := "Cayapa", iso := "cbi", value := .normalImperativeNormalNegative }
-  , { walsCode := "ceb", language := "Cebuano", iso := "ceb", value := .normalImperativeSpecialNegative }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .normalImperativeSpecialNegative }
-  , { walsCode := "chc", language := "Chechen", iso := "che", value := .normalImperativeSpecialNegative }
-  , { walsCode := "cmh", language := "Chemehuevi", iso := "ute", value := .specialImperativeNormalNegative }
-  , { walsCode := "ccm", language := "Chinantec (Comaltepec)", iso := "cco", value := .specialImperativeNormalNegative }
-  , { walsCode := "cle", language := "Chinantec (Lealao)", iso := "cle", value := .specialImperativeNormalNegative }
-  , { walsCode := "cte", language := "Chinantec (Tepetotutla)", iso := "cnt", value := .specialImperativeNormalNegative }
-  , { walsCode := "crg", language := "Chiriguano", iso := "gui", value := .normalImperativeSpecialNegative }
-  , { walsCode := "coi", language := "Chortí", iso := "caa", value := .specialImperativeSpecialNegative }
-  , { walsCode := "chr", language := "Chrau", iso := "crw", value := .normalImperativeSpecialNegative }
-  , { walsCode := "chk", language := "Chukchi", iso := "ckt", value := .specialImperativeSpecialNegative }
-  , { walsCode := "chv", language := "Chuvash", iso := "chv", value := .normalImperativeSpecialNegative }
-  , { walsCode := "cmn", language := "Comanche", iso := "com", value := .specialImperativeSpecialNegative }
-  , { walsCode := "coo", language := "Coos (Hanis)", iso := "csz", value := .normalImperativeNormalNegative }
-  , { walsCode := "cor", language := "Cora", iso := "crn", value := .specialImperativeNormalNegative }
-  , { walsCode := "cre", language := "Cree (Plains)", iso := "crk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "cze", language := "Czech", iso := "ces", value := .normalImperativeNormalNegative }
-  , { walsCode := "dbd", language := "Dabida", iso := "dav", value := .specialImperativeSpecialNegative }
-  , { walsCode := "dam", language := "Damana", iso := "mbp", value := .specialImperativeNormalNegative }
-  , { walsCode := "dni", language := "Dani (Lower Grand Valley)", iso := "dni", value := .specialImperativeSpecialNegative }
-  , { walsCode := "dsh", language := "Danish", iso := "dan", value := .normalImperativeNormalNegative }
-  , { walsCode := "des", language := "Desano", iso := "des", value := .specialImperativeNormalNegative }
-  , { walsCode := "die", language := "Diegueño (Mesa Grande)", iso := "dih", value := .normalImperativeNormalNegative }
-  , { walsCode := "dig", language := "Digaro", iso := "mhu", value := .specialImperativeSpecialNegative }
-  , { walsCode := "dio", language := "Diola-Fogny", iso := "dyo", value := .specialImperativeSpecialNegative }
-  , { walsCode := "diz", language := "Dizi", iso := "mdx", value := .specialImperativeSpecialNegative }
-  , { walsCode := "dja", language := "Djabugay", iso := "dyy", value := .normalImperativeNormalNegative }
-  , { walsCode := "djp", language := "Djapu", iso := "dwu", value := .normalImperativeNormalNegative }
-  , { walsCode := "don", language := "Dong (Southern)", iso := "kmc", value := .normalImperativeNormalNegative }
-  , { walsCode := "dre", language := "Drehu", iso := "dhv", value := .specialImperativeSpecialNegative }
-  , { walsCode := "dmi", language := "Dumi", iso := "dus", value := .specialImperativeNormalNegative }
-  , { walsCode := "dut", language := "Dutch", iso := "nld", value := .normalImperativeNormalNegative }
-  , { walsCode := "dyi", language := "Dyirbal", iso := "dbl", value := .specialImperativeSpecialNegative }
-  , { walsCode := "eka", language := "Ekari", iso := "ekg", value := .normalImperativeNormalNegative }
-  , { walsCode := "emc", language := "Embera Chami", iso := "cmi", value := .normalImperativeSpecialNegative }
-  , { walsCode := "emb", language := "Emberá (Northern)", iso := "emp", value := .normalImperativeSpecialNegative }
-  , { walsCode := "egn", language := "Engenni", iso := "enn", value := .normalImperativeSpecialNegative }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .normalImperativeNormalNegative }
-  , { walsCode := "epe", language := "Epena Pedee", iso := "sja", value := .normalImperativeSpecialNegative }
-  , { walsCode := "err", language := "Erromangan", iso := "erg", value := .normalImperativeNormalNegative }
-  , { walsCode := "est", language := "Estonian", iso := "ekk", value := .specialImperativeNormalNegative }
-  , { walsCode := "evn", language := "Even", iso := "eve", value := .specialImperativeNormalNegative }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .normalImperativeNormalNegative }
-  , { walsCode := "ewe", language := "Ewe", iso := "ewe", value := .normalImperativeSpecialNegative }
-  , { walsCode := "far", language := "Faroese", iso := "fao", value := .normalImperativeNormalNegative }
-  , { walsCode := "fij", language := "Fijian", iso := "fij", value := .normalImperativeSpecialNegative }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .normalImperativeSpecialNegative }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .normalImperativeNormalNegative }
-  , { walsCode := "fri", language := "Frisian", iso := "fry", value := .normalImperativeNormalNegative }
-  , { walsCode := "fua", language := "Fulfulde (Adamawa)", iso := "fub", value := .normalImperativeSpecialNegative }
-  , { walsCode := "fur", language := "Fur", iso := "fvr", value := .normalImperativeSpecialNegative }
-  , { walsCode := "fue", language := "Futuna (East)", iso := "fud", value := .normalImperativeSpecialNegative }
-  , { walsCode := "fye", language := "Fyem", iso := "pym", value := .specialImperativeNormalNegative }
-  , { walsCode := "gll", language := "Galela", iso := "gbi", value := .normalImperativeSpecialNegative }
-  , { walsCode := "glc", language := "Galician", iso := "glg", value := .specialImperativeNormalNegative }
-  , { walsCode := "gar", language := "Garo", iso := "grt", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .normalImperativeNormalNegative }
-  , { walsCode := "gim", language := "Gimira", iso := "bcq", value := .normalImperativeSpecialNegative }
-  , { walsCode := "god", language := "Godoberi", iso := "gdo", value := .specialImperativeSpecialNegative }
-  , { walsCode := "goj", language := "Gojri", iso := "gju", value := .normalImperativeSpecialNegative }
-  , { walsCode := "goo", language := "Gooniyandi", iso := "gni", value := .specialImperativeNormalNegative }
-  , { walsCode := "grb", language := "Grebo", iso := "grj", value := .specialImperativeSpecialNegative }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .specialImperativeSpecialNegative }
-  , { walsCode := "grw", language := "Greenlandic (West)", iso := "kal", value := .specialImperativeSpecialNegative }
-  , { walsCode := "gua", language := "Guaraní", iso := "gug", value := .specialImperativeSpecialNegative }
-  , { walsCode := "gum", language := "Gumbaynggir", iso := "kgs", value := .normalImperativeSpecialNegative }
-  , { walsCode := "gmz", language := "Gumuz", iso := "guk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "gwa", language := "Gwari", iso := "gbr", value := .normalImperativeNormalNegative }
-  , { walsCode := "hmr", language := "Hamer", iso := "amf", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ham", language := "Hamtai", iso := "hmt", value := .normalImperativeNormalNegative }
-  , { walsCode := "hat", language := "Hatam", iso := "had", value := .normalImperativeNormalNegative }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .specialImperativeSpecialNegative }
-  , { walsCode := "haw", language := "Hawaiian", iso := "haw", value := .normalImperativeSpecialNegative }
-  , { walsCode := "hya", language := "Haya", iso := "hay", value := .specialImperativeSpecialNegative }
-  , { walsCode := "hay", language := "Hayu", iso := "vay", value := .normalImperativeSpecialNegative }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .specialImperativeSpecialNegative }
-  , { walsCode := "her", language := "Herero", iso := "her", value := .specialImperativeSpecialNegative }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .normalImperativeSpecialNegative }
-  , { walsCode := "hix", language := "Hixkaryana", iso := "hix", value := .normalImperativeNormalNegative }
-  , { walsCode := "hmo", language := "Hmong Njua", iso := "hnj", value := .normalImperativeSpecialNegative }
-  , { walsCode := "hmi", language := "Huitoto (Minica)", iso := "hto", value := .normalImperativeSpecialNegative }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .normalImperativeSpecialNegative }
-  , { walsCode := "hzb", language := "Hunzib", iso := "huz", value := .specialImperativeSpecialNegative }
-  , { walsCode := "iaa", language := "Iaai", iso := "iai", value := .normalImperativeNormalNegative }
-  , { walsCode := "ice", language := "Icelandic", iso := "isl", value := .normalImperativeNormalNegative }
-  , { walsCode := "ido", language := "Idoma", iso := "idu", value := .normalImperativeNormalNegative }
-  , { walsCode := "igb", language := "Igbo", iso := "ibo", value := .normalImperativeNormalNegative }
-  , { walsCode := "ijo", language := "Ijo (Kolokuma)", iso := "ijc", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ika", language := "Ika", iso := "arh", value := .normalImperativeSpecialNegative }
-  , { walsCode := "imo", language := "Imonda", iso := "imn", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ing", language := "Ingush", iso := "inh", value := .normalImperativeSpecialNegative }
-  , { walsCode := "iqu", language := "Iquito", iso := "iqu", value := .normalImperativeSpecialNegative }
-  , { walsCode := "irq", language := "Iraqw", iso := "irk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "iri", language := "Irish", iso := "gle", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ita", language := "Italian", iso := "ita", value := .specialImperativeNormalNegative }
-  , { walsCode := "jar", language := "Izere", iso := "izr", value := .normalImperativeSpecialNegative }
-  , { walsCode := "jab", language := "Jabêm", iso := "jae", value := .normalImperativeNormalNegative }
-  , { walsCode := "jak", language := "Jakaltek", iso := "jac", value := .specialImperativeNormalNegative }
-  , { walsCode := "jpn", language := "Japanese", iso := "jpn", value := .normalImperativeSpecialNegative }
-  , { walsCode := "jaq", language := "Jaqaru", iso := "jqr", value := .specialImperativeNormalNegative }
-  , { walsCode := "jeb", language := "Jebero", iso := "jeb", value := .specialImperativeSpecialNegative }
-  , { walsCode := "juh", language := "Ju|'hoan", iso := "ktz", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kdw", language := "Kadiwéu", iso := "kbc", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kmk", language := "Kalmyk", iso := "xal", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kms", language := "Kamass", iso := "xas", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kam", language := "Kambera", iso := "xbr", value := .normalImperativeSpecialNegative }
-  , { walsCode := "knd", language := "Kannada", iso := "kan", value := .specialImperativeSpecialNegative }
-  , { walsCode := "knr", language := "Kanuri", iso := "knc", value := .specialImperativeSpecialNegative }
-  , { walsCode := "krc", language := "Karachay-Balkar", iso := "krc", value := .normalImperativeNormalNegative }
-  , { walsCode := "krt", language := "Karata", iso := "kpt", value := .specialImperativeSpecialNegative }
-  , { walsCode := "krk", language := "Karok", iso := "kyh", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kas", language := "Kashmiri", iso := "kas", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kws", language := "Kawaiisu", iso := "xaw", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kyl", language := "Kayah Li (Eastern)", iso := "eky", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kay", language := "Kayardild", iso := "gyd", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kei", language := "Kei", iso := "kei", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kyg", language := "Kenyang", iso := "ken", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ker", language := "Kera", iso := "ker", value := .specialImperativeSpecialNegative }
-  , { walsCode := "krq", language := "Kerek", iso := "krk", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ket", language := "Ket", iso := "ket", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kte", language := "Kete", iso := "kcv", value := .specialImperativeNormalNegative }
-  , { walsCode := "kew", language := "Kewa", iso := "kew", value := .normalImperativeNormalNegative }
-  , { walsCode := "khk", language := "Khakas", iso := "kjh", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kha", language := "Khalkha", iso := "khk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kty", language := "Khanty", iso := "kca", value := .normalImperativeSpecialNegative }
-  , { walsCode := "khm", language := "Khmer", iso := "khm", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kmu", language := "Khmu'", iso := "kjg", value := .normalImperativeSpecialNegative }
-  , { walsCode := "klv", language := "Kilivila", iso := "kij", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kil", language := "Kiluba", iso := "lub", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kim", language := "Kimaghama", iso := "kig", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kio", language := "Kiowa", iso := "kio", value := .specialImperativeSpecialNegative }
-  , { walsCode := "krb", language := "Kiribati", iso := "gil", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kis", language := "Kisi", iso := "kss", value := .normalImperativeNormalNegative }
-  , { walsCode := "kiw", language := "Kiwai (Southern)", iso := "kjd", value := .specialImperativeSpecialNegative }
-  , { walsCode := "klm", language := "Klamath", iso := "kla", value := .normalImperativeNormalNegative }
-  , { walsCode := "kow", language := "Ko (Winye)", iso := "kst", value := .specialImperativeSpecialNegative }
-  , { walsCode := "koa", language := "Koasati", iso := "cku", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .normalImperativeNormalNegative }
-  , { walsCode := "kod", language := "Kodava", iso := "kfa", value := .specialImperativeSpecialNegative }
-  , { walsCode := "koi", language := "Koiari", iso := "kbk", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kok", language := "Kokborok", iso := "trp", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kon", language := "Kongo", iso := "kng", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kkn", language := "Konkani", iso := "knn", value := .specialImperativeSpecialNegative }
-  , { walsCode := "krn", language := "Korana", iso := "kqz", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kor", language := "Korean", iso := "kor", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kfe", language := "Koromfe", iso := "kfz", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kse", language := "Koyraboro Senni", iso := "ses", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kpe", language := "Kpelle", iso := "xpe", value := .normalImperativeNormalNegative }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kui", language := "Kui (in India)", iso := "kxu", value := .specialImperativeSpecialNegative }
-  , { walsCode := "knm", language := "Kunama", iso := "kun", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kmp", language := "Kunimaipa", iso := "kup", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kuv", language := "Kuvi", iso := "kxv", value := .normalImperativeSpecialNegative }
-  , { walsCode := "kwa", language := "Kwaio", iso := "kwd", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kwk", language := "Kwakw'ala", iso := "kwk", value := .specialImperativeSpecialNegative }
-  , { walsCode := "kwr", language := "Kwamera", iso := "tnk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "lad", language := "Ladakhi", iso := "lbj", value := .normalImperativeSpecialNegative }
-  , { walsCode := "lno", language := "Ladino", iso := "lad", value := .specialImperativeNormalNegative }
-  , { walsCode := "lak", language := "Lak", iso := "lbe", value := .normalImperativeSpecialNegative }
-  , { walsCode := "lkt", language := "Lakhota", iso := "lkt", value := .normalImperativeNormalNegative }
-  , { walsCode := "lan", language := "Lango", iso := "laj", value := .specialImperativeSpecialNegative }
-  , { walsCode := "lat", language := "Latvian", iso := "lav", value := .normalImperativeNormalNegative }
-  , { walsCode := "lav", language := "Lavukaleve", iso := "lvk", value := .specialImperativeSpecialNegative }
-  , { walsCode := "laz", language := "Laz", iso := "lzz", value := .specialImperativeSpecialNegative }
-  , { walsCode := "lng", language := "Lengua", iso := "enx", value := .normalImperativeNormalNegative }
-  , { walsCode := "lep", language := "Lepcha", iso := "lep", value := .specialImperativeSpecialNegative }
-  , { walsCode := "lew", language := "Lewo", iso := "lww", value := .normalImperativeNormalNegative }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .specialImperativeSpecialNegative }
-  , { walsCode := "lil", language := "Lillooet", iso := "lil", value := .specialImperativeSpecialNegative }
-  , { walsCode := "lim", language := "Limbu", iso := "lif", value := .normalImperativeSpecialNegative }
-  , { walsCode := "lnd", language := "Linda", iso := "liy", value := .normalImperativeNormalNegative }
-  , { walsCode := "lin", language := "Lingala", iso := "lin", value := .specialImperativeNormalNegative }
-  , { walsCode := "lit", language := "Lithuanian", iso := "lit", value := .normalImperativeNormalNegative }
-  , { walsCode := "lob", language := "Lobi", iso := "lob", value := .specialImperativeSpecialNegative }
-  , { walsCode := "lon", language := "Loniu", iso := "los", value := .normalImperativeSpecialNegative }
-  , { walsCode := "lot", language := "Lotha", iso := "njh", value := .normalImperativeSpecialNegative }
-  , { walsCode := "loz", language := "Lozi", iso := "loz", value := .specialImperativeSpecialNegative }
-  , { walsCode := "lug", language := "Lugbara", iso := "lgg", value := .normalImperativeNormalNegative }
-  , { walsCode := "luo", language := "Luo", iso := "luo", value := .specialImperativeSpecialNegative }
-  , { walsCode := "luv", language := "Luvale", iso := "lue", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mad", language := "Ma'di", iso := "mhi", value := .normalImperativeNormalNegative }
-  , { walsCode := "mle", language := "Maale", iso := "mdy", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mab", language := "Maba", iso := "mde", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mcd", language := "Macedonian", iso := "mkd", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mac", language := "Macushi", iso := "mbc", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mai", language := "Maithili", iso := "mai", value := .normalImperativeNormalNegative }
-  , { walsCode := "mak", language := "Makah", iso := "myh", value := .specialImperativeNormalNegative }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mym", language := "Malayalam", iso := "mal", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mlt", language := "Maltese", iso := "mlt", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mam", language := "Mam", iso := "mam", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mnm", language := "Manam", iso := "mva", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mdn", language := "Mandan", iso := "mhq", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mdk", language := "Mandinka", iso := "mnk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "myi", language := "Mangarrayi", iso := "mpc", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mns", language := "Mansi", iso := "mns", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .specialImperativeSpecialNegative }
-  , { walsCode := "map", language := "Mapudungun", iso := "arn", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mku", language := "Maranungku", iso := "zmr", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mhi", language := "Marathi", iso := "mar", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mme", language := "Mari (Meadow)", iso := "mhr", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mar", language := "Maricopa", iso := "mrc", value := .normalImperativeNormalNegative }
-  , { walsCode := "mrd", language := "Marind", iso := "mrz", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mrt", language := "Martuthunira", iso := "vma", value := .specialImperativeNormalNegative }
-  , { walsCode := "msl", language := "Masalit", iso := "mls", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mau", language := "Maung", iso := "mph", value := .specialImperativeSpecialNegative }
-  , { walsCode := "may", language := "Maybrat", iso := "ayz", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mbb", language := "Mbabaram", iso := "vmb", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mhu", language := "Mbalanhu", iso := "lnb", value := .specialImperativeNormalNegative }
-  , { walsCode := "mby", language := "Mbay", iso := "myb", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mbg", language := "Mbugu", iso := "mhd", value := .specialImperativeSpecialNegative }
-  , { walsCode := "meh", language := "Mehri", iso := "gdq", value := .specialImperativeNormalNegative }
-  , { walsCode := "mei", language := "Meithei", iso := "mni", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mde", language := "Mende", iso := "men", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mik", language := "Mikir", iso := "mjw", value := .normalImperativeSpecialNegative }
-  , { walsCode := "msg", language := "Mising", iso := "mrg", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mxc", language := "Mixtec (Chalcatongo)", iso := "mig", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mxy", language := "Mixtec (Yosondúa)", iso := "mpm", value := .normalImperativeSpecialNegative }
-  , { walsCode := "miy", language := "Miya", iso := "mkf", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mok", language := "Mokilese", iso := "mkj", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mon", language := "Mon", iso := "mnw", value := .normalImperativeNormalNegative }
-  , { walsCode := "mgo", language := "Mongo", iso := "lol", value := .normalImperativeNormalNegative }
-  , { walsCode := "mbo", language := "Monumbo", iso := "mxk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "moe", language := "Mordvin (Erzya)", iso := "myv", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mro", language := "Moro", iso := "mor", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mos", language := "Mosetén", iso := "cas", value := .specialImperativeNormalNegative }
-  , { walsCode := "mul", language := "Mulao", iso := "mlm", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mum", language := "Mumuye", iso := "mzm", value := .normalImperativeNormalNegative }
-  , { walsCode := "mna", language := "Muna", iso := "mnb", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mdg", language := "Mundang", iso := "mua", value := .normalImperativeSpecialNegative }
-  , { walsCode := "mun", language := "Mundari", iso := "unr", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mwe", language := "Mwera", iso := "mwe", value := .specialImperativeSpecialNegative }
-  , { walsCode := "mwo", language := "Mwotlap", iso := "mlv", value := .specialImperativeSpecialNegative }
-  , { walsCode := "nad", language := "Nadëb", iso := "mbj", value := .normalImperativeSpecialNegative }
-  , { walsCode := "nma", language := "Naga (Mao)", iso := "nbi", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ngt", language := "Naga (Tangkhul)", iso := "nmf", value := .normalImperativeNormalNegative }
-  , { walsCode := "npn", language := "Naga Pidgin", iso := "nag", value := .normalImperativeNormalNegative }
-  , { walsCode := "nht", language := "Nahuatl (Tetelcingo)", iso := "nhg", value := .normalImperativeNormalNegative }
-  , { walsCode := "kho", language := "Nama", iso := "naq", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ntn", language := "Nateni", iso := "ntm", value := .normalImperativeSpecialNegative }
-  , { walsCode := "nav", language := "Navajo", iso := "nav", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ndg", language := "Ndogo", iso := "ndz", value := .normalImperativeNormalNegative }
-  , { walsCode := "ndy", language := "Ndyuka", iso := "djk", value := .normalImperativeNormalNegative }
-  , { walsCode := "nel", language := "Nelemwa", iso := "nee", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ntu", language := "Nenets", iso := "yrk", value := .specialImperativeSpecialNegative }
-  , { walsCode := "nen", language := "Nenets (Forest)", iso := "yrk", value := .specialImperativeSpecialNegative }
-  , { walsCode := "nga", language := "Nganasan", iso := "nio", value := .specialImperativeSpecialNegative }
-  , { walsCode := "nbm", language := "Ngbaka (Ma'bo)", iso := "nbm", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ngi", language := "Ngiyambaa", iso := "wyb", value := .specialImperativeSpecialNegative }
-  , { walsCode := "nca", language := "Nicobarese (Car)", iso := "caq", value := .normalImperativeSpecialNegative }
-  , { walsCode := "nko", language := "Nkore-Kiga", iso := "cgg", value := .normalImperativeSpecialNegative }
-  , { walsCode := "noo", language := "Noon", iso := "snf", value := .specialImperativeSpecialNegative }
-  , { walsCode := "nor", language := "Norwegian", iso := "nor", value := .normalImperativeNormalNegative }
-  , { walsCode := "nub", language := "Nubi", iso := "kcn", value := .normalImperativeSpecialNegative }
-  , { walsCode := "nbd", language := "Nubian (Dongolese)", iso := "dgl", value := .normalImperativeSpecialNegative }
-  , { walsCode := "nun", language := "Nung (in Vietnam)", iso := "nut", value := .normalImperativeSpecialNegative }
-  , { walsCode := "nug", language := "Nunggubuyu", iso := "nuy", value := .normalImperativeSpecialNegative }
-  , { walsCode := "nnn", language := "Nuni (Northern)", iso := "nuv", value := .normalImperativeSpecialNegative }
-  , { walsCode := "nng", language := "Nyanga", iso := "nyj", value := .specialImperativeNormalNegative }
-  , { walsCode := "nya", language := "Nyawaygi", iso := "nyt", value := .normalImperativeSpecialNegative }
-  , { walsCode := "obo", language := "Obolo", iso := "ann", value := .normalImperativeNormalNegative }
-  , { walsCode := "oka", language := "Okanagan", iso := "oka", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ond", language := "Oneida", iso := "one", value := .normalImperativeSpecialNegative }
-  , { walsCode := "orh", language := "Oromo (Harar)", iso := "hae", value := .normalImperativeSpecialNegative }
-  , { walsCode := "oss", language := "Ossetic", iso := "oss", value := .specialImperativeSpecialNegative }
-  , { walsCode := "oix", language := "Otomí (Ixtenco)", iso := "otz", value := .normalImperativeSpecialNegative }
-  , { walsCode := "otm", language := "Otomí (Mezquital)", iso := "ote", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pms", language := "Paamese", iso := "pma", value := .specialImperativeSpecialNegative }
-  , { walsCode := "pta", language := "Paita", iso := "duf", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pno", language := "Paiute (Northern)", iso := "pao", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pai", language := "Paiwan", iso := "pwn", value := .specialImperativeSpecialNegative }
-  , { walsCode := "pal", language := "Palauan", iso := "pau", value := .normalImperativeNormalNegative }
-  , { walsCode := "pnn", language := "Pangasinan", iso := "pag", value := .specialImperativeSpecialNegative }
-  , { walsCode := "pan", language := "Panjabi", iso := "pan", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pny", language := "Panyjima", iso := "pnw", value := .specialImperativeNormalNegative }
-  , { walsCode := "psm", language := "Passamaquoddy-Maliseet", iso := "pqm", value := .specialImperativeSpecialNegative }
-  , { walsCode := "plh", language := "Paulohi", iso := "plh", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pau", language := "Paumarí", iso := "pad", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pec", language := "Pech", iso := "pay", value := .normalImperativeNormalNegative }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .normalImperativeNormalNegative }
-  , { walsCode := "pba", language := "Pima Bajo", iso := "pia", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pip", language := "Pipil", iso := "ppl", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pit", language := "Pitjantjatjara", iso := "pjt", value := .normalImperativeNormalNegative }
-  , { walsCode := "ppi", language := "Pitta Pitta", iso := "pit", value := .normalImperativeNormalNegative }
-  , { walsCode := "pol", language := "Polish", iso := "pol", value := .normalImperativeNormalNegative }
-  , { walsCode := "pso", language := "Pomo (Southeastern)", iso := "pom", value := .normalImperativeNormalNegative }
-  , { walsCode := "por", language := "Portuguese", iso := "por", value := .specialImperativeNormalNegative }
-  , { walsCode := "prk", language := "Purki", iso := "prx", value := .normalImperativeSpecialNegative }
-  , { walsCode := "pur", language := "Purépecha", iso := "tsz", value := .normalImperativeSpecialNegative }
-  , { walsCode := "qim", language := "Quechua (Imbabura)", iso := "qvi", value := .normalImperativeSpecialNegative }
-  , { walsCode := "qta", language := "Quechua (Tarma)", iso := "qvn", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ram", language := "Rama", iso := "rma", value := .specialImperativeSpecialNegative }
-  , { walsCode := "rap", language := "Rapanui", iso := "rap", value := .normalImperativeNormalNegative }
-  , { walsCode := "rwa", language := "Rawa", iso := "rwo", value := .normalImperativeNormalNegative }
-  , { walsCode := "ret", language := "Retuarã", iso := "tnc", value := .specialImperativeSpecialNegative }
-  , { walsCode := "rav", language := "Romani (Ajia Varvara)", iso := "rmn", value := .normalImperativeSpecialNegative }
-  , { walsCode := "rka", language := "Romani (Kalderash)", iso := "rmy", value := .normalImperativeSpecialNegative }
-  , { walsCode := "rom", language := "Romanian", iso := "ron", value := .specialImperativeNormalNegative }
-  , { walsCode := "rsu", language := "Romansch (Sursilvan)", iso := "roh", value := .normalImperativeNormalNegative }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .normalImperativeNormalNegative }
-  , { walsCode := "sno", language := "Saami (Northern)", iso := "sme", value := .normalImperativeNormalNegative }
-  , { walsCode := "slb", language := "Saliba (in Papua New Guinea)", iso := "sbe", value := .normalImperativeSpecialNegative }
-  , { walsCode := "san", language := "Sango", iso := "sag", value := .normalImperativeNormalNegative }
-  , { walsCode := "sgu", language := "Sangu", iso := "snq", value := .specialImperativeSpecialNegative }
-  , { walsCode := "snm", language := "Sanuma", iso := "xsu", value := .normalImperativeSpecialNegative }
-  , { walsCode := "sap", language := "Sapuan", iso := "spu", value := .normalImperativeSpecialNegative }
-  , { walsCode := "srd", language := "Sardinian", iso := "sro", value := .specialImperativeNormalNegative }
-  , { walsCode := "saw", language := "Sawu", iso := "hvn", value := .normalImperativeSpecialNegative }
-  , { walsCode := "sel", language := "Selknam", iso := "ona", value := .normalImperativeSpecialNegative }
-  , { walsCode := "sem", language := "Sema", iso := "nsm", value := .normalImperativeSpecialNegative }
-  , { walsCode := "sml", language := "Semelai", iso := "sza", value := .normalImperativeSpecialNegative }
-  , { walsCode := "sgl", language := "Sengele", iso := "szg", value := .specialImperativeNormalNegative }
-  , { walsCode := "snt", language := "Sentani", iso := "set", value := .normalImperativeSpecialNegative }
-  , { walsCode := "scr", language := "Serbian-Croatian", iso := "hbs", value := .normalImperativeNormalNegative }
-  , { walsCode := "shb", language := "Shabo", iso := "sbf", value := .normalImperativeSpecialNegative }
-  , { walsCode := "shl", language := "Shilluk", iso := "shk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "shk", language := "Shipibo-Konibo", iso := "shp", value := .normalImperativeNormalNegative }
-  , { walsCode := "shu", language := "Shuswap", iso := "shs", value := .specialImperativeSpecialNegative }
-  , { walsCode := "sko", language := "Skou", iso := "skv", value := .normalImperativeNormalNegative }
-  , { walsCode := "slo", language := "Slovene", iso := "slv", value := .normalImperativeNormalNegative }
-  , { walsCode := "so", language := "So", iso := "teu", value := .normalImperativeNormalNegative }
-  , { walsCode := "sou", language := "Sorbian (Upper)", iso := "hsb", value := .normalImperativeSpecialNegative }
-  , { walsCode := "stn", language := "Sotho (Northern)", iso := "nso", value := .specialImperativeSpecialNegative }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .specialImperativeNormalNegative }
-  , { walsCode := "squ", language := "Squamish", iso := "squ", value := .specialImperativeSpecialNegative }
-  , { walsCode := "sug", language := "Sungor", iso := "sjg", value := .specialImperativeSpecialNegative }
-  , { walsCode := "sup", language := "Supyire", iso := "spp", value := .normalImperativeSpecialNegative }
-  , { walsCode := "sus", language := "Susu", iso := "sus", value := .normalImperativeSpecialNegative }
-  , { walsCode := "sva", language := "Svan", iso := "sva", value := .specialImperativeNormalNegative }
-  , { walsCode := "swa", language := "Swahili", iso := "swh", value := .specialImperativeSpecialNegative }
-  , { walsCode := "swe", language := "Swedish", iso := "swe", value := .normalImperativeNormalNegative }
-  , { walsCode := "tab", language := "Taba", iso := "mky", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tah", language := "Tahitian", iso := "tah", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tml", language := "Tamil", iso := "tam", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tas", language := "Tashlhiyt", iso := "shi", value := .normalImperativeNormalNegative }
-  , { walsCode := "tvo", language := "Tatar", iso := "tat", value := .normalImperativeNormalNegative }
-  , { walsCode := "tau", language := "Tauya", iso := "tya", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tel", language := "Telugu", iso := "tel", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tem", language := "Tem", iso := "kdh", value := .specialImperativeSpecialNegative }
-  , { walsCode := "teo", language := "Teop", iso := "tio", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tpn", language := "Tepehuan (Northern)", iso := "ntp", value := .normalImperativeNormalNegative }
-  , { walsCode := "ter", language := "Tera", iso := "ttr", value := .specialImperativeNormalNegative }
-  , { walsCode := "tet", language := "Tetela", iso := "tll", value := .normalImperativeNormalNegative }
-  , { walsCode := "ttn", language := "Tetun", iso := "tet", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tha", language := "Thai", iso := "tha", value := .normalImperativeSpecialNegative }
-  , { walsCode := "thk", language := "Thakali", iso := "ths", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tgr", language := "Tigré", iso := "tig", value := .specialImperativeNormalNegative }
-  , { walsCode := "tin", language := "Tinrin", iso := "cir", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tir", language := "Tiriyo", iso := "tri", value := .normalImperativeNormalNegative }
-  , { walsCode := "tiw", language := "Tiwi", iso := "tiw", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tke", language := "Tokelauan", iso := "tkl", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tms", language := "Tommo So", iso := "dto", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tno", language := "Tondano", iso := "tdn", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ton", language := "Tonkawa", iso := "tqw", value := .normalImperativeNormalNegative }
-  , { walsCode := "tor", language := "Toratán", iso := "rth", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tot", language := "Totonac (Misantla)", iso := "tlc", value := .specialImperativeSpecialNegative }
-  , { walsCode := "txj", language := "Totonac (Xicotepec de Juárez)", iso := "too", value := .normalImperativeNormalNegative }
-  , { walsCode := "tri", language := "Trique (Copala)", iso := "trc", value := .normalImperativeNormalNegative }
-  , { walsCode := "tru", language := "Trumai", iso := "tpy", value := .specialImperativeNormalNegative }
-  , { walsCode := "tsa", language := "Tsakhur", iso := "tkr", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .normalImperativeSpecialNegative }
-  , { walsCode := "ttu", language := "Tsova-Tush", iso := "bbl", value := .normalImperativeNormalNegative }
-  , { walsCode := "tbu", language := "Tubu", iso := "", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tun", language := "Tunica", iso := "tun", value := .specialImperativeSpecialNegative }
-  , { walsCode := "tna", language := "Turkana", iso := "tuv", value := .specialImperativeNormalNegative }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .normalImperativeNormalNegative }
-  , { walsCode := "tuv", language := "Tuvan", iso := "tyv", value := .normalImperativeSpecialNegative }
-  , { walsCode := "tuy", language := "Tuyuca", iso := "tue", value := .specialImperativeNormalNegative }
-  , { walsCode := "tsh", language := "Tümpisa Shoshone", iso := "par", value := .normalImperativeNormalNegative }
-  , { walsCode := "udi", language := "Udi", iso := "udi", value := .specialImperativeSpecialNegative }
-  , { walsCode := "udh", language := "Udihe", iso := "ude", value := .normalImperativeNormalNegative }
-  , { walsCode := "ukr", language := "Ukrainian", iso := "ukr", value := .normalImperativeNormalNegative }
-  , { walsCode := "uma", language := "Uma", iso := "ppk", value := .normalImperativeNormalNegative }
-  , { walsCode := "una", language := "Una", iso := "mtg", value := .specialImperativeSpecialNegative }
-  , { walsCode := "url", language := "Urak Lawoi'", iso := "urk", value := .normalImperativeSpecialNegative }
-  , { walsCode := "urk", language := "Urubú-Kaapor", iso := "urb", value := .normalImperativeNormalNegative }
-  , { walsCode := "uzb", language := "Uzbek", iso := "", value := .normalImperativeNormalNegative }
-  , { walsCode := "vag", language := "Vagla", iso := "vag", value := .normalImperativeSpecialNegative }
-  , { walsCode := "vai", language := "Vai", iso := "vai", value := .specialImperativeNormalNegative }
-  , { walsCode := "vie", language := "Vietnamese", iso := "vie", value := .normalImperativeSpecialNegative }
-  , { walsCode := "vot", language := "Votic", iso := "vot", value := .specialImperativeNormalNegative }
-  , { walsCode := "wll", language := "Wallisian", iso := "wls", value := .normalImperativeSpecialNegative }
-  , { walsCode := "wao", language := "Waorani", iso := "auc", value := .normalImperativeNormalNegative }
-  , { walsCode := "wap", language := "Wappo", iso := "wao", value := .normalImperativeNormalNegative }
-  , { walsCode := "wra", language := "Warao", iso := "wba", value := .normalImperativeNormalNegative }
-  , { walsCode := "wrd", language := "Wardaman", iso := "wrr", value := .specialImperativeNormalNegative }
-  , { walsCode := "wrk", language := "Warekena", iso := "gae", value := .normalImperativeSpecialNegative }
-  , { walsCode := "wrm", language := "Warembori", iso := "wsa", value := .normalImperativeNormalNegative }
-  , { walsCode := "war", language := "Wari'", iso := "pav", value := .normalImperativeSpecialNegative }
-  , { walsCode := "wrl", language := "Warlpiri", iso := "wbp", value := .normalImperativeNormalNegative }
-  , { walsCode := "wrg", language := "Warrgamay", iso := "wgy", value := .specialImperativeSpecialNegative }
-  , { walsCode := "wth", language := "Wathawurrung", iso := "wth", value := .specialImperativeNormalNegative }
-  , { walsCode := "wau", language := "Waunana", iso := "noa", value := .normalImperativeSpecialNegative }
-  , { walsCode := "way", language := "Wayampi", iso := "oym", value := .specialImperativeSpecialNegative }
-  , { walsCode := "wel", language := "Welsh", iso := "cym", value := .normalImperativeSpecialNegative }
-  , { walsCode := "wic", language := "Wichita", iso := "wic", value := .normalImperativeNormalNegative }
-  , { walsCode := "wch", language := "Wichí", iso := "mzh", value := .specialImperativeSpecialNegative }
-  , { walsCode := "wiy", language := "Wiyot", iso := "wiy", value := .specialImperativeSpecialNegative }
-  , { walsCode := "wwr", language := "Woiwurrung", iso := "wyi", value := .specialImperativeSpecialNegative }
-  , { walsCode := "wlo", language := "Wolio", iso := "wlo", value := .normalImperativeSpecialNegative }
-  , { walsCode := "wlf", language := "Wolof", iso := "wol", value := .normalImperativeSpecialNegative }
-  , { walsCode := "yag", language := "Yagua", iso := "yad", value := .normalImperativeNormalNegative }
-  , { walsCode := "ykm", language := "Yakoma", iso := "yky", value := .normalImperativeSpecialNegative }
-  , { walsCode := "yny", language := "Yanyuwa", iso := "jao", value := .specialImperativeSpecialNegative }
-  , { walsCode := "yap", language := "Yapese", iso := "yap", value := .normalImperativeSpecialNegative }
-  , { walsCode := "yaq", language := "Yaqui", iso := "yaq", value := .specialImperativeSpecialNegative }
-  , { walsCode := "yid", language := "Yidiny", iso := "yii", value := .normalImperativeSpecialNegative }
-  , { walsCode := "yim", language := "Yimas", iso := "yee", value := .specialImperativeSpecialNegative }
-  , { walsCode := "yng", language := "Yingkarta", iso := "yia", value := .normalImperativeNormalNegative }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .normalImperativeSpecialNegative }
-  , { walsCode := "yuk", language := "Yukulta", iso := "gcd", value := .specialImperativeSpecialNegative }
-  , { walsCode := "ypk", language := "Yup'ik (Central)", iso := "esu", value := .normalImperativeNormalNegative }
-  , { walsCode := "yus", language := "Yupik (Siberian)", iso := "ess", value := .specialImperativeSpecialNegative }
-  , { walsCode := "yrm", language := "Yurimangí", iso := "", value := .normalImperativeNormalNegative }
-  , { walsCode := "yur", language := "Yurok", iso := "yur", value := .specialImperativeNormalNegative }
-  , { walsCode := "zaz", language := "Zazaki", iso := "diq", value := .specialImperativeSpecialNegative }
-  , { walsCode := "zen", language := "Zenaga", iso := "zen", value := .specialImperativeNormalNegative }
-  , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .specialImperativeSpecialNegative }
-  , { walsCode := "zul", language := "Zulu", iso := "zul", value := .specialImperativeSpecialNegative }
-  , { walsCode := "zun", language := "Zuni", iso := "zun", value := .normalImperativeSpecialNegative }
+  [ { walsCode := "abk", iso := "abk", value := .specialImperativeNormalNegative }
+  , { walsCode := "ace", iso := "ace", value := .normalImperativeSpecialNegative }
+  , { walsCode := "acl", iso := "ach", value := .specialImperativeSpecialNegative }
+  , { walsCode := "acu", iso := "acu", value := .specialImperativeSpecialNegative }
+  , { walsCode := "aco", iso := "kjq", value := .normalImperativeSpecialNegative }
+  , { walsCode := "aga", iso := "agd", value := .normalImperativeSpecialNegative }
+  , { walsCode := "agu", iso := "agu", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ain", iso := "ain", value := .normalImperativeSpecialNegative }
+  , { walsCode := "akn", iso := "aka", value := .normalImperativeNormalNegative }
+  , { walsCode := "ala", iso := "amp", value := .specialImperativeSpecialNegative }
+  , { walsCode := "alb", iso := "sqi", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ame", iso := "aey", value := .specialImperativeSpecialNegative }
+  , { walsCode := "amh", iso := "amh", value := .specialImperativeSpecialNegative }
+  , { walsCode := "amo", iso := "amo", value := .specialImperativeNormalNegative }
+  , { walsCode := "ago", iso := "aoa", value := .normalImperativeNormalNegative }
+  , { walsCode := "anu", iso := "cko", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ao", iso := "njo", value := .normalImperativeSpecialNegative }
+  , { walsCode := "apl", iso := "apy", value := .normalImperativeNormalNegative }
+  , { walsCode := "apt", iso := "apt", value := .specialImperativeSpecialNegative }
+  , { walsCode := "abb", iso := "shu", value := .specialImperativeNormalNegative }
+  , { walsCode := "aeg", iso := "arz", value := .specialImperativeNormalNegative }
+  , { walsCode := "arg", iso := "afb", value := .normalImperativeSpecialNegative }
+  , { walsCode := "amr", iso := "ary", value := .specialImperativeNormalNegative }
+  , { walsCode := "anl", iso := "apc", value := .specialImperativeNormalNegative }
+  , { walsCode := "apa", iso := "ajp", value := .normalImperativeNormalNegative }
+  , { walsCode := "ars", iso := "ayn", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ark", iso := "akr", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ana", iso := "aro", value := .specialImperativeSpecialNegative }
+  , { walsCode := "arp", iso := "ape", value := .normalImperativeSpecialNegative }
+  , { walsCode := "arm", iso := "hye", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ath", iso := "aph", value := .specialImperativeNormalNegative }
+  , { walsCode := "au", iso := "avt", value := .normalImperativeNormalNegative }
+  , { walsCode := "ava", iso := "ava", value := .normalImperativeSpecialNegative }
+  , { walsCode := "awp", iso := "kwi", value := .specialImperativeSpecialNegative }
+  , { walsCode := "aym", iso := "ayr", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ayr", iso := "ayo", value := .normalImperativeNormalNegative }
+  , { walsCode := "azi", iso := "azb", value := .normalImperativeNormalNegative }
+  , { walsCode := "bbl", iso := "bvx", value := .specialImperativeNormalNegative }
+  , { walsCode := "bab", iso := "bav", value := .specialImperativeSpecialNegative }
+  , { walsCode := "baf", iso := "bfd", value := .normalImperativeSpecialNegative }
+  , { walsCode := "bag", iso := "bmi", value := .normalImperativeNormalNegative }
+  , { walsCode := "baj", iso := "bdl", value := .normalImperativeSpecialNegative }
+  , { walsCode := "bam", iso := "bam", value := .specialImperativeSpecialNegative }
+  , { walsCode := "brs", iso := "bsn", value := .normalImperativeNormalNegative }
+  , { walsCode := "bae", iso := "bae", value := .normalImperativeSpecialNegative }
+  , { walsCode := "bsk", iso := "bak", value := .normalImperativeNormalNegative }
+  , { walsCode := "bsq", iso := "eus", value := .normalImperativeNormalNegative }
+  , { walsCode := "bkr", iso := "btx", value := .normalImperativeSpecialNegative }
+  , { walsCode := "baw", iso := "bgr", value := .normalImperativeSpecialNegative }
+  , { walsCode := "bej", iso := "bej", value := .normalImperativeSpecialNegative }
+  , { walsCode := "bem", iso := "bem", value := .specialImperativeSpecialNegative }
+  , { walsCode := "bfg", iso := "grr", value := .normalImperativeNormalNegative }
+  , { walsCode := "bma", iso := "tzm", value := .specialImperativeNormalNegative }
+  , { walsCode := "ber", iso := "wti", value := .specialImperativeSpecialNegative }
+  , { walsCode := "bhu", iso := "unr", value := .specialImperativeSpecialNegative }
+  , { walsCode := "bii", iso := "bzr", value := .normalImperativeNormalNegative }
+  , { walsCode := "brz", iso := "bvq", value := .normalImperativeNormalNegative }
+  , { walsCode := "brr", iso := "bor", value := .specialImperativeSpecialNegative }
+  , { walsCode := "bri", iso := "bzd", value := .specialImperativeSpecialNegative }
+  , { walsCode := "bdk", iso := "bdk", value := .specialImperativeSpecialNegative }
+  , { walsCode := "bud", iso := "bdm", value := .specialImperativeNormalNegative }
+  , { walsCode := "buk", iso := "bxk", value := .specialImperativeSpecialNegative }
+  , { walsCode := "bul", iso := "bul", value := .specialImperativeSpecialNegative }
+  , { walsCode := "brm", iso := "mya", value := .normalImperativeSpecialNegative }
+  , { walsCode := "bur", iso := "bsk", value := .normalImperativeNormalNegative }
+  , { walsCode := "cah", iso := "chl", value := .specialImperativeNormalNegative }
+  , { walsCode := "cml", iso := "rab", value := .specialImperativeSpecialNegative }
+  , { walsCode := "cnl", iso := "ram", value := .normalImperativeNormalNegative }
+  , { walsCode := "cnt", iso := "yue", value := .normalImperativeSpecialNegative }
+  , { walsCode := "csh", iso := "cbs", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ctl", iso := "cat", value := .specialImperativeNormalNegative }
+  , { walsCode := "cay", iso := "cbi", value := .normalImperativeNormalNegative }
+  , { walsCode := "ceb", iso := "ceb", value := .normalImperativeSpecialNegative }
+  , { walsCode := "cha", iso := "cha", value := .normalImperativeSpecialNegative }
+  , { walsCode := "chc", iso := "che", value := .normalImperativeSpecialNegative }
+  , { walsCode := "cmh", iso := "ute", value := .specialImperativeNormalNegative }
+  , { walsCode := "ccm", iso := "cco", value := .specialImperativeNormalNegative }
+  , { walsCode := "cle", iso := "cle", value := .specialImperativeNormalNegative }
+  , { walsCode := "cte", iso := "cnt", value := .specialImperativeNormalNegative }
+  , { walsCode := "crg", iso := "gui", value := .normalImperativeSpecialNegative }
+  , { walsCode := "coi", iso := "caa", value := .specialImperativeSpecialNegative }
+  , { walsCode := "chr", iso := "crw", value := .normalImperativeSpecialNegative }
+  , { walsCode := "chk", iso := "ckt", value := .specialImperativeSpecialNegative }
+  , { walsCode := "chv", iso := "chv", value := .normalImperativeSpecialNegative }
+  , { walsCode := "cmn", iso := "com", value := .specialImperativeSpecialNegative }
+  , { walsCode := "coo", iso := "csz", value := .normalImperativeNormalNegative }
+  , { walsCode := "cor", iso := "crn", value := .specialImperativeNormalNegative }
+  , { walsCode := "cre", iso := "crk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "cze", iso := "ces", value := .normalImperativeNormalNegative }
+  , { walsCode := "dbd", iso := "dav", value := .specialImperativeSpecialNegative }
+  , { walsCode := "dam", iso := "mbp", value := .specialImperativeNormalNegative }
+  , { walsCode := "dni", iso := "dni", value := .specialImperativeSpecialNegative }
+  , { walsCode := "dsh", iso := "dan", value := .normalImperativeNormalNegative }
+  , { walsCode := "des", iso := "des", value := .specialImperativeNormalNegative }
+  , { walsCode := "die", iso := "dih", value := .normalImperativeNormalNegative }
+  , { walsCode := "dig", iso := "mhu", value := .specialImperativeSpecialNegative }
+  , { walsCode := "dio", iso := "dyo", value := .specialImperativeSpecialNegative }
+  , { walsCode := "diz", iso := "mdx", value := .specialImperativeSpecialNegative }
+  , { walsCode := "dja", iso := "dyy", value := .normalImperativeNormalNegative }
+  , { walsCode := "djp", iso := "dwu", value := .normalImperativeNormalNegative }
+  , { walsCode := "don", iso := "kmc", value := .normalImperativeNormalNegative }
+  , { walsCode := "dre", iso := "dhv", value := .specialImperativeSpecialNegative }
+  , { walsCode := "dmi", iso := "dus", value := .specialImperativeNormalNegative }
+  , { walsCode := "dut", iso := "nld", value := .normalImperativeNormalNegative }
+  , { walsCode := "dyi", iso := "dbl", value := .specialImperativeSpecialNegative }
+  , { walsCode := "eka", iso := "ekg", value := .normalImperativeNormalNegative }
+  , { walsCode := "emc", iso := "cmi", value := .normalImperativeSpecialNegative }
+  , { walsCode := "emb", iso := "emp", value := .normalImperativeSpecialNegative }
+  , { walsCode := "egn", iso := "enn", value := .normalImperativeSpecialNegative }
+  , { walsCode := "eng", iso := "eng", value := .normalImperativeNormalNegative }
+  , { walsCode := "epe", iso := "sja", value := .normalImperativeSpecialNegative }
+  , { walsCode := "err", iso := "erg", value := .normalImperativeNormalNegative }
+  , { walsCode := "est", iso := "ekk", value := .specialImperativeNormalNegative }
+  , { walsCode := "evn", iso := "eve", value := .specialImperativeNormalNegative }
+  , { walsCode := "eve", iso := "evn", value := .normalImperativeNormalNegative }
+  , { walsCode := "ewe", iso := "ewe", value := .normalImperativeSpecialNegative }
+  , { walsCode := "far", iso := "fao", value := .normalImperativeNormalNegative }
+  , { walsCode := "fij", iso := "fij", value := .normalImperativeSpecialNegative }
+  , { walsCode := "fin", iso := "fin", value := .normalImperativeSpecialNegative }
+  , { walsCode := "fre", iso := "fra", value := .normalImperativeNormalNegative }
+  , { walsCode := "fri", iso := "fry", value := .normalImperativeNormalNegative }
+  , { walsCode := "fua", iso := "fub", value := .normalImperativeSpecialNegative }
+  , { walsCode := "fur", iso := "fvr", value := .normalImperativeSpecialNegative }
+  , { walsCode := "fue", iso := "fud", value := .normalImperativeSpecialNegative }
+  , { walsCode := "fye", iso := "pym", value := .specialImperativeNormalNegative }
+  , { walsCode := "gll", iso := "gbi", value := .normalImperativeSpecialNegative }
+  , { walsCode := "glc", iso := "glg", value := .specialImperativeNormalNegative }
+  , { walsCode := "gar", iso := "grt", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ger", iso := "deu", value := .normalImperativeNormalNegative }
+  , { walsCode := "gim", iso := "bcq", value := .normalImperativeSpecialNegative }
+  , { walsCode := "god", iso := "gdo", value := .specialImperativeSpecialNegative }
+  , { walsCode := "goj", iso := "gju", value := .normalImperativeSpecialNegative }
+  , { walsCode := "goo", iso := "gni", value := .specialImperativeNormalNegative }
+  , { walsCode := "grb", iso := "grj", value := .specialImperativeSpecialNegative }
+  , { walsCode := "grk", iso := "ell", value := .specialImperativeSpecialNegative }
+  , { walsCode := "grw", iso := "kal", value := .specialImperativeSpecialNegative }
+  , { walsCode := "gua", iso := "gug", value := .specialImperativeSpecialNegative }
+  , { walsCode := "gum", iso := "kgs", value := .normalImperativeSpecialNegative }
+  , { walsCode := "gmz", iso := "guk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "gwa", iso := "gbr", value := .normalImperativeNormalNegative }
+  , { walsCode := "hmr", iso := "amf", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ham", iso := "hmt", value := .normalImperativeNormalNegative }
+  , { walsCode := "hat", iso := "had", value := .normalImperativeNormalNegative }
+  , { walsCode := "hau", iso := "hau", value := .specialImperativeSpecialNegative }
+  , { walsCode := "haw", iso := "haw", value := .normalImperativeSpecialNegative }
+  , { walsCode := "hya", iso := "hay", value := .specialImperativeSpecialNegative }
+  , { walsCode := "hay", iso := "vay", value := .normalImperativeSpecialNegative }
+  , { walsCode := "heb", iso := "heb", value := .specialImperativeSpecialNegative }
+  , { walsCode := "her", iso := "her", value := .specialImperativeSpecialNegative }
+  , { walsCode := "hin", iso := "hin", value := .normalImperativeSpecialNegative }
+  , { walsCode := "hix", iso := "hix", value := .normalImperativeNormalNegative }
+  , { walsCode := "hmo", iso := "hnj", value := .normalImperativeSpecialNegative }
+  , { walsCode := "hmi", iso := "hto", value := .normalImperativeSpecialNegative }
+  , { walsCode := "hun", iso := "hun", value := .normalImperativeSpecialNegative }
+  , { walsCode := "hzb", iso := "huz", value := .specialImperativeSpecialNegative }
+  , { walsCode := "iaa", iso := "iai", value := .normalImperativeNormalNegative }
+  , { walsCode := "ice", iso := "isl", value := .normalImperativeNormalNegative }
+  , { walsCode := "ido", iso := "idu", value := .normalImperativeNormalNegative }
+  , { walsCode := "igb", iso := "ibo", value := .normalImperativeNormalNegative }
+  , { walsCode := "ijo", iso := "ijc", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ika", iso := "arh", value := .normalImperativeSpecialNegative }
+  , { walsCode := "imo", iso := "imn", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ind", iso := "ind", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ing", iso := "inh", value := .normalImperativeSpecialNegative }
+  , { walsCode := "iqu", iso := "iqu", value := .normalImperativeSpecialNegative }
+  , { walsCode := "irq", iso := "irk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "iri", iso := "gle", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ita", iso := "ita", value := .specialImperativeNormalNegative }
+  , { walsCode := "jar", iso := "izr", value := .normalImperativeSpecialNegative }
+  , { walsCode := "jab", iso := "jae", value := .normalImperativeNormalNegative }
+  , { walsCode := "jak", iso := "jac", value := .specialImperativeNormalNegative }
+  , { walsCode := "jpn", iso := "jpn", value := .normalImperativeSpecialNegative }
+  , { walsCode := "jaq", iso := "jqr", value := .specialImperativeNormalNegative }
+  , { walsCode := "jeb", iso := "jeb", value := .specialImperativeSpecialNegative }
+  , { walsCode := "juh", iso := "ktz", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kdw", iso := "kbc", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kmk", iso := "xal", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kms", iso := "xas", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kam", iso := "xbr", value := .normalImperativeSpecialNegative }
+  , { walsCode := "knd", iso := "kan", value := .specialImperativeSpecialNegative }
+  , { walsCode := "knr", iso := "knc", value := .specialImperativeSpecialNegative }
+  , { walsCode := "krc", iso := "krc", value := .normalImperativeNormalNegative }
+  , { walsCode := "krt", iso := "kpt", value := .specialImperativeSpecialNegative }
+  , { walsCode := "krk", iso := "kyh", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kas", iso := "kas", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kws", iso := "xaw", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kyl", iso := "eky", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kay", iso := "gyd", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kei", iso := "kei", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kyg", iso := "ken", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ker", iso := "ker", value := .specialImperativeSpecialNegative }
+  , { walsCode := "krq", iso := "krk", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ket", iso := "ket", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kte", iso := "kcv", value := .specialImperativeNormalNegative }
+  , { walsCode := "kew", iso := "kew", value := .normalImperativeNormalNegative }
+  , { walsCode := "khk", iso := "kjh", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kha", iso := "khk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kty", iso := "kca", value := .normalImperativeSpecialNegative }
+  , { walsCode := "khm", iso := "khm", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kmu", iso := "kjg", value := .normalImperativeSpecialNegative }
+  , { walsCode := "klv", iso := "kij", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kil", iso := "lub", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kim", iso := "kig", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kio", iso := "kio", value := .specialImperativeSpecialNegative }
+  , { walsCode := "krb", iso := "gil", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kis", iso := "kss", value := .normalImperativeNormalNegative }
+  , { walsCode := "kiw", iso := "kjd", value := .specialImperativeSpecialNegative }
+  , { walsCode := "klm", iso := "kla", value := .normalImperativeNormalNegative }
+  , { walsCode := "kow", iso := "kst", value := .specialImperativeSpecialNegative }
+  , { walsCode := "koa", iso := "cku", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kob", iso := "kpw", value := .normalImperativeNormalNegative }
+  , { walsCode := "kod", iso := "kfa", value := .specialImperativeSpecialNegative }
+  , { walsCode := "koi", iso := "kbk", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kok", iso := "trp", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kon", iso := "kng", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kkn", iso := "knn", value := .specialImperativeSpecialNegative }
+  , { walsCode := "krn", iso := "kqz", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kor", iso := "kor", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kfe", iso := "kfz", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kse", iso := "ses", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kpe", iso := "xpe", value := .normalImperativeNormalNegative }
+  , { walsCode := "kro", iso := "kgo", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kui", iso := "kxu", value := .specialImperativeSpecialNegative }
+  , { walsCode := "knm", iso := "kun", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kmp", iso := "kup", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kuv", iso := "kxv", value := .normalImperativeSpecialNegative }
+  , { walsCode := "kwa", iso := "kwd", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kwk", iso := "kwk", value := .specialImperativeSpecialNegative }
+  , { walsCode := "kwr", iso := "tnk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "lad", iso := "lbj", value := .normalImperativeSpecialNegative }
+  , { walsCode := "lno", iso := "lad", value := .specialImperativeNormalNegative }
+  , { walsCode := "lak", iso := "lbe", value := .normalImperativeSpecialNegative }
+  , { walsCode := "lkt", iso := "lkt", value := .normalImperativeNormalNegative }
+  , { walsCode := "lan", iso := "laj", value := .specialImperativeSpecialNegative }
+  , { walsCode := "lat", iso := "lav", value := .normalImperativeNormalNegative }
+  , { walsCode := "lav", iso := "lvk", value := .specialImperativeSpecialNegative }
+  , { walsCode := "laz", iso := "lzz", value := .specialImperativeSpecialNegative }
+  , { walsCode := "lng", iso := "enx", value := .normalImperativeNormalNegative }
+  , { walsCode := "lep", iso := "lep", value := .specialImperativeSpecialNegative }
+  , { walsCode := "lew", iso := "lww", value := .normalImperativeNormalNegative }
+  , { walsCode := "lez", iso := "lez", value := .specialImperativeSpecialNegative }
+  , { walsCode := "lil", iso := "lil", value := .specialImperativeSpecialNegative }
+  , { walsCode := "lim", iso := "lif", value := .normalImperativeSpecialNegative }
+  , { walsCode := "lnd", iso := "liy", value := .normalImperativeNormalNegative }
+  , { walsCode := "lin", iso := "lin", value := .specialImperativeNormalNegative }
+  , { walsCode := "lit", iso := "lit", value := .normalImperativeNormalNegative }
+  , { walsCode := "lob", iso := "lob", value := .specialImperativeSpecialNegative }
+  , { walsCode := "lon", iso := "los", value := .normalImperativeSpecialNegative }
+  , { walsCode := "lot", iso := "njh", value := .normalImperativeSpecialNegative }
+  , { walsCode := "loz", iso := "loz", value := .specialImperativeSpecialNegative }
+  , { walsCode := "lug", iso := "lgg", value := .normalImperativeNormalNegative }
+  , { walsCode := "luo", iso := "luo", value := .specialImperativeSpecialNegative }
+  , { walsCode := "luv", iso := "lue", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mad", iso := "mhi", value := .normalImperativeNormalNegative }
+  , { walsCode := "mle", iso := "mdy", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mab", iso := "mde", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mcd", iso := "mkd", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mac", iso := "mbc", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mai", iso := "mai", value := .normalImperativeNormalNegative }
+  , { walsCode := "mak", iso := "myh", value := .specialImperativeNormalNegative }
+  , { walsCode := "mal", iso := "plt", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mym", iso := "mal", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mlt", iso := "mlt", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mam", iso := "mam", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mnm", iso := "mva", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mdn", iso := "mhq", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mnd", iso := "cmn", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mdk", iso := "mnk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "myi", iso := "mpc", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mns", iso := "mns", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mao", iso := "mri", value := .specialImperativeSpecialNegative }
+  , { walsCode := "map", iso := "arn", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mku", iso := "zmr", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mhi", iso := "mar", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mme", iso := "mhr", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mar", iso := "mrc", value := .normalImperativeNormalNegative }
+  , { walsCode := "mrd", iso := "mrz", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mrt", iso := "vma", value := .specialImperativeNormalNegative }
+  , { walsCode := "msl", iso := "mls", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mau", iso := "mph", value := .specialImperativeSpecialNegative }
+  , { walsCode := "may", iso := "ayz", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mbb", iso := "vmb", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mhu", iso := "lnb", value := .specialImperativeNormalNegative }
+  , { walsCode := "mby", iso := "myb", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mbg", iso := "mhd", value := .specialImperativeSpecialNegative }
+  , { walsCode := "meh", iso := "gdq", value := .specialImperativeNormalNegative }
+  , { walsCode := "mei", iso := "mni", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mde", iso := "men", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mik", iso := "mjw", value := .normalImperativeSpecialNegative }
+  , { walsCode := "msg", iso := "mrg", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mxc", iso := "mig", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mxy", iso := "mpm", value := .normalImperativeSpecialNegative }
+  , { walsCode := "miy", iso := "mkf", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mok", iso := "mkj", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mon", iso := "mnw", value := .normalImperativeNormalNegative }
+  , { walsCode := "mgo", iso := "lol", value := .normalImperativeNormalNegative }
+  , { walsCode := "mbo", iso := "mxk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "moe", iso := "myv", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mro", iso := "mor", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mos", iso := "cas", value := .specialImperativeNormalNegative }
+  , { walsCode := "mul", iso := "mlm", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mum", iso := "mzm", value := .normalImperativeNormalNegative }
+  , { walsCode := "mna", iso := "mnb", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mdg", iso := "mua", value := .normalImperativeSpecialNegative }
+  , { walsCode := "mun", iso := "unr", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mwe", iso := "mwe", value := .specialImperativeSpecialNegative }
+  , { walsCode := "mwo", iso := "mlv", value := .specialImperativeSpecialNegative }
+  , { walsCode := "nad", iso := "mbj", value := .normalImperativeSpecialNegative }
+  , { walsCode := "nma", iso := "nbi", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ngt", iso := "nmf", value := .normalImperativeNormalNegative }
+  , { walsCode := "npn", iso := "nag", value := .normalImperativeNormalNegative }
+  , { walsCode := "nht", iso := "nhg", value := .normalImperativeNormalNegative }
+  , { walsCode := "kho", iso := "naq", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ntn", iso := "ntm", value := .normalImperativeSpecialNegative }
+  , { walsCode := "nav", iso := "nav", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ndg", iso := "ndz", value := .normalImperativeNormalNegative }
+  , { walsCode := "ndy", iso := "djk", value := .normalImperativeNormalNegative }
+  , { walsCode := "nel", iso := "nee", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ntu", iso := "yrk", value := .specialImperativeSpecialNegative }
+  , { walsCode := "nen", iso := "yrk", value := .specialImperativeSpecialNegative }
+  , { walsCode := "nga", iso := "nio", value := .specialImperativeSpecialNegative }
+  , { walsCode := "nbm", iso := "nbm", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ngi", iso := "wyb", value := .specialImperativeSpecialNegative }
+  , { walsCode := "nca", iso := "caq", value := .normalImperativeSpecialNegative }
+  , { walsCode := "nko", iso := "cgg", value := .normalImperativeSpecialNegative }
+  , { walsCode := "noo", iso := "snf", value := .specialImperativeSpecialNegative }
+  , { walsCode := "nor", iso := "nor", value := .normalImperativeNormalNegative }
+  , { walsCode := "nub", iso := "kcn", value := .normalImperativeSpecialNegative }
+  , { walsCode := "nbd", iso := "dgl", value := .normalImperativeSpecialNegative }
+  , { walsCode := "nun", iso := "nut", value := .normalImperativeSpecialNegative }
+  , { walsCode := "nug", iso := "nuy", value := .normalImperativeSpecialNegative }
+  , { walsCode := "nnn", iso := "nuv", value := .normalImperativeSpecialNegative }
+  , { walsCode := "nng", iso := "nyj", value := .specialImperativeNormalNegative }
+  , { walsCode := "nya", iso := "nyt", value := .normalImperativeSpecialNegative }
+  , { walsCode := "obo", iso := "ann", value := .normalImperativeNormalNegative }
+  , { walsCode := "oka", iso := "oka", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ond", iso := "one", value := .normalImperativeSpecialNegative }
+  , { walsCode := "orh", iso := "hae", value := .normalImperativeSpecialNegative }
+  , { walsCode := "oss", iso := "oss", value := .specialImperativeSpecialNegative }
+  , { walsCode := "oix", iso := "otz", value := .normalImperativeSpecialNegative }
+  , { walsCode := "otm", iso := "ote", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pms", iso := "pma", value := .specialImperativeSpecialNegative }
+  , { walsCode := "pta", iso := "duf", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pno", iso := "pao", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pai", iso := "pwn", value := .specialImperativeSpecialNegative }
+  , { walsCode := "pal", iso := "pau", value := .normalImperativeNormalNegative }
+  , { walsCode := "pnn", iso := "pag", value := .specialImperativeSpecialNegative }
+  , { walsCode := "pan", iso := "pan", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pny", iso := "pnw", value := .specialImperativeNormalNegative }
+  , { walsCode := "psm", iso := "pqm", value := .specialImperativeSpecialNegative }
+  , { walsCode := "plh", iso := "plh", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pau", iso := "pad", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pec", iso := "pay", value := .normalImperativeNormalNegative }
+  , { walsCode := "prs", iso := "pes", value := .normalImperativeNormalNegative }
+  , { walsCode := "pba", iso := "pia", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pip", iso := "ppl", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pit", iso := "pjt", value := .normalImperativeNormalNegative }
+  , { walsCode := "ppi", iso := "pit", value := .normalImperativeNormalNegative }
+  , { walsCode := "pol", iso := "pol", value := .normalImperativeNormalNegative }
+  , { walsCode := "pso", iso := "pom", value := .normalImperativeNormalNegative }
+  , { walsCode := "por", iso := "por", value := .specialImperativeNormalNegative }
+  , { walsCode := "prk", iso := "prx", value := .normalImperativeSpecialNegative }
+  , { walsCode := "pur", iso := "tsz", value := .normalImperativeSpecialNegative }
+  , { walsCode := "qim", iso := "qvi", value := .normalImperativeSpecialNegative }
+  , { walsCode := "qta", iso := "qvn", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ram", iso := "rma", value := .specialImperativeSpecialNegative }
+  , { walsCode := "rap", iso := "rap", value := .normalImperativeNormalNegative }
+  , { walsCode := "rwa", iso := "rwo", value := .normalImperativeNormalNegative }
+  , { walsCode := "ret", iso := "tnc", value := .specialImperativeSpecialNegative }
+  , { walsCode := "rav", iso := "rmn", value := .normalImperativeSpecialNegative }
+  , { walsCode := "rka", iso := "rmy", value := .normalImperativeSpecialNegative }
+  , { walsCode := "rom", iso := "ron", value := .specialImperativeNormalNegative }
+  , { walsCode := "rsu", iso := "roh", value := .normalImperativeNormalNegative }
+  , { walsCode := "rus", iso := "rus", value := .normalImperativeNormalNegative }
+  , { walsCode := "sno", iso := "sme", value := .normalImperativeNormalNegative }
+  , { walsCode := "slb", iso := "sbe", value := .normalImperativeSpecialNegative }
+  , { walsCode := "san", iso := "sag", value := .normalImperativeNormalNegative }
+  , { walsCode := "sgu", iso := "snq", value := .specialImperativeSpecialNegative }
+  , { walsCode := "snm", iso := "xsu", value := .normalImperativeSpecialNegative }
+  , { walsCode := "sap", iso := "spu", value := .normalImperativeSpecialNegative }
+  , { walsCode := "srd", iso := "sro", value := .specialImperativeNormalNegative }
+  , { walsCode := "saw", iso := "hvn", value := .normalImperativeSpecialNegative }
+  , { walsCode := "sel", iso := "ona", value := .normalImperativeSpecialNegative }
+  , { walsCode := "sem", iso := "nsm", value := .normalImperativeSpecialNegative }
+  , { walsCode := "sml", iso := "sza", value := .normalImperativeSpecialNegative }
+  , { walsCode := "sgl", iso := "szg", value := .specialImperativeNormalNegative }
+  , { walsCode := "snt", iso := "set", value := .normalImperativeSpecialNegative }
+  , { walsCode := "scr", iso := "hbs", value := .normalImperativeNormalNegative }
+  , { walsCode := "shb", iso := "sbf", value := .normalImperativeSpecialNegative }
+  , { walsCode := "shl", iso := "shk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "shk", iso := "shp", value := .normalImperativeNormalNegative }
+  , { walsCode := "shu", iso := "shs", value := .specialImperativeSpecialNegative }
+  , { walsCode := "sko", iso := "skv", value := .normalImperativeNormalNegative }
+  , { walsCode := "slo", iso := "slv", value := .normalImperativeNormalNegative }
+  , { walsCode := "so", iso := "teu", value := .normalImperativeNormalNegative }
+  , { walsCode := "sou", iso := "hsb", value := .normalImperativeSpecialNegative }
+  , { walsCode := "stn", iso := "nso", value := .specialImperativeSpecialNegative }
+  , { walsCode := "spa", iso := "spa", value := .specialImperativeNormalNegative }
+  , { walsCode := "squ", iso := "squ", value := .specialImperativeSpecialNegative }
+  , { walsCode := "sug", iso := "sjg", value := .specialImperativeSpecialNegative }
+  , { walsCode := "sup", iso := "spp", value := .normalImperativeSpecialNegative }
+  , { walsCode := "sus", iso := "sus", value := .normalImperativeSpecialNegative }
+  , { walsCode := "sva", iso := "sva", value := .specialImperativeNormalNegative }
+  , { walsCode := "swa", iso := "swh", value := .specialImperativeSpecialNegative }
+  , { walsCode := "swe", iso := "swe", value := .normalImperativeNormalNegative }
+  , { walsCode := "tab", iso := "mky", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tag", iso := "tgl", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tah", iso := "tah", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tml", iso := "tam", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tas", iso := "shi", value := .normalImperativeNormalNegative }
+  , { walsCode := "tvo", iso := "tat", value := .normalImperativeNormalNegative }
+  , { walsCode := "tau", iso := "tya", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tel", iso := "tel", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tem", iso := "kdh", value := .specialImperativeSpecialNegative }
+  , { walsCode := "teo", iso := "tio", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tpn", iso := "ntp", value := .normalImperativeNormalNegative }
+  , { walsCode := "ter", iso := "ttr", value := .specialImperativeNormalNegative }
+  , { walsCode := "tet", iso := "tll", value := .normalImperativeNormalNegative }
+  , { walsCode := "ttn", iso := "tet", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tha", iso := "tha", value := .normalImperativeSpecialNegative }
+  , { walsCode := "thk", iso := "ths", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tgr", iso := "tig", value := .specialImperativeNormalNegative }
+  , { walsCode := "tin", iso := "cir", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tir", iso := "tri", value := .normalImperativeNormalNegative }
+  , { walsCode := "tiw", iso := "tiw", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tke", iso := "tkl", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tms", iso := "dto", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tno", iso := "tdn", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ton", iso := "tqw", value := .normalImperativeNormalNegative }
+  , { walsCode := "tor", iso := "rth", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tot", iso := "tlc", value := .specialImperativeSpecialNegative }
+  , { walsCode := "txj", iso := "too", value := .normalImperativeNormalNegative }
+  , { walsCode := "tri", iso := "trc", value := .normalImperativeNormalNegative }
+  , { walsCode := "tru", iso := "tpy", value := .specialImperativeNormalNegative }
+  , { walsCode := "tsa", iso := "tkr", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tsi", iso := "tsi", value := .normalImperativeSpecialNegative }
+  , { walsCode := "ttu", iso := "bbl", value := .normalImperativeNormalNegative }
+  , { walsCode := "tbu", iso := "", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tuk", iso := "", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tun", iso := "tun", value := .specialImperativeSpecialNegative }
+  , { walsCode := "tna", iso := "tuv", value := .specialImperativeNormalNegative }
+  , { walsCode := "tur", iso := "tur", value := .normalImperativeNormalNegative }
+  , { walsCode := "tuv", iso := "tyv", value := .normalImperativeSpecialNegative }
+  , { walsCode := "tuy", iso := "tue", value := .specialImperativeNormalNegative }
+  , { walsCode := "tsh", iso := "par", value := .normalImperativeNormalNegative }
+  , { walsCode := "udi", iso := "udi", value := .specialImperativeSpecialNegative }
+  , { walsCode := "udh", iso := "ude", value := .normalImperativeNormalNegative }
+  , { walsCode := "ukr", iso := "ukr", value := .normalImperativeNormalNegative }
+  , { walsCode := "uma", iso := "ppk", value := .normalImperativeNormalNegative }
+  , { walsCode := "una", iso := "mtg", value := .specialImperativeSpecialNegative }
+  , { walsCode := "url", iso := "urk", value := .normalImperativeSpecialNegative }
+  , { walsCode := "urk", iso := "urb", value := .normalImperativeNormalNegative }
+  , { walsCode := "uzb", iso := "", value := .normalImperativeNormalNegative }
+  , { walsCode := "vag", iso := "vag", value := .normalImperativeSpecialNegative }
+  , { walsCode := "vai", iso := "vai", value := .specialImperativeNormalNegative }
+  , { walsCode := "vie", iso := "vie", value := .normalImperativeSpecialNegative }
+  , { walsCode := "vot", iso := "vot", value := .specialImperativeNormalNegative }
+  , { walsCode := "wll", iso := "wls", value := .normalImperativeSpecialNegative }
+  , { walsCode := "wao", iso := "auc", value := .normalImperativeNormalNegative }
+  , { walsCode := "wap", iso := "wao", value := .normalImperativeNormalNegative }
+  , { walsCode := "wra", iso := "wba", value := .normalImperativeNormalNegative }
+  , { walsCode := "wrd", iso := "wrr", value := .specialImperativeNormalNegative }
+  , { walsCode := "wrk", iso := "gae", value := .normalImperativeSpecialNegative }
+  , { walsCode := "wrm", iso := "wsa", value := .normalImperativeNormalNegative }
+  , { walsCode := "war", iso := "pav", value := .normalImperativeSpecialNegative }
+  , { walsCode := "wrl", iso := "wbp", value := .normalImperativeNormalNegative }
+  , { walsCode := "wrg", iso := "wgy", value := .specialImperativeSpecialNegative }
+  , { walsCode := "wth", iso := "wth", value := .specialImperativeNormalNegative }
+  , { walsCode := "wau", iso := "noa", value := .normalImperativeSpecialNegative }
+  , { walsCode := "way", iso := "oym", value := .specialImperativeSpecialNegative }
+  , { walsCode := "wel", iso := "cym", value := .normalImperativeSpecialNegative }
+  , { walsCode := "wic", iso := "wic", value := .normalImperativeNormalNegative }
+  , { walsCode := "wch", iso := "mzh", value := .specialImperativeSpecialNegative }
+  , { walsCode := "wiy", iso := "wiy", value := .specialImperativeSpecialNegative }
+  , { walsCode := "wwr", iso := "wyi", value := .specialImperativeSpecialNegative }
+  , { walsCode := "wlo", iso := "wlo", value := .normalImperativeSpecialNegative }
+  , { walsCode := "wlf", iso := "wol", value := .normalImperativeSpecialNegative }
+  , { walsCode := "yag", iso := "yad", value := .normalImperativeNormalNegative }
+  , { walsCode := "ykm", iso := "yky", value := .normalImperativeSpecialNegative }
+  , { walsCode := "yny", iso := "jao", value := .specialImperativeSpecialNegative }
+  , { walsCode := "yap", iso := "yap", value := .normalImperativeSpecialNegative }
+  , { walsCode := "yaq", iso := "yaq", value := .specialImperativeSpecialNegative }
+  , { walsCode := "yid", iso := "yii", value := .normalImperativeSpecialNegative }
+  , { walsCode := "yim", iso := "yee", value := .specialImperativeSpecialNegative }
+  , { walsCode := "yng", iso := "yia", value := .normalImperativeNormalNegative }
+  , { walsCode := "yko", iso := "yux", value := .normalImperativeSpecialNegative }
+  , { walsCode := "yuk", iso := "gcd", value := .specialImperativeSpecialNegative }
+  , { walsCode := "ypk", iso := "esu", value := .normalImperativeNormalNegative }
+  , { walsCode := "yus", iso := "ess", value := .specialImperativeSpecialNegative }
+  , { walsCode := "yrm", iso := "", value := .normalImperativeNormalNegative }
+  , { walsCode := "yur", iso := "yur", value := .specialImperativeNormalNegative }
+  , { walsCode := "zaz", iso := "diq", value := .specialImperativeSpecialNegative }
+  , { walsCode := "zen", iso := "zen", value := .specialImperativeNormalNegative }
+  , { walsCode := "zqc", iso := "zoc", value := .specialImperativeSpecialNegative }
+  , { walsCode := "zul", iso := "zul", value := .specialImperativeSpecialNegative }
+  , { walsCode := "zun", iso := "zun", value := .normalImperativeSpecialNegative }
   ]
-
--- Count verification
-theorem total_count : allData.length = 496 := by native_decide
-
-theorem count_normalImperativeNormalNegative :
-    (allData.filter (·.value == .normalImperativeNormalNegative)).length = 113 := by native_decide
-theorem count_normalImperativeSpecialNegative :
-    (allData.filter (·.value == .normalImperativeSpecialNegative)).length = 182 := by native_decide
-theorem count_specialImperativeNormalNegative :
-    (allData.filter (·.value == .specialImperativeNormalNegative)).length = 55 := by native_decide
-theorem count_specialImperativeSpecialNegative :
-    (allData.filter (·.value == .specialImperativeSpecialNegative)).length = 146 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

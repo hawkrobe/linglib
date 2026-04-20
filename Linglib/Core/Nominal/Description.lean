@@ -113,20 +113,26 @@ variable {F : Frame}
 
 /-- Is this a definite description (in the broad sense — uniqueness,
     familiarity, demonstrative, or possessive)? -/
-def isDefinite : NominalKind F → Bool
-  | .bare _              => false
-  | .indefinite _        => false
-  | .unique _ _          => true
-  | .anaphoric _ _       => true
-  | .demonstrative ..    => true
-  | .possessive ..       => true
+def isDefinite : NominalKind F → Prop
+  | .bare _              => False
+  | .indefinite _        => False
+  | .unique _ _          => True
+  | .anaphoric _ _       => True
+  | .demonstrative ..    => True
+  | .possessive ..       => True
+
+instance : DecidablePred (@isDefinite F) := fun n => by
+  cases n <;> unfold isDefinite <;> infer_instance
 
 /-- Does this description require a discourse antecedent? Anaphoric and
     demonstrative do; unique/possessive/bare/indefinite do not. -/
-def isAnaphoric : NominalKind F → Bool
-  | .anaphoric _ _       => true
-  | .demonstrative ..    => true
-  | _                    => false
+def isAnaphoric : NominalKind F → Prop
+  | .anaphoric _ _       => True
+  | .demonstrative ..    => True
+  | _                    => False
+
+instance : DecidablePred (@isAnaphoric F) := fun n => by
+  cases n <;> unfold isAnaphoric <;> infer_instance
 
 /-- Does this description bind a structural situation pronoun? Coppock–Beaver
     uniqueness and demonstratives do (resource situation for maximality and
@@ -151,12 +157,12 @@ def expectedPresupType :
 /-- Definites are exactly those flavors with a non-`none` expected
     presupposition type. By construction. -/
 theorem isDefinite_iff_expectedPresup_some (n : NominalKind F) :
-    n.isDefinite = true ↔ n.expectedPresupType.isSome = true := by
+    n.isDefinite ↔ n.expectedPresupType.isSome = true := by
   cases n <;> simp [isDefinite, expectedPresupType]
 
 /-- Anaphoric flavors all carry the familiarity presupposition type. -/
 theorem isAnaphoric_implies_familiarity (n : NominalKind F)
-    (h : n.isAnaphoric = true) :
+    (h : n.isAnaphoric) :
     n.expectedPresupType = some .familiarity := by
   cases n <;> simp [isAnaphoric] at h
   all_goals rfl

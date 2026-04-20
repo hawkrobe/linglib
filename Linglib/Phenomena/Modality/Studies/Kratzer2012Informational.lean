@@ -31,12 +31,17 @@ open Core.Evidence
 /-! ## Propositions -/
 
 /-- It is raining. -/
-def raining : (World → Bool) := λ w =>
-  match w with | .w0 => true | .w1 => true | .w2 => false | .w3 => false
+def raining : World → Prop := λ w =>
+  match w with | .w0 => True | .w1 => True | .w2 => False | .w3 => False
+
+instance : DecidablePred raining := fun w => by cases w <;> unfold raining <;> infer_instance
 
 /-- The weather report says it is raining. -/
-def reportSaysRain : (World → Bool) := λ w =>
-  match w with | .w0 => true | .w1 => false | .w2 => true | .w3 => false
+def reportSaysRain : World → Prop := λ w =>
+  match w with | .w0 => True | .w1 => False | .w2 => True | .w3 => False
+
+instance : DecidablePred reportSaysRain :=
+  fun w => by cases w <;> unfold reportSaysRain <;> infer_instance
 
 /-! ## Conversational backgrounds -/
 
@@ -46,7 +51,7 @@ def informationalBg : ModalBase World := λ _ => [reportSaysRain]
 
 /-- Reliability assumption: if the report says rain, it's raining.
     This is a conditional proposition (report → rain). -/
-def reliabilityAssumption : (World → Bool) := λ w => !reportSaysRain w || raining w
+def reliabilityAssumption : World → Prop := λ w => reportSaysRain w → raining w
 
 /-- Strong epistemic base: report + reliability. Accessible = {w0} only. -/
 def strongEpistemicBg : ModalBase World := λ _ => [reportSaysRain, reliabilityAssumption]
@@ -57,34 +62,63 @@ def strongEpistemicBg : ModalBase World := λ _ => [reportSaysRain, reliabilityA
     accessible worlds {w0, w2}, and raining is false at w2. -/
 theorem informational_alone_not_necessity (w : World) :
     ¬ necessity informationalBg emptyBackground raining w := by
-  cases w <;> decide
+  rw [necessity_iff_all]
+  intro h
+  have hAccW2 : (.w2 : World) ∈ accessibleWorlds informationalBg w := by
+    intro p hp
+    simp [informationalBg] at hp
+    subst hp
+    decide
+  have hBestW2 : (.w2 : World) ∈ bestWorlds informationalBg emptyBackground w := by
+    rw [empty_ordering_emptyBackground]; exact hAccW2
+  have := h .w2 hBestW2
+  simp [raining] at this
 
 /-- **Report + reliability entails rain.** The strong base gives
     accessible worlds {w0}, and raining is true at w0. -/
 theorem with_reliability_necessity (w : World) :
     necessity strongEpistemicBg emptyBackground raining w := by
-  cases w <;> decide
+  rw [necessity_iff_all]
+  intro w' hw'
+  rw [empty_ordering_emptyBackground] at hw'
+  have hReport : reportSaysRain w' :=
+    hw' reportSaysRain (by simp [strongEpistemicBg])
+  have hRel : reliabilityAssumption w' :=
+    hw' reliabilityAssumption (by simp [strongEpistemicBg])
+  cases w' with
+  | w0 => decide
+  | w1 => exact absurd hReport (by decide)
+  | w2 => exact absurd (hRel hReport) (by decide)
+  | w3 => exact absurd hReport (by decide)
 
 /-- **The informational base is not realistic.** At w1 (it rains but
     the report doesn't say so), w1 ∉ ∩f(w1) because reportSaysRain w1 = false. -/
 theorem informational_not_realistic : ¬ isRealistic informationalBg := by
   intro h
-  have h1 : (informationalBg .w1).all (λ p => p .w1) = true := h .w1
-  -- informationalBg .w1 = [reportSaysRain], and reportSaysRain .w1 = false
+  have h1 : reportSaysRain .w1 :=
+    h .w1 reportSaysRain (by simp [informationalBg])
   exact absurd h1 (by decide)
 
 /-- **The strong epistemic base is also not realistic.** At w1, the
     report doesn't say rain, so w1 fails the reportSaysRain proposition. -/
 theorem strong_epistemic_not_realistic : ¬ isRealistic strongEpistemicBg := by
   intro h
-  have h1 : (strongEpistemicBg .w1).all (λ p => p .w1) = true := h .w1
+  have h1 : reportSaysRain .w1 :=
+    h .w1 reportSaysRain (by simp [strongEpistemicBg])
   exact absurd h1 (by decide)
 
 /-- **Possibility holds under report alone.** Even without reliability,
     rain is possible (w0 is accessible and raining). -/
 theorem informational_possibility (w : World) :
     possibility informationalBg emptyBackground raining w := by
-  cases w <;> decide
+  rw [possibility_iff_any]
+  refine ⟨.w0, ?_, ?_⟩
+  · rw [empty_ordering_emptyBackground]
+    intro p hp
+    simp [informationalBg] at hp
+    subst hp
+    decide
+  · decide
 
 /-! ## Evidence type bridge -/
 

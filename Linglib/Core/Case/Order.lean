@@ -99,34 +99,34 @@ instance : PartialOrder Case where
   le_antisymm _ _ := cahaLE_antisymm _ _
 
 /-- A case is **nonnominative** iff its representation contains ACC's, i.e.
-    `Case.acc ≤ c` in the Caha order. @cite{mcfadden-2018} argues this is
+    `(.acc : Case) ≤ c` in the Caha order. @cite{mcfadden-2018} argues this is
     the key natural class for stem allomorphy: a VI rule conditioned on
     `[ACC]` captures the NOM-vs-oblique split found cross-linguistically. -/
-def IsNonnominative (c : Case) : Prop := Case.acc ≤ c
+def IsNonnominative (c : Case) : Prop := (.acc : Case) ≤ c
 
 instance (c : Case) : Decidable (IsNonnominative c) :=
-  inferInstanceAs (Decidable (Case.acc ≤ c))
+  inferInstanceAs (Decidable ((.acc : Case) ≤ c))
 
 -- ============================================================================
 -- § Sanity Chain: NOM < ACC < GEN < DAT < LOC
 -- ============================================================================
 
-theorem nom_le_acc : (Case.nom : Case) ≤ Case.acc :=
+theorem nom_le_acc : (.nom : Case) ≤ .acc :=
   Or.inr (show (0 : Nat) < 1 from Nat.lt_succ_self 0)
-theorem acc_le_gen : (Case.acc : Case) ≤ Case.gen :=
+theorem acc_le_gen : (.acc : Case) ≤ .gen :=
   Or.inr (show (1 : Nat) < 2 from Nat.lt_succ_self 1)
-theorem gen_le_dat : (Case.gen : Case) ≤ Case.dat :=
+theorem gen_le_dat : (.gen : Case) ≤ .dat :=
   Or.inr (show (2 : Nat) < 3 from Nat.lt_succ_self 2)
-theorem dat_le_loc : (Case.dat : Case) ≤ Case.loc :=
+theorem dat_le_loc : (.dat : Case) ≤ .loc :=
   Or.inr (show (3 : Nat) < 4 from Nat.lt_succ_self 3)
 
 /-- Off-hierarchy cases (ERG) are incomparable with on-hierarchy cases. -/
-theorem erg_incomparable_nom : ¬ ((Case.erg : Case) ≤ Case.nom) := by
+theorem erg_incomparable_nom : ¬ ((.erg : Case) ≤ .nom) := by
   rintro (h | h)
   · exact UD.Case.noConfusion h
   · exact (show False from h)
 
-theorem nom_incomparable_erg : ¬ ((Case.nom : Case) ≤ Case.erg) := by
+theorem nom_incomparable_erg : ¬ ((.nom : Case) ≤ .erg) := by
   rintro (h | h)
   · exact UD.Case.noConfusion h
   · exact (show False from h)

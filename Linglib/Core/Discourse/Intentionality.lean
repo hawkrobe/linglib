@@ -1,5 +1,4 @@
 import Linglib.Core.Discourse.IllocutionaryForce
-import Linglib.Core.Semantics.Proposition
 
 /-!
 # Intentional States: S in S(r)

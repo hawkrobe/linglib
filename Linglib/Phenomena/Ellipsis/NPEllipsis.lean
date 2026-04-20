@@ -198,25 +198,31 @@ theorem maravilla_npe_blocked :
     reference is contextually determined (like a pronoun). This
     is why NP-ellipsis fails: the empty noun cannot be recovered
     from the antecedent. -/
-def hasIndexicalEmptyNoun : BinominalType → Bool
-  | .pseudoPartitive  => false
-  | .quantificational => false
-  | .qualitative      => true
+def HasIndexicalEmptyNoun : BinominalType → Prop
+  | .pseudoPartitive  => False
+  | .quantificational => False
+  | .qualitative      => True
+
+instance : DecidablePred HasIndexicalEmptyNoun := fun b => by
+  cases b <;> unfold HasIndexicalEmptyNoun <;> infer_instance
 
 /-- Qualitative binominals contain an equative phrase (EquP)
     establishing a predication relation between the expressive
     noun and the referent. -/
-def hasEquP : BinominalType → Bool
-  | .pseudoPartitive  => false
-  | .quantificational => false
-  | .qualitative      => true
+def HasEquP : BinominalType → Prop
+  | .pseudoPartitive  => False
+  | .quantificational => False
+  | .qualitative      => True
+
+instance : DecidablePred HasEquP := fun b => by
+  cases b <;> unfold HasEquP <;> infer_instance
 
 /-- The presence of an indexical empty noun entails no Num[E]:
     if the ellipsis site would include an unrecoverable element,
     NP-ellipsis is blocked. -/
 theorem indexical_blocks_numE (b : BinominalType) :
-    hasIndexicalEmptyNoun b = true → b.hasNumE = false := by
-  cases b <;> simp [hasIndexicalEmptyNoun, BinominalType.hasNumE]
+    HasIndexicalEmptyNoun b → b.hasNumE = false := by
+  cases b <;> simp [HasIndexicalEmptyNoun, BinominalType.hasNumE]
 
 /-- Primeval genitive ↔ Num[E] ↔ NP-ellipsis licensed.
     The three properties are coextensive across binominal types. -/

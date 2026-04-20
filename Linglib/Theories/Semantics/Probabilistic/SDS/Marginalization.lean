@@ -38,7 +38,7 @@ This factorization enables:
 
 import Linglib.Theories.Semantics.Probabilistic.SDS.Core
 import Linglib.Theories.Semantics.Probabilistic.SDS.ThresholdInstances
-import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
+import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
 import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
 
 namespace Semantics.Probabilistic.SDS.Marginalization

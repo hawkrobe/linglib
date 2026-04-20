@@ -1,11 +1,11 @@
-import Linglib.Theories.Pragmatics.RSA.ScalarImplicatures.Embedded.Basic
+import Linglib.Phenomena.ScalarImplicatures.Embedded.Basic
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
 # RSA Embedded Scalar Implicatures → Phenomena
 @cite{geurts-2010}
 
-Connects the RSA embedded scalar implicature model (`RSA.EmbeddedScalars`)
+Connects the RSA embedded scalar implicature model (`Phenomena.ScalarImplicatures.Embedded.Simplified`)
 to empirical data from `Phenomena.ScalarImplicatures.Basic`.
 
 ## Content
@@ -17,7 +17,7 @@ to empirical data from `Phenomena.ScalarImplicatures.Basic`.
 
 namespace Geurts2010
 
-open RSA.EmbeddedScalars
+open Phenomena.ScalarImplicatures.Embedded.Simplified
 open Phenomena.ScalarImplicatures
 
 /--

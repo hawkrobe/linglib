@@ -107,13 +107,19 @@ inductive BathroomEntity where
   | theBathroom
   deriving DecidableEq, Repr
 
-def isBathroom : BathroomEntity → BathroomWorld → Bool
-  | .theBathroom, .noBathroom => false
-  | .theBathroom, _ => true
+def isBathroom : BathroomEntity → BathroomWorld → Prop
+  | .theBathroom, .noBathroom => False
+  | .theBathroom, _ => True
 
-def inFunnyPlace : BathroomEntity → BathroomWorld → Bool
-  | .theBathroom, .bathroomFunny => true
-  | _, _ => false
+instance (e : BathroomEntity) (w : BathroomWorld) : Decidable (isBathroom e w) := by
+  cases e <;> cases w <;> (unfold isBathroom; infer_instance)
+
+def inFunnyPlace : BathroomEntity → BathroomWorld → Prop
+  | .theBathroom, .bathroomFunny => True
+  | _, _ => False
+
+instance (e : BathroomEntity) (w : BathroomWorld) : Decidable (inFunnyPlace e w) := by
+  cases e <;> cases w <;> (unfold inFunnyPlace; infer_instance)
 
 def exampleBathroomConfig : BathroomConfig BathroomWorld BathroomEntity :=
   { bathroom := BilateralDen.exists_ 0 Set.univ (BilateralDen.pred1 isBathroom 0)

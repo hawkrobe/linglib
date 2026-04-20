@@ -391,9 +391,9 @@ theorem distinguished_by_filtering_not_class :
 
     The precondition (occasion) is what projects. -/
 def occasionEventPhase {W : Type*}
-    (occasion : W → Bool)     -- The occasioning eventuality
-    (engagement : W → Bool)   -- The agent's action
-    (outcome : W → Bool)      -- Result state
+    (occasion : W → Prop)     -- The occasioning eventuality
+    (engagement : W → Prop)   -- The agent's action
+    (outcome : W → Prop)      -- Result state
     : EventPhase W where
   precondition := occasion
   eventOccurs := engagement
@@ -402,7 +402,7 @@ def occasionEventPhase {W : Type*}
 /-- Occasion presupposition projects through negation.
     "The judge didn't punish Peter" still presupposes Peter did something wrong. -/
 theorem occasion_presup_projects {W : Type*}
-    (occasion engagement outcome : W → Bool) :
+    (occasion engagement outcome : W → Prop) :
     (affirmative (occasionEventPhase occasion engagement outcome)).presupposition =
     (negative (occasionEventPhase occasion engagement outcome)).presupposition := rfl
 
@@ -424,7 +424,7 @@ theorem heim_antecedent_projects {W : Type*}
     presupProjects (initialLocalCtx c) trigger := by
   obtain ⟨w, hw_in, hpresup_false⟩ := h
   intro hfilter
-  exact hpresup_false (hfilter w hw_in)
+  exact hpresup_false (hfilter hw_in)
 
 -- ════════════════════════════════════════════════════
 -- § 10. Symmetric Filtering (@cite{schlenker-2008}, @cite{schlenker-2009})

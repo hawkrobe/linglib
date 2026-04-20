@@ -5,6 +5,8 @@ import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
 import Linglib.Phenomena.Anaphora.CrossSentential
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Keshet & Abney (2024): Intensional Anaphora
@@ -51,7 +53,6 @@ open Semantics.Dynamic.IntensionalCDRT (IContext)
 -- `BRefl` / `kripkeEval` were Bool-internal modal infrastructure that has
 -- been replaced by the Prop-valued `Refl`/`boxR` API in
 -- `Core.IntensionalLogic.RestrictedModality` and isn't needed here.
-open Core.Proposition (FiniteWorlds)
 open Phenomena.Anaphora
 
 
@@ -169,7 +170,7 @@ private theorem g_wolf_in_retrieve :
   simp only [stoneSentence1, might, modalExpand, existsLabeled, atom,
              Discourse.mapInfo, LabelStore.register, LabelStore.lookup, αWolf,
              vWolf, isWolf]
-  exact ⟨g_wolf_in_sentence1, rfl, rfl⟩
+  refine ⟨g_wolf_in_sentence1, ?_, ?_⟩ <;> decide
 
 /--
 End-to-end test: Stone's discourse is consistent on a concrete model.
@@ -597,9 +598,9 @@ theorem burger_desc_fails_at_actual :
   have : (IBWorld.actual == IBWorld.burgerW) = false := by decide
   simp [this]
 
-instance : FiniteWorlds IBWorld where
-  worlds := ibWorlds
-  complete := by intro w; cases w <;> simp [ibWorlds]
+instance : Fintype IBWorld where
+  elems := {.actual, .burgerW}
+  complete := λ w => by cases w <;> decide
 
 /--
 Might blocks anaphora NOT because of non-reflexive access, but because the
@@ -677,9 +678,9 @@ theorem animal_desc_succeeds :
     g.indiv vAnimal w == .some .animal → isAnimalInShed g w = true := by
   intro g w h; simp [isAnimalInShed, h]
 
-instance : FiniteWorlds IAWorld where
-  worlds := iaWorlds
-  complete := by intro w; cases w <;> simp [iaWorlds]
+instance : Fintype IAWorld where
+  elems := {.actual, .shedW}
+  complete := λ w => by cases w <;> decide
 
 /--
 Must allows anaphora via Kratzer's realistic modal base.
@@ -1183,9 +1184,9 @@ def donkeySentence : PUpdate DWorld DEntity :=
           (retrieveDef αDonkey)
           (atom beats))))
 
-instance : FiniteWorlds DWorld where
-  worlds := dWorlds
-  complete := by intro w; cases w; simp [dWorlds]
+instance : Fintype DWorld where
+  elems := {.w0}
+  complete := λ w => by cases w <;> decide
 
 /-- The donkey label is registered through the forall (¬∃¬). -/
 theorem donkey_label_registered (d : Discourse DWorld DEntity) :

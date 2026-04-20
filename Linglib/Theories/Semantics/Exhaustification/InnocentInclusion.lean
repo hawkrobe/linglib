@@ -61,7 +61,7 @@ inductive FCWorld where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Proposition: a is permitted -/
-def permA : Prop' FCWorld
+def permA : Set FCWorld
   | .neither => False
   | .onlyA => True
   | .onlyB => False
@@ -69,7 +69,7 @@ def permA : Prop' FCWorld
   | .separatelyAB => True
 
 /-- Proposition: b is permitted -/
-def permB : Prop' FCWorld
+def permB : Set FCWorld
   | .neither => False
   | .onlyA => False
   | .onlyB => True
@@ -77,7 +77,7 @@ def permB : Prop' FCWorld
   | .separatelyAB => True
 
 /-- Proposition: a ∨ b is permitted (◇(a ∨ b)) -/
-def permAorB : Prop' FCWorld
+def permAorB : Set FCWorld
   | .neither => False
   | .onlyA => True
   | .onlyB => True
@@ -85,7 +85,7 @@ def permAorB : Prop' FCWorld
   | .separatelyAB => True
 
 /-- Proposition: a ∧ b is permitted (◇(a ∧ b)) -/
-def permAandB : Prop' FCWorld
+def permAandB : Set FCWorld
   | .neither => False
   | .onlyA => False
   | .onlyB => False
@@ -93,11 +93,11 @@ def permAandB : Prop' FCWorld
   | .separatelyAB => False  -- individually permitted ≠ jointly permitted
 
 /-- The free choice alternative set: {◇(a ∨ b), ◇a, ◇b, ◇(a ∧ b)} -/
-def fcALT : Set (Prop' FCWorld) :=
+def fcALT : Set (Set FCWorld) :=
   {permAorB, permA, permB, permAandB}
 
 /-- The prejacent: ◇(a ∨ b) -/
-def fcPrejacent : Prop' FCWorld := permAorB
+def fcPrejacent : Set FCWorld := permAorB
 
 -- SECTION 4: Non-Closure Under Conjunction
 
@@ -130,9 +130,9 @@ For FC disjunction:
     individually possible but their conjunction is not).
 -/
 theorem fc_not_closed_general :
-    ¬(∀ (X : Set (Prop' FCWorld)), X ⊆ fcALT → (⋀ X) ∈ fcALT) := by
+    ¬(∀ (X : Set (Set FCWorld)), X ⊆ fcALT → (⋀ X) ∈ fcALT) := by
   intro h
-  have hX : ({permA, permB} : Set (Prop' FCWorld)) ⊆ fcALT := by
+  have hX : ({permA, permB} : Set (Set FCWorld)) ⊆ fcALT := by
     intro x hx
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
     simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -302,7 +302,7 @@ private theorem mc_set_without_neg_permB :
 private theorem permA_not_ie :
     ¬isInnocentlyExcludable fcALT fcPrejacent permA := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼permA ∉ ({fcPrejacent, ∼permB, ∼permAandB} : Set (Prop' FCWorld)) := by
+  have hNotIn : ∼permA ∉ ({fcPrejacent, ∼permB, ∼permAandB} : Set (Set FCWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mpr (congrFun h .onlyA) id trivial,
@@ -313,7 +313,7 @@ private theorem permA_not_ie :
 private theorem permB_not_ie :
     ¬isInnocentlyExcludable fcALT fcPrejacent permB := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼permB ∉ ({fcPrejacent, ∼permA, ∼permAandB} : Set (Prop' FCWorld)) := by
+  have hNotIn : ∼permB ∉ ({fcPrejacent, ∼permA, ∼permAandB} : Set (Set FCWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mp (congrFun h .onlyA) id trivial,
@@ -322,7 +322,7 @@ private theorem permB_not_ie :
 
 /-- Helper: dispatch IE-excludability at.separatelyAB. For any IE-excludable q,
     (∼q).separatelyAB holds. -/
-private theorem ie_neg_at_separatelyAB (q : Prop' FCWorld)
+private theorem ie_neg_at_separatelyAB (q : Set FCWorld)
     (hqIE : isInnocentlyExcludable fcALT fcPrejacent q) : (∼q) FCWorld.separatelyAB := by
   have hq_in := hqIE.1
   simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hq_in
@@ -335,11 +335,11 @@ private theorem ie_neg_at_separatelyAB (q : Prop' FCWorld)
 /-- Helper: For any II-compatible R, adding a target alternative that holds at
 .separatelyAB and is implied by permAandB preserves II-compatibility. -/
 private theorem extend_II_with_target
-    (target : Prop' FCWorld)
+    (target : Set FCWorld)
     (htarget_alt : target ∈ fcALT)
     (htarget_sep : target FCWorld.separatelyAB)
     (hAandB_implies : ∀ u, permAandB u → target u)
-    (R : Set (Prop' FCWorld))
+    (R : Set (Set FCWorld))
     (hRcompat : isIICompatible fcALT fcPrejacent R) (_hNotIn : target ∉ R) :
     isIICompatible fcALT fcPrejacent (R ∪ {target}) := by
   constructor
@@ -377,7 +377,7 @@ private theorem extend_II_with_target
 /-- Helper: a target alternative in fcALT that holds at.separatelyAB and is
     implied by permAandB is innocently includable. -/
 theorem target_in_II
-    (target : Prop' FCWorld)
+    (target : Set FCWorld)
     (htarget_alt : target ∈ fcALT)
     (htarget_sep : target FCWorld.separatelyAB)
     (hAandB_implies : ∀ u, permAandB u → target u) :
@@ -444,35 +444,35 @@ inductive DisjWorld where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Proposition a -/
-def propA : Prop' DisjWorld
+def propA : Set DisjWorld
   | .neither => False
   | .onlyA => True
   | .onlyB => False
   | .both => True
 
 /-- Proposition b -/
-def propB : Prop' DisjWorld
+def propB : Set DisjWorld
   | .neither => False
   | .onlyA => False
   | .onlyB => True
   | .both => True
 
 /-- Proposition a ∨ b -/
-def propAorB : Prop' DisjWorld
+def propAorB : Set DisjWorld
   | .neither => False
   | .onlyA => True
   | .onlyB => True
   | .both => True
 
 /-- Proposition a ∧ b -/
-def propAandB : Prop' DisjWorld
+def propAandB : Set DisjWorld
   | .neither => False
   | .onlyA => False
   | .onlyB => False
   | .both => True
 
 /-- Simple disjunction alternatives: {a ∨ b, a, b, a ∧ b} -/
-def simpleALT : Set (Prop' DisjWorld) :=
+def simpleALT : Set (Set DisjWorld) :=
   {propAorB, propA, propB, propAandB}
 
 /-- Simple disjunction IS closed under conjunction (a ∧ b ∈ ALT) -/

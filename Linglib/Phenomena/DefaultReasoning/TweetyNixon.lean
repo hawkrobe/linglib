@@ -46,15 +46,23 @@ def isBird : TweetyWorld → Prop
   | penguinFlies => True
   | penguinNoFly => True
 
+instance : DecidablePred isBird := fun w => by cases w <;> unfold isBird <;> infer_instance
+
 def isPenguin : TweetyWorld → Prop
   | penguinFlies => True
   | penguinNoFly => True
   | _ => False
 
+instance : DecidablePred isPenguin :=
+  fun w => by cases w <;> unfold isPenguin <;> infer_instance
+
 def flies : TweetyWorld → Prop
   | birdFlies => True
   | penguinFlies => True
   | _ => False
+
+instance : DecidablePred flies :=
+  fun w => by cases w <;> unfold flies <;> infer_instance
 
 /-- Every penguin is a bird. -/
 theorem penguin_is_bird : ∀ w, isPenguin w → isBird w := by

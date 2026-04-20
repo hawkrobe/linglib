@@ -92,25 +92,25 @@ theorem violatesABA_four (a b c d : Nat) :
 -- ============================================================================
 
 /-- ABA: the canonical violation. -/
-theorem aba_violates : violatesABA [0, 1, 0] = true := by native_decide
+theorem aba_violates : violatesABA [0, 1, 0] = true := by decide
 
 /-- AAA: regular throughout. -/
-theorem aaa_contiguous : isContiguous [0, 0, 0] = true := by native_decide
+theorem aaa_contiguous : isContiguous [0, 0, 0] = true := by decide
 
 /-- ABB: suppletive at CMPR+SPRL. -/
-theorem abb_contiguous : isContiguous [0, 1, 1] = true := by native_decide
+theorem abb_contiguous : isContiguous [0, 1, 1] = true := by decide
 
 /-- ABC: three distinct forms. -/
-theorem abc_contiguous : isContiguous [0, 1, 2] = true := by native_decide
+theorem abc_contiguous : isContiguous [0, 1, 2] = true := by decide
 
 /-- AAB: contiguous (but excluded by VI locality in degree domain). -/
-theorem aab_contiguous : isContiguous [0, 0, 1] = true := by native_decide
+theorem aab_contiguous : isContiguous [0, 0, 1] = true := by decide
 
 /-- ABAB: violates on 4-position hierarchy. -/
-theorem abab_violates : violatesABA [0, 1, 0, 1] = true := by native_decide
+theorem abab_violates : violatesABA [0, 1, 0, 1] = true := by decide
 
 /-- AABB: contiguous on 4-position hierarchy. -/
-theorem aabb_contiguous : isContiguous [0, 0, 1, 1] = true := by native_decide
+theorem aabb_contiguous : isContiguous [0, 0, 1, 1] = true := by decide
 
 -- ============================================================================
 -- § 4: Exhaustive 3-Position Check
@@ -127,15 +127,15 @@ def allPatterns3 : List (List Nat) :=
 /-- Exactly 6 of the 27 three-position patterns violate *ABA.
     (3 choices for the "A" value × 2 choices for the "B" value.) -/
 theorem six_aba_violations :
-    (allPatterns3.filter violatesABA).length = 6 := by native_decide
+    (allPatterns3.filter violatesABA).length = 6 := by decide
 
 /-- The remaining 21 patterns are contiguous. -/
 theorem twentyone_contiguous :
-    (allPatterns3.filter isContiguous).length = 21 := by native_decide
+    (allPatterns3.filter isContiguous).length = 21 := by decide
 
 /-- No pattern is both ABA-violating and contiguous. -/
 theorem no_aba_contiguous :
     (allPatterns3.filter (λ p => violatesABA p && isContiguous p)).length = 0 := by
-  native_decide
+  decide
 
 end Morphology.Containment

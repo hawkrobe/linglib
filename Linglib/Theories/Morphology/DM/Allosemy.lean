@@ -300,8 +300,8 @@ def VoiceAlloseme.assignsTheta : VoiceAlloseme → Bool
     Engineer is the most specific: it requires a saturated eventive
     VoiceP as complement. The elsewhere case is expletive (identity). -/
 def VoiceAlloseme.fromComplement
-    (complementIsEventiveVoiceP : Bool)
-    (complementIsStative : Bool) : VoiceAlloseme :=
+    (complementIsEventiveVoiceP : Prop) [Decidable complementIsEventiveVoiceP]
+    (complementIsStative : Prop) [Decidable complementIsStative] : VoiceAlloseme :=
   if complementIsEventiveVoiceP then .engineer
   else if complementIsStative then .holder
   else .expletive

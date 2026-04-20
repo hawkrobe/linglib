@@ -441,9 +441,9 @@ def EvidenceType.toEvidentialSource : EvidenceType → EvidentialSource
   | .reported => .hearsay
 
 /-- All VF&G evidence types map to nonfuture evidential perspectives:
-    every source's perspective has `isNonfuture = true`. -/
+    every source's perspective satisfies `IsNonfuture`. -/
 theorem all_evidence_types_nonfuture (e : EvidenceType) :
-    (e.toEvidentialSource).toEvidentialPerspective.isNonfuture = true := by
-  cases e <;> rfl
+    (e.toEvidentialSource).toEvidentialPerspective.IsNonfuture := by
+  cases e <;> decide
 
 end Phenomena.Modality.EpistemicEvidentiality

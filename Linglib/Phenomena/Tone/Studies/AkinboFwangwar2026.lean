@@ -740,8 +740,8 @@ def verbMH_GT : GTSpec :=
 /-- Both verbalisers are dominant: they neutralize the lexical tonal
     contrast of the target. -/
 theorem verbalizers_are_dominant :
-    verbM_GT.dominance.isDominant = true ∧
-    verbMH_GT.dominance.isDominant = true := ⟨rfl, rfl⟩
+    verbM_GT.dominance.IsDominant ∧
+    verbMH_GT.dominance.IsDominant := ⟨by decide, by decide⟩
 
 /-- Mwaghavul verbalisers are dominant at the abstract prosodic level,
     bridging GT-specific and cross-domain classifications. -/

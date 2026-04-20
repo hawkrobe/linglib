@@ -378,8 +378,10 @@ inductive AdjectiveClass where
 
 /-- Coarse 2-way classification: relative vs absolute.
     Collapses absoluteMaximum and absoluteMinimum. -/
-def AdjectiveClass.isRelative : AdjectiveClass → Bool
-  | .relativeGradable => true
-  | _                 => false
+def AdjectiveClass.IsRelative (c : AdjectiveClass) : Prop :=
+  c = .relativeGradable
+
+instance : DecidablePred AdjectiveClass.IsRelative :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 end Semantics.Degree

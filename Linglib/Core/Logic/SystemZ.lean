@@ -13,7 +13,7 @@ the lowest possible rank consistent with all constraints.
 
 ## Key definitions
 
-- `DefaultRule W`: a default rule φ → ψ (Bool predicates on worlds)
+- `DefaultRule W`: a default rule φ → ψ (decidable Prop predicates on worlds)
 - `KnowledgeBase W`: a list of default rules
 - `tolerated`: a rule is tolerated by Δ iff ∃ω verifying it + all
   material counterparts (Def. 3)
@@ -57,9 +57,13 @@ open Core.Logic.Ranking (RankingFunction)
     in the domain φ, admitting exceptions. -/
 structure DefaultRule (W : Type*) where
   /-- Antecedent (domain of the default) -/
-  ante : W → Bool
+  ante : W → Prop
   /-- Consequent (what normally holds) -/
-  cons : W → Bool
+  cons : W → Prop
+  [decAnte : DecidablePred ante]
+  [decCons : DecidablePred cons]
+
+attribute [instance] DefaultRule.decAnte DefaultRule.decCons
 
 /-- A knowledge base: a list of default rules. -/
 abbrev KnowledgeBase (W : Type*) := List (DefaultRule W)
@@ -67,14 +71,20 @@ abbrev KnowledgeBase (W : Type*) := List (DefaultRule W)
 variable {W : Type*}
 
 /-- A world **verifies** a rule: satisfies the material counterpart φ ⊃ ψ.
-    Equivalently, either the antecedent is false or the consequent holds. -/
-def DefaultRule.verified (r : DefaultRule W) (w : W) : Bool :=
-  !r.ante w || r.cons w
+    Equivalently, either the antecedent fails or the consequent holds. -/
+def DefaultRule.verified (r : DefaultRule W) (w : W) : Prop :=
+  ¬ r.ante w ∨ r.cons w
+
+instance (r : DefaultRule W) (w : W) : Decidable (r.verified w) := by
+  unfold DefaultRule.verified; infer_instance
 
 /-- A world **falsifies** a rule: satisfies φ ∧ ¬ψ.
     This is the world that violates the default expectation. -/
-def DefaultRule.falsified (r : DefaultRule W) (w : W) : Bool :=
-  r.ante w && !r.cons w
+def DefaultRule.falsified (r : DefaultRule W) (w : W) : Prop :=
+  r.ante w ∧ ¬ r.cons w
+
+instance (r : DefaultRule W) (w : W) : Decidable (r.falsified w) := by
+  unfold DefaultRule.falsified; infer_instance
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 2. Tolerance and Admissibility
@@ -87,8 +97,11 @@ def DefaultRule.falsified (r : DefaultRule W) (w : W) : Bool :=
     Tolerance is the key to stratification: rules that can be satisfied
     without violating others are the least surprising (lowest Z-priority). -/
 def tolerated (r : DefaultRule W) (Δ : KnowledgeBase W) : Prop :=
-  ∃ w : W, r.ante w = true ∧ r.cons w = true ∧
-    (Δ.all fun r' => r'.verified w) = true
+  ∃ w : W, r.ante w ∧ r.cons w ∧ ∀ r' ∈ Δ, r'.verified w
+
+instance [Fintype W] (r : DefaultRule W) (Δ : KnowledgeBase W) :
+    Decidable (tolerated r Δ) := by
+  unfold tolerated; infer_instance
 
 /-- @cite{goldszmidt-pearl-1996}, Definition 2 (Eq. 7). A ranking κ is
     **admissible** relative to Δ iff for each rule φᵢ → ψᵢ, every world
@@ -98,9 +111,8 @@ def tolerated (r : DefaultRule W) (Δ : KnowledgeBase W) : Prop :=
     satisfying the rule has strictly lower rank than the most normal
     world violating it. -/
 def admissible (κ : RankingFunction W) (Δ : KnowledgeBase W) : Prop :=
-  Δ.Forall fun r =>
-    ∀ w : W, r.falsified w = true →
-      ∃ v : W, (r.ante v && r.cons v) = true ∧ κ.rank v < κ.rank w
+  ∀ r ∈ Δ, ∀ w : W, r.falsified w →
+    ∃ v : W, r.ante v ∧ r.cons v ∧ κ.rank v < κ.rank w
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 3. Minimal Ranking κ^z
@@ -124,9 +136,9 @@ where
     | [], _ => none
     | (r, z) :: rest, w =>
       let acc := maxFalsifiedPriority rest w
-      match r.falsified w with
-      | true => some (match acc with | none => z | some z' => max z z')
-      | false => acc
+      if r.falsified w then
+        some (match acc with | none => z | some z' => max z z')
+      else acc
 
 /-- Build a `RankingFunction` from Z-prioritized rules.
 
@@ -149,9 +161,9 @@ def zRanking (rules : List (DefaultRule W × ℕ))
 
     Equivalently: every world satisfying φ ∧ ¬σ is outranked by some
     world satisfying φ ∧ σ. -/
-def rankEntails (κ : RankingFunction W) (φ σ : W → Bool) : Prop :=
-  ∀ w : W, (φ w && !σ w) = true →
-    ∃ v : W, (φ v && σ v) = true ∧ κ.rank v < κ.rank w
+def rankEntails (κ : RankingFunction W) (φ σ : W → Prop) : Prop :=
+  ∀ w : W, φ w → ¬ σ w →
+    ∃ v : W, φ v ∧ σ v ∧ κ.rank v < κ.rank w
 
 /-- @cite{goldszmidt-pearl-1996}, Definition 8 (p. 66). σ is
     **p-entailed** by φ given Δ iff φ ⊨_κ σ holds in every consequence
@@ -161,25 +173,19 @@ def rankEntails (κ : RankingFunction W) (φ σ : W → Bool) : Prop :=
     safe across ALL admissible rankings. z-entailment (Definition 13)
     is bolder, using only the unique minimal ranking κ^z. Every
     p-entailed conclusion is z-entailed but not vice versa (Table 2). -/
-def pEntails (Δ : KnowledgeBase W) (φ σ : W → Bool) : Prop :=
+def pEntails (Δ : KnowledgeBase W) (φ σ : W → Prop) : Prop :=
   ∀ κ : RankingFunction W, admissible κ Δ → rankEntails κ φ σ
 
 /-- p-entailment implies z-entailment: if φ ⊨_p σ then φ ⊨_{κ^z} σ,
     since κ^z is one particular admissible ranking. -/
 theorem pEntails_implies_rankEntails {Δ : KnowledgeBase W}
     {κ : RankingFunction W} (hadm : admissible κ Δ)
-    {φ σ : W → Bool} (h : pEntails Δ φ σ) : rankEntails κ φ σ :=
+    {φ σ : W → Prop} (h : pEntails Δ φ σ) : rankEntails κ φ σ :=
   h κ hadm
 
 -- ══════════════════════════════════════════════════════════════════════
 -- § 5. Computable Consistency-Test (Fig. 2)
 -- ══════════════════════════════════════════════════════════════════════
-
-/-- Decidable tolerance check. Inlines the `tolerated` definition for
-    `Decidable` instance synthesis on finite types. -/
-def toleratedBool [Fintype W] (r : DefaultRule W) (Δ : KnowledgeBase W) : Bool :=
-  decide (∃ w : W, r.ante w = true ∧ r.cons w = true ∧
-    (Δ.all fun r' => r'.verified w) = true)
 
 /-- Iterative tolerance stripping (Consistency-Test, Fig. 2).
     At each level, peels off tolerated rules and assigns them the
@@ -191,7 +197,7 @@ def zPrioritiesAux [Fintype W]
   | _, [] => []
   | 0, _ => remaining.map (·, level)
   | fuel' + 1, _ =>
-    let (tol, rest) := remaining.partition (fun r => toleratedBool r remaining)
+    let (tol, rest) := remaining.partition (fun r => decide (tolerated r remaining))
     if tol.isEmpty then remaining.map (·, level)
     else tol.map (·, level) ++ zPrioritiesAux rest (level + 1) fuel'
 
@@ -228,15 +234,8 @@ def StrengthKB.flat {W : Type*} (Δ : StrengthKB W) : KnowledgeBase W :=
     Note: Eq. 14 as printed has δ on the wrong side; the "equivalently
     κ(¬ψ|φ) > δ" clause and Fig. 3 confirm this corrected form. -/
 def strengthAdmissible (κ : RankingFunction W) (Δ : StrengthKB W) : Prop :=
-  Δ.Forall fun sr =>
-    ∀ w : W, sr.falsified w = true →
-      ∃ v : W, (sr.ante v && sr.cons v) = true ∧ κ.rank v + sr.strength < κ.rank w
-
-/-- `toleratedBool` computes `tolerated`: the Bool decision procedure
-    agrees with the Prop definition on finite types. -/
-theorem toleratedBool_iff [Fintype W] (r : DefaultRule W) (Δ : KnowledgeBase W) :
-    toleratedBool r Δ = true ↔ tolerated r Δ := by
-  simp [toleratedBool, tolerated, decide_eq_true_eq]
+  ∀ sr ∈ Δ, ∀ w : W, sr.falsified w →
+    ∃ v : W, sr.ante v ∧ sr.cons v ∧ κ.rank v + sr.strength < κ.rank w
 
 /-- Any element's strength is bounded by the foldr-max over the list. -/
 private theorem strength_le_foldr_max (Δ : StrengthKB W)
@@ -265,22 +264,19 @@ theorem strength_consistent_iff_flat [Fintype W] (Δ : StrengthKB W) :
   · -- (→) δ-admissible → admissible (weaken constraints)
     rintro ⟨κ, hadm⟩
     refine ⟨κ, ?_⟩
-    rw [strengthAdmissible, List.forall_iff_forall_mem] at hadm
-    rw [admissible, StrengthKB.flat, List.forall_iff_forall_mem]
     intro r hr w hw
     obtain ⟨sr, hsr, rfl⟩ := List.mem_map.mp hr
-    obtain ⟨v, hv, hlt⟩ := hadm sr hsr w hw
-    exact ⟨v, hv, by omega⟩
+    obtain ⟨v, hva, hvc, hlt⟩ := hadm sr hsr w hw
+    exact ⟨v, hva, hvc, by omega⟩
   · -- (←) admissible → ∃ δ-admissible (scale by 1 + max δ)
     rintro ⟨κ, hadm⟩
     set M := 1 + Δ.foldr (fun sr n => max sr.strength n) 0 with hM_def
     refine ⟨⟨fun w => κ.rank w * M, ?_⟩, ?_⟩
     · obtain ⟨w, hw⟩ := κ.normalized; exact ⟨w, by simp [hw]⟩
-    · rw [strengthAdmissible, List.forall_iff_forall_mem]
-      intro sr hsr w hw
-      rw [admissible, StrengthKB.flat, List.forall_iff_forall_mem] at hadm
-      obtain ⟨v, hv, hlt⟩ := hadm sr.toDefaultRule (List.mem_map.mpr ⟨sr, hsr, rfl⟩) w hw
-      refine ⟨v, hv, ?_⟩
+    · intro sr hsr w hw
+      obtain ⟨v, hva, hvc, hlt⟩ :=
+        hadm sr.toDefaultRule (List.mem_map.mpr ⟨sr, hsr, rfl⟩) w hw
+      refine ⟨v, hva, hvc, ?_⟩
       have hδ : sr.strength < M := by
         have := strength_le_foldr_max Δ sr hsr; omega
       show κ.rank v * M + sr.strength < κ.rank w * M

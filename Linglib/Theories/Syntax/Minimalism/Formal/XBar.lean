@@ -130,11 +130,11 @@ def barLevelSimple (so : SyntacticObject) : BarLevel :=
   | .node a b =>
     -- If both children are leaves, could be X' (head + complement)
     -- If one child is a phrase (node), more likely XP (spec + X')
-    match a.isLeaf, b.isLeaf with
-    | true, true => .bar   -- Two heads merged = likely X' (head + complement)
-    | true, false => .max  -- Leaf + phrase = likely XP (specifier configuration)
-    | false, true => .max  -- Phrase + leaf = likely XP
-    | false, false => .max -- Two phrases = XP level
+    match a, b with
+    | .leaf _, .leaf _ => .bar   -- Two heads merged = likely X' (head + complement)
+    | .leaf _, .node _ _ => .max -- Leaf + phrase = likely XP (specifier configuration)
+    | .node _ _, .leaf _ => .max -- Phrase + leaf = likely XP
+    | .node _ _, .node _ _ => .max -- Two phrases = XP level
 
 -- Part 4: Extracting Structure
 
@@ -250,12 +250,9 @@ theorem heads_are_minimal (tok : LIToken) :
 theorem spec_xbar_is_maximal (spec xbar : SyntacticObject)
     (hSpec : spec.isNode) :
     barLevelSimple (merge spec xbar) = .max := by
-  simp only [SyntacticObject.isNode] at hSpec
   cases spec with
-  | leaf _ => simp at hSpec
-  | node a b =>
-    simp only [barLevelSimple, merge, SyntacticObject.isLeaf]
-    cases xbar <;> rfl
+  | leaf _ => exact absurd hSpec (by unfold SyntacticObject.isNode; exact id)
+  | node a b => cases xbar <;> rfl
 
 -- Part 8: Examples
 

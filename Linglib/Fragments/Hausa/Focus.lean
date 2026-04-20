@@ -38,7 +38,7 @@ namespace Fragments.Hausa.Focus
 
 open Fragments.Hausa.Inflection (TAM Mode Subject PAC)
 open Fragments.Hausa.Tone (polarOf)
-open Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (TRN)
 open Core (SurfaceGender)
 
 -- ============================================================================
@@ -210,7 +210,7 @@ theorem exSitu_fem_picks_cee :
     given tone. The stabilizer *nē/cē* is **polar-toned**: it surfaces
     with the *opposite* tone of the immediately preceding syllable
     (@cite{newman-2000} §66.1). -/
-def Stabilizer.toneAfter (_ : Stabilizer) (host : ToneFeature) : ToneFeature :=
+def Stabilizer.toneAfter (_ : Stabilizer) (host : TRN) : TRN :=
   polarOf host
 
 /-- **Stabilizer tone is polarity (cross-fragment).** The stabilizer's
@@ -219,14 +219,14 @@ def Stabilizer.toneAfter (_ : Stabilizer) (host : ToneFeature) : ToneFeature :=
     description of *nē/cē* in the same operator that handles the
     genitive linker *-n*, making the two cases instances of one
     autosegmental operation rather than parallel idiosyncrasies. -/
-theorem stabilizer_tone_is_polar (s : Stabilizer) (host : ToneFeature) :
+theorem stabilizer_tone_is_polar (s : Stabilizer) (host : TRN) :
     s.toneAfter host = polarOf host := rfl
 
 /-- **Stabilizer-tone involutivity.** Iterating the stabilizer-tone
     map twice returns to the host tone (on the H/L sublattice).
     Direct corollary of `Tone.polarOf_involutive_on_HL`. -/
 theorem stabilizer_toneAfter_involutive (s : Stabilizer)
-    (h : ToneFeature) (hh : h ∈ ([.H, .L] : List ToneFeature)) :
+    (h : TRN) (hh : h ∈ ([.H, .L] : List TRN)) :
     polarOf (s.toneAfter h) = h :=
   Fragments.Hausa.Tone.polarOf_involutive_on_HL h hh
 

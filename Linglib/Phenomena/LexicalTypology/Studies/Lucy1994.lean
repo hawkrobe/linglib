@@ -83,14 +83,14 @@ local macro "lucy_orbit " r:term : tactic =>
     (unfold predictedClass Root.predictedSalience classOfSignature
        inventory Inventory.orbit
        affectiveT zeroDeriv causativeS positionalTal
-       Root.isAgentSalient Root.isAgentPatientSalient
-       Root.isPatientSalient Root.isPositional
-       FeatureSignature.isAgentSalient FeatureSignature.isAgentPatientSalient
-       FeatureSignature.isPatientSalient FeatureSignature.isPositional
+       Root.IsAgentSalient Root.IsAgentPatientSalient
+       Root.IsPatientSalient Root.IsPositional
+       FeatureSignature.IsAgentSalient FeatureSignature.IsAgentPatientSalient
+       FeatureSignature.IsPatientSalient FeatureSignature.IsPositional
        Root.featureSignature
-     simp only [List.filter_cons, List.filter_nil]
-     cases hs : ($r).hasState <;> cases hm : ($r).hasManner <;>
-       cases hr : ($r).hasResult <;> cases hc : ($r).hasCause <;> simp_all))
+     simp only [List.filter_cons, List.filter_nil, decide_eq_true_eq]
+     cases hm : ($r).hasManner <;> cases hr : ($r).hasResult <;>
+       cases hs : ($r).hasState <;> cases hc : ($r).hasCause <;> simp_all))
 
 /-- The `=t`-only orbit characterises agent-salient roots. -/
 theorem agent_iff_orbit_t (r : Root) :
@@ -129,16 +129,16 @@ theorem orbit_eq_iff_predictedClass_eq (r₁ r₂ : Root) :
   unfold predictedClass Root.predictedSalience classOfSignature
     inventory Inventory.orbit
     affectiveT zeroDeriv causativeS positionalTal
-    Root.isAgentSalient Root.isAgentPatientSalient
-    Root.isPatientSalient Root.isPositional
-    FeatureSignature.isAgentSalient FeatureSignature.isAgentPatientSalient
-    FeatureSignature.isPatientSalient FeatureSignature.isPositional
+    Root.IsAgentSalient Root.IsAgentPatientSalient
+    Root.IsPatientSalient Root.IsPositional
+    FeatureSignature.IsAgentSalient FeatureSignature.IsAgentPatientSalient
+    FeatureSignature.IsPatientSalient FeatureSignature.IsPositional
     Root.featureSignature
-  simp only [List.filter_cons, List.filter_nil]
-  cases r₁.hasState <;> cases r₁.hasManner <;>
-    cases r₁.hasResult <;> cases r₁.hasCause <;>
-    cases r₂.hasState <;> cases r₂.hasManner <;>
-      cases r₂.hasResult <;> cases r₂.hasCause <;> simp_all
+  simp only [List.filter_cons, List.filter_nil, decide_eq_true_eq]
+  cases r₁.hasManner <;> cases r₁.hasResult <;>
+    cases r₁.hasState <;> cases r₁.hasCause <;>
+    cases r₂.hasManner <;> cases r₂.hasResult <;>
+      cases r₂.hasState <;> cases r₂.hasCause <;> simp_all
 
 -- ════════════════════════════════════════════════════
 -- § 5. Per-Root Sanity Checks

@@ -120,22 +120,22 @@ This aspectual difference explains differential suppression:
 -/
 
 /-- Know is atelic: precondition = consequence (stative, no change). -/
-theorem know_atelic (BEL C : W → Bool) :
+theorem know_atelic (BEL C : W → Prop) :
     (knowAsEventPhase BEL C).isAtelic :=
   know_is_atelic BEL C
 
 /-- Discover is telic: precondition ≠ consequence (state change). -/
-theorem discover_telic (IGNORANT C : W → Bool) (w : W)
-    (hC : C w = true) (hIgn : IGNORANT w = true) :
+theorem discover_telic (IGNORANT C : W → Prop) (w : W)
+    (hC : C w) (hIgn : IGNORANT w) :
     (discoverAsEventPhase IGNORANT C).isTelic :=
   ⟨w, discover_is_telic IGNORANT C w hC hIgn⟩
 
 /-- Both share factivity: complement truth is a precondition. -/
-theorem know_discover_both_factive (BEL IGNORANT C : W → Bool) (w : W) :
+theorem know_discover_both_factive (BEL IGNORANT C : W → Prop) (w : W) :
     -- know's precondition is C directly
     (knowAsEventPhase BEL C).precondition w = C w ∧
     -- discover's precondition entails C
-    ((discoverAsEventPhase IGNORANT C).precondition w = true → C w = true) := by
+    ((discoverAsEventPhase IGNORANT C).precondition w → C w) := by
   constructor
   · rfl
   · exact factive_precondition_entails_complement IGNORANT C w
@@ -143,8 +143,8 @@ theorem know_discover_both_factive (BEL IGNORANT C : W → Bool) (w : W) :
 /-- Discover has an additional precondition (ignorance) that know lacks.
     This is the source of differential suppression: the ignorance precondition
     creates a context in which the speaker signals uncertainty about C. -/
-theorem discover_has_ignorance_precondition (IGNORANT C : W → Bool) (w : W) :
-    (discoverAsEventPhase IGNORANT C).precondition w = true → IGNORANT w = true :=
+theorem discover_has_ignorance_precondition (IGNORANT C : W → Prop) (w : W) :
+    (discoverAsEventPhase IGNORANT C).precondition w → IGNORANT w :=
   discover_precondition_requires_ignorance IGNORANT C w
 
 
@@ -171,17 +171,17 @@ Differential suppression follows from this:
 -/
 
 /-- Stop is telic: involves a state change. -/
-theorem stop_telic (P : W → Bool) (w : W) (hP : P w = true) :
+theorem stop_telic (P : W → Prop) (w : W) (hP : P w) :
     (stopAsEventPhase P).isTelic :=
   ⟨w, stop_is_telic P w hP⟩
 
 /-- Continue is atelic: no state change. -/
-theorem continue_atelic (P : W → Bool) :
+theorem continue_atelic (P : W → Prop) :
     (continueAsEventPhase P).isAtelic :=
   continue_is_atelic P
 
 /-- Stop and continue share the same precondition (prior activity P). -/
-theorem stop_continue_same_precondition (P : W → Bool) :
+theorem stop_continue_same_precondition (P : W → Prop) :
     (stopAsEventPhase P).precondition = (continueAsEventPhase P).precondition := rfl
 
 /-- But they differ in telicity: stop is telic, continue is atelic. -/
@@ -222,7 +222,7 @@ Diagnostics confirm:
 
 /-- Selectional preconditions project through negation.
     "The robot didn't kick the tree" still implies it has feet. -/
-theorem selectional_projects_through_negation (req event : W → Bool) (pol : Core.Polarity) :
+theorem selectional_projects_through_negation (req event : W → Prop) (pol : Core.Polarity) :
     ({ eventType := selectionalEventPhase req event, polarity := pol } :
       EventSentence W).presupposition = req := rfl
 
@@ -261,12 +261,12 @@ that the speaker presumes the precondition globally.
 /-- In a conjunction "P, and (stop P)", the first conjunct asserts the
     precondition. R&S: it is pragmatically implausible that the speaker
     presumes the precondition — they are *explicitly asserting* it. -/
-def conjunctionFiltering (P : W → Bool) : Prop :=
+def conjunctionFiltering (P : W → Prop) : Prop :=
   -- The conjunction entails the precondition locally
-  ∀ w, (P w = true ∧ (stopAsEventPhase P).eventOccurs w = true) →
-    (stopAsEventPhase P).precondition w = true
+  ∀ w, (P w ∧ (stopAsEventPhase P).eventOccurs w) →
+    (stopAsEventPhase P).precondition w
 
-theorem conjunction_entails_precondition (P : W → Bool) :
+theorem conjunction_entails_precondition (P : W → Prop) :
     conjunctionFiltering P := by
   intro w ⟨hP, _⟩; exact hP
 
@@ -275,10 +275,10 @@ theorem conjunction_entails_precondition (P : W → Bool) :
     commitment to the antecedent, and the function of the conditional is
     to evaluate the consequent relative to the antecedent. No global
     presumption of P is pragmatically attributable. -/
-def conditionalFiltering (P : W → Bool) : Prop :=
-  ∀ w, (P w = true → (stopAsEventPhase P).precondition w = true)
+def conditionalFiltering (P : W → Prop) : Prop :=
+  ∀ w, (P w → (stopAsEventPhase P).precondition w)
 
-theorem conditional_entails_precondition (P : W → Bool) :
+theorem conditional_entails_precondition (P : W → Prop) :
     conditionalFiltering P := by
   intro _ hP; exact hP
 
@@ -316,7 +316,7 @@ variable {W : Type*}
     This shows the two representations — the aboutness-based (R&S) and the
     trivalent (Heim) — agree on *what* projects, even though they disagree
     on *why* it projects. -/
-theorem cos_eventphase_agrees_with_prprop (t : CoSType) (P : W → Bool) :
+theorem cos_eventphase_agrees_with_prprop (t : CoSType) (P : W → Prop) :
     (match t with
      | .cessation => stopAsEventPhase P
      | .inception => startAsEventPhase P
@@ -396,7 +396,7 @@ This chain explains the precondition/consequence asymmetry:
 /-- End-to-end: for "stop P", the full chain from event structure to
     projection prediction. The precondition (prior state P) is invariant
     across both polarities, while the consequence (¬P) flips. -/
-theorem stop_end_to_end (P : W → Bool) (w : W) :
+theorem stop_end_to_end (P : W → Prop) (w : W) :
     -- (1) Precondition = prior state P
     (stopAsEventPhase P).precondition w = P w ∧
     -- (2) Presupposition = precondition (from aboutness)
@@ -405,17 +405,17 @@ theorem stop_end_to_end (P : W → Bool) (w : W) :
     (affirmative (stopAsEventPhase P)).presupposition w =
     (negative (stopAsEventPhase P)).presupposition w ∧
     -- (4) But consequence flips under negation
-    (negative (stopAsEventPhase P)).assertion w =
-    !(affirmative (stopAsEventPhase P)).assertion w ∧
+    ((negative (stopAsEventPhase P)).assertion w ↔
+    ¬ (affirmative (stopAsEventPhase P)).assertion w) ∧
     -- (5) The precondition projects but the consequence doesn't
     EntailmentRelation.projects .precondition = true ∧
     EntailmentRelation.projects .consequence = false := by
-  exact ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+  exact ⟨rfl, rfl, rfl, Iff.rfl, rfl, rfl⟩
 
 /-- End-to-end for factives: know's complement truth is an ontological
     precondition, shares the same structural projection mechanism as
     CoS verbs, and agrees with the PrProp representation. -/
-theorem know_end_to_end (BEL C : W → Bool) (w : W) :
+theorem know_end_to_end (BEL C : W → Prop) (w : W) :
     -- (1) Precondition = complement truth
     (knowAsEventPhase BEL C).precondition w = C w ∧
     -- (2) Presupposition = precondition
@@ -429,7 +429,7 @@ theorem know_end_to_end (BEL C : W → Bool) (w : W) :
 
 /-- End-to-end for selectional restrictions: same aboutness mechanism,
     same projection behavior, same structural explanation. -/
-theorem selectional_end_to_end (req event : W → Bool) (w : W) :
+theorem selectional_end_to_end (req event : W → Prop) (w : W) :
     -- (1) Precondition = selectional requirement
     (selectionalEventPhase req event).precondition w = req w ∧
     -- (2) Presupposition = precondition

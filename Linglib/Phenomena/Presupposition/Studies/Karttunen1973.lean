@@ -54,7 +54,6 @@ namespace Karttunen1973
 
 open Classical
 open Core.Presupposition
-open Core.Proposition
 open Core.Verbs (ProjectionBehavior)
 open Fragments.English.Predicates.Verbal
 

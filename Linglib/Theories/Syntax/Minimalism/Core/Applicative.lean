@@ -51,10 +51,11 @@ inductive ApplType where
   deriving DecidableEq, Repr
 
 /-- Is this a low applicative (either recipient or source)? -/
-def ApplType.isLow : ApplType → Bool
-  | .lowRecipient => true
-  | .lowSource    => true
-  | .high         => false
+def ApplType.IsLow (a : ApplType) : Prop :=
+  a = .lowRecipient ∨ a = .lowSource
+
+instance : DecidablePred ApplType.IsLow :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 -- ============================================================================
 -- § 2: Semantic Relations
@@ -81,10 +82,11 @@ def ApplType.semantics : ApplType → ApplSemantics
     High applicatives relate to the event, so they need Voice to contribute
     event semantics. Low applicatives relate to the theme and are
     independent of Voice. -/
-def ApplType.requiresEventSemantics : ApplType → Bool
-  | .high         => true
-  | .lowRecipient => false
-  | .lowSource    => false
+def ApplType.RequiresEventSemantics (a : ApplType) : Prop :=
+  a = .high
+
+instance : DecidablePred ApplType.RequiresEventSemantics :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 -- ============================================================================
 -- § 3: Applicative Head Structure
@@ -121,7 +123,7 @@ def applLowSource : ApplHead :=
     Low applicatives relate to the theme and are always licensed
     (@cite{pylkknen-2008}). -/
 def ApplHead.licensedWith (appl : ApplHead) (voice : VoiceHead) : Bool :=
-  if appl.applType.requiresEventSemantics then voice.hasSemantics
+  if appl.applType.RequiresEventSemantics then voice.hasSemantics
   else true
 
 -- ============================================================================
@@ -130,12 +132,12 @@ def ApplHead.licensedWith (appl : ApplHead) (voice : VoiceHead) : Bool :=
 
 /-- High applicatives require event semantics. -/
 theorem high_requires_event :
-    ApplType.requiresEventSemantics .high = true := rfl
+    ApplType.RequiresEventSemantics .high := by decide
 
 /-- Low applicatives do not require event semantics. -/
 theorem low_no_event_requirement :
-    ApplType.requiresEventSemantics .lowRecipient = false ∧
-    ApplType.requiresEventSemantics .lowSource = false := ⟨rfl, rfl⟩
+    ¬ ApplType.RequiresEventSemantics .lowRecipient ∧
+    ¬ ApplType.RequiresEventSemantics .lowSource := ⟨by decide, by decide⟩
 
 /-- Ethical datives (high Appl) are licensed with agentive Voice. -/
 theorem ethical_dative_with_agent :

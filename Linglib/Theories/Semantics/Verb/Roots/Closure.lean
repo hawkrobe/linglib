@@ -72,12 +72,12 @@ def bkgRules : EntailmentRules
 
 /-- Every atom produced by `bkgRules` is a state-attribution. -/
 theorem bkgRules_only_state (a b : LexEntailment) (h : a ∈ bkgRules b) :
-    a.isState = true := by
+    a.isState := by
   match b, h with
   | .becomesState _, h =>
     rw [show bkgRules (.becomesState _) = [.hasState _] from rfl] at h
     rcases List.mem_singleton.mp h with rfl
-    rfl
+    exact True.intro
 
 -- ════════════════════════════════════════════════════
 -- § 3. Closed Entailments and Signature
@@ -94,10 +94,10 @@ def closedEntailments (r : Root) : List LexEntailment :=
     `featureSignature` only in the `state` field: any root with a
     `becomesState` atom in its base set acquires `state = true`. -/
 def closedFeatureSignature (r : Root) : FeatureSignature :=
-  { state  := r.closedEntailments.any LexEntailment.isState
-  , manner := r.closedEntailments.any LexEntailment.isManner
-  , result := r.closedEntailments.any LexEntailment.isBecome
-  , cause  := r.closedEntailments.any LexEntailment.isCause }
+  { state  := r.closedEntailments.any (decide <| LexEntailment.isState ·)
+  , manner := r.closedEntailments.any (decide <| LexEntailment.isManner ·)
+  , result := r.closedEntailments.any (decide <| LexEntailment.isBecome ·)
+  , cause  := r.closedEntailments.any (decide <| LexEntailment.isCause ·) }
 
 end Root
 
@@ -142,8 +142,8 @@ private theorem flatMap_bkgRules_any_eq_false (atoms : List LexEntailment)
 /-- Closed and base signatures agree on `manner`. -/
 @[simp] theorem closedFeatureSignature_manner (r : Root) :
     r.closedFeatureSignature.manner = r.featureSignature.manner := by
-  show r.closedEntailments.any LexEntailment.isManner =
-    r.entailments.any LexEntailment.isManner
+  show r.closedEntailments.any (decide <| LexEntailment.isManner ·) =
+    r.entailments.any (decide <| LexEntailment.isManner ·)
   unfold Root.closedEntailments closure closeOnce
   rw [List.any_append,
       flatMap_bkgRules_any_eq_false r.entailments _ (fun _ => rfl),
@@ -152,8 +152,8 @@ private theorem flatMap_bkgRules_any_eq_false (atoms : List LexEntailment)
 /-- Closed and base signatures agree on `result`. -/
 @[simp] theorem closedFeatureSignature_result (r : Root) :
     r.closedFeatureSignature.result = r.featureSignature.result := by
-  show r.closedEntailments.any LexEntailment.isBecome =
-    r.entailments.any LexEntailment.isBecome
+  show r.closedEntailments.any (decide <| LexEntailment.isBecome ·) =
+    r.entailments.any (decide <| LexEntailment.isBecome ·)
   unfold Root.closedEntailments closure closeOnce
   rw [List.any_append,
       flatMap_bkgRules_any_eq_false r.entailments _ (fun _ => rfl),
@@ -162,8 +162,8 @@ private theorem flatMap_bkgRules_any_eq_false (atoms : List LexEntailment)
 /-- Closed and base signatures agree on `cause`. -/
 @[simp] theorem closedFeatureSignature_cause (r : Root) :
     r.closedFeatureSignature.cause = r.featureSignature.cause := by
-  show r.closedEntailments.any LexEntailment.isCause =
-    r.entailments.any LexEntailment.isCause
+  show r.closedEntailments.any (decide <| LexEntailment.isCause ·) =
+    r.entailments.any (decide <| LexEntailment.isCause ·)
   unfold Root.closedEntailments closure closeOnce
   rw [List.any_append,
       flatMap_bkgRules_any_eq_false r.entailments _ (fun _ => rfl),
@@ -174,7 +174,7 @@ private theorem flatMap_bkgRules_any_eq_false (atoms : List LexEntailment)
 theorem closedFeatureSignature_state_of_base (r : Root)
     (h : r.featureSignature.state = true) :
     r.closedFeatureSignature.state = true := by
-  show r.closedEntailments.any LexEntailment.isState = true
+  show r.closedEntailments.any (decide <| LexEntailment.isState ·) = true
   exact closure_any_of_any bkgRules r.entailments _ h
 
 /-- The principal closure consequence: every `becomesState s` in the
@@ -182,15 +182,16 @@ theorem closedFeatureSignature_state_of_base (r : Root)
 theorem closedFeatureSignature_state_of_becomes (r : Root) (s : String)
     (h : LexEntailment.becomesState s ∈ r.entailments) :
     r.closedFeatureSignature.state = true := by
-  show r.closedEntailments.any LexEntailment.isState = true
+  show r.closedEntailments.any (decide <| LexEntailment.isState ·) = true
   unfold Root.closedEntailments closure closeOnce
   rw [List.any_append]
   apply Bool.or_eq_true_iff.mpr
   right
   apply List.any_eq_true.mpr
-  refine ⟨LexEntailment.hasState s, ?_, rfl⟩
-  apply List.mem_flatMap.mpr
-  exact ⟨LexEntailment.becomesState s, h, by simp [bkgRules]⟩
+  refine ⟨LexEntailment.hasState s, ?_, ?_⟩
+  · apply List.mem_flatMap.mpr
+    exact ⟨LexEntailment.becomesState s, h, by simp [bkgRules]⟩
+  · rfl
 
 /-- Closure adds state atoms exactly when the base set has a
     `becomesState` atom. So the closed `state` field is the disjunction
@@ -198,9 +199,9 @@ theorem closedFeatureSignature_state_of_becomes (r : Root) (s : String)
 theorem closedFeatureSignature_state_eq (r : Root) :
     r.closedFeatureSignature.state =
       (r.featureSignature.state || r.featureSignature.result) := by
-  show r.closedEntailments.any LexEntailment.isState =
-    (r.entailments.any LexEntailment.isState ||
-      r.entailments.any LexEntailment.isBecome)
+  show r.closedEntailments.any (decide <| LexEntailment.isState ·) =
+    (r.entailments.any (decide <| LexEntailment.isState ·) ||
+      r.entailments.any (decide <| LexEntailment.isBecome ·))
   unfold Root.closedEntailments closure closeOnce
   rw [List.any_append]
   congr 1
@@ -213,13 +214,13 @@ theorem closedFeatureSignature_state_eq (r : Root) :
     cases b <;> simp [bkgRules] at hab
     obtain rfl := hab
     apply List.any_eq_true.mpr
-    exact ⟨_, hb, rfl⟩
+    exact ⟨_, hb, by rfl⟩
   · intro hbase
     rcases List.any_eq_true.mp hbase with ⟨a, ha, hp⟩
-    cases a <;> simp [LexEntailment.isBecome] at hp
+    cases a <;> simp [LexEntailment.isBecome, decide_eq_true_eq] at hp
     rename_i s
     apply List.any_eq_true.mpr
-    refine ⟨LexEntailment.hasState s, ?_, rfl⟩
+    refine ⟨LexEntailment.hasState s, ?_, by rfl⟩
     apply List.mem_flatMap.mpr
     exact ⟨LexEntailment.becomesState s, ha, by simp [bkgRules]⟩
 
@@ -229,19 +230,19 @@ theorem closedFeatureSignature_state_eq (r : Root) :
 
 /-- `bkgRules` produces nothing from a `hasState` atom (and similarly
     nothing from any non-`becomesState` atom). -/
-theorem bkgRules_eq_nil_of_isState (a : LexEntailment) (h : a.isState = true) :
+theorem bkgRules_eq_nil_of_isState (a : LexEntailment) (h : a.isState) :
     bkgRules a = [] := by
   cases a <;> simp_all [bkgRules, LexEntailment.isState]
 
 /-- If every atom in `atoms` is a `hasState`, `flatMap bkgRules` is empty. -/
 theorem flatMap_bkgRules_eq_nil_of_all_isState (atoms : List LexEntailment)
-    (h : ∀ a ∈ atoms, a.isState = true) :
+    (h : ∀ a ∈ atoms, a.isState) :
     atoms.flatMap bkgRules = [] := by
   induction atoms with
   | nil => rfl
   | cons a t ih =>
-    have ha : a.isState = true := h a List.mem_cons_self
-    have ht : ∀ x ∈ t, x.isState = true :=
+    have ha : a.isState := h a List.mem_cons_self
+    have ht : ∀ x ∈ t, x.isState :=
       fun x hx => h x (List.mem_cons_of_mem _ hx)
     rw [List.flatMap_cons, bkgRules_eq_nil_of_isState a ha, List.nil_append,
         ih ht]

@@ -187,14 +187,14 @@ def dat : Nat := 3
 def abbLexicon : List LexEntry :=
   [⟨0, "A"⟩, ⟨3, "B"⟩]
 
-theorem abb_nom : spellout abbLexicon nom = some "A" := by native_decide
-theorem abb_acc : spellout abbLexicon acc = some "B" := by native_decide
-theorem abb_gen : spellout abbLexicon gen = some "B" := by native_decide
-theorem abb_dat : spellout abbLexicon dat = some "B" := by native_decide
+theorem abb_nom : spellout abbLexicon nom = some "A" := by decide
+theorem abb_acc : spellout abbLexicon acc = some "B" := by decide
+theorem abb_gen : spellout abbLexicon gen = some "B" := by decide
+theorem abb_dat : spellout abbLexicon dat = some "B" := by decide
 
 /-- ABB has no ABA violation. -/
 theorem abb_no_aba :
-    abaViolation abbLexicon nom acc gen = false := by native_decide
+    abaViolation abbLexicon nom acc gen = false := by decide
 
 /-- AAB pattern: entry A at rank 2 (GEN-sized), entry B at rank 3
     (DAT-sized).
@@ -205,10 +205,10 @@ theorem abb_no_aba :
 def aabLexicon : List LexEntry :=
   [⟨2, "A"⟩, ⟨3, "B"⟩]
 
-theorem aab_nom : spellout aabLexicon nom = some "A" := by native_decide
-theorem aab_acc : spellout aabLexicon acc = some "A" := by native_decide
-theorem aab_gen : spellout aabLexicon gen = some "A" := by native_decide
-theorem aab_dat : spellout aabLexicon dat = some "B" := by native_decide
+theorem aab_nom : spellout aabLexicon nom = some "A" := by decide
+theorem aab_acc : spellout aabLexicon acc = some "A" := by decide
+theorem aab_gen : spellout aabLexicon gen = some "A" := by decide
+theorem aab_dat : spellout aabLexicon dat = some "B" := by decide
 
 /-- AABB pattern: entry A at rank 1 (ACC-sized), entry B at rank 3.
     - NOM: A (rank 1) vs B (rank 3), A wins → "A"
@@ -218,10 +218,10 @@ theorem aab_dat : spellout aabLexicon dat = some "B" := by native_decide
 def aabbLexicon : List LexEntry :=
   [⟨1, "A"⟩, ⟨3, "B"⟩]
 
-theorem aabb_nom : spellout aabbLexicon nom = some "A" := by native_decide
-theorem aabb_acc : spellout aabbLexicon acc = some "A" := by native_decide
-theorem aabb_gen : spellout aabbLexicon gen = some "B" := by native_decide
-theorem aabb_dat : spellout aabbLexicon dat = some "B" := by native_decide
+theorem aabb_nom : spellout aabbLexicon nom = some "A" := by decide
+theorem aabb_acc : spellout aabbLexicon acc = some "A" := by decide
+theorem aabb_gen : spellout aabbLexicon gen = some "B" := by decide
+theorem aabb_dat : spellout aabbLexicon dat = some "B" := by decide
 
 /-- Total syncretism: a single entry at rank 3 matches everything.
     One form for all cases. -/
@@ -231,7 +231,7 @@ def totalSyncretism : List LexEntry :=
 theorem total_syncretic :
     syncretic totalSyncretism nom acc = true ∧
     syncretic totalSyncretism acc gen = true ∧
-    syncretic totalSyncretism gen dat = true := by native_decide
+    syncretic totalSyncretism gen dat = true := by decide
 
 /-- *ABA is impossible. With entries at ranks 0 and 2 (trying to
     skip rank 1), the rank-2 entry matches rank 1 too — and beats
@@ -242,10 +242,10 @@ def attemptedABA : List LexEntry :=
 theorem attempted_aba_produces_abb :
     spellout attemptedABA nom = some "A" ∧
     spellout attemptedABA acc = some "B" ∧
-    spellout attemptedABA gen = some "B" := by native_decide
+    spellout attemptedABA gen = some "B" := by decide
 
 theorem attempted_aba_fails :
-    abaViolation attemptedABA nom acc gen = false := by native_decide
+    abaViolation attemptedABA nom acc gen = false := by decide
 
 /-- Even with three entries, *ABA is impossible. Adding a third
     entry at rank 2 with exponent "A" doesn't help — entries at
@@ -264,7 +264,7 @@ def threeEntryAttempt : List LexEntry :=
 -- systematic syncretism — the theory distinguishes the two.
 
 theorem three_entry_is_aba :
-    abaViolation threeEntryAttempt nom acc gen = true := by native_decide
+    abaViolation threeEntryAttempt nom acc gen = true := by decide
 
 -- The point: *ABA from SYSTEMATIC syncretism (one lexical item
 -- covering a contiguous span) is impossible. ABA from accidental

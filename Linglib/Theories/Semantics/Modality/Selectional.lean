@@ -400,6 +400,46 @@ theorem cognitive_role_not [Fintype W] (s : SelectionFunction W)
     μ.probOf (fun w => !(A (s.sel w f))) = μ.probOf (fun w => !(A w)) :=
   cognitive_role s (fun w => !(A w)) f μ h_supp
 
+/-! ### Prop-friendly cognitive role bridge
+
+Wrappers that accept `Prop`-valued prejacents with a `DecidablePred` instance,
+coercing through `decide` so callers can stay in the Prop layer (matching the
+rest of `Selectional.lean`). Internally these delegate to the Bool variants
+because `FinitePMF.probOf` is Bool-typed by design (an intrinsic computational
+boundary, not a Bool stand-in for Prop content). -/
+
+/-- Prop-friendly variant of `cognitive_role`: under any credence supported on
+    `f`, `μ(‖will A‖) = μ(‖A‖)` for any decidable `Prop` prejacent. -/
+theorem cognitive_role_prop [Fintype W] (s : SelectionFunction W)
+    (A : W → Prop) [DecidablePred A] (f : Set W) (μ : FinitePMF W)
+    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
+    μ.probOf (fun w => decide (A (s.sel w f))) = μ.probOf (fun w => decide (A w)) :=
+  cognitive_role s (fun w => decide (A w)) f μ h_supp
+
+/-- Prop-friendly variant of `cognitive_role_and`. -/
+theorem cognitive_role_and_prop [Fintype W] (s : SelectionFunction W)
+    (A B : W → Prop) [DecidablePred A] [DecidablePred B]
+    (f : Set W) (μ : FinitePMF W) (h_supp : ∀ w ∉ f, μ.mass w = 0) :
+    μ.probOf (fun w => decide (A (s.sel w f)) && decide (B (s.sel w f))) =
+      μ.probOf (fun w => decide (A w) && decide (B w)) :=
+  cognitive_role s (fun w => decide (A w) && decide (B w)) f μ h_supp
+
+/-- Prop-friendly variant of `cognitive_role_or`. -/
+theorem cognitive_role_or_prop [Fintype W] (s : SelectionFunction W)
+    (A B : W → Prop) [DecidablePred A] [DecidablePred B]
+    (f : Set W) (μ : FinitePMF W) (h_supp : ∀ w ∉ f, μ.mass w = 0) :
+    μ.probOf (fun w => decide (A (s.sel w f)) || decide (B (s.sel w f))) =
+      μ.probOf (fun w => decide (A w) || decide (B w)) :=
+  cognitive_role s (fun w => decide (A w) || decide (B w)) f μ h_supp
+
+/-- Prop-friendly variant of `cognitive_role_not`. -/
+theorem cognitive_role_not_prop [Fintype W] (s : SelectionFunction W)
+    (A : W → Prop) [DecidablePred A] (f : Set W) (μ : FinitePMF W)
+    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
+    μ.probOf (fun w => !(decide (A (s.sel w f)))) =
+      μ.probOf (fun w => !(decide (A w))) :=
+  cognitive_role s (fun w => !(decide (A w))) f μ h_supp
+
 /-! ## §9. Multi-premise validity (paper §6)
 
 @cite{cariani-santorio-2018} §6 distinguishes Validity₁ (truth at the

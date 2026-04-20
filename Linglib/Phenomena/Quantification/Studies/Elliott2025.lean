@@ -49,15 +49,15 @@ variable {α : Type*}
 /-- The fundamental split-scope fact: joining complementary polarities
     yields a GQ that depends only on the restrictor, not the scope.
     This means scope position is irrelevant — the quantifier "splits". -/
-theorem split_scope_restrictor_only (e : α) (R S₁ S₂ : α → Bool) :
-    (PolInd.toConsGQ (e, true) ⊔ PolInd.toConsGQ (e, false)).1 R S₁ =
+theorem split_scope_restrictor_only (e : α) (R S₁ S₂ : α → Prop) :
+    (PolInd.toConsGQ (e, true) ⊔ PolInd.toConsGQ (e, false)).1 R S₁ ↔
     (PolInd.toConsGQ (e, true) ⊔ PolInd.toConsGQ (e, false)).1 R S₂ := by
   simp [split_scope]
 
 /-- Corollary: split scope means the result equals `R(e)` regardless of
     what scope predicate is supplied. -/
-theorem split_scope_eq_restrictor (e : α) (R S : α → Bool) :
-    (PolInd.toConsGQ (e, true) ⊔ PolInd.toConsGQ (e, false)).1 R S = R e := by
+theorem split_scope_eq_restrictor (e : α) (R S : α → Prop) :
+    (PolInd.toConsGQ (e, true) ⊔ PolInd.toConsGQ (e, false)).1 R S ↔ R e := by
   simp [split_scope]
 
 -- ============================================================================
@@ -68,10 +68,10 @@ theorem split_scope_eq_restrictor (e : α) (R S : α → Bool) :
     the complement of the join of positive polarized individuals.
     When scope splits, the complement applies at one position while
     the existential restrictor applies at another. -/
-theorem no_from_complement_of_some (entities : List α) (R S : α → Bool) :
-    Bool.not (entities.any (λ e => R e && S e)) =
-    Bool.not (entities.any (λ e => PolInd.toGQ (e, true) R S)) := by
-  congr 1; congr 1; ext e; simp
+theorem no_from_complement_of_some (entities : List α) (R S : α → Prop) :
+    ¬ (∃ e ∈ entities, R e ∧ S e) ↔
+    ¬ (∃ e ∈ entities, PolInd.toGQ (e, true) R S) := by
+  rw [some_as_polInd_join]
 
 -- ============================================================================
 -- §3 — Duality: Every from Not-Some-Not
@@ -81,10 +81,13 @@ theorem no_from_complement_of_some (entities : List α) (R S : α → Bool) :
     With polarized individuals: `every(R,S) = ¬(⋁_e (e,-))(R,S)`,
     i.e., the complement of the join of negative polarized individuals.
     This decomposition parallels `no` but with reversed polarity. -/
-theorem every_from_neg_polInd (entities : List α) (R S : α → Bool) :
-    Bool.not (entities.any (λ e => PolInd.toGQ (e, false) R S)) =
-    entities.all (λ e => Bool.not (R e) || S e) := by
+theorem every_from_neg_polInd (entities : List α) (R S : α → Prop) :
+    ¬ (∃ e ∈ entities, PolInd.toGQ (e, false) R S) ↔
+    (∀ e ∈ entities, ¬ R e ∨ S e) := by
   rw [← dual_some_eq_every]
-  congr 1; congr 1; ext e; simp
+  apply not_congr
+  apply exists_congr; intro e
+  apply and_congr_right; intro _
+  rw [PolInd.toGQ_neg]
 
 end Elliott2025

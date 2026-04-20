@@ -45,10 +45,11 @@ inductive EvidentialPerspective where
 /-- Is this evidential perspective nonfuture? Retrospective and
     contemporaneous perspectives involve evidence that is downstream
     of the event (T ≤ A); prospective does not. -/
-def EvidentialPerspective.isNonfuture : EvidentialPerspective → Bool
-  | .retrospective => true
-  | .contemporaneous => true
-  | .prospective => false
+def EvidentialPerspective.IsNonfuture (p : EvidentialPerspective) : Prop :=
+  p = .retrospective ∨ p = .contemporaneous
+
+instance : DecidablePred EvidentialPerspective.IsNonfuture :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Every evidential source maps to an evidential perspective.
     Direct observation is contemporaneous (A = T), hearsay and inference
@@ -66,18 +67,5 @@ inductive MirativityValue where
   | unexpected
   | neutral
   deriving DecidableEq, Repr
-
-/-- Does this mirativity value mark surprise/new information? -/
-def MirativityValue.isMirative : MirativityValue → Bool
-  | .unexpected => true
-  | _ => false
-
-/-- Is this evidence source indirect? Hearsay and inference are indirect;
-    direct observation is not. This is @cite{izvorski-1997}'s binary partition
-    of Aikhenvald's three-way classification. -/
-def EvidentialSource.isIndirect : EvidentialSource → Bool
-  | .direct => false
-  | .hearsay => true
-  | .inference => true
 
 end Core.Evidence

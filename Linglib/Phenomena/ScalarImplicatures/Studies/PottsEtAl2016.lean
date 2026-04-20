@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.RSA.Quantities
+import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Phenomena.ScalarImplicatures.QuantityDomain
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!
@@ -302,7 +302,7 @@ theorem all_findings_verified : ∀ f : Finding, formalize f := by
 -- ============================================================================
 
 /-! The outer quantifiers "every" and "no" in the @cite{potts-etal-2016} model
-agree with the generic quantity domain semantics from `RSA.Domains.Quantity.meaning`.
+agree with the generic quantity domain semantics from `Phenomena.ScalarImplicatures.QuantityDomain.meaning`.
 This grounds the stipulated `utteranceTruth` in the shared quantifier infrastructure.
 
 See also: `GoodmanStuhlmuller2013.quantifier_meaning_grounded`. -/
@@ -314,14 +314,14 @@ private theorem predCount_lt_four (sq : ShotQ) (lex : Lexicon) (w : World) :
 /-- "Every player hit X" ↔ `Quantity.meaning 3 .all` applied to `predCount`. -/
 theorem outer_every_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
     utteranceTruth lex (.stmt .every sq) w =
-    RSA.Domains.Quantity.meaning 3 .all
+    Phenomena.ScalarImplicatures.QuantityDomain.meaning 3 .all
       ⟨predCount sq lex w, predCount_lt_four sq lex w⟩ := by
   cases sq <;> cases lex <;> cases w <;> native_decide
 
 /-- "No player hit X" ↔ `Quantity.meaning 3 .none_` applied to `predCount`. -/
 theorem outer_no_grounded (sq : ShotQ) (lex : Lexicon) (w : World) :
     utteranceTruth lex (.stmt .no sq) w =
-    RSA.Domains.Quantity.meaning 3 .none_
+    Phenomena.ScalarImplicatures.QuantityDomain.meaning 3 .none_
       ⟨predCount sq lex w, predCount_lt_four sq lex w⟩ := by
   cases sq <;> cases lex <;> cases w <;> native_decide
 

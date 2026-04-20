@@ -18,6 +18,7 @@ This breaks closure and creates the need for rescue mechanisms.
 
 import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
+import Mathlib.Data.Set.Basic
 
 namespace AlonsoOvalleMoghiseh2025Closure
 
@@ -31,7 +32,7 @@ variable {World : Type*} {Entity : Type*}
 The prejacent and scalar alternative set is "almost closed" under conjunction.
 The universal is the conjunction of all singleton assertions.
 -/
-theorem scalar_alts_structure (D : Domain Entity) (P : Entity → Prop' World) :
+theorem scalar_alts_structure (D : Domain Entity) (P : Entity → Set World) :
     universalAlt D P = λ w => ∀ d ∈ D, P d w := rfl
 
 /--
@@ -42,7 +43,7 @@ For distinct d₁, d₂ ∈ D:
 You can't have "exactly d₁ satisfies P" AND "exactly d₂ satisfies P".
 -/
 theorem preExh_pairwise_inconsistent
-    (D : Domain Entity) (d₁ d₂ : Entity) (P : Entity → Prop' World)
+    (D : Domain Entity) (d₁ d₂ : Entity) (P : Entity → Set World)
     (_hd₁ : d₁ ∈ D) (hd₂ : d₂ ∈ D) (hne : d₁ ≠ d₂) :
     ∀ w, ¬(preExhaustify D d₁ P w ∧ preExhaustify D d₂ P w) := by
   intro w ⟨⟨_, hexcl₁⟩, ⟨hPd₂, _⟩⟩
@@ -53,7 +54,7 @@ The conjunction of ALL pre-exhaustified domain alternatives is ⊥
 (when |D| ≥ 2).
 -/
 theorem preExh_all_inconsistent
-    (D : Domain Entity) (P : Entity → Prop' World)
+    (D : Domain Entity) (P : Entity → Set World)
     (d₁ d₂ : Entity) (hd₁ : d₁ ∈ D) (hd₂ : d₂ ∈ D) (hne : d₁ ≠ d₂) :
     ∀ w, ¬(∀ φ ∈ preExhDomainAlts D P, φ w) := by
   intro w hall
@@ -67,7 +68,7 @@ The EFCI alternative set fails closure under conjunction when |D| ≥ 2.
 The witness: {preExh(d₁), preExh(d₂)} ⊆ ALT but ⋀{preExh(d₁), preExh(d₂)} = ⊥.
 -/
 theorem efci_not_closed_witness
-    (D : Domain Entity) (P : Entity → Prop' World)
+    (D : Domain Entity) (P : Entity → Set World)
     (d₁ d₂ : Entity) (hd₁ : d₁ ∈ D) (hd₂ : d₂ ∈ D) (hne : d₁ ≠ d₂) :
     let X := {preExhaustify D d₁ P, preExhaustify D d₂ P}
     X ⊆ efciAlternatives D P ∧
@@ -105,7 +106,7 @@ For EFCI:
 Pruning to scalar-only alternatives may restore closure properties.
 The universal is in the scalar alt set.
 -/
-theorem scalar_only_contains_universal (D : Domain Entity) (P : Entity → Prop' World) :
+theorem scalar_only_contains_universal (D : Domain Entity) (P : Entity → Set World) :
     universalAlt D P ∈ scalarOnlyAlts D P := by
   apply Set.mem_union_right
   rfl
@@ -115,7 +116,7 @@ Domain-only alternatives (scalar pruned) still have the inconsistency.
 But under innocent exclusion, not all can be negated together.
 -/
 theorem domain_only_still_not_closed
-    (D : Domain Entity) (P : Entity → Prop' World)
+    (D : Domain Entity) (P : Entity → Set World)
     (d₁ d₂ : Entity) (hd₁ : d₁ ∈ D) (hd₂ : d₂ ∈ D) (hne : d₁ ≠ d₂) :
     let X := {preExhaustify D d₁ P, preExhaustify D d₂ P}
     X ⊆ domainOnlyAlts D P ∧ (∀ w, ¬(bigConj X w)) := by
@@ -185,14 +186,14 @@ The negation of a pre-exhaustified alternative.
 ¬preExh(d) = "d is not the unique satisfier"
            = "either ¬P(d) or ∃y≠d. P(y)"
 -/
-def notPreExh (D : Domain Entity) (d : Entity) (P : Entity → Prop' World) : Prop' World :=
+def notPreExh (D : Domain Entity) (d : Entity) (P : Entity → Set World) : Set World :=
   λ w => ¬(preExhaustify D d P w)
 
 /--
 The conjunction of negated pre-exhaustified alternatives.
 This says "NO element is the unique satisfier" = "either none or ≥2 satisfy P".
 -/
-def allNotPreExh (D : Domain Entity) (P : Entity → Prop' World) : Prop' World :=
+def allNotPreExh (D : Domain Entity) (P : Entity → Set World) : Set World :=
   λ w => ∀ d ∈ D, notPreExh D d P w
 
 /--
@@ -205,7 +206,7 @@ This is why innocent exclusion can't negate ALL domain alternatives
 while keeping the prejacent (∃x. P(x)) true with a unique witness.
 -/
 theorem unique_witness_falsifies_allNotPreExh
-    (D : Domain Entity) (P : Entity → Prop' World) (d₀ : Entity)
+    (D : Domain Entity) (P : Entity → Set World) (d₀ : Entity)
     (hd₀ : d₀ ∈ D)
     (hPd₀ : ∀ w, P d₀ w)
     (hunique : ∀ w d, d ∈ D → d ≠ d₀ → ¬P d w) :

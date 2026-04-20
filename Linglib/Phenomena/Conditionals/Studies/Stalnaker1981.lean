@@ -82,19 +82,25 @@ def bvSim : SimilarityOrdering BVWorld := .ofBool
   (by decide) (by decide)
 
 /-- The antecedent: Bizet and Verdi are compatriots. -/
-def compatriots : BVWorld → Bool
-  | .bothItalian | .bothFrench => true
-  | .actual => false
+def compatriots : BVWorld → Prop
+  | .bothItalian | .bothFrench => True
+  | .actual => False
+
+instance : DecidablePred compatriots := fun w => by cases w <;> unfold compatriots <;> infer_instance
 
 /-- The consequent: Bizet is Italian. -/
-def bizetItalian : BVWorld → Bool
-  | .bothItalian => true
-  | _ => false
+def bizetItalian : BVWorld → Prop
+  | .bothItalian => True
+  | _ => False
+
+instance : DecidablePred bizetItalian := fun w => by cases w <;> unfold bizetItalian <;> infer_instance
 
 /-- The consequent: Verdi is French. -/
-def verdiFrench : BVWorld → Bool
-  | .bothFrench => true
-  | _ => false
+def verdiFrench : BVWorld → Prop
+  | .bothFrench => True
+  | _ => False
+
+instance : DecidablePred verdiFrench := fun w => by cases w <;> unfold verdiFrench <;> infer_instance
 
 /-- "If B&V had been compatriots, Bizet would have been Italian" is
     indeterminate: some closest compatriot-worlds make it true (.bothItalian),
@@ -114,7 +120,7 @@ theorem verdi_french_indeterminate :
     the theory rather than being independently verified. -/
 theorem bizet_verdi_cem :
     let φ := selectionalCounterfactual bvSim compatriots bizetItalian .actual
-    let ψ := selectionalCounterfactual bvSim compatriots (!bizetItalian ·) .actual
+    let ψ := selectionalCounterfactual bvSim compatriots (¬ bizetItalian ·) .actual
     Truth3.join φ ψ ≠ .false :=
   cem_selectional bvSim compatriots bizetItalian .actual
 
@@ -122,8 +128,8 @@ theorem bizet_verdi_cem :
     "would B" and "would ¬B" false — so their disjunction is false.
     This is the central empirical divergence. -/
 theorem bizet_cem_fails_universal :
-    universalCounterfactual bvSim compatriots bizetItalian .actual = false ∧
-    universalCounterfactual bvSim compatriots (!bizetItalian ·) .actual = false :=
+    ¬ universalCounterfactual bvSim compatriots bizetItalian .actual ∧
+    ¬ universalCounterfactual bvSim compatriots (¬ bizetItalian ·) .actual :=
   ⟨by decide, by decide⟩
 
 end BizetVerdi
@@ -161,13 +167,11 @@ section MightCollapse
     correctly predicting that "Bizet MIGHT have been Italian" is
     acceptable. -/
 theorem selectional_might_bizet_true :
-    selectionalMight bvSim compatriots bizetItalian .actual
-    = true := by decide
+    selectionalMight bvSim compatriots bizetItalian .actual := by decide
 
 /-- Selectional `might` is also true for the French direction. -/
 theorem selectional_might_verdi_true :
-    selectionalMight bvSim compatriots verdiFrench .actual
-    = true := by decide
+    selectionalMight bvSim compatriots verdiFrench .actual := by decide
 
 /-- **The might/would asymmetry under supervaluation**: both `might`
     conditionals are true even though neither `would` conditional is
@@ -175,8 +179,8 @@ theorem selectional_might_verdi_true :
     might have been Italian" is acceptable, "Bizet would have been
     Italian" is neither true nor false. -/
 theorem might_would_asymmetry :
-    selectionalMight bvSim compatriots bizetItalian .actual = true ∧
-    selectionalMight bvSim compatriots verdiFrench .actual = true ∧
+    selectionalMight bvSim compatriots bizetItalian .actual ∧
+    selectionalMight bvSim compatriots verdiFrench .actual ∧
     selectionalCounterfactual bvSim compatriots bizetItalian .actual = .gap ∧
     selectionalCounterfactual bvSim compatriots verdiFrench .actual = .gap :=
   ⟨by decide, by decide, by decide, by decide⟩
@@ -197,12 +201,14 @@ def sSim : SimilarityOrdering SWorld := .ofBool
   (fun | .actual, .actual, _ => true
        | _, w₁, w₂ => w₁ == w₂)
   (by decide) (by decide)
-def sAnte : SWorld → Bool | .closest => true | _ => false
-def sCons : SWorld → Bool | .closest => true | _ => false
+def sAnte : SWorld → Prop | .closest => True | _ => False
+instance : DecidablePred sAnte := fun w => by cases w <;> unfold sAnte <;> infer_instance
+def sCons : SWorld → Prop | .closest => True | _ => False
+instance : DecidablePred sCons := fun w => by cases w <;> unfold sCons <;> infer_instance
 
 /-- With a unique closest world, Lewis's `might` = `would`. -/
 theorem singleton_collapse :
-    lewisMight sSim sAnte sCons .actual =
+    lewisMight sSim sAnte sCons .actual ↔
     universalCounterfactual sSim sAnte sCons .actual :=
   lewis_might_eq_would_singleton sSim sAnte sCons .actual (by decide)
 
@@ -232,9 +238,9 @@ section DistributionWorked
     Distribution fails. -/
 theorem distribution_fails_bizetverdi :
     universalCounterfactual bvSim compatriots
-      (λ w => bizetItalian w || verdiFrench w) .actual = true ∧
-    universalCounterfactual bvSim compatriots bizetItalian .actual = false ∧
-    universalCounterfactual bvSim compatriots verdiFrench .actual = false :=
+      (λ w => bizetItalian w ∨ verdiFrench w) .actual ∧
+    ¬ universalCounterfactual bvSim compatriots bizetItalian .actual ∧
+    ¬ universalCounterfactual bvSim compatriots verdiFrench .actual :=
   ⟨by decide, by decide, by decide⟩
 
 /-- Under selectional semantics with ties, the compound conditional
@@ -243,7 +249,7 @@ theorem distribution_fails_bizetverdi :
     `distribution_selectional` is not met here (two closest worlds). -/
 theorem distribution_needs_uniqueness :
     selectionalCounterfactual bvSim compatriots
-      (λ w => bizetItalian w || verdiFrench w) .actual = .true ∧
+      (λ w => bizetItalian w ∨ verdiFrench w) .actual = .true ∧
     selectionalCounterfactual bvSim compatriots bizetItalian .actual = .gap ∧
     selectionalCounterfactual bvSim compatriots verdiFrench .actual = .gap :=
   ⟨by decide, by decide, by decide⟩
@@ -290,26 +296,34 @@ def courtSim : SimilarityOrdering CourtWorld := .ofBool
   (by decide) (by decide)
 
 /-- The antecedent: a vacancy occurs. -/
-def vacancy : CourtWorld → Bool
-  | .actual => false | _ => true
+def vacancy : CourtWorld → Prop
+  | .actual => False | _ => True
+
+instance : DecidablePred vacancy := fun w => by cases w <;> unfold vacancy <;> infer_instance
 
 /-- Woman A is appointed in w1. -/
-def appointA : CourtWorld → Bool
-  | .w1 => true | _ => false
+def appointA : CourtWorld → Prop
+  | .w1 => True | _ => False
+
+instance : DecidablePred appointA := fun w => by cases w <;> unfold appointA <;> infer_instance
 
 /-- Woman B is appointed in w2. -/
-def appointB : CourtWorld → Bool
-  | .w2 => true | _ => false
+def appointB : CourtWorld → Prop
+  | .w2 => True | _ => False
+
+instance : DecidablePred appointB := fun w => by cases w <;> unfold appointB <;> infer_instance
 
 /-- Someone is appointed (narrow scope ∃). -/
-def someoneAppointed : CourtWorld → Bool
-  | .w1 | .w2 => true | .actual => false
+def someoneAppointed : CourtWorld → Prop
+  | .w1 | .w2 => True | .actual => False
+
+instance : DecidablePred someoneAppointed :=
+  fun w => by cases w <;> unfold someoneAppointed <;> infer_instance
 
 /-- Narrow scope: "he would appoint some woman" — all closest worlds have
     someone appointed, so this is true even under universal semantics. -/
 theorem narrow_scope_true :
-    universalCounterfactual courtSim vacancy someoneAppointed .actual
-    = true := by decide
+    universalCounterfactual courtSim vacancy someoneAppointed .actual := by decide
 
 /-- Wide scope fails for each particular woman: "he would appoint woman A"
     is indeterminate (gap) under selectional semantics. -/

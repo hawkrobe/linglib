@@ -16,7 +16,7 @@ ch. 71).
 This file is the *interpretation* of two existing Theory interfaces in
 Hausa, not a parallel hierarchy:
 
-- `Phonology.Autosegmental.RegisterTier.ToneFeature` is the
+- `Phonology.Autosegmental.RegisterTier.TRN` is the
   underlying autosegmental primitive; `HausaTone` is a surface
   inventory whose decomposition is given by `toAutoseg`.
 - `Phonology.Autosegmental.GrammaticalTone.GTSpec` is the GT-trigger
@@ -32,7 +32,7 @@ Per-cell facts (e.g. *the plural template is dominant*) appear as
 
 namespace Fragments.Hausa.Tone
 
-open Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (TRN)
 open Phonology.Autosegmental.GrammaticalTone
   (Spec GTSpec TonalMelody ValuationWindow GTDominance
    GTLevel ExponenceType tonalOverwrite TBU)
@@ -59,7 +59,7 @@ def all : List HausaTone := [.H, .L, .F]
 /-- Project a Hausa surface tone to its autosegmental decomposition on
     the underlying tone tier. The falling contour decomposes to `[H, L]`,
     a level tone to a singleton. -/
-def toAutoseg : HausaTone → List ToneFeature
+def toAutoseg : HausaTone → List TRN
   | .H => [.H]
   | .L => [.L]
   | .F => [.H, .L]
@@ -86,7 +86,7 @@ theorem no_rising_contour :
     construction, which is L after a H-final host and H after a L-final
     host. Polarity is one of the named operations in @cite{rolle-2018}
     (`GTOperation.polarization`); we derive its behaviour structurally. -/
-def polarOf : ToneFeature → ToneFeature
+def polarOf : TRN → TRN
   | .H => .L
   | _  => .H
 
@@ -95,7 +95,7 @@ def polarOf : ToneFeature → ToneFeature
     swaps H and L, and applying the swap twice returns to the
     original. -/
 theorem polarOf_involutive_on_HL :
-    ∀ t ∈ ([.H, .L] : List ToneFeature), polarOf (polarOf t) = t := by
+    ∀ t ∈ ([.H, .L] : List TRN), polarOf (polarOf t) = t := by
   intro t ht
   simp only [List.mem_cons, List.not_mem_nil, or_false] at ht
   rcases ht with rfl | rfl <;> decide
@@ -167,8 +167,8 @@ theorem hausa_dominance_is_replacive_or_neutral :
 -- § 6: Per-Trigger Verifications (demoted to `example`s)
 -- ============================================================================
 
-example : pluralTemplate.dominance.isDominant = true := rfl
-example : referentialClitic.dominance.isNonDominant = true := rfl
+example : pluralTemplate.dominance.IsDominant := by decide
+example : referentialClitic.dominance.IsNonDominant := by decide
 
 /-- Concrete demonstration: an all-L disyllabic stem is overwritten to
     H on every TBU under the plural template. -/

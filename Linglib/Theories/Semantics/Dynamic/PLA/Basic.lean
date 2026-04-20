@@ -64,9 +64,11 @@ def vars : Term → Finset VarIdx
   | .pron _ => ∅
 
 /-- Is this a pronoun? -/
-def isPron : Term → Bool
-  | .var _ => false
-  | .pron _ => true
+def isPron : Term → Prop
+  | .var _ => False
+  | .pron _ => True
+
+instance : DecidablePred isPron := fun t => by unfold isPron; cases t <;> infer_instance
 
 theorem pronouns_var (i : VarIdx) : (Term.var i).pronouns = ∅ := rfl
 theorem pronouns_pron (i : PronIdx) : (Term.pron i).pronouns = {i} := rfl

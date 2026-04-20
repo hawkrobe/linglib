@@ -35,7 +35,6 @@ Local RSA derives EVEN effects from polarity-sensitive informativity:
 -/
 
 import Mathlib.Data.Set.Basic
-import Linglib.Core.Semantics.Proposition
 import Linglib.Core.Logic.NaturalLogic
 
 namespace Semantics.FocusParticles

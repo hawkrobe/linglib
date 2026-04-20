@@ -87,12 +87,12 @@ asserting `A or B` requires both `¬A∧B` and `A∧¬B` to be open in the prior
 context — is what guarantees `h_open_notA` after the update. -/
 theorem direct_argument_reasonable {W : Type*}
     (s : SelectionFunction W) (C : ContextSet W)
-    (notA B AorB : (W → Bool))
+    (notA B AorB : W → Prop)
     (h_constraint : pragmaticConstraint s C)
-    (h_C_AorB : ∀ w, C w → AorB w = true)
-    (h_AorB_decomp : ∀ w, AorB w = true → notA w = true → B w = true)
-    (h_open_notA : ∃ w' ∈ {w' | notA w' = true}, C w') :
-    ∀ w, C w → moodedConditional .indicative s notA B w = true := by
+    (h_C_AorB : ∀ w, C w → AorB w)
+    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
+    (h_open_notA : ∃ w' ∈ {w' | notA w'}, C w') :
+    ∀ w, C w → moodedConditional .indicative s notA B w := by
   intro w hCw
   apply moodedConditional_indicative_eq_material_within_context s C notA B w hCw
     h_open_notA h_constraint
@@ -111,18 +111,18 @@ disjunction-appropriateness condition guarantees: the pragmatic constraint
 holds, and `¬A` remains open after the update. -/
 theorem direct_argument_reasonableInference {W : Type*}
     (s : SelectionFunction W)
-    (notA B AorB : (W → Bool))
-    (h_AorB_decomp : ∀ w, AorB w = true → notA w = true → B w = true)
+    (notA B AorB : W → Prop)
+    (h_AorB_decomp : ∀ w, AorB w → notA w → B w)
     (𝒜 : Appropriateness W)
     (h_𝒜 : ∀ k, 𝒜 AorB k →
       pragmaticConstraint s (changeFn AorB k) ∧
-      ∃ w' ∈ {w' | notA w' = true}, changeFn AorB k w') :
+      ∃ w' ∈ {w' | notA w'}, changeFn AorB k w') :
     reasonableInference 𝒜 [AorB] (moodedConditional .indicative s notA B) := by
   intro k h_app w hw_post
   -- changeFnSeq [AorB] k = changeFn AorB k.
   -- hw_post : changeFn AorB k w; h_app.1 : 𝒜 AorB k.
   obtain ⟨h_constraint, h_open⟩ := h_𝒜 k h_app.1
-  have h_C_AorB : ∀ w', changeFn AorB k w' → AorB w' = true := by
+  have h_C_AorB : ∀ w', changeFn AorB k w' → AorB w' := by
     intro w' hw'; exact ((changeFn_eq AorB k w').mp hw').2
   exact direct_argument_reasonable s (changeFn AorB k) notA B AorB
     h_constraint h_C_AorB h_AorB_decomp h_open w hw_post
@@ -136,10 +136,15 @@ inductive Suspect where
   deriving DecidableEq, Repr
 
 abbrev W3 := Suspect
-def A3 : (W3 → Bool) := λ s => s == .butler
-def B3 : (W3 → Bool) := λ s => s == .gardener
-def AorB3 : (W3 → Bool) := λ s => A3 s || B3 s
-def notA3 : (W3 → Bool) := λ s => !A3 s
+def A3 : W3 → Prop := λ s => s = .butler
+def B3 : W3 → Prop := λ s => s = .gardener
+def AorB3 : W3 → Prop := λ s => A3 s ∨ B3 s
+def notA3 : W3 → Prop := λ s => ¬ A3 s
+
+instance : DecidablePred A3 := fun s => decEq s .butler
+instance : DecidablePred B3 := fun s => decEq s .gardener
+instance : DecidablePred AorB3 := fun s => instDecidableOr (p := A3 s) (q := B3 s)
+instance : DecidablePred notA3 := fun s => instDecidableNot (p := A3 s)
 
 open Classical in
 /-- A "subjunctive" selection function on `W3` that, for any nonempty
@@ -176,14 +181,14 @@ At `w = butler`, `A∨B = true`, but `s_subj3.sel butler {¬A worlds} =
 someoneElse`, where `B` fails. So `if ¬A, B` is false at `butler` under
 this selection function. -/
 theorem direct_argument_not_entailment :
-    AorB3 .butler = true ∧
-    moodedConditional .indicative s_subj3 notA3 B3 .butler = false := by
+    AorB3 .butler ∧
+    ¬ moodedConditional (W := W3) .indicative s_subj3 notA3 B3 .butler := by
   refine ⟨by decide, ?_⟩
-  show B3 (s_subj3.sel Suspect.butler {w | notA3 w = true}) = false
-  have hw : (Suspect.butler : W3) ∉ ({w | notA3 w = true} : Set W3) :=
-    fun h => absurd (h : notA3 .butler = true) (by decide)
-  have hs : (Suspect.someoneElse : W3) ∈ ({w | notA3 w = true} : Set W3) :=
-    show notA3 .someoneElse = true from by decide
+  show ¬ B3 (s_subj3.sel Suspect.butler {w | notA3 w})
+  have hw : (Suspect.butler : W3) ∉ ({w | notA3 w} : Set W3) :=
+    fun h => absurd (h : notA3 .butler) (by decide)
+  have hs : (Suspect.someoneElse : W3) ∈ ({w | notA3 w} : Set W3) :=
+    show notA3 .someoneElse from by decide
   simp only [s_subj3, if_neg hw, if_pos hs]
   decide
 
@@ -194,15 +199,15 @@ theorem direct_argument_not_entailment :
     @cite{stalnaker-1975} emphasises. -/
 theorem direct_argument_holds_under_indicative_selection :
     ∀ s : SelectionFunction W3,
-      pragmaticConstraint s (λ w => w ≠ .someoneElse ∧ AorB3 w = true) →
-      moodedConditional .indicative s notA3 B3 .butler = true := by
+      pragmaticConstraint s (λ w => w ≠ .someoneElse ∧ AorB3 w) →
+      moodedConditional (W := W3) .indicative s notA3 B3 .butler := by
   intro s h_constraint
-  apply direct_argument_reasonable s (λ w => w ≠ .someoneElse ∧ AorB3 w = true)
+  apply direct_argument_reasonable s (λ w => w ≠ .someoneElse ∧ AorB3 w)
     notA3 B3 AorB3 h_constraint
   · intro w hw; exact hw.2
   · intro w h_AorB h_notA
     -- butler: ¬A is false, contradicts h_notA.
-    -- gardener: B = true. someoneElse: AorB false, contradicts h_AorB.
+    -- gardener: B holds. someoneElse: AorB false, contradicts h_AorB.
     cases w with
     | butler => exact absurd h_notA (by decide)
     | gardener => decide

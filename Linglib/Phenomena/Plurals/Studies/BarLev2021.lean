@@ -4,6 +4,7 @@ import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Phenomena.Plurals.Studies.Magri2014
+import Mathlib.Data.Set.Basic
 
 /-!
 # Bar-Lev (2021): An Implicature Account of Homogeneity and Non-Maximality
@@ -82,14 +83,14 @@ inductive HomWorld where
   deriving DecidableEq, Repr, Inhabited
 
 /-- Kelly laughed (subdomain alternative for D = {Kelly}). -/
-def kellyLaughed : Prop' HomWorld
+def kellyLaughed : Set HomWorld
   | .neither => False
   | .onlyKelly => True
   | .onlyJane => False
   | .both => True
 
 /-- Jane laughed (subdomain alternative for D = {Jane}). -/
-def janeLaughed : Prop' HomWorld
+def janeLaughed : Set HomWorld
   | .neither => False
   | .onlyKelly => False
   | .onlyJane => True
@@ -97,7 +98,7 @@ def janeLaughed : Prop' HomWorld
 
 /-- The prejacent: ∃-PL_{D={Kelly,Jane}} P (the kids) = "some kid laughed."
     This is the basic existential meaning of "the kids laughed." -/
-def someLaughed : Prop' HomWorld
+def someLaughed : Set HomWorld
   | .neither => False
   | .onlyKelly => True
   | .onlyJane => True
@@ -184,11 +185,11 @@ theorem janeLaughed_eq_existPL :
 
     Crucially, the *conjunction* kellyLaughed ∧ janeLaughed is NOT in
     this set — the alternatives are not closed under ∧. -/
-def homAlt : Set (Prop' HomWorld) :=
+def homAlt : Set (Set HomWorld) :=
   {someLaughed, kellyLaughed, janeLaughed}
 
 /-- The prejacent: ∃-PL with full domain. -/
-def homPrejacent : Prop' HomWorld := someLaughed
+def homPrejacent : Set HomWorld := someLaughed
 
 /-- The subdomain alternatives are NOT closed under conjunction.
 
@@ -196,9 +197,9 @@ def homPrejacent : Prop' HomWorld := someLaughed
     to any member of homAlt. This is the structural property that
     enables the Exh^{IE+II} derivation, parallel to free choice. -/
 theorem hom_not_closed :
-    ¬(∀ (X : Set (Prop' HomWorld)), X ⊆ homAlt → (⋀ X) ∈ homAlt) := by
+    ¬(∀ (X : Set (Set HomWorld)), X ⊆ homAlt → (⋀ X) ∈ homAlt) := by
   intro h
-  have hX : ({kellyLaughed, janeLaughed} : Set (Prop' HomWorld)) ⊆ homAlt := by
+  have hX : ({kellyLaughed, janeLaughed} : Set (Set HomWorld)) ⊆ homAlt := by
     intro x hx
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hx
     simp only [homAlt, Set.mem_insert_iff, Set.mem_singleton_iff]
@@ -333,7 +334,7 @@ private theorem someLaughed_not_ie :
 private theorem kellyLaughed_not_ie :
     ¬isInnocentlyExcludable homAlt homPrejacent kellyLaughed := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼kellyLaughed ∉ ({homPrejacent, ∼janeLaughed} : Set (Prop' HomWorld)) := by
+  have hNotIn : ∼kellyLaughed ∉ ({homPrejacent, ∼janeLaughed} : Set (Set HomWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩
@@ -347,7 +348,7 @@ private theorem kellyLaughed_not_ie :
 private theorem janeLaughed_not_ie :
     ¬isInnocentlyExcludable homAlt homPrejacent janeLaughed := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼janeLaughed ∉ ({homPrejacent, ∼kellyLaughed} : Set (Prop' HomWorld)) := by
+  have hNotIn : ∼janeLaughed ∉ ({homPrejacent, ∼kellyLaughed} : Set (Set HomWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mpr (congrFun h .onlyJane) id trivial⟩
@@ -359,7 +360,7 @@ private theorem janeLaughed_not_ie :
     IE-excludable. Here, the alternatives lack a conjunction member
     entirely, so neither individual alternative can be consistently
     excluded from all MC-sets. -/
-theorem nothing_ie (q : Prop' HomWorld)
+theorem nothing_ie (q : Set HomWorld)
     (hqIE : isInnocentlyExcludable homAlt homPrejacent q) : False := by
   have hq_in := hqIE.1
   simp only [homAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at hq_in
@@ -398,9 +399,9 @@ private theorem all_hold_at_both :
     Since nothing is IE-excludable (`nothing_ie`), the IE negation set is empty,
     and the witness .both satisfies everything in homAlt. -/
 private theorem extend_hom_II
-    (target : Prop' HomWorld)
+    (target : Set HomWorld)
     (htarget_alt : target ∈ homAlt)
-    (R : Set (Prop' HomWorld))
+    (R : Set (Set HomWorld))
     (hRcompat : isIICompatible homAlt homPrejacent R) (_hNotIn : target ∉ R) :
     isIICompatible homAlt homPrejacent (R ∪ {target}) := by
   constructor
@@ -422,7 +423,7 @@ private theorem extend_hom_II
 
 /-- A target ∈ homAlt is innocently includable. -/
 private theorem target_in_hom_II
-    (target : Prop' HomWorld)
+    (target : Set HomWorld)
     (htarget_alt : target ∈ homAlt) :
     isInnocentlyIncludable homAlt homPrejacent target := by
   constructor
@@ -538,7 +539,7 @@ the existential basic meaning surfaces directly.
 -/
 
 /-- Fully pruned alternative set: only the prejacent remains. -/
-def prunedAlt : Set (Prop' HomWorld) := {someLaughed}
+def prunedAlt : Set (Set HomWorld) := {someLaughed}
 
 /-- With a fully pruned alternative set, Exh^{IE+II} reduces to the
     basic existential meaning (no strengthening occurs). -/
@@ -581,7 +582,7 @@ theorem pruning_weakens :
     Exh^{IE}(φ) = someLaughed ∧ ¬janeLaughed. The 2-atom case yields
     *exclusive* readings under partial pruning, not weakened universals.
     True non-maximal readings require ≥3 atoms. -/
-def partialPrunedAlt : Set (Prop' HomWorld) := {someLaughed, janeLaughed}
+def partialPrunedAlt : Set (Set HomWorld) := {someLaughed, janeLaughed}
 
 /-- MC-set for partialPrunedAlt: {homPrejacent, ∼janeLaughed}.
     With ALT = {someLaughed, janeLaughed}, the only compatible negation
@@ -613,7 +614,7 @@ private theorem mc_partial :
 private theorem someLaughed_not_ie_partial :
     ¬isInnocentlyExcludable partialPrunedAlt homPrejacent someLaughed := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼someLaughed ∉ ({homPrejacent, ∼janeLaughed} : Set (Prop' HomWorld)) := by
+  have hNotIn : ∼someLaughed ∉ ({homPrejacent, ∼janeLaughed} : Set (Set HomWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩

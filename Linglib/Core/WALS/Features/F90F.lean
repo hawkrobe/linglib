@@ -14,31 +14,25 @@ namespace Core.WALS.F90F
 
 /-- WALS 90F values. -/
 inductive AdjoinedRelativeClauses where
-  | adjoinedRelativeClauseDominant  -- Adjoined relative clause dominant (8 languages)
-  | adjoinedOrCorrelative  -- Adjoined or correlative (2 languages)
-  deriving DecidableEq, Repr
+  /-- Adjoined relative clause dominant (8 languages). -/
+  | relativeClauseDominant
+  /-- Adjoined or correlative (2 languages). -/
+  | orCorrelative
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 90F dataset (10 languages). -/
 def allData : List (Datapoint AdjoinedRelativeClauses) :=
-  [ { walsCode := "diy", language := "Diyari", iso := "dif", value := .adjoinedRelativeClauseDominant }
-  , { walsCode := "kkq", language := "Kuikúro", iso := "kui", value := .adjoinedRelativeClauseDominant }
-  , { walsCode := "kya", language := "Kuku-Yalanji", iso := "gvn", value := .adjoinedRelativeClauseDominant }
-  , { walsCode := "mrt", language := "Martuthunira", iso := "vma", value := .adjoinedRelativeClauseDominant }
-  , { walsCode := "mek", language := "Mekens", iso := "skf", value := .adjoinedRelativeClauseDominant }
-  , { walsCode := "ngk", language := "Ngankikurungkurr", iso := "nam", value := .adjoinedRelativeClauseDominant }
-  , { walsCode := "ngi", language := "Ngiyambaa", iso := "wyb", value := .adjoinedOrCorrelative }
-  , { walsCode := "wrl", language := "Warlpiri", iso := "wbp", value := .adjoinedRelativeClauseDominant }
-  , { walsCode := "xas", language := "Xasonga", iso := "kao", value := .adjoinedOrCorrelative }
-  , { walsCode := "yid", language := "Yidiny", iso := "yii", value := .adjoinedRelativeClauseDominant }
+  [ { walsCode := "diy", iso := "dif", value := .relativeClauseDominant }
+  , { walsCode := "kkq", iso := "kui", value := .relativeClauseDominant }
+  , { walsCode := "kya", iso := "gvn", value := .relativeClauseDominant }
+  , { walsCode := "mrt", iso := "vma", value := .relativeClauseDominant }
+  , { walsCode := "mek", iso := "skf", value := .relativeClauseDominant }
+  , { walsCode := "ngk", iso := "nam", value := .relativeClauseDominant }
+  , { walsCode := "ngi", iso := "wyb", value := .orCorrelative }
+  , { walsCode := "wrl", iso := "wbp", value := .relativeClauseDominant }
+  , { walsCode := "xas", iso := "kao", value := .orCorrelative }
+  , { walsCode := "yid", iso := "yii", value := .relativeClauseDominant }
   ]
-
--- Count verification
-theorem total_count : allData.length = 10 := by native_decide
-
-theorem count_adjoinedRelativeClauseDominant :
-    (allData.filter (·.value == .adjoinedRelativeClauseDominant)).length = 8 := by native_decide
-theorem count_adjoinedOrCorrelative :
-    (allData.filter (·.value == .adjoinedOrCorrelative)).length = 2 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

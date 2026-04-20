@@ -1,4 +1,5 @@
 import Linglib.Core.Discourse.Roles
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Illocutionary Mood — the Speech-Act Force Category
@@ -38,7 +39,7 @@ inductive IllocutionaryMood where
   | imperative
   | promissive
   | exclamative
-  deriving DecidableEq, Repr, Inhabited
+  deriving DecidableEq, Repr, Inhabited, Fintype
 
 /-- Which participant holds epistemic authority for a given illocutionary mood.
 

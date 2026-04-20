@@ -122,7 +122,7 @@ epistemic and random choice flavors. This is the core empirical
 contribution of @cite{alonso-ovalle-royer-2024}. -/
 theorem yalnhej_unique_profile :
     (allEntries.filter (λ e =>
-      e.status == .atIssue && e.hasEpistemic && e.hasCircumstantial)).length = 1 := rfl
+      e.status == .atIssue && decide e.hasEpistemic && decide e.hasCircumstantial)).length = 1 := rfl
 
 
 -- ════════════════════════════════════════════════════
@@ -168,7 +168,7 @@ theorem at_issue_iff_anchored :
 event anchoring (speech acts lack normative content). -/
 theorem volitional_blocks_epistemic :
     unoCualquieraEntry.anchorConstraint = some .volitionalOnly ∧
-    unoCualquieraEntry.hasEpistemic = false := ⟨rfl, rfl⟩
+    ¬ unoCualquieraEntry.hasEpistemic := ⟨rfl, by decide⟩
 
 /-- Unrestricted anchor constraint is necessary but not sufficient for
 epistemic: *yalnhej* gets epistemic because f is defined for the
@@ -177,11 +177,11 @@ yet only have circumstantial (their lexical semantics restricts to
 indiscriminacy/FC readings). -/
 theorem unrestricted_with_epistemic :
     yalnhejEntry.anchorConstraint = some .unrestricted ∧
-    yalnhejEntry.hasEpistemic = true := ⟨rfl, rfl⟩
+    yalnhejEntry.hasEpistemic := ⟨rfl, by decide⟩
 
 theorem unrestricted_without_epistemic :
     nimporteQuelEntry.anchorConstraint = some .unrestricted ∧
-    nimporteQuelEntry.hasEpistemic = false := ⟨rfl, rfl⟩
+    ¬ nimporteQuelEntry.hasEpistemic := ⟨rfl, by decide⟩
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -406,20 +406,20 @@ theorem yalnhej_nonmaximal :
 tolerate more than one modal flavour. -/
 theorem multi_flavor_items :
     (allEntries.filter (λ e =>
-      e.hasEpistemic && e.hasCircumstantial)).length = 2 := rfl
+      decide e.hasEpistemic && decide e.hasCircumstantial)).length = 2 := rfl
 
 /-- Epistemic-only items: *algún* conveys only speaker ignorance
 (§6.2, example 118). -/
 theorem epistemic_only_items :
     (allEntries.filter (λ e =>
-      e.hasEpistemic && !e.hasCircumstantial)).length = 1 := rfl
+      decide e.hasEpistemic && !decide e.hasCircumstantial)).length = 1 := rfl
 
 /-- RC-only items: *uno cualquiera*, *n'importe quel*, *un qualsiasi*,
 *komon* convey only random choice / indiscriminacy
 (§6.2, examples 119–121). -/
 theorem rc_only_items :
     (allEntries.filter (λ e =>
-      !e.hasEpistemic && e.hasCircumstantial)).length = 4 := rfl
+      !decide e.hasEpistemic && decide e.hasCircumstantial)).length = 4 := rfl
 
 
 -- ════════════════════════════════════════════════════

@@ -102,9 +102,12 @@ inductive Typology where
 
 /-- Whether a typological cell is attested under the universal. The
     only forbidden cell is `overtPROProDrop`. -/
-def Typology.isAttested : Typology → Bool
-  | .overtPROProDrop => false
-  | _                => true
+def Typology.isAttested : Typology → Prop
+  | .overtPROProDrop => False
+  | _                => True
+
+instance (t : Typology) : Decidable t.isAttested := by
+  cases t <;> unfold Typology.isAttested <;> infer_instance
 
 namespace ProDropProfile
 
@@ -120,7 +123,7 @@ def classify (p : ProDropProfile) : Typology :=
     attested. This is the typology-as-finite-enumeration restatement
     of `Satisfies`. -/
 theorem satisfies_iff_attested (p : ProDropProfile) :
-    p.Satisfies ↔ p.classify.isAttested = true := by
+    p.Satisfies ↔ p.classify.isAttested := by
   cases hO : p.hasOvertPRO <;> cases hD : p.allowsProDrop <;>
     simp [Satisfies, classify, Typology.isAttested, hO, hD]
 

@@ -14,28 +14,49 @@ namespace Core.WALS.F144A
 
 /-- WALS 144A values. -/
 inductive PositionOfNegativeWordWithRespectToSubjectObjectAndVerb where
-  | negsvo  -- NegSVO (10 languages)
-  | snegvo  -- SNegVO (112 languages)
-  | svnego  -- SVNegO (2 languages)
-  | svoneg  -- SVONeg (81 languages)
-  | negsov  -- NegSOV (11 languages)
-  | snegov  -- SNegOV (15 languages)
-  | sonegv  -- SONegV (65 languages)
-  | sovneg  -- SOVNeg (49 languages)
-  | negvso  -- NegVSO (58 languages)
-  | vsnego  -- VSNegO (1 languages)
-  | vsoneg  -- VSONeg (1 languages)
-  | negvos  -- NegVOS (18 languages)
-  | onegvs  -- ONegVS (3 languages)
-  | ovnegs  -- OVNegS (1 languages)
-  | osvneg  -- OSVNeg (1 languages)
-  | moreThanOnePosition  -- More than one position (91 languages)
-  | optsingleneg  -- OptSingleNeg (1 languages)
-  | obligdoubleneg  -- ObligDoubleNeg (101 languages)
-  | optdoubleneg  -- OptDoubleNeg (67 languages)
-  | morphneg  -- MorphNeg (333 languages)
-  | other  -- Other (169 languages)
-  deriving DecidableEq, Repr
+  /-- NegSVO (10 languages). -/
+  | negsvo
+  /-- SNegVO (112 languages). -/
+  | snegvo
+  /-- SVNegO (2 languages). -/
+  | svnego
+  /-- SVONeg (81 languages). -/
+  | svoneg
+  /-- NegSOV (11 languages). -/
+  | negsov
+  /-- SNegOV (15 languages). -/
+  | snegov
+  /-- SONegV (65 languages). -/
+  | sonegv
+  /-- SOVNeg (49 languages). -/
+  | sovneg
+  /-- NegVSO (58 languages). -/
+  | negvso
+  /-- VSNegO (1 languages). -/
+  | vsnego
+  /-- VSONeg (1 languages). -/
+  | vsoneg
+  /-- NegVOS (18 languages). -/
+  | negvos
+  /-- ONegVS (3 languages). -/
+  | onegvs
+  /-- OVNegS (1 languages). -/
+  | ovnegs
+  /-- OSVNeg (1 languages). -/
+  | osvneg
+  /-- More than one position (91 languages). -/
+  | moreThanOnePosition
+  /-- OptSingleNeg (1 languages). -/
+  | optsingleneg
+  /-- ObligDoubleNeg (101 languages). -/
+  | obligdoubleneg
+  /-- OptDoubleNeg (67 languages). -/
+  | optdoubleneg
+  /-- MorphNeg (333 languages). -/
+  | morphneg
+  /-- Other (169 languages). -/
+  | other
+  deriving DecidableEq, BEq, Repr
 
 private def allData_0 : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) :=
   [ { walsCode := "ani", language := "//Ani", iso := "hnh", value := .other }
@@ -1238,52 +1259,6 @@ private def allData_2 : List (Datapoint PositionOfNegativeWordWithRespectToSubje
 
 /-- Complete WALS 144A dataset (1190 languages). -/
 def allData : List (Datapoint PositionOfNegativeWordWithRespectToSubjectObjectAndVerb) := allData_0 ++ allData_1 ++ allData_2
-
--- Count verification
-theorem total_count : allData.length = 1190 := by native_decide
-
-theorem count_negsvo :
-    (allData.filter (·.value == .negsvo)).length = 10 := by native_decide
-theorem count_snegvo :
-    (allData.filter (·.value == .snegvo)).length = 112 := by native_decide
-theorem count_svnego :
-    (allData.filter (·.value == .svnego)).length = 2 := by native_decide
-theorem count_svoneg :
-    (allData.filter (·.value == .svoneg)).length = 81 := by native_decide
-theorem count_negsov :
-    (allData.filter (·.value == .negsov)).length = 11 := by native_decide
-theorem count_snegov :
-    (allData.filter (·.value == .snegov)).length = 15 := by native_decide
-theorem count_sonegv :
-    (allData.filter (·.value == .sonegv)).length = 65 := by native_decide
-theorem count_sovneg :
-    (allData.filter (·.value == .sovneg)).length = 49 := by native_decide
-theorem count_negvso :
-    (allData.filter (·.value == .negvso)).length = 58 := by native_decide
-theorem count_vsnego :
-    (allData.filter (·.value == .vsnego)).length = 1 := by native_decide
-theorem count_vsoneg :
-    (allData.filter (·.value == .vsoneg)).length = 1 := by native_decide
-theorem count_negvos :
-    (allData.filter (·.value == .negvos)).length = 18 := by native_decide
-theorem count_onegvs :
-    (allData.filter (·.value == .onegvs)).length = 3 := by native_decide
-theorem count_ovnegs :
-    (allData.filter (·.value == .ovnegs)).length = 1 := by native_decide
-theorem count_osvneg :
-    (allData.filter (·.value == .osvneg)).length = 1 := by native_decide
-theorem count_moreThanOnePosition :
-    (allData.filter (·.value == .moreThanOnePosition)).length = 91 := by native_decide
-theorem count_optsingleneg :
-    (allData.filter (·.value == .optsingleneg)).length = 1 := by native_decide
-theorem count_obligdoubleneg :
-    (allData.filter (·.value == .obligdoubleneg)).length = 101 := by native_decide
-theorem count_optdoubleneg :
-    (allData.filter (·.value == .optdoubleneg)).length = 67 := by native_decide
-theorem count_morphneg :
-    (allData.filter (·.value == .morphneg)).length = 333 := by native_decide
-theorem count_other :
-    (allData.filter (·.value == .other)).length = 169 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

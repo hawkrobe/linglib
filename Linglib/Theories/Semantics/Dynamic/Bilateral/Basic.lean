@@ -351,53 +351,61 @@ theorem egli (x : Nat) (domain : Set E) (φ ψ : BilateralDen W E) (s : InfoStat
   exact hp
 
 
-/-- Create bilateral from predicate over entities -/
-def pred1 (p : E → W → Bool) (t : Nat) : BilateralDen W E :=
-  { positive := λ s => { poss ∈ s | p (poss.assignment t) poss.world }
-  , negative := λ s => { poss ∈ s | !p (poss.assignment t) poss.world } }
+/-- Create bilateral from predicate over entities.
 
-/-- Create bilateral from binary predicate -/
-def pred2 (p : E → E → W → Bool) (t₁ t₂ : Nat) : BilateralDen W E :=
+The predicate is `Prop`-valued (with per-point `Decidable`), following the
+project-wide migration of propositional positions from `Bool` to `Prop`. -/
+def pred1 (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) : BilateralDen W E :=
+  { positive := λ s => { poss ∈ s | p (poss.assignment t) poss.world }
+  , negative := λ s => { poss ∈ s | ¬ p (poss.assignment t) poss.world } }
+
+/-- Create bilateral from binary predicate. -/
+def pred2 (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)] (t₁ t₂ : Nat) :
+    BilateralDen W E :=
   { positive := λ s => { poss ∈ s | p (poss.assignment t₁) (poss.assignment t₂) poss.world }
-  , negative := λ s => { poss ∈ s | !p (poss.assignment t₁) (poss.assignment t₂) poss.world } }
+  , negative := λ s => { poss ∈ s | ¬ p (poss.assignment t₁) (poss.assignment t₂) poss.world } }
 
 /-- pred1 positive update is monotone. -/
-theorem pred1_positive_monotone (p : E → W → Bool) (t : Nat) :
+theorem pred1_positive_monotone (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
     Monotone (pred1 p t).positive (α := InfoState W E) :=
   sep_monotone _
 
 /-- pred1 negative update is monotone. -/
-theorem pred1_negative_monotone (p : E → W → Bool) (t : Nat) :
+theorem pred1_negative_monotone (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
     Monotone (pred1 p t).negative (α := InfoState W E) :=
   sep_monotone _
 
 /-- pred1 positive update is eliminative. -/
-theorem pred1_positive_eliminative (p : E → W → Bool) (t : Nat) :
+theorem pred1_positive_eliminative (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
     IsEliminative (pred1 p t).positive (P := Possibility W E) :=
   sep_eliminative _
 
 /-- pred1 negative update is eliminative. -/
-theorem pred1_negative_eliminative (p : E → W → Bool) (t : Nat) :
+theorem pred1_negative_eliminative (p : E → W → Prop) [∀ e w, Decidable (p e w)] (t : Nat) :
     IsEliminative (pred1 p t).negative (P := Possibility W E) :=
   sep_eliminative _
 
 /-- pred2 positive update is monotone. -/
-theorem pred2_positive_monotone (p : E → E → W → Bool) (t₁ t₂ : Nat) :
+theorem pred2_positive_monotone (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
+    (t₁ t₂ : Nat) :
     Monotone (pred2 p t₁ t₂).positive (α := InfoState W E) :=
   sep_monotone _
 
 /-- pred2 negative update is monotone. -/
-theorem pred2_negative_monotone (p : E → E → W → Bool) (t₁ t₂ : Nat) :
+theorem pred2_negative_monotone (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
+    (t₁ t₂ : Nat) :
     Monotone (pred2 p t₁ t₂).negative (α := InfoState W E) :=
   sep_monotone _
 
 /-- pred2 positive update is eliminative. -/
-theorem pred2_positive_eliminative (p : E → E → W → Bool) (t₁ t₂ : Nat) :
+theorem pred2_positive_eliminative (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
+    (t₁ t₂ : Nat) :
     IsEliminative (pred2 p t₁ t₂).positive (P := Possibility W E) :=
   sep_eliminative _
 
 /-- pred2 negative update is eliminative. -/
-theorem pred2_negative_eliminative (p : E → E → W → Bool) (t₁ t₂ : Nat) :
+theorem pred2_negative_eliminative (p : E → E → W → Prop) [∀ e₁ e₂ w, Decidable (p e₁ e₂ w)]
+    (t₁ t₂ : Nat) :
     IsEliminative (pred2 p t₁ t₂).negative (P := Possibility W E) :=
   sep_eliminative _
 

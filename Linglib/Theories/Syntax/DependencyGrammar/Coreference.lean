@@ -5,7 +5,7 @@ Reflexives require short dependency paths; locality = same subgraph rooted at ve
 References: @cite{hudson-1990}, @cite{gibson-2025}
 -/
 
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Core.Dependency.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
 import Linglib.Core.CoreferenceStatus
 

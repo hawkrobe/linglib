@@ -41,7 +41,7 @@ import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Partition
 import Linglib.Theories.Semantics.Questions.Denotation.Partition
 import Linglib.Theories.Semantics.Questions.Utility.GSVanRooyBridge
-import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
+import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility
 import Mathlib.Tactic.Ring
 
 namespace Semantics.Questions.RelevanceComparisons

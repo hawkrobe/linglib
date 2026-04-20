@@ -144,22 +144,22 @@ def a_vowel : Segment := Segment.ofSpecs
 /-- A vowel is neutral iff it is front and unrounded: /i, í, e, é/.
     @cite{siptar-torkenczy-2000} §3.2, (27). -/
 def isNeutral (s : Segment) : Bool :=
-  s.hasValue .syllabic true &&
-  s.hasValue .back false &&
-  s.hasValue .round false
+  s.HasValue .syllabic true &&
+  s.HasValue .back false &&
+  s.HasValue .round false
 
 /-- A vowel is front-harmonic iff it is front and rounded: /ö, ő, ü, ű/.
     These always trigger and undergo palatal harmony. -/
 def isFrontHarmonic (s : Segment) : Bool :=
-  s.hasValue .syllabic true &&
-  s.hasValue .back false &&
-  s.hasValue .round true
+  s.HasValue .syllabic true &&
+  s.HasValue .back false &&
+  s.HasValue .round true
 
 /-- A vowel is back-harmonic iff it is [+back]: /a, á, o, ó, u, ú/.
     All back vowels are harmonic in Hungarian. -/
 def isBackHarmonic (s : Segment) : Bool :=
-  s.hasValue .syllabic true &&
-  s.hasValue .back true
+  s.HasValue .syllabic true &&
+  s.HasValue .back true
 
 /-- Harmony role classification. -/
 inductive HarmonyRole where
@@ -187,8 +187,8 @@ def classifyVowel (s : Segment) : HarmonyRole :=
     @cite{rose-walker-2011}. -/
 def hungarianPalatalHarmony : HarmonySystem :=
   HarmonySystem.mk' (feature := .back)
-    (isTrigger     := (λ s => s.hasValue .syllabic true && !isNeutral s))
-    (isTarget      := (λ s => s.hasValue .syllabic true && !isNeutral s))
+    (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
+    (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
     (isTransparent := isNeutral)
     (direction     := .rightward)
 
@@ -203,8 +203,8 @@ def hungarianPalatalHarmony : HarmonySystem :=
     get the back suffix variant regardless of rounding). -/
 def hungarianLabialHarmony : HarmonySystem :=
   HarmonySystem.mk' (feature := .round)
-    (isTrigger     := (·.hasValue .syllabic true))
-    (isTarget      := (·.hasValue .syllabic true))
+    (isTrigger     := (·.HasValue .syllabic true))
+    (isTarget      := (·.HasValue .syllabic true))
     (isTransparent := (λ _ => false))
     (direction     := .rightward)
 
@@ -273,20 +273,20 @@ def resolveThreeWay (back : Bool) (round : Bool) : Segment :=
 -- ============================================================================
 
 -- Backness
-theorem a_is_back : a_vowel.hasValue .back true = true := by native_decide
-theorem o_is_back : o_vowel.hasValue .back true = true := by native_decide
-theorem u_is_back : u_vowel.hasValue .back true = true := by native_decide
-theorem i_is_front : i_vowel.hasValue .back false = true := by native_decide
-theorem e_is_front : e_vowel.hasValue .back false = true := by native_decide
-theorem ö_is_front : ö_vowel.hasValue .back false = true := by native_decide
-theorem ü_is_front : ü_vowel.hasValue .back false = true := by native_decide
+theorem a_is_back : a_vowel.HasValue .back true = true := by native_decide
+theorem o_is_back : o_vowel.HasValue .back true = true := by native_decide
+theorem u_is_back : u_vowel.HasValue .back true = true := by native_decide
+theorem i_is_front : i_vowel.HasValue .back false = true := by native_decide
+theorem e_is_front : e_vowel.HasValue .back false = true := by native_decide
+theorem ö_is_front : ö_vowel.HasValue .back false = true := by native_decide
+theorem ü_is_front : ü_vowel.HasValue .back false = true := by native_decide
 
 -- Rounding
-theorem ö_is_round : ö_vowel.hasValue .round true = true := by native_decide
-theorem ü_is_round : ü_vowel.hasValue .round true = true := by native_decide
-theorem i_is_unround : i_vowel.hasValue .round false = true := by native_decide
-theorem e_is_unround : e_vowel.hasValue .round false = true := by native_decide
-theorem a_is_unround : a_vowel.hasValue .round false = true := by native_decide
+theorem ö_is_round : ö_vowel.HasValue .round true = true := by native_decide
+theorem ü_is_round : ü_vowel.HasValue .round true = true := by native_decide
+theorem i_is_unround : i_vowel.HasValue .round false = true := by native_decide
+theorem e_is_unround : e_vowel.HasValue .round false = true := by native_decide
+theorem a_is_unround : a_vowel.HasValue .round false = true := by native_decide
 
 -- Harmony classification
 theorem i_is_neutral : isNeutral i_vowel = true := by native_decide
@@ -487,13 +487,13 @@ def archiphoneU : Segment := Segment.ofSpecs
 
 /-- *ház*: harmonize an underspecified suffix vowel to [+back]. -/
 theorem ház_suffix_becomes_back :
-    (harmonizeOne hungarianPalatalHarmony true archiphoneU).hasValue
+    (harmonizeOne hungarianPalatalHarmony true archiphoneU).HasValue
       .back true = true := by
   native_decide
 
 /-- *tűz* → suffix vowel becomes [−back]. -/
 theorem tűz_suffix_becomes_front :
-    (harmonizeOne hungarianPalatalHarmony false archiphoneU).hasValue
+    (harmonizeOne hungarianPalatalHarmony false archiphoneU).HasValue
       .back false = true := by
   native_decide
 
@@ -645,12 +645,12 @@ theorem hungarian_turkish_both_twoDim :
     neutral vowel (most likely to block). -/
 def palatalHarmony_eBlocks : HarmonySystem :=
   HarmonySystem.mk' (feature := .back)
-    (isTrigger     := (λ s => s.hasValue .syllabic true && !isNeutral s))
-    (isTarget      := (λ s => s.hasValue .syllabic true && !isNeutral s))
-    (isTransparent := (λ s => s.hasValue .syllabic true &&
-      s.hasValue .back false && s.hasValue .round false && s.hasValue .high true))
-    (isBlocker     := (λ s => s.hasValue .syllabic true &&
-      s.hasValue .back false && s.hasValue .round false && s.hasValue .high false))
+    (isTrigger     := (λ s => s.HasValue .syllabic true && !isNeutral s))
+    (isTarget      := (λ s => s.HasValue .syllabic true && !isNeutral s))
+    (isTransparent := (λ s => s.HasValue .syllabic true &&
+      s.HasValue .back false && s.HasValue .round false && s.HasValue .high true))
+    (isBlocker     := (λ s => s.HasValue .syllabic true &&
+      s.HasValue .back false && s.HasValue .round false && s.HasValue .high false))
     (direction     := .rightward)
 
 /-- With /e/ as blocker: *hotel* /o, e/ → /e/ blocks, domain = [], no trigger.

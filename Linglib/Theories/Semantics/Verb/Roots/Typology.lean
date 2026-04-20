@@ -62,13 +62,20 @@ end Root
     entailment (state or manner) and an eventive one (result or cause).
     The Bifurcation Thesis (@cite{beavers-koontz-garboden-2020}) is the
     universal claim that no root violates this. -/
-def Root.violatesBifurcation (r : Root) : Bool :=
-  (r.hasState || r.hasManner) && (r.hasResult || r.hasCause)
+def Root.ViolatesBifurcation (r : Root) : Prop :=
+  (r.hasState = true ∨ r.hasManner = true) ∧
+  (r.hasResult = true ∨ r.hasCause = true)
 
-/-- Dual of `violatesBifurcation`. A root respects the thesis iff it
+instance (r : Root) : Decidable r.ViolatesBifurcation := by
+  unfold Root.ViolatesBifurcation; infer_instance
+
+/-- Dual of `ViolatesBifurcation`. A root respects the thesis iff it
     has only ontological *or* only eventive entailments. -/
-def Root.respectsBifurcation (r : Root) : Bool :=
-  !r.violatesBifurcation
+def Root.RespectsBifurcation (r : Root) : Prop :=
+  ¬ r.ViolatesBifurcation
+
+instance (r : Root) : Decidable r.RespectsBifurcation := by
+  unfold Root.RespectsBifurcation; infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § 3. Manner/Result Complementarity
@@ -77,11 +84,17 @@ def Root.respectsBifurcation (r : Root) : Bool :=
 /-- A root has both manner and result entailments — the Manner/Result
     Complementarity thesis (@cite{rappaport-hovav-levin-2010}) is the
     universal claim that no root does. -/
-def Root.hasMannerAndResult (r : Root) : Bool :=
-  r.hasManner && r.hasResult
+def Root.HasMannerAndResult (r : Root) : Prop :=
+  r.hasManner = true ∧ r.hasResult = true
 
-/-- Dual of `hasMannerAndResult`. -/
-def Root.respectsMannerResultComplementarity (r : Root) : Bool :=
-  !r.hasMannerAndResult
+instance (r : Root) : Decidable r.HasMannerAndResult := by
+  unfold Root.HasMannerAndResult; infer_instance
+
+/-- Dual of `HasMannerAndResult`. -/
+def Root.RespectsMannerResultComplementarity (r : Root) : Prop :=
+  ¬ r.HasMannerAndResult
+
+instance (r : Root) : Decidable r.RespectsMannerResultComplementarity := by
+  unfold Root.RespectsMannerResultComplementarity; infer_instance
 
 end Semantics.Verb.Roots

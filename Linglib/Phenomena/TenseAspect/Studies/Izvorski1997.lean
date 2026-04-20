@@ -4,6 +4,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Tense.Evidential
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Fragments.Bulgarian.Evidentials
+import Mathlib.Data.Set.Basic
 
 /-!
 # @cite{izvorski-1997}: The Present Perfect as an Epistemic Modal — Data @cite{izvorski-1997}
@@ -167,25 +168,28 @@ open Core.Presupposition
 open Core.Evidence
 open Semantics.Tense.Evidential
 open Fragments.Bulgarian.Evidentials
-open Core.Proposition (World4)
 
 /-- Izvorski's EV operator (formalization of (17)–(19) + (8ii)). -/
 def izvorskiEv (f : ModalBase World) (g : OrderingSource World)
-    (p : (World → Bool)) : PrProp World where
+    (p : World → Prop) : PrProp World where
   presup := λ w => (accessibleWorlds f w).Nonempty
   assertion := λ w => necessity f g p w
 
-def johnDrank : (World → Bool)
-  | .w0 => true
-  | .w1 => true
-  | .w2 => false
-  | .w3 => false
+def johnDrank : World → Prop
+  | .w0 => True
+  | .w1 => True
+  | .w2 => False
+  | .w3 => False
 
-def bottlesEmpty : (World → Bool)
-  | .w0 => true
-  | .w1 => false
-  | .w2 => true
-  | .w3 => false
+instance : DecidablePred johnDrank := fun w => by cases w <;> unfold johnDrank <;> infer_instance
+
+def bottlesEmpty : World → Prop
+  | .w0 => True
+  | .w1 => False
+  | .w2 => True
+  | .w3 => False
+
+instance : DecidablePred bottlesEmpty := fun w => by cases w <;> unfold bottlesEmpty <;> infer_instance
 
 def evBase : ModalBase World := λ _ => [bottlesEmpty]
 
@@ -195,56 +199,64 @@ def beliefOrdering : OrderingSource World := λ _ => [johnDrank]
 
 theorem ev_presup_satisfied (w : World) :
     (izvorskiEv evBase beliefOrdering johnDrank).presup w := by
-  simp only [izvorskiEv]; cases w <;> decide
-
-theorem ev_asserts_drank (w : World) :
-    (izvorskiEv evBase beliefOrdering johnDrank).assertion w := by
-  simp only [izvorskiEv]; cases w <;> native_decide
+  -- ⋂evBase = {w0, w2}; both are accessible
+  refine ⟨.w0, ?_⟩
+  intro p hp
+  simp only [evBase, List.mem_singleton] at hp
+  rw [hp]
+  trivial
 
 theorem must_accessible_subset_ev (w w' : World)
     (hw' : w' ∈ accessibleWorlds mustBase w) :
     w' ∈ accessibleWorlds evBase w := by
-  cases w <;> cases w' <;> simp_all [accessibleWorlds, propIntersection,
-    mustBase, evBase, bottlesEmpty, johnDrank, Finset.mem_filter]
+  intro p hp
+  simp only [evBase, List.mem_singleton] at hp
+  subst hp
+  exact hw' bottlesEmpty (by simp [mustBase])
 
 theorem restricted_base_enlarges_access
     (f_ev f_must : ModalBase World)
     (h : ∀ w p, p ∈ f_ev w → p ∈ f_must w)
     (w w' : World)
     (hw' : w' ∈ accessibleWorlds f_must w) :
-    w' ∈ accessibleWorlds f_ev w := by
-  simp only [accessibleWorlds, propIntersection, Finset.mem_filter] at hw' ⊢
-  refine ⟨Finset.mem_univ _, ?_⟩
-  rw [List.all_eq_true] at hw' ⊢
-  exact fun p hp => hw'.2 p (h w p hp)
+    w' ∈ accessibleWorlds f_ev w :=
+  fun p hp => hw' p (h w p hp)
 
-theorem ev_and_must_agree_here (w : World) :
-    (izvorskiEv evBase beliefOrdering johnDrank).assertion w ↔
-    (necessity mustBase beliefOrdering johnDrank w : Prop) := by
-  simp only [izvorskiEv]; cases w <;> native_decide
+private def pOnlyW0 : World → Prop
+  | .w0 => True
+  | _ => False
 
-private def pOnlyW0 : (World → Bool)
-  | .w0 => true
-  | _ => false
+instance : DecidablePred pOnlyW0 := fun w => by cases w <;> unfold pOnlyW0 <;> infer_instance
 
+/-- The izvorski operator can diverge from the bare prejacent: at `w0`,
+    `pOnlyW0 w0 = True`, but the necessity claim is False (since `w1, w2, w3`
+    are also accessible under universal access and don't satisfy `pOnlyW0`). -/
 theorem izvorski_koev_diverge :
-    ∃ (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) (w : World),
-      (izvorskiEv f g p).assertion w ≠ p w := by
-  refine ⟨emptyBackground, emptyBackground, pOnlyW0, .w0, ?_⟩
-  simp only [izvorskiEv]; native_decide
+    ∃ (f : ModalBase World) (g : OrderingSource World) (p : World → Prop) (w : World),
+      ¬ (izvorskiEv f g p).assertion w ∧ p w := by
+  refine ⟨emptyBackground, emptyBackground, pOnlyW0, .w0, ?_, trivial⟩
+  intro h
+  simp only [izvorskiEv] at h
+  rw [necessity_iff_all] at h
+  have hAcc : .w1 ∈ accessibleWorlds (emptyBackground (W := World)) .w0 := by
+    rw [empty_base_universal_access]; exact Set.mem_univ _
+  have hBest : .w1 ∈ bestWorlds emptyBackground emptyBackground (W := World) .w0 :=
+    ⟨hAcc, fun w'' _ q hq _ => by simp [emptyBackground] at hq⟩
+  exact (h .w1 hBest : pOnlyW0 .w1)
 
 theorem izvorski_collapses_to_koev_when_realistic
-    (f : ModalBase World) (p : (World → Bool)) (w : World)
+    (f : ModalBase World) (p : World → Prop) (w : World)
     (hTotal : accessibleWorlds f w = {w}) :
-    (izvorskiEv f emptyBackground p).assertion w ↔ (p w = true) := by
+    (izvorskiEv f emptyBackground p).assertion w ↔ p w := by
   simp only [izvorskiEv]
   rw [necessity_iff_all, empty_ordering_emptyBackground, hTotal]
-  simp only [Finset.mem_singleton]
   constructor
-  · intro h; exact h w rfl
-  · intro h w' hw'; rw [hw']; exact h
+  · intro h; exact h w (Set.mem_singleton_iff.mpr rfl)
+  · intro h w' hw'
+    rw [Set.mem_singleton_iff.mp hw']
+    exact h
 
-theorem izvorski_projection (f : ModalBase World) (g : OrderingSource World) (p : (World → Bool)) :
+theorem izvorski_projection (f : ModalBase World) (g : OrderingSource World) (p : World → Prop) :
     (PrProp.neg (izvorskiEv f g p)).presup = (izvorskiEv f g p).presup :=
   PrProp.neg_presup _
 

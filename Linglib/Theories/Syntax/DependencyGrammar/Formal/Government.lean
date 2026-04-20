@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Core.Dependency.Basic
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
 

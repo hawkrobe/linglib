@@ -1,6 +1,6 @@
 import Linglib.Core.InformationTheory
 import Linglib.Theories.Syntax.ConstructionGrammar.Basic
-import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
+import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
 
 /-!
 # Grammar as Distribution

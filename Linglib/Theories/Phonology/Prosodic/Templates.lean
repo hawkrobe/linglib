@@ -66,9 +66,12 @@ def isV : CVSlot → Bool
   | _ => false
 
 /-- Does this slot require a [+consonantal] segment? -/
-def requiresConsonantal : CVSlot → Bool
-  | .Cspec => true
-  | _ => false
+def RequiresConsonantal : CVSlot → Prop
+  | .Cspec => True
+  | _ => False
+
+instance : DecidablePred RequiresConsonantal := fun s => by
+  cases s <;> unfold RequiresConsonantal <;> infer_instance
 
 end CVSlot
 

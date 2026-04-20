@@ -1,4 +1,5 @@
-import Mathlib.Data.Finset.Card
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Set.Lattice
 import Mathlib.Data.List.Sublists
 
 /-!
@@ -15,26 +16,28 @@ at which propositions are evaluated.
 
 ## Why this lives in `Core/IntensionalLogic/`
 
-A premise set is a `List (Index → Bool)`. The notions of *consistency*,
+A premise set is a `List (Index → Prop)`. The notions of *consistency*,
 *following from*, and *compatibility* are purely set-theoretic facts about
 extensions in `Index` — they are about logical relations on propositions, not
 about modality. Modal operators (necessity, possibility) are then defined in
 terms of these primitives, but the primitives themselves should be available
 to any module that wants to talk about premises (counterfactual analysis,
-discourse update, situation lumping, ...).
+discourse update, situation lumping, …).
 
 ## Mathlib-style discipline
 
-Predicates return `Prop`; decidability is provided via `Decidable` instances
-under `[DecidableEq Index] [Fintype Index]`. Callers can use `decide`/
-`native_decide` or reason classically without `= true` overhead.
+Propositions are `Index → Prop` (mathlib-native), extensions are `Set Index`
+(also mathlib-native). All predicates return `Prop`; we reason classically and
+do *not* register `Decidable` instances. Callers who need decidability can
+supply it locally via `[DecidablePred p]` in their own theorems; the core
+intensional algebra is purely classical.
 
 ## Key definitions
 
-- `propExtension` — extension of a proposition (set of indices where it holds)
-- `propIntersection` — intersection of a list of propositions
-- `followsFrom` — `p` follows from `A` iff `∩A ⊆ p` (Kratzer p. 31)
-- `isConsistent` — `A` is consistent iff `∩A ≠ ∅`
+- `propExtension` — extension of a proposition (`{i | p i}` as a `Set Index`)
+- `propIntersection` — intersection of a list of propositions (`Set Index`)
+- `followsFrom` — `p` follows from `A` iff `⋂ A ⊆ {i | p i}` (Kratzer p. 31)
+- `isConsistent` — `A` is consistent iff `⋂ A` is non-empty
 - `isCompatibleWith` — `p` is compatible with `A` iff `A ∪ {p}` is consistent
 
 ## Kratzer 1977 Definitions 5–8
@@ -57,73 +60,54 @@ itself consistent (`mustInView_iff_mustInView'_of_consistent`).
 
 namespace Core.IntensionalLogic.Premise
 
-variable {Index : Type*} [DecidableEq Index] [Fintype Index]
+variable {Index : Type*}
 
 /-! ## Primitives on premise sets -/
 
-/-- Convert a Boolean proposition to the finite set of indices at which it holds. -/
-def propExtension (p : Index → Bool) : Finset Index :=
-  Finset.univ.filter (fun i => p i)
+/-- The extension of a proposition: the set of indices at which it holds. -/
+def propExtension (p : Index → Prop) : Set Index := {i | p i}
 
 /-- The intersection of a list of propositions: indices satisfying *all* of them. -/
-def propIntersection (props : List (Index → Bool)) : Finset Index :=
-  Finset.univ.filter (fun i => props.all fun p => p i)
+def propIntersection (props : List (Index → Prop)) : Set Index :=
+  {i | ∀ p ∈ props, p i}
 
-/-- A proposition `p` **follows from** a premise set `A` iff `∩A ⊆ p`
+/-- A proposition `p` **follows from** a premise set `A` iff `⋂ A ⊆ {i | p i}`
     (@cite{kratzer-1977} p. 31). -/
-def followsFrom (p : Index → Bool) (A : List (Index → Bool)) : Prop :=
-  ∀ i ∈ propIntersection A, p i = true
+def followsFrom (p : Index → Prop) (A : List (Index → Prop)) : Prop :=
+  propIntersection A ⊆ propExtension p
 
-instance (p : Index → Bool) (A : List (Index → Bool)) : Decidable (followsFrom p A) := by
-  unfold followsFrom; infer_instance
-
-/-- A premise set is **consistent** iff `∩A ≠ ∅` (@cite{kratzer-1977} p. 31). -/
-def isConsistent (A : List (Index → Bool)) : Prop :=
-  propIntersection A ≠ ∅
-
-instance (A : List (Index → Bool)) : Decidable (isConsistent A) := by
-  unfold isConsistent; infer_instance
+/-- A premise set is **consistent** iff `⋂ A` is non-empty (@cite{kratzer-1977} p. 31). -/
+def isConsistent (A : List (Index → Prop)) : Prop :=
+  (propIntersection A).Nonempty
 
 /-- A proposition `p` is **compatible with** `A` iff `A ∪ {p}` is consistent. -/
-def isCompatibleWith (p : Index → Bool) (A : List (Index → Bool)) : Prop :=
+def isCompatibleWith (p : Index → Prop) (A : List (Index → Prop)) : Prop :=
   isConsistent (p :: A)
-
-instance (p : Index → Bool) (A : List (Index → Bool)) : Decidable (isCompatibleWith p A) := by
-  unfold isCompatibleWith; infer_instance
 
 /-! ## Kratzer 1977 Definitions 5–6: must/can in view of -/
 
 /-- **Def 5** (@cite{kratzer-1977}): `must p in view of f` at index `i`
     iff `p` follows from the premise set `f i`.
 
-    `ν(p, f) = {i : ∩(f i) ⊆ p}` -/
-def mustInView (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) : Prop :=
+    `ν(p, f) = {i : ⋂(f i) ⊆ p}` -/
+def mustInView (f : Index → List (Index → Prop)) (p : Index → Prop) (i : Index) : Prop :=
   followsFrom p (f i)
-
-instance (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) :
-    Decidable (mustInView f p i) := by
-  unfold mustInView; infer_instance
 
 /-- **Def 6** (@cite{kratzer-1977}): `can p in view of f` at index `i`
     iff `p` is compatible with the premise set `f i`.
 
-    `μ(p, f) = {i : ∩((f i) ∪ {p}) ≠ ∅}` -/
-def canInView (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) : Prop :=
+    `μ(p, f) = {i : ⋂((f i) ∪ {p}) ≠ ∅}` -/
+def canInView (f : Index → List (Index → Prop)) (p : Index → Prop) (i : Index) : Prop :=
   isCompatibleWith p (f i)
-
-instance (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) :
-    Decidable (canInView f p i) := by
-  unfold canInView; infer_instance
 
 /-! ## Kratzer 1977 Definitions 7–8: revised must/can for inconsistent premise sets -/
 
 /-- The set of consistent sublists of a premise set: `X_A = {B ⊆ A : consistent B}`.
     Kratzer's revised definitions quantify over these to handle inconsistent `A`.
 
-    Concretely: powerset of `A` (as a list, since `A` is a list), filtered by
-    `isConsistent`. -/
-def consistentSublists (A : List (Index → Bool)) : List (List (Index → Bool)) :=
-  A.sublists.filter (fun B => decide (isConsistent B))
+    Concretely: a sublist `B` of `A` such that `B` is consistent. -/
+def consistentSublists (A : List (Index → Prop)) : Set (List (Index → Prop)) :=
+  {B | B ∈ A.sublists ∧ isConsistent B}
 
 /-- **Def 7** (@cite{kratzer-1977}): the revised necessity operator that handles
     possibly inconsistent premise sets.
@@ -132,14 +116,10 @@ def consistentSublists (A : List (Index → Bool)) : List (List (Index → Bool)
     there exists a consistent subset `C ⊇ B` such that `p` follows from `C`.
 
     Original notation:
-    `ν(p, f) = {i : ∀B[B ∈ X_{f(i)} → ∃C[C ∈ X_{f(i)} ∧ B ⊆ C ∧ ∩C ⊆ p]]}` -/
-def mustInView' (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) : Prop :=
+    `ν(p, f) = {i : ∀B[B ∈ X_{f(i)} → ∃C[C ∈ X_{f(i)} ∧ B ⊆ C ∧ ⋂C ⊆ p]]}` -/
+def mustInView' (f : Index → List (Index → Prop)) (p : Index → Prop) (i : Index) : Prop :=
   ∀ B ∈ consistentSublists (f i),
     ∃ C ∈ consistentSublists (f i), B ⊆ C ∧ followsFrom p C
-
-instance (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) :
-    Decidable (mustInView' f p i) := by
-  unfold mustInView'; infer_instance
 
 /-- **Def 8** (@cite{kratzer-1977}): the revised possibility operator that handles
     possibly inconsistent premise sets.
@@ -149,43 +129,34 @@ instance (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) 
 
     Original notation:
     `μ(p, f) = {i : ∃B[B ∈ X_{f(i)} ∧ ∀C[(C ∈ X_{f(i)} ∧ B ⊆ C) → consistent(C ∪ {p})]]}` -/
-def canInView' (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) : Prop :=
+def canInView' (f : Index → List (Index → Prop)) (p : Index → Prop) (i : Index) : Prop :=
   ∃ B ∈ consistentSublists (f i),
     ∀ C ∈ consistentSublists (f i), B ⊆ C → isCompatibleWith p C
-
-instance (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index) :
-    Decidable (canInView' f p i) := by
-  unfold canInView'; infer_instance
 
 /-! ## Monotonicity helpers
 
 The reduction theorems below need three monotonicity facts about the premise
 algebra. They are proved here once and reused. -/
 
-omit [DecidableEq Index] in
 /-- `propIntersection` is **anti-monotone** in the premise list: more premises
     can only shrink the set of indices satisfying *all* of them. -/
 theorem propIntersection_anti_of_subset
-    {A B : List (Index → Bool)} (h : A ⊆ B) :
+    {A B : List (Index → Prop)} (h : A ⊆ B) :
     propIntersection B ⊆ propIntersection A := by
-  intro i hi
-  simp only [propIntersection, Finset.mem_filter, Finset.mem_univ, true_and,
-    List.all_eq_true] at hi ⊢
-  exact fun p hp => hi p (h hp)
+  intro _ hi p hp
+  exact hi p (h hp)
 
-omit [DecidableEq Index] in
 /-- `followsFrom` is **monotone** in the premise list: more premises only add
     consequences. -/
 theorem followsFrom_mono_of_subset
-    {p : Index → Bool} {A B : List (Index → Bool)}
+    {p : Index → Prop} {A B : List (Index → Prop)}
     (h : A ⊆ B) (hp : followsFrom p A) : followsFrom p B :=
-  fun i hi => hp i (propIntersection_anti_of_subset h hi)
+  fun i hi => hp (propIntersection_anti_of_subset h hi)
 
-omit [DecidableEq Index] in
 /-- `isCompatibleWith` is **anti-monotone** in the premise list: removing
     premises can only make a proposition easier to be compatible with. -/
 theorem isCompatibleWith_anti_of_subset
-    {p : Index → Bool} {A B : List (Index → Bool)}
+    {p : Index → Prop} {A B : List (Index → Prop)}
     (h : B ⊆ A) (hp : isCompatibleWith p A) :
     isCompatibleWith p B := by
   have hcons : (p :: B) ⊆ (p :: A) := by
@@ -193,27 +164,21 @@ theorem isCompatibleWith_anti_of_subset
     rcases List.mem_cons.mp hx with rfl | hxB
     · exact List.mem_cons_self
     · exact List.mem_cons_of_mem _ (h hxB)
-  unfold isCompatibleWith isConsistent at hp ⊢
-  rw [← Finset.nonempty_iff_ne_empty] at hp ⊢
   obtain ⟨i, hi⟩ := hp
   exact ⟨i, propIntersection_anti_of_subset hcons hi⟩
 
 /-- A consistent premise list is itself a member of its own consistent
     sublist powerset. -/
 theorem self_mem_consistentSublists
-    {A : List (Index → Bool)} (h : isConsistent A) :
-    A ∈ consistentSublists A := by
-  unfold consistentSublists
-  rw [List.mem_filter]
-  exact ⟨List.mem_sublists.mpr (List.Sublist.refl _), decide_eq_true h⟩
+    {A : List (Index → Prop)} (h : isConsistent A) :
+    A ∈ consistentSublists A :=
+  ⟨List.mem_sublists.mpr (List.Sublist.refl _), h⟩
 
 /-- Every element of `consistentSublists A` is a `⊆`-subset of `A`. -/
 theorem subset_of_mem_consistentSublists
-    {A B : List (Index → Bool)} (h : B ∈ consistentSublists A) :
-    B ⊆ A := by
-  unfold consistentSublists at h
-  rw [List.mem_filter] at h
-  exact (List.mem_sublists.mp h.1).subset
+    {A B : List (Index → Prop)} (h : B ∈ consistentSublists A) :
+    B ⊆ A :=
+  (List.mem_sublists.mp h.1).subset
 
 /-! ## Reduction to the unrevised definitions
 
@@ -225,7 +190,7 @@ is consistent by hypothesis, and `B ⊆ f i` for every `B ∈ consistentSublists
 /-- When `f i` is consistent, the revised necessity operator coincides with
     the original. -/
 theorem mustInView_iff_mustInView'_of_consistent
-    (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index)
+    (f : Index → List (Index → Prop)) (p : Index → Prop) (i : Index)
     (h : isConsistent (f i)) :
     mustInView' f p i ↔ mustInView f p i := by
   unfold mustInView mustInView'
@@ -242,7 +207,7 @@ theorem mustInView_iff_mustInView'_of_consistent
 /-- When `f i` is consistent, the revised possibility operator coincides with
     the original. -/
 theorem canInView_iff_canInView'_of_consistent
-    (f : Index → List (Index → Bool)) (p : Index → Bool) (i : Index)
+    (f : Index → List (Index → Prop)) (p : Index → Prop) (i : Index)
     (h : isConsistent (f i)) :
     canInView' f p i ↔ canInView f p i := by
   unfold canInView canInView'

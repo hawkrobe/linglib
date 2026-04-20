@@ -1,4 +1,4 @@
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 
 /-!
@@ -35,7 +35,7 @@ table in `EpistemicThreshold.lean`). The bridge proves:
 
 namespace Phenomena.Modality.Studies.YingEtAl2025
 
-open Fragments.English.FunctionWords
+open Fragments.English.Auxiliaries
 open Semantics.Attitudes.EpistemicThreshold (EpistemicEntry)
 open Core.Modality (ModalForce ModalFlavor ForceFlavor)
 

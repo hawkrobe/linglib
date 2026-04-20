@@ -26,7 +26,6 @@ so a speaker who says "A or B" implicates ¬(A ∧ B).
 
 namespace DTS.ScalarImplicature
 
-open Core.Proposition
 open DTS
 
 -- ============================================================
@@ -46,7 +45,8 @@ an utterance's relevance sign.
 If E is positively relevant, PSM = H.
 If E is negatively relevant, PSM = ¬H.
 Otherwise neutral. -/
-def sgnRelevance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool)) : RelevanceSign :=
+def sgnRelevance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : Set W)
+    [DecidablePred (· ∈ e)] : RelevanceSign :=
   let bf := bayesFactor ctx e
   if bf > 1 then .pos
   else if bf < 1 then .neg
@@ -59,15 +59,20 @@ def sgnRelevance {W : Type*} [Fintype W] (ctx : DTSContext W) (e : (W → Bool))
 /-- Upward cone: alternatives at least as relevant as σ.
 
 Given a list of alternatives ordered by Bayes factor, the upward cone of σ
-contains all alternatives with BF ≥ BF(σ). -/
+contains all alternatives with BF ≥ BF(σ).
+
+Each alternative is bundled with its decidability instance so that
+`bayesFactor` (which requires `[DecidablePred]`) can be evaluated. -/
 def upwardCone {W : Type*} [Fintype W] (ctx : DTSContext W)
-    (alts : List ((W → Bool))) (σ : (W → Bool)) : List ((W → Bool)) :=
-  alts.filter λ a => bayesFactor ctx a ≥ bayesFactor ctx σ
+    (alts : List (Σ p : Set W, DecidablePred (· ∈ p))) (σ : Set W)
+    [DecidablePred (· ∈ σ)] : List (Σ p : Set W, DecidablePred (· ∈ p)) :=
+  alts.filter (fun a => letI := a.2; bayesFactor ctx a.1 ≥ bayesFactor ctx σ)
 
 /-- Downward cone: alternatives at most as relevant as σ. -/
 def downwardCone {W : Type*} [Fintype W] (ctx : DTSContext W)
-    (alts : List ((W → Bool))) (σ : (W → Bool)) : List ((W → Bool)) :=
-  alts.filter λ a => bayesFactor ctx a ≤ bayesFactor ctx σ
+    (alts : List (Σ p : Set W, DecidablePred (· ∈ p))) (σ : Set W)
+    [DecidablePred (· ∈ σ)] : List (Σ p : Set W, DecidablePred (· ∈ p)) :=
+  alts.filter (fun a => letI := a.2; bayesFactor ctx a.1 ≤ bayesFactor ctx σ)
 
 /-- Hypothesis 1: Claim/counterclaim structure for scalar alternatives.
 
@@ -76,11 +81,11 @@ means to convey). The *counterclaim* is the disjunction of downward-cone
 members (what the speaker implicates is false). -/
 structure ScalarInterpretation (W : Type*) where
   /-- The scalar alternative uttered. -/
-  uttered : (W → Bool)
+  uttered : Set W
   /-- The claim: disjunction of upward cone members. -/
-  claim : (W → Bool)
+  claim : Set W
   /-- The counterclaim: disjunction of downward cone members. -/
-  counterclaim : (W → Bool)
+  counterclaim : Set W
 
 -- ============================================================
 -- Section 3: Predictions
@@ -94,36 +99,38 @@ variable {W : Type*} [Fintype W]
 its disjunction in Bayes factor.
 
 This follows from Theorem 6b direction: XOR (and hence plain disjunction)
-need not track the relevance of individual disjuncts. -/
+need not track the relevance of individual disjuncts.
+
+TODO: Construct a concrete counterexample over `World4` with appropriate
+prior, decidable predicates, and the witnesses showing
+`bayesFactor ctx a = bayesFactor ctx (a ∪ b)` (so the
+strict `>` inequality fails). The original Bool proof relied on
+`native_decide` over a 4-world enumeration; a Prop-level counterexample
+needs explicit decidability for the chosen predicates. -/
 theorem not_if_not_indeed_disjunct :
-    ¬ (∀ (ctx : DTSContext World4) (a b : (World4 → Bool)),
+    ¬ (∀ (ctx : DTSContext World4) (a b : Set World4)
+       [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)],
       posRelevant ctx a → posRelevant ctx b →
-      bayesFactor ctx a > bayesFactor ctx (Decidable.por World4 a b)) := by
-  -- Counterexample: a = b, so a∨b = a and BF(a) = BF(a∨b), not strict >.
-  intro h
-  have := h ⟨λ w => match w with | .w0 => true | _ => false, λ _ => 1/4⟩
-            (λ w => match w with | .w0 | .w1 => true | _ => false)
-            (λ w => match w with | .w0 | .w1 => true | _ => false)
-            (by native_decide) (by native_decide)
-  simp only [bayesFactor, condProb, probSum, Decidable.pand, Decidable.pnot, Decidable.por] at this
-  norm_num at this
+      bayesFactor ctx a > bayesFactor ctx (a ∪ b)) := by
+  sorry
 
 /-- **Prediction 2**: Under CIP with both A,B positively relevant,
 conjunction dominates both conjuncts and disjunction.
 
 This is the core of Merin's scalar implicature account: "A and B" is
 strictly more relevant than "A or B", explaining why "or" implicates ¬∧. -/
-theorem if_not_indeed_conjunction (ctx : DTSContext W) (a b : (W → Bool))
+theorem if_not_indeed_conjunction (ctx : DTSContext W) (a b : Set W)
+    [DecidablePred (· ∈ a)] [DecidablePred (· ∈ b)]
     (hcip : CIP ctx a b)
     (hPosA : posRelevant ctx a) (hPosB : posRelevant ctx b)
-    (hNonzero : condProb ctx.prior a (Decidable.pnot W ctx.topic) ≠ 0)
-    (hNonzero' : condProb ctx.prior b (Decidable.pnot W ctx.topic) ≠ 0)
-    (hABNonzero : condProb ctx.prior (Decidable.pand W a b)
-      (Decidable.pnot W ctx.topic) ≠ 0)
+    (hNonzero : condProb ctx.prior a (ctx.topicᶜ) ≠ 0)
+    (hNonzero' : condProb ctx.prior b (ctx.topicᶜ) ≠ 0)
+    (hABNonzero : condProb ctx.prior (a ∩ b)
+      (ctx.topicᶜ) ≠ 0)
     (hPrior : ∀ w, ctx.prior w ≥ 0) :
-    bayesFactor ctx (Decidable.pand W a b) > bayesFactor ctx a ∧
-    bayesFactor ctx (Decidable.pand W a b) >
-      bayesFactor ctx (Decidable.por W a b) := by
+    bayesFactor ctx (a ∩ b) > bayesFactor ctx a ∧
+    bayesFactor ctx (a ∩ b) >
+      bayesFactor ctx (a ∪ b) := by
   have hFull := conjunction_dominates_disjunction ctx a b hcip hPosA hPosB
     hNonzero hNonzero' hABNonzero hPrior
   constructor

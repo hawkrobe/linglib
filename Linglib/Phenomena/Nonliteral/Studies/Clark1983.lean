@@ -3,7 +3,7 @@ import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
+import Linglib.Theories.Pragmatics.RSA.LexicalUncertainty
 import Mathlib.Data.Fintype.BigOperators
 
 /-!
@@ -778,7 +778,7 @@ theorem conventional_lexicon_fails_bombeck :
 theorem bombeck_cg_determines_meaning :
     ∀ w, bombecksCG.contextSet w → (λ w => w.ownersCommon) w = true := by
   intro w h
-  exact h _ List.mem_cons_self
+  exact h.1
 
 -- ════════════════════════════════════════════════════════════════
 -- §11. Bridge to Indirect Speech Acts
@@ -960,12 +960,13 @@ end
 private theorem bombecksCG_entails_owners :
     ∀ w, bombecksCG.contextSet w → w.ownersCommon = true := by
   intro w h
-  exact h _ List.mem_cons_self
+  exact h.1
 
 private theorem emptyCG_not_entails_owners :
     ¬ ∀ w, (CG.empty : CG StereosWorld).contextSet w → w.ownersCommon = true := by
   push_neg
-  exact ⟨⟨true, false⟩, by simp [CG.contextSet, CG.empty], nofun⟩
+  refine ⟨⟨true, false⟩, ?_, nofun⟩
+  trivial
 
 /-- Evaluating at Arlene's empty CG yields the conventional goal hierarchy.
     The empty CG does not entail anything about owners, so `compute` returns

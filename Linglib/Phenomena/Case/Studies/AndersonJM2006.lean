@@ -278,10 +278,13 @@ theorem anderson_blake_concordant :
 /-- Does a morphological case carry the spatial locative feature?
     ABL, LOC both map to {loc} — they share the locative feature
     because they involve spatial location. -/
-def hasSpatialLoc : Core.Case → Bool
-  | .abl  => true
-  | .loc  => true
-  | _     => false
+def HasSpatialLoc : Core.Case → Prop
+  | .abl  => True
+  | .loc  => True
+  | _     => False
+
+instance : DecidablePred HasSpatialLoc := fun c => by
+  cases c <;> unfold HasSpatialLoc <;> infer_instance
 
 /-- ABL and LOC both map to Anderson's locative case relation. -/
 theorem spatial_cases_are_locative :
@@ -323,10 +326,10 @@ theorem alignment_is_labeling :
 theorem anderson_dowty_transitive_agree :
     CaseRelation.canonicalTheta .ergative = some .agent ∧
     CaseRelation.canonicalTheta .absolutive = some .patient ∧
-    outranksForSubject
+    OutranksForSubject
       (ThetaRole.canonicalProfile .agent)
-      (ThetaRole.canonicalProfile .patient) = true := by
-  exact ⟨rfl, rfl, by native_decide⟩
+      (ThetaRole.canonicalProfile .patient) := by
+  exact ⟨rfl, rfl, by decide⟩
 
 /-- The three-feature system improves on the old two-feature version
     for the experiencer case: Anderson distinguishes experiencer from

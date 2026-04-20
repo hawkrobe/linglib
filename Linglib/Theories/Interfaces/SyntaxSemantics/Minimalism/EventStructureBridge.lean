@@ -64,13 +64,13 @@ theorem activity_maps_to_activity :
 
 /-- Accomplishments have external cause iff they have vDO. -/
 theorem accomplishment_has_external_cause :
-    Template.hasExternalCauser .accomplishment = true ∧
-    (templateToHeads .accomplishment).contains .vDO = true := ⟨rfl, by native_decide⟩
+    Template.HasExternalCauser .accomplishment ∧
+    (templateToHeads .accomplishment).contains .vDO = true := ⟨by decide, by native_decide⟩
 
 /-- Achievements lack external cause and lack vDO. -/
 theorem achievement_no_external_cause :
-    Template.hasExternalCauser .achievement = false ∧
-    (templateToHeads .achievement).contains .vDO = false := ⟨rfl, by native_decide⟩
+    ¬ Template.HasExternalCauser .achievement ∧
+    (templateToHeads .achievement).contains .vDO = false := ⟨by decide, by native_decide⟩
 
 /-- The causative alternation: accomplishment and achievement share the
     inchoative core [vGO, vBE], differing only in vDO (external cause). -/

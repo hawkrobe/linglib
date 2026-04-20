@@ -291,31 +291,31 @@ same prediction.
 
 /-- Negation empirically licenses "ever" and the Builder agrees. -/
 theorem fragment_builder_agree_negation_ever :
-    isLicensedIn ever .negation = true ∧
-    negationProfile.licensesItem ever = true := ⟨rfl, rfl⟩
+    isLicensedIn ever .negation ∧
+    negationProfile.licensesItem ever = true := ⟨by decide, rfl⟩
 
 /-- Negation empirically licenses "lift a finger" and the Builder agrees. -/
 theorem fragment_builder_agree_negation_liftAFinger :
-    isLicensedIn liftAFinger .negation = true ∧
-    negationProfile.licensesItem liftAFinger = true := ⟨rfl, rfl⟩
+    isLicensedIn liftAFinger .negation ∧
+    negationProfile.licensesItem liftAFinger = true := ⟨by decide, rfl⟩
 
 /-- "Only" empirically licenses "ever" (via only_focus) and the Builder agrees. -/
 theorem fragment_builder_agree_only_ever :
-    isLicensedIn ever .only_focus = false ∧  -- "ever" doesn't list only_focus
+    ¬ isLicensedIn ever .only_focus ∧  -- "ever" doesn't list only_focus
     onlyProfile.licensesItem ever = true :=    -- but Builder derives licensing
-  ⟨rfl, rfl⟩
+  ⟨by decide, rfl⟩
   -- Note: the Fragment is conservative (only lists attested contexts);
   -- the Builder generalizes (any Strawson-DE context licenses weak NPIs).
 
 /-- "At most 2" empirically blocks "lift a finger" and the Builder agrees. -/
 theorem fragment_builder_agree_atMost2_liftAFinger :
-    isLicensedIn liftAFinger .atMost = false ∧
-    atMost2Profile.licensesItem liftAFinger = false := ⟨rfl, rfl⟩
+    ¬ isLicensedIn liftAFinger .atMost ∧
+    atMost2Profile.licensesItem liftAFinger = false := ⟨by decide, rfl⟩
 
 /-- PPIs: "some (stressed)" not licensed under negation, Builder agrees. -/
 theorem fragment_builder_agree_negation_ppi :
-    isLicensedIn some_ppi .negation = false ∧
-    negationProfile.licensesItem some_ppi = false := ⟨rfl, rfl⟩
+    ¬ isLicensedIn some_ppi .negation ∧
+    negationProfile.licensesItem some_ppi = false := ⟨by decide, rfl⟩
 
 -- ============================================================================
 -- @cite{von-fintel-1999} empirical bridge

@@ -461,28 +461,28 @@ open Phonology
 /-- The `over` candidate's OCP violation is grounded: /tɕ/ is [+coronal],
     so two /tɕ/ in successive syllables violate OCP(+cor). -/
 theorem akan_over_ocp_grounded :
-    seg_tc.hasValue Feature.coronal true = true := by native_decide
+    seg_tc.HasValue Feature.coronal true = true := by native_decide
 
 /-- The `normal` candidate's IDENT-BR violation is grounded: the
     reduplicant has /tɕ/ ([+cor]) but the base has /k/ ([−cor]) — a
     featural mismatch on [coronal]. -/
 theorem akan_normal_identBR_grounded :
-    seg_tc.hasValue Feature.coronal true = true ∧
-    seg_k.hasValue Feature.coronal false = true := ⟨by native_decide, by native_decide⟩
+    seg_tc.HasValue Feature.coronal true = true ∧
+    seg_k.HasValue Feature.coronal false = true := ⟨by native_decide, by native_decide⟩
 
 /-- The `under` candidate's PAL violation is grounded: /k/ is [−coronal]
     and /ɪ/ is [+front] — a velar before a front vowel without
     palatalization. -/
 theorem akan_under_pal_grounded :
-    seg_k.hasValue Feature.coronal false = true ∧
-    seg_i.hasValue Feature.front true = true := ⟨by native_decide, by native_decide⟩
+    seg_k.HasValue Feature.coronal false = true ∧
+    seg_i.HasValue Feature.front true = true := ⟨by native_decide, by native_decide⟩
 
 /-- The `over` candidate's IDENT-IO violation is grounded: input /k/
     is [−coronal] but output /tɕ/ is [+coronal] — an IO faithfulness
     violation on the [coronal] feature. -/
 theorem akan_over_identIO_grounded :
-    seg_k.hasValue Feature.coronal false = true ∧
-    seg_tc.hasValue Feature.coronal true = true := ⟨by native_decide, by native_decide⟩
+    seg_k.HasValue Feature.coronal false = true ∧
+    seg_tc.HasValue Feature.coronal true = true := ⟨by native_decide, by native_decide⟩
 
 end AkanGrounding
 

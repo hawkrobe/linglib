@@ -96,18 +96,16 @@ theorem eat_signature :
     (result, cause) entailments — a structural counterexample to the
     Bifurcation Thesis of Roots. -/
 theorem hand_violates_bifurcation :
-    hand.violatesBifurcation = true := rfl
+    hand.ViolatesBifurcation := by decide
 
 /-- √eat is a second counterexample: manner *and* result+cause. -/
 theorem eat_violates_bifurcation :
-    eat.violatesBifurcation = true := rfl
+    eat.ViolatesBifurcation := by decide
 
 /-- The universal closure of the Bifurcation Thesis is false. -/
 theorem bifurcation_thesis_false :
-    ¬ ∀ r : Root, r.respectsBifurcation = true := by
-  intro h
-  have : hand.respectsBifurcation = true := h hand
-  exact Bool.noConfusion this
+    ¬ ∀ r : Root, r.RespectsBifurcation := fun h =>
+  h hand hand_violates_bifurcation
 
 -- ════════════════════════════════════════════════════
 -- § 4. Falsification of Manner/Result Complementarity
@@ -117,19 +115,17 @@ theorem bifurcation_thesis_false :
     ("possessed") — a counterexample to Manner/Result
     Complementarity (@cite{rappaport-hovav-levin-2010}). -/
 theorem hand_has_manner_and_result :
-    hand.hasMannerAndResult = true := rfl
+    hand.HasMannerAndResult := by decide
 
 /-- √eat is a second counterexample: manner ("consumption") + result
     ("consumed"). -/
 theorem eat_has_manner_and_result :
-    eat.hasMannerAndResult = true := rfl
+    eat.HasMannerAndResult := by decide
 
 /-- The universal closure of Manner/Result Complementarity is false. -/
 theorem manner_result_complementarity_false :
-    ¬ ∀ r : Root, r.respectsMannerResultComplementarity = true := by
-  intro h
-  have : hand.respectsMannerResultComplementarity = true := h hand
-  exact Bool.noConfusion this
+    ¬ ∀ r : Root, r.RespectsMannerResultComplementarity := fun h =>
+  h hand hand_has_manner_and_result
 
 -- ════════════════════════════════════════════════════
 -- § 5. Roots that DO respect each constraint
@@ -137,12 +133,12 @@ theorem manner_result_complementarity_false :
 
 /-- √flat (pure state) and √jog (pure manner) respect Bifurcation. -/
 theorem pure_ontological_respects_bifurcation :
-    flat.respectsBifurcation = true ∧ jog.respectsBifurcation = true :=
-  ⟨rfl, rfl⟩
+    flat.RespectsBifurcation ∧ jog.RespectsBifurcation := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- √crack (result + cause, no manner or state) respects Manner/Result
     Complementarity. -/
 theorem crack_respects_manner_result :
-    crack.respectsMannerResultComplementarity = true := rfl
+    crack.RespectsMannerResultComplementarity := by decide
 
 end Phenomena.LexicalTypology.Studies.BeaversKoontzGarboden2020

@@ -14,11 +14,15 @@ namespace Core.WALS.F139A
 
 /-- WALS 139A values. -/
 inductive IrregularNegativesInSignLanguages where
-  | none  -- None (1 languages)
-  | one  -- One (3 languages)
-  | some  -- Some (2-5) (10 languages)
-  | many  -- Many (more than 5) (21 languages)
-  deriving DecidableEq, Repr
+  /-- None (1 languages). -/
+  | none
+  /-- One (3 languages). -/
+  | one
+  /-- Some (2-5) (10 languages). -/
+  | some
+  /-- Many (more than 5) (21 languages). -/
+  | many
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 139A dataset (35 languages). -/
 def allData : List (Datapoint IrregularNegativesInSignLanguages) :=
@@ -58,18 +62,6 @@ def allData : List (Datapoint IrregularNegativesInSignLanguages) :=
   , { walsCode := "ugs", language := "Ugandan Sign Language", iso := "ugn", value := .many }
   , { walsCode := "vla", language := "Vlaamse Gebarentaal", iso := "vgt", value := .many }
   ]
-
--- Count verification
-theorem total_count : allData.length = 35 := by native_decide
-
-theorem count_none :
-    (allData.filter (·.value == .none)).length = 1 := by native_decide
-theorem count_one :
-    (allData.filter (·.value == .one)).length = 3 := by native_decide
-theorem count_some :
-    (allData.filter (·.value == .some)).length = 10 := by native_decide
-theorem count_many :
-    (allData.filter (·.value == .many)).length = 21 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

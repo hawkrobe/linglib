@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Directive
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 
 /-!
 # Modal Force and its Realization across Languages
@@ -42,7 +42,7 @@ namespace AghaJeretic2026
 open Core.Modality (ModalForce ModalFlavor ForceFlavor ModalItem)
 open Semantics.Modality.Directive
 open Semantics.Attitudes.Intensional (World)
-open Fragments.English.FunctionWords
+open Fragments.English.Auxiliaries
 
 -- ============================================================================
 -- §1. Entailment Asymmetry (§2.1)
@@ -136,13 +136,13 @@ theorem must_entails_ought_kratzer :
 
 /-- Re-export: the converse fails (Directive.lean). -/
 theorem ought_not_entails_must_kratzer :
-    ¬(∀ {W : Type} [DecidableEq W] [Fintype W]
+    ¬(∀ (W : Type)
         (f : Semantics.Modality.Kratzer.ModalBase W)
         (g g' : Semantics.Modality.Kratzer.OrderingSource W)
-        (p : W → Prop) (_ : DecidablePred p) (w : W),
+        (p : W → Prop) (w : W),
       weakNecessity f g g' p w →
       strongNecessity f g p w) :=
-  fun h => weak_not_entails_strong fun _ _ _ f g g' p hp w hw => h f g g' p hp w hw
+  weak_not_entails_strong
 
 -- ============================================================================
 -- §4. Variable Force Typology (§3.2)

@@ -4,6 +4,8 @@ import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Competence
 import Linglib.Phenomena.ScalarImplicatures.Studies.BaleEtAl2025
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # @cite{evcen-bale-barner-2026} — Conditional Perfection
@@ -333,7 +335,6 @@ Data: antecedent-focused > neutral ≈ consequent-focused (Exp 1)
 
 open Semantics.Conditionals
 open Semantics.Conditionals.Exhaustivity
-open Core.Proposition
 
 private theorem Bool.of_not_eq_true {b : Bool} (h : ¬(b = true)) : b = false := by
   cases b <;> simp_all
@@ -693,7 +694,7 @@ confirm the pragmatic nature:
    Semantic entailments are invariant across these factors. -/
 theorem cp_is_pragmatic :
     (∃ (W : Type) (sim : SimilarityOrdering W) (domain : Set W)
-       (p q : Prop' W) (w : W),
+       (p q : Set W) (w : W),
       variablyStrictImp sim domain p q w ∧ ¬(conditionalPerfection p q w)) ∧
     (exp1Data .antecedentFocused).perfectionRate ≠
     (exp1Data .consequentFocused).perfectionRate ∧

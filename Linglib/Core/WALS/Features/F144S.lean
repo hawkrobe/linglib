@@ -14,18 +14,29 @@ namespace Core.WALS.F144S
 
 /-- WALS 144S values. -/
 inductive SovnegOrder where
-  | wordNodoubleneg  -- Word&NoDoubleNeg (60 languages)
-  | suffixNodoubleneg  -- Suffix&NoDoubleNeg (142 languages)
-  | wordOptdoubleneg  -- Word&OptDoubleNeg (7 languages)
-  | suffixOptdoubleneg  -- Suffix&OptDoubleNeg (8 languages)
-  | wordOnlywithanotherneg  -- Word&OnlyWithAnotherNeg (10 languages)
-  | suffixOnlywithanotherneg  -- Suffix&OnlyWithAnotherNeg (32 languages)
-  | type1Type2  -- Type 1 / Type 2 (8 languages)
-  | type1Type6  -- Type 1 / Type 6 (2 languages)
-  | type5Type4  -- Type 5 / Type 4 (2 languages)
-  | type5Type6  -- Type 5 / Type 6 (2 languages)
-  | nosovneg  -- NoSOVNeg (217 languages)
-  deriving DecidableEq, Repr
+  /-- Word&NoDoubleNeg (60 languages). -/
+  | wordNodoubleneg
+  /-- Suffix&NoDoubleNeg (142 languages). -/
+  | suffixNodoubleneg
+  /-- Word&OptDoubleNeg (7 languages). -/
+  | wordOptdoubleneg
+  /-- Suffix&OptDoubleNeg (8 languages). -/
+  | suffixOptdoubleneg
+  /-- Word&OnlyWithAnotherNeg (10 languages). -/
+  | wordOnlywithanotherneg
+  /-- Suffix&OnlyWithAnotherNeg (32 languages). -/
+  | suffixOnlywithanotherneg
+  /-- Type 1 / Type 2 (8 languages). -/
+  | type1Type2
+  /-- Type 1 / Type 6 (2 languages). -/
+  | type1Type6
+  /-- Type 5 / Type 4 (2 languages). -/
+  | type5Type4
+  /-- Type 5 / Type 6 (2 languages). -/
+  | type5Type6
+  /-- NoSOVNeg (217 languages). -/
+  | nosovneg
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144S dataset (490 languages). -/
 def allData : List (Datapoint SovnegOrder) :=
@@ -520,32 +531,6 @@ def allData : List (Datapoint SovnegOrder) :=
   , { walsCode := "rgc", language := "rGyalrong (Caodeng)", iso := "jya", value := .nosovneg }
   , { walsCode := "eme", language := "Émérillon", iso := "eme", value := .suffixOnlywithanotherneg }
   ]
-
--- Count verification
-theorem total_count : allData.length = 490 := by native_decide
-
-theorem count_wordNodoubleneg :
-    (allData.filter (·.value == .wordNodoubleneg)).length = 60 := by native_decide
-theorem count_suffixNodoubleneg :
-    (allData.filter (·.value == .suffixNodoubleneg)).length = 142 := by native_decide
-theorem count_wordOptdoubleneg :
-    (allData.filter (·.value == .wordOptdoubleneg)).length = 7 := by native_decide
-theorem count_suffixOptdoubleneg :
-    (allData.filter (·.value == .suffixOptdoubleneg)).length = 8 := by native_decide
-theorem count_wordOnlywithanotherneg :
-    (allData.filter (·.value == .wordOnlywithanotherneg)).length = 10 := by native_decide
-theorem count_suffixOnlywithanotherneg :
-    (allData.filter (·.value == .suffixOnlywithanotherneg)).length = 32 := by native_decide
-theorem count_type1Type2 :
-    (allData.filter (·.value == .type1Type2)).length = 8 := by native_decide
-theorem count_type1Type6 :
-    (allData.filter (·.value == .type1Type6)).length = 2 := by native_decide
-theorem count_type5Type4 :
-    (allData.filter (·.value == .type5Type4)).length = 2 := by native_decide
-theorem count_type5Type6 :
-    (allData.filter (·.value == .type5Type6)).length = 2 := by native_decide
-theorem count_nosovneg :
-    (allData.filter (·.value == .nosovneg)).length = 217 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

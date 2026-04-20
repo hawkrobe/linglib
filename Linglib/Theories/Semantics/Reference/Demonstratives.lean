@@ -67,7 +67,7 @@ structure TrueDemonstrative (C : Type*) (W : Type*) (E : Type*) where
   /-- The associated demonstration -/
   demonstration : Demonstration C E
   /-- Optional sortal restriction (e.g., "that *planet*") -/
-  sortal : Option (E → W → Bool) := none
+  sortal : Option (E → W → Prop) := none
 
 /-- The character of a true demonstrative: in each context, rigidly designate
 the demonstratum (if the demonstration succeeds).

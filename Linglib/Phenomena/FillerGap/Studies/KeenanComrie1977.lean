@@ -438,7 +438,7 @@ theorem english_kc_matches_wals :
 theorem welsh_kc_covers_deeper_than_wals :
     welsh.lowestCovered = .objComparison ∧
     Typology.welsh.lowestRelativizable = .oblique ∧
-    AHPosition.moreAccessible .oblique .objComparison = true := by native_decide
+    AHPosition.moreAccessible .oblique .objComparison := by decide
 
 /-- Korean: KCProfile covers SU-OBL + GEN, lowest = GEN.
     WALS records `.oblique` (doesn't track GEN). -/

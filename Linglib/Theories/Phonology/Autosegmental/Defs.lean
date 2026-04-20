@@ -92,7 +92,7 @@ def AutosegRep.delink (r : AutosegRep) (pos : Nat) (n : GeomNode) :
     the entire node (including unspecified features) is copied, not just
     the specified ones. -/
 def copyFeaturesUnder (tgt src : Segment) (n : GeomNode) : Segment where
-  spec f := if f.dominatedBy n then src.spec f else tgt.spec f
+  spec f := if decide (f.DominatedBy n) then src.spec f else tgt.spec f
 
 /-- Spread node `n` from position `pos + 1` onto position `pos`, replacing
     the target's features under `n` with the trigger's values and recording
@@ -126,7 +126,7 @@ theorem copyFeaturesUnder_agreeAt (tgt src : Segment) (n : GeomNode) :
     agreeAt (copyFeaturesUnder tgt src n) src n = true := by
   simp only [agreeAt, copyFeaturesUnder, GeomNode.features]
   exact all_filter_if_beq_self Feature.allFeatures
-    (fun f => n.dominates f.node) src.spec tgt.spec
+    (fun f => decide (f.DominatedBy n)) src.spec tgt.spec
 
 -- ============================================================================
 -- § 5: Verification Theorems

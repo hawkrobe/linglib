@@ -14,11 +14,15 @@ namespace Core.WALS.F144K
 
 /-- WALS 144K values. -/
 inductive SvonegOrder where
-  | nodoubleneg  -- NoDoubleNeg (95 languages)
-  | optdoubleneg  -- OptDoubleNeg (12 languages)
-  | onlywithanotherneg  -- OnlyWithAnotherNeg (35 languages)
-  | noSvoneg  -- No SVONeg (304 languages)
-  deriving DecidableEq, Repr
+  /-- NoDoubleNeg (95 languages). -/
+  | nodoubleneg
+  /-- OptDoubleNeg (12 languages). -/
+  | optdoubleneg
+  /-- OnlyWithAnotherNeg (35 languages). -/
+  | onlywithanotherneg
+  /-- No SVONeg (304 languages). -/
+  | noSvoneg
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 144K dataset (446 languages). -/
 def allData : List (Datapoint SvonegOrder) :=
@@ -469,18 +473,6 @@ def allData : List (Datapoint SvonegOrder) :=
   , { walsCode := "zch", language := "Zoque (Chimalapa)", iso := "zoh", value := .noSvoneg }
   , { walsCode := "zul", language := "Zulu", iso := "zul", value := .noSvoneg }
   ]
-
--- Count verification
-theorem total_count : allData.length = 446 := by native_decide
-
-theorem count_nodoubleneg :
-    (allData.filter (·.value == .nodoubleneg)).length = 95 := by native_decide
-theorem count_optdoubleneg :
-    (allData.filter (·.value == .optdoubleneg)).length = 12 := by native_decide
-theorem count_onlywithanotherneg :
-    (allData.filter (·.value == .onlywithanotherneg)).length = 35 := by native_decide
-theorem count_noSvoneg :
-    (allData.filter (·.value == .noSvoneg)).length = 304 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

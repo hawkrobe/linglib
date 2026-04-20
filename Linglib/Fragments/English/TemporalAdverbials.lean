@@ -221,8 +221,8 @@ def allTemporalAdvs : List TemporalAdvEntry := [since, forAdv, ago]
 #guard !inGTIA.usesRuntime
 
 -- Only G-TIA is an NPI
-#guard !inETIA.isNPI
-#guard inGTIA.isNPI
+example : ¬ inETIA.isNPI := by decide
+example : inGTIA.isNPI := by decide
 
 -- E-TIA requires telicity, G-TIA requires negation + perfect
 #guard inETIA.requiresTelic && !inETIA.requiresNegative

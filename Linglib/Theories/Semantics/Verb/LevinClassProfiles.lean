@@ -377,16 +377,23 @@ theorem build_subject_agrees :
 -- § 8d. The derivation produces well-formed ArgTemplates
 
 /-- All canonical root entailments derive well-formed internal constraints
-    (volition → sentience holds for derived subject profiles). -/
+    (volition → sentience holds for derived subject profiles). The
+    `Option.elim False` form simultaneously checks that `toArgTemplate`
+    succeeds on each input and that the resulting template's subject
+    profile is well-formed. -/
 theorem derived_subjects_wellformed :
-    (toArgTemplate .causativeResult |>.map
-      (·.subjectProfile.wellFormedInternal)) = some true ∧
-    (toArgTemplate .pureManner |>.map
-      (·.subjectProfile.wellFormedInternal)) = some true ∧
-    (toArgTemplate .pureResult |>.map
-      (·.subjectProfile.wellFormedInternal)) = some true ∧
-    (toArgTemplate .propertyConcept |>.map
-      (·.subjectProfile.wellFormedInternal)) = some true := by
-  exact ⟨rfl, rfl, rfl, rfl⟩
+    (toArgTemplate .causativeResult).elim False
+      (·.subjectProfile.WellFormedInternal) ∧
+    (toArgTemplate .pureManner).elim False
+      (·.subjectProfile.WellFormedInternal) ∧
+    (toArgTemplate .pureResult).elim False
+      (·.subjectProfile.WellFormedInternal) ∧
+    (toArgTemplate .propertyConcept).elim False
+      (·.subjectProfile.WellFormedInternal) := by
+  refine ⟨?_, ?_, ?_, ?_⟩
+  · show resultChange.subjectProfile.WellFormedInternal; decide
+  · show selfMotion.subjectProfile.WellFormedInternal; decide
+  · show unaccusativeCoS.subjectProfile.WellFormedInternal; decide
+  · show perception.subjectProfile.WellFormedInternal; decide
 
 end Semantics.Verb.LevinClassProfiles

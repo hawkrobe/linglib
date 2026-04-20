@@ -72,9 +72,12 @@ def atom : Literal α → α
   | neg a => a
 
 /-- Whether a literal is positive. -/
-def isPositive : Literal α → Bool
-  | pos _ => true
-  | neg _ => false
+def isPositive : Literal α → Prop
+  | pos _ => True
+  | neg _ => False
+
+instance : DecidablePred (@isPositive α) := fun x => by
+  cases x <;> unfold isPositive <;> infer_instance
 
 /-- The negation of a literal. -/
 def negate : Literal α → Literal α

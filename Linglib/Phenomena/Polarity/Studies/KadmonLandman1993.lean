@@ -7,6 +7,7 @@ import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Theories.Semantics.Quantification.DomainVagueness
 import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
+import Mathlib.Data.Set.Basic
 
 /-!
 # Kadmon & Landman (1993): Any
@@ -366,7 +367,7 @@ theorem sorry_not_classically_de :
     particular subset to have members. My wish could be satisfied in
     another way." -/
 theorem glad_does_not_license (bestOf : World → List World) :
-    ∀ p q : Prop' World, (∀ w, p w → q w) →
+    ∀ p q : Set World, (∀ w, p w → q w) →
       ∀ w, gladFull bestOf p w → gladFull bestOf q w :=
   gladFull_isUE bestOf
 
@@ -444,7 +445,7 @@ The formal proof is imported from `StrawsonEntailment.conditional_antecedent_DE`
     corresponds to Kratzer's modal base — the implicit restriction that
     is held constant. -/
 theorem conditional_satisfies_strengthening
-    (domain : World → List World) (β : (World → Bool)) :
+    (domain : World → List World) (β : Set World) :
     IsDownwardEntailing (λ α => condNecessity domain α β) :=
   conditional_antecedent_DE domain β
 
@@ -460,7 +461,7 @@ theorem conditional_satisfies_strengthening
     presupposition), while adversatives are only *Strawson*-DE (factivity
     presupposition blocks classical DE). -/
 theorem conditional_de_on_constant_domain
-    (domain : World → List World) (β : (World → Bool)) :
+    (domain : World → List World) (β : Set World) :
     IsDE_OnConstant (λ d α => condNecessity d α β) domain :=
   conditional_antecedent_DE domain β
 

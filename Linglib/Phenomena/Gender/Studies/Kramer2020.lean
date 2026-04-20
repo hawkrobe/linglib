@@ -557,7 +557,7 @@ structure NInventory where
 /-- Does this inventory include any arbitrary (uninterpretable) gender? -/
 def NInventory.hasArbitraryGender (inv : NInventory) : Bool :=
   inv.nHeads.any (λ ch => match ch.phi.gender with
-    | some gf => gf.isArbitrary | none => false)
+    | some gf => decide gf.IsArbitrary | none => false)
 
 /-- Is this a purely semantic gender system (no u-features)? -/
 def NInventory.purelySemanticGender (inv : NInventory) : Bool :=

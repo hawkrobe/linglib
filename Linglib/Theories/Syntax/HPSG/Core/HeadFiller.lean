@@ -260,15 +260,18 @@ inductive GapRestriction where
   deriving Repr, DecidableEq
 
 /-- Does this GAP restriction block all extraction? -/
-def GapRestriction.isAbsoluteIsland : GapRestriction → Bool
-  | .noGap => true
-  | _ => false
+def GapRestriction.IsAbsoluteIsland (g : GapRestriction) : Prop :=
+  g = .noGap
+
+instance : DecidablePred GapRestriction.IsAbsoluteIsland :=
+  fun _ => inferInstanceAs (Decidable (_ = _))
 
 /-- Does this GAP restriction allow NP extraction? -/
-def GapRestriction.allowsNPExtraction : GapRestriction → Bool
-  | .unrestricted => true
-  | .npOnly => true
-  | .noGap => false
+def GapRestriction.AllowsNPExtraction (g : GapRestriction) : Prop :=
+  g = .unrestricted ∨ g = .npOnly
+
+instance : DecidablePred GapRestriction.AllowsNPExtraction :=
+  fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- A SLASH value satisfies a GAP restriction if all its gaps are
 permitted by the restriction. -/

@@ -150,27 +150,27 @@ def postnasalDeletion : PhonRule where
 
 /-- /t/ is a voiceless stop: [-cont, -voice]. -/
 theorem t_is_voiceless_stop :
-    t.hasValue Feature.continuant false = true ∧
-    t.hasValue Feature.voice false = true :=
+    t.HasValue Feature.continuant false = true ∧
+    t.HasValue Feature.voice false = true :=
   ⟨by native_decide, by native_decide⟩
 
 /-- /n/ is a nasal: [+nasal, +son]. -/
 theorem n_is_nasal :
-    n.hasValue Feature.nasal true = true ∧
-    n.hasValue Feature.sonorant true = true :=
+    n.HasValue Feature.nasal true = true ∧
+    n.HasValue Feature.sonorant true = true :=
   ⟨by native_decide, by native_decide⟩
 
 /-- /æ/ is a vowel: [+syll, +son]. -/
 theorem æ_is_vowel :
-    æ.hasValue Feature.syllabic true = true ∧
-    æ.hasValue Feature.sonorant true = true :=
+    æ.HasValue Feature.syllabic true = true ∧
+    æ.HasValue Feature.sonorant true = true :=
   ⟨by native_decide, by native_decide⟩
 
 /-- /k/ is a voiceless velar stop: [-cont, -voice, +dor]. -/
 theorem k_is_voiceless_velar_stop :
-    k.hasValue Feature.continuant false = true ∧
-    k.hasValue Feature.voice false = true ∧
-    k.hasValue Feature.dorsal true = true :=
+    k.HasValue Feature.continuant false = true ∧
+    k.HasValue Feature.voice false = true ∧
+    k.HasValue Feature.dorsal true = true :=
   ⟨by native_decide, by native_decide, by native_decide⟩
 
 end Fragments.English.Phonology

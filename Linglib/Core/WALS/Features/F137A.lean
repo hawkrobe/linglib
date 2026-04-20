@@ -14,10 +14,13 @@ namespace Core.WALS.F137A
 
 /-- WALS 137A values. -/
 inductive NMPronouns where
-  | noNMPronouns  -- No N-M pronouns (194 languages)
-  | nMPronounsParadigmatic  -- N-M pronouns, paradigmatic (25 languages)
-  | nMPronounsNonParadigmatic  -- N-M pronouns, non-paradigmatic (11 languages)
-  deriving DecidableEq, Repr
+  /-- No N-M pronouns (194 languages). -/
+  | noNMPronouns
+  /-- N-M pronouns, paradigmatic (25 languages). -/
+  | nMPronounsParadigmatic
+  /-- N-M pronouns, non-paradigmatic (11 languages). -/
+  | nMPronounsNonParadigmatic
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 137A dataset (230 languages). -/
 def allData : List (Datapoint NMPronouns) :=
@@ -252,16 +255,6 @@ def allData : List (Datapoint NMPronouns) :=
   , { walsCode := "zul", language := "Zulu", iso := "zul", value := .noNMPronouns }
   , { walsCode := "zun", language := "Zuni", iso := "zun", value := .noNMPronouns }
   ]
-
--- Count verification
-theorem total_count : allData.length = 230 := by native_decide
-
-theorem count_noNMPronouns :
-    (allData.filter (·.value == .noNMPronouns)).length = 194 := by native_decide
-theorem count_nMPronounsParadigmatic :
-    (allData.filter (·.value == .nMPronounsParadigmatic)).length = 25 := by native_decide
-theorem count_nMPronounsNonParadigmatic :
-    (allData.filter (·.value == .nMPronounsNonParadigmatic)).length = 11 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

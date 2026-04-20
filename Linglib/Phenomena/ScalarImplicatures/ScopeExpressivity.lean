@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Exhaustification.Operators
-import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
+import Linglib.Theories.Pragmatics.RSA.EmbeddedSI
 
 /-!
 # RSA vs EXH: Expressivity Gap
@@ -27,7 +27,7 @@ These give different truth conditions, but standard RSA conflates them.
 namespace Phenomena.ScalarImplicatures.ScopeExpressivity
 
 open Exhaustification
-open RSA.Core.EmbeddedSI
+open RSA.EmbeddedSI
 
 -- SECTION 3: Standard RSA (Scope-Blind)
 

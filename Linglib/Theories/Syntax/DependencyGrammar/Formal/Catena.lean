@@ -1,6 +1,6 @@
 import Mathlib.Combinatorics.SimpleGraph.Maps
 import Mathlib.Combinatorics.SimpleGraph.Connectivity.Connected
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Projection
+import Linglib.Core.Dependency.Projection
 
 /-!
 # Catenae: A Novel Unit of Syntactic Analysis

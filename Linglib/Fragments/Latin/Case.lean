@@ -63,7 +63,7 @@ def neuterSyncretism : Syncretism := nomAccSyncretism
 
 /-- NOM/ACC is same-tier (both rank 6) — trivially adjacent. -/
 theorem neuter_syncretism_adjacent :
-    hierarchyAdjacent .nom .acc = true := by native_decide
+    HierarchyAdjacent .nom .acc := by decide
 
 /-- DAT/ABL syncretism in the plural. -/
 def pluralDatAblSyncretism : Syncretism :=
@@ -73,10 +73,10 @@ def pluralDatAblSyncretism : Syncretism :=
     LOC (rank 3) intervenes. But they ARE inventory-adjacent in the
     standard 6-case system that lacks LOC. -/
 theorem dat_abl_not_strictly_adjacent :
-    hierarchyAdjacent .dat .abl = false := by native_decide
+    ¬ HierarchyAdjacent .dat .abl := by decide
 
 theorem dat_abl_inventory_adjacent :
-    inventoryAdjacent coreInventory .dat .abl = true := by decide
+    InventoryAdjacent coreInventory .dat .abl := by decide
 
 -- ============================================================================
 -- § 3: Case Extension (@cite{heine-2009}, Table 29.6)

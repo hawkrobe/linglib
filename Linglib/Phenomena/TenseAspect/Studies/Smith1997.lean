@@ -164,30 +164,32 @@ def showsFinalPoint : ViewpointType → Bool
   | .prospective => false
 
 /-- Whether the viewpoint presents a closed (completed) situation. -/
-def isClosed : ViewpointType → Bool
-  | .perfective => true
-  | .imperfective => false
-  | .neutral => false    -- neutral allows both open AND closed readings
-  | .perfect => true     -- perfect presents completed event within PTS
-  | .prospective => false
+def isClosed : ViewpointType → Prop
+  | .perfective => True
+  | .imperfective => False
+  | .neutral => False    -- neutral allows both open AND closed readings
+  | .perfect => True     -- perfect presents completed event within PTS
+  | .prospective => False
+
+instance : DecidablePred isClosed := fun x => by cases x <;> unfold isClosed <;> infer_instance
 
 /-- Perfective is informationally closed: both I and F visible. -/
 theorem perfective_closed :
     showsInitialPoint .perfective = true ∧
     showsFinalPoint .perfective = true ∧
-    isClosed .perfective = true := ⟨rfl, rfl, rfl⟩
+    isClosed .perfective := ⟨rfl, rfl, trivial⟩
 
 /-- Imperfective is informationally open: neither I nor F visible. -/
 theorem imperfective_open :
     showsInitialPoint .imperfective = false ∧
     showsFinalPoint .imperfective = false ∧
-    isClosed .imperfective = false := ⟨rfl, rfl, rfl⟩
+    ¬ isClosed .imperfective := ⟨rfl, rfl, not_false⟩
 
 /-- Neutral includes I but not necessarily F — intermediate informativity. -/
 theorem neutral_intermediate :
     showsInitialPoint .neutral = true ∧
     showsFinalPoint .neutral = false ∧
-    isClosed .neutral = false := ⟨rfl, rfl, rfl⟩
+    ¬ isClosed .neutral := ⟨rfl, rfl, not_false⟩
 
 /-- Whether the viewpoint can focus preliminary stages of an event.
     @cite{smith-1997} §4.2.2 (p. 75): imperfective viewpoints may focus

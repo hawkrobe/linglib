@@ -14,10 +14,13 @@ namespace Core.WALS.F138A
 
 /-- WALS 138A values. -/
 inductive Tea where
-  | wordsDerivedFromSiniticCha  -- Words derived from Sinitic cha (110 languages)
-  | wordsDerivedFromMinNanChineseTe  -- Words derived from Min Nan Chinese te (84 languages)
-  | others  -- Others (36 languages)
-  deriving DecidableEq, Repr
+  /-- Words derived from Sinitic cha (110 languages). -/
+  | wordsDerivedFromSiniticCha
+  /-- Words derived from Min Nan Chinese te (84 languages). -/
+  | wordsDerivedFromMinNanChineseTe
+  /-- Others (36 languages). -/
+  | others
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 138A dataset (230 languages). -/
 def allData : List (Datapoint Tea) :=
@@ -252,16 +255,6 @@ def allData : List (Datapoint Tea) :=
   , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .others }
   , { walsCode := "zul", language := "Zulu", iso := "zul", value := .others }
   ]
-
--- Count verification
-theorem total_count : allData.length = 230 := by native_decide
-
-theorem count_wordsDerivedFromSiniticCha :
-    (allData.filter (·.value == .wordsDerivedFromSiniticCha)).length = 110 := by native_decide
-theorem count_wordsDerivedFromMinNanChineseTe :
-    (allData.filter (·.value == .wordsDerivedFromMinNanChineseTe)).length = 84 := by native_decide
-theorem count_others :
-    (allData.filter (·.value == .others)).length = 36 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

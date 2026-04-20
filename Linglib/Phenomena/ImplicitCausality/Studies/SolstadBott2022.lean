@@ -332,16 +332,16 @@ theorem theta_reversal_at_proto_level :
     "What the noise did was frighten John" is grammatical because the
     subject has the causation entailment (Dowty's P-Agent (c)). -/
 theorem stimExp_subject_passes_doTest :
-    passesDoTestFromProfile stimExpSubjectProfile = true := by native_decide
+    PassesDoTestFromProfile stimExpSubjectProfile := by decide
 
 /-- ExpStim subjects fail the do-test (experiencers lack volition,
     causation, and movement). "??What Mary did was admire John" is marginal. -/
 theorem expStim_subject_fails_doTest :
-    passesDoTestFromProfile expStimSubjectProfile = false := by native_decide
+    ¬ PassesDoTestFromProfile expStimSubjectProfile := by decide
 
 /-- AgPat subjects pass the do-test (full agents). -/
 theorem agPat_subject_passes_doTest :
-    passesDoTestFromProfile agPatSubjectProfile = true := by native_decide
+    PassesDoTestFromProfile agPatSubjectProfile := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to ThetaRole

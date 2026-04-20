@@ -334,23 +334,12 @@ def NonperiphrCausativeType.hasMorphological : NonperiphrCausativeType -> Bool
 -- These theorems re-derive aggregate counts from the generated data, ensuring
 -- the numbers in our generalizations below stay in sync with the source.
 
-theorem reciprocal_total : Core.WALS.F106A.allData.length = 175 :=
-  Core.WALS.F106A.total_count
-theorem passive_total : Core.WALS.F107A.allData.length = 373 :=
-  Core.WALS.F107A.total_count
-theorem antipassive_total : Core.WALS.F108A.allData.length = 194 :=
-  Core.WALS.F108A.total_count
-theorem antipassive_productivity_total : Core.WALS.F108B.allData.length = 186 := by
-  exact Core.WALS.F108B.total_count
-theorem nonperiphr_causative_total : Core.WALS.F111A.allData.length = 310 :=
-  Core.WALS.F111A.total_count
+-- Per-feature dataset sizes (175, 373, 194, 186, 310 for F{106A,107A,108A,108B,111A})
+-- are documented in each feature's module docstring; we don't restate them here.
 
 -- ---- F105A: Ditransitive Constructions ----
 
 private abbrev f105a := Core.WALS.F105A.allData
-
-theorem ditransitive_total : f105a.length = 378 :=
-  Core.WALS.F105A.total_count
 
 /-- Convert WALS 105A value to our DitransitiveType. -/
 private def fromWALS105A : Core.WALS.F105A.DitransitiveConstructionsTheVerbGive → DitransitiveType
@@ -371,9 +360,6 @@ theorem f105a_count_mixed :
 -- ---- F109A: Applicative Constructions ----
 
 private abbrev f109a := Core.WALS.F109A.allData
-
-theorem applicative_total : f109a.length = 183 :=
-  Core.WALS.F109A.total_count
 
 /-- Convert WALS 109A value to our ApplicativeType.
     The WALS enum encodes base-transitivity and semantic role together;
@@ -408,9 +394,6 @@ theorem f109a_count_noApplicative :
 -- ---- F109B: Other Roles of Applied Objects ----
 
 private abbrev f109b := Core.WALS.F109B.allData
-
-theorem applied_object_role_total : f109b.length = 183 :=
-  Core.WALS.F109B.total_count
 
 /-- Convert WALS 109B value to an optional AppliedObjectRole.
     Returns `none` for languages without applicative constructions,

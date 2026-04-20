@@ -17,8 +17,8 @@ A respondent can infer likely decision problems from the question asked.
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
+import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Theories.Pragmatics.RSA.Limits
 import Linglib.Tactics.RSAPredict
 import Linglib.Core.Agent.ExperimentDesign
 import Linglib.Phenomena.Questions.Studies.VanRooy2003

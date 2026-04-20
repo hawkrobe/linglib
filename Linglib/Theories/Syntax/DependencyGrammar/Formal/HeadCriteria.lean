@@ -20,7 +20,7 @@ Given a construction C containing words H and D:
 
 -/
 
-import Linglib.Theories.Syntax.DependencyGrammar.Core.Basic
+import Linglib.Core.Dependency.Basic
 
 namespace DepGrammar.HeadCriteria
 

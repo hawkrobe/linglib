@@ -186,21 +186,21 @@ theorem qidai_builder_not_cDistributive :
 /-- Hope is Class 3 (C-dist + positive → anti-rogative) -/
 theorem hope_builder_class3 :
     Preferential.nvpClass (.degreeComparison .positive) = .class3_cDist_positive := by
-  native_decide
+  decide
 
 /-- Fear is Class 2 (C-dist + negative → takes questions) -/
 theorem fear_builder_class2 :
     Preferential.nvpClass (.degreeComparison .negative) = .class2_cDist_negative := by
-  native_decide
+  decide
 
 /-- Worry is Class 1 (non-C-dist → takes questions) -/
 theorem worry_builder_class1 :
     Preferential.nvpClass .uncertaintyBased = .class1_nonCDist := by
-  native_decide
+  decide
 
 /-- Qidai is Class 1 (non-C-dist → takes questions despite positive valence) -/
 theorem qidai_builder_class1 :
     Preferential.nvpClass (.relevanceBased .positive) = .class1_nonCDist := by
-  native_decide
+  decide
 
 end Semantics.Attitudes.BuilderProperties

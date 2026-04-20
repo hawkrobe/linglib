@@ -44,16 +44,6 @@ inductive SurfaceGender where
   | inanimate
   deriving DecidableEq, Repr, Inhabited, BEq
 
-/-- Whether this gender is from a sex-based system. -/
-def SurfaceGender.isSexBased : SurfaceGender → Bool
-  | .masculine | .feminine | .neuter | .common => true
-  | .animate | .inanimate => false
-
-/-- Whether this gender is from an animacy-based system. -/
-def SurfaceGender.isAnimacyBased : SurfaceGender → Bool
-  | .animate | .inanimate => true
-  | _ => false
-
 /-- Map surface gender to Universal Dependencies gender where a natural
     correspondence exists. Animacy-based genders have no standard UD
     equivalent. -/

@@ -1,7 +1,8 @@
 import Linglib.Core.Modality.ModalTypes
-import Linglib.Fragments.English.FunctionWords
+import Linglib.Fragments.English.Auxiliaries
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Phenomena.Modality.ModalConcord.Data
+import Mathlib.Data.Set.Basic
 
 /-!
 # @cite{ciardelli-guerrini-2026} — Against Wide Scope Free Choice
@@ -67,7 +68,7 @@ namespace CiardelliGuerrini2026
 open Core.Modality
 open Exhaustification.FreeChoice (diamond pdisj diamond_distributes_iff FCAltSet free_choice_forward)
 open Exhaustification (pand)
-open Fragments.English.FunctionWords
+open Fragments.English.Auxiliaries
 
 -- ============================================================================
 -- §1. Semantic Equivalence: ◇(A∨B) ↔ ◇A ∨ ◇B
@@ -89,7 +90,7 @@ matters only for compositional derivation and pragmatic enrichment.
     The scope distinction is truth-conditionally vacuous — it matters
     only for pragmatic enrichment. This is the central observation of
     @cite{ciardelli-guerrini-2026}. -/
-example {World : Type*} (p q : Prop' World) :
+example {World : Type*} (p q : Set World) :
     diamond (pdisj p q) ↔ diamond p ∨ diamond q :=
   diamond_distributes_iff p q
 
@@ -324,7 +325,7 @@ active** — exhaustification produces opposite results:
     narrow-scope LF (derived via concord) fed to the standard
     exhaustification mechanism. Uses `free_choice_forward` from
     `Exhaustification/FreeChoice.lean`. -/
-theorem narrowScope_yields_fc {World : Type*} (A B : Prop' World)
+theorem narrowScope_yields_fc {World : Type*} (A B : Set World)
     (hExh : (FCAltSet.mk A B).exh2) : diamond A ∧ diamond B :=
   free_choice_forward ⟨A, B⟩ hExh
 
@@ -333,18 +334,18 @@ theorem narrowScope_yields_fc {World : Type*} (A B : Prop' World)
 
     This is the standard scalar implicature for disjunction: "A or B"
     implicates "not both." -/
-def wideScopeExh {World : Type*} (A B : Prop' World) : Prop :=
+def wideScopeExh {World : Type*} (A B : Set World) : Prop :=
   (diamond A ∨ diamond B) ∧ ¬(diamond A ∧ diamond B)
 
 /-- Wide-scope exhaustification is **incompatible** with free choice.
     FC = ◇A ∧ ◇B, but wide-scope Exh asserts ¬(◇A ∧ ◇B). -/
-theorem wideScope_blocks_fc {World : Type*} (A B : Prop' World)
+theorem wideScope_blocks_fc {World : Type*} (A B : Set World)
     (h : wideScopeExh A B) : ¬(diamond A ∧ diamond B) :=
   h.2
 
 /-- Truth-conditional equivalence: the scope distinction is semantically
     vacuous. ◇(A∨B) ↔ ◇A∨◇B in standard modal logic. -/
-theorem scope_equivalence {World : Type*} (A B : Prop' World) :
+theorem scope_equivalence {World : Type*} (A B : Set World) :
     diamond (pdisj A B) ↔ diamond A ∨ diamond B :=
   diamond_distributes_iff A B
 
@@ -359,7 +360,7 @@ theorem scope_equivalence {World : Type*} (A B : Prop' World) :
     There is no separate problem of "wide-scope free choice" — the FC
     reading arises exclusively from the narrow-scope LF, which is
     derived via modal concord (`ConcordDerivation`). -/
-theorem reductionist_thesis {World : Type*} (A B : Prop' World) :
+theorem reductionist_thesis {World : Type*} (A B : Set World) :
     -- (1) Narrow scope + exhaustification → free choice
     ((FCAltSet.mk A B).exh2 → diamond A ∧ diamond B) ∧
     -- (2) Wide scope + exhaustification → NOT free choice
@@ -575,7 +576,7 @@ truth-conditional consequences for conjunction.
 /-- For conjunction, narrow scope is strictly stronger than wide scope:
     ◇(A ∧ B) → ◇A ∧ ◇B but not conversely. -/
 theorem conjunctive_narrow_stronger {World : Type*}
-    (p q : Prop' World)
+    (p q : Set World)
     (h : diamond (pand p q)) : diamond p ∧ diamond q := by
   obtain ⟨w, hp, hq⟩ := h
   exact ⟨⟨w, hp⟩, ⟨w, hq⟩⟩

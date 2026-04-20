@@ -319,8 +319,8 @@ semantic relation is idiosyncratic and must be listed in the lexicon
 def dasi_morph : MorphWord :=
   .compound (.root { form := "da", gloss := "hit" }) (.root { form := "si", gloss := "die" })
 
-/-- V-V compounds are recognized as compounds by `isCompound`. -/
-theorem dasi_is_compound : dasi_morph.isCompound = true := rfl
+/-- V-V compounds are recognized as compounds by `IsCompound`. -/
+theorem dasi_is_compound : dasi_morph.IsCompound := by decide
 
 /-- Surface form is concatenation of V1 + V2. -/
 theorem dasi_surface : dasi_morph.surface = "dasi" := rfl
@@ -332,7 +332,7 @@ theorem dasi_morpheme_count : dasi_morph.morphemeCount = 2 := rfl
 def kulei_morph : MorphWord :=
   .compound (.root { form := "ku", gloss := "cry" }) (.root { form := "lei", gloss := "tired" })
 
-theorem kulei_is_compound : kulei_morph.isCompound = true := rfl
+theorem kulei_is_compound : kulei_morph.IsCompound := by decide
 theorem kulei_surface : kulei_morph.surface = "kulei" := rfl
 
 -- ════════════════════════════════════════════════════
@@ -413,18 +413,18 @@ theorem phase_covers_all_cos :
 
 /-- The CoS presupposition for inceptive phase complements (dǎo, hǎo, diào):
     the result state was NOT holding before the event.
-    Connects to `priorStatePresup .inception P w = !P w` from
+    Connects to `priorStatePresup .inception P w = ¬ P w` from
     `ChangeOfState.Theory`. -/
-theorem inceptive_phase_presup {W : Type*} (P : W → Bool) (w : W) :
-    priorStatePresup PhaseComplement.dao.cosType P w = !P w := rfl
+theorem inceptive_phase_presup {W : Type*} (P : W → Prop) (w : W) :
+    priorStatePresup PhaseComplement.dao.cosType P w = ¬ P w := rfl
 
 /-- The CoS presupposition for the cessative phase complement (wán):
     the activity WAS happening before the event. -/
-theorem cessative_phase_presup {W : Type*} (P : W → Bool) :
+theorem cessative_phase_presup {W : Type*} (P : W → Prop) :
     priorStatePresup PhaseComplement.wan.cosType P = P := rfl
 
 /-- The continuation phase complement (zhù) presupposes P and asserts P. -/
-theorem continuation_phase_presup {W : Type*} (P : W → Bool) :
+theorem continuation_phase_presup {W : Type*} (P : W → Prop) :
     priorStatePresup PhaseComplement.zhu.cosType P = P := rfl
 
 -- ════════════════════════════════════════════════════
@@ -466,7 +466,7 @@ theorem vv_compound_architecture :
     -- Tight causation (direct, single law)
     completesForEffect dasiModel Situation.empty hittingVar deathVar = true ∧
     -- Morphological compound
-    dasi_morph.isCompound = true ∧
+    dasi_morph.IsCompound ∧
     -- Subject-oriented resultatives exist (no DOR)
     (allCompounds.any (·.orientation == .subjectOriented)) = true ∧
     -- V-V is opaque, V-de is transparent
@@ -480,6 +480,6 @@ theorem vv_compound_architecture :
     (allPhaseComplements.any (·.phase.cosType == .cessation)) = true ∧
     -- Constructional BECOME = inception
     resultStateMapsToCoS = .inception := by
-  refine ⟨?_, rfl, ?_, ?_, ?_, ?_, ?_, rfl⟩ <;> native_decide
+  refine ⟨?_, by decide, ?_, ?_, ?_, ?_, ?_, rfl⟩ <;> native_decide
 
 end Tay2024

@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
-import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
-import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
+import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Theories.Pragmatics.RSA.ArgumentativeStrength
+import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility
 import Mathlib.Data.Rat.Defs
 
 /-!
@@ -60,6 +60,10 @@ plays the role of β. The s1Score uses precomputed L0(longer|u) values squared
 set_option autoImplicit false
 
 namespace BarnettEtAl2022
+
+-- TODO: Bool→Prop cascade to Linglib/Theories/Pragmatics/RSA/Core/Config.lean
+-- (`isLonger` flows into `RSAConfig.L0_marginal`/`L1_marginal` and `s1ScoreQ`,
+-- which expect `W → Bool`; cannot migrate without changing the RSAConfig API.)
 
 open RSA.ArgumentativeStrength
 open RSA.CombinedUtility

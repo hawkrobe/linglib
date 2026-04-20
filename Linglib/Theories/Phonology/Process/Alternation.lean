@@ -76,7 +76,9 @@ inductive Side where
     - `side`         : whether the triggering context precedes (`.left`,
       eq. 6) or follows (`.right`, eq. 8) the unspecified target slot.
     - `targetIsContext` : the natural class `C` — the rule fires only when
-      the tier-adjacent segment satisfies this predicate.
+      the tier-adjacent segment satisfies this predicate. Following
+      mathlib's `Finset.filter` convention this is `Prop`-valued with
+      `[DecidablePred]` carried as the instance field `decTarget`.
     - `relation`     : `.agree` (assimilation) or `.disagree` (dissimilation).
     - `featureValue` : the value of `F` extracted from a context segment.
       `none` means the segment is itself underspecified for `F`, in which
@@ -87,7 +89,8 @@ inductive Side where
 structure TierRule (α : Type) where
   tier : Tier α α
   side : Side := .left
-  targetIsContext : α → Bool
+  targetIsContext : α → Prop
+  [decTarget : DecidablePred targetIsContext]
   relation : Relation
   featureValue : α → Option Bool
   default : Option Bool := none
@@ -95,6 +98,8 @@ structure TierRule (α : Type) where
 namespace TierRule
 
 variable {α : Type}
+
+attribute [instance] TierRule.decTarget
 
 /-- The value the rule predicts at the unspecified slot, given the rule
     `r`, the *preceding* segments `pre`, and the *following* segments
@@ -143,7 +148,7 @@ def flipRelation (r : TierRule α) : TierRule α :=
 theorem id_tier_left_is_strict_local (r : TierRule α)
     (h_id : r.tier = Tier.id) (h_side : r.side = .left) (pre : List α) :
     apply r pre [] =
-      (match (pre.filter r.targetIsContext).getLast? with
+      (match (pre.filter (fun x => decide (r.targetIsContext x))).getLast? with
         | none => r.default
         | some ctx => match r.featureValue ctx with
                       | none => r.default

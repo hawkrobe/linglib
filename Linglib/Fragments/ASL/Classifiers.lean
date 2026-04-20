@@ -52,39 +52,53 @@ inductive Entity where
 -- ════════════════════════════════════════════════════════════════
 
 /-- Logical predicate: is the entity a tree? -/
-def isTree : Entity → Bool
-  | .tree => true
-  | _ => false
+def isTree : Entity → Prop
+  | .tree => True
+  | _ => False
+
+instance : DecidablePred isTree := fun e => by cases e <;> unfold isTree <;> infer_instance
 
 /-- Logical predicate: is the entity a pole? -/
-def isPole : Entity → Bool
-  | .pole => true
-  | _ => false
+def isPole : Entity → Prop
+  | .pole => True
+  | _ => False
+
+instance : DecidablePred isPole := fun e => by cases e <;> unfold isPole <;> infer_instance
 
 /-- Logical predicate: is the entity a person? -/
-def isPerson : Entity → Bool
-  | .ann => true
-  | _ => false
+def isPerson : Entity → Prop
+  | .ann => True
+  | _ => False
+
+instance : DecidablePred isPerson := fun e => by cases e <;> unfold isPerson <;> infer_instance
 
 /-- Logical predicate: is the entity a vehicle? -/
-def isVehicle : Entity → Bool
-  | .vehicle => true
-  | _ => false
+def isVehicle : Entity → Prop
+  | .vehicle => True
+  | _ => False
+
+instance : DecidablePred isVehicle := fun e => by cases e <;> unfold isVehicle <;> infer_instance
 
 /-- Logical predicate: is the entity a wall or flat surface? -/
-def isWall : Entity → Bool
-  | .wall => true
-  | _ => false
+def isWall : Entity → Prop
+  | .wall => True
+  | _ => False
+
+instance : DecidablePred isWall := fun e => by cases e <;> unfold isWall <;> infer_instance
 
 /-- Logical predicate: is the entity a rectangular object? -/
-def isRectangle : Entity → Bool
-  | .rectangle => true
-  | _ => false
+def isRectangle : Entity → Prop
+  | .rectangle => True
+  | _ => False
+
+instance : DecidablePred isRectangle := fun e => by cases e <;> unfold isRectangle <;> infer_instance
 
 /-- Logical predicate: is the entity a corner? -/
-def isCorner : Entity → Bool
-  | .corner => true
-  | _ => false
+def isCorner : Entity → Prop
+  | .corner => True
+  | _ => False
+
+instance : DecidablePred isCorner := fun e => by cases e <;> unfold isCorner <;> infer_instance
 
 -- ════════════════════════════════════════════════════════════════
 -- § Classifier Entries

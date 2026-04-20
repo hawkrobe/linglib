@@ -444,9 +444,9 @@ theorem inanimate_is_iAnimNeg :
     is always interpretable, and connects H&H's claim that core noun
     class lives on n to Kramer's n-head architecture. -/
 theorem core_features_are_interpretable :
-    GenderFeature.isNatural (toGenderFeature AnimacyFeatures.human) = true ∧
-    GenderFeature.isNatural (toGenderFeature AnimacyFeatures.animal) = true ∧
-    GenderFeature.isNatural (toGenderFeature AnimacyFeatures.inanimate) = true :=
+    GenderFeature.IsNatural (toGenderFeature AnimacyFeatures.human) ∧
+    GenderFeature.IsNatural (toGenderFeature AnimacyFeatures.animal) ∧
+    GenderFeature.IsNatural (toGenderFeature AnimacyFeatures.inanimate) :=
   ⟨rfl, rfl, rfl⟩
 
 /-- H&H's `GenderStatus.uninterpretable` corresponds to Kramer's
@@ -455,8 +455,8 @@ theorem core_features_are_interpretable :
 theorem interpretability_alignment :
     GenderStatus.isInterpretable (.interpretable .human) = true ∧
     GenderStatus.isInterpretable .uninterpretable = false ∧
-    GenderFeature.isNatural iAnimPos = true ∧
-    GenderFeature.isArbitrary { interp := .u, val := { dim := .anim, pol := .pos } } = true :=
+    GenderFeature.IsNatural iAnimPos ∧
+    GenderFeature.IsArbitrary { interp := .u, val := { dim := .anim, pol := .pos } } :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end KramerBridge

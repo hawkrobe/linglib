@@ -139,12 +139,12 @@ This is formalized in `WordhoodBridge`. -/
 
 /-- Affixhood (in MorphStatus) is equivalent to ms-boundedness. -/
 theorem affix_iff_msbound (s : Core.Morphology.MorphStatus) :
-    s.isAffix = true ↔ morphStatusToMSBound s = .bound :=
+    s.IsAffix ↔ morphStatusToMSBound s = .bound :=
   affix_iff_ms_bound s
 
 /-- Clitichood implies ms-freedom. -/
 theorem clitic_implies_msfree (s : Core.Morphology.MorphStatus)
-    (h : s.isClitic = true) : morphStatusToMSBound s = .free :=
+    (h : s.IsClitic) : morphStatusToMSBound s = .free :=
   clitic_implies_ms_free s h
 
 /-! ### 2c. PrWd diagnostics determine p-boundedness

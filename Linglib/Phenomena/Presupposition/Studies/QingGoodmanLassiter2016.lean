@@ -1,5 +1,5 @@
 import Linglib.Tactics.RSAPredict
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Semantics.Verb.ChangeOfState.Theory
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -130,21 +130,27 @@ open Semantics.Verb.ChangeOfState (priorStatePresup resultStateAssertion)
     separates prior state (`past`) from current state (`now`). We use `·.past`
     for the presupposition and `·.now` for the assertion. -/
 theorem stopped_matches_cessation (w : WorldState) :
-    literalMeaning .stoppedSmoking w =
-    (priorStatePresup .cessation (·.past) w &&
-     resultStateAssertion .cessation (·.now) w) := rfl
+    literalMeaning .stoppedSmoking w = true ↔
+    (priorStatePresup .cessation (fun w => w.past = true) w ∧
+     resultStateAssertion .cessation (fun w => w.now = true) w) := by
+  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
+    WorldState.past, WorldState.now]
 
 /-- "Started smoking" = inception presupposition (past=F) ∧ inception assertion (now=T). -/
 theorem started_matches_inception (w : WorldState) :
-    literalMeaning .startedSmoking w =
-    (priorStatePresup .inception (·.past) w &&
-     resultStateAssertion .inception (·.now) w) := rfl
+    literalMeaning .startedSmoking w = true ↔
+    (priorStatePresup .inception (fun w => w.past = true) w ∧
+     resultStateAssertion .inception (fun w => w.now = true) w) := by
+  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
+    WorldState.past, WorldState.now]
 
 /-- "Always smoked" = continuation presupposition (past=T) ∧ continuation assertion (now=T). -/
 theorem always_matches_continuation (w : WorldState) :
-    literalMeaning .alwaysSmoked w =
-    (priorStatePresup .continuation (·.past) w &&
-     resultStateAssertion .continuation (·.now) w) := rfl
+    literalMeaning .alwaysSmoked w = true ↔
+    (priorStatePresup .continuation (fun w => w.past = true) w ∧
+     resultStateAssertion .continuation (fun w => w.now = true) w) := by
+  cases w <;> simp [literalMeaning, priorStatePresup, resultStateAssertion,
+    WorldState.past, WorldState.now]
 
 -- ============================================================================
 -- §4. Context Sets (Common Ground)

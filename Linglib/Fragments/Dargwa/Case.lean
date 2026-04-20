@@ -71,7 +71,7 @@ def patientCase : Core.Case := .abs
 
 /-- The inventory contains both core ergative cases. -/
 theorem has_core_ergative :
-    Core.Case.abs ∈ caseInventory ∧ Core.Case.erg ∈ caseInventory := by
+    .abs ∈ caseInventory ∧ .erg ∈ caseInventory := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- Dargwa is consistently ergative (no split). -/

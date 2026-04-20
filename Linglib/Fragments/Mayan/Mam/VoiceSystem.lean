@@ -247,9 +247,9 @@ theorem mam_voice_count :
 
 /-- Mam is not a simple active/passive system — it also has antipassive. -/
 theorem mam_not_simple_active_passive :
-    mamVoiceSystem.isActivePassive = false := by native_decide
+    ¬ mamVoiceSystem.isActivePassive := by decide
 
 theorem mam_no_oblique_pivots :
-    mamVoiceSystem.distinguishesObliques = false := rfl
+    ¬ mamVoiceSystem.distinguishesObliques := by decide
 
 end Fragments.Mayan.Mam

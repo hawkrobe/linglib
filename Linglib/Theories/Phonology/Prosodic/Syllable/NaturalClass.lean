@@ -64,15 +64,15 @@ def NatClass.parkerSonority : NatClass → Nat
     Follows the feature decomposition of `SonorityRank` but additionally
     splits obstruents by [±voice] (@cite{parker-2002}). -/
 def natClassOf (s : Segment) : NatClass :=
-  if s.hasValue .sonorant false then
+  if s.HasValue .sonorant false then
     -- Obstruent: split by [±continuant] then [±voice]
-    if s.hasValue .continuant true then
-      if s.hasValue .voice true then .vdf else .vlf
+    if s.HasValue .continuant true then
+      if s.HasValue .voice true then .vdf else .vlf
     else
-      if s.hasValue .voice true then .vds else .vls
-  else if s.hasValue .approximant false then .nasal
-  else if s.hasValue .consonantal true then .liquid
-  else if s.hasValue .syllabic true then .vowel
+      if s.HasValue .voice true then .vds else .vls
+  else if s.HasValue .approximant false then .nasal
+  else if s.HasValue .consonantal true then .liquid
+  else if s.HasValue .syllabic true then .vowel
   else .glide
 
 /-- Parker sonority of a segment (convenience). -/

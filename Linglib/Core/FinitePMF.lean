@@ -3,6 +3,7 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Data.Set.Basic
 import Mathlib.Tactic.Linarith
 
 /-!
@@ -168,6 +169,140 @@ theorem probOf_target_pos_of_condProb_gt (pmf : FinitePMF W) (cond target : W �
                (pmf.probOf_nonneg _)
   have : pmf.condProb cond target = 0 := by
     rw [condProb_of_pos pmf cond target hPc, hAnd_eq]; simp
+  linarith
+
+/-! ## Set-based API (mathlib-aligned)
+
+The `probOf`/`condProb` functions above take `W → Bool` predicates for
+historical reasons (compatibility with earlier Bool/List question
+infrastructure). The mathlib-aligned API takes `Set W` with a
+`DecidablePred (· ∈ s)` typeclass instance, mirroring `MeasureTheory.Measure`.
+
+The two APIs are equated by `probOfSet_eq_probOf_setOf` and friends.
+New code should prefer the Set form. -/
+
+/-- Probability mass of worlds in a set, mathlib-aligned form.
+
+`probOfSet pmf s = ∑ w, if w ∈ s then pmf.mass w else 0`
+
+The Set-based sibling of `probOf`. Requires `[DecidablePred (· ∈ s)]` so
+the indicator is computable. Used by the mathlib-pure question infrastructure
+(`Core.Issue` consumers). -/
+def probOfSet (pmf : FinitePMF W) (s : Set W) [DecidablePred (· ∈ s)] : ℚ :=
+  ∑ w : W, if w ∈ s then pmf.mass w else 0
+
+/-- Conditional probability P(target | condition), mathlib-aligned form.
+
+The Set-based sibling of `condProb`. -/
+def condProbSet (pmf : FinitePMF W) (cond target : Set W)
+    [DecidablePred (· ∈ cond)] [DecidablePred (· ∈ target)] : ℚ :=
+  let pCond := pmf.probOfSet cond
+  if pCond > 0 then
+    pmf.probOfSet (cond ∩ target) / pCond
+  else 0
+
+/-- `probOfSet` is nonneg. -/
+theorem probOfSet_nonneg (pmf : FinitePMF W) (s : Set W) [DecidablePred (· ∈ s)] :
+    0 ≤ pmf.probOfSet s := by
+  unfold probOfSet
+  exact Finset.sum_nonneg fun w _ => by
+    split_ifs <;> [exact pmf.mass_nonneg w; linarith]
+
+/-- `probOfSet` agrees with `probOf` after coercing the Bool predicate to its
+characteristic set. -/
+theorem probOfSet_eq_probOf (pmf : FinitePMF W) (φ : W → Bool) :
+    pmf.probOfSet {w | φ w} = pmf.probOf φ := by
+  unfold probOfSet probOf
+  apply Finset.sum_congr rfl
+  intro w _
+  by_cases h : φ w
+  · simp [h, Set.mem_setOf_eq]
+  · simp [h, Set.mem_setOf_eq]
+
+/-- `condProbSet` unfolds when conditioning event has positive probability. -/
+theorem condProbSet_of_pos (pmf : FinitePMF W) (cond target : Set W)
+    [DecidablePred (· ∈ cond)] [DecidablePred (· ∈ target)]
+    (h : pmf.probOfSet cond > 0) :
+    pmf.condProbSet cond target =
+      pmf.probOfSet (cond ∩ target) / pmf.probOfSet cond := by
+  simp [condProbSet, h]
+
+/-- `condProbSet` is zero when conditioning event has zero probability. -/
+theorem condProbSet_of_zero (pmf : FinitePMF W) (cond target : Set W)
+    [DecidablePred (· ∈ cond)] [DecidablePred (· ∈ target)]
+    (h : pmf.probOfSet cond = 0) :
+    pmf.condProbSet cond target = 0 := by
+  simp [condProbSet, h]
+
+/-- P(s) + P(sᶜ) = 1. -/
+theorem probOfSet_compl_add (pmf : FinitePMF W) (s : Set W)
+    [DecidablePred (· ∈ s)] :
+    pmf.probOfSet s + pmf.probOfSet sᶜ = 1 := by
+  have h : pmf.probOfSet s + pmf.probOfSet sᶜ = ∑ w : W, pmf w := by
+    unfold probOfSet; rw [← Finset.sum_add_distrib]
+    apply Finset.sum_congr rfl; intro w _
+    by_cases hs : w ∈ s
+    · simp [hs]
+    · simp [hs]
+  rw [h]; exact pmf.mass_sum_one
+
+/-- P(s ∩ t) ≤ P(t). -/
+theorem probOfSet_inter_le (pmf : FinitePMF W) (s t : Set W)
+    [DecidablePred (· ∈ s)] [DecidablePred (· ∈ t)] :
+    pmf.probOfSet (s ∩ t) ≤ pmf.probOfSet t := by
+  unfold probOfSet; apply Finset.sum_le_sum; intro w _
+  by_cases hs : w ∈ s <;> by_cases ht : w ∈ t
+  all_goals simp [hs, ht, Set.mem_inter_iff]
+  exact pmf.mass_nonneg w
+
+/-- Partition: P(s) = P(s ∩ t) + P(s ∩ tᶜ). -/
+theorem probOfSet_partition (pmf : FinitePMF W) (s t : Set W)
+    [DecidablePred (· ∈ s)] [DecidablePred (· ∈ t)] :
+    pmf.probOfSet s =
+    pmf.probOfSet (s ∩ t) + pmf.probOfSet (s ∩ tᶜ) := by
+  unfold probOfSet; rw [← Finset.sum_add_distrib]
+  apply Finset.sum_congr rfl; intro w _
+  by_cases hs : w ∈ s <;> by_cases ht : w ∈ t
+  all_goals simp [hs, ht, Set.mem_inter_iff, Set.mem_compl_iff]
+
+/-- P(target | cond) + P(targetᶜ | cond) = 1 when P(cond) > 0. -/
+theorem condProbSet_compl_sum (pmf : FinitePMF W) (cond target : Set W)
+    [DecidablePred (· ∈ cond)] [DecidablePred (· ∈ target)]
+    (h : pmf.probOfSet cond > 0) :
+    pmf.condProbSet cond target + pmf.condProbSet cond targetᶜ = 1 := by
+  rw [condProbSet_of_pos pmf cond target h,
+      condProbSet_of_pos pmf cond _ h, ← add_div,
+      show pmf.probOfSet (cond ∩ target) + pmf.probOfSet (cond ∩ targetᶜ)
+           = pmf.probOfSet cond from
+        (pmf.probOfSet_partition cond target).symm]
+  exact div_self (ne_of_gt h)
+
+/-- If P(target | cond) > P(target) then P(cond) > 0. -/
+theorem probOfSet_pos_of_condProbSet_gt (pmf : FinitePMF W) (cond target : Set W)
+    [DecidablePred (· ∈ cond)] [DecidablePred (· ∈ target)]
+    (h : pmf.condProbSet cond target > pmf.probOfSet target) :
+    pmf.probOfSet cond > 0 := by
+  by_contra hle; push_neg at hle
+  have hZero := le_antisymm hle (pmf.probOfSet_nonneg cond)
+  rw [condProbSet_of_zero pmf cond target hZero] at h
+  linarith [pmf.probOfSet_nonneg target]
+
+/-- If P(target | cond) > P(target) then P(target) > 0. -/
+theorem probOfSet_target_pos_of_condProbSet_gt (pmf : FinitePMF W)
+    (cond target : Set W)
+    [DecidablePred (· ∈ cond)] [DecidablePred (· ∈ target)]
+    (h : pmf.condProbSet cond target > pmf.probOfSet target) :
+    pmf.probOfSet target > 0 := by
+  have hPc := pmf.probOfSet_pos_of_condProbSet_gt cond target h
+  by_contra hle; push_neg at hle
+  have ht_eq := le_antisymm hle (pmf.probOfSet_nonneg target)
+  have hAnd_eq : pmf.probOfSet (cond ∩ target) = 0 :=
+    le_antisymm (by
+      have := pmf.probOfSet_inter_le cond target
+      linarith)
+      (pmf.probOfSet_nonneg _)
+  have : pmf.condProbSet cond target = 0 := by
+    rw [condProbSet_of_pos pmf cond target hPc, hAnd_eq]; simp
   linarith
 
 variable [DecidableEq W]

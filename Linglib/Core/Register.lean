@@ -18,7 +18,7 @@ goals, as in @cite{yoon-etal-2020} for politeness).
 
 * `Core.Pronouns.PronounEntry.register`: pronoun register (T/V/honorific)
 * `Core.Pronouns.AllocutiveEntry.register`: allocutive marker register
-* `Fragments.English.FunctionWords.AuxEntry.register`: modal register
+* `Fragments.English.Auxiliaries.AuxEntry.register`: modal register
 * `Pragmatics.Expressives.OutlookMarker.ModalCompatibility`: outlook marker selectional restrictions
 
 Binary T/V systems (Basque, Tamil, Galician, Punjabi) use `.informal`/`.formal`.
@@ -78,7 +78,10 @@ def Level.toRat : Level → ℚ
 /-- Two forms are **register variants** if they differ in register
     level. This is the structural precondition for register mixing
     and split-register constructions. -/
-def areVariants (a b : Level) : Bool := a != b
+def areVariants (a b : Level) : Prop := a ≠ b
+
+instance (a b : Level) : Decidable (areVariants a b) :=
+  inferInstanceAs (Decidable (a ≠ b))
 
 /-! ## Social indexation -/
 

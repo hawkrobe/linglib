@@ -19,9 +19,9 @@ Hausa, not a parallel hierarchy:
 - `Theories/Semantics/Verb/VerbEntry.VerbCore` carries argument
   structure, voice, and Vendler class. A Hausa verb is a `VerbCore`
   *plus* a Parsons grade.
-- `Theories/Phonology/Autosegmental/RegisterTier.ToneFeature` carries
+- `Theories/Phonology/Autosegmental/RegisterTier.TRN` carries
   the autosegmental tone primitives. A grade's tone melody is a list
-  of `ToneFeature`s, not a fresh enum.
+  of `TRN`s, not a fresh enum.
 
 The grade itself is a **record of predictions** (`StemTemplate`): tone,
 final-vowel template, derivational function, and the argument-structure
@@ -35,7 +35,7 @@ Per-cell verifications appear as `example`s.
 
 namespace Fragments.Hausa.VerbGrades
 
-open Phonology.Autosegmental.RegisterTier (ToneFeature)
+open Phonology.Autosegmental.RegisterTier (TRN)
 open Core.Verbs (VerbCore VoiceType ComplementType)
 
 -- ============================================================================
@@ -120,7 +120,7 @@ structure StemTemplate where
   label    : String
   /-- Tone melody on the disyllabic stem; empty for monoverbs (gr0)
       whose tone is lexical. -/
-  tones    : List ToneFeature
+  tones    : List TRN
   /-- Final-vowel template across A/B/C/D. -/
   fv       : FVTemplate
   /-- Primary derivational function. -/
@@ -201,11 +201,11 @@ structure HausaVerb extends VerbCore where
   grade    : StemTemplate
   /-- For gr0 monoverbs only: lexically-specified tone(s). Empty list
       otherwise (the grade fixes the tones). -/
-  lexTones : List ToneFeature := []
+  lexTones : List TRN := []
 
 /-- The verb's tone melody: from the grade unless the grade is
     lexically-toned (gr0), in which case from `lexTones`. -/
-def HausaVerb.tones (v : HausaVerb) : List ToneFeature :=
+def HausaVerb.tones (v : HausaVerb) : List TRN :=
   match v.grade.tones with
   | [] => v.lexTones
   | ts => ts
@@ -229,7 +229,7 @@ instance (v : HausaVerb) : Decidable v.canonical :=
     verb definitions use this; per-verb overrides spell out which
     field departs from the default. -/
 def mkVerb (form : String) (g : StemTemplate)
-    (lexTones : List ToneFeature := []) : HausaVerb where
+    (lexTones : List TRN := []) : HausaVerb where
   form           := form
   complementType := g.defaultCT
   voiceType      := some g.defaultVoice
@@ -329,7 +329,7 @@ theorem gr7_nonThematic (v : HausaVerb)
     `lexicon` is canonical by construction — no per-verb checking
     needed. -/
 theorem mkVerb_is_canonical (form : String) (g : StemTemplate)
-    (lexTones : List ToneFeature := []) :
+    (lexTones : List TRN := []) :
     (mkVerb form g lexTones).canonical :=
   ⟨rfl, rfl⟩
 

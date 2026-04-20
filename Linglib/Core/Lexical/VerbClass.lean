@@ -400,20 +400,23 @@ def LevinClass.meaningComponents : LevinClass → MeaningComponents
     Based on @cite{levin-hovav-1995}: unaccusativity correlates with internally
     caused change of state or directed change, while unergativity correlates
     with agentive activity. -/
-def LevinClass.predictsUnaccusative : LevinClass → Bool
+def LevinClass.PredictsUnaccusative : LevinClass → Prop
   | .break_ | .bend | .cooking | .otherCoS
-  | .entitySpecificCoS | .calibratableCoS => true
-  | .destroy => true
-  | .mix | .amalgamate => true
-  | .separate | .split => true
-  | .appear => true
-  | .exist => true
-  | .calve => true
-  | .inherentlyDirectedMotion => true
-  | .leave => true
-  | .lightEmission | .soundEmission | .substanceEmission => true
-  | .weather => true
-  | _ => false
+  | .entitySpecificCoS | .calibratableCoS => True
+  | .destroy => True
+  | .mix | .amalgamate => True
+  | .separate | .split => True
+  | .appear => True
+  | .exist => True
+  | .calve => True
+  | .inherentlyDirectedMotion => True
+  | .leave => True
+  | .lightEmission | .soundEmission | .substanceEmission => True
+  | .weather => True
+  | _ => False
+
+instance : DecidablePred LevinClass.PredictsUnaccusative := fun c => by
+  cases c <;> unfold LevinClass.PredictsUnaccusative <;> infer_instance
 
 /-- Whether a Levin class denotes creation of the object referent.
     @cite{davies-dubinsky-2003}: VOCs produce their direct object
@@ -623,9 +626,12 @@ def Attitude.valence : Attitude → Option AttitudeValence
     preferential attitudes (hope, want, pray) can also take CIR, which
     permits future temporal orientation. This is the source of the
     Upper Limit Constraint: DOX-only verbs block future readings. -/
-def Attitude.permitsCircumstantial : Attitude → Bool
-  | .doxastic _ => false
-  | .preferential _ => true
+def Attitude.PermitsCircumstantial : Attitude → Prop
+  | .doxastic _ => False
+  | .preferential _ => True
+
+instance : DecidablePred Attitude.PermitsCircumstantial := fun a => by
+  cases a <;> unfold Attitude.PermitsCircumstantial <;> infer_instance
 
 -- ════════════════════════════════════════════════════
 -- § Vendler classification: situation types

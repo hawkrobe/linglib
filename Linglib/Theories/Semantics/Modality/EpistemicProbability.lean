@@ -60,7 +60,6 @@ set_option autoImplicit false
 namespace Semantics.Modality.EpistemicProbability
 
 open Semantics.Attitudes.EpistemicThreshold
-open Core.Proposition
 
 -- ============================================================================
 -- §1. World-Dependent Credence

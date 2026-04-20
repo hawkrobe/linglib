@@ -387,18 +387,21 @@ theorem men_incompatible_with_di :
     that the middle alternation requires `changeOfState` (see
     `predictedAlternation` in Core/RootDimensions.lean) — the same
     verb class restriction viewed through different theoretical lenses. -/
-def licensesDispositionalMiddle (d : AffectednessDegree) : Bool :=
-  AffectednessDegree.ge d .nonquantized
+def LicensesDispositionalMiddle (d : AffectednessDegree) : Prop :=
+  AffectednessDegree.nonquantized ≤ d
+
+instance (d : AffectednessDegree) : Decidable (LicensesDispositionalMiddle d) := by
+  unfold LicensesDispositionalMiddle; infer_instance
 
 /-- Change-of-state verbs (quantized/nonquantized) license dispositionals. -/
 theorem cos_verbs_license_dispositional :
-    licensesDispositionalMiddle .quantized = true ∧
-    licensesDispositionalMiddle .nonquantized = true := ⟨rfl, rfl⟩
+    LicensesDispositionalMiddle .quantized ∧
+    LicensesDispositionalMiddle .nonquantized := ⟨by decide, by decide⟩
 
 /-- Non-CoS verbs (potential/unspecified) do NOT license dispositionals. -/
 theorem non_cos_block_dispositional :
-    licensesDispositionalMiddle .potential = false ∧
-    licensesDispositionalMiddle .unspecified = false := ⟨rfl, rfl⟩
+    ¬ LicensesDispositionalMiddle .potential ∧
+    ¬ LicensesDispositionalMiddle .unspecified := ⟨by decide, by decide⟩
 
 /-- Bridge: Levin's middle alternation diagnostic and Beavers 2010's
     affectedness constraint make the same prediction. Verbs that

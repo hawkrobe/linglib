@@ -130,14 +130,23 @@ def alternativeTypeOf (d : NPIDecomposition) : AlternativeType :=
     The propositions `∃x[n(x) ∧ VP(x)]` then have clear truth values,
     and their entailment relations model the cardinality scale. -/
 
-/-- At least one entity satisfies the VP. True at w0, w1, w2. -/
-def atLeastOne : (World → Bool) := λ w => w != .w3
+/-- At least one entity satisfies the VP (Bool form for likelihood/EVEN API). -/
+def atLeastOneB : (World → Bool) := λ w => w != .w3
 
-/-- At least two entities satisfy the VP. True at w0, w1. -/
-def atLeastTwo : (World → Bool) := λ w => w == .w0 || w == .w1
+/-- At least two entities satisfy the VP (Bool form). -/
+def atLeastTwoB : (World → Bool) := λ w => w == .w0 || w == .w1
 
-/-- At least three entities satisfy the VP. True at w0 only. -/
-def atLeastThree : (World → Bool) := λ w => w == .w0
+/-- At least three entities satisfy the VP (Bool form). -/
+def atLeastThreeB : (World → Bool) := λ w => w == .w0
+
+/-- At least one entity satisfies the VP (Set form for entails). True at w0, w1, w2. -/
+def atLeastOne : Set World := {w | atLeastOneB w = true}
+
+/-- At least two entities satisfy the VP (Set form). True at w0, w1. -/
+def atLeastTwo : Set World := {w | atLeastTwoB w = true}
+
+/-- At least three entities satisfy the VP (Set form). True at w0 only. -/
+def atLeastThree : Set World := {w | atLeastThreeB w = true}
 
 -- ============================================================================
 -- §4. Weakness of `one`
@@ -150,13 +159,30 @@ def atLeastThree : (World → Bool) := λ w => w == .w0
     `atLeastOne`, but not vice versa. This is eq. (70) in the paper:
     ∀x(P(x) → one(x)). -/
 
-theorem two_entails_one : entails atLeastTwo atLeastOne = true := by native_decide
-theorem three_entails_one : entails atLeastThree atLeastOne = true := by native_decide
-theorem three_entails_two : entails atLeastThree atLeastTwo = true := by native_decide
+theorem two_entails_one : entails atLeastTwo atLeastOne := by
+  intro w hw
+  simp [atLeastOne, atLeastOneB, atLeastTwo, atLeastTwoB] at *
+  rcases hw with h | h <;> simp [h]
+theorem three_entails_one : entails atLeastThree atLeastOne := by
+  intro w hw
+  simp [atLeastOne, atLeastOneB, atLeastThree, atLeastThreeB] at *
+  simp [hw]
+theorem three_entails_two : entails atLeastThree atLeastTwo := by
+  intro w hw
+  simp [atLeastThree, atLeastThreeB, atLeastTwo, atLeastTwoB] at *
+  left; exact hw
 
 /-- The entailment is strict: `atLeastOne` does not entail stronger predicates. -/
-theorem one_not_entails_two : entails atLeastOne atLeastTwo = false := by native_decide
-theorem one_not_entails_three : entails atLeastOne atLeastThree = false := by native_decide
+theorem one_not_entails_two : ¬ entails atLeastOne atLeastTwo := by
+  intro h
+  have hw : (.w2 : World) ∈ atLeastOne := by simp [atLeastOne, atLeastOneB]
+  have := h hw
+  simp [atLeastTwo, atLeastTwoB] at this
+theorem one_not_entails_three : ¬ entails atLeastOne atLeastThree := by
+  intro h
+  have hw : (.w2 : World) ∈ atLeastOne := by simp [atLeastOne, atLeastOneB]
+  have := h hw
+  simp [atLeastThree, atLeastThreeB] at this
 
 -- ============================================================================
 -- §5. The Implicature Clash (§7.4)
@@ -185,29 +211,43 @@ section ImplicatureClash
 /-- UE pattern: all alternatives entail the assertion.
     This makes the assertion the MOST likely — fatal for EVEN. -/
 theorem ue_alt_entails_assertion :
-    entails atLeastTwo atLeastOne = true ∧
-    entails atLeastThree atLeastOne = true :=
-  ⟨by native_decide, by native_decide⟩
+    entails atLeastTwo atLeastOne ∧
+    entails atLeastThree atLeastOne :=
+  ⟨two_entails_one, three_entails_one⟩
 
 /-- DE pattern: the assertion entails all alternatives.
     Negation reverses the entailment direction.
     This makes the assertion the LEAST likely — satisfying EVEN. -/
 theorem de_assertion_entails_alt :
-    entails (pnot atLeastOne) (pnot atLeastTwo) = true ∧
-    entails (pnot atLeastOne) (pnot atLeastThree) = true :=
-  ⟨by native_decide, by native_decide⟩
+    entails (pnot atLeastOne) (pnot atLeastTwo) ∧
+    entails (pnot atLeastOne) (pnot atLeastThree) := by
+  refine ⟨?_, ?_⟩
+  · intro w hw hw'
+    exact hw (two_entails_one hw')
+  · intro w hw hw'
+    exact hw (three_entails_one hw')
 
 /-- The asymmetry: in UE the assertion does NOT entail alternatives. -/
 theorem ue_not_reverse :
-    entails atLeastOne atLeastTwo = false ∧
-    entails atLeastOne atLeastThree = false :=
-  ⟨by native_decide, by native_decide⟩
+    ¬ entails atLeastOne atLeastTwo ∧
+    ¬ entails atLeastOne atLeastThree :=
+  ⟨one_not_entails_two, one_not_entails_three⟩
 
 /-- The asymmetry: in DE the alternatives do NOT entail the assertion. -/
 theorem de_not_reverse :
-    entails (pnot atLeastTwo) (pnot atLeastOne) = false ∧
-    entails (pnot atLeastThree) (pnot atLeastOne) = false :=
-  ⟨by native_decide, by native_decide⟩
+    ¬ entails (pnot atLeastTwo) (pnot atLeastOne) ∧
+    ¬ entails (pnot atLeastThree) (pnot atLeastOne) := by
+  refine ⟨?_, ?_⟩
+  · intro h
+    have h1 : (.w2 : World) ∈ pnot atLeastTwo := by
+      simp [pnot, atLeastTwo, atLeastTwoB, Set.mem_compl_iff]
+    have h2 := h h1
+    simp [pnot, atLeastOne, atLeastOneB, Set.mem_compl_iff] at h2
+  · intro h
+    have h1 : (.w1 : World) ∈ pnot atLeastThree := by
+      simp [pnot, atLeastThree, atLeastThreeB, Set.mem_compl_iff]
+    have h2 := h h1
+    simp [pnot, atLeastOne, atLeastOneB, Set.mem_compl_iff] at h2
 
 end ImplicatureClash
 
@@ -228,14 +268,14 @@ end ImplicatureClash
 
 /-- EVEN instance for *ek bhii aayaa ('*Even one came') in UE context. -/
 def ekBhiiEvenUE : TraditionalEven (World := World) :=
-  { prejacent := atLeastOne
-  , alternatives := [atLeastTwo, atLeastThree]
+  { prejacent := atLeastOneB
+  , alternatives := [atLeastTwoB, atLeastThreeB]
   , likelihood := λ _ _ => True }  -- placeholder; clash proved independently
 
 /-- EVEN instance for *ek bhii nahiiN aayaa* ('Not even one came') in DE. -/
 def ekBhiiEvenDE : TraditionalEven (World := World) :=
-  { prejacent := pnot atLeastOne
-  , alternatives := [pnot atLeastTwo, pnot atLeastThree]
+  { prejacent := λ w => !atLeastOneB w
+  , alternatives := [λ w => !atLeastTwoB w, λ w => !atLeastThreeB w]
   , likelihood := λ _ _ => True }  -- placeholder; satisfaction proved independently
 
 /-- In UE, the EVEN presupposition for *ek bhii* is contradicted:
@@ -249,16 +289,18 @@ theorem ekBhii_even_clash_UE
     (hMono : LikelihoodMonotone le)
     (hCompat : ∀ (a b : (World → Bool)), lt a b → le b a → False)
     (alt : (World → Bool))
-    (hAlt : alt = atLeastTwo ∨ alt = atLeastThree)
-    (hEven : lt atLeastOne alt) :
+    (hAlt : alt = atLeastTwoB ∨ alt = atLeastThreeB)
+    (hEven : lt atLeastOneB alt) :
     False := by
   cases hAlt with
   | inl h =>
-    exact hCompat atLeastOne alt hEven
-      (hMono alt atLeastOne (by subst h; intro w; cases w <;> native_decide))
+    exact hCompat atLeastOneB alt hEven
+      (hMono alt atLeastOneB
+        (by subst h; intro w; cases w <;> simp [atLeastOneB, atLeastTwoB]))
   | inr h =>
-    exact hCompat atLeastOne alt hEven
-      (hMono alt atLeastOne (by subst h; intro w; cases w <;> native_decide))
+    exact hCompat atLeastOneB alt hEven
+      (hMono alt atLeastOneB
+        (by subst h; intro w; cases w <;> simp [atLeastOneB, atLeastThreeB]))
 
 /-- In DE, the EVEN presupposition for *ek bhii nahiiN* is satisfiable:
     the negated assertion entails each negated alternative, so the assertion
@@ -266,9 +308,9 @@ theorem ekBhii_even_clash_UE
 
     This is the paper's argument (§7.4, eqs. 76–79). -/
 theorem ekBhii_even_ok_DE :
-    entails (pnot atLeastOne) (pnot atLeastTwo) = true ∧
-    entails (pnot atLeastOne) (pnot atLeastThree) = true :=
-  ⟨by native_decide, by native_decide⟩
+    entails (pnot atLeastOne) (pnot atLeastTwo) ∧
+    entails (pnot atLeastOne) (pnot atLeastThree) :=
+  de_assertion_entails_alt
 
 -- ============================================================================
 -- §7. Abstract Implicature Clash
@@ -679,21 +721,31 @@ theorem licensing_context_iff_grammatical :
 
 /-- All licensing contexts in the grammatical data are DE environments
     (or questions, which license via negative bias rather than pure DE). -/
-def isDEOrQuestion : Phenomena.Polarity.NPIs.LicensingContext → Bool
-  | .sententialNegation  => true
-  | .conditional         => true
-  | .universalRestrictor => true
-  | .beforeClause        => true
-  | .question            => true
-  | .adversative         => true  -- Strawson-DE (@cite{von-fintel-1999})
-  | .denyVerb            => true  -- semantically negative
-  | _                    => false
+def isDEOrQuestion : Phenomena.Polarity.NPIs.LicensingContext → Prop
+  | .sententialNegation  => True
+  | .conditional         => True
+  | .universalRestrictor => True
+  | .beforeClause        => True
+  | .question            => True
+  | .adversative         => True  -- Strawson-DE (@cite{von-fintel-1999})
+  | .denyVerb            => True  -- semantically negative
+  | _                    => False
+
+instance : DecidablePred isDEOrQuestion := fun x => by
+  cases x <;> unfold isDEOrQuestion <;> infer_instance
+
+/-- Predicate: a datum's context is some DE-or-question licenser. -/
+def hasDELicenser (d : NPIDatum) : Prop :=
+  match d.context with
+  | none => False
+  | some c => isDEOrQuestion c
+
+instance : DecidablePred hasDELicenser := fun d => by
+  unfold hasDELicenser
+  cases d.context <;> infer_instance
 
 theorem grammatical_contexts_are_de :
-    (allHindiNPIData.filter (·.grammatical)).all (λ d =>
-      match d.context with
-      | some ctx => isDEOrQuestion ctx
-      | none => false) = true := by native_decide
+    (allHindiNPIData.filter (·.grammatical)).Forall hasDELicenser := by decide
 
 -- ============================================================================
 -- §12. Subject NPI Licensing: Hindi vs English (§6)

@@ -183,9 +183,17 @@ theorem flavors_differ_on_all_dimensions {Time : Type*} [LinearOrder Time] :
     no longer has the mental representation, the concern ceases. -/
 def counterfactuallyDependent {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W)
-    (causeProp effectProp : W → Bool) (w : W) : Bool :=
+    (causeProp effectProp : W → Prop)
+    [DecidablePred causeProp] [DecidablePred effectProp] (w : W) : Prop :=
   universalCounterfactual sim
-    (fun w => !causeProp w) (fun w => !effectProp w) w
+    (fun w => ¬ causeProp w) (fun w => ¬ effectProp w) w
+
+instance counterfactuallyDependent_decidable {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
+    (causeProp effectProp : W → Prop)
+    [DecidablePred causeProp] [DecidablePred effectProp] (w : W) :
+    Decidable (counterfactuallyDependent sim causeProp effectProp w) :=
+  inferInstanceAs (Decidable (universalCounterfactual _ _ _ _))
 
 /-- Counterfactual persistence: in the closest worlds where the cause
     doesn't hold, the effect STILL holds.
@@ -197,9 +205,17 @@ def counterfactuallyDependent {W : Type*} [DecidableEq W] [Fintype W]
     frightened state, once established by BECOME, persists independently. -/
 def counterfactuallyPersistent {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W)
-    (causeProp effectProp : W → Bool) (w : W) : Bool :=
+    (causeProp effectProp : W → Prop)
+    [DecidablePred causeProp] [DecidablePred effectProp] (w : W) : Prop :=
   universalCounterfactual sim
-    (fun w => !causeProp w) effectProp w
+    (fun w => ¬ causeProp w) effectProp w
+
+instance counterfactuallyPersistent_decidable {W : Type*} [DecidableEq W] [Fintype W]
+    (sim : SimilarityOrdering W)
+    (causeProp effectProp : W → Prop)
+    [DecidablePred causeProp] [DecidablePred effectProp] (w : W) :
+    Decidable (counterfactuallyPersistent sim causeProp effectProp w) :=
+  inferInstanceAs (Decidable (universalCounterfactual _ _ _ _))
 
 /-- Counterfactual dependence and persistence are mutually exclusive
     when the set of closest ¬cause worlds is non-empty.
@@ -208,23 +224,21 @@ def counterfactuallyPersistent {W : Type*} [DecidableEq W] [Fintype W]
     at least one closest world falsifies effect, so persistence fails.
 
     Proved by extracting a witness from the non-empty closest-world
-    list and showing it satisfies `!effectProp w` (from dependence)
+    list and showing it satisfies `¬ effectProp w` (from dependence)
     and `effectProp w` (from persistence), a contradiction. -/
 theorem dependent_excludes_persistent {W : Type*} [DecidableEq W] [Fintype W]
     (sim : SimilarityOrdering W)
-    (causeProp effectProp : W → Bool) (w : W)
-    (hDep : counterfactuallyDependent sim causeProp effectProp w = true)
+    (causeProp effectProp : W → Prop)
+    [DecidablePred causeProp] [DecidablePred effectProp] (w : W)
+    (hDep : counterfactuallyDependent sim causeProp effectProp w)
     (hNonempty : (sim.closestWorlds w
-      (Finset.univ.filter (fun w => (!causeProp w) = true))).Nonempty) :
-    counterfactuallyPersistent sim causeProp effectProp w = false := by
-  simp only [counterfactuallyDependent, universalCounterfactual, decide_eq_true_eq] at hDep
+      (Finset.univ.filter (fun w => ¬ causeProp w))).Nonempty) :
+    ¬ counterfactuallyPersistent sim causeProp effectProp w := by
+  simp only [counterfactuallyDependent, universalCounterfactual] at hDep
   simp only [counterfactuallyPersistent, universalCounterfactual]
-  rw [decide_eq_false_iff_not]
   intro hall
   obtain ⟨x, hx⟩ := hNonempty
-  have h1 := hDep x hx
-  have h2 := hall x hx
-  simp [h2] at h1
+  exact (hDep x hx) (hall x hx)
 
 -- ════════════════════════════════════════════════════
 -- § 7. @cite{kim-2024}: Three Properties of Maintenance

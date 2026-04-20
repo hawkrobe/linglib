@@ -29,16 +29,6 @@ inductive DualityType where
   | universal
   deriving Repr, DecidableEq, Inhabited
 
-/-- Existential is robust: one witness suffices. -/
-def DualityType.isRobust : DualityType → Bool
-  | .existential => true
-  | .universal => false
-
-/-- Universal is fragile: one counterexample breaks. -/
-def DualityType.isFragile : DualityType → Bool
-  | .existential => false
-  | .universal => true
-
 /-- Swap existential and universal. -/
 def DualityType.dual : DualityType → DualityType
   | .existential => .universal

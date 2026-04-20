@@ -1,17 +1,17 @@
-import Linglib.Theories.Semantics.Questions.QParticleLayer
-
 /-!
 # Ukrainian Question Particles
 @cite{simik-2024}
 
-Lexical entries for Ukrainian interrogative particles.
+Lexical entries for Ukrainian interrogative particles. The fragment
+commits only to theory-neutral lexical primitives; the left-peripheral
+layer assignment lives in `Phenomena.Questions.Studies.Simik2024`.
 
 ## Particles
 
-| Particle | Romanization | Gloss | Layer | Bias |
-|----------|-------------|-------|-------|------|
-| чи | čy | neutral PQ | CP | none |
-| хіба | xiba | RAZVE (mirative) | PerspP | +evidential |
+| Particle | Romanization | Gloss | Bias |
+|----------|-------------|-------|------|
+| чи | čy | neutral PQ | none |
+| хіба | xiba | RAZVE (mirative) | +evidential |
 
 ## Cross-Module Connections
 
@@ -22,14 +22,11 @@ Lexical entries for Ukrainian interrogative particles.
 
 namespace Fragments.Ukrainian.QuestionParticles
 
-open Semantics.Questions (QParticleLayer)
-
 /-- A Ukrainian interrogative particle entry. -/
 structure QParticleEntry where
   form : String
   romanization : String
   gloss : String
-  layer : QParticleLayer
   polarOk : Bool
   declOk : Bool
   whOk : Bool
@@ -43,7 +40,6 @@ def cy : QParticleEntry where
   form := "чи"
   romanization := "čy"
   gloss := "PQ (clause-initial neutral)"
-  layer := .cp
   polarOk := true
   declOk := false
   whOk := true
@@ -57,7 +53,6 @@ def xiba : QParticleEntry where
   form := "хіба"
   romanization := "xiba"
   gloss := "RAZVE (mirative/dubitative)"
-  layer := .perspP
   polarOk := true
   declOk := false
   whOk := false

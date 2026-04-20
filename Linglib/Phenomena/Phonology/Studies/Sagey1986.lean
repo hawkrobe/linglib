@@ -55,8 +55,8 @@ namespace Sagey1986
 structure MajorMinor where
   major : GeomNode
   minor : GeomNode
-  major_is_articulator : major.isArticulator = true
-  minor_is_articulator : minor.isArticulator = true
+  major_is_articulator : major.IsArticulator
+  minor_is_articulator : minor.IsArticulator
   distinct : major ≠ minor
 
 /-- Nupe labiovelar /k͡p/: dorsal is major (stop closure), labial is minor.
@@ -88,7 +88,7 @@ inductive DegreeOfClosure where
 structure ArticulatorSpec where
   node : GeomNode
   closure : DegreeOfClosure
-  node_is_articulator : node.isArticulator = true
+  node_is_articulator : node.IsArticulator = true
 
 /-- A click's anterior closure (coronal, full stop). -/
 def click_anterior : ArticulatorSpec where
@@ -119,12 +119,12 @@ theorem nasal_assimilation_scope :
     spread nasality. This is Sagey's core structural argument for the
     soft palate node as a separate constituent. -/
 theorem nasal_not_under_place :
-    Feature.nasal.dominatedBy .place = false := by native_decide
+    ¬ Feature.nasal.DominatedBy .place := by decide
 
 /-- Nasality IS under supralaryngeal (via the soft palate node), so
     total assimilation (spreading supralaryngeal) does spread nasality. -/
 theorem nasal_under_supralaryngeal :
-    Feature.nasal.dominatedBy .supralaryngeal = true := by native_decide
+    Feature.nasal.DominatedBy .supralaryngeal := by decide
 
 -- ============================================================================
 -- § 4: Nupe Labiovelars
@@ -138,12 +138,10 @@ def nupe_kp_segment : Segment :=
      (.voice, false), (.labial, true), (.dorsal, true)]
 
 /-- The Nupe /k͡p/ is a complex segment (two active place articulators). -/
-theorem nupe_kp_is_complex : isComplex nupe_kp_segment = true := by
-  native_decide
+theorem nupe_kp_is_complex : IsComplex nupe_kp_segment := by decide
 
 /-- The Nupe /k͡p/ is well-formed: labial ≠ dorsal. -/
-theorem nupe_kp_wf : complexWF nupe_kp_segment = true := by
-  native_decide
+theorem nupe_kp_wf : ComplexWF nupe_kp_segment := by decide
 
 /-- A simple /p/ (labial only) is not complex. -/
 def simple_p : Segment :=
@@ -151,8 +149,7 @@ def simple_p : Segment :=
     [(.consonantal, true), (.sonorant, false), (.continuant, false),
      (.voice, false), (.labial, true)]
 
-theorem simple_p_not_complex : isComplex simple_p = false := by
-  native_decide
+theorem simple_p_not_complex : ¬ IsComplex simple_p := by decide
 
 /-- A velar nasal /ŋ/ is NOT complex despite activating both the dorsal
     articulator and the soft palate (velum lowering). The soft palate
@@ -164,12 +161,10 @@ def velar_nasal : Segment :=
     [(.consonantal, true), (.sonorant, true), (.continuant, false),
      (.nasal, true), (.voice, true), (.dorsal, true)]
 
-theorem velar_nasal_not_complex : isComplex velar_nasal = false := by
-  native_decide
+theorem velar_nasal_not_complex : ¬ IsComplex velar_nasal := by decide
 
 /-- The velar nasal is well-formed (only one place articulator: dorsal). -/
-theorem velar_nasal_wf : complexWF velar_nasal = true := by
-  native_decide
+theorem velar_nasal_wf : ComplexWF velar_nasal := by decide
 
 -- ============================================================================
 -- § 5: Impossible Complex Segments (Ch. 2)
@@ -186,8 +181,7 @@ def alveolar_t : Segment :=
     [(.consonantal, true), (.sonorant, false), (.continuant, false),
      (.voice, false), (.coronal, true), (.anterior, true)]
 
-theorem alveolar_not_complex : isComplex alveolar_t = false := by
-  native_decide
+theorem alveolar_not_complex : ¬ IsComplex alveolar_t := by decide
 
 /-- An alveopalatal (postalveolar) is [+cor, −ant, +dist] — still just
     one articulator (coronal), so not complex. An alveolar-alveopalatal
@@ -199,8 +193,7 @@ def alveopalatal : Segment :=
      (.voice, false), (.coronal, true), (.anterior, false),
      (.distributed, true)]
 
-theorem alveopalatal_not_complex : isComplex alveopalatal = false := by
-  native_decide
+theorem alveopalatal_not_complex : ¬ IsComplex alveopalatal := by decide
 
 -- ============================================================================
 -- § 6: No-Crossing Constraint (Ch. 5)

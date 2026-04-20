@@ -420,9 +420,12 @@ theorem vcause_not_caus :
 
 /-- Natural predicates select Target stimulus (PP *of*);
     arbitrary predicates select Subject Matter (PP *about*). -/
-def isNaturalPredicate : StimulusType → Bool
-  | .target => true
-  | .subjectMatter => false
+def isNaturalPredicate : StimulusType → Prop
+  | .target => True
+  | .subjectMatter => False
+
+instance : DecidablePred isNaturalPredicate := fun x => by
+  cases x <;> unfold isNaturalPredicate <;> infer_instance
 
 /-- End-to-end cascade derivation chain for a Class II psych verb.
     From a verb's `causalSource`, derives: cascade assignment (via

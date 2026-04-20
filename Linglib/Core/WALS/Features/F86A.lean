@@ -14,1281 +14,1274 @@ namespace Core.WALS.F86A
 
 /-- WALS 86A values. -/
 inductive GenitiveNounOrder where
-  | genitiveNoun  -- Genitive-Noun (685 languages)
-  | nounGenitive  -- Noun-Genitive (468 languages)
-  | noDominantOrder  -- No dominant order (96 languages)
-  deriving DecidableEq, Repr
+  /-- Genitive-Noun (685 languages). -/
+  | genitiveNoun
+  /-- Noun-Genitive (468 languages). -/
+  | nounGenitive
+  /-- No dominant order (96 languages). -/
+  | noDominantOrder
+  deriving DecidableEq, BEq, Repr
 
 private def allData_0 : List (Datapoint GenitiveNounOrder) :=
-  [ { walsCode := "xoo", language := "!Xóõ", iso := "nmn", value := .genitiveNoun }
-  , { walsCode := "ani", language := "//Ani", iso := "hnh", value := .genitiveNoun }
-  , { walsCode := "xam", language := "/Xam", iso := "xam", value := .genitiveNoun }
-  , { walsCode := "huc", language := "=|Hoan", iso := "huc", value := .genitiveNoun }
-  , { walsCode := "aar", language := "Aari", iso := "aiw", value := .genitiveNoun }
-  , { walsCode := "aba", language := "Abau", iso := "aau", value := .genitiveNoun }
-  , { walsCode := "abi", language := "Abipón", iso := "axb", value := .noDominantOrder }
-  , { walsCode := "abk", language := "Abkhaz", iso := "abk", value := .genitiveNoun }
-  , { walsCode := "abv", language := "Abui", iso := "abz", value := .genitiveNoun }
-  , { walsCode := "abu", language := "Abun", iso := "kgr", value := .genitiveNoun }
-  , { walsCode := "ace", language := "Acehnese", iso := "ace", value := .nounGenitive }
-  , { walsCode := "acg", language := "Achagua", iso := "aca", value := .genitiveNoun }
-  , { walsCode := "acn", language := "Achang", iso := "acn", value := .genitiveNoun }
-  , { walsCode := "acl", language := "Acholi", iso := "ach", value := .nounGenitive }
-  , { walsCode := "acu", language := "Achuar", iso := "acu", value := .genitiveNoun }
-  , { walsCode := "aco", language := "Acoma", iso := "kjq", value := .genitiveNoun }
-  , { walsCode := "adg", language := "Adang", iso := "adn", value := .genitiveNoun }
-  , { walsCode := "adi", language := "Adioukrou", iso := "adj", value := .genitiveNoun }
-  , { walsCode := "adn", language := "Adynyamathanha", iso := "adt", value := .genitiveNoun }
-  , { walsCode := "adz", language := "Adzera", iso := "adz", value := .genitiveNoun }
-  , { walsCode := "awi", language := "Aekyom", iso := "awi", value := .genitiveNoun }
-  , { walsCode := "aga", language := "Agarabi", iso := "agd", value := .genitiveNoun }
-  , { walsCode := "agh", language := "Aghem", iso := "agq", value := .nounGenitive }
-  , { walsCode := "agc", language := "Agta (Central)", iso := "agt", value := .nounGenitive }
-  , { walsCode := "agd", language := "Agta (Dupaningan)", iso := "duo", value := .nounGenitive }
-  , { walsCode := "ain", language := "Ainu", iso := "ain", value := .genitiveNoun }
-  , { walsCode := "aja", language := "Aja", iso := "aja", value := .nounGenitive }
-  , { walsCode := "ajg", language := "Ajagbe", iso := "ajg", value := .noDominantOrder }
-  , { walsCode := "akn", language := "Akan", iso := "aka", value := .genitiveNoun }
-  , { walsCode := "akh", language := "Akha", iso := "ahk", value := .genitiveNoun }
-  , { walsCode := "all", language := "Ala'ala", iso := "nrz", value := .genitiveNoun }
-  , { walsCode := "ala", language := "Alamblak", iso := "amp", value := .genitiveNoun }
-  , { walsCode := "alb", language := "Albanian", iso := "sqi", value := .nounGenitive }
-  , { walsCode := "als", language := "Alsea", iso := "aes", value := .genitiveNoun }
-  , { walsCode := "aln", language := "Alune", iso := "alp", value := .genitiveNoun }
-  , { walsCode := "aly", language := "Alyawarra", iso := "aly", value := .nounGenitive }
-  , { walsCode := "amm", language := "Ama", iso := "amm", value := .genitiveNoun }
-  , { walsCode := "amc", language := "Amahuaca", iso := "amc", value := .genitiveNoun }
-  , { walsCode := "amn", language := "Amanab", iso := "amn", value := .genitiveNoun }
-  , { walsCode := "aml", language := "Ambae (Lolovoli Northeast)", iso := "omb", value := .nounGenitive }
-  , { walsCode := "amq", language := "Ambai", iso := "amk", value := .genitiveNoun }
-  , { walsCode := "amb", language := "Ambulas", iso := "abt", value := .genitiveNoun }
-  , { walsCode := "amt", language := "Amdo (Themchen)", iso := "adx", value := .genitiveNoun }
-  , { walsCode := "ame", language := "Amele", iso := "aey", value := .genitiveNoun }
-  , { walsCode := "amh", language := "Amharic", iso := "amh", value := .genitiveNoun }
-  , { walsCode := "ami", language := "Amis", iso := "ami", value := .nounGenitive }
-  , { walsCode := "amx", language := "Anamuxra", iso := "imi", value := .genitiveNoun }
-  , { walsCode := "adk", language := "Andoke", iso := "ano", value := .genitiveNoun }
-  , { walsCode := "anj", language := "Anejom", iso := "aty", value := .nounGenitive }
-  , { walsCode := "agm", language := "Angami", iso := "njm", value := .genitiveNoun }
-  , { walsCode := "anc", language := "Angas", iso := "anc", value := .nounGenitive }
-  , { walsCode := "ang", language := "Anggor", iso := "agg", value := .genitiveNoun }
-  , { walsCode := "ann", language := "Anindilyakwa", iso := "aoi", value := .noDominantOrder }
-  , { walsCode := "ano", language := "Anong", iso := "nun", value := .genitiveNoun }
-  , { walsCode := "anu", language := "Anufo", iso := "cko", value := .genitiveNoun }
-  , { walsCode := "ayi", language := "Anyi", iso := "any", value := .genitiveNoun }
-  , { walsCode := "any", language := "Anywa", iso := "anu", value := .nounGenitive }
-  , { walsCode := "ane", language := "Anêm", iso := "anz", value := .noDominantOrder }
-  , { walsCode := "ao", language := "Ao", iso := "njo", value := .genitiveNoun }
-  , { walsCode := "apl", language := "Apalaí", iso := "apy", value := .genitiveNoun }
-  , { walsCode := "apt", language := "Apatani", iso := "apt", value := .genitiveNoun }
-  , { walsCode := "api", language := "Apinayé", iso := "apn", value := .genitiveNoun }
-  , { walsCode := "apu", language := "Apurinã", iso := "apu", value := .genitiveNoun }
-  , { walsCode := "abn", language := "Arabana", iso := "ard", value := .noDominantOrder }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .nounGenitive }
-  , { walsCode := "arg", language := "Arabic (Gulf)", iso := "afb", value := .nounGenitive }
-  , { walsCode := "arq", language := "Arabic (Iraqi)", iso := "acm", value := .nounGenitive }
-  , { walsCode := "arj", language := "Arabic (Kuwaiti)", iso := "afb", value := .nounGenitive }
-  , { walsCode := "ams", language := "Arabic (Modern Standard)", iso := "arb", value := .nounGenitive }
-  , { walsCode := "amr", language := "Arabic (Moroccan)", iso := "ary", value := .nounGenitive }
-  , { walsCode := "asy", language := "Arabic (Syrian)", iso := "apc", value := .nounGenitive }
-  , { walsCode := "ana", language := "Araona", iso := "aro", value := .genitiveNoun }
-  , { walsCode := "arp", language := "Arapesh (Mountain)", iso := "ape", value := .noDominantOrder }
-  , { walsCode := "abo", language := "Arbore", iso := "arv", value := .nounGenitive }
-  , { walsCode := "arc", language := "Archi", iso := "aqc", value := .genitiveNoun }
-  , { walsCode := "ari", language := "Aribwatsa", iso := "laz", value := .genitiveNoun }
-  , { walsCode := "arm", language := "Armenian (Eastern)", iso := "hye", value := .genitiveNoun }
-  , { walsCode := "arw", language := "Armenian (Western)", iso := "hyw", value := .genitiveNoun }
-  , { walsCode := "alk", language := "Arop-Lokep", iso := "apr", value := .noDominantOrder }
-  , { walsCode := "aro", language := "Arosi", iso := "aia", value := .nounGenitive }
-  , { walsCode := "awe", language := "Arrernte (Western)", iso := "are", value := .nounGenitive }
-  , { walsCode := "asm", language := "Asmat", iso := "cns", value := .genitiveNoun }
-  , { walsCode := "ass", language := "Assamese", iso := "asm", value := .genitiveNoun }
-  , { walsCode := "atk", language := "Atakapa", iso := "aqp", value := .genitiveNoun }
-  , { walsCode := "ata", language := "Atayal", iso := "tay", value := .nounGenitive }
-  , { walsCode := "ath", language := "Athpare", iso := "aph", value := .genitiveNoun }
-  , { walsCode := "au", language := "Au", iso := "avt", value := .noDominantOrder }
-  , { walsCode := "ava", language := "Avar", iso := "ava", value := .genitiveNoun }
-  , { walsCode := "avo", language := "Avokaya", iso := "avu", value := .noDominantOrder }
-  , { walsCode := "awa", language := "Awa", iso := "awb", value := .genitiveNoun }
-  , { walsCode := "awp", language := "Awa Pit", iso := "kwi", value := .genitiveNoun }
-  , { walsCode := "awt", language := "Awtuw", iso := "kmn", value := .genitiveNoun }
-  , { walsCode := "ayw", language := "Ayiwo", iso := "nfl", value := .nounGenitive }
-  , { walsCode := "aym", language := "Aymara (Central)", iso := "ayr", value := .genitiveNoun }
-  , { walsCode := "ayo", language := "Ayomán", iso := "", value := .genitiveNoun }
-  , { walsCode := "ayr", language := "Ayoreo", iso := "ayo", value := .genitiveNoun }
-  , { walsCode := "aze", language := "Azerbaijani", iso := "", value := .genitiveNoun }
-  , { walsCode := "bdm", language := "Badimaya", iso := "bia", value := .genitiveNoun }
-  , { walsCode := "bfi", language := "Bafia", iso := "ksf", value := .nounGenitive }
-  , { walsCode := "bag", language := "Bagirmi", iso := "bmi", value := .nounGenitive }
-  , { walsCode := "bgr", language := "Bagiro", iso := "fuu", value := .nounGenitive }
-  , { walsCode := "bai", language := "Bai", iso := "bca", value := .genitiveNoun }
-  , { walsCode := "baj", language := "Bajau (Sama)", iso := "bdl", value := .nounGenitive }
-  , { walsCode := "bwc", language := "Bajau (West Coast)", iso := "bdr", value := .nounGenitive }
-  , { walsCode := "bak", language := "Baka (in Cameroon)", iso := "bkc", value := .nounGenitive }
-  , { walsCode := "bka", language := "Baka (in South Sudan)", iso := "bdh", value := .nounGenitive }
-  , { walsCode := "bku", language := "Bakueri", iso := "bri", value := .nounGenitive }
-  , { walsCode := "blz", language := "Balanta", iso := "", value := .nounGenitive }
-  , { walsCode := "bvi", language := "Bali-Vitu", iso := "", value := .nounGenitive }
-  , { walsCode := "bam", language := "Bambara", iso := "bam", value := .genitiveNoun }
-  , { walsCode := "bnk", language := "Bankon", iso := "abb", value := .nounGenitive }
-  , { walsCode := "bnn", language := "Banoni", iso := "bcm", value := .nounGenitive }
-  , { walsCode := "baa", language := "Barai", iso := "bbb", value := .genitiveNoun }
-  , { walsCode := "bbu", language := "Barambu", iso := "brm", value := .nounGenitive }
-  , { walsCode := "brs", language := "Barasano", iso := "bsn", value := .genitiveNoun }
-  , { walsCode := "bar", language := "Bari", iso := "bfa", value := .nounGenitive }
-  , { walsCode := "brp", language := "Barupu", iso := "bpe", value := .nounGenitive }
-  , { walsCode := "bry", language := "Baruya", iso := "byr", value := .genitiveNoun }
-  , { walsCode := "bae", language := "Baré", iso := "bae", value := .genitiveNoun }
-  , { walsCode := "bsr", language := "Basari", iso := "bsc", value := .nounGenitive }
-  , { walsCode := "bas", language := "Basaá", iso := "bas", value := .nounGenitive }
-  , { walsCode := "bsk", language := "Bashkir", iso := "bak", value := .genitiveNoun }
-  , { walsCode := "bsq", language := "Basque", iso := "eus", value := .genitiveNoun }
-  , { walsCode := "bkr", language := "Batak (Karo)", iso := "btx", value := .nounGenitive }
-  , { walsCode := "bto", language := "Batak (Toba)", iso := "bbc", value := .nounGenitive }
-  , { walsCode := "baq", language := "Baure", iso := "brg", value := .nounGenitive }
-  , { walsCode := "baw", language := "Bawm", iso := "bgr", value := .genitiveNoun }
-  , { walsCode := "bej", language := "Beja", iso := "bej", value := .genitiveNoun }
-  , { walsCode := "bel", language := "Belhare", iso := "byw", value := .genitiveNoun }
-  , { walsCode := "bco", language := "Bella Coola", iso := "blc", value := .nounGenitive }
-  , { walsCode := "blr", language := "Belorussian", iso := "bel", value := .nounGenitive }
-  , { walsCode := "bga", language := "Benga", iso := "bng", value := .nounGenitive }
-  , { walsCode := "brq", language := "Bera", iso := "brf", value := .nounGenitive }
-  , { walsCode := "bch", language := "Berber (Chaouia)", iso := "shy", value := .nounGenitive }
-  , { walsCode := "bfg", language := "Berber (Figuig)", iso := "grr", value := .nounGenitive }
-  , { walsCode := "bma", language := "Berber (Middle Atlas)", iso := "tzm", value := .nounGenitive }
-  , { walsCode := "brf", language := "Berber (Rif)", iso := "rif", value := .nounGenitive }
-  , { walsCode := "zag", language := "Beria", iso := "zag", value := .noDominantOrder }
-  , { walsCode := "bho", language := "Bhojpuri", iso := "bho", value := .genitiveNoun }
-  , { walsCode := "bhu", language := "Bhumij", iso := "unr", value := .genitiveNoun }
-  , { walsCode := "bik", language := "Biak", iso := "bhw", value := .genitiveNoun }
-  , { walsCode := "bid", language := "Bidiya", iso := "bid", value := .nounGenitive }
-  , { walsCode := "bkl", language := "Bikol", iso := "bcl", value := .noDominantOrder }
-  , { walsCode := "bln", language := "Bilin", iso := "byn", value := .genitiveNoun }
-  , { walsCode := "bnr", language := "Bilinarra", iso := "nbj", value := .noDominantOrder }
-  , { walsCode := "blx", language := "Biloxi", iso := "bll", value := .genitiveNoun }
-  , { walsCode := "bil", language := "Bilua", iso := "blb", value := .genitiveNoun }
-  , { walsCode := "bmb", language := "Bimoba", iso := "bim", value := .genitiveNoun }
-  , { walsCode := "bin", language := "Binandere", iso := "bhg", value := .genitiveNoun }
-  , { walsCode := "bni", language := "Bini", iso := "bin", value := .nounGenitive }
-  , { walsCode := "bbw", language := "Bininj Gun-Wok", iso := "gup", value := .genitiveNoun }
-  , { walsCode := "bii", language := "Biri", iso := "bzr", value := .genitiveNoun }
-  , { walsCode := "bir", language := "Birom", iso := "bom", value := .nounGenitive }
-  , { walsCode := "bla", language := "Blackfoot", iso := "bla", value := .genitiveNoun }
-  , { walsCode := "bob", language := "Bobangi", iso := "bni", value := .nounGenitive }
-  , { walsCode := "bod", language := "Bodo", iso := "brx", value := .genitiveNoun }
-  , { walsCode := "bok", language := "Boko", iso := "bqc", value := .genitiveNoun }
-  , { walsCode := "bol", language := "Bolia", iso := "bli", value := .nounGenitive }
-  , { walsCode := "bgo", language := "Bongo", iso := "bot", value := .nounGenitive }
-  , { walsCode := "bon", language := "Bongu", iso := "bpu", value := .genitiveNoun }
-  , { walsCode := "btk", language := "Bontok", iso := "lbk", value := .nounGenitive }
-  , { walsCode := "bra", language := "Brao", iso := "brb", value := .nounGenitive }
-  , { walsCode := "bre", language := "Breton", iso := "bre", value := .nounGenitive }
-  , { walsCode := "bri", language := "Bribri", iso := "bzd", value := .genitiveNoun }
-  , { walsCode := "bkt", language := "Brokskat", iso := "bkk", value := .genitiveNoun }
-  , { walsCode := "bdu", language := "Budu", iso := "buu", value := .nounGenitive }
-  , { walsCode := "bud", language := "Buduma", iso := "bdm", value := .nounGenitive }
-  , { walsCode := "bug", language := "Bugis", iso := "bug", value := .nounGenitive }
-  , { walsCode := "bul", language := "Bulgarian", iso := "bul", value := .noDominantOrder }
-  , { walsCode := "buw", language := "Bulu", iso := "bum", value := .nounGenitive }
-  , { walsCode := "bum", language := "Buma", iso := "tkw", value := .nounGenitive }
-  , { walsCode := "pnu", language := "Bunu (Younuo)", iso := "buh", value := .genitiveNoun }
-  , { walsCode := "bnb", language := "Bunuba", iso := "bck", value := .genitiveNoun }
-  , { walsCode := "but", language := "Buriat", iso := "bxm", value := .genitiveNoun }
-  , { walsCode := "brm", language := "Burmese", iso := "mya", value := .genitiveNoun }
-  , { walsCode := "buu", language := "Buru", iso := "mhs", value := .genitiveNoun }
-  , { walsCode := "brn", language := "Burunge", iso := "bds", value := .nounGenitive }
-  , { walsCode := "bur", language := "Burushaski", iso := "bsk", value := .genitiveNoun }
-  , { walsCode := "bus", language := "Busa", iso := "bqp", value := .genitiveNoun }
-  , { walsCode := "bya", language := "Byansi", iso := "bee", value := .genitiveNoun }
-  , { walsCode := "cah", language := "Cahuilla", iso := "chl", value := .genitiveNoun }
-  , { walsCode := "cak", language := "Cakchiquel", iso := "cak", value := .nounGenitive }
-  , { walsCode := "cml", language := "Camling", iso := "rab", value := .genitiveNoun }
-  , { walsCode := "cax", language := "Campa (Axininca)", iso := "", value := .genitiveNoun }
-  , { walsCode := "cnm", language := "Canamarí", iso := "knm", value := .genitiveNoun }
-  , { walsCode := "can", language := "Candoshi", iso := "cbu", value := .genitiveNoun }
-  , { walsCode := "cnl", language := "Canela", iso := "ram", value := .genitiveNoun }
-  , { walsCode := "cnt", language := "Cantonese", iso := "yue", value := .genitiveNoun }
-  , { walsCode := "car", language := "Carib", iso := "car", value := .genitiveNoun }
-  , { walsCode := "cde", language := "Carib (De'kwana)", iso := "mch", value := .genitiveNoun }
-  , { walsCode := "cas", language := "Cashibo", iso := "cbr", value := .genitiveNoun }
-  , { walsCode := "ctl", language := "Catalan", iso := "cat", value := .nounGenitive }
-  , { walsCode := "ctw", language := "Catawba", iso := "chc", value := .genitiveNoun }
-  , { walsCode := "cav", language := "Cavineña", iso := "cav", value := .genitiveNoun }
-  , { walsCode := "cay", language := "Cayapa", iso := "cbi", value := .genitiveNoun }
-  , { walsCode := "cyv", language := "Cayuvava", iso := "cyb", value := .nounGenitive }
-  , { walsCode := "ceb", language := "Cebuano", iso := "ceb", value := .nounGenitive }
-  , { walsCode := "chh", language := "Chaha", iso := "sgw", value := .genitiveNoun }
-  , { walsCode := "cai", language := "Chai", iso := "suq", value := .nounGenitive }
-  , { walsCode := "cld", language := "Chaldean (Modern)", iso := "cld", value := .nounGenitive }
-  , { walsCode := "cme", language := "Cham (Eastern)", iso := "cjm", value := .nounGenitive }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .nounGenitive }
-  , { walsCode := "chg", language := "Chang", iso := "nbc", value := .genitiveNoun }
-  , { walsCode := "chn", language := "Chantyal", iso := "chx", value := .genitiveNoun }
-  , { walsCode := "cso", language := "Chatino (Sierra Occidental)", iso := "ctp", value := .nounGenitive }
-  , { walsCode := "cya", language := "Chatino (Yaitepec)", iso := "ctp", value := .nounGenitive }
-  , { walsCode := "chc", language := "Chechen", iso := "che", value := .genitiveNoun }
-  , { walsCode := "cmh", language := "Chemehuevi", iso := "ute", value := .genitiveNoun }
-  , { walsCode := "cpn", language := "Chepang", iso := "cdm", value := .genitiveNoun }
-  , { walsCode := "che", language := "Cherokee", iso := "chr", value := .genitiveNoun }
-  , { walsCode := "cic", language := "Chichewa", iso := "nya", value := .nounGenitive }
-  , { walsCode := "chi", language := "Chimariko", iso := "cid", value := .genitiveNoun }
-  , { walsCode := "cmr", language := "Chin (Mara)", iso := "mrh", value := .genitiveNoun }
-  , { walsCode := "chs", language := "Chin (Siyin)", iso := "csy", value := .genitiveNoun }
-  , { walsCode := "cti", language := "Chin (Tiddim)", iso := "ctd", value := .genitiveNoun }
-  , { walsCode := "ccm", language := "Chinantec (Comaltepec)", iso := "cco", value := .nounGenitive }
-  , { walsCode := "cle", language := "Chinantec (Lealao)", iso := "cle", value := .nounGenitive }
-  , { walsCode := "cpl", language := "Chinantec (Palantla)", iso := "cpa", value := .nounGenitive }
-  , { walsCode := "chq", language := "Chinantec (Quiotepec)", iso := "chq", value := .nounGenitive }
-  , { walsCode := "ckl", language := "Chinook (Lower)", iso := "chh", value := .noDominantOrder }
-  , { walsCode := "cpy", language := "Chipaya", iso := "cap", value := .genitiveNoun }
-  , { walsCode := "cqt", language := "Chiquitano", iso := "cax", value := .nounGenitive }
-  , { walsCode := "ctm", language := "Chitimacha", iso := "ctm", value := .genitiveNoun }
-  , { walsCode := "cct", language := "Choctaw", iso := "cho", value := .genitiveNoun }
-  , { walsCode := "cln", language := "Cholón", iso := "cht", value := .genitiveNoun }
-  , { walsCode := "chx", language := "Chontal (Huamelultec Oaxaca)", iso := "clo", value := .nounGenitive }
-  , { walsCode := "cmy", language := "Chontal Maya", iso := "chf", value := .nounGenitive }
-  , { walsCode := "chr", language := "Chrau", iso := "crw", value := .nounGenitive }
-  , { walsCode := "chj", language := "Chuj", iso := "cac", value := .nounGenitive }
-  , { walsCode := "chk", language := "Chukchi", iso := "ckt", value := .genitiveNoun }
-  , { walsCode := "cba", language := "Chumash (Barbareño)", iso := "boi", value := .nounGenitive }
-  , { walsCode := "chv", language := "Chuvash", iso := "chv", value := .genitiveNoun }
-  , { walsCode := "cbo", language := "Chácobo", iso := "cao", value := .genitiveNoun }
-  , { walsCode := "coa", language := "Coahuilteco", iso := "xcw", value := .genitiveNoun }
-  , { walsCode := "coc", language := "Cocama", iso := "cod", value := .genitiveNoun }
-  , { walsCode := "cmn", language := "Comanche", iso := "com", value := .genitiveNoun }
-  , { walsCode := "cmx", language := "Comox", iso := "coo", value := .nounGenitive }
-  , { walsCode := "coo", language := "Coos (Hanis)", iso := "csz", value := .noDominantOrder }
-  , { walsCode := "cop", language := "Coptic", iso := "cop", value := .nounGenitive }
-  , { walsCode := "cor", language := "Cora", iso := "crn", value := .noDominantOrder }
-  , { walsCode := "crn", language := "Cornish", iso := "cor", value := .nounGenitive }
-  , { walsCode := "cro", language := "Crow", iso := "cro", value := .genitiveNoun }
-  , { walsCode := "cub", language := "Cubeo", iso := "cub", value := .genitiveNoun }
-  , { walsCode := "cup", language := "Cupeño", iso := "cup", value := .genitiveNoun }
-  , { walsCode := "cze", language := "Czech", iso := "ces", value := .noDominantOrder }
-  , { walsCode := "cem", language := "Cèmuhî", iso := "cam", value := .nounGenitive }
-  , { walsCode := "dag", language := "Daga", iso := "dgz", value := .genitiveNoun }
-  , { walsCode := "dga", language := "Dagaare", iso := "dga", value := .genitiveNoun }
-  , { walsCode := "dgb", language := "Dagbani", iso := "dag", value := .genitiveNoun }
-  , { walsCode := "dgr", language := "Dagur", iso := "dta", value := .genitiveNoun }
-  , { walsCode := "dan", language := "Dan", iso := "dnj", value := .genitiveNoun }
-  , { walsCode := "dni", language := "Dani (Lower Grand Valley)", iso := "dni", value := .genitiveNoun }
-  , { walsCode := "dsh", language := "Danish", iso := "dan", value := .genitiveNoun }
-  , { walsCode := "drg", language := "Dargwa", iso := "dar", value := .genitiveNoun }
-  , { walsCode := "drm", language := "Darma", iso := "drd", value := .genitiveNoun }
-  , { walsCode := "day", language := "Day", iso := "dai", value := .nounGenitive }
-  , { walsCode := "des", language := "Desano", iso := "des", value := .genitiveNoun }
-  , { walsCode := "dha", language := "Dhaasanac", iso := "dsh", value := .genitiveNoun }
-  , { walsCode := "dhb", language := "Dharumbal", iso := "xgm", value := .genitiveNoun }
-  , { walsCode := "dhm", language := "Dhimal", iso := "dhi", value := .genitiveNoun }
-  , { walsCode := "dhi", language := "Dhivehi", iso := "div", value := .genitiveNoun }
-  , { walsCode := "did", language := "Didinga", iso := "did", value := .nounGenitive }
-  , { walsCode := "die", language := "Diegueño (Mesa Grande)", iso := "dih", value := .genitiveNoun }
-  , { walsCode := "dig", language := "Digaro", iso := "mhu", value := .genitiveNoun }
-  , { walsCode := "din", language := "Dinka", iso := "din", value := .nounGenitive }
-  , { walsCode := "dio", language := "Diola-Fogny", iso := "dyo", value := .nounGenitive }
-  , { walsCode := "diy", language := "Diyari", iso := "dif", value := .genitiveNoun }
-  , { walsCode := "djm", language := "Djambarrpuyngu", iso := "djr", value := .noDominantOrder }
-  , { walsCode := "djp", language := "Djapu", iso := "dwu", value := .noDominantOrder }
-  , { walsCode := "djn", language := "Djinang", iso := "dji", value := .genitiveNoun }
-  , { walsCode := "dji", language := "Djingili", iso := "jig", value := .nounGenitive }
-  , { walsCode := "dlm", language := "Dla (Menggwa)", iso := "kbv", value := .genitiveNoun }
-  , { walsCode := "der", language := "Dla (Proper)", iso := "kbv", value := .genitiveNoun }
-  , { walsCode := "dom", language := "Domari", iso := "rmt", value := .genitiveNoun }
-  , { walsCode := "dgo", language := "Dongo", iso := "doo", value := .nounGenitive }
-  , { walsCode := "dds", language := "Donno So", iso := "dds", value := .genitiveNoun }
-  , { walsCode := "doy", language := "Doyayo", iso := "dow", value := .genitiveNoun }
-  , { walsCode := "dre", language := "Drehu", iso := "dhv", value := .nounGenitive }
-  , { walsCode := "dua", language := "Duala", iso := "dua", value := .nounGenitive }
-  , { walsCode := "duk", language := "Duka", iso := "dud", value := .nounGenitive }
-  , { walsCode := "dul", language := "Dulong", iso := "duu", value := .genitiveNoun }
-  , { walsCode := "dmi", language := "Dumi", iso := "dus", value := .genitiveNoun }
-  , { walsCode := "dum", language := "Dumo", iso := "vam", value := .genitiveNoun }
-  , { walsCode := "dun", language := "Duna", iso := "duc", value := .genitiveNoun }
-  , { walsCode := "dut", language := "Dutch", iso := "nld", value := .nounGenitive }
-  , { walsCode := "dyi", language := "Dyirbal", iso := "dbl", value := .genitiveNoun }
-  , { walsCode := "daw", language := "Dâw", iso := "kwa", value := .genitiveNoun }
-  , { walsCode := "edo", language := "Edolo", iso := "etr", value := .genitiveNoun }
-  , { walsCode := "erk", language := "Efate (South)", iso := "erk", value := .nounGenitive }
-  , { walsCode := "ega", language := "Ega", iso := "ega", value := .genitiveNoun }
-  , { walsCode := "eip", language := "Eipo", iso := "eip", value := .genitiveNoun }
-  , { walsCode := "emb", language := "Emberá (Northern)", iso := "emp", value := .genitiveNoun }
-  , { walsCode := "egn", language := "Engenni", iso := "enn", value := .nounGenitive }
-  , { walsCode := "eno", language := "Enggano", iso := "eno", value := .nounGenitive }
-  , { walsCode := "eng", language := "English", iso := "eng", value := .noDominantOrder }
-  , { walsCode := "epe", language := "Epena Pedee", iso := "sja", value := .genitiveNoun }
-  , { walsCode := "err", language := "Erromangan", iso := "erg", value := .nounGenitive }
-  , { walsCode := "ese", language := "Ese Ejja", iso := "ese", value := .genitiveNoun }
-  , { walsCode := "esm", language := "Esmeraldeño", iso := "", value := .nounGenitive }
-  , { walsCode := "est", language := "Estonian", iso := "ekk", value := .genitiveNoun }
-  , { walsCode := "eud", language := "Eudeve", iso := "", value := .genitiveNoun }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .genitiveNoun }
-  , { walsCode := "ewe", language := "Ewe", iso := "ewe", value := .genitiveNoun }
-  , { walsCode := "ewo", language := "Ewondo", iso := "ewo", value := .nounGenitive }
-  , { walsCode := "fas", language := "Fasu", iso := "faa", value := .genitiveNoun }
-  , { walsCode := "fij", language := "Fijian", iso := "fij", value := .nounGenitive }
-  , { walsCode := "fin", language := "Finnish", iso := "fin", value := .genitiveNoun }
-  , { walsCode := "pdp", language := "Folopa", iso := "ppo", value := .genitiveNoun }
-  , { walsCode := "fon", language := "Fongbe", iso := "fon", value := .nounGenitive }
-  , { walsCode := "for", language := "Fore", iso := "for", value := .genitiveNoun }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .nounGenitive }
-  , { walsCode := "fri", language := "Frisian", iso := "fry", value := .noDominantOrder }
-  , { walsCode := "fua", language := "Fulfulde (Adamawa)", iso := "fub", value := .nounGenitive }
-  , { walsCode := "ful", language := "Fulniô", iso := "fun", value := .genitiveNoun }
-  , { walsCode := "fur", language := "Fur", iso := "fvr", value := .genitiveNoun }
-  , { walsCode := "fut", language := "Futuna-Aniwa", iso := "fut", value := .nounGenitive }
-  , { walsCode := "fye", language := "Fyem", iso := "pym", value := .nounGenitive }
-  , { walsCode := "gnd", language := "Ga'anda", iso := "gqa", value := .nounGenitive }
-  , { walsCode := "gds", language := "Gadsup", iso := "gaj", value := .genitiveNoun }
-  , { walsCode := "gae", language := "Gaelic (Scots)", iso := "gla", value := .nounGenitive }
-  , { walsCode := "gam", language := "Gamo", iso := "gmv", value := .genitiveNoun }
-  , { walsCode := "gap", language := "Gapapaiwa", iso := "pwg", value := .genitiveNoun }
-  , { walsCode := "gar", language := "Garo", iso := "grt", value := .genitiveNoun }
-  , { walsCode := "grr", language := "Garrwa", iso := "wrk", value := .genitiveNoun }
-  , { walsCode := "grf", language := "Garífuna", iso := "cab", value := .nounGenitive }
-  , { walsCode := "gav", language := "Gavião", iso := "gvo", value := .genitiveNoun }
-  , { walsCode := "gbs", language := "Gbaya (Southwest)", iso := "gso", value := .nounGenitive }
-  , { walsCode := "gbb", language := "Gbeya Bossangoa", iso := "gbp", value := .nounGenitive }
-  , { walsCode := "gel", language := "Gela", iso := "nlg", value := .nounGenitive }
-  , { walsCode := "geo", language := "Georgian", iso := "kat", value := .genitiveNoun }
-  , { walsCode := "ger", language := "German", iso := "deu", value := .nounGenitive }
-  , { walsCode := "goa", language := "Goajiro", iso := "guc", value := .nounGenitive }
-  , { walsCode := "god", language := "Godoberi", iso := "gdo", value := .genitiveNoun }
-  , { walsCode := "goe", language := "Goemai", iso := "ank", value := .nounGenitive }
-  , { walsCode := "gok", language := "Gokana", iso := "gkn", value := .nounGenitive }
-  , { walsCode := "gln", language := "Golin", iso := "gvf", value := .genitiveNoun }
-  , { walsCode := "gon", language := "Gondi", iso := "gno", value := .genitiveNoun }
-  , { walsCode := "goo", language := "Gooniyandi", iso := "gni", value := .noDominantOrder }
-  , { walsCode := "gan", language := "Great Andamanese", iso := "apq", value := .genitiveNoun }
-  , { walsCode := "grb", language := "Grebo", iso := "grj", value := .genitiveNoun }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .nounGenitive }
-  , { walsCode := "grw", language := "Greenlandic (West)", iso := "kal", value := .genitiveNoun }
-  , { walsCode := "gjj", language := "Guajajara", iso := "gub", value := .genitiveNoun }
-  , { walsCode := "gua", language := "Guaraní", iso := "gug", value := .genitiveNoun }
-  , { walsCode := "grj", language := "Guarijío", iso := "var", value := .genitiveNoun }
-  , { walsCode := "gto", language := "Guató", iso := "gta", value := .nounGenitive }
-  , { walsCode := "gud", language := "Gude", iso := "gde", value := .nounGenitive }
-  , { walsCode := "gul", language := "Gula (in Central African Republic)", iso := "kcm", value := .nounGenitive }
-  , { walsCode := "gmw", language := "Gumawana", iso := "gvs", value := .genitiveNoun }
-  , { walsCode := "gum", language := "Gumbaynggir", iso := "kgs", value := .noDominantOrder }
-  , { walsCode := "gmz", language := "Gumuz", iso := "guk", value := .nounGenitive }
-  , { walsCode := "guw", language := "Gungbe", iso := "guw", value := .noDominantOrder }
-  , { walsCode := "gnn", language := "Gunin", iso := "gww", value := .genitiveNoun }
-  , { walsCode := "gur", language := "Gurung", iso := "", value := .genitiveNoun }
-  , { walsCode := "guu", language := "Guugu Yimidhirr", iso := "kky", value := .noDominantOrder }
-  , { walsCode := "gwa", language := "Gwari", iso := "gbr", value := .genitiveNoun }
-  , { walsCode := "gwo", language := "Gworok", iso := "kcg", value := .nounGenitive }
-  , { walsCode := "gyc", language := "Gyarong (Cogtse)", iso := "jya", value := .genitiveNoun }
-  , { walsCode := "ga", language := "Gã", iso := "gaa", value := .genitiveNoun }
-  , { walsCode := "gku", language := "Gününa Küne", iso := "pue", value := .noDominantOrder }
-  , { walsCode := "hai", language := "Haida", iso := "hai", value := .genitiveNoun }
-  , { walsCode := "hal", language := "Halia", iso := "hla", value := .nounGenitive }
-  , { walsCode := "hhu", language := "Hanga Hundi", iso := "wos", value := .genitiveNoun }
-  , { walsCode := "har", language := "Haruai", iso := "tmd", value := .genitiveNoun }
-  , { walsCode := "hat", language := "Hatam", iso := "had", value := .genitiveNoun }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .nounGenitive }
-  , { walsCode := "haw", language := "Hawaiian", iso := "haw", value := .nounGenitive }
-  , { walsCode := "hay", language := "Hayu", iso := "vay", value := .genitiveNoun }
-  , { walsCode := "hdi", language := "Hdi", iso := "xed", value := .nounGenitive }
-  , { walsCode := "heb", language := "Hebrew (Modern)", iso := "heb", value := .nounGenitive }
-  , { walsCode := "hei", language := "Heiltsuk", iso := "hei", value := .nounGenitive }
-  , { walsCode := "hid", language := "Hidatsa", iso := "hid", value := .genitiveNoun }
-  , { walsCode := "hil", language := "Hiligaynon", iso := "hil", value := .nounGenitive }
-  , { walsCode := "hin", language := "Hindi", iso := "hin", value := .genitiveNoun }
-  , { walsCode := "hix", language := "Hixkaryana", iso := "hix", value := .genitiveNoun }
-  , { walsCode := "hma", language := "Hmar", iso := "hmr", value := .genitiveNoun }
-  , { walsCode := "hmo", language := "Hmong Njua", iso := "hnj", value := .genitiveNoun }
-  , { walsCode := "ho", language := "Ho", iso := "hoc", value := .genitiveNoun }
-  , { walsCode := "hoa", language := "Hoava", iso := "hoa", value := .nounGenitive }
-  , { walsCode := "hop", language := "Hopi", iso := "hop", value := .genitiveNoun }
-  , { walsCode := "hua", language := "Hua", iso := "ygr", value := .genitiveNoun }
-  , { walsCode := "htc", language := "Huastec", iso := "hus", value := .nounGenitive }
-  , { walsCode := "hve", language := "Huave (San Mateo del Mar)", iso := "huv", value := .nounGenitive }
-  , { walsCode := "hui", language := "Huichol", iso := "hch", value := .genitiveNoun }
-  , { walsCode := "hum", language := "Huitoto (Murui)", iso := "huu", value := .genitiveNoun }
-  , { walsCode := "hnd", language := "Hunde", iso := "hke", value := .nounGenitive }
-  , { walsCode := "hun", language := "Hungarian", iso := "hun", value := .genitiveNoun }
-  , { walsCode := "hzb", language := "Hunzib", iso := "huz", value := .genitiveNoun }
-  , { walsCode := "hpd", language := "Hup", iso := "jup", value := .genitiveNoun }
-  , { walsCode := "hup", language := "Hupa", iso := "hup", value := .genitiveNoun }
-  , { walsCode := "isa", language := "I'saka", iso := "ksi", value := .nounGenitive }
-  , { walsCode := "iaa", language := "Iaai", iso := "iai", value := .nounGenitive }
-  , { walsCode := "iau", language := "Iau", iso := "tmu", value := .genitiveNoun }
-  , { walsCode := "iba", language := "Iban", iso := "iba", value := .nounGenitive }
-  , { walsCode := "ice", language := "Icelandic", iso := "isl", value := .nounGenitive }
-  , { walsCode := "idn", language := "Iduna", iso := "viv", value := .genitiveNoun }
-  , { walsCode := "mxe", language := "Ifira-Mele", iso := "mxe", value := .noDominantOrder }
-  , { walsCode := "ifu", language := "Ifugao (Batad)", iso := "ifb", value := .nounGenitive }
-  , { walsCode := "ifm", language := "Ifumu", iso := "ifm", value := .nounGenitive }
-  , { walsCode := "igb", language := "Igbo", iso := "ibo", value := .nounGenitive }
-  , { walsCode := "ign", language := "Ignaciano", iso := "ign", value := .nounGenitive }
-  , { walsCode := "ijo", language := "Ijo (Kolokuma)", iso := "ijc", value := .genitiveNoun }
-  , { walsCode := "ik", language := "Ik", iso := "ikx", value := .noDominantOrder }
-  , { walsCode := "ika", language := "Ika", iso := "arh", value := .genitiveNoun }
-  , { walsCode := "ila", language := "Ila", iso := "ilb", value := .nounGenitive }
-  , { walsCode := "imo", language := "Imonda", iso := "imn", value := .genitiveNoun }
-  , { walsCode := "ina", language := "Inanwatan", iso := "szp", value := .genitiveNoun }
-  , { walsCode := "ind", language := "Indonesian", iso := "ind", value := .nounGenitive }
-  , { walsCode := "igs", language := "Ingessana", iso := "tbi", value := .nounGenitive }
-  , { walsCode := "ing", language := "Ingush", iso := "inh", value := .genitiveNoun }
-  , { walsCode := "iqu", language := "Iquito", iso := "iqu", value := .genitiveNoun }
-  , { walsCode := "irx", language := "Iranxe", iso := "irn", value := .genitiveNoun }
-  , { walsCode := "irq", language := "Iraqw", iso := "irk", value := .nounGenitive }
-  , { walsCode := "irr", language := "Irarutu", iso := "irh", value := .genitiveNoun }
-  , { walsCode := "iri", language := "Irish", iso := "gle", value := .nounGenitive }
-  , { walsCode := "ita", language := "Italian", iso := "ita", value := .nounGenitive }
-  , { walsCode := "ite", language := "Itelmen", iso := "itl", value := .noDominantOrder }
-  , { walsCode := "ito", language := "Itonama", iso := "ito", value := .noDominantOrder }
-  , { walsCode := "iwa", language := "Iwaidja", iso := "ibd", value := .genitiveNoun }
-  , { walsCode := "jar", language := "Izere", iso := "izr", value := .nounGenitive }
-  , { walsCode := "izi", language := "Izi", iso := "izz", value := .nounGenitive }
-  , { walsCode := "jab", language := "Jabêm", iso := "jae", value := .genitiveNoun }
-  , { walsCode := "jak", language := "Jakaltek", iso := "jac", value := .nounGenitive }
-  , { walsCode := "jms", language := "Jamsay", iso := "djm", value := .genitiveNoun }
-  , { walsCode := "jpn", language := "Japanese", iso := "jpn", value := .genitiveNoun }
-  , { walsCode := "jaq", language := "Jaqaru", iso := "jqr", value := .genitiveNoun }
-  , { walsCode := "jeb", language := "Jebero", iso := "jeb", value := .nounGenitive }
-  , { walsCode := "jel", language := "Jeli", iso := "jek", value := .genitiveNoun }
-  , { walsCode := "jng", language := "Jingpho", iso := "kac", value := .genitiveNoun }
-  , { walsCode := "jiv", language := "Jivaro", iso := "jiv", value := .genitiveNoun }
-  , { walsCode := "juk", language := "Jukun", iso := "jbu", value := .nounGenitive }
-  , { walsCode := "jmo", language := "Jur Mödö", iso := "bex", value := .nounGenitive }
-  , { walsCode := "juh", language := "Ju|'hoan", iso := "ktz", value := .genitiveNoun }
-  , { walsCode := "kab", language := "Kabardian", iso := "kbd", value := .genitiveNoun }
-  , { walsCode := "kbt", language := "Kabatei", iso := "xkp", value := .genitiveNoun }
-  , { walsCode := "kby", language := "Kabiyé", iso := "kbp", value := .genitiveNoun }
-  , { walsCode := "kbl", language := "Kabyle", iso := "kab", value := .nounGenitive }
-  , { walsCode := "kdz", language := "Kadazan", iso := "kzj", value := .nounGenitive }
-  , { walsCode := "kdw", language := "Kadiwéu", iso := "kbc", value := .noDominantOrder }
-  , { walsCode := "kad", language := "Kadugli", iso := "xtc", value := .nounGenitive }
-  , { walsCode := "kng", language := "Kaingang", iso := "kgp", value := .genitiveNoun }
-  , { walsCode := "krr", language := "Kairiru", iso := "kxa", value := .nounGenitive }
-  , { walsCode := "kae", language := "Kaki Ae", iso := "tbd", value := .genitiveNoun }
-  , { walsCode := "klq", language := "Kalam", iso := "kmh", value := .genitiveNoun }
-  , { walsCode := "kls", language := "Kalispel", iso := "fla", value := .nounGenitive }
-  , { walsCode := "kgu", language := "Kalkatungu", iso := "ktg", value := .genitiveNoun }
-  , { walsCode := "kmk", language := "Kalmyk", iso := "xal", value := .genitiveNoun }
-  , { walsCode := "kll", language := "Kaluli", iso := "bco", value := .genitiveNoun }
-  , { walsCode := "kma", language := "Kamaiurá", iso := "kay", value := .genitiveNoun }
-  , { walsCode := "kmz", language := "Kamasau", iso := "kms", value := .genitiveNoun }
-  , { walsCode := "kms", language := "Kamass", iso := "xas", value := .genitiveNoun }
-  , { walsCode := "kba", language := "Kamba", iso := "kam", value := .nounGenitive }
-  , { walsCode := "kmr", language := "Kamoro", iso := "kgq", value := .noDominantOrder }
-  , { walsCode := "kan", language := "Kana", iso := "ogo", value := .nounGenitive }
-  , { walsCode := "knk", language := "Kanakuru", iso := "kna", value := .nounGenitive }
-  , { walsCode := "kbu", language := "Kanembu", iso := "kbl", value := .nounGenitive }
-  , { walsCode := "knd", language := "Kannada", iso := "kan", value := .genitiveNoun }
-  , { walsCode := "kno", language := "Kanoê", iso := "kxo", value := .genitiveNoun }
-  , { walsCode := "knb", language := "Kanum (Bädi)", iso := "khd", value := .genitiveNoun }
-  , { walsCode := "knr", language := "Kanuri", iso := "knc", value := .nounGenitive }
-  , { walsCode := "kyo", language := "Kanyok", iso := "kny", value := .nounGenitive }
-  , { walsCode := "kpm", language := "Kapampangan", iso := "pam", value := .nounGenitive }
-  , { walsCode := "kar", language := "Kara (in Central African Republic)", iso := "kah", value := .nounGenitive }
-  , { walsCode := "krc", language := "Karachay-Balkar", iso := "krc", value := .genitiveNoun }
-  , { walsCode := "krj", language := "Karadjeri", iso := "gbd", value := .noDominantOrder }
-  , { walsCode := "jva", language := "Karajá", iso := "kpj", value := .genitiveNoun }
-  , { walsCode := "kkp", language := "Karakalpak", iso := "kaa", value := .genitiveNoun }
-  , { walsCode := "kbw", language := "Karen (Bwe)", iso := "bwe", value := .genitiveNoun }
-  , { walsCode := "kpw", language := "Karen (Pwo)", iso := "kjp", value := .genitiveNoun }
-  , { walsCode := "ksg", language := "Karen (Sgaw)", iso := "ksw", value := .genitiveNoun }
-  , { walsCode := "kmj", language := "Karimojong", iso := "kdj", value := .nounGenitive }
-  , { walsCode := "kyr", language := "Karkar-Yuri", iso := "yuj", value := .genitiveNoun }
-  , { walsCode := "krk", language := "Karok", iso := "kyh", value := .genitiveNoun }
-  , { walsCode := "kaa", language := "Karó (Arára)", iso := "arr", value := .genitiveNoun }
-  , { walsCode := "kas", language := "Kashmiri", iso := "kas", value := .genitiveNoun }
-  , { walsCode := "ktc", language := "Katcha", iso := "xtc", value := .nounGenitive }
-  , { walsCode := "kti", language := "Kati (in West Papua, Indonesia)", iso := "kts", value := .genitiveNoun }
-  , { walsCode := "ktl", language := "Katla", iso := "kcr", value := .nounGenitive }
-  , { walsCode := "ktu", language := "Katu", iso := "", value := .nounGenitive }
-  , { walsCode := "kau", language := "Kaulong", iso := "pss", value := .noDominantOrder }
-  , { walsCode := "kws", language := "Kawaiisu", iso := "xaw", value := .noDominantOrder }
-  , { walsCode := "kyz", language := "Kayabí", iso := "kyz", value := .genitiveNoun }
-  , { walsCode := "kyl", language := "Kayah Li (Eastern)", iso := "eky", value := .genitiveNoun }
-  , { walsCode := "kay", language := "Kayardild", iso := "gyd", value := .genitiveNoun }
-  , { walsCode := "kel", language := "Kele", iso := "sbc", value := .nounGenitive }
-  , { walsCode := "kem", language := "Kemant", iso := "ahg", value := .genitiveNoun }
-  , { walsCode := "ken", language := "Kenga", iso := "kyq", value := .nounGenitive }
-  , { walsCode := "ker", language := "Kera", iso := "ker", value := .nounGenitive }
-  , { walsCode := "ksa", language := "Keresan (Santa Ana)", iso := "kee", value := .genitiveNoun }
-  , { walsCode := "ket", language := "Ket", iso := "ket", value := .genitiveNoun }
-  , { walsCode := "kew", language := "Kewa", iso := "kew", value := .genitiveNoun }
-  , { walsCode := "khl", language := "Khalaj", iso := "klj", value := .genitiveNoun }
-  , { walsCode := "khg", language := "Khaling", iso := "klr", value := .genitiveNoun }
-  , { walsCode := "kha", language := "Khalkha", iso := "khk", value := .genitiveNoun }
-  , { walsCode := "kmh", language := "Kham", iso := "kjl", value := .genitiveNoun }
-  , { walsCode := "khd", language := "Kham (Dege)", iso := "khg", value := .genitiveNoun }
-  , { walsCode := "knz", language := "Kham (Tibetan) (Nangchen)", iso := "khg", value := .genitiveNoun }
-  , { walsCode := "kty", language := "Khanty", iso := "kca", value := .genitiveNoun }
-  , { walsCode := "khs", language := "Khasi", iso := "kha", value := .nounGenitive }
-  , { walsCode := "khi", language := "Khinalug", iso := "kjj", value := .genitiveNoun }
+  [ { walsCode := "xoo", iso := "nmn", value := .genitiveNoun }
+  , { walsCode := "ani", iso := "hnh", value := .genitiveNoun }
+  , { walsCode := "xam", iso := "xam", value := .genitiveNoun }
+  , { walsCode := "huc", iso := "huc", value := .genitiveNoun }
+  , { walsCode := "aar", iso := "aiw", value := .genitiveNoun }
+  , { walsCode := "aba", iso := "aau", value := .genitiveNoun }
+  , { walsCode := "abi", iso := "axb", value := .noDominantOrder }
+  , { walsCode := "abk", iso := "abk", value := .genitiveNoun }
+  , { walsCode := "abv", iso := "abz", value := .genitiveNoun }
+  , { walsCode := "abu", iso := "kgr", value := .genitiveNoun }
+  , { walsCode := "ace", iso := "ace", value := .nounGenitive }
+  , { walsCode := "acg", iso := "aca", value := .genitiveNoun }
+  , { walsCode := "acn", iso := "acn", value := .genitiveNoun }
+  , { walsCode := "acl", iso := "ach", value := .nounGenitive }
+  , { walsCode := "acu", iso := "acu", value := .genitiveNoun }
+  , { walsCode := "aco", iso := "kjq", value := .genitiveNoun }
+  , { walsCode := "adg", iso := "adn", value := .genitiveNoun }
+  , { walsCode := "adi", iso := "adj", value := .genitiveNoun }
+  , { walsCode := "adn", iso := "adt", value := .genitiveNoun }
+  , { walsCode := "adz", iso := "adz", value := .genitiveNoun }
+  , { walsCode := "awi", iso := "awi", value := .genitiveNoun }
+  , { walsCode := "aga", iso := "agd", value := .genitiveNoun }
+  , { walsCode := "agh", iso := "agq", value := .nounGenitive }
+  , { walsCode := "agc", iso := "agt", value := .nounGenitive }
+  , { walsCode := "agd", iso := "duo", value := .nounGenitive }
+  , { walsCode := "ain", iso := "ain", value := .genitiveNoun }
+  , { walsCode := "aja", iso := "aja", value := .nounGenitive }
+  , { walsCode := "ajg", iso := "ajg", value := .noDominantOrder }
+  , { walsCode := "akn", iso := "aka", value := .genitiveNoun }
+  , { walsCode := "akh", iso := "ahk", value := .genitiveNoun }
+  , { walsCode := "all", iso := "nrz", value := .genitiveNoun }
+  , { walsCode := "ala", iso := "amp", value := .genitiveNoun }
+  , { walsCode := "alb", iso := "sqi", value := .nounGenitive }
+  , { walsCode := "als", iso := "aes", value := .genitiveNoun }
+  , { walsCode := "aln", iso := "alp", value := .genitiveNoun }
+  , { walsCode := "aly", iso := "aly", value := .nounGenitive }
+  , { walsCode := "amm", iso := "amm", value := .genitiveNoun }
+  , { walsCode := "amc", iso := "amc", value := .genitiveNoun }
+  , { walsCode := "amn", iso := "amn", value := .genitiveNoun }
+  , { walsCode := "aml", iso := "omb", value := .nounGenitive }
+  , { walsCode := "amq", iso := "amk", value := .genitiveNoun }
+  , { walsCode := "amb", iso := "abt", value := .genitiveNoun }
+  , { walsCode := "amt", iso := "adx", value := .genitiveNoun }
+  , { walsCode := "ame", iso := "aey", value := .genitiveNoun }
+  , { walsCode := "amh", iso := "amh", value := .genitiveNoun }
+  , { walsCode := "ami", iso := "ami", value := .nounGenitive }
+  , { walsCode := "amx", iso := "imi", value := .genitiveNoun }
+  , { walsCode := "adk", iso := "ano", value := .genitiveNoun }
+  , { walsCode := "anj", iso := "aty", value := .nounGenitive }
+  , { walsCode := "agm", iso := "njm", value := .genitiveNoun }
+  , { walsCode := "anc", iso := "anc", value := .nounGenitive }
+  , { walsCode := "ang", iso := "agg", value := .genitiveNoun }
+  , { walsCode := "ann", iso := "aoi", value := .noDominantOrder }
+  , { walsCode := "ano", iso := "nun", value := .genitiveNoun }
+  , { walsCode := "anu", iso := "cko", value := .genitiveNoun }
+  , { walsCode := "ayi", iso := "any", value := .genitiveNoun }
+  , { walsCode := "any", iso := "anu", value := .nounGenitive }
+  , { walsCode := "ane", iso := "anz", value := .noDominantOrder }
+  , { walsCode := "ao", iso := "njo", value := .genitiveNoun }
+  , { walsCode := "apl", iso := "apy", value := .genitiveNoun }
+  , { walsCode := "apt", iso := "apt", value := .genitiveNoun }
+  , { walsCode := "api", iso := "apn", value := .genitiveNoun }
+  , { walsCode := "apu", iso := "apu", value := .genitiveNoun }
+  , { walsCode := "abn", iso := "ard", value := .noDominantOrder }
+  , { walsCode := "aeg", iso := "arz", value := .nounGenitive }
+  , { walsCode := "arg", iso := "afb", value := .nounGenitive }
+  , { walsCode := "arq", iso := "acm", value := .nounGenitive }
+  , { walsCode := "arj", iso := "afb", value := .nounGenitive }
+  , { walsCode := "ams", iso := "arb", value := .nounGenitive }
+  , { walsCode := "amr", iso := "ary", value := .nounGenitive }
+  , { walsCode := "asy", iso := "apc", value := .nounGenitive }
+  , { walsCode := "ana", iso := "aro", value := .genitiveNoun }
+  , { walsCode := "arp", iso := "ape", value := .noDominantOrder }
+  , { walsCode := "abo", iso := "arv", value := .nounGenitive }
+  , { walsCode := "arc", iso := "aqc", value := .genitiveNoun }
+  , { walsCode := "ari", iso := "laz", value := .genitiveNoun }
+  , { walsCode := "arm", iso := "hye", value := .genitiveNoun }
+  , { walsCode := "arw", iso := "hyw", value := .genitiveNoun }
+  , { walsCode := "alk", iso := "apr", value := .noDominantOrder }
+  , { walsCode := "aro", iso := "aia", value := .nounGenitive }
+  , { walsCode := "awe", iso := "are", value := .nounGenitive }
+  , { walsCode := "asm", iso := "cns", value := .genitiveNoun }
+  , { walsCode := "ass", iso := "asm", value := .genitiveNoun }
+  , { walsCode := "atk", iso := "aqp", value := .genitiveNoun }
+  , { walsCode := "ata", iso := "tay", value := .nounGenitive }
+  , { walsCode := "ath", iso := "aph", value := .genitiveNoun }
+  , { walsCode := "au", iso := "avt", value := .noDominantOrder }
+  , { walsCode := "ava", iso := "ava", value := .genitiveNoun }
+  , { walsCode := "avo", iso := "avu", value := .noDominantOrder }
+  , { walsCode := "awa", iso := "awb", value := .genitiveNoun }
+  , { walsCode := "awp", iso := "kwi", value := .genitiveNoun }
+  , { walsCode := "awt", iso := "kmn", value := .genitiveNoun }
+  , { walsCode := "ayw", iso := "nfl", value := .nounGenitive }
+  , { walsCode := "aym", iso := "ayr", value := .genitiveNoun }
+  , { walsCode := "ayo", iso := "", value := .genitiveNoun }
+  , { walsCode := "ayr", iso := "ayo", value := .genitiveNoun }
+  , { walsCode := "aze", iso := "", value := .genitiveNoun }
+  , { walsCode := "bdm", iso := "bia", value := .genitiveNoun }
+  , { walsCode := "bfi", iso := "ksf", value := .nounGenitive }
+  , { walsCode := "bag", iso := "bmi", value := .nounGenitive }
+  , { walsCode := "bgr", iso := "fuu", value := .nounGenitive }
+  , { walsCode := "bai", iso := "bca", value := .genitiveNoun }
+  , { walsCode := "baj", iso := "bdl", value := .nounGenitive }
+  , { walsCode := "bwc", iso := "bdr", value := .nounGenitive }
+  , { walsCode := "bak", iso := "bkc", value := .nounGenitive }
+  , { walsCode := "bka", iso := "bdh", value := .nounGenitive }
+  , { walsCode := "bku", iso := "bri", value := .nounGenitive }
+  , { walsCode := "blz", iso := "", value := .nounGenitive }
+  , { walsCode := "bvi", iso := "", value := .nounGenitive }
+  , { walsCode := "bam", iso := "bam", value := .genitiveNoun }
+  , { walsCode := "bnk", iso := "abb", value := .nounGenitive }
+  , { walsCode := "bnn", iso := "bcm", value := .nounGenitive }
+  , { walsCode := "baa", iso := "bbb", value := .genitiveNoun }
+  , { walsCode := "bbu", iso := "brm", value := .nounGenitive }
+  , { walsCode := "brs", iso := "bsn", value := .genitiveNoun }
+  , { walsCode := "bar", iso := "bfa", value := .nounGenitive }
+  , { walsCode := "brp", iso := "bpe", value := .nounGenitive }
+  , { walsCode := "bry", iso := "byr", value := .genitiveNoun }
+  , { walsCode := "bae", iso := "bae", value := .genitiveNoun }
+  , { walsCode := "bsr", iso := "bsc", value := .nounGenitive }
+  , { walsCode := "bas", iso := "bas", value := .nounGenitive }
+  , { walsCode := "bsk", iso := "bak", value := .genitiveNoun }
+  , { walsCode := "bsq", iso := "eus", value := .genitiveNoun }
+  , { walsCode := "bkr", iso := "btx", value := .nounGenitive }
+  , { walsCode := "bto", iso := "bbc", value := .nounGenitive }
+  , { walsCode := "baq", iso := "brg", value := .nounGenitive }
+  , { walsCode := "baw", iso := "bgr", value := .genitiveNoun }
+  , { walsCode := "bej", iso := "bej", value := .genitiveNoun }
+  , { walsCode := "bel", iso := "byw", value := .genitiveNoun }
+  , { walsCode := "bco", iso := "blc", value := .nounGenitive }
+  , { walsCode := "blr", iso := "bel", value := .nounGenitive }
+  , { walsCode := "bga", iso := "bng", value := .nounGenitive }
+  , { walsCode := "brq", iso := "brf", value := .nounGenitive }
+  , { walsCode := "bch", iso := "shy", value := .nounGenitive }
+  , { walsCode := "bfg", iso := "grr", value := .nounGenitive }
+  , { walsCode := "bma", iso := "tzm", value := .nounGenitive }
+  , { walsCode := "brf", iso := "rif", value := .nounGenitive }
+  , { walsCode := "zag", iso := "zag", value := .noDominantOrder }
+  , { walsCode := "bho", iso := "bho", value := .genitiveNoun }
+  , { walsCode := "bhu", iso := "unr", value := .genitiveNoun }
+  , { walsCode := "bik", iso := "bhw", value := .genitiveNoun }
+  , { walsCode := "bid", iso := "bid", value := .nounGenitive }
+  , { walsCode := "bkl", iso := "bcl", value := .noDominantOrder }
+  , { walsCode := "bln", iso := "byn", value := .genitiveNoun }
+  , { walsCode := "bnr", iso := "nbj", value := .noDominantOrder }
+  , { walsCode := "blx", iso := "bll", value := .genitiveNoun }
+  , { walsCode := "bil", iso := "blb", value := .genitiveNoun }
+  , { walsCode := "bmb", iso := "bim", value := .genitiveNoun }
+  , { walsCode := "bin", iso := "bhg", value := .genitiveNoun }
+  , { walsCode := "bni", iso := "bin", value := .nounGenitive }
+  , { walsCode := "bbw", iso := "gup", value := .genitiveNoun }
+  , { walsCode := "bii", iso := "bzr", value := .genitiveNoun }
+  , { walsCode := "bir", iso := "bom", value := .nounGenitive }
+  , { walsCode := "bla", iso := "bla", value := .genitiveNoun }
+  , { walsCode := "bob", iso := "bni", value := .nounGenitive }
+  , { walsCode := "bod", iso := "brx", value := .genitiveNoun }
+  , { walsCode := "bok", iso := "bqc", value := .genitiveNoun }
+  , { walsCode := "bol", iso := "bli", value := .nounGenitive }
+  , { walsCode := "bgo", iso := "bot", value := .nounGenitive }
+  , { walsCode := "bon", iso := "bpu", value := .genitiveNoun }
+  , { walsCode := "btk", iso := "lbk", value := .nounGenitive }
+  , { walsCode := "bra", iso := "brb", value := .nounGenitive }
+  , { walsCode := "bre", iso := "bre", value := .nounGenitive }
+  , { walsCode := "bri", iso := "bzd", value := .genitiveNoun }
+  , { walsCode := "bkt", iso := "bkk", value := .genitiveNoun }
+  , { walsCode := "bdu", iso := "buu", value := .nounGenitive }
+  , { walsCode := "bud", iso := "bdm", value := .nounGenitive }
+  , { walsCode := "bug", iso := "bug", value := .nounGenitive }
+  , { walsCode := "bul", iso := "bul", value := .noDominantOrder }
+  , { walsCode := "buw", iso := "bum", value := .nounGenitive }
+  , { walsCode := "bum", iso := "tkw", value := .nounGenitive }
+  , { walsCode := "pnu", iso := "buh", value := .genitiveNoun }
+  , { walsCode := "bnb", iso := "bck", value := .genitiveNoun }
+  , { walsCode := "but", iso := "bxm", value := .genitiveNoun }
+  , { walsCode := "brm", iso := "mya", value := .genitiveNoun }
+  , { walsCode := "buu", iso := "mhs", value := .genitiveNoun }
+  , { walsCode := "brn", iso := "bds", value := .nounGenitive }
+  , { walsCode := "bur", iso := "bsk", value := .genitiveNoun }
+  , { walsCode := "bus", iso := "bqp", value := .genitiveNoun }
+  , { walsCode := "bya", iso := "bee", value := .genitiveNoun }
+  , { walsCode := "cah", iso := "chl", value := .genitiveNoun }
+  , { walsCode := "cak", iso := "cak", value := .nounGenitive }
+  , { walsCode := "cml", iso := "rab", value := .genitiveNoun }
+  , { walsCode := "cax", iso := "", value := .genitiveNoun }
+  , { walsCode := "cnm", iso := "knm", value := .genitiveNoun }
+  , { walsCode := "can", iso := "cbu", value := .genitiveNoun }
+  , { walsCode := "cnl", iso := "ram", value := .genitiveNoun }
+  , { walsCode := "cnt", iso := "yue", value := .genitiveNoun }
+  , { walsCode := "car", iso := "car", value := .genitiveNoun }
+  , { walsCode := "cde", iso := "mch", value := .genitiveNoun }
+  , { walsCode := "cas", iso := "cbr", value := .genitiveNoun }
+  , { walsCode := "ctl", iso := "cat", value := .nounGenitive }
+  , { walsCode := "ctw", iso := "chc", value := .genitiveNoun }
+  , { walsCode := "cav", iso := "cav", value := .genitiveNoun }
+  , { walsCode := "cay", iso := "cbi", value := .genitiveNoun }
+  , { walsCode := "cyv", iso := "cyb", value := .nounGenitive }
+  , { walsCode := "ceb", iso := "ceb", value := .nounGenitive }
+  , { walsCode := "chh", iso := "sgw", value := .genitiveNoun }
+  , { walsCode := "cai", iso := "suq", value := .nounGenitive }
+  , { walsCode := "cld", iso := "cld", value := .nounGenitive }
+  , { walsCode := "cme", iso := "cjm", value := .nounGenitive }
+  , { walsCode := "cha", iso := "cha", value := .nounGenitive }
+  , { walsCode := "chg", iso := "nbc", value := .genitiveNoun }
+  , { walsCode := "chn", iso := "chx", value := .genitiveNoun }
+  , { walsCode := "cso", iso := "ctp", value := .nounGenitive }
+  , { walsCode := "cya", iso := "ctp", value := .nounGenitive }
+  , { walsCode := "chc", iso := "che", value := .genitiveNoun }
+  , { walsCode := "cmh", iso := "ute", value := .genitiveNoun }
+  , { walsCode := "cpn", iso := "cdm", value := .genitiveNoun }
+  , { walsCode := "che", iso := "chr", value := .genitiveNoun }
+  , { walsCode := "cic", iso := "nya", value := .nounGenitive }
+  , { walsCode := "chi", iso := "cid", value := .genitiveNoun }
+  , { walsCode := "cmr", iso := "mrh", value := .genitiveNoun }
+  , { walsCode := "chs", iso := "csy", value := .genitiveNoun }
+  , { walsCode := "cti", iso := "ctd", value := .genitiveNoun }
+  , { walsCode := "ccm", iso := "cco", value := .nounGenitive }
+  , { walsCode := "cle", iso := "cle", value := .nounGenitive }
+  , { walsCode := "cpl", iso := "cpa", value := .nounGenitive }
+  , { walsCode := "chq", iso := "chq", value := .nounGenitive }
+  , { walsCode := "ckl", iso := "chh", value := .noDominantOrder }
+  , { walsCode := "cpy", iso := "cap", value := .genitiveNoun }
+  , { walsCode := "cqt", iso := "cax", value := .nounGenitive }
+  , { walsCode := "ctm", iso := "ctm", value := .genitiveNoun }
+  , { walsCode := "cct", iso := "cho", value := .genitiveNoun }
+  , { walsCode := "cln", iso := "cht", value := .genitiveNoun }
+  , { walsCode := "chx", iso := "clo", value := .nounGenitive }
+  , { walsCode := "cmy", iso := "chf", value := .nounGenitive }
+  , { walsCode := "chr", iso := "crw", value := .nounGenitive }
+  , { walsCode := "chj", iso := "cac", value := .nounGenitive }
+  , { walsCode := "chk", iso := "ckt", value := .genitiveNoun }
+  , { walsCode := "cba", iso := "boi", value := .nounGenitive }
+  , { walsCode := "chv", iso := "chv", value := .genitiveNoun }
+  , { walsCode := "cbo", iso := "cao", value := .genitiveNoun }
+  , { walsCode := "coa", iso := "xcw", value := .genitiveNoun }
+  , { walsCode := "coc", iso := "cod", value := .genitiveNoun }
+  , { walsCode := "cmn", iso := "com", value := .genitiveNoun }
+  , { walsCode := "cmx", iso := "coo", value := .nounGenitive }
+  , { walsCode := "coo", iso := "csz", value := .noDominantOrder }
+  , { walsCode := "cop", iso := "cop", value := .nounGenitive }
+  , { walsCode := "cor", iso := "crn", value := .noDominantOrder }
+  , { walsCode := "crn", iso := "cor", value := .nounGenitive }
+  , { walsCode := "cro", iso := "cro", value := .genitiveNoun }
+  , { walsCode := "cub", iso := "cub", value := .genitiveNoun }
+  , { walsCode := "cup", iso := "cup", value := .genitiveNoun }
+  , { walsCode := "cze", iso := "ces", value := .noDominantOrder }
+  , { walsCode := "cem", iso := "cam", value := .nounGenitive }
+  , { walsCode := "dag", iso := "dgz", value := .genitiveNoun }
+  , { walsCode := "dga", iso := "dga", value := .genitiveNoun }
+  , { walsCode := "dgb", iso := "dag", value := .genitiveNoun }
+  , { walsCode := "dgr", iso := "dta", value := .genitiveNoun }
+  , { walsCode := "dan", iso := "dnj", value := .genitiveNoun }
+  , { walsCode := "dni", iso := "dni", value := .genitiveNoun }
+  , { walsCode := "dsh", iso := "dan", value := .genitiveNoun }
+  , { walsCode := "drg", iso := "dar", value := .genitiveNoun }
+  , { walsCode := "drm", iso := "drd", value := .genitiveNoun }
+  , { walsCode := "day", iso := "dai", value := .nounGenitive }
+  , { walsCode := "des", iso := "des", value := .genitiveNoun }
+  , { walsCode := "dha", iso := "dsh", value := .genitiveNoun }
+  , { walsCode := "dhb", iso := "xgm", value := .genitiveNoun }
+  , { walsCode := "dhm", iso := "dhi", value := .genitiveNoun }
+  , { walsCode := "dhi", iso := "div", value := .genitiveNoun }
+  , { walsCode := "did", iso := "did", value := .nounGenitive }
+  , { walsCode := "die", iso := "dih", value := .genitiveNoun }
+  , { walsCode := "dig", iso := "mhu", value := .genitiveNoun }
+  , { walsCode := "din", iso := "din", value := .nounGenitive }
+  , { walsCode := "dio", iso := "dyo", value := .nounGenitive }
+  , { walsCode := "diy", iso := "dif", value := .genitiveNoun }
+  , { walsCode := "djm", iso := "djr", value := .noDominantOrder }
+  , { walsCode := "djp", iso := "dwu", value := .noDominantOrder }
+  , { walsCode := "djn", iso := "dji", value := .genitiveNoun }
+  , { walsCode := "dji", iso := "jig", value := .nounGenitive }
+  , { walsCode := "dlm", iso := "kbv", value := .genitiveNoun }
+  , { walsCode := "der", iso := "kbv", value := .genitiveNoun }
+  , { walsCode := "dom", iso := "rmt", value := .genitiveNoun }
+  , { walsCode := "dgo", iso := "doo", value := .nounGenitive }
+  , { walsCode := "dds", iso := "dds", value := .genitiveNoun }
+  , { walsCode := "doy", iso := "dow", value := .genitiveNoun }
+  , { walsCode := "dre", iso := "dhv", value := .nounGenitive }
+  , { walsCode := "dua", iso := "dua", value := .nounGenitive }
+  , { walsCode := "duk", iso := "dud", value := .nounGenitive }
+  , { walsCode := "dul", iso := "duu", value := .genitiveNoun }
+  , { walsCode := "dmi", iso := "dus", value := .genitiveNoun }
+  , { walsCode := "dum", iso := "vam", value := .genitiveNoun }
+  , { walsCode := "dun", iso := "duc", value := .genitiveNoun }
+  , { walsCode := "dut", iso := "nld", value := .nounGenitive }
+  , { walsCode := "dyi", iso := "dbl", value := .genitiveNoun }
+  , { walsCode := "daw", iso := "kwa", value := .genitiveNoun }
+  , { walsCode := "edo", iso := "etr", value := .genitiveNoun }
+  , { walsCode := "erk", iso := "erk", value := .nounGenitive }
+  , { walsCode := "ega", iso := "ega", value := .genitiveNoun }
+  , { walsCode := "eip", iso := "eip", value := .genitiveNoun }
+  , { walsCode := "emb", iso := "emp", value := .genitiveNoun }
+  , { walsCode := "egn", iso := "enn", value := .nounGenitive }
+  , { walsCode := "eno", iso := "eno", value := .nounGenitive }
+  , { walsCode := "eng", iso := "eng", value := .noDominantOrder }
+  , { walsCode := "epe", iso := "sja", value := .genitiveNoun }
+  , { walsCode := "err", iso := "erg", value := .nounGenitive }
+  , { walsCode := "ese", iso := "ese", value := .genitiveNoun }
+  , { walsCode := "esm", iso := "", value := .nounGenitive }
+  , { walsCode := "est", iso := "ekk", value := .genitiveNoun }
+  , { walsCode := "eud", iso := "", value := .genitiveNoun }
+  , { walsCode := "eve", iso := "evn", value := .genitiveNoun }
+  , { walsCode := "ewe", iso := "ewe", value := .genitiveNoun }
+  , { walsCode := "ewo", iso := "ewo", value := .nounGenitive }
+  , { walsCode := "fas", iso := "faa", value := .genitiveNoun }
+  , { walsCode := "fij", iso := "fij", value := .nounGenitive }
+  , { walsCode := "fin", iso := "fin", value := .genitiveNoun }
+  , { walsCode := "pdp", iso := "ppo", value := .genitiveNoun }
+  , { walsCode := "fon", iso := "fon", value := .nounGenitive }
+  , { walsCode := "for", iso := "for", value := .genitiveNoun }
+  , { walsCode := "fre", iso := "fra", value := .nounGenitive }
+  , { walsCode := "fri", iso := "fry", value := .noDominantOrder }
+  , { walsCode := "fua", iso := "fub", value := .nounGenitive }
+  , { walsCode := "ful", iso := "fun", value := .genitiveNoun }
+  , { walsCode := "fur", iso := "fvr", value := .genitiveNoun }
+  , { walsCode := "fut", iso := "fut", value := .nounGenitive }
+  , { walsCode := "fye", iso := "pym", value := .nounGenitive }
+  , { walsCode := "gnd", iso := "gqa", value := .nounGenitive }
+  , { walsCode := "gds", iso := "gaj", value := .genitiveNoun }
+  , { walsCode := "gae", iso := "gla", value := .nounGenitive }
+  , { walsCode := "gam", iso := "gmv", value := .genitiveNoun }
+  , { walsCode := "gap", iso := "pwg", value := .genitiveNoun }
+  , { walsCode := "gar", iso := "grt", value := .genitiveNoun }
+  , { walsCode := "grr", iso := "wrk", value := .genitiveNoun }
+  , { walsCode := "grf", iso := "cab", value := .nounGenitive }
+  , { walsCode := "gav", iso := "gvo", value := .genitiveNoun }
+  , { walsCode := "gbs", iso := "gso", value := .nounGenitive }
+  , { walsCode := "gbb", iso := "gbp", value := .nounGenitive }
+  , { walsCode := "gel", iso := "nlg", value := .nounGenitive }
+  , { walsCode := "geo", iso := "kat", value := .genitiveNoun }
+  , { walsCode := "ger", iso := "deu", value := .nounGenitive }
+  , { walsCode := "goa", iso := "guc", value := .nounGenitive }
+  , { walsCode := "god", iso := "gdo", value := .genitiveNoun }
+  , { walsCode := "goe", iso := "ank", value := .nounGenitive }
+  , { walsCode := "gok", iso := "gkn", value := .nounGenitive }
+  , { walsCode := "gln", iso := "gvf", value := .genitiveNoun }
+  , { walsCode := "gon", iso := "gno", value := .genitiveNoun }
+  , { walsCode := "goo", iso := "gni", value := .noDominantOrder }
+  , { walsCode := "gan", iso := "apq", value := .genitiveNoun }
+  , { walsCode := "grb", iso := "grj", value := .genitiveNoun }
+  , { walsCode := "grk", iso := "ell", value := .nounGenitive }
+  , { walsCode := "grw", iso := "kal", value := .genitiveNoun }
+  , { walsCode := "gjj", iso := "gub", value := .genitiveNoun }
+  , { walsCode := "gua", iso := "gug", value := .genitiveNoun }
+  , { walsCode := "grj", iso := "var", value := .genitiveNoun }
+  , { walsCode := "gto", iso := "gta", value := .nounGenitive }
+  , { walsCode := "gud", iso := "gde", value := .nounGenitive }
+  , { walsCode := "gul", iso := "kcm", value := .nounGenitive }
+  , { walsCode := "gmw", iso := "gvs", value := .genitiveNoun }
+  , { walsCode := "gum", iso := "kgs", value := .noDominantOrder }
+  , { walsCode := "gmz", iso := "guk", value := .nounGenitive }
+  , { walsCode := "guw", iso := "guw", value := .noDominantOrder }
+  , { walsCode := "gnn", iso := "gww", value := .genitiveNoun }
+  , { walsCode := "gur", iso := "", value := .genitiveNoun }
+  , { walsCode := "guu", iso := "kky", value := .noDominantOrder }
+  , { walsCode := "gwa", iso := "gbr", value := .genitiveNoun }
+  , { walsCode := "gwo", iso := "kcg", value := .nounGenitive }
+  , { walsCode := "gyc", iso := "jya", value := .genitiveNoun }
+  , { walsCode := "ga", iso := "gaa", value := .genitiveNoun }
+  , { walsCode := "gku", iso := "pue", value := .noDominantOrder }
+  , { walsCode := "hai", iso := "hai", value := .genitiveNoun }
+  , { walsCode := "hal", iso := "hla", value := .nounGenitive }
+  , { walsCode := "hhu", iso := "wos", value := .genitiveNoun }
+  , { walsCode := "har", iso := "tmd", value := .genitiveNoun }
+  , { walsCode := "hat", iso := "had", value := .genitiveNoun }
+  , { walsCode := "hau", iso := "hau", value := .nounGenitive }
+  , { walsCode := "haw", iso := "haw", value := .nounGenitive }
+  , { walsCode := "hay", iso := "vay", value := .genitiveNoun }
+  , { walsCode := "hdi", iso := "xed", value := .nounGenitive }
+  , { walsCode := "heb", iso := "heb", value := .nounGenitive }
+  , { walsCode := "hei", iso := "hei", value := .nounGenitive }
+  , { walsCode := "hid", iso := "hid", value := .genitiveNoun }
+  , { walsCode := "hil", iso := "hil", value := .nounGenitive }
+  , { walsCode := "hin", iso := "hin", value := .genitiveNoun }
+  , { walsCode := "hix", iso := "hix", value := .genitiveNoun }
+  , { walsCode := "hma", iso := "hmr", value := .genitiveNoun }
+  , { walsCode := "hmo", iso := "hnj", value := .genitiveNoun }
+  , { walsCode := "ho", iso := "hoc", value := .genitiveNoun }
+  , { walsCode := "hoa", iso := "hoa", value := .nounGenitive }
+  , { walsCode := "hop", iso := "hop", value := .genitiveNoun }
+  , { walsCode := "hua", iso := "ygr", value := .genitiveNoun }
+  , { walsCode := "htc", iso := "hus", value := .nounGenitive }
+  , { walsCode := "hve", iso := "huv", value := .nounGenitive }
+  , { walsCode := "hui", iso := "hch", value := .genitiveNoun }
+  , { walsCode := "hum", iso := "huu", value := .genitiveNoun }
+  , { walsCode := "hnd", iso := "hke", value := .nounGenitive }
+  , { walsCode := "hun", iso := "hun", value := .genitiveNoun }
+  , { walsCode := "hzb", iso := "huz", value := .genitiveNoun }
+  , { walsCode := "hpd", iso := "jup", value := .genitiveNoun }
+  , { walsCode := "hup", iso := "hup", value := .genitiveNoun }
+  , { walsCode := "isa", iso := "ksi", value := .nounGenitive }
+  , { walsCode := "iaa", iso := "iai", value := .nounGenitive }
+  , { walsCode := "iau", iso := "tmu", value := .genitiveNoun }
+  , { walsCode := "iba", iso := "iba", value := .nounGenitive }
+  , { walsCode := "ice", iso := "isl", value := .nounGenitive }
+  , { walsCode := "idn", iso := "viv", value := .genitiveNoun }
+  , { walsCode := "mxe", iso := "mxe", value := .noDominantOrder }
+  , { walsCode := "ifu", iso := "ifb", value := .nounGenitive }
+  , { walsCode := "ifm", iso := "ifm", value := .nounGenitive }
+  , { walsCode := "igb", iso := "ibo", value := .nounGenitive }
+  , { walsCode := "ign", iso := "ign", value := .nounGenitive }
+  , { walsCode := "ijo", iso := "ijc", value := .genitiveNoun }
+  , { walsCode := "ik", iso := "ikx", value := .noDominantOrder }
+  , { walsCode := "ika", iso := "arh", value := .genitiveNoun }
+  , { walsCode := "ila", iso := "ilb", value := .nounGenitive }
+  , { walsCode := "imo", iso := "imn", value := .genitiveNoun }
+  , { walsCode := "ina", iso := "szp", value := .genitiveNoun }
+  , { walsCode := "ind", iso := "ind", value := .nounGenitive }
+  , { walsCode := "igs", iso := "tbi", value := .nounGenitive }
+  , { walsCode := "ing", iso := "inh", value := .genitiveNoun }
+  , { walsCode := "iqu", iso := "iqu", value := .genitiveNoun }
+  , { walsCode := "irx", iso := "irn", value := .genitiveNoun }
+  , { walsCode := "irq", iso := "irk", value := .nounGenitive }
+  , { walsCode := "irr", iso := "irh", value := .genitiveNoun }
+  , { walsCode := "iri", iso := "gle", value := .nounGenitive }
+  , { walsCode := "ita", iso := "ita", value := .nounGenitive }
+  , { walsCode := "ite", iso := "itl", value := .noDominantOrder }
+  , { walsCode := "ito", iso := "ito", value := .noDominantOrder }
+  , { walsCode := "iwa", iso := "ibd", value := .genitiveNoun }
+  , { walsCode := "jar", iso := "izr", value := .nounGenitive }
+  , { walsCode := "izi", iso := "izz", value := .nounGenitive }
+  , { walsCode := "jab", iso := "jae", value := .genitiveNoun }
+  , { walsCode := "jak", iso := "jac", value := .nounGenitive }
+  , { walsCode := "jms", iso := "djm", value := .genitiveNoun }
+  , { walsCode := "jpn", iso := "jpn", value := .genitiveNoun }
+  , { walsCode := "jaq", iso := "jqr", value := .genitiveNoun }
+  , { walsCode := "jeb", iso := "jeb", value := .nounGenitive }
+  , { walsCode := "jel", iso := "jek", value := .genitiveNoun }
+  , { walsCode := "jng", iso := "kac", value := .genitiveNoun }
+  , { walsCode := "jiv", iso := "jiv", value := .genitiveNoun }
+  , { walsCode := "juk", iso := "jbu", value := .nounGenitive }
+  , { walsCode := "jmo", iso := "bex", value := .nounGenitive }
+  , { walsCode := "juh", iso := "ktz", value := .genitiveNoun }
+  , { walsCode := "kab", iso := "kbd", value := .genitiveNoun }
+  , { walsCode := "kbt", iso := "xkp", value := .genitiveNoun }
+  , { walsCode := "kby", iso := "kbp", value := .genitiveNoun }
+  , { walsCode := "kbl", iso := "kab", value := .nounGenitive }
+  , { walsCode := "kdz", iso := "kzj", value := .nounGenitive }
+  , { walsCode := "kdw", iso := "kbc", value := .noDominantOrder }
+  , { walsCode := "kad", iso := "xtc", value := .nounGenitive }
+  , { walsCode := "kng", iso := "kgp", value := .genitiveNoun }
+  , { walsCode := "krr", iso := "kxa", value := .nounGenitive }
+  , { walsCode := "kae", iso := "tbd", value := .genitiveNoun }
+  , { walsCode := "klq", iso := "kmh", value := .genitiveNoun }
+  , { walsCode := "kls", iso := "fla", value := .nounGenitive }
+  , { walsCode := "kgu", iso := "ktg", value := .genitiveNoun }
+  , { walsCode := "kmk", iso := "xal", value := .genitiveNoun }
+  , { walsCode := "kll", iso := "bco", value := .genitiveNoun }
+  , { walsCode := "kma", iso := "kay", value := .genitiveNoun }
+  , { walsCode := "kmz", iso := "kms", value := .genitiveNoun }
+  , { walsCode := "kms", iso := "xas", value := .genitiveNoun }
+  , { walsCode := "kba", iso := "kam", value := .nounGenitive }
+  , { walsCode := "kmr", iso := "kgq", value := .noDominantOrder }
+  , { walsCode := "kan", iso := "ogo", value := .nounGenitive }
+  , { walsCode := "knk", iso := "kna", value := .nounGenitive }
+  , { walsCode := "kbu", iso := "kbl", value := .nounGenitive }
+  , { walsCode := "knd", iso := "kan", value := .genitiveNoun }
+  , { walsCode := "kno", iso := "kxo", value := .genitiveNoun }
+  , { walsCode := "knb", iso := "khd", value := .genitiveNoun }
+  , { walsCode := "knr", iso := "knc", value := .nounGenitive }
+  , { walsCode := "kyo", iso := "kny", value := .nounGenitive }
+  , { walsCode := "kpm", iso := "pam", value := .nounGenitive }
+  , { walsCode := "kar", iso := "kah", value := .nounGenitive }
+  , { walsCode := "krc", iso := "krc", value := .genitiveNoun }
+  , { walsCode := "krj", iso := "gbd", value := .noDominantOrder }
+  , { walsCode := "jva", iso := "kpj", value := .genitiveNoun }
+  , { walsCode := "kkp", iso := "kaa", value := .genitiveNoun }
+  , { walsCode := "kbw", iso := "bwe", value := .genitiveNoun }
+  , { walsCode := "kpw", iso := "kjp", value := .genitiveNoun }
+  , { walsCode := "ksg", iso := "ksw", value := .genitiveNoun }
+  , { walsCode := "kmj", iso := "kdj", value := .nounGenitive }
+  , { walsCode := "kyr", iso := "yuj", value := .genitiveNoun }
+  , { walsCode := "krk", iso := "kyh", value := .genitiveNoun }
+  , { walsCode := "kaa", iso := "arr", value := .genitiveNoun }
+  , { walsCode := "kas", iso := "kas", value := .genitiveNoun }
+  , { walsCode := "ktc", iso := "xtc", value := .nounGenitive }
+  , { walsCode := "kti", iso := "kts", value := .genitiveNoun }
+  , { walsCode := "ktl", iso := "kcr", value := .nounGenitive }
+  , { walsCode := "ktu", iso := "", value := .nounGenitive }
+  , { walsCode := "kau", iso := "pss", value := .noDominantOrder }
+  , { walsCode := "kws", iso := "xaw", value := .noDominantOrder }
+  , { walsCode := "kyz", iso := "kyz", value := .genitiveNoun }
+  , { walsCode := "kyl", iso := "eky", value := .genitiveNoun }
+  , { walsCode := "kay", iso := "gyd", value := .genitiveNoun }
+  , { walsCode := "kel", iso := "sbc", value := .nounGenitive }
+  , { walsCode := "kem", iso := "ahg", value := .genitiveNoun }
+  , { walsCode := "ken", iso := "kyq", value := .nounGenitive }
+  , { walsCode := "ker", iso := "ker", value := .nounGenitive }
+  , { walsCode := "ksa", iso := "kee", value := .genitiveNoun }
+  , { walsCode := "ket", iso := "ket", value := .genitiveNoun }
+  , { walsCode := "kew", iso := "kew", value := .genitiveNoun }
+  , { walsCode := "khl", iso := "klj", value := .genitiveNoun }
+  , { walsCode := "khg", iso := "klr", value := .genitiveNoun }
+  , { walsCode := "kha", iso := "khk", value := .genitiveNoun }
+  , { walsCode := "kmh", iso := "kjl", value := .genitiveNoun }
+  , { walsCode := "khd", iso := "khg", value := .genitiveNoun }
+  , { walsCode := "knz", iso := "khg", value := .genitiveNoun }
+  , { walsCode := "kty", iso := "kca", value := .genitiveNoun }
+  , { walsCode := "khs", iso := "kha", value := .nounGenitive }
+  , { walsCode := "khi", iso := "kjj", value := .genitiveNoun }
   ]
 
 private def allData_1 : List (Datapoint GenitiveNounOrder) :=
-  [ { walsCode := "khm", language := "Khmer", iso := "khm", value := .nounGenitive }
-  , { walsCode := "kmu", language := "Khmu'", iso := "kjg", value := .nounGenitive }
-  , { walsCode := "khw", language := "Khowar", iso := "khw", value := .genitiveNoun }
-  , { walsCode := "kik", language := "Kikuyu", iso := "kik", value := .nounGenitive }
-  , { walsCode := "klv", language := "Kilivila", iso := "kij", value := .genitiveNoun }
-  , { walsCode := "kim", language := "Kimaghama", iso := "kig", value := .genitiveNoun }
-  , { walsCode := "kga", language := "Kinga", iso := "zga", value := .nounGenitive }
-  , { walsCode := "knn", language := "Kinnauri", iso := "kfk", value := .genitiveNoun }
-  , { walsCode := "kio", language := "Kiowa", iso := "kio", value := .genitiveNoun }
-  , { walsCode := "kri", language := "Kipea", iso := "kzw", value := .nounGenitive }
-  , { walsCode := "krb", language := "Kiribati", iso := "gil", value := .nounGenitive }
-  , { walsCode := "kir", language := "Kirma", iso := "cme", value := .genitiveNoun }
-  , { walsCode := "kis", language := "Kisi", iso := "kss", value := .nounGenitive }
-  , { walsCode := "kiw", language := "Kiwai (Southern)", iso := "kjd", value := .genitiveNoun }
-  , { walsCode := "klm", language := "Klamath", iso := "kla", value := .genitiveNoun }
-  , { walsCode := "kla", language := "Klao", iso := "klu", value := .genitiveNoun }
-  , { walsCode := "koa", language := "Koasati", iso := "cku", value := .genitiveNoun }
-  , { walsCode := "kob", language := "Kobon", iso := "kpw", value := .genitiveNoun }
-  , { walsCode := "koe", language := "Koegu", iso := "xwg", value := .nounGenitive }
-  , { walsCode := "kmo", language := "Koiali (Mountain)", iso := "kpx", value := .genitiveNoun }
-  , { walsCode := "kta", language := "Koita", iso := "kqi", value := .genitiveNoun }
-  , { walsCode := "kok", language := "Kokborok", iso := "trp", value := .genitiveNoun }
-  , { walsCode := "kkt", language := "Kokota", iso := "kkk", value := .nounGenitive }
-  , { walsCode := "kol", language := "Kolami", iso := "kfb", value := .genitiveNoun }
-  , { walsCode := "klr", language := "Koluri", iso := "shm", value := .genitiveNoun }
-  , { walsCode := "kmb", language := "Kombai", iso := "", value := .genitiveNoun }
-  , { walsCode := "xbi", language := "Kombio", iso := "xbi", value := .nounGenitive }
-  , { walsCode := "kop", language := "Komi-Permyak", iso := "koi", value := .genitiveNoun }
-  , { walsCode := "kzy", language := "Komi-Zyrian", iso := "kpv", value := .genitiveNoun }
-  , { walsCode := "kom", language := "Komo", iso := "xom", value := .nounGenitive }
-  , { walsCode := "kon", language := "Kongo", iso := "kng", value := .nounGenitive }
-  , { walsCode := "knw", language := "Konkow", iso := "mjd", value := .genitiveNoun }
-  , { walsCode := "kni", language := "Konni", iso := "kma", value := .genitiveNoun }
-  , { walsCode := "krn", language := "Korana", iso := "kqz", value := .genitiveNoun }
-  , { walsCode := "kor", language := "Korean", iso := "kor", value := .genitiveNoun }
-  , { walsCode := "kje", language := "Koreguaje", iso := "coe", value := .genitiveNoun }
-  , { walsCode := "kku", language := "Korku", iso := "kfq", value := .genitiveNoun }
-  , { walsCode := "kfe", language := "Koromfe", iso := "kfz", value := .genitiveNoun }
-  , { walsCode := "krw", language := "Korowai", iso := "khe", value := .genitiveNoun }
-  , { walsCode := "kry", language := "Koryak", iso := "kpy", value := .genitiveNoun }
-  , { walsCode := "kos", language := "Kosraean", iso := "kos", value := .nounGenitive }
-  , { walsCode := "koy", language := "Koya", iso := "kff", value := .genitiveNoun }
-  , { walsCode := "kch", language := "Koyra Chiini", iso := "khq", value := .genitiveNoun }
-  , { walsCode := "kse", language := "Koyraboro Senni", iso := "ses", value := .genitiveNoun }
-  , { walsCode := "kyn", language := "Koyukon", iso := "koy", value := .genitiveNoun }
-  , { walsCode := "kpe", language := "Kpelle", iso := "xpe", value := .genitiveNoun }
-  , { walsCode := "kqq", language := "Krenak", iso := "kqq", value := .genitiveNoun }
-  , { walsCode := "kre", language := "Kresh", iso := "krs", value := .nounGenitive }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .nounGenitive }
-  , { walsCode := "krz", language := "Kryz", iso := "kry", value := .genitiveNoun }
-  , { walsCode := "knc", language := "Kugu Nganhcara", iso := "uwa", value := .nounGenitive }
-  , { walsCode := "kkq", language := "Kuikúro", iso := "kui", value := .genitiveNoun }
-  , { walsCode := "kya", language := "Kuku-Yalanji", iso := "gvn", value := .noDominantOrder }
-  , { walsCode := "klg", language := "Kulung", iso := "kle", value := .genitiveNoun }
-  , { walsCode := "kum", language := "Kumauni", iso := "kfy", value := .genitiveNoun }
-  , { walsCode := "kun", language := "Kuna", iso := "kvn", value := .noDominantOrder }
-  , { walsCode := "knm", language := "Kunama", iso := "kun", value := .genitiveNoun }
-  , { walsCode := "kmp", language := "Kunimaipa", iso := "kup", value := .genitiveNoun }
-  , { walsCode := "kuo", language := "Kuot", iso := "kto", value := .nounGenitive }
-  , { walsCode := "krd", language := "Kurdish (Central)", iso := "ckb", value := .nounGenitive }
-  , { walsCode := "kut", language := "Kutenai", iso := "kut", value := .nounGenitive }
-  , { walsCode := "thy", language := "Kuuk Thaayorre", iso := "thd", value := .nounGenitive }
-  , { walsCode := "kuv", language := "Kuvi", iso := "kxv", value := .genitiveNoun }
-  , { walsCode := "kwk", language := "Kwakw'ala", iso := "kwk", value := .nounGenitive }
-  , { walsCode := "kwm", language := "Kwami", iso := "ksq", value := .nounGenitive }
-  , { walsCode := "kwn", language := "Kwangali", iso := "kwn", value := .nounGenitive }
-  , { walsCode := "kwz", language := "Kwaza", iso := "xwa", value := .genitiveNoun }
-  , { walsCode := "kwo", language := "Kwoma", iso := "kmo", value := .genitiveNoun }
-  , { walsCode := "kwt", language := "Kwomtari", iso := "kwo", value := .genitiveNoun }
-  , { walsCode := "kxo", language := "Kxoe", iso := "xuu", value := .genitiveNoun }
-  , { walsCode := "kgy", language := "Kyirong", iso := "kgy", value := .genitiveNoun }
-  , { walsCode := "laa", language := "Laal", iso := "gdm", value := .nounGenitive }
-  , { walsCode := "lab", language := "Labu", iso := "lbu", value := .genitiveNoun }
-  , { walsCode := "lac", language := "Lacandón", iso := "lac", value := .nounGenitive }
-  , { walsCode := "lad", language := "Ladakhi", iso := "lbj", value := .genitiveNoun }
-  , { walsCode := "laf", language := "Lafofa", iso := "laf", value := .noDominantOrder }
-  , { walsCode := "lag", language := "Lagwan", iso := "kot", value := .nounGenitive }
-  , { walsCode := "lah", language := "Lahu", iso := "lhu", value := .genitiveNoun }
-  , { walsCode := "lai", language := "Lai", iso := "cnh", value := .genitiveNoun }
-  , { walsCode := "lkt", language := "Lakhota", iso := "lkt", value := .noDominantOrder }
-  , { walsCode := "lal", language := "Lalo", iso := "ywt", value := .genitiveNoun }
-  , { walsCode := "lmh", language := "Lamaholot", iso := "slp", value := .noDominantOrder }
-  , { walsCode := "lmg", language := "Lamang", iso := "hia", value := .nounGenitive }
-  , { walsCode := "lmn", language := "Lamani", iso := "lmn", value := .genitiveNoun }
-  , { walsCode := "lmb", language := "Lamba", iso := "lam", value := .nounGenitive }
-  , { walsCode := "lmu", language := "Lamen", iso := "lmu", value := .nounGenitive }
-  , { walsCode := "lmp", language := "Lampung", iso := "ljp", value := .nounGenitive }
-  , { walsCode := "lgi", language := "Langi", iso := "lag", value := .nounGenitive }
-  , { walsCode := "lan", language := "Lango", iso := "laj", value := .nounGenitive }
-  , { walsCode := "lao", language := "Lao", iso := "lao", value := .nounGenitive }
-  , { walsCode := "lar", language := "Laragia", iso := "lrg", value := .nounGenitive }
-  , { walsCode := "lat", language := "Latvian", iso := "lav", value := .genitiveNoun }
-  , { walsCode := "lav", language := "Lavukaleve", iso := "lvk", value := .genitiveNoun }
-  , { walsCode := "agb", language := "Leggbó", iso := "agb", value := .nounGenitive }
-  , { walsCode := "lel", language := "Lele", iso := "lln", value := .noDominantOrder }
-  , { walsCode := "llm", language := "Lelemi", iso := "lef", value := .genitiveNoun }
-  , { walsCode := "len", language := "Lenakel", iso := "tnl", value := .nounGenitive }
-  , { walsCode := "ldu", language := "Lendu", iso := "led", value := .genitiveNoun }
-  , { walsCode := "lng", language := "Lengua", iso := "enx", value := .genitiveNoun }
-  , { walsCode := "lep", language := "Lepcha", iso := "lep", value := .genitiveNoun }
-  , { walsCode := "les", language := "Lese", iso := "les", value := .noDominantOrder }
-  , { walsCode := "let", language := "Leti", iso := "lti", value := .genitiveNoun }
-  , { walsCode := "lew", language := "Lewo", iso := "lww", value := .nounGenitive }
-  , { walsCode := "lez", language := "Lezgian", iso := "lez", value := .genitiveNoun }
-  , { walsCode := "lil", language := "Lillooet", iso := "lil", value := .nounGenitive }
-  , { walsCode := "lim", language := "Limbu", iso := "lif", value := .genitiveNoun }
-  , { walsCode := "lnd", language := "Linda", iso := "liy", value := .nounGenitive }
-  , { walsCode := "lin", language := "Lingala", iso := "lin", value := .nounGenitive }
-  , { walsCode := "lis", language := "Lisu", iso := "lis", value := .genitiveNoun }
-  , { walsCode := "lit", language := "Lithuanian", iso := "lit", value := .genitiveNoun }
-  , { walsCode := "lgt", language := "Logoti", iso := "log", value := .genitiveNoun }
-  , { walsCode := "ara", language := "Lokono", iso := "arw", value := .genitiveNoun }
-  , { walsCode := "ldo", language := "Londo", iso := "bdu", value := .nounGenitive }
-  , { walsCode := "lgu", language := "Longgu", iso := "lgu", value := .nounGenitive }
-  , { walsCode := "lon", language := "Loniu", iso := "los", value := .nounGenitive }
-  , { walsCode := "lot", language := "Lotha", iso := "njh", value := .genitiveNoun }
-  , { walsCode := "lou", language := "Lou", iso := "loj", value := .nounGenitive }
-  , { walsCode := "lda", language := "Luganda", iso := "lug", value := .nounGenitive }
-  , { walsCode := "lug", language := "Lugbara", iso := "lgg", value := .genitiveNoun }
-  , { walsCode := "lui", language := "Luiseño", iso := "lui", value := .genitiveNoun }
-  , { walsCode := "lul", language := "Lule", iso := "ule", value := .genitiveNoun }
-  , { walsCode := "lbu", language := "Lunda", iso := "lun", value := .nounGenitive }
-  , { walsCode := "luo", language := "Luo", iso := "luo", value := .nounGenitive }
-  , { walsCode := "kkv", language := "Lusi", iso := "khl", value := .genitiveNoun }
-  , { walsCode := "luv", language := "Luvale", iso := "lue", value := .nounGenitive }
-  , { walsCode := "jlu", language := "Luwo", iso := "lwo", value := .nounGenitive }
-  , { walsCode := "ma", language := "Ma", iso := "msj", value := .nounGenitive }
-  , { walsCode := "myn", language := "Ma'anyan", iso := "mhy", value := .nounGenitive }
-  , { walsCode := "mad", language := "Ma'di", iso := "mhi", value := .noDominantOrder }
-  , { walsCode := "maa", language := "Maasai", iso := "mas", value := .nounGenitive }
-  , { walsCode := "mab", language := "Maba", iso := "mde", value := .noDominantOrder }
-  , { walsCode := "mcd", language := "Macedonian", iso := "mkd", value := .noDominantOrder }
-  , { walsCode := "mch", language := "Machiguenga", iso := "mcb", value := .nounGenitive }
-  , { walsCode := "mac", language := "Macushi", iso := "mbc", value := .genitiveNoun }
-  , { walsCode := "mda", language := "Mada (in Cameroon)", iso := "mxu", value := .nounGenitive }
-  , { walsCode := "mdm", language := "Madimadi", iso := "dmd", value := .genitiveNoun }
-  , { walsCode := "mae", language := "Mae", iso := "mmw", value := .nounGenitive }
-  , { walsCode := "mag", language := "Magar", iso := "mgp", value := .genitiveNoun }
-  , { walsCode := "mne", language := "Maidu (Northeast)", iso := "nmu", value := .genitiveNoun }
-  , { walsCode := "mpr", language := "Maipure", iso := "", value := .genitiveNoun }
-  , { walsCode := "msn", language := "Maisin", iso := "mbq", value := .genitiveNoun }
-  , { walsCode := "maj", language := "Majang", iso := "mpe", value := .nounGenitive }
-  , { walsCode := "mak", language := "Makah", iso := "myh", value := .noDominantOrder }
-  , { walsCode := "mkj", language := "Makasae", iso := "mkz", value := .noDominantOrder }
-  , { walsCode := "mkl", language := "Maklew", iso := "mgf", value := .genitiveNoun }
-  , { walsCode := "mua", language := "Makua", iso := "mgh", value := .nounGenitive }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .nounGenitive }
-  , { walsCode := "mlk", language := "Malakmalak", iso := "mpb", value := .noDominantOrder }
-  , { walsCode := "mym", language := "Malayalam", iso := "mal", value := .genitiveNoun }
-  , { walsCode := "mlu", language := "Maleu", iso := "mgl", value := .noDominantOrder }
-  , { walsCode := "mlg", language := "Malgwa", iso := "", value := .nounGenitive }
-  , { walsCode := "mam", language := "Mam", iso := "mam", value := .nounGenitive }
-  , { walsCode := "mmn", language := "Mamanwa", iso := "mmn", value := .nounGenitive }
-  , { walsCode := "mla", language := "Mambila", iso := "", value := .nounGenitive }
-  , { walsCode := "mmv", language := "Mamvu", iso := "mdi", value := .noDominantOrder }
-  , { walsCode := "mnm", language := "Manam", iso := "mva", value := .nounGenitive }
-  , { walsCode := "mdn", language := "Mandan", iso := "mhq", value := .genitiveNoun }
-  , { walsCode := "mnd", language := "Mandarin", iso := "cmn", value := .genitiveNoun }
-  , { walsCode := "mkg", language := "Mandinka (Gambian)", iso := "mnk", value := .genitiveNoun }
-  , { walsCode := "mmb", language := "Mangap-Mbula", iso := "mna", value := .noDominantOrder }
-  , { walsCode := "myi", language := "Mangarrayi", iso := "mpc", value := .noDominantOrder }
-  , { walsCode := "mbt", language := "Mangbetu", iso := "mdj", value := .noDominantOrder }
-  , { walsCode := "mng", language := "Manggarai", iso := "mqy", value := .nounGenitive }
-  , { walsCode := "mgg", language := "Mangghuer", iso := "mjg", value := .genitiveNoun }
-  , { walsCode := "mgq", language := "Mango", iso := "mge", value := .nounGenitive }
-  , { walsCode := "maw", language := "Maninka (Western)", iso := "mlq", value := .genitiveNoun }
-  , { walsCode := "man", language := "Mano", iso := "mev", value := .genitiveNoun }
-  , { walsCode := "mwb", language := "Manobo (Western Bukidnon)", iso := "mbb", value := .nounGenitive }
-  , { walsCode := "mns", language := "Mansi", iso := "mns", value := .genitiveNoun }
-  , { walsCode := "mao", language := "Maori", iso := "mri", value := .nounGenitive }
-  , { walsCode := "map", language := "Mapudungun", iso := "arn", value := .genitiveNoun }
-  , { walsCode := "mra", language := "Mara", iso := "mec", value := .noDominantOrder }
-  , { walsCode := "mku", language := "Maranungku", iso := "zmr", value := .genitiveNoun }
-  , { walsCode := "mhi", language := "Marathi", iso := "mar", value := .genitiveNoun }
-  , { walsCode := "mny", language := "Margany", iso := "zmc", value := .genitiveNoun }
-  , { walsCode := "mrg", language := "Margi", iso := "mrt", value := .nounGenitive }
-  , { walsCode := "mme", language := "Mari (Meadow)", iso := "mhr", value := .genitiveNoun }
-  , { walsCode := "mar", language := "Maricopa", iso := "mrc", value := .genitiveNoun }
-  , { walsCode := "mrd", language := "Marind", iso := "mrz", value := .genitiveNoun }
-  , { walsCode := "mrr", language := "Maringarr", iso := "zmt", value := .genitiveNoun }
-  , { walsCode := "mrq", language := "Marquesan", iso := "", value := .nounGenitive }
-  , { walsCode := "mrt", language := "Martuthunira", iso := "vma", value := .noDominantOrder }
-  , { walsCode := "mru", language := "Maru", iso := "mhx", value := .genitiveNoun }
-  , { walsCode := "mas", language := "Masa", iso := "mcn", value := .nounGenitive }
-  , { walsCode := "msk", language := "Masakin", iso := "jle", value := .nounGenitive }
-  , { walsCode := "msl", language := "Masalit", iso := "mls", value := .nounGenitive }
-  , { walsCode := "mtt", language := "Massachusett", iso := "wam", value := .nounGenitive }
-  , { walsCode := "mts", language := "Matis", iso := "mpq", value := .genitiveNoun }
-  , { walsCode := "myr", language := "Matsés", iso := "mcf", value := .genitiveNoun }
-  , { walsCode := "mtb", language := "Matuumbi", iso := "mgw", value := .nounGenitive }
-  , { walsCode := "mka", language := "Mauka", iso := "mxx", value := .genitiveNoun }
-  , { walsCode := "mau", language := "Maung", iso := "mph", value := .genitiveNoun }
-  , { walsCode := "may", language := "Maybrat", iso := "ayz", value := .noDominantOrder }
-  , { walsCode := "myg", language := "Mayogo", iso := "mdm", value := .nounGenitive }
-  , { walsCode := "mba", language := "Mba", iso := "mfc", value := .genitiveNoun }
-  , { walsCode := "mbr", language := "Mbara", iso := "mpk", value := .nounGenitive }
-  , { walsCode := "mby", language := "Mbay", iso := "myb", value := .nounGenitive }
-  , { walsCode := "mdo", language := "Mbodomo", iso := "gmm", value := .nounGenitive }
-  , { walsCode := "mbl", language := "Mbole", iso := "mdq", value := .nounGenitive }
-  , { walsCode := "mdw", language := "Mbosi", iso := "mdw", value := .nounGenitive }
-  , { walsCode := "mbm", language := "Mbum", iso := "mdd", value := .nounGenitive }
-  , { walsCode := "mee", language := "Me'en", iso := "mym", value := .nounGenitive }
-  , { walsCode := "meh", language := "Mehri", iso := "gdq", value := .nounGenitive }
-  , { walsCode := "mei", language := "Meithei", iso := "mni", value := .genitiveNoun }
-  , { walsCode := "mek", language := "Mekens", iso := "skf", value := .genitiveNoun }
-  , { walsCode := "mke", language := "Mekeo", iso := "mek", value := .genitiveNoun }
-  , { walsCode := "mde", language := "Mende", iso := "men", value := .genitiveNoun }
-  , { walsCode := "men", language := "Menomini", iso := "mez", value := .genitiveNoun }
-  , { walsCode := "mnt", language := "Mentawai", iso := "mwv", value := .nounGenitive }
-  , { walsCode := "mey", language := "Menya", iso := "mcr", value := .genitiveNoun }
-  , { walsCode := "mer", language := "Meryam Mir", iso := "ulk", value := .genitiveNoun }
-  , { walsCode := "mea", language := "Meyah", iso := "mej", value := .genitiveNoun }
-  , { walsCode := "mpt", language := "Mian", iso := "mpt", value := .genitiveNoun }
-  , { walsCode := "mie", language := "Mien", iso := "ium", value := .genitiveNoun }
-  , { walsCode := "mii", language := "Miisiirii", iso := "", value := .genitiveNoun }
-  , { walsCode := "mik", language := "Mikir", iso := "mjw", value := .genitiveNoun }
-  , { walsCode := "hna", language := "Mina", iso := "hna", value := .nounGenitive }
-  , { walsCode := "min", language := "Minangkabau", iso := "min", value := .nounGenitive }
-  , { walsCode := "mnv", language := "Minaveha", iso := "mvn", value := .genitiveNoun }
-  , { walsCode := "msg", language := "Mising", iso := "mrg", value := .genitiveNoun }
-  , { walsCode := "mis", language := "Miskito", iso := "miq", value := .genitiveNoun }
-  , { walsCode := "mss", language := "Miwok (Southern Sierra)", iso := "skd", value := .noDominantOrder }
-  , { walsCode := "mxx", language := "Mixe (Ayutla)", iso := "mxp", value := .genitiveNoun }
-  , { walsCode := "mco", language := "Mixe (Coatlán)", iso := "mco", value := .genitiveNoun }
-  , { walsCode := "mxa", language := "Mixtec (Atatlahuca)", iso := "mib", value := .nounGenitive }
-  , { walsCode := "mxc", language := "Mixtec (Chalcatongo)", iso := "mig", value := .nounGenitive }
-  , { walsCode := "mxo", language := "Mixtec (Ocotepec)", iso := "mie", value := .nounGenitive }
-  , { walsCode := "mxp", language := "Mixtec (Peñoles)", iso := "mil", value := .nounGenitive }
-  , { walsCode := "mxy", language := "Mixtec (Yosondúa)", iso := "mpm", value := .nounGenitive }
-  , { walsCode := "miy", language := "Miya", iso := "mkf", value := .nounGenitive }
-  , { walsCode := "miz", language := "Mizo", iso := "lus", value := .genitiveNoun }
-  , { walsCode := "mlm", language := "Mlabri (Minor)", iso := "mra", value := .genitiveNoun }
-  , { walsCode := "mcc", language := "Mochica", iso := "omc", value := .genitiveNoun }
-  , { walsCode := "mcv", language := "Mocoví", iso := "moc", value := .noDominantOrder }
-  , { walsCode := "mof", language := "Mofu-Gudur", iso := "mif", value := .nounGenitive }
-  , { walsCode := "moh", language := "Mohawk", iso := "moh", value := .genitiveNoun }
-  , { walsCode := "mok", language := "Mokilese", iso := "mkj", value := .noDominantOrder }
-  , { walsCode := "mom", language := "Mombum", iso := "mso", value := .genitiveNoun }
-  , { walsCode := "fqs", language := "Momu", iso := "fqs", value := .genitiveNoun }
-  , { walsCode := "mon", language := "Mon", iso := "mnw", value := .nounGenitive }
-  , { walsCode := "mga", language := "Mondunga", iso := "ndt", value := .nounGenitive }
-  , { walsCode := "mgo", language := "Mongo", iso := "lol", value := .nounGenitive }
-  , { walsCode := "mni", language := "Moni", iso := "mnz", value := .genitiveNoun }
-  , { walsCode := "mno", language := "Mono (in United States)", iso := "mnr", value := .genitiveNoun }
-  , { walsCode := "moa", language := "Mono-Alu", iso := "mte", value := .noDominantOrder }
-  , { walsCode := "mbo", language := "Monumbo", iso := "mxk", value := .genitiveNoun }
-  , { walsCode := "moo", language := "Mooré", iso := "mos", value := .genitiveNoun }
-  , { walsCode := "mor", language := "Mor", iso := "mhz", value := .genitiveNoun }
-  , { walsCode := "mri", language := "Moraori", iso := "mok", value := .genitiveNoun }
-  , { walsCode := "mro", language := "Moro", iso := "mor", value := .nounGenitive }
-  , { walsCode := "mou", language := "Moru", iso := "mgd", value := .nounGenitive }
-  , { walsCode := "mos", language := "Mosetén", iso := "cas", value := .genitiveNoun }
-  , { walsCode := "mtu", language := "Motu", iso := "meu", value := .genitiveNoun }
-  , { walsCode := "mot", language := "Motuna", iso := "siw", value := .genitiveNoun }
-  , { walsCode := "aoj", language := "Mufian", iso := "aoj", value := .nounGenitive }
-  , { walsCode := "msc", language := "Muisca", iso := "chb", value := .genitiveNoun }
-  , { walsCode := "mum", language := "Mumuye", iso := "mzm", value := .noDominantOrder }
-  , { walsCode := "mna", language := "Muna", iso := "mnb", value := .nounGenitive }
-  , { walsCode := "mdg", language := "Mundang", iso := "mua", value := .nounGenitive }
-  , { walsCode := "mud", language := "Mundani", iso := "mnf", value := .nounGenitive }
-  , { walsCode := "mun", language := "Mundari", iso := "unr", value := .genitiveNoun }
-  , { walsCode := "mnz", language := "Munzombo", iso := "moj", value := .nounGenitive }
-  , { walsCode := "mup", language := "Mupun", iso := "sur", value := .nounGenitive }
-  , { walsCode := "mrl", language := "Murle", iso := "mur", value := .nounGenitive }
-  , { walsCode := "mpa", language := "Murrinh-Patha", iso := "mwf", value := .nounGenitive }
-  , { walsCode := "mur", language := "Mursi", iso := "muz", value := .nounGenitive }
-  , { walsCode := "mrw", language := "Muruwari", iso := "zmu", value := .genitiveNoun }
-  , { walsCode := "mgu", language := "Musgu", iso := "mug", value := .nounGenitive }
-  , { walsCode := "msq", language := "Musqueam", iso := "hur", value := .nounGenitive }
-  , { walsCode := "mus", language := "Mussau", iso := "emi", value := .nounGenitive }
-  , { walsCode := "mut", language := "Mutsun", iso := "css", value := .genitiveNoun }
-  , { walsCode := "mwe", language := "Mwera", iso := "mwe", value := .nounGenitive }
-  , { walsCode := "nab", language := "Nabak", iso := "naf", value := .genitiveNoun }
-  , { walsCode := "ndr", language := "Nadroga", iso := "wyy", value := .nounGenitive }
-  , { walsCode := "nad", language := "Nadëb", iso := "mbj", value := .genitiveNoun }
-  , { walsCode := "nma", language := "Naga (Mao)", iso := "nbi", value := .genitiveNoun }
-  , { walsCode := "ngt", language := "Naga (Tangkhul)", iso := "nmf", value := .genitiveNoun }
-  , { walsCode := "nhh", language := "Nahuatl (Huasteca)", iso := "", value := .nounGenitive }
-  , { walsCode := "nhm", language := "Nahuatl (Michoacán)", iso := "ncl", value := .noDominantOrder }
-  , { walsCode := "nht", language := "Nahuatl (Tetelcingo)", iso := "nhg", value := .nounGenitive }
-  , { walsCode := "bio", language := "Nai", iso := "bio", value := .genitiveNoun }
-  , { walsCode := "nak", language := "Nakanai", iso := "nak", value := .nounGenitive }
-  , { walsCode := "kho", language := "Nama", iso := "naq", value := .genitiveNoun }
-  , { walsCode := "nam", language := "Namia", iso := "nnm", value := .genitiveNoun }
-  , { walsCode := "nnc", language := "Nancowry", iso := "ncb", value := .nounGenitive }
-  , { walsCode := "nde", language := "Nande", iso := "nnb", value := .nounGenitive }
-  , { walsCode := "nan", language := "Nandi", iso := "niq", value := .nounGenitive }
-  , { walsCode := "nrg", language := "Nanerge", iso := "sen", value := .genitiveNoun }
-  , { walsCode := "nnk", language := "Nankina", iso := "nnk", value := .genitiveNoun }
-  , { walsCode := "nph", language := "Nar-Phu", iso := "npa", value := .genitiveNoun }
-  , { walsCode := "nar", language := "Nara (in Ethiopia)", iso := "nrb", value := .genitiveNoun }
-  , { walsCode := "nas", language := "Nasioi", iso := "nas", value := .noDominantOrder }
-  , { walsCode := "nav", language := "Navajo", iso := "nav", value := .genitiveNoun }
-  , { walsCode := "ncm", language := "Ncàm", iso := "bud", value := .genitiveNoun }
-  , { walsCode := "ndb", language := "Ndebele", iso := "nde", value := .nounGenitive }
-  , { walsCode := "ndo", language := "Ndonga", iso := "ndo", value := .nounGenitive }
-  , { walsCode := "ndu", language := "Ndumu", iso := "nmd", value := .nounGenitive }
-  , { walsCode := "ndt", language := "Ndut", iso := "ndv", value := .nounGenitive }
-  , { walsCode := "ndy", language := "Ndyuka", iso := "djk", value := .noDominantOrder }
-  , { walsCode := "neh", language := "Nehan", iso := "nsn", value := .nounGenitive }
-  , { walsCode := "nnd", language := "Nend", iso := "anh", value := .noDominantOrder }
-  , { walsCode := "ntu", language := "Nenets", iso := "yrk", value := .genitiveNoun }
-  , { walsCode := "nne", language := "Nengone", iso := "nen", value := .nounGenitive }
-  , { walsCode := "naj", language := "Neo-Aramaic (Arbel Jewish)", iso := "aij", value := .nounGenitive }
-  , { walsCode := "nep", language := "Nepali", iso := "npi", value := .genitiveNoun }
-  , { walsCode := "nev", language := "Nevome", iso := "pia", value := .genitiveNoun }
-  , { walsCode := "nwd", language := "Newar (Dolakha)", iso := "new", value := .genitiveNoun }
-  , { walsCode := "new", language := "Newari (Kathmandu)", iso := "new", value := .genitiveNoun }
-  , { walsCode := "ney", language := "Neyo", iso := "ney", value := .genitiveNoun }
-  , { walsCode := "nez", language := "Nez Perce", iso := "nez", value := .genitiveNoun }
-  , { walsCode := "ntj", language := "Ngaanyatjarra", iso := "ntj", value := .genitiveNoun }
-  , { walsCode := "ngd", language := "Ngad'a", iso := "nxg", value := .nounGenitive }
-  , { walsCode := "ngl", language := "Ngalakan", iso := "nig", value := .noDominantOrder }
-  , { walsCode := "nkb", language := "Ngalkbun", iso := "ngk", value := .nounGenitive }
-  , { walsCode := "ngm", language := "Ngambay", iso := "sba", value := .nounGenitive }
-  , { walsCode := "ngn", language := "Ngandi", iso := "nid", value := .noDominantOrder }
-  , { walsCode := "ngb", language := "Ngbaka (Minagende)", iso := "nga", value := .nounGenitive }
-  , { walsCode := "ndi", language := "Ngbandi", iso := "ngb", value := .nounGenitive }
-  , { walsCode := "nti", language := "Ngiti", iso := "niy", value := .genitiveNoun }
-  , { walsCode := "ngi", language := "Ngiyambaa", iso := "wyb", value := .genitiveNoun }
-  , { walsCode := "ngz", language := "Ngizim", iso := "ngi", value := .nounGenitive }
-  , { walsCode := "ngo", language := "Ngoni", iso := "ngo", value := .nounGenitive }
-  , { walsCode := "ngu", language := "Nguna", iso := "llp", value := .nounGenitive }
-  , { walsCode := "nbr", language := "Ngäbere", iso := "gym", value := .genitiveNoun }
-  , { walsCode := "nia", language := "Nias", iso := "nia", value := .nounGenitive }
-  , { walsCode := "nca", language := "Nicobarese (Car)", iso := "caq", value := .nounGenitive }
-  , { walsCode := "nsn", language := "Nisenan", iso := "nsz", value := .genitiveNoun }
-  , { walsCode := "nsg", language := "Nisgha", iso := "ncg", value := .nounGenitive }
-  , { walsCode := "niu", language := "Niuean", iso := "niu", value := .nounGenitive }
-  , { walsCode := "niv", language := "Nivkh", iso := "niv", value := .genitiveNoun }
-  , { walsCode := "nkn", language := "Nkonya", iso := "nko", value := .genitiveNoun }
-  , { walsCode := "nko", language := "Nkore-Kiga", iso := "cgg", value := .nounGenitive }
-  , { walsCode := "noc", language := "Nocte", iso := "njb", value := .genitiveNoun }
-  , { walsCode := "non", language := "Noni", iso := "nhu", value := .nounGenitive }
-  , { walsCode := "noo", language := "Noon", iso := "snf", value := .nounGenitive }
-  , { walsCode := "nor", language := "Norwegian", iso := "nor", value := .noDominantOrder }
-  , { walsCode := "nua", language := "Nuaulu", iso := "nxl", value := .genitiveNoun }
-  , { walsCode := "nbd", language := "Nubian (Dongolese)", iso := "dgl", value := .genitiveNoun }
-  , { walsCode := "nku", language := "Nubian (Kunuz)", iso := "xnz", value := .genitiveNoun }
-  , { walsCode := "nue", language := "Nuer", iso := "nus", value := .nounGenitive }
-  , { walsCode := "nun", language := "Nung (in Vietnam)", iso := "nut", value := .nounGenitive }
-  , { walsCode := "nug", language := "Nunggubuyu", iso := "nuy", value := .noDominantOrder }
-  , { walsCode := "nup", language := "Nupe", iso := "nup", value := .nounGenitive }
-  , { walsCode := "nym", language := "Nyamwezi", iso := "nym", value := .nounGenitive }
-  , { walsCode := "nng", language := "Nyanga", iso := "nyj", value := .nounGenitive }
-  , { walsCode := "nyn", language := "Nyigina", iso := "nyh", value := .noDominantOrder }
-  , { walsCode := "nyi", language := "Nyimang", iso := "nyi", value := .genitiveNoun }
-  , { walsCode := "nis", language := "Nyishi", iso := "njz", value := .genitiveNoun }
-  , { walsCode := "nza", language := "Nzakara", iso := "nzk", value := .nounGenitive }
-  , { walsCode := "ood", language := "O'odham", iso := "ood", value := .noDominantOrder }
-  , { walsCode := "obo", language := "Obolo", iso := "ann", value := .nounGenitive }
-  , { walsCode := "ocu", language := "Ocuilteco", iso := "ocu", value := .noDominantOrder }
-  , { walsCode := "oji", language := "Ojibwa (Eastern)", iso := "", value := .genitiveNoun }
-  , { walsCode := "oks", language := "Oksapmin", iso := "opm", value := .genitiveNoun }
-  , { walsCode := "olo", language := "Olo", iso := "ong", value := .noDominantOrder }
-  , { walsCode := "omh", language := "Omaha", iso := "oma", value := .genitiveNoun }
-  , { walsCode := "one", language := "One", iso := "aun", value := .noDominantOrder }
-  , { walsCode := "ond", language := "Oneida", iso := "one", value := .noDominantOrder }
-  , { walsCode := "ong", language := "Onge", iso := "oon", value := .genitiveNoun }
-  , { walsCode := "ord", language := "Ordos", iso := "mvf", value := .genitiveNoun }
-  , { walsCode := "ori", language := "Orig", iso := "tag", value := .nounGenitive }
-  , { walsCode := "ork", language := "Orok", iso := "oaa", value := .genitiveNoun }
-  , { walsCode := "oro", language := "Orokaiva", iso := "okv", value := .genitiveNoun }
-  , { walsCode := "orh", language := "Oromo (Harar)", iso := "hae", value := .nounGenitive }
-  , { walsCode := "orw", language := "Oromo (Waata)", iso := "ssn", value := .nounGenitive }
-  , { walsCode := "ory", language := "Orya", iso := "ury", value := .genitiveNoun }
-  , { walsCode := "osa", language := "Osage", iso := "osa", value := .genitiveNoun }
-  , { walsCode := "oss", language := "Ossetic", iso := "oss", value := .genitiveNoun }
-  , { walsCode := "otm", language := "Otomí (Mezquital)", iso := "ote", value := .nounGenitive }
-  , { walsCode := "otr", language := "Otoro", iso := "otr", value := .nounGenitive }
-  , { walsCode := "owi", language := "Owininga", iso := "owi", value := .genitiveNoun }
-  , { walsCode := "paa", language := "Pa'a", iso := "pqa", value := .nounGenitive }
-  , { walsCode := "pms", language := "Paamese", iso := "pma", value := .nounGenitive }
-  , { walsCode := "pno", language := "Paiute (Northern)", iso := "pao", value := .genitiveNoun }
-  , { walsCode := "pai", language := "Paiwan", iso := "pwn", value := .nounGenitive }
-  , { walsCode := "pal", language := "Palauan", iso := "pau", value := .nounGenitive }
-  , { walsCode := "plg", language := "Palaung", iso := "pll", value := .nounGenitive }
-  , { walsCode := "plk", language := "Palikur", iso := "plu", value := .genitiveNoun }
-  , { walsCode := "pnx", language := "Panará", iso := "kre", value := .genitiveNoun }
-  , { walsCode := "pnn", language := "Pangasinan", iso := "pag", value := .nounGenitive }
-  , { walsCode := "pan", language := "Panjabi", iso := "pan", value := .genitiveNoun }
-  , { walsCode := "pny", language := "Panyjima", iso := "pnw", value := .noDominantOrder }
-  , { walsCode := "pre", language := "Pare", iso := "asa", value := .nounGenitive }
-  , { walsCode := "psh", language := "Pashto", iso := "pst", value := .genitiveNoun }
-  , { walsCode := "pat", language := "Patep", iso := "ptp", value := .genitiveNoun }
-  , { walsCode := "ptt", language := "Pattani", iso := "lae", value := .genitiveNoun }
-  , { walsCode := "plh", language := "Paulohi", iso := "plh", value := .genitiveNoun }
-  , { walsCode := "pau", language := "Paumarí", iso := "pad", value := .genitiveNoun }
-  , { walsCode := "pwn", language := "Pawnee", iso := "paw", value := .genitiveNoun }
-  , { walsCode := "per", language := "Pero", iso := "pip", value := .nounGenitive }
-  , { walsCode := "prs", language := "Persian", iso := "pes", value := .nounGenitive }
-  , { walsCode := "ppc", language := "Piapoco", iso := "pio", value := .genitiveNoun }
-  , { walsCode := "pia", language := "Piaroa", iso := "pid", value := .genitiveNoun }
-  , { walsCode := "pga", language := "Pilagá", iso := "plg", value := .nounGenitive }
-  , { walsCode := "pba", language := "Pima Bajo", iso := "pia", value := .genitiveNoun }
-  , { walsCode := "pip", language := "Pipil", iso := "ppl", value := .nounGenitive }
-  , { walsCode := "prh", language := "Pirahã", iso := "myp", value := .genitiveNoun }
-  , { walsCode := "pir", language := "Piro", iso := "pib", value := .genitiveNoun }
-  , { walsCode := "pis", language := "Pisa", iso := "psa", value := .genitiveNoun }
-  , { walsCode := "pit", language := "Pitjantjatjara", iso := "pjt", value := .genitiveNoun }
-  , { walsCode := "ppi", language := "Pitta Pitta", iso := "pit", value := .genitiveNoun }
-  , { walsCode := "pod", language := "Podoko", iso := "pbi", value := .nounGenitive }
-  , { walsCode := "poh", language := "Pohnpeian", iso := "pon", value := .noDominantOrder }
-  , { walsCode := "pok", language := "Poko-Rawo", iso := "rwa", value := .genitiveNoun }
-  , { walsCode := "pkt", language := "Pokot", iso := "pko", value := .nounGenitive }
-  , { walsCode := "pol", language := "Polish", iso := "pol", value := .nounGenitive }
-  , { walsCode := "pme", language := "Pomo (Eastern)", iso := "peb", value := .genitiveNoun }
-  , { walsCode := "pmn", language := "Pomo (Northern)", iso := "pej", value := .genitiveNoun }
-  , { walsCode := "pso", language := "Pomo (Southeastern)", iso := "pom", value := .genitiveNoun }
-  , { walsCode := "zqs", language := "Popoluca (Sierra)", iso := "poi", value := .genitiveNoun }
-  , { walsCode := "psw", language := "Port Sandwich", iso := "psw", value := .nounGenitive }
-  , { walsCode := "por", language := "Portuguese", iso := "por", value := .nounGenitive }
-  , { walsCode := "pra", language := "Prasuni", iso := "prn", value := .genitiveNoun }
-  , { walsCode := "pul", language := "Puluwat", iso := "puw", value := .genitiveNoun }
-  , { walsCode := "pum", language := "Pumi", iso := "pmi", value := .genitiveNoun }
-  , { walsCode := "pun", language := "Pungupungu", iso := "wdj", value := .genitiveNoun }
-  , { walsCode := "pur", language := "Purépecha", iso := "tsz", value := .noDominantOrder }
-  , { walsCode := "pae", language := "Páez", iso := "pbb", value := .genitiveNoun }
-  , { walsCode := "par", language := "Päri", iso := "lkr", value := .nounGenitive }
-  , { walsCode := "qaf", language := "Qafar", iso := "aar", value := .genitiveNoun }
-  , { walsCode := "qaw", language := "Qawasqar", iso := "alc", value := .genitiveNoun }
-  , { walsCode := "qia", language := "Qiang", iso := "", value := .genitiveNoun }
-  , { walsCode := "qhu", language := "Quechua (Huallaga)", iso := "qub", value := .genitiveNoun }
-  , { walsCode := "qim", language := "Quechua (Imbabura)", iso := "qvi", value := .genitiveNoun }
-  , { walsCode := "qui", language := "Quileute", iso := "qui", value := .nounGenitive }
-  , { walsCode := "rag", language := "Raga", iso := "lml", value := .nounGenitive }
-  , { walsCode := "ral", language := "Ralte", iso := "ral", value := .genitiveNoun }
-  , { walsCode := "ram", language := "Rama", iso := "rma", value := .genitiveNoun }
-  , { walsCode := "rao", language := "Rao", iso := "rao", value := .genitiveNoun }
-  , { walsCode := "rap", language := "Rapanui", iso := "rap", value := .nounGenitive }
-  , { walsCode := "ras", language := "Rashad", iso := "ras", value := .nounGenitive }
-  , { walsCode := "raw", language := "Rawang", iso := "raw", value := .genitiveNoun }
-  , { walsCode := "rem", language := "Remo", iso := "bfw", value := .genitiveNoun }
-  , { walsCode := "res", language := "Resígaro", iso := "rgr", value := .genitiveNoun }
-  , { walsCode := "ret", language := "Retuarã", iso := "tnc", value := .genitiveNoun }
-  , { walsCode := "rwe", language := "Romani (Welsh)", iso := "rmw", value := .genitiveNoun }
-  , { walsCode := "rom", language := "Romanian", iso := "ron", value := .nounGenitive }
-  , { walsCode := "rsu", language := "Romansch (Sursilvan)", iso := "roh", value := .nounGenitive }
-  , { walsCode := "ron", language := "Ron", iso := "cla", value := .nounGenitive }
-  , { walsCode := "rga", language := "Ronga", iso := "rng", value := .nounGenitive }
-  , { walsCode := "rot", language := "Rotuman", iso := "rtm", value := .nounGenitive }
-  , { walsCode := "rov", language := "Roviana", iso := "rug", value := .nounGenitive }
-  , { walsCode := "ruk", language := "Rukai (Tanan)", iso := "dru", value := .nounGenitive }
-  , { walsCode := "cos", language := "Rumsien", iso := "", value := .noDominantOrder }
-  , { walsCode := "rum", language := "Rumu", iso := "klq", value := .genitiveNoun }
-  , { walsCode := "run", language := "Runga", iso := "rou", value := .genitiveNoun }
-  , { walsCode := "rny", language := "Runyankore", iso := "nyn", value := .nounGenitive }
-  , { walsCode := "rus", language := "Russian", iso := "rus", value := .nounGenitive }
-  , { walsCode := "rut", language := "Rutul", iso := "rut", value := .genitiveNoun }
-  , { walsCode := "saa", language := "Sa'a", iso := "apb", value := .nounGenitive }
-  , { walsCode := "sno", language := "Saami (Northern)", iso := "sme", value := .genitiveNoun }
-  , { walsCode := "sah", language := "Sahu", iso := "saj", value := .genitiveNoun }
-  , { walsCode := "sak", language := "Sakao", iso := "sku", value := .nounGenitive }
-  , { walsCode := "slb", language := "Saliba (in Papua New Guinea)", iso := "sbe", value := .genitiveNoun }
-  , { walsCode := "sal", language := "Salinan", iso := "sln", value := .nounGenitive }
-  , { walsCode := "sle", language := "Samba Leko", iso := "ndi", value := .genitiveNoun }
-  , { walsCode := "sam", language := "Samoan", iso := "smo", value := .nounGenitive }
-  , { walsCode := "sdw", language := "Sandawe", iso := "sad", value := .genitiveNoun }
-  , { walsCode := "san", language := "Sango", iso := "sag", value := .nounGenitive }
-  , { walsCode := "sgu", language := "Sangu", iso := "snq", value := .nounGenitive }
-  , { walsCode := "sta", language := "Santa", iso := "sce", value := .genitiveNoun }
-  , { walsCode := "stl", language := "Santali", iso := "sat", value := .genitiveNoun }
-  , { walsCode := "snm", language := "Sanuma", iso := "xsu", value := .genitiveNoun }
-  , { walsCode := "src", language := "Sarcee", iso := "srs", value := .genitiveNoun }
-  , { walsCode := "sar", language := "Sare", iso := "dju", value := .genitiveNoun }
-  , { walsCode := "sav", language := "Savi", iso := "sdg", value := .genitiveNoun }
-  , { walsCode := "svs", language := "Savosavo", iso := "svs", value := .genitiveNoun }
-  , { walsCode := "seb", language := "Sebei", iso := "kpz", value := .nounGenitive }
-  , { walsCode := "sec", language := "Secoya", iso := "sey", value := .genitiveNoun }
-  , { walsCode := "sed", language := "Sedang", iso := "sed", value := .nounGenitive }
-  , { walsCode := "see", language := "Seediq", iso := "trv", value := .nounGenitive }
-  , { walsCode := "slp", language := "Selepet", iso := "spl", value := .genitiveNoun }
-  , { walsCode := "skp", language := "Selkup", iso := "sel", value := .genitiveNoun }
-  , { walsCode := "sem", language := "Sema", iso := "nsm", value := .genitiveNoun }
-  , { walsCode := "sme", language := "Seme", iso := "sif", value := .genitiveNoun }
-  , { walsCode := "sml", language := "Semelai", iso := "sza", value := .nounGenitive }
-  , { walsCode := "smn", language := "Seminole", iso := "mus", value := .genitiveNoun }
-  , { walsCode := "snt", language := "Sentani", iso := "set", value := .genitiveNoun }
-  , { walsCode := "scr", language := "Serbian-Croatian", iso := "hbs", value := .noDominantOrder }
-  , { walsCode := "ser", language := "Seri", iso := "sei", value := .genitiveNoun }
-  , { walsCode := "ses", language := "Sesotho", iso := "sot", value := .nounGenitive }
-  , { walsCode := "sha", language := "Shan", iso := "shn", value := .nounGenitive }
-  , { walsCode := "sht", language := "Shatt", iso := "shj", value := .nounGenitive }
-  , { walsCode := "she", language := "Sherpa", iso := "xsr", value := .genitiveNoun }
-  , { walsCode := "shl", language := "Shilluk", iso := "shk", value := .nounGenitive }
-  , { walsCode := "sna", language := "Shina", iso := "scl", value := .genitiveNoun }
-  , { walsCode := "shk", language := "Shipibo-Konibo", iso := "shp", value := .genitiveNoun }
-  , { walsCode := "shi", language := "Shiriana", iso := "shb", value := .genitiveNoun }
-  , { walsCode := "shn", language := "Shona", iso := "sna", value := .nounGenitive }
-  , { walsCode := "shu", language := "Shuswap", iso := "shs", value := .nounGenitive }
-  , { walsCode := "sia", language := "Siane", iso := "snp", value := .genitiveNoun }
-  , { walsCode := "sir", language := "Siar", iso := "sjr", value := .nounGenitive }
-  , { walsCode := "sid", language := "Sidaama", iso := "sid", value := .genitiveNoun }
-  , { walsCode := "skk", language := "Sikkimese", iso := "sip", value := .genitiveNoun }
-  , { walsCode := "sil", language := "Sila", iso := "dau", value := .nounGenitive }
-  , { walsCode := "sim", language := "Simeulue", iso := "smr", value := .nounGenitive }
-  , { walsCode := "sng", language := "Sinaugoro", iso := "snc", value := .genitiveNoun }
-  , { walsCode := "sio", language := "Sio", iso := "xsi", value := .genitiveNoun }
-  , { walsCode := "sin", language := "Siona", iso := "snn", value := .genitiveNoun }
-  , { walsCode := "qum", language := "Sipakapense", iso := "qum", value := .nounGenitive }
+  [ { walsCode := "khm", iso := "khm", value := .nounGenitive }
+  , { walsCode := "kmu", iso := "kjg", value := .nounGenitive }
+  , { walsCode := "khw", iso := "khw", value := .genitiveNoun }
+  , { walsCode := "kik", iso := "kik", value := .nounGenitive }
+  , { walsCode := "klv", iso := "kij", value := .genitiveNoun }
+  , { walsCode := "kim", iso := "kig", value := .genitiveNoun }
+  , { walsCode := "kga", iso := "zga", value := .nounGenitive }
+  , { walsCode := "knn", iso := "kfk", value := .genitiveNoun }
+  , { walsCode := "kio", iso := "kio", value := .genitiveNoun }
+  , { walsCode := "kri", iso := "kzw", value := .nounGenitive }
+  , { walsCode := "krb", iso := "gil", value := .nounGenitive }
+  , { walsCode := "kir", iso := "cme", value := .genitiveNoun }
+  , { walsCode := "kis", iso := "kss", value := .nounGenitive }
+  , { walsCode := "kiw", iso := "kjd", value := .genitiveNoun }
+  , { walsCode := "klm", iso := "kla", value := .genitiveNoun }
+  , { walsCode := "kla", iso := "klu", value := .genitiveNoun }
+  , { walsCode := "koa", iso := "cku", value := .genitiveNoun }
+  , { walsCode := "kob", iso := "kpw", value := .genitiveNoun }
+  , { walsCode := "koe", iso := "xwg", value := .nounGenitive }
+  , { walsCode := "kmo", iso := "kpx", value := .genitiveNoun }
+  , { walsCode := "kta", iso := "kqi", value := .genitiveNoun }
+  , { walsCode := "kok", iso := "trp", value := .genitiveNoun }
+  , { walsCode := "kkt", iso := "kkk", value := .nounGenitive }
+  , { walsCode := "kol", iso := "kfb", value := .genitiveNoun }
+  , { walsCode := "klr", iso := "shm", value := .genitiveNoun }
+  , { walsCode := "kmb", iso := "", value := .genitiveNoun }
+  , { walsCode := "xbi", iso := "xbi", value := .nounGenitive }
+  , { walsCode := "kop", iso := "koi", value := .genitiveNoun }
+  , { walsCode := "kzy", iso := "kpv", value := .genitiveNoun }
+  , { walsCode := "kom", iso := "xom", value := .nounGenitive }
+  , { walsCode := "kon", iso := "kng", value := .nounGenitive }
+  , { walsCode := "knw", iso := "mjd", value := .genitiveNoun }
+  , { walsCode := "kni", iso := "kma", value := .genitiveNoun }
+  , { walsCode := "krn", iso := "kqz", value := .genitiveNoun }
+  , { walsCode := "kor", iso := "kor", value := .genitiveNoun }
+  , { walsCode := "kje", iso := "coe", value := .genitiveNoun }
+  , { walsCode := "kku", iso := "kfq", value := .genitiveNoun }
+  , { walsCode := "kfe", iso := "kfz", value := .genitiveNoun }
+  , { walsCode := "krw", iso := "khe", value := .genitiveNoun }
+  , { walsCode := "kry", iso := "kpy", value := .genitiveNoun }
+  , { walsCode := "kos", iso := "kos", value := .nounGenitive }
+  , { walsCode := "koy", iso := "kff", value := .genitiveNoun }
+  , { walsCode := "kch", iso := "khq", value := .genitiveNoun }
+  , { walsCode := "kse", iso := "ses", value := .genitiveNoun }
+  , { walsCode := "kyn", iso := "koy", value := .genitiveNoun }
+  , { walsCode := "kpe", iso := "xpe", value := .genitiveNoun }
+  , { walsCode := "kqq", iso := "kqq", value := .genitiveNoun }
+  , { walsCode := "kre", iso := "krs", value := .nounGenitive }
+  , { walsCode := "kro", iso := "kgo", value := .nounGenitive }
+  , { walsCode := "krz", iso := "kry", value := .genitiveNoun }
+  , { walsCode := "knc", iso := "uwa", value := .nounGenitive }
+  , { walsCode := "kkq", iso := "kui", value := .genitiveNoun }
+  , { walsCode := "kya", iso := "gvn", value := .noDominantOrder }
+  , { walsCode := "klg", iso := "kle", value := .genitiveNoun }
+  , { walsCode := "kum", iso := "kfy", value := .genitiveNoun }
+  , { walsCode := "kun", iso := "kvn", value := .noDominantOrder }
+  , { walsCode := "knm", iso := "kun", value := .genitiveNoun }
+  , { walsCode := "kmp", iso := "kup", value := .genitiveNoun }
+  , { walsCode := "kuo", iso := "kto", value := .nounGenitive }
+  , { walsCode := "krd", iso := "ckb", value := .nounGenitive }
+  , { walsCode := "kut", iso := "kut", value := .nounGenitive }
+  , { walsCode := "thy", iso := "thd", value := .nounGenitive }
+  , { walsCode := "kuv", iso := "kxv", value := .genitiveNoun }
+  , { walsCode := "kwk", iso := "kwk", value := .nounGenitive }
+  , { walsCode := "kwm", iso := "ksq", value := .nounGenitive }
+  , { walsCode := "kwn", iso := "kwn", value := .nounGenitive }
+  , { walsCode := "kwz", iso := "xwa", value := .genitiveNoun }
+  , { walsCode := "kwo", iso := "kmo", value := .genitiveNoun }
+  , { walsCode := "kwt", iso := "kwo", value := .genitiveNoun }
+  , { walsCode := "kxo", iso := "xuu", value := .genitiveNoun }
+  , { walsCode := "kgy", iso := "kgy", value := .genitiveNoun }
+  , { walsCode := "laa", iso := "gdm", value := .nounGenitive }
+  , { walsCode := "lab", iso := "lbu", value := .genitiveNoun }
+  , { walsCode := "lac", iso := "lac", value := .nounGenitive }
+  , { walsCode := "lad", iso := "lbj", value := .genitiveNoun }
+  , { walsCode := "laf", iso := "laf", value := .noDominantOrder }
+  , { walsCode := "lag", iso := "kot", value := .nounGenitive }
+  , { walsCode := "lah", iso := "lhu", value := .genitiveNoun }
+  , { walsCode := "lai", iso := "cnh", value := .genitiveNoun }
+  , { walsCode := "lkt", iso := "lkt", value := .noDominantOrder }
+  , { walsCode := "lal", iso := "ywt", value := .genitiveNoun }
+  , { walsCode := "lmh", iso := "slp", value := .noDominantOrder }
+  , { walsCode := "lmg", iso := "hia", value := .nounGenitive }
+  , { walsCode := "lmn", iso := "lmn", value := .genitiveNoun }
+  , { walsCode := "lmb", iso := "lam", value := .nounGenitive }
+  , { walsCode := "lmu", iso := "lmu", value := .nounGenitive }
+  , { walsCode := "lmp", iso := "ljp", value := .nounGenitive }
+  , { walsCode := "lgi", iso := "lag", value := .nounGenitive }
+  , { walsCode := "lan", iso := "laj", value := .nounGenitive }
+  , { walsCode := "lao", iso := "lao", value := .nounGenitive }
+  , { walsCode := "lar", iso := "lrg", value := .nounGenitive }
+  , { walsCode := "lat", iso := "lav", value := .genitiveNoun }
+  , { walsCode := "lav", iso := "lvk", value := .genitiveNoun }
+  , { walsCode := "agb", iso := "agb", value := .nounGenitive }
+  , { walsCode := "lel", iso := "lln", value := .noDominantOrder }
+  , { walsCode := "llm", iso := "lef", value := .genitiveNoun }
+  , { walsCode := "len", iso := "tnl", value := .nounGenitive }
+  , { walsCode := "ldu", iso := "led", value := .genitiveNoun }
+  , { walsCode := "lng", iso := "enx", value := .genitiveNoun }
+  , { walsCode := "lep", iso := "lep", value := .genitiveNoun }
+  , { walsCode := "les", iso := "les", value := .noDominantOrder }
+  , { walsCode := "let", iso := "lti", value := .genitiveNoun }
+  , { walsCode := "lew", iso := "lww", value := .nounGenitive }
+  , { walsCode := "lez", iso := "lez", value := .genitiveNoun }
+  , { walsCode := "lil", iso := "lil", value := .nounGenitive }
+  , { walsCode := "lim", iso := "lif", value := .genitiveNoun }
+  , { walsCode := "lnd", iso := "liy", value := .nounGenitive }
+  , { walsCode := "lin", iso := "lin", value := .nounGenitive }
+  , { walsCode := "lis", iso := "lis", value := .genitiveNoun }
+  , { walsCode := "lit", iso := "lit", value := .genitiveNoun }
+  , { walsCode := "lgt", iso := "log", value := .genitiveNoun }
+  , { walsCode := "ara", iso := "arw", value := .genitiveNoun }
+  , { walsCode := "ldo", iso := "bdu", value := .nounGenitive }
+  , { walsCode := "lgu", iso := "lgu", value := .nounGenitive }
+  , { walsCode := "lon", iso := "los", value := .nounGenitive }
+  , { walsCode := "lot", iso := "njh", value := .genitiveNoun }
+  , { walsCode := "lou", iso := "loj", value := .nounGenitive }
+  , { walsCode := "lda", iso := "lug", value := .nounGenitive }
+  , { walsCode := "lug", iso := "lgg", value := .genitiveNoun }
+  , { walsCode := "lui", iso := "lui", value := .genitiveNoun }
+  , { walsCode := "lul", iso := "ule", value := .genitiveNoun }
+  , { walsCode := "lbu", iso := "lun", value := .nounGenitive }
+  , { walsCode := "luo", iso := "luo", value := .nounGenitive }
+  , { walsCode := "kkv", iso := "khl", value := .genitiveNoun }
+  , { walsCode := "luv", iso := "lue", value := .nounGenitive }
+  , { walsCode := "jlu", iso := "lwo", value := .nounGenitive }
+  , { walsCode := "ma", iso := "msj", value := .nounGenitive }
+  , { walsCode := "myn", iso := "mhy", value := .nounGenitive }
+  , { walsCode := "mad", iso := "mhi", value := .noDominantOrder }
+  , { walsCode := "maa", iso := "mas", value := .nounGenitive }
+  , { walsCode := "mab", iso := "mde", value := .noDominantOrder }
+  , { walsCode := "mcd", iso := "mkd", value := .noDominantOrder }
+  , { walsCode := "mch", iso := "mcb", value := .nounGenitive }
+  , { walsCode := "mac", iso := "mbc", value := .genitiveNoun }
+  , { walsCode := "mda", iso := "mxu", value := .nounGenitive }
+  , { walsCode := "mdm", iso := "dmd", value := .genitiveNoun }
+  , { walsCode := "mae", iso := "mmw", value := .nounGenitive }
+  , { walsCode := "mag", iso := "mgp", value := .genitiveNoun }
+  , { walsCode := "mne", iso := "nmu", value := .genitiveNoun }
+  , { walsCode := "mpr", iso := "", value := .genitiveNoun }
+  , { walsCode := "msn", iso := "mbq", value := .genitiveNoun }
+  , { walsCode := "maj", iso := "mpe", value := .nounGenitive }
+  , { walsCode := "mak", iso := "myh", value := .noDominantOrder }
+  , { walsCode := "mkj", iso := "mkz", value := .noDominantOrder }
+  , { walsCode := "mkl", iso := "mgf", value := .genitiveNoun }
+  , { walsCode := "mua", iso := "mgh", value := .nounGenitive }
+  , { walsCode := "mal", iso := "plt", value := .nounGenitive }
+  , { walsCode := "mlk", iso := "mpb", value := .noDominantOrder }
+  , { walsCode := "mym", iso := "mal", value := .genitiveNoun }
+  , { walsCode := "mlu", iso := "mgl", value := .noDominantOrder }
+  , { walsCode := "mlg", iso := "", value := .nounGenitive }
+  , { walsCode := "mam", iso := "mam", value := .nounGenitive }
+  , { walsCode := "mmn", iso := "mmn", value := .nounGenitive }
+  , { walsCode := "mla", iso := "", value := .nounGenitive }
+  , { walsCode := "mmv", iso := "mdi", value := .noDominantOrder }
+  , { walsCode := "mnm", iso := "mva", value := .nounGenitive }
+  , { walsCode := "mdn", iso := "mhq", value := .genitiveNoun }
+  , { walsCode := "mnd", iso := "cmn", value := .genitiveNoun }
+  , { walsCode := "mkg", iso := "mnk", value := .genitiveNoun }
+  , { walsCode := "mmb", iso := "mna", value := .noDominantOrder }
+  , { walsCode := "myi", iso := "mpc", value := .noDominantOrder }
+  , { walsCode := "mbt", iso := "mdj", value := .noDominantOrder }
+  , { walsCode := "mng", iso := "mqy", value := .nounGenitive }
+  , { walsCode := "mgg", iso := "mjg", value := .genitiveNoun }
+  , { walsCode := "mgq", iso := "mge", value := .nounGenitive }
+  , { walsCode := "maw", iso := "mlq", value := .genitiveNoun }
+  , { walsCode := "man", iso := "mev", value := .genitiveNoun }
+  , { walsCode := "mwb", iso := "mbb", value := .nounGenitive }
+  , { walsCode := "mns", iso := "mns", value := .genitiveNoun }
+  , { walsCode := "mao", iso := "mri", value := .nounGenitive }
+  , { walsCode := "map", iso := "arn", value := .genitiveNoun }
+  , { walsCode := "mra", iso := "mec", value := .noDominantOrder }
+  , { walsCode := "mku", iso := "zmr", value := .genitiveNoun }
+  , { walsCode := "mhi", iso := "mar", value := .genitiveNoun }
+  , { walsCode := "mny", iso := "zmc", value := .genitiveNoun }
+  , { walsCode := "mrg", iso := "mrt", value := .nounGenitive }
+  , { walsCode := "mme", iso := "mhr", value := .genitiveNoun }
+  , { walsCode := "mar", iso := "mrc", value := .genitiveNoun }
+  , { walsCode := "mrd", iso := "mrz", value := .genitiveNoun }
+  , { walsCode := "mrr", iso := "zmt", value := .genitiveNoun }
+  , { walsCode := "mrq", iso := "", value := .nounGenitive }
+  , { walsCode := "mrt", iso := "vma", value := .noDominantOrder }
+  , { walsCode := "mru", iso := "mhx", value := .genitiveNoun }
+  , { walsCode := "mas", iso := "mcn", value := .nounGenitive }
+  , { walsCode := "msk", iso := "jle", value := .nounGenitive }
+  , { walsCode := "msl", iso := "mls", value := .nounGenitive }
+  , { walsCode := "mtt", iso := "wam", value := .nounGenitive }
+  , { walsCode := "mts", iso := "mpq", value := .genitiveNoun }
+  , { walsCode := "myr", iso := "mcf", value := .genitiveNoun }
+  , { walsCode := "mtb", iso := "mgw", value := .nounGenitive }
+  , { walsCode := "mka", iso := "mxx", value := .genitiveNoun }
+  , { walsCode := "mau", iso := "mph", value := .genitiveNoun }
+  , { walsCode := "may", iso := "ayz", value := .noDominantOrder }
+  , { walsCode := "myg", iso := "mdm", value := .nounGenitive }
+  , { walsCode := "mba", iso := "mfc", value := .genitiveNoun }
+  , { walsCode := "mbr", iso := "mpk", value := .nounGenitive }
+  , { walsCode := "mby", iso := "myb", value := .nounGenitive }
+  , { walsCode := "mdo", iso := "gmm", value := .nounGenitive }
+  , { walsCode := "mbl", iso := "mdq", value := .nounGenitive }
+  , { walsCode := "mdw", iso := "mdw", value := .nounGenitive }
+  , { walsCode := "mbm", iso := "mdd", value := .nounGenitive }
+  , { walsCode := "mee", iso := "mym", value := .nounGenitive }
+  , { walsCode := "meh", iso := "gdq", value := .nounGenitive }
+  , { walsCode := "mei", iso := "mni", value := .genitiveNoun }
+  , { walsCode := "mek", iso := "skf", value := .genitiveNoun }
+  , { walsCode := "mke", iso := "mek", value := .genitiveNoun }
+  , { walsCode := "mde", iso := "men", value := .genitiveNoun }
+  , { walsCode := "men", iso := "mez", value := .genitiveNoun }
+  , { walsCode := "mnt", iso := "mwv", value := .nounGenitive }
+  , { walsCode := "mey", iso := "mcr", value := .genitiveNoun }
+  , { walsCode := "mer", iso := "ulk", value := .genitiveNoun }
+  , { walsCode := "mea", iso := "mej", value := .genitiveNoun }
+  , { walsCode := "mpt", iso := "mpt", value := .genitiveNoun }
+  , { walsCode := "mie", iso := "ium", value := .genitiveNoun }
+  , { walsCode := "mii", iso := "", value := .genitiveNoun }
+  , { walsCode := "mik", iso := "mjw", value := .genitiveNoun }
+  , { walsCode := "hna", iso := "hna", value := .nounGenitive }
+  , { walsCode := "min", iso := "min", value := .nounGenitive }
+  , { walsCode := "mnv", iso := "mvn", value := .genitiveNoun }
+  , { walsCode := "msg", iso := "mrg", value := .genitiveNoun }
+  , { walsCode := "mis", iso := "miq", value := .genitiveNoun }
+  , { walsCode := "mss", iso := "skd", value := .noDominantOrder }
+  , { walsCode := "mxx", iso := "mxp", value := .genitiveNoun }
+  , { walsCode := "mco", iso := "mco", value := .genitiveNoun }
+  , { walsCode := "mxa", iso := "mib", value := .nounGenitive }
+  , { walsCode := "mxc", iso := "mig", value := .nounGenitive }
+  , { walsCode := "mxo", iso := "mie", value := .nounGenitive }
+  , { walsCode := "mxp", iso := "mil", value := .nounGenitive }
+  , { walsCode := "mxy", iso := "mpm", value := .nounGenitive }
+  , { walsCode := "miy", iso := "mkf", value := .nounGenitive }
+  , { walsCode := "miz", iso := "lus", value := .genitiveNoun }
+  , { walsCode := "mlm", iso := "mra", value := .genitiveNoun }
+  , { walsCode := "mcc", iso := "omc", value := .genitiveNoun }
+  , { walsCode := "mcv", iso := "moc", value := .noDominantOrder }
+  , { walsCode := "mof", iso := "mif", value := .nounGenitive }
+  , { walsCode := "moh", iso := "moh", value := .genitiveNoun }
+  , { walsCode := "mok", iso := "mkj", value := .noDominantOrder }
+  , { walsCode := "mom", iso := "mso", value := .genitiveNoun }
+  , { walsCode := "fqs", iso := "fqs", value := .genitiveNoun }
+  , { walsCode := "mon", iso := "mnw", value := .nounGenitive }
+  , { walsCode := "mga", iso := "ndt", value := .nounGenitive }
+  , { walsCode := "mgo", iso := "lol", value := .nounGenitive }
+  , { walsCode := "mni", iso := "mnz", value := .genitiveNoun }
+  , { walsCode := "mno", iso := "mnr", value := .genitiveNoun }
+  , { walsCode := "moa", iso := "mte", value := .noDominantOrder }
+  , { walsCode := "mbo", iso := "mxk", value := .genitiveNoun }
+  , { walsCode := "moo", iso := "mos", value := .genitiveNoun }
+  , { walsCode := "mor", iso := "mhz", value := .genitiveNoun }
+  , { walsCode := "mri", iso := "mok", value := .genitiveNoun }
+  , { walsCode := "mro", iso := "mor", value := .nounGenitive }
+  , { walsCode := "mou", iso := "mgd", value := .nounGenitive }
+  , { walsCode := "mos", iso := "cas", value := .genitiveNoun }
+  , { walsCode := "mtu", iso := "meu", value := .genitiveNoun }
+  , { walsCode := "mot", iso := "siw", value := .genitiveNoun }
+  , { walsCode := "aoj", iso := "aoj", value := .nounGenitive }
+  , { walsCode := "msc", iso := "chb", value := .genitiveNoun }
+  , { walsCode := "mum", iso := "mzm", value := .noDominantOrder }
+  , { walsCode := "mna", iso := "mnb", value := .nounGenitive }
+  , { walsCode := "mdg", iso := "mua", value := .nounGenitive }
+  , { walsCode := "mud", iso := "mnf", value := .nounGenitive }
+  , { walsCode := "mun", iso := "unr", value := .genitiveNoun }
+  , { walsCode := "mnz", iso := "moj", value := .nounGenitive }
+  , { walsCode := "mup", iso := "sur", value := .nounGenitive }
+  , { walsCode := "mrl", iso := "mur", value := .nounGenitive }
+  , { walsCode := "mpa", iso := "mwf", value := .nounGenitive }
+  , { walsCode := "mur", iso := "muz", value := .nounGenitive }
+  , { walsCode := "mrw", iso := "zmu", value := .genitiveNoun }
+  , { walsCode := "mgu", iso := "mug", value := .nounGenitive }
+  , { walsCode := "msq", iso := "hur", value := .nounGenitive }
+  , { walsCode := "mus", iso := "emi", value := .nounGenitive }
+  , { walsCode := "mut", iso := "css", value := .genitiveNoun }
+  , { walsCode := "mwe", iso := "mwe", value := .nounGenitive }
+  , { walsCode := "nab", iso := "naf", value := .genitiveNoun }
+  , { walsCode := "ndr", iso := "wyy", value := .nounGenitive }
+  , { walsCode := "nad", iso := "mbj", value := .genitiveNoun }
+  , { walsCode := "nma", iso := "nbi", value := .genitiveNoun }
+  , { walsCode := "ngt", iso := "nmf", value := .genitiveNoun }
+  , { walsCode := "nhh", iso := "", value := .nounGenitive }
+  , { walsCode := "nhm", iso := "ncl", value := .noDominantOrder }
+  , { walsCode := "nht", iso := "nhg", value := .nounGenitive }
+  , { walsCode := "bio", iso := "bio", value := .genitiveNoun }
+  , { walsCode := "nak", iso := "nak", value := .nounGenitive }
+  , { walsCode := "kho", iso := "naq", value := .genitiveNoun }
+  , { walsCode := "nam", iso := "nnm", value := .genitiveNoun }
+  , { walsCode := "nnc", iso := "ncb", value := .nounGenitive }
+  , { walsCode := "nde", iso := "nnb", value := .nounGenitive }
+  , { walsCode := "nan", iso := "niq", value := .nounGenitive }
+  , { walsCode := "nrg", iso := "sen", value := .genitiveNoun }
+  , { walsCode := "nnk", iso := "nnk", value := .genitiveNoun }
+  , { walsCode := "nph", iso := "npa", value := .genitiveNoun }
+  , { walsCode := "nar", iso := "nrb", value := .genitiveNoun }
+  , { walsCode := "nas", iso := "nas", value := .noDominantOrder }
+  , { walsCode := "nav", iso := "nav", value := .genitiveNoun }
+  , { walsCode := "ncm", iso := "bud", value := .genitiveNoun }
+  , { walsCode := "ndb", iso := "nde", value := .nounGenitive }
+  , { walsCode := "ndo", iso := "ndo", value := .nounGenitive }
+  , { walsCode := "ndu", iso := "nmd", value := .nounGenitive }
+  , { walsCode := "ndt", iso := "ndv", value := .nounGenitive }
+  , { walsCode := "ndy", iso := "djk", value := .noDominantOrder }
+  , { walsCode := "neh", iso := "nsn", value := .nounGenitive }
+  , { walsCode := "nnd", iso := "anh", value := .noDominantOrder }
+  , { walsCode := "ntu", iso := "yrk", value := .genitiveNoun }
+  , { walsCode := "nne", iso := "nen", value := .nounGenitive }
+  , { walsCode := "naj", iso := "aij", value := .nounGenitive }
+  , { walsCode := "nep", iso := "npi", value := .genitiveNoun }
+  , { walsCode := "nev", iso := "pia", value := .genitiveNoun }
+  , { walsCode := "nwd", iso := "new", value := .genitiveNoun }
+  , { walsCode := "new", iso := "new", value := .genitiveNoun }
+  , { walsCode := "ney", iso := "ney", value := .genitiveNoun }
+  , { walsCode := "nez", iso := "nez", value := .genitiveNoun }
+  , { walsCode := "ntj", iso := "ntj", value := .genitiveNoun }
+  , { walsCode := "ngd", iso := "nxg", value := .nounGenitive }
+  , { walsCode := "ngl", iso := "nig", value := .noDominantOrder }
+  , { walsCode := "nkb", iso := "ngk", value := .nounGenitive }
+  , { walsCode := "ngm", iso := "sba", value := .nounGenitive }
+  , { walsCode := "ngn", iso := "nid", value := .noDominantOrder }
+  , { walsCode := "ngb", iso := "nga", value := .nounGenitive }
+  , { walsCode := "ndi", iso := "ngb", value := .nounGenitive }
+  , { walsCode := "nti", iso := "niy", value := .genitiveNoun }
+  , { walsCode := "ngi", iso := "wyb", value := .genitiveNoun }
+  , { walsCode := "ngz", iso := "ngi", value := .nounGenitive }
+  , { walsCode := "ngo", iso := "ngo", value := .nounGenitive }
+  , { walsCode := "ngu", iso := "llp", value := .nounGenitive }
+  , { walsCode := "nbr", iso := "gym", value := .genitiveNoun }
+  , { walsCode := "nia", iso := "nia", value := .nounGenitive }
+  , { walsCode := "nca", iso := "caq", value := .nounGenitive }
+  , { walsCode := "nsn", iso := "nsz", value := .genitiveNoun }
+  , { walsCode := "nsg", iso := "ncg", value := .nounGenitive }
+  , { walsCode := "niu", iso := "niu", value := .nounGenitive }
+  , { walsCode := "niv", iso := "niv", value := .genitiveNoun }
+  , { walsCode := "nkn", iso := "nko", value := .genitiveNoun }
+  , { walsCode := "nko", iso := "cgg", value := .nounGenitive }
+  , { walsCode := "noc", iso := "njb", value := .genitiveNoun }
+  , { walsCode := "non", iso := "nhu", value := .nounGenitive }
+  , { walsCode := "noo", iso := "snf", value := .nounGenitive }
+  , { walsCode := "nor", iso := "nor", value := .noDominantOrder }
+  , { walsCode := "nua", iso := "nxl", value := .genitiveNoun }
+  , { walsCode := "nbd", iso := "dgl", value := .genitiveNoun }
+  , { walsCode := "nku", iso := "xnz", value := .genitiveNoun }
+  , { walsCode := "nue", iso := "nus", value := .nounGenitive }
+  , { walsCode := "nun", iso := "nut", value := .nounGenitive }
+  , { walsCode := "nug", iso := "nuy", value := .noDominantOrder }
+  , { walsCode := "nup", iso := "nup", value := .nounGenitive }
+  , { walsCode := "nym", iso := "nym", value := .nounGenitive }
+  , { walsCode := "nng", iso := "nyj", value := .nounGenitive }
+  , { walsCode := "nyn", iso := "nyh", value := .noDominantOrder }
+  , { walsCode := "nyi", iso := "nyi", value := .genitiveNoun }
+  , { walsCode := "nis", iso := "njz", value := .genitiveNoun }
+  , { walsCode := "nza", iso := "nzk", value := .nounGenitive }
+  , { walsCode := "ood", iso := "ood", value := .noDominantOrder }
+  , { walsCode := "obo", iso := "ann", value := .nounGenitive }
+  , { walsCode := "ocu", iso := "ocu", value := .noDominantOrder }
+  , { walsCode := "oji", iso := "", value := .genitiveNoun }
+  , { walsCode := "oks", iso := "opm", value := .genitiveNoun }
+  , { walsCode := "olo", iso := "ong", value := .noDominantOrder }
+  , { walsCode := "omh", iso := "oma", value := .genitiveNoun }
+  , { walsCode := "one", iso := "aun", value := .noDominantOrder }
+  , { walsCode := "ond", iso := "one", value := .noDominantOrder }
+  , { walsCode := "ong", iso := "oon", value := .genitiveNoun }
+  , { walsCode := "ord", iso := "mvf", value := .genitiveNoun }
+  , { walsCode := "ori", iso := "tag", value := .nounGenitive }
+  , { walsCode := "ork", iso := "oaa", value := .genitiveNoun }
+  , { walsCode := "oro", iso := "okv", value := .genitiveNoun }
+  , { walsCode := "orh", iso := "hae", value := .nounGenitive }
+  , { walsCode := "orw", iso := "ssn", value := .nounGenitive }
+  , { walsCode := "ory", iso := "ury", value := .genitiveNoun }
+  , { walsCode := "osa", iso := "osa", value := .genitiveNoun }
+  , { walsCode := "oss", iso := "oss", value := .genitiveNoun }
+  , { walsCode := "otm", iso := "ote", value := .nounGenitive }
+  , { walsCode := "otr", iso := "otr", value := .nounGenitive }
+  , { walsCode := "owi", iso := "owi", value := .genitiveNoun }
+  , { walsCode := "paa", iso := "pqa", value := .nounGenitive }
+  , { walsCode := "pms", iso := "pma", value := .nounGenitive }
+  , { walsCode := "pno", iso := "pao", value := .genitiveNoun }
+  , { walsCode := "pai", iso := "pwn", value := .nounGenitive }
+  , { walsCode := "pal", iso := "pau", value := .nounGenitive }
+  , { walsCode := "plg", iso := "pll", value := .nounGenitive }
+  , { walsCode := "plk", iso := "plu", value := .genitiveNoun }
+  , { walsCode := "pnx", iso := "kre", value := .genitiveNoun }
+  , { walsCode := "pnn", iso := "pag", value := .nounGenitive }
+  , { walsCode := "pan", iso := "pan", value := .genitiveNoun }
+  , { walsCode := "pny", iso := "pnw", value := .noDominantOrder }
+  , { walsCode := "pre", iso := "asa", value := .nounGenitive }
+  , { walsCode := "psh", iso := "pst", value := .genitiveNoun }
+  , { walsCode := "pat", iso := "ptp", value := .genitiveNoun }
+  , { walsCode := "ptt", iso := "lae", value := .genitiveNoun }
+  , { walsCode := "plh", iso := "plh", value := .genitiveNoun }
+  , { walsCode := "pau", iso := "pad", value := .genitiveNoun }
+  , { walsCode := "pwn", iso := "paw", value := .genitiveNoun }
+  , { walsCode := "per", iso := "pip", value := .nounGenitive }
+  , { walsCode := "prs", iso := "pes", value := .nounGenitive }
+  , { walsCode := "ppc", iso := "pio", value := .genitiveNoun }
+  , { walsCode := "pia", iso := "pid", value := .genitiveNoun }
+  , { walsCode := "pga", iso := "plg", value := .nounGenitive }
+  , { walsCode := "pba", iso := "pia", value := .genitiveNoun }
+  , { walsCode := "pip", iso := "ppl", value := .nounGenitive }
+  , { walsCode := "prh", iso := "myp", value := .genitiveNoun }
+  , { walsCode := "pir", iso := "pib", value := .genitiveNoun }
+  , { walsCode := "pis", iso := "psa", value := .genitiveNoun }
+  , { walsCode := "pit", iso := "pjt", value := .genitiveNoun }
+  , { walsCode := "ppi", iso := "pit", value := .genitiveNoun }
+  , { walsCode := "pod", iso := "pbi", value := .nounGenitive }
+  , { walsCode := "poh", iso := "pon", value := .noDominantOrder }
+  , { walsCode := "pok", iso := "rwa", value := .genitiveNoun }
+  , { walsCode := "pkt", iso := "pko", value := .nounGenitive }
+  , { walsCode := "pol", iso := "pol", value := .nounGenitive }
+  , { walsCode := "pme", iso := "peb", value := .genitiveNoun }
+  , { walsCode := "pmn", iso := "pej", value := .genitiveNoun }
+  , { walsCode := "pso", iso := "pom", value := .genitiveNoun }
+  , { walsCode := "zqs", iso := "poi", value := .genitiveNoun }
+  , { walsCode := "psw", iso := "psw", value := .nounGenitive }
+  , { walsCode := "por", iso := "por", value := .nounGenitive }
+  , { walsCode := "pra", iso := "prn", value := .genitiveNoun }
+  , { walsCode := "pul", iso := "puw", value := .genitiveNoun }
+  , { walsCode := "pum", iso := "pmi", value := .genitiveNoun }
+  , { walsCode := "pun", iso := "wdj", value := .genitiveNoun }
+  , { walsCode := "pur", iso := "tsz", value := .noDominantOrder }
+  , { walsCode := "pae", iso := "pbb", value := .genitiveNoun }
+  , { walsCode := "par", iso := "lkr", value := .nounGenitive }
+  , { walsCode := "qaf", iso := "aar", value := .genitiveNoun }
+  , { walsCode := "qaw", iso := "alc", value := .genitiveNoun }
+  , { walsCode := "qia", iso := "", value := .genitiveNoun }
+  , { walsCode := "qhu", iso := "qub", value := .genitiveNoun }
+  , { walsCode := "qim", iso := "qvi", value := .genitiveNoun }
+  , { walsCode := "qui", iso := "qui", value := .nounGenitive }
+  , { walsCode := "rag", iso := "lml", value := .nounGenitive }
+  , { walsCode := "ral", iso := "ral", value := .genitiveNoun }
+  , { walsCode := "ram", iso := "rma", value := .genitiveNoun }
+  , { walsCode := "rao", iso := "rao", value := .genitiveNoun }
+  , { walsCode := "rap", iso := "rap", value := .nounGenitive }
+  , { walsCode := "ras", iso := "ras", value := .nounGenitive }
+  , { walsCode := "raw", iso := "raw", value := .genitiveNoun }
+  , { walsCode := "rem", iso := "bfw", value := .genitiveNoun }
+  , { walsCode := "res", iso := "rgr", value := .genitiveNoun }
+  , { walsCode := "ret", iso := "tnc", value := .genitiveNoun }
+  , { walsCode := "rwe", iso := "rmw", value := .genitiveNoun }
+  , { walsCode := "rom", iso := "ron", value := .nounGenitive }
+  , { walsCode := "rsu", iso := "roh", value := .nounGenitive }
+  , { walsCode := "ron", iso := "cla", value := .nounGenitive }
+  , { walsCode := "rga", iso := "rng", value := .nounGenitive }
+  , { walsCode := "rot", iso := "rtm", value := .nounGenitive }
+  , { walsCode := "rov", iso := "rug", value := .nounGenitive }
+  , { walsCode := "ruk", iso := "dru", value := .nounGenitive }
+  , { walsCode := "cos", iso := "", value := .noDominantOrder }
+  , { walsCode := "rum", iso := "klq", value := .genitiveNoun }
+  , { walsCode := "run", iso := "rou", value := .genitiveNoun }
+  , { walsCode := "rny", iso := "nyn", value := .nounGenitive }
+  , { walsCode := "rus", iso := "rus", value := .nounGenitive }
+  , { walsCode := "rut", iso := "rut", value := .genitiveNoun }
+  , { walsCode := "saa", iso := "apb", value := .nounGenitive }
+  , { walsCode := "sno", iso := "sme", value := .genitiveNoun }
+  , { walsCode := "sah", iso := "saj", value := .genitiveNoun }
+  , { walsCode := "sak", iso := "sku", value := .nounGenitive }
+  , { walsCode := "slb", iso := "sbe", value := .genitiveNoun }
+  , { walsCode := "sal", iso := "sln", value := .nounGenitive }
+  , { walsCode := "sle", iso := "ndi", value := .genitiveNoun }
+  , { walsCode := "sam", iso := "smo", value := .nounGenitive }
+  , { walsCode := "sdw", iso := "sad", value := .genitiveNoun }
+  , { walsCode := "san", iso := "sag", value := .nounGenitive }
+  , { walsCode := "sgu", iso := "snq", value := .nounGenitive }
+  , { walsCode := "sta", iso := "sce", value := .genitiveNoun }
+  , { walsCode := "stl", iso := "sat", value := .genitiveNoun }
+  , { walsCode := "snm", iso := "xsu", value := .genitiveNoun }
+  , { walsCode := "src", iso := "srs", value := .genitiveNoun }
+  , { walsCode := "sar", iso := "dju", value := .genitiveNoun }
+  , { walsCode := "sav", iso := "sdg", value := .genitiveNoun }
+  , { walsCode := "svs", iso := "svs", value := .genitiveNoun }
+  , { walsCode := "seb", iso := "kpz", value := .nounGenitive }
+  , { walsCode := "sec", iso := "sey", value := .genitiveNoun }
+  , { walsCode := "sed", iso := "sed", value := .nounGenitive }
+  , { walsCode := "see", iso := "trv", value := .nounGenitive }
+  , { walsCode := "slp", iso := "spl", value := .genitiveNoun }
+  , { walsCode := "skp", iso := "sel", value := .genitiveNoun }
+  , { walsCode := "sem", iso := "nsm", value := .genitiveNoun }
+  , { walsCode := "sme", iso := "sif", value := .genitiveNoun }
+  , { walsCode := "sml", iso := "sza", value := .nounGenitive }
+  , { walsCode := "smn", iso := "mus", value := .genitiveNoun }
+  , { walsCode := "snt", iso := "set", value := .genitiveNoun }
+  , { walsCode := "scr", iso := "hbs", value := .noDominantOrder }
+  , { walsCode := "ser", iso := "sei", value := .genitiveNoun }
+  , { walsCode := "ses", iso := "sot", value := .nounGenitive }
+  , { walsCode := "sha", iso := "shn", value := .nounGenitive }
+  , { walsCode := "sht", iso := "shj", value := .nounGenitive }
+  , { walsCode := "she", iso := "xsr", value := .genitiveNoun }
+  , { walsCode := "shl", iso := "shk", value := .nounGenitive }
+  , { walsCode := "sna", iso := "scl", value := .genitiveNoun }
+  , { walsCode := "shk", iso := "shp", value := .genitiveNoun }
+  , { walsCode := "shi", iso := "shb", value := .genitiveNoun }
+  , { walsCode := "shn", iso := "sna", value := .nounGenitive }
+  , { walsCode := "shu", iso := "shs", value := .nounGenitive }
+  , { walsCode := "sia", iso := "snp", value := .genitiveNoun }
+  , { walsCode := "sir", iso := "sjr", value := .nounGenitive }
+  , { walsCode := "sid", iso := "sid", value := .genitiveNoun }
+  , { walsCode := "skk", iso := "sip", value := .genitiveNoun }
+  , { walsCode := "sil", iso := "dau", value := .nounGenitive }
+  , { walsCode := "sim", iso := "smr", value := .nounGenitive }
+  , { walsCode := "sng", iso := "snc", value := .genitiveNoun }
+  , { walsCode := "sio", iso := "xsi", value := .genitiveNoun }
+  , { walsCode := "sin", iso := "snn", value := .genitiveNoun }
+  , { walsCode := "qum", iso := "qum", value := .nounGenitive }
   ]
 
 private def allData_2 : List (Datapoint GenitiveNounOrder) :=
-  [ { walsCode := "srn", language := "Sirionó", iso := "srq", value := .genitiveNoun }
-  , { walsCode := "sro", language := "Siroi", iso := "ssd", value := .genitiveNoun }
-  , { walsCode := "sis", language := "Sisiqa", iso := "baa", value := .nounGenitive }
-  , { walsCode := "siu", language := "Siuslaw", iso := "sis", value := .noDominantOrder }
-  , { walsCode := "sko", language := "Skou", iso := "skv", value := .genitiveNoun }
-  , { walsCode := "sla", language := "Slave", iso := "den", value := .genitiveNoun }
-  , { walsCode := "slo", language := "Slovene", iso := "slv", value := .noDominantOrder }
-  , { walsCode := "so", language := "So", iso := "teu", value := .nounGenitive }
-  , { walsCode := "sob", language := "Sobei", iso := "sob", value := .genitiveNoun }
-  , { walsCode := "sod", language := "Soddo", iso := "gru", value := .genitiveNoun }
-  , { walsCode := "som", language := "Somali", iso := "som", value := .noDominantOrder }
-  , { walsCode := "son", language := "Sonsorol-Tobi", iso := "sov", value := .nounGenitive }
-  , { walsCode := "stn", language := "Sotho (Northern)", iso := "nso", value := .nounGenitive }
-  , { walsCode := "sgb", language := "Sougb", iso := "mnx", value := .genitiveNoun }
-  , { walsCode := "tou", language := "Southern Toussian", iso := "wib", value := .genitiveNoun }
-  , { walsCode := "spa", language := "Spanish", iso := "spa", value := .nounGenitive }
-  , { walsCode := "squ", language := "Squamish", iso := "squ", value := .nounGenitive }
-  , { walsCode := "sre", language := "Sre", iso := "kpm", value := .nounGenitive }
-  , { walsCode := "sti", language := "Stieng", iso := "", value := .nounGenitive }
-  , { walsCode := "sud", language := "Sudest", iso := "tgo", value := .genitiveNoun }
-  , { walsCode := "sue", language := "Suena", iso := "sue", value := .genitiveNoun }
-  , { walsCode := "suk", language := "Suki", iso := "sui", value := .genitiveNoun }
-  , { walsCode := "sul", language := "Sulka", iso := "sua", value := .noDominantOrder }
-  , { walsCode := "sun", language := "Sundanese", iso := "sun", value := .nounGenitive }
-  , { walsCode := "sug", language := "Sungor", iso := "sjg", value := .genitiveNoun }
-  , { walsCode := "sup", language := "Supyire", iso := "spp", value := .genitiveNoun }
-  , { walsCode := "sus", language := "Susu", iso := "sus", value := .genitiveNoun }
-  , { walsCode := "swa", language := "Swahili", iso := "swh", value := .nounGenitive }
-  , { walsCode := "swt", language := "Swati", iso := "ssw", value := .nounGenitive }
-  , { walsCode := "swe", language := "Swedish", iso := "swe", value := .genitiveNoun }
-  , { walsCode := "tab", language := "Taba", iso := "mky", value := .genitiveNoun }
-  , { walsCode := "tba", language := "Tabare", iso := "sst", value := .genitiveNoun }
-  , { walsCode := "tbw", language := "Tabwa", iso := "tap", value := .nounGenitive }
-  , { walsCode := "tac", language := "Tacana", iso := "tna", value := .genitiveNoun }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .nounGenitive }
-  , { walsCode := "tah", language := "Tahitian", iso := "tah", value := .noDominantOrder }
-  , { walsCode := "taf", language := "Taiof", iso := "sps", value := .nounGenitive }
-  , { walsCode := "trr", language := "Tairora", iso := "tbg", value := .genitiveNoun }
-  , { walsCode := "taj", language := "Tajik", iso := "tgk", value := .nounGenitive }
-  , { walsCode := "tkl", language := "Takelma", iso := "tkm", value := .genitiveNoun }
-  , { walsCode := "tak", language := "Takia", iso := "tbc", value := .genitiveNoun }
-  , { walsCode := "tls", language := "Talysh (Southern)", iso := "shm", value := .genitiveNoun }
-  , { walsCode := "tma", language := "Tama", iso := "tma", value := .genitiveNoun }
-  , { walsCode := "tmm", language := "Tamabo", iso := "mla", value := .nounGenitive }
-  , { walsCode := "tam", language := "Tamang (Eastern)", iso := "taj", value := .genitiveNoun }
-  , { walsCode := "tsk", language := "Tamashek", iso := "taq", value := .nounGenitive }
-  , { walsCode := "tml", language := "Tamil", iso := "tam", value := .genitiveNoun }
-  , { walsCode := "tnc", language := "Tanacross", iso := "tcb", value := .genitiveNoun }
-  , { walsCode := "tpt", language := "Tapieté", iso := "tpj", value := .genitiveNoun }
-  , { walsCode := "twe", language := "Tarahumara (Western)", iso := "tac", value := .genitiveNoun }
-  , { walsCode := "tar", language := "Tariana", iso := "tae", value := .genitiveNoun }
-  , { walsCode := "tas", language := "Tashlhiyt", iso := "shi", value := .nounGenitive }
-  , { walsCode := "tsm", language := "Tasmanian", iso := "", value := .genitiveNoun }
-  , { walsCode := "tat", language := "Tatana'", iso := "txx", value := .nounGenitive }
-  , { walsCode := "tvo", language := "Tatar", iso := "tat", value := .genitiveNoun }
-  , { walsCode := "tts", language := "Tati (Southern)", iso := "tks", value := .genitiveNoun }
-  , { walsCode := "tsg", language := "Tausug", iso := "tsg", value := .nounGenitive }
-  , { walsCode := "tau", language := "Tauya", iso := "tya", value := .genitiveNoun }
-  , { walsCode := "taw", language := "Tawala", iso := "tbo", value := .genitiveNoun }
-  , { walsCode := "tbo", language := "Tboli", iso := "tbl", value := .nounGenitive }
-  , { walsCode := "tlf", language := "Telefol", iso := "tlf", value := .genitiveNoun }
-  , { walsCode := "tel", language := "Telugu", iso := "tel", value := .genitiveNoun }
-  , { walsCode := "tmn", language := "Temein", iso := "teq", value := .nounGenitive }
-  , { walsCode := "tne", language := "Temne", iso := "tem", value := .nounGenitive }
-  , { walsCode := "ten", language := "Tennet", iso := "tex", value := .nounGenitive }
-  , { walsCode := "teo", language := "Teop", iso := "tio", value := .nounGenitive }
-  , { walsCode := "tee", language := "Tepehua (Huehuetla)", iso := "tee", value := .nounGenitive }
-  , { walsCode := "tep", language := "Tepehua (Tlachichilco)", iso := "tpt", value := .nounGenitive }
-  , { walsCode := "tpn", language := "Tepehuan (Northern)", iso := "ntp", value := .genitiveNoun }
-  , { walsCode := "ter", language := "Tera", iso := "ttr", value := .nounGenitive }
-  , { walsCode := "trb", language := "Teribe", iso := "tfr", value := .genitiveNoun }
-  , { walsCode := "trt", language := "Ternate", iso := "tft", value := .genitiveNoun }
-  , { walsCode := "tes", language := "Teso", iso := "teo", value := .nounGenitive }
-  , { walsCode := "tet", language := "Tetela", iso := "tll", value := .nounGenitive }
-  , { walsCode := "ttn", language := "Tetun", iso := "tet", value := .genitiveNoun }
-  , { walsCode := "ttd", language := "Tetun Dili", iso := "tet", value := .genitiveNoun }
-  , { walsCode := "tha", language := "Thai", iso := "tha", value := .nounGenitive }
-  , { walsCode := "thk", language := "Thakali", iso := "ths", value := .genitiveNoun }
-  , { walsCode := "thn", language := "Thangmi", iso := "thf", value := .genitiveNoun }
-  , { walsCode := "tho", language := "Thompson", iso := "thp", value := .genitiveNoun }
-  , { walsCode := "thu", language := "Thulung", iso := "tdh", value := .genitiveNoun }
-  , { walsCode := "tdi", language := "Tibetan (Dingri)", iso := "bod", value := .genitiveNoun }
-  , { walsCode := "tmo", language := "Tibetan (Modern Literary)", iso := "bod", value := .genitiveNoun }
-  , { walsCode := "tis", language := "Tibetan (Shigatse)", iso := "bod", value := .genitiveNoun }
-  , { walsCode := "tib", language := "Tibetan (Standard Spoken)", iso := "bod", value := .genitiveNoun }
-  , { walsCode := "tic", language := "Ticuna", iso := "tca", value := .noDominantOrder }
-  , { walsCode := "tid", language := "Tidore", iso := "tvo", value := .genitiveNoun }
-  , { walsCode := "tgk", language := "Tigak", iso := "tgc", value := .nounGenitive }
-  , { walsCode := "tig", language := "Tigrinya", iso := "tir", value := .noDominantOrder }
-  , { walsCode := "tgr", language := "Tigré", iso := "tig", value := .nounGenitive }
-  , { walsCode := "tja", language := "Tiipay (Jamul)", iso := "dih", value := .genitiveNoun }
-  , { walsCode := "tik", language := "Tikar", iso := "tik", value := .nounGenitive }
-  , { walsCode := "tia", language := "Tima", iso := "tms", value := .nounGenitive }
-  , { walsCode := "tim", language := "Timugon", iso := "tih", value := .nounGenitive }
-  , { walsCode := "tin", language := "Tinrin", iso := "cir", value := .nounGenitive }
-  , { walsCode := "tir", language := "Tiriyo", iso := "tri", value := .genitiveNoun }
-  , { walsCode := "tiv", language := "Tiv", iso := "tiv", value := .nounGenitive }
-  , { walsCode := "tiw", language := "Tiwi", iso := "tiw", value := .genitiveNoun }
-  , { walsCode := "tlp", language := "Tlapanec", iso := "tcf", value := .nounGenitive }
-  , { walsCode := "tli", language := "Tlingit", iso := "tli", value := .genitiveNoun }
-  , { walsCode := "tob", language := "Toba", iso := "tob", value := .nounGenitive }
-  , { walsCode := "tbt", language := "Tobati", iso := "tti", value := .genitiveNoun }
-  , { walsCode := "tlo", language := "Tobelo", iso := "tlb", value := .genitiveNoun }
-  , { walsCode := "tla", language := "Tolai", iso := "ksd", value := .nounGenitive }
-  , { walsCode := "tno", language := "Tondano", iso := "tdn", value := .nounGenitive }
-  , { walsCode := "toz", language := "Tonga (in Zambia)", iso := "toi", value := .nounGenitive }
-  , { walsCode := "tng", language := "Tongan", iso := "ton", value := .nounGenitive }
-  , { walsCode := "ton", language := "Tonkawa", iso := "tqw", value := .genitiveNoun }
-  , { walsCode := "trw", language := "Torwali", iso := "trw", value := .genitiveNoun }
-  , { walsCode := "txj", language := "Totonac (Xicotepec de Juárez)", iso := "too", value := .nounGenitive }
-  , { walsCode := "tri", language := "Trique (Copala)", iso := "trc", value := .nounGenitive }
-  , { walsCode := "tru", language := "Trumai", iso := "tpy", value := .genitiveNoun }
-  , { walsCode := "tsf", language := "Tsafiki", iso := "cof", value := .genitiveNoun }
-  , { walsCode := "tsz", language := "Tsez", iso := "ddo", value := .genitiveNoun }
-  , { walsCode := "tgl", language := "Tshangla", iso := "tsj", value := .genitiveNoun }
-  , { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .nounGenitive }
-  , { walsCode := "ttu", language := "Tsova-Tush", iso := "bbl", value := .genitiveNoun }
-  , { walsCode := "tai", language := "Tuareg (Air)", iso := "thz", value := .nounGenitive }
-  , { walsCode := "tgh", language := "Tuareg (Ghat)", iso := "thv", value := .nounGenitive }
-  , { walsCode := "tbu", language := "Tubu", iso := "", value := .nounGenitive }
-  , { walsCode := "tgn", language := "Tugun", iso := "tzn", value := .genitiveNoun }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .nounGenitive }
-  , { walsCode := "tul", language := "Tulu", iso := "tcy", value := .genitiveNoun }
-  , { walsCode := "tnb", language := "Tunebo", iso := "tuf", value := .genitiveNoun }
-  , { walsCode := "tnn", language := "Tunen", iso := "tvu", value := .nounGenitive }
-  , { walsCode := "tnk", language := "Tungak", iso := "lcm", value := .nounGenitive }
-  , { walsCode := "tun", language := "Tunica", iso := "tun", value := .genitiveNoun }
-  , { walsCode := "tna", language := "Turkana", iso := "tuv", value := .nounGenitive }
-  , { walsCode := "tur", language := "Turkish", iso := "tur", value := .genitiveNoun }
-  , { walsCode := "tkm", language := "Turkmen", iso := "tuk", value := .genitiveNoun }
-  , { walsCode := "tte", language := "Tutelo", iso := "tta", value := .genitiveNoun }
-  , { walsCode := "tvl", language := "Tuvaluan", iso := "tvl", value := .nounGenitive }
-  , { walsCode := "tuv", language := "Tuvan", iso := "tyv", value := .genitiveNoun }
-  , { walsCode := "tye", language := "Tyeraity", iso := "woa", value := .genitiveNoun }
-  , { walsCode := "tzo", language := "Tzotzil", iso := "tzo", value := .nounGenitive }
-  , { walsCode := "tzu", language := "Tzutujil", iso := "tzj", value := .nounGenitive }
-  , { walsCode := "tsh", language := "Tümpisa Shoshone", iso := "par", value := .genitiveNoun }
-  , { walsCode := "uby", language := "Ubykh", iso := "uby", value := .genitiveNoun }
-  , { walsCode := "udh", language := "Udihe", iso := "ude", value := .genitiveNoun }
-  , { walsCode := "udm", language := "Udmurt", iso := "udm", value := .genitiveNoun }
-  , { walsCode := "uld", language := "Uldeme", iso := "udl", value := .nounGenitive }
-  , { walsCode := "uli", language := "Ulithian", iso := "uli", value := .genitiveNoun }
-  , { walsCode := "una", language := "Una", iso := "mtg", value := .genitiveNoun }
-  , { walsCode := "ung", language := "Ungarinjin", iso := "ung", value := .noDominantOrder }
-  , { walsCode := "ura", language := "Ura", iso := "uur", value := .nounGenitive }
-  , { walsCode := "uhi", language := "Uradhi", iso := "urf", value := .genitiveNoun }
-  , { walsCode := "url", language := "Urak Lawoi'", iso := "urk", value := .nounGenitive }
-  , { walsCode := "urn", language := "Urarina", iso := "ura", value := .genitiveNoun }
-  , { walsCode := "urt", language := "Urat", iso := "urt", value := .nounGenitive }
-  , { walsCode := "urd", language := "Urdu", iso := "urd", value := .genitiveNoun }
-  , { walsCode := "urk", language := "Urubú-Kaapor", iso := "urb", value := .genitiveNoun }
-  , { walsCode := "usa", language := "Usan", iso := "wnu", value := .genitiveNoun }
-  , { walsCode := "usr", language := "Usarufa", iso := "usa", value := .genitiveNoun }
-  , { walsCode := "ute", language := "Ute", iso := "ute", value := .genitiveNoun }
-  , { walsCode := "uzb", language := "Uzbek", iso := "", value := .genitiveNoun }
-  , { walsCode := "vaf", language := "Vafsi", iso := "vaf", value := .nounGenitive }
-  , { walsCode := "vai", language := "Vai", iso := "vai", value := .genitiveNoun }
-  , { walsCode := "vie", language := "Vietnamese", iso := "vie", value := .nounGenitive }
-  , { walsCode := "vif", language := "Vili", iso := "vif", value := .nounGenitive }
-  , { walsCode := "vnm", language := "Vinmavis", iso := "vnm", value := .nounGenitive }
-  , { walsCode := "wwa", language := "Waama", iso := "wwa", value := .genitiveNoun }
-  , { walsCode := "wah", language := "Wahgi", iso := "", value := .genitiveNoun }
-  , { walsCode := "wai", language := "Wai Wai", iso := "waw", value := .genitiveNoun }
-  , { walsCode := "wak", language := "Wakhi", iso := "wbl", value := .genitiveNoun }
-  , { walsCode := "wal", language := "Walman", iso := "van", value := .noDominantOrder }
-  , { walsCode := "wbn", language := "Wambon", iso := "wms", value := .genitiveNoun }
-  , { walsCode := "wme", language := "Wambule", iso := "wme", value := .genitiveNoun }
-  , { walsCode := "wna", language := "Wan", iso := "wan", value := .genitiveNoun }
-  , { walsCode := "wao", language := "Waorani", iso := "auc", value := .genitiveNoun }
-  , { walsCode := "wap", language := "Wappo", iso := "wao", value := .genitiveNoun }
-  , { walsCode := "wra", language := "Warao", iso := "wba", value := .genitiveNoun }
-  , { walsCode := "wrd", language := "Wardaman", iso := "wrr", value := .noDominantOrder }
-  , { walsCode := "wrk", language := "Warekena", iso := "gae", value := .nounGenitive }
-  , { walsCode := "wrm", language := "Warembori", iso := "wsa", value := .genitiveNoun }
-  , { walsCode := "war", language := "Wari'", iso := "pav", value := .nounGenitive }
-  , { walsCode := "wrn", language := "Warndarang", iso := "wnd", value := .nounGenitive }
-  , { walsCode := "wrw", language := "Warrwa", iso := "wwr", value := .genitiveNoun }
-  , { walsCode := "was", language := "Washo", iso := "was", value := .genitiveNoun }
-  , { walsCode := "wsk", language := "Waskia", iso := "wsk", value := .genitiveNoun }
-  , { walsCode := "wat", language := "Watjarri", iso := "wbv", value := .genitiveNoun }
-  , { walsCode := "way", language := "Wayampi", iso := "oym", value := .genitiveNoun }
-  , { walsCode := "wed", language := "Wedau", iso := "wed", value := .genitiveNoun }
-  , { walsCode := "wel", language := "Welsh", iso := "cym", value := .nounGenitive }
-  , { walsCode := "wem", language := "Wembawemba", iso := "xww", value := .genitiveNoun }
-  , { walsCode := "wma", language := "West Makian", iso := "mqs", value := .genitiveNoun }
-  , { walsCode := "wch", language := "Wichí", iso := "mzh", value := .genitiveNoun }
-  , { walsCode := "wmu", language := "Wik Munkan", iso := "wim", value := .genitiveNoun }
-  , { walsCode := "wik", language := "Wikchamni", iso := "yok", value := .genitiveNoun }
-  , { walsCode := "win", language := "Wintu", iso := "wnw", value := .genitiveNoun }
-  , { walsCode := "wiy", language := "Wiyot", iso := "wiy", value := .genitiveNoun }
-  , { walsCode := "wog", language := "Wogamusin", iso := "wog", value := .genitiveNoun }
-  , { walsCode := "woi", language := "Woisika", iso := "woi", value := .genitiveNoun }
-  , { walsCode := "wly", language := "Wolaytta", iso := "wal", value := .genitiveNoun }
-  , { walsCode := "wol", language := "Woleaian", iso := "woe", value := .noDominantOrder }
-  , { walsCode := "wlo", language := "Wolio", iso := "wlo", value := .nounGenitive }
-  , { walsCode := "wlf", language := "Wolof", iso := "wol", value := .nounGenitive }
-  , { walsCode := "wom", language := "Womo", iso := "wmx", value := .genitiveNoun }
-  , { walsCode := "xas", language := "Xasonga", iso := "kao", value := .genitiveNoun }
-  , { walsCode := "xav", language := "Xavánte", iso := "xav", value := .genitiveNoun }
-  , { walsCode := "xer", language := "Xerénte", iso := "xer", value := .genitiveNoun }
-  , { walsCode := "xho", language := "Xhosa", iso := "xho", value := .nounGenitive }
-  , { walsCode := "xar", language := "Xârâcùù", iso := "ane", value := .noDominantOrder }
-  , { walsCode := "ygr", language := "Yagaria", iso := "ygr", value := .genitiveNoun }
-  , { walsCode := "yag", language := "Yagua", iso := "yad", value := .genitiveNoun }
-  , { walsCode := "ykt", language := "Yakut", iso := "sah", value := .genitiveNoun }
-  , { walsCode := "yal", language := "Yale (Kosarek)", iso := "kkl", value := .genitiveNoun }
-  , { walsCode := "ybi", language := "Yamphu", iso := "ybi", value := .genitiveNoun }
-  , { walsCode := "yns", language := "Yansi", iso := "yns", value := .nounGenitive }
-  , { walsCode := "yap", language := "Yapese", iso := "yap", value := .nounGenitive }
-  , { walsCode := "yqy", language := "Yaqay", iso := "jaq", value := .genitiveNoun }
-  , { walsCode := "yaq", language := "Yaqui", iso := "yaq", value := .genitiveNoun }
-  , { walsCode := "yar", language := "Yareba", iso := "yrb", value := .genitiveNoun }
-  , { walsCode := "ywr", language := "Yawuru", iso := "ywr", value := .nounGenitive }
-  , { walsCode := "yay", language := "Yay", iso := "pcc", value := .nounGenitive }
-  , { walsCode := "yyg", language := "Yaygir", iso := "xya", value := .genitiveNoun }
-  , { walsCode := "yei", language := "Yei", iso := "jei", value := .genitiveNoun }
-  , { walsCode := "ylm", language := "Yelmek", iso := "jel", value := .noDominantOrder }
-  , { walsCode := "yel", language := "Yelî Dnye", iso := "yle", value := .genitiveNoun }
-  , { walsCode := "yiw", language := "Yi (Wuding-Luquan)", iso := "ywq", value := .genitiveNoun }
-  , { walsCode := "yid", language := "Yidiny", iso := "yii", value := .genitiveNoun }
-  , { walsCode := "yim", language := "Yimas", iso := "yee", value := .genitiveNoun }
-  , { walsCode := "yin", language := "Yindjibarndi", iso := "yij", value := .genitiveNoun }
-  , { walsCode := "yok", language := "Yokuts (Yaudanchi)", iso := "yok", value := .noDominantOrder }
-  , { walsCode := "yor", language := "Yoruba", iso := "yor", value := .nounGenitive }
-  , { walsCode := "yuc", language := "Yuchi", iso := "yuc", value := .genitiveNoun }
-  , { walsCode := "ycn", language := "Yucuna", iso := "ycn", value := .genitiveNoun }
-  , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .genitiveNoun }
-  , { walsCode := "ytu", language := "Yukaghir (Tundra)", iso := "ykg", value := .genitiveNoun }
-  , { walsCode := "yuk", language := "Yukulta", iso := "gcd", value := .genitiveNoun }
-  , { walsCode := "yul", language := "Yulu", iso := "yul", value := .nounGenitive }
-  , { walsCode := "yus", language := "Yupik (Siberian)", iso := "ess", value := .genitiveNoun }
-  , { walsCode := "yrm", language := "Yurimangí", iso := "", value := .genitiveNoun }
-  , { walsCode := "yur", language := "Yurok", iso := "yur", value := .genitiveNoun }
-  , { walsCode := "yuw", language := "Yuwaalaraay", iso := "kld", value := .noDominantOrder }
-  , { walsCode := "zan", language := "Zande", iso := "zne", value := .noDominantOrder }
-  , { walsCode := "zpr", language := "Zaparo", iso := "zro", value := .genitiveNoun }
-  , { walsCode := "zai", language := "Zapotec (Isthmus)", iso := "zai", value := .nounGenitive }
-  , { walsCode := "zap", language := "Zapotec (Mitla)", iso := "zaw", value := .nounGenitive }
-  , { walsCode := "zya", language := "Zapotec (Yatzachi)", iso := "zav", value := .nounGenitive }
-  , { walsCode := "zar", language := "Zarma", iso := "dje", value := .genitiveNoun }
-  , { walsCode := "zay", language := "Zayse", iso := "zay", value := .genitiveNoun }
-  , { walsCode := "zen", language := "Zenaga", iso := "zen", value := .nounGenitive }
-  , { walsCode := "zch", language := "Zoque (Chimalapa)", iso := "zoh", value := .genitiveNoun }
-  , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .genitiveNoun }
-  , { walsCode := "zul", language := "Zulu", iso := "zul", value := .nounGenitive }
-  , { walsCode := "zun", language := "Zuni", iso := "zun", value := .genitiveNoun }
-  , { walsCode := "rgc", language := "rGyalrong (Caodeng)", iso := "jya", value := .genitiveNoun }
-  , { walsCode := "eme", language := "Émérillon", iso := "eme", value := .genitiveNoun }
-  , { walsCode := "omi", language := "Ömie", iso := "aom", value := .genitiveNoun }
+  [ { walsCode := "srn", iso := "srq", value := .genitiveNoun }
+  , { walsCode := "sro", iso := "ssd", value := .genitiveNoun }
+  , { walsCode := "sis", iso := "baa", value := .nounGenitive }
+  , { walsCode := "siu", iso := "sis", value := .noDominantOrder }
+  , { walsCode := "sko", iso := "skv", value := .genitiveNoun }
+  , { walsCode := "sla", iso := "den", value := .genitiveNoun }
+  , { walsCode := "slo", iso := "slv", value := .noDominantOrder }
+  , { walsCode := "so", iso := "teu", value := .nounGenitive }
+  , { walsCode := "sob", iso := "sob", value := .genitiveNoun }
+  , { walsCode := "sod", iso := "gru", value := .genitiveNoun }
+  , { walsCode := "som", iso := "som", value := .noDominantOrder }
+  , { walsCode := "son", iso := "sov", value := .nounGenitive }
+  , { walsCode := "stn", iso := "nso", value := .nounGenitive }
+  , { walsCode := "sgb", iso := "mnx", value := .genitiveNoun }
+  , { walsCode := "tou", iso := "wib", value := .genitiveNoun }
+  , { walsCode := "spa", iso := "spa", value := .nounGenitive }
+  , { walsCode := "squ", iso := "squ", value := .nounGenitive }
+  , { walsCode := "sre", iso := "kpm", value := .nounGenitive }
+  , { walsCode := "sti", iso := "", value := .nounGenitive }
+  , { walsCode := "sud", iso := "tgo", value := .genitiveNoun }
+  , { walsCode := "sue", iso := "sue", value := .genitiveNoun }
+  , { walsCode := "suk", iso := "sui", value := .genitiveNoun }
+  , { walsCode := "sul", iso := "sua", value := .noDominantOrder }
+  , { walsCode := "sun", iso := "sun", value := .nounGenitive }
+  , { walsCode := "sug", iso := "sjg", value := .genitiveNoun }
+  , { walsCode := "sup", iso := "spp", value := .genitiveNoun }
+  , { walsCode := "sus", iso := "sus", value := .genitiveNoun }
+  , { walsCode := "swa", iso := "swh", value := .nounGenitive }
+  , { walsCode := "swt", iso := "ssw", value := .nounGenitive }
+  , { walsCode := "swe", iso := "swe", value := .genitiveNoun }
+  , { walsCode := "tab", iso := "mky", value := .genitiveNoun }
+  , { walsCode := "tba", iso := "sst", value := .genitiveNoun }
+  , { walsCode := "tbw", iso := "tap", value := .nounGenitive }
+  , { walsCode := "tac", iso := "tna", value := .genitiveNoun }
+  , { walsCode := "tag", iso := "tgl", value := .nounGenitive }
+  , { walsCode := "tah", iso := "tah", value := .noDominantOrder }
+  , { walsCode := "taf", iso := "sps", value := .nounGenitive }
+  , { walsCode := "trr", iso := "tbg", value := .genitiveNoun }
+  , { walsCode := "taj", iso := "tgk", value := .nounGenitive }
+  , { walsCode := "tkl", iso := "tkm", value := .genitiveNoun }
+  , { walsCode := "tak", iso := "tbc", value := .genitiveNoun }
+  , { walsCode := "tls", iso := "shm", value := .genitiveNoun }
+  , { walsCode := "tma", iso := "tma", value := .genitiveNoun }
+  , { walsCode := "tmm", iso := "mla", value := .nounGenitive }
+  , { walsCode := "tam", iso := "taj", value := .genitiveNoun }
+  , { walsCode := "tsk", iso := "taq", value := .nounGenitive }
+  , { walsCode := "tml", iso := "tam", value := .genitiveNoun }
+  , { walsCode := "tnc", iso := "tcb", value := .genitiveNoun }
+  , { walsCode := "tpt", iso := "tpj", value := .genitiveNoun }
+  , { walsCode := "twe", iso := "tac", value := .genitiveNoun }
+  , { walsCode := "tar", iso := "tae", value := .genitiveNoun }
+  , { walsCode := "tas", iso := "shi", value := .nounGenitive }
+  , { walsCode := "tsm", iso := "", value := .genitiveNoun }
+  , { walsCode := "tat", iso := "txx", value := .nounGenitive }
+  , { walsCode := "tvo", iso := "tat", value := .genitiveNoun }
+  , { walsCode := "tts", iso := "tks", value := .genitiveNoun }
+  , { walsCode := "tsg", iso := "tsg", value := .nounGenitive }
+  , { walsCode := "tau", iso := "tya", value := .genitiveNoun }
+  , { walsCode := "taw", iso := "tbo", value := .genitiveNoun }
+  , { walsCode := "tbo", iso := "tbl", value := .nounGenitive }
+  , { walsCode := "tlf", iso := "tlf", value := .genitiveNoun }
+  , { walsCode := "tel", iso := "tel", value := .genitiveNoun }
+  , { walsCode := "tmn", iso := "teq", value := .nounGenitive }
+  , { walsCode := "tne", iso := "tem", value := .nounGenitive }
+  , { walsCode := "ten", iso := "tex", value := .nounGenitive }
+  , { walsCode := "teo", iso := "tio", value := .nounGenitive }
+  , { walsCode := "tee", iso := "tee", value := .nounGenitive }
+  , { walsCode := "tep", iso := "tpt", value := .nounGenitive }
+  , { walsCode := "tpn", iso := "ntp", value := .genitiveNoun }
+  , { walsCode := "ter", iso := "ttr", value := .nounGenitive }
+  , { walsCode := "trb", iso := "tfr", value := .genitiveNoun }
+  , { walsCode := "trt", iso := "tft", value := .genitiveNoun }
+  , { walsCode := "tes", iso := "teo", value := .nounGenitive }
+  , { walsCode := "tet", iso := "tll", value := .nounGenitive }
+  , { walsCode := "ttn", iso := "tet", value := .genitiveNoun }
+  , { walsCode := "ttd", iso := "tet", value := .genitiveNoun }
+  , { walsCode := "tha", iso := "tha", value := .nounGenitive }
+  , { walsCode := "thk", iso := "ths", value := .genitiveNoun }
+  , { walsCode := "thn", iso := "thf", value := .genitiveNoun }
+  , { walsCode := "tho", iso := "thp", value := .genitiveNoun }
+  , { walsCode := "thu", iso := "tdh", value := .genitiveNoun }
+  , { walsCode := "tdi", iso := "bod", value := .genitiveNoun }
+  , { walsCode := "tmo", iso := "bod", value := .genitiveNoun }
+  , { walsCode := "tis", iso := "bod", value := .genitiveNoun }
+  , { walsCode := "tib", iso := "bod", value := .genitiveNoun }
+  , { walsCode := "tic", iso := "tca", value := .noDominantOrder }
+  , { walsCode := "tid", iso := "tvo", value := .genitiveNoun }
+  , { walsCode := "tgk", iso := "tgc", value := .nounGenitive }
+  , { walsCode := "tig", iso := "tir", value := .noDominantOrder }
+  , { walsCode := "tgr", iso := "tig", value := .nounGenitive }
+  , { walsCode := "tja", iso := "dih", value := .genitiveNoun }
+  , { walsCode := "tik", iso := "tik", value := .nounGenitive }
+  , { walsCode := "tia", iso := "tms", value := .nounGenitive }
+  , { walsCode := "tim", iso := "tih", value := .nounGenitive }
+  , { walsCode := "tin", iso := "cir", value := .nounGenitive }
+  , { walsCode := "tir", iso := "tri", value := .genitiveNoun }
+  , { walsCode := "tiv", iso := "tiv", value := .nounGenitive }
+  , { walsCode := "tiw", iso := "tiw", value := .genitiveNoun }
+  , { walsCode := "tlp", iso := "tcf", value := .nounGenitive }
+  , { walsCode := "tli", iso := "tli", value := .genitiveNoun }
+  , { walsCode := "tob", iso := "tob", value := .nounGenitive }
+  , { walsCode := "tbt", iso := "tti", value := .genitiveNoun }
+  , { walsCode := "tlo", iso := "tlb", value := .genitiveNoun }
+  , { walsCode := "tla", iso := "ksd", value := .nounGenitive }
+  , { walsCode := "tno", iso := "tdn", value := .nounGenitive }
+  , { walsCode := "toz", iso := "toi", value := .nounGenitive }
+  , { walsCode := "tng", iso := "ton", value := .nounGenitive }
+  , { walsCode := "ton", iso := "tqw", value := .genitiveNoun }
+  , { walsCode := "trw", iso := "trw", value := .genitiveNoun }
+  , { walsCode := "txj", iso := "too", value := .nounGenitive }
+  , { walsCode := "tri", iso := "trc", value := .nounGenitive }
+  , { walsCode := "tru", iso := "tpy", value := .genitiveNoun }
+  , { walsCode := "tsf", iso := "cof", value := .genitiveNoun }
+  , { walsCode := "tsz", iso := "ddo", value := .genitiveNoun }
+  , { walsCode := "tgl", iso := "tsj", value := .genitiveNoun }
+  , { walsCode := "tsi", iso := "tsi", value := .nounGenitive }
+  , { walsCode := "ttu", iso := "bbl", value := .genitiveNoun }
+  , { walsCode := "tai", iso := "thz", value := .nounGenitive }
+  , { walsCode := "tgh", iso := "thv", value := .nounGenitive }
+  , { walsCode := "tbu", iso := "", value := .nounGenitive }
+  , { walsCode := "tgn", iso := "tzn", value := .genitiveNoun }
+  , { walsCode := "tuk", iso := "", value := .nounGenitive }
+  , { walsCode := "tul", iso := "tcy", value := .genitiveNoun }
+  , { walsCode := "tnb", iso := "tuf", value := .genitiveNoun }
+  , { walsCode := "tnn", iso := "tvu", value := .nounGenitive }
+  , { walsCode := "tnk", iso := "lcm", value := .nounGenitive }
+  , { walsCode := "tun", iso := "tun", value := .genitiveNoun }
+  , { walsCode := "tna", iso := "tuv", value := .nounGenitive }
+  , { walsCode := "tur", iso := "tur", value := .genitiveNoun }
+  , { walsCode := "tkm", iso := "tuk", value := .genitiveNoun }
+  , { walsCode := "tte", iso := "tta", value := .genitiveNoun }
+  , { walsCode := "tvl", iso := "tvl", value := .nounGenitive }
+  , { walsCode := "tuv", iso := "tyv", value := .genitiveNoun }
+  , { walsCode := "tye", iso := "woa", value := .genitiveNoun }
+  , { walsCode := "tzo", iso := "tzo", value := .nounGenitive }
+  , { walsCode := "tzu", iso := "tzj", value := .nounGenitive }
+  , { walsCode := "tsh", iso := "par", value := .genitiveNoun }
+  , { walsCode := "uby", iso := "uby", value := .genitiveNoun }
+  , { walsCode := "udh", iso := "ude", value := .genitiveNoun }
+  , { walsCode := "udm", iso := "udm", value := .genitiveNoun }
+  , { walsCode := "uld", iso := "udl", value := .nounGenitive }
+  , { walsCode := "uli", iso := "uli", value := .genitiveNoun }
+  , { walsCode := "una", iso := "mtg", value := .genitiveNoun }
+  , { walsCode := "ung", iso := "ung", value := .noDominantOrder }
+  , { walsCode := "ura", iso := "uur", value := .nounGenitive }
+  , { walsCode := "uhi", iso := "urf", value := .genitiveNoun }
+  , { walsCode := "url", iso := "urk", value := .nounGenitive }
+  , { walsCode := "urn", iso := "ura", value := .genitiveNoun }
+  , { walsCode := "urt", iso := "urt", value := .nounGenitive }
+  , { walsCode := "urd", iso := "urd", value := .genitiveNoun }
+  , { walsCode := "urk", iso := "urb", value := .genitiveNoun }
+  , { walsCode := "usa", iso := "wnu", value := .genitiveNoun }
+  , { walsCode := "usr", iso := "usa", value := .genitiveNoun }
+  , { walsCode := "ute", iso := "ute", value := .genitiveNoun }
+  , { walsCode := "uzb", iso := "", value := .genitiveNoun }
+  , { walsCode := "vaf", iso := "vaf", value := .nounGenitive }
+  , { walsCode := "vai", iso := "vai", value := .genitiveNoun }
+  , { walsCode := "vie", iso := "vie", value := .nounGenitive }
+  , { walsCode := "vif", iso := "vif", value := .nounGenitive }
+  , { walsCode := "vnm", iso := "vnm", value := .nounGenitive }
+  , { walsCode := "wwa", iso := "wwa", value := .genitiveNoun }
+  , { walsCode := "wah", iso := "", value := .genitiveNoun }
+  , { walsCode := "wai", iso := "waw", value := .genitiveNoun }
+  , { walsCode := "wak", iso := "wbl", value := .genitiveNoun }
+  , { walsCode := "wal", iso := "van", value := .noDominantOrder }
+  , { walsCode := "wbn", iso := "wms", value := .genitiveNoun }
+  , { walsCode := "wme", iso := "wme", value := .genitiveNoun }
+  , { walsCode := "wna", iso := "wan", value := .genitiveNoun }
+  , { walsCode := "wao", iso := "auc", value := .genitiveNoun }
+  , { walsCode := "wap", iso := "wao", value := .genitiveNoun }
+  , { walsCode := "wra", iso := "wba", value := .genitiveNoun }
+  , { walsCode := "wrd", iso := "wrr", value := .noDominantOrder }
+  , { walsCode := "wrk", iso := "gae", value := .nounGenitive }
+  , { walsCode := "wrm", iso := "wsa", value := .genitiveNoun }
+  , { walsCode := "war", iso := "pav", value := .nounGenitive }
+  , { walsCode := "wrn", iso := "wnd", value := .nounGenitive }
+  , { walsCode := "wrw", iso := "wwr", value := .genitiveNoun }
+  , { walsCode := "was", iso := "was", value := .genitiveNoun }
+  , { walsCode := "wsk", iso := "wsk", value := .genitiveNoun }
+  , { walsCode := "wat", iso := "wbv", value := .genitiveNoun }
+  , { walsCode := "way", iso := "oym", value := .genitiveNoun }
+  , { walsCode := "wed", iso := "wed", value := .genitiveNoun }
+  , { walsCode := "wel", iso := "cym", value := .nounGenitive }
+  , { walsCode := "wem", iso := "xww", value := .genitiveNoun }
+  , { walsCode := "wma", iso := "mqs", value := .genitiveNoun }
+  , { walsCode := "wch", iso := "mzh", value := .genitiveNoun }
+  , { walsCode := "wmu", iso := "wim", value := .genitiveNoun }
+  , { walsCode := "wik", iso := "yok", value := .genitiveNoun }
+  , { walsCode := "win", iso := "wnw", value := .genitiveNoun }
+  , { walsCode := "wiy", iso := "wiy", value := .genitiveNoun }
+  , { walsCode := "wog", iso := "wog", value := .genitiveNoun }
+  , { walsCode := "woi", iso := "woi", value := .genitiveNoun }
+  , { walsCode := "wly", iso := "wal", value := .genitiveNoun }
+  , { walsCode := "wol", iso := "woe", value := .noDominantOrder }
+  , { walsCode := "wlo", iso := "wlo", value := .nounGenitive }
+  , { walsCode := "wlf", iso := "wol", value := .nounGenitive }
+  , { walsCode := "wom", iso := "wmx", value := .genitiveNoun }
+  , { walsCode := "xas", iso := "kao", value := .genitiveNoun }
+  , { walsCode := "xav", iso := "xav", value := .genitiveNoun }
+  , { walsCode := "xer", iso := "xer", value := .genitiveNoun }
+  , { walsCode := "xho", iso := "xho", value := .nounGenitive }
+  , { walsCode := "xar", iso := "ane", value := .noDominantOrder }
+  , { walsCode := "ygr", iso := "ygr", value := .genitiveNoun }
+  , { walsCode := "yag", iso := "yad", value := .genitiveNoun }
+  , { walsCode := "ykt", iso := "sah", value := .genitiveNoun }
+  , { walsCode := "yal", iso := "kkl", value := .genitiveNoun }
+  , { walsCode := "ybi", iso := "ybi", value := .genitiveNoun }
+  , { walsCode := "yns", iso := "yns", value := .nounGenitive }
+  , { walsCode := "yap", iso := "yap", value := .nounGenitive }
+  , { walsCode := "yqy", iso := "jaq", value := .genitiveNoun }
+  , { walsCode := "yaq", iso := "yaq", value := .genitiveNoun }
+  , { walsCode := "yar", iso := "yrb", value := .genitiveNoun }
+  , { walsCode := "ywr", iso := "ywr", value := .nounGenitive }
+  , { walsCode := "yay", iso := "pcc", value := .nounGenitive }
+  , { walsCode := "yyg", iso := "xya", value := .genitiveNoun }
+  , { walsCode := "yei", iso := "jei", value := .genitiveNoun }
+  , { walsCode := "ylm", iso := "jel", value := .noDominantOrder }
+  , { walsCode := "yel", iso := "yle", value := .genitiveNoun }
+  , { walsCode := "yiw", iso := "ywq", value := .genitiveNoun }
+  , { walsCode := "yid", iso := "yii", value := .genitiveNoun }
+  , { walsCode := "yim", iso := "yee", value := .genitiveNoun }
+  , { walsCode := "yin", iso := "yij", value := .genitiveNoun }
+  , { walsCode := "yok", iso := "yok", value := .noDominantOrder }
+  , { walsCode := "yor", iso := "yor", value := .nounGenitive }
+  , { walsCode := "yuc", iso := "yuc", value := .genitiveNoun }
+  , { walsCode := "ycn", iso := "ycn", value := .genitiveNoun }
+  , { walsCode := "yko", iso := "yux", value := .genitiveNoun }
+  , { walsCode := "ytu", iso := "ykg", value := .genitiveNoun }
+  , { walsCode := "yuk", iso := "gcd", value := .genitiveNoun }
+  , { walsCode := "yul", iso := "yul", value := .nounGenitive }
+  , { walsCode := "yus", iso := "ess", value := .genitiveNoun }
+  , { walsCode := "yrm", iso := "", value := .genitiveNoun }
+  , { walsCode := "yur", iso := "yur", value := .genitiveNoun }
+  , { walsCode := "yuw", iso := "kld", value := .noDominantOrder }
+  , { walsCode := "zan", iso := "zne", value := .noDominantOrder }
+  , { walsCode := "zpr", iso := "zro", value := .genitiveNoun }
+  , { walsCode := "zai", iso := "zai", value := .nounGenitive }
+  , { walsCode := "zap", iso := "zaw", value := .nounGenitive }
+  , { walsCode := "zya", iso := "zav", value := .nounGenitive }
+  , { walsCode := "zar", iso := "dje", value := .genitiveNoun }
+  , { walsCode := "zay", iso := "zay", value := .genitiveNoun }
+  , { walsCode := "zen", iso := "zen", value := .nounGenitive }
+  , { walsCode := "zch", iso := "zoh", value := .genitiveNoun }
+  , { walsCode := "zqc", iso := "zoc", value := .genitiveNoun }
+  , { walsCode := "zul", iso := "zul", value := .nounGenitive }
+  , { walsCode := "zun", iso := "zun", value := .genitiveNoun }
+  , { walsCode := "rgc", iso := "jya", value := .genitiveNoun }
+  , { walsCode := "eme", iso := "eme", value := .genitiveNoun }
+  , { walsCode := "omi", iso := "aom", value := .genitiveNoun }
   ]
 
 /-- Complete WALS 86A dataset (1249 languages). -/
 def allData : List (Datapoint GenitiveNounOrder) := allData_0 ++ allData_1 ++ allData_2
-
--- Count verification
-theorem total_count : allData.length = 1249 := by native_decide
-
-theorem count_genitiveNoun :
-    (allData.filter (·.value == .genitiveNoun)).length = 685 := by native_decide
-theorem count_nounGenitive :
-    (allData.filter (·.value == .nounGenitive)).length = 468 := by native_decide
-theorem count_noDominantOrder :
-    (allData.filter (·.value == .noDominantOrder)).length = 96 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

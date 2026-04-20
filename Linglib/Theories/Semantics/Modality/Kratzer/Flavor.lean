@@ -12,7 +12,7 @@ import Linglib.Theories.Semantics.Modality.Basic
 
 namespace Semantics.Modality.Kratzer
 
-variable {W : Type*} [DecidableEq W] [Fintype W]
+variable {W : Type*}
 
 /--
 **Epistemic modality**: what is known/believed.
@@ -162,16 +162,8 @@ def KratzerParams.necessity (params : KratzerParams W) (p : W → Prop) (w : W) 
 def KratzerParams.possibility (params : KratzerParams W) (p : W → Prop) (w : W) : Prop :=
   Kratzer.possibility params.base params.ordering p w
 
-instance (params : KratzerParams W) (p : W → Prop) [DecidablePred p] (w : W) :
-    Decidable (params.necessity p w) :=
-  inferInstanceAs (Decidable (Kratzer.necessity params.base params.ordering p w))
-
-instance (params : KratzerParams W) (p : W → Prop) [DecidablePred p] (w : W) :
-    Decidable (params.possibility p w) :=
-  inferInstanceAs (Decidable (Kratzer.possibility params.base params.ordering p w))
-
 /-- Duality: □p ↔ ¬◇¬p for any KratzerParams. -/
-theorem KratzerParams.duality (params : KratzerParams W) (p : W → Prop) [DecidablePred p]
+theorem KratzerParams.duality (params : KratzerParams W) (p : W → Prop)
     (w : W) :
     params.necessity p w ↔ ¬ params.possibility (fun w' => ¬ p w') w :=
   Kratzer.duality params.base params.ordering p w
@@ -188,14 +180,14 @@ open Semantics.Modality (ModalTheory ModalForce)
 
 /-- Wrap `KratzerParams World` as a `ModalTheory` (Prop-valued evaluation).
     Forces: necessity/weakNecessity use □, possibility uses ◇. -/
-def KratzerTheory (params : KratzerParams World) : ModalTheory where
+noncomputable def KratzerTheory (params : KratzerParams World) : ModalTheory where
   name := "Kratzer"
   citation := "Kratzer (1981)"
   eval := fun force p w =>
     match force with
     | .necessity | .weakNecessity => Kratzer.necessity params.base params.ordering p w
     | .possibility => Kratzer.possibility params.base params.ordering p w
-  decEval := fun force p _ w => by cases force <;> · unfold Kratzer.necessity Kratzer.possibility <;> infer_instance
+  decEval := fun _ _ _ _ => Classical.propDecidable _
 
 /-- `KratzerTheory` evaluates weak necessity with the same quantifier as necessity.
     For proper @cite{vonfintel-iatridou-2008} weak necessity, use
@@ -205,7 +197,7 @@ theorem kratzerTheory_weakNec_eq_nec (params : KratzerParams World) (p : World �
     (KratzerTheory params).eval .necessity p w := rfl
 
 /-- Minimal Kratzer theory: empty base + empty ordering = universal quantification. -/
-def KratzerMinimal : ModalTheory := KratzerTheory minimalParams
+noncomputable def KratzerMinimal : ModalTheory := KratzerTheory minimalParams
 
 /-- Duality holds for every `KratzerTheory` instantiation. -/
 theorem kratzerTheory_duality (params : KratzerParams World) (p : World → Prop) (w : World) :

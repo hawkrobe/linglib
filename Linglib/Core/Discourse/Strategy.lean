@@ -1,18 +1,25 @@
-import Linglib.Core.Inquisitive
-import Linglib.Core.QUD.Relevance
+import Linglib.Core.Issue.Hamblin
+import Linglib.Core.Issue.Relevance
 
 /-!
 # Strategy of Inquiry: Rose-Tree Decomposition of a QUD
 @cite{roberts-2012}
 
-A `Strategy W` is Roberts 2012 Def. 12: a plan to answer a question by
+A `Strategy W` is @cite{roberts-2012} Def. 12: a plan to answer a question by
 pursuing subquestions. Modeled as a rose tree where each node is a question
 and children are subquestions whose collective answers resolve the parent.
 The companion stack representation (`QUDStack`) captures the *current*
 unanswered slice; a strategy captures the *full plan*.
+
+The strategy is parameterized by `Core.Issue W` — the Set-based
+inquisitive-content lattice. The completeness predicate uses lattice
+meet `⊓` (children's joint answer) and the Prop-valued
+`Core.Issue.questionEntails` from `Core/Issue/Relevance.lean`.
 -/
 
 namespace Discourse
+
+open Core
 
 /-- A strategy of inquiry: a plan to answer a question by pursuing subquestions.
 
@@ -49,32 +56,28 @@ def leaves : Strategy W → List (Issue W)
   | .leaf q => [q]
   | .branch _ ss => ss.flatMap leaves
 
-/-- A strategy is **complete** at a single level: the intersection of
-    child questions entails the parent question.
+/-- A strategy is **complete** at a single level: the meet of child
+    questions (their joint resolution) entails the parent question.
 
     @cite{roberts-2012} Def. 12: answering all subquestions answers the parent.
 
-    This checks only the root node; use separately on sub-strategies
-    for full-tree verification. -/
-def isComplete (s : Strategy W) (worlds : List W) : Bool :=
-  match s with
-  | .leaf _ => true
+    This checks only the root node; recurse on sub-strategies for full-tree
+    verification. The meet `⊓` is taken in the inquisitive-content lattice;
+    `⊤` is the trivial issue (resolved by every state). -/
+def isComplete : Strategy W → Prop
+  | .leaf _ => True
   | .branch q children =>
-    let combined := children.map (·.question) |>.foldl (·.inter · worlds)
-      (Issue.ofAlternatives [trivialState])
-    questionEntails combined q worlds
+    let combined := (children.map (·.question)).foldl (· ⊓ ·) ⊤
+    Issue.questionEntails combined q
 
 end Strategy
 
-/-- A discourse move is relevant to a strategy if it partially answers
-    any question in the strategy.
+/-- A discourse move is relevant to a strategy if some alternative of `den`
+    partially answers some question in the strategy.
 
-    Derived from `moveRelevant` by extracting all subquestions from the
-    strategy tree. -/
-def moveRelevantToStrategy {W : Type*} (den : Issue W) (strat : Strategy W)
-    (worlds : List W) : Bool :=
-  let allQs := strat.allQuestions
-  den.alternatives.any fun alt =>
-    allQs.any fun q => partiallyAnswers alt q worlds
+    Derived from `Core.Issue.moveRelevant` by treating every question in
+    the strategy tree as a candidate subquestion. -/
+def moveRelevantToStrategy {W : Type*} (den : Issue W) (strat : Strategy W) : Prop :=
+  ∃ a ∈ Issue.alt den, ∃ q ∈ strat.allQuestions, Issue.partiallyAnswers q a
 
 end Discourse

@@ -274,7 +274,7 @@ def whyNegationIsDoxastic : String :=
 -- Turkish Polar Questions and Modal Answers (@cite{turk-hirsch-2026})
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-! Turk, Hirsch & İnce (2026) observe that deontic modal answers are
+/-! Türk & Hirsch (2026) observe that deontic modal answers are
     infelicitous responses to Turkish polar questions formed with *mI*.
 
     "Ali uyuyor mu?" ("Does Ali sleep?")
@@ -295,7 +295,7 @@ def turkishPolar_yes : QAPair where
   completeness := .exhaustive
   form := .taciturn
   felicitous := true
-  source := "Turk, Hirsch & İnce (2026)"
+  source := "Türk & Hirsch (2026)"
 
 /-- "Ali uyuyor mu?" → "Hayır" (no) — felicitous. -/
 def turkishPolar_no : QAPair where
@@ -305,7 +305,7 @@ def turkishPolar_no : QAPair where
   completeness := .exhaustive
   form := .taciturn
   felicitous := true
-  source := "Turk, Hirsch & İnce (2026)"
+  source := "Türk & Hirsch (2026)"
 
 /-- "Ali uyuyor mu?" → "Ali uyumalı" (Ali must sleep) — infelicitous.
     A deontic modal answer does not address the polar question. -/
@@ -316,7 +316,7 @@ def turkishPolar_must : QAPair where
   completeness := .incomplete
   form := .sentential
   felicitous := false
-  source := "Turk, Hirsch & İnce (2026)"
+  source := "Türk & Hirsch (2026)"
 
 def turkishPolarExamples : List QAPair :=
   [turkishPolar_yes, turkishPolar_no, turkishPolar_must]

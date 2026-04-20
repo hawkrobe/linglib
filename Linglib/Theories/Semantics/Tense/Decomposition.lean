@@ -131,8 +131,11 @@ structure KratzerDecomposition where
 
 /-- Can this form be used deictically ("out of the blue")?
     Derived: indexical tense head → deictic-compatible. -/
-def KratzerDecomposition.canBeDeictic (d : KratzerDecomposition) : Bool :=
+def KratzerDecomposition.canBeDeictic (d : KratzerDecomposition) : Prop :=
   d.tensePronoun.isIndexical
+
+instance (d : KratzerDecomposition) : Decidable d.canBeDeictic :=
+  inferInstanceAs (Decidable d.tensePronoun.isIndexical)
 
 /-- Phonological overtness of the tense head, given locality. -/
 def KratzerDecomposition.tenseOvertness (d : KratzerDecomposition)
@@ -189,9 +192,9 @@ theorem german_preterit_is_past (n : ℕ) :
 /-- English simple past is indexical-compatible: can be used "out of the blue."
     German Preterit forces anaphoric mode: cannot be used "out of the blue." -/
 theorem english_deictic_german_anaphoric (n : ℕ) :
-    kratzerEnglishPast.isIndexical = true ∧
-    (kratzerGermanPreterit n).isIndexical = false :=
-  ⟨rfl, rfl⟩
+    kratzerEnglishPast.isIndexical ∧
+    ¬ (kratzerGermanPreterit n).isIndexical :=
+  ⟨by decide, nofun⟩
 
 /-- Kratzer's aspect decomposition bridge: the English simple past
     (PRESENT + PERFECT) maps to `presPerfSimple` from the compositional
@@ -281,7 +284,7 @@ vs. times). -/
     Left conjunct: zero tense is bound (like a reflexive).
     Right conjunct: it surfaces as zero (like reflexive morphology). -/
 theorem reflexive_simultaneous_parallel (n : ℕ) :
-    (kratzerZeroTense n).isBound = true ∧
+    (kratzerZeroTense n).isBound ∧
     Overtness.fromBinding (kratzerZeroTense n).mode true = .zero :=
   ⟨rfl, rfl⟩
 

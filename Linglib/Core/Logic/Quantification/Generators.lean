@@ -15,12 +15,12 @@ quantification over X as lattice operations.
 
 ## Architecture
 
-`NPQ α = (α → Bool) → Bool` inherits a full `BooleanAlgebra` from
-Mathlib's Pi instances over `Bool`. All definitions here are stated
-directly in terms of Mathlib's `⊓`/`⊔`/`⊤`/`⊥`/`≤`. The computational
-characterizations (`conjGQ X P = X.all P`, `disjGQ X P = X.any P`) are
-*derived theorems*, not definitions — the definitions express the
-lattice-theoretic content directly.
+`NPQ α = (α → Prop) → Prop` inherits a full `BooleanAlgebra` from
+Mathlib's Pi instances over `Prop`. All definitions here are stated
+directly in terms of Mathlib's `⊓`/`⊔`/`⊤`/`⊥`/`≤`. The propositional
+characterizations (`conjGQ X P ↔ ∀ x ∈ X, P x`,
+`disjGQ X P ↔ ∃ x ∈ X, P x`) are *derived theorems*, not definitions
+— the definitions express the lattice-theoretic content directly.
 
 ## Key Definitions
 
@@ -30,7 +30,7 @@ lattice-theoretic content directly.
 
 ## Key Theorems
 
-- `conjGQ_eq_all` / `disjGQ_eq_any` — computational characterization
+- `conjGQ_iff_forall` / `disjGQ_iff_exists` — propositional characterization
 - `conjGQ_cons` / `disjGQ_cons` — recursive decomposition (definitional)
 - `conjGQ_le_individual` + `le_conjGQ` — glb characterization via `≤`
 - `individual_le_disjGQ` + `disjGQ_le` — lub characterization via `≤`
@@ -92,58 +92,61 @@ theorem conjGQ_nil : conjGQ ([] : List α) = ⊤ := rfl
 theorem disjGQ_nil : disjGQ ([] : List α) = ⊥ := rfl
 
 -- ============================================================================
--- §3 Bool ↔ Lattice Bridge
+-- §3 Propositional Characterization
 -- ============================================================================
 
-/-! `⊓`/`⊔` on `Bool` are `min`/`max` via `LinearOrder`, which unfold
-    through `if a ≤ b then a else b`. These bridge lemmas connect the
-    abstract lattice operations back to Boolean connectives for
-    computation. -/
+/-! The lattice-based definitions compute as `∀ x ∈ X, P x` /
+    `∃ x ∈ X, P x`. These theorems bridge the abstract lattice structure
+    with first-order quantification. -/
 
-private theorem bool_inf_eq_and : ∀ (a b : Bool), a ⊓ b = (a && b) := by decide
-private theorem bool_sup_eq_or : ∀ (a b : Bool), a ⊔ b = (a || b) := by decide
-
--- ============================================================================
--- §4 Computational Characterization
--- ============================================================================
-
-/-! The lattice-based definitions compute as `List.all` / `List.any`.
-    These theorems bridge the abstract lattice structure with concrete
-    Boolean evaluation. -/
-
-/-- conjGQ computes as universal quantification: conjGQ X P = X.all P.
-    The iterated `⊓` of individual quantifiers, applied to P, equals
-    the conjunction of P over all elements. -/
-theorem conjGQ_eq_all (X : List α) (P : α → Bool) :
-    conjGQ X P = X.all P := by
+/-- conjGQ computes as universal quantification: conjGQ X P ↔ ∀ x ∈ X, P x. -/
+theorem conjGQ_iff_forall (X : List α) (P : α → Prop) :
+    conjGQ X P ↔ ∀ x ∈ X, P x := by
   induction X with
-  | nil => rfl
+  | nil =>
+    refine ⟨fun _ _ h => ?_, fun _ => trivial⟩
+    exact (List.not_mem_nil h).elim
   | cons a xs ih =>
-    show individual a P ⊓ conjGQ xs P = (a :: xs).all P
-    simp only [bool_inf_eq_and, individual, ih, List.all_cons]
+    show (P a ∧ conjGQ xs P) ↔ ∀ x ∈ a :: xs, P x
+    refine ⟨?_, ?_⟩
+    · rintro ⟨hPa, hRest⟩ x hx
+      rcases List.mem_cons.mp hx with rfl | hx
+      · exact hPa
+      · exact ih.mp hRest x hx
+    · intro h
+      refine ⟨h a (List.mem_cons_self), ih.mpr fun x hx => h x ?_⟩
+      exact List.mem_cons_of_mem _ hx
 
-/-- disjGQ computes as existential quantification: disjGQ X P = X.any P.
-    The iterated `⊔` of individual quantifiers, applied to P, equals
-    the disjunction of P over all elements. -/
-theorem disjGQ_eq_any (X : List α) (P : α → Bool) :
-    disjGQ X P = X.any P := by
+/-- disjGQ computes as existential quantification: disjGQ X P ↔ ∃ x ∈ X, P x. -/
+theorem disjGQ_iff_exists (X : List α) (P : α → Prop) :
+    disjGQ X P ↔ ∃ x ∈ X, P x := by
   induction X with
-  | nil => rfl
+  | nil =>
+    refine ⟨fun h => h.elim, ?_⟩
+    rintro ⟨x, hx, _⟩; exact (List.not_mem_nil hx).elim
   | cons a xs ih =>
-    show individual a P ⊔ disjGQ xs P = (a :: xs).any P
-    simp only [bool_sup_eq_or, individual, ih, List.any_cons]
+    show (P a ∨ disjGQ xs P) ↔ ∃ x ∈ a :: xs, P x
+    refine ⟨?_, ?_⟩
+    · rintro (hPa | hRest)
+      · exact ⟨a, List.mem_cons_self, hPa⟩
+      · obtain ⟨x, hx, hPx⟩ := ih.mp hRest
+        exact ⟨x, List.mem_cons_of_mem _ hx, hPx⟩
+    · rintro ⟨x, hx, hPx⟩
+      rcases List.mem_cons.mp hx with rfl | hx
+      · exact Or.inl hPx
+      · exact Or.inr (ih.mpr ⟨x, hx, hPx⟩)
 
 /-- Singleton conjunction GQ recovers the Montagovian individual.
     ⊓({a}) = individual(a) ⊓ ⊤ = individual(a). -/
 theorem conjGQ_singleton (a : α) :
     conjGQ [a] = individual a := by
-  simp [conjGQ_cons, conjGQ_nil]
+  funext P; exact and_true _
 
 /-- Singleton disjunction GQ recovers the Montagovian individual.
     ⊔({a}) = individual(a) ⊔ ⊥ = individual(a). -/
 theorem disjGQ_singleton (a : α) :
     disjGQ [a] = individual a := by
-  simp [disjGQ_cons, disjGQ_nil]
+  funext P; exact or_false _
 
 -- ============================================================================
 -- §4 Lattice-Theoretic Characterization
@@ -152,44 +155,40 @@ theorem disjGQ_singleton (a : α) :
 /-! `conjGQ X` is the greatest lower bound (infimum) and `disjGQ X` the
     least upper bound (supremum) of `{individual a | a ∈ X}` in the NPQ
     lattice. These use Mathlib's `≤` on `NPQ α`, which is pointwise
-    implication: `f ≤ g ↔ ∀ P, f P = true → g P = true`
-    (via `bool_le_iff_imp`). -/
+    implication: `f ≤ g ↔ ∀ P, f P → g P` for the Pi-of-Prop ordering. -/
 
 /-- conjGQ X ≤ individual a for every a ∈ X: the iterated meet is below
     each factor. -/
 theorem conjGQ_le_individual (a : α) (X : List α) (ha : a ∈ X) :
     conjGQ X ≤ individual a := by
-  intro P; rw [bool_le_iff_imp, conjGQ_eq_all]
-  simp only [List.all_eq_true, individual]
-  exact (· a ha)
+  intro P hConj
+  exact (conjGQ_iff_forall X P).mp hConj a ha
 
 /-- conjGQ X is the greatest lower bound of {individual a | a ∈ X}:
     any Q below every individual in X is below conjGQ X. -/
 theorem le_conjGQ (Q : NPQ α) (X : List α)
     (h : ∀ a ∈ X, Q ≤ individual a) :
     Q ≤ conjGQ X := by
-  intro P; rw [bool_le_iff_imp, conjGQ_eq_all]
-  intro hQ; simp only [List.all_eq_true]
+  intro P hQ
+  refine (conjGQ_iff_forall X P).mpr ?_
   intro a ha
-  exact (bool_le_iff_imp _ _).mp (h a ha P) hQ
+  exact h a ha P hQ
 
 /-- individual a ≤ disjGQ X for every a ∈ X: each factor is below the
     iterated join. -/
 theorem individual_le_disjGQ (a : α) (X : List α) (ha : a ∈ X) :
     individual a ≤ disjGQ X := by
-  intro P; rw [bool_le_iff_imp, disjGQ_eq_any]
-  simp only [List.any_eq_true, individual]
-  exact fun hPa => ⟨a, ha, hPa⟩
+  intro P hPa
+  exact (disjGQ_iff_exists X P).mpr ⟨a, ha, hPa⟩
 
 /-- disjGQ X is the least upper bound of {individual a | a ∈ X}:
     any Q above every individual in X is above disjGQ X. -/
 theorem disjGQ_le (Q : NPQ α) (X : List α)
     (h : ∀ a ∈ X, individual a ≤ Q) :
     disjGQ X ≤ Q := by
-  intro P; rw [bool_le_iff_imp, disjGQ_eq_any]
-  simp only [List.any_eq_true]
-  intro ⟨a, ha, hPa⟩
-  exact (bool_le_iff_imp _ _).mp (h a ha P) hPa
+  intro P hDisj
+  obtain ⟨a, ha, hPa⟩ := (disjGQ_iff_exists X P).mp hDisj
+  exact h a ha P hPa
 
 -- ============================================================================
 -- §5 Monotonicity
@@ -200,23 +199,24 @@ theorem disjGQ_le (Q : NPQ α) (X : List α)
 
     X ⊆ Y → ⊓(Y) ≤ ⊓(X) in the NPQ lattice. -/
 theorem conjGQ_antitone {X Y : List α} (h : ∀ x, x ∈ X → x ∈ Y)
-    (P : α → Bool) : conjGQ Y P = true → conjGQ X P = true := by
-  simp only [conjGQ_eq_all, List.all_eq_true]
+    (P : α → Prop) : conjGQ Y P → conjGQ X P := by
+  rw [conjGQ_iff_forall, conjGQ_iff_forall]
   exact fun hY x hx => hY x (h x hx)
 
 /-- disjGQ is monotone: more disjuncts produce a weaker quantifier.
 
     X ⊆ Y → ⊔(X) ≤ ⊔(Y) in the NPQ lattice. -/
 theorem disjGQ_monotone {X Y : List α} (h : ∀ x, x ∈ X → x ∈ Y)
-    (P : α → Bool) : disjGQ X P = true → disjGQ Y P = true := by
-  simp only [disjGQ_eq_any, List.any_eq_true]
-  exact fun ⟨x, hx, hpx⟩ => ⟨x, h x hx, hpx⟩
+    (P : α → Prop) : disjGQ X P → disjGQ Y P := by
+  rw [disjGQ_iff_exists, disjGQ_iff_exists]
+  rintro ⟨x, hx, hpx⟩
+  exact ⟨x, h x hx, hpx⟩
 
 /-- ⊓(X) ≤ ⊔(X) when X ≠ ∅: conjunction entails disjunction for
     non-empty subsets (pointwise form). -/
 theorem conjGQ_le_disjGQ {X : List α} (hne : X ≠ [])
-    (P : α → Bool) : conjGQ X P = true → disjGQ X P = true := by
-  simp only [conjGQ_eq_all, disjGQ_eq_any, List.all_eq_true, List.any_eq_true]
+    (P : α → Prop) : conjGQ X P → disjGQ X P := by
+  rw [conjGQ_iff_forall, disjGQ_iff_exists]
   intro h
   obtain ⟨x, hx⟩ := List.exists_mem_of_ne_nil X hne
   exact ⟨x, hx, h x hx⟩
@@ -224,8 +224,7 @@ theorem conjGQ_le_disjGQ {X : List α} (hne : X ≠ [])
 /-- ⊓(X) ≤ ⊔(X) when X ≠ ∅: conjunction below disjunction in the NPQ
     lattice. Lattice-order form of `conjGQ_le_disjGQ`. -/
 theorem conjGQ_le_disjGQ' {X : List α} (hne : X ≠ []) :
-    conjGQ X ≤ disjGQ X := by
-  intro P; exact (bool_le_iff_imp _ _).mpr (conjGQ_le_disjGQ hne P)
+    conjGQ X ≤ disjGQ X := fun P => conjGQ_le_disjGQ hne P
 
 -- ============================================================================
 -- §6 Join-Primality of Individuals
@@ -238,33 +237,28 @@ theorem conjGQ_le_disjGQ' {X : List α} (hne : X ≠ []) :
     membership in disjunctive quantifiers. It is the formal foundation
     for Dayal's ANS identifying which individual satisfies the answer. -/
 theorem individual_le_disjGQ_iff [DecidableEq α] (a : α) (X : List α) :
-    (∀ P, individual a P = true → disjGQ X P = true) ↔ a ∈ X := by
+    (∀ P, individual a P → disjGQ X P) ↔ a ∈ X := by
   constructor
   · intro h
-    have key := h (fun x => decide (x = a)) (decide_eq_true rfl)
-    simp only [disjGQ_eq_any, List.any_eq_true, decide_eq_true_eq] at key
-    obtain ⟨x, hx, rfl⟩ := key
-    exact hx
+    have key := h (fun x => x = a) rfl
+    obtain ⟨x, hx, hxa⟩ := (disjGQ_iff_exists X _).mp key
+    exact hxa ▸ hx
   · intro ha P hPa
-    simp only [disjGQ_eq_any, List.any_eq_true]
-    exact ⟨a, ha, hPa⟩
+    exact (disjGQ_iff_exists X P).mpr ⟨a, ha, hPa⟩
 
 /-- Dual: ⊓(X) ≤ individual(a) iff a ∈ X. -/
 theorem conjGQ_le_individual_iff [DecidableEq α] (a : α) (X : List α) :
-    (∀ P, conjGQ X P = true → individual a P = true) ↔ a ∈ X := by
+    (∀ P, conjGQ X P → individual a P) ↔ a ∈ X := by
   constructor
   · intro h
     by_contra ha
-    suffices conjGQ X (fun x => !decide (x = a)) = true by
-      have := h _ this
-      simp [individual] at this
-    rw [conjGQ_eq_all, List.all_eq_true]
-    intro x hx
-    simp only [Bool.not_eq_true', decide_eq_false_iff_not]
-    intro heq; exact ha (heq ▸ hx)
+    have hConj : conjGQ X (fun x => x ≠ a) := by
+      refine (conjGQ_iff_forall X _).mpr ?_
+      intro x hx heq
+      exact ha (heq ▸ hx)
+    exact (h _ hConj) rfl
   · intro ha P hP
-    simp only [conjGQ_eq_all, individual, List.all_eq_true] at hP ⊢
-    exact hP a ha
+    exact (conjGQ_iff_forall X P).mp hP a ha
 
 -- ============================================================================
 -- §7 De Morgan Duality
@@ -274,32 +268,33 @@ theorem conjGQ_le_individual_iff [DecidableEq α] (a : α) (X : List α) :
     GQ produces a disjunction GQ and vice versa. These are the
     `∀`/`∃`-level lifts of classical De Morgan:
 
-      ¬(∀x∈X. P(x)) = ∃x∈X. ¬P(x)
-      ¬(∃x∈X. P(x)) = ∀x∈X. ¬P(x)
+      ¬(∀x∈X. P(x)) ↔ ∃x∈X. ¬P(x)
+      ¬(∃x∈X. P(x)) ↔ ∀x∈X. ¬P(x)
 
     Note: these are distinct from the BooleanAlgebra complement laws
     on NPQ α. The lattice complement `(conjGQ X)ᶜ` negates the
     *output*; De Morgan negates the *input predicate*. -/
 
 /-- De Morgan for conjunction: negating each argument swaps ∀ to ∃. -/
-theorem deMorgan_conj (X : List α) (P : α → Bool) :
-    conjGQ X (fun a => !P a) = !(disjGQ X P) := by
-  simp only [conjGQ_eq_all, disjGQ_eq_any]
-  induction X with
-  | nil => rfl
-  | cons x xs ih =>
-    simp only [List.all_cons, List.any_cons]
-    rw [ih, Bool.not_or]
+theorem deMorgan_conj (X : List α) (P : α → Prop) :
+    conjGQ X (fun a => ¬ P a) ↔ ¬ disjGQ X P := by
+  rw [conjGQ_iff_forall, disjGQ_iff_exists]
+  exact ⟨fun h ⟨x, hx, hPx⟩ => h x hx hPx,
+         fun h x hx hPx => h ⟨x, hx, hPx⟩⟩
 
-/-- De Morgan for disjunction: negating each argument swaps ∃ to ∀. -/
-theorem deMorgan_disj (X : List α) (P : α → Bool) :
-    disjGQ X (fun a => !P a) = !(conjGQ X P) := by
-  simp only [conjGQ_eq_all, disjGQ_eq_any]
-  induction X with
-  | nil => rfl
-  | cons x xs ih =>
-    simp only [List.all_cons, List.any_cons]
-    rw [ih, Bool.not_and]
+/-- De Morgan for disjunction: negating each argument swaps ∃ to ∀.
+    Classical (requires excluded middle). -/
+theorem deMorgan_disj (X : List α) (P : α → Prop) :
+    disjGQ X (fun a => ¬ P a) ↔ ¬ conjGQ X P := by
+  rw [disjGQ_iff_exists, conjGQ_iff_forall]
+  classical
+  exact ⟨fun ⟨x, hx, hNPx⟩ h => hNPx (h x hx),
+         fun h => by
+           by_contra hAll
+           apply h
+           intro x hx
+           by_contra hNPx
+           exact hAll ⟨x, hx, hNPx⟩⟩
 
 -- ============================================================================
 -- §8 Compositionality
@@ -310,15 +305,29 @@ theorem deMorgan_disj (X : List α) (P : α → Bool) :
     concatenation of entity domains corresponds to the lattice meet/join
     of the corresponding GQ generators. -/
 
-/-- ⊓(X ++ Y) = ⊓(X) ⊓ ⊓(Y): conjunction GQ decomposes over append. -/
-theorem conjGQ_append (X Y : List α) (P : α → Bool) :
-    conjGQ (X ++ Y) P = (conjGQ X P && conjGQ Y P) := by
-  simp only [conjGQ_eq_all, List.all_append]
+/-- ⊓(X ++ Y) ↔ ⊓(X) ⊓ ⊓(Y): conjunction GQ decomposes over append. -/
+theorem conjGQ_append (X Y : List α) (P : α → Prop) :
+    conjGQ (X ++ Y) P ↔ (conjGQ X P ∧ conjGQ Y P) := by
+  rw [conjGQ_iff_forall, conjGQ_iff_forall, conjGQ_iff_forall]
+  refine ⟨fun h => ⟨fun x hx => h x (List.mem_append.mpr (Or.inl hx)),
+                    fun x hx => h x (List.mem_append.mpr (Or.inr hx))⟩,
+          fun ⟨hX, hY⟩ x hx => ?_⟩
+  rcases List.mem_append.mp hx with hx | hx
+  · exact hX x hx
+  · exact hY x hx
 
-/-- ⊔(X ++ Y) = ⊔(X) ⊔ ⊔(Y): disjunction GQ decomposes over append. -/
-theorem disjGQ_append (X Y : List α) (P : α → Bool) :
-    disjGQ (X ++ Y) P = (disjGQ X P || disjGQ Y P) := by
-  simp only [disjGQ_eq_any, List.any_append]
+/-- ⊔(X ++ Y) ↔ ⊔(X) ⊔ ⊔(Y): disjunction GQ decomposes over append. -/
+theorem disjGQ_append (X Y : List α) (P : α → Prop) :
+    disjGQ (X ++ Y) P ↔ (disjGQ X P ∨ disjGQ Y P) := by
+  rw [disjGQ_iff_exists, disjGQ_iff_exists, disjGQ_iff_exists]
+  refine ⟨?_, ?_⟩
+  · rintro ⟨x, hx, hPx⟩
+    rcases List.mem_append.mp hx with hx | hx
+    · exact Or.inl ⟨x, hx, hPx⟩
+    · exact Or.inr ⟨x, hx, hPx⟩
+  · rintro (⟨x, hx, hPx⟩ | ⟨x, hx, hPx⟩)
+    · exact ⟨x, List.mem_append.mpr (Or.inl hx), hPx⟩
+    · exact ⟨x, List.mem_append.mpr (Or.inr hx), hPx⟩
 
 -- ============================================================================
 -- §9 Generators
@@ -350,22 +359,5 @@ def conjGQs (dom : List α) : List (NPQ α) :=
     disjGQs(dom) = {⊔(X) | ∅ ≠ X ⊆ dom} -/
 def disjGQs (dom : List α) : List (NPQ α) :=
   (nonemptySubsets dom).map disjGQ
-
--- ============================================================================
--- §10 Generator Properties
--- ============================================================================
-
-/-- conjGQs generates map conjGQ over nonemptySubsets. Each entry
-    computes as universal quantification over the subset. -/
-theorem conjGQs_eq_map_all (dom : List α) :
-    conjGQs dom = (nonemptySubsets dom).map (fun X => fun Q => X.all Q) := by
-  simp only [conjGQs]
-  congr 1; ext X Q; exact conjGQ_eq_all X Q
-
-/-- disjGQs generates map disjGQ over nonemptySubsets. -/
-theorem disjGQs_eq_map_any (dom : List α) :
-    disjGQs dom = (nonemptySubsets dom).map (fun X => fun Q => X.any Q) := by
-  simp only [disjGQs]
-  congr 1; ext X Q; exact disjGQ_eq_any X Q
 
 end Core.Quantification

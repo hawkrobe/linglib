@@ -315,13 +315,16 @@ def getOutcomeOf (label : String) (results : List LicensedResult) :
     secondary licenser. The unmarked/marked split in DOM languages is
     thus derivative of the licensing algorithm rather than a primitive
     of the case system. -/
-@[simp] def isDOMMarked : LicensingOutcome → Bool
-  | .bySecondary _ _ => true
-  | _ => false
+@[simp] def isDOMMarked : LicensingOutcome → Prop
+  | .bySecondary _ _ => True
+  | _ => False
+
+instance : DecidablePred isDOMMarked := fun o => by
+  cases o <;> unfold isDOMMarked <;> infer_instance
 
 /-- The set of DOM-marked NP labels in a result list. -/
 def domMarkedNPs (results : List LicensedResult) : List String :=
-  (results.filter λ r => isDOMMarked r.outcome).map (·.label)
+  (results.filter λ r => decide (isDOMMarked r.outcome)).map (·.label)
 
 -- ============================================================================
 -- § 6: Structural Properties

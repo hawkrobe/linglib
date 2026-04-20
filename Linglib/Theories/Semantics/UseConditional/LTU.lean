@@ -64,14 +64,20 @@ inductive UCType where
 /-- A type is use-conditional iff it is `u` or a function into a
 use-conditional type. This determines which dimension an expression's
 content targets during composition. -/
-def UCType.isUCType : UCType → Bool
-  | .u => true
-  | .func _ τ => τ.isUCType
-  | _ => false
+def UCType.IsUCType : UCType → Prop
+  | .u => True
+  | .func _ τ => τ.IsUCType
+  | _ => False
 
-theorem u_is_uc : UCType.u.isUCType = true := rfl
-theorem t_is_not_uc : UCType.t.isUCType = false := rfl
-theorem func_into_u_is_uc : (UCType.func .e .u).isUCType = true := rfl
+instance UCType.decIsUCType : DecidablePred UCType.IsUCType
+  | .e => isFalse (fun h => h)
+  | .t => isFalse (fun h => h)
+  | .u => isTrue trivial
+  | .func _ τ => UCType.decIsUCType τ
+
+theorem u_is_uc : UCType.u.IsUCType := trivial
+theorem t_is_not_uc : ¬ UCType.t.IsUCType := fun h => h
+theorem func_into_u_is_uc : (UCType.func .e .u).IsUCType := trivial
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -174,12 +180,12 @@ utterance*, not the described world — matching Kaplan's character/content
 distinction. -/
 structure ThreeDimMeaning (C : Type*) (W : Type*) where
   /-- Truth-conditional content: the at-issue proposition -/
-  tDim : W → Bool
+  tDim : W → Prop
   /-- Active use-conditional content being composed -/
-  sDim : W → Bool
+  sDim : W → Prop
   /-- Completed use-conditional propositions (stored, inaccessible to
       further truth-conditional composition) -/
-  uDim : C → Bool
+  uDim : C → Prop
 
 /-- Multidimensional application (@cite{gutzmann-2015}, (4.46)).
 
@@ -191,9 +197,9 @@ conjunction, which is what this definition implements. The sub-propositional
 case (where dims 1-2 are genuine function applications) is not formalized. -/
 def multidimApp {C W : Type*}
     (f a : ThreeDimMeaning C W) : ThreeDimMeaning C W where
-  tDim := λ w => f.tDim w && a.tDim w
-  sDim := λ w => f.sDim w && a.sDim w
-  uDim := λ c => f.uDim c && a.uDim c
+  tDim := λ w => f.tDim w ∧ a.tDim w
+  sDim := λ w => f.sDim w ∧ a.sDim w
+  uDim := λ c => f.uDim c ∧ a.uDim c
 
 /-- Use-conditional elimination (@cite{gutzmann-2015}, (4.54)).
 
@@ -205,11 +211,11 @@ use-conditional proposition), UE:
 The `eval` parameter bridges the world-indexed s-dim to the
 context-indexed u-dim, typically by projecting the world from the context. -/
 def ucElim {C W : Type*}
-    (m : ThreeDimMeaning C W) (eval : (W → Bool) → C → Bool) :
+    (m : ThreeDimMeaning C W) (eval : (W → Prop) → C → Prop) :
     ThreeDimMeaning C W where
   tDim := m.tDim
   sDim := m.tDim
-  uDim := λ c => m.uDim c && eval m.sDim c
+  uDim := λ c => m.uDim c ∧ eval m.sDim c
 
 /-- Lift a truth-conditional proposition to a three-dimensional meaning.
 
@@ -217,20 +223,20 @@ Both t-dim and s-dim carry the propositional content.
 u-dim is trivially satisfied (no use-conditional content yet).
 Corresponds to a pure truth-conditional lexical item before LER
 extension. -/
-def ofTruthConditional {C W : Type*} (p : W → Bool) : ThreeDimMeaning C W where
+def ofTruthConditional {C W : Type*} (p : W → Prop) : ThreeDimMeaning C W where
   tDim := p
   sDim := p
-  uDim := λ _ => true
+  uDim := λ _ => True
 
 /-- Lift a use-conditional function to a three-dimensional meaning.
 
 t-dim is trivially true (UCIs do not contribute truth conditions).
 s-dim carries the active UCI content.
 u-dim is trivially true until `ucElim` fires. -/
-def ofUCI {C W : Type*} (ucContent : W → Bool) : ThreeDimMeaning C W where
-  tDim := λ _ => true
+def ofUCI {C W : Type*} (ucContent : W → Prop) : ThreeDimMeaning C W where
+  tDim := λ _ => True
   sDim := ucContent
-  uDim := λ _ => true
+  uDim := λ _ => True
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -251,7 +257,7 @@ field. This corresponds to @cite{gutzmann-2015}'s lowering operator
 `⇓_c` which converts u-propositions to world sets by fixing context
 parameters except the world. -/
 def toTwoDim {C W : Type*}
-    (m : ThreeDimMeaning C W) (evalU : (C → Bool) → W → Bool) :
+    (m : ThreeDimMeaning C W) (evalU : (C → Prop) → W → Prop) :
     TwoDimProp W where
   atIssue := m.tDim
   ci := evalU m.uDim
@@ -267,29 +273,29 @@ This is the formal guarantee of *non-interaction*: storing use-conditional
 content in the u-dimension never changes what a sentence says about the
 world. -/
 theorem ucElim_preserves_tDim {C W : Type*}
-    (m : ThreeDimMeaning C W) (eval : (W → Bool) → C → Bool) :
+    (m : ThreeDimMeaning C W) (eval : (W → Prop) → C → Prop) :
     (ucElim m eval).tDim = m.tDim := rfl
 
 /-- After UE, the s-dimension is reset to the t-dimension. -/
 theorem ucElim_resets_sDim {C W : Type*}
-    (m : ThreeDimMeaning C W) (eval : (W → Bool) → C → Bool) :
+    (m : ThreeDimMeaning C W) (eval : (W → Prop) → C → Prop) :
     (ucElim m eval).sDim = m.tDim := rfl
 
 /-- MA merges u-dimensions via conjunction. Completed use-conditional
 propositions from both constituents are preserved. -/
 theorem multidimApp_merges_uDim {C W : Type*}
     (f a : ThreeDimMeaning C W) (c : C) :
-    (multidimApp f a).uDim c = (f.uDim c && a.uDim c) := rfl
+    (multidimApp f a).uDim c ↔ (f.uDim c ∧ a.uDim c) := Iff.rfl
 
 /-- A pure truth-conditional expression has trivial use conditions. -/
 theorem ofTruthConditional_trivial_uDim {C W : Type*}
-    (p : W → Bool) (c : C) :
-    (ofTruthConditional (C := C) p).uDim c = true := rfl
+    (p : W → Prop) (c : C) :
+    (ofTruthConditional (C := C) p).uDim c := trivial
 
 /-- A UCI has trivial truth conditions. -/
 theorem ofUCI_trivial_tDim {C W : Type*}
-    (ucContent : W → Bool) (w : W) :
-    (ofUCI (C := C) ucContent).tDim w = true := rfl
+    (ucContent : W → Prop) (w : W) :
+    (ofUCI (C := C) ucContent).tDim w := trivial
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -308,7 +314,7 @@ inductive LTUDeriv (C : Type*) (W : Type*) where
   /-- Multidimensional application of two sub-derivations -/
   | app : LTUDeriv C W → LTUDeriv C W → LTUDeriv C W
   /-- Use-conditional elimination applied to a sub-derivation -/
-  | elim : LTUDeriv C W → ((W → Bool) → C → Bool) → LTUDeriv C W
+  | elim : LTUDeriv C W → ((W → Prop) → C → Prop) → LTUDeriv C W
 
 /-- Evaluate a derivation to its three-dimensional meaning. -/
 def LTUDeriv.eval {C W : Type*} : LTUDeriv C W → ThreeDimMeaning C W
@@ -320,7 +326,7 @@ def LTUDeriv.eval {C W : Type*} : LTUDeriv C W → ThreeDimMeaning C W
 replacing s-dim with t-dim and u-dim with trivial content. This
 produces a "truth-conditional shadow" of the derivation. -/
 def LTUDeriv.stripUC {C W : Type*} : LTUDeriv C W → LTUDeriv C W
-  | .leaf m => .leaf ⟨m.tDim, m.tDim, λ _ => true⟩
+  | .leaf m => .leaf ⟨m.tDim, m.tDim, λ _ => True⟩
   | .app d₁ d₂ => .app d₁.stripUC d₂.stripUC
   | .elim d f => .elim d.stripUC f
 
@@ -336,12 +342,12 @@ truth conditions — not through MA, not through UE, not through any
 combination of the two. This is the fundamental architectural guarantee
 of L_TU. -/
 theorem non_interaction {C W : Type*} (d : LTUDeriv C W) (w : W) :
-    d.eval.tDim w = d.stripUC.eval.tDim w := by
+    d.eval.tDim w ↔ d.stripUC.eval.tDim w := by
   induction d with
-  | leaf _ => rfl
+  | leaf _ => exact Iff.rfl
   | app d₁ d₂ ih₁ ih₂ =>
     simp only [LTUDeriv.eval, LTUDeriv.stripUC, multidimApp]
-    rw [ih₁, ih₂]
+    exact and_congr ih₁ ih₂
   | elim d _ ih =>
     simp only [LTUDeriv.eval, LTUDeriv.stripUC, ucElim]
     exact ih
@@ -349,7 +355,7 @@ theorem non_interaction {C W : Type*} (d : LTUDeriv C W) (w : W) :
 /-- Non-interaction at the function level (extensional form). -/
 theorem non_interaction_ext {C W : Type*} (d : LTUDeriv C W) :
     d.eval.tDim = d.stripUC.eval.tDim :=
-  funext (non_interaction d)
+  funext (λ w => propext (non_interaction d w))
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -364,19 +370,17 @@ t-dim of the truth-conditional input. This is the formal content of
 "UCIs do not contribute truth conditions." -/
 theorem multidimApp_uci_tDim {C W : Type*}
     (tc : ThreeDimMeaning C W) (uci : ThreeDimMeaning C W)
-    (h : ∀ w, uci.tDim w = true) (w : W) :
-    (multidimApp tc uci).tDim w = tc.tDim w := by
-  simp only [multidimApp]
-  rw [h, Bool.and_true]
+    (h : ∀ w, uci.tDim w) (w : W) :
+    (multidimApp tc uci).tDim w ↔ tc.tDim w := by
+  simp only [multidimApp, and_iff_left (h w)]
 
 /-- Composing with truth-conditional content does not change truth conditions
 of an expression whose t-dim is already trivial. -/
 theorem multidimApp_tc_preserves_uci_tDim {C W : Type*}
     (uci tc : ThreeDimMeaning C W)
-    (h : ∀ w, uci.tDim w = true) (w : W) :
-    (multidimApp uci tc).tDim w = tc.tDim w := by
-  simp only [multidimApp]
-  rw [h, Bool.true_and]
+    (h : ∀ w, uci.tDim w) (w : W) :
+    (multidimApp uci tc).tDim w ↔ tc.tDim w := by
+  simp only [multidimApp, and_iff_right (h w)]
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -394,13 +398,13 @@ the individual 2D projections.
 This is the formal guarantee that L_TU's 3D composition "collapses"
 correctly into @cite{potts-2005}'s 2D framework. -/
 theorem toTwoDim_multidimApp {C W : Type*}
-    (f a : ThreeDimMeaning C W) (evalU : (C → Bool) → W → Bool)
-    (hConj : ∀ (p q : C → Bool) (w : W),
-      evalU (λ c => p c && q c) w = (evalU p w && evalU q w)) :
+    (f a : ThreeDimMeaning C W) (evalU : (C → Prop) → W → Prop)
+    (hConj : ∀ (p q : C → Prop) (w : W),
+      evalU (λ c => p c ∧ q c) w ↔ (evalU p w ∧ evalU q w)) :
     toTwoDim (multidimApp f a) evalU =
     TwoDimProp.and (toTwoDim f evalU) (toTwoDim a evalU) := by
-  simp only [toTwoDim, multidimApp, TwoDimProp.and]
-  congr 1
-  funext w; exact hConj f.uDim a.uDim w
+  ext w
+  · simp only [toTwoDim, multidimApp, TwoDimProp.and]
+  · simp only [toTwoDim, multidimApp, TwoDimProp.and, hConj]
 
 end Semantics.UseConditional

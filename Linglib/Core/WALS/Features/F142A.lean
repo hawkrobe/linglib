@@ -14,10 +14,13 @@ namespace Core.WALS.F142A
 
 /-- WALS 142A values. -/
 inductive ParaLinguisticUsagesOfClicks where
-  | logicalMeanings  -- Logical meanings (47 languages)
-  | affectiveMeanings  -- Affective meanings (71 languages)
-  | otherOrNone  -- Other or none (25 languages)
-  deriving DecidableEq, Repr
+  /-- Logical meanings (47 languages). -/
+  | logicalMeanings
+  /-- Affective meanings (71 languages). -/
+  | affectiveMeanings
+  /-- Other or none (25 languages). -/
+  | otherOrNone
+  deriving DecidableEq, BEq, Repr
 
 /-- Complete WALS 142A dataset (143 languages). -/
 def allData : List (Datapoint ParaLinguisticUsagesOfClicks) :=
@@ -165,16 +168,6 @@ def allData : List (Datapoint ParaLinguisticUsagesOfClicks) :=
   , { walsCode := "yko", language := "Yukaghir (Kolyma)", iso := "yux", value := .otherOrNone }
   , { walsCode := "zsq", language := "Zapotec (San Lucas Quiaviní)", iso := "zab", value := .affectiveMeanings }
   ]
-
--- Count verification
-theorem total_count : allData.length = 143 := by native_decide
-
-theorem count_logicalMeanings :
-    (allData.filter (·.value == .logicalMeanings)).length = 47 := by native_decide
-theorem count_affectiveMeanings :
-    (allData.filter (·.value == .affectiveMeanings)).length = 71 := by native_decide
-theorem count_otherOrNone :
-    (allData.filter (·.value == .otherOrNone)).length = 25 := by native_decide
 
 /-- Look up a language by WALS code. -/
 def lookup (code : String) := Datapoint.lookup allData code

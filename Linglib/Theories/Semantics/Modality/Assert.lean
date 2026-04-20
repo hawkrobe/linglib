@@ -62,8 +62,9 @@ a speech act IS the performance of propositional content.
 This derives `EventBinder.speechAct.hasContent = true`: the speech
 event introduced by SAP always carries content, hence it can always
 project epistemic R (content licensing, EventRelativity §8). -/
-def hasContent : SpeechActType → Bool
-  | _ => true
+def HasContent (_ : SpeechActType) : Prop := True
+
+instance : DecidablePred HasContent := fun _ => instDecidableTrue
 
 /-- The primary modal flavor licensed by each speech act type.
 
@@ -177,16 +178,15 @@ The bridge theorems below make this derivation explicit. -/
 /-- All speech act types are contentful — by definition, performing
 a speech act involves producing propositional content. -/
 theorem all_speech_acts_contentful :
-    ∀ t : SpeechActType, hasContent t = true := by
-  intro t; cases t <;> rfl
+    ∀ t : SpeechActType, HasContent t := fun _ => trivial
 
 /-- ASSERT produces a contentful event. -/
 theorem assert_contentful {W : Type*} (beliefs : W → List ((W → Bool))) :
-    hasContent (ASSERT beliefs).actType = true := rfl
+    HasContent (ASSERT beliefs).actType := trivial
 
 /-- DIRECT produces a contentful event. -/
 theorem direct_contentful {W : Type*} (obligations : W → List ((W → Bool))) :
-    hasContent (DIRECT obligations).actType = true := rfl
+    HasContent (DIRECT obligations).actType := trivial
 
 /-- Speech act contentfulness agrees with `EventBinder.speechAct.hasContent`.
 
@@ -195,7 +195,7 @@ This is the key bridge: the stipulated fact in EventRelativity §8
 analysis — ASSERT always introduces a contentful event. -/
 theorem sap_justifies_binder_content :
     -- Every speech act type is contentful (this file)
-    (∀ t : SpeechActType, hasContent t = true) ∧
+    (∀ t : SpeechActType, HasContent t) ∧
     -- EventBinder.speechAct is contentful (EventRelativity §8)
     EventBinder.speechAct.hasContent = true :=
   ⟨all_speech_acts_contentful, rfl⟩
@@ -283,17 +283,17 @@ private def fImpr : AnchoringFn Unit LeaveWorld :=
 /-- Under the declarative, both leaving and staying are possible
 (speaker is uncertain). -/
 theorem declarative_leave_possible :
-    possibility fDecl () allLW (· == .leave) .leave := by decide
+    possibility fDecl () allLW (· = .leave) .leave := by decide
 
 theorem declarative_stay_possible :
-    possibility fDecl () allLW (· == .stay) .leave := by decide
+    possibility fDecl () allLW (· = .stay) .leave := by decide
 
 /-- Under the imperative, leaving is permitted but staying is NOT. -/
 theorem imperative_leave_permitted :
-    possibility fImpr () allLW (· == .leave) .leave := by decide
+    possibility fImpr () allLW (· = .leave) .leave := by decide
 
 theorem imperative_stay_not_permitted :
-    ¬ possibility fImpr () allLW (· == .stay) .leave := by decide
+    ¬ possibility fImpr () allLW (· = .stay) .leave := by decide
 
 /-- The core contrast: same modal (◇), same proposition (stay),
 same evaluation world — but different speech acts yield different
@@ -301,9 +301,9 @@ truth values. The speech act type, mediated through CON(e*),
 determines the modal domain. -/
 theorem speech_act_modulates_domain :
     -- Declarative: ◇(stay) = true (staying is epistemically possible)
-    possibility fDecl () allLW (· == .stay) .leave ∧
+    possibility fDecl () allLW (· = .stay) .leave ∧
     -- Imperative: ◇(stay) = false (staying is not permitted)
-    ¬ possibility fImpr () allLW (· == .stay) .leave := by
+    ¬ possibility fImpr () allLW (· = .stay) .leave := by
   refine ⟨?_, ?_⟩ <;> decide
 
 

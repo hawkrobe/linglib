@@ -1,5 +1,6 @@
 import Linglib.Phenomena.Complementation.Attitudes.IntentionalIdentity.Data
 import Linglib.Theories.Semantics.TypeTheoretic.Modality
+import Mathlib.Data.Set.Basic
 
 /-!
 # Intentional Identity Bridge @cite{chatzikyriakidis-etal-2025}
@@ -108,12 +109,12 @@ theorem intentional_identity_is_type_sharing :
 
 /-! ## Contrast with possible-worlds approach
 
-In `Prop' W`, there's no way to distinguish "Hob thinks p"
+In `Set W`, there's no way to distinguish "Hob thinks p"
 from "Hob thinks q" when p and q are the same set of worlds.
 The intensional identity of the witch type is lost. -/
 
 /-- Two ITypes can share the same (empty) carrier but differ intensionally.
-This is why TTR can handle intentional identity but `Prop' W` cannot:
+This is why TTR can handle intentional identity but `Set W` cannot:
 it distinguishes types by identity, not just extension. -/
 theorem intensional_distinction_enables_ii :
     witchType.extEquiv ⟨Empty, "ghost_who_haunts"⟩ ∧

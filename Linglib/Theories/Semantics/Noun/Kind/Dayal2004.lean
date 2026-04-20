@@ -495,11 +495,15 @@ Kind-level predicates (@cite{dayal-2004}: 401-403):
 
 These directly predicate of kinds without coercion.
 -/
-def isKindLevelPredicate : String → Bool
-  | "extinct" | "widespread" | "rare" | "common" => true
-  | "evolve" | "originate" | "die_out" => true
-  | "invented" | "discovered" => true
-  | _ => false
+def isKindLevelPredicate : String → Prop
+  | "extinct" | "widespread" | "rare" | "common" => True
+  | "evolve" | "originate" | "die_out" => True
+  | "invented" | "discovered" => True
+  | _ => False
+
+instance : DecidablePred isKindLevelPredicate := fun s => by
+  unfold isKindLevelPredicate
+  split <;> infer_instance
 
 -- Well-Established Kinds
 
@@ -514,12 +518,16 @@ For ι to apply to a kind (giving "the NP"), the kind must be
 
 This explains why modified NPs resist the singular kind reading.
 -/
-def isWellEstablishedKind : String → Bool
-  | "lion" | "tiger" | "dog" | "cat" => true
-  | "dodo" | "mammoth" | "dinosaur" => true  -- Extinct kinds
-  | "computer" | "telephone" | "automobile" => true  -- Artifacts
-  | "wheel" | "printing_press" => true  -- Inventions
-  | _ => false
+def isWellEstablishedKind : String → Prop
+  | "lion" | "tiger" | "dog" | "cat" => True
+  | "dodo" | "mammoth" | "dinosaur" => True  -- Extinct kinds
+  | "computer" | "telephone" | "automobile" => True  -- Artifacts
+  | "wheel" | "printing_press" => True  -- Inventions
+  | _ => False
+
+instance : DecidablePred isWellEstablishedKind := fun s => by
+  unfold isWellEstablishedKind
+  split <;> infer_instance
 
 /--
 Why modification blocks singular kind reading:

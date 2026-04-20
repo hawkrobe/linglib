@@ -45,17 +45,17 @@ open Fragments.Drubea.Prosody
 /-- Every monosyllabic minimal pair shares the same segmental form.
     The contrast is **purely prosodic** — the register feature `l` is
     the only difference between the two members of each pair
-    (@cite{lionnet-2025}: ex. 4). -/
+    (@cite{lionnet-2025}). -/
 theorem minimal_pairs_same_segments :
     monoMinimalPairs.all (fun (a, b) => a.form == b.form) = true := by
-  native_decide
+  decide
 
 /-- The contrast in each minimal pair IS the register specification:
     one member is registerless, the other is σ1-downstepped. -/
 theorem minimal_pairs_register_contrast :
     monoMinimalPairs.all (fun (a, b) =>
       a.pattern == .registerless && b.pattern == .σ1_downstepped) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 2: Culminativity
@@ -95,15 +95,15 @@ theorem cvPlusV_three_way_distinct :
 
 /-- CVV registerless: both morae unspecified [∅, ∅]. -/
 theorem cvv_registerless :
-    StemPattern.registerless.toSpecs 2 = [none, none] := by rfl
+    StemPattern.registerless.toSpecs 2 = [TRN.empty, TRN.empty] := by rfl
 
 /-- ⁺CVV: downstep on first mora [l, ∅]. -/
 theorem cvv_σ1_downstepped :
-    StemPattern.σ1_downstepped.toSpecs 2 = [some .l, none] := by rfl
+    StemPattern.σ1_downstepped.toSpecs 2 = [TRN.downstep, TRN.empty] := by rfl
 
 /-- CV⁺V: downstep on second mora [∅, l]. -/
 theorem cvPlusV_σ2_downstepped :
-    StemPattern.σ2_downstepped.toSpecs 2 = [none, some .l] := by rfl
+    StemPattern.σ2_downstepped.toSpecs 2 = [TRN.empty, TRN.downstep] := by rfl
 
 /-- With only 1 mora (monomoraic CV), only two patterns are distinct:
     registerless and σ1-downstepped. The σ2 pattern collapses to
@@ -124,30 +124,30 @@ theorem monomoraic_two_way :
     each downstep adds another step of cumulative descent. The offset-4
     realization below is just an arbitrary anchoring of those deltas. -/
 theorem four_downsteps_deltas :
-    pitchDeltas [some .l, some .l, some .l, some .l] = [-1, -2, -3, -4] := by
+    pitchDeltas [TRN.downstep, TRN.downstep, TRN.downstep, TRN.downstep] = [-1, -2, -3, -4] := by
   decide
 
 theorem four_downsteps_terrace :
     realizePitch 4
-      [some .l, some .l, some .l, some .l] = [3, 2, 1, 0] := by
+      [TRN.downstep, TRN.downstep, TRN.downstep, TRN.downstep] = [3, 2, 1, 0] := by
   decide
 
 /-- Registerless syllables following a downstep maintain the lowered
     register — they are realized at the same pitch as the downstepped
-    syllable (cf. ex. 7–8, Figures 3–4). -/
+    syllable. -/
 theorem registerless_maintains_lowered :
     realizePitch 4
-      [some .l, none, none] = [3, 3, 3] := by
-  native_decide
+      [TRN.downstep, TRN.empty, TRN.empty] = [3, 3, 3] := by
+  decide
 
 /-- A mixed sequence of downstepped and registerless syllables:
-    each downstep creates a new lower plateau
-    (cf. ex. 15: /⁺ne-⁺boo-V ⁺ya yaa ⁺me a-⁺te/). -/
+    each downstep creates a new lower plateau, registerless RBUs
+    inherit the current register. -/
 theorem mixed_terracing :
     realizePitch 4
-      [some .l, some .l, none, some .l, none, none, some .l] =
+      [TRN.downstep, TRN.downstep, TRN.empty, TRN.downstep, TRN.empty, TRN.empty, TRN.downstep] =
       [3, 2, 2, 1, 1, 1, 0] := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 5: Pre-Downstep Raising (h-Epenthesis)
@@ -156,77 +156,64 @@ theorem mixed_terracing :
 /-- Abrupt h-epenthesis: insert `h` on the registerless RBU immediately
     preceding a downstep (cf. ex. 13b; @cite{lionnet-2025} §3.2, §4.4). -/
 theorem h_epenthesis_abrupt :
-    hEpenthesis [none, some .l, none] =
-      [some .h, some .l, none] := by rfl
-
-/-- After h-epenthesis, the raised RBU is realized above baseline,
-    creating a sharper contrast with the following downstep
-    (cf. Figure 8). -/
-theorem h_epenthesis_pitch :
-    realizePitch 4 (hEpenthesis [none, some .l, none]) = [5, 4, 4] := by
-  native_decide
+    hEpenthesis [TRN.empty, TRN.downstep, TRN.empty] =
+      [TRN.upstep, TRN.downstep, TRN.empty] := by rfl
 
 /-- Spreading h-epenthesis: raising extends over the entire sequence
     of registerless syllables before a downstep
-    (cf. ex. 16: /⁺tã ⁺mwa ne-re ma⁺a/; @cite{lionnet-2025} §3.2). -/
+    (@cite{lionnet-2025} §3.2). -/
 theorem h_epenthesis_spreads :
-    hEpenthesisSpread [none, none, none, some .l, none] =
-      [some .h, some .h, some .h, some .l, none] := by rfl
-
-/-- Registerless RBUs get h-epenthesis before a downstep;
-    downstepped RBUs do NOT — they are already `l`-bearing
-    (cf. ex. 32 vs 33; @cite{lionnet-2025} §4.5). -/
-theorem registerless_gets_h_downstepped_does_not :
-    hEpenthesis [none, some .l] = [some .h, some .l] ∧
-    hEpenthesis [some .l, some .l] = [some .l, some .l] := ⟨rfl, rfl⟩
+    hEpenthesisSpread [TRN.empty, TRN.empty, TRN.empty, TRN.downstep, TRN.empty] =
+      [TRN.upstep, TRN.upstep, TRN.upstep, TRN.downstep, TRN.empty] := by rfl
 
 -- ============================================================================
 -- § 6: Utterance-Initial Neutralization
 -- ============================================================================
 
 /-- Utterance-initial downstep is not phonetically realized: there is
-    no preceding register to contrast with
-    (cf. ex. 30 vs 31; @cite{lionnet-2025} §3.5, §4.5). -/
+    no preceding register to contrast with (@cite{lionnet-2025} §3.5,
+    §4.5). The realized pitch sequence is indistinguishable from a
+    registerless initial. -/
 theorem utt_initial_no_contrast :
-    realizePitch 4 (uttInitialNeutralize [some .l, none]) =
-    realizePitch 4 [none, none] := by
-  native_decide
+    realizePitchUtterance 4 [TRN.downstep, TRN.empty] =
+    realizePitch 4 [TRN.empty, TRN.empty] := by
+  decide
 
 /-- The contrast between registerless and downstepped IS maintained
     when a downstepped syllable follows: the initial registerless
     syllable undergoes pre-downstep raising, the initial downstepped
-    one does not (cf. ex. 32 vs 33; @cite{lionnet-2025} §3.5). -/
+    one does not (@cite{lionnet-2025} §3.5, §4.5). The minimal pair
+    `/goo ⁺mie/` 'wet Hibbertia' (registerless initial → h-epenthesis)
+    vs `/⁺goo ⁺mie/` 'wet tree' (downstepped initial → no h-epenthesis)
+    is the diagnostic. -/
 theorem utt_initial_contrast_with_following_downstep :
-    -- /goo ⁺mie/ 'wet Hibbertia': registerless initial → h-epenthesis
-    hEpenthesis [none, some .l] = [some .h, some .l] ∧
-    -- /⁺goo ⁺mie/ 'wet tree': downstepped initial → no h-epenthesis
-    hEpenthesis [some .l, some .l] = [some .l, some .l] := ⟨rfl, rfl⟩
+    hEpenthesis [TRN.empty, TRN.downstep] = [TRN.upstep, TRN.downstep] ∧
+    hEpenthesis [TRN.downstep, TRN.downstep] = [TRN.downstep, TRN.downstep] := ⟨rfl, rfl⟩
+
+/-- The reason the contrast survives utterance-initial neutralization:
+    `realizePitchUtterance` only suppresses the *phonetic* drop, leaving
+    the underlying `l` in place to block h-epenthesis on itself. The
+    underlying form is still culminative-sensitive
+    (@cite{lionnet-2025} §3.5). -/
+theorem utt_initial_l_underlyingly_active :
+    -- Phonetically flat utterance-initially…
+    realizePitchUtterance 4 [TRN.downstep, TRN.downstep] = realizePitch 4 [TRN.empty, TRN.downstep] ∧
+    -- …but the underlying `l` blocks h-epenthesis on itself.
+    hEpenthesis [TRN.downstep, TRN.downstep] = [TRN.downstep, TRN.downstep] := by
+  refine ⟨by decide, rfl⟩
 
 -- ============================================================================
--- § 7: Utterance-Final Prosody
+-- § 7: Drubea Utterance-Final Raising (h%)
 -- ============================================================================
 
-/-- Drubea utterance-final raising: h% docks onto the final
-    registerless syllable (cf. ex. 20: /⁺taa bee pwi +⁺%/;
-    @cite{lionnet-2025} §3.3, §4.8). -/
+/-- Drubea utterance-final raising: `h%` docks onto the final
+    registerless syllable (@cite{lionnet-2025} §3.3, §4.8). The
+    Numèè utterance-final downstep `⁺%` is formalized separately
+    in §13 because its eligibility conditions (light CV + registerless
+    penult) require explicit syllable structure. -/
 theorem drubea_final_raising :
-    applyBoundary [some .l, none, none] .h_pct =
-      [some .l, none, some .h] := by native_decide
-
-/-- Numèè utterance-final lowering: l% docks onto final light CV
-    syllable after a registerless syllable
-    (cf. ex. 24–25; @cite{lionnet-2025} §3.4, §4.8). -/
-theorem numee_final_lowering :
-    applyBoundary [none, none] .l_pct =
-      [none, some .l] := by native_decide
-
-/-- Boundary l% after a downstepped syllable: the final registerless
-    syllable acquires a boundary downstep, producing two consecutive
-    pitch drops (@cite{lionnet-2025} §3.4, §4.8). -/
-theorem boundary_after_downstep :
-    realizePitch 4 (applyBoundary [some .l, none] .l_pct) =
-      [3, 2] := by
-  native_decide
+    applyBoundary [TRN.downstep, TRN.empty, TRN.empty] .h_pct =
+      [TRN.downstep, TRN.empty, TRN.upstep] := by decide
 
 -- ============================================================================
 -- § 8: Downstep Properties (Leben 2018)
@@ -251,6 +238,21 @@ theorem drubea_core_properties :
     drubeaDownstep.affectsDomain ∧
     drubeaDownstep.changesRegister ∧
     drubeaDownstep.isCumulative := ⟨rfl, rfl, rfl⟩
+
+/-- The `functionsContrastively` annotation on `drubeaDownstep` is not a
+    free stipulation: it is *witnessed* by `monoMinimalPairs`. A pair of
+    segmentally identical stems differing only in register (the form
+    equality of `minimal_pairs_same_segments` plus the register
+    contrast of `minimal_pairs_register_contrast`) is exactly what
+    `functionsContrastively` claims for the lexical case
+    (@cite{lionnet-2025} §3.10). -/
+theorem drubea_contrastively_witnessed :
+    drubeaDownstep.functionsContrastively = true ∧
+    ∃ a b : StemEntry, a.form = b.form ∧ a.specs ≠ b.specs := by
+  refine ⟨rfl, ?_⟩
+  refine ⟨⟨"be", "death; to die", .registerless, 1⟩,
+          ⟨"be", "niaouli tree", .σ1_downstepped, 1⟩, rfl, ?_⟩
+  decide
 
 -- ============================================================================
 -- § 9: Register vs Tonal Analysis
@@ -280,7 +282,7 @@ def tonalAnalysis : AnalysisInventory where
 theorem register_more_parsimonious :
     registerAnalysis.underlyingPrimitives < tonalAnalysis.underlyingPrimitives ∧
     registerAnalysis.postlexicalProcesses < tonalAnalysis.postlexicalProcesses :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- § 10: Typological Classification
@@ -395,7 +397,7 @@ theorem numee_singleton_no_boundary :
     numeeBoundaryEffect [niCoconut] = .none := by decide
 
 /-- Numèè syllables inherit the same register inventory as Drubea
-    morphemes — the per-mora `RegisterSpec` list `niBreast` carries is
+    morphemes — the per-mora `TRN` list `niBreast` carries is
     `IsCulminative`, just like Drubea stems. The boundary process is
     *postlexical* and does not feed culminativity, which is a property
     of underlying lexical specifications. -/

@@ -228,7 +228,7 @@ def allData : List IsraelDatum :=
   , redCentDatum, forPeanutsDatum ]
 
 -- Every fully-classified item has consistent canonicity
-#guard allData.all (·.item.canonicityConsistent)
+example : ∀ d ∈ allData, d.item.canonicityConsistent := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Bridge to Entailment Profiles

@@ -227,7 +227,7 @@ structure RootProfile where
     - `result`: root entails change — passes restitutive *again* test
     - `cause`: root entails causation
 
-    Constraints: `result → state` and `cause → result` (see `wellFormed`).
+    Constraints: `result → state` and `cause → result` (see `WellFormed`).
 
     @cite{beavers-koontz-garboden-2020} -/
 structure RootEntailments where
@@ -241,17 +241,26 @@ namespace RootEntailments
 
 /-- If a root entails change (result), it entails a state that changes.
     B&@cite{beavers-koontz-garboden-2020}: result entailments presuppose state entailments. -/
-def resultImpliesState (r : RootEntailments) : Bool :=
-  !r.result || r.state
+def ResultImpliesState (r : RootEntailments) : Prop :=
+  r.result = true → r.state = true
+
+instance (r : RootEntailments) : Decidable r.ResultImpliesState := by
+  unfold ResultImpliesState; infer_instance
 
 /-- If a root entails causation, it entails what is caused (a result).
     B&@cite{beavers-koontz-garboden-2020}: cause entailments presuppose result entailments. -/
-def causeImpliesResult (r : RootEntailments) : Bool :=
-  !r.cause || r.result
+def CauseImpliesResult (r : RootEntailments) : Prop :=
+  r.cause = true → r.result = true
+
+instance (r : RootEntailments) : Decidable r.CauseImpliesResult := by
+  unfold CauseImpliesResult; infer_instance
 
 /-- Well-formedness: both collocational constraints hold. -/
-def wellFormed (r : RootEntailments) : Bool :=
-  r.resultImpliesState && r.causeImpliesResult
+def WellFormed (r : RootEntailments) : Prop :=
+  r.ResultImpliesState ∧ r.CauseImpliesResult
+
+instance (r : RootEntailments) : Decidable r.WellFormed := by
+  unfold WellFormed; infer_instance
 
 /-! ### Canonical root types (B&KG Table 12) -/
 
@@ -299,25 +308,29 @@ def minimal : RootEntailments := ⟨false, false, false, false⟩
 
 /-! ### Canonical type well-formedness -/
 
-theorem propertyConcept_wf : propertyConcept.wellFormed = true := rfl
-theorem pureResult_wf : pureResult.wellFormed = true := rfl
-theorem causativeResult_wf : causativeResult.wellFormed = true := rfl
-theorem pureManner_wf : pureManner.wellFormed = true := rfl
-theorem mannerResult_wf : mannerResult.wellFormed = true := rfl
-theorem fullSpec_wf : fullSpec.wellFormed = true := rfl
-theorem minimal_wf : minimal.wellFormed = true := rfl
+theorem propertyConcept_wf : propertyConcept.WellFormed := by decide
+theorem pureResult_wf : pureResult.WellFormed := by decide
+theorem causativeResult_wf : causativeResult.WellFormed := by decide
+theorem pureManner_wf : pureManner.WellFormed := by decide
+theorem mannerResult_wf : mannerResult.WellFormed := by decide
+theorem fullSpec_wf : fullSpec.WellFormed := by decide
+theorem minimal_wf : minimal.WellFormed := by decide
 
 /-! ### MRC violation detection -/
 
 /-- Does this root violate Manner/Result Complementarity?
     B&KG Ch. 4: some roots encode both manner and result. -/
-def violatesMRC (r : RootEntailments) : Bool := r.manner && r.result
+def ViolatesMRC (r : RootEntailments) : Prop :=
+  r.manner = true ∧ r.result = true
 
-theorem fullSpec_violates_MRC : fullSpec.violatesMRC = true := rfl
-theorem mannerResult_violates_MRC : mannerResult.violatesMRC = true := rfl
-theorem pureResult_respects_MRC : pureResult.violatesMRC = false := rfl
-theorem pureManner_respects_MRC : pureManner.violatesMRC = false := rfl
-theorem causativeResult_respects_MRC : causativeResult.violatesMRC = false := rfl
+instance (r : RootEntailments) : Decidable r.ViolatesMRC := by
+  unfold ViolatesMRC; infer_instance
+
+theorem fullSpec_violates_MRC : fullSpec.ViolatesMRC := by decide
+theorem mannerResult_violates_MRC : mannerResult.ViolatesMRC := by decide
+theorem pureResult_respects_MRC : ¬ pureResult.ViolatesMRC := by decide
+theorem pureManner_respects_MRC : ¬ pureManner.ViolatesMRC := by decide
+theorem causativeResult_respects_MRC : ¬ causativeResult.ViolatesMRC := by decide
 
 end RootEntailments
 
@@ -350,14 +363,20 @@ inductive RootPosition where
 -- ════════════════════════════════════════════════════
 
 /-- Does a root profile constrain patient properties? -/
-def RootProfile.constrainsPatient (rp : RootProfile) : Bool :=
-  rp.patientRob.isConstrained
+def RootProfile.constrainsPatient (rp : RootProfile) : Prop :=
+  rp.patientRob.isConstrained = true
+
+instance (rp : RootProfile) : Decidable rp.constrainsPatient :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- Do two root profiles overlap (share at least one compatible event)? -/
-def RootProfile.overlaps (rp₁ rp₂ : RootProfile) : Bool :=
-  rp₁.forceMag.overlaps rp₂.forceMag &&
-  rp₁.forceDir.overlaps rp₂.forceDir &&
-  rp₁.patientRob.overlaps rp₂.patientRob &&
-  rp₁.resultType.overlaps rp₂.resultType &&
-  rp₁.agentVolition.overlaps rp₂.agentVolition &&
-  rp₁.agentControl.overlaps rp₂.agentControl
+def RootProfile.overlaps (rp₁ rp₂ : RootProfile) : Prop :=
+  rp₁.forceMag.overlaps rp₂.forceMag = true ∧
+  rp₁.forceDir.overlaps rp₂.forceDir = true ∧
+  rp₁.patientRob.overlaps rp₂.patientRob = true ∧
+  rp₁.resultType.overlaps rp₂.resultType = true ∧
+  rp₁.agentVolition.overlaps rp₂.agentVolition = true ∧
+  rp₁.agentControl.overlaps rp₂.agentControl = true
+
+instance (rp₁ rp₂ : RootProfile) : Decidable (rp₁.overlaps rp₂) :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _ ∧ _ ∧ _))

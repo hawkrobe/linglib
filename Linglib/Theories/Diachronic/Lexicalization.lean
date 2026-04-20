@@ -1,6 +1,6 @@
 import Linglib.Core.Efficiency
 import Linglib.Core.InformationTheory
-import Linglib.Theories.Pragmatics.RSA.Core.ConfigData
+import Linglib.Theories.Pragmatics.RSA.ConfigData
 
 /-!
 # Lexicalization: Efficient Encoding of Emerging Concepts

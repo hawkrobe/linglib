@@ -296,17 +296,15 @@ needed — the equality holds by `rfl`.
 
 /-- For polar questions, `disjOf [p, ¬p] = ⊤`. -/
 theorem disjOf_polar_eq_top {W : Type*} (p : (W → Bool)) :
-    disjOf [p, Core.Proposition.Decidable.pnot W p] = (fun _ => true) := by
+    disjOf [p, (fun w => !p w)] = (fun _ => true) := by
   funext w
-  simp only [disjOf, List.any_cons, List.any_nil, Bool.or_false,
-             Core.Proposition.Decidable.pnot]
+  simp only [disjOf, List.any_cons, List.any_nil, Bool.or_false]
   cases p w <;> rfl
 
 /-- For polar questions, the existence presupposition is trivially satisfied. -/
 theorem existsTrueAnswer_polar {W : Type*} (p : (W → Bool)) (w : W) :
-    existsTrueAnswer [p, Core.Proposition.Decidable.pnot W p] w = true := by
-  simp only [existsTrueAnswer, List.any_cons, List.any_nil, Bool.or_false,
-             Core.Proposition.Decidable.pnot]
+    existsTrueAnswer [p, (fun w => !p w)] w = true := by
+  simp only [existsTrueAnswer, List.any_cons, List.any_nil, Bool.or_false]
   cases p w <;> rfl
 
 -- ============================================================================
@@ -354,8 +352,8 @@ theorem karttunen_polar_requires_inconsistent_belief {W E : Type*}
     (relevance_dec : E → (W → Bool) → W → Bool)
     (x : E) (p : (W → Bool)) (w : W)
     (hConsistent :
-        ¬ (bel x p w = true ∧ bel x (Core.Proposition.Decidable.pnot W p) w = true)) :
-    karttunenCareInt bel relevance_dec x [p, Core.Proposition.Decidable.pnot W p] w
+        ¬ (bel x p w = true ∧ bel x ((fun w => !p w)) w = true)) :
+    karttunenCareInt bel relevance_dec x [p, (fun w => !p w)] w
       = false := by
   by_contra h
   rw [Bool.not_eq_false] at h
@@ -385,9 +383,9 @@ theorem elliott_polar_is_licit {W E : Type*}
     (settled : BouState W → (W → Bool) → Bool)
     (x : E) (p : (W → Bool)) (w : W)
     (hCare : careSem dox bou doxSupports settled x
-                [p, Core.Proposition.Decidable.pnot W p] w = true) :
+                [p, (fun w => !p w)] w = true) :
     elliottCareLex dox bou doxSupports settled x
-        [p, Core.Proposition.Decidable.pnot W p] w = true := by
+        [p, (fun w => !p w)] w = true := by
   simp only [elliottCareLex, Bool.and_eq_true]
   exact ⟨existsTrueAnswer_polar p w, hCare⟩
 
@@ -415,12 +413,12 @@ theorem elliott_and_karttunen_disagree_on_polar {W E : Type*}
     (settled : BouState W → (W → Bool) → Bool)
     (x : E) (p : (W → Bool)) (w : W)
     (hConsistent :
-        ¬ (bel x p w = true ∧ bel x (Core.Proposition.Decidable.pnot W p) w = true))
+        ¬ (bel x p w = true ∧ bel x ((fun w => !p w)) w = true))
     (hCare : careSem dox bou doxSupports settled x
-                [p, Core.Proposition.Decidable.pnot W p] w = true) :
+                [p, (fun w => !p w)] w = true) :
     elliottCareLex dox bou doxSupports settled x
-        [p, Core.Proposition.Decidable.pnot W p] w = true ∧
-    karttunenCareInt bel relevance_dec x [p, Core.Proposition.Decidable.pnot W p] w
+        [p, (fun w => !p w)] w = true ∧
+    karttunenCareInt bel relevance_dec x [p, (fun w => !p w)] w
       = false :=
   ⟨elliott_polar_is_licit dox bou doxSupports settled x p w hCare,
    karttunen_polar_requires_inconsistent_belief bel relevance_dec x p w hConsistent⟩
@@ -591,26 +589,26 @@ theorem care_is_semantically_rogative {W E : Type*}
     (settled : BouState W → (W → Bool) → Bool)
     (x : E) (p : (W → Bool)) (w : W)
     (hCare : careSem dox bou doxSupports settled x
-                [p, Core.Proposition.Decidable.pnot W p] w = true) :
+                [p, (fun w => !p w)] w = true) :
     IsSemanticallyRogative (elliottCareLex dox bou doxSupports settled) := by
   rintro ⟨V_prop, hKR⟩
   -- (1) The polar care-claim is true under the witness.
   have hPolar :
       elliottCareLex dox bou doxSupports settled x
-        [p, Core.Proposition.Decidable.pnot W p] w = true :=
+        [p, (fun w => !p w)] w = true :=
     elliott_polar_is_licit dox bou doxSupports settled x p w hCare
   -- (2) Karttunen (→) at the polar question forces V_prop on each alternative.
-  have hAll := (hKR x [p, Core.Proposition.Decidable.pnot W p] w).mp hPolar
+  have hAll := (hKR x [p, (fun w => !p w)] w).mp hPolar
   have hVp_p : V_prop x p w = true := hAll p List.mem_cons_self
-  have hVp_np : V_prop x (Core.Proposition.Decidable.pnot W p) w = true :=
+  have hVp_np : V_prop x ((fun w => !p w)) w = true :=
     hAll _ (List.mem_cons_of_mem _ List.mem_cons_self)
   -- (3) Karttunen (←) at each singleton forces elliottCareLex on the singleton.
   have hSing_p : elliottCareLex dox bou doxSupports settled x [p] w = true :=
     (hKR x [p] w).mpr (fun q hq => by rw [List.mem_singleton.mp hq]; exact hVp_p)
   have hSing_np :
       elliottCareLex dox bou doxSupports settled x
-        [Core.Proposition.Decidable.pnot W p] w = true :=
-    (hKR x [Core.Proposition.Decidable.pnot W p] w).mpr
+        [(fun w => !p w)] w = true :=
+    (hKR x [(fun w => !p w)] w).mpr
       (fun q hq => by rw [List.mem_singleton.mp hq]; exact hVp_np)
   -- (4) Singleton care extracts the existence presupposition: p w and (¬p) w.
   simp only [elliottCareLex, existsTrueAnswer, List.any_cons, List.any_nil,
@@ -618,7 +616,7 @@ theorem care_is_semantically_rogative {W E : Type*}
   obtain ⟨hPw, _⟩ := hSing_p
   obtain ⟨hNotPw, _⟩ := hSing_np
   -- hNotPw : (pnot W p) w = true, i.e., !(p w) = true. Combined with hPw, false.
-  simp only [Core.Proposition.Decidable.pnot, hPw, Bool.not_true] at hNotPw
+  simp only [hPw, Bool.not_true] at hNotPw
   exact Bool.false_ne_true hNotPw
 
 -- ============================================================================
@@ -790,22 +788,22 @@ and the bouletic state is settled by `isSick` (Mary's bouletic singleton
 is `{w}`, contained in either `isSick` or `¬isSick` depending on `w`). -/
 theorem care_holds_on_polar (w : Bool) :
     careSem dox bou doxSupports settled Mary
-      [isSick, Core.Proposition.Decidable.pnot Bool isSick] w = true := by
+      [isSick, (fun w => !isSick w)] w = true := by
   cases w <;> decide
 
 /-- Mary's belief is consistent: she does not believe `p` and `¬p` at the
 same world. (Direct from the veridical-believer definition.) -/
 theorem bel_consistent (w : Bool) :
     ¬ (bel Mary isSick w = true ∧
-       bel Mary (Core.Proposition.Decidable.pnot Bool isSick) w = true) := by
+       bel Mary ((fun w => !isSick w)) w = true) := by
   intro ⟨h1, h2⟩
-  simp only [bel, isSick, Core.Proposition.Decidable.pnot] at h1 h2
+  simp only [bel, isSick] at h1 h2
   cases w <;> simp_all
 
 /-- **Felicity of (4a):** Mary cares whether Sue is sick. -/
 theorem mary_cares_whether_sue_is_sick (w : Bool) :
     elliottCareLex dox bou doxSupports settled Mary
-      [isSick, Core.Proposition.Decidable.pnot Bool isSick] w = true :=
+      [isSick, (fun w => !isSick w)] w = true :=
   elliott_polar_is_licit dox bou doxSupports settled Mary isSick w
     (care_holds_on_polar w)
 
@@ -813,7 +811,7 @@ theorem mary_cares_whether_sue_is_sick (w : Bool) :
 under the Karttunen reduction of `careDec`. -/
 theorem karttunen_predicts_false (w : Bool) :
     karttunenCareInt bel relevance_dec Mary
-      [isSick, Core.Proposition.Decidable.pnot Bool isSick] w = false :=
+      [isSick, (fun w => !isSick w)] w = false :=
   karttunen_polar_requires_inconsistent_belief bel relevance_dec Mary isSick w
     (bel_consistent w)
 

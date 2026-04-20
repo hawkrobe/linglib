@@ -37,12 +37,18 @@ def AvailableScopes.binary (surface inverse : ScopeReading) : AvailableScopes :=
   ⟨[surface, inverse], by simp⟩
 
 /-- Check if a specific reading is available -/
-def AvailableScopes.hasReading (a : AvailableScopes) (r : ScopeReading) : Bool :=
-  a.readings.contains r
+def AvailableScopes.hasReading (a : AvailableScopes) (r : ScopeReading) : Prop :=
+  r ∈ a.readings
+
+instance (a : AvailableScopes) (r : ScopeReading) : Decidable (a.hasReading r) :=
+  inferInstanceAs (Decidable (_ ∈ _))
 
 /-- Is the scope ambiguous (more than one reading)? -/
-def AvailableScopes.isAmbiguous (a : AvailableScopes) : Bool :=
+def AvailableScopes.isAmbiguous (a : AvailableScopes) : Prop :=
   a.readings.length > 1
+
+instance (a : AvailableScopes) : Decidable a.isAmbiguous :=
+  inferInstanceAs (Decidable (_ > _))
 
 /-- A ranked preference over scope readings. -/
 structure ScopePreference where

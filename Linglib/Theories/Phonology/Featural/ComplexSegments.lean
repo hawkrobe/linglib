@@ -36,9 +36,12 @@ namespace Phonology.FeatureGeometry
     (as a sibling under supralaryngeal), so it does not participate
     in complex segment formation: a velar nasal [ŋ] is simple despite
     activating both dorsal and soft palate. -/
-def GeomNode.isArticulator : GeomNode → Bool
-  | .labial | .coronal | .dorsal => true
-  | _ => false
+def GeomNode.IsArticulator : GeomNode → Prop
+  | .labial | .coronal | .dorsal => True
+  | _ => False
+
+instance : DecidablePred GeomNode.IsArticulator := fun n => by
+  cases n <;> unfold GeomNode.IsArticulator <;> infer_instance
 
 end Phonology.FeatureGeometry
 
@@ -53,7 +56,7 @@ open Phonology.FeatureGeometry (GeomNode)
 
 /-- The articulator nodes in the geometry. -/
 def articulatorNodes : List GeomNode :=
-  GeomNode.allNodes.filter GeomNode.isArticulator
+  GeomNode.allNodes.filter (fun n => decide (GeomNode.IsArticulator n))
 
 theorem articulatorNodes_count : articulatorNodes.length = 3 := by native_decide
 
@@ -76,8 +79,11 @@ def articulatorCount (s : Segment) : Nat :=
 
 /-- A complex segment has two or more simultaneously active articulator
     nodes — e.g., labiovelars [k͡p] (labial + dorsal). -/
-def isComplex (s : Segment) : Bool :=
+def IsComplex (s : Segment) : Prop :=
   articulatorCount s ≥ 2
+
+instance : DecidablePred IsComplex := fun _ =>
+  inferInstanceAs (Decidable (_ ≥ _))
 
 -- ============================================================================
 -- § 4: Well-Formedness
@@ -87,9 +93,12 @@ def isComplex (s : Segment) : Bool :=
     nodes. This is trivially satisfied by `activeArticulators` (which returns
     a duplicate-free sublist of `articulatorNodes`), but we state it
     explicitly as the standard WFC. -/
-def complexWF (s : Segment) : Bool :=
+def ComplexWF (s : Segment) : Prop :=
   let aa := activeArticulators s
-  aa.length == aa.eraseDups.length
+  aa.length = aa.eraseDups.length
+
+instance : DecidablePred ComplexWF := fun _ =>
+  inferInstanceAs (Decidable (_ = _))
 
 -- ============================================================================
 -- § 5: Verification
@@ -97,12 +106,11 @@ def complexWF (s : Segment) : Bool :=
 
 /-- Articulators are exactly the leaf-level nodes (no children). -/
 theorem articulators_are_leaves :
-    articulatorNodes.all (λ n => n.children == []) = true := by native_decide
+    ∀ n ∈ articulatorNodes, n.children = [] := by decide
 
 /-- Every articulator is dominated by root. -/
 theorem articulators_under_root :
-    articulatorNodes.all (λ n => GeomNode.root.dominates n) = true := by
-  native_decide
+    ∀ n ∈ articulatorNodes, GeomNode.Dominates .root n := by decide
 
 /-- Labial and dorsal are distinct (required for labiovelars). -/
 theorem labial_ne_dorsal : GeomNode.labial ≠ GeomNode.dorsal := by decide
@@ -111,14 +119,14 @@ theorem labial_ne_dorsal : GeomNode.labial ≠ GeomNode.dorsal := by decide
     Supralaryngeal, not a child. This means nasal assimilation (spreading
     soft palate) is independent of place assimilation (spreading place). -/
 theorem softPalate_not_under_place :
-    GeomNode.place.dominates .softPalate = false := by native_decide
+    ¬ GeomNode.Dominates .place .softPalate := by decide
 
 /-- Soft palate is not a place articulator — nasals are simple segments
     even though they involve velum lowering plus an oral place of
     articulation. This follows from `softPalate` being a sibling of
     `place` under `supralaryngeal`, not a child of `place`. -/
 theorem softPalate_not_articulator :
-    GeomNode.softPalate.isArticulator = false := by rfl
+    ¬ GeomNode.IsArticulator .softPalate := by decide
 
 /-- The three place articulators are all distinct from each other —
     this gives rise to three possible complex segment types:
@@ -130,7 +138,6 @@ theorem place_articulators_distinct :
 
 /-- Every place articulator is under the place node. -/
 theorem articulators_under_place :
-    articulatorNodes.all (λ n => GeomNode.place.dominates n) = true := by
-  native_decide
+    ∀ n ∈ articulatorNodes, GeomNode.Dominates .place n := by decide
 
 end Phonology.ComplexSegments

@@ -1,6 +1,8 @@
 import Linglib.Theories.Semantics.PIP.Composition
 import Linglib.Theories.Semantics.PIP.Bridges
 import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # Abney & Keshet (2025): PIP Compositional Operations
@@ -54,9 +56,9 @@ instance : FiniteDomain Ent where
   elements := [.alice, .bob, .spot, .rex]
   complete d := by cases d <;> simp
 
-instance : Core.Proposition.FiniteWorlds W1 where
-  worlds := [.w0]
-  complete w := by cases w; simp
+instance : Fintype W1 where
+  elems := {.w0}
+  complete w := by cases w; decide
 
 
 -- ============================================================
@@ -207,7 +209,7 @@ end Subordination
 section ExistsSigma
 
 /-- ∃x(farmer(x)) is true (at least one farmer exists). -/
-theorem exists_farmer : (PIPExprF.exists_ farmerBody).truth W1.w0 = true := by native_decide
+theorem exists_farmer : (PIPExprF.exists_ farmerBody).truth W1.w0 = true := by decide
 
 /-- The sigma bridge: ∃x(farmer(x)) ↔ nonempty sigma set. -/
 theorem exists_farmer_bridge :
@@ -217,7 +219,7 @@ theorem exists_farmer_bridge :
 
 /-- ∀x(farmer(x)) is false (donkeys are not farmers). -/
 theorem forall_farmer_false :
-    (PIPExprF.forall_ farmerBody).truth W1.w0 = false := by native_decide
+    (PIPExprF.forall_ farmerBody).truth W1.w0 = false := by decide
 
 end ExistsSigma
 
@@ -391,9 +393,9 @@ inductive W2 where
   | actual | alt
   deriving DecidableEq, Repr, Inhabited
 
-instance : Core.Proposition.FiniteWorlds W2 where
-  worlds := [.actual, .alt]
-  complete w := by cases w <;> simp
+instance : Fintype W2 where
+  elems := {.actual, .alt}
+  complete w := by cases w <;> decide
 
 
 -- ============================================================

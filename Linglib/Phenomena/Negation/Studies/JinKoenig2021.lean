@@ -623,17 +623,14 @@ private theorem all_not_false_any_true {α : Type*} (L : List α) (p : α → Bo
     cases p x <;> simp_all
 
 theorem not_impossible_activates_p (f : ModalBase World) (g : OrderingSource World)
-    (p : (World → Bool)) (w : World) :
-    ¬ necessity f g (λ w' => !p w') w →
+    (p : (World → Prop)) (w : World) :
+    ¬ necessity f g (λ w' => ¬ p w') w →
     possibility f g p w := by
   rw [necessity_iff_all, possibility_iff_any]
   intro h
   by_contra hne
   push_neg at hne
-  exact h fun w' hw' => by
-    have := hne w' hw'
-    simp only [Bool.not_eq_true] at this
-    simp [this]
+  exact h fun w' hw' => hne w' hw'
 
 -- ════════════════════════════════════════════════════
 -- § 9b. WITHOUT Bridge: q ∧ ¬p → Logical Operator
@@ -690,21 +687,19 @@ meaning, satisfying the logical operator licensing condition (§6.3.3).
 More precisely: "q UNLESS p" entails that ¬p is true in all
 *suppositive worlds* (worlds where q holds). -/
 
-open Semantics.Conditionals (materialImpB)
+open Semantics.Conditionals (materialImp)
 
 /-- UNLESS q p is definable as material implication with negated
     antecedent: if ¬p then q. The negation is structural. -/
-def unlessSem {W : Type*} (q p : (W → Bool)) : (W → Bool) :=
-  materialImpB (λ w => !p w) q
+def unlessSem {W : Type*} (q p : Set W) : Set W :=
+  materialImp pᶜ q
 
 /-- UNLESS includes ¬ in its meaning: at any world where ¬p is true
     AND q is true, the conditional holds. Conversely, at any world
     where the conditional holds and ¬p is true, q must be true. -/
-theorem unless_modus_ponens {W : Type*} (q p : (W → Bool)) (w : W)
-    (hcond : unlessSem q p w = true) (hnp : p w = false) : q w = true := by
-  simp only [unlessSem, materialImpB] at hcond
-  simp only [hnp, Bool.not_false] at hcond
-  exact hcond
+theorem unless_modus_ponens {W : Type*} (q p : Set W) (w : W)
+    (hcond : unlessSem q p w) (hnp : ¬ p w) : q w :=
+  hcond hnp
 
 /-- UNLESS maps to the logical operator licensing condition. -/
 theorem unless_licensing :

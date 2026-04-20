@@ -72,7 +72,7 @@ theorem assert_norain_excluded :
 /-- Assertion preserves settledness: asserting into an empty (settled)
     space yields a settled space. -/
 theorem assert_stays_settled :
-    (s₀.assert isRaining).isStable = true := rfl
+    (s₀.assert isRaining).isStable := by decide
 
 /-- The speaker's commitment slate records the assertion. -/
 theorem assert_records_speaker :
@@ -101,7 +101,7 @@ theorem question_continuation_content :
 
 /-- Questioning makes the state unstable (there's an unresolved proposal). -/
 theorem question_makes_unstable :
-    (s₀.question isRaining).isStable = false := rfl
+    ¬ (s₀.question isRaining).isStable := by decide
 
 /-- Both worlds are still compatible with the CG after a question. -/
 theorem question_all_worlds_live :
@@ -119,7 +119,7 @@ theorem accept_updates_root :
 
 /-- After acceptance, the space is settled again. -/
 theorem accept_resettles :
-    (s₀.question isRaining).acceptContinuation.isStable = true := rfl
+    (s₀.question isRaining).acceptContinuation.isStable := by decide
 
 /-- After acceptance, rain-world is compatible, no-rain is excluded. -/
 theorem accept_rain_only :
@@ -135,7 +135,7 @@ theorem reject_preserves_root :
 
 /-- After rejection, the space is settled again. -/
 theorem reject_resettles :
-    (s₀.question isRaining).rejectContinuation.isStable = true := rfl
+    (s₀.question isRaining).rejectContinuation.isStable := by decide
 
 /-- After rejection, both worlds are still live (we're back to start). -/
 theorem reject_all_worlds_live :

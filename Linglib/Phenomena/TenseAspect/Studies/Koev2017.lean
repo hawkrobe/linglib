@@ -267,7 +267,7 @@ theorem LearningScenario.triangleTemporalB_iff (s : LearningScenario ℤ) :
     - `presup` := △(described, learning) — the evidential's cs(k) contribution
     - `assertion` := p — the scope proposition -/
 def LearningScenario.toEvidentialProp (s : LearningScenario ℤ)
-    {W : Type*} (p : W → Bool) : PrProp W where
+    {W : Type*} (p : W → Prop) : PrProp W where
   presup := fun _ => s.triangleTemporalB
   assertion := p
 
@@ -384,8 +384,8 @@ theorem smoke_no_tense_ordering :
 /-- Property (6i): the presupposition of the constructed PrProp IS the
     △ condition, derived from the event structure. When △ holds (indirect
     evidence), the presupposition is satisfied at every world. -/
-theorem indirect_presup_satisfied {W : Type*} (p : W → Bool) (w : W) :
-    (indirectScenario.toEvidentialProp p).presup w = true := by
+theorem indirect_presup_satisfied {W : Type*} (p : W → Prop) (w : W) :
+    (indirectScenario.toEvidentialProp p).presup w := by
   unfold LearningScenario.toEvidentialProp LearningScenario.triangleTemporalB
          indirectScenario describedEvent learningEventIndirect
   simp only [Ev.τ]
@@ -397,8 +397,8 @@ def directScenario : LearningScenario ℤ where
   described := describedEvent
   learning := learningEventDirect
 
-theorem direct_presup_fails {W : Type*} (p : W → Bool) (w : W) :
-    (directScenario.toEvidentialProp p).presup w = false := by
+theorem direct_presup_fails {W : Type*} (p : W → Prop) (w : W) :
+    ¬ (directScenario.toEvidentialProp p).presup w := by
   unfold LearningScenario.toEvidentialProp LearningScenario.triangleTemporalB
          directScenario describedEvent learningEventDirect
   simp only [Ev.τ]
@@ -407,7 +407,7 @@ theorem direct_presup_fails {W : Type*} (p : W → Bool) (w : W) :
 /-- Property (6ii): the assertion of a scenario's PrProp IS the scope
     proposition. The speaker commits to p, not to a modalized version.
     This holds by construction: DECL (72) maps to `PrProp.assertion`. -/
-theorem assertion_is_scope (s : LearningScenario ℤ) {W : Type*} (p : W → Bool) :
+theorem assertion_is_scope (s : LearningScenario ℤ) {W : Type*} (p : W → Prop) :
     (s.toEvidentialProp p).assertion = p := rfl
 
 /-- A modal evidential would assert □_e(p) — "p must be
@@ -416,7 +416,7 @@ theorem assertion_is_scope (s : LearningScenario ℤ) {W : Type*} (p : W → Boo
     This is a simplified stub; the full Kratzer-grounded version is
     `Izvorski1997.Bridge.izvorskiEv`, which uses `necessity f g p` as
     the assertion and `!(accessibleWorlds f w).isEmpty` as the presup. -/
-def modalEvidential {W : Type*} (evidence : Bool) (must_p : W → Bool) : PrProp W where
+def modalEvidential {W : Type*} (evidence : Bool) (must_p : W → Prop) : PrProp W where
   presup := fun _ => evidence
   assertion := must_p
 
@@ -424,10 +424,10 @@ def modalEvidential {W : Type*} (evidence : Bool) (must_p : W → Bool) : PrProp
     instantiations where the modal's assertion diverges from the scope
     proposition, while Koev's assertion is always p by construction. -/
 theorem modal_can_weaken :
-    ∃ (p must_p : Unit → Bool),
+    ∃ (p must_p : Unit → Prop),
       (indirectScenario.toEvidentialProp p).assertion ≠
       (modalEvidential true must_p).assertion := by
-  refine ⟨fun _ => true, fun _ => false, ?_⟩
+  refine ⟨fun _ => True, fun _ => False, ?_⟩
   simp only [LearningScenario.toEvidentialProp, modalEvidential]
   intro h
   exact absurd (congr_fun h ()) (by simp)
@@ -436,7 +436,7 @@ theorem modal_can_weaken :
     Negating the evidential negates the assertion (p → ¬p) but preserves
     the presupposition (△). This follows from PrProp's general negation
     rule and captures the paper's formalization (78). -/
-theorem projection_past_negation (s : LearningScenario ℤ) {W : Type*} (p : W → Bool) :
+theorem projection_past_negation (s : LearningScenario ℤ) {W : Type*} (p : W → Prop) :
     (PrProp.neg (s.toEvidentialProp p)).presup = (s.toEvidentialProp p).presup :=
   PrProp.neg_presup _
 

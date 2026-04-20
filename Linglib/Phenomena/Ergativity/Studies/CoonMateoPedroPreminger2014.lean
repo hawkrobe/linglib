@@ -641,12 +641,12 @@ def AbstractCase.toCoreCase : AbstractCase → Core.Case
 theorem coreCase_bridge_object (locus : CaseLocus) :
     (objectAbstractCase locus).toCoreCase =
       match locus with
-      | .absNom => Core.Case.nom
-      | .absDef => Core.Case.acc := by
+      | .absNom => .nom
+      | .absDef => .acc := by
   cases locus <;> rfl
 
 theorem coreCase_bridge_subject (locus : CaseLocus) :
-    (subjectAbstractCase locus).toCoreCase = Core.Case.erg := rfl
+    (subjectAbstractCase locus).toCoreCase = .erg := rfl
 
 -- ============================================================================
 -- § 17: Cross-Language AF Bridge (Q'anjob'al vs Kaqchikel)

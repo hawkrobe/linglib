@@ -58,9 +58,12 @@ def pCGivenA (n : NoisyOR) : ℚ := n.background + n.power
 def pCGivenNotA (n : NoisyOR) : ℚ := n.background
 
 /-- Check if parameters are valid. -/
-def isValid (n : NoisyOR) : Bool :=
-  0 ≤ n.background && n.background ≤ 1 &&
-  0 ≤ n.background + n.power && n.background + n.power ≤ 1
+def isValid (n : NoisyOR) : Prop :=
+  0 ≤ n.background ∧ n.background ≤ 1 ∧
+  0 ≤ n.background + n.power ∧ n.background + n.power ≤ 1
+
+instance (n : NoisyOR) : Decidable n.isValid :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _))
 
 /-- Deterministic cause: P(C|A) = 1, P(C|¬A) = 0. -/
 def deterministic : NoisyOR := { background := 0, power := 1 }
@@ -93,11 +96,14 @@ namespace WorldState
 -- Validity
 
 /-- Check if a WorldState represents a valid probability distribution. -/
-def isValid (w : WorldState) : Bool :=
-  0 ≤ w.pA && w.pA ≤ 1 &&
-  0 ≤ w.pC && w.pC ≤ 1 &&
-  0 ≤ w.pAC && w.pAC ≤ min w.pA w.pC &&
+def isValid (w : WorldState) : Prop :=
+  0 ≤ w.pA ∧ w.pA ≤ 1 ∧
+  0 ≤ w.pC ∧ w.pC ≤ 1 ∧
+  0 ≤ w.pAC ∧ w.pAC ≤ min w.pA w.pC ∧
   w.pA + w.pC - w.pAC ≤ 1
+
+instance (w : WorldState) : Decidable w.isValid :=
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _ ∧ _ ∧ _ ∧ _ ∧ _))
 
 -- Derived Probabilities
 
@@ -139,16 +145,25 @@ def pAGivenNotC (w : WorldState) : ℚ :=
 -- Independence and Correlation
 
 /-- P(A ∧ C) = P(A) · P(C). -/
-def isIndependent (w : WorldState) : Bool :=
-  w.pAC == w.pA * w.pC
+def isIndependent (w : WorldState) : Prop :=
+  w.pAC = w.pA * w.pC
+
+instance (w : WorldState) : Decidable w.isIndependent :=
+  inferInstanceAs (Decidable (_ = _))
 
 /-- P(A ∧ C) > P(A) · P(C). -/
-def isPositivelyCorrelated (w : WorldState) : Bool :=
+def isPositivelyCorrelated (w : WorldState) : Prop :=
   w.pAC > w.pA * w.pC
 
+instance (w : WorldState) : Decidable w.isPositivelyCorrelated :=
+  inferInstanceAs (Decidable (_ > _))
+
 /-- P(A ∧ C) < P(A) · P(C). -/
-def isNegativelyCorrelated (w : WorldState) : Bool :=
+def isNegativelyCorrelated (w : WorldState) : Prop :=
   w.pAC < w.pA * w.pC
+
+instance (w : WorldState) : Decidable w.isNegativelyCorrelated :=
+  inferInstanceAs (Decidable (_ < _))
 
 -- Constructors
 
@@ -166,24 +181,17 @@ def mutuallyExclusive (pA pC : ℚ) : WorldState :=
 
 -- Validity Theorems
 
-/-- Propositional version of isValid for theorem proving. -/
-def IsValid (w : WorldState) : Prop :=
-  0 ≤ w.pA ∧ w.pA ≤ 1 ∧
-  0 ≤ w.pC ∧ w.pC ≤ 1 ∧
-  0 ≤ w.pAC ∧ w.pAC ≤ min w.pA w.pC ∧
-  w.pA + w.pC - w.pAC ≤ 1
-
-theorem valid_implies_pA_bounded (w : WorldState) (h : w.IsValid) :
+theorem valid_implies_pA_bounded (w : WorldState) (h : w.isValid) :
     0 ≤ w.pA ∧ w.pA ≤ 1 := ⟨h.1, h.2.1⟩
 
-theorem valid_implies_pC_bounded (w : WorldState) (h : w.IsValid) :
+theorem valid_implies_pC_bounded (w : WorldState) (h : w.isValid) :
     0 ≤ w.pC ∧ w.pC ≤ 1 := ⟨h.2.2.1, h.2.2.2.1⟩
 
-theorem valid_implies_pAC_bounded (w : WorldState) (h : w.IsValid) :
+theorem valid_implies_pAC_bounded (w : WorldState) (h : w.isValid) :
     0 ≤ w.pAC ∧ w.pAC ≤ min w.pA w.pC := ⟨h.2.2.2.2.1, h.2.2.2.2.2.1⟩
 
 /-- Validity implies 0 ≤ P(C|A) ≤ 1. -/
-theorem valid_implies_pCGivenA_bounded (w : WorldState) (h : w.IsValid) (hA : 0 < w.pA) :
+theorem valid_implies_pCGivenA_bounded (w : WorldState) (h : w.isValid) (hA : 0 < w.pA) :
     0 ≤ w.pCGivenA ∧ w.pCGivenA ≤ 1 := by
   simp only [pCGivenA, gt_iff_lt, hA, ↓reduceIte]
   constructor
@@ -195,7 +203,7 @@ theorem valid_implies_pCGivenA_bounded (w : WorldState) (h : w.IsValid) (hA : 0 
          _ = 1 := div_self hA_ne
 
 /-- Validity implies 0 ≤ P(C|¬A) ≤ 1. -/
-theorem valid_implies_pCGivenNotA_bounded (w : WorldState) (h : w.IsValid) (hA : w.pA < 1) :
+theorem valid_implies_pCGivenNotA_bounded (w : WorldState) (h : w.isValid) (hA : w.pA < 1) :
     0 ≤ w.pCGivenNotA ∧ w.pCGivenNotA ≤ 1 := by
   simp only [pCGivenNotA, pNotAC]
   have hNotA_pos : 0 < 1 - w.pA := by linarith
@@ -212,7 +220,7 @@ theorem valid_implies_pCGivenNotA_bounded (w : WorldState) (h : w.IsValid) (hA :
          _ = 1 := div_self hNotA_ne
 
 /-- **Law of Total Probability**: P(C) = P(C|A)·P(A) + P(C|¬A)·P(¬A). -/
-theorem law_of_total_probability (w : WorldState) (_h : w.IsValid)
+theorem law_of_total_probability (w : WorldState) (_h : w.isValid)
     (hA_pos : 0 < w.pA) (hA_lt_one : w.pA < 1) :
     w.pC = w.pCGivenA * w.pA + w.pCGivenNotA * (1 - w.pA) := by
   simp only [pCGivenA, pCGivenNotA, pNotAC]

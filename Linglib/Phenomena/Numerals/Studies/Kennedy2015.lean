@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Numerals.Basic
-import Linglib.Theories.Pragmatics.RSA.Core.Config
+import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs
 

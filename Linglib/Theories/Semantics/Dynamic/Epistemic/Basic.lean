@@ -1,6 +1,7 @@
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Semantics.Proposition
+import Mathlib.Data.Set.Basic
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
+import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
 
 /-!
 # Neo-Stalnakerian Formalization of Assertion
@@ -21,11 +22,13 @@ The key insight: epistemic modals get nonstandard updates not because they
 have special update semantics, but because they are speaker-orientedly
 epistemic *in the same way* that assertion is.
 
+Following the Bool→Prop migration: predicates on worlds are `W → Prop`
+(mathlib-native), and list operations that depend on decidability of
+predicates carry `[DecidablePred p]` constraints.
 -/
 
 namespace Semantics.Dynamic.NeoStalnakerian
 
-open Core.Proposition
 open Core.CommonGround
 
 /-! ## Part 1: Core Types -/
@@ -36,26 +39,26 @@ variable {W : Type*}
 
 /-- Information-sensitive denotation: ⟦s⟧ⁱ(w).
     Truth value may depend on the epistemic state `i`. -/
-abbrev InfoSensDen (W : Type*) := List W → (W → Bool)
+abbrev InfoSensDen (W : Type*) := List W → (W → Prop)
 
 /-- Lift a plain proposition to an information-insensitive denotation.
     For sentences like "John is dead" whose truth doesn't vary with `i`. -/
-def liftProp (p : (W → Bool)) : InfoSensDen W := λ _ => p
+def liftProp (p : (W → Prop)) : InfoSensDen W := λ _ => p
 
 /-- Simple quantificational semantics for epistemic *might*:
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ i, p(w') = true.
     Truth is insensitive to the evaluation world w.
 
     eq. (25); adapted from @cite{yalcin-2007}. -/
-def mightSimple (p : (W → Bool)) : InfoSensDen W :=
-  λ i _ => i.any p
+def mightSimple (p : (W → Prop)) : InfoSensDen W :=
+  λ i _ => ∃ w ∈ i, p w
 
 /-- Simple quantificational semantics for epistemic *must*:
     ⟦must-p⟧ⁱ(w) = true iff ∀w' ∈ i, p(w') = true.
 
     Appendix A, eq. (57). -/
-def mustSimple (p : (W → Bool)) : InfoSensDen W :=
-  λ i _ => i.all p
+def mustSimple (p : (W → Prop)) : InfoSensDen W :=
+  λ i _ => ∀ w ∈ i, p w
 
 /-! ## Part 2: Meta-Intensionalization -/
 
@@ -69,7 +72,7 @@ def mustSimple (p : (W → Bool)) : InfoSensDen W :=
 
     Definition (10). -/
 def MI (sem : InfoSensDen W) (i : List W) : Prop :=
-  ∀ w, w ∈ i → sem i w = true
+  ∀ w, w ∈ i → sem i w
 
 /-- Refinement: i' refines i iff i' ⊆ i.
     Removing worlds monotonically increases information.
@@ -96,8 +99,8 @@ def rejectionLicensed (sem : InfoSensDen W) (i_rejector : List W) : Prop :=
     Equivalently, i ⊆ ext(p) — the downward closure of the proposition's extension.
 
     eqs. (22)–(23). -/
-theorem MI_liftProp (p : (W → Bool)) (i : List W) :
-    MI (liftProp p) i ↔ ∀ w, w ∈ i → p w = true :=
+theorem MI_liftProp (p : (W → Prop)) (i : List W) :
+    MI (liftProp p) i ↔ ∀ w, w ∈ i → p w :=
   Iff.rfl
 
 /-- MI for might-p (non-empty states): i ∈ MI(might-p) iff i has a p-world.
@@ -105,8 +108,8 @@ theorem MI_liftProp (p : (W → Bool)) (i : List W) :
     are insensitive to the evaluation world.
 
     eq. (27b): MI(might-p) = { i : i ∩ p ≠ ∅ }. -/
-theorem MI_mightSimple (p : (W → Bool)) (i : List W) (hi : i ≠ []) :
-    MI (mightSimple p) i ↔ i.any p = true := by
+theorem MI_mightSimple (p : (W → Prop)) (i : List W) (hi : i ≠ []) :
+    MI (mightSimple p) i ↔ ∃ w ∈ i, p w := by
   constructor
   · intro h
     cases i with
@@ -119,18 +122,20 @@ theorem MI_mightSimple (p : (W → Bool)) (i : List W) (hi : i ≠ []) :
     over, the two collapse: MI(must-p) = { i : i ⊆ p }.
 
     Appendix A, eq. (58). -/
-theorem MI_mustSimple (p : (W → Bool)) (i : List W) (hi : i ≠ []) :
-    MI (mustSimple p) i ↔ ∀ w, w ∈ i → p w = true := by
+theorem MI_mustSimple (p : (W → Prop)) (i : List W) (hi : i ≠ []) :
+    MI (mustSimple p) i ↔ ∀ w, w ∈ i → p w := by
   constructor
   · intro h
     cases i with
     | nil => exact absurd rfl hi
-    | cons w _ => exact List.all_eq_true.mp (h w (by simp))
-  · intro h _ _; exact List.all_eq_true.mpr h
+    | cons w _ =>
+      have hAll := h w (by simp)
+      intro v hv; exact hAll v hv
+  · intro h _ _ v hv; exact h v hv
 
 /-- MI(must-p) = MI(p): must has the same meta-intensionalized denotation
     as a non-epistemic assertion of its prejacent. -/
-theorem MI_must_eq_MI_lift (p : (W → Bool)) (i : List W) (hi : i ≠ []) :
+theorem MI_must_eq_MI_lift (p : (W → Prop)) (i : List W) (hi : i ≠ []) :
     MI (mustSimple p) i ↔ MI (liftProp p) i := by
   rw [MI_mustSimple p i hi, MI_liftProp]
 
@@ -140,27 +145,27 @@ theorem MI_must_eq_MI_lift (p : (W → Bool)) (i : List W) (hi : i ≠ []) :
     The most conservative refinement of c that lands in MI(liftProp p).
 
     eq. (24). -/
-def nsfUpdateNonEpistemic (p : (W → Bool)) (c : List W) : List W :=
+def nsfUpdateNonEpistemic (p : (W → Prop)) [DecidablePred p] (c : List W) : List W :=
   c.filter p
 
 /-- NSF update for might-p (simple semantics): consistency test.
     Leave context unchanged if c has p-worlds; anomaly otherwise.
 
     eq. (29). -/
-def nsfUpdateMight (p : (W → Bool)) (c : List W) : List W :=
-  if c.any p then c else []
+def nsfUpdateMight (p : (W → Prop)) [DecidablePred p] (c : List W) : List W :=
+  if c.any (fun w => decide (p w)) then c else []
 
 /-- NSF update for must-p (simple semantics): same as non-epistemic.
 
     Appendix A, eq. (59). -/
-def nsfUpdateMust (p : (W → Bool)) (c : List W) : List W :=
+def nsfUpdateMust (p : (W → Prop)) [DecidablePred p] (c : List W) : List W :=
   c.filter p
 
 /-! ## Part 5: Derivation Theorems -/
 
 /-- If c has p-worlds, it is already in MI(might-p). No refinement needed. -/
-theorem context_in_MI_might (p : (W → Bool)) (c : List W)
-    (h : c.any p = true) : MI (mightSimple p) c :=
+theorem context_in_MI_might (p : (W → Prop)) (c : List W)
+    (h : ∃ w ∈ c, p w) : MI (mightSimple p) c :=
   λ _ _ => h
 
 /-- **Core lemma**: subset refinement cannot introduce p-worlds.
@@ -170,19 +175,17 @@ theorem context_in_MI_might (p : (W → Bool)) (c : List W)
     This is the key step in deriving Veltman's test semantics from
     the NSF: the "consistency test" behavior of might falls out of
     the monotonicity of refinement. -/
-theorem no_p_worlds_not_compatible (p : (W → Bool)) (c : List W)
-    (h : c.any p = false) : ¬sCompatible (mightSimple p) c := by
+theorem no_p_worlds_not_compatible (p : (W → Prop)) (c : List W)
+    (h : ¬ ∃ w ∈ c, p w) : ¬sCompatible (mightSimple p) c := by
   intro ⟨c', hRef, hMI, hNe⟩
-  -- c' is non-empty, so MI gives c'.any p = true
-  have hAny : c'.any p = true := by
+  -- c' is non-empty, so MI gives ∃ w ∈ c', p w
+  have hAny : ∃ w ∈ c', p w := by
     cases c' with
     | nil => exact absurd rfl hNe
     | cons w _ => exact hMI w (by simp)
   -- Some world in c' satisfies p; by refinement it's in c
-  obtain ⟨v, hv, hpv⟩ := List.any_eq_true.mp hAny
-  -- So c.any p = true, contradicting h
-  have : c.any p = true := List.any_eq_true.mpr ⟨v, hRef v hv, hpv⟩
-  simp [h] at this
+  obtain ⟨v, hv, hpv⟩ := hAny
+  exact h ⟨v, hRef v hv, hpv⟩
 
 /-- **NSF derives Veltman's consistency test.**
 
@@ -198,15 +201,15 @@ theorem no_p_worlds_not_compatible (p : (W → Bool)) (c : List W)
     Bridges `nsfUpdateMight` to `Update.might` from UpdateSemantics.
 
     §4.2; cf. @cite{veltman-1996}, @cite{yalcin-2007}. -/
-theorem nsfUpdateMight_spec (p : (W → Bool)) (c : List W) :
-    nsfUpdateMight p c = (if c.any p then c else []) :=
+theorem nsfUpdateMight_spec (p : (W → Prop)) [DecidablePred p] (c : List W) :
+    nsfUpdateMight p c = (if c.any (fun w => decide (p w)) then c else []) :=
   rfl
 
 /-- NSF update for must-p equals update for its prejacent.
     Must-p updates identically to a non-epistemic assertion of p.
 
     Appendix A, eq. (59). -/
-theorem nsfUpdateMust_eq_nonEpistemic (p : (W → Bool)) (c : List W) :
+theorem nsfUpdateMust_eq_nonEpistemic (p : (W → Prop)) [DecidablePred p] (c : List W) :
     nsfUpdateMust p c = nsfUpdateNonEpistemic p c :=
   rfl
 
@@ -218,37 +221,32 @@ theorem nsfUpdateMust_eq_nonEpistemic (p : (W → Bool)) (c : List W) :
 
     Bridges `nsfUpdateNonEpistemic` to `ContextSet.update` from CommonGround:
     both compute c ∩ p (filter c to p-worlds). -/
-theorem nsf_recovers_stalnaker (p : (W → Bool)) (c : List W) (w : W) :
-    w ∈ nsfUpdateNonEpistemic p c ↔ w ∈ c ∧ p w = true := by
+theorem nsf_recovers_stalnaker (p : (W → Prop)) [DecidablePred p] (c : List W) (w : W) :
+    w ∈ nsfUpdateNonEpistemic p c ↔ w ∈ c ∧ p w := by
   simp [nsfUpdateNonEpistemic, List.mem_filter]
 
 /-! ## Part 6: Rejection Licensing -/
 
 /-- Rejection of a non-epistemic assertion of p is licensed iff the rejector
     has no p-worlds — i.e., the rejector knows ¬p. -/
-theorem rejection_nonEpistemic (p : (W → Bool)) (i : List W) (_ : i ≠ []) :
-    rejectionLicensed (liftProp p) i ↔ ∀ w, w ∈ i → p w = false := by
+theorem rejection_nonEpistemic (p : (W → Prop)) (i : List W) (_ : i ≠ []) :
+    rejectionLicensed (liftProp p) i ↔ ∀ w, w ∈ i → ¬ p w := by
   unfold rejectionLicensed sCompatible
   constructor
-  · intro hRej w hw
-    by_contra hpw
-    have hne : p w = true := by
-      cases hpw' : p w with
-      | true => rfl
-      | false => exact absurd hpw' hpw
+  · intro hRej w hw hpw
     -- {w} is a non-empty refinement in MI(liftProp p)
     apply hRej
     refine ⟨[w], λ v hv => ?_, λ v hv => ?_, List.cons_ne_nil w []⟩
     · simp only [List.mem_singleton] at hv; rw [hv]; exact hw
-    · simp only [List.mem_singleton] at hv; rw [hv]; exact hne
+    · simp only [List.mem_singleton] at hv; rw [hv]; exact hpw
   · intro h ⟨c', hRef, hMI, hNe⟩
     cases c' with
     | nil => exact absurd rfl hNe
     | cons v vs =>
       have hvi : v ∈ i := hRef v (by simp)
-      have hpv : liftProp p (v :: vs) v = true := hMI v (by simp)
+      have hpv : liftProp p (v :: vs) v := hMI v (by simp)
       simp only [liftProp] at hpv
-      exact absurd hpv (by simp [h v hvi])
+      exact h v hvi hpv
 
 /-- Rejection of might-p is licensed iff the rejector has no p-worlds.
     Crucially, this depends on the *rejector's* information, not the
@@ -259,13 +257,13 @@ theorem rejection_nonEpistemic (p : (W → Bool)) (i : List W) (_ : i ≠ []) :
     simultaneously not-judged-false and rejected.
 
     §4.2.1. -/
-theorem rejection_mightSimple (p : (W → Bool)) (i : List W) :
+theorem rejection_mightSimple (p : (W → Prop)) (i : List W) :
     rejectionLicensed (mightSimple p) i ↔ ¬(sCompatible (mightSimple p) i) :=
   Iff.rfl
 
 /-- Rejection of might-p reduces to having no p-worlds. -/
-theorem rejection_might_iff_no_p_worlds (p : (W → Bool)) (i : List W)
-    (hi : i.any p = false) :
+theorem rejection_might_iff_no_p_worlds (p : (W → Prop)) (i : List W)
+    (hi : ¬ ∃ w ∈ i, p w) :
     rejectionLicensed (mightSimple p) i :=
   no_p_worlds_not_compatible p i hi
 
@@ -287,31 +285,50 @@ structure OrdEpistemicState where
   /-- Modal base: the set of epistemically accessible worlds -/
   base : List World
   /-- Ordering source: propositions ranking accessible worlds -/
-  ordering : List ((World → Bool))
+  ordering : List ((World → Prop))
+
+/-- Predicate: world `w` is *not strictly dominated* in `s` (i.e., there is no
+    `w'` in the base that beats `w` strictly under the ordering). -/
+def OrdEpistemicState.notDominated (s : OrdEpistemicState) (w : World) : Prop :=
+  ¬ ∃ w' ∈ s.base, atLeastAsGoodAs s.ordering w' w ∧
+    ¬ atLeastAsGoodAs s.ordering w w'
+
+/-- Membership in `bestWorlds` unfolds to base ∧ notDominated. -/
+theorem OrdEpistemicState.mem_bestWorlds_iff (s : OrdEpistemicState) (w : World) :
+    (w ∈ s.base ∧ s.notDominated w) ↔
+    (w ∈ s.base ∧
+      ¬ ∃ w' ∈ s.base, atLeastAsGoodAs s.ordering w' w ∧
+        ¬ atLeastAsGoodAs s.ordering w w') :=
+  Iff.rfl
 
 /-- BEST worlds: worlds in the modal base not strictly dominated by any other.
     A world w is strictly dominated by w' iff w' satisfies a proper superset
     of the ordering propositions that w satisfies.
 
     eq. (44); @cite{kratzer-1981}. -/
-def OrdEpistemicState.bestWorlds (s : OrdEpistemicState) : List World :=
-  s.base.filter λ w =>
-    !s.base.any λ w' =>
-      atLeastAsGoodAs s.ordering w' w && !atLeastAsGoodAs s.ordering w w'
+noncomputable def OrdEpistemicState.bestWorlds (s : OrdEpistemicState) : List World :=
+  letI : DecidablePred s.notDominated := fun _ => Classical.propDecidable _
+  s.base.filter s.notDominated
+
+theorem OrdEpistemicState.mem_bestWorlds (s : OrdEpistemicState) (w : World) :
+    w ∈ s.bestWorlds ↔ w ∈ s.base ∧ s.notDominated w := by
+  classical
+  unfold OrdEpistemicState.bestWorlds
+  simp [List.mem_filter]
 
 /-- Ordering semantics for might:
     ⟦might-p⟧ⁱ(w) = true iff ∃w' ∈ BEST_{b_i,o_i}, p(w') = true.
 
     eq. (45). -/
-def mightOrdering (p : (World → Bool)) (s : OrdEpistemicState) (_ : World) : Bool :=
-  s.bestWorlds.any p
+def mightOrdering (p : (World → Prop)) (s : OrdEpistemicState) (_ : World) : Prop :=
+  ∃ w ∈ s.bestWorlds, p w
 
 /-- MI for ordering-semantic might-p: the set of epistemic states whose
     BEST worlds include at least one p-world.
 
     eq. (54b). -/
-def MI_ord (p : (World → Bool)) (s : OrdEpistemicState) : Prop :=
-  s.bestWorlds.any p = true
+def MI_ord (p : (World → Prop)) (s : OrdEpistemicState) : Prop :=
+  ∃ w ∈ s.bestWorlds, p w
 
 /-- Refinement (ordering version): only the modal base is refined.
 
@@ -327,7 +344,8 @@ def OrdEpistemicState.refines (c' c : OrdEpistemicState) : Prop :=
     worlds, yielding an informative (non-trivial) update.
 
     eq. (56). -/
-def nsfUpdateMightOrd (p : (World → Bool)) (c : OrdEpistemicState) : OrdEpistemicState :=
+def nsfUpdateMightOrd (p : (World → Prop)) [DecidablePred p]
+    (c : OrdEpistemicState) : OrdEpistemicState :=
   if (c.base.filter p).isEmpty then
     { base := [], ordering := c.ordering }  -- anomaly
   else
@@ -339,12 +357,12 @@ def nsfUpdateMightOrd (p : (World → Bool)) (c : OrdEpistemicState) : OrdEpiste
 
     This is the key step in proving the ordering update is commensurate. -/
 theorem nonPWorld_cannot_dominate_pWorld
-    (A : List ((World → Bool))) (p : (World → Bool))
-    (w z : World) (hw : p w = true) (hz : p z = false) :
-    atLeastAsGoodAs (p :: A) z w = false := by
-  unfold atLeastAsGoodAs satisfiedPropositions
-  simp only [List.filter_cons, hw, ↓reduceIte, List.all_cons, hz,
-             Bool.false_and]
+    (A : List ((World → Prop))) (p : (World → Prop))
+    (w z : World) (hw : p w) (hz : ¬ p z) :
+    ¬ atLeastAsGoodAs (p :: A) z w := by
+  intro hLeq
+  -- z ≤[p :: A] w means: ∀ q ∈ p :: A, q w → q z. Apply to p.
+  exact hz (hLeq p (by simp) hw)
 
 /-- A non-empty list has an element maximizing any Nat-valued function. -/
 private theorem exists_max_by {α : Type*} (f : α → Nat) (l : List α) (hl : l ≠ []) :
@@ -368,68 +386,119 @@ private theorem exists_max_by {α : Type*} (f : α → Nat) (l : List α) (hl : 
           · exact Nat.le_of_lt h
           · exact hmax b hb⟩
 
-/-- Filter by a weaker predicate gives a weakly longer result. -/
+/-- Filtering by an implied Prop predicate yields a (weakly) longer list.
+    Helper lemma for `strict_dom_more_sat`. Filters use classical decidability
+    via `decide`; correspondence to the propositional condition is provided by
+    the membership-based hypothesis `h`. -/
 private theorem filter_length_le_of_imp
-    (A : List ((World → Bool))) (w w' : World)
-    (h : ∀ q, q ∈ A → q w = true → q w' = true) :
-    (A.filter (λ q => q w)).length ≤ (A.filter (λ q => q w')).length := by
+    (A : List (World → Prop)) (w w' : World)
+    (h : ∀ q, q ∈ A → q w → q w') :
+    (A.filter (fun q => @decide (q w) (Classical.propDecidable _))).length ≤
+      (A.filter (fun q => @decide (q w') (Classical.propDecidable _))).length := by
+  classical
   induction A with
-  | nil => rfl
+  | nil => exact Nat.le_refl _
   | cons q qs ih =>
-    have ih' := ih (λ r hr => h r (List.mem_cons_of_mem q hr))
-    simp only [List.filter_cons]
-    by_cases hqw : q w = true <;> by_cases hqw' : q w' = true
-      <;> simp only [hqw, hqw', ↓reduceIte]
-    · exact Nat.succ_le_succ ih'
-    · exact absurd (h q (by simp) hqw) (by simp [hqw'])
-    · exact Nat.le_trans ih' (Nat.le_succ _)
-    · exact ih'
+    have ih' := ih (fun r hr => h r (List.mem_cons_of_mem q hr))
+    by_cases hqw : q w
+    · have hqw' : q w' := h q (by simp) hqw
+      have hd  : @decide (q w)  (Classical.propDecidable _) = true := by
+        simp [hqw]
+      have hd' : @decide (q w') (Classical.propDecidable _) = true := by
+        simp [hqw']
+      simp only [List.filter_cons, hd, hd']
+      exact Nat.succ_le_succ ih'
+    · by_cases hqw' : q w'
+      · have hd  : @decide (q w)  (Classical.propDecidable _) = false := by
+          simp [hqw]
+        have hd' : @decide (q w') (Classical.propDecidable _) = true := by
+          simp [hqw']
+        simp only [List.filter_cons, hd, hd']
+        exact Nat.le_trans ih' (Nat.le_succ _)
+      · have hd  : @decide (q w)  (Classical.propDecidable _) = false := by
+          simp [hqw]
+        have hd' : @decide (q w') (Classical.propDecidable _) = false := by
+          simp [hqw']
+        simp only [List.filter_cons, hd, hd']
+        exact ih'
 
-/-- Filter is strictly longer when one predicate strictly implies another. -/
+/-- Filter is strictly longer when one Prop predicate strictly implies another. -/
 private theorem filter_length_lt_of_strict
-    (A : List ((World → Bool))) (w w' : World)
-    (hsub : ∀ q, q ∈ A → q w = true → q w' = true)
-    (hstrict : ∃ q, q ∈ A ∧ q w' = true ∧ q w = false) :
-    (A.filter (λ q => q w)).length < (A.filter (λ q => q w')).length := by
+    (A : List (World → Prop)) (w w' : World)
+    (hsub : ∀ q, q ∈ A → q w → q w')
+    (hstrict : ∃ q, q ∈ A ∧ q w' ∧ ¬ q w) :
+    (A.filter (fun q => @decide (q w) (Classical.propDecidable _))).length <
+      (A.filter (fun q => @decide (q w') (Classical.propDecidable _))).length := by
+  classical
   induction A with
-  | nil => obtain ⟨q, hq, _, _⟩ := hstrict; simp at hq
+  | nil => obtain ⟨_, hq, _, _⟩ := hstrict; simp at hq
   | cons r rs ih =>
-    simp only [List.filter_cons]
-    have hsub_rs : ∀ q, q ∈ rs → q w = true → q w' = true :=
-      λ q hq => hsub q (List.mem_cons_of_mem r hq)
+    have hsub_rs : ∀ q, q ∈ rs → q w → q w' :=
+      fun q hq => hsub q (List.mem_cons_of_mem r hq)
     obtain ⟨q, hqA, hqw', hqw⟩ := hstrict
     rcases List.mem_cons.mp hqA with rfl | hqrs
-    · -- Witness is the head
-      simp only [hqw, hqw', ↓reduceIte]
+    · -- Witness is the head: q w = False, q w' = True
+      have hd  : @decide (q w)  (Classical.propDecidable _) = false := by
+        simp [hqw]
+      have hd' : @decide (q w') (Classical.propDecidable _) = true := by
+        simp [hqw']
+      simp only [List.filter_cons, hd, hd']
       exact Nat.lt_succ_of_le (filter_length_le_of_imp rs w w' hsub_rs)
-    · -- Witness is in tail
-      by_cases hrw : r w = true <;> by_cases hrw' : r w' = true
-        <;> simp only [hrw, hrw', ↓reduceIte]
-      · exact Nat.succ_lt_succ (ih hsub_rs ⟨q, hqrs, hqw', hqw⟩)
-      · exact absurd (hsub r (by simp) hrw) (by simp [hrw'])
-      · exact Nat.lt_succ_of_lt (ih hsub_rs ⟨q, hqrs, hqw', hqw⟩)
-      · exact ih hsub_rs ⟨q, hqrs, hqw', hqw⟩
+    · -- Witness is in tail. Case-split on r at w/w'.
+      by_cases hrw : r w
+      · have hrw' : r w' := hsub r (by simp) hrw
+        have hd  : @decide (r w)  (Classical.propDecidable _) = true := by
+          simp [hrw]
+        have hd' : @decide (r w') (Classical.propDecidable _) = true := by
+          simp [hrw']
+        simp only [List.filter_cons, hd, hd']
+        exact Nat.succ_lt_succ (ih hsub_rs ⟨q, hqrs, hqw', hqw⟩)
+      · by_cases hrw' : r w'
+        · have hd  : @decide (r w)  (Classical.propDecidable _) = false := by
+            simp [hrw]
+          have hd' : @decide (r w') (Classical.propDecidable _) = true := by
+            simp [hrw']
+          simp only [List.filter_cons, hd, hd']
+          exact Nat.lt_succ_of_lt (ih hsub_rs ⟨q, hqrs, hqw', hqw⟩)
+        · have hd  : @decide (r w)  (Classical.propDecidable _) = false := by
+            simp [hrw]
+          have hd' : @decide (r w') (Classical.propDecidable _) = false := by
+            simp [hrw']
+          simp only [List.filter_cons, hd, hd']
+          exact ih hsub_rs ⟨q, hqrs, hqw', hqw⟩
 
-/-- Strict domination implies strictly more satisfied propositions. -/
+/-- Strict domination implies strictly more satisfied propositions.
+
+    Proof: from `h1` (w' ≤[A] w), every A-prop true at w is true at w'; from
+    `h2` (¬ w ≤[A] w'), some A-prop is true at w' and false at w. Apply
+    `filter_length_lt_of_strict`. -/
 private theorem strict_dom_more_sat
-    (A : List ((World → Bool))) (w w' : World)
-    (h1 : atLeastAsGoodAs A w' w = true)
-    (h2 : atLeastAsGoodAs A w w' = false) :
+    (A : List ((World → Prop))) (w w' : World)
+    (h1 : atLeastAsGoodAs A w' w)
+    (h2 : ¬ atLeastAsGoodAs A w w') :
     (satisfiedPropositions A w).length < (satisfiedPropositions A w').length := by
-  unfold satisfiedPropositions
-  unfold atLeastAsGoodAs at h1 h2
-  have hsub : ∀ q, q ∈ A → q w = true → q w' = true := by
-    intro q hq hqw
-    exact List.all_eq_true.mp h1 q (List.mem_filter.mpr ⟨hq, hqw⟩)
-  have hstrict : ∃ q, q ∈ A ∧ q w' = true ∧ q w = false := by
-    have hne : ¬(∀ q, q ∈ A.filter (λ r => r w') → q w = true) := by
-      intro hall
-      exact absurd (List.all_eq_true.mpr hall) (Bool.eq_false_iff.mp h2)
-    push_neg at hne
-    obtain ⟨q, hq, hqw⟩ := hne
-    exact ⟨q, (List.mem_filter.mp hq).1, (List.mem_filter.mp hq).2,
-           by cases hv : q w <;> simp_all⟩
-  exact filter_length_lt_of_strict A w w' hsub hstrict
+  classical
+  -- Extract sub and strict properties from atLeastAsGoodAs hypotheses.
+  have hsub : ∀ q, q ∈ A → q w → q w' := fun q hq hqw => h1 q hq hqw
+  have hstrict : ∃ q, q ∈ A ∧ q w' ∧ ¬ q w := by
+    by_contra hAll
+    apply h2
+    intro p hpA hpw'
+    by_contra hpw
+    exact hAll ⟨p, hpA, hpw', hpw⟩
+  -- Now reduce both sides to filter-by-decide and apply the helper.
+  have key := filter_length_lt_of_strict A w w' hsub hstrict
+  -- `satisfiedPropositions A w` is `A.filter (fun p => p w)` with a `letI`-
+  -- provided `Classical.propDecidable` instance. Both filters reduce to the
+  -- same `@decide ... (Classical.propDecidable _)` form.
+  show
+    (haveI : DecidablePred (fun p : World → Prop => p w) :=
+      fun p => Classical.propDecidable (p w)
+     A.filter (fun p => p w)).length <
+    (haveI : DecidablePred (fun p : World → Prop => p w') :=
+      fun p => Classical.propDecidable (p w')
+     A.filter (fun p => p w')).length
+  convert key using 2
 
 /-- **Commensurativity**: if the modal base has a p-world, adding p to the
     ordering source yields a state whose BEST worlds include a p-world.
@@ -441,52 +510,42 @@ private theorem strict_dom_more_sat
 
     §5.3, pp. 77–78. -/
 theorem ordering_update_commensurate
-    (c : OrdEpistemicState) (p : (World → Bool))
-    (hCompat : c.base.any p = true) :
+    (c : OrdEpistemicState) (p : (World → Prop)) [DecidablePred p]
+    (hCompat : ∃ w ∈ c.base, p w) :
     MI_ord p (nsfUpdateMightOrd p c) := by
+  classical
   unfold MI_ord nsfUpdateMightOrd
-  obtain ⟨w₀, hw₀, hpw₀⟩ := List.any_eq_true.mp hCompat
-  have hFilterMem : w₀ ∈ c.base.filter p := List.mem_filter.mpr ⟨hw₀, hpw₀⟩
+  obtain ⟨w₀, hw₀, hpw₀⟩ := hCompat
+  have hFilterMem : w₀ ∈ c.base.filter p := List.mem_filter.mpr
+    ⟨hw₀, by simpa using hpw₀⟩
   have hNotEmpty : (c.base.filter p).isEmpty = false := by
     cases hfp : c.base.filter p with
     | nil => simp [hfp] at hFilterMem
     | cons _ _ => rfl
-  simp only [hNotEmpty]
+  simp only [hNotEmpty, ↓reduceIte]
   have hPWorldsNe : c.base.filter p ≠ [] := by
     intro h; simp [h] at hFilterMem
   obtain ⟨m, hm, hmmax⟩ := exists_max_by
     (λ w => (satisfiedPropositions (p :: c.ordering) w).length)
     (c.base.filter p) hPWorldsNe
   have hmBase : m ∈ c.base := (List.mem_filter.mp hm).1
-  have hpm : p m = true := (List.mem_filter.mp hm).2
-  apply List.any_eq_true.mpr
+  have hpm : p m := by
+    have := (List.mem_filter.mp hm).2
+    simpa using this
   refine ⟨m, ?_, hpm⟩
-  -- Show m ∈ bestWorlds: m is in base and not strictly dominated
-  apply List.mem_filter.mpr
+  -- Show m ∈ bestWorlds: m is in base and not strictly dominated.
+  rw [OrdEpistemicState.mem_bestWorlds]
   refine ⟨hmBase, ?_⟩
-  -- Need: !(base.any (λ w' => ... w' m && !... m w')) = true
-  -- Equivalently: base.any (λ w' => ... w' m && !... m w') = false
-  -- Goal: !(base.any (λ w' => ... && !...)) = true
-  -- i.e., no w' in base strictly dominates m
-  suffices h : c.base.any (λ w' =>
-    atLeastAsGoodAs (p :: c.ordering) w' m &&
-    !atLeastAsGoodAs (p :: c.ordering) m w') = false by
-    simp [h]
-  rw [List.any_eq_false]
-  intro w' hw' hcontra
-  have ⟨h1, h2bang⟩ := Bool.and_eq_true_iff.mp hcontra
-  -- h1: w' ≥ m, h2bang: !(m ≥ w') = true
-  have h2 : atLeastAsGoodAs (p :: c.ordering) m w' = false := by
-    revert h2bang; cases atLeastAsGoodAs (p :: c.ordering) m w' <;> simp
-  by_cases hpw' : p w' = true
+  -- Goal: notDominated, i.e., ¬ ∃ w' ∈ base, w' ≥ m ∧ ¬ m ≥ w'
+  intro ⟨w', hw', h1, h2⟩
+  -- h1: w' ≥ m, h2: ¬ m ≥ w'
+  by_cases hpw' : p w'
   · -- w' is a p-world. m has max satCount, so no strict domination.
     have hlt := strict_dom_more_sat (p :: c.ordering) m w' h1 h2
-    have hw'F : w' ∈ c.base.filter p := List.mem_filter.mpr ⟨hw', hpw'⟩
+    have hw'F : w' ∈ c.base.filter p := List.mem_filter.mpr ⟨hw', by simpa using hpw'⟩
     exact absurd (hmmax w' hw'F) (by omega)
   · -- w' is a non-p-world. Can't even be ≥ m.
-    have hpw'f : p w' = false := by cases hv : p w' <;> simp_all
-    have habs := nonPWorld_cannot_dominate_pWorld c.ordering p m w' hpm hpw'f
-    simp [habs] at h1
+    exact nonPWorld_cannot_dominate_pWorld c.ordering p m w' hpm hpw' h1
 
 /-- The ordering update is conservative: adding p to the ordering source
     does not guarantee that the resulting context will entail anything
@@ -494,12 +553,12 @@ theorem ordering_update_commensurate
 
     §5.3. -/
 theorem ordering_update_conservative
-    (c : OrdEpistemicState) (p : (World → Bool))
-    (hCompat : c.base.any p = true) :
+    (c : OrdEpistemicState) (p : (World → Prop)) [DecidablePred p]
+    (hCompat : ∃ w ∈ c.base, p w) :
     (nsfUpdateMightOrd p c).base = c.base := by
   unfold nsfUpdateMightOrd
-  obtain ⟨w, hw, hpw⟩ := List.any_eq_true.mp hCompat
-  have hMem : w ∈ c.base.filter p := List.mem_filter.mpr ⟨hw, hpw⟩
+  obtain ⟨w, hw, hpw⟩ := hCompat
+  have hMem : w ∈ c.base.filter p := List.mem_filter.mpr ⟨hw, by simpa using hpw⟩
   have hNotEmpty : (c.base.filter p).isEmpty = false := by
     cases hfp : c.base.filter p with
     | nil => simp [hfp] at hMem
@@ -511,7 +570,7 @@ theorem ordering_update_conservative
 
     eq. (52). -/
 theorem ordering_nonEpistemic_preserves_ordering
-    (c : OrdEpistemicState) (p : (World → Bool)) :
+    (c : OrdEpistemicState) (p : (World → Prop)) [DecidablePred p] :
     let c' : OrdEpistemicState :=
       { base := c.base.filter p, ordering := c.ordering }
     c'.ordering = c.ordering :=
@@ -523,25 +582,25 @@ theorem ordering_nonEpistemic_preserves_ordering
     ⟦must-p⟧ⁱ(w) = true iff ∀w' ∈ BEST_{b_i,o_i}, p(w') = true.
 
     eq. (60). -/
-def mustOrdering (p : (World → Bool)) (s : OrdEpistemicState) (_ : World) : Bool :=
-  s.bestWorlds.all p
+def mustOrdering (p : (World → Prop)) (s : OrdEpistemicState) (_ : World) : Prop :=
+  ∀ w ∈ s.bestWorlds, p w
 
 /-- MI for ordering-semantic must-p: the set of epistemic states whose
     BEST worlds are all p-worlds.
 
     eq. (61). -/
-def MI_ord_must (p : (World → Bool)) (s : OrdEpistemicState) : Prop :=
-  ∀ w, w ∈ s.bestWorlds → p w = true
+def MI_ord_must (p : (World → Prop)) (s : OrdEpistemicState) : Prop :=
+  ∀ w, w ∈ s.bestWorlds → p w
 
 /-- MI(must-p) on ordering semantics ↔ BEST ⊆ p. -/
-theorem MI_ord_must_iff (p : (World → Bool)) (s : OrdEpistemicState) :
-    MI_ord_must p s ↔ s.bestWorlds.all p = true := by
-  unfold MI_ord_must
-  exact Iff.symm List.all_eq_true
+theorem MI_ord_must_iff (p : (World → Prop)) (s : OrdEpistemicState) :
+    MI_ord_must p s ↔ ∀ w ∈ s.bestWorlds, p w :=
+  Iff.rfl
 
-/-- A proposition is p-disjoint iff no world satisfies both it and p. -/
-def pDisjoint (p q : (World → Bool)) (base : List World) : Bool :=
-  base.all λ w => !(p w && q w)
+/-- A proposition is p-disjoint iff no world in the base satisfies both it
+    and p. -/
+def pDisjoint (p q : (World → Prop)) (base : List World) : Prop :=
+  ∀ w ∈ base, ¬ (p w ∧ q w)
 
 /-- **NSF update for must-p (ordering semantics).**
 
@@ -551,21 +610,25 @@ def pDisjoint (p q : (World → Bool)) (base : List World) : Bool :=
     satisfy p.
 
     eq. (64). -/
-def nsfUpdateMustOrd (p : (World → Bool)) (c : OrdEpistemicState) : OrdEpistemicState :=
+noncomputable def nsfUpdateMustOrd (p : (World → Prop)) [DecidablePred p]
+    (c : OrdEpistemicState) : OrdEpistemicState :=
+  haveI : DecidablePred (fun q : World → Prop => ¬ pDisjoint p q c.base) :=
+    fun _ => Classical.propDecidable _
   if (c.base.filter p).isEmpty then
     { base := [], ordering := c.ordering }  -- anomaly
   else
     { base := c.base,
-      ordering := p :: c.ordering.filter (λ q => !pDisjoint p q c.base) }
+      ordering := p :: c.ordering.filter (fun q => ¬ pDisjoint p q c.base) }
 
 /-- The must ordering update preserves the modal base (when compatible). -/
 theorem nsfUpdateMustOrd_preserves_base
-    (c : OrdEpistemicState) (p : (World → Bool))
-    (hCompat : c.base.any p = true) :
+    (c : OrdEpistemicState) (p : (World → Prop)) [DecidablePred p]
+    (hCompat : ∃ w ∈ c.base, p w) :
     (nsfUpdateMustOrd p c).base = c.base := by
+  classical
   unfold nsfUpdateMustOrd
-  obtain ⟨w, hw, hpw⟩ := List.any_eq_true.mp hCompat
-  have hMem : w ∈ c.base.filter p := List.mem_filter.mpr ⟨hw, hpw⟩
+  obtain ⟨w, hw, hpw⟩ := hCompat
+  have hMem : w ∈ c.base.filter p := List.mem_filter.mpr ⟨hw, by simpa using hpw⟩
   have hNotEmpty : (c.base.filter p).isEmpty = false := by
     cases hfp : c.base.filter p with
     | nil => simp [hfp] at hMem
@@ -586,8 +649,8 @@ open Semantics.Attitudes.Intensional (World allWorlds)
     where f_i is the epistemic accessibility function determined by i.
 
     eq. (65). -/
-def mightRelational (f : World → List World) (p : (World → Bool)) (w : World) : Bool :=
-  (f w).any p
+def mightRelational (f : World → List World) (p : (World → Prop)) (w : World) : Prop :=
+  ∃ w' ∈ f w, p w'
 
 /-- Epistemic closure: f maps every world in i to i itself.
     Under solipsistic contextualism, the accessibility function for
@@ -607,42 +670,42 @@ def EpistemicClosure (f : World → List World) (i : List World) : Prop :=
 
     Appendix B1, eq. (69c). -/
 theorem MI_relational_might_eq_domain
-    (f : World → List World) (i : List World) (p : (World → Bool))
+    (f : World → List World) (i : List World) (p : (World → Prop))
     (hClosed : EpistemicClosure f i) (hi : i ≠ []) :
-    (∀ w, w ∈ i → mightRelational f p w = true) ↔ i.any p = true := by
+    (∀ w, w ∈ i → mightRelational f p w) ↔ ∃ w ∈ i, p w := by
   constructor
   · intro h
     cases i with
     | nil => exact absurd rfl hi
     | cons w _ =>
-      have := h w (by simp)
-      simp only [mightRelational] at this
-      rwa [hClosed w (by simp)] at this
+      have hwi := h w (by simp)
+      simp only [mightRelational] at hwi
+      rwa [hClosed w (by simp)] at hwi
   · intro hAny w hw
     simp only [mightRelational, hClosed w hw]
     exact hAny
 
 /-- Must on relational semantics: ⟦must-p⟧ⁱ(w) = ∀w' ∈ f_i(w), p(w'). -/
-def mustRelational (f : World → List World) (p : (World → Bool)) (w : World) : Bool :=
-  (f w).all p
+def mustRelational (f : World → List World) (p : (World → Prop)) (w : World) : Prop :=
+  ∀ w' ∈ f w, p w'
 
 /-- Under epistemic closure, MI(must-p) on relational semantics
     is { i : i ⊆ p } — identical to the domain semantics result.
 
     Appendix B1 (analogous to eq. 69). -/
 theorem MI_relational_must_eq_domain
-    (f : World → List World) (i : List World) (p : (World → Bool))
+    (f : World → List World) (i : List World) (p : (World → Prop))
     (hClosed : EpistemicClosure f i) (_hi : i ≠ []) :
-    (∀ w, w ∈ i → mustRelational f p w = true) ↔ (∀ w, w ∈ i → p w = true) := by
+    (∀ w, w ∈ i → mustRelational f p w) ↔ (∀ w, w ∈ i → p w) := by
   constructor
   · intro h w hw
-    have := h w hw
-    simp only [mustRelational] at this
-    rw [hClosed w hw] at this
-    exact List.all_eq_true.mp this w hw
+    have hwi := h w hw
+    simp only [mustRelational] at hwi
+    rw [hClosed w hw] at hwi
+    exact hwi w hw
   · intro h w hw
     simp only [mustRelational, hClosed w hw]
-    exact List.all_eq_true.mpr (λ v hv => h v hv)
+    intro v hv; exact h v hv
 
 /-! ### B2: Relational ordering semantics -/
 
@@ -651,16 +714,16 @@ theorem MI_relational_must_eq_domain
     where g_i maps worlds to ordering sources.
 
     eq. (70). -/
-def mightRelOrd (f : World → List World) (g : World → List ((World → Bool)))
-    (p : (World → Bool)) (w : World) : Bool :=
+def mightRelOrd (f : World → List World) (g : World → List ((World → Prop)))
+    (p : (World → Prop)) (w : World) : Prop :=
   let s : OrdEpistemicState := { base := f w, ordering := g w }
-  s.bestWorlds.any p
+  ∃ w' ∈ s.bestWorlds, p w'
 
 /-- Ordering closure: g maps every world in b_i to the same ordering o_i.
 
     eq. (71). -/
-def OrderingClosure (g : World → List ((World → Bool)))
-    (base : List World) (ordering : List ((World → Bool))) : Prop :=
+def OrderingClosure (g : World → List ((World → Prop)))
+    (base : List World) (ordering : List ((World → Prop))) : Prop :=
   ∀ w, w ∈ base → g w = ordering
 
 /-- Under both epistemic and ordering closure, MI(might-p) on the
@@ -669,21 +732,21 @@ def OrderingClosure (g : World → List ((World → Bool)))
 
     Appendix B2, eq. (73). -/
 theorem MI_relOrd_might_eq_domain
-    (f : World → List World) (g : World → List ((World → Bool)))
-    (i : OrdEpistemicState) (p : (World → Bool))
+    (f : World → List World) (g : World → List ((World → Prop)))
+    (i : OrdEpistemicState) (p : (World → Prop))
     (hfClosed : EpistemicClosure f i.base)
     (hgClosed : OrderingClosure g i.base i.ordering)
     (hi : i.base ≠ []) :
-    (∀ w, w ∈ i.base → mightRelOrd f g p w = true) ↔
+    (∀ w, w ∈ i.base → mightRelOrd f g p w) ↔
     MI_ord p i := by
   constructor
   · intro h
     unfold MI_ord
     obtain ⟨w₀, hw₀⟩ := List.exists_mem_of_ne_nil _ hi
-    have := h w₀ hw₀
-    simp only [mightRelOrd] at this
-    rw [hfClosed w₀ hw₀, hgClosed w₀ hw₀] at this
-    exact this
+    have hwi := h w₀ hw₀
+    simp only [mightRelOrd] at hwi
+    rw [hfClosed w₀ hw₀, hgClosed w₀ hw₀] at hwi
+    exact hwi
   · intro hMI w hw
     simp only [mightRelOrd, hfClosed w hw, hgClosed w hw]
     exact hMI
@@ -702,19 +765,19 @@ variable {W : Type*}
 
     This is the standard biconditional relationship. -/
 theorem nonEpistemic_truth_acceptance_biconditional
-    (p : (W → Bool)) (c_assertor c_rejector : List W)
+    (p : (W → Prop)) (c_assertor c_rejector : List W)
     (_h_rej_ne : c_rejector ≠ [])
     (_h_assertor_true : MI (liftProp p) c_assertor)
-    (h_rejector_false : ∀ w, w ∈ c_rejector → p w = false) :
+    (h_rejector_false : ∀ w, w ∈ c_rejector → ¬ p w) :
     rejectionLicensed (liftProp p) c_rejector := by
   intro ⟨c', hRef, hMI, hNe⟩
   cases c' with
   | nil => exact absurd rfl hNe
   | cons v vs =>
     have hvi := hRef v (by simp)
-    have hpv : liftProp p (v :: vs) v = true := hMI v (by simp)
+    have hpv : liftProp p (v :: vs) v := hMI v (by simp)
     simp only [liftProp] at hpv
-    exact absurd hpv (by simp [h_rejector_false v hvi])
+    exact h_rejector_false v hvi hpv
 
 /-- **For might-claims, truth and rejectability dissociate.**
 
@@ -731,9 +794,9 @@ theorem nonEpistemic_truth_acceptance_biconditional
 
     §4.3, bridging §4.2.1. -/
 theorem might_truth_acceptance_dissociate
-    (p : (W → Bool)) (c_assertor c_rejector : List W)
-    (h_assertor_has_p : c_assertor.any p = true)
-    (h_rejector_no_p : c_rejector.any p = false) :
+    (p : (W → Prop)) (c_assertor c_rejector : List W)
+    (h_assertor_has_p : ∃ w ∈ c_assertor, p w)
+    (h_rejector_no_p : ¬ ∃ w ∈ c_rejector, p w) :
     MI (mightSimple p) c_assertor ∧ rejectionLicensed (mightSimple p) c_rejector :=
   ⟨context_in_MI_might p c_assertor h_assertor_has_p,
    no_p_worlds_not_compatible p c_rejector h_rejector_no_p⟩

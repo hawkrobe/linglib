@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.PIP.Basic
 import Linglib.Core.IntensionalLogic.RestrictedModality
+import Mathlib.Data.Fintype.Basic
 
 /-!
 # PIP Connectives and Modal Operators
@@ -281,7 +282,6 @@ end Properties
 -- ============================================================
 
 open Core.IntensionalLogic.RestrictedModality (boxR diamondR Refl boxR_T)
-open Core.Proposition (FiniteWorlds)
 
 /-- Lift a Bool-valued accessibility to its Prop-valued equivalent. -/
 private def liftR {W : Type*} (R : BAccessRel W) : W → W → Prop :=
@@ -299,19 +299,19 @@ Specifically: a pair (g, w₀) survives `must R allWorlds (atom p)` iff
 all R-accessible worlds. This connects PIP's discourse-update modals to the
 standard Kripke semantics used throughout `Theories/Semantics/Modality/`.
 -/
-theorem must_truth_agrees_boxR [FiniteWorlds W]
+theorem must_truth_agrees_boxR [Fintype W]
     (R : BAccessRel W) (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
-    ((g, w₀) ∈ (must R FiniteWorlds.worlds (atom p) d).info) ↔
+    ((g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) ↔
     boxR (liftR R) (liftP (p g)) w₀ := by
   constructor
   · intro ⟨_, h⟩
     intro v hRv
-    have hmem : v ∈ FiniteWorlds.worlds.filter (R w₀) := by
+    have hmem : v ∈ (Finset.univ : Finset W).toList.filter (R w₀) := by
       simp only [List.mem_filter]
-      exact ⟨FiniteWorlds.complete v, hRv⟩
-    have := h v (FiniteWorlds.complete v) hRv
+      exact ⟨Finset.mem_toList.mpr (Finset.mem_univ v), hRv⟩
+    have := h v (Finset.mem_toList.mpr (Finset.mem_univ v)) hRv
     unfold atom Discourse.mapInfo at this
     exact this.2
   · intro hbox
@@ -324,18 +324,18 @@ theorem must_truth_agrees_boxR [FiniteWorlds W]
 /--
 PIP's `might` agrees with `diamondR`.
 -/
-theorem might_truth_agrees_diamondR [FiniteWorlds W]
+theorem might_truth_agrees_diamondR [Fintype W]
     (R : BAccessRel W) (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info) :
-    ((g, w₀) ∈ (might R FiniteWorlds.worlds (atom p) d).info) ↔
+    ((g, w₀) ∈ (might R (Finset.univ : Finset W).toList (atom p) d).info) ↔
     diamondR (liftR R) (liftP (p g)) w₀ := by
   constructor
   · intro ⟨_, w₁, _, hacc, hmem⟩
     unfold atom Discourse.mapInfo at hmem
     exact ⟨w₁, hacc, hmem.2⟩
   · intro ⟨v, hRv, hpv⟩
-    refine ⟨hd, v, FiniteWorlds.complete v, hRv, ?_⟩
+    refine ⟨hd, v, Finset.mem_toList.mpr (Finset.mem_univ v), hRv, ?_⟩
     unfold atom Discourse.mapInfo
     exact ⟨modalExpand_adds_accessible d.info R g w₀ v hd hRv, hpv⟩
 
@@ -347,12 +347,12 @@ This derives PIP's key insight — must allows anaphora because a realistic
 modal base guarantees the description holds at the evaluation world — from
 `Core.IntensionalLogic.RestrictedModality.boxR_T`.
 -/
-theorem must_realistic_of_refl [FiniteWorlds W]
+theorem must_realistic_of_refl [Fintype W]
     (R : BAccessRel W) (hRefl : Refl (liftR R))
     (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info)
-    (hmust : (g, w₀) ∈ (must R FiniteWorlds.worlds (atom p) d).info) :
+    (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
     p g w₀ = true :=
   boxR_T (liftR R) hRefl (liftP (p g)) w₀
     ((must_truth_agrees_boxR R p d g w₀ hd).mp hmust)
@@ -365,14 +365,14 @@ This is the version that applies to non-globally-reflexive relations
 (e.g., epistemic access from a specific evaluation world). It captures
 @cite{kratzer-1991}'s realistic modal base without requiring global reflexivity.
 -/
-theorem must_realistic_at [FiniteWorlds W]
+theorem must_realistic_at [Fintype W]
     (R : BAccessRel W) (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hRefl_at : R w₀ w₀ = true)
-    (hmust : (g, w₀) ∈ (must R FiniteWorlds.worlds (atom p) d).info) :
+    (hmust : (g, w₀) ∈ (must R (Finset.univ : Finset W).toList (atom p) d).info) :
     p g w₀ = true := by
   obtain ⟨_, h⟩ := hmust
-  have := h w₀ (FiniteWorlds.complete w₀) hRefl_at
+  have := h w₀ (Finset.mem_toList.mpr (Finset.mem_univ w₀)) hRefl_at
   unfold atom Discourse.mapInfo at this
   exact this.2
 
