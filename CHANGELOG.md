@@ -4,6 +4,23 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.73] - 2026-04-20
+
+### Removed
+- **`Linglib/Tactics/RSAPredict/Backend/Bounds.lean`**: delete three
+  pieces of dead/duplicate code surfaced by the recent 5-file merge.
+  (1) `eq_zero_of_containsReal` was a verbatim restatement of
+  `eq_zero_of_bounds` with zero call sites — the duplication was
+  invisible while the two lemmas lived in separate files. (2) `powNat`
+  (the runtime-checked nat-power wrapper around `rpowNat`) had zero
+  consumers; all real users go through `rpowNat` with the proof
+  obligation. (3) `eq_zero_of_bounds` itself, after migrating its four
+  call sites (3 in this file + 1 in `Reflection.lean`'s
+  `interval_eq_zero`) to the strictly-more-general
+  `eq_zero_of_contained_nonneg`, which takes inequalities. The
+  zero-detection API now has one canonical entry point. Build clean
+  (2662 jobs).
+
 ## [0.230.72] - 2026-04-20
 
 ### Changed

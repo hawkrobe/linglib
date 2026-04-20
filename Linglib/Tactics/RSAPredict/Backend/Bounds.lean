@@ -442,14 +442,6 @@ theorem invPos_containsReal {a : QInterval} {x : ℝ}
   rw [one_div, one_div]
   exact ⟨inv_anti₀ hx_pos hx.2, inv_anti₀ (by exact_mod_cast ha) hx.1⟩
 
-/-- If an interval has lo = 0 and hi = 0, the contained value equals zero. -/
-theorem eq_zero_of_bounds {a : QInterval} {x : ℝ}
-    (hx : a.containsReal x) (hlo : a.lo = 0) (hhi : a.hi = 0) : x = 0 := by
-  have h1 := hx.1; have h2 := hx.2
-  rw [hlo] at h1; rw [hhi] at h2
-  simp at h1 h2
-  linarith
-
 -- ============================================================================
 -- Zero short-circuit for multiplication
 -- ============================================================================
@@ -458,21 +450,21 @@ theorem eq_zero_of_bounds {a : QInterval} {x : ℝ}
 theorem zero_mul_containsReal {a : QInterval} {x y : ℝ}
     (hx : a.containsReal x) (hlo : a.lo = 0) (hhi : a.hi = 0) :
     (exact 0).containsReal (x * y) := by
-  have := eq_zero_of_bounds hx hlo hhi
+  have := eq_zero_of_contained_nonneg hx hlo.ge hhi.le
   subst this; simp [exact, containsReal]
 
 /-- If y is in a zero interval, x * y is in the zero interval. -/
 theorem mul_zero_containsReal {b : QInterval} {x y : ℝ}
     (hy : b.containsReal y) (hlo : b.lo = 0) (hhi : b.hi = 0) :
     (exact 0).containsReal (x * y) := by
-  have := eq_zero_of_bounds hy hlo hhi
+  have := eq_zero_of_contained_nonneg hy hlo.ge hhi.le
   subst this; simp [exact, containsReal]
 
 /-- If x is in a zero interval, x / y is in the zero interval. -/
 theorem zero_div_containsReal {a : QInterval} {x y : ℝ}
     (hx : a.containsReal x) (hlo : a.lo = 0) (hhi : a.hi = 0) :
     (exact 0).containsReal (x / y) := by
-  have := eq_zero_of_bounds hx hlo hhi
+  have := eq_zero_of_contained_nonneg hx hlo.ge hhi.le
   subst this; simp [exact, containsReal]
 
 -- ============================================================================
@@ -504,21 +496,6 @@ theorem powNat_containsReal {a : QInterval} {x : ℝ} (n : ℕ)
   push_cast
   exact ⟨pow_le_pow_left₀ (by exact_mod_cast ha) hx.1 n,
          pow_le_pow_left₀ hx_nn hx.2 n⟩
-
-/-- Raise an interval to a natural power. No proof obligation — checks nonneg
-    at runtime and uses `rpowNat` for sound computation, fallback otherwise. -/
-def powNat (iv : QInterval) (n : ℕ) : QInterval :=
-  if n == 0 then exact 1
-  else if h : 0 ≤ iv.lo then iv.rpowNat n h
-  else ⟨0, 1, by norm_num⟩
-
-/-- If a real value is contained in an interval with lo = 0 and hi = 0,
-    the value equals zero. -/
-theorem eq_zero_of_containsReal {I : QInterval} {x : ℝ}
-    (h : I.containsReal x) (hlo : I.lo = 0) (hhi : I.hi = 0) : x = 0 := by
-  simp only [containsReal, hlo, hhi] at h
-  push_cast at h
-  linarith [h.1, h.2]
 
 -- ============================================================================
 -- Coarsening: bound rational precision to avoid blowup

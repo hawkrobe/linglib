@@ -369,7 +369,7 @@ private theorem mul_branch_containsReal {a b : QInterval} {v1 v2 : ℝ}
 /-- Key lemma: if interval proves x = 0, then x = 0. -/
 private theorem interval_eq_zero {I : QInterval} {x : ℝ}
     (hx : I.containsReal x) (hlo : I.lo = 0) (hhi : I.hi = 0) : x = 0 :=
-  QInterval.eq_zero_of_bounds hx (by simp [hlo]) (by simp [hhi])
+  QInterval.eq_zero_of_contained_nonneg hx hlo.ge hhi.le
 
 /-- Key lemma: if interval proves x > 0, then x > 0. -/
 private theorem interval_pos {I : QInterval} {x : ℝ}
