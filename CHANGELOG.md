@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.230.52] - 2026-04-20
+
+### Changed
+- **`Theories/Interfaces/SyntaxSemantics/Minimalism/TopologicalMapping.lean`**: sister Bool→Prop migration following 0.230.51's `CanBePredicate` — `objectReferential` → `ObjectReferential`, `kindReferential` → `KindReferential`, `raisingObligatory` → `RaisingObligatory`, `expletiveBlocksKindReading` → `ExpletiveBlocksKindReading`, each with `DecidablePred` instance. `table_28` and `raising_monotone` reformulated to consume the Prop API.
+- **`Phenomena/Reference/Studies/Longobardi2005.lean`**: cascade — `expletive_vs_operator` reformulated from `= true`/`= false` pair to `ExpletiveBlocksKindReading a ∧ ¬ ExpletiveBlocksKindReading b` with `⟨trivial, id⟩` proof.
+- **Bool-as-data principle (not migrated)**: `Core/Modality/ModalIndefinite.lean`'s typological-table fields (`upperBounded`, `hasUnremarkableReading`, `canBePredicate`, `numberNeutral`, `positionSensitive`) stay `Bool`. Mathlib idiom: `Bool` is appropriate for *decidable yes/no data storage* (typological table cells, struct fields surfaced via `deriving Repr`); `Prop` is appropriate for *propositional reasoning surfaces* (predicate functions consumed in proofs). Mirror: `Finset.carrier : Multiset α` (Bool data) + `Finset.Nonempty : Prop` (Prop wrapper). Add Prop wrappers if/when propositional consumers arise.
+
 ## [0.230.51] - 2026-04-20
 
 ### Changed

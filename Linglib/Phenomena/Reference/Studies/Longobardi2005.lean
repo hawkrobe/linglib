@@ -156,9 +156,9 @@ def ilTavolo : ExpletiveArticleDatum :=
 
 /-- Expletive articles block kind readings; operator articles allow them. -/
 theorem expletive_vs_operator :
-    expletiveBlocksKindReading laMaria.articleType = true ∧
-    expletiveBlocksKindReading ilTavolo.articleType = false :=
-  ⟨rfl, rfl⟩
+    ExpletiveBlocksKindReading laMaria.articleType ∧
+    ¬ ExpletiveBlocksKindReading ilTavolo.articleType :=
+  ⟨trivial, id⟩
 
 /-- Expletive articles preserve rigidity (wide scope only). -/
 theorem expletive_preserves_rigidity :

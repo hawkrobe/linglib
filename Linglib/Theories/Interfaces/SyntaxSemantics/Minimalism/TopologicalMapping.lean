@@ -62,11 +62,14 @@ inductive NominalHeadClass where
 
 /-- Object-referential: the nominal can denote a specific object
     (individual in Carlson's sense) by occupying the D position. -/
-def objectReferential : NominalHeadClass → Bool
-  | .pronoun      => true
-  | .properName   => true
-  | .specialCommon => true   -- conditioned: only when raised to D
-  | .commonNoun   => false
+def ObjectReferential : NominalHeadClass → Prop
+  | .pronoun      => True
+  | .properName   => True
+  | .specialCommon => True   -- conditioned: only when raised to D
+  | .commonNoun   => False
+
+instance : DecidablePred ObjectReferential := fun c => by
+  cases c <;> unfold ObjectReferential <;> infer_instance
 
 /-- Can function as a predicate (i.e., survive without D). -/
 def CanBePredicate : NominalHeadClass → Prop
@@ -79,18 +82,24 @@ instance : DecidablePred CanBePredicate := fun c => by
   cases c <;> unfold CanBePredicate <;> infer_instance
 
 /-- Kind-referential: can denote a kind when introduced by definite article. -/
-def kindReferential : NominalHeadClass → Bool
-  | .pronoun      => false
-  | .properName   => false
-  | .specialCommon => true
-  | .commonNoun   => true
+def KindReferential : NominalHeadClass → Prop
+  | .pronoun      => False
+  | .properName   => False
+  | .specialCommon => True
+  | .commonNoun   => True
+
+instance : DecidablePred KindReferential := fun c => by
+  cases c <;> unfold KindReferential <;> infer_instance
 
 /-- Whether N-to-D raising is obligatory in argument position. -/
-def raisingObligatory : NominalHeadClass → Bool
-  | .pronoun      => true   -- always in D (base-generated)
-  | .properName   => true   -- obligatory raising in argument function
-  | .specialCommon => false  -- conditioned raising
-  | .commonNoun   => false  -- never raises
+def RaisingObligatory : NominalHeadClass → Prop
+  | .pronoun      => True   -- always in D (base-generated)
+  | .properName   => True   -- obligatory raising in argument function
+  | .specialCommon => False  -- conditioned raising
+  | .commonNoun   => False  -- never raises
+
+instance : DecidablePred RaisingObligatory := fun c => by
+  cases c <;> unfold RaisingObligatory <;> infer_instance
 
 /-- Table (28): the three diagnostics partition the four classes.
     Pronouns and proper names are object-referential but not kind-referential.
@@ -98,15 +107,15 @@ def raisingObligatory : NominalHeadClass → Bool
     in object-referentiality. -/
 theorem table_28 :
     -- Object-referential partition
-    objectReferential .pronoun = true ∧
-    objectReferential .properName = true ∧
-    objectReferential .specialCommon = true ∧
-    objectReferential .commonNoun = false ∧
+    ObjectReferential .pronoun ∧
+    ObjectReferential .properName ∧
+    ObjectReferential .specialCommon ∧
+    ¬ ObjectReferential .commonNoun ∧
     -- Kind-referential partition
-    kindReferential .pronoun = false ∧
-    kindReferential .properName = false ∧
-    kindReferential .specialCommon = true ∧
-    kindReferential .commonNoun = true ∧
+    ¬ KindReferential .pronoun ∧
+    ¬ KindReferential .properName ∧
+    KindReferential .specialCommon ∧
+    KindReferential .commonNoun ∧
     -- Predicative partition
     ¬ CanBePredicate .pronoun ∧
     CanBePredicate .properName ∧
@@ -140,9 +149,9 @@ def propernessRank : NominalHeadClass → Nat
 theorem raising_monotone :
     ∀ c₁ c₂ : NominalHeadClass,
       propernessRank c₁ ≤ propernessRank c₂ →
-        (raisingObligatory c₂ = true → raisingObligatory c₁ = true) := by
+        (RaisingObligatory c₂ → RaisingObligatory c₁) := by
   intro c₁ c₂ h₁ h₂
-  cases c₁ <;> cases c₂ <;> simp_all [propernessRank, raisingObligatory]
+  cases c₁ <;> cases c₂ <;> simp_all [propernessRank, RaisingObligatory]
 
 -- ============================================================================
 -- § 3: The Topological Mapping Theory — Axioms (52)–(54)
@@ -315,9 +324,12 @@ inductive ArticleType where
     bare *Maria* — wide scope, rigid, no generic/kind reading. This
     distinguishes expletive articles from genuine definite operators,
     which CAN induce kind readings (*i cani* 'the dogs' = the dog-kind). -/
-def expletiveBlocksKindReading : ArticleType → Bool
-  | .expletive => true   -- no kind reading: article is semantically vacuous
-  | .operator  => false  -- kind reading possible: article is a real operator
+def ExpletiveBlocksKindReading : ArticleType → Prop
+  | .expletive => True   -- no kind reading: article is semantically vacuous
+  | .operator  => False  -- kind reading possible: article is a real operator
+
+instance : DecidablePred ExpletiveBlocksKindReading := fun a => by
+  cases a <;> unfold ExpletiveBlocksKindReading <;> infer_instance
 
 -- ============================================================================
 -- § 7: Bridge to Reference/Basic.lean — Proper Names
