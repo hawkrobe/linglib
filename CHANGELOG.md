@@ -4,6 +4,26 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.80] - 2026-04-20
+
+### Changed
+- **`Linglib/Phenomena/Polarity/Studies/{AlonsoOvalleMoghiseh2025,Chierchia2013}.lean`**:
+  extract Section 7 ("Universal Free Choice Items") from
+  AlonsoOvalleMoghiseh2025 to Chierchia2013. Section 7 was Chierchia's
+  *any*/UFCI analysis, not material from the @cite{alonso-ovalle-moghiseh-2025}
+  paper. Moved: `UniversalFCI`, `any_FCI`, `qualunque_FCI`,
+  `UFCIContext`, `UFCIReading` (new enum, replacing the broader
+  `EFCIReading` to scope to UFCI-only readings — UFCIs only ever yield
+  `plainExistential` or `freeChoice`), `ufciGrammatical`, `ufciReading`,
+  6 `AnyExample` data, 6 §7.1–7.5 theorems. AOM gains
+  `import Linglib.Phenomena.Polarity.Studies.Chierchia2013` and keeps
+  the 3 cross-FCI comparison theorems (`efci_allows_root`,
+  `ufci_blocks_root`, `efci_ufci_fc_under_modal`) since they pair
+  AOM-side EFCI predictions with Chierchia-side UFCI predictions.
+  AOM net loss: ~280 lines. Chierchia2013 net gain: ~210 lines. Build
+  clean. Downstream `Chierchia2006` (which uses `FCIFlavor`/`EFCIRescue`
+  from AOM) untouched.
+
 ## [0.230.79] - 2026-04-20
 
 ### Changed
