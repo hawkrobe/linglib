@@ -4,6 +4,23 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.72] - 2026-04-20
+
+### Changed
+- **`Phenomena/Polarity/Studies/Schwab2022.lean`**: docstring moved
+  after imports (`/-` → `/-!`); `acceptanceRate`/`bayesFactor` Float→ℚ
+  for exact arithmetic and proof compatibility (Mathlib.Data.Rat.Defs);
+  `IllusionAsymmetry` struct deleted (anti-pattern: invariant pinning
+  Bool fields to specific values is a theorem-shape, not a struct-shape)
+  and replaced with the theorem `illusion_asymmetry`. `#guard`s
+  promoted to `example` rfls.
+- **`Phenomena/Polarity/Studies/DenicEtAl2021.lean`**: `predictNPIEffect`
+  / `predictPPIEffect` Bool→Prop with explicit per-constructor Decidable
+  instances; consumer theorems use `↔ ... = true` against
+  `PIInfluence.significant : Bool`. `ComplementaryPattern` struct
+  deleted (same invariant-pinning anti-pattern as `IllusionAsymmetry`)
+  and replaced with theorem `complementary_pattern`.
+
 ## [0.230.71] - 2026-04-20
 
 ### Changed

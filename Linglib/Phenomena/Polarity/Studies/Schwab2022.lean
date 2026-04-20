@@ -1,4 +1,7 @@
-/-
+import Linglib.Core.Lexical.PolarityItem
+import Mathlib.Data.Rat.Defs
+
+/-!
 # @cite{schwab-2022}: Lexical Variation in NPI Illusions
 @cite{krifka-1995a}
 
@@ -31,8 +34,6 @@ illusion arises.
 
 -/
 
-import Linglib.Core.Lexical.PolarityItem
-
 namespace Schwab2022
 
 open Core.Lexical.PolarityItem (ScalarDirection)
@@ -54,14 +55,18 @@ inductive NPIType where
   | attenuating    -- soRecht (all that)
   deriving DecidableEq, Repr
 
-/-- A single experimental datum -/
+/-- A single experimental datum.
+
+Acceptance rates and Bayes factors are stored as `ℚ` (exact rational
+arithmetic) — `Float` would prevent any later use in proofs and isn't
+how mathlib stores measured quantities. -/
 structure ExperimentalDatum where
   npiType : NPIType
   condition : Condition
   /-- Mean acceptance rate (0–1) -/
-  acceptanceRate : Float
+  acceptanceRate : ℚ
   /-- Bayes factor for grammaticality (BF₁₀ > 3 = substantial evidence) -/
-  bayesFactor : Float
+  bayesFactor : ℚ
   /-- Accepted as grammatical? (BF₁₀ > 3) -/
   accepted : Bool
   deriving Repr
@@ -71,32 +76,32 @@ structure ExperimentalDatum where
 /-- jemals (strengthening) in grammatical condition -/
 def jemals_grammatical : ExperimentalDatum :=
   { npiType := .strengthening, condition := .grammatical
-  , acceptanceRate := 0.85, bayesFactor := 100.0, accepted := true }
+  , acceptanceRate := 85/100, bayesFactor := 100, accepted := true }
 
 /-- jemals (strengthening) in illusion condition — ACCEPTED (illusion!) -/
 def jemals_illusion : ExperimentalDatum :=
   { npiType := .strengthening, condition := .illusion
-  , acceptanceRate := 0.65, bayesFactor := 15.0, accepted := true }
+  , acceptanceRate := 65/100, bayesFactor := 15, accepted := true }
 
 /-- jemals (strengthening) in ungrammatical condition -/
 def jemals_ungrammatical : ExperimentalDatum :=
   { npiType := .strengthening, condition := .ungrammatical
-  , acceptanceRate := 0.25, bayesFactor := 0.05, accepted := false }
+  , acceptanceRate := 25/100, bayesFactor := 5/100, accepted := false }
 
 /-- soRecht (attenuating) in grammatical condition -/
 def soRecht_grammatical : ExperimentalDatum :=
   { npiType := .attenuating, condition := .grammatical
-  , acceptanceRate := 0.80, bayesFactor := 80.0, accepted := true }
+  , acceptanceRate := 80/100, bayesFactor := 80, accepted := true }
 
 /-- soRecht (attenuating) in illusion condition — REJECTED (no illusion!) -/
 def soRecht_illusion : ExperimentalDatum :=
   { npiType := .attenuating, condition := .illusion
-  , acceptanceRate := 0.30, bayesFactor := 0.10, accepted := false }
+  , acceptanceRate := 30/100, bayesFactor := 1/10, accepted := false }
 
 /-- soRecht (attenuating) in ungrammatical condition -/
 def soRecht_ungrammatical : ExperimentalDatum :=
   { npiType := .attenuating, condition := .ungrammatical
-  , acceptanceRate := 0.20, bayesFactor := 0.02, accepted := false }
+  , acceptanceRate := 20/100, bayesFactor := 2/100, accepted := false }
 
 /-- All experimental data -/
 def experimentalData : List ExperimentalDatum :=
@@ -107,28 +112,19 @@ def experimentalData : List ExperimentalDatum :=
 -- Core Finding: Illusion Asymmetry
 -- ============================================================================
 
-/-- The illusion asymmetry: strengthening NPIs show illusion, attenuating don't. -/
-structure IllusionAsymmetry where
-  /-- Strengthening NPIs accepted in illusion condition -/
-  strengtheningIllusion : Bool
-  /-- Attenuating NPIs accepted in illusion condition -/
-  attenuatingIllusion : Bool
-  /-- The asymmetry holds: strengthening shows illusion, attenuating doesn't -/
-  asymmetry : strengtheningIllusion = true ∧ attenuatingIllusion = false
+/-- Per-datum acceptance pattern (Experiment 2). -/
+example : jemals_grammatical.accepted = true := rfl
+example : jemals_illusion.accepted = true := rfl       -- illusion!
+example : jemals_ungrammatical.accepted = false := rfl
+example : soRecht_grammatical.accepted = true := rfl
+example : soRecht_illusion.accepted = false := rfl     -- no illusion!
+example : soRecht_ungrammatical.accepted = false := rfl
 
-/-- The observed illusion asymmetry from Experiment 2 -/
-def observedAsymmetry : IllusionAsymmetry :=
-  { strengtheningIllusion := jemals_illusion.accepted
-  , attenuatingIllusion := soRecht_illusion.accepted
-  , asymmetry := ⟨rfl, rfl⟩ }
-
--- Per-datum verification
-#guard jemals_grammatical.accepted == true
-#guard jemals_illusion.accepted == true       -- illusion!
-#guard jemals_ungrammatical.accepted == false
-#guard soRecht_grammatical.accepted == true
-#guard soRecht_illusion.accepted == false     -- no illusion!
-#guard soRecht_ungrammatical.accepted == false
+/-- The illusion asymmetry: strengthening NPIs show illusory acceptance,
+    attenuating NPIs do not. -/
+theorem illusion_asymmetry :
+    jemals_illusion.accepted = true ∧ soRecht_illusion.accepted = false :=
+  ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- Theoretical Connection: ScalarDirection → Illusion Prediction
@@ -150,9 +146,12 @@ def predictsIllusion (npi : NPIType) : Bool :=
   | .nonScalar => false
   | .unknown => false
 
--- The theoretical prediction matches the observed data
-#guard predictsIllusion .strengthening == jemals_illusion.accepted
-#guard predictsIllusion .attenuating == soRecht_illusion.accepted
+/-- The theoretical prediction matches the observed data. -/
+theorem prediction_matches_data :
+    predictsIllusion .strengthening = jemals_illusion.accepted ∧
+    predictsIllusion .attenuating = soRecht_illusion.accepted := by
+  refine ⟨?_, ?_⟩ <;> simp only [predictsIllusion, npiTypeToScalarDirection,
+    jemals_illusion, soRecht_illusion]
 
 /-- Illusion asymmetry follows from scalar direction:
     strengthening NPIs are predicted to show illusion,

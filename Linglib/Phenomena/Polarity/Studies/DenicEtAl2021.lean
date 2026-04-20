@@ -184,25 +184,17 @@ def exp3_npi_NM_controlled : PIInfluence :=
 -- Exp 3: effect persists without domain widening
 #guard exp3_npi_NM_controlled.significant == true
 
-/-- The complementary pattern: each PI type affects exactly the environment
-where its associated polarity is ambiguous.
+/-- The complementary pattern observed in Experiment 1: each PI type affects
+exactly the environment where its associated polarity is ambiguous.
 
 - NPIs (associated with DE) affect NM but not DN
 - PPIs (associated with UE) affect DN but not NM -/
-structure ComplementaryPattern where
-  npi_affects_NM : Bool
-  npi_affects_DN : Bool
-  ppi_affects_NM : Bool
-  ppi_affects_DN : Bool
-  complementary : npi_affects_NM = true ∧ npi_affects_DN = false ∧
-                  ppi_affects_NM = false ∧ ppi_affects_DN = true
-
-def observedPattern : ComplementaryPattern :=
-  { npi_affects_NM := exp1_npi_NM.significant
-  , npi_affects_DN := exp1_npi_DN.significant
-  , ppi_affects_NM := exp1_ppi_NM.significant
-  , ppi_affects_DN := exp1_ppi_DN.significant
-  , complementary := ⟨rfl, rfl, rfl, rfl⟩ }
+theorem complementary_pattern :
+    exp1_npi_NM.significant = true ∧
+    exp1_npi_DN.significant = false ∧
+    exp1_ppi_NM.significant = false ∧
+    exp1_ppi_DN.significant = true :=
+  ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
 -- Mechanism Predictions
@@ -358,53 +350,62 @@ theorem mechanism_constraints :
     ever.baseForce ≠ any.baseForce :=
   ⟨rfl, by decide, rfl, by decide⟩
 
-/-- Predict NPI significance from signature. -/
-def predictNPIEffect (env : MonotonicityEnv) : Bool :=
-  match envSignature env with
-  | none => true
-  | some _ => false
+/-- Predict NPI significance from signature: true exactly when the
+    environment has no determinate signature. -/
+def PredictsNPIEffect (env : MonotonicityEnv) : Prop :=
+  envSignature env = none
 
-/-- Predict PPI significance from signature. -/
-def predictPPIEffect (env : MonotonicityEnv) : Bool :=
+instance (env : MonotonicityEnv) : Decidable (PredictsNPIEffect env) := by
+  unfold PredictsNPIEffect; infer_instance
+
+/-- Predict PPI significance from signature: true exactly when the
+    environment's signature has a non-weak UE strength. -/
+def PredictsPPIEffect (env : MonotonicityEnv) : Prop :=
   match envSignature env with
   | some sig => match EntailmentSig.toUEStrength sig with
-    | some .weak => false
-    | some _ => true
-    | none => false
-  | none => false
+    | some .weak => False
+    | some _ => True
+    | none => False
+  | none => False
+
+instance : ∀ env : MonotonicityEnv, Decidable (PredictsPPIEffect env)
+  | .UE => show Decidable False from isFalse not_false
+  | .DE => show Decidable False from isFalse not_false
+  | .NM => show Decidable False from isFalse not_false
+  | .DN => show Decidable True from isTrue trivial
 
 /-- NPI prediction matches all 4 experimental environments. -/
 theorem npi_prediction_matches_data :
-    predictNPIEffect .NM = exp1_npi_NM.significant ∧
-    predictNPIEffect .DN = exp1_npi_DN.significant ∧
-    predictNPIEffect .UE = exp1_npi_UE.significant ∧
-    predictNPIEffect .DE = exp1_npi_DE.significant :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    (PredictsNPIEffect .NM ↔ exp1_npi_NM.significant = true) ∧
+    (PredictsNPIEffect .DN ↔ exp1_npi_DN.significant = true) ∧
+    (PredictsNPIEffect .UE ↔ exp1_npi_UE.significant = true) ∧
+    (PredictsNPIEffect .DE ↔ exp1_npi_DE.significant = true) := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- PPI prediction matches all 4 experimental environments. -/
 theorem ppi_prediction_matches_data :
-    predictPPIEffect .NM = exp1_ppi_NM.significant ∧
-    predictPPIEffect .DN = exp1_ppi_DN.significant ∧
-    predictPPIEffect .UE = exp1_ppi_UE.significant ∧
-    predictPPIEffect .DE = exp1_ppi_DE.significant := by
-  exact ⟨by decide, by decide, by decide, by decide⟩
+    (PredictsPPIEffect .NM ↔ exp1_ppi_NM.significant = true) ∧
+    (PredictsPPIEffect .DN ↔ exp1_ppi_DN.significant = true) ∧
+    (PredictsPPIEffect .UE ↔ exp1_ppi_UE.significant = true) ∧
+    (PredictsPPIEffect .DE ↔ exp1_ppi_DE.significant = true) := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- Algebraic predictions agree with all 8 empirical data points. -/
-theorem experiment1_predictions_match :
-    experiment1.all (fun f =>
-      (match f.piCondition with
-       | .npi => predictNPIEffect f.environment
-       | .ppi => predictPPIEffect f.environment
-       | _ => f.significant) == f.significant) = true := by
+theorem experiment1_predictions_match : ∀ f ∈ experiment1,
+    (match f.piCondition with
+     | .npi => decide (PredictsNPIEffect f.environment)
+     | .ppi => decide (PredictsPPIEffect f.environment)
+     | _ => f.significant) = f.significant := by
   decide
 
-/-- Observed pattern matches signature-based predictions. -/
+/-- Observed pattern (from `complementary_pattern`) matches
+    signature-based predictions. -/
 theorem observed_pattern_matches_predictions :
-    observedPattern.npi_affects_NM = predictNPIEffect .NM ∧
-    observedPattern.npi_affects_DN = predictNPIEffect .DN ∧
-    observedPattern.ppi_affects_NM = predictPPIEffect .NM ∧
-    observedPattern.ppi_affects_DN = predictPPIEffect .DN := by
-  exact ⟨by decide, rfl, by decide, by decide⟩
+    (PredictsNPIEffect .NM ↔ exp1_npi_NM.significant = true) ∧
+    (¬ PredictsNPIEffect .DN ↔ exp1_npi_DN.significant = false) ∧
+    (¬ PredictsPPIEffect .NM ↔ exp1_ppi_NM.significant = false) ∧
+    (PredictsPPIEffect .DN ↔ exp1_ppi_DN.significant = true) := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> decide
 
 /-- Shift directions match PI polarity. -/
 theorem shift_directions_match_pi_polarity :
