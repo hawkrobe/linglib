@@ -1,6 +1,11 @@
 import Linglib.Core.InformationStructure
 import Linglib.Fragments.Dutch.Particles
 import Linglib.Fragments.German.PolarityMarking
+import Linglib.Fragments.French.PolarityMarking
+import Linglib.Fragments.Swedish.AnswerParticles
+import Linglib.Fragments.English.PolarityMarking
+import Linglib.Fragments.Spanish.PolarityMarking
+import Linglib.Fragments.Italian.PolarityMarking
 import Linglib.Theories.Semantics.Focus.PolarityLevel
 
 /-!
@@ -50,6 +55,11 @@ namespace TurcoBraunDimroth2014
 open Core.InformationStructure (PolaritySwitchContext PolarityMarkingStrategy PolarityMarkingEntry)
 open Fragments.Dutch.Particles (wel)
 open Fragments.German.PolarityMarking (verumFocus dochPreUtterance)
+open Fragments.French.PolarityMarking (si)
+open Fragments.Swedish.AnswerParticles (joMarking)
+open Fragments.English.PolarityMarking (emphaticDo)
+open Fragments.Spanish.PolarityMarking (siQue)
+open Fragments.Italian.PolarityMarking (siChe)
 open Semantics.Focus.PolarityLevel (PolarityMarkingLevel strategyLevel)
 
 /-! ## Types -/
@@ -348,5 +358,88 @@ theorem vf_targets_assertion :
     This is the paper's key theoretical claim (p. 104). -/
 theorem strategies_target_different_levels :
     strategyLevel wel.strategy ≠ strategyLevel verumFocus.strategy := by decide
+
+/-! ## Cross-Linguistic Extension
+
+@cite{turco-braun-dimroth-2014} compare Dutch and German; the analysis
+naturally extends to other Western European languages with comparable
+polarity-marking inventories: English (emphatic *do*),
+French (*si*), Swedish (*jo*), Spanish (*sí (que)*),
+Italian (*sì che*). See also @cite{holmberg-2016},
+@cite{batllori-hernanz-2013}, @cite{wilder-2013},
+@cite{garassino-jacob-2018}.
+
+We aggregate the seven-language sample and verify the strategy–level,
+correction-only, context-general, and sentence-internality
+generalizations as quantified statements over the inventory rather
+than as individual per-entry `rfl`s. -/
+
+/-- All polarity-marking entries across the seven-language sample. -/
+def allEntries : List PolarityMarkingEntry :=
+  [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking, siQue, siChe]
+
+/-- **Generalization 1 — Strategy/level mapping.** Every particle and
+    polarity-reversal entry targets the polarity level; every Verum-focus
+    entry targets the assertion level. -/
+theorem strategy_level_partition :
+    ∀ e ∈ allEntries,
+      (e.strategy = .particle ∨ e.strategy = .polarityReversal →
+        strategyLevel e.strategy = some .polarity) ∧
+      (e.strategy = .verumFocus →
+        strategyLevel e.strategy = some .assertion) := by
+  intro e he
+  simp [allEntries] at he
+  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    refine ⟨?_, ?_⟩ <;> intro h <;>
+    simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
+              siQue, siChe, strategyLevel]
+
+/-- **Generalization 2 — Reversal particles are correction-only.**
+    Every polarity-reversal entry has `contrastOk = false` and
+    `correctionOk = true`. -/
+theorem all_reversal_correction_only :
+    ∀ e ∈ allEntries, e.strategy = .polarityReversal →
+      e.contrastOk = false ∧ e.correctionOk = true := by
+  intro e he hs
+  simp [allEntries] at he
+  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
+              siQue, siChe]
+
+/-- **Generalization 3 — Non-reversal strategies are context-general.**
+    Every particle or Verum-focus entry has both `contrastOk = true`
+    and `correctionOk = true`. -/
+theorem all_nonreversal_context_general :
+    ∀ e ∈ allEntries,
+      e.strategy = .particle ∨ e.strategy = .verumFocus →
+      e.contrastOk = true ∧ e.correctionOk = true := by
+  intro e he hs
+  simp [allEntries] at he
+  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
+              siQue, siChe]
+
+/-- **Generalization 4 — Sentence-internality splits by strategy type.**
+    Polarity-reversal entries are not sentence-internal; particles and
+    Verum-focus entries are. -/
+theorem sentence_internality_by_strategy :
+    ∀ e ∈ allEntries,
+      (e.strategy = .polarityReversal → e.sentenceInternal = false) ∧
+      (e.strategy = .particle ∨ e.strategy = .verumFocus →
+        e.sentenceInternal = true) := by
+  intro e he
+  simp [allEntries] at he
+  rcases he with rfl | rfl | rfl | rfl | rfl | rfl | rfl | rfl <;>
+    refine ⟨?_, ?_⟩ <;> intro h <;>
+    simp_all [wel, verumFocus, emphaticDo, si, dochPreUtterance, joMarking,
+              siQue, siChe]
+
+/-- Italian *sì che* and Spanish *sí que* are cognates with identical
+    formal properties (strategy, sentence-internality, contrast/correction). -/
+theorem italian_spanish_cognates :
+    siChe.strategy = siQue.strategy ∧
+    siChe.sentenceInternal = siQue.sentenceInternal ∧
+    siChe.contrastOk = siQue.contrastOk ∧
+    siChe.correctionOk = siQue.correctionOk := ⟨rfl, rfl, rfl, rfl⟩
 
 end TurcoBraunDimroth2014

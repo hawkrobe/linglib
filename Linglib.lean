@@ -154,6 +154,9 @@ import Linglib.Core.Temporal.System
 import Linglib.Core.Temporal.Reichenbach
 import Linglib.Core.Temporal.Tense
 import Linglib.Core.Typology.WordOrder
+import Linglib.Core.Typology.Adposition
+import Linglib.Core.Typology.LanguageProfile
+import Linglib.Core.Typology.Universal
 import Linglib.Core.Context.Basic
 import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
@@ -469,6 +472,7 @@ import Linglib.Paradigms.WugTest
 -- Fragments
 import Linglib.Fragments.Arabic.Relativization
 import Linglib.Fragments.Arabic.Morph
+import Linglib.Fragments.Arabic.Typology
 import Linglib.Fragments.ASL.Classifiers
 import Linglib.Fragments.ASL.Height
 import Linglib.Fragments.Dutch.Adpositions
@@ -508,6 +512,7 @@ import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.English.TDDeletion
 import Linglib.Fragments.English.Relativization
 import Linglib.Fragments.English.Morph
+import Linglib.Fragments.English.Typology
 import Linglib.Fragments.English.Negation
 import Linglib.Fragments.English.V2
 import Linglib.Fragments.English.Indefinites
@@ -649,6 +654,7 @@ import Linglib.Fragments.Japanese.Passive
 import Linglib.Fragments.Japanese.Predicates
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Japanese.Morph
+import Linglib.Fragments.Japanese.Typology
 import Linglib.Fragments.Japanese.Negation
 import Linglib.Fragments.Japanese.Prosody
 import Linglib.Fragments.Mongolian.Case
@@ -666,6 +672,7 @@ import Linglib.Fragments.Mandarin.Predicates
 import Linglib.Fragments.Mandarin.Reciprocals
 import Linglib.Fragments.Mandarin.Resultatives
 import Linglib.Fragments.Mandarin.Morph
+import Linglib.Fragments.Mandarin.Typology
 import Linglib.Fragments.Mandarin.Negation
 import Linglib.Fragments.Turkish.Case
 import Linglib.Fragments.Turkish.Comparison
@@ -693,6 +700,7 @@ import Linglib.Fragments.Magahi.Pronouns
 import Linglib.Fragments.Korean.Pronouns
 import Linglib.Fragments.Korean.Relativization
 import Linglib.Fragments.Korean.Morph
+import Linglib.Fragments.Korean.Typology
 import Linglib.Fragments.Japanese.Pronouns
 import Linglib.Fragments.Tamil.Case
 import Linglib.Fragments.Tamil.Pronouns
@@ -1217,6 +1225,7 @@ import Linglib.Phenomena.Negation.Studies.Stakov2026
 import Linglib.Phenomena.Negation.Studies.Stakov2026Typology
 import Linglib.Phenomena.Negation.FlexibleNegation
 import Linglib.Phenomena.Morphology.CompositionBridge
+import Linglib.Phenomena.Morphology.Studies.AlbrightHayes2003
 import Linglib.Phenomena.Morphology.Studies.Bybee1985
 import Linglib.Phenomena.Morphology.Studies.ZwickyPullum1983
 import Linglib.Phenomena.Morphology.Studies.KalinBjorkmanEtAl2026
@@ -1924,7 +1933,6 @@ import Linglib.Phenomena.Focus.Studies.Umbach2004
 import Linglib.Phenomena.Focus.Studies.HartmannZimmermann2007
 import Linglib.Phenomena.Focus.Studies.Kiss1998
 import Linglib.Phenomena.Polarity.Studies.TurcoBraunDimroth2014
-import Linglib.Phenomena.Polarity.MarkingTypology
 import Linglib.Theories.Semantics.Focus.Interpretation
 import Linglib.Theories.Semantics.Focus.Sensitivity
 import Linglib.Theories.Semantics.Focus.Particles
@@ -2140,6 +2148,7 @@ import Linglib.Theories.Semantics.Polarity.Operator
 import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Linglib.Theories.Semantics.Exhaustification.Operators
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
+import Linglib.Theories.Semantics.Exhaustification.IE
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
 import Linglib.Theories.Semantics.Exhaustification.ScalePredictions

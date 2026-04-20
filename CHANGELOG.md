@@ -4,6 +4,82 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.82] - 2026-04-20
+
+### Changed
+- **Polarity overhaul Phase 2 cleanup** (closes overhaul tasks #21–#23):
+  - `Phenomena/Polarity/Typology.lean`: trimmed 34 redundant per-language
+    theorems (17 `_contiguous` + 17 `_disjoint`) — each was subsumed by the
+    existing `all_languages_contiguous` / `all_languages_disjoint` masters.
+    Inlined `IndefiniteFunction.mem` (trivial wrapper around `s.contains f`).
+    Replaced ad-hoc `foldl (· + ·) 0` with `.sum` in 6 sites
+    (`map_edge_count`, `WALSCount.totalOf`, `fewer_series_broader_coverage`,
+    `wh_based_fewer_series`, `interrogative_based_avg_series`,
+    `total_series`).
+  - `Phenomena/Polarity/MarkingTypology.lean` **dissolved** into
+    `Studies/TurcoBraunDimroth2014.lean`. Per linglib convention,
+    cross-linguistic extension of TBD2014's two-language production study
+    to seven Western European languages belongs in the study file that
+    introduced the framework. New "Cross-Linguistic Extension" section
+    in TBD2014 aggregates `allEntries` (8 entries across Dutch, German,
+    English, French, Swedish, Spanish, Italian) and proves the four
+    typological generalizations (strategy/level mapping, reversal
+    correction-only, non-reversal context-general, sentence-internality)
+    as quantified statements over the inventory rather than 30+ per-entry
+    `rfl`s. Linglib.lean import removed.
+  - `Studies/KadmonLandman1993.lean`: removed `KLExplanation` alias
+    (use `Core.Lexical.PolarityItem.LicensingMechanism` directly via
+    `open`); fixed pre-existing `entails`/`Set World` cascade from prior
+    `Exhaustification.FreeChoice` migration (3 sites: `klStrengthening`,
+    `de_satisfies_strengthening`, `ue_violates_strengthening`).
+  - `Studies/Lahiri1998.lean`: removed two trivial `rfl` theorems
+    (`hindi_allows_subject_npi`, `english_blocks_subject_npi`) that just
+    re-stated literal field values from the `subjectNPI` definition above.
+
+## [0.230.81] - 2026-04-20
+
+### Added
+- **`Linglib/Theories/Semantics/Exhaustification/IE.lean`** (new, 124 lines,
+  `Exhaustification.Innocent` namespace): mathlib-canonical Finset
+  formulation of @cite{fox-2007}'s innocent exclusion. Single computational
+  type — no `Set` spec + parallel `Bool`/`List` API. Worlds are an arbitrary
+  `[Fintype W] [DecidableEq W]`; alternatives are `Finset (Finset W)`;
+  `exhIE : Finset W` is the exhaustified meaning. `Decidable` instances
+  for `IsCompatible` / `IsMCSet` derive automatically from `Finset.powerset`
+  + `Finset.filter` — no hand-crafted machinery. Bridge helpers
+  `predToFinset` / `altsFromPreds` lift `W → Bool` predicates without
+  needing `DecidableEq (W → Bool)`. Convenience: `innocentlyExcludable`
+  for layered consumers (trivalent EXH, presuppositional EXH).
+
+### Changed
+- **5 consumers migrated** from `Exhaustification.InnocentExclusion.exhB`
+  (Bool/List API) to `Exhaustification.Innocent.exhIE` (Finset API):
+  - `Phenomena/ScalarImplicatures/ExhaustivityLimit.lean` (POC): all four
+    `native_decide` proofs become kernel-checked `decide` proofs;
+    `scaleDomain : List ScaleW` dropped (`Fintype` handles it); alternative
+    set recast as `Finset (Finset ScaleW)`; `scaleExh : Finset ScaleW`
+    queryable directly via `∈`.
+  - `Theories/Semantics/Exhaustification/Trivalent.lean`: `exh1`/`exh2`
+    drop `[BEq W] domain` parameters in favor of `[Fintype W] [DecidableEq W]`;
+    use `innocentlyExcludable` to map IE membership back to Truth3
+    alternatives.
+  - `Phenomena/Presupposition/Studies/WangDavidson2026.lean`: `bDomain`
+    arg removed from `exh1`/`exh2` re-exports.
+  - `Phenomena/ScalarImplicatures/Studies/CremersWilcoxSpector2023.lean`:
+    `exhMeaning` recomputed via `exhIE`; `native_decide` proofs preserved.
+  - `Theories/Semantics/Quantification/CovertQuantifier.lean`: docstring
+    pointer to canonical implementation updated.
+- `Linglib.lean`: registers new `Exhaustification.IE` module.
+
+### Deferred
+- Wave 2.5 Phase C continues with the remaining 12 consumers
+  (`Symmetric.lean` 39 refs, `AlonsoOvalleMoghiseh2025` 47, `Magri2014` 27,
+  `Spector2013` 23, `ChowErlewine2022` 22, `Denic2023` 17, `BrehenyEtAl2018` 16,
+  `Magri2009` 12, `FreeChoiceCompare` 8, `AtomicConstraint` 7, `FoxSpector2018` 7,
+  `ContextualConstraint` 6, `AlternativeSensitive` 4) before Phase D
+  deletes `InnocentExclusion.lean`. Both modules coexist during migration —
+  the new API is additive, not destructive.
+
 ## [0.230.80] - 2026-04-20
 
 ### Changed

@@ -790,9 +790,6 @@ def subjectNPI : SubjectNPIContrast :=
   , englishGrammatical := false
   , notes := "Hindi NegP c-commands subject at LF; English NegP does not" }
 
-theorem hindi_allows_subject_npi : subjectNPI.hindiGrammatical = true := rfl
-theorem english_blocks_subject_npi : subjectNPI.englishGrammatical = false := rfl
-
 -- ============================================================================
 -- §13. Connection to Existing Fragment Entries
 -- ============================================================================

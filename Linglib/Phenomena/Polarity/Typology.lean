@@ -153,16 +153,12 @@ theorem every_function_has_neighbor :
 /-- The map has exactly 8 edges (undirected). We count ordered pairs and
     divide by 2: each edge appears once in each direction. -/
 theorem map_edge_count :
-    (IndefiniteFunction.all.map (λ f => (adjacentFunctions f).length)).foldl
-      (· + ·) 0 = 16 := by decide
+    (IndefiniteFunction.all.map (λ f => (adjacentFunctions f).length)).sum
+      = 16 := by decide
 
 -- ============================================================================
 -- §3: Contiguity Check (BFS on the Map)
 -- ============================================================================
-
-/-- Check whether a function is in a given set (list membership). -/
-def IndefiniteFunction.mem (f : IndefiniteFunction) (s : List IndefiniteFunction) : Bool :=
-  s.contains f
 
 /-- BFS on the implicational map restricted to a given set of functions.
     Starting from `start`, explore all reachable nodes through edges whose
@@ -179,7 +175,7 @@ def bfsReachable (funcs : List IndefiniteFunction) (start : IndefiniteFunction)
     | _, []         => visited
     | fuel + 1, f :: rest =>
       let neighbors := (adjacentFunctions f).filter (λ g =>
-        g.mem funcs && !(g.mem visited))
+        funcs.contains g && !visited.contains g)
       go (rest ++ neighbors) (visited ++ neighbors) fuel
   go [start] [start] fuel
 
@@ -193,7 +189,7 @@ def isContiguous (funcs : List IndefiniteFunction) : Bool :=
   | []     => true
   | f :: _ =>
     let reached := bfsReachable funcs f 15
-    funcs.all (λ g => g.mem reached)
+    funcs.all reached.contains
 
 -- ============================================================================
 -- §4: Pronoun Series and Language Profiles
@@ -267,7 +263,7 @@ structure WALSCount where
 
 /-- Sum of counts in a WALS table. -/
 def WALSCount.totalOf (cs : List WALSCount) : Nat :=
-  cs.foldl (λ acc c => acc + c.count) 0
+  (cs.map (·.count)).sum
 
 private abbrev ch46 := Core.WALS.F46A.allData
 
@@ -795,64 +791,8 @@ theorem sample_size : allLanguages.length = 17 := by decide
 -- §8: Contiguity Verification
 -- ============================================================================
 
-/-! The central typological claim: every pronoun series covers a
-    **contiguous** region on Haspelmath's implicational map.
-
-    We verify this for every series in every language in our sample. -/
-
-/-- English: all series are contiguous on the map. -/
-theorem english_contiguous : english.allContiguous = true := by decide
-
-/-- Russian: all series are contiguous. -/
-theorem russian_contiguous : russian.allContiguous = true := by decide
-
-/-- German: all series are contiguous. -/
-theorem german_contiguous : german.allContiguous = true := by decide
-
-/-- Japanese: all series are contiguous. -/
-theorem japanese_contiguous : japanese.allContiguous = true := by decide
-
-/-- Mandarin: all series are contiguous. -/
-theorem mandarin_contiguous : mandarin.allContiguous = true := by decide
-
-/-- Turkish: all series are contiguous. -/
-theorem turkish_contiguous : turkish.allContiguous = true := by decide
-
-/-- Hindi: all series are contiguous. -/
-theorem hindi_contiguous : hindi.allContiguous = true := by decide
-
-/-- Italian: all series are contiguous. -/
-theorem italian_contiguous : italian.allContiguous = true := by decide
-
-/-- Finnish: all series are contiguous. -/
-theorem finnish_contiguous : finnish.allContiguous = true := by decide
-
-/-- Korean: all series are contiguous. -/
-theorem korean_contiguous : korean.allContiguous = true := by decide
-
-/-- Hungarian: all series are contiguous. -/
-theorem hungarian_contiguous : hungarian.allContiguous = true := by decide
-
-/-- Georgian: all series are contiguous. -/
-theorem georgian_contiguous : georgian.allContiguous = true := by decide
-
-/-- Quechua: all series are contiguous. -/
-theorem quechua_contiguous : quechua.allContiguous = true := by decide
-
-/-- Yoruba: all series are contiguous. -/
-theorem yoruba_contiguous : yoruba.allContiguous = true := by decide
-
-/-- Thai: all series are contiguous. -/
-theorem thai_contiguous : thai.allContiguous = true := by decide
-
-/-- Tagalog: all series are contiguous. -/
-theorem tagalog_contiguous : tagalog.allContiguous = true := by decide
-
-/-- Swahili: all series are contiguous. -/
-theorem swahili_contiguous : swahili.allContiguous = true := by decide
-
-/-- **Master contiguity theorem**: every series in every language in our
-    sample is contiguous on Haspelmath's implicational map. -/
+/-- The central typological claim: every pronoun series covers a
+    **contiguous** region on Haspelmath's implicational map. -/
 theorem all_languages_contiguous :
     allLanguages.all (·.allContiguous) = true := by decide
 
@@ -868,29 +808,9 @@ theorem all_languages_cover_all_functions :
 -- §9a: Disjointness Verification (Series Partition)
 -- ============================================================================
 
-/-! Every language's series have **disjoint** function sets — no function
+/-- Every language's series have **disjoint** function sets — no function
     appears in two different series. Together with coverage (§9), this means
     the series form a **partition** of the nine function types. -/
-
-theorem english_disjoint : english.seriesDisjoint = true := by decide
-theorem russian_disjoint : russian.seriesDisjoint = true := by decide
-theorem german_disjoint : german.seriesDisjoint = true := by decide
-theorem japanese_disjoint : japanese.seriesDisjoint = true := by decide
-theorem mandarin_disjoint : mandarin.seriesDisjoint = true := by decide
-theorem turkish_disjoint : turkish.seriesDisjoint = true := by decide
-theorem hindi_disjoint : hindi.seriesDisjoint = true := by decide
-theorem italian_disjoint : italian.seriesDisjoint = true := by decide
-theorem finnish_disjoint : finnish.seriesDisjoint = true := by decide
-theorem korean_disjoint : korean.seriesDisjoint = true := by decide
-theorem hungarian_disjoint : hungarian.seriesDisjoint = true := by decide
-theorem georgian_disjoint : georgian.seriesDisjoint = true := by decide
-theorem quechua_disjoint : quechua.seriesDisjoint = true := by decide
-theorem yoruba_disjoint : yoruba.seriesDisjoint = true := by decide
-theorem thai_disjoint : thai.seriesDisjoint = true := by decide
-theorem tagalog_disjoint : tagalog.seriesDisjoint = true := by decide
-theorem swahili_disjoint : swahili.seriesDisjoint = true := by decide
-
-/-- **Master disjointness theorem**: every language's series are disjoint. -/
 theorem all_languages_disjoint :
     allLanguages.all (·.seriesDisjoint) = true := by decide
 
@@ -960,8 +880,8 @@ theorem fewer_series_broader_coverage :
     -- Mandarin: 2 series covering 9 functions → avg 4.5
     -- Russian: 5 series covering 9 functions → avg 1.8
     mandarin.seriesCount < russian.seriesCount ∧
-    (mandarin.series.map (·.coverage)).foldl (· + ·) 0 =
-    (russian.series.map (·.coverage)).foldl (· + ·) 0 := by
+    (mandarin.series.map (·.coverage)).sum =
+    (russian.series.map (·.coverage)).sum := by
   decide
 
 /-! ### Generalization 5: Specific known is typically separate
@@ -1106,7 +1026,7 @@ def whBasedLanguages : List IndefinitePronounProfile :=
 
 /-- Wh-based indefinite languages average fewer series than others. -/
 theorem wh_based_fewer_series :
-    (whBasedLanguages.map (·.seriesCount)).foldl (· + ·) 0 ≤
+    (whBasedLanguages.map (·.seriesCount)).sum ≤
     whBasedLanguages.length * 4 := by
   decide
 
@@ -1153,7 +1073,7 @@ theorem interrogative_based_sample_count :
 /-- Interrogative-based languages in our sample average ≤ 4 series per
     language (total series ≤ 28 across 7 languages). -/
 theorem interrogative_based_avg_series :
-    (interrogativeBasedProfiles.map (·.seriesCount)).foldl (· + ·) 0 ≤ 28 := by
+    (interrogativeBasedProfiles.map (·.seriesCount)).sum ≤ 28 := by
   decide
 
 -- ============================================================================
@@ -1269,7 +1189,7 @@ theorem max_series_count :
 
 /-- Total number of distinct series across all languages. -/
 theorem total_series :
-    (allLanguages.map (·.seriesCount)).foldl (· + ·) 0 = 63 := by decide
+    (allLanguages.map (·.seriesCount)).sum = 63 := by decide
 
 /-- The most common series count in our sample is 4 (six languages). -/
 theorem most_common_series_count :

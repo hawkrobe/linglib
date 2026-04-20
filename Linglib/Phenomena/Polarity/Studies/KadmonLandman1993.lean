@@ -61,11 +61,10 @@ do not freely license *any*. The difference traces to lexical semantics:
 namespace KadmonLandman1993
 
 open Core.NaturalLogic
-open Core.Lexical.PolarityItem (LicensingContext PolarityType)
+open Core.Lexical.PolarityItem (LicensingContext LicensingMechanism PolarityType)
 open Semantics.Entailment.Polarity
 open Semantics.Entailment.AntiAdditivity
 open Semantics.Quantification.DomainVagueness
-open Exhaustification (entails)
 open Exhaustification.FreeChoice (Ctx existsInDomain
   widening_strengthens_in_de widening_weakens_in_ue)
 
@@ -95,8 +94,8 @@ widening in DE contexts strengthens.
     iff `klStrengthening` holds for the relevant widening. -/
 def klStrengthening {World Entity : Type*}
     (C : Ctx World) (D D' : Set Entity)
-    (P : Entity → World → Prop) (_hD : D ⊆ D') : Prop :=
-  entails (C (existsInDomain D' P)) (C (existsInDomain D P))
+    (P : Entity → Set World) (_hD : D ⊆ D') : Prop :=
+  C (existsInDomain D' P) ⊆ₚ C (existsInDomain D P)
 
 /-- **Theorem (K&L → Ladusaw).**
     In any DE context, strengthening is automatically satisfied.
@@ -107,8 +106,8 @@ def klStrengthening {World Entity : Type*}
     `FreeChoice.lean`. -/
 theorem de_satisfies_strengthening {World Entity : Type*}
     (C : Ctx World)
-    (hDE : ∀ (p q : World → Prop), entails p q → entails (C q) (C p))
-    (D D' : Set Entity) (P : Entity → World → Prop) (hD : D ⊆ D') :
+    (hDE : ∀ (p q : Set World), (p ⊆ₚ q) → (C q ⊆ₚ C p))
+    (D D' : Set Entity) (P : Entity → Set World) (hD : D ⊆ D') :
     klStrengthening C D D' P hD :=
   widening_strengthens_in_de C hDE D D' P hD
 
@@ -117,9 +116,9 @@ theorem de_satisfies_strengthening {World Entity : Type*}
     This is why *any* is ungrammatical in positive contexts. -/
 theorem ue_violates_strengthening {World Entity : Type*}
     (C : Ctx World)
-    (hUE : ∀ (p q : World → Prop), entails p q → entails (C p) (C q))
-    (D D' : Set Entity) (P : Entity → World → Prop) (hD : D ⊆ D') :
-    entails (C (existsInDomain D P)) (C (existsInDomain D' P)) :=
+    (hUE : ∀ (p q : Set World), (p ⊆ₚ q) → (C p ⊆ₚ C q))
+    (D D' : Set Entity) (P : Entity → Set World) (hD : D ⊆ D') :
+    C (existsInDomain D P) ⊆ₚ C (existsInDomain D' P) :=
   widening_weakens_in_ue C hUE D D' P hD
 
 -- ============================================================================
@@ -178,16 +177,11 @@ def guaranteesStrengthening (ctx : LicensingContext) : Bool :=
 #guard !guaranteesStrengthening .modalPossibility -- FC, not DE → ✗
 #guard !guaranteesStrengthening .generic          -- FC, not DE → ✗
 
-/-- The K&L licensing classification: why each context licenses *any*.
-
-    Re-exports `Core.Lexical.PolarityItem.LicensingMechanism`. -/
-abbrev KLExplanation := Core.Lexical.PolarityItem.LicensingMechanism
-
-/-- Each context's K&L explanation, projected from `contextProperties`.
+/-- Each context's K&L licensing mechanism, projected from `contextProperties`.
 
     This is the unifying function: instead of stipulating *that* each
     context licenses, we explain *why*. -/
-abbrev klExplanation (c : LicensingContext) : KLExplanation :=
+abbrev klExplanation (c : LicensingContext) : LicensingMechanism :=
   (Core.Lexical.PolarityItem.contextProperties c).mechanism
 
 /-- Consistency check: every context classified as `byStrengthening`
@@ -652,8 +646,8 @@ structure KLDatum where
   sentence : String
   /-- Grammaticality judgment -/
   grammatical : Bool
-  /-- K&L's explanation for the judgment -/
-  explanation : KLExplanation
+  /-- K&L's licensing mechanism for the judgment -/
+  explanation : LicensingMechanism
   /-- The entailment signature at the LOCAL proposition (narrowest operator
       scoping over *any*). This is the signature that matters for
       strengthening under K&L's locality condition (D). -/
