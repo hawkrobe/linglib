@@ -4,6 +4,48 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.68] - 2026-04-20
+
+### Changed
+- **`Linglib/Tactics/RSAPredict/Backend/Reflection.lean`**: rename
+  `ReflectInterval.lean` → `Reflection.lean` now that the backend lives
+  under `Tactics/RSAPredict/Backend/` — the `Interval` suffix was a
+  vestigial echo of the old `Core/Interval/` location and `Backend/`
+  already implies "for the reflection-based tactic". Three internal
+  consumers (`RSAPredict.lean`, `Helpers.lean`, `ReflectBridge.lean`)
+  and the `HerbstrittFranke2019.lean` docstring updated. Build clean
+  (2662 jobs).
+
+## [0.230.67] - 2026-04-20
+
+### Changed
+- **`Linglib/Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`**:
+  refactor to consume `ParadigmUniformity/LexicalConservatism.lean` and
+  `Paradigms/WugTest.lean` directly instead of inline-stipulating the
+  paradigm-construction discipline. `n2Paradigm` now wraps `lcParadigm`
+  and `puFaith` is `mkLCFaith "PU-N2-FAITH" velarMismatch`; the
+  bound-case zero-violations theorem now invokes `lc_unanchored_zero`
+  rather than rederiving the diagonal-mismatch fact. Adds:
+
+  - § 8 `WugBKKCell` with `freeN2`/`formDistinct` structural proofs +
+    `HasAttestation`/`HasFrequency` instances + the lemma
+    `cpdPuViolations_eq_two` (every cell forces 2 violations);
+  - § 9 `wugBkkRate : ℝ → WugBKKCell → ℝ` plus
+    `bkk_satisfies_NovelShowsFreqGradient` and the discriminator
+    corollary `bkk_excludes_useListed`, wired through
+    `WugTest.novelGradient_inconsistent_with_invariance` with
+    `cell_haigan` as the non-vacuous frequency witness;
+  - § 10 OP engagement: `n2OpParadigm`/`opPuFaith`/`cpdOpPuViolations`
+    plus `op_paradigm_uniform_in_bound_free` and the contrast theorem
+    `op_lc_disagree_on_bound` (and `dokunga_op_vs_lc` witness),
+    making the @cite{mccarthy-2005} vs. @cite{steriade-2000} structural
+    incompatibility on bound compounds visible.
+
+  All existing § 1-7 theorems unchanged. `OptimalParadigms.lean` and
+  `WugTest.lean` each gain a second consumer. Build:
+  `lake build Linglib.Phenomena.Phonology.Studies.BreissKatsudaKawahara2026`
+  clean (1948 jobs).
+
 ## [0.230.66] - 2026-04-20
 
 ### Changed

@@ -3,7 +3,7 @@ import Linglib.Tactics.RSAPredict.Backend.Bounds
 set_option autoImplicit false
 
 /-!
-# ReflectInterval — Proof by Reflection for Interval Arithmetic
+# Reflection — Proof by Reflection for Interval Arithmetic
 
 Defines a reified expression type `RExpr` with:
 - `RExpr.denote : RExpr → ℝ` — the real-valued denotation
