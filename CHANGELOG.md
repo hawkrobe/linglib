@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.66] - 2026-04-20
+
+### Changed
+- **`Linglib/Tactics/RSAPredict/Backend/Bounds.lean`**: collapse the
+  five interval-arithmetic files (`QInterval`, `PadeExp`, `LogInterval`,
+  `SqrtInterval`, `RpowInterval`) into a single `Bounds.lean`, in
+  dependency order. The merge preserves git history on the largest
+  layer (QInterval → Bounds via `git mv`) and folds the four smaller
+  files in as trailing sections. `Backend/ReflectInterval.lean` now
+  imports `Backend.Bounds` only — five internal imports drop to one.
+  Net: 5 files / ~1426 source lines → 1 file / 1385 lines (the savings
+  come from deduplicated module headers and merged mathlib imports).
+  Build: `lake build Linglib.Tactics.RSAPredict` clean (2662 jobs).
+
 ## [0.230.65] - 2026-04-20
 
 ### Removed

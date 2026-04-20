@@ -1,8 +1,4 @@
-import Linglib.Tactics.RSAPredict.Backend.QInterval
-import Linglib.Tactics.RSAPredict.Backend.PadeExp
-import Linglib.Tactics.RSAPredict.Backend.LogInterval
-import Linglib.Tactics.RSAPredict.Backend.RpowInterval
-import Linglib.Tactics.RSAPredict.Backend.SqrtInterval
+import Linglib.Tactics.RSAPredict.Backend.Bounds
 
 set_option autoImplicit false
 
