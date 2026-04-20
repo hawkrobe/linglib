@@ -41,7 +41,7 @@ The key ingredients:
 
 This file proves that the Exh^{IE+II} derivation for homogeneity is
 structurally isomorphic to the free choice derivation in
-`InnocentInclusion.lean`:
+`Phenomena/Modality/Studies/BarLevFox2020.lean`:
 
 | Free Choice              | Homogeneity                     |
 |--------------------------|----------------------------------|
@@ -457,7 +457,7 @@ theorem janeLaughed_ii :
     This is the homogeneity derivation: the universal reading of a
     plural definite arises as an implicature, not from basic semantics.
 
-    Compare `free_choice` in `InnocentInclusion.lean`. -/
+    Compare `free_choice` in `Phenomena/Modality/Studies/BarLevFox2020.lean`. -/
 theorem universality :
     ∀ w, exhIEII homAlt homPrejacent w → kellyLaughed w ∧ janeLaughed w := by
   intro w ⟨_, _, hII⟩

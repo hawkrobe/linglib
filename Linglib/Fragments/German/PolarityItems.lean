@@ -28,10 +28,10 @@ open Core.Lexical.PolarityItem
     The *irgend-* prefix marks non-specificity / domain widening. -/
 def irgendein : PolarityItemEntry :=
   { form := "irgendein/irgendwer"
-  , polarityType := .npi_fci
+  , polarityType := .npiFci
   , baseForce := .existential
   , licensingContexts :=
-      [.question, .conditional_ant, .modal_possibility, .modal_necessity, .imperative]
+      [.question, .conditionalAntecedent, .modalPossibility, .modalNecessity, .imperative]
   , scalarDirection := .strengthening
   , notes := "irgend- prefix = domain widening; Chierchia's EFCI class" }
 
@@ -41,7 +41,7 @@ def wer : PolarityItemEntry :=
   { form := "wer (conditional)"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.conditional_ant, .negation]
+  , licensingContexts := [.conditionalAntecedent, .negation]
   , scalarDirection := .strengthening
   , notes := "Bare wh-word in conditional/neg contexts" }
 
@@ -59,7 +59,7 @@ def niemand : PolarityItemEntry :=
 -- Verification
 -- ============================================================================
 
-theorem irgendein_is_npi_fci : irgendein.polarityType = .npi_fci := rfl
+theorem irgendein_is_npi_fci : irgendein.polarityType = .npiFci := rfl
 
 theorem german_npis_strengthening :
     [irgendein, wer, niemand].all

@@ -27,11 +27,11 @@ open Core.Lexical.PolarityItem
     FCI (in modal/generic contexts). -/
 def shei : PolarityItemEntry :=
   { form := "shéi (谁, non-interrog.)"
-  , polarityType := .npi_fci
+  , polarityType := .npiFci
   , baseForce := .existential
   , licensingContexts :=
-      [ .negation, .nobody, .question, .conditional_ant
-      , .modal_possibility, .modal_necessity, .imperative, .generic
+      [ .negation, .nobody, .question, .conditionalAntecedent
+      , .modalPossibility, .modalNecessity, .imperative, .generic
       , .comparative ]
   , scalarDirection := .strengthening
   , notes := "Wh-word covers 7 functions: irrealis through free choice" }
@@ -40,6 +40,6 @@ def shei : PolarityItemEntry :=
 -- Verification
 -- ============================================================================
 
-theorem shei_is_npi_fci : shei.polarityType = .npi_fci := rfl
+theorem shei_is_npi_fci : shei.polarityType = .npiFci := rfl
 
 end Fragments.Mandarin.PolarityItems

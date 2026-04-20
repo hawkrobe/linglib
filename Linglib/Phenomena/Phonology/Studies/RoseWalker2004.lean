@@ -3,7 +3,6 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Subregular.ForbiddenPairs
 import Linglib.Theories.Phonology.Subregular.ForbidPairs
 
 /-!
@@ -38,6 +37,15 @@ surface generalization; the TSL_2 description *characterizes* the
 surface stringset that their derivation produces. The two analyses
 operate at different levels and are not in competition for the same
 explanatory work.
+
+Kikongo nasal harmony is *asymmetric*: the forbidden tier-adjacent pair
+is `(nasal, voiced-stop)`, not the reverse. This is a strict instance of
+the generic `TSLGrammar.ofForbiddenPairs` constructor and does **not**
+factor through either `TSLGrammar.ocp` (`R := (· = ·)`) or
+`TSLGrammar.agree` (`R := (· ≠ ·)`); the AGREE specialization captures
+*symmetric* harmony (e.g. Navajo sibilant harmony in `Hansson2010.lean`).
+The asymmetry here tracks the morphological geometry (stem→suffix
+direction), not a feature-symmetric agreement relation.
 
 ## Design boundary
 
@@ -74,7 +82,7 @@ are transparent), then forbid any tier-adjacent pair `(C₁, C₂)` where
 
 namespace Phonology.Studies.RoseWalker2004
 
-open Core.Computability.Subregular
+open Core Core.Computability.Subregular Phonology.Subregular
 
 -- ============================================================================
 -- § 1: A toy Kikongo segmental alphabet
@@ -102,12 +110,13 @@ oral stops are on-tier. Neutral consonants and vowels are transparent
 the agreement form the relevant locality domain. The tier choice is the
 substantive theoretical commitment (cf. the design-boundary docstring
 on `tierProject` non-monotonicity in `ForbiddenPairs.lean`). -/
-def KSeg.onTier : KSeg → Prop
+@[reducible] def KSeg.onTier : KSeg → Prop
   | .nasalC | .voicedStop => True
   | .neutralC | .vowel => False
 
-instance : DecidablePred KSeg.onTier := fun s => by
-  cases s <;> unfold KSeg.onTier <;> infer_instance
+instance : DecidablePred KSeg.onTier
+  | .nasalC | .voicedStop => isTrue trivial
+  | .neutralC | .vowel => isFalse not_false
 
 /-- The forbidden-pair relation: a nasal consonant immediately followed
 on the harmonizing-class tier by a voiced oral stop. Asymmetric: the
@@ -117,12 +126,14 @@ The reverse order (voiced stop then nasal) is unattested in the
 relevant domain rather than independently licit; the asymmetry tracks
 the morphological geometry, not a separately stipulated directionality
 of agreement. -/
-def KSeg.forbidNasalStop : KSeg → KSeg → Prop
+@[reducible] def KSeg.forbidNasalStop : KSeg → KSeg → Prop
   | .nasalC, .voicedStop => True
   | _, _ => False
 
-instance : DecidableRel KSeg.forbidNasalStop := fun a b => by
-  cases a <;> cases b <;> unfold KSeg.forbidNasalStop <;> infer_instance
+instance : DecidableRel KSeg.forbidNasalStop
+  | .nasalC, .voicedStop => isTrue trivial
+  | .nasalC, .nasalC | .nasalC, .neutralC | .nasalC, .vowel
+  | .voicedStop, _ | .neutralC, _ | .vowel, _ => isFalse not_false
 
 -- ============================================================================
 -- § 2: The TSL_2 grammar
@@ -131,7 +142,7 @@ instance : DecidableRel KSeg.forbidNasalStop := fun a b => by
 /-- The Kikongo nasal-harmony grammar as a tier-based strictly 2-local
 language: project to the harmonizing-class tier (nasals + voiced stops),
 forbid `nasalC`-then-`voicedStop` adjacency on the tier. -/
-def kikongoNasalHarmony : TSLGrammar 2 KSeg :=
+@[reducible] def kikongoNasalHarmony : TSLGrammar 2 KSeg :=
   TSLGrammar.ofForbiddenPairs KSeg.forbidNasalStop KSeg.onTier
 
 -- ============================================================================
@@ -142,73 +153,71 @@ def kikongoNasalHarmony : TSLGrammar 2 KSeg :=
 (across vowels and a neutral coda) by a voiced oral stop in the suffix.
 Illustrates the offending input configuration that Kikongo harmony
 resolves; not a verbatim Kikongo lexical item. -/
-def preHarmonyNasalStop : List KSeg :=
+@[reducible] def preHarmonyNasalStop : List KSeg :=
   [.nasalC, .vowel, .neutralC, .neutralC, .vowel, .voicedStop, .vowel]
 
 /-- The corresponding post-harmony surface form: the suffix voiced stop
 has been realized as a nasal. Illustrates the resolved configuration; not
 a verbatim Kikongo lexical item. -/
-def postHarmonyNasalNasal : List KSeg :=
+@[reducible] def postHarmonyNasalNasal : List KSeg :=
   [.nasalC, .vowel, .neutralC, .neutralC, .vowel, .nasalC, .vowel]
 
 /-- A schematic control form with no nasal trigger: the voiced stop is
 licit because no preceding tier element is `nasalC`. -/
-def controlNoTrigger : List KSeg :=
+@[reducible] def controlNoTrigger : List KSeg :=
   [.neutralC, .vowel, .neutralC, .vowel, .voicedStop, .vowel]
 
 -- ============================================================================
 -- § 4: Theorems — TSL_2 captures the surface phonotactic
 -- ============================================================================
 
-/-- The pre-harmony underlying form is **rejected** by the surface
-grammar: it contains a tier-adjacent `nasalC`-`voicedStop` pair.
-Closed by the `decidableMemOfForbiddenPairsLang` instance. -/
+/-- The pre-harmony underlying form is **rejected**: it contains a
+tier-adjacent `nasalC`-`voicedStop` pair. -/
 theorem preHarmonyNasalStop_violates :
-    preHarmonyNasalStop ∉ kikongoNasalHarmony.lang := by
-  unfold kikongoNasalHarmony preHarmonyNasalStop; decide
+    preHarmonyNasalStop ∉ kikongoNasalHarmony.lang := by decide
 
 /-- The post-harmony surface form is **accepted**: every tier-adjacent
 pair is licit. -/
 theorem postHarmonyNasalNasal_legal :
-    postHarmonyNasalNasal ∈ kikongoNasalHarmony.lang := by
-  unfold kikongoNasalHarmony postHarmonyNasalNasal; decide
+    postHarmonyNasalNasal ∈ kikongoNasalHarmony.lang := by decide
 
 /-- Forms with no nasal trigger are **accepted** even if they contain
 voiced stops — the constraint is conditional on a preceding tier-
 adjacent nasal. -/
 theorem controlNoTrigger_legal :
-    controlNoTrigger ∈ kikongoNasalHarmony.lang := by
-  unfold kikongoNasalHarmony controlNoTrigger; decide
+    controlNoTrigger ∈ kikongoNasalHarmony.lang := by decide
 
 -- ============================================================================
 -- § 5: OT-side bridge — markedness constraint co-extensive with the language
 -- ============================================================================
-
-open Core
 
 /-- The OT markedness constraint corresponding to the Kikongo nasal-harmony
 phonotactic: AGREE-style markedness penalizing each tier-adjacent
 `nasalC`-`voicedStop` pair on the harmonizing-class tier. The OT-side
 counterpart of `kikongoNasalHarmony` — same forbidden-pair relation,
 same tier predicate, packaged as a `NamedConstraint`. The TSL grammar
-characterizes the *language*; this constraint *evaluates* it. -/
-def kikongoAgreeNasalCC : Core.Constraint.OT.NamedConstraint (List KSeg) :=
+characterizes the *language*; this constraint *evaluates* it.
+
+This case does *not* use `mkAgreeOnTier` (the symmetric `R := (· ≠ ·)`
+specialization) because Kikongo's forbidden pair is asymmetric — see the
+"What this file formalizes" docstring above. -/
+def kikongoAgree : Constraint.OT.NamedConstraint (List KSeg) :=
   Phonology.Constraints.mkForbidPairsOnTier
     "AGREE-[nas]/CC" KSeg.forbidNasalStop (Tier.byClass KSeg.onTier) id
 
-/-- The AGREE constraint is a markedness constraint by construction. -/
-theorem kikongoAgreeNasalCC_is_markedness :
-    kikongoAgreeNasalCC.family = Core.Constraint.OT.ConstraintFamily.markedness :=
+/-- `kikongoAgree` is a markedness constraint by construction. -/
+theorem kikongoAgree_is_markedness :
+    kikongoAgree.family = Constraint.OT.ConstraintFamily.markedness :=
   Phonology.Constraints.mkForbidPairsOnTier_is_markedness _ _ _ _
 
-/-- **Bridge**: `kikongoAgreeNasalCC` evaluates to zero on a candidate iff
-the candidate is in the TSL_2 language. The "OT-side" and "subregular-side"
+/-- **Bridge**: `kikongoAgree` evaluates to zero on a candidate iff the
+candidate is in the TSL_2 language. The "OT-side" and "subregular-side"
 characterizations of the same Kikongo phonotactic coincide — making the
 co-extensiveness of the two analyses true by construction rather than a
 separately-proved equivalence. -/
-theorem kikongoAgreeNasalCC_zero_iff_in_TSL (c : List KSeg) :
-    kikongoAgreeNasalCC.eval c = 0 ↔ c ∈ kikongoNasalHarmony.lang :=
-  Phonology.Subregular.mkForbidPairsOnTier_zero_iff_in_lang
+theorem kikongoAgree_zero_iff_in_TSL (c : List KSeg) :
+    kikongoAgree.eval c = 0 ↔ c ∈ kikongoNasalHarmony.lang :=
+  mkForbidPairsOnTier_zero_iff_in_lang
     "AGREE-[nas]/CC" KSeg.forbidNasalStop KSeg.onTier id c
 
 end Phonology.Studies.RoseWalker2004

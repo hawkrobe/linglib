@@ -217,6 +217,21 @@ def mkOCPOnTier {C α β : Type} [DecidableEq β]
     NamedConstraint C :=
   mkOCP name (fun c => Core.Tier.apply T (extract c))
 
+-- ---- AGREE as the inequality-relation instance ----------------------------
+
+/-- Build an AGREE constraint from a `Core.Tier` projection: penalizes
+    each tier-adjacent pair `(a, b)` with `a ≠ b`. The non-identity dual of
+    `mkOCPOnTier`. AGREE-style markedness in OT phonology is the symmetric
+    specialization of `mkForbidPairsOnTier` with `R := (· ≠ ·)`, just as the
+    OCP is the `R := (· = ·)` specialization. The two specializations sit in
+    the same constraint algebra; their consumers (consonant harmony, vowel
+    harmony, dissimilation, anti-OCP) use the same machinery up to the
+    choice of `R`. -/
+def mkAgreeOnTier {C α β : Type} [DecidableEq β]
+    (name : String) (T : Core.Tier α β) (extract : C → List α) :
+    NamedConstraint C :=
+  mkForbidPairsOnTier name (· ≠ ·) T extract
+
 -- ============================================================================
 -- § 2c: Alignment (@cite{mccarthy-prince-1993} Generalized Alignment)
 -- ============================================================================
@@ -269,6 +284,11 @@ theorem mkForbidPairsOnTier_is_markedness {C α β : Type} (name : String)
     (R : β → β → Prop) [DecidableRel R] (T : Core.Tier α β)
     (extract : C → List α) :
     (mkForbidPairsOnTier name R T extract).family = .markedness := rfl
+
+/-- AGREE constraints are markedness constraints. -/
+theorem mkAgreeOnTier_is_markedness {C α β : Type} [DecidableEq β]
+    (name : String) (T : Core.Tier α β) (extract : C → List α) :
+    (mkAgreeOnTier name T extract).family = .markedness := rfl
 
 /-- Forbidden-singleton constraints are markedness constraints. -/
 theorem mkForbidSingletonOnTier_is_markedness {C α β : Type} (name : String)

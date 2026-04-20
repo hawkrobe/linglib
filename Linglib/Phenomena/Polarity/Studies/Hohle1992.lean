@@ -1,9 +1,10 @@
-/-
-# Polarity Stress: Empirical Data
+import Linglib.Core.Lexical.Word
 
-Theory-neutral data on prosodic stress patterns that affect polarity interpretation.
+/-!
+# Polarity Stress @cite{hohle-1992}
 
-## The Phenomenon
+Empirical data on prosodic stress patterns that affect polarity interpretation,
+following @cite{hohle-1992}'s analysis of verum focus.
 
 Stress (prosodic prominence) on auxiliaries or negation affects interpretation:
 
@@ -15,24 +16,12 @@ Stress (prosodic prominence) on auxiliaries or negation affects interpretation:
    - "Does John NOT drink?" → speaker expected negative answer
    - "John does NOT drink" → emphatic negation
 
-## Distinction from Other Focus Types
-
-- **Content focus**: "JOHN drinks" (who drinks? → John)
-- **Polarity stress**: "John DOES drink" (whether John drinks? → yes, emphatically)
-
-Polarity stress targets truth/polarity rather than content alternatives.
-
-## Related Files
-
-- `ProsodicExhaustivity.lean` - Prosody effects on exhaustive interpretation
-- `Basic.lean` - General focus phenomena (only, even, contrast)
-- `Questions/Studies/RomeroHan2004.lean` - Negative question interpretation (@cite{romero-han-2004})
-
+Polarity stress targets truth/polarity rather than content alternatives:
+"JOHN drinks" (content focus, who drinks?) vs. "John DOES drink"
+(polarity focus, whether John drinks).
 -/
 
-import Linglib.Core.Lexical.Word
-
-namespace Phenomena.Polarity.Stress
+namespace Phenomena.Polarity.Studies.Hohle1992
 
 -- Data Structure
 
@@ -149,4 +138,4 @@ def contentFocusData : List PolarityStressDatum := [
 def allData : List PolarityStressDatum :=
   polarityStressData ++ contentFocusData
 
-end Phenomena.Polarity.Stress
+end Phenomena.Polarity.Studies.Hohle1992

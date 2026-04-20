@@ -26,11 +26,11 @@ open Core.Lexical.PolarityItem
     (indirect neg, direct neg, comparative, free choice). -/
 def enikeni : PolarityItemEntry :=
   { form := "ẹ̀nìkẹ́ni"
-  , polarityType := .npi_fci
+  , polarityType := .npiFci
   , baseForce := .existential
   , licensingContexts :=
       [ .negation, .nobody
-      , .modal_possibility, .modal_necessity, .imperative, .generic
+      , .modalPossibility, .modalNecessity, .imperative, .generic
       , .comparative ]
   , notes := "Covers 4 Haspelmath functions: indirectNeg through freeChoice" }
 
@@ -38,6 +38,6 @@ def enikeni : PolarityItemEntry :=
 -- Verification
 -- ============================================================================
 
-theorem enikeni_is_npi_fci : enikeni.polarityType = .npi_fci := rfl
+theorem enikeni_is_npi_fci : enikeni.polarityType = .npiFci := rfl
 
 end Fragments.Yoruba.PolarityItems

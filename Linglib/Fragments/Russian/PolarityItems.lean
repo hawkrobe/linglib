@@ -27,7 +27,7 @@ def ktoLibo : PolarityItemEntry :=
   { form := "кто-либо (kto-libo)"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.question, .conditional_ant, .negation]
+  , licensingContexts := [.question, .conditionalAntecedent, .negation]
   , scalarDirection := .strengthening
   , notes := "Polarity-sensitive indefinite" }
 
@@ -37,7 +37,7 @@ def nikto : PolarityItemEntry :=
   { form := "никто (nikto)"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .without_clause]
+  , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
   , notes := "N-word; negative concord: 'nikto ne prišël'" }
 
@@ -51,7 +51,7 @@ def ktoUgodno : PolarityItemEntry :=
   { form := "кто угодно (kto ugodno)"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Free choice: 'kto ugodno možet èto sdelat'' (anyone can do that)" }
 
 -- ============================================================================

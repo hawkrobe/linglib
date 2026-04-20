@@ -55,45 +55,18 @@ jobs:
 
       - name: Build documentation (Linglib only, skip Mathlib)
         run: |
-          # Use doc-gen4 CLI directly to avoid Lake facet processing ALL
-          # transitive deps (Mathlib/Lean core), which OOMs the runner.
-          lake build doc-gen4
-
-          BUILD=.lake/build
-          DOCGEN="lake exe doc-gen4"
-          REPO_URL="https://github.com/${{ github.repository }}"
-          COMMIT="${{ github.sha }}"
-          SRC_URI="$REPO_URL/blob/$COMMIT"
-          DB=api-docs.db
-
-          # Remove stale DB — schema changes across doc-gen4 versions
+          # Use Lake's docs facet directly. `library_facet docs` (defined
+          # in doc-gen4) only documents Linglib's own modules; transitive
+          # Mathlib oleans are loaded into memory for symbol resolution
+          # but not documented. Lake parallelizes per-module `docInfo`
+          # jobs natively. `-j 2` caps concurrency to keep memory under
+          # the 16 GB runner limit (each docInfo job loads the module's
+          # full Mathlib import closure into memory).
+          #
+          # Stale DB cleanup: doc-gen4 schema changes across versions
           # cause "no such table" errors if an old DB is reused.
-          # Delete both possible locations (build dir and repo root).
-          rm -f "$BUILD/$DB" "$DB"
-
-          # Bibliography prepass
-          if [ -f docs/references.bib ]; then
-            $DOCGEN bibPrepass --build "$BUILD" docs/references.bib
-          elif [ -f docs/references.json ]; then
-            $DOCGEN bibPrepass --build "$BUILD" --json docs/references.json
-          else
-            $DOCGEN bibPrepass --build "$BUILD" --none
-          fi
-
-          # Document root module (may fail if Linglib.olean missing — non-fatal)
-          $DOCGEN single --build "$BUILD" Linglib "$DB" "$SRC_URI/Linglib.lean" || true
-
-          # Document all Linglib submodules
-          find Linglib -name '*.lean' | sort | while read -r f; do
-            mod=$(echo "$f" | sed 's|/|.|g; s|\.lean$||')
-            echo "  doc: $mod"
-            $DOCGEN single --build "$BUILD" "$mod" "$DB" "$SRC_URI/$f" || true
-          done
-
-          # Generate HTML + search index from database
-          # NOTE: fromDb treats the db arg as a literal path (not relative
-          # to --build), unlike single/genCore which prepend --build.
-          $DOCGEN fromDb --build "$BUILD" "$BUILD/$DB"
+          rm -f .lake/build/api-docs.db api-docs.db
+          lake -j 2 build Linglib:docs
 
       - name: Install Hugo
         uses: peaceiris/actions-hugo@v3

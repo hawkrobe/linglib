@@ -42,11 +42,11 @@ open Core.Lexical.PolarityItem
 /-- "any" - the prototypical NPI/FCI -/
 def any : PolarityItemEntry :=
   { form := "any"
-  , polarityType := .npi_fci
+  , polarityType := .npiFci
   , baseForce := .existential
   , licensingContexts :=
-      [ .negation, .nobody, .conditional_ant, .question
-      , .modal_possibility, .modal_necessity, .imperative, .generic ]
+      [ .negation, .nobody, .conditionalAntecedent, .question
+      , .modalPossibility, .modalNecessity, .imperative, .generic ]
   , scalarDirection := .strengthening  -- domain widening → stronger assertion
   , scalarValue := .low               -- existential = low on quantifier scale
   , canonicity := .canonical           -- low NPI = canonical
@@ -61,7 +61,7 @@ def ever : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .temporal
   , licensingContexts :=
-      [ .negation, .nobody, .conditional_ant, .question
+      [ .negation, .nobody, .conditionalAntecedent, .question
       , .superlative, .comparative ]
   , scalarDirection := .strengthening  -- temporal endpoint → stronger assertion
   , scalarValue := .low               -- minimal temporal extent
@@ -94,7 +94,7 @@ def atAll : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .degree
   , licensingContexts :=
-      [.negation, .nobody, .conditional_ant, .question]
+      [.negation, .nobody, .conditionalAntecedent, .question]
   , scalarDirection := .strengthening -- emphatic: "not at all" = complete negation (Figure 1)
   , scalarValue := .low              -- minimal degree
   , canonicity := .canonical
@@ -115,7 +115,7 @@ def aSingle : PolarityItemEntry :=
   { form := "a single"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .without_clause]
+  , licensingContexts := [.negation, .nobody, .withoutClause]
   , notes := "'I didn't see a single person'"
   }
 
@@ -137,7 +137,7 @@ def liftAFinger : PolarityItemEntry :=
   { form := "lift a finger"
   , polarityType := .npiStrong
   , baseForce := .degree
-  , licensingContexts := [.negation, .nobody, .without_clause]
+  , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening  -- emphatic minimizer (§1, Figure 1)
   , scalarValue := .low           -- minimal effort (a finger, not a hand)
   , canonicity := .canonical      -- low-value NPI = canonical
@@ -151,7 +151,7 @@ def budgeAnInch : PolarityItemEntry :=
   { form := "budge an inch"
   , polarityType := .npiStrong
   , baseForce := .degree
-  , licensingContexts := [.negation, .nobody, .without_clause]
+  , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening  -- emphatic minimizer (§1, Figure 1)
   , scalarValue := .low           -- minimal distance (an inch)
   , canonicity := .canonical      -- low-value NPI = canonical
@@ -188,7 +188,7 @@ def whatever : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts :=
-      [.modal_possibility, .modal_necessity, .imperative, .generic, .free_relative]
+      [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative]
   , notes := "Free relative; 'Read whatever you want'"
   }
 
@@ -198,7 +198,7 @@ def whoever : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts :=
-      [.modal_possibility, .modal_necessity, .imperative, .generic, .free_relative]
+      [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative]
   , notes := "Free relative; 'Invite whoever you like'"
   }
 
@@ -208,7 +208,7 @@ def whichever : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts :=
-      [.modal_possibility, .modal_necessity, .imperative, .generic, .free_relative]
+      [.modalPossibility, .modalNecessity, .imperative, .generic, .freeRelative]
   , notes := "Free relative with restriction; 'whichever book you prefer'"
   }
 

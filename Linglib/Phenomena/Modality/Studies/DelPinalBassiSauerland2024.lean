@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustificat
 import Linglib.Theories.Semantics.Presupposition.LocalContext
 import Linglib.Theories.Semantics.Presupposition.BeliefEmbedding
 import Linglib.Theories.Semantics.Presupposition.Accommodation
-import Linglib.Phenomena.Modality.FreeChoice
+import Linglib.Phenomena.Modality.Studies.BarLevFox2020
 import Mathlib.Data.Set.Basic
 
 /-!
@@ -42,7 +42,7 @@ namespace DelPinalBassiSauerland2024
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
 open Exhaustification.Presuppositional
-open Exhaustification.FreeChoice
+open Phenomena.Modality.Studies.BarLevFox2020
 open Exhaustification
 open Semantics.Presupposition.LocalContext
 open Semantics.Presupposition.BeliefEmbedding
@@ -67,6 +67,151 @@ theorem fc_is_pragmatic :
 /-- FC is captured pragmatically -/
 theorem fc_is_captured :
     Phenomena.Modality.FreeChoice.coffeeOrTea.isPragmaticInference = true := rfl
+
+-- ============================================================================
+-- §1b. The pex output for free choice over FCWorld
+-- ============================================================================
+
+/-!
+## §2.2: pex Applied to ◇(p ∨ q)
+
+Instantiating `pexIEII_full` on the five-world FC toy from
+`Phenomena.Modality.Studies.BarLevFox2020`:
+
+- φ = ◇(p ∨ q) = `permAorB` = `fcPrejacent`
+- ALT = {◇(p ∨ q), ◇p, ◇q, ◇(p ∧ q)} = `fcALT`
+- IE = {◇(p ∧ q)}
+- II = {◇p, ◇q}
+
+**pex^{IE+II}[◇(p ∨ q)]**:
+  asserts: ◇(p ∨ q)
+  presupposes: ¬◇(p ∧ q) ∧ (◇p ↔ ◇q)
+
+Since ◇(p ∨ q) ∧ (◇p ↔ ◇q) entails ◇p ∧ ◇q, pex derives FC.
+-/
+
+/-- The pex output for free choice: pex^{IE+II}[◇(p ∨ q)]. -/
+def pexFC : PrProp FCWorld := pexIEII_full fcALT fcPrejacent
+
+/-- FC via pex: when presupposition and assertion hold, we get ◇p ∧ ◇q.
+
+    This is the paper's (14)–(15):
+    ⟦pex^{IE+II}[◇[p ∨ q]]⟧ = ◇(p ∨ q)_{◇p↔◇q} ⊨ ◇p ∧ ◇q
+
+    The proof uses `mem_II_of_cell_witness`: `separatelyAB` is the cell
+    witness for `fcALT` (verified in `BarLevFox2020.separatelyAB_in_cell`),
+    and both `permA` and `permB` hold at `separatelyAB`. -/
+theorem pex_fc :
+    ∀ w, pexFC.holds w → permA w ∧ permB w := by
+  intro w ⟨hpresup, hassert⟩
+  simp only [pexFC, pexIEII_full, pexIEII] at hpresup hassert
+  obtain ⟨_, hHomog⟩ := hpresup
+  -- We need: permA and permB are in II ∩ fcALT
+  have hA_II : isInnocentlyIncludable fcALT fcPrejacent permA :=
+    mem_II_of_cell_witness fcALT fcPrejacent
+      (by simp [fcALT]) .separatelyAB separatelyAB_in_cell trivial
+  have hB_II : isInnocentlyIncludable fcALT fcPrejacent permB :=
+    mem_II_of_cell_witness fcALT fcPrejacent
+      (by simp [fcALT]) .separatelyAB separatelyAB_in_cell trivial
+  have hA_in : permA ∈ ({α | α ∈ II fcALT fcPrejacent ∧ α ∈ fcALT} : Set _) :=
+    ⟨hA_II, by simp [fcALT]⟩
+  have hB_in : permB ∈ ({α | α ∈ II fcALT fcPrejacent ∧ α ∈ fcALT} : Set _) :=
+    ⟨hB_II, by simp [fcALT]⟩
+  -- Homogeneity gives: permA w ↔ permB w
+  have hiff : permA w ↔ permB w := hHomog permA hA_in permB hB_in
+  -- From fcPrejacent w: at least one of permA, permB holds
+  have hAtLeastOne : permA w ∨ permB w := by
+    cases w <;> simp_all [fcPrejacent, permAorB, permA, permB]
+  rcases hAtLeastOne with hA | hB
+  · exact ⟨hA, hiff.mp hA⟩
+  · exact ⟨hiff.mpr hB, hB⟩
+
+/-- Negation of pex FC: ¬pex^{IE+II}[◇(p ∨ q)]. -/
+def negPexFC : PrProp FCWorld := pexFC.neg
+
+/-- Double prohibition: the negated pex output entails ¬◇p ∧ ¬◇q.
+
+    This is the paper's (16):
+    ⟦¬[pex^{IE+II}[◇[T ∨ B]]]⟧ = ¬◇(T ∨ B)_{◇T↔◇B} ⊨ ¬◇T ∧ ¬◇B -/
+theorem pex_double_prohibition :
+    ∀ w, negPexFC.holds w → ¬permA w ∧ ¬permB w := by
+  intro w ⟨hpresup, hassert⟩
+  simp only [negPexFC, PrProp.neg,
+             pexFC, pexIEII_full, pexIEII] at hpresup hassert
+  -- hassert : ¬fcPrejacent w, i.e., ¬permAorB w
+  -- ¬permAorB w → ¬permA w ∧ ¬permB w
+  constructor
+  · intro hA; exact hassert (by cases w <;> simp_all [fcPrejacent, permAorB, permA])
+  · intro hB; exact hassert (by cases w <;> simp_all [fcPrejacent, permAorB, permB])
+
+/-!
+## Negative FC via pex: the ¬□ ↔ ◇ duality
+
+The alternative set for ¬□(p∧q) is {¬□(p∧q), ¬□p, ¬□q, ¬□(p∨q)}, which
+is **isomorphic** to the ◇∨ alternative set under the mapping:
+
+| ¬□ world | ◇ world | Reinterpretation |
+|----------|---------|------------------|
+| ¬□(p∧q)  | ◇(a∨b)  | notReqAandB = fcPrejacent |
+| ¬□p      | ◇b      | notReqA = permB |
+| ¬□q      | ◇a      | notReqB = permA |
+| ¬□(p∨q)  | ◇(a∧b)  | notReqAorB = permAandB |
+
+Consequently, `pexFC` simultaneously derives both positive FC (◇a ∧ ◇b)
+and negative FC (¬□p ∧ ¬□q) under reinterpretation.
+-/
+
+/-- ¬□p: p is not required (= ◇¬p by duality). Under the isomorphism, this
+    is `permB` on `FCWorld`. -/
+abbrev notReqA : Set FCWorld := permB
+
+/-- ¬□q: q is not required. Under the isomorphism, this is `permA`. -/
+abbrev notReqB : Set FCWorld := permA
+
+/-- ¬□(p∧q): not both required. Under the isomorphism, this is
+    `permAorB` = `fcPrejacent`. -/
+abbrev notReqAandB : Set FCWorld := permAorB
+
+/-- ¬□(p∨q): neither required. Under the isomorphism, this is
+    `permAandB`. -/
+abbrev notReqAorB : Set FCWorld := permAandB
+
+/-- The alternative set for ¬□(p∧q) is the same set as fcALT. -/
+theorem negNecALT_eq_fcALT :
+    ({notReqAandB, notReqA, notReqB, notReqAorB} : Set (Set FCWorld)) = fcALT := by
+  simp only [notReqAandB, notReqA, notReqB, notReqAorB, fcALT]
+  ext x; simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
+  tauto
+
+/-- Negative FC via pex: pex^{IE+II}[¬□(p∧q)] ⊨ ¬□p ∧ ¬□q.
+
+    The paper's (19a): since pexFC on the ¬□-reinterpreted `FCWorld`
+    entails ◇b ∧ ◇a (= permB ∧ permA), and notReqA = permB,
+    notReqB = permA, we get ¬□p ∧ ¬□q. -/
+theorem pex_negative_fc :
+    ∀ w, pexFC.holds w → notReqA w ∧ notReqB w := by
+  intro w h
+  have ⟨hA, hB⟩ := pex_fc w h
+  exact ⟨hB, hA⟩
+
+/-- Double requirement for necessity: ¬pex^{IE+II}[¬□(p∧q)] gives
+    the negation of negative FC — i.e., both are required: □p ∧ □q.
+
+    This is the paper's (20):
+    ⟦¬ pex^{IE+II}[¬□[T ∧ B]]⟧ = ¬(¬□T ∨ ¬□B)_{¬□T↔¬□B} ⊨ □T ∧ □B -/
+theorem pex_neg_necessity_double_req :
+    ∀ w, negPexFC.holds w → ¬notReqA w ∧ ¬notReqB w := by
+  intro w h
+  have ⟨hA, hB⟩ := pex_double_prohibition w h
+  exact ⟨hB, hA⟩
+
+/-- Convenience re-export: exhIEII entails FC (proved as `BarLevFox2020.free_choice`). -/
+theorem exhIEII_fc : ∀ w, exhIEII fcALT fcPrejacent w → permA w ∧ permB w :=
+  free_choice
+
+/-- Convenience re-export: pexIEII entails FC. -/
+theorem pexIEII_fc : ∀ w, pexFC.holds w → permA w ∧ permB w :=
+  pex_fc
 
 -- ============================================================================
 -- §2. Presupposed FC Under Negative Factives (§3)

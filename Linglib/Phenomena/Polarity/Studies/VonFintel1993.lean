@@ -1,13 +1,11 @@
 import Linglib.Fragments.English.Determiners
 
-/-
-# But-Exceptive Data
+/-!
+# But-Exceptives @cite{von-fintel-1993}
 
-Empirical patterns for "X but Y" exceptive constructions.
-
-## Pattern
-
-But-exceptives require universal quantifiers (positive or negative):
+Empirical patterns for "X but Y" exceptive constructions, anchored on
+@cite{von-fintel-1993}'s observation that but-exceptives require
+universal quantifiers (positive or negative):
 
 | Quantifier | Example | Grammatical |
 |------------|---------|-------------|
@@ -17,21 +15,21 @@ But-exceptives require universal quantifiers (positive or negative):
 | many | "*many people but John" | ✗ |
 | few | "*few people but John" | ✗ |
 
-## Semantic Contribution
+The but-exceptive subtracts the exception from the quantifier's domain
+and asserts that without the exception, the claim would be false.
 
-The but-exceptive:
-1. Subtracts the exception from the quantifier's domain
-2. Presupposes/asserts that without the exception, the claim would be false
+This file provides `predictExceptiveGrammaticality : QuantifierType → Bool`
+plus a Fragment-side bridge `qforceToExceptiveType` that maps Fragment
+QForce values to QuantifierType, with `fragment_exceptive_bridge` showing
+the prediction agrees with the Fragment classification.
 
-## Theoretical Analysis
-
-See:
-- `Core/Analyticity.lean`: L-analyticity explanation
-- The semantics should go in `Theories/Semantics/` when added
-
+The semantic operators (`ExcI`, `ExcE`, `ExcW`, `ExcS`) live in
+`Theories/Semantics/Quantification/Exceptive.lean`. The connection
+between this file's Fragment-derived predictions and those operators
+is not yet wired up — TODO.
 -/
 
-namespace Phenomena.Polarity.Exceptives
+namespace Phenomena.Polarity.Studies.VonFintel1993
 
 
 /--
@@ -391,6 +389,6 @@ theorem universal_qforce_partition :
       (λ q => q == .universal || q == .negative) = true ∧
     ([QuantityWord.some_, .few, .half, .most].map (·.entry.qforce)).all
       (λ q => q != .universal && q != .negative) = true := by
-  constructor <;> native_decide
+  constructor <;> decide
 
-end Phenomena.Polarity.Exceptives
+end Phenomena.Polarity.Studies.VonFintel1993

@@ -31,7 +31,7 @@ def nessuno : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .existential
   , licensingContexts :=
-      [.negation, .nobody, .without_clause, .conditional_ant, .question]
+      [.negation, .nobody, .withoutClause, .conditionalAntecedent, .question]
   , scalarDirection := .strengthening
   , alternativeType := .domain
   , notes := "N-word; postverbal requires 'non': 'Non ho visto nessuno'" }
@@ -41,7 +41,7 @@ def niente : PolarityItemEntry :=
   { form := "niente/nulla"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.negation, .nobody, .without_clause]
+  , licensingContexts := [.negation, .nobody, .withoutClause]
   , scalarDirection := .strengthening
   , notes := "Non-human N-word: 'Non ho fatto niente'" }
 
@@ -52,7 +52,7 @@ def mai : PolarityItemEntry :=
   , polarityType := .npiWeak
   , baseForce := .temporal
   , licensingContexts :=
-      [.negation, .nobody, .without_clause, .question, .conditional_ant]
+      [.negation, .nobody, .withoutClause, .question, .conditionalAntecedent]
   , scalarDirection := .strengthening
   , alternativeType := .domain
   , notes := "Pure NPI; 'Non l'ho mai visto'; no FC use" }
@@ -141,7 +141,7 @@ def qualsiasi : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts :=
-      [.modal_possibility, .modal_necessity, .imperative, .generic]
+      [.modalPossibility, .modalNecessity, .imperative, .generic]
   , alternativeType := .domain
   , notes := "Pure FCI; 'qualsiasi studente' = any/every student; no NPI reading" }
 
@@ -151,7 +151,7 @@ def qualunque : PolarityItemEntry :=
   , polarityType := .fci
   , baseForce := .existential
   , licensingContexts :=
-      [.modal_possibility, .modal_necessity, .imperative, .generic]
+      [.modalPossibility, .modalNecessity, .imperative, .generic]
   , alternativeType := .domain
   , notes := "Post-nominal FCI; 'libro qualunque' = any/whatever book" }
 
@@ -166,7 +166,7 @@ def uno_qualsiasi : PolarityItemEntry :=
   { form := "un N qualsiasi"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative]
   , alternativeType := .domain
   , notes := "Existential FCI; 'un dottore qualsiasi' = a doctor whatever; needs modal" }
 

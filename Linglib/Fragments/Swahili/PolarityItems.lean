@@ -39,7 +39,7 @@ def mtuYeYote : PolarityItemEntry :=
   { form := "mtu ye yote"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Person any whatsoever: free choice" }
 
 -- ============================================================================

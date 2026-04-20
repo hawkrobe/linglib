@@ -39,7 +39,7 @@ def khrajKo : PolarityItemEntry :=
   { form := "khraj kɔ̂ (ใครก็)"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "wh + kɔ̂ particle: free choice" }
 
 -- ============================================================================

@@ -1,6 +1,5 @@
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Exhaustification.Operators
-import Linglib.Theories.Semantics.Exhaustification.InnocentInclusion
 
 /-!
 # Presuppositional Exhaustification (pex)
@@ -44,14 +43,18 @@ produces a `PrProp World` — a Prop-based partial proposition with separate
 assertive and presuppositional components. This directly integrates with
 the presupposition projection infrastructure in `Core.Semantics.Presupposition`.
 
-For embedding under factives and filtering connectives (§3–§5 of the paper),
-see the study file `Phenomena/Modality/Studies/DelPinalBassiSauerland2024.lean`.
+This file contains only the abstract pex theory (parameterized by an
+arbitrary `World` type and abstract `ALT`, `φ`). The concrete worked
+example over `FCWorld` (the five-world toy from @cite{bar-lev-fox-2020}) and
+all consequences specific to that example — `pexFC`, `pex_fc`,
+`pex_double_prohibition`, the negative-FC isomorphism, and the embedding
+puzzles from §3–§5 — live in the study file
+`Phenomena/Modality/Studies/DelPinalBassiSauerland2024.lean`.
 -/
 
 namespace Exhaustification.Presuppositional
 
 open Exhaustification
-open Exhaustification.FreeChoice
 open Core.Presupposition (PrProp)
 
 variable {World : Type*}
@@ -159,104 +162,11 @@ theorem pex_neg_presup (ALT : Set (Set World)) (φ : Set World)
     ((pexIEII ALT φ Rc).neg).presup = (pexIEII ALT φ Rc).presup := rfl
 
 -- ============================================================================
--- SECTION 5: Free Choice Derivation (§2.2)
+-- SECTION 5: Negative FC entailment (abstract)
 -- ============================================================================
 
 /-!
-## Free Choice via pex
-
-For ◇∨-sentences:
-- φ = ◇(p ∨ q) = `permAorB`
-- ALT = {◇(p ∨ q), ◇p, ◇q, ◇(p ∧ q)} = `fcALT`
-- IE = {◇(p ∧ q)}
-- II = {◇p, ◇q}
-
-**pex^{IE+II}[◇(p ∨ q)]**:
-  asserts: ◇(p ∨ q)
-  presupposes: ¬◇(p ∧ q) ∧ (◇p ↔ ◇q)
-
-Since ◇(p ∨ q) ∧ (◇p ↔ ◇q) entails ◇p ∧ ◇q, pex derives FC.
--/
-
-/-- The pex output for free choice: pex^{IE+II}[◇(p ∨ q)] -/
-def pexFC : PrProp FCWorld := pexIEII_full fcALT fcPrejacent
-
-/-- FC via pex: when presupposition and assertion hold, we get ◇p ∧ ◇q.
-
-    This is the paper's (14)–(15):
-    ⟦pex^{IE+II}[◇[p ∨ q]]⟧ = ◇(p ∨ q)_{◇p↔◇q} ⊨ ◇p ∧ ◇q -/
-theorem pex_fc :
-    ∀ w, pexFC.holds w → permA w ∧ permB w := by
-  intro w ⟨hpresup, hassert⟩
-  simp only [pexFC, pexIEII_full, pexIEII] at hpresup hassert
-  obtain ⟨_, hHomog⟩ := hpresup
-  -- hassert : fcPrejacent w, i.e., permAorB w
-  -- hHomog : homogeneous {α ∈ II fcALT fcPrejacent | α ∈ fcALT} w
-  -- We need: permA and permB are in II ∩ fcALT
-  have hA_II : isInnocentlyIncludable fcALT fcPrejacent permA :=
-    target_in_II permA (by simp [fcALT]) trivial
-      (fun u h => by cases u <;> simp_all [permAandB, permA])
-  have hB_II : isInnocentlyIncludable fcALT fcPrejacent permB :=
-    target_in_II permB (by simp [fcALT]) trivial
-      (fun u h => by cases u <;> simp_all [permAandB, permB])
-  have hA_in : permA ∈ ({α | α ∈ II fcALT fcPrejacent ∧ α ∈ fcALT} : Set _) :=
-    ⟨hA_II, by simp [fcALT]⟩
-  have hB_in : permB ∈ ({α | α ∈ II fcALT fcPrejacent ∧ α ∈ fcALT} : Set _) :=
-    ⟨hB_II, by simp [fcALT]⟩
-  -- Homogeneity gives: permA w ↔ permB w
-  have hiff : permA w ↔ permB w := hHomog permA hA_in permB hB_in
-  -- From fcPrejacent w: at least one of permA, permB holds
-  have hAtLeastOne : permA w ∨ permB w := by
-    cases w <;> simp_all [fcPrejacent, permAorB, permA, permB]
-  rcases hAtLeastOne with hA | hB
-  · exact ⟨hA, hiff.mp hA⟩
-  · exact ⟨hiff.mpr hB, hB⟩
-
--- ============================================================================
--- SECTION 6: Double Prohibition (§2.2)
--- ============================================================================
-
-/-!
-## Double Prohibition via pex
-
-For ¬◇∨-sentences, pex is applied locally below negation:
-
-  ⟦¬[pex^{IE+II}[◇(p ∨ q)]]⟧
-
-Negation applies to the assertive component: ¬◇(p ∨ q).
-The homogeneity presupposition projects: ◇p ↔ ◇q.
-
-Together: ¬◇(p ∨ q) ∧ (◇p ↔ ◇q) ⊨ ¬◇p ∧ ¬◇q
-  (since ¬◇(p ∨ q) → ¬◇p ∧ ¬◇q in standard modal logic)
-
-This is double prohibition — crucially derived WITHOUT dropping pex
-from under negation (unlike exh-based accounts that need economy).
--/
-
-/-- Negation of pex FC: ¬pex^{IE+II}[◇(p ∨ q)] -/
-def negPexFC : PrProp FCWorld := pexFC.neg
-
-/-- Double prohibition: the negated pex output entails ¬◇p ∧ ¬◇q.
-
-    This is the paper's (16):
-    ⟦¬[pex^{IE+II}[◇[T ∨ B]]]⟧ = ¬◇(T ∨ B)_{◇T↔◇B} ⊨ ¬◇T ∧ ¬◇B -/
-theorem pex_double_prohibition :
-    ∀ w, negPexFC.holds w → ¬permA w ∧ ¬permB w := by
-  intro w ⟨hpresup, hassert⟩
-  simp only [negPexFC, PrProp.neg,
-             pexFC, pexIEII_full, pexIEII] at hpresup hassert
-  -- hassert : ¬fcPrejacent w, i.e., ¬permAorB w
-  -- ¬permAorB w → ¬permA w ∧ ¬permB w
-  constructor
-  · intro hA; exact hassert (by cases w <;> simp_all [fcPrejacent, permAorB, permA])
-  · intro hB; exact hassert (by cases w <;> simp_all [fcPrejacent, permAorB, permB])
-
--- ============================================================================
--- SECTION 7: Negative FC for ¬□∧ (§2.2)
--- ============================================================================
-
-/-!
-## Negative Free Choice
+## Negative Free Choice (abstract entailment)
 
 For ¬□(p ∧ q)-sentences:
 - φ = ¬□(p ∧ q)
@@ -290,80 +200,7 @@ theorem negative_fc_entailment {W : Type*}
     exact hassert ⟨by_contra fun hNP => absurd (hhomog.mp hNP) (not_not.mpr hQ), hQ⟩
 
 -- ============================================================================
--- SECTION 7b: Negative FC via pex Computation (§2.2)
--- ============================================================================
-
-/-!
-## Negative FC via pex: Full Computation
-
-The entailment theorem above (`negative_fc_entailment`) shows that the
-entailment pattern works. But the paper's derivation (18a–e) involves
-actually computing IE and II for ¬□(p∧q). Here we show that this
-computation reduces to the existing ◇∨ computation by duality.
-
-The key observation: the alternative set for ¬□(p∧q) is
-{¬□(p∧q), ¬□p, ¬□q, ¬□(p∨q)}, which is **isomorphic** to the ◇∨
-alternative set {◇(a∨b), ◇a, ◇b, ◇(a∧b)} under the mapping:
-
-| ¬□ world | ◇ world | Reinterpretation |
-|----------|---------|------------------|
-| ¬□(p∧q)  | ◇(a∨b)  | notReqAandB = fcPrejacent |
-| ¬□p      | ◇b      | notReqA = permB |
-| ¬□q      | ◇a      | notReqB = permA |
-| ¬□(p∨q)  | ◇(a∧b)  | notReqAorB = permAandB |
-
-This isomorphism holds because ¬□ propositions obey the same
-entailment structure as ◇ propositions (by modal duality).
-Consequently, `pexFC` simultaneously derives both positive FC
-(◇a ∧ ◇b) and negative FC (¬□p ∧ ¬□q) under reinterpretation.
--/
-
-/-- ¬□p: p is not required (= ◇¬p by duality). Under the isomorphism, this
-    is `permB` on `FCWorld`. -/
-abbrev notReqA : Set FCWorld := permB
-
-/-- ¬□q: q is not required. Under the isomorphism, this is `permA`. -/
-abbrev notReqB : Set FCWorld := permA
-
-/-- ¬□(p∧q): not both required. Under the isomorphism, this is
-    `permAorB` = `fcPrejacent`. -/
-abbrev notReqAandB : Set FCWorld := permAorB
-
-/-- ¬□(p∨q): neither required. Under the isomorphism, this is
-    `permAandB`. -/
-abbrev notReqAorB : Set FCWorld := permAandB
-
-/-- The alternative set for ¬□(p∧q) is the same set as fcALT. -/
-theorem negNecALT_eq_fcALT :
-    ({notReqAandB, notReqA, notReqB, notReqAorB} : Set (Set FCWorld)) = fcALT := by
-  simp only [notReqAandB, notReqA, notReqB, notReqAorB, fcALT]
-  ext x; simp only [Set.mem_insert_iff, Set.mem_singleton_iff]
-  tauto
-
-/-- Negative FC via pex: pex^{IE+II}[¬□(p∧q)] ⊨ ¬□p ∧ ¬□q.
-
-    The paper's (19a): since pexFC on the ¬□-reinterpreted `FCWorld`
-    entails ◇b ∧ ◇a (= permB ∧ permA), and notReqA = permB,
-    notReqB = permA, we get ¬□p ∧ ¬□q. -/
-theorem pex_negative_fc :
-    ∀ w, pexFC.holds w → notReqA w ∧ notReqB w := by
-  intro w h
-  have ⟨hA, hB⟩ := pex_fc w h
-  exact ⟨hB, hA⟩
-
-/-- Double requirement for necessity: ¬pex^{IE+II}[¬□(p∧q)] gives
-    the negation of negative FC — i.e., both are required: □p ∧ □q.
-
-    This is the paper's (20):
-    ⟦¬ pex^{IE+II}[¬□[T ∧ B]]⟧ = ¬(¬□T ∨ ¬□B)_{¬□T↔¬□B} ⊨ □T ∧ □B -/
-theorem pex_neg_necessity_double_req :
-    ∀ w, negPexFC.holds w → ¬notReqA w ∧ ¬notReqB w := by
-  intro w h
-  have ⟨hA, hB⟩ := pex_double_prohibition w h
-  exact ⟨hB, hA⟩
-
--- ============================================================================
--- SECTION 8: Equivalence with exhIEII for Basic Cases (§2.1)
+-- SECTION 6: Equivalence with exhIEII for Basic Cases (§2.1)
 -- ============================================================================
 
 /-!
@@ -390,7 +227,7 @@ theorem pex_basic_scalar (ALT : Set (Set World)) (φ : Set World)
     exact ⟨hIE, fun α ⟨hα_II, hα_Rc⟩ => absurd hα_Rc (fun h => hII_empty α hα_II h)⟩
 
 -- ============================================================================
--- SECTION 9: Comparison with exhIEII
+-- SECTION 7: Comparison with exhIEII (structural note)
 -- ============================================================================
 
 /-!
@@ -408,14 +245,9 @@ For FC (φ = ◇(p∨q)):
 The overall entailments are the same (both entail ◇p ∧ ◇q), but the
 at-issue structure differs. This difference is what allows pex to solve
 the embedded FC puzzles that exh cannot.
+
+For the concrete worked example over `FCWorld` and the embedded FC
+puzzles, see `Phenomena/Modality/Studies/DelPinalBassiSauerland2024.lean`.
 -/
-
-/-- exhIEII entails FC (from InnocentInclusion.lean). -/
-theorem exhIEII_fc : ∀ w, exhIEII fcALT fcPrejacent w → permA w ∧ permB w :=
-  free_choice
-
-/-- pexIEII entails FC (proven above). -/
-theorem pexIEII_fc : ∀ w, pexFC.holds w → permA w ∧ permB w :=
-  pex_fc
 
 end Exhaustification.Presuppositional

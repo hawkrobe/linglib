@@ -3,8 +3,7 @@ Copyright (c) 2026 Robert Hawkins. All rights reserved.
 Released under Apache 2.0 license as described in the file LICENSE.
 Authors: Robert Hawkins
 -/
-import Linglib.Core.Computability.Subregular.ForbiddenPairs
-import Linglib.Theories.Phonology.Subregular.ForbidPairs
+import Linglib.Theories.Phonology.Subregular.Agree
 
 /-!
 # Hansson (2010) @cite{hansson-2010}
@@ -38,6 +37,14 @@ analysis *derives* the surface generalization; the TSL_2 description
 *characterizes* the surface stringset. The two analyses operate at
 different levels and are not in competition for the same explanatory
 work.
+
+Sibilant harmony is a *symmetric* dissimilation-style phonotactic — the
+forbidden pair is "tier-adjacent and *unequal*" — so this study is the
+canonical instance of the AGREE specialization in
+`Theories/Phonology/Subregular/Agree.lean`, the non-identity dual of the
+OCP (@cite{goldsmith-1976}, @cite{mccarthy-1986}). The Kikongo case in
+`RoseWalker2004.lean` is *asymmetric* and instantiates the generic
+forbidden-pair constructor directly rather than via AGREE.
 
 ## Design boundary
 
@@ -88,15 +95,13 @@ the root /s/.
 
 The surface generalization: **no two sibilants of differing place
 (anterior vs posterior) may co-occur within the harmonic domain**.
-
-The TSL_2 description: project the sibilant tier (other consonants and
-vowels are transparent), then forbid any tier-adjacent pair drawn
-from different sibilant series.
+Equivalently, every tier-adjacent pair of sibilants must *agree* in
+place — the TSL_2 instance of `TSLGrammar.agree`.
 -/
 
 namespace Phonology.Studies.Hansson2010
 
-open Core.Computability.Subregular
+open Core Core.Computability.Subregular Phonology.Subregular
 
 -- ============================================================================
 -- § 1: A toy Navajo segmental alphabet
@@ -124,37 +129,25 @@ typology — only the segments participating in the agreement form the
 relevant locality domain. The tier choice is the substantive theoretical
 commitment (cf. the design-boundary docstring on `tierProject`
 non-monotonicity in `ForbiddenPairs.lean`). -/
-def NSeg.onTier : NSeg → Prop
+@[reducible] def NSeg.onTier : NSeg → Prop
   | .antSib | .postSib => True
   | .neutralC | .vowel => False
 
-instance : DecidablePred NSeg.onTier := fun s => by
-  cases s <;> unfold NSeg.onTier <;> infer_instance
-
-/-- The forbidden-pair relation: two tier-adjacent sibilants drawn from
-different series. Symmetric — both `(antSib, postSib)` and
-`(postSib, antSib)` are forbidden, since the surface phonotactic does
-not distinguish trigger from target. The directional asymmetry that
-@cite{hansson-2010} argues for (anticipatory derivation) is an OT-layer
-claim about *how* a violating pair gets resolved, not about *which*
-strings are licit. -/
-def NSeg.forbidDisagreement : NSeg → NSeg → Prop
-  | .antSib, .postSib => True
-  | .postSib, .antSib => True
-  | _, _ => False
-
-instance : DecidableRel NSeg.forbidDisagreement := fun a b => by
-  cases a <;> cases b <;> unfold NSeg.forbidDisagreement <;> infer_instance
+instance : DecidablePred NSeg.onTier
+  | .antSib | .postSib => isTrue trivial
+  | .neutralC | .vowel => isFalse not_false
 
 -- ============================================================================
--- § 2: The TSL_2 grammar
+-- § 2: The TSL_2 grammar — instance of the AGREE specialization
 -- ============================================================================
 
 /-- The Navajo sibilant-harmony grammar as a tier-based strictly 2-local
 language: project to the sibilant tier (anterior + posterior sibilants),
-forbid any tier-adjacent disagreeing pair. -/
-def navajoSibilantHarmony : TSLGrammar 2 NSeg :=
-  TSLGrammar.ofForbiddenPairs NSeg.forbidDisagreement NSeg.onTier
+forbid any tier-adjacent disagreeing pair. Symmetric forbidden-pair
+relation = `(· ≠ ·)` restricted to on-tier elements, so the grammar is
+exactly the AGREE specialization `TSLGrammar.agree NSeg.onTier`. -/
+@[reducible] def navajoSibilantHarmony : TSLGrammar 2 NSeg :=
+  TSLGrammar.agree NSeg.onTier
 
 -- ============================================================================
 -- § 3: Concrete data — pre-harmony vs post-harmony surface forms
@@ -164,82 +157,76 @@ def navajoSibilantHarmony : TSLGrammar 2 NSeg :=
 sibilant prefix preceding a postalveolar sibilant in the root, across
 an intervening vowel. The two disagreeing sibilants are tier-adjacent
 under the sibilant projection. -/
-def preSiDze : List NSeg :=
+@[reducible] def preSiDze : List NSeg :=
   [.antSib, .vowel, .postSib, .vowel, .neutralC]
 
 /-- The post-harmony surface form analogous to [ʃidʒéːʔ]: the prefix
 sibilant has been realized as postalveolar to agree with the root. -/
-def postShiDze : List NSeg :=
+@[reducible] def postShiDze : List NSeg :=
   [.postSib, .vowel, .postSib, .vowel, .neutralC]
 
 /-- A control form analogous to [sisná]: only anterior sibilants in the
 word, with intervening vowels and a non-sibilant consonant. -/
-def controlOnlyAnterior : List NSeg :=
+@[reducible] def controlOnlyAnterior : List NSeg :=
   [.antSib, .vowel, .antSib, .neutralC, .vowel]
 
 /-- A control form with no sibilants at all — vacuously legal, since the
 tier projection is empty. -/
-def controlNoSibilants : List NSeg :=
+@[reducible] def controlNoSibilants : List NSeg :=
   [.neutralC, .vowel, .neutralC, .vowel, .neutralC]
 
 -- ============================================================================
 -- § 4: Theorems — TSL_2 captures the surface phonotactic
 -- ============================================================================
 
-/-- The pre-harmony underlying form is **rejected** by the surface
-grammar: it contains a tier-adjacent `antSib`-`postSib` pair.
-Closed by the `decidableMemOfForbiddenPairsLang` instance. -/
-theorem preSiDze_violates :
-    preSiDze ∉ navajoSibilantHarmony.lang := by
-  unfold navajoSibilantHarmony preSiDze; decide
+/-- The pre-harmony underlying form is **rejected**: it contains a
+tier-adjacent disagreeing-sibilant pair. -/
+theorem preSiDze_violates : preSiDze ∉ navajoSibilantHarmony.lang := by
+  unfold navajoSibilantHarmony TSLGrammar.agree; decide
 
 /-- The post-harmony surface form is **accepted**: every tier-adjacent
 sibilant pair agrees in place. -/
-theorem postShiDze_legal :
-    postShiDze ∈ navajoSibilantHarmony.lang := by
-  unfold navajoSibilantHarmony postShiDze; decide
+theorem postShiDze_legal : postShiDze ∈ navajoSibilantHarmony.lang := by
+  unfold navajoSibilantHarmony TSLGrammar.agree; decide
 
-/-- A form with only anterior sibilants is **accepted** — the constraint
-forbids disagreement, not co-occurrence. -/
+/-- A form with only anterior sibilants is **accepted** — the AGREE
+constraint forbids disagreement, not co-occurrence. -/
 theorem controlOnlyAnterior_legal :
     controlOnlyAnterior ∈ navajoSibilantHarmony.lang := by
-  unfold navajoSibilantHarmony controlOnlyAnterior; decide
+  unfold navajoSibilantHarmony TSLGrammar.agree; decide
 
 /-- Forms with no sibilants are vacuously accepted — the tier projection
 is empty, so there are no tier-adjacent pairs to check. -/
 theorem controlNoSibilants_legal :
     controlNoSibilants ∈ navajoSibilantHarmony.lang := by
-  unfold navajoSibilantHarmony controlNoSibilants; decide
+  unfold navajoSibilantHarmony TSLGrammar.agree; decide
 
 -- ============================================================================
 -- § 5: OT-side bridge — markedness constraint co-extensive with the language
 -- ============================================================================
 
-open Core
-
 /-- The OT markedness constraint corresponding to the Navajo
 sibilant-harmony phonotactic: AGREE-style markedness penalizing each
 tier-adjacent disagreeing sibilant pair on the sibilant tier. The OT-side
-counterpart of `navajoSibilantHarmony` — same forbidden-pair relation,
-same tier predicate, packaged as a `NamedConstraint`. The TSL grammar
-characterizes the *language*; this constraint *evaluates* it. -/
-def navajoAgreeAntCC : Core.Constraint.OT.NamedConstraint (List NSeg) :=
-  Phonology.Constraints.mkForbidPairsOnTier
-    "AGREE-[ant]/CC" NSeg.forbidDisagreement (Tier.byClass NSeg.onTier) id
+counterpart of `navajoSibilantHarmony` — same tier predicate, packaged as
+a `NamedConstraint` via the `mkAgreeOnTier` specialization. The TSL
+grammar characterizes the *language*; this constraint *evaluates* it. -/
+def navajoAgree : Constraint.OT.NamedConstraint (List NSeg) :=
+  Phonology.Constraints.mkAgreeOnTier
+    "AGREE-[ant]/CC" (Tier.byClass NSeg.onTier) id
 
-/-- The AGREE constraint is a markedness constraint by construction. -/
-theorem navajoAgreeAntCC_is_markedness :
-    navajoAgreeAntCC.family = Core.Constraint.OT.ConstraintFamily.markedness :=
-  Phonology.Constraints.mkForbidPairsOnTier_is_markedness _ _ _ _
+/-- `navajoAgree` is a markedness constraint by construction. -/
+theorem navajoAgree_is_markedness :
+    navajoAgree.family = Constraint.OT.ConstraintFamily.markedness :=
+  Phonology.Constraints.mkAgreeOnTier_is_markedness _ _ _
 
-/-- **Bridge**: `navajoAgreeAntCC` evaluates to zero on a candidate iff
-the candidate is in the TSL_2 language. The "OT-side" and
-"subregular-side" characterizations of the same Navajo phonotactic
-coincide — making the co-extensiveness of the two analyses true by
-construction rather than a separately-proved equivalence. -/
-theorem navajoAgreeAntCC_zero_iff_in_TSL (c : List NSeg) :
-    navajoAgreeAntCC.eval c = 0 ↔ c ∈ navajoSibilantHarmony.lang :=
-  Phonology.Subregular.mkForbidPairsOnTier_zero_iff_in_lang
-    "AGREE-[ant]/CC" NSeg.forbidDisagreement NSeg.onTier id c
+/-- **Bridge**: `navajoAgree` evaluates to zero on a candidate iff the
+candidate is in the TSL_2 language. The "OT-side" and "subregular-side"
+characterizations of the same Navajo phonotactic coincide — making the
+co-extensiveness of the two analyses true by construction rather than a
+separately-proved equivalence. -/
+theorem navajoAgree_zero_iff_in_TSL (c : List NSeg) :
+    navajoAgree.eval c = 0 ↔ c ∈ navajoSibilantHarmony.lang :=
+  mkAgreeOnTier_zero_iff_in_agree_lang "AGREE-[ant]/CC" NSeg.onTier id c
 
 end Phonology.Studies.Hansson2010

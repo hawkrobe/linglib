@@ -69,7 +69,7 @@ representative examples, plus the Tolerance Principle inequality that
 licenses convergence.
 -/
 
-namespace Phenomena.PhonologicalAlternation.Studies.Belth2026
+namespace Phenomena.Phonology.Studies.Belth2026
 
 open Core
 open Phonology.Alternation
@@ -557,4 +557,4 @@ suffices to demonstrate the schema, the empirical-limit pattern
 (*lunaris*), the Tolerance Principle bridge, and the OCP-tier OT bridge.
 -/
 
-end Phenomena.PhonologicalAlternation.Studies.Belth2026
+end Phenomena.Phonology.Studies.Belth2026

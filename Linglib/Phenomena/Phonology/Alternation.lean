@@ -7,7 +7,7 @@ type and environmental context, without committing to any particular
 phonological framework (SPE, OT, etc.).
 -/
 
-namespace Phenomena.PhonologicalAlternation
+namespace Phenomena.Phonology.Alternation
 
 -- ============================================================================
 -- § 1: Types
@@ -117,4 +117,4 @@ theorem postnasal_deletion_is_deletion :
 theorem korean_nasalization_is_feature_change :
     koreanStopNasalization.alternationType = .featureChange := rfl
 
-end Phenomena.PhonologicalAlternation
+end Phenomena.Phonology.Alternation

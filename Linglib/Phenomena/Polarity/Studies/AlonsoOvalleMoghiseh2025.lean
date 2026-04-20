@@ -521,7 +521,7 @@ Context type for determining Universal FCI distribution.
 inductive UFCIContext where
   | positiveEpisodic   -- *There are any cookies (ungrammatical)
   | negation           -- I didn't see any students (NPI)
-  | conditional_ant    -- If you see any students, ... (NPI)
+  | conditionalAntecedent    -- If you see any students, ... (NPI)
   | deonticModal       -- You may read any book (FC)
   | epistemicModal     -- There might be any solution (FC)
   | generic            -- Any owl hunts mice (subtrigging)
@@ -537,7 +537,7 @@ def ufciGrammatical (ctx : UFCIContext) : Bool :=
   match ctx with
   | .positiveEpisodic => false  -- Exhaustification contradicts
   | .negation => true           -- DE: vacuous exhaustification
-  | .conditional_ant => true    -- DE: vacuous exhaustification
+  | .conditionalAntecedent => true    -- DE: vacuous exhaustification
   | .deonticModal => true       -- Modal rescues
   | .epistemicModal => true     -- Modal rescues
   | .generic => true            -- Generic/subtrigging rescues
@@ -550,7 +550,7 @@ def ufciReading (ctx : UFCIContext) : Option EFCIReading :=
   match ctx with
   | .positiveEpisodic => none           -- Ungrammatical
   | .negation => some .plainExistential -- NPI: ¬∃ = ∀¬
-  | .conditional_ant => some .plainExistential
+  | .conditionalAntecedent => some .plainExistential
   | .deonticModal => some .freeChoice   -- FC: ◇∀
   | .epistemicModal => some .freeChoice
   | .generic => some .freeChoice        -- Generic universal
@@ -690,7 +690,7 @@ def any_question_ok : AnyExample :=
 
 def any_conditional_ok : AnyExample :=
   { sentence := "If you see any students, tell me"
-  , context := .conditional_ant
+  , context := .conditionalAntecedent
   , grammatical := true
   , reading := some "NPI: ∃x.student(x) ∧ saw(you,x) → tell(you,me)"
   , notes := "Antecedent is DE" }

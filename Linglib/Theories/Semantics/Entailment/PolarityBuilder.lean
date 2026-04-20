@@ -265,7 +265,7 @@ the item's polarity type — not stipulated.
 def MonotonicityProfile.licensesItem (profile : MonotonicityProfile)
     (item : PolarityItemEntry) : Bool :=
   match item.polarityType with
-  | .npiWeak | .npi_fci => profile.licensesWeakNPI
+  | .npiWeak | .npiFci => profile.licensesWeakNPI
   | .npiStrong => profile.licensesStrongNPI
   | .fci => profile.licensesWeakNPI  -- FCIs in DE/Strawson-DE contexts
   | .ppi => !profile.isAtLeastStrawsonDE  -- PPIs blocked in DE
@@ -328,9 +328,9 @@ theorem fragment_builder_agree_negation_liftAFinger :
     isLicensedIn liftAFinger .negation ∧
     negationProfile.licensesItem liftAFinger = true := ⟨by decide, rfl⟩
 
-/-- "Only" empirically licenses "ever" (via only_focus) and the Builder agrees. -/
+/-- "Only" empirically licenses "ever" (via onlyFocus) and the Builder agrees. -/
 theorem fragment_builder_agree_only_ever :
-    ¬ isLicensedIn ever .only_focus ∧  -- "ever" doesn't list only_focus
+    ¬ isLicensedIn ever .onlyFocus ∧  -- "ever" doesn't list onlyFocus
     onlyProfile.licensesItem ever = true :=    -- but Builder derives licensing
   ⟨by decide, rfl⟩
   -- Note: the Fragment is conservative (only lists attested contexts);

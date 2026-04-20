@@ -1,7 +1,7 @@
 import Linglib.Theories.Phonology.Process.RuleBased.Defs
 import Linglib.Fragments.English.Phonology
 import Linglib.Fragments.Korean.Phonology
-import Linglib.Phenomena.PhonologicalAlternation.Data
+import Linglib.Phenomena.Phonology.Alternation
 
 /-!
 # SPE Derivation Bridge

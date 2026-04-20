@@ -40,7 +40,7 @@ def dareDemo : PolarityItemEntry :=
   { form := "dare-demo (誰でも)"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "wh + demo: free choice / concessive conditional" }
 
 -- ============================================================================

@@ -1,12 +1,10 @@
 import Linglib.Core.Logic.NaturalLogic
 
-/-
-# Disjunction Ignorance: Empirical Data
-@cite{chierchia-2013}
+/-!
+# Disjunction Ignorance @cite{chierchia-2013}
 
-Theory-neutral empirical patterns for ignorance inferences from disjunction.
-
-## The Pattern
+Empirical patterns for ignorance inferences from disjunction, organized
+around @cite{chierchia-2013}'s positional-asymmetry account.
 
 "Harry is in Antwerp or Brussels" implicates:
 1. Speaker doesn't know Harry is in Antwerp
@@ -16,9 +14,12 @@ This is different from scalar implicature:
 - Scalar: "some" → speaker knows not all
 - Ignorance: "A or B" → speaker doesn't know which
 
+The file provides a `predictReading` function over `ContextPolarity`
+(from `Core.NaturalLogic`) that derives the preferred inclusive/exclusive
+reading from structural position.
 -/
 
-namespace Phenomena.Polarity.DisjunctionIgnorance
+namespace Phenomena.Polarity.Studies.Chierchia2013
 
 
 /--
@@ -324,7 +325,7 @@ Structural position of the disjunction.
 inductive DisjunctionPosition where
   | matrix            -- Main clause
   | conditional_cons  -- Consequent of conditional (UE)
-  | conditional_ant   -- Antecedent of conditional (DE)
+  | conditionalAntecedent   -- Antecedent of conditional (DE)
   | every_scope       -- Scope of "every" (UE)
   | every_restrictor  -- Restrictor of "every" (DE)
   | negation_scope    -- Under negation (DE)
@@ -338,7 +339,7 @@ Determine context polarity from position.
 def positionPolarity : DisjunctionPosition → ContextPolarity
   | .matrix => .upward
   | .conditional_cons => .upward
-  | .conditional_ant => .downward
+  | .conditionalAntecedent => .downward
   | .every_scope => .upward
   | .every_restrictor => .downward
   | .negation_scope => .downward
@@ -383,7 +384,7 @@ def hiring_consequent : ExclusiveInclusiveExample :=
 
 def hiring_antecedent : ExclusiveInclusiveExample :=
   { sentence := "If we hire Mary or Sue, everything will go well"
-  , position := .conditional_ant
+  , position := .conditionalAntecedent
   , polarity := .downward
   , preferredReading := .inclusive
   , canForceOther := true
@@ -491,7 +492,7 @@ def force_inclusive_ue : ForcedReadingExample :=
 
 def force_exclusive_de : ForcedReadingExample :=
   { baseSentence := "If we hire Mary or Sue, everything will go well"
-  , position := .conditional_ant
+  , position := .conditionalAntecedent
   , defaultReading := .inclusive
   , forcingPhrase := "but not both"
   , forcedReading := .exclusive
@@ -504,4 +505,4 @@ All forced reading examples.
 def forcedReadingExamples : List ForcedReadingExample :=
   [force_inclusive_ue, force_exclusive_de]
 
-end Phenomena.Polarity.DisjunctionIgnorance
+end Phenomena.Polarity.Studies.Chierchia2013

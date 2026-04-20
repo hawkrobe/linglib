@@ -344,7 +344,7 @@ inductive ScaleDirection where
 
 /-- Map from polarity type to expected scale direction in licensing contexts. -/
 def expectedScaleDirection : PolarityType → Option ScaleDirection
-  | .npiWeak | .npiStrong | .npi_fci => some .reversing
+  | .npiWeak | .npiStrong | .npiFci => some .reversing
   | .ppi => some .preserving
   | .fci => none  -- FCIs require non-veridicality, not DE/UE
 

@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Empirical
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
-import Linglib.Phenomena.Polarity.NPIs
+import Linglib.Core.Lexical.PolarityItem
 
 /-!
 # @cite{fillmore-kay-oconnor-1988}: *Let Alone* — Empirical Data
@@ -309,7 +309,7 @@ end FillmoreKayOConnor1988
 
 Connects the Construction Grammar analysis of *let alone* to:
 
-1. NPI licensing contexts in `Phenomena.Polarity.NPIs` — maps each FKO NPI
+1. NPI licensing contexts in `Core.Lexical.PolarityItem` — maps each FKO NPI
    trigger type to a known licensing context
 2. Empirical judgments in `FillmoreKayOConnor1988`
    — verifies that *barely* licenses *let alone* while *almost* does not
@@ -320,29 +320,29 @@ namespace ConstructionGrammar.Studies.FillmoreKayOConnor1988.Bridge
 
 open ConstructionGrammar.Studies.FillmoreKayOConnor1988
 
-/-! ### Bridge 1: NPI triggers → Polarity.NPIs.LicensingContext
+/-! ### Bridge 1: NPI triggers → Core.Lexical.PolarityItem.LicensingContext
 
 FKO1988's NPI trigger inventory (§2.2.4) maps onto the licensing contexts
-already catalogued in `Phenomena.Polarity.NPIs`. This bridge makes that
+already catalogued in `Core.Lexical.PolarityItem`. This bridge makes that
 mapping explicit: each FKO trigger type corresponds to a known NPI
 licensing context. -/
 
-open Phenomena.Polarity.NPIs in
-/-- Map FKO1988 *let alone* NPI triggers to Polarity.NPIs licensing contexts. -/
+open Core.Lexical.PolarityItem in
+/-- Map FKO1988 *let alone* NPI triggers to `LicensingContext`s. -/
 def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
-  | .simpleNegation         => .sententialNegation
-  | .tooComplementation     => .tooAdjective
-  | .comparisonOfInequality => .comparativeThan
+  | .simpleNegation         => .negation
+  | .tooComplementation     => .tooTo
+  | .comparisonOfInequality => .comparative
   | .onlyDeterminer         => .onlyFocus
-  | .minimalAttainment      => .sententialNegation  -- "barely" ≈ negation
-  | .conditionalSurprise    => .conditional
-  | .failureVerb            => .sententialNegation   -- "fail" ≈ implicit negation
+  | .minimalAttainment      => .negation              -- "barely" ≈ negation
+  | .conditionalSurprise    => .conditionalAntecedent
+  | .failureVerb            => .negation              -- "fail" ≈ implicit negation
   | .anyoneWhod             => .universalRestrictor
 
 /-! ### Bridge 2: FKO Phenomena data ↔ NPI theory
 
 The phenomena file records that *barely* licenses *let alone* (ex.115)
-while *almost* does not (ex.113). This matches the Polarity.NPIs
+while *almost* does not (ex.113). This matches the Core polarity-item
 classification: *barely* is a syntactic negative polarity trigger,
 *almost* is not. -/
 

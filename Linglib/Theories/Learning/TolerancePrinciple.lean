@@ -22,7 +22,7 @@ pairs are deferred to the study files that need them.
 
 @cite{belth-2026} invokes the principle as the productivity gate inside
 the D2L tier-learner; see
-`Phenomena/PhonologicalAlternation/Studies/Belth2026.lean`. Other potential
+`Phenomena/Phonology/Studies/Belth2026.lean`. Other potential
 consumers (Yang's morphological productivity, infant rule generalization
 @cite{emond-shi-2021}) are not yet wired in.
 -/

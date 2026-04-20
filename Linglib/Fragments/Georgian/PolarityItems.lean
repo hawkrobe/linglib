@@ -46,7 +46,7 @@ def nebismieri : PolarityItemEntry :=
   { form := "nebismieri (ნებისმიერი)"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Free choice: any/every" }
 
 -- ============================================================================

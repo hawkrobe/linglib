@@ -25,8 +25,8 @@ namespace Phenomena.Numerals.Embedding
 /-- Type of embedding environment for numeral test cases. -/
 inductive EmbeddingType where
   | negation
-  | modal_possibility
-  | modal_necessity
+  | modalPossibility
+  | modalNecessity
   | attitude
   | conditional
   | restrictor
@@ -102,7 +102,7 @@ def neg_metalinguistic : NumeralEmbeddingDatum where
 Key interaction: EXH scope relative to modal. -/
 def modal_possibility_biscuit : NumeralEmbeddingDatum where
   sentence := "You are allowed to eat two biscuits"
-  embedding := .modal_possibility
+  embedding := .modalPossibility
   numeral := 2
   lowerBoundReading := "There is a permitted world where you eat ≥2 biscuits"
   bilateralReading := "There is a permitted world where you eat exactly 2 biscuits"
@@ -113,7 +113,7 @@ def modal_possibility_biscuit : NumeralEmbeddingDatum where
 Necessity quantifies universally over accessible worlds. -/
 def modal_necessity_books : NumeralEmbeddingDatum where
   sentence := "You must read three books"
-  embedding := .modal_necessity
+  embedding := .modalNecessity
   numeral := 3
   lowerBoundReading := "In all obligation worlds, you read ≥3 books"
   bilateralReading := "In all obligation worlds, you read exactly 3 books"

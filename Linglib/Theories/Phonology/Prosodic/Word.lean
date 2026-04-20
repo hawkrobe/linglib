@@ -51,42 +51,67 @@ open Phonology.Syllable
 -- § 1: Morphological Status and PrWd Membership
 -- ============================================================================
 
-/-- The morphological status of an element relative to the prosodic word.
-    Determines whether the element is parsed inside the PrWd with the
-    stem or forms a separate prosodic domain. -/
-inductive MorphStatus where
-  /-- Root morpheme: always PrWd-internal. -/
-  | root
-  /-- Derivational affix: PrWd-internal with the stem. -/
-  | derivational
-  /-- Inflectional affix (case, number, tense): PrWd-internal. -/
-  | inflectional
-  /-- Agreement marker: PrWd-internal (crucially, for Telugu nominal
-      predicative agreement; @cite{aitha-2026} §3.1). -/
-  | agreement
-  /-- Postposition: forms a **separate** PrWd. Evidence: not subject to
-      progressive vowel harmony, obeys minimal word constraint
-      independently, hiatus resolution across boundary is optional
-      (@cite{aitha-2026} §3.2). -/
-  | postposition
-  /-- Clitic: may be PrWd-internal or -external depending on the
-      language and the specific clitic. -/
-  | clitic
+/-- Morphological status of an element relative to the prosodic word,
+    decomposed into **orthogonal Boolean axes** rather than a flat
+    enumeration of named cases. The previous inductive design with cases
+    `root | derivational | ... | clitic` conflated three independent
+    dimensions and made it impossible to add new combinations (e.g., a
+    "free" vs. "bound" N2 in a Japanese compound, which is the moderator
+    in @cite{breiss-katsuda-kawahara-2026}) without doubling the case
+    enumeration.
+
+    The three axes:
+
+    - `prWdInternal` — is this element parsed inside the prosodic word
+      with the stem? Empirically diagnosed by vowel-harmony scope,
+      minimal-word effects, and hiatus-resolution obligation
+      (@cite{aitha-2026} §3.2).
+    - `free` — can this element stand alone as a wordform? Roots and
+      free morphemes are `true`; bound roots, inflectional suffixes,
+      and most clitics are `false`. **The Breiss N2 free-vs-bound
+      distinction lives on this axis.**
+    - `affixal` — is this element morphologically bound to a stem
+      (vs. a separate lexical word)? Roots are `false`; affixes,
+      clitics, and bound morphemes are `true`.
+
+    Named constructors below recover the old enum cases. -/
+structure MorphStatus where
+  prWdInternal : Bool
+  free         : Bool
+  affixal      : Bool
   deriving DecidableEq, Repr
 
-/-- Is this morphological element parsed inside the PrWd with the stem?
+namespace MorphStatus
 
-    The boundary between PrWd-internal and PrWd-external elements is
-    empirically diagnosed by:
-    1. **Vowel harmony**: progressive harmony in Telugu affects only
-       PrWd-internal suffixes, not postpositions
-    2. **Minimal word constraint**: postpositions independently satisfy
-       the bimoraic minimum; inflectional suffixes do not
-    3. **Hiatus resolution**: obligatory within PrWd, optional across
-       PrWd boundaries -/
-def MorphStatus.isPrWdInternal : MorphStatus → Bool
-  | .root | .derivational | .inflectional | .agreement => true
-  | .postposition | .clitic => false
+/-- Root morpheme: PrWd-internal, free-standing, not affixal. -/
+def root         : MorphStatus := ⟨true,  true,  false⟩
+/-- Derivational affix: PrWd-internal with the stem, bound, affixal. -/
+def derivational : MorphStatus := ⟨true,  false, true⟩
+/-- Inflectional affix (case, number, tense): PrWd-internal, bound. -/
+def inflectional : MorphStatus := ⟨true,  false, true⟩
+/-- Agreement marker: PrWd-internal (crucially, for Telugu nominal
+    predicative agreement; @cite{aitha-2026} §3.1). -/
+def agreement    : MorphStatus := ⟨true,  false, true⟩
+/-- Postposition: forms a **separate** PrWd. Evidence: not subject to
+    progressive vowel harmony, obeys minimal word constraint
+    independently, hiatus resolution across boundary is optional
+    (@cite{aitha-2026} §3.2). Free-standing in many languages. -/
+def postposition : MorphStatus := ⟨false, true,  false⟩
+/-- Clitic: PrWd-external boundary element; phonologically bound but
+    syntactically not an affix. -/
+def clitic       : MorphStatus := ⟨false, false, true⟩
+
+/-- Bound free-standing morpheme that occurs only inside compounds —
+    e.g., the "bound" N2 in Japanese compound nominals. PrWd-internal,
+    not free, not strictly affixal (it's a stem-class member, just one
+    that never surfaces alone). -/
+def boundStem    : MorphStatus := ⟨true,  false, false⟩
+
+end MorphStatus
+
+/-- Is this morphological element parsed inside the PrWd with the stem?
+    Direct projection of the `prWdInternal` axis. -/
+def MorphStatus.isPrWdInternal (s : MorphStatus) : Bool := s.prWdInternal
 
 -- ============================================================================
 -- § 2: Prosodic Word Structure

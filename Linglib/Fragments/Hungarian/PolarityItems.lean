@@ -26,7 +26,7 @@ def senki : PolarityItemEntry :=
   { form := "senki"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.conditional_ant, .negation, .nobody]
+  , licensingContexts := [.conditionalAntecedent, .negation, .nobody]
   , scalarDirection := .strengthening
   , notes := "N-word; with sem in direct neg: 'senki sem jött'" }
 
@@ -40,7 +40,7 @@ def akarki : PolarityItemEntry :=
   { form := "akárki / bárki"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Free choice: anyone at all" }
 
 -- ============================================================================

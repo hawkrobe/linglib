@@ -1,4 +1,4 @@
-import Linglib.Theories.Phonology.OptimalityTheory.OptimalParadigms
+import Linglib.Theories.Phonology.ParadigmUniformity.OptimalParadigms
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Theories.Phonology.Prosodic.Syllable.Defs
 import Linglib.Core.Constraint.System
@@ -45,7 +45,7 @@ namespace MarcoRasin2026
 
 open Core.Constraint.OT
 open Phonology.Constraints
-open Phonology.OptimalParadigms
+open Phonology.ParadigmUniformity
 open Phonology.Syllable (SonorityRank)
 
 -- ============================================================================

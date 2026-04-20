@@ -1,6 +1,7 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentInclusion
 import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
+import Linglib.Phenomena.Modality.Studies.BarLevFox2020
+import Linglib.Phenomena.Modality.Studies.DelPinalBassiSauerland2024
 import Linglib.Phenomena.Modality.Studies.ChampollionAlsopGrosu2019
 import Linglib.Phenomena.Modality.Studies.Alsop2024
 import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
@@ -41,7 +42,8 @@ namespace Phenomena.Modality.FreeChoiceCompare
 open Phenomena.Modality.FreeChoice
 open Exhaustification
 open Exhaustification.InnocentExclusion
-open Exhaustification.FreeChoice
+open Phenomena.Modality.Studies.BarLevFox2020
+open DelPinalBassiSauerland2024
 open RSA.FreeChoice
 open RSA.FCIAny
 open Semantics.Dynamic.BUS.FreeChoice
@@ -146,8 +148,8 @@ For FC alternatives:
 /-- Bar-Lev & Fox: Free choice is derived via Innocent Inclusion -/
 theorem barlevfox_derives_fc :
     ∀ w, exhIEII fcALT fcPrejacent w →
-      Exhaustification.FreeChoice.permA w ∧ Exhaustification.FreeChoice.permB w :=
-  Exhaustification.FreeChoice.free_choice
+      permA w ∧ permB w :=
+  free_choice
 
 -- ============================================================================
 -- SECTION 2b: @cite{delpinal-bassi-sauerland-2024} - Presuppositional Exhaustification
@@ -181,13 +183,13 @@ embedded FC puzzles without auxiliary mechanisms.
 /-- Del Pinal et al.: FC via presuppositional exhaustification -/
 theorem delpinal_derives_fc :
     ∀ w, pexFC.holds w →
-      Exhaustification.FreeChoice.permA w ∧ Exhaustification.FreeChoice.permB w :=
+      permA w ∧ permB w :=
   pex_fc
 
 /-- Del Pinal et al.: Double prohibition via pex (no economy needed) -/
 theorem delpinal_double_prohibition :
     ∀ w, negPexFC.holds w →
-      ¬Exhaustification.FreeChoice.permA w ∧ ¬Exhaustification.FreeChoice.permB w :=
+      ¬permA w ∧ ¬permB w :=
   pex_double_prohibition
 
 /-- Del Pinal et al.: pex's presupposition survives negation (by construction) -/

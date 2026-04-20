@@ -1,8 +1,11 @@
 # Linglib
 
 [![CI](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml/badge.svg)](https://github.com/hawkrobe/linglib/actions/workflows/ci.yml)
+[![Lean 4](https://img.shields.io/badge/Lean-v4.29.1-blue)](https://leanprover.github.io/)
+[![Mathlib](https://img.shields.io/badge/mathlib-v4.29.1-blueviolet)](https://github.com/leanprover-community/mathlib4)
+[![License](https://img.shields.io/badge/license-Apache%202.0-green)](LICENSE)
 
-A Lean 4 library for formal linguistics.
+A Lean 4 library for formal linguistics — semantics, syntax, pragmatics, morphology, phonology, and processing — covering ~76 phenomenon categories and ~100 languages, with multiple competing frameworks formalized for the same phenomenon.
 
 > ⚠️ This is an experiment in "AI for Linguistics" using recent advances in proof assistants. Please let us know if you identify any inaccuracies. 
 
@@ -31,10 +34,21 @@ lake exe cache get  # Get mathlib cache
 lake build
 ```
 
+## Using Linglib in your own Lake project
+
+Add to your `lakefile.lean`:
+
+```lean
+require linglib from git
+  "https://github.com/hawkrobe/linglib" @ "main"
+```
+
+Then `import Linglib` — or, more selectively, e.g. `import Linglib.Theories.Pragmatics.RSA.Basic`.
+
 ## Docs
 
 [https://hawkrobe.github.io/linglib/](https://hawkrobe.github.io/linglib/)
 
 ## License
 
-Apache 2.0
+Apache 2.0 — see [LICENSE](LICENSE).

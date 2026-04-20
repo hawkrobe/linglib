@@ -750,8 +750,7 @@ which is sufficient for weak NPI licensing.
 theorem de_signature_licenses_weak_npi (σ : EntailmentSig) :
     EntailmentSig.toContextPolarity σ = .downward →
     (EntailmentSig.toDEStrength σ).isSome = true := by
-  cases σ <;> simp [EntailmentSig.toContextPolarity, EntailmentSig.toDEStrength,
-    EntailmentSig.project]
+  cases σ <;> decide
 
 /--
 Anti-additive or stronger signature licenses strong NPIs.
@@ -763,8 +762,7 @@ theorem strong_npi_requires_antiadditive (σ : EntailmentSig) :
     EntailmentSig.toDEStrength σ = some DEStrength.antiAdditive ∨
     EntailmentSig.toDEStrength σ = some DEStrength.antiMorphic →
     EntailmentSig.toContextPolarity σ = ContextPolarity.downward := by
-  cases σ <;> simp [EntailmentSig.toDEStrength, EntailmentSig.toContextPolarity,
-    EntailmentSig.project]
+  cases σ <;> decide
 
 -- Verify: antiMult is DE but NOT anti-additive (licenses weak but not strong NPIs)
 #guard EntailmentSig.toDEStrength .antiMult == some .weak

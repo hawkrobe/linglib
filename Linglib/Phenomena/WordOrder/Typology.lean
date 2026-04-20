@@ -1,4 +1,5 @@
 import Linglib.Core.Lexical.Word
+import Linglib.Core.Typology.WordOrder
 import Linglib.Core.WALS.Features.F81A
 import Linglib.Core.WALS.Features.F82A
 import Linglib.Core.WALS.Features.F83A
@@ -227,51 +228,21 @@ theorem all_exceptions_single_word :
 -- Aggregate counts are derived from the generated data by filtering.
 
 -- ============================================================================
--- Chapter 81: Basic Order of Subject, Object, and Verb
+-- Word-order types (re-exported from Core.Typology.WordOrder)
 -- ============================================================================
+-- The order enums (`BasicOrder`, `SVOrder`, `OVOrder`) and the WALS
+-- conversion helpers live in `Core/Typology/WordOrder.lean` so that both
+-- this file and per-language Fragments can import them without violating
+-- the layered dependency hierarchy. They are re-exported here for the
+-- convenience of consumers that already `open Phenomena.WordOrder.Typology`.
 
-/-- WALS Ch 81: The six-way classification of basic constituent order.
-
-    The "basic" order is determined by the dominant order in pragmatically
-    neutral, declarative clauses with full NP arguments. Languages where no
-    single order clearly dominates (e.g., free word-order languages like
-    Warlpiri, or V2 languages like German where underlying order is debated)
-    are classified as "no dominant order."
-
-    Key finding: SOV and SVO together account for >76% of languages;
-    object-initial orders (OVS + OSV) are vanishingly rare.
-    This asymmetry is one of the most robust typological generalizations:
-    subjects overwhelmingly precede objects. -/
-inductive BasicOrder where
-  | sov | svo | vso | vos | ovs | osv | noDominant
-  deriving DecidableEq, Repr
+export Core.Typology.WordOrder
+  ( BasicOrder SVOrder OVOrder WordOrderProfile
+    fromWALS81A fromWALS82A fromWALS83A
+    basicOrderOfWALS svOrderOfWALS ovOrderOfWALS )
 
 -- ============================================================================
--- Chapter 82: Order of Subject and Verb
--- ============================================================================
-
-/-- WALS Ch 82: Binary classification of S-V order. -/
-inductive SVOrder where
-  | sv | vs | noDominant
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Chapter 83: Order of Object and Verb
--- ============================================================================
-
-/-- WALS Ch 83: Binary classification of O-V order.
-
-    The most theoretically significant binary parameter: whether the object
-    precedes the verb (OV = head-final VP) or follows it (VO = head-initial VP).
-    This single parameter correlates with adposition order, genitive order,
-    relative clause order, and subordinator order — the head-direction
-    generalization formalized in the cross-tabulations above. -/
-inductive OVOrder where
-  | ov | vo | noDominant
-  deriving DecidableEq, Repr
-
--- ============================================================================
--- Basic Order Language Profiles
+-- Basic Order Language Profiles (legacy struct; pending migration to Fragments)
 -- ============================================================================
 
 /-- A language's basic word-order profile across WALS Chapters 81--83.
@@ -279,7 +250,13 @@ inductive OVOrder where
     The order fields (`basicOrder`, `svOrder`, `ovOrder`) are derived from
     `Core.WALS` via ISO 639-3 lookup — they are not hand-coded. Cross-chapter
     consistency theorems (e.g., `sov_implies_sv_and_ov`) thus test WALS's
-    internal consistency rather than the agreement of hand-coded fields. -/
+    internal consistency rather than the agreement of hand-coded fields.
+
+    NOTE: this struct is scheduled for retirement under the
+    Fragments-as-typology-endpoint architecture (see project memory). The
+    canonical `WordOrderProfile` record now lives in
+    `Core.Typology.WordOrder`; per-language Fragments will populate it
+    directly. The `BasicOrderProfile` wrapper persists during the migration. -/
 structure BasicOrderProfile where
   /-- Language name. -/
   language : String
@@ -289,48 +266,17 @@ structure BasicOrderProfile where
   notes : String := ""
   deriving Repr
 
-/-- Convert WALS F81A's BasicWordOrder to our local BasicOrder. -/
-private def fromWALS81A : Core.WALS.F81A.BasicWordOrder → BasicOrder
-  | .sov => .sov
-  | .svo => .svo
-  | .vso => .vso
-  | .vos => .vos
-  | .ovs => .ovs
-  | .osv => .osv
-  | .noDominantOrder => .noDominant
-
-/-- Convert WALS F82A's SubjectVerbOrder to our local SVOrder. -/
-private def fromWALS82A : Core.WALS.F82A.SubjectVerbOrder → SVOrder
-  | .sv => .sv
-  | .vs => .vs
-  | .noDominantOrder => .noDominant
-
-/-- Convert WALS F83A's ObjectVerbOrder to our local OVOrder. -/
-private def fromWALS83A : Core.WALS.F83A.ObjectVerbOrder → OVOrder
-  | .ov => .ov
-  | .vo => .vo
-  | .noDominantOrder => .noDominant
-
-/-- Ch 81 basic order, derived from WALS by ISO lookup.
-    Returns `.noDominant` for languages absent from WALS F81A. -/
+/-- Ch 81 basic order, derived from WALS by ISO lookup. -/
 def BasicOrderProfile.basicOrder (p : BasicOrderProfile) : BasicOrder :=
-  match Core.WALS.Datapoint.lookupISO Core.WALS.F81A.allData p.iso with
-  | some d => fromWALS81A d.value
-  | none => .noDominant
+  basicOrderOfWALS p.iso
 
-/-- Ch 82 subject-verb order, derived from WALS by ISO lookup.
-    Returns `.noDominant` for languages absent from WALS F82A. -/
+/-- Ch 82 subject-verb order, derived from WALS by ISO lookup. -/
 def BasicOrderProfile.svOrder (p : BasicOrderProfile) : SVOrder :=
-  match Core.WALS.Datapoint.lookupISO Core.WALS.F82A.allData p.iso with
-  | some d => fromWALS82A d.value
-  | none => .noDominant
+  svOrderOfWALS p.iso
 
-/-- Ch 83 object-verb order, derived from WALS by ISO lookup.
-    Returns `.noDominant` for languages absent from WALS F83A. -/
+/-- Ch 83 object-verb order, derived from WALS by ISO lookup. -/
 def BasicOrderProfile.ovOrder (p : BasicOrderProfile) : OVOrder :=
-  match Core.WALS.Datapoint.lookupISO Core.WALS.F83A.allData p.iso with
-  | some d => fromWALS83A d.value
-  | none => .noDominant
+  ovOrderOfWALS p.iso
 
 -- ---- SOV languages ----
 

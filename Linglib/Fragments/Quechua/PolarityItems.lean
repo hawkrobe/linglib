@@ -27,7 +27,7 @@ def piPash : PolarityItemEntry :=
   { form := "pi-pash"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.conditional_ant, .negation]
+  , licensingContexts := [.conditionalAntecedent, .negation]
   , notes := "wh + pash: conditional/neg scope" }
 
 /-- *mana pi-pash* — Negative indefinite.
@@ -49,7 +49,7 @@ def maijanPash : PolarityItemEntry :=
   { form := "maijan-pash"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Free choice: anyone" }
 
 -- ============================================================================

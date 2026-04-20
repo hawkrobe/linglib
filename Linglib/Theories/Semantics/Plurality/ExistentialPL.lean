@@ -39,8 +39,9 @@ bridge if needed.
 - `Core/Mereology.lean`: `AlgClosure` = Link's `*` (the universal dual)
 - `Lexical/Plural/Link1983.lean`: `star`, `Distr`
 - `Lexical/Plural/Distributivity.lean`: `distMaximal` (∀ atoms satisfy P)
-- `Exhaustification/InnocentInclusion.lean`: Exh^{IE+II} that derives
-  universality from existential + non-closed alternatives
+- `Exhaustification/Operators.lean` (Exh^{IE+II}) +
+  `Phenomena/Modality/Studies/BarLevFox2020.lean` (worked FC example):
+  Exh^{IE+II} derives universality from existential + non-closed alternatives
 -/
 
 namespace Semantics.Plurality.ExistentialPL

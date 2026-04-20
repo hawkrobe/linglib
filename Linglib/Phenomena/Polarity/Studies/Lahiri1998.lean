@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Focus.Particles
 import Linglib.Theories.Semantics.Entailment.Basic
 import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Phenomena.Polarity.NPIs
+import Linglib.Core.Lexical.PolarityItem
 import Linglib.Fragments.Hindi.PolarityItems
 
 /-!
@@ -40,8 +40,21 @@ namespace Lahiri1998
 
 open Semantics.FocusParticles (TraditionalEven LikelihoodOrder LikelihoodMonotone)
 open Semantics.Entailment (World allWorlds entails pnot)
-open Phenomena.Polarity.NPIs (NPIDatum)
 open Core.Lexical.PolarityItem
+
+/-- A judged Hindi NPI sentence, paired with the licensing context (if any). -/
+structure HindiNPIDatum where
+  /-- The sentence -/
+  sentence : String
+  /-- The NPI item -/
+  npiItem : String
+  /-- Grammaticality judgment (true = OK, false = bad) -/
+  grammatical : Bool
+  /-- Type of licensing context (if grammatical) -/
+  context : Option LicensingContext
+  /-- Notes -/
+  notes : String
+  deriving Repr
 
 -- ============================================================================
 -- §1. Morphological Decomposition
@@ -88,13 +101,11 @@ def kahiiNBhii : NPIDecomposition :=
   { base := "kahiiN", baseGloss := "somewhere"
   , npiForm := "kahiiN bhii", npiGloss := "anywhere" }
 
+/-- All Hindi NPIs share the particle *bhii* — the morphological uniformity
+    that motivates the compositional analysis. Visible by inspection of the
+    `npiForm` field of every entry below. -/
 def hindiNPIs : List NPIDecomposition :=
   [ekBhii, koiiBhiiD, kuchBhii, zaraaBhii, kabhiiBhii, kahiiNBhii]
-
-/-- All Hindi NPIs share the particle *bhii* — the morphological uniformity
-    that motivates the compositional analysis. -/
-theorem all_share_bhii :
-    hindiNPIs.all (λ d => d.npiForm.endsWith "bhii") = true := by native_decide
 
 -- ============================================================================
 -- §2. Alternative Types
@@ -341,56 +352,53 @@ theorem even_clash_abstract
     the compositional prediction: bhii + indefinite is licensed in DE
     contexts and blocked in UE contexts.
 
-    Uses `NPIDatum` from `Phenomena.Polarity.NPIs`. -/
-
--- Use the Phenomena-level licensing context type
-open Phenomena.Polarity.NPIs (LicensingContext)
+    Uses the local `HindiNPIDatum` defined above. -/
 
 -- Clausemate negation (§4.1)
 
-def koiiBhii_neg : NPIDatum :=
+def koiiBhii_neg : HindiNPIDatum :=
   { sentence := "koii bhii nahiiN aayaa"
   , npiItem := "koii bhii", grammatical := true
-  , context := some .sententialNegation
+  , context := some .negation
   , notes := "(6b) 'No one came.' Negation is DE → no clash" }
 
-def koiiBhii_pos : NPIDatum :=
+def koiiBhii_pos : HindiNPIDatum :=
   { sentence := "*koii bhii aayaa"
   , npiItem := "koii bhii", grammatical := false
   , context := none
   , notes := "(6a) '*Anyone came.' Positive is UE → clash" }
 
-def ekBhii_neg : NPIDatum :=
+def ekBhii_neg : HindiNPIDatum :=
   { sentence := "ek bhii aadmii nahiiN aayaa"
   , npiItem := "ek bhii", grammatical := true
-  , context := some .sententialNegation
+  , context := some .negation
   , notes := "(7b) 'No man came.' DE → no clash" }
 
-def ekBhii_pos : NPIDatum :=
+def ekBhii_pos : HindiNPIDatum :=
   { sentence := "*ek bhii aadmii aayaa"
   , npiItem := "ek bhii", grammatical := false
   , context := none
   , notes := "(7a) '*Any man came.' UE → clash" }
 
-def kuchBhii_neg : NPIDatum :=
+def kuchBhii_neg : HindiNPIDatum :=
   { sentence := "maiN-ne kuch bhii nahiiN khaayaa"
   , npiItem := "kuch bhii", grammatical := true
-  , context := some .sententialNegation
+  , context := some .negation
   , notes := "(8b) 'I didn't eat anything.' DE → no clash" }
 
-def kuchBhii_pos : NPIDatum :=
+def kuchBhii_pos : HindiNPIDatum :=
   { sentence := "*maiN-ne kuch bhii khaayaa"
   , npiItem := "kuch bhii", grammatical := false
   , context := none
   , notes := "(8a) '*I ate anything.' UE → clash" }
 
-def zaraaBhii_neg : NPIDatum :=
+def zaraaBhii_neg : HindiNPIDatum :=
   { sentence := "maiN-ne zaraa bhii khaanaa nahiiN khaayaa"
   , npiItem := "zaraa bhii", grammatical := true
-  , context := some .sententialNegation
+  , context := some .negation
   , notes := "(9b) 'I didn't eat any food.' DE → no clash" }
 
-def zaraaBhii_pos : NPIDatum :=
+def zaraaBhii_pos : HindiNPIDatum :=
   { sentence := "*maiN-ne zaraa bhii khaanaa khaayaa"
   , npiItem := "zaraa bhii", grammatical := false
   , context := none
@@ -398,13 +406,13 @@ def zaraaBhii_pos : NPIDatum :=
 
 -- Object position (§4.1, eqs. 6c-d)
 
-def koiiBhii_obj_neg : NPIDatum :=
+def koiiBhii_obj_neg : HindiNPIDatum :=
   { sentence := "maiN-ne kisii-ko bhii nahiiN dekhaa"
   , npiItem := "kisii-ko bhii", grammatical := true
-  , context := some .sententialNegation
+  , context := some .negation
   , notes := "(6d) 'I didn't see anyone.' Object NPI under negation" }
 
-def koiiBhii_obj_pos : NPIDatum :=
+def koiiBhii_obj_pos : HindiNPIDatum :=
   { sentence := "*maiN-ne kisii-ko bhii dekhaa"
   , npiItem := "kisii-ko bhii", grammatical := false
   , context := none
@@ -412,13 +420,13 @@ def koiiBhii_obj_pos : NPIDatum :=
 
 -- Conditionals (§4.2)
 
-def npi_cond_protasis : NPIDatum :=
+def npi_cond_protasis : HindiNPIDatum :=
   { sentence := "agar raam kisii-ko bhii dekhegaa to tumheN bataayegaa"
   , npiItem := "kisii-ko bhii", grammatical := true
-  , context := some .conditional
+  , context := some .conditionalAntecedent
   , notes := "(10a) 'If Ram sees anyone, he will inform you.' Protasis is DE" }
 
-def npi_cond_apodosis : NPIDatum :=
+def npi_cond_apodosis : HindiNPIDatum :=
   { sentence := "*agar raam aayegaa, to kuch bhii karegaa"
   , npiItem := "kuch bhii", grammatical := false
   , context := none
@@ -426,13 +434,13 @@ def npi_cond_apodosis : NPIDatum :=
 
 -- Universal restrictor (§4.3)
 
-def npi_univ_restrictor : NPIDatum :=
+def npi_univ_restrictor : HindiNPIDatum :=
   { sentence := "aisaa har chaatr jisne ek bhii kitaab paRhii, paas ho gayaa"
   , npiItem := "ek bhii", grammatical := true
   , context := some .universalRestrictor
   , notes := "(11a) 'Every student who read any book passed.' Restrictor of ∀ is DE" }
 
-def npi_exist_restrictor : NPIDatum :=
+def npi_exist_restrictor : HindiNPIDatum :=
   { sentence := "*aisaa koii chaatr jisne ek bhii kitaab paRhii, paas ho gayaa"
   , npiItem := "ek bhii", grammatical := false
   , context := none
@@ -440,37 +448,37 @@ def npi_exist_restrictor : NPIDatum :=
 
 -- Adversative predicates (§4.5)
 
-def npi_adversative_surprise_ek : NPIDatum :=
+def npi_adversative_surprise_ek : HindiNPIDatum :=
   { sentence := "mujhe is baat par aaScarya huaa ki ek bhii aadmii tumhaare ghar gayaa"
   , npiItem := "ek bhii", grammatical := true
   , context := some .adversative
   , notes := "(29a) 'I am surprised that even one person went to your house.'" }
 
-def npi_adversative_surprise_koii : NPIDatum :=
+def npi_adversative_surprise_koii : HindiNPIDatum :=
   { sentence := "mujhe is baat par aaScarya huaa ki koii bhii tumhaare ghar gayaa"
   , npiItem := "koii bhii", grammatical := true
   , context := some .adversative
   , notes := "(29b) 'I am surprised that anyone went to your house.'" }
 
-def npi_prohibition_obj : NPIDatum :=
+def npi_prohibition_obj : HindiNPIDatum :=
   { sentence := "maiN-ne rameS-ko kisii-se bhii baat-ciit karne-se manaa kiyaa"
   , npiItem := "kisii-se bhii", grammatical := true
   , context := some .denyVerb
   , notes := "(29c) 'I prohibited Rames from talking to anyone.' Object NPI under prohibition" }
 
-def npi_prohibition_subj : NPIDatum :=
+def npi_prohibition_subj : HindiNPIDatum :=
   { sentence := "*maiN-ne kisii-ko bhii rameS-se baat-ciit karne-se manaa kiyaa/rokaa"
   , npiItem := "kisii-ko bhii", grammatical := false
   , context := none
   , notes := "(29d) '*I prohibited anyone from talking to Rames.' Subject NPI outside DE scope" }
 
-def npi_glad_bad : NPIDatum :=
+def npi_glad_bad : HindiNPIDatum :=
   { sentence := "*maiN is baat par khuS huuN ki koii bhii mere ghar aayaa"
   , npiItem := "koii bhii", grammatical := false
   , context := none
   , notes := "(31a) '*I am glad that anyone came to my place.' Non-adversative factive blocks NPI" }
 
-def npi_glad_settle : NPIDatum :=
+def npi_glad_settle : HindiNPIDatum :=
   { sentence := "tum is baat se khuS raho ki koii bhii tumhaare ghar aayaa"
   , npiItem := "koii bhii", grammatical := true
   , context := some .adversative
@@ -478,7 +486,7 @@ def npi_glad_settle : NPIDatum :=
 
 -- Before-clauses (§4.6)
 
-def npi_before : NPIDatum :=
+def npi_before : HindiNPIDatum :=
   { sentence := "kisiike bhii aane-se pahle raam ghar calaa gayaa"
   , npiItem := "kisiike bhii", grammatical := true
   , context := some .beforeClause
@@ -486,7 +494,7 @@ def npi_before : NPIDatum :=
 
 -- Questions (§4.7)
 
-def npi_question : NPIDatum :=
+def npi_question : HindiNPIDatum :=
   { sentence := "tumheN koii bhii kitaab pasand aayii kyaa?"
   , npiItem := "koii bhii", grammatical := true
   , context := some .question
@@ -494,10 +502,10 @@ def npi_question : NPIDatum :=
 
 -- Subject position (§6) — Hindi differs from English
 
-def npi_subject_hindi : NPIDatum :=
+def npi_subject_hindi : HindiNPIDatum :=
   { sentence := "koi bhii aadmii nahiiN aayaa"
   , npiItem := "koi bhii", grammatical := true
-  , context := some .sententialNegation
+  , context := some .negation
   , notes := "(41a) 'No one came.' Hindi: subject NPI + clausemate negation OK" }
 
 -- ============================================================================
@@ -557,19 +565,19 @@ def fc_generic_zaraa : FCDatum :=
 
 def fc_possibility_ek : FCDatum :=
   { sentence := "ek bhii aadmii is mez-ko uThaa saktaa hai"
-  , npiItem := "ek bhii", contextType := "modal_possibility"
+  , npiItem := "ek bhii", contextType := "modalPossibility"
   , grammatical := true
   , notes := "(36a) 'Even one person can lift this table.' Possibility modal" }
 
 def fc_possibility_koii : FCDatum :=
   { sentence := "koii bhii aadmii is mez-ko uThaa saktaa hai"
-  , npiItem := "koii bhii", contextType := "modal_possibility"
+  , npiItem := "koii bhii", contextType := "modalPossibility"
   , grammatical := true
   , notes := "(36b) 'Anyone can lift this table.' Possibility modal" }
 
 def fc_possibility_kabhii : FCDatum :=
   { sentence := "tum kabhii bhii ghar jaa sakte ho"
-  , npiItem := "kabhii bhii", contextType := "modal_possibility"
+  , npiItem := "kabhii bhii", contextType := "modalPossibility"
   , grammatical := true
   , notes := "(36c) 'You may go home anytime.' Possibility modal" }
 
@@ -577,13 +585,13 @@ def fc_possibility_kabhii : FCDatum :=
 
 def fc_necessity_kisii : FCDatum :=
   { sentence := "*kisii-ko bhii ghar jaanaa caahiye"
-  , npiItem := "kisii-ko bhii", contextType := "modal_necessity"
+  , npiItem := "kisii-ko bhii", contextType := "modalNecessity"
   , grammatical := false
   , notes := "(36d) '*Anyone must go home.' Necessity blocks FC reading" }
 
 def fc_necessity_ek : FCDatum :=
   { sentence := "*ek bhii aadmii-ko ghar jaanaa caahiye"
-  , npiItem := "ek bhii", contextType := "modal_necessity"
+  , npiItem := "ek bhii", contextType := "modalNecessity"
   , grammatical := false
   , notes := "(36e) '*Even one person must go home.' Necessity blocks" }
 
@@ -625,13 +633,13 @@ def allFCData : List FCDatum :=
 /-- Generics and possibility modals license FC readings. -/
 theorem generic_and_possibility_license :
     (allFCData.filter (λ d =>
-      d.contextType == "generic" || d.contextType == "modal_possibility")).all
-      (·.grammatical) = true := by native_decide
+      d.contextType == "generic" || d.contextType == "modalPossibility")).all
+      (·.grammatical) = true := by decide
 
 /-- Necessity modals block FC readings. -/
 theorem necessity_blocks :
-    (allFCData.filter (λ d => d.contextType == "modal_necessity")).all
-      (! ·.grammatical) = true := by native_decide
+    (allFCData.filter (λ d => d.contextType == "modalNecessity")).all
+      (! ·.grammatical) = true := by decide
 
 -- ============================================================================
 -- §10. The ek bhii / koii bhii Contrast (§8)
@@ -700,7 +708,7 @@ theorem alternative_type_predicts_contrast :
 -- §11. All NPI Data
 -- ============================================================================
 
-def allHindiNPIData : List NPIDatum :=
+def allHindiNPIData : List HindiNPIDatum :=
   [ koiiBhii_neg, koiiBhii_pos
   , ekBhii_neg, ekBhii_pos
   , kuchBhii_neg, kuchBhii_pos
@@ -721,11 +729,11 @@ theorem licensing_context_iff_grammatical :
 
 /-- All licensing contexts in the grammatical data are DE environments
     (or questions, which license via negative bias rather than pure DE). -/
-def isDEOrQuestion : Phenomena.Polarity.NPIs.LicensingContext → Prop
-  | .sententialNegation  => True
-  | .conditional         => True
+def isDEOrQuestion : LicensingContext → Prop
+  | .negation            => True
+  | .conditionalAntecedent     => True
   | .universalRestrictor => True
-  | .beforeClause        => True
+  | .beforeClause       => True
   | .question            => True
   | .adversative         => True  -- Strawson-DE (@cite{von-fintel-1999})
   | .denyVerb            => True  -- semantically negative
@@ -735,7 +743,7 @@ instance : DecidablePred isDEOrQuestion := fun x => by
   cases x <;> unfold isDEOrQuestion <;> infer_instance
 
 /-- Predicate: a datum's context is some DE-or-question licenser. -/
-def hasDELicenser (d : NPIDatum) : Prop :=
+def hasDELicenser (d : HindiNPIDatum) : Prop :=
   match d.context with
   | none => False
   | some c => isDEOrQuestion c

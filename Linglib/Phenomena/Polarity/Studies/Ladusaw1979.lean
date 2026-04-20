@@ -1,6 +1,6 @@
 import Linglib.Core.Logic.Quantification
+import Linglib.Core.Lexical.PolarityItem
 import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Phenomena.Polarity.NPIs
 
 /-!
 # Ladusaw (1979): Polarity Sensitivity as Inherent Scope Relations
@@ -12,8 +12,9 @@ NPI licensing to downward entailingness (DE). The core claim:
 > Weak NPIs are licensed in downward-entailing contexts.
 
 This file bridges the GQ monotonicity proofs from `Core.Quantification` and
-`Semantics.Quantification.Quantifier` to the NPI licensing data in
-`Phenomena.Polarity.NPIs`, making the DE ↔ NPI connection formally explicit.
+`Semantics.Quantification.Quantifier` to the NPI licensing classification
+indexed by `Core.Lexical.PolarityItem.LicensingContext`, making the DE ↔ NPI
+connection formally explicit.
 
 ## Key connections
 
@@ -29,7 +30,7 @@ This file bridges the GQ monotonicity proofs from `Core.Quantification` and
 namespace Ladusaw1979
 
 open Core.Quantification
-open Phenomena.Polarity.NPIs (LicensingContext)
+open Core.Lexical.PolarityItem (LicensingContext)
 open Core.IntensionalLogic
 open Semantics.Montague (toyModel ToyEntity)
 open Semantics.Quantification.Quantifier
@@ -40,33 +41,29 @@ open Semantics.Quantification.Quantifier
 
 /-- The monotonicity-based licensing strength of a context.
     @cite{ladusaw-1979}: DE licenses weak NPIs.
-    @cite{zwarts-1998}: anti-additive licenses strong NPIs. -/
+    @cite{zwarts-1998}: anti-additive licenses strong NPIs.
+
+    A coarsening of `Core.NaturalLogic.DEStrength` that collapses the
+    `.antiMorphic` and `.antiAdditive` cases (Ladusaw treats them
+    identically: both license strong NPIs). -/
 inductive LicensingStrength where
-  | antiAdditive  -- licenses both weak and strong NPIs
+  | antiAdditive  -- licenses both weak and strong NPIs (incl. anti-morphic)
   | downwardEntailing  -- licenses only weak NPIs
   | nonDE  -- does not license NPIs by monotonicity
   deriving DecidableEq, Repr
 
-/-- Classify NPI licensing contexts by their monotonicity-based strength.
-    Anti-additive contexts (negation, "without", "no one", universal restrictor) license strong NPIs.
-    Merely DE contexts ("few", conditionals) license only weak NPIs.
-    Non-DE contexts (questions, superlatives) license NPIs via other mechanisms. -/
-def licensingStrength : LicensingContext → LicensingStrength
-  | .sententialNegation  => .antiAdditive
-  | .constituentNegation => .antiAdditive
-  | .withoutClause       => .antiAdditive
-  | .denyVerb            => .antiAdditive
-  | .universalRestrictor => .antiAdditive  -- P&W Prop 13: every/no are LAA
-  | .fewNP               => .downwardEntailing
-  | .beforeClause        => .downwardEntailing
-  | .comparativeThan     => .downwardEntailing
-  | .tooAdjective        => .downwardEntailing
-  | .conditional         => .downwardEntailing
-  | .onlyFocus           => .downwardEntailing
-  | .doubtVerb           => .downwardEntailing
-  | .adversative         => .downwardEntailing  -- Strawson-DE
-  | .question            => .nonDE
-  | .superlative         => .nonDE
+/-- Coarsen a `DEStrength` to Ladusaw's three-way classification. -/
+def LicensingStrength.ofDEStrength : Option Core.NaturalLogic.DEStrength → LicensingStrength
+  | some .antiMorphic | some .antiAdditive => .antiAdditive
+  | some .weak                              => .downwardEntailing
+  | none                                    => .nonDE
+
+/-- Classify NPI licensing contexts by their monotonicity-based strength,
+    derived from `Core.Lexical.PolarityItem.contextProperties`. The Ladusaw
+    classification is a coarsening of the Icard signature lattice. -/
+def licensingStrength (c : LicensingContext) : LicensingStrength :=
+  LicensingStrength.ofDEStrength
+    (Core.Lexical.PolarityItem.contextProperties c).signature.toDEStrength
 
 -- ============================================================================
 -- §2. GQ monotonicity → NPI licensing (the Ladusaw bridge)
@@ -93,14 +90,14 @@ structure ScopeDELicensesWeakNPIs (q : m.Denot Ty.det) where
 def no_scope_licenses_weak :
     ScopeDELicensesWeakNPIs (no_sem m) :=
   { scopeDE := no_scope_down
-  , context := .constituentNegation
+  , context := .nobody
   , isDE := Or.inr rfl }
 
 /-- "Few" licenses weak NPIs in scope via scope-↓ monotonicity. -/
 def few_scope_licenses_weak :
     ScopeDELicensesWeakNPIs (few_sem m) :=
   { scopeDE := few_scope_down
-  , context := .fewNP
+  , context := .few
   , isDE := Or.inl rfl }
 
 /-- The restrictor Ladusaw generalization: restrictor-DE quantifiers license
@@ -126,7 +123,7 @@ def every_restrictor_licenses_weak :
 def no_restrictor_licenses_weak :
     RestrictorDELicensesWeakNPIs (no_sem m) :=
   { restrictorDE := no_restrictor_down
-  , context := .constituentNegation
+  , context := .nobody
   , isDE := Or.inr rfl }
 
 -- ============================================================================
@@ -160,7 +157,7 @@ def every_laa_licenses_strong :
 def no_laa_licenses_strong :
     AntiAddLicensesStrongNPIs (no_sem m) :=
   { laa := no_laa
-  , context := .constituentNegation
+  , context := .nobody
   , isAA := rfl }
 
 /-- Scope-level anti-additivity also licenses strong NPIs.
@@ -176,7 +173,7 @@ structure ScopeAALicensesStrongNPIs (q : m.Denot Ty.det) where
 def no_raa_licenses_strong :
     ScopeAALicensesStrongNPIs (no_sem m) :=
   { raa := no_raa
-  , context := .constituentNegation
+  , context := .nobody
   , isAA := rfl }
 
 -- ============================================================================
@@ -186,12 +183,12 @@ def no_raa_licenses_strong :
 /- The DE classification predicts NPI data: all DE contexts license weak NPIs,
    and only anti-additive contexts license strong NPIs.
 
-   Cross-reference with `Phenomena.Polarity.NPIs`:
-   - `anyUniversal`: "Everyone who saw anyone" — restrictor DE ✓
-   - `anyFew`: "Few students saw anyone" — scope DE ✓
-   - `liftFingerFew`: "*Few people lifted a finger" — scope DE but not AA ✗
-   - `liftFingerWithout`: "without lifting a finger" — AA ✓
-   - `liftFingerNegation`: "didn't lift a finger" — AA ✓ -/
+   Illustrative examples:
+   - "Everyone who saw anyone" — restrictor DE ✓
+   - "Few students saw anyone" — scope DE ✓
+   - "*Few people lifted a finger" — scope DE but not AA ✗
+   - "without lifting a finger" — AA ✓
+   - "didn't lift a finger" — AA ✓ -/
 
 set_option maxHeartbeats 400000 in
 /-- "Few" is DE but NOT right-anti-additive in scope:
@@ -214,7 +211,7 @@ theorem few_DE_not_RAA :
   have hback := (h R S S').mpr
   -- few(R, S∨S') implies |R∩(S∨S')| < |R\(S∨S')|, i.e. 2 < 1, contradiction
   -- First establish few(R,S) ∧ few(R,S'), i.e. |R∩S|<|R\S| and |R∩S'|<|R\S'|
-  -- TODO: noncomputable count prevents native_decide; manual proof needed
+  -- TODO: noncomputable count prevents decide; manual proof needed
   sorry
 
 /-- The Ladusaw hierarchy: AA ⊂ DE ⊂ NV (nonveridical).
@@ -223,8 +220,8 @@ theorem few_DE_not_RAA :
     ✓ "Few students saw anyone" (weak NPI in DE) vs
     ✗ "*Few people lifted a finger" (strong NPI needs AA). -/
 theorem ladusaw_hierarchy :
-    (licensingStrength .sententialNegation = .antiAdditive) ∧
-    (licensingStrength .fewNP = .downwardEntailing) ∧
+    (licensingStrength .negation = .antiAdditive) ∧
+    (licensingStrength .few = .downwardEntailing) ∧
     (licensingStrength .question = .nonDE) := ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -232,22 +229,21 @@ theorem ladusaw_hierarchy :
 -- ============================================================================
 
 /-- Prediction: all NPI licensing contexts classified as DE or AA
-    should produce grammatical NPI sentences. This is verified
-    by the `anyData` checks in `NPIs.lean` (#guard at line 695-696). -/
+    should produce grammatical NPI sentences. -/
 theorem de_contexts_license_weak_npis :
     licensingStrength .universalRestrictor ≠ .nonDE ∧
-    licensingStrength .fewNP ≠ .nonDE ∧
-    licensingStrength .sententialNegation ≠ .nonDE ∧
-    licensingStrength .constituentNegation ≠ .nonDE ∧
+    licensingStrength .few ≠ .nonDE ∧
+    licensingStrength .negation ≠ .nonDE ∧
+    licensingStrength .nobody ≠ .nonDE ∧
     licensingStrength .withoutClause ≠ .nonDE ∧
     licensingStrength .beforeClause ≠ .nonDE ∧
-    licensingStrength .conditional ≠ .nonDE := by decide
+    licensingStrength .conditionalAntecedent ≠ .nonDE := by decide
 
 /-- Strong NPI prediction: only AA contexts license strong NPIs.
     "Few" (merely DE) does not license "lift a finger". -/
 theorem strong_npi_requires_aa :
-    licensingStrength .sententialNegation = .antiAdditive ∧
+    licensingStrength .negation = .antiAdditive ∧
     licensingStrength .withoutClause = .antiAdditive ∧
-    licensingStrength .fewNP ≠ .antiAdditive := by decide
+    licensingStrength .few ≠ .antiAdditive := by decide
 
 end Ladusaw1979

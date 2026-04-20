@@ -1,5 +1,6 @@
 import Linglib.Core.Prosody
 import Linglib.Theories.Phonology.Prosodic.Accent
+import Linglib.Theories.Phonology.LexicalFrequency.Defs
 import Linglib.Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
 
 /-!
@@ -96,6 +97,77 @@ def mame : JProsodicEntry :=
 /-- *ame* — unaccented noun (§2.2, Fig. 6). -/
 def ame : JProsodicEntry :=
   { form := "ame", gloss := "rain", accentMora := none, nMorae := 2 }
+
+-- ============================================================================
+-- § 2b: Frequency-annotated lexical entries
+-- ============================================================================
+
+/-- A Japanese lexical entry extending `JProsodicEntry` with the two
+    annotations needed for frequency-conditioned phonology (e.g., the
+    Breiss-Katsuda-Kawahara compounds in
+    `Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`):
+    a corpus token log-frequency and a free/bound flag.
+
+    Following CLAUDE.md's "infrastructure on demand", these annotations
+    are kept on a thin extension structure rather than added to
+    `JProsodicEntry`, so existing accent-only consumers are unaffected.
+    The `HasTokenFreq` typeclass instance below makes this entry
+    consumable by any module under `Theories/Phonology/LexicalFrequency/`. -/
+structure JLexicalEntry extends JProsodicEntry where
+  /-- Token log-frequency in a reference corpus (e.g., BCCWJ). `0`
+      conventionally means "log of 1 occurrence" — used as the no-info
+      default for unannotated items. Stored as `ℚ` so that the lexicon
+      remains computable while the abstract `Theories/Phonology/`
+      interface coerces to `ℝ`. -/
+  tokenLogFreq : ℚ := 0
+  /-- Can this morpheme stand alone as a wordform? `false` for bound
+      stems that occur only in compounds (e.g., the bound N2s targeted
+      in @cite{breiss-katsuda-kawahara-2026}). -/
+  canStandAlone : Bool := true
+  deriving Repr
+
+/-- `HasTokenFreq` instance routing `tokenLogFreq` through the
+    fragment-level `ℚ` field into the abstract `LogFreq := ℝ` interface
+    used by `Theories/Phonology/LexicalFrequency/`. `Rat.cast` is the
+    standard mathlib coercion. The instance is `noncomputable` because
+    `ℝ` is noncomputable; the `ℚ` field itself remains computable for
+    `decide`-style proofs. -/
+noncomputable instance : Phonology.LexicalFrequency.HasTokenFreq JLexicalEntry where
+  tokenLogFreq e := (e.tokenLogFreq : ℝ)
+
+-- ============================================================================
+-- § 2c: Compounds
+-- ============================================================================
+
+/-- A Japanese N1 + N2 nominal compound. Compound-medial position is
+    the locus of voiced velar nasalisation (/g/ → [ŋ]) studied in
+    @cite{breiss-katsuda-kawahara-2026}: obligatory when N2 is bound,
+    optional and frequency-conditioned when N2 is free.
+
+    The compound's own `tokenLogFreq` is **independent** of N1's and
+    N2's — high-frequency compounds with low-frequency components, and
+    vice versa, both occur. Frequency-conditioned theories that treat
+    the compound's frequency as inherited from constituents (e.g., some
+    `RepresentationStrength` variants with multiplicative inheritance)
+    must reconcile this independence with empirical reality. -/
+structure JCompound where
+  n1 : JLexicalEntry
+  n2 : JLexicalEntry
+  /-- Token log-frequency of the compound *as a unit* — typically much
+      lower than either constituent in isolation, but the principal
+      conditioning variable on optional nasalisation. -/
+  compoundLogFreq : ℚ := 0
+  deriving Repr
+
+/-- The compound's surface form: simple concatenation of N1 and N2
+    forms (the segmental alternation /g/→[ŋ] applies on top). -/
+def JCompound.form (c : JCompound) : String := c.n1.form ++ c.n2.form
+
+/-- A compound's nasalisation is *obligatory* iff its N2 is bound. The
+    free-N2 case is the gradient one tested in
+    @cite{breiss-katsuda-kawahara-2026}. -/
+def JCompound.nasalisationObligatory (c : JCompound) : Bool :=
+  ! c.n2.canStandAlone
 
 -- ============================================================================
 -- § 3: Accentual Phrase Structure (§2.2)

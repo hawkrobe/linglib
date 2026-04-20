@@ -192,29 +192,29 @@ contiguous subsets of their class's region.
 
 /-- Pure NPI region {question..directNeg} is contiguous. -/
 theorem pureNPI_contiguous :
-    isContiguous pureNPI.predictedFunctions = true := by native_decide
+    isContiguous pureNPI.predictedFunctions = true := by decide
 
 /-- NPI/FCI region {irrealis..freeChoice} is contiguous. -/
 theorem npiFCI_contiguous :
-    isContiguous npiFCI.predictedFunctions = true := by native_decide
+    isContiguous npiFCI.predictedFunctions = true := by decide
 
 /-- Pure FCI region {comparative, freeChoice} is contiguous. -/
 theorem pureFCI_contiguous :
-    isContiguous pureFCI.predictedFunctions = true := by native_decide
+    isContiguous pureFCI.predictedFunctions = true := by decide
 
 /-- EFCI NPI/FCI has same eligible region as NPI/FCI (scalar alts don't
     change distributional range, only add uniqueness readings). -/
 theorem efciNpiFci_contiguous :
-    isContiguous efciNpiFci.predictedFunctions = true := by native_decide
+    isContiguous efciNpiFci.predictedFunctions = true := by decide
 
 /-- EFCI pure FCI has same eligible region as pure FCI. -/
 theorem efciPureFci_contiguous :
-    isContiguous efciPureFci.predictedFunctions = true := by native_decide
+    isContiguous efciPureFci.predictedFunctions = true := by decide
 
 /-- All five PSI classes have contiguous predicted function ranges. -/
 theorem all_psi_classes_contiguous :
     [pureNPI, npiFCI, pureFCI, efciNpiFci, efciPureFci].all
-      (λ p => isContiguous p.predictedFunctions) = true := by native_decide
+      (λ p => isContiguous p.predictedFunctions) = true := by decide
 
 /-- D-MAX + presuppositional is unattested: the combination of requiring
     DE contexts (D-MAX) and proper strengthening (σ̃) is contradictory,
@@ -251,37 +251,37 @@ private def seriesFunctions (profile : IndefinitePronounProfile) (form : String)
 -- Italian: nessuno = pure NPI
 theorem italian_nessuno_matches :
     functionsSubset (seriesFunctions italian "nessuno")
-      pureNPI.predictedFunctions = true := by native_decide
+      pureNPI.predictedFunctions = true := by decide
 
 -- Italian: qualunque/qualsiasi = pure FCI
 theorem italian_qualsiasi_matches :
     functionsSubset (seriesFunctions italian "qualunque/qualsiasi")
-      pureFCI.predictedFunctions = true := by native_decide
+      pureFCI.predictedFunctions = true := by decide
 
 -- Italian: qualcuno = plain indefinite
 theorem italian_qualcuno_matches :
     functionsSubset (seriesFunctions italian "qualcuno")
-      (PSIProfile.mk .max false false false).predictedFunctions = true := by native_decide
+      (PSIProfile.mk .max false false false).predictedFunctions = true := by decide
 
 -- English: any (NPI) ⊆ NPI/FCI eligible region
 theorem english_anyNPI_matches :
     functionsSubset (seriesFunctions english "any- (NPI)")
-      npiFCI.predictedFunctions = true := by native_decide
+      npiFCI.predictedFunctions = true := by decide
 
 -- English: any (FC) ⊆ NPI/FCI eligible region
 theorem english_anyFC_matches :
     functionsSubset (seriesFunctions english "any- (FC)")
-      npiFCI.predictedFunctions = true := by native_decide
+      npiFCI.predictedFunctions = true := by decide
 
 -- German: irgendwer ⊆ EFCI NPI/FCI eligible region
 theorem german_irgendwer_matches :
     functionsSubset (seriesFunctions german "irgendwer")
-      efciNpiFci.predictedFunctions = true := by native_decide
+      efciNpiFci.predictedFunctions = true := by decide
 
 -- Mandarin: 谁 covers the full NPI/FCI eligible region
 theorem mandarin_shei_matches :
     functionsSubset (seriesFunctions mandarin "shéi (谁, non-interrog.)")
-      npiFCI.predictedFunctions = true := by native_decide
+      npiFCI.predictedFunctions = true := by decide
 
 -- ============================================================================
 -- §6. The qualsiasi/any Contrast Under Negation
@@ -316,32 +316,32 @@ parameter blocking DE eligibility.
     D-MIN + weak σ: exhaustification is vacuous in DE (NPI reading). -/
 theorem npiFCI_eligible_in_all_de :
     (IndefiniteFunction.all.filter (·.isDE)).all
-      (npiFCI.predictedFunctions.contains ·) = true := by native_decide
+      (npiFCI.predictedFunctions.contains ·) = true := by decide
 
 /-- No DE Haspelmath function is in the pure FCI eligible region.
     D-MIN + σ̃: proper strengthening fails in DE (`sigma_bold_fails_in_de`). -/
 theorem pureFCI_not_eligible_in_any_de :
     (IndefiniteFunction.all.filter (·.isDE)).all
-      (λ f => !pureFCI.predictedFunctions.contains f) = true := by native_decide
+      (λ f => !pureFCI.predictedFunctions.contains f) = true := by decide
 
 /-- Every DE function is in the pure NPI eligible region.
     D-MAX + weak σ: even-like enrichment is informative in DE. -/
 theorem pureNPI_eligible_in_all_de :
     (IndefiniteFunction.all.filter (·.isDE)).all
-      (pureNPI.predictedFunctions.contains ·) = true := by native_decide
+      (pureNPI.predictedFunctions.contains ·) = true := by decide
 
 /-- No FC function is in the pure NPI eligible region.
     D-MAX items lack antiexhaustive enrichment. -/
 theorem pureNPI_not_eligible_in_fc :
     (IndefiniteFunction.all.filter (·.isFC)).all
-      (λ f => !pureNPI.predictedFunctions.contains f) = true := by native_decide
+      (λ f => !pureNPI.predictedFunctions.contains f) = true := by decide
 
 /-- The *qualsiasi*/*any* contrast: among D-MIN items, every DE function
     is included by weak σ (*any*) and excluded by σ̃ (*qualsiasi*). -/
 theorem dMin_sigma_determines_de :
     (IndefiniteFunction.all.filter (·.isDE)).all
       (λ f => npiFCI.predictedFunctions.contains f &&
-              !pureFCI.predictedFunctions.contains f) = true := by native_decide
+              !pureFCI.predictedFunctions.contains f) = true := by decide
 
 -- ============================================================================
 -- §7. Bridge to EFCI Theory
@@ -420,14 +420,14 @@ def PSIProfile.toPolarityType (p : PSIProfile) : PolarityType :=
   else match p.grain, p.requiresProperStrengthening with
     | .max, false => .npiWeak    -- D-MAX, weak σ → pure NPI
     | .max, true  => .npiStrong  -- D-MAX, presuppositional → strong NPI (unattested)
-    | .min, false => .npi_fci    -- D-MIN, weak σ → NPI/FCI (any)
+    | .min, false => .npiFci    -- D-MIN, weak σ → NPI/FCI (any)
     | .min, true  => .fci        -- D-MIN, presuppositional σ̃ → pure FCI (qualsiasi)
 
 -- Verify the mapping is correct for all five named classes
 theorem pureNPI_polarityType : pureNPI.toPolarityType = .npiWeak := rfl
-theorem npiFCI_polarityType : npiFCI.toPolarityType = .npi_fci := rfl
+theorem npiFCI_polarityType : npiFCI.toPolarityType = .npiFci := rfl
 theorem pureFCI_polarityType : pureFCI.toPolarityType = .fci := rfl
-theorem efciNpiFci_polarityType : efciNpiFci.toPolarityType = .npi_fci := rfl
+theorem efciNpiFci_polarityType : efciNpiFci.toPolarityType = .npiFci := rfl
 theorem efciPureFci_polarityType : efciPureFci.toPolarityType = .fci := rfl
 
 -- Fragment entries match their PSI profile's predicted PolarityType
@@ -691,11 +691,11 @@ theorem subtrigging_no_help_existential :
 
 /-- Universal FCIs always admit ∀ (and sometimes ∃): force is ambiguous. -/
 theorem universal_fci_ambiguous_force :
-    [obs_10a, obs_10c].all (·.force == .ambiguous) = true := by native_decide
+    [obs_10a, obs_10c].all (·.force == .ambiguous) = true := by decide
 
 /-- Existential FCIs have ∃ force only. -/
 theorem existential_fci_existential_force :
-    [obs_10b, obs_10d].all (·.force == .existential) = true := by native_decide
+    [obs_10b, obs_10d].all (·.force == .existential) = true := by decide
 
 /-- Under negation, bare universal FCI yields only ¬∀ (rhetorical), not NPI ¬∃.
     This is the *qualsiasi*/*any* contrast: *qualsiasi* under negation ≠ NPI. -/

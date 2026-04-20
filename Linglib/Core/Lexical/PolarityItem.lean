@@ -1,7 +1,10 @@
+import Linglib.Core.Logic.NaturalLogic
+
 /-!
 # Polarity Item Infrastructure
 @cite{lahiri-1998} @cite{lee-horn-1994} @cite{haspelmath-1997} @cite{chierchia-2006}
 @cite{israel-1996} @cite{israel-2001} @cite{israel-2011} @cite{schwab-2022}
+@cite{ladusaw-1979} @cite{kadmon-landman-1993} @cite{zwarts-1998}
 
 Language-neutral types for polarity-sensitive items, shared across all
 language fragments. These capture cross-linguistic generalizations about
@@ -38,22 +41,163 @@ inductive LicensingContext where
   | nobody            -- "nobody", "nothing" (negative quantifiers)
   | few               -- "few NPs" (weak DE, controversial)
   | atMost            -- "at most n"
-  | conditional_ant   -- Antecedent of conditional
-  | before_clause     -- "before" clauses
-  | without_clause    -- "without" PPs
-  | only_focus        -- Focus of "only"
+  | conditionalAntecedent   -- Antecedent of conditional
+  | beforeClause     -- "before" clauses
+  | withoutClause    -- "without" PPs
+  | onlyFocus        -- Focus of "only"
   | question          -- Questions (for some NPIs)
   | comparative       -- "more than", "less than"
   | superlative       -- "the most", "the least"
-  | too_to            -- "too ADJ to VP"
-  | modal_possibility -- Possibility modals (for FCIs)
-  | modal_necessity   -- Necessity modals
+  | tooTo            -- "too ADJ to VP"
+  | modalPossibility -- Possibility modals (for FCIs)
+  | modalNecessity   -- Necessity modals
   | imperative        -- Imperatives (for FCIs)
   | generic           -- Generic contexts (for FCIs)
   | adversative       -- "sorry", "surprised", "regret" (factive + DE)
-  | since_temporal    -- "it's been five years since" (Iatridou)
-  | free_relative     -- Free relatives: "whatever", "whoever"
+  | sinceTemporal    -- "it's been five years since" (Iatridou)
+  | freeRelative     -- Free relatives: "whatever", "whoever"
+  | universalRestrictor -- Restrictor of universal: "everyone who saw anyone"
+  | doubtVerb         -- DE attitude verbs: "I doubt anyone came"
+  | denyVerb          -- Anti-additive attitude verbs: "She denied seeing anyone"
   deriving DecidableEq, Repr
+
+-- ============================================================================
+-- Licensing Mechanism (@cite{kadmon-landman-1993})
+-- ============================================================================
+
+/-- The mechanism by which a context licenses NPIs.
+
+    @cite{kadmon-landman-1993} unify NPI licensing under domain widening +
+    strengthening. Three categories cover the attested licensing contexts:
+
+    - `byStrengthening` — DE contexts where widening strengthens the assertion.
+      Covers @cite{ladusaw-1979}'s monotonicity-based licensing.
+    - `byGenericIndefinite` — Non-DE contexts (modals, generics, free relatives)
+      where *any* surfaces as the generic indefinite (FC any).
+    - `byOtherMechanism` — entropy-based (questions), Strawson-DE
+      (superlatives), or other contributions outside K&L's two-pronged proposal. -/
+inductive LicensingMechanism where
+  | byStrengthening
+  | byGenericIndefinite
+  | byOtherMechanism
+  deriving DecidableEq, Repr
+
+-- ============================================================================
+-- Context Properties (single source of truth)
+-- ============================================================================
+
+/-- The bundle of theory-relevant facts about a licensing context.
+
+    Every classification of `LicensingContext` (DE strength, K&L mechanism,
+    canonical example, citation lineage) projects out of this single record.
+    Per-paper classifiers (`Ladusaw1979.licensingStrength`,
+    `KadmonLandman1993.klExplanation`) are derivations from `contextProperties`,
+    not parallel stipulations. -/
+structure ContextProperties where
+  /-- Icard signature: locates the context in the natural-logic lattice. -/
+  signature : Core.NaturalLogic.EntailmentSig
+  /-- K&L mechanism: how this context licenses NPIs. -/
+  mechanism : LicensingMechanism
+  /-- A canonical English example. -/
+  prototype : String
+  /-- BibTeX keys for the works that established this classification. -/
+  citations : List String
+  deriving Repr
+
+/-- Canonical map from licensing contexts to their theoretical properties.
+
+    The signature follows @cite{ladusaw-1979} + @cite{zwarts-1998} +
+    @cite{partee-westerstaahl-2007} (P&W Prop 13: every-restrictor is LAA).
+    The mechanism follows @cite{kadmon-landman-1993}. -/
+def contextProperties : LicensingContext → ContextProperties
+  | .negation =>
+      { signature := .antiAddMult, mechanism := .byStrengthening
+      , prototype := "Mary didn't see anyone."
+      , citations := ["ladusaw-1979", "kadmon-landman-1993", "zwarts-1998"] }
+  | .nobody =>
+      { signature := .antiAdd, mechanism := .byStrengthening
+      , prototype := "Nobody saw anyone."
+      , citations := ["ladusaw-1979", "zwarts-1998"] }
+  | .withoutClause =>
+      { signature := .antiAdd, mechanism := .byStrengthening
+      , prototype := "She left without saying anything."
+      , citations := ["ladusaw-1979", "zwarts-1998"] }
+  | .denyVerb =>
+      { signature := .antiAdd, mechanism := .byStrengthening
+      , prototype := "She denied seeing anyone."
+      , citations := ["zwarts-1998"] }
+  | .universalRestrictor =>
+      { signature := .antiAdd, mechanism := .byStrengthening
+      , prototype := "Everyone who saw anyone was questioned."
+      , citations := ["ladusaw-1979", "partee-westerstaahl-2007"] }
+  | .few =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "Few students saw anyone."
+      , citations := ["ladusaw-1979"] }
+  | .atMost =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "At most three students saw anyone."
+      , citations := ["ladusaw-1979"] }
+  | .conditionalAntecedent =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "If anyone calls, take a message."
+      , citations := ["ladusaw-1979", "kadmon-landman-1993"] }
+  | .beforeClause =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "She left before anyone arrived."
+      , citations := ["ladusaw-1979"] }
+  | .onlyFocus =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "Only Mary saw anyone."
+      , citations := ["horn-1996", "von-fintel-1999"] }
+  | .tooTo =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "He was too tired to say anything."
+      , citations := ["ladusaw-1979"] }
+  | .comparative =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "Mary is taller than anyone in the class."
+      , citations := ["ladusaw-1979", "hoeksema-1983"] }
+  | .adversative =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "I'm sorry I said anything."
+      , citations := ["kadmon-landman-1993"] }
+  | .sinceTemporal =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "It's been five years since anyone visited."
+      , citations := ["iatridou-1990"] }
+  | .doubtVerb =>
+      { signature := .anti, mechanism := .byStrengthening
+      , prototype := "I doubt anyone came."
+      , citations := ["zwarts-1998"] }
+  | .modalPossibility =>
+      { signature := .mono, mechanism := .byGenericIndefinite
+      , prototype := "You may take any cookie."
+      , citations := ["kadmon-landman-1993", "dayal-1998"] }
+  | .modalNecessity =>
+      { signature := .mono, mechanism := .byGenericIndefinite
+      , prototype := "Anyone can solve this."
+      , citations := ["dayal-1998"] }
+  | .imperative =>
+      { signature := .mono, mechanism := .byGenericIndefinite
+      , prototype := "Pick any card."
+      , citations := ["kadmon-landman-1993"] }
+  | .generic =>
+      { signature := .mono, mechanism := .byGenericIndefinite
+      , prototype := "Any owl hunts mice."
+      , citations := ["kadmon-landman-1993", "dayal-1998"] }
+  | .freeRelative =>
+      { signature := .mono, mechanism := .byGenericIndefinite
+      , prototype := "Pick whichever you like."
+      , citations := ["dayal-1997"] }
+  | .question =>
+      { signature := .mono, mechanism := .byOtherMechanism
+      , prototype := "Did anyone call?"
+      , citations := ["van-rooy-2003"] }
+  | .superlative =>
+      { signature := .mono, mechanism := .byOtherMechanism
+      , prototype := "The tallest student who saw anyone..."
+      , citations := ["herdan-sharvit-2006"] }
 
 -- ============================================================================
 -- Scalar Value (@cite{israel-2001} Figure 1)
@@ -156,7 +300,7 @@ inductive PolarityType where
   | npiWeak      -- Weak NPI: licensed by DE contexts
   | npiStrong    -- Strong NPI: requires anti-additive
   | fci          -- Free Choice Item: modal/generic/imperative
-  | npi_fci      -- Dual use: NPI in DE, FCI under modals (= "any")
+  | npiFci      -- Dual use: NPI in DE, FCI under modals (= "any")
   | ppi          -- Positive Polarity Item: blocked in DE
   deriving DecidableEq, Repr
 
@@ -240,39 +384,26 @@ Check if a context licenses a polarity item.
 
 An item is licensed if the context is explicitly listed in `licensingContexts`.
 -/
-def isLicensedIn (item : PolarityItemEntry) (ctx : LicensingContext) : Prop :=
+abbrev isLicensedIn (item : PolarityItemEntry) (ctx : LicensingContext) : Prop :=
   ctx ∈ item.licensingContexts
-
-instance (item : PolarityItemEntry) (ctx : LicensingContext) :
-    Decidable (isLicensedIn item ctx) :=
-  inferInstanceAs (Decidable (ctx ∈ item.licensingContexts))
 
 /--
 Check if an item is an NPI (weak or strong).
 -/
-def PolarityItemEntry.isNPI (p : PolarityItemEntry) : Prop :=
-  p.polarityType = .npiWeak ∨ p.polarityType = .npiStrong ∨ p.polarityType = .npi_fci
-
-instance (p : PolarityItemEntry) : Decidable p.isNPI :=
-  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
+abbrev PolarityItemEntry.isNPI (p : PolarityItemEntry) : Prop :=
+  p.polarityType = .npiWeak ∨ p.polarityType = .npiStrong ∨ p.polarityType = .npiFci
 
 /--
 Check if an item is an FCI.
 -/
-def PolarityItemEntry.isFCI (p : PolarityItemEntry) : Prop :=
-  p.polarityType = .fci ∨ p.polarityType = .npi_fci
-
-instance (p : PolarityItemEntry) : Decidable p.isFCI :=
-  inferInstanceAs (Decidable (_ ∨ _))
+abbrev PolarityItemEntry.isFCI (p : PolarityItemEntry) : Prop :=
+  p.polarityType = .fci ∨ p.polarityType = .npiFci
 
 /--
 Check if an item is a PPI.
 -/
-def PolarityItemEntry.isPPI (p : PolarityItemEntry) : Prop :=
+abbrev PolarityItemEntry.isPPI (p : PolarityItemEntry) : Prop :=
   p.polarityType = .ppi
-
-instance (p : PolarityItemEntry) : Decidable p.isPPI :=
-  inferInstanceAs (Decidable (_ = _))
 
 /--
 Israel's prediction (@cite{israel-2001} §4): canonical/inverted is determined
@@ -294,12 +425,9 @@ def predictCanonicity (le : LikelihoodEffect) (pt : PolarityType) : Canonicity :
 /-- Check if a polarity item's stated canonicity agrees with the prediction.
     Holds if canonicity or likelihood effect is unknown (insufficient data),
     or if the stated canonicity matches the prediction from likelihood effect. -/
-def PolarityItemEntry.canonicityConsistent (p : PolarityItemEntry) : Prop :=
+abbrev PolarityItemEntry.canonicityConsistent (p : PolarityItemEntry) : Prop :=
   p.canonicity = .unknown ∨
   p.likelihoodEffect = .unknown ∨
   p.canonicity = predictCanonicity p.likelihoodEffect p.polarityType
-
-instance (p : PolarityItemEntry) : Decidable p.canonicityConsistent :=
-  inferInstanceAs (Decidable (_ ∨ _ ∨ _))
 
 end Core.Lexical.PolarityItem

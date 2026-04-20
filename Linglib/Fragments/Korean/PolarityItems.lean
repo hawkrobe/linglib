@@ -28,7 +28,7 @@ def nwukwu : PolarityItemEntry :=
   { form := "nwukwu (누구)"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.question, .conditional_ant]
+  , licensingContexts := [.question, .conditionalAntecedent]
   , scalarDirection := .strengthening
   , notes := "Bare wh-word as non-specific indefinite" }
 
@@ -52,7 +52,7 @@ def nwukwuNa : PolarityItemEntry :=
   { form := "nwukwu-na (누구나)"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "wh + na: free choice / universal" }
 
 -- ============================================================================

@@ -1,6 +1,5 @@
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
-import Linglib.Phenomena.Polarity.Stress
 
 /-!
 # English Auxiliary Diagnostics: NICE Properties
@@ -249,35 +248,6 @@ theorem do_support_repairs_all_nice_contexts :
   ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
 
 end SAIBridge
-
-/-! ## Link 3: NICE Emphasis ↔ Polarity Stress
-
-NICE Emphasis (emphatic stress on auxiliary for verum focus) is the same
-phenomenon as polarity stress: prosodic prominence on the auxiliary targets
-truth/polarity rather than content alternatives (@cite{hohle-1992}). -/
-
-section PolarityStressBridge
-open Phenomena.Polarity.Stress
-
-/-- NICE Emphasis maps to polarity stress on the auxiliary: both describe
-    prosodic prominence on AUX signaling verum focus. The PolarityStress
-    datum confirms this with "John DOES drink" (stressed AUX in declarative). -/
-theorem nice_emphasis_is_polarity_stress :
-    -- NICE says full auxiliaries have emphasis
-    doProfile.emphasis = true ∧
-    -- PolarityStress data: "John DOES drink" stresses auxiliary
-    emphaticDoDeclarative.stressedElement = "auxiliary" ∧
-    emphaticDoDeclarative.clauseType = "declarative" :=
-  ⟨rfl, rfl, rfl⟩
-
-/-- Content focus is distinct from NICE Emphasis: stressing the subject
-    ("JOHN drinks") targets content alternatives, not polarity. -/
-theorem content_focus_not_nice_emphasis :
-    contentFocusSubject.stressedElement = "subject" ∧
-    contentFocusSubject.effect = "Identifies who drinks (content focus, not polarity)" :=
-  ⟨rfl, rfl⟩
-
-end PolarityStressBridge
 
 /-! ## Aggregate Collections -/
 

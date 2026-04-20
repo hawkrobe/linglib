@@ -28,7 +28,7 @@ def kukaan : PolarityItemEntry :=
   { form := "kukaan"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.question, .conditional_ant, .negation]
+  , licensingContexts := [.question, .conditionalAntecedent, .negation]
   , scalarDirection := .strengthening
   , notes := "Polarity-sensitive indefinite" }
 
@@ -52,7 +52,7 @@ def kukaTahansa : PolarityItemEntry :=
   { form := "kuka tahansa"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Free choice: 'kuka tahansa voi tehdä sen' (anyone can do it)" }
 
 -- ============================================================================

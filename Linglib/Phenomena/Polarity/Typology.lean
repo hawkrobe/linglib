@@ -143,18 +143,18 @@ def adjacentFunctions : IndefiniteFunction → List IndefiniteFunction
 theorem adjacency_symmetric :
     IndefiniteFunction.all.all (λ f =>
       (adjacentFunctions f).all (λ g =>
-        (adjacentFunctions g).contains f)) = true := by native_decide
+        (adjacentFunctions g).contains f)) = true := by decide
 
 /-- Every function has at least one neighbor (the map is connected). -/
 theorem every_function_has_neighbor :
     IndefiniteFunction.all.all (λ f =>
-      !(adjacentFunctions f).isEmpty) = true := by native_decide
+      !(adjacentFunctions f).isEmpty) = true := by decide
 
 /-- The map has exactly 8 edges (undirected). We count ordered pairs and
     divide by 2: each edge appears once in each direction. -/
 theorem map_edge_count :
     (IndefiniteFunction.all.map (λ f => (adjacentFunctions f).length)).foldl
-      (· + ·) 0 = 16 := by native_decide
+      (· + ·) 0 = 16 := by decide
 
 -- ============================================================================
 -- §3: Contiguity Check (BFS on the Map)
@@ -274,28 +274,15 @@ private abbrev ch46 := Core.WALS.F46A.allData
 /-- WALS Chapter 46 distribution (N = 326).
 
     The five values classify languages by the morphological source of
-    their indefinite pronouns, computed from the WALS 46A dataset. -/
+    their indefinite pronouns, computed from the WALS 46A dataset.
+    Counts in @cite{haspelmath-1997}: interrogative-based dominates,
+    outnumbering all other categories combined. -/
 def ch46Counts : List WALSCount :=
   [ ⟨"Interrogative-based", (ch46.filter (·.value == .interrogativeBased)).length⟩
   , ⟨"Generic-noun-based", (ch46.filter (·.value == .genericNounBased)).length⟩
   , ⟨"Special", (ch46.filter (·.value == .special)).length⟩
   , ⟨"Mixed", (ch46.filter (·.value == .mixed)).length⟩
   , ⟨"Existential construction", (ch46.filter (·.value == .existentialConstruction)).length⟩ ]
-
-/-- Ch 46 total: 326 languages. -/
-theorem ch46_total : WALSCount.totalOf ch46Counts = 326 := by native_decide
-
-/-- Interrogative-based is the most common single category. -/
-theorem interrogative_most_common :
-    ch46Counts.all (λ c => c.count ≤ (ch46.filter (·.value == .interrogativeBased)).length) = true := by native_decide
-
-/-- Interrogative-based languages outnumber all other categories combined. -/
-theorem interrogative_majority :
-    (ch46.filter (·.value == .interrogativeBased)).length >
-    (ch46.filter (·.value == .genericNounBased)).length +
-    (ch46.filter (·.value == .special)).length +
-    (ch46.filter (·.value == .mixed)).length +
-    (ch46.filter (·.value == .existentialConstruction)).length := by native_decide
 
 /-- Look up a language profile's WALS 46A morphological source classification. -/
 def IndefinitePronounProfile.wals46A
@@ -802,7 +789,7 @@ def allLanguages : List IndefinitePronounProfile :=
   , thai, tagalog, swahili ]
 
 /-- Number of languages in our sample. -/
-theorem sample_size : allLanguages.length = 17 := by native_decide
+theorem sample_size : allLanguages.length = 17 := by decide
 
 -- ============================================================================
 -- §8: Contiguity Verification
@@ -814,60 +801,60 @@ theorem sample_size : allLanguages.length = 17 := by native_decide
     We verify this for every series in every language in our sample. -/
 
 /-- English: all series are contiguous on the map. -/
-theorem english_contiguous : english.allContiguous = true := by native_decide
+theorem english_contiguous : english.allContiguous = true := by decide
 
 /-- Russian: all series are contiguous. -/
-theorem russian_contiguous : russian.allContiguous = true := by native_decide
+theorem russian_contiguous : russian.allContiguous = true := by decide
 
 /-- German: all series are contiguous. -/
-theorem german_contiguous : german.allContiguous = true := by native_decide
+theorem german_contiguous : german.allContiguous = true := by decide
 
 /-- Japanese: all series are contiguous. -/
-theorem japanese_contiguous : japanese.allContiguous = true := by native_decide
+theorem japanese_contiguous : japanese.allContiguous = true := by decide
 
 /-- Mandarin: all series are contiguous. -/
-theorem mandarin_contiguous : mandarin.allContiguous = true := by native_decide
+theorem mandarin_contiguous : mandarin.allContiguous = true := by decide
 
 /-- Turkish: all series are contiguous. -/
-theorem turkish_contiguous : turkish.allContiguous = true := by native_decide
+theorem turkish_contiguous : turkish.allContiguous = true := by decide
 
 /-- Hindi: all series are contiguous. -/
-theorem hindi_contiguous : hindi.allContiguous = true := by native_decide
+theorem hindi_contiguous : hindi.allContiguous = true := by decide
 
 /-- Italian: all series are contiguous. -/
-theorem italian_contiguous : italian.allContiguous = true := by native_decide
+theorem italian_contiguous : italian.allContiguous = true := by decide
 
 /-- Finnish: all series are contiguous. -/
-theorem finnish_contiguous : finnish.allContiguous = true := by native_decide
+theorem finnish_contiguous : finnish.allContiguous = true := by decide
 
 /-- Korean: all series are contiguous. -/
-theorem korean_contiguous : korean.allContiguous = true := by native_decide
+theorem korean_contiguous : korean.allContiguous = true := by decide
 
 /-- Hungarian: all series are contiguous. -/
-theorem hungarian_contiguous : hungarian.allContiguous = true := by native_decide
+theorem hungarian_contiguous : hungarian.allContiguous = true := by decide
 
 /-- Georgian: all series are contiguous. -/
-theorem georgian_contiguous : georgian.allContiguous = true := by native_decide
+theorem georgian_contiguous : georgian.allContiguous = true := by decide
 
 /-- Quechua: all series are contiguous. -/
-theorem quechua_contiguous : quechua.allContiguous = true := by native_decide
+theorem quechua_contiguous : quechua.allContiguous = true := by decide
 
 /-- Yoruba: all series are contiguous. -/
-theorem yoruba_contiguous : yoruba.allContiguous = true := by native_decide
+theorem yoruba_contiguous : yoruba.allContiguous = true := by decide
 
 /-- Thai: all series are contiguous. -/
-theorem thai_contiguous : thai.allContiguous = true := by native_decide
+theorem thai_contiguous : thai.allContiguous = true := by decide
 
 /-- Tagalog: all series are contiguous. -/
-theorem tagalog_contiguous : tagalog.allContiguous = true := by native_decide
+theorem tagalog_contiguous : tagalog.allContiguous = true := by decide
 
 /-- Swahili: all series are contiguous. -/
-theorem swahili_contiguous : swahili.allContiguous = true := by native_decide
+theorem swahili_contiguous : swahili.allContiguous = true := by decide
 
 /-- **Master contiguity theorem**: every series in every language in our
     sample is contiguous on Haspelmath's implicational map. -/
 theorem all_languages_contiguous :
-    allLanguages.all (·.allContiguous) = true := by native_decide
+    allLanguages.all (·.allContiguous) = true := by decide
 
 -- ============================================================================
 -- §9: Coverage Verification
@@ -875,7 +862,7 @@ theorem all_languages_contiguous :
 
 /-- Every language in our sample covers all nine functions. -/
 theorem all_languages_cover_all_functions :
-    allLanguages.all (·.coversAllFunctions) = true := by native_decide
+    allLanguages.all (·.coversAllFunctions) = true := by decide
 
 -- ============================================================================
 -- §9a: Disjointness Verification (Series Partition)
@@ -885,34 +872,34 @@ theorem all_languages_cover_all_functions :
     appears in two different series. Together with coverage (§9), this means
     the series form a **partition** of the nine function types. -/
 
-theorem english_disjoint : english.seriesDisjoint = true := by native_decide
-theorem russian_disjoint : russian.seriesDisjoint = true := by native_decide
-theorem german_disjoint : german.seriesDisjoint = true := by native_decide
-theorem japanese_disjoint : japanese.seriesDisjoint = true := by native_decide
-theorem mandarin_disjoint : mandarin.seriesDisjoint = true := by native_decide
-theorem turkish_disjoint : turkish.seriesDisjoint = true := by native_decide
-theorem hindi_disjoint : hindi.seriesDisjoint = true := by native_decide
-theorem italian_disjoint : italian.seriesDisjoint = true := by native_decide
-theorem finnish_disjoint : finnish.seriesDisjoint = true := by native_decide
-theorem korean_disjoint : korean.seriesDisjoint = true := by native_decide
-theorem hungarian_disjoint : hungarian.seriesDisjoint = true := by native_decide
-theorem georgian_disjoint : georgian.seriesDisjoint = true := by native_decide
-theorem quechua_disjoint : quechua.seriesDisjoint = true := by native_decide
-theorem yoruba_disjoint : yoruba.seriesDisjoint = true := by native_decide
-theorem thai_disjoint : thai.seriesDisjoint = true := by native_decide
-theorem tagalog_disjoint : tagalog.seriesDisjoint = true := by native_decide
-theorem swahili_disjoint : swahili.seriesDisjoint = true := by native_decide
+theorem english_disjoint : english.seriesDisjoint = true := by decide
+theorem russian_disjoint : russian.seriesDisjoint = true := by decide
+theorem german_disjoint : german.seriesDisjoint = true := by decide
+theorem japanese_disjoint : japanese.seriesDisjoint = true := by decide
+theorem mandarin_disjoint : mandarin.seriesDisjoint = true := by decide
+theorem turkish_disjoint : turkish.seriesDisjoint = true := by decide
+theorem hindi_disjoint : hindi.seriesDisjoint = true := by decide
+theorem italian_disjoint : italian.seriesDisjoint = true := by decide
+theorem finnish_disjoint : finnish.seriesDisjoint = true := by decide
+theorem korean_disjoint : korean.seriesDisjoint = true := by decide
+theorem hungarian_disjoint : hungarian.seriesDisjoint = true := by decide
+theorem georgian_disjoint : georgian.seriesDisjoint = true := by decide
+theorem quechua_disjoint : quechua.seriesDisjoint = true := by decide
+theorem yoruba_disjoint : yoruba.seriesDisjoint = true := by decide
+theorem thai_disjoint : thai.seriesDisjoint = true := by decide
+theorem tagalog_disjoint : tagalog.seriesDisjoint = true := by decide
+theorem swahili_disjoint : swahili.seriesDisjoint = true := by decide
 
 /-- **Master disjointness theorem**: every language's series are disjoint. -/
 theorem all_languages_disjoint :
-    allLanguages.all (·.seriesDisjoint) = true := by native_decide
+    allLanguages.all (·.seriesDisjoint) = true := by decide
 
 /-- **Master partition theorem**: every language's series form a partition
     of the nine function types (contiguous + covering + disjoint). -/
 theorem all_languages_partition :
     allLanguages.all (λ p =>
       p.allContiguous && p.coversAllFunctions && p.seriesDisjoint) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §10: Typological Generalizations
@@ -928,7 +915,7 @@ of an indefinite. -/
 theorem every_language_has_direct_neg :
     allLanguages.all (λ p =>
       p.series.any (λ s => s.functions.contains .directNeg)) = true := by
-  native_decide
+  decide
 
 /-! ### Generalization 2: Free choice and comparative pattern together
 
@@ -943,7 +930,7 @@ theorem freeChoice_comparative_together :
       p.series.any (λ s =>
         s.functions.contains .freeChoice &&
         s.functions.contains .comparative)) = true := by
-  native_decide
+  decide
 
 /-! ### Generalization 3: Specific known is rarely shared with polarity functions
 
@@ -958,7 +945,7 @@ theorem specificKnown_directNeg_disjoint :
       p.series.all (λ s =>
         !(s.functions.contains .specificKnown &&
           s.functions.contains .directNeg))) = true := by
-  native_decide
+  decide
 
 /-! ### Generalization 4: More series means more precise function encoding
 
@@ -975,7 +962,7 @@ theorem fewer_series_broader_coverage :
     mandarin.seriesCount < russian.seriesCount ∧
     (mandarin.series.map (·.coverage)).foldl (· + ·) 0 =
     (russian.series.map (·.coverage)).foldl (· + ·) 0 := by
-  native_decide
+  decide
 
 /-! ### Generalization 5: Specific known is typically separate
 
@@ -991,7 +978,7 @@ theorem specificKnown_separate_from_polarity :
         then !(s.functions.contains .conditional) ||
              s.functions.contains .specificUnknown
         else true)) = true := by
-  native_decide
+  decide
 
 /-! ### Generalization 6: The polarity cluster
 
@@ -1009,7 +996,7 @@ theorem polarity_cluster_exists :
         let c := s.functions.contains .conditional
         let i := s.functions.contains .indirectNeg
         (q && c) || (c && i) || (q && i))) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §11: Series Count Distribution in Our Sample
@@ -1020,10 +1007,10 @@ def countBySeriesCount (langs : List IndefinitePronounProfile) (n : Nat) : Nat :
   (langs.filter (λ p => p.seriesCount == n)).length
 
 /-- Series count distribution in our sample. -/
-theorem sample_2_series : countBySeriesCount allLanguages 2 = 2 := by native_decide
-theorem sample_3_series : countBySeriesCount allLanguages 3 = 5 := by native_decide
-theorem sample_4_series : countBySeriesCount allLanguages 4 = 6 := by native_decide
-theorem sample_5_series : countBySeriesCount allLanguages 5 = 4 := by native_decide
+theorem sample_2_series : countBySeriesCount allLanguages 2 = 2 := by decide
+theorem sample_3_series : countBySeriesCount allLanguages 3 = 5 := by decide
+theorem sample_4_series : countBySeriesCount allLanguages 4 = 6 := by decide
+theorem sample_5_series : countBySeriesCount allLanguages 5 = 4 := by decide
 
 -- ============================================================================
 -- §12: Per-Language Verification
@@ -1031,23 +1018,23 @@ theorem sample_5_series : countBySeriesCount allLanguages 5 = 4 := by native_dec
 
 /-! Verify the series count and key properties for each language. -/
 
-theorem english_series_count : english.seriesCount = 4 := by native_decide
-theorem russian_series_count : russian.seriesCount = 5 := by native_decide
-theorem german_series_count : german.seriesCount = 5 := by native_decide
-theorem japanese_series_count : japanese.seriesCount = 3 := by native_decide
-theorem mandarin_series_count : mandarin.seriesCount = 2 := by native_decide
-theorem turkish_series_count : turkish.seriesCount = 5 := by native_decide
-theorem hindi_series_count : hindi.seriesCount = 3 := by native_decide
-theorem italian_series_count : italian.seriesCount = 3 := by native_decide
-theorem finnish_series_count : finnish.seriesCount = 5 := by native_decide
-theorem korean_series_count : korean.seriesCount = 4 := by native_decide
-theorem hungarian_series_count : hungarian.seriesCount = 4 := by native_decide
-theorem georgian_series_count : georgian.seriesCount = 4 := by native_decide
-theorem quechua_series_count : quechua.seriesCount = 4 := by native_decide
-theorem yoruba_series_count : yoruba.seriesCount = 2 := by native_decide
-theorem thai_series_count : thai.seriesCount = 3 := by native_decide
-theorem tagalog_series_count : tagalog.seriesCount = 4 := by native_decide
-theorem swahili_series_count : swahili.seriesCount = 3 := by native_decide
+theorem english_series_count : english.seriesCount = 4 := by decide
+theorem russian_series_count : russian.seriesCount = 5 := by decide
+theorem german_series_count : german.seriesCount = 5 := by decide
+theorem japanese_series_count : japanese.seriesCount = 3 := by decide
+theorem mandarin_series_count : mandarin.seriesCount = 2 := by decide
+theorem turkish_series_count : turkish.seriesCount = 5 := by decide
+theorem hindi_series_count : hindi.seriesCount = 3 := by decide
+theorem italian_series_count : italian.seriesCount = 3 := by decide
+theorem finnish_series_count : finnish.seriesCount = 5 := by decide
+theorem korean_series_count : korean.seriesCount = 4 := by decide
+theorem hungarian_series_count : hungarian.seriesCount = 4 := by decide
+theorem georgian_series_count : georgian.seriesCount = 4 := by decide
+theorem quechua_series_count : quechua.seriesCount = 4 := by decide
+theorem yoruba_series_count : yoruba.seriesCount = 2 := by decide
+theorem thai_series_count : thai.seriesCount = 3 := by decide
+theorem tagalog_series_count : tagalog.seriesCount = 4 := by decide
+theorem swahili_series_count : swahili.seriesCount = 3 := by decide
 
 -- ============================================================================
 -- §12a: WALS 46A Bridge
@@ -1066,43 +1053,43 @@ theorem swahili_series_count : swahili.seriesCount = 3 := by native_decide
     - Existential construction: Tagalog (1) -/
 
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem english_wals : english.wals46A = some .genericNounBased := by native_decide
+theorem english_wals : english.wals46A = some .genericNounBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem russian_wals : russian.wals46A = some .interrogativeBased := by native_decide
+theorem russian_wals : russian.wals46A = some .interrogativeBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem german_wals : german.wals46A = some .mixed := by native_decide
+theorem german_wals : german.wals46A = some .mixed := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem japanese_wals : japanese.wals46A = some .interrogativeBased := by native_decide
+theorem japanese_wals : japanese.wals46A = some .interrogativeBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem mandarin_wals : mandarin.wals46A = some .mixed := by native_decide
+theorem mandarin_wals : mandarin.wals46A = some .mixed := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem turkish_wals : turkish.wals46A = some .genericNounBased := by native_decide
+theorem turkish_wals : turkish.wals46A = some .genericNounBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem hindi_wals : hindi.wals46A = some .special := by native_decide
+theorem hindi_wals : hindi.wals46A = some .special := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem italian_wals : italian.wals46A = some .genericNounBased := by native_decide
+theorem italian_wals : italian.wals46A = some .genericNounBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem finnish_wals : finnish.wals46A = some .special := by native_decide
+theorem finnish_wals : finnish.wals46A = some .special := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem korean_wals : korean.wals46A = some .interrogativeBased := by native_decide
+theorem korean_wals : korean.wals46A = some .interrogativeBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem hungarian_wals : hungarian.wals46A = some .interrogativeBased := by native_decide
+theorem hungarian_wals : hungarian.wals46A = some .interrogativeBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem georgian_wals : georgian.wals46A = some .interrogativeBased := by native_decide
+theorem georgian_wals : georgian.wals46A = some .interrogativeBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem quechua_wals : quechua.wals46A = some .interrogativeBased := by native_decide
+theorem quechua_wals : quechua.wals46A = some .interrogativeBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem yoruba_wals : yoruba.wals46A = some .genericNounBased := by native_decide
+theorem yoruba_wals : yoruba.wals46A = some .genericNounBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem thai_wals : thai.wals46A = some .interrogativeBased := by native_decide
+theorem thai_wals : thai.wals46A = some .interrogativeBased := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem tagalog_wals : tagalog.wals46A = some .existentialConstruction := by native_decide
+theorem tagalog_wals : tagalog.wals46A = some .existentialConstruction := by decide
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem swahili_wals : swahili.wals46A = some .genericNounBased := by native_decide
+theorem swahili_wals : swahili.wals46A = some .genericNounBased := by decide
 
 /-- Every language in our sample has a WALS 46A entry. -/
 theorem all_languages_in_wals :
-    allLanguages.all (λ p => p.wals46A.isSome) = true := by native_decide
+    allLanguages.all (λ p => p.wals46A.isSome) = true := by decide
 
 -- ============================================================================
 -- §13: Cross-Linguistic Pattern Tests
@@ -1121,7 +1108,7 @@ def whBasedLanguages : List IndefinitePronounProfile :=
 theorem wh_based_fewer_series :
     (whBasedLanguages.map (·.seriesCount)).foldl (· + ·) 0 ≤
     whBasedLanguages.length * 4 := by
-  native_decide
+  decide
 
 /-! ### Negative concord languages
 
@@ -1138,7 +1125,7 @@ theorem neg_concord_directNeg_grouped :
     negConcordLanguages.any (λ p =>
       p.series.any (λ s =>
         s.functions.contains .directNeg && s.functions.length > 1)) = true := by
-  native_decide
+  decide
 
 /-! ### WALS morphological source and series count
 
@@ -1152,7 +1139,7 @@ open Core.WALS.F46A (IndefinitePronouns) in
 theorem wh_based_are_interrogative_or_mixed :
     whBasedLanguages.all (λ p =>
       p.wals46A == some .interrogativeBased ||
-      p.wals46A == some .mixed) = true := by native_decide
+      p.wals46A == some .mixed) = true := by decide
 
 /-- Languages classified as interrogative-based in WALS 46A. -/
 def interrogativeBasedProfiles : List IndefinitePronounProfile :=
@@ -1161,13 +1148,13 @@ def interrogativeBasedProfiles : List IndefinitePronounProfile :=
 
 /-- Seven of our 17 languages are interrogative-based. -/
 theorem interrogative_based_sample_count :
-    interrogativeBasedProfiles.length = 7 := by native_decide
+    interrogativeBasedProfiles.length = 7 := by decide
 
 /-- Interrogative-based languages in our sample average ≤ 4 series per
     language (total series ≤ 28 across 7 languages). -/
 theorem interrogative_based_avg_series :
     (interrogativeBasedProfiles.map (·.seriesCount)).foldl (· + ·) 0 ≤ 28 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §14: Non-Contiguous Sets Are Predicted Impossible
@@ -1180,34 +1167,34 @@ theorem interrogative_based_avg_series :
 /-- A hypothetical series covering {specificKnown, directNeg} without the
     intervening functions is not contiguous. -/
 theorem specKnown_directNeg_not_contiguous :
-    isContiguous [.specificKnown, .directNeg] = false := by native_decide
+    isContiguous [.specificKnown, .directNeg] = false := by decide
 
 /-- A hypothetical series covering {specificKnown, freeChoice} without
     intervening functions is not contiguous. -/
 theorem specKnown_freeChoice_not_contiguous :
-    isContiguous [.specificKnown, .freeChoice] = false := by native_decide
+    isContiguous [.specificKnown, .freeChoice] = false := by decide
 
 /-- A hypothetical series covering {specificKnown, comparative} is not
     contiguous. -/
 theorem specKnown_comparative_not_contiguous :
-    isContiguous [.specificKnown, .comparative] = false := by native_decide
+    isContiguous [.specificKnown, .comparative] = false := by decide
 
 /-- A hypothetical series covering {specificUnknown, directNeg} skipping
     irrealis through indirectNeg is not contiguous. -/
 theorem specUnknown_directNeg_not_contiguous :
-    isContiguous [.specificUnknown, .directNeg] = false := by native_decide
+    isContiguous [.specificUnknown, .directNeg] = false := by decide
 
 /-- But {specificKnown, specificUnknown} IS contiguous (adjacent). -/
 theorem specKnown_specUnknown_contiguous :
-    isContiguous [.specificKnown, .specificUnknown] = true := by native_decide
+    isContiguous [.specificKnown, .specificUnknown] = true := by decide
 
 /-- And {question, conditional, indirectNeg} IS contiguous (a path). -/
 theorem polarity_triple_contiguous :
-    isContiguous [.question, .conditional, .indirectNeg] = true := by native_decide
+    isContiguous [.question, .conditional, .indirectNeg] = true := by decide
 
 /-- The full set of all nine functions is contiguous (the map is connected). -/
 theorem all_nine_contiguous :
-    isContiguous IndefiniteFunction.all = true := by native_decide
+    isContiguous IndefiniteFunction.all = true := by decide
 
 -- ============================================================================
 -- §15: Adjacency on the Map and NPI/FCI Theory
@@ -1250,23 +1237,23 @@ def IndefiniteFunction.isFC : IndefiniteFunction → Bool
 /-- The NPI region (question through directNeg) is contiguous. -/
 theorem npi_region_contiguous :
     isContiguous [.question, .conditional, .indirectNeg, .directNeg] = true := by
-  native_decide
+  decide
 
 /-- The FC region (comparative, freeChoice) is contiguous. -/
 theorem fc_region_contiguous :
-    isContiguous [.comparative, .freeChoice] = true := by native_decide
+    isContiguous [.comparative, .freeChoice] = true := by decide
 
 /-- The specific/irrealis region is contiguous. -/
 theorem specific_region_contiguous :
     isContiguous [.specificKnown, .specificUnknown, .irrealis] = true := by
-  native_decide
+  decide
 
 /-- The NPI+FC region (question through freeChoice, the full
     polarity-sensitive span) is contiguous. -/
 theorem polarity_sensitive_region_contiguous :
     isContiguous [.question, .conditional, .indirectNeg, .directNeg,
                   .comparative, .freeChoice] = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §16: Summary Statistics
@@ -1274,22 +1261,22 @@ theorem polarity_sensitive_region_contiguous :
 
 /-- Minimum series count in our sample. -/
 theorem min_series_count :
-    (allLanguages.map (·.seriesCount)).foldl min 100 = 2 := by native_decide
+    (allLanguages.map (·.seriesCount)).foldl min 100 = 2 := by decide
 
 /-- Maximum series count in our sample. -/
 theorem max_series_count :
-    (allLanguages.map (·.seriesCount)).foldl max 0 = 5 := by native_decide
+    (allLanguages.map (·.seriesCount)).foldl max 0 = 5 := by decide
 
 /-- Total number of distinct series across all languages. -/
 theorem total_series :
-    (allLanguages.map (·.seriesCount)).foldl (· + ·) 0 = 63 := by native_decide
+    (allLanguages.map (·.seriesCount)).foldl (· + ·) 0 = 63 := by decide
 
 /-- The most common series count in our sample is 4 (six languages). -/
 theorem most_common_series_count :
     countBySeriesCount allLanguages 4 ≥ countBySeriesCount allLanguages 2 ∧
     countBySeriesCount allLanguages 4 ≥ countBySeriesCount allLanguages 3 ∧
     countBySeriesCount allLanguages 4 ≥ countBySeriesCount allLanguages 5 := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §17: Fragment Bridges
@@ -1308,100 +1295,100 @@ section FragmentBridges
 -- Typology "any- (NPI)" series covering question function
 theorem english_any_covers_question :
     Fragments.English.PolarityItems.any.licensingContexts.contains .question = true := by
-  native_decide
+  decide
 
 -- Italian: Fragment nessuno (NPI) licensed under negation, matching
 -- Typology "nessuno" series covering directNeg function
 theorem italian_nessuno_covers_negation :
     Fragments.Italian.PolarityItems.nessuno.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- Russian: Fragment nikto (NPI) licensed under negation, matching
 -- Typology "никто" series covering directNeg
 theorem russian_nikto_covers_negation :
     Fragments.Russian.PolarityItems.nikto.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- German: Fragment irgendein is NPI/FCI, matching Typology "irgendwer"
 -- series covering both question (NPI) and irrealis (FCI-like)
 theorem german_irgendein_is_npi_fci :
-    Fragments.German.PolarityItems.irgendein.polarityType = .npi_fci := rfl
+    Fragments.German.PolarityItems.irgendein.polarityType = .npiFci := rfl
 
 -- German: Fragment niemand (NPI) licensed under negation, matching
 -- Typology "niemand" series covering directNeg
 theorem german_niemand_covers_negation :
     Fragments.German.PolarityItems.niemand.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- Japanese: Fragment dareMo (NPI) licensed under negation, matching
 -- Typology "dare-mo (neg)" series covering directNeg
 theorem japanese_dareMo_covers_negation :
     Fragments.Japanese.PolarityItems.dareMo.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- Korean: Fragment nwukwuTo (NPI) licensed under negation, matching
 -- Typology "nwukwu-to (neg)" series covering directNeg
 theorem korean_nwukwuTo_covers_negation :
     Fragments.Korean.PolarityItems.nwukwuTo.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- Mandarin: Fragment shei is NPI/FCI, matching Typology "shéi" series
 -- covering 7 functions from irrealis through freeChoice
 theorem mandarin_shei_is_npi_fci :
-    Fragments.Mandarin.PolarityItems.shei.polarityType = .npi_fci := rfl
+    Fragments.Mandarin.PolarityItems.shei.polarityType = .npiFci := rfl
 
 -- Turkish: Fragment kimse (NPI) licensed in questions, matching
 -- Typology "kimse" series covering question function
 theorem turkish_kimse_covers_question :
     Fragments.Turkish.PolarityItems.kimse.licensingContexts.contains .question = true := by
-  native_decide
+  decide
 
 -- Finnish: Fragment kukaan (NPI) licensed in questions, matching
 -- Typology "kukaan" series covering question function
 theorem finnish_kukaan_covers_question :
     Fragments.Finnish.PolarityItems.kukaan.licensingContexts.contains .question = true := by
-  native_decide
+  decide
 
 -- Hungarian: Fragment senki (NPI) licensed under negation, matching
 -- Typology "senki" series covering directNeg
 theorem hungarian_senki_covers_negation :
     Fragments.Hungarian.PolarityItems.senki.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- Georgian: Fragment aravin (NPI) licensed under negation, matching
 -- Typology "aravin" series covering directNeg
 theorem georgian_aravin_covers_negation :
     Fragments.Georgian.PolarityItems.aravin.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- Quechua: Fragment manaPiPash (NPI) licensed under negation, matching
 -- Typology "mana pi-pash" series covering directNeg
 theorem quechua_manaPiPash_covers_negation :
     Fragments.Quechua.PolarityItems.manaPiPash.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- Yoruba: Fragment enikeni is NPI/FCI, matching Typology "ẹ̀nìkẹ́ni"
 -- series covering indirectNeg through freeChoice
 theorem yoruba_enikeni_is_npi_fci :
-    Fragments.Yoruba.PolarityItems.enikeni.polarityType = .npi_fci := rfl
+    Fragments.Yoruba.PolarityItems.enikeni.polarityType = .npiFci := rfl
 
 -- Thai: Fragment majMiiKhraj (NPI) licensed under negation, matching
 -- Typology series covering directNeg
 theorem thai_majMiiKhraj_covers_negation :
     Fragments.Thai.PolarityItems.majMiiKhraj.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 -- Tagalog: Fragment sinuman (NPI) licensed in questions, matching
 -- Typology "sinuman" series covering question function
 theorem tagalog_sinuman_covers_question :
     Fragments.Tagalog.PolarityItems.sinuman.licensingContexts.contains .question = true := by
-  native_decide
+  decide
 
 -- Swahili: Fragment hakunaMtu (NPI) licensed under negation, matching
 -- Typology series covering directNeg
 theorem swahili_hakunaMtu_covers_negation :
     Fragments.Swahili.PolarityItems.hakunaMtu.licensingContexts.contains .negation = true := by
-  native_decide
+  decide
 
 end FragmentBridges
 

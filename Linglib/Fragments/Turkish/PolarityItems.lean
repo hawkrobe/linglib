@@ -27,7 +27,7 @@ def kimse : PolarityItemEntry :=
   { form := "kimse"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.question, .conditional_ant, .negation]
+  , licensingContexts := [.question, .conditionalAntecedent, .negation]
   , scalarDirection := .strengthening
   , notes := "Polarity-sensitive; historically 'person' > NPI" }
 
@@ -51,7 +51,7 @@ def herhangiBiri : PolarityItemEntry :=
   { form := "herhangi biri"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Free choice: 'herhangi biri yapabilir' (anyone can do it)" }
 
 -- ============================================================================

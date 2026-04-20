@@ -27,7 +27,7 @@ def sinuman : PolarityItemEntry :=
   { form := "sinuman"
   , polarityType := .npiWeak
   , baseForce := .existential
-  , licensingContexts := [.question, .conditional_ant, .negation]
+  , licensingContexts := [.question, .conditionalAntecedent, .negation]
   , notes := "wh-based polarity-sensitive indefinite" }
 
 /-- *walang (tao)* — Negative existential.
@@ -50,7 +50,7 @@ def kahitSino : PolarityItemEntry :=
   { form := "kahit sino"
   , polarityType := .fci
   , baseForce := .existential
-  , licensingContexts := [.modal_possibility, .modal_necessity, .imperative, .generic]
+  , licensingContexts := [.modalPossibility, .modalNecessity, .imperative, .generic]
   , notes := "Concessive + wh: anyone at all (FC)" }
 
 -- ============================================================================

@@ -1,6 +1,6 @@
 import Linglib.Theories.Phonology.Autosegmental.Defs
 import Linglib.Fragments.English.Phonology
-import Linglib.Phenomena.PhonologicalAlternation.Data
+import Linglib.Phenomena.Phonology.Alternation
 
 /-!
 # Autosegmental Derivations

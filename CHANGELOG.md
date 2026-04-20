@@ -1,5 +1,150 @@
 # Changelog
 
+The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what Reservoir consumers pull. The dev clock (`0.230.x`) tracks day-to-day commits and is the unit used in commit messages and memory. A release header is a banner over the dev entries that ship in it; the dev entries are not demoted under it.
+
+## [Unreleased]
+
+## [0.230.61] - 2026-04-20
+
+### Changed
+- **Wave 1 exhaustification API reorganization** (mathlib-style):
+  `Theories/Semantics/Exhaustification/InnocentInclusion.lean` deleted.
+  Its abstract API (`II`, `isInnocentlyIncludable`, `exhIEII`) had already
+  been promoted to `Operators.lean` in earlier waves; the file's remaining
+  content was the worked `FCWorld` example (5-world toy + IE/II
+  computations + `free_choice`) and the `DisjWorld` simple-disjunction
+  contrast. Both moved to the proper layer:
+  - `Phenomena/Modality/Studies/BarLevFox2020.lean` now contains the
+    `FCWorld` toy, `fcALT`/`fcPrejacent`, the IE non-excludability lemmas
+    (`permAorB_not_ie`/`permA_not_ie`/`permB_not_ie`/`permAandB_is_ie`),
+    `separatelyAB_in_cell` (cell witness), the one-line `free_choice`
+    proof via `mem_II_of_cell_witness`, and the `DisjWorld` contrast
+    (`simple_has_conjunction`).
+  - `Theories/Semantics/Exhaustification/PresuppositionalExhaustification.lean`
+    slimmed to abstract pex theory only: `homogeneous`/`pexIEII`/
+    `pexIEII_full`/basic projection lemmas/`negative_fc_entailment`/
+    `pex_basic_scalar`. All `FCWorld`-specific content (`pexFC`,
+    `pex_fc`, `negPexFC`, `pex_double_prohibition`, `notReqA/B/AandB/AorB`
+    duality abbrevs, `pex_negative_fc`, `pex_neg_necessity_double_req`,
+    `exhIEII_fc`, `pexIEII_fc`) moved to the study file
+    `Phenomena/Modality/Studies/DelPinalBassiSauerland2024.lean` —
+    preserves the `Theories/` → `Phenomena/` dependency direction
+    (Theories may not import from Phenomena).
+  - `Phenomena/Modality/FreeChoiceCompare.lean` updated: imports
+    `BarLevFox2020` + `DelPinalBassiSauerland2024` instead of
+    `InnocentInclusion`; `Exhaustification.FreeChoice.permA/permB/free_choice`
+    references stripped to bare names via the new opens.
+  - Stale doc references in `Phenomena/Plurals/Studies/BarLev2021.lean`
+    and `Theories/Semantics/Plurality/ExistentialPL.lean` rewritten to
+    point at the new homes.
+  - Dropped the old `simple_exclusive_or` theorem (broken statement —
+    its third disjunct collapsed the conclusion into `propAorB`, and
+    proving its strengthened form would require an unproved
+    `propAandB_is_ie_simple` lemma; the abstract `cell` API in
+    `Operators.lean` already captures the simple-disjunction contrast
+    via cell-emptiness when ALT is closed under conjunction).
+  - `pex_fc` now a 1-line corollary of `mem_II_of_cell_witness` +
+    `separatelyAB_in_cell` (instead of two ~10-line `target_in_II`
+    invocations); the new `permAandB_is_ie` lemma plugs the gap that
+    the old `extend_II_with_target` sidestepped via `by_cases` on the
+    target.
+
+## [0.230.60] - 2026-04-20
+
+### Changed
+- **Phase 0 mathlib hygiene on `Phenomena/Polarity/`**: snake_case →
+  camelCase across `LicensingContext` (9 constructors:
+  `conditional_ant → conditionalAntecedent`, `before_clause → beforeClause`,
+  `without_clause → withoutClause`, `only_focus → onlyFocus`,
+  `too_to → tooTo`, `modal_possibility → modalPossibility`,
+  `modal_necessity → modalNecessity`, `since_temporal → sinceTemporal`,
+  `free_relative → freeRelative`) and `PolarityType.npi_fci → npiFci`,
+  propagated across 30 files via word-boundary perl. `native_decide`
+  → `decide` across all `Phenomena/Polarity/` (~160 sites). Hand-rolled
+  `Decidable` instances on `isLicensedIn`/`isNPI`/`isFCI`/`isPPI`/
+  `canonicityConsistent` dropped — converted to `abbrev` so the underlying
+  `∈`/`∨`/`=` instances are inferred. Bare `simp` in
+  `NaturalLogic.de_signature_licenses_weak_npi` /
+  `strong_npi_requires_antiadditive` tightened to `cases σ <;> decide`.
+  Stray `set_option autoImplicit false` dropped from `KadmonLandman1993.lean`.
+  Four data-sanity theorems deleted (`Typology.ch46_total`,
+  `interrogative_most_common`, `interrogative_majority`,
+  `Lahiri1998.all_share_bhii`) — descriptive statistics over external
+  datasets, not load-bearing, now docstring prose.
+- **Phase 1 ContextProperties single classifier**: new
+  `Core.Lexical.PolarityItem.LicensingMechanism` enum +
+  `ContextProperties` structure (`signature`, `mechanism`, `prototype`,
+  `citations`) + `contextProperties : LicensingContext → ContextProperties`
+  canonical map for all 22 licensing contexts. The three previously parallel
+  classifications now derive from a single source of truth:
+  `KadmonLandman1993.contextEntailmentSig` is `(contextProperties c).signature`,
+  `KadmonLandman1993.klExplanation` is `(contextProperties c).mechanism`,
+  `Ladusaw1979.licensingStrength` is the Ladusaw coarsening of
+  `(contextProperties c).signature.toDEStrength`. `KLExplanation` is now an
+  `abbrev` for the Core enum. The three consistency theorems
+  (`strengthening_implies_de`, `ladusaw_de_is_kl_strengthening`,
+  `fc_iff_generic`) close by `cases ctx <;> decide` since both sides
+  project from the same map.
+
+## [0.230.59] - 2026-04-20
+
+### Added
+- **`Paradigms/WugTest.lean`**: NEW. Contract layer for the wug paradigm
+  (@cite{berko-1958} + @cite{albright-hayes-2003}). `Attestation` enum
+  (`attested`/`novel`); `HasAttestation` and `HasFrequency` typeclasses
+  with full lens laws (`get_set`, `set_get`, `set_set`); polymorphic
+  `Rate Cell R` observable. Two paradigm-level predicates:
+  `NovelShowsFreqGradient` (the indexed-constraint / scaled-weight
+  prediction: novel forms inherit a frequency gradient from analogous
+  lexical items) and `NovelInvariantInFrequency` (the UseListed
+  prediction: novel forms have no entry, so no entry-keyed frequency
+  effect). `novelGradient_inconsistent_with_invariance` proves the two
+  are mutually exclusive on any cell with two distinct frequencies —
+  the structural source of the wug paradigm's role as a UseListed-vs-
+  grammar discriminator.
+- **`Theories/Phonology/ParadigmUniformity/LexicalConservatism.lean`**:
+  NEW. Sibling of `OptimalParadigms.lean` for the
+  @cite{steriade-2000} Lexical Conservatism account. Reuses
+  `liftPairwise` from `Defs.lean`; the LC channel is paradigm
+  *membership* rather than a different lift — `lcParadigm candidate
+  none = [candidate]`, `lcParadigm candidate (some a) = [candidate, a]`.
+  `lc_unanchored_zero` is the structural derivation that an unanchored
+  paradigm has zero LC-FAITH violations (the diagonal is the only
+  pair, and `mismatch f f = 0`); this is the source of the LC
+  prediction that bound stems impose no LC pressure, derived from
+  paradigm construction rather than stipulated as a side condition.
+- **`blog/data/references.bib`**: `berko-1958` and `albright-hayes-2003`
+  entries with verified DOIs (10.1080/00437956.1958.11659661 and
+  10.1016/S0010-0277(03)00146-X). Both anchor the new
+  `Paradigms/WugTest.lean` file.
+
+### Changed
+- **`Linglib.lean`**: imports for `Paradigms.WugTest` and
+  `Theories.Phonology.ParadigmUniformity.LexicalConservatism`.
+
+## [0.230.58] - 2026-04-20
+
+### Added
+- **`Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`**: NEW. @cite{breiss-katsuda-kawahara-2026} ("Token frequency modulates optional paradigm uniformity in Japanese voiced velar nasalization", *Phonology* accepted, lingbuzz/009507). Architecture-only formalization: Fragment-typed bound vs. free-N2 schematic compounds (`cpd_bound`, `cpd_freeLow`, `cpd_freeHigh`), the bound→categorical / free→optional split via `JCompound.nasalisationObligatory`, and the abstract `puPressure` channel (zero-floored when N2 is bound, monotone in N2 token log-frequency when N2 is free). Three theorems: `bound_puPressure_zero` (PU pressure zero in the bound case for any strength function), `free_puPressure_eq_strength` (free case reduces to the strength function), `free_puPressure_monotone` (signed-monotonicity claim). Closing `architectural_constraint_zero_when_bound` packages the architectural punchline that any account of these data must produce a signed, frequency-modulated PU pressure that switches off in the bound case — naming `LexicalFrequency.UseListed` and `LexicalFrequency.IndexedConstraints` as ruled out, and `ScaledWeights` + `RepresentationStrength` as ruled in. No numerical fits, no specific corpus statistics, no MaxEnt fitting routine — those belong in the modelling companion (lingbuzz/009508).
+- **`Theories/Phonology/LexicalFrequency/Separation.lean`**: NEW. Abstract framework-separation theorems for the four lexical-frequency theories. Toy `ToyItem` carrier + `baseOne` constant constraint isolate the modulation channel. Five separations with concrete witnesses: `sep_indexed_vs_scaled` (within-stratum equal vs. continuous-monotone), `sep_uselisted_novel_invariant` (novel item dispatches to grammar), `sep_uselisted_vs_scaled_on_novel_pair` (UseListed flat across two novel items, ScaledWeights gradient), `sep_repstrength_vs_scaled_compositional` (compound activation inherited from constituents under min-combine vs. compound-only frequency), `sep_indexed_vs_uselisted_routing` (compute-through-grammar vs. skip-grammar at the same threshold). All proofs constructive (`norm_num` / `simp` after explicit hypothesis discharge). The file does not commit to any empirical case study; the Breiss-Katsuda-Kawahara compounds are one *application* of these separations, formalized in the sibling Phenomena file.
+- **`blog/data/references.bib`**: `breiss-katsuda-kawahara-2026` entry — `@article` accepted at *Phonology*, lingbuzz URL recorded, no DOI fabricated (omitted per CLAUDE.md). Sources field points at the new study + the four `LexicalFrequency/` theory files that anchor on the paper as a discriminating test case.
+- **`Linglib.lean`**: imports for `Belth2026` (previously orphaned in the moved-but-unlisted state from 0.230.55-ish), `BreissKatsudaKawahara2026`, and `LexicalFrequency.Separation`. LexicalFrequency import block re-sorted alphabetically.
+
+### Changed
+- **Toolchain bump v4.29.0 → v4.29.1.** `lean-toolchain` updated; `lakefile.lean` `mathlib` pin moved to `v4.29.1` and package `version` bumped to `v!"4.29.1"` (release-clock alignment per the two-clock CHANGELOG scheme introduced in this release). `lake-manifest.json` regenerated. README badges updated. No source changes required for the bump itself.
+- **CHANGELOG preamble** now describes the two-clock scheme (release clock = Lean compatibility, dev clock = `0.MAJOR.MINOR` per-commit). `## [Unreleased]` and `## [v4.29.1]` headers added above the existing dev entries (no demotion of `0.230.x` headers — the release header is a banner, not a wrapper).
+
+### Known issue (concurrent-session pollution)
+- Stale `.lake/build/lib/lean/Linglib/Phenomena/Polarity/{Stress,DisjunctionIgnorance,Exceptives}.{trace,ilean.hash,olean.hash}` artifacts left over from a concurrent session that deleted source files without `lake clean`. Causes spurious "no such file or directory" failures in full `lake build`; standalone module builds (including all new files in this entry) succeed cleanly. Removing the trace files would resolve, but is left for the owning session to handle.
+
+## [v4.29.1] - 2026-04-20
+
+First Reservoir-published release. Tracks Lean 4.29.1 / mathlib v4.29.1.
+
+Library scope at first release: ~76 phenomenon categories across syntax, semantics, pragmatics, morphology, phonology, and processing; ~100 languages with parameterized Fragment lexica; competing frameworks formalized side-by-side (RSA vs. exhaustification; Minimalism vs. HPSG vs. CCG vs. DG vs. Construction Grammar; Kratzer vs. Kripke modality; OT vs. subregular phonology; etc.). Aggregated from ~230 dev iterations (0.1 → 0.230.57); see the dev log below for granular history.
+
+---
+
 ## [0.230.57] - 2026-04-20
 
 ### Changed
@@ -10,6 +155,17 @@
 
 ### Added
 - **`Core/Inheritance/Prototype.lean`**: NEW. Hosts the `Prototype α` structure (graded category membership, `category : α` + `typicality : α → ℚ`) plus `atLeastAsTypical`, `moreTypical`, `atLeastAsTypical_refl`, `atLeastAsTypical_trans`. Moved out of `Basic.lean` to keep the network module orthogonal to rationals/linarith — consumers that only need the isA backbone no longer pay for `Mathlib.Data.Rat.Defs`. Single consumer `WesterbeekKoolenMaes2015.lean` switched over.
+
+## [0.230.56] - 2026-04-20
+
+### Added
+- **`Theories/Phonology/Subregular/Agree.lean`**: NEW. AGREE specialization of the generic forbidden-pair TSL_2 constructor — the (· ≠ ·) dual of the OCP's (· = ·) specialization. Mirrors `OCP.lean`: `agreeForbidden`, `TSLGrammar.agree p := TSLGrammar.ofForbiddenPairs (· ≠ ·) p`, `AgreeCleanPair`, `agreeCleanPair_some_some` (uses `not_not` to flip), `AgreeCleanPair.isBoundaryVacuous`, plus two bridge theorems `mkAgreeOnTier_zero_iff_isChain` and `mkAgreeOnTier_zero_iff_in_agree_lang` showing the OT-side AGREE constraint and the subregular-side TSL_2 language are co-extensive by construction. Carries the same `α : Type` (not `Type*`) limitation as `OCP.lean` due to monomorphism in `Phonology.Constraints` / `Core.Constraint.eval`. Module docstring frames the OCP/AGREE structural duality (no two same → dissimilation; no two different → assimilation/harmony) and notes that asymmetric harmonies (e.g. Kikongo nasal harmony) instantiate the generic constructor directly rather than factoring through either specialization.
+- **`Theories/Phonology/OptimalityTheory/Constraints.lean`**: `mkAgreeOnTier` and `mkAgreeOnTier_is_markedness` — the OT-side `NamedConstraint` constructor for AGREE-style markedness, defined as `mkForbidPairsOnTier` with `R := (· ≠ ·)`. Parallel to existing `mkOCPOnTier`.
+
+### Changed
+- **`Phenomena/Phonology/Studies/Hansson2010.lean`**: refactored to use the AGREE specialization. Navajo sibilant harmony is *symmetric* dissimilation-of-disagreement, so `navajoSibilantHarmony := TSLGrammar.agree NSeg.onTier` (down from `TSLGrammar.ofForbiddenPairs NSeg.forbidDisagreement NSeg.onTier`) and `NSeg.forbidDisagreement` is deleted entirely. OT-side `navajoAgreeAntCC` → `navajoAgree` via `mkAgreeOnTier`. The four accept/reject theorems use `unfold navajoSibilantHarmony TSLGrammar.agree; decide` (typeclass inference doesn't see through the specialization wrapper even with `@[reducible]`). Mathlib hygiene: `match`-style `DecidablePred NSeg.onTier` instance, `@[reducible]` on grammar/data defs, `open Core Core.Computability.Subregular Phonology.Subregular` discipline at top of namespace.
+- **`Phenomena/Phonology/Studies/RoseWalker2004.lean`**: stays on the generic `TSLGrammar.ofForbiddenPairs` constructor — Kikongo nasal harmony is *asymmetric* (forbidden pair is `(nasal, voiced-stop)`, not the reverse) and so factors through neither OCP nor AGREE. Docstring updated to explicitly call out this distinction. Mathlib hygiene: `match`-style `DecidablePred KSeg.onTier` and `DecidableRel KSeg.forbidNasalStop` instances, `@[reducible]` on grammar/data defs, `kikongoAgreeNasalCC` → `kikongoAgree`, `open Core` discipline at top of namespace.
+- **`Linglib.lean`**: import line for `Theories.Phonology.Subregular.Agree` added under the OCP import.
 
 ## [0.230.55] - 2026-04-20
 

@@ -5,7 +5,6 @@ import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Theories.Semantics.Entailment.StrawsonEntailment
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Theories.Semantics.Quantification.DomainVagueness
-import Linglib.Phenomena.Polarity.NPIs
 import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
 import Mathlib.Data.Set.Basic
 
@@ -58,8 +57,6 @@ perspective, while non-adversatives (*glad*, *sure*) are not DE and
 do not freely license *any*. The difference traces to lexical semantics:
 *sorry that A* entails *want ¬A*, while *glad that A* entails *want A*.
 -/
-
-set_option autoImplicit false
 
 namespace KadmonLandman1993
 
@@ -144,7 +141,8 @@ classification: contexts license *any* because their entailment signature
 is on the DE side, not because they appear on an enumerated list.
 -/
 
-/-- Map each licensing context to its entailment signature.
+/-- Each licensing context's entailment signature, projected from the
+    canonical `Core.Lexical.PolarityItem.contextProperties` mapping.
 
     Contexts on the DE side (anti, antiAdd, antiAddMult) guarantee
     strengthening. Contexts that are not monotone (questions, superlatives)
@@ -154,30 +152,8 @@ is on the DE side, not because they appear on an enumerated list.
 
     This mapping unifies the surface inventory with the algebraic
     hierarchy from @cite{icard-2012}. -/
-def contextEntailmentSig : LicensingContext → EntailmentSig
-  -- Anti-morphic (negation): strongest DE
-  | .negation         => .antiAddMult
-  -- Anti-additive: ∨→∧ distributive
-  | .nobody           => .antiAdd
-  | .without_clause   => .antiAdd
-  -- Plain DE (antitone)
-  | .few              => .anti
-  | .atMost           => .anti
-  | .conditional_ant  => .anti
-  | .before_clause    => .anti
-  | .only_focus       => .anti
-  | .too_to           => .anti
-  | .comparative      => .anti
-  | .adversative      => .anti      -- DE on a constant perspective (K&L §3.3)
-  -- UE / non-monotone contexts: license via non-DE mechanisms
-  | .question         => .mono      -- entropy-based (van Rooy 2003)
-  | .superlative      => .mono      -- Strawson-DE
-  | .modal_possibility => .mono     -- FC any, not PS any
-  | .modal_necessity  => .mono      -- FC any
-  | .imperative       => .mono      -- FC any
-  | .generic          => .mono      -- FC any (generic indefinite)
-  | .since_temporal   => .anti      -- DE (Iatridou)
-  | .free_relative    => .mono      -- FC any
+abbrev contextEntailmentSig (c : LicensingContext) : EntailmentSig :=
+  (Core.Lexical.PolarityItem.contextProperties c).signature
 
 /-- A licensing context guarantees K&L strengthening iff its entailment
     signature is on the DE side. -/
@@ -189,65 +165,39 @@ def guaranteesStrengthening (ctx : LicensingContext) : Bool :=
 -- Verify: all standard DE contexts guarantee strengthening
 #guard guaranteesStrengthening .negation         -- anti-morphic → ✓
 #guard guaranteesStrengthening .nobody           -- anti-additive → ✓
-#guard guaranteesStrengthening .without_clause   -- anti-additive → ✓
+#guard guaranteesStrengthening .withoutClause   -- anti-additive → ✓
 #guard guaranteesStrengthening .few              -- DE → ✓
-#guard guaranteesStrengthening .conditional_ant  -- DE → ✓
+#guard guaranteesStrengthening .conditionalAntecedent  -- DE → ✓
 #guard guaranteesStrengthening .adversative      -- DE (constant perspective) → ✓
-#guard guaranteesStrengthening .before_clause    -- DE → ✓
-#guard guaranteesStrengthening .only_focus       -- DE → ✓
+#guard guaranteesStrengthening .beforeClause    -- DE → ✓
+#guard guaranteesStrengthening .onlyFocus       -- DE → ✓
 
 -- Verify: non-DE contexts do NOT guarantee strengthening via DE
 #guard !guaranteesStrengthening .question         -- not DE → ✗
 #guard !guaranteesStrengthening .superlative      -- not DE → ✗
-#guard !guaranteesStrengthening .modal_possibility -- FC, not DE → ✗
+#guard !guaranteesStrengthening .modalPossibility -- FC, not DE → ✗
 #guard !guaranteesStrengthening .generic          -- FC, not DE → ✗
 
 /-- The K&L licensing classification: why each context licenses *any*.
 
-    - `byStrengthening`: DE context → widening strengthens → licensed
-    - `byGenericIndefinite`: FC *any* — indefinite interpreted generically
-    - `byOtherMechanism`: licensed via entropy, Strawson-DE, etc. -/
-inductive KLExplanation where
-  | byStrengthening      -- DE → widening strengthens (the core K&L mechanism)
-  | byGenericIndefinite  -- FC any = generic indefinite + widening
-  | byOtherMechanism     -- entropy, Strawson-DE, etc.
-  deriving DecidableEq, Repr
+    Re-exports `Core.Lexical.PolarityItem.LicensingMechanism`. -/
+abbrev KLExplanation := Core.Lexical.PolarityItem.LicensingMechanism
 
-/-- Derive the K&L explanation for each licensing context.
+/-- Each context's K&L explanation, projected from `contextProperties`.
 
     This is the unifying function: instead of stipulating *that* each
     context licenses, we explain *why*. -/
-def klExplanation : LicensingContext → KLExplanation
-  -- DE contexts: strengthening (K&L's core mechanism)
-  | .negation        => .byStrengthening
-  | .nobody          => .byStrengthening
-  | .without_clause  => .byStrengthening
-  | .few             => .byStrengthening
-  | .atMost          => .byStrengthening
-  | .conditional_ant => .byStrengthening
-  | .before_clause   => .byStrengthening
-  | .only_focus      => .byStrengthening
-  | .too_to          => .byStrengthening
-  | .comparative     => .byStrengthening
-  | .adversative     => .byStrengthening
-  | .since_temporal  => .byStrengthening
-  -- FC any: generic indefinite
-  | .modal_possibility => .byGenericIndefinite
-  | .modal_necessity   => .byGenericIndefinite
-  | .imperative        => .byGenericIndefinite
-  | .generic           => .byGenericIndefinite
-  | .free_relative     => .byGenericIndefinite
-  -- Other mechanisms
-  | .question          => .byOtherMechanism
-  | .superlative       => .byOtherMechanism
+abbrev klExplanation (c : LicensingContext) : KLExplanation :=
+  (Core.Lexical.PolarityItem.contextProperties c).mechanism
 
 /-- Consistency check: every context classified as `byStrengthening`
-    has a DE entailment signature. -/
+    has a DE entailment signature. After Phase 1 unification, both sides
+    project from a single `contextProperties` map, so the check reduces to
+    concrete enum-case verification. -/
 theorem strengthening_implies_de (ctx : LicensingContext)
     (h : klExplanation ctx = .byStrengthening) :
     guaranteesStrengthening ctx = true := by
-  cases ctx <;> simp_all [klExplanation, guaranteesStrengthening,
-    contextEntailmentSig, EntailmentSig.toDEStrength, EntailmentSig.project]
+  revert h; cases ctx <;> decide
 
 -- ============================================================================
 -- §3. Bridge to Ladusaw1979
@@ -263,31 +213,7 @@ with implicit restrictions — cases where Ladusaw's DE condition is
 necessary but not sufficient for a full account.
 -/
 
-private abbrev PhenCtx := Phenomena.Polarity.NPIs.LicensingContext
 open Ladusaw1979 (LicensingStrength licensingStrength)
-
-/-- Map a Phenomena-level licensing context to its K&L explanation.
-
-    Unlike the Core → K&L mapping, this covers all 15 Phenomena contexts
-    directly. The three contexts without Core counterparts (`universalRestrictor`,
-    `doubtVerb`, `denyVerb`) are all DE/anti-additive and explained by
-    strengthening. -/
-def phenCtxKLExplanation : PhenCtx → KLExplanation
-  | .sententialNegation  => .byStrengthening
-  | .constituentNegation => .byStrengthening
-  | .withoutClause       => .byStrengthening
-  | .beforeClause        => .byStrengthening
-  | .onlyFocus           => .byStrengthening
-  | .conditional         => .byStrengthening
-  | .universalRestrictor => .byStrengthening  -- AA restrictor, no Core counterpart
-  | .fewNP               => .byStrengthening
-  | .comparativeThan     => .byStrengthening
-  | .tooAdjective        => .byStrengthening
-  | .doubtVerb           => .byStrengthening  -- DE verb, no Core counterpart
-  | .denyVerb            => .byStrengthening  -- AA verb, no Core counterpart
-  | .adversative         => .byStrengthening
-  | .question            => .byOtherMechanism
-  | .superlative         => .byOtherMechanism
 
 /-- Ladusaw's DE contexts are always K&L strengthening contexts.
 
@@ -295,11 +221,11 @@ def phenCtxKLExplanation : PhenCtx → KLExplanation
     it as `byStrengthening`. K&L's analysis is strictly more explanatory:
     Ladusaw describes *where* NPIs occur (DE contexts), K&L explains
     *why* (widening + strengthening). -/
-theorem ladusaw_de_is_kl_strengthening (ctx : PhenCtx)
+theorem ladusaw_de_is_kl_strengthening (ctx : LicensingContext)
     (hDE : licensingStrength ctx = .antiAdditive ∨
            licensingStrength ctx = .downwardEntailing) :
-    phenCtxKLExplanation ctx = .byStrengthening := by
-  cases ctx <;> simp_all [licensingStrength, phenCtxKLExplanation]
+    klExplanation ctx = .byStrengthening := by
+  revert hDE; cases ctx <;> decide
 
 -- ============================================================================
 -- §4. Sorry vs Glad: Adversative Predicates (Derived from StrawsonEntailment)
@@ -597,25 +523,29 @@ def interpretationOf : LicensingContext → AnyInterpretation
   -- DE contexts → episodic (PS any)
   | .negation        => .episodic
   | .nobody          => .episodic
-  | .without_clause  => .episodic
+  | .withoutClause  => .episodic
   | .few             => .episodic
   | .atMost          => .episodic
-  | .conditional_ant => .episodic
-  | .before_clause   => .episodic
-  | .only_focus      => .episodic
-  | .too_to          => .episodic
+  | .conditionalAntecedent => .episodic
+  | .beforeClause   => .episodic
+  | .onlyFocus      => .episodic
+  | .tooTo          => .episodic
   | .comparative     => .episodic
   | .adversative     => .episodic
-  | .since_temporal  => .episodic
+  | .sinceTemporal  => .episodic
   -- Non-episodic contexts → generic (FC any)
-  | .modal_possibility => .generic
-  | .modal_necessity   => .generic
+  | .modalPossibility => .generic
+  | .modalNecessity   => .generic
   | .imperative        => .generic
   | .generic           => .generic
-  | .free_relative     => .generic
+  | .freeRelative     => .generic
   -- Questions / superlatives: episodic (PS any)
   | .question          => .episodic
   | .superlative       => .episodic
+  -- Quantifier-restrictor / attitude-verb: episodic (PS any)
+  | .universalRestrictor => .episodic
+  | .doubtVerb           => .episodic
+  | .denyVerb            => .episodic
 
 /-- K&L's prediction: FC any occurs exactly in generic-interpretation
     contexts, and these are the contexts explained by generic indefinite
@@ -623,7 +553,7 @@ def interpretationOf : LicensingContext → AnyInterpretation
 theorem fc_iff_generic (ctx : LicensingContext) :
     interpretationOf ctx = .generic ↔
     klExplanation ctx = .byGenericIndefinite := by
-  cases ctx <;> simp [interpretationOf, klExplanation]
+  cases ctx <;> decide
 
 -- ============================================================================
 -- §6. Domain Vagueness and Generics
