@@ -459,6 +459,8 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
 import Linglib.Tactics.NgeFS
 import Linglib.Tactics.CancelFin4
+-- Paradigms (contract layer between Theories/ and Phenomena/Studies/)
+import Linglib.Paradigms.VisualWorld
 -- Fragments
 import Linglib.Fragments.Arabic.Relativization
 import Linglib.Fragments.Arabic.Morph
@@ -1507,8 +1509,6 @@ import Linglib.Theories.Semantics.Questions.RelevanceTheories
 import Linglib.Theories.Semantics.TypeTheoretic.CNsAsTypes
 import Linglib.Theories.Semantics.TypeTheoretic.FrameComposition
 import Linglib.Theories.Semantics.Dynamic.DynamicTTR
-import Linglib.Theories.Pragmatics.RSA.RSAandPDS
-import Linglib.Theories.Pragmatics.RSA.SDSandRSA
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Phenomena.Anaphora.Compare
 import Linglib.Phenomena.Assertion.Compare
@@ -1562,7 +1562,6 @@ import Linglib.Phenomena.WordOrder.Studies.Chomsky1995
 import Linglib.Phenomena.WordOrder.Studies.SagWasowBender2003
 import Linglib.Phenomena.WordOrder.Studies.Adger2003
 import Linglib.Phenomena.WordOrder.Studies.Pollock1989
-import Linglib.Phenomena.WordOrder.Studies.Hudson1984
 import Linglib.Phenomena.WordOrder.Studies.SchlotterbeckWang2023
 import Linglib.Phenomena.WordOrder.Studies.ColeHermon2008
 import Linglib.Phenomena.WordOrder.Studies.Westergaard2009
@@ -2163,11 +2162,8 @@ import Linglib.Theories.Pragmatics.RSA.Core.BToMGrounding
 import Linglib.Theories.Pragmatics.RSA.Core.CombinedUtility
 import Linglib.Theories.Pragmatics.RSA.Core.Config
 import Linglib.Theories.Pragmatics.RSA.Core.CompositionalRSA
-import Linglib.Theories.Pragmatics.RSA.Core.Convergence
 import Linglib.Theories.Pragmatics.RSA.Core.EmbeddedSI
-import Linglib.Theories.Pragmatics.RSA.Core.Model
 import Linglib.Theories.Pragmatics.RSA.Core.Noise
-import Linglib.Theories.Pragmatics.RSA.Core.Priors
 import Linglib.Theories.Pragmatics.RSA.Core.RankingBridge
 import Linglib.Theories.Pragmatics.RSA.Core.Softmax.Limits
 import Linglib.Theories.Pragmatics.RSA.Core.SpeakerDiscrimination
@@ -2175,10 +2171,6 @@ import Linglib.Theories.Pragmatics.RSA.Quantities
 import Linglib.Theories.Pragmatics.RSA.Extensions.ArgumentativeStrength
 import Linglib.Theories.Pragmatics.RSA.Extensions.NoncooperativeCommunication
 import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.Basic
-import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.PhaseTransition
-import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.RateDistortion
-import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityDynamics
-import Linglib.Theories.Pragmatics.RSA.Extensions.InformationTheory.UtilityNonMonotonicity
 import Linglib.Theories.Pragmatics.RSA.Extensions.LexicalUncertainty.Basic
 import Linglib.Phenomena.ArealTypology.Studies.Haspelmath2001
 import Linglib.Theories.Diachronic.Areal

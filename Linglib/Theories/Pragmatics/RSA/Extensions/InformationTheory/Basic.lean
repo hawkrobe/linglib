@@ -31,19 +31,4 @@ namespace RSA.InformationTheory
 export Core.InformationTheory (log2Approx entropy conditionalEntropy mutualInformation
   jsdOf deltaP deltaPCounts)
 
-/--
-RSA iteration level.
-
-Track the depth of pragmatic reasoning:
-- L0 = literal listener
-- S1 = pragmatic speaker (responds to L0)
-- L1 = pragmatic listener (responds to S1)
-- S2 = second-order speaker (responds to L1)
-- etc.
--/
-inductive RSALevel where
-  | L : Nat → RSALevel  -- Listener level n
-  | S : Nat → RSALevel  -- Speaker level n
-  deriving DecidableEq, Repr
-
 end RSA.InformationTheory

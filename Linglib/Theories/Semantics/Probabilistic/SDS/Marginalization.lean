@@ -410,7 +410,6 @@ SDS extends LU-RSA with **factored priors**:
 
 - `BayesianSemantics.ParamPred`: SDS is ParamPred with factored priors
 - `ThresholdSemantics`: All three domains are SDS instances
-- `SDSandRSA`: This module extends that correspondence formally
 -/
 
 end Semantics.Probabilistic.SDS.Marginalization
