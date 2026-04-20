@@ -48,7 +48,7 @@ namespace Storme2026
 
 open Core.Constraint Phonology.Constraints
 open Fragments.Farsi.Phonology
-open Core.OT
+open Core.Constraint.OT
 
 -- Fintype instances for HiatusInput/Output (Fintype requires Mathlib,
 -- which is available here via MaxEnt → RationalAction)

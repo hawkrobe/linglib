@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.ConstraintEvaluation
+import Linglib.Core.Constraint.Evaluation
 import Linglib.Theories.Pragmatics.Bidirectional
 import Linglib.Theories.Semantics.Presupposition.Accommodation
 
@@ -67,7 +67,7 @@ set_option autoImplicit false
 
 namespace Blutner2000
 
-open Core.ConstraintEvaluation
+open Core.Constraint.Evaluation
 
 -- ============================================================================
 -- § 1: Projection Sites

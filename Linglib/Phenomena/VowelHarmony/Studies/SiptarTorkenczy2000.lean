@@ -12,7 +12,7 @@ End-to-end OT analysis of Hungarian vowel harmony, connecting:
 2. **Harmony system** (`Harmony.Defs`) — trigger/target/transparent predicates
 3. **OT constraints** (`Harmony.OT`) — SPREAD and IDENT derived from
    `HarmonySystem`
-4. **Tableaux** (`Core.Logic.OT`) — `mkTableau` + `optimal` select winner
+4. **Tableaux** (`Core.Constraint.OT`) — `mkTableau` + `optimal` select winner
 5. **Hungarian fragments** (`Fragments.Hungarian.VowelHarmony`) — concrete
    vowel segments and `hungarianPalatalHarmony`
 
@@ -41,7 +41,7 @@ namespace SiptarTorkenczy2000
 
 open Phonology (Segment Feature)
 open Phonology.Harmony
-open Core.OT Core.ConstraintEvaluation
+open Core.Constraint.OT Core.Constraint.Evaluation
 open Fragments.Hungarian.VowelHarmony
 
 -- ============================================================================

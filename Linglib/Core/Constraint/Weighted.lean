@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 import Mathlib.Data.Real.Basic
 import Mathlib.Data.Rat.Cast.Order
 
@@ -12,7 +12,7 @@ The shared foundation for any constraint framework that assigns numerical
 - Noisy HG @cite{boersma-pater-2016}
 - Normal MaxEnt @cite{flemming-2021}
 
-A `WeightedConstraint C` extends `NamedConstraint C` (from `Core.Logic.OT`)
+A `WeightedConstraint C` extends `NamedConstraint C` (from `Core.Constraint.OT`)
 with a rational `weight`. The `harmonyScore` of a candidate is the negated
 weighted sum of its violations: `H(c) = -Σⱼ wⱼ · Cⱼ(c)`.
 
@@ -24,7 +24,7 @@ modules in `Core.Constraint.*` consume them; framework-specific wrappers
 
 namespace Core.Constraint
 
-open Core.OT
+open Core.Constraint.OT
 
 -- ============================================================================
 -- § 1: Weighted Constraints

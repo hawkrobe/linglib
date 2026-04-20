@@ -89,7 +89,7 @@ about OT candidate competition.
 namespace Erlewine2016
 
 open Fragments.Mayan.Kaqchikel Minimalism
-open Core.OT (mkTableau)
+open Core.Constraint.OT (mkTableau)
 
 -- ============================================================================
 -- § 1: Anti-Locality Grounds the Transitive Crash

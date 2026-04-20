@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Gradability.Antonymy
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
 import Linglib.Phenomena.Negation.FlexibleNegation
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # @cite{krifka-2007b} — Negated Antonyms: Creating and Filling the Gap
@@ -52,7 +52,7 @@ data in `FlexibleNegation.lean`. The pragmatic mechanism connecting
 contradictory base → effective ThresholdPair is derived via two routes:
 1. **Bidirectional OT** (§ 9 below): @cite{blutner-2000}'s weak BiOT (eq. 14)
    derives the four-way form-meaning assignment via the greatest-fixed-point
-   computation in `Core.ConstraintEvaluation.superoptimal`.
+   computation in `Core.Constraint.Evaluation.superoptimal`.
 2. **RSA model**: @cite{tessler-franke-2019} (`Studies/TesslerFranke2020.lean`)
    derives the same effect through Bayesian pragmatic reasoning.
 -/
@@ -67,8 +67,8 @@ open Semantics.Gradability (ThresholdPair inGapRegion
 open Semantics.Gradability.Antonymy
 open Semantics.Degree (positiveMeaning)
 open Phenomena.Negation.FlexibleNegation
-open Core.ConstraintEvaluation (superoptimal)
-open Core.OT (NamedConstraint)
+open Core.Constraint.Evaluation (superoptimal)
+open Core.Constraint.OT (NamedConstraint)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Quadruplet: The Central Data Structure
@@ -292,7 +292,7 @@ theorem strengthened_not_exhaustive :
     derives the form-meaning assignment from constraint competition. Krifka
     explicitly invokes this version (p. 6, citing @cite{blutner-2000} and
     @cite{jaeger-2002}). The evaluation uses `superoptimal` from
-    `Core.Logic.ConstraintEvaluation`.
+    `Core.Constraint.Evaluation`.
 
     Two ranked constraints:
     1. **M-principle** (@cite{horn-1984}): simple forms pair with stereotypical

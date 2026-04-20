@@ -56,7 +56,7 @@ at the expected edge of the root morpheme.
 
 namespace AkinboFwangwar2026
 
-open Core.OT
+open Core.Constraint.OT
 open Phonology.Autosegmental.RegisterTier (TRN)
 open Fragments.Mwaghavul
 

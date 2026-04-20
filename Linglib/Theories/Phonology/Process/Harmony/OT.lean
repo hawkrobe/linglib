@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Process.Harmony.Defs
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Harmony–OT Bridge
@@ -7,7 +7,7 @@ import Linglib.Core.Logic.OT
 
 Derives OT constraints from a `HarmonySystem`, connecting the direct
 computation in `Harmony.Defs` to the OT evaluation framework in
-`Core.Logic.OT` and `Phonology.Constraints`.
+`Core.Constraint.OT` and `Phonology.Constraints`.
 
 ## Constraints
 
@@ -30,7 +30,7 @@ violations. Under SPREAD ≫ IDENT, the harmonized output is optimal.
 namespace Phonology.Harmony
 
 open Phonology (Segment Feature)
-open Core.OT
+open Core.Constraint.OT
 
 -- ============================================================================
 -- § 1: Feature BEq Helper

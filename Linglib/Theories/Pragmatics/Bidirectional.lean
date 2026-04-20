@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.ConstraintEvaluation
+import Linglib.Core.Constraint.Evaluation
 
 /-!
 # Bidirectional Optimality Theory
@@ -67,7 +67,7 @@ set_option autoImplicit false
 
 namespace Pragmatics.Bidirectional
 
-open Core.ConstraintEvaluation
+open Core.Constraint.Evaluation
 
 -- ============================================================================
 -- § 1: Q-Principle and I-Principle as Predicates

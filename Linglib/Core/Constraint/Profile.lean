@@ -20,7 +20,7 @@ frameworks:
 
 `LexProfile β n` wraps `Fin n → β` in `Lex` so that `Pi.Lex`'s
 lexicographic order kicks in. The familiar OT type `ViolationProfile n`
-from `Core.Logic.ConstraintEvaluation` is exactly `LexProfile Nat n`.
+from `Core.Constraint.Evaluation` is exactly `LexProfile Nat n`.
 
 ## Why a separate file?
 
@@ -31,7 +31,7 @@ back through `Lex` *only* under the lexicographic order, where the
 compatibility is sound, and in maximum generality so that downstream
 modules can specialize to whatever value type they need.
 
-The same proofs as `Core.Logic.ConstraintEvaluation` (for `Nat`), but
+The same proofs as `Core.Constraint.Evaluation` (for `Nat`), but
 generalized — `add_lt_add_left`, `add_left_cancel`, `lt_of_add_lt_add_left`
 in place of their `Nat.*` specializations.
 -/
@@ -54,7 +54,7 @@ abbrev Profile (β : Type*) (n : Nat) : Type _ := Fin n → β
     monotonicity hypotheses on `β`, it carries `IsOrderedAddMonoid` and
     `IsOrderedCancelAddMonoid` (proved below).
 
-    `ViolationProfile n` from `Core.Logic.ConstraintEvaluation` is the
+    `ViolationProfile n` from `Core.Constraint.Evaluation` is the
     `β = Nat` specialization. -/
 abbrev LexProfile (β : Type*) (n : Nat) : Type _ := Lex (Fin n → β)
 
@@ -124,7 +124,7 @@ end LexProfile
 -- ============================================================================
 
 /-- The existing `ViolationProfile n := Lex (Fin n → Nat)` from
-    `Core.Logic.ConstraintEvaluation` is definitionally `LexProfile Nat n`.
+    `Core.Constraint.Evaluation` is definitionally `LexProfile Nat n`.
     This `rfl` is the load-bearing claim that no downstream code needs
     to change when the `Nat`-specific instances are replaced by the
     generic ones above. -/

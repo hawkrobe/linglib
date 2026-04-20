@@ -50,7 +50,7 @@ labial place (p: 253/263 vs b: 177/277).
 
 namespace Zuraw2010
 
-open Core.OT Phonology.Constraints
+open Core.Constraint.OT Phonology.Constraints
 open Fragments.Tagalog.Phonology (StemC SubSt NSCand dictRate_p dictRate_b dict_voicing_labial)
 
 -- ============================================================================

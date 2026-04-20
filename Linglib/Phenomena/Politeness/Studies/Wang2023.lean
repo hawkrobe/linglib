@@ -1,5 +1,5 @@
 import Linglib.Core.PrivativePair
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
 import Linglib.Theories.Syntax.Minimalism.Core.Features
@@ -39,7 +39,7 @@ This file connects three layers:
 - `Core.PrivativePair`: the algebraic structure (specLevel ordering)
 - `Theories.Semantics.Presupposition.PhiFeatures`: presuppositional
   denotations, semantic markedness, and presuppositional strength ordering
-- `Core.Logic.OT`: constraint evaluation and factorial typology
+- `Core.Constraint.OT`: constraint evaluation and factorial typology
 
 ## Sections
 
@@ -58,7 +58,7 @@ set_option autoImplicit false
 namespace Wang2023
 
 open Core (PrivativePair PhiFeatures)
-open Core.OT (NamedConstraint ConstraintFamily mkTableau
+open Core.Constraint.OT (NamedConstraint ConstraintFamily mkTableau
               mkFactorialOptima mkFactorialTypologySize)
 open Semantics.Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
   presupWeakerThan wellFormed_specLevel_le_two sgSem plSem)
@@ -503,8 +503,8 @@ it holds for arbitrary candidate sets. The proof is purely algebraic:
 
 section GeneralTheorem
 
-open Core.OT (mkTableau_optimal_zero_first mkTableau_optimal_mem)
-open Core.ConstraintEvaluation (Tableau buildViolationProfile)
+open Core.Constraint.OT (mkTableau_optimal_zero_first mkTableau_optimal_mem)
+open Core.Constraint.Evaluation (Tableau buildViolationProfile)
 
 /-- Every optimal candidate under ToD >> MP! is `.minimal`. The proof:
     `optimal_zero_first` gives `todConstraint.eval c = 0`, i.e.

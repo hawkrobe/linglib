@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 
 /-!
@@ -39,7 +39,7 @@ of `Corr.identViol` specialized to particular tiers:
 
 namespace Phonology.Correspondence
 
-open Core.OT
+open Core.Constraint.OT
 
 -- ============================================================================
 -- § 1: Correspondence Domains
@@ -409,7 +409,7 @@ theorem integrityViol_le_length {α : Type*} (c : Corr α) :
 
 /-- Build a MAX `NamedConstraint` from the structural `Corr.maxViol`.
     Ties the schema-level definition (§3) to the OT evaluation
-    machinery in `Core.OT`. -/
+    machinery in `Core.Constraint.OT`. -/
 def Corr.toMaxConstraint (α : Type) (domain : CorrDomain) :
     NamedConstraint (Corr α) :=
   { name := "MAX-" ++ domain.label

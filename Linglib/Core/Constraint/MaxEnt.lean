@@ -40,7 +40,7 @@ equals its factor.
 
 namespace Core.Constraint
 
-open Core.OT Core
+open Core.Constraint.OT Core
 
 -- ============================================================================
 -- § 1: MaxEnt Grammar (Classical — Individual Mappings)

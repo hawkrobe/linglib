@@ -53,7 +53,7 @@ Telugu nouns exhibit two stem alternation patterns:
 
 namespace Aitha2026
 
-open Core Core.OT Core.ConstraintEvaluation
+open Core Core.Constraint.OT Core.Constraint.Evaluation
 open Morphology.DM.VI
 open Phonology.Syllable
 

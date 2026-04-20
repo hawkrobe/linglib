@@ -64,7 +64,7 @@ namespace Haspelmath2021
 
 open Core.Prominence
 open Core.FormFrequency
-open Core.ConstraintEvaluation
+open Core.Constraint.Evaluation
 open Aissen2003
 open DeHoopMalchukov2008
 open Phenomena.Alignment.Typology

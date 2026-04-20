@@ -57,7 +57,7 @@ open Phonology.Doubling
 
 namespace Berent2026
 
-open Core.OT
+open Core.Constraint.OT
 
 -- ============================================================================
 -- § 1: Onset Markedness — the sonority gradient

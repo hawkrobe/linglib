@@ -35,7 +35,7 @@ Together: MaxEnt(α → ∞) → HG winner = OT winner.
 
 namespace Core.Constraint
 
-open Core Core.OT Core.ConstraintEvaluation Real Finset
+open Core Core.Constraint.OT Core.Constraint.Evaluation Real Finset
 
 -- ============================================================================
 -- § 1: OT → HG Weight Construction
@@ -75,7 +75,7 @@ theorem otToWeighted_eval {C : Type} (ranking : List (NamedConstraint C)) (M : N
     (vb): at the first position where they differ, a has strictly fewer
     violations.
 
-    This mirrors `Core.ConstraintEvaluation.lexLT` but on `Fin n → Nat`
+    This mirrors `Core.Constraint.Evaluation.lexLT` but on `Fin n → Nat`
     rather than `List Nat`, enabling Finset-based reasoning. -/
 def LexStrictlyBetter {n : Nat} (va vb : Fin n → Nat) : Prop :=
   ∃ k : Fin n,

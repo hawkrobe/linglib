@@ -47,7 +47,7 @@ formalization.
 
 namespace Phonology.OptimalParadigms
 
-open Core.OT (NamedConstraint ConstraintFamily)
+open Core.Constraint.OT (NamedConstraint ConstraintFamily)
 open Phonology.Correspondence (Corr CorrDomain)
 
 -- ============================================================================

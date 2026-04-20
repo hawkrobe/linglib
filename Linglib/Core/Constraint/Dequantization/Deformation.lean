@@ -74,7 +74,7 @@ other candidate's softmax probability decays exponentially in the gap.
 namespace Core.Constraint
 
 open Real Filter Topology Finset
-open Core.OT Core.Constraint.ViolationSemiring
+open Core.Constraint.OT Core.Constraint.ViolationSemiring
 
 -- ============================================================================
 -- § 1: The Soft Aggregator on Harmony Scores

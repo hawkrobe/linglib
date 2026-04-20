@@ -47,7 +47,7 @@ modeling phonological variation, illustrated with English t/d-deletion.
 
 namespace CoetzeePater2011
 
-open Core.OT Core.ConstraintEvaluation
+open Core.Constraint.OT Core.Constraint.Evaluation
 open Core.Constraint
 open Phonology.Constraints
 open Fragments.English.TDDeletion

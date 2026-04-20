@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.Weighted
 import Linglib.Core.StringHom
 
@@ -44,7 +44,7 @@ Binary constraints use a `Bool` predicate; gradient constraints use a
 
 namespace Phonology.Constraints
 
-open Core.OT
+open Core.Constraint.OT
 
 -- ============================================================================
 -- § 1: Faithfulness Constraint Constructors
@@ -127,12 +127,12 @@ theorem mkIntegrity_is_faithfulness {C : Type} (name : String) (p : C → Bool) 
     (mkIntegrity name p).family = .faithfulness := rfl
 
 -- ============================================================================
--- § 2: Markedness Constraint Constructors (re-exported from Core.OT)
+-- § 2: Markedness Constraint Constructors (re-exported from Core.Constraint.OT)
 -- ============================================================================
 
--- `mkMark`, `mkFaith`, `mkMarkGrad`, `mkFaithGrad` are defined in `Core.OT`.
+-- `mkMark`, `mkFaith`, `mkMarkGrad`, `mkFaithGrad` are defined in `Core.Constraint.OT`.
 -- Re-export them so `open Phonology.Constraints` includes them.
-export Core.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
+export Core.Constraint.OT (mkMark mkFaith mkMarkGrad mkFaithGrad)
 
 -- ============================================================================
 -- § 2b: OCP (Obligatory Contour Principle)

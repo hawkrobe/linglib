@@ -42,10 +42,10 @@ to a possible OT grammar.
 namespace Aissen2003
 
 open Core.Prominence
-open Core.OT Phonology.Constraints
+open Core.Constraint.OT Phonology.Constraints
 open Phenomena.Case.Typology
 
-open Core.ConstraintEvaluation (Finset.checkAll Finset.checkAny)
+open Core.Constraint.Evaluation (Finset.checkAll Finset.checkAny)
 
 -- ============================================================================
 -- § 1: Interleavings

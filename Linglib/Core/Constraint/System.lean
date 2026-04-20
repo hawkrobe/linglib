@@ -1,7 +1,7 @@
 import Linglib.Core.Constraint.Decoder
 import Linglib.Core.Constraint.Weighted
 import Linglib.Core.Constraint.Profile
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Constraint Systems — The Unified Interface
@@ -125,7 +125,7 @@ noncomputable def maxEntSystem {Cand : Type}
 -- § 3: Tableau Bridge
 -- ============================================================================
 
-/-! `Core.ConstraintEvaluation.Tableau` is the established study-file API for
+/-! `Core.Constraint.Evaluation.Tableau` is the established study-file API for
 OT (used by `mkTableau ... .optimal = {winner}` patterns). The bridge below
 shows that `Tableau` is a special case of `ConstraintSystem`: the OT score
 `profile : C → ViolationProfile n` is exactly a `LexProfile Nat n`-valued
@@ -134,7 +134,7 @@ score (definitionally), and `Tableau.optimal` is exactly the support of the
 `Tableau`/`optimal` formulation and additionally expose the unified
 `ConstraintSystem.predict` view via `tableauSystem`. -/
 
-open Core.ConstraintEvaluation
+open Core.Constraint.Evaluation
 
 /-- An OT tableau viewed as a generic `ConstraintSystem`. The score type
     `LexProfile Nat n` is definitionally `ViolationProfile n`, so the

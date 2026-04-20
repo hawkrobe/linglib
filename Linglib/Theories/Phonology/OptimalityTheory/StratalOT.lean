@@ -1,5 +1,5 @@
 import Mathlib.Order.Nat
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Stratal Optimality Theory
@@ -29,7 +29,7 @@ rules or extrinsic ordering.
 
 ## Connection to Linglib
 
-Each individual stratum is evaluated using `Core.OT.mkTableau` and
+Each individual stratum is evaluated using `Core.Constraint.OT.mkTableau` and
 `Tableau.optimal`. This module adds the stratal architecture:
 strata ordering, cross-stratal chaining, and reranking specification.
 
@@ -41,8 +41,8 @@ underlying form.
 
 namespace Phonology.StratalOT
 
-open Core.OT (NamedConstraint ConstraintFamily mkTableau)
-open Core.ConstraintEvaluation
+open Core.Constraint.OT (NamedConstraint ConstraintFamily mkTableau)
+open Core.Constraint.Evaluation
 
 -- ============================================================================
 -- § 1: Strata

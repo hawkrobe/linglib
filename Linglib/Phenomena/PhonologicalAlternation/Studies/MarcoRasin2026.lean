@@ -43,7 +43,7 @@ argument that OP fails "regardless of what constitutes a paradigm."
 
 namespace MarcoRasin2026
 
-open Core.OT
+open Core.Constraint.OT
 open Phonology.Constraints
 open Phonology.OptimalParadigms
 open Phonology.Syllable (SonorityRank)

@@ -1,16 +1,21 @@
-import Linglib.Core.Logic.ConstraintEvaluation
+import Linglib.Core.Constraint.Evaluation
 import Mathlib.GroupTheory.Perm.Basic
 
 /-!
-# OT Definitions — ERCs, Rankings, and Bridges
+# OT — Elementary Ranking Conditions (Definitions + Operations)
 
-Pure types for Optimality Theory's algebraic layer. This module defines:
+Pure types and operations for OT's algebraic ranking-inference layer.
+This module defines:
 
 - `ERCVal` — the three-valued alphabet {W, L, e} for Elementary Ranking
   Conditions
 - `ERC n` — an ERC over `n` constraints (a vector of `ERCVal`)
 - `Ranking n` — a constraint ranking (a permutation of `Fin n`)
 - `ercOfProfiles` — the bridge from violation profiles to ERCs
+- `ERC.satisfiedBy`, `ERCSet.consistent`, `ERCSet.entails` — the
+  satisfaction/consistency/entailment algebra
+- `tableauERC` — build an ERC from a winner-loser pair in a tableau
+- `simpleERC` — single-W/single-L ERCs corresponding to Hasse edges
 
 These types connect the *evaluation* side of OT (`ViolationProfile`,
 `Tableau`) to the *inference* side (ranking requirements, consistency,
@@ -19,6 +24,13 @@ candidate beat another — the intermediate level between "a specific
 ranking with specific evaluation functions" and "a violation profile
 with no connection to which constraints matter."
 
+## The ranking question
+
+Given candidates α and β with violation profiles, the ERC [α ∼ β]
+answers the **ranking question**: exactly which rankings select α over β?
+A ranking satisfies [α ∼ β] iff at least one W-constraint (preferring
+the winner α) is ranked above all L-constraints (preferring the loser β).
+
 ## References
 
 @cite{prince-2002} — Entailed ranking arguments (original ERC formulation)
@@ -26,9 +38,9 @@ with no connection to which constraints matter."
 ERC sets and antimatroids
 -/
 
-namespace Core.OT
+namespace Core.Constraint.OT
 
-open Core.ConstraintEvaluation
+open Core.Constraint.Evaluation
 
 -- ============================================================================
 -- § 1: ERCVal — The Three-Valued Alphabet
@@ -64,7 +76,7 @@ instance : ToString ERCVal where
     - `α k = e` means constraint `k` is indifferent
 
     A ranking satisfies the ERC iff some W-constraint is ranked above
-    all L-constraints. See `ERC.satisfiedBy` in `Core.OT.ERC`. -/
+    all L-constraints. See `ERC.satisfiedBy` below. -/
 def ERC (n : Nat) := Fin n → ERCVal
 
 instance {n : Nat} : Inhabited (ERC n) := ⟨fun _ => .e⟩
@@ -214,4 +226,160 @@ noncomputable def Ranking.ofRankFn {n : Nat} (f : Fin n → Fin n)
 def Ranking.swap {n : Nat} (r : Ranking n) (i j : Fin n) : Ranking n :=
   r.trans (Equiv.swap i j)
 
-end Core.OT
+-- ============================================================================
+-- § 7: ERC Satisfaction
+-- ============================================================================
+
+/-- A ranking `r` **satisfies** ERC `α` iff some W-constraint is ranked
+    above all L-constraints.
+
+    In the ranking `r`, position `0` is highest-ranked. `r i` is the
+    constraint at position `i`, and `r.symm k` is the rank position of
+    constraint `k`. So `r.symm w < r.symm l` means constraint `w` is
+    ranked above constraint `l`.
+
+    This is the semantic content of an ERC: it encodes a disjunction of
+    dominance conditions. The ERC ⟨W, e, L, e⟩ says "constraint 0 must
+    dominate constraint 2." The ERC ⟨W, W, L, e⟩ says "constraint 0 OR
+    constraint 1 must dominate constraint 2." -/
+def ERC.satisfiedBy {n : Nat} (r : Ranking n) (α : ERC n) : Prop :=
+  ∀ l : Fin n, α l = .L → ∃ w : Fin n, α w = .W ∧ dominates r w l
+
+instance {n : Nat} (r : Ranking n) (α : ERC n) :
+    Decidable (α.satisfiedBy r) :=
+  Fintype.decidableForallFintype
+
+/-- A trivial ERC (no L-constraints) is satisfied by every ranking. -/
+theorem ERC.trivial_satisfiedBy {n : Nat} (α : ERC n) (htriv : α.isTrivial)
+    (r : Ranking n) : α.satisfiedBy r :=
+  fun l hl => absurd hl (htriv l)
+
+-- ============================================================================
+-- § 8: ERC Set Satisfaction and Consistency
+-- ============================================================================
+
+/-- A ranking satisfies a set of ERCs iff it satisfies each one. -/
+def ERCSet.satisfiedBy {n : Nat} (r : Ranking n)
+    (E : List (ERC n)) : Prop :=
+  ∀ α ∈ E, ERC.satisfiedBy r α
+
+instance {n : Nat} (r : Ranking n) (E : List (ERC n)) :
+    Decidable (ERCSet.satisfiedBy r E) :=
+  List.decidableBAll _ E
+
+/-- An ERC set is **consistent** iff there exists at least one ranking
+    that satisfies all ERCs in the set. An inconsistent ERC set encodes
+    contradictory ranking requirements.
+
+    This is the decidable version — it searches over all `n!` rankings.
+    For large `n`, use the ERC fusion algorithm instead. -/
+def ERCSet.consistent {n : Nat} (E : List (ERC n)) : Prop :=
+  ∃ r : Ranking n, ERCSet.satisfiedBy r E
+
+/-- The set of rankings consistent with an ERC set — its **linear
+    extensions** in the terminology of @cite{merchant-riggle-2016}. -/
+def ERCSet.linearExtensions {n : Nat} (E : List (ERC n)) :
+    Set (Ranking n) :=
+  { r | ERCSet.satisfiedBy r E }
+
+-- ============================================================================
+-- § 9: Entailment
+-- ============================================================================
+
+/-- ERC set `E` **entails** ERC set `E'` iff every ranking satisfying
+    `E` also satisfies `E'`. Equivalently, the linear extensions of `E`
+    are a subset of the linear extensions of `E'`.
+
+    This is the natural preorder on ERC sets. Two ERC sets are equivalent
+    iff they entail each other — they have the same linear extensions
+    and describe the same OT grammar. -/
+def ERCSet.entails {n : Nat} (E E' : List (ERC n)) : Prop :=
+  ∀ r : Ranking n, ERCSet.satisfiedBy r E → ERCSet.satisfiedBy r E'
+
+/-- Entailment is reflexive. -/
+theorem ERCSet.entails_refl {n : Nat} (E : List (ERC n)) :
+    ERCSet.entails E E :=
+  fun _ h => h
+
+/-- Entailment is transitive. -/
+theorem ERCSet.entails_trans {n : Nat} (E₁ E₂ E₃ : List (ERC n))
+    (h₁₂ : ERCSet.entails E₁ E₂) (h₂₃ : ERCSet.entails E₂ E₃) :
+    ERCSet.entails E₁ E₃ :=
+  fun r hr => h₂₃ r (h₁₂ r hr)
+
+/-- Adding an ERC to a set weakens the entailment (more requirements =
+    fewer satisfying rankings = stronger set). -/
+theorem ERCSet.entails_of_cons {n : Nat} (α : ERC n) (E : List (ERC n)) :
+    ERCSet.entails (α :: E) E :=
+  fun _ hr β hβ => hr β (List.mem_cons_of_mem α hβ)
+
+/-- If every ERC in `E'` is already entailed by `E`, then `E` entails
+    `E'`. This is the pointwise characterization. -/
+theorem ERCSet.entails_of_forall_mem {n : Nat} (E E' : List (ERC n))
+    (h : ∀ α ∈ E', ERCSet.entails E [α]) :
+    ERCSet.entails E E' :=
+  fun r hr α hα => h α hα r hr α (List.mem_cons.mpr (Or.inl rfl))
+
+-- ============================================================================
+-- § 10: Bridge — Tableau → ERC
+-- ============================================================================
+
+/-- Build an ERC from a winner-loser pair in a tableau.
+
+    Given a tableau `t` with candidates and violation profiles, and
+    a designated winner `w` and loser `l`, construct the ERC that
+    encodes the ranking requirements for `w` to beat `l`.
+
+    This is the fundamental bridge from OT evaluation to OT inference:
+    every time a tableau selects a winner, it implicitly generates ERCs
+    for all winner-loser pairs. -/
+def tableauERC {C : Type} [DecidableEq C] {n : Nat}
+    (t : Tableau C n) (w l : C) : ERC n :=
+  ercOfProfiles (t.profile w) (t.profile l)
+
+-- ============================================================================
+-- § 11: Simple ERCs
+-- ============================================================================
+
+/-- A **simple ERC** has exactly one W and one L — it encodes a single
+    dominance requirement `w ≫ l` (constraint `w` must dominate
+    constraint `l`).
+
+    Simple ERCs correspond to edges in the Hasse diagram of the ranking
+    partial order. Sets of simple ERCs describe exactly the rankings
+    representable as partial orders (@cite{merchant-riggle-2016} §1.1). -/
+def ERC.isSimple {n : Nat} (α : ERC n) : Prop :=
+  (∃! w, α w = .W) ∧ (∃! l, α l = .L)
+
+/-- Construct a simple ERC asserting that constraint `i` must dominate
+    constraint `j`. All other constraints are `e`. -/
+def simpleERC {n : Nat} (i j : Fin n) : ERC n :=
+  fun k => if k = i then .W else if k = j then .L else .e
+
+/-- A simple ERC `i ≫ j` is satisfied by ranking `r` iff `i` dominates
+    `j` under `r`. -/
+theorem simpleERC_satisfiedBy_iff {n : Nat} {i j : Fin n} (hij : i ≠ j)
+    (r : Ranking n) :
+    (simpleERC i j).satisfiedBy r ↔ dominates r i j := by
+  constructor
+  · intro h
+    have hl : simpleERC i j j = .L := by
+      simp only [simpleERC]; split_ifs with h₁ <;> [exact absurd h₁ hij.symm; rfl]
+    obtain ⟨w, hw_val, hw_dom⟩ := h j hl
+    have hw : w = i := by
+      unfold simpleERC at hw_val
+      by_contra hne
+      simp [hne] at hw_val
+      split_ifs at hw_val
+    subst hw; exact hw_dom
+  · intro hdom l hl
+    have hl_eq : l = j := by
+      unfold simpleERC at hl
+      by_contra hne
+      have hne_i : l ≠ i := by
+        intro heq; subst heq; simp at hl
+      simp [hne_i, hne] at hl
+    subst hl_eq
+    exact ⟨i, by simp [simpleERC], hdom⟩
+
+end Core.Constraint.OT

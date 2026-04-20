@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.230.28] - 2026-04-19
+
+### Changed
+- **`Core/Constraint/` consolidation**: unified scattered OT machinery under `Core/Constraint/` with mathlib-style sub-namespaces. **Moves**: `Core/Logic/ConstraintEvaluation.lean` → `Core/Constraint/Evaluation.lean` (namespace `Core.Constraint.Evaluation`); `Core/Logic/OT.lean` → `Core/Constraint/OT/Basic.lean` (namespace `Core.Constraint.OT`); `Core/OT/{Defs.lean, ERC.lean}` merged → `Core/Constraint/OT/ERC.lean`; `Core/OT/{Antimatroid.lean, ERCAntimatroid.lean}` merged → `Core/Constraint/OT/Antimatroid.lean`; old `Core/OT/` directory deleted. **Rationale**: prior layout scattered constraint/OT code across `Core/Logic/`, `Core/OT/`, and `Core/Constraint/`; the sub-namespace approach (mathlib pattern: flat top + named subpackages) consolidates without the `LexProfile` collision that a flat namespace would have caused (`Core.Constraint.LexProfile` is an abbrev for `Lex (Fin n → β)` while the evaluation-side struct lives at `Core.Constraint.Evaluation.LexProfile`). **Consumer updates**: 47 files updated. Build clean: 5201 jobs, 0 errors.
+
+
 ## [0.230.24] - 2026-04-19
 
 ### Changed

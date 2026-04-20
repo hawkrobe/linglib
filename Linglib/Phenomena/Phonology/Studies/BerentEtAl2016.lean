@@ -52,7 +52,7 @@ open Phonology.Doubling
 
 namespace BerentEtAl2016
 
-open Core.OT
+open Core.Constraint.OT
 
 -- ============================================================================
 -- § 1: L1 Morphological Grammars

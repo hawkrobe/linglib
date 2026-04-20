@@ -102,7 +102,7 @@ contradicting the paper's findings.
 
 namespace ArnoldEtAl2000
 
-open Core.OT Core.Constraint Core.InformationStructure
+open Core.Constraint.OT Core.Constraint Core.InformationStructure
 open DepGrammar DepGrammar.DependencyLength
 
 -- ============================================================================

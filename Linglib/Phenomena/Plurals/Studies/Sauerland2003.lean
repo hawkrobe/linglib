@@ -52,7 +52,7 @@ namespace Sauerland2003
 open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
 open Core (PrivativePair PhiFeatures)
 open Core.Presupposition (PrProp)
-open Core.OT (NamedConstraint mkTableau)
+open Core.Constraint.OT (NamedConstraint mkTableau)
 open Semantics.Presupposition.PhiFeatures
 open Semantics.Presupposition.MaximizePresupposition (phiMP phi_mp_selects_maximal)
 

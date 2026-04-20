@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 
 /-!
 # Cophonology Theory
@@ -31,14 +31,14 @@ This gives DM's Vocabulary Item a four-part structure:
 `cophonologicalEval` function merges the winning VI's subranking with
 the default ranking and runs `Tableau.optimal`, connecting DM
 vocabulary insertion (`Morphology.DM.VI`) to OT constraint evaluation
-(`Core.OT` / `Core.ConstraintEvaluation`).
+(`Core.Constraint.OT` / `Core.Constraint.Evaluation`).
 -/
 
 namespace Phonology.CophonologyTheory
 
 open Morphology.DM.VI (VocabItem)
-open Core.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
-open Core.ConstraintEvaluation (Tableau)
+open Core.Constraint.OT (NamedConstraint mkTableau mkTableau_optimal_zero_first mkTableau_optimal_mem)
+open Core.Constraint.Evaluation (Tableau)
 
 -- ============================================================================
 -- § 1: Cophonological Vocabulary Item

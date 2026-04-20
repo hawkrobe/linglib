@@ -299,12 +299,12 @@ theorem latinDissimCoarse_misses_lunaris :
     `latinFineOCP` is the OCP constraint on a candidate-as-segment-list
     type evaluated against the fine consonantal tier. A tier-adjacent
     pair of identical liquids contributes one violation. -/
-def latinFineOCP : Core.OT.NamedConstraint (List LatSeg) :=
+def latinFineOCP : Core.Constraint.OT.NamedConstraint (List LatSeg) :=
   Phonology.Constraints.mkOCPOnTier "OCP/[+cons,−nasal]" LatSeg.fineTier id
 
 /-- The OCP constraint is a markedness constraint by construction. -/
 theorem latinFineOCP_is_markedness :
-    latinFineOCP.family = Core.OT.ConstraintFamily.markedness :=
+    latinFineOCP.family = Core.Constraint.OT.ConstraintFamily.markedness :=
   Phonology.Constraints.mkOCPOnTier_is_markedness _ _ _
 
 -- ============================================================================

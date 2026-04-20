@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.ExtractionMorphology
 import Linglib.Core.VoiceSystem
 
@@ -49,7 +49,7 @@ cross-referencing agreement.
 
 namespace Fragments.Mayan.Kaqchikel
 
-open Minimalism Core.OT Core.ConstraintEvaluation
+open Minimalism Core.Constraint.OT Core.Constraint.Evaluation
 
 -- ============================================================================
 -- § 1: Morphological Forms

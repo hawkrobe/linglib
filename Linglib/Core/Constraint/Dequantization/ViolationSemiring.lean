@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.ConstraintEvaluation
+import Linglib.Core.Constraint.Evaluation
 import Linglib.Core.Constraint.Dequantization.OTLimit
 import Mathlib.Algebra.Tropical.Basic
 
@@ -43,7 +43,7 @@ an optimal input–output mapping is itself an optimal mapping."
 
 namespace Core.Constraint.ViolationSemiring
 
-open Core.ConstraintEvaluation Core.Constraint
+open Core.Constraint.Evaluation Core.Constraint
 
 -- ============================================================================
 -- § 1: The Violation Semiring V

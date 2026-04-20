@@ -103,12 +103,10 @@ import Linglib.Theories.Semantics.Verb.VerbEntry
 import Linglib.Core.Logic.NaturalLogic
 import Linglib.Core.Constraint.Profile
 import Linglib.Core.Constraint.Weighted
-import Linglib.Core.Logic.ConstraintEvaluation
-import Linglib.Core.Logic.OT
-import Linglib.Core.OT.Defs
-import Linglib.Core.OT.ERC
-import Linglib.Core.OT.Antimatroid
-import Linglib.Core.OT.ERCAntimatroid
+import Linglib.Core.Constraint.Evaluation
+import Linglib.Core.Constraint.OT.Basic
+import Linglib.Core.Constraint.OT.ERC
+import Linglib.Core.Constraint.OT.Antimatroid
 import Linglib.Core.Agent.DecisionTheory
 import Linglib.Core.Agent.BayesianUpdate
 import Linglib.Core.Agent.ExperimentDesign

@@ -39,7 +39,7 @@ the model assigns higher harmony (= higher MaxEnt probability via
 namespace HayesWilson2008
 
 open Phonology Core.Constraint Phonology.Constraints
-open Core Core.OT Finset Real
+open Core Core.Constraint.OT Finset Real
 
 -- ============================================================================
 -- § 1: English Onset Constraints (Table (4) subset)

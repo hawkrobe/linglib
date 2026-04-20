@@ -60,7 +60,7 @@ namespace AfkirZellou2025
 open Core.Constraint Phonology.Constraints
 open Phonology.Syllable
 open Fragments.Tarifit.Inventory
-open Core.OT
+open Core.Constraint.OT
 
 -- ============================================================================
 -- § 1: Surface Forms and Candidates
@@ -350,7 +350,7 @@ softmax decoder used for English onset phonotactics
 
 section PredictAPI
 
-open Core.Constraint Core.OT
+open Core.Constraint Core.Constraint.OT
 
 instance : Fintype SurfaceForm where
   elems := {.faithful, .intrusive, .vowelless}

@@ -38,7 +38,7 @@ three core constraints can produce it. We prove this as
 
 namespace McCarthyPrince1995
 
-open Core.OT
+open Core.Constraint.OT
 open Phonology.Constraints
 
 -- ============================================================================

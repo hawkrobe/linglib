@@ -1,4 +1,4 @@
-import Linglib.Core.Logic.OT
+import Linglib.Core.Constraint.OT.Basic
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Core.Morphology.MorphProfile
 
@@ -43,7 +43,7 @@ reduplication for other functions while excluding *f*).
 
 namespace Phonology.Doubling
 
-open Core.OT
+open Core.Constraint.OT
 open Phonology.Constraints
 
 -- ============================================================================

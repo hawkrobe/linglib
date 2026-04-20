@@ -66,7 +66,7 @@ correspond to attested groups; {[iv]} is unattested.
 
 namespace Stojkovic2026
 
-open Core.OT Core.ConstraintEvaluation Phonology.Constraints
+open Core.Constraint.OT Core.Constraint.Evaluation Phonology.Constraints
 
 -- ============================================================================
 -- § 0: Empirical Data
