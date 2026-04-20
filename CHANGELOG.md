@@ -4,6 +4,45 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.86] - 2026-04-20
+
+### Changed
+- **`Phenomena/AuxiliaryVerbs/Diagnostics.lean` — NICE diagnostic
+  rewritten as derived predictions, not stipulated tables.** Spillover
+  from the Polarity overhaul (Diagnostics.lean was the sole consumer
+  of `Polarity/Stress.lean`, audited 2026-04-20). The previous file
+  was tautological: `*Profile := fullNICE foo` defs stipulated all
+  four NICE Bools as `true` independent of any `AuxEntry` field, and
+  `nice_*_predicts_sai` theorems conjoined hand-stipulated table cells
+  with `⟨rfl, rfl, rfl⟩` rather than computing predictions. New layout:
+  - `inductive AuxClass` (3 cases: `.full`, `.semiNI`, `.semiNE`)
+    captures Huddleston 1976's NICE-diagnostic classes; `.semiNE`
+    handles *ought*'s irregular N+E profile (no Inversion).
+  - `auxClass : AuxEntry → AuxClass` matches on `e.form` for the
+    semi-modals (`ought`, `dare`, `need`); everything else is full.
+  - `nice e := (auxClass e).toNICE` — structural derivation of the
+    4-Bool NICE feature vector from the Fragment entry.
+  - `predictSAI : NICEProfile → SAIContext → Acceptability` defined
+    as a function via `saiContextNICE : SAIContext → Option NICEProperty`
+    (matrixWh/matrixYN → inversion, sentNeg → negation, vpEllipsis →
+    code, emphatic → emphasis); other contexts default to grammatical.
+  - `predictionTable : List (NICEProfile × SAIDatum)` covers 9
+    representative pairs (4 auxiliary-passes, 2 lexical-fails, 3
+    do-support successes) drawn from
+    `Phenomena/WordOrder/SubjectAuxInversion`'s ex01/ex27/ex28/ex32/
+    ex33/ex34/ex38/ex39/ex40. Single quantified `predictSAI_agrees`
+    theorem replaces the old per-aux conjunctions.
+  - Quantified consistency theorems `all_full_classify_full` /
+    `all_semi_classify_semi` over `allFullAuxiliaries` / `allSemiModals`
+    via `decide`.
+  - Preserved the genuinely Fragment-derived `hasContractedNeg
+    e := e.negForm.isSome` and its 10 fragment-check theorems
+    (paradigm gaps at *may* / *am*).
+  Net −33 lines (217 → 184); removed ~20 trivial `*Profile :=
+  fullNICE foo` defs, ~15 tautological `_form` / `_is_full` /
+  `_is_semi` rfl theorems, 4 fake `nice_*_predicts_sai` conjunctions,
+  and `do_support_repairs_all_nice_contexts`.
+
 ## [0.230.85] - 2026-04-20
 
 ### Changed
