@@ -26,22 +26,18 @@ open Interval.QInterval
 
 /-- Exact rational power for nonneg intervals: [lo^n, hi^n].
     Requires 0 ≤ lo (so the interval is nonneg) and n : ℕ.
-    Exact — no approximation error. -/
-def rpowNat (a : QInterval) (n : ℕ) (ha : 0 ≤ a.lo) : QInterval where
-  lo := a.lo ^ n
-  hi := a.hi ^ n
-  valid := pow_le_pow_left₀ ha a.valid n
+    Exact — no approximation error.
+
+    Thin wrapper around `QInterval.rpowNat`; kept under `Interval` namespace so
+    rpow-shaped consumers (RSA reflection backend) call it directly. -/
+def rpowNat (a : QInterval) (n : ℕ) (ha : 0 ≤ a.lo) : QInterval :=
+  a.rpowNat n ha
 
 theorem rpowNat_containsReal {a : QInterval} {x : ℝ} {n : ℕ}
     (ha : 0 ≤ a.lo) (hx : a.containsReal x) :
     (rpowNat a n ha).containsReal (x ^ (↑n : ℝ)) := by
-  have hx_nn : (0 : ℝ) ≤ x := le_trans (by exact_mod_cast ha) hx.1
   rw [Real.rpow_natCast]
-  simp only [rpowNat, containsReal]
-  push_cast
-  constructor
-  · exact pow_le_pow_left₀ (by exact_mod_cast ha) hx.1 n
-  · exact pow_le_pow_left₀ hx_nn hx.2 n
+  exact QInterval.powNat_containsReal n ha hx
 
 -- ============================================================================
 -- Special cases

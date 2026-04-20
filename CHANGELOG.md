@@ -4,6 +4,19 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.63] - 2026-04-20
+
+### Changed
+- **`Linglib/Core/Interval/RpowInterval.lean`**: dedup `rpowNat` and
+  `rpowNat_containsReal` — the bodies were byte-identical to
+  `QInterval.rpowNat` / `QInterval.powNat_containsReal` modulo a
+  `Real.rpow_natCast` cast. Replaced the duplicated definitions with
+  thin delegators (3 lines each) so the `Interval.rpowNat` /
+  `rpowNat_containsReal` names still resolve at the ~16 call sites in
+  `ReflectInterval.lean`, but the underlying arithmetic and proof live
+  exactly once in `QInterval.lean`. Phase 1 of the `Core/Interval/` →
+  `Tactics/RSAPredict/Backend/` consolidation.
+
 ## [0.230.62] - 2026-04-20
 
 ### Changed
