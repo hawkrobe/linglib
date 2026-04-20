@@ -4,6 +4,70 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.79] - 2026-04-20
+
+### Changed
+- **`Linglib/Tactics/RSAPredict/Backend/Bounds.lean`**: replace 11
+  bare `simp [...]` calls with `simp only [...]` (or with explicit
+  rewrite + term-mode closer) per the CLAUDE.md proof-style hierarchy.
+  The three `subst this; simp [exact, containsReal]` proofs of
+  `(exact 0).containsReal (x ∘ y)` now reuse the existing
+  `exact_zero_containsReal` lemma after a `zero_mul`/`mul_zero`/
+  `zero_div` rewrite. The factorial computation at
+  `pade_error_bound` switches to `norm_num [Nat.factorial]`. Build
+  clean (2662 jobs).
+
+## [0.230.78] - 2026-04-20
+
+### Changed
+- **WugTest line — Tier 1 review cleanup** (4-agent critical review:
+  mathlib-quality, morphology-domain, integration-auditor,
+  cross-framework-reconciler). Correctness/integrity fixes only;
+  larger structural cleanups (HasFactor unification, TolerancePrinciple
+  bridge, fragment promotion) deferred to subsequent commits.
+  - **`Linglib/Phenomena/Morphology/Studies/AlbrightHayes2003.lean`**:
+    convert `opaque adjustedConfidence` → `noncomputable def` returning
+    `r.rawConfidence` as a placeholder with TODO. The previous `opaque`
+    declared an axiom-like commitment with no equational content while
+    the docstring claimed monotonicity properties never stated as
+    axioms — fictional spec. The discriminator depends on
+    `rawConfidence`, not the adjustment, so the placeholder is sound.
+    Reframe `ah_excludes_singleDefaultRule` docstring to acknowledge it
+    captures only the anti-dual-mechanism prong (anti-analogy via
+    structured-vs-variegated similarity is out of scope). Replace
+    "Fig. 3" / "Fig. 2a/b" location references with content
+    descriptions per CLAUDE.md hallucination prevention. Add
+    `@cite{albright-hayes-2002}`, `@cite{mikheev-1997}`,
+    `@cite{pinker-prince-1988}`, `@cite{bybee-moder-1983}` to docstring
+    header (replacing the misplaced `@cite{bybee-1985}` since
+    Bybee 1985 is not the centrally-engaged Bybee work for A&H 2003).
+  - **`Linglib/Phenomena/Phonology/Studies/BreissKatsudaKawahara2026.lean`**:
+    rename `velarMismatch` → `stringMismatch` (and `velarMismatch_self`
+    → `stringMismatch_self`); the function does whole-string identity,
+    not velar-feature comparison, and the existing "stand-in" comment
+    was honest but the name was misleading. Update docstring to flag
+    that a tier-restricted velar comparison via
+    `Theories/Phonology/Featural/Geometry.lean` is the architecturally
+    faithful version. Replace four "BKK Fig. 2" references with content
+    descriptions ("negative regression coefficient on N2 token
+    frequency" etc.) per CLAUDE.md. Reframe §10 OP-vs-LC: McCarthy
+    2005 OP narrowly applies to inflectional paradigms of one lexeme,
+    not to N1+N2 compounds; the OP-on-compounds analog is an *extended
+    application*. Update both the §10 module docstring and
+    `op_lc_disagree_on_bound` docstring to acknowledge this — the
+    architectural argument becomes "OP doesn't naturally apply to N1+N2
+    compounds; LC does, that's part of why BKK choose LC", not "OP
+    fails on these compounds on its own merits".
+  - **`blog/data/references.bib`**: add four entries for the docstring
+    citations above — `albright-hayes-2002` (the MGL ACL paper),
+    `mikheev-1997` (Computational Linguistics 23(3); the
+    lower-confidence-limit reference), `pinker-prince-1988` (the
+    dual-mechanism position A&H argues against), `bybee-moder-1983`
+    (the analogical-tradition Bybee paper that A&H argues against,
+    correcting the previous misplaced `bybee-1985` citation).
+  - Build clean (1949 jobs); bibliography regenerated with all four new
+    keys resolving (zero new "unknown key" warnings).
+
 ## [0.230.77] - 2026-04-20
 
 ### Changed

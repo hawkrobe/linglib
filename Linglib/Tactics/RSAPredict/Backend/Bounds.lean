@@ -377,13 +377,13 @@ theorem eq_of_exact {q : ℚ} {x y : ℝ}
 theorem ite_neg_containsReal {c : Prop} [Decidable c] {I : QInterval} {x y : ℝ}
     (hc : ¬c) (hy : I.containsReal y) :
     I.containsReal (if c then x else y) := by
-  simp [hc, hy]
+  simp only [if_neg hc]; exact hy
 
 /-- If the condition is known true, take the then branch. -/
 theorem ite_pos_containsReal {c : Prop} [Decidable c] {I : QInterval} {x y : ℝ}
     (hc : c) (hx : I.containsReal x) :
     I.containsReal (if c then x else y) := by
-  simp [hc, hx]
+  simp only [if_pos hc]; exact hx
 
 /-- Decidable.rec with condition known true → take the isTrue branch.
     Handles the case where `ite` has been unfolded to `Decidable.rec` by whnf. -/
@@ -452,21 +452,21 @@ theorem zero_mul_containsReal {a : QInterval} {x y : ℝ}
     (hx : a.containsReal x) (hlo : a.lo = 0) (hhi : a.hi = 0) :
     (exact 0).containsReal (x * y) := by
   have := eq_zero_of_contained_nonneg hx hlo.ge hhi.le
-  subst this; simp [exact, containsReal]
+  subst this; rw [zero_mul]; exact exact_zero_containsReal
 
 /-- If y is in a zero interval, x * y is in the zero interval. -/
 theorem mul_zero_containsReal {b : QInterval} {x y : ℝ}
     (hy : b.containsReal y) (hlo : b.lo = 0) (hhi : b.hi = 0) :
     (exact 0).containsReal (x * y) := by
   have := eq_zero_of_contained_nonneg hy hlo.ge hhi.le
-  subst this; simp [exact, containsReal]
+  subst this; rw [mul_zero]; exact exact_zero_containsReal
 
 /-- If x is in a zero interval, x / y is in the zero interval. -/
 theorem zero_div_containsReal {a : QInterval} {x y : ℝ}
     (hx : a.containsReal x) (hlo : a.lo = 0) (hhi : a.hi = 0) :
     (exact 0).containsReal (x / y) := by
   have := eq_zero_of_contained_nonneg hx hlo.ge hhi.le
-  subst this; simp [exact, containsReal]
+  subst this; rw [zero_div]; exact exact_zero_containsReal
 
 -- ============================================================================
 -- Transport along equality
@@ -774,7 +774,7 @@ theorem pade_error_bound (q : ℚ) (hq_lo : -1 ≤ q) (hq_hi : q ≤ 1)
           Real.exp_bound hx_abs (by norm_num : (0 : ℕ) < 11)
       _ ≤ 1 * ((12 : ℝ) / (↑(Nat.factorial 11) * 11)) := by
           exact mul_le_mul_of_nonneg_right (pow_le_one₀ (abs_nonneg _) hx_abs) (by positivity)
-      _ = 1 / 36590400 := by simp [Nat.factorial]; norm_num
+      _ = 1 / 36590400 := by norm_num [Nat.factorial]
   -- T₁₀·Q - P = D₁₁ (polynomial identity verified by ring)
   have hD_eq : T * Q - P = x^9 / 25401600 + x^10 / 50803200 - x^11 / 50803200 +
       x^12 / 87091200 - x^13 / 609638400 + x^14 / 6096384000 := by
@@ -947,7 +947,7 @@ private theorem reductionSteps_spec (q : ℚ) :
 private theorem repeatedSq_containsReal {I : QInterval} {z : ℝ}
     (h : 0 ≤ I.lo) (hz : I.containsReal z) (hz_nn : 0 ≤ z) :
     ∀ n, (repeatedSq I n h).containsReal (z ^ (2 ^ n))
-  | 0 => by simp [repeatedSq, repeatedSqCore]; exact hz
+  | 0 => by simp only [repeatedSq, repeatedSqCore, pow_zero, pow_one]; exact hz
   | n + 1 => by
     simp only [repeatedSq, repeatedSqCore]
     have ih := repeatedSq_containsReal h hz hz_nn n
@@ -969,7 +969,7 @@ private theorem exp_pow_reduction (q : ℚ) (k : ℕ) :
 /-- exp(n) ≤ 3^n for all n : ℕ, since e < 3. -/
 private theorem exp_le_three_pow (n : ℕ) : Real.exp (↑n : ℝ) ≤ (3 : ℝ) ^ n := by
   induction n with
-  | zero => simp [Real.exp_zero]
+  | zero => simp only [Nat.cast_zero, Real.exp_zero, pow_zero, le_refl]
   | succ n ih =>
     rw [show (↑(n + 1) : ℝ) = ↑n + 1 from by push_cast; ring]
     rw [Real.exp_add, pow_succ]
@@ -1110,7 +1110,7 @@ private theorem nat_le_exp (n : ℕ) : (↑n : ℝ) ≤ Real.exp (↑n : ℝ) :=
 /-- 2^k ≤ exp(k) for natural k, since exp(1) ≥ 2 and exp is multiplicative. -/
 private theorem pow2_le_exp (k : ℕ) : (2 : ℝ) ^ k ≤ Real.exp (↑k : ℝ) := by
   induction k with
-  | zero => simp [Real.exp_zero]
+  | zero => simp only [Nat.cast_zero, Real.exp_zero, pow_zero, le_refl]
   | succ n ih =>
     have h2 : (2 : ℝ) ≤ Real.exp 1 := by linarith [Real.add_one_le_exp (1 : ℝ)]
     calc (2 : ℝ) ^ (n + 1) = 2 ^ n * 2 := pow_succ 2 n
@@ -1134,7 +1134,7 @@ private theorem logBisectCore_sound (q : ℚ) (lo hi : ℚ) (hle : lo ≤ hi) (n
     Real.exp (↑(logBisectCore q lo hi hle n).val.1 : ℝ) ≤ ↑q ∧
     (↑q : ℝ) ≤ Real.exp (↑(logBisectCore q lo hi hle n).val.2 : ℝ) := by
   induction n generalizing lo hi with
-  | zero => simp [logBisectCore]; exact ⟨h_lo, h_hi⟩
+  | zero => simp only [logBisectCore]; exact ⟨h_lo, h_hi⟩
   | succ n ih =>
     simp only [logBisectCore]
     split
@@ -1198,7 +1198,8 @@ theorem logPoint_containsReal (q : ℚ) (hq : 0 < q) :
   split
   · -- q = 1: exact 0 contains log(1) = 0
     subst ‹q = 1›
-    simp [QInterval.exact, QInterval.containsReal, Real.log_one]
+    rw [show ((1 : ℚ) : ℝ) = 1 from by norm_cast, Real.log_one]
+    exact QInterval.exact_zero_containsReal
   · -- q ≠ 1: bisection
     simp only [QInterval.containsReal]
     have hle₀ : -(↑(Nat.log 2 q.den + 1) : ℚ) ≤ (↑(Nat.log 2 q.num.natAbs + 1) : ℚ) := by
