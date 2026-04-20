@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.69] - 2026-04-20
+
+### Changed
+- **`Core/Logic/NaturalLogic.lean`**: `NLRelation.refines` and
+  `EntailmentSig.refines` migrated `Bool → Prop` with `DecidableRel`
+  instances, removing the `bool = true` indirection in their `LE`
+  instances. `LE` now wraps the Prop relation directly via `⟨Refines⟩`,
+  with explicit `Decidable (a ≤ b)` instances synthesized via
+  `inferInstanceAs (Decidable (Refines a b))`. `OrderBot.bot_le` and
+  `OrderTop.le_top` proofs use `show Refines bot a by cases a <;> trivial`
+  to thread through the instance-defined `LE`. Two consumers in
+  `Theories/Semantics/Verb/VerbEntry.lean` updated to use
+  `(fun s => decide (s ≤ .mono))` instead of `(·.refines .mono)`.
+
 ## [0.230.68] - 2026-04-20
 
 ### Changed

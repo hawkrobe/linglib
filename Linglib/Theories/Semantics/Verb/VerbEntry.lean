@@ -390,12 +390,12 @@ def VerbCore.isPreferential (v : VerbCore) : Bool :=
     DERIVED from complementSig: any signature that refines `.mono`
     (mono, additive, mult, addMult, all) distributes. -/
 def VerbCore.distribOverConj (v : VerbCore) : Bool :=
-  v.complementSig.map (·.refines .mono) |>.getD false
+  v.complementSig.map (fun s => decide (s ≤ .mono)) |>.getD false
 
 /-- Is the complement position upward-entailing?
     DERIVED from complementSig. -/
 def VerbCore.isComplementUE (v : VerbCore) : Bool :=
-  v.complementSig.map (·.refines .mono) |>.getD false
+  v.complementSig.map (fun s => decide (s ≤ .mono)) |>.getD false
 
 /-- Valence is DERIVED from the attitude builder (for preferential attitudes) -/
 def VerbCore.preferentialValence (v : VerbCore) : Option AttitudeValence :=

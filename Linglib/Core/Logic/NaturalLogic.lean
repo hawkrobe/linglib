@@ -68,57 +68,72 @@ Key: ^ (negation) refines both | (alternation) and ⌣ (cover), because
 knowing sets are complementary tells you both that they're disjoint (|)
 and exhaustive (⌣).
 -/
-def refines : NLRelation → NLRelation → Bool
-  -- ≡ refines everything
-  | .equiv, _ => true
-  -- ⊑ refines |, ⌣, #
-  | .forward, .forward => true
-  | .forward, .alternation => true
-  | .forward, .cover => true
-  | .forward, .independent => true
-  -- ⊒ refines |, ⌣, #
-  | .reverse, .reverse => true
-  | .reverse, .alternation => true
-  | .reverse, .cover => true
-  | .reverse, .independent => true
-  -- ^ refines |, ⌣, #
-  | .negation, .negation => true
-  | .negation, .alternation => true
-  | .negation, .cover => true
-  | .negation, .independent => true
-  -- | refines #
-  | .alternation, .alternation => true
-  | .alternation, .independent => true
-  -- ⌣ refines #
-  | .cover, .cover => true
-  | .cover, .independent => true
-  -- # refines only itself
-  | .independent, .independent => true
-  | _, _ => false
+def Refines : NLRelation → NLRelation → Prop
+  | .equiv, _ => True
+  | .forward, .forward | .forward, .alternation
+  | .forward, .cover | .forward, .independent => True
+  | .reverse, .reverse | .reverse, .alternation
+  | .reverse, .cover | .reverse, .independent => True
+  | .negation, .negation | .negation, .alternation
+  | .negation, .cover | .negation, .independent => True
+  | .alternation, .alternation | .alternation, .independent => True
+  | .cover, .cover | .cover, .independent => True
+  | .independent, .independent => True
+  | _, _ => False
 
--- Mathlib order instances
-instance : LE NLRelation where le a b := refines a b = true
+instance : DecidableRel (α := NLRelation) Refines := fun a b =>
+  match a, b with
+  | .equiv, .equiv | .equiv, .forward | .equiv, .reverse
+  | .equiv, .negation | .equiv, .alternation | .equiv, .cover
+  | .equiv, .independent => isTrue trivial
+  | .forward, .forward | .forward, .alternation
+  | .forward, .cover | .forward, .independent => isTrue trivial
+  | .reverse, .reverse | .reverse, .alternation
+  | .reverse, .cover | .reverse, .independent => isTrue trivial
+  | .negation, .negation | .negation, .alternation
+  | .negation, .cover | .negation, .independent => isTrue trivial
+  | .alternation, .alternation | .alternation, .independent => isTrue trivial
+  | .cover, .cover | .cover, .independent => isTrue trivial
+  | .independent, .independent => isTrue trivial
+  | .forward, .equiv | .forward, .reverse | .forward, .negation
+  | .reverse, .equiv | .reverse, .forward | .reverse, .negation
+  | .negation, .equiv | .negation, .forward | .negation, .reverse
+  | .alternation, .equiv | .alternation, .forward | .alternation, .reverse
+  | .alternation, .negation | .alternation, .cover
+  | .cover, .equiv | .cover, .forward | .cover, .reverse
+  | .cover, .negation | .cover, .alternation
+  | .independent, .equiv | .independent, .forward | .independent, .reverse
+  | .independent, .negation | .independent, .alternation | .independent, .cover
+    => isFalse not_false
 
-private theorem NLRelation.le_refl (a : NLRelation) : refines a a = true := by
-  cases a <;> rfl
+instance : LE NLRelation := ⟨Refines⟩
 
-private theorem NLRelation.le_trans (a b c : NLRelation) :
-    refines a b = true → refines b c = true → refines a c = true := by
-  cases a <;> cases b <;> cases c <;> simp only [refines] <;> intro h1 h2 <;> trivial
+instance decidableLE (a b : NLRelation) : Decidable (a ≤ b) :=
+  inferInstanceAs (Decidable (Refines a b))
 
-private theorem NLRelation.le_antisymm (a b : NLRelation) :
-    refines a b = true → refines b a = true → a = b := by
-  cases a <;> cases b <;> simp only [refines] <;> intro h1 h2 <;> trivial
+private theorem Refines_refl (a : NLRelation) : Refines a a := by
+  cases a <;> decide
+
+private theorem Refines_trans (a b c : NLRelation) :
+    Refines a b → Refines b c → Refines a c := by
+  cases a <;> cases b <;> cases c <;> decide
+
+private theorem Refines_antisymm (a b : NLRelation) :
+    Refines a b → Refines b a → a = b := by
+  cases a <;> cases b <;> decide
 
 instance : Preorder NLRelation where
-  le_refl := NLRelation.le_refl
-  le_trans _ _ _ := NLRelation.le_trans _ _ _
+  le := Refines
+  le_refl := Refines_refl
+  le_trans := Refines_trans
 instance : PartialOrder NLRelation where
-  le_antisymm _ _ := NLRelation.le_antisymm _ _
+  le_antisymm := Refines_antisymm
 instance : Bot NLRelation := ⟨.equiv⟩
 instance : Top NLRelation := ⟨.independent⟩
-instance : OrderBot NLRelation where bot_le a := by cases a <;> rfl
-instance : OrderTop NLRelation where le_top a := by cases a <;> rfl
+instance : OrderBot NLRelation where
+  bot_le a := show Refines .equiv a by cases a <;> trivial
+instance : OrderTop NLRelation where
+  le_top a := show Refines a .independent by cases a <;> trivial
 instance : BoundedOrder NLRelation :=
   { (inferInstance : OrderBot NLRelation),
     (inferInstance : OrderTop NLRelation) with }
@@ -234,65 +249,91 @@ Refinement ordering on entailment signatures.
 The lattice has `all` at the bottom (most specific) and `mono`/`anti`
 at the top of their respective halves.
 -/
-def refines : EntailmentSig → EntailmentSig → Bool
-  -- all refines everything
-  | .all, _ => true
-  -- addMult refines additive, mult, mono
-  | .addMult, .addMult => true
-  | .addMult, .additive => true
-  | .addMult, .mult => true
-  | .addMult, .mono => true
-  -- antiAddMult refines antiAdd, antiMult, anti
-  | .antiAddMult, .antiAddMult => true
-  | .antiAddMult, .antiAdd => true
-  | .antiAddMult, .antiMult => true
-  | .antiAddMult, .anti => true
-  -- additive refines mono
-  | .additive, .additive => true
-  | .additive, .mono => true
-  -- mult refines mono
-  | .mult, .mult => true
-  | .mult, .mono => true
-  -- antiAdd refines anti
-  | .antiAdd, .antiAdd => true
-  | .antiAdd, .anti => true
-  -- antiMult refines anti
-  | .antiMult, .antiMult => true
-  | .antiMult, .anti => true
-  -- mono and anti refine only themselves
-  | .mono, .mono => true
-  | .anti, .anti => true
-  | _, _ => false
+def Refines : EntailmentSig → EntailmentSig → Prop
+  | .all, _ => True
+  | .addMult, .addMult | .addMult, .additive
+  | .addMult, .mult | .addMult, .mono => True
+  | .antiAddMult, .antiAddMult | .antiAddMult, .antiAdd
+  | .antiAddMult, .antiMult | .antiAddMult, .anti => True
+  | .additive, .additive | .additive, .mono => True
+  | .mult, .mult | .mult, .mono => True
+  | .antiAdd, .antiAdd | .antiAdd, .anti => True
+  | .antiMult, .antiMult | .antiMult, .anti => True
+  | .mono, .mono => True
+  | .anti, .anti => True
+  | _, _ => False
+
+instance : DecidableRel (α := EntailmentSig) Refines := fun a b =>
+  match a, b with
+  | .all, .all | .all, .mono | .all, .anti | .all, .additive
+  | .all, .antiAdd | .all, .mult | .all, .antiMult
+  | .all, .addMult | .all, .antiAddMult => isTrue trivial
+  | .addMult, .addMult | .addMult, .additive
+  | .addMult, .mult | .addMult, .mono => isTrue trivial
+  | .antiAddMult, .antiAddMult | .antiAddMult, .antiAdd
+  | .antiAddMult, .antiMult | .antiAddMult, .anti => isTrue trivial
+  | .additive, .additive | .additive, .mono => isTrue trivial
+  | .mult, .mult | .mult, .mono => isTrue trivial
+  | .antiAdd, .antiAdd | .antiAdd, .anti => isTrue trivial
+  | .antiMult, .antiMult | .antiMult, .anti => isTrue trivial
+  | .mono, .mono => isTrue trivial
+  | .anti, .anti => isTrue trivial
+  | .mono, .all | .mono, .anti | .mono, .additive
+  | .mono, .antiAdd | .mono, .mult | .mono, .antiMult
+  | .mono, .addMult | .mono, .antiAddMult => isFalse not_false
+  | .anti, .all | .anti, .mono | .anti, .additive
+  | .anti, .antiAdd | .anti, .mult | .anti, .antiMult
+  | .anti, .addMult | .anti, .antiAddMult => isFalse not_false
+  | .additive, .all | .additive, .anti | .additive, .antiAdd
+  | .additive, .mult | .additive, .antiMult
+  | .additive, .addMult | .additive, .antiAddMult => isFalse not_false
+  | .antiAdd, .all | .antiAdd, .mono | .antiAdd, .additive
+  | .antiAdd, .mult | .antiAdd, .antiMult
+  | .antiAdd, .addMult | .antiAdd, .antiAddMult => isFalse not_false
+  | .mult, .all | .mult, .anti | .mult, .additive
+  | .mult, .antiAdd | .mult, .antiMult
+  | .mult, .addMult | .mult, .antiAddMult => isFalse not_false
+  | .antiMult, .all | .antiMult, .mono | .antiMult, .additive
+  | .antiMult, .antiAdd | .antiMult, .mult
+  | .antiMult, .addMult | .antiMult, .antiAddMult => isFalse not_false
+  | .addMult, .all | .addMult, .anti | .addMult, .antiAdd
+  | .addMult, .antiMult | .addMult, .antiAddMult => isFalse not_false
+  | .antiAddMult, .all | .antiAddMult, .mono | .antiAddMult, .additive
+  | .antiAddMult, .mult | .antiAddMult, .addMult => isFalse not_false
+
+instance : LE EntailmentSig := ⟨Refines⟩
+
+instance decidableLE (a b : EntailmentSig) : Decidable (a ≤ b) :=
+  inferInstanceAs (Decidable (Refines a b))
 
 -- Spot-checks for the refinement lattice
-#guard refines .all .mono          -- • ≤ +
-#guard refines .all .anti          -- • ≤ −
-#guard refines .addMult .additive  -- ⊕⊞ ≤ ⊕
-#guard refines .antiAddMult .anti  -- ◇⊟ ≤ −
-#guard !refines .mono .additive    -- + ≰ ⊕
-#guard !refines .additive .mult    -- ⊕ ≰ ⊞
+example : (EntailmentSig.all : EntailmentSig) ≤ .mono := by decide
+example : (EntailmentSig.all : EntailmentSig) ≤ .anti := by decide
+example : (EntailmentSig.addMult : EntailmentSig) ≤ .additive := by decide
+example : (EntailmentSig.antiAddMult : EntailmentSig) ≤ .anti := by decide
+example : ¬ ((EntailmentSig.mono : EntailmentSig) ≤ .additive) := by decide
+example : ¬ ((EntailmentSig.additive : EntailmentSig) ≤ .mult) := by decide
 
--- Mathlib order instances
-instance : LE EntailmentSig where le a b := refines a b = true
+private theorem Refines_refl (a : EntailmentSig) : Refines a a := by
+  cases a <;> decide
 
-private theorem EntailmentSig.le_refl (a : EntailmentSig) : refines a a = true := by
-  cases a <;> rfl
+private theorem Refines_trans (a b c : EntailmentSig) :
+    Refines a b → Refines b c → Refines a c := by
+  cases a <;> cases b <;> cases c <;> decide
 
-private theorem EntailmentSig.le_trans (a b c : EntailmentSig) :
-    refines a b = true → refines b c = true → refines a c = true := by
-  cases a <;> cases b <;> cases c <;> simp only [refines] <;> intro h1 h2 <;> trivial
-
-private theorem EntailmentSig.le_antisymm (a b : EntailmentSig) :
-    refines a b = true → refines b a = true → a = b := by
-  cases a <;> cases b <;> simp only [refines] <;> intro h1 h2 <;> trivial
+private theorem Refines_antisymm (a b : EntailmentSig) :
+    Refines a b → Refines b a → a = b := by
+  cases a <;> cases b <;> decide
 
 instance : Preorder EntailmentSig where
-  le_refl := EntailmentSig.le_refl
-  le_trans _ _ _ := EntailmentSig.le_trans _ _ _
+  le := Refines
+  le_refl := Refines_refl
+  le_trans := Refines_trans
 instance : PartialOrder EntailmentSig where
-  le_antisymm _ _ := EntailmentSig.le_antisymm _ _
+  le_antisymm := Refines_antisymm
 instance : Bot EntailmentSig := ⟨.all⟩
-instance : OrderBot EntailmentSig where bot_le a := by cases a <;> rfl
+instance : OrderBot EntailmentSig where
+  bot_le a := show Refines .all a by cases a <;> trivial
 
 /--
 Projection of a NL relation through a function of given signature
