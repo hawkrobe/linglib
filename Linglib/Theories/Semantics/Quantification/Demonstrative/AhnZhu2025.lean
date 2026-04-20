@@ -426,7 +426,7 @@ theorem bridging_from_barker {E S : Type}
     -- Barker: π creates a Pred2 (has relatum slot)
     -- Ahn & Zhu: na applies π, so na creates a relatum slot
     -- Therefore: na enables bridging
-    Semantics.Noun.Relational.Barker2011.canFillRelatum .appliedPi = true := rfl
+    Semantics.Noun.Relational.Barker2011.CanFillRelatum .appliedPi := trivial
 
 /--
 **The Derivation Chain**:
@@ -442,9 +442,10 @@ applied to Mandarin demonstratives.
 -/
 theorem derivation_chain {E S : Type} :
     -- Step 1-2: From Barker - π application means relatum slot exists
-    Semantics.Noun.Relational.Barker2011.canFillRelatum .appliedPi = true ∧
+    Semantics.Noun.Relational.Barker2011.CanFillRelatum .appliedPi ∧
     -- Step 3-5: Na uses π, so na enables bridging
-    Semantics.Noun.Relational.Barker2011.canFillRelatum .noRelation = false := ⟨rfl, rfl⟩
+    ¬ Semantics.Noun.Relational.Barker2011.CanFillRelatum .noRelation :=
+  ⟨trivial, id⟩
 
 /-!
 ## What Makes This Cumulative

@@ -69,11 +69,14 @@ def objectReferential : NominalHeadClass → Bool
   | .commonNoun   => false
 
 /-- Can function as a predicate (i.e., survive without D). -/
-def canBePredicate : NominalHeadClass → Bool
-  | .pronoun      => false
-  | .properName   => true   -- conditioned: only under marked circumstances
-  | .specialCommon => true
-  | .commonNoun   => true
+def CanBePredicate : NominalHeadClass → Prop
+  | .pronoun      => False
+  | .properName   => True   -- conditioned: only under marked circumstances
+  | .specialCommon => True
+  | .commonNoun   => True
+
+instance : DecidablePred CanBePredicate := fun c => by
+  cases c <;> unfold CanBePredicate <;> infer_instance
 
 /-- Kind-referential: can denote a kind when introduced by definite article. -/
 def kindReferential : NominalHeadClass → Bool
@@ -105,10 +108,10 @@ theorem table_28 :
     kindReferential .specialCommon = true ∧
     kindReferential .commonNoun = true ∧
     -- Predicative partition
-    canBePredicate .pronoun = false ∧
-    canBePredicate .properName = true ∧
-    canBePredicate .specialCommon = true ∧
-    canBePredicate .commonNoun = true := by decide
+    ¬ CanBePredicate .pronoun ∧
+    CanBePredicate .properName ∧
+    CanBePredicate .specialCommon ∧
+    CanBePredicate .commonNoun := by decide
 
 -- ============================================================================
 -- § 2: The Properness Hierarchy — (25)

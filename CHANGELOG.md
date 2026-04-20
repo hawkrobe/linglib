@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.230.51] - 2026-04-20
+
+### Changed
+- **`Theories/Semantics/Noun/Relational/Barker2011.lean`**: `canFillRelatum` Bool → Prop (`CanFillRelatum`) with `DecidablePred` instance, per `feedback_no_intrinsic_bool.md`. `bridging_from_pi` reformulated from `= true`/`= false` triple to `CanFillRelatum a ∧ ¬ CanFillRelatum b ∧ CanFillRelatum c` with `⟨trivial, id, trivial⟩` proof.
+- **`Theories/Semantics/Quantification/Demonstrative/AhnZhu2025.lean`**: cascade — `bridging_from_barker` and `derivation_chain` consume the new Prop API (`= true` → bare predicate, `= false` → `¬`, `rfl` → `trivial`/`id`).
+- **`Theories/Interfaces/SyntaxSemantics/Minimalism/TopologicalMapping.lean`**: `canBePredicate` Bool → Prop (`CanBePredicate`) with `DecidablePred` instance. `table_28`'s predicative-partition conjuncts updated from `= true`/`= false` to bare predicate / `¬` (still closed by `decide`). The sister Bool predicates `objectReferential`/`kindReferential`/`raisingObligatory` left as Bool — outside this batch's scope.
+
 ## [0.230.50] - 2026-04-19
 
 ### Changed

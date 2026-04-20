@@ -92,10 +92,13 @@ inductive InterpretationSource where
   | noRelation        -- No relation available (bare sortal)
   deriving DecidableEq, Repr
 
-def canFillRelatum : InterpretationSource → Bool
-  | .lexicalRelation => true   -- Lexical slot
-  | .appliedPi => true         -- π-created slot
-  | .noRelation => false       -- No slot
+def CanFillRelatum : InterpretationSource → Prop
+  | .lexicalRelation => True   -- Lexical slot
+  | .appliedPi => True         -- π-created slot
+  | .noRelation => False       -- No slot
+
+instance : DecidablePred CanFillRelatum := fun s => by
+  cases s <;> unfold CanFillRelatum <;> infer_instance
 
 /-- Bridging licensing follows from π-application.
 
@@ -104,12 +107,12 @@ Relational nouns: lexical slot exists regardless of π. -/
 theorem bridging_from_pi {E S : Type}
     (P : Pred1 E S) (R : Pred2 E S) :
     -- π always creates a relatum slot
-    canFillRelatum .appliedPi = true ∧
+    CanFillRelatum .appliedPi ∧
     -- No π means no slot (for sortal nouns)
-    canFillRelatum .noRelation = false ∧
+    ¬ CanFillRelatum .noRelation ∧
     -- Lexical relations have slots
-    canFillRelatum .lexicalRelation = true := by
-  exact ⟨rfl, rfl, rfl⟩
+    CanFillRelatum .lexicalRelation :=
+  ⟨trivial, id, trivial⟩
 
 
 /-- Vikner & Jensen's taxonomy of possession relations (Barker p. 9). -/
