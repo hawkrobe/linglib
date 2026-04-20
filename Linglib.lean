@@ -178,6 +178,7 @@ import Linglib.Core.Computability.Subregular.Tier
 import Linglib.Core.Computability.Subregular.Hierarchy
 import Linglib.Core.Computability.Subregular.Piecewise
 import Linglib.Core.Computability.Subregular.Definite
+import Linglib.Core.Computability.Subregular.ForbiddenPairs
 import Linglib.Core.StringHom
 import Linglib.Core.VerbCluster
 import Linglib.Core.Case.Basic
@@ -1130,6 +1131,7 @@ import Linglib.Phenomena.Islands.Studies.CartnerEtAl2026
 import Linglib.Phenomena.Islands.Studies.HofmeisterSag2010
 import Linglib.Phenomena.Islands.Studies.Ross1967
 import Linglib.Phenomena.Islands.Studies.ShenHuang2026
+import Linglib.Phenomena.Kinship.Studies.Hudson2010
 import Linglib.Phenomena.FillerGap.Studies.Charlow2020
 import Linglib.Phenomena.FillerGap.Studies.LuPanDegen2025
 import Linglib.Phenomena.FillerGap.Studies.Osborne2019Islands
@@ -1535,9 +1537,7 @@ import Linglib.Phenomena.TenseAspect.Compare
 import Linglib.Phenomena.TenseAspect.CompareTenseModal
 import Linglib.Phenomena.TenseAspect.ComparePartee
 -- Theories: Dependency Grammar
-import Linglib.Theories.Syntax.DependencyGrammar.Core.LexicalRules
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
-import Linglib.Theories.Syntax.DependencyGrammar.Core.NetworkIntegration
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HeadCriteria
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.DependencyLength
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.HarmonicOrder
@@ -1551,6 +1551,9 @@ import Linglib.Theories.Syntax.DependencyGrammar.Formal.Ellipsis
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Discontinuity
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.Islands
 import Linglib.Theories.Syntax.DependencyGrammar.Formal.CoordinationParallelism
+-- Theories: Word Grammar
+import Linglib.Theories.Syntax.WordGrammar.LexicalRules
+import Linglib.Theories.Syntax.WordGrammar.Network
 import Linglib.Theories.Processing.Cost.Profile
 import Linglib.Theories.Processing.CueBasedRetrieval.Basic
 import Linglib.Theories.Processing.LanguageModel.Basic
@@ -2273,6 +2276,7 @@ import Linglib.Theories.Phonology.OptimalityTheory.StratalOT
 import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Theories.Phonology.OptimalityTheory.Doubling
 import Linglib.Theories.Phonology.Subregular.TierProjection
+import Linglib.Theories.Phonology.Subregular.ForbidPairs
 import Linglib.Theories.Phonology.Subregular.OCP
 -- Theories: Sociolinguistics
 import Linglib.Theories.Sociolinguistics.PropertySpace

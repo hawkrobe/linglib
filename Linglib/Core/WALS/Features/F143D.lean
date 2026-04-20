@@ -30,12 +30,12 @@ inductive OptionalTripleNegation where
 
 /-- Complete WALS 143D dataset (6 languages). -/
 def allData : List (Datapoint OptionalTripleNegation) :=
-  [ { walsCode := "doy", language := "Doyayo", iso := "dow", value := .negVNegNegvnegNegtone }
-  , { walsCode := "gnb", language := "Gunbalang", iso := "wlg", value := .negVNeg }
-  , { walsCode := "kon", language := "Kongo", iso := "kng", value := .negVNegNegVNeg }
-  , { walsCode := "kwt", language := "Kwomtari", iso := "kwo", value := .negV }
-  , { walsCode := "non", language := "Noni", iso := "nhu", value := .negvnegNegnegvneg }
-  , { walsCode := "tbl", language := "Tabla", iso := "tnm", value := .vNegNegOptneginfixOrPref }
+  [ { walsCode := "doy", iso := "dow", value := .negVNegNegvnegNegtone }
+  , { walsCode := "gnb", iso := "wlg", value := .negVNeg }
+  , { walsCode := "kon", iso := "kng", value := .negVNegNegVNeg }
+  , { walsCode := "kwt", iso := "kwo", value := .negV }
+  , { walsCode := "non", iso := "nhu", value := .negvnegNegnegvneg }
+  , { walsCode := "tbl", iso := "tnm", value := .vNegNegOptneginfixOrPref }
   ]
 
 /-- Look up a language by WALS code. -/

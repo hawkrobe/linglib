@@ -20,9 +20,9 @@ namespace DepGrammar.CoordinationParallelism.Bridge
     corresponds to backward gapping (verb retained in last conjunct). -/
 theorem sharing_direction_matches_gapping :
     -- Forward sharing: verb overt in first conjunct (like English forward gapping)
-    (Phenomena.Ellipsis.Gapping.rossOriginal .SVO).allowsForward = true ∧
+    (Phenomena.Ellipsis.Gapping.rossOriginal .SVO).allowsForward ∧
     -- Backward sharing: possible in SOV (like backward gapping)
-    (Phenomena.Ellipsis.Gapping.rossOriginal .SOV).allowsBackward = true := by
-  constructor <;> rfl
+    (Phenomena.Ellipsis.Gapping.rossOriginal .SOV).allowsBackward :=
+  ⟨trivial, trivial⟩
 
 end DepGrammar.CoordinationParallelism.Bridge

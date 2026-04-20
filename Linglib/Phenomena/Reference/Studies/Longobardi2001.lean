@@ -44,7 +44,7 @@ into a 2×2 parametric space that also predicts PN syntax.
 
 namespace Longobardi2001
 
-open Semantics.Noun.Kind.Chierchia1998 (NominalMapping canDenoteKind)
+open Semantics.Noun.Kind.Chierchia1998 (NominalMapping CanDenoteKind)
 open Semantics.Noun.Kind.Carlson1977 (PredicateLevel barePluralTranslation
   genericDerivation existentialDerivation RealizationRel stageLevelPred)
 
@@ -638,24 +638,24 @@ theorem greek_is_predOnly : toNominalMapping greek = .predOnly := rfl
 -- ============================================================================
 
 /-- English BNs can denote kinds (without overt D).
-    Derived: weak D → `argAndPred` → `canDenoteKind` = true without D. -/
+    Derived: weak D → `argAndPred` → `CanDenoteKind` holds without D. -/
 theorem english_bn_can_denote_kind :
-    canDenoteKind (toNominalMapping english) false = true := rfl
+    CanDenoteKind (toNominalMapping english) False := trivial
 
 /-- Italian BNs cannot denote kinds (without overt D).
-    Derived: strong D → `predOnly` → `canDenoteKind` = false without D. -/
+    Derived: strong D → `predOnly` → `CanDenoteKind` fails without D. -/
 theorem italian_bn_cannot_denote_kind :
-    canDenoteKind (toNominalMapping romance) false = false := rfl
+    ¬ CanDenoteKind (toNominalMapping romance) False := id
 
 /-- Italian definite plurals can denote kinds (with overt D).
     Even in a `predOnly` language, overt D restores kind denotation. -/
 theorem italian_defpl_can_denote_kind :
-    canDenoteKind (toNominalMapping romance) true = true := rfl
+    CanDenoteKind (toNominalMapping romance) True := trivial
 
 /-- Greek BNs cannot denote kinds.
     Same as Romance: strong D → `predOnly` → no kind without D. -/
 theorem greek_bn_cannot_denote_kind :
-    canDenoteKind (toNominalMapping greek) false = false := rfl
+    ¬ CanDenoteKind (toNominalMapping greek) False := id
 
 -- ============================================================================
 -- § 14: Bridge to Carlson (1977) — English BNs as Proper Names of Kinds
@@ -784,7 +784,7 @@ theorem kind_reference_predictions :
     -- Italian bare pl cannot denote kind (= KindReference.italianBarePlKind.available)
     bnCanBeReferential romance = false ∧
     -- Italian def pl can denote kind (overt D overrides strong D)
-    canDenoteKind (toNominalMapping romance) true = true := ⟨rfl, rfl, rfl⟩
+    CanDenoteKind (toNominalMapping romance) True := ⟨rfl, rfl, trivial⟩
 
 -- ============================================================================
 -- § 17: The Full Parametric Table

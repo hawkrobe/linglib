@@ -54,51 +54,51 @@ inductive ObligatoryDoubleNegationInSovLanguages where
 
 /-- Complete WALS 144N dataset (45 languages). -/
 def allData : List (Datapoint ObligatoryDoubleNegationInSovLanguages) :=
-  [ { walsCode := "amn", language := "Amanab", iso := "amn", value := .sovNegVNeg }
-  , { walsCode := "amh", language := "Amharic", iso := "amh", value := .soNegVNeg_6 }
-  , { walsCode := "amx", language := "Anamuxra", iso := "imi", value := .svOvNegVNeg }
-  , { walsCode := "apw", language := "Apache (Western)", iso := "apw", value := .snegoVNegSonegVNeg }
-  , { walsCode := "ana", language := "Araona", iso := "aro", value := .svOvNegVNeg_18 }
-  , { walsCode := "awp", language := "Awa Pit", iso := "kwi", value := .sonegvnegSonegVNeg }
-  , { walsCode := "baf", language := "Bafut", iso := "bfd", value := .svoButNegsnegov }
-  , { walsCode := "brm", language := "Burmese", iso := "mya", value := .soNegVNeg }
-  , { walsCode := "cml", language := "Camling", iso := "rab", value := .soNegVNeg_6 }
-  , { walsCode := "chb", language := "Chambri", iso := "can", value := .sovNegNegV }
-  , { walsCode := "cui", language := "Cuiba", iso := "cui", value := .negsoVNeg }
-  , { walsCode := "dha", language := "Dhaasanac", iso := "dsh", value := .sovNegVNeg }
-  , { walsCode := "evn", language := "Even", iso := "eve", value := .sovNegVNeg }
-  , { walsCode := "eve", language := "Evenki", iso := "evn", value := .sonegVNeg }
-  , { walsCode := "fur", language := "Fur", iso := "fvr", value := .soNegVNeg_6 }
-  , { walsCode := "gwa", language := "Gwari", iso := "gbr", value := .snegovnegSnegvoneg }
-  , { walsCode := "hai", language := "Haida", iso := "hai", value := .negsoVNeg }
-  , { walsCode := "ite", language := "Itelmen", iso := "itl", value := .sovNegVNeg }
-  , { walsCode := "kio", language := "Kiowa", iso := "kio", value := .negsoVNeg }
-  , { walsCode := "kis", language := "Kisi", iso := "kss", value := .snegovnegSvonegNegtone }
-  , { walsCode := "kiw", language := "Kiwai (Southern)", iso := "kjd", value := .snegoVNegSonegVNeg }
-  , { walsCode := "krw", language := "Korowai", iso := "khe", value := .soNegVNeg_6 }
-  , { walsCode := "kry", language := "Koryak", iso := "kpy", value := .soNegVNeg_6 }
-  , { walsCode := "lep", language := "Lepcha", iso := "lep", value := .soNegVNeg_6 }
-  , { walsCode := "lim", language := "Limbu", iso := "lif", value := .svOvNegVNeg_18 }
-  , { walsCode := "msn", language := "Maisin", iso := "mbq", value := .sovNegvneg }
-  , { walsCode := "mdn", language := "Mandan", iso := "mhq", value := .soNegVNeg_6 }
-  , { walsCode := "mar", language := "Maricopa", iso := "mrc", value := .soNegVNeg_6 }
-  , { walsCode := "mom", language := "Mombum", iso := "mso", value := .sovNegVNeg }
-  , { walsCode := "orh", language := "Oromo (Harar)", iso := "hae", value := .soNegVWithNegativeToneOnVerbSoNegVNegtone }
-  , { walsCode := "orw", language := "Oromo (Waata)", iso := "ssn", value := .sovNegVNeg }
-  , { walsCode := "pis", language := "Pisa", iso := "psa", value := .sovNegvneg }
-  , { walsCode := "pso", language := "Pomo (Southeastern)", iso := "pom", value := .sovNegVNeg }
-  , { walsCode := "qhu", language := "Quechua (Huallaga)", iso := "qub", value := .sovNegvneg }
-  , { walsCode := "tbl", language := "Tabla", iso := "tnm", value := .soVNegNegOptnegprefInfix }
-  , { walsCode := "tnc", language := "Tanacross", iso := "tcb", value := .svOvNegVNeg }
-  , { walsCode := "thu", language := "Thulung", iso := "tdh", value := .sonegVNeg }
-  , { walsCode := "tig", language := "Tigrinya", iso := "tir", value := .soNegVNeg_6 }
-  , { walsCode := "trm", language := "Tirmaga", iso := "suq", value := .svoButSonegVNegSoNegVNeg }
-  , { walsCode := "tte", language := "Tutelo", iso := "tta", value := .soNegVNeg_6 }
-  , { walsCode := "tye", language := "Tyeraity", iso := "woa", value := .sonegvneg }
-  , { walsCode := "way", language := "Wayampi", iso := "oym", value := .soNegVNeg_6 }
-  , { walsCode := "yqy", language := "Yaqay", iso := "jaq", value := .soNegVNeg_6 }
-  , { walsCode := "zun", language := "Zuni", iso := "zun", value := .negsoVNeg }
-  , { walsCode := "eme", language := "Émérillon", iso := "eme", value := .soNegVNeg_6 }
+  [ { walsCode := "amn", iso := "amn", value := .sovNegVNeg }
+  , { walsCode := "amh", iso := "amh", value := .soNegVNeg_6 }
+  , { walsCode := "amx", iso := "imi", value := .svOvNegVNeg }
+  , { walsCode := "apw", iso := "apw", value := .snegoVNegSonegVNeg }
+  , { walsCode := "ana", iso := "aro", value := .svOvNegVNeg_18 }
+  , { walsCode := "awp", iso := "kwi", value := .sonegvnegSonegVNeg }
+  , { walsCode := "baf", iso := "bfd", value := .svoButNegsnegov }
+  , { walsCode := "brm", iso := "mya", value := .soNegVNeg }
+  , { walsCode := "cml", iso := "rab", value := .soNegVNeg_6 }
+  , { walsCode := "chb", iso := "can", value := .sovNegNegV }
+  , { walsCode := "cui", iso := "cui", value := .negsoVNeg }
+  , { walsCode := "dha", iso := "dsh", value := .sovNegVNeg }
+  , { walsCode := "evn", iso := "eve", value := .sovNegVNeg }
+  , { walsCode := "eve", iso := "evn", value := .sonegVNeg }
+  , { walsCode := "fur", iso := "fvr", value := .soNegVNeg_6 }
+  , { walsCode := "gwa", iso := "gbr", value := .snegovnegSnegvoneg }
+  , { walsCode := "hai", iso := "hai", value := .negsoVNeg }
+  , { walsCode := "ite", iso := "itl", value := .sovNegVNeg }
+  , { walsCode := "kio", iso := "kio", value := .negsoVNeg }
+  , { walsCode := "kis", iso := "kss", value := .snegovnegSvonegNegtone }
+  , { walsCode := "kiw", iso := "kjd", value := .snegoVNegSonegVNeg }
+  , { walsCode := "krw", iso := "khe", value := .soNegVNeg_6 }
+  , { walsCode := "kry", iso := "kpy", value := .soNegVNeg_6 }
+  , { walsCode := "lep", iso := "lep", value := .soNegVNeg_6 }
+  , { walsCode := "lim", iso := "lif", value := .svOvNegVNeg_18 }
+  , { walsCode := "msn", iso := "mbq", value := .sovNegvneg }
+  , { walsCode := "mdn", iso := "mhq", value := .soNegVNeg_6 }
+  , { walsCode := "mar", iso := "mrc", value := .soNegVNeg_6 }
+  , { walsCode := "mom", iso := "mso", value := .sovNegVNeg }
+  , { walsCode := "orh", iso := "hae", value := .soNegVWithNegativeToneOnVerbSoNegVNegtone }
+  , { walsCode := "orw", iso := "ssn", value := .sovNegVNeg }
+  , { walsCode := "pis", iso := "psa", value := .sovNegvneg }
+  , { walsCode := "pso", iso := "pom", value := .sovNegVNeg }
+  , { walsCode := "qhu", iso := "qub", value := .sovNegvneg }
+  , { walsCode := "tbl", iso := "tnm", value := .soVNegNegOptnegprefInfix }
+  , { walsCode := "tnc", iso := "tcb", value := .svOvNegVNeg }
+  , { walsCode := "thu", iso := "tdh", value := .sonegVNeg }
+  , { walsCode := "tig", iso := "tir", value := .soNegVNeg_6 }
+  , { walsCode := "trm", iso := "suq", value := .svoButSonegVNegSoNegVNeg }
+  , { walsCode := "tte", iso := "tta", value := .soNegVNeg_6 }
+  , { walsCode := "tye", iso := "woa", value := .sonegvneg }
+  , { walsCode := "way", iso := "oym", value := .soNegVNeg_6 }
+  , { walsCode := "yqy", iso := "jaq", value := .soNegVNeg_6 }
+  , { walsCode := "zun", iso := "zun", value := .negsoVNeg }
+  , { walsCode := "eme", iso := "eme", value := .soNegVNeg_6 }
   ]
 
 /-- Look up a language by WALS code. -/

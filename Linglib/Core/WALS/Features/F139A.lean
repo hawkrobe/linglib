@@ -26,41 +26,41 @@ inductive IrregularNegativesInSignLanguages where
 
 /-- Complete WALS 139A dataset (35 languages). -/
 def allData : List (Datapoint IrregularNegativesInSignLanguages) :=
-  [ { walsCode := "ada", language := "Adamorobe Sign Language", iso := "ads", value := .some }
-  , { walsCode := "asl", language := "American Sign Language", iso := "ase", value := .many }
-  , { walsCode := "aus", language := "Auslan", iso := "asf", value := .many }
-  , { walsCode := "bsl", language := "British Sign Language", iso := "bfi", value := .many }
-  , { walsCode := "csl", language := "Chinese Sign Language", iso := "csl", value := .many }
-  , { walsCode := "dge", language := "Deutsche Gebärdensprache", iso := "gsg", value := .many }
-  , { walsCode := "fsl", language := "Finnish Sign Language", iso := "fse", value := .many }
-  , { walsCode := "gsl", language := "Greek Sign Language", iso := "gss", value := .many }
-  , { walsCode := "hks", language := "Hong Kong Sign Language", iso := "hks", value := .many }
-  , { walsCode := "ics", language := "Icelandic Sign Language", iso := "icl", value := .some }
-  , { walsCode := "ipi", language := "Indo-Pakistani Sign Language (Indian dialects)", iso := "ins", value := .one }
-  , { walsCode := "ipk", language := "Indo-Pakistani Sign Language (Karachi dialect)", iso := "pks", value := .none }
-  , { walsCode := "isl", language := "International Sign", iso := "ils", value := .some }
-  , { walsCode := "irs", language := "Irish Sign Language", iso := "isg", value := .some }
-  , { walsCode := "iss", language := "Israeli Sign Language", iso := "isr", value := .many }
-  , { walsCode := "kkl", language := "Kata Kolok", iso := "bqy", value := .one }
-  , { walsCode := "lsf", language := "Langue des Signes Française", iso := "fsl", value := .many }
-  , { walsCode := "lsq", language := "Langue des Signes Québecoise", iso := "fcs", value := .many }
-  , { walsCode := "lsa", language := "Lengua de Señas Argentina", iso := "aed", value := .many }
-  , { walsCode := "lse", language := "Lengua de Señas Española", iso := "ssp", value := .one }
-  , { walsCode := "lii", language := "Lingua Italiana dei Segni", iso := "ise", value := .some }
-  , { walsCode := "lgh", language := "Lughat al-Isharat al-Lubnaniya", iso := "jos", value := .some }
-  , { walsCode := "lsb", language := "Língua de Sinais Brasileira", iso := "bzs", value := .many }
-  , { walsCode := "ned", language := "Nederlandse Gebarentaal", iso := "dse", value := .some }
-  , { walsCode := "nzs", language := "New Zealand Sign Language", iso := "nzs", value := .many }
-  , { walsCode := "nih", language := "Nihon Shuwa (Japanese Sign Language)", iso := "jsl", value := .many }
-  , { walsCode := "rsl", language := "Russian Sign Language", iso := "rsl", value := .many }
-  , { walsCode := "ssl", language := "South Korean Sign Language", iso := "kvk", value := .many }
-  , { walsCode := "svt", language := "Svenska Teckenspråket", iso := "swl", value := .many }
-  , { walsCode := "tzi", language := "Taiwanese Sign Language (Ziran Shouyu)", iso := "tss", value := .many }
-  , { walsCode := "tsl", language := "Tanzania Sign Language", iso := "tza", value := .some }
-  , { walsCode := "ths", language := "Thai Sign Language", iso := "tsq", value := .some }
-  , { walsCode := "tui", language := "Türk Isaret Dili", iso := "tsm", value := .some }
-  , { walsCode := "ugs", language := "Ugandan Sign Language", iso := "ugn", value := .many }
-  , { walsCode := "vla", language := "Vlaamse Gebarentaal", iso := "vgt", value := .many }
+  [ { walsCode := "ada", iso := "ads", value := .some }
+  , { walsCode := "asl", iso := "ase", value := .many }
+  , { walsCode := "aus", iso := "asf", value := .many }
+  , { walsCode := "bsl", iso := "bfi", value := .many }
+  , { walsCode := "csl", iso := "csl", value := .many }
+  , { walsCode := "dge", iso := "gsg", value := .many }
+  , { walsCode := "fsl", iso := "fse", value := .many }
+  , { walsCode := "gsl", iso := "gss", value := .many }
+  , { walsCode := "hks", iso := "hks", value := .many }
+  , { walsCode := "ics", iso := "icl", value := .some }
+  , { walsCode := "ipi", iso := "ins", value := .one }
+  , { walsCode := "ipk", iso := "pks", value := .none }
+  , { walsCode := "isl", iso := "ils", value := .some }
+  , { walsCode := "irs", iso := "isg", value := .some }
+  , { walsCode := "iss", iso := "isr", value := .many }
+  , { walsCode := "kkl", iso := "bqy", value := .one }
+  , { walsCode := "lsf", iso := "fsl", value := .many }
+  , { walsCode := "lsq", iso := "fcs", value := .many }
+  , { walsCode := "lsa", iso := "aed", value := .many }
+  , { walsCode := "lse", iso := "ssp", value := .one }
+  , { walsCode := "lii", iso := "ise", value := .some }
+  , { walsCode := "lgh", iso := "jos", value := .some }
+  , { walsCode := "lsb", iso := "bzs", value := .many }
+  , { walsCode := "ned", iso := "dse", value := .some }
+  , { walsCode := "nzs", iso := "nzs", value := .many }
+  , { walsCode := "nih", iso := "jsl", value := .many }
+  , { walsCode := "rsl", iso := "rsl", value := .many }
+  , { walsCode := "ssl", iso := "kvk", value := .many }
+  , { walsCode := "svt", iso := "swl", value := .many }
+  , { walsCode := "tzi", iso := "tss", value := .many }
+  , { walsCode := "tsl", iso := "tza", value := .some }
+  , { walsCode := "ths", iso := "tsq", value := .some }
+  , { walsCode := "tui", iso := "tsm", value := .some }
+  , { walsCode := "ugs", iso := "ugn", value := .many }
+  , { walsCode := "vla", iso := "vgt", value := .many }
   ]
 
 /-- Look up a language by WALS code. -/

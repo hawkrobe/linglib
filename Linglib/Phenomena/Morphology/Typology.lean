@@ -262,30 +262,30 @@ def toFusion : FusionType → Fusion
 
 -- Grounding: example languages verified against F20A data
 theorem vietnamese_isolating : Core.WALS.F20A.lookup "vie" =
-    some ⟨"vie", "Vietnamese", "vie", .exclusivelyIsolating⟩ := by native_decide
+    some ⟨"vie", "vie", .exclusivelyIsolating⟩ := by native_decide
 theorem indonesian_isolating : Core.WALS.F20A.lookup "ind" =
-    some ⟨"ind", "Indonesian", "ind", .exclusivelyIsolating⟩ := by native_decide
+    some ⟨"ind", "ind", .exclusivelyIsolating⟩ := by native_decide
 theorem turkish_concatenative : Core.WALS.F20A.lookup "tur" =
-    some ⟨"tur", "Turkish", "tur", .exclusivelyConcatenative⟩ := by native_decide
+    some ⟨"tur", "tur", .exclusivelyConcatenative⟩ := by native_decide
 theorem finnish_concatenative : Core.WALS.F20A.lookup "fin" =
-    some ⟨"fin", "Finnish", "fin", .exclusivelyConcatenative⟩ := by native_decide
+    some ⟨"fin", "fin", .exclusivelyConcatenative⟩ := by native_decide
 theorem swahili_concatenative : Core.WALS.F20A.lookup "swa" =
-    some ⟨"swa", "Swahili", "swh", .exclusivelyConcatenative⟩ := by native_decide
+    some ⟨"swa", "swh", .exclusivelyConcatenative⟩ := by native_decide
 theorem arabic_ablaut : Core.WALS.F20A.lookup "aeg" =
-    some ⟨"aeg", "Arabic (Egyptian)", "arz", .ablautConcatenative⟩ := by native_decide
+    some ⟨"aeg", "arz", .ablautConcatenative⟩ := by native_decide
 theorem hebrew_ablaut : Core.WALS.F20A.lookup "heb" =
-    some ⟨"heb", "Hebrew (Modern)", "heb", .ablautConcatenative⟩ := by native_decide
+    some ⟨"heb", "heb", .ablautConcatenative⟩ := by native_decide
 -- Note: Russian and German are exclusivelyConcatenative in WALS 20A (case formatives),
 -- despite being commonly called "fusional" in typological tradition.
 theorem russian_concatenative : Core.WALS.F20A.lookup "rus" =
-    some ⟨"rus", "Russian", "rus", .exclusivelyConcatenative⟩ := by native_decide
+    some ⟨"rus", "rus", .exclusivelyConcatenative⟩ := by native_decide
 theorem german_concatenative : Core.WALS.F20A.lookup "ger" =
-    some ⟨"ger", "German", "deu", .exclusivelyConcatenative⟩ := by native_decide
+    some ⟨"ger", "deu", .exclusivelyConcatenative⟩ := by native_decide
 -- Note: Mandarin and Thai are isolatingConcatenative (mixed), not exclusively isolating.
 theorem mandarin_isoConcatenative : Core.WALS.F20A.lookup "mnd" =
-    some ⟨"mnd", "Mandarin", "cmn", .isolatingConcatenative⟩ := by native_decide
+    some ⟨"mnd", "cmn", .isolatingConcatenative⟩ := by native_decide
 theorem thai_isoConcatenative : Core.WALS.F20A.lookup "tha" =
-    some ⟨"tha", "Thai", "tha", .isolatingConcatenative⟩ := by native_decide
+    some ⟨"tha", "tha", .isolatingConcatenative⟩ := by native_decide
 
 /-- A single row in a WALS distribution table: a label and a language count. -/
 structure WALSCount where
@@ -322,17 +322,17 @@ def toExponence : ExponenceType → Exponence
 
 -- Grounding: example languages verified against F21A data
 theorem turkish_monoexp : Core.WALS.F21A.lookup "tur" =
-    some ⟨"tur", "Turkish", "tur", .monoexponentialCase⟩ := by native_decide
+    some ⟨"tur", "tur", .monoexponentialCase⟩ := by native_decide
 theorem finnish_caseNumber : Core.WALS.F21A.lookup "fin" =
-    some ⟨"fin", "Finnish", "fin", .caseNumber⟩ := by native_decide
+    some ⟨"fin", "fin", .caseNumber⟩ := by native_decide
 theorem german_caseNumber : Core.WALS.F21A.lookup "ger" =
-    some ⟨"ger", "German", "deu", .caseNumber⟩ := by native_decide
+    some ⟨"ger", "deu", .caseNumber⟩ := by native_decide
 theorem russian_caseNumber : Core.WALS.F21A.lookup "rus" =
-    some ⟨"rus", "Russian", "rus", .caseNumber⟩ := by native_decide
+    some ⟨"rus", "rus", .caseNumber⟩ := by native_decide
 theorem english_noCase : Core.WALS.F21A.lookup "eng" =
-    some ⟨"eng", "English", "eng", .noCase⟩ := by native_decide
+    some ⟨"eng", "eng", .noCase⟩ := by native_decide
 theorem kayardild_caseTam : Core.WALS.F21A.lookup "kay" =
-    some ⟨"kay", "Kayardild", "gyd", .caseTam⟩ := by native_decide
+    some ⟨"kay", "gyd", .caseTam⟩ := by native_decide
 
 /-- WALS Chapter 21 distribution, derived from F21A data (@cite{bickel-nichols-2013b}). -/
 def ch21Distribution : List WALSCount :=
@@ -360,21 +360,21 @@ def toVerbSynthesis : InflectionalSynthesis → VerbSynthesis
 
 -- Grounding: example languages verified against F22A data
 theorem mandarin_0_1 : Core.WALS.F22A.lookup "mnd" =
-    some ⟨"mnd", "Mandarin", "cmn", .categoryPerWord0_1⟩ := by native_decide
+    some ⟨"mnd", "cmn", .categoryPerWord0_1⟩ := by native_decide
 theorem english_2_3 : Core.WALS.F22A.lookup "eng" =
-    some ⟨"eng", "English", "eng", .categoriesPerWord2_3⟩ := by native_decide
+    some ⟨"eng", "eng", .categoriesPerWord2_3⟩ := by native_decide
 theorem thai_2_3 : Core.WALS.F22A.lookup "tha" =
-    some ⟨"tha", "Thai", "tha", .categoriesPerWord2_3⟩ := by native_decide
+    some ⟨"tha", "tha", .categoriesPerWord2_3⟩ := by native_decide
 theorem spanish_4_5 : Core.WALS.F22A.lookup "spa" =
-    some ⟨"spa", "Spanish", "spa", .categoriesPerWord4_5⟩ := by native_decide
+    some ⟨"spa", "spa", .categoriesPerWord4_5⟩ := by native_decide
 theorem russian_4_5 : Core.WALS.F22A.lookup "rus" =
-    some ⟨"rus", "Russian", "rus", .categoriesPerWord4_5⟩ := by native_decide
+    some ⟨"rus", "rus", .categoriesPerWord4_5⟩ := by native_decide
 theorem swahili_4_5 : Core.WALS.F22A.lookup "swa" =
-    some ⟨"swa", "Swahili", "swh", .categoriesPerWord4_5⟩ := by native_decide
+    some ⟨"swa", "swh", .categoriesPerWord4_5⟩ := by native_decide
 theorem georgian_8_9 : Core.WALS.F22A.lookup "geo" =
-    some ⟨"geo", "Georgian", "kat", .categoriesPerWord8_9⟩ := by native_decide
+    some ⟨"geo", "kat", .categoriesPerWord8_9⟩ := by native_decide
 theorem abkhaz_10_11 : Core.WALS.F22A.lookup "abk" =
-    some ⟨"abk", "Abkhaz", "abk", .categoriesPerWord10_11⟩ := by native_decide
+    some ⟨"abk", "abk", .categoriesPerWord10_11⟩ := by native_decide
 
 /-- WALS Chapter 22 distribution, derived from F22A data (@cite{bickel-nichols-2013c}). -/
 def ch22Distribution : List WALSCount :=
@@ -409,30 +409,30 @@ def toLocusOfMarking : LocusOfMarkingWholeLanguageTypology → LocusOfMarking
 
 -- Grounding: example languages verified against F26A data
 theorem turkish_strongSuffix : Core.WALS.F26A.lookup "tur" =
-    some ⟨"tur", "Turkish", "tur", .stronglySuffixing⟩ := by native_decide
+    some ⟨"tur", "tur", .stronglySuffixing⟩ := by native_decide
 theorem japanese_strongSuffix : Core.WALS.F26A.lookup "jpn" =
-    some ⟨"jpn", "Japanese", "jpn", .stronglySuffixing⟩ := by native_decide
+    some ⟨"jpn", "jpn", .stronglySuffixing⟩ := by native_decide
 -- Note: Russian and German are strongly (not weakly) suffixing in WALS 26A.
 theorem russian_strongSuffix : Core.WALS.F26A.lookup "rus" =
-    some ⟨"rus", "Russian", "rus", .stronglySuffixing⟩ := by native_decide
+    some ⟨"rus", "rus", .stronglySuffixing⟩ := by native_decide
 theorem german_strongSuffix : Core.WALS.F26A.lookup "ger" =
-    some ⟨"ger", "German", "deu", .stronglySuffixing⟩ := by native_decide
+    some ⟨"ger", "deu", .stronglySuffixing⟩ := by native_decide
 theorem arabic_eg_weakSuffix : Core.WALS.F26A.lookup "aeg" =
-    some ⟨"aeg", "Arabic (Egyptian)", "arz", .weaklySuffixing⟩ := by native_decide
+    some ⟨"aeg", "arz", .weaklySuffixing⟩ := by native_decide
 theorem swahili_weakPrefix : Core.WALS.F26A.lookup "swa" =
-    some ⟨"swa", "Swahili", "swh", .weaklyPrefixing⟩ := by native_decide
+    some ⟨"swa", "swh", .weaklyPrefixing⟩ := by native_decide
 theorem navajo_strongPrefix : Core.WALS.F26A.lookup "nav" =
-    some ⟨"nav", "Navajo", "nav", .strongPrefixing⟩ := by native_decide
+    some ⟨"nav", "nav", .strongPrefixing⟩ := by native_decide
 -- Note: Thai, Tagalog, and Vietnamese are littleAffixation, not prefixing.
 theorem thai_littleAffix : Core.WALS.F26A.lookup "tha" =
-    some ⟨"tha", "Thai", "tha", .littleAffixation⟩ := by native_decide
+    some ⟨"tha", "tha", .littleAffixation⟩ := by native_decide
 theorem tagalog_littleAffix : Core.WALS.F26A.lookup "tag" =
-    some ⟨"tag", "Tagalog", "tgl", .littleAffixation⟩ := by native_decide
+    some ⟨"tag", "tgl", .littleAffixation⟩ := by native_decide
 theorem vietnamese_littleAffix : Core.WALS.F26A.lookup "vie" =
-    some ⟨"vie", "Vietnamese", "vie", .littleAffixation⟩ := by native_decide
+    some ⟨"vie", "vie", .littleAffixation⟩ := by native_decide
 -- Note: Mandarin is strongly suffixing in WALS 26A (few affixes but all suffixal).
 theorem mandarin_strongSuffix : Core.WALS.F26A.lookup "mnd" =
-    some ⟨"mnd", "Mandarin", "cmn", .stronglySuffixing⟩ := by native_decide
+    some ⟨"mnd", "cmn", .stronglySuffixing⟩ := by native_decide
 
 /-- WALS Chapter 26 distribution, derived from F26A data (@cite{dryer-haspelmath-2013}). -/
 def ch26Distribution : List WALSCount :=
@@ -453,17 +453,17 @@ theorem ch26_total :
 
 -- Grounding: example languages verified against F27A data
 theorem tagalog_fullPartial : Core.WALS.F27A.lookup "tag" =
-    some ⟨"tag", "Tagalog", "tgl", .productiveFullAndPartialReduplication⟩ := by native_decide
+    some ⟨"tag", "tgl", .productiveFullAndPartialReduplication⟩ := by native_decide
 theorem swahili_fullPartial : Core.WALS.F27A.lookup "swa" =
-    some ⟨"swa", "Swahili", "swh", .productiveFullAndPartialReduplication⟩ := by native_decide
+    some ⟨"swa", "swh", .productiveFullAndPartialReduplication⟩ := by native_decide
 -- Note: Indonesian has full reduplication ONLY (not partial) in WALS 27A.
 theorem indonesian_fullOnly : Core.WALS.F27A.lookup "ind" =
-    some ⟨"ind", "Indonesian", "ind", .fullReduplicationOnly⟩ := by native_decide
+    some ⟨"ind", "ind", .fullReduplicationOnly⟩ := by native_decide
 theorem english_noRedup : Core.WALS.F27A.lookup "eng" =
-    some ⟨"eng", "English", "eng", .noProductiveReduplication⟩ := by native_decide
+    some ⟨"eng", "eng", .noProductiveReduplication⟩ := by native_decide
 -- Note: Arabic (Egyptian) has productive reduplication in WALS 27A, not "none."
 theorem arabic_eg_fullPartial : Core.WALS.F27A.lookup "aeg" =
-    some ⟨"aeg", "Arabic (Egyptian)", "arz", .productiveFullAndPartialReduplication⟩ := by native_decide
+    some ⟨"aeg", "arz", .productiveFullAndPartialReduplication⟩ := by native_decide
 
 /-- WALS Chapter 27 distribution, derived from F27A data (@cite{rubino-2013}). -/
 def ch27Distribution : List WALSCount :=

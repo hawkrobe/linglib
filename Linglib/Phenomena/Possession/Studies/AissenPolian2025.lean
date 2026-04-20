@@ -698,21 +698,18 @@ theorem ψ_constructions_permit_both_modes (c : ψConstruction) :
     Psr-O is the possessor of the internal argument of a transitive
     clause (vP layer → agent intervenes → stranding blocked). -/
 theorem table2_psr_S_O :
-    canExtractPossessor .possP .t .unaccusative .stranding = true ∧
-    canExtractPossessor .dp .t .unaccusative .piedPiping = true :=
-  ⟨rfl, rfl⟩
+    CanExtractPossessor .possP .t .unaccusative .stranding ∧
+    CanExtractPossessor .dp .t .unaccusative .piedPiping := by decide
 
 theorem table2_psr_O :
-    canExtractPossessor .possP .t .transitive .stranding = false ∧
-    canExtractPossessor .dp .t .transitive .piedPiping = true :=
-  ⟨rfl, rfl⟩
+    ¬ CanExtractPossessor .possP .t .transitive .stranding ∧
+    CanExtractPossessor .dp .t .transitive .piedPiping := by decide
 
 /-- The stranding asymmetry between Psr-S_O and Psr-O reduces to
     whether the clause type has a vP layer. -/
 theorem stranding_asymmetry_is_vP :
-    canExtractPossessor .possP .t .unaccusative .stranding = true ∧
-    canExtractPossessor .possP .t .transitive .stranding = false :=
-  ⟨rfl, rfl⟩
+    CanExtractPossessor .possP .t .unaccusative .stranding ∧
+    ¬ CanExtractPossessor .possP .t .transitive .stranding := by decide
 
 -- ============================================================================
 -- § 15: Bridge to Ergativity
@@ -869,26 +866,26 @@ The tree-geometric derivation agrees with the boolean stipulations
 from §§3-4. Each conjunction pairs a tree prediction with the
 corresponding boolean function, showing they make identical claims. -/
 
-/-- D-layer shielding: tree geometry matches `dLayerShields .dp`. -/
+/-- D-layer shielding: tree geometry matches `DLayerShields .dp`. -/
 theorem bridge_dLayer_dp :
     closestGoalB treeUnaccDP T₀ Psr hasDFeatures = false ∧
-    dLayerShields .dp = true := ⟨by decide, rfl⟩
+    DLayerShields .dp := ⟨by decide, trivial⟩
 
-/-- No D-layer for PossP: tree geometry matches `dLayerShields .possP`. -/
+/-- No D-layer for PossP: tree geometry matches `DLayerShields .possP`. -/
 theorem bridge_no_dLayer_possP :
     closestGoalB treeUnaccPossP T₀ Psr hasDFeatures = true ∧
-    dLayerShields .possP = false := ⟨by decide, rfl⟩
+    ¬ DLayerShields .possP := ⟨by decide, id⟩
 
-/-- Agent intervention: tree geometry matches `hasIntervener .t .transitive`. -/
+/-- Agent intervention: tree geometry matches `HasIntervener .t .transitive`. -/
 theorem bridge_intervention_trans :
     closestGoalB treeTransPossP T₀ Psr hasDFeatures = false ∧
-    hasIntervener .t .transitive false = true := ⟨by decide, rfl⟩
+    HasIntervener .t .transitive false := ⟨by decide, trivial⟩
 
 /-- No intervention in unaccusative: tree geometry matches
-    `hasIntervener .t .unaccusative`. -/
+    `HasIntervener .t .unaccusative`. -/
 theorem bridge_no_intervention_unacc :
     closestGoalB treeUnaccPossP T₀ Psr hasDFeatures = true ∧
-    hasIntervener .t .unaccusative false = false := ⟨by decide, rfl⟩
+    ¬ HasIntervener .t .unaccusative false := ⟨by decide, id⟩
 
 -- ============================================================================
 -- § 17: Selective Opacity from Tree Geometry (N-Horizons)
@@ -946,30 +943,31 @@ theorem dHead_not_behind_horizon :
 
 /-- The N-horizon is geometrically present even for D-probes — N°
     c-commands Psr regardless of probe type. The difference is that
-    D-probes IGNORE the horizon (`selectivelyOpaque .dProbe = false`).
+    D-probes IGNORE the horizon (`¬ SelectivelyOpaque .dProbe`).
     This is the "selective" in selective opacity: the same tree
     geometry produces different results for different probe types. -/
 theorem horizon_present_but_dprobe_ignores :
     behindHorizonB treeUnaccPossP T₀ Psr .N = true ∧
-    selectivelyOpaque .dProbe = false := ⟨by decide, rfl⟩
+    ¬ SelectivelyOpaque .dProbe := ⟨by decide, id⟩
 
 /-! ### Bridge Theorems -/
 
 /-- Selective opacity from tree geometry: the N-horizon blocks
     wh-subextraction of Psr from both DP and PossP nominals,
-    agreeing with `canĀSubextract`. -/
+    agreeing with `CanĀSubextract`. -/
 theorem bridge_selective_opacity :
     behindHorizonB treeCPUnaccDP C₀ Psr .N = true ∧
     behindHorizonB treeCPUnaccPossP C₀ Psr .N = true ∧
-    canĀSubextract .dp = false ∧
-    canĀSubextract .possP = false := ⟨by decide, by decide, rfl, rfl⟩
+    ¬ CanĀSubextract .dp ∧
+    ¬ CanĀSubextract .possP :=
+  ⟨by decide, by decide, fun h => h trivial, fun h => h trivial⟩
 
 /-- D° visible despite N-horizon: pied-piping is available because
     D° is outside N°'s c-command domain. Agrees with
-    `extractionAvailable .piedPiping .dp`. -/
+    `ExtractionAvailable .piedPiping .dp`. -/
 theorem bridge_piedpiping_ok :
     behindHorizonB treeCPUnaccDP C₀ D₀ .N = false ∧
-    extractionAvailable .piedPiping .dp = true := ⟨by decide, rfl⟩
+    ExtractionAvailable .piedPiping .dp := ⟨by decide, trivial⟩
 
 /-! ### Unified Derivation -/
 

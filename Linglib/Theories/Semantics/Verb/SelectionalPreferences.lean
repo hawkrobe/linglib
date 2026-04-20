@@ -31,19 +31,25 @@ inductive SemClass where
   | time
   deriving Repr, DecidableEq
 
-/-- Class hierarchy: `subclassOf a b` means a is a subclass of b. -/
-def subclassOf : SemClass → SemClass → Bool
-  | .human, .animate => true
-  | .animal, .animate => true
-  | .plant, .inanimate => true
-  | .artifact, .inanimate => true
-  | _, _ => false
+/-- Class hierarchy: `SubclassOf a b` means a is a subclass of b. -/
+def SubclassOf : SemClass → SemClass → Prop
+  | .human, .animate    => True
+  | .animal, .animate   => True
+  | .plant, .inanimate  => True
+  | .artifact, .inanimate => True
+  | _, _                => False
+
+instance : ∀ a b, Decidable (SubclassOf a b) := fun a b => by
+  cases a <;> cases b <;> unfold SubclassOf <;> infer_instance
 
 /-- Transitive closure of subclass relation. -/
-def isA : SemClass → SemClass → Bool
-  | c₁, c₂ => c₁ == c₂ || subclassOf c₁ c₂ ||
-    [SemClass.animate, .inanimate, .human, .animal, .plant, .artifact].any
-      λ c => subclassOf c₁ c && subclassOf c c₂
+def IsA (c₁ c₂ : SemClass) : Prop :=
+  c₁ = c₂ ∨ SubclassOf c₁ c₂ ∨
+    ∃ c ∈ [SemClass.animate, .inanimate, .human, .animal, .plant, .artifact],
+      SubclassOf c₁ c ∧ SubclassOf c c₂
+
+instance : ∀ a b, Decidable (IsA a b) := fun a b => by
+  unfold IsA; infer_instance
 
 end Classes
 

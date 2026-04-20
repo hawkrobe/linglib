@@ -70,8 +70,8 @@ English [+arg, +pred] allows both; Italian [-arg, +pred] forces D.
 
 namespace Guerrini2026
 
-open Semantics.Noun.Kind.Chierchia1998 (NominalMapping Kind canDenoteKind
-  canDenoteProperty downDefinedFor DPP)
+open Semantics.Noun.Kind.Chierchia1998 (NominalMapping Kind CanDenoteKind
+  CanDenoteProperty downDefinedFor DPP)
 open Core.Duality (Truth3)
 open Semantics.Plurality.Distributivity (distMaximal pluralTruthValue
   allSatisfy noneSatisfy)
@@ -361,14 +361,17 @@ def nominalMapping : NominalExpression → NominalMapping
   | .italianBarePlural     => .predOnly
 
 /-- Whether an overt determiner (D) is present. -/
-def hasD : NominalExpression → Bool
-  | .englishBarePlural     => false  -- bare = no D
-  | .italianDefinitePlural => true   -- "i/gli/le" = overt D
-  | .italianBarePlural     => false  -- bare = no D
+def HasD : NominalExpression → Prop
+  | .englishBarePlural     => False  -- bare = no D
+  | .italianDefinitePlural => True   -- "i/gli/le" = overt D
+  | .italianBarePlural     => False  -- bare = no D
+
+instance : DecidablePred HasD := fun ne => by
+  cases ne <;> unfold HasD <;> infer_instance
 
 /-- Available denotations for each nominal form in argument position.
 
-For kind denotation, derived from `canDenoteKind` (Chierchia 1998).
+For kind denotation, derived from `CanDenoteKind` (Chierchia 1998).
 For property denotation, derived from the Nominal Mapping Parameter
 combined with D-status:
 
@@ -382,28 +385,33 @@ This yields:
 - English BPs [+arg, +pred, -D]: both kind and property ✓
 - Italian def pl [-arg, +pred, +D]: kind only (D forces kind) ✓
 - Italian bare pl [-arg, +pred, -D]: property only (no ∩) ✓ -/
-def canDenote (ne : NominalExpression) (nd : NominalDenotation) : Bool :=
+def CanDenote (ne : NominalExpression) (nd : NominalDenotation) : Prop :=
   match nd with
-  | .kind     => canDenoteKind (nominalMapping ne) (hasD ne)
+  | .kind     => CanDenoteKind (nominalMapping ne) (HasD ne)
   | .property => match nominalMapping ne with
-    | .argOnly    => false      -- [+arg, -pred]: nouns are never predicates
-    | .argAndPred => true       -- [+arg, +pred]: property always available
-    | .predOnly   => !hasD ne   -- [-arg, +pred]: D maps to kind, blocks property
+    | .argOnly    => False        -- [+arg, -pred]: nouns are never predicates
+    | .argAndPred => True         -- [+arg, +pred]: property always available
+    | .predOnly   => ¬ HasD ne    -- [-arg, +pred]: D maps to kind, blocks property
+
+instance : ∀ ne nd, Decidable (CanDenote ne nd) := fun ne nd => by
+  cases nd <;> unfold CanDenote
+  · infer_instance
+  · cases ne <;> unfold nominalMapping <;> infer_instance
 
 /-- English bare plurals are ambiguous. -/
 theorem english_bp_ambiguous :
-    canDenote .englishBarePlural .kind = true ∧
-    canDenote .englishBarePlural .property = true := ⟨rfl, rfl⟩
+    CanDenote .englishBarePlural .kind ∧
+    CanDenote .englishBarePlural .property := ⟨trivial, trivial⟩
 
 /-- Italian definite plurals unambiguously denote kinds. -/
 theorem italian_def_pl_kind_only :
-    canDenote .italianDefinitePlural .kind = true ∧
-    canDenote .italianDefinitePlural .property = false := ⟨rfl, rfl⟩
+    CanDenote .italianDefinitePlural .kind ∧
+    ¬ CanDenote .italianDefinitePlural .property := ⟨trivial, fun h => h trivial⟩
 
 /-- Italian bare plurals unambiguously denote properties. -/
 theorem italian_bare_pl_property_only :
-    canDenote .italianBarePlural .kind = false ∧
-    canDenote .italianBarePlural .property = true := ⟨rfl, rfl⟩
+    ¬ CanDenote .italianBarePlural .kind ∧
+    CanDenote .italianBarePlural .property := ⟨id, id⟩
 
 -- ============================================================================
 -- § 6: LF Availability by Nominal Form
@@ -415,36 +423,41 @@ Kind denotation enables DKP and CKP (kind-level LFs).
 Property denotation enables BFG (property enters Gen restrictor)
 and existential DPP (property yields low-scoped ∃).
 Diagram (145): four paths for English BPs, two via kind, two via property. -/
-def lfAvailable (ne : NominalExpression) (lf : GeneralizationLF) : Bool :=
+def LFAvailable (ne : NominalExpression) (lf : GeneralizationLF) : Prop :=
   match lf with
-  | .bonaFideGeneric       => true  -- always: kind enters Gen restrictor (19) or property does (20)
-  | .distributiveKindPred  => canDenote ne .kind
-  | .cumulativeKindPred    => canDenote ne .kind
-  | .existentialDPP        => canDenote ne .property
+  | .bonaFideGeneric       => True  -- always: kind enters Gen restrictor (19) or property does (20)
+  | .distributiveKindPred  => CanDenote ne .kind
+  | .cumulativeKindPred    => CanDenote ne .kind
+  | .existentialDPP        => CanDenote ne .property
+
+instance : ∀ ne lf, Decidable (LFAvailable ne lf) := fun ne lf => by
+  cases lf <;> unfold LFAvailable <;> infer_instance
 
 /-- English bare plurals allow all four LFs (diagram (145)):
     kind path → BFG, DKP, CKP; property path → BFG, DPP. -/
 theorem english_bp_all_lfs :
-    lfAvailable .englishBarePlural .bonaFideGeneric = true ∧
-    lfAvailable .englishBarePlural .distributiveKindPred = true ∧
-    lfAvailable .englishBarePlural .cumulativeKindPred = true ∧
-    lfAvailable .englishBarePlural .existentialDPP = true := ⟨rfl, rfl, rfl, rfl⟩
+    LFAvailable .englishBarePlural .bonaFideGeneric ∧
+    LFAvailable .englishBarePlural .distributiveKindPred ∧
+    LFAvailable .englishBarePlural .cumulativeKindPred ∧
+    LFAvailable .englishBarePlural .existentialDPP := ⟨trivial, trivial, trivial, trivial⟩
 
 /-- Italian definite plurals: kind-level LFs only (no property → no DPP).
     This predicts near-universal but no existential readings in episodics (§5.4). -/
 theorem italian_def_pl_lfs :
-    lfAvailable .italianDefinitePlural .bonaFideGeneric = true ∧
-    lfAvailable .italianDefinitePlural .distributiveKindPred = true ∧
-    lfAvailable .italianDefinitePlural .cumulativeKindPred = true ∧
-    lfAvailable .italianDefinitePlural .existentialDPP = false := ⟨rfl, rfl, rfl, rfl⟩
+    LFAvailable .italianDefinitePlural .bonaFideGeneric ∧
+    LFAvailable .italianDefinitePlural .distributiveKindPred ∧
+    LFAvailable .italianDefinitePlural .cumulativeKindPred ∧
+    ¬ LFAvailable .italianDefinitePlural .existentialDPP :=
+  ⟨trivial, trivial, trivial, fun h => h trivial⟩
 
 /-- Italian bare plurals: property-level LFs only (BFG + DPP, no DKP/CKP).
     This predicts existential but no near-universal readings in episodics (§5.4). -/
 theorem italian_bare_pl_lfs :
-    lfAvailable .italianBarePlural .bonaFideGeneric = true ∧
-    lfAvailable .italianBarePlural .distributiveKindPred = false ∧
-    lfAvailable .italianBarePlural .cumulativeKindPred = false ∧
-    lfAvailable .italianBarePlural .existentialDPP = true := ⟨rfl, rfl, rfl, rfl⟩
+    LFAvailable .italianBarePlural .bonaFideGeneric ∧
+    ¬ LFAvailable .italianBarePlural .distributiveKindPred ∧
+    ¬ LFAvailable .italianBarePlural .cumulativeKindPred ∧
+    LFAvailable .italianBarePlural .existentialDPP :=
+  ⟨trivial, id, id, id⟩
 
 -- ============================================================================
 -- § 7: Episodic Sentences (§5 of the paper)
@@ -609,12 +622,12 @@ theorem italian_gen_disambiguation :
     def pl can denote kind → DKP available → accidental / near-universal;
     bare pl cannot → no DKP → no accidental / no near-universal. -/
 theorem italian_disambiguation_from_kind_denotation :
-    canDenote .italianDefinitePlural .kind = true ∧
-    lfAvailable .italianDefinitePlural .distributiveKindPred = true ∧
-    canDenote .italianBarePlural .kind = false ∧
-    lfAvailable .italianBarePlural .distributiveKindPred = false ∧
+    CanDenote .italianDefinitePlural .kind ∧
+    LFAvailable .italianDefinitePlural .distributiveKindPred ∧
+    ¬ CanDenote .italianBarePlural .kind ∧
+    ¬ LFAvailable .italianBarePlural .distributiveKindPred ∧
     -- Additionally, bare pl has property → DPP → existential
-    canDenote .italianBarePlural .property = true := ⟨rfl, rfl, rfl, rfl, rfl⟩
+    CanDenote .italianBarePlural .property := ⟨trivial, trivial, id, id, id⟩
 
 -- ============================================================================
 -- § 8: Connection to Tessler & Goodman (2019)
@@ -1015,16 +1028,16 @@ def evalBFG (situations : List Situation) (normal : NormalcyPredicate)
     available LFs (just BFG) map to the law-like flavor. -/
 theorem table1_from_lf_structure :
     -- Kind-denoting plurals: both flavors available via different LFs
-    (∃ lf, lfAvailable .englishBarePlural lf = true ∧ lfFlavor lf = .lawLike) ∧
-    (∃ lf, lfAvailable .englishBarePlural lf = true ∧ lfFlavor lf = .accidental) ∧
+    (∃ lf, LFAvailable .englishBarePlural lf ∧ lfFlavor lf = .lawLike) ∧
+    (∃ lf, LFAvailable .englishBarePlural lf ∧ lfFlavor lf = .accidental) ∧
     -- Property-only nominals (Italian bare pl, singular indef — by different
     -- mechanisms: Italian bare pl is [-arg,+pred] without D; singular indef
     -- has ∩ undefined for singular count nouns): only BFG available → law-like
     (lfFlavor .bonaFideGeneric = .lawLike) ∧
     -- No accidental LF is available for property-only nominals
-    (lfAvailable .italianBarePlural .distributiveKindPred = false) ∧
-    (lfAvailable .italianBarePlural .cumulativeKindPred = false) := by
-  exact ⟨⟨.bonaFideGeneric, rfl, rfl⟩, ⟨.distributiveKindPred, rfl, rfl⟩, rfl, rfl, rfl⟩
+    (¬ LFAvailable .italianBarePlural .distributiveKindPred) ∧
+    (¬ LFAvailable .italianBarePlural .cumulativeKindPred) :=
+  ⟨⟨.bonaFideGeneric, trivial, rfl⟩, ⟨.distributiveKindPred, trivial, rfl⟩, rfl, id, id⟩
 
 -- ============================================================================
 -- Bridge to Longobardi (2001)
@@ -1045,10 +1058,11 @@ open Longobardi2001 (DPParameter bnCanBeReferential
     Italian bare plurals: `canDenote .italianBarePlural .kind = false` (Guerrini)
     ↔ `bnCanBeReferential romance = false` (Longobardi) -/
 theorem referential_iff_longobardi_kind :
-    bnCanBeReferential english =
-      canDenote .englishBarePlural .kind ∧
-    bnCanBeReferential romance =
-      canDenote .italianBarePlural .kind := ⟨rfl, rfl⟩
+    (bnCanBeReferential english = true ↔
+      CanDenote .englishBarePlural .kind) ∧
+    (bnCanBeReferential romance = false ↔
+      ¬ CanDenote .italianBarePlural .kind) :=
+  ⟨⟨fun _ => trivial, fun _ => rfl⟩, ⟨fun _ h => h, fun _ => rfl⟩⟩
 
 /-- @cite{longobardi-2001}'s quantificational-only BN = only BFG parse.
     DKP/CKP require kind denotation, which `strongD` blocks for BNs.
@@ -1056,10 +1070,10 @@ theorem referential_iff_longobardi_kind :
     English BPs: all three LFs (BFG + DKP + CKP)
     Italian bare plurals: BFG only -/
 theorem quantificational_only_iff_bfg_only :
-    lfAvailable .englishBarePlural .distributiveKindPred = true ∧
-    lfAvailable .englishBarePlural .cumulativeKindPred = true ∧
-    lfAvailable .italianBarePlural .distributiveKindPred = false ∧
-    lfAvailable .italianBarePlural .cumulativeKindPred = false := ⟨rfl, rfl, rfl, rfl⟩
+    LFAvailable .englishBarePlural .distributiveKindPred ∧
+    LFAvailable .englishBarePlural .cumulativeKindPred ∧
+    ¬ LFAvailable .italianBarePlural .distributiveKindPred ∧
+    ¬ LFAvailable .italianBarePlural .cumulativeKindPred := ⟨trivial, trivial, id, id⟩
 
 /-- End-to-end chain from @cite{longobardi-2001}'s `strongD` to Table 1:
 
@@ -1072,10 +1086,10 @@ theorem quantificational_only_iff_bfg_only :
 theorem strongd_to_table1 :
     romance.strongD = true ∧
     toNominalMapping romance = .predOnly ∧
-    canDenoteKind .predOnly false = false ∧
-    canDenote .italianBarePlural .kind = false ∧
-    lfAvailable .italianBarePlural .distributiveKindPred = false ∧
-    table1 .singularIndefinite .accidental = false := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
+    ¬ CanDenoteKind .predOnly False ∧
+    ¬ CanDenote .italianBarePlural .kind ∧
+    ¬ LFAvailable .italianBarePlural .distributiveKindPred ∧
+    table1 .singularIndefinite .accidental = false := ⟨rfl, rfl, id, id, id, rfl⟩
 
 /-- @cite{longobardi-2001}'s `GenericType` aligns with `GenFlavor`:
     indefinite generics are law-like (BFG); definite generics can be
@@ -1422,11 +1436,12 @@ of episodic bare plurals ("Bears are destroying my garden" ≈ ∃x[bear(x)
     is available, via DPP. -/
 theorem existential_via_dpp :
     -- English BPs: property available → DPP LF available → existential
-    lfAvailable .englishBarePlural .existentialDPP = true ∧
+    LFAvailable .englishBarePlural .existentialDPP ∧
     -- Italian bare pl: property available → DPP LF available → existential
-    lfAvailable .italianBarePlural .existentialDPP = true ∧
+    LFAvailable .italianBarePlural .existentialDPP ∧
     -- Italian def pl: no property → no DPP → no existential
-    lfAvailable .italianDefinitePlural .existentialDPP = false := ⟨rfl, rfl, rfl⟩
+    ¬ LFAvailable .italianDefinitePlural .existentialDPP :=
+  ⟨trivial, id, fun h => h trivial⟩
 
 /-- The four-way LF typology from diagram (145), connecting denotation
     types to available LFs and their truth conditions:
@@ -1441,18 +1456,19 @@ theorem existential_via_dpp :
     - DPP: ∃x[property(x) ∧ VP(x)] — low-scoped existential -/
 theorem diagram_145_four_paths :
     -- Kind-requiring LFs
-    (lfAvailable .englishBarePlural .distributiveKindPred = true) ∧
-    (lfAvailable .englishBarePlural .cumulativeKindPred = true) ∧
+    (LFAvailable .englishBarePlural .distributiveKindPred) ∧
+    (LFAvailable .englishBarePlural .cumulativeKindPred) ∧
     -- Property-requiring LF
-    (lfAvailable .englishBarePlural .existentialDPP = true) ∧
+    (LFAvailable .englishBarePlural .existentialDPP) ∧
     -- BFG available via either path
-    (lfAvailable .englishBarePlural .bonaFideGeneric = true) ∧
+    (LFAvailable .englishBarePlural .bonaFideGeneric) ∧
     -- Italian definite plural: kind path only
-    (lfAvailable .italianDefinitePlural .existentialDPP = false) ∧
-    (lfAvailable .italianDefinitePlural .distributiveKindPred = true) ∧
+    (¬ LFAvailable .italianDefinitePlural .existentialDPP) ∧
+    (LFAvailable .italianDefinitePlural .distributiveKindPred) ∧
     -- Italian bare plural: property path only
-    (lfAvailable .italianBarePlural .distributiveKindPred = false) ∧
-    (lfAvailable .italianBarePlural .existentialDPP = true) := ⟨rfl, rfl, rfl, rfl, rfl, rfl, rfl, rfl⟩
+    (¬ LFAvailable .italianBarePlural .distributiveKindPred) ∧
+    (LFAvailable .italianBarePlural .existentialDPP) :=
+  ⟨trivial, trivial, trivial, trivial, fun h => h trivial, trivial, id, id⟩
 
 -- ============================================================================
 -- § 16: Habituality and the Two LF Structures (§3.4)
@@ -1520,11 +1536,11 @@ theorem episodic_no_bfg :
 theorem episodic_kind_plural_advantage :
     -- Kind-denoting plural: DKP available in episodic
     lfCompatibleWithAspect .episodic .distributiveKindPred = true ∧
-    canDenote .englishBarePlural .kind = true ∧
+    CanDenote .englishBarePlural .kind ∧
     -- Singular indefinite: ∩ undefined for singular count → no kind denotation
     downDefinedFor .count false = false ∧
     -- Episodic: no Gen/Hab → no BFG
-    lfCompatibleWithAspect .episodic .bonaFideGeneric = false := ⟨rfl, rfl, rfl, rfl⟩
+    lfCompatibleWithAspect .episodic .bonaFideGeneric = false := ⟨rfl, trivial, rfl, rfl⟩
 
 -- ============================================================================
 -- § 17: Singular Kind Terms Diverge from Plural Kind Terms (§6.2)

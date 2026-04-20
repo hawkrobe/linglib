@@ -726,7 +726,7 @@ theorem ch48_pronounsAndNouns :
 
 -- English
 theorem english_ch39 :
-    ch39.find? (·.walsCode == "eng") = some ⟨"eng", "English", "eng", .noInclusiveExclusive⟩ := by
+    ch39.find? (·.walsCode == "eng") = some ⟨"eng", "eng", .noInclusiveExclusive⟩ := by
   native_decide
 theorem english_ch39_agrees :
     (ch39.find? (·.walsCode == "eng")).map (fromWALS39A ·.value) = english.inclusiveExclusive := by

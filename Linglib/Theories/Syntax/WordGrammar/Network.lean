@@ -24,9 +24,10 @@ treatment of inversion as a word-class subtype rather than a movement rule.
 
 set_option autoImplicit false
 
-namespace DepGrammar.WG
+namespace WordGrammar
 
 open Core.Inheritance
+open DepGrammar (Dir ArgStr ArgSlot DepTree satisfiesArgStr)
 
 -- ============================================================================
 -- Node and Relation Types
@@ -238,4 +239,4 @@ def wgLicenses (net : WGNetwork) (t : DepTree) (auxIdx : Nat)
     (ct : ClauseForm) : Bool :=
   satisfiesArgStr t auxIdx (resolveArgStr net (wordClassForClauseType ct))
 
-end DepGrammar.WG
+end WordGrammar

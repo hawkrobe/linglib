@@ -14,9 +14,12 @@ to nodes — they ARE links between nodes. "Bird has wing" is a link labeled
 `front-limb` from `bird` to `wing`. IsA links form a taxonomy; properties flow
 down the taxonomy by default inheritance.
 
-## Hudson's six primitive relations (§3.2.5, p. 67)
+## Hudson's six primitive relations (Ch 3 summary, p. 68)
 
-`isA`, `argument`, `value`, `or` (choice), `identity`, `quantity`.
+`isA`, `argument`, `value`, `or` (choice), `quantity`, `identity` —
+listed in the Chapter 3 summary box on p. 68 of @cite{hudson-2010}
+(under "Links between concepts are therefore of two types: primitive
+relations / conceptual relations").
 
 This module distinguishes three link kinds at the type level:
 
@@ -29,12 +32,14 @@ This module distinguishes three link kinds at the type level:
 
 - `LinkKind`, `Link`, `Network`
 - `Network.nodeUniverse` — finite carrier derived from the link list
-- `parents`, `ancestors`, `isA` — taxonomy traversal (no magic-constant fuel)
-- `IsA` — propositional spec via `Relation.ReflTransGen` (mathlib bridge)
+- `parents`, `ancestorsBound`, `ancestors` — computational taxonomy traversal
+- `IsA` — the canonical reflexive-transitive `isA`, defined as
+  `Relation.ReflTransGen` of the parent edge
 - `Prototype` — graded category membership
 
-Termination of `ancestors` is bounded by `nodeUniverse.length` rather than a
-magic 100, so finite networks always traverse to fixpoint.
+`IsA` is the API; `parents`/`ancestors` are computational evidence producers
+(`b ∈ ancestors net a → IsA net a b` via `IsA.of_mem_ancestors`). Termination
+of `ancestors` is bounded by `nodeUniverse.length`, not a magic constant.
 -/
 
 set_option autoImplicit false
@@ -107,20 +112,18 @@ networks always traverse to fixpoint without a magic constant. -/
 def ancestors (net : Network α R) (node : α) : List α :=
   ancestorsBound net node net.nodeUniverse.length
 
-/-- Reflexive-transitive isA: does `a` inherit from `b`? -/
-def isA (net : Network α R) (a b : α) : Bool :=
-  a == b || (ancestors net a).elem b
-
--- ----------------------------------------------------------------------------
--- Mathlib spec: isA as `Relation.ReflTransGen` of the parent relation
--- ----------------------------------------------------------------------------
+-- ============================================================================
+-- IsA: propositional reflexive-transitive `isA` via mathlib's `ReflTransGen`
+-- ============================================================================
 
 /-- The single-step parent relation. -/
 def isAEdge (net : Network α R) (a b : α) : Prop := b ∈ parents net a
 
-/-- Propositional reflexive-transitive `isA`, via mathlib's `Relation.ReflTransGen`.
-This is the *spec* for the computable `isA` Bool — useful for stating algebraic
-properties (transitivity, monotonicity in links) without unfolding fuel. -/
+/-- Reflexive-transitive `isA`: `a` inherits from `b` along the chain of isA
+links. Defined as `Relation.ReflTransGen` of the parent edge — the same
+construction mathlib uses for transitive closures elsewhere, so every lemma
+about `ReflTransGen` (and the `Preorder` structure in `Core.Inheritance.Order`)
+applies for free. -/
 def IsA (net : Network α R) (a b : α) : Prop := Relation.ReflTransGen (isAEdge net) a b
 
 /-- Every node `IsA` itself. -/
@@ -133,12 +136,8 @@ theorem IsA.trans (net : Network α R) {a b c : α}
   Relation.ReflTransGen.trans hab hbc
 
 -- ----------------------------------------------------------------------------
--- Bool theorems on the computable `isA`
+-- Constructors and computational-evidence bridges
 -- ----------------------------------------------------------------------------
-
-/-- Every node `isA` itself (Bool form). -/
-theorem isA_refl (net : Network α R) (a : α) : isA net a a = true := by
-  simp [isA]
 
 /-- Single isA links are tracked: if `a → b` is an isA link, then `b ∈ parents net a`. -/
 theorem mem_parents_of_isALink (net : Network α R) {a b : α}
@@ -146,6 +145,40 @@ theorem mem_parents_of_isALink (net : Network α R) {a b : α}
     b ∈ parents net a := by
   simp only [parents, List.mem_map, List.mem_filter]
   exact ⟨⟨LinkKind.isA, a, b, none⟩, ⟨h, by simp⟩, rfl⟩
+
+/-- A direct isA edge gives the propositional `IsA` in one step. -/
+theorem IsA.of_isAEdge (net : Network α R) {a b : α}
+    (h : isAEdge net a b) : IsA net a b :=
+  Relation.ReflTransGen.single h
+
+/-- Membership in the bounded transitive closure implies `IsA`. Proved by
+induction on the fuel. -/
+theorem IsA.of_mem_ancestorsBound (net : Network α R) :
+    ∀ (n : Nat) (a b : α), b ∈ ancestorsBound net a n → IsA net a b
+  | 0, _, _, h => by simp [ancestorsBound] at h
+  | n + 1, a, b, h => by
+    simp only [ancestorsBound, List.mem_append, List.mem_flatMap] at h
+    rcases h with hpar | ⟨p, hp_par, hp_anc⟩
+    · exact IsA.of_isAEdge net hpar
+    · have h_pa : isAEdge net a p := hp_par
+      have h_pb : IsA net p b := IsA.of_mem_ancestorsBound net n p b hp_anc
+      exact Relation.ReflTransGen.head h_pa h_pb
+
+/-- Membership in `ancestors` implies `IsA`. The convenience entry point for
+constructing `IsA net a b` proofs from a `decide`-able list-membership goal:
+`IsA.of_mem_ancestors _ (by decide)`. -/
+theorem IsA.of_mem_ancestors (net : Network α R) {a b : α}
+    (h : b ∈ ancestors net a) : IsA net a b :=
+  IsA.of_mem_ancestorsBound net _ a b h
+
+/-! The reverse direction `IsA net a b → a = b ∨ b ∈ ancestors net a` requires
+path compression: any `ReflTransGen` chain in a finite network reduces to one
+with no repeated nodes (length `≤ nodeUniverse.length`), which then sits inside
+`ancestorsBound` at that fuel. Not yet formalized — TODO(0.230.50+). Until
+then, `¬IsA net a b` for a concrete network must be argued via direct case
+analysis on `Relation.ReflTransGen`, or expressed as the strictly weaker,
+decidable fact `b ∉ ancestors net a` (which says only that the BFS doesn't
+witness the relationship, not that no `ReflTransGen` chain can exist). -/
 
 end NetworkOps
 

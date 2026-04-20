@@ -24,44 +24,44 @@ inductive QuestionParticlesInSignLanguages where
 
 /-- Complete WALS 140A dataset (38 languages). -/
 def allData : List (Datapoint QuestionParticlesInSignLanguages) :=
-  [ { walsCode := "ada", language := "Adamorobe Sign Language", iso := "ads", value := .none }
-  , { walsCode := "asl", language := "American Sign Language", iso := "ase", value := .one }
-  , { walsCode := "aus", language := "Auslan", iso := "asf", value := .none }
-  , { walsCode := "bsl", language := "British Sign Language", iso := "bfi", value := .none }
-  , { walsCode := "csl", language := "Chinese Sign Language", iso := "csl", value := .moreThanOne }
-  , { walsCode := "dge", language := "Deutsche Gebärdensprache", iso := "gsg", value := .none }
-  , { walsCode := "fsl", language := "Finnish Sign Language", iso := "fse", value := .one }
-  , { walsCode := "gsl", language := "Greek Sign Language", iso := "gss", value := .none }
-  , { walsCode := "hks", language := "Hong Kong Sign Language", iso := "hks", value := .moreThanOne }
-  , { walsCode := "ics", language := "Icelandic Sign Language", iso := "icl", value := .none }
-  , { walsCode := "ipi", language := "Indo-Pakistani Sign Language (Indian dialects)", iso := "ins", value := .none }
-  , { walsCode := "irs", language := "Irish Sign Language", iso := "isg", value := .none }
-  , { walsCode := "iss", language := "Israeli Sign Language", iso := "isr", value := .none }
-  , { walsCode := "kkl", language := "Kata Kolok", iso := "bqy", value := .none }
-  , { walsCode := "ksl", language := "Kenyan Sign Language", iso := "xki", value := .one }
-  , { walsCode := "lsf", language := "Langue des Signes Française", iso := "fsl", value := .none }
-  , { walsCode := "lsq", language := "Langue des Signes Québecoise", iso := "fcs", value := .none }
-  , { walsCode := "lsa", language := "Lengua de Señas Argentina", iso := "aed", value := .none }
-  , { walsCode := "lse", language := "Lengua de Señas Española", iso := "ssp", value := .one }
-  , { walsCode := "lii", language := "Lingua Italiana dei Segni", iso := "ise", value := .none }
-  , { walsCode := "lgh", language := "Lughat al-Isharat al-Lubnaniya", iso := "jos", value := .none }
-  , { walsCode := "lgp", language := "Língua Gestual Portuguesa", iso := "psr", value := .none }
-  , { walsCode := "lsb", language := "Língua de Sinais Brasileira", iso := "bzs", value := .none }
-  , { walsCode := "ned", language := "Nederlandse Gebarentaal", iso := "dse", value := .none }
-  , { walsCode := "nzs", language := "New Zealand Sign Language", iso := "nzs", value := .none }
-  , { walsCode := "nih", language := "Nihon Shuwa (Japanese Sign Language)", iso := "jsl", value := .one }
-  , { walsCode := "nte", language := "Norsk Tegnspråk", iso := "nsl", value := .none }
-  , { walsCode := "psl", language := "Plains-Indians Sign Language", iso := "psd", value := .one }
-  , { walsCode := "rsl", language := "Russian Sign Language", iso := "rsl", value := .none }
-  , { walsCode := "ssl", language := "South Korean Sign Language", iso := "kvk", value := .moreThanOne }
-  , { walsCode := "svt", language := "Svenska Teckenspråket", iso := "swl", value := .none }
-  , { walsCode := "tzi", language := "Taiwanese Sign Language (Ziran Shouyu)", iso := "tss", value := .moreThanOne }
-  , { walsCode := "tsl", language := "Tanzania Sign Language", iso := "tza", value := .one }
-  , { walsCode := "ths", language := "Thai Sign Language", iso := "tsq", value := .none }
-  , { walsCode := "tui", language := "Türk Isaret Dili", iso := "tsm", value := .one }
-  , { walsCode := "ugs", language := "Ugandan Sign Language", iso := "ugn", value := .none }
-  , { walsCode := "usl", language := "Urubú Sign Language", iso := "uks", value := .one }
-  , { walsCode := "vla", language := "Vlaamse Gebarentaal", iso := "vgt", value := .none }
+  [ { walsCode := "ada", iso := "ads", value := .none }
+  , { walsCode := "asl", iso := "ase", value := .one }
+  , { walsCode := "aus", iso := "asf", value := .none }
+  , { walsCode := "bsl", iso := "bfi", value := .none }
+  , { walsCode := "csl", iso := "csl", value := .moreThanOne }
+  , { walsCode := "dge", iso := "gsg", value := .none }
+  , { walsCode := "fsl", iso := "fse", value := .one }
+  , { walsCode := "gsl", iso := "gss", value := .none }
+  , { walsCode := "hks", iso := "hks", value := .moreThanOne }
+  , { walsCode := "ics", iso := "icl", value := .none }
+  , { walsCode := "ipi", iso := "ins", value := .none }
+  , { walsCode := "irs", iso := "isg", value := .none }
+  , { walsCode := "iss", iso := "isr", value := .none }
+  , { walsCode := "kkl", iso := "bqy", value := .none }
+  , { walsCode := "ksl", iso := "xki", value := .one }
+  , { walsCode := "lsf", iso := "fsl", value := .none }
+  , { walsCode := "lsq", iso := "fcs", value := .none }
+  , { walsCode := "lsa", iso := "aed", value := .none }
+  , { walsCode := "lse", iso := "ssp", value := .one }
+  , { walsCode := "lii", iso := "ise", value := .none }
+  , { walsCode := "lgh", iso := "jos", value := .none }
+  , { walsCode := "lgp", iso := "psr", value := .none }
+  , { walsCode := "lsb", iso := "bzs", value := .none }
+  , { walsCode := "ned", iso := "dse", value := .none }
+  , { walsCode := "nzs", iso := "nzs", value := .none }
+  , { walsCode := "nih", iso := "jsl", value := .one }
+  , { walsCode := "nte", iso := "nsl", value := .none }
+  , { walsCode := "psl", iso := "psd", value := .one }
+  , { walsCode := "rsl", iso := "rsl", value := .none }
+  , { walsCode := "ssl", iso := "kvk", value := .moreThanOne }
+  , { walsCode := "svt", iso := "swl", value := .none }
+  , { walsCode := "tzi", iso := "tss", value := .moreThanOne }
+  , { walsCode := "tsl", iso := "tza", value := .one }
+  , { walsCode := "ths", iso := "tsq", value := .none }
+  , { walsCode := "tui", iso := "tsm", value := .one }
+  , { walsCode := "ugs", iso := "ugn", value := .none }
+  , { walsCode := "usl", iso := "uks", value := .one }
+  , { walsCode := "vla", iso := "vgt", value := .none }
   ]
 
 /-- Look up a language by WALS code. -/

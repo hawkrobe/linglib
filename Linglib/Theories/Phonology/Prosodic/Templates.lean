@@ -56,14 +56,20 @@ inductive CVSlot where
 namespace CVSlot
 
 /-- Is this slot a C-slot (bare or [+c]-specified)? -/
-def isC : CVSlot → Bool
-  | .C | .Cspec => true
-  | .V => false
+def IsC : CVSlot → Prop
+  | .C | .Cspec => True
+  | .V => False
+
+instance : DecidablePred IsC := fun s => by
+  cases s <;> unfold IsC <;> infer_instance
 
 /-- Is this slot a V-slot? -/
-def isV : CVSlot → Bool
-  | .V => true
-  | _ => false
+def IsV : CVSlot → Prop
+  | .V => True
+  | _ => False
+
+instance : DecidablePred IsV := fun s => by
+  cases s <;> unfold IsV <;> infer_instance
 
 /-- Does this slot require a [+consonantal] segment? -/
 def RequiresConsonantal : CVSlot → Prop
@@ -90,7 +96,8 @@ namespace Template
 def length (t : Template) : Nat := t.slots.length
 
 /-- The number of C-slots (consonant timing positions). -/
-def cCount (t : Template) : Nat := (t.slots.filter CVSlot.isC).length
+def cCount (t : Template) : Nat :=
+  (t.slots.filter (fun s => decide (CVSlot.IsC s))).length
 
 /-- Slot `i` is the final slot of the template. -/
 def isFinalSlot (t : Template) (i : Nat) : Bool := i + 1 == t.length
@@ -164,7 +171,7 @@ def isMisaligned (m : RootTemplateMatch α) : Bool :=
 def allCSlotsFilled (m : RootTemplateMatch α) : Bool :=
   (List.range m.template.length).all fun i =>
     match m.template.slotAt i with
-    | some s => !s.isC || m.associations.any (·.slotIndex == i)
+    | some s => !decide (CVSlot.IsC s) || m.associations.any (·.slotIndex == i)
     | none => true
 
 /-- The template is *satisfied* iff all C-slots are filled and the result
@@ -189,7 +196,7 @@ def inBounds (m : RootTemplateMatch α) : Bool :=
 def unfilledCSlots (m : RootTemplateMatch α) : List Nat :=
   (List.range m.template.length).filter fun i =>
     match m.template.slotAt i with
-    | some s => s.isC && !m.associations.any (·.slotIndex == i)
+    | some s => decide (CVSlot.IsC s) && !m.associations.any (·.slotIndex == i)
     | none => false
 
 /-- The No-Crossing Constraint (@cite{goldsmith-1976}): an intruder

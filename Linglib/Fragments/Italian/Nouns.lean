@@ -188,23 +188,23 @@ example : bareSingularLicensed = false := rfl
 -- § 9a: Nominal Denotation — Kind vs Property (@cite{guerrini-2026})
 -- ============================================================================
 
-open Semantics.Noun.Kind.Chierchia1998 (canDenoteKind canDenoteProperty)
+open Semantics.Noun.Kind.Chierchia1998 (CanDenoteKind CanDenoteProperty)
 
 /-- Italian definite plurals denote kinds: derived from `predOnly` + overt D.
     Because Italian is [-arg, +pred], D is required for argumenthood.
     With D present, the noun maps to a kind via ∩. -/
 theorem definitePluralDenotesKind :
-    canDenoteKind italianMapping true = true := rfl
+    CanDenoteKind italianMapping True := trivial
 
 /-- Italian bare plurals cannot denote kinds: derived from `predOnly` + no D.
     Without D, Italian nouns remain predicates. No covert ∩ is available. -/
 theorem barePluralCannotDenoteKind :
-    canDenoteKind italianMapping false = false := rfl
+    ¬ CanDenoteKind italianMapping False := id
 
 /-- Italian bare plurals denote properties: derived from `predOnly`.
     All [+pred] languages allow property denotation for nouns. -/
 theorem barePluralDenotesProperty :
-    canDenoteProperty italianMapping = true := rfl
+    CanDenoteProperty italianMapping := trivial
 
 -- ============================================================================
 -- § 10: NP Examples

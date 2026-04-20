@@ -30,12 +30,12 @@ inductive WritingSystems where
 
 /-- Complete WALS 141A dataset (6 languages). -/
 def allData : List (Datapoint WritingSystems) :=
-  [ { walsCode := "che", language := "Cherokee", iso := "chr", value := .syllabic }
-  , { walsCode := "chp", language := "Chipewyan", iso := "chp", value := .alphasyllabic }
-  , { walsCode := "cre", language := "Cree (Plains)", iso := "crk", value := .alphasyllabic }
-  , { walsCode := "iql", language := "Inuktitut (Quebec-Labrador)", iso := "ike", value := .alphasyllabic }
-  , { walsCode := "oji", language := "Ojibwa (Eastern)", iso := "", value := .alphasyllabic }
-  , { walsCode := "vai", language := "Vai", iso := "vai", value := .syllabic }
+  [ { walsCode := "che", iso := "chr", value := .syllabic }
+  , { walsCode := "chp", iso := "chp", value := .alphasyllabic }
+  , { walsCode := "cre", iso := "crk", value := .alphasyllabic }
+  , { walsCode := "iql", iso := "ike", value := .alphasyllabic }
+  , { walsCode := "oji", iso := "", value := .alphasyllabic }
+  , { walsCode := "vai", iso := "vai", value := .syllabic }
   ]
 
 /-- Look up a language by WALS code. -/

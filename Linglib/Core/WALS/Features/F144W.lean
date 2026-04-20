@@ -30,157 +30,157 @@ inductive VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndO
 
 /-- Complete WALS 144W dataset (151 languages). -/
 def allData : List (Datapoint VerbInitialWithNegativeThatIsImmediatelyPostverbalOrBetweenSubjectAndObject) :=
-  [ { walsCode := "agc", language := "Agta (Central)", iso := "agt", value := .none }
-  , { walsCode := "agd", language := "Agta (Dupaningan)", iso := "duo", value := .none }
-  , { walsCode := "als", language := "Alsea", iso := "aes", value := .none }
-  , { walsCode := "anj", language := "Anejom", iso := "aty", value := .none }
-  , { walsCode := "ann", language := "Anindilyakwa", iso := "aoi", value := .none }
-  , { walsCode := "ams", language := "Arabic (Modern Standard)", iso := "arb", value := .none }
-  , { walsCode := "amr", language := "Arabic (Moroccan)", iso := "ary", value := .suffixOnlywithanotherneg }
-  , { walsCode := "asy", language := "Arabic (Syrian)", iso := "apc", value := .none }
-  , { walsCode := "ata", language := "Atayal", iso := "tay", value := .none }
-  , { walsCode := "bwc", language := "Bajau (West Coast)", iso := "bdr", value := .none }
-  , { walsCode := "bbu", language := "Barambu", iso := "brm", value := .none }
-  , { walsCode := "bkr", language := "Batak (Karo)", iso := "btx", value := .none }
-  , { walsCode := "bto", language := "Batak (Toba)", iso := "bbc", value := .none }
-  , { walsCode := "baq", language := "Baure", iso := "brg", value := .none }
-  , { walsCode := "bco", language := "Bella Coola", iso := "blc", value := .none }
-  , { walsCode := "bch", language := "Berber (Chaouia)", iso := "shy", value := .none }
-  , { walsCode := "bfg", language := "Berber (Figuig)", iso := "grr", value := .none }
-  , { walsCode := "btk", language := "Bontok", iso := "lbk", value := .none }
-  , { walsCode := "cak", language := "Cakchiquel", iso := "cak", value := .wordOnlywithanotherneg }
-  , { walsCode := "cyv", language := "Cayuvava", iso := "cyb", value := .none }
-  , { walsCode := "cha", language := "Chamorro", iso := "cha", value := .none }
-  , { walsCode := "cso", language := "Chatino (Sierra Occidental)", iso := "ctp", value := .none }
-  , { walsCode := "cya", language := "Chatino (Yaitepec)", iso := "ctp", value := .none }
-  , { walsCode := "ccm", language := "Chinantec (Comaltepec)", iso := "cco", value := .none }
-  , { walsCode := "cle", language := "Chinantec (Lealao)", iso := "cle", value := .none }
-  , { walsCode := "cpl", language := "Chinantec (Palantla)", iso := "cpa", value := .none }
-  , { walsCode := "chq", language := "Chinantec (Quiotepec)", iso := "chq", value := .none }
-  , { walsCode := "ckl", language := "Chinook (Lower)", iso := "chh", value := .none }
-  , { walsCode := "chx", language := "Chontal (Huamelultec Oaxaca)", iso := "clo", value := .none }
-  , { walsCode := "chj", language := "Chuj", iso := "cac", value := .suffixOnlywithanotherneg }
-  , { walsCode := "cba", language := "Chumash (Barbareño)", iso := "boi", value := .none }
-  , { walsCode := "crn", language := "Cornish", iso := "cor", value := .none }
-  , { walsCode := "cem", language := "Cèmuhî", iso := "cam", value := .none }
-  , { walsCode := "did", language := "Didinga", iso := "did", value := .none }
-  , { walsCode := "dom", language := "Domari", iso := "rmt", value := .suffixOptdoubleneg }
-  , { walsCode := "dre", language := "Drehu", iso := "dhv", value := .none }
-  , { walsCode := "fij", language := "Fijian", iso := "fij", value := .none }
-  , { walsCode := "gae", language := "Gaelic (Scots)", iso := "gla", value := .none }
-  , { walsCode := "grf", language := "Garífuna", iso := "cab", value := .none }
-  , { walsCode := "gel", language := "Gela", iso := "nlg", value := .none }
-  , { walsCode := "goa", language := "Goajiro", iso := "guc", value := .none }
-  , { walsCode := "grk", language := "Greek (Modern)", iso := "ell", value := .none }
-  , { walsCode := "gjj", language := "Guajajara", iso := "gub", value := .none }
-  , { walsCode := "gku", language := "Gününa Küne", iso := "pue", value := .none }
-  , { walsCode := "hlu", language := "Halkomelem (Upriver)", iso := "hur", value := .none }
-  , { walsCode := "haw", language := "Hawaiian", iso := "haw", value := .none }
-  , { walsCode := "hdi", language := "Hdi", iso := "xed", value := .wordOnlywithanotherneg }
-  , { walsCode := "hei", language := "Heiltsuk", iso := "hei", value := .none }
-  , { walsCode := "hil", language := "Hiligaynon", iso := "hil", value := .none }
-  , { walsCode := "hoa", language := "Hoava", iso := "hoa", value := .none }
-  , { walsCode := "ifu", language := "Ifugao (Batad)", iso := "ifb", value := .none }
-  , { walsCode := "ign", language := "Ignaciano", iso := "ign", value := .none }
-  , { walsCode := "ik", language := "Ik", iso := "ikx", value := .none }
-  , { walsCode := "iri", language := "Irish", iso := "gle", value := .none }
-  , { walsCode := "jak", language := "Jakaltek", iso := "jac", value := .none }
-  , { walsCode := "kbl", language := "Kabyle", iso := "kab", value := .wordOnlywithanotherneg }
-  , { walsCode := "kdz", language := "Kadazan", iso := "kzj", value := .none }
-  , { walsCode := "kls", language := "Kalispel", iso := "fla", value := .none }
-  , { walsCode := "kmj", language := "Karimojong", iso := "kdj", value := .none }
-  , { walsCode := "klv", language := "Kilivila", iso := "kij", value := .none }
-  , { walsCode := "kri", language := "Kipea", iso := "kzw", value := .suffixNodoubleneg }
-  , { walsCode := "krb", language := "Kiribati", iso := "gil", value := .none }
-  , { walsCode := "shp", language := "Klikitat", iso := "yak", value := .none }
-  , { walsCode := "kkt", language := "Kokota", iso := "kkk", value := .none }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .none }
-  , { walsCode := "kuo", language := "Kuot", iso := "kto", value := .none }
-  , { walsCode := "kut", language := "Kutenai", iso := "kut", value := .none }
-  , { walsCode := "kyq", language := "Kyuquot", iso := "nuk", value := .none }
-  , { walsCode := "lac", language := "Lacandón", iso := "lac", value := .none }
-  , { walsCode := "lmg", language := "Lamang", iso := "hia", value := .wordOnlywithanotherneg }
-  , { walsCode := "lgu", language := "Longgu", iso := "lgu", value := .none }
-  , { walsCode := "maa", language := "Maasai", iso := "mas", value := .none }
-  , { walsCode := "mch", language := "Machiguenga", iso := "mcb", value := .none }
-  , { walsCode := "mak", language := "Makah", iso := "myh", value := .none }
-  , { walsCode := "mal", language := "Malagasy", iso := "plt", value := .none }
-  , { walsCode := "mam", language := "Mam", iso := "mam", value := .none }
-  , { walsCode := "mmn", language := "Mamanwa", iso := "mmn", value := .none }
-  , { walsCode := "mwb", language := "Manobo (Western Bukidnon)", iso := "mbb", value := .none }
-  , { walsCode := "mzc", language := "Mazatec (Chiquihuitlán)", iso := "maq", value := .suffixNodoubleneg }
-  , { walsCode := "meh", language := "Mehri", iso := "gdq", value := .none }
-  , { walsCode := "mxc", language := "Mixtec (Chalcatongo)", iso := "mig", value := .none }
-  , { walsCode := "mxj", language := "Mixtec (Jicaltepec)", iso := "mio", value := .none }
-  , { walsCode := "mxo", language := "Mixtec (Ocotepec)", iso := "mie", value := .none }
-  , { walsCode := "mxp", language := "Mixtec (Peñoles)", iso := "mil", value := .none }
-  , { walsCode := "miy", language := "Miya", iso := "mkf", value := .wordOnlywithanotherneg }
-  , { walsCode := "mov", language := "Movima", iso := "mzp", value := .none }
-  , { walsCode := "mrl", language := "Murle", iso := "mur", value := .none }
-  , { walsCode := "msq", language := "Musqueam", iso := "hur", value := .none }
-  , { walsCode := "ndr", language := "Nadroga", iso := "wyy", value := .none }
-  , { walsCode := "nhh", language := "Nahuatl (Huasteca)", iso := "", value := .none }
-  , { walsCode := "nan", language := "Nandi", iso := "niq", value := .none }
-  , { walsCode := "nia", language := "Nias", iso := "nia", value := .none }
-  , { walsCode := "nca", language := "Nicobarese (Car)", iso := "caq", value := .none }
-  , { walsCode := "nsg", language := "Nisgha", iso := "ncg", value := .none }
-  , { walsCode := "nif", language := "Niuafo'ou", iso := "num", value := .none }
-  , { walsCode := "niu", language := "Niuean", iso := "niu", value := .none }
-  , { walsCode := "ood", language := "O'odham", iso := "ood", value := .none }
-  , { walsCode := "oji", language := "Ojibwa (Eastern)", iso := "", value := .none }
-  , { walsCode := "ond", language := "Oneida", iso := "one", value := .none }
-  , { walsCode := "otm", language := "Otomí (Mezquital)", iso := "ote", value := .none }
-  , { walsCode := "pai", language := "Paiwan", iso := "pwn", value := .none }
-  , { walsCode := "pnn", language := "Pangasinan", iso := "pag", value := .none }
-  , { walsCode := "pip", language := "Pipil", iso := "ppl", value := .none }
-  , { walsCode := "pod", language := "Podoko", iso := "pbi", value := .none }
-  , { walsCode := "pkt", language := "Pokot", iso := "pko", value := .suffixOnlywithanotherneg }
-  , { walsCode := "qui", language := "Quileute", iso := "qui", value := .none }
-  , { walsCode := "rap", language := "Rapanui", iso := "rap", value := .none }
-  , { walsCode := "rov", language := "Roviana", iso := "rug", value := .none }
-  , { walsCode := "ruk", language := "Rukai (Tanan)", iso := "dru", value := .none }
-  , { walsCode := "cos", language := "Rumsien", iso := "", value := .none }
-  , { walsCode := "sam", language := "Samoan", iso := "smo", value := .none }
-  , { walsCode := "see", language := "Seediq", iso := "trv", value := .none }
-  , { walsCode := "sml", language := "Semelai", iso := "sza", value := .none }
-  , { walsCode := "shu", language := "Shuswap", iso := "shs", value := .none }
-  , { walsCode := "qum", language := "Sipakapense", iso := "qum", value := .none }
-  , { walsCode := "so", language := "So", iso := "teu", value := .none }
-  , { walsCode := "squ", language := "Squamish", iso := "squ", value := .none }
-  , { walsCode := "tag", language := "Tagalog", iso := "tgl", value := .none }
-  , { walsCode := "tah", language := "Tahitian", iso := "tah", value := .none }
-  , { walsCode := "tsk", language := "Tamashek", iso := "taq", value := .none }
-  , { walsCode := "tsg", language := "Tausug", iso := "tsg", value := .none }
-  , { walsCode := "tbo", language := "Tboli", iso := "tbl", value := .none }
-  , { walsCode := "tee", language := "Tepehua (Huehuetla)", iso := "tee", value := .none }
-  , { walsCode := "tpn", language := "Tepehuan (Northern)", iso := "ntp", value := .none }
-  , { walsCode := "tho", language := "Thompson", iso := "thp", value := .none }
-  , { walsCode := "tim", language := "Timugon", iso := "tih", value := .none }
-  , { walsCode := "tin", language := "Tinrin", iso := "cir", value := .none }
-  , { walsCode := "tlp", language := "Tlapanec", iso := "tcf", value := .none }
-  , { walsCode := "tob", language := "Toba", iso := "tob", value := .none }
-  , { walsCode := "tke", language := "Tokelauan", iso := "tkl", value := .none }
-  , { walsCode := "tng", language := "Tongan", iso := "ton", value := .none }
-  , { walsCode := "tri", language := "Trique (Copala)", iso := "trc", value := .none }
-  , { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .none }
-  , { walsCode := "tuk", language := "Tukang Besi", iso := "", value := .none }
-  , { walsCode := "tna", language := "Turkana", iso := "tuv", value := .none }
-  , { walsCode := "tzo", language := "Tzotzil", iso := "tzo", value := .none }
-  , { walsCode := "tzu", language := "Tzutujil", iso := "tzj", value := .none }
-  , { walsCode := "war", language := "Wari'", iso := "pav", value := .none }
-  , { walsCode := "wrb", language := "Warrnambool", iso := "gjm", value := .none }
-  , { walsCode := "wel", language := "Welsh", iso := "cym", value := .none }
-  , { walsCode := "wec", language := "Welsh (Colloquial)", iso := "cym", value := .wordbetweensando }
-  , { walsCode := "wem", language := "Wembawemba", iso := "xww", value := .none }
-  , { walsCode := "wya", language := "Wyandot", iso := "wya", value := .none }
-  , { walsCode := "yag", language := "Yagua", iso := "yad", value := .none }
-  , { walsCode := "yap", language := "Yapese", iso := "yap", value := .none }
-  , { walsCode := "yok", language := "Yokuts (Yaudanchi)", iso := "yok", value := .none }
-  , { walsCode := "zai", language := "Zapotec (Isthmus)", iso := "zai", value := .none }
-  , { walsCode := "zap", language := "Zapotec (Mitla)", iso := "zaw", value := .none }
-  , { walsCode := "zzo", language := "Zapotec (Zoogocho)", iso := "zpq", value := .none }
-  , { walsCode := "zqc", language := "Zoque (Copainalá)", iso := "zoc", value := .none }
-  , { walsCode := "zqo", language := "Zoque (Ostuacan)", iso := "zoc", value := .none }
+  [ { walsCode := "agc", iso := "agt", value := .none }
+  , { walsCode := "agd", iso := "duo", value := .none }
+  , { walsCode := "als", iso := "aes", value := .none }
+  , { walsCode := "anj", iso := "aty", value := .none }
+  , { walsCode := "ann", iso := "aoi", value := .none }
+  , { walsCode := "ams", iso := "arb", value := .none }
+  , { walsCode := "amr", iso := "ary", value := .suffixOnlywithanotherneg }
+  , { walsCode := "asy", iso := "apc", value := .none }
+  , { walsCode := "ata", iso := "tay", value := .none }
+  , { walsCode := "bwc", iso := "bdr", value := .none }
+  , { walsCode := "bbu", iso := "brm", value := .none }
+  , { walsCode := "bkr", iso := "btx", value := .none }
+  , { walsCode := "bto", iso := "bbc", value := .none }
+  , { walsCode := "baq", iso := "brg", value := .none }
+  , { walsCode := "bco", iso := "blc", value := .none }
+  , { walsCode := "bch", iso := "shy", value := .none }
+  , { walsCode := "bfg", iso := "grr", value := .none }
+  , { walsCode := "btk", iso := "lbk", value := .none }
+  , { walsCode := "cak", iso := "cak", value := .wordOnlywithanotherneg }
+  , { walsCode := "cyv", iso := "cyb", value := .none }
+  , { walsCode := "cha", iso := "cha", value := .none }
+  , { walsCode := "cso", iso := "ctp", value := .none }
+  , { walsCode := "cya", iso := "ctp", value := .none }
+  , { walsCode := "ccm", iso := "cco", value := .none }
+  , { walsCode := "cle", iso := "cle", value := .none }
+  , { walsCode := "cpl", iso := "cpa", value := .none }
+  , { walsCode := "chq", iso := "chq", value := .none }
+  , { walsCode := "ckl", iso := "chh", value := .none }
+  , { walsCode := "chx", iso := "clo", value := .none }
+  , { walsCode := "chj", iso := "cac", value := .suffixOnlywithanotherneg }
+  , { walsCode := "cba", iso := "boi", value := .none }
+  , { walsCode := "crn", iso := "cor", value := .none }
+  , { walsCode := "cem", iso := "cam", value := .none }
+  , { walsCode := "did", iso := "did", value := .none }
+  , { walsCode := "dom", iso := "rmt", value := .suffixOptdoubleneg }
+  , { walsCode := "dre", iso := "dhv", value := .none }
+  , { walsCode := "fij", iso := "fij", value := .none }
+  , { walsCode := "gae", iso := "gla", value := .none }
+  , { walsCode := "grf", iso := "cab", value := .none }
+  , { walsCode := "gel", iso := "nlg", value := .none }
+  , { walsCode := "goa", iso := "guc", value := .none }
+  , { walsCode := "grk", iso := "ell", value := .none }
+  , { walsCode := "gjj", iso := "gub", value := .none }
+  , { walsCode := "gku", iso := "pue", value := .none }
+  , { walsCode := "hlu", iso := "hur", value := .none }
+  , { walsCode := "haw", iso := "haw", value := .none }
+  , { walsCode := "hdi", iso := "xed", value := .wordOnlywithanotherneg }
+  , { walsCode := "hei", iso := "hei", value := .none }
+  , { walsCode := "hil", iso := "hil", value := .none }
+  , { walsCode := "hoa", iso := "hoa", value := .none }
+  , { walsCode := "ifu", iso := "ifb", value := .none }
+  , { walsCode := "ign", iso := "ign", value := .none }
+  , { walsCode := "ik", iso := "ikx", value := .none }
+  , { walsCode := "iri", iso := "gle", value := .none }
+  , { walsCode := "jak", iso := "jac", value := .none }
+  , { walsCode := "kbl", iso := "kab", value := .wordOnlywithanotherneg }
+  , { walsCode := "kdz", iso := "kzj", value := .none }
+  , { walsCode := "kls", iso := "fla", value := .none }
+  , { walsCode := "kmj", iso := "kdj", value := .none }
+  , { walsCode := "klv", iso := "kij", value := .none }
+  , { walsCode := "kri", iso := "kzw", value := .suffixNodoubleneg }
+  , { walsCode := "krb", iso := "gil", value := .none }
+  , { walsCode := "shp", iso := "yak", value := .none }
+  , { walsCode := "kkt", iso := "kkk", value := .none }
+  , { walsCode := "kro", iso := "kgo", value := .none }
+  , { walsCode := "kuo", iso := "kto", value := .none }
+  , { walsCode := "kut", iso := "kut", value := .none }
+  , { walsCode := "kyq", iso := "nuk", value := .none }
+  , { walsCode := "lac", iso := "lac", value := .none }
+  , { walsCode := "lmg", iso := "hia", value := .wordOnlywithanotherneg }
+  , { walsCode := "lgu", iso := "lgu", value := .none }
+  , { walsCode := "maa", iso := "mas", value := .none }
+  , { walsCode := "mch", iso := "mcb", value := .none }
+  , { walsCode := "mak", iso := "myh", value := .none }
+  , { walsCode := "mal", iso := "plt", value := .none }
+  , { walsCode := "mam", iso := "mam", value := .none }
+  , { walsCode := "mmn", iso := "mmn", value := .none }
+  , { walsCode := "mwb", iso := "mbb", value := .none }
+  , { walsCode := "mzc", iso := "maq", value := .suffixNodoubleneg }
+  , { walsCode := "meh", iso := "gdq", value := .none }
+  , { walsCode := "mxc", iso := "mig", value := .none }
+  , { walsCode := "mxj", iso := "mio", value := .none }
+  , { walsCode := "mxo", iso := "mie", value := .none }
+  , { walsCode := "mxp", iso := "mil", value := .none }
+  , { walsCode := "miy", iso := "mkf", value := .wordOnlywithanotherneg }
+  , { walsCode := "mov", iso := "mzp", value := .none }
+  , { walsCode := "mrl", iso := "mur", value := .none }
+  , { walsCode := "msq", iso := "hur", value := .none }
+  , { walsCode := "ndr", iso := "wyy", value := .none }
+  , { walsCode := "nhh", iso := "", value := .none }
+  , { walsCode := "nan", iso := "niq", value := .none }
+  , { walsCode := "nia", iso := "nia", value := .none }
+  , { walsCode := "nca", iso := "caq", value := .none }
+  , { walsCode := "nsg", iso := "ncg", value := .none }
+  , { walsCode := "nif", iso := "num", value := .none }
+  , { walsCode := "niu", iso := "niu", value := .none }
+  , { walsCode := "ood", iso := "ood", value := .none }
+  , { walsCode := "oji", iso := "", value := .none }
+  , { walsCode := "ond", iso := "one", value := .none }
+  , { walsCode := "otm", iso := "ote", value := .none }
+  , { walsCode := "pai", iso := "pwn", value := .none }
+  , { walsCode := "pnn", iso := "pag", value := .none }
+  , { walsCode := "pip", iso := "ppl", value := .none }
+  , { walsCode := "pod", iso := "pbi", value := .none }
+  , { walsCode := "pkt", iso := "pko", value := .suffixOnlywithanotherneg }
+  , { walsCode := "qui", iso := "qui", value := .none }
+  , { walsCode := "rap", iso := "rap", value := .none }
+  , { walsCode := "rov", iso := "rug", value := .none }
+  , { walsCode := "ruk", iso := "dru", value := .none }
+  , { walsCode := "cos", iso := "", value := .none }
+  , { walsCode := "sam", iso := "smo", value := .none }
+  , { walsCode := "see", iso := "trv", value := .none }
+  , { walsCode := "sml", iso := "sza", value := .none }
+  , { walsCode := "shu", iso := "shs", value := .none }
+  , { walsCode := "qum", iso := "qum", value := .none }
+  , { walsCode := "so", iso := "teu", value := .none }
+  , { walsCode := "squ", iso := "squ", value := .none }
+  , { walsCode := "tag", iso := "tgl", value := .none }
+  , { walsCode := "tah", iso := "tah", value := .none }
+  , { walsCode := "tsk", iso := "taq", value := .none }
+  , { walsCode := "tsg", iso := "tsg", value := .none }
+  , { walsCode := "tbo", iso := "tbl", value := .none }
+  , { walsCode := "tee", iso := "tee", value := .none }
+  , { walsCode := "tpn", iso := "ntp", value := .none }
+  , { walsCode := "tho", iso := "thp", value := .none }
+  , { walsCode := "tim", iso := "tih", value := .none }
+  , { walsCode := "tin", iso := "cir", value := .none }
+  , { walsCode := "tlp", iso := "tcf", value := .none }
+  , { walsCode := "tob", iso := "tob", value := .none }
+  , { walsCode := "tke", iso := "tkl", value := .none }
+  , { walsCode := "tng", iso := "ton", value := .none }
+  , { walsCode := "tri", iso := "trc", value := .none }
+  , { walsCode := "tsi", iso := "tsi", value := .none }
+  , { walsCode := "tuk", iso := "", value := .none }
+  , { walsCode := "tna", iso := "tuv", value := .none }
+  , { walsCode := "tzo", iso := "tzo", value := .none }
+  , { walsCode := "tzu", iso := "tzj", value := .none }
+  , { walsCode := "war", iso := "pav", value := .none }
+  , { walsCode := "wrb", iso := "gjm", value := .none }
+  , { walsCode := "wel", iso := "cym", value := .none }
+  , { walsCode := "wec", iso := "cym", value := .wordbetweensando }
+  , { walsCode := "wem", iso := "xww", value := .none }
+  , { walsCode := "wya", iso := "wya", value := .none }
+  , { walsCode := "yag", iso := "yad", value := .none }
+  , { walsCode := "yap", iso := "yap", value := .none }
+  , { walsCode := "yok", iso := "yok", value := .none }
+  , { walsCode := "zai", iso := "zai", value := .none }
+  , { walsCode := "zap", iso := "zaw", value := .none }
+  , { walsCode := "zzo", iso := "zpq", value := .none }
+  , { walsCode := "zqc", iso := "zoc", value := .none }
+  , { walsCode := "zqo", iso := "zoc", value := .none }
   ]
 
 /-- Look up a language by WALS code. -/

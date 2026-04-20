@@ -634,23 +634,23 @@ theorem numberStage_consistent_with_size :
 -- §10: Bridge to Chierchia (1998) Nominal Mapping Parameter
 -- ============================================================================
 
-open Semantics.Noun.Kind.Chierchia1998 (NominalMapping canDenoteKind)
+open Semantics.Noun.Kind.Chierchia1998 (NominalMapping CanDenoteKind)
 
 /-- Corbett's general number languages are those where bare nouns can denote
     kinds without a determiner — exactly Chierchia's [+arg] languages.
 
     If a language has general number (a form outside the number system, non-
     committal to cardinality), bare NPs can serve as arguments. This corresponds
-    to `canDenoteKind mapping (hasD := false) = true`, which holds for
+    to `CanDenoteKind mapping (hasD := false)`, which holds for
     `argOnly` and `argAndPred` but not `predOnly`. -/
 theorem general_number_iff_bare_kind :
     (baysoNS.hasGeneral = true ∧
-     canDenoteKind .argOnly false = true) ∧
+     CanDenoteKind .argOnly False) ∧
     (japaneseNS.hasGeneral = true ∧
-     canDenoteKind .argOnly false = true) ∧
+     CanDenoteKind .argOnly False) ∧
     (englishNS.hasGeneral = false ∧
-     canDenoteKind .predOnly false = false) := by
-  native_decide
+     ¬ CanDenoteKind .predOnly False) :=
+  ⟨⟨rfl, trivial⟩, ⟨rfl, trivial⟩, ⟨rfl, id⟩⟩
 
 -- ============================================================================
 -- §11: Bridge to Link (1983) — Inclusive vs Exclusive Plural

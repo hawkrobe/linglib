@@ -137,4 +137,131 @@ lemma mem_ofForbiddenPairs_lang_iff_filter_isChain (R : α → α → Prop)
       tierProject_eq_filter, List.isChain_map]
   rfl
 
+/-! ### API around `ofForbiddenPairs` -/
+
+/-- Membership in `(ofForbiddenPairs R p).lang` is decidable, derived from
+the `IsChain` characterization. -/
+instance decidableMemOfForbiddenPairsLang (R : α → α → Prop) [DecidableRel R]
+    (p : α → Prop) [DecidablePred p] (w : List α) :
+    Decidable (w ∈ (TSLGrammar.ofForbiddenPairs R p).lang) :=
+  decidable_of_iff _ (mem_ofForbiddenPairs_lang_iff_filter_isChain R p w).symm
+
+/-- **Antitonicity in `R`**: forbidding more pairs (`R ≤ R'`) shrinks the
+language. The chain witness for the larger `R'` immediately yields one for
+the smaller `R` since `¬ R' a b → ¬ R a b`. -/
+lemma lang_antitone_R {R R' : α → α → Prop} [DecidableRel R] [DecidableRel R']
+    (h : ∀ a b, R a b → R' a b) (p : α → Prop) [DecidablePred p] :
+    (TSLGrammar.ofForbiddenPairs R' p).lang ≤
+      (TSLGrammar.ofForbiddenPairs R p).lang := fun w hw =>
+  (mem_ofForbiddenPairs_lang_iff_filter_isChain R p w).mpr <|
+    ((mem_ofForbiddenPairs_lang_iff_filter_isChain R' p w).mp hw).imp
+      fun _ _ hR' hR => hR' (h _ _ hR)
+
+/-- Any list is a chain for the always-true relation. Used as the trivial
+witness for `lang_R_bot`. -/
+private lemma _isChain_true : ∀ (l : List α),
+    l.IsChain (fun _ _ : α => True)
+  | [] => List.isChain_nil
+  | [_] => List.isChain_singleton _
+  | _ :: _ :: _ => by
+      rw [List.isChain_cons_cons]
+      exact ⟨trivial, _isChain_true _⟩
+
+/-- **Boundary case** (`R = ⊥`): if no pair is forbidden, the language is
+universal. -/
+@[simp] lemma lang_R_bot (p : α → Prop) [DecidablePred p] :
+    (TSLGrammar.ofForbiddenPairs (fun _ _ : α => False) p).lang = Set.univ := by
+  ext w
+  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  exact ⟨fun _ => Set.mem_univ _, fun _ =>
+    (_isChain_true _).imp (fun _ _ _ h => h.elim)⟩
+
+/-- **Boundary case** (`p = ⊥`): if no symbol is on the tier, the projection is
+empty and the language is universal. -/
+@[simp] lemma lang_p_bot (R : α → α → Prop) [DecidableRel R] :
+    (TSLGrammar.ofForbiddenPairs R (fun _ : α => False)).lang = Set.univ := by
+  ext w
+  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  refine ⟨fun _ => Set.mem_univ _, fun _ => ?_⟩
+  rw [show w.filter (fun x => decide ((fun _ : α => False) x)) = [] by
+        induction w with
+        | nil => rfl
+        | cons _ _ ih => simp]
+  exact List.isChain_nil
+
+/-- **Boundary case** (`p = ⊤`): with no tier filtering the language reduces
+to the SL_2 case — no two adjacent symbols of the raw string may be
+`R`-related. -/
+lemma lang_p_top (R : α → α → Prop) [DecidableRel R] :
+    (TSLGrammar.ofForbiddenPairs R (fun _ : α => True)).lang =
+      { w | w.IsChain (fun a b => ¬ R a b) } := by
+  ext w
+  rw [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  have hfilter : w.filter (fun x => decide ((fun _ : α => True) x)) = w := by
+    rw [List.filter_eq_self]; intros; simp
+  rw [hfilter]; rfl
+
+/-- Two `IsChain` witnesses on the same list combine into a chain for the
+conjunction relation. Used as a helper for `lang_R_sup_eq_inter`. -/
+private lemma _isChain_and {S T : α → α → Prop} : ∀ {l : List α},
+    l.IsChain S → l.IsChain T → l.IsChain (fun a b => S a b ∧ T a b)
+  | [], _, _ => List.isChain_nil
+  | [_], _, _ => List.isChain_singleton _
+  | _ :: _ :: _, hS, hT => by
+    rw [List.isChain_cons_cons] at hS hT ⊢
+    exact ⟨⟨hS.1, hT.1⟩, _isChain_and hS.2 hT.2⟩
+
+/-- **Same-tier composition** (membership form): forbidding the disjunction of
+two relations on a single tier coincides with conjunctive membership in the
+two corresponding languages. The cross-tier case (two relations on *different*
+tiers `p₁ ≠ p₂`) does NOT factor through this constructor — that is precisely
+the empirical and formal motivation for multi-tier strictly local languages
+(MTSL). -/
+lemma mem_lang_R_sup_iff (R₁ R₂ : α → α → Prop) [DecidableRel R₁]
+    [DecidableRel R₂] (p : α → Prop) [DecidablePred p] (w : List α) :
+    w ∈ (TSLGrammar.ofForbiddenPairs (fun a b => R₁ a b ∨ R₂ a b) p).lang ↔
+      w ∈ (TSLGrammar.ofForbiddenPairs R₁ p).lang ∧
+        w ∈ (TSLGrammar.ofForbiddenPairs R₂ p).lang := by
+  simp only [mem_ofForbiddenPairs_lang_iff_filter_isChain]
+  refine ⟨fun h => ⟨h.imp (fun _ _ hne h1 => hne (Or.inl h1)),
+                    h.imp (fun _ _ hne h2 => hne (Or.inr h2))⟩, ?_⟩
+  rintro ⟨h1, h2⟩
+  exact (_isChain_and h1 h2).imp (fun _ _ ⟨hne1, hne2⟩ => fun
+    | Or.inl hR1 => hne1 hR1
+    | Or.inr hR2 => hne2 hR2)
+
+/-- **Same-tier composition** (lattice form): forbidding the disjunction of two
+relations on a single tier equals the meet of the two corresponding
+languages. The cross-tier case is *not* expressible — see MTSL. -/
+lemma lang_R_sup_eq_inf (R₁ R₂ : α → α → Prop) [DecidableRel R₁]
+    [DecidableRel R₂] (p : α → Prop) [DecidablePred p] :
+    (TSLGrammar.ofForbiddenPairs (fun a b => R₁ a b ∨ R₂ a b) p).lang =
+      (TSLGrammar.ofForbiddenPairs R₁ p).lang ⊓
+        (TSLGrammar.ofForbiddenPairs R₂ p).lang := by
+  ext w; exact mem_lang_R_sup_iff R₁ R₂ p w
+
+/-! ### Design boundary
+
+The language `(ofForbiddenPairs R p).lang` is **neither monotone nor
+antitone** in the tier predicate `p`. Counterexample: take
+`R := (· = ·)`, `p := { s }`, `p' := { s, t }` with `p ≤ p'`, and
+`xs := [s, t, t]`. Then `xs.filter p = [s]` is a chain (singleton), so
+`xs ∈ lang p`, but `xs.filter p' = [s, t, t]` is not a chain (`t = t` is
+adjacent), so `xs ∉ lang p'`. The reverse direction also fails — see
+`xs := [s, s, t]`. This is the formal counterpart of the linguistic
+intuition that *which segments project to the tier* is not just a
+monotone refinement but a substantive theoretical commitment, and it is
+why TSL_2 over different tiers gives genuinely incomparable theories.
+
+The substantive empirical force of this boundary is the gradient
+similarity-based OCP of @cite{frisch-pierrehumbert-broe-2004}: Arabic
+co-occurrence restrictions decay with featural distance rather than
+following a clean tier cut, so the same `R` paired with different `p`
+yields incomparable predictions about which root pairs are licit.
+Dependencies on multiple tiers — e.g. simultaneous consonantal and
+vocalic harmony — likewise fall outside this single-tier constructor.
+The natural way to combine constraints across tiers is the multi-tier
+strictly local (MTSL) family, which is *not* a special case of this
+constructor. -/
+
 end Core.Computability.Subregular

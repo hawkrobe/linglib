@@ -349,18 +349,24 @@ def languageFamily : NominalMapping → String
     - [+arg] languages: nouns can denote kinds without D (covert ∩ available)
     - [-arg, +pred] languages: D is required to map predicates to arguments;
       without D, nouns remain predicates (properties) -/
-def canDenoteKind (mapping : NominalMapping) (hasD : Bool) : Bool :=
+def CanDenoteKind (mapping : NominalMapping) (hasD : Prop) [Decidable hasD] : Prop :=
   match mapping with
-  | .argOnly    => true   -- all nouns are kinds; ∩ is trivially available
-  | .argAndPred => true   -- covert ∩ available (for plurals/mass; see downDefinedFor)
+  | .argOnly    => True   -- all nouns are kinds; ∩ is trivially available
+  | .argAndPred => True   -- covert ∩ available (for plurals/mass; see downDefinedFor)
   | .predOnly   => hasD   -- needs overt D to become argumental
 
+instance (m : NominalMapping) (h : Prop) [Decidable h] : Decidable (CanDenoteKind m h) := by
+  cases m <;> unfold CanDenoteKind <;> infer_instance
+
 /-- Whether a nominal can denote a property, given the mapping parameter. -/
-def canDenoteProperty (mapping : NominalMapping) : Bool :=
+def CanDenoteProperty (mapping : NominalMapping) : Prop :=
   match mapping with
-  | .argOnly    => false  -- nouns are kinds, not predicates
-  | .argAndPred => true   -- nouns can be predicates
-  | .predOnly   => true   -- nouns are predicates by default
+  | .argOnly    => False  -- nouns are kinds, not predicates
+  | .argAndPred => True   -- nouns can be predicates
+  | .predOnly   => True   -- nouns are predicates by default
+
+instance : DecidablePred CanDenoteProperty := fun m => by
+  cases m <;> unfold CanDenoteProperty <;> infer_instance
 
 -- Mass/Count Distinction
 -- Uses `MassCount` from `Core.Lexical.Word`.

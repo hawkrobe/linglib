@@ -1,23 +1,25 @@
-/-
-# Lexical Rules for Dependency Grammar
-@cite{hudson-2010}
-
-Lexical rules derive new lexical entries from existing ones.
-Following Word Grammar and HPSG.
-
-Key lexical rules:
-1. Auxiliary Inversion: V+aux → V+aux,+inv (subject moves from left to right)
-2. Passive: VN → V+passive (object promoted, subject demoted to by-phrase)
-3. Dative Alternation: VN,N → VN,PP (double object ↔ prepositional dative)
-
-References:
-- @cite{gibson-2025}
-- @cite{pollard-sag-1994} "Head-Driven Phrase Structure Grammar"
--/
-
 import Linglib.Core.Dependency.Basic
 
-namespace DepGrammar
+/-!
+# Lexical Rules for Word Grammar @cite{hudson-2010}
+
+Lexical rules derive new lexical entries from existing ones, following
+Word Grammar and HPSG @cite{pollard-sag-1994}. The two rules formalised
+here are central to the @cite{hudson-2010} treatment of English auxiliaries
+(also discussed in @cite{gibson-2025}):
+
+1. Auxiliary Inversion: `V+aux → V+aux,+inv` (subject moves from left to
+   right — Hudson treats this as a word-class subtype, not a movement rule;
+   see `WordGrammar.Network.englishAuxNet`'s `inverted_auxiliary` node).
+2. Passive: `VN → V+passive` (object promoted, subject demoted to by-phrase).
+
+A third rule — Dative Alternation — is mentioned in the literature but not
+formalised here.
+-/
+
+namespace WordGrammar
+
+open DepGrammar (ArgStr ArgSlot Dir)
 
 -- ============================================================================
 -- Lexical Entries with Argument Structures
@@ -104,4 +106,4 @@ def applyRule (rule : LexRule) (entry : LexEntry) : Option LexEntry :=
 def deriveEntries (rules : List LexRule) (entry : LexEntry) : List LexEntry :=
   entry :: rules.filterMap (applyRule · entry)
 
-end DepGrammar
+end WordGrammar

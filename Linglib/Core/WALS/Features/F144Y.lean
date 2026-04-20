@@ -40,22 +40,22 @@ inductive PositionOfNegativeMorphemesInObjectInitialLanguages where
 
 /-- Complete WALS 144Y dataset (16 languages). -/
 def allData : List (Datapoint PositionOfNegativeMorphemesInObjectInitialLanguages) :=
-  [ { walsCode := "apl", language := "Apalaí", iso := "apy", value := .oVNegSSoVNeg }
-  , { walsCode := "asu", language := "Asuriní", iso := "asu", value := .oNegVNegS }
-  , { walsCode := "cub", language := "Cubeo", iso := "cub", value := .oVNegS }
-  , { walsCode := "hix", language := "Hixkaryana", iso := "hix", value := .oVNegS }
-  , { walsCode := "kxo", language := "Kxoe", iso := "xuu", value := .osvneg }
-  , { walsCode := "mac", language := "Macushi", iso := "mbc", value := .ovnegsSovneg }
-  , { walsCode := "myi", language := "Mangarrayi", iso := "mpc", value := .onegvs }
-  , { walsCode := "nad", language := "Nadëb", iso := "mbj", value := .oNegVSNegsvo }
-  , { walsCode := "par", language := "Päri", iso := "lkr", value := .ovsNegv }
-  , { walsCode := "sel", language := "Selknam", iso := "ona", value := .ovnegs }
-  , { walsCode := "tir", language := "Tiriyo", iso := "tri", value := .oVNegS }
-  , { walsCode := "tbt", language := "Tobati", iso := "tti", value := .osV }
-  , { walsCode := "tvl", language := "Tuvaluan", iso := "tvl", value := .onegvs }
-  , { walsCode := "ung", language := "Ungarinjin", iso := "ung", value := .onegvs }
-  , { walsCode := "urn", language := "Urarina", iso := "ura", value := .oVNegS }
-  , { walsCode := "wic", language := "Wichita", iso := "wic", value := .negovsNegsov }
+  [ { walsCode := "apl", iso := "apy", value := .oVNegSSoVNeg }
+  , { walsCode := "asu", iso := "asu", value := .oNegVNegS }
+  , { walsCode := "cub", iso := "cub", value := .oVNegS }
+  , { walsCode := "hix", iso := "hix", value := .oVNegS }
+  , { walsCode := "kxo", iso := "xuu", value := .osvneg }
+  , { walsCode := "mac", iso := "mbc", value := .ovnegsSovneg }
+  , { walsCode := "myi", iso := "mpc", value := .onegvs }
+  , { walsCode := "nad", iso := "mbj", value := .oNegVSNegsvo }
+  , { walsCode := "par", iso := "lkr", value := .ovsNegv }
+  , { walsCode := "sel", iso := "ona", value := .ovnegs }
+  , { walsCode := "tir", iso := "tri", value := .oVNegS }
+  , { walsCode := "tbt", iso := "tti", value := .osV }
+  , { walsCode := "tvl", iso := "tvl", value := .onegvs }
+  , { walsCode := "ung", iso := "ung", value := .onegvs }
+  , { walsCode := "urn", iso := "ura", value := .oVNegS }
+  , { walsCode := "wic", iso := "wic", value := .negovsNegsov }
   ]
 
 /-- Look up a language by WALS code. -/

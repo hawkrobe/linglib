@@ -83,14 +83,17 @@ inductive GappingDirection where
 A gapping pattern describes what a language allows.
 -/
 structure GappingPattern where
-  allowsForward : Bool
-  allowsBackward : Bool
-  deriving Repr
+  allowsForward : Prop
+  allowsBackward : Prop
+  [decAllowsForward : Decidable allowsForward]
+  [decAllowsBackward : Decidable allowsBackward]
 
-def GappingPattern.forwardOnly : GappingPattern := ⟨true, false⟩
-def GappingPattern.backwardOnly : GappingPattern := ⟨false, true⟩
-def GappingPattern.both : GappingPattern := ⟨true, true⟩
-def GappingPattern.neither : GappingPattern := ⟨false, false⟩
+attribute [instance] GappingPattern.decAllowsForward GappingPattern.decAllowsBackward
+
+def GappingPattern.forwardOnly : GappingPattern := ⟨True, False⟩
+def GappingPattern.backwardOnly : GappingPattern := ⟨False, True⟩
+def GappingPattern.both : GappingPattern := ⟨True, True⟩
+def GappingPattern.neither : GappingPattern := ⟨False, False⟩
 
 -- Ross's Generalization
 
@@ -113,23 +116,27 @@ of verb categories, not "underlying" word order.
 A language allows forward gapping iff it has rightward-combining verbs.
 A language allows backward gapping iff it has leftward-combining verbs.
 -/
-def hasRightwardVerbs : WordOrder → Bool
-  | .VSO => true
-  | .SVO => true
-  | .VOS => true
-  | _ => false
+def HasRightwardVerbs : WordOrder → Prop
+  | .VSO => True
+  | .SVO => True
+  | .VOS => True
+  | _ => False
 
-def hasLeftwardVerbs : WordOrder → Bool
-  | .SOV => true
-  | .OVS => true
-  | .OSV => true
-  | _ => false
+instance : DecidablePred HasRightwardVerbs := fun w => by
+  cases w <;> unfold HasRightwardVerbs <;> infer_instance
+
+def HasLeftwardVerbs : WordOrder → Prop
+  | .SOV => True
+  | .OVS => True
+  | .OSV => True
+  | _ => False
+
+instance : DecidablePred HasLeftwardVerbs := fun w => by
+  cases w <;> unfold HasLeftwardVerbs <;> infer_instance
 
 def rossRevised (profile : WordOrderProfile) : GappingPattern :=
-  let hasRightward := hasRightwardVerbs profile.mainClause
-  let hasLeftward := hasLeftwardVerbs profile.mainClause ||
-                     hasLeftwardVerbs profile.subClause
-  ⟨hasRightward, hasLeftward⟩
+  ⟨HasRightwardVerbs profile.mainClause,
+   HasLeftwardVerbs profile.mainClause ∨ HasLeftwardVerbs profile.subClause⟩
 
 -- Language Examples
 
@@ -295,27 +302,31 @@ instance : DecidablePred HasWordOrderConstraints := fun x => by
 
 /-- Pure SOV language has backward gapping only -/
 theorem sov_backward_only :
-    (rossRevised japanese).allowsForward = false ∧
-    (rossRevised japanese).allowsBackward = true := by
-  constructor <;> rfl
+    ¬ (rossRevised japanese).allowsForward ∧
+    (rossRevised japanese).allowsBackward := by
+  refine ⟨id, ?_⟩
+  exact Or.inl trivial
 
 /-- Pure VSO language has forward gapping only -/
 theorem vso_forward_only :
-    (rossRevised irish).allowsForward = true ∧
-    (rossRevised irish).allowsBackward = false := by
-  constructor <;> rfl
+    (rossRevised irish).allowsForward ∧
+    ¬ (rossRevised irish).allowsBackward := by
+  refine ⟨trivial, ?_⟩
+  rintro (h | h) <;> exact h
 
 /-- Pure SVO language has forward gapping only -/
 theorem svo_forward_only :
-    (rossRevised english).allowsForward = true ∧
-    (rossRevised english).allowsBackward = false := by
-  constructor <;> rfl
+    (rossRevised english).allowsForward ∧
+    ¬ (rossRevised english).allowsBackward := by
+  refine ⟨trivial, ?_⟩
+  rintro (h | h) <;> exact h
 
 /-- Mixed order language (Dutch) allows both -/
 theorem mixed_allows_both :
-    (rossRevised dutch).allowsForward = true ∧
-    (rossRevised dutch).allowsBackward = true := by
-  constructor <;> rfl
+    (rossRevised dutch).allowsForward ∧
+    (rossRevised dutch).allowsBackward := by
+  refine ⟨trivial, ?_⟩
+  exact Or.inr trivial
 
 -- ============================================================================
 -- Identity Conditions (@cite{anand-hardt-mccloskey-2021})
@@ -324,35 +335,41 @@ theorem mixed_allows_both :
 /-- Does this ellipsis type require syntactic identity (SIC)?
     @cite{anand-hardt-mccloskey-2021}: sluicing and gapping require structural matching;
     VP ellipsis does not. -/
-def requiresSyntacticIdentity : EllipsisType → Bool
-  | .sluicing => true
-  | .gapping => true
-  | .stripping => true
-  | .vpEllipsis => false
+def RequiresSyntacticIdentity : EllipsisType → Prop
+  | .sluicing => True
+  | .gapping => True
+  | .stripping => True
+  | .vpEllipsis => False
+
+instance : DecidablePred RequiresSyntacticIdentity := fun e => by
+  cases e <;> unfold RequiresSyntacticIdentity <;> infer_instance
 
 /-- Does this ellipsis type require semantic identity (e-GIVENness)?
     @cite{anand-hardt-mccloskey-2021}: all ellipsis types require e-GIVENness. -/
-def requiresSemanticIdentity : EllipsisType → Bool
-  | _ => true
+def RequiresSemanticIdentity : EllipsisType → Prop
+  | _ => True
+
+instance : DecidablePred RequiresSemanticIdentity := fun e => by
+  cases e <;> unfold RequiresSemanticIdentity <;> infer_instance
 
 /-- Sluicing requires both semantic and syntactic identity. -/
 theorem sluicing_requires_both :
-    requiresSemanticIdentity .sluicing = true ∧
-    requiresSyntacticIdentity .sluicing = true :=
-  ⟨rfl, rfl⟩
+    RequiresSemanticIdentity .sluicing ∧
+    RequiresSyntacticIdentity .sluicing :=
+  ⟨trivial, trivial⟩
 
 /-- VP ellipsis requires semantic identity but not syntactic identity. -/
 theorem vpe_semantic_only :
-    requiresSemanticIdentity .vpEllipsis = true ∧
-    requiresSyntacticIdentity .vpEllipsis = false :=
-  ⟨rfl, rfl⟩
+    RequiresSemanticIdentity .vpEllipsis ∧
+    ¬ RequiresSyntacticIdentity .vpEllipsis :=
+  ⟨trivial, id⟩
 
 /-- VP ellipsis tolerates voice mismatches because it lacks the SIC.
     Since VPE has no syntactic identity requirement, voice flavor
     differences (agentive vs nonThematic) are irrelevant — only
     e-GIVENness (semantic identity) must hold. -/
 theorem vpe_voice_mismatch_explained :
-    requiresSyntacticIdentity .vpEllipsis = false :=
-  rfl
+    ¬ RequiresSyntacticIdentity .vpEllipsis :=
+  id
 
 end Phenomena.Ellipsis.Gapping

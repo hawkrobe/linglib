@@ -50,23 +50,23 @@ inductive DoubleNegationInVerbInitialLanguages where
 
 /-- Complete WALS 144U dataset (17 languages). -/
 def allData : List (Datapoint DoubleNegationInVerbInitialLanguages) :=
-  [ { walsCode := "ann", language := "Anindilyakwa", iso := "aoi", value := .vsVoNegV }
-  , { walsCode := "amr", language := "Arabic (Moroccan)", iso := "ary", value := .vsVoNegVNeg }
-  , { walsCode := "bbu", language := "Barambu", iso := "brm", value := .svoVsoButNegVSo }
-  , { walsCode := "cak", language := "Cakchiquel", iso := "cak", value := .negvnegos }
-  , { walsCode := "chj", language := "Chuj", iso := "cac", value := .vosNegvneg }
-  , { walsCode := "dom", language := "Domari", iso := "rmt", value := .vsVoNegvVNeg }
-  , { walsCode := "hdi", language := "Hdi", iso := "xed", value := .vnegsoneg }
-  , { walsCode := "kbl", language := "Kabyle", iso := "kab", value := .negvnegso }
-  , { walsCode := "kro", language := "Krongo", iso := "kgo", value := .negvsoneg }
-  , { walsCode := "lmg", language := "Lamang", iso := "hia", value := .vsoneg }
-  , { walsCode := "miy", language := "Miya", iso := "mkf", value := .negvosnegVnegosnegSnegvonegSvnegoneg }
-  , { walsCode := "ond", language := "Oneida", iso := "one", value := .vsVoNegV }
-  , { walsCode := "pkt", language := "Pokot", iso := "pko", value := .negvsoNegVNegSo }
-  , { walsCode := "rap", language := "Rapanui", iso := "rap", value := .negvso }
-  , { walsCode := "rwe", language := "Romani (Welsh)", iso := "rmw", value := .vsoSvoV }
-  , { walsCode := "tsk", language := "Tamashek", iso := "taq", value := .negvsoOptstemchange }
-  , { walsCode := "tsi", language := "Tsimshian (Coast)", iso := "tsi", value := .negnegvso }
+  [ { walsCode := "ann", iso := "aoi", value := .vsVoNegV }
+  , { walsCode := "amr", iso := "ary", value := .vsVoNegVNeg }
+  , { walsCode := "bbu", iso := "brm", value := .svoVsoButNegVSo }
+  , { walsCode := "cak", iso := "cak", value := .negvnegos }
+  , { walsCode := "chj", iso := "cac", value := .vosNegvneg }
+  , { walsCode := "dom", iso := "rmt", value := .vsVoNegvVNeg }
+  , { walsCode := "hdi", iso := "xed", value := .vnegsoneg }
+  , { walsCode := "kbl", iso := "kab", value := .negvnegso }
+  , { walsCode := "kro", iso := "kgo", value := .negvsoneg }
+  , { walsCode := "lmg", iso := "hia", value := .vsoneg }
+  , { walsCode := "miy", iso := "mkf", value := .negvosnegVnegosnegSnegvonegSvnegoneg }
+  , { walsCode := "ond", iso := "one", value := .vsVoNegV }
+  , { walsCode := "pkt", iso := "pko", value := .negvsoNegVNegSo }
+  , { walsCode := "rap", iso := "rap", value := .negvso }
+  , { walsCode := "rwe", iso := "rmw", value := .vsoSvoV }
+  , { walsCode := "tsk", iso := "taq", value := .negvsoOptstemchange }
+  , { walsCode := "tsi", iso := "tsi", value := .negnegvso }
   ]
 
 /-- Look up a language by WALS code. -/

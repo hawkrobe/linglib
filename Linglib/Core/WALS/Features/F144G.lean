@@ -54,41 +54,41 @@ inductive OptionalDoubleNegationInSvoLanguages where
 
 /-- Complete WALS 144G dataset (35 languages). -/
 def allData : List (Datapoint OptionalDoubleNegationInSvoLanguages) :=
-  [ { walsCode := "adz", language := "Adzera", iso := "adz", value := .sNegVO }
-  , { walsCode := "aeg", language := "Arabic (Egyptian)", iso := "arz", value := .snegVNegOSNegVNegO }
-  , { walsCode := "arp", language := "Arapesh (Mountain)", iso := "ape", value := .snegvo }
-  , { walsCode := "bmb", language := "Bimoba", iso := "bim", value := .snegvo }
-  , { walsCode := "bol", language := "Bolia", iso := "bli", value := .sNegVO }
-  , { walsCode := "bgo", language := "Bongo", iso := "bot", value := .svoneg }
-  , { walsCode := "ctl", language := "Catalan", iso := "cat", value := .snegvo_4 }
-  , { walsCode := "chr", language := "Chrau", iso := "crw", value := .snegvo }
-  , { walsCode := "cop", language := "Coptic", iso := "cop", value := .sNegVONegsvnego }
-  , { walsCode := "dma", language := "Duma", iso := "dma", value := .svnego }
-  , { walsCode := "ewo", language := "Ewondo", iso := "ewo", value := .snegvoSvnegoNegtone }
-  , { walsCode := "fre", language := "French", iso := "fra", value := .svnego }
-  , { walsCode := "fye", language := "Fyem", iso := "pym", value := .svoneg_5 }
-  , { walsCode := "gbb", language := "Gbeya Bossangoa", iso := "gbp", value := .svoneg }
-  , { walsCode := "hau", language := "Hausa", iso := "hau", value := .snegvo }
-  , { walsCode := "mxe", language := "Ifira-Mele", iso := "mxe", value := .sVNego }
-  , { walsCode := "ina", language := "Inanwatan", iso := "szp", value := .svoSovVNeg }
-  , { walsCode := "kre", language := "Kresh", iso := "krs", value := .svonegSvoneg }
-  , { walsCode := "lew", language := "Lewo", iso := "lww", value := .svnego_6 }
-  , { walsCode := "mbe", language := "Mbere", iso := "mdt", value := .svnego }
-  , { walsCode := "mum", language := "Mumuye", iso := "mzm", value := .svoneg }
-  , { walsCode := "mgk", language := "Mungaka", iso := "mhk", value := .svoneg }
-  , { walsCode := "mup", language := "Mupun", iso := "sur", value := .svoneg_5 }
-  , { walsCode := "nke", language := "Nkem", iso := "isi", value := .sVO }
-  , { walsCode := "one", language := "One", iso := "aun", value := .svoneg }
-  , { walsCode := "paa", language := "Pa'a", iso := "pqa", value := .svoneg }
-  , { walsCode := "plh", language := "Paulohi", iso := "plh", value := .snegvo }
-  , { walsCode := "rwe", language := "Romani (Welsh)", iso := "rmw", value := .svoVsoNegvVnegNegvneg }
-  , { walsCode := "tmn", language := "Temein", iso := "teq", value := .negsVO }
-  , { walsCode := "ter", language := "Tera", iso := "ttr", value := .svoneg }
-  , { walsCode := "tid", language := "Tidore", iso := "tvo", value := .svoneg }
-  , { walsCode := "urt", language := "Urat", iso := "urt", value := .snegvo }
-  , { walsCode := "wrn", language := "Warndarang", iso := "wnd", value := .sNegVO_12 }
-  , { walsCode := "zch", language := "Zoque (Chimalapa)", iso := "zoh", value := .sVONegv }
-  , { walsCode := "zul", language := "Zulu", iso := "zul", value := .sNegVO_12 }
+  [ { walsCode := "adz", iso := "adz", value := .sNegVO }
+  , { walsCode := "aeg", iso := "arz", value := .snegVNegOSNegVNegO }
+  , { walsCode := "arp", iso := "ape", value := .snegvo }
+  , { walsCode := "bmb", iso := "bim", value := .snegvo }
+  , { walsCode := "bol", iso := "bli", value := .sNegVO }
+  , { walsCode := "bgo", iso := "bot", value := .svoneg }
+  , { walsCode := "ctl", iso := "cat", value := .snegvo_4 }
+  , { walsCode := "chr", iso := "crw", value := .snegvo }
+  , { walsCode := "cop", iso := "cop", value := .sNegVONegsvnego }
+  , { walsCode := "dma", iso := "dma", value := .svnego }
+  , { walsCode := "ewo", iso := "ewo", value := .snegvoSvnegoNegtone }
+  , { walsCode := "fre", iso := "fra", value := .svnego }
+  , { walsCode := "fye", iso := "pym", value := .svoneg_5 }
+  , { walsCode := "gbb", iso := "gbp", value := .svoneg }
+  , { walsCode := "hau", iso := "hau", value := .snegvo }
+  , { walsCode := "mxe", iso := "mxe", value := .sVNego }
+  , { walsCode := "ina", iso := "szp", value := .svoSovVNeg }
+  , { walsCode := "kre", iso := "krs", value := .svonegSvoneg }
+  , { walsCode := "lew", iso := "lww", value := .svnego_6 }
+  , { walsCode := "mbe", iso := "mdt", value := .svnego }
+  , { walsCode := "mum", iso := "mzm", value := .svoneg }
+  , { walsCode := "mgk", iso := "mhk", value := .svoneg }
+  , { walsCode := "mup", iso := "sur", value := .svoneg_5 }
+  , { walsCode := "nke", iso := "isi", value := .sVO }
+  , { walsCode := "one", iso := "aun", value := .svoneg }
+  , { walsCode := "paa", iso := "pqa", value := .svoneg }
+  , { walsCode := "plh", iso := "plh", value := .snegvo }
+  , { walsCode := "rwe", iso := "rmw", value := .svoVsoNegvVnegNegvneg }
+  , { walsCode := "tmn", iso := "teq", value := .negsVO }
+  , { walsCode := "ter", iso := "ttr", value := .svoneg }
+  , { walsCode := "tid", iso := "tvo", value := .svoneg }
+  , { walsCode := "urt", iso := "urt", value := .snegvo }
+  , { walsCode := "wrn", iso := "wnd", value := .sNegVO_12 }
+  , { walsCode := "zch", iso := "zoh", value := .sVONegv }
+  , { walsCode := "zul", iso := "zul", value := .sNegVO_12 }
   ]
 
 /-- Look up a language by WALS code. -/
