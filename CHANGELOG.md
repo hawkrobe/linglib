@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.83] - 2026-04-20
+
+### Changed
+- **`Phenomena/Polarity/Typology.lean`** (Phase 3 of Polarity overhaul):
+  trim 17 per-language `_series_count` decide-theorems → one quantified
+  `language_series_counts` over `allLanguages`; trim 17 per-language
+  `_wals` decide-theorems → one quantified `language_wals_classifications`
+  (each as `(iso, value)` list-equality proven by `decide`). Existing
+  masters (`total_series`, `min/max_series_count`,
+  `most_common_series_count`, `all_languages_in_wals`) retained. Top-
+  level placement preserved per per-file test: WALS Ch46 grounding +
+  Haspelmath ontology used by `Studies/Chierchia2006.lean`. Net −20
+  lines (1315 → 1295).
+
 ## [0.230.82] - 2026-04-20
 
 ### Changed

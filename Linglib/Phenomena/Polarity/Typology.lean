@@ -936,25 +936,15 @@ theorem sample_5_series : countBySeriesCount allLanguages 5 = 4 := by decide
 -- §12: Per-Language Verification
 -- ============================================================================
 
-/-! Verify the series count and key properties for each language. -/
-
-theorem english_series_count : english.seriesCount = 4 := by decide
-theorem russian_series_count : russian.seriesCount = 5 := by decide
-theorem german_series_count : german.seriesCount = 5 := by decide
-theorem japanese_series_count : japanese.seriesCount = 3 := by decide
-theorem mandarin_series_count : mandarin.seriesCount = 2 := by decide
-theorem turkish_series_count : turkish.seriesCount = 5 := by decide
-theorem hindi_series_count : hindi.seriesCount = 3 := by decide
-theorem italian_series_count : italian.seriesCount = 3 := by decide
-theorem finnish_series_count : finnish.seriesCount = 5 := by decide
-theorem korean_series_count : korean.seriesCount = 4 := by decide
-theorem hungarian_series_count : hungarian.seriesCount = 4 := by decide
-theorem georgian_series_count : georgian.seriesCount = 4 := by decide
-theorem quechua_series_count : quechua.seriesCount = 4 := by decide
-theorem yoruba_series_count : yoruba.seriesCount = 2 := by decide
-theorem thai_series_count : thai.seriesCount = 3 := by decide
-theorem tagalog_series_count : tagalog.seriesCount = 4 := by decide
-theorem swahili_series_count : swahili.seriesCount = 3 := by decide
+/-- Series count per language (ISO code, count) for the 17-language sample.
+    Replaces 17 per-language `_series_count` decide-theorems. -/
+theorem language_series_counts :
+    allLanguages.map (λ p => (p.iso, p.seriesCount)) =
+      [ ("eng", 4), ("rus", 5), ("deu", 5), ("jpn", 3), ("cmn", 2)
+      , ("tur", 5), ("hin", 3), ("ita", 3), ("fin", 5), ("kor", 4)
+      , ("hun", 4), ("kat", 4), ("qvi", 4), ("yor", 2), ("tha", 3)
+      , ("tgl", 4), ("swh", 3) ] := by
+  decide
 
 -- ============================================================================
 -- §12a: WALS 46A Bridge
@@ -973,39 +963,29 @@ theorem swahili_series_count : swahili.seriesCount = 3 := by decide
     - Existential construction: Tagalog (1) -/
 
 open Core.WALS.F46A (IndefinitePronouns) in
-theorem english_wals : english.wals46A = some .genericNounBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem russian_wals : russian.wals46A = some .interrogativeBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem german_wals : german.wals46A = some .mixed := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem japanese_wals : japanese.wals46A = some .interrogativeBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem mandarin_wals : mandarin.wals46A = some .mixed := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem turkish_wals : turkish.wals46A = some .genericNounBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem hindi_wals : hindi.wals46A = some .special := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem italian_wals : italian.wals46A = some .genericNounBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem finnish_wals : finnish.wals46A = some .special := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem korean_wals : korean.wals46A = some .interrogativeBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem hungarian_wals : hungarian.wals46A = some .interrogativeBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem georgian_wals : georgian.wals46A = some .interrogativeBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem quechua_wals : quechua.wals46A = some .interrogativeBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem yoruba_wals : yoruba.wals46A = some .genericNounBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem thai_wals : thai.wals46A = some .interrogativeBased := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem tagalog_wals : tagalog.wals46A = some .existentialConstruction := by decide
-open Core.WALS.F46A (IndefinitePronouns) in
-theorem swahili_wals : swahili.wals46A = some .genericNounBased := by decide
+/-- WALS 46A morphological-source classification per language (ISO code, value)
+    for the 17-language sample. Replaces 17 per-language `_wals` decide-theorems.
+    Verifies the `lookupISO`-derived `wals46A` field against expected values. -/
+theorem language_wals_classifications :
+    allLanguages.map (λ p => (p.iso, p.wals46A)) =
+      [ ("eng", some .genericNounBased)
+      , ("rus", some .interrogativeBased)
+      , ("deu", some .mixed)
+      , ("jpn", some .interrogativeBased)
+      , ("cmn", some .mixed)
+      , ("tur", some .genericNounBased)
+      , ("hin", some .special)
+      , ("ita", some .genericNounBased)
+      , ("fin", some .special)
+      , ("kor", some .interrogativeBased)
+      , ("hun", some .interrogativeBased)
+      , ("kat", some .interrogativeBased)
+      , ("qvi", some .interrogativeBased)
+      , ("yor", some .genericNounBased)
+      , ("tha", some .interrogativeBased)
+      , ("tgl", some .existentialConstruction)
+      , ("swh", some .genericNounBased) ] := by
+  decide
 
 /-- Every language in our sample has a WALS 46A entry. -/
 theorem all_languages_in_wals :
