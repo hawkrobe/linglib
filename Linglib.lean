@@ -258,11 +258,6 @@ import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Discourse.Roles
 import Linglib.Core.Mood
-import Linglib.Tactics.RSAPredict.Backend.QInterval
-import Linglib.Tactics.RSAPredict.Backend.PadeExp
-import Linglib.Tactics.RSAPredict.Backend.RpowInterval
-import Linglib.Tactics.RSAPredict.Backend.LogInterval
-import Linglib.Tactics.RSAPredict.Backend.SqrtInterval
 import Linglib.Core.Modality.DeonticNecessity
 import Linglib.Core.SubjectProperties
 import Linglib.Core.NullSubject.Basic

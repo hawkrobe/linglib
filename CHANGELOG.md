@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.65] - 2026-04-20
+
+### Removed
+- **`Linglib.lean`**: drop the 5 misleading public re-exports of
+  `Linglib.Tactics.RSAPredict.Backend.{QInterval, PadeExp,
+  RpowInterval, LogInterval, SqrtInterval}` (formerly
+  `Linglib.Core.Interval.*`). Verified zero consumers outside
+  `Linglib/Tactics/RSAPredict/` import these modules — the `Backend/`
+  layer is now honestly private to the `rsa_predict` tactic instead of
+  pretending to be a public framework-agnostic interval-arithmetic API.
+  Phase 3 of the consolidation; file collapse follows in Phase 4.
+
 ## [0.230.64] - 2026-04-20
 
 ### Changed
