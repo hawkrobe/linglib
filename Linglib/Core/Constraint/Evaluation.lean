@@ -33,7 +33,7 @@ Each comparison is a decidable Prop relation (`LexLE`, `SatLE`, `LexLT`).
 `Decidable` instances are defined by structural recursion, delegating to
 standard combinators (`And.decidable`, `Or.decidable`). `Tableau C n`
 provides the Finset-based OT tableau with `ViolationProfile n` profiles;
-study files use `mkTableau` (in `Core.OT`) for concrete evaluation.
+study files use `mkTableau` (in `Core.Constraint.OT`) for concrete evaluation.
 
 ## Algebraic Structure — Violation Semiring
 
@@ -86,7 +86,7 @@ coincides with `SatLE` on this profile.
 
 -/
 
-namespace Core.ConstraintEvaluation
+namespace Core.Constraint.Evaluation
 
 -- ============================================================================
 -- § 1: Prop Relations
@@ -682,19 +682,20 @@ abbrev ViolationProfile (n : Nat) := Lex (Fin n → Nat)
 
 -- The linear order comes from mathlib's Pi.Lex:
 -- Pi.Lex (· < ·) (· < ·) a b ↔ ∃ i, (∀ j < i, a j = b j) ∧ a i < b i
-noncomputable example : LinearOrder (ViolationProfile 3) := inferInstance
 
 -- Extensionality for ViolationProfile (Lex has no @[ext] instance)
 private theorem vp_ext {n : Nat} {a b : ViolationProfile n}
     (h : ∀ i, a i = b i) : a = b :=
   show toLex (ofLex a) = toLex (ofLex b) from congrArg toLex (funext h)
 
--- `Add` and `Zero` are inherited from `instAddLex`/`instZeroLex`
--- (which lift `Pi.instAdd` and `Pi.instZero` through the Lex synonym).
--- Pointwise semantics hold definitionally:
-example (n : Nat) (a b : ViolationProfile n) (i : Fin n) :
+/-- Pointwise addition on `ViolationProfile n` reduces componentwise. -/
+theorem ViolationProfile.add_apply {n : Nat}
+    (a b : ViolationProfile n) (i : Fin n) :
     (a + b) i = a i + b i := rfl
-example (n : Nat) (i : Fin n) : (0 : ViolationProfile n) i = 0 := rfl
+
+/-- The zero `ViolationProfile n` is pointwise zero. -/
+theorem ViolationProfile.zero_apply {n : Nat} (i : Fin n) :
+    (0 : ViolationProfile n) i = 0 := rfl
 
 -- `AddCommMonoid` is NOT lifted automatically (Lex deliberately strips
 -- algebraic instances — mathlib's PiLex.lean has `assert_not_exists Monoid`).
@@ -1025,4 +1026,4 @@ theorem ViolationProfile.le_apply_zero {n : Nat}
     ⟨0, fun j hj => absurd hj (Fin.not_lt_zero j), hgt⟩)
     (not_lt.mpr h)
 
-end Core.ConstraintEvaluation
+end Core.Constraint.Evaluation

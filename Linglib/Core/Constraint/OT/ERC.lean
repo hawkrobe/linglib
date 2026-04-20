@@ -114,6 +114,9 @@ instance {n : Nat} (α : ERC n) : Decidable α.isTrivial :=
 def ERC.isContradictory {n : Nat} (α : ERC n) : Prop :=
   (∀ k, α k ≠ .W) ∧ (∃ k, α k = .L)
 
+instance {n : Nat} (α : ERC n) : Decidable α.isContradictory :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
 -- ============================================================================
 -- § 3: Ranking — Constraint Permutations
 -- ============================================================================
@@ -356,6 +359,17 @@ def ERC.isSimple {n : Nat} (α : ERC n) : Prop :=
 def simpleERC {n : Nat} (i j : Fin n) : ERC n :=
   fun k => if k = i then .W else if k = j then .L else .e
 
+/-- The W-position of a simple ERC. -/
+@[simp] theorem simpleERC_apply_W {n : Nat} {i j : Fin n} :
+    simpleERC i j i = .W := by simp [simpleERC]
+
+/-- The L-position of a simple ERC. -/
+@[simp] theorem simpleERC_apply_L {n : Nat} {i j : Fin n} (hij : i ≠ j) :
+    simpleERC i j j = .L := by
+  simp only [simpleERC]; split_ifs with h
+  · exact absurd h hij.symm
+  · rfl
+
 /-- A simple ERC `i ≫ j` is satisfied by ranking `r` iff `i` dominates
     `j` under `r`. -/
 theorem simpleERC_satisfiedBy_iff {n : Nat} {i j : Fin n} (hij : i ≠ j)
@@ -381,5 +395,41 @@ theorem simpleERC_satisfiedBy_iff {n : Nat} {i j : Fin n} (hij : i ≠ j)
       simp [hne_i, hne] at hl
     subst hl_eq
     exact ⟨i, by simp [simpleERC], hdom⟩
+
+/-- A simple ERC `i ≫ j` (with `i ≠ j`) is consistent: any ranking that
+    places `i` strictly above `j` is a witness; the identity ranking
+    works whenever the index order already has `i < j`, and a swap
+    suffices otherwise. We pick a witness by transposing `(i, j)` if
+    needed so that the resulting permutation puts `i` at a position
+    less than `j`'s. -/
+theorem simpleERC_consistent {n : Nat} {i j : Fin n} (hij : i ≠ j) :
+    ERCSet.consistent [simpleERC i j] := by
+  -- Witness: the permutation swapping i and j, applied to the identity
+  -- so that under the resulting ranking, i sits at position min(i.val, j.val)
+  -- and j sits at position max(i.val, j.val).
+  by_cases hlt : i.val < j.val
+  · refine ⟨Ranking.id n, ?_⟩
+    intro α hα
+    simp only [List.mem_singleton] at hα; subst hα
+    refine (simpleERC_satisfiedBy_iff hij _).mpr ?_
+    -- dominates r i j ↔ r.symm i < r.symm j; for Ranking.id, r.symm = id.
+    show (Ranking.id n).symm i < (Ranking.id n).symm j
+    simpa [Ranking.id, Equiv.refl] using hlt
+  · -- i.val > j.val (i ≠ j rules out equality)
+    have hij_lt : j.val < i.val := by
+      rcases Nat.lt_or_ge j.val i.val with h | h
+      · exact h
+      · -- h : i.val ≤ j.val, hlt : ¬ i.val < j.val ⇒ j.val ≤ i.val ⇒ i.val = j.val
+        have heq : i.val = j.val := Nat.le_antisymm h (Nat.le_of_not_lt hlt)
+        exact absurd (Fin.ext heq) hij
+    refine ⟨(Equiv.swap i j : Ranking n), ?_⟩
+    intro α hα
+    simp only [List.mem_singleton] at hα; subst hα
+    refine (simpleERC_satisfiedBy_iff hij _).mpr ?_
+    -- (Equiv.swap i j).symm = Equiv.swap i j; (swap i j) i = j, (swap i j) j = i.
+    -- So (swap i j).symm i = j, (swap i j).symm j = i, and j.val < i.val.
+    show (Equiv.swap i j).symm i < (Equiv.swap i j).symm j
+    rw [Equiv.symm_swap, Equiv.swap_apply_left, Equiv.swap_apply_right]
+    exact hij_lt
 
 end Core.Constraint.OT
