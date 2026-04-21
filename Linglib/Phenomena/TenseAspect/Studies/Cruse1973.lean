@@ -79,7 +79,7 @@ inductive AgentivityFeature where
     entity–event pairs for each of Cruse's four sub-features.
 
     Each field `hasF x e` means "entity x exhibits feature F in event e". -/
-structure AgentivityProfile (Entity Time : Type*) [LE Time] where
+structure AgentivityProfile (Entity Time : Type*) [LinearOrder Time] where
   /-- Does x exhibit an act of will in e? -/
   hasVolitive : Entity → Ev Time → Prop
   /-- Does x exert force (from position/motion/energy) in e? -/
@@ -97,14 +97,14 @@ structure AgentivityProfile (Entity Time : Type*) [LE Time] where
     iff at least one agentivity sub-feature is present.
 
     This is the disjunction of all four features. -/
-def passesDoTest {Entity Time : Type*} [LE Time]
+def passesDoTest {Entity Time : Type*} [LinearOrder Time]
     (x : Entity) (e : Ev Time)
     (profile : AgentivityProfile Entity Time) : Prop :=
   profile.hasVolitive x e ∨ profile.hasEffective x e ∨
   profile.hasInitiative x e ∨ profile.hasAgentive x e
 
 /-- The do-test is equivalent to the 4-way disjunction (definitional). -/
-theorem passesDo_iff_or {Entity Time : Type*} [LE Time]
+theorem passesDo_iff_or {Entity Time : Type*} [LinearOrder Time]
     (x : Entity) (e : Ev Time) (p : AgentivityProfile Entity Time) :
     passesDoTest x e p ↔
     (p.hasVolitive x e ∨ p.hasEffective x e ∨
@@ -126,7 +126,7 @@ theorem passesDo_iff_or {Entity Time : Type*} [LE Time]
       (command present, prisoners do the marching)
     - `agentive_without_initiative`: "John ran"
       (own energy, no command to another) -/
-class CruseIndependence (Entity Time : Type*) [LE Time]
+class CruseIndependence (Entity Time : Type*) [LinearOrder Time]
     (profile : AgentivityProfile Entity Time) where
   /-- Volitive without agentive: "John deliberately drifted downstream" -/
   volitive_without_agentive :
@@ -154,7 +154,7 @@ class CruseIndependence (Entity Time : Type*) [LE Time]
     The Parsonian `agent(x,e)` captures specifically the own-energy
     sub-feature: an agent uses its own body's internal energy source.
     This is strictly narrower than the full do-test. -/
-class AgentAgentiveLink (Entity Time : Type*) [LE Time]
+class AgentAgentiveLink (Entity Time : Type*) [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
     (profile : AgentivityProfile Entity Time) where
   /-- Parsons' agent implies Cruse's agentive_ feature. -/
@@ -166,7 +166,7 @@ class AgentAgentiveLink (Entity Time : Type*) [LE Time]
 
     In any model where agent → hasAgentive, the result follows
     immediately from the fact that agentive_ is the fourth disjunct. -/
-theorem agent_implies_passesDo {Entity Time : Type*} [LE Time]
+theorem agent_implies_passesDo {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     {profile : AgentivityProfile Entity Time}
     [link : AgentAgentiveLink Entity Time frame profile]
@@ -182,7 +182,7 @@ theorem agent_implies_passesDo {Entity Time : Type*} [LE Time]
     `ThematicAxioms` has agent entail agentive_ (from the link) and
     agent entail action (from the axioms). Together these characterize
     the prototypical "own-energy + dynamic" combination. -/
-theorem agent_is_agentive_subfeature {Entity Time : Type*} [LE Time]
+theorem agent_is_agentive_subfeature {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     {profile : AgentivityProfile Entity Time}
     [link : AgentAgentiveLink Entity Time frame profile]
@@ -253,7 +253,7 @@ theorem coercion_requires_volitive :
 
     The bridge: initiative ↔ {make, force} builders, where the causer
     has initiative and the causee has agentive_. -/
-structure InitiativeCausativeLink (Entity Time : Type*) [LE Time]
+structure InitiativeCausativeLink (Entity Time : Type*) [LinearOrder Time]
     (profile : AgentivityProfile Entity Time) where
   /-- In a causative construction, the causer has initiative. -/
   causer_has_initiative : ∀ (causer causee : Entity) (e : Ev Time),
@@ -302,7 +302,7 @@ theorem stative_can_pass_doTest :
     entity is agent of a stative event we get a contradiction — so
     no stative event has a Parsonian agent. The do-test still passes
     for statives via other features (volitive, effective). -/
-theorem agent_selects_action_consistent {Entity Time : Type*} [LE Time]
+theorem agent_selects_action_consistent {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     [ax : ThematicAxioms Entity Time frame]
     (x : Entity) (e : Ev Time)

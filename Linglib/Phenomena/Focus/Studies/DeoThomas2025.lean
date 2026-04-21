@@ -14,7 +14,7 @@ alternatives, explaining why it substitutes in only 2 of the 9 flavors.
 
 -/
 
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Question.Basic
 import Linglib.Core.Question.Granularity

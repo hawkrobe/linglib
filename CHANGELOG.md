@@ -4,6 +4,73 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.108] - 2026-04-21
+
+### Changed
+- **`Core/Partition.lean` dissolved into `Core/Question/Partition/`** —
+  the 1360-line straggler is now four per-purpose modules sharing a
+  single Setoid-canonical foundation:
+  - `Core/Question/Partition/QUD.lean` (moved from
+    `Core/Question/QUD.lean`): `QUD M = {toSetoid : Setoid M, decR :
+    DecidableRel toSetoid.r}`. The bundled-Setoid struct preserves the
+    Bool API for ~335 consumer call sites while making the
+    Setoid-canonical structure explicit.
+  - `Core/Question/Partition/Basic.lean` (moved from
+    `Core/Question/Partition.lean`): `IsPartition` predicate (over
+    `Setoid.IsPartition`), `toSetoid`/`toQUD` bridges.
+  - `Core/Question/Partition/Lattice.lean` (new, ~89 LOC): refinement
+    order — `refines` (`⊑`), `coarsens`, reflexivity / transitivity /
+    antisymmetry, `all_refine_trivial`, `compose_refines_left`/right,
+    `exact_refines_all`.
+  - `Core/Question/Partition/Cells.lean` (new, 394 LOC): concrete
+    enumeration — `toCells`, `numCells`, `stepFn` and rep-fold helpers,
+    `toCells_*` theorems, `toFinpartition`, `toCellsFinset`,
+    coverage/disjointness lemmas, fine/coarse refinement lemmas.
+  - `Core/Question/Partition/Binary.lean` (new, 95 LOC): yes/no
+    partitions — `binaryPartition`, `complement_same_partition`,
+    `binaryPartition_coarsens`, `coarsestPreserving` and its
+    refinement/preservation lemmas.
+  - `Core/Question/Partition/Negativity.lean` (new, ~50 LOC): Merin's
+    epistemic characterization — `isProperCoarsening`,
+    `isNegativeAttribute`.
+- **DT block extracted to `Core/Agent/PartitionDT.lean`** (767 LOC) —
+  partition decision-theoretic infrastructure (`partitionEU`,
+  `eu_eq_partitionEU`, `coarsening_preserves_eu`, `partitionValue`,
+  Blackwell ordering theorems, `questionUtility_qud_nonneg`) lives
+  under `Core/Agent/` to mirror its dependency on
+  `Core/Agent/DecisionTheory.lean`.
+- Architectural choice: Direction A (Setoid-canonical) — `QUD`,
+  `Question`, and partition primitives are co-located construction /
+  consumption faces of the underlying `Setoid` rather than separately
+  unified. Mirrors mathlib's non-unification of `Setoid` + `LowerSet`
+  + `IsPartition`.
+- **21 consumers migrated** (Linglib.lean + 20 importers) across
+  `Theories/Semantics/Questions/`, `Theories/Semantics/Plurality/`,
+  `Theories/Semantics/Focus/`, `Theories/Pragmatics/Dialogue/KOS/`,
+  `Core/Discourse/`, and `Phenomena/Studies/`.
+
+### Fixed
+- **`Interval Time` `[LE Time]` → `[LinearOrder Time]` cascade**
+  (pre-existing build failure unrelated to partition work). The Time
+  directory rename in 0.230.99 (commit f64da888) tightened
+  `Interval Time` to require `[LinearOrder Time]`, but ~12 downstream
+  files declaring functions/structures over `Ev Time` /
+  `Eventuality Time` / `Interval Time` weren't propagated. Strengthened
+  at definition sites (safe — `LinearOrder` extends `LE`) in:
+  `Events/Basic.lean`, `Events/EventRelations.lean`,
+  `Events/DegreeEvents.lean` (also `[LE Deg]` → `[LinearOrder Deg]`),
+  `Events/ThematicRoles.lean`, `Attitudes/RationalAttitude.lean`,
+  `Tense/TemporalAdverbials.lean`, `Quotation/Demonstration.lean`,
+  `Morphology/ReversalRestitution.lean`,
+  `Phenomena/TenseAspect/Studies/Cruse1973.lean`,
+  `Phenomena/TenseAspect/Studies/OgiharaST2024.lean` (uses `T` rather
+  than `Time`), `Phenomena/Comparison/Studies/Wellwood2015.lean`,
+  `Phenomena/Gradability/Studies/CarianiSantorioWellwood2024.lean`,
+  `Phenomena/Quotation/Studies/Rudin2025LI.lean`. Files using only `≤`
+  (`Tense/Basic.lean::upperLimitConstraint`,
+  `Modality/TemporalConstraint.lean`, `Core/Modality/HistoricalAlternatives.lean`)
+  were left at `[LE Time]`.
+
 ## [0.230.107] - 2026-04-20
 
 ### Changed

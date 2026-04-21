@@ -1,4 +1,5 @@
 import Linglib.Core.Agent.DecisionTheory
+import Linglib.Core.Agent.PartitionDT
 import Linglib.Theories.Semantics.Questions.Answerhood.PragmaticAnswerhood
 import Linglib.Theories.Semantics.Questions.Answerhood.MentionSome
 import Linglib.Theories.Semantics.Questions.Utility.Polarity

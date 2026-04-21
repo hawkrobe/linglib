@@ -104,7 +104,7 @@ open Core.Time
     (per @cite{rudin-2025b}, fn 21). The `SpeechVerbs` structure is
     parameterized over `Perf`, so users may instantiate `Perf` with
     other types (e.g., a discourse-state-derived performance type). -/
-abbrev Performance (Time : Type*) [LE Time] := Ev Time
+abbrev Performance (Time : Type*) [LinearOrder Time] := Ev Time
 
 /-- The ontology of performance properties.
 
@@ -180,7 +180,7 @@ end PerformanceOntology
     Each meaning postulate carries an annotation indicating whether it
     is *explicit* in @cite{rudin-2025b} or an *extrapolation* (formal
     rendering of an informal generalization in the paper). -/
-structure SpeechVerbs (Time SemObj Perf : Type*) [LE Time]
+structure SpeechVerbs (Time SemObj Perf : Type*) [LinearOrder Time]
     (Ω : PerformanceOntology Perf) where
   /-- *say*: linguistic-material producing event -/
   SAY : Ev Time → Prop
@@ -241,7 +241,7 @@ structure SpeechVerbs (Time SemObj Perf : Type*) [LE Time]
 
 namespace SpeechVerbs
 
-variable {Time SemObj Perf : Type*} [LE Time] {Ω : PerformanceOntology Perf}
+variable {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology Perf}
 
 -- ════════════════════════════════════════════════════
 -- § 3. Composition: Quotative vs Propositional Complements

@@ -352,7 +352,7 @@ abbrev StateFunction (Entity State Time : Type*) := Time → Entity → State
 
     This ensures the verb denotes a dynamic process that happened to *x*,
     filtering out stative verbs (which have no force transmission). -/
-abbrev Applies (Entity Time : Type*) [LE Time] := Entity → Ev Time → Prop
+abbrev Applies (Entity Time : Type*) [LinearOrder Time] := Entity → Ev Time → Prop
 
 /-- Verb-Root-Outcomes: the compositional bundle for a dynamic transitive verb
     root (eq. 60).
@@ -366,7 +366,7 @@ abbrev Applies (Entity Time : Type*) [LE Time] := Entity → Ev Time → Prop
     halfway bent, tightly folded, etc.). For COS verbs, `outcomes` is a
     singleton. For IE verbs, `outcomes` is a singleton (surface alteration).
     For no-force verbs, `outcomes` is empty. -/
-structure VerbRootVRO (Entity State Time : Type*) [LE Time] where
+structure VerbRootVRO (Entity State Time : Type*) [LinearOrder Time] where
   /-- The verb's truth-conditional predicate: verb(e)(x) -/
   verb : Entity → Ev Time → Prop
   /-- APPLIES: force transmission predicate -/

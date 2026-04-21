@@ -38,7 +38,9 @@ U_Combined(u|w,A) = λ·U_Relevance + (1-λ)·U_Truthfulness + C(u)
 -/
 
 import Linglib.Core.Agent.DecisionTheory
-import Linglib.Core.Partition
+import Linglib.Core.Agent.PartitionDT
+import Linglib.Core.Question.Partition.Lattice
+import Linglib.Core.Question.Partition.Cells
 import Linglib.Theories.Semantics.Questions.Denotation.Partition
 import Linglib.Theories.Semantics.Questions.Utility.GSVanRooyBridge
 import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility

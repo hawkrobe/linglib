@@ -256,7 +256,7 @@ theorem certain_cross_framework_agreement :
     with `role = holder` and `extract = id` applied to confidence
     predicates yields CSW's (47). -/
 theorem confidence_comparative_reduces
-    {E : Type*} {Time : Type*} [LE Time]
+    {E : Type*} {Time : Type*} [LinearOrder Time]
     {frame : Semantics.Events.ThematicRoles.ThematicFrame E Time}
     {P : Semantics.Events.EvPred Time}
     {μ : Semantics.Events.Ev Time → ℚ}

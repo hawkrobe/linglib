@@ -60,7 +60,10 @@ import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Semantics.Postsupposition
 import Linglib.Core.Semantics.ContentLayer
 import Linglib.Core.Agent.ProductOfExperts
-import Linglib.Core.Partition
+import Linglib.Core.Question.Partition.Lattice
+import Linglib.Core.Question.Partition.Cells
+import Linglib.Core.Question.Partition.Binary
+import Linglib.Core.Question.Partition.Negativity
 import Linglib.Core.Negation
 import Linglib.Core.Polarity
 import Linglib.Core.PolarityPartition
@@ -69,13 +72,13 @@ import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.SelectionFunction
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.InfoState
 import Linglib.Core.Question.Support
 import Linglib.Core.Question.Basic
 import Linglib.Core.Question.Hamblin
-import Linglib.Core.Question.Partition
+import Linglib.Core.Question.Partition.Basic
 import Linglib.Core.Question.Singleton
 import Linglib.Core.Question.Answerhood
 import Linglib.Core.Question.Granularity
@@ -112,6 +115,7 @@ import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.OT.ERC
 import Linglib.Core.Constraint.OT.Antimatroid
 import Linglib.Core.Agent.DecisionTheory
+import Linglib.Core.Agent.PartitionDT
 import Linglib.Core.Agent.BayesianUpdate
 import Linglib.Core.Agent.ExperimentDesign
 import Linglib.Core.Agent.RationalAction

@@ -1,6 +1,6 @@
 import Linglib.Core.InformationStructure
 import Linglib.Core.Discourse.Coherence
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Question.Answerhood
 import Linglib.Core.Mood.PartitionAsInquiry

@@ -1,11 +1,11 @@
 import Mathlib.Order.Basic
 import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Linglib.Core.Partition
+import Linglib.Core.Question.Partition.Lattice
 
 /-!
 # Granularity-Sensitive Degree Semantics @cite{thomas-deo-2020}

@@ -23,7 +23,7 @@ This parallels how QUDs partition propositions in `Core/QUD.lean`.
 
 import Mathlib.Data.Finset.Basic
 import Mathlib.Data.Finset.Powerset
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy

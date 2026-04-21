@@ -30,7 +30,7 @@ open Core.Time
 /-- A thematic relation: a two-place predicate relating an entity to an event.
     The core neo-Davidsonian type.
     Agent(j, e) means "j is the agent of event e". -/
-abbrev ThematicRel (Entity Time : Type*) [LE Time] :=
+abbrev ThematicRel (Entity Time : Type*) [LinearOrder Time] :=
   Entity → Ev Time → Prop
 
 -- ════════════════════════════════════════════════════
@@ -44,7 +44,7 @@ abbrev ThematicRel (Entity Time : Type*) [LE Time] :=
     `agent` — it selects for states, not actions. The Fragment-layer
     `ThetaRole` enum does not include `holder` since `VendlerClass`
     already encodes dynamicity. -/
-structure ThematicFrame (Entity Time : Type*) [LE Time] where
+structure ThematicFrame (Entity Time : Type*) [LinearOrder Time] where
   /-- Agent: volitional causer -/
   agent : ThematicRel Entity Time
   /-- Patient: affected entity -/
@@ -72,7 +72,7 @@ structure ThematicFrame (Entity Time : Type*) [LE Time] where
 /-- Map the Fragment-layer ThetaRole enum to the corresponding
     ThematicFrame field. This bridges lexical annotations to
     semantic content. -/
-def ThetaRole.toRel {Entity Time : Type*} [LE Time]
+def ThetaRole.toRel {Entity Time : Type*} [LinearOrder Time]
     (θ : ThetaRole) (frame : ThematicFrame Entity Time) : ThematicRel Entity Time :=
   match θ with
   | .agent       => frame.agent
@@ -88,7 +88,7 @@ def ThetaRole.toRel {Entity Time : Type*} [LE Time]
 -- § 4. Per-Role Retrieval Verification
 -- ════════════════════════════════════════════════════
 
-variable {Entity Time : Type*} [LE Time] (frame : ThematicFrame Entity Time)
+variable {Entity Time : Type*} [LinearOrder Time] (frame : ThematicFrame Entity Time)
 
 theorem agent_toRel : ThetaRole.toRel .agent frame = frame.agent := rfl
 theorem patient_toRel : ThetaRole.toRel .patient frame = frame.patient := rfl
@@ -109,7 +109,7 @@ theorem stimulus_toRel : ThetaRole.toRel .stimulus frame = frame.stimulus := rfl
     - `holder_selects_state`: holders only participate in states
     - `agent_unique`: each event has at most one agent
     - `patient_unique`: each event has at most one patient -/
-class ThematicAxioms (Entity Time : Type*) [LE Time]
+class ThematicAxioms (Entity Time : Type*) [LinearOrder Time]
     (frame : ThematicFrame Entity Time) where
   /-- Agents only participate in actions (dynamic events). -/
   agent_selects_action : ∀ (x : Entity) (e : Ev Time),
@@ -130,7 +130,7 @@ class ThematicAxioms (Entity Time : Type*) [LE Time]
 
 /-- Agent and holder cannot both hold of the same entity and event,
     since agents require actions and holders require states. -/
-theorem agent_holder_disjoint {Entity Time : Type*} [LE Time]
+theorem agent_holder_disjoint {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time} [ax : ThematicAxioms Entity Time frame]
     (x : Entity) (e : Ev Time) :
     frame.agent x e → frame.holder x e → False := by
@@ -149,21 +149,21 @@ theorem agent_holder_disjoint {Entity Time : Type*} [LE Time]
 
     The key @cite{parsons-1990} insight: thematic roles are separate
     conjuncts, not part of the verb's argument structure. -/
-def transitiveLogicalForm {Entity Time : Type*} [LE Time]
+def transitiveLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (V : EvPred Time) (frame : ThematicFrame Entity Time)
     (subj obj : Entity) : Prop :=
   ∃ e : Ev Time, V e ∧ frame.agent subj e ∧ frame.patient obj e
 
 /-- Neo-Davidsonian logical form for an intransitive sentence:
     "x V-ed" ↦ ∃e. V(e) ∧ Agent(x, e) -/
-def intransitiveLogicalForm {Entity Time : Type*} [LE Time]
+def intransitiveLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (V : EvPred Time) (frame : ThematicFrame Entity Time)
     (subj : Entity) : Prop :=
   ∃ e : Ev Time, V e ∧ frame.agent subj e
 
 /-- Neo-Davidsonian logical form for a ditransitive sentence:
     "x V-ed y z" ↦ ∃e. V(e) ∧ Agent(x, e) ∧ Theme(y, e) ∧ Goal(z, e) -/
-def ditransitiveLogicalForm {Entity Time : Type*} [LE Time]
+def ditransitiveLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (V : EvPred Time) (frame : ThematicFrame Entity Time)
     (subj directObj indirectObj : Entity) : Prop :=
   ∃ e : Ev Time, V e ∧ frame.agent subj e ∧
@@ -174,18 +174,18 @@ def ditransitiveLogicalForm {Entity Time : Type*} [LE Time]
 -- ════════════════════════════════════════════════════
 
 /-- An event modifier: a predicate on events (e.g., "quickly", "in the park"). -/
-abbrev EventModifier (Time : Type*) [LE Time] := EvPred Time
+abbrev EventModifier (Time : Type*) [LinearOrder Time] := EvPred Time
 
 /-- Apply a modifier to an event predicate via conjunction.
     This is @cite{davidson-1967}'s key insight: adverbial modification is
     simply conjunction of event predicates.
     "John kicked the ball quickly" = ∃e. kick(e) ∧ Agent(j,e) ∧ Patient(b,e) ∧ quickly(e) -/
-def modify {Time : Type*} [LE Time]
+def modify {Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (M : EventModifier Time) : EvPred Time :=
   λ e => P e ∧ M e
 
 /-- Modification is commutative: "quickly and loudly" = "loudly and quickly". -/
-theorem modify_comm {Time : Type*} [LE Time]
+theorem modify_comm {Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (M₁ M₂ : EventModifier Time) :
     modify (modify P M₁) M₂ = modify (modify P M₂) M₁ := by
   funext e
@@ -194,7 +194,7 @@ theorem modify_comm {Time : Type*} [LE Time]
                 λ ⟨⟨hp, hm2⟩, hm1⟩ => ⟨⟨hp, hm1⟩, hm2⟩⟩
 
 /-- Modification is associative. -/
-theorem modify_assoc {Time : Type*} [LE Time]
+theorem modify_assoc {Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (M₁ M₂ : EventModifier Time) :
     modify (modify P M₁) M₂ = modify P (λ e => M₁ e ∧ M₂ e) := by
   funext e
@@ -216,7 +216,7 @@ theorem modify_assoc {Time : Type*} [LE Time]
 
     Note: `EventModifier` applies to states since states are events
     (of sort `.state`). -/
-def stativeLogicalForm {Entity Time : Type*} [LE Time]
+def stativeLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (frame : ThematicFrame Entity Time)
     (x : Entity) : Prop :=
   ∃ s : Ev Time, P s ∧ frame.holder x s
@@ -228,7 +228,7 @@ def stativeLogicalForm {Entity Time : Type*} [LE Time]
     the modifier M restricts the state variable via conjunction,
     exactly as adverbial modifiers restrict event variables in
     @cite{davidson-1967}. -/
-def modifiedStativeLogicalForm {Entity Time : Type*} [LE Time]
+def modifiedStativeLogicalForm {Entity Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (frame : ThematicFrame Entity Time)
     (x : Entity) (M : EventModifier Time) : Prop :=
   ∃ s : Ev Time, P s ∧ frame.holder x s ∧ M s
@@ -240,7 +240,7 @@ def modifiedStativeLogicalForm {Entity Time : Type*} [LE Time]
     Davidson's conjunction-based event modification: modifying the state
     predicate P by M and then existentially closing is the same as
     existentially closing P ∧ Holder ∧ M. -/
-theorem modified_stative_is_pm {Entity Time : Type*} [LE Time]
+theorem modified_stative_is_pm {Entity Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (frame : ThematicFrame Entity Time)
     (x : Entity) (M : EventModifier Time) :
     modifiedStativeLogicalForm P frame x M ↔

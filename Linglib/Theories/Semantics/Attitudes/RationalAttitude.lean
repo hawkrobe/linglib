@@ -98,7 +98,7 @@ theorem size_determines_reading (cs : ComplementSize) :
 
     This is `existsClosureW` from event semantics, re-exported under the
     name used in @cite{fusco-sgrizzi-2026}. -/
-abbrev closure {W Time : Type*} [LE Time] := @existsClosureW W Time _
+abbrev closure {W Time : Type*} [LinearOrder Time] := @existsClosureW W Time _
 
 -- ════════════════════════════════════════════════════════════════
 -- § 4. Causative Attitude Verb (convincere-type)
@@ -114,7 +114,7 @@ abbrev closure {W Time : Type*} [LE Time] := @existsClosureW W Time _
     The parameter P is supplied by the complement:
     - CP (*di*): CLOSURE applied → P is propositional (belief)
     - Sub-CP (*a*): P is an event predicate (intention) -/
-structure CausativeAttitude (E Time : Type*) [LE Time] where
+structure CausativeAttitude (E Time : Type*) [LinearOrder Time] where
   /-- The verb's descriptive predicate (e.g., Convince) -/
   verbPred : Ev Time → Prop
   /-- The agent of the matrix event -/
@@ -135,7 +135,7 @@ structure CausativeAttitude (E Time : Type*) [LE Time] where
 
     Returns a proposition existentially closed over both the matrix
     event and the resulting attitude event. -/
-def CausativeAttitude.denote {E Time : Type*} [LE Time]
+def CausativeAttitude.denote {E Time : Type*} [LinearOrder Time]
     (v : CausativeAttitude E Time) (P : Ev Time → Prop) : Prop :=
   ∃ e e' : Ev Time,
     v.verbPred e ∧
@@ -148,13 +148,13 @@ def CausativeAttitude.denote {E Time : Type*} [LE Time]
 
 /-- Belief reading: CLOSURE applies to the embedded VP, yielding a proposition.
     The attitude is evaluated via CONTENT (doxastic alternatives). -/
-def CausativeAttitude.beliefReading {E Time : Type*} [LE Time]
+def CausativeAttitude.beliefReading {E Time : Type*} [LinearOrder Time]
     (v : CausativeAttitude E Time) (embeddedVP : Ev Time → Prop) : Prop :=
   v.denote (λ _ => ∃ e'' : Ev Time, embeddedVP e'')
 
 /-- Intention reading: no CLOSURE — the embedded VP is applied directly as an
     event predicate. The attitude is evaluated via INERTIA. -/
-def CausativeAttitude.intentionReading {E Time : Type*} [LE Time]
+def CausativeAttitude.intentionReading {E Time : Type*} [LinearOrder Time]
     (v : CausativeAttitude E Time) (embeddedVP : Ev Time → Prop) : Prop :=
   v.denote embeddedVP
 
@@ -162,7 +162,7 @@ def CausativeAttitude.intentionReading {E Time : Type*} [LE Time]
     This is the paper's central formal claim (ex. 24): *convincere* has ONE
     denotation; the belief/intention split is compositional, arising from
     complement size (CP triggers CLOSURE, sub-CP does not). -/
-theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LE Time]
+theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LinearOrder Time]
     (v : CausativeAttitude E Time) (VP : Ev Time → Prop) :
     v.beliefReading VP = v.denote (fun _ => ∃ e, VP e) ∧
     v.intentionReading VP = v.denote VP :=
@@ -186,7 +186,7 @@ theorem CausativeAttitude.readings_from_single_denote {E Time : Type*} [LE Time]
     but not "in the right way" — the causal chain was deviant. CAUSE*
     would not hold, correctly predicting that Betty did not carry out
     her intention. -/
-abbrev CauseStar (W Time : Type*) [LE Time] := Ev Time → Ev Time → W → Prop
+abbrev CauseStar (W Time : Type*) [LinearOrder Time] := Ev Time → Ev Time → W → Prop
 
 /-- Semantics for intention reports with causal self-reference
     (@cite{grano-2024}, version 4, (79)).
@@ -202,7 +202,7 @@ abbrev CauseStar (W Time : Type*) [LE Time] := Ev Time → Ev Time → W → Pro
     close the event argument, yielding `(E → W → Prop)`, which is
     type-incompatible with CAUSE*. The type system enforces that
     intention reports require eventuality abstraction. -/
-def intentionHolds {E W Time : Type*} [LE Time]
+def intentionHolds {E W Time : Type*} [LinearOrder Time]
     (isIntention : Ev Time → W → Prop)
     (holder : E → Ev Time → W → Prop)
     (content : Ev Time → Set (W × E))

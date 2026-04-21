@@ -426,7 +426,7 @@ def comparativeTruth {Ent α Measured : Type*}
 
     Measured domain: entities (via `themeOf`).
     Role: Agent. Extract: themeOf (the consumed/affected entity). -/
-def nominalComparative {Entity Time : Type*} [LE Time]
+def nominalComparative {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
     (P : EvPred Time) (themeOf : Ev Time → Entity)
     (μ : Entity → ℚ) (a b : Entity) : Prop :=
@@ -436,7 +436,7 @@ def nominalComparative {Entity Time : Type*} [LE Time]
     "Al ran more than Bill did."
 
     Measured domain: events directly (extract = id). Role: Agent. -/
-def verbalComparative {Entity Time : Type*} [LE Time]
+def verbalComparative {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
     (P : EvPred Time) (μ : Ev Time → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.agent P id μ a b
@@ -445,7 +445,7 @@ def verbalComparative {Entity Time : Type*} [LE Time]
     "This coffee is hotter than that coffee."
 
     Measured domain: states directly (extract = id). Role: Holder. -/
-def adjectivalComparative {Entity Time : Type*} [LE Time]
+def adjectivalComparative {Entity Time : Type*} [LinearOrder Time]
     (frame : ThematicFrame Entity Time)
     (P : EvPred Time) (μ : Ev Time → ℚ) (a b : Entity) : Prop :=
   comparativeTruth frame.holder P id μ a b
@@ -496,7 +496,7 @@ theorem comparativeTruth_max {Ent α Measured : Type*}
 -- ════════════════════════════════════════════════════
 
 /-- Adjectival comparative under maximality reduces to `μ(sb) < μ(sa)`. -/
-theorem adjectival_max_reduces {Entity Time : Type*} [LE Time]
+theorem adjectival_max_reduces {Entity Time : Type*} [LinearOrder Time]
     {frame : ThematicFrame Entity Time}
     {P : EvPred Time} {μ : Ev Time → ℚ}
     {a b : Entity} {sa sb : Ev Time}
@@ -516,7 +516,7 @@ theorem statesComparativeSem_is_lt {S D : Type*} [Preorder S] [Preorder D]
 
 /-- All comparative domains under maximality = `comparativeSem`
     (Rett/Schwarzschild) on measured values. -/
-theorem max_eq_comparativeSem {Entity Time Measured : Type*} [LE Time]
+theorem max_eq_comparativeSem {Entity Time Measured : Type*} [LinearOrder Time]
     {role : Entity → Ev Time → Prop}
     {P : EvPred Time}
     {extract : Ev Time → Measured}
@@ -679,7 +679,7 @@ theorem droveMore_not_restricted :
 
 -- State modification bridge (§3.5)
 
-theorem state_mod_pm_bridge {Entity Time : Type*} [LE Time]
+theorem state_mod_pm_bridge {Entity Time : Type*} [LinearOrder Time]
     (P : EvPred Time) (frame : ThematicFrame Entity Time)
     (x : Entity) (M : EventModifier Time) :
     modifiedStativeLogicalForm P frame x M ↔

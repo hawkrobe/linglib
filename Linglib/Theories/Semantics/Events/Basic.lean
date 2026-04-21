@@ -48,7 +48,7 @@ inductive EventSort where
 
 /-- An event: a temporal individual with ontological sort.
     Events have interval-valued runtimes, following @cite{krifka-1989}. -/
-@[ont_sort] structure Ev (Time : Type*) [LE Time] where
+@[ont_sort] structure Ev (Time : Type*) [LinearOrder Time] where
   /-- The temporal extent of this event -/
   runtime : Interval Time
   /-- Ontological sort: action or state -/
@@ -56,7 +56,7 @@ inductive EventSort where
 
 /-- Temporal trace function τ(e) = the runtime interval of event e. -/
 @[simp]
-def Ev.τ {Time : Type*} [LE Time] (e : Ev Time) : Interval Time :=
+def Ev.τ {Time : Type*} [LinearOrder Time] (e : Ev Time) : Interval Time :=
   e.runtime
 
 -- ════════════════════════════════════════════════════
@@ -64,11 +64,11 @@ def Ev.τ {Time : Type*} [LE Time] (e : Ev Time) : Interval Time :=
 -- ════════════════════════════════════════════════════
 
 /-- Is this event an action (dynamic eventuality)? -/
-def Ev.isAction {Time : Type*} [LE Time] (e : Ev Time) : Bool :=
+def Ev.isAction {Time : Type*} [LinearOrder Time] (e : Ev Time) : Bool :=
   e.sort == .action
 
 /-- Is this event a state (stative eventuality)? -/
-def Ev.isState {Time : Type*} [LE Time] (e : Ev Time) : Bool :=
+def Ev.isState {Time : Type*} [LinearOrder Time] (e : Ev Time) : Bool :=
   e.sort == .state
 
 /-- Every event is either an action or a state (exhaustivity). -/
@@ -80,13 +80,13 @@ theorem sort_exclusive : EventSort.action ≠ EventSort.state := by
   decide
 
 /-- `isAction` and `isState` are complementary. -/
-theorem isAction_iff_not_isState {Time : Type*} [LE Time] (e : Ev Time) :
+theorem isAction_iff_not_isState {Time : Type*} [LinearOrder Time] (e : Ev Time) :
     e.isAction = true ↔ e.isState = false := by
   simp only [Ev.isAction, Ev.isState]
   cases e.sort <;> decide
 
 /-- `isState` and `isAction` are complementary. -/
-theorem isState_iff_not_isAction {Time : Type*} [LE Time] (e : Ev Time) :
+theorem isState_iff_not_isAction {Time : Type*} [LinearOrder Time] (e : Ev Time) :
     e.isState = true ↔ e.isAction = false := by
   simp only [Ev.isAction, Ev.isState]
   cases e.sort <;> decide
@@ -128,29 +128,29 @@ theorem vendlerClass_sort_agrees (c : VendlerClass) :
 -- ════════════════════════════════════════════════════
 
 /-- Forget the sort: project Ev down to Eventuality. -/
-def Ev.toEventuality {Time : Type*} [LE Time] (e : Ev Time) : Eventuality Time :=
+def Ev.toEventuality {Time : Type*} [LinearOrder Time] (e : Ev Time) : Eventuality Time :=
   ⟨e.runtime⟩
 
 /-- Lift an Eventuality to Ev with a given sort. -/
-def eventualityToEv {Time : Type*} [LE Time]
+def eventualityToEv {Time : Type*} [LinearOrder Time]
     (ev : Eventuality Time) (s : EventSort) : Ev Time :=
   ⟨ev.runtime, s⟩
 
 /-- Roundtrip: toEventuality ∘ eventualityToEv forgets the sort
     (we recover the Eventuality). -/
-theorem toEv_toEventuality_roundtrip {Time : Type*} [LE Time]
+theorem toEv_toEventuality_roundtrip {Time : Type*} [LinearOrder Time]
     (ev : Eventuality Time) (s : EventSort) :
     (eventualityToEv ev s).toEventuality = ev := by
   cases ev; rfl
 
 /-- The temporal trace is preserved by the Ev → Eventuality projection. -/
-theorem toEventuality_τ {Time : Type*} [LE Time] (e : Ev Time) :
+theorem toEventuality_τ {Time : Type*} [LinearOrder Time] (e : Ev Time) :
     e.toEventuality.τ = e.τ := by
   cases e; rfl
 
 /-- Lift an EventPred (over Eventuality) to a world-indexed predicate over Ev,
     ignoring the sort. -/
-def EventPred.liftToEv {W Time : Type*} [LE Time]
+def EventPred.liftToEv {W Time : Type*} [LinearOrder Time]
     (P : EventPred W Time) : W → Ev Time → Prop :=
   λ w e => P w e.toEventuality
 
@@ -188,18 +188,18 @@ instance eventPreorder (Time : Type*) [LinearOrder Time]
 -- ════════════════════════════════════════════════════
 
 /-- A predicate over events (not world-indexed). -/
-abbrev EvPred (Time : Type*) [LE Time] := Ev Time → Prop
+abbrev EvPred (Time : Type*) [LinearOrder Time] := Ev Time → Prop
 
 /-- A world-indexed predicate over events. -/
-abbrev EvPredW (W Time : Type*) [LE Time] := W → Ev Time → Prop
+abbrev EvPredW (W Time : Type*) [LinearOrder Time] := W → Ev Time → Prop
 
 /-- Existential closure: ∃e. P(e).
     The fundamental step from event semantics to truth conditions. -/
-def existsClosure {Time : Type*} [LE Time] (P : EvPred Time) : Prop :=
+def existsClosure {Time : Type*} [LinearOrder Time] (P : EvPred Time) : Prop :=
   ∃ e : Ev Time, P e
 
 /-- World-indexed existential closure: λw. ∃e. P(w)(e). -/
-def existsClosureW {W Time : Type*} [LE Time] (P : EvPredW W Time) : W → Prop :=
+def existsClosureW {W Time : Type*} [LinearOrder Time] (P : EvPredW W Time) : W → Prop :=
   λ w => ∃ e : Ev Time, P w e
 
 -- ════════════════════════════════════════════════════
@@ -230,18 +230,18 @@ def exampleRun : Ev ℤ :=
     - Alexeyenko, S. (2015). The syntax and semantics of manner modification.
     - Umbach, C. et al. (2022). Manner reference and similarity.
     - Liefke, K. (2024). Natural Language Ontology, §4.3. -/
-@[ont_sort] structure Manner (Time : Type*) [LE Time] where
+@[ont_sort] structure Manner (Time : Type*) [LinearOrder Time] where
   /-- The characteristic predicate: which events exhibit this manner -/
   exhibits : Ev Time → Prop
 
 /-- The manner of an event under a similarity criterion.
     `mannerOf sim e` gives the manner class of `e` under `sim`. -/
-def mannerOf {Time : Type*} [LE Time]
+def mannerOf {Time : Type*} [LinearOrder Time]
     (sim : Ev Time → Ev Time → Prop) (e : Ev Time) : Manner Time :=
   ⟨sim e⟩
 
 /-- Two events share a manner iff both satisfy the manner predicate. -/
-def Manner.sharedBy {Time : Type*} [LE Time]
+def Manner.sharedBy {Time : Type*} [LinearOrder Time]
     (m : Manner Time) (e₁ e₂ : Ev Time) : Prop :=
   m.exhibits e₁ ∧ m.exhibits e₂
 

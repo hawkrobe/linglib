@@ -27,7 +27,7 @@ open Semantics.Events
 /-- A degree event: an event with both temporal and degree traces.
     Extends the standard `Ev` (which has temporal trace τ_i = runtime)
     with a degree trace τ_d. -/
-@[ont_sort] structure DegreeEv (Time Deg : Type*) [LE Time] [LE Deg] where
+@[ont_sort] structure DegreeEv (Time Deg : Type*) [LinearOrder Time] [LinearOrder Deg] where
   /-- The underlying temporal event -/
   base : Ev Time
   /-- Degree trace: the interval on the degree scale spanned by this event -/
@@ -35,13 +35,13 @@ open Semantics.Events
 
 /-- Temporal trace τ_i of a degree event (inherited from base). -/
 @[simp]
-def DegreeEv.τ_i {Time Deg : Type*} [LE Time] [LE Deg]
+def DegreeEv.τ_i {Time Deg : Type*} [LinearOrder Time] [LinearOrder Deg]
     (e : DegreeEv Time Deg) : Interval Time :=
   e.base.τ
 
 /-- Degree trace τ_d of a degree event. -/
 @[simp]
-def DegreeEv.τ_d {Time Deg : Type*} [LE Time] [LE Deg]
+def DegreeEv.τ_d {Time Deg : Type*} [LinearOrder Time] [LinearOrder Deg]
     (e : DegreeEv Time Deg) : Interval Deg :=
   e.degTrace
 
@@ -55,15 +55,15 @@ inductive ComparisonRole where
   deriving DecidableEq, Repr
 
 /-- A predicate over degree events (not world-indexed). -/
-abbrev DegEvPred (Time Deg : Type*) [LE Time] [LE Deg] :=
+abbrev DegEvPred (Time Deg : Type*) [LinearOrder Time] [LinearOrder Deg] :=
   DegreeEv Time Deg → Prop
 
 /-- A world-indexed predicate over degree events. -/
-abbrev DegEvPredW (W Time Deg : Type*) [LE Time] [LE Deg] :=
+abbrev DegEvPredW (W Time Deg : Type*) [LinearOrder Time] [LinearOrder Deg] :=
   W → DegreeEv Time Deg → Prop
 
 /-- Existential closure for degree events. -/
-def degExistsClosure {Time Deg : Type*} [LE Time] [LE Deg]
+def degExistsClosure {Time Deg : Type*} [LinearOrder Time] [LinearOrder Deg]
     (P : DegEvPred Time Deg) : Prop :=
   ∃ e : DegreeEv Time Deg, P e
 

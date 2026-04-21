@@ -71,7 +71,7 @@ inductive Complement
   deriving DecidableEq, Repr, Inhabited
 
 /-- Selector: map a `Verb` enum to the corresponding model predicate. -/
-def Verb.toPred {Time SemObj Perf : Type*} [LE Time] {Ω : PerformanceOntology Perf}
+def Verb.toPred {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology Perf}
     (M : SpeechVerbs Time SemObj Perf Ω) : Verb → (Ev Time → Prop)
   | .say => M.SAY
   | .assert => M.ASSERT
@@ -102,7 +102,7 @@ def Verb.toPred {Time SemObj Perf : Type*} [LE Time] {Ω : PerformanceOntology P
     constraints on REENACTed performances (or CONTENT denotations);
     if those constraints conflict with the complement's, no witness
     exists and the cell is infelicitous. -/
-def Felicitous {Time SemObj Perf : Type*} [LE Time] {Ω : PerformanceOntology Perf}
+def Felicitous {Time SemObj Perf : Type*} [LinearOrder Time] {Ω : PerformanceOntology Perf}
     (M : SpeechVerbs Time SemObj Perf Ω) (V : Ev Time → Prop) :
     Complement → Prop
   | .quoteDecl =>
@@ -129,7 +129,7 @@ def Felicitous {Time SemObj Perf : Type*} [LE Time] {Ω : PerformanceOntology Pe
     This class IS the empirical claim. There is no separate `empirical`
     function whose values must be reconciled with model predictions —
     a model satisfies these facts or it does not. -/
-class IsRudinModel {Time SemObj Perf : Type*} [LE Time]
+class IsRudinModel {Time SemObj Perf : Type*} [LinearOrder Time]
     {Ω : PerformanceOntology Perf} (M : SpeechVerbs Time SemObj Perf Ω) :
     Prop where
   -- say (5 felicitous, 1 infelicitous)

@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Questions.Denotation.Basic
-import Linglib.Core.Partition
+import Linglib.Core.Question.Partition.Lattice
+import Linglib.Core.Question.Partition.Cells
 
 /-!
 # Questions/Partition.lean

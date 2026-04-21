@@ -809,7 +809,7 @@ def holdsAtAbutting (runtime : E → Core.Time.Interval T) (e₁ : E)
 
 /-- Denotation type for O&ST's truth conditions: sets of
     world–interval–eventuality triples. -/
-abbrev SitDenot (W T E : Type*) [LE T] := Set (W × Core.Time.Interval T × E)
+abbrev SitDenot (W T E : Type*) [LinearOrder T] := Set (W × Core.Time.Interval T × E)
 
 /-- **Case (i)**: ⟦A before B⟧ = 1 when the complement B already holds
     at some interval after I₀ in the actual world w₀. -/

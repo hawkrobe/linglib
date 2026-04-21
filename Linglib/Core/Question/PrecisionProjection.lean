@@ -1,4 +1,4 @@
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 
 /-!
 # Precision Projection for Numeric QUDs

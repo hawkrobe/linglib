@@ -1,4 +1,4 @@
-import Linglib.Core.Partition
+import Linglib.Core.Question.Partition.Binary
 import Linglib.Core.Logic.NaturalLogic
 
 /-!

@@ -1,7 +1,7 @@
 import Mathlib.Data.Setoid.Partition
 import Linglib.Core.Question.Hamblin
 import Linglib.Core.Mood.PartitionAsInquiry
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 
 /-!
 # Question — partition predicate, Setoid bridge, QUD bridge

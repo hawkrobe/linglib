@@ -1,4 +1,4 @@
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.Basic
 import Linglib.Core.Question.Granularity
 import Linglib.Core.Mood.PartitionAsInquiry

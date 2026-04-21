@@ -2,7 +2,7 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Definiteness
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.IntensionalLogic.Rigidity
-import Linglib.Core.Question.QUD
+import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy

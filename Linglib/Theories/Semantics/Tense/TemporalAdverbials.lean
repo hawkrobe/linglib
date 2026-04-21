@@ -43,7 +43,7 @@ variable {W Time : Type*} [LinearOrder Time]
 
 /-- A constraint on the Perfect Time Span.
     Adverbials restrict which PTS intervals are admissible. -/
-abbrev PTSConstraint (Time : Type*) [LE Time] := Interval Time → Prop
+abbrev PTSConstraint (Time : Type*) [LinearOrder Time] := Interval Time → Prop
 
 /-- @cite{iatridou-anagnostopoulou-izvorski-2001} adverbial type classification.
     - `durative`: specifies the left boundary (e.g., "since Monday")

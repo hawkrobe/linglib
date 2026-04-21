@@ -32,6 +32,6 @@ open Core.Time
     arguments may be propositions, questions, performances, content
     individuals, or any other ontological category that the analysis
     requires. -/
-abbrev EventRel (Time α : Type*) [LE Time] := Ev Time → α → Prop
+abbrev EventRel (Time α : Type*) [LinearOrder Time] := Ev Time → α → Prop
 
 end Semantics.Events
