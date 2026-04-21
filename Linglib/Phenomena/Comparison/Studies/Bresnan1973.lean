@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Degree.Differential
 
 /-!
 # Bresnan 1973: Syntax of the Comparative Clause Construction in English
-@cite{bresnan-1973}
+@cite{bresnan-1973} @cite{bhatt-pancheva-2004} @cite{bhatt-takahashi-2011}
 
 Joan W. Bresnan. Syntax of the Comparative Clause Construction in English.
 *Linguistic Inquiry* 4(3): 275–343.
@@ -27,9 +27,14 @@ Joan W. Bresnan. Syntax of the Comparative Clause Construction in English.
    "nondistinct" from the head. The clause is then extraposed.
 
 4. **All than-clauses are underlyingly clausal**: "Phrasal" comparatives like
-   `taller than Bill` derive from full clauses via maximal deletion. This
-   contrasts with the 2026 consensus (@cite{bhatt-pancheva-2004}) that
-   phrasal and clausal comparatives are syntactically distinct.
+   `taller than Bill` derive from full clauses via maximal deletion.
+   @cite{bhatt-pancheva-2004} reject this view, arguing phrasal
+   comparatives are genuinely phrasal (DA). @cite{bhatt-takahashi-2011}
+   reverses B&P on the basis of Lechner-style binding diagnostics and
+   re-vindicates Bresnan's clausal-source analysis for English (the
+   3-place '-er' is needed for *Hindi-Urdu*, not English). See
+   `BhattTakahashi2011.bt2011_agrees_with_bresnan_against_bp2004` for
+   the cross-tradition bridge.
 
 5. **Subdeletion**: When the head is a QP (measure phrase), only a matching
    QP is deleted from the clause — not an AP or NP. This explains
@@ -382,13 +387,14 @@ theorem np_qp_identity_fails :
     clausal. What appears as a "phrasal" comparative ("taller than Bill")
     is derived from a full clause by maximal deletion.
 
-    This contrasts with the modern consensus (`ThanClauseType` distinguishes
-    `phrasal` from `clausal` as genuinely distinct). Both analyses yield the
-    same truth conditions for simple comparatives (proved in
-    `ThanClause.phrasal_clausal_equivalence`), so the disagreement is purely
-    syntactic.
-
-    See @cite{bhatt-pancheva-2004} for the modern "genuinely phrasal" view. -/
+    @cite{bhatt-pancheva-2004} rejected this view in favor of a "genuinely
+    phrasal" Direct Analysis. @cite{bhatt-takahashi-2011} subsequently
+    reversed B&P on the basis of binding diagnostics and re-vindicates
+    Bresnan's clausal-source analysis for English (cross-tradition
+    bridge: `BhattTakahashi2011.bt2011_agrees_with_bresnan_against_bp2004`).
+    Both analyses yield the same truth conditions for simple comparatives
+    (proved in `ThanClause.phrasal_clausal_equivalence`), so the
+    disagreement is purely syntactic. -/
 inductive BresnanThanClauseAnalysis where
   /-- Full clause with partial deletion: "than Bill is [x much tall]"
       → "than Bill is" (deletion of AP) -/

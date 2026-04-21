@@ -62,7 +62,7 @@ Fragments/English/Pronouns.lean
 
 namespace Elbourne2013
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Presupposition (PrProp)
 open Core.Presupposition.PrProp (presupOfReferent presupOfReferent_presup
@@ -350,7 +350,7 @@ def qudRelevantSituation
     (w : F.Sit) (_hw : F.isWorld w)
     (s : F.Sit) : Prop :=
   F.le s w
-  ∧ q.sameAnswer w s = true
+  ∧ q.r w s
   ∧ F.isMinimal (λ s' => leDecide s' w && q.sameAnswer w s') s
 
 theorem situation_pronoun_tracks_qud
@@ -379,10 +379,10 @@ theorem qud_refinement_monotone
     (q₁ q₂ : QUD F.Sit)
     (w : F.Sit) (hw : F.isWorld w)
     (s₁ s₂ : F.Sit)
-    (hRefine : ∀ a b, q₂.sameAnswer a b = true → q₁.sameAnswer a b = true)
+    (hRefine : ∀ a b, q₂.r a b → q₁.r a b)
     (hs₁ : qudRelevantSituation F leDecide q₁ w hw s₁)
     (hs₂ : qudRelevantSituation F leDecide q₂ w hw s₂)
-    (hUniq : ∀ s, F.le s w → q₁.sameAnswer w s = true → F.le s₁ s) :
+    (hUniq : ∀ s, F.le s w → q₁.r w s → F.le s₁ s) :
     F.le s₁ s₂ := by
   exact hUniq s₂ hs₂.1 (hRefine w s₂ hs₂.2.1)
 

@@ -20,7 +20,7 @@ cylindric set algebra defined in `Core.CylindricAlgebra`.
 |---|---|---|
 | Heim & Kratzer | `Entity` | `Assignment Entity` |
 | Partee 1973 | `Time` | `TemporalAssignment Time` |
-| Percus 2000 | `Situation W Time` | `SituationAssignment W Time` |
+| Percus 2000 | `WorldTimeIndex W Time` | `SituationAssignment W Time` |
 | CDRT (Muskens) | `E` | `Register E` |
 | PLA (@cite{dekker-2012}) | `E` | `VarIdx → E` |
 

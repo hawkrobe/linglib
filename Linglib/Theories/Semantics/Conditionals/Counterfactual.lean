@@ -42,7 +42,7 @@ import Linglib.Core.Logic.NonBivalence
 
 namespace Semantics.Conditionals.Counterfactual
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Semantics.Conditionals
 open Core.Causal

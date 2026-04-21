@@ -1,5 +1,5 @@
 import Linglib.Core.Causal.SEM.Counterfactual
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
@@ -54,7 +54,7 @@ strictly stronger.
 
 namespace Lewis1973
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Causal
 open Semantics.Causation.CCSelection

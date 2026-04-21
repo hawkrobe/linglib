@@ -100,17 +100,16 @@ def PairListQuestion.individualQuestion {W E : Type} [DecidableEq E]
     (plq : PairListQuestion W E) (y : E) : GSQuestion W :=
   QUD.ofDecEq (λ w => plq.whDomain.map (λ x => plq.relation w y x))
 
-/-- Helper: foldl of GSQuestion conjunction decomposes into init && all. -/
-private theorem foldl_conj_sameAnswer {W E : Type*}
+/-- Helper: foldl of GSQuestion conjunction decomposes into init ∧ all-elements. -/
+private theorem foldl_conj_r {W E : Type*}
     (f : E → GSQuestion W) (es : List E) (init : GSQuestion W) (w v : W) :
-    (es.foldl (λ acc e' => acc + f e') init).sameAnswer w v =
-    (init.sameAnswer w v && es.all (λ e' => (f e').sameAnswer w v)) := by
+    (es.foldl (λ acc e' => acc + f e') init).r w v ↔
+    init.r w v ∧ ∀ e' ∈ es, (f e').r w v := by
   induction es generalizing init with
   | nil => simp
   | cons e' rest ih =>
-    simp only [List.foldl_cons]
-    rw [ih]
-    simp only [add_eq_compose, QUD.compose_sameAnswer, List.all_cons, Bool.and_assoc]
+    rw [List.foldl_cons, ih (init + f e')]
+    simp only [add_eq_compose, QUD.compose_r, List.mem_cons, forall_eq_or_imp, and_assoc]
 
 /-- A pair-list question is equivalent to a conjunction of individual questions.
 
@@ -120,11 +119,8 @@ The partition induced by the pair-list question agrees pointwise with the
 conjunction of per-element individual questions. -/
 theorem pairList_as_conjunction {W E : Type} [DecidableEq E] [BEq W]
     (plq : PairListQuestion W E) (w v : W) :
-    plq.toGSQuestion.sameAnswer w v =
-    (pairListAsConjunction plq.universalDomain plq.individualQuestion).sameAnswer w v := by
-  -- Both sides are decidable and agree pointwise as Props; show via Iff bridge.
-  apply Bool.eq_iff_iff.mpr
-  rw [QUD.sameAnswer_eq_true_iff]
+    plq.toGSQuestion.r w v ↔
+    (pairListAsConjunction plq.universalDomain plq.individualQuestion).r w v := by
   -- Helper: list-equality of two maps decomposes to all-pointwise-equal
   have map_eq_iff_all : ∀ (l : List E) (f g : E → List Bool),
       List.map f l = List.map g l ↔ ∀ y ∈ l, f y = g y := by
@@ -134,27 +130,13 @@ theorem pairList_as_conjunction {W E : Type} [DecidableEq E] [BEq W]
     | cons x xs ih =>
       simp only [List.map_cons, List.cons_eq_cons, List.mem_cons, forall_eq_or_imp]
       exact and_congr_right (fun _ => ih)
-  -- Helper: foldl conjunction matches all-pointwise
-  have foldl_iff : ∀ (l : List E) (f : E → GSQuestion W) (init : GSQuestion W),
-      (l.foldl (λ acc e' => acc + f e') init).sameAnswer w v = true ↔
-      init.sameAnswer w v = true ∧ ∀ y ∈ l, (f y).sameAnswer w v = true := by
-    intro l f init
-    induction l generalizing init with
-    | nil => simp
-    | cons y rest ih =>
-      rw [List.foldl_cons, ih (init + f y)]
-      simp only [add_eq_compose, QUD.compose_sameAnswer_iff, List.mem_cons,
-                 forall_eq_or_imp, and_assoc]
-  show (plq.toGSQuestion).r w v ↔ _
   match h : plq.universalDomain with
   | [] =>
-    simp only [pairListAsConjunction, GSQuestion.trivial, QUD.trivial_sameAnswer]
-    show plq.toGSQuestion.r w v ↔ True
+    simp only [pairListAsConjunction, GSQuestion.trivial, QUD.trivial_r, iff_true]
     simp only [PairListQuestion.toGSQuestion, QUD.ofDecEq_r, h, List.map_nil]
   | e :: es =>
-    simp only [pairListAsConjunction, foldl_iff, PairListQuestion.individualQuestion,
-               QUD.ofDecEq_sameAnswer_iff]
-    show plq.toGSQuestion.r w v ↔ _
+    simp only [pairListAsConjunction, foldl_conj_r, PairListQuestion.individualQuestion,
+               QUD.ofDecEq_r]
     simp only [PairListQuestion.toGSQuestion, QUD.ofDecEq_r, h, map_eq_iff_all,
                List.mem_cons, forall_eq_or_imp]
 

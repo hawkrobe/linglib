@@ -60,7 +60,7 @@ temporal (`progressive_before_result`).
 
 namespace Semantics.Causation.Progressive
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Causal
 open Semantics.Causation.Sufficiency

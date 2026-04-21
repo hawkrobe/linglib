@@ -252,12 +252,12 @@ theorem removeGap_not_homogeneous (S : SentenceTV W) :
     something literally true, only something equivalent to something true
     for current purposes. -/
 def sufficientlyTrue (q : QUD W) (S : SentenceTV W) (w : W) : Prop :=
-  ∃ w', q.sameAnswer w w' = true ∧ S w' = .true
+  ∃ w', q.r w w' ∧ S w' = .true
 
 /-- Literal truth implies sufficient truth (for any issue). -/
 theorem literal_imp_sufficient (q : QUD W) (S : SentenceTV W) (w : W)
     (h : S w = .true) : sufficientlyTrue q S w :=
-  ⟨w, q.refl w, h⟩
+  ⟨w, q.iseqv.refl w, h⟩
 
 /-- Addressing an Question: S may be used to address issue I only if no
     cell of I overlaps with both the positive and the negative extension.
@@ -265,7 +265,7 @@ theorem literal_imp_sufficient (q : QUD W) (S : SentenceTV W) (w : W)
     Gap-worlds are invisible: a cell containing true-worlds and gap-worlds
     is fine. Only a cell straddling the true/false boundary is problematic. -/
 def addressesIssue (q : QUD W) (S : SentenceTV W) : Prop :=
-  ¬∃ w₁ w₂, q.sameAnswer w₁ w₂ = true ∧ S w₁ = .true ∧ S w₂ = .false
+  ¬∃ w₁ w₂, q.r w₁ w₂ ∧ S w₁ = .true ∧ S w₂ = .false
 
 /-- A sentence may be used at w iff: (1) S is not false at w,
     (2) S is sufficiently true at w, and (3) S addresses the issue. -/
@@ -316,7 +316,7 @@ theorem bivalent_communicated_eq_posExt (q : QUD W) (S : SentenceTV W)
     cases hbiv w with
     | inl h => exact h
     | inr hFalse =>
-      have hSymm : q.sameAnswer w' w = true := by rw [q.symm]; exact hEq
+      have hSymm : q.r w' w := q.iseqv.symm hEq
       exact absurd ⟨w', w, hSymm, hTrue, hFalse⟩ hAddr
   · exact literal_imp_sufficient q S w
 
@@ -328,7 +328,7 @@ theorem bivalent_communicated_eq_posExt (q : QUD W) (S : SentenceTV W)
     non-maximal use. The finite model in `Kriz2016.lean` demonstrates this:
     `coarseQ` communicates `smithNeutral` but `fineQ` does not. -/
 theorem communicatedContent_antitone (q q' : QUD W) (S : SentenceTV W)
-    (hRef : ∀ w₁ w₂, q'.sameAnswer w₁ w₂ = true → q.sameAnswer w₁ w₂ = true) :
+    (hRef : ∀ w₁ w₂, q'.r w₁ w₂ → q.r w₁ w₂) :
     communicatedContent q' S ⊆ communicatedContent q S :=
   fun _ ⟨w', hEq, hTrue⟩ => ⟨w', hRef _ _ hEq, hTrue⟩
 
@@ -599,7 +599,7 @@ theorem removed_prevents_nonmax (q : QUD W) (S : SentenceTV W) (w : W)
     contains a true-world, then S is usable at w (assuming addressing). -/
 theorem gap_enables_nonmax (q : QUD W) (S : SentenceTV W) (w w' : W)
     (hGap : S w = .gap)
-    (hEquiv : q.sameAnswer w w' = true)
+    (hEquiv : q.r w w')
     (hTrue : S w' = .true)
     (hAddr : addressesIssue q S) :
     usable q S w :=
@@ -794,7 +794,7 @@ This is an instance of the general `Semantics.Homogeneity.gap_enables_nonmax`. -
 theorem plural_gap_enables_nonmax (q : QUD W) (P : Atom → W → Bool) (x : Finset Atom)
     (w w' : W)
     (hGap : barePluralTV P x w = .gap)
-    (hEquiv : q.sameAnswer w w' = true)
+    (hEquiv : q.r w w')
     (hTrue : barePluralTV P x w' = .true)
     (hAddr : addressesIssue q (barePluralTV P x)) :
     usable q (barePluralTV P x) w :=

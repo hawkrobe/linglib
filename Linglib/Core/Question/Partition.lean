@@ -111,11 +111,16 @@ noncomputable def toQUD {P : Question W} (h : P.IsPartition) : QUD W := by
   classical
   exact { toSetoid := toSetoid h, decR := fun w v => Classical.dec _ }
 
+/-- `toQUD`'s relation holds iff the two worlds share an alternative cell. -/
+theorem toQUD_r_iff {P : Question W} (h : P.IsPartition) (w v : W) :
+    (toQUD h).r w v ↔ ∃ p ∈ alt P, w ∈ p ∧ v ∈ p :=
+  toSetoid_rel_iff h w v
+
 /-- `toQUD`'s `sameAnswer` is true iff the two worlds share a cell. -/
 theorem toQUD_sameAnswer_iff {P : Question W} (h : P.IsPartition) (w v : W) :
     (toQUD h).sameAnswer w v = true ↔ ∃ p ∈ alt P, w ∈ p ∧ v ∈ p := by
   rw [QUD.sameAnswer_eq_true_iff]
-  exact toSetoid_rel_iff h w v
+  exact toQUD_r_iff h w v
 
 /-- The cell of a world under `toQUD h` is in `alt P`. -/
 theorem cell_toQUD_mem_alt {P : Question W} (h : P.IsPartition) (w : W) :
@@ -124,7 +129,7 @@ theorem cell_toQUD_mem_alt {P : Question W} (h : P.IsPartition) (w : W) :
   rw [show (toQUD h).cell w = p from ?_]
   · exact hpAlt
   ext v
-  rw [QUD.mem_cell_iff, toQUD_sameAnswer_iff]
+  rw [QUD.mem_cell_iff_r, toQUD_r_iff]
   refine ⟨?_, fun hvp => ⟨p, hpAlt, hwp, hvp⟩⟩
   rintro ⟨q, hqAlt, hwq, hvq⟩
   exact ((huniq q ⟨hqAlt, hwq⟩).trans (huniq p ⟨hpAlt, hwp⟩).symm) ▸ hvq
@@ -141,7 +146,7 @@ theorem cell_toQUD_eq {P : Question W} (h : P.IsPartition) {p : Set W}
   obtain ⟨q, ⟨hqAlt, hwq⟩, huniq⟩ := h.2 w
   have hpq : p = q := huniq p ⟨hpAlt, hwp⟩
   ext v
-  rw [QUD.mem_cell_iff, toQUD_sameAnswer_iff]
+  rw [QUD.mem_cell_iff_r, toQUD_r_iff]
   refine ⟨?_, fun hvp => ⟨p, hpAlt, hwp, hvp⟩⟩
   rintro ⟨r, hrAlt, hwr, hvr⟩
   exact ((huniq r ⟨hrAlt, hwr⟩).trans hpq.symm) ▸ hvr

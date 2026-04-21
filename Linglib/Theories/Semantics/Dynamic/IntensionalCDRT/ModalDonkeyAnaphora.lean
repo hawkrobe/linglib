@@ -35,7 +35,7 @@ import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
 
 namespace Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 
-open Core (Situation)
+open _root_.Core (WorldTimeIndex)
 
 open Core.Time
 open Core.Modality.HistoricalAlternatives
@@ -53,7 +53,7 @@ From @cite{mendes-2025}'s IND operator:
   IND_v = λP.[| w_{s₂} = w_{s₁}]; P(s₂)(s₁)
 -/
 def modallyAccessible {W Time : Type*}
-    (s₁ s₂ : Situation W Time) : Prop :=
+    (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
   s₂.world = s₁.world
 
 /--
@@ -86,7 +86,7 @@ theorem cross_clausal_same_world {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ crossClausalBinding history v v c) :
     gs.2.world = (gs.1.sit v).world := by
   unfold crossClausalBinding at h
@@ -135,7 +135,7 @@ theorem subj_ind_chain_modal_donkey {W Time E : Type*} [LE Time]
     (v : SVar)
     (P Q : SitContext W Time E → SitContext W Time E)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ subjIndChain history v P Q c)
     (hQ : IsContextFilter Q) :
     -- The consequent situation shares its world with the bound situation
@@ -172,7 +172,7 @@ This is the modal analog of donkey universals.
 theorem unselective_universal_force {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
-    (antecedent consequent : Situation W Time → Prop)
+    (antecedent consequent : WorldTimeIndex W Time → Prop)
     (c : SitContext W Time E) :
     -- For all situations in the output...
     (∀ gs ∈ subjIndChain history v
@@ -202,7 +202,7 @@ theorem modal_donkey_enables_temporal_shift {W Time E : Type*} [Preorder Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ dynSUBJ history v c) :
     ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧
           (gs.1.sit v).time ≥ s₀.time := by
@@ -229,7 +229,7 @@ If s₁ is accessible from s₀, and s₂ is accessible from s₁,
 then s₂ is accessible from s₀ (within the same world).
 -/
 theorem donkey_accessibility_transitive {W Time : Type*}
-    (s₀ s₁ s₂ : Situation W Time)
+    (s₀ s₁ s₂ : WorldTimeIndex W Time)
     (h₁ : modallyAccessible s₀ s₁)
     (h₂ : modallyAccessible s₁ s₂) :
     modallyAccessible s₀ s₂ := by
@@ -274,7 +274,7 @@ local context is contained within the antecedent's local context.
     world level: if s₂ can anaphorically retrieve s₁, then any
     world-level property holding at s₁'s world also holds at s₂'s. -/
 theorem donkey_accessible_preserves_world_property {W Time : Type*}
-    (s₁ s₂ : Situation W Time)
+    (s₁ s₂ : WorldTimeIndex W Time)
     (h : modallyAccessible s₁ s₂)
     (P : W → Prop) (hp : P s₁.world) :
     P s₂.world := by
@@ -307,8 +307,8 @@ theorem subjIndChain_singleton {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (g : SitAssignment W Time E)
-    (s₀ : Situation W Time)
-    (P Q : Situation W Time → Prop) :
+    (s₀ : WorldTimeIndex W Time)
+    (P Q : WorldTimeIndex W Time → Prop) :
     (∃ gs, gs ∈ subjIndChain history v
       (fun c => { gs ∈ c | P gs.2 })
       (fun c => { gs ∈ c | Q gs.2 })
@@ -334,9 +334,9 @@ theorem subjIndChain_entails_conditionalSF {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (g : SitAssignment W Time E)
-    (s₀ : Situation W Time)
-    (P : Situation W Time → Prop)
-    (Q : Situation W Time → Situation W Time → Prop)
+    (s₀ : WorldTimeIndex W Time)
+    (P : WorldTimeIndex W Time → Prop)
+    (Q : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
     (h : ∃ gs, gs ∈ subjIndChain history v
       (fun c => { gs ∈ c | P gs.2 })
       (fun c => { gs ∈ c | Q gs.2 gs.2 })

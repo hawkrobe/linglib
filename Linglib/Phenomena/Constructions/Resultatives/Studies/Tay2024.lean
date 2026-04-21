@@ -48,7 +48,7 @@ Connects:
 
 namespace Tay2024
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Semantics.Causation.Resultatives
 open Core.Causal

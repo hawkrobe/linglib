@@ -97,12 +97,23 @@ theorem no_scopeOK_forces_reconstruction
 -- ════════════════════════════════════════════════════
 
 /-- A scope binding records the LF heights of a DegP and a QP, plus
-    whether the QP's trace appears inside the DegP's restrictor. -/
+    whether the QP's trace appears inside the DegP's restrictor.
+    `qpBasePosition` records the QP's base (theta) position separately
+    from its surface-scope position `qpHeight`; this is needed for
+    @cite{bhatt-takahashi-2011} §4 (43), which states the than-phrase-
+    internal scope generalization in terms of the QP's *base* position
+    relative to the degree trace, not its surface-scope position. For
+    B&P 2004 / Heim 2001 usages where the distinction is irrelevant,
+    set `qpBasePosition := qpHeight`. -/
 structure ScopeBinding where
   /-- LF height at which the DegP takes scope. -/
   degHeight : Nat
   /-- LF height at which the QP takes scope. -/
   qpHeight : Nat
+  /-- LF height of the QP's base (theta) position. For the B&T 2011
+      §4 (43) generalization this can differ from `qpHeight`; for the
+      B&P / Heim usage it should equal `qpHeight`. -/
+  qpBasePosition : Nat
   /-- Whether the QP binds into the DegP's restrictor (i.e., the DegP
       contains a trace of the QP). -/
   qpBindsDeg : Bool
@@ -112,26 +123,33 @@ structure ScopeBinding where
     a scope binding is licit iff either
     (a) there is no binding dependency from the QP into the DegP, OR
     (b) the DegP scopes at or above the QP. -/
-def heimKennedyOK (b : ScopeBinding) : Bool :=
-  !b.qpBindsDeg || decide (b.degHeight ≥ b.qpHeight)
+def IsHeimKennedy (b : ScopeBinding) : Prop :=
+  ¬ b.qpBindsDeg ∨ b.degHeight ≥ b.qpHeight
 
-/-- Without a binding dependency, HKC imposes no scope constraint. -/
-theorem heimKennedy_no_dependency (degH qpH : Nat) :
-    heimKennedyOK ⟨degH, qpH, false⟩ = true := rfl
+instance (b : ScopeBinding) : Decidable (IsHeimKennedy b) := by
+  unfold IsHeimKennedy; infer_instance
+
+/-- Without a binding dependency, HKC imposes no scope constraint.
+    `qpBasePosition` defaults to `qpH` (irrelevant to HKC). -/
+theorem isHeimKennedy_no_dependency (degH qpH : Nat) :
+    IsHeimKennedy ⟨degH, qpH, qpH, false⟩ :=
+  Or.inl (by simp)
 
 /-- With a binding dependency, HKC requires the DegP to scope at or
     above the binding QP. -/
-theorem heimKennedy_dependency_requires_high_DegP
+theorem isHeimKennedy_dependency_requires_high_DegP
     (degH qpH : Nat) (h : degH ≥ qpH) :
-    heimKennedyOK ⟨degH, qpH, true⟩ = true := by
-  simp [heimKennedyOK, h]
+    IsHeimKennedy ⟨degH, qpH, qpH, true⟩ :=
+  Or.inr h
 
 /-- HKC's characteristic prohibition: a QP scoping strictly above a
     DegP it binds into is illicit. -/
-theorem heimKennedy_QP_above_bound_DegP_illicit
+theorem not_isHeimKennedy_QP_above_bound_DegP
     (degH qpH : Nat) (h : degH < qpH) :
-    heimKennedyOK ⟨degH, qpH, true⟩ = false := by
-  simp [heimKennedyOK]; omega
+    ¬ IsHeimKennedy ⟨degH, qpH, qpH, true⟩ := by
+  rintro (h1 | h2)
+  · exact h1 rfl
+  · exact absurd h2 (Nat.not_le.mpr h)
 
 -- ════════════════════════════════════════════════════
 -- § 3. Williams 1974 as a Derivable Corollary
@@ -148,8 +166,8 @@ theorem heimKennedy_QP_above_bound_DegP_illicit
     intensional subjects bind into the degree predicate. -/
 theorem williams_scope_correlation
     (degH intH : Nat) (h : degH < intH) :
-    heimKennedyOK ⟨degH, intH, true⟩ = false :=
-  heimKennedy_QP_above_bound_DegP_illicit degH intH h
+    ¬ IsHeimKennedy ⟨degH, intH, intH, true⟩ :=
+  not_isHeimKennedy_QP_above_bound_DegP degH intH h
 
 /-- Conversely: when the intensional subject doesn't bind into the
     DegP, Williams's prohibition is lifted — the DegP is free to
@@ -157,7 +175,43 @@ theorem williams_scope_correlation
     generalization shows exceptions. -/
 theorem williams_exempt_when_no_binding
     (degH intH : Nat) :
-    heimKennedyOK ⟨degH, intH, false⟩ = true :=
-  heimKennedy_no_dependency degH intH
+    IsHeimKennedy ⟨degH, intH, intH, false⟩ :=
+  isHeimKennedy_no_dependency degH intH
+
+-- ════════════════════════════════════════════════════
+-- § 4. Bhatt-Takahashi (43): Base-Position Generalization
+-- ════════════════════════════════════════════════════
+
+/-- @cite{bhatt-takahashi-2011} §4 (43): English allows than-phrase-
+    internal scope for QPs whose *base position* does not c-command
+    the degree trace. Stated as a structural filter on `ScopeBinding`,
+    `IsBhattTakahashiScopeLicit` returns `True` when the QP's base
+    position is at or below the DegP's height (no c-command of the
+    degree trace from the base) — in which case than-internal scope
+    is licensed.
+
+    Note this is *distinct* from HKC: HKC is over the QP's *surface*
+    scope position relative to the DegP; B&T (43) is over the QP's
+    *base* position. The two coincide for in-situ QPs (where surface
+    = base) and diverge for QPs that have moved. -/
+def IsBhattTakahashiScopeLicit (b : ScopeBinding) : Prop :=
+  b.qpBasePosition ≤ b.degHeight
+
+instance (b : ScopeBinding) : Decidable (IsBhattTakahashiScopeLicit b) := by
+  unfold IsBhattTakahashiScopeLicit; infer_instance
+
+/-- The structural witness of B&T (43): a QP whose base position is
+    strictly above the DegP cannot license than-internal scope. -/
+theorem not_isBhattTakahashiScopeLicit_base_above_DegP
+    (degH qpH qpBase : Nat) (qpBindsDeg : Bool) (h : qpBase > degH) :
+    ¬ IsBhattTakahashiScopeLicit ⟨degH, qpH, qpBase, qpBindsDeg⟩ :=
+  Nat.not_le.mpr h
+
+/-- A QP whose base position is at or below the DegP licenses
+    than-internal scope under B&T (43). -/
+theorem isBhattTakahashiScopeLicit_base_below_DegP
+    (degH qpH qpBase : Nat) (qpBindsDeg : Bool) (h : qpBase ≤ degH) :
+    IsBhattTakahashiScopeLicit ⟨degH, qpH, qpBase, qpBindsDeg⟩ :=
+  h
 
 end Minimalism.Semantics.DegreeMovement

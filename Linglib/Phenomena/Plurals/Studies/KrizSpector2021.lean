@@ -76,9 +76,7 @@ theorem bivalent_addressing_iff_stronglyRelevant (q : QUD W) (S : SentenceTV W)
       | inr h₂ => exact hAddr ⟨w₁, w₂, hEquiv, h₁, h₂⟩
     | inr h₁ =>
       cases hbiv w₂ with
-      | inl h₂ =>
-        have hEquiv' := q.symm w₁ w₂ ▸ hEquiv
-        exact hAddr ⟨w₂, w₁, hEquiv', h₂, h₁⟩
+      | inl h₂ => exact hAddr ⟨w₂, w₁, q.iseqv.symm hEquiv, h₂, h₁⟩
       | inr h₂ => exact hNeq (by rw [h₁, h₂])
   · -- Strong relevance → Addressing
     intro hSR ⟨w₁, w₂, hEquiv, hTrue, hFalse⟩

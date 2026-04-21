@@ -45,7 +45,7 @@ via circumscription/antiperfection.
 
 namespace Nadathur2024
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Causal
 open Semantics.Causation.Implicative

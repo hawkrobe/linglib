@@ -76,8 +76,8 @@ def RichContext.addressee (rc : RichContext W E P T) : E := rc.base.addressee
 /-- Position of the rich context. -/
 def RichContext.position (rc : RichContext W E P T) : P := rc.base.position
 
-/-- Project a RichContext to a Situation (world + time pair). -/
-def RichContext.toSituation (rc : RichContext W E P T) : Core.Situation W T :=
+/-- Project a RichContext to a `WorldTimeIndex` (world + time pair). -/
+def RichContext.toSituation (rc : RichContext W E P T) : Core.WorldTimeIndex W T :=
   rc.base.toSituation
 
 -- ════════════════════════════════════════════════════════════════

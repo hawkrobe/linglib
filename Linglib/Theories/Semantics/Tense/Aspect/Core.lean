@@ -28,7 +28,7 @@ Equations:
 
 -/
 
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
@@ -38,7 +38,7 @@ import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 namespace Semantics.Tense.Aspect.Core
 
-open _root_.Core (Situation)
+open _root_.Core (WorldTimeIndex)
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
@@ -65,10 +65,10 @@ abbrev EventPred (W Time : Type*) [LinearOrder Time] := W → Eventuality Time �
 abbrev IntervalPred (W Time : Type*) [LinearOrder Time] := W → Interval Time → Prop
 
 /-- Predicate over time points (output of PERF, input to TENSE).
-    Defined as `Situation W Time → Prop` to make the situation structure
+    Defined as `WorldTimeIndex W Time → Prop` to make the situation structure
     explicit in the tense-aspect pipeline, connecting directly to
     situation semantics (Elbourne, Percus, Kratzer). -/
-abbrev PointPred (W Time : Type*) := Situation W Time → Prop
+abbrev PointPred (W Time : Type*) := WorldTimeIndex W Time → Prop
 
 -- ════════════════════════════════════════════════════
 -- § Klein's Viewpoint Classification

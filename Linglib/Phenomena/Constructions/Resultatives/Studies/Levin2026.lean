@@ -61,7 +61,7 @@ does not directly accommodate. This file formalizes the specific case.
 
 namespace Levin2026
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Verbs
 open LevinClass (pushPull hit wipe)

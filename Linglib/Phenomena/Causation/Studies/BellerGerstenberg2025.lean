@@ -69,7 +69,7 @@ set_option autoImplicit false
 
 namespace BellerGerstenberg2025
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 
 -- ============================================================================

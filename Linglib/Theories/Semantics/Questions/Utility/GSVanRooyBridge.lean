@@ -35,42 +35,6 @@ open Semantics.Questions.MentionSome
 open Semantics.Questions.Polarity
 open scoped GSQuestion  -- For ⊑ notation
 
-/-! ### Bool → Finset boundary shim
-
-The GSQuestion side speaks Bool predicates (`Question W := List (W → Bool)`,
-`Cell W := W → Bool`); the migrated `Core.DecisionTheory` kernel speaks
-`Finset W` cells. This bridge converts at the boundary by intersecting each
-Bool cell with the world set. -/
-
-/-- Wrap a Bool cell as a Finset by filtering against the world set. -/
-private def cellAsFinset {W : Type*} [DecidableEq W]
-    (worlds : Finset W) (c : W → Bool) : Finset W :=
-  worlds.filter (fun w => c w = true)
-
-/-- Wrap a Bool-cell question as a list of Finset cells. -/
-private def cellsAsFinset {W : Type*} [DecidableEq W]
-    (worlds : Finset W) (q : List (W → Bool)) : List (Finset W) :=
-  q.map (cellAsFinset worlds)
-
-private theorem cellAsFinset_subset {W : Type*} [DecidableEq W]
-    (worlds : Finset W) (c : W → Bool) :
-    cellAsFinset worlds c ⊆ worlds :=
-  Finset.filter_subset _ _
-
-private theorem cellAsFinset_mono {W : Type*} [DecidableEq W]
-    (worlds : Finset W) (c c' : W → Bool)
-    (h : ∀ w, c w = true → c' w = true) :
-    cellAsFinset worlds c ⊆ cellAsFinset worlds c' := by
-  intro w hw
-  simp only [cellAsFinset, Finset.mem_filter] at hw ⊢
-  exact ⟨hw.1, h w hw.2⟩
-
-private theorem inter_cellAsFinset {W : Type*} [DecidableEq W]
-    (worlds : Finset W) (c : W → Bool) :
-    worlds ∩ cellAsFinset worlds c = cellAsFinset worlds c :=
-  Finset.inter_eq_right.mpr (cellAsFinset_subset worlds c)
-
-
 /-!
 ## Blackwell's Theorem
 
@@ -183,57 +147,44 @@ theorem blackwell_maximin_forward {W A : Type*} [DecidableEq A] [DecidableEq W]
     (hRefines : q ⊑ q') :
     ∀ dp : DecisionProblem W A,
       questionMaximin dp worlds.toFinset actions
-        (cellsAsFinset worlds.toFinset (q.toQuestion worlds)) >=
+        (q.toCells worlds) >=
       questionMaximin dp worlds.toFinset actions
-        (cellsAsFinset worlds.toFinset (q'.toQuestion worlds)) := by
+        (q'.toCells worlds) := by
   intro dp
-  simp only [GSQuestion.toQuestion]
   -- Key: for each fine cell, MUV ≥ questionMaximin of coarse partition
   have key : ∀ cell ∈ q.toCells worlds,
-      maximinUtilityValue dp worlds.toFinset actions
-        (cellAsFinset worlds.toFinset cell) ≥
-      questionMaximin dp worlds.toFinset actions
-        (cellsAsFinset worlds.toFinset (q'.toCells worlds)) := by
+      maximinUtilityValue dp worlds.toFinset actions cell ≥
+      questionMaximin dp worlds.toFinset actions (q'.toCells worlds) := by
     intro cell hcell
     -- 1. Find containing coarse cell
     obtain ⟨cell', hcell', hcontains⟩ :=
       QUD.toCells_fine_sub_coarse q q' worlds hRefines cell hcell
     -- 2. Filter nonemptiness: cell has a representative
     obtain ⟨w, hw, hcw⟩ := QUD.toCells_cell_nonempty q worlds cell hcell
-    have hne : (worlds.toFinset ∩ cellAsFinset worlds.toFinset cell).Nonempty := by
-      rw [inter_cellAsFinset]
-      exact ⟨w, Finset.mem_filter.mpr ⟨List.mem_toFinset.mpr hw, hcw⟩⟩
+    have hne : (worlds.toFinset ∩ cell).Nonempty :=
+      ⟨w, Finset.mem_inter.mpr ⟨List.mem_toFinset.mpr hw, hcw⟩⟩
     -- 3. MUV(fine) ≥ MUV(coarse) ≥ questionMaximin(coarse)
-    calc maximinUtilityValue dp worlds.toFinset actions
-            (cellAsFinset worlds.toFinset cell)
-        ≥ maximinUtilityValue dp worlds.toFinset actions
-            (cellAsFinset worlds.toFinset cell') :=
+    calc maximinUtilityValue dp worlds.toFinset actions cell
+        ≥ maximinUtilityValue dp worlds.toFinset actions cell' :=
           maximinUtilityValue_monotone_cell dp worlds.toFinset actions
-            (cellAsFinset worlds.toFinset cell)
-            (cellAsFinset worlds.toFinset cell')
-            (cellAsFinset_mono worlds.toFinset cell cell' hcontains) hne
-      _ ≥ questionMaximin dp worlds.toFinset actions
-            (cellsAsFinset worlds.toFinset (q'.toCells worlds)) :=
+            cell cell' hcontains hne
+      _ ≥ questionMaximin dp worlds.toFinset actions (q'.toCells worlds) :=
           questionMaximin_le_muv dp worlds.toFinset actions
-            (cellsAsFinset worlds.toFinset (q'.toCells worlds))
-            (cellAsFinset worlds.toFinset cell')
-            (List.mem_map_of_mem hcell')
+            (q'.toCells worlds) cell' hcell'
   -- Case split on worlds to handle empty case
   cases worlds with
-  | nil => simp [cellsAsFinset, QUD.toCells, questionMaximin]
+  | nil => simp [QUD.toCells, questionMaximin]
   | cons w ws =>
     -- toCells of nonempty worlds is nonempty
     obtain ⟨c, cs, hq⟩ : ∃ c cs, q.toCells (w :: ws) = c :: cs := by
       match hne : q.toCells (w :: ws) with
       | c :: cs => exact ⟨c, cs, rfl⟩
       | [] => exact absurd hne (QUD.toCells_nonempty q w ws)
-    simp only [cellsAsFinset, hq, List.map_cons, questionMaximin]
+    simp only [hq, questionMaximin]
     exact le_foldl_min _ _ _ _
       (key c (hq ▸ List.mem_cons_self))
-      (fun cellF hcellF => by
-        simp only [List.mem_map] at hcellF
-        obtain ⟨cell, hcell, rfl⟩ := hcellF
-        exact key cell (hq ▸ List.mem_cons_of_mem c hcell))
+      (fun cellF hcellF =>
+        key cellF (hq ▸ List.mem_cons_of_mem c hcellF))
 
 
 /-!
@@ -256,9 +207,8 @@ a decision problem with the mention-some structure.
 Van Rooy's characterization: mention-some <-> |resolving cells| > 1 -/
 def hasMentionSomeStructure {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : Finset A)
-    (q : Question W) : Bool :=
-  (resolvingAnswers dp worlds.toFinset actions
-    (cellsAsFinset worlds.toFinset q)).length > 1
+    (q : List (Finset W)) : Bool :=
+  (resolvingAnswers dp worlds.toFinset actions q).length > 1
 
 /-- Van Rooy's mention-some structure implies G&S mention-some is appropriate.
 
@@ -266,11 +216,10 @@ If a DP has multiple resolving cells, then mention-some answers are pragmaticall
 appropriate (complete information is not required). -/
 theorem mentionSomeDP_implies_partialOK {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : Finset A)
-    (q : Question W)
+    (q : List (Finset W))
     (_hMS : hasMentionSomeStructure dp worlds actions q = true) :
     -- Any resolving cell gives an appropriate answer
-    ∀ cell ∈ resolvingAnswers dp worlds.toFinset actions
-      (cellsAsFinset worlds.toFinset q),
+    ∀ cell ∈ resolvingAnswers dp worlds.toFinset actions q,
       resolves dp worlds.toFinset actions cell = true := by
   -- By definition of resolvingAnswers, each cell in it satisfies resolves
   intro cell hMem
@@ -291,23 +240,21 @@ theorem canonicalMentionSomeDP_has_structure {W : Type*} [DecidableEq W]
     (satisfies : W -> Bool) (worlds : List W)
     (hMultiple : (worlds.filter satisfies).length > 1) :
     let dp := canonicalMentionSomeDP satisfies
-    let q : Question W := worlds.filter satisfies |>.map λ w => (· == w)
+    let q : List (Finset W) := worlds.filter satisfies |>.map fun w => {w}
     hasMentionSomeStructure dp worlds {true, false} q = true := by
-  simp only [hasMentionSomeStructure, canonicalMentionSomeDP, cellsAsFinset]
-  -- All wrapped cells resolve
-  have hAllResolve : ∀ cF ∈ (worlds.filter satisfies |>.map λ w => (· == w)).map
-        (cellAsFinset worlds.toFinset),
+  simp only [hasMentionSomeStructure, canonicalMentionSomeDP]
+  -- All singleton cells (centered on a satisfier) resolve
+  have hAllResolve : ∀ cF ∈ (worlds.filter satisfies).map fun w => ({w} : Finset W),
       resolves (mentionSomeDP satisfies) worlds.toFinset {true, false} cF = true := by
     intro cF hcF
-    obtain ⟨c, hc, rfl⟩ := List.mem_map.mp hcF
-    obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hc
+    obtain ⟨w, hw, rfl⟩ := List.mem_map.mp hcF
     have hsat := (List.mem_filter.mp hw).2
     simp only [resolves, decide_eq_true_eq]
     right
     refine ⟨true, by simp, fun b hb v hv => ?_⟩
-    simp only [cellAsFinset, Finset.mem_inter, Finset.mem_filter] at hv
-    have hvw : (· == w) v = true := hv.2.2
-    rw [beq_iff_eq] at hvw; subst hvw
+    rw [Finset.mem_inter] at hv
+    have hvw : v ∈ ({w} : Finset W) := hv.2
+    rw [Finset.mem_singleton] at hvw; subst hvw
     simp only [mentionSomeDP, hsat, Bool.true_and]
     simp only [Finset.mem_insert, Finset.mem_singleton] at hb
     rcases hb with rfl | rfl <;> simp
@@ -328,7 +275,7 @@ theorem mentionSome_multiple_satisfiers {W : Type*} [DecidableEq W]
     (satisfies : W → Bool) (worlds : List W)
     (hMultiple : (worlds.filter satisfies).length > 1) :
     hasMentionSomeStructure (canonicalMentionSomeDP satisfies) worlds {true, false}
-      (worlds.filter satisfies |>.map fun w => (· == w)) = true :=
+      (worlds.filter satisfies |>.map fun w => ({w} : Finset W)) = true :=
   canonicalMentionSomeDP_has_structure satisfies worlds hMultiple
 
 
@@ -374,10 +321,9 @@ goal requires complete information to optimize.
 partition resolves it (no single cell suffices). -/
 def requiresExhaustive {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : Finset A)
-    (q : Question W) : Bool :=
+    (q : List (Finset W)) : Bool :=
   -- No single cell resolves the DP
-  (cellsAsFinset worlds.toFinset q).all λ cell =>
-    !resolves dp worlds.toFinset actions cell
+  q.all λ cell => !resolves dp worlds.toFinset actions cell
 
 /-- Mention-some DPs don't require exhaustive answers.
 
@@ -386,22 +332,28 @@ theorem mentionSomeDP_not_exhaustive {W : Type*} [DecidableEq W]
     (satisfies : W -> Bool) (worlds : List W)
     (_hExists : worlds.any satisfies = true) :
     let dp := canonicalMentionSomeDP satisfies
-    let q : Question W := [satisfies, λ w => !satisfies w]
+    let q : List (Finset W) :=
+      [worlds.toFinset.filter (satisfies ·),
+       worlds.toFinset.filter (fun w => !satisfies w)]
     requiresExhaustive dp worlds {true, false} q = false := by
   -- The satisfies cell resolves the DP (true dominates false in satisfying worlds)
   -- so not all cells fail to resolve, hence requiresExhaustive = false
   show requiresExhaustive (mentionSomeDP satisfies) worlds {true, false}
-    [satisfies, fun w => !satisfies w] = false
-  simp only [requiresExhaustive, cellsAsFinset, List.map_cons, List.map_nil,
-    List.all_cons, List.all_nil, Bool.and_true, Bool.and_eq_false_iff]
+    [worlds.toFinset.filter (satisfies ·),
+     worlds.toFinset.filter (fun w => !satisfies w)] = false
+  simp only [requiresExhaustive, List.all_cons, List.all_nil, Bool.and_true,
+    Bool.and_eq_false_iff]
   left
   simp only [Bool.not_eq_false']
   simp only [resolves, decide_eq_true_eq]
   -- Need to show the disjunction holds: ∃ a ∈ {true, false}, a dominates on satisfiers
   right
   refine ⟨true, by simp, fun b hb w hw => ?_⟩
-  simp only [cellAsFinset, Finset.mem_inter, Finset.mem_filter] at hw
-  have hsat := hw.2.2; simp only [mentionSomeDP, hsat, Bool.true_and]
+  rw [Finset.mem_inter] at hw
+  obtain ⟨_, hwf⟩ := hw
+  rw [Finset.mem_filter] at hwf
+  have hsat : satisfies w = true := hwf.2
+  simp only [mentionSomeDP, hsat, Bool.true_and]
   simp only [Finset.mem_insert, Finset.mem_singleton] at hb
   rcases hb with rfl | rfl <;> simp
 
@@ -495,9 +447,8 @@ This follows from Blackwell but is useful to state directly.
 /-- A question resolves a DP if learning its answer determines optimal action. -/
 def questionResolves {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : Finset A)
-    (q : Question W) : Bool :=
-  (cellsAsFinset worlds.toFinset q).all λ cell =>
-    resolves dp worlds.toFinset actions cell
+    (q : List (Finset W)) : Bool :=
+  q.all λ cell => resolves dp worlds.toFinset actions cell
 
 /-- Helper: If some action dominates in a superset, it dominates in any subset.
 
@@ -525,16 +476,13 @@ theorem refinement_preserves_resolution {W A : Type*} [DecidableEq W] [Decidable
     (q q' : GSQuestion W) (worlds : List W) (actions : Finset A)
     (dp : DecisionProblem W A)
     (hRefines : q' ⊑ q)
-    (hResolves : questionResolves dp worlds actions (q.toQuestion worlds) = true) :
-    questionResolves dp worlds actions (q'.toQuestion worlds) = true := by
-  simp only [questionResolves, GSQuestion.toQuestion, cellsAsFinset, List.all_eq_true,
-    List.mem_map] at *
-  rintro _ ⟨c', hc', rfl⟩
+    (hResolves : questionResolves dp worlds actions (q.toCells worlds) = true) :
+    questionResolves dp worlds actions (q'.toCells worlds) = true := by
+  simp only [questionResolves, List.all_eq_true] at *
+  intro c' hc'
   obtain ⟨c, hc_mem, hc_sub⟩ := QUD.toCells_fine_sub_coarse q' q worlds hRefines c' hc'
-  exact resolves_subset dp worlds.toFinset actions
-    (cellAsFinset worlds.toFinset c) (cellAsFinset worlds.toFinset c')
-    (cellAsFinset_mono worlds.toFinset c' c hc_sub)
-    (hResolves (cellAsFinset worlds.toFinset c) ⟨c, hc_mem, rfl⟩)
+  exact resolves_subset dp worlds.toFinset actions c c' hc_sub
+    (hResolves c hc_mem)
 
 /-- Exhaustivity is anti-monotone in refinement.
 
@@ -553,21 +501,18 @@ theorem exhaustive_antimonotone {W A : Type*} [DecidableEq W] [DecidableEq A]
     (q q' : GSQuestion W) (worlds : List W) (actions : Finset A)
     (dp : DecisionProblem W A)
     (hRefines : q' ⊑ q)
-    (hExh : requiresExhaustive dp worlds actions (q'.toQuestion worlds) = true) :
-    requiresExhaustive dp worlds actions (q.toQuestion worlds) = true := by
-  simp only [requiresExhaustive, GSQuestion.toQuestion, cellsAsFinset,
-    List.all_eq_true, List.mem_map, Bool.not_eq_true'] at *
-  rintro _ ⟨c, hc, rfl⟩
+    (hExh : requiresExhaustive dp worlds actions (q'.toCells worlds) = true) :
+    requiresExhaustive dp worlds actions (q.toCells worlds) = true := by
+  simp only [requiresExhaustive, List.all_eq_true, Bool.not_eq_true'] at *
+  intro c hc
   obtain ⟨c', hc'_mem, hc'_sub⟩ := QUD.toCells_coarse_contains_fine q q' worlds hRefines c hc
-  have hc'_nr := hExh (cellAsFinset worlds.toFinset c') ⟨c', hc'_mem, rfl⟩
+  have hc'_nr := hExh c' hc'_mem
   by_contra habs
-  have hrc : resolves dp worlds.toFinset actions (cellAsFinset worlds.toFinset c) = true := by
-    cases h : resolves dp worlds.toFinset actions (cellAsFinset worlds.toFinset c) with
+  have hrc : resolves dp worlds.toFinset actions c = true := by
+    cases h : resolves dp worlds.toFinset actions c with
     | true => rfl
     | false => exact absurd h habs
-  have h_contra := resolves_subset dp worlds.toFinset actions
-    (cellAsFinset worlds.toFinset c) (cellAsFinset worlds.toFinset c')
-    (cellAsFinset_mono worlds.toFinset c' c hc'_sub) hrc
+  have h_contra := resolves_subset dp worlds.toFinset actions c c' hc'_sub hrc
   simp [hc'_nr] at h_contra
 
 /-- The converse of `exhaustive_antimonotone` is FALSE.
@@ -586,11 +531,11 @@ private def exhaustiveCounterexDP : DecisionProblem ExhW Bool where
 
 /-- Coarse (trivial) question requires exhaustive for the counterex DP. -/
 example : requiresExhaustive exhaustiveCounterexDP [.w1, .w2] {true, false}
-    [fun _ => true] = true := by native_decide
+    [({.w1, .w2} : Finset ExhW)] = true := by native_decide
 
 /-- Fine (exact) question does NOT require exhaustive — each cell resolves. -/
 example : requiresExhaustive exhaustiveCounterexDP [.w1, .w2] {true, false}
-    [fun w => w == ExhW.w1, fun w => w == ExhW.w2] = false := by native_decide
+    [({.w1} : Finset ExhW), {.w2}] = false := by native_decide
 
 /-- The trivial question resolves only trivial DPs.
 
@@ -599,17 +544,16 @@ some action dominates all others on all worlds. -/
 theorem trivial_resolves_only_trivial {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : List W) (actions : Finset A)
     (hNonempty : actions.Nonempty)
-    (hResolves : questionResolves dp worlds actions [λ _ => true] = true) :
+    (hResolves : questionResolves dp worlds actions [worlds.toFinset] = true) :
     ∃ a ∈ actions, ∀ b ∈ actions, ∀ w ∈ worlds,
       dp.utility w a >= dp.utility w b := by
-  simp only [questionResolves, cellsAsFinset, List.map_cons, List.map_nil,
-    List.all_cons, List.all_nil, Bool.and_true] at hResolves
+  simp only [questionResolves, List.all_cons, List.all_nil, Bool.and_true] at hResolves
   simp only [resolves, decide_eq_true_eq] at hResolves
   rcases hResolves with hne | ⟨dom, hdom_mem, hdom⟩
   · exact absurd hNonempty hne
   · refine ⟨dom, hdom_mem, fun b hb w hw => ?_⟩
     refine hdom b hb w (Finset.mem_inter.mpr ⟨List.mem_toFinset.mpr hw, ?_⟩)
-    simp [cellAsFinset, List.mem_toFinset, hw]
+    exact List.mem_toFinset.mpr hw
 
 /-- The exact question resolves all DPs (with world-indexed actions).
 
@@ -620,18 +564,17 @@ Now correct after fixing `resolves` to existential. -/
 theorem exact_resolves_all {W : Type*} [DecidableEq W]
     (worlds : List W) (hNonempty : worlds.length > 0) :
     let dp := completeInformationDP (W := W)
-    questionResolves dp worlds worlds.toFinset (exactQuestion worlds) = true := by
+    questionResolves dp worlds worlds.toFinset (worlds.map fun w => ({w} : Finset W)) = true := by
   obtain ⟨x, xs, rfl⟩ : ∃ x xs, worlds = x :: xs := by
     cases worlds with | nil => simp at hNonempty | cons x xs => exact ⟨x, xs, rfl⟩
-  simp only [questionResolves, exactQuestion, cellsAsFinset, List.all_eq_true,
-    List.mem_map]
-  rintro _ ⟨_, ⟨w, hw, rfl⟩, rfl⟩
+  simp only [questionResolves, List.all_eq_true, List.mem_map]
+  rintro _ ⟨w, hw, rfl⟩
   -- Each singleton cell resolves: action w dominates
   simp only [resolves, decide_eq_true_eq]
   right
   refine ⟨w, List.mem_toFinset.mpr hw, fun b hb v hv => ?_⟩
-  simp only [cellAsFinset, Finset.mem_inter, Finset.mem_filter] at hv
-  have hvw := hv.2.2; rw [beq_iff_eq] at hvw; subst hvw
+  rw [Finset.mem_inter, Finset.mem_singleton] at hv
+  obtain ⟨_, hvw⟩ := hv; subst hvw
   simp only [completeInformationDP, beq_self_eq_true, ite_true]
   split <;> norm_num
 
@@ -642,25 +585,25 @@ worlds cannot resolve the DP: for any candidate action a, there exists
 w ≠ a with U(w, a) = 0 < 1 = U(w, w). Requires ≥2 distinct worlds. -/
 theorem completeInfoDP_requires_exhaustive {W : Type*} [DecidableEq W]
     (worlds : List W) (hMultiple : worlds.length > 1) (hNodup : worlds.Nodup) :
-    requiresExhaustive completeInformationDP worlds worlds.toFinset [fun _ => true] = true := by
+    requiresExhaustive completeInformationDP worlds worlds.toFinset [worlds.toFinset] = true := by
   -- Suffices to show the trivial cell doesn't resolve
   suffices h : resolves completeInformationDP worlds.toFinset worlds.toFinset
-      (cellAsFinset worlds.toFinset (fun _ => true)) = false by
-    simp [requiresExhaustive, cellsAsFinset, h]
+      worlds.toFinset = false by
+    simp [requiresExhaustive, h]
   -- By contradiction: if it resolves, some action dominates on all worlds
   by_contra habs
   have hres : resolves completeInformationDP worlds.toFinset worlds.toFinset
-      (cellAsFinset worlds.toFinset (fun _ => true)) = true := by
+      worlds.toFinset = true := by
     cases h : resolves completeInformationDP worlds.toFinset worlds.toFinset
-        (cellAsFinset worlds.toFinset (fun _ => true)) with
+        worlds.toFinset with
     | true => rfl
     | false => exact absurd h habs
   have hne : worlds.toFinset.Nonempty := by
     rw [List.toFinset_nonempty_iff]
     intro h; rw [h] at hMultiple; simp at hMultiple
   have hqr : questionResolves completeInformationDP worlds worlds.toFinset
-      [fun _ => true] = true := by
-    simp [questionResolves, cellsAsFinset, hres]
+      [worlds.toFinset] = true := by
+    simp [questionResolves, hres]
   obtain ⟨a, ha, hdom⟩ := trivial_resolves_only_trivial
     completeInformationDP worlds worlds.toFinset hne hqr
   -- Find w ∈ worlds with w ≠ a

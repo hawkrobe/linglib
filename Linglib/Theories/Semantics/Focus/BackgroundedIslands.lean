@@ -157,6 +157,7 @@ dimension of a communication event is foregrounded (participates in the QUD
 partition) and which is backgrounded (invisible to the partition).
 -/
 
+omit [DecidableEq Content] in
 /-- **Manner QUD ignores content**: Under the manner QUD, events with the same
 manner are equivalent regardless of their content.
 
@@ -165,18 +166,16 @@ partition, which is exactly what "backgrounded" means — the content doesn't
 participate in distinguishing Q-alternatives. -/
 theorem manner_qud_ignores_content (e1 e2 : CommEvent Manner Content)
     (h : e1.manner = e2.manner) :
-    mannerQUD.sameAnswer e1 e2 = true := by
-  simp only [mannerQUD, QUD.ofDecEq]
-  exact decide_eq_true_eq.mpr h
+    mannerQUD.r e1 e2 := h
 
+omit [DecidableEq Manner] in
 /-- **Content QUD ignores manner**: Under the content QUD, events with the same
 content are equivalent regardless of manner. -/
 theorem content_qud_ignores_manner (e1 e2 : CommEvent Manner Content)
     (h : e1.content = e2.content) :
-    contentQUD.sameAnswer e1 e2 = true := by
-  simp only [contentQUD, QUD.ofDecEq]
-  exact decide_eq_true_eq.mpr h
+    contentQUD.r e1 e2 := h
 
+omit [DecidableEq Content] in
 /-- **Backgroundedness = QUD invisibility**: Varying the content of a communication
 event does not change its QUD cell under the manner QUD.
 
@@ -188,19 +187,20 @@ This directly formalizes the paper's claim that elements in MoS verb
 complements are discourse-backgrounded. -/
 theorem backgroundedness_means_qud_invisible
     (e : CommEvent Manner Content) (c' : Content) :
-    (mannerQUD (Manner := Manner) (Content := Content)).sameAnswer
-      e ⟨e.manner, c'⟩ = true :=
+    (mannerQUD (Manner := Manner) (Content := Content)).r
+      e ⟨e.manner, c'⟩ :=
   manner_qud_ignores_content e ⟨e.manner, c'⟩ rfl
 
+omit [DecidableEq Content] in
 /-- Backgrounded content is in the same QUD cell (set-membership version). -/
 theorem backgrounded_content_same_cell
     [BEq Manner] [BEq Content]
     (e : CommEvent Manner Content) (c' : Content) :
     (⟨e.manner, c'⟩ : CommEvent Manner Content) ∈
-      (mannerQUD (Manner := Manner) (Content := Content)).cell e := by
-  rw [QUD.mem_cell_iff]
-  exact backgroundedness_means_qud_invisible e c'
+      (mannerQUD (Manner := Manner) (Content := Content)).cell e :=
+  backgroundedness_means_qud_invisible e c'
 
+omit [DecidableEq Content] in
 /-- **Foregrounding is QUD projection (manner direction)**: events in the same
 manner-QUD cell must agree on manner. That is, manner **distinguishes**
 Q-alternatives — it is foregrounded.
@@ -210,19 +210,16 @@ invisible to the manner QUD, manner is NOT invisible — it's what the
 partition is about. -/
 theorem foregrounding_is_qud_projection_manner
     (e1 e2 : CommEvent Manner Content)
-    (h : (mannerQUD (Manner := Manner) (Content := Content)).sameAnswer e1 e2 = true) :
-    e1.manner = e2.manner := by
-  simp only [mannerQUD, QUD.ofDecEq] at h
-  exact decide_eq_true_eq.mp h
+    (h : (mannerQUD (Manner := Manner) (Content := Content)).r e1 e2) :
+    e1.manner = e2.manner := h
 
+omit [DecidableEq Manner] in
 /-- **Foregrounding is QUD projection (content direction)**: events in the same
 content-QUD cell must agree on content. -/
 theorem foregrounding_is_qud_projection_content
     (e1 e2 : CommEvent Manner Content)
-    (h : (contentQUD (Manner := Manner) (Content := Content)).sameAnswer e1 e2 = true) :
-    e1.content = e2.content := by
-  simp only [contentQUD, QUD.ofDecEq] at h
-  exact decide_eq_true_eq.mp h
+    (h : (contentQUD (Manner := Manner) (Content := Content)).r e1 e2) :
+    e1.content = e2.content := h
 
 /-- **Manner QUD and content QUD are genuinely distinct partitions.**
 Events can be equivalent under one QUD but not the other. This is what makes
@@ -235,12 +232,9 @@ theorem manner_content_qud_distinct
     (e1 e2 : CommEvent Manner Content)
     (h_same_manner : e1.manner = e2.manner)
     (h_diff_content : e1.content ≠ e2.content) :
-    (mannerQUD (Manner := Manner) (Content := Content)).sameAnswer e1 e2 = true ∧
-    ¬((contentQUD (Manner := Manner) (Content := Content)).sameAnswer e1 e2 = true) := by
-  constructor
-  · exact manner_qud_ignores_content e1 e2 h_same_manner
-  · simp only [contentQUD, QUD.ofDecEq_sameAnswer_iff]
-    exact h_diff_content
+    (mannerQUD (Manner := Manner) (Content := Content)).r e1 e2 ∧
+    ¬ (contentQUD (Manner := Manner) (Content := Content)).r e1 e2 :=
+  ⟨manner_qud_ignores_content e1 e2 h_same_manner, h_diff_content⟩
 
 /-! ## §4. Deriving the Extraction Constraint
 @cite{erteschik-shir-1973} @cite{roberts-1996} @cite{goldberg-2006}
@@ -292,22 +286,23 @@ content (prosodic amelioration). -/
 must produce events in different QUD cells. If not, the extraction question
 is vacuous — every filler gives the same QUD-level answer. -/
 def contentQuestionRelevant (qud : QUD (CommEvent Manner Content)) : Prop :=
-  ∃ (m : Manner) (c₁ c₂ : Content),
-    qud.sameAnswer ⟨m, c₁⟩ ⟨m, c₂⟩ = false
+  ∃ (m : Manner) (c₁ c₂ : Content), ¬ qud.r ⟨m, c₁⟩ ⟨m, c₂⟩
 
+omit [DecidableEq Content] in
 /-- Under the manner QUD, content extraction questions are QUD-irrelevant:
 varying content never changes the QUD cell. -/
 theorem content_question_irrelevant_under_manner :
     ¬ contentQuestionRelevant (mannerQUD (Manner := Manner) (Content := Content)) := by
   intro ⟨_, _, _, h⟩
-  simp [mannerQUD, QUD.ofDecEq_sameAnswer] at h
+  exact h rfl
 
+omit [DecidableEq Manner] in
 /-- Under the content QUD, content extraction questions ARE QUD-relevant:
 different content values produce events in different QUD cells. -/
 theorem content_question_relevant_under_content
     (m : Manner) (c₁ c₂ : Content) (hne : c₁ ≠ c₂) :
     contentQuestionRelevant (contentQUD (Manner := Manner) (Content := Content)) :=
-  ⟨m, c₁, c₂, by simp [contentQUD, QUD.ofDecEq_sameAnswer, hne]⟩
+  ⟨m, c₁, c₂, hne⟩
 
 -- ── Route 2: Information-structural clash ────────────────────────────
 
@@ -316,6 +311,7 @@ complement. "What₁ did John whisper t₁?" partitions events by the filler
 (= content dimension). (@cite{roberts-2012}: wh-questions establish QUDs.) -/
 def extractionQUD : QUD (CommEvent Manner Content) := contentQUD
 
+omit [DecidableEq Manner] in
 /-- The extraction QUD partitions by content: different fillers produce
 different QUD cells. This is what makes the filler the focused element —
 it is the variable that distinguishes alternatives.
@@ -327,11 +323,11 @@ must be focus alternatives of the answer (varying the focused position),
 so filler position = focused position. -/
 theorem extraction_filler_varies
     (m : Manner) (c₁ c₂ : Content) (hne : c₁ ≠ c₂) :
-    (extractionQUD (Manner := Manner) (Content := Content)).sameAnswer
-      ⟨m, c₁⟩ ⟨m, c₂⟩ = false := by
-  simp [extractionQUD, contentQUD, QUD.ofDecEq_sameAnswer, hne]
+    ¬ (extractionQUD (Manner := Manner) (Content := Content)).r
+      ⟨m, c₁⟩ ⟨m, c₂⟩ := hne
 
 open Semantics.FocusInterpretation Semantics.Questions.Hamblin in
+omit [DecidableEq Manner] [DecidableEq Content] in
 /-- **Q-A congruence applied to extraction** (@cite{rooth-1992} (26d)):
 if Q-A congruence holds between the extraction question and the answer's
 focus value, then every filler produces a focus alternative of the answer.
@@ -686,6 +682,7 @@ linglib formalization, establishing that this is not an isolated theory
 but a natural extension of the QUD and information-structure framework.
 -/
 
+omit [DecidableEq Content] in
 /-- **Foregrounding = QUD cell membership (biconditional, manner direction).**
 
 The paper defines (def 3): "C is foregrounded iff Alt(C) ⊆ Q-alternatives."
@@ -698,20 +695,17 @@ This biconditional shows that our QUD.ofDecEq model exactly captures the
 paper's notion of foregrounding. -/
 theorem foregrounding_iff_qud_manner
     (e1 e2 : CommEvent Manner Content) :
-    (mannerQUD (Manner := Manner) (Content := Content)).sameAnswer e1 e2 = true ↔
-    e1.manner = e2.manner := by
-  constructor
-  · exact foregrounding_is_qud_projection_manner e1 e2
-  · exact manner_qud_ignores_content e1 e2
+    (mannerQUD (Manner := Manner) (Content := Content)).r e1 e2 ↔
+    e1.manner = e2.manner :=
+  ⟨foregrounding_is_qud_projection_manner e1 e2, manner_qud_ignores_content e1 e2⟩
 
+omit [DecidableEq Manner] in
 /-- **Foregrounding = QUD cell membership (biconditional, content direction).** -/
 theorem foregrounding_iff_qud_content
     (e1 e2 : CommEvent Manner Content) :
-    (contentQUD (Manner := Manner) (Content := Content)).sameAnswer e1 e2 = true ↔
-    e1.content = e2.content := by
-  constructor
-  · exact foregrounding_is_qud_projection_content e1 e2
-  · exact content_qud_ignores_manner e1 e2
+    (contentQUD (Manner := Manner) (Content := Content)).r e1 e2 ↔
+    e1.content = e2.content :=
+  ⟨foregrounding_is_qud_projection_content e1 e2, content_qud_ignores_manner e1 e2⟩
 
 /-- **QUD complementarity**: Under manner QUD, manner is foregrounded ([FoC])
 and content is backgrounded ([G]). Under content QUD, vice versa.

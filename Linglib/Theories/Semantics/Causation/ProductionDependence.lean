@@ -1,4 +1,4 @@
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.CCSelection
 
@@ -35,7 +35,7 @@ d-causes without producing anything.
 
 namespace Semantics.Causation.ProductionDependence
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Causal
 open Semantics.Causation.Sufficiency

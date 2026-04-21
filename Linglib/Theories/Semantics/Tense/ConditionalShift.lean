@@ -32,7 +32,7 @@ while preserving the Context of Thought θ (= `tower.origin`).
 
 namespace Semantics.Tense.ConditionalShift
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Time
 open Core.Context (RichContext KContext ContextTower ContextShift
@@ -97,7 +97,7 @@ variable {W : Type*} {T : Type*} [Preorder T]
 theorem hp_achieves_expansion
     (history : WorldHistory W T)
     (h_bc : history.backwardsClosed)
-    (s₀ : Situation W T) (t' : T) (h_earlier : t' ≤ s₀.time)
+    (s₀ : WorldTimeIndex W T) (t' : T) (h_earlier : t' ≤ s₀.time)
     (w : W) (hw : w ∈ history s₀) :
     w ∈ history ⟨s₀.world, t'⟩ :=
   h_bc s₀.world w s₀.time t' h_earlier hw
@@ -113,7 +113,7 @@ theorem hp_achieves_expansion
 theorem history_monotone_set
     (history : WorldHistory W T)
     (h_bc : history.backwardsClosed)
-    (s₀ : Situation W T) (t' : T) (h_earlier : t' ≤ s₀.time) :
+    (s₀ : WorldTimeIndex W T) (t' : T) (h_earlier : t' ≤ s₀.time) :
     (history s₀ : Set W) ⊆ (history ⟨s₀.world, t'⟩ : Set W) :=
   λ _ hw => hp_achieves_expansion history h_bc s₀ t' h_earlier _ hw
 
@@ -123,8 +123,8 @@ theorem history_monotone_set
 theorem historicalBase_monotone
     (history : WorldHistory W T)
     (h_bc : history.backwardsClosed)
-    (s₀ : Situation W T) (t' : T) (h_earlier : t' ≤ s₀.time)
-    (s₁ : Situation W T) (h_s₁ : s₁ ∈ historicalBase history s₀)
+    (s₀ : WorldTimeIndex W T) (t' : T) (h_earlier : t' ≤ s₀.time)
+    (s₁ : WorldTimeIndex W T) (h_s₁ : s₁ ∈ historicalBase history s₀)
     (h_time : s₁.time ≥ t') :
     s₁ ∈ historicalBase history ⟨s₀.world, t'⟩ := by
   simp only [historicalBase, Set.mem_setOf_eq] at h_s₁ ⊢
@@ -253,8 +253,8 @@ variable {W : Type*} {T : Type*} [Preorder T]
     a situation whose world is in the expanded historical alternatives. -/
 theorem subj_subsumes_hp_expansion
     (history : WorldHistory W T)
-    (P : Situation W T → Situation W T → Prop)
-    (s : Situation W T)
+    (P : WorldTimeIndex W T → WorldTimeIndex W T → Prop)
+    (s : WorldTimeIndex W T)
     (h : SUBJ history P s) :
     ∃ s₁, s₁.world ∈ history s ∧ P s₁ s := by
   obtain ⟨s₁, h_hist, hP⟩ := h

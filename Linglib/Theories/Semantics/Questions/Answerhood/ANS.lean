@@ -29,7 +29,7 @@ theorem ans_true_at_index {W : Type*} (q : GSQuestion W) (i : W) :
 
 /-- Worlds in the same cell get the same ANS. -/
 theorem ans_constant_on_cells {W : Type*} (q : GSQuestion W) (w v : W)
-    (hEquiv : q.sameAnswer w v = true) :
+    (hEquiv : q.r w v) :
     ∀ u, ans q w u = ans q v u := by
   intro u
   simp only [ans]
@@ -38,23 +38,22 @@ theorem ans_constant_on_cells {W : Type*} (q : GSQuestion W) (w v : W)
     cases hvu : q.sameAnswer v u with
     | false => rfl
     | true =>
-      have hwu := q.trans w v u hEquiv hvu
-      rw [hwu] at hu
+      have hwu := q.iseqv.trans hEquiv (QUD.r_of_sameAnswer hvu)
+      rw [QUD.sameAnswer_of_r hwu] at hu
       exact absurd hu (by simp)
   | true =>
-    have hvw : q.sameAnswer v w = true := by rw [q.symm]; exact hEquiv
-    exact (q.trans v w u hvw hu).symm
+    have hvw : q.r v u := q.iseqv.trans (q.iseqv.symm hEquiv) (QUD.r_of_sameAnswer hu)
+    exact (QUD.sameAnswer_of_r hvw).symm
 
 /-- ANS propositions from different cells are disjoint. -/
 theorem ans_disjoint {W : Type*} (q : GSQuestion W) (w v u : W)
-    (hNotEquiv : q.sameAnswer w v = false) :
+    (hNotEquiv : ¬ q.r w v) :
     ¬(ans q w u = true ∧ ans q v u = true) := by
   intro ⟨hwu, hvu⟩
   simp only [ans] at hwu hvu
-  have huv : q.sameAnswer u v = true := by rw [q.symm]; exact hvu
-  have hwv := q.trans w u v hwu huv
-  rw [hwv] at hNotEquiv
-  exact absurd hNotEquiv (by simp)
+  have hwv : q.r w v :=
+    q.iseqv.trans (QUD.r_of_sameAnswer hwu) (q.iseqv.symm (QUD.r_of_sameAnswer hvu))
+  exact hNotEquiv hwv
 
 /-- Wh-question refines the polar question for any individual in the domain.
     Core result of @cite{groenendijk-stokhof-1984}: knowing the answer to "Who walks?" determines
@@ -99,20 +98,20 @@ theorem answerhood_thesis {W : Type*} (q : GSQuestion W) (i : W) :
 
 /-- The same question can have different answers at different indices. -/
 theorem ans_situation_dependent {W : Type*} (q : GSQuestion W) (w v : W)
-    (hDiff : q.sameAnswer w v = false) :
+    (hDiff : ¬ q.r w v) :
     ∃ u, ans q w u ≠ ans q v u := by
   use w
   simp only [ans, ne_eq]
   rw [q.refl w]
-  rw [q.symm] at hDiff
-  simp [hDiff]
+  have : q.sameAnswer v w = false := decide_eq_false (mt q.iseqv.symm hDiff)
+  simp [this]
 
 /-- @cite{belnap-1982}'s Unique Answer Fallacy: it is a fallacy to assume that each
     question has a unique complete true answer. In the G&S framework, `ans q w`
     varies with the index `w` — the same question Q yields different complete true
     answers at different worlds. -/
 theorem unique_answer_fallacy {W : Type*} (q : GSQuestion W) (w v : W)
-    (hDiff : q.sameAnswer w v = false) :
+    (hDiff : ¬ q.r w v) :
     ∃ u, ans q w u ≠ ans q v u :=
   ans_situation_dependent q w v hDiff
 
@@ -241,11 +240,11 @@ theorem nonrigid_may_fail_semantic {W E : Type*} [DecidableEq E]
     (description : W → E)
     (hNonrigid : ∃ w v, description w ≠ description v) :
     ∃ (pred : E → W → Bool) (q : GSQuestion W) (w v : W),
-      q.sameAnswer w v = true ∧
+      q.r w v ∧
       deDictoAnswer description pred w = true ∧
       deDictoAnswer description pred v = false := by
   obtain ⟨w₀, v₀, hNeq⟩ := hNonrigid
-  refine ⟨λ e _ => decide (e = description w₀), QUD.trivial, w₀, v₀, rfl, ?_, ?_⟩
+  refine ⟨λ e _ => decide (e = description w₀), QUD.trivial, w₀, v₀, ⟨⟩, ?_, ?_⟩
   · show decide (description w₀ = description w₀) = true
     exact decide_eq_true rfl
   · show decide (description v₀ = description w₀) = false

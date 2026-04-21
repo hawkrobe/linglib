@@ -285,22 +285,24 @@ theorem qud_as_decision_problem
     -- There exists a DP that respects the partition:
     -- same-cell worlds (within `worlds`) have identical utility profiles
     ∃ dp : DecisionProblem W Nat,
-      ∀ w v : W, w ∈ worlds → v ∈ worlds → q.sameAnswer w v = true →
+      ∀ w v : W, w ∈ worlds → v ∈ worlds → q.r w v →
         ∀ i : Nat, dp.utility w i = dp.utility v i := by
   use qudToDP q worlds
   intro w v hwmem hvmem hsame i
-  -- Each cell is q.sameAnswer rep · for some rep.
-  -- If q.sameAnswer w v, then by transitivity, cell(w) = cell(v) for all cells.
+  -- Each cell is the equivalence class of some representative under q.
+  -- If q.r w v, then by transitivity, cell(w) = cell(v) for all cells.
   simp only [qudToDP]
   cases h : (q.toCells worlds)[i]? with
   | none => rfl
   | some cell =>
     have hmem : cell ∈ q.toCells worlds := by
       exact List.mem_of_getElem? h
-    have hiff := QUD.toCells_sameAnswer_eq q worlds cell hmem w v hwmem hvmem hsame
+    have hiff := QUD.toCells_sameAnswer_eq q worlds cell hmem w v hwmem hvmem
+                   (QUD.sameAnswer_of_r hsame)
     by_cases hw : w ∈ cell
     · simp [hw, hiff.mp hw]
-    · simp [hw, fun hv => hw (hiff.mpr hv)]
+    · have hv : v ∉ cell := fun hv => hw (hiff.mpr hv)
+      simp [hw, hv]
 
 /-- The converse: a DP with cell-structured utility induces a QUD.
 

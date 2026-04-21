@@ -254,8 +254,8 @@ open Semantics.Questions.Inquisitive (toIssue)
     `toIssue q` is wider than `toIssue q'` as `Core.Question`s.
 
     The strictness witnesses `w₀, v₀ : W` share a coarse cell
-    (`q'.sameAnswer w₀ v₀ = true`) but not a fine cell
-    (`q.sameAnswer w₀ v₀ = false`); they witness condition (c).
+    (`q'.r w₀ v₀`) but not a fine cell
+    (`¬ q.r w₀ v₀`); they witness condition (c).
 
     The proof establishes the three conditions of `Core.Question.widerThan`:
     - (a) Same `info`: both `fromSetoid`-derived issues have `info = univ`.
@@ -270,8 +270,8 @@ theorem refinement_implies_wider {W : Type*}
     (q q' : QUD W)
     (hRefines : QUD.refines q q')
     (w₀ v₀ : W)
-    (hCoarse : q'.sameAnswer w₀ v₀ = true)
-    (hFine : q.sameAnswer w₀ v₀ = false) :
+    (hCoarse : q'.r w₀ v₀)
+    (hFine : ¬ q.r w₀ v₀) :
     (toIssue q).widerThan (toIssue q') := by
   -- Refinement reads as `q.toSetoid ≤ q'.toSetoid` in mathlib's lattice
   have hle : ∀ {x y : W}, q.toSetoid x y → q'.toSetoid x y :=
@@ -327,12 +327,10 @@ theorem refinement_implies_wider {W : Type*}
       -- v₀ ∈ C₂ (from hCoarse + symm) but v₀ ∉ C₁ (from hFine)
       have hv₀_C₂ : v₀ ∈ C₂ := by
         change q'.toSetoid v₀ w₀
-        exact Setoid.symm' q'.toSetoid (QUD.r_of_sameAnswer hCoarse)
+        exact Setoid.symm' q'.toSetoid hCoarse
       have hv₀_C₁ : v₀ ∈ C₁ := hCsub hv₀_C₂
-      have hv₀_q : q.sameAnswer v₀ w₀ = true := QUD.sameAnswer_of_r hv₀_C₁
-      rw [q.symm v₀ w₀] at hv₀_q
-      rw [hv₀_q] at hFine
-      exact absurd hFine (by decide)
+      -- hv₀_C₁ : q.toSetoid v₀ w₀, want: q.r w₀ v₀
+      exact hFine (q.iseqv.symm hv₀_C₁)
 
 -- ============================================================================
 -- G. Granularity–Question Composition (§3.1.2 + §3.2)
@@ -363,8 +361,8 @@ open Semantics.Degree.Granularity (granQUD finer_granularity_refines)
 theorem finer_granularity_implies_wider (n ε₁ ε₂ : Nat)
     (hdvd : ε₁ ∣ ε₂)
     (w₀ v₀ : Fin n)
-    (hCoarse : (granQUD n ε₂).sameAnswer w₀ v₀ = true)
-    (hFine : (granQUD n ε₁).sameAnswer w₀ v₀ = false) :
+    (hCoarse : (granQUD n ε₂).r w₀ v₀)
+    (hFine : ¬ (granQUD n ε₁).r w₀ v₀) :
     (toIssue (granQUD n ε₁)).widerThan (toIssue (granQUD n ε₂)) :=
   refinement_implies_wider _ _
     (finer_granularity_refines n ε₁ ε₂ hdvd)

@@ -52,7 +52,7 @@ to `Boundedness.closed`/`.open_`, yielding identical licensing predictions.
 
 namespace Phenomena.Gradability.CrossDomainLicensingBridge
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Scale
 open Core.Time

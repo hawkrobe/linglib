@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.Scoreboard
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Directive
@@ -45,7 +45,7 @@ and shows the account satisfies all of them. See `section Desiderata` below.
 
 namespace Roberts2023
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 open Core.Discourse
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional
@@ -56,9 +56,9 @@ open Semantics.Attitudes.Intensional
 
     @cite{roberts-2023} (45): "A circumstance is a world/time pair ⟨w, t⟩."
 
-    Unified with `Core.Situation` from the temporal infrastructure —
+    Unified with `Core.WorldTimeIndex` from the temporal infrastructure —
     both are world-time pairs, differing only in field names. -/
-abbrev Circumstance (W T : Type*) := Situation W T
+abbrev Circumstance (W T : Type*) := WorldTimeIndex W T
 
 /-- A **proposition** in the circumstantial sense: a set of circumstances. -/
 abbrev CProp (W T : Type*) := Circumstance W T → Bool

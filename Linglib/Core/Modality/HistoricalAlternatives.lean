@@ -1,4 +1,4 @@
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Theories.Semantics.Modality.TemporalConstraint
 
 /-!
@@ -49,7 +49,7 @@ Intuition: At time t in world w, multiple futures are possible.
 The historical alternatives are all worlds that share the same
 past with w up to t.
 -/
-def WorldHistory (W Time : Type*) := Situation W Time → Set W
+def WorldHistory (W Time : Type*) := WorldTimeIndex W Time → Set W
 
 /--
 Historical modal base: situations whose worlds agree with s up to τ(s),
@@ -63,7 +63,7 @@ hist(s) = {s' : w_{s'} ∈ H(wₛ, τ(s)) ∧ τ(s') ≥ τ(s)}
 -/
 def historicalBase {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (s : Situation W Time) : Set (Situation W Time) :=
+    (s : WorldTimeIndex W Time) : Set (WorldTimeIndex W Time) :=
   { s' | s'.world ∈ history s ∧ s'.time ≥ s.time }
 
 /--
@@ -76,7 +76,7 @@ component ends at the evaluation time: 𝒜_t = {i : τ(i) = (-∞, t]}.
 -/
 def actualHistoryBase {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (s : Situation W Time) : Set (Situation W Time) :=
+    (s : WorldTimeIndex W Time) : Set (WorldTimeIndex W Time) :=
   { s' | s'.world ∈ history s ∧ s'.time ≤ s.time }
 
 /--
@@ -88,14 +88,14 @@ component departs from the evaluation time: ℱ_t = {j : τ(j) = (t, ∞)}.
 -/
 def futureHistoryBase {W Time : Type*} [LT Time]
     (history : WorldHistory W Time)
-    (s : Situation W Time) : Set (Situation W Time) :=
+    (s : WorldTimeIndex W Time) : Set (WorldTimeIndex W Time) :=
   { s' | s'.world ∈ history s ∧ s'.time > s.time }
 
 /--
 A world history is reflexive if every world agrees with itself.
 -/
 def WorldHistory.reflexive {W Time : Type*} (h : WorldHistory W Time) : Prop :=
-  ∀ s : Situation W Time, s.world ∈ h s
+  ∀ s : WorldTimeIndex W Time, s.world ∈ h s
 
 /--
 A world history is symmetric: if w' agrees with w up to t,
@@ -150,7 +150,7 @@ A temporal proposition: true or false at each situation.
 
 This is the situation-semantic analog of Prop' W.
 -/
-abbrev TProp (W Time : Type*) := Situation W Time → Prop
+abbrev TProp (W Time : Type*) := WorldTimeIndex W Time → Prop
 
 /--
 Lift a world proposition to a temporal proposition.
@@ -182,7 +182,7 @@ open Semantics.Modality.TemporalConstraint
 /-- A situation in `historicalBase` has prospective time:
     `s' ∈ historicalBase h s → isProspectiveHistory s.time s'.time`. -/
 theorem historicalBase_time_prospective {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time)
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (h : s' ∈ historicalBase history s) :
     isProspectiveHistory s.time s'.time :=
   h.2
@@ -190,7 +190,7 @@ theorem historicalBase_time_prospective {W Time : Type*} [LE Time]
 /-- A situation in `actualHistoryBase` has actual time:
     `s' ∈ actualHistoryBase h s → isActualHistory s.time s'.time`. -/
 theorem actualHistoryBase_time_actual {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time)
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (h : s' ∈ actualHistoryBase history s) :
     isActualHistory s.time s'.time :=
   h.2
@@ -198,7 +198,7 @@ theorem actualHistoryBase_time_actual {W Time : Type*} [LE Time]
 /-- A situation in `futureHistoryBase` has future time:
     `s' ∈ futureHistoryBase h s → isFutureHistory s.time s'.time`. -/
 theorem futureHistoryBase_time_future {W Time : Type*} [LT Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time)
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (h : s' ∈ futureHistoryBase history s) :
     isFutureHistory s.time s'.time :=
   h.2
@@ -206,7 +206,7 @@ theorem futureHistoryBase_time_future {W Time : Type*} [LT Time]
 /-- `futureHistoryBase ⊆ historicalBase`: future situations are prospective.
     This is the situation-semantic instantiation of `future_implies_prospective`. -/
 theorem futureHistoryBase_subset_historicalBase {W Time : Type*} [Preorder Time]
-    (history : WorldHistory W Time) (s : Situation W Time) :
+    (history : WorldHistory W Time) (s : WorldTimeIndex W Time) :
     futureHistoryBase history s ⊆ historicalBase history s :=
   λ _ ⟨hw, ht⟩ => ⟨hw, le_of_lt ht⟩
 
@@ -215,7 +215,7 @@ theorem futureHistoryBase_subset_historicalBase {W Time : Type*} [Preorder Time]
     This is the situation-semantic instantiation of
     `actual_and_prospective_iff_simultaneous`. -/
 theorem actualBase_inter_historicalBase_simultaneous {W Time : Type*} [PartialOrder Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time)
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (hActual : s' ∈ actualHistoryBase history s)
     (hHist : s' ∈ historicalBase history s) :
     s'.time = s.time :=
@@ -226,7 +226,7 @@ theorem actualBase_inter_historicalBase_simultaneous {W Time : Type*} [PartialOr
     This is the situation-semantic instantiation of `past_future_disjoint`
     (actual ∩ future = ∅ since actual ⊃ past). -/
 theorem actualBase_futureBase_disjoint {W Time : Type*} [Preorder Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time) :
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time) :
     ¬(s' ∈ actualHistoryBase history s ∧ s' ∈ futureHistoryBase history s) := by
   intro ⟨⟨_, hle⟩, ⟨_, hgt⟩⟩
   exact lt_irrefl _ (lt_of_lt_of_le hgt hle)
@@ -236,7 +236,7 @@ theorem actualBase_futureBase_disjoint {W Time : Type*} [Preorder Time]
     This is the situation-semantic instantiation of
     `actual_future_complementary`. -/
 theorem actualBase_futureBase_complementary {W Time : Type*} [LinearOrder Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time)
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (hw : s'.world ∈ history s) :
     s' ∈ actualHistoryBase history s ∨ s' ∈ futureHistoryBase history s :=
   (le_or_gt s'.time s.time).elim
@@ -247,7 +247,7 @@ theorem actualBase_futureBase_complementary {W Time : Type*} [LinearOrder Time]
     `historicalBase`. The time predicate fully characterizes the temporal
     component of the base. -/
 theorem prospective_time_mem_historicalBase {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time)
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (hw : s'.world ∈ history s)
     (ht : isProspectiveHistory s.time s'.time) :
     s' ∈ historicalBase history s :=
@@ -256,7 +256,7 @@ theorem prospective_time_mem_historicalBase {W Time : Type*} [LE Time]
 /-- Converse: actual time + world agreement → membership in
     `actualHistoryBase`. -/
 theorem actual_time_mem_actualHistoryBase {W Time : Type*} [LE Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time)
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (hw : s'.world ∈ history s)
     (ht : isActualHistory s.time s'.time) :
     s' ∈ actualHistoryBase history s :=
@@ -265,7 +265,7 @@ theorem actual_time_mem_actualHistoryBase {W Time : Type*} [LE Time]
 /-- Converse: future time + world agreement → membership in
     `futureHistoryBase`. -/
 theorem future_time_mem_futureHistoryBase {W Time : Type*} [LT Time]
-    (history : WorldHistory W Time) (s s' : Situation W Time)
+    (history : WorldHistory W Time) (s s' : WorldTimeIndex W Time)
     (hw : s'.world ∈ history s)
     (ht : isFutureHistory s.time s'.time) :
     s' ∈ futureHistoryBase history s :=

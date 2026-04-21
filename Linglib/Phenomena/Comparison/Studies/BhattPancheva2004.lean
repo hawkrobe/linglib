@@ -33,19 +33,20 @@ the empirical claims of B&P, and bridge to neighbouring studies.
   DegP after movement. We instantiate `lateMergerBleeds` at the
   degree-specific admissibility predicate and witness the Condition C
   bleeding profile via `degree_lm_bleeds_iff_scope_position_above`.
-- **§4.1** Heim-Kennedy Constraint. We use `heimKennedyOK` from the
+- **§4.1** Heim-Kennedy Constraint. We use `IsHeimKennedy` from the
   interface module and witness B&P's characteristic prohibition.
 - **§5.1** Late merger of degree clauses bleeds Condition C. Captured
-  by the structural parallel `degree_lm_bleeding_parallels_wlm`.
+  by `degree_lm_bleeds_iff_scope_position_above` (§ 1 below).
 - **§5.2** Williams 1974 derived from HKC. We bridge to
   @cite{heim-2001}'s intensional-verb data via
-  `heim_intensional_data_consistent_with_HKC`.
+  `bp_hkc_matches_heim_intensional_data` (§ 3 below).
 - **§3.9 (Hoeksema 1983 link)** Reduction theorem demoted to
   corollary: `thanClause_reduces_to_max` is one line of
   order-theoretic plumbing, not the substance of the paper.
 - **§1.1.1 fn. 4** B&P explicitly reject @cite{bresnan-1973}'s view
   that phrasal "than NP" reduces to clausal "than NP is Adj". Captured
-  as `bhattPancheva_phrasal_is_genuine`.
+  as prose only (see closing note); the analytical machinery to encode
+  the disagreement compositionally lives in @cite{bhatt-takahashi-2011}.
 
 ## Polarity remarks
 
@@ -69,7 +70,8 @@ open Heim2001 (IntensionalVerbDatum intensionalVerbData)
 open Minimalism (lateMergerBleeds wlmBleedsCondC ChainPosition admissible_above_binder_bleeds)
 open Minimalism.Semantics.DegreeMovement
   (DegreeChainPosition degreeClauseLateMergerBleeds scopeOK_above_binder_bleeds
-   ScopeBinding heimKennedyOK heimKennedy_QP_above_bound_DegP_illicit
+   ScopeBinding IsHeimKennedy not_isHeimKennedy_QP_above_bound_DegP
+   isHeimKennedy_no_dependency isHeimKennedy_dependency_requires_high_DegP
    williams_scope_correlation williams_exempt_when_no_binding)
 open Semantics.Degree.Comparative (sComparative sComparative_eq_singleton_of_isGreatest)
 open Semantics.Degree.ThanClause (thanClauseDenotation thanClauseMax thanClauseMax_isGreatest)
@@ -105,8 +107,8 @@ theorem degree_lm_bleeds_iff_scope_position_above
     LF. Direct application of the interface lemma. -/
 theorem hkc_blocks_QP_above_bound_DegP
     (degH qpH : Nat) (h : degH < qpH) :
-    heimKennedyOK ⟨degH, qpH, true⟩ = false :=
-  heimKennedy_QP_above_bound_DegP_illicit degH qpH h
+    ¬ IsHeimKennedy ⟨degH, qpH, qpH, true⟩ :=
+  not_isHeimKennedy_QP_above_bound_DegP degH qpH h
 
 -- ════════════════════════════════════════════════════
 -- § 3. Williams 1974 derived (B&P §5.2)
@@ -124,7 +126,7 @@ theorem hkc_blocks_QP_above_bound_DegP
     reading. -/
 def bpHypothesizedBinding (d : IntensionalVerbDatum)
     (degHeight intHeight : Nat) : ScopeBinding :=
-  ⟨degHeight, intHeight, !d.highDegPAvailable⟩
+  ⟨degHeight, intHeight, intHeight, !d.highDegPAvailable⟩
 
 /-- Non-vacuous bridge to @cite{heim-2001}: under B&P's hypothesis
     (`bpHypothesizedBinding`) that high-DegP-blocking iff binding-tail,
@@ -139,10 +141,10 @@ def bpHypothesizedBinding (d : IntensionalVerbDatum)
     blocking pattern. -/
 theorem bp_hkc_matches_heim_intensional_data :
     ∀ d ∈ intensionalVerbData,
-      heimKennedyOK (bpHypothesizedBinding d 0 1) = d.highDegPAvailable := by
+      IsHeimKennedy (bpHypothesizedBinding d 0 1) ↔ d.highDegPAvailable = true := by
   intro d _
   cases h : d.highDegPAvailable <;>
-    simp [bpHypothesizedBinding, heimKennedyOK, h]
+    simp [bpHypothesizedBinding, IsHeimKennedy, h]
 
 -- ════════════════════════════════════════════════════
 -- § 4. Reduction theorem (B&P §3.9 link to Hoeksema 1983)
@@ -197,20 +199,23 @@ B&P explicitly reject @cite{bresnan-1973}'s view that surface phrasal
 stranding (Bresnan's `.maximalDeletion`). On B&P's analysis the phrasal
 form is genuinely phrasal — no clausal source.
 
-This file does not encode the disagreement as a Lean theorem because
-the disagreement is at the level of *underlying syntactic structure*,
-and we lack the diagnostic apparatus (idiom-chunk tests, scope
-diagnostics, ECM cases — see B&P §1.1.1, §6) needed to derive
-distinguishing predictions. A stipulative encoding (`def
-bhattPanchevaAnalysisOf .phrasal := none`) would be the
-"encoding-conclusions-as-definitions" anti-pattern.
+The disagreement is at the level of *underlying syntactic structure*,
+and the diagnostic apparatus needed to derive distinguishing predictions
+(binding minimal pairs in the style of Lechner 2004; idiom-chunk tests,
+scope diagnostics, ECM cases) is not encoded here. The disagreement is
+*formalized* in @cite{bhatt-takahashi-2011} (see
+`Phenomena/Comparison/Studies/BhattTakahashi2011.lean`), which supplies
+the binding battery (`englishBindingPairs` + `realizesReduction`) and
+reaches the conclusion that English in fact patterns with B&T's
+Reduction Analysis, vindicating Bresnan's clausal-source view against
+B&P's direct view. The cross-tradition bridge is
+`bt2011_agrees_with_bresnan_against_bp2004` in that file.
 
 The extensional content of the two analyses agrees for proper-name
 standards: `npGQ_principal_eq_sComp_thanClause` (above) shows that the
 NP-comparative GQ on `Q_b` and the S-comparative on the than-clause
 denotation deliver the same predicate. Their *intensional* difference
-— what underlying structure each posits — would need either Bhatt &
-Takahashi 2011's diagnostic battery or a richer syntactic interface to
-formalize. -/
+— what underlying structure each posits — is what the BT2011 binding
+diagnostic resolves empirically. -/
 
 end BhattPancheva2004

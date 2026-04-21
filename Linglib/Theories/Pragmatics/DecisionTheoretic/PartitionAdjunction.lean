@@ -103,14 +103,19 @@ def sufficientPartition (dp : DecisionProblem W A) (actions : List A) : QUD W wh
   · simp
   · simp
 
+@[simp] theorem sufficientPartition_r_iff
+    (dp : DecisionProblem W A) (actions : List A) (w v : W) :
+    (sufficientPartition dp actions).r w v ↔ utilityEquiv dp actions w v = true :=
+  Iff.rfl
+
 /-- Within a sufficient partition cell, utilities are identical for every action. -/
 theorem sufficientPartition_utility_eq
     (dp : DecisionProblem W A) (actions : List A)
-    {w v : W} (h : (sufficientPartition dp actions).sameAnswer w v = true)
+    {w v : W} (h : (sufficientPartition dp actions).r w v)
     {a : A} (ha : a ∈ actions) :
     dp.utility w a = dp.utility v a := by
-  simp only [sufficientPartition_sameAnswer, utilityEquiv, List.all_eq_true,
-             beq_iff_eq] at h
+  rw [sufficientPartition_r_iff] at h
+  simp only [utilityEquiv, List.all_eq_true, beq_iff_eq] at h
   exact h a ha
 
 -- ════════════════════════════════════════════════════
@@ -124,10 +129,11 @@ theorem sufficientPartition_utility_eq
 theorem refinement_preserves_utility
     (dp : DecisionProblem W A) (actions : List A) (q : QUD W)
     (hRef : QUD.refines q (sufficientPartition dp actions))
-    {w v : W} (hCell : q.sameAnswer w v = true)
+    {w v : W} (hCell : q.r w v)
     {a : A} (ha : a ∈ actions) :
     dp.utility w a = dp.utility v a :=
-  sufficientPartition_utility_eq dp actions (hRef w v hCell) ha
+  sufficientPartition_utility_eq dp actions
+    (QUD.r_of_sameAnswer (hRef w v (QUD.sameAnswer_of_r hCell))) ha
 
 /-- Within a sufficient-partition cell, if any action weakly dominates all
     others at one world, it dominates at every world in the cell.
@@ -136,7 +142,7 @@ theorem refinement_preserves_utility
     utility vectors. -/
 theorem dominance_transfers_within_cell
     (dp : DecisionProblem W A) (actions : List A)
-    {w v : W} (hCell : (sufficientPartition dp actions).sameAnswer w v = true)
+    {w v : W} (hCell : (sufficientPartition dp actions).r w v)
     {a : A} (ha : a ∈ actions)
     (hDom : ∀ b ∈ actions, dp.utility w a ≥ dp.utility w b) :
     ∀ b ∈ actions, dp.utility v a ≥ dp.utility v b := by
@@ -157,7 +163,7 @@ theorem dominance_transfers_within_cell
     sense: for each cell, there exists a dominating action. -/
 theorem sufficientPartition_cell_dominated
     (dp : DecisionProblem W A) (actions : List A)
-    {w v : W} (hCell : (sufficientPartition dp actions).sameAnswer w v = true)
+    {w v : W} (hCell : (sufficientPartition dp actions).r w v)
     {a : A} (ha : a ∈ actions)
     (hBest : ∀ b ∈ actions, dp.utility w a ≥ dp.utility w b) :
     dp.utility v a ≥ dp.utility v (actions.head (List.ne_nil_of_mem ha)) :=
@@ -177,13 +183,13 @@ theorem sufficientPartition_cell_dominated
     partition. This is immediate from the definitions. -/
 theorem sufficientPartition_coarsest
     (dp : DecisionProblem W A) (actions : List A) (q : QUD W)
-    (hUtil : ∀ w v, q.sameAnswer w v = true →
+    (hUtil : ∀ w v, q.r w v →
       ∀ a ∈ actions, dp.utility w a = dp.utility v a) :
     QUD.refines q (sufficientPartition dp actions) := by
   intro w v hCell
   simp only [sufficientPartition_sameAnswer, utilityEquiv, List.all_eq_true,
              beq_iff_eq]
-  exact hUtil w v hCell
+  exact hUtil w v (QUD.r_of_sameAnswer hCell)
 
 -- ════════════════════════════════════════════════════
 -- § 5. Categorical Refinement Morphism
@@ -244,20 +250,19 @@ private def counterexDP : DecisionProblem GW GA where
 
 /-- w₁ and w₂ are NOT equivalent in the sufficient partition. -/
 theorem counterex_not_equiv :
-    (sufficientPartition counterexDP [.a, .b]).sameAnswer GW.w₁ GW.w₂ = false := by
+    ¬ (sufficientPartition counterexDP [.a, .b]).r GW.w₁ GW.w₂ := by
   decide
 
 /-- But trivial doesn't separate them. -/
 theorem counterex_trivial_identifies :
-    QUD.trivial.sameAnswer GW.w₁ GW.w₂ = true := rfl
+    (QUD.trivial : QUD GW).r GW.w₁ GW.w₂ := ⟨⟩
 
 /-- So trivial does NOT refine the sufficient partition. -/
 theorem counterex_trivial_not_refines :
     ¬ QUD.refines (QUD.trivial (M := GW)) (sufficientPartition counterexDP [.a, .b]) := by
   intro h
-  have := h GW.w₁ GW.w₂ rfl
-  rw [counterex_not_equiv] at this
-  exact Bool.false_ne_true this
+  exact counterex_not_equiv
+    (QUD.r_of_sameAnswer (h GW.w₁ GW.w₂ (QUD.sameAnswer_of_r counterex_trivial_identifies)))
 
 -- ════════════════════════════════════════════════════
 -- § 7. Connection to Blackwell

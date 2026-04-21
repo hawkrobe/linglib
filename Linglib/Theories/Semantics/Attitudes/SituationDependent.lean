@@ -1,4 +1,4 @@
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Theories.Semantics.Attitudes.Doxastic
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Theories.Semantics.Attitudes.Doxastic
 
 Attitude operators with temporal parameters: `believe`'s complement type shifts
 from `st` (propositions = W → Bool) to `s(it)` (situation-dependent propositions =
-Situation W Time → Bool). The doxastic alternatives `Dox_y(w,t)` become world–time
+WorldTimeIndex W Time → Bool). The doxastic alternatives `Dox_y(w,t)` become world–time
 pairs, not just worlds.
 
 ## Motivation
@@ -32,7 +32,7 @@ situation-dependent types natively, with backward-compat wrappers.
 
 namespace Semantics.Attitudes.SituationDependent
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 open Core.Time
 open Semantics.Attitudes.Doxastic
   (Veridicality DoxasticPredicate AccessRel boxAt veridicalityHolds)
@@ -50,16 +50,16 @@ abbrev BAgentAccessRel (W E : Type*) := AccessRel W E
 /-- Situation-dependent proposition type (von Stechow's s(it), Prop-valued).
 
     Where standard propositions are `W → Prop` (sets of worlds),
-    situation-dependent propositions are `Situation W Time → Prop`
+    situation-dependent propositions are `WorldTimeIndex W Time → Prop`
     (sets of world–time pairs). This is the complement type for
     attitude verbs that support temporal interpretation. -/
-abbrev SitProp (W Time : Type*) := Situation W Time → Prop
+abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
 
 /-- Situation-dependent accessibility relation: Dox_y(w,t) = {(w',t') |...}.
 
     Generalizes `BAgentAccessRel W E = E → W → W → Prop` to include
     temporal coordinates in both the evaluation and accessible situations. -/
-abbrev SitAccessRel (W Time E : Type*) := E → Situation W Time → Situation W Time → Prop
+abbrev SitAccessRel (W Time E : Type*) := E → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -72,7 +72,7 @@ abbrev SitAccessRel (W Time E : Type*) := E → Situation W Time → Situation W
 
     Generalizes `Doxastic.boxAt` from worlds to situations. -/
 def sitBoxAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
-    (s : Situation W Time) (situations : List (Situation W Time))
+    (s : WorldTimeIndex W Time) (situations : List (WorldTimeIndex W Time))
     (p : SitProp W Time) : Prop :=
   ∀ s' ∈ situations, R agent s s' → p s'
 
@@ -82,19 +82,19 @@ def sitBoxAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
 
     Generalizes `Doxastic.diaAt` from worlds to situations. -/
 def sitDiaAt {W Time E : Type*} (R : SitAccessRel W Time E) (agent : E)
-    (s : Situation W Time) (situations : List (Situation W Time))
+    (s : WorldTimeIndex W Time) (situations : List (WorldTimeIndex W Time))
     (p : SitProp W Time) : Prop :=
   ∃ s' ∈ situations, R agent s s' ∧ p s'
 
 instance sitBoxAt_decidable {W Time E : Type*} (R : SitAccessRel W Time E)
-    [∀ a s s', Decidable (R a s s')] (agent : E) (s : Situation W Time)
-    (situations : List (Situation W Time)) (p : SitProp W Time) [DecidablePred p] :
+    [∀ a s s', Decidable (R a s s')] (agent : E) (s : WorldTimeIndex W Time)
+    (situations : List (WorldTimeIndex W Time)) (p : SitProp W Time) [DecidablePred p] :
     Decidable (sitBoxAt R agent s situations p) :=
   inferInstanceAs (Decidable (∀ s' ∈ situations, _))
 
 instance sitDiaAt_decidable {W Time E : Type*} (R : SitAccessRel W Time E)
-    [∀ a s s', Decidable (R a s s')] (agent : E) (s : Situation W Time)
-    (situations : List (Situation W Time)) (p : SitProp W Time) [DecidablePred p] :
+    [∀ a s s', Decidable (R a s s')] (agent : E) (s : WorldTimeIndex W Time)
+    (situations : List (WorldTimeIndex W Time)) (p : SitProp W Time) [DecidablePred p] :
     Decidable (sitDiaAt R agent s situations p) :=
   inferInstanceAs (Decidable (∃ s' ∈ situations, _))
 
@@ -134,8 +134,8 @@ def liftAccess {W Time E : Type*} (R : BAgentAccessRel W E) : SitAccessRel W Tim
     This means code using the old world-only operators produces
     identical results when embedded in the situation framework. -/
 theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
-    (R : BAgentAccessRel W E) (agent : E) (s : Situation W Time)
-    (sits : List (Situation W Time)) (p : W → Prop) :
+    (R : BAgentAccessRel W E) (agent : E) (s : WorldTimeIndex W Time)
+    (sits : List (WorldTimeIndex W Time)) (p : W → Prop) :
     sitBoxAt (liftAccess R) agent s sits (liftProp p) ↔
     boxAt R agent s.world (sits.map (·.world)) p := by
   simp only [sitBoxAt, boxAt, liftAccess, liftProp, List.mem_map]
@@ -155,19 +155,19 @@ theorem sitBoxAt_lift_eq_boxAt {W Time E : Type*}
     For veridical predicates (know), requires p(s) at the
     evaluation situation. Mirrors `Doxastic.veridicalityHolds`. -/
 def sitVeridicalityHolds {W Time : Type*} (v : Veridicality)
-    (p : SitProp W Time) (s : Situation W Time) : Prop :=
+    (p : SitProp W Time) (s : WorldTimeIndex W Time) : Prop :=
   match v with
   | .veridical => p s
   | .nonVeridical => True
 
 instance sitVeridicalityHolds_decidable {W Time : Type*} (v : Veridicality)
-    (p : SitProp W Time) [DecidablePred p] (s : Situation W Time) :
+    (p : SitProp W Time) [DecidablePred p] (s : WorldTimeIndex W Time) :
     Decidable (sitVeridicalityHolds v p s) := by
   cases v <;> simp [sitVeridicalityHolds] <;> infer_instance
 
 /-- Lifted veridicality matches world-level veridicality. -/
 theorem sitVeridicalityHolds_lift {W Time : Type*} (v : Veridicality)
-    (p : W → Prop) (s : Situation W Time) :
+    (p : W → Prop) (s : WorldTimeIndex W Time) :
     sitVeridicalityHolds v (liftProp p) s ↔ veridicalityHolds v p s.world := by
   cases v <;> simp [sitVeridicalityHolds, veridicalityHolds, liftProp]
 
@@ -198,7 +198,7 @@ structure SitDoxasticPredicate (W Time E : Type*) where
     Generalizes `DoxasticPredicate.holdsAt` to situations. -/
 def SitDoxasticPredicate.holdsAt {W Time E : Type*}
     (V : SitDoxasticPredicate W Time E) (agent : E) (p : SitProp W Time)
-    (s : Situation W Time) (situations : List (Situation W Time)) : Prop :=
+    (s : WorldTimeIndex W Time) (situations : List (WorldTimeIndex W Time)) : Prop :=
   sitVeridicalityHolds V.veridicality p s ∧ sitBoxAt V.access agent s situations p
 
 
@@ -228,8 +228,8 @@ def liftDoxastic {W E : Type*} (V : DoxasticPredicate W E)
     in the situation-dependent framework by lifting. -/
 theorem liftDoxastic_holdsAt_eq {W Time E : Type*}
     (V : DoxasticPredicate W E) (agent : E)
-    (p : W → Prop) (s : Situation W Time)
-    (sits : List (Situation W Time)) :
+    (p : W → Prop) (s : WorldTimeIndex W Time)
+    (sits : List (WorldTimeIndex W Time)) :
     (liftDoxastic V Time).holdsAt agent (liftProp p) s sits ↔
     V.holdsAt agent p s.world (sits.map (·.world)) := by
   simp only [SitDoxasticPredicate.holdsAt, DoxasticPredicate.holdsAt,
@@ -245,8 +245,8 @@ theorem liftDoxastic_holdsAt_eq {W Time E : Type*}
     If x knows p at situation s, then p is true at s. -/
 theorem sit_veridical_entails_complement {W Time E : Type*}
     (V : SitDoxasticPredicate W Time E) (hV : V.veridicality = .veridical)
-    (agent : E) (p : SitProp W Time) (s : Situation W Time)
-    (sits : List (Situation W Time))
+    (agent : E) (p : SitProp W Time) (s : WorldTimeIndex W Time)
+    (sits : List (WorldTimeIndex W Time))
     (holds : V.holdsAt agent p s sits) : p s := by
   unfold SitDoxasticPredicate.holdsAt at holds
   rw [hV] at holds
@@ -258,8 +258,8 @@ theorem sit_veridical_entails_complement {W Time E : Type*}
     then x believes q at s. -/
 theorem sit_k_axiom {W Time E : Type*}
     (R : SitAccessRel W Time E) (agent : E)
-    (p q : SitProp W Time) (s : Situation W Time)
-    (sits : List (Situation W Time))
+    (p q : SitProp W Time) (s : WorldTimeIndex W Time)
+    (sits : List (WorldTimeIndex W Time))
     (hp : sitBoxAt R agent s sits p)
     (hpq : sitBoxAt R agent s sits (λ s' => p s' → q s')) :
     sitBoxAt R agent s sits q := by

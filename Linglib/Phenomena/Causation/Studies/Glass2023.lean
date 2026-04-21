@@ -1,4 +1,4 @@
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Theories.Semantics.Causation.Interpretation
 
 /-!
@@ -38,7 +38,7 @@ the semantic level, relegating the difference to pragmatic implicature.
 
 namespace Glass2023
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Causal
 open Semantics.Causation.Sufficiency

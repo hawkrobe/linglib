@@ -1,6 +1,6 @@
 import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.Assignment
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Relation
 import Linglib.Core.Time.Reichenbach
 import Linglib.Core.Context.Tower
@@ -168,13 +168,13 @@ abbrev temporalLambdaAbs {Time α : Type*} (n : ℕ)
     This is the formal bridge between situation semantics and tense semantics:
     the temporal coordinate of each situation is extracted. -/
 def situationToTemporal {W Time : Type*}
-    (g : ℕ → Situation W Time) : TemporalAssignment Time :=
+    (g : ℕ → WorldTimeIndex W Time) : TemporalAssignment Time :=
   λ n => (g n).time
 
 /-- Temporal interpretation via situation assignment commutes with
     time projection: `interpTense n (π g) = (g n).time`. -/
 theorem situation_temporal_commutes {W Time : Type*}
-    (g : ℕ → Situation W Time) (n : ℕ) :
+    (g : ℕ → WorldTimeIndex W Time) (n : ℕ) :
     interpTense n (situationToTemporal g) = (g n).time := rfl
 
 /-- Zero tense: a bound tense variable contributes no independent
@@ -201,7 +201,7 @@ Note: a Bool-valued counterpart exists at
 `Semantics.Attitudes.SituationDependent.SitProp` for
 computational RSA evaluation.
 -/
-abbrev SitProp (W Time : Type*) := Situation W Time → Prop
+abbrev SitProp (W Time : Type*) := WorldTimeIndex W Time → Prop
 
 
 -- ════════════════════════════════════════════════════════════════

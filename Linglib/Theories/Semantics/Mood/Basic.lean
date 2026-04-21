@@ -42,7 +42,7 @@ import Linglib.Core.Mood.Basic
 
 namespace Semantics.Mood
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Time
 open Core.Modality.HistoricalAlternatives
@@ -58,7 +58,7 @@ The two situations are:
 - s: The "local" or "described" situation
 - s': The "anchor" or "reference" situation
 -/
-abbrev SitPred (W Time : Type*) := Situation W Time → Situation W Time → Prop
+abbrev SitPred (W Time : Type*) := WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
 
 /--
 SUBJ operator (@cite{mendes-2025}, Definition on p.29).
@@ -75,8 +75,8 @@ Analogous to an indefinite for situations.
 def SUBJ {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (P : SitPred W Time)
-    (s₀ : Situation W Time) : Prop :=
-  ∃ s₁ : Situation W Time,
+    (s₀ : WorldTimeIndex W Time) : Prop :=
+  ∃ s₁ : WorldTimeIndex W Time,
     s₁ ∈ historicalBase history s₀ ∧ P s₁ s₀
 
 /--
@@ -93,7 +93,7 @@ Analogous to a definite for situations.
 -/
 def IND {W Time : Type*}
     (P : SitPred W Time)
-    (s₁ s₂ : Situation W Time) : Prop :=
+    (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
   s₂.world = s₁.world ∧ P s₂ s₁
 
 -- ════════════════════════════════════════════════════════════════
@@ -208,9 +208,9 @@ introduces a future situation that the main clause can refer back to.
 -/
 def conditionalSF {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (antecedent : Situation W Time → Prop)  -- "Maria is home"
-    (consequent : Situation W Time → Situation W Time → Prop)  -- "she answers"
-    (s₀ : Situation W Time) : Prop :=
+    (antecedent : WorldTimeIndex W Time → Prop)  -- "Maria is home"
+    (consequent : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)  -- "she answers"
+    (s₀ : WorldTimeIndex W Time) : Prop :=
   SUBJ history (λ s₁ s₀' => antecedent s₁ → consequent s₁ s₀') s₀
 
 /--
@@ -222,9 +222,9 @@ Here the antecedent is evaluated at the same situation as the main clause.
 No new situation is introduced.
 -/
 def conditionalIND {W Time : Type*}
-    (antecedent : Situation W Time → Prop)
-    (consequent : Situation W Time → Prop)
-    (s : Situation W Time) : Prop :=
+    (antecedent : WorldTimeIndex W Time → Prop)
+    (consequent : WorldTimeIndex W Time → Prop)
+    (s : WorldTimeIndex W Time) : Prop :=
   antecedent s → consequent s
 
 
@@ -234,7 +234,7 @@ SUBJ is existential: it introduces a situation.
 theorem subj_is_existential {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (P : SitPred W Time)
-    (s₀ : Situation W Time) :
+    (s₀ : WorldTimeIndex W Time) :
     SUBJ history P s₀ → ∃ s₁, P s₁ s₀ := by
   intro ⟨s₁, _, hP⟩
   exact ⟨s₁, hP⟩
@@ -246,7 +246,7 @@ is in the historical alternatives.
 theorem subj_in_hist {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (P : SitPred W Time)
-    (s₀ : Situation W Time) :
+    (s₀ : WorldTimeIndex W Time) :
     SUBJ history P s₀ → ∃ s₁, s₁ ∈ historicalBase history s₀ ∧ P s₁ s₀ := by
   intro h
   exact h
@@ -256,7 +256,7 @@ IND requires same world: the two situations must share a world.
 -/
 theorem ind_same_world {W Time : Type*}
     (P : SitPred W Time)
-    (s₁ s₂ : Situation W Time) :
+    (s₁ s₂ : WorldTimeIndex W Time) :
     IND P s₁ s₂ → s₂.world = s₁.world := by
   intro ⟨h, _⟩
   exact h
@@ -269,7 +269,7 @@ theorem subj_current_option {W Time : Type*} [Preorder Time]
     (history : WorldHistory W Time)
     (h_refl : history.reflexive)
     (P : SitPred W Time)
-    (s₀ : Situation W Time)
+    (s₀ : WorldTimeIndex W Time)
     (h_P : P s₀ s₀) :
     SUBJ history P s₀ := by
   use s₀
@@ -289,8 +289,8 @@ The subjunctive is associated with non-veridical contexts because
 SUBJ introduces a situation that may differ from the actual one.
 -/
 def nonVeridical {W Time : Type*}
-    (F : (Situation W Time → Prop) → Situation W Time → Prop) : Prop :=
-  ∃ (P : Situation W Time → Prop) (s : Situation W Time),
+    (F : (WorldTimeIndex W Time → Prop) → WorldTimeIndex W Time → Prop) : Prop :=
+  ∃ (P : WorldTimeIndex W Time → Prop) (s : WorldTimeIndex W Time),
     F P s ∧ ¬P s
 
 /--
@@ -302,7 +302,7 @@ situations in the historical base, which includes non-actual futures.
 theorem subj_nonveridical {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     -- Need: history has an option distinct from the evaluation point
-    (h_branching : ∃ s₀ s₁ : Situation W Time,
+    (h_branching : ∃ s₀ s₁ : WorldTimeIndex W Time,
       s₁ ∈ historicalBase history s₀ ∧ s₀ ≠ s₁) :
     nonVeridical (λ P s₀ => SUBJ history (λ s₁ _ => P s₁) s₀) := by
   obtain ⟨s₀, s₁, h₁, hne⟩ := h_branching
@@ -348,7 +348,7 @@ section AttitudeTemporalAnchor
 theorem subj_temporal_anchor {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (P : SitPred W Time)
-    (s₀ : Situation W Time)
+    (s₀ : WorldTimeIndex W Time)
     (h : SUBJ history P s₀) :
     ∃ s₁, s₁ ∈ historicalBase history s₀ ∧ s₁.time ≥ s₀.time ∧ P s₁ s₀ := by
   obtain ⟨s₁, h_hist, h_P⟩ := h
@@ -417,7 +417,7 @@ theorem subjShift_preserves_agent {E P : Type*}
 theorem subj_as_tower_push [LE Time]
     (history : WorldHistory W Time)
     (Q : SitPred W Time)
-    (s₀ : Situation W Time) :
+    (s₀ : WorldTimeIndex W Time) :
     SUBJ history Q s₀ ↔
     ∃ s₁ ∈ historicalBase history s₀,
       Q s₁ s₀ := by

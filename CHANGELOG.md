@@ -4,7 +4,76 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
-## [0.230.104] - 2026-04-20
+## [0.230.106] - 2026-04-20
+
+### Changed
+- **Phase ζ continued: `sameAnswer` Bool→Prop migration of QUD consumers.**
+  Migrated hypothesis sites and theorem-conclusion sites from
+  `q.sameAnswer w v = true` (Bool API) to `q.r w v` (Prop API), enabling
+  the long-term reduction of `QUD M` to `Setoid M`. Files migrated:
+  `Theories/Semantics/Plurality/CandidateInterpretation.lean`,
+  `Phenomena/Plurals/Studies/KrizSpector2021.lean`,
+  `Theories/Semantics/Questions/ScopeReadings.lean`,
+  `Theories/Semantics/Questions/Answerhood/ANS.lean`,
+  `Theories/Semantics/Questions/RelevanceTheories.lean`,
+  `Theories/Semantics/Questions/Coordination.lean`. Added
+  `Core/Question/Partition.lean.toQUD_r_iff` as the Prop-form bridge
+  (`(toQUD h).r w v ↔ ∃ p ∈ alt P, w ∈ p ∧ v ∈ p`); `cell_toQUD_mem_alt`
+  and `cell_toQUD_eq` rewired through `mem_cell_iff_r` + `toQUD_r_iff`,
+  the existing `toQUD_sameAnswer_iff` now derives from `toQUD_r_iff` via
+  `QUD.sameAnswer_eq_true_iff`. Deferred (require restructuring
+  `Core/Partition.lean`'s `toCells` foldl-based Bool deduplication
+  machinery): `Questions/Answerhood/Answerhood.lean` (14 sites),
+  `Questions/Answerhood/PragmaticAnswerhood.lean` (2 sites),
+  `Core/Partition.lean` (32 sites including `refines` definition).
+
+## [0.230.105] - 2026-04-20
+
+### Added
+- **`Phenomena/Comparison/Studies/Lechner2004.lean`** (new). Canonical
+  home of the binding-diagnostic schema for phrasal comparatives:
+  `BindingDatum` (with `citationId`, `acceptability`,
+  `pronCCommandsAssociate`, `corefAttested`), `RAPredictsCoref` /
+  `DAPredictsCoref` structural predictions, language-level
+  `realizesReduction` / `realizesDirect` predicates with `Decidable`
+  instances, and `headAvailabilityFromBinding` deriving
+  `HeadAvailability` from data instead of stipulating it. Anchored to
+  Lechner Ch 2 §2.1 (disjoint-reference effects, examples 24/28a);
+  B&T fn. 4 attribution made explicit. The schema is the source that
+  @cite{bhatt-takahashi-2011}'s English binding battery instantiates.
+
+### Changed
+- **`Phenomena/Comparison/Studies/BhattTakahashi2011.lean`** rewritten
+  as a paper-faithful application of the Lechner2004 schema (anti-
+  stipulation refactor). `englishBindingPairs` expanded from 4 nameless
+  duplicates to 6 entries citing B&T (11a/b)–(13a/b) with `citationId`
+  and per-pair `acceptability` (including `.marginal` for (13b) per
+  fn. 5). `IsReductionLicit` / `IsDirectLicit` removed in favor of
+  Lechner2004's `RAPredictsCoref` / `DAPredictsCoref`. Local
+  `LanguageHeadAvailability` (Bool×Bool stipulated) replaced with
+  `HeadAvailability` *derived* via `headAvailabilityFromBinding` for
+  English and Hindi-Urdu; Japanese remains stipulated with explicit
+  `UNVERIFIED-AS-DERIVED` comment (B&T's §5 multiple-standard
+  diagnostics not formalized). Added `surveyedLanguages : List (String
+  × HeadAvailability)` + `surveyed_languages_pairwise_distinct` over
+  `List.Pairwise` instead of three-way conjunction.
+- Added cross-tradition bridge `bt2011_agrees_with_bresnan_against_bp2004`
+  witnessing that B&T's "reduction" and Bresnan's "maximal deletion"
+  are the same analytic style (vs. B&P's "direct"). Bresnan1973 and
+  BhattPancheva2004 closing prose updated to point forward to BT2011's
+  re-vindication of Bresnan.
+- **`Theories/Interfaces/SyntaxSemantics/Minimalism/DegreeMovement.lean`**:
+  added `qpBasePosition : Nat` field to `ScopeBinding` and a new
+  predicate `IsBhattTakahashiScopeLicit` for B&T §4 (43)'s base-position
+  generalization (distinct from HKC's surface-position constraint).
+  Existing B&P / Williams theorems updated with `qpBasePosition := qpH`
+  defaults; `bpHypothesizedBinding` (BhattPancheva2004) updated.
+- **`BhattTakahashi2011.lean` §4b**: added `ScopeDatum` schema +
+  `englishScopeData` / `hindiUrduScopeData` instances + parallel
+  theorem pair `english_scope_matches_RA` /
+  `hindi_urdu_scope_rules_out_RA` (mirroring the §2 binding pair).
+
+
 
 ### Changed
 - **`Core/Causal/SEM.lean` split into 3 subfiles, no hub.** The

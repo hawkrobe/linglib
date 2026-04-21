@@ -31,7 +31,7 @@ rather than requiring it globally.
 
 namespace Mendes2025
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Time
 open Core.Modality.HistoricalAlternatives
@@ -60,7 +60,7 @@ estar em casa — "be at home".
 `⟦estar em casa⟧ = λxλsλc. [| at-home(x)(s)]; c`
 -/
 def lexAtHome
-    (atHomeRel : E → Situation W Time → Prop)
+    (atHomeRel : E → WorldTimeIndex W Time → Prop)
     (x : E)
     (sitVar : SVar)
     (c : SitContext W Time E) : SitContext W Time E :=
@@ -71,7 +71,7 @@ atender — "answer (the door)".
 `⟦atender⟧ = λxλsλc. [| answer(x)(s)]; c`
 -/
 def lexAnswer
-    (answerRel : E → Situation W Time → Prop)
+    (answerRel : E → WorldTimeIndex W Time → Prop)
     (x : E)
     (sitVar : SVar)
     (c : SitContext W Time E) : SitContext W Time E :=
@@ -127,7 +127,7 @@ Introduces s₁ ∈ hist(s₀), constrains τ(s₁) > τ(s₀), asserts Maria at
 -/
 def deriveAntecedent
     (maria : E)
-    (atHomeRel : E → Situation W Time → Prop)
+    (atHomeRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
     (c : SitContext W Time E) : SitContext W Time E :=
   let c₁ := lexSF history sfVar speechVar c
@@ -139,7 +139,7 @@ Consequent derivation:
 -/
 def deriveConsequent
     (maria : E)
-    (answerRel : E → Situation W Time → Prop)
+    (answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar : SVar)
     (c : SitContext W Time E) : SitContext W Time E :=
   let c₁ := dynIND sfVar c
@@ -151,7 +151,7 @@ Full sentence derivation:
 -/
 def deriveFullSentence
     (maria : E)
-    (atHomeRel answerRel : E → Situation W Time → Prop)
+    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
     (c : SitContext W Time E) : SitContext W Time E :=
   let antecedent := deriveAntecedent history maria atHomeRel sfVar speechVar
@@ -164,10 +164,10 @@ The situation introduced by SF is in the historical alternatives.
 -/
 theorem derivation_in_historical_base
     (maria : E)
-    (atHomeRel answerRel : E → Situation W Time → Prop)
+    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧
           (gs.1.sit sfVar) ∈ historicalBase history s₀ := by
@@ -199,10 +199,10 @@ The derivation enforces future ordering: τ(s₁) > τ(s₀).
 -/
 theorem derivation_future_ordering
     (maria : E)
-    (atHomeRel answerRel : E → Situation W Time → Prop)
+    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     (gs.1.sit sfVar).time > (gs.1.sit speechVar).time := by
   unfold deriveFullSentence seqUpdate at h
@@ -222,10 +222,10 @@ If Maria is at home at s₁, she answers at s₁.
 -/
 theorem derivation_conditional_holds
     (maria : E)
-    (atHomeRel answerRel : E → Situation W Time → Prop)
+    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     atHomeRel maria (gs.1.sit sfVar) → answerRel maria (gs.1.sit sfVar) := by
   intro _
@@ -242,7 +242,7 @@ Uses SUBJ without FUT — allows past/present alternatives.
 -/
 def deriveCounterfactual
     (maria : E)
-    (atHomeRel answerRel : E → Situation W Time → Prop)
+    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (cfVar speechVar : SVar)
     (c : SitContext W Time E) : SitContext W Time E :=
   let c₁ := dynSUBJ history cfVar c
@@ -256,7 +256,7 @@ SF constrains to future; counterfactual allows past/present.
 theorem sf_vs_counterfactual_temporal {W Time E : Type*} [Preorder Time]
     (history : WorldHistory W Time)
     (maria : E)
-    (atHomeRel answerRel : E → Situation W Time → Prop)
+    (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sitVar speechVar : SVar)
     (c : SitContext W Time E) :
     ∀ gs ∈ deriveFullSentence history maria atHomeRel answerRel sitVar speechVar c,
@@ -292,8 +292,8 @@ Indicative restrictor: evaluates at the actual world.
 "Every book that Maria reads.IND..." → presupposes books exist that Maria reads.
 -/
 def indicativeRestrictor {W Time E : Type*}
-    (restrictor : E → Situation W Time → Prop)
-    (s : Situation W Time) : E → Prop :=
+    (restrictor : E → WorldTimeIndex W Time → Prop)
+    (s : WorldTimeIndex W Time) : E → Prop :=
   λ x => restrictor x s
 
 /--
@@ -302,15 +302,15 @@ SF restrictor: quantifies over historical alternatives.
 -/
 def sfRestrictor {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (restrictor : E → Situation W Time → Prop)
-    (s₀ : Situation W Time) : E → Prop :=
+    (restrictor : E → WorldTimeIndex W Time → Prop)
+    (s₀ : WorldTimeIndex W Time) : E → Prop :=
   λ x => ∃ s₁ ∈ historicalBase history s₀, restrictor x s₁
 
 
 /-- Indicative preserves existential presupposition. -/
 theorem indicative_preserves_presup {W Time E : Type*}
-    (restrictor : E → Situation W Time → Prop)
-    (s : Situation W Time)
+    (restrictor : E → WorldTimeIndex W Time → Prop)
+    (s : WorldTimeIndex W Time)
     (h_presup : ∃ x, indicativeRestrictor restrictor s x) :
     ∃ x, restrictor x s := by
   obtain ⟨x, hx⟩ := h_presup
@@ -322,8 +322,8 @@ the SF restrictor can be satisfied in alternative situations.
 -/
 theorem sf_weakens_presup {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (restrictor : E → Situation W Time → Prop)
-    (s₀ : Situation W Time)
+    (restrictor : E → WorldTimeIndex W Time → Prop)
+    (s₀ : WorldTimeIndex W Time)
     (h_no_actual : ¬∃ x, restrictor x s₀)
     (h_possible : ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁) :
     ∃ x, sfRestrictor history restrictor s₀ x := by
@@ -337,8 +337,8 @@ SF makes strong quantifiers felicitous under uncertainty.
 -/
 theorem sf_felicitous_under_uncertainty {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (restrictor : E → Situation W Time → Prop)
-    (s₀ : Situation W Time)
+    (restrictor : E → WorldTimeIndex W Time → Prop)
+    (s₀ : WorldTimeIndex W Time)
     (h_uncertainty : (∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁) ∧
                      (∃ s₂ ∈ historicalBase history s₀, ¬∃ x, restrictor x s₂)) :
     (∃ x, sfRestrictor history restrictor s₀ x) ∧
@@ -357,15 +357,15 @@ This is the formal version of the indicative-vs-SF contrast in restrictors.
 -/
 def relClauseSF {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (noun : E → Situation W Time → Prop)
-    (relClause : E → Situation W Time → Prop)
-    (s₀ : Situation W Time) : E → Prop :=
+    (noun : E → WorldTimeIndex W Time → Prop)
+    (relClause : E → WorldTimeIndex W Time → Prop)
+    (s₀ : WorldTimeIndex W Time) : E → Prop :=
   λ x => ∃ s₁ ∈ historicalBase history s₀, noun x s₁ ∧ relClause x s₁
 
 theorem relClause_sf_weakens_quantifier {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (noun relClause : E → Situation W Time → Prop)
-    (s₀ : Situation W Time)
+    (noun relClause : E → WorldTimeIndex W Time → Prop)
+    (s₀ : WorldTimeIndex W Time)
     (h_none_actual : ¬∃ x, noun x s₀ ∧ relClause x s₀)
     (h_some_possible : ∃ s₁ ∈ historicalBase history s₀, ∃ x, noun x s₁ ∧ relClause x s₁) :
     ∃ x, relClauseSF history noun relClause s₀ x := by
@@ -380,8 +380,8 @@ Modal displacement: SF introduces quantification over situations,
 -/
 def modalDisplacement {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (restrictor nuclear : E → Situation W Time → Prop)
-    (s₀ : Situation W Time) : Prop :=
+    (restrictor nuclear : E → WorldTimeIndex W Time → Prop)
+    (s₀ : WorldTimeIndex W Time) : Prop :=
   ∀ s₁ ∈ historicalBase history s₀,
     (∃ x, restrictor x s₁) →
     ∀ x, restrictor x s₁ → nuclear x s₁
@@ -391,8 +391,8 @@ SF semantics is equivalent to modal displacement.
 -/
 theorem sf_is_modal_displacement {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (restrictor nuclear : E → Situation W Time → Prop)
-    (s₀ : Situation W Time) :
+    (restrictor nuclear : E → WorldTimeIndex W Time → Prop)
+    (s₀ : WorldTimeIndex W Time) :
     modalDisplacement history restrictor nuclear s₀ ↔
     ∀ s₁ ∈ historicalBase history s₀,
       ∀ x, restrictor x s₁ → nuclear x s₁ := by
@@ -410,8 +410,8 @@ Modal displacement is weaker than global accommodation.
 -/
 theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (restrictor : E → Situation W Time → Prop)
-    (s₀ : Situation W Time)
+    (restrictor : E → WorldTimeIndex W Time → Prop)
+    (s₀ : WorldTimeIndex W Time)
     (h_global : ∀ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁)
     (h_nonempty : ∃ s, s ∈ historicalBase history s₀) :
     ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁ := by

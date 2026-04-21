@@ -1,4 +1,4 @@
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Reichenbach
 
 /-!
@@ -16,7 +16,7 @@ projection; `KContext` is the full Kaplanian structure.
 
 namespace Core.Context
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 /-- Full Kaplanian context of utterance: ⟨agent, world, time, position⟩.
 
@@ -50,9 +50,9 @@ def LocatedContext {W E P T : Type*} (c : KContext W E P T)
     (located : E → P → T → W → Prop) : Prop :=
   located c.agent c.position c.time c.world
 
-/-- Project a KContext to a Situation (world + time pair). -/
+/-- Project a KContext to a `WorldTimeIndex` (world + time pair). -/
 def KContext.toSituation {W E P T : Type*} (c : KContext W E P T) :
-    Situation W T :=
+    WorldTimeIndex W T :=
   ⟨c.world, c.time⟩
 
 /-- Project a KContext into a root-clause ReichenbachFrame.

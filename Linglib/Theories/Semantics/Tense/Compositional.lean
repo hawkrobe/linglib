@@ -30,7 +30,7 @@ import Linglib.Core.Time.Tense
 
 namespace Semantics.Tense
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Time
 open Core.Time.Reichenbach
@@ -51,7 +51,7 @@ A tense operator takes:
 - Two situations: the "now" situation s and evaluation situation s'
 - Returns whether P holds with the tense constraint
 -/
-abbrev TenseOp (W Time : Type*) := SitProp W Time → Situation W Time → Situation W Time → Prop
+abbrev TenseOp (W Time : Type*) := SitProp W Time → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
 
 /--
 PAST operator (@cite{mendes-2025} style)
@@ -184,7 +184,7 @@ theorem applyTense_eq_constrains {Time : Type*} [LinearOrder Time]
 PAST requires temporal precedence.
 -/
 theorem past_requires_precedence {W Time : Type*} [LT Time]
-    (P : SitProp W Time) (s s' : Situation W Time) :
+    (P : SitProp W Time) (s s' : WorldTimeIndex W Time) :
     PAST P s s' → s.time < s'.time := by
   intro ⟨h, _⟩
   exact h
@@ -193,7 +193,7 @@ theorem past_requires_precedence {W Time : Type*} [LT Time]
 FUT requires temporal succession.
 -/
 theorem fut_requires_succession {W Time : Type*} [LT Time]
-    (P : SitProp W Time) (s s' : Situation W Time) :
+    (P : SitProp W Time) (s s' : WorldTimeIndex W Time) :
     FUT P s s' → s.time > s'.time := by
   intro ⟨h, _⟩
   exact h
@@ -202,7 +202,7 @@ theorem fut_requires_succession {W Time : Type*} [LT Time]
 PRES requires contemporaneity.
 -/
 theorem pres_requires_contemporaneity {W Time : Type*}
-    (P : SitProp W Time) (s s' : Situation W Time) :
+    (P : SitProp W Time) (s s' : WorldTimeIndex W Time) :
     PRES P s s' → s.time = s'.time := by
   intro ⟨h, _⟩
   exact h
@@ -213,19 +213,19 @@ Tense preserves the predicate.
 If TENSE(P)(s, s'), then P(s).
 -/
 theorem past_preserves_pred {W Time : Type*} [LT Time]
-    (P : SitProp W Time) (s s' : Situation W Time) :
+    (P : SitProp W Time) (s s' : WorldTimeIndex W Time) :
     PAST P s s' → P s := by
   intro ⟨_, h⟩
   exact h
 
 theorem pres_preserves_pred {W Time : Type*}
-    (P : SitProp W Time) (s s' : Situation W Time) :
+    (P : SitProp W Time) (s s' : WorldTimeIndex W Time) :
     PRES P s s' → P s := by
   intro ⟨_, h⟩
   exact h
 
 theorem fut_preserves_pred {W Time : Type*} [LT Time]
-    (P : SitProp W Time) (s s' : Situation W Time) :
+    (P : SitProp W Time) (s s' : WorldTimeIndex W Time) :
     FUT P s s' → P s := by
   intro ⟨_, h⟩
   exact h

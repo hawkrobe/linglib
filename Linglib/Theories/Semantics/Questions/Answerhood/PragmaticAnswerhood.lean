@@ -209,20 +209,43 @@ private theorem intersect_totalIgnorance {W : Type*} (p : W → Bool) :
     totalIgnorance.intersect p = p := by
   funext w; simp [InfoSet.intersect, totalIgnorance]
 
-private theorem restrictedCells_totalIgnorance {W : Type*}
-    (q : GSQuestion W) (worlds : List W) :
-    q.restrictedCells totalIgnorance worlds = q.toCells worlds := by
-  simp only [GSQuestion.restrictedCells, QUD.toCells, GSQuestion.equiv,
-             filter_totalIgnorance, totalIgnorance, Bool.true_and]
+/-- Under total ignorance, the J-restricted cells and the (Finset-valued)
+question cells agree on `worlds`-restricted predicates.
 
-theorem semantic_is_pragmatic_limit {W : Type*}
+We can't claim function equality of cells (post-Finset-migration, `q.toCells`
+restricts membership to `worlds`, while `restrictedCells totalIgnorance` does
+not), but pointwise on `w ∈ worlds` the two cell representations evaluate
+identically. The `worlds.all` envelope in `givesPragmaticAnswer`/`answers`
+restricts to exactly that domain, so the resulting `any … all …` aggregates
+are equal. -/
+private theorem restrictedCells_totalIgnorance_any_all {W : Type*} [DecidableEq W]
+    (p : W → Bool) (q : GSQuestion W) (worlds : List W) :
+    (q.restrictedCells totalIgnorance worlds).any
+      (fun cell => worlds.all (fun w => p w → cell w)) =
+    (q.toQuestion worlds).any
+      (fun cell => worlds.all (fun w => p w → cell w)) := by
+  simp only [GSQuestion.restrictedCells, GSQuestion.toQuestion, QUD.toCells,
+    GSQuestion.equiv, filter_totalIgnorance, totalIgnorance, Bool.true_and,
+    List.any_map, List.map_map, Function.comp_def]
+  apply List.any_congr rfl
+  intro rep
+  rw [Bool.eq_iff_iff, List.all_eq_true, List.all_eq_true]
+  refine forall_congr' (fun w => forall_congr' (fun hw => ?_))
+  rw [decide_eq_true_iff, decide_eq_true_iff]
+  have hbridge :
+      (decide (w ∈ worlds.toFinset.filter (q.sameAnswer rep ·)) = true) ↔
+      (q.sameAnswer rep w = true) := by
+    rw [decide_eq_true_iff, Finset.mem_filter, List.mem_toFinset]
+    exact ⟨fun ⟨_, h⟩ => h, fun h => ⟨hw, h⟩⟩
+  exact ⟨fun h hp => hbridge.mpr (h hp), fun h hp => hbridge.mp (h hp)⟩
+
+theorem semantic_is_pragmatic_limit {W : Type*} [DecidableEq W]
     (p : W -> Bool) (q : GSQuestion W) (worlds : List W)
     (hNonEmpty : worlds.any p = true) :
     givesPragmaticAnswer p q totalIgnorance worlds =
     answers p (q.toQuestion worlds) worlds := by
-  simp only [givesPragmaticAnswer, answers, GSQuestion.toQuestion,
-             intersect_totalIgnorance, restrictedCells_totalIgnorance,
-             hNonEmpty, Bool.true_and]
+  simp only [givesPragmaticAnswer, answers, intersect_totalIgnorance, hNonEmpty,
+    Bool.true_and, restrictedCells_totalIgnorance_any_all]
 
 /-- Upward monotonicity of pragmatic answerhood for propositions within J'.
 

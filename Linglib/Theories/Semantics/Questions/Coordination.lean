@@ -92,7 +92,7 @@ than Q1 alone: the conjunction has at least as many cells as Q1.
 This uses the hypothesis: functional dependence witnesses two worlds in the
 same Q1-cell but different Q2-cells, which means Q1+Q2 separates them while
 Q1 does not. The conjunction therefore has strictly more distinctions. -/
-theorem functional_dep_conjunction_finer {W : Type*}
+theorem functional_dep_conjunction_finer {W : Type*} [DecidableEq W]
     (q1 q2 : GSQuestion W) (worlds : List W)
     (_h : functionallyDependent q1 q2 worlds = true) :
     (q1 + q2).numCells worlds ≥ q1.numCells worlds :=
@@ -107,15 +107,14 @@ is informationally redundant — it has the same cells as Q1 alone. -/
 theorem not_functionally_dependent_implies_refines {W : Type*}
     (q1 q2 : GSQuestion W) (worlds : List W)
     (h : functionallyDependent q1 q2 worlds = false) :
-    ∀ w ∈ worlds, ∀ v ∈ worlds,
-      q1.sameAnswer w v = true → q2.sameAnswer w v = true := by
+    ∀ w ∈ worlds, ∀ v ∈ worlds, q1.r w v → q2.r w v := by
   intro w hw v hv hq1
   by_contra hq2
   have : functionallyDependent q1 q2 worlds = true := by
     simp only [functionallyDependent, List.any_eq_true]
     refine ⟨w, hw, v, hv, ?_⟩
-    simp only [hq1, Bool.true_and, Bool.not_eq_true']
-    exact Bool.eq_false_iff.mpr hq2
+    simp only [QUD.sameAnswer_of_r hq1, Bool.true_and, Bool.not_eq_true']
+    exact Bool.eq_false_iff.mpr (mt QUD.r_of_sameAnswer hq2)
   simp [this] at h
 
 end FunctionalDependence
@@ -183,9 +182,9 @@ from the antecedent, then knowing the antecedent answer entails knowing the
 sluice answer. -/
 theorem sluice_inherits_resolution {W : Type*}
     (q_antecedent q_sluice : GSQuestion W)
-    (hIdentical : ∀ w v, q_antecedent.sameAnswer w v = q_sluice.sameAnswer w v) :
+    (hIdentical : ∀ w v, q_antecedent.r w v ↔ q_sluice.r w v) :
     q_antecedent ⊑ q_sluice :=
-  λ w v h => (hIdentical w v).symm ▸ h
+  λ w v h => QUD.sameAnswer_of_r ((hIdentical w v).mp (QUD.r_of_sameAnswer h))
 
 end Sluicing
 

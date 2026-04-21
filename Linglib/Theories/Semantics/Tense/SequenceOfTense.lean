@@ -88,14 +88,14 @@ situations. All three descriptions collapse to the same truth condition.
 -/
 
 open Semantics.Attitudes.SituationDependent (temporallyBound)
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 /-- Temporal binding extracts a time-equality constraint from situation
     accessibility. This is the situation-semantic formulation of "the
     embedded tense receives the matrix event time." -/
 theorem temporallyBound_forces_time_eq {W Time E : Type*}
     (R : Semantics.Attitudes.SituationDependent.BAgentAccessRel W E) (agent : E)
-    (s₁ s₂ : Situation W Time)
+    (s₁ s₂ : WorldTimeIndex W Time)
     (h : temporallyBound R agent s₁ s₂) :
     s₂.time = s₁.time :=
   h.2
@@ -108,7 +108,7 @@ theorem temporallyBound_forces_time_eq {W Time E : Type*}
     to the tense-side formalization (simultaneousFrame in IS/Tense/Basic). -/
 theorem temporallyBound_gives_simultaneous {W Time E : Type*} [LinearOrder Time]
     (R : Semantics.Attitudes.SituationDependent.BAgentAccessRel W E) (agent : E)
-    (s₁ s₂ : Situation W Time) (speechTime : Time)
+    (s₁ s₂ : WorldTimeIndex W Time) (speechTime : Time)
     (h : temporallyBound R agent s₁ s₂) :
     let embFrame : ReichenbachFrame Time :=
       { speechTime, perspectiveTime := s₁.time,

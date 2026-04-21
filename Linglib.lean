@@ -149,7 +149,7 @@ import Linglib.Core.GameTheory
 import Linglib.Core.Evidence
 import Linglib.Core.Epistemicity
 import Linglib.Core.Logophoricity
-import Linglib.Core.Situation
+import Linglib.Core.WorldTimeIndex
 import Linglib.Core.Time.Interval.Basic
 import Linglib.Core.Time.Interval.Generalized
 import Linglib.Core.Time.Boundedness
@@ -1097,6 +1097,7 @@ import Linglib.Phenomena.Comparison.Studies.VonStechow1984
 import Linglib.Phenomena.Comparison.Studies.Buring2007
 import Linglib.Phenomena.Comparison.Studies.Bobaljik2012
 import Linglib.Phenomena.Comparison.Studies.BhattPancheva2004
+import Linglib.Phenomena.Comparison.Studies.Lechner2004
 import Linglib.Phenomena.Comparison.Studies.BhattTakahashi2011
 import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016

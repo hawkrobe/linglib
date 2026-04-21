@@ -49,7 +49,7 @@ Specific implicatives lexicalize **which** prerequisite matters:
 
 namespace Semantics.Causation.Implicative
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Core.Causal
 open Core.Verbs (Implicative)

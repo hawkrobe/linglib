@@ -21,7 +21,7 @@ We add:
 
 | Type | Interpretation |
 |------|----------------|
-| SDref | assignment → Situation W Time |
+| SDref | assignment → WorldTimeIndex W Time |
 | SVar | situation variable indices |
 | SitAssignment | extends ICDRTAssignment with situation variables |
 
@@ -40,7 +40,7 @@ import Linglib.Theories.Semantics.Mood.Basic
 
 namespace Semantics.Dynamic.IntensionalCDRT.Situations
 
-open _root_.Core (Situation)
+open _root_.Core (WorldTimeIndex)
 
 open Core.Time
 open Core.Modality.HistoricalAlternatives
@@ -66,14 +66,14 @@ This is the situation-level analog of `IDref`.
 
 In Mendes' analysis, subjunctive mood introduces SDrefs.
 -/
-def SDref (W Time : Type*) (E : Type*) := ICDRTAssignment W E → Situation W Time
+def SDref (W Time : Type*) (E : Type*) := ICDRTAssignment W E → WorldTimeIndex W Time
 
 namespace SDref
 
 variable {W Time E : Type*}
 
 /-- Constant situation dref (same situation in all contexts) -/
-def const (s : Situation W Time) : SDref W Time E := λ _ => s
+def const (s : WorldTimeIndex W Time) : SDref W Time E := λ _ => s
 
 /-- Extract the world component -/
 def world (d : SDref W Time E) : ICDRTAssignment W E → W :=
@@ -95,19 +95,19 @@ structure SitAssignment (W Time E : Type*) where
   /-- Base ICDRT assignment (individuals + propositions) -/
   base : ICDRTAssignment W E
   /-- Situation variable assignment -/
-  sit : SVar → Situation W Time
+  sit : SVar → WorldTimeIndex W Time
 
 namespace SitAssignment
 
 variable {W Time E : Type*}
 
 /-- Empty assignment -/
-def empty (defaultSit : Situation W Time) : SitAssignment W Time E where
+def empty (defaultSit : WorldTimeIndex W Time) : SitAssignment W Time E where
   base := ICDRTAssignment.empty
   sit := λ _ => defaultSit
 
 /-- Update situation variable -/
-def updateSit (g : SitAssignment W Time E) (v : SVar) (s : Situation W Time) :
+def updateSit (g : SitAssignment W Time E) (v : SVar) (s : WorldTimeIndex W Time) :
     SitAssignment W Time E :=
   { g with sit := λ v' => if v' == v then s else g.sit v' }
 
@@ -126,16 +126,16 @@ Extended ICDRT context with situation tracking.
 Contexts are now triples: (assignment, situation, world).
 The situation is the "evaluation situation" for temporal semantics.
 -/
-def SitContext (W Time E : Type*) := Set (SitAssignment W Time E × Situation W Time)
+def SitContext (W Time E : Type*) := Set (SitAssignment W Time E × WorldTimeIndex W Time)
 
-instance {W Time E : Type*} : Membership (SitAssignment W Time E × Situation W Time) (SitContext W Time E) :=
+instance {W Time E : Type*} : Membership (SitAssignment W Time E × WorldTimeIndex W Time) (SitContext W Time E) :=
   Set.instMembership
 instance {W Time E : Type*} : EmptyCollection (SitContext W Time E) := Set.instEmptyCollection
 instance {W Time E : Type*} : HasSubset (SitContext W Time E) := Set.instHasSubset
 instance {W Time E : Type*} : Union (SitContext W Time E) := Set.instUnion
 instance {W Time E : Type*} : Inter (SitContext W Time E) := Set.instInter
 instance {W Time E : Type*} :
-    Singleton (SitAssignment W Time E × Situation W Time) (SitContext W Time E) :=
+    Singleton (SitAssignment W Time E × WorldTimeIndex W Time) (SitContext W Time E) :=
   Set.instSingletonSet
 
 namespace SitContext
@@ -147,11 +147,11 @@ def worlds (c : SitContext W Time E) : Set W :=
   { w | ∃ gs, gs ∈ c ∧ gs.2.world = w }
 
 /-- Project to situations -/
-def situations (c : SitContext W Time E) : Set (Situation W Time) :=
+def situations (c : SitContext W Time E) : Set (WorldTimeIndex W Time) :=
   { s | ∃ g, (g, s) ∈ c }
 
 /-- Update with situation predicate -/
-def updateSit (c : SitContext W Time E) (p : Situation W Time → Prop) :
+def updateSit (c : SitContext W Time E) (p : WorldTimeIndex W Time → Prop) :
     SitContext W Time E :=
   { gs ∈ c | p gs.2 }
 
@@ -194,12 +194,12 @@ All temporal constraints (`dynPAST`, `dynPRES`, `dynFUT`) are instances
 of `dynRelation` with the appropriate ordering on `.time`.
 -/
 def dynRelation {W Time E : Type*}
-    (R : Situation W Time → Situation W Time → Prop)
+    (R : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
     (v₁ v₂ : SVar) (c : SitContext W Time E) : SitContext W Time E :=
   { gs ∈ c | R (gs.1.sit v₁) (gs.1.sit v₂) }
 
 theorem dynRelation_isFilter {W Time E : Type*}
-    (R : Situation W Time → Situation W Time → Prop) (v₁ v₂ : SVar) :
+    (R : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop) (v₁ v₂ : SVar) :
     @IsContextFilter W Time E (dynRelation R v₁ v₂) :=
   fun _ _ h => h.1
 
@@ -288,17 +288,17 @@ theorem dynIND_isFilter {W Time E : Type*} (v : SVar) :
 theorem dynPAST_eq_dynRelation {W Time E : Type*} [LT Time]
     (e r : SVar) (c : SitContext W Time E) :
     dynPAST e r c =
-    dynRelation (fun s₁ s₂ : Situation W Time => s₁.time < s₂.time) e r c := rfl
+    dynRelation (fun s₁ s₂ : WorldTimeIndex W Time => s₁.time < s₂.time) e r c := rfl
 
 theorem dynPRES_eq_dynRelation {W Time E : Type*}
     (e r : SVar) (c : SitContext W Time E) :
     dynPRES e r c =
-    dynRelation (fun s₁ s₂ : Situation W Time => s₁.time = s₂.time) e r c := rfl
+    dynRelation (fun s₁ s₂ : WorldTimeIndex W Time => s₁.time = s₂.time) e r c := rfl
 
 theorem dynFUT_eq_dynRelation {W Time E : Type*} [LT Time]
     (e r : SVar) (c : SitContext W Time E) :
     dynFUT e r c =
-    dynRelation (fun s₁ s₂ : Situation W Time => s₁.time > s₂.time) e r c := rfl
+    dynRelation (fun s₁ s₂ : WorldTimeIndex W Time => s₁.time > s₂.time) e r c := rfl
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -307,7 +307,7 @@ theorem dynFUT_eq_dynRelation {W Time E : Type*} [LT Time]
 
 /-- Applying the same relation filter twice is the same as applying it once. -/
 theorem dynRelation_idempotent {W Time E : Type*}
-    (R : Situation W Time → Situation W Time → Prop)
+    (R : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
     (v₁ v₂ : SVar) (c : SitContext W Time E) :
     dynRelation R v₁ v₂ (dynRelation R v₁ v₂ c) = dynRelation R v₁ v₂ c := by
   apply Set.ext; intro gs
@@ -316,7 +316,7 @@ theorem dynRelation_idempotent {W Time E : Type*}
 
 /-- Contradictory relation filters compose to the empty context. -/
 theorem dynRelation_contradictory {W Time E : Type*}
-    (R₁ R₂ : Situation W Time → Situation W Time → Prop)
+    (R₁ R₂ : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
     (h : ∀ s₁ s₂, R₁ s₁ s₂ → R₂ s₁ s₂ → False)
     (v₁ v₂ : SVar) (c : SitContext W Time E) :
     dynRelation R₁ v₁ v₂ (dynRelation R₂ v₁ v₂ c) = ∅ := by
@@ -329,10 +329,10 @@ theorem dynRelation_contradictory {W Time E : Type*}
 
 /-- Transitive relations chain across three situation variables. -/
 theorem dynRelation_transitive {W Time E : Type*}
-    (R₁ R₂ R₃ : Situation W Time → Situation W Time → Prop)
+    (R₁ R₂ R₃ : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
     (hTrans : ∀ a b c, R₁ a b → R₂ b c → R₃ a c)
     (v₁ v₂ v₃ : SVar) (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ dynRelation R₂ v₂ v₃ (dynRelation R₁ v₁ v₂ c)) :
     R₃ (gs.1.sit v₁) (gs.1.sit v₃) :=
   hTrans _ _ _ h.1.2 h.2
@@ -346,7 +346,7 @@ The temporal partition (`PAST ∪ PRES ∪ FUT = c`) is the special case
 where `f = Situation.time`.
 -/
 theorem dynRelation_trichotomy {W Time E α : Type*} [LinearOrder α]
-    (f : Situation W Time → α)
+    (f : WorldTimeIndex W Time → α)
     (v₁ v₂ : SVar) (c : SitContext W Time E) :
     dynRelation (fun s₁ s₂ => f s₁ < f s₂) v₁ v₂ c ∪
     dynRelation (fun s₁ s₂ => f s₁ = f s₂) v₁ v₂ c ∪
@@ -403,7 +403,7 @@ theorem dynPRES_dynFUT_empty {W Time E : Type*} [Preorder Time]
 /-- Chained PAST constraints compose: e < r ∧ r < s → e < s. -/
 theorem dynPAST_transitive {W Time E : Type*} [Preorder Time]
     (e r s : SVar) (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ dynPAST r s (dynPAST e r c)) :
     (gs.1.sit e).time < (gs.1.sit s).time := by
   rw [dynPAST_eq_dynRelation, dynPAST_eq_dynRelation] at h
@@ -471,7 +471,7 @@ theorem sf_introduces_future {W Time E : Type*} [Preorder Time]
     (history : WorldHistory W Time)
     (newVar refVar : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ subordinateFuture history newVar refVar c) :
     (gs.1.sit newVar).time ≥ (gs.1.sit refVar).time := by
   -- The subordinateFuture composes SUBJ and FUT
@@ -488,7 +488,7 @@ theorem dynSUBJ_existential {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ dynSUBJ history v c) :
     ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧ gs.2 ∈ historicalBase history s₀ := by
   unfold dynSUBJ at h
@@ -504,7 +504,7 @@ IND is presuppositional (same-world check).
 theorem dynIND_same_world {W Time E : Type*}
     (v : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ dynIND v c) :
     gs.2.world = (gs.1.sit v).world := by
   unfold dynIND at h
@@ -531,10 +531,10 @@ theorem temporal_shift_parasitic_on_modal {W Time E : Type*} [Preorder Time]
     (sfVar speechVar : SVar)
     (c : SitContext W Time E)
     -- For any situation in the output of SF application...
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ subordinateFuture history sfVar speechVar c)
     -- ...there exists an original speech situation...
-    : ∃ (g₀ : SitAssignment W Time E) (s₀ : Situation W Time),
+    : ∃ (g₀ : SitAssignment W Time E) (s₀ : WorldTimeIndex W Time),
         -- ...that was in the input context...
         (g₀, s₀) ∈ c ∧
         -- ...and the temporal shift comes from SUBJ's modal component:
@@ -625,7 +625,7 @@ theorem sf_restrictor_future_reference {W Time E : Type*} [Preorder Time]
     (rcVar speechVar : SVar)
     (restrictor nuclear : SitContext W Time E → SitContext W Time E)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ everyWithSFRestrictor history rcVar speechVar restrictor nuclear c)
     (hR : IsContextFilter restrictor) (hN : IsContextFilter nuclear) :
     -- The restrictor situation can be future relative to speech time
@@ -669,7 +669,7 @@ theorem dynSUBJ_singleton_eq {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (g : SitAssignment W Time E)
-    (s₀ : Situation W Time) :
+    (s₀ : WorldTimeIndex W Time) :
     dynSUBJ history v ({(g, s₀)} : SitContext W Time E) =
     { gs | ∃ s₁ ∈ historicalBase history s₀, gs = (g.updateSit v s₁, s₁) } := by
   apply Set.ext; intro gs
@@ -698,7 +698,7 @@ theorem dynSUBJ_realizes_SUBJ {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (g : SitAssignment W Time E)
-    (s₀ : Situation W Time)
+    (s₀ : WorldTimeIndex W Time)
     (P : SitPred W Time) :
     (∃ gs ∈ dynSUBJ history v ({(g, s₀)} : SitContext W Time E),
       P (gs.1.sit v) s₀) ↔
@@ -734,7 +734,7 @@ theorem dynSUBJ_binds_current {W Time E : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (h : gs ∈ dynSUBJ history v c) :
     gs.1.sit v = gs.2 := by
   unfold dynSUBJ at h
@@ -754,7 +754,7 @@ original context plus the static IND applied to those situations.
 theorem dynIND_realizes_IND {W Time E : Type*}
     (v : SVar)
     (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × Situation W Time)
+    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
     (P : SitPred W Time) :
     (gs ∈ dynIND v c ∧ P gs.2 (gs.1.sit v)) ↔
     (gs ∈ c ∧ IND P (gs.1.sit v) gs.2) := by

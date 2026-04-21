@@ -247,11 +247,11 @@ if two worlds are q-equivalent, then p has the same truth value at both.
 This is the key filtering mechanism from @cite{kriz-spector-2021} Section 3.
 -/
 def isStronglyRelevantProp (q : QUD W) (p : (W → Bool)) : Prop :=
-  ∀ w1 w2 : W, q.sameAnswer w1 w2 = true → p w1 = p w2
+  ∀ w1 w2 : W, q.r w1 w2 → p w1 = p w2
 
 /-- Decidable version -/
 def isStronglyRelevant (q : QUD W) (p : (W → Bool)) : Bool :=
-  decide (∀ w1 w2 : W, q.sameAnswer w1 w2 = true → p w1 = p w2)
+  decide (∀ w1 w2 : W, q.r w1 w2 → p w1 = p w2)
 
 /-- Filter candidate set to strongly relevant propositions -/
 def stronglyRelevantSet (q : QUD W) (candidates : Set ((W → Bool))) : Set ((W → Bool)) :=
@@ -266,7 +266,6 @@ respects the partition.
 theorem exact_all_relevant [LawfulBEq W] (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.exact (M := W)) p := by
   intro w1 w2 h
-  rw [QUD.exact_sameAnswer_iff] at h
   exact congrArg p h
 
 /--
@@ -285,8 +284,8 @@ Theorem: With trivial QUD, only constant propositions are strongly relevant.
 -/
 theorem trivial_relevant_iff_constant (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.trivial (M := W)) p ↔ (∀ w1 w2 : W, p w1 = p w2) := by
-  simp only [isStronglyRelevantProp, QUD.trivial_sameAnswer]
-  exact ⟨λ h w1 w2 => h w1 w2 trivial, λ h _ _ _ => h _ _⟩
+  simp only [isStronglyRelevantProp, QUD.trivial_r]
+  exact ⟨λ h w1 w2 => h w1 w2 ⟨⟩, λ h _ _ _ => h _ _⟩
 
 /--
 Non-Maximality Theorem: With a coarse QUD that groups "all P" with "almost all P",
@@ -306,7 +305,7 @@ different values.
 -/
 theorem nonMaximality_from_coarse_qud (P : Atom → W → Bool) (x : Finset Atom)
     (q : QUD W) (w_all w_almost : W)
-    (h_equiv : q.sameAnswer w_all w_almost = true)
+    (h_equiv : q.r w_all w_almost)
     (h_all : allSatisfy P x w_all = true)
     (h_not_all : allSatisfy P x w_almost = false) :
     ¬isStronglyRelevantProp q (candidateProp P x) := by
@@ -352,7 +351,7 @@ theorem identity_candidateSet_singleton' (P : Atom → W → Bool) (x : Finset A
 Strong relevance (propositional version): respects QUD partition.
 -/
 theorem stronglyRelevant_iff (q : QUD W) (p : (W → Bool)) :
-    isStronglyRelevantProp q p ↔ ∀ w1 w2, q.sameAnswer w1 w2 = true → p w1 = p w2 := by
+    isStronglyRelevantProp q p ↔ ∀ w1 w2, q.r w1 w2 → p w1 = p w2 := by
   rfl
 
 /--
@@ -363,7 +362,6 @@ The exact QUD distinguishes all worlds, so every proposition aligns with it.
 theorem exact_all_stronglyRelevant [LawfulBEq W] (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.exact (M := W)) p := by
   intro w1 w2 h
-  rw [QUD.exact_sameAnswer_iff] at h
   exact congrArg p h
 
 /--
@@ -374,8 +372,8 @@ iff it has the same value at all worlds.
 -/
 theorem trivial_stronglyRelevant_iff (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.trivial (M := W)) p ↔ (∀ w1 w2 : W, p w1 = p w2) := by
-  simp only [isStronglyRelevantProp, QUD.trivial_sameAnswer]
-  exact ⟨λ h w1 w2 => h w1 w2 trivial, λ h _ _ _ => h _ _⟩
+  simp only [isStronglyRelevantProp, QUD.trivial_r]
+  exact ⟨λ h w1 w2 => h w1 w2 ⟨⟩, λ h _ _ _ => h _ _⟩
 
 /--
 Key Theorem: The maximal proposition is always strongly relevant to exact QUD.

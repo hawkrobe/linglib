@@ -33,7 +33,7 @@ open Phenomena.TenseAspect
 
 namespace Smith1997
 
-open Core (Situation)
+open Core (WorldTimeIndex)
 
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
