@@ -3,11 +3,17 @@ import Linglib.Theories.Semantics.Degree.Core
 
 /-!
 # Framework-Independent Comparative Semantics
-@cite{hoeksema-1983} @cite{rett-2026} @cite{schwarzschild-2008} @cite{von-stechow-1984}
+@cite{rett-2026} @cite{schwarzschild-2008} @cite{von-stechow-1984}
 
 Comparative semantics shared across all degree frameworks: the basic
 `comparativeSem` and `equativeSem` functions, antonymy as scale reversal,
 DE-ness of than-clauses (NPI licensing), and boundary dependence.
+
+NPI licensing in than-clauses (the @cite{hoeksema-1983} analysis: NP-comparative
+as Boolean homomorphism, S-comparative as anti-additive) lives in
+`Phenomena/Polarity/Studies/Hoeksema1983.lean`. The `comparative_than_DE`
+lemma below is the generic universal-quantifier antitonicity result, not
+the Hoeksema-specific anti-additivity result.
 
 This module was extracted from `Theories/Semantics/Lexical/Adjective/Comparative.lean`
 (which now re-exports from here). The framework-specific content (MAX,
@@ -100,8 +106,11 @@ theorem equative_boundary {α : Type*} [LinearOrder α]
 -- § 5. NPI Licensing in Comparatives
 -- ════════════════════════════════════════════════════
 
-/-- The *than*-clause argument of a comparative is DE (@cite{hoeksema-1983}):
-    universal quantification over a domain is anti-monotone in the domain. -/
+/-- Universal quantification over a domain is antitone in the domain.
+    This is the generic monotonicity fact behind the surface observation
+    that *than*-clauses are downward-entailing — not @cite{hoeksema-1983}'s
+    specific anti-additivity / Boolean-homomorphism result, which is
+    proved in `Phenomena/Polarity/Studies/Hoeksema1983.lean`. -/
 theorem comparative_than_DE {α : Type*} (R : α → α → Prop)
     (μ_a : α) (D₁ D₂ : Set α) (h_sub : D₁ ⊆ D₂)
     (h : ∀ d ∈ D₂, R μ_a d) : ∀ d ∈ D₁, R μ_a d :=
