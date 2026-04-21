@@ -413,7 +413,7 @@ This gives overlapping cells at w0:
 -/
 
 /-- The FO cells as explicit propositions, for use with DecisionTheory. -/
-def foCells : Question XW :=
+def foCells : List (XW → Bool) :=
   [ foQDen chairs abilityMB .a
   , foQDen chairs abilityMB .b
   ]
@@ -429,11 +429,20 @@ def partQDen : (XW → List XW) → XW → XW → Bool :=
   λ _ target w => w == target
 
 /-- Partition cells: one cell per world. -/
-def partCells : Question XW :=
+def partCells : List (XW → Bool) :=
   [ λ w => w == XW.w0
   , λ w => w == XW.w1
   , λ w => w == XW.w2
   ]
+
+/-- Finset view of `foCells` for `Core.DecisionTheory` consumption.
+DT cells migrated to `Finset W`; see `Linglib/Core/Agent/DecisionTheory.lean`. -/
+def foCellsFinset : List (Finset XW) :=
+  foCells.map (fun c => Finset.univ.filter (fun w => c w = true))
+
+/-- Finset view of `partCells` for `Core.DecisionTheory` consumption. -/
+def partCellsFinset : List (Finset XW) :=
+  partCells.map (fun c => Finset.univ.filter (fun w => c w = true))
 
 /-! ### Decision Problems -/
 
@@ -510,14 +519,14 @@ theorem canQ_relExh_passes :
 Both FO cells resolve `findChairDP` (learning that a can chair → nominate a;
 learning that b can chair → nominate b), and the cells overlap at w0. -/
 theorem canQ_mentionSome :
-    isMentionSome findChairDP {.w0, .w1, .w2} {.a, .b} foCells = true := by
+    isMentionSome findChairDP {.w0, .w1, .w2} {.a, .b} foCellsFinset = true := by
   native_decide
 
 /-- **Semantic–pragmatic agreement on MS**: RelExh passes AND DecisionTheory
 says mention-some, on the same finite model. -/
 theorem canQ_semantic_pragmatic_agree :
     relExh (foQDen chairs) abilityMB [.a, .b] allWorlds .w0 = true ∧
-    isMentionSome findChairDP {.w0, .w1, .w2} {.a, .b} foCells = true := by
+    isMentionSome findChairDP {.w0, .w1, .w2} {.a, .b} foCellsFinset = true := by
   exact ⟨canQ_relExh_passes, canQ_mentionSome⟩
 
 /-! ### Structural link: cells are qden -/
@@ -554,7 +563,7 @@ goal is complete identification. FO cells don't resolve identifyAllDP:
 knowing that a can chair (= being in {w0, w1}) doesn't identify whether
 you're in w0 or w1. -/
 theorem foQ_identifyAll_mentionAll :
-    isMentionAll identifyAllDP {.w0, .w1, .w2} {XW.w0, .w1, .w2} foCells = true := by
+    isMentionAll identifyAllDP {.w0, .w1, .w2} {XW.w0, .w1, .w2} foCellsFinset = true := by
   native_decide
 
 /-! ## Part III: Preserved from Prior Bridge
@@ -564,7 +573,7 @@ Structural properties of the answer space and questionUtility. -/
 /-- The MS question has positive expected utility value for `findChairDP`.
 Learning any FO cell improves decision-making over the prior. -/
 theorem questionUtility_positive :
-    questionUtility findChairDP {.a, .b} (questionToFinset foCells) > 0 := by
+    questionUtility findChairDP {.a, .b} (questionToFinset foCellsFinset) > 0 := by
   native_decide
 
 /-! ### Answer space structure (van Rooij–inspired predicates) -/
@@ -572,14 +581,14 @@ theorem questionUtility_positive :
 /-- Answer cells are not mutually exclusive: some pair of distinct cells
 shares at least one world. -/
 def answersOverlap {W : Type} [BEq (W → Bool)]
-    (q : Question W) (worlds : List W) : Bool :=
+    (q : List (W → Bool)) (worlds : List W) : Bool :=
   q.any λ c1 => q.any λ c2 =>
     !BEq.beq c1 c2 && worlds.any λ w => c1 w && c2 w
 
 /-- Answer space is not closed under conjunction: some pair of cells has
 a conjunction that isn't represented by any cell. -/
 def notClosedUnderConj {W : Type}
-    (q : Question W) (worlds : List W) : Bool :=
+    (q : List (W → Bool)) (worlds : List W) : Bool :=
   q.any λ c1 => q.any λ c2 =>
     !(q.any λ c3 => worlds.all λ w => c3 w == (c1 w && c2 w))
 
@@ -749,7 +758,7 @@ and DecisionTheory. -/
 theorem canQ_ho_ms_agree :
     foxAns hoCells allWorlds .w0 = 3 ∧
     relExh (foQDen chairs) abilityMB [.a, .b] allWorlds .w0 = true ∧
-    isMentionSome findChairDP {.w0, .w1, .w2} {.a, .b} foCells = true := by
+    isMentionSome findChairDP {.w0, .w1, .w2} {.a, .b} foCellsFinset = true := by
   exact ⟨canQ_ho_foxAns_w0, canQ_relExh_passes, canQ_mentionSome⟩
 
 end Xiang2022

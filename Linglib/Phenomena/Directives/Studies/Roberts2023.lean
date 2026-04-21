@@ -1,5 +1,5 @@
 import Linglib.Core.Discourse.Scoreboard
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Situation
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Directive

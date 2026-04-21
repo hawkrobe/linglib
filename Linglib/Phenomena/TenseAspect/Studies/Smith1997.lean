@@ -33,6 +33,8 @@ open Phenomena.TenseAspect
 
 namespace Smith1997
 
+open Core (Situation)
+
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open Semantics.Tense.Aspect.Core (ViewpointType)

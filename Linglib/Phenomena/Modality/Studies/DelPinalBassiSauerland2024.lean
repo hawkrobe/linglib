@@ -107,10 +107,10 @@ theorem pex_fc :
   simp only [pexFC, pexIEII_full, pexIEII] at hpresup hassert
   obtain ⟨_, hHomog⟩ := hpresup
   -- We need: permA and permB are in II ∩ fcALT
-  have hA_II : isInnocentlyIncludable fcALT fcPrejacent permA :=
+  have hA_II : IsInnocentlyIncludable fcALT fcPrejacent permA :=
     mem_II_of_cell_witness fcALT fcPrejacent
       (by simp [fcALT]) .separatelyAB separatelyAB_in_cell trivial
-  have hB_II : isInnocentlyIncludable fcALT fcPrejacent permB :=
+  have hB_II : IsInnocentlyIncludable fcALT fcPrejacent permB :=
     mem_II_of_cell_witness fcALT fcPrejacent
       (by simp [fcALT]) .separatelyAB separatelyAB_in_cell trivial
   have hA_in : permA ∈ ({α | α ∈ II fcALT fcPrejacent ∧ α ∈ fcALT} : Set _) :=

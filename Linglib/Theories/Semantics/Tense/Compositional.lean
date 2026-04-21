@@ -26,17 +26,19 @@ they introduce or retrieve temporal reference points.
 
 -/
 
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Time.Tense
 
 namespace Semantics.Tense
 
-open Core.Time
-open Core.Reichenbach
+open Core (Situation)
 
-export Core.Tense (GramTense SOTParameter TenseInterpretation SitProp
+open Core.Time
+open Core.Time.Reichenbach
+
+export Core.Time.Tense (GramTense SOTParameter TenseInterpretation SitProp
   TemporalAssignment interpTense updateTemporal temporalLambdaAbs
   situationToTemporal situation_temporal_commutes
-  zeroTense_receives_binder_time bound_is_sot_mechanism
+  zeroTense_receives_binder_time
   TensePronoun doubleAccess
   evalTime_root_is_speech evalTime_shifts_under_embedding)
 

@@ -52,6 +52,8 @@ are disjoint. See `Phenomena/Generics/Studies/Nickel2009.lean`.
 
 namespace Cohen1999
 
+open Core (Situation)
+
 open Semantics.Noun.Kind.Generics
 open Semantics.Quantification.CovertQuantifier
 -- Cohen's Probability-Based GEN

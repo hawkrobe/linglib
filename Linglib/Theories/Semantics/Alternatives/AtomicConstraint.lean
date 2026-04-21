@@ -1,5 +1,7 @@
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Theories.Semantics.Alternatives.Symmetric
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 
 /-!
 # Trinh & Haida 2015: Constraining the Derivation of Alternatives
@@ -31,6 +33,23 @@ to structural operations. This refines @cite{fox-katzir-2011} /
 - `ATree` / `ATStructOp`: parse trees with AT-marking; structural
   operations that cannot enter AT-marked nodes
 - `structuralAlternativesAT`: F_AT(S) ⊆ F(S)
+
+## Relation to the `Excluder.preFilter` combinator
+
+Atomicity is a restriction on the formal-alternative source `F`, the
+@cite{fox-katzir-2011} `F` (not `C`) side of the asymmetry.
+`Theories/Semantics/Exhaustification/Combinators.lean` packages F-side
+restrictions as the abstract combinator `Excluder.preFilter`, with the
+algebraic non-monotonicity theorem `preFilter_can_create_implicature`.
+The Trinh–Haida construction is a linguistically-motivated *two-layer*
+F-side restriction (Atomicity + Conditions on A), so it doesn't reduce
+to a single `preFilter` call: `innocent.exh` on full `F_AT(run)` remains
+vacuous; the strengthening to `ran ∧ smoked` requires the further
+domain-choice step `A = {ran, ranNotSmoked}`. The Symmetric/Atomic
+formalization here is therefore complementary to (not subsumed by) the
+abstract combinator: `Combinators.lean` proves the asymmetry exists in
+the algebra; this file shows the linguistic substance the asymmetry
+licenses.
 -/
 
 namespace Alternatives.AtomicConstraint
@@ -38,7 +57,7 @@ namespace Alternatives.AtomicConstraint
 open Core.Tree (Tree Cat)
 open Core.Tree.Cat
 open Alternatives.Symmetric (isSymmetric)
-open Exhaustification.InnocentExclusion (exhB ieIndices nonWeakerIndices)
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 
 -- ════════════════════════════════════════════════════════════════════
@@ -196,7 +215,7 @@ section RunSmoke
 
 /-- Four activity worlds (run and smoke are independent). -/
 inductive AW where | rs | rns | s | ns
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 private def awDomain : List AW := [.rs, .rns, .s, .ns]
 
@@ -226,23 +245,22 @@ theorem run_valid_domain :
   native_decide
 
 /-- EXH(A)(run) = run ∧ smoke: the correct empirical inference.
-    exhB negates "run ∧ ¬smoke" (the only non-weaker alternative
+    exhIE negates "run ∧ ¬smoke" (the only non-weaker alternative
     in A), deriving that John smoked. -/
 theorem run_exh_correct :
-    ∀ w : AW, exhB awDomain domainA ran w = (ran w && smoked w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds domainA) (predToFinset ran) =
+    predToFinset (fun w => ran w && smoked w) := by decide
 
 /-- Without Atomicity, F(S) would also contain "run ∧ smoke" = {rs}.
     With this alternative, smoked and ranNotSmoked become symmetric
-    on the run-restricted domain, and exhB over F(S) is vacuous. -/
+    on the run-restricted domain, and exhIE over F(S) is vacuous. -/
 private def ranAndSmoked : AW → Bool
   | .rs => true | _ => false
 
+set_option maxRecDepth 2048 in
 theorem without_atomicity_vacuous :
-    ∀ w : AW,
-      exhB awDomain [ran, smoked, didntSmoke, ranNotSmoked, ranAndSmoked]
-        ran w = ran w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [ran, smoked, didntSmoke, ranNotSmoked, ranAndSmoked])
+      (predToFinset ran) = predToFinset ran := by decide
 
 end RunSmoke
 
@@ -266,7 +284,7 @@ section ThreeCookies
 
 /-- Three cookie worlds: ate exactly 3, 4, or 5. -/
 inductive CW where | w3 | w4 | w5
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 private def cwDomain : List CW := [.w3, .w4, .w5]
 
@@ -306,11 +324,11 @@ theorem cookies_symmetric :
     isSymmetric cwDomain three exactlyThree four = true := by
   native_decide
 
-/-- With A = F(S) (the only valid domain), exhB is vacuous:
+/-- With A = F(S) (the only valid domain), exhIE is vacuous:
     the symmetric alternatives make exhaustification identity. -/
 theorem cookies_exh_vacuous :
-    ∀ w : CW, exhB cwDomain fCookies three w = three w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds fCookies) (predToFinset three) =
+    predToFinset three := by decide
 
 end ThreeCookies
 

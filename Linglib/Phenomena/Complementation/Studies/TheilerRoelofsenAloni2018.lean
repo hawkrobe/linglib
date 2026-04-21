@@ -1,8 +1,8 @@
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Setoid.Basic
 import Mathlib.Data.Setoid.Partition
-import Linglib.Core.Issue.Basic
-import Linglib.Core.Issue.Hamblin
+import Linglib.Core.Question.Basic
+import Linglib.Core.Question.Hamblin
 import Linglib.Core.Mood.PartitionAsInquiry
 
 /-!
@@ -14,14 +14,14 @@ import Linglib.Core.Mood.PartitionAsInquiry
 This study formalizes Section 2 of the paper (semantic framework:
 inquisitive sentence meanings) plus the **forcing** mention-some
 example from Section 3.1, which justifies the existence of
-`Core/Issue/Basic.lean` as a sibling structure to
+`Core/Question/Basic.lean` as a sibling structure to
 `Setoid W`.
 
 ## What this file establishes
 
 1. **Figure 2** examples (Section 2.1, p. 415): the polar interrogative
    `Did Amy leave?` and the declarative `Amy left.` constructed via the
-   `polar` and `declarative` constructors of `Issue`. We
+   `polar` and `declarative` constructors of `Question`. We
    prove the four characteristic properties from the paper's prose
    discussion (Section 2.2):
    - `amyLeft` is informative and non-inquisitive (declarative).
@@ -37,7 +37,7 @@ example from Section 3.1, which justifies the existence of
 
    This is the forcing theorem for the architectural decision in the
    "Architectural note" docstring of `Core/Mood/POSWQ.lean` (added
-   0.229.922) — it shows that `Setoid → Issue` is a
+   0.229.922) — it shows that `Setoid → Question` is a
    strictly weaker representation, and so the sibling-structure
    architecture is necessary rather than redundant.
 
@@ -49,19 +49,19 @@ This file does **not** formalize the rest of the paper:
   meaning, which we leave for a follow-up.
 - Sections 4–6 (verb meanings, predicates of relevance, constraints
   on responsive verb meanings) require a full Fragment of attitude
-  verbs typed against `Issue`, also future work.
+  verbs typed against `Question`, also future work.
 - Appendices A–B (comparison with @cite{uegaki-2015} inverse reductive
   approach; formal proofs).
 
 The point of this file is the existence theorem for the "more
 expressive than partitions" claim, which is what the
-`Core/Issue/Basic.lean`/`Core/Mood/PartitionAsInquiry.lean`
+`Core/Question/Basic.lean`/`Core/Mood/PartitionAsInquiry.lean`
 pair was built to support.
 -/
 
 namespace Phenomena.Complementation.Studies.TheilerRoelofsenAloni2018
 
-open Core Issue
+open Core Question
 
 /-! ### Section 2.1: Figure 2 — Did Amy leave? / Amy left. -/
 
@@ -74,10 +74,10 @@ abbrev W : Type := Fin 4
 def amyLeft : Set W := {0, 1}
 
 /-- (6b) **Amy left.** — Figure 2(b). -/
-def amyLeftMeaning : Issue W := declarative amyLeft
+def amyLeftMeaning : Question W := declarative amyLeft
 
 /-- (6a) **Did Amy leave?** — Figure 2(a). -/
-def didAmyLeaveMeaning : Issue W := polar amyLeft
+def didAmyLeaveMeaning : Question W := polar amyLeft
 
 theorem amyLeftMeaning_info : amyLeftMeaning.info = amyLeft :=
   info_declarative amyLeft
@@ -158,7 +158,7 @@ def msPaperworld : Set MS := {1, 2}
     it agrees on at least one of the two stores selling. The
     alternatives are `msNewstopia` and `msPaperworld`, which **overlap**
     at world `1`. -/
-def mentionSome : Issue MS where
+def mentionSome : Question MS where
   props := {q | q ⊆ msNewstopia ∨ q ⊆ msPaperworld}
   contains_empty := Or.inl (Set.empty_subset _)
   downward_closed := fun _ hp _ hr => by
@@ -167,7 +167,7 @@ def mentionSome : Issue MS where
     · exact Or.inr (hr.trans h)
 
 /-- **Forcing theorem** (the architectural justification for
-    `Issue`). The mention-some content is **not** in the
+    `Question`). The mention-some content is **not** in the
     image of `fromSetoid` for any `Setoid` on the three worlds.
 
     Proof: `msNewstopia = {0, 1}` and `msPaperworld = {1, 2}` both lie

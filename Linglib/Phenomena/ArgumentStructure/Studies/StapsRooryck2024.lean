@@ -53,6 +53,8 @@ and `VendlerClass`, connecting to the affectedness hierarchy
 
 namespace StapsRooryck2024
 
+open Core (Situation)
+
 open Core.Presupposition
 open Fragments.French.Predicates
 open Semantics.Verb.EntailmentProfile

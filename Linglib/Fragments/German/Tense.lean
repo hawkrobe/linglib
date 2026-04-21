@@ -26,7 +26,7 @@ has a PRESENT tense head (indexical-compatible).
 
 namespace Fragments.German.Tense
 
-open Core.Tense
+open Core.Time.Tense
 open Semantics.Tense.Decomposition
 
 -- ════════════════════════════════════════════════════

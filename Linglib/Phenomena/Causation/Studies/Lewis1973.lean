@@ -53,6 +53,8 @@ strictly stronger.
 
 namespace Lewis1973
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.CCSelection
 open Semantics.Causation.Sufficiency

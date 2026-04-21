@@ -32,7 +32,7 @@ def shei : PolarityItemEntry :=
   , licensingContexts :=
       [ .negation, .nobody, .question, .conditionalAntecedent
       , .modalPossibility, .modalNecessity, .imperative, .generic
-      , .comparativeNP, .comparativeS ]
+      , .comparativeS ]
   , scalarDirection := .strengthening
   , notes := "Wh-word covers 7 functions: irrealis through free choice" }
 

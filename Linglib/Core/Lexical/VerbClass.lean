@@ -23,6 +23,8 @@ set_option autoImplicit false
 
 namespace Core.Verbs
 
+open Core (Situation)
+
 -- ════════════════════════════════════════════════════
 -- § LevinClass: diathesis-based verb taxonomy
 -- ════════════════════════════════════════════════════

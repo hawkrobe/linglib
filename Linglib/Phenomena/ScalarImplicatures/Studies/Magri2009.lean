@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
 import Linglib.Phenomena.Generics.BarePlurals
@@ -48,7 +49,7 @@ stage-level predicates do not.
 
 namespace Magri2009
 
-open Exhaustification.InnocentExclusion (exhB ieIndices)
+open Exhaustification (innocent predToFinset altsFromPreds)
 open Semantics.Noun.Kind.Carlson1977 (PredicateLevel)
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -59,26 +60,23 @@ open Semantics.Noun.Kind.Carlson1977 (PredicateLevel)
 
 @cite{magri-2009}'s mechanism needs only literal meanings, scalar
 alternatives, and common knowledge — no QUD or complexity ordering. -/
-structure BlindScenario (W U : Type) where
+structure BlindScenario (W U : Type) [Fintype W] [DecidableEq W] where
   /-- Literal meaning of each utterance at each world. -/
   meaning : U → W → Bool
   /-- All scalar alternatives for each utterance.
-      @cite{fox-2007}'s innocent exclusion algorithm (`ieIndices`) determines
-      which alternatives are excludable — weaker alternatives (e.g., "some"
-      when the prejacent is "all") are automatically filtered out by the
-      non-weaker check (NW). -/
+      @cite{fox-2007}'s innocent exclusion algorithm determines which
+      alternatives are excludable — weaker alternatives (e.g., "some"
+      when the prejacent is "all") are automatically filtered out. -/
   alternatives : U → List U
   /-- Common knowledge: which worlds are CK-compatible. -/
   context : W → Bool
-  /-- Exhaustive world enumeration. -/
-  worlds : List W
 
 namespace BlindScenario
 
-variable {W U : Type} (s : BlindScenario W U)
+variable {W U : Type} [Fintype W] [DecidableEq W] (s : BlindScenario W U)
 
 /-- CK-compatible worlds. -/
-def cWorlds : List W := s.worlds.filter s.context
+def cWorlds : Finset W := Finset.univ.filter (fun w => s.context w)
 
 /-- Strengthened meaning via @cite{fox-2007}'s exhaustivity operator.
 
@@ -87,7 +85,8 @@ strengthened meaning using logical entailment over W, not entailment
 given common knowledge W_ck. The grammar strengthens automatically,
 even when the result contradicts what speaker and hearer both know. -/
 def strengthened (u : U) (w : W) : Bool :=
-  exhB s.worlds ((s.alternatives u).map s.meaning) (s.meaning u) w
+  decide (w ∈ innocent.exh (altsFromPreds ((s.alternatives u).map s.meaning))
+                    (predToFinset (s.meaning u)))
 
 /-- Blind oddness: the exhaustivity operator produced a non-vacuous
 implicature, yet the strengthened meaning is false at every CK world.
@@ -96,9 +95,10 @@ Implements the **Mismatch Hypothesis** (MH): if EXH(φ) ∩ W_ck = ∅
 (the blind strengthened meaning contradicts common knowledge), then
 φ sounds odd. -/
 def blindOdd (u : U) : Bool :=
-  let ie := ieIndices s.worlds (s.meaning u) ((s.alternatives u).map s.meaning)
-  !ie.isEmpty &&
-  s.cWorlds.all (λ w => !s.strengthened u w)
+  let alts := altsFromPreds ((s.alternatives u).map s.meaning)
+  let φ := predToFinset (s.meaning u)
+  decide (innocent.excluded alts φ).Nonempty &&
+  decide (∀ w ∈ s.cWorlds, w ∉ innocent.exh alts φ)
 
 /-- Ignorance-based oddness: alternatives exist that are NOT innocently
 excludable (so ignorance inferences are derived), yet CK settles every
@@ -115,14 +115,16 @@ contradict CK (alternatives are relevant but CK-settled).
 Susan, or Jane" arises because ignorance inferences about singleton-
 denoting predicates contradict CK. -/
 def ignoranceContradictsCK (u : U) : Bool :=
-  let ie := ieIndices s.worlds (s.meaning u) ((s.alternatives u).map s.meaning)
+  let altSet := altsFromPreds ((s.alternatives u).map s.meaning)
+  let φ := predToFinset (s.meaning u)
   -- There are alternatives that are NOT IE (so ignorance inferences arise)
-  (s.alternatives u).length > ie.length &&
+  decide (altSet.card > (innocent.excluded altSet φ).card) &&
   -- All CK worlds agree on all alternatives (speaker can't be ignorant)
   (s.alternatives u).all (λ alt =>
     let altMeaning := s.meaning alt
     -- Either alt is true at ALL CK worlds or false at ALL CK worlds
-    s.cWorlds.all altMeaning || s.cWorlds.all (!altMeaning ·))
+    decide (∀ w ∈ s.cWorlds, altMeaning w = true) ||
+    decide (∀ w ∈ s.cWorlds, altMeaning w = false))
 
 end BlindScenario
 
@@ -143,7 +145,7 @@ inductive ItalyWorld₃ where
   | allWarm     -- all Italians come from a warm country (CK-compatible)
   | someNotAll  -- some but not all (not CK-compatible)
   | noneWarm    -- none do (not CK-compatible)
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 inductive ItalyUtt where
   | some_ | all_
@@ -159,7 +161,6 @@ def italianScenario : BlindScenario ItalyWorld₃ ItalyUtt where
     | all_  => [some_]
   context
     | allWarm => true | someNotAll => false | noneWarm => false
-  worlds := [allWarm, someNotAll, noneWarm]
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §3  Core Predictions
@@ -169,23 +170,23 @@ def italianScenario : BlindScenario ItalyWorld₃ ItalyUtt where
 some(allWarm) ∧ ¬all(allWarm) = true ∧ false = false.
 The blind implicature "not all" kills the literal meaning at the CK world. -/
 theorem some_strengthened_false_at_ck :
-    italianScenario.strengthened .some_ .allWarm = false := by native_decide
+    italianScenario.strengthened .some_ .allWarm = false := by decide
 
 /-- Strengthened "some" at someNotAll is true:
 some(someNotAll) ∧ ¬all(someNotAll) = true ∧ true = true.
 But someNotAll is ruled out by CK — no help. -/
 theorem some_strengthened_true_at_nonck :
-    italianScenario.strengthened .some_ .someNotAll = true := by native_decide
+    italianScenario.strengthened .some_ .someNotAll = true := by decide
 
 /-- @cite{magri-2009} prediction: "some Italians" is odd.
 The blind implicature "not all" contradicts CK (Italy is warm). -/
 theorem italian_some_blind_odd :
-    italianScenario.blindOdd .some_ = true := by native_decide
+    italianScenario.blindOdd .some_ = true := by decide
 
 /-- "all Italians" is not odd: no stronger alternative to negate,
 so no blind implicature is generated. -/
 theorem italian_all_not_odd :
-    italianScenario.blindOdd .all_ = false := by native_decide
+    italianScenario.blindOdd .all_ = false := by decide
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §5  Individual-Level Predicates: Q-Adverbs (§4.1)
@@ -220,7 +221,7 @@ inductive TallWorld where
   | alwaysTall   -- tall at all times (CK-compatible: homogeneity (70))
   | sometimesOnly -- tall at some but not all times (NOT CK-compatible)
   | neverTall    -- tall at no time (CK-compatible: homogeneity (70))
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 inductive QAdvUtt where
   | sometimes_ | always_
@@ -246,26 +247,25 @@ def tallScenario : BlindScenario TallWorld QAdvUtt where
   -- Homogeneity (70): only homogeneous worlds are CK-compatible
   context
     | alwaysTall => true | sometimesOnly => false | neverTall => true
-  worlds := [alwaysTall, sometimesOnly, neverTall]
 
 /-- Strengthened "sometimes" at alwaysTall is false:
 sometimes(alwaysTall) ∧ ¬always(alwaysTall) = true ∧ false = false. -/
 theorem tall_sometimes_strengthened_false :
-    tallScenario.strengthened .sometimes_ .alwaysTall = false := by native_decide
+    tallScenario.strengthened .sometimes_ .alwaysTall = false := by decide
 
 /-- Strengthened "sometimes" at neverTall is also false:
 sometimes(neverTall) = false. -/
 theorem tall_sometimes_strengthened_false_never :
-    tallScenario.strengthened .sometimes_ .neverTall = false := by native_decide
+    tallScenario.strengthened .sometimes_ .neverTall = false := by decide
 
 /-- @cite{magri-2009} prediction: "# Sometimes, John is tall" is odd.
 The blind implicature "not always" contradicts homogeneity (70). -/
 theorem tall_sometimes_blind_odd :
-    tallScenario.blindOdd .sometimes_ = true := by native_decide
+    tallScenario.blindOdd .sometimes_ = true := by decide
 
 /-- "Always, John is tall" is fine: no stronger alternative exists. -/
 theorem tall_always_not_odd :
-    tallScenario.blindOdd .always_ = false := by native_decide
+    tallScenario.blindOdd .always_ = false := by decide
 
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -307,7 +307,6 @@ def availableScenario : BlindScenario TallWorld QAdvUtt where
   meaning := tallScenario.meaning
   alternatives := tallScenario.alternatives
   context := homogeneity .stageLevel
-  worlds := tallScenario.worlds
 
 /-- The context of `availableScenario` matches stage-level homogeneity:
 all worlds are CK-compatible. -/
@@ -318,7 +317,7 @@ theorem available_context_from_slp :
 Stage-level predicates don't trigger homogeneity (70), so `sometimesOnly`
 is CK-compatible and the strengthened meaning is satisfiable. -/
 theorem available_sometimes_not_odd :
-    availableScenario.blindOdd .sometimes_ = false := by native_decide
+    availableScenario.blindOdd .sometimes_ = false := by decide
 
 /-- The ILP/SLP distinction determines oddness:
 individual-level + "sometimes" → odd; stage-level + "sometimes" → fine.
@@ -327,18 +326,17 @@ This is the structural prediction: @cite{carlson-1977}'s `PredicateLevel`
 feeds into @cite{magri-2009}'s blindness mechanism via homogeneity (70). -/
 theorem predicate_level_determines_oddness :
     tallScenario.blindOdd .sometimes_ = true ∧
-    availableScenario.blindOdd .sometimes_ = false := ⟨by native_decide, by native_decide⟩
+    availableScenario.blindOdd .sometimes_ = false := ⟨by decide, by decide⟩
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §5.3  Homogeneity Is Necessary and Sufficient
 -- ═══════════════════════════════════════════════════════════════════════
 
-/-- The tall and available scenarios share literal semantics, alternatives,
-and worlds — they differ ONLY in the CK context. -/
+/-- The tall and available scenarios share literal semantics and alternatives
+— they differ ONLY in the CK context. -/
 theorem scenarios_share_semantics :
     tallScenario.meaning = availableScenario.meaning ∧
-    tallScenario.alternatives = availableScenario.alternatives ∧
-    tallScenario.worlds = availableScenario.worlds := ⟨rfl, rfl, rfl⟩
+    tallScenario.alternatives = availableScenario.alternatives := ⟨rfl, rfl⟩
 
 /-- The contexts genuinely differ: `sometimesOnly` is CK-incompatible
 for individual-level (tall) but CK-compatible for stage-level (available). -/
@@ -366,19 +364,15 @@ theorem homogeneity_necessary_and_sufficient :
     -- Same semantics
     tallScenario.meaning = availableScenario.meaning ∧
     tallScenario.alternatives = availableScenario.alternatives ∧
-    tallScenario.worlds = availableScenario.worlds ∧
     -- Different context (from different PredicateLevel)
     tallScenario.context ≠ availableScenario.context ∧
     -- Different oddness prediction
     tallScenario.blindOdd .sometimes_ ≠ availableScenario.blindOdd .sometimes_ := by
-  refine ⟨rfl, rfl, rfl, ?_, ?_⟩
+  refine ⟨rfl, rfl, ?_, ?_⟩
   · intro h
     have := congrFun h .sometimesOnly
     simp [tallScenario, availableScenario, homogeneity] at this
-  · simp [tallScenario, availableScenario, homogeneity,
-          BlindScenario.blindOdd, BlindScenario.strengthened,
-          BlindScenario.cWorlds]
-    native_decide
+  · decide
 
 end QAdverb
 
@@ -427,7 +421,7 @@ theorem oddness_iff_mixed_excluded (ctx : TallWorld → Bool) :
         | .sometimesOnly => ctx .sometimesOnly
         | .neverTall => ctx .neverTall := funext fun w => by cases w <;> rfl
     simp only [ha, hs, hn] at hfun
-    rw [hfun]; native_decide
+    rw [hfun]; decide
   }
 
 /-- Homogeneity (70) produces oddness because it rules out the mixed world. -/
@@ -476,7 +470,7 @@ inductive BPSWorld where
   | allThroughout  -- every fireman is tall throughout his lifespan
   | partialOnly    -- some fireman tall at some times but not throughout
   | noneTall       -- no fireman is ever tall
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The bare plural reading and its definite-description alternative.
 
@@ -517,17 +511,16 @@ def bpsScenario : BlindScenario BPSWorld BPSReading where
   -- Homogeneity (70): partialOnly is CK-incompatible
   context
     | allThroughout => true | partialOnly => false | noneTall => true
-  worlds := [allThroughout, partialOnly, noneTall]
 
 /-- The ∃-BPS reading of ILP "Firemen are tall" is odd.
 Blind strengthening derives "∃ fireman tall at some times BUT no fireman
 tall throughout" — contradicting homogeneity (70). -/
 theorem bps_existential_ilp_odd :
-    bpsScenario.blindOdd .existential_ = true := by native_decide
+    bpsScenario.blindOdd .existential_ = true := by decide
 
 /-- The GEN-BPS reading of ILP "Firemen are tall" is fine. -/
 theorem bps_generic_not_odd :
-    bpsScenario.blindOdd .generic_ = false := by native_decide
+    bpsScenario.blindOdd .generic_ = false := by decide
 
 open BPSWorld BPSReading in
 /-- Stage-level counterpart: ∃-BPS reading of "Firemen are available."
@@ -538,11 +531,10 @@ def bpsSLPScenario : BlindScenario BPSWorld BPSReading where
   meaning := bpsScenario.meaning
   alternatives := bpsScenario.alternatives
   context := fun _ => true
-  worlds := bpsScenario.worlds
 
 /-- The ∃-BPS reading of SLP "Firemen are available" is fine. -/
 theorem bps_existential_slp_not_odd :
-    bpsSLPScenario.blindOdd .existential_ = false := by native_decide
+    bpsSLPScenario.blindOdd .existential_ = false := by decide
 
 /-- The BPS scenario's meaning table is isomorphic to the Q-adverb scenario:
 "∃-BPS at world w" has the same truth value as "sometimes at the
@@ -626,20 +618,18 @@ def universalRescueScenario : BlindScenario TallWorld QAdvUtt where
   meaning := tallScenario.meaning
   alternatives := tallScenario.alternatives
   context := fun _ => true
-  worlds := tallScenario.worlds
 
 /-- The ∃-BPS reading under a universal quantifier is NOT odd.
 The distributed-witnesses world is CK-compatible, so the strengthened
 meaning is satisfiable at a CK world. -/
 theorem universal_rescue_not_odd :
-    universalRescueScenario.blindOdd .sometimes_ = false := by native_decide
+    universalRescueScenario.blindOdd .sometimes_ = false := by decide
 
 /-- The rescue scenario shares literal semantics and scale with the
 ILP Q-adverb scenario — the ONLY difference is the CK context. -/
 theorem rescue_shares_semantics :
     tallScenario.meaning = universalRescueScenario.meaning ∧
-    tallScenario.alternatives = universalRescueScenario.alternatives ∧
-    tallScenario.worlds = universalRescueScenario.worlds := ⟨rfl, rfl, rfl⟩
+    tallScenario.alternatives = universalRescueScenario.alternatives := ⟨rfl, rfl⟩
 
 /-- The rescue context matches the SLP context: both admit all worlds.
 
@@ -667,8 +657,6 @@ theorem three_way_contrast :
     tallScenario.meaning = universalRescueScenario.meaning ∧
     tallScenario.alternatives = availableScenario.alternatives ∧
     tallScenario.alternatives = universalRescueScenario.alternatives ∧
-    tallScenario.worlds = availableScenario.worlds ∧
-    tallScenario.worlds = universalRescueScenario.worlds ∧
     -- ILP is odd, SLP and rescue are not
     tallScenario.blindOdd .sometimes_ = true ∧
     availableScenario.blindOdd .sometimes_ = false ∧
@@ -677,10 +665,10 @@ theorem three_way_contrast :
     tallScenario.context .sometimesOnly = false ∧
     availableScenario.context .sometimesOnly = true ∧
     universalRescueScenario.context .sometimesOnly = true := by
-  refine ⟨rfl, rfl, rfl, rfl, rfl, rfl, ?_, ?_, ?_, rfl, rfl, rfl⟩
-  · native_decide
-  · native_decide
-  · native_decide
+  refine ⟨rfl, rfl, rfl, rfl, ?_, ?_, ?_, rfl, rfl, rfl⟩
+  · decide
+  · decide
+  · decide
 
 end UniversalRescue
 
@@ -713,13 +701,14 @@ section PresuppositionalExtension
 
 @cite{magri-2009} §3.4: presupposition strengthening runs in parallel
 to meaning strengthening, using the same @cite{fox-2007} algorithm. -/
-structure BlindPresupScenario (W U : Type) extends BlindScenario W U where
+structure BlindPresupScenario (W U : Type) [Fintype W] [DecidableEq W]
+    extends BlindScenario W U where
   /-- Presupposition carried by each utterance. -/
   presup : U → W → Bool
 
 namespace BlindPresupScenario
 
-variable {W U : Type} (s : BlindPresupScenario W U)
+variable {W U : Type} [Fintype W] [DecidableEq W] (s : BlindPresupScenario W U)
 
 /-- Strengthened presupposition via @cite{fox-2007}'s EXH applied to
 presuppositions.
@@ -727,16 +716,18 @@ presuppositions.
 Implements **BH_prs**: the strengthening uses logical entailment over W,
 not entailment given common knowledge. -/
 def strengthenedPresup (u : U) (w : W) : Bool :=
-  exhB s.worlds ((s.alternatives u).map s.presup) (s.presup u) w
+  decide (w ∈ innocent.exh (altsFromPreds ((s.alternatives u).map s.presup))
+                    (predToFinset (s.presup u)))
 
 /-- Blind presuppositional oddness: EXH_prs(φ) ∩ W_ck = ∅.
 
 Implements **MH_prs** (66): if the blind strengthened presupposition
 contradicts common knowledge, the sentence sounds odd. -/
 def blindOddPrs (u : U) : Bool :=
-  let ie := ieIndices s.worlds (s.presup u) ((s.alternatives u).map s.presup)
-  !ie.isEmpty &&
-  s.toBlindScenario.cWorlds.all (λ w => !s.strengthenedPresup u w)
+  let alts := altsFromPreds ((s.alternatives u).map s.presup)
+  let ψ := predToFinset (s.presup u)
+  decide (innocent.excluded alts ψ).Nonempty &&
+  decide (∀ w ∈ s.toBlindScenario.cWorlds, w ∉ innocent.exh alts ψ)
 
 end BlindPresupScenario
 
@@ -797,7 +788,6 @@ def alwaysGENScenario : BlindPresupScenario TallWorld AlwaysGENUtt where
     | .always_ => [.gen_]    -- ⟨always, GEN⟩ Horn scale (assumption (81))
     | .gen_    => [.always_]
   context := homogeneity .individualLevel
-  worlds := [alwaysTall, sometimesOnly, neverTall]
   -- Presuppositions differ:
   presup
     -- *always* has no homogeneity presupposition (φ_prs = W)
@@ -827,14 +817,14 @@ rules out. -/
 theorem always_strengthened_presup_false_at_ck :
     alwaysGENScenario.strengthenedPresup .always_ .alwaysTall = false ∧
     alwaysGENScenario.strengthenedPresup .always_ .neverTall = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- @cite{magri-2009} §4.6: "#John is always tall" is odd via MH_prs.
 
 The blind strengthened presupposition (= ¬homogeneity = mixed worlds
 only) contradicts CK (= homogeneity = no mixed worlds). -/
 theorem always_tall_blind_odd_prs :
-    alwaysGENScenario.blindOddPrs .always_ = true := by native_decide
+    alwaysGENScenario.blindOddPrs .always_ = true := by decide
 
 /-- "John is tall" (= covert GEN) is NOT odd via MH_prs.
 
@@ -843,7 +833,7 @@ presuppositionally weaker (trivial presupposition ⊂ homogeneity
 presupposition is backwards). Since GEN's presupposition entails
 *always*'s, *always* is not excludable w.r.t. GEN. -/
 theorem gen_tall_not_odd_prs :
-    alwaysGENScenario.blindOddPrs .gen_ = false := by native_decide
+    alwaysGENScenario.blindOddPrs .gen_ = false := by decide
 
 /-- Meanings are identical but oddness differs — the presupposition
 is doing ALL the work. This is a pure presuppositional effect: the
@@ -857,8 +847,7 @@ theorem always_gen_same_meaning_different_presup :
   · intro h
     have := congrFun h .sometimesOnly
     simp [alwaysGENScenario] at this
-  · simp [alwaysGENScenario]
-    native_decide
+  · decide
 
 end OvertAlways
 
@@ -905,14 +894,14 @@ and empirical observation. -/
 theorem magri_predicts_ilp_no_existential :
     bpsScenario.blindOdd .existential_ = true ∧
     iLevelData.all (λ d => !d.existentialOK) = true :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 /-- The BPS scenario for SLPs is fine, AND the SLP-argument data
 independently confirms existential reading available. -/
 theorem magri_predicts_slp_existential :
     bpsSLPScenario.blindOdd .existential_ = false ∧
     sLevelArgumentData.all (λ d => d.toBarePluralDatum.existentialOK) = true :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 end BarePluralBridge
 
@@ -953,7 +942,7 @@ theorem german_data_matches_magri :
     bpsScenario.blindOdd .existential_ = true ∧
     -- Magri model: SLP existential is fine
     bpsSLPScenario.blindOdd .existential_ = false :=
-  ⟨by native_decide, by native_decide, by native_decide⟩
+  ⟨by decide, by decide, by decide⟩
 
 end GermanBridge
 
@@ -991,7 +980,7 @@ inductive BPAlwaysWorld where
   | allTall       -- all firemen always tall
   | mixedFiremen  -- some firemen tall, others not
   | noneTall      -- no fireman tall
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 open BPAlwaysWorld AlwaysGENUtt in
 /-- @cite{magri-2009} §4.6.2: *always* vs GEN with bare plural subject.
@@ -1010,7 +999,6 @@ def bpAlwaysScenario : BlindPresupScenario BPAlwaysWorld AlwaysGENUtt where
     | .gen_    => [.always_]
   -- CK: ALL worlds are compatible (some firemen could be tall, others not)
   context := fun _ => true
-  worlds := [allTall, mixedFiremen, noneTall]
   presup
     | .always_, _ => true                -- *always* has no homogeneity presup
     | .gen_, allTall => true             -- YES: all firemen tall
@@ -1023,7 +1011,7 @@ The strengthened presupposition ¬ψ_prs = {mixedFiremen} is satisfiable
 at a CK world (mixedFiremen is CK-compatible for bare plurals), so
 MH_prs does not fire. -/
 theorem bp_always_not_odd_prs :
-    bpAlwaysScenario.blindOddPrs .always_ = false := by native_decide
+    bpAlwaysScenario.blindOddPrs .always_ = false := by decide
 
 /-- Contrast: same logical structure, different subjects, different oddness.
 
@@ -1036,7 +1024,7 @@ The difference: CK for a definite (John) rules out the mixed world
 theorem definite_vs_bp_always_contrast :
     alwaysGENScenario.blindOddPrs .always_ = true ∧
     bpAlwaysScenario.blindOddPrs .always_ = false :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 end BarePluralAlways
 
@@ -1046,7 +1034,7 @@ end BarePluralAlways
 
 section AlternativeSourceBridge
 
-open Alternatives Exhaustification.InnocentExclusion
+open Alternatives
 
 /-- AlternativeSource instance for the Italian ⟨some, all⟩ scale. -/
 instance : AlternativeSource ItalyUtt where
@@ -1058,14 +1046,15 @@ instance : AlternativeSource ItalyUtt where
     deriving alternatives from the AlternativeSource typeclass produces
     the same exhaustified meaning. The key: including the assertion in the
     alternative list (AlternativeSource convention) doesn't change the
-    result — exhB filters it out via the non-weaker check. -/
+    result — `exhIE` filters it out via the non-weaker check. -/
 theorem strengthened_eq_alternativeSource :
     ∀ w : ItalyWorld₃,
       italianScenario.strengthened .some_ w =
-      exhB italianScenario.worlds
-        ((AlternativeSource.alternatives ItalyUtt.some_).map italianScenario.meaning)
-        (italianScenario.meaning ItalyUtt.some_) w := by
-  intro w; cases w <;> native_decide
+      decide (w ∈ innocent.exh
+        (altsFromPreds
+          ((AlternativeSource.alternatives ItalyUtt.some_).map italianScenario.meaning))
+        (predToFinset (italianScenario.meaning ItalyUtt.some_))) := by
+  intro w; cases w <;> decide
 
 end AlternativeSourceBridge
 

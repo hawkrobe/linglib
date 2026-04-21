@@ -2,10 +2,11 @@ import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
+import Linglib.Core.Question.Support
 
 /-!
 # KOS Conversational Rules
@@ -32,7 +33,7 @@ pairs (record types with `pre` and `effects` fields).
 
 The `Answerhood` typeclass abstracts the resolves-relation between facts
 and questions — connecting to partition-based `QUD W` from `Core/Discourse/QUD.lean`
-and to inquisitive `Issue W`.
+and to inquisitive `Question W`.
 
 ## Genre (@cite{ginzburg-2012} §4.6)
 
@@ -64,6 +65,14 @@ class Answerhood (Fact QContent : Type) where
 def allResolved {Fact QContent : Type} [Answerhood Fact QContent]
     (facts : List Fact) (qud : List QContent) : Bool :=
   qud.all fun q => facts.any fun f => Answerhood.resolves f q
+
+/-- Bridge: every Bool-valued KOS `Answerhood` instance induces a Prop-valued
+`Core.Question.Support` instance. Lets downstream files written against the
+mathlib-shaped `Support` interface consume KOS facts/questions without the
+KOS framework having to migrate first. -/
+instance instSupportOfAnswerhood {Fact QContent : Type} [Answerhood Fact QContent] :
+    Core.Question.Support Fact QContent where
+  supports f q := Answerhood.resolves f q = true
 
 -- ════════════════════════════════════════════════════
 -- § 2. DGB Update Operations

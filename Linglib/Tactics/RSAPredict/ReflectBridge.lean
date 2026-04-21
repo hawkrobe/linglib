@@ -89,7 +89,18 @@ def parseS1Policy (e : Expr) : MetaM (Option (Expr × Expr × Expr × Expr)) := 
 /-- Module-scope reification cache shared across all `rsa_predict` invocations
     within a file. The first theorem pays the full reification cost; subsequent
     theorems for the same model get cache hits on shared sub-expressions
-    (L0 policies, S1 scores, belief distributions, etc.). -/
+    (L0 policies, S1 scores, belief distributions, etc.).
+
+    **Note on async elaboration.** The cache is an `IO.Ref`, which only persists
+    across theorems when elaboration is synchronous. `lake build` and the language
+    server set `Elab.async = true` by default, which runs each theorem in an
+    isolated async branch — the cache is empty at the start of every theorem.
+    RSA-heavy files should add `set_option Elab.async false` at the file top to
+    re-enable cache sharing (typical 2x speedup; see CHANGELOG 0.230.x). This is
+    the same workaround Lean's own `native_decide` and `#eval` use internally
+    (`Meta/Native.lean`, `Meta/Eval.lean`). `EnvExtension` is not a fix — its
+    only consistent-read mode (`.sync`) blocks on prior async branches, giving
+    equivalent serialization. -/
 initialize persistentReifyCache : IO.Ref (Std.HashMap Expr (Expr × MetaBounds)) ←
   IO.mkRef ∅
 
@@ -169,9 +180,10 @@ private def tryMarginalDenomCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
   let scoreSumRhs := mkAppN rhsSum.getAppFn (rhsArgs.set! 4 scoreFn)
   let scoreGoalType ← mkAppM ``GT.gt #[scoreSumLhs, scoreSumRhs]
   let scoreGoal ← mkFreshExprMVar scoreGoalType
-  -- Proof: L1_marginal_gt_of_score_sum_gt cfg u P Q hScore
-  let proof ← mkAppM ``RSA.RSAConfig.L1_marginal_gt_of_score_sum_gt
-    #[cfgL, uL, pL, pR, scoreGoal]
+  -- Goal `marginal pL > marginal pR` ≡ `marginal pR < marginal pL`,
+  -- so instantiate L1_marginal_lt_of_score_sum_lt with P := pR, Q := pL.
+  let proof ← mkAppM ``RSA.RSAConfig.L1_marginal_lt_of_score_sum_lt
+    #[cfgL, uL, pR, pL, scoreGoal]
   goal.assign proof
   return some (scoreGoal.mvarId!, scoreSumLhs, scoreSumRhs)
 
@@ -191,9 +203,10 @@ private def tryLatentDenomCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
   let scoreRhs ← mkAppM ``Core.RationalAction.score #[latentAgent, unitVal, l₂]
   let scoreGoalType ← mkAppM ``GT.gt #[scoreLhs, scoreRhs]
   let scoreGoal ← mkFreshExprMVar scoreGoalType
-  -- Proof: L1_latent_gt_of_score_gt cfg u l₁ l₂ hScore
-  let proof ← mkAppM ``RSA.RSAConfig.L1_latent_gt_of_score_gt
-    #[cfgL, uL, l₁, l₂, scoreGoal]
+  -- Goal `L1_latent u l₁ > L1_latent u l₂` ≡ `L1_latent u l₂ < L1_latent u l₁`,
+  -- so instantiate L1_latent_lt_of_score_lt with l₁ := l₂, l₂ := l₁.
+  let proof ← mkAppM ``RSA.RSAConfig.L1_latent_lt_of_score_lt
+    #[cfgL, uL, l₂, l₁, scoreGoal]
   goal.assign proof
   return some (scoreGoal.mvarId!, scoreLhs, scoreRhs)
 
@@ -218,8 +231,10 @@ private def tryDenominatorCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
           let scoreRhs ← mkAppM ``Core.RationalAction.score #[raR, sR, aR]
           let scoreGoalType ← mkAppM ``GT.gt #[scoreLhs, scoreRhs]
           let scoreGoal ← mkFreshExprMVar scoreGoalType
-          let proof ← mkAppM ``Core.RationalAction.policy_gt_of_score_gt
-            #[raL, sL, aL, aR, scoreGoal]
+          -- Goal `policy s aL > policy s aR` ≡ `policy s aR < policy s aL`,
+          -- so instantiate policy_lt_of_score_lt with a₁ := aR, a₂ := aL.
+          let proof ← mkAppM ``Core.RationalAction.policy_lt_of_score_lt
+            #[raL, sL, aR, aL, scoreGoal]
           goal.assign proof
           return some (scoreGoal.mvarId!, scoreLhs, scoreRhs)
         else if (← isDefEq aL aR) then
@@ -235,8 +250,13 @@ private def tryDenominatorCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
           let crossRhs ← mkAppM ``HMul.hMul #[scoreRhs, totalLhs]
           let crossGoalType ← mkAppM ``GT.gt #[crossLhs, crossRhs]
           let crossGoal ← mkFreshExprMVar crossGoalType
-          let proof ← mkAppM ``Core.RationalAction.policy_gt_cross_of_cross_gt
-            #[raL, sL, sR, aL, crossGoal]
+          -- Goal `policy sL a > policy sR a` ≡ `policy sR a < policy sL a`,
+          -- so instantiate policy_lt_cross_of_cross_lt with s₁ := sR, s₂ := sL.
+          -- The cross-product hypothesis becomes
+          --   `score sR a * total sL < score sL a * total sR`,
+          -- which matches the `>` goal `score sL a * total sR > score sR a * total sL`.
+          let proof ← mkAppM ``Core.RationalAction.policy_lt_cross_of_cross_lt
+            #[raL, sR, sL, aL, crossGoal]
           goal.assign proof
           return some (crossGoal.mvarId!, crossLhs, crossRhs)
   -- Pattern 2: L1_marginal comparison (sum of policies with shared denominator)
@@ -251,7 +271,7 @@ private def tryDenominatorCancel (goal : MVarId) (lhsExpr rhsExpr : Expr) :
     Runs `native_decide` on tree-based `checkGtOptMemo` (sorry-free soundness).
 
     When both sides are `policy ra s a₁/a₂` with the same `ra` and `s`,
-    applies denominator cancellation first via `policy_gt_of_score_gt`,
+    applies denominator cancellation first via `policy_lt_of_score_lt`,
     reducing the goal to a score comparison that skips the shared
     normalization constant. -/
 def tryDirectRExprCompare (goal : MVarId) (lhsExpr rhsExpr : Expr) : TacticM Bool := do

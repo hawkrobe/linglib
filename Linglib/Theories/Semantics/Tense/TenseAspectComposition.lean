@@ -38,6 +38,8 @@ import Linglib.Theories.Semantics.Tense.Compositional
 
 namespace Semantics.Tense.TenseAspectComposition
 
+open Core (Situation)
+
 open Core.Time
 open Semantics.Tense.Aspect.Core
 

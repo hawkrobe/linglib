@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Phenomena.ScalarImplicatures.Basic
 
 /-!

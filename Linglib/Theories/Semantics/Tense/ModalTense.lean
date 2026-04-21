@@ -1,4 +1,4 @@
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Time.Tense
 import Linglib.Theories.Semantics.Modality.TemporalConstraint
 
 /-!
@@ -40,7 +40,7 @@ RTs satisfy both the tense presupposition and the modal's domain.
 - **believe** takes DOX only → imposes upper limit
 - **pray** can take CIR → permits future orientation
 
-The `evalTimeIndex` mechanism (from `Core.Tense`) handles the separate
+The `evalTimeIndex` mechanism (from `Core.Time.Tense`) handles the separate
 question of how attitude verbs transmit their evaluation time to the
 embedded clause. That mechanism is orthogonal to Klecha's modal base
 constraint.
@@ -49,13 +49,13 @@ constraint.
 
 namespace Semantics.Tense.ModalTense
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Semantics.Modality.TemporalConstraint (attitudeTemporalConstraint
   doxConstrainsRT cirConstrainsRT
   dox_compatible_with_past dox_incompatible_with_future cir_compatible_with_future)
 open Core.Modality (ModalBaseKind)
-open Core.Tense (GramTense)
+open Core.Time.Tense (GramTense)
 
 
 -- ════════════════════════════════════════════════════════════════

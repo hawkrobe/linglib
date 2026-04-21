@@ -36,7 +36,7 @@ namespace Fragments.Italian.Tense
 open Semantics.Tense.Evidential
 open Semantics.Tense.Decomposition
 open Semantics.Tense
-open Core.Tense
+open Core.Time.Tense
 open Core.Morphology.Tense
 
 -- ════════════════════════════════════════════════════════════════

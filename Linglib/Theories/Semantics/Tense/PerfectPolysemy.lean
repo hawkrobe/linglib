@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Events.TemporalDecomposition
 import Linglib.Theories.Semantics.Tense.Aspect.Core
-import Linglib.Core.Temporal.Time
-import Linglib.Core.Temporal.Reichenbach
+import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Time.Reichenbach
 import Linglib.Theories.Semantics.Tense.Compositional
 
 /-!
@@ -38,7 +38,7 @@ This module integrates:
 namespace Semantics.Tense.PerfectPolysemy
 
 open Core.Time
-open Core.Reichenbach
+open Core.Time.Reichenbach
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open Semantics.Tense.Aspect.Core

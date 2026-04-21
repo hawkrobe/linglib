@@ -11,6 +11,8 @@ import Linglib.Theories.Semantics.Causation.Necessity
 
 namespace Semantics.Causation.CoerciveImplication
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
 

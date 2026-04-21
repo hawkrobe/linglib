@@ -33,6 +33,8 @@ def myLex : Lexicon FyModel :=
 
 namespace Semantics.Quantification.CovertQuantifier
 
+open Core (Situation)
+
 variable {D : Type}
 
 /-- A covert quantifier: `∀d ∈ domain. restriction(d) → scope(d)`.
@@ -191,8 +193,8 @@ def hab (F : Frame) (h : (F.Entity → Prop) → (F.Entity → Prop))
 
     `exhOp` maps a proposition to its exhaustified version — typically
     asserting the prejacent and negating innocently excludable alternatives.
-    The canonical computational implementation is `exhB` from
-    `Exhaustification.InnocentExclusion` (the Set-spec is `exhIE` in
+    The canonical computational implementation is `exhIE` from
+    `Exhaustification.Innocent` (the Set-spec is `exhIE` in
     `Exhaustification.Operators`). Specific instances are plugged in at
     lexicon construction time with alternatives and world domain baked
     into the closure.

@@ -34,6 +34,8 @@ variable (degree ≥ threshold). This means:
 
 namespace Semantics.Causation.Degree
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 open Semantics.Attitudes.Intensional (World allWorlds)

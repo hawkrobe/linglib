@@ -17,6 +17,8 @@ is vacuous in positive-only dynamics) and `preventSem_possible_inhibitory`
 
 namespace Semantics.Causation.Prevention
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

@@ -1,7 +1,8 @@
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Semantics.Presupposition
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Wang & Davidson (2026): Presupposition Filtering in Disjunction
@@ -69,7 +70,7 @@ namespace WangDavidson2026
 
 open Core.Duality (Truth3 Prop3)
 open Core.Presupposition (PrProp)
-open Exhaustification.InnocentExclusion
+open Exhaustification (innocent predToFinset altsFromPreds)
 open Exhaustification.Trivalent
 
 
@@ -84,7 +85,7 @@ The fundamental asymmetry: inclusive disjunction can "see past" an
 undefined disjunct when the other is true. Exclusive cannot.
 
 This single fact drives the Type A prediction for bivalent EXH + SK:
-since `InnocentExclusion.disj_exh_eq_exor` shows Exh strengthens ∨ to ⊻,
+since `bivalent_exh_yields_xor` shows Exh strengthens ∨ to ⊻,
 and `Truth3.xor_indet_iff` shows ⊻ propagates undefinedness
 unconditionally, exhaustification eliminates filtering.
 -/
@@ -207,7 +208,7 @@ theorem exh2_always_typeA (proj : ProjectionTheory) :
 ### Bivalent EXH strengthens inclusive to exclusive
 
 The bridge from bivalent EXH to the SK prediction:
-1. `InnocentExclusion.disj_exh_eq_exor`: Exh(Alt)(p∨q) = p ⊕ q
+1. `bivalent_exh_yields_xor`: Exh(Alt)(p∨q) = p ⊕ q
 2. The exclusive truth conditions, when lifted to Truth3 via SK,
    yield `Truth3.xor` — which propagates `#` unconditionally
 3. Therefore: bivalent EXH + SK → no filtering (Type A prediction)
@@ -218,12 +219,27 @@ projection computation. Without it, projection would see only the
 original inclusive conditions and filtering would be unaffected.
 -/
 
-/-- Fox 2007 already proves that bivalent EXH strengthens
-    inclusive to exclusive disjunction (reexported for context). -/
+/-- Four propositional worlds with two atomic propositions. -/
+inductive PQWorld where
+  | pOnly | qOnly | both | neither
+  deriving Repr, DecidableEq, Fintype
+
+def pProp : PQWorld → Bool | .pOnly | .both => true | _ => false
+def qProp : PQWorld → Bool | .qOnly | .both => true | _ => false
+def pOrQ  : PQWorld → Bool | .neither => false | _ => true
+def pAndQ : PQWorld → Bool | .both => true | _ => false
+
+/-- Sauerland alternatives for `p ∨ q`: `{p∨q, p, q, p∧q}`. -/
+private abbrev disjAltsF : Finset (Finset PQWorld) :=
+  altsFromPreds [pOrQ, pProp, qProp, pAndQ]
+
+private abbrev pOrQF : Finset PQWorld := predToFinset pOrQ
+
+/-- Bivalent EXH on inclusive disjunction yields exclusive disjunction:
+    `exh(p ∨ q)` is the set of worlds where exactly one of `p`, `q` holds. -/
 theorem bivalent_exh_yields_xor :
-    ∀ w : PQWorld, exhB pqDomain disjAlts pOrQ w =
-      (pOrQ w && !pAndQ w) :=
-  disj_exh_eq_exor
+    innocent.exh disjAltsF pOrQF
+      = predToFinset (fun w => pOrQ w && !pAndQ w) := by decide
 
 /-- The classical exclusive disjunction (Bool XOR) agrees with
     Strong Kleene XOR on defined inputs. -/
@@ -254,12 +270,12 @@ This drives the Type A/B split. The mechanism:
 
 /-- Re-export: EXH¹ preserves filtering (Type B). -/
 theorem exh1_preserves_filtering :
-    exh1 bDomain bathAlts inclDisj .pOnly = .true :=
+    exh1 bathAlts inclDisj .pOnly = .true :=
   exh1_disjunction_pOnly
 
 /-- Re-export: EXH² destroys filtering (Type A). -/
 theorem exh2_destroys_filtering :
-    exh2 bDomain bathAlts inclDisj .pOnly = .indet :=
+    exh2 bathAlts inclDisj .pOnly = .indet :=
   exh2_disjunction_pOnly
 
 
@@ -354,18 +370,19 @@ theorem null_result_challenges_typeA :
     truth conditions → SK propagates undefinedness → Type A predicted →
     experiment finds no effect → challenges bivalent EXH + SK.
 
-    This links `InnocentExclusion.disj_exh_eq_exor`, `Truth3.xor_indet_iff`,
+    This links `bivalent_exh_yields_xor`, `Truth3.xor_indet_iff`,
     the Type A classification, and the null experimental result. -/
 theorem end_to_end_bivalent_sk_challenged :
     -- (1) Bivalent EXH yields exclusive disjunction
-    (∀ w : PQWorld, exhB pqDomain disjAlts pOrQ w = (pOrQ w && !pAndQ w)) ∧
+    (innocent.exh disjAltsF pOrQF
+      = predToFinset (fun w => pOrQ w && !pAndQ w)) ∧
     -- (2) SK XOR propagates undefinedness
     (Truth3.xor .true .indet = .indet) ∧
     -- (3) This combination is classified Type A
     (classify .bivalent .strongKleene = .typeA) ∧
     -- (4) The experiment finds no effect (challenging Type A)
     (mainResult.significant = false) :=
-  ⟨disj_exh_eq_exor, rfl, rfl, rfl⟩
+  ⟨bivalent_exh_yields_xor, rfl, rfl, rfl⟩
 
 
 end WangDavidson2026

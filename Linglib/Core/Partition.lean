@@ -1,5 +1,5 @@
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Agent.DecisionTheory
@@ -99,22 +99,22 @@ theorem all_refine_trivial (q : QUD M) :
 /-- The meet (coarsest common refinement) refines the left factor. -/
 theorem compose_refines_left (q1 q2 : QUD M) : (q1 * q2) ⊑ q1 := by
   intro w v h
-  simp only [HMul.hMul, Mul.mul, QUD.compose] at h
-  cases h1 : q1.sameAnswer w v <;> cases h2 : q2.sameAnswer w v <;> simp_all
+  rw [mul_sameAnswer, Bool.and_eq_true] at h
+  exact h.1
 
 /-- The meet (coarsest common refinement) refines the right factor. -/
 theorem compose_refines_right (q1 q2 : QUD M) : (q1 * q2) ⊑ q2 := by
   intro w v h
-  simp only [HMul.hMul, Mul.mul, QUD.compose] at h
-  cases h1 : q1.sameAnswer w v <;> cases h2 : q2.sameAnswer w v <;> simp_all
+  rw [mul_sameAnswer, Bool.and_eq_true] at h
+  exact h.2
 
 /-- The exact (finest) partition refines all partitions. -/
 theorem exact_refines_all [BEq M] [LawfulBEq M] (q : QUD M) :
     exact ⊑ q := by
   intro w v h
-  simp only [exact] at h
-  have heq : w = v := by rw [beq_iff_eq] at h; exact h
-  rw [heq]; exact q.refl v
+  rw [exact_sameAnswer_iff] at h
+  rw [h]
+  exact q.refl v
 
 /-! ### Finite Partition Cells -/
 

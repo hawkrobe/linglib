@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Limits
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 import Linglib.Theories.Semantics.Alternatives.Lexical
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
 
@@ -48,7 +48,7 @@ blindness in the high-rationality limit — probabilistic mechanisms
 namespace Phenomena.ScalarImplicatures.ExhaustivityLimit
 
 open Core Real BigOperators Finset Filter Topology
-open Exhaustification.InnocentExclusion (exhB ieIndices)
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 -- ============================================================================
 -- § 1. Scale Types
@@ -140,28 +140,27 @@ theorem l1_weak_weakOnly_tendsto_one :
 -- § 5. Connection to Fox 2007's exh
 -- ============================================================================
 
-def scaleDomain : List ScaleW := [.weakOnly, .both]
 def weakMeaning : ScaleW → Bool := meaning .weak
 def strongMeaning : ScaleW → Bool := meaning .strong
-def scaleAlts : List (ScaleW → Bool) := [weakMeaning, strongMeaning]
 
-/-- Fox's innocent exclusion: "strong" is the only excludable alternative. -/
-theorem scale_ie :
-    ieIndices scaleDomain weakMeaning scaleAlts = [1] := by native_decide
+/-- Alternative set as a `Finset (Finset ScaleW)`: the prejacent and
+    the strong scalemate, each represented by its world support. -/
+def scaleAlts : Finset (Finset ScaleW) :=
+  altsFromPreds [weakMeaning, strongMeaning]
 
-/-- exh(weak) = weak ∧ ¬strong. -/
-theorem exh_weak :
-    ∀ w : ScaleW, exhB scaleDomain scaleAlts weakMeaning w =
-      (weakMeaning w && !strongMeaning w) := by
-  intro w; cases w <;> native_decide
+/-- The exhaustified prejacent as a `Finset ScaleW`. -/
+def scaleExh : Finset ScaleW := innocent.exh scaleAlts (predToFinset weakMeaning)
 
-/-- The world where L1 concentrates is exactly where exh(weak) = true. -/
-theorem exh_true_at_weakOnly :
-    exhB scaleDomain scaleAlts weakMeaning .weakOnly = true := by native_decide
+/-- Fox's innocent exclusion concentrates the meaning on `weakOnly`:
+    `exh(some) = some ∧ ¬all`, true exactly at the world where the
+    strong alternative fails. -/
+theorem scale_exhIE_eq : scaleExh = {ScaleW.weakOnly} := by decide
 
-/-- exh(weak) is false at the "both" world — L1 assigns probability 0 there. -/
-theorem exh_false_at_both :
-    exhB scaleDomain scaleAlts weakMeaning .both = false := by native_decide
+/-- The world where L1 concentrates is exactly where `exhIE` returns true. -/
+theorem exh_true_at_weakOnly : ScaleW.weakOnly ∈ scaleExh := by decide
+
+/-- `exhIE` excludes the "both" world — L1 assigns probability 0 there. -/
+theorem exh_false_at_both : ScaleW.both ∉ scaleExh := by decide
 
 -- ============================================================================
 -- § 6. Bridge to AlternativeSource
@@ -171,15 +170,16 @@ theorem exh_false_at_both :
 instance : Alternatives.AlternativeSource ScaleU where
   alternatives _ := [.weak, .strong]
 
-/-- Exhaustifying via AlternativeSource agrees with the hand-crafted exhB call.
+/-- Exhaustifying via `AlternativeSource` agrees with the hand-crafted
+    alternative set.
 
     This validates the full pipeline: AlternativeSource instance →
-    meanings (via interp = meaning) → exhB → exhaustified meaning. -/
+    meanings (via interp = meaning) → exhIE → exhaustified meaning. -/
 theorem exh_via_alternativeSource :
-    ∀ w : ScaleW, exhB scaleDomain
-      ((Alternatives.AlternativeSource.alternatives ScaleU.weak).map meaning)
-      (meaning ScaleU.weak) w =
-      exhB scaleDomain scaleAlts weakMeaning w := by
-  intro w; cases w <;> native_decide
+    innocent.exh
+      (altsFromPreds
+        ((Alternatives.AlternativeSource.alternatives ScaleU.weak).map meaning))
+      (predToFinset (meaning ScaleU.weak))
+    = scaleExh := by decide
 
 end Phenomena.ScalarImplicatures.ExhaustivityLimit

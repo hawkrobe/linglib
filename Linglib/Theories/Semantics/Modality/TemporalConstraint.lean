@@ -1,5 +1,5 @@
 import Linglib.Core.Modality.ModalBaseKind
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Time.Tense
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Core.Modality.ModalTypes
 

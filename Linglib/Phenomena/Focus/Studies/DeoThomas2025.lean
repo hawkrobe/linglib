@@ -14,10 +14,10 @@ alternatives, explaining why it substitutes in only 2 of the 9 flavors.
 
 -/
 
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.Issue.Basic
-import Linglib.Core.Issue.Granularity
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
+import Linglib.Core.Question.Basic
+import Linglib.Core.Question.Granularity
 import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Phenomena.Focus.Exclusives
 import Linglib.Theories.Semantics.Questions.Denotation.Inquisitive
@@ -26,7 +26,7 @@ import Linglib.Theories.Semantics.Degree.Granularity
 namespace DeoThomas2025
 
 open Phenomena.Focus.Exclusives
-open Core (Issue)
+open Core (Question)
 
 -- ============================================================================
 -- A. Alternative Source
@@ -62,7 +62,7 @@ def associatedSource : JustFlavor → AlternativeSource
 /-- A discourse context provides construals of an underspecified question (UQ)
     together with Quality and Relevance filters.
 
-    Construals are `Issue`s (sets of alternative propositions), matching the
+    Construals are `Question`s (sets of alternative propositions), matching the
     paper's definition (30)-(31): questions are sets of propositions that cover
     the common ground. This is more faithful than using partitions (`QUD`),
     since the paper explicitly notes that granularity-based construals generally
@@ -71,18 +71,18 @@ def associatedSource : JustFlavor → AlternativeSource
     `W` is the world type. -/
 structure DiscourseContext (W : Type*) where
   /-- The available construals of UQ_c -/
-  construals : List (Issue W)
+  construals : List (Question W)
   /-- Does the speaker have sufficient evidence to answer this question? -/
-  quality : Issue W → Bool
+  quality : Question W → Bool
   /-- Is this question relevant to the current discourse? -/
-  relevance : Issue W → Bool
+  relevance : Question W → Bool
   /-- There must be at least one construal -/
   nonempty : construals ≠ []
 
 variable {W : Type*}
 
 /-- A question is answerable iff it passes both Quality and Relevance (34). -/
-def answerable (ctx : DiscourseContext W) (q : Issue W) : Bool :=
+def answerable (ctx : DiscourseContext W) (q : Question W) : Bool :=
   ctx.quality q && ctx.relevance q
 
 -- ============================================================================
@@ -95,11 +95,11 @@ def answerable (ctx : DiscourseContext W) (q : Issue W) : Bool :=
     `q` is the widest answerable construal: it is answerable, it is in the
     construal set, and no strictly wider answerable construal exists.
 
-    Width is measured by `Core.Issue.widerThan` ((32)), the paper's comparison
+    Width is measured by `Core.Question.widerThan` ((32)), the paper's comparison
     of question inquisitivity — explicitly weaker than G&S question entailment
     (fn. 20), because granularity-based construals generally cannot be ordered
     by entailment strength. -/
-def isWidestAnswerable (ctx : DiscourseContext W) (q : Issue W) : Prop :=
+def isWidestAnswerable (ctx : DiscourseContext W) (q : Question W) : Prop :=
   q ∈ ctx.construals ∧
   answerable ctx q = true ∧
   ∀ q' ∈ ctx.construals, answerable ctx q' = true → ¬ q'.widerThan q
@@ -234,13 +234,13 @@ theorem wxdy_incongruity_is_counterexpectational :
 The paper's central formal insight: finer granularity produces wider questions.
 At the partition level, "finer" is `QUD.refines` (every fine cell ⊆ some coarse
 cell), equivalently `q.toSetoid ≤ q'.toSetoid` in mathlib's `Setoid` lattice.
-At the issue level, "wider" is `Core.Issue.widerThan` (@cite{deo-thomas-2025}
+At the issue level, "wider" is `Core.Question.widerThan` (@cite{deo-thomas-2025}
 (32): same `info`, no coarse answer ⊊ fine answer, some fine answer ⊊ coarse
-answer). The bridge: `toIssue := Core.Issue.fromSetoid ∘ QUD.toSetoid`
+answer). The bridge: `toIssue := Core.Question.fromSetoid ∘ QUD.toSetoid`
 preserves this relationship.
 
 The proof is an order-theoretic one-liner over `Setoid`: every alternative
-of `Core.Issue.fromSetoid r` is either `∅` or an equivalence class of `r`
+of `Core.Question.fromSetoid r` is either `∅` or an equivalence class of `r`
 (`alt_fromSetoid_subset_classes`), and the q-class of `w₀` is contained in
 the q'-class of `w₀` by refinement, with `v₀` witnessing strict containment.
 This replaces a 100-line Bool/List proof that managed indices into
@@ -251,13 +251,13 @@ open Semantics.Questions.Inquisitive (toIssue)
 /-- Strict partition refinement implies issue width.
 
     If `q` (strictly) refines `q'` (`q` is the finer partition), then
-    `toIssue q` is wider than `toIssue q'` as `Core.Issue`s.
+    `toIssue q` is wider than `toIssue q'` as `Core.Question`s.
 
     The strictness witnesses `w₀, v₀ : W` share a coarse cell
     (`q'.sameAnswer w₀ v₀ = true`) but not a fine cell
     (`q.sameAnswer w₀ v₀ = false`); they witness condition (c).
 
-    The proof establishes the three conditions of `Core.Issue.widerThan`:
+    The proof establishes the three conditions of `Core.Question.widerThan`:
     - (a) Same `info`: both `fromSetoid`-derived issues have `info = univ`.
     - (b) No q'-alternative is properly contained in any q-alternative:
       alternatives are classes (or `∅`); under refinement, classes only
@@ -275,31 +275,31 @@ theorem refinement_implies_wider {W : Type*}
     (toIssue q).widerThan (toIssue q') := by
   -- Refinement reads as `q.toSetoid ≤ q'.toSetoid` in mathlib's lattice
   have hle : ∀ {x y : W}, q.toSetoid x y → q'.toSetoid x y :=
-    fun {x y} hxy => hRefines x y hxy
+    fun {x y} hxy => QUD.r_of_sameAnswer (hRefines x y (QUD.sameAnswer_of_r hxy))
   -- The q-class and q'-class of w₀
   let C₁ : Set W := {x | q.toSetoid x w₀}
   let C₂ : Set W := {x | q'.toSetoid x w₀}
   have hC₁_class : C₁ ∈ q.toSetoid.classes := Setoid.mem_classes q.toSetoid w₀
   have hC₂_class : C₂ ∈ q'.toSetoid.classes := Setoid.mem_classes q'.toSetoid w₀
-  have hC₁_alt : C₁ ∈ Core.Issue.alt (Core.Issue.fromSetoid q.toSetoid) :=
-    Core.Issue.class_mem_alt_fromSetoid _ hC₁_class
-  have hC₂_alt : C₂ ∈ Core.Issue.alt (Core.Issue.fromSetoid q'.toSetoid) :=
-    Core.Issue.class_mem_alt_fromSetoid _ hC₂_class
+  have hC₁_alt : C₁ ∈ Core.Question.alt (Core.Question.fromSetoid q.toSetoid) :=
+    Core.Question.class_mem_alt_fromSetoid _ hC₁_class
+  have hC₂_alt : C₂ ∈ Core.Question.alt (Core.Question.fromSetoid q'.toSetoid) :=
+    Core.Question.class_mem_alt_fromSetoid _ hC₂_class
   refine ⟨?_, ?_, ?_⟩
   -- (a) Same info: both reduce to Set.univ
-  · simp only [toIssue, Core.Issue.info_fromSetoid]
+  · simp only [toIssue, Core.Question.info_fromSetoid]
   -- (b) No q'-alternative properly contained in any q-alternative
   · intro p₂ hp₂ p₁ hp₁ hssub
-    rcases Core.Issue.alt_fromSetoid_subset_classes _ hp₂ with hp₂_empty | hp₂_class
+    rcases Core.Question.alt_fromSetoid_subset_classes _ hp₂ with hp₂_empty | hp₂_class
     · -- p₂ = ∅ but the q'-class of w₀ contains w₀, so ∅ ∉ alt — contradiction
-      have hC₂_props : C₂ ∈ (Core.Issue.fromSetoid q'.toSetoid).props :=
+      have hC₂_props : C₂ ∈ (Core.Question.fromSetoid q'.toSetoid).props :=
         Or.inr ⟨C₂, hC₂_class, subset_rfl⟩
       have hp_sub : p₂ ⊆ C₂ := by rw [hp₂_empty]; exact Set.empty_subset _
       have heq : p₂ = C₂ := hp₂.2 C₂ hC₂_props hp_sub
       have hw₀_in : w₀ ∈ p₂ := by rw [heq]; exact Setoid.refl' q'.toSetoid w₀
       rw [hp₂_empty] at hw₀_in
       exact hw₀_in.elim
-    · rcases Core.Issue.alt_fromSetoid_subset_classes _ hp₁ with hp₁_empty | hp₁_class
+    · rcases Core.Question.alt_fromSetoid_subset_classes _ hp₁ with hp₁_empty | hp₁_class
       · -- p₁ = ∅, so p₂ ⊊ ∅: p₂ ⊆ ∅ AND ¬ ∅ ⊆ p₂. The latter is vacuously false.
         rw [hp₁_empty] at hssub
         exact hssub.2 (Set.empty_subset _)
@@ -327,9 +327,9 @@ theorem refinement_implies_wider {W : Type*}
       -- v₀ ∈ C₂ (from hCoarse + symm) but v₀ ∉ C₁ (from hFine)
       have hv₀_C₂ : v₀ ∈ C₂ := by
         change q'.toSetoid v₀ w₀
-        exact Setoid.symm' q'.toSetoid hCoarse
+        exact Setoid.symm' q'.toSetoid (QUD.r_of_sameAnswer hCoarse)
       have hv₀_C₁ : v₀ ∈ C₁ := hCsub hv₀_C₂
-      have hv₀_q : q.sameAnswer v₀ w₀ = true := hv₀_C₁
+      have hv₀_q : q.sameAnswer v₀ w₀ = true := QUD.sameAnswer_of_r hv₀_C₁
       rw [q.symm v₀ w₀] at hv₀_q
       rw [hv₀_q] at hFine
       exact absurd hFine (by decide)

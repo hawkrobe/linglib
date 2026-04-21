@@ -578,7 +578,7 @@ private theorem L1_score_at_ironic (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp 
 
     Proof: L1_score at each matching world equals wp (the S1 values are
     deterministic — either 0 or 1 — so the prior passes through unchanged).
-    Then the biconditional follows from `policy_gt_of_score_gt` and its
+    Then the biconditional follows from `policy_lt_of_score_lt` and its
     contrapositive. -/
 theorem irony_iff_prior_favors_antonym (wp : Weather → ℝ) (hw : ∀ s, 0 ≤ wp s)
     (u : Utterance) (hne : u.toWeather ≠ opposite u.toWeather) :
@@ -593,9 +593,9 @@ theorem irony_iff_prior_favors_antonym (wp : Weather → ℝ) (hw : ∀ s, 0 ≤
     have hscore : (cfg wp hw).L1agent.score u u.toWeather ≥
                   (cfg wp hw).L1agent.score u (opposite u.toWeather) := by
       rw [hs_lit, hs_iron]; exact hle
-    exact absurd h (Core.RationalAction.policy_not_gt_of_score_le _ _ _ _ hscore)
+    exact absurd h (Core.RationalAction.policy_not_lt_of_score_le _ _ _ _ hscore)
   · intro h
-    apply Core.RationalAction.policy_gt_of_score_gt
+    apply Core.RationalAction.policy_lt_of_score_lt
     rw [hs_iron, hs_lit]; exact h
 
 end Structural

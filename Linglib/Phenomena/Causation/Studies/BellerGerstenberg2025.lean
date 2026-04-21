@@ -69,6 +69,8 @@ set_option autoImplicit false
 
 namespace BellerGerstenberg2025
 
+open Core (Situation)
+
 
 -- ============================================================================
 -- Section 1: Causal Expressions

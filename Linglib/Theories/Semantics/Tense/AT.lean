@@ -121,7 +121,7 @@ theorem prfv_iff_atEvent (P : EventPred W Time) (w : W)
 theorem impf_implies_atState (P : EventPred W Time) (w : W)
     (t : Interval Time) (h : IMPF P w t) : atState P w t :=
   let ⟨e, hSub, hP⟩ := h
-  ⟨e, hP, Interval.subinterval_overlaps (Interval.properSub_implies_sub _ _ hSub)
+  ⟨e, hP, Interval.subinterval_overlaps (Interval.properSubinterval_implies_subinterval _ _ hSub)
     |> Interval.overlaps_symm⟩
 
 /-! ## Monotonicity -/

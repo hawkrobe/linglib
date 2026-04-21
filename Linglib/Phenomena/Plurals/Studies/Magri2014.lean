@@ -1,7 +1,8 @@
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Core.Polarity
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.Multiplicity
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 
 /-!
 # Magri (2014): Homogeneity Effects via Double Strengthening
@@ -673,13 +674,11 @@ are *included in the list*. THE and SOME get different alternative lists:
 
 section FoxBridge
 
-open Exhaustification.InnocentExclusion (exhB)
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 /-- Three worlds for a two-member plurality: none, one, or all satisfy. -/
 inductive Sat where | none | one | all
-  deriving Repr, DecidableEq
-
-private def satDomain : List Sat := [.none, .one, .all]
+  deriving Repr, DecidableEq, Fintype
 
 /-- SOME meaning: at least one satisfies. -/
 private def bSome : Sat → Bool | .one | .all => true | _ => false
@@ -695,24 +694,26 @@ private def someAlts : List (Sat → Bool) := [bSome, bAll]
 /-- Inner EXH(THE) = SOME: THE has no excludable alternatives because
     its only Horn-mate (SOME) is equivalent, not strictly stronger. -/
 theorem fox_inner_exh_the :
-    ∀ w : Sat, exhB satDomain theAlts bSome w = bSome w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds theAlts) (predToFinset bSome)
+      = predToFinset bSome := by decide
 
 /-- Inner EXH(SOME) = SOME ∧ ¬ALL: the standard "only some" SI. -/
 theorem fox_inner_exh_some :
-    ∀ w : Sat, exhB satDomain someAlts bSome w = (bSome w && !bAll w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds someAlts) (predToFinset bSome)
+      = predToFinset (fun w => bSome w && !bAll w) := by decide
 
 /-- Inner results as named functions for the outer level. -/
-private def innerThe : Sat → Bool := exhB satDomain theAlts bSome
-private def innerSome : Sat → Bool := exhB satDomain someAlts bSome
+private def innerThe : Sat → Bool :=
+  fun w => decide (w ∈ innocent.exh (altsFromPreds theAlts) (predToFinset bSome))
+private def innerSome : Sat → Bool :=
+  fun w => decide (w ∈ innocent.exh (altsFromPreds someAlts) (predToFinset bSome))
 
 /-- Outer-level alternative list for THE: [EXH(THE), EXH(SOME)].
     EXH(SOME) = SOME ∧ ¬ALL is strictly stronger than EXH(THE) = SOME,
     and SOME is a Horn-mate of THE, so it becomes excludable. -/
 private def outerAltsForThe : List (Sat → Bool) := [innerThe, innerSome]
 
-/-- **Bridge theorem**: Fox's `exhB` applied twice with the correct
+/-- **Bridge theorem**: Fox's exhaustification applied twice with the correct
     Horn-mate-restricted alternative sets yields the universal reading,
     matching `double_strengthening_yields_universal`.
 
@@ -720,8 +721,8 @@ private def outerAltsForThe : List (Sat → Bool) := [innerThe, innerSome]
                    = SOME ∧ ¬(SOME ∧ ¬ALL)
                    = ALL -/
 theorem fox_double_exh_yields_all :
-    ∀ w : Sat, exhB satDomain outerAltsForThe innerThe w = bAll w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds outerAltsForThe) (predToFinset innerThe)
+      = predToFinset bAll := by decide
 
 end FoxBridge
 
@@ -827,14 +828,12 @@ behaves as disjunction: |||not·AND_unF||| = not·OR.
 
 section EnrichedConjunction
 
-open Exhaustification.InnocentExclusion (exhB)
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 /-- Four worlds for two atomic propositions (saw Adam, saw Bill). -/
 inductive ConjW where
   | neither | onlyA | onlyB | both
-  deriving Repr, DecidableEq
-
-def conjDomain : List ConjW := [.neither, .onlyA, .onlyB, .both]
+  deriving Repr, DecidableEq, Fintype
 
 def cLeft : ConjW → Bool | .onlyA | .both => true | _ => false
 def cRight : ConjW → Bool | .onlyB | .both => true | _ => false
@@ -863,25 +862,23 @@ private def rightAlts : List (ConjW → Bool) := [cAnd, cAnd, cOr, cLeft]
 
 /-- EXH(AND_unF) = AND (vacuous: all alts are entailed by AND). -/
 theorem exh_andUnF :
-    ∀ w : ConjW, exhB conjDomain andUnFAlts cAnd w = cAnd w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds andUnFAlts) (predToFinset cAnd)
+      = predToFinset cAnd := by decide
 
 /-- EXH(AND_F) = AND (same: AND entails everything in its alt list). -/
 theorem exh_andF :
-    ∀ w : ConjW, exhB conjDomain andFAlts cAnd w = cAnd w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds andFAlts) (predToFinset cAnd)
+      = predToFinset cAnd := by decide
 
 /-- EXH(LEFT) = LEFT ∧ ¬RIGHT (RIGHT is the only IE alternative). -/
 theorem exh_left :
-    ∀ w : ConjW, exhB conjDomain leftAlts cLeft w =
-      (cLeft w && !cRight w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds leftAlts) (predToFinset cLeft)
+      = predToFinset (fun w => cLeft w && !cRight w) := by decide
 
 /-- EXH(RIGHT) = RIGHT ∧ ¬LEFT (symmetric). -/
 theorem exh_right :
-    ∀ w : ConjW, exhB conjDomain rightAlts cRight w =
-      (cRight w && !cLeft w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds rightAlts) (predToFinset cRight)
+      = predToFinset (fun w => cRight w && !cLeft w) := by decide
 
 -- DE computation: negated meanings with per-prejacent alternative lists
 
@@ -903,40 +900,37 @@ private def nRightAlts : List (ConjW → Bool) := [nAnd, nAnd, nOr, nLeft]
     Neither not·LEFT nor not·RIGHT is IE: excluding one forces including
     the other, since ¬AND ∧ LEFT ∧ RIGHT is inconsistent. -/
 theorem de_exh_notAndUnF :
-    ∀ w : ConjW, exhB conjDomain nAndUnFAlts nAnd w = nAnd w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds nAndUnFAlts) (predToFinset nAnd)
+      = predToFinset nAnd := by decide
 
 /-- (71a) EXH(not·AND_F) = not·AND ∧ ¬not·OR = not·AND ∧ OR.
     not·OR is IE (the only alternative not entailed by not·AND_F
     that can be consistently excluded). -/
 theorem de_exh_notAndF :
-    ∀ w : ConjW, exhB conjDomain nAndFAlts nAnd w =
-      (nAnd w && cOr w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds nAndFAlts) (predToFinset nAnd)
+      = predToFinset (fun w => nAnd w && cOr w) := by decide
 
 /-- (71c) EXH(not·LEFT) = not·LEFT ∧ OR ∧ RIGHT. -/
 theorem de_exh_notLeft :
-    ∀ w : ConjW, exhB conjDomain nLeftAlts nLeft w =
-      (nLeft w && cOr w && cRight w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds nLeftAlts) (predToFinset nLeft)
+      = predToFinset (fun w => nLeft w && cOr w && cRight w) := by decide
 
 /-- (71d) EXH(not·RIGHT) = not·RIGHT ∧ OR ∧ LEFT. -/
 theorem de_exh_notRight :
-    ∀ w : ConjW, exhB conjDomain nRightAlts nRight w =
-      (nRight w && cOr w && cLeft w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds nRightAlts) (predToFinset nRight)
+      = predToFinset (fun w => nRight w && cOr w && cLeft w) := by decide
 
 /-- Outer-level alternatives for not·AND_unF: the exhaustified forms
     of its Horn-mates {not·AND_F, not·LEFT, not·RIGHT}. -/
 def outerNAndUnFAlts : List (ConjW → Bool) :=
-  [ exhB conjDomain nAndUnFAlts nAnd    -- EXH(not·AND_unF) (self)
-  , exhB conjDomain nAndFAlts nAnd      -- EXH(not·AND_F)
-  , exhB conjDomain nLeftAlts nLeft     -- EXH(not·LEFT)
-  , exhB conjDomain nRightAlts nRight ] -- EXH(not·RIGHT)
+  [ fun w => decide (w ∈ innocent.exh (altsFromPreds nAndUnFAlts) (predToFinset nAnd))
+  , fun w => decide (w ∈ innocent.exh (altsFromPreds nAndFAlts) (predToFinset nAnd))
+  , fun w => decide (w ∈ innocent.exh (altsFromPreds nLeftAlts) (predToFinset nLeft))
+  , fun w => decide (w ∈ innocent.exh (altsFromPreds nRightAlts) (predToFinset nRight)) ]
 
 /-- The inner EXH result for not·AND_unF (= not·AND, vacuous). -/
 def innerNAndUnF : ConjW → Bool :=
-  exhB conjDomain nAndUnFAlts nAnd
+  fun w => decide (w ∈ innocent.exh (altsFromPreds nAndUnFAlts) (predToFinset nAnd))
 
 /-- **Computation (72)**: Double exhaustification of not·AND_unF yields not·OR.
 
@@ -950,9 +944,8 @@ def innerNAndUnF : ConjW → Bool :=
 
     Unfocused conjunction in DE environments behaves as disjunction. -/
 theorem de_double_exh_conjunction :
-    ∀ w : ConjW,
-      exhB conjDomain outerNAndUnFAlts innerNAndUnF w = nOr w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds outerNAndUnFAlts) (predToFinset innerNAndUnF)
+      = predToFinset nOr := by decide
 
 end EnrichedConjunction
 
@@ -1114,14 +1107,14 @@ private def conjGapWorlds : List ConjW := [.onlyA]
 /-- In the gap, positive conjunction (AND) is false. -/
 theorem conj_gap_positive_false :
     conjGapWorlds.all (λ w => cAnd w = false) = true := by
-  native_decide
+  decide
 
 /-- In the gap, negative conjunction with enriched dual theory
     gives not·OR (= "saw neither"). This is FALSE in the gap
     (she DID see one of them), producing the homogeneity gap. -/
 theorem conj_gap_dual_negative_false :
     conjGapWorlds.all (λ w => nOr w = false) = true := by
-  native_decide
+  decide
 
 /-- This matches the empirical data: conjunction gap is
     neither-true-nor-false for both polarities. -/
@@ -1133,8 +1126,10 @@ theorem conj_gap_matches_empirical_data :
     truth values that correspond to the homogeneity gap pattern. -/
 theorem enriched_conjunction_end_to_end :
     -- (1) Double EXH of not·AND_unF yields not·OR (Section 11)
-    (∀ w, Exhaustification.InnocentExclusion.exhB
-      conjDomain outerNAndUnFAlts innerNAndUnF w = nOr w) ∧
+    (Exhaustification.innocent.exh
+        (Exhaustification.altsFromPreds outerNAndUnFAlts)
+        (Exhaustification.predToFinset innerNAndUnF)
+      = Exhaustification.predToFinset nOr) ∧
     -- (2) In gap world, AND (positive) is false
     cAnd .onlyA = false ∧
     -- (3) In gap world, not·OR (dual negative) is false

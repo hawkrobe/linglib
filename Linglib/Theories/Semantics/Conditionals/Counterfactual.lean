@@ -42,6 +42,8 @@ import Linglib.Core.Logic.NonBivalence
 
 namespace Semantics.Conditionals.Counterfactual
 
+open Core (Situation)
+
 open Semantics.Conditionals
 open Core.StructuralEquationModel
 open Core.Duality (Truth3 ProjectionType dist)

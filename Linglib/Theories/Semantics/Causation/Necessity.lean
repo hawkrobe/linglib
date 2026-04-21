@@ -52,6 +52,8 @@ These can come apart in overdetermination cases:
 
 namespace Semantics.Causation.Necessity
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 export Core.StructuralEquationModel (causallyNecessary)
 

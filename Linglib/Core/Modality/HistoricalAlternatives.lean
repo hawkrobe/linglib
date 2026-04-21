@@ -1,4 +1,4 @@
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Situation
 import Linglib.Theories.Semantics.Modality.TemporalConstraint
 
 /-!

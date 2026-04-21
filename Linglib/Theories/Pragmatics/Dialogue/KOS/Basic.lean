@@ -652,7 +652,16 @@ illocutionary content. This is crucial for CRification: clarification
 requests target the *form* of the utterance, not just its content.
 
 Parameterized over the content type `Cont` for grammar-neutrality.
-When `Cont = String`, this subsumes both `PendingLoc` and `UttSkeleton`. -/
+When `Cont = String`, this subsumes both `PendingLoc` and `UttSkeleton`.
+
+The two parameter fields reflect @cite{ginzburg-2012}'s sign architecture:
+`cparams` carries dgb-params (referential, requiring contextual anchoring);
+`qcparams` carries q-params (existentially closed at proposition level).
+The asymmetry: only `cparams` triggers CRification under
+`integrateLocProp`; q-params travel with the sign but do not block
+grounding. This is the structural prerequisite for the Reprise Content
+Hypothesis (@cite{purver-ginzburg-2004}, @cite{ginzburg-2012} §8.5.1):
+fragment reprises query the q-params record, not the dgb-params one. -/
 structure LocProp (Cont : Type) where
   /-- Phonological form of the utterance -/
   phon : String
@@ -660,9 +669,14 @@ structure LocProp (Cont : Type) where
   cat : String
   /-- Semantic content -/
   cont : Cont
-  /-- Contextual parameters: unresolved dependencies.
+  /-- DGB-PARAMS: referential parameters requiring contextual resolution.
       Empty = fully grounded; non-empty = CRification may be needed. -/
   cparams : CParamSet := []
+  /-- Q-PARAMS: parameters whose index is existentially closed at the
+      sentential level (@cite{ginzburg-2012} §8.5.1, ex. 101–103, p. 325–326).
+      Travel with the sign but do *not* trigger CRification — they
+      contribute the descriptive content of non-referential NPs. -/
+  qcparams : CParamSet := []
   /-- Sub-constituents accessible for clarification.
       @cite{ginzburg-2012} Ch. 6: any sub-utterance can be targeted by a CR. -/
   constits : List SubUtterance := []

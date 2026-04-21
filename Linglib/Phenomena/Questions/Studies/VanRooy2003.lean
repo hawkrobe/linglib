@@ -45,7 +45,7 @@ produces mention-some readings.
 namespace VanRooy2003
 
 open Core.DecisionTheory
-open Semantics.Questions hiding Question
+open Semantics.Questions
 open Semantics.Questions.MentionSome
 open Semantics.Questions.Relevance
 
@@ -120,7 +120,8 @@ def newspaperDP : DecisionProblem NewspaperWorld Shop where
 theorem newspaper_mentionSome :
     isMentionSome newspaperDP
       {NewspaperWorld.shopA_only, .shopB_only, .both} {Shop.A, .B}
-      [λ w => sellsItalian w .A, λ w => sellsItalian w .B] = true := by
+      [(Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w .A),
+       (Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w .B)] = true := by
   native_decide
 
 
@@ -284,8 +285,9 @@ predicate). The newspaper DP has utility 1 for going to a shop that sells
 Italian papers, so each shop-cell resolves it. -/
 theorem mentionSome_from_goal_dp :
     let worlds : Finset NewspaperWorld := {.shopA_only, .shopB_only, .both}
-    let q : Question NewspaperWorld :=
-      [λ w => sellsItalian w Shop.A, λ w => sellsItalian w Shop.B]
+    let q : List (Finset NewspaperWorld) :=
+      [(Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.A),
+       (Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.B)]
     isMentionSome newspaperDP worlds {Shop.A, .B} q = true := by
   native_decide
 
@@ -294,15 +296,18 @@ complete information (e.g., the complete information DP). -/
 theorem mentionAll_from_complete_dp :
     let dp := completeInformationDP (W := NewspaperWorld)
     let worlds : Finset NewspaperWorld := {.shopA_only, .shopB_only, .both}
-    let q : Question NewspaperWorld :=
-      [λ w => sellsItalian w Shop.A, λ w => sellsItalian w Shop.B]
+    let q : List (Finset NewspaperWorld) :=
+      [(Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.A),
+       (Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.B)]
     isMentionAll dp worlds {NewspaperWorld.shopA_only, .shopB_only, .both} q = true := by
   native_decide
 
 /-- The newspaper question utility is positive: asking is worthwhile. -/
 theorem newspaper_question_has_value :
     questionUtility newspaperDP {Shop.A, .B}
-      (questionToFinset [λ w => sellsItalian w Shop.A, λ w => sellsItalian w Shop.B]) > 0 := by
+      (questionToFinset
+        [(Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.A),
+         (Finset.univ : Finset NewspaperWorld).filter (fun w => sellsItalian w Shop.B)]) > 0 := by
   native_decide
 
 
@@ -357,12 +362,8 @@ need only mention one shop. -/
 two worlds are equivalent iff they have the same extension for
 "sells Italian newspapers." This gives three cells:
 {shopA_only}, {shopB_only}, {both}. -/
-def newspaperGS : QUD NewspaperWorld where
-  sameAnswer w v := (sellsItalian w Shop.A == sellsItalian v Shop.A) &&
-                    (sellsItalian w Shop.B == sellsItalian v Shop.B)
-  refl w := by cases w <;> native_decide
-  symm w v := by cases w <;> cases v <;> native_decide
-  trans w v u h1 h2 := by cases w <;> cases v <;> cases u <;> simp_all
+def newspaperGS : QUD NewspaperWorld :=
+  QUD.ofProject (λ w => (sellsItalian w Shop.A, sellsItalian w Shop.B))
 
 /-- The mention-some partition: two worlds are equivalent iff they give
 the same answer to "does SOME shop sell Italian newspapers?"
@@ -372,18 +373,12 @@ worlds have a satisfier, so there's just one cell — trivial partition).
 For a non-trivial mention-some partition, we use a coarser grouping:
 worlds are equivalent iff they agree on whether shop A sells.
 This gives two cells: {shopA_only, both} and {shopB_only}. -/
-def newspaperMS_A : QUD NewspaperWorld where
-  sameAnswer w v := sellsItalian w Shop.A == sellsItalian v Shop.A
-  refl w := by cases w <;> native_decide
-  symm w v := by cases w <;> cases v <;> native_decide
-  trans w v u h1 h2 := by cases w <;> cases v <;> cases u <;> simp_all
+def newspaperMS_A : QUD NewspaperWorld :=
+  QUD.ofProject (λ w => sellsItalian w Shop.A)
 
 /-- The mention-some partition based on shop B. -/
-def newspaperMS_B : QUD NewspaperWorld where
-  sameAnswer w v := sellsItalian w Shop.B == sellsItalian v Shop.B
-  refl w := by cases w <;> native_decide
-  symm w v := by cases w <;> cases v <;> native_decide
-  trans w v u h1 h2 := by cases w <;> cases v <;> cases u <;> simp_all
+def newspaperMS_B : QUD NewspaperWorld :=
+  QUD.ofProject (λ w => sellsItalian w Shop.B)
 
 
 /-! ### Value saturation: concrete verification -/
@@ -451,7 +446,8 @@ can act optimally.
 This is the bridge from Van Rooy's Op(P) construction to value saturation:
 Op(P) produces cells → cells resolve → value is saturated. -/
 theorem underspecified_all_cells_resolve :
-    newspaperUnderspecCells.all
+    (newspaperUnderspecCells.map fun c =>
+        (Finset.univ : Finset NewspaperWorld).filter (fun w => c w = true)).all
       (resolves newspaperDP
         {NewspaperWorld.shopA_only, .shopB_only, .both} {Shop.A, .B})
       = true := by

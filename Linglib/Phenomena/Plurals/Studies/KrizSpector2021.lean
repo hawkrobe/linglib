@@ -11,7 +11,7 @@ Linguistics and Philosophy, 44, 1131-1178.
 ## Core Contribution
 
 Križ & Spector 2021 refine @cite{kriz-2016}'s pragmatic mechanism for
-non-maximality. Where Križ 2016 used "Addressing an Issue" (no QUD cell
+non-maximality. Where Križ 2016 used "Addressing an Question" (no QUD cell
 straddles the true/false boundary), K&S replace this with **strong relevance
 filtering**: a candidate interpretation is relevant only if its truth
 predicate is constant on each cell of the QUD partition.

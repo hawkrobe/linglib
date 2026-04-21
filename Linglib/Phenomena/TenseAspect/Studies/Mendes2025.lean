@@ -31,6 +31,8 @@ rather than requiring it globally.
 
 namespace Mendes2025
 
+open Core (Situation)
+
 open Core.Time
 open Core.Modality.HistoricalAlternatives
 open Semantics.Dynamic.IntensionalCDRT

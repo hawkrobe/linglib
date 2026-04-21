@@ -62,7 +62,7 @@ def ever : PolarityItemEntry :=
   , baseForce := .temporal
   , licensingContexts :=
       [ .negation, .nobody, .conditionalAntecedent, .question
-      , .superlative, .comparativeNP, .comparativeS ]
+      , .superlative, .comparativeS ]
   , scalarDirection := .strengthening  -- temporal endpoint → stronger assertion
   , scalarValue := .low               -- minimal temporal extent
   , canonicity := .canonical

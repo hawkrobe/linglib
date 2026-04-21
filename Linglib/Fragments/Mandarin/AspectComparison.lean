@@ -1,4 +1,4 @@
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Time.AtomDist
 
 /-!
 # Mandarin Cross-Domain Particles @cite{zhao-2025}

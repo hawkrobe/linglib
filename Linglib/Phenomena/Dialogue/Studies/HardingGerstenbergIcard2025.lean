@@ -31,6 +31,8 @@ dynamics rather than needing to be stipulated (contra @cite{halpern-pearl-2005})
 
 namespace HardingGerstenbergIcard2025
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 
 -- ============================================================

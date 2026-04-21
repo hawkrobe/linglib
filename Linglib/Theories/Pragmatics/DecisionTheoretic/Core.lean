@@ -1,4 +1,4 @@
-import Linglib.Core.Issue.Hamblin
+import Linglib.Core.Question.Hamblin
 import Mathlib.Data.Set.Basic
 import Mathlib.Order.SetNotation
 import Mathlib.Tactic.DeriveFintype
@@ -28,7 +28,7 @@ Predicates over worlds are `Set W`; arithmetic operations carry
   probability distribution. Following mathlib's `Filter.principal` pattern,
   the polar interrogative is not given a separate wrapper type: the
   `topic` is stored directly, and the inquisitive view is recovered as
-  `DTSContext.toCoreIssue ctx = Core.Issue.polar {w | ctx.topic w}` at
+  `DTSContext.toCoreIssue ctx = Core.Question.polar {w | ctx.topic w}` at
   consumption sites that need the general inquisitive-content lattice.
 - `condProb` — conditional probability P(E|H) over finite worlds
 - `bayesFactor` — P(E|H) / P(E|¬H), exact rational arithmetic
@@ -68,7 +68,7 @@ inductive World4 where
     on demand via `DTSContext.toCoreIssue`. -/
 structure DTSContext (W : Type*) where
   /-- The hypothesis H. The dichotomic issue {H, ¬H} is recovered as
-      `Core.Issue.polar topic`. -/
+      `Core.Question.polar topic`. -/
   topic : Set W
   /-- Decidability of `topic` — required so that arithmetic over finite
       worlds (`probSum`, `condProb`) is well-defined without invoking
@@ -85,29 +85,29 @@ def swapIssue {W : Type*} (ctx : DTSContext W) : DTSContext W :=
     topicDec := inferInstance,
     prior := ctx.prior }
 
-/-- Forgetful projection from a DTS context to the general `Core.Issue`
+/-- Forgetful projection from a DTS context to the general `Core.Question`
     lattice via the polar interrogative content of the topic
     proposition. The two representations agree on the underlying
     question semantics: a DTS dichotomy {H, ¬H} is exactly the polar
     interrogative of H, with two alternatives ⟦H⟧ and ⟦¬H⟧. -/
-def DTSContext.toCoreIssue {W : Type*} (ctx : DTSContext W) : Core.Issue W :=
-  Core.Issue.polar {w | ctx.topic w}
+def DTSContext.toCoreIssue {W : Type*} (ctx : DTSContext W) : Core.Question W :=
+  Core.Question.polar {w | ctx.topic w}
 
 /-- Every DTS dichotomic issue is non-informative (`info = univ`):
     the question `{H, ¬H}` itself rules out no worlds; only an answer
-    to it does. Inherited from `Core.Issue.info_polar`. -/
+    to it does. Inherited from `Core.Question.info_polar`. -/
 @[simp] theorem DTSContext.toCoreIssue_info {W : Type*} (ctx : DTSContext W) :
     ctx.toCoreIssue.info = Set.univ :=
-  Core.Issue.info_polar _
+  Core.Question.info_polar _
 
 /-- A DTS dichotomy is genuinely inquisitive (raises an unsettled
     question over the universal info state) iff its topic is non-trivial:
     neither everything nor nothing satisfies H. Inherited from
-    `Core.Issue.isInquisitive_polar_iff`. -/
+    `Core.Question.isInquisitive_polar_iff`. -/
 theorem DTSContext.toCoreIssue_isInquisitive_iff {W : Type*} (ctx : DTSContext W) :
     ctx.toCoreIssue.isInquisitive ↔
       {w | ctx.topic w} ≠ ∅ ∧ {w | ctx.topic w} ≠ Set.univ :=
-  Core.Issue.isInquisitive_polar_iff _
+  Core.Question.isInquisitive_polar_iff _
 
 -- ============================================================
 -- Section 2: Probability

@@ -2,8 +2,8 @@ import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Definiteness
 import Linglib.Core.Nominal.Maximality
 import Linglib.Core.IntensionalLogic.Rigidity
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Theories.Semantics.Definiteness.Basic
@@ -61,6 +61,8 @@ Fragments/English/Pronouns.lean
 -/
 
 namespace Elbourne2013
+
+open Core (Situation)
 
 open Core.Presupposition (PrProp)
 open Core.Presupposition.PrProp (presupOfReferent presupOfReferent_presup

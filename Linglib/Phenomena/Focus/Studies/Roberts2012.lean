@@ -1,5 +1,5 @@
-import Linglib.Core.Issue.Hamblin
-import Linglib.Core.Issue.Relevance
+import Linglib.Core.Question.Hamblin
+import Linglib.Core.Question.Relevance
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Theories.Semantics.Focus.Interpretation
@@ -42,18 +42,18 @@ q_ai (H beans?) q_aii (H tofu?) q_bi (R beans?) q_bii (R tofu?)
 
 ## Representation
 
-This file uses `Core.Issue` (Set-based, with `Prop` + `Decidable` Roberts QUD
-predicates from `Core/Issue/Relevance.lean`). Non-polar issues are built via
-`Issue.ofList` and `⊓`; entailment for these uses the `HasAltList` infrastructure
-from `Core/Issue/Hamblin.lean`. Set-based partitions live in
-`Core/Issue/Partition.lean` (`Core.Issue.IsPartition`, backed by
+This file uses `Core.Question` (Set-based, with `Prop` + `Decidable` Roberts QUD
+predicates from `Core/Question/Relevance.lean`). Non-polar issues are built via
+`Question.ofList` and `⊓`; entailment for these uses the `HasAltList` infrastructure
+from `Core/Question/Hamblin.lean`. Set-based partitions live in
+`Core/Question/Partition.lean` (`Core.Question.IsPartition`, backed by
 `Setoid.IsPartition`).
 -/
 
 namespace Roberts2012
 
 open Core
-open Core.Issue
+open Core.Question
 open Discourse (QUDStack Strategy moveRelevantToStrategy)
 
 -- ════════════════════════════════════════════════════
@@ -156,28 +156,28 @@ theorem rt_ne_univ : rogerTofu ≠ Set.univ := by
   exact Bool.false_ne_true hmem
 
 -- ════════════════════════════════════════════════════
--- § Polar Questions (via `Issue.polar`)
+-- § Polar Questions (via `Question.polar`)
 -- ════════════════════════════════════════════════════
 
 /-- "Did Hannah eat the beans?" -/
-abbrev q_ai : Issue D0World := Issue.polar hannahBeans
+abbrev q_ai : Question D0World := Question.polar hannahBeans
 
 /-- "Did Hannah eat the tofu?" -/
-abbrev q_aii : Issue D0World := Issue.polar hannahTofu
+abbrev q_aii : Question D0World := Question.polar hannahTofu
 
 /-- "Did Roger eat the beans?" -/
-abbrev q_bi : Issue D0World := Issue.polar rogerBeans
+abbrev q_bi : Question D0World := Question.polar rogerBeans
 
 /-- "Did Roger eat the tofu?" -/
-abbrev q_bii : Issue D0World := Issue.polar rogerTofu
+abbrev q_bii : Question D0World := Question.polar rogerTofu
 
 -- ════════════════════════════════════════════════════
--- § Wh-Questions (via `Issue.ofList`)
+-- § Wh-Questions (via `Question.ofList`)
 -- ════════════════════════════════════════════════════
 
 /-- "What did Hannah eat?" — partition into 4 cells by ⟨hb, ht⟩.
     Beans-only, tofu-only, both, neither. -/
-def q_a : Issue D0World := Issue.ofList [
+def q_a : Question D0World := Question.ofList [
   {w | w.hb = true ∧ w.ht = false},
   {w | w.hb = false ∧ w.ht = true},
   {w | w.hb = true ∧ w.ht = true},
@@ -185,7 +185,7 @@ def q_a : Issue D0World := Issue.ofList [
 ]
 
 /-- "What did Roger eat?" — partition by ⟨rb, rt⟩. -/
-def q_b : Issue D0World := Issue.ofList [
+def q_b : Question D0World := Question.ofList [
   {w | w.rb = true ∧ w.rt = false},
   {w | w.rb = false ∧ w.rt = true},
   {w | w.rb = true ∧ w.rt = true},
@@ -195,7 +195,7 @@ def q_b : Issue D0World := Issue.ofList [
 /-- "What did everyone eat?" — the Big Question, the lattice meet of
     `q_a` and `q_b` (knowing what everyone ate = knowing what Hannah ate
     AND what Roger ate). -/
-def q_1 : Issue D0World := q_a ⊓ q_b
+def q_1 : Question D0World := q_a ⊓ q_b
 
 -- ════════════════════════════════════════════════════
 -- § Internal: per-cell alternatives of q_a, q_b, q_1
@@ -217,7 +217,7 @@ private abbrev qb_c4 : Set D0World := {w | w.rb = false ∧ w.rt = false}
 private abbrev w_zero : D0World := ⟨false, false, false, false⟩
 
 private theorem qa_c1_in_alt : qa_c1 ∈ alt q_a := by
-  apply Issue.mem_alt_ofList_of_disjoint_others
+  apply Question.mem_alt_ofList_of_disjoint_others
   · simp [qa_c1]
   · intro h
     have : (⟨true, false, false, false⟩ : D0World) ∈ qa_c1 := ⟨rfl, rfl⟩
@@ -237,12 +237,12 @@ private theorem qa_c1_in_alt : qa_c1 ∈ alt q_a := by
 private theorem singleton_w_zero_in_alt_q1 :
     ({w_zero} : Set D0World) ∈ alt q_1 := by
   show ({w_zero} : Set D0World) ∈ alt (q_a ⊓ q_b)
-  rw [Issue.mem_alt_inf_iff]
+  rw [Question.mem_alt_inf_iff]
   refine ⟨⟨?_, ?_⟩, ?_⟩
   · -- {w_zero} ∈ q_a.props (subset of qa_c4)
-    rw [show (q_a : Issue D0World).props = (Issue.ofList _).props from rfl]
-    show ({w_zero} : Set D0World) ∈ Issue.ofList _
-    rw [Issue.mem_ofList]
+    rw [show (q_a : Question D0World).props = (Question.ofList _).props from rfl]
+    show ({w_zero} : Set D0World) ∈ Question.ofList _
+    rw [Question.mem_ofList]
     refine Or.inr ⟨qa_c4, ?_, ?_⟩
     · simp [qa_c4]
     · intro x hx
@@ -250,9 +250,9 @@ private theorem singleton_w_zero_in_alt_q1 :
       subst hx
       exact ⟨rfl, rfl⟩
   · -- {w_zero} ∈ q_b.props (subset of qb_c4)
-    rw [show (q_b : Issue D0World).props = (Issue.ofList _).props from rfl]
-    show ({w_zero} : Set D0World) ∈ Issue.ofList _
-    rw [Issue.mem_ofList]
+    rw [show (q_b : Question D0World).props = (Question.ofList _).props from rfl]
+    show ({w_zero} : Set D0World) ∈ Question.ofList _
+    rw [Question.mem_ofList]
     refine Or.inr ⟨qb_c4, ?_, ?_⟩
     · simp [qb_c4]
     · intro x hx
@@ -262,13 +262,13 @@ private theorem singleton_w_zero_in_alt_q1 :
   · -- maximality: any q ⊇ {w_zero} in both q_a.props and q_b.props
     -- must equal {w_zero}.
     intro q ⟨hqa, hqb⟩ hsub
-    have hqa' : q ∈ Issue.ofList (W := D0World)
+    have hqa' : q ∈ Question.ofList (W := D0World)
         [{w | w.hb = true ∧ w.ht = false}, {w | w.hb = false ∧ w.ht = true},
          {w | w.hb = true ∧ w.ht = true}, {w | w.hb = false ∧ w.ht = false}] := hqa
-    have hqb' : q ∈ Issue.ofList (W := D0World)
+    have hqb' : q ∈ Question.ofList (W := D0World)
         [{w | w.rb = true ∧ w.rt = false}, {w | w.rb = false ∧ w.rt = true},
          {w | w.rb = true ∧ w.rt = true}, {w | w.rb = false ∧ w.rt = false}] := hqb
-    rw [Issue.mem_ofList] at hqa' hqb'
+    rw [Question.mem_ofList] at hqa' hqb'
     -- q ⊇ {w_zero} so q nonempty; pick the cell of q_a / q_b containing w_zero
     have hwq : w_zero ∈ q := hsub rfl
     have hqne : q ≠ ∅ := fun h => by rw [h] at hwq; exact hwq.elim
@@ -395,7 +395,7 @@ theorem qa_not_entails_q1 : ¬ questionEntails q_a q_1 := by
   obtain ⟨q, hq, hsub⟩ := h qa_c1 qa_c1_in_alt
   -- q ∈ alt q_1 = alt (q_a ⊓ q_b); extract membership in q_b.props
   obtain ⟨⟨_, hqb⟩, _⟩ := hq
-  have hqb' : q ∈ Issue.ofList (W := D0World)
+  have hqb' : q ∈ Question.ofList (W := D0World)
       [{w | w.rb = true ∧ w.rt = false}, {w | w.rb = false ∧ w.rt = true},
        {w | w.rb = true ∧ w.rt = true}, {w | w.rb = false ∧ w.rt = false}] := hqb
   rw [mem_ofList] at hqb'
@@ -417,12 +417,12 @@ theorem qa_not_entails_q1 : ¬ questionEntails q_a q_1 := by
 theorem qai_not_entails_qa : ¬ questionEntails q_ai q_a := by
   intro h
   have halt : hannahBeans ∈ alt q_ai := by
-    rw [show q_ai = Issue.polar hannahBeans from rfl,
+    rw [show q_ai = Question.polar hannahBeans from rfl,
         alt_polar_of_nontrivial hb_ne_empty hb_ne_univ]
     left; rfl
   obtain ⟨q, hq, hsub⟩ := h hannahBeans halt
   have hq_props : q ∈ q_a.props := alt_subset_props _ hq
-  have hq' : q ∈ Issue.ofList (W := D0World)
+  have hq' : q ∈ Question.ofList (W := D0World)
       [{w | w.hb = true ∧ w.ht = false}, {w | w.hb = false ∧ w.ht = true},
        {w | w.hb = true ∧ w.ht = true}, {w | w.hb = false ∧ w.ht = false}] := hq_props
   rw [mem_ofList] at hq'
@@ -482,8 +482,8 @@ theorem strat_1_qa_complete :
   show questionEntails ((⊤ ⊓ q_ai) ⊓ q_aii) q_a
   rw [top_inf_eq]
   apply questionEntails_of_le'
-  show Issue.polar hannahBeans ⊓ Issue.polar hannahTofu ≤ q_a
-  apply Issue.polar_inf_polar_le_ofList_of_corners
+  show Question.polar hannahBeans ⊓ Question.polar hannahTofu ≤ q_a
+  apply Question.polar_inf_polar_le_ofList_of_corners
   · exact ⟨{w | w.hb = true ∧ w.ht = true}, by simp, fun _ hw => hw⟩
   · refine ⟨{w | w.hb = true ∧ w.ht = false}, by simp, fun w hw => ⟨hw.1, ?_⟩⟩
     cases h : w.ht
@@ -508,8 +508,8 @@ theorem strat_1_qb_complete :
   show questionEntails ((⊤ ⊓ q_bi) ⊓ q_bii) q_b
   rw [top_inf_eq]
   apply questionEntails_of_le'
-  show Issue.polar rogerBeans ⊓ Issue.polar rogerTofu ≤ q_b
-  apply Issue.polar_inf_polar_le_ofList_of_corners
+  show Question.polar rogerBeans ⊓ Question.polar rogerTofu ≤ q_b
+  apply Question.polar_inf_polar_le_ofList_of_corners
   · exact ⟨{w | w.rb = true ∧ w.rt = true}, by simp, fun _ hw => hw⟩
   · refine ⟨{w | w.rb = true ∧ w.rt = false}, by simp, fun w hw => ⟨hw.1, ?_⟩⟩
     cases h : w.rt
@@ -596,13 +596,13 @@ theorem hb_partially_answers_q1 :
 -- ════════════════════════════════════════════════════
 
 /-- "Hannah ate beans" as a single-alternative declarative issue. -/
-def hannahBeans_assertion : Core.Issue D0World := Issue.declarative hannahBeans
+def hannahBeans_assertion : Core.Question D0World := Question.declarative hannahBeans
 
 /-- "Hannah ate beans" is relevant to q_1 (the Big Question). -/
 theorem hannahBeans_relevant_to_q1 :
     moveRelevant hannahBeans_assertion q_1 [] := by
   refine ⟨hannahBeans, ?_, Or.inl hb_partially_answers_q1⟩
-  show hannahBeans ∈ alt (Issue.declarative hannahBeans)
+  show hannahBeans ∈ alt (Question.declarative hannahBeans)
   rw [alt_declarative]
   rfl
 
@@ -622,7 +622,7 @@ theorem qa_relevant_to_q1 :
 theorem hannahBeans_relevant_to_strategy :
     moveRelevantToStrategy hannahBeans_assertion strat_1 := by
   refine ⟨hannahBeans, ?_, q_1, ?_, hb_partially_answers_q1⟩
-  · show hannahBeans ∈ alt (Issue.declarative hannahBeans)
+  · show hannahBeans ∈ alt (Question.declarative hannahBeans)
     rw [alt_declarative]; rfl
   · -- strat_1 = .branch q_1 [...]; q_1 is the head of allQuestions
     simp [strat_1, Strategy.allQuestions]

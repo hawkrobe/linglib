@@ -47,6 +47,8 @@ import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
 namespace Semantics.Attitudes.Doxastic
 
+open Core (Situation)
+
 open Core.Verbs (Veridicality)
 export Core.Verbs (Veridicality)
 

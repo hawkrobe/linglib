@@ -1,5 +1,5 @@
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Time.Interval.Basic
 
 /-!
 # Temporal Connective Infrastructure

@@ -1,5 +1,7 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.Tolerant
 import Linglib.Fragments.Farsi.Determiners
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Alonso-Ovalle & Moghiseh 2025: Existential Free Choice Items
@@ -26,22 +28,22 @@ clause-bounded below the modal.
 4. **◇ + split exh = FC + embedded uniqueness** (yek-i under deontic ◇)
 5. **DE + scalar exh weakens** (Maximize Strength blocks it)
 6. **EFCI typology** (Table 2: modal insertion × partial exh)
-7. **Split necessity** (eqs. 143-146: single/two-operator alternatives fail)
+7. **Split necessity** (alternatives 143-146: single/two-operator alternatives fail)
 
 ## Relationship to `SplitExhaustification.lean`
 
-This file verifies each result computationally via `native_decide` on
-small finite world types (PQWorld, PermW, CondW). The companion module
+Each result is verified computationally on small finite world types
+(`PQWorld`, `PermW`, `CondW`) via the `Excluder` API
+(`innocent.exh`/`tolerant.exh`). The companion module
 `Exhaustification.SplitExhaustification` proves the same results
-structurally at the Prop level for arbitrary domains, without
-`native_decide`. The two are complementary: the general module proves
-WHY the results hold; this file verifies the algorithm (`exhB`)
-computes the right answers.
+structurally at the Prop level for arbitrary domains. The two are
+complementary: the general module proves WHY the results hold; this
+file verifies the algorithm computes the right answers.
 -/
 
 namespace AlonsoOvalleMoghiseh2025
 
-open Exhaustification.InnocentExclusion
+open Exhaustification (innocent tolerant predToFinset altsFromPreds)
 
 
 -- ============================================================
@@ -52,8 +54,8 @@ open Exhaustification.InnocentExclusion
 ## Root Contexts (§4)
 
 With a domain D = {b₁, b₂}, the assertion of unembedded *yek-i* is
-b₁ ∨ b₂ ("Forood bought a book"). We reuse `PQWorld` from
-`InnocentExclusion` (renaming p → b₁, q → b₂).
+b₁ ∨ b₂ ("Forood bought a book"). `PQWorld` enumerates the four
+possible book-buying configurations.
 
 The three alternative classes:
 - **Scalar**: {b₁ ∧ b₂} (bought ≥ 2, from replacing numeral *yek*)
@@ -63,44 +65,54 @@ The three alternative classes:
 
 section RootContext
 
--- Reuse PQWorld infrastructure (p = b₁, q = b₂)
+/-- Four book-buying configurations: each book independently bought or not. -/
+inductive PQWorld where
+  | pOnly | qOnly | both | neither
+  deriving Repr, DecidableEq, Fintype
+
+def pProp : PQWorld → Bool | .pOnly | .both => true | _ => false
+def qProp : PQWorld → Bool | .qOnly | .both => true | _ => false
+def pOrQ  : PQWorld → Bool | .neither => false | _ => true
+def pAndQ : PQWorld → Bool | .both => true | _ => false
 
 /-- Assertion: ∃x ∈ {b₁,b₂}. bought(x) = b₁ ∨ b₂ -/
-private abbrev assertion := pOrQ
+private abbrev assertion : PQWorld → Bool := pOrQ
 
 /-- Scalar alternative: bought ≥ 2 = b₁ ∧ b₂ -/
-private abbrev scalarAlt := pAndQ
+private abbrev scalarAlt : PQWorld → Bool := pAndQ
 
-/-- Pre-exhaustified domain alternatives: {b₁ ∧ ¬b₂, b₂ ∧ ¬b₁}
+/-- Pre-exhaustified domain alternatives: {b₁ ∧ ¬b₂, b₂ ∧ ¬b₁}.
 
-    Each domain alternative exhaustified w.r.t. the other domain alts.
-    exh({b₁,b₂})(b₁) = b₁ ∧ ¬b₂; exh({b₁,b₂})(b₂) = b₂ ∧ ¬b₁. -/
-private def preExhDomAlts : List (PQWorld → Bool) :=
-  [ fun w => pProp w && !qProp w    -- b₁ ∧ ¬b₂
-  , fun w => qProp w && !pProp w ]  -- b₂ ∧ ¬b₁
+    Each domain alternative exhaustified w.r.t. the other. -/
+private def preExhDomAlt1 : PQWorld → Bool := fun w => pProp w && !qProp w
+private def preExhDomAlt2 : PQWorld → Bool := fun w => qProp w && !pProp w
+
+private def preExhDomAlts : List (PQWorld → Bool) := [preExhDomAlt1, preExhDomAlt2]
+
+private abbrev domAlts : Finset (Finset PQWorld) := altsFromPreds [pProp, qProp]
+private abbrev assertionF : Finset PQWorld := predToFinset assertion
+private abbrev scalarAltF : Finset PQWorld := predToFinset scalarAlt
+private abbrev preExhDomAltsF : Finset (Finset PQWorld) := altsFromPreds preExhDomAlts
+private abbrev allAltsF : Finset (Finset PQWorld) :=
+  altsFromPreds ([scalarAlt] ++ preExhDomAlts)
 
 /-- Pre-exhaustified domain alternatives are derived from IE, not stipulated.
-    exhB({b₁,b₂})(b₁) = b₁ ∧ ¬b₂ and exhB({b₁,b₂})(b₂) = b₂ ∧ ¬b₁. -/
-theorem preExhDom_from_exhB_root :
-    (∀ w, exhB pqDomain [pProp, qProp] pProp w = (pProp w && !qProp w)) ∧
-    (∀ w, exhB pqDomain [pProp, qProp] qProp w = (qProp w && !pProp w)) := by
-  constructor <;> intro w <;> cases w <;> native_decide
-
-/-- All alternatives (scalar + pre-exhaustified domain). -/
-private def allAlts : List (PQWorld → Bool) :=
-  [scalarAlt] ++ preExhDomAlts
+    `innocent.exh({b₁,b₂})(b₁) = b₁ ∧ ¬b₂` and dually for b₂. -/
+theorem preExhDom_from_innocent_root :
+    innocent.exh domAlts (predToFinset pProp) = predToFinset preExhDomAlt1 ∧
+    innocent.exh domAlts (predToFinset qProp) = predToFinset preExhDomAlt2 := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 
 -- ── Result 1: Full exhaustification yields contradiction ─────
 
-/-- **Theorem (eq. 92)**: Chierchia's O_ALT applied to all alternatives
-    yields ⊥ — the assertion conjoined with negation of all non-entailed
-    alternatives is unsatisfiable.
+/-- **Theorem (eq. 92)**: Chierchia's contradiction-tolerating operator
+    applied to all alternatives yields ⊥ — the assertion conjoined with
+    negation of all non-entailed alternatives is unsatisfiable.
 
     (b₁∨b₂) ∧ ¬(b₁∧b₂) ∧ ¬(b₁∧¬b₂) ∧ ¬(b₂∧¬b₁) ⟺ ⊥ -/
-theorem root_full_exhAll_contradiction :
-    ∀ w : PQWorld, exhAll pqDomain allAlts assertion w = false := by
-  intro w; cases w <;> native_decide
+theorem root_full_tolerant_contradiction :
+    tolerant.exh allAltsF assertionF = ∅ := by decide
 
 /-- With Fox's IE, full exhaustification is vacuous (IE = ∅, no
     alternative is in every MCE).
@@ -113,14 +125,13 @@ theorem root_full_exhAll_contradiction :
     the operators are applied separately (scalar-only IE correctly
     excludes b₁∧b₂ — see `root_scalar_only_uniqueness`).
 
-    **exhB vs exhAll**: For this specific alternative set, `exhAll`
-    yields ⊥ while `exhB` is vacuous — they differ maximally. The split
-    exhaustification architecture (O_σ and O_EXH-D as independent
-    operators) means the paper's predictions go through `exhB` on each
-    operator separately, not `exhAll` on the combined set. -/
-theorem root_full_exhB_vacuous :
-    ∀ w : PQWorld, exhB pqDomain allAlts assertion w = assertion w := by
-  intro w; cases w <;> native_decide
+    **Innocent vs tolerant**: For this specific alternative set, `tolerant`
+    yields ⊥ while `innocent` is vacuous — they differ maximally. The
+    split exhaustification architecture (O_σ and O_EXH-D as independent
+    operators) means the paper's predictions go through `innocent` on
+    each operator separately, not `tolerant` on the combined set. -/
+theorem root_full_innocent_vacuous :
+    innocent.exh allAltsF assertionF = assertionF := by decide
 
 
 -- ── Result 2: Scalar-only exhaustification yields uniqueness ─
@@ -130,15 +141,13 @@ theorem root_full_exhB_vacuous :
 
     This is yek-i's reading in root contexts via partial exhaustification. -/
 theorem root_scalar_only_uniqueness :
-    ∀ w : PQWorld, exhB pqDomain [scalarAlt] assertion w =
-      (assertion w && !scalarAlt w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [scalarAlt]) assertionF
+      = assertionF \ scalarAltF := by decide
 
 /-- Uniqueness is contingent (not contradictory). -/
 theorem root_scalar_only_contingent :
-    (∃ w, exhB pqDomain [scalarAlt] assertion w = true) ∧
-    (∃ w, exhB pqDomain [scalarAlt] assertion w = false) :=
-  ⟨⟨.pOnly, by native_decide⟩, ⟨.both, by native_decide⟩⟩
+    PQWorld.pOnly ∈ innocent.exh (altsFromPreds [scalarAlt]) assertionF ∧
+    PQWorld.both ∉ innocent.exh (altsFromPreds [scalarAlt]) assertionF := by decide
 
 
 -- ── Result 3: Domain-only exhaustification yields conjunction ─
@@ -149,14 +158,12 @@ theorem root_scalar_only_contingent :
     This is blocked by Chierchia's Economy Principle (the result is
     equivalent to the scalar alternative). -/
 theorem root_domain_only_conjunction :
-    ∀ w : PQWorld, exhB pqDomain preExhDomAlts assertion w = pAndQ w := by
-  intro w; cases w <;> native_decide
+    innocent.exh preExhDomAltsF assertionF = predToFinset pAndQ := by decide
 
 /-- Domain-only result is equivalent to the scalar alternative → blocked
     by the Exhaustification Economy Principle. -/
 theorem domain_exh_equiv_scalar_alt :
-    ∀ w : PQWorld, exhB pqDomain preExhDomAlts assertion w = scalarAlt w := by
-  intro w; cases w <;> native_decide
+    innocent.exh preExhDomAltsF assertionF = scalarAltF := by decide
 
 end RootContext
 
@@ -199,10 +206,7 @@ inductive PermW where
   | w101  -- b₁-exclusive and joint accessible
   | w011  -- b₂-exclusive and joint accessible
   | w111  -- all three types accessible
-  deriving Repr, DecidableEq, BEq
-
-private def permDomain : List PermW :=
-  [.w000, .w100, .w010, .w110, .w001, .w101, .w011, .w111]
+  deriving Repr, DecidableEq, BEq, Fintype
 
 -- Atomic modal propositions
 private def canExB1 : PermW → Bool  -- ◇(b₁ ∧ ¬b₂)
@@ -226,21 +230,29 @@ private def canExOr (w : PermW) : Bool := canExB1 w || canExB2 w  -- ◇(b₁⊻
 
 -- ── Step 3: O_EXH-D ─────────────────────────────────────────
 
-/-- Pre-exhaustified domain alternatives under ◇: {◇b₁ ∧ ¬◇b₂, ◇b₂ ∧ ¬◇b₁}
+/-- Pre-exhaustified domain alternatives under ◇: {◇b₁ ∧ ¬◇b₂, ◇b₂ ∧ ¬◇b₁}.
 
     Computed by exhaustifying each domain alt {◇b₁, ◇b₂} w.r.t. the
-    other domain alts, following @cite{chierchia-2013}'s pre-exhaustification
-    of subdomain alternatives. -/
-private def modalPreExhDomAlts : List (PermW → Bool) :=
-  [ fun w => canB1 w && !canB2 w    -- ◇b₁ ∧ ¬◇b₂
-  , fun w => canB2 w && !canB1 w ]  -- ◇b₂ ∧ ¬◇b₁
+    other domain alts, following @cite{chierchia-2013}'s
+    pre-exhaustification of subdomain alternatives. -/
+private def modalPreExhDomAlt1 : PermW → Bool := fun w => canB1 w && !canB2 w
+private def modalPreExhDomAlt2 : PermW → Bool := fun w => canB2 w && !canB1 w
 
-/-- Pre-exhaustified domain alts are correctly computed by applying `exhB`
+private def modalPreExhDomAlts : List (PermW → Bool) :=
+  [modalPreExhDomAlt1, modalPreExhDomAlt2]
+
+private abbrev modalPreExhDomAltsF : Finset (Finset PermW) :=
+  altsFromPreds modalPreExhDomAlts
+
+private abbrev modalDomAltsF : Finset (Finset PermW) := altsFromPreds [canB1, canB2]
+private abbrev canExOrF : Finset PermW := predToFinset canExOr
+
+/-- Pre-exhaustified domain alts are correctly computed by applying `innocent.exh`
     to each domain alternative w.r.t. the domain alternative set. -/
-theorem preExhDom_from_exhB :
-    (∀ w, exhB permDomain [canB1, canB2] canB1 w = (canB1 w && !canB2 w)) ∧
-    (∀ w, exhB permDomain [canB1, canB2] canB2 w = (canB2 w && !canB1 w)) := by
-  constructor <;> intro w <;> cases w <;> native_decide
+theorem preExhDom_from_innocent :
+    innocent.exh modalDomAltsF (predToFinset canB1) = predToFinset modalPreExhDomAlt1 ∧
+    innocent.exh modalDomAltsF (predToFinset canB2) = predToFinset modalPreExhDomAlt2 := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- **Theorem (eq. 119)**: Split exhaustification under ◇ derives
     FC + embedded uniqueness:
@@ -249,28 +261,26 @@ theorem preExhDom_from_exhB :
     Equivalently: ◇(b₁⊻b₂) ∧ ◇b₁ ∧ ◇b₂ — each book is a permitted
     option, and in each permitted world exactly one book is bought. -/
 theorem deontic_poss_split_exh :
-    ∀ w : PermW, exhB permDomain modalPreExhDomAlts canExOr w =
-      (canExOr w && (canB1 w == canB2 w)) := by
-  intro w; cases w <;> native_decide
+    innocent.exh modalPreExhDomAltsF canExOrF
+      = canExOrF.filter (fun w => canB1 w == canB2 w) := by decide
 
 /-- FC component: the result entails ◇b₁ ∧ ◇b₂ whenever true. -/
 theorem deontic_poss_fc (w : PermW)
-    (h : exhB permDomain modalPreExhDomAlts canExOr w = true) :
+    (h : w ∈ innocent.exh modalPreExhDomAltsF canExOrF) :
     canB1 w = true ∧ canB2 w = true := by
-  cases w <;> revert h <;> native_decide
+  revert h; cases w <;> decide
 
 /-- Embedded uniqueness: the assertion ◇(b₁⊻b₂) means in every
     permitted world exactly one book is bought (the ⊻ is under ◇). -/
 theorem deontic_poss_embedded_uniqueness (w : PermW)
-    (h : exhB permDomain modalPreExhDomAlts canExOr w = true) :
+    (h : w ∈ innocent.exh modalPreExhDomAltsF canExOrF) :
     canExOr w = true := by
-  cases w <;> revert h <;> native_decide
+  revert h; cases w <;> decide
 
 /-- The result is compatible with ◇(b₁∧b₂) being true (fn. 14):
     Forood may be permitted to buy more than one book. -/
 theorem deontic_poss_compatible_with_joint :
-    exhB permDomain modalPreExhDomAlts canExOr .w111 = true := by
-  native_decide
+    PermW.w111 ∈ innocent.exh modalPreExhDomAltsF canExOrF := by decide
 
 
 -- ── Single IE without split: no FC ─────────────────────────
@@ -278,12 +288,15 @@ theorem deontic_poss_compatible_with_joint :
 /-- ◇(b₁ ∨ b₂): at least one book is permitted. -/
 private def canBuyAny (w : PermW) : Bool := canB1 w || canB2 w
 
+private abbrev canBuyAnyF : Finset PermW := predToFinset canBuyAny
+
 /-- Standard Sauerland-style alternatives at the modal level
     (without scalar exhaustification below the modal):
     {◇b₁, ◇b₂, ◇(b₁∧b₂)}. Note ◇(b₁∧b₂) = `canJoint`, NOT
     ◇b₁ ∧ ◇b₂ = `canB1 && canB2` — these are distinct propositions. -/
-private def unsplitModalAlts : List (PermW → Bool) :=
-  [canB1, canB2, canJoint]
+private def unsplitModalAlts : List (PermW → Bool) := [canB1, canB2, canJoint]
+private abbrev unsplitModalAltsF : Finset (Finset PermW) :=
+  altsFromPreds unsplitModalAlts
 
 /-- **Theorem**: Single IE on ◇(b₁∨b₂) without split gives
     ◇(b₁∨b₂) ∧ ¬◇(b₁∧b₂) — anti-conjunction at the modal level
@@ -292,16 +305,14 @@ private def unsplitModalAlts : List (PermW → Bool) :=
     This shows split exhaustification is necessary for yek-i's
     distinctive FC + embedded uniqueness profile. -/
 theorem single_exh_no_fc :
-    ∀ w : PermW, exhB permDomain unsplitModalAlts canBuyAny w =
-      (canBuyAny w && !canJoint w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh unsplitModalAltsF canBuyAnyF
+      = canBuyAnyF.filter (fun w => !canJoint w) := by decide
 
 /-- The single-exh result is NOT free choice: there exists a world
     satisfying the exhaustified assertion where ◇b₁ but ¬◇b₂. -/
 theorem single_exh_not_fc_witness :
-    ∃ w : PermW, exhB permDomain unsplitModalAlts canBuyAny w = true ∧
-      canB1 w = true ∧ canB2 w = false :=
-  ⟨.w100, by native_decide, rfl, rfl⟩
+    PermW.w100 ∈ innocent.exh unsplitModalAltsF canBuyAnyF ∧
+    canB1 PermW.w100 = true ∧ canB2 PermW.w100 = false := by decide
 
 
 -- ── Why split is necessary (§5, eqs. 143-146) ────────────────
@@ -324,16 +335,16 @@ scalar alternative, producing FC + uniqueness without ¬◇(b₁∧b₂).
 /-- All alternatives at the modal level: scalar ◇(b₁∧b₂) plus
     pre-exhaustified domain alternatives {◇b₁∧¬◇b₂, ◇b₂∧¬◇b₁}.
     Used by single-operator-above and two-operator architectures. -/
-private def allModalAlts : List (PermW → Bool) :=
-  [canJoint] ++ modalPreExhDomAlts
+private def allModalAlts : List (PermW → Bool) := [canJoint] ++ modalPreExhDomAlts
+private abbrev allModalAltsF : Finset (Finset PermW) := altsFromPreds allModalAlts
 
 /-- **Single operator below ◇ too weak (eq. 143)**: after scalar
     exhaustification below the modal gives ◇(b₁⊻b₂), the result is
     compatible with only one book being permitted — no FC emerges
     without domain exhaustification above the modal. -/
 theorem below_modal_only_no_fc :
-    ∃ w : PermW, canExOr w = true ∧ canB1 w = true ∧ canB2 w = false :=
-  ⟨.w100, rfl, rfl, rfl⟩
+    canExOr PermW.w100 = true ∧ canB1 PermW.w100 = true ∧ canB2 PermW.w100 = false := by
+  decide
 
 /-- **Single operator above ◇ too strong (eq. 146)**: a single IE
     operator above ◇ with all alternatives on the unexhaustified assertion
@@ -344,9 +355,8 @@ theorem below_modal_only_no_fc :
     difference is `&& !canJoint w`. Split exh allows ◇(b₁∧b₂),
     this forbids it. -/
 theorem above_only_all_alts_too_strong :
-    ∀ w : PermW, exhB permDomain allModalAlts canBuyAny w =
-      (canBuyAny w && (canB1 w == canB2 w) && !canJoint w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh allModalAltsF canBuyAnyF
+      = canBuyAnyF.filter (fun w => (canB1 w == canB2 w) && !canJoint w) := by decide
 
 /-- **Two operators above+below ◇ too strong (eq. 144-145)**: two IE
     operators (O_σ below gives ◇(b₁⊻b₂), then full IE above) produces
@@ -357,33 +367,28 @@ theorem above_only_all_alts_too_strong :
     is non-entailed and consistently negatable alongside domain-alt
     negations. -/
 theorem two_ie_above_below_too_strong :
-    ∀ w : PermW, exhB permDomain allModalAlts canExOr w =
-      (canExOr w && (canB1 w == canB2 w) && !canJoint w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh allModalAltsF canExOrF
+      = canExOrF.filter (fun w => (canB1 w == canB2 w) && !canJoint w) := by decide
 
 /-- Two-IE exhaustification is strictly stronger than split: it entails
     the split result but not vice versa. The difference is exactly
     ¬◇(b₁∧b₂) — split exh never negates the modal scalar alternative. -/
 theorem two_ie_strictly_stronger :
-    (∀ w, exhB permDomain allModalAlts canExOr w = true →
-          exhB permDomain modalPreExhDomAlts canExOr w = true) ∧
-    (∃ w, exhB permDomain modalPreExhDomAlts canExOr w = true ∧
-          exhB permDomain allModalAlts canExOr w = false) := by
-  constructor
-  · intro w h; cases w <;> revert h <;> native_decide
-  · exact ⟨.w111, by native_decide, by native_decide⟩
+    innocent.exh allModalAltsF canExOrF ⊆ innocent.exh modalPreExhDomAltsF canExOrF ∧
+    PermW.w111 ∈ innocent.exh modalPreExhDomAltsF canExOrF ∧
+    PermW.w111 ∉ innocent.exh allModalAltsF canExOrF := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 /-- The distinguishing case: split exh allows ◇(b₁∧b₂) (compatible with
     Forood buying both), while any architecture targeting the scalar
     alternative at the modal level forbids it. -/
 theorem split_allows_joint_two_ie_forbids :
-    (∃ w, exhB permDomain modalPreExhDomAlts canExOr w = true ∧
-          canJoint w = true) ∧
-    (∀ w, exhB permDomain allModalAlts canExOr w = true →
-          canJoint w = false) := by
-  constructor
-  · exact ⟨.w111, by native_decide, rfl⟩
-  · intro w h; cases w <;> revert h <;> native_decide
+    (PermW.w111 ∈ innocent.exh modalPreExhDomAltsF canExOrF ∧ canJoint PermW.w111 = true) ∧
+    (∀ w, w ∈ innocent.exh allModalAltsF canExOrF → canJoint w = false) := by
+  refine ⟨⟨?_, ?_⟩, ?_⟩
+  · decide
+  · decide
+  · intro w h; revert h; cases w <;> decide
 
 end DeonticPossibility
 
@@ -418,15 +423,19 @@ private def boxB2 (w : PermW) : Bool := !canExB1 w  -- □b₂ = ¬◇(b₁∧¬
 private def boxExOr (w : PermW) : Bool := !canJoint w  -- □(b₁⊻b₂) = ¬◇(b₁∧b₂)
 
 /-- Pre-exhaustified domain alternatives under □: {□b₁ ∧ ¬□b₂, □b₂ ∧ ¬□b₁} -/
-private def necPreExhDomAlts : List (PermW → Bool) :=
-  [ fun w => boxB1 w && !boxB2 w    -- □b₁ ∧ ¬□b₂
-  , fun w => boxB2 w && !boxB1 w ]  -- □b₂ ∧ ¬□b₁
+private def necPreExhDomAlt1 : PermW → Bool := fun w => boxB1 w && !boxB2 w
+private def necPreExhDomAlt2 : PermW → Bool := fun w => boxB2 w && !boxB1 w
+private def necPreExhDomAlts : List (PermW → Bool) := [necPreExhDomAlt1, necPreExhDomAlt2]
+
+private abbrev necPreExhDomAltsF : Finset (Finset PermW) := altsFromPreds necPreExhDomAlts
+private abbrev boxExOrF : Finset PermW := predToFinset boxExOr
+private abbrev boxDomAltsF : Finset (Finset PermW) := altsFromPreds [boxB1, boxB2]
 
 /-- Pre-exhaustified domain alts under □ are derived from IE. -/
-theorem preExhDom_from_exhB_nec :
-    (∀ w, exhB permDomain [boxB1, boxB2] boxB1 w = (boxB1 w && !boxB2 w)) ∧
-    (∀ w, exhB permDomain [boxB1, boxB2] boxB2 w = (boxB2 w && !boxB1 w)) := by
-  constructor <;> intro w <;> cases w <;> native_decide
+theorem preExhDom_from_innocent_nec :
+    innocent.exh boxDomAltsF (predToFinset boxB1) = predToFinset necPreExhDomAlt1 ∧
+    innocent.exh boxDomAltsF (predToFinset boxB2) = predToFinset necPreExhDomAlt2 := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- **Theorem (eq. 120)**: Split exhaustification under □ derives
     FC + embedded uniqueness: □(b₁⊻b₂) ∧ (□b₁ ↔ □b₂).
@@ -434,23 +443,22 @@ theorem preExhDom_from_exhB_nec :
     "Must buy exactly one book, and neither book is predetermined" —
     each book remains a possible choice within the obligation. -/
 theorem deontic_nec_split_exh :
-    ∀ w : PermW, exhB permDomain necPreExhDomAlts boxExOr w =
-      (boxExOr w && (boxB1 w == boxB2 w)) := by
-  intro w; cases w <;> native_decide
+    innocent.exh necPreExhDomAltsF boxExOrF
+      = boxExOrF.filter (fun w => boxB1 w == boxB2 w) := by decide
 
 /-- FC component under □: ¬□b₁ ∧ ¬□b₂ (neither book is obligatory)
     whenever the exhaustified assertion holds non-vacuously. -/
 theorem deontic_nec_fc (w : PermW)
-    (h : exhB permDomain necPreExhDomAlts boxExOr w = true)
+    (h : w ∈ innocent.exh necPreExhDomAltsF boxExOrF)
     (hne : canExB1 w = true ∨ canExB2 w = true) :
     boxB1 w = false ∧ boxB2 w = false := by
-  cases w <;> revert hne <;> revert h <;> native_decide
+  revert h hne; cases w <;> decide
 
 /-- Embedded uniqueness under □: no joint-purchase world is accessible. -/
 theorem deontic_nec_embedded_uniqueness (w : PermW)
-    (h : exhB permDomain necPreExhDomAlts boxExOr w = true) :
+    (h : w ∈ innocent.exh necPreExhDomAltsF boxExOrF) :
     canJoint w = false := by
-  cases w <;> revert h <;> native_decide
+  revert h; cases w <;> decide
 
 end DeonticNecessity
 
@@ -479,10 +487,7 @@ section DEContext
 /-- Worlds for the conditional: b₁, b₂, g (gift). -/
 inductive CondW where
   | b1g | b2g | bg | b1 | b2 | b | g | none
-  deriving Repr, DecidableEq
-
-private def condDomain : List CondW :=
-  [.b1g, .b2g, .bg, .b1, .b2, .b, .g, .none]
+  deriving Repr, DecidableEq, Fintype
 
 private def cb1 : CondW → Bool
   | .b1g | .bg | .b1 | .b => true | _ => false
@@ -499,26 +504,24 @@ private def condNoExh (w : CondW) : Bool :=
 private def condWithExh (w : CondW) : Bool :=
   !((cb1 w || cb2 w) && !(cb1 w && cb2 w)) || cg w
 
+private abbrev condNoExhF : Finset CondW := predToFinset condNoExh
+private abbrev condWithExhF : Finset CondW := predToFinset condWithExh
+
 /-- **Theorem (eq. 131–134)**: Scalar exhaustification inside a
     conditional antecedent strictly weakens the matrix.
 
-    condWithExh ⊂ condNoExh: every world making condWithExh true also
-    makes condNoExh true, but w = .b (b₁∧b₂ without gift) makes
-    condNoExh false but condWithExh true. -/
-theorem de_scalar_exh_weakens :
-    maximizeStrength condDomain condWithExh condNoExh = false := by
-  native_decide
+    `condNoExhF ⊂ condWithExhF`: the exhaustified version is true in
+    strictly more worlds, so it carries less information. -/
+theorem de_scalar_exh_weakens : condNoExhF ⊂ condWithExhF := by decide
 
-/-- Without exhaustification, the conditional is stronger. -/
-theorem de_no_exh_stronger :
-    condDomain.any (fun w => condNoExh w && !condWithExh w) = false := by
-  native_decide
+/-- Without exhaustification, the conditional is stronger: every
+    `condNoExh`-world is a `condWithExh`-world. -/
+theorem de_no_exh_stronger : condNoExhF ⊆ condWithExhF := by decide
 
-/-- With exhaustification, there's a world satisfying condWithExh
-    but not condNoExh. -/
-theorem de_exh_weaker_witness :
-    condDomain.any (fun w => !condNoExh w && condWithExh w) = true := by
-  native_decide
+/-- With exhaustification, there's a world satisfying `condWithExh`
+    but not `condNoExh`. -/
+theorem de_exh_weaker_witness : ∃ w, w ∈ condWithExhF ∧ w ∉ condNoExhF :=
+  ⟨.b, by decide⟩
 
 /-- Domain alternatives in the conditional: subdomain conditionals
     b₁→g and b₂→g. -/
@@ -532,18 +535,21 @@ private def condPreExhDomAlts : List (CondW → Bool) :=
   [ fun w => (!cb1 w || cg w) && !(!cb2 w || cg w)  -- (b₁→g) ∧ ¬(b₂→g)
   , fun w => (!cb2 w || cg w) && !(!cb1 w || cg w)] -- (b₂→g) ∧ ¬(b₁→g)
 
+private abbrev condPreExhDomAltsF : Finset (Finset CondW) :=
+  altsFromPreds condPreExhDomAlts
+
 /-- **Theorem**: In DE contexts, domain exhaustification on the
     conditional is vacuous. The assertion (b₁∨b₂)→g already entails
     both b₁→g and b₂→g, so the pre-exhaustified domain alternatives
     (b₁→g ∧ ¬(b₂→g)) and (b₂→g ∧ ¬(b₁→g)) are both inconsistent
-    with the assertion. IE correctly returns ∅, and exhB is the identity.
+    with the assertion. IE correctly returns ∅, and `innocent.exh`
+    is the identity.
 
     This means even without Maximize Strength blocking O_σ, O_EXH-D
     alone contributes nothing in DE contexts — the plain existential
     reading emerges regardless. -/
 theorem de_domain_exh_vacuous :
-    ∀ w : CondW, exhB condDomain condPreExhDomAlts condNoExh w = condNoExh w := by
-  intro w; cases w <;> native_decide
+    innocent.exh condPreExhDomAltsF condNoExhF = condNoExhF := by decide
 
 end DEContext
 

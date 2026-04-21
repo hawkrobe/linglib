@@ -19,6 +19,8 @@ Pure classification data (enums, feature accessors, theorems) is in
 -- Methods on Core.Verbs types must be in Core.Verbs namespace for dot notation
 namespace Core.Verbs
 
+open Core (Situation)
+
 /-- Telicity → MereoTag: telic = quantized.
     Telic predicates are QUA (no proper part of a telic event is telic);
     atelic predicates are CUM (the sum of two atelic events is atelic). -/

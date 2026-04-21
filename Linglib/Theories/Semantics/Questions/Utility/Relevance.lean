@@ -77,7 +77,7 @@ this produces one answer per satisfier. -/
 
 @cite{van-rooy-2003}, p. 752. -/
 def underspecifiedDenotation {W E : Type*} [BEq E] [BEq (List E)]
-    (rf : RelevanceFunction W E) (worlds : List W) : Question W :=
+    (rf : RelevanceFunction W E) (worlds : List W) : List (W → Bool) :=
   let allGroups := worlds.flatMap rf.optimalGroups |>.eraseDups
   allGroups.map λ g => λ v => rf.optimalGroups v |>.any (· == g)
 

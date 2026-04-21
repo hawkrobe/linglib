@@ -91,44 +91,14 @@ structure PairListAnswer (E : Type*) where
 The partition groups worlds by the ENTIRE function from Y to X:
 Two worlds are equivalent iff they have the same pair-list. -/
 def PairListQuestion.toGSQuestion {W E : Type*} [DecidableEq E]
-    (plq : PairListQuestion W E) : GSQuestion W where
-  sameAnswer w v :=
-    -- Same iff for all y∈Y, the unique x with R(y,x) is the same
-    plq.universalDomain.all λ y =>
-      plq.whDomain.all λ x =>
-        plq.relation w y x == plq.relation v y x
-  refl w := by
-    simp only [List.all_eq_true]
-    intro y _ x _
-    exact beq_self_eq_true _
-  symm w v := by
-    congr 1
-    funext y
-    congr 1
-    funext x
-    cases plq.relation w y x <;> cases plq.relation v y x <;> rfl
-  trans w v x hwv hvx := by
-    simp only [List.all_eq_true] at *
-    intro y hy z hz
-    have h1 := hwv y hy z hz
-    have h2 := hvx y hy z hz
-    rw [beq_iff_eq] at *
-    exact h1.trans h2
+    (plq : PairListQuestion W E) : GSQuestion W :=
+  QUD.ofDecEq (λ w =>
+    plq.universalDomain.map (λ y => plq.whDomain.map (λ x => plq.relation w y x)))
 
 /-- Build individual question for a specific universal element. -/
 def PairListQuestion.individualQuestion {W E : Type} [DecidableEq E]
-    (plq : PairListQuestion W E) (y : E) : GSQuestion W where
-  sameAnswer w v :=
-    plq.whDomain.all λ x => plq.relation w y x == plq.relation v y x
-  refl w := by
-    simp only [List.all_eq_true]
-    intro x _; exact beq_self_eq_true _
-  symm w v := by
-    congr 1; funext x
-    cases plq.relation w y x <;> cases plq.relation v y x <;> rfl
-  trans w v u hwv hvu := by
-    simp only [List.all_eq_true, beq_iff_eq] at *
-    intro x hx; exact (hwv x hx).trans (hvu x hx)
+    (plq : PairListQuestion W E) (y : E) : GSQuestion W :=
+  QUD.ofDecEq (λ w => plq.whDomain.map (λ x => plq.relation w y x))
 
 /-- Helper: foldl of GSQuestion conjunction decomposes into init && all. -/
 private theorem foldl_conj_sameAnswer {W E : Type*}
@@ -140,8 +110,7 @@ private theorem foldl_conj_sameAnswer {W E : Type*}
   | cons e' rest ih =>
     simp only [List.foldl_cons]
     rw [ih]
-    simp only [HAdd.hAdd, Add.add, QUD.compose, List.all_cons]
-    rw [Bool.and_assoc]
+    simp only [add_eq_compose, QUD.compose_sameAnswer, List.all_cons, Bool.and_assoc]
 
 /-- A pair-list question is equivalent to a conjunction of individual questions.
 
@@ -153,12 +122,41 @@ theorem pairList_as_conjunction {W E : Type} [DecidableEq E] [BEq W]
     (plq : PairListQuestion W E) (w v : W) :
     plq.toGSQuestion.sameAnswer w v =
     (pairListAsConjunction plq.universalDomain plq.individualQuestion).sameAnswer w v := by
-  simp only [PairListQuestion.toGSQuestion, pairListAsConjunction]
-  match plq.universalDomain with
-  | [] => simp [GSQuestion.trivial, QUD.trivial]
+  -- Both sides are decidable and agree pointwise as Props; show via Iff bridge.
+  apply Bool.eq_iff_iff.mpr
+  rw [QUD.sameAnswer_eq_true_iff]
+  -- Helper: list-equality of two maps decomposes to all-pointwise-equal
+  have map_eq_iff_all : ∀ (l : List E) (f g : E → List Bool),
+      List.map f l = List.map g l ↔ ∀ y ∈ l, f y = g y := by
+    intro l f g
+    induction l with
+    | nil => simp
+    | cons x xs ih =>
+      simp only [List.map_cons, List.cons_eq_cons, List.mem_cons, forall_eq_or_imp]
+      exact and_congr_right (fun _ => ih)
+  -- Helper: foldl conjunction matches all-pointwise
+  have foldl_iff : ∀ (l : List E) (f : E → GSQuestion W) (init : GSQuestion W),
+      (l.foldl (λ acc e' => acc + f e') init).sameAnswer w v = true ↔
+      init.sameAnswer w v = true ∧ ∀ y ∈ l, (f y).sameAnswer w v = true := by
+    intro l f init
+    induction l generalizing init with
+    | nil => simp
+    | cons y rest ih =>
+      rw [List.foldl_cons, ih (init + f y)]
+      simp only [add_eq_compose, QUD.compose_sameAnswer_iff, List.mem_cons,
+                 forall_eq_or_imp, and_assoc]
+  show (plq.toGSQuestion).r w v ↔ _
+  match h : plq.universalDomain with
+  | [] =>
+    simp only [pairListAsConjunction, GSQuestion.trivial, QUD.trivial_sameAnswer]
+    show plq.toGSQuestion.r w v ↔ True
+    simp only [PairListQuestion.toGSQuestion, QUD.ofDecEq_r, h, List.map_nil]
   | e :: es =>
-    rw [foldl_conj_sameAnswer]
-    simp only [PairListQuestion.individualQuestion, List.all_cons]
+    simp only [pairListAsConjunction, foldl_iff, PairListQuestion.individualQuestion,
+               QUD.ofDecEq_sameAnswer_iff]
+    show plq.toGSQuestion.r w v ↔ _
+    simp only [PairListQuestion.toGSQuestion, QUD.ofDecEq_r, h, map_eq_iff_all,
+               List.mem_cons, forall_eq_or_imp]
 
 /-- Number of cells in pair-list: can be up to |X|^|Y| (exponential).
 
@@ -233,17 +231,8 @@ Two worlds are equivalent iff for SOME disjunct, they give the same answer. -/
 def ChoiceQuestion.toLiftedQuestion_choice {W E : Type*} [BEq W] [DecidableEq E]
     (cq : ChoiceQuestion W E) : LiftedTypes.LiftedQuestion W :=
   -- The choice reading is a disjunction over the per-disjunct questions
-  -- We build each question directly to avoid LawfulBEq constraint on List E
-  let mkQuestion (d : E) : GSQuestion W := {
-    sameAnswer := λ w v =>
-      decide (cq.whDomain.filter (λ x => cq.relation w d x) =
-              cq.whDomain.filter (λ x => cq.relation v d x))
-    refl := λ w => by simp [decide_eq_true_iff]
-    symm := λ w v => by simp [decide_eq_decide]; exact eq_comm
-    trans := λ w v x hwv hvx => by
-      simp only [decide_eq_true_iff] at *
-      exact hvx ▸ hwv
-  }
+  let mkQuestion (d : E) : GSQuestion W :=
+    QUD.ofDecEq (λ w => cq.whDomain.filter (λ x => cq.relation w d x))
   let perDisjunct := cq.disjuncts.map mkQuestion
   match perDisjunct with
   | [] => LiftedTypes.LiftedQuestion.lift GSQuestion.trivial
@@ -254,25 +243,8 @@ def ChoiceQuestion.toLiftedQuestion_choice {W E : Type*} [BEq W] [DecidableEq E]
 
 /-- Under NON-choice reading, worlds match iff ALL disjunct-answers match. -/
 def ChoiceQuestion.toGSQuestion_nonchoice {W E : Type*} [DecidableEq E]
-    (cq : ChoiceQuestion W E) : GSQuestion W where
-  sameAnswer w v :=
-    -- Same iff all disjuncts give same answer
-    cq.disjuncts.all λ d =>
-      cq.whDomain.all λ x =>
-        cq.relation w d x == cq.relation v d x
-  refl w := by
-    simp only [List.all_eq_true]
-    intro _ _ _ _
-    exact beq_self_eq_true _
-  symm w v := by
-    simp only [List.all_eq_true, Bool.beq_comm]
-  trans w v x hwv hvx := by
-    simp only [List.all_eq_true] at *
-    intro d hd e he
-    have h1 := hwv d hd e he
-    have h2 := hvx d hd e he
-    rw [beq_iff_eq] at *
-    exact h1.trans h2
+    (cq : ChoiceQuestion W E) : GSQuestion W :=
+  QUD.ofDecEq (λ w => cq.disjuncts.map (λ d => cq.whDomain.map (λ x => cq.relation w d x)))
 
 /-!
 ### Relationship between choice and non-choice readings
@@ -316,16 +288,9 @@ structure ExistentialQuestion (W E : Type*) where
 
 /-- Narrow scope: ∃y. ?x. R(y,x) collapses to ?x. ∃y. R(y,x) -/
 def ExistentialQuestion.narrowScope {W E : Type} [DecidableEq E] [DecidableEq (List E)]
-    (eq : ExistentialQuestion W E) : GSQuestion W where
-  sameAnswer w v :=
-    let answersW := eq.whDomain.filter λ x => eq.existentialDomain.any λ y => eq.relation w y x
-    let answersV := eq.whDomain.filter λ x => eq.existentialDomain.any λ y => eq.relation v y x
-    decide (answersW = answersV)
-  refl w := by simp [decide_eq_true_iff]
-  symm w v := by simp [decide_eq_decide]; exact eq_comm
-  trans w v x hwv hvx := by
-    simp only [decide_eq_true_iff] at *
-    exact hvx ▸ hwv
+    (eq : ExistentialQuestion W E) : GSQuestion W :=
+  QUD.ofDecEq (λ w =>
+    eq.whDomain.filter λ x => eq.existentialDomain.any λ y => eq.relation w y x)
 
 /-- Wide scope: for the "relevant" y, what's the answer?
 
@@ -337,17 +302,8 @@ we must use the lifted type to avoid the transitivity problem. -/
 def ExistentialQuestion.wideScope {W E : Type*} [BEq W] [DecidableEq E]
     (eq : ExistentialQuestion W E) : LiftedTypes.LiftedQuestion W :=
   -- Wide scope is a disjunction over the per-witness questions
-  -- Build each question directly to avoid LawfulBEq constraint on List E
-  let mkQuestion (y : E) : GSQuestion W := {
-    sameAnswer := λ w v =>
-      decide (eq.whDomain.filter (λ x => eq.relation w y x) =
-              eq.whDomain.filter (λ x => eq.relation v y x))
-    refl := λ w => by simp [decide_eq_true_iff]
-    symm := λ w v => by simp [decide_eq_decide]; exact eq_comm
-    trans := λ w v x hwv hvx => by
-      simp only [decide_eq_true_iff] at *
-      exact hvx ▸ hwv
-  }
+  let mkQuestion (y : E) : GSQuestion W :=
+    QUD.ofDecEq (λ w => eq.whDomain.filter (λ x => eq.relation w y x))
   let perWitness := eq.existentialDomain.map mkQuestion
   match perWitness with
   | [] => LiftedTypes.LiftedQuestion.lift GSQuestion.trivial

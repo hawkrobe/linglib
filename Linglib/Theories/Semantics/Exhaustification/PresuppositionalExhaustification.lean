@@ -1,5 +1,6 @@
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
 
 /-!
 # Presuppositional Exhaustification (pex)
@@ -108,7 +109,7 @@ and a local context c:
 ⟦pex^{IE+II}(φ)⟧:
   a. **asserts**: ⟦φ⟧
   b. **presupposes**:
-     (i) ⋀{¬⟦ψ⟧ : ψ ∈ IE(φ) ∧ ⟦ψ⟧ ∈ Rₓ}
+     (i) ⋂₀ {¬⟦ψ⟧ : ψ ∈ IE(φ) ∧ ⟦ψ⟧ ∈ Rₓ}
      (ii) homogeneity over relevant II alternatives
 
 We treat Rₓ (the relevance predicate) as a parameter; for basic cases
@@ -128,7 +129,7 @@ def pexIEII (ALT : Set (Set World)) (φ : Set World)
   assertion := φ
   presup := fun w =>
     -- (i) all relevant IE alternatives are false
-    (∀ ψ, isInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → ¬ψ w) ∧
+    (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → ¬ψ w) ∧
     -- (ii) relevant II alternatives are homogeneous
     homogeneous {α ∈ II ALT φ | α ∈ Rc} w
 
@@ -219,7 +220,7 @@ theorem pex_basic_scalar (ALT : Set (Set World)) (φ : Set World)
     (Rc : Set (Set World))
     (hII_empty : ∀ α, α ∈ II ALT φ → α ∈ Rc → False) (w : World) :
     (pexIEII ALT φ Rc).presup w ↔
-      (∀ ψ, isInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → ¬ψ w) := by
+      (∀ ψ, IsInnocentlyExcludable ALT φ ψ → ψ ∈ Rc → ¬ψ w) := by
   simp only [pexIEII]
   constructor
   · exact fun ⟨hIE, _⟩ => hIE

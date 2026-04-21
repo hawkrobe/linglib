@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Questions.QParticleLayer
-import Linglib.Core.Issue.Singleton
+import Linglib.Core.Question.Singleton
 import Linglib.Fragments.HindiUrdu.Particles
 import Linglib.Fragments.Japanese.Particles
 import Linglib.Fragments.English.QuestionParticles
@@ -30,7 +30,7 @@ the fragments themselves carry only theory-neutral distributional fields.
 namespace Phenomena.Questions.TypologyBridge
 
 open Semantics.Questions (QParticleLayer)
-open Core.Issue (IsSingleton SingletonIssue declarative polar
+open Core.Question (IsSingleton SingletonQuestion declarative polar
   isSingleton_declarative not_isSingleton_polar_of_nontrivial)
 open Fragments.HindiUrdu.Particles (kya)
 open Fragments.Japanese.Particles (ka kke)
@@ -167,9 +167,9 @@ theorem sap_particles_not_in_quasi_sub :
 `⟦kya:⟧ = λp[∃q ∈ Q[∀q′[q′ ∈ Q → q′ = q]].Q`
 i.e. *kya:* is interpreted only when its sister question `Q` has a
 singleton alternative set, in which case the particle is the identity
-on `Q`. The presupposition is exactly `Core.Issue.IsSingleton`; the
+on `Q`. The presupposition is exactly `Core.Question.IsSingleton`; the
 well-typed analogue of "felicitous sister content" is the subtype
-`SingletonIssue W` (a question paired with a proof that its
+`SingletonQuestion W` (a question paired with a proof that its
 alternative set is a singleton). The "highlighted" terminology of
 @cite{roelofsen-farkas-2015} corresponds to `declarative p` in this
 setting (one-cell denotation, in contrast to the two-cell `polar p`).
@@ -192,10 +192,10 @@ theorem kya_felicitous_declarative (p : Set W) :
 
 /-- **Empirical prediction (defined case)**: kya: on a felicitous
     sister returns the question unchanged — packaged as a
-    `SingletonIssue` whose underlying issue is the input declarative.
+    `SingletonQuestion` whose underlying issue is the input declarative.
     Mathlib pattern: subtype + `.val` rather than `Option`. -/
 theorem kya_interp_declarative (p : Set W) :
-    (SingletonIssue.ofDeclarative (W := W) p).issue = declarative p := rfl
+    (SingletonQuestion.ofDeclarative (W := W) p).issue = declarative p := rfl
 
 /-- **Empirical prediction (infelicitous case)**: kya: cannot license
     a two-cell Hamblin polar with a non-trivial proposition — the
@@ -209,7 +209,7 @@ theorem kya_infelicitous_two_cell_polar {p : Set W}
     the surface signal of the singleton-presupposition analysis — the
     fragment data field flags the particle whose interpretation is
     given by the `IsSingleton` presupposition + identity on
-    `SingletonIssue`. -/
+    `SingletonQuestion`. -/
 theorem kya_polarQuestion_signals_singletonPresup :
     Fragments.HindiUrdu.Particles.kya.polarQuestion = true := rfl
 

@@ -18,7 +18,7 @@ that derive the acceptability of specific cross-linguistic examples.
 
 The discourse *only* theory (in `Theories/Pragmatics/Particles/DiscourseOnly.lean`)
 defines `isDefined`, `ciContent`, `agree`, `disagree` as `noncomputable Prop`
-predicates over `Core.Issue` denotations and `Set W` doxastic states. This
+predicates over `Core.Question` denotations and `Set W` doxastic states. This
 file instantiates those predicates with a concrete 8-world model of the
 house-buying scenario (@cite{ippolito-kiss-williams-2025} §7) and proves the
 predictions match the empirical data in `Phenomena/Focus/DiscourseOnly.lean`.
@@ -135,16 +135,16 @@ def prior : Prior W where
 -- ============================================================================
 
 /-- QUD: "Should we buy the house?" — binary issue. -/
-def qud : Core.Issue W := Core.Issue.polar buy
+def qud : Core.Question W := Core.Question.polar buy
 
 /-- Declarative S: "The house is beautiful" — one alternative. -/
-def sBeautiful : Core.Issue W := Core.Issue.polar beautiful
+def sBeautiful : Core.Question W := Core.Question.polar beautiful
 
 /-- Declarative S': "It's (very) expensive" — one alternative. -/
-def s'Expensive : Core.Issue W := Core.Issue.polar expensive
+def s'Expensive : Core.Question W := Core.Question.polar expensive
 
 /-- Polar Q S': "Has it been renovated?" — two alternatives. -/
-def s'RenovatedQ : Core.Issue W := Core.Issue.polar renovated
+def s'RenovatedQ : Core.Question W := Core.Question.polar renovated
 
 -- ============================================================================
 -- § 3: Doxastic States
@@ -175,8 +175,8 @@ def coreCtx : Context W :=
   , prior := prior
   , dox := doxBE
   , partialAnswers := []
-  , subquestions := [Core.Issue.polar beautiful, Core.Issue.polar expensive,
-                     Core.Issue.polar renovated] }
+  , subquestions := [Core.Question.polar beautiful, Core.Question.polar expensive,
+                     Core.Question.polar renovated] }
 
 /-- Context for clause-type examples: S = "beautiful", S' = interrogative.
 Speaker believes S but doesn't know the answer to S'. Same subquestions
@@ -186,8 +186,8 @@ def clauseTypeCtx : Context W :=
   , prior := prior
   , dox := doxB
   , partialAnswers := []
-  , subquestions := [Core.Issue.polar beautiful, Core.Issue.polar expensive,
-                     Core.Issue.polar renovated] }
+  , subquestions := [Core.Question.polar beautiful, Core.Question.polar expensive,
+                     Core.Question.polar renovated] }
 
 -- ============================================================================
 -- § 5: Sentences
@@ -225,7 +225,7 @@ theorem core_atIssue_nonempty :
     (2 : W) ∈ declSentence.atIssueContent := by
   -- atIssueContent = sBeautiful.info ∩ s'Expensive.info; both polar info = univ
   unfold Sentence.atIssueContent declSentence sBeautiful s'Expensive
-  simp [Core.Issue.info_polar]
+  simp [Core.Question.info_polar]
 
 /-- S and S' disagree w.r.t. the QUD: S supports "buy" but S' supports
 "don't buy", and they don't agree on any single answer. -/
@@ -315,10 +315,10 @@ for the CI — only that the speaker doesn't know the answer. -/
 theorem interrogative_s'_ci_satisfied {W' : Type*} [Fintype W']
     (sent : Sentence W') (ctx : Context W')
     -- S supports some answer
-    (hSsupports : ∃ α ∈ Core.Issue.alt ctx.qud,
+    (hSsupports : ∃ α ∈ Core.Question.alt ctx.qud,
       fullSupportS ctx.dox sent.sDen ctx.prior α)
     -- Speaker doesn't believe any alternative of S'
-    (hNoBelief : ∀ q ∈ Core.Issue.alt sent.s'Den, ¬ (ctx.dox ⊆ q))
+    (hNoBelief : ∀ q ∈ Core.Question.alt sent.s'Den, ¬ (ctx.dox ⊆ q))
     -- No prior partial answers (vacuous condition (i))
     (hPartial : ctx.partialAnswers = []) :
     sent.ciContent ctx := by

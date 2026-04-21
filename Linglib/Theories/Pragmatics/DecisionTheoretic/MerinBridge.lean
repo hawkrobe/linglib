@@ -50,7 +50,7 @@ namespace DTS.MerinBridge
 open Core.DecisionTheory
 open DTS
 
-/-! ## Encoding Merin's Issue as a Decision Problem
+/-! ## Encoding Merin's Question as a Decision Problem
 
 A dichotomic issue {H, ¬H} with prior π corresponds to a decision problem:
 - World type W (shared)

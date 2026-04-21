@@ -209,7 +209,7 @@ we will need:
 - Selection functions (S_p)
 
 ### Core/StrongRelevance.lean
-- Issue as partition
+- Question as partition
 - Strong relevance predicate
 - Partition alignment
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Pragmatics.RSA.EmbeddedSI
 
 /-!

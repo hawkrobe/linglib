@@ -45,6 +45,8 @@ via circumscription/antiperfection.
 
 namespace Nadathur2024
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Implicative
 open Core.Verbs (Causative)

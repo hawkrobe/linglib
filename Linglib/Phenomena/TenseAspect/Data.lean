@@ -1,6 +1,6 @@
-import Linglib.Core.Temporal.Reichenbach
-import Linglib.Core.Temporal.Time
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Time.Reichenbach
+import Linglib.Core.Time.Boundedness
+import Linglib.Core.Time.Tense
 
 /-!
 # Tense Phenomena: Empirical Data
@@ -59,9 +59,9 @@ are in `Studies/HeimKratzer1998.lean`.
 
 namespace Phenomena.TenseAspect
 
-open Core.Reichenbach
+open Core.Time.Reichenbach
 open Core.Time (SituationBoundedness)
-open Core.Tense
+open Core.Time.Tense
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -1377,7 +1377,7 @@ The empirical contrast:
 
 This data is tested against the theory in `Studies/HeimKratzer1998.lean` §29. -/
 
-open Core.Tense
+open Core.Time.Tense
 open Core.ReferentialMode (ReferentialMode)
 
 /-- Whether a surface past tense form can be used deictically

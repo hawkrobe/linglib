@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 
 /-!
 # Spector (2016): Worked examples of exhaustivity operators
@@ -13,7 +13,7 @@ on the two classic Horn scales:
 2. **or/and** scale: "John sang or danced" → exclusive reading
 
 The abstract Spector framework lives in
-`Theories/Semantics/Exhaustification/Operators.lean`. This file holds the
+`Theories/Semantics/Exhaustification/Operators/Basic.lean`. This file holds the
 empirical exemplars — small finite worlds, scale-specific alternative
 sets, and the per-scale `exhMW ≡ exhIE` corollaries — kept out of the
 theory file in line with the project's Theory/Phenomena split.
@@ -97,7 +97,7 @@ theorem w3_not_leALT_w1 : ¬(w3 ≤[someAllALT] w1) := by
 theorem w1_ltALT_w3 : w1 <[someAllALT] w3 :=
   ⟨w1_leALT_w3, w3_not_leALT_w1⟩
 
-theorem w1_minimal_some : isMinimal someAllALT someStudents w1 := by
+theorem w1_minimal_some : IsMinimal someAllALT someStudents w1 := by
   constructor
   · exact w1_satisfies_some
   · intro ⟨v, hv_some, hv_lt_w1⟩
@@ -110,7 +110,7 @@ theorem w1_minimal_some : isMinimal someAllALT someStudents w1 := by
     · simp only [allStudents, w1] at haw1
       exact absurd haw1 (by decide)
 
-theorem w3_not_minimal_some : ¬isMinimal someAllALT someStudents w3 := by
+theorem w3_not_minimal_some : ¬IsMinimal someAllALT someStudents w3 := by
   intro ⟨_, hmin⟩
   apply hmin
   exact ⟨w1, w1_satisfies_some, w1_ltALT_w3⟩
@@ -195,7 +195,7 @@ theorem wBoth_not_leALT_wSang : ¬(wBoth ≤[orAndALT] wSang) := by
 theorem wSang_ltALT_wBoth : wSang <[orAndALT] wBoth :=
   ⟨wSang_leALT_wBoth, wBoth_not_leALT_wSang⟩
 
-theorem wSang_minimal : isMinimal orAndALT sangOrDanced wSang := by
+theorem wSang_minimal : IsMinimal orAndALT sangOrDanced wSang := by
   constructor
   · exact wSang_satisfies_or
   · intro ⟨v, hv_or, hv_lt⟩
@@ -228,7 +228,7 @@ hypothesis: at any exhIE world, the stronger alternative is false,
 which makes the world minimal.
 -/
 
-theorem allStudents_entails_someStudents : allStudents ⊆ₚ someStudents := by
+theorem allStudents_entails_someStudents : allStudents ⊆ someStudents := by
   intro w h
   show w.val ≥ 1
   change w.val = 3 at h
@@ -236,9 +236,9 @@ theorem allStudents_entails_someStudents : allStudents ⊆ₚ someStudents := by
 
 /-- Per-scale Theorem 9 instance: some/all. -/
 theorem someAll_exhMW_iff_exhIE :
-    exhMW someAllALT someStudents ≡ₚ exhIE someAllALT someStudents := by
-  constructor
-  · exact prop6_exhMW_entails_exhIE someAllALT someStudents
+    exhMW someAllALT someStudents = exhIE someAllALT someStudents := by
+  apply Set.Subset.antisymm
+  · exact exhMW_entails_exhIE someAllALT someStudents
   · intro w hie
     constructor
     · have hsome_in_IE : someStudents ∈ IE someAllALT someStudents := by
@@ -253,11 +253,11 @@ theorem someAll_exhMW_iff_exhIE :
       simp only [someAllALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha_ALT
       rcases ha_ALT with rfl | rfl
       · exact hna_v hv_some
-      · have hneg_all_in_IE : (∼allStudents) ∈ IE someAllALT someStudents := by
+      · have hneg_all_in_IE : (allStudentsᶜ) ∈ IE someAllALT someStudents := by
           intro E hE_mc
           by_contra h_not_in
-          let E' := E ∪ {∼allStudents}
-          have hcompat : isCompatible someAllALT someStudents E' := by
+          let E' := E ∪ {allStudentsᶜ}
+          have hcompat : IsCompatible someAllALT someStudents E' := by
             obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
             refine ⟨Or.inl hphi, ?_, ?_⟩
             · intro ψ hψ
@@ -274,7 +274,7 @@ theorem someAll_exhMW_iff_exhIE :
                   rcases ha with rfl | rfl
                   · exfalso
                     obtain ⟨u, hu⟩ := hcons
-                    exact hu (∼someStudents) hψ_E (hu someStudents hphi)
+                    exact hu (someStudentsᶜ) hψ_E (hu someStudents hphi)
                   · exact w1_not_all
               · simp only [Set.mem_singleton_iff] at hψ_new
                 rw [hψ_new]
@@ -285,19 +285,19 @@ theorem someAll_exhMW_iff_exhIE :
             apply h_not_in
             exact hle (Set.mem_union_right E (Set.mem_singleton _))
           exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-        have hna_w : ¬(allStudents w) := hie (∼allStudents) hneg_all_in_IE
+        have hna_w : ¬(allStudents w) := hie (allStudentsᶜ) hneg_all_in_IE
         exact hna_w ha_w
 
-theorem sangAndDanced_entails_sangOrDanced : sangAndDanced ⊆ₚ sangOrDanced := by
+theorem sangAndDanced_entails_sangOrDanced : sangAndDanced ⊆ sangOrDanced := by
   intro w h
   change sang w ∧ danced w at h
   exact Or.inl h.1
 
 /-- Per-scale Theorem 9 instance: or/and. -/
 theorem orAnd_exhMW_iff_exhIE :
-    exhMW orAndALT sangOrDanced ≡ₚ exhIE orAndALT sangOrDanced := by
-  constructor
-  · exact prop6_exhMW_entails_exhIE orAndALT sangOrDanced
+    exhMW orAndALT sangOrDanced = exhIE orAndALT sangOrDanced := by
+  apply Set.Subset.antisymm
+  · exact exhMW_entails_exhIE orAndALT sangOrDanced
   · intro w hie
     constructor
     · have hor_in_IE : sangOrDanced ∈ IE orAndALT sangOrDanced := λ E hE => hE.1.1
@@ -310,11 +310,11 @@ theorem orAnd_exhMW_iff_exhIE :
       simp only [orAndALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha_ALT
       rcases ha_ALT with rfl | rfl
       · exact hna_v hv_or
-      · have hneg_and_in_IE : (∼sangAndDanced) ∈ IE orAndALT sangOrDanced := by
+      · have hneg_and_in_IE : (sangAndDancedᶜ) ∈ IE orAndALT sangOrDanced := by
           intro E hE_mc
           by_contra h_not_in
-          let E' := E ∪ {∼sangAndDanced}
-          have hcompat : isCompatible orAndALT sangOrDanced E' := by
+          let E' := E ∪ {sangAndDancedᶜ}
+          have hcompat : IsCompatible orAndALT sangOrDanced E' := by
             obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
             refine ⟨Or.inl hphi, ?_, ?_⟩
             · intro ψ hψ
@@ -331,7 +331,7 @@ theorem orAnd_exhMW_iff_exhIE :
                   rcases ha with rfl | rfl
                   · exfalso
                     obtain ⟨u, hu⟩ := hcons
-                    exact hu (∼sangOrDanced) hψ_E (hu sangOrDanced hphi)
+                    exact hu (sangOrDancedᶜ) hψ_E (hu sangOrDanced hphi)
                   · exact wSang_not_and
               · simp only [Set.mem_singleton_iff] at hψ_new
                 rw [hψ_new]
@@ -342,22 +342,22 @@ theorem orAnd_exhMW_iff_exhIE :
             apply h_not_in
             exact hle (Set.mem_union_right E (Set.mem_singleton _))
           exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-        have hna_w : ¬(sangAndDanced w) := hie (∼sangAndDanced) hneg_and_in_IE
+        have hna_w : ¬(sangAndDanced w) := hie (sangAndDancedᶜ) hneg_and_in_IE
         exact hna_w ha_w
 
 theorem exhIE_some_at_w1 : exhIE someAllALT someStudents w1 :=
-  someAll_exhMW_iff_exhIE.1 exhMW_some_at_w1
+  someAll_exhMW_iff_exhIE.subset exhMW_some_at_w1
 
 theorem exhIE_some_not_w3 : ¬exhIE someAllALT someStudents w3 := by
   intro h
-  exact exhMW_some_not_w3 (someAll_exhMW_iff_exhIE.2 h)
+  exact exhMW_some_not_w3 (someAll_exhMW_iff_exhIE.symm.subset h)
 
 theorem exhIE_or_at_wSang : exhIE orAndALT sangOrDanced wSang :=
-  orAnd_exhMW_iff_exhIE.1 exhMW_or_at_wSang
+  orAnd_exhMW_iff_exhIE.subset exhMW_or_at_wSang
 
 theorem exhIE_or_not_wBoth : ¬exhIE orAndALT sangOrDanced wBoth := by
   intro h
-  exact exhMW_or_not_wBoth (orAnd_exhMW_iff_exhIE.2 h)
+  exact exhMW_or_not_wBoth (orAnd_exhMW_iff_exhIE.symm.subset h)
 
 -- ----------------------------------------------------------------------------
 -- 4: MAXIMIZE STRENGTH EXAMPLES (@cite{chierchia-2013})

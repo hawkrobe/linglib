@@ -6,7 +6,9 @@ import Linglib.Theories.Syntax.Minimalism.HeadMovement.GermanicV2
 import Linglib.Core.InformationStructure
 import Linglib.Fragments.Norwegian.V2
 import Linglib.Fragments.English.V2
+import Linglib.Fragments.English.Typology
 import Linglib.Fragments.German.V2
+import Linglib.Fragments.German.Typology
 import Linglib.Fragments.Danish.V2
 
 /-!
@@ -654,7 +656,7 @@ open Phenomena.WordOrder.Typology in
     a micro-parameter profile that has BOTH +Decl° (V2 in roots → surface SVO)
     AND +Fin° (V-to-I in embedded → surface SOV). -/
 theorem german_noDominant_explained :
-    germanV2.basicOrder = .noDominant ∧
+    Fragments.German.typology.wordOrder.basicOrder = .noDominant ∧
     german.toProfile.verbMovement .Decl = true ∧
     german.toProfile.verbMovement .Fin  = true := by decide
 
@@ -663,7 +665,7 @@ open Phenomena.WordOrder.Typology in
     (no verb movement in declaratives → surface SVO with SVO base order)
     and −Fin° (no V-to-I in embedded clauses → embedded order also SVO). -/
 theorem english_svo_explained :
-    english.basicOrder = .svo ∧
+    Fragments.English.typology.wordOrder.basicOrder = .svo ∧
     stdEnglish.toProfile.verbMovement .Decl = false ∧
     stdEnglish.toProfile.verbMovement .Fin  = false := by decide
 

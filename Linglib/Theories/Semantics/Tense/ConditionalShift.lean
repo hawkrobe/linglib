@@ -32,6 +32,8 @@ while preserving the Context of Thought θ (= `tower.origin`).
 
 namespace Semantics.Tense.ConditionalShift
 
+open Core (Situation)
+
 open Core.Time
 open Core.Context (RichContext KContext ContextTower ContextShift
   hpShift DomainExpanding)

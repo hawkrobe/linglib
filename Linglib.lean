@@ -47,6 +47,7 @@ import Linglib.Core.Order.Normality
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.FeaturePreorder
+import Linglib.Core.Order.SetPreimage
 import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Logic.SystemZ
 import Linglib.Core.Register
@@ -68,16 +69,17 @@ import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.ModalTypes
 import Linglib.Core.SelectionFunction
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.InfoState
-import Linglib.Core.Issue.Basic
-import Linglib.Core.Issue.Hamblin
-import Linglib.Core.Issue.Partition
-import Linglib.Core.Issue.Singleton
-import Linglib.Core.Issue.Answerhood
-import Linglib.Core.Issue.Granularity
-import Linglib.Core.Issue.Relevance
+import Linglib.Core.Question.Support
+import Linglib.Core.Question.Basic
+import Linglib.Core.Question.Hamblin
+import Linglib.Core.Question.Partition
+import Linglib.Core.Question.Singleton
+import Linglib.Core.Question.Answerhood
+import Linglib.Core.Question.Granularity
+import Linglib.Core.Question.Relevance
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Discourse.Goal
@@ -145,14 +147,19 @@ import Linglib.Core.GameTheory
 import Linglib.Core.Evidence
 import Linglib.Core.Epistemicity
 import Linglib.Core.Logophoricity
-import Linglib.Core.Temporal.Time
-import Linglib.Core.Temporal.Allen
-import Linglib.Core.Temporal.OrientationTime
-import Linglib.Core.Temporal.Domain
-import Linglib.Core.Temporal.RelationOrigin
-import Linglib.Core.Temporal.System
-import Linglib.Core.Temporal.Reichenbach
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Situation
+import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Time.Interval.Generalized
+import Linglib.Core.Time.Boundedness
+import Linglib.Core.Time.Relation
+import Linglib.Core.Time.AtomDist
+import Linglib.Core.Time.Allen
+import Linglib.Core.Time.Orientation
+import Linglib.Core.Time.Domain
+import Linglib.Core.Time.RelationOrigin
+import Linglib.Core.Time.System
+import Linglib.Core.Time.Reichenbach
+import Linglib.Core.Time.Tense
 import Linglib.Core.Typology.WordOrder
 import Linglib.Core.Typology.Adposition
 import Linglib.Core.Typology.LanguageProfile
@@ -545,6 +552,7 @@ import Linglib.Fragments.German.Conditionals
 import Linglib.Fragments.German.Pronouns
 import Linglib.Fragments.German.Reciprocals
 import Linglib.Fragments.German.Morph
+import Linglib.Fragments.German.Typology
 import Linglib.Fragments.German.Negation
 import Linglib.Fragments.German.AdjAgreement
 import Linglib.Fragments.German.V2
@@ -1086,6 +1094,7 @@ import Linglib.Phenomena.Comparison.Studies.FoxHackl2006
 import Linglib.Phenomena.Comparison.Studies.VonStechow1984
 import Linglib.Phenomena.Comparison.Studies.Buring2007
 import Linglib.Phenomena.Comparison.Studies.Bobaljik2012
+import Linglib.Phenomena.Comparison.Studies.BhattPancheva2004
 import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014
@@ -1191,6 +1200,7 @@ import Linglib.Phenomena.Modality.Studies.Boylan2023
 import Linglib.Phenomena.Modality.Studies.Narrog2010
 import Linglib.Phenomena.Modality.Studies.Narrog2012
 import Linglib.Phenomena.Modality.Studies.HerbstrittFranke2019
+import Linglib.Phenomena.Modality.Studies.Huijsmans2025
 import Linglib.Theories.Semantics.BSML.Defs
 import Linglib.Theories.Semantics.BSML.Enrichment
 import Linglib.Theories.Semantics.BSML.FreeChoice
@@ -1207,7 +1217,7 @@ import Linglib.Phenomena.Modality.Studies.CiardelliGuerrini2026
 import Linglib.Phenomena.Modality.Studies.ElliottSudo2025
 import Linglib.Phenomena.Modality.Studies.AnandHacquard2013
 import Linglib.Phenomena.Modality.Studies.Condoravdi2002
-import Linglib.Phenomena.Modality.FreeChoiceCompare
+import Linglib.Phenomena.Modality.Studies.Fox2007
 import Linglib.Phenomena.Modality.EpistemicContradictions
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleMenendezBenito2010
 import Linglib.Phenomena.ModalIndefinites.Studies.AlonsoOvalleRoyer2024
@@ -1266,6 +1276,7 @@ import Linglib.Phenomena.Plurals.Studies.KrizSpector2021
 import Linglib.Phenomena.Polarity.Studies.Chierchia2006
 import Linglib.Phenomena.Polarity.Studies.Chierchia2013
 import Linglib.Phenomena.Polarity.Studies.DenicEtAl2021
+import Linglib.Phenomena.Polarity.Studies.Hoeksema1983
 import Linglib.Phenomena.Polarity.Studies.Hohle1992
 import Linglib.Phenomena.Polarity.Studies.Ladusaw1979
 import Linglib.Phenomena.Polarity.Studies.Lahiri1998
@@ -1541,7 +1552,6 @@ import Linglib.Phenomena.Modality.Studies.Ferreira2023
 import Linglib.Phenomena.Presupposition.Compare
 import Linglib.Phenomena.ScalarImplicatures.ExhaustivityLimit
 import Linglib.Phenomena.ScalarImplicatures.ScopeExpressivity
-import Linglib.Phenomena.ScalarImplicatures.EpistemicBlocking
 import Linglib.Phenomena.TenseAspect.Compare
 import Linglib.Phenomena.TenseAspect.CompareTenseModal
 import Linglib.Phenomena.TenseAspect.ComparePartee
@@ -2137,6 +2147,7 @@ import Linglib.Theories.Pragmatics.Implicature.Analyticity
 import Linglib.Theories.Pragmatics.Implicature.ConventionalImplicatures
 import Linglib.Theories.Pragmatics.Implicature.Core.Basic
 import Linglib.Theories.Pragmatics.Implicature.Core.Competence
+import Linglib.Theories.Pragmatics.Implicature.Core.EpistemicBlocking
 import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
 import Linglib.Theories.Semantics.Alternatives.Categorical
@@ -2146,13 +2157,22 @@ import Linglib.Theories.Semantics.Alternatives.Symmetric
 import Linglib.Theories.Semantics.Alternatives.AtomicConstraint
 import Linglib.Theories.Semantics.Polarity.Operator
 import Linglib.Theories.Pragmatics.Implicature.Evaluativity
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators.Antiexhaustive
+import Linglib.Theories.Semantics.Exhaustification.Operators.ExhMX
+import Linglib.Theories.Semantics.Exhaustification.Operators.Flat
+import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
+import Linglib.Theories.Semantics.Exhaustification.Operators.MaximizeStrength
+import Linglib.Theories.Semantics.Exhaustification.Combinators
+import Linglib.Theories.Semantics.Exhaustification.Excluder
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
-import Linglib.Theories.Semantics.Exhaustification.IE
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Linglib.Theories.Semantics.Exhaustification.SetFinsetBridge
 import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
+import Linglib.Theories.Semantics.Exhaustification.Relevance
 import Linglib.Theories.Semantics.Exhaustification.ScalePredictions
 import Linglib.Theories.Semantics.Exhaustification.SplitExhaustification
+import Linglib.Theories.Semantics.Exhaustification.Tolerant
 import Linglib.Theories.Semantics.Exhaustification.Trivalent
 import Linglib.Theories.Pragmatics.Implicature.Core.FoxSpector2018
 import Linglib.Phenomena.Plurals.Studies.Magri2014
@@ -2183,6 +2203,7 @@ import Linglib.Theories.Pragmatics.RSA.BToM
 import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility
 import Linglib.Theories.Pragmatics.RSA.Defs
 import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Theories.Pragmatics.RSA.Monotonicity
 import Linglib.Theories.Pragmatics.RSA.Compositional
 import Linglib.Theories.Pragmatics.RSA.EmbeddedSI
 import Linglib.Theories.Pragmatics.RSA.Channel
@@ -2215,6 +2236,7 @@ import Linglib.Phenomena.Persuasion.Studies.MacuchSilvaEtAl2024
 import Linglib.Phenomena.ScalarImplicatures.Studies.Franke2011
 import Linglib.Phenomena.Dialogue.Studies.HardingGerstenbergIcard2025
 import Linglib.Phenomena.Dialogue.Studies.Ginzburg2012
+import Linglib.Phenomena.Dialogue.Studies.PurverGinzburg2004
 -- Nouwen2024RSA merged into Nouwen2024
 import Linglib.Phenomena.Quantification.Studies.ScopeFreezing
 import Linglib.Phenomena.Quantification.Studies.RSAScopeFreezing
@@ -2253,6 +2275,7 @@ import Linglib.Theories.Pragmatics.Assertion.DisjunctiveUpdate
 -- Theories: Pragmatics: Dialogue
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Basic
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar
+import Linglib.Theories.Pragmatics.Dialogue.KOS.RepriseContent
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Rules
 import Linglib.Theories.Pragmatics.Dialogue.KOS.TTRBridge
 -- Theories: Phonology

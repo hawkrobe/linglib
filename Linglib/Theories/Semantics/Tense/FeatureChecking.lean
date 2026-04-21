@@ -27,8 +27,8 @@ that must be checked against the local temporal anchor.
 
 namespace Semantics.Tense.FeatureChecking
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Core.Time
 open Semantics.Tense
 

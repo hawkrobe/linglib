@@ -1,6 +1,6 @@
 import Linglib.Theories.Phonology.Featural.Features
 import Linglib.Theories.Phonology.Featural.Geometry
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Time.Interval.Basic
 
 /-!
 # Autosegmental Representations

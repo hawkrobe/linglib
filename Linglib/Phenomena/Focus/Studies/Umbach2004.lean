@@ -1,8 +1,8 @@
 import Linglib.Core.InformationStructure
 import Linglib.Core.Discourse.Coherence
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.Issue.Answerhood
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
+import Linglib.Core.Question.Answerhood
 import Linglib.Core.Mood.PartitionAsInquiry
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
@@ -48,7 +48,7 @@ three levels at which "contrast" appears:
 ## Connection to existing formalization
 
 - Focus alternatives & FIP: `Semantics.FocusInterpretation` (@cite{rooth-1992})
-- QUD / implicit questions: `Core.Issue`, `Core.Issue.isPartialAnswer` (@cite{roberts-2012})
+- QUD / implicit questions: `Core.Question`, `Core.Question.isPartialAnswer` (@cite{roberts-2012})
 - DTS "but": `DTS.But` (@cite{merin-1999})
 - Coherence relations: `Core.Discourse.Coherence` (@cite{kehler-2002})
 - Focus particles: `Fragments.English.FocusParticles`
@@ -319,7 +319,7 @@ theorem room_dishes_independent :
 /-! @cite{umbach-2004} §3.1 formulates confirm+deny in terms of implicit
 questions (QUDs): "A but B" responds to an implicit conjunctive question
 "Did X do A, and did X do B?" where one sub-answer confirms and the other
-denies. This connects to `Core.Issue.fromSetoid` (@cite{roberts-2012}):
+denies. This connects to `Core.Question.fromSetoid` (@cite{roberts-2012}):
 the implicit conjunctive question is the partition by joint
 (room, dishes) values, and confirm+deny picks one cell. -/
 
@@ -332,13 +332,13 @@ def roomDishesEquiv : Setoid CDWorld :=
 /-- The implicit conjunctive question behind a *but*-sentence:
     "Did John clean his room? And did he wash the dishes?"
     Built as the inquisitive content of the (room, dishes) partition. -/
-def roomDishesQUD : Core.Issue CDWorld :=
-  Core.Issue.fromSetoid roomDishesEquiv
+def roomDishesQUD : Core.Question CDWorld :=
+  Core.Question.fromSetoid roomDishesEquiv
 
 /-- The implicit question behind CONTRAST is genuinely inquisitive:
     it has multiple alternatives (all four combinations are nontrivial). -/
 theorem roomDishes_inquisitive : roomDishesQUD.isInquisitive :=
-  Core.Issue.isInquisitive_fromSetoid_of_two_classes roomDishesEquiv
+  Core.Question.isInquisitive_fromSetoid_of_two_classes roomDishesEquiv
     .roomOnly .dishesOnly (fun h => by
       have : (true, false) = (false, true) := h
       exact absurd this (by decide))
@@ -351,9 +351,9 @@ def roomYesDishesNo : Set CDWorld := {x | roomDishesEquiv x .roomOnly}
     the confirm+deny pattern corresponds to one cell of the implicit
     conjunctive question. -/
 theorem confirm_deny_is_partial_answer :
-    Core.Issue.isPartialAnswer roomDishesQUD roomYesDishesNo :=
+    Core.Question.isPartialAnswer roomDishesQUD roomYesDishesNo :=
   ⟨roomYesDishesNo,
-   Core.Issue.class_mem_alt_fromSetoid roomDishesEquiv
+   Core.Question.class_mem_alt_fromSetoid roomDishesEquiv
      (Setoid.mem_classes roomDishesEquiv .roomOnly),
    Or.inl subset_rfl⟩
 

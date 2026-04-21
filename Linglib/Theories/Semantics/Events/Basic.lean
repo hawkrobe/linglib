@@ -19,7 +19,7 @@ later module.
 -/
 
 import Mathlib.Order.Basic
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Time.Interval.Basic
 import Linglib.Tactics.OntSort
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Tense.Aspect.Core

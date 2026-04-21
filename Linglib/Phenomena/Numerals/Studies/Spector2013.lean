@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Numerals.Basic
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 
 /-!
 # Spector 2013: Bare Numerals and Scalar Implicatures
@@ -30,7 +30,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 
 - §1: The four approaches as an enum
 - §2: The three generalizations as a checkable predicate
-- §3: **EXH bridge** — proves `exhNumeral` agrees with the general `exhB`
+- §3: **EXH bridge** — proves `exhNumeral` agrees with the general `Excluder.exh`
   from @cite{fox-2007}'s innocent exclusion on numeral alternative sets
 - §4: Neo-Gricean failure in DE contexts + discourse coherence against exactly-only
 - §5: Against underspecification (no genuine "at most" readings)
@@ -41,8 +41,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 ## Integration
 
 - **EXH bridge** (§3) connects `Theories/Semantics/Lexical/Numeral/Semantics.lean`'s
-  `exhNumeral` to `Theories/Semantics/Exhaustification/InnocentExclusion.lean`'s `exhB`
-- `Compare.lean` Bridge 9 independently shows RSA derives exact from LB
+  `exhNumeral` to the `Exhaustification.innocent` excluder
 - `ExhaustivityLimit.lean` proves RSA at α→∞ = EXH for ⟨some, all⟩
 - @cite{spector-2007} proves Max(P) = {Exhaust(P)} (Gricean ↔ exhaustive)
 -/
@@ -50,7 +49,7 @@ generalizations about numeral interpretation (§5, (41a–c)):
 namespace Spector2013
 
 open Semantics.Numerals
-open Exhaustification.InnocentExclusion (exhB ieIndices)
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 -- ============================================================================
 -- § 0. Local Embedding Helpers
@@ -193,55 +192,65 @@ theorem only_ambiguity_satisfies_all :
     exactlyOnlyPredictions.allSatisfied = false := by decide
 
 -- ============================================================================
--- § 3. EXH Bridge: exhNumeral ↔ exhB
+-- § 3. EXH Bridge: exhNumeral ↔ innocent.exh
 -- ============================================================================
 
 /-! ### Bridging numeral exhaustification to general innocent exclusion
 
 The numeral-specific `exhNumeral` (in `Semantics.lean`) hard-codes the scalar
-alternatives {≥k} and checks only the immediate successor. The general `exhB`
-from @cite{fox-2007} operates on arbitrary alternative sets via innocent
-exclusion.
+alternatives {≥k} and checks only the immediate successor. The general
+`Excluder.exh` from @cite{fox-2007} operates on arbitrary alternative sets
+via innocent exclusion.
 
-We prove these agree on the standard numeral domain. This bridges two
-previously disconnected parts of the library and validates that numerals
+We prove these agree on the standard numeral domain `Fin 4`. This bridges
+two previously disconnected parts of the library and validates that numerals
 receive standard exhaustification — they are not a special case. -/
 
-/-- Standard numeral domain for exhaustification. -/
-def exhDomain : List Nat := [0, 1, 2, 3]
+/-- Standard four-world numeral domain. World `i : Fin 4` represents
+    "exactly `i` objects". -/
+abbrev NumW : Type := Fin 4
+
+/-- Prejacent for bare numeral m under LB: ≥m as a `Bool` predicate on `NumW`. -/
+def lbMeaning (m : Nat) : NumW → Bool := fun w => decide (atLeastMeaning m w.val)
 
 /-- Numeral alternatives for bare numeral m under LB: {≥0, ≥1, ..., ≥(m+1)}.
-    Includes the prejacent and both weaker and stronger alternatives. -/
-def lbAlts (m : Nat) : List (Nat → Bool) :=
-  (List.range (m + 2)).map fun k => fun n => decide (atLeastMeaning k n)
+    Includes the prejacent and both weaker and stronger alternatives, as
+    a `Finset` of world supports. -/
+def lbAltsF (m : Nat) : Finset (Finset NumW) :=
+  altsFromPreds <| (List.range (m + 2)).map fun k => fun w : NumW =>
+    decide (atLeastMeaning k w.val)
 
-/-- Prejacent for bare numeral m under LB: ≥m. -/
-def lbMeaning (m : Nat) : Nat → Bool := fun n => decide (atLeastMeaning m n)
+/-- Support of the prejacent ≥m. -/
+def lbMeaningF (m : Nat) : Finset NumW := predToFinset (lbMeaning m)
 
-/-- Innocent exclusion identifies the successor as the only innocently
-    excludable alternative for each numeral. -/
-theorem ie_numerals :
-    ieIndices exhDomain (lbMeaning 1) (lbAlts 1) = [2] ∧
-    ieIndices exhDomain (lbMeaning 2) (lbAlts 2) = [3] ∧
-    ieIndices exhDomain (lbMeaning 3) (lbAlts 3) = [4] := by decide
+set_option maxRecDepth 2000 in
+/-- Innocent exclusion negates exactly the immediate successor `≥(m+1)`
+    for each numeral. Equivalently: the exhaustified meaning is the
+    singleton `{m}`. -/
+theorem innocent_exh_lb_eq :
+    innocent.exh (lbAltsF 1) (lbMeaningF 1) = {⟨1, by decide⟩} ∧
+    innocent.exh (lbAltsF 2) (lbMeaningF 2) = {⟨2, by decide⟩} ∧
+    innocent.exh (lbAltsF 3) (lbMeaningF 3) = {⟨3, by decide⟩} := by decide
 
+set_option maxRecDepth 2000 in
 /-- **EXH bridge**: The numeral-specific `exhNumeral` agrees with the
-    general `exhB` on the standard domain for all three bare numerals.
+    general `innocent.exh` on the four-world domain for all three bare numerals.
 
     This proves numerals get standard @cite{fox-2007} exhaustification —
     they are not a special case requiring a bespoke operator. -/
-theorem exhNumeral_eq_exhB :
-    (∀ n ∈ exhDomain, exhNumeral 1 n ↔ exhB exhDomain (lbAlts 1) (lbMeaning 1) n = true) ∧
-    (∀ n ∈ exhDomain, exhNumeral 2 n ↔ exhB exhDomain (lbAlts 2) (lbMeaning 2) n = true) ∧
-    (∀ n ∈ exhDomain, exhNumeral 3 n ↔ exhB exhDomain (lbAlts 3) (lbMeaning 3) n = true) := by
+theorem exhNumeral_eq_innocent_exh :
+    (∀ w : NumW, exhNumeral 1 w.val ↔ w ∈ innocent.exh (lbAltsF 1) (lbMeaningF 1)) ∧
+    (∀ w : NumW, exhNumeral 2 w.val ↔ w ∈ innocent.exh (lbAltsF 2) (lbMeaningF 2)) ∧
+    (∀ w : NumW, exhNumeral 3 w.val ↔ w ∈ innocent.exh (lbAltsF 3) (lbMeaningF 3)) := by
   decide
 
+set_option maxRecDepth 2000 in
 /-- The EXH bridge also holds for the local `exhLB` helper, which is
     definitionally equivalent to the inlined LB exhaustification. -/
-theorem exhLB_eq_exhB :
-    (∀ n ∈ exhDomain, exhLB .one n ↔ exhB exhDomain (lbAlts 1) (lbMeaning 1) n = true) ∧
-    (∀ n ∈ exhDomain, exhLB .two n ↔ exhB exhDomain (lbAlts 2) (lbMeaning 2) n = true) ∧
-    (∀ n ∈ exhDomain, exhLB .three n ↔ exhB exhDomain (lbAlts 3) (lbMeaning 3) n = true) := by
+theorem exhLB_eq_innocent_exh :
+    (∀ w : NumW, exhLB .one w.val ↔ w ∈ innocent.exh (lbAltsF 1) (lbMeaningF 1)) ∧
+    (∀ w : NumW, exhLB .two w.val ↔ w ∈ innocent.exh (lbAltsF 2) (lbMeaningF 2)) ∧
+    (∀ w : NumW, exhLB .three w.val ↔ w ∈ innocent.exh (lbAltsF 3) (lbMeaningF 3)) := by
   decide
 
 -- ============================================================================
@@ -440,26 +449,23 @@ theorem intermediate_embedded :
 
 The results here connect to three independent lines of evidence in the library:
 
-1. **EXH bridge** (§3): `exhNumeral` = `exhB` on numeral domains. This closes
-   the gap between `Semantics/Lexical/Numeral/Semantics.lean` and
-   `Semantics/Exhaustification/InnocentExclusion.lean` — numerals get standard
+1. **EXH bridge** (§3): `exhNumeral` = `innocent.exh` on the four-world numeral
+   domain. This closes the gap between `Semantics/Lexical/Numeral/Semantics.lean`
+   and `Semantics/Exhaustification/Innocent.lean` — numerals get standard
    @cite{fox-2007} exhaustification.
 
-2. **RSA bridge** (`Compare.lean` Bridge 9): `lb_rsa_strengthens_two` proves
-   L1("two") peaks at w=2 under LB semantics. This is the RSA derivation of
-   the same exact reading that EXH derives grammatically.
-
-3. **RSA=EXH limit** (`ExhaustivityLimit.lean`): `l1_weak_weakOnly_tendsto_one`
+2. **RSA=EXH limit** (`ExhaustivityLimit.lean`): `l1_weak_weakOnly_tendsto_one`
    proves RSA L1 at α→∞ recovers Fox's EXH for ⟨some, all⟩. Combined with the
    EXH bridge here, this means RSA at α→∞ on numerals should also recover
    `exhNumeral` — the three formalisms (EXH, `exhNumeral`, RSA-limit) converge.
 
-4. **Gricean foundation** (@cite{spector-2007}): `max_eq_exhaust` proves
+3. **Gricean foundation** (@cite{spector-2007}): `max_eq_exhaust` proves
    Max(P) = {Exhaust(P)} — Gricean reasoning derives exhaustive interpretation.
    @cite{spector-2013}'s EXH operator is the grammaticalized version of the
    same operation.
 -/
 
+set_option maxRecDepth 2000 in
 /-- @cite{spector-2013}: the ambiguity-via-EXH account uniquely captures all
     three generalizations, and the EXH bridge validates that numeral
     exhaustification is an instance of general innocent exclusion. -/
@@ -470,9 +476,9 @@ theorem spector2013_summary :
     underspecPredictions.allSatisfied = false ∧
     exactlyOnlyPredictions.allSatisfied = false ∧
     -- EXH bridge: numeral EXH = general EXH (for all three numerals)
-    (∀ n ∈ exhDomain, exhNumeral 1 n ↔ exhB exhDomain (lbAlts 1) (lbMeaning 1) n = true) ∧
-    (∀ n ∈ exhDomain, exhNumeral 2 n ↔ exhB exhDomain (lbAlts 2) (lbMeaning 2) n = true) ∧
-    (∀ n ∈ exhDomain, exhNumeral 3 n ↔ exhB exhDomain (lbAlts 3) (lbMeaning 3) n = true) ∧
+    (∀ w : NumW, exhNumeral 1 w.val ↔ w ∈ innocent.exh (lbAltsF 1) (lbMeaningF 1)) ∧
+    (∀ w : NumW, exhNumeral 2 w.val ↔ w ∈ innocent.exh (lbAltsF 2) (lbMeaningF 2)) ∧
+    (∀ w : NumW, exhNumeral 3 w.val ↔ w ∈ innocent.exh (lbAltsF 3) (lbMeaningF 3)) ∧
     -- EXH derives exact from at-least
     (exhNumeral 3 3 ∧ ¬ exhNumeral 3 4) ∧
     -- Discourse coherence refutes exactly-only

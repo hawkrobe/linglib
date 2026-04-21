@@ -1,5 +1,13 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Typology.WordOrder
+import Linglib.Core.Typology.Adposition
+import Linglib.Core.Typology.LanguageProfile
+import Linglib.Core.Typology.Universal
+import Linglib.Fragments.English.Typology
+import Linglib.Fragments.Japanese.Typology
+import Linglib.Fragments.Mandarin.Typology
+import Linglib.Fragments.Korean.Typology
+import Linglib.Fragments.Arabic.Typology
 import Linglib.Core.WALS.Features.F81A
 import Linglib.Core.WALS.Features.F82A
 import Linglib.Core.WALS.Features.F83A
@@ -42,15 +50,21 @@ adjective-noun, demonstrative-noun, intensifier-adjective, negator-verb.
 @cite{gibson-2025} argues these are cases where the dependent is a single word
 (no recursive subtree), so head direction is irrelevant to DLM.
 
-## Per-language and per-chapter data lookups
+## Per-language profiles
 
-This file keeps language-profile records (`english`, `japanese`, ...) and the
-cross-linguistic *generalizations* derived from WALS. Per-language WALS-
-agreement theorems (`english_ch85`, `japanese_order_wals`, ...) and per-cell
-distribution counts (`ch85_count_postpositions`, ...) have been removed: in
-the long-term architecture, language profiles are functions of WALS lookups,
-so per-language agreement is true by construction. Distribution counts can be
-recovered directly from `Core.WALS.Features.F*` if needed.
+Per-language records live in `Fragments/{Lang}/Typology.lean` (when they carry
+overrides) or are inlined as `Core.Typology.LanguageProfile.ofWALS` directly
+in `fragmentSample` (when pure WALS suffices). The legacy `BasicOrderProfile`
+struct and its 21 hand-curated language defs have been retired in favour of
+that source-of-truth chain.
+
+## Greenbergian universals
+
+`fragmentSample : Finset LanguageProfile` is the curated 15-language sample
+used to state cross-linguistic implicational universals (@cite{greenberg-1963}
+U3 and U4 are stated and proved here as `greenberg_universal_3`/`_4`). Cross-
+chapter consistency theorems (`sov_implies_sv_and_ov`, ...) verify that WALS
+Ch 81/82/83 agree per language for sampled languages.
 
 -/
 
@@ -242,225 +256,6 @@ export Core.Typology.WordOrder
     basicOrderOfWALS svOrderOfWALS ovOrderOfWALS )
 
 -- ============================================================================
--- Basic Order Language Profiles (legacy struct; pending migration to Fragments)
--- ============================================================================
-
-/-- A language's basic word-order profile across WALS Chapters 81--83.
-
-    The order fields (`basicOrder`, `svOrder`, `ovOrder`) are derived from
-    `Core.WALS` via ISO 639-3 lookup — they are not hand-coded. Cross-chapter
-    consistency theorems (e.g., `sov_implies_sv_and_ov`) thus test WALS's
-    internal consistency rather than the agreement of hand-coded fields.
-
-    NOTE: this struct is scheduled for retirement under the
-    Fragments-as-typology-endpoint architecture (see project memory). The
-    canonical `WordOrderProfile` record now lives in
-    `Core.Typology.WordOrder`; per-language Fragments will populate it
-    directly. The `BasicOrderProfile` wrapper persists during the migration. -/
-structure BasicOrderProfile where
-  /-- Language name. -/
-  language : String
-  /-- ISO 639-3 code. -/
-  iso : String := ""
-  /-- Notes on the word-order system. -/
-  notes : String := ""
-  deriving Repr
-
-/-- Ch 81 basic order, derived from WALS by ISO lookup. -/
-def BasicOrderProfile.basicOrder (p : BasicOrderProfile) : BasicOrder :=
-  basicOrderOfWALS p.iso
-
-/-- Ch 82 subject-verb order, derived from WALS by ISO lookup. -/
-def BasicOrderProfile.svOrder (p : BasicOrderProfile) : SVOrder :=
-  svOrderOfWALS p.iso
-
-/-- Ch 83 object-verb order, derived from WALS by ISO lookup. -/
-def BasicOrderProfile.ovOrder (p : BasicOrderProfile) : OVOrder :=
-  ovOrderOfWALS p.iso
-
--- ---- SOV languages ----
-
-/-- Japanese: rigid SOV with postpositions, relative clause before noun,
-    genitive before noun. The canonical head-final language. -/
-def japanese : BasicOrderProfile :=
-  { language := "Japanese"
-  , iso := "jpn"
-  , notes := "Rigid SOV; canonical head-final" }
-
-/-- Turkish: SOV with postpositions. Relatively free word order for
-    pragmatic effects, but SOV is strongly dominant. -/
-def turkish : BasicOrderProfile :=
-  { language := "Turkish"
-  , iso := "tur"
-  , notes := "SOV dominant; some pragmatic reordering" }
-
-/-- Hindi-Urdu: SOV with postpositions. Word order is relatively flexible
-    due to case marking, but SOV is the default neutral order. -/
-def hindiUrdu : BasicOrderProfile :=
-  { language := "Hindi-Urdu"
-  , iso := "hin"
-  , notes := "SOV default; case marking allows scrambling" }
-
-/-- Korean: rigid SOV with postpositions, relative clause before noun.
-    Very similar head-final profile to Japanese. -/
-def korean : BasicOrderProfile :=
-  { language := "Korean"
-  , iso := "kor"
-  , notes := "Rigid SOV; head-final like Japanese" }
-
-/-- Quechua (Southern): rigid SOV with postpositions, suffixal morphology.
-    One of the most consistently head-final languages. -/
-def quechua : BasicOrderProfile :=
-  { language := "Quechua"
-  , iso := "que"
-  , notes := "Rigid SOV; consistently head-final. NOTE: absent from WALS F81A/F82A/F83A; derived order accessors return .noDominant. Reference grammars (e.g., Weber 1989) classify Huallaga Quechua as SOV with postpositions." }
-
-/-- Basque: SOV with postpositions. Ergative-absolutive case system.
-    Word order is flexible but SOV is the pragmatically neutral order. -/
-def basque : BasicOrderProfile :=
-  { language := "Basque"
-  , iso := "eus"
-  , notes := "SOV dominant; ergative-absolutive case" }
-
--- ---- SVO languages ----
-
-/-- English: rigid SVO with prepositions and relative clause after noun.
-    The canonical head-initial language (among non-V-initial types). -/
-def english : BasicOrderProfile :=
-  { language := "English"
-  , iso := "eng"
-  , notes := "Rigid SVO; canonical head-initial (non-V-initial)" }
-
-/-- Mandarin Chinese: SVO with prepositions (mostly). Some constructions
-    are head-final (relative clause before noun, some postpositions),
-    making Mandarin a mixed-headedness language. -/
-def mandarinChinese : BasicOrderProfile :=
-  { language := "Mandarin Chinese"
-  , iso := "cmn"
-  , notes := "SVO but mixed headedness; RelCl-N, some postpositions" }
-
-/-- Russian: SVO as the pragmatically neutral order, but word order is
-    relatively free due to rich case morphology. -/
-def russian : BasicOrderProfile :=
-  { language := "Russian"
-  , iso := "rus"
-  , notes := "SVO dominant; case morphology allows scrambling" }
-
-/-- Swahili: SVO with prepositions. Bantu language with rich verbal
-    agreement that cross-references subject and object. -/
-def swahili : BasicOrderProfile :=
-  { language := "Swahili"
-  , iso := "swh"
-  , notes := "SVO; rich verbal agreement cross-referencing S and O" }
-
-/-- Indonesian: SVO with prepositions. Relatively rigid word order
-    for an Austronesian language. -/
-def indonesian : BasicOrderProfile :=
-  { language := "Indonesian"
-  , iso := "ind"
-  , notes := "SVO; rigid for an Austronesian language" }
-
--- ---- VSO languages ----
-
-/-- Arabic (Modern Standard): VSO as the classical/formal basic order,
-    though SVO is increasingly common in spoken varieties. -/
-def arabicMSA : BasicOrderProfile :=
-  { language := "Arabic (MSA)"
-  , iso := "arb"
-  , notes := "VSO classical; SVO common in modern spoken varieties" }
-
-/-- Irish: VSO with prepositions, relative clause after noun. Celtic
-    languages are the canonical European VSO family. -/
-def irish : BasicOrderProfile :=
-  { language := "Irish"
-  , iso := "gle"
-  , notes := "VSO; Celtic canonical VSO" }
-
-/-- Tagalog: VSO / VOS (verb-initial with flexible S/O ordering).
-    WALS classifies as VSO based on pragmatically neutral clauses.
-    Philippine-type voice system complicates the S vs O distinction. -/
-def tagalog : BasicOrderProfile :=
-  { language := "Tagalog"
-  , iso := "tgl"
-  , notes := "VSO; Philippine voice system complicates S/O identification" }
-
-/-- Welsh: VSO with prepositions, relative clause after noun.
-    Another Celtic VSO language. -/
-def welsh : BasicOrderProfile :=
-  { language := "Welsh"
-  , iso := "cym"
-  , notes := "VSO; Celtic VSO like Irish" }
-
--- ---- VOS languages ----
-
-/-- Malagasy: VOS with prepositions. The best-known VOS language,
-    extensively studied in formal syntax. -/
-def malagasy : BasicOrderProfile :=
-  { language := "Malagasy"
-  , iso := "mlg"
-  , notes := "VOS; Austronesian; extensively studied in formal syntax. NOTE: absent from WALS F81A/F82A/F83A; derived order accessors return .noDominant. Reference grammars classify as VOS." }
-
-/-- Tzotzil (Mayan): VOS basic order, common in the Mayan family. -/
-def tzotzil : BasicOrderProfile :=
-  { language := "Tzotzil"
-  , iso := "tzo"
-  , notes := "VOS; Mayan family" }
-
--- ---- OVS languages ----
-
-/-- Hixkaryana (Cariban; Brazil): the first language for which OVS basic
-    order was convincingly demonstrated. This discovery
-    refuted the earlier claim that OVS and OSV orders were unattested. -/
-def hixkaryana : BasicOrderProfile :=
-  { language := "Hixkaryana"
-  , iso := "hix"
-  , notes := "OVS; first demonstrated by Derbyshire (1977); Cariban" }
-
--- ---- No dominant order ----
-
-/-- German: V2 in main clauses, SOV in embedded clauses. WALS classifies
-    as SVO, but many syntacticians analyze the underlying order as SOV
-    with V2 movement. The tension makes "no dominant order" defensible
-    (though WALS itself codes German as SVO). -/
-def germanV2 : BasicOrderProfile :=
-  { language := "German"
-  , iso := "deu"
-  , notes := "V2 main clauses, SOV embedded; WALS codes as noDominant for F81A and F83A, SV for F82A" }
-
-/-- Warlpiri (Pama-Nyungan; Australia): radically free word order, with
-    all six permutations of S, O, V attested in natural discourse.
-    The canonical non-configurational language. -/
-def warlpiri : BasicOrderProfile :=
-  { language := "Warlpiri"
-  , iso := "wbp"
-  , notes := "Radically free word order; canonical non-configurational (Hale 1983)" }
-
-/-- All basic-order language profiles in the sample. -/
-def basicOrderProfiles : List BasicOrderProfile :=
-  [ japanese, turkish, hindiUrdu, korean, quechua, basque          -- SOV
-  , english, mandarinChinese, russian, swahili, indonesian         -- SVO
-  , arabicMSA, irish, tagalog, welsh                               -- VSO
-  , malagasy, tzotzil                                              -- VOS
-  , hixkaryana                                                     -- OVS
-  , germanV2, warlpiri ]                                           -- noDominant
-
--- ============================================================================
--- Helper Functions
--- ============================================================================
-
-/-- Count of languages in a profile list with a given basic order. -/
-def countByBasicOrder (langs : List BasicOrderProfile) (o : BasicOrder) : Nat :=
-  (langs.filter (·.basicOrder == o)).length
-
-/-- Count of languages in a profile list with a given S-V order. -/
-def countBySVOrder (langs : List BasicOrderProfile) (o : SVOrder) : Nat :=
-  (langs.filter (·.svOrder == o)).length
-
-/-- Count of languages in a profile list with a given O-V order. -/
-def countByOVOrder (langs : List BasicOrderProfile) (o : OVOrder) : Nat :=
-  (langs.filter (·.ovOrder == o)).length
-
--- ============================================================================
 -- Typological Generalizations
 -- ============================================================================
 
@@ -538,55 +333,6 @@ set_option maxRecDepth 8192 in
 theorem sv_dominant :
     (ch82.filter (·.value == .sv)).length >
     (ch82.filter (·.value == .vs)).length * 5 := by decide
-
-set_option maxRecDepth 4096 in
-/-- Generalization 8: Cross-chapter consistency — all SOV languages in our
-    sample have OV order (Ch 83) and SV order (Ch 82). -/
-theorem sov_implies_sv_and_ov :
-    let sovLangs := basicOrderProfiles.filter (·.basicOrder == .sov)
-    sovLangs.all (λ p => p.svOrder == .sv && p.ovOrder == .ov) = true := by
-  decide
-
-set_option maxRecDepth 4096 in
-/-- Cross-chapter consistency — all SVO languages in our sample have SV order
-    (Ch 82) and VO order (Ch 83). -/
-theorem svo_implies_sv_and_vo :
-    let svoLangs := basicOrderProfiles.filter (·.basicOrder == .svo)
-    svoLangs.all (λ p => p.svOrder == .sv && p.ovOrder == .vo) = true := by
-  decide
-
-set_option maxRecDepth 4096 in
-/-- Cross-chapter consistency — all VSO languages in our sample have VS order
-    (Ch 82) and VO order (Ch 83). -/
-theorem vso_implies_vs_and_vo :
-    let vsoLangs := basicOrderProfiles.filter (·.basicOrder == .vso)
-    vsoLangs.all (λ p => p.svOrder == .vs && p.ovOrder == .vo) = true := by
-  decide
-
-set_option maxRecDepth 4096 in
-/-- Cross-chapter consistency — all VOS languages in our sample have VS order
-    (Ch 82) and VO order (Ch 83). -/
-theorem vos_implies_vs_and_vo :
-    let vosLangs := basicOrderProfiles.filter (·.basicOrder == .vos)
-    vosLangs.all (λ p => p.svOrder == .vs && p.ovOrder == .vo) = true := by
-  decide
-
-set_option maxRecDepth 4096 in
-/-- Generalization 9: All OV languages in our sample have basic order SOV
-    or OVS (the two S-containing OV orders). -/
-theorem ov_languages_are_sov_or_ovs :
-    let ovLangs := basicOrderProfiles.filter (·.ovOrder == .ov)
-    ovLangs.all (λ p => p.basicOrder == .sov || p.basicOrder == .ovs) = true := by
-  decide
-
-set_option maxRecDepth 4096 in
-/-- All VO languages in our sample have basic order SVO, VSO, or VOS. -/
-theorem vo_languages_are_svo_vso_or_vos :
-    let voLangs := basicOrderProfiles.filter (·.ovOrder == .vo)
-    voLangs.all (λ p =>
-      p.basicOrder == .svo || p.basicOrder == .vso || p.basicOrder == .vos
-    ) = true := by
-  decide
 
 -- ============================================================================
 -- Per-Chapter Generalizations
@@ -682,5 +428,164 @@ set_option maxRecDepth 4096 in
 theorem ch61_withoutMarking_majority :
     (ch61.filter (·.value == .withoutMarking)).length >
     ch61.length / 2 := by decide
+
+-- ============================================================================
+-- Fragment sample: per-language `LanguageProfile`s for cross-linguistic claims
+-- ============================================================================
+-- Per the Fragments-as-typology-endpoint architecture: samples are built from
+-- per-language `LanguageProfile` values rather than constructed inline. The
+-- source-of-truth chain:
+--   WALS → Core.Typology.{WordOrder,Adposition} ISO lookups
+--        → LanguageProfile.{ofWALS, withWordOrderFromWALS, withAdpositionFromWALS}
+--        → Fragments.{Lang}.typology  (when overrides/morphology exist)
+--        → Phenomena.WordOrder.Typology.fragmentSample.
+--
+-- Languages with hand-coded `morphProfile` overrides live in `Fragments/`; pure-
+-- WALS languages are inlined as `Core.Typology.LanguageProfile.ofWALS` directly.
+
+open Core.Typology (LanguageProfile) in
+/-- Hand-verified sample of `LanguageProfile`s spanning the four major basic-
+    order classes (SOV, SVO, VSO, plus a couple non-SVO order entries) with
+    adposition data attested in WALS. Used for stating cross-linguistic
+    Greenbergian universals; `Core.Typology.ImplicationalUniversal` is the
+    corresponding API.
+
+    Each entry's domain values come from WALS via ISO 639-3 lookup — see
+    `LanguageProfile.ofWALS` and the per-domain `withXFromWALS` helpers. The
+    five languages with Fragment files (English, Japanese, Mandarin, Korean,
+    Arabic) bring along their hand-coded `morphProfile`; the remaining nine
+    are inlined here because they carry no overrides. -/
+def fragmentSample : Finset LanguageProfile :=
+  -- Fragment-sourced (carry morphProfile overrides):
+  { Fragments.English.typology     -- eng, SVO, prepositional
+  , Fragments.Japanese.typology    -- jpn, SOV, postpositional
+  , Fragments.Mandarin.typology    -- cmn, SVO, mixed adpositions
+  , Fragments.Korean.typology      -- kor, SOV, postpositional
+  , Fragments.Arabic.typology      -- arb, VSO, prepositional
+  -- VSO + prepositional (Celtic):
+  , LanguageProfile.ofWALS "cym" "Welsh"
+  , LanguageProfile.ofWALS "gle" "Irish"
+  -- Additional SOV + postpositional:
+  , LanguageProfile.ofWALS "tur" "Turkish"
+  , LanguageProfile.ofWALS "hin" "Hindi"
+  , LanguageProfile.ofWALS "eus" "Basque"
+  -- Additional SVO + prepositional:
+  , LanguageProfile.ofWALS "rus" "Russian"
+  , LanguageProfile.ofWALS "swh" "Swahili"
+  , LanguageProfile.ofWALS "ind" "Indonesian"
+  -- Object-initial / verb-final-object orders for shape diversity:
+  , LanguageProfile.ofWALS "tzo" "Tzotzil"   -- VOS, prepositional
+  , LanguageProfile.ofWALS "hix" "Hixkaryana" -- OVS, postpositional
+  }
+
+-- ============================================================================
+-- Greenbergian implicational universals over `fragmentSample`
+-- ============================================================================
+-- @cite{greenberg-1963} stated 45 cross-linguistic implicational universals.
+-- Two of the most cited concern adposition order:
+--
+--   U3: VSO languages are prepositional.
+--   U4: SOV languages are postpositional (with overwhelming greater than chance frequency).
+--
+-- Below: predicates over `LanguageProfile`, then the universal claims as
+-- `Core.Typology.ImplicationalUniversal` instances over `fragmentSample`. The
+-- proofs decide a quotient over a 15-element `Finset` literal — bumping
+-- `maxRecDepth` is the same idiom mathlib uses for similar `Finset.decide`
+-- sites (see `Core/Typology/Universal.lean` for the discussion).
+
+open Core.Typology (LanguageProfile ImplicationalUniversal)
+
+/-- Language has WALS basic order VSO. -/
+def isVSO (p : LanguageProfile) : Prop :=
+  p.wordOrder.basicOrder = .vso
+
+/-- Language has WALS basic order SOV. -/
+def isSOV (p : LanguageProfile) : Prop :=
+  p.wordOrder.basicOrder = .sov
+
+/-- Language is classified as prepositional in WALS Ch 85. -/
+def isPrepositional (p : LanguageProfile) : Prop :=
+  p.adposition = some .prepositional
+
+/-- Language is classified as postpositional in WALS Ch 85. -/
+def isPostpositional (p : LanguageProfile) : Prop :=
+  p.adposition = some .postpositional
+
+instance : DecidablePred isVSO := fun p => by unfold isVSO; infer_instance
+instance : DecidablePred isSOV := fun p => by unfold isSOV; infer_instance
+instance : DecidablePred isPrepositional := fun p => by unfold isPrepositional; infer_instance
+instance : DecidablePred isPostpositional := fun p => by unfold isPostpositional; infer_instance
+
+set_option maxRecDepth 4096 in
+/-- @cite{greenberg-1963} Universal 3: "Languages with dominant VSO order
+    are always prepositional." Tested over `fragmentSample`; antecedent is
+    triggered by Arabic, Welsh, Irish, all of which are prepositional. -/
+theorem greenberg_universal_3 :
+    ImplicationalUniversal isVSO isPrepositional fragmentSample := by
+  decide
+
+set_option maxRecDepth 4096 in
+/-- @cite{greenberg-1963} Universal 4: "With overwhelmingly greater than
+    chance frequency, languages with normal SOV order are postpositional."
+    Tested over `fragmentSample`; antecedent triggers Japanese, Korean,
+    Turkish, Hindi, and Basque — all postpositional in WALS. -/
+theorem greenberg_universal_4 :
+    ImplicationalUniversal isSOV isPostpositional fragmentSample := by
+  decide
+
+-- ============================================================================
+-- Cross-chapter WALS consistency over `fragmentSample`
+-- ============================================================================
+-- Each `LanguageProfile` in `fragmentSample` derives its `basicOrder` (Ch 81),
+-- `svOrder` (Ch 82), and `ovOrder` (Ch 83) by independent ISO 639-3 lookups
+-- against WALS. The theorems below verify that those independent lookups agree
+-- per language: e.g. WALS-Ch81-SOV implies WALS-Ch82-SV and WALS-Ch83-OV. They
+-- test internal consistency of WALS at the per-language level for the curated
+-- sample, not a typological claim.
+
+set_option maxRecDepth 4096 in
+/-- Every SOV-by-Ch81 language in `fragmentSample` is SV-by-Ch82 and OV-by-Ch83. -/
+theorem sov_implies_sv_and_ov :
+    ∀ p ∈ fragmentSample, p.wordOrder.basicOrder = .sov →
+      p.wordOrder.svOrder = .sv ∧ p.wordOrder.ovOrder = .ov := by
+  decide
+
+set_option maxRecDepth 4096 in
+/-- Every SVO-by-Ch81 language in `fragmentSample` is SV-by-Ch82 and VO-by-Ch83. -/
+theorem svo_implies_sv_and_vo :
+    ∀ p ∈ fragmentSample, p.wordOrder.basicOrder = .svo →
+      p.wordOrder.svOrder = .sv ∧ p.wordOrder.ovOrder = .vo := by
+  decide
+
+set_option maxRecDepth 4096 in
+/-- Every VSO-by-Ch81 language in `fragmentSample` is VS-by-Ch82 and VO-by-Ch83. -/
+theorem vso_implies_vs_and_vo :
+    ∀ p ∈ fragmentSample, p.wordOrder.basicOrder = .vso →
+      p.wordOrder.svOrder = .vs ∧ p.wordOrder.ovOrder = .vo := by
+  decide
+
+set_option maxRecDepth 4096 in
+/-- Every VOS-by-Ch81 language in `fragmentSample` is VS-by-Ch82 and VO-by-Ch83. -/
+theorem vos_implies_vs_and_vo :
+    ∀ p ∈ fragmentSample, p.wordOrder.basicOrder = .vos →
+      p.wordOrder.svOrder = .vs ∧ p.wordOrder.ovOrder = .vo := by
+  decide
+
+set_option maxRecDepth 4096 in
+/-- Every OV-by-Ch83 language in `fragmentSample` has Ch 81 basic order SOV
+    or OVS (the two S-containing OV orders). -/
+theorem ov_languages_are_sov_or_ovs :
+    ∀ p ∈ fragmentSample, p.wordOrder.ovOrder = .ov →
+      p.wordOrder.basicOrder = .sov ∨ p.wordOrder.basicOrder = .ovs := by
+  decide
+
+set_option maxRecDepth 4096 in
+/-- Every VO-by-Ch83 language in `fragmentSample` has Ch 81 basic order SVO,
+    VSO, or VOS. -/
+theorem vo_languages_are_svo_vso_or_vos :
+    ∀ p ∈ fragmentSample, p.wordOrder.ovOrder = .vo →
+      p.wordOrder.basicOrder = .svo ∨ p.wordOrder.basicOrder = .vso ∨
+      p.wordOrder.basicOrder = .vos := by
+  decide
 
 end Phenomena.WordOrder.Typology

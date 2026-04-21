@@ -24,6 +24,8 @@ and proves the predictions match via `native_decide`.
 
 namespace Phenomena.Causation.StructuralCausation
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

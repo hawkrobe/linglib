@@ -4,6 +4,51 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.99] - 2026-04-20
+
+### Changed
+- **`Core/Agent/DecisionTheory.lean` Bool→Finset kernel migration (Phase α/β/δ/ε complete).**
+  All `cell : W → Bool` parameters in DT-kernel operators migrated to
+  `cell : Finset W`, and all `List (W → Bool)` cell lists migrated to
+  `List (Finset W)`. Migrated operators: `resolves`, `resolvingAnswers`,
+  `isMentionSome`, `isMentionAll`, `questionMaximin`, `maximinUtilityValue`,
+  `maximinUtilityValue_monotone_cell`, `questionMaximin_le_muv`,
+  `conditionalSecurityLevel`, `maximinAfterLearning`, `questionToFinset`.
+  Per `feedback_no_intrinsic_bool.md`: mathlib API at the kernel; Bool
+  intrinsic-cell pattern eliminated from the foundation layer.
+  - `GSVanRooyBridge.lean`: boundary-shim path (Phase δ). Added private
+    helpers `cellAsFinset (worlds c) := worlds.filter (c · = true)` and
+    `cellsAsFinset (worlds q) := q.map (cellAsFinset worlds)` plus
+    `cellAsFinset_subset/_mono` and `inter_cellAsFinset` lemmas.
+    `Semantics.Questions.Question = List (W → Bool)` alias preserved
+    on the GS side; conversion happens at bridge invocation sites
+    (`hasMentionSomeStructure`, `mentionSomeDP_implies_partialOK`,
+    `canonicalMentionSomeDP_has_structure`, `requiresExhaustive`,
+    `mentionSomeDP_not_exhaustive`, `questionResolves`,
+    `refinement_preserves_resolution`, `exhaustive_antimonotone`,
+    `trivial_resolves_only_trivial`, `exact_resolves_all`,
+    `completeInfoDP_requires_exhaustive`). `resolves_subset` internal
+    lemma signature migrated to `(c c' : Finset W) (hSubset : c' ⊆ c)`.
+  - `Theories/Semantics/Questions/Utility/Relevance.lean`:
+    `underspecifiedDenotation` return type changed from `Question W` to
+    `List (W → Bool)` (decoupled from migrated alias).
+  - `Phenomena/Questions/Studies/Xiang2022.lean`: added `foCellsFinset`
+    and `partCellsFinset` adapters wrapping `foCells`/`partCells` with
+    `Finset.univ.filter (c · = true)`. Five call sites updated
+    (`canQ_mentionSome`, `canQ_semantic_pragmatic_agree`,
+    `foQ_identifyAll_mentionAll`, `questionUtility_positive`,
+    `canQ_ho_ms_agree`).
+  - `Phenomena/Questions/Studies/VanRooy2003.lean`: five call sites
+    updated to inline `Finset.univ.filter` wrappers
+    (`newspaper_mentionSome`, `mentionSome_from_goal_dp`,
+    `mentionAll_from_complete_dp`, `newspaper_question_has_value`,
+    `underspecified_all_cells_resolve`).
+  - **Deferred**: Phase γ (`Partition.toCells : QUD M → List M → List (M → Bool)`
+    cascade through ~52 sites in 21 files) and Phase 5.4-5.5
+    (`GSQuestion.toQuestion` Bool-cell elimination). Boundary-shim
+    pattern allows DT kernel to use mathlib-discipline Finset cells
+    without forcing the full Phenomena cascade.
+
 ## [0.230.98] - 2026-04-20
 
 ### Added
@@ -82,6 +127,266 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
       replacing it with one denotation + asymmetric entailment.
   - `Theories/Semantics/Alternatives/Lexical.lean`: docstring updated to
     reference `kennedyAlternatives` instead of the deleted lower/upper pair.
+
+## [0.230.97] - 2026-04-20
+
+### Added
+- **`Theories/Semantics/Exhaustification/Combinators.lean`**: abstract
+  combinator algebra over `Excluder W`, capturing the @cite{fox-katzir-2011}
+  asymmetry between contextual restriction `C` and formal-alternative
+  source `F` as an algebraic property of two combinators on excluders:
+  - `Excluder.restrict E R` — post-filter on the *excluded* output (the
+    `C`-side; @cite{magri-2009}'s relevance modifier).
+  - `Excluder.preFilter E P` — pre-filter on the *input* alternative set
+    (the `F`-side; e.g. @cite{trinh-haida-2015}'s Atomicity).
+  - `restrict_preserves_no_implicature` (positive half): `restrict` is
+    monotone in `R` (`exh_subset_restrict_exh`); contrapositively, an
+    implicature licensed under `E.restrict R` was already licensed under
+    `E`. Algebraic statement of "C cannot break symmetry."
+  - `preFilter_can_create_implicature` (negative half, two-world Bool
+    witness): `preFilter` is *not* monotone in `P`; removing a symmetric
+    partner from `ALT` strictly strengthens `innocent.exh`. Algebraic
+    statement of "F can break symmetry."
+- The Fox–Katzir thesis previously stated only as a claim about which
+  level theories should restrict at is now an algebraic theorem about
+  which combinator one chose.
+
+### Changed
+- `Exhaustification/Relevance.lean` slimmed to its Magri-specific
+  surface (`magri R := innocent.restrict R`,
+  `magri_const_true_eq_innocent`, `innocent_exh_subset_magri_exh`); the
+  combinator definitions and abstract algebra moved to
+  `Combinators.lean`.
+- `Alternatives/AtomicConstraint.lean` docstring extended with a
+  cross-reference to `Combinators.preFilter` explaining why Trinh–Haida's
+  two-layer construction (Atomicity + Conditions on A) doesn't reduce to
+  a single `preFilter` call but instantiates the same F-side asymmetry.
+
+## [0.230.96] - 2026-04-20
+
+### Changed
+- **QUD dissolution Phase 5.3**: dropped `Core.DecisionTheory.Question` abbrev
+  (the duplicate of `Semantics.Questions.Question` colliding with `Core.Question`).
+  - `Core/Agent/DecisionTheory.lean`: deleted `abbrev Question (W : Type*) := List (W -> Bool)`.
+    Inlined the underlying `List (W → Bool)` in 5 signatures (`questionToFinset`,
+    `resolvingAnswers`, `isMentionSome`, `isMentionAll`, `questionMaximin`,
+    `questionMaximin_le_muv`). Module docstring updated to reference
+    `Core.Question.ofBoolList` + `HasAltList.altList` as the bundled-view bridge
+    for consumers that want the `Core.Question` view (per Phase 5.1).
+  - `Phenomena/Questions/Studies/VanRooy2003.lean`: `open Semantics.Questions`
+    (was `hiding Question` to defer to the now-deleted `Core.DecisionTheory.Question`).
+    `Question W` references now resolve to `Semantics.Questions.Question` —
+    same underlying `List (W → Bool)`, no proof changes.
+  - `Phenomena/Questions/Studies/Xiang2022.lean`: 2 helper-def signatures
+    (`answersOverlap`, `notClosedUnderConj`) inlined `Question W → List (W → Bool)`
+    — they only had `open Semantics.Questions (entails)` so the fallback didn't apply.
+  - `Theories/Semantics/Questions/Utility/GSVanRooyBridge.lean`: untouched —
+    `open Semantics.Questions` (full) means `Question W` references now resolve
+    to `Semantics.Questions.Question` transparently.
+  - The full Option-β bundled migration (operations take `Q : Core.Question W [HasAltList Q]`
+    rather than raw `List (W → Bool)`) is deferred. The dissolution of
+    `Semantics.Questions.Question` itself + consumer migration to `Question.ofBoolList`
+    is Phase 5.4-5.5.
+
+## [0.230.94] - 2026-04-20
+
+### Changed
+- **QUD dissolution Phase 5.1 + 5.2**: bridge for List-based `Semantics.Questions.Question`
+  consumers + dead-helper sweep. Two coordinated changes:
+  - `Core/Question/Relevance.lean`: added `HasAltList.ofBoolList` constructor
+    parallel to existing `HasAltList.polar` and `HasAltList.ofList`. Witnesses
+    `HasAltList (Question.ofBoolList L)` from a non-empty `L : List (W → Bool)`
+    plus pairwise disjointness + nonempty hypotheses on the truth-sets
+    `{w | c w = true}`. Discharges via `alt_ofBoolList_of_pairwise_disjoint_nonempty`
+    (already in `Hamblin.lean`). Enables consumers that currently take
+    `q : List (W → Bool)` to migrate to `Q : Core.Question W` plus a
+    `[HasAltList Q]` witness, with `Q := Question.ofBoolList [c₁, c₂, ...]`.
+  - `Theories/Semantics/Questions/Denotation/Basic.lean`: dead-helper sweep
+    (76 → 32 lines, −44). Removed `trivialQuestion`, `numCells`,
+    `consistentWith`, `cellOf`, `filterWorlds`, `questionProduct`, the `Mul`
+    instance, `questionJoin`, `partiallyAnswers` (Bool), `pand`, `por`,
+    `pimplies`. Surface kept: `Question`/`Answer`/`Cell` abbrevs,
+    `exactQuestion`, `answers`, `completelyAnswers`, `pnot`, `entails`.
+    The full `Semantics.Questions.Question = List (W → Bool)` deletion is
+    deferred to Phase 5.4 (after consumer migration to `Core.Question`).
+
+## [0.230.92] - 2026-04-20
+
+### Added
+- **`IsBooleanHomomorphism`** structure in
+  `Theories/Semantics/Entailment/AntiAdditivity.lean` — preserves `∩`,
+  `∪`, complement; `preserves_univ`/`preserves_empty` derived from
+  preservation rather than stipulated. `toIsAdditive` /
+  `toIsMultiplicative` / `monotone` connect it to the existing
+  Boolean-closure hierarchy. Foundation for @cite{hoeksema-1983}'s
+  Eq (22) (NP-comparative as Boolean homomorphism) and Fact 3 (Boolean
+  homomorphisms are monotone).
+
+### Changed
+- **Boolean closure predicates generalized** from `Set World → Set World`
+  to `{α β : Type*} (f : Set α → Set β)`:
+  `IsAntiAdditive`, `IsAntiMorphic`, `IsAdditive`, `IsMultiplicative`,
+  `IsAntiMultiplicative`. Needed for @cite{hoeksema-1983}'s
+  S-comparative (`Set Degree → Set Individual`). Polymorphic versions
+  expose dot-notation methods (`.antitone`, `.monotone`,
+  `.antiAdditive`); back-compat `*_implies_de` / `*_implies_ue` lemmas
+  retained as `Set World` thin wrappers — no downstream files touched
+  (StrawsonEntailment, Negation/Defs, PolarityBuilder,
+  Coordination/Typology all build).
+
+## [0.230.91] - 2026-04-20
+
+### Added
+- **@cite{kennedy-2015} integration** (Kennedy alternatives + Sauerland operator).
+  Three coordinated changes:
+  - `Core/Scales/Scale.lean` (§6d/6e): polymorphic
+    `kennedyGQ rel μ d w := rel (μ w) d` captures @cite{kennedy-2015}'s
+    de-Fregean GQ schema. The Class A / Class B distinction reduces to
+    `Std.Refl` vs `Std.Irrefl` of the relation
+    (`kennedyGQ_refl_at_boundary` / `kennedyGQ_irrefl_at_boundary`).
+    General anti-Horn-scale lemmas (`moreThanDeg_disjoint_eqDeg`,
+    `eqDeg_imp_atLeastDeg`, `atLeastDeg_strictly_weaker_than_eqDeg`,
+    `eqDeg_not_upward_monotone`, etc.) live next to the scale primitives,
+    not in the numeral file.
+  - `Theories/Semantics/Numerals/Basic.lean`: 5 numeral meanings now
+    `def + @[simp] _def` over `Core.Scale.{eq,moreThan,lessThan,atLeast,
+    atMost}Deg id` (mathlib `def + @[simp]` pattern over `abbrev`); Nat
+    consequences (Class A excludes / Class B includes / disjointness /
+    strict-weakening / non-monotonicity) all delegate to the general
+    `Core.Scale` lemmas via `id`-specialization.
+  - `Phenomena/ScalarImplicatures/EpistemicBlocking.lean`:
+    @cite{sauerland-2004}'s primary-implicature operator added —
+    `asymStrongerOver`, `sauerlandPrimaryAlts`, `satisfiesPrimary` (~15
+    lines) on top of the existing `EpistemicState` / `knows` / `possible`
+    primitives. Lemmas: `not_asymStrongerOver_self`,
+    `self_not_in_primary`, `sauerlandPrimaryAlts_nil`.
+  - `Phenomena/Numerals/Studies/Kennedy2015.lean` rewrite: dual configs
+    retained (utterance type matters) but bridge anti-pattern dropped —
+    Bool meanings derive from `NumeralExpr.meaning bareMeaning` via
+    `KLowerUtt.expr` / `KUpperUtt.expr` embeddings into the unified
+    `NumeralExpr`. **New §3 symbolic neo-Gricean derivation** (4
+    `decide`-proved theorems) shows Class B (atLeast/atMost) triggers two
+    primary implicatures via `sauerlandPrimaryAlts` over Kennedy
+    alternative sets, while Class A (more/fewerThan) triggers none.
+    §4 RSA L1 derivation retained as the probabilistic implementation of
+    the same Sauerland recipe. Docstring reframed: paper is neo-Gricean,
+    not Bayesian; RSA is one *way* to compute Sauerland's predictions.
+
+## [0.230.90] - 2026-04-20
+
+### Changed
+- **`Core/QUD/` dissolved into `Core/Question/`**. `git mv
+  Core/QUD/Basic.lean → Core/Question/QUD.lean`, `git mv
+  Core/QUD/PrecisionProjection.lean →
+  Core/Question/PrecisionProjection.lean`, `Core/QUD/` directory
+  removed. Eliminates the parallel directory after the
+  `Core/Issue/ → Core/Question/` rename — `QUD` (partition-shaped
+  construction face) and `Question` (inquisitive consumption face)
+  now live under one `Core/Question/` umbrella, mirroring mathlib's
+  pattern of co-locating related types (`Setoid` + `LowerSet` +
+  `Setoid.IsPartition` view) rather than splitting them across
+  directories. Imports auto-updated across 20 consumer files +
+  `Linglib.lean`. The bundled `{toSetoid, decR}` struct shape is
+  preserved (the `abbrev QUD M := Setoid M` collapse is deferred until
+  Bool-API consumer migration). Top-of-file docstring in
+  `Core/Question/QUD.lean` documents the new architectural placement.
+- **`SingletonIssue` → `SingletonQuestion`** (leftover from the
+  `Issue → Question` rename in 0.230.88, missed by the `\bIssue\b`
+  perl substitution because `n` and `I` are both word characters and
+  so no word boundary breaks `SingletonIssue`). Renamed in
+  `Core/Question/Singleton.lean` and 2 study consumers.
+
+## [0.230.89] - 2026-04-20
+
+### Changed
+- **Exhaustification subsystem mathlib-PR cleanup (Steps 6–9).**
+  - **Step 6**: dropped notation pollution `⊆ₚ`/`≡ₚ`/`∼`/`∧ₚ`/`⋀`/`⋁`
+    across 21 files — every usage replaced with the mathlib primitive
+    (`⊆`, `=`, `·ᶜ`, `∩`, `⋂₀`, `⋃₀`); notation declarations removed
+    from `Operators/Basic.lean`.
+  - **Step 7**: dropped `pequiv` abbrev. All `≡ₚ`-style theorem
+    statements now return `Set` equality (`=`); proofs migrated to
+    `Set.Subset.antisymm` / `.subset` / `.symm.subset` from the prior
+    `constructor` / `.1` / `.2` pattern.
+  - **Step 8**: renamed `Theories/Semantics/Exhaustification/Operators.lean`
+    → `Operators/Basic.lean` (no re-export shim) so the parent file is
+    no longer a foundation hidden among siblings — sibling files
+    (`ExhMX`, `Antiexhaustive`, `MaximizeStrength`, `InnocentInclusion`,
+    `Flat`) and 21 downstream consumers updated to import
+    `Operators.Basic` directly.
+  - **Step 9**: added `Theories/Semantics/Exhaustification/SetFinsetBridge.lean`
+    establishing the `coeSet : Finset (Finset W) → Set (Set W)` lift
+    plus a `dropToFinset` inverse (filtered through `excludables ALT φ`
+    so no `Fintype (Finset W)` is needed). Bidirectional MC-set bridge
+    (`liftToSet_isMCSet` / `dropToFinset_isMCSet`) underpins the public
+    `coeSet_innocentlyExcludable_iff` (full **iff** Finset/Set agreement
+    on innocent excludability) and `IE_set_eq_coeSet_IE_finset`
+    (`IE (coeSet ALT) ↑φ = coeSet (Innocent.IE ALT φ) ∪ {↑φ}`, gated by
+    `φ.Nonempty` since the Set IE collapses to `Set.univ` on
+    unsatisfiable prejacents while the Finset side stays bounded).
+    No `sorry`s.
+
+## [0.230.88] - 2026-04-20
+
+### Changed
+- **`Core/Issue/` → `Core/Question/`** (Phase 3 of QUD dissolution).
+  Directory renamed via `git mv`; structure `Issue W` renamed to
+  `Question W`; namespace `Core.Issue` renamed to `Core.Question`.
+  Token-level rename (`\bIssue\b` → `Question`) across all `Linglib/`
+  plus `Linglib.lean` import paths and docstring path strings
+  (`Core/Issue/X.lean` → `Core/Question/X.lean`). The pre-existing
+  `Core/Question/Support.lean` (which had been written anticipating
+  this consolidation) now coexists with the inquisitive `Question`
+  type in a single namespace. `Core/Discourse/AtIssueness.lean`
+  unaffected (token-boundary safe). Build clean across all consumers.
+
+## [0.230.87] - 2026-04-20
+
+### Added
+- **`Theories/Pragmatics/Dialogue/KOS/RepriseContent.lean`** — Reprise
+  Content Hypothesis (RCH) as a `Prop` predicate over denotation
+  predictors. `RFReading` enum (Clausal Confirmation, Intended Content,
+  Repetition, Correction; @cite{ginzburg-2012} Ch. 6 §6.2.1, Table 6.1);
+  `QueryType` enum reifying the type at which a reprise queries
+  (`.individual` / `.property` / `.functional` / `.repetition`) so that
+  the GQ-violation argument is a structural type-mismatch (§8.5.1)
+  rather than a numerical mismatch; `reprisedContent` returns the query
+  types observed for a (host LocProp, sub-utterance, reading) triple by
+  reading the host's `qcparams` channel; `RchPredictor` abbrev for the
+  function a denotation theory must supply; `qParamsPredictor` defined
+  as `reprisedContent ∘ event` (the by-construction Ginzburg–Sag
+  proposal); `WeakRCH`/`StrongRCH` Prop predicates with
+  `strongRCH_implies_weakRCH` and the two satisfaction theorems for
+  the q-params predictor.
+- **`Phenomena/Dialogue/Studies/PurverGinzburg2004.lean`** — paper
+  replication for @cite{purver-ginzburg-2004} "Clarifying Noun Phrase
+  Semantics". Worked example for the indefinite 'a thief broke in'
+  with `qcparams := [{ index := "x", restriction := "thief" }]`; the
+  `gqPredictor` that licenses only `.functional` queries (the GQ
+  prediction); the central type-mismatch theorem
+  `gq_reprise_type_mismatch : ¬ WeakRCH (gqPredictor : RchPredictor String)`
+  proven via the witness 'a thief'/'A thief?' reprise event (which
+  observes an `.individual` query the GQ predictor cannot license);
+  `qparams_split_satisfies_weakRCH` inheriting from
+  `qParamsPredictor_satisfies_weakRCH`; cross-check theorem on the
+  referential 'Jo' case showing the property-fallback branch fires
+  when `qcparams` is empty.
+- **`purver-ginzburg-2004` bibliography entry** in `references.bib`
+  (Journal of Semantics 21(3): 283–311, doi 10.1093/jos/21.3.283 —
+  verified against academic.oup.com).
+
+### Changed
+- **`Theories/Pragmatics/Dialogue/KOS/Basic.lean`** — `LocProp` gains
+  a `qcparams : CParamSet := []` field (defaulted, so all existing
+  consumers continue to compile unchanged). Models the dgb-params /
+  q-params split from @cite{ginzburg-2012} §8.5.1: `cparams` carries
+  referential parameters that block grounding; `qcparams` carries
+  existentially-bound indices that travel with the sign and remain
+  available for fragment-reprise queries but do not trigger CRification.
+- **`Theories/Pragmatics/Dialogue/KOS/Grammar.lean`** —
+  `DialogueSign.toLocProp` now routes `dgbParams → cparams` and
+  `qParams → qcparams`. New theorems `toLocProp_dgb_to_cparams` and
+  `toLocProp_q_to_qcparams` make the routing explicit.
 
 ## [0.230.86] - 2026-04-20
 

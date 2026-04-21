@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Theories.Semantics.Plurality.ExistentialPL
 import Linglib.Phenomena.Plurals.Homogeneity
 import Linglib.Phenomena.Plurals.NonMaximality
@@ -197,7 +198,7 @@ def homPrejacent : Set HomWorld := someLaughed
     to any member of homAlt. This is the structural property that
     enables the Exh^{IE+II} derivation, parallel to free choice. -/
 theorem hom_not_closed :
-    ¬(∀ (X : Set (Set HomWorld)), X ⊆ homAlt → (⋀ X) ∈ homAlt) := by
+    ¬(∀ (X : Set (Set HomWorld)), X ⊆ homAlt → (⋂₀ X) ∈ homAlt) := by
   intro h
   have hX : ({kellyLaughed, janeLaughed} : Set (Set HomWorld)) ⊆ homAlt := by
     intro x hx
@@ -207,16 +208,16 @@ theorem hom_not_closed :
   have hconj := h {kellyLaughed, janeLaughed} hX
   simp only [homAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at hconj
   rcases hconj with heq | heq | heq
-  · -- ⋀{kellyL, janeL} = someLaughed: at onlyKelly, janeL false
-    have : ¬(⋀ ({kellyLaughed, janeLaughed} : Set _)) .onlyKelly :=
+  · -- ⋂₀ {kellyL, janeL} = someLaughed: at onlyKelly, janeL false
+    have : ¬(⋂₀ ({kellyLaughed, janeLaughed} : Set _)) .onlyKelly :=
       fun hc => hc janeLaughed (Set.mem_insert_of_mem _ rfl)
     rw [heq] at this; exact this trivial
-  · -- ⋀{kellyL, janeL} = kellyLaughed: at onlyKelly, janeL false but kellyL true
-    have : ¬(⋀ ({kellyLaughed, janeLaughed} : Set _)) .onlyKelly :=
+  · -- ⋂₀ {kellyL, janeL} = kellyLaughed: at onlyKelly, janeL false but kellyL true
+    have : ¬(⋂₀ ({kellyLaughed, janeLaughed} : Set _)) .onlyKelly :=
       fun hc => hc janeLaughed (Set.mem_insert_of_mem _ rfl)
     rw [heq] at this; exact this trivial
-  · -- ⋀{kellyL, janeL} = janeLaughed: at onlyJane, kellyL false but janeL true
-    have : ¬(⋀ ({kellyLaughed, janeLaughed} : Set _)) .onlyJane :=
+  · -- ⋂₀ {kellyL, janeL} = janeLaughed: at onlyJane, kellyL false but janeL true
+    have : ¬(⋂₀ ({kellyLaughed, janeLaughed} : Set _)) .onlyJane :=
       fun hc => hc kellyLaughed (Set.mem_insert_iff.mpr (Or.inl rfl))
     rw [heq] at this; exact this trivial
 
@@ -232,14 +233,14 @@ For φ = someLaughed and ALT = {someLaughed, kellyLaughed, janeLaughed}:
 
 There are two MC-sets (maximal sets of negated alternatives consistent
 with the prejacent):
-- MC₁ = {φ, ∼janeLaughed} — witness: onlyKelly
-- MC₂ = {φ, ∼kellyLaughed} — witness: onlyJane
+- MC₁ = {φ, janeLaughedᶜ} — witness: onlyKelly
+- MC₂ = {φ, kellyLaughedᶜ} — witness: onlyJane
 
-The IE set is {a ∈ ALT : ∼a ∈ every MC-set}. The intersection
-MC₁ ∩ MC₂ = {φ}, and since ∼φ is never in an MC-set (contradicts
+The IE set is {a ∈ ALT : aᶜ ∈ every MC-set}. The intersection
+MC₁ ∩ MC₂ = {φ}, and since φᶜ is never in an MC-set (contradicts
 the prejacent), **no alternative is innocently excludable**.
 
-More precisely: ∼kellyLaughed ∉ MC₁ and ∼janeLaughed ∉ MC₂, so neither
+More precisely: kellyLaughedᶜ ∉ MC₁ and janeLaughedᶜ ∉ MC₂, so neither
 individual alternative is in IE. And someLaughed = φ cannot be IE-excluded
 by definition.
 
@@ -257,9 +258,9 @@ private theorem homPrejacent_sat : ∃ w, homPrejacent w := ⟨.onlyKelly, trivi
 private theorem hom_cover : ∀ u, someLaughed u → ¬kellyLaughed u → ¬janeLaughed u → False :=
   fun u => by cases u <;> simp [someLaughed, kellyLaughed, janeLaughed]
 
-/-- MC-set that omits ∼kellyLaughed (contains ∼janeLaughed). Witness: onlyKelly. -/
+/-- MC-set that omits kellyLaughedᶜ (contains janeLaughedᶜ). Witness: onlyKelly. -/
 private theorem mc_set_without_neg_kelly :
-    isMCSet homAlt homPrejacent {homPrejacent, ∼janeLaughed} := by
+    IsMCSet homAlt homPrejacent {homPrejacent, janeLaughedᶜ} := by
   constructor
   · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
     · intro ψ hψ
@@ -277,20 +278,20 @@ private theorem mc_set_without_neg_kelly :
     · exact Set.mem_insert _ _
     · simp only [homAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl | rfl
-      · -- ∼someLaughed contradicts homPrejacent
+      · -- someLaughedᶜ contradicts homPrejacent
         exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu (∼someLaughed) hψ' (hu homPrejacent (hsub (Set.mem_insert _ _)))
-      · -- ∼kellyLaughed + ∼janeLaughed + someLaughed is inconsistent
+        exact hu (someLaughedᶜ) hψ' (hu homPrejacent (hsub (Set.mem_insert _ _)))
+      · -- kellyLaughedᶜ + janeLaughedᶜ + someLaughed is inconsistent
         exfalso; obtain ⟨u, hu⟩ := hE'.2.2
         exact hom_cover u
           (hu homPrejacent (hsub (Set.mem_insert _ _)))
-          (hu (∼kellyLaughed) hψ')
-          (hu (∼janeLaughed) (hsub (Set.mem_insert_of_mem _ rfl)))
+          (hu (kellyLaughedᶜ) hψ')
+          (hu (janeLaughedᶜ) (hsub (Set.mem_insert_of_mem _ rfl)))
       · exact Set.mem_insert_of_mem _ rfl
 
-/-- MC-set that omits ∼janeLaughed (contains ∼kellyLaughed). Witness: onlyJane. -/
+/-- MC-set that omits janeLaughedᶜ (contains kellyLaughedᶜ). Witness: onlyJane. -/
 private theorem mc_set_without_neg_jane :
-    isMCSet homAlt homPrejacent {homPrejacent, ∼kellyLaughed} := by
+    IsMCSet homAlt homPrejacent {homPrejacent, kellyLaughedᶜ} := by
   constructor
   · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
     · intro ψ hψ
@@ -309,32 +310,32 @@ private theorem mc_set_without_neg_jane :
     · simp only [homAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl | rfl
       · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu (∼someLaughed) hψ' (hu homPrejacent (hsub (Set.mem_insert _ _)))
+        exact hu (someLaughedᶜ) hψ' (hu homPrejacent (hsub (Set.mem_insert _ _)))
       · exact Set.mem_insert_of_mem _ rfl
-      · -- ∼janeLaughed + ∼kellyLaughed + someLaughed is inconsistent
+      · -- janeLaughedᶜ + kellyLaughedᶜ + someLaughed is inconsistent
         exfalso; obtain ⟨u, hu⟩ := hE'.2.2
         exact hom_cover u
           (hu homPrejacent (hsub (Set.mem_insert _ _)))
-          (hu (∼kellyLaughed) (hsub (Set.mem_insert_of_mem _ rfl)))
-          (hu (∼janeLaughed) hψ')
+          (hu (kellyLaughedᶜ) (hsub (Set.mem_insert_of_mem _ rfl)))
+          (hu (janeLaughedᶜ) hψ')
 
 /-- someLaughed is not innocently excludable (it's the prejacent). -/
 private theorem someLaughed_not_ie :
-    ¬isInnocentlyExcludable homAlt homPrejacent someLaughed := by
+    ¬IsInnocentlyExcludable homAlt homPrejacent someLaughed := by
   intro ⟨_, hIE⟩
   obtain ⟨E, hMC⟩ := exists_MCset homAlt homPrejacent homAlt_finite homPrejacent_sat
   obtain ⟨u, hu⟩ := hMC.1.2.2
-  exact hu (∼someLaughed) (hIE E hMC) (hu homPrejacent hMC.1.1)
+  exact hu (someLaughedᶜ) (hIE E hMC) (hu homPrejacent hMC.1.1)
 
 /-- kellyLaughed is NOT innocently excludable.
 
-    ∼kellyLaughed ∉ MC₁ = {homPrejacent, ∼janeLaughed}, because
-    ∼kellyLaughed ≠ homPrejacent (differ at .neither) and
-    ∼kellyLaughed ≠ ∼janeLaughed (differ at .onlyKelly). -/
+    kellyLaughedᶜ ∉ MC₁ = {homPrejacent, janeLaughedᶜ}, because
+    kellyLaughedᶜ ≠ homPrejacent (differ at .neither) and
+    kellyLaughedᶜ ≠ janeLaughedᶜ (differ at .onlyKelly). -/
 private theorem kellyLaughed_not_ie :
-    ¬isInnocentlyExcludable homAlt homPrejacent kellyLaughed := by
+    ¬IsInnocentlyExcludable homAlt homPrejacent kellyLaughed := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼kellyLaughed ∉ ({homPrejacent, ∼janeLaughed} : Set (Set HomWorld)) := by
+  have hNotIn : kellyLaughedᶜ ∉ ({homPrejacent, janeLaughedᶜ} : Set (Set HomWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩
@@ -342,13 +343,13 @@ private theorem kellyLaughed_not_ie :
 
 /-- janeLaughed is NOT innocently excludable.
 
-    ∼janeLaughed ∉ MC₂ = {homPrejacent, ∼kellyLaughed}, because
-    ∼janeLaughed ≠ homPrejacent (differ at .neither) and
-    ∼janeLaughed ≠ ∼kellyLaughed (differ at .onlyJane). -/
+    janeLaughedᶜ ∉ MC₂ = {homPrejacent, kellyLaughedᶜ}, because
+    janeLaughedᶜ ≠ homPrejacent (differ at .neither) and
+    janeLaughedᶜ ≠ kellyLaughedᶜ (differ at .onlyJane). -/
 private theorem janeLaughed_not_ie :
-    ¬isInnocentlyExcludable homAlt homPrejacent janeLaughed := by
+    ¬IsInnocentlyExcludable homAlt homPrejacent janeLaughed := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼janeLaughed ∉ ({homPrejacent, ∼kellyLaughed} : Set (Set HomWorld)) := by
+  have hNotIn : janeLaughedᶜ ∉ ({homPrejacent, kellyLaughedᶜ} : Set (Set HomWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mpr (congrFun h .onlyJane) id trivial⟩
@@ -361,7 +362,7 @@ private theorem janeLaughed_not_ie :
     entirely, so neither individual alternative can be consistently
     excluded from all MC-sets. -/
 theorem nothing_ie (q : Set HomWorld)
-    (hqIE : isInnocentlyExcludable homAlt homPrejacent q) : False := by
+    (hqIE : IsInnocentlyExcludable homAlt homPrejacent q) : False := by
   have hq_in := hqIE.1
   simp only [homAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at hq_in
   rcases hq_in with rfl | rfl | rfl
@@ -402,8 +403,8 @@ private theorem extend_hom_II
     (target : Set HomWorld)
     (htarget_alt : target ∈ homAlt)
     (R : Set (Set HomWorld))
-    (hRcompat : isIICompatible homAlt homPrejacent R) (_hNotIn : target ∉ R) :
-    isIICompatible homAlt homPrejacent (R ∪ {target}) := by
+    (hRcompat : IsIICompatible homAlt homPrejacent R) (_hNotIn : target ∉ R) :
+    IsIICompatible homAlt homPrejacent (R ∪ {target}) := by
   constructor
   · intro x hx
     rcases hx with hxR | hxT
@@ -425,7 +426,7 @@ private theorem extend_hom_II
 private theorem target_in_hom_II
     (target : Set HomWorld)
     (htarget_alt : target ∈ homAlt) :
-    isInnocentlyIncludable homAlt homPrejacent target := by
+    IsInnocentlyIncludable homAlt homPrejacent target := by
   constructor
   · exact htarget_alt
   · intro R ⟨hRcompat, hRmax⟩
@@ -436,12 +437,12 @@ private theorem target_in_hom_II
 
 /-- kellyLaughed is innocently includable. -/
 theorem kellyLaughed_ii :
-    isInnocentlyIncludable homAlt homPrejacent kellyLaughed :=
+    IsInnocentlyIncludable homAlt homPrejacent kellyLaughed :=
   target_in_hom_II kellyLaughed (by simp [homAlt])
 
 /-- janeLaughed is innocently includable. -/
 theorem janeLaughed_ii :
-    isInnocentlyIncludable homAlt homPrejacent janeLaughed :=
+    IsInnocentlyIncludable homAlt homPrejacent janeLaughed :=
   target_in_hom_II janeLaughed (by simp [homAlt])
 
 
@@ -560,7 +561,7 @@ theorem existential_suffices_pruned :
     obtain ⟨E, hMC⟩ := exists_MCset prunedAlt homPrejacent
       (Set.finite_singleton _) ⟨.onlyKelly, trivial⟩
     obtain ⟨u, hu⟩ := hMC.1.2.2
-    exact hu (∼someLaughed) (hq.2 E hMC) (hu homPrejacent hMC.1.1)
+    exact hu (someLaughedᶜ) (hq.2 E hMC) (hu homPrejacent hMC.1.1)
   · -- II: r ∈ prunedAlt means r = someLaughed, which holds by hφ
     have := hr.1
     simp only [prunedAlt, Set.mem_singleton_iff] at this
@@ -578,17 +579,17 @@ theorem pruning_weakens :
 /-- Partially pruned alternative set: kellyLaughed removed, janeLaughed retained.
 
     With this ALT = {φ, janeLaughed}, there is a single MC-set
-    {φ, ∼janeLaughed} (witness: onlyKelly). So janeLaughed ∈ IE, and
+    {φ, janeLaughedᶜ} (witness: onlyKelly). So janeLaughed ∈ IE, and
     Exh^{IE}(φ) = someLaughed ∧ ¬janeLaughed. The 2-atom case yields
     *exclusive* readings under partial pruning, not weakened universals.
     True non-maximal readings require ≥3 atoms. -/
 def partialPrunedAlt : Set (Set HomWorld) := {someLaughed, janeLaughed}
 
-/-- MC-set for partialPrunedAlt: {homPrejacent, ∼janeLaughed}.
+/-- MC-set for partialPrunedAlt: {homPrejacent, janeLaughedᶜ}.
     With ALT = {someLaughed, janeLaughed}, the only compatible negation
-    is ∼janeLaughed since ∼someLaughed contradicts the prejacent. -/
+    is janeLaughedᶜ since someLaughedᶜ contradicts the prejacent. -/
 private theorem mc_partial :
-    isMCSet partialPrunedAlt homPrejacent {homPrejacent, ∼janeLaughed} := by
+    IsMCSet partialPrunedAlt homPrejacent {homPrejacent, janeLaughedᶜ} := by
   constructor
   · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
     · intro ψ hψ
@@ -607,28 +608,28 @@ private theorem mc_partial :
     · simp only [partialPrunedAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl
       · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu (∼someLaughed) hψ' (hu homPrejacent (hsub (Set.mem_insert _ _)))
+        exact hu (someLaughedᶜ) hψ' (hu homPrejacent (hsub (Set.mem_insert _ _)))
       · exact Set.mem_insert_of_mem _ rfl
 
 /-- someLaughed is not IE-excludable for partialPrunedAlt. -/
 private theorem someLaughed_not_ie_partial :
-    ¬isInnocentlyExcludable partialPrunedAlt homPrejacent someLaughed := by
+    ¬IsInnocentlyExcludable partialPrunedAlt homPrejacent someLaughed := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼someLaughed ∉ ({homPrejacent, ∼janeLaughed} : Set (Set HomWorld)) := by
+  have hNotIn : someLaughedᶜ ∉ ({homPrejacent, janeLaughedᶜ} : Set (Set HomWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩
   exact hNotIn (hIE _ mc_partial)
 
 /-- janeLaughed IS IE-excludable for partialPrunedAlt.
-    ∼janeLaughed is in every MC-set: if E omits ∼janeLaughed, E can be
-    extended (since ∼someLaughed is the only other option and contradicts φ),
+    janeLaughedᶜ is in every MC-set: if E omits janeLaughedᶜ, E can be
+    extended (since someLaughedᶜ is the only other option and contradicts φ),
     violating maximality. -/
 private theorem janeLaughed_ie_partial :
-    isInnocentlyExcludable partialPrunedAlt homPrejacent janeLaughed := by
+    IsInnocentlyExcludable partialPrunedAlt homPrejacent janeLaughed := by
   refine ⟨Set.mem_insert_of_mem _ rfl, fun E hMC => ?_⟩
   by_contra hNotIn
-  have hcompat : isCompatible partialPrunedAlt homPrejacent (E ∪ {∼janeLaughed}) := by
+  have hcompat : IsCompatible partialPrunedAlt homPrejacent (E ∪ {janeLaughedᶜ}) := by
     refine ⟨Or.inl hMC.1.1, ?_, ?_⟩
     · intro ψ hψ
       rcases hψ with hψE | hψS
@@ -642,7 +643,7 @@ private theorem janeLaughed_ie_partial :
         · simp only [partialPrunedAlt, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
           rcases ha with rfl | rfl
           · exfalso; obtain ⟨u, hu⟩ := hMC.1.2.2
-            exact hu (∼someLaughed) hψE (hu homPrejacent hMC.1.1)
+            exact hu (someLaughedᶜ) hψE (hu homPrejacent hMC.1.1)
           · exact absurd hψE hNotIn
       · rw [Set.mem_singleton_iff.mp hψS]; exact id
   exact hNotIn (hMC.2 _ hcompat Set.subset_union_left (Set.subset_union_right rfl))
@@ -673,7 +674,7 @@ theorem partial_pruning_not_universal :
     rcases hrAlt with rfl | rfl
     · exact trivial
     · exfalso
-      have hmi : isMISet partialPrunedAlt homPrejacent {someLaughed} := by
+      have hmi : IsMISet partialPrunedAlt homPrejacent {someLaughed} := by
         constructor
         · constructor
           · intro x hx; simp only [Set.mem_singleton_iff] at hx
@@ -696,7 +697,7 @@ theorem partial_pruning_not_universal :
           · exact rfl
           · exfalso
             obtain ⟨u, hu⟩ := hR'compat.2
-            exact hu (∼janeLaughed)
+            exact hu (janeLaughedᶜ)
               (Or.inl (Or.inr ⟨janeLaughed, janeLaughed_ie_partial, rfl⟩))
               (hu janeLaughed (Or.inr hr'))
       have hmem := hr.2 _ hmi

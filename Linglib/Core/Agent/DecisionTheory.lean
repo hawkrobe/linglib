@@ -5,6 +5,7 @@ import Mathlib.Data.Finset.Max
 import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
+import Linglib.Core.Question.Relevance
 
 /-!
 # Core Decision Theory
@@ -22,8 +23,8 @@ without pulling in question-semantic types.
 Functions that sum over the full universe use `[Fintype W]` with `∑ w : W`.
 Functions that operate over action sets or world subsets use `Finset`.
 `questionUtility` and `expectedVSI` take `Finset (Finset W)` (cells as sets).
-`Question W = List (W → Bool)` remains for ordering-sensitive operations
-(`questionMaximin`, `isMentionSome`).
+Ordering-sensitive operations (`questionMaximin`, `isMentionSome`,
+`resolvingAnswers`, …) take a `List (Finset W)` of cells.
 
 - @cite{van-rooy-2003}. Questioning to Resolve Decision Problems. L&P 26.
 - @cite{blackwell-1953}. Equivalent Comparisons of Experiments.
@@ -103,31 +104,27 @@ def maximinValue {W A : Type*}
 
 /-- Conditional security level: worst case within cell C -/
 def conditionalSecurityLevel {W A : Type*} [DecidableEq W] (dp : DecisionProblem W A)
-    (worlds : Finset W) (a : A) (c : W -> Bool) : ℚ :=
-  securityLevel dp (worlds.filter (fun w => c w = true)) a
+    (worlds : Finset W) (a : A) (c : Finset W) : ℚ :=
+  securityLevel dp (worlds ∩ c) a
 
 /-- Maximin value after learning C -/
 def maximinAfterLearning {W A : Type*} [DecidableEq W]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (c : W -> Bool) : ℚ :=
-  maximinValue dp (worlds.filter (fun w => c w = true)) actions
+    (c : Finset W) : ℚ :=
+  maximinValue dp (worlds ∩ c) actions
 
 /-- Maximin utility value of learning C -/
 def maximinUtilityValue {W A : Type*} [DecidableEq W]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (c : W -> Bool) : ℚ :=
+    (c : Finset W) : ℚ :=
   maximinAfterLearning dp worlds actions c - maximinValue dp worlds actions
 
 /-! ### Mention-Some / Mention-All -/
 
-/-- Theory-neutral question type: a list of characteristic functions (cells).
-Used by ordering-sensitive operations (`questionMaximin`, `isMentionSome`). -/
-abbrev Question (W : Type*) := List (W -> Bool)
-
-/-- Convert a list of predicates to a `Finset (Finset W)` of cells. -/
-def questionToFinset {W : Type*} [Fintype W] [DecidableEq W]
-    (q : Question W) : Finset (Finset W) :=
-  (q.map (fun cell => Finset.univ.filter (fun w => cell w = true))).toFinset
+/-- Convert a list of cells to a `Finset (Finset W)` of cells. -/
+def questionToFinset {W : Type*} [DecidableEq W]
+    (q : List (Finset W)) : Finset (Finset W) :=
+  q.toFinset
 
 /-- C resolves decision problem if some action dominates after learning C.
 
@@ -135,30 +132,30 @@ Per @cite{van-rooy-2003}: C resolves DP iff after learning C, there exists
 an action a ∈ A that weakly dominates all other actions on every world in C. -/
 def resolves {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (c : W -> Bool) : Bool :=
+    (c : Finset W) : Bool :=
   decide (¬actions.Nonempty ∨ ∃ a ∈ actions, ∀ b ∈ actions,
-    ∀ w ∈ worlds.filter (fun w => c w = true), dp.utility w a >= dp.utility w b)
+    ∀ w ∈ worlds ∩ c, dp.utility w a >= dp.utility w b)
 
 /-- Set of answers that resolve the decision problem -/
 def resolvingAnswers {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (q : Question W) : List (W -> Bool) :=
+    (q : List (Finset W)) : List (Finset W) :=
   q.filter λ cell => resolves dp worlds actions cell
 
 /-- A question has mention-some reading if multiple non-disjoint cells resolve the DP. -/
 def isMentionSome {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (q : Question W) : Bool :=
+    (q : List (Finset W)) : Bool :=
   let resolving := resolvingAnswers dp worlds actions q
   resolving.length > 1 &&
     resolving.any λ c1 =>
       resolving.any λ c2 =>
-        decide ((worlds.filter (fun w => c1 w && c2 w)).Nonempty)
+        decide ((worlds ∩ c1 ∩ c2).Nonempty)
 
 /-- Mention-all reading: need the complete partition to resolve DP -/
 def isMentionAll {W A : Type*} [DecidableEq W] [DecidableEq A]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (q : Question W) : Bool :=
+    (q : List (Finset W)) : Bool :=
   !isMentionSome dp worlds actions q
 
 /-! ### Question Utility -/
@@ -173,7 +170,7 @@ def questionUtility {W A : Type*} [Fintype W] [DecidableEq W] [DecidableEq A]
 /-- MV(Q) = min_{q in Q} MV(q), maximin question value. -/
 def questionMaximin {W A : Type*} [DecidableEq W]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (q : Question W) : ℚ :=
+    (q : List (Finset W)) : ℚ :=
   match q with
   | [] => 0
   | c :: cs => cs.foldl (λ m cell =>
@@ -309,33 +306,27 @@ theorem maximinValue_subset_ge {W A : Type*}
 learning a more specific proposition (subset of worlds) gives higher MUV. -/
 theorem maximinUtilityValue_monotone_cell {W A : Type*} [DecidableEq W]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (c1 c2 : W → Bool) (hSub : ∀ w, c1 w = true → c2 w = true)
-    (hNe : (worlds.filter (fun w => c1 w = true)).Nonempty) :
+    (c1 c2 : Finset W) (hSub : c1 ⊆ c2)
+    (hNe : (worlds ∩ c1).Nonempty) :
     maximinUtilityValue dp worlds actions c1 ≥
     maximinUtilityValue dp worlds actions c2 := by
   unfold maximinUtilityValue maximinAfterLearning
-  have hFilterSub : worlds.filter (fun w => c1 w = true) ⊆
-      worlds.filter (fun w => c2 w = true) := by
-    intro w hw; simp only [Finset.mem_filter] at hw ⊢; exact ⟨hw.1, hSub w hw.2⟩
-  linarith [maximinValue_subset_ge dp
-    (worlds.filter (fun w => c1 w = true))
-    (worlds.filter (fun w => c2 w = true))
-    actions hNe hFilterSub]
+  have hFilterSub : worlds ∩ c1 ⊆ worlds ∩ c2 :=
+    Finset.inter_subset_inter_left hSub
+  linarith [maximinValue_subset_ge dp (worlds ∩ c1) (worlds ∩ c2) actions hNe hFilterSub]
 
 /-- Maximin value of information is non-negative for nonempty cells.
 
-When the cell is nonempty, `worlds.filter c ⊆ worlds`, and the maximin over a
+When the cell is nonempty, `worlds ∩ c ⊆ worlds`, and the maximin over a
 subset considers fewer worst cases, so `maximinAfterLearning ≥ maximinValue`. -/
 theorem maximinUtilityValue_nonneg {W A : Type*} [DecidableEq W]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (c : W -> Bool)
-    (hNonempty : (worlds.filter (fun w => c w = true)).Nonempty) :
+    (c : Finset W)
+    (hNonempty : (worlds ∩ c).Nonempty) :
     maximinUtilityValue dp worlds actions c >= 0 := by
   unfold maximinUtilityValue maximinAfterLearning
-  have hsub : worlds.filter (fun w => c w = true) ⊆ worlds :=
-    Finset.filter_subset _ _
-  linarith [maximinValue_subset_ge dp
-    (worlds.filter (fun w => c w = true)) worlds actions hNonempty hsub]
+  have hsub : worlds ∩ c ⊆ worlds := Finset.inter_subset_left
+  linarith [maximinValue_subset_ge dp (worlds ∩ c) worlds actions hNonempty hsub]
 
 -- ── List helpers for Question (List-based) iteration ────────────────
 
@@ -373,7 +364,7 @@ private lemma foldl_min_le_of_mem {α : Type*} (f : α → ℚ) (xs : List α) (
 /-- The question maximin value is ≤ MUV of each cell in the question. -/
 theorem questionMaximin_le_muv {W A : Type*} [DecidableEq W]
     (dp : DecisionProblem W A) (worlds : Finset W) (actions : Finset A)
-    (q : Question W) (cell : W → Bool) (hcell : cell ∈ q) :
+    (q : List (Finset W)) (cell : Finset W) (hcell : cell ∈ q) :
     questionMaximin dp worlds actions q ≤
     maximinUtilityValue dp worlds actions cell := by
   cases q with

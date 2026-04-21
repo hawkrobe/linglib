@@ -3,7 +3,8 @@ import Linglib.Theories.Semantics.Gradability.Theory
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Time.Interval.Basic
+import Linglib.Core.Time.Boundedness
 
 /-!
 # Cross-Domain Licensing Agreement Bridge
@@ -50,6 +51,8 @@ to `Boundedness.closed`/`.open_`, yielding identical licensing predictions.
 -/
 
 namespace Phenomena.Gradability.CrossDomainLicensingBridge
+
+open Core (Situation)
 
 open Core.Scale
 open Core.Time

@@ -1,8 +1,8 @@
 import Linglib.Theories.Semantics.Questions.Answerhood.ProbabilisticAnswerhood
 import Linglib.Theories.Semantics.Questions.Denotation.Basic
-import Linglib.Core.Issue.Basic
-import Linglib.Core.Issue.Hamblin
-import Linglib.Core.Issue.Relevance
+import Linglib.Core.Question.Basic
+import Linglib.Core.Question.Hamblin
+import Linglib.Core.Question.Relevance
 
 /-!
 # Additive Particles: too, also, either
@@ -15,9 +15,9 @@ Felicity conditions for additive particles following @cite{thomas-2026}
 
 This module is built on the Set/Prop layer of `ProbabilisticAnswerhood`
 (`relevantS`, `probAnswersS`, `someResolutionStrengthenedS`,
-`isPositiveEvidenceS`) over `Core.Issue W` (downward-closed inquisitive
+`isPositiveEvidenceS`) over `Core.Question W` (downward-closed inquisitive
 lattice) and `Set W` for propositions. Felicity predicates are `Prop`-valued
-and `noncomputable` where they quantify over `Core.Issue.alt`; concrete
+and `noncomputable` where they quantify over `Core.Question.alt`; concrete
 study contexts use the per-alternative `[DecidablePred]` infrastructure
 to recover decidability.
 
@@ -102,7 +102,7 @@ def AdditiveParticle.IsLicensed (p : AdditiveParticle) (positive : Prop) : Prop 
 - A prior probability distribution -/
 structure AdditiveContext (W : Type*) [Fintype W] where
   /-- The resolved question (RQ) -/
-  resolvedQuestion : Core.Issue W
+  resolvedQuestion : Core.Question W
   /-- The antecedent proposition (ANT) - what was just established -/
   antecedent : Set W
   /-- Prior probability distribution over worlds -/
@@ -114,14 +114,14 @@ variable {W : Type*} [Fintype W]
 
 /-- Create a context from a polar question (Set version). -/
 def fromPolar (p ant : Set W) (prior : Prior W) : AdditiveContext W :=
-  { resolvedQuestion := Core.Issue.polar p
+  { resolvedQuestion := Core.Question.polar p
   , antecedent := ant
   , prior := prior }
 
 /-- Create a context from a list of alternatives. -/
 def fromList (alts : List (Set W)) (ant : Set W) (prior : Prior W) :
     AdditiveContext W :=
-  { resolvedQuestion := Core.Issue.ofList alts
+  { resolvedQuestion := Core.Question.ofList alts
   , antecedent := ant
   , prior := prior }
 
@@ -152,7 +152,7 @@ There exists a strengthened alternative `a` such that `prejacent ⊄ a`
 (some prejacent world is outside `a`). -/
 noncomputable def nonTrivialityCondition
     (ctx : AdditiveContext W) (prejacent : Set W) : Prop :=
-  ∃ a ∈ Core.Issue.alt ctx.resolvedQuestion,
+  ∃ a ∈ Core.Question.alt ctx.resolvedQuestion,
     ¬ (prejacent ⊆ a) ∧
     ctx.prior.condProbSet (ctx.antecedent ∩ prejacent) a >
     ctx.prior.condProbSet ctx.antecedent a
@@ -174,7 +174,7 @@ where the strict advantage actually obtains, matching the original
 Bool spec which iterated only over strengthened resolutions. -/
 noncomputable def maximalityCondition
     (ctx : AdditiveContext W) (prejacent : Set W) : Prop :=
-  ∀ a ∈ Core.Issue.alt ctx.resolvedQuestion,
+  ∀ a ∈ Core.Question.alt ctx.resolvedQuestion,
     ctx.prior.condProbSet (ctx.antecedent ∩ prejacent) a >
       ctx.prior.condProbSet ctx.antecedent a →
     ∀ w : W, ctx.prior w > 0 → w ∈ ctx.antecedent → w ∈ a → w ∈ prejacent
@@ -284,8 +284,8 @@ explains argument-building uses that Heim cannot. -/
 theorem heim_subsumption
     (ctx : AdditiveContext W) (prejacent altAnt altPi : Set W)
     -- Heim's setup: ANT entails one alternative, π entails another
-    (hAntInQ : altAnt ∈ Core.Issue.alt ctx.resolvedQuestion)
-    (hPiInQ : altPi ∈ Core.Issue.alt ctx.resolvedQuestion)
+    (hAntInQ : altAnt ∈ Core.Question.alt ctx.resolvedQuestion)
+    (hPiInQ : altPi ∈ Core.Question.alt ctx.resolvedQuestion)
     (hAntEntails : ctx.antecedent ⊆ altAnt)
     (hPiEntails : prejacent ⊆ altPi)
     -- Probability assumptions (non-degeneracy)
@@ -325,8 +325,8 @@ Example (@cite{thomas-2026}, ex. 1c/65):
 - But ANT ∧ π together raise the probability that this hotel is good -/
 def isArgumentBuildingUseCharacterized {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : Set W) : Prop :=
-  (¬ ∃ a ∈ Core.Issue.alt ctx.resolvedQuestion, ctx.antecedent ⊆ a) ∧
-  (¬ ∃ a ∈ Core.Issue.alt ctx.resolvedQuestion, prejacent ⊆ a) ∧
+  (¬ ∃ a ∈ Core.Question.alt ctx.resolvedQuestion, ctx.antecedent ⊆ a) ∧
+  (¬ ∃ a ∈ Core.Question.alt ctx.resolvedQuestion, prejacent ⊆ a) ∧
   conjunctionCondition ctx prejacent
 
 /-- Argument-building requires that the resolved question be about something
@@ -338,8 +338,8 @@ but rather some further question that ANT and π provide evidence for. -/
 theorem argumentBuilding_requires_implicit_qud {W : Type*} [Fintype W]
     (ctx : AdditiveContext W) (prejacent : Set W)
     (hArgBuild : isArgumentBuildingUseCharacterized ctx prejacent) :
-    (¬ ∃ a ∈ Core.Issue.alt ctx.resolvedQuestion, ctx.antecedent ⊆ a) ∧
-    (¬ ∃ a ∈ Core.Issue.alt ctx.resolvedQuestion, prejacent ⊆ a) :=
+    (¬ ∃ a ∈ Core.Question.alt ctx.resolvedQuestion, ctx.antecedent ⊆ a) ∧
+    (¬ ∃ a ∈ Core.Question.alt ctx.resolvedQuestion, prejacent ⊆ a) :=
   ⟨hArgBuild.1, hArgBuild.2.1⟩
 
 -- Result 3: Cumulative Evidence Necessity
@@ -355,8 +355,8 @@ open Classical in
 /-- π is evidentially irrelevant to Q given ANT if π doesn't change the
 conditional probability of any alternative when we already know ANT. -/
 noncomputable def evidentiallyIrrelevant {W : Type*} [Fintype W]
-    (ant prejacent : Set W) (q : Core.Issue W) (prior : Prior W) : Prop :=
-  ∀ a ∈ Core.Issue.alt q, conditionallyIndependent ant prejacent a prior
+    (ant prejacent : Set W) (q : Core.Question W) (prior : Prior W) : Prop :=
+  ∀ a ∈ Core.Question.alt q, conditionallyIndependent ant prejacent a prior
 
 /-- **Theorem: Cumulative Evidence Necessity**
 

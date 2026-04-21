@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Questions.Answerhood.Support
-import Linglib.Core.Issue.Relevance
+import Linglib.Core.Question.Relevance
 
 /-!
 # Discourse *only* @cite{ippolito-kiss-williams-2025}
@@ -44,7 +44,7 @@ the evidential trajectory of the first:
 
 ## Mathlib-pure formulation
 
-This file uses `Core.Issue` (Set-based) for inquisitive denotations,
+This file uses `Core.Question` (Set-based) for inquisitive denotations,
 `Set W` for doxastic states and answers, and `Prop` predicates throughout.
 The DOX-subset check is native `Set.Subset`. Universal quantification over
 prior partial answers is a clean `∀ p ∈ partialAnswers, ...`.
@@ -59,7 +59,7 @@ open Semantics.Questions.Support
 
 /-- Discourse context for evaluating discourse *only* (mathlib-pure).
 
-Includes the QUD as a `Core.Issue`, a prior distribution, the speaker's
+Includes the QUD as a `Core.Question`, a prior distribution, the speaker's
 doxastic state as a `Set W`, and a record of true partial answers
 established in prior discourse.
 
@@ -68,7 +68,7 @@ naturally: canonical info-seeking questions fail the doxastic condition
 of SUPPORT (the speaker doesn't believe any answer). -/
 structure Context (W : Type*) [Fintype W] where
   /-- The QUD as an inquisitive issue -/
-  qud : Core.Issue W
+  qud : Core.Question W
   /-- Prior probability distribution -/
   prior : Prior W
   /-- Speaker's doxastic state DOX_sp -/
@@ -89,7 +89,7 @@ structure Context (W : Type*) [Fintype W] where
   These are provided by the discourse context, not computed: the contextual
   entailment relation depends on common ground assumptions (e.g., beauty
   is a criterion for buying). -/
-  subquestions : List (Core.Issue W)
+  subquestions : List (Core.Question W)
 
 -- Sentence
 
@@ -98,15 +98,15 @@ structure Context (W : Type*) [Fintype W] where
 `sDen` is the inquisitive denotation of the left argument S,
 `s'Den` is the inquisitive denotation of the right argument S'.
 
-For declaratives, each `Issue` has a single nontrivial alternative (the
-propositional content). For questions, each `Issue` has multiple
+For declaratives, each `Question` has a single nontrivial alternative (the
+propositional content). For questions, each `Question` has multiple
 alternatives. The denotation type is uniform — what varies is whether
 the doxastic condition of SUPPORT can be satisfied. -/
 structure Sentence (W : Type*) where
   /-- Inquisitive denotation of the left argument S -/
-  sDen : Core.Issue W
+  sDen : Core.Question W
   /-- Inquisitive denotation of the right argument S' -/
-  s'Den : Core.Issue W
+  s'Den : Core.Question W
 
 namespace Sentence
 
@@ -130,7 +130,7 @@ open Classical in
 Three conditions:
 
 1. **S is structurally relevant**: some alternative of S partially answers
-   the QUD or a subquestion of the QUD (via `Core.Issue.moveRelevant`).
+   the QUD or a subquestion of the QUD (via `Core.Question.moveRelevant`).
 
 2. **S' is structurally relevant**: same check for the right argument.
 
@@ -139,9 +139,9 @@ Three conditions:
    doxastic condition (Def. 13) blocks info-seeking questions from supporting
    any answer. -/
 noncomputable def isDefined (d : Sentence W) (ctx : Context W) : Prop :=
-  Core.Issue.moveRelevant d.sDen ctx.qud ctx.subquestions ∧
-  Core.Issue.moveRelevant d.s'Den ctx.qud ctx.subquestions ∧
-  ∃ α ∈ Core.Issue.alt ctx.qud, fullSupportS ctx.dox d.sDen ctx.prior α
+  Core.Question.moveRelevant d.sDen ctx.qud ctx.subquestions ∧
+  Core.Question.moveRelevant d.s'Den ctx.qud ctx.subquestions ∧
+  ∃ α ∈ Core.Question.alt ctx.qud, fullSupportS ctx.dox d.sDen ctx.prior α
 
 open Classical in
 /-- CI content of discourse *only* (Prop form).
@@ -157,7 +157,7 @@ the CI only requires that no prior evidence contradicts the direction.
 The "S supports α" condition is included explicitly here as part of
 establishing the direction. -/
 noncomputable def ciContent (d : Sentence W) (ctx : Context W) : Prop :=
-  ∃ α ∈ Core.Issue.alt ctx.qud,
+  ∃ α ∈ Core.Question.alt ctx.qud,
     -- (i) All true partial answers support α (probabilistically; speaker has
     -- already committed to believing them, so doxastic condition is trivial).
     (∀ p ∈ ctx.partialAnswers, isPositiveEvidenceS p α ctx.prior) ∧
@@ -172,7 +172,7 @@ both S and S' fully support α.
 
 @cite{ippolito-kiss-williams-2025} Def. 14a. -/
 noncomputable def agree (d : Sentence W) (ctx : Context W) : Prop :=
-  ∃ α ∈ Core.Issue.alt ctx.qud,
+  ∃ α ∈ Core.Question.alt ctx.qud,
     fullSupportS ctx.dox d.sDen ctx.prior α ∧
     fullSupportS ctx.dox d.s'Den ctx.prior α
 
@@ -182,8 +182,8 @@ some answer but do not agree on any single answer.
 
 @cite{ippolito-kiss-williams-2025} Def. 14b. -/
 noncomputable def disagree (d : Sentence W) (ctx : Context W) : Prop :=
-  (∃ α ∈ Core.Issue.alt ctx.qud, fullSupportS ctx.dox d.sDen ctx.prior α) ∧
-  (∃ α ∈ Core.Issue.alt ctx.qud, fullSupportS ctx.dox d.s'Den ctx.prior α) ∧
+  (∃ α ∈ Core.Question.alt ctx.qud, fullSupportS ctx.dox d.sDen ctx.prior α) ∧
+  (∃ α ∈ Core.Question.alt ctx.qud, fullSupportS ctx.dox d.s'Den ctx.prior α) ∧
   ¬ d.agree ctx
 
 end Sentence
@@ -203,9 +203,9 @@ This derives the restriction from the architecture of SUPPORT rather than
 stipulating it as a clause-type filter. Biased/rhetorical questions, where
 the speaker DOES believe an answer, correctly pass this check. -/
 theorem interrogative_blocks_support {W : Type*} [Fintype W]
-    (dox : Set W) (sentDen : Core.Issue W) (prior : Prior W)
+    (dox : Set W) (sentDen : Core.Question W) (prior : Prior W)
     (answer : Set W)
-    (hNoBelief : ∀ q ∈ Core.Issue.alt sentDen, ¬ (dox ⊆ q)) :
+    (hNoBelief : ∀ q ∈ Core.Question.alt sentDen, ¬ (dox ⊆ q)) :
     ¬ fullSupportS dox sentDen prior answer :=
   fullSupport_fails_unbelievedS dox sentDen prior answer hNoBelief
 
@@ -214,9 +214,9 @@ when S' is an info-seeking question whose speaker doesn't believe any
 answer, `fullSupportS` fails for S' on every α, so `¬ fullSupportS ... =
 True`. This captures IKW §5.2's observation that S' can be interrogative. -/
 theorem interrogative_prejacent_satisfies_ci_condition {W : Type*} [Fintype W]
-    (dox : Set W) (s'Den : Core.Issue W) (prior : Prior W)
+    (dox : Set W) (s'Den : Core.Question W) (prior : Prior W)
     (α : Set W)
-    (hNoBelief : ∀ q ∈ Core.Issue.alt s'Den, ¬ (dox ⊆ q)) :
+    (hNoBelief : ∀ q ∈ Core.Question.alt s'Den, ¬ (dox ⊆ q)) :
     ¬ fullSupportS dox s'Den prior α :=
   fullSupport_fails_unbelievedS dox s'Den prior α hNoBelief
 
@@ -234,7 +234,7 @@ Example (IKW ex. 18): "The house is beautiful, only can we afford it?"
 → Not agreement, not disagreement: just weak non-agreement -/
 theorem weak_non_agreement {W : Type*} [Fintype W]
     (d : Sentence W) (ctx : Context W)
-    (hS'noSupport : ∀ α ∈ Core.Issue.alt ctx.qud,
+    (hS'noSupport : ∀ α ∈ Core.Question.alt ctx.qud,
       ¬ fullSupportS ctx.dox d.s'Den ctx.prior α) :
     ¬ d.agree ctx ∧ ¬ d.disagree ctx := by
   refine ⟨?_, ?_⟩

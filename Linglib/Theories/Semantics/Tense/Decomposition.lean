@@ -40,8 +40,8 @@ and simultaneous readings) but differ on what "past" means:
 
 namespace Semantics.Tense.Decomposition
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Semantics.Tense
 
 
@@ -233,7 +233,7 @@ uniformly to pronouns and tenses:
   - Persian: zero PRONOUNS (locally bound by Agr) but NOT zero TENSE
     (tense is in C, outside the local domain of Agr in Infl)
 
-The distribution of overt vs. zero follows from `Core.Tense.Overtness`. -/
+The distribution of overt vs. zero follows from `Core.Time.Tense.Overtness`. -/
 
 /-- Zero tense: a bound present tense in a local agreement domain.
 
@@ -252,7 +252,7 @@ def kratzerZeroTense (n : ℕ) : TensePronoun where
 theorem zero_tense_is_present (n : ℕ) :
     (kratzerZeroTense n).constraint = .present := rfl
 
-/-- Zero tense surfaces as zero (from Core.Tense.Overtness). -/
+/-- Zero tense surfaces as zero (from Core.Time.Tense.Overtness). -/
 theorem zero_tense_overtness (n : ℕ) :
     Overtness.fromBinding (kratzerZeroTense n).mode true = .zero := rfl
 

@@ -43,6 +43,8 @@ Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
 
 namespace KonukEtAl2026
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Strength (nsm samplingPropensity)
 

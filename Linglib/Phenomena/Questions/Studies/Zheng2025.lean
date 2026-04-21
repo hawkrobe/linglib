@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 import Linglib.Fragments.Mandarin.QuestionParticles
 import Linglib.Theories.Semantics.Modality.Kernel
 import Linglib.Theories.Semantics.Questions.QParticleLayer
-import Linglib.Core.Issue.Singleton
+import Linglib.Core.Question.Singleton
 import Linglib.Phenomena.Questions.Studies.BhattDayal2020
 
 /-!
@@ -281,10 +281,10 @@ At the algebraic level, both particles share the same singleton
 presupposition: their sister question must denote a singleton-cell
 issue (@cite{bhatt-dayal-2020} eq. 23). The cross-particle
 generalization is captured by inheriting the same
-`Core.Issue.IsSingleton` predicate — both kya: and nandao take a
-`SingletonIssue W` as well-typed sister content. -/
+`Core.Question.IsSingleton` predicate — both kya: and nandao take a
+`SingletonQuestion W` as well-typed sister content. -/
 
-open Core.Issue (IsSingleton SingletonIssue declarative
+open Core.Question (IsSingleton SingletonQuestion declarative
   isSingleton_declarative)
 
 universe u
@@ -307,12 +307,12 @@ theorem nandao_kya_share_felicity (p : Set W) :
         (W := W) p := rfl
 
 -- ════════════════════════════════════════════════════════════════════════════
--- §5 — Integrated Felicity: §2 (Kernel-bias) ∧ §4 (Issue-singleton)
+-- §5 — Integrated Felicity: §2 (Kernel-bias) ∧ §4 (Question-singleton)
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-! Bridge §2 and §4. Nandao's full felicity has two independent layers:
 
-  - **Layer 1** (Issue-level, §4): the sister content `Q : Core.Issue World`
+  - **Layer 1** (Question-level, §4): the sister content `Q : Core.Question World`
     is *singleton* — `alt Q = {p}` for some unique witness `p`. This is the
     @cite{bhatt-dayal-2020} eq. 23 presupposition: nandao requires a
     one-cell sister, not a two-cell Hamblin polar.
@@ -328,7 +328,7 @@ single statement, and the bridges below show that Layer 1 failure
 (e.g. a non-trivial two-cell polar) blocks felicity at the integrated
 level regardless of `(k, u)`. -/
 
-open Core.Issue (alt polar
+open Core.Question (alt polar
   not_isSingleton_polar_of_nontrivial alt_polar_of_nontrivial
   alt_declarative)
 
@@ -336,22 +336,22 @@ open Core.Issue (alt polar
     (singleton presupposition: `alt Q = {p}`) and Layer 2 (Kernel-bias
     check on the witness). The witness `p` is supplied externally so
     decidability is concrete; for the noncomputable choice from a
-    `SingletonIssue` use `SingletonIssue.witness`. -/
-def nandaoFullFelicity (Q : Core.Issue World) (k : Kernel) (u : Background)
+    `SingletonQuestion` use `SingletonQuestion.witness`. -/
+def nandaoFullFelicity (Q : Core.Question World) (k : Kernel) (u : Background)
     (p : Set World) [DecidablePred p] : Prop :=
   alt Q = {p} ∧ nandaoFelicitous k u p
 
 /-- **Layer-1 projection**: integrated felicity entails the §4
     singleton presupposition. -/
-theorem nandaoFullFelicity_isSingleton {Q : Core.Issue World} {k : Kernel}
+theorem nandaoFullFelicity_isSingleton {Q : Core.Question World} {k : Kernel}
     {u : Background} {p : Set World} [DecidablePred p]
     (h : nandaoFullFelicity Q k u p) :
-    Core.Issue.IsSingleton Q :=
+    Core.Question.IsSingleton Q :=
   ⟨p, h.1⟩
 
 /-- **Layer-2 projection**: integrated felicity entails the §2
     Kernel-bias check on the witness. -/
-theorem nandaoFullFelicity_kernel {Q : Core.Issue World} {k : Kernel}
+theorem nandaoFullFelicity_kernel {Q : Core.Question World} {k : Kernel}
     {u : Background} {p : Set World} [DecidablePred p]
     (h : nandaoFullFelicity Q k u p) :
     nandaoFelicitous k u p :=
@@ -378,7 +378,7 @@ theorem nandao_polar_no_witness {p₀ : Set World}
     explicit on the canonical felicitous case. -/
 theorem nandaoFullFelicity_declarative_iff {p : Set World} [DecidablePred p]
     (k : Kernel) (u : Background) :
-    nandaoFullFelicity (Core.Issue.declarative p) k u p ↔
+    nandaoFullFelicity (Core.Question.declarative p) k u p ↔
       nandaoFelicitous k u p := by
   unfold nandaoFullFelicity
   rw [alt_declarative]
@@ -409,7 +409,7 @@ open Semantics.Modality (raincoatK dryU isRaining raincoat_nandao_felicitous)
     felicity hold simultaneously. Reduces to `raincoat_nandao_felicitous`
     via `nandaoFullFelicity_declarative_iff`. -/
 theorem biasedUse_integrated_felicity :
-    nandaoFullFelicity (Core.Issue.declarative isRaining) raincoatK dryU
+    nandaoFullFelicity (Core.Question.declarative isRaining) raincoatK dryU
       isRaining := by
   rw [nandaoFullFelicity_declarative_iff]
   exact raincoat_nandao_felicitous
@@ -423,7 +423,7 @@ theorem biasedUse_witnesses_integrated_felicity :
     biasedUse.felicitous = true ∧
     biasedUse.evidentialBias = true ∧
     biasedUse.epistemicBias = true ∧
-    nandaoFullFelicity (Core.Issue.declarative isRaining) raincoatK dryU
+    nandaoFullFelicity (Core.Question.declarative isRaining) raincoatK dryU
       isRaining :=
   ⟨rfl, rfl, rfl, biasedUse_integrated_felicity⟩
 

@@ -28,8 +28,8 @@ about the source: ambiguity (Ogihara) vs deletion (Kratzer).
 
 namespace Semantics.Tense.ZeroTense
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Semantics.Tense
 
 
@@ -58,7 +58,7 @@ def pastUnderPastReadings : List OgiharaPastReading :=
     verb and receives the matrix event time. This produces R' = E_matrix
     (the simultaneous reading).
 
-    This is exactly `zeroTense_receives_binder_time` from Core.Tense,
+    This is exactly `zeroTense_receives_binder_time` from Core.Time.Tense,
     applied to the attitude embedding context. -/
 def zeroTenseSemantics {Time : Type*}
     (g : TemporalAssignment Time) (n : ℕ) (matrixEventTime : Time) : Time :=
@@ -84,7 +84,7 @@ theorem ogihara_derives_simultaneous {Time : Type*}
   simp [zeroTenseSemantics, zeroTense_receives_binder_time,
     embeddedFrame, ReichenbachFrame.isPresent]
 
-/-- Ogihara's zero tense IS the bound-variable mechanism from Core.Tense. -/
+/-- Ogihara's zero tense IS the bound-variable mechanism from Core.Time.Tense. -/
 theorem ogihara_zero_is_bound_var {Time : Type*}
     (g : TemporalAssignment Time) (n : ℕ) (binderTime : Time) :
     zeroTenseSemantics g n binderTime = binderTime :=

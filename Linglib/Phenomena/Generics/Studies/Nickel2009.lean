@@ -52,6 +52,8 @@ This is discussed in the introduction to *Genericity* (OUP 2013).
 
 namespace Nickel2009
 
+open Core (Situation)
+
 open Semantics.Noun.Kind.Generics (prevalence thresholdGeneric)
 
 -- Ways of Being Normal

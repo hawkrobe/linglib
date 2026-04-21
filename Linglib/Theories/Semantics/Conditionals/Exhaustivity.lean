@@ -1,9 +1,9 @@
 import Mathlib.Data.Set.Basic
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 /-!
@@ -171,7 +171,7 @@ theorem exhaustifiedAnswer_excludes
     {Trigger W : Type*} (as : AnswerSpace Trigger W)
     (t t' : Trigger) (w : W)
     (h_exh : exhaustifiedAnswer as t w)
-    (h_ie : Exhaustification.isInnocentlyExcludable
+    (h_ie : Exhaustification.IsInnocentlyExcludable
               (answerAlternatives as t) (answerProp as t) (answerProp as t'))
     : ¬as.causes t' w := by
   unfold exhaustifiedAnswer Exhaustification.exhIE at h_exh
@@ -200,7 +200,7 @@ theorem exhaustification_yields_perfection
     (t : Trigger) (p C : W → Prop) (w : W)
     (h_t_requires_p : ∀ w, as.causes t w → p w)
     (h_all_ie : ∀ t' ∈ as.triggers, t' ≠ t →
-      Exhaustification.isInnocentlyExcludable
+      Exhaustification.IsInnocentlyExcludable
         (answerAlternatives as t) (answerProp as t) (answerProp as t'))
     (h_coverage : C w → ∃ t' ∈ as.triggers, as.causes t' w)
     (h_exh : exhaustifiedAnswer as t w)
@@ -222,10 +222,10 @@ When the alternative set effectively contains a single proposition `a`
 (every member equals `a`) and the assertion `φ` is jointly satisfiable with
 `¬a`, then `a` is innocently excludable.
 
-**Proof sketch**: Any MC-set E ⊆ {φ, ∼a} (by compatibility, every element
-is φ or ∼a' for a' ∈ ALT, and all a' = a). The set {φ, ∼a} is itself
+**Proof sketch**: Any MC-set E ⊆ {φ, aᶜ} (by compatibility, every element
+is φ or a'ᶜ for a' ∈ ALT, and all a' = a). The set {φ, aᶜ} is itself
 compatible (consistency from `h_consist`). By maximality of E with
-E ⊆ {φ, ∼a}: {φ, ∼a} ⊆ E. Hence ∼a ∈ E for every MC-set E.
+E ⊆ {φ, aᶜ}: {φ, aᶜ} ⊆ E. Hence aᶜ ∈ E for every MC-set E.
 
 This closes the gap between the abstract IE machinery and
 concrete scenarios with a single competing alternative — the typical
@@ -237,37 +237,37 @@ theorem singleton_alt_innocently_excludable
     (h_mem : a ∈ ALT)
     (h_all_eq : ∀ a' ∈ ALT, a' = a)
     (h_consist : ∃ w, φ w ∧ ¬(a w))
-    : Exhaustification.isInnocentlyExcludable ALT φ a := by
+    : Exhaustification.IsInnocentlyExcludable ALT φ a := by
   open Exhaustification in
   constructor
   · exact h_mem
-  · -- Goal: ∼a ∈ IE ALT φ, i.e., ∀ E, isMCSet ALT φ E → ∼a ∈ E
+  · -- Goal: aᶜ ∈ IE ALT φ, i.e., ∀ E, IsMCSet ALT φ E → aᶜ ∈ E
     intro E hE_mc
-    -- The candidate superset: {φ, ∼a}
-    -- Step 1: E ⊆ {φ, ∼a} (by compatibility + singleton condition)
-    have h_sub : E ⊆ ({φ, ∼a} : Set (Set World)) := by
+    -- The candidate superset: {φ, aᶜ}
+    -- Step 1: E ⊆ {φ, aᶜ} (by compatibility + singleton condition)
+    have h_sub : E ⊆ ({φ, aᶜ} : Set (Set World)) := by
       intro ψ hψ
       rcases hE_mc.1.2.1 ψ hψ with h | ⟨a', ha'_mem, ha'_eq⟩
       · exact Set.mem_insert_iff.mpr (Or.inl h)
       · rw [h_all_eq a' ha'_mem] at ha'_eq
         exact Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr ha'_eq))
-    -- Step 2: {φ, ∼a} is compatible
-    have h_compat : isCompatible ALT φ ({φ, ∼a} : Set (Set World)) := by
+    -- Step 2: {φ, aᶜ} is compatible
+    have h_compat : IsCompatible ALT φ ({φ, aᶜ} : Set (Set World)) := by
       refine ⟨Set.mem_insert φ _, ?_, ?_⟩
-      · -- Every element is φ or ∼a' for some a' ∈ ALT
+      · -- Every element is φ or a'ᶜ for some a' ∈ ALT
         intro ψ hψ
         rcases Set.mem_insert_iff.mp hψ with h | h
         · exact Or.inl h
         · exact Or.inr ⟨a, h_mem, Set.mem_singleton_iff.mp h⟩
-      · -- Consistent: ∃ w, φ w ∧ (∼a) w
+      · -- Consistent: ∃ w, φ w ∧ (aᶜ) w
         obtain ⟨w, hw_phi, hw_not_a⟩ := h_consist
         exact ⟨w, fun ψ hψ => by
           rcases Set.mem_insert_iff.mp hψ with h | h
           · rw [h]; exact hw_phi
           · rw [Set.mem_singleton_iff.mp h]; exact hw_not_a⟩
-    -- Step 3: By maximality of E, {φ, ∼a} ⊆ E
-    have h_sup : ({φ, ∼a} : Set (Set World)) ⊆ E := hE_mc.2 _ h_compat h_sub
-    -- Step 4: ∼a ∈ E
+    -- Step 3: By maximality of E, {φ, aᶜ} ⊆ E
+    have h_sup : ({φ, aᶜ} : Set (Set World)) ⊆ E := hE_mc.2 _ h_compat h_sub
+    -- Step 4: aᶜ ∈ E
     exact h_sup (Set.mem_insert_iff.mpr (Or.inr (Set.mem_singleton_iff.mpr rfl)))
 
 -- ============================================================================
@@ -280,10 +280,10 @@ When there exists a world where φ holds and every alternative in ALT is false,
 every alternative is innocently excludable. This generalizes
 `singleton_alt_innocently_excludable` from singleton to arbitrary ALT.
 
-**Proof**: The set S = {φ} ∪ {∼a | a ∈ ALT} is the unique MC-set: it is
+**Proof**: The set S = {φ} ∪ {aᶜ | a ∈ ALT} is the unique MC-set: it is
 compatible by hypothesis, and every compatible set is a subset of it (by the
-compatibility constraint, every element is φ or ∼a for some a ∈ ALT). By
-maximality, every MC-set equals S. Since ∼a ∈ S for all a ∈ ALT, every
+compatibility constraint, every element is φ or aᶜ for some a ∈ ALT). By
+maximality, every MC-set equals S. Since aᶜ ∈ S for all a ∈ ALT, every
 alternative is in IE.
 
 This covers conditional perfection scenarios with any number of alternative
@@ -294,24 +294,24 @@ theorem all_alt_innocently_excludable
     (ALT : Set (Set World))
     (φ : Set World)
     (h_consist : ∃ w, φ w ∧ ∀ a ∈ ALT, ¬(a w))
-    : ∀ a ∈ ALT, Exhaustification.isInnocentlyExcludable ALT φ a := by
+    : ∀ a ∈ ALT, Exhaustification.IsInnocentlyExcludable ALT φ a := by
   open Exhaustification in
   intro a ha_mem
   constructor
   · exact ha_mem
-  · -- Goal: ∼a ∈ IE ALT φ, i.e., ∀ E, isMCSet ALT φ E → ∼a ∈ E
+  · -- Goal: aᶜ ∈ IE ALT φ, i.e., ∀ E, IsMCSet ALT φ E → aᶜ ∈ E
     intro E hE_mc
-    -- S_max = {ψ | ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a} (= {φ} ∪ {∼a | a ∈ ALT})
+    -- S_max = {ψ | ψ = φ ∨ ∃ a ∈ ALT, ψ = aᶜ} (= {φ} ∪ {aᶜ | a ∈ ALT})
     -- Defined as a predicate so membership unfolds directly.
-    let S_max : Set (Set World) := fun ψ => ψ = φ ∨ ∃ a ∈ ALT, ψ = ∼a
-    -- Step 1: E ⊆ S_max (from compatibility: every element is φ or ∼a')
+    let S_max : Set (Set World) := fun ψ => ψ = φ ∨ ∃ a ∈ ALT, ψ = aᶜ
+    -- Step 1: E ⊆ S_max (from compatibility: every element is φ or a'ᶜ)
     have h_sub : E ⊆ S_max := by
       intro ψ hψ
       rcases hE_mc.1.2.1 ψ hψ with h | ⟨a', ha'_mem, ha'_eq⟩
       · exact Or.inl h
       · exact Or.inr ⟨a', ha'_mem, ha'_eq⟩
-    -- Step 2: S_max is compatible (φ ∈ S_max, every element is φ or ∼a, consistent)
-    have h_compat : isCompatible ALT φ S_max := by
+    -- Step 2: S_max is compatible (φ ∈ S_max, every element is φ or aᶜ, consistent)
+    have h_compat : IsCompatible ALT φ S_max := by
       refine ⟨Or.inl rfl, fun ψ hψ => hψ, ?_⟩
       obtain ⟨w, hw_phi, hw_not⟩ := h_consist
       exact ⟨w, fun ψ hψ => by
@@ -320,7 +320,7 @@ theorem all_alt_innocently_excludable
         · rw [heq]; exact hw_not a' ha'⟩
     -- Step 3: By maximality of E, S_max ⊆ E
     have h_sup : S_max ⊆ E := hE_mc.2 _ h_compat h_sub
-    -- Step 4: ∼a ∈ S_max, so ∼a ∈ E
+    -- Step 4: aᶜ ∈ S_max, so aᶜ ∈ E
     exact h_sup (Or.inr ⟨a, ha_mem, rfl⟩)
 
 end Semantics.Conditionals.Exhaustivity

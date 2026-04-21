@@ -71,13 +71,16 @@ def DialogueSign.toSynsem (ds : DialogueSign) : Synsem where
   head := ds.head
 
 /-- Convert a DialogueSign to a LocProp for the KOS DGB.
-DGB-PARAMS become cparams; Q-PARAMS are not cparams (they are
-contributed, not requiring resolution). -/
+DGB-PARAMS become `cparams` (block grounding until resolved);
+Q-PARAMS become `qcparams` (travel with the sign, do not block grounding,
+but remain available for fragment-reprise queries per
+@cite{ginzburg-2012} §8.5.1, @cite{purver-ginzburg-2004}). -/
 def DialogueSign.toLocProp (ds : DialogueSign) : LocProp String where
   phon := ds.phon
   cat := toString ds.pos
   cont := ds.cont
   cparams := ds.dgbParams
+  qcparams := ds.qParams
 
 /-- Conversion preserves phonological form. -/
 theorem toLocProp_preserves_phon (ds : DialogueSign) :
@@ -86,6 +89,15 @@ theorem toLocProp_preserves_phon (ds : DialogueSign) :
 /-- Conversion preserves content. -/
 theorem toLocProp_preserves_cont (ds : DialogueSign) :
     ds.toLocProp.cont = ds.cont := rfl
+
+/-- Conversion routes DGB-PARAMS to `cparams` (the resolution channel). -/
+theorem toLocProp_dgb_to_cparams (ds : DialogueSign) :
+    ds.toLocProp.cparams = ds.dgbParams := rfl
+
+/-- Conversion routes Q-PARAMS to `qcparams` (the existential-witness
+channel) — the structural prerequisite for the Reprise Content Hypothesis. -/
+theorem toLocProp_q_to_qcparams (ds : DialogueSign) :
+    ds.toLocProp.qcparams = ds.qParams := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. Example Entries

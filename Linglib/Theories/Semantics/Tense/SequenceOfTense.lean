@@ -30,7 +30,7 @@ Klecha, Deal), see `Theories/Semantics.Intensional/Tense/` and
 
 namespace Semantics.Tense.SequenceOfTense
 
-open Core.Reichenbach
+open Core.Time.Reichenbach
 open Semantics.Tense (applyTense)
 open Semantics.Tense (embeddedFrame simultaneousFrame)
 

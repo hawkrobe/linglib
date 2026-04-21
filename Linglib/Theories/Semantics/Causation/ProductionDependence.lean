@@ -34,6 +34,8 @@ d-causes without producing anything.
 
 namespace Semantics.Causation.ProductionDependence
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

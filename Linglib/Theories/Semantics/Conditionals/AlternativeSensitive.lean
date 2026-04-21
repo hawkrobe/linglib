@@ -2,7 +2,6 @@ import Mathlib.Data.Finset.Card
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Core.Logic.Truth3
 import Linglib.Theories.Semantics.Alternatives.Structural
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
 
 /-!
 # Alternative-Sensitive Conditional Semantics
@@ -452,7 +451,7 @@ Verifies the stability algorithm on the paper's central example
 - ALT_S = {O∨A, O, A, O∧A}
 - Stable subsets: {O∨A, O}, {O∨A, A}, ALT_S
 - **Minimal** stable: {O∨A, O} and {O∨A, A}
-- Truthmakers: O (= ⋀{O∨A, O}) and A (= ⋀{O∨A, A})
+- Truthmakers: O (= ⋂₀ {O∨A, O}) and A (= ⋂₀ {O∨A, A})
 
 The truthmakers are exactly the individual disjuncts — the "ways for
 the disjunction to be true." These then feed into `altConditionalResults`
@@ -515,13 +514,13 @@ theorem oa_anna_minimal :
 
 -- ── Truthmaker identification ─────────────────────────────────
 
-/-- ⋀{O∨A, O} = O (Otto went): the conjunctive closure reduces to
+/-- ⋂₀ {O∨A, O} = O (Otto went): the conjunctive closure reduces to
     the stronger conjunct. -/
 theorem oa_otto_closure_eq :
     ∀ w : OAWorld, conjunctiveClosure oaAlts [0, 1] w = ottoWent w := by
   intro w; cases w <;> native_decide
 
-/-- ⋀{O∨A, A} = A (Anna went). -/
+/-- ⋂₀ {O∨A, A} = A (Anna went). -/
 theorem oa_anna_closure_eq :
     ∀ w : OAWorld, conjunctiveClosure oaAlts [0, 2] w = annaWent w := by
   intro w; cases w <;> native_decide
@@ -549,93 +548,18 @@ theorem oa_anna_is_truthmaker :
 
 end OttoAnna
 
-
--- ============================================================
--- SECTION 9: Duality with Fox 2007 (footnote 40, p. 540)
--- ============================================================
-
 /-!
 ## Fox–Santorio Duality
 
-@cite{santorio-2018} (footnote 40, p. 540) observes that his stability
-algorithm is the **dual** of @cite{fox-2007}'s innocent exclusion: where
+@cite{santorio-2018} (footnote 40, p. 540) observes that the stability
+algorithm of §IV.2 is dual to @cite{fox-2007}'s innocent exclusion:
 Fox finds maximal sets of alternatives that can consistently be
-**excluded**, Santorio finds minimal sets that can consistently be
-**included** (with the complement negated).
-
-Concretely, for disjunction alternatives {p∨q, p, q, p∧q}:
-
-| Santorio (minimal stable) | Fox (maximal consistent exclusion) |
-|---------------------------|------------------------------------|
-| {p∨q, p} — include p, negate q,p∧q | {q, p∧q} — exclude q, p∧q |
-| {p∨q, q} — include q, negate p,p∧q | {p, p∧q} — exclude p, p∧q |
-
-The complement of each minimal stable subset (restricted to the
-non-weaker alternatives NW) equals a maximal consistent exclusion.
-This section verifies the duality computationally on both algorithms.
+**excluded**, while Santorio finds minimal sets that can consistently be
+**included** (with the complement negated). For disjunction alternatives
+`{p∨q, p, q, p∧q}`, the complement (within `NW = {p, q, p∧q}`) of each
+minimal stable subset equals the corresponding maximal consistent
+exclusion. The general duality theorem is not formalized here.
 -/
-
-section Duality
-
-open Exhaustification.InnocentExclusion hiding sublists
-
--- Both algorithms are applied to the same data (InnocentExclusion's public
--- PQWorld/disjAlts) to verify the duality computationally.
-
-private instance : Fintype PQWorld where
-  elems := {.pOnly, .qOnly, .both, .neither}
-  complete x := by cases x <;> simp
-
-/-- InnocentExclusion's disjunction alternatives, used as input for Santorio's
-    stability algorithm. -/
-private def dualAlts : List (PQWorld → Bool) := disjAlts
-
--- ── Santorio's stability on Fox's types ────────────────────────
-
-/-- The two minimal stable subsets of the disjunction alternatives.
-    Each includes the prejacent (index 0) plus one disjunct. -/
-theorem disj_minStable_sets :
-    (sublists (List.range dualAlts.length)).filter
-      (isMinimalStable dualAlts) = [[0, 2], [0, 1]] := by
-  native_decide
-
--- ── Fox's exclusions on the same data ──────────────────────────
-
-/-- Fox's maximal consistent exclusions for p∨q. -/
-theorem fox_maxExcl_sets :
-    maxConsistentExclusions pqDomain pOrQ disjAlts = [[2, 3], [1, 3]] := by
-  native_decide
-
--- ── The duality ────────────────────────────────────────────────
-
-/-- Complement of a subset within NW = {1, 2, 3}. -/
-private def complementInNW (σ : List Nat) : List Nat :=
-  [1, 2, 3].filter fun i => !σ.contains i
-
-/-- **Duality verified**: the complement (in NW) of each minimal
-    stable subset equals the corresponding maximal consistent exclusion.
-
-    - minStable {0,2}: NW \ {2} = {1,3} = MCE₂
-    - minStable {0,1}: NW \ {1} = {2,3} = MCE₁ -/
-theorem stability_exclusion_duality :
-    let santorioSets := [[0, 2], [0, 1]]
-    let foxSets := [[1, 3], [2, 3]]
-    santorioSets.map complementInNW = foxSets := by
-  native_decide
-
-/-- The innocently excludable alternatives (Fox) are exactly those
-    NOT in ANY minimal stable subset beyond the prejacent (Santorio).
-
-    Fox: I-E = {3} (= p∧q)
-    Santorio: ⋃(minStable ∩ NW) = {1, 2} (= p, q)
-    Complement: NW \ {1,2} = {3} = I-E -/
-theorem ie_from_stability :
-    let includedByStability := [1, 2]
-    let foxIE := ieIndices pqDomain pOrQ disjAlts
-    complementInNW includedByStability = foxIE := by
-  native_decide
-
-end Duality
 
 
 end Semantics.Conditionals.AlternativeSensitive

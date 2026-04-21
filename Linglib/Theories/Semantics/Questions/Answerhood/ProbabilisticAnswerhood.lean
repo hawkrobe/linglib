@@ -1,9 +1,9 @@
 import Linglib.Core.FinitePMF
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
-import Linglib.Core.Issue.Basic
-import Linglib.Core.Issue.Hamblin
-import Linglib.Core.Issue.Relevance
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
+import Linglib.Core.Question.Basic
+import Linglib.Core.Question.Hamblin
+import Linglib.Core.Question.Relevance
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Mathlib.Algebra.Order.Field.Basic
@@ -39,7 +39,7 @@ of additive particles like "too", "also", "either".
 
 ## API surface (Set/Prop)
 
-All predicates operate on `Core.Issue W` (the mathlib-aligned downward-closed
+All predicates operate on `Core.Question W` (the mathlib-aligned downward-closed
 inquisitive lattice) and `Set W` (with `[DecidablePred]` for computability),
 in line with project-wide mathlib discipline.
 -/
@@ -59,7 +59,7 @@ abbrev Prior (W : Type*) [Fintype W] := Core.FinitePMF W
 
 /-! ## Set/Prop API — full mathlib alignment
 
-Predicates operate on `Core.Issue W` (with `[HasAltList]` for finiteness witness)
+Predicates operate on `Core.Question W` (with `[HasAltList]` for finiteness witness)
 and `Set W` (with `[DecidablePred]`) as the canonical types.
 
 The relationship to FinitePMF:
@@ -71,19 +71,19 @@ open Classical in
 /-- Probabilistic relevance: `s` changes the probability of some alternative
 of `q`. @cite{thomas-2026} Def. 61. -/
 noncomputable def relevantS {W : Type*} [Fintype W]
-    (s : Set W) (q : Core.Issue W) (prior : Prior W) : Prop :=
-  ∃ a ∈ Core.Issue.alt q, prior.condProbSet s a ≠ prior.probOfSet a
+    (s : Set W) (q : Core.Question W) (prior : Prior W) : Prop :=
+  ∃ a ∈ Core.Question.alt q, prior.condProbSet s a ≠ prior.probOfSet a
 
 open Classical in
 /-- Probabilistic answerhood: `s` raises the probability of some alternative
 of `q`. @cite{thomas-2026} Def. 62 condition (a). -/
 noncomputable def probAnswersS {W : Type*} [Fintype W]
-    (s : Set W) (q : Core.Issue W) (prior : Prior W) : Prop :=
-  ∃ a ∈ Core.Issue.alt q, prior.condProbSet s a > prior.probOfSet a
+    (s : Set W) (q : Core.Question W) (prior : Prior W) : Prop :=
+  ∃ a ∈ Core.Question.alt q, prior.condProbSet s a > prior.probOfSet a
 
 /-- Probabilistic answerhood implies relevance. -/
 theorem probAnswersS_implies_relevantS {W : Type*} [Fintype W]
-    (s : Set W) (q : Core.Issue W) (prior : Prior W)
+    (s : Set W) (q : Core.Question W) (prior : Prior W)
     (h : probAnswersS s q prior) : relevantS s q prior := by
   obtain ⟨a, ha, hgt⟩ := h
   exact ⟨a, ha, ne_of_gt hgt⟩
@@ -95,9 +95,9 @@ If `s ⊆ a` for some alternative `a` of `q`, and `s` has positive prior and
 1, exceeding `P(a) < 1`. The Classical instances baked into `probAnswersS`
 agree with user-supplied `[DecidablePred]` instances by `Subsingleton`. -/
 theorem probAnswersS_when_entailing {W : Type*} [Fintype W] [DecidableEq W]
-    (s : Set W) (q : Core.Issue W) (prior : Prior W) (a : Set W)
+    (s : Set W) (q : Core.Question W) (prior : Prior W) (a : Set W)
     [DecidablePred (· ∈ s)] [DecidablePred (· ∈ a)]
-    (hAltMem : a ∈ Core.Issue.alt q)
+    (hAltMem : a ∈ Core.Question.alt q)
     (hEntails : s ⊆ a)
     (hPosS : prior.probOfSet s > 0)
     (hNotCertain : prior.probOfSet a < 1) :
@@ -189,8 +189,8 @@ body is well-typed without an `[∀ a, DecidablePred (· ∈ a)]` hypothesis.
 For computable `Decidable` instances at concrete consumers, supply the
 per-alternative `[DecidablePred]` and use `decide` directly. -/
 noncomputable def someResolutionStrengthenedS {W : Type*} [Fintype W]
-    (p1 p2 : Set W) (q : Core.Issue W) (prior : Prior W) : Prop :=
-  ∃ a ∈ Core.Issue.alt q, prior.condProbSet (p1 ∩ p2) a > prior.condProbSet p1 a
+    (p1 p2 : Set W) (q : Core.Question W) (prior : Prior W) : Prop :=
+  ∃ a ∈ Core.Question.alt q, prior.condProbSet (p1 ∩ p2) a > prior.condProbSet p1 a
 
 /-! ### Witness constructors — Classical/structural Decidable bridge
 
@@ -227,9 +227,9 @@ instances at use sites. -/
     instances. The Classical instances inside the spec match by
     `Subsingleton (Decidable _)`. -/
 lemma relevantS.of_witness {W : Type*} [Fintype W]
-    (s : Set W) (q : Core.Issue W) (prior : Prior W) (a : Set W)
+    (s : Set W) (q : Core.Question W) (prior : Prior W) (a : Set W)
     [DecidablePred (· ∈ s)] [DecidablePred (· ∈ a)]
-    (hAltMem : a ∈ Core.Issue.alt q)
+    (hAltMem : a ∈ Core.Question.alt q)
     (h : prior.condProbSet s a ≠ prior.probOfSet a) :
     relevantS s q prior :=
   ⟨a, hAltMem, by convert h⟩
@@ -237,9 +237,9 @@ lemma relevantS.of_witness {W : Type*} [Fintype W]
 /-- Constructive witness for `probAnswersS`: produce an alternative `a`
     that is strictly raised by `s`. -/
 lemma probAnswersS.of_witness {W : Type*} [Fintype W]
-    (s : Set W) (q : Core.Issue W) (prior : Prior W) (a : Set W)
+    (s : Set W) (q : Core.Question W) (prior : Prior W) (a : Set W)
     [DecidablePred (· ∈ s)] [DecidablePred (· ∈ a)]
-    (hAltMem : a ∈ Core.Issue.alt q)
+    (hAltMem : a ∈ Core.Question.alt q)
     (h : prior.condProbSet s a > prior.probOfSet a) :
     probAnswersS s q prior :=
   ⟨a, hAltMem, by convert h⟩
@@ -248,9 +248,9 @@ lemma probAnswersS.of_witness {W : Type*} [Fintype W]
     alternative `a` whose conditional probability strictly increases when
     `p2` is added to `p1`. -/
 lemma someResolutionStrengthenedS.of_witness {W : Type*} [Fintype W]
-    (p1 p2 : Set W) (q : Core.Issue W) (prior : Prior W) (a : Set W)
+    (p1 p2 : Set W) (q : Core.Question W) (prior : Prior W) (a : Set W)
     [DecidablePred (· ∈ p1)] [DecidablePred (· ∈ p2)] [DecidablePred (· ∈ a)]
-    (hAltMem : a ∈ Core.Issue.alt q)
+    (hAltMem : a ∈ Core.Question.alt q)
     (h : prior.condProbSet (p1 ∩ p2) a > prior.condProbSet p1 a) :
     someResolutionStrengthenedS p1 p2 q prior := by
   haveI : DecidablePred (· ∈ p1 ∩ p2) :=

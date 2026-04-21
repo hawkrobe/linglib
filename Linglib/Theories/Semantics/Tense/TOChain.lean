@@ -1,5 +1,5 @@
-import Linglib.Core.Temporal.Time
-import Linglib.Core.Temporal.Reichenbach
+import Linglib.Core.Time.Relation
+import Linglib.Core.Time.Reichenbach
 import Linglib.Core.Context.Tower
 
 /-!
@@ -70,8 +70,8 @@ Declercian projection — the "perfect" lives in the chain structure
 
 namespace Semantics.Tense.TOChain
 
-open Core.Time (TemporalRelation Domain NamedTO TO OrientationTime)
-open Core.Reichenbach (ReichenbachFrame)
+open Core.Time (Relation Domain NamedTO TO Orientation)
+open Core.Time.Reichenbach (ReichenbachFrame)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -99,7 +99,7 @@ inductive TimeSphere where
 -- § TO-Chain Architecture
 -- ════════════════════════════════════════════════════════════════
 
-/-- A single link in a TO chain: a `Core.Time.OrientationTime`-labelled
+/-- A single link in a TO chain: a `Core.Time.Orientation`-labelled
     Time of Orientation related to the next TO inward by a temporal
     relation.
 
@@ -111,11 +111,11 @@ inductive TimeSphere where
 structure TOLink (Time : Type*) where
   /-- The orientation-time role of this link (`.situation` for TO_sit;
       `.sub n` for an intermediate TO). -/
-  name : OrientationTime
+  name : Orientation
   /-- How this TO relates to the next TO inward toward TO₁.
       `before` = this TO precedes the next; `after` = this TO follows it;
       `overlapping` = simultaneous. -/
-  relation : TemporalRelation
+  relation : Relation
   /-- The resolved time value. -/
   time : Time
 
@@ -717,7 +717,7 @@ end TowerBridge
     `Core.Time.Domain` substrate (central TO + list of sub-TOs, with
     Allen relations computed on demand from the underlying linear
     order). The `toDomain` builder lifts the chain structure into a
-    `Domain Time OrientationTime` whose central TO is the utterance
+    `Domain Time Orientation` whose central TO is the utterance
     time (T₀) and whose sub-TOs are the perspective TO (TO₁) followed
     by every chain link as a point interval.
 
@@ -733,7 +733,7 @@ section DomainBridge
 variable {Time : Type*} [LinearOrder Time]
 
 /-- The schema as a `Core.Time.Domain` over the universal
-    `OrientationTime` role vocabulary: central = `.utterance` (T₀, the
+    `Orientation` role vocabulary: central = `.utterance` (T₀, the
     temporal zero-point), sub-TOs = `.perspective` (TO₁) followed by
     every chain link as a point interval.
 
@@ -744,7 +744,7 @@ variable {Time : Type*} [LinearOrder Time]
     to constrain admissible time assignments at the call site, not to
     reproduce information already implicit in the linear order. -/
 def DeclercianSchema.toDomain (s : DeclercianSchema Time) :
-    Domain Time OrientationTime where
+    Domain Time Orientation where
   central := NamedTO.ofPoint .utterance s.t0
   subTOs := NamedTO.ofPoint .perspective s.to1 ::
             s.chain.map (fun link => NamedTO.ofPoint link.name link.time)
@@ -760,7 +760,7 @@ def DeclercianSchema.toDomain (s : DeclercianSchema Time) :
     every chain link's role. Useful for stating role-set invariants. -/
 theorem DeclercianSchema.toDomain_labels (s : DeclercianSchema Time) :
     s.toDomain.labels =
-      OrientationTime.utterance :: .perspective :: s.chain.map TOLink.name := by
+      Orientation.utterance :: .perspective :: s.chain.map TOLink.name := by
   simp [DeclercianSchema.toDomain, Domain.labels, Domain.all,
         NamedTO.ofPoint, List.map_cons, List.map_map, Function.comp]
 
@@ -887,19 +887,20 @@ theorem preterit_presentPerfect_differ_zone {Time : Type*} (t0 toSit : Time) :
     TO_sit) and `Core.Time.AspectSystem` instance. The aspect instance
     collapses event and reference roles both to `.situation` —
     Declerck's universal `TS = TO_sit` principle means E = R always
-    holds, so the generic `isPerfective` is trivially satisfied for
-    every Declercian schema, and `isPerfect` can never hold. The
-    "perfect" lives in the chain structure (TO_sit before `.sub 0`),
-    not in the E/R relation — exactly Declerck's claim. -/
+    holds, so any predicate of the form "event equals reference" is
+    trivially satisfied for every Declercian schema, and "event
+    precedes reference" can never hold. The "perfect" lives in the
+    chain structure (TO_sit before `.sub 0`), not in the E/R relation
+    — exactly Declerck's claim. -/
 
 instance declercianSchema_tenseSystem {Time : Type*} [LinearOrder Time] :
-    Core.Time.TenseSystem (DeclercianSchema Time) Time OrientationTime where
+    Core.Time.TenseSystem (DeclercianSchema Time) Time Orientation where
   toDomain := DeclercianSchema.toDomain
   anchor := .perspective
   situation := .situation
 
 instance declercianSchema_aspectSystem {Time : Type*} [LinearOrder Time] :
-    Core.Time.AspectSystem (DeclercianSchema Time) Time OrientationTime where
+    Core.Time.AspectSystem (DeclercianSchema Time) Time Orientation where
   toDomain := DeclercianSchema.toDomain
   event := .situation
   reference := .situation

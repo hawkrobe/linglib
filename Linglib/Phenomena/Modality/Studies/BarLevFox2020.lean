@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators.InnocentInclusion
 import Linglib.Phenomena.Modality.FreeChoice
 
 /-!
@@ -14,7 +15,7 @@ toy modal model.
 The abstract theory of Innocent Exclusion (`IE`), Innocent Inclusion (`II`),
 the cell-of-the-induced-partition (`cell`), and the cell-identification theorem
 `mem_II_of_cell_witness` lives in
-`Theories/Semantics/Exhaustification/Operators.lean`. This file instantiates
+`Theories/Semantics/Exhaustification/Operators/Basic.lean`. This file instantiates
 that theory on a small `FCWorld` and verifies the paper's headline empirical
 prediction:
 
@@ -107,7 +108,7 @@ Witnessed by `permA ∧ permB` (= ◇a ∧ ◇b), which is not equivalent to any
 member of `fcALT` — in particular, not to `permAandB` (= ◇(a ∧ b)), since the
 `separatelyAB` world satisfies the former but not the latter. -/
 theorem fc_not_closed_general :
-    ¬(∀ (X : Set (Set FCWorld)), X ⊆ fcALT → (⋀ X) ∈ fcALT) := by
+    ¬(∀ (X : Set (Set FCWorld)), X ⊆ fcALT → (⋂₀ X) ∈ fcALT) := by
   intro h
   have hX : ({permA, permB} : Set (Set FCWorld)) ⊆ fcALT := by
     intro x hx
@@ -117,16 +118,16 @@ theorem fc_not_closed_general :
   have hconj := h {permA, permB} hX
   simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at hconj
   rcases hconj with heq | heq | heq | heq
-  · have : ¬(⋀ ({permA, permB} : Set _)) .onlyA :=
+  · have : ¬(⋂₀ ({permA, permB} : Set _)) .onlyA :=
       fun hc => hc permB (Set.mem_insert_of_mem _ rfl)
     rw [heq] at this; exact this trivial
-  · have : ¬(⋀ ({permA, permB} : Set _)) .onlyA :=
+  · have : ¬(⋂₀ ({permA, permB} : Set _)) .onlyA :=
       fun hc => hc permB (Set.mem_insert_of_mem _ rfl)
     rw [heq] at this; exact this trivial
-  · have : ¬(⋀ ({permA, permB} : Set _)) .onlyB :=
+  · have : ¬(⋂₀ ({permA, permB} : Set _)) .onlyB :=
       fun hc => hc permA (Set.mem_insert_iff.mpr (Or.inl rfl))
     rw [heq] at this; exact this trivial
-  · have : (⋀ ({permA, permB} : Set _)) .separatelyAB := by
+  · have : (⋂₀ ({permA, permB} : Set _)) .separatelyAB := by
       intro φ hφ
       simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hφ
       rcases hφ with rfl | rfl <;> trivial
@@ -145,10 +146,10 @@ place, free choice follows as a one-line corollary of
 The witness world is `separatelyAB`. Establishing the cell predicate at
 `separatelyAB` requires four facts about the IE structure of `fcALT`:
 
-* `permAorB` is *not* innocently excludable (since ∼permAorB contradicts the
+* `permAorB` is *not* innocently excludable (since permAorBᶜ contradicts the
   prejacent in any MC-set);
 * `permA` is *not* innocently excludable (witnessed by an MC-set that omits
-  ∼permA);
+  permAᶜ);
 * `permB` is *not* innocently excludable (symmetric);
 * `permAandB` *is* innocently excludable.
 -/
@@ -159,11 +160,11 @@ private theorem fcALT_finite : Set.Finite fcALT :=
 private theorem fcPrejacent_sat : ∃ w, fcPrejacent w := ⟨.onlyA, trivial⟩
 
 private theorem permAorB_not_ie :
-    ¬isInnocentlyExcludable fcALT fcPrejacent permAorB := by
+    ¬IsInnocentlyExcludable fcALT fcPrejacent permAorB := by
   intro ⟨_, hIE⟩
   obtain ⟨E, hMC⟩ := exists_MCset fcALT fcPrejacent fcALT_finite fcPrejacent_sat
   obtain ⟨u, hu⟩ := hMC.1.2.2
-  exact hu (∼permAorB) (hIE E hMC) (hu fcPrejacent hMC.1.1)
+  exact hu (permAorBᶜ) (hIE E hMC) (hu fcPrejacent hMC.1.1)
 
 /-- ¬`permA` and ¬`permB` together with the prejacent are inconsistent on
 `FCWorld`: every world satisfying `permAorB` satisfies at least one disjunct. -/
@@ -171,7 +172,7 @@ private theorem perm_cover : ∀ u, fcPrejacent u → ¬permA u → ¬permB u �
   fun u => by cases u <;> simp [fcPrejacent, permAorB, permA, permB]
 
 private theorem mc_set_without_neg_permA :
-    isMCSet fcALT fcPrejacent {fcPrejacent, ∼permB, ∼permAandB} := by
+    IsMCSet fcALT fcPrejacent {fcPrejacent, permBᶜ, permAandBᶜ} := by
   constructor
   · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
     · intro ψ hψ
@@ -192,17 +193,17 @@ private theorem mc_set_without_neg_permA :
     · simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl | rfl | rfl
       · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu (∼permAorB) hψ' (hu fcPrejacent (hsub (Set.mem_insert _ _)))
+        exact hu (permAorBᶜ) hψ' (hu fcPrejacent (hsub (Set.mem_insert _ _)))
       · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
         exact perm_cover u
           (hu fcPrejacent (hsub (Set.mem_insert _ _)))
-          (hu (∼permA) hψ')
-          (hu (∼permB) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _))))
+          (hu (permAᶜ) hψ')
+          (hu (permBᶜ) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _))))
       · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
       · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
 
 private theorem mc_set_without_neg_permB :
-    isMCSet fcALT fcPrejacent {fcPrejacent, ∼permA, ∼permAandB} := by
+    IsMCSet fcALT fcPrejacent {fcPrejacent, permAᶜ, permAandBᶜ} := by
   constructor
   · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
     · intro ψ hψ
@@ -223,19 +224,19 @@ private theorem mc_set_without_neg_permB :
     · simp only [fcALT, Set.mem_insert_iff, Set.mem_singleton_iff] at ha
       rcases ha with rfl | rfl | rfl | rfl
       · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
-        exact hu (∼permAorB) hψ' (hu fcPrejacent (hsub (Set.mem_insert _ _)))
+        exact hu (permAorBᶜ) hψ' (hu fcPrejacent (hsub (Set.mem_insert _ _)))
       · exact Set.mem_insert_of_mem _ (Set.mem_insert _ _)
       · exfalso; obtain ⟨u, hu⟩ := hE'.2.2
         exact perm_cover u
           (hu fcPrejacent (hsub (Set.mem_insert _ _)))
-          (hu (∼permA) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _))))
-          (hu (∼permB) hψ')
+          (hu (permAᶜ) (hsub (Set.mem_insert_of_mem _ (Set.mem_insert _ _))))
+          (hu (permBᶜ) hψ')
       · exact Set.mem_insert_of_mem _ (Set.mem_insert_of_mem _ rfl)
 
 private theorem permA_not_ie :
-    ¬isInnocentlyExcludable fcALT fcPrejacent permA := by
+    ¬IsInnocentlyExcludable fcALT fcPrejacent permA := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼permA ∉ ({fcPrejacent, ∼permB, ∼permAandB} : Set (Set FCWorld)) := by
+  have hNotIn : permAᶜ ∉ ({fcPrejacent, permBᶜ, permAandBᶜ} : Set (Set FCWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mpr (congrFun h .onlyA) id trivial,
@@ -243,24 +244,24 @@ private theorem permA_not_ie :
   exact hNotIn (hIE _ mc_set_without_neg_permA)
 
 private theorem permB_not_ie :
-    ¬isInnocentlyExcludable fcALT fcPrejacent permB := by
+    ¬IsInnocentlyExcludable fcALT fcPrejacent permB := by
   intro ⟨_, hIE⟩
-  have hNotIn : ∼permB ∉ ({fcPrejacent, ∼permA, ∼permAandB} : Set (Set FCWorld)) := by
+  have hNotIn : permBᶜ ∉ ({fcPrejacent, permAᶜ, permAandBᶜ} : Set (Set FCWorld)) := by
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
     exact ⟨fun h => Eq.mp (congrFun h .neither) id,
            fun h => Eq.mp (congrFun h .onlyA) id trivial,
            fun h => Eq.mpr (congrFun h .onlyB) id trivial⟩
   exact hNotIn (hIE _ mc_set_without_neg_permB)
 
-/-- `permAandB` *is* innocently excludable: every MC-set contains `∼permAandB`,
-because adjoining `∼permAandB` to any MC-set is consistent (witnessed at
+/-- `permAandB` *is* innocently excludable: every MC-set contains `permAandBᶜ`,
+because adjoining `permAandBᶜ` to any MC-set is consistent (witnessed at
 `onlyA` whenever the MC-set itself is consistent), so maximality forces
 inclusion. -/
 private theorem permAandB_is_ie :
-    isInnocentlyExcludable fcALT fcPrejacent permAandB := by
+    IsInnocentlyExcludable fcALT fcPrejacent permAandB := by
   refine ⟨by simp [fcALT], ?_⟩
   intro E hE
-  apply hE.2 (E ∪ {∼permAandB}) ?_ Set.subset_union_left
+  apply hE.2 (E ∪ {permAandBᶜ}) ?_ Set.subset_union_left
     (Set.mem_union_right E rfl)
   refine ⟨Set.mem_union_left _ hE.1.1, ?_, ?_⟩
   · rintro ψ (hψE | hψN)

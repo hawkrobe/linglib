@@ -127,82 +127,84 @@ theorem RationalAction.policy_eq_one_of_totalScore_eq (ra : RationalAction S A) 
   simp only [policy, h_sum, ne_of_gt h_pos, ↓reduceIte, div_self (ne_of_gt h_pos)]
 
 /-- Score ordering implies ¬(policy strict ordering). Used by compositional proof
-    builder for ¬(L1 w₁ > L1 w₂) goals. -/
-theorem RationalAction.policy_not_gt_of_score_le (ra : RationalAction S A) (s : S)
-    (a₁ a₂ : A) (h : ra.score s a₁ ≤ ra.score s a₂) :
-    ¬(ra.policy s a₁ > ra.policy s a₂) :=
-  not_lt_of_ge (ra.policy_monotone s a₁ a₂ h)
+    builder for ¬(L1 w₁ < L1 w₂) goals. -/
+theorem RationalAction.policy_not_lt_of_score_le (ra : RationalAction S A) (s : S)
+    (a₁ a₂ : A) (h : ra.score s a₂ ≤ ra.score s a₁) :
+    ¬(ra.policy s a₁ < ra.policy s a₂) :=
+  not_lt_of_ge (ra.policy_monotone s a₂ a₁ h)
 
 /-- Strict policy monotonicity: strictly higher score → strictly higher probability.
 
     Used by `rsa_decide` to eliminate shared denominator computations: when
-    comparing `policy s a₁ > policy s a₂` (same state), it suffices to show
-    `score s a₁ > score s a₂`, skipping the expensive `totalScore` computation
+    comparing `policy s a₁ < policy s a₂` (same state), it suffices to show
+    `score s a₁ < score s a₂`, skipping the expensive `totalScore` computation
     in the proof term. -/
-theorem RationalAction.policy_gt_of_score_gt (ra : RationalAction S A) (s : S)
-    (a₁ a₂ : A) (hgt : ra.score s a₁ > ra.score s a₂) :
-    ra.policy s a₁ > ra.policy s a₂ := by
-  have ha₁_pos : 0 < ra.score s a₁ :=
-    lt_of_le_of_lt (ra.score_nonneg s a₂) hgt
+@[gcongr]
+theorem RationalAction.policy_lt_of_score_lt (ra : RationalAction S A) (s : S)
+    (a₁ a₂ : A) (hlt : ra.score s a₁ < ra.score s a₂) :
+    ra.policy s a₁ < ra.policy s a₂ := by
+  have ha₂_pos : 0 < ra.score s a₂ :=
+    lt_of_le_of_lt (ra.score_nonneg s a₁) hlt
   have htot_pos : 0 < ra.totalScore s :=
-    lt_of_lt_of_le ha₁_pos
-      (Finset.single_le_sum (fun a _ => ra.score_nonneg s a) (Finset.mem_univ a₁))
+    lt_of_lt_of_le ha₂_pos
+      (Finset.single_le_sum (fun a _ => ra.score_nonneg s a) (Finset.mem_univ a₂))
   simp only [policy, ne_of_gt htot_pos, ↓reduceIte]
-  exact div_lt_div_of_pos_right hgt htot_pos
+  exact div_lt_div_of_pos_right hlt htot_pos
 
 /-- Cross-state policy comparison: compares policy values at different states
     (different denominators). Used for S2 cross-world comparisons where
     S2(u|w₁) vs S2(u|w₂) have different normalization constants.
 
-    The cross-product condition `score(s₁,a) * total(s₂) > score(s₂,a) * total(s₁)`
-    is equivalent to `score(s₁,a)/total(s₁) > score(s₂,a)/total(s₂)` when both
+    The cross-product condition `score(s₁,a) * total(s₂) < score(s₂,a) * total(s₁)`
+    is equivalent to `score(s₁,a)/total(s₁) < score(s₂,a)/total(s₂)` when both
     totals are positive. -/
-theorem RationalAction.policy_gt_cross (ra : RationalAction S A) (s₁ s₂ : S) (a : A)
+theorem RationalAction.policy_lt_cross (ra : RationalAction S A) (s₁ s₂ : S) (a : A)
     (h_pos₁ : 0 < ra.totalScore s₁) (h_pos₂ : 0 < ra.totalScore s₂)
-    (h_cross : ra.score s₁ a * ra.totalScore s₂ > ra.score s₂ a * ra.totalScore s₁) :
-    ra.policy s₁ a > ra.policy s₂ a := by
+    (h_cross : ra.score s₁ a * ra.totalScore s₂ < ra.score s₂ a * ra.totalScore s₁) :
+    ra.policy s₁ a < ra.policy s₂ a := by
   simp only [policy, ne_of_gt h_pos₁, ne_of_gt h_pos₂, ↓reduceIte]
-  exact (div_lt_div_iff₀ h_pos₂ h_pos₁).mpr h_cross
+  exact (div_lt_div_iff₀ h_pos₁ h_pos₂).mpr h_cross
 
 /-- Cross-state policy comparison with positivity derived from the cross-product.
 
-    Like `policy_gt_cross` but derives the `totalScore > 0` conditions from the
-    cross-product inequality itself: if `score(s₁,a) * total(s₂) > score(s₂,a) * total(s₁) ≥ 0`,
-    then `score(s₁,a) * total(s₂) > 0`, so both `score(s₁,a) > 0` and `total(s₂) > 0`.
-    And `score(s₁,a) ≤ total(s₁)`, so `total(s₁) > 0`.
+    Like `policy_lt_cross` but derives the `totalScore > 0` conditions from the
+    cross-product inequality itself: if `0 ≤ score(s₁,a) * total(s₂) < score(s₂,a) * total(s₁)`,
+    then `score(s₂,a) * total(s₁) > 0`, so both `score(s₂,a) > 0` and `total(s₁) > 0`.
+    And `score(s₂,a) ≤ total(s₂)`, so `total(s₂) > 0`.
 
     Used by `rsa_predict` for cross-utterance L1 comparisons where the two sides
     have different normalization constants. -/
-theorem RationalAction.policy_gt_cross_of_cross_gt (ra : RationalAction S A)
+@[gcongr]
+theorem RationalAction.policy_lt_cross_of_cross_lt (ra : RationalAction S A)
     (s₁ s₂ : S) (a : A)
-    (h_cross : ra.score s₁ a * ra.totalScore s₂ > ra.score s₂ a * ra.totalScore s₁) :
-    ra.policy s₁ a > ra.policy s₂ a := by
-  have h_rhs_nonneg : 0 ≤ ra.score s₂ a * ra.totalScore s₁ :=
-    mul_nonneg (ra.score_nonneg s₂ a)
-      (Finset.sum_nonneg fun b _ => ra.score_nonneg s₁ b)
-  have h_lhs_pos : 0 < ra.score s₁ a * ra.totalScore s₂ :=
-    lt_of_le_of_lt h_rhs_nonneg h_cross
-  have h_tot2_nonneg : (0 : ℝ) ≤ ra.totalScore s₂ :=
-    Finset.sum_nonneg fun b _ => ra.score_nonneg s₂ b
-  have h_score1_pos : 0 < ra.score s₁ a :=
-    (mul_pos_iff.mp h_lhs_pos).elim (fun ⟨h, _⟩ => h)
-      (fun ⟨h, _⟩ => absurd h (not_lt.mpr (ra.score_nonneg s₁ a)))
-  have h_tot2_pos : 0 < ra.totalScore s₂ :=
-    (mul_pos_iff.mp h_lhs_pos).elim (fun ⟨_, h⟩ => h)
-      (fun ⟨_, h⟩ => absurd h (not_lt.mpr h_tot2_nonneg))
+    (h_cross : ra.score s₁ a * ra.totalScore s₂ < ra.score s₂ a * ra.totalScore s₁) :
+    ra.policy s₁ a < ra.policy s₂ a := by
+  have h_lhs_nonneg : 0 ≤ ra.score s₁ a * ra.totalScore s₂ :=
+    mul_nonneg (ra.score_nonneg s₁ a)
+      (Finset.sum_nonneg fun b _ => ra.score_nonneg s₂ b)
+  have h_rhs_pos : 0 < ra.score s₂ a * ra.totalScore s₁ :=
+    lt_of_le_of_lt h_lhs_nonneg h_cross
+  have h_tot1_nonneg : (0 : ℝ) ≤ ra.totalScore s₁ :=
+    Finset.sum_nonneg fun b _ => ra.score_nonneg s₁ b
+  have h_score2_pos : 0 < ra.score s₂ a :=
+    (mul_pos_iff.mp h_rhs_pos).elim (fun ⟨h, _⟩ => h)
+      (fun ⟨h, _⟩ => absurd h (not_lt.mpr (ra.score_nonneg s₂ a)))
   have h_tot1_pos : 0 < ra.totalScore s₁ :=
-    lt_of_lt_of_le h_score1_pos
-      (Finset.single_le_sum (fun b _ => ra.score_nonneg s₁ b) (Finset.mem_univ a))
-  exact ra.policy_gt_cross s₁ s₂ a h_tot1_pos h_tot2_pos h_cross
+    (mul_pos_iff.mp h_rhs_pos).elim (fun ⟨_, h⟩ => h)
+      (fun ⟨_, h⟩ => absurd h (not_lt.mpr h_tot1_nonneg))
+  have h_tot2_pos : 0 < ra.totalScore s₂ :=
+    lt_of_lt_of_le h_score2_pos
+      (Finset.single_le_sum (fun b _ => ra.score_nonneg s₂ b) (Finset.mem_univ a))
+  exact ra.policy_lt_cross s₁ s₂ a h_tot1_pos h_tot2_pos h_cross
 
 /-- Score-sum ordering implies policy-sum ordering when both sides share the same
     state (same denominator). Used by `rsa_predict` for marginal L1 comparisons
     where the worlds being summed differ but the utterance and config are shared. -/
-theorem RationalAction.policy_list_sum_gt (ra : RationalAction S A) (s : S)
+theorem RationalAction.policy_list_sum_lt (ra : RationalAction S A) (s : S)
     (as₁ as₂ : List A)
-    (h : (as₁.map (ra.score s)).sum > (as₂.map (ra.score s)).sum)
+    (h : (as₁.map (ra.score s)).sum < (as₂.map (ra.score s)).sum)
     (htot : 0 < ra.totalScore s) :
-    (as₁.map (ra.policy s)).sum > (as₂.map (ra.policy s)).sum := by
+    (as₁.map (ra.policy s)).sum < (as₂.map (ra.policy s)).sum := by
   have htot_ne : ra.totalScore s ≠ 0 := ne_of_gt htot
   have hpol : ∀ a, ra.policy s a = ra.score s a / ra.totalScore s := by
     intro a; simp only [policy, htot_ne, ↓reduceIte]
@@ -215,23 +217,23 @@ theorem RationalAction.policy_list_sum_gt (ra : RationalAction S A) (s : S)
   exact div_lt_div_of_pos_right h htot
 
 /-- Finset-sum ordering implies policy-sum ordering when both sides share the
-    same state (same denominator). Like `policy_list_sum_gt` but for Finset.sum.
+    same state (same denominator). Like `policy_list_sum_lt` but for Finset.sum.
 
     Derives totalScore positivity from the score ordering itself, so no extra
-    hypothesis is needed: if Σ_{F₁} score > Σ_{F₂} score ≥ 0, then some score
+    hypothesis is needed: if 0 ≤ Σ_{F₁} score < Σ_{F₂} score, then some score
     is positive, so totalScore > 0.
 
     Used by `rsa_predict` for denominator cancellation in marginal comparisons. -/
-theorem RationalAction.finset_sum_policy_gt_of_sum_score_gt
+theorem RationalAction.finset_sum_policy_lt_of_sum_score_lt
     (ra : RationalAction S A) (s : S) (F₁ F₂ : Finset A)
-    (h : F₁.sum (ra.score s) > F₂.sum (ra.score s)) :
-    F₁.sum (ra.policy s) > F₂.sum (ra.policy s) := by
-  have hF₂_nonneg : 0 ≤ F₂.sum (ra.score s) :=
+    (h : F₁.sum (ra.score s) < F₂.sum (ra.score s)) :
+    F₁.sum (ra.policy s) < F₂.sum (ra.policy s) := by
+  have hF₁_nonneg : 0 ≤ F₁.sum (ra.score s) :=
     Finset.sum_nonneg fun a _ => ra.score_nonneg s a
-  have hF₁_pos : 0 < F₁.sum (ra.score s) := lt_of_le_of_lt hF₂_nonneg h
+  have hF₂_pos : 0 < F₂.sum (ra.score s) := lt_of_le_of_lt hF₁_nonneg h
   have htot_pos : 0 < ra.totalScore s :=
-    lt_of_lt_of_le hF₁_pos (Finset.sum_le_sum_of_subset_of_nonneg
-      (Finset.subset_univ F₁) (fun a _ _ => ra.score_nonneg s a))
+    lt_of_lt_of_le hF₂_pos (Finset.sum_le_sum_of_subset_of_nonneg
+      (Finset.subset_univ F₂) (fun a _ _ => ra.score_nonneg s a))
   have htot_ne : ra.totalScore s ≠ 0 := ne_of_gt htot_pos
   have hpol : ∀ a, ra.policy s a = ra.score s a / ra.totalScore s := by
     intro a; simp only [policy, htot_ne, ↓reduceIte]

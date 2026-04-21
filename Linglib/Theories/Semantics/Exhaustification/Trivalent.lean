@@ -1,5 +1,6 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 import Linglib.Core.Logic.Truth3
+import Mathlib.Tactic.DeriveFintype
 
 /-!
 # Trivalent Exhaustification
@@ -37,14 +38,15 @@ consistent with Type B (EXH¹).
 ## Design
 
 This file is generic infrastructure, not a paper replication.
-The IE computation reuses `InnocentExclusion.ieIndices` (computable, Bool-based).
-The trivalent layer wraps the bivalent IE result with `Truth3` semantics.
+The IE computation reuses `Exhaustification.innocent.excluded`
+(mathlib-canonical Finset version). The trivalent layer wraps the
+bivalent IE result with `Truth3` semantics.
 -/
 
 namespace Exhaustification.Trivalent
 
 open Core.Duality (Truth3 Prop3)
-open Exhaustification.InnocentExclusion
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -77,18 +79,19 @@ def classicalPart {W : Type} (p : W → Truth3) : W → Bool :=
 
     Type B in @cite{wang-davidson-2026}: predicts no effect of
     exclusivity on presupposition filtering. -/
-def exh1 {W : Type} [BEq W] (domain : List W) (alts : List (W → Truth3))
+def exh1 {W : Type} [Fintype W] [DecidableEq W] (alts : List (W → Truth3))
     (p : W → Truth3) : W → Truth3 :=
-  let boolAlts := alts.map classicalPart
-  let ie := ieIndices domain (classicalPart p) boolAlts
+  let φF := predToFinset (classicalPart p)
+  let altSet := altsFromPreds (alts.map classicalPart)
+  let excluded := innocent.excluded altSet φF
   fun w => match p w with
     | .indet => .indet
     | .false => .false
     | .true =>
       -- Weak negation: ψ(w) ≠ true suffices (indet counts as "negated")
-      if ie.all fun i => match alts[i]? with
-        | some q => q w != .true
-        | none => true
+      if alts.all fun q =>
+        if predToFinset (classicalPart q) ∈ excluded then q w != .true
+        else true
       then .true
       else .false
 
@@ -109,24 +112,24 @@ def exh1 {W : Type} [BEq W] (domain : List W) (alts : List (W → Truth3))
 
     Type A in @cite{wang-davidson-2026}: predicts that increasing
     exclusivity reduces presupposition filtering. -/
-def exh2 {W : Type} [BEq W] (domain : List W) (alts : List (W → Truth3))
+def exh2 {W : Type} [Fintype W] [DecidableEq W] (alts : List (W → Truth3))
     (p : W → Truth3) : W → Truth3 :=
-  let boolAlts := alts.map classicalPart
-  let ie := ieIndices domain (classicalPart p) boolAlts
+  let φF := predToFinset (classicalPart p)
+  let altSet := altsFromPreds (alts.map classicalPart)
+  let excluded := innocent.excluded altSet φF
   fun w =>
     -- Strong negation: any IE alternative undefined → result undefined
-    if ie.any fun i => match alts[i]? with
-      | some q => q w == .indet
-      | none => false
+    if alts.any fun q =>
+      predToFinset (classicalPart q) ∈ excluded ∧ q w == .indet
     then .indet
     else match p w with
       | .indet => .indet
       | .false => .false
       | .true =>
         -- Strong negation: all IE alternatives must be false (not indet)
-        if ie.all fun i => match alts[i]? with
-          | some q => q w == .false
-          | none => true
+        if alts.all fun q =>
+          if predToFinset (classicalPart q) ∈ excluded then q w == .false
+          else true
         then .true
         else .false
 
@@ -137,15 +140,15 @@ def exh2 {W : Type} [BEq W] (domain : List W) (alts : List (W → Truth3))
 
 /-- EXH¹ preserves the presupposition of the prejacent:
     if φ(w) = #, then EXH¹(φ)(w) = #. -/
-theorem exh1_preserves_presup {W : Type} [BEq W] (domain : List W)
+theorem exh1_preserves_presup {W : Type} [Fintype W] [DecidableEq W]
     (alts : List (W → Truth3)) (p : W → Truth3) (w : W)
-    (h : p w = .indet) : exh1 domain alts p w = .indet := by
+    (h : p w = .indet) : exh1 alts p w = .indet := by
   unfold exh1; simp only [h]
 
 /-- EXH² also preserves the prejacent's presupposition. -/
-theorem exh2_preserves_presup {W : Type} [BEq W] (domain : List W)
+theorem exh2_preserves_presup {W : Type} [Fintype W] [DecidableEq W]
     (alts : List (W → Truth3)) (p : W → Truth3) (w : W)
-    (h : p w = .indet) : exh2 domain alts p w = .indet := by
+    (h : p w = .indet) : exh2 alts p w = .indet := by
   unfold exh2; split <;> simp_all
 
 
@@ -172,9 +175,7 @@ section BathroomDisjunction
     - `neither`: p false, q false (presupposition satisfied) -/
 inductive BathWorld where
   | pOnly | qOnly | neither
-  deriving Repr, DecidableEq
-
-def bDomain : List BathWorld := [.pOnly, .qOnly, .neither]
+  deriving Repr, DecidableEq, Fintype
 
 /-- p: always defined (no presupposition). -/
 def pT3 : BathWorld → Truth3
@@ -223,13 +224,13 @@ def bathAlts : List (BathWorld → Truth3) :=
   , fun w => Truth3.meet (pT3 w) (qT3 w) ]
 
 theorem exh1_disjunction_pOnly :
-    exh1 bDomain bathAlts inclDisj .pOnly = .true := by native_decide
+    exh1 bathAlts inclDisj .pOnly = .true := by native_decide
 
 /-- EXH² applied to inclusive disjunction: the conjunction
     alternative p∧q is undefined at pOnly, so strong negation
     makes EXH² undefined there → presupposition imported. -/
 theorem exh2_disjunction_pOnly :
-    exh2 bDomain bathAlts inclDisj .pOnly = .indet := by native_decide
+    exh2 bathAlts inclDisj .pOnly = .indet := by native_decide
 
 end BathroomDisjunction
 

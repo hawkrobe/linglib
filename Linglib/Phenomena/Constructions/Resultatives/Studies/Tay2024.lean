@@ -48,6 +48,8 @@ Connects:
 
 namespace Tay2024
 
+open Core (Situation)
+
 open Semantics.Causation.Resultatives
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency (causallySufficient)

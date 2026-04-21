@@ -1,4 +1,6 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Mathlib.Tactic.DeriveFintype
+import Mathlib.Tactic.NormNum
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 import Linglib.Theories.Semantics.Alternatives.Symmetric
 import Linglib.Phenomena.ScalarImplicatures.Studies.Magri2009
 
@@ -55,8 +57,8 @@ Two components:
 
 ## Key connections
 
-- @cite{fox-2007}: innocent exclusion (IE) algorithm — `ieIndices`,
-  `exhB`, `maxConsistentExclusions` from `InnocentExclusion.lean`
+- @cite{fox-2007}: innocent exclusion (IE) algorithm — `innocent.exh`,
+  `innocent.excluded`, `IsMCSet` from `Innocent.lean`
 - @cite{magri-2009}: blindness hypothesis + mismatch hypothesis —
   `BlindScenario`, `blindOdd` from `Magri2009.lean`
 - @cite{fox-katzir-2011}: contextual constraint on alternatives
@@ -66,8 +68,7 @@ Two components:
 
 namespace Denic2023
 
-open Exhaustification.InnocentExclusion
-  (exhB ieIndices nonWeakerIndices maxConsistentExclusions)
+open Exhaustification (innocent predToFinset altsFromPreds)
 open Alternatives.Symmetric (isSymmetric)
 open Magri2009 (BlindScenario)
 
@@ -154,7 +155,7 @@ theorem ratio_ordering :
 four data points. -/
 theorem threshold_2_correct :
     inferencePuzzleData.all (λ d =>
-      thresholdPrediction 2 d == d.preferred) = true := by native_decide
+      thresholdPrediction 2 d == d.preferred) = true := by decide
 
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -190,10 +191,7 @@ inductive GroupWorld where
   | mixed
   /-- All are French AND Spanish (bilingual). -/
   | allBoth
-  deriving DecidableEq, Repr
-
-private def groupDomain : List GroupWorld :=
-  [.allFrench, .allSpanish, .mixed, .allBoth]
+  deriving DecidableEq, Repr, Fintype
 
 /-- "All n are French or Spanish" — the target sentence.
 True at every world (every composition satisfies the disjunctive predicate). -/
@@ -215,19 +213,19 @@ private def altOr : List (GroupWorld → Bool) := [allFrenchAlt, allSpanishAlt]
 with the prejacent. Negating both yields distributive inferences:
 "some are French, some are Spanish." -/
 theorem altOr_both_ie :
-    ieIndices groupDomain allForS altOr = [0, 1] := by native_decide
+    innocent.excluded (altsFromPreds altOr) (predToFinset allForS)
+      = altsFromPreds altOr := by decide
 
 /-- The exhaustified meaning with ALT-or: "All are F∨S, NOT all French,
 NOT all Spanish" — true only at `mixed`, the distributive reading
 where some are French AND some are Spanish.
 
-This connects to `InnocentExclusion.disj_exh_eq_exor` (unembedded
-disjunction yields exclusive or); embedding under ∀ + domain structure
-gives the distributive reading. -/
+This connects to `Spector2016.disj_exh_eq_exor` (unembedded disjunction
+yields exclusive or); embedding under ∀ + domain structure gives the
+distributive reading. -/
 theorem altOr_exh_distributive :
-    ∀ w : GroupWorld, exhB groupDomain altOr allForS w =
-      match w with | .mixed => true | _ => false := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds altOr) (predToFinset allForS)
+      = ({GroupWorld.mixed} : Finset GroupWorld) := by decide
 
 /-- Existential alternatives for ALT-all-or.
 "Some are French" and "Some are Spanish." -/
@@ -252,19 +250,23 @@ Note: this is a distinct mechanism from `symmetric_not_ie` in
 below) — the IE emptiness arises from the MCE structure, not from
 alternative pairs partitioning the prejacent. -/
 theorem altAllOr_no_ie :
-    ieIndices groupDomain allForS altAllOr = [] := by native_decide
+    innocent.excluded (altsFromPreds altAllOr) (predToFinset allForS) = ∅ := by
+  decide
 
-/-- The three maximal consistent exclusions for ALT-all-or.
+/-- IE collapse for ALT-all-or: with three incompatible maximal
+consistent exclusions (@cite{denic-2023} (26a–c)), no alternative
+survives in every MC-set. Consequently `exhIE` returns the prejacent
+unchanged — exhaustification is vacuous.
 
-@cite{denic-2023} (26a–c): the MCEs are
-- {allS(1), someS(3)}: negate → all French
-- {allF(0), someF(2)}: negate → all Spanish
-- {allF(0), allS(1)}: negate → mixed
+The MCEs in Denić's notation are
+- {allS, someS}: negate → all French
+- {allF, someF}: negate → all Spanish
+- {allF, allS}: negate → mixed
 
-No alternative appears in all three → IE = ∅. -/
-theorem altAllOr_three_mces :
-    maxConsistentExclusions groupDomain allForS altAllOr =
-      [[1, 3], [0, 2], [0, 1]] := by native_decide
+No proposition appears in all three → IE = {prejacent} → exhIE = prejacent. -/
+theorem altAllOr_exh_vacuous :
+    innocent.exh (altsFromPreds altAllOr) (predToFinset allForS)
+      = predToFinset allForS := by decide
 
 /-- The existential alternatives ("some are French" / "some are Spanish")
 are NOT symmetric in the @cite{fox-katzir-2011} sense: they overlap at
@@ -275,9 +277,11 @@ This matters because it means the IE emptiness (above) cannot be
 derived from `Symmetric.symmetric_not_ie` — it requires the full MCE
 computation showing three incompatible exclusion sets. -/
 theorem altAllOr_not_symmetric :
-    isSymmetric groupDomain allForS someFrenchAlt someSpanishAlt = false ∧
-    isSymmetric groupDomain allForS allFrenchAlt allSpanishAlt = false := by
-  exact ⟨by native_decide, by native_decide⟩
+    isSymmetric [GroupWorld.allFrench, .allSpanish, .mixed, .allBoth]
+        allForS someFrenchAlt someSpanishAlt = false ∧
+    isSymmetric [GroupWorld.allFrench, .allSpanish, .mixed, .allBoth]
+        allForS allFrenchAlt allSpanishAlt = false := by
+  exact ⟨by decide, by decide⟩
 
 /-- **The core negative result**: the IE computation is identical for any
 domain size when the same abstract alternative structure is used.
@@ -298,10 +302,11 @@ Since @cite{franke-2011}'s IBR converges to exhMW for scalar games
 inability to distinguish ALL-20-OR from ALL-2-OR. -/
 theorem entailment_invariant_across_domain_size :
     -- ALT-or → distributive for ALL-20-OR (correct) AND ALL-2-OR (wrong)
-    ieIndices groupDomain allForS altOr = [0, 1] ∧
+    innocent.excluded (altsFromPreds altOr) (predToFinset allForS)
+      = altsFromPreds altOr ∧
     -- ALT-all-or → ignorance for ALL-20-OR (wrong) AND ALL-2-OR (correct)
-    ieIndices groupDomain allForS altAllOr = [] := by
-  exact ⟨by native_decide, by native_decide⟩
+    innocent.excluded (altsFromPreds altAllOr) (predToFinset allForS) = ∅ := by
+  exact ⟨by decide, by decide⟩
 
 end EntailmentNegativeResult
 
@@ -357,7 +362,7 @@ theorem condProb_values :
     uniformCondProb 4 2 = (15 : Int) / 16 ∧
     uniformCondProb 2 2 = (3 : Int) / 4 ∧
     uniformCondProb 4 4 = (175 : Int) / 256 := by
-  simp only [uniformCondProb]; native_decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> (simp only [uniformCondProb]; norm_num)
 
 /-- The conditional probability ordering matches the inference pattern:
 ALL-20-OR > SIMPLE-DISJ > ALL-2-OR > COMPLEX-DISJ.
@@ -373,7 +378,7 @@ theorem condProb_ordering :
     uniformCondProb 20 2 > uniformCondProb 4 2 ∧
     uniformCondProb 4 2 > uniformCondProb 2 2 ∧
     uniformCondProb 2 2 > uniformCondProb 4 4 := by
-  simp only [uniformCondProb]; native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> (simp only [uniformCondProb]; norm_num)
 
 /-- The proposal correctly predicts the ALL-20-OR vs ALL-2-OR contrast.
 
@@ -440,7 +445,7 @@ def singletonDenoting {α : Type} (predDomain : List α) (predicate : α → Boo
 
 /-- Individual-level domain for verifying singleton-denotation.
 Three girls in the DEVIANT-BE scenario. -/
-private inductive Girl where | g1 | g2 | g3 deriving DecidableEq
+private inductive Girl where | g1 | g2 | g3 deriving DecidableEq, Fintype
 private def girls : List Girl := [.g1, .g2, .g3]
 private def allGirls : Girl → Bool := λ _ => true
 
@@ -455,14 +460,14 @@ private def isCalledMary : Girl → Bool | .g1 | .g2 => true | _ => false
 
 /-- Identity predicates ("is Mary") are singleton-denoting. -/
 theorem isMary_singleton :
-    singletonDenoting girls isMary allGirls = true := by native_decide
+    singletonDenoting girls isMary allGirls = true := by decide
 
 theorem isSusan_singleton :
-    singletonDenoting girls isSusan allGirls = true := by native_decide
+    singletonDenoting girls isSusan allGirls = true := by decide
 
 /-- "Is called" predicates are NOT singleton-denoting. -/
 theorem isCalledMary_not_singleton :
-    singletonDenoting girls isCalledMary allGirls = false := by native_decide
+    singletonDenoting girls isCalledMary allGirls = false := by decide
 
 -- ── Deviance data ──────────────────────────────────────────────────
 
@@ -502,7 +507,7 @@ def deviancePuzzleData : List DevianceDatum :=
 /-- Deviance tracks singleton-denotation exactly. -/
 theorem deviance_iff_singleton :
     deviancePuzzleData.all (λ d => d.isDeviant == d.isSingletonDenoting)
-    = true := by native_decide
+    = true := by decide
 
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -534,7 +539,7 @@ inductive DeviantBEWorld where
   | mjs
   /-- Girl 1 = Susan, Girl 2 = Mary, Girl 3 = Jane. -/
   | smj
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- Utterances: the target sentence and its individual-disjunct
 alternatives. -/
@@ -570,15 +575,15 @@ def deviantBEScenario : BlindScenario DeviantBEWorld DeviantBEUtt where
     | someIsSusan => [eachOrDisj]
     | someIsJane => [eachOrDisj]
   context := λ _ => true  -- all permutation worlds are CK-compatible
-  worlds := [msj, mjs, smj]
 
 /-- No alternative is IE for DEVIANT-BE: all alternatives are entailed
 by the prejacent (trivially true everywhere), so none can be excluded. -/
 theorem deviantBE_no_ie :
-    ieIndices deviantBEScenario.worlds
-      (deviantBEScenario.meaning .eachOrDisj)
-      ((deviantBEScenario.alternatives .eachOrDisj).map deviantBEScenario.meaning)
-      = [] := by native_decide
+    innocent.excluded
+      (altsFromPreds
+        ((deviantBEScenario.alternatives .eachOrDisj).map deviantBEScenario.meaning))
+      (predToFinset (deviantBEScenario.meaning .eachOrDisj))
+      = ∅ := by decide
 
 /-- DEVIANT-BE is NOT blindOdd in this direct model, because IE is empty
 (no implicature is generated at all). The deviance comes not from
@@ -591,7 +596,7 @@ via the maxim of quantity or grammatically via K_speaker) contradicting
 CK. Since all alternatives are true at all CK worlds, claiming ignorance
 about any of them contradicts CK. -/
 theorem deviantBE_not_blindOdd_directly :
-    deviantBEScenario.blindOdd .eachOrDisj = false := by native_decide
+    deviantBEScenario.blindOdd .eachOrDisj = false := by decide
 
 /-- DEVIANT-BE triggers ignorance inferences that contradict CK.
 
@@ -603,7 +608,7 @@ This is @cite{denic-2023}'s proposal (40): "Sentences DEVIANT-BE and
 DEVIANT-WRITE are deviant because they trigger ignorance inferences
 which contradict common knowledge." -/
 theorem deviantBE_ignorance_contradicts_ck :
-    deviantBEScenario.ignoranceContradictsCK .eachOrDisj = true := by native_decide
+    deviantBEScenario.ignoranceContradictsCK .eachOrDisj = true := by decide
 
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -627,7 +632,7 @@ inductive CalledWorld where
   | allMary
   /-- Some called Mary, some called Susan, none called Jane. -/
   | noJane
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 open CalledWorld DeviantBEUtt in
 /-- Blind scenario for NON-DEVIANT-CALLED.
@@ -650,7 +655,6 @@ def nonDeviantCalledScenario : BlindScenario CalledWorld DeviantBEUtt where
     | someIsSusan => [eachOrDisj]
     | someIsJane => [eachOrDisj]
   context := λ _ => true
-  worlds := [allDifferent, allMary, noJane]
 
 /-- NON-DEVIANT-CALLED: ignorance does NOT contradict CK.
 
@@ -659,7 +663,7 @@ because there exist CK worlds where it's true (allDifferent) and where
 it's false (allMary, noJane). -/
 theorem nonDeviantCalled_ignorance_ok :
     nonDeviantCalledScenario.ignoranceContradictsCK .eachOrDisj = false := by
-  native_decide
+  decide
 
 /-- The deviance contrast: singleton-denoting predicates trigger CK-
 contradicting ignorance inferences; non-singleton-denoting ones don't.
@@ -670,7 +674,7 @@ denoting. -/
 theorem deviance_contrast :
     deviantBEScenario.ignoranceContradictsCK .eachOrDisj = true ∧
     nonDeviantCalledScenario.ignoranceContradictsCK .eachOrDisj = false :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 end DeviancePuzzle
 
@@ -711,9 +715,10 @@ would be pruned, leaving no active alternatives for exhaustification.
 We verify the premise: all existential alternatives ARE true at all
 CK worlds in the DEVIANT-BE scenario. -/
 theorem deviantBE_all_alts_ck_settled :
-    (deviantBEScenario.alternatives .eachOrDisj).all (λ alt =>
-      deviantBEScenario.cWorlds.all (deviantBEScenario.meaning alt)) = true := by
-  native_decide
+    ∀ alt ∈ deviantBEScenario.alternatives .eachOrDisj,
+      ∀ w ∈ deviantBEScenario.cWorlds,
+        deviantBEScenario.meaning alt w = true := by
+  decide
 
 /-- The counterfactual: if we pruned all existential alternatives (as
 CK-informed informativeness would recommend), exhaustification would be
@@ -723,9 +728,10 @@ inferences and incorrectly predicts non-deviance.
 But DEVIANT-BE IS deviant (`deviantBE_ignorance_contradicts_ck`), so
 CK must be screened off from the informativeness computation. -/
 theorem ck_pruning_would_be_vacuous :
-    exhB deviantBEScenario.worlds [] (deviantBEScenario.meaning .eachOrDisj) =
-      deviantBEScenario.meaning .eachOrDisj := by
-  funext w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [])
+        (predToFinset (deviantBEScenario.meaning .eachOrDisj))
+      = predToFinset (deviantBEScenario.meaning .eachOrDisj) := by
+  decide
 
 end BlindnessArgument
 
@@ -763,16 +769,17 @@ types are not independent — their solutions constrain each other.
 - Combined ← blind informativeness-based pruning -/
 theorem puzzles_connected :
     -- Inference puzzle: entailment gives same IE for both...
-    ieIndices groupDomain allForS altAllOr = [] ∧
-    ieIndices groupDomain allForS altOr = [0, 1] ∧
+    innocent.excluded (altsFromPreds altAllOr) (predToFinset allForS) = ∅ ∧
+    innocent.excluded (altsFromPreds altOr) (predToFinset allForS)
+      = altsFromPreds altOr ∧
     -- ...but condProb distinguishes them
     uniformCondProb 20 2 > uniformCondProb 2 2 ∧
     -- Deviance puzzle: ignorance contradicts CK for singleton-denoting...
     deviantBEScenario.ignoranceContradictsCK .eachOrDisj = true ∧
     -- ...but not for non-singleton-denoting predicates
     nonDeviantCalledScenario.ignoranceContradictsCK .eachOrDisj = false := by
-  refine ⟨by native_decide, by native_decide, ?_, by native_decide, by native_decide⟩
-  simp only [uniformCondProb]; native_decide
+  refine ⟨by decide, by decide, ?_, by decide, by decide⟩
+  simp only [uniformCondProb]; norm_num
 
 
 end Denic2023

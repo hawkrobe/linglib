@@ -1,4 +1,4 @@
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Time.Tense
 
 /-!
 # Modal Base Kind
@@ -18,7 +18,7 @@ phenomena-layer study files. It depends only on `GramTense` from Core.
 
 namespace Core.Modality
 
-open Core.Tense (GramTense)
+open Core.Time.Tense (GramTense)
 
 /-- Classification of modal base temporal character.
     @cite{klecha-2016} (35): DOX returns actual histories 𝒜_t, CIR returns

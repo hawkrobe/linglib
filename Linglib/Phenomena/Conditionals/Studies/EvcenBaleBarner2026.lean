@@ -430,7 +430,7 @@ theorem theory_chain_3button_perfection
     intro w' h; cases w' <;> simp_all [button3AnswerSpace, aCausesSound, pressA]
   -- Step 2: All alternative triggers are IE (via general lemma)
   have h_ie : ∀ t' ∈ button3AnswerSpace.triggers, t' ≠ .A →
-      Exhaustification.isInnocentlyExcludable
+      Exhaustification.IsInnocentlyExcludable
         (answerAlternatives button3AnswerSpace .A)
         (answerProp button3AnswerSpace .A)
         (answerProp button3AnswerSpace t') := by

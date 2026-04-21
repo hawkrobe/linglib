@@ -17,6 +17,8 @@ that interpret these categories.
 This file lives in `Core/Mood/` alongside `IllocutionaryMood.lean` (force) and
 `ClauseType.lean` (force × mood); together they form the unified mood-category
 namespace `Core.Mood`. Discourse-act material (Searle classes, direction of
+
+open Core (Situation)
 fit, preparatory conditions, discourse roles) lives in
 `Core/Discourse/IllocutionaryForce.lean`.
 -/

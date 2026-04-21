@@ -187,7 +187,7 @@ New code should prefer the Set form. -/
 
 The Set-based sibling of `probOf`. Requires `[DecidablePred (· ∈ s)]` so
 the indicator is computable. Used by the mathlib-pure question infrastructure
-(`Core.Issue` consumers). -/
+(`Core.Question` consumers). -/
 def probOfSet (pmf : FinitePMF W) (s : Set W) [DecidablePred (· ∈ s)] : ℚ :=
   ∑ w : W, if w ∈ s then pmf.mass w else 0
 

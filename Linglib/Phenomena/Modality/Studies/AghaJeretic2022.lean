@@ -884,18 +884,18 @@ theorem mustEval_eq_ofBool (domain : List World) (p : World → Bool) :
 /-! ## Sufficient Truth (@cite{kriz-2016}, A&J Appendix 1)
 
 Formalizes the mechanism by which indeterminate (★) sentences are rescued
-to "true enough" relative to an Issue (= QUD). A sentence S is
+to "true enough" relative to an Question (= QUD). A sentence S is
 **sufficiently true** at w w.r.t. issue I iff:
 
 1. S is not false at w: ⟦S⟧(w) ≠ 0
 2. There exists an I-equivalent world u where S is true: ⟦S⟧(u) = 1
 
-Condition 2 means the exceptions are in the same Issue cell as a
+Condition 2 means the exceptions are in the same Question cell as a
 satisfying world — they are "irrelevant" to the QUD.
 
-**Addressing an Issue** (def 46): S cannot address issue I if any cell
+**Addressing an Question** (def 46): S cannot address issue I if any cell
 of I contains both worlds where S is true and worlds where S is false.
-In other words, S must not split any Issue cell. -/
+In other words, S must not split any Question cell. -/
 
 /-- Sufficient Truth (Križ 2016, A&J def 44).
     S is true enough at w w.r.t. issue I iff (i) S is not false at w,
@@ -905,7 +905,7 @@ def sufficientTruth {W : Type} (S : W → Truth3) (sameCell : W → W → Bool)
   S w != .false &&
   worlds.any (fun u => sameCell w u && (S u == .true))
 
--- Addressing an Issue: see `Semantics.Homogeneity.addressesIssue` for the
+-- Addressing an Question: see `Semantics.Homogeneity.addressesIssue` for the
 -- canonical definition (Križ 2016 def 46). Not redefined here to avoid duplication.
 
 /-- Sufficient truth rescues an indeterminate sentence when the exceptions

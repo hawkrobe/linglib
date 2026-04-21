@@ -1,9 +1,8 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Theories.Semantics.Exhaustification.Operators
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Tactics.RSAPredict
@@ -104,7 +103,7 @@ svRSA uses no prior in L0 meaning — QUD projection neutralizes it
 ## Connection to Other Formalizations
 
 - `ExhaustivityLimit.lean`: proves RSA at α→∞ recovers Fox's exh,
-  using the same IE infrastructure (`Exhaustification.InnocentExclusion.exhB`)
+  using the same IE infrastructure (`Exhaustification.Innocent.exhIE`)
   as our `exhMeaning`.
 - `FrankeBergen2020.lean`: formalizes four RSA models (vanilla, LU, LI, GI)
   for nested quantifiers, using compositional exhaustification.
@@ -175,10 +174,7 @@ theorem AandNotB_only_in_wa : literalTruth .w_a .AandNotB = true ∧ literalTrut
 -- §3. Exhaustification (Innocent Exclusion)
 -- ============================================================================
 
-open Exhaustification.InnocentExclusion (exhB)
-
-/-- All worlds for IE enumeration. -/
-def allWorlds : List CWSWorld := [.w_a, .w_ab]
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 /-- Alternatives for each utterance: A has scale-mate A∧B. -/
 def alternatives (u : CWSUtterance) : List (CWSWorld → Bool) :=
@@ -190,7 +186,8 @@ def alternatives (u : CWSUtterance) : List (CWSWorld → Bool) :=
     IE negates A∧B (the non-entailed stronger alternative to A),
     giving EXH(A) = A ∧ ¬(A∧B) = A ∧ ¬B. -/
 def exhMeaning (w : CWSWorld) (u : CWSUtterance) : Bool :=
-  exhB allWorlds (alternatives u) (fun w' => literalTruth w' u) w
+  decide (w ∈ innocent.exh (altsFromPreds (alternatives u))
+                    (predToFinset (fun w' => literalTruth w' u)))
 
 /-- EXH(A) is only true in w_a — derived from IE, not stipulated. -/
 theorem exhA_only_in_wa : exhMeaning .w_a .A = true ∧ exhMeaning .w_ab .A = false := by

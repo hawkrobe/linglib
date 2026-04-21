@@ -3,7 +3,7 @@
 
 PLA embeds into Dynamic Ty2 using a sum type for the assignment domain.
 
-## The Key Issue
+## The Key Question
 
 PLA distinguishes variables (VarIdx) from pronouns (PronIdx).
 Dynamic Ty2 has a single dref type S → E.

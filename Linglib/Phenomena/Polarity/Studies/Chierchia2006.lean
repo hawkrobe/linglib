@@ -4,7 +4,8 @@ import Linglib.Fragments.English.PolarityItems
 import Linglib.Fragments.Italian.PolarityItems
 import Linglib.Fragments.German.PolarityItems
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Theories.Semantics.Exhaustification.Operators.Antiexhaustive
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 
 /-!

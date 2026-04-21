@@ -303,12 +303,17 @@ in the Fragment), so this study file just consumes those facts and
 shows them follow from the bias profile. -/
 
 /-- A weak NPI from the Italian Fragment is licensed in a bias-conditioned
-    negation environment iff (a) its registry already lists `.comparativeNP`
-    among its licensing contexts AND (b) the bias profile licenses.
-    The first conjunct rules out *affatto* (registry-blocked); the second
-    rules out unlicensed contexts. -/
+    negation environment iff (a) its registry lists `.comparativeS` (the
+    clausal-comparative slot — N&N's *non₂* originates in subjunctive
+    clausal complements, not surface NP-comparatives) among its licensing
+    contexts AND (b) the bias profile licenses. The first conjunct rules
+    out *affatto* (registry-blocked); the second rules out unlicensed
+    contexts.
+
+    `.comparativeS` rather than `.comparativeNP` because surface NP-
+    comparatives are not NPI environments (@cite{hoeksema-1983} §3.6). -/
 def predictsWeakNPI (p : BiasLicensingProfile) (npi : PolarityItemEntry) : Prop :=
-  p.licenses ∧ npi.licensingContexts.contains .comparativeNP = true
+  p.licenses ∧ npi.licensingContexts.contains .comparativeS = true
 
 instance (p : BiasLicensingProfile) (npi : PolarityItemEntry) :
     Decidable (predictsWeakNPI p npi) :=
@@ -321,8 +326,7 @@ theorem pur_licensed_with_non2 : predictsWeakNPI licensedProfile pur := by decid
 
 /-- *Affatto* is *never* licensed in *non₂*-comparatives — the block is
     *registered in the lexical entry itself* (`affatto.licensingContexts`
-    excludes both `.comparativeNP` and `.comparativeS` per
-    @cite{napoli-nespor-1976} §3.22 fn 6). The
+    excludes `.comparativeS` per @cite{napoli-nespor-1976} §3.22 fn 6). The
     bias profile's licensing status is irrelevant: the Fragment's
     distributional fact alone settles the case.
 

@@ -1,7 +1,7 @@
 import Linglib.Theories.Pragmatics.Dialogue.KOS.Grammar
 import Linglib.Phenomena.Ellipsis.FragmentAnswers
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 

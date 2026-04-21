@@ -37,6 +37,8 @@ the semantic level, relegating the difference to pragmatic implicature.
 
 namespace Glass2023
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

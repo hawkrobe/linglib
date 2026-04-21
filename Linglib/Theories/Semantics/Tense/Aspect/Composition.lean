@@ -32,6 +32,8 @@ temporal feature clashes with the verb constellation's, the adverbial wins.
 
 namespace Semantics.Tense.Aspect.Composition
 
+open Core (Situation)
+
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open _root_ (MassCount)

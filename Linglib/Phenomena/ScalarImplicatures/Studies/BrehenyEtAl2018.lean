@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 import Linglib.Theories.Semantics.Alternatives.Symmetric
 
 /-!
@@ -53,7 +54,7 @@ and the AC's overcorrection are verified by `native_decide`.
 
 namespace BrehenyEtAl2018
 
-open Exhaustification.InnocentExclusion
+open Exhaustification (innocent predToFinset altsFromPreds)
 open Alternatives.Symmetric
 
 
@@ -84,9 +85,7 @@ section IndirectSI
 /-- Three homework worlds: did none, did some but not all, did all. -/
 inductive HWWorld where
   | none_ | someNotAll | all_
-  deriving Repr, DecidableEq
-
-private def hwDomain : List HWWorld := [.none_, .someNotAll, .all_]
+  deriving Repr, DecidableEq, Fintype
 
 /-- ¬all = "didn't do all the homework" = {none, someNotAll}. -/
 private def notAll : HWWorld → Bool
@@ -108,9 +107,8 @@ private def didSome : HWWorld → Bool
     "some" is derivable by extracting the VP subconstituent and
     substituting all→some within it. -/
 theorem indirect_si_blocked :
-    ∀ w : HWWorld, exhB hwDomain [notAll, notAny, didSome] notAll w
-      = notAll w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [notAll, notAny, didSome]) (predToFinset notAll)
+      = predToFinset notAll := by decide
 
 /-- Without "some" (the Atomicity Constraint's prediction), exh
     correctly derives the indirect SI: ¬all ∧ ¬(¬any) = {someNotAll}.
@@ -118,14 +116,14 @@ theorem indirect_si_blocked :
     The AC blocks "some" because deriving it requires extracting the
     VP and then substituting within it, violating atomicity. -/
 theorem indirect_si_correct :
-    ∀ w : HWWorld, exhB hwDomain [notAll, notAny] notAll w
-      = (notAll w && didSome w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [notAll, notAny]) (predToFinset notAll)
+      = predToFinset (fun w => notAll w && didSome w) := by decide
 
 /-- I-E includes ¬any when "some" is absent. -/
 theorem ac_solves_indirect_si :
-    (ieIndices hwDomain notAll [notAll, notAny]).contains 1 = true := by
-  native_decide
+    predToFinset notAny ∈
+      innocent.excluded (altsFromPreds [notAll, notAny]) (predToFinset notAll) := by
+  decide
 
 end IndirectSI
 
@@ -178,9 +176,7 @@ section GradableAdjectives
     Represents glass fullness: empty (0), mid (0.5), full (1). -/
 inductive GlassWorld where
   | empty_ | mid | full_
-  deriving Repr, DecidableEq
-
-private def glassDomain : List GlassWorld := [.empty_, .mid, .full_]
+  deriving Repr, DecidableEq, Fintype
 
 private def isFull : GlassWorld → Bool
   | .full_ => true | _ => false
@@ -197,32 +193,31 @@ private def notEmpty : GlassWorld → Bool
 -- ── Full alternative set (no AC) ─────────────────────────────
 
 /-- With all four alternatives {¬full, ¬empty, full, empty}, only
-    "full" (index 2) is in I-E — but ¬full already entails ¬full,
-    so exh adds nothing. The crucial inference ¬empty is NOT derived.
+    "full" is in I-E — but ¬full already entails ¬full, so exh adds
+    nothing. The crucial inference ¬empty is NOT derived.
 
     This is because ¬empty and empty cannot both be excluded
     (¬empty ∧ empty = ⊥), and they end up in different MCEs. -/
 theorem adjective_full_alts_ie :
-    ieIndices glassDomain notFull [notFull, notEmpty, isFull, isEmpty]
-      = [2] := by native_decide
+    innocent.excluded
+      (altsFromPreds [notFull, notEmpty, isFull, isEmpty]) (predToFinset notFull)
+      = {predToFinset isFull} := by decide
 
 /-- Consequence: exh(¬full) = ¬full (vacuous for the empty/¬empty
     pair). Neither the correct inference (32a) nor the wrong one (32b)
     is derived. -/
 theorem adjective_full_alts_vacuous :
-    ∀ w : GlassWorld,
-      exhB glassDomain [notFull, notEmpty, isFull, isEmpty] notFull w
-        = notFull w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [notFull, notEmpty, isFull, isEmpty]) (predToFinset notFull)
+      = predToFinset notFull := by decide
 
 -- ── AC alternative set (empty removed) ───────────────────────
 
 /-- With the AC, "empty" is blocked (requires extraction + substitution,
-    ex. 40). Alternatives: {¬full, ¬empty, full}. Now both ¬empty
-    (index 1) and full (index 2) are in I-E. -/
+    ex. 40). Alternatives: {¬full, ¬empty, full}. Now both ¬empty and
+    "full" are in I-E. -/
 theorem ac_adjective_ie :
-    ieIndices glassDomain notFull [notFull, notEmpty, isFull]
-      = [1, 2] := by native_decide
+    innocent.excluded (altsFromPreds [notFull, notEmpty, isFull]) (predToFinset notFull)
+      = {predToFinset notEmpty, predToFinset isFull} := by decide
 
 /-- The AC produces the WRONG prediction: exh(¬full) = ¬full ∧ empty
     = {empty}. This says the glass IS empty — inference (32b).
@@ -230,10 +225,8 @@ theorem ac_adjective_ie :
     The derivation: ¬empty is in I-E, so exh negates it. ¬(¬empty)
     = empty. Combined with ¬full: ¬full ∧ empty = {empty}. -/
 theorem ac_wrong_for_adjectives :
-    ∀ w : GlassWorld,
-      exhB glassDomain [notFull, notEmpty, isFull] notFull w
-        = isEmpty w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [notFull, notEmpty, isFull]) (predToFinset notFull)
+      = predToFinset isEmpty := by decide
 
 -- ── Desired alternative set ──────────────────────────────────
 
@@ -245,10 +238,8 @@ theorem ac_wrong_for_adjectives :
     produces this alternative set: ¬empty is always derivable by
     leaf substitution of full→empty under negation. -/
 theorem adjective_correct_alts :
-    ∀ w : GlassWorld,
-      exhB glassDomain [notFull, isFull, isEmpty] notFull w
-        = (notFull w && notEmpty w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [notFull, isFull, isEmpty]) (predToFinset notFull)
+      = predToFinset (fun w => notFull w && notEmpty w) := by decide
 
 end GradableAdjectives
 
@@ -285,7 +276,7 @@ section ParticularisedSI
 /-- Three activity worlds for John. -/
 inductive ActivityWorld where
   | ranOnly | ranAndSmoked | neither
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, Fintype
 
 private def actDomain : List ActivityWorld :=
   [.ranOnly, .ranAndSmoked, .neither]
@@ -308,10 +299,8 @@ theorem particularised_symmetric :
 /-- With the symmetric alternative present, exh is vacuous —
     the inference "John smoked" is not derived. -/
 theorem particularised_blocked :
-    ∀ w : ActivityWorld,
-      exhB actDomain [ran, smoked, ranAndNotSmoked] ran w
-        = ran w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [ran, smoked, ranAndNotSmoked]) (predToFinset ran)
+      = predToFinset ran := by decide
 
 /-- With only the conjunctive alternative "ran ∧ ¬smoked" (salient
     from context), exh correctly derives: ran ∧ ¬(ran ∧ ¬smoked)
@@ -321,10 +310,8 @@ theorem particularised_blocked :
     contextual salience (@cite{fox-katzir-2011} def 37), but NOT
     for (28), where the conjunction spans separate sentences. -/
 theorem particularised_correct :
-    ∀ w : ActivityWorld,
-      exhB actDomain [ran, ranAndNotSmoked] ran w
-        = smoked w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [ran, ranAndNotSmoked]) (predToFinset ran)
+      = predToFinset smoked := by decide
 
 end ParticularisedSI
 
@@ -360,7 +347,7 @@ section SwansonCases
 /-- Three deontic worlds. -/
 inductive DeonticWorld where
   | forbidden | optional_ | required_
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, Fintype
 
 private def deonticDomain : List DeonticWorld :=
   [.forbidden, .optional_, .required_]
@@ -387,18 +374,14 @@ theorem swanson_symmetric :
     single lexical item, not a phrasal combination like "some but
     not all" which requires ConjP/NegP structure. -/
 theorem swanson_exh_vacuous :
-    ∀ w : DeonticWorld,
-      exhB deonticDomain [isPermitted, isRequired, isOptional]
-        isPermitted w = isPermitted w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [isPermitted, isRequired, isOptional]) (predToFinset isPermitted)
+      = predToFinset isPermitted := by decide
 
 /-- Without the symmetric partner, exh correctly derives the SI:
     permitted ∧ ¬required = optional. -/
 theorem swanson_without_symmetric :
-    ∀ w : DeonticWorld,
-      exhB deonticDomain [isPermitted, isRequired] isPermitted w
-        = isOptional w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [isPermitted, isRequired]) (predToFinset isPermitted)
+      = predToFinset isOptional := by decide
 
 end SwansonCases
 

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Tense.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Time.Tense
 
 /-!
 # @cite{zeijlstra-2012}: SOT as Upward Agree
@@ -42,8 +42,8 @@ Agree spell-out, not semantic past.
 
 namespace Minimalism.Tense.AgreeSOT
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Semantics.Tense
 open Minimalism (FeatureVal GramFeature Interpretability)
 

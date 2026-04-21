@@ -161,7 +161,7 @@ theorem goingTo_blocks_false : goingTo.allowsFalseTense = false := rfl
 -- ════════════════════════════════════════════════════
 
 open Semantics.Tense.Decomposition
-open Core.Tense
+open Core.Time.Tense
 
 /-- English simple past: Kratzer decomposition.
     Surface "V-ed" = PRESENT tense + PERFECT aspect.

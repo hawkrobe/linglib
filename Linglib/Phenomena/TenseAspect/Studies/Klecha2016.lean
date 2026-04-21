@@ -58,7 +58,7 @@ open Fragments.English.Predicates.Verbal (think believe hope pray)
 open Semantics.Tense.ModalTense (embeddedRTConstraint think_blocks_future
   think_permits_past hope_permits_future hope_permits_past
   dox_past_iff dox_npst_iff cir_npst_iff cir_past_impossible)
-open Core.Tense (GramTense)
+open Core.Time.Tense (GramTense)
 open Core.Modality (ModalFlavor)
 
 

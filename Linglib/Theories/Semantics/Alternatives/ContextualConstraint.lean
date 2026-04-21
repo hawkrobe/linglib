@@ -1,5 +1,7 @@
+import Mathlib.Tactic.DeriveFintype
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Theories.Semantics.Alternatives.Symmetric
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 
 /-!
 # Fox & Katzir 2011: On the Characterization of Alternatives
@@ -30,7 +32,7 @@ the exhaustification literature.
 ## Connection to Linglib
 
 This file bridges @cite{katzir-2007} (`Structural.lean`)
-and @cite{fox-2007} (`InnocentExclusion.lean`):
+and @cite{fox-2007} (`Exhaustification/IE.lean`):
 
 - Katzir defines F(S) structurally → symmetry is broken in F
 - Fox defines `exh` via innocent exclusion → symmetric alts are
@@ -42,7 +44,7 @@ and @cite{fox-2007} (`InnocentExclusion.lean`):
 namespace Alternatives.ContextualConstraint
 
 open Alternatives.Symmetric
-open Exhaustification.InnocentExclusion hiding sublists
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 
 -- ============================================================
@@ -63,7 +65,7 @@ section SomeAll
 
 /-- Three homework worlds: did all, did some (but not all), did none. -/
 inductive HWWorld where | all_ | someNotAll | none_
-  deriving Repr, DecidableEq
+  deriving Repr, DecidableEq, Fintype
 
 private def hwDomain : List HWWorld := [.all_, .someNotAll, .none_]
 
@@ -87,35 +89,37 @@ theorem some_all_complement :
   native_decide
 
 /-- Alternatives for "some": {some, all, sbna}. -/
-private def someAlts : List (HWWorld → Bool) :=
-  [didSome, didAll, didSomeNotAll]
+private def someAlts : Finset (Finset HWWorld) :=
+  altsFromPreds [didSome, didAll, didSomeNotAll]
+
+/-- Horn-scale alternatives: {some, all} only — no symmetric partner. -/
+private def hornAlts : Finset (Finset HWWorld) :=
+  altsFromPreds [didSome, didAll]
+
+/-- The prejacent: "some". -/
+private def somePrej : Finset HWWorld := predToFinset didSome
 
 /-- With both symmetric alternatives, neither is innocently excludable:
     MCE₁ excludes all (index 1), MCE₂ excludes sbna (index 2). -/
 theorem some_symmetric_neither_ie :
-    let ie := ieIndices hwDomain didSome someAlts
-    ie.contains 1 = false ∧ ie.contains 2 = false := by
-  native_decide
+    predToFinset didAll ∉ innocent.excluded someAlts somePrej ∧
+    predToFinset didSomeNotAll ∉ innocent.excluded someAlts somePrej := by
+  decide
 
 /-- Without the symmetric alternative sbna (i.e., with Horn-scale
     alternatives {some, all}), "all" IS innocently excludable. -/
 theorem some_hornscale_all_ie :
-    let hornAlts : List (HWWorld → Bool) := [didSome, didAll]
-    let ie := ieIndices hwDomain didSome hornAlts
-    ie.contains 1 = true := by
-  native_decide
+    predToFinset didAll ∈ innocent.excluded hornAlts somePrej := by
+  decide
 
 /-- The symmetry problem in a nutshell: with the full set
-    {some, all, sbna}, exh is vacuous (no SIs). With the restricted
-    set {some, all}, exh correctly derives ¬all. -/
+    {some, all, sbna}, exh is vacuous (no SIs — exhIE = some). With the
+    restricted set {some, all}, exh correctly derives ¬all (exhIE
+    excludes the all-world). -/
 theorem symmetry_problem :
-    -- Full set: exh is identity (no exclusions)
-    (∀ w : HWWorld, exhB hwDomain someAlts didSome w =
-      didSome w) ∧
-    -- Restricted set: exh derives ¬all
-    (∀ w : HWWorld, exhB hwDomain [didSome, didAll] didSome w =
-      (didSome w && !didAll w)) := by
-  constructor <;> intro w <;> cases w <;> native_decide
+    innocent.exh someAlts somePrej = somePrej ∧
+    innocent.exh hornAlts somePrej = predToFinset didSome \ predToFinset didAll := by
+  decide
 
 end SomeAll
 

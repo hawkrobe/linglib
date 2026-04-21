@@ -46,8 +46,13 @@ inductive LicensingContext where
   | withoutClause    -- "without" PPs
   | onlyFocus        -- Focus of "only"
   | question          -- Questions (for some NPIs)
-  | comparativeNP     -- "taller than NP" — Boolean homomorphism (@cite{hoeksema-1983})
-  | comparativeS      -- "taller than S is" — anti-additive (@cite{hoeksema-1983} Fact 5)
+  | comparativeNP     -- surface "taller than NP" — Boolean homomorphism, monotone increasing,
+                      -- and per @cite{hoeksema-1983} §3.6 *not* an NPI environment.
+                      -- Surface NPIs in "than NP" arise from a covert clausal source
+                      -- (modern: @cite{bhatt-pancheva-2004} interval reduction) — list
+                      -- such NPIs under `.comparativeS`, not here.
+  | comparativeS      -- "taller than S is" — anti-additive (@cite{hoeksema-1983}, refined
+                      -- in interval semantics by @cite{bhatt-pancheva-2004}, @cite{heim-2006})
   | superlative       -- "the most", "the least"
   | tooTo            -- "too ADJ to VP"
   | modalPossibility -- Possibility modals (for FCIs)
@@ -156,13 +161,21 @@ def contextProperties : LicensingContext → ContextProperties
       , prototype := "He was too tired to say anything."
       , citations := ["ladusaw-1979"] }
   | .comparativeNP =>
-      { signature := .antiAdd, mechanism := .byStrengthening
-      , prototype := "Mary is taller than anyone in the class."
-      , citations := ["ladusaw-1979", "hoeksema-1983"] }
+      -- @cite{hoeksema-1983} §3.6, Eq (22): the NP-comparative is a Boolean
+      -- homomorphism `Set (Set U) → Set U`, hence monotone increasing — it
+      -- does *not* license NPIs. Modern interval-semantic accounts
+      -- (@cite{bhatt-pancheva-2004}, @cite{heim-2006}) reduce surface
+      -- "than NP" with NPI to a covert clausal source — those NPIs are
+      -- licensed by `.comparativeS`, not by this slot. Listed here only for
+      -- typological / structural completeness; `mechanism := .byOtherMechanism`
+      -- because no NPI licensing actually occurs.
+      { signature := .mono, mechanism := .byOtherMechanism
+      , prototype := "Surface NP-comparative; no NPI licensing under genuine NP reading."
+      , citations := ["hoeksema-1983", "bhatt-pancheva-2004", "heim-2006"] }
   | .comparativeS =>
       { signature := .antiAdd, mechanism := .byStrengthening
       , prototype := "Mary is taller than anyone is."
-      , citations := ["ladusaw-1979", "hoeksema-1983"] }
+      , citations := ["ladusaw-1979", "hoeksema-1983", "bhatt-pancheva-2004"] }
   | .adversative =>
       { signature := .anti, mechanism := .byStrengthening
       , prototype := "I'm sorry I said anything."

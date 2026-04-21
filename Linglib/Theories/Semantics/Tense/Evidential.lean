@@ -51,7 +51,7 @@ the canonical `EvidentialPerspective` classification in `Core.Evidence`.
 namespace Semantics.Tense.Evidential
 
 open Core.Time
-open Core.Reichenbach
+open Core.Time.Reichenbach
 open Semantics.Tense
 open Core.Evidence
 open Core.Presupposition
@@ -88,13 +88,21 @@ inductive EPCondition where
   | unconstrained
   deriving DecidableEq, Repr
 
+/-- Underlying point-relation: `EPCondition` is a domain-flavored selector
+    over the abstract `Core.Time.Relation` partition. The evidential
+    vocabulary (downstream/prospective/…) maps onto the abstract
+    before/after/… partition; the slot pair is
+    `(eventTime, acquisitionTime)`. -/
+def EPCondition.toRelation : EPCondition → Core.Time.Relation
+  | .downstream       => .notAfter
+  | .strictDownstream => .before
+  | .contemporaneous  => .overlapping
+  | .prospective      => .after          -- A < T, i.e. T > A
+  | .unconstrained    => .unrestricted
+
 /-- Recover the predicate over `EvidentialFrame ℤ` from an `EPCondition`. -/
-def EPCondition.toConstraint : EPCondition → EvidentialFrame ℤ → Prop
-  | .downstream => λ f => f.eventTime ≤ f.acquisitionTime
-  | .strictDownstream => λ f => f.eventTime < f.acquisitionTime
-  | .contemporaneous => λ f => f.eventTime = f.acquisitionTime
-  | .prospective => λ f => f.acquisitionTime < f.eventTime
-  | .unconstrained => λ _ => True
+def EPCondition.toConstraint (e : EPCondition) (f : EvidentialFrame ℤ) : Prop :=
+  e.toRelation.eval f.eventTime f.acquisitionTime
 
 /-- Is this EP constraint nonfuture? Downstream, strict downstream, and
     contemporaneous all entail T ≤ A; prospective and unconstrained do not. -/
@@ -193,12 +201,13 @@ def downstreamEvidence (f : EvidentialFrame ℤ) : Prop :=
 -- ════════════════════════════════════════════════════
 
 /-- Any nonfuture EP constraint entails downstream evidence (T ≤ A).
-    One proof, five cases — the three nonfuture cases follow from ≤, <, =
-    respectively; the two non-nonfuture cases are eliminated by `h_nf`. -/
+    One proof, six cases — the three nonfuture cases follow from ≤, <, =
+    respectively; the three non-nonfuture cases are eliminated by `h_nf`. -/
 theorem EPCondition.nonfuture_implies_downstream
     (ep : EPCondition) (f : EvidentialFrame ℤ)
     (h_nf : ep.IsNonfuture) (h_ep : ep.toConstraint f) :
     downstreamEvidence f := by
+  simp only [toConstraint, toRelation, Core.Time.Relation.eval] at h_ep
   cases ep with
   | downstream => exact h_ep
   | strictDownstream => exact le_of_lt h_ep

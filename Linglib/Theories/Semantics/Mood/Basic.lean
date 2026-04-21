@@ -42,6 +42,8 @@ import Linglib.Core.Mood.Basic
 
 namespace Semantics.Mood
 
+open Core (Situation)
+
 open Core.Time
 open Core.Modality.HistoricalAlternatives
 

@@ -48,7 +48,7 @@ structure WordOrderProfile where
   svOrder : SVOrder
   ovOrder : OVOrder
   notes : String := ""
-  deriving Repr
+  deriving Repr, DecidableEq
 
 /-- Convert WALS F81A's `BasicWordOrder` to our local `BasicOrder`. -/
 def fromWALS81A : Core.WALS.F81A.BasicWordOrder → BasicOrder

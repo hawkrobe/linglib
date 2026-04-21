@@ -41,6 +41,8 @@ P(concept | context) ∝ P_selectional(concept | role) × P_scenario(concept | f
 
 namespace ErkHerbelot2024
 
+open Core (Situation)
+
 open Semantics.Probabilistic.SDS.Core
 
 -- ════════════════════════════════════════════════════

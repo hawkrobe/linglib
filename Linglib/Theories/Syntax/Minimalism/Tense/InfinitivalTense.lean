@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Time.Tense
 
 /-!
 # @cite{wurmbrand-2014}: Tense and Aspect in English Infinitives
@@ -47,8 +47,8 @@ properties. The key insight: infinitival complements are not uniformly
 
 namespace Minimalism.Tense.InfinitivalTense
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Semantics.Tense
 
 

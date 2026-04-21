@@ -460,14 +460,14 @@ noncomputable def expectedBin (prior : Prevalence → ℝ) : ℝ :=
 
 open Core in
 /-- Policy comparison ↔ score comparison for any RationalAction.
-    Combines `policy_gt_of_score_gt` and `policy_not_gt_of_score_le`. -/
+    Combines `policy_lt_of_score_lt` and `policy_not_lt_of_score_le`. -/
 private theorem policy_gt_iff_score_gt {S A : Type*} [Fintype A]
     (ra : RationalAction S A) (s : S) (a₁ a₂ : A) :
     ra.policy s a₁ > ra.policy s a₂ ↔ ra.score s a₁ > ra.score s a₂ :=
   ⟨fun h => by
     by_contra hle; push_neg at hle
     exact absurd h (not_lt.mpr (ra.policy_monotone s a₁ a₂ hle)),
-   ra.policy_gt_of_score_gt s a₁ a₂⟩
+   ra.policy_lt_of_score_lt s a₂ a₁⟩
 
 /-- The endorsement condition reduces to a cue validity comparison:
     a generic is endorsed iff the referent prevalence bin exceeds

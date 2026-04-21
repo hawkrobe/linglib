@@ -26,8 +26,8 @@ temporal tense (subject to ULC) from counterfactual tense (exempt from ULC).
 
 namespace Semantics.Tense.CounterfactualTense
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Semantics.Tense
 
 

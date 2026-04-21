@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Theories.Semantics.Alternatives.Lexical
 
 /-!
@@ -35,7 +35,7 @@ structure HurfordSemantic (World : Type*) where
   /-- Second disjunct meaning -/
   disjunctB : Set World
   /-- The entailment that creates the violation -/
-  entailment : (disjunctA ⊆ₚ disjunctB) ∨ (disjunctB ⊆ₚ disjunctA)
+  entailment : (disjunctA ⊆ disjunctB) ∨ (disjunctB ⊆ disjunctA)
   /-- Alternative set for exhaustification -/
   alts : Set (Set World)
 
@@ -44,13 +44,13 @@ A Hurford violation is rescued iff after exhaustifying the weaker disjunct,
 the entailment no longer holds.
 -/
 def HurfordSemantic.isRescued {World : Type*} (h : HurfordSemantic World) : Prop :=
-  (¬(exhIE h.alts h.disjunctA ⊆ₚ h.disjunctB)) ∨ (¬(exhIE h.alts h.disjunctB ⊆ₚ h.disjunctA))
+  (¬(exhIE h.alts h.disjunctA ⊆ h.disjunctB)) ∨ (¬(exhIE h.alts h.disjunctB ⊆ h.disjunctA))
 
 /--
 For cases where B⊆A (stronger entails weaker), rescue requires exh(B) ⊄ A.
 -/
 def HurfordSemantic.isRescuedFromBA {World : Type*} (h : HurfordSemantic World) : Prop :=
-  ¬(exhIE h.alts h.disjunctB ⊆ₚ h.disjunctA)
+  ¬(exhIE h.alts h.disjunctB ⊆ h.disjunctA)
 
 
 -- ============================================================
@@ -66,7 +66,7 @@ structure SinghSemantic (World : Type*) where
   /-- Stronger disjunct meaning -/
   stronger : Set World
   /-- Stronger entails weaker -/
-  entailment : stronger ⊆ₚ weaker
+  entailment : stronger ⊆ weaker
   /-- Alternative set -/
   alts : Set (Set World)
   /-- Is weaker mentioned first? -/
@@ -77,7 +77,7 @@ Fox & Spector's prediction: weak-first is felicitous because exh(weak)
 can break the entailment to strong.
 -/
 def SinghSemantic.exhBreaksEntailment {World : Type*} (s : SinghSemantic World) : Prop :=
-  ¬(exhIE s.alts s.weaker ⊆ₚ s.stronger)
+  ¬(exhIE s.alts s.weaker ⊆ s.stronger)
 
 /--
 The asymmetry: felicitous iff (weak-first AND exh breaks entailment).
@@ -97,11 +97,11 @@ Prediction: exh(some) → ¬all.
 theorem someAll_implicature :
     ∀ w : SemQuantWorld, exhIE someAllScale.alts someQ w → ¬allQ w := by
   intro w hexh hall
-  have hie_neg_all : (∼allQ) ∈ IE someAllScale.alts someQ := by
+  have hie_neg_all : (allQᶜ) ∈ IE someAllScale.alts someQ := by
     intro E hE_mc
     by_contra h_not_in
-    let E' := E ∪ {∼allQ}
-    have hcompat : isCompatible someAllScale.alts someQ E' := by
+    let E' := E ∪ {allQᶜ}
+    have hcompat : IsCompatible someAllScale.alts someQ E' := by
       obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
       refine ⟨Set.mem_union_left _ hphi, ?_, ?_⟩
       · intro ψ hψ
@@ -120,7 +120,7 @@ theorem someAll_implicature :
             rcases ha with rfl | rfl
             · exfalso
               obtain ⟨u, hu⟩ := hcons
-              exact hu (∼someQ) hψ_E (hu someQ hphi)
+              exact hu (someQᶜ) hψ_E (hu someQ hphi)
             · intro h; have : (1 : Nat) = 3 := h; omega
         · simp only [Set.mem_singleton_iff] at hψ_new
           rw [hψ_new]
@@ -131,7 +131,7 @@ theorem someAll_implicature :
       apply h_not_in
       exact hle (Set.mem_union_right E (Set.mem_singleton _))
     exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-  have hneg_all_w : (∼allQ) w := hexh (∼allQ) hie_neg_all
+  have hneg_all_w : (allQᶜ) w := hexh (allQᶜ) hie_neg_all
   exact hneg_all_w hall
 
 /--
@@ -140,11 +140,11 @@ Prediction: exh(or) → ¬and.
 theorem orAnd_implicature :
     ∀ w : ConnWorld, exhIE orAndScale.alts orConn w → ¬andConn w := by
   intro w hexh hand
-  have hie_neg_and : (∼andConn) ∈ IE orAndScale.alts orConn := by
+  have hie_neg_and : (andConnᶜ) ∈ IE orAndScale.alts orConn := by
     intro E hE_mc
     by_contra h_not_in
-    let E' := E ∪ {∼andConn}
-    have hcompat : isCompatible orAndScale.alts orConn E' := by
+    let E' := E ∪ {andConnᶜ}
+    have hcompat : IsCompatible orAndScale.alts orConn E' := by
       obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
       refine ⟨Set.mem_union_left _ hphi, ?_, ?_⟩
       · intro ψ hψ
@@ -163,7 +163,7 @@ theorem orAnd_implicature :
             rcases ha with rfl | rfl
             · exfalso
               obtain ⟨u, hu⟩ := hcons
-              exact hu (∼orConn) hψ_E (hu orConn hphi)
+              exact hu (orConnᶜ) hψ_E (hu orConn hphi)
             · intro h; exact h
         · simp only [Set.mem_singleton_iff] at hψ_new
           rw [hψ_new]
@@ -174,7 +174,7 @@ theorem orAnd_implicature :
       apply h_not_in
       exact hle (Set.mem_union_right E (Set.mem_singleton _))
     exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-  have hneg_and_w : (∼andConn) w := hexh (∼andConn) hie_neg_and
+  have hneg_and_w : (andConnᶜ) w := hexh (andConnᶜ) hie_neg_and
   exact hneg_and_w hand
 
 /--
@@ -183,11 +183,11 @@ Prediction: exh(possible) → ¬necessary.
 theorem possibleNecessary_implicature :
     ∀ w : ModalWorld, exhIE possibleNecessaryScale.alts possibleP w → ¬necessaryP w := by
   intro w hexh hnec
-  have hie_neg_nec : (∼necessaryP) ∈ IE possibleNecessaryScale.alts possibleP := by
+  have hie_neg_nec : (necessaryPᶜ) ∈ IE possibleNecessaryScale.alts possibleP := by
     intro E hE_mc
     by_contra h_not_in
-    let E' := E ∪ {∼necessaryP}
-    have hcompat : isCompatible possibleNecessaryScale.alts possibleP E' := by
+    let E' := E ∪ {necessaryPᶜ}
+    have hcompat : IsCompatible possibleNecessaryScale.alts possibleP E' := by
       obtain ⟨⟨hphi, hform, hcons⟩, _⟩ := hE_mc
       refine ⟨Set.mem_union_left _ hphi, ?_, ?_⟩
       · intro ψ hψ
@@ -206,7 +206,7 @@ theorem possibleNecessary_implicature :
             rcases ha with rfl | rfl
             · exfalso
               obtain ⟨u, hu⟩ := hcons
-              exact hu (∼possibleP) hψ_E (hu possibleP hphi)
+              exact hu (possiblePᶜ) hψ_E (hu possibleP hphi)
             · intro h; exact h
         · simp only [Set.mem_singleton_iff] at hψ_new
           rw [hψ_new]
@@ -217,7 +217,7 @@ theorem possibleNecessary_implicature :
       apply h_not_in
       exact hle (Set.mem_union_right E (Set.mem_singleton _))
     exact hE'_not_sub_E (hE_mc.2 E' hcompat hsubset)
-  have hneg_nec_w : (∼necessaryP) w := hexh (∼necessaryP) hie_neg_nec
+  have hneg_nec_w : (necessaryPᶜ) w := hexh (necessaryPᶜ) hie_neg_nec
   exact hneg_nec_w hnec
 
 /--
@@ -254,7 +254,7 @@ theorem someOrAll_is_rescued : someOrAll_semantic.isRescued := by
   intro h_entails
   have hw1 : exhIE someOrAll_semantic.alts someQ ⟨1, by omega⟩ := by
     intro ψ hψ_IE
-    have hMC : isMCSet someOrAll_semantic.alts someQ {someQ, ∼allQ} := by
+    have hMC : IsMCSet someOrAll_semantic.alts someQ {someQ, allQᶜ} := by
       constructor
       · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
         · intro ψ' hψ'
@@ -273,9 +273,9 @@ theorem someOrAll_is_rescued : someOrAll_semantic.isRescued := by
           · exfalso
             obtain ⟨u, hu⟩ := hE'_compat.2.2
             have hsomeQ := hE'_compat.1
-            exact hu (∼someQ) hψ'_E' (hu someQ hsomeQ)
+            exact hu (someQᶜ) hψ'_E' (hu someQ hsomeQ)
           · exact Or.inr rfl
-    have hψ_in_MC : ψ ∈ ({someQ, ∼allQ} : Set (Set SemQuantWorld)) := hψ_IE _ hMC
+    have hψ_in_MC : ψ ∈ ({someQ, allQᶜ} : Set (Set SemQuantWorld)) := hψ_IE _ hMC
     rcases hψ_in_MC with rfl | rfl
     · simp [someQ]
     · intro h; have : (1 : Nat) = 3 := h; omega
@@ -308,7 +308,7 @@ def californianP : Set HyponymWorld := λ w =>
   | _ => False
 
 /-- Californian entails American (hyponymy) -/
-theorem californian_entails_american : californianP ⊆ₚ americanP := by
+theorem californian_entails_american : californianP ⊆ americanP := by
   intro w hcal
   cases w
   · exact hcal.elim
@@ -329,7 +329,7 @@ def americanCalifornian_semantic : HurfordSemantic HyponymWorld :=
 Key Lemma: With no scalar alternatives, exh is vacuous.
 -/
 theorem exh_californian_entails_american :
-    exhIE americanCalifornian_semantic.alts californianP ⊆ₚ americanP := by
+    exhIE americanCalifornian_semantic.alts californianP ⊆ americanP := by
   intro w hexh
   have hcal : californianP w := by
     apply hexh californianP
@@ -377,11 +377,11 @@ def bothThenOr_semantic : SinghSemantic ConnWorld :=
 Prediction: exh(or) breaks entailment to and.
 -/
 theorem orAnd_exh_breaks_entailment :
-    ¬(exhIE {orConn, andConn} orConn ⊆ₚ andConn) := by
+    ¬(exhIE {orConn, andConn} orConn ⊆ andConn) := by
   intro h
   have hexh : exhIE {orConn, andConn} orConn ConnWorld.onlyA := by
     intro ψ hψ_IE
-    have hMC : isMCSet {orConn, andConn} orConn {orConn, ∼andConn} := by
+    have hMC : IsMCSet {orConn, andConn} orConn {orConn, andConnᶜ} := by
       constructor
       · refine ⟨Set.mem_insert _ _, ?_, ?_⟩
         · intro ψ' hψ'
@@ -399,9 +399,9 @@ theorem orAnd_exh_breaks_entailment :
         · rcases ha with rfl | rfl
           · exfalso
             obtain ⟨u, hu⟩ := hE'_compat.2.2
-            exact hu (∼orConn) hψ'_E' (hu orConn hE'_compat.1)
+            exact hu (orConnᶜ) hψ'_E' (hu orConn hE'_compat.1)
           · exact Or.inr rfl
-    have hψ_in : ψ ∈ ({orConn, ∼andConn} : Set (Set ConnWorld)) := hψ_IE _ hMC
+    have hψ_in : ψ ∈ ({orConn, andConnᶜ} : Set (Set ConnWorld)) := hψ_IE _ hMC
     rcases hψ_in with rfl | rfl
     · simp [orConn]
     · intro h; exact h

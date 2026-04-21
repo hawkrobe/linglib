@@ -306,13 +306,13 @@ If U(w, a) depends only on which cell w is, the DP is QUD-equivalent.
 -/
 def dpToQUD {W A : Type*} [DecidableEq A]
     (dp : DecisionProblem W A) (actions : Finset A) : GSQuestion W where
-  -- Two worlds are equivalent iff they have the same utility profile
-  sameAnswer w v := decide (∀ a ∈ actions, dp.utility w a = dp.utility v a)
-  refl w := decide_eq_true_eq.mpr (fun _ _ => rfl)
-  symm w v := by simp only [eq_comm]
-  trans w v x hwv hvx := by
-    rw [decide_eq_true_eq] at *
-    exact fun a ha => (hwv a ha).trans (hvx a ha)
+  toSetoid :=
+    { r := λ w v => ∀ a ∈ actions, dp.utility w a = dp.utility v a
+      iseqv :=
+        { refl := λ _ _ _ => rfl
+          symm := λ h a ha => (h a ha).symm
+          trans := λ h1 h2 a ha => (h1 a ha).trans (h2 a ha) } }
+  decR := λ _ _ => Finset.decidableDforallFinset
 
 
 /-!

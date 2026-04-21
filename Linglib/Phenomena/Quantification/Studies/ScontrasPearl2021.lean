@@ -313,7 +313,8 @@ theorem lowerBound_preserves_negation_scope :
     via type-shift. Both meanings are grammatically available. -/
 theorem typeshift_resolves_tension :
     Core.Scale.typeLower bareMeaning 2 2 ↔
-    atLeastMeaning 2 2 := by decide
+    atLeastMeaning 2 2 :=
+  Semantics.Numerals.typeLower_bareMeaning_iff 2 2
 
 -- ============================================================================
 -- Part II: Every-Not RSA Model (§3)
@@ -656,7 +657,7 @@ noncomputable abbrev allBiasedCfg :=
     S2(u|w) = S2agent.policy(w, u) where S2agent.score(w, u) = cfg.L1(u, w)
     (the **normalized** L1 posterior).
 
-    The `rsa_predict` tactic handles S2 cross-world goals via `policy_gt_cross`,
+    The `rsa_predict` tactic handles S2 cross-world goals via `policy_lt_cross`,
     building compositional QInterval proofs for the cross-product comparison. -/
 
 -- L1-Level Theorems

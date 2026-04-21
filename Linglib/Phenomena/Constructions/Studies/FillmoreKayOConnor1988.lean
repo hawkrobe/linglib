@@ -332,7 +332,7 @@ open Core.Lexical.PolarityItem in
 def npiTriggerToContext : LetAloneNPITrigger → LicensingContext
   | .simpleNegation         => .negation
   | .tooComplementation     => .tooTo
-  | .comparisonOfInequality => .comparative
+  | .comparisonOfInequality => .comparativeS
   | .onlyDeterminer         => .onlyFocus
   | .minimalAttainment      => .negation              -- "barely" ≈ negation
   | .conditionalSurprise    => .conditionalAntecedent

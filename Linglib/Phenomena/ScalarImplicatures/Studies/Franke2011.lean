@@ -102,21 +102,21 @@ theorem r1_eq_exhMW_under_totality (G : InterpGame) (m : G.Message) (s : G.State
 
 /-- **Franke Fact 3 (Appendix A)**: ExhMW(S, Alt) ⊆ ExhIE(S, Alt)
 
-    This is already proved as `prop6_exhMW_entails_exhIE` in
-    Exhaustification/Operators.lean. -/
+    This is already proved as `exhMW_entails_exhIE` in
+    Exhaustification/Operators/Basic.lean. -/
 theorem fact3_exhMW_subset_exhIE (G : InterpGame) (m : G.Message) :
-    exhMW (toAlternatives G) (prejacent G m) ⊆ₚ exhIE (toAlternatives G) (prejacent G m) :=
-  prop6_exhMW_entails_exhIE (toAlternatives G) (prejacent G m)
+    exhMW (toAlternatives G) (prejacent G m) ⊆ exhIE (toAlternatives G) (prejacent G m) :=
+  exhMW_entails_exhIE (toAlternatives G) (prejacent G m)
 
 -- SECTION 5: Fact 4 — ExhMW = ExhIE under closure (Franke Appendix A)
 
 /-- **Franke Fact 4 (Appendix A)**: ExhMW = ExhIE when Alt is closed under ∧.
 
-    This is proved as `theorem9_main` in Exhaustification/Operators.lean. -/
+    This is proved as `exhMW_eq_exhIE_of_closedUnderConj` in Exhaustification/Operators/Basic.lean. -/
 theorem fact4_exhMW_eq_exhIE_closed (G : InterpGame) (m : G.Message)
     (hClosed : closedUnderConj (toAlternatives G)) :
-    exhMW (toAlternatives G) (prejacent G m) ≡ₚ exhIE (toAlternatives G) (prejacent G m) :=
-  theorem9_main (toAlternatives G) (prejacent G m) hClosed
+    exhMW (toAlternatives G) (prejacent G m) = exhIE (toAlternatives G) (prejacent G m) :=
+  exhMW_eq_exhIE_of_closedUnderConj (toAlternatives G) (prejacent G m) hClosed
 
 -- SECTION 6: Examples
 

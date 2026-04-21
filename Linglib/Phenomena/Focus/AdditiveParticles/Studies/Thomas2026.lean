@@ -260,8 +260,8 @@ After the Set/Prop migration, the felicity predicates are `noncomputable`
 and `Prop`-valued. Each scenario provides per-set `DecidablePred` instances
 + named probability/conditional-probability lemmas (computed via
 `Fin.sum_univ_four`) + an `alt`-characterisation lemma
-(`Issue.alt_polar_of_nontrivial` for polar contexts;
-`Issue.alt_ofList_of_pairwise_disjoint_nonempty` for partition contexts);
+(`Question.alt_polar_of_nontrivial` for polar contexts;
+`Question.alt_ofList_of_pairwise_disjoint_nonempty` for partition contexts);
 felicity proofs then reduce to `convert`-bridged inequalities. -/
 
 section Verification
@@ -293,7 +293,7 @@ def hotelPrior : Prior (Fin 4) where
   mass_sum_one := by native_decide
 
 def hotelCtx : AdditiveContext (Fin 4) :=
-  { resolvedQuestion := Core.Issue.polar goodHotel
+  { resolvedQuestion := Core.Question.polar goodHotel
   , antecedent := roomAvail
   , prior := hotelPrior }
 
@@ -382,10 +382,10 @@ private lemma hotel_cond_roomFancy_goodC :
 - **Maximality**: every ANT ∧ good world (w₀) is also fancy. -/
 theorem hotel_too_felicitous : tooFelicitous hotelCtx fancyH := by
   have hCtxAnt : hotelCtx.antecedent = roomAvail := rfl
-  have hCtxRQ : hotelCtx.resolvedQuestion = Issue.polar goodHotel := rfl
+  have hCtxRQ : hotelCtx.resolvedQuestion = Question.polar goodHotel := rfl
   have hCtxPrior : hotelCtx.prior = hotelPrior := rfl
-  have hAltMem : goodHotel ∈ Issue.alt (Issue.polar goodHotel) := by
-    rw [Issue.alt_polar_of_nontrivial goodHotel_ne_empty goodHotel_ne_univ]
+  have hAltMem : goodHotel ∈ Question.alt (Question.polar goodHotel) := by
+    rw [Question.alt_polar_of_nontrivial goodHotel_ne_empty goodHotel_ne_univ]
     exact Set.mem_insert _ _
   refine ⟨?ant, ⟨?conjA, ?conjS⟩, ?nontrv, ?max⟩
   · show probAnswersS hotelCtx.antecedent hotelCtx.resolvedQuestion hotelCtx.prior
@@ -425,7 +425,7 @@ theorem hotel_too_felicitous : tooFelicitous hotelCtx fancyH := by
     unfold maximalityCondition
     rw [hCtxAnt, hCtxRQ, hCtxPrior]
     intro a haAlt hStrengthen w _ _ haW
-    rw [Issue.alt_polar_of_nontrivial goodHotel_ne_empty goodHotel_ne_univ] at haAlt
+    rw [Question.alt_polar_of_nontrivial goodHotel_ne_empty goodHotel_ne_univ] at haAlt
     rcases haAlt with rfl | haAlt
     · have : w = 0 := Fin.ext (haW : w.val = 0)
       rw [this]; exact Or.inl rfl
@@ -452,8 +452,8 @@ def happyE : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
 def ecstaticE : Set (Fin 4) := {w | w.val = 0}
 
 /-- "What is Sam's emotional state?" — three-way partition. -/
-def emotionRQ : Core.Issue (Fin 4) :=
-  Core.Issue.ofList
+def emotionRQ : Core.Question (Fin 4) :=
+  Core.Question.ofList
     [ {w | w.val = 0}                    -- ecstatic
     , {w | w.val = 1}                    -- happy but not ecstatic
     , {w | w.val = 2 ∨ w.val = 3}        -- not happy
@@ -541,10 +541,10 @@ private lemma em_cond_happyEcst_n :
   norm_num
 
 private lemma emotion_alt :
-    Issue.alt emotionRQ =
+    Question.alt emotionRQ =
     {p | p ∈ ([{w | w.val = 0}, {w | w.val = 1}, {w | w.val = 2 ∨ w.val = 3}]
               : List (Set (Fin 4)))} := by
-  apply Issue.alt_ofList_of_pairwise_disjoint_nonempty
+  apply Question.alt_ofList_of_pairwise_disjoint_nonempty
   · decide
   · intro p₁ hp₁ p₂ hp₂ hne
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hp₁ hp₂
@@ -610,8 +610,8 @@ def likePizza : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
 def likeSpaghetti : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 2}
 
 /-- "What do you like?" — mention-all partition. -/
-def foodRQ : Core.Issue (Fin 4) :=
-  Core.Issue.ofList
+def foodRQ : Core.Question (Fin 4) :=
+  Core.Question.ofList
     [ {w | w.val = 0}    -- both
     , {w | w.val = 1}    -- pizza only
     , {w | w.val = 2}    -- spaghetti only
@@ -756,10 +756,10 @@ private lemma fd_cond_pizzaSpag_3 :
   norm_num
 
 private lemma food_alt :
-    Issue.alt foodRQ =
+    Question.alt foodRQ =
     {p | p ∈ ([{w | w.val = 0}, {w | w.val = 1}, {w | w.val = 2}, {w | w.val = 3}]
               : List (Set (Fin 4)))} := by
-  apply Issue.alt_ofList_of_pairwise_disjoint_nonempty
+  apply Question.alt_ofList_of_pairwise_disjoint_nonempty
   · decide
   · intro p₁ hp₁ p₂ hp₂ hne
     simp only [List.mem_cons, List.not_mem_nil, or_false] at hp₁ hp₂
@@ -794,7 +794,7 @@ theorem pizza_spaghetti_too_felicitous : tooFelicitous foodCtx likeSpaghetti := 
   have hCtxAnt : foodCtx.antecedent = likePizza := rfl
   have hCtxRQ : foodCtx.resolvedQuestion = foodRQ := rfl
   have hCtxPrior : foodCtx.prior = foodPrior := rfl
-  have hAltMem0 : ({w : Fin 4 | w.val = 0}) ∈ Issue.alt foodRQ := by
+  have hAltMem0 : ({w : Fin 4 | w.val = 0}) ∈ Question.alt foodRQ := by
     rw [food_alt]; exact List.mem_cons_self
   refine ⟨?ant, ⟨?conjA, ?conjS⟩, ?nontrv, ?max⟩
   · show probAnswersS foodCtx.antecedent foodCtx.resolvedQuestion foodCtx.prior
@@ -880,7 +880,7 @@ def instrumentPrior : Prior (Fin 4) where
   mass_sum_one := by native_decide
 
 def instrumentCtx : AdditiveContext (Fin 4) :=
-  { resolvedQuestion := Core.Issue.polar baileyPlays
+  { resolvedQuestion := Core.Question.polar baileyPlays
   , antecedent := averyPlays
   , prior := instrumentPrior }
 
@@ -933,15 +933,15 @@ Maximality (Def. 64c.ii) fails: the strengthened resolution is `baileyPlays`
 `w₁ ∉ baileyPlaysCello`, so prejacent does not capture all witnesses. -/
 theorem cello_too_infelicitous : ¬ tooFelicitous instrumentCtx baileyPlaysCello := by
   have hCtxAnt : instrumentCtx.antecedent = averyPlays := rfl
-  have hCtxRQ : instrumentCtx.resolvedQuestion = Issue.polar baileyPlays := rfl
+  have hCtxRQ : instrumentCtx.resolvedQuestion = Question.polar baileyPlays := rfl
   have hCtxPrior : instrumentCtx.prior = instrumentPrior := rfl
   intro hFel
   obtain ⟨_, _, _, hMax⟩ := hFel
   have hMax' : maximalityCondition instrumentCtx baileyPlaysCello := hMax
   unfold maximalityCondition at hMax'
   rw [hCtxAnt, hCtxRQ, hCtxPrior] at hMax'
-  have hAltMem : baileyPlays ∈ Issue.alt (Issue.polar baileyPlays) := by
-    rw [Issue.alt_polar_of_nontrivial baileyPlays_ne_empty baileyPlays_ne_univ]
+  have hAltMem : baileyPlays ∈ Question.alt (Question.polar baileyPlays) := by
+    rw [Question.alt_polar_of_nontrivial baileyPlays_ne_empty baileyPlays_ne_univ]
     exact Set.mem_insert _ _
   have hStr : instrumentPrior.condProbSet (averyPlays ∩ baileyPlaysCello) baileyPlays >
               instrumentPrior.condProbSet averyPlays baileyPlays := by
@@ -980,7 +980,7 @@ def crossPrior : Prior (Fin 4) where
 
 /-- RQ = "What did Avery eat?" (polar: did Avery eat pizza?). -/
 def crossCtx : AdditiveContext (Fin 4) :=
-  { resolvedQuestion := Core.Issue.polar averyPizzaCP
+  { resolvedQuestion := Core.Question.polar averyPizzaCP
   , antecedent := averyPizzaCP
   , prior := crossPrior }
 
@@ -1064,7 +1064,7 @@ stays at 1; for its complement it stays at 0. -/
 theorem cross_product_too_infelicitous :
     ¬ tooFelicitous crossCtx baileySpaghetti := by
   have hCtxAnt : crossCtx.antecedent = averyPizzaCP := rfl
-  have hCtxRQ : crossCtx.resolvedQuestion = Issue.polar averyPizzaCP := rfl
+  have hCtxRQ : crossCtx.resolvedQuestion = Question.polar averyPizzaCP := rfl
   have hCtxPrior : crossCtx.prior = crossPrior := rfl
   intro hFel
   obtain ⟨_, ⟨_, hStr⟩, _, _⟩ := hFel
@@ -1073,7 +1073,7 @@ theorem cross_product_too_infelicitous :
   unfold someResolutionStrengthenedS at hStr'
   rw [hCtxAnt, hCtxRQ, hCtxPrior] at hStr'
   obtain ⟨a, haAlt, hgt⟩ := hStr'
-  rw [Issue.alt_polar_of_nontrivial averyPizzaCP_ne_empty averyPizzaCP_ne_univ] at haAlt
+  rw [Question.alt_polar_of_nontrivial averyPizzaCP_ne_empty averyPizzaCP_ne_univ] at haAlt
   rcases haAlt with rfl | haAlt
   · have hno : ¬ (crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCP >
                   crossPrior.condProbSet averyPizzaCP averyPizzaCP) := by

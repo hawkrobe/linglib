@@ -1,4 +1,5 @@
 import Linglib.Core.Scales.Scale
+import Linglib.Core.Time.Interval.Generalized
 import Linglib.Theories.Semantics.Tense.Aspect.Core
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Tense.Aspect.SubintervalProperty

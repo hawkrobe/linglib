@@ -90,10 +90,12 @@ def pur : PolarityItemEntry :=
   { form := "pur"
   , polarityType := .npiWeak
   , baseForce := .degree
-  , licensingContexts := [.negation, .comparativeNP, .comparativeS]
+  , licensingContexts := [.negation, .comparativeS]
   , scalarDirection := .strengthening
   , notes :=
-      "Weak NPI in comparatives + bias-licensed contexts; @cite{napoli-nespor-1976} §3.11" }
+      "Weak NPI in clausal comparatives + bias-licensed contexts; @cite{napoli-nespor-1976} §3.11. " ++
+      "Licensed via .comparativeS (the clausal-comparative source); .comparativeNP does not " ++
+      "license per @cite{hoeksema-1983} §3.6." }
 
 /-- *affatto* ("at all", "completely") — weak NPI requiring *precise*
     knowledge of the listener's belief; blocked in N&N's comparative *non₂*
@@ -110,7 +112,7 @@ def affatto : PolarityItemEntry :=
   { form := "affatto"
   , polarityType := .npiWeak
   , baseForce := .degree
-  , licensingContexts := [.negation]  -- not .comparativeNP/.comparativeS: blocked by precision
+  , licensingContexts := [.negation]  -- not .comparativeS: blocked by precision
   , scalarDirection := .strengthening
   , notes :=
       "Weak NPI but requires precise prior belief; blocked under bias-conditioned " ++
@@ -119,14 +121,19 @@ def affatto : PolarityItemEntry :=
 /-- N&N's central diagnostic: *pur* is licensed in comparative-clause
     contexts (which encode bias-conditioned negation in Italian), *affatto*
     is not. The contrast is structural in the registry — *pur*'s
-    `licensingContexts` includes `.comparativeNP` (and `.comparativeS`)
-    while *affatto*'s does not, so the Italian Fragment alone witnesses
-    the distributional contrast that motivated the *non₂* analysis. -/
+    `licensingContexts` includes `.comparativeS` while *affatto*'s does
+    not, so the Italian Fragment alone witnesses the distributional
+    contrast that motivated the *non₂* analysis.
+
+    `.comparativeS` (clausal-comparative) is the relevant slot:
+    @cite{hoeksema-1983} establishes that surface NP-comparatives are
+    Boolean homomorphisms (monotone) and not NPI environments —
+    `.comparativeNP` therefore licenses nothing. -/
 theorem pur_licensed_in_comparative :
-    pur.licensingContexts.contains .comparativeNP = true := by decide
+    pur.licensingContexts.contains .comparativeS = true := by decide
 
 theorem affatto_not_licensed_in_comparative :
-    affatto.licensingContexts.contains .comparativeNP = false := by decide
+    affatto.licensingContexts.contains .comparativeS = false := by decide
 
 -- ============================================================================
 -- Pure Universal FCIs

@@ -87,10 +87,21 @@ private theorem utilityEquiv_trans (dp : DecisionProblem W A) (actions : List A)
     Two worlds are in the same cell iff they have identical utility
     vectors across all actions. -/
 def sufficientPartition (dp : DecisionProblem W A) (actions : List A) : QUD W where
-  sameAnswer := utilityEquiv dp actions
-  refl := utilityEquiv_refl dp actions
-  symm := utilityEquiv_symm dp actions
-  trans := utilityEquiv_trans dp actions
+  toSetoid :=
+    { r := λ w v => utilityEquiv dp actions w v = true
+      iseqv :=
+        { refl := utilityEquiv_refl dp actions
+          symm := λ {w v} h => (utilityEquiv_symm dp actions w v).symm.trans h
+          trans := λ {w v u} h1 h2 => utilityEquiv_trans dp actions w v u h1 h2 } }
+  decR := λ w v => decEq (utilityEquiv dp actions w v) true
+
+@[simp] theorem sufficientPartition_sameAnswer
+    (dp : DecisionProblem W A) (actions : List A) (w v : W) :
+    (sufficientPartition dp actions).sameAnswer w v = utilityEquiv dp actions w v := by
+  show decide (utilityEquiv dp actions w v = true) = _
+  cases h : utilityEquiv dp actions w v
+  · simp
+  · simp
 
 /-- Within a sufficient partition cell, utilities are identical for every action. -/
 theorem sufficientPartition_utility_eq
@@ -98,7 +109,8 @@ theorem sufficientPartition_utility_eq
     {w v : W} (h : (sufficientPartition dp actions).sameAnswer w v = true)
     {a : A} (ha : a ∈ actions) :
     dp.utility w a = dp.utility v a := by
-  simp only [sufficientPartition, utilityEquiv, List.all_eq_true, beq_iff_eq] at h
+  simp only [sufficientPartition_sameAnswer, utilityEquiv, List.all_eq_true,
+             beq_iff_eq] at h
   exact h a ha
 
 -- ════════════════════════════════════════════════════
@@ -169,7 +181,8 @@ theorem sufficientPartition_coarsest
       ∀ a ∈ actions, dp.utility w a = dp.utility v a) :
     QUD.refines q (sufficientPartition dp actions) := by
   intro w v hCell
-  simp only [sufficientPartition, utilityEquiv, List.all_eq_true, beq_iff_eq]
+  simp only [sufficientPartition_sameAnswer, utilityEquiv, List.all_eq_true,
+             beq_iff_eq]
   exact hUtil w v hCell
 
 -- ════════════════════════════════════════════════════
@@ -193,7 +206,8 @@ theorem sufficient_trivial_of_constant_utility
     (hConst : ∀ w v : W, ∀ a ∈ actions, dp.utility w a = dp.utility v a) :
     QUD.refines QUD.trivial (sufficientPartition dp actions) := by
   intro w v _
-  simp only [sufficientPartition, utilityEquiv, List.all_eq_true, beq_iff_eq]
+  simp only [sufficientPartition_sameAnswer, utilityEquiv, List.all_eq_true,
+             beq_iff_eq]
   exact hConst w v
 
 -- ════════════════════════════════════════════════════

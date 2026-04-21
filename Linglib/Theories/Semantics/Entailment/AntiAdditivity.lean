@@ -39,7 +39,9 @@ def IsAntiMorphic (f : Set α → Set β) : Prop :=
   (∀ p q : Set α, ∀ x, f (p ∩ q) x ↔ f p x ∨ f q x)
 
 
-/-- Anti-additive implies antitone. The codomain need not be `Set World`. -/
+/-- Anti-additive implies antitone (@cite{hoeksema-1983} Fact 4: the
+    polarity-environment classification of anti-additive operators as
+    downward-entailing). Codomain need not be `Set World`. -/
 theorem IsAntiAdditive.antitone {f : Set α → Set β} (hAA : IsAntiAdditive f) :
     Antitone f := by
   intro p q hpq x hfq
@@ -287,31 +289,5 @@ theorem IsAntiMultiplicative.antitone {f : Set α → Set β} (hAM : IsAntiMulti
 
 end UEDuals
 
-
--- ============================================================================
--- Section: Boolean Homomorphism (@cite{hoeksema-1983})
--- ============================================================================
-
-section BooleanHomomorphism
-
-/-- A function `f : Set α → Set β` is a Boolean homomorphism iff it underlies
-a `BoundedLatticeHom (Set α) (Set β)`. Since `Set _` is a `BooleanAlgebra`,
-mathlib's `BoundedLatticeHomClass.toBiheytingHomClass` instance derives
-`map_compl` for free — so preservation of `∩` / `∪` / `ᶜ` / `⊤` / `⊥` are
-all available via the standard `map_inf` / `map_sup` / `map_compl` /
-`map_top` / `map_bot` simp lemmas on the underlying bundled hom.
-
-This is the property @cite{hoeksema-1983} attributes to the NP-comparative
-`⟦Adj-er than⟧ : Set (Set U) → Set U` (Eq 22), from which Hoeksema derives
-both monotonicity (Fact 3) and uniqueness (Facts 1–2).
-
-For consumers, the recommended API is to construct a `BoundedLatticeHom` and
-use mathlib's `map_inf`/`map_sup`/`map_compl` directly; this `Prop`-valued
-predicate exists as a documentation hook anchoring the @cite{hoeksema-1983}
-terminology to the mathlib infrastructure. -/
-def IsBooleanHomomorphism {α β : Type*} (f : Set α → Set β) : Prop :=
-  ∃ g : BoundedLatticeHom (Set α) (Set β), ⇑g = f
-
-end BooleanHomomorphism
 
 end Semantics.Entailment.AntiAdditivity

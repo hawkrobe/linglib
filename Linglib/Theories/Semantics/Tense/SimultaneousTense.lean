@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Core.Temporal.Tense
+import Linglib.Core.Time.Tense
 
 /-!
 # @cite{sharvit-2003}: Simultaneous Tense as a Genuine Tense
@@ -53,8 +53,8 @@ are available in embedded clauses, producing optional SOT:
 
 namespace Semantics.Tense.SimultaneousTense
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Semantics.Tense
 
 

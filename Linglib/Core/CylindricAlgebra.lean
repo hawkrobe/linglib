@@ -95,6 +95,8 @@ over a different carrier.
 
 namespace Core.CylindricAlgebra
 
+open Core (Situation)
+
 open Core (Assignment)
 
 -- ════════════════════════════════════════════════════════════════

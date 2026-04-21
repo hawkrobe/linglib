@@ -1,5 +1,5 @@
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.InformationStructure
@@ -239,7 +239,7 @@ theorem manner_content_qud_distinct
     ¬((contentQUD (Manner := Manner) (Content := Content)).sameAnswer e1 e2 = true) := by
   constructor
   · exact manner_qud_ignores_content e1 e2 h_same_manner
-  · simp only [contentQUD, QUD.ofDecEq, decide_eq_true_eq]
+  · simp only [contentQUD, QUD.ofDecEq_sameAnswer_iff]
     exact h_diff_content
 
 /-! ## §4. Deriving the Extraction Constraint
@@ -300,14 +300,14 @@ varying content never changes the QUD cell. -/
 theorem content_question_irrelevant_under_manner :
     ¬ contentQuestionRelevant (mannerQUD (Manner := Manner) (Content := Content)) := by
   intro ⟨_, _, _, h⟩
-  simp [mannerQUD, QUD.ofDecEq] at h
+  simp [mannerQUD, QUD.ofDecEq_sameAnswer] at h
 
 /-- Under the content QUD, content extraction questions ARE QUD-relevant:
 different content values produce events in different QUD cells. -/
 theorem content_question_relevant_under_content
     (m : Manner) (c₁ c₂ : Content) (hne : c₁ ≠ c₂) :
     contentQuestionRelevant (contentQUD (Manner := Manner) (Content := Content)) :=
-  ⟨m, c₁, c₂, by simp [contentQUD, QUD.ofDecEq, hne]⟩
+  ⟨m, c₁, c₂, by simp [contentQUD, QUD.ofDecEq_sameAnswer, hne]⟩
 
 -- ── Route 2: Information-structural clash ────────────────────────────
 
@@ -329,7 +329,7 @@ theorem extraction_filler_varies
     (m : Manner) (c₁ c₂ : Content) (hne : c₁ ≠ c₂) :
     (extractionQUD (Manner := Manner) (Content := Content)).sameAnswer
       ⟨m, c₁⟩ ⟨m, c₂⟩ = false := by
-  simp [extractionQUD, contentQUD, QUD.ofDecEq, hne]
+  simp [extractionQUD, contentQUD, QUD.ofDecEq_sameAnswer, hne]
 
 open Semantics.FocusInterpretation Semantics.Questions.Hamblin in
 /-- **Q-A congruence applied to extraction** (@cite{rooth-1992} (26d)):

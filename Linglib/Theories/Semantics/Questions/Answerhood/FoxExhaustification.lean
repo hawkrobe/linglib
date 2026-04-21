@@ -10,7 +10,7 @@ The definitions below are Bool-valued analogues of the Prop-valued MC-set/IE
 machinery in `Exhaustification.Operators`, specialized to question cells
 for decidable computation via `native_decide`.
 
-- `cellMCSets` mirrors `isMCSet` from Exhaustification
+- `cellMCSets` mirrors `IsMCSet` from Exhaustification
 - `cellIE` mirrors `IE` from Exhaustification
 - `foxExh` mirrors `exhIE` from Exhaustification
 - `foxAns` implements @cite{fox-2018}'s answer operator (definition 35)
@@ -39,7 +39,7 @@ negated while cell `pIdx` stays true?
 ∃w ∈ worlds. cells[pIdx](w) ∧ ∀j ∈ excluded. ¬cells[j](w)
 
 This is the Bool analogue of `SetConsistent` in Exhaustification,
-specialized to the pattern φ ∧ ⋀{¬a : a ∈ excluded}. -/
+specialized to the pattern φ ∧ ⋂₀ {¬a : a ∈ excluded}. -/
 def negConsistent {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (excluded : List Nat) (worlds : List W) : Bool :=
   worlds.any (λ w =>
@@ -52,7 +52,7 @@ A subset `S` of alternative indices (excluding `pIdx`) is an MC-set iff:
 1. Negating all cells in `S` is consistent with `pIdx` being true
 2. No proper superset of `S` is also consistent
 
-Bool analogue of `isMCSet` in Exhaustification.Operators. -/
+Bool analogue of `IsMCSet` in Exhaustification.Operators. -/
 def cellMCSets {W : Type _} (cells : List (W → Bool)) (pIdx : Nat)
     (worlds : List W) : List (List Nat) :=
   let altIdxs := (List.range cells.length).filter (· != pIdx)

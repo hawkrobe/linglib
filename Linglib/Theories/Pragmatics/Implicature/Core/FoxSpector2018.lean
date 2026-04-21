@@ -1,5 +1,6 @@
-import Linglib.Theories.Semantics.Exhaustification.Operators
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Mathlib.Tactic.DeriveFintype
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
+import Linglib.Theories.Semantics.Exhaustification.Innocent
 
 /-!
 # Fox & Spector 2018: Economy and Embedded Exhaustification
@@ -73,7 +74,7 @@ private def por (φ ψ : Set World) : Set World := fun w => φ w ∨ ψ w
 abbrev Continuation (World : Type*) := Set World → Set World
 
 /-- Negation continuation. -/
-def negCont : Continuation World := pneg
+def negCont : Continuation World := (·)ᶜ
 
 /-- A parse point: a proposition with alternatives and possible
     continuations. -/
@@ -98,7 +99,7 @@ def isIncrementallyVacuous (ALT : Set (Set World)) (φ : Set World)
     weakening. -/
 def isIncrementallyWeakening (ALT : Set (Set World)) (φ : Set World)
     (conts : Set (Continuation World)) : Prop :=
-  ∀ C ∈ conts, C φ ⊆ₚ C (exhIE ALT φ)
+  ∀ C ∈ conts, C φ ⊆ C (exhIE ALT φ)
 
 /-- **Economy Condition on Exhaustification** (definition 63):
     `exh(φ)` is licensed only if it is neither incrementally
@@ -153,19 +154,19 @@ Fox & Spector derive this from economy rather than stipulating it.
 
 /-- Hurford violation: one disjunct entails the other. -/
 def hurfordViolation (A B : Set World) : Prop :=
-  (A ⊆ₚ B) ∨ (B ⊆ₚ A)
+  (A ⊆ B) ∨ (B ⊆ A)
 
 /-- A disjunction satisfies Hurford's Constraint if neither
     disjunct entails the other. -/
 def satisfiesHC (A B : Set World) : Prop :=
-  ¬(A ⊆ₚ B) ∧ ¬(B ⊆ₚ A)
+  ¬(A ⊆ B) ∧ ¬(B ⊆ A)
 
 /-- A Hurford disjunction can be rescued by embedding `exh` in the
     weaker disjunct if the exhaustified disjunct no longer entails
     the stronger one. -/
 def isRescuedByExh (ALT : Set (Set World)) (A B : Set World) :
     Prop :=
-  ¬(exhIE ALT A ⊆ₚ B)
+  ¬(exhIE ALT A ⊆ B)
 
 /-- The disjunction continuation: (λp. A ∨ p). -/
 def disjCont (A : Set World) : Continuation World :=
@@ -178,7 +179,7 @@ def disjCont (A : Set World) : Continuation World :=
     This derives Hurford's Constraint from economy rather than
     stipulating it as a surface filter. -/
 theorem hurford_from_economy (ALT : Set (Set World)) (A B : Set World)
-    (hBA : B ⊆ₚ A) (_hstill : exhIE ALT B ⊆ₚ A) :
+    (hBA : B ⊆ A) (_hstill : exhIE ALT B ⊆ A) :
     isIncrementallyWeakening ALT B {disjCont A} := by
   intro C hC w hCBw
   simp only [Set.mem_singleton_iff] at hC
@@ -232,9 +233,9 @@ theorem singh_weak_exh_nonvacuous (ALT : Set (Set World))
     ¬weak or ¬strong to the exclusion set makes it inconsistent
     (since strong entails weak, every strong-world is a weak-world). -/
 theorem singh_strong_exh_vacuous (weak strong : Set World)
-    (h_entails : strong ⊆ₚ weak) :
-    exhIE {weak, strong} strong ≡ₚ strong := by
-  constructor
+    (h_entails : strong ⊆ weak) :
+    exhIE {weak, strong} strong = strong := by
+  apply Set.Subset.antisymm
   · -- exhIE ⊆ strong: the prejacent is always in IE
     intro w hexh
     have hstrong_in_IE : strong ∈ IE {weak, strong} strong :=
@@ -242,12 +243,12 @@ theorem singh_strong_exh_vacuous (weak strong : Set World)
     exact hexh strong hstrong_in_IE
   · -- strong ⊆ exhIE: construct the unique MC-set {strong}
     intro w hstrong_w ψ hψ_IE
-    have hE₀_compat : isCompatible {weak, strong} strong {strong} := by
+    have hE₀_compat : IsCompatible {weak, strong} strong {strong} := by
       refine ⟨Set.mem_singleton _, ?_, ?_⟩
       · intro ψ' hψ'
         left; exact Set.mem_singleton_iff.mp hψ'
       · exact ⟨w, fun ψ' hψ' => Set.mem_singleton_iff.mp hψ' ▸ hstrong_w⟩
-    have hE₀_maximal : isMCSet {weak, strong} strong {strong} := by
+    have hE₀_maximal : IsMCSet {weak, strong} strong {strong} := by
       refine ⟨hE₀_compat, ?_⟩
       intro E' hE'_compat hE₀_sub_E' ψ' hψ'_E'
       rcases hE'_compat.2.1 ψ' hψ'_E' with hψ'_eq | ⟨a, ha_ALT, hψ'_neg⟩
@@ -297,7 +298,7 @@ def isDECont (S : Continuation World) : Prop :=
   ∀ (p q : Set World), (∀ w, p w → q w) → ∀ w, S q w → S p w
 
 /-- Negation is DE. -/
-theorem negCont_is_DE : isDECont (pneg (World := World)) := by
+theorem negCont_is_DE : isDECont (Compl.compl (α := Set World)) := by
   intro p q hpq w hnq hp
   exact hnq (hpq w hp)
 
@@ -310,12 +311,12 @@ theorem prejacent_mem_IE (ALT : Set (Set World)) (φ : Set World) :
 /-- `exhIE` always entails its prejacent: exhaustification can
     only strengthen, never weaken. -/
 theorem exhIE_entails_prejacent (ALT : Set (Set World))
-    (φ : Set World) : exhIE ALT φ ⊆ₚ φ :=
+    (φ : Set World) : exhIE ALT φ ⊆ φ :=
   fun _w h => h φ (prejacent_mem_IE ALT φ)
 
 /-- **`exh` is always globally weakening under DE**: since
-    `exhIE ALT φ ⊆ₚ φ` and DE reverses entailment,
-    `S(φ) ⊆ₚ S(exhIE ALT φ)`.
+    `exhIE ALT φ ⊆ φ` and DE reverses entailment,
+    `S(φ) ⊆ S(exhIE ALT φ)`.
 
     This is the core observation behind the IFG: embedded `exh`
     under DE operators is blocked by economy unless focus provides
@@ -327,15 +328,15 @@ theorem exh_weakening_under_de (ALT : Set (Set World))
   fun w => hDE (exhIE ALT φ) φ (exhIE_entails_prejacent ALT φ) w
 
 /-- More IE alternatives means a stronger exhaustified meaning:
-    if IE(ALT') ⊆ IE(ALT), then exhIE ALT φ ⊆ₚ exhIE ALT' φ.
+    if IE(ALT') ⊆ IE(ALT), then exhIE ALT φ ⊆ exhIE ALT' φ.
     More requirements to satisfy → fewer satisfying worlds. -/
 theorem exhIE_stronger_of_more_IE (ALT ALT' : Set (Set World))
     (φ : Set World) (hIE : IE ALT' φ ⊆ IE ALT φ) :
-    exhIE ALT φ ⊆ₚ exhIE ALT' φ :=
+    exhIE ALT φ ⊆ exhIE ALT' φ :=
   fun _w hexh ψ hψ => hexh ψ (hIE hψ)
 
 /-- **Under DE, more IE alternatives weakens the global result**.
-    If IE(ALT') ⊆ IE(ALT), then S(exhIE ALT' φ) ⊆ₚ S(exhIE ALT φ).
+    If IE(ALT') ⊆ IE(ALT), then S(exhIE ALT' φ) ⊆ S(exhIE ALT φ).
 
     This captures the core of theorem (88): under DE operators,
     expanding the comparison class can only weaken the overall
@@ -376,12 +377,10 @@ section ExhExh
 
 /-- Four worlds for two atomic propositions p, q. -/
 inductive PQWorld where | pq | p_only | q_only | neither
-  deriving Repr, DecidableEq, Inhabited
+  deriving Repr, DecidableEq, Inhabited, Fintype
 
 open PQWorld
-open Exhaustification.InnocentExclusion
-
-private def pqDomain : List PQWorld := [pq, p_only, q_only, neither]
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 private def p_or_q : PQWorld → Bool
   | pq | p_only | q_only => true | neither => false
@@ -390,13 +389,12 @@ private def p_and_q : PQWorld → Bool
 
 /-- exh(p ∨ q) = exclusive or (with alternatives {p∨q, p∧q}). -/
 theorem exh_p_or_q_is_exclusive :
-    ∀ w, exhB pqDomain [p_or_q, p_and_q] p_or_q w =
-      (p_or_q w && !p_and_q w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [p_or_q, p_and_q]) (predToFinset p_or_q) =
+    predToFinset (fun w => p_or_q w && !p_and_q w) := by decide
 
 /-- ¬exh(p ∨ q): "both or neither". -/
 private def neg_exh_p_or_q : PQWorld → Bool :=
-  fun w => !(exhB pqDomain [p_or_q, p_and_q] p_or_q w)
+  fun w => decide (w ∉ innocent.exh (altsFromPreds [p_or_q, p_and_q]) (predToFinset p_or_q))
 
 /-- ¬(p ∨ q): "neither". -/
 private def neg_p_or_q : PQWorld → Bool
@@ -409,9 +407,8 @@ private def neg_p_or_q : PQWorld → Bool
     strictly stronger, it is innocently excludable. Negating it
     adds (p∨q), which combined with ¬exh(p∨q) gives p∧q. -/
 theorem exh_exh_conjunctive :
-    ∀ w, exhB pqDomain [neg_exh_p_or_q, neg_p_or_q] neg_exh_p_or_q w =
-      p_and_q w := by
-  intro w; cases w <;> native_decide
+    innocent.exh (altsFromPreds [neg_exh_p_or_q, neg_p_or_q]) (predToFinset neg_exh_p_or_q) =
+    predToFinset p_and_q := by decide
 
 end ExhExh
 
@@ -436,7 +433,7 @@ Economy and structural complexity are **complementary**:
   alternatives → blocks vacuous/weakening insertions
 -/
 
-/-- Vacuous `exhIE` violates economy: if `exhIE ≡ₚ φ`, then `exh`
+/-- Vacuous `exhIE` violates economy: if `exhIE = φ`, then `exh`
     is incrementally vacuous for all extensional continuations, so
     economy is not met.
 
@@ -447,15 +444,14 @@ Economy and structural complexity are **complementary**:
 theorem vacuous_violates_economy (ALT : Set (Set World))
     (φ : Set World) (conts : Set (Continuation World))
     (_hne : conts.Nonempty)
-    (hvac : exhIE ALT φ ≡ₚ φ)
+    (hvac : exhIE ALT φ = φ)
     (hext : ∀ C ∈ conts, ∀ (p q : Set World),
       (∀ w, p w ↔ q w) → ∀ w, C p w ↔ C q w) :
     ¬economyConditionMet ALT φ conts := by
   intro ⟨hnv, _⟩
   apply hnv
   intro C hC w
-  exact hext C hC (exhIE ALT φ) φ
-    (fun _ => ⟨fun h => hvac.1 h, fun h => hvac.2 h⟩) w
+  exact hext C hC (exhIE ALT φ) φ (fun w => Iff.of_eq (congrFun hvac w)) w
 
 
 end Implicature.FoxSpector2018

@@ -20,23 +20,25 @@ section Conjunction
 instance {W : Type*} : Add (GSQuestion W) where
   add := QUD.compose
 
+@[simp] theorem add_eq_compose {W : Type*} (q1 q2 : GSQuestion W) :
+    q1 + q2 = QUD.compose q1 q2 := rfl
+
 /-- Conjunction is commutative (up to equivalence). -/
 theorem compose_comm {W : Type*} (q1 q2 : GSQuestion W) (w v : W) :
     (q1 + q2).sameAnswer w v = (q2 + q1).sameAnswer w v := by
-  simp only [HAdd.hAdd, Add.add, QUD.compose]
-  exact Bool.and_comm _ _
+  rw [add_eq_compose, add_eq_compose, QUD.compose_sameAnswer, QUD.compose_sameAnswer,
+      Bool.and_comm]
 
 /-- Conjunction is associative. -/
 theorem compose_assoc {W : Type*} (q1 q2 q3 : GSQuestion W) (w v : W) :
     ((q1 + q2) + q3).sameAnswer w v = (q1 + (q2 + q3)).sameAnswer w v := by
-  simp only [HAdd.hAdd, Add.add, QUD.compose]
-  exact Bool.and_assoc _ _ _
+  simp only [add_eq_compose, QUD.compose_sameAnswer, Bool.and_assoc]
 
 /-- The trivial question is the unit for conjunction. -/
 theorem compose_trivial_left {W : Type*} [BEq W] (q : GSQuestion W) (w v : W) :
     (GSQuestion.trivial + q).sameAnswer w v = q.sameAnswer w v := by
-  simp only [HAdd.hAdd, Add.add, QUD.compose, GSQuestion.trivial,
-             QUD.trivial, Bool.true_and]
+  simp only [add_eq_compose, QUD.compose_sameAnswer, GSQuestion.trivial,
+             QUD.trivial_sameAnswer, Bool.true_and]
 
 end Conjunction
 
@@ -57,7 +59,7 @@ theorem conj_is_meet {W : Type*} (q1 q2 q : GSQuestion W)
     (h1 : q ⊑ q1) (h2 : q ⊑ q2) :
     q ⊑ (q1 + q2) := by
   intro w v hq
-  simp only [HAdd.hAdd, Add.add, QUD.compose, Bool.and_eq_true]
+  rw [add_eq_compose, QUD.compose_sameAnswer, Bool.and_eq_true]
   exact ⟨h1 w v hq, h2 w v hq⟩
 
 /-- Conjunction preserves refinement in both arguments. -/
@@ -65,7 +67,8 @@ theorem conj_monotone_left {W : Type*} (q1 q1' q2 : GSQuestion W)
     (h : q1 ⊑ q1') :
     (q1 + q2) ⊑ (q1' + q2) := by
   intro w v heq
-  simp only [HAdd.hAdd, Add.add, QUD.compose, Bool.and_eq_true] at *
+  rw [add_eq_compose, QUD.compose_sameAnswer, Bool.and_eq_true]
+  rw [add_eq_compose, QUD.compose_sameAnswer, Bool.and_eq_true] at heq
   exact ⟨h w v heq.1, heq.2⟩
 
 end PartitionLattice

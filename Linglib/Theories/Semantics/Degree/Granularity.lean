@@ -1,8 +1,8 @@
 import Mathlib.Order.Basic
 import Mathlib.Algebra.Order.Group.Defs
 import Linglib.Core.Scales.Scale
-import Linglib.Core.QUD.Basic
-import Linglib.Core.QUD.PrecisionProjection
+import Linglib.Core.Question.QUD
+import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
 import Linglib.Core.Partition
@@ -264,7 +264,7 @@ def granQUD (n : Nat) (ε : Nat) : QUD (Fin n) :=
 theorem finer_granularity_refines (n ε₁ ε₂ : Nat) (hdvd : ε₁ ∣ ε₂) :
     QUD.refines (granQUD n ε₁) (granQUD n ε₂) := by
   intro w v h
-  simp only [granQUD, QUD.ofProject, beq_iff_eq] at *
+  simp only [granQUD, QUD.ofProject_sameAnswer_iff] at *
   exact div_determined_by_finer w.val v.val ε₁ ε₂ hdvd h
 
 end GranularityQuestion

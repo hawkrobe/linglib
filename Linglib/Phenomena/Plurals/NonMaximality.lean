@@ -6,7 +6,7 @@ Theory-neutral empirical patterns for non-maximal readings of plural sentences.
 
 ## Phenomena Covered
 
-1. Issue-sensitivity: same sentence, different contexts yield different readings
+1. Question-sensitivity: same sentence, different contexts yield different readings
 2. Switches scenarios: maximal vs non-maximal contexts
 3. Bank robbery scenario: fine-grained non-maximality
 4. Homogeneity removers block non-maximality: "all" prevents weakening
@@ -252,7 +252,7 @@ structure TruthDistinctionDatum where
   semanticallyTrue : Bool
   /-- P-true in context? -/
   pTrue : Bool
-  /-- Issue -/
+  /-- Question -/
   issue : String
   deriving Repr
 

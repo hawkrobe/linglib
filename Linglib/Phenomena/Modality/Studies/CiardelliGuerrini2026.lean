@@ -67,7 +67,6 @@ namespace CiardelliGuerrini2026
 
 open Core.Modality
 open Exhaustification.FreeChoice (diamond pdisj diamond_distributes_iff FCAltSet free_choice_forward)
-open Exhaustification (pand)
 open Fragments.English.Auxiliaries
 
 -- ============================================================================
@@ -577,7 +576,7 @@ truth-conditional consequences for conjunction.
     ◇(A ∧ B) → ◇A ∧ ◇B but not conversely. -/
 theorem conjunctive_narrow_stronger {World : Type*}
     (p q : Set World)
-    (h : diamond (pand p q)) : diamond p ∧ diamond q := by
+    (h : diamond (p ∩ q)) : diamond p ∧ diamond q := by
   obtain ⟨w, hp, hq⟩ := h
   exact ⟨⟨w, hp⟩, ⟨w, hq⟩⟩
 

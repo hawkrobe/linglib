@@ -48,6 +48,8 @@ the simple past tense form, the periphrastic *used to*, and *would*.
 
 namespace BonehDoron2013
 
+open Core (Situation)
+
 open Semantics.Quantification.CovertQuantifier
 open Semantics.Noun.Kind.Generics (Situation traditionalGEN)
 open Semantics.Verb.Habituals (Occasion traditionalHAB)

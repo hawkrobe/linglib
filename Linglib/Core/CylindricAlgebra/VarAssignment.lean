@@ -30,6 +30,8 @@ substitution theory (HMT §1.5).
 
 namespace Core.CylindricAlgebra
 
+open Core (Situation)
+
 open Core (Assignment)
 open Core.VarAssignment (VarAssignment updateVar lookupVar varLambdaAbs)
 

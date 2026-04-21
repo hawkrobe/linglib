@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Causation.Psych
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Time.Interval.Basic
 import Linglib.Theories.Semantics.Events.Basic
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 

@@ -266,7 +266,7 @@ respects the partition.
 theorem exact_all_relevant [LawfulBEq W] (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.exact (M := W)) p := by
   intro w1 w2 h
-  simp only [QUD.exact, beq_iff_eq] at h
+  rw [QUD.exact_sameAnswer_iff] at h
   exact congrArg p h
 
 /--
@@ -285,10 +285,8 @@ Theorem: With trivial QUD, only constant propositions are strongly relevant.
 -/
 theorem trivial_relevant_iff_constant (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.trivial (M := W)) p ↔ (∀ w1 w2 : W, p w1 = p w2) := by
-  simp only [isStronglyRelevantProp, QUD.trivial]
-  constructor
-  · intro h w1 w2; exact h w1 w2 trivial
-  · intro h _ _ _; exact h _ _
+  simp only [isStronglyRelevantProp, QUD.trivial_sameAnswer]
+  exact ⟨λ h w1 w2 => h w1 w2 trivial, λ h _ _ _ => h _ _⟩
 
 /--
 Non-Maximality Theorem: With a coarse QUD that groups "all P" with "almost all P",
@@ -365,7 +363,7 @@ The exact QUD distinguishes all worlds, so every proposition aligns with it.
 theorem exact_all_stronglyRelevant [LawfulBEq W] (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.exact (M := W)) p := by
   intro w1 w2 h
-  simp only [QUD.exact, beq_iff_eq] at h
+  rw [QUD.exact_sameAnswer_iff] at h
   exact congrArg p h
 
 /--
@@ -376,12 +374,8 @@ iff it has the same value at all worlds.
 -/
 theorem trivial_stronglyRelevant_iff (p : (W → Bool)) :
     isStronglyRelevantProp (QUD.trivial (M := W)) p ↔ (∀ w1 w2 : W, p w1 = p w2) := by
-  simp only [isStronglyRelevantProp, QUD.trivial]
-  constructor
-  · intro h w1 w2
-    exact h w1 w2 trivial
-  · intro h _ _ _
-    exact h _ _
+  simp only [isStronglyRelevantProp, QUD.trivial_sameAnswer]
+  exact ⟨λ h w1 w2 => h w1 w2 trivial, λ h _ _ _ => h _ _⟩
 
 /--
 Key Theorem: The maximal proposition is always strongly relevant to exact QUD.

@@ -36,8 +36,8 @@ via res movement, just as DPs can scope out of attitude complements.
 
 namespace Semantics.Tense.TemporalDeRe
 
-open Core.Tense
-open Core.Reichenbach
+open Core.Time.Tense
+open Core.Time.Reichenbach
 open Core.Time
 open Semantics.Tense
 

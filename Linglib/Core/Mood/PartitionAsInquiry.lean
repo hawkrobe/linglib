@@ -1,27 +1,27 @@
 import Mathlib.Data.Setoid.Partition
-import Linglib.Core.Issue.Basic
+import Linglib.Core.Question.Basic
 import Linglib.Core.Mood.POSWQ
 
 /-!
-# Partition as Inquiry — Setoid → Issue embedding
+# Partition as Inquiry — Setoid → Question embedding
 @cite{ciardelli-groenendijk-roelofsen-2018} @cite{theiler-etal-2018}
 @cite{puncochar-2019}
 
 The faithful embedding of partition-based inquiry (`Setoid W` — what
 `POSWQ.inquiry` carries) into the more general inquisitive-content
-representation (`Issue W` — downward-closed nonempty
+representation (`Question W` — downward-closed nonempty
 families of information states).
 
 ## Architectural placement
 
 This file implements the embedding direction prescribed in the
-"Architectural note: Setoid vs. Issue" section of
+"Architectural note: Setoid vs. Question" section of
 `POSWQ.lean` (added 0.229.922): we keep `inquiry : Setoid W` as the
 field of `POSWQ` (partitions are the right shape for the propositional-
 discourse use cases that currently exist), and provide a *one-way*
-embedding `Setoid → Issue`. The embedding goes this way
+embedding `Setoid → Question`. The embedding goes this way
 and not the other because every Setoid-based partition can be expressed
-as an Issue (each equivalence class becomes a maximal
+as an Question (each equivalence class becomes a maximal
 proposition / alternative), but the reverse fails — mention-some,
 intermediate-exhaustive, and conditional question alternatives are
 non-disjoint or non-exhaustive and so are not representable as the
@@ -34,7 +34,7 @@ forgetful map.
 
 ## What this gives us
 
-- `fromSetoid r : Issue W` — the inquisitive content whose
+- `fromSetoid r : Question W` — the inquisitive content whose
   alternatives are the equivalence classes of `r`. Concretely,
   `props = {q | q = ∅ ∨ ∃ c ∈ r.classes, q ⊆ c}`: a non-empty information
   state `q` resolves the issue iff it is contained in some equivalence
@@ -44,23 +44,23 @@ forgetful map.
   information. (This matches the standard partition-semantics view.)
 - `isInquisitive_fromSetoid_of_two_classes` — if `r` has at least two
   distinct equivalence classes, the resulting content is inquisitive
-  (in `Issue`'s sense: `info ∉ props`). The trivial
+  (in `Question`'s sense: `info ∉ props`). The trivial
   partition (one class) yields a declarative.
 -/
 
 namespace Core
 
-namespace Issue
+namespace Question
 
 universe u
 variable {W : Type u}
 
-/-- The Issue associated with a setoid `r` on `W`: a
+/-- The Question associated with a setoid `r` on `W`: a
     proposition `q` resolves the issue iff `q = ∅` or `q` is contained
     in some `r`-equivalence class (i.e., everything in `q` agrees on the
     `r`-question). The maximal such propositions are the equivalence
     classes themselves. -/
-def fromSetoid (r : Setoid W) : Issue W where
+def fromSetoid (r : Setoid W) : Question W where
   props := {q | q = ∅ ∨ ∃ c ∈ r.classes, q ⊆ c}
   contains_empty := Or.inl rfl
   downward_closed := fun p hp q hq => by
@@ -100,19 +100,19 @@ theorem isInquisitive_fromSetoid_of_two_classes
     have h2 : r w₂ v := hsub (Set.mem_univ w₂)
     exact hne (Setoid.trans' r h1 (Setoid.symm' r h2))
 
-/-! ### Setoid–Issue bridge: refinement = entailment
+/-! ### Setoid–Question bridge: refinement = entailment
 
 The `fromSetoid` embedding is **monotone** in mathlib's lattice order on
 `Setoid` (where `r₁ ≤ r₂` iff `r₁` is *finer*: `r₁.Rel x y → r₂.Rel x y`)
-and the entailment order on `Issue` (`P ≤ Q` iff `P.props ⊆ Q.props`).
+and the entailment order on `Question` (`P ≤ Q` iff `P.props ⊆ Q.props`).
 The bridge is moreover a **lattice embedding**: `≤` is reflected back.
 
 This is the Set-based form of Groenendijk–Stokhof's "partition refinement
 = question entailment", formulated as a one-liner over `Setoid` and
-`Core.Issue` with no `worlds : List W` quantifier and no `isPartition`
+`Core.Question` with no `worlds : List W` quantifier and no `isPartition`
 precondition. -/
 
-/-- The `Setoid → Issue` embedding **reflects** the order: a setoid is
+/-- The `Setoid → Question` embedding **reflects** the order: a setoid is
     finer than another iff its inquisitive content is entailed by the
     other's. The forward direction is monotonicity; the backward
     direction uses the fact that `r`-equivalent pairs are resolved by
@@ -121,7 +121,7 @@ precondition. -/
 theorem fromSetoid_le_iff (r₁ r₂ : Setoid W) :
     fromSetoid r₁ ≤ fromSetoid r₂ ↔ r₁ ≤ r₂ := by
   refine ⟨?_, ?_⟩
-  · -- ≤ on Issue → ≤ on Setoid: take r₁-related x y; the doubleton
+  · -- ≤ on Question → ≤ on Setoid: take r₁-related x y; the doubleton
     -- {x, y} resolves fromSetoid r₁, hence resolves fromSetoid r₂.
     intro hle x y hxy
     have hpair : ({x, y} : Set W) ∈ fromSetoid r₁ := by
@@ -138,7 +138,7 @@ theorem fromSetoid_le_iff (r₁ r₂ : Setoid W) :
       have hxv : r₂ x v := hsub (Set.mem_insert x _)
       have hyv : r₂ y v := hsub (Set.mem_insert_of_mem x rfl)
       exact Setoid.trans' r₂ hxv (Setoid.symm' r₂ hyv)
-  · -- ≤ on Setoid → ≤ on Issue: a state contained in an r₁-cell is
+  · -- ≤ on Setoid → ≤ on Question: a state contained in an r₁-cell is
     -- contained in the surrounding r₂-cell (cells only widen).
     intro hle q hq
     rcases hq with hempty | ⟨c, hc, hqc⟩
@@ -194,14 +194,14 @@ theorem class_mem_alt_fromSetoid (r : Setoid W) {c : Set W}
     have hxv' : r x v' := hqc' hxq
     exact Setoid.trans' r hxv' (Setoid.symm' r hvv')
 
-end Issue
+end Question
 
 end Core
 
 /-! ## POSWQ bridge
 
 Lift the partition-based inquiry component of a `POSWQ` to its full
-`Issue`. This makes every existing POSWQ-using study
+`Question`. This makes every existing POSWQ-using study
 automatically a consumer of the inquisitive-content API: `info`,
 `alt`, `isInquisitive`, the lattice operations, and the
 mention-some/IE-question forcing arguments all become available
@@ -211,7 +211,7 @@ namespace Core.Mood
 
 namespace POSWQ
 
-open Core (Issue)
+open Core (Question)
 
 universe u
 variable {W : Type u}
@@ -219,15 +219,15 @@ variable {W : Type u}
 /-- The inquisitive content embedded in a POSWQ via its inquiry
     partition. Always non-informative (`info = univ`); inquisitive
     iff the partition has more than one cell. -/
-def inquiryContent (c : POSWQ W) : Issue W :=
-  Issue.fromSetoid c.inquiry
+def inquiryContent (c : POSWQ W) : Question W :=
+  Question.fromSetoid c.inquiry
 
 @[simp] theorem inquiryContent_eq (c : POSWQ W) :
-    c.inquiryContent = Issue.fromSetoid c.inquiry := rfl
+    c.inquiryContent = Question.fromSetoid c.inquiry := rfl
 
 @[simp] theorem info_inquiryContent (c : POSWQ W) :
     c.inquiryContent.info = Set.univ :=
-  Issue.info_fromSetoid c.inquiry
+  Question.info_fromSetoid c.inquiry
 
 end POSWQ
 

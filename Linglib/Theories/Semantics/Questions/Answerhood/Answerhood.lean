@@ -48,9 +48,9 @@ theorem gs_ans_implies_karttunen {W E : Type*} [BEq W] [DecidableEq E]
          karttunenCompleteAnswer domain pred w worlds v = true := by
   intro _ v hGS
   -- Extract that full extensions match from G&S sameAnswer
-  change (domain.map (λ x => pred x w) == domain.map (λ x => pred x v)) = true at hGS
-  rw [beq_iff_eq] at hGS
-  -- hGS : domain.map (λ x => pred x w) = domain.map (λ x => pred x v)
+  have hGS : domain.map (λ x => pred x w) = domain.map (λ x => pred x v) := by
+    have := QUD.r_of_sameAnswer (q := GSQuestion.ofProject _) hGS
+    exact this
   simp only [karttunenCompleteAnswer, karttunenDenotation]
   rw [List.all_eq_true]
   intro p hp

@@ -36,7 +36,7 @@ open Semantics.Questions.ProbabilisticAnswerhood
 /-! ### Set/Prop API (mathlib-pure)
 
 Wrappers over the Set/Prop primitives in `ProbabilisticAnswerhood`
-(`isPositiveEvidenceS`, etc.) using `Core.Issue` for inquisitive denotations
+(`isPositiveEvidenceS`, etc.) using `Core.Question` for inquisitive denotations
 and `Set W` (with `[DecidablePred (· ∈ s)]`) for evidence/answer arguments.
 DOX-subset check uses native `Set.Subset`. -/
 
@@ -60,9 +60,9 @@ supports `answer` (`P(answer | q) > P(answer)`).
 
 Spec uses `Classical.dec` so we don't need `[∀ q, DecidablePred (· ∈ q)]`. -/
 noncomputable def fullSupportS {W : Type*} [Fintype W]
-    (dox : Set W) (sentDen : Core.Issue W) (prior : Prior W)
+    (dox : Set W) (sentDen : Core.Question W) (prior : Prior W)
     (answer : Set W) : Prop :=
-  ∃ q ∈ Core.Issue.alt sentDen, dox ⊆ q ∧ isPositiveEvidenceS q answer prior
+  ∃ q ∈ Core.Question.alt sentDen, dox ⊆ q ∧ isPositiveEvidenceS q answer prior
 
 /-- Full support fails when no alternative is doxastically endorsed.
 
@@ -71,8 +71,8 @@ which blocks SUPPORT entirely regardless of the probabilistic component.
 This is IKW's explanation of the interrogative left-argument restriction
 on discourse *only*. -/
 theorem fullSupport_fails_unbelievedS {W : Type*} [Fintype W]
-    (dox : Set W) (sentDen : Core.Issue W) (prior : Prior W) (answer : Set W)
-    (hNoBelief : ∀ q ∈ Core.Issue.alt sentDen, ¬ (dox ⊆ q)) :
+    (dox : Set W) (sentDen : Core.Question W) (prior : Prior W) (answer : Set W)
+    (hNoBelief : ∀ q ∈ Core.Question.alt sentDen, ¬ (dox ⊆ q)) :
     ¬ fullSupportS dox sentDen prior answer := by
   rintro ⟨q, hq, hSub, _⟩
   exact hNoBelief q hq hSub

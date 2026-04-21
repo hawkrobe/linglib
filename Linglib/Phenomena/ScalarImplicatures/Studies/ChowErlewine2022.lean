@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Exhaustification.InnocentExclusion
+import Linglib.Theories.Semantics.Exhaustification.Innocent
+import Mathlib.Tactic.DeriveFintype
 /-!
 # Chow & Erlewine 2022: Restrictions on the Position of *exh*
 @cite{chow-erlewine-2022}
@@ -30,18 +31,13 @@ Restrictions on the position of *exh*. Proceedings of SALT 32: 522--542.
 
 Adjunction sites are derived from tree structure via `OpTree.inScopeOf`,
 not stipulated as an enum. The tree determines whether *exh* must be below
-a presupposition trigger (like *also*), and @cite{fox-2007}'s computable
-`exhB` verifies the resulting semantic predictions on finite models.
-
-## Related Files
-
-- `Exhaustification/InnocentExclusion.lean`: `exhB`, innocent exclusion algorithm
-- `Exhaustification/FreeChoice.lean`: feature-checking, scale reversal, FC
-- `Exhaustification/InnocentExclusion.lean`: `exhB`, `ieIndices` (computable exhaustification)
-- `ScalarImplicatures/ScopeExpressivity.lean`: grammatical vs pragmatic SI
+a presupposition trigger (like *also*), and @cite{fox-2007}'s `innocent`
+excluder verifies the resulting semantic predictions on finite models.
 -/
 
 namespace ChowErlewine2022
+
+open Exhaustification (innocent predToFinset altsFromPreds)
 
 -- ============================================================================
 -- § 1. OpTree: Theory-Neutral Scope Tree
@@ -141,54 +137,68 @@ def ex7_tree : OpTree :=
 
 /-- In (3), "or" IS in "also"'s scope: *exh* must go below *also*. -/
 theorem ex3_trigger_below_also :
-    ex3_tree.inScopeOf "also" "or" = true := by native_decide
+    ex3_tree.inScopeOf "also" "or" = true := by decide
 
 /-- In (7), "or" is NOT in "also"'s scope: *exh* goes above *also*. -/
 theorem ex7_trigger_above_also :
-    ex7_tree.inScopeOf "also" "or" = false := by native_decide
+    ex7_tree.inScopeOf "also" "or" = false := by decide
 
 -- ============================================================================
 -- § 5. Semantic Predictions via Fox 2007
 -- ============================================================================
 
-open Exhaustification.InnocentExclusion
+/-- Four propositional worlds for examples with two atomic propositions. -/
+inductive PQWorld where
+  | pOnly | qOnly | both | neither
+  deriving Repr, DecidableEq, Fintype
 
-/-- Exhaustified disjunction: `exh(A ∨ B)` = exclusive or.
-Directly reuses @cite{fox-2007}'s `disj_exh_eq_exor`. -/
-def exhDisj : PQWorld → Bool := exhB pqDomain disjAlts pOrQ
+def pProp : PQWorld → Bool | .pOnly | .both => true | _ => false
+def qProp : PQWorld → Bool | .qOnly | .both => true | _ => false
+def pOrQ  : PQWorld → Bool | .neither => false | _ => true
+def pAndQ : PQWorld → Bool | .both => true | _ => false
 
-theorem exhDisj_eq_exor : ∀ w, exhDisj w = (pOrQ w && !pAndQ w) :=
-  disj_exh_eq_exor
+/-- Sauerland alternatives for `p ∨ q`: `{p∨q, p, q, p∧q}`. -/
+private abbrev disjAltsF : Finset (Finset PQWorld) :=
+  altsFromPreds [pOrQ, pProp, qProp, pAndQ]
+
+private abbrev pOrQF : Finset PQWorld := predToFinset pOrQ
+
+/-- Exhaustified disjunction: `exh(A ∨ B)` = exclusive or. -/
+def exhDisj : Finset PQWorld := innocent.exh disjAltsF pOrQF
+
+/-- `exh(A ∨ B)` exactly identifies the worlds where exclusive-or holds. -/
+theorem exhDisj_eq_exor :
+    exhDisj = predToFinset (fun w => pOrQ w && !pAndQ w) := by decide
 
 /-- Content of *also*'s scope, determined by tree structure.
 
 - *exh* below *also*: *also*'s scope contains the exhaustified content
 - *exh* above *also*: *also*'s scope contains the bare (unexhaustified) content -/
-def alsoScopeContent (exhBelow : Bool) : PQWorld → Bool :=
-  if exhBelow then exhDisj else pOrQ
+def alsoScopeContent (exhBelow : Bool) : Finset PQWorld :=
+  if exhBelow then exhDisj else pOrQF
 
 -- ── Example (3): also > exh ──
 
 /-- (3a) Disjunctive antecedent (Mira teaches Arabic only) is felicitous:
 antecedent satisfies exclusive or. -/
 theorem ex3a_felicitous :
-    alsoScopeContent true .pOnly = true := by native_decide
+    PQWorld.pOnly ∈ alsoScopeContent true := by decide
 
 /-- (3b) Conjunctive antecedent (Mira teaches both) is infelicitous:
 antecedent does NOT satisfy exclusive or. -/
 theorem ex3b_infelicitous :
-    alsoScopeContent true .both = false := by native_decide
+    PQWorld.both ∉ alsoScopeContent true := by decide
 
 /-- Symmetric: Basque-only antecedent is also felicitous. -/
 theorem ex3a_qOnly :
-    alsoScopeContent true .qOnly = true := by native_decide
+    PQWorld.qOnly ∈ alsoScopeContent true := by decide
 
 -- ── Counterfactual: exh > also would overgenerate ──
 
 /-- If *exh* were above *also* in (3), (3b) would be wrongly predicted
 felicitous: the conjunctive antecedent satisfies bare `A ∨ B`. -/
 theorem ex3b_wrongly_ok_if_exh_above :
-    alsoScopeContent false .both = true := by native_decide
+    PQWorld.both ∈ alsoScopeContent false := by decide
 
 -- ── Example (7): passive — exh > also ──
 
@@ -196,7 +206,7 @@ theorem ex3b_wrongly_ok_if_exh_above :
 *exh* is above *also* (the only non-vacuous position), so *also*'s
 scope is unexhaustified `A ∨ B`. Conjunctive antecedent satisfies this. -/
 theorem ex7_conjunctive_ok :
-    alsoScopeContent false .both = true := by native_decide
+    PQWorld.both ∈ alsoScopeContent false := by decide
 
 -- ── End-to-end: tree → scope config → prediction ──
 
@@ -204,16 +214,16 @@ theorem ex7_conjunctive_ok :
 (3a) felicitous and (3b) infelicitous — both in one theorem. -/
 theorem ex3_end_to_end :
     let exhBelow := ex3_tree.inScopeOf "also" "or"
-    alsoScopeContent exhBelow .pOnly = true
-    ∧ alsoScopeContent exhBelow .both = false := by
-  native_decide
+    PQWorld.pOnly ∈ alsoScopeContent exhBelow
+    ∧ PQWorld.both ∉ alsoScopeContent exhBelow := by
+  decide
 
 /-- The tree for (7) determines *exh* above *also*, which correctly predicts
 conjunctive antecedent felicitous. -/
 theorem ex7_end_to_end :
     let exhBelow := ex7_tree.inScopeOf "also" "or"
-    alsoScopeContent exhBelow .both = true := by
-  native_decide
+    PQWorld.both ∈ alsoScopeContent exhBelow := by
+  decide
 
 -- ============================================================================
 -- § 6. Indirect Scalar Implicatures Under Negation
@@ -228,7 +238,10 @@ def notQ     : PQWorld → Bool := λ w => !qProp w
 /-- Alternatives for `¬(A ∧ B)` under scale reversal:
 `{¬(A∧B), ¬A, ¬B, ¬(A∨B)}`. The scale `⟨∨, ∧⟩` reverses under negation
 to `⟨¬∧, ¬∨⟩`, where `¬(A∨B)` is strongest. -/
-def negConjAlts : List (PQWorld → Bool) := [notPandQ, notP, notQ, notPorQ]
+private abbrev negConjAltsF : Finset (Finset PQWorld) :=
+  altsFromPreds [notPandQ, notP, notQ, notPorQ]
+
+private abbrev notPandQF : Finset PQWorld := predToFinset notPandQ
 
 /-- The indirect SI of negated conjunction equals exclusive or:
 `exh(¬(A ∧ B)) = ¬(A ∧ B) ∧ (A ∨ B) = A ⊕ B`.
@@ -236,21 +249,22 @@ def negConjAlts : List (PQWorld → Bool) := [notPandQ, notP, notQ, notPorQ]
 The same result as the direct SI of disjunction — as expected from
 duality under negation. -/
 theorem indirect_si_eq_exclusive_or :
-    ∀ w : PQWorld, exhB pqDomain negConjAlts notPandQ w =
-      (pOrQ w && !pAndQ w) := by
-  intro w; cases w <;> native_decide
+    innocent.exh negConjAltsF notPandQF
+      = predToFinset (fun w => pOrQ w && !pAndQ w) := by decide
 
 -- ── Vacuity: exh on conjunction is trivial ──
 
 /-- Sauerland alternatives for conjunction: `{A∧B, A, B, A∨B}`. -/
-def conjAlts : List (PQWorld → Bool) := [pAndQ, pProp, qProp, pOrQ]
+private abbrev conjAltsF : Finset (Finset PQWorld) :=
+  altsFromPreds [pAndQ, pProp, qProp, pOrQ]
 
-/-- *exh* applied directly to conjunction is **vacuous**: A∧B entails every
-Sauerland alternative, so NW = {} and I-E = {}. This is why position ③
-in (19) is ruled out — *exh* there makes no contribution. -/
-theorem exh_conj_vacuous :
-    ∀ w : PQWorld, exhB pqDomain conjAlts pAndQ w = pAndQ w := by
-  intro w; cases w <;> native_decide
+private abbrev pAndQF : Finset PQWorld := predToFinset pAndQ
+
+/-- *exh* applied directly to conjunction is **vacuous**: `A∧B` entails every
+Sauerland alternative, so `IE = ∅` and the exhaustified meaning equals the
+prejacent. This is why position ③ in (19) is ruled out — *exh* there makes
+no contribution. -/
+theorem exh_conj_vacuous : innocent.exh conjAltsF pAndQF = pAndQF := by decide
 
 -- ── Parse (18): indirect SI + also diagnostic ──
 
@@ -275,26 +289,26 @@ def parse18c_tree : OpTree :=
   .op "also" (.op "not" (.op "exh" (.content "and")))
 
 theorem parse18a_violates :
-    satisfiesUExhStar parse18a_tree "also" "exh" "and" = false := by native_decide
+    satisfiesUExhStar parse18a_tree "also" "exh" "and" = false := by decide
 
 theorem parse18b_satisfies :
-    satisfiesUExhStar parse18b_tree "also" "exh" "and" = true := by native_decide
+    satisfiesUExhStar parse18b_tree "also" "exh" "and" = true := by decide
 
 /-- Parse (18c) passes the structural check but is vacuous — the "as low
 as possible" generalization (9) requires the *non-vacuity* qualification
 to correctly rule out this position. -/
 theorem parse18c_structural_ok_but_vacuous :
-    satisfiesUExhStar parse18c_tree "also" "exh" "and" = true := by native_decide
+    satisfiesUExhStar parse18c_tree "also" "exh" "and" = true := by decide
 
 /-- (16a) `not>and` antecedent (teaches exactly one) is felicitous:
 satisfies `exh(¬(A ∧ B))` = exclusive or. -/
 theorem ex16a_felicitous :
-    exhB pqDomain negConjAlts notPandQ .pOnly = true := by native_decide
+    PQWorld.pOnly ∈ innocent.exh negConjAltsF notPandQF := by decide
 
 /-- (16b) `not>or` antecedent (teaches neither) is infelicitous:
 `neither` does NOT satisfy exclusive or. -/
 theorem ex16b_infelicitous :
-    exhB pqDomain negConjAlts notPandQ .neither = false := by native_decide
+    PQWorld.neither ∉ innocent.exh negConjAltsF notPandQF := by decide
 
 /-- End-to-end for indirect SI: parse (18b) places *exh* below *also*,
 yielding `exh(¬(A∧B)) = A⊕B` as *also*'s scope content. Combined with
@@ -302,9 +316,9 @@ the structural constraint and semantic predictions, this closes the
 argument chain: tree → [uexh*] satisfied → indirect SI → correct judgments. -/
 theorem ex16_end_to_end :
     satisfiesUExhStar parse18b_tree "also" "exh" "and" = true
-    ∧ exhB pqDomain negConjAlts notPandQ .pOnly = true
-    ∧ exhB pqDomain negConjAlts notPandQ .neither = false := by
-  exact ⟨by native_decide, by native_decide, by native_decide⟩
+    ∧ PQWorld.pOnly ∈ innocent.exh negConjAltsF notPandQF
+    ∧ PQWorld.neither ∉ innocent.exh negConjAltsF notPandQF := by
+  exact ⟨by decide, by decide, by decide⟩
 
 -- ============================================================================
 -- § 7. Scalar Adjectives: No Placement Constraint
@@ -313,24 +327,27 @@ theorem ex16_end_to_end :
 /-- Temperature scale: `freezing > cold > warm`.
 Scalar adjectives bear no `[uexh]` feature (§3.1). -/
 inductive TempWorld where | freezing | cold | warm
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 def isCold     : TempWorld → Bool | .freezing | .cold => true | .warm => false
 def isFreezing : TempWorld → Bool | .freezing => true  | _ => false
-def tempDomain : List TempWorld := [.freezing, .cold, .warm]
-def coldAlts   : List (TempWorld → Bool) := [isCold, isFreezing]
+
+private abbrev coldAltsF : Finset (Finset TempWorld) :=
+  altsFromPreds [isCold, isFreezing]
+
+private abbrev isColdF : Finset TempWorld := predToFinset isCold
 
 /-- `exh(cold) = cold ∧ ¬freezing`: exactly cold, not freezing. -/
-def exhCold : TempWorld → Bool := exhB tempDomain coldAlts isCold
+def exhCold : Finset TempWorld := innocent.exh coldAltsF isColdF
 
 /-- If `[uexh*]` forced *exh* low (below *also*), a "freezing" antecedent
 would need to satisfy `exh(cold) = cold ∧ ¬freezing`. It doesn't. -/
-theorem freezing_fails_exh_cold : exhCold .freezing = false := by native_decide
+theorem freezing_fails_exh_cold : TempWorld.freezing ∉ exhCold := by decide
 
 /-- But (24) IS felicitous with a "freezing" antecedent, showing
 scalar adjectives allow *exh* above *also*. The antecedent satisfies
 unexhaustified "cold" (since freezing entails cold). -/
-theorem freezing_satisfies_cold : isCold .freezing = true := by native_decide
+theorem freezing_satisfies_cold : isCold .freezing = true := by decide
 
 -- ============================================================================
 -- § 8. Ignorance Implicatures: Embedded □
@@ -365,7 +382,7 @@ def parse37c : OpTree :=
   .op "exh2" (.op "box" (.op "exh1" (.op "also" (.content "or"))))
 
 theorem parse37a_ok :
-    satisfiesUExhStar parse37a "also" "exh1" "or" = true := by native_decide
+    satisfiesUExhStar parse37a "also" "exh1" "or" = true := by decide
 
 /-- Parse (37b) is grammatical AND places □ in an embedded position.
 This is the empirical argument against Meyer's Matrix K theory,
@@ -373,16 +390,16 @@ which requires the ignorance-generating operator to adjoin only
 at the clause root. Parse (37b) is necessary to account for "split"
 antecedents (33c) — the grammar must generate it. -/
 theorem parse37b_ok :
-    satisfiesUExhStar parse37b "also" "exh1" "or" = true := by native_decide
+    satisfiesUExhStar parse37b "also" "exh1" "or" = true := by decide
 
 theorem parse37c_bad :
-    satisfiesUExhStar parse37c "also" "exh1" "or" = false := by native_decide
+    satisfiesUExhStar parse37c "also" "exh1" "or" = false := by decide
 
 /-- In (37b), □ is dominated by exh₂ — an embedded, non-root position.
 This demonstrates that ignorance implicatures can be generated in
 embedded positions, contra the Matrix K theory. -/
 theorem box_embedded_in_37b :
-    parse37b.inScopeOf "exh2" "box" = true := by native_decide
+    parse37b.inScopeOf "exh2" "box" = true := by decide
 
 -- ============================================================================
 -- § 9. Tree-Based *exh* Positioning
@@ -416,6 +433,6 @@ distinction as a special case of tree structure. -/
 theorem strong_forces_inner :
     satisfiesUExhStar treeExhI "also" "exh" "Q2" = true
     ∧ satisfiesUExhStar treeExhM "also" "exh" "Q2" = false := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 end ChowErlewine2022

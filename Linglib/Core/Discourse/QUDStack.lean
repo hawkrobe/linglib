@@ -1,4 +1,4 @@
-import Linglib.Core.Issue.Basic
+import Linglib.Core.Question.Basic
 
 /-!
 # QUD Stack: Ordered Accepted-Unanswered Questions
@@ -10,7 +10,7 @@ but have not yet been resolved. Subquestions are pushed on top; answers
 pop the immediate QUD. Strategies of inquiry (`Core/Discourse/Strategy.lean`)
 are the rose-tree counterpart.
 
-Parameterized by `Core.Issue W` — the Set-based inquisitive-content lattice.
+Parameterized by `Core.Question W` — the Set-based inquisitive-content lattice.
 -/
 
 namespace Discourse
@@ -25,7 +25,7 @@ open Core
     at m, but which have not yet been answered." The stack ordering
     reflects discourse subordination — subquestions pushed on top. -/
 structure QUDStack (W : Type*) where
-  questions : List (Issue W)
+  questions : List (Question W)
 
 namespace QUDStack
 
@@ -35,11 +35,11 @@ variable {W : Type*}
 def empty : QUDStack W := ⟨[]⟩
 
 /-- The immediate QUD: the most recently accepted, unanswered question. -/
-def immediateQUD (s : QUDStack W) : Option (Issue W) := s.questions.head?
+def immediateQUD (s : QUDStack W) : Option (Question W) := s.questions.head?
 
 /-- Accept a new question: push onto the stack.
     @cite{roberts-2012}: "a subquestion of QUD is pushed onto QUD." -/
-def push (s : QUDStack W) (q : Issue W) : QUDStack W := ⟨q :: s.questions⟩
+def push (s : QUDStack W) (q : Question W) : QUDStack W := ⟨q :: s.questions⟩
 
 /-- Answer the immediate QUD: pop from the stack.
     @cite{roberts-2012}: "an answer to QUD pops QUD off the stack." -/

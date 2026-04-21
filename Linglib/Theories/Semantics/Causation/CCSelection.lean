@@ -50,6 +50,8 @@ So: "cause" entails "completion" entails "make." The reverse fails:
 
 namespace Semantics.Causation.CCSelection
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

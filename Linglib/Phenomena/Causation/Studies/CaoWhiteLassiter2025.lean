@@ -43,6 +43,8 @@ import Linglib.Theories.Semantics.Causation.Interpretation
 
 namespace CaoWhiteLassiter2025
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

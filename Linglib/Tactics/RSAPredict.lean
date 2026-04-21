@@ -12,12 +12,11 @@ set_option autoImplicit false
 
 The `rsa_predict` tactic proves ℝ comparison goals on RSA models by:
 
-1. Trying `native_decide` (handles ℚ, Bool, finite types directly)
-2. Reifying both sides to `RExpr` (rational expression trees)
-3. Evaluating via exact ℚ arithmetic or tree-based intervals
-4. Building kernel-verifiable proofs from the interval separation
+1. Reifying both sides to `RExpr` (rational expression trees)
+2. Evaluating via exact ℚ arithmetic or tree-based intervals
+3. Building kernel-verifiable proofs from the interval separation
 
-All ~400 invocations across 38 study files use this reflection path exclusively.
+All invocations use this reflection path exclusively (no `native_decide` fallback).
 
 ## Supported Goal Forms
 
@@ -62,12 +61,6 @@ open Tactics.RSAPredict
 elab "rsa_predict" : tactic => do
   let goal ← getMainGoal
   let goalType ← goal.getType
-
-  -- Try native_decide first (handles ℚ, Bool, finite types)
-  try
-    evalTactic (← `(tactic| native_decide))
-    return
-  catch _ => pure ()
 
   -- ¬(_ > _): detect as P → False (Not is @[reducible], so whnf reduces @Not P)
   let goalTypeWhnf ← whnf goalType

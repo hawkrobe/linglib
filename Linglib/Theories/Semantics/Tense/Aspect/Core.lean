@@ -28,7 +28,8 @@ Equations:
 
 -/
 
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Situation
+import Linglib.Core.Time.Interval.Basic
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 -- ════════════════════════════════════════════════════

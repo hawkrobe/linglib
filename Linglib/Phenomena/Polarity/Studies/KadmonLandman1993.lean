@@ -79,7 +79,7 @@ K&L's principle (C): *any* is licensed only if widening creates a stronger
 statement. For assertions, "stronger" = entailment. For a context C and
 domains D ⊆ D' (narrow ⊆ wide):
 
-    C(∃x∈D', Px) ⊆ₚ C(∃x∈D, Px)    — the wide interpretation entails the narrow
+    C(∃x∈D', Px) ⊆ C(∃x∈D, Px)    — the wide interpretation entails the narrow
 
 This holds exactly when C is DE (antitone). K&L's insight is that this
 is not a coincidence: it is *because* *any* widens that it must create
@@ -95,7 +95,7 @@ widening in DE contexts strengthens.
 def klStrengthening {World Entity : Type*}
     (C : Ctx World) (D D' : Set Entity)
     (P : Entity → Set World) (_hD : D ⊆ D') : Prop :=
-  C (existsInDomain D' P) ⊆ₚ C (existsInDomain D P)
+  C (existsInDomain D' P) ⊆ C (existsInDomain D P)
 
 /-- **Theorem (K&L → Ladusaw).**
     In any DE context, strengthening is automatically satisfied.
@@ -106,7 +106,7 @@ def klStrengthening {World Entity : Type*}
     `FreeChoice.lean`. -/
 theorem de_satisfies_strengthening {World Entity : Type*}
     (C : Ctx World)
-    (hDE : ∀ (p q : Set World), (p ⊆ₚ q) → (C q ⊆ₚ C p))
+    (hDE : ∀ (p q : Set World), (p ⊆ q) → (C q ⊆ C p))
     (D D' : Set Entity) (P : Entity → Set World) (hD : D ⊆ D') :
     klStrengthening C D D' P hD :=
   widening_strengthens_in_de C hDE D D' P hD
@@ -116,9 +116,9 @@ theorem de_satisfies_strengthening {World Entity : Type*}
     This is why *any* is ungrammatical in positive contexts. -/
 theorem ue_violates_strengthening {World Entity : Type*}
     (C : Ctx World)
-    (hUE : ∀ (p q : Set World), (p ⊆ₚ q) → (C p ⊆ₚ C q))
+    (hUE : ∀ (p q : Set World), (p ⊆ q) → (C p ⊆ C q))
     (D D' : Set Entity) (P : Entity → Set World) (hD : D ⊆ D') :
-    C (existsInDomain D P) ⊆ₚ C (existsInDomain D' P) :=
+    C (existsInDomain D P) ⊆ C (existsInDomain D' P) :=
   widening_weakens_in_ue C hUE D D' P hD
 
 -- ============================================================================
@@ -524,7 +524,12 @@ def interpretationOf : LicensingContext → AnyInterpretation
   | .beforeClause   => .episodic
   | .onlyFocus      => .episodic
   | .tooTo          => .episodic
-  | .comparative     => .episodic
+  | .comparativeNP   => .episodic   -- not a true NPI environment per @cite{hoeksema-1983};
+                                     -- routed here only for case exhaustivity (no genuine
+                                     -- *any* interpretation) — surface NPIs in "than NP"
+                                     -- arise from a covert clausal source via
+                                     -- @cite{bhatt-pancheva-2004} interval reduction
+  | .comparativeS    => .episodic   -- the genuine NPI-licensing comparative
   | .adversative     => .episodic
   | .sinceTemporal  => .episodic
   -- Non-episodic contexts → generic (FC any)

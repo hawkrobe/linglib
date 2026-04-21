@@ -21,7 +21,7 @@ This grounds the NeoGricean analysis in compositional semantics.
 -/
 
 import Linglib.Theories.Semantics.Quantification.Quantifier
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
@@ -257,9 +257,9 @@ argument as in Operators.lean Section 6.3.
 
 /-- Proposition 6 applies: exhMW ⊆ exhIE for compositional meanings -/
 theorem montague_exhMW_entails_exhIE :
-    exhMW someAllALT_Montague somePassed_Prop ⊆ₚ
+    exhMW someAllALT_Montague somePassed_Prop ⊆
     exhIE someAllALT_Montague somePassed_Prop :=
-  prop6_exhMW_entails_exhIE someAllALT_Montague somePassed_Prop
+  exhMW_entails_exhIE someAllALT_Montague somePassed_Prop
 
 /--
 **exhIE also holds at w1** (derived from exhMW via Proposition 6).

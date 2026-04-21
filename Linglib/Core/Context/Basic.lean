@@ -1,5 +1,5 @@
-import Linglib.Core.Temporal.Time
-import Linglib.Core.Temporal.Reichenbach
+import Linglib.Core.Situation
+import Linglib.Core.Time.Reichenbach
 
 /-!
 # Kaplanian Context of Utterance
@@ -60,7 +60,7 @@ def KContext.toSituation {W E P T : Type*} (c : KContext W E P T) :
     default, @cite{kiparsky-2002}); R and E are supplied per clause. -/
 def KContext.toReichenbachFrame {W E P T : Type*}
     (c : KContext W E P T) (R Ev : T) :
-    Core.Reichenbach.ReichenbachFrame T where
+    Core.Time.Reichenbach.ReichenbachFrame T where
   speechTime := c.time
   perspectiveTime := c.time  -- root clause default: P = S
   referenceTime := R

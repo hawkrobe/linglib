@@ -16,7 +16,7 @@ This breaks closure and creates the need for rescue mechanisms.
 
 -/
 
-import Linglib.Theories.Semantics.Exhaustification.Operators
+import Linglib.Theories.Semantics.Exhaustification.Operators.Basic
 import Linglib.Phenomena.Polarity.Studies.AlonsoOvalleMoghiseh2025
 import Mathlib.Data.Set.Basic
 
@@ -65,14 +65,14 @@ theorem preExh_all_inconsistent
 
 /--
 The EFCI alternative set fails closure under conjunction when |D| ≥ 2.
-The witness: {preExh(d₁), preExh(d₂)} ⊆ ALT but ⋀{preExh(d₁), preExh(d₂)} = ⊥.
+The witness: {preExh(d₁), preExh(d₂)} ⊆ ALT but ⋂₀ {preExh(d₁), preExh(d₂)} = ⊥.
 -/
 theorem efci_not_closed_witness
     (D : Domain Entity) (P : Entity → Set World)
     (d₁ d₂ : Entity) (hd₁ : d₁ ∈ D) (hd₂ : d₂ ∈ D) (hne : d₁ ≠ d₂) :
     let X := {preExhaustify D d₁ P, preExhaustify D d₂ P}
     X ⊆ efciAlternatives D P ∧
-    (∀ w, ¬(bigConj X w)) := by
+    (∀ w, ¬(∀ φ ∈ X, φ w)) := by
   constructor
   · intro φ hφ
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hφ
@@ -119,7 +119,7 @@ theorem domain_only_still_not_closed
     (D : Domain Entity) (P : Entity → Set World)
     (d₁ d₂ : Entity) (hd₁ : d₁ ∈ D) (hd₂ : d₂ ∈ D) (hne : d₁ ≠ d₂) :
     let X := {preExhaustify D d₁ P, preExhaustify D d₂ P}
-    X ⊆ domainOnlyAlts D P ∧ (∀ w, ¬(bigConj X w)) := by
+    X ⊆ domainOnlyAlts D P ∧ (∀ w, ¬(∀ φ ∈ X, φ w)) := by
   constructor
   · intro φ hφ
     simp only [Set.mem_insert_iff, Set.mem_singleton_iff] at hφ

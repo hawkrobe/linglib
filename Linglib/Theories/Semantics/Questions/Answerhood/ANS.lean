@@ -68,14 +68,12 @@ theorem wh_refines_polar {W E : Type*} [DecidableEq E]
     let whQ := GSQuestion.ofProject (λ w => domain.map (λ x => pred x w))
     let polarQ := polarQuestion (pred e)
     whQ ⊑ polarQ := by
-  -- Intro let-bindings, then unfold refinement
-  intro _ _ w v h
-  -- Bypass let-bindings: restate h and goal in terms of BEq
-  change (pred e w == pred e v) = true
-  have h' : (domain.map (λ x => pred x w) == domain.map (λ x => pred x v)) = true := h
-  rw [beq_iff_eq] at h' ⊢
-  -- h' : domain.map (λ x => pred x w) = domain.map (λ x => pred x v)
-  -- goal : pred e w = pred e v
+  intro whQ polarQ w v h
+  have h' : domain.map (λ x => pred x w) = domain.map (λ x => pred x v) := by
+    show (QUD.ofProject (λ w' => domain.map (λ x => pred x w'))).r w v
+    exact QUD.r_of_sameAnswer h
+  show (QUD.ofProject (pred e)).sameAnswer w v = true
+  rw [QUD.ofProject_sameAnswer_iff]
   simpa using List.map_eq_map_iff.mp h' e he
 
 /-- If ANS("Who walks?", i) is known, ANS("Does John walk?", i) is determined. -/
@@ -132,16 +130,13 @@ theorem exhaustive_answers {W E : Type*} [DecidableEq E]
     let q := GSQuestion.ofProject (λ w' => domain.map (λ x => pred x w'))
     ans q w v = true ↔
     (∀ e ∈ domain, pred e w = pred e v) := by
-  simp only [ans, GSQuestion.ofProject, QUD.ofProject]
+  simp only [ans, GSQuestion.ofProject, QUD.ofProject_sameAnswer_iff]
   constructor
-  · intro h
-    rw [beq_iff_eq] at h
-    intro e he
+  · intro h e he
     have := List.map_eq_map_iff.mp h e he
     simp at this
     exact this
   · intro h
-    rw [beq_iff_eq]
     exact List.map_eq_map_iff.mpr λ e he => by simp [h e he]
 
 /-- @cite{belnap-1982}'s Distributivity Principle: knowing the answer to a wh-question

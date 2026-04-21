@@ -48,6 +48,8 @@ Specific implicatives lexicalize **which** prerequisite matters:
 
 namespace Semantics.Causation.Implicative
 
+open Core (Situation)
+
 open Core.StructuralEquationModel
 open Core.Verbs (Implicative)
 

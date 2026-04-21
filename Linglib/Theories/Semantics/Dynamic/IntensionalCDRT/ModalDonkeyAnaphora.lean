@@ -35,6 +35,8 @@ import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
 
 namespace Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 
+open Core (Situation)
+
 open Core.Time
 open Core.Modality.HistoricalAlternatives
 open Semantics.Dynamic.IntensionalCDRT

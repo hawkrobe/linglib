@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.Basic
-import Linglib.Core.Temporal.Time
+import Linglib.Core.Time.Interval.Basic
 
 /-!
 # Spatiotemporal Distance @cite{koev-2017}

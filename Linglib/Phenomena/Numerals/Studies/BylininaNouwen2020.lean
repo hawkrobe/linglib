@@ -1,7 +1,12 @@
 import Linglib.Theories.Semantics.Numerals.Basic
 import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Theories.Pragmatics.RSA.Monotonicity
 import Linglib.Tactics.RSAPredict
 import Mathlib.Data.Rat.Defs
+
+-- `rsa_predict` shares a reify cache across theorems in the file; async
+-- elaboration runs each theorem in an isolated context, defeating that cache.
+set_option Elab.async false
 
 /-!
 # @cite{bylinina-nouwen-2020}: Lower-Bound Bare Numerals + RSA Derive Exact Readings

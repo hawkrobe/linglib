@@ -36,8 +36,8 @@ per-datum verification theorems.
 
 namespace Phenomena.TenseAspect.Bridge
 
-open Core.Reichenbach
-open Core.Tense
+open Core.Time.Reichenbach
+open Core.Time.Tense
 open Phenomena.TenseAspect
 open Semantics.Tense (satisfiesTense SOTParameter)
 open Semantics.Tense
@@ -695,7 +695,7 @@ section KratzerChain
 open Fragments.English.Tense (kratzerSimplePast kratzerPresentPerfect)
 open Fragments.German.Tense (kratzerPreterit kratzerPerfekt)
 open Semantics.Tense.Decomposition
-open Core.Tense (Overtness)
+open Core.Time.Tense (Overtness)
 
 /-- **English full chain**: Fragment entry → Theory → Composed semantics → Data.
 
