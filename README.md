@@ -17,7 +17,7 @@ Decades of progress in formal linguistics live in prose scattered across hundred
 
 - **Check predictions.** Theories are often stated in notation ambiguous enough to hide gaps between what is claimed and what actually follows from the definitions. Lean won't let a proof go through unless the prediction genuinely follows from the theory.
 
-- **Compare theories.** When two theories (RSA vs. exhaustification, Kratzer vs. Kripke modals) both claim to handle the same data, we can formally characterize where they agree and where they diverge — rather than arguing past each other with different formalisms.
+- **Compare theories.** When two theories both claim to handle the same data, we can formally characterize where they agree and where they diverge rather than arguing past each other with different formalisms.
 
 ## How It's Organized
 
