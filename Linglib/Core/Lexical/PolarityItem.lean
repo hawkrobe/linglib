@@ -46,7 +46,8 @@ inductive LicensingContext where
   | withoutClause    -- "without" PPs
   | onlyFocus        -- Focus of "only"
   | question          -- Questions (for some NPIs)
-  | comparative       -- "more than", "less than"
+  | comparativeNP     -- "taller than NP" — Boolean homomorphism (@cite{hoeksema-1983})
+  | comparativeS      -- "taller than S is" — anti-additive (@cite{hoeksema-1983} Fact 5)
   | superlative       -- "the most", "the least"
   | tooTo            -- "too ADJ to VP"
   | modalPossibility -- Possibility modals (for FCIs)
@@ -154,9 +155,13 @@ def contextProperties : LicensingContext → ContextProperties
       { signature := .anti, mechanism := .byStrengthening
       , prototype := "He was too tired to say anything."
       , citations := ["ladusaw-1979"] }
-  | .comparative =>
-      { signature := .anti, mechanism := .byStrengthening
+  | .comparativeNP =>
+      { signature := .antiAdd, mechanism := .byStrengthening
       , prototype := "Mary is taller than anyone in the class."
+      , citations := ["ladusaw-1979", "hoeksema-1983"] }
+  | .comparativeS =>
+      { signature := .antiAdd, mechanism := .byStrengthening
+      , prototype := "Mary is taller than anyone is."
       , citations := ["ladusaw-1979", "hoeksema-1983"] }
   | .adversative =>
       { signature := .anti, mechanism := .byStrengthening

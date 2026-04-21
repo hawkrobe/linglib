@@ -90,7 +90,7 @@ def pur : PolarityItemEntry :=
   { form := "pur"
   , polarityType := .npiWeak
   , baseForce := .degree
-  , licensingContexts := [.negation, .comparative]
+  , licensingContexts := [.negation, .comparativeNP, .comparativeS]
   , scalarDirection := .strengthening
   , notes :=
       "Weak NPI in comparatives + bias-licensed contexts; @cite{napoli-nespor-1976} §3.11" }
@@ -110,7 +110,7 @@ def affatto : PolarityItemEntry :=
   { form := "affatto"
   , polarityType := .npiWeak
   , baseForce := .degree
-  , licensingContexts := [.negation]  -- not .comparative: blocked by precision
+  , licensingContexts := [.negation]  -- not .comparativeNP/.comparativeS: blocked by precision
   , scalarDirection := .strengthening
   , notes :=
       "Weak NPI but requires precise prior belief; blocked under bias-conditioned " ++
@@ -119,14 +119,14 @@ def affatto : PolarityItemEntry :=
 /-- N&N's central diagnostic: *pur* is licensed in comparative-clause
     contexts (which encode bias-conditioned negation in Italian), *affatto*
     is not. The contrast is structural in the registry — *pur*'s
-    `licensingContexts` includes `.comparative` while *affatto*'s does not,
-    so the Italian Fragment alone witnesses the distributional contrast
-    that motivated the *non₂* analysis. -/
+    `licensingContexts` includes `.comparativeNP` (and `.comparativeS`)
+    while *affatto*'s does not, so the Italian Fragment alone witnesses
+    the distributional contrast that motivated the *non₂* analysis. -/
 theorem pur_licensed_in_comparative :
-    pur.licensingContexts.contains .comparative = true := by decide
+    pur.licensingContexts.contains .comparativeNP = true := by decide
 
 theorem affatto_not_licensed_in_comparative :
-    affatto.licensingContexts.contains .comparative = false := by decide
+    affatto.licensingContexts.contains .comparativeNP = false := by decide
 
 -- ============================================================================
 -- Pure Universal FCIs

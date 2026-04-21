@@ -31,7 +31,7 @@ def enikeni : PolarityItemEntry :=
   , licensingContexts :=
       [ .negation, .nobody
       , .modalPossibility, .modalNecessity, .imperative, .generic
-      , .comparative ]
+      , .comparativeNP, .comparativeS ]
   , notes := "Covers 4 Haspelmath functions: indirectNeg through freeChoice" }
 
 -- ============================================================================
