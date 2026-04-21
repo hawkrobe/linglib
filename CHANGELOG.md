@@ -4,6 +4,102 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.104] - 2026-04-20
+
+### Changed
+- **`Core/Causal/SEM.lean` split into 3 subfiles, no hub.** The
+  995-line module now lives as three siblings under `Core/Causal/SEM/`:
+  `Defs.lean` (Variable, Situation, CausalLaw, CausalDynamics,
+  normalDevelopment + fixpoint theorems — 384 LOC), `Monotonicity.lean`
+  (positive-dynamics monotonicity machinery, ending at
+  `normalDevelopment_trueLE_positive` — 243 LOC), and
+  `Counterfactual.lean` (graph queries, `intervene` / `manipulates`,
+  `causallySufficient` / `causallyNecessary` / `extractProfile`, plus
+  the structured `simple_law_necessity` proof — 344 LOC).
+  `Counterfactual` only depends on `Defs` (does not need `Monotonicity`).
+  `Core/Causal/SEM.lean` shim deleted: 12 consumers migrated to import
+  the specific subfile(s) they use — the 4 files that reference
+  `normalDevelopment_trueLE_positive` / `positive_normalDevelopment_grows`
+  (`Closure.lean`, `Implicative.lean`, `Necessity.lean`,
+  `Sufficiency.lean`) now import both `Counterfactual` and
+  `Monotonicity`; the other 8 (`BellerGerstenberg2025`, `KonukEtAl2026`,
+  `Lewis1973`, `HardingGerstenbergIcard2025`, `Doxastic`, `Progressive`,
+  `Strength`, `Conditionals/Counterfactual`) import only `Counterfactual`
+  (which transitively imports `Defs`).
+
+## [0.230.103] - 2026-04-20
+
+### Changed
+- **DT kernel Bool→Finset migration Phase γ — `Core/Partition.lean`
+  `toCells` cascade complete.** `QUD.toCells [DecidableEq M] : QUD M →
+  List M → List (Finset M)` (was `List (M → Bool)`). Cells are now
+  `elements.toFinset.filter (q.sameAnswer rep ·)` — restricted to the
+  world set, so cell-extensional theorems require world-membership
+  hypotheses. `toCells_sameAnswer_eq` requires `(hwmem : w ∈ worlds)
+  (hvmem : v ∈ worlds)` and concludes `(w ∈ cell ↔ v ∈ cell)`.
+  `toCells_fine_sub_coarse` / `toCells_coarse_contains_fine` take and
+  return `Finset M` cells with `c ⊆ c'` conclusions.
+- **`Theories/Semantics/Questions/Denotation/Partition.lean`:**
+  `GSQuestion.toQuestion worlds = (q.toCells worlds).map (fun cell w =>
+  decide (w ∈ cell))` — preserves `Question = List (W → Bool)` alias
+  via decide bridge.
+- **`Theories/Semantics/Questions/Answerhood/{ANS,Answerhood}.lean`:**
+  `[DecidableEq W]` propagated; `complete_not_partial` proof updated
+  with `List.filter_map`/`List.length_map`/`Function.comp_def`
+  preprocessing.
+- **`Theories/Semantics/Questions/LiftedTypes.lean`:** `answers` /
+  `partiallyAnswers` rephrased as `∃ cell ∈ q.toCells worlds, ∀ w, w ∈
+  cell ↔ p w` (resp. `∀ w, p w → w ∈ cell`).
+- **`Theories/Semantics/Questions/RelevanceTheories.lean`:** `qudToDP`
+  uses Finset cell membership (`if w ∈ cell then 1 else 0`);
+  `qud_as_decision_problem` requires `[DecidableEq W]` + world-bounded
+  hypotheses.
+- **`Theories/Semantics/Questions/Answerhood/PragmaticAnswerhood.lean`:**
+  `restrictedCells_totalIgnorance` (function-equality, no longer
+  typecheckable) replaced with `restrictedCells_totalIgnorance_any_all`
+  (pointwise-on-worlds equivalence).
+- **`Theories/Semantics/Questions/Utility/GSVanRooyBridge.lean`:**
+  `cellAsFinset` / `cellsAsFinset` boundary shim helpers deleted —
+  `questionResolves` / `requiresExhaustive` /
+  `hasMentionSomeStructure` now take `List (Finset W)` directly. Ad-hoc
+  Bool-cell constructions (`(· == w)`, `[fun _ => true]`) replaced
+  with direct Finset constructions (`{w}`, `worlds.toFinset`).
+- **`Theories/Semantics/Questions/Coordination.lean`:**
+  `functional_dep_conjunction_finer` requires `[DecidableEq W]`
+  (transitive from `numCells`).
+
+## [0.230.102] - 2026-04-20
+
+### Changed
+- **`Theories/Interfaces/SyntaxSemantics/Minimalism/DegreeMovement.lean`:**
+  `heimKennedyOK : ScopeBinding → Bool` migrated to `IsHeimKennedy :
+  ScopeBinding → Prop` with derivable `Decidable` instance, per the
+  "no intrinsic Bool" discipline. Three theorems renamed
+  (`heimKennedy_*` → `isHeimKennedy_*` / `not_isHeimKennedy_*`).
+- **`Phenomena/Comparison/Studies/BhattPancheva2004.lean`:**
+  `bp_hkc_matches_heim_intensional_data` rephrased as a biconditional
+  with `d.highDegPAvailable = true`; the prior `_ _ _; exact <constant>`
+  vacuity (flagged by four independent agent reviews) is now
+  non-vacuous via case-split on the datum's empirical field. Stipulative
+  Bresnan-disagreement stub `bhattPanchevaAnalysisOf` deleted; replaced
+  with prose pointing to `bhatt-takahashi-2011` for the diagnostic
+  battery.
+
+### Added
+- **`Phenomena/Comparison/Studies/BhattTakahashi2011.lean`:** new
+  paper-faithful study of @cite{bhatt-takahashi-2011}, the successor
+  paper to @cite{bhatt-pancheva-2004}. Formalizes (a) the Reduction
+  vs Direct Analysis structural distinction, (b) the §2 English
+  binding diagnostic (B&T (10)) over a 4-element `BindingDatum` list
+  with non-vacuous matches-RA / rules-out-DA theorems, (c) the §3.4
+  Hindi-Urdu binding contrast with the inverse pattern, (d) the
+  reversal of B&P 2004's English claim
+  (`bp2004_bt2011_disagree_about_english`), and (e) the §6 typology
+  proposal (B&T (63)) as `LanguageHeadAvailability` for
+  English/Hindi-Urdu/Japanese with pairwise-distinctness theorem.
+  `merchant-2009`, `lechner-2001`, `bhatt-takahashi-2011` added to
+  `references.bib`.
+
 ## [0.230.101] - 2026-04-20
 
 ### Changed

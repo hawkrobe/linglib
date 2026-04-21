@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Causal.SEM
+import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
 # A Communication-First Account of Explanation

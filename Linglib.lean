@@ -96,7 +96,9 @@ import Linglib.Core.ExtractionMorphology
 import Linglib.Core.VoiceSystem
 import Linglib.Core.Alternation
 import Linglib.Core.Causal.BayesNet
-import Linglib.Core.Causal.SEM
+import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Core.Causal.SEM.Defs
+import Linglib.Core.Causal.SEM.Monotonicity
 import Linglib.Core.NestedRestriction
 import Linglib.Core.Lexical.RootFeatures
 import Linglib.Core.Lexical.VerbClass
@@ -1095,6 +1097,7 @@ import Linglib.Phenomena.Comparison.Studies.VonStechow1984
 import Linglib.Phenomena.Comparison.Studies.Buring2007
 import Linglib.Phenomena.Comparison.Studies.Bobaljik2012
 import Linglib.Phenomena.Comparison.Studies.BhattPancheva2004
+import Linglib.Phenomena.Comparison.Studies.BhattTakahashi2011
 import Linglib.Theories.Semantics.Degree.Intensional
 import Linglib.Phenomena.Nonliteral.Humor.Studies.KaoEtAl2016
 import Linglib.Phenomena.Nonliteral.Hyperbole.KaoEtAl2014

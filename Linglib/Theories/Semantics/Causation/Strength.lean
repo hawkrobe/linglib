@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.NormNum
-import Linglib.Core.Causal.SEM
+import Linglib.Core.Causal.SEM.Counterfactual
 
 /-!
 # Causal Strength Models

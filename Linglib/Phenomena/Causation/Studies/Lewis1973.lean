@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM
+import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Situation
 import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Sufficiency

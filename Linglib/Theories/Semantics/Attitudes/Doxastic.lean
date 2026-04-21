@@ -41,7 +41,7 @@ import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.IntensionalLogic.RestrictedModality
-import Linglib.Core.Causal.SEM
+import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 

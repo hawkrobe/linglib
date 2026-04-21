@@ -1,5 +1,6 @@
 import Mathlib.Order.Closure
-import Linglib.Core.Causal.SEM
+import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Core.Causal.SEM.Monotonicity
 import Linglib.Theories.Semantics.Causation.Sufficiency
 
 /-!

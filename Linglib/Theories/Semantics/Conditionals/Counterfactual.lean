@@ -36,7 +36,7 @@ import Linglib.Theories.Semantics.Conditionals.SelectionalRestrictor
 import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.SelectionFunction
-import Linglib.Core.Causal.SEM
+import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.NonBivalence
 

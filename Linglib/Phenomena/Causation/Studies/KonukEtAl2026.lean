@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM
+import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Theories.Semantics.Causation.Strength
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Mathlib.Data.Rat.Defs
