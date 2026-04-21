@@ -4,6 +4,8 @@ Reference: @cite{chierchia-2013} section 1.4.3, @cite{ladusaw-1980}.
 -/
 
 import Mathlib.Order.Monotone.Defs
+import Mathlib.Order.Hom.BoundedLattice
+import Mathlib.Order.Heyting.Hom
 import Mathlib.Data.List.Basic
 import Mathlib.Data.Finset.Card
 import Mathlib.Data.Fintype.Basic
@@ -45,25 +47,26 @@ theorem IsAntiAdditive.antitone {f : Set α → Set β} (hAA : IsAntiAdditive f)
   have := (hAA p q x).mp (by rw [hu]; exact hfq)
   exact this.1
 
-/-- Anti-additive implies DE (specialization to `Set World → Set World`). -/
-theorem antiAdditive_implies_de (f : Set World → Set World) (hAA : IsAntiAdditive f) :
-    IsDownwardEntailing f :=
-  hAA.antitone
-
 /-- Anti-morphic implies anti-additive. -/
 theorem IsAntiMorphic.antiAdditive {f : Set α → Set β} (hAM : IsAntiMorphic f) :
     IsAntiAdditive f := hAM.1
-
-theorem antiMorphic_implies_antiAdditive (f : Set World → Set World) (hAM : IsAntiMorphic f) :
-    IsAntiAdditive f := hAM.antiAdditive
 
 /-- Anti-morphic implies antitone. -/
 theorem IsAntiMorphic.antitone {f : Set α → Set β} (hAM : IsAntiMorphic f) :
     Antitone f := hAM.antiAdditive.antitone
 
-theorem antiMorphic_implies_de (f : Set World → Set World) (hAM : IsAntiMorphic f) :
-    IsDownwardEntailing f := hAM.antitone
 
+/-- Any function of the form `fun X y => ∀ x ∈ X, P x y` is anti-additive in `X`.
+
+    `npComparative` and `sComparative` (@cite{hoeksema-1983}) instantiate this
+    with `P x y := μ x < μ y` and `P d y := d < μ y` respectively. -/
+theorem isAntiAdditive_forall_mem (P : α → β → Prop) :
+    IsAntiAdditive (fun (X : Set α) (y : β) => ∀ x ∈ X, P x y) := by
+  intro A B y
+  refine ⟨fun h => ⟨fun x hx => h x (Or.inl hx), fun x hx => h x (Or.inr hx)⟩, ?_⟩
+  rintro ⟨hA, hB⟩ x (hx | hx)
+  · exact hA x hx
+  · exact hB x hx
 
 /-- Negation is anti-additive. -/
 theorem pnot_isAntiAdditive : IsAntiAdditive pnot := by
@@ -108,7 +111,7 @@ theorem no_isAntiAdditive_scope : IsAntiAdditive no_student := by
 
 /-- "No" is DE in scope. -/
 theorem no_isDE_scope : IsDE no_student :=
-  antiAdditive_implies_de no_student no_isAntiAdditive_scope
+  no_isAntiAdditive_scope.antitone
 
 
 /-- "At most n A's are B" - true if at most n worlds satisfy both.
@@ -265,9 +268,6 @@ theorem IsAdditive.monotone {f : Set α → Set β} (hAdd : IsAdditive f) :
   rw [hu] at h
   exact h
 
-theorem additive_implies_ue (f : Set World → Set World) (hAdd : IsAdditive f) :
-    IsUpwardEntailing f := hAdd.monotone
-
 /-- Multiplicative implies monotone. -/
 theorem IsMultiplicative.monotone {f : Set α → Set β} (hMult : IsMultiplicative f) :
     Monotone f := by
@@ -275,9 +275,6 @@ theorem IsMultiplicative.monotone {f : Set α → Set β} (hMult : IsMultiplicat
   have hi : p ∩ q = p := Set.inter_eq_left.mpr hpq
   have hfpand : f (p ∩ q) x := by rw [hi]; exact hfp
   exact ((hMult.1 p q x).mp hfpand).2
-
-theorem multiplicative_implies_ue (f : Set World → Set World) (hMult : IsMultiplicative f) :
-    IsUpwardEntailing f := hMult.monotone
 
 /-- Anti-multiplicative implies antitone. -/
 theorem IsAntiMultiplicative.antitone {f : Set α → Set β} (hAM : IsAntiMultiplicative f) :
@@ -288,9 +285,6 @@ theorem IsAntiMultiplicative.antitone {f : Set α → Set β} (hAM : IsAntiMulti
   rw [hi] at h
   exact h
 
-theorem antiMultiplicative_implies_de (f : Set World → Set World) (hAM : IsAntiMultiplicative f) :
-    IsDownwardEntailing f := hAM.antitone
-
 end UEDuals
 
 
@@ -300,58 +294,23 @@ end UEDuals
 
 section BooleanHomomorphism
 
-/-- Boolean homomorphism: a function between powersets that preserves
-the three Boolean operations `∩`, `∪`, and complement.
+/-- A function `f : Set α → Set β` is a Boolean homomorphism iff it underlies
+a `BoundedLatticeHom (Set α) (Set β)`. Since `Set _` is a `BooleanAlgebra`,
+mathlib's `BoundedLatticeHomClass.toBiheytingHomClass` instance derives
+`map_compl` for free — so preservation of `∩` / `∪` / `ᶜ` / `⊤` / `⊥` are
+all available via the standard `map_inf` / `map_sup` / `map_compl` /
+`map_top` / `map_bot` simp lemmas on the underlying bundled hom.
 
 This is the property @cite{hoeksema-1983} attributes to the NP-comparative
-`⟦Adj-er than⟧ : Set (Set U) → Set U` (Eq 22) — preservation of intersection,
-union, and complement is what makes the NP-comparative a Boolean homomorphism,
-from which @cite{hoeksema-1983} derives both monotonicity (Fact 3) and
-uniqueness (Facts 1–2).
+`⟦Adj-er than⟧ : Set (Set U) → Set U` (Eq 22), from which Hoeksema derives
+both monotonicity (Fact 3) and uniqueness (Facts 1–2).
 
-`f Set.univ = Set.univ` and `f ∅ = ∅` are not stipulated: they follow from
-preservation of `∪` and complement (`f (A ∪ Aᶜ) = f A ∪ (f A)ᶜ = ⊤`).
-See `IsBooleanHomomorphism.preserves_univ`. -/
-structure IsBooleanHomomorphism {α β : Type*} (f : Set α → Set β) : Prop where
-  preserves_inter : ∀ A B : Set α, f (A ∩ B) = f A ∩ f B
-  preserves_union : ∀ A B : Set α, f (A ∪ B) = f A ∪ f B
-  preserves_compl : ∀ A : Set α, f Aᶜ = (f A)ᶜ
-
-namespace IsBooleanHomomorphism
-
-variable {α β : Type*} {f : Set α → Set β}
-
-/-- A Boolean homomorphism preserves the top element. -/
-theorem preserves_univ (h : IsBooleanHomomorphism f) : f Set.univ = Set.univ := by
-  have h₁ : f (∅ ∪ (∅ : Set α)ᶜ) = f ∅ ∪ (f ∅)ᶜ := by
-    rw [h.preserves_union, h.preserves_compl]
-  rw [Set.empty_union, Set.compl_empty] at h₁
-  rw [h₁, Set.union_compl_self]
-
-/-- A Boolean homomorphism preserves the bottom element. -/
-theorem preserves_empty (h : IsBooleanHomomorphism f) : f ∅ = ∅ := by
-  have h₁ : f (Set.univ ∩ (Set.univ : Set α)ᶜ) = f Set.univ ∩ (f Set.univ)ᶜ := by
-    rw [h.preserves_inter, h.preserves_compl]
-  rw [Set.univ_inter, Set.compl_univ] at h₁
-  rw [h₁, Set.inter_compl_self]
-
-/-- A Boolean homomorphism is additive. -/
-theorem toIsAdditive (h : IsBooleanHomomorphism f) : IsAdditive f := by
-  refine ⟨fun p q x => ?_, fun x => ?_⟩
-  · rw [h.preserves_union]; rfl
-  · rw [h.preserves_univ]; exact Set.mem_univ x
-
-/-- A Boolean homomorphism is multiplicative. -/
-theorem toIsMultiplicative (h : IsBooleanHomomorphism f) : IsMultiplicative f := by
-  refine ⟨fun p q x => ?_, fun x => ?_⟩
-  · rw [h.preserves_inter]; rfl
-  · rw [h.preserves_empty]; exact id
-
-/-- @cite{hoeksema-1983} Fact 3: every Boolean homomorphism is monotone. -/
-theorem monotone (h : IsBooleanHomomorphism f) : Monotone f :=
-  h.toIsAdditive.monotone
-
-end IsBooleanHomomorphism
+For consumers, the recommended API is to construct a `BoundedLatticeHom` and
+use mathlib's `map_inf`/`map_sup`/`map_compl` directly; this `Prop`-valued
+predicate exists as a documentation hook anchoring the @cite{hoeksema-1983}
+terminology to the mathlib infrastructure. -/
+def IsBooleanHomomorphism {α β : Type*} (f : Set α → Set β) : Prop :=
+  ∃ g : BoundedLatticeHom (Set α) (Set β), ⇑g = f
 
 end BooleanHomomorphism
 

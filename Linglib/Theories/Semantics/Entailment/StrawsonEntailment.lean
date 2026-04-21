@@ -95,7 +95,7 @@ Via: AA → DE → Strawson-DE.
 theorem antiAdditive_implies_strawsonDE (f : Set World → Set World)
     (hAA : IsAntiAdditive f) (defined : Set World → World → Prop) :
     IsStrawsonDE f defined :=
-  de_implies_strawsonDE f (antiAdditive_implies_de f hAA) defined
+  de_implies_strawsonDE f hAA.antitone defined
 
 /--
 Every anti-morphic function is Strawson-DE.
@@ -105,7 +105,7 @@ Via: AM → AA → DE → Strawson-DE.
 theorem antiMorphic_implies_strawsonDE (f : Set World → Set World)
     (hAM : IsAntiMorphic f) (defined : Set World → World → Prop) :
     IsStrawsonDE f defined :=
-  de_implies_strawsonDE f (antiMorphic_implies_de f hAM) defined
+  de_implies_strawsonDE f hAM.antitone defined
 
 /--
 The full hierarchy chain: AM → AA → DE → Strawson-DE.
@@ -115,7 +115,7 @@ Given an anti-morphic proof, we can derive all weaker properties.
 structure FullHierarchy (f : Set World → Set World) (defined : Set World → World → Prop) where
   am : IsAntiMorphic f
   aa : IsAntiAdditive f := am.1
-  de : IsDownwardEntailing f := antiAdditive_implies_de f aa
+  de : IsDownwardEntailing f := aa.antitone
   strawsonDE : IsStrawsonDE f defined := de_implies_strawsonDE f de defined
 
 /-- Negation satisfies the full hierarchy. -/

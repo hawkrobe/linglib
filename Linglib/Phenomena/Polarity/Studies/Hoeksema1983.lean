@@ -1,3 +1,5 @@
+import Mathlib.Order.Hom.BoundedLattice
+import Mathlib.Order.Heyting.Hom
 import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 import Linglib.Core.Lexical.PolarityItem
 
@@ -13,7 +15,12 @@ Two distinctly typed comparatives:
 - **NP-comparative** `[Adj-er than NP]` operates on a set of individuals
   (or a generalized quantifier). Hoeksema's Eq (22) frames the GQ version
   as a *Boolean homomorphism* `Set (Set U) → Set U` — preserves `∩`, `∪`,
-  and complement.
+  and complement. We realize this with mathlib's
+  `BoundedLatticeHom (Set (Set Entity)) (Set Entity)`: since `Set _` is a
+  `BooleanAlgebra`, mathlib's `BoundedLatticeHomClass.toBiheytingHomClass`
+  derives `map_compl` automatically, so all three Boolean preservation
+  properties (and monotonicity, Hoeksema Fact 3) come from the standard
+  `map_inf` / `map_sup` / `map_compl` / `OrderHomClass.mono` API.
 - **S-comparative** `[Adj-er than S]` operates on a set of degrees
   (the than-clause's existential closure over a degree variable).
   Anti-additive, but not a Boolean homomorphism.
@@ -21,13 +28,12 @@ Two distinctly typed comparatives:
 Hoeksema's **Fact 5** distinguishes them: the NP-comparative is strictly
 stronger than the S-comparative on the Boolean-closure hierarchy, but
 both are anti-additive (`.antiAdd` in `EntailmentSig`), so both license
-strong NPIs by Zwarts-style reasoning.
+strong NPIs by Zwarts-style reasoning. Both anti-additivity proofs delegate
+to the general `isAntiAdditive_forall_mem` lemma in
+`Theories/Semantics/Entailment/AntiAdditivity.lean`.
 
-The structural primitives — `IsAntiAdditive`, `IsBooleanHomomorphism` —
-are imported from `Theories/Semantics/Entailment/AntiAdditivity.lean`
-(see PR 1). The licensing-context registry slots `.comparativeNP` and
-`.comparativeS` are imported from `Core/Lexical/PolarityItem.lean`
-(see PR 3).
+The licensing-context registry slots `.comparativeNP` and `.comparativeS`
+are imported from `Core/Lexical/PolarityItem.lean`.
 -/
 
 namespace Hoeksema1983
@@ -35,9 +41,7 @@ namespace Hoeksema1983
 open Semantics.Entailment.AntiAdditivity
 open Core.Lexical.PolarityItem (LicensingContext contextProperties)
 
--- ════════════════════════════════════════════════════
--- § 1. NP-Comparative as Set-of-Individuals
--- ════════════════════════════════════════════════════
+/-! ## NP-comparative as set-of-individuals -/
 
 variable {Entity : Type*} {D : Type*} [LinearOrder D]
 
@@ -54,16 +58,10 @@ def npComparative (μ : Entity → D) (X : Set Entity) : Set Entity :=
     "Mary is taller than every (A ∪ B)" iff "Mary is taller than every A
     and every B". This is the source of NPI licensing in the than-NP. -/
 theorem npComparative_isAntiAdditive (μ : Entity → D) :
-    IsAntiAdditive (npComparative μ) := by
-  intro A B y
-  refine ⟨fun h => ⟨fun x hx => h x (Or.inl hx), fun x hx => h x (Or.inr hx)⟩, ?_⟩
-  rintro ⟨hA, hB⟩ x (hx | hx)
-  · exact hA x hx
-  · exact hB x hx
+    IsAntiAdditive (npComparative μ) :=
+  isAntiAdditive_forall_mem (fun x y => μ x < μ y)
 
--- ════════════════════════════════════════════════════
--- § 2. S-Comparative as Set-of-Degrees
--- ════════════════════════════════════════════════════
+/-! ## S-comparative as set-of-degrees -/
 
 /-- S-comparative on a set of degrees: `y ∈ sComparative μ Δ` iff
     `μ y` strictly exceeds every degree in `Δ`.
@@ -79,47 +77,53 @@ def sComparative (μ : Entity → D) (Δ : Set D) : Set Entity :=
     type `Set D → Set Entity` (cross-sortal), unlike the NP-comparative
     which is `Set Entity → Set Entity`. -/
 theorem sComparative_isAntiAdditive (μ : Entity → D) :
-    IsAntiAdditive (sComparative μ) := by
-  intro A B y
-  refine ⟨fun h => ⟨fun d hd => h d (Or.inl hd), fun d hd => h d (Or.inr hd)⟩, ?_⟩
-  rintro ⟨hA, hB⟩ d (hd | hd)
-  · exact hA d hd
-  · exact hB d hd
+    IsAntiAdditive (sComparative μ) :=
+  isAntiAdditive_forall_mem (fun d y => d < μ y)
 
--- ════════════════════════════════════════════════════
--- § 3. NP-Comparative as Boolean Homomorphism (Eq 22)
--- ════════════════════════════════════════════════════
+/-! ## NP-comparative as Boolean homomorphism (Eq 22) -/
 
 /-- @cite{hoeksema-1983} Eq (22) formulation: the NP-comparative as a
-    function on generalized quantifiers (sets of properties).
+    function on generalized quantifiers, packaged as a mathlib
+    `BoundedLatticeHom`.
 
-    `npComparativeGQ μ Q y` holds iff the property `λx. μ x < μ y`
-    (the things `y` is taller than) is one of the properties picked
-    out by the GQ `Q`. This is the genuine Boolean-homomorphism case:
-    `Q` is being applied pointwise, so `f` distributes over all three
-    Boolean operations on `Set (Set Entity)`. -/
-def npComparativeGQ (μ : Entity → D) : Set (Set Entity) → Set Entity :=
-  fun Q y => {x : Entity | μ x < μ y} ∈ Q
+    `npComparativeGQ μ Q y` holds iff the property `λx. μ x < μ y` (the
+    things `y` is taller than) is one of the properties picked out by the
+    GQ `Q`. This is the genuine Boolean-homomorphism case: `Q` is just
+    being evaluated at a fixed property, so preservation of `∩` / `∪` /
+    `⊤` / `⊥` is definitional. Complement preservation follows for free
+    via mathlib's `BoundedLatticeHomClass.toBiheytingHomClass` instance
+    for `BooleanAlgebra → BooleanAlgebra`, and monotonicity (Hoeksema
+    Fact 3) from `OrderHomClass.mono`. -/
+def npComparativeGQ (μ : Entity → D) :
+    BoundedLatticeHom (Set (Set Entity)) (Set Entity) where
+  toFun Q := fun y => {x : Entity | μ x < μ y} ∈ Q
+  map_inf' _ _ := by ext y; rfl
+  map_sup' _ _ := by ext y; rfl
+  map_top' := by ext y; exact Iff.rfl
+  map_bot' := by ext y; exact Iff.rfl
 
-/-- @cite{hoeksema-1983} Fact in §4: the GQ NP-comparative is a Boolean
-    homomorphism. Preservation of `∩`, `∪`, and complement holds by
-    construction — `Q` is just being evaluated at a fixed property. -/
-theorem npComparativeGQ_isBooleanHomomorphism (μ : Entity → D) :
-    IsBooleanHomomorphism (npComparativeGQ μ) where
-  preserves_inter A B := by ext y; rfl
-  preserves_union A B := by ext y; rfl
-  preserves_compl A := by ext y; rfl
-
-/-- @cite{hoeksema-1983} Fact 3 instantiated: the GQ NP-comparative is
-    monotone in its GQ argument, derived from the Boolean-homomorphism
-    structure rather than stipulated. -/
+/-- @cite{hoeksema-1983} Fact 3: the GQ NP-comparative is monotone in its
+    GQ argument. Derived from the `BoundedLatticeHom`'s underlying
+    `OrderHomClass`. -/
 theorem npComparativeGQ_monotone (μ : Entity → D) :
     Monotone (npComparativeGQ μ) :=
-  (npComparativeGQ_isBooleanHomomorphism μ).monotone
+  OrderHomClass.mono _
 
--- ════════════════════════════════════════════════════
--- § 4. Connection to the Licensing-Context Registry
--- ════════════════════════════════════════════════════
+/-- @cite{hoeksema-1983} Eq (22), complement clause: complement preservation
+    on the NP-comparative GQ, via mathlib's automatic `BiheytingHomClass`
+    instance for `BooleanAlgebra → BooleanAlgebra` `BoundedLatticeHom`s. -/
+theorem npComparativeGQ_map_compl (μ : Entity → D) (Q : Set (Set Entity)) :
+    npComparativeGQ μ Qᶜ = (npComparativeGQ μ Q)ᶜ :=
+  map_compl (npComparativeGQ μ) Q
+
+/-- The NP-comparative GQ underlies a Boolean homomorphism in the sense
+    of @cite{hoeksema-1983}; the bundled `BoundedLatticeHom` IS the
+    witness. -/
+theorem npComparativeGQ_isBooleanHomomorphism (μ : Entity → D) :
+    IsBooleanHomomorphism (fun Q => (npComparativeGQ μ : _ → _) Q) :=
+  ⟨npComparativeGQ μ, rfl⟩
+
+/-! ## Connection to the licensing-context registry -/
 
 /-- The `.comparativeNP` registry slot is anti-additive, matching
     `npComparative_isAntiAdditive`. -/
