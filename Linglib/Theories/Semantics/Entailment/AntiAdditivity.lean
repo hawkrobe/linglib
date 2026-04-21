@@ -21,38 +21,48 @@ open List (Sublist)
 
 section Definitions
 
-/-- Anti-additive: forall A B, f(A | B) = f(A) & f(B). -/
-def IsAntiAdditive (f : Set World → Set World) : Prop :=
-  ∀ p q : Set World, ∀ w, f (por p q) w ↔ f p w ∧ f q w
+variable {α β : Type*}
 
-/--
-Anti-morphic (AM): Anti-additive + distributes ∧ to ∨ in both directions.
--/
-def IsAntiMorphic (f : Set World → Set World) : Prop :=
+/-- Anti-additive: `f(A ∪ B) = f(A) ∩ f(B)` (pointwise iff form).
+
+Polymorphic in domain and codomain — this is needed e.g. for
+@cite{hoeksema-1983}'s S-comparative, which is anti-additive as a
+function `Set Degree → Set Individual`. -/
+def IsAntiAdditive (f : Set α → Set β) : Prop :=
+  ∀ p q : Set α, ∀ x, f (p ∪ q) x ↔ f p x ∧ f q x
+
+/-- Anti-morphic (AM): Anti-additive + distributes ∩ to ∪. -/
+def IsAntiMorphic (f : Set α → Set β) : Prop :=
   IsAntiAdditive f ∧
-  (∀ p q : Set World, ∀ w, f (pand p q) w ↔ f p w ∨ f q w)
+  (∀ p q : Set α, ∀ x, f (p ∩ q) x ↔ f p x ∨ f q x)
 
 
-/-- Anti-additive implies DE. -/
-theorem antiAdditive_implies_de (f : Set World → Set World) (hAA : IsAntiAdditive f) :
-    IsDownwardEntailing f := by
-  intro p q hpq w hfq
-  have hpor_eq : por p q = q := by
-    funext w'
-    simp only [por, Set.mem_union, eq_iff_iff]
-    exact ⟨fun h => h.elim (fun hp => hpq hp) id, Or.inr⟩
-  have := (hAA p q w).mp (by rw [hpor_eq]; exact hfq)
+/-- Anti-additive implies antitone. The codomain need not be `Set World`. -/
+theorem IsAntiAdditive.antitone {f : Set α → Set β} (hAA : IsAntiAdditive f) :
+    Antitone f := by
+  intro p q hpq x hfq
+  have hu : p ∪ q = q := Set.union_eq_right.mpr hpq
+  have := (hAA p q x).mp (by rw [hu]; exact hfq)
   exact this.1
 
-/-- Anti-morphic implies anti-additive. -/
-theorem antiMorphic_implies_antiAdditive (f : Set World → Set World) (hAM : IsAntiMorphic f) :
-    IsAntiAdditive f :=
-  hAM.1
-
-/-- Anti-morphic implies DE. -/
-theorem antiMorphic_implies_de (f : Set World → Set World) (hAM : IsAntiMorphic f) :
+/-- Anti-additive implies DE (specialization to `Set World → Set World`). -/
+theorem antiAdditive_implies_de (f : Set World → Set World) (hAA : IsAntiAdditive f) :
     IsDownwardEntailing f :=
-  antiAdditive_implies_de f (antiMorphic_implies_antiAdditive f hAM)
+  hAA.antitone
+
+/-- Anti-morphic implies anti-additive. -/
+theorem IsAntiMorphic.antiAdditive {f : Set α → Set β} (hAM : IsAntiMorphic f) :
+    IsAntiAdditive f := hAM.1
+
+theorem antiMorphic_implies_antiAdditive (f : Set World → Set World) (hAM : IsAntiMorphic f) :
+    IsAntiAdditive f := hAM.antiAdditive
+
+/-- Anti-morphic implies antitone. -/
+theorem IsAntiMorphic.antitone {f : Set α → Set β} (hAM : IsAntiMorphic f) :
+    Antitone f := hAM.antiAdditive.antitone
+
+theorem antiMorphic_implies_de (f : Set World → Set World) (hAM : IsAntiMorphic f) :
+    IsDownwardEntailing f := hAM.antitone
 
 
 /-- Negation is anti-additive. -/
@@ -229,56 +239,120 @@ end Definitions
 
 section UEDuals
 
-/-- Additive: f(A ∨ B) = f(A) ∨ f(B) and f(⊤) = ⊤. -/
-def IsAdditive (f : Set World → Set World) : Prop :=
-  (∀ p q : Set World, ∀ w, f (por p q) w ↔ f p w ∨ f q w) ∧
-  (∀ w, f pAll w)
+variable {α β : Type*}
 
-/-- Multiplicative: f(A ∧ B) = f(A) ∧ f(B) and f(⊥) = ⊥. -/
-def IsMultiplicative (f : Set World → Set World) : Prop :=
-  (∀ p q : Set World, ∀ w, f (pand p q) w ↔ f p w ∧ f q w) ∧
-  (∀ w, ¬ f pNone w)
+/-- Additive: `f(A ∪ B) = f(A) ∪ f(B)` and `f(⊤) = ⊤`. -/
+def IsAdditive (f : Set α → Set β) : Prop :=
+  (∀ p q : Set α, ∀ x, f (p ∪ q) x ↔ f p x ∨ f q x) ∧
+  (∀ x, f Set.univ x)
 
-/-- Anti-multiplicative: f(A ∧ B) = f(A) ∨ f(B) and f(⊥) = ⊤. -/
-def IsAntiMultiplicative (f : Set World → Set World) : Prop :=
-  (∀ p q : Set World, ∀ w, f (pand p q) w ↔ f p w ∨ f q w) ∧
-  (∀ w, f pNone w)
+/-- Multiplicative: `f(A ∩ B) = f(A) ∩ f(B)` and `f(⊥) = ⊥`. -/
+def IsMultiplicative (f : Set α → Set β) : Prop :=
+  (∀ p q : Set α, ∀ x, f (p ∩ q) x ↔ f p x ∧ f q x) ∧
+  (∀ x, ¬ f ∅ x)
 
-/-- Additive implies UE. -/
-theorem additive_implies_ue (f : Set World → Set World) (hAdd : IsAdditive f) :
-    IsUpwardEntailing f := by
-  intro p q hpq w hfp
-  have hpor_eq : por p q = q := by
-    funext w'
-    simp only [por, Set.mem_union, eq_iff_iff]
-    exact ⟨fun h => h.elim (fun hp => hpq hp) id, Or.inr⟩
-  have := (hAdd.1 p q w).mpr (Or.inl hfp)
-  rw [hpor_eq] at this
-  exact this
+/-- Anti-multiplicative: `f(A ∩ B) = f(A) ∪ f(B)` and `f(⊥) = ⊤`. -/
+def IsAntiMultiplicative (f : Set α → Set β) : Prop :=
+  (∀ p q : Set α, ∀ x, f (p ∩ q) x ↔ f p x ∨ f q x) ∧
+  (∀ x, f ∅ x)
 
-/-- Multiplicative implies UE. -/
-theorem multiplicative_implies_ue (f : Set World → Set World) (hMult : IsMultiplicative f) :
-    IsUpwardEntailing f := by
-  intro p q hpq w hfp
-  have hpand_eq : pand p q = p := by
-    funext w'
-    simp only [pand, Set.mem_inter_iff, eq_iff_iff]
-    exact ⟨And.left, fun h => ⟨h, hpq h⟩⟩
-  have hfpand : f (pand p q) w := by rw [hpand_eq]; exact hfp
-  exact ((hMult.1 p q w).mp hfpand).2
-
-/-- Anti-multiplicative implies DE. -/
-theorem antiMultiplicative_implies_de (f : Set World → Set World) (hAM : IsAntiMultiplicative f) :
-    IsDownwardEntailing f := by
-  intro p q hpq w hfq
-  have hpand_eq : pand p q = p := by
-    funext w'
-    simp only [pand, Set.mem_inter_iff, eq_iff_iff]
-    exact ⟨And.left, fun h => ⟨h, hpq h⟩⟩
-  have h := (hAM.1 p q w).mpr (Or.inr hfq)
-  rw [hpand_eq] at h
+/-- Additive implies monotone. -/
+theorem IsAdditive.monotone {f : Set α → Set β} (hAdd : IsAdditive f) :
+    Monotone f := by
+  intro p q hpq x hfp
+  have hu : p ∪ q = q := Set.union_eq_right.mpr hpq
+  have h := (hAdd.1 p q x).mpr (Or.inl hfp)
+  rw [hu] at h
   exact h
 
+theorem additive_implies_ue (f : Set World → Set World) (hAdd : IsAdditive f) :
+    IsUpwardEntailing f := hAdd.monotone
+
+/-- Multiplicative implies monotone. -/
+theorem IsMultiplicative.monotone {f : Set α → Set β} (hMult : IsMultiplicative f) :
+    Monotone f := by
+  intro p q hpq x hfp
+  have hi : p ∩ q = p := Set.inter_eq_left.mpr hpq
+  have hfpand : f (p ∩ q) x := by rw [hi]; exact hfp
+  exact ((hMult.1 p q x).mp hfpand).2
+
+theorem multiplicative_implies_ue (f : Set World → Set World) (hMult : IsMultiplicative f) :
+    IsUpwardEntailing f := hMult.monotone
+
+/-- Anti-multiplicative implies antitone. -/
+theorem IsAntiMultiplicative.antitone {f : Set α → Set β} (hAM : IsAntiMultiplicative f) :
+    Antitone f := by
+  intro p q hpq x hfq
+  have hi : p ∩ q = p := Set.inter_eq_left.mpr hpq
+  have h := (hAM.1 p q x).mpr (Or.inr hfq)
+  rw [hi] at h
+  exact h
+
+theorem antiMultiplicative_implies_de (f : Set World → Set World) (hAM : IsAntiMultiplicative f) :
+    IsDownwardEntailing f := hAM.antitone
+
 end UEDuals
+
+
+-- ============================================================================
+-- Section: Boolean Homomorphism (@cite{hoeksema-1983})
+-- ============================================================================
+
+section BooleanHomomorphism
+
+/-- Boolean homomorphism: a function between powersets that preserves
+the three Boolean operations `∩`, `∪`, and complement.
+
+This is the property @cite{hoeksema-1983} attributes to the NP-comparative
+`⟦Adj-er than⟧ : Set (Set U) → Set U` (Eq 22) — preservation of intersection,
+union, and complement is what makes the NP-comparative a Boolean homomorphism,
+from which @cite{hoeksema-1983} derives both monotonicity (Fact 3) and
+uniqueness (Facts 1–2).
+
+`f Set.univ = Set.univ` and `f ∅ = ∅` are not stipulated: they follow from
+preservation of `∪` and complement (`f (A ∪ Aᶜ) = f A ∪ (f A)ᶜ = ⊤`).
+See `IsBooleanHomomorphism.preserves_univ`. -/
+structure IsBooleanHomomorphism {α β : Type*} (f : Set α → Set β) : Prop where
+  preserves_inter : ∀ A B : Set α, f (A ∩ B) = f A ∩ f B
+  preserves_union : ∀ A B : Set α, f (A ∪ B) = f A ∪ f B
+  preserves_compl : ∀ A : Set α, f Aᶜ = (f A)ᶜ
+
+namespace IsBooleanHomomorphism
+
+variable {α β : Type*} {f : Set α → Set β}
+
+/-- A Boolean homomorphism preserves the top element. -/
+theorem preserves_univ (h : IsBooleanHomomorphism f) : f Set.univ = Set.univ := by
+  have h₁ : f (∅ ∪ (∅ : Set α)ᶜ) = f ∅ ∪ (f ∅)ᶜ := by
+    rw [h.preserves_union, h.preserves_compl]
+  rw [Set.empty_union, Set.compl_empty] at h₁
+  rw [h₁, Set.union_compl_self]
+
+/-- A Boolean homomorphism preserves the bottom element. -/
+theorem preserves_empty (h : IsBooleanHomomorphism f) : f ∅ = ∅ := by
+  have h₁ : f (Set.univ ∩ (Set.univ : Set α)ᶜ) = f Set.univ ∩ (f Set.univ)ᶜ := by
+    rw [h.preserves_inter, h.preserves_compl]
+  rw [Set.univ_inter, Set.compl_univ] at h₁
+  rw [h₁, Set.inter_compl_self]
+
+/-- A Boolean homomorphism is additive. -/
+theorem toIsAdditive (h : IsBooleanHomomorphism f) : IsAdditive f := by
+  refine ⟨fun p q x => ?_, fun x => ?_⟩
+  · rw [h.preserves_union]; rfl
+  · rw [h.preserves_univ]; exact Set.mem_univ x
+
+/-- A Boolean homomorphism is multiplicative. -/
+theorem toIsMultiplicative (h : IsBooleanHomomorphism f) : IsMultiplicative f := by
+  refine ⟨fun p q x => ?_, fun x => ?_⟩
+  · rw [h.preserves_inter]; rfl
+  · rw [h.preserves_empty]; exact id
+
+/-- @cite{hoeksema-1983} Fact 3: every Boolean homomorphism is monotone. -/
+theorem monotone (h : IsBooleanHomomorphism f) : Monotone f :=
+  h.toIsAdditive.monotone
+
+end IsBooleanHomomorphism
+
+end BooleanHomomorphism
 
 end Semantics.Entailment.AntiAdditivity
