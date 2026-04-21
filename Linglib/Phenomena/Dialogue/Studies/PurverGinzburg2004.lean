@@ -172,7 +172,7 @@ def joArrived : LocProp String where
     q-params channel is empty, so the property fallback applies. -/
 theorem jo_intendedContent_property_only :
     reprisedContent joArrived joSub .intendedContent = [.property "jo"] := by
-  unfold reprisedContent joArrived
-  simp
+  unfold reprisedContent joArrived joSub
+  rfl
 
 end Phenomena.Dialogue.Studies.PurverGinzburg2004

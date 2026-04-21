@@ -41,9 +41,11 @@ and arbitrary `sSup`/`sInf` (strengthening Hoeksema's finitary claim)
 gives complement preservation for free on `BooleanAlgebra → BooleanAlgebra`
 homs.
 
-For the S-comparative we use `IsAntiAdditive` from
-`Theories/Semantics/Entailment/AntiAdditivity.lean`, instantiated via
-the generic `isAntiAdditive_forall_mem` lemma.
+The S-comparative `sComparative` (originally @cite{hoeksema-1983} §3.8
+Def 7) and its anti-additivity (Fact 4) live in
+`Theories/Semantics/Degree/Comparative.lean` as the natural
+generalization of `comparativeSem` from a binary comparator to a
+degree-set comparator. This file imports them from there.
 
 ## Hoeksema's algebraic spine: Definitions 4–8 and Facts 1–4
 
@@ -51,8 +53,9 @@ The §3 algebraic content is formalized in five layers:
 - **Definition 4** (`IsOrderingPreserving`): the abstract property
   `μ b < μ a ↔ a ∈ f Q_b`, where `Q_b = {X | b ∈ X}` is the principal
   ultrafilter at `b` (`principalUltrafilter`).
-- **Definition 7/8** (`sComparative`): the S-comparative as a
-  set-of-degrees operator (already covered above).
+- **Definition 7/8** (`sComparative` in
+  `Theories/Semantics/Degree/Comparative.lean`): the S-comparative as
+  a set-of-degrees operator.
 - **Fact 1** (`fact1_agree_on_atoms`): two `>`-preserving functions
   coincide on every principal ultrafilter — a one-line chain of the
   Definition 4 biconditionals.
@@ -64,8 +67,9 @@ The §3 algebraic content is formalized in five layers:
 - **Fact 3** (`npComparativeGQ_monotone`): every Boolean hom is
   monotone increasing — disqualifies the NP-comparative as a Ladusaw
   NPI environment.
-- **Fact 4** (cited from `IsAntiAdditive.antitone` in
-  `Theories/Semantics/Entailment/AntiAdditivity.lean`): every
+- **Fact 4** (`sComparative_isAntiAdditive` in
+  `Theories/Semantics/Degree/Comparative.lean`, cited from
+  `IsAntiAdditive.antitone` in `AntiAdditivity.lean`): every
   anti-additive function is antitone — hence the S-comparative
   qualifies as an NPI environment.
 - **§3.9 NP↔S equivalence** (`npComparativeGQ_principal_eq_sComparative_singleton`):
@@ -88,36 +92,11 @@ registry's classification, by `rfl`.
 namespace Hoeksema1983
 
 open Semantics.Entailment.AntiAdditivity
+open Semantics.Degree.Comparative (sComparative sComparative_isAntiAdditive
+  sComparative_atomic)
 open Core.Lexical.PolarityItem (LicensingContext contextProperties)
 
 variable {Entity : Type*} {D : Type*} [Preorder D]
-
-/-! ## S-comparative as set-of-degrees (§3.8, Def 7) -/
-
-/-- S-comparative on a set of degrees: `y ∈ sComparative μ Δ` iff `μ y`
-    strictly exceeds every degree in `Δ`. The than-clause supplies a
-    set of degrees `Δ` (typically existentially closed). -/
-def sComparative (μ : Entity → D) (Δ : Set D) : Set Entity :=
-  fun y => ∀ d ∈ Δ, d < μ y
-
-/-- The S-comparative is anti-additive in its set-of-degrees argument:
-    `sComparative μ (A ∪ B) = sComparative μ A ∩ sComparative μ B`.
-    Source of NPI licensing in clausal *than*-comparatives. -/
-theorem sComparative_isAntiAdditive (μ : Entity → D) :
-    IsAntiAdditive (sComparative μ) :=
-  isAntiAdditive_forall_mem (fun d y => d < μ y)
-
-/-- Atomic specialization of the S-comparative: at the singleton
-    `{μ b}`, membership reduces to the binary "taller than b" relation.
-    This is the bridge between the Hoeksema set-theoretic schema and
-    the everyday `μ b < μ a` reading. -/
-theorem sComparative_atomic (μ : Entity → D) (a b : Entity) :
-    a ∈ sComparative μ {μ b} ↔ μ b < μ a := by
-  refine ⟨fun h => h (μ b) rfl, ?_⟩
-  intro h d hd
-  rw [Set.mem_singleton_iff] at hd
-  rw [hd]
-  exact h
 
 /-! ## NP-comparative as Boolean homomorphism (§3.6, Eq 22) -/
 
@@ -252,16 +231,24 @@ theorem fact1_agree_on_atoms {μ : Entity → D}
     homomorphisms on `Set (Set Entity) → Set Entity` that agree on every
     principal ultrafilter `Q_b` are equal. The proof reduces every
     `Q : Set (Set Entity)` to the `iSup` of its singleton members, each of
-    which is the intersection of `Q_a` for `a ∈ Y` and `Q_aᶜ` for `a ∉ Y`.
-    The hom commutes with `iSup`, `iInf`, `inf`, and `compl`. -/
+    which is the `iInf` of `Q_a` for `a ∈ Y` and `Q_aᶜ` for `a ∉ Y`.
+    The hom commutes with `iSup`, `iInf`, `inf`, and `compl`.
+
+    The two bridge lemmas (`singleton_eq_iInf_principalUltrafilter`,
+    `eq_iSup_singletons`) state the atom representation directly with
+    `⨅`/`⨆` so the consumer (`fact2_unique_from_atoms`) chains with
+    `map_iInf₂` / `map_iSup₂` without any `⋂ → ⨅` bridging step. -/
 
 /-- Atom representation of a singleton in `Set (Set Entity)`:
-    `{X} = (⋂_{a ∈ X} Q_a) ∩ (⋂_{a ∉ X} Q_aᶜ)`. -/
-theorem singleton_eq_atomic_intersection (X : Set Entity) :
+    `{X} = (⨅_{a ∈ X} Q_a) ⊓ (⨅_{a ∉ X} Q_aᶜ)`. Stated with `⨅`/`⊓`
+    rather than `⋂`/`∩` so that consumers chain directly with
+    `map_iInf₂` / `map_inf`. -/
+theorem singleton_eq_iInf_principalUltrafilter (X : Set Entity) :
     ({X} : Set (Set Entity)) =
-      (⋂ a ∈ X, principalUltrafilter a) ∩ (⋂ a ∉ X, (principalUltrafilter a)ᶜ) := by
+      (⨅ a ∈ X, principalUltrafilter a) ⊓ (⨅ a ∉ X, (principalUltrafilter a)ᶜ) := by
   ext Y
-  simp only [Set.mem_singleton_iff, Set.mem_inter_iff, Set.mem_iInter,
+  simp only [Set.mem_singleton_iff, Set.inf_eq_inter, Set.mem_inter_iff,
+             Set.iInf_eq_iInter, Set.mem_iInter,
              Set.mem_compl_iff, principalUltrafilter, Set.mem_setOf_eq]
   refine ⟨?_, ?_⟩
   · rintro rfl; exact ⟨fun _ ha => ha, fun _ ha => ha⟩
@@ -269,18 +256,28 @@ theorem singleton_eq_atomic_intersection (X : Set Entity) :
     ext a
     exact ⟨fun hY => by_contra fun hX => h2 a hX hY, fun hX => h1 a hX⟩
 
-/-- Any `Q : Set (Set Entity)` is the union of its singleton members. -/
-theorem set_eq_iUnion_singletons (Q : Set (Set Entity)) :
-    Q = ⋃ Y ∈ Q, ({Y} : Set (Set Entity)) := by
-  ext; simp
+/-- Any `Q : Set (Set Entity)` is the `⨆` of its singleton members.
+    Stated with `⨆` rather than `⋃` so that the consumer
+    (`fact2_unique_from_atoms`) chains directly with `map_iSup₂`. -/
+theorem eq_iSup_singletons (Q : Set (Set Entity)) :
+    Q = ⨆ Y ∈ Q, ({Y} : Set (Set Entity)) := by
+  ext Y
+  simp only [Set.iSup_eq_iUnion, Set.mem_iUnion, Set.mem_singleton_iff,
+             exists_prop, exists_eq_right']
 
 /-- @cite{hoeksema-1983} Fact 2: a `CompleteLatticeHom` on
     `Set (Set Entity) → Set Entity` is determined by its values on the
     principal-ultrafilter generators `Q_b`. The proof composes
-    `set_eq_iUnion_singletons` (every `Q` is a sup of singletons),
-    `singleton_eq_atomic_intersection` (every singleton is an atomic
-    inf of `Q_a`'s and `Q_aᶜ`'s), and the standard mathlib hom
-    morphism API (`map_iSup₂`, `map_iInf₂`, `map_inf`, `map_compl`). -/
+    `eq_iSup_singletons` (every `Q` is a `⨆` of singletons),
+    `singleton_eq_iInf_principalUltrafilter` (every singleton is an
+    atomic `⨅` of `Q_a`'s and `Q_aᶜ`'s), and the standard mathlib hom
+    API (`map_iSup₂`, `map_iInf₂`, `map_inf`, `map_compl`).
+
+    The mathematical content — "a `CompleteLatticeHom` on
+    `Set (Set α) → Set α` is determined by its values on principal-set
+    generators" — is generic and would PR cleanly to
+    `Mathlib/Order/Hom/CompleteLattice.lean` as a strengthening of the
+    existing pointwise `@[ext]` lemma. -/
 theorem fact2_unique_from_atoms
     (f g : CompleteLatticeHom (Set (Set Entity)) (Set Entity))
     (hagree : ∀ b : Entity, f (principalUltrafilter b) = g (principalUltrafilter b)) :
@@ -288,16 +285,11 @@ theorem fact2_unique_from_atoms
   suffices h_singletons : ∀ Y : Set Entity, f {Y} = g {Y} by
     apply DFunLike.ext
     intro Q
-    rw [set_eq_iUnion_singletons Q]
-    rw [show (⋃ Y ∈ Q, ({Y} : Set (Set Entity))) = ⨆ Y ∈ Q, ({Y} : Set (Set Entity)) from rfl]
-    rw [map_iSup₂ f, map_iSup₂ g]
+    rw [eq_iSup_singletons Q, map_iSup₂ f, map_iSup₂ g]
     exact iSup_congr (fun Y => iSup_congr (fun _ => h_singletons Y))
   intro Y
-  rw [singleton_eq_atomic_intersection]
-  rw [show ((⋂ a ∈ Y, principalUltrafilter a) ∩ (⋂ a ∉ Y, (principalUltrafilter a)ᶜ))
-        = ((⨅ a ∈ Y, principalUltrafilter a) ⊓ (⨅ a ∉ Y, (principalUltrafilter a)ᶜ)) from rfl]
-  rw [map_inf f, map_inf g]
-  rw [map_iInf₂ f, map_iInf₂ g, map_iInf₂ f, map_iInf₂ g]
+  rw [singleton_eq_iInf_principalUltrafilter, map_inf f, map_inf g,
+      map_iInf₂ f, map_iInf₂ g, map_iInf₂ f, map_iInf₂ g]
   congr 1
   · exact iInf_congr (fun a => iInf_congr (fun _ => hagree a))
   · refine iInf_congr (fun a => iInf_congr (fun _ => ?_))
@@ -329,23 +321,6 @@ theorem npComparativeGQ_principal_eq_sComparative_singleton
   simp only [CompleteLatticeHom.coe_setPreimage, Set.mem_preimage,
              Set.mem_setOf_eq, Set.mem_singleton_iff]
   refine ⟨fun h d hd => hd ▸ h, fun h => h (μ b) rfl⟩
-
-/-! ## Bridge to the framework-independent comparative
-
-    `Theories/Semantics/Degree/Comparative.lean` defines the binary
-    `comparativeSem μ a b .positive ↔ μ a > μ b` for a `LinearOrder D`.
-    The atomic S-comparative agrees with this binary form pointwise —
-    the Hoeksema set-theoretic schema is a strict generalization. -/
-
-/-- The atomic S-comparative coincides with the framework-independent
-    binary comparative on a `LinearOrder`. The bridge is stated outside
-    the `[Preorder D]` block to avoid an instance clash with the
-    `LinearOrder → Preorder` derivation. -/
-theorem sComparative_atomic_eq_comparativeSem
-    {Entity D : Type*} [LinearOrder D] (μ : Entity → D) (a b : Entity) :
-    a ∈ sComparative μ {μ b} ↔
-      Semantics.Degree.Comparative.comparativeSem μ a b .positive :=
-  sComparative_atomic μ a b
 
 /-! ## Connection to the licensing-context registry -/
 

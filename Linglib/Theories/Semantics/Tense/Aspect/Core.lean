@@ -38,6 +38,7 @@ import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 
 namespace Semantics.Tense.Aspect.Core
 
+open _root_.Core (Situation)
 open Core.Time
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
@@ -48,20 +49,20 @@ open Core.Verbs
 
 /-- An eventuality with interval-valued runtime. @cite{pancheva-2003}
     Unlike `Situation` (point-valued τ), eventualities occupy temporal intervals. -/
-structure Eventuality (Time : Type*) [LE Time] where
+structure Eventuality (Time : Type*) [LinearOrder Time] where
   /-- The temporal extent of this eventuality -/
   runtime : Interval Time
 
 /-- Temporal trace: the runtime interval of an eventuality. -/
 @[simp]
-def Eventuality.τ {Time : Type*} [LE Time] (e : Eventuality Time) : Interval Time :=
+def Eventuality.τ {Time : Type*} [LinearOrder Time] (e : Eventuality Time) : Interval Time :=
   e.runtime
 
 /-- Predicate over eventualities (VP denotations). -/
-abbrev EventPred (W Time : Type*) [LE Time] := W → Eventuality Time → Prop
+abbrev EventPred (W Time : Type*) [LinearOrder Time] := W → Eventuality Time → Prop
 
 /-- Predicate over time intervals (output of IMPF/PRFV). -/
-abbrev IntervalPred (W Time : Type*) [LE Time] := W → Interval Time → Prop
+abbrev IntervalPred (W Time : Type*) [LinearOrder Time] := W → Interval Time → Prop
 
 /-- Predicate over time points (output of PERF, input to TENSE).
     Defined as `Situation W Time → Prop` to make the situation structure

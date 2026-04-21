@@ -40,7 +40,7 @@ import Linglib.Theories.Semantics.Mood.Basic
 
 namespace Semantics.Dynamic.IntensionalCDRT.Situations
 
-open Core (Situation)
+open _root_.Core (Situation)
 
 open Core.Time
 open Core.Modality.HistoricalAlternatives

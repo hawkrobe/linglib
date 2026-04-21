@@ -68,10 +68,11 @@ set_option autoImplicit false
 
 namespace GrusdtLassiterFranke2022
 
-open Core (Situation)
-
+open Core.StructuralEquationModel
 open Core.CausalBayesNet
 open Semantics.Conditionals.Assertability
+open Semantics.Causation.Sufficiency
+open Semantics.Causation.Necessity
 
 
 -- ============================================================================

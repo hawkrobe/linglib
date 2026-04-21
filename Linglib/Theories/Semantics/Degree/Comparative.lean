@@ -1,19 +1,22 @@
 import Linglib.Core.Scales.Extent
 import Linglib.Theories.Semantics.Degree.Core
+import Linglib.Theories.Semantics.Entailment.AntiAdditivity
 
 /-!
 # Framework-Independent Comparative Semantics
-@cite{rett-2026} @cite{schwarzschild-2008} @cite{von-stechow-1984}
+@cite{rett-2026} @cite{schwarzschild-2008} @cite{von-stechow-1984} @cite{hoeksema-1983}
 
 Comparative semantics shared across all degree frameworks: the basic
-`comparativeSem` and `equativeSem` functions, antonymy as scale reversal,
-DE-ness of than-clauses (NPI licensing), and boundary dependence.
+`comparativeSem` and `equativeSem` functions, the set-of-degrees
+generalization `sComparative`, antonymy as scale reversal, DE-ness of
+than-clauses (NPI licensing), and boundary dependence.
 
-NPI licensing in than-clauses (the @cite{hoeksema-1983} analysis: NP-comparative
-as Boolean homomorphism, S-comparative as anti-additive) lives in
-`Phenomena/Polarity/Studies/Hoeksema1983.lean`. The `comparative_than_DE`
-lemma below is the generic universal-quantifier antitonicity result, not
-the Hoeksema-specific anti-additivity result.
+The set-of-degrees S-comparative `sComparative` (originally
+@cite{hoeksema-1983} §3.8 Def 7) lives here as the natural generalization
+of `comparativeSem` from a binary comparator to a degree-set comparator.
+Hoeksema's polarity-asymmetry consumers (Boolean-hom `npComparativeGQ`,
+the licensing-context registry connection) remain in
+`Phenomena/Polarity/Studies/Hoeksema1983.lean`.
 
 This module was extracted from `Theories/Semantics/Lexical/Adjective/Comparative.lean`
 (which now re-exports from here). The framework-specific content (MAX,
@@ -23,8 +26,14 @@ ambidirectionality, manner implicature) is in `Degree/Frameworks/Rett.lean`.
 
 1. **comparativeSem**: "A is taller than B" iff μ(A) > μ(B) (positive) or
    μ(A) < μ(B) (negative).
-2. **Antonymy as scale reversal**: "A taller than B" ↔ "B shorter than A".
-3. **DE-ness of than-clauses**: universal quantification over the standard
+2. **sComparative**: degree-set generalization; anti-additive in the
+   standard set (the algebraic source of S-comparative NPI licensing).
+3. **sComparative_eq_singleton_of_isGreatest**: the S-comparative is
+   determined by the supremum of its degree-set argument when one
+   exists. Specializes to: a downward-closed than-clause denotation
+   reduces to its maximum (@cite{bhatt-pancheva-2004} §3 reduction).
+4. **Antonymy as scale reversal**: "A taller than B" ↔ "B shorter than A".
+5. **DE-ness of than-clauses**: universal quantification over the standard
    domain is anti-monotone.
 
 -/
@@ -101,6 +110,68 @@ theorem equative_boundary {α : Type*} [LinearOrder α]
     (∃ m ∈ maxOnScale (· ≥ ·) {d | d ≤ μ_b}, μ_a ≥ m) ↔ μ_a ≥ μ_b := by
   rw [maxOnScale_ge_atMost]
   simp
+
+-- ════════════════════════════════════════════════════
+-- § 4½. Set-of-Degrees Comparative (`sComparative`)
+-- ════════════════════════════════════════════════════
+
+/-- S-comparative on a set of degrees (@cite{hoeksema-1983} §3.8 Def 7):
+    `y ∈ sComparative μ Δ` iff `μ y` strictly exceeds every degree in
+    `Δ`. The than-clause supplies a set of degrees `Δ` (typically
+    existentially closed). Generalizes the binary `comparativeSem` from
+    a single standard to an arbitrary degree-set standard. -/
+def sComparative {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (Δ : Set D) : Set Entity :=
+  fun y => ∀ d ∈ Δ, d < μ y
+
+/-- @cite{hoeksema-1983} Fact 4: the S-comparative is anti-additive in
+    its set-of-degrees argument. The algebraic source of NPI licensing
+    in clausal *than*-comparatives. -/
+theorem sComparative_isAntiAdditive {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) :
+    Semantics.Entailment.AntiAdditivity.IsAntiAdditive (sComparative μ) :=
+  Semantics.Entailment.AntiAdditivity.isAntiAdditive_forall_mem
+    (fun d y => d < μ y)
+
+/-- Atomic specialization: at the singleton `{μ b}`, S-comparative
+    membership reduces to the binary "taller than `b`" relation. The
+    bridge between the Hoeksema set-theoretic schema and the everyday
+    `μ b < μ a` reading. -/
+theorem sComparative_atomic {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) (a b : Entity) :
+    a ∈ sComparative μ {μ b} ↔ μ b < μ a := by
+  refine ⟨fun h => h (μ b) rfl, ?_⟩
+  intro h d hd
+  rw [Set.mem_singleton_iff] at hd
+  rw [hd]
+  exact h
+
+/-- **Reduction lemma** (@cite{bhatt-pancheva-2004} §3 in algebraic
+    form): the S-comparative is determined by the *greatest* element of
+    its degree-set argument. Passing a set whose supremum is `m` yields
+    the same predicate as passing `{m}`.
+
+    The proof requires neither linearity nor density of the scale —
+    only `[Preorder D]` and the `IsGreatest` witness. This is the
+    generic order-theoretic content behind B&P's claim that the
+    clausal-source than-clause denotation `{d | d ≤ μ b}` collapses
+    to its maximum. -/
+theorem sComparative_eq_singleton_of_isGreatest {Entity D : Type*} [Preorder D]
+    (μ : Entity → D) {Δ : Set D} {m : D} (hm : IsGreatest Δ m) :
+    sComparative μ Δ = sComparative μ ({m} : Set D) := by
+  ext y
+  refine ⟨fun h d hd => ?_, fun h d hd => ?_⟩
+  · rw [Set.mem_singleton_iff] at hd
+    exact hd ▸ h m hm.1
+  · exact lt_of_le_of_lt (hm.2 hd) (h m rfl)
+
+/-- Bridge: the atomic S-comparative coincides with the binary
+    `comparativeSem` on a `LinearOrder`. The set-of-degrees schema is a
+    strict generalization of the binary comparator. -/
+theorem sComparative_atomic_eq_comparativeSem
+    {Entity α : Type*} [LinearOrder α] (μ : Entity → α) (a b : Entity) :
+    a ∈ sComparative μ {μ b} ↔ comparativeSem μ a b .positive :=
+  sComparative_atomic μ a b
 
 -- ════════════════════════════════════════════════════
 -- § 5. NPI Licensing in Comparatives

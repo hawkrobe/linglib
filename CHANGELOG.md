@@ -4,6 +4,64 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.100] - 2026-04-20
+
+### Changed
+- **`sComparative` promoted from `Hoeksema1983.lean` to
+  `Theories/Semantics/Degree/Comparative.lean`.** Set-of-degrees
+  S-comparative (`sComparative`, `sComparative_isAntiAdditive`,
+  `sComparative_atomic`) belongs in the framework-independent
+  comparative-semantics module as the natural generalization of
+  `comparativeSem` from a binary comparator to a degree-set comparator;
+  Hoeksema's polarity-asymmetry consumers (Boolean-hom `npComparativeGQ`,
+  registry connection) remain in `Phenomena/Polarity/Studies/Hoeksema1983.lean`
+  via an `open Semantics.Degree.Comparative (...)`. New
+  `sComparative_eq_singleton_of_isGreatest` (Preorder, no linearity) is
+  the order-theoretic content of @cite{bhatt-pancheva-2004} §3 reduction:
+  passing a set whose supremum is `m` to the S-comparative yields the
+  same predicate as passing `{m}`.
+- **`Phenomena/Comparison/Studies/BhattPancheva2004.lean` reduction
+  refactored.** `bhattPancheva_reduction` (8-line ext-based proof
+  requiring `[LinearOrder D]`) replaced by `thanClause_reduces_to_max`
+  (1-line corollary of `sComparative_eq_singleton_of_isGreatest` at
+  `thanClauseMax_isGreatest`, requiring only `[Preorder D]`).
+  `npGQ_principal_eq_sComp_thanClause` follows. Docstring tightened to
+  flag that the algebraic equivalence does not witness B&P's syntactic
+  distinctness claim (B&P §1.1.1 fn. 4, contra @cite{bresnan-1973}).
+- **`Phenomena/Polarity/Studies/Hoeksema1983.lean` Fact 2 mathlib
+  hygiene.** `singleton_eq_atomic_intersection` /
+  `set_eq_iUnion_singletons` restated as
+  `singleton_eq_iInf_principalUltrafilter` / `eq_iSup_singletons` —
+  bridge lemmas now use `⨅/⨆/⊓` directly so the consumer
+  `fact2_unique_from_atoms` chains with `map_iInf₂` / `map_iSup₂` /
+  `map_inf` without any `⋂ → ⨅` / `⋃ → ⨆` `show ... from rfl`
+  intermediates. Docstring of `fact2_unique_from_atoms` calls out the
+  generic mathlib content ("a `CompleteLatticeHom` on `Set (Set α) → Set α`
+  is determined by its values on principal-set generators") as a
+  candidate mathlib PR.
+- **Dead `open Core (Situation)` lines deleted post-`Core/Situation.lean`
+  introduction.** 13 files where the post-0.230.99 `Core.Situation`
+  namespace shadowed prior local references: `Core/CylindricAlgebra.lean`,
+  `Core/CylindricAlgebra/VarAssignment.lean`, `Core/Lexical/VerbClass.lean`,
+  `Core/StructuralEquationModel.lean`, `Phenomena/Causation/Studies/{BarAsherSiegal2026,KonukEtAl2026,NadathurLauer2020}.lean`,
+  `Phenomena/Dialogue/Studies/HardingGerstenbergIcard2025.lean`,
+  `Phenomena/Generics/Studies/{Cohen1999,Guerrini2026,Nickel2009}.lean`,
+  `Phenomena/Polysemy/Studies/ErkHerbelot2024.lean`, and 9 sibling files
+  in `Theories/Semantics/{Causation,Noun/Kind,Probabilistic/SDS,Quantification,Tense/Aspect}/`.
+  Two files genuinely consume the new world-time `Core.Situation` and
+  add explicit `open Core (Situation)`:
+  `Phenomena/Directives/Studies/Roberts2023.lean` and
+  `Theories/Semantics/Attitudes/SituationDependent.lean`.
+- **`Core/Time/Allen.lean` mathlib API rename.** 8 sites:
+  `le_of_not_lt` → `le_of_not_gt` (mathlib `Mathlib.Order.Defs.LinearOrder`).
+- **`Theories/Semantics/Attitudes/Monotonicity.lean` Bool→Prop bridge.**
+  `distribOverConj` and `hasEMP` switched from
+  `sig.refines .mono` (Bool method) to `decide (sig.Refines .mono)`
+  (Prop predicate + DecidableEq) per the EntailmentSig API migration.
+- **`Phenomena/Dialogue/Studies/PurverGinzburg2004.lean` proof
+  tightened.** `jo_intendedContent_property_only`: `unfold` extended to
+  `joSub`, `simp` replaced by `rfl` (structural reduction).
+
 ## [0.230.99] - 2026-04-20
 
 ### Changed

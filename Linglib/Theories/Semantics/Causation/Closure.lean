@@ -35,8 +35,6 @@ closures with different triggers.
 
 namespace Semantics.Causation.Closure
 
-open Core (Situation)
-
 open Core.StructuralEquationModel
 
 -- ════════════════════════════════════════════════════

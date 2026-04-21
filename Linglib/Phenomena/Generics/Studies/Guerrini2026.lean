@@ -70,8 +70,6 @@ English [+arg, +pred] allows both; Italian [-arg, +pred] forces D.
 
 namespace Guerrini2026
 
-open Core (Situation)
-
 open Semantics.Noun.Kind.Chierchia1998 (NominalMapping Kind CanDenoteKind
   CanDenoteProperty downDefinedFor DPP)
 open Core.Duality (Truth3)

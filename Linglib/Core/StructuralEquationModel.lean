@@ -23,8 +23,6 @@ NoisyOR), see `Core.CausalBayesNet`.
 
 namespace Core.StructuralEquationModel
 
-open Core (Situation)
-
 -- ============================================================
 -- § Variables and Situations
 -- ============================================================

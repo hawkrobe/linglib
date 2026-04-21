@@ -33,8 +33,6 @@ import Mathlib.Tactic.Ring
 
 namespace Semantics.Probabilistic.SDS.Core
 
-open Core (Situation)
-
 -- Core Typeclass: SDSConstraintSystem
 
 /--

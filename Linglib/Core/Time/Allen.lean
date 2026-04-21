@@ -170,29 +170,29 @@ def witness (i j : Interval Time) : { r : AllenRelation // r.holds i j } :=
   if h₁ : i.finish < j.start then ⟨.precedes, h₁⟩
   else if h₁' : i.finish = j.start then ⟨.meets, h₁'⟩
   else
-    have hfgs : j.start < i.finish := lt_of_le_of_ne (le_of_not_lt h₁) (Ne.symm h₁')
+    have hfgs : j.start < i.finish := lt_of_le_of_ne (le_of_not_gt h₁) (Ne.symm h₁')
     if h₂ : j.finish < i.start then ⟨.precededBy, h₂⟩
     else if h₂' : i.start = j.finish then ⟨.metBy, h₂'⟩
     else
-      have hsgf : i.start < j.finish := lt_of_le_of_ne (le_of_not_lt h₂) h₂'
+      have hsgf : i.start < j.finish := lt_of_le_of_ne (le_of_not_gt h₂) h₂'
       if h₃ : i.start < j.start then
         if h₄ : i.finish < j.finish then ⟨.overlaps, h₃, hfgs, h₄⟩
         else if h₄' : i.finish = j.finish then ⟨.finishedBy, h₃, h₄'⟩
         else
-          have h₄g : j.finish < i.finish := lt_of_le_of_ne (le_of_not_lt h₄) (Ne.symm h₄')
+          have h₄g : j.finish < i.finish := lt_of_le_of_ne (le_of_not_gt h₄) (Ne.symm h₄')
           ⟨.contains, h₃, h₄g⟩
       else if h₃' : i.start = j.start then
         if h₄ : i.finish < j.finish then ⟨.starts, h₃', h₄⟩
         else if h₄' : i.finish = j.finish then ⟨.equal, h₃', h₄'⟩
         else
-          have h₄g : j.finish < i.finish := lt_of_le_of_ne (le_of_not_lt h₄) (Ne.symm h₄')
+          have h₄g : j.finish < i.finish := lt_of_le_of_ne (le_of_not_gt h₄) (Ne.symm h₄')
           ⟨.startedBy, h₃', h₄g⟩
       else
-        have h₃g : j.start < i.start := lt_of_le_of_ne (le_of_not_lt h₃) (Ne.symm h₃')
+        have h₃g : j.start < i.start := lt_of_le_of_ne (le_of_not_gt h₃) (Ne.symm h₃')
         if h₄ : i.finish < j.finish then ⟨.during, h₃g, h₄⟩
         else if h₄' : i.finish = j.finish then ⟨.finishes, h₃g, h₄'⟩
         else
-          have h₄g : j.finish < i.finish := lt_of_le_of_ne (le_of_not_lt h₄) (Ne.symm h₄')
+          have h₄g : j.finish < i.finish := lt_of_le_of_ne (le_of_not_gt h₄) (Ne.symm h₄')
           ⟨.overlappedBy, h₃g, hsgf, h₄g⟩
 
 /-- **Exhaustiveness** (existence half): every interval pair satisfies at

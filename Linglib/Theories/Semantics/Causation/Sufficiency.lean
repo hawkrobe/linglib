@@ -35,8 +35,6 @@ In other words: if we add C to the background, E necessarily follows.
 
 namespace Semantics.Causation.Sufficiency
 
-open Core (Situation)
-
 open Core.StructuralEquationModel
 export Core.StructuralEquationModel (causallySufficient)
 

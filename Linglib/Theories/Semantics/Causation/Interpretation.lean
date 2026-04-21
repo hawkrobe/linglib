@@ -27,8 +27,6 @@ mechanism.
 
 namespace Core.Verbs
 
-open Core (Situation)
-
 open Core.StructuralEquationModel
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

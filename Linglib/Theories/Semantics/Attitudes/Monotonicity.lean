@@ -49,7 +49,7 @@ open Semantics.Attitudes.Doxastic (Veridicality)
     Note: `.mult` (multiplicative) distributes over ∧ by definition —
     f(A ∧ B) = f(A) ∧ f(B). The `.mono` refinement captures this. -/
 def distribOverConj (sig : EntailmentSig) : Bool :=
-  sig.refines .mono
+  decide (sig.Refines .mono)
 
 -- Verification: signatures that distribute over conjunction
 #guard distribOverConj .mono       -- upward monotone
@@ -81,7 +81,7 @@ def distribOverConj (sig : EntailmentSig) : Bool :=
     state either contains a verifier for p or for ¬p (no undecided gap).
     This is a presupposition, not a semantic entailment. -/
 def hasEMP (sig : EntailmentSig) : Bool :=
-  sig.refines .mono
+  decide (sig.Refines .mono)
 
 /-- Neg-raising available via monotonicity + EMP.
     This is an alternative to `NegRaising.negRaisingAvailable`, which

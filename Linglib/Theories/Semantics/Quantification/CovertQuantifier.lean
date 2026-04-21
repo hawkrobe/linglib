@@ -33,8 +33,6 @@ def myLex : Lexicon FyModel :=
 
 namespace Semantics.Quantification.CovertQuantifier
 
-open Core (Situation)
-
 variable {D : Type}
 
 /-- A covert quantifier: `∀d ∈ domain. restriction(d) → scope(d)`.

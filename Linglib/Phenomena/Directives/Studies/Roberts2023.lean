@@ -45,6 +45,7 @@ and shows the account satisfies all of them. See `section Desiderata` below.
 
 namespace Roberts2023
 
+open Core (Situation)
 open Core.Discourse
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional

@@ -38,7 +38,7 @@ variable {Time : Type*} [LinearOrder Time]
 
 /-- A sentence denotes a set of temporal intervals (its "run-times").
     Statives denote homogeneous interval sets; accomplishments denote singletons. -/
-abbrev SentDenotation (Time : Type*) [LE Time] := Set (Interval Time)
+abbrev SentDenotation (Time : Type*) [LinearOrder Time] := Set (Interval Time)
 
 /-- The set of all time points contained in some interval of a denotation.
     This projects from interval-set representation to time-set representation,
