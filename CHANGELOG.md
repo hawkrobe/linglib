@@ -4,6 +4,33 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.107] - 2026-04-20
+
+### Changed
+- **`Core.Situation` (world×time index) renamed to `Core.WorldTimeIndex`.**
+  Disambiguates from two semantically distinct `Situation` types that
+  were colliding in qualified contexts: this Lewis/Kaplan-style "index
+  of evaluation" (a (world, time) coordinate pair), the Kratzer
+  parthood-structured `Core.IntensionalLogic.Situations.Situation`
+  (full mereological structure), and the Pearl/Halpern partial-
+  valuation `Core.Causal.Situation` (variable assignments for SEM
+  evaluation). The new name is descriptive of the coordinate-tuple
+  shape and never confusable with the other two.
+  - New file: `Core/WorldTimeIndex.lean` (replacing deleted
+    `Core/Situation.lean`); module docstring explicitly cross-
+    references the two more substantive `Situation` namespaces.
+  - `Linglib.lean` import updated.
+  - ~38 consumers across `Core/`, `Theories/`, and `Phenomena/Studies/`
+    migrated (`Situation W T` → `WorldTimeIndex W T`).
+  - `Theories/Semantics/Dynamic/IntensionalCDRT/ModalDonkeyAnaphora.lean`
+    needed `open _root_.Core (WorldTimeIndex)` (rather than
+    `open Core (...)`) to disambiguate from the in-scope
+    `Semantics.Dynamic.Core` namespace, matching the pattern already
+    used in `IntensionalCDRT/Situations.lean`.
+  - The actual code changes for this rename were absorbed into commit
+    `77a4ae54` (0.230.105) by a concurrent session that swept the
+    working tree; this entry credits the work post-hoc.
+
 ## [0.230.106] - 2026-04-20
 
 ### Changed
