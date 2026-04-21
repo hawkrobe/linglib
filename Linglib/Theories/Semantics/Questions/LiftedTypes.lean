@@ -403,12 +403,13 @@ In the lifted setting, "p answers LQ" means:
 ∃Q ∈ LQ. p is an answer to Q
 
 Note: Full definition requires a world list parameter for toCells. -/
-def answers (p : W → Prop) (lq : LiftedQuestion W) (worlds : List W) : Prop :=
-  lq (λ q => ∃ cell ∈ q.toCells worlds, ∀ w, cell w = true ↔ p w)
+def answers [DecidableEq W] (p : W → Prop) (lq : LiftedQuestion W) (worlds : List W) : Prop :=
+  lq (λ q => ∃ cell ∈ q.toCells worlds, ∀ w, w ∈ cell ↔ p w)
 
 /-- Partial answerhood for lifted questions. -/
-def partiallyAnswers (p : W → Prop) (lq : LiftedQuestion W) (worlds : List W) : Prop :=
-  lq (λ q => ∃ cell ∈ q.toCells worlds, ∀ w, p w → cell w = true)
+def partiallyAnswers [DecidableEq W] (p : W → Prop) (lq : LiftedQuestion W)
+    (worlds : List W) : Prop :=
+  lq (λ q => ∃ cell ∈ q.toCells worlds, ∀ w, p w → w ∈ cell)
 
 end LiftedQuestion
 

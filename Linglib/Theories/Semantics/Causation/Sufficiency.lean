@@ -1,4 +1,4 @@
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 import Mathlib.Tactic.Set
 import Mathlib.Tactic.SplitIfs
 
@@ -35,8 +35,8 @@ In other words: if we add C to the background, E necessarily follows.
 
 namespace Semantics.Causation.Sufficiency
 
-open Core.StructuralEquationModel
-export Core.StructuralEquationModel (causallySufficient)
+open Core.Causal
+export Core.Causal (causallySufficient)
 
 /-- Semantics of "make": X was causally sufficient for Y (@cite{nadathur-lauer-2020}). -/
 def makeSem (dyn : CausalDynamics) (background : Situation)
@@ -65,7 +65,7 @@ theorem chain_isPositive (a b c : Variable) :
 -- ============================================================
 
 -- trueLE, Situation.trueLE_refl, Situation.trueLE_trans, Situation.extend_hasValue_same/diff
--- are defined in Core.StructuralEquationModel
+-- are defined in Core.Causal
 
 /-- Local abbreviation for readability. -/
 private abbrev trueLE := Situation.trueLE

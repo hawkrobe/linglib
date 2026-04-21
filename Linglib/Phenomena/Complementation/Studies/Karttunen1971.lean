@@ -52,7 +52,7 @@ open Core.Verbs (Causative)
 open Fragments.English.Predicates.Verbal
 open Fragments.English.Predicates.Copular (beAble)
 open Core.Verbs
-open Core.StructuralEquationModel
+open Core.Causal
 
 -- ════════════════════════════════════════════════════════════════
 -- § 1. Karttunen's Four-Cell Classification (§§9–11)

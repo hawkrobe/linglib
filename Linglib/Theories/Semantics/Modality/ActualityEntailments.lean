@@ -59,7 +59,7 @@ open Semantics.Modality.EventRelativity
 open Semantics.Causation.ComplementEntailing
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
-open Core.StructuralEquationModel
+open Core.Causal
 
 
 -- ════════════════════════════════════════════════════

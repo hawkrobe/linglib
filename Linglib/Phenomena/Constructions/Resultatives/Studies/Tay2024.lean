@@ -51,7 +51,7 @@ namespace Tay2024
 open Core (Situation)
 
 open Semantics.Causation.Resultatives
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency (causallySufficient)
 open Morphology.WordStructure
 open Semantics.Verb.ChangeOfState (CoSType priorStatePresup)

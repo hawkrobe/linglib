@@ -117,11 +117,11 @@ theorem unique_answer_fallacy {W : Type*} (q : GSQuestion W) (w v : W)
   ans_situation_dependent q w v hDiff
 
 /-- Partial answer: eliminates some cells but not all. -/
-def isPartialAnswer {W : Type*} (p : W → Bool) (q : GSQuestion W)
+def isPartialAnswer {W : Type*} [DecidableEq W] (p : W → Bool) (q : GSQuestion W)
     (worlds : List W) : Bool :=
   let cells := q.toCells worlds
   let compatible := cells.filter λ cell =>
-    worlds.any λ w => p w && cell w
+    worlds.any λ w => p w && decide (w ∈ cell)
   compatible.length > 1 && compatible.length < cells.length
 
 /-- Exhaustive answers: ANS pins down the full extension of the predicate. -/

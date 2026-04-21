@@ -36,7 +36,7 @@ import Linglib.Theories.Semantics.Conditionals.SelectionalRestrictor
 import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.SelectionFunction
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.NonBivalence
 
@@ -45,7 +45,7 @@ namespace Semantics.Conditionals.Counterfactual
 open Core (Situation)
 
 open Semantics.Conditionals
-open Core.StructuralEquationModel
+open Core.Causal
 open Core.Duality (Truth3 ProjectionType dist)
 
 
@@ -539,7 +539,7 @@ This connects @cite{stalnaker-1968} selection to @cite{lewis-1973}/@cite{nadathu
 theorem causal_counterfactual_necessity (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) :
     causalCounterfactual dyn s cause effect =
-    Core.StructuralEquationModel.developsToTrue dyn (s.extend cause true) effect := rfl
+    Core.Causal.developsToTrue dyn (s.extend cause true) effect := rfl
 
 -- ════════════════════════════════════════════════════
 -- Bridge: Selectional Semantics as Supervaluation

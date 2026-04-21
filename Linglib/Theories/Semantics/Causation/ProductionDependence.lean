@@ -1,3 +1,4 @@
+import Linglib.Core.Situation
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.CCSelection
 
@@ -36,7 +37,7 @@ namespace Semantics.Causation.ProductionDependence
 
 open Core (Situation)
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 open Core.Verbs (Causative)

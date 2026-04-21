@@ -68,7 +68,7 @@ open LevinClass (pushPull hit wipe)
 open Fragments.English.Predicates.Verbal (push pull kick)
 open Fragments.English.Predicates.Adjectival (open_ closed_ shut free_ loose flat
   AdjectivalPredicateEntry)
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency (causallySufficient)
 open Semantics.Causation.Necessity (causallyNecessary)
 open Semantics.Causation.Resultatives (completesForEffect resultativeCausativeBuilder

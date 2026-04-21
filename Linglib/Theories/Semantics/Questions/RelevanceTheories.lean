@@ -260,14 +260,14 @@ communicate which cell contains the true world.
 The DP has actions = partition cells, utility = cell membership.
 This encodes "the goal is to identify which cell the world is in".
 -/
-def qudToDP {W : Type*}
+def qudToDP {W : Type*} [DecidableEq W]
     (q : GSQuestion W) (worlds : List W)
     (prior : W → ℚ := λ _ => 1) : DecisionProblem W Nat where
   -- Action i = "guess the world is in cell i"
   utility w i :=
     let cells := q.toCells worlds
     match cells[i]? with
-    | some cell => if cell w then 1 else 0
+    | some cell => if w ∈ cell then 1 else 0
     | none => 0
   prior := prior
 
@@ -283,12 +283,12 @@ theorem qud_as_decision_problem
     {W : Type*} [DecidableEq W]
     (q : GSQuestion W) (worlds : List W) :
     -- There exists a DP that respects the partition:
-    -- same-cell worlds have identical utility profiles
+    -- same-cell worlds (within `worlds`) have identical utility profiles
     ∃ dp : DecisionProblem W Nat,
-      ∀ w v : W, q.sameAnswer w v = true →
+      ∀ w v : W, w ∈ worlds → v ∈ worlds → q.sameAnswer w v = true →
         ∀ i : Nat, dp.utility w i = dp.utility v i := by
   use qudToDP q worlds
-  intro w v hsame i
+  intro w v hwmem hvmem hsame i
   -- Each cell is q.sameAnswer rep · for some rep.
   -- If q.sameAnswer w v, then by transitivity, cell(w) = cell(v) for all cells.
   simp only [qudToDP]
@@ -297,8 +297,10 @@ theorem qud_as_decision_problem
   | some cell =>
     have hmem : cell ∈ q.toCells worlds := by
       exact List.mem_of_getElem? h
-    have := QUD.toCells_sameAnswer_eq q worlds cell hmem w v hsame
-    simp [this]
+    have hiff := QUD.toCells_sameAnswer_eq q worlds cell hmem w v hwmem hvmem hsame
+    by_cases hw : w ∈ cell
+    · simp [hw, hiff.mp hw]
+    · simp [hw, fun hv => hw (hiff.mpr hv)]
 
 /-- The converse: a DP with cell-structured utility induces a QUD.
 

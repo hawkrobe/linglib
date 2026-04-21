@@ -39,13 +39,14 @@ import Mathlib.Tactic.NormNum
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.CoerciveImplication
+import Linglib.Core.Situation
 import Linglib.Theories.Semantics.Causation.Interpretation
 
 namespace CaoWhiteLassiter2025
 
 open Core (Situation)
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 open Semantics.Causation.CoerciveImplication (ActionType)

@@ -95,8 +95,8 @@ import Linglib.Core.ScopeTypes
 import Linglib.Core.ExtractionMorphology
 import Linglib.Core.VoiceSystem
 import Linglib.Core.Alternation
-import Linglib.Core.StructuralEquationModel
-import Linglib.Core.CausalBayesNet
+import Linglib.Core.Causal.BayesNet
+import Linglib.Core.Causal.SEM
 import Linglib.Core.NestedRestriction
 import Linglib.Core.Lexical.RootFeatures
 import Linglib.Core.Lexical.VerbClass
@@ -1784,6 +1784,7 @@ import Linglib.Theories.Syntax.Minimalism.Core.MCommand
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.TopologicalMapping
+import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.DegreeMovement
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics

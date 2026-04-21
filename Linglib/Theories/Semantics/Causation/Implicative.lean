@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.VerbClass
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Attitudes.Intensional
 import Linglib.Theories.Semantics.Tense.Aspect.Core
@@ -50,7 +50,7 @@ namespace Semantics.Causation.Implicative
 
 open Core (Situation)
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Core.Verbs (Implicative)
 
 -- ════════════════════════════════════════════════════
@@ -317,7 +317,7 @@ end Core.Verbs
 
 namespace Semantics.Causation.Implicative
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Core.Verbs (Implicative)
 
 /-- Positive builder entails complement: if `manageSem` holds, complement is true. -/
@@ -510,7 +510,7 @@ All complement-entailing constructions share the same causal skeleton:
 
 namespace Semantics.Causation.ComplementEntailing
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 
 -- ════════════════════════════════════════════════════

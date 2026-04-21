@@ -4,6 +4,25 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.101] - 2026-04-20
+
+### Changed
+- **`Core/StructuralEquationModel.lean` and `Core/CausalBayesNet.lean`
+  reorganized into `Core/Causal/`.** The two top-level straggler files
+  are now `Core/Causal/SEM.lean` and `Core/Causal/BayesNet.lean`, with
+  namespaces `Core.Causal` and `Core.Causal.BayesNet` respectively.
+  Mathlib-style file-per-concept layout: no re-export hub, consumers
+  import `Linglib.Core.Causal.SEM` / `Linglib.Core.Causal.BayesNet`
+  directly. Three independent papers (@cite{nadathur-lauer-2020} Def 22,
+  @cite{baglini-bar-asher-siegal-2025} Def 3, @cite{kratzer-1989}) agree
+  on "situation" terminology for the partial-valuation type, motivating
+  the consolidated `Core.Causal` namespace as the home for SCM
+  primitives. 32 consumer files migrated via mass replacement; 4 files
+  (`Lewis1973`, `Glass2023`, `CaoWhiteLassiter2025`,
+  `ProductionDependence`) gained the missing `import
+  Linglib.Core.Situation` they had been silently relying on through the
+  old `StructuralEquationModel.lean` transitive import.
+
 ## [0.230.100] - 2026-04-20
 
 ### Changed

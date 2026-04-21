@@ -1,47 +1,129 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
 /-!
-# Wholesale Late Merger
-@cite{takahashi-hulsey-2009} @cite{lebeaux-1988}
+# Late Merger
+@cite{lebeaux-1988} @cite{takahashi-hulsey-2009} @cite{bhatt-pancheva-2004}
 
-Wholesale late merger (WLM) allows the NP restrictor of a moved DP
-to merge countercyclically at a position on the movement chain where
-case can be assigned, rather than at the base position. This is an
-updated and expanded version of @cite{lebeaux-1988}'s late merger
-operation for adjuncts.
+Late merger (originally @cite{lebeaux-1988} for adjuncts; extended to NP
+restrictors as Wholesale Late Merger by @cite{takahashi-hulsey-2009};
+extended to degree clauses by @cite{bhatt-pancheva-2004}) introduces
+some sub-constituent of a moved phrase countercyclically at a non-base
+position on the movement chain.
 
-## Core idea
+## Generic shape
 
-Under the copy theory of movement, a moved DP leaves copies at every
-position on its chain. WLM allows the NP restrictor to be introduced
-at *any* copy position, so long as the resulting DP can receive case.
+Late merger comes in flavors that differ only in *which positions are
+admissible targets* for late merger:
 
-## Condition C interaction
+- WLM (NP restrictors): admissible iff case can be assigned there.
+- B&P (degree clauses): admissible iff the position can host a ⟨t⟩-scope
+  for the degree quantifier (subject to the Heim-Kennedy Constraint).
+- Lebeaux (adjuncts): admissible everywhere on the chain.
 
-If the NP restrictor contains an R-expression that would be
+The Condition C bleeding profile is the same in every flavor: late
+merger bleeds Condition C iff there exists an *admissible* chain
+position strictly above the pronoun binder. We factor this shared
+shape into the polymorphic `lateMergerBleeds` operation, with
+`wlmBleedsCondC` as the case-licensing specialization for NPs.
+
+## Core ideas
+
+Under the copy theory of movement, a moved phrase leaves copies at
+every position on its chain. Late merger allows the relevant
+sub-constituent to be introduced at *any* copy position, subject to
+the flavor's admissibility constraint.
+
+If the late-merged constituent contains an R-expression that would be
 c-commanded by a coreferential pronoun at the base position, full
-reconstruction triggers a Condition C violation. WLM can avoid this
-by introducing the restrictor at a higher copy position — but only if
-case is available there.
+reconstruction triggers a Condition C violation. Late merger can
+avoid this by introducing the constituent at a higher *admissible*
+copy position.
 
-@cite{gong-2022} shows that this case requirement is the key factor
-controlling Condition C reconstruction effects in Mongolian scrambling:
-reconstruction tracks case positions, not the A/A-bar distinction.
+@cite{gong-2022} shows that for NP restrictors the case requirement is
+the key factor controlling Condition C reconstruction effects in
+Mongolian scrambling: reconstruction tracks case positions, not the
+A/A-bar distinction.
 
 ## Definitions
 
+- `lateMergerBleeds` — generic late-merger bleeding test, polymorphic
+  in position type and admissibility predicate
 - `ChainPosition` — a position on a movement chain with its height and
   case availability
-- `wlmBleedsCondC` — whether WLM can avoid Condition C by merging
-  the restrictor above the binder
-- `wlmForcesReconstruction` — the restrictor must merge below the
-  binder (no case position above)
+- `wlmBleedsCondC` — case-licensing specialization for NP restrictors
+- `wlmForcesReconstruction` — negation of `wlmBleedsCondC`
 -/
 
 namespace Minimalism
 
 -- ============================================================================
--- S 1: Chain Positions
+-- S 1: Generic Late-Merger Bleeding
+-- ============================================================================
+
+/-- Generic late-merger bleeding test.
+
+    Given a movement chain (any list of positions), a height projection,
+    an admissibility predicate, and a binder height: late merger bleeds
+    Condition C iff there exists an *admissible* chain position strictly
+    above the binder.
+
+    Specializations:
+    - `wlmBleedsCondC` (@cite{takahashi-hulsey-2009}): NP restrictors,
+      admissible := case-available
+    - Late merger of degree clauses (@cite{bhatt-pancheva-2004}): degree
+      clauses, admissible := position can host a ⟨t⟩-scope subject to
+      the Heim-Kennedy Constraint -/
+def lateMergerBleeds {α : Type*} (admissible : α → Bool) (height : α → Nat)
+    (chain : List α) (binderHeight : Nat) : Bool :=
+  chain.any (fun p => admissible p && height p > binderHeight)
+
+/-- Adding a chain position never removes late-merger bleeding. -/
+theorem lateMerger_bleeding_monotone {α : Type*}
+    (admissible : α → Bool) (height : α → Nat)
+    (chain : List α) (p : α) (binderHeight : Nat)
+    (h : lateMergerBleeds admissible height chain binderHeight = true) :
+    lateMergerBleeds admissible height (p :: chain) binderHeight = true := by
+  simp only [lateMergerBleeds, List.any_cons, Bool.or_eq_true]
+  right; exact h
+
+/-- Consing an admissible position above the binder guarantees bleeding. -/
+theorem admissible_above_binder_bleeds {α : Type*}
+    (admissible : α → Bool) (height : α → Nat)
+    (chain : List α) (p : α) (binderHeight : Nat)
+    (hadm : admissible p = true) (hgt : height p > binderHeight) :
+    lateMergerBleeds admissible height (p :: chain) binderHeight = true := by
+  simp only [lateMergerBleeds, List.any_cons, Bool.or_eq_true, Bool.and_eq_true,
+             decide_eq_true_eq]
+  left; exact ⟨hadm, hgt⟩
+
+/-- If every chain position is at or below the binder, late merger
+    cannot bleed Condition C — regardless of which admissibility
+    predicate is used. -/
+theorem top_binder_no_bleed {α : Type*}
+    (admissible : α → Bool) (height : α → Nat)
+    (chain : List α) (binderHeight : Nat)
+    (h : ∀ p ∈ chain, height p ≤ binderHeight) :
+    lateMergerBleeds admissible height chain binderHeight = false := by
+  simp only [lateMergerBleeds]
+  rw [List.any_eq_false]
+  intro p hmem
+  simp only [Bool.and_eq_true, decide_eq_true_eq]
+  intro ⟨_, hgt⟩
+  exact absurd hgt (Nat.not_lt.mpr (h p hmem))
+
+/-- If no chain position is admissible, late merger cannot bleed. -/
+theorem no_admissible_no_bleed {α : Type*}
+    (admissible : α → Bool) (height : α → Nat)
+    (chain : List α) (binderHeight : Nat)
+    (h : ∀ p ∈ chain, admissible p = false) :
+    lateMergerBleeds admissible height chain binderHeight = false := by
+  simp only [lateMergerBleeds]
+  rw [List.any_eq_false]
+  intro p hmem
+  simp [h p hmem]
+
+-- ============================================================================
+-- S 2: Chain Positions for NP Late Merger
 -- ============================================================================
 
 /-- A position on a movement chain.
@@ -54,22 +136,20 @@ structure ChainPosition where
   deriving DecidableEq, Repr
 
 -- ============================================================================
--- S 2: WLM and Condition C
+-- S 3: WLM (NP Restrictors) and Condition C
 -- ============================================================================
 
 /-- Wholesale late merger bleeds Condition C iff there exists a position
     on the movement chain that is (a) strictly above the pronoun binder
     and (b) a position where case can be assigned.
 
-    When such a position exists, the NP restrictor can merge there,
-    placing the R-expression outside the c-command domain of the
-    binder and avoiding a Condition C violation.
+    Case-licensing specialization of `lateMergerBleeds`.
 
     @cite{gong-2022} condition (2): WLM may bleed Condition C if the
     movement chain permits a case position higher than the pronoun
     binder. -/
 def wlmBleedsCondC (chain : List ChainPosition) (binderHeight : Nat) : Bool :=
-  chain.any (λ cp => cp.caseAvailable && cp.height > binderHeight)
+  lateMergerBleeds (·.caseAvailable) ChainPosition.height chain binderHeight
 
 /-- WLM forces Condition C reconstruction when no case position
     on the chain is above the binder. The NP restrictor must merge
@@ -88,55 +168,46 @@ def wlmForcesReconstruction (chain : List ChainPosition) (binderHeight : Nat) : 
 def ppAlwaysReconstructs : Bool := true
 
 -- ============================================================================
--- S 3: Structural Properties
+-- S 4: WLM Structural Properties (specializations of generic lemmas)
 -- ============================================================================
 
 /-- If every chain position is at or below the binder, WLM forces
-    reconstruction. -/
+    reconstruction. Specialization of `top_binder_no_bleed`. -/
 theorem top_binder_forces_reconstruction
     (chain : List ChainPosition) (binderHeight : Nat)
     (h : ∀ cp ∈ chain, cp.height ≤ binderHeight) :
     wlmForcesReconstruction chain binderHeight = true := by
-  unfold wlmForcesReconstruction wlmBleedsCondC
-  simp only [Bool.not_eq_true']
-  rw [List.any_eq_false]
-  intro cp hmem
-  have hle := h cp hmem
-  simp only [Bool.and_eq_true, decide_eq_true_eq]
-  intro ⟨_, hgt⟩
-  omega
+  simp [wlmForcesReconstruction, wlmBleedsCondC,
+        top_binder_no_bleed _ ChainPosition.height chain binderHeight h]
 
-/-- A case position above the binder guarantees WLM bleeds Condition C. -/
+/-- A case position above the binder guarantees WLM bleeds Condition C.
+    Specialization of `admissible_above_binder_bleeds`. -/
 theorem case_above_binder_bleeds
     (chain : List ChainPosition) (binderHeight h : Nat)
     (hgt : h > binderHeight) :
-    wlmBleedsCondC (⟨h, true⟩ :: chain) binderHeight = true := by
-  simp only [wlmBleedsCondC, List.any_cons, Bool.or_eq_true, Bool.and_eq_true,
-             decide_eq_true_eq, true_and]
-  left; exact hgt
+    wlmBleedsCondC (⟨h, true⟩ :: chain) binderHeight = true :=
+  admissible_above_binder_bleeds _ _ chain ⟨h, true⟩ binderHeight rfl hgt
 
-/-- WLM bleeding is monotone: adding positions never removes it. -/
+/-- WLM bleeding is monotone: adding positions never removes it.
+    Specialization of `lateMerger_bleeding_monotone`. -/
 theorem wlm_bleeding_monotone
     (chain : List ChainPosition) (cp : ChainPosition) (binderHeight : Nat)
     (h : wlmBleedsCondC chain binderHeight = true) :
-    wlmBleedsCondC (cp :: chain) binderHeight = true := by
-  simp only [wlmBleedsCondC, List.any_cons, Bool.or_eq_true]
-  right; exact h
+    wlmBleedsCondC (cp :: chain) binderHeight = true :=
+  lateMerger_bleeding_monotone _ _ chain cp binderHeight h
 
 /-- If no chain position has case available, WLM forces reconstruction
-    regardless of heights. -/
+    regardless of heights. Specialization of `no_admissible_no_bleed`. -/
 theorem no_case_forces_reconstruction
     (chain : List ChainPosition) (binderHeight : Nat)
     (h : ∀ cp ∈ chain, cp.caseAvailable = false) :
     wlmForcesReconstruction chain binderHeight = true := by
-  unfold wlmForcesReconstruction wlmBleedsCondC
-  simp only [Bool.not_eq_true']
-  rw [List.any_eq_false]
-  intro cp hmem
-  simp [h cp hmem]
+  simp [wlmForcesReconstruction, wlmBleedsCondC,
+        no_admissible_no_bleed (·.caseAvailable) ChainPosition.height
+          chain binderHeight h]
 
 -- ============================================================================
--- S 4: Condition C over Syntactic Objects
+-- S 5: Condition C over Syntactic Objects
 -- ============================================================================
 
 /-- Condition C violation check: does the binder c-command the
@@ -155,7 +226,7 @@ def conditionCSatisfied (tree binder rExpr : SyntacticObject) : Bool :=
   !conditionCViolation tree binder rExpr
 
 -- ============================================================================
--- S 5: Successive-Cyclic Movement and Phase Edges
+-- S 6: Successive-Cyclic Movement and Phase Edges
 -- ============================================================================
 
 /-- A position at a phase edge on a movement chain.

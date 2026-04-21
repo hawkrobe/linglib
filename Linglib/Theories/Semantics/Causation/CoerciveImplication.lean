@@ -11,7 +11,7 @@ import Linglib.Theories.Semantics.Causation.Necessity
 
 namespace Semantics.Causation.CoerciveImplication
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 
 /-- Action volitionality (volitional/non-volitional/ambiguous). -/

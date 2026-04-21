@@ -1,4 +1,5 @@
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
+import Linglib.Core.Situation
 import Linglib.Theories.Semantics.Causation.CCSelection
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
@@ -55,7 +56,7 @@ namespace Lewis1973
 
 open Core (Situation)
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.CCSelection
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

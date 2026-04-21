@@ -1,5 +1,5 @@
 import Mathlib.Order.Closure
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 import Linglib.Theories.Semantics.Causation.Sufficiency
 
 /-!
@@ -35,7 +35,7 @@ closures with different triggers.
 
 namespace Semantics.Causation.Closure
 
-open Core.StructuralEquationModel
+open Core.Causal
 
 -- ════════════════════════════════════════════════════
 -- § 1. Preorder on Situation

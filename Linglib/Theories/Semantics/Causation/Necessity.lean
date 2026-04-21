@@ -1,4 +1,4 @@
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 import Mathlib.Tactic.Use
 
 /-!
@@ -52,8 +52,8 @@ These can come apart in overdetermination cases:
 
 namespace Semantics.Causation.Necessity
 
-open Core.StructuralEquationModel
-export Core.StructuralEquationModel (causallyNecessary)
+open Core.Causal
+export Core.Causal (causallyNecessary)
 
 /-- Semantics of "cause": effect occurred AND cause was necessary.
     Necessity uses @cite{nadathur-2024} Def 10b (supersituation test). -/

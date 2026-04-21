@@ -17,11 +17,11 @@ reasoning based on Pearl's structural causal model framework.
 - **manipulates**: Does intervening on X change Y?
 
 For the probabilistic causal Bayes net layer (WorldState, CausalRelation,
-NoisyOR), see `Core.CausalBayesNet`.
+NoisyOR), see `Core.Causal.BayesNet`.
 
 -/
 
-namespace Core.StructuralEquationModel
+namespace Core.Causal
 
 -- ============================================================
 -- § Variables and Situations
@@ -47,9 +47,9 @@ instance : ToString Variable where
 /-- Create a variable from a string literal. -/
 def mkVar (name : String) : Variable := ⟨name⟩
 
--- Situations (Def 9)
+-- Situations (Def 22)
 
-/-- **Situation** (Definition 9 from @cite{nadathur-lauer-2020})
+/-- **Situation** (Definition 22 from @cite{nadathur-lauer-2020})
 
     A partial valuation: some variables have known values, others are
     undetermined. Situations are *partial* functions — crucial for
@@ -992,4 +992,4 @@ theorem simple_law_necessity (c e : Variable) :
       rfl
     simp [hE]
 
-end Core.StructuralEquationModel
+end Core.Causal

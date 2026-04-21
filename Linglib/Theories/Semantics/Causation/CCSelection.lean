@@ -21,7 +21,7 @@ library. CC-selection unifies them:
 | `CCSelectionMode` | (this file) | **Primary**: how the construction selects |
 | `Causative` | Builder.lean | Derived via `.selectionMode` |
 | `CausationType` | ProductionDependence.lean | Derived via `.selectionMode` |
-| `CausalProfile` | Core/StructuralEquationModel.lean | Computed by evaluating selection against a model |
+| `CausalProfile` | Core/Causal/SEM.lean | Computed by evaluating selection against a model |
 
 ## Two core conditions (@cite{baglini-bar-asher-siegal-2025})
 
@@ -50,7 +50,7 @@ So: "cause" entails "completion" entails "make." The reverse fails:
 
 namespace Semantics.Causation.CCSelection
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 

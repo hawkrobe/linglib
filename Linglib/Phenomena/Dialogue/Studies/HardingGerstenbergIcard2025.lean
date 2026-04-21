@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 
 /-!
 # A Communication-First Account of Explanation
@@ -31,7 +31,7 @@ dynamics rather than needing to be stipulated (contra @cite{halpern-pearl-2005})
 
 namespace HardingGerstenbergIcard2025
 
-open Core.StructuralEquationModel
+open Core.Causal
 
 -- ============================================================
 -- § Framework

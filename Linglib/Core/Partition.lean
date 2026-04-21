@@ -118,18 +118,18 @@ theorem exact_refines_all [BEq M] [LawfulBEq M] (q : QUD M) :
 
 /-! ### Finite Partition Cells -/
 
-/-- Compute partition cells as characteristic functions over a finite domain.
+/-- Compute partition cells as Finsets over a finite domain.
 
-Each cell is the set of elements equivalent to a representative. Representatives
-are chosen greedily from the input list. -/
-def toCells (q : QUD M) (elements : List M) : List (M → Bool) :=
+Each cell is the set of elements equivalent to a representative, restricted
+to the input list. Representatives are chosen greedily from the input list. -/
+def toCells [DecidableEq M] (q : QUD M) (elements : List M) : List (Finset M) :=
   let representatives := elements.foldl (λ acc w =>
     if acc.any λ r => q.sameAnswer r w then acc else w :: acc
   ) []
-  representatives.map λ rep => λ w => q.sameAnswer rep w
+  representatives.map λ rep => elements.toFinset.filter (q.sameAnswer rep ·)
 
 /-- Number of cells in the partition over a finite domain. -/
-def numCells (q : QUD M) (elements : List M) : Nat :=
+def numCells [DecidableEq M] (q : QUD M) (elements : List M) : Nat :=
   (q.toCells elements).length
 
 /-! #### Representative fold helpers -/
@@ -240,7 +240,7 @@ private theorem nodup_length_le_of_injOn {α β : Type*}
 
 The covering map from q'-representatives to q-representatives is injective
 (by pairwise inequivalence and refinement), giving `|q-reps| ≥ |q'-reps|`. -/
-theorem refines_numCells_ge (q q' : QUD M) (elements : List M) :
+theorem refines_numCells_ge [DecidableEq M] (q q' : QUD M) (elements : List M) :
     q ⊑ q' → q.numCells elements >= q'.numCells elements := by
   intro hqq
   unfold numCells toCells
@@ -276,29 +276,27 @@ theorem refines_numCells_ge (q q' : QUD M) (elements : List M) :
         (q.trans r1 (f r2 hr2) r2 (by rw [q.symm]; exact hc1) (hf_cover r2 hr2))))
     (fun x hx => by simp only [g, dif_pos hx]; exact hf_mem x hx)
 
-/-- Cells of a QUD respect the equivalence relation: equivalent worlds
-agree on cell membership. If `q.sameAnswer w v = true`, then for any cell
-in `q.toCells worlds`, `cell w = cell v`. -/
-theorem toCells_sameAnswer_eq (q : QUD M) (worlds : List M) (cell : M → Bool)
-    (hcell : cell ∈ q.toCells worlds) (w v : M) (hsame : q.sameAnswer w v = true) :
-    cell w = cell v := by
+/-- Cells of a QUD respect the equivalence relation: for any cell in `q.toCells worlds`,
+if `q.sameAnswer w v = true` and both `w, v ∈ worlds`, then `w ∈ cell ↔ v ∈ cell`. -/
+theorem toCells_sameAnswer_eq [DecidableEq M] (q : QUD M) (worlds : List M)
+    (cell : Finset M) (hcell : cell ∈ q.toCells worlds) (w v : M)
+    (hwmem : w ∈ worlds) (hvmem : v ∈ worlds)
+    (hsame : q.sameAnswer w v = true) :
+    (w ∈ cell ↔ v ∈ cell) := by
   simp only [toCells, List.mem_map] at hcell
   obtain ⟨rep, _, rfl⟩ := hcell
-  have hvw : q.sameAnswer v w = true := by rw [q.symm]; exact hsame
-  cases hrepw : q.sameAnswer rep w <;> cases hrepv : q.sameAnswer rep v
-  · simp [hrepw, hrepv]
-  · exact absurd (q.trans rep v w hrepv hvw) (by simp [hrepw])
-  · exact absurd (q.trans rep w v hrepw hsame) (by simp [hrepv])
-  · simp [hrepw, hrepv]
+  simp only [Finset.mem_filter, List.mem_toFinset]
+  refine ⟨fun ⟨_, hrw⟩ => ⟨hvmem, q.trans rep w v hrw hsame⟩,
+          fun ⟨_, hrv⟩ => ⟨hwmem, q.trans rep v w hrv (by rw [q.symm]; exact hsame)⟩⟩
 
 /-- Each fine cell is contained in some coarse cell (w.r.t. `toCells`).
 
 If `q` refines `q'` (`q ⊑ q'`, finer partition), then for every fine cell
 `c` of `q`, there exists a coarse cell of `q'` containing it. -/
-theorem toCells_fine_sub_coarse (q q' : QUD M)
+theorem toCells_fine_sub_coarse [DecidableEq M] (q q' : QUD M)
     (worlds : List M) (hRefines : q ⊑ q')
-    (c : M → Bool) (hc : c ∈ q.toCells worlds) :
-    ∃ c' ∈ q'.toCells worlds, ∀ w, c w = true → c' w = true := by
+    (c : Finset M) (hc : c ∈ q.toCells worlds) :
+    ∃ c' ∈ q'.toCells worlds, c ⊆ c' := by
   simp only [toCells, List.mem_map] at hc ⊢
   obtain ⟨rep, hrep_mem, rfl⟩ := hc
   have hrep_worlds : rep ∈ worlds := by
@@ -306,19 +304,19 @@ theorem toCells_fine_sub_coarse (q q' : QUD M)
     · exact absurd h List.not_mem_nil
     · exact h
   obtain ⟨rep', hrep'_mem, hrep'_eq⟩ := repFold_covers q' worlds [] rep hrep_worlds
-  refine ⟨fun w => q'.sameAnswer rep' w, ⟨rep', hrep'_mem, rfl⟩, fun w hw => ?_⟩
-  have h1 : q'.sameAnswer rep' w = true :=
-    q'.trans rep' rep w hrep'_eq (hRefines rep w hw)
-  exact h1
+  refine ⟨worlds.toFinset.filter (q'.sameAnswer rep' ·),
+          ⟨rep', hrep'_mem, rfl⟩, fun w hw => ?_⟩
+  simp only [Finset.mem_filter] at hw ⊢
+  exact ⟨hw.1, q'.trans rep' rep w hrep'_eq (hRefines rep w hw.2)⟩
 
 /-- Each coarse cell contains some fine cell (w.r.t. `toCells`).
 
 If `q'` refines `q` (`q' ⊑ q`, finer partition), then for every coarse cell
 `c` of `q`, there exists a fine cell of `q'` contained in it. -/
-theorem toCells_coarse_contains_fine (q q' : QUD M)
+theorem toCells_coarse_contains_fine [DecidableEq M] (q q' : QUD M)
     (worlds : List M) (hRefines : q' ⊑ q)
-    (c : M → Bool) (hc : c ∈ q.toCells worlds) :
-    ∃ c' ∈ q'.toCells worlds, ∀ w, c' w = true → c w = true := by
+    (c : Finset M) (hc : c ∈ q.toCells worlds) :
+    ∃ c' ∈ q'.toCells worlds, c' ⊆ c := by
   simp only [toCells, List.mem_map] at hc ⊢
   obtain ⟨rep, hrep_mem, rfl⟩ := hc
   have hrep_worlds : rep ∈ worlds := by
@@ -326,31 +324,33 @@ theorem toCells_coarse_contains_fine (q q' : QUD M)
     · exact absurd h List.not_mem_nil
     · exact h
   obtain ⟨rep', hrep'_mem, hrep'_eq⟩ := repFold_covers q' worlds [] rep hrep_worlds
-  refine ⟨fun w => q'.sameAnswer rep' w, ⟨rep', hrep'_mem, rfl⟩, fun w hw => ?_⟩
-  -- hw : q'.sameAnswer rep' w = true
+  refine ⟨worlds.toFinset.filter (q'.sameAnswer rep' ·),
+          ⟨rep', hrep'_mem, rfl⟩, fun w hw => ?_⟩
+  simp only [Finset.mem_filter] at hw ⊢
+  -- hw.2 : q'.sameAnswer rep' w = true
   -- Need: q.sameAnswer rep w = true
-  -- By symmetry + transitivity: q'.sameAnswer rep w = true
   have h1 : q'.sameAnswer rep rep' = true := by rw [q'.symm]; exact hrep'_eq
-  have h2 : q'.sameAnswer rep w = true := q'.trans rep rep' w h1 hw
-  -- By refinement: q' ⊑ q
-  exact hRefines rep w h2
+  have h2 : q'.sameAnswer rep w = true := q'.trans rep rep' w h1 hw.2
+  exact ⟨hw.1, hRefines rep w h2⟩
 
 /-- Each cell of `toCells` is nonempty: there exists an element in `elements`
 that belongs to the cell (namely, the cell's representative). -/
-theorem toCells_cell_nonempty (q : QUD M) (elements : List M)
-    (c : M → Bool) (hc : c ∈ q.toCells elements) :
-    ∃ w ∈ elements, c w = true := by
+theorem toCells_cell_nonempty [DecidableEq M] (q : QUD M) (elements : List M)
+    (c : Finset M) (hc : c ∈ q.toCells elements) :
+    ∃ w ∈ elements, w ∈ c := by
   simp only [toCells, List.mem_map] at hc
   obtain ⟨rep, hrep, rfl⟩ := hc
   have hrep_elem : rep ∈ elements := by
     rcases mem_repFold_sub q elements [] rep hrep with h | h
     · exact absurd h List.not_mem_nil
     · exact h
-  exact ⟨rep, hrep_elem, q.refl rep⟩
+  exact ⟨rep, hrep_elem, by
+    simp only [Finset.mem_filter, List.mem_toFinset]
+    exact ⟨hrep_elem, q.refl rep⟩⟩
 
 /-- `toCells` of a nonempty list is nonempty. Every element gets covered
 by a representative, so at least one representative (and cell) exists. -/
-theorem toCells_nonempty (q : QUD M) (w : M) (ws : List M) :
+theorem toCells_nonempty [DecidableEq M] (q : QUD M) (w : M) (ws : List M) :
     q.toCells (w :: ws) ≠ [] := by
   intro h
   -- Step 1: w is in the representative fold (first element always added)
@@ -368,19 +368,23 @@ theorem toCells_nonempty (q : QUD M) (w : M) (ws : List M) :
   exact List.not_mem_nil hw
 
 /-- Every element in the input list belongs to some cell of `toCells`. -/
-theorem toCells_covers (q : QUD M) (elements : List M) (w : M) (hw : w ∈ elements) :
-    ∃ c ∈ q.toCells elements, c w = true := by
+theorem toCells_covers [DecidableEq M] (q : QUD M) (elements : List M)
+    (w : M) (hw : w ∈ elements) :
+    ∃ c ∈ q.toCells elements, w ∈ c := by
   obtain ⟨r, hr, hsame⟩ := repFold_covers q elements [] w hw
-  exact ⟨fun w' => q.sameAnswer r w', List.mem_map.mpr ⟨r, hr, rfl⟩, hsame⟩
+  refine ⟨elements.toFinset.filter (q.sameAnswer r ·),
+          List.mem_map.mpr ⟨r, hr, rfl⟩, ?_⟩
+  simp only [Finset.mem_filter, List.mem_toFinset]
+  exact ⟨hw, hsame⟩
 
 /-- Every cell in `toCells` has a representative from the input list,
-    and cell membership equals `sameAnswer` with the representative. -/
-theorem toCells_exists_rep (q : QUD M) (elements : List M) (c : M → Bool)
-    (hc : c ∈ q.toCells elements) :
-    ∃ rep ∈ elements, ∀ w, c w = q.sameAnswer rep w := by
+    and cell membership is `w ∈ elements ∧ q.sameAnswer rep w`. -/
+theorem toCells_exists_rep [DecidableEq M] (q : QUD M) (elements : List M)
+    (c : Finset M) (hc : c ∈ q.toCells elements) :
+    ∃ rep ∈ elements, ∀ w, w ∈ c ↔ w ∈ elements ∧ q.sameAnswer rep w = true := by
   simp only [toCells, List.mem_map] at hc
   obtain ⟨rep, hrep, rfl⟩ := hc
-  refine ⟨rep, ?_, fun w => rfl⟩
+  refine ⟨rep, ?_, fun w => by simp [Finset.mem_filter, List.mem_toFinset]⟩
   rcases mem_repFold_sub q elements [] rep hrep with h | h
   · exact absurd h List.not_mem_nil
   · exact h
@@ -395,7 +399,7 @@ R is a *negative attribute* with respect to partition F iff for some Q ∈ F,
 {R, Q} is a proper coarsening of F. This characterization is purely epistemic
 and syntax-independent — negativity is a matter of partition kinetics, not
 morphological form. -/
-def isProperCoarsening (q q' : QUD M) (elements : List M) : Prop :=
+def isProperCoarsening [DecidableEq M] (q q' : QUD M) (elements : List M) : Prop :=
   q.coarsens q' ∧ q.numCells elements < q'.numCells elements
 
 /-! ### Binary Partitions -/
@@ -435,7 +439,8 @@ a finite domain iff the binary partition of R is a proper coarsening of Q.
 "not", etc.) but a partition-kinetic one. R is negative relative to Q when
 the R/¬R distinction is strictly coarser than Q's partition — answering
 whether R holds loses information that Q distinguishes. -/
-def isNegativeAttribute (R : M → Bool) (q : QUD M) (elements : List M) : Prop :=
+def isNegativeAttribute [DecidableEq M] (R : M → Bool) (q : QUD M)
+    (elements : List M) : Prop :=
   isProperCoarsening (binaryPartition R) q elements
 
 /-! ### Coarsest P-Preserving Coarsening (@cite{merin-1999}, Fact 3) -/

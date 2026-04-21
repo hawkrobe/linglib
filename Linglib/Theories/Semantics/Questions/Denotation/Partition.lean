@@ -69,9 +69,12 @@ def ofPredicate (p : W → Bool) : GSQuestion W :=
 
 -- Question-specific bridge
 
-/-- Convert to the general Question type (list of characteristic functions). -/
-def toQuestion (q : GSQuestion W) (worlds : List W) : Question W :=
-  q.toCells worlds
+/-- Convert to the general Question type (list of characteristic functions).
+
+    Bridges the migrated `Finset W` cells to the `Question W := List (W → Bool)`
+    alias by reifying each Finset cell as its decidable membership predicate. -/
+def toQuestion [DecidableEq W] (q : GSQuestion W) (worlds : List W) : Question W :=
+  (q.toCells worlds).map (fun cell w => decide (w ∈ cell))
 
 /-- Convert to a Core.QUD (identity since GSQuestion = QUD). -/
 def toQUD (q : GSQuestion W) : QUD W := q
@@ -123,7 +126,7 @@ def isExhaustive {W : Type*} (_q : GSQuestion W) : Bool := true
 
 /-- The exhaustive interpretation of a polar question is complete:
 answering requires saying "yes" or "no", not "I don't know". -/
-theorem polar_exhaustive {W : Type*} (p : W → Bool) (w : W) :
+theorem polar_exhaustive {W : Type*} [DecidableEq W] (p : W → Bool) (w : W) :
     (polarQuestion p).numCells [w] <= 2 := by
   unfold polarQuestion GSQuestion.ofPredicate QUD.numCells QUD.toCells
   simp only [List.foldl_cons, List.foldl_nil, List.any_nil, Bool.false_eq_true,

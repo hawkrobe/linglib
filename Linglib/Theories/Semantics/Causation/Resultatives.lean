@@ -36,7 +36,7 @@ open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open Semantics.Verb.ChangeOfState
 open Core
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 open Core.Verbs (Causative)

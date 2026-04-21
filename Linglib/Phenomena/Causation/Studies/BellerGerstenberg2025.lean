@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Alternatives.Lexical
@@ -495,11 +495,11 @@ theorem exp3_full_best :
 -- Section 11: Bridge to Structural Causal Models
 -- ============================================================================
 
-/-! ## Bridge to Core.StructuralEquationModel
+/-! ## Bridge to Core.Causal
 
 Beller & Gerstenberg's W, H, S dimensions can be COMPUTED from structural
 causal models, grounding the primitive Boolean features in the counterfactual
-reasoning machinery of `Core.StructuralEquationModel`.
+reasoning machinery of `Core.Causal`.
 
 | B&G aspect | Structural definition |
 |------------|---------------------|
@@ -515,7 +515,7 @@ For simple causal models, the two coincide.
 
 section StructuralBridge
 
-open Core.StructuralEquationModel
+open Core.Causal
 
 /-- Compute a `CausalWorld` from a structural causal model. -/
 def causalWorldFromModel (dyn : CausalDynamics) (bg : Situation)
@@ -664,7 +664,7 @@ break these theorems. -/
 
 section EndToEnd
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.ProductionDependence (profileCausationType)
 
 /-- **Solo cause → P-CAUSE → S1 prefers "caused".**

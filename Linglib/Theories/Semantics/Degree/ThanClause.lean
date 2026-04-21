@@ -45,15 +45,18 @@ def thanClauseDenotation {Entity D : Type*} [Preorder D]
 -- ════════════════════════════════════════════════════
 
 /-- The maximum of a than-clause denotation is the degree of the
-    standard entity: max({d | d ≤ μ(b)}) = μ(b). -/
-def thanClauseMax {Entity D : Type*} [LinearOrder D]
+    standard entity: max({d | d ≤ μ(b)}) = μ(b).
+
+    Only `[Preorder D]` is needed: the standard's measure is the greatest
+    element of its own downward-closure regardless of linearity. -/
+def thanClauseMax {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (standard : Entity) : D :=
   μ standard
 
 /-- μ(b) is the greatest element of the than-clause denotation.
     This is `isGreatest_Iic` specialized to degree semantics: the
-    maximum of {d | d ≤ μ(b)} is μ(b). -/
-theorem thanClauseMax_isGreatest {Entity D : Type*} [LinearOrder D]
+    maximum of {d | d ≤ μ(b)} is μ(b). Only `[Preorder D]` required. -/
+theorem thanClauseMax_isGreatest {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (b : Entity) :
     IsGreatest (thanClauseDenotation μ b) (thanClauseMax μ b) :=
   isGreatest_Iic
@@ -71,7 +74,7 @@ inductive ThanClauseType where
 /-- Phrasal and clausal than-clauses yield the same degree when the
     elided material is the same predicate. "taller than Bill" and
     "taller than Bill is tall" have the same truth conditions. -/
-theorem phrasal_clausal_equivalence {Entity D : Type*} [LinearOrder D]
+theorem phrasal_clausal_equivalence {Entity D : Type*} [Preorder D]
     (μ : Entity → D) (b : Entity) :
     thanClauseMax μ b = μ b :=
   rfl

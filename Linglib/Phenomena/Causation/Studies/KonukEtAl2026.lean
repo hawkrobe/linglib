@@ -1,4 +1,4 @@
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 import Linglib.Theories.Semantics.Causation.Strength
 import Linglib.Theories.Semantics.Plurality.Distributivity
 import Mathlib.Data.Rat.Defs
@@ -32,18 +32,18 @@ Formalizes Konuk, Quillien & Mascarenhas (2026) "Plural causes,"
 
 | Concept | Connects to | Module |
 |---------|-------------|--------|
-| Compound sufficiency/necessity | `causallySufficient`/`causallyNecessary` | `Core.StructuralEquationModel` |
+| Compound sufficiency/necessity | `causallySufficient`/`causallyNecessary` | `Core.Causal` |
 | NSM (Nec/Suf weighting) | `nsm` | `Causation.Strength` (@cite{icard-et-al-2017}) |
 | LOSS_strong (all absent) | `noneSatisfy` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
 | Compound sufficiency | `allSatisfy` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
 | Loss gap (classical − strong) | `inGap` | `Plural.Distributivity` (@cite{kriz-spector-2021}) |
-| `CausalLaw.conjunctive` | Threshold/disjunctive models | `Core.StructuralEquationModel` |
-| Crossing avoidance | structural sufficiency gap | `Core.StructuralEquationModel` |
+| `CausalLaw.conjunctive` | Threshold/disjunctive models | `Core.Causal` |
+| Crossing avoidance | structural sufficiency gap | `Core.Causal` |
 -/
 
 namespace KonukEtAl2026
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Strength (nsm samplingPropensity)
 
 /-! ## § 1. Compound Sufficiency and Necessity

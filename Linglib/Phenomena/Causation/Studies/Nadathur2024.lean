@@ -47,7 +47,7 @@ namespace Nadathur2024
 
 open Core (Situation)
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Implicative
 open Core.Verbs (Causative)
 open Fragments.English.Predicates.Verbal

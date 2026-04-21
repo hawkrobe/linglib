@@ -5,7 +5,7 @@ import Linglib.Theories.Semantics.Causation.Necessity
 # Structural Causation Tests
 @cite{nadathur-lauer-2020} @cite{pearl-2000}
 
-Verification that `Core.StructuralEquationModel` correctly models classic causal
+Verification that `Core.Causal` correctly models classic causal
 structures from the philosophy and linguistics literature. Each section
 sets up a concrete `CausalDynamics`, states the expected causal profile,
 and proves the predictions match via `native_decide`.
@@ -24,7 +24,7 @@ and proves the predictions match via `native_decide`.
 
 namespace Phenomena.Causation.StructuralCausation
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 

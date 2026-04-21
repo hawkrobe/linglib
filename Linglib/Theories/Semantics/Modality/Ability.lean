@@ -18,7 +18,7 @@ to Kratzer's circumstantial possibility.
 
 namespace Semantics.Modality.Ability
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.ComplementEntailing
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer (ModalBase)

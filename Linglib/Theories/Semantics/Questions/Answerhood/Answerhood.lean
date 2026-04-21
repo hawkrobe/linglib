@@ -339,48 +339,58 @@ private theorem nodup_filter_eq_singleton {α : Type*}
 
 /-- ANS(Q, i) answers Q in the sense of Basic.answers.
     Requires i ∈ worlds; otherwise toCells may be empty. -/
-theorem ans_answers {W : Type*} (q : GSQuestion W) (i : W) (worlds : List W)
+theorem ans_answers {W : Type*} [DecidableEq W]
+    (q : GSQuestion W) (i : W) (worlds : List W)
     (hIn : i ∈ worlds) :
     answers (ans q i) (q.toQuestion worlds) worlds = true := by
   obtain ⟨rep, hRepResult, hRepSame⟩ := foldl_has_rep q worlds [] i (Or.inl hIn)
-  simp only [answers, GSQuestion.toQuestion]
+  simp only [answers, GSQuestion.toQuestion, QUD.toCells, List.map_map]
   rw [List.any_eq_true]
-  exact ⟨(λ w => q.sameAnswer rep w), List.mem_map.mpr ⟨rep, hRepResult, rfl⟩, by
-    rw [List.all_eq_true]
-    intro w _
-    simp only [ans, decide_eq_true_eq]
-    exact q.trans rep i w hRepSame⟩
+  refine ⟨_, List.mem_map.mpr ⟨rep, hRepResult, rfl⟩, ?_⟩
+  rw [List.all_eq_true]
+  intro w hw
+  simp only [Function.comp_apply, ans, decide_eq_true_eq, Finset.mem_filter,
+    List.mem_toFinset]
+  intro hsame
+  exact ⟨hw, q.trans rep i w hRepSame hsame⟩
 
 /-- ANS(Q, i) selects exactly one cell (completeness).
     Uses filter_map_comm to pull the filter through toCells' map,
     then nodup_filter_eq_singleton to show exactly one representative passes. -/
-theorem ans_completely_answers {W : Type*} (q : GSQuestion W) (i : W) (worlds : List W)
+theorem ans_completely_answers {W : Type*} [DecidableEq W]
+    (q : GSQuestion W) (i : W) (worlds : List W)
     (hIn : i ∈ worlds) :
     completelyAnswers (ans q i) (q.toQuestion worlds) worlds = true := by
   obtain ⟨rep, hRepResult, hRepSame⟩ := foldl_has_rep q worlds [] i (Or.inl hIn)
   have hClassUniq := foldl_reps_no_dup q worlds [] (by intro r1 h; simp at h)
   have hND := foldl_nodup q worlds [] List.nodup_nil (by intro r1 h; simp at h)
-  simp only [completelyAnswers, GSQuestion.toQuestion, QUD.toCells]
+  simp only [completelyAnswers, GSQuestion.toQuestion, QUD.toCells, List.map_map]
   rw [beq_iff_eq]
   -- Pull filter through map: (reps.map f).filter g = (reps.filter (g ∘ f)).map f
   rw [filter_map_comm]
   -- The filter on reps selects exactly [rep], so map gives a singleton
   have hfilt : (worlds.foldl (fun acc w =>
       if (acc.any fun r => q.sameAnswer r w) = true then acc else w :: acc) []).filter
-    ((fun cell => worlds.any fun w => ans q i w && cell w) ∘ fun rep w => q.sameAnswer rep w) = [rep] := by
+    ((fun cell => worlds.any fun w => ans q i w && cell w) ∘
+     ((fun cell w => decide (w ∈ cell)) ∘
+      fun rep => worlds.toFinset.filter (q.sameAnswer rep ·))) = [rep] := by
     apply nodup_filter_eq_singleton _ _ _ hRepResult
     · -- rep passes the overlap test (witnessed by i)
       simp only [Function.comp_apply]
       rw [List.any_eq_true]
-      exact ⟨i, hIn, by simp only [ans, Bool.and_eq_true]; exact ⟨q.refl i, hRepSame⟩⟩
+      refine ⟨i, hIn, ?_⟩
+      simp only [ans, Bool.and_eq_true, decide_eq_true_eq, Finset.mem_filter,
+        List.mem_toFinset]
+      exact ⟨q.refl i, hIn, hRepSame⟩
     · -- uniqueness: any passing rep' must equal rep
       intro rep' hrep' hg
       simp only [Function.comp_apply] at hg
       rw [List.any_eq_true] at hg
       obtain ⟨w, _, hw⟩ := hg
-      simp only [ans, Bool.and_eq_true] at hw
+      simp only [ans, Bool.and_eq_true, decide_eq_true_eq, Finset.mem_filter,
+        List.mem_toFinset] at hw
       have hSame' : q.sameAnswer rep' i = true :=
-        q.trans rep' w i hw.2 (by rw [q.symm]; exact hw.1)
+        q.trans rep' w i hw.2.2 (by rw [q.symm]; exact hw.1)
       have hSameReps : q.sameAnswer rep rep' = true :=
         q.trans rep i rep' hRepSame (by rw [q.symm]; exact hSame')
       exact hClassUniq rep' hrep' rep hRepResult (by rw [q.symm]; exact hSameReps)
@@ -388,21 +398,22 @@ theorem ans_completely_answers {W : Type*} (q : GSQuestion W) (i : W) (worlds : 
   rw [hfilt]; rfl
 
 /-- A complete answer is not a partial answer. -/
-theorem complete_not_partial {W : Type*} (q : GSQuestion W) (i : W)
+theorem complete_not_partial {W : Type*} [DecidableEq W] (q : GSQuestion W) (i : W)
     (worlds : List W) (hIn : i ∈ worlds) :
     isPartialAnswer (ans q i) q worlds = false := by
   have hComplete := ans_completely_answers q i worlds hIn
-  simp only [completelyAnswers, GSQuestion.toQuestion, beq_iff_eq] at hComplete
+  simp only [completelyAnswers, GSQuestion.toQuestion, beq_iff_eq, List.filter_map,
+    List.length_map, Function.comp_def] at hComplete
   simp only [isPartialAnswer]
   rw [hComplete]
   simp
 
-theorem partition_cells_are_hamblin_alternatives {W : Type*}
+theorem partition_cells_are_hamblin_alternatives {W : Type*} [DecidableEq W]
     (q : GSQuestion W) (worlds : List W) :
     ∀ cell ∈ q.toCells worlds,
-      gsToHamblin q worlds cell = true := by
+      gsToHamblin q worlds (fun w => decide (w ∈ cell)) = true := by
   intro cell hCell
-  -- Unfold toCells: cell = (λ w => q.sameAnswer rep w) for some representative
+  -- Unfold toCells: cell = worlds.toFinset.filter (q.sameAnswer rep ·) for some rep
   simp only [QUD.toCells] at hCell
   rw [List.mem_map] at hCell
   obtain ⟨rep, hRep, rfl⟩ := hCell
@@ -411,7 +422,15 @@ theorem partition_cells_are_hamblin_alternatives {W : Type*}
     rcases foldl_reps_subset q worlds [] rep hRep with h | h
     · simp at h
     · exact h
-  -- cell = (λ w => q.sameAnswer rep w) = ans q rep
-  exact gsToHamblin_recognizes_ans q worlds rep hRepMem
+  -- gsToHamblin checks ∃ w' ∈ worlds, ∀ v ∈ worlds, p v == ans q w' v.
+  -- Take w' = rep: for v ∈ worlds, decide (v ∈ filter) = q.sameAnswer rep v = ans q rep v.
+  simp only [gsToHamblin]
+  rw [List.any_eq_true]
+  refine ⟨rep, hRepMem, ?_⟩
+  rw [List.all_eq_true]
+  intro v hvIn
+  simp only [ans, Finset.mem_filter, List.mem_toFinset, hvIn, true_and,
+    beq_iff_eq]
+  by_cases h : q.sameAnswer rep v = true <;> simp [h]
 
 end Semantics.Questions.Answerhood

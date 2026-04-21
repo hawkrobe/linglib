@@ -1,6 +1,6 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
-import Linglib.Core.CausalBayesNet
+import Linglib.Core.Causal.BayesNet
 import Linglib.Theories.Semantics.Conditionals.Assertability
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
@@ -68,8 +68,8 @@ set_option autoImplicit false
 
 namespace GrusdtLassiterFranke2022
 
-open Core.StructuralEquationModel
-open Core.CausalBayesNet
+open Core.Causal
+open Core.Causal.BayesNet
 open Semantics.Conditionals.Assertability
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
@@ -497,7 +497,7 @@ the RSA listener should infer `CausalRelation.ACausesC`. This section bridges
 @cite{nadathur-lauer-2020}'s structural semantics to the probabilistic
 inference above. -/
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 

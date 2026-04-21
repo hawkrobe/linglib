@@ -1,3 +1,4 @@
+import Linglib.Core.Situation
 import Linglib.Theories.Semantics.Causation.Interpretation
 
 /-!
@@ -39,7 +40,7 @@ namespace Glass2023
 
 open Core (Situation)
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 open Core.Verbs (Causative)
@@ -203,7 +204,7 @@ theorem local_necessary_not_implies_global :
 
 /-! The lightbulb has two switches: the light is on iff both are on.
     This is `CausalDynamics.conjunctiveCausation`, which already exists
-    in `Core.StructuralEquationModel`. -/
+    in `Core.Causal`. -/
 
 /-- In a conjunctive model (A ∧ B → C), A is **globally necessary** for C:
     without A, the law can never fire, so C never develops.

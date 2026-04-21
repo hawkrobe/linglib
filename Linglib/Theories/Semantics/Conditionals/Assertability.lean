@@ -16,12 +16,12 @@ This probabilistic semantics:
 
 -/
 
-import Linglib.Core.CausalBayesNet
+import Linglib.Core.Causal.BayesNet
 import Mathlib.Data.Rat.Defs
 
 namespace Semantics.Conditionals.Assertability
 
-open Core.CausalBayesNet
+open Core.Causal.BayesNet
 
 -- Conditional Probability
 

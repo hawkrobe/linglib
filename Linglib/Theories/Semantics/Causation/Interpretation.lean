@@ -27,7 +27,7 @@ mechanism.
 
 namespace Core.Verbs
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 open Semantics.Causation.Prevention
@@ -70,7 +70,7 @@ end Core.Verbs
 
 namespace Semantics.Causation.Interpretation
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Core.Verbs
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity

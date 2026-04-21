@@ -36,7 +36,7 @@ namespace Semantics.Causation.Degree
 
 open Core (Situation)
 
-open Core.StructuralEquationModel
+open Core.Causal
 open Semantics.Tense.Aspect.Core (ViewpointAspectB)
 open Semantics.Attitudes.Intensional (World allWorlds)
 open Semantics.Causation.ComplementEntailing (CausalFrame ActualizationMode)

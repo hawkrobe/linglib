@@ -41,7 +41,7 @@ import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.IntensionalLogic.RestrictedModality
-import Linglib.Core.StructuralEquationModel
+import Linglib.Core.Causal.SEM
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
@@ -184,18 +184,18 @@ This asymmetry DERIVES the gap from independent causal-cognitive principles.
 -/
 
 -- ============================================================================
--- Causal Model Infrastructure (via Core.StructuralEquationModel)
+-- Causal Model Infrastructure (via Core.Causal)
 -- ============================================================================
 
 /-!
-The belief formation causal model uses `Core.StructuralEquationModel` —
+The belief formation causal model uses `Core.Causal` —
 the same Pearl-style SCM framework used for resultatives, prerequisite
 semantics, and counterfactual conditionals. This avoids a parallel
 graph implementation and connects the PLC to the full causal infrastructure
 (interventions, counterfactuals, monotonicity proofs).
 -/
 
-open Core.StructuralEquationModel
+open Core.Causal
 
 -- ============================================================================
 -- Belief Formation Causal Model (Roberts & Özyıldız 2025)
@@ -203,7 +203,7 @@ open Core.StructuralEquationModel
 
 /-!
 Standard variables in belief formation, represented as
-`Core.StructuralEquationModel.Variable`.
+`Core.Causal.Variable`.
 -/
 namespace BeliefVars
 
@@ -220,7 +220,7 @@ end BeliefVars
 
 /--
 The standard causal dynamics for knowledge/belief formation, expressed as
-structural equations in the `Core.StructuralEquationModel` framework.
+structural equations in the `Core.Causal` framework.
 
 Each `CausalLaw.simple c e` says: if c is true, then e becomes true.
 The chain p → indic(p) → acq(a)(iₚ) → B(a)(p) is four simple laws;
@@ -253,7 +253,7 @@ def beliefFormationDynamics : CausalDynamics :=
 A verbal predicate with at-issue content α can have presupposition π iff
 setting π to true and running `normalDevelopment` produces α.
 
-This uses `causallySufficient` from `Core.StructuralEquationModel`:
+This uses `causallySufficient` from `Core.Causal`:
 the presupposition being true must be causally sufficient for the
 at-issue content in the belief formation model. This is stronger than
 mere graph reachability — it actually runs the structural equations.
