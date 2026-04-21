@@ -24,8 +24,7 @@ Decades of progress in formal linguistics live in prose scattered across hundred
 Linglib separates **phenomena** (what we observe) from **theories** (what explains it).
 
 `Phenomena/` contains theory-neutral empirical data — acceptability judgments, experimental results, distributional patterns. `Theories/` contains formal theories that make predictions about those phenomena. The connection between them is explicit: theories prove theorems that reference the data.
-
-Other top-level directories: `Core/` (shared infrastructure like propositions, intensions, accessibility relations), `Fragments/` (lexical data for specific languages), `Comparisons/` (cross-theory results).
+ `Core/` has shared infrastructure like propositions, intensions, accessibility relations, `Fragments/` exposes typological and lexical data for specific languages. 
 
 ## Building
 
