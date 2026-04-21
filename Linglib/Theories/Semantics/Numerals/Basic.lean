@@ -7,26 +7,34 @@ import Linglib.Theories.Semantics.Quantification.Quantifier
 @cite{goodman-stuhlmuller-2013} @cite{horn-1972} @cite{kennedy-2015}
 @cite{hackl-2000} @cite{link-1983} @cite{partee-1987} @cite{spector-2013}
 
-Five named `Prop` numeral meanings, each an `abbrev` over the corresponding
-`Core.Scale.{...}Deg id` polymorphic degree property — so the scale
-infrastructure (maximal informativity, monotonicity, density) holds by
-construction, not by bridge theorem. The only theory disagreement is the
-bare-numeral semantics:
+The numeral surface forms ("three", "more than three", "at least three", "at
+most three", "fewer than three") are five `Nat`-instantiations of
+@cite{kennedy-2015}'s unified de-Fregean GQ
+`λP. max{d | #P ≥ d} REL m`, captured in `Core.Scale.kennedyGQ`. Each named
+meaning is the corresponding `Core.Scale.{...}Deg id` specialization, and so
+inherits the scale infrastructure (maximal informativity, monotonicity,
+density) by construction.
+
+The only theory disagreement is the bare-numeral semantics:
 
 | Theory      | Bare "three" | bare semantics    |
 |-------------|--------------|-------------------|
 | Lower-bound | ≥3           | `atLeastMeaning`  |
 | Exact       | =3           | `bareMeaning`     |
 
-Modified numerals are theory-independent — everyone agrees "more than 3" means `> 3`.
+Modified numerals are theory-independent — everyone agrees "more than 3"
+means `> 3`. The Class A / Class B distinction (@cite{geurts-nouwen-2007},
+@cite{nouwen-2010}) reduces to reflexivity vs irreflexivity of the modifier's
+underlying relation; see `Core.Scale.kennedyGQ_refl_at_boundary` and
+`Core.Scale.kennedyGQ_irrefl_at_boundary`.
 
 ## Sections
 
 1. Modifier classification (Class A/B, Bound direction)
-2. Numeral meaning functions (5 abbrevs over `Core.Scale.{...}Deg id`)
+2. Numeral meaning functions (5 `def`s over `Core.Scale.{...}Deg id`)
 3. `BareNumeral` and `NumeralExpr`
 4. Alternative sets (Kennedy §4.1)
-5. Class A/B theorems, anti-Horn-scale argument
+5. Class A/B corollaries, anti-Horn-scale corollaries
 6. Type-shifting (Kennedy §3.1)
 7. EXH–type-shift duality (Spector §6.2)
 8. GQT bridge (Bylinina & Nouwen)
@@ -46,7 +54,11 @@ namespace Semantics.Numerals
 
 The distinction predicts ignorance implicature patterns:
 - Class A (>, <): EXCLUDE the bare-numeral world → no ignorance
-- Class B (≥, ≤): INCLUDE the bare-numeral world → ignorance -/
+- Class B (≥, ≤): INCLUDE the bare-numeral world → ignorance
+
+Structurally: Class B iff the underlying relation is reflexive (`Std.Refl`),
+Class A iff irreflexive (`Std.Irrefl`); see
+`Core.Scale.kennedyGQ_refl_at_boundary`. -/
 inductive ModifierClass where
   | classA  -- strict: >, <
   | classB  -- non-strict: ≥, ≤
@@ -65,9 +77,9 @@ inductive BoundDirection where
 -- Section 2: Numeral Meaning Functions
 -- ============================================================================
 
-/-! Five named meanings — one per surface form. Each is a `Nat`-instantiation
-of the corresponding `Core.Scale` degree property (with `id : Nat → Nat` as
-the measure function). They capture Kennedy's
+/-! Five named meanings — one per surface form. Each is the `id`-instantiation
+of the corresponding `Core.Scale` degree property. They capture
+@cite{kennedy-2015}'s
 
   ⟦modifier m⟧ = λP. max{d | #P ≥ d} REL m
 
@@ -78,19 +90,25 @@ density predictions (`atLeastDeg_downMono`, `moreThan_noMaxInf`,
 `atLeast_hasMaxInf`, etc.) hold by construction. -/
 
 /-- Bare numeral meaning (exact reading): `n = m`. -/
-abbrev bareMeaning : Nat → Nat → Prop := Core.Scale.eqDeg id
+def bareMeaning : Nat → Nat → Prop := Core.Scale.eqDeg id
 
 /-- "More than `m`": `n > m`. -/
-abbrev moreThanMeaning : Nat → Nat → Prop := Core.Scale.moreThanDeg id
+def moreThanMeaning : Nat → Nat → Prop := Core.Scale.moreThanDeg id
 
 /-- "Fewer than `m`": `n < m`. -/
-abbrev fewerThanMeaning : Nat → Nat → Prop := Core.Scale.lessThanDeg id
+def fewerThanMeaning : Nat → Nat → Prop := Core.Scale.lessThanDeg id
 
 /-- "At least `m`": `n ≥ m`. -/
-abbrev atLeastMeaning : Nat → Nat → Prop := Core.Scale.atLeastDeg id
+def atLeastMeaning : Nat → Nat → Prop := Core.Scale.atLeastDeg id
 
 /-- "At most `m`": `n ≤ m`. -/
-abbrev atMostMeaning : Nat → Nat → Prop := Core.Scale.atMostDeg id
+def atMostMeaning : Nat → Nat → Prop := Core.Scale.atMostDeg id
+
+@[simp] theorem bareMeaning_def (m n : Nat) : bareMeaning m n ↔ n = m := Iff.rfl
+@[simp] theorem moreThanMeaning_def (m n : Nat) : moreThanMeaning m n ↔ n > m := Iff.rfl
+@[simp] theorem fewerThanMeaning_def (m n : Nat) : fewerThanMeaning m n ↔ n < m := Iff.rfl
+@[simp] theorem atLeastMeaning_def (m n : Nat) : atLeastMeaning m n ↔ n ≥ m := Iff.rfl
+@[simp] theorem atMostMeaning_def (m n : Nat) : atMostMeaning m n ↔ n ≤ m := Iff.rfl
 
 instance (m n : Nat) : Decidable (bareMeaning m n) :=
   inferInstanceAs (Decidable (n = m))
@@ -130,8 +148,8 @@ instance : ToString BareNumeral where
     | .four => "four" | .five => "five"
 
 /-- A numeral expression: a bare numeral or one of the four modifications.
-    Used both as a surface form and (via `lowerAlternatives`/`upperAlternatives`)
-    as an element of Kennedy's alternative sets. -/
+    Used both as a surface form and (via `kennedyAlternatives`) as an
+    element of Kennedy's single alternative set. -/
 inductive NumeralExpr where
   | bare (n : Nat)
   | atLeast (n : Nat)
@@ -172,99 +190,98 @@ instance (bare : Nat → Nat → Prop) [∀ m n, Decidable (bare m n)]
   cases e <;> unfold NumeralExpr.meaning <;> infer_instance
 
 -- ============================================================================
--- Section 4: Alternative Sets (Kennedy §4.1)
+-- Section 4: Alternative Set (@cite{kennedy-2015} §4.1)
 -- ============================================================================
 
-/-- Lower-bound alternative set: replaces the traditional Horn scale
-    `⟨1, 2, 3,…⟩` with the surface-form alternatives for numeral `n`. -/
-def lowerAlternatives (n : Nat) : List NumeralExpr :=
-  [.bare n, .moreThan n, .atLeast n]
-
-/-- Upper-bound alternative set. -/
-def upperAlternatives (n : Nat) : List NumeralExpr :=
-  [.bare n, .fewerThan n, .atMost n]
-
-/-- Lower-bound alternatives all carry the same numeric argument and span
-    `{none, some classA, some classB}` exactly once. Catches reordering or
-    omission bugs in `lowerAlternatives`. -/
-theorem lowerAlternatives_classification (n : Nat) :
-    (lowerAlternatives n).map (fun e => (e.argument, e.modifierClass, e.boundDirection))
-      = [(n, none, none), (n, some .classA, some .lower), (n, some .classB, some .lower)] :=
-  rfl
-
-/-- Upper-bound alternatives all carry the same numeric argument and span
-    `{none, some classA, some classB}` with `.upper` direction. -/
-theorem upperAlternatives_classification (n : Nat) :
-    (upperAlternatives n).map (fun e => (e.argument, e.modifierClass, e.boundDirection))
-      = [(n, none, none), (n, some .classA, some .upper), (n, some .classB, some .upper)] :=
-  rfl
+/-- @cite{kennedy-2015}'s single alternative set for numeral `n` —
+    bare plus all four surface modifications. The point is
+    **anti-Horn-scale**: there is no fixed scale direction. The
+    Class A / Class B split is read off asymmetric entailment
+    (cf. `classA_excludes_bare_world`, `classB_includes_bare_world`),
+    not from membership in a pre-split sublist. -/
+def kennedyAlternatives (n : Nat) : List NumeralExpr :=
+  [.bare n, .moreThan n, .fewerThan n, .atLeast n, .atMost n]
 
 -- ============================================================================
--- Section 5: Class A/B Universal Theorems and Anti-Horn-Scale Argument
+-- Section 5: Class A/B Corollaries and Anti-Horn-Scale Corollaries
 -- ============================================================================
 
 /-! Class A/B is the central typological generalization (@cite{geurts-nouwen-2007},
     @cite{nouwen-2010}): strict modifiers (`>`, `<`) exclude the bare-numeral
     world; non-strict modifiers (`≥`, `≤`) include it. The classification is
-    derived from `NumeralExpr.modifierClass` and the inclusion/exclusion theorems
-    are universally quantified over `NumeralExpr` — adding a new modifier requires
-    extending the classifier *and* the case analysis here, by construction. -/
+    derived from `NumeralExpr.modifierClass`; the inclusion/exclusion theorems
+    below apply the corresponding general lemmas
+    `Core.Scale.kennedyGQ_irrefl_at_boundary` and
+    `Core.Scale.kennedyGQ_refl_at_boundary`, instantiated at `μ = id`. -/
 
 /-- **Class A excludes the bare-numeral world** (universal). For every
     `e : NumeralExpr` whose modifier class is A, the meaning fails at
-    `n = e.argument`, regardless of which bare-numeral semantics is chosen. -/
+    `n = e.argument`, regardless of which bare-numeral semantics is chosen.
+
+    Each non-vacuous branch delegates to
+    `Core.Scale.kennedyGQ_irrefl_at_boundary` at `μ = id`. -/
 theorem classA_excludes_bare_world (bare : Nat → Nat → Prop) (e : NumeralExpr)
     (h : e.modifierClass = some .classA) :
     ¬ e.meaning bare e.argument := by
-  cases e <;> simp_all [NumeralExpr.modifierClass, NumeralExpr.meaning,
-    NumeralExpr.argument, moreThanMeaning, fewerThanMeaning,
-    Core.Scale.moreThanDeg, Core.Scale.lessThanDeg]
+  cases e with
+  | bare _      => simp [NumeralExpr.modifierClass] at h
+  | atLeast _   => simp [NumeralExpr.modifierClass] at h
+  | atMost _    => simp [NumeralExpr.modifierClass] at h
+  | moreThan _  => exact Core.Scale.kennedyGQ_irrefl_at_boundary (rel := (· > ·)) id rfl
+  | fewerThan _ => exact Core.Scale.kennedyGQ_irrefl_at_boundary (rel := (· < ·)) id rfl
 
 /-- **Class B includes the bare-numeral world** (universal). For every
     `e : NumeralExpr` whose modifier class is B, the meaning holds at
-    `n = e.argument`, regardless of which bare-numeral semantics is chosen. -/
+    `n = e.argument`, regardless of which bare-numeral semantics is chosen.
+
+    Each non-vacuous branch delegates to
+    `Core.Scale.kennedyGQ_refl_at_boundary` at `μ = id`. -/
 theorem classB_includes_bare_world (bare : Nat → Nat → Prop) (e : NumeralExpr)
     (h : e.modifierClass = some .classB) :
     e.meaning bare e.argument := by
-  cases e <;> simp_all [NumeralExpr.modifierClass, NumeralExpr.meaning,
-    NumeralExpr.argument, atLeastMeaning, atMostMeaning,
-    Core.Scale.atLeastDeg, Core.Scale.atMostDeg]
+  cases e with
+  | bare _      => simp [NumeralExpr.modifierClass] at h
+  | moreThan _  => simp [NumeralExpr.modifierClass] at h
+  | fewerThan _ => simp [NumeralExpr.modifierClass] at h
+  | atLeast _   => exact Core.Scale.kennedyGQ_refl_at_boundary (rel := (· ≥ ·)) id rfl
+  | atMost _    => exact Core.Scale.kennedyGQ_refl_at_boundary (rel := (· ≤ ·)) id rfl
 
-/-- Bare numeral pointwise entails "at least `m`" (the half of Class B
-    inclusion that survives Kennedy's exact bare semantics). -/
+/-- Bare numeral pointwise entails "at least `m`" — the `id`-specialization
+    of `Core.Scale.eqDeg_imp_atLeastDeg`. -/
 theorem classB_entailed_by_bare (m n : Nat) :
-    bareMeaning m n → atLeastMeaning m n := fun h => h ▸ Nat.le_refl m
+    bareMeaning m n → atLeastMeaning m n :=
+  Core.Scale.eqDeg_imp_atLeastDeg id m n
 
-/-- Exact bare numerals are not upward-monotone: the universal would let
-    `bareMeaning 3 3 → bareMeaning 4 3`, but `4 ≠ 3`. -/
+/-- Exact bare numerals are not upward-monotone: the `id`-specialization of
+    `Core.Scale.eqDeg_not_upward_monotone` (witness `d = 3`, `d' = 4`). -/
 theorem bare_not_upward_monotone :
     ¬ ∀ m m' n, m ≤ m' → bareMeaning m n → bareMeaning m' n := by
   intro h
-  exact absurd (h 3 4 3 (by omega) rfl) (by decide)
+  exact Core.Scale.eqDeg_not_upward_monotone (W := Nat) id (d := 3) (d' := 4)
+    (by decide) (by decide) (w := 3) rfl
+    (fun x y hxy hex => h x y 3 hxy hex)
 
 /-- Bare numerals are not downward-monotone either, so they fail the
-    Horn-scale criterion in both directions. -/
+    Horn-scale criterion in both directions. The `id`-specialization of
+    `Core.Scale.eqDeg_not_downward_monotone`. -/
 theorem bare_not_downward_monotone :
     ¬ ∀ m m' n, m' ≤ m → bareMeaning m n → bareMeaning m' n := by
   intro h
-  exact absurd (h 3 2 3 (by omega) rfl) (by decide)
+  exact Core.Scale.eqDeg_not_downward_monotone (W := Nat) id (d := 3) (d' := 2)
+    (by decide) (by decide) (w := 3) rfl
+    (fun x y hyx hex => h x y 3 hyx hex)
 
-/-- "At least `m`" is strictly weaker than "bare `m`" (one-sided): every
-    `bare m n` is `atLeast m n` (`classB_entailed_by_bare`), but the converse
-    fails — witness `n = m+1`. -/
+/-- "At least `m`" is strictly weaker than "bare `m`" — the `id`-specialization
+    of `Core.Scale.atLeastDeg_strictly_weaker_than_eqDeg` (witness `d' = m+1`). -/
 theorem atLeast_strictly_weaker_than_bare (m : Nat) :
-    atLeastMeaning m (m + 1) ∧ ¬ bareMeaning m (m + 1) := by
-  refine ⟨?_, ?_⟩
-  · show m ≤ m + 1; omega
-  · show ¬ (m + 1 = m); omega
+    atLeastMeaning m (m + 1) ∧ ¬ bareMeaning m (m + 1) :=
+  Core.Scale.atLeastDeg_strictly_weaker_than_eqDeg id (Nat.lt_succ_self m) (w := m + 1) rfl
 
-/-- "More than `m`" and "bare `m`" have disjoint denotations: no `n` satisfies
-    both. Equivalent to: `n = m → ¬ n > m`. -/
+/-- "More than `m`" and "bare `m`" have disjoint denotations — the
+    `id`-specialization of `Core.Scale.moreThanDeg_disjoint_eqDeg`. -/
 theorem moreThan_disjoint_from_bare (m n : Nat) :
-    ¬ (bareMeaning m n ∧ moreThanMeaning m n) := by
-  rintro ⟨h₁, h₂⟩
-  show False
-  exact absurd h₂ (h₁ ▸ Nat.lt_irrefl m)
+    ¬ (bareMeaning m n ∧ moreThanMeaning m n) :=
+  Core.Scale.moreThanDeg_disjoint_eqDeg id m n
 
 -- ============================================================================
 -- Section 6: Type-Shifting (@cite{kennedy-2015} §3.1)
@@ -340,22 +357,22 @@ open Classical Core.IntensionalLogic Semantics.Quantification
 theorem gqt_atLeast_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.at_least_n_sem m n R S ↔
-    atLeastMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) := by
-  simp only [Quantifier.at_least_n_sem, atLeastMeaning, Core.Scale.atLeastDeg, id_eq]
+    atLeastMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) :=
+  Iff.rfl
 
 /-- GQT "at most `n`" agrees with `atMostMeaning` on intersection cardinality. -/
 theorem gqt_atMost_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.at_most_n_sem m n R S ↔
-    atMostMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) := by
-  simp only [Quantifier.at_most_n_sem, atMostMeaning, Core.Scale.atMostDeg, id_eq]
+    atMostMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) :=
+  Iff.rfl
 
 /-- GQT "exactly `n`" agrees with `bareMeaning` on intersection cardinality. -/
 theorem gqt_exactly_agrees (m : Frame) [Fintype m.Entity]
     (n : Nat) (R S : m.Entity → Prop) :
     Quantifier.exactly_n_sem m n R S ↔
-    bareMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) := by
-  simp only [Quantifier.exactly_n_sem, bareMeaning, Core.Scale.eqDeg, id_eq]
+    bareMeaning n (Quantifier.count (fun x : m.Entity => R x ∧ S x)) :=
+  Iff.rfl
 
 end GQTBridge
 

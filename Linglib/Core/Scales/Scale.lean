@@ -848,9 +848,156 @@ instance atLeastDeg.decidable {W : Type*} [DecidableLE α] (μ : W → α)
     (d : α) (w : W) : Decidable (atLeastDeg μ d w) := by
   unfold atLeastDeg; infer_instance
 
+instance atMostDeg.decidable {W : Type*} [DecidableLE α] (μ : W → α)
+    (d : α) (w : W) : Decidable (atMostDeg μ d w) := by
+  unfold atMostDeg; infer_instance
+
+instance moreThanDeg.decidable {W : Type*} [DecidableLT α] (μ : W → α)
+    (d : α) (w : W) : Decidable (moreThanDeg μ d w) := by
+  unfold moreThanDeg; infer_instance
+
+instance lessThanDeg.decidable {W : Type*} [DecidableLT α] (μ : W → α)
+    (d : α) (w : W) : Decidable (lessThanDeg μ d w) := by
+  unfold lessThanDeg; infer_instance
+
+instance eqDeg.decidable {W : Type*} [DecidableEq α] (μ : W → α)
+    (d : α) (w : W) : Decidable (eqDeg μ d w) := by
+  unfold eqDeg; infer_instance
+
 instance typeLower_eqDeg.decidable {W : Type*} (μ : W → α) (d : α) (w : W) :
     Decidable (typeLower (eqDeg μ) d w) :=
   decidable_of_iff _ (typeLower_eqDeg_iff μ d w).symm
+
+-- ════════════════════════════════════════════════════
+-- § 6d. @cite{kennedy-2015}'s De-Fregean GQ
+-- ════════════════════════════════════════════════════
+
+/-! ## A unified GQ denotation parameterized by the comparison relation
+
+@cite{kennedy-2015} proposes a single denotation for modified and
+unmodified numerals: `λP. max{d | #P ≥ d} REL m`, where the only parameter
+distinguishing surface forms is the relation `REL ∈ {=, ≥, >, ≤, <}`.
+
+Specialised to a property of the form `atLeastDeg μ`, the maximum degree
+satisfying `atLeastDeg μ d w` is `μ w` itself, so Kennedy's denotation
+collapses to `rel (μ w) m` — captured here as `kennedyGQ rel μ m w`.
+
+The five existing degree properties (`eqDeg`, `atLeastDeg`, `moreThanDeg`,
+`atMostDeg`, `lessThanDeg`) are definitionally `kennedyGQ` instantiated at
+the corresponding relation. The Class A vs Class B distinction
+(@cite{geurts-nouwen-2007}, @cite{nouwen-2010}) collapses to a structural
+property of `rel`: Class B ↔ `IsRefl α rel`; Class A ↔ `IsIrrefl α rel`. -/
+
+/-- Kennedy's unified GQ denotation: `(rel) (μ w) d`. The five named degree
+    properties are definitionally equal to instantiations of this. -/
+def kennedyGQ {W : Type*} (rel : α → α → Prop) (μ : W → α) (d : α) (w : W) : Prop :=
+  rel (μ w) d
+
+omit [LinearOrder α] in
+/-- Specialisation to `(· = ·)` recovers `eqDeg`. -/
+theorem kennedyGQ_eq_eqDeg {W : Type*} (μ : W → α) :
+    kennedyGQ (· = ·) μ = eqDeg μ := rfl
+
+/-- Specialisation to `(· ≥ ·)` recovers `atLeastDeg`. -/
+theorem kennedyGQ_ge_eq_atLeastDeg {W : Type*} (μ : W → α) :
+    kennedyGQ (· ≥ ·) μ = atLeastDeg μ := rfl
+
+/-- Specialisation to `(· > ·)` recovers `moreThanDeg`. -/
+theorem kennedyGQ_gt_eq_moreThanDeg {W : Type*} (μ : W → α) :
+    kennedyGQ (· > ·) μ = moreThanDeg μ := rfl
+
+/-- Specialisation to `(· ≤ ·)` recovers `atMostDeg`. -/
+theorem kennedyGQ_le_eq_atMostDeg {W : Type*} (μ : W → α) :
+    kennedyGQ (· ≤ ·) μ = atMostDeg μ := rfl
+
+/-- Specialisation to `(· < ·)` recovers `lessThanDeg`. -/
+theorem kennedyGQ_lt_eq_lessThanDeg {W : Type*} (μ : W → α) :
+    kennedyGQ (· < ·) μ = lessThanDeg μ := rfl
+
+omit [LinearOrder α] in
+/-- **Class B inclusion at the boundary** (general). If `rel` is reflexive,
+    Kennedy's GQ holds at any world `w` whose measure equals the boundary `d`.
+    Specialised to numerals: "at least 3" / "at most 3" hold at `w = 3`. -/
+theorem kennedyGQ_refl_at_boundary {W : Type*} {rel : α → α → Prop}
+    [Std.Refl rel] (μ : W → α) {d : α} {w : W} (h : μ w = d) :
+    kennedyGQ rel μ d w := by
+  show rel (μ w) d
+  rw [h]; exact Std.Refl.refl _
+
+omit [LinearOrder α] in
+/-- **Class A exclusion at the boundary** (general). If `rel` is irreflexive,
+    Kennedy's GQ fails at any world `w` whose measure equals the boundary `d`.
+    Specialised to numerals: "more than 3" / "fewer than 3" fail at `w = 3`. -/
+theorem kennedyGQ_irrefl_at_boundary {W : Type*} {rel : α → α → Prop}
+    [Std.Irrefl rel] (μ : W → α) {d : α} {w : W} (h : μ w = d) :
+    ¬ kennedyGQ rel μ d w := by
+  intro hk
+  have hdd : rel d d := h ▸ (hk : rel (μ w) d)
+  exact (Std.Irrefl.irrefl (r := rel) d) hdd
+
+-- ════════════════════════════════════════════════════
+-- § 6e. Anti-Horn-Scale Lemmas (general)
+-- ════════════════════════════════════════════════════
+
+/-! ## Why exact bare numerals are not part of a Horn scale
+
+@cite{kennedy-2015} argues that bare numerals (under their exact reading) are
+**not monotone in their numerical argument** — neither upward nor downward —
+so they fail the Horn-scale criterion. The classic Horn scale `⟨1, 2, 3, …⟩`
+presupposes upward monotonicity; the dual scale `⟨…, 3, 2, 1⟩` presupposes
+downward monotonicity. Kennedy's unified GQ accommodates both modifier
+directions without needing a Horn scale at all.
+
+The lemmas below state the failure-of-monotonicity and weakness-vs-exact
+results purely in terms of `eqDeg` / `atLeastDeg` / `moreThanDeg` —
+independent of any specific scale. The Nat-specific results in
+`Theories/Semantics/Numerals/Basic.lean` are immediate corollaries. -/
+
+/-- "More than `d`" and "exactly `d`" are disjoint (general). -/
+theorem moreThanDeg_disjoint_eqDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
+    ¬ (eqDeg μ d w ∧ moreThanDeg μ d w) := by
+  rintro ⟨h₁, h₂⟩
+  exact lt_irrefl d (h₁ ▸ h₂)
+
+/-- "Less than `d`" and "exactly `d`" are disjoint (general). -/
+theorem lessThanDeg_disjoint_eqDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
+    ¬ (eqDeg μ d w ∧ lessThanDeg μ d w) := by
+  rintro ⟨h₁, h₂⟩
+  exact lt_irrefl d (h₁ ▸ h₂)
+
+/-- Bare exact meaning entails "at least" (general half of Class B inclusion). -/
+theorem eqDeg_imp_atLeastDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
+    eqDeg μ d w → atLeastDeg μ d w := fun h => h ▸ le_refl _
+
+/-- Bare exact meaning entails "at most" (general; symmetric to above). -/
+theorem eqDeg_imp_atMostDeg {W : Type*} (μ : W → α) (d : α) (w : W) :
+    eqDeg μ d w → atMostDeg μ d w := fun h => h ▸ le_refl _
+
+/-- "At least `d`" is strictly weaker than "exactly `d`" (general). Given a
+    witness world `w` with `μ w = d'` where `d < d'`, "at least `d`" holds
+    but "exactly `d`" fails. -/
+theorem atLeastDeg_strictly_weaker_than_eqDeg {W : Type*} (μ : W → α)
+    {d d' : α} (hlt : d < d') {w : W} (hμ : μ w = d') :
+    atLeastDeg μ d w ∧ ¬ eqDeg μ d w := by
+  refine ⟨?_, ?_⟩
+  · show μ w ≥ d; rw [hμ]; exact le_of_lt hlt
+  · show ¬ μ w = d; rw [hμ]; exact ne_of_gt hlt
+
+/-- Exact `eqDeg` is **not upward-monotone** (general). Given two distinct
+    boundary values `d ≤ d'` and a witness world with `μ w = d`, the universal
+    "if exact at `d` then exact at `d'`" fails — `μ w` cannot equal both. -/
+theorem eqDeg_not_upward_monotone {W : Type*} (μ : W → α)
+    {d d' : α} (hne : d ≠ d') (hle : d ≤ d') {w : W} (hμ : μ w = d) :
+    ¬ ∀ x y, x ≤ y → eqDeg μ x w → eqDeg μ y w := by
+  intro h
+  exact hne ((h d d' hle hμ).symm.trans hμ).symm
+
+/-- Exact `eqDeg` is **not downward-monotone** (general). Symmetric to above. -/
+theorem eqDeg_not_downward_monotone {W : Type*} (μ : W → α)
+    {d d' : α} (hne : d ≠ d') (hle : d' ≤ d) {w : W} (hμ : μ w = d) :
+    ¬ ∀ x y, y ≤ x → eqDeg μ x w → eqDeg μ y w := by
+  intro h
+  exact hne ((h d d' hle hμ).symm.trans hμ).symm
 
 /-- Universal closure (the alternative to existential closure) is
     unsatisfiable when the closure range contains two distinct values:

@@ -218,8 +218,9 @@ Numerals are NOT represented as a `HornScale` here because:
 Both cases are handled in `Theories/Semantics/Numerals/Basic.lean`:
 - The five Prop meaning functions (`bareMeaning`, `atLeastMeaning`, ...)
   expose theory disagreement directly via the choice of bare-numeral semantics
-- `lowerAlternatives` / `upperAlternatives` (lists of `NumeralExpr`) are
-  Kennedy's alternative sets
+- `kennedyAlternatives` (a single list of `NumeralExpr`) is Kennedy's
+  anti-Horn-scale alternative set; Class A vs Class B emerges from
+  asymmetric entailment, not from a pre-split sublist
 - `bare_not_upward_monotone` / `bare_not_downward_monotone` /
   `atLeast_strictly_weaker_than_bare` prove the key contrast
 -/

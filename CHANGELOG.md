@@ -4,6 +4,85 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.98] - 2026-04-20
+
+### Added
+- **`Theories/Semantics/Entailment/AsymStronger.lean`** (new file): polymorphic
+  asymmetric-entailment primitive `asymStrongerOn (worlds : Finset W) (ψ φ : W → Prop)
+  [DecidablePred ψ] [DecidablePred φ] : Prop`, defined as `(∀ w ∈ worlds, ψ w → φ w) ∧
+  (∃ w ∈ worlds, φ w ∧ ¬ ψ w)` (mathlib `MonotoneOn`-style explicit form).
+  Bridge `asymStrongerOn_iff_filter_ssubset` proves equivalence to
+  `worlds.filter ψ ⊂ worlds.filter φ`. Decidability via `Decidable (_ ∧ _)`.
+  Irreflexivity lemma `not_asymStrongerOn_self`. Docstring documents why
+  `RSA.IBR.strongestAt` (unary, not the binary asym-stronger relation) and
+  `Magri2014.innerExcludable` (Horn-mateness fragment + non-Fintype `Scenario`)
+  cannot be trivially unified — both flagged as deeper future refactors.
+
+### Changed
+- **@cite{kennedy-2015} cleanup pass + Bool→Prop migration + consolidation.**
+  Six coordinated changes:
+  - `blog/data/references.bib`: added `geurts-nouwen-2007` (Language 83(3):533-559)
+    and `nouwen-2010` (S&P 3.3, doi 10.3765/sp.3.3) — both were `@cite`'d in
+    Scale.lean / Numerals/Basic.lean docstrings without bib entries.
+  - `Theories/Pragmatics/Implicature/Core/EpistemicBlocking.lean` (`git mv`
+    from `Phenomena/ScalarImplicatures/EpistemicBlocking.lean`): pure
+    pragmatic-implicature theory belongs in `Theories/`, not `Phenomena/`.
+    Namespace `Phenomena.ScalarImplicatures.EpistemicBlocking →
+    Implicature.EpistemicBlocking`. Migrated to Prop+`[DecidablePred]`
+    throughout: `(W → Bool)` → `(W → Prop)`, `EpistemicState.possible : List W`
+    → `Finset W`, `nonempty : possible ≠ []` → `Nonempty`. All five theorems
+    (`duality`, `secondary_blocked_if_possible`, `primary_possibility_correspondence`,
+    `blocking_correspondence`) restated and proved in Prop form via mathlib
+    lemmas. Local `asymStrongerOver` deleted in favor of imported
+    `Semantics.Entailment.asymStrongerOn`. Dead API removed: `sauerlandPrimaryAlts`,
+    `satisfiesPrimary`, `sauerlandPrimaryAlts_nil`, `self_not_in_primary`. Net
+    −33 LOC vs prior version.
+  - `Theories/Semantics/Numerals/Basic.lean`:
+    - `lowerAlternatives` / `upperAlternatives` (two pre-split lists)
+      collapsed into single `kennedyAlternatives n := [bare n, moreThan n,
+      fewerThan n, atLeast n, atMost n]`. Per @cite{kennedy-2015} §4.1
+      the alt-set is one set; the Class A/B split should fall out of
+      asymmetric entailment, not be encoded in the input partition. This
+      is Kennedy's anti-Horn-scale move.
+    - `classA_excludes_bare_world` / `classB_includes_bare_world` now
+      delegate to `Core.Scale.kennedyGQ_irrefl_at_boundary` /
+      `kennedyGQ_refl_at_boundary` via `(rel := (· > ·)) id rfl` etc.,
+      replacing opaque `simp_all` with the general lemmas they were
+      claimed to instantiate.
+  - `Core/Scales/Scale.lean`: dropped unverified "(eq. 1)" location citation
+    per CLAUDE.md anti-hallucination rule; new § 6d formalizes
+    @cite{kennedy-2015}'s de-Fregean GQ `kennedyGQ` with refl/irrefl-at-boundary
+    lemmas; added decidability instances for `atMostDeg`, `moreThanDeg`,
+    `lessThanDeg`, `eqDeg` (parallel to existing `atLeastDeg.decidable`).
+  - `Phenomena/Numerals/Studies/Kennedy2015.lean` rewrite (consumer of all
+    the above):
+    - `KCard` now `Fin 6` (was custom enum cosplay) — `Fintype`-derived
+      `decide` works directly.
+    - `KLowerUtt` + `KUpperUtt` (two enums) collapsed into single
+      5-constructor `KUtt` over Kennedy's full alt-set.
+    - `kennedyLowerCfg` + `kennedyUpperCfg` collapsed into single
+      `kennedyCfg` — Class A vs Class B emerges from which `KUtt` is
+      asserted, not from a separate config per direction.
+    - `kMean : KUtt → KCard → Bool` → `Prop` with `noncomputable instance
+      DecidablePred (kMean u)` (the underlying `NumeralExpr.meaning`'s
+      Decidable instance is built via tactics, hence noncomputable; `decide`
+      uses kernel reduction so this is fine).
+    - `kAlts : List (KCard → Bool)` deleted; symbolic theorems now filter
+      over `Finset.univ : Finset KUtt` (the alternative type IS the
+      enumeration) and use `.card` instead of `.length`.
+    - `allKCards : List KCard` deleted; symbolic theorems now use
+      `Finset.univ : Finset KCard` (Fintype-derived) inline.
+    - All 4 symbolic Sauerland theorems still close via `decide`; all 7
+      RSA `rsa_predict` theorems unaffected.
+    - Docstring corrects two framing errors: (i) RSA derivation framed
+      as our integration contribution rather than Kennedy's recipe
+      (Kennedy discusses @cite{franke-2011} IBR, not RSA); (ii) Class A/B
+      labels properly attributed to @cite{nouwen-2010}, with note that
+      @cite{kennedy-2015} *contests* Nouwen's lexical bifurcation by
+      replacing it with one denotation + asymmetric entailment.
+  - `Theories/Semantics/Alternatives/Lexical.lean`: docstring updated to
+    reference `kennedyAlternatives` instead of the deleted lower/upper pair.
+
 ## [0.230.86] - 2026-04-20
 
 ### Changed
