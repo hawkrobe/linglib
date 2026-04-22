@@ -58,11 +58,39 @@ def perf (sort : Dynamicity) (P : EventPred W Time) (w : W)
     (t : Time) : Prop :=
   ∃ t' : Time, t' < t ∧ at' sort P w (Interval.point t')
 
+/-! ### Modal cores vs. prospective modals
+
+The temporal evaluator is factored out: `mayCore`/`wollCore` quantify
+over the modal base and check the prejacent at the perspective point,
+while `may`/`woll` apply forward temporal expansion. Condoravdi's
+English `might`/`would` use the prospective versions (futurity is
+lexicalized in the modal). Languages whose modals are not inherently
+future-oriented — @cite{matthewson-2013} argues Gitksan *ima('a)* is
+one — should be modeled with `mayCore`/`wollCore`, with prospective
+aspect supplied by a separate operator (Gitksan *dim*).
+
+This is the structural expression of @cite{matthewson-2013}'s central
+anti-Condoravdi claim: the prospective component is a separable
+combinator, not part of the modal lexical entry. -/
+
+/-- Modal possibility core: ∃ w' ∈ MB(w,t), the prejacent holds at
+    the point `t` in `w'`. No forward expansion. -/
+def mayCore (MB : W → Time → Set W) (sort : Dynamicity)
+    (P : EventPred W Time) (w : W) (t : Time) : Prop :=
+  ∃ w' ∈ MB w t, at' sort P w' (Interval.point t)
+
 /-- MAY/MIGHT: existential quantification over the modal base, with
-    forward temporal expansion. -/
+    forward temporal expansion. The English modal lexicalizes the
+    prospective choice (@cite{condoravdi-2002}). -/
 def may (MB : W → Time → Set W) (sort : Dynamicity)
     (P : EventPred W Time) (w : W) (t : Time) : Prop :=
   ∃ w' ∈ MB w t, atForward sort P w' t
+
+/-- Modal necessity core: ∀ w' ∈ MB(w,t), the prejacent holds at
+    the point `t` in `w'`. No forward expansion. -/
+def wollCore (MB : W → Time → Set W) (sort : Dynamicity)
+    (P : EventPred W Time) (w : W) (t : Time) : Prop :=
+  ∀ w' ∈ MB w t, at' sort P w' (Interval.point t)
 
 /-- WOLL: universal quantification over the modal base, with forward
     temporal expansion. The untensed modal underlying *will* / *would*;
@@ -71,6 +99,26 @@ def may (MB : W → Time → Set W) (sort : Dynamicity)
 def woll (MB : W → Time → Set W) (sort : Dynamicity)
     (P : EventPred W Time) (w : W) (t : Time) : Prop :=
   ∀ w' ∈ MB w t, atForward sort P w' t
+
+/-- For dynamic predicates, `mayCore` implies `may`: forward expansion
+    is a weakening when the prejacent is checked at a point. The
+    pointwise instantiation gives an event whose start lies at or
+    after `t`, which is exactly what `atEventForward` requires. -/
+theorem may_of_mayCore_dynamic (MB : W → Time → Set W)
+    (P : EventPred W Time) (w : W) (t : Time)
+    (h : mayCore MB .dynamic P w t) : may MB .dynamic P w t := by
+  obtain ⟨w', hMem, hAt⟩ := h
+  refine ⟨w', hMem, ?_⟩
+  exact atEventForward_of_atEvent_point P w' t hAt
+
+/-- For stative predicates, `mayCore` implies `may`: pointwise state
+    overlap entails forward state persistence at the point. -/
+theorem may_of_mayCore_stative (MB : W → Time → Set W)
+    (P : EventPred W Time) (w : W) (t : Time)
+    (h : mayCore MB .stative P w t) : may MB .stative P w t := by
+  obtain ⟨w', hMem, hAt⟩ := h
+  refine ⟨w', hMem, ?_⟩
+  exact atStateForward_of_atState_point P w' t hAt
 
 /-! ## Composed scope readings
 
