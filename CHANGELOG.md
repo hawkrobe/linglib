@@ -4,6 +4,18 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.121] - 2026-04-21
+
+### Added
+- **Bib entries**: `@de-groote-2006` (Towards a Montagovian Account of
+  Dynamics, SALT XVI 1–16, DOI 10.3765/salt.v16i0.2952, verified from
+  PDF title page) and `@groenendijk-stokhof-veltman-1996` (Coreference
+  and Modality, in Lappin ed., Handbook of Contemporary Semantic
+  Theory, Blackwell — page range omitted pending verification per
+  CLAUDE.md "leave fields blank rather than guessing"). Resolves the
+  two unknown citation keys introduced by `Tense/Dynamic.lean`'s
+  literature-anchored docstring in 0.230.120.
+
 ## [0.230.120] - 2026-04-21
 
 ### Changed
