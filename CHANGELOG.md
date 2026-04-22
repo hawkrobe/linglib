@@ -4,6 +4,42 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.120] - 2026-04-21
+
+### Changed
+- **Tense kernel extraction**: `Tense/Compositional.lean` now exposes
+  three `abbrev` kernels — `precedes`/`coincides`/`follows` on
+  `WorldTimeIndex` pairs — plus four shared algebra lemmas
+  (`precedes_or_coincides_or_follows`, `not_precedes_and_follows`,
+  `not_precedes_and_coincides`, `not_coincides_and_follows`). Static
+  `PAST`/`PRES`/`FUT` refactored to call the kernels rather than
+  re-stipulating `<`/`=`/`>` on `.time`.
+- **`Tense/Dynamic.lean` redesigned as eliminative-update lift of
+  static tense** (per @cite{veltman-1996} test operator,
+  @cite{groenendijk-stokhof-veltman-1996} eliminative updates,
+  @cite{de-groote-2006} CPS embedding, @cite{charlow-2021} monadic
+  lift, @cite{heim-1982} principle (A)). `dynPAST`/`dynPRES`/`dynFUT`
+  now defined as `dynRelation precedes`/`coincides`/`follows`,
+  inheriting the same temporal kernel as the static operators. Three
+  rfl bridges (`dyn{Op}_eq_dynRelation_{kernel}`) make the factoring
+  visible; three realization theorems (`dyn{Op}_iff_{Op}_with_true`)
+  prove that an entry survives the dynamic filter iff the static
+  operator (with trivial propositional payload) holds at the entry's
+  event/reference situations — the "wrapper actually wraps" check.
+  Temporal-algebra theorems (`temporal_partition`,
+  three contradictory-pair lemmas, `dynPAST_transitive`) now derive
+  from the shared kernel via `dynRelation`'s generic algebra in
+  one line each. Closes the linglib-integration-auditor's finding
+  that pre-refactor `Tense/Dynamic.lean` was a sibling-by-namespace
+  only with no code-level linkage to `Tense/Compositional.lean`.
+- **Reciprocal pointers added** to `Dynamic/Bilateral/Basic.lean`,
+  `Dynamic/Comparisons/CDRT_TTR.lean`,
+  `Dynamic/Comparisons/ICDRT_BUS.lean` — each now names the
+  cross-cutting smell docstrings (`Core/DynProp.lean`'s "three
+  incompatible DNE solutions" table, `Bilateral/ICDRT.lean`'s
+  picks-by-phenomenon framing) that direct readers to it, closing
+  the cross-reference loop opened by 0.230.118.
+
 ## [0.230.119] - 2026-04-21
 
 ### Changed

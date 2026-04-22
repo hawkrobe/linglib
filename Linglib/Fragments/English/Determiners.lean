@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Quantification.Quantifier
+import Linglib.Theories.Semantics.Quantification.Lexicon
 import Linglib.Theories.Semantics.Plurality.CandidateInterpretation
 import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Basic
@@ -10,51 +11,16 @@ import Mathlib.Tactic.NormNum
 # English Determiners
 @cite{horn-1972} @cite{barwise-cooper-1981}
 
-Quantifier lexicon with syntactic and semantic properties.
-
-## Main definitions
-
-- `QForce`: quantificational force
-- `QuantEntry`: unified lexical entry
-
+English-specific quantifier lexicon. The shared structure
+`QuantifierEntry` (and supporting `QForce`/`Monotonicity`/`Strength`
+enums) lives in `Theories/Semantics/Quantification/Lexicon.lean`; this
+file is just the English instantiations.
 -/
 
 namespace Fragments.English.Determiners
 
-inductive QForce where
-  | universal
-  | existential
-  | definite
-  | negative
-  | proportional
-  deriving DecidableEq, Repr
-
-inductive Monotonicity where
-  | increasing
-  | decreasing
-  | nonMonotone
-  deriving DecidableEq, Repr
-
-/-- Weak/strong classification (B&C §4.3, Table II).
-    Weak determiners allow there-insertion: "There are some cats."
-    Strong determiners don't: "*There is every cat." -/
-inductive Strength where
-  | weak
-  | strong
-  deriving DecidableEq, Repr
-
-/-- Unified lexical entry for quantifiers/determiners. -/
-structure QuantifierEntry where
-  form : String
-  qforce : QForce
-  numberRestriction : Option Number := none
-  allowsMass : Bool := false
-  monotonicity : Monotonicity := .increasing
-  strength : Strength := .weak
-  gqtThreshold : ℚ := 0
-  ptPrototype : ℚ := 0
-  ptSpread : ℚ := 2
-  deriving Repr, BEq
+export Theories.Semantics.Quantification.Lexicon
+  (QForce Monotonicity Strength QuantifierEntry)
 
 def none_ : QuantifierEntry :=
   { form := "none", qforce := .negative, allowsMass := true, monotonicity := .decreasing
@@ -200,22 +166,30 @@ def an : QuantifierEntry :=
 
 /-- "both" - universal dual, presupposes exactly 2.
     K&S (83a): [_Det each of the two] ⇒ both.
-    Semantically: gqMeet of every and (the 2). -/
+    Semantically: gqMeet of every and (the 2).
+
+    `numberRestriction := some .du` carries the dual core concept
+    (@cite{harbour-2014} `[−atomic, +minimal]`) — the "presupposes
+    exactly 2" meaning is `Core.Number.dualPredOnLattice` of the
+    restrictor (Core/Number.lean § 11). -/
 def both : QuantifierEntry :=
   { form := "both"
   , qforce := .universal
-  , numberRestriction := some .pl
+  , numberRestriction := some .du
   , monotonicity := .increasing
   , strength := .strong  -- K&S §3.2: definite dets are strong
   }
 
 /-- "neither" - negative dual, presupposes exactly 2.
     K&S (83b): [_Det (not one) of the two] ⇒ neither.
-    Semantically: outerNeg of both. -/
+    Semantically: outerNeg of both.
+
+    `numberRestriction := some .du`: dual core concept, same source as
+    *both*. -/
 def neither : QuantifierEntry :=
   { form := "neither"
   , qforce := .negative
-  , numberRestriction := some .pl  -- syntactically singular but semantically dual
+  , numberRestriction := some .du
   , monotonicity := .decreasing
   , strength := .strong  -- K&S §3.3: negative strong
   }
@@ -389,11 +363,7 @@ theorem QuantityWord.ptMeaning_nonneg (n : Nat) (q : QuantityWord) (t : Fin (n +
 -- Conversion to Core.Word
 -- ============================================================================
 
-def QuantifierEntry.toWord (d : QuantifierEntry) : Word :=
-  { form := d.form
-  , cat := .DET
-  , features := { number := d.numberRestriction }
-  }
+-- `QuantifierEntry.toWord` lives in `Theories.Semantics.Quantification.Lexicon`.
 
 -- ============================================================================
 -- Examples
@@ -631,6 +601,19 @@ theorem neither_decreasing : neither.monotonicity = .decreasing := rfl
     mirroring every/no. -/
 theorem both_neither_mono_duality :
     both.monotonicity = .increasing ∧ neither.monotonicity = .decreasing :=
+  ⟨rfl, rfl⟩
+
+/-- The lexical entries `both` and `neither` carry `numberRestriction
+:= some .du`, which is the Harbour `[−atomic, +minimal]` bundle
+(@cite{harbour-2014}, `Core.Number.dualF`). The cardinality clause
+`|R| ≥ 2` in `both_sem`/`neither_sem` is the assertional reflex of the
+predicate-modifier denotation `Core.Number.dualPredOnLattice`
+(@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025} eq 39):
+"and has exactly 2 atomic parts". On a powerset lattice over the
+R-extension this is a `latticeToFeatures … = dualF` condition
+(`Core.Number.dualPredOnLattice_eq_via_features`). -/
+theorem both_neither_dual_marked :
+    both.numberRestriction = some .du ∧ neither.numberRestriction = some .du :=
   ⟨rfl, rfl⟩
 
 -- ============================================================================

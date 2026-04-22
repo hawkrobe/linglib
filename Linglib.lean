@@ -36,6 +36,7 @@ import Linglib.Core.IntensionalLogic.Rigidity
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Variables
 import Linglib.Core.IntensionalLogic.Conjunction
+import Linglib.Core.IntensionalLogic.Defs
 import Linglib.Core.IntensionalLogic.Quantification
 import Linglib.Core.IntensionalLogic.Algebra
 import Linglib.Core.IntensionalLogic.CategoryType
@@ -1899,6 +1900,7 @@ import Linglib.Theories.Semantics.Quantification.DomainRestriction
 import Linglib.Theories.Semantics.Quantification.DomainVagueness
 import Linglib.Theories.Semantics.Quantification.PolarizedIndividuals
 import Linglib.Theories.Semantics.Quantification.Quantifier
+import Linglib.Theories.Semantics.Quantification.Lexicon
 import Linglib.Theories.Semantics.Quantification.Exceptive
 import Linglib.Theories.Semantics.Quantification.Possessive
 import Linglib.Theories.Semantics.Quantification.UnifiedUniversal
@@ -1911,7 +1913,6 @@ import Linglib.Theories.Semantics.Quotation.Demonstration
 import Linglib.Theories.Semantics.Probabilistic.Scenarios.Basic
 import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Theories.Semantics.Probabilistic.BayesianSemantics
-import Linglib.Core.Semantics.GradedProposition
 import Linglib.Core.Categorical.AgentCat
 import Linglib.Core.Categorical.ScaleCat
 import Linglib.Theories.Interfaces.SyntaxSemantics.SyntaxInterface

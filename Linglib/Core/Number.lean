@@ -553,13 +553,64 @@ theorem dualPredOnLattice_refines {D : Type} [DecidableEq D]
   exact And.left
 
 /-- The dual reading of a property holds of `x` iff `P x` and `x` is a
-minimal non-atom in the domain. The two conjuncts are independent. -/
+minimal non-atom in the domain. -/
 theorem dualPredOnLattice_iff {D : Type} [DecidableEq D]
     (join : D → D → D) (domain : List D)
     (P : D → Bool) (x : D) :
     dualPredOnLattice join domain P x = true ↔
     P x = true ∧ isMinimalNonAtom join domain x = true := by
-  simp [dualPredOnLattice]
+  simp only [dualPredOnLattice, Bool.and_eq_true]
+
+/-- An element classified as a minimal non-atom is, by construction, not
+an atom. This is a structural fact about `isMinimalNonAtom`: it filters
+to the non-atom region of the domain before testing minimality. -/
+theorem not_atom_of_isMinimalNonAtom {D : Type} [DecidableEq D]
+    (join : D → D → D) (domain : List D) (x : D)
+    (h : isMinimalNonAtom join domain x = true) :
+    isAtom join domain x = false := by
+  unfold isMinimalNonAtom at h
+  rw [Bool.and_eq_true] at h
+  have hMem : x ∈ domain.filter (! isAtom join domain ·) := by
+    have := h.1
+    simp only [List.contains_iff_exists_mem_beq, beq_iff_eq] at this
+    obtain ⟨y, hy, rfl⟩ := this
+    exact hy
+  rw [List.mem_filter] at hMem
+  simpa using hMem.2
+
+/-- **Bridge**: the lattice predicate `isMinimalNonAtom` IS the condition
+`latticeToFeatures` uses to assign `dualF`. So `dualPredOnLattice`
+factors as `P x ∧ latticeToFeatures … x = dualF`.
+
+This grounds the paper's predicate-modifier semantics
+(@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025} eq 39)
+in the existing Harbour feature decomposition (Number.lean §§4-5):
+DUAL is *not* a separate primitive but the same conditions used to
+classify a lattice element as `[−atomic, +minimal]`. -/
+theorem dualPredOnLattice_eq_via_features {D : Type} [DecidableEq D]
+    (join : D → D → D) (domain : List D)
+    (P : D → Bool) (x : D) :
+    dualPredOnLattice join domain P x = true ↔
+    P x = true ∧ latticeToFeatures join domain x = dualF := by
+  rw [dualPredOnLattice_iff]
+  refine and_congr_right (fun _ => ?_)
+  constructor
+  · -- isMinimalNonAtom → latticeToFeatures = dualF
+    intro hMin
+    have hNotAtom : isAtom join domain x = false :=
+      not_atom_of_isMinimalNonAtom join domain x hMin
+    unfold latticeToFeatures
+    simp [hNotAtom, hMin]
+  · -- latticeToFeatures = dualF → isMinimalNonAtom
+    intro hF
+    unfold latticeToFeatures at hF
+    by_cases ha : isAtom join domain x = true
+    · simp [ha, singularF, dualF] at hF
+    · simp only [ha, if_false, Bool.not_eq_true] at hF
+      by_cases hm : isMinimalNonAtom join domain x = true
+      · exact hm
+      · simp only [hm, if_false, Bool.not_eq_true] at hF
+        simp [pluralF, dualF] at hF
 
 /-- On the 3-atom powerset, the dual reading of "is a non-atom"
 selects the three pairs (3, 5, 6) and excludes the triple (7). -/
@@ -567,7 +618,7 @@ theorem ps3_dual_pairs_satisfy :
     dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 3 = true ∧
     dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 5 = true ∧
     dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 6 = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> decide
+  decide
 
 /-- Triples (≥3 atomic parts) fail the dual predicate. -/
 theorem ps3_dual_triple_excluded :

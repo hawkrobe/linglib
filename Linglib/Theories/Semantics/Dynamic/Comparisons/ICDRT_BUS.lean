@@ -41,6 +41,20 @@ non-DC worlds) plus an attitude/modal shifting the local context.
 BUS swap-based negation makes ¬∃x.P(x) forget the witness in the negative
 dimension, but has no mechanism to recover it in a subsequent modal context
 without a fresh ∃.
+
+## Upstream pointers
+
+This file is the empirical comparison cited by three cross-cutting smell
+docstrings:
+
+- `Dynamic/Core/DynProp.lean` (§ "three incompatible DNE solutions") — lists
+  Bilateral and ICDRT as competing DNE repairs; directs readers here for the
+  empirical breakdown.
+- `Dynamic/Bilateral/ICDRT.lean` (§ "two competing approaches to cross-disjunct
+  anaphora") — lays out the picks-by-phenomenon framing; directs readers here
+  for the formal version.
+- `Dynamic/IntensionalCDRT/Basic.lean` — the ICDRT side of the comparison; its
+  `disjunction_enables_anaphora` lemma is what makes the bathroom case work.
 -/
 
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Operators

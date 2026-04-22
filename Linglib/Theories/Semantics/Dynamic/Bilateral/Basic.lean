@@ -30,6 +30,15 @@ BilateralDen W E = {
 - DNE: ¬¬φ = φ (definitional - negation swaps, swap twice = identity)
 - de Morgan: ¬(φ ∨ ψ) ⟺ ¬φ ∧ ¬ψ (valid, unlike standard DS)
 
+## Cross-cutting pointers
+
+This is the BUS / bilateral DNE strategy listed in `Dynamic/Core/DynProp.lean`'s
+"three incompatible DNE solutions" table. The ICDRT-flavored variant
+(`InfoState` → `IContext`) lives in `Dynamic/Bilateral/ICDRT.lean`, and the
+empirical comparison against full ICDRT (which solves disagreement, modal
+subordination, and three-way veridicality on top of DNE + bathroom) is in
+`Dynamic/Comparisons/ICDRT_BUS.lean`.
+
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Update

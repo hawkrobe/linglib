@@ -4,6 +4,7 @@ import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Determiners
 import Linglib.Fragments.English.Lexicon
+import Linglib.Theories.Semantics.Quantification.Lexicon
 
 /-!
 # Minimalist Interpretation of Fragment Entries
@@ -36,7 +37,7 @@ open Minimalism
 open Fragments.English.Predicates.Verbal (VerbEntry ComplementType)
 open Fragments.English.Pronouns (PronounEntry PronounType)
 open Fragments.English.Nouns (NounEntry)
-open Fragments.English.Determiners (QuantifierEntry)
+open Theories.Semantics.Quantification.Lexicon (QuantifierEntry)
 open Fragments.English.Lexicon (LexResult)
 
 /-- Map a VerbEntry's complement type to a formal selectional stack. -/

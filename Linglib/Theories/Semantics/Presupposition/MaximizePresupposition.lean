@@ -22,12 +22,16 @@ connects it to existing domain-specific implementations:
 
 2. **Structural alternatives** (`violatesMP` in
    `Theories.Semantics.Alternatives.Structural`): MP defined over
-   syntactic trees with presupposition and assertion functions.
-   The most general formulation, requiring structural alternatives
-   (Katzir complexity), same assertion, and strict presupposition
-   containment. Bridge to the OT formulation is conceptual: both
-   enforce "prefer the strongest presupposition" but over different
-   candidate-generation mechanisms.
+   syntactic trees, parametric in an
+   `Alternatives.AlternativeSource (Tree C W)`. The classical Katzir
+   2007 source is `katzirSource lex`; the indirect-alternative source
+   `Alternatives.Indirect.indirectFrom`
+   (@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025})
+   competes with unpronounceable Katzir witnesses (e.g. *les deux NP*
+   competes with the silent *tous les NP.dual* via the Indirect
+   Alternative construction). Bridge to the OT formulation is
+   conceptual: both enforce "prefer the strongest presupposition"
+   but over different candidate-generation mechanisms.
 
 3. **IC/FP/MP ranking** (`PragConstraint.MP` in
    `Pragmatics.Implicature.Presuppositions`): MP as a

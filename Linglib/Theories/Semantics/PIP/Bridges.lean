@@ -19,7 +19,7 @@ between PIP's formulation and the standard treatments in:
 1. **Presupposition projection** — PIP's F operator ↔ `PrProp.andFilter`
 2. **Generalized quantifiers** — PIP's EVERY/SOME ↔ `PropGQ`
 3. **Plural semantics** — PIP's SINGLE/PLURAL ↔ Link's Atom/properPlural
-4. **Modal logic** — PIP's must/might ↔ `Core.IntensionalLogic.RestrictedModality.boxR/diamondR`
+4. **Modal logic** — PIP's must/might ↔ `Core.IntensionalLogic.boxR/diamondR`
 5. **Static↔dynamic agreement** — `PIPExprF.truth` ↔ `PUpdate` filtering
 
 The set-based GQ operations (`setEvery`/`setSome`), three-argument modals
@@ -40,8 +40,8 @@ namespace Semantics.PIP.Bridges
 open Semantics.PIP
 open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity)
 open Semantics.Dynamic.IntensionalCDRT (IContext)
-open Core.IntensionalLogic.RestrictedModality (Refl)
-open Core.IntensionalLogic.RestrictedModality.Logic (frameConditions)
+open Core.IntensionalLogic (Refl)
+open Core.IntensionalLogic.Logic (frameConditions)
 
 
 -- ============================================================
@@ -336,7 +336,7 @@ frame condition: reflexivity).
 The `must_truth_agrees_kripkeEval` and `must_realistic_of_refl`
 theorems in `Connectives.lean` already prove this correspondence.
 This section classifies PIP's modal operators in the lattice of
-normal modal logics from `Core.IntensionalLogic.RestrictedModality`.
+normal modal logics from `Core.IntensionalLogic`.
 -/
 
 /--
@@ -348,21 +348,21 @@ with a reflexive R guarantees the description holds at the evaluation
 world; might with a non-reflexive R does not.
 -/
 theorem pip_anaphora_requires_T :
-    Core.IntensionalLogic.RestrictedModality.Logic.K ≤ Core.IntensionalLogic.RestrictedModality.Logic.T :=
-  Core.IntensionalLogic.RestrictedModality.Logic.K_bot ▸ OrderBot.bot_le _
+    Core.IntensionalLogic.Logic.K ≤ Core.IntensionalLogic.Logic.T :=
+  Core.IntensionalLogic.Logic.K_bot ▸ OrderBot.bot_le _
 
 /--
 A reflexive accessibility relation satisfies Logic.T's frame condition.
 
 Stated for the Prop-valued `AccessRel`/`Refl`/`frameConditions` API in
-`Core.IntensionalLogic.RestrictedModality`. To apply this to a PIP
+`Core.IntensionalLogic`. To apply this to a PIP
 `BAccessRel R`, lift via `liftR R = fun a b => R a b = true`.
 -/
 theorem reflexive_satisfies_T {W : Type*}
-    (R : Core.IntensionalLogic.RestrictedModality.AccessRel W) (hRefl : Refl R) :
-    frameConditions Core.IntensionalLogic.RestrictedModality.Logic.T R := by
-  unfold frameConditions Core.IntensionalLogic.RestrictedModality.Logic.hasAxiom
-    Core.IntensionalLogic.RestrictedModality.Logic.T
+    (R : Core.IntensionalLogic.AccessRel W) (hRefl : Refl R) :
+    frameConditions Core.IntensionalLogic.Logic.T R := by
+  unfold frameConditions Core.IntensionalLogic.Logic.hasAxiom
+    Core.IntensionalLogic.Logic.T
   refine ⟨fun _ => hRefl, fun h => ?_, fun h => ?_, fun h => ?_, fun h => ?_⟩ <;>
     simp_all [Finset.mem_singleton]
 
@@ -384,7 +384,7 @@ This is structurally identical to @cite{kratzer-1991}'s analysis where:
 - The ordering source (for graded modality) is not used in PIP's
   simple must/might
 
-The formal connection is established via `Core.IntensionalLogic.RestrictedModality.boxR`:
+The formal connection is established via `Core.IntensionalLogic.boxR`:
 `must_truth_agrees_boxR` (in Connectives.lean) proves that PIP's
 `must R allWorlds (atom p)` produces the same truth conditions as
 `boxR (liftR R) (liftP (p g))`.
@@ -407,10 +407,10 @@ The composition: `mustBase (accessRelToBase R w) ⊤ {w' | φ w' = true}` ↔
 theorem mustBase_agrees_boxR {W D : Type*} [FiniteDomain D] [Fintype W]
     (R : BAccessRel W) (φ : PIPExprF W D) (w : W) :
     mustBase (accessRelToBase R w) Set.univ { w' | φ.truth w' = true } ↔
-    Core.IntensionalLogic.RestrictedModality.boxR
+    Core.IntensionalLogic.boxR
       (fun a b => R a b = true) (fun w' => φ.truth w' = true) w := by
   simp only [mustBase, accessRelToBase, Set.inter_univ, Set.subset_def,
-    Set.mem_setOf_eq, Core.IntensionalLogic.RestrictedModality.boxR]
+    Set.mem_setOf_eq, Core.IntensionalLogic.boxR]
 
 
 -- ============================================================

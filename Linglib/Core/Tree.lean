@@ -184,6 +184,66 @@ where
 
 instance [BEq C] [BEq W] : BEq (Tree C W) := ⟨beq⟩
 
+-- ── Decidable equality (manual: nested-inductive `deriving` fails) ──
+
+mutual
+  /-- Decidable equality on `Tree C W`, mutually recursive with the
+  list-of-trees case. Required because `deriving DecidableEq` does not
+  handle the nested `List (Tree C W)` in `node`. -/
+  def decEq [DecidableEq C] [DecidableEq W] :
+      (a b : Tree C W) → Decidable (a = b)
+    | .terminal c₁ w₁, .terminal c₂ w₂ =>
+      if hc : c₁ = c₂ then
+        if hw : w₁ = w₂ then isTrue (by rw [hc, hw])
+        else isFalse fun h => by cases h; exact hw rfl
+      else isFalse fun h => by cases h; exact hc rfl
+    | .node c₁ cs₁, .node c₂ cs₂ =>
+      if hc : c₁ = c₂ then
+        match decEqList cs₁ cs₂ with
+        | isTrue hcs => isTrue (by rw [hc, hcs])
+        | isFalse hcs => isFalse fun h => by cases h; exact hcs rfl
+      else isFalse fun h => by cases h; exact hc rfl
+    | .trace n₁ c₁, .trace n₂ c₂ =>
+      if hn : n₁ = n₂ then
+        if hc : c₁ = c₂ then isTrue (by rw [hn, hc])
+        else isFalse fun h => by cases h; exact hc rfl
+      else isFalse fun h => by cases h; exact hn rfl
+    | .bind n₁ c₁ b₁, .bind n₂ c₂ b₂ =>
+      if hn : n₁ = n₂ then
+        if hc : c₁ = c₂ then
+          match decEq b₁ b₂ with
+          | isTrue hb => isTrue (by rw [hn, hc, hb])
+          | isFalse hb => isFalse fun h => by cases h; exact hb rfl
+        else isFalse fun h => by cases h; exact hc rfl
+      else isFalse fun h => by cases h; exact hn rfl
+    | .terminal _ _, .node _ _ => isFalse fun h => by cases h
+    | .terminal _ _, .trace _ _ => isFalse fun h => by cases h
+    | .terminal _ _, .bind _ _ _ => isFalse fun h => by cases h
+    | .node _ _, .terminal _ _ => isFalse fun h => by cases h
+    | .node _ _, .trace _ _ => isFalse fun h => by cases h
+    | .node _ _, .bind _ _ _ => isFalse fun h => by cases h
+    | .trace _ _, .terminal _ _ => isFalse fun h => by cases h
+    | .trace _ _, .node _ _ => isFalse fun h => by cases h
+    | .trace _ _, .bind _ _ _ => isFalse fun h => by cases h
+    | .bind _ _ _, .terminal _ _ => isFalse fun h => by cases h
+    | .bind _ _ _, .node _ _ => isFalse fun h => by cases h
+    | .bind _ _ _, .trace _ _ => isFalse fun h => by cases h
+
+  /-- Helper: decidable equality for list of trees. -/
+  def decEqList [DecidableEq C] [DecidableEq W] :
+      (as bs : List (Tree C W)) → Decidable (as = bs)
+    | [], [] => isTrue rfl
+    | [], _ :: _ => isFalse fun h => by cases h
+    | _ :: _, [] => isFalse fun h => by cases h
+    | a :: as, b :: bs =>
+      match decEq a b, decEqList as bs with
+      | isTrue ha, isTrue has => isTrue (by rw [ha, has])
+      | isFalse ha, _ => isFalse fun h => by cases h; exact ha rfl
+      | _, isFalse has => isFalse fun h => by cases h; exact has rfl
+end
+
+instance [DecidableEq C] [DecidableEq W] : DecidableEq (Tree C W) := decEq
+
 -- ════════════════════════════════════════════════════════════════════
 -- §5  Size
 -- ════════════════════════════════════════════════════════════════════
@@ -210,6 +270,36 @@ where
   leafCountList : List (Tree C W) → Nat
   | [] => 0
   | t :: ts => leafCount t + leafCountList ts
+
+-- ════════════════════════════════════════════════════════════════════
+-- §5b  Binary-Tree Recursor (for `Tree Unit W`)
+-- ════════════════════════════════════════════════════════════════════
+
+/-- Custom recursor for binary trees over `Tree Unit W`. The default
+`induction` tactic refuses nested inductives like `Tree`; this recursor
+collapses the `node`-case enumeration into the binary-only branch
+(`binNode`) plus a fall-through `otherNode` branch covering 0-, 1-, and
+3+-child nodes. With `@[elab_as_elim]`, used as
+`induction t using Tree.binRec with | term … | binNode … | tr … | bd … | otherNode …`. -/
+@[elab_as_elim]
+def binRec {W : Type} {motive : Tree Unit W → Sort*}
+    (term : ∀ w, motive (.terminal () w))
+    (binNode : ∀ l r, motive l → motive r → motive (.node () [l, r]))
+    (tr : ∀ n, motive (.trace n ()))
+    (bd : ∀ n body, motive body → motive (.bind n () body))
+    (otherNode : ∀ cs, motive (.node () cs))
+    : ∀ t, motive t
+  | .terminal () w => term w
+  | .node () [] => otherNode []
+  | .node () (_ :: []) => otherNode _
+  | .node () [l, r] => binNode l r
+      (binRec term binNode tr bd otherNode l)
+      (binRec term binNode tr bd otherNode r)
+  | .node () (_ :: _ :: _ :: _) => otherNode _
+  | .trace n () => tr n
+  | .bind n () body => bd n body (binRec term binNode tr bd otherNode body)
+termination_by t => t.size
+decreasing_by all_goals (simp only [Tree.size, Tree.size.sizeList]; omega)
 
 -- ════════════════════════════════════════════════════════════════════
 -- §6  Subtrees

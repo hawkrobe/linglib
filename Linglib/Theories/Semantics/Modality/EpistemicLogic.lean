@@ -37,7 +37,7 @@ on finite worlds goes through `Decidable` instances + `decide`.
 
 namespace Semantics.Modality.EpistemicLogic
 
-open Core.IntensionalLogic.RestrictedModality
+open Core.IntensionalLogic
   (AccessRel AgentAccessRel boxR diamondR Refl Serial Trans Symm Eucl
    boxR_T boxR_D boxR_four boxR_B boxR_five)
 open Core.CommonGround (CG)

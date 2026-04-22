@@ -1,5 +1,4 @@
 import Linglib.Core.FinitePMF
-import Linglib.Core.Semantics.GradedProposition
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
@@ -25,7 +24,6 @@ emerges from parameter uncertainty.
 
 namespace Semantics.Probabilistic.ParamPred
 
-open Core.GradedProposition
 open Core
 
 /--
@@ -47,10 +45,6 @@ variable {E Θ : Type*} [Fintype Θ] [DecidableEq Θ]
 /-- Graded truth value: `P(x) = E_θ[P_θ(x)]`. -/
 def gradedTruth (pred : ParamPred E Θ) (x : E) : ℚ :=
   pred.prior.prob λ θ => pred.semantics θ x
-
-/-- Convert a parameterized predicate to a graded predicate. -/
-def toGPred (pred : ParamPred E Θ) : GPred E :=
-  pred.gradedTruth
 
 /-- For a point mass prior (no uncertainty), graded truth = Boolean truth. -/
 theorem gradedTruth_pure (sem : Θ → E → Bool) (θ₀ : Θ) (x : E) :

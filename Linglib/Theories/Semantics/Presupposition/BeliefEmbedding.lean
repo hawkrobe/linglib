@@ -298,7 +298,7 @@ Both represent the same concept (agent-indexed world accessibility). The
 section BoolPropBridge
 
 open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
-open Core.IntensionalLogic.RestrictedModality (AgentAccessRel)
+open Core.IntensionalLogic (AgentAccessRel)
 
 variable {W E : Type*}
 

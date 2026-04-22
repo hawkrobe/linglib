@@ -30,6 +30,18 @@ potential**. In CDRT, `¬¬(∃x.P(x))` has the same truth conditions as
 after double negation (negation resets the register). In TTR, anaphoric
 potential is carried by type structure, not side effects.
 
+## Upstream pointers
+
+This file is the truth-conditional bridge cited by:
+
+- `Dynamic/Core/DynProp.lean` (§ "three incompatible DNE solutions") — lists
+  TTR's classical-metalanguage DNE alongside Bilateral and ICDRT; directs
+  readers here for the formal correspondence and the divergence-under-
+  negation result.
+
+The TTR side of the bridge lives in `Theories/Semantics/TypeTheoretic/`,
+which (per `DynProp.lean`'s table) inherits DNE from the classical metalanguage
+rather than mechanizing it dynamically.
 -/
 
 namespace Semantics.Dynamic.Comparisons.CDRT_TTR

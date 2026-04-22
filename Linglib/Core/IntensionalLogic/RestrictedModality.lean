@@ -1,3 +1,4 @@
+import Linglib.Core.IntensionalLogic.Defs
 import Linglib.Core.IntensionalLogic.Quantification
 import Linglib.Core.IntensionalLogic.Algebra
 import Linglib.Core.Modality.ModalTypes
@@ -7,44 +8,36 @@ import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 
 /-!
-# Restricted Modality: Accessibility-Parameterized Box and Diamond
+# Restricted Modality: Modal Axioms, Decidability, Logic Lattice, Gallin Hierarchy
 
 @cite{dowty-wall-peters-1981} @cite{kratzer-1981} @cite{kripke-1963}
 
-In intensional semantics, meanings depend on a world parameter — a proposition
-is `W → Prop`, and modal operators quantify over worlds. Montague's IL defines
-`box`/`diamond` as S5 operators quantifying over **all** indices. But natural
-language modality requires restricting quantification to **accessible** indices,
-determined by an accessibility relation `R : W → W → Prop`.
+Builds on the polymorphic Kripke foundation in `Defs.lean`. This file adds:
 
-This module is the **single source of truth** for accessibility-restricted
-modal logic in linglib. It provides:
+1. **Modal axiom correspondence** (T, D, 4, B, 5): which frame conditions on
+   `R` validate which modal axioms when interpreted via `boxR`/`diamondR`.
+   The K axiom holds for any `R`.
 
-1. **Generic `{W : Type*}` infrastructure**: `AccessRel`, `boxR`/`diamondR`,
-   frame conditions (reflexivity, transitivity, symmetry, euclideanness),
-   modal axiom correspondence (T, 4, B, 5), monotonicity, distribution,
-   restriction theorems — all parameterized by an arbitrary world type.
+2. **Monotonicity, distribution, restriction**: standard properties of
+   normal modal operators. Restriction (`boxR_restrict`) is Kratzer's
+   insight that conversational backgrounds *strengthen* necessity.
 
-2. **Gallin hierarchy** (@cite{gallin-1975} §12): `PropOp` (general propositional
-   operators), `indicialNec`/`indicialPoss` (Kripke-type = accessibility-defined),
-   `s5Nec`/`s5Poss` (IL's S5 = universal accessibility). Proves the formal
-   embedding: S5 ⊂ Indicial ⊂ All PropOps.
+3. **Decidable instances**: `boxR R p w`, `diamondR R p w` are decidable
+   over finite worlds with decidable accessibility and propositions.
 
-3. **Decidable instances**: for `Refl`/`Serial`/`Trans`/`Symm`/`Eucl` and
-   `boxR`/`diamondR` over finite worlds with decidable accessibility and
-   propositions. Following mathlib style: define in Prop, provide Decidable
-   instances, compute with `decide`.
+4. **Logic lattice**: `Axiom`, `Logic`, named logics (K, T, D, S4, S5, KD45),
+   lattice instances, `frameConditions` predicate.
 
-4. **Logic lattice**: `Axiom`, `Logic`, standard logics (K, T, D, S4, S5, KD45),
-   lattice instances, `frameConditions`.
+5. **Gallin hierarchy** (@cite{gallin-1975}): `PropOp` (general propositional
+   operators), `indicialNec`/`indicialPoss` (Kripke-type), `s5Nec`/`s5Poss`
+   (universal-accessibility = classical IL S5). The architectural anchor
+   showing that classical IL S5 = the universal-accessibility special case
+   of the polymorphic theory, and that non-Kripke operators (tense,
+   progressive) live outside `IsIndicial`.
 
-5. **IL Frame specialization**: `boxR`/`diamondR` with universal accessibility
-   recover S5 `box`/`diamond`.
-
-The intensional core is just the world type `W` — you don't need the full
-Montague `Frame` (Entity + Index + Ty) to define modal operators. The `Frame`
-is Montague's packaging for compositional semantics; `W` is the intensional
-index that modal operators quantify over.
+6. **IL Frame specialization**: with universal accessibility, `boxR`/`diamondR`
+   recover S5 `box`/`diamond` from `Quantification.lean` — the formal
+   bridge that the polymorphic theory contains classical IL as a special case.
 
 ## Connection to Kratzer semantics
 
@@ -57,142 +50,13 @@ worlds. In IL terms:
 - S5 necessity = `boxR (fun _ _ => True)` = `box`
 -/
 
-namespace Core.IntensionalLogic.RestrictedModality
-
--- ════════════════════════════════════════════════════════════════════════
--- § 1. Generic Accessibility-Restricted Modality
--- ════════════════════════════════════════════════════════════════════════
-
-/-! All definitions in this section are parameterized by `{W : Type*}` — an
-arbitrary world type. No Frame, no Entity, no type system. This is the
-intensional core: meanings depend on a world parameter, and modal operators
-quantify over accessible worlds. -/
-
--- ────────────────────────────────────────────────────────────────
--- §1.1 Accessibility Relations
--- ────────────────────────────────────────────────────────────────
-
-/-- An accessibility relation on worlds. `R w v` means world `v` is
-    accessible from world `w`. -/
-abbrev AccessRel (W : Type*) := W → W → Prop
-
-/-- Agent-indexed accessibility relation: each agent has their own
-    accessibility relation over worlds. -/
-abbrev AgentAccessRel (W E : Type*) := E → AccessRel W
-
-/-- Universal accessibility: every world is accessible from every world. -/
-def universalR {W : Type*} : AccessRel W := fun _ _ => True
-
-/-- Empty accessibility: no world is accessible from any world. -/
-def emptyR {W : Type*} : AccessRel W := fun _ _ => False
-
-/-- Reflexive (identity) accessibility: each world accesses only itself. -/
-def identityR {W : Type*} : AccessRel W := fun w v => w = v
-
--- ────────────────────────────────────────────────────────────────
--- §1.2 Frame Conditions
--- ────────────────────────────────────────────────────────────────
-
-/-- Reflexivity: every world accesses itself. -/
-def Refl {W : Type*} (R : AccessRel W) : Prop := ∀ w, R w w
-
-/-- Seriality: every world accesses at least one world. -/
-def Serial {W : Type*} (R : AccessRel W) : Prop := ∀ w, ∃ v, R w v
-
-/-- Transitivity. -/
-def Trans {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R v u → R w u
-
-/-- Symmetry. -/
-def Symm {W : Type*} (R : AccessRel W) : Prop := ∀ w v, R w v → R v w
-
-/-- Euclideanness. -/
-def Eucl {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R w u → R v u
-
--- ────────────────────────────────────────────────────────────────
--- §1.3 Frame Condition Relationships
--- ────────────────────────────────────────────────────────────────
+namespace Core.IntensionalLogic
 
 variable {W : Type*}
 
-theorem universalR_refl : Refl (universalR (W := W)) := fun _ => trivial
-theorem universalR_serial : Serial (universalR (W := W)) := fun w => ⟨w, trivial⟩
-theorem universalR_trans : Trans (universalR (W := W)) := fun _ _ _ _ _ => trivial
-theorem universalR_symm : Symm (universalR (W := W)) := fun _ _ _ => trivial
-theorem universalR_eucl : Eucl (universalR (W := W)) := fun _ _ _ _ _ => trivial
-
-theorem refl_serial {R : AccessRel W} (h : Refl R) : Serial R :=
-  fun w => ⟨w, h w⟩
-
-theorem refl_eucl_symm {R : AccessRel W} (hR : Refl R) (hE : Eucl R) : Symm R :=
-  fun w v hwv => hE w v w hwv (hR w)
-
-theorem refl_eucl_trans {R : AccessRel W} (hR : Refl R) (hE : Eucl R) : Trans R :=
-  fun w v u hwv hvu => hE v w u (refl_eucl_symm hR hE w v hwv) hvu
-
-theorem symm_trans_eucl {R : AccessRel W} (hS : Symm R) (hT : Trans R) : Eucl R :=
-  fun w v u hwv hwu => hT v w u (hS w v hwv) hwu
-
-/-- S5 frames are equivalence relations. -/
-theorem S5_equiv {R : AccessRel W} (hR : Refl R) (hE : Eucl R) :
-    Refl R ∧ Symm R ∧ Trans R :=
-  ⟨hR, refl_eucl_symm hR hE, refl_eucl_trans hR hE⟩
-
-/-- S4 frames are preorders. -/
-theorem S4_preorder {R : AccessRel W} (hR : Refl R) (hT : Trans R) :
-    Refl R ∧ Trans R := ⟨hR, hT⟩
-
-/-- M implies D (reflexive implies serial). -/
-theorem M_implies_D {R : AccessRel W} (hM : Refl R) : Serial R :=
-  refl_serial hM
-
-/-- M + 5 implies B. -/
-theorem M5_implies_B {R : AccessRel W} (hM : Refl R) (h5 : Eucl R) : Symm R :=
-  refl_eucl_symm hM h5
-
-/-- M + 5 implies 4. -/
-theorem M5_implies_4 {R : AccessRel W} (hM : Refl R) (h5 : Eucl R) : Trans R :=
-  refl_eucl_trans hM h5
-
--- ────────────────────────────────────────────────────────────────
--- §1.4 Restricted Box and Diamond
--- ────────────────────────────────────────────────────────────────
-
-/-- Restricted necessity: `□_R p` at world `w` holds iff `p v` for all
-    `v` accessible from `w`.
-
-    `⟦□_R φ⟧^w = 1` iff `⟦φ⟧^v = 1` for all `v` with `R(w,v)`.
-
-    This is the Kripke generalization of DWP's Rule B.13 (`box`). -/
-def boxR (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
-  ∀ v, R w v → p v
-
-/-- Restricted possibility: `◇_R p` at world `w` holds iff `p v` for some
-    `v` accessible from `w`. Dual of `boxR`. -/
-def diamondR (R : AccessRel W) (p : W → Prop) (w : W) : Prop :=
-  ∃ v, R w v ∧ p v
-
--- ────────────────────────────────────────────────────────────────
--- §1.5 Duality
--- ────────────────────────────────────────────────────────────────
-
-/-- `□_R p ↔ ¬◇_R ¬p` — restricted modal duality. -/
-theorem boxR_neg_diamondR (R : AccessRel W) (p : W → Prop) (w : W) :
-    boxR R p w = ¬(diamondR R (fun v => ¬(p v)) w) := by
-  simp only [boxR, diamondR, not_exists, not_and, not_not]
-
-/-- `◇_R p ↔ ¬□_R ¬p` — dual form. -/
-theorem diamondR_neg_boxR (R : AccessRel W) (p : W → Prop) (w : W) :
-    diamondR R p w = ¬(boxR R (fun v => ¬(p v)) w) := by
-  simp only [diamondR, boxR]
-  exact propext ⟨
-    fun ⟨v, hwv, hpv⟩ h => h v hwv hpv,
-    fun h => Classical.byContradiction fun hne => by
-      simp only [not_exists, not_and] at hne
-      exact h (fun v hwv => hne v hwv)⟩
-
--- ────────────────────────────────────────────────────────────────
--- §1.6 Modal Axiom Correspondence
--- ────────────────────────────────────────────────────────────────
+-- ════════════════════════════════════════════════════════════════════════
+-- § 1. Modal Axiom Correspondence
+-- ════════════════════════════════════════════════════════════════════════
 
 /-- **K axiom**: `□_R(p → q) → (□_R p → □_R q)`.
     Holds for any accessibility relation. -/
@@ -232,9 +96,9 @@ theorem boxR_five (R : AccessRel W) (hE : Eucl R) (p : W → Prop) (w : W)
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv => ⟨u, hE w v u hwv hwu, hpu⟩
 
--- ────────────────────────────────────────────────────────────────
--- §1.7 Monotonicity
--- ────────────────────────────────────────────────────────────────
+-- ════════════════════════════════════════════════════════════════════════
+-- § 2. Monotonicity
+-- ════════════════════════════════════════════════════════════════════════
 
 /-- `boxR R` is monotone: if `p ≤ q` pointwise, then `□_R p ≤ □_R q`. -/
 theorem boxR_mono (R : AccessRel W) {p q : W → Prop}
@@ -248,9 +112,9 @@ theorem diamondR_mono (R : AccessRel W) {p q : W → Prop}
     (hd : diamondR R p w) : diamondR R q w :=
   let ⟨v, hwv, hpv⟩ := hd; ⟨v, hwv, h v hpv⟩
 
--- ────────────────────────────────────────────────────────────────
--- §1.8 Distribution over Connectives
--- ────────────────────────────────────────────────────────────────
+-- ════════════════════════════════════════════════════════════════════════
+-- § 3. Distribution over Connectives
+-- ════════════════════════════════════════════════════════════════════════
 
 /-- `□_R` distributes over `∧`. -/
 theorem boxR_conj (R : AccessRel W) (p q : W → Prop) (w : W) :
@@ -273,9 +137,9 @@ theorem boxR_necessitation (R : AccessRel W) (p : W → Prop)
     (h : ∀ v, p v) (w : W) : boxR R p w :=
   fun v _ => h v
 
--- ────────────────────────────────────────────────────────────────
--- §1.9 Accessibility Restriction (Kratzer's Insight)
--- ────────────────────────────────────────────────────────────────
+-- ════════════════════════════════════════════════════════════════════════
+-- § 4. Accessibility Restriction (Kratzer's Insight)
+-- ════════════════════════════════════════════════════════════════════════
 
 /-- Restricting accessibility strengthens necessity:
     if `R₂ ⊆ R₁`, then `□_{R₁} p → □_{R₂} p`. -/
@@ -291,9 +155,9 @@ theorem diamondR_restrict {R₁ R₂ : AccessRel W}
     (hd : diamondR R₂ p w) : diamondR R₁ p w :=
   let ⟨v, hwv, hpv⟩ := hd; ⟨v, h w v hwv, hpv⟩
 
--- ────────────────────────────────────────────────────────────────
--- §1.10 S5 Recovery
--- ────────────────────────────────────────────────────────────────
+-- ════════════════════════════════════════════════════════════════════════
+-- § 5. S5 Recovery
+-- ════════════════════════════════════════════════════════════════════════
 
 /-- With reflexive + euclidean accessibility (= S5 frame conditions),
     `boxR` validates all of T, D, 4, B, 5. -/
@@ -319,10 +183,159 @@ theorem diamondR_eq_exists (R : AccessRel W) (p : W → Prop) (w : W) :
     diamondR R p w = (∃ v, R w v ∧ p v) := rfl
 
 -- ════════════════════════════════════════════════════════════════════════
--- § 3. Decidable Instances over Finite Worlds
+-- § 6. Gallin's Hierarchy of Propositional Operators
 -- ════════════════════════════════════════════════════════════════════════
 
-/-! Following mathlib conventions: definitions are `Prop`-valued (§1 above),
+/-! ## The Gallin hierarchy (@cite{gallin-1975})
+
+In IL/ML_p, propositional operators form a three-level hierarchy:
+
+1. **General** (`PropOp`): Any `(W → Prop) → W → Prop` — arbitrary
+   properties of propositions, varying by world.
+
+2. **Indicial** (= Kripke-type): Operators definable via an accessibility
+   relation `R`. The necessity variant is `∀ v, R w v → p v` (= `boxR`);
+   the possibility variant is `∃ v, R w v ∧ p v` (= `diamondR`).
+
+3. **S5**: The indicial case with `R = universalR` — IL's `box`/`diamond`.
+
+```
+All PropOps  ⊋  Indicial (Kripke)  ⊋  S5 (IL's □)
+```
+
+**Why this is here even with no current downstream consumer.** These
+theorems are the *architectural anchor* for the design choice that
+restricted modality lives in `Core/IntensionalLogic/`: they prove that
+classical IL S5 is exactly the universal-accessibility special case of
+the polymorphic theory, and that every `boxR R` is a normal modal
+operator (monotone, distribConj). Non-indicial PropOps (e.g., tense,
+present progressive) are the formal extension point for tense /
+non-Kripke modal operators that *cannot* be expressed as `boxR R` for
+any `R`. Removing this section would erase the formal record of why
+the directory layout is what it is.
+-/
+
+-- ────────────────────────────────────────────────────────────────
+-- §6.1 General Propositional Operators
+-- ────────────────────────────────────────────────────────────────
+
+/-- A propositional operator: any function from propositions to propositions,
+    parametrized by world. This is Gallin's most general level —
+    an arbitrary property of propositions varying by index.
+
+    Examples: necessity (`boxR R`), possibility (`diamondR R`),
+    past tense (`∃ v, v < w ∧ p v`), present progressive, habituals. -/
+abbrev PropOp (W : Type*) := (W → Prop) → W → Prop
+
+/-- A propositional operator `N` is **monotone** if `p ≤ q` pointwise implies
+    `N p ≤ N q` pointwise. Every K-operator (= normal modal operator) is
+    monotone. -/
+def PropOp.Monotone {W : Type*} (N : PropOp W) : Prop :=
+  ∀ {p q : W → Prop}, (∀ v, p v → q v) → ∀ w, N p w → N q w
+
+/-- A propositional operator distributes over conjunction (one direction of
+    the K axiom: □(p ∧ q) → □p ∧ □q). -/
+def PropOp.DistribConj {W : Type*} (N : PropOp W) : Prop :=
+  ∀ (p q : W → Prop) (w : W), N (fun v => p v ∧ q v) w → N p w ∧ N q w
+
+-- ────────────────────────────────────────────────────────────────
+-- §6.2 Indicial (Kripke-type) Operators
+-- ────────────────────────────────────────────────────────────────
+
+/-- An indicial necessity operator: the restriction of `PropOp` to
+    operators definable via an accessibility relation.
+    `indicialNec R p w ↔ ∀ v, R w v → p v`.
+
+    This is `boxR` viewed as a member of the Gallin hierarchy. -/
+def indicialNec {W : Type*} (R : AccessRel W) : PropOp W :=
+  fun p w => ∀ v, R w v → p v
+
+/-- An indicial possibility operator (dual).
+    `indicialPoss R p w ↔ ∃ v, R w v ∧ p v`. -/
+def indicialPoss {W : Type*} (R : AccessRel W) : PropOp W :=
+  fun p w => ∃ v, R w v ∧ p v
+
+/-- `boxR` IS `indicialNec` — definitional equality. -/
+theorem boxR_eq_indicialNec (R : AccessRel W) :
+    boxR R = indicialNec R := rfl
+
+/-- `diamondR` IS `indicialPoss` — definitional equality. -/
+theorem diamondR_eq_indicialPoss (R : AccessRel W) :
+    diamondR R = indicialPoss R := rfl
+
+/-- A propositional operator is **indicial** if there exists an accessibility
+    relation `R` such that `N = indicialNec R`. The non-indicial case is
+    where tense and other non-Kripke operators live. -/
+def IsIndicial {W : Type*} (N : PropOp W) : Prop :=
+  ∃ R : AccessRel W, N = indicialNec R
+
+/-- Every `boxR R` is indicial. -/
+theorem boxR_isIndicial (R : AccessRel W) : IsIndicial (boxR R) :=
+  ⟨R, rfl⟩
+
+/-- Every indicial operator is monotone (every Kripke operator is a
+    K-operator). -/
+theorem indicial_monotone (R : AccessRel W) :
+    PropOp.Monotone (indicialNec R) :=
+  fun h _ hn v hwv => h v (hn v hwv)
+
+/-- Every indicial operator distributes over conjunction. -/
+theorem indicial_distribConj (R : AccessRel W) :
+    PropOp.DistribConj (indicialNec R) :=
+  fun _ _ _ hn => ⟨fun v hwv => (hn v hwv).1, fun v hwv => (hn v hwv).2⟩
+
+-- ────────────────────────────────────────────────────────────────
+-- §6.3 S5 as the Universal Indicial Operator
+-- ────────────────────────────────────────────────────────────────
+
+/-- S5 necessity as a `PropOp`: `p` holds at all worlds. -/
+def s5Nec {W : Type*} : PropOp W :=
+  fun p _ => ∀ w, p w
+
+/-- S5 possibility as a `PropOp`: `p` holds at some world. -/
+def s5Poss {W : Type*} : PropOp W :=
+  fun p _ => ∃ w, p w
+
+/-- **S5 = indicialNec universalR**: the S5 necessity operator is
+    the indicial operator with universal accessibility.
+    The formal statement that S5 sits at the top of the indicial hierarchy. -/
+theorem s5Nec_eq_indicialNec_universalR :
+    s5Nec (W := W) = indicialNec universalR := by
+  ext p w
+  simp only [s5Nec, indicialNec, universalR, forall_true_left]
+
+/-- S5 necessity is indicial. -/
+theorem s5Nec_isIndicial : IsIndicial (s5Nec (W := W)) :=
+  ⟨universalR, s5Nec_eq_indicialNec_universalR⟩
+
+/-- **Restriction order on indicial operators**: if `R₂ ⊆ R₁` then
+    `indicialNec R₁` is weaker than `indicialNec R₂` —
+    fewer accessible worlds means a stronger necessity.
+
+    S5 (R = universal) is the weakest; empty R is the strongest (vacuously true).
+    This is Kratzer's insight that conversational backgrounds *restrict*
+    the modal base, formalized at the PropOp level. -/
+theorem indicialNec_weaker_of_sub {R₁ R₂ : AccessRel W}
+    (h : ∀ w v, R₂ w v → R₁ w v) :
+    ∀ (p : W → Prop) (w : W), indicialNec R₁ p w → indicialNec R₂ p w :=
+  fun _ w hn v hwv => hn v (h w v hwv)
+
+/-- S5 necessity is the weakest indicial operator: for any R,
+    `s5Nec p w → indicialNec R p w`. -/
+theorem s5Nec_weakest (R : AccessRel W) (p : W → Prop) (w : W)
+    (h : s5Nec p w) : indicialNec R p w :=
+  fun v _ => h v
+
+/-- Empty accessibility gives the strongest (vacuously true) indicial operator. -/
+theorem indicialNec_emptyR (p : W → Prop) (w : W) :
+    indicialNec (emptyR (W := W)) p w := by
+  intro v hv; exact absurd hv (by simp [emptyR])
+
+-- ════════════════════════════════════════════════════════════════════════
+-- § 7. Decidable Instances over Finite Worlds
+-- ════════════════════════════════════════════════════════════════════════
+
+/-! Following mathlib conventions: definitions are `Prop`-valued (in `Defs.lean`),
 with `Decidable` instances providing computation. With `[Fintype W]`,
 `[DecidableRel R]`, and `[DecidablePred p]`, formulas like `boxR R p w` and
 `Refl R` reduce by `decide`. -/
@@ -347,7 +360,7 @@ instance diamondR_decidable {W : Type*} [Fintype W]
      fun ⟨v, hwv, hpv⟩ => ⟨v, Finset.mem_univ v, hwv, hpv⟩⟩
 
 -- ════════════════════════════════════════════════════════════════════════
--- § 4. Lattice of Normal Modal Logics
+-- § 8. Lattice of Normal Modal Logics
 -- ════════════════════════════════════════════════════════════════════════
 
 /-- Axiom schemas addable to K. -/
@@ -433,16 +446,16 @@ def frameConditions {W : Type*} (L : Logic) (R : AccessRel W) : Prop :=
 end Logic
 
 -- ════════════════════════════════════════════════════════════════════════
--- § 5. IL Frame Specialization
+-- § 9. IL Frame Specialization
 -- ════════════════════════════════════════════════════════════════════════
 
-/-! Bridge theorems connecting the generic `{W : Type*}` infrastructure
-to Montague's IL. With universal accessibility, `boxR`/`diamondR` recover
-S5 `box`/`diamond` from `Core.IntensionalLogic`. -/
+/-! Bridge theorems connecting the polymorphic infrastructure to Montague's IL.
+With universal accessibility, `boxR`/`diamondR` recover S5 `box`/`diamond`
+from `Quantification.lean`. These would all be `rfl` if `box`/`diamond` were
+definitionally `boxR universalR ∘ pick-an-index` — see the Quantification module
+for the layering question. As stated they're one-step `simp` proofs. -/
 
 section FrameSpecialization
-
-open Core.IntensionalLogic
 
 variable {F : Frame}
 
@@ -469,10 +482,10 @@ theorem diamondR_implies_diamond (R : AccessRel F.Index) (p : F.Denot .prop) (i 
   let ⟨v, _, hpv⟩ := h; ⟨v, hpv⟩
 
 -- ────────────────────────────────────────────────────────────────
--- §5.1 Entailment with Restricted Modality
+-- §9.1 Entailment with Restricted Modality
 -- ────────────────────────────────────────────────────────────────
 
-open Core.IntensionalLogic.Algebra (valid entails trueAt)
+open Algebra (valid entails trueAt)
 
 /-- A valid proposition is R-necessary at every world (for any R). -/
 theorem valid_boxR (R : AccessRel F.Index) (p : F.Denot .prop)
@@ -489,4 +502,4 @@ theorem boxR_entailment_lift (R : AccessRel F.Index)
 
 end FrameSpecialization
 
-end Core.IntensionalLogic.RestrictedModality
+end Core.IntensionalLogic

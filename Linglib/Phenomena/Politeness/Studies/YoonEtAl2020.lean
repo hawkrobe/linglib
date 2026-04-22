@@ -1,6 +1,5 @@
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Tactics.RSAPredict
-import Linglib.Core.Semantics.GradedProposition
 import Linglib.Core.Subjectivity
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -41,8 +40,6 @@ the signature of indirect speech driven by self-presentation.
 set_option autoImplicit false
 
 namespace YoonEtAl2020
-
-open Core.GradedProposition (GProp neg)
 
 -- ============================================================================
 -- §1. Types & Semantics
@@ -112,6 +109,14 @@ binary yes/no judgments for each adjective × state combination.
 The paper's full model infers θ via a Beta-Binomial BDA (uniform Beta(1,1)
 prior), marginalizing over posterior uncertainty. We use the raw proportions
 k/49 as point estimates — the maximum likelihood values.
+
+Returns `ℚ` (not `ℝ≥0∞`): values feed into the RSA `meaning` field via
+`↑(...) : ℝ`, and the `rsa_predict` reflection tactic extracts `ℚ`
+literals from this coercion to drive its memoized evaluator. ENNReal
+literals would block reflection.
+
+TODO: migrate to `ℝ≥0∞` once `rsa_predict` learns to reify ENNReal
+literals (extension tracked separately).
 -/
 def softSemantics : Adjective → HeartState → ℚ
   -- "terrible": peaks at 0 hearts, ~50% at 1 heart
@@ -135,35 +140,36 @@ def softSemantics : Adjective → HeartState → ℚ
   | .amazing, .h2 => 7/49     -- 0.14
   | .amazing, .h3 => 47/49    -- 0.96
 
-/-- Base adjective meaning (positive form).
-    Returns a graded proposition `GProp HeartState = HeartState → ℚ`. -/
-def adjMeaning : Adjective → GProp HeartState
+/-- Base adjective meaning (positive form): `HeartState → ℚ`. -/
+def adjMeaning : Adjective → HeartState → ℚ
   | .terrible => softSemantics .terrible
   | .bad => softSemantics .bad
   | .good => softSemantics .good
   | .amazing => softSemantics .amazing
 
+/-- Graded negation on soft semantic values: `(¬p) w = 1 - p w`. -/
+private def negProp (p : HeartState → ℚ) : HeartState → ℚ := fun w => 1 - p w
+
 /--
 **Compositionally derived utterance semantics.**
 
-Negated utterances are derived by applying `Core.GradedProposition.neg`
-to base meanings:
-- ⟦not terrible⟧ = neg(⟦terrible⟧)
+Negated utterances are derived by applying graded negation to base meanings:
+- ⟦not terrible⟧ = (1 - ⟦terrible⟧)
 
 This mirrors Montague's compositional semantics where ⟦not φ⟧ = pnot(⟦φ⟧),
-lifted to graded propositions (see `neg_involutive`, `neg_antitone`).
+lifted to soft (`ℚ`-valued) propositions.
 -/
-def utteranceSemantics : Utterance → GProp HeartState
+def utteranceSemantics : Utterance → HeartState → ℚ
   -- Positive forms: base adjective meaning
   | .terrible => adjMeaning .terrible
   | .bad => adjMeaning .bad
   | .good => adjMeaning .good
   | .amazing => adjMeaning .amazing
   -- Negated forms: compositionally derived via graded negation
-  | .notTerrible => neg (adjMeaning .terrible)
-  | .notBad => neg (adjMeaning .bad)
-  | .notGood => neg (adjMeaning .good)
-  | .notAmazing => neg (adjMeaning .amazing)
+  | .notTerrible => negProp (adjMeaning .terrible)
+  | .notBad => negProp (adjMeaning .bad)
+  | .notGood => negProp (adjMeaning .good)
+  | .notAmazing => negProp (adjMeaning .amazing)
 
 /-- Utterance cost: number of words -/
 def utteranceCost : Utterance → ℕ
@@ -187,7 +193,7 @@ def subjectiveValue : HeartState → ℚ
 /-- The model uses soft semantics: meaning values are in [0,1]. -/
 theorem meaning_bounded : ∀ u s, 0 ≤ utteranceSemantics u s ∧ utteranceSemantics u s ≤ 1 := by
   intro u s; cases u <;> cases s <;>
-  simp only [utteranceSemantics, adjMeaning, Core.GradedProposition.neg, softSemantics] <;>
+  simp only [utteranceSemantics, adjMeaning, negProp, softSemantics] <;>
   constructor <;> norm_num
 
 /-- Negated utterances cost more than direct ones. -/

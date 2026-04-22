@@ -53,6 +53,75 @@ A tense operator takes:
 -/
 abbrev TenseOp (W Time : Type*) := SitProp W Time → WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
 
+-- ════════════════════════════════════════════════════════════════
+-- § Temporal-relation kernel
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+The temporal constraint of each tense, factored out as a pure relation
+on `WorldTimeIndex` pairs and shared with the dynamic-context-update
+counterparts in `Tense/Dynamic.lean` via `dynRelation`. This is the
+Heim-Kratzer "tense as relation between times" intuition isolated from
+the propositional payload, so that a single relation kernel (`precedes`/
+`coincides`/`follows`) is the source of truth for both static `PAST`/
+`PRES`/`FUT` (Compositional, this file) and their dynamic eliminative-
+update counterparts (`Tense/Dynamic.lean`). Trichotomy and pairwise
+exclusion proved at this layer propagate to both static and dynamic
+operators by definitional unfolding.
+-/
+
+/-- Event time precedes reference time. The temporal kernel of `PAST`
+and `dynPAST`. Reducible so `decide` and `rw` see through to the
+underlying `<` on `.time`. -/
+abbrev precedes {W Time : Type*} [LT Time]
+    (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
+  s₁.time < s₂.time
+
+/-- Event time coincides with reference time. The temporal kernel of
+`PRES` and `dynPRES`. -/
+abbrev coincides {W Time : Type*}
+    (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
+  s₁.time = s₂.time
+
+/-- Event time follows reference time. The temporal kernel of `FUT`
+and `dynFUT`. -/
+abbrev follows {W Time : Type*} [LT Time]
+    (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
+  s₁.time > s₂.time
+
+/-- The three temporal relations partition any pair of situations on a
+linear order. Used downstream by `temporal_partition` (in
+`Tense/Dynamic.lean`) and by static analyses that need exhaustive case
+analysis on tense. -/
+theorem precedes_or_coincides_or_follows {W Time : Type*} [LinearOrder Time]
+    (s₁ s₂ : WorldTimeIndex W Time) :
+    precedes s₁ s₂ ∨ coincides s₁ s₂ ∨ follows s₁ s₂ :=
+  lt_trichotomy s₁.time s₂.time
+
+/-- `precedes` and `follows` are mutually exclusive on any preorder. -/
+theorem not_precedes_and_follows {W Time : Type*} [Preorder Time]
+    (s₁ s₂ : WorldTimeIndex W Time) :
+    ¬ (precedes s₁ s₂ ∧ follows s₁ s₂) :=
+  fun ⟨h₁, h₂⟩ => lt_asymm h₁ h₂
+
+/-- `precedes` and `coincides` are mutually exclusive on any preorder. -/
+theorem not_precedes_and_coincides {W Time : Type*} [Preorder Time]
+    (s₁ s₂ : WorldTimeIndex W Time) :
+    ¬ (precedes s₁ s₂ ∧ coincides s₁ s₂) :=
+  fun ⟨h₁, h₂⟩ =>
+    have h₁' : s₁.time < s₂.time := h₁
+    have h₂' : s₁.time = s₂.time := h₂
+    lt_irrefl _ (h₂' ▸ h₁')
+
+/-- `coincides` and `follows` are mutually exclusive on any preorder. -/
+theorem not_coincides_and_follows {W Time : Type*} [Preorder Time]
+    (s₁ s₂ : WorldTimeIndex W Time) :
+    ¬ (coincides s₁ s₂ ∧ follows s₁ s₂) :=
+  fun ⟨h₁, h₂⟩ =>
+    have h₁' : s₁.time = s₂.time := h₁
+    have h₂' : s₂.time < s₁.time := h₂
+    lt_irrefl _ (h₁' ▸ h₂')
+
 /--
 PAST operator (@cite{mendes-2025} style)
 
@@ -61,9 +130,12 @@ PAST operator (@cite{mendes-2025} style)
 The PAST operator:
 1. Requires the event situation s to precede reference situation s'
 2. Evaluates P at the past situation s
+
+Defined via the `precedes` kernel (above) so the temporal constraint is
+shared with `dynPAST` in `Tense/Dynamic.lean`.
 -/
 def PAST {W Time : Type*} [LT Time] : TenseOp W Time :=
-  λ P s s' => s.time < s'.time ∧ P s
+  λ P s s' => precedes s s' ∧ P s
 
 /--
 PRES operator (@cite{mendes-2025} style)
@@ -73,9 +145,11 @@ PRES operator (@cite{mendes-2025} style)
 The PRESENT operator:
 1. Requires the event situation s to be contemporaneous with s'
 2. Evaluates P at situation s
+
+Defined via the `coincides` kernel.
 -/
 def PRES {W Time : Type*} : TenseOp W Time :=
-  λ P s s' => s.time = s'.time ∧ P s
+  λ P s s' => coincides s s' ∧ P s
 
 /--
 FUT operator (@cite{mendes-2025} style)
@@ -85,9 +159,11 @@ FUT operator (@cite{mendes-2025} style)
 The FUTURE operator:
 1. Requires the event situation s to follow reference situation s'
 2. Evaluates P at the future situation s
+
+Defined via the `follows` kernel.
 -/
 def FUT {W Time : Type*} [LT Time] : TenseOp W Time :=
-  λ P s s' => s.time > s'.time ∧ P s
+  λ P s s' => follows s s' ∧ P s
 
 
 /-

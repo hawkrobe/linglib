@@ -74,7 +74,7 @@ theorem empty_inertia_is_simple (circ : ModalBase World) (prop : World → Prop)
     inertialNecessity ⟨circ, emptyBackground⟩ prop w ↔
     simpleNecessity circ prop w := by
   simp only [inertialNecessity, necessity, simpleNecessity,
-             Core.IntensionalLogic.RestrictedModality.boxR]
+             Core.IntensionalLogic.boxR]
   constructor
   · intro h j hj
     exact h j ((kratzerBestR_empty circ w j).mpr hj)

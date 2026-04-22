@@ -122,4 +122,49 @@ theorem blocking_requires_atMostAsComplex {S P M : Type u}
     (h : Blocked parses meaning size s p) :
     ∃ s' : S, size s' ≤ size s := h.imp (fun _ ⟨h, _⟩ => h)
 
+/-! ## Decidability
+
+`IsAmbiguous` and `UnambiguouslyRealizes` are decidable from
+`[DecidableEq M]` alone, since they only quantify over the
+finite list `parses s`. `Blocked` requires an additional witness set:
+we expose `blockedOver`, the list-relativized version, which checks
+the existential against an explicitly-supplied candidate list rather
+than imposing a `Fintype S` constraint globally. -/
+
+instance instDecidableIsAmbiguous {S P M : Type u} [DecidableEq M]
+    (parses : S → List P) (meaning : P → M) (s : S) :
+    Decidable (IsAmbiguous parses meaning s) := by
+  unfold IsAmbiguous
+  exact inferInstance
+
+instance instDecidableUnambiguouslyRealizes {S P M : Type u} [DecidableEq M]
+    (parses : S → List P) (meaning : P → M) (s' s : S) (p : P) :
+    Decidable (UnambiguouslyRealizes parses meaning s' s p) := by
+  unfold UnambiguouslyRealizes
+  exact inferInstance
+
+/-- Decision procedure for `Blocked` against a specific list of candidate
+strings. Returns `true` iff some candidate `s' ∈ candidates` of size
+≤ `size s` unambiguously realizes `p`. -/
+def blockedOver {S P M : Type u} [DecidableEq M]
+    (parses : S → List P) (meaning : P → M) (size : S → Nat)
+    (candidates : List S) (s : S) (p : P) : Bool :=
+  candidates.any fun s' =>
+    decide (size s' ≤ size s) &&
+    decide (UnambiguouslyRealizes parses meaning s' s p)
+
+/-- `blockedOver` soundly witnesses `Blocked`. -/
+theorem blocked_of_blockedOver {S P M : Type u} [DecidableEq M]
+    (parses : S → List P) (meaning : P → M) (size : S → Nat)
+    (candidates : List S) (s : S) (p : P)
+    (h : blockedOver parses meaning size candidates s p = true) :
+    Blocked parses meaning size s p := by
+  unfold blockedOver at h
+  rw [List.any_eq_true] at h
+  obtain ⟨s', _, hs'⟩ := h
+  rw [Bool.and_eq_true] at hs'
+  refine ⟨s', ?_, ?_⟩
+  · exact decide_eq_true_eq.mp hs'.1
+  · exact decide_eq_true_eq.mp hs'.2
+
 end Pragmatics.AvoidAmbiguity

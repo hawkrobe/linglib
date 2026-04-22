@@ -33,7 +33,7 @@ open HPSG
 open Fragments.English.Predicates.Verbal (VerbEntry ComplementType)
 open Fragments.English.Pronouns (PronounEntry PronounType)
 open Fragments.English.Nouns (NounEntry)
-open Fragments.English.Determiners (QuantifierEntry)
+open Theories.Semantics.Quantification.Lexicon (QuantifierEntry)
 open Fragments.English.Lexicon (LexResult)
 
 /--

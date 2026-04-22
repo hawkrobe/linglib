@@ -103,7 +103,10 @@ theorem violations_independent :
 inductive MannerSubmaxim where
   /-- M1: "Avoid obscurity of expression." -/
   | avoidObscurity
-  /-- M2: "Avoid ambiguity." -/
+  /-- M2: "Avoid ambiguity." Formalized as a parse-blocking
+  predicate in `Theories.Pragmatics.AvoidAmbiguity.Blocked`
+  (@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
+  eq 37). -/
   | avoidAmbiguity
   /-- M3: "Be brief (avoid unnecessary prolixity)." -/
   | beBrief

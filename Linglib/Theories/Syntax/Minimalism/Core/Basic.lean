@@ -19,6 +19,7 @@ Foundation module for the Minimalist Program formalization.
 
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Lexical.UD
+import Linglib.Core.Tree
 import Linglib.Theories.Syntax.Minimalism.Core.Cat
 
 namespace Minimalism
@@ -85,35 +86,58 @@ instance : DecidableEq LIToken := λ a b =>
   else
     isFalse (by intro heq; cases heq; exact hid rfl)
 
-/-- Syntactic object: LI token or set of two SOs (Definition 11) -/
-inductive SyntacticObject where
-  | leaf : LIToken → SyntacticObject
-  | node : SyntacticObject → SyntacticObject → SyntacticObject
-  deriving Repr, DecidableEq
+/-- Syntactic object: LI token or binary set of two SOs (Definition 11).
+
+Implemented as the framework-neutral `Core.Tree.Tree Unit LIToken`. The
+unit category parameter reflects that Minimalism does not label internal
+nodes with categories at this layer (projection is handled separately).
+The four `Tree` constructors are: `terminal` (leaves), `node` (internal),
+`trace` and `bind` (used by movement; currently unreachable for objects
+built via `merge`/`mkLeaf`/`mkLeafPhon`/`mkTrace`). -/
+abbrev SyntacticObject := Core.Tree.Tree Unit LIToken
 
 namespace SyntacticObject
 
-def isLeaf : SyntacticObject → Prop
-  | .leaf _ => True
-  | .node _ _ => False
+/-- Leaf shim: `SyntacticObject.leaf tok ≡ Tree.terminal () tok`. -/
+@[match_pattern] abbrev leaf (tok : LIToken) : SyntacticObject :=
+  Core.Tree.Tree.terminal () tok
 
-instance : DecidablePred isLeaf := fun so => by
-  cases so <;> unfold isLeaf <;> infer_instance
+/-- Binary-node shim: `SyntacticObject.node l r ≡ Tree.node () [l, r]`. -/
+@[match_pattern] abbrev node (l r : SyntacticObject) : SyntacticObject :=
+  Core.Tree.Tree.node () (l :: r :: [])
+
+def isLeaf : SyntacticObject → Prop
+  | Core.Tree.Tree.terminal _ _ => True
+  | _ => False
+
+instance : DecidablePred isLeaf := fun so =>
+  match so with
+  | Core.Tree.Tree.terminal _ _ => isTrue trivial
+  | Core.Tree.Tree.node _ _ => isFalse id
+  | Core.Tree.Tree.trace _ _ => isFalse id
+  | Core.Tree.Tree.bind _ _ _ => isFalse id
 
 def isNode : SyntacticObject → Prop
-  | .leaf _ => False
-  | .node _ _ => True
+  | Core.Tree.Tree.node _ [_, _] => True
+  | _ => False
 
-instance : DecidablePred isNode := fun so => by
-  cases so <;> unfold isNode <;> infer_instance
+instance : DecidablePred isNode := fun so =>
+  match so with
+  | Core.Tree.Tree.terminal _ _ => isFalse id
+  | Core.Tree.Tree.node _ [] => isFalse id
+  | Core.Tree.Tree.node _ [_] => isFalse id
+  | Core.Tree.Tree.node _ [_, _] => isTrue trivial
+  | Core.Tree.Tree.node _ (_ :: _ :: _ :: _) => isFalse id
+  | Core.Tree.Tree.trace _ _ => isFalse id
+  | Core.Tree.Tree.bind _ _ _ => isFalse id
 
 def getLIToken : SyntacticObject → Option LIToken
   | .leaf tok => some tok
-  | .node _ _ => none
+  | _ => none
 
 def getConstituents : SyntacticObject → Option (SyntacticObject × SyntacticObject)
-  | .leaf _ => none
   | .node a b => some (a, b)
+  | _ => none
 
 end SyntacticObject
 
@@ -160,12 +184,14 @@ def SyntacticObject.phonYield : SyntacticObject → List String
     let phon := tok.item.features.head?.map (·.phonForm) |>.getD ""
     if phon.isEmpty then [] else [phon]
   | .node a b => a.phonYield ++ b.phonYield
+  | _ => []
 
 /-- Linearize a `SyntacticObject` by collecting leaf `LIToken`s in
     left-to-right traversal order. -/
 def linearize : SyntacticObject → List LIToken
   | .leaf tok => [tok]
   | .node l r => linearize l ++ linearize r
+  | _ => []
 
 /-- Extract the phonological form from an LIToken. -/
 def LIToken.phonForm (tok : LIToken) : String :=
@@ -194,7 +220,7 @@ def mkTrace (index : Nat) : SyntacticObject :=
     Returns the trace index if so. -/
 def isTrace : SyntacticObject → Option Nat
   | .leaf tok => if tok.id ≥ 10000 then some (tok.id - 10000) else none
-  | .node _ _ => none
+  | _ => none
 
 def exampleVerb : SyntacticObject := mkLeaf .V [.D] 1
 
@@ -206,10 +232,12 @@ def exampleDet : SyntacticObject := mkLeaf .D [.N] 3
 def SyntacticObject.nodeCount : SyntacticObject → Nat
   | .leaf _ => 0
   | .node a b => 1 + a.nodeCount + b.nodeCount
+  | _ => 0
 
 def SyntacticObject.leafCount : SyntacticObject → Nat
   | .leaf _ => 1
   | .node a b => a.leafCount + b.leafCount
+  | _ => 0
 theorem leaf_node_relation (so : SyntacticObject) :
     so.leafCount = so.nodeCount + 1 := by
   induction so with
@@ -226,11 +254,13 @@ theorem leaf_node_relation (so : SyntacticObject) :
 def SyntacticObject.subtrees : SyntacticObject → List SyntacticObject
   | so@(.leaf _) => [so]
   | so@(.node l r) => so :: (l.subtrees ++ r.subtrees)
+  | so => [so]
 
 /-- The terminal (leaf) nodes of a `SyntacticObject`. -/
 def terminalNodes : SyntacticObject → List SyntacticObject
   | so@(.leaf _) => [so]
   | .node l r => terminalNodes l ++ terminalNodes r
+  | _ => []
 
 /-- Every terminal node is a leaf. -/
 theorem terminalNodes_are_leaves {so t : SyntacticObject}
@@ -277,8 +307,8 @@ theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
     two immediate daughters of X. -/
 def immediatelyContains (x y : SyntacticObject) : Prop :=
   match x with
-  | .leaf _ => False
   | .node a b => y = a ∨ y = b
+  | _ => False
 
 /-- Decidable immediate containment -/
 instance decImmediatelyContains (x y : SyntacticObject) :
@@ -373,8 +403,8 @@ theorem contains_irrefl (x : SyntacticObject) : ¬contains x x := by
 
 /-- Boolean containment check: does `x` (strictly) contain `y`? -/
 def containsB : SyntacticObject → SyntacticObject → Bool
-  | .leaf _, _ => false
   | .node a b, y => a == y || b == y || containsB a y || containsB b y
+  | _, _ => false
 
 /-- `containsB` implies `contains`. -/
 theorem containsB_implies_contains {x y : SyntacticObject}
@@ -491,7 +521,7 @@ def cCommandsInB (root x y : SyntacticObject) : Bool :=
     | .node a b =>
       (a == x && x != y && (b == y || containsB b y)) ||
       (b == x && x != y && (a == y || containsB a y))
-    | .leaf _ => false
+    | _ => false
 
 /-! ## Tree Shape — abstract geometry ignoring terminal labels -/
 
@@ -507,6 +537,7 @@ inductive TreeShape where
 def SyntacticObject.shape : SyntacticObject → TreeShape
   | .leaf _ => .leaf
   | .node l r => .node l.shape r.shape
+  | _ => .leaf
 
 /-- Two syntactic objects are structurally isomorphic iff they have
     the same tree shape (ignoring all terminal labels). -/

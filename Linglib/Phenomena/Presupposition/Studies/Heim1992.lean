@@ -33,7 +33,7 @@ namespace Heim1992
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
 open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
-open Core.IntensionalLogic.RestrictedModality (Refl Serial Eucl Trans)
+open Core.IntensionalLogic (Refl Serial Eucl Trans)
 open Semantics.Presupposition.LocalContext (presupFiltered)
 open Semantics.Presupposition.BeliefEmbedding
 

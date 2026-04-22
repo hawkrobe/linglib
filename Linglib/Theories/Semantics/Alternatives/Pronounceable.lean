@@ -32,26 +32,32 @@ namespace Alternatives
 
 universe u
 
-/-- A type comes equipped with a pronounceability predicate.
+/-- A pronounceability predicate on expressions.
 
-The default instance (provided here for `Tree C W`) treats every
-expression as pronounceable. Specialized instances can refine this
-in lexicon-sensitive ways. -/
-class HasPronounceability (S : Type u) where
-  pronounceable : S → Prop
+Most pragmatic accounts assume all expressions are pronounceable, in
+which case clients should pass `(fun _ => True)`; non-trivial
+instances arise when expressions can contain silent material that the
+language fails to realize (e.g. *tous les NP.dual* in
+@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}).
 
-export HasPronounceability (pronounceable)
+We keep this as a structure rather than a typeclass: there is no
+canonical pronounceability per type — it depends on the lexicon, the
+phenomenon (traces vs ellipsis vs core-concept silent realization),
+and the analysis. Constants are exposed via the `pron`/`unpron` API
+on `Pronounceability`. -/
+structure Pronounceability (S : Type u) where
+  /-- The pronounceability predicate. -/
+  pron : S → Prop
 
-/-- Default: every tree is pronounceable. Override locally with a
-`HasPronounceability` term in scope when needed. -/
-instance defaultTreePronounceability {C W : Type} :
-    HasPronounceability (Core.Tree.Tree C W) :=
-  ⟨fun _ => True⟩
+namespace Pronounceability
 
-/-- Construct a `HasPronounceability` instance from an arbitrary
-predicate. Useful when pronounceability is parameterized by external
-data (e.g. a lexicon) that the typeclass system cannot synthesize. -/
-@[reducible] def HasPronounceability.ofPred {S : Type u} (p : S → Prop) :
-    HasPronounceability S := ⟨p⟩
+/-- The everything-pronounceable instance. -/
+def trivial {S : Type u} : Pronounceability S := ⟨fun _ => True⟩
+
+/-- An expression is unpronounceable. -/
+def unpron {S : Type u} (P : Pronounceability S) (s : S) : Prop :=
+  ¬ P.pron s
+
+end Pronounceability
 
 end Alternatives

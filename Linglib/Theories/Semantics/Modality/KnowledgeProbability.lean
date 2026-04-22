@@ -55,7 +55,7 @@ set_option autoImplicit false
 
 namespace Semantics.Modality.KnowledgeProbability
 
-open Core.IntensionalLogic.RestrictedModality
+open Core.IntensionalLogic
   (AgentAccessRel AccessRel boxR Refl Eucl refl_eucl_symm refl_eucl_trans)
 open Semantics.Modality.EpistemicLogic (knows everyoneKnows)
 open Semantics.Modality.EpistemicProbability (WorldCredence nestedThreshold)

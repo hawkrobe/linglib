@@ -16,7 +16,7 @@ import Mathlib.Data.Rat.Defs
 
 namespace Core.Conjectures
 
-open Core.IntensionalLogic.RestrictedModality (AgentAccessRel)
+open Core.IntensionalLogic (AgentAccessRel)
 open Core (Intension)
 open Core.Intension (IsRigid)
 

@@ -57,7 +57,7 @@ structure TeleologicalFlavor (W : Type*) where
 /-! ## Flavor Tags
 
 Each flavor structure maps to the theory-neutral `ModalFlavor` enum from
-`Core.IntensionalLogic.RestrictedModality`, bridging Kratzer's parameterized semantics to the
+`Core.IntensionalLogic`, bridging Kratzer's parameterized semantics to the
 typological meaning space (Imel, Guo, & @cite{imel-guo-steinert-threlkeld-2026}). -/
 
 open Core.Modality (ModalFlavor)

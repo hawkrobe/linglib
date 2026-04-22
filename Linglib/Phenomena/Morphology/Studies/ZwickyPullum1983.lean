@@ -239,13 +239,13 @@ lexical items can have idiosyncratic scope properties. If *-n't* were
 a clitic (a reduced form of *not*), its scope should always match *not*.
 
 We formalize this using `boxR`/`diamondR` from
-`Core.IntensionalLogic.RestrictedModality`: a Kripke countermodel exhibits
+`Core.IntensionalLogic`: a Kripke countermodel exhibits
 an accessibility relation under which the two scope readings diverge. -/
 
 section ScopeBridge
 
 open Core.Modality (ModalForce)
-open Core.IntensionalLogic.RestrictedModality (AccessRel boxR diamondR)
+open Core.IntensionalLogic (AccessRel boxR diamondR)
 open Semantics.Attitudes.Intensional (World)
 
 /-- Scope of negation relative to a modal operator. -/

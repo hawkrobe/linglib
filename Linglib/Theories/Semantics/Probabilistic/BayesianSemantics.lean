@@ -8,7 +8,7 @@ uncertainty over predicate parameters, rather than being stipulated directly.
 
 Three approaches to probabilistic/graded semantics:
 
-### 1. Stipulated Graded Values (our `GradedProposition.lean`)
+### 1. Stipulated Graded Values
 - Define `P : Entity → ℚ` directly
 - Compose using probabilistic operations (×, +−pq)
 - Simple but ad hoc
@@ -35,13 +35,11 @@ Goodman's result: "threshold semantics + uncertainty = graded semantics".
 
 import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Core.FinitePMF
-import Linglib.Core.Semantics.GradedProposition
 import Mathlib.Data.Fintype.Prod
 import Mathlib.Algebra.BigOperators.Ring.Finset
 
 namespace Semantics.Montague.BayesianSemantics
 
-open Core.GradedProposition
 open Semantics.Probabilistic.ParamPred
 
 -- Use the canonical FinitePMF from Core

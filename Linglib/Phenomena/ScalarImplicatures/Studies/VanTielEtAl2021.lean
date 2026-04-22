@@ -416,12 +416,12 @@ Note: "half" is classified as nonMonotone in the three-way system but as
 "increasing" in the binary empirical classification. -/
 theorem monotonicity_matches_data_increasing (q : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance) :
     q ≠ .half →
-    (RSAModel.modelMonotonicity q = Fragments.English.Determiners.Monotonicity.increasing) ↔
+    (RSAModel.modelMonotonicity q = Theories.Semantics.Quantification.Lexicon.Monotonicity.increasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.increasing) := by
   cases q <;> native_decide
 
 theorem monotonicity_matches_data_decreasing (q : Phenomena.ScalarImplicatures.VanTielQuantity.Utterance) :
-    (RSAModel.modelMonotonicity q = Fragments.English.Determiners.Monotonicity.decreasing) ↔
+    (RSAModel.modelMonotonicity q = Theories.Semantics.Quantification.Lexicon.Monotonicity.decreasing) ↔
     (monotonicity (toDataWord q) = Monotonicity.decreasing) := by
   cases q <;> native_decide
 

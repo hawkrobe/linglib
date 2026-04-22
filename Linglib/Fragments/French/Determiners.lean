@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Fragments.English.Determiners
+import Linglib.Theories.Semantics.Quantification.Lexicon
 
 /-!
 # French Determiners and Quantifiers
@@ -22,7 +22,8 @@ realizes the dual core concept (`Core.CoreConcept.Id.dual`).
 
 namespace Fragments.French.Determiners
 
-open Fragments.English.Determiners (QuantifierEntry QForce Monotonicity Strength)
+open Theories.Semantics.Quantification.Lexicon
+  (QuantifierEntry QForce Monotonicity Strength)
 
 /-- *tous* — universal, plural. The French universal of @cite{chemla-2007}'s
 puzzle: anti-dual despite the lack of any French *both*. The paper's

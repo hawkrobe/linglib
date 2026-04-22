@@ -52,7 +52,7 @@ open Semantics.Dynamic.IntensionalCDRT (IContext)
 -- `BAccessRel` is re-exported by `Semantics.PIP` (opened above);
 -- `BRefl` / `kripkeEval` were Bool-internal modal infrastructure that has
 -- been replaced by the Prop-valued `Refl`/`boxR` API in
--- `Core.IntensionalLogic.RestrictedModality` and isn't needed here.
+-- `Core.IntensionalLogic` and isn't needed here.
 open Phenomena.Anaphora
 
 

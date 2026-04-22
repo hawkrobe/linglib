@@ -42,15 +42,4 @@ Theory-specific instances of this signature live elsewhere:
 `Alternatives.Indirect.indirectFrom` (Jeretič et al. 2025), etc. -/
 abbrev AlternativeSource (S : Type u) : Type u := S → Set S
 
-/-- The trivial alternative source: only the expression itself. -/
-def selfOnly {S : Type u} : AlternativeSource S := fun s => {s}
-
-/-- Reflexivity: under any source that contains its argument, every
-expression is an alternative to itself. -/
-def IsReflexive {S : Type u} (src : AlternativeSource S) : Prop :=
-  ∀ s, s ∈ src s
-
-theorem selfOnly_isReflexive {S : Type u} : IsReflexive (@selfOnly S) :=
-  fun _ => rfl
-
 end Alternatives

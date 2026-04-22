@@ -2,7 +2,7 @@
 @cite{kratzer-1981} Modal Operators — IL Foundation
 
 Necessity and possibility operators defined as `boxR`/`diamondR` from
-`Core.IntensionalLogic.RestrictedModality`, with Kratzer-specific
+`Core.IntensionalLogic`, with Kratzer-specific
 accessibility relations derived from conversational backgrounds.
 
 The key architectural insight: Kratzer's operators ARE restricted modal
@@ -27,7 +27,6 @@ import Mathlib.Data.Set.Basic
 namespace Semantics.Modality.Kratzer
 
 open Core.IntensionalLogic
-open Core.IntensionalLogic.RestrictedModality
 
 variable {W : Type*}
 
@@ -139,29 +138,6 @@ theorem necessity_empty_eq_simple (f : ModalBase W) (p : W → Prop) (w : W) :
 -- § Frame Condition Definitions
 -- ════════════════════════════════════════════════════════════════
 
-def isTransitiveAccess (f : ModalBase W) : Prop :=
-  ∀ w w' w'' : W,
-    w' ∈ accessibleWorlds f w →
-    w'' ∈ accessibleWorlds f w' →
-    w'' ∈ accessibleWorlds f w
-
-def isSymmetricAccess (f : ModalBase W) : Prop :=
-  ∀ w w' : W,
-    w' ∈ accessibleWorlds f w →
-    w ∈ accessibleWorlds f w'
-
-def isEuclideanAccess (f : ModalBase W) : Prop :=
-  ∀ w w' w'' : W,
-    w' ∈ accessibleWorlds f w →
-    w'' ∈ accessibleWorlds f w →
-    w'' ∈ accessibleWorlds f w'
-
-def isS4Base (f : ModalBase W) : Prop :=
-  isRealistic f ∧ isTransitiveAccess f
-
-def isS5Base (f : ModalBase W) : Prop :=
-  isRealistic f ∧ isEuclideanAccess f
-
 -- ════════════════════════════════════════════════════════════════
 -- § Frame Condition Derivation
 -- ════════════════════════════════════════════════════════════════
@@ -169,7 +145,10 @@ def isS5Base (f : ModalBase W) : Prop :=
 /-! These theorems derive frame conditions on `kratzerR` from properties
 of conversational backgrounds. This is the Kratzer-specific contribution:
 the frame conditions aren't stipulated, they follow from what kind of
-conversational background the modal base is. -/
+conversational background the modal base is.
+
+Frame conditions on `kratzerR` are stated directly via the polymorphic
+`Refl`/`Trans`/`Symm`/`Eucl` predicates from `RestrictedModality`. -/
 
 /-- A realistic modal base gives reflexive accessibility. -/
 theorem realistic_refl (f : ModalBase W) (hReal : isRealistic f) :
@@ -182,21 +161,6 @@ theorem empty_base_universalR :
   ext w w'
   simp only [kratzerR, emptyBackground, List.not_mem_nil, false_implies,
              forall_const, universalR]
-
-/-- Transitive list-accessibility gives transitive `kratzerR`. -/
-theorem transitive_trans (f : ModalBase W) (hTrans : isTransitiveAccess f) :
-    Trans (kratzerR f) :=
-  fun w w' w'' h1 h2 => hTrans w w' w'' h1 h2
-
-/-- Symmetric list-accessibility gives symmetric `kratzerR`. -/
-theorem symmetric_symm (f : ModalBase W) (hSym : isSymmetricAccess f) :
-    Symm (kratzerR f) :=
-  fun w w' h => hSym w w' h
-
-/-- Euclidean list-accessibility gives euclidean `kratzerR`. -/
-theorem euclidean_eucl (f : ModalBase W) (hEuc : isEuclideanAccess f) :
-    Eucl (kratzerR f) :=
-  fun w w' w'' h1 h2 => hEuc w w' w'' h1 h2
 
 -- ════════════════════════════════════════════════════════════════
 -- § Modal Axioms (from RestrictedModality)
@@ -254,33 +218,30 @@ theorem D_axiom_simple (f : ModalBase W) (p : W → Prop) (w : W)
 
 Positive introspection. -/
 theorem four_axiom (f : ModalBase W) (p : W → Prop) (w : W)
-    (hTrans : isTransitiveAccess f)
+    (hTrans : Trans (kratzerR f))
     (hNec : simpleNecessity f p w) :
-    simpleNecessity f (fun w' => simpleNecessity f p w') w := by
-  intro j hj
-  exact boxR_four (kratzerR f) (transitive_trans f hTrans) _ w hNec j hj
+    simpleNecessity f (fun w' => simpleNecessity f p w') w :=
+  boxR_four (kratzerR f) hTrans _ w hNec
 
 /--
 **B Axiom**: Symmetric accessibility → p → □◇p.
 
 What is actual is necessarily possible. -/
 theorem B_axiom (f : ModalBase W) (p : W → Prop) (w : W)
-    (hSym : isSymmetricAccess f)
+    (hSym : Symm (kratzerR f))
     (hP : p w) :
-    simpleNecessity f (fun w' => simplePossibility f p w') w := by
-  intro j hj
-  exact boxR_B (kratzerR f) (symmetric_symm f hSym) _ w hP j hj
+    simpleNecessity f (fun w' => simplePossibility f p w') w :=
+  boxR_B (kratzerR f) hSym _ w hP
 
 /--
 **5 Axiom**: Euclidean accessibility → ◇p → □◇p.
 
 Positive possibility introspection. -/
 theorem five_axiom (f : ModalBase W) (p : W → Prop) (w : W)
-    (hEuc : isEuclideanAccess f)
+    (hEuc : Eucl (kratzerR f))
     (hPoss : simplePossibility f p w) :
-    simpleNecessity f (fun w' => simplePossibility f p w') w := by
-  intro j hj
-  exact boxR_five (kratzerR f) (euclidean_eucl f hEuc) _ w hPoss j hj
+    simpleNecessity f (fun w' => simplePossibility f p w') w :=
+  boxR_five (kratzerR f) hEuc _ w hPoss
 
 -- ════════════════════════════════════════════════════════════════
 -- § Additional Theorems

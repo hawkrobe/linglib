@@ -217,7 +217,7 @@ theorem neFree_flat (M : BSMLModel W)
 -- §5: BSML–CML Type Bridge
 -- ============================================================================
 
-open Core.IntensionalLogic.RestrictedModality (diamondR)
+open Core.IntensionalLogic (diamondR)
 
 /-!
 ### Accessibility Type Bridge
@@ -225,18 +225,18 @@ open Core.IntensionalLogic.RestrictedModality (diamondR)
 `BSMLModel.access : W → Finset W` can be converted to a Prop-valued
 `AccessRel W = W → W → Prop` via `fun w v => v ∈ M.access w`, which is the
 canonical accessibility-relation type in
-`Core.IntensionalLogic.RestrictedModality`.
+`Core.IntensionalLogic`.
 -/
 
 /-- Convert BSML accessibility (`Finset`-valued) to a classical Prop-valued
     accessibility relation. -/
 def BSMLModel.toAccessRel (M : BSMLModel W) :
-    Core.IntensionalLogic.RestrictedModality.AccessRel W :=
+    Core.IntensionalLogic.AccessRel W :=
   fun w v => v ∈ M.access w
 
 /-- `classicalEval` of ◇φ agrees with `diamondR` (Prop-valued possibility),
     connecting BSML's classical evaluation to the shared modal logic
-    infrastructure from `Core.IntensionalLogic.RestrictedModality`. -/
+    infrastructure from `Core.IntensionalLogic`. -/
 theorem classicalEval_agrees_diamondR_poss
     (M : BSMLModel W) (φ : BSMLFormula) (w : W) :
     classicalEval M (.poss φ) w = true ↔
