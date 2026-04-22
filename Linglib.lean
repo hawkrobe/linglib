@@ -80,6 +80,7 @@ import Linglib.Core.PropertyDomain
 import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.ModalTypes
+import Linglib.Core.Modality.TemporalAxes
 import Linglib.Core.SelectionFunction
 import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection

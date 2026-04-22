@@ -251,7 +251,7 @@ theorem imaa_past_present_no_dim :
     @cite{matthewson-2016} §18.4.3. -/
 structure TemporalMarkingMirror where
   /-- Which orientation is obligatorily marked. -/
-  obligatoryMarking : Fragments.Gitksan.Modals.TemporalOrientation
+  obligatoryMarking : Core.Modality.TemporalOrientation
   /-- Name of the marker. -/
   marker : String
 

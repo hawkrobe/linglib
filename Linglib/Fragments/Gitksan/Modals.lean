@@ -1,3 +1,4 @@
+import Linglib.Core.Modality.TemporalAxes
 import Linglib.Theories.Semantics.Modality.Typology
 
 /-!
@@ -38,7 +39,7 @@ but only weakly.
 
 namespace Fragments.Gitksan.Modals
 
-open Core.Modality (ForceFlavor ForceAnalysis BackgroundClass)
+open Core.Modality (ForceFlavor ForceAnalysis BackgroundClass TemporalOrientation)
 open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic
@@ -161,11 +162,6 @@ The contrast with English is the central typological mirror @cite{matthewson-201
 §3.3 draws: English obligatorily marks past orientation (via *have*),
 Gitksan obligatorily marks future orientation (via *dim*) — but for
 Gitksan epistemics only. Circumstantials uniformly demand the marker. -/
-
-/-- Temporal orientation of Gitksan modals. -/
-inductive TemporalOrientation where
-  | past | present | future
-  deriving DecidableEq, Repr, BEq
 
 /-- Whether prospective `dim` is required, given a modal expression and
     the temporal orientation of its prejacent. The asymmetry follows

@@ -1,3 +1,4 @@
+import Linglib.Core.Modality.TemporalAxes
 import Linglib.Fragments.Gitksan.Modals
 import Linglib.Fragments.NezPerce.Modals
 import Linglib.Phenomena.Modality.Studies.Condoravdi2002
@@ -51,7 +52,7 @@ the chapter cites.
 namespace Matthewson2013
 
 open Fragments.Gitksan.Modals
-open Core.Modality (ForceAnalysis)
+open Core.Modality (ForceAnalysis TemporalPerspective TemporalOrientation)
 
 -- ============================================================================
 -- §1. Mixed-system thesis (Fig. 1)
@@ -162,11 +163,9 @@ theorem oqa_admits_necessity :
 
 /-! @cite{matthewson-2013} Fig. 4 (p. 369) cross-tabulates temporal
     perspective (past/present) with temporal orientation (past/present/
-    future) for the two epistemic modals. -/
-
-inductive TemporalPerspective where
-  | past | present
-  deriving DecidableEq, Repr
+    future) for the two epistemic modals. The two axes are the
+    canonical `Core.Modality.TemporalPerspective` and
+    `Core.Modality.TemporalOrientation` opened above. -/
 
 /-- A Figure 4 cell: a temporal perspective × orientation pair, with
     the paper's example number for grounding. The dim-requirement is

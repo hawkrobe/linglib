@@ -1,3 +1,4 @@
+import Linglib.Core.Modality.TemporalAxes
 import Linglib.Theories.Semantics.Modality.EventRelativity
 import Linglib.Theories.Semantics.Modality.Temporal
 import Mathlib.Data.List.Defs
@@ -37,26 +38,18 @@ namespace Hacquard2006
 
 open Semantics.Modality.EventRelativity
 open Semantics.Modality.Temporal
+open Core.Modality (TemporalOrientation)
 
 
 -- ════════════════════════════════════════════════════
 -- § 1. Temporal Orientation Type
 -- ════════════════════════════════════════════════════
 
-/-- The temporal orientation of a modal: what time the modal's
-conversational background is evaluated at.
-
-@cite{hacquard-2006} derives present vs. past from modal position (§ 3).
-@cite{klecha-2016} adds future: derived not from position but from the
-modal base kind (CIR permits future orientation). -/
-inductive TemporalOrientation where
-  /-- Present: evaluated at the speech time -/
-  | present
-  /-- Past: evaluated at a past event time -/
-  | past
-  /-- Future: accessible via circumstantial modal base (@cite{klecha-2016}) -/
-  | future
-  deriving DecidableEq, Repr
+/-! @cite{hacquard-2006} derives present vs. past from modal position
+(§ 3). @cite{klecha-2016} adds future: derived not from position but
+from the modal base kind (CIR permits future orientation). The
+canonical 3-value `TemporalOrientation` lives in
+`Core/Modality/TemporalAxes.lean` and is opened above. -/
 
 /-- A time type for the orientation examples. -/
 inductive OTime where
