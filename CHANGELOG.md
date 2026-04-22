@@ -4,6 +4,304 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.149] - 2026-04-21
+
+### Refactored — `Theories/Syntax/Minimalism/Coreference.lean` Bool→Prop migration
+
+Continuation of 0.230.147. The Theory file `Coreference.lean` itself —
+not just its consumers — is now fully Prop-valued. All twelve
+predicates (`subjectCCommandsObject`, `objectCCommandsSubject`,
+`sameLocalDomain`, `inSameBindingDomain`, `phiAgree`,
+`reflexiveLicensed`, `reciprocalLicensed`, `pronounLocallyFree`,
+`rExpressionFree`, `grammaticalForCoreference`,
+`reflexiveLicensedInSentence`, `pronounCoreferenceBlocked`) return
+`Prop` and carry matching `Decidable` instances synthesised via the
+`split` tactic (which reduces nested `match` goals — `cases` did not).
+Bool residuals retained only at boundaries with existing Bool API
+(`semanticPl : Bool` field, `genderAgrees` from
+`Fragments.English.Pronouns`) — these stay until those producers
+migrate. `computeCoreferenceStatus` now uses `if Prop ∧ Prop then else`
+syntax with `i = 0 ∧ j = 2` instead of `i == 0 && j == 2`.
+
+Bridge file `Phenomena/Anaphora/Studies/MinimalismCoreference.lean`
+migrated alongside: `capturesCoreferenceMinimalPair`,
+`capturesCoreferenceData` are now Prop with Decidable; the
+`phenom.pairs.all` Bool aggregation became `∀ p ∈ phenom.pairs, _`
+(decidable via `List.decidableBAll`). Theorem statements drop
+`= true`/`= false`; `native_decide` tactics preserved. The unused
+`Linglib.Fragments.English.Predicates.Verbal` import was removed from
+`Coreference.lean` and added directly to the bridge file (which is
+the actual user of `see.toWord3sg`/`see.toWordPl`).
+
+`Phenomena/Anaphora/Compare.lean`: three `MinimalismCoreference.*`
+conjuncts dropped their `= true` suffix. HPSG/Hudson1990/OsborneLi2023
+conjuncts left as Bool until their respective theory files migrate.
+
+`Coreference.lean` builds clean. The bridge files transitively depend
+on `Core/Causal/SEM/Monotonicity.lean`, which is mid-migration in a
+concurrent session — those files cannot be independently validated
+until upstream Causation work finishes (same blocker as 0.230.147).
+
+## [0.230.148] - 2026-04-21
+
+### Proved — `wantEP_jointly_belief_consistent` (no `sorry`)
+
+The theorem deferred in 0.230.145 — Condoravdi-Lauer 2016 § 5.4
+final paragraph (p. 30): if both `wantEP EP a φ w` and `wantEP EP a ψ w`
+hold, then `φ ∩ ψ` is not belief-empty — is now proved.
+
+Strategy: factor the substantive content into an abstract
+`PreferenceStructure.maxElts_pair_belief_compatible` lemma in
+`Core/Order/PreferenceStructure.lean`. The order-theoretic statement is:
+given `consistent B`, two maximal elements of a preference structure
+have non-empty intersection with `B`. The wrapper
+`wantEP_jointly_belief_consistent` then becomes a one-liner delegating
+to the abstract lemma with `(EP a w).isConsistent` as the consistency
+witness.
+
+The abstract proof uses `Set.biInter_pair` for the iInter computation,
+`Set.insert_subset` for the subset assertion, `Std.Irrefl.irrefl` for
+the diagonal cases, and `Subtype.ext` + term-mode `▸` for the
+off-diagonal Subtype-proof-irrelevance step. The four-case analysis
+collapses cleanly via `rcases hpDisj with hp | hp <;> rcases hqDisj
+with hq | hq`.
+
+Total: 425 jobs build clean, zero `sorry` in either Phase 1 file.
+
+## [0.230.147] - 2026-04-21
+
+### Refactored — Bool legacy deletion in Minimalism c-command/m-command (per `feedback_no_intrinsic_bool.md`)
+
+Deleted Bool-valued predicates and migrated their consumers to the
+existing Prop equivalents with new `Decidable` instances:
+
+- `Theories/Syntax/Minimalism/Core/Basic.lean`:
+  - **Deleted**: `cCommandsInB`
+  - **Added**: `instance decContainsOrEq`, `instance decAreSistersIn`,
+    `instance decCCommandsIn`, `instance decAsymCCommandsIn`
+  - **Added supporting lemmas**: `subtrees_subset_of_mem`,
+    `mem_subtrees_of_imm_contains` — used to prove `cCommandsIn`
+    decidable despite an unbounded `∃ z` (z is provably in
+    `root.subtrees` whenever the witness exists)
+- `Theories/Syntax/Minimalism/Core/MCommand.lean`:
+  - **Deleted**: `isMaximalProjectionIn`, `dominatesB`, `mCommandsB`,
+    `asymMCommandsB`, `reflexiveLicensedMCmd`, `pronounFreeMCmd`,
+    `cCommand_implies_mCommand_bool`
+  - **Added** Prop versions: `isHeadChildOf` (helper for decidability),
+    `isMaximalProjection`, `mCommandsIn`, `asymMCommandsIn`,
+    `reflexiveLicensedM`, `pronounFreeM`, with matching `Decidable`
+    instances. The path-based mCCommand block (Section 4) is unchanged.
+- `Theories/Syntax/Minimalism/{Scope,Coreference}.lean` and
+  `Theories/Syntax/Minimalism/Core/{Agree,LateMerger}.lean`: replaced
+  ~10 `cCommandsInB tree x y` Bool call sites with
+  `decide (cCommandsIn tree x y)` (Prop with Decidable). Docstrings
+  updated to refer to `cCommandsIn`.
+- `Theories/Syntax/HPSG/Coreference.lean`: docstring update only.
+- `Phenomena/WordOrder/Studies/ColeHermon2008.lean` and
+  `Phenomena/ArgumentStructure/Studies/{Larson1988,Kratzer1996,Pylkkanen2008,Newman2024}.lean`:
+  ~44 theorem-statement sites migrated. Pattern:
+  `cCommandsInB tree x y = true` → `cCommandsIn tree x y`;
+  `cCommandsInB tree x y = false` → `¬ cCommandsIn tree x y`.
+  All `native_decide` tactics preserved (Decidable instances suffice).
+  `cross_linguistic_binding_contrast` rewritten from
+  `⟨rfl, rfl, rfl, rfl⟩` to `refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide`.
+
+Theory layer (Core.Basic, Core.MCommand, Scope, Core.Agree,
+Core.LateMerger) builds cleanly. Coreference and Phenomena downstream
+files transitively depend on `Theories/Semantics/Causation/*`, which
+is mid-migration in a concurrent session — those files cannot be
+independently validated until the upstream Causation Bool→Prop work
+finishes. Migration is mechanically uniform with the Theory-layer
+substitutions that did build.
+
+## [0.230.146] - 2026-04-21
+
+### Added — @cite{kratzer-2012} §5.4.3 Paula apple-buying scenario formalized
+
+`Phenomena/Conditionals/Studies/Kratzer2012Lumping.lean` (~250 LOC,
+builds in 5s) formalizes Kratzer's textbook example demonstrating
+that the Crucial Set's lumping-closure clause prevents the spurious
+"if Paula weren't buying apples, the Atlantic would be drying"
+prediction (@cite{kratzer-2012} pp. 127–129).
+
+Minimal scenario: 4 indices in a `SituationFrame` — `actual` (the
+actual world: Paula buys apples, Atlantic fine), `noApplesQuiet`
+(counterfactual: no Paula apples, Atlantic fine), `atlantic`
+(counterfactual: no Paula apples, Atlantic dries), `sA` (a partial
+situation supporting just "Paula buys apples", `≤ actual`).
+
+Proves:
+
+- `lumps_paOrAd_pa_actual : Lumps paOrAd pa actual` — the textbook
+  lumping fact (@cite{kratzer-2012} p. 129: "every situation where
+  Paula is buying apples or the Atlantic is drying up is a situation
+  where Paula is buying apples").
+- `lumps_pa_paOrAd_actual` — the reverse direction (`pa ⊆ paOrAd`).
+- `crucialSet_notPa_singleton : {notPa} ∈ CrucialSet Fw₀ actual notPa`
+  — the lumping-closure clause forces `paOrAd → pa → ⊥` (with
+  `notPa`) so the only consistent lumping-closed subset containing
+  `notPa` is `{notPa}` alone.
+- `follows_notPa_ad_fails : ¬ Follows {notPa} ad` — at the
+  `noApplesQuiet` world, the antecedent `notPa` holds but the
+  consequent `ad` fails, so `wouldCF` (which reduces to `Follows
+  {notPa} ad` here since the Crucial Set is a singleton) correctly
+  predicts the spurious counterfactual is false.
+
+This is the first concrete demonstration that the
+`PremiseSemantic.wouldCF` operator (added 0.230.143) does the
+work Kratzer's text describes — and the first multi-step formal use
+of the `Lumps` API on a worked example. The scenario uses the
+Direction-A architecture (`Lumps p q w` with `p`, `q : Set Sit`,
+parthood as the `[Preorder Sit]` instance on the `SituationFrame`).
+
+Out of scope: the full five-proposition variant ((9a)–(9e) plus the
+moon counterfactual (10b)), the still-life variant from §5.2, and
+admissibility checks for the Base Set (cognitive viability,
+non-redundancy, completeness).
+
+## [0.230.145] - 2026-04-21
+
+### Audited — Phase 1 + Phase 1d formalization vs @cite{condoravdi-lauer-2016}
+
+Systematic re-read of the C&L 2016 anankastics paper §5.3–5.5 + §7.1
+to verify each definition in the Phase 1 + Phase 1d files matches the
+primary source.
+
+**Fidelity verdict (all faithful)**:
+
+| Lean | C&L 2016 | Status |
+|---|---|---|
+| `PreferenceStructure` | eq. 65 | ✓ |
+| `consistent` | eq. 66 (strong, ≠ pairwise C&L 2011 — fn. 29) | ✓ |
+| `realistic` | eq. 67 | ✓ |
+| `consistent_implies_realistic` | fn. 30 | ✓ |
+| `EffectivePreference` | eq. 68 + §5.3 | ✓ |
+| `wantPExact` | eq. 69 (= 71c) | ✓ |
+| `wantPSuccess` | eq. 71a | ✓ |
+| `wantPQH` | eq. 71b | ✓ |
+| `maxElts` | eq. 70 | ✓ |
+| `maxOrderingSource` | eq. 88 + §7.1.1 | ✓ |
+
+### Added — substantive C&L theorems missing from Phase 1d
+
+The audit identified three explicit C&L 2016 claims that I had not
+formalized as theorems (only the *definitions* were in place; the
+*claims about them* were not). Added two of three:
+
+- **`wantPSuccess_downward_entailing`** (p. 31, Zimmermann's note):
+  the success-oriented reading is downward-entailing in φ — if φ ⊆ ψ
+  and `wantPSuccess` holds for the weaker ψ, it holds for the stronger
+  φ. One-line proof.
+- **`wantPQH_upward_entailing`** (p. 31, explicit): the Quine-Hintikka
+  reading is upward-entailing in φ — if φ ⊆ ψ and `wantPQH` holds for
+  the stronger φ, it holds for the weaker ψ. One-line proof.
+- **`wantEP_jointly_belief_consistent`** (p. 30, end of § 5.4): if
+  both `wantEP EP a φ w` and `wantEP EP a ψ w` hold, then `φ ∩ ψ` is
+  not belief-empty. *Stated, not proved* — landed as a documented
+  `sorry` (per CLAUDE.md "prefer sorry over weakening theorem
+  statements"). Proof sketch in docstring; the obstacle is
+  Subtype/maxElts elaboration plumbing that needs a careful coercion
+  through the `Subtype.val ''` form of `maxElts`.
+
+### Added — `PreferenceStructure.mem_maxElts` helper
+
+`Core/Order/PreferenceStructure.lean` gains a `mem_maxElts` Iff lemma
+unwrapping `Subtype.val ''`-style maxElts membership into the more
+direct `∃ hp : φ ∈ P.prefs, ∀ q : P.prefs, ¬ P.prec ⟨φ, hp⟩ q` form.
+Used (or will be used, once the conjunction-incompatibility proof is
+closed) by downstream consumers.
+
+### Bib — `condoravdi-lauer-anankastics` → `condoravdi-lauer-2016`
+
+The paper is published in *Semantics and Pragmatics* 9, article 8
+(2016), DOI [10.3765/sp.9.8](https://doi.org/10.3765/sp.9.8) — *not*
+an unpublished manuscript as I initially keyed it. Bib entry upgraded
+from `@unpublished` (with `note = {Manuscript}`) to `@article` with
+proper journal/volume/number/pages/DOI fields. Cite-key renamed to
+follow the linglib `lastname-lastname-year` convention. All 4 Lean
+files updated via `perl -pi -e`.
+
+## [0.230.144] - 2026-04-21
+
+### Refactored — `DPL/Bridge.lean` dissolved (mathlib bridge-file anti-pattern)
+
+`Linglib/Theories/Semantics/Dynamic/DPL/Bridge.lean` (169 LOC) is deleted.
+Its content splits along architectural lines, mirroring the
+`CDRT/DynamicTy2.lean` dissolution from 0.230.142:
+
+- **DPL→Dynamic Ty2 embedding** (`dref`, `extend`, `extend_at`,
+  `extend_other`, `toDRS`, `ofDRS`, `toDRS_ofDRS`/`ofDRS_toDRS`,
+  `atom_eq_test`, `conj_eq_dseq`, `neg_eq_test_dneg`, `exists_eq`,
+  `impl_eq_test_dimpl`, `disj_eq_test_ddisj`, `close_eq_test_closure`,
+  `trueAt_eq_closure`, plus the `export DPLRel (...)` block) folded into
+  `DPL/Basic.lean` under a new `## DPL-as-Dynamic-Ty2` section.
+- **Cylindric algebra bridges** (`closure_exists_eq_cylindrify`,
+  `closure_identity_eq_diagonal`, `closure_neg_eq`) moved to
+  `Core/CylindricAlgebra/DynamicSemantics.lean` (renamed with a `dpl_`
+  prefix for namespace hygiene), joining the existing CDRT and Charlow
+  cylindric bridges in their proper algebraic home.
+
+`DPL/Basic.lean` gains one import (`Core.DynamicTy2`).
+`Core/CylindricAlgebra/DynamicSemantics.lean` swaps `import DPL.Bridge`
+→ `import DPL.Basic`. `Linglib.lean` and `Core/CylindricAlgebra.lean`
+docstring table updated to drop `DPL/Bridge.lean` references. Same
+mathlib-quality discipline as the CDRT precedent: bridge-file naming
+that says "X has a bridge to Y" is an anti-pattern; embeddings and
+cross-framework algebraic identifications belong with the structures
+they characterize, not under a generic "Bridge" label.
+
+## [0.230.143] - 2026-04-21
+
+### Added — Kratzer 2012 §5.4.4 lumping-CF operator (`Lumps`'s first formal consumer)
+
+`Theories/Semantics/Conditionals/PremiseSemantic.lean` formalizes the
+"would"- and "might"-counterfactual truth conditions from
+@cite{kratzer-2012} §5.4.4, p. 132–133, on top of the lumping API:
+
+- `CrucialSet Fw w p` — set of subsets of `Fw ∪ {p}` that are
+  consistent, contain `p`, and are closed under lumping at `w` (the
+  literal §5.4.4 definition; the closure condition calls
+  `Lumps q r w` from `Core.IntensionalLogic.Lumping`)
+- `wouldCF Fw w p q` — `∀ A ∈ Fw,p, ∃ A' ⊇ A in Fw,p, Follows A' q`
+- `mightCF Fw w p q` — `∃ A ∈ Fw,p, ∀ A' ⊇ A in Fw,p, IsCompatible q A'`
+- Sanity-check API: `antecedent_mem_crucialSet`,
+  `crucialSet_isConsistent`, `wouldCF_of_crucialSet_empty`,
+  `not_mightCF_of_crucialSet_empty`
+
+This closes the orphan-API problem flagged by the linglib-integration
+auditor: `Lumps` now has a downstream consumer that could not exist
+without it (the lumping-closure clause of `CrucialSet` directly
+calls `Lumps`).
+
+Admissibility checks for Base Sets (cognitive viability,
+non-redundancy, completeness) are not formalized — Kratzer herself
+calls cognitive viability "the big unknown" (p. 133). Operator takes
+`Fw` as a parameter; admissibility is a downstream consumer
+responsibility.
+
+### Changed — Promoted `closestWorlds_anti` + reformulated `closestWorlds_inherits`
+
+The structural antitonicity lemma underlying CZC's §1.2 argument moves
+from a `private` definition in
+`Phenomena/Conditionals/Studies/CiardelliZhangChampollion2018.lean`
+to public API in `Core/Order/SimilarityOrdering.lean` as
+`SimilarityOrdering.closestWorlds_anti`, reformulated on `Finset W`
+directly (no `[DecidablePred]` plumbing). CZC2018's
+`minimal_change_forces_notBothUp_off` proof shrinks accordingly.
+
+### Fixed — Hallucinated Kratzer 2012 claim in CZC2018 docstring
+
+`Phenomena/Conditionals/Studies/CiardelliZhangChampollion2018.lean`
+docstring previously claimed @cite{ciardelli-zhang-champollion-2018}
+§6.3 extended their argument to @cite{kratzer-2012}'s lumping-based
+revision. Verified against the PDF (pp. 611–613): CZC §6.3 cites only
+Kratzer 1981 (a/b), not 2012; lumping is not discussed. The docstring
+now correctly attributes the §6.3 argument to standard premise
+semantics (Kratzer 1981) and explicitly leaves open whether the §1.2
+falsification carries over to Kratzer 2012's §5.4.4 lumping CF — a
+question that the new `PremiseSemantic.wouldCF` operator now makes
+formally testable.
+
 ## [0.230.142] - 2026-04-21
 
 ### Removed — `*/DynamicTy2.lean` filename pattern dissolved (mathlib audit)

@@ -122,51 +122,23 @@ def wantEP {B : Agent → W → Set W}
     incompatible if `φ` and `ψ` are believed to be incompatible by agent
     `a` at `w`."
 
-    Stated contrapositively: if `wantEP EP a φ w` and `wantEP EP a ψ w`
-    both hold, then `φ ∩ ψ` is *not* belief-empty — the agent does not
-    believe that φ and ψ cannot jointly hold. The substantive content of
-    the theorem comes from chaining (i) `(EP a w).isConsistent` (the
-    strong subset-quantified version of consistency), (ii) maximality
-    blocking φ ≺ ψ and ψ ≺ φ, and (iii) irreflexivity blocking the
-    diagonal cases. -/
+    Stated contrapositively: if both `wantEP EP a φ w` and
+    `wantEP EP a ψ w` hold, then `φ ∩ ψ` is *not* belief-empty — the
+    agent does not believe that φ and ψ cannot jointly hold.
+
+    Proof: delegates to the abstract
+    `PreferenceStructure.maxElts_pair_belief_compatible` lemma. The
+    abstract version captures the same content at the order-theoretic
+    level: any two maximal elements of a consistent preference structure
+    are jointly belief-compatible. -/
 theorem wantEP_jointly_belief_consistent
     {B : Agent → W → Set W}
     (EP : EffectivePreferentialBackground Agent W B)
     {a : Agent} {φ ψ : Set W} {w : W}
     (hφ : wantEP EP a φ w) (hψ : wantEP EP a ψ w) :
-    (φ ∩ ψ) ∩ B a w ≠ ∅ := by
-  intro hEmpty
-  -- Extract the maximality-of-φ and maximality-of-ψ data
-  obtain ⟨⟨φ', hφ'P⟩, hφmax, (hφ_eq : φ' = φ)⟩ := hφ
-  obtain ⟨⟨ψ', hψ'P⟩, hψmax, (hψ_eq : ψ' = ψ)⟩ := hψ
-  -- Apply consistency to X = {φ, ψ}
-  have hX_sub :
-      ({φ, ψ} : Set (Set W)) ⊆ (EP a w).toPreferenceStructure.prefs := by
-    rintro x (rfl | rfl)
-    · exact hφ_eq ▸ hφ'P
-    · exact hψ_eq ▸ hψ'P
-  have hX_int : B a w ∩ ⋂ p ∈ ({φ, ψ} : Set (Set W)), p = ∅ := by
-    have heq : ⋂ p ∈ ({φ, ψ} : Set (Set W)), p = φ ∩ ψ := by
-      ext x; simp [Set.mem_iInter, Set.mem_insert_iff]; tauto
-    rw [heq, Set.inter_comm]; exact hEmpty
-  obtain ⟨p, hpX, q, hqX, hpP, hqP, hpq⟩ :=
-    (EP a w).isConsistent _ hX_sub hX_int
-  -- p, q ∈ {φ, ψ}; four cases
-  rcases hpX with rfl | rfl <;> rcases hqX with rfl | rfl
-  · exact Std.Irrefl.irrefl (r := (EP a w).toPreferenceStructure.prec)
-      ⟨p, hpP⟩ hpq
-  · -- p = φ, q = ψ: φ-maximality forbids φ ≺ ψ
-    refine hφmax ⟨ψ, hqP⟩ ?_
-    have heq : (⟨φ', hφ'P⟩ : (EP a w).toPreferenceStructure.prefs) =
-               ⟨φ, hpP⟩ := Subtype.ext hφ_eq
-    exact heq ▸ hpq
-  · -- p = ψ, q = φ: ψ-maximality forbids ψ ≺ φ
-    refine hψmax ⟨φ, hqP⟩ ?_
-    have heq : (⟨ψ', hψ'P⟩ : (EP a w).toPreferenceStructure.prefs) =
-               ⟨ψ, hpP⟩ := Subtype.ext hψ_eq
-    exact heq ▸ hpq
-  · exact Std.Irrefl.irrefl (r := (EP a w).toPreferenceStructure.prec)
-      ⟨p, hpP⟩ hpq
+    (φ ∩ ψ) ∩ B a w ≠ ∅ :=
+  (EP a w).toPreferenceStructure.maxElts_pair_belief_compatible
+    (EP a w).isConsistent hφ hψ
 
 /-- The **set-valued ordering source** at addressee `Ad` derived from an
     effective preferential background: at each world, the maximal

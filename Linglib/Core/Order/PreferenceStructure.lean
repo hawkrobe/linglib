@@ -62,6 +62,14 @@ def maxElts : Set (Set W) :=
 theorem maxElts_subset_prefs : P.maxElts ⊆ P.prefs := by
   rintro _ ⟨⟨_, hp⟩, _, rfl⟩; exact hp
 
+/-- Membership in `maxElts` unwrapped: `φ` is maximal iff it's in `prefs`
+    and no preference in `prefs` is strictly above it. -/
+theorem mem_maxElts {φ : Set W} :
+    φ ∈ P.maxElts ↔ ∃ hp : φ ∈ P.prefs, ∀ q : P.prefs, ¬ P.prec ⟨φ, hp⟩ q := by
+  constructor
+  · rintro ⟨⟨_, hp⟩, hmax, rfl⟩; exact ⟨hp, hmax⟩
+  · rintro ⟨hp, hmax⟩; exact ⟨⟨φ, hp⟩, hmax, rfl⟩
+
 /-- **Consistency** w.r.t. an information state `B`
     (@cite{condoravdi-lauer-2016} (66)): for any subfamily of
     preferences whose joint realization is incompatible with `B`, some
@@ -89,6 +97,46 @@ theorem consistent_implies_realistic {B : Set W} (hC : P.consistent B) :
   simp only [Set.mem_singleton_iff] at h
   obtain ⟨_, rfl, _, rfl, _, _, hpq⟩ := h
   exact Std.Irrefl.irrefl (r := P.prec) _ hpq
+
+/-- **Pair belief-consistency of maximal preferences** — abstract version
+    of @cite{condoravdi-lauer-2016} p. 30 (end of § 5.4): given
+    `consistent B`, two maximal preferences cannot have an empty
+    intersection w.r.t. `B`. The four cases of the consistency conclusion
+    `∃ p, q ∈ {φ, ψ}, prec p q` are blocked by `IsStrictOrder`
+    irreflexivity (diagonal pairs) and maximality (off-diagonal pairs). -/
+theorem maxElts_pair_belief_compatible {B : Set W} (hC : P.consistent B)
+    {φ ψ : Set W} (hφ : φ ∈ P.maxElts) (hψ : ψ ∈ P.maxElts) :
+    (φ ∩ ψ) ∩ B ≠ ∅ := by
+  intro hEmpty
+  obtain ⟨hφP, hφmax⟩ := P.mem_maxElts.mp hφ
+  obtain ⟨hψP, hψmax⟩ := P.mem_maxElts.mp hψ
+  have hX_sub : ({φ, ψ} : Set (Set W)) ⊆ P.prefs :=
+    Set.insert_subset hφP (Set.singleton_subset_iff.mpr hψP)
+  have hX_int : B ∩ ⋂ p ∈ ({φ, ψ} : Set (Set W)), p = ∅ := by
+    rw [Set.biInter_pair, Set.inter_comm]; exact hEmpty
+  obtain ⟨p, hpX, q, hqX, hpP, hqP, hpq⟩ := hC _ hX_sub hX_int
+  have hpDisj : p = φ ∨ p = ψ := by
+    rw [Set.mem_insert_iff, Set.mem_singleton_iff] at hpX; exact hpX
+  have hqDisj : q = φ ∨ q = ψ := by
+    rw [Set.mem_insert_iff, Set.mem_singleton_iff] at hqX; exact hqX
+  -- Use term-mode `▸` rewrites since `rw` can't handle the dependent
+  -- types in `Subtype.mk p hpP` (the proof's type changes when p is
+  -- rewritten). The four cases collapse via Subtype proof irrelevance.
+  rcases hpDisj with hp | hp <;> rcases hqDisj with hq | hq
+  · -- p = φ, q = φ: irreflexivity (after equating the two Subtypes)
+    have hpq_eq : (⟨q, hqP⟩ : P.prefs) = ⟨p, hpP⟩ := Subtype.ext (hq.trans hp.symm)
+    exact Std.Irrefl.irrefl (⟨p, hpP⟩ : P.prefs) (hpq_eq ▸ hpq)
+  · -- p = φ, q = ψ: φ-maximality forbids φ ≺ ψ
+    have hp_eq : (⟨p, hpP⟩ : P.prefs) = ⟨φ, hp ▸ hpP⟩ := Subtype.ext hp
+    have hq_eq : (⟨q, hqP⟩ : P.prefs) = ⟨ψ, hq ▸ hqP⟩ := Subtype.ext hq
+    exact hφmax ⟨ψ, hq ▸ hqP⟩ (hp_eq ▸ hq_eq ▸ hpq)
+  · -- p = ψ, q = φ: ψ-maximality forbids ψ ≺ φ
+    have hp_eq : (⟨p, hpP⟩ : P.prefs) = ⟨ψ, hp ▸ hpP⟩ := Subtype.ext hp
+    have hq_eq : (⟨q, hqP⟩ : P.prefs) = ⟨φ, hq ▸ hqP⟩ := Subtype.ext hq
+    exact hψmax ⟨φ, hq ▸ hqP⟩ (hp_eq ▸ hq_eq ▸ hpq)
+  · -- p = ψ, q = ψ
+    have hpq_eq : (⟨q, hqP⟩ : P.prefs) = ⟨p, hpP⟩ := Subtype.ext (hq.trans hp.symm)
+    exact Std.Irrefl.irrefl (⟨p, hpP⟩ : P.prefs) (hpq_eq ▸ hpq)
 
 end PreferenceStructure
 
