@@ -120,15 +120,19 @@ def jointCellDistribution {n : Nat} (ps : ParadigmSystem n)
 def eComplexity {n : Nat} (ps : ParadigmSystem n) : Nat :=
   ps.entries.length
 
-/-- H(Cᵢ): Shannon entropy of a single paradigm cell.
+/-- Cast a ℚ-valued distribution to ℝ for entropy computation. -/
+private def toReal {α : Type} (dist : List (α × ℚ)) : List (α × ℝ) :=
+  dist.map fun (a, q) => (a, ((q : ℚ) : ℝ))
+
+/-- H(Cᵢ): Shannon entropy of a single paradigm cell (in nats).
 
     Measures how unpredictable the realization of cell `c` is when you
     know nothing about the lexeme. High entropy = many equiprobable
     realizations; low entropy = one dominant form. -/
-def cellEntropy {n : Nat} (ps : ParadigmSystem n) (c : Fin n) : ℚ :=
-  entropy (cellDistribution ps c)
+noncomputable def cellEntropy {n : Nat} (ps : ParadigmSystem n) (c : Fin n) : ℝ :=
+  entropy (toReal (cellDistribution ps c))
 
-/-- H(Cᵢ | Cⱼ): conditional entropy of cell `ci` given cell `cj`.
+/-- H(Cᵢ | Cⱼ): conditional entropy of cell `ci` given cell `cj` (in nats).
 
     Measures how uncertain you are about cell `ci`'s realization *after*
     learning cell `cj`'s realization. This is the core quantity in the LCEC:
@@ -136,24 +140,25 @@ def cellEntropy {n : Nat} (ps : ParadigmSystem n) (c : Fin n) : ℚ :=
 
     When H(Cᵢ | Cⱼ) = 0, cell j *fully determines* cell i — an
     implicative relation. -/
-def conditionalCellEntropy {n : Nat} (ps : ParadigmSystem n)
-    (ci cj : Fin n) : ℚ :=
-  conditionalEntropy (jointCellDistribution ps ci cj) (cellDistribution ps cj)
+noncomputable def conditionalCellEntropy {n : Nat} (ps : ParadigmSystem n)
+    (ci cj : Fin n) : ℝ :=
+  conditionalEntropy (toReal (jointCellDistribution ps ci cj))
+    (toReal (cellDistribution ps cj))
 
-/-- I-complexity: average conditional entropy across all directed cell pairs.
+/-- I-complexity: average conditional entropy across all directed cell pairs (in nats).
 
     I-complexity = (1 / n(n-1)) · Σᵢ≠ⱼ H(Cᵢ | Cⱼ)
 
     This is @cite{ackerman-malouf-2013} central measure. It quantifies
     how hard it is, on average, to predict one paradigm cell from another.
     The LCEC asserts this is uniformly low across languages. -/
-def iComplexity {n : Nat} (ps : ParadigmSystem n) : ℚ :=
+noncomputable def iComplexity {n : Nat} (ps : ParadigmSystem n) : ℝ :=
   let cells := List.finRange n
   let pairs := cells.flatMap λ ci => (cells.filter (· != ci)).map λ cj => (ci, cj)
   let total := pairs.map λ (ci, cj) => conditionalCellEntropy ps ci cj
   let sum := total.sum
   let numPairs := n * (n - 1)
-  if numPairs == 0 then 0 else sum / numPairs
+  if numPairs == 0 then 0 else sum / (numPairs : ℝ)
 
 -- ============================================================================
 -- §4. The Low Conditional Entropy Conjecture
@@ -162,8 +167,9 @@ def iComplexity {n : Nat} (ps : ParadigmSystem n) : ℚ :=
 /-- The LCEC holds for a paradigm system if its I-complexity is below
     a threshold (Ackerman & Malouf use ~1.5 bits as the empirical bound
     across their 10-language sample; the highest observed value is
-    Chiquihuitlán Mazatec at 0.709 bits). -/
-def LCECHolds {n : Nat} (ps : ParadigmSystem n) (threshold : ℚ) : Prop :=
+    Chiquihuitlán Mazatec at 0.709 bits). Threshold is in nats — multiply
+    a bit-valued bound by `Real.log 2` to convert. -/
+def LCECHolds {n : Nat} (ps : ParadigmSystem n) (threshold : ℝ) : Prop :=
   iComplexity ps ≤ threshold
 
 -- ============================================================================
@@ -189,7 +195,7 @@ def isTransparent {n : Nat} (ps : ParadigmSystem n) : Prop :=
   ∀ (ci cj : Fin n), ci ≠ cj → isImplicative ps ci cj
 
 /-- Transparent paradigm systems have I-complexity = 0. -/
-private lemma sum_eq_zero_of_forall_zero {l : List ℚ}
+private lemma sum_eq_zero_of_forall_zero {l : List ℝ}
     (h : ∀ x ∈ l, x = 0) : l.sum = 0 := by
   induction l with
   | nil => rfl

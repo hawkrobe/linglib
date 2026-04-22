@@ -48,26 +48,38 @@ counterfactuals; the discriminating contrast (Tables 7–8, p. 607):
 
 ## Connection to linglib's Kratzer infrastructure
 
-@cite{ciardelli-zhang-champollion-2018} §6.3 explicitly extends the
-argument to Kratzer-style premise semantics: "regardless of the
-particular ordering source that we consider, standard premise semantics
-still predicts that ... `¬(A ∧ B) > OFF` is true as well, contrary to
-our experimental findings." This applies to @cite{kratzer-2012}'s
-lumping-based revision (foundation in
-`Theories/Semantics/Conditionals/Kratzer/Lumping.lean`) because lumping
-augments premise sets without relaxing the maximization-of-consistency
-requirement that drives the wrong prediction.
+@cite{ciardelli-zhang-champollion-2018} §6.3 extends the argument to
+*standard premise semantics* as formulated in @cite{kratzer-1981} (CZC
+cite both Kratzer 1981a and 1981b — only the 1981 "Notional Category"
+paper is in the linglib bib): "regardless of the particular ordering
+source that
+we consider, standard premise semantics still predicts that ... `¬(A ∧ B)
+> OFF` is true as well, contrary to our experimental findings." Per
+Lewis 1981, standard premise semantics is equivalent to ordering
+semantics with a weak partial order, which puts it in scope of the §1.2
+argument formalized above.
 
-The CZC alternative — a foreground/background distinction combined
-with inquisitive lifting (§4) — is left as future formalization. It
-would replace minimal change with a binary distinction between facts
-that are at stake (foregrounded) and facts that are held fixed
-(backgrounded).
+**Whether the argument extends to @cite{kratzer-2012}'s lumping-based
+revision (§5.4.4) is open and not addressed by CZC.** The lumping CF
+truth condition (§5.4.4) is a quantifier alternation — "for every set
+in F_{w,p} there is a superset that implies q" — *not* the
+maximization-of-consistency pattern that the §1.2 argument falsifies.
+Lumping constrains *which* propositions can accompany an antecedent
+into a Crucial Set (the lumping-closure condition); it doesn't relax
+the for-all-supersets quantifier. Whether this rescues the analysis on
+the switches scenario requires building a properly situation-semantic
+switches model and instantiating
+`Semantics.Conditionals.PremiseSemantic.wouldCF`; we leave this as
+future work.
+
+The CZC positive proposal — a foreground/background distinction
+combined with inquisitive lifting (§4) — and §6.4's SNCA derivation
+(Proposition 2 + Lemma 1) are also left as future formalization.
 -/
 
 namespace Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018
 
-open Semantics.Conditionals (SimilarityOrdering)
+open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
 /-! ## The switches scenario -/

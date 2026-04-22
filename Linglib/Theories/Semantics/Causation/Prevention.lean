@@ -34,11 +34,15 @@ open Semantics.Causation.Necessity
     Requires inhibitory dynamics (`CausalDynamics.prevention`);
     vacuous for positive dynamics (`preventSem_impossible_positive`). -/
 def preventSem (dyn : CausalDynamics) (bg : Situation)
-    (preventer effect : Variable) : Bool :=
+    (preventer effect : Variable) : Prop :=
   let devWith := normalDevelopment dyn (bg.extend preventer true)
   let devWithout := normalDevelopment dyn (bg.extend preventer false)
   -- Effect blocked with preventer, would occur without
-  !devWith.hasValue effect true && devWithout.hasValue effect true
+  devWith.hasValue effect true = false ∧ devWithout.hasValue effect true = true
+
+instance (dyn : CausalDynamics) (bg : Situation) (preventer effect : Variable) :
+    Decidable (preventSem dyn bg preventer effect) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `prevent` and `cause` are mutually exclusive: they cannot both
     hold for the same variable in the same background.
@@ -48,10 +52,11 @@ def preventSem (dyn : CausalDynamics) (bg : Situation)
     These are contradictory first conjuncts. -/
 theorem prevent_cause_exclusive
     (dyn : CausalDynamics) (bg : Situation) (x e : Variable) :
-    ¬(preventSem dyn bg x e = true ∧ causeSem dyn bg x e = true) := by
+    ¬(preventSem dyn bg x e ∧ causeSem dyn bg x e) := by
   intro ⟨hp, hc⟩
-  simp only [preventSem, causeSem, Bool.and_eq_true, Bool.not_eq_true'] at hp hc
-  exact absurd hc.1 (by rw [hp.1]; decide)
+  -- preventSem says effect = false with cause; causeSem says effect = true with cause
+  rw [hp.1] at hc
+  exact absurd hc.1 (by decide)
 
 /-- **Prevention is impossible in positive-only dynamics.**
 
@@ -70,8 +75,8 @@ theorem prevent_cause_exclusive
 theorem preventSem_impossible_positive
     (dyn : CausalDynamics) (bg : Situation)
     (x e : Variable) (hPos : isPositiveDynamics dyn = true) :
-    preventSem dyn bg x e = false := by
-  simp only [preventSem]
+    ¬ (preventSem dyn bg x e) := by
+  intro ⟨hWithFalse, hWithoutTrue⟩
   -- Key: trueLE (bg.extend x false) (bg.extend x true)
   have hLE : Situation.trueLE (bg.extend x false) (bg.extend x true) := by
     intro v hv
@@ -80,16 +85,10 @@ theorem preventSem_impossible_positive
     · rwa [Situation.extend_hasValue_diff hv_eq] at hv ⊢
   -- Monotonicity: devWithout ⊑ devWith
   have hMono := normalDevelopment_trueLE_positive dyn _ _ 100 hPos hLE
-  -- If devWithout has e=true, then devWith has e=true too (by monotonicity).
-  -- This makes the two conjuncts of preventSem contradictory.
-  by_cases h : (normalDevelopment dyn (bg.extend x false)).hasValue e true = true
-  · -- devWithout has e=true → by monotonicity, devWith has e=true → ¬devWith is false
-    have hWith := hMono e h
-    simp only [hWith, Bool.not_true, Bool.false_and]
-  · -- devWithout doesn't have e=true → second conjunct false
-    have h' : (normalDevelopment dyn (bg.extend x false)).hasValue e true = false :=
-      Bool.eq_false_iff.mpr h
-    simp only [h', Bool.and_false]
+  -- devWithout has e=true → by monotonicity, devWith has e=true → contradicts hWithFalse
+  have hWith := hMono e hWithoutTrue
+  rw [hWithFalse] at hWith
+  exact absurd hWith (by decide)
 
 /-- Witness: `preventSem` CAN return true with inhibitory dynamics.
 
@@ -104,7 +103,7 @@ theorem preventSem_impossible_positive
 theorem preventSem_possible_inhibitory :
     ∃ (dyn : CausalDynamics) (bg : Situation) (x e : Variable),
       isPositiveDynamics dyn = false ∧
-      preventSem dyn bg x e = true := by
+      preventSem dyn bg x e := by
   refine ⟨CausalDynamics.prevention (mkVar "x") (mkVar "e"),
           Situation.empty, mkVar "x", mkVar "e", ?_, ?_⟩ <;> decide
 
@@ -112,10 +111,10 @@ theorem preventSem_possible_inhibitory :
 
     @cite{sloman-barbey-hotaling-2009} eq. 4a: B := ¬A.
     `CausalDynamics.prevention x e` wraps `CausalLaw.inhibitory x e`:
-    if x is absent, e fires. So x's presence blocks e (preventSem = true). -/
+    if x is absent, e fires. So x's presence blocks e (preventSem). -/
 theorem preventSem_prevention_model :
     let x := mkVar "x"; let e := mkVar "e"
-    preventSem (CausalDynamics.prevention x e) Situation.empty x e = true := by
+    preventSem (CausalDynamics.prevention x e) Situation.empty x e := by
   decide
 
 /-- The prevention model is not positive (it has an inhibitory law).
@@ -134,7 +133,7 @@ theorem prevention_not_positive :
 theorem preventSem_with_accessory :
     let x := mkVar "x"; let acc := mkVar "acc"; let e := mkVar "e"
     preventSem (CausalDynamics.preventionWithAccessory x acc e)
-      (Situation.empty.extend acc true) x e = true := by
+      (Situation.empty.extend acc true) x e := by
   decide
 
 end Semantics.Causation.Prevention

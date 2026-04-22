@@ -28,6 +28,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Finset.Filter
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Order.Normality
+import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Mood.Basic
 import Linglib.Core.SelectionFunction
 
@@ -36,6 +37,7 @@ namespace Semantics.Conditionals
 open Core.CommonGround (ContextSet)
 open Core.Mood (GramMood)
 open _root_.Core (SelectionFunction selectionPrefers)
+open Core.Order (SimilarityOrdering candidateSelections comparativeCloseness)
 
 -- Material Conditional
 
@@ -72,51 +74,11 @@ def strictImp {W : Type*} (access : W → Set W) (p q : Set W) : Set W :=
 
 -- Variably Strict Conditional (@cite{stalnaker-1968}–@cite{lewis-1973})
 
-/--
-A similarity ordering on worlds.
-
-For variably strict conditionals, we need a notion of "closest" p-worlds.
-This is typically modeled as a preorder on worlds centered at each world.
-
-`closer w w₁ w₂` means w₁ is at least as similar to w as w₂ is.
--/
-structure SimilarityOrdering (W : Type*) where
-  /-- `closer w₀ w₁ w₂` means w₁ is at least as close to w₀ as w₂ is -/
-  closer : W → W → W → Prop
-  /-- Reflexivity: every world is as close to any center as itself -/
-  closer_refl (w₀ w : W) : closer w₀ w w
-  /-- Transitivity -/
-  closer_trans (w₀ w₁ w₂ w₃ : W) :
-    closer w₀ w₁ w₂ → closer w₀ w₂ w₃ → closer w₀ w₁ w₃
-  /-- Decidability of the similarity relation -/
-  closerDec (w₀ w₁ w₂ : W) : Decidable (closer w₀ w₁ w₂)
-
-instance {W : Type*} (sim : SimilarityOrdering W) (w₀ w₁ w₂ : W) :
-    Decidable (sim.closer w₀ w₁ w₂) :=
-  sim.closerDec w₀ w₁ w₂
-
-/-- Construct a `SimilarityOrdering` from a `Bool`-valued function.
-    Proofs can typically be discharged by `decide` on finite types. -/
-def SimilarityOrdering.ofBool {W : Type*}
-    (f : W → W → W → Bool)
-    (hrefl : ∀ w₀ w, f w₀ w w = true)
-    (htrans : ∀ w₀ w₁ w₂ w₃, f w₀ w₁ w₂ = true → f w₀ w₂ w₃ = true →
-      f w₀ w₁ w₃ = true) :
-    SimilarityOrdering W where
-  closer w₀ w₁ w₂ := f w₀ w₁ w₂ = true
-  closer_refl := hrefl
-  closer_trans w₀ w₁ w₂ w₃ := htrans w₀ w₁ w₂ w₃
-  closerDec _ _ _ := inferInstance
-
-/-- The `NormalityOrder` centered at world `w₀`: `le w₁ w₂` iff `w₁` is
-    at least as close to `w₀` as `w₂` is. Connects Lewis/Stalnaker
-    conditionals to the default reasoning infrastructure (`optimal`,
-    `refine`, `respects`, CR1–CR4). -/
-def SimilarityOrdering.atCenter {W : Type*} (sim : SimilarityOrdering W)
-    (w₀ : W) : Core.Order.NormalityOrder W where
-  le := sim.closer w₀
-  le_refl w := sim.closer_refl w₀ w
-  le_trans w₁ w₂ w₃ := sim.closer_trans w₀ w₁ w₂ w₃
+/-! `SimilarityOrdering` and its constructors (`ofBool`, `atCenter`) live
+    in `Core.Order.SimilarityOrdering` since they are general-purpose
+    primitives used by counterfactuals, alternative-sensitive operators,
+    and causal psycholinguistic models. They are re-exported above via
+    `open Core.Order`. -/
 
 /--
 Variably strict conditional (@cite{stalnaker-1968}/@cite{lewis-1973}):
@@ -229,13 +191,8 @@ theorem strict_implies_material {W : Type*} (R : W → Set W) (p q : Set W) (w :
   intro h_refl h_strict h_p
   exact h_strict w h_refl h_p
 
-/--
-A centered similarity ordering: the actual world is always strictly closest to itself.
-
-This is the "strong centering" axiom: w is strictly closer to itself than any other world.
--/
-def SimilarityOrdering.isCentered {W : Type*} (sim : SimilarityOrdering W) : Prop :=
-  ∀ w w' : W, w ≠ w' → sim.closer w w w' ∧ ¬sim.closer w w' w
+/-! `SimilarityOrdering.isCentered` lives in `Core.Order.SimilarityOrdering`
+    (re-exported above). -/
 
 /--
 **Variably strict conditional implies material conditional** (with centered similarity).
@@ -362,59 +319,12 @@ opened above. Field name is `sel`; axioms are `inclusion` (Stalnaker's
 underlies @cite{cariani-santorio-2018}'s selectional *will*; unifying
 the two avoids a duplicate type. -/
 
-/--
-**Candidate selection functions** induced by a comparative similarity ordering.
+/-! `candidateSelections`, `comparativeCloseness`, and the notation
+    `w₁ ≤[sim, w₀] w₂` live in `Core.Order.SimilarityOrdering`.
 
-Given an ordering, a selection function is "legitimate" iff it always
-selects a world that is closest (minimal w.r.t. the ordering).
-
-This is the connection between @cite{lewis-1973}/Kratzer orderings and @cite{stalnaker-1968} selection.
--/
-def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
-    (domain : Set W) (w : W) (A : Set W) : Set W :=
-  let pWorlds := A ∩ domain
-  { w' ∈ pWorlds | ∀ w'' ∈ pWorlds, sim.closer w w' w'' }
-
-/--
-**Comparative closeness** relation derived from a similarity ordering.
-
-`w₁ ≤_w₀ w₂` means w₁ is at least as similar to w₀ as w₂ is.
-This is the @cite{lewis-1973} notation.
--/
-def comparativeCloseness {W : Type*} (sim : SimilarityOrdering W)
-    (w₀ w₁ w₂ : W) : Prop :=
-  sim.closer w₀ w₁ w₂
-
-notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ => comparativeCloseness sim w₀ w₁ w₂
-
--- Closest Worlds
-
-/--
-The closest A-worlds to w₀: minimal elements of `A` under the similarity
-preorder centered at `w₀`.
-
-In @cite{lewis-1973}'s notation: min_{≤_w}(A) = {w' ∈ A : ¬∃w'' ∈ A. w'' <_w w'}.
--/
-def SimilarityOrdering.closestWorlds {W : Type*} [DecidableEq W]
-    (sim : SimilarityOrdering W) (w₀ : W) (A : Finset W) : Finset W :=
-  A.filter fun w' => ∀ w'' ∈ A, sim.closer w₀ w' w'' ∨ ¬sim.closer w₀ w'' w'
-
-@[simp]
-theorem SimilarityOrdering.closestWorlds_empty {W : Type*} [DecidableEq W]
-    (sim : SimilarityOrdering W) (w₀ : W) :
-    sim.closestWorlds w₀ ∅ = ∅ := by
-  simp [closestWorlds]
-
-theorem SimilarityOrdering.closestWorlds_subset {W : Type*} [DecidableEq W]
-    (sim : SimilarityOrdering W) (w₀ : W) (A : Finset W) :
-    sim.closestWorlds w₀ A ⊆ A :=
-  Finset.filter_subset _ A
-
-theorem SimilarityOrdering.mem_closestWorlds {W : Type*} [DecidableEq W]
-    (sim : SimilarityOrdering W) (w₀ : W) (A : Finset W) (w' : W) :
-    w' ∈ sim.closestWorlds w₀ A ↔
-    w' ∈ A ∧ ∀ w'' ∈ A, sim.closer w₀ w' w'' ∨ ¬sim.closer w₀ w'' w' := by
-  simp [closestWorlds, Finset.mem_filter]
+    `SimilarityOrdering.closestWorlds` and its three companion lemmas
+    (`closestWorlds_empty`, `closestWorlds_subset`, `mem_closestWorlds`)
+    likewise live there. -/
 
 -- Selection ↔ Similarity Bridge
 

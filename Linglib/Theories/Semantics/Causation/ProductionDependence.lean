@@ -128,8 +128,8 @@ x would prevent y. -/
 theorem single_pathway_sufficiency_implies_necessity
     (c e : Variable) (_hne : c ≠ e) :
     let dyn := CausalDynamics.mk [CausalLaw.simple c e]
-    causallySufficient dyn Situation.empty c e = true →
-    causallyNecessary dyn Situation.empty c e = true := by
+    causallySufficient dyn Situation.empty c e →
+    causallyNecessary dyn Situation.empty c e := by
   intro _ _
   exact simple_law_necessity c e
 
@@ -142,8 +142,8 @@ theorem single_pathway_concrete :
     let a := mkVar "a"
     let b := mkVar "b"
     let dyn := CausalDynamics.mk [CausalLaw.simple a b]
-    causallySufficient dyn Situation.empty a b = true ∧
-    causallyNecessary dyn Situation.empty a b = true := by
+    causallySufficient dyn Situation.empty a b ∧
+    causallyNecessary dyn Situation.empty a b := by
   constructor <;> native_decide
 
 /-- Under overdetermination, sufficiency does NOT imply necessity.
@@ -155,8 +155,8 @@ theorem single_pathway_concrete :
     Reuses the existing witness from `truth_conditionally_distinct`. -/
 theorem overdetermination_breaks_entailment :
     ∃ (dyn : CausalDynamics) (s : Situation) (c e : Variable),
-      causallySufficient dyn s c e = true ∧
-      causallyNecessary dyn s c e = false := by
+      causallySufficient dyn s c e ∧
+      ¬ (causallyNecessary dyn s c e) := by
   let a := mkVar "a"
   let b := mkVar "b"
   let c := mkVar "c"
@@ -270,36 +270,37 @@ theorem production_is_direct :
 theorem dependence_not_necessarily_direct :
     productionEntailsDirectness .dependence = false := rfl
 
-/-! ## Bridge to CausalProfile
+/-! ## Bridge to structural queries
 
-The structural causal model's `CausalProfile` directly determines the
-dominant causation type via its directness and necessity fields. This
-connects model-level structural properties to the production/dependence
-distinction without going through any study-specific representation. -/
+The structural causal model's directness and necessity directly determine
+the dominant causation type. This connects model-level structural
+properties to the production/dependence distinction without going through
+any study-specific representation. -/
 
-/-- Map a structural causal profile to the dominant causation type.
+/-- Map directness/necessity to the dominant causation type.
 
 - `direct = true` → P-CAUSE (production): a direct causal law implies
   energy/force transfer.
 - `necessary = true` (without directness) → D-CAUSE (dependence):
   counterfactual dependence without direct interaction.
 - Neither → no causal involvement. -/
-def profileCausationType (p : CausalProfile) : Option CausationType :=
-  if p.direct then some .production
-  else if p.necessary then some .dependence
+def causationType (necessary direct : Bool) : Option CausationType :=
+  if direct then some .production
+  else if necessary then some .dependence
   else none
 
 /-- Production type iff direct causal connection. -/
-theorem profileCausationType_production_iff (p : CausalProfile) :
-    profileCausationType p = some .production ↔ p.direct = true := by
-  simp only [profileCausationType]
-  cases p.direct <;> simp
+theorem causationType_production_iff (necessary direct : Bool) :
+    causationType necessary direct = some .production ↔ direct = true := by
+  simp only [causationType]
+  cases direct <;> simp
 
 /-- Dependence type iff necessary but not direct. -/
-theorem profileCausationType_dependence_iff (p : CausalProfile) :
-    profileCausationType p = some .dependence ↔ p.direct = false ∧ p.necessary = true := by
-  simp only [profileCausationType]
-  cases p.direct <;> cases p.necessary <;> simp
+theorem causationType_dependence_iff (necessary direct : Bool) :
+    causationType necessary direct = some .dependence ↔
+      direct = false ∧ necessary = true := by
+  simp only [causationType]
+  cases direct <;> cases necessary <;> simp
 
 /-! ## Bridge to CC-Selection
 

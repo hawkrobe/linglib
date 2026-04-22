@@ -18,7 +18,7 @@ from different quantifiers compose independently.
 
 namespace Semantics.Dynamic.DynamicGQ.PostSuppositional
 
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 
 variable {S : Type*}
 

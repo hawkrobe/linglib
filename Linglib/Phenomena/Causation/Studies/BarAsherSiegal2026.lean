@@ -95,7 +95,7 @@ def unlocked : Situation := Situation.empty.extend lock false
 
 /-- Handle is sufficient for door opening when lock is disengaged. -/
 theorem handle_sufficient :
-    causallySufficient doorDynamics unlocked handle doorOpens = true := by
+    causallySufficient doorDynamics unlocked handle doorOpens := by
   native_decide
 
 /-- Button is sufficient for door opening when electricity is on
@@ -108,7 +108,7 @@ theorem button_sufficient :
 
 /-- Handle alone is NOT sufficient — lock must be disengaged. -/
 theorem handle_not_sufficient_locked :
-    causallySufficient doorDynamics Situation.empty handle doorOpens = false := by
+    ¬ (causallySufficient doorDynamics Situation.empty handle doorOpens) := by
   native_decide
 
 /-! ## § 2. CC-Selection: Full Model (Both Pathways)
@@ -172,7 +172,7 @@ theorem handle_both_modes_single :
 
 /-- Single-pathway: handle is necessary (no alternative pathway exists). -/
 theorem handle_necessary_single :
-    causallyNecessary manualOnlyDynamics unlocked handle doorOpens = true := by
+    causallyNecessary manualOnlyDynamics unlocked handle doorOpens := by
   native_decide
 
 /-! ## § 4. Causal Profiles -/
@@ -180,15 +180,17 @@ theorem handle_necessary_single :
 /-- Full model: handle is sufficient and direct, but NOT necessary
     (alternative automatic pathway exists in the model). -/
 theorem handle_profile_full :
-    extractProfile doorDynamics unlocked handle doorOpens =
-      { sufficient := true, necessary := false, direct := true } := by
-  native_decide
+    causallySufficient doorDynamics unlocked handle doorOpens ∧
+    ¬ causallyNecessary doorDynamics unlocked handle doorOpens ∧
+    hasDirectLaw doorDynamics handle doorOpens := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-- Single-pathway model: handle is sufficient, necessary, AND direct. -/
 theorem handle_profile_single :
-    extractProfile manualOnlyDynamics unlocked handle doorOpens =
-      { sufficient := true, necessary := true, direct := true } := by
-  native_decide
+    causallySufficient manualOnlyDynamics unlocked handle doorOpens ∧
+    causallyNecessary manualOnlyDynamics unlocked handle doorOpens ∧
+    hasDirectLaw manualOnlyDynamics handle doorOpens := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-! ## § 5. The Divergence: *open* vs *cause*
 

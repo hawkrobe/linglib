@@ -21,7 +21,6 @@ library. CC-selection unifies them:
 | `CCSelectionMode` | (this file) | **Primary**: how the construction selects |
 | `Causative` | Builder.lean | Derived via `.selectionMode` |
 | `CausationType` | ProductionDependence.lean | Derived via `.selectionMode` |
-| `CausalProfile` | Core/Causal/SEM.lean | Computed by evaluating selection against a model |
 
 ## Two core conditions (@cite{baglini-bar-asher-siegal-2025})
 
@@ -94,7 +93,7 @@ inductive CCSelectionMode where
     completion events where intermediate variables are passive. -/
 def completesForEffect (dyn : CausalDynamics) (background : Situation)
     (cause effect : Variable) : Bool :=
-  causallySufficient dyn background cause effect &&
+  (normalDevelopment dyn (background.extend cause true)).hasValue effect true &&
   !(normalDevelopment dyn (background.extend cause false)).hasValue effect true
 
 -- ════════════════════════════════════════════════════
@@ -171,11 +170,12 @@ theorem member_entails_completion (dyn : CausalDynamics) (bg : Situation)
     have hNoE : (normalDevelopment dyn bg).hasValue e true = false := by
       rcases Bool.eq_false_or_eq_true ((normalDevelopment dyn bg).hasValue e true)
         with h | h
-      · -- h : ... = true → precondition fails → causallyNecessary = false
-        have : causallyNecessary dyn bg c e = false := by
+      · -- h : ... = true → precondition fails → ¬ (causallyNecessary)
+        have hNotNec : ¬ (causallyNecessary dyn bg c e) := by
           unfold causallyNecessary
           simp only [h, Bool.or_true, ↓reduceIte]
-        rw [this] at hNec; simp at hNec
+          decide
+        exact absurd (of_decide_eq_true hNec) hNotNec
       · exact h
     -- Step 2: trueLE (bg.extend c false) bg (c=false adds no true content)
     have hLE : Situation.trueLE (bg.extend c false) bg := by
@@ -253,19 +253,19 @@ theorem completion_entails_member_single_pathway
   simp only [causeSem, Bool.and_eq_true]
   constructor
   · exact h.1
-  · exact simple_law_necessity c e
+  · exact decide_eq_true (simple_law_necessity c e)
 
 /-- Member mode asserts Def 10b necessity. -/
 theorem member_asserts_necessity (dyn : CausalDynamics) (bg : Situation)
     (c e : Variable) (h : ccConstraintSatisfied .memberOfSufficientSet dyn bg c e = true) :
-    causallyNecessary dyn bg c e = true := by
+    causallyNecessary dyn bg c e := by
   simp only [ccConstraintSatisfied, causeSem, Bool.and_eq_true] at h
-  exact h.2
+  exact of_decide_eq_true h.2
 
 /-- Completion mode asserts sufficiency. -/
 theorem completion_asserts_sufficiency (dyn : CausalDynamics) (bg : Situation)
     (c e : Variable) (h : ccConstraintSatisfied .completionOfSufficientSet dyn bg c e = true) :
-    causallySufficient dyn bg c e = true := by
+    causallySufficient dyn bg c e := by
   simp only [ccConstraintSatisfied, completesForEffect, Bool.and_eq_true] at h
   exact h.1
 
@@ -408,10 +408,6 @@ structure CausalDependency where
 def CausalDependency.satisfies (dep : CausalDependency)
     (mode : CCSelectionMode) : Bool :=
   ccConstraintSatisfied mode dep.dynamics dep.background dep.cause dep.effect
-
-/-- Extract the causal profile of a dependency. -/
-def CausalDependency.profile (dep : CausalDependency) : CausalProfile :=
-  extractProfile dep.dynamics dep.background dep.cause dep.effect
 
 /-- Check actualization for a dependency. -/
 def CausalDependency.actualized (dep : CausalDependency) : Bool :=

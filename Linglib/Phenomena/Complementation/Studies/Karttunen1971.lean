@@ -334,7 +334,7 @@ theorem force_no_necessity :
     For sufficient-positive classes, the chain is:
     `KarttunenClass.manage.polarity` = `.positive`
     → `Implicative.positive.toSemantics` = `manageSem`
-    → `manage_entails_complement`: manageSem sc = true → complement true
+    → `manage_entails_complement`: manageSem sc → complement true
 
     These theorems derive the entailment from the classification,
     not just re-export the theory-layer theorem. -/

@@ -261,8 +261,12 @@ mere graph reachability — it actually runs the structural equations.
 This is the central constraint from Roberts & Özyıldız (2025).
 -/
 def satisfiesPLC (presup atIssue : Variable)
-    (dyn : CausalDynamics := beliefFormationDynamics) : Bool :=
+    (dyn : CausalDynamics := beliefFormationDynamics) : Prop :=
   causallySufficient dyn Situation.empty presup atIssue
+
+instance (presup atIssue : Variable) (dyn : CausalDynamics) :
+    Decidable (satisfiesPLC presup atIssue dyn) :=
+  inferInstanceAs (Decidable (causallySufficient ..))
 
 -- ============================================================================
 -- Deriving the Contrafactive Gap
@@ -277,7 +281,7 @@ For "x knows p":
 - Causal chain: p → indic(p) → acq(a)(iₚ) → B(a)(p) ✓
 -/
 theorem factive_satisfies_plc :
-    satisfiesPLC BeliefVars.p BeliefVars.B_a_p = true := by
+    satisfiesPLC BeliefVars.p BeliefVars.B_a_p := by
   decide
 
 /--
@@ -293,7 +297,7 @@ The fact that the Earth is round does not generate evidence
 that the Earth is flat.
 -/
 theorem strong_contrafactive_violates_plc :
-    satisfiesPLC BeliefVars.not_p BeliefVars.B_a_p = false := by
+    ¬ satisfiesPLC BeliefVars.not_p BeliefVars.B_a_p := by
   decide
 
 /--
@@ -308,8 +312,8 @@ the Predicate Lexicalization Constraint:
 This DERIVES the gap from the independently motivated causal constraint.
 -/
 theorem contrafactive_gap :
-    satisfiesPLC BeliefVars.p BeliefVars.B_a_p = true ∧
-    satisfiesPLC BeliefVars.not_p BeliefVars.B_a_p = false := by
+    satisfiesPLC BeliefVars.p BeliefVars.B_a_p ∧
+    ¬ satisfiesPLC BeliefVars.not_p BeliefVars.B_a_p := by
   exact ⟨factive_satisfies_plc, strong_contrafactive_violates_plc⟩
 
 /--
@@ -325,11 +329,11 @@ is describing a causally incoherent eventuality.
 -/
 theorem contrafactive_gap_is_structural :
     -- p is causally sufficient for B(a)(p)
-    causallySufficient beliefFormationDynamics .empty BeliefVars.p BeliefVars.B_a_p = true ∧
+    causallySufficient beliefFormationDynamics .empty BeliefVars.p BeliefVars.B_a_p ∧
     -- ¬p is NOT causally sufficient for B(a)(p)
-    causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_p = false ∧
+    ¬ (causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_p) ∧
     -- But ¬p IS causally sufficient for B(a)(¬p)
-    causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_not_p = true := by
+    causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_not_p := by
   decide
 
 -- ============================================================================
@@ -385,7 +389,7 @@ Returns `some true` if it satisfies PLC, `some false` if it violates PLC.
 def presupClassSatisfiesPLC (pc : PresupClass) : Option Bool :=
   match presupClassToCausalVars pc with
   | none => none
-  | some (presup, atIssue) => some (satisfiesPLC presup atIssue)
+  | some (presup, atIssue) => some (decide (satisfiesPLC presup atIssue))
 
 /--
 Is this presuppositional profile valid (attestable)?

@@ -92,7 +92,7 @@ This is the grounding theorem connecting Cao et al.'s probabilistic
 SUF to Nadathur & Lauer's structural sufficiency. -/
 theorem deterministicSuf_iff_sufficient (dyn : CausalDynamics) (bg : Situation)
     (c e : Variable) :
-    (deterministicSuf dyn bg c e = 1) ↔ (causallySufficient dyn bg c e = true) := by
+    (deterministicSuf dyn bg c e = 1) ↔ (causallySufficient dyn bg c e) := by
   simp only [deterministicSuf]
   constructor
   · intro h; split_ifs at h <;> simp_all
@@ -101,7 +101,7 @@ theorem deterministicSuf_iff_sufficient (dyn : CausalDynamics) (bg : Situation)
 /-- Deterministic SUF = 0 iff binary `causallySufficient` fails. -/
 theorem deterministicSuf_zero_iff_not_sufficient (dyn : CausalDynamics) (bg : Situation)
     (c e : Variable) :
-    (deterministicSuf dyn bg c e = 0) ↔ (causallySufficient dyn bg c e = false) := by
+    (deterministicSuf dyn bg c e = 0) ↔ (¬ (causallySufficient dyn bg c e)) := by
   simp only [deterministicSuf]
   constructor
   · intro h; split_ifs at h <;> simp_all

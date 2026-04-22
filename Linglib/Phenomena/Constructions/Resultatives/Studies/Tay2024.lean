@@ -373,7 +373,7 @@ def tuikaiModel : CausalDynamics :=
 /-! ### Sufficiency and tightness proofs -/
 
 theorem dasi_sufficient :
-    causallySufficient dasiModel Situation.empty hittingVar deathVar = true := by
+    causallySufficient dasiModel Situation.empty hittingVar deathVar := by
   native_decide
 
 theorem dasi_tight :
@@ -381,7 +381,7 @@ theorem dasi_tight :
   native_decide
 
 theorem kulei_sufficient :
-    causallySufficient kuleiModel Situation.empty cryingVar tiredVar = true := by
+    causallySufficient kuleiModel Situation.empty cryingVar tiredVar := by
   native_decide
 
 theorem kulei_tight :

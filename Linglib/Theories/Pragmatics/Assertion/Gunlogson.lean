@@ -63,6 +63,14 @@ variable {W : Type*}
 def empty : GunlogsonState W :=
   ⟨TaggedSlate.empty, TaggedSlate.empty⟩
 
+/-- Per-role slate accessor — `K.slateOf .speaker = K.speakerSlate`,
+    `K.slateOf .addressee = K.addresseeSlate`. Lifts the discourse-role
+    enum into a uniform indexer. -/
+def slateOf (K : GunlogsonState W) :
+    Core.Discourse.DiscourseRole → TaggedSlate W
+  | .speaker   => K.speakerSlate
+  | .addressee => K.addresseeSlate
+
 /-- Falling declarative: speaker commits self to p.
 
     The speaker adds p to their own slate with source = `.selfGenerated`.

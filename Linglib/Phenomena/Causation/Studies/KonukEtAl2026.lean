@@ -153,16 +153,16 @@ theorem anyPair_sufficient_BC :
 
 /-- No single urn is sufficient (need 2 for threshold). -/
 theorem no_single_sufficient :
-    causallySufficient thresholdDyn Situation.empty urnA win = false ∧
-    causallySufficient thresholdDyn Situation.empty urnB win = false ∧
-    causallySufficient thresholdDyn Situation.empty urnC win = false := by
+    ¬ (causallySufficient thresholdDyn Situation.empty urnA win) ∧
+    ¬ (causallySufficient thresholdDyn Situation.empty urnB win) ∧
+    ¬ (causallySufficient thresholdDyn Situation.empty urnC win) := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 /-- In the overdetermined actual world, no individual urn is necessary. -/
 theorem no_single_necessary_in_actual :
-    causallyNecessary thresholdDyn thresholdActual urnA win = false ∧
-    causallyNecessary thresholdDyn thresholdActual urnB win = false ∧
-    causallyNecessary thresholdDyn thresholdActual urnC win = false := by
+    ¬ (causallyNecessary thresholdDyn thresholdActual urnA win) ∧
+    ¬ (causallyNecessary thresholdDyn thresholdActual urnB win) ∧
+    ¬ (causallyNecessary thresholdDyn thresholdActual urnC win) := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 /-- But compound pairs ARE necessary in the actual world.
@@ -375,7 +375,7 @@ theorem triple1_AB_sufficient_and_necessary :
 
 /-- In Triple-1, the idle variable D is not individually necessary. -/
 theorem triple1_D_not_necessary :
-    causallyNecessary disjunctiveRuleDyn triple1Actual exp2D exp2Win = false := by
+    ¬ (causallyNecessary disjunctiveRuleDyn triple1Actual exp2D exp2Win) := by
   native_decide
 
 /-- In Triple-1, adding D to the A∧B compound does NOT increase sufficiency
@@ -390,7 +390,7 @@ theorem triple1_D_dilutes :
     compoundNecessary disjunctiveRuleDyn triple1Actual [exp2A, exp2B] exp2Win = true ∧
     compoundNecessary disjunctiveRuleDyn triple1Actual [exp2A, exp2B, exp2D] exp2Win = true ∧
     -- But D individually is not necessary
-    causallyNecessary disjunctiveRuleDyn triple1Actual exp2D exp2Win = false := by
+    ¬ (causallyNecessary disjunctiveRuleDyn triple1Actual exp2D exp2Win) := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
 
 /-- Triple-0 actual world: white balls from A, B, D; colored from C. -/

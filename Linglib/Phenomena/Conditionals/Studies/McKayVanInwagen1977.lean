@@ -38,7 +38,7 @@ this with two arguments:
 
 namespace McKayVanInwagen1977
 
-open Semantics.Conditionals (SimilarityOrdering)
+open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.AlternativeSensitive (lewisDAC sdaEval)
 
 -- ════════════════════════════════════════════════════

@@ -1,6 +1,6 @@
 import Linglib.Core.CylindricAlgebra
 import Linglib.Theories.Semantics.Dynamic.DPL.Bridge
-import Linglib.Theories.Semantics.Dynamic.CDRT.DynamicTy2
+import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
 
 /-!
@@ -40,7 +40,7 @@ open Core.CylindricAlgebra
 section CDRT
 
 open Semantics.Dynamic.CDRT
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 
 /-- CDRT registers ARE assignments. -/
 theorem cdrt_register_eq_assignment {E : Type*} :

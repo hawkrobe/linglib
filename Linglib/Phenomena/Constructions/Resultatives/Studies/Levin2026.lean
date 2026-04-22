@@ -646,7 +646,7 @@ theorem projectile_energy_breaks_necessity :
 /-- The theme's momentum HAS an independent source in this model. -/
 theorem theme_has_independent_source :
     hasIndependentSource projectileWithEnergyModel
-      agentForceVar themeMomentumVar = true := by
+      agentForceVar themeMomentumVar := by
   native_decide
 
 -- ════════════════════════════════════════════════════

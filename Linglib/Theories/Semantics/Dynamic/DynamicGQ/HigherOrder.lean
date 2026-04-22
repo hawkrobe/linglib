@@ -22,7 +22,7 @@ flat DRS — the nuclear scope can only be placed outside maximization.
 
 namespace Semantics.Dynamic.DynamicGQ.HigherOrder
 
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 open Semantics.Dynamic.DynamicGQ.Basic
 open Core.Continuation
 open Mereology

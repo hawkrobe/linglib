@@ -116,15 +116,22 @@ structure ImplicativeScenario where
 
     The old label "action" has been renamed to "prerequisite" to match
     @cite{nadathur-2024}'s terminology. -/
-def manageSem (sc : ImplicativeScenario) : Bool :=
-  causallySufficient sc.dynamics sc.background sc.prerequisite sc.complement
+def manageSem (sc : ImplicativeScenario) : Prop :=
+  (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
+    sc.complement true = true
+
+instance (sc : ImplicativeScenario) : Decidable (manageSem sc) :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- Semantics of "fail": the complement did NOT develop.
 
     "Kim failed to swim across" entails "Kim did not swim across."
-    Dual of `manageSem`: `failSem sc = !manageSem sc`. -/
-def failSem (sc : ImplicativeScenario) : Bool :=
-  !manageSem sc
+    Dual of `manageSem`: `failSem sc ↔ ¬ manageSem sc`. -/
+def failSem (sc : ImplicativeScenario) : Prop :=
+  ¬ manageSem sc
+
+instance (sc : ImplicativeScenario) : Decidable (failSem sc) :=
+  inferInstanceAs (Decidable (¬ _))
 
 /-- **Central grounding theorem**: if `manageSem` holds, the complement
     is true after normal development.
@@ -132,24 +139,27 @@ def failSem (sc : ImplicativeScenario) : Bool :=
     This grounds `VerbEntry.implicative := some.positive` for *manage*:
     the entailment is not stipulated but follows from causal sufficiency. -/
 theorem manage_entails_complement (sc : ImplicativeScenario)
-    (h : manageSem sc = true) :
+    (h : manageSem sc) :
     (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
       sc.complement true = true := h
 
 /-- If `failSem` holds, the complement is false after normal development. -/
 theorem fail_entails_not_complement (sc : ImplicativeScenario)
-    (h : failSem sc = true) :
+    (h : failSem sc) :
     (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
       sc.complement true = false := by
-  simp only [failSem, manageSem, causallySufficient, Bool.not_eq_true'] at h
-  exact h
+  unfold failSem manageSem at h
+  cases hb : (normalDevelopment sc.dynamics
+      (sc.background.extend sc.prerequisite true)).hasValue sc.complement true
+  · rfl
+  · exact absurd hb h
 
 /-- Implicative entailment is NOT aspect-governed: the entailment holds with
     no aspect parameter in the semantics. This contrasts with ability modals
     (see `Modal/Ability.lean`) where aspect determines whether the complement
     is entailed. -/
 theorem implicative_not_aspect_governed (sc : ImplicativeScenario)
-    (h : manageSem sc = true) :
+    (h : manageSem sc) :
     (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
       sc.complement true = true :=
   manage_entails_complement sc h
@@ -190,14 +200,15 @@ structure PrerequisiteAccount where
 /-- (32i): The necessity presupposition holds — A(x) is causally necessary
     for P(x) relative to the background. -/
 def PrerequisiteAccount.necessityPresup (pa : PrerequisiteAccount) : Bool :=
-  causallyNecessary pa.dynamics pa.background pa.prereqVar pa.complementVar
+  decide (causallyNecessary pa.dynamics pa.background pa.prereqVar pa.complementVar)
 
 /-- (32iii): **Check** whether A(x) is causally sufficient for P(x) in
     the model. This is a computed property of the dynamics/background,
     distinct from `hasSufficiencyPresup` (a lexical property of the verb).
     For well-formed accounts, `sufficiencyPresup = hasSufficiencyPresup`. -/
 def PrerequisiteAccount.sufficiencyPresup (pa : PrerequisiteAccount) : Bool :=
-  causallySufficient pa.dynamics pa.background pa.prereqVar pa.complementVar
+  (normalDevelopment pa.dynamics (pa.background.extend pa.prereqVar true)).hasValue
+    pa.complementVar true
 
 /-- (32ii): The assertion — A(x) holds in the evaluation world. -/
 def PrerequisiteAccount.assertion (pa : PrerequisiteAccount) (w : Situation) : Bool :=
@@ -220,7 +231,7 @@ def PrerequisiteAccount.toScenario (pa : PrerequisiteAccount) : ImplicativeScena
     account rather than stipulating it. -/
 theorem prerequisite_derives_manageSem (pa : PrerequisiteAccount)
     (hSuf : pa.sufficiencyPresup = true) :
-    manageSem pa.toScenario = true := hSuf
+    manageSem pa.toScenario := hSuf
 
 -- ════════════════════════════════════════════════════
 -- § Directionality
@@ -275,7 +286,7 @@ private def manageScenario : ImplicativeScenario where
   background := Situation.empty
 
 /-- Concrete verification: manageSem holds for the swim scenario. -/
-theorem manage_swim_holds : manageSem manageScenario = true := by native_decide
+theorem manage_swim_holds : manageSem manageScenario := by native_decide
 
 /-- Concrete verification: the complement (swimming across) is true. -/
 theorem manage_swim_complement_true :
@@ -286,7 +297,7 @@ theorem manage_swim_complement_true :
 /-- The fail scenario: same dynamics, but testing failSem.
     If the dynamics DO fire (prerequisite sufficient for complement), failSem is false. -/
 theorem fail_swim_false_when_sufficient :
-    failSem manageScenario = false := by native_decide
+    ¬ failSem manageScenario := by native_decide
 
 /-- A scenario where the prerequisite is NOT sufficient (no causal law). -/
 private def failScenario : ImplicativeScenario where
@@ -296,7 +307,7 @@ private def failScenario : ImplicativeScenario where
   background := Situation.empty
 
 /-- When there's no causal connection, failSem holds (complement doesn't develop). -/
-theorem fail_no_law_holds : failSem failScenario = true := by native_decide
+theorem fail_no_law_holds : failSem failScenario := by native_decide
 
 end ConcreteExample
 
@@ -569,18 +580,29 @@ section FrameSemantics
 variable {W : Type}
 
 /-- Trigger is causally sufficient for complement at evaluation context `w`. -/
-def CausalFrame.sufficientAt (f : CausalFrame W) (w : W) : Bool :=
-  causallySufficient f.dynamics (f.background w) f.trigger f.complement
+def CausalFrame.sufficientAt (f : CausalFrame W) (w : W) : Prop :=
+  (normalDevelopment f.dynamics ((f.background w).extend f.trigger true)).hasValue
+    f.complement true = true
+
+instance (f : CausalFrame W) (w : W) : Decidable (f.sufficientAt w) :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- Complement is actualized at `w`: trigger occurred AND complement developed. -/
-def CausalFrame.actualizedAt (f : CausalFrame W) (w : W) : Bool :=
-  factuallyDeveloped f.dynamics (f.background w) f.trigger f.complement
+def CausalFrame.actualizedAt (f : CausalFrame W) (w : W) : Prop :=
+  (f.background w).hasValue f.trigger true = true ∧
+  (normalDevelopment f.dynamics (f.background w)).hasValue f.complement true = true
+
+instance (f : CausalFrame W) (w : W) : Decidable (f.actualizedAt w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- The complement did NOT develop at `w` (for negative-polarity verbs like
     *fail*, *too Adj to VP*). -/
-def CausalFrame.complementBlockedAt (f : CausalFrame W) (w : W) : Bool :=
-  (f.background w).hasValue f.trigger true &&
-  !(normalDevelopment f.dynamics (f.background w)).hasValue f.complement true
+def CausalFrame.complementBlockedAt (f : CausalFrame W) (w : W) : Prop :=
+  (f.background w).hasValue f.trigger true = true ∧
+  (normalDevelopment f.dynamics (f.background w)).hasValue f.complement true = false
+
+instance (f : CausalFrame W) (w : W) : Decidable (f.complementBlockedAt w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- **Generic actuality predicate** with aspectual modulation.
 
@@ -588,14 +610,23 @@ def CausalFrame.complementBlockedAt (f : CausalFrame W) (w : W) : Bool :=
     - **Aspectual + perfective**: sufficiency AND actualization
     - **Aspectual + imperfective**: sufficiency only (no actualization required) -/
 def CausalFrame.actualityWithAspect (f : CausalFrame W) (asp : ViewpointAspectB)
-    (w : W) : Bool :=
+    (w : W) : Prop :=
   match f.actualization with
   | .lexical =>
-    f.sufficientAt w && f.actualizedAt w
+    f.sufficientAt w ∧ f.actualizedAt w
   | .aspectual =>
     match asp with
-    | .perfective => f.sufficientAt w && f.actualizedAt w
+    | .perfective => f.sufficientAt w ∧ f.actualizedAt w
     | .imperfective => f.sufficientAt w
+
+instance (f : CausalFrame W) (asp : ViewpointAspectB) (w : W) :
+    Decidable (f.actualityWithAspect asp w) := by
+  unfold CausalFrame.actualityWithAspect
+  cases f.actualization
+  · exact inferInstanceAs (Decidable (_ ∧ _))
+  · cases asp
+    · exact inferInstanceAs (Decidable (_ ∧ _))
+    · exact inferInstanceAs (Decidable (_ : Prop))
 
 end FrameSemantics
 
@@ -611,19 +642,21 @@ variable {W : Type}
     frame holds, the complement is actualized. -/
 theorem CausalFrame.lexical_entails_complement (f : CausalFrame W) (w : W)
     (asp : ViewpointAspectB)
-    (h : f.actualityWithAspect asp w = true) (hMode : f.actualization = .lexical) :
-    f.actualizedAt w = true := by
-  simp only [actualityWithAspect, hMode, Bool.and_eq_true] at h
+    (h : f.actualityWithAspect asp w) (hMode : f.actualization = .lexical) :
+    f.actualizedAt w := by
+  unfold CausalFrame.actualityWithAspect at h
+  rw [hMode] at h
   exact h.2
 
 /-- **Generic actuality theorem (aspectual + perfective)**: if an
     aspect-governed frame holds with perfective aspect, the complement
     is actualized. -/
 theorem CausalFrame.perfective_entails_complement (f : CausalFrame W) (w : W)
-    (h : f.actualityWithAspect .perfective w = true)
+    (h : f.actualityWithAspect .perfective w)
     (hMode : f.actualization = .aspectual) :
-    f.actualizedAt w = true := by
-  simp only [actualityWithAspect, hMode, Bool.and_eq_true] at h
+    f.actualizedAt w := by
+  unfold CausalFrame.actualityWithAspect at h
+  rw [hMode] at h
   exact h.2
 
 /-- **Generic non-entailment (aspectual + imperfective)**: imperfective
@@ -631,8 +664,8 @@ theorem CausalFrame.perfective_entails_complement (f : CausalFrame W) (w : W)
 theorem CausalFrame.imperfective_compatible_with_unrealized :
     ∃ (f : CausalFrame Unit),
       f.actualization = .aspectual ∧
-      f.actualityWithAspect .imperfective () = true ∧
-      f.actualizedAt () = false := by
+      f.actualityWithAspect .imperfective () ∧
+      ¬ f.actualizedAt () := by
   let act := mkVar "act"
   let comp := mkVar "comp"
   let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
@@ -650,10 +683,10 @@ theorem CausalFrame.imperfective_compatible_with_unrealized :
 theorem CausalFrame.aspect_governs_actuality :
     ∃ (f : CausalFrame Bool),
       f.actualization = .aspectual ∧
-      f.actualityWithAspect .perfective true = true ∧
-      f.actualizedAt true = true ∧
-      f.actualityWithAspect .imperfective false = true ∧
-      f.actualizedAt false = false := by
+      f.actualityWithAspect .perfective true ∧
+      f.actualizedAt true ∧
+      f.actualityWithAspect .imperfective false ∧
+      ¬ f.actualizedAt false := by
   let act := mkVar "act"
   let comp := mkVar "comp"
   let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
@@ -670,21 +703,24 @@ theorem CausalFrame.aspect_governs_actuality :
 /-- Lexical mode is aspect-independent. -/
 theorem CausalFrame.lexical_aspect_independent (f : CausalFrame W) (w : W)
     (hMode : f.actualization = .lexical) :
-    f.actualityWithAspect .perfective w = f.actualityWithAspect .imperfective w := by
-  simp only [CausalFrame.actualityWithAspect, hMode]
+    f.actualityWithAspect .perfective w ↔ f.actualityWithAspect .imperfective w := by
+  unfold CausalFrame.actualityWithAspect
+  rw [hMode]
 
 /-- **Imperfective is pure sufficiency** for aspectually-governed frames. -/
 theorem CausalFrame.imperfective_is_pure_sufficiency (f : CausalFrame W) (w : W)
     (hMode : f.actualization = .aspectual) :
-    f.actualityWithAspect .imperfective w = f.sufficientAt w := by
-  simp only [CausalFrame.actualityWithAspect, hMode]
+    f.actualityWithAspect .imperfective w ↔ f.sufficientAt w := by
+  unfold CausalFrame.actualityWithAspect
+  rw [hMode]
 
-/-- **Perfective adds actualization**: perfective = imperfective ∧ actualized. -/
+/-- **Perfective adds actualization**: perfective ↔ imperfective ∧ actualized. -/
 theorem CausalFrame.perfective_adds_actualization (f : CausalFrame W) (w : W)
     (hMode : f.actualization = .aspectual) :
-    f.actualityWithAspect .perfective w =
-      (f.actualityWithAspect .imperfective w && f.actualizedAt w) := by
-  simp only [CausalFrame.actualityWithAspect, hMode]
+    f.actualityWithAspect .perfective w ↔
+      f.actualityWithAspect .imperfective w ∧ f.actualizedAt w := by
+  unfold CausalFrame.actualityWithAspect
+  rw [hMode]
 
 end ActualityTheorems
 
@@ -696,9 +732,9 @@ end ActualityTheorems
 theorem CausalFrame.sufficiency_monotone {W : Type} (f : CausalFrame W) (w : W)
     (extra : Variable)
     (hPos : isPositiveDynamics f.dynamics = true)
-    (h : f.sufficientAt w = true) :
+    (h : f.sufficientAt w) :
     causallySufficient f.dynamics ((f.background w).extend extra true)
-      f.trigger f.complement = true :=
+      f.trigger f.complement :=
   Semantics.Causation.Sufficiency.sufficiency_monotone_positive
     f.dynamics (f.background w) f.trigger extra f.complement hPos h
 
@@ -733,7 +769,7 @@ open Semantics.Attitudes.Intensional (World) in
 theorem CausalFrame.ability_differs_from_implicative :
     ∃ (f : CausalFrame World) (w : World),
       f.actualization = .aspectual ∧
-      f.sufficientAt w = true ∧ f.actualizedAt w = false := by
+      f.¬ (sufficientAt w ∧ f.actualizedAt w) := by
   let act := mkVar "act"
   let comp := mkVar "comp"
   let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
@@ -746,10 +782,10 @@ open Semantics.Attitudes.Intensional (World) in
 theorem CausalFrame.aspect_governs_ability :
     ∃ (f : CausalFrame World) (w : World),
       f.actualization = .aspectual ∧
-      f.actualityWithAspect .perfective w = true ∧
-      f.actualizedAt w = true ∧
-      ∃ w', f.actualityWithAspect .imperfective w' = true ∧
-            f.actualizedAt w' = false := by
+      f.actualityWithAspect .perfective w ∧
+      f.actualizedAt w ∧
+      ∃ w', f.actualityWithAspect .imperfective w' ∧
+            f.¬ (actualizedAt w') := by
   let act := mkVar "act"
   let comp := mkVar "comp"
   let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
@@ -796,8 +832,9 @@ theorem closure_fixpoint_returns (dyn : CausalDynamics) (s : Situation)
 /-- **Causal sufficiency as closure membership.** -/
 theorem sufficiency_is_closure_membership (dyn : CausalDynamics) (s : Situation)
     (trigger complement : Variable) :
-    causallySufficient dyn s trigger complement =
-      (normalDevelopment dyn (s.extend trigger true)).hasValue complement true := rfl
+    causallySufficient dyn s trigger complement ↔
+      (normalDevelopment dyn (s.extend trigger true)).hasValue complement true = true :=
+  Iff.rfl
 
 -- ════════════════════════════════════════════════════
 -- § Instance Bridge: Implicatives → CausalFrame
@@ -815,7 +852,8 @@ def CausalFrame.ofImplicative (sc : ImplicativeScenario) : CausalFrame Unit :=
 open Semantics.Causation.Implicative in
 /-- The generic frame's sufficiency at `()` matches `manageSem`. -/
 theorem implicative_sufficiency_matches (sc : ImplicativeScenario) :
-    (CausalFrame.ofImplicative sc).sufficientAt () =
-      causallySufficient sc.dynamics sc.background sc.prerequisite sc.complement := rfl
+    (CausalFrame.ofImplicative sc).sufficientAt () ↔
+      causallySufficient sc.dynamics sc.background sc.prerequisite sc.complement :=
+  Iff.rfl
 
 end Semantics.Causation.ComplementEntailing

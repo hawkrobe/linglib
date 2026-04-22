@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
+import Linglib.Core.Order.Command
 
 /-!
 # M-Command @cite{newman-2024}
@@ -109,12 +110,87 @@ def pronounFreeMCmd (root binder pronoun : SyntacticObject) : Bool :=
     dominates α's sister and hence β. Since maximal projections are a
     subset of all dominating nodes, the m-command condition follows.
 
-    We state this as a Boolean implication over `SyntacticObject`. -/
+    We state this as a Boolean implication over `SyntacticObject`.
+    The path-based companion `kCCommand_subset_mCCommand` (below) is
+    *proved* via @cite{barker-pullum-1990}'s `command_antitone`; the
+    Bool→Prop migration of `cCommandsInB` / `mCommandsB` would let
+    this theorem be derived from the path-based version through the
+    C6 bridge. -/
 theorem cCommand_implies_mCommand_bool (root α β : SyntacticObject)
     (h : cCommandsInB root α β = true) :
     mCommandsB root α β = true := by
   sorry  -- TODO: prove from definitions; requires showing that
          -- c-command witnesses (sister containing β) ensure all
          -- maximal projections above α are above β
+
+-- ============================================================================
+-- § 6: Path-based M-Command via Barker-Pullum (mathlib-shape)
+-- ============================================================================
+
+/-! The path-based companion to value-based `mCommandsB`. Both definitions
+    coexist: `mCommandsB` is decidable Bool for the existing ~10 consumers,
+    `mCCommand` is `Set`-valued Prop for B&P-style algebraic reasoning.
+
+    Definitionally, `mCCommand root` is just `commandRelation` applied to
+    `maximalProjectionPaths`. The subset `kCCommand root ⊆ mCCommand root`
+    — Reinhart's claim 49 in path form — is one line via
+    `command_antitone`, with no induction on `SyntacticObject`. This is
+    the design payoff motivating the C6 grounding in `commandRelation`. -/
+
+/-- Maximal-projection paths in `root`. A `TreePath` is a max-projection
+    iff (i) its last index is *not* 0 (it isn't a left-daughter / head;
+    `getLast? = none` for the root automatically passes), and (ii) its
+    subtree under the forgetful `FreeMagma.toTree` is a binary `.node`
+    (a max projection must project — leaves don't qualify).
+
+    Reflects the head-on-left convention of `isMaximalProjectionIn`:
+    heads are left daughters, max projections are right daughters or
+    the root. -/
+def maximalProjectionPaths (root : SyntacticObject) : Set Core.Tree.TreePath :=
+  {p | p.toList.getLast? ≠ some 0 ∧
+       ∃ a b, root.toTree.subtreeAt p.toList = some (.node () [a, b])}
+
+/-- Path-based m-command on `SyntacticObject`, recast as B&P
+    @cite{barker-pullum-1990} `commandRelation` over the forgetful
+    tree-order with `maximalProjectionPaths` as the generator.
+
+    Use `mCCommand_def` to unfold to the underlying B&P apparatus when
+    needed; otherwise treat as opaque. Sibling to `kCCommand` (in
+    `Minimalism/Core/Basic.lean`); both inhabit the same B&P lattice. -/
+def mCCommand (root : SyntacticObject) :
+    Set (Core.Tree.TreePath × Core.Tree.TreePath) :=
+  Core.Order.commandRelation root.toTree.toTreeOrder (maximalProjectionPaths root)
+
+/-- Definitional unfolding of `mCCommand`. Use `rw [mCCommand_def]` only
+    when the underlying `commandRelation` / `upperBounds` apparatus is
+    needed; consumer code should treat `mCCommand` as opaque. -/
+theorem mCCommand_def (root : SyntacticObject) :
+    mCCommand root =
+      Core.Order.commandRelation root.toTree.toTreeOrder
+        (maximalProjectionPaths root) :=
+  rfl
+
+/-- Maximal-projection paths are a subset of branching paths: every
+    max projection is, in particular, a binary node. -/
+theorem maximalProjectionPaths_subset_branchingPaths (root : SyntacticObject) :
+    maximalProjectionPaths root ⊆ branchingPaths root :=
+  fun _ ⟨_, hb⟩ => hb
+
+/-- **Reinhart's claim 49 (path form)**: c-command implies m-command.
+
+    `kCCommand root ⊆ mCCommand root`. Proved in one line via B&P's
+    `command_antitone` — no `SyntacticObject` induction, no path
+    manipulation. The subset of generators
+    (`maximalProjectionPaths ⊆ branchingPaths`) lifts antitonely into
+    the *opposite* containment of command relations.
+
+    This is the path-based analog of `cCommand_implies_mCommand_bool`
+    (which awaits the C6 bridge proofs to be derivable from this
+    via the value/path correspondence). -/
+theorem kCCommand_subset_mCCommand (root : SyntacticObject) :
+    kCCommand root ⊆ mCCommand root :=
+  Core.Order.command_antitone root.toTree.toTreeOrder
+    (maximalProjectionPaths root) (branchingPaths root)
+    (maximalProjectionPaths_subset_branchingPaths root)
 
 end Minimalism

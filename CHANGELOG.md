@@ -4,6 +4,411 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.142] - 2026-04-21
+
+### Removed — `*/DynamicTy2.lean` filename pattern dissolved (mathlib audit)
+
+Following a mathlib-reviewer audit of the `Dynamic/Core/` cluster, the
+`X/DynamicTy2.lean` filename pattern (where `X ∈ {CDRT, Bilateral, PLA}`)
+is recognized as inverted bridge-file naming — mathlib never names files
+after their *import target*. The convention is `Source/Bridge.lean` or
+content-named sibling, not `Source/CodomainName.lean`.
+
+Cluster reshape:
+
+- **Namespace flattening (`Dynamic/Core/DynamicTy2.lean`)**: dropped the
+  `Semantics.Dynamic.Core.DynamicTy2` sub-namespace; contents now live in
+  `Semantics.Dynamic.Core` directly, parallel to `Core/CCP.lean`,
+  `Core/Translation.lean`, `Core/DiscourseRef.lean`, `Core/Update.lean`,
+  `Core/ContextFilter.lean`, `Core/Intensional.lean`. The `export
+  DynProp (...)` block (republishing 14 names: `DRS`, `Condition`,
+  `dseq`, `test`, `dneg`, `dimpl`, `ddisj`, `closure`, `trueAt`, `valid`,
+  `entails`, plus 4 lemmas) now sits at `Semantics.Dynamic.Core` level.
+  10 consumer files updated mechanically (`open Semantics.Dynamic.Core.DynamicTy2`
+  → `open Semantics.Dynamic.Core`).
+- **Deleted `Dynamic/CDRT/DynamicTy2.lean`** (75 LOC, all `rfl`-style
+  identifications). The two used names (`dref`, `toDRS`) folded into
+  `CDRT/Basic.lean`; the rest were no-content rfl chains with zero
+  consumers. Sole external consumer (`Core/CylindricAlgebra/DynamicSemantics.lean`)
+  re-pointed at `CDRT/Basic.lean`.
+- **Deleted `Dynamic/Bilateral/BUS_DynamicTy2.lean`** (132 LOC). Defined
+  an orphaned `structure BilateralDRS` parallel to the `BilateralDen`
+  in `Bilateral/Basic.lean`, with zero downstream consumers and no
+  proven equivalence to `BilateralDen`. Option A from the audit (delete
+  outright) chosen — the parallel-formulation pattern requires an
+  equivalence theorem to be non-misleading, and `BilateralDRS` had none.
+- **Folded `Dynamic/PLA/DynamicTy2.lean` into `Dynamic/PLA/Semantics.lean`**
+  (337 → ~530 LOC). Real content (`MergedAssignment`, `varDref`/`pronDref`,
+  `formulaToCondition`/`formulaToDRS` translation, `formulaToDRS_correct`
+  correctness theorem) moves under § Embedding into Dynamic Ty2 in the
+  source's primary file. Zero external consumers; one Linglib.lean
+  import removal.
+
+Net: ~600 LOC of mis-shaped bridge files dissolve into thematic structure.
+Dynamic Ty2 is now exposed as what it actually is — the foundational
+algebra in `Dynamic/Core/` plus assignment-class machinery — not a
+separate framework requiring per-system bridge files. Total: 3 files
+deleted, 1 namespace flattened, 12 files updated mechanically.
+
+Deferred (separate audit-flagged targets): `Dynamic/Core/` shell itself
+violates the RSA exemplar (Defs/Basic at root, no `Core/` subdirectory)
+— ~50 import-line cascade, separate task. Notation in `Core/DynamicTy2.lean`
+should be `scoped`. AX2 ("variable vs constant register" axiom) is
+type-encoded but lacks a `-- TODO` note.
+
+## [0.230.141] - 2026-04-21
+
+### Changed — Closed two `sorry`s in `EgreEtAl2023.lean` Section VI (peaked-vs-flat utility theorems)
+
+Closes the two sorrys carried since 0.230.136 (the entropy-stack ℚ→ℝ
+migration) by refactoring the utility definitions to follow mathlib
+idiom rather than fighting the original `List.foldl` + if-guard
+structure.
+
+- **`U_std` and `U_bergen`** (Section VI, Appendix C) — dropped the
+  redundant `if pw > 0 ∧ lw > 0` guard. Mathlib's `Real.log 0 = 0`
+  convention makes `pw · Real.log lw = 0` whenever either factor is
+  zero, so the guard is dead code that only obstructed `simp`/`rw`
+  normalization. Body is now `(allValues.map (fun w => obs w · Real.log
+  (l0 w))).sum` — the standard mathlib idiom for finite sums of
+  function-of-element terms.
+
+- **`peaked_gets_higher_utility_from_around`** — proved by reducing
+  `U_peaked - U_flat` to `(1/15) · log(8/3)` (algebraic identity
+  `2·log(1/4) − log(1/8) − log(3/16) = log(8/3)` worked out via
+  `Real.log_div`/`Real.log_inv`/`Real.log_pow`), then closing
+  positivity via `Real.log_pos (by norm_num : (1 : ℝ) < 8/3)` and
+  `mul_pos`. The peaked observation `(1/6, 1/6, 1/3, 1/6, 1/6)` puts
+  more mass on the L0 mode (v3 = 1/4) than the flat observation
+  `(1/5)×5` does, so its KL utility is strictly higher.
+
+- **`same_utility_under_uniform_l0`** — proved structurally: under
+  uniform L0 = 1/5 on the shared support {v1..v5}, off-support terms
+  vanish via `Real.log 0 = 0` (mathlib convention), on-support terms
+  collapse to a constant `Real.log (1/5)` factor, and both
+  `obs_peaked` / `obs_flat` sum to 1 over the support — so utilities
+  coincide. Closes with `ring`.
+
+- **Two new private helpers**: `l0_around3_eval` and
+  `l0_between1_5_eval` map each `Value` to its concrete ℚ posterior
+  weight. Use `cases v <;> native_decide` matching the established
+  convention for `getScore l0_around3 v` finite-data theorems already
+  scattered through this file (`bir_triangular_shape`, `bir_symmetry`,
+  `ratio_inequality`, `between_is_uniform`, …) — kernel `decide`
+  stalls on `Rat.div`'s gcd-normalization after `find?` traversal.
+  Docstrings explain the choice. The algebraic content of the two
+  utility theorems remains structural (no `native_decide`).
+
+No public API changes; `U_std`'s body change is invisible to
+consumers (it had none). Build clean, 0 sorrys in EgreEtAl2023.lean.
+
+## [0.230.140] - 2026-04-21
+
+### Changed — Conditionals reorganization Phase 1 (mathlib-style relocation of general-purpose primitives)
+
+Two general-purpose primitives that had been misfiled inside
+`Theories/Semantics/Conditionals/` move to `Core/`, where their actual
+usage profile (multiple downstream consumers across modality, causation,
+and conditionals) shows they belong:
+
+- `SimilarityOrdering` (structure + `ofBool`/`atCenter`/`isCentered`/
+  `closestWorlds` + 3 lemmas + `candidateSelections` +
+  `comparativeCloseness` + `≤[sim, w₀]` notation) hoisted from
+  `Conditionals/Basic.lean:75-417` (scattered) into a single
+  `Core/Order/SimilarityOrdering.lean`. The 5-call-site external
+  consumer in `Theories/Semantics/Causation/PsychLink.lean` made the
+  misfiling concrete: a "conditional" file was the home for infrastructure
+  that causal psycholinguistic models also need.
+- `Conditionals/Kratzer/Lumping.lean` → `Core/IntensionalLogic/Lumping.lean`.
+  Now sits as a sibling of `Premise.lean` (Kratzer 1977 premise algebra)
+  rather than under an author-named subdirectory containing one file.
+  The empty `Kratzer/` directory is deleted. Namespace
+  `Semantics.Conditionals.Kratzer.Lumping` → `Core.IntensionalLogic.Lumping`.
+
+9 downstream files updated to `open Core.Order (SimilarityOrdering)`
+(was `open Semantics.Conditionals (SimilarityOrdering)`):
+`AlternativeSensitive.lean`, `Counterfactual.lean`, `Presuppositional.lean`,
+`Causation/PsychLink.lean`, and 5 `Phenomena/Conditionals/Studies/` files
+including the new `CiardelliZhangChampollion2018.lean`.
+`AlternativeSensitive.lean` `unfold ... dist` qualified to
+`Core.Duality.dist` to disambiguate against mathlib's `Dist.dist`
+(transitively pulled in by `Mathlib.Data.Finset.Filter`).
+
+This is Phase 1 of a larger mathlib-style reorganization; remaining
+phases (split `Counterfactual.lean`'s 1097-line three-operator bundle,
+dissolve author-named theory files `Iatridou.lean` / `Anderson.lean`,
+deduplicate the three parallel Kratzer formalizations) are deferred.
+
+## [0.230.139] - 2026-04-21
+
+### Added — `FreeMagma.toTree` forgetful map + `kCCommand` via Barker-Pullum (C6 of Stage-0 Minimalism architecture refactor)
+
+Grounds Minimalism's value-based `cCommandsIn` predicate in the
+framework-agnostic `Core.Order.commandRelation` library by composing
+through the existing `Core.Tree.Tree.toTreeOrder` rather than
+duplicating path machinery onto `FreeMagma`. The mathlib-reviewer
+critique drove the design: one forgetful map, no "CCommandBridge"
+file, no premature generalization to a `HasTreeOrder` typeclass.
+
+- **`Core/Tree.lean`** gains `FreeMagma.toTree : FreeMagma α → Tree Unit α`
+  (`{α : Type}` due to `Tree`'s `Type 0` cap; sufficient for `LIToken`).
+  `.of a ↦ .terminal () a`, `.mul l r ↦ .node () [l.toTree, r.toTree]`.
+  Image lives in a strict subset of `Tree Unit α` (`.terminal` + binary
+  `.node` only); via composition with `Tree.toTreeOrder`, every
+  `FreeMagma α` inherits a `Core.Order.TreeOrder TreePath` for free.
+  No subtree/path machinery duplicated — all inherited from
+  `Core.Tree`. (~25 LOC.)
+
+- **`Theories/Syntax/Minimalism/Core/Basic.lean`** gains:
+  - `branchingPaths root : Set Core.Tree.TreePath` — paths whose
+    subtree is a binary `.node () [_, _]`. Lives in Minimalism (not
+    `Core/Tree.lean`) because B&P parameterizes `commandRelation` by
+    `P : Set Node` precisely so each theory picks its own generator;
+    crystallizing "branching = ≥2 children" into the framework-agnostic
+    layer would preempt alternative generators (XP-only, phase-only).
+  - `kCCommand root : Set (TreePath × TreePath)` —
+    `commandRelation root.toTree.toTreeOrder (branchingPaths root)`.
+  - `kCCommand_def : kCCommand root = commandRelation ...` —
+    explicit unfolding so consumers don't get `commandRelation` /
+    `upperBounds` exposed in every goal (mathlib opacity discipline).
+  - `cCommandsIn_of_kCCommand` (path → value) and
+    `kCCommand_of_cCommandsIn` (value → ∃ paths) bridge theorems
+    stated with `sorry` + TODO proof sketches. Per the reviewer:
+    two named one-direction lemmas, not `iff`, because witness-path
+    asymmetry is real (value-multiplicity from repeated subtrees).
+    The infrastructure (`kCCommand` def, branching-paths) is the
+    load-bearing C6 deliverable; the bridge proofs are deferred.
+
+The value-based `cCommandsIn` and `cCommandsInB` are unchanged — the
+~10 existing consumers (LCA, Scope, Amalgamation, GenHM, HMC, Agree,
+Coreference) continue to work as before. `kCCommand` is added
+alongside, not as a replacement.
+
+Deferred per reviewer:
+- Refactoring `SpellOut.toLFTree` to expose `(toTree) ∘ (token-processing)` —
+  separate PR.
+- Promoting `FreeMagma.toTree` (and `Tree.toTreeOrder`, `LabeledTree`)
+  to a `HasTreeOrder` typeclass — wait for a third instance to arrive.
+- Proving the two bridge `sorry`s — non-trivial path/value extraction.
+
+## [0.230.138] - 2026-04-21
+
+### Refactored — mathlib-style organization of Phase 5 (Deo 2025) work
+
+Three integration-density fixes flagged by the integration-auditor and
+mathlib-reviewer audits.
+
+- **`Core/Discourse/Commitment.lean`** gains six `Set`-typed projection
+  methods on `TaggedSlate` filling out the `CommitmentSource ×
+  CommitmentForce` 2×2 cross: `dependent`, `independent`,
+  `dependentDoxastic`, `dependentPreferential`, `independentDoxastic`,
+  `independentPreferential`. Stated with `∃ c ∈ commitments, c.source =
+  ... ∧ c.commitmentForce = ... ∧ c.content = p` (Prop predicates with
+  `=`/`∧`, not Bool `==`/`&&`). The legacy List-typed projections
+  (`selfGenerated`, `otherGenerated`, `doxasticContents`,
+  `preferentialContents`) coexist for backward compat; the Bool→Prop
+  migration of those is queued.
+
+- **`Phenomena/SentenceMood/Studies/Deo2025.lean`** dropped its local
+  `Scoreboard W` and `Agent` types (which duplicated
+  `Pragmatics.Assertion.Gunlogson.GunlogsonState` and
+  `Core.Discourse.DiscourseRole` field-for-field — flagged by the
+  integration-auditor as restipulation of foundational discourse-state
+  types). Now imports `GunlogsonState` and `DiscourseRole` directly.
+  Lost: ~30 LOC of duplicated infrastructure. Gained: actual
+  interconnection with `Pragmatics/Assertion/Gunlogson.lean` and
+  `Core/Discourse/Roles.lean`.
+
+  The `dcDep`/`dcDepDox`/`dcDepPref` projections moved to
+  `Core/Discourse/Commitment.lean` (above) — paper-agnostic, reusable
+  across studies.
+
+- **`bara_predictions_match_empirical` reframed as `deo_characterization`**.
+  The previous theorem proved a `Bool` equality between two co-stipulated
+  per-act tables (the structural `BaraFelicitous` and the empirical
+  `DeoEmpiricalReport`) — a tautology. The new statement:
+  ```
+  theorem deo_characterization (act : IllocutionaryAct) :
+      BaraFelicitous act ↔ act ∈ empiricalFelicityClass := ...
+  ```
+  …where `empiricalFelicityClass : Set IllocutionaryAct` is just the
+  `{warning, advice, reminder, command, strongRecommendation}` set
+  (Deo's empirical observation), and the `↔` *is* Deo's substantive
+  claim — that her three architectural conditions exactly carve out the
+  strong-directive cluster across the 13-act survey.
+
+- **`IllocutionaryAct.toSearleClass`** projection added: each of the 13
+  acts maps to its `Core.Discourse.IllocutionaryForce.SearleClass`
+  (mostly `.directive`; `commissive`→`.commissive`,
+  `agreement`→`.assertive`). Bridges the study-local enum to the Core
+  Searle taxonomy.
+
+Builds clean (887 jobs). The `lake build` now includes the
+`Pragmatics.Assertion.Gunlogson` transitive import chain in the Phase 5
+file's dependencies — the integration-density gain comes with a
+cold-build cost of ~30s for the first compile.
+
+## [0.230.137] - 2026-04-21
+
+### Removed — `Theories/Semantics/Dynamic/Comparisons/` directory dissolution (Phase 2)
+
+Completes the comparisons-directory dissolution begun in 0.230.135
+(ICDRT_BUS → Hofmann2025). The remaining two framework-vs-framework
+comparison files move under their respective phenomena:
+
+- `Comparisons/CDRT_TTR.lean` (325 LOC) absorbed into
+  `Phenomena/Anaphora/Studies/Cooper2023.lean §§ 4-5`. Cooper2023.lean
+  now hosts the CDRT↔TTR truth-conditional equivalence, donkey-anaphora
+  bridge, and DNE divergence theorems (`exists_equiv`, `donkey_equiv`,
+  `full_donkey_equiv`, `neg_destroys_dref`, `dne_same_truth`,
+  `ttr_witness_survives`) plus the `ConcreteModel` end-to-end
+  demonstration. Citations added: `groenendijk-stokhof-1991`,
+  `muskens-1996`, `sutton-2024`.
+- `Comparisons/PLA_BUS.lean` (155 LOC) absorbed into new
+  `Phenomena/Anaphora/Studies/Dekker2012.lean` (~130 LOC). The new file
+  hosts PLA-side bathroom-sentence facts (`pla_dne_syntactic`,
+  `pla_existential_exports`, `pla_dne_has_domain`,
+  `bathroom_pla_has_unbound_pronoun`, `bathroom_pla_has_domain`) and
+  documents the BUS-side architectural divergence in prose, since PLA
+  and BUS use incompatible `InfoState` parametrizations. Citations:
+  `dekker-2012`, `krahmer-muskens-1995`.
+
+The `Theories/Semantics/Dynamic/Comparisons/` directory is now empty
+and removed. `Dynamic/Core/DynProp.lean`'s "three incompatible DNE
+solutions" pointer table updated to reference the three phenomenon-level
+homes (Hofmann2025 §7, Cooper2023 §§ 4-5, Dekker2012). Pure framework-
+vs-framework studies that don't engage empirical data live with the
+phenomenon they bear on, not under `Theories/`. The `Dynamic/`
+subdirectory now follows mathlib's pattern: type-by-type, no comparison
+shell.
+
+## [0.230.136] - 2026-04-21
+
+### Changed — Migrated entropy stack from ℚ to ℝ via `Real.negMulLog`
+
+Removed the `log2Approx` rational-Padé fake-logarithm
+(`3·(x−1)/(x+1)`) from `Core/InformationTheory.lean`. Entropy and its
+derivatives now route through mathlib's `Real.negMulLog`, the canonical
+Shannon-entropy summand, with the convention `0 · log 0 = 0` already
+built in. Output is in **nats** (mathlib convention); convert to bits
+by multiplying by `1 / Real.log 2`.
+
+Migrated declarations (all `noncomputable def` returning ℝ):
+`Core.InformationTheory.entropy`, `mutualInformation`,
+`conditionalEntropy`, `jsdOf`. The ΔP family (`deltaP`,
+`deltaPCounts`, `deltaP_eq_zero_of_independent`) stays ℚ-valued (no log).
+
+Cascading consumer migration:
+
+- `Theories/Pragmatics/RSA/InformationTheory.lean` — re-export trimmed
+  (drops `log2Approx`).
+- `Theories/Processing/MemorySurprisal/Basic.lean` — `averageSurprisal`,
+  `memoryEntropy` to ℝ.
+- `Theories/Syntax/ConstructionGrammar/GrammarDist.lean` —
+  `entropyOver`, `jsd`, `cost` to ℝ; `[BEq C]` requirement dropped.
+- `Core/Efficiency.lean` — `CostPair` fields ℚ→ℝ; `deriving
+  Repr, DecidableEq` dropped (no instances on ℝ); `weightedCost`,
+  `efficiencyLossAt`, `efficiencyLoss` to ℝ.
+- `Theories/Diachronic/Lexicalization.lean` — `encodingCosts`,
+  `unifiedObjective`, `moreEfficientThan`, `literalAdvantage` to ℝ;
+  the listener-score guard switches from divide-by-zero to log-of-zero
+  fallback (cap = 20 nats).
+- `Theories/Pragmatics/RSA/ArgumentativeStrength.lean` — `argStr`,
+  `pragArgStr` return ℝ via `Real.log`; `argStr_eq_pointwiseKL` proven
+  via `unfold` + `simp [ne_of_gt]`.
+- `Theories/Morphology/WP/LCEC.lean` — `cellEntropy`,
+  `conditionalCellEntropy`, `iComplexity`, `LCECHolds` to ℝ via
+  private `toReal` cast on ℚ-valued `cellDistribution` /
+  `jointCellDistribution`. `sum_eq_zero_of_forall_zero` lemma
+  re-typed to `List ℝ`. `transparent_iComplexity_zero` proof
+  unchanged structurally.
+- `Phenomena/Imprecision/Studies/EgreEtAl2023.lean` — utility
+  functions (`U_bergen`, `U1`, `U_std`, `utilityDifferenceConstant`)
+  to ℝ; `U1_foldl_zero` rewritten with `Prop`-valued `if-then-else`
+  guards. Two new `sorry`s with TODO/proof-sketch docstrings:
+  `peaked_gets_higher_utility_from_around` (reduces to `(1/15)·log(8/3) > 0`)
+  and `same_utility_under_uniform_l0` (both sides → `Real.log (1/5)`).
+
+The motivation: `log2Approx` was a smell — a rational substitute that
+let theorems prove "ordering of approximations" rather than ordering of
+actual entropies. Routing through `Real.negMulLog` makes the intended
+mathematical content available (Gibbs VP, KL non-negativity,
+shannonEntropy_le_log_card from `Core/Agent/RationalAction.lean`),
+even if individual study-level theorems now carry one or two `sorry`s
+that need real-analytic proofs to close.
+
+## [0.230.135] - 2026-04-21
+
+### Changed — Dissolved `Theories/Semantics/Dynamic/IntensionalCDRT/`
+
+Per mathlib-reviewer "Block as-is" verdict (a directory must justify
+itself by hosting an object you can't define without it). The
+paper-named `IntensionalCDRT/` directory was ~50% generic
+intensional-dynamic-semantics infrastructure and ~50% Hofmann 2025
+paper apparatus, with a `Bridge.lean` admitting its own redundancy via
+four trivial `:= rfl` "type identification" theorems
+(`icdrtUpdate_eq_drs`, `dynProp_eq_ccp`, `seq_eq_dseq`, `idUp_eq_id`).
+
+Promoted to `Theories/Semantics/Dynamic/Core/Intensional.lean` (~700
+LOC, namespace `Semantics.Dynamic.Core`): `IContext`, `DynProp`
+(reusing `CCP.id`/`CCP.absurd`), `ICDRTUpdate` (`seq`/`idUp`/
+`successful`/`toDynProp` + bridges), variable updates
+(`propVarUp`/`indivVarUp`/`multiVarUp`/`relVarUp`), dynamic conditions
+(`dynInclusion`/`dynIdentity`/`dynComplement`/`isComplement`/
+`dynUnion`), `dynPred`/`localEntailment`/`pred_entails_existence`,
+veridicality typology (`veridicalIndiv`/`counterfactualIndiv`/
+`hypotheticalIndiv` + propositional variants + `accessible`/
+`subsetReq`), generic structural theorems
+(`relVarUp_implies_localEntailment`, `veridical_implies_accessible`,
+`counterfactual_veridical_fails`, `double_complement_eq`,
+`disjunction_enables_anaphora`, `veridicality_trichotomy`,
+`veridical_counterfactual_exclusive`, `star_blocks_dynPred`,
+`dec_complement_counterfactual`), the fiber bridge (`fiberDRS` +
+homomorphism + algebra), `IsDistributive`/`IsEliminative` lifts, and
+the paper-flavored discourse-context apparatus (`DiscContext`,
+`pragMaxDC`, `propMaxOp`, `believeCondition`) needed by Hofmann's
+study file.
+
+Absorbed into `Phenomena/Anaphora/Studies/Hofmann2025.lean`
+(828 → ~966 LOC): the entire Compositional Appendix C fragment (`SemE`,
+`SemW`, `commonNoun`, `intransVP`, `indefinite`, `pronoun`,
+`properName`, `semNOT`, `semOR`, `semIF`, `semAND`, `semBelieved`,
+`semDEC` + structural tests + bridge to CCP) and the empirical
+ICDRT-vs-BUS comparison theorems formerly in
+`Dynamic/Comparisons/ICDRT_BUS.lean`
+(`icdrt_bathroom_anaphora`, `icdrt_disagreement_*`,
+`icdrt_modal_subordination`, `icdrt_veridicality_exhaustive`,
+`icdrt_dne`, `icdrt_negated_dref_persists`,
+`icdrt_neg_existential_truth`).
+
+Files deleted:
+- `Linglib/Theories/Semantics/Dynamic/IntensionalCDRT/{Basic,Operators,Bridge,Compositional}.lean` (1,395 LOC)
+- `Linglib/Theories/Semantics/Dynamic/IntensionalCDRT/` directory
+- `Linglib/Theories/Semantics/Dynamic/Comparisons/ICDRT_BUS.lean` (390 LOC) — comparison study belongs in the relevant phenomenon's `Studies/`, not under `Theories/`
+
+Consumer rewires (substrate types now in `Dynamic/Core/`):
+- `Theories/Semantics/PIP/Basic.lean`,
+  `Theories/Semantics/PIP/Bridges.lean`,
+  `Theories/Semantics/PIP/Connectives.lean` —
+  `open Semantics.Dynamic.IntensionalCDRT` → `open Semantics.Dynamic.Core`.
+- `Theories/Semantics/Dynamic/Bilateral/ICDRT.lean`,
+  `Bilateral/ICDRTConnectives.lean` —
+  `open IntensionalCDRT` → `open Semantics.Dynamic.Core`; cross-cutting
+  smell pointer redirected to `Phenomena/Anaphora/Studies/Hofmann2025.lean §7`.
+- `Phenomena/Anaphora/Studies/KeshetAbney2024.lean` —
+  `IContext` opened from `Semantics.Dynamic.Core`.
+- `Theories/Semantics/Dynamic/Core/DynProp.lean`,
+  `Theories/Semantics/Dynamic/Core/DiscourseRef.lean`,
+  `Phenomena/TenseAspect/Studies/Mendes2025.lean` — docstring pointers
+  updated to point at the new locations.
+- `Linglib.lean` — 4 `IntensionalCDRT.*` imports + 1 `Comparisons.ICDRT_BUS`
+  import collapsed to 1 `Dynamic.Core.Intensional` import.
+
+The four trivial `:= rfl` "type identification" theorems are gone:
+once `ICDRTUpdate W E ≡ DRS (ICDRTAssignment W E)` and
+`DynProp W E ≡ CCP (ICDRTAssignment W E × W)` hold by definition (no
+intermediate paper-named layer), there's nothing left to bridge.
+
 ## [0.230.134] - 2026-04-21
 
 ### Changed — `Minimalism.SyntacticObject` migrated to `FreeMagma LIToken` (C5/C6 of Stage-0 architecture refactor)

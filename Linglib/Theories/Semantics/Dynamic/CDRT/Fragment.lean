@@ -32,7 +32,7 @@ pointwise. The same schema works at every syntactic category (S, VP, NP).
 
 namespace Semantics.Dynamic.CDRT.Fragment
 
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 
 variable {S E : Type*}
 

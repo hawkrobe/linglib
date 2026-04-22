@@ -31,8 +31,6 @@ open Semantics.Dynamic.Core.DRSExpr
 -- § 1. Semantic Interpretation
 -- ════════════════════════════════════════════════════════════════
 
-open DynamicTy2
-
 /-- Interpretation of relation symbols. -/
 abbrev RelInterp (E : Type*) := Nat → List E → Prop
 

@@ -57,9 +57,12 @@ structure CoerciveContext where
 namespace CoerciveContext
 
 /-- Coercion arises when effect is volitional and cause is sufficient. -/
-def hasCoerciveImplication (ctx : CoerciveContext) : Bool :=
-  ctx.causeeAction.isVolitional &&
+def hasCoerciveImplication (ctx : CoerciveContext) : Prop :=
+  ctx.causeeAction.isVolitional = true ∧
   causallySufficient ctx.dynamics ctx.background ctx.causerAction ctx.causeeAction.event
+
+instance (ctx : CoerciveContext) : Decidable ctx.hasCoerciveImplication :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- Coercion strength: strong (volitional), weak (ambiguous), none. -/
 inductive CoercionStrength
@@ -70,7 +73,8 @@ inductive CoercionStrength
 
 /-- Compute coercion strength. -/
 def coercionStrength (ctx : CoerciveContext) : CoercionStrength :=
-  if !causallySufficient ctx.dynamics ctx.background ctx.causerAction ctx.causeeAction.event then
+  if ¬ causallySufficient ctx.dynamics ctx.background ctx.causerAction
+      ctx.causeeAction.event then
     .None  -- Sufficiency required for coercion
   else match ctx.causeeAction.actionType with
     | .Volitional => .Strong
@@ -116,7 +120,7 @@ theorem kim_sandy_coercive :
       causerAction := kim
       causeeAction := sandyLeaves
     }
-    ctx.hasCoerciveImplication = true := by
+    ctx.hasCoerciveImplication := by
   native_decide
 
 /--
@@ -138,7 +142,7 @@ theorem kim_sneeze_not_coercive :
       causerAction := kim
       causeeAction := sandySneezes
     }
-    ctx.hasCoerciveImplication = false := by
+    ¬ ctx.hasCoerciveImplication := by
   native_decide
 
 /--

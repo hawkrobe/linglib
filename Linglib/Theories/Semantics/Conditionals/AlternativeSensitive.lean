@@ -58,7 +58,7 @@ Both are instances of the generic `dist` operator (`Core/Logic/Truth3.lean`).
 namespace Semantics.Conditionals.AlternativeSensitive
 
 open Core.Duality (Truth3 dist)
-open Semantics.Conditionals (SimilarityOrdering)
+open Core.Order (SimilarityOrdering)
 
 
 -- ============================================================
@@ -136,7 +136,7 @@ theorem sda_is_universal_homogeneity {W : Type*} [DecidableEq W] [Fintype W]
     (alts : List (W → Bool)) (C : W → Bool) (w : W) :
     sdaEval sim alts C w =
     (homogeneityEval sim alts C w == .true) := by
-  unfold sdaEval homogeneityEval dist
+  unfold sdaEval homogeneityEval Core.Duality.dist
   generalize altConditionalResults sim alts C w = rs
   cases rs.all id <;> cases rs.all (!·) <;> rfl
 
@@ -164,7 +164,7 @@ theorem dcr_is_existential_homogeneity {W : Type*} [DecidableEq W] [Fintype W]
     (h : alts ≠ []) :
     dcrEval sim alts C w =
     !(homogeneityEval sim alts C w == .false) := by
-  unfold dcrEval homogeneityEval dist
+  unfold dcrEval homogeneityEval Core.Duality.dist
   rw [any_id_eq_not_all_not]
   have hne : (altConditionalResults sim alts C w) ≠ [] := by
     unfold altConditionalResults

@@ -1,4 +1,5 @@
 import Mathlib.Data.List.Infix
+import Mathlib.Algebra.Free
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Order.Tree
 
@@ -434,3 +435,28 @@ def toTreeOrder (t : Tree C W) : Core.Order.TreeOrder TreePath where
 end Tree
 
 end Core.Tree
+
+-- ════════════════════════════════════════════════════════════════════
+-- §10  FreeMagma → Tree forgetful map
+-- ════════════════════════════════════════════════════════════════════
+
+namespace FreeMagma
+
+/-- Forgetful map from a free magma to a binary `Core.Tree.Tree Unit α`.
+
+The image lives in a strict subset of `Tree Unit α`: only `.terminal ()`
+(from `.of`) and the binary `.node () [_, _]` (from `.mul`) are produced;
+the n-ary `.node`, `.trace`, and `.bind` constructors are never used.
+
+By composition with `Core.Tree.Tree.toTreeOrder`, every `FreeMagma α`
+inherits a `Core.Order.TreeOrder Core.Tree.TreePath`, making B&P's
+framework-agnostic command-relation library
+(`Linglib.Core.Order.Command`) directly applicable.
+
+Universe note: capped at `α : Type` because `Core.Tree.Tree` is monomorphic
+in `Type 0`; sufficient for `LIToken`-indexed `SyntacticObject`. -/
+def toTree {α : Type} : FreeMagma α → Core.Tree.Tree Unit α
+  | .of a => .terminal () a
+  | .mul l r => .node () [l.toTree, r.toTree]
+
+end FreeMagma

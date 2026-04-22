@@ -20,7 +20,7 @@ Cumulative readings require non-distributive M_v, which lives only in `StateCCP`
 
 namespace Semantics.Dynamic.Core.PointwiseUpdate
 
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core
 
 variable {W E : Type*}

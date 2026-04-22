@@ -583,53 +583,58 @@ def translateUtilities (utils : List ℚ) (a : ℚ) : List ℚ :=
 
 -- (A-5) SoftMax translation invariance: see `Core.softmax_add_const` in Core.
 
-/-- K(o₁,o₂): utility difference constant, independent of m and i (Core Lemma A-6). -/
-def utilityDifferenceConstant {W : Type} [BEq W]
-    (support : List W) (d₁ d₂ : W → ℚ) : ℚ :=
-  let f := fun d => support.map (fun w =>
-    let p := d w
-    if p > 0 then p * RSA.InformationTheory.log2Approx p else 0)
-  sumScores (f d₂) - sumScores (f d₁)
+/-- K(o₁,o₂): utility difference constant, independent of m and i (Core Lemma A-6).
+
+In nats; multiply by `1 / Real.log 2` to convert to bits. -/
+noncomputable def utilityDifferenceConstant {W : Type} [BEq W]
+    (support : List W) (d₁ d₂ : W → ℚ) : ℝ :=
+  let f := fun (d : W → ℚ) => support.map (fun w =>
+    let p : ℝ := ((d w : ℚ) : ℝ)
+    if p > 0 then p * Real.log p else 0)
+  (f d₂).sum - (f d₁).sum
 
 -- LU utility and speaker functions (Appendix A definitions)
 
-/-- U¹(m, o, i) = Σ_w P(w|o) · log L⁰(w | m, i) — speaker utility at level 1.
+/-- U¹(m, o, i) = Σ_w P(w|o) · log L⁰(w | m, i) — speaker utility at level 1, in nats.
 This is the KL-based utility: higher when L⁰ matches the observation. -/
-def U1 {W M I : Type} [BEq W]
+noncomputable def U1 {W M I : Type}
     (l0 : M → I → W → ℚ) (obs : W → ℚ) (m : M) (i : I)
-    (worlds : List W) : ℚ :=
+    (worlds : List W) : ℝ :=
   worlds.foldl (fun acc w =>
-    let pw := obs w
-    let lw := l0 m i w
-    if pw > 0 && lw > 0
-    then acc + pw * RSA.InformationTheory.log2Approx lw
+    let pw : ℝ := ((obs w : ℚ) : ℝ)
+    let lw : ℝ := ((l0 m i w : ℚ) : ℝ)
+    if pw > 0 ∧ lw > 0
+    then acc + pw * Real.log lw
     else acc) 0
 
 /-- (A-2a) No Quality → S¹ = 0: if message m is false under interpretation i
 at every world in observation's support, then S¹(m | o, i) = 0.
 Proof sketch: L⁰(w | m, i) = 0 for all supported w, so U¹ = -∞, softmax → 0. -/
-private theorem U1_foldl_zero {W M I : Type} [BEq W]
+private theorem U1_foldl_zero {W M I : Type}
     (l0 : M → I → W → ℚ) (obs : W → ℚ) (m : M) (i : I)
-    (worlds : List W) (acc : ℚ)
+    (worlds : List W) (acc : ℝ)
     (h_nq : ∀ w, obs w > 0 → l0 m i w = 0) :
     worlds.foldl (fun acc w =>
-      let pw := obs w
-      let lw := l0 m i w
-      if decide (pw > 0) && decide (lw > 0) then acc + pw * RSA.InformationTheory.log2Approx lw
+      let pw : ℝ := ((obs w : ℚ) : ℝ)
+      let lw : ℝ := ((l0 m i w : ℚ) : ℝ)
+      if pw > 0 ∧ lw > 0 then acc + pw * Real.log lw
       else acc) acc = acc := by
   induction worlds generalizing acc with
   | nil => rfl
   | cons w ws ih =>
     simp only [List.foldl]
-    have h_guard : (decide (obs w > 0) && decide (l0 m i w > 0)) = false := by
-      by_cases hw : obs w > 0
-      · simp [h_nq w hw]
-      · simp [show ¬(obs w > 0) from hw]
-    simp only [h_guard]
+    have h_guard :
+        ¬ (((obs w : ℚ) : ℝ) > 0 ∧ ((l0 m i w : ℚ) : ℝ) > 0) := by
+      rintro ⟨hpw, hlw⟩
+      have hpwQ : (0 : ℚ) < obs w := by exact_mod_cast hpw
+      have hlwZ : l0 m i w = 0 := h_nq w hpwQ
+      have : ((l0 m i w : ℚ) : ℝ) = 0 := by rw [hlwZ]; norm_cast
+      linarith
+    simp only [if_neg h_guard]
     exact ih acc
 
 theorem no_quality_implies_S1_zero
-    {W M I : Type} [BEq W] [BEq M]
+    {W M I : Type} [BEq M]
     (l0 : M → I → W → ℚ) (obs : W → ℚ)
     (_messages : List M) (i : I) (worlds : List W) (_alpha : ℚ) (m : M)
     (h_nq : ∀ w, obs w > 0 → l0 m i w = 0) :
@@ -724,47 +729,109 @@ theorem obs_same_support : ∀ x : Value,
     (obs_peaked x > 0) ↔ (obs_flat x > 0) := by
   intro x; cases x <;> simp [obs_peaked, obs_flat]
 
-/-- C.1: Standard utility U_std(m,o) = Σ_w P(w|o) · log(Σ_{o'} L(w,o')).
+/-- C.1: Standard utility U_std(m,o) = Σ_w P(w|o) · log(Σ_{o'} L(w,o')), in nats.
 Under standard utility, U_std differs for same-support observations
-because the marginal Σ_{o'} L(w,o') washes out observation-specific shape. -/
-def U_std (l0_scores : Value → ℚ) (obs : Value → ℚ) : ℚ :=
-  allValues.foldl (fun acc w =>
-    let pw := obs w
-    let lw := l0_scores w
-    if pw > 0 && lw > 0
-    then acc + pw * RSA.InformationTheory.log2Approx lw
-    else acc) 0
+because the marginal Σ_{o'} L(w,o') washes out observation-specific shape.
 
-/-- C.2: Bergen utility U_bergen(m,o) = Σ_w P(w|o) · log L(w|o).
+The `if pw > 0 ∧ lw > 0` guard is unneeded: mathlib's `Real.log 0 = 0`
+convention makes `pw · Real.log lw = 0` whenever either factor is 0. -/
+noncomputable def U_std (l0_scores : Value → ℚ) (obs : Value → ℚ) : ℝ :=
+  (allValues.map (fun w =>
+    ((obs w : ℚ) : ℝ) * Real.log ((l0_scores w : ℚ) : ℝ))).sum
+
+/-- C.2: Bergen utility U_bergen(m,o) = Σ_w P(w|o) · log L(w|o), in nats.
 Under Bergen utility, the observation enters both the weight and the
 listener posterior, so same-support observations yield different utilities
 (the peaked observation gets higher utility from a peaked L0). -/
-def U_bergen (l0_scores : Value → ℚ) (obs : Value → ℚ) : ℚ :=
-  allValues.foldl (fun acc w =>
-    let pw := obs w
-    let lw := l0_scores w
-    if pw > 0 && lw > 0
-    then acc + pw * RSA.InformationTheory.log2Approx lw
-    else acc) 0
+noncomputable def U_bergen (l0_scores : Value → ℚ) (obs : Value → ℚ) : ℝ :=
+  (allValues.map (fun w =>
+    ((obs w : ℚ) : ℝ) * Real.log ((l0_scores w : ℚ) : ℝ))).sum
 
 -- For "around 3", L0 is triangular [1/16, 1/8, 3/16, 1/4, 3/16, 1/8, 1/16]
 
 def l0_around3_fn : Value → ℚ := fun v => getScore l0_around3 v
 
+/-- Concrete L0 values for "around 3". The triangular distribution from the BIR
+posterior over y ∈ {0,1,2,3}, normalized. Like the other `getScore l0_around3`
+evaluations elsewhere in this file (`bir_triangular_shape`, `bir_symmetry`,
+`ratio_inequality`, …), this is a finite ℚ-arithmetic check and uses
+`native_decide` — kernel `decide` stalls on the gcd-normalization in
+`Rat.div` after `find?` traversal. -/
+private lemma l0_around3_eval (v : Value) : l0_around3_fn v =
+    match v with
+    | .v0 => 1/16 | .v1 => 1/8 | .v2 => 3/16 | .v3 => 1/4
+    | .v4 => 3/16 | .v5 => 1/8 | .v6 => 1/16 := by
+  cases v <;> native_decide
+
 /-- Peaked observation has better utility from triangular L0 than flat does.
 This is because the peaked observation puts more weight on center values
-where L0 also has higher probability — better KL alignment. -/
+where L0 also has higher probability — better KL alignment.
+
+Algebraic content: with `obs_peaked = (1/6, 1/6, 1/3, 1/6, 1/6)` and
+`obs_flat = (1/5, 1/5, 1/5, 1/5, 1/5)` over `(v1, v2, v3, v4, v5)`, and
+the triangular L0 `(1/8, 3/16, 1/4, 3/16, 1/8)`,
+
+  U_peaked - U_flat = (1/15) · (2·log(1/4) - log(1/8) - log(3/16))
+                    = (1/15) · log((1/4)² / ((1/8)·(3/16)))
+                    = (1/15) · log(8/3) > 0. -/
 theorem peaked_gets_higher_utility_from_around :
     U_bergen l0_around3_fn obs_peaked > U_bergen l0_around3_fn obs_flat := by
-  native_decide
+  suffices h : U_bergen l0_around3_fn obs_peaked -
+               U_bergen l0_around3_fn obs_flat = (1/15 : ℝ) * Real.log (8/3) by
+    have h_pos : (0 : ℝ) < (1/15 : ℝ) * Real.log (8/3) :=
+      mul_pos (by norm_num) (Real.log_pos (by norm_num))
+    linarith
+  unfold U_bergen
+  simp only [allValues, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+             obs_peaked, obs_flat, l0_around3_eval]
+  push_cast
+  -- Goal reduces to a pure ℝ identity in `Real.log (1/8)`, `Real.log (3/16)`, `Real.log (1/4)`.
+  -- Algebraic step: 2·log(1/4) - log(1/8) - log(3/16) = log(8/3).
+  have h_log_eq : Real.log (8/3) =
+      2 * Real.log (1/4) - Real.log (1/8) - Real.log (3/16) := by
+    have h18 : Real.log (1/8) = -Real.log 8 := by
+      rw [show (1/8 : ℝ) = 8⁻¹ from by norm_num, Real.log_inv]
+    have h14 : Real.log (1/4) = -Real.log 4 := by
+      rw [show (1/4 : ℝ) = 4⁻¹ from by norm_num, Real.log_inv]
+    have h316 : Real.log (3/16) = Real.log 3 - Real.log 16 := by
+      rw [Real.log_div (by norm_num) (by norm_num)]
+    have h83 : Real.log (8/3) = Real.log 8 - Real.log 3 := by
+      rw [Real.log_div (by norm_num) (by norm_num)]
+    have h4 : Real.log 4 = 2 * Real.log 2 := by
+      rw [show (4 : ℝ) = 2^2 from by norm_num, Real.log_pow]; ring
+    have h8 : Real.log 8 = 3 * Real.log 2 := by
+      rw [show (8 : ℝ) = 2^3 from by norm_num, Real.log_pow]; ring
+    have h16 : Real.log 16 = 4 * Real.log 2 := by
+      rw [show (16 : ℝ) = 2^4 from by norm_num, Real.log_pow]; ring
+    rw [h83, h18, h14, h316, h4, h8, h16]; ring
+  rw [h_log_eq]; ring
 
 /-- Both observations get the SAME utility under a uniform L0 (from "between").
 This demonstrates the LU limitation: uniform L0 cannot distinguish shapes. -/
 def l0_between_fn : Value → ℚ := fun v => getScore l0_between1_5 v
 
+/-- Concrete L0 values for "between 1 and 5" — uniform 1/5 on {v1..v5}, 0 outside.
+Same finite-ℚ-data-check rationale as `l0_around3_eval`. -/
+private lemma l0_between1_5_eval (v : Value) : l0_between_fn v =
+    match v with
+    | .v0 => 0 | .v1 => 1/5 | .v2 => 1/5 | .v3 => 1/5
+    | .v4 => 1/5 | .v5 => 1/5 | .v6 => 0 := by
+  cases v <;> native_decide
+
+/-- Under a uniform L0 over the shared support {v1..v5}, both observations
+yield the same utility `Real.log (1/5)`. This works because:
+  (a) On the support, `Real.log lw = Real.log (1/5)` is constant.
+  (b) Off the support, `Real.log 0 = 0` (mathlib convention) zeros the term.
+  (c) Both `obs_peaked` and `obs_flat` sum to 1 over {v1..v5}. -/
 theorem same_utility_under_uniform_l0 :
     U_bergen l0_between_fn obs_peaked = U_bergen l0_between_fn obs_flat := by
-  native_decide
+  unfold U_bergen
+  simp only [allValues, List.map_cons, List.map_nil, List.sum_cons, List.sum_nil,
+             obs_peaked, obs_flat, l0_between1_5_eval]
+  push_cast
+  -- Off-support terms vanish (Real.log 0 = 0); on-support terms collapse to log(1/5).
+  rw [Real.log_zero]
+  ring
 
 -- ============================================================================
 -- Section VII: Grounding and Bridge Theorems

@@ -42,9 +42,9 @@ choice of "worlds vs. situations" anywhere in `Frame`.
 
 The relation **lumping** between propositions and the distinction
 between accidental and non-accidental generalizations belong in
-`Theories/Semantics/Conditionals/Kratzer/Lumping.lean`; those are
-theory-laden and depend on a chosen modal base. This file keeps only
-the order-theoretic core.
+`Core/IntensionalLogic/Lumping.lean`; those are theory-laden and
+depend on a chosen modal base. This file keeps only the order-theoretic
+core.
 -/
 
 namespace Core.IntensionalLogic

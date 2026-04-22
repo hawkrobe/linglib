@@ -520,8 +520,9 @@ open Core.Causal
 /-- Compute a `CausalWorld` from a structural causal model. -/
 def causalWorldFromModel (dyn : CausalDynamics) (bg : Situation)
     (cause effect : Variable) : CausalWorld :=
-  let p := extractProfile dyn bg cause effect
-  { whether := p.necessary, how := p.direct, sufficient := p.sufficient }
+  { whether := decide (causallyNecessary dyn bg cause effect)
+  , how := decide (hasDirectLaw dyn cause effect)
+  , sufficient := decide (causallySufficient dyn bg cause effect) }
 
 private def mA : Variable := mkVar "bg_cause"
 private def mB : Variable := mkVar "bg_alt"
@@ -597,8 +598,8 @@ divergence reflects different questions: N&L model *verb choice*
 (make vs cause), B&G model *expression choice* (caused vs enabled). -/
 theorem bg_caused_vs_nl_cause_diverge :
     expressionMeaning (causalWorldFromModel overdetModel overdetBg mA mC) .caused = true ∧
-    causallySufficient overdetModel overdetBg mA mC = true ∧
-    causallyNecessary overdetModel overdetBg mA mC = false := by
+    causallySufficient overdetModel overdetBg mA mC ∧
+    ¬ (causallyNecessary overdetModel overdetBg mA mC) := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 end StructuralBridge
@@ -651,21 +652,20 @@ end HornScaleBridge
 Each theorem below chains across three levels of analysis:
 
 1. **Structural**: A `CausalDynamics` (structural equation model) yields
-   a `CausalProfile` via `extractProfile`
-2. **Causation type**: The profile determines production vs dependence
-   causation via `profileCausationType` (from `ProductionDependence.lean`)
+   directness and necessity via `hasDirectLaw` / `causallyNecessary`
+2. **Causation type**: These determine production vs dependence
+   causation via `causationType` (from `ProductionDependence.lean`)
 3. **Semantic + Pragmatic**: The derived `CausalWorld` determines which
    expressions are literally true, and the S1 pragmatic speaker selects
    the most informative one
 
 These are the deepest integration points: a change to `normalDevelopment`,
-`extractProfile`, `expressionMeaning`, or the L0/S1 computation would
-break these theorems. -/
+`expressionMeaning`, or the L0/S1 computation would break these theorems. -/
 
 section EndToEnd
 
 open Core.Causal
-open Semantics.Causation.ProductionDependence (profileCausationType)
+open Semantics.Causation.ProductionDependence (causationType)
 
 /-- **Solo cause → P-CAUSE → S1 prefers "caused".**
 
@@ -674,7 +674,9 @@ produces the correct pragmatic prediction: the S1 speaker selects
 "caused" over "enabled" and "affected." -/
 theorem solo_cause_chain :
     let cw := causalWorldFromModel soloModel Situation.empty mA mC
-    profileCausationType (extractProfile soloModel Situation.empty mA mC) = some .production ∧
+    causationType
+        (decide (causallyNecessary soloModel Situation.empty mA mC))
+        (decide (hasDirectLaw soloModel mA mC)) = some .production ∧
     expressionMeaning cw .caused = true ∧
     cfg.S1 () cw .caused > cfg.S1 () cw .enabled ∧
     cfg.S1 () cw .caused > cfg.S1 () cw .affected := by
@@ -693,7 +695,9 @@ Under @cite{nadathur-2024} Def 10b, the chain root is also NOT necessary
 becomes `none` (neither production nor dependence). -/
 theorem chain_cause_chain :
     let cw := causalWorldFromModel chainModel Situation.empty mA mC
-    profileCausationType (extractProfile chainModel Situation.empty mA mC) = none ∧
+    causationType
+        (decide (causallyNecessary chainModel Situation.empty mA mC))
+        (decide (hasDirectLaw chainModel mA mC)) = none ∧
     expressionMeaning cw .caused = false ∧
     expressionMeaning cw .enabled = true := by
   exact ⟨by native_decide, by native_decide, by native_decide⟩
@@ -707,11 +711,12 @@ false (necessity fails). This is a genuine theoretical divergence:
 B&G model *expression choice* (how speakers describe events),
 N&L model *verb argument structure* (make vs cause). -/
 theorem overdetermination_divergence :
-    let p := extractProfile overdetModel overdetBg mA mC
     let cw := causalWorldFromModel overdetModel overdetBg mA mC
-    profileCausationType p = some .production ∧
+    causationType
+        (decide (causallyNecessary overdetModel overdetBg mA mC))
+        (decide (hasDirectLaw overdetModel mA mC)) = some .production ∧
     expressionMeaning cw .caused = true ∧
-    Semantics.Causation.Necessity.causeSem overdetModel overdetBg mA mC = false := by
+    Semantics.Causation.Necessity.¬ (causeSem overdetModel overdetBg mA mC) := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 end EndToEnd

@@ -44,10 +44,12 @@ import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.IntensionalLogic.Premise
 import Linglib.Core.IntensionalLogic.ConversationalBackground
 import Linglib.Core.IntensionalLogic.Situations
+import Linglib.Core.IntensionalLogic.Lumping
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Tree
 import Linglib.Core.Order.Command
 import Linglib.Core.Order.Normality
+import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.FeaturePreorder
@@ -923,6 +925,7 @@ import Linglib.Phenomena.Anaphora.Studies.Heim1982
 import Linglib.Phenomena.Anaphora.Studies.KampReyle1993
 import Linglib.Phenomena.Anaphora.Studies.KeshetAbney2024
 import Linglib.Phenomena.Anaphora.Studies.AbneyKeshet2025
+import Linglib.Phenomena.Anaphora.Studies.Dekker2012
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Phenomena.Anaphora.CrossSentential
 import Linglib.Phenomena.Anaphora.DonkeyAnaphora
@@ -1652,7 +1655,6 @@ import Linglib.Theories.Semantics.Dynamic.DRT.Basic
 import Linglib.Theories.Semantics.Dynamic.Bilateral.Basic
 import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
 import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS
-import Linglib.Theories.Semantics.Dynamic.Bilateral.BUS_DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRT
 import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRTConnectives
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Basic
@@ -1661,7 +1663,6 @@ import Linglib.Theories.Semantics.Dynamic.Nondeterminism.PointwiseUpdate
 import Linglib.Theories.Semantics.Dynamic.Probability.Basic
 import Linglib.Theories.Semantics.Dynamic.Epistemic.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
-import Linglib.Theories.Semantics.Dynamic.CDRT.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.CDRT.Fragment
 import Linglib.Theories.Semantics.Dynamic.DynamicGQ.Basic
 import Linglib.Theories.Semantics.Dynamic.DynamicGQ.UpdateTheoretic
@@ -1677,14 +1678,10 @@ import Linglib.Theories.Semantics.PIP.Felicity
 import Linglib.Theories.Semantics.Dynamic.PLA.Basic
 import Linglib.Theories.Semantics.Dynamic.PLA.Belief
 import Linglib.Theories.Semantics.Dynamic.PLA.DeepTheorems
-import Linglib.Theories.Semantics.Dynamic.PLA.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.PLA.Epistemic
 import Linglib.Theories.Semantics.Dynamic.PLA.Quantifiers
 import Linglib.Theories.Semantics.Dynamic.PLA.Semantics
 import Linglib.Theories.Semantics.Dynamic.PLA.Update
--- Theories: Dynamic Semantics — Comparisons & top-level
-import Linglib.Theories.Semantics.Dynamic.Comparisons.CDRT_TTR
-import Linglib.Theories.Semantics.Dynamic.Comparisons.PLA_BUS
 -- Theories: Decision-Theoretic Semantics (Merin 1999)
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Theories.Pragmatics.DecisionTheoretic.ScalarImplicature
@@ -2073,7 +2070,6 @@ import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Iatridou
 import Linglib.Theories.Semantics.Conditionals.LeftNested
 import Linglib.Theories.Semantics.Conditionals.Restrictor
-import Linglib.Theories.Semantics.Conditionals.Kratzer.Lumping
 import Linglib.Theories.Semantics.Conditionals.Presuppositional
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Modality.Disjunction

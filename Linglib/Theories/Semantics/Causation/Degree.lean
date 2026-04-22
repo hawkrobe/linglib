@@ -76,23 +76,38 @@ structure DegreeScenario where
 
     "The coffee is hot enough to drink" presupposes that the degree of
     heat being sufficient is causally linked to the drinking event. -/
-def enoughAt (sc : DegreeScenario) (w : World) : Bool :=
-  causallySufficient sc.dynamics (sc.background w) sc.degreeMet sc.complement
+def enoughAt (sc : DegreeScenario) (w : World) : Prop :=
+  (normalDevelopment sc.dynamics ((sc.background w).extend sc.degreeMet true)).hasValue
+    sc.complement true = true
+
+instance (sc : DegreeScenario) (w : World) : Decidable (enoughAt sc w) :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- The complement is actualized at `w`: degree was met AND complement
     developed via normal causal propagation. -/
-def enoughActualized (sc : DegreeScenario) (w : World) : Bool :=
-  factuallyDeveloped sc.dynamics (sc.background w) sc.degreeMet sc.complement
+def enoughActualized (sc : DegreeScenario) (w : World) : Prop :=
+  (sc.background w).hasValue sc.degreeMet true = true ∧
+  (normalDevelopment sc.dynamics (sc.background w)).hasValue sc.complement true = true
+
+instance (sc : DegreeScenario) (w : World) : Decidable (enoughActualized sc w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- *Enough* with aspectual modulation.
 
     - **Perfective**: degree met AND complement actualized
     - **Imperfective**: degree met (causal link exists) but no actualization required -/
 def enoughWithAspect (sc : DegreeScenario) (asp : ViewpointAspectB)
-    (w : World) : Bool :=
+    (w : World) : Prop :=
   match asp with
-  | .perfective => enoughAt sc w && enoughActualized sc w
+  | .perfective => enoughAt sc w ∧ enoughActualized sc w
   | .imperfective => enoughAt sc w
+
+instance (sc : DegreeScenario) (asp : ViewpointAspectB) (w : World) :
+    Decidable (enoughWithAspect sc asp w) := by
+  unfold enoughWithAspect
+  cases asp
+  · exact inferInstanceAs (Decidable (_ ∧ _))
+  · exact inferInstanceAs (Decidable (_ : Prop))
 
 -- ════════════════════════════════════════════════════
 -- § 3. Too Semantics
@@ -103,25 +118,38 @@ def enoughWithAspect (sc : DegreeScenario) (asp : ViewpointAspectB)
 
     "The coffee is too hot to drink": the degree of heat being excessive
     is causally sufficient for the complement NOT occurring. -/
-def tooAt (sc : DegreeScenario) (w : World) : Bool :=
+def tooAt (sc : DegreeScenario) (w : World) : Prop :=
   let bgWithDeg := (sc.background w).extend sc.degreeMet true
-  !(normalDevelopment sc.dynamics bgWithDeg).hasValue sc.complement true
+  (normalDevelopment sc.dynamics bgWithDeg).hasValue sc.complement true = false
+
+instance (sc : DegreeScenario) (w : World) : Decidable (tooAt sc w) :=
+  inferInstanceAs (Decidable (_ = false))
 
 /-- The complement is blocked at `w`: degree was met AND complement
     did NOT develop. -/
-def tooActualized (sc : DegreeScenario) (w : World) : Bool :=
-  (sc.background w).hasValue sc.degreeMet true &&
-  !(normalDevelopment sc.dynamics (sc.background w)).hasValue sc.complement true
+def tooActualized (sc : DegreeScenario) (w : World) : Prop :=
+  (sc.background w).hasValue sc.degreeMet true = true ∧
+  (normalDevelopment sc.dynamics (sc.background w)).hasValue sc.complement true = false
+
+instance (sc : DegreeScenario) (w : World) : Decidable (tooActualized sc w) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 /-- *Too* with aspectual modulation.
 
     - **Perfective**: degree met AND complement blocked (= didn't happen)
     - **Imperfective**: degree is excessive (causal link to blocking) -/
 def tooWithAspect (sc : DegreeScenario) (asp : ViewpointAspectB)
-    (w : World) : Bool :=
+    (w : World) : Prop :=
   match asp with
-  | .perfective => tooAt sc w && tooActualized sc w
+  | .perfective => tooAt sc w ∧ tooActualized sc w
   | .imperfective => tooAt sc w
+
+instance (sc : DegreeScenario) (asp : ViewpointAspectB) (w : World) :
+    Decidable (tooWithAspect sc asp w) := by
+  unfold tooWithAspect
+  cases asp
+  · exact inferInstanceAs (Decidable (_ ∧ _))
+  · exact inferInstanceAs (Decidable (_ : Prop))
 
 -- ════════════════════════════════════════════════════
 -- § 4. Actuality Theorems
@@ -133,24 +161,20 @@ def tooWithAspect (sc : DegreeScenario) (asp : ViewpointAspectB)
     Proof: immediate from the definition — perfective conjoins
     causal sufficiency with actualization. -/
 theorem perfective_enough_entails_complement (sc : DegreeScenario) (w : World)
-    (h : enoughWithAspect sc .perfective w = true) :
-    enoughActualized sc w = true := by
-  simp only [enoughWithAspect, Bool.and_eq_true] at h
-  exact h.2
+    (h : enoughWithAspect sc .perfective w) :
+    enoughActualized sc w := h.2
 
 /-- **Perfective too entails complement blocked**: if "was too Adj to VP"
     holds with perfective aspect, the complement did NOT occur. -/
 theorem perfective_too_blocks_complement (sc : DegreeScenario) (w : World)
-    (h : tooWithAspect sc .perfective w = true) :
-    tooActualized sc w = true := by
-  simp only [tooWithAspect, Bool.and_eq_true] at h
-  exact h.2
+    (h : tooWithAspect sc .perfective w) :
+    tooActualized sc w := h.2
 
 /-- Imperfective enough is compatible with complement not actualized. -/
 theorem imperfective_enough_no_entailment :
     ∃ (sc : DegreeScenario) (w : World),
-      enoughWithAspect sc .imperfective w = true ∧
-      enoughActualized sc w = false := by
+      enoughWithAspect sc .imperfective w ∧
+      ¬ enoughActualized sc w := by
   let deg := mkVar "deg"
   let comp := mkVar "comp"
   let dyn := CausalDynamics.ofList [CausalLaw.simple deg comp]
@@ -173,11 +197,11 @@ theorem enough_too_opposite :
       -- Same degree variable
       scE.degreeMet = scT.degreeMet ∧
       -- Enough: degree met → complement occurs
-      enoughWithAspect scE .perfective w = true ∧
-      enoughActualized scE w = true ∧
+      enoughWithAspect scE .perfective w ∧
+      enoughActualized scE w ∧
       -- Too: degree met → complement does NOT occur
-      tooWithAspect scT .perfective w = true ∧
-      tooActualized scT w = true := by
+      tooWithAspect scT .perfective w ∧
+      tooActualized scT w := by
   let deg := mkVar "deg"
   let comp := mkVar "comp"
   -- "Enough" dynamics: degree → complement
@@ -213,7 +237,7 @@ def DegreeScenario.toFrame (sc : DegreeScenario) : CausalFrame World :=
     both are aspect-governed causal frames. -/
 theorem enough_matches_frame (sc : DegreeScenario) (asp : ViewpointAspectB)
     (w : World) :
-    enoughWithAspect sc asp w =
+    enoughWithAspect sc asp w ↔
       sc.toFrame.actualityWithAspect asp w := by
   cases asp <;> rfl
 

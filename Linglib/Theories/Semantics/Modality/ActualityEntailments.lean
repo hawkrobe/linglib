@@ -198,8 +198,8 @@ theorem causal_structural_agreement :
     -- Causal result: PFV + aspectual mode → complement actualized
     (∀ (f : CausalFrame World) (w : World)
       (hMode : f.actualization = .aspectual)
-      (h : f.actualityWithAspect .perfective w = true),
-      f.actualizedAt w = true) :=
+      (h : f.actualityWithAspect .perfective w),
+      f.actualizedAt w) :=
   ⟨rfl, λ f w hMode h => CausalFrame.perfective_entails_complement f w h hMode⟩
 
 

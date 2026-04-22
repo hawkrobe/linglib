@@ -35,10 +35,10 @@ dref's as functions taking info states as arguments.
 
 import Linglib.Theories.Semantics.Dynamic.Core.DynProp
 
-namespace Semantics.Dynamic.Core.DynamicTy2
+namespace Semantics.Dynamic.Core
 
--- Re-export the DRS algebra so downstream code that opens DynamicTy2
--- continues to see DRS, Condition, dseq, test, etc.
+-- Re-export the DRS algebra so downstream code that opens
+-- Semantics.Dynamic.Core continues to see DRS, Condition, dseq, test, etc.
 export DynProp (DRS Condition
   dseq test dneg dimpl ddisj closure
   trueAt valid entails
@@ -194,4 +194,4 @@ theorem specificDref_extend_invariant {S E : Type*} [AssignmentStructure S E]
   exact AssignmentStructure.extend_other i u (specificDref e) d h.symm
 
 
-end Semantics.Dynamic.Core.DynamicTy2
+end Semantics.Dynamic.Core

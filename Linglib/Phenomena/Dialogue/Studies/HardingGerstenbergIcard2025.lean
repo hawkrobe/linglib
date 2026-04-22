@@ -286,15 +286,15 @@ theorem roof_D_ambiguous_for_roof_decision :
 
 /-- In M_∧ (conjunctive): both R and D manipulate F. -/
 theorem roof_conj_both_manipulate :
-    manipulates dynRAndD roofBg R F = true ∧
-    manipulates dynRAndD roofBg D F = true := by
+    manipulates dynRAndD roofBg R F ∧
+    manipulates dynRAndD roofBg D F := by
   constructor <;> native_decide
 
 /-- In M_∨ (disjunctive): neither R nor D individually manipulates F
     because the other cause is present as backup. -/
 theorem roof_disj_neither_manipulates :
-    manipulates dynROrD roofBg R F = false ∧
-    manipulates dynROrD roofBg D F = false := by
+    ¬ (manipulates dynROrD roofBg R F) ∧
+    ¬ (manipulates dynROrD roofBg D F) := by
   constructor <;> native_decide
 
 /-- **Causal selection interacts with structure** (§4.3.1).
@@ -308,10 +308,10 @@ theorem roof_disj_neither_manipulates :
     disjunctive ones (where the manipulation game with varied contexts
     favors the more probable cause). -/
 theorem roof_structure_affects_manipulation :
-    manipulates dynRAndD roofBg R F = true ∧
-    manipulates dynRAndD roofBg D F = true ∧
-    manipulates dynROrD roofBg R F = false ∧
-    manipulates dynROrD roofBg D F = false := by
+    manipulates dynRAndD roofBg R F ∧
+    manipulates dynRAndD roofBg D F ∧
+    ¬ (manipulates dynROrD roofBg R F) ∧
+    ¬ (manipulates dynROrD roofBg D F) := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 end RoofReplacement
@@ -364,8 +364,8 @@ theorem milk_charlie_sole_cause :
 /-- When both drank, neither individually manipulates M (overdetermination):
     removing one doesn't stop M = 1 because the other is still present. -/
 theorem milk_overdetermination :
-    manipulates milkDyn milkBgBoth Ch M = false ∧
-    manipulates milkDyn milkBgBoth Da M = false := by
+    ¬ (manipulates milkDyn milkBgBoth Ch M) ∧
+    ¬ (manipulates milkDyn milkBgBoth Da M) := by
   constructor <;> native_decide
 
 /-- Neither explanation is literally true when both drank (overdetermination
@@ -384,8 +384,8 @@ theorem milk_neither_literal_when_both :
     than milkBgCharlie (which includes Ch=true): @cite{nadathur-2024}
     Definition 10b requires the cause not already entailed by s. -/
 theorem milk_charlie_sole_profile :
-    causallySufficient milkDyn Situation.empty Ch M = true ∧
-    causallyNecessary milkDyn (Situation.empty.extend Da false) Ch M = true := by
+    causallySufficient milkDyn Situation.empty Ch M ∧
+    causallyNecessary milkDyn (Situation.empty.extend Da false) Ch M := by
   constructor <;> native_decide
 
 end MilkTheft

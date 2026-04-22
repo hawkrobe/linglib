@@ -70,10 +70,12 @@ contexts; TTR loses dynamic state-threading at the negation site.
 
 The cross-framework comparisons are formalized at the phenomenon level:
 `Phenomena/Anaphora/Studies/Hofmann2025.lean §7` (bilateral vs ICDRT on
-the bathroom sentence) and `Comparisons/CDRT_TTR.lean` (CDRT ↔ TTR
-truth-conditional equivalence + dynamic divergence under negation).
-New dynamic frameworks should declare which DNE strategy they adopt
-and link to one of these comparisons.
+the bathroom sentence), `Phenomena/Anaphora/Studies/Cooper2023.lean §§ 4-5`
+(CDRT ↔ TTR truth-conditional equivalence + dynamic divergence under
+negation), and `Phenomena/Anaphora/Studies/Dekker2012.lean` (PLA vs BUS
+on the bathroom sentence: eliminative test vs structural swap). New
+dynamic frameworks should declare which DNE strategy they adopt and
+link to one of these comparisons.
 -/
 
 namespace Semantics.Dynamic.Core.DynProp

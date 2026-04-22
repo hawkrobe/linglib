@@ -52,29 +52,29 @@ def preemptionBg : Situation :=
 
 /-- Suzy's throw is sufficient for shattering. -/
 theorem suzy_sufficient :
-    causallySufficient preemptionDyn Situation.empty suzyThrows bottleShatters = true := by
+    causallySufficient preemptionDyn Situation.empty suzyThrows bottleShatters := by
   native_decide
 
 /-- Billy's throw is also sufficient (backup cause). -/
 theorem billy_sufficient :
-    causallySufficient preemptionDyn Situation.empty billyThrows bottleShatters = true := by
+    causallySufficient preemptionDyn Situation.empty billyThrows bottleShatters := by
   native_decide
 
 /-- Neither is necessary when both are present (overdetermination). -/
 theorem suzy_not_necessary :
-    causallyNecessary preemptionDyn preemptionBg suzyThrows bottleShatters = false := by
+    ¬ (causallyNecessary preemptionDyn preemptionBg suzyThrows bottleShatters) := by
   native_decide
 
 theorem billy_not_necessary :
-    causallyNecessary preemptionDyn preemptionBg billyThrows bottleShatters = false := by
+    ¬ (causallyNecessary preemptionDyn preemptionBg billyThrows bottleShatters) := by
   native_decide
 
 /-- "Suzy made the bottle shatter" is true; "Suzy caused the bottle to
     shatter" is false — matching Nadathur & Lauer's prediction for
     overdetermination. -/
 theorem preemption_make_not_cause :
-    makeSem preemptionDyn preemptionBg suzyThrows bottleShatters = true ∧
-    causeSem preemptionDyn preemptionBg suzyThrows bottleShatters = false := by
+    makeSem preemptionDyn preemptionBg suzyThrows bottleShatters ∧
+    ¬ (causeSem preemptionDyn preemptionBg suzyThrows bottleShatters) := by
   constructor <;> native_decide
 
 /-- When Suzy is the sole thrower, she both "made" and "caused" the
@@ -82,8 +82,8 @@ theorem preemption_make_not_cause :
     encodes Billy's absence rather than Suzy's presence. -/
 theorem suzy_solo_make_and_cause :
     let bg := Situation.empty.extend billyThrows false
-    makeSem preemptionDyn bg suzyThrows bottleShatters = true ∧
-    causeSem preemptionDyn bg suzyThrows bottleShatters = true := by
+    makeSem preemptionDyn bg suzyThrows bottleShatters ∧
+    causeSem preemptionDyn bg suzyThrows bottleShatters := by
   constructor <;> native_decide
 
 end Preemption
@@ -121,7 +121,7 @@ theorem disease_sufficient_no_surgery :
 /-- Disease is NOT sufficient for death in an empty background
     (needs the no_surgery enabling condition). -/
 theorem disease_not_sufficient_alone :
-    causallySufficient preventionDyn Situation.empty disease death = false := by
+    ¬ (causallySufficient preventionDyn Situation.empty disease death) := by
   native_decide
 
 end Prevention
@@ -149,29 +149,29 @@ def oxygenBg : Situation :=
 
 /-- Match is sufficient for fire given oxygen. -/
 theorem match_sufficient_given_oxygen :
-    causallySufficient enablingDyn oxygenBg matchStrike flame = true := by
+    causallySufficient enablingDyn oxygenBg matchStrike flame := by
   native_decide
 
 /-- Match is NOT sufficient without oxygen. -/
 theorem match_not_sufficient_without_oxygen :
-    causallySufficient enablingDyn Situation.empty matchStrike flame = false := by
+    ¬ (causallySufficient enablingDyn Situation.empty matchStrike flame) := by
   native_decide
 
 /-- Match is necessary for fire given oxygen. -/
 theorem match_necessary :
-    causallyNecessary enablingDyn oxygenBg matchStrike flame = true := by
+    causallyNecessary enablingDyn oxygenBg matchStrike flame := by
   native_decide
 
 /-- Oxygen is also necessary for fire given match. -/
 theorem oxygen_necessary :
     let bg := Situation.empty.extend matchStrike true
-    causallyNecessary enablingDyn bg oxygenPresent flame = true := by
+    causallyNecessary enablingDyn bg oxygenPresent flame := by
   native_decide
 
 /-- Both "make" and "cause" are true for the match (given oxygen). -/
 theorem match_make_and_cause :
-    makeSem enablingDyn oxygenBg matchStrike flame = true ∧
-    causeSem enablingDyn oxygenBg matchStrike flame = true := by
+    makeSem enablingDyn oxygenBg matchStrike flame ∧
+    causeSem enablingDyn oxygenBg matchStrike flame := by
   constructor <;> native_decide
 
 end Enabling
@@ -194,54 +194,58 @@ def bypassDyn : CausalDynamics :=
 
 /-- A is sufficient for C (direct law). -/
 theorem a_sufficient_for_c :
-    causallySufficient bypassDyn Situation.empty a c = true := by
+    causallySufficient bypassDyn Situation.empty a c := by
   native_decide
 
 /-- A is necessary for C (only cause). -/
 theorem a_necessary_for_c :
-    causallyNecessary bypassDyn Situation.empty a c = true := by
+    causallyNecessary bypassDyn Situation.empty a c := by
   native_decide
 
 /-- B is NOT sufficient for C (no law B → C). -/
 theorem b_not_sufficient_for_c :
-    causallySufficient bypassDyn Situation.empty b c = false := by
+    ¬ (causallySufficient bypassDyn Situation.empty b c) := by
   native_decide
 
 end ChainBypass
 
 /-! ## 5. Causal profiles summary
 
-Verify the full `CausalProfile` for each scenario. -/
+Verify sufficiency, necessity, and directness for each scenario. -/
 
 section Profiles
 
 /-- Preemption (both present): sufficient, not necessary, direct. -/
 theorem preemption_profile :
-    extractProfile preemptionDyn preemptionBg suzyThrows bottleShatters =
-      { sufficient := true, necessary := false, direct := true } := by
-  native_decide
+    causallySufficient preemptionDyn preemptionBg suzyThrows bottleShatters ∧
+    ¬ causallyNecessary preemptionDyn preemptionBg suzyThrows bottleShatters ∧
+    hasDirectLaw preemptionDyn suzyThrows bottleShatters := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-- Enabling: match is sufficient, necessary, direct (given oxygen).
     Under @cite{nadathur-2024} Def 10b, bg excludes the cause. -/
 theorem enabling_profile :
-    extractProfile enablingDyn oxygenBg matchStrike flame =
-      { sufficient := true, necessary := true, direct := true } := by
-  native_decide
+    causallySufficient enablingDyn oxygenBg matchStrike flame ∧
+    causallyNecessary enablingDyn oxygenBg matchStrike flame ∧
+    hasDirectLaw enablingDyn matchStrike flame := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-- Chain bypass: A is sufficient, necessary, direct for C. -/
 theorem bypass_profile_a :
-    extractProfile bypassDyn Situation.empty a c =
-      { sufficient := true, necessary := true, direct := true } := by
-  native_decide
+    causallySufficient bypassDyn Situation.empty a c ∧
+    causallyNecessary bypassDyn Situation.empty a c ∧
+    hasDirectLaw bypassDyn a c := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-- Chain bypass: B has no causal power over C.
     B is not sufficient (no B→C law), but IS necessary under Def 10b:
     the only way to achieve C is through A→C, which also fires A→B,
     so every path to C entails B. -/
 theorem bypass_profile_b :
-    extractProfile bypassDyn Situation.empty b c =
-      { sufficient := false, necessary := true, direct := false } := by
-  native_decide
+    ¬ causallySufficient bypassDyn Situation.empty b c ∧
+    causallyNecessary bypassDyn Situation.empty b c ∧
+    ¬ hasDirectLaw bypassDyn b c := by
+  refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 end Profiles
 
@@ -270,22 +274,22 @@ theorem intervene_overrides :
 /-- Suzy's throw manipulates the bottle: do(throw=T) vs do(throw=F)
     yield different outcomes. -/
 theorem suzy_manipulates_bottle :
-    manipulates preemptionDyn Situation.empty suzyThrows bottleShatters = true := by
+    manipulates preemptionDyn Situation.empty suzyThrows bottleShatters := by
   native_decide
 
 /-- In enabling, the match manipulates the flame (given oxygen). -/
 theorem match_manipulates_flame :
-    manipulates enablingDyn oxygenBg matchStrike flame = true := by
+    manipulates enablingDyn oxygenBg matchStrike flame := by
   native_decide
 
 /-- In chain bypass, B does NOT manipulate C (no B → C law). -/
 theorem b_does_not_manipulate_c :
-    manipulates bypassDyn Situation.empty b c = false := by
+    ¬ (manipulates bypassDyn Situation.empty b c) := by
   native_decide
 
 /-- A manipulates C in the bypass model (direct law A → C). -/
 theorem a_manipulates_c :
-    manipulates bypassDyn Situation.empty a c = true := by
+    manipulates bypassDyn Situation.empty a c := by
   native_decide
 
 end Intervention
@@ -301,20 +305,20 @@ section ActualCausation
 /-- In preemption (both throwers), Suzy did NOT actually cause the
     shattering — Billy's backup blocks necessity. -/
 theorem preemption_suzy_not_actual_cause :
-    actuallyCaused preemptionDyn preemptionBg suzyThrows bottleShatters = false := by
+    ¬ (actuallyCaused preemptionDyn preemptionBg suzyThrows bottleShatters) := by
   native_decide
 
 /-- When Suzy is the sole thrower, she actually caused the shattering. -/
 theorem solo_suzy_actual_cause :
     let bg := Situation.empty.extend suzyThrows true |>.extend billyThrows false
-    actuallyCaused preemptionDyn bg suzyThrows bottleShatters = true := by
+    actuallyCaused preemptionDyn bg suzyThrows bottleShatters := by
   native_decide
 
 /-- In the enabling scenario, the match actually caused the flame
     (given oxygen as background). -/
 theorem match_actually_caused_flame :
     let bg := oxygenBg.extend matchStrike true
-    actuallyCaused enablingDyn bg matchStrike flame = true := by
+    actuallyCaused enablingDyn bg matchStrike flame := by
   native_decide
 
 end ActualCausation
@@ -325,8 +329,8 @@ The main linguistic claim of @cite{nadathur-lauer-2020}: "make" and "cause"
 are not synonyms — there exist scenarios where one is true and the other false.
 
 Witnessed by disjunctive overdetermination: lightning OR arsonist → fire.
-With both present, lightning is sufficient (makeSem = true) but not necessary
-(causeSem = false) because the arsonist backup blocks but-for. -/
+With both present, lightning is sufficient (makeSem) but not necessary
+(¬ (causeSem)) because the arsonist backup blocks but-for. -/
 
 theorem make_cause_truth_conditionally_distinct :
     ∃ (dyn : CausalDynamics) (s : Situation) (c e : Variable),

@@ -33,6 +33,7 @@ Instead of DRS boxes, CDRT uses:
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 
 namespace Semantics.Dynamic.CDRT
 
@@ -173,5 +174,21 @@ theorem DProp.ofStatic_true_at {E : Type*} (p : SProp E) (i : Register E) :
     DProp.true_at (DProp.ofStatic p) i ↔ p i := by
   simp only [DProp.true_at, DProp.ofStatic]
   exact ⟨λ ⟨_, rfl, h⟩ => h, λ h => ⟨i, rfl, h⟩⟩
+
+/-! ## CDRT-as-Dynamic-Ty2
+
+CDRT's `Register E = Nat → E` is the same type as @cite{muskens-1996}'s
+state space `S` in Dynamic Ty2 with discourse referents `Dref S E = S → E`.
+Drefs in CDRT are register-lookups; `DProp E` and `DRS (Register E)` are
+*the same type*, so the embedding is a pair of identity functions.
+-/
+
+/-- CDRT register lookup as a Dynamic Ty2 dref. -/
+def dref {E : Type*} (n : Nat) : Semantics.Dynamic.Core.Dref (Register E) E :=
+  λ r => r n
+
+/-- `DProp E` IS a DRS over `Register E`. -/
+def toDRS {E : Type*} (φ : DProp E) :
+    Semantics.Dynamic.Core.DynProp.DRS (Register E) := φ
 
 end Semantics.Dynamic.CDRT

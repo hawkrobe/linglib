@@ -63,7 +63,7 @@ private theorem hasValue_of_get_none {s : Situation} {v : Variable} {b : Bool}
     then delegates to `causallySufficient`. -/
 def GloballySufficient (dyn : CausalDynamics) (cause effect : Variable) : Prop :=
   ∀ bg : Situation, bg.get cause = none → bg.get effect = none →
-    causallySufficient dyn bg cause effect = true
+    causallySufficient dyn bg cause effect
 
 /-- **Locally sufficient** (@cite{glass-2023b} def 10): there exists
     some background (with E undetermined) where adding C guarantees E.
@@ -72,7 +72,7 @@ def GloballySufficient (dyn : CausalDynamics) (cause effect : Variable) : Prop :
     where the effect is already true, mirroring `GloballySufficient`. -/
 def LocallySufficient (dyn : CausalDynamics) (cause effect : Variable) : Prop :=
   ∃ bg : Situation, bg.get effect = none ∧
-    causallySufficient dyn bg cause effect = true
+    causallySufficient dyn bg cause effect
 
 /-- **Globally necessary** (@cite{glass-2023b} def 9): without C,
     E never develops, regardless of other variables.
@@ -441,7 +441,7 @@ theorem glass_cause_is_make :
     (which is `causallySufficient`) with necessity. -/
 theorem nadathur_implies_glass {dyn : CausalDynamics} {bg : Situation}
     {cause effect : Variable}
-    (h : causeSem dyn bg cause effect = true) :
+    (h : causeSem dyn bg cause effect) :
     causeSemGlass dyn bg cause effect = true := by
   simp only [causeSemGlass, causeSem, Bool.and_eq_true] at *
   exact h.1
@@ -481,7 +481,7 @@ set_option maxHeartbeats 800000 in
     of @cite{nadathur-2024} Def 10b fails (effect already entailed). -/
 theorem glass_strictly_weaker :
     ∃ (dyn : CausalDynamics) (bg : Situation) (c e : Variable),
-      causeSemGlass dyn bg c e = true ∧ causeSem dyn bg c e = false := by
+      causeSemGlass dyn bg c e = true ∧ ¬ (causeSem dyn bg c e) := by
   let x := mkVar "x"
   let y := mkVar "y"
   let z := mkVar "z"

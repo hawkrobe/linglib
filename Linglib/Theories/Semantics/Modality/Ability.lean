@@ -40,12 +40,13 @@ def toCircumstantialBase (f : CausalFrame World) : ModalBase World :=
 def abilityAsKratzerPossibility (f : CausalFrame World) (w : World) : Prop :=
   Semantics.Modality.Kratzer.simplePossibility
     (toCircumstantialBase f)
-    (λ w' => f.actualizedAt w' = true)
+    (λ w' => f.actualizedAt w')
     w
 
 /-- Ability = causal sufficiency (definitional). -/
 theorem ability_is_causal_sufficiency (f : CausalFrame World) (w : World) :
-    f.sufficientAt w = causallySufficient f.dynamics (f.background w)
-      f.trigger f.complement := rfl
+    f.sufficientAt w ↔
+      causallySufficient f.dynamics (f.background w) f.trigger f.complement :=
+  Iff.rfl
 
 end Semantics.Modality.Ability

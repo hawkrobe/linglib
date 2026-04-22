@@ -39,7 +39,7 @@ namespace Semantics.Causation.PsychLink
 open Core.Time (Interval)
 open Semantics.Events (EventSort)
 open Semantics.Causation.Psych (CausalSource)
-open Semantics.Conditionals (SimilarityOrdering)
+open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Counterfactual (universalCounterfactual)
 
 -- ════════════════════════════════════════════════════

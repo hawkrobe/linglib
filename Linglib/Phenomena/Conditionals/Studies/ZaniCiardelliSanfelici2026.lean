@@ -47,7 +47,7 @@ The DCR→SDA trajectory supports homogeneity-based accounts
 namespace ZaniCiardelliSanfelici2026
 
 open Core.Duality (Truth3 ProjectionType)
-open Semantics.Conditionals (SimilarityOrdering)
+open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.AlternativeSensitive
 
 

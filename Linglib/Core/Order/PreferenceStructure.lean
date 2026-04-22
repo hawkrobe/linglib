@@ -3,7 +3,7 @@ import Mathlib.Data.Set.Lattice
 
 /-!
 # Preference Structures
-@cite{condoravdi-lauer-2012} @cite{lauer-2013} @cite{condoravdi-lauer-anankastics}
+@cite{condoravdi-lauer-2012} @cite{lauer-2013} @cite{condoravdi-lauer-2016}
 @cite{condoravdi-lauer-2011}
 
 A **preference structure** (@cite{condoravdi-lauer-2012} (65)) is a pair
@@ -54,7 +54,7 @@ variable (P : PreferenceStructure W)
 instance : IsStrictOrder P.prefs P.prec := P.isStrictOrder
 
 /-- The maximal elements of the preference structure
-    (@cite{condoravdi-lauer-anankastics} (70)), returned as
+    (@cite{condoravdi-lauer-2016} (70)), returned as
     propositions in `Set (Set W)`. -/
 def maxElts : Set (Set W) :=
   Subtype.val '' { p : P.prefs | ∀ q : P.prefs, ¬ P.prec p q }
@@ -63,7 +63,7 @@ theorem maxElts_subset_prefs : P.maxElts ⊆ P.prefs := by
   rintro _ ⟨⟨_, hp⟩, _, rfl⟩; exact hp
 
 /-- **Consistency** w.r.t. an information state `B`
-    (@cite{condoravdi-lauer-anankastics} (66)): for any subfamily of
+    (@cite{condoravdi-lauer-2016} (66)): for any subfamily of
     preferences whose joint realization is incompatible with `B`, some
     pair is strictly ranked. The quantification over arbitrary `X ⊆ prefs`
     (not just pairs) is the strong form, distinct from
@@ -74,12 +74,12 @@ def consistent (B : Set W) : Prop :=
       P.prec ⟨p, hp⟩ ⟨q, hq⟩
 
 /-- **Realism** w.r.t. an information state
-    (@cite{condoravdi-lauer-anankastics} (67)): every preference is
+    (@cite{condoravdi-lauer-2016} (67)): every preference is
     belief-compatible. -/
 def realistic (B : Set W) : Prop :=
   ∀ p ∈ P.prefs, p ∩ B ≠ ∅
 
-/-- @cite{condoravdi-lauer-anankastics} fn. 30: realism follows from
+/-- @cite{condoravdi-lauer-2016} fn. 30: realism follows from
     consistency via the singleton-`X` case combined with irreflexivity. -/
 theorem consistent_implies_realistic {B : Set W} (hC : P.consistent B) :
     P.realistic B := by

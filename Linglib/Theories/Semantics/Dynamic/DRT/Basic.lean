@@ -48,7 +48,7 @@ enables a unified treatment of denial.
 namespace Semantics.Dynamic.DRT
 
 open Semantics.Dynamic.Core.Accessibility
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core (Assignment)
 open Semantics.Dynamic.Core.WeakestPrecondition
 open Core.Semantics.ContentLayer

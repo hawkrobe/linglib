@@ -131,8 +131,9 @@ def PositiveDynamics.closureOp (pd : PositiveDynamics) :
     of a background situation extended with a trigger. -/
 theorem sufficiency_as_closure_membership (dyn : CausalDynamics)
     (s : Situation) (trigger complement : Variable) :
-    causallySufficient dyn s trigger complement =
-      (normalDevelopment dyn (s.extend trigger true)).hasValue complement true := rfl
+    causallySufficient dyn s trigger complement ↔
+      (normalDevelopment dyn (s.extend trigger true)).hasValue complement true = true :=
+  Iff.rfl
 
 -- Note: Under @cite{nadathur-2024} Definition 10b, `causallyNecessary` is no
 -- longer a simple but-for test over `s[cause ↦ false]`. The old

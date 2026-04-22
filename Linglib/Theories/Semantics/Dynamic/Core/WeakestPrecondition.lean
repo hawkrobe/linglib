@@ -28,8 +28,6 @@ transition to a state satisfying `χ`.
 
 namespace Semantics.Dynamic.Core.WeakestPrecondition
 
-open DynamicTy2
-
 variable {S E : Type*}
 
 -- ════════════════════════════════════════════════════════════════

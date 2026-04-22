@@ -90,17 +90,17 @@ def laughSillyModel : CausalDynamics :=
 
 /-- Hammering is causally sufficient for flatness. -/
 theorem hammer_sufficient_for_flat :
-    causallySufficient hammerFlatModel Situation.empty hammeringVar flatVar = true := by
+    causallySufficient hammerFlatModel Situation.empty hammeringVar flatVar := by
   native_decide
 
 /-- Kicking is causally sufficient for being in the field. -/
 theorem kick_sufficient_for_field :
-    causallySufficient kickIntoFieldModel Situation.empty kickingVar inFieldVar = true := by
+    causallySufficient kickIntoFieldModel Situation.empty kickingVar inFieldVar := by
   native_decide
 
 /-- Laughing is causally sufficient for becoming silly (fake reflexive). -/
 theorem laugh_sufficient_for_silly :
-    causallySufficient laughSillyModel Situation.empty laughingVar sillyVar = true := by
+    causallySufficient laughSillyModel Situation.empty laughingVar sillyVar := by
   native_decide
 
 /-! ### Necessity proofs
@@ -111,14 +111,14 @@ Single-pathway resultatives: verbal subevent is both sufficient and necessary. -
     Under @cite{nadathur-2024} Def 10b, the background must NOT
     include the cause (precondition rejects it). -/
 theorem hammer_necessary_for_flat :
-    causallyNecessary hammerFlatModel Situation.empty hammeringVar flatVar = true := by
+    causallyNecessary hammerFlatModel Situation.empty hammeringVar flatVar := by
   native_decide
 
 /-- Both `makeSem` and `causeSem` hold for "hammer flat"
     (no overdetermination). -/
 theorem hammer_flat_make_and_cause :
-    makeSem hammerFlatModel Situation.empty hammeringVar flatVar = true ∧
-    causeSem hammerFlatModel Situation.empty hammeringVar flatVar = true := by
+    makeSem hammerFlatModel Situation.empty hammeringVar flatVar ∧
+    causeSem hammerFlatModel Situation.empty hammeringVar flatVar := by
   constructor <;> native_decide
 
 /-! ### Noncausative resultatives = empty dynamics
@@ -133,7 +133,7 @@ def freezeSolidModel : CausalDynamics := CausalDynamics.empty
 
 /-- In the empty model, freezing is NOT sufficient for solidity. -/
 theorem freeze_not_sufficient :
-    causallySufficient freezeSolidModel Situation.empty freezingVar solidVar = false := by
+    ¬ (causallySufficient freezeSolidModel Situation.empty freezingVar solidVar) := by
   native_decide
 
 /-- Causative → non-empty dynamics; noncausative → empty. -/
@@ -439,7 +439,7 @@ theorem kick_door_direct_tight :
 /-- `hasDirectLaw` (graph inspection) incorrectly rejects the passive
     chain "drink teapot dry" — no direct law, but tight. -/
 theorem drink_dry_no_direct_law_but_tight :
-    hasDirectLaw drinkTeapotDryModel drinkingVar teapotDryVar = false ∧
+    ¬ (hasDirectLaw drinkTeapotDryModel drinkingVar teapotDryVar) ∧
     completesForEffect drinkTeapotDryModel Situation.empty
       drinkingVar teapotDryVar = true := by
   constructor <;> native_decide
@@ -449,13 +449,13 @@ theorem drink_dry_no_direct_law_but_tight :
 /-- Ball has an independent source (ball_energy law). -/
 theorem ball_has_independent_source :
     hasIndependentSource kickDoorViaBallModel
-      kickingDoorVar ballMotionVar = true := by
+      kickingDoorVar ballMotionVar := by
   native_decide
 
 /-- Tea removal has no independent source. -/
 theorem tea_no_independent_source :
-    hasIndependentSource drinkTeapotDryModel
-      drinkingVar teaRemovalVar = false := by
+    ¬ hasIndependentSource drinkTeapotDryModel
+      drinkingVar teaRemovalVar := by
   native_decide
 
 set_option maxHeartbeats 800000 in

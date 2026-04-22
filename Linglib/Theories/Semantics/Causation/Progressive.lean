@@ -100,8 +100,12 @@ structure CausalProcess where
     a type-level causal process is underway — the initiator is sufficient
     for the result given the enabling conditions. No commitment to the
     result actually obtaining in the actual world. -/
-def CausalProcess.typeLevelHolds (proc : CausalProcess) : Bool :=
-  causallySufficient proc.dynamics proc.enablingConditions proc.initiator proc.result
+def CausalProcess.typeLevelHolds (proc : CausalProcess) : Prop :=
+  (normalDevelopment proc.dynamics
+    (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true = true
+
+instance (proc : CausalProcess) : Decidable proc.typeLevelHolds :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- Token-level completion: the initiator actually occurred and the
     causal chain ran to completion, producing the result.
@@ -109,27 +113,36 @@ def CausalProcess.typeLevelHolds (proc : CausalProcess) : Bool :=
     @cite{nadathur-bar-asher-siegal-2024}: the perfective asserts
     token-level completion — the causal process finished, and the
     result state actually obtained. -/
-def CausalProcess.tokenLevelCompleted (proc : CausalProcess) : Bool :=
+def CausalProcess.tokenLevelCompleted (proc : CausalProcess) : Prop :=
   let fullSituation := proc.enablingConditions.extend proc.initiator true
-  (normalDevelopment proc.dynamics fullSituation).hasValue proc.result true
+  (normalDevelopment proc.dynamics fullSituation).hasValue proc.result true = true
+
+instance (proc : CausalProcess) : Decidable proc.tokenLevelCompleted :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- Progressive semantics: type-level process underway, completion open.
 
-    Returns `true` when the causal trajectory exists (type-level sufficiency
+    Holds when the causal trajectory exists (type-level sufficiency
     holds) — regardless of whether the result actually obtained. This
     captures "Mary was opening the door": the action is part of a causal
     trajectory to door-opening, even if the door never opens. -/
-def CausalProcess.progressiveTrue (proc : CausalProcess) : Bool :=
+def CausalProcess.progressiveTrue (proc : CausalProcess) : Prop :=
   proc.typeLevelHolds
+
+instance (proc : CausalProcess) : Decidable proc.progressiveTrue :=
+  inferInstanceAs (Decidable proc.typeLevelHolds)
 
 /-- Perfective semantics: token-level causation completed.
 
-    Returns `true` when the causal chain ran to completion and the
+    Holds when the causal chain ran to completion and the
     initiator was the completing condition of the only actualized
     sufficient set. This captures "Mary opened the door." -/
-def CausalProcess.perfectiveTrue (proc : CausalProcess) : Bool :=
+def CausalProcess.perfectiveTrue (proc : CausalProcess) : Prop :=
   completesForEffect proc.dynamics proc.enablingConditions
-    proc.initiator proc.result
+    proc.initiator proc.result = true
+
+instance (proc : CausalProcess) : Decidable proc.perfectiveTrue :=
+  inferInstanceAs (Decidable (_ = true))
 
 -- ════════════════════════════════════════════════════
 -- § 3. The Imperfective Paradox
@@ -146,11 +159,11 @@ def maryOpening : CausalProcess :=
 /-- The progressive is true: Mary's action is type-level sufficient
     for the door opening. -/
 theorem maryOpening_progressive :
-    maryOpening.progressiveTrue = true := by native_decide
+    maryOpening.progressiveTrue := by native_decide
 
 /-- The perfective is true: Mary's action completed the causal process. -/
 theorem maryOpening_perfective :
-    maryOpening.perfectiveTrue = true := by native_decide
+    maryOpening.perfectiveTrue := by native_decide
 
 /-- Perfective entails progressive (for the same process).
 
@@ -158,10 +171,10 @@ theorem maryOpening_perfective :
     trajectory existed (progressive). Completion implies the causal
     model had the relevant sufficiency. -/
 theorem perfective_entails_progressive (proc : CausalProcess)
-    (h : proc.perfectiveTrue = true) :
-    proc.progressiveTrue = true := by
-  simp only [CausalProcess.perfectiveTrue, completesForEffect,
-             Bool.and_eq_true] at h
+    (h : proc.perfectiveTrue) :
+    proc.progressiveTrue := by
+  unfold CausalProcess.perfectiveTrue completesForEffect at h
+  rw [Bool.and_eq_true] at h
   exact h.1
 
 /-- Progressive does NOT entail perfective in general.
@@ -173,7 +186,7 @@ theorem perfective_entails_progressive (proc : CausalProcess)
     isolation. -/
 theorem progressive_not_entails_perfective :
     ∃ (proc : CausalProcess),
-      proc.progressiveTrue = true ∧ proc.perfectiveTrue = false := by
+      proc.progressiveTrue ∧ ¬ proc.perfectiveTrue := by
   -- Overdetermination: action is type-level sufficient (progressive),
   -- but a backup cause in the enabling conditions means the result
   -- still obtains without the action (perfective fails).
@@ -204,9 +217,10 @@ theorem progressive_not_entails_perfective :
     the result holding in the "normal development" of the initiator
     (the causal model's inertia). -/
 theorem typeLevelHolds_is_normalDevelopment (proc : CausalProcess) :
-    proc.typeLevelHolds =
+    proc.typeLevelHolds ↔
     (normalDevelopment proc.dynamics
-      (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true := rfl
+      (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true = true :=
+  Iff.rfl
 
 -- ════════════════════════════════════════════════════
 -- § 5. Bridge to Temporal Decomposition
@@ -236,7 +250,7 @@ structure CausallyGroundedEvent (Time : Type*) [LinearOrder Time] where
   phases : Semantics.Events.SubeventPhases Time
   /-- The causal trajectory is viable: the initiator is type-level
       sufficient for the result under enabling conditions -/
-  causallyViable : process.typeLevelHolds = true
+  causallyViable : process.typeLevelHolds
 
 /-- A causally grounded event's progressive is always true: the causal
     trajectory from initiator to result exists (by `causallyViable`).
@@ -249,7 +263,7 @@ structure CausallyGroundedEvent (Time : Type*) [LinearOrder Time] where
 theorem CausallyGroundedEvent.progressiveTrue
     {Time : Type*} [LinearOrder Time]
     (cge : CausallyGroundedEvent Time) :
-    cge.process.progressiveTrue = true := cge.causallyViable
+    cge.process.progressiveTrue := cge.causallyViable
 
 /-- Token-level completion (perfective) is NOT guaranteed for causally
     grounded events. The causal trajectory exists (progressive), but
@@ -266,8 +280,8 @@ theorem CausallyGroundedEvent.progressiveTrue
     need not obtain. -/
 theorem causallyGroundedEvent_progressive_not_perfective :
     ∃ (cge : CausallyGroundedEvent ℤ),
-      cge.process.progressiveTrue = true ∧
-      cge.process.perfectiveTrue = false := by
+      cge.process.progressiveTrue ∧
+      cge.process.¬ (perfectiveTrue) := by
   refine ⟨{
     process := {
       dynamics := ⟨[CausalLaw.simple (mkVar "a") (mkVar "r"),

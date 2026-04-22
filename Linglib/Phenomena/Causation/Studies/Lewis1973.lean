@@ -426,14 +426,14 @@ theorem lewis_agrees_completes_overdet :
     simple dynamics — both identify the single cause as necessary. -/
 theorem lewis_agrees_necessity_simple :
     lewisButFor simpleDyn simpleBg va vb = true ∧
-    causallyNecessary simpleDyn Situation.empty va vb = true := by
+    causallyNecessary simpleDyn Situation.empty va vb := by
   constructor <;> native_decide
 
 /-- For overdetermination, both Lewis and Def 10b agree: neither
     overdetermining cause is necessary. -/
 theorem lewis_agrees_necessity_overdet :
     lewisButFor overdetDyn overdetBg va ve = false ∧
-    causallyNecessary overdetDyn Situation.empty va ve = false := by
+    ¬ (causallyNecessary overdetDyn Situation.empty va ve) := by
   constructor <;> native_decide
 
 -- ════════════════════════════════════════════════════
@@ -517,9 +517,10 @@ theorem preemption_no_backup :
     completely: a is sufficient, necessary, and direct. -/
 theorem lewis_profile_simple :
     lewisDependence simpleDyn simpleBg va vb = true ∧
-    extractProfile simpleDyn Situation.empty va vb =
-      { sufficient := true, necessary := true, direct := true } := by
-  constructor <;> native_decide
+    causallySufficient simpleDyn Situation.empty va vb ∧
+    causallyNecessary simpleDyn Situation.empty va vb ∧
+    hasDirectLaw simpleDyn va vb := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 /-- **Lewis vs Def 10b on chains**: this is where they DIVERGE.
 
@@ -539,9 +540,9 @@ theorem lewis_vs_def10b_chain :
     -- Lewis: A is necessary for C (simple but-for)
     lewisButFor chainDyn chainBg va vc = true ∧
     -- Def 10b: A is NOT necessary for C (supersituation bypass)
-    causallyNecessary chainDyn Situation.empty va vc = false ∧
+    ¬ (causallyNecessary chainDyn Situation.empty va vc) ∧
     -- But both agree A is sufficient
-    causallySufficient chainDyn Situation.empty va vc = true := by
+    causallySufficient chainDyn Situation.empty va vc := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 end Lewis1973

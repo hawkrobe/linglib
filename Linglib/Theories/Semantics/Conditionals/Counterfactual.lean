@@ -49,7 +49,7 @@ open Core.Causal
 open Core.Duality (Truth3 ProjectionType dist)
 
 
-open Semantics.Conditionals (SimilarityOrdering)
+open Core.Order (SimilarityOrdering)
 
 
 /-!

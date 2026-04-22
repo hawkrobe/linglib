@@ -37,7 +37,9 @@ This is the BUS / bilateral DNE strategy listed in `Dynamic/Core/DynProp.lean`'s
 (`InfoState` → `IContext`) lives in `Dynamic/Bilateral/ICDRT.lean`, and the
 empirical comparison against full ICDRT (which solves disagreement, modal
 subordination, and three-way veridicality on top of DNE + bathroom) is in
-`Dynamic/Comparisons/ICDRT_BUS.lean`.
+`Phenomena/Anaphora/Studies/Hofmann2025.lean §7`. The empirical comparison
+against PLA (which lacks DNE for anaphora and fails on the bathroom
+sentence) is in `Phenomena/Anaphora/Studies/Dekker2012.lean`.
 
 -/
 

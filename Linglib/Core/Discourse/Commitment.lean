@@ -182,6 +182,42 @@ def doxasticContents (s : TaggedSlate W) : List (W → Prop) :=
 def preferentialContents (s : TaggedSlate W) : List (W → Prop) :=
   s.commitments.filter (·.commitmentForce == .preferential) |>.map (·.content)
 
+/-- Dependent commitments (any force) — `DC_x_dep` in
+    @cite{deo-2025-bara}'s notation. The `Set`-typed counterpart of
+    the legacy `otherGenerated` (List-typed); use this for new code
+    and proofs. -/
+def dependent (s : TaggedSlate W) : Set (W → Prop) :=
+  { p | ∃ c ∈ s.commitments, c.source = .otherGenerated ∧ c.content = p }
+
+/-- Independent (self-sourced) commitments (any force) — `DC_x_ind`. -/
+def independent (s : TaggedSlate W) : Set (W → Prop) :=
+  { p | ∃ c ∈ s.commitments, c.source = .selfGenerated ∧ c.content = p }
+
+/-- Dependent doxastic commitments — the (`source = .otherGenerated`,
+    `commitmentForce = .doxastic`) cell of the 2×2 cross. The agent's
+    `DC_x_dep_dox` in @cite{deo-2025-bara}'s notation. -/
+def dependentDoxastic (s : TaggedSlate W) : Set (W → Prop) :=
+  { p | ∃ c ∈ s.commitments,
+        c.source = .otherGenerated ∧ c.commitmentForce = .doxastic ∧ c.content = p }
+
+/-- Dependent preferential commitments — `DC_x_dep_pref`. The 2×2 cell
+    targeted by @cite{deo-2025-bara}'s bərə convention (eq. 20). -/
+def dependentPreferential (s : TaggedSlate W) : Set (W → Prop) :=
+  { p | ∃ c ∈ s.commitments,
+        c.source = .otherGenerated ∧ c.commitmentForce = .preferential ∧ c.content = p }
+
+/-- Independent doxastic commitments — `DC_x_ind_dox`. The standard
+    Stalnakerian assertion-driven cell. -/
+def independentDoxastic (s : TaggedSlate W) : Set (W → Prop) :=
+  { p | ∃ c ∈ s.commitments,
+        c.source = .selfGenerated ∧ c.commitmentForce = .doxastic ∧ c.content = p }
+
+/-- Independent preferential commitments — `DC_x_ind_pref`. The
+    @cite{condoravdi-lauer-2012} imperative-as-PEP cell. -/
+def independentPreferential (s : TaggedSlate W) : Set (W → Prop) :=
+  { p | ∃ c ∈ s.commitments,
+        c.source = .selfGenerated ∧ c.commitmentForce = .preferential ∧ c.content = p }
+
 /-- Convert to a plain (untagged) commitment slate. -/
 def toSlate (s : TaggedSlate W) : CommitmentSlate W :=
   ⟨s.commitments.map (·.content)⟩

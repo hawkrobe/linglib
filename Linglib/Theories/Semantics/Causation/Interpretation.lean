@@ -42,7 +42,7 @@ open Semantics.Causation.Prevention
     They differ in force-dynamic properties (coercion, permissivity),
     which are captured by `isCoercive` and `isPermissive`. -/
 def Causative.toSemantics : Causative →
-    (CausalDynamics → Situation → Variable → Variable → Bool)
+    (CausalDynamics → Situation → Variable → Variable → Prop)
   | .cause => causeSem
   | .make => makeSem
   | .force => makeSem
@@ -163,7 +163,9 @@ theorem assertsSufficiency_iff_makeSem (b : Causative) :
 theorem sufficiency_implies_causallySufficient
     (dyn : CausalDynamics) (s : Situation) (c e : Variable)
     (h : Causative.make.toSemantics dyn s c e = true) :
-    causallySufficient dyn s c e = true := h
+    causallySufficient dyn s c e := by
+  simp only [Causative.toSemantics, makeSem, decide_eq_true_eq] at h
+  exact h
 
 /-- When the cause variant's semantics holds, the cause is
     causally necessary for the effect.
@@ -173,8 +175,8 @@ theorem sufficiency_implies_causallySufficient
 theorem necessity_implies_causallyNecessary
     (dyn : CausalDynamics) (s : Situation) (c e : Variable)
     (h : Causative.cause.toSemantics dyn s c e = true) :
-    causallyNecessary dyn s c e = true := by
-  simp only [Causative.toSemantics, causeSem, Bool.and_eq_true] at h
+    causallyNecessary dyn s c e := by
+  simp only [Causative.toSemantics, causeSem, Bool.and_eq_true, decide_eq_true_eq] at h
   exact h.2
 
 -- ════════════════════════════════════════════════════

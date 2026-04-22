@@ -334,6 +334,7 @@ Data: antecedent-focused > neutral ≈ consequent-focused (Exp 1)
 -/
 
 open Semantics.Conditionals
+open Core.Order (SimilarityOrdering)
 open Semantics.Conditionals.Exhaustivity
 
 private theorem Bool.of_not_eq_true {b : Bool} (h : ¬(b = true)) : b = false := by

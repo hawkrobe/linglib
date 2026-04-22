@@ -17,8 +17,6 @@ Pearl's `do`-operator and the counterfactual queries built from it.
   consistency of supersituations
 - `causallyNecessary` (@cite{nadathur-2024} Def 10b) — but-for with
   precondition + achievability
-- `extractProfile` — packages sufficient/necessary/direct as a Bool record
-  (uses `decide` on the Prop-valued queries)
 - `simple_law_necessity` — structured proof that `c → e` makes `c`
   necessary for `e` against the empty background
 
@@ -214,23 +212,6 @@ instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
     Decidable (causallyNecessary dyn s cause effect) :=
   inferInstanceAs (Decidable (_ = true))
 
-/-- Causal profile: packages the counterfactual properties of a
-    cause-effect pair in a structural model. Fields are `Bool` for use
-    in tabulation and pattern matching; populate via `decide` on the
-    `Prop`-valued queries. -/
-structure CausalProfile where
-  sufficient : Bool
-  necessary : Bool
-  direct : Bool
-  deriving DecidableEq, Repr
-
-/-- Extract the causal profile of a cause-effect pair. -/
-def extractProfile (dyn : CausalDynamics) (bg : Situation)
-    (cause effect : Variable) : CausalProfile :=
-  { sufficient := decide (causallySufficient dyn bg cause effect)
-  , necessary := decide (causallyNecessary dyn bg cause effect)
-  , direct := decide (hasDirectLaw dyn cause effect) }
-
 -- ============================================================
 -- § Simple-law necessity (structured proof)
 -- ============================================================
@@ -361,8 +342,7 @@ set_option maxHeartbeats 3200000 in
        doesn't fire and `e` remains unset (blocking the `effect` conjunct) -/
 theorem simple_law_necessity (c e : Variable) :
     causallyNecessary ⟨[CausalLaw.simple c e]⟩ Situation.empty c e := by
-  show (_ : Bool) = true
-  simp only [causallyNecessary]
+  unfold causallyNecessary
   have hDevEmpty : normalDevelopment ⟨[CausalLaw.simple c e]⟩ Situation.empty = Situation.empty := by
     rw [normalDevelopment_simple]; simp [empty_hasValue_false']
   rw [hDevEmpty]
@@ -370,7 +350,6 @@ theorem simple_law_necessity (c e : Variable) :
   rw [freeI_eq_nil]
   simp only [Situation.allExtensions, List.any_cons, List.any_nil, Bool.or_false]
   rw [innerVars_simple]
-  simp only [decide_eq_true_eq]
   rw [show (decide (isConsistentSuper ⟨[CausalLaw.simple c e]⟩
       (Situation.empty.extend c true) (Situation.empty.extend c true) [e]) = true)
       from decide_eq_true (isConsistentSuper_self' _ _ _)]

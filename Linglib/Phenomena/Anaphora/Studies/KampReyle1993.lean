@@ -29,7 +29,7 @@ namespace KampReyle1993
 
 open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core.Accessibility
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core.WeakestPrecondition
 open Semantics.Dynamic.Core.DRSExpr
 open Semantics.Dynamic.DRT

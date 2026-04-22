@@ -115,8 +115,8 @@ private def dreyfusBg : Situation :=
     when NRV is the only undetermined causal ancestor of MSG.
     NRV is causally necessary and sufficient for MSG given s. -/
 theorem dare_send_msg_felicitous :
-    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG = true ∧
-    causallySufficient dreyfusDynamics dreyfusBg vNRV vMSG = true := by
+    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG ∧
+    causallySufficient dreyfusDynamics dreyfusBg vNRV vMSG := by
   exact ⟨by native_decide, by native_decide⟩
 
 /-- (34c) "#Dreyfus dared to establish communication" is predicted
@@ -127,14 +127,14 @@ theorem dare_send_msg_felicitous :
     (the intermediate MSG can be achieved as a consistent supersituation
     extension, bypassing NRV). -/
 theorem dare_establish_com_infelicitous :
-    causallySufficient dreyfusDynamics dreyfusBg vNRV vCOM = false := by
+    ¬ (causallySufficient dreyfusDynamics dreyfusBg vNRV vCOM) := by
   native_decide
 
 /-- (34d) "#Dreyfus dared to spy" is infelicitous: NRV is NOT
     sufficient for SPY (SPY depends on COM, which requires LST
     and ¬BRK beyond NRV). -/
 theorem dare_spy_infelicitous :
-    causallySufficient dreyfusDynamics dreyfusBg vNRV vSPY = false := by
+    ¬ (causallySufficient dreyfusDynamics dreyfusBg vNRV vSPY) := by
   native_decide
 
 -- ── manage predictions (ex. 35) ──
@@ -144,7 +144,7 @@ theorem dare_spy_infelicitous :
     sufficiency, for the prerequisite. Since NRV is nec+suf for MSG,
     manage is felicitous. -/
 theorem manage_send_msg_felicitous :
-    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG = true := by
+    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG := by
   native_decide
 
 /-- (35c) "Dreyfus managed to establish communication" — felicitous.
@@ -156,7 +156,7 @@ theorem manage_send_msg_felicitous :
     single-variable necessity. NRV IS individually necessary for MSG
     (the direct complement of the prerequisite relation). -/
 theorem manage_com_nrv_necessity_for_msg :
-    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG = true := by
+    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG := by
   native_decide
 
 /-- Key contrast: dare is INFELICITOUS for COM because NRV alone
@@ -167,9 +167,9 @@ theorem manage_com_nrv_necessity_for_msg :
     pairs (NRV→MSG) rather than transitive chains (NRV→MSG→COM). -/
 theorem dare_vs_manage_contrast :
     -- dare requires suf → infelicitous for COM
-    causallySufficient dreyfusDynamics dreyfusBg vNRV vCOM = false ∧
+    ¬ (causallySufficient dreyfusDynamics dreyfusBg vNRV vCOM) ∧
     -- manage requires nec → felicitous for MSG (direct complement)
-    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG = true := by
+    causallyNecessary dreyfusDynamics dreyfusBg vNRV vMSG := by
   exact ⟨by native_decide, by native_decide⟩
 
 -- ── fail predictions ──
@@ -178,7 +178,7 @@ theorem dare_vs_manage_contrast :
     failSem checks that the complement does NOT develop. Here it fails
     (= false) because the dynamics DO support MSG via NRV. -/
 theorem fail_send_msg :
-    causallySufficient dreyfusDynamics dreyfusBg vNRV vMSG = true := by
+    causallySufficient dreyfusDynamics dreyfusBg vNRV vMSG := by
   native_decide
 
 -- ── innocent Dreyfus scenario (§6.1.1, last para) ──
@@ -193,7 +193,7 @@ private def innocentBg : Situation :=
 /-- In the innocent scenario, NRV is not sufficient for MSG because
     MSG := INT ∧ NRV and INT=0. -/
 theorem innocent_dare_msg_infelicitous :
-    causallySufficient dreyfusDynamics innocentBg vNRV vMSG = false := by
+    ¬ (causallySufficient dreyfusDynamics innocentBg vNRV vMSG) := by
   native_decide
 
 /-- In the innocent scenario, the paper argues infelicity from
@@ -208,7 +208,7 @@ theorem innocent_dare_msg_infelicitous :
     @cite{nadathur-2024} Definition 10b. -/
 theorem innocent_sufficiency_is_what_matters :
     -- Sufficiency fails (the paper's actual argument)
-    causallySufficient dreyfusDynamics innocentBg vNRV vMSG = false ∧
+    ¬ (causallySufficient dreyfusDynamics innocentBg vNRV vMSG) ∧
     -- NRV is already determined by the background, so Def 10
     -- necessity is inapplicable (but-for test is vacuously true)
     innocentBg.hasValue vNRV true = true := by
@@ -344,7 +344,7 @@ theorem dreyfus_dare_sufficiency :
 /-- The prerequisite account derives manageSem: when the sufficiency
     presupposition holds, manageSem follows. -/
 theorem dreyfus_dare_manages :
-    manageSem dreyfusDareAccount.toScenario = true := by native_decide
+    manageSem dreyfusDareAccount.toScenario := by native_decide
 
 /-- The directionality is two-way (dare presupposes sufficiency). -/
 theorem dreyfus_dare_twoWay :

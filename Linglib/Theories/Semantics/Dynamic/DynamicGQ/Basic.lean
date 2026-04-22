@@ -50,7 +50,7 @@ which the other four are measured.
 
 namespace Semantics.Dynamic.DynamicGQ.Basic
 
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 open Mereology
 
 variable {S E : Type*}

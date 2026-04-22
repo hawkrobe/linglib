@@ -14,7 +14,7 @@ import Linglib.Core.CylindricAlgebra
 
 namespace Semantics.Dynamic.DPL
 
-open Semantics.Dynamic.Core.DynamicTy2
+open Semantics.Dynamic.Core
 open Semantics.Dynamic.Core
 
 /-- DPL dref: projection function for variable n -/

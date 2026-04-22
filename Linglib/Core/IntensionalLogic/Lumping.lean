@@ -48,9 +48,9 @@ formal definitions in §5.4.4 — is out of scope here.
   shows how to recover Kratzer's worlds-only reading.
 -/
 
-namespace Semantics.Conditionals.Kratzer.Lumping
+namespace Core.IntensionalLogic.Lumping
 
-open Core.IntensionalLogic Set
+open Set
 
 /-! ## Lumping (@cite{kratzer-2012} §5.3.3, p. 118)
 
@@ -242,4 +242,4 @@ theorem Lumps.discrete_iff (p q : Set G.Index) (w : G.Index) :
 
 end DiscreteCorollary
 
-end Semantics.Conditionals.Kratzer.Lumping
+end Core.IntensionalLogic.Lumping
