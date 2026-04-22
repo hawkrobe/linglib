@@ -41,15 +41,10 @@ and `Set W` (with `[DecidablePred (· ∈ s)]`) for evidence/answer arguments.
 DOX-subset check uses native `Set.Subset`. -/
 
 /-- Probabilistic support: `evidence` raises `P(answer)`. -/
-def probSupportsS {W : Type*} [Fintype W]
+noncomputable def probSupportsS {W : Type*} [Fintype W]
     (prior : Prior W) (evidence answer : Set W)
     [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ answer)] : Prop :=
   isPositiveEvidenceS evidence answer prior
-
-instance {W : Type*} [Fintype W] (prior : Prior W) (evidence answer : Set W)
-    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ answer)] :
-    Decidable (probSupportsS prior evidence answer) :=
-  inferInstanceAs (Decidable (isPositiveEvidenceS evidence answer prior))
 
 open Classical in
 /-- Full SUPPORT from @cite{ippolito-kiss-williams-2025} Def. 13.

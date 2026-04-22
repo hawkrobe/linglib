@@ -40,7 +40,7 @@ while blocking:
 2. Concept dref projection past anaphoric islands
 -/
 
-namespace Semantics.Dynamic.Core.KindAnaphora
+namespace Semantics.Noun.Kind.Anaphora
 
 open Semantics.Noun.Kind.Chierchia1998 (Kind Property IsMass
   kindAnaphorMass kindAnaphorCount kindAnaphorCount_mass)
@@ -258,4 +258,4 @@ theorem liftDPL_neg (φ : DPLRel E) (g h : HAssign W E) :
 
 end DPLBridge
 
-end Semantics.Dynamic.Core.KindAnaphora
+end Semantics.Noun.Kind.Anaphora

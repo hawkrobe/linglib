@@ -54,12 +54,40 @@ inductive GradienceSource where
   | unresolved
   deriving DecidableEq, Repr
 
-/-- Subtypes of resolved indeterminacy. -/
-inductive ResolvedSource where
-  | lexicalAmbiguity
-  | syntacticAmbiguity
-  | semanticAmbiguity
-  | qud
+/-- A specific application of `GradienceSource` to factivity. The
+    @cite{grove-white-2025} paper frames the choice between the discrete
+    (FDH) and gradient (FGH) hypotheses as a binary choice of source for
+    the gradient projection observations.
+
+    Defined as `@[reducible] def` rather than `abbrev` so the unfolding is
+    explicit (mathlib convention). -/
+@[reducible] def FactivityHypothesis : Type := GradienceSource
+
+/-- The Fundamental Discreteness Hypothesis (@cite{grove-white-2025}):
+    factivity is a discrete property of an expression on each occasion
+    of use. Observed gradience arises from resolved indeterminacy. -/
+def FactivityHypothesis.FDH : FactivityHypothesis := .resolved
+
+/-- The Fundamental Gradience Hypothesis (@cite{grove-white-2025}):
+    there is no property distinguishing factive from non-factive
+    occurrences. Gradient distinctions reflect gradient inference
+    contributions. -/
+def FactivityHypothesis.FGH : FactivityHypothesis := .unresolved
+
+/-- Mechanisms by which resolved indeterminacy may be cashed out.
+    Catalogue from @cite{grove-white-2025} (Sect. 6, p. 10). The FDH
+    is neutral among them. -/
+inductive ResolvedMechanism where
+  /-- Polysemy: a predicate has multiple senses, at least one factive and
+      at least one nonfactive (conventionalist account, Sect. 6.1). -/
+  | polysemy
+  /-- Structural ambiguity: a predicate occurs in multiple structures, at
+      least one implicated in triggering projection and one not. -/
+  | structuralAmbiguity
+  /-- Discourse sensitivity: the predicate's complement content may or may
+      not be entailed by a discourse construct like the QUD
+      (conversationalist account, Sect. 6.2). -/
+  | discourseSensitivity
   deriving DecidableEq, Repr
 
 /-- Subtypes of unresolved indeterminacy. -/

@@ -241,6 +241,7 @@ import Linglib.Core.PrivativePair
 import Linglib.Core.Person
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.PhiSemantics
 import Linglib.Core.Number
+import Linglib.Core.CoreConcept
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
 import Linglib.Core.Efficiency
@@ -248,7 +249,7 @@ import Linglib.Core.SearchEfficiency
 import Linglib.Core.InformationTheory
 import Linglib.Core.Distributions
 import Linglib.Core.FinitePMF
-import Linglib.Core.Probability.PMFAdapter
+import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Divergence
 import Linglib.Core.ChannelCapacity
 import Linglib.Core.Inheritance.Basic
@@ -482,6 +483,7 @@ import Linglib.Tactics.RSAPredict
 import Linglib.Tactics.OntSort
 import Linglib.Tactics.NgeFS
 import Linglib.Tactics.CancelFin4
+import Linglib.Tactics.ENNRealArith
 -- Paradigms (contract layer between Theories/ and Phenomena/Studies/)
 import Linglib.Paradigms.VisualWorld
 import Linglib.Paradigms.WugTest
@@ -642,6 +644,7 @@ import Linglib.Fragments.French.Negation
 import Linglib.Fragments.French.ModalIndefinites
 import Linglib.Fragments.French.Reciprocals
 import Linglib.Fragments.French.PolarityMarking
+import Linglib.Fragments.French.Determiners
 import Linglib.Fragments.Irish.Coordination
 import Linglib.Fragments.Jakaltek.AuxiliaryVerbs
 import Linglib.Fragments.Javanese.Modals
@@ -1343,6 +1346,7 @@ import Linglib.Phenomena.Presupposition.Studies.QingGoodmanLassiter2016
 import Linglib.Phenomena.Presupposition.Studies.TowerDerivation
 import Linglib.Phenomena.Presupposition.Studies.WangDavidson2026
 import Linglib.Phenomena.Presupposition.Studies.Heim1992
+import Linglib.Phenomena.Presupposition.Studies.JereticEtAl2025
 import Linglib.Phenomena.Presupposition.ForgetPresuppositions
 import Linglib.Phenomena.Presupposition.Studies.White2014
 import Linglib.Phenomena.Presupposition.Studies.GiorgoloAsudeh2012
@@ -1633,7 +1637,6 @@ import Linglib.Theories.Semantics.Dynamic.FileChange.Basic
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Frames
-import Linglib.Theories.Semantics.Dynamic.Generics
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.DPL.Bridge
 import Linglib.Theories.Semantics.Dynamic.DRT.Basic
@@ -1778,6 +1781,7 @@ import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.Interface
 import Linglib.Theories.Syntax.Minimalism.CombinationSchemata
 import Linglib.Theories.Syntax.Minimalism.RelativeClauses
 import Linglib.Theories.Syntax.Minimalism.Core.Structure
+import Linglib.Theories.Syntax.Minimalism.Core.Cat
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Derivation
 import Linglib.Theories.Syntax.Minimalism.Core.EPP
@@ -1924,6 +1928,7 @@ import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
 import Linglib.Theories.Semantics.Noun.Kind.Generics
+import Linglib.Theories.Semantics.Noun.Kind.GenericsDynamic
 import Linglib.Theories.Semantics.Noun.Kind.Krifka2004
 import Linglib.Theories.Semantics.Noun.Relational.Barker2011
 import Linglib.Theories.Pragmatics.Particles.Additive
@@ -2161,9 +2166,13 @@ import Linglib.Theories.Pragmatics.Implicature.Core.Markedness
 import Linglib.Theories.Semantics.Alternatives.AltMeaning
 import Linglib.Theories.Semantics.Alternatives.Categorical
 import Linglib.Theories.Semantics.Alternatives.ContextualConstraint
+import Linglib.Theories.Semantics.Alternatives.Source
+import Linglib.Theories.Semantics.Alternatives.Pronounceable
+import Linglib.Theories.Semantics.Alternatives.Indirect
 import Linglib.Theories.Semantics.Alternatives.Structural
 import Linglib.Theories.Semantics.Alternatives.Symmetric
 import Linglib.Theories.Semantics.Alternatives.AtomicConstraint
+import Linglib.Theories.Pragmatics.AvoidAmbiguity
 import Linglib.Theories.Semantics.Polarity.Operator
 import Linglib.Theories.Pragmatics.Implicature.Evaluativity
 import Linglib.Theories.Semantics.Exhaustification.Operators.Basic

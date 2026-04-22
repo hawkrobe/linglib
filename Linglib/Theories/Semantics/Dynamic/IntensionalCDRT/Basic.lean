@@ -36,14 +36,12 @@ end ICDRTAssignment
 
 -- ICDRT Contexts (Information States)
 
-/-- Set of assignment-world pairs (information state in flat update). -/
-def IContext (W : Type*) (E : Type*) := Set (ICDRTAssignment W E × W)
+/-- Set of assignment-world pairs (information state in flat update).
 
-instance {W E : Type*} : Membership (ICDRTAssignment W E × W) (IContext W E) := Set.instMembership
-instance {W E : Type*} : EmptyCollection (IContext W E) := Set.instEmptyCollection
-instance {W E : Type*} : HasSubset (IContext W E) := Set.instHasSubset
-instance {W E : Type*} : Union (IContext W E) := Set.instUnion
-instance {W E : Type*} : Inter (IContext W E) := Set.instInter
+Kept as `abbrev` so it inherits `Set α`'s `Membership`,
+`EmptyCollection`, `HasSubset`, `Union`, `Inter`, and `Singleton`
+instances (and the corresponding `Set` API) directly. -/
+abbrev IContext (W : Type*) (E : Type*) := Set (ICDRTAssignment W E × W)
 
 namespace IContext
 

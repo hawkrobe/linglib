@@ -1,6 +1,7 @@
 import Mathlib.Logic.Relation
 import Mathlib.Data.Set.Basic
 import Linglib.Core.Tree
+import Linglib.Theories.Semantics.Alternatives.Source
 
 /-!
 # Structurally-Defined Alternatives
@@ -150,10 +151,23 @@ def structuralAlternatives {C W : Type} (lex : List (Tree C W))
     (φ : Tree C W) : Set (Tree C W) :=
   {ψ | atMostAsComplex (substitutionSource lex φ) ψ φ}
 
+/-- The Katzir source as an `AlternativeSource`. Pragmatic competition
+operators (`violatesMP`, `violatesMaximize`, `violatesMCIs`) accept any
+`AlternativeSource (Tree C W)`; pass `katzirSource lex` to recover the
+classical Katzir 2007 competition. Other sources include
+`Indirect.indirectFrom` (Jeretič et al. 2025). -/
+def katzirSource {C W : Type} (lex : List (Tree C W)) :
+    Alternatives.AlternativeSource (Tree C W) :=
+  structuralAlternatives lex
+
 /-- φ is always a structural alternative to itself (reflexivity of ≲). -/
 theorem self_is_alternative {C W : Type} (lex : List (Tree C W))
     (φ : Tree C W) :
     φ ∈ structuralAlternatives lex φ :=
+  Relation.ReflTransGen.refl
+
+theorem self_mem_katzirSource {C W : Type} (lex : List (Tree C W))
+    (φ : Tree C W) : φ ∈ katzirSource lex φ :=
   Relation.ReflTransGen.refl
 
 -- ═══════════════════════════════════════════════════════════════════════
@@ -713,45 +727,48 @@ All three are instances of: do not use φ if there is a formal alternative
 content dimension, (b) φ' is contextually relevant, and (c) ¬φ' is innocently
 excludable.
 
-`contentFn` maps each tree to its content along the relevant dimension. -/
+`contentFn` maps each tree to its content along the relevant dimension.
+
+The competitor set is supplied as an `AlternativeSource` parameter so
+that the same operator works for Katzir alternatives
+(`katzirSource lex`), indirect alternatives
+(`Indirect.indirectFromKatzir`, @cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}),
+or any other source. -/
 def violatesMaximize {C W World : Type}
-    (lex : List (Tree C W))
+    (src : Alternatives.AlternativeSource (Tree C W))
     (contentFn : Tree C W → World → Bool)
     (φ : Tree C W)
     (weaklyAssertable : Tree C W → Bool) : Prop :=
-  ∃ φ' ∈ structuralAlternatives lex φ,
-    -- φ' is strictly more informative along contentFn
+  ∃ φ' ∈ src φ,
     (∀ w, contentFn φ' w = true → contentFn φ w = true) ∧
     (∃ w, contentFn φ w = true ∧ contentFn φ' w = false) ∧
-    -- φ' is weakly assertable
     weaklyAssertable φ' = true
 
 /-- The neo-Gricean conversational principle: `violatesMaximize` applied
 to at-issue (truth-conditional) content. @cite{katzir-2007} def 21. -/
 abbrev violatesConversationalPrinciple {C W World : Type}
-    (lex : List (Tree C W))
+    (src : Alternatives.AlternativeSource (Tree C W))
     (meaning : Tree C W → World → Bool)
     (φ : Tree C W)
     (weaklyAssertable : Tree C W → Bool) : Prop :=
-  violatesMaximize lex meaning φ weaklyAssertable
+  violatesMaximize src meaning φ weaklyAssertable
 
 /-- Maximize Presupposition (@cite{schlenker-2012}): `violatesMaximize`
-applied to presuppositional content. Do not use φ if there is a formal
-alternative φ' with the same assertive content but stronger presupposition.
+applied to presuppositional content. Do not use φ if there is a
+competitor φ' (from `src`) with the same assertive content but stronger
+presupposition.
 
-Note: the full formulation additionally requires that φ and φ' have
-the same assertive content relative to the context. This is captured
-by requiring `assertionFn φ' = assertionFn φ` as a side condition. -/
+Pass `katzirSource lex` for Katzir alternatives;
+`Indirect.indirectFromKatzir lex pron` for indirect alternatives
+(@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}). -/
 def violatesMP {C W World : Type}
-    (lex : List (Tree C W))
+    (src : Alternatives.AlternativeSource (Tree C W))
     (presupFn : Tree C W → World → Bool)
     (assertionFn : Tree C W → World → Bool)
     (φ : Tree C W)
     (weaklyAssertable : Tree C W → Bool) : Prop :=
-  ∃ φ' ∈ structuralAlternatives lex φ,
-    -- Same assertive content (required for MP! unlike MCIs!)
+  ∃ φ' ∈ src φ,
     (∀ w, assertionFn φ' w = assertionFn φ w) ∧
-    -- φ' has strictly stronger presupposition
     (∀ w, presupFn φ' w = true → presupFn φ w = true) ∧
     (∃ w, presupFn φ w = true ∧ presupFn φ' w = false) ∧
     weaklyAssertable φ' = true
@@ -765,11 +782,11 @@ a. ⟦φ'⟧ᵘ ⊂ ⟦φ⟧ᵘ (CI-stronger)
 b. φ' ∈ C (contextually relevant)
 c. ¬⟦φ'⟧ᵘ doesn't contradict the negation of CI content of any element in C -/
 abbrev violatesMCIs {C W World : Type}
-    (lex : List (Tree C W))
+    (src : Alternatives.AlternativeSource (Tree C W))
     (ciContentFn : Tree C W → World → Bool)
     (φ : Tree C W)
     (weaklyAssertable : Tree C W → Bool) : Prop :=
-  violatesMaximize lex ciContentFn φ weaklyAssertable
+  violatesMaximize src ciContentFn φ weaklyAssertable
 
 -- ═══════════════════════════════════════════════════════════════════════
 -- §10  Bridge to Economy of Structure (@cite{katzir-singh-2015})

@@ -3,8 +3,11 @@ import Mathlib.Data.Fintype.Basic
 import Mathlib.Data.Fintype.BigOperators
 import Mathlib.Algebra.Order.Field.Basic
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
+import Mathlib.Algebra.BigOperators.Ring.Finset
 import Mathlib.Data.Set.Basic
+import Mathlib.Order.Interval.Set.Defs
 import Mathlib.Tactic.Linarith
+import Mathlib.Tactic.Ring
 
 /-!
 # Finite Probability Mass Functions
@@ -54,6 +57,13 @@ instance : Coe (FinitePMF W) (W → ℚ) where
   coe d := d.mass
 
 @[simp] lemma coe_def (d : FinitePMF W) (w : W) : d w = d.mass w := rfl
+
+@[ext] theorem ext {d₁ d₂ : FinitePMF W} (h : ∀ w, d₁.mass w = d₂.mass w) :
+    d₁ = d₂ := by
+  obtain ⟨m₁, _, _⟩ := d₁
+  obtain ⟨m₂, _, _⟩ := d₂
+  congr
+  exact funext h
 
 /-- Uniform distribution over a nonempty finite type. -/
 def uniform [Nonempty W] : FinitePMF W where
@@ -305,6 +315,54 @@ theorem probOfSet_target_pos_of_condProbSet_gt (pmf : FinitePMF W)
     rw [condProbSet_of_pos pmf cond target hPc, hAnd_eq]; simp
   linarith
 
+/-! ## Monadic structure (`bind`)
+
+`FinitePMF` admits the operations of a probability monad — `pure` and
+`bind` with the three monad laws — but cannot bear the `Monad` typeclass
+because the `[Fintype]` constraint takes it outside the unrestricted
+`Type → Type` signature `Monad` requires (mirroring `Finset.bind` /
+`Sym.bind`, which are likewise functions rather than typeclass instances).
+
+The bind `(d.bind f).mass v = ∑ w, d(w) · (f w)(v)` is the marginal
+of joint sampling: first draw `w ~ d`, then draw `v ~ f w`.
+
+`bind` and `bind_assoc` are placed before `variable [DecidableEq W]`
+because they don't depend on equality on `W`; `pure_bind` and `bind_pure`,
+which need `pure`, are defined later in the `[DecidableEq W]` section. -/
+
+section Bind
+
+variable {V : Type*} [Fintype V]
+
+/-- Probability-monad bind: marginal of sequential sampling. -/
+def bind (d : FinitePMF W) (f : W → FinitePMF V) : FinitePMF V where
+  mass v := ∑ w : W, d.mass w * (f w).mass v
+  mass_nonneg v := Finset.sum_nonneg fun w _ =>
+    mul_nonneg (d.mass_nonneg w) ((f w).mass_nonneg v)
+  mass_sum_one := by
+    rw [Finset.sum_comm]
+    have h : (∑ w : W, ∑ v : V, d.mass w * (f w).mass v) = ∑ w : W, d.mass w := by
+      apply Finset.sum_congr rfl
+      intro w _
+      rw [← Finset.mul_sum, (f w).mass_sum_one, mul_one]
+    rw [h]
+    exact d.mass_sum_one
+
+@[simp] theorem bind_apply (d : FinitePMF W) (f : W → FinitePMF V) (v : V) :
+    (d.bind f).mass v = ∑ w : W, d.mass w * (f w).mass v := rfl
+
+/-- Associativity: `(d >>= f) >>= g = d >>= (fun w => f w >>= g)`. -/
+theorem bind_assoc {X : Type*} [Fintype X] (d : FinitePMF W)
+    (f : W → FinitePMF V) (g : V → FinitePMF X) :
+    (d.bind f).bind g = d.bind (fun w => (f w).bind g) := by
+  ext x
+  simp only [bind_apply, Finset.sum_mul, Finset.mul_sum]
+  rw [Finset.sum_comm]
+  refine Finset.sum_congr rfl fun w _ => Finset.sum_congr rfl fun v _ => ?_
+  ring
+
+end Bind
+
 variable [DecidableEq W]
 
 /-- Point mass at a single value -/
@@ -316,6 +374,26 @@ def pure (w₀ : W) : FinitePMF W where
     · simp
     · intro b _ hb; simp [hb]
     · intro h; exact (h (Finset.mem_univ _)).elim
+
+/-- Bernoulli distribution on `Bool`: returns `true` with probability `p` and
+`false` with probability `1 - p`. Argument bundled as `↥(Set.Icc (0:ℚ) 1)`
+so the [0,1] constraint is intrinsic to the type (matching `Core.Scale.Rat01`).
+
+Distinct from `Mathlib.Probability.ProbabilityMassFunction.Constructions.PMF.bernoulli`,
+which is `ℝ≥0∞`-indexed for measure-theoretic interoperability. We keep
+`Core.FinitePMF.bernoulli` ℚ-valued so finite probabilistic models compute by
+`decide` / `rfl` and side hypotheses become subtype membership rather than
+threaded `0 ≤ p` / `p ≤ 1` bookkeeping. -/
+def bernoulli (p : ↥(Set.Icc (0 : ℚ) 1)) : FinitePMF Bool where
+  mass := λ b => if b then p.val else 1 - p.val
+  mass_nonneg := by
+    intro b; cases b
+    · simp only [Bool.false_eq_true, ↓reduceIte]; linarith [p.prop.2]
+    · simp only [↓reduceIte]; exact p.prop.1
+  mass_sum_one := by
+    rw [Fintype.sum_bool]
+    simp only [Bool.false_eq_true, ↓reduceIte]
+    linarith
 
 /-- Expected value of a function under this distribution -/
 def expect (pmf : FinitePMF W) (f : W → ℚ) : ℚ :=
@@ -333,6 +411,41 @@ theorem expect_pure (w₀ : W) (f : W → ℚ) :
   · simp
   · intro b _ hb; simp [hb]
   · intro h; exact (h (Finset.mem_univ _)).elim
+
+/-! ### Monad laws (left and right identity)
+
+Associativity is proved earlier (before `[DecidableEq W]`) since it
+doesn't use `pure`. Left and right identity are placed here because
+they refer to `pure`. -/
+
+section MonadIdentity
+
+variable {V : Type*} [Fintype V]
+
+/-- Left identity: `pure a >>= f = f a`. -/
+theorem pure_bind (w₀ : W) (f : W → FinitePMF V) :
+    (FinitePMF.pure w₀).bind f = f w₀ := by
+  ext v
+  simp only [bind_apply, FinitePMF.pure]
+  rw [Finset.sum_eq_single w₀]
+  · simp
+  · intros b _ hb
+    simp [hb]
+  · intro h; exact (h (Finset.mem_univ _)).elim
+
+/-- Right identity: `d >>= pure = d`. -/
+theorem bind_pure (d : FinitePMF W) :
+    d.bind FinitePMF.pure = d := by
+  ext w
+  simp only [bind_apply, FinitePMF.pure]
+  rw [Finset.sum_eq_single w]
+  · simp
+  · intros b _ hb
+    have hwb : w ≠ b := fun h => hb h.symm
+    simp [hwb]
+  · intro h; exact (h (Finset.mem_univ _)).elim
+
+end MonadIdentity
 
 end FinitePMF
 

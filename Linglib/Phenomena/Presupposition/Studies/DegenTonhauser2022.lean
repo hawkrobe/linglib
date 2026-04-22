@@ -105,9 +105,11 @@ Higher = more projective (speaker more certain of CC).
 Values computed from the data at
 github.com/judith-tonhauser/projective-probability (results/5-projectivity-no-fact),
 rounded to 2 decimal places. The gradient nature and ordering show no
-categorical factive/nonfactive gap.
+categorical factive/nonfactive gap. Stored as `ℚ` so finite-arithmetic
+inequalities between predicates close by `decide` rather than `native_decide`
+on `Float`.
 -/
-def projectionRating_Exp1a : Predicate → Float
+def projectionRating_Exp1a : Predicate → ℚ
   -- Canonically factive - not clustered at top
   | .beAnnoyed => 0.88
   | .know => 0.86
@@ -140,7 +142,7 @@ Values computed from the data at
 github.com/judith-tonhauser/projective-probability (results/8-projectivity-no-fact-binary),
 rounded to 2 decimal places.
 -/
-def projectionRating_Exp1b : Predicate → Float
+def projectionRating_Exp1b : Predicate → ℚ
   | .know => 0.93
   | .beAnnoyed => 0.92
   | .inform => 0.90
@@ -171,7 +173,7 @@ Values computed from the data at
 github.com/judith-tonhauser/projective-probability (results/4-veridicality3),
 rounded to 2 decimal places.
 -/
-def inferenceRating_Exp2a : Predicate → Float
+def inferenceRating_Exp2a : Predicate → ℚ
   | .prove => 0.96
   | .beRight => 0.96
   | .see => 0.95
@@ -202,8 +204,8 @@ inform=0.81 vs reveal=0.70 (Exp 1a).
 -/
 theorem optionally_factive_as_projective_as_factive :
     projectionRating_Exp1a .inform > projectionRating_Exp1a .reveal ∧
-    projectionRating_Exp1a .acknowledge > projectionRating_Exp1a .reveal :=
-  ⟨by native_decide, by native_decide⟩
+    projectionRating_Exp1a .acknowledge > projectionRating_Exp1a .reveal := by
+  refine ⟨?_, ?_⟩ <;> simp only [projectionRating_Exp1a] <;> norm_num
 
 /--
 There is no categorical gap between factive and optionally factive
@@ -214,7 +216,7 @@ is lower than the most projective optionally factive (inform: 0.81).
 -/
 theorem no_categorical_projection_gap :
     projectionRating_Exp1a .inform > projectionRating_Exp1a .reveal := by
-  native_decide
+  simp only [projectionRating_Exp1a]; norm_num
 
 /--
 Predicates with highest entailment have lowest projection.
@@ -227,8 +229,9 @@ strength is one of the key empirical observations of the paper,
 undermining Definition 3b. -/
 theorem entailment_projection_dissociation :
     inferenceRating_Exp2a .beRight > inferenceRating_Exp2a .know ∧
-    projectionRating_Exp1a .know > projectionRating_Exp1a .beRight :=
-  ⟨by native_decide, by native_decide⟩
+    projectionRating_Exp1a .know > projectionRating_Exp1a .beRight := by
+  refine ⟨?_, ?_⟩ <;>
+    simp only [inferenceRating_Exp2a, projectionRating_Exp1a] <;> norm_num
 
 -- ============================================================================
 -- §5. Cross-Diagnostic Consistency
@@ -243,8 +246,13 @@ theorem top_two_agree :
       projectionRating_Exp1a p < projectionRating_Exp1a .know) ∧
     (∀ p : Predicate, p ≠ .beAnnoyed → p ≠ .know →
       projectionRating_Exp1b p < projectionRating_Exp1b .know) := by
-  refine ⟨by native_decide, by native_decide, fun p h1 h2 => ?_, fun p h1 h2 => ?_⟩ <;>
-    cases p <;> simp_all [projectionRating_Exp1a, projectionRating_Exp1b] <;> native_decide
+  refine ⟨?_, ?_, fun p h1 h2 => ?_, fun p h1 h2 => ?_⟩
+  · simp only [projectionRating_Exp1a]; norm_num
+  · simp only [projectionRating_Exp1b]; norm_num
+  · cases p <;> first | (exact absurd rfl h1) | (exact absurd rfl h2) |
+      (simp only [projectionRating_Exp1a]; norm_num)
+  · cases p <;> first | (exact absurd rfl h1) | (exact absurd rfl h2) |
+      (simp only [projectionRating_Exp1b]; norm_num)
 
 /-- The binary diagnostic produces sharper separation: nonfactive predicates
     cluster near 0 in binary (< 0.10) but are above 0.15 in continuous. -/
@@ -259,7 +267,8 @@ theorem binary_sharper_separation :
     projectionRating_Exp1a .say > 0.10 ∧
     projectionRating_Exp1a .suggest > 0.10 ∧
     projectionRating_Exp1a .beRight > 0.10 := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_, ?_⟩ <;>
+    simp only [projectionRating_Exp1a, projectionRating_Exp1b] <;> norm_num
 
 -- ============================================================================
 -- §6. Fragment Factivity Bridge

@@ -153,12 +153,13 @@ about `violatesMCIs`: there is no polarity parameter in its type
 signature, so polarity cannot affect it.
 -/
 theorem aci_polarity_insensitive {C W World : Type}
-    (lex : List (Tree C W)) (ciContentFn : Tree C W → World → Bool)
+    (src : Alternatives.AlternativeSource (Tree C W))
+    (ciContentFn : Tree C W → World → Bool)
     (φ : Tree C W) (weaklyAssertable : Tree C W → Bool)
     (_ctx1 _ctx2 : ContextPolarity) :
     -- The same violation holds regardless of polarity
-    violatesMCIs lex ciContentFn φ weaklyAssertable =
-    violatesMCIs lex ciContentFn φ weaklyAssertable := rfl
+    violatesMCIs src ciContentFn φ weaklyAssertable =
+    violatesMCIs src ciContentFn φ weaklyAssertable := rfl
 
 
 -- ============================================================================

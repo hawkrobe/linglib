@@ -507,4 +507,71 @@ theorem ps5_additive_asymmetry :
     isRegionJoinComplete bitmaskJoin ps5Paucal = false :=
   ⟨ps5_plural_joinComplete, ps5_paucal_not_joinComplete⟩
 
+-- ============================================================================
+-- § 11: DUAL Core Concept — Predicate-Modification Denotation
+-- ============================================================================
+
+/-! ### DUAL as predicate modifier
+@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}
+
+The paper proposes (eq 39 in §4.2.1, derived from Harbour features
+in §8 eq 98b) that the core concept DUAL has a predicate-modification
+semantics:
+
+  ⟦DUAL⟧ = λP.λx. P(x) ∧ |{y : atom(y) ∧ y ⊑ x}| = 2
+
+In a join-semilattice, "exactly 2 atomic parts below x" coincides with
+"x is a minimal non-atom" — already formalized as `isMinimalNonAtom`.
+The bridge is therefore a one-line composition: filter P by the dual
+lattice predicate.
+
+This connects the Harbour feature bundle `dualF = ⟨isAtomic := false,
+isMinimal := true⟩` to the predicate modifier required by the paper's
+Indirect Alternative analysis: *les deux* lexicalizes the predicate
+modifier `dualPredOnLattice _ _ verres` ('cup'), which is what blocks
+*tous les NP.dual*. See `Phenomena/Presupposition/Studies/JereticEtAl2025.lean`. -/
+
+/-- ⟦DUAL⟧ as a predicate modifier on a join-semilattice domain
+(@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025} eq 39).
+
+Given a property `P` over individuals and an element `x`, `dualPredOnLattice`
+holds of `x` iff `P x` and `x` has exactly 2 atomic parts. The latter is
+witnessed by `isMinimalNonAtom`, since in a join-semilattice the minimal
+non-atoms are precisely the joins of two atoms. -/
+def dualPredOnLattice {D : Type} [DecidableEq D]
+    (join : D → D → D) (domain : List D)
+    (P : D → Bool) (x : D) : Bool :=
+  P x && isMinimalNonAtom join domain x
+
+/-- `dualPredOnLattice P` strictly refines `P`: the dual reading
+of `P` is a subset of `P`. -/
+theorem dualPredOnLattice_refines {D : Type} [DecidableEq D]
+    (join : D → D → D) (domain : List D)
+    (P : D → Bool) (x : D) :
+    dualPredOnLattice join domain P x = true → P x = true := by
+  simp only [dualPredOnLattice, Bool.and_eq_true]
+  exact And.left
+
+/-- The dual reading of a property holds of `x` iff `P x` and `x` is a
+minimal non-atom in the domain. The two conjuncts are independent. -/
+theorem dualPredOnLattice_iff {D : Type} [DecidableEq D]
+    (join : D → D → D) (domain : List D)
+    (P : D → Bool) (x : D) :
+    dualPredOnLattice join domain P x = true ↔
+    P x = true ∧ isMinimalNonAtom join domain x = true := by
+  simp [dualPredOnLattice]
+
+/-- On the 3-atom powerset, the dual reading of "is a non-atom"
+selects the three pairs (3, 5, 6) and excludes the triple (7). -/
+theorem ps3_dual_pairs_satisfy :
+    dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 3 = true ∧
+    dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 5 = true ∧
+    dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 6 = true := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
+
+/-- Triples (≥3 atomic parts) fail the dual predicate. -/
+theorem ps3_dual_triple_excluded :
+    dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 7 = false := by
+  decide
+
 end Core.Number

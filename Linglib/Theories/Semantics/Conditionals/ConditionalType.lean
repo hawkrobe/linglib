@@ -29,14 +29,14 @@ This explains why PCs block NPIs despite being semantically DE!
 -/
 
 import Mathlib.Data.Set.Basic
-import Linglib.Theories.Semantics.Dynamic.State
+import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
 import Linglib.Theories.Semantics.Entailment.Polarity
 import Linglib.Theories.Semantics.Conditionals.Basic
 
 namespace Semantics.Conditionals
 
 open Semantics.Entailment.Polarity
-open Semantics.Dynamic.State
+open Pragmatics.Assertion.FarkasBruce
 
 -- Conditional Type: HC vs PC
 

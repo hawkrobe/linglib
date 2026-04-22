@@ -368,29 +368,8 @@ RSA's graded φ emerges from:
 This is exactly Lassiter & Goodman's "threshold + uncertainty = graded".
 -/
 
-/--
-Probability of a proposition in a finite distribution.
-
-This is `Pr[φ] = E_i[1_{φ(i)}]` in Grove & White notation.
-For finite distributions, this is the sum of masses where φ holds.
--/
-def probProp {ι : Type} [Fintype ι] (mass : ι → ℚ) (φ : ι → Bool) : ℚ :=
-  Finset.sum Finset.univ λ i => mass i * if φ i then 1 else 0
-
-/--
-Probability of a true proposition is the total mass (1 for normalized distributions).
--/
-theorem probProp_true {ι : Type} [Fintype ι] (mass : ι → ℚ) :
-    probProp mass (λ _ => true) = Finset.sum Finset.univ mass := by
-  simp only [probProp, ↓reduceIte, mul_one]
-
-/--
-Probability of a false proposition is 0.
--/
-theorem probProp_false {ι : Type} [Fintype ι] (mass : ι → ℚ) :
-    probProp mass (λ _ => false) = 0 := by
-  simp only [probProp]
-  have h : ∀ i, mass i * (if false then 1 else 0) = 0 := λ i => by simp
-  simp only [h, Finset.sum_const_zero]
+-- `Pr[φ] = E_i[1_{φ(i)}]` is `Core.FinitePMF.prob` (over a normalized
+-- `FinitePMF ι`). Use that rather than re-stipulating a bare-`mass` variant
+-- here.
 
 end Semantics.Dynamic.Probabilistic

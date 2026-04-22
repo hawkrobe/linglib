@@ -45,6 +45,34 @@ type `S`, showing all systems embed into this algebra.
 | `dimpl` | `DRS S → DRS S → Condition S` | K&R verification for ⇒ |
 | `ddisj` | `DRS S → DRS S → Condition S` | K&R verification for ∨ |
 | `closure` | `DRS S → Condition S` | existential closure (Heim's truth) |
+
+## Cross-cutting smell: three incompatible DNE solutions
+
+`dneg` (above) gives the standard relational negation `¬D i ⟺ ¬∃k, D i k`,
+which fails double-negation elimination — `dneg (dneg D) ≢ D` because
+positive update information is destroyed when negation collapses to a
+state predicate. Three downstream frameworks repair DNE in mutually
+incompatible ways:
+
+| Framework | DNE mechanism | File |
+|-----------|---------------|------|
+| Bilateral (BUS, @cite{krahmer-muskens-1995}, @cite{elliott-sudo-2025}) | Two update channels (positive/negative); negation = swap | `Dynamic/Bilateral/Basic.lean`, `Dynamic/Bilateral/ICDRT.lean` |
+| ICDRT (@cite{hofmann-2025}) | Propositional drefs + complementation under flat update | `Dynamic/IntensionalCDRT/Basic.lean` |
+| TTR (@cite{cooper-2023}) | Classical metalanguage reduction; negation is static | `Theories/Semantics/TypeTheoretic/` |
+
+These are not mere notational variants. Bilateral DNE is structural
+(swap is involutive by definition); ICDRT DNE is derived (complementation
+of a propositional dref); TTR DNE is inherited (the metalanguage is
+classical so `¬¬p ↔ p` holds at the static layer). Each repair pays
+for itself with different downstream costs — bilateral cannot
+distinguish speaker-vs-hearer commitments; ICDRT requires intensional
+contexts; TTR loses dynamic state-threading at the negation site.
+
+The cross-framework comparisons are formalized in `Comparisons/`:
+`ICDRT_BUS.lean` (bilateral vs ICDRT on the bathroom sentence) and
+`CDRT_TTR.lean` (CDRT ↔ TTR truth-conditional equivalence + dynamic
+divergence under negation). New dynamic frameworks should declare
+which DNE strategy they adopt and link to one of these comparisons.
 -/
 
 namespace Semantics.Dynamic.Core.DynProp

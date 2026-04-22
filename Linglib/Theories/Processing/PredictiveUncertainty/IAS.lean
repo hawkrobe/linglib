@@ -1,4 +1,3 @@
-import Linglib.Core.FinitePMF
 import Linglib.Theories.Processing.LanguageModel.Basic
 import Linglib.Theories.Processing.PredictiveUncertainty.Config
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
@@ -42,7 +41,7 @@ set_option autoImplicit false
 
 namespace Theories.Processing.PredictiveUncertainty
 
-open Finset BigOperators Real Core
+open Finset BigOperators Real
 open Theories.Processing.LanguageModel (LangModel)
 
 -- ============================================================================
@@ -61,7 +60,7 @@ noncomputable def genSurprisal {Voc : Type*} [Fintype Voc]
     (warp : ℝ → ℝ)
     (score : Option Voc → Voc → List Voc → ℝ)
     (c : List Voc) (w : Voc) : ℝ :=
-  warp (∑ o : Option Voc, ((lm.next c).mass o : ℝ) * score o w c)
+  warp (∑ o : Option Voc, ((lm.next c) o).toReal * score o w c)
 
 /-- The indicator scoring function: 1 iff the alternative matches the target. -/
 noncomputable def indicatorScore {Voc : Type*} [DecidableEq Voc]
@@ -128,8 +127,8 @@ theorem standardSurprisal_denotes_surprisal
   show standardSurprisal.warp.denote _ = _
   unfold standardSurprisal WarpingFn.denote
   have key : ∀ o : Option Voc,
-      ((lm.next c).mass o : ℝ) * indicatorScore o w c =
-        if o = some w then ((lm.next c).mass (some w) : ℝ) else 0 := by
+      ((lm.next c) o).toReal * indicatorScore o w c =
+        if o = some w then ((lm.next c) (some w)).toReal else 0 := by
     intro o
     unfold indicatorScore
     split_ifs with h
@@ -171,7 +170,7 @@ noncomputable def informationValue1
     {Voc : Type*} [Fintype Voc]
     (lm : LangModel Voc) (d : Option Voc → Voc → ℝ)
     (c : List Voc) (w : Voc) : ℝ :=
-  ∑ o : Option Voc, ((lm.next c).mass o : ℝ) * d o w
+  ∑ o : Option Voc, ((lm.next c) o).toReal * d o w
 
 /-- Information value at horizon 1 is `genSurprisal` with the identity
 warping. The sampler is the LM, the scoring function is the distance,

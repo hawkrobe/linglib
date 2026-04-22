@@ -1,5 +1,6 @@
 import Linglib.Theories.Processing.LanguageModel.Basic
 import Linglib.Theories.Processing.PredictiveUncertainty.IAS
+import Mathlib.Probability.ProbabilityMassFunction.Monad
 
 /-!
 # Giulianelli, Wallbridge, Cotterell & Fernández (2026)
@@ -81,7 +82,7 @@ open Theories.Processing.LanguageModel (LangModel)
 /-- A trivial language model over `Unit` with point-mass on the unique
 symbol. Used as a witness in the strict-generalization theorem below. -/
 noncomputable def trivialLM : LangModel Unit where
-  next _ := Core.FinitePMF.pure (some ())
+  next _ := PMF.pure (some ())
 
 /-- **Strict generalization**: fixing the language model, context, and
 target, the IAS value at horizon 1 depends on the choice of distance
@@ -101,6 +102,6 @@ theorem informationValue1_not_determined_by_surprisal :
       informationValue1 trivialLM d₂ [] () := by
   refine ⟨fun _ _ => 0, fun _ _ => 1, ?_⟩
   unfold informationValue1 trivialLM
-  simp [Core.FinitePMF.pure]
+  simp
 
 end Phenomena.Processing.Studies.GiulianelliEtAl2026

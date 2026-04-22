@@ -35,6 +35,10 @@ namespace Number
 @[match_pattern] abbrev sg : Number := .Sing
 /-- Plural (compatibility alias for UD.Number.Plur) -/
 @[match_pattern] abbrev pl : Number := .Plur
+/-- Dual (compatibility alias for UD.Number.Dual). Used for lexical
+items that morphologically restrict to two-atom domains
+(e.g. English `both`/`neither`, Slovenian dual, Icelandic `hvor`). -/
+@[match_pattern] abbrev du : Number := .Dual
 end Number
 
 /-- Grammatical person. Aliased to UD.Person for cross-linguistic compatibility.

@@ -38,7 +38,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 
 namespace Semantics.Conditionals
 
-open Semantics.Dynamic.State
+open Pragmatics.Assertion.FarkasBruce
 
 -- Left-Nested Conditional Structure
 

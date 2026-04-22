@@ -35,12 +35,12 @@ set_option autoImplicit false
 
 namespace Theories.Processing
 
-open Core Real
+open Real
 open Theories.Processing.LanguageModel (LangModel)
 
 namespace MemoryProcess
 
-variable {Voc Mem : Type*} [Fintype Voc] [Fintype Mem]
+variable {Voc Mem : Type*}
 
 /-- A memory process is *lossless for* a language model `lm` if some
 deterministic history-summary `f` makes the encoder a Dirac at `f c`
@@ -49,8 +49,7 @@ and the predictor's distribution at `f c` equal to `lm.next c`.
 (@cite{futrell-gibson-levy-2020} §3.5.1: this is the "perfect memory"
 regime in which lossy-context surprisal collapses to classical
 surprisal.) -/
-def IsLosslessFor [DecidableEq Mem]
-    (mp : MemoryProcess Voc Mem) (lm : LangModel Voc) : Prop :=
+def IsLosslessFor (mp : MemoryProcess Voc Mem) (lm : LangModel Voc) : Prop :=
   ∃ f : List Voc → Mem,
     mp.IsDirac f ∧ ∀ c, mp.predict (f c) = lm.next c
 
@@ -61,7 +60,7 @@ surprisal *generalises* surprisal — it does not replace it.
 Reading: when no information is lost in encoding, the integral over
 memory states in `expectedSurprisal` (Eq. 3) degenerates to a single
 deterministic prediction, recovering Shannon's `-log p(w | c)`. -/
-theorem expectedSurprisal_eq_surprisal_of_lossless [DecidableEq Mem]
+theorem expectedSurprisal_eq_surprisal_of_lossless
     {mp : MemoryProcess Voc Mem} {lm : LangModel Voc}
     (h : mp.IsLosslessFor lm) (c : List Voc) (w : Voc) :
     mp.expectedSurprisal c w = lm.surprisal c w := by
@@ -80,7 +79,7 @@ def virtualLM (mp : MemoryProcess Voc Mem)
 encoder is a Dirac at `f`. This is the "construction-side" complement
 of `expectedSurprisal_eq_surprisal_of_lossless`: any Dirac encoder
 *does* realise some LM, namely `virtualLM`. -/
-theorem isLosslessFor_virtualLM [DecidableEq Mem]
+theorem isLosslessFor_virtualLM
     (mp : MemoryProcess Voc Mem) {f : List Voc → Mem}
     (h : mp.IsDirac f) :
     mp.IsLosslessFor (mp.virtualLM f) :=
@@ -90,7 +89,7 @@ theorem isLosslessFor_virtualLM [DecidableEq Mem]
 memory process realises classical surprisal under its induced
 language model. This is the reduction in its purely structural form,
 without an external `lm` parameter. -/
-theorem expectedSurprisal_eq_virtualLM_surprisal [DecidableEq Mem]
+theorem expectedSurprisal_eq_virtualLM_surprisal
     {mp : MemoryProcess Voc Mem} {f : List Voc → Mem}
     (h : mp.IsDirac f) (c : List Voc) (w : Voc) :
     mp.expectedSurprisal c w = (mp.virtualLM f).surprisal c w :=

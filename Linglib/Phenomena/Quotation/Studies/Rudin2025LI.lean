@@ -48,7 +48,7 @@ namespace Phenomena.Quotation.Studies.Rudin2025LI
 
 open Semantics.Quotation.Demonstration
 open Pragmatics.Assertion.QuotationFBOntology
-open Semantics.Dynamic.State
+open Pragmatics.Assertion.FarkasBruce
 open Semantics.Events
 
 -- ════════════════════════════════════════════════════

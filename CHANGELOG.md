@@ -4,6 +4,139 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.119] - 2026-04-21
+
+### Changed
+- **Extracted `Cat` enum + `SelStack` abbrev to
+  `Theories/Syntax/Minimalism/Core/Cat.lean`** (from
+  `Minimalism/Core/Basic.lean`). Cat.lean is intentionally minimal:
+  only the 28-constructor categorial inductive (preserving every
+  `@cite{...}` tag on individual constructors) and `abbrev SelStack
+  := List Cat`. Consumers that only need the categorial inventory
+  (Polarity, MereologicalSyntax, Borer 2005 demonstration,
+  KonnellyCowper2020 pronouns, etc.) inherit Cat transitively via
+  `Core.Basic`'s new `import …Core.Cat`, so no consumer-side import
+  changes are required. `Core.Basic` is unchanged downstream of the
+  removed lines. C7 of the Stage-0 Minimalism architecture refactor.
+
+## [0.230.118] - 2026-04-21
+
+### Changed
+- **Phase 4 of `Dynamic/` directory dissolution: cross-cutting smell
+  docstrings (no code moves).** Three docstring pointers added to
+  acknowledge incompatibilities and choice-by-hand surfaces in the
+  `Dynamic/` framework zoo:
+  - `Dynamic/Core/DynProp.lean` documents the **three incompatible
+    DNE solutions** — Bilateral negation-as-swap (BUS), ICDRT
+    propositional drefs + complementation, TTR classical metalanguage
+    reduction. New dynamic frameworks should declare which DNE
+    strategy they adopt and link to the relevant `Comparisons/` file
+    (`ICDRT_BUS.lean` or `CDRT_TTR.lean`).
+  - `Dynamic/DynamicGQ/Basic.lean` documents **all five DynamicGQ
+    variants** (pointwise / update-theoretic / higher-order tower /
+    post-suppositional / subtype-polymorphic), all from
+    @cite{charlow-2021}, with what each can or cannot derive
+    (cumulative readings, pseudo-cumulative blocking) so consumers
+    can choose by phenomenon rather than by accident.
+  - `Dynamic/Bilateral/ICDRT.lean` acknowledges the **bilateral vs full
+    ICDRT tension**: bilateral is the lighter formalism (one info
+    state, two update polarities) but cannot handle disagreement or
+    modal subordination; full ICDRT (@cite{hofmann-2025}) is heavier
+    but strictly more expressive. Empirical comparison formalized
+    in `Comparisons/ICDRT_BUS.lean`.
+  - Closes the Dynamic/ dissolution audit (Phases 1-4 done).
+
+## [0.230.117] - 2026-04-21
+
+### Added
+- **@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025}**
+  formalized as `Phenomena/Presupposition/Studies/JereticEtAl2025.lean`.
+  Cross-linguistic anti-duality of universal/negative/temporal
+  quantifiers — French *tous* anti-dual via the indirect alternative
+  *les deux* despite no French *both*; English *no* anti-dual via
+  *neither*; German *keine* not anti-dual; Japanese/Icelandic
+  dual-marked *which*/*each*/*one* anti-dual; English *always* via
+  *both times*; French *toujours* not. One parametric theorem
+  (`theory_matches_data`) verifies the indirect-alternative theory
+  against 30 (language, quantifier-slot) data points by `decide`.
+- **`Theories/Semantics/Alternatives/Source.lean`** — `AlternativeSource
+  S := S → Set S` abbrev, the join point for Katzir, Indirect, Meaning
+  First, and other competition-feeding sources. Mathlib-style
+  factor-by-genus: the previous hardcoding of `structuralAlternatives`
+  inside `violatesMP`/`violatesMaximize`/`violatesMCIs` is removed in
+  favor of an explicit source parameter. Existing call sites pass
+  `katzirSource lex` to recover prior behavior.
+- **`Theories/Semantics/Alternatives/Pronounceable.lean`** — typeclass
+  `HasPronounceability (S : Type)` with default-true instance for
+  `Tree C W`. Required by `Indirect.lean` to define alternatives that
+  pass through silent witnesses (e.g. *tous les NP.dual*).
+- **`Theories/Semantics/Alternatives/Indirect.lean`** — derived
+  `AlternativeSource` from a base source (`indirectFrom`): `s'` is an
+  indirect alt of `s` iff there is an unpronounceable `sₓ ∈ base s`
+  with the same meaning as `s'` and `size s' ≤ size s`. Paper eq 43.
+- **`Theories/Pragmatics/AvoidAmbiguity.lean`** — formalization of
+  Jeretič et al. eq 37 as `Blocked parses meaning size s p`. Lifts the
+  string-only mention in `GriceanMaxims.lean` to a real predicate.
+  Generic over (parses : S → List P) (meaning : P → M) (size : S → ℕ).
+- **`Core/CoreConcept.lean`** — `Core.CoreConcept.Id` registry
+  (`dual`, `trial`, `universal`, `existential`) plus `Lexicalizes`
+  predicate over a lexicon and a per-token realization relation.
+- **`Core/Number.lean` § 11** — `dualPredOnLattice` predicate-modifier
+  semantics for DUAL (paper eq 39 / §8 eq 98b), grounded in the
+  existing Harbour `dualF = ⟨−atomic, +minimal⟩` via
+  `isMinimalNonAtom`. Closes the gap between Harbour features and the
+  paper's predicate-modification denotation.
+- **`Fragments/French/Determiners.lean`** — French quantifier lexicon
+  (tous, chaque, aucun, les_deux, quelques, un, les, toujours)
+  mirroring `Fragments.English.Determiners`. Closes a long-standing
+  asymmetry: French had Negation, ModalIndefinites, Reciprocals but no
+  determiners/quantifiers despite linglib targeting ~100 languages.
+- **`Core/Lexical/Word.lean`** — `Number.du` compatibility alias for
+  `UD.Number.Dual`, mirroring existing `Number.sg`/`Number.pl`.
+- **9 bib entries**: jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025
+  (DOI 10.1093/jos/ffaf014, JoS Advance Access), chemla-2007 (Snippets
+  15:4-5), sauerland-2008 ("Implicated Presuppositions"), percus-2006
+  ("Antipresuppositions"), buccola-kriz-chemla-2018 (Conceptual
+  Alternatives ms.), aravind-2018 (MIT thesis), marti-2020 (S&P 13:3),
+  sauerland-alexiadou-2020 (Frontiers Psy. 11:571295).
+
+### Changed
+- **`Theories/Semantics/Alternatives/Structural.lean`**: `violatesMP`,
+  `violatesMaximize`, `violatesMCIs` now take an
+  `AlternativeSource (Tree C W)` parameter instead of `lex : List
+  (Tree C W)`. Pass `katzirSource lex` for prior behavior. One
+  downstream consumer updated (`ConventionalImplicatures.lean`
+  `aci_polarity_insensitive`).
+
+## [0.230.116] - 2026-04-21
+
+### Changed
+- **Phase 3 of `Dynamic/` directory dissolution.** Two larger
+  paper-anchored files extracted from `Dynamic/`; each lands at a
+  more honest location.
+  - **Moved** `Dynamic/State.lean` (289 LOC) →
+    `Theories/Pragmatics/Assertion/FarkasBruce.lean`. The file is a
+    direct formalization of @cite{farkas-bruce-2010}'s discourse-state
+    model (dcS / dcL / cg / table); naturally a sibling of
+    `Brandom.lean`, `Stalnaker.lean`, `Krifka.lean`, `Lauer.lean`,
+    `Gunlogson.lean` (per-author assertion-theory study files).
+    Namespace `Semantics.Dynamic.State` →
+    `Pragmatics.Assertion.FarkasBruce`. Five consumers updated:
+    `Pragmatics/Assertion/{QuotationFBOntology,FarkasAdapter}.lean`,
+    `Phenomena/Quotation/Studies/Rudin2025LI.lean`,
+    `Theories/Semantics/Conditionals/{LeftNested,ConditionalType}.lean`.
+  - **Moved** `Dynamic/Generics.lean` (656 LOC) →
+    `Theories/Semantics/Noun/Kind/GenericsDynamic.lean`. The file is
+    the dynamic-generics theory anchored on @cite{kirkpatrick-2024} —
+    `GenericSentence`, `evalGeneric`, `horizonStep`, the abstract
+    `commutative_implies_equal_verdicts` impossibility theorem, and
+    presupposition-failure-triggered horizon expansion — *not* a
+    paper-specific replication. Sibling of static
+    `Theories/Semantics/Noun/Kind/Generics.lean` (the GEN operator).
+    The Kirkpatrick raven/lion/teacher toy models stay in
+    `Phenomena/Generics/Studies/Kirkpatrick2024.lean`. Namespace
+    `Semantics.Dynamic.Generics` → `Semantics.Noun.Kind.GenericsDynamic`.
+
 ## [0.230.115] - 2026-04-21
 
 ### Removed

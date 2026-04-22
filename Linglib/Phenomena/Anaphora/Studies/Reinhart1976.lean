@@ -35,6 +35,7 @@ set_option autoImplicit false
 namespace Reinhart1976
 
 open Phenomena.Anaphora.Compare
+open Core.Order
 open Set
 
 -- ============================================================================
@@ -75,7 +76,7 @@ A key observation (p. 34): c-command domains are always **constituents**
     c-commands, plus `a` itself.
 
     In B&P terms: `{b | (a, b) ∈ kCommand T} ∪ {a}`. -/
-def cCommandDomain {Node : Type} (T : AbstractTree Node) (a : Node) : Set Node :=
+def cCommandDomain {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (a : Node) : Set Node :=
   {b | (a, b) ∈ kCommand T} ∪ {a}
 
 -- ============================================================================
@@ -96,10 +97,10 @@ also a branching node — a universally accepted structural assumption
     Every S-node is a branching node (S-nodes dominate ≥2 children),
     so `{S-nodes} ⊆ {branching nodes}`, and by B&P's antitone map
     (`command_antitone`), `C_{branching} ⊆ C_{S}`. -/
-theorem cCommand_implies_command {Node : Type} (T : LabeledTree Node)
-    (h_S_branch : sNodes T ⊆ branchingNodes T.toAbstractTree) :
-    kCommand T.toAbstractTree ⊆ sCommand T :=
-  command_antitone T.toAbstractTree (sNodes T) (branchingNodes T.toAbstractTree) h_S_branch
+theorem cCommand_implies_command {Node : Type} [PartialOrder Node] (T : LabeledTree Node)
+    (h_S_branch : sNodes T ⊆ branchingNodes T.toTreeOrder) :
+    kCommand T.toTreeOrder ⊆ sCommand T :=
+  command_antitone T.toTreeOrder (sNodes T) (branchingNodes T.toTreeOrder) h_S_branch
 
 -- ============================================================================
 -- §3: The Coreference Restriction (10b)
@@ -127,8 +128,8 @@ abbrev IsPronoun (Node : Type) := Node → Prop
     `corefPermitted isPron T a b` holds iff:
     - neither is in the other's domain, OR
     - whichever is in the other's domain is a pronoun. -/
-def corefPermitted {Node : Type} (isPron : IsPronoun Node)
-    (T : AbstractTree Node) (a b : Node) : Prop :=
+def corefPermitted {Node : Type} [PartialOrder Node] (isPron : IsPronoun Node)
+    (T : TreeOrder Node) (a b : Node) : Prop :=
   (b ∈ cCommandDomain T a → isPron b) ∧
   (a ∈ cCommandDomain T b → isPron a)
 
@@ -164,9 +165,9 @@ without mentioning linear order. -/
     This is a structural fact about how `commandRelation` is defined —
     it uses only vertical (dominance) relations, never horizontal
     (precedence) relations. -/
-theorem command_ignores_precedence {Node : Type} (T : AbstractTree Node) (P : Set Node) :
+theorem command_ignores_precedence {Node : Type} [PartialOrder Node] (T : TreeOrder Node) (P : Set Node) :
     ∀ a b, (a, b) ∈ commandRelation T P ↔
-      ∀ x ∈ upperBounds T a P, T.dom x b :=
+      ∀ x ∈ upperBounds T a P, x ≤ b :=
   λ _ _ => Iff.rfl
 
 -- ============================================================================

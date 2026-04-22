@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Quotation.Demonstration
-import Linglib.Theories.Semantics.Dynamic.State
+import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
 import Linglib.Theories.Pragmatics.Assertion.FarkasAdapter
 
 /-!
@@ -56,7 +56,7 @@ simultaneously be both values.
 
 namespace Pragmatics.Assertion.QuotationFBOntology
 
-open Semantics.Dynamic.State
+open Pragmatics.Assertion.FarkasBruce
 open Semantics.Quotation.Demonstration
 
 -- ════════════════════════════════════════════════════

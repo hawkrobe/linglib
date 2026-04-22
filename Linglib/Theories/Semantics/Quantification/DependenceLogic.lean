@@ -21,7 +21,7 @@ indefinite pronouns in @cite{degano-aloni-2025}:
 | Monotonicity | `variation t v x` lifts to `variation t y x` when `y` is coarser than `v` |
 -/
 
-namespace Semantics.Dynamic.DependenceLogic
+namespace Semantics.Quantification.DependenceLogic
 
 /-- An assignment team: a set of variable assignments.
     Variables are `V`, entities are `E`. Each assignment maps
@@ -107,4 +107,4 @@ theorem variation_monotone {V E : Type} [DecidableEq V] [DecidableEq E]
   obtain ⟨a₁, ha₁, a₂, ha₂, hveq, hxne⟩ := hvar
   exact ⟨a₁, ha₁, a₂, ha₂, h_agree a₁ a₂ hveq, hxne⟩
 
-end Semantics.Dynamic.DependenceLogic
+end Semantics.Quantification.DependenceLogic

@@ -1,4 +1,8 @@
-/-
+import Linglib.Theories.Semantics.Tense.Dynamic
+import Linglib.Theories.Semantics.Mood.Dynamic
+import Linglib.Core.Modality.HistoricalAlternatives
+
+/-!
 # Modal Donkey Anaphora (@cite{mendes-2025} §3.1)
 
 The central theoretical insight of @cite{mendes-2025}: the Subordinate Future (SF)
@@ -27,20 +31,12 @@ IND retrieves: [| w_{s₂} = w_{s₁}]
 The anaphoric relationship:
 - SUBJ is existential (like indefinite "a")
 - IND is presuppositional (like definite "the")
-
 -/
-
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
 
 namespace Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 
-open _root_.Core (WorldTimeIndex)
-
-open Core.Time
+open _root_.Core (Assignment WorldTimeIndex)
 open Core.Modality.HistoricalAlternatives
-open Semantics.Dynamic.IntensionalCDRT
-open Semantics.Dynamic.IntensionalCDRT.Situations
 open Semantics.Dynamic.Core
 open Semantics.Mood
 
@@ -67,10 +63,10 @@ Example:
   "Se Maria estiver em casa, ela vai atender."
        ↑ SUBJ introduces s₁ ↑ IND retrieves s₁
 -/
-def crossClausalBinding {W Time E : Type*} [LE Time]
+def crossClausalBinding {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
-    (antecedentVar consequentVar : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (antecedentVar _consequentVar : SVar)
+    (c : SitContext W Time) : SitContext W Time :=
   -- First: SUBJ in antecedent introduces situation bound to antecedentVar
   let c₁ := dynSUBJ history antecedentVar c
   -- Then: IND in consequent retrieves via same-world constraint
@@ -82,13 +78,13 @@ Cross-clausal binding preserves world identity.
 When a situation is introduced in the antecedent and retrieved in the
 consequent, the two clauses are evaluated at the same world.
 -/
-theorem cross_clausal_same_world {W Time E : Type*} [LE Time]
+theorem cross_clausal_same_world {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
-    (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
     (h : gs ∈ crossClausalBinding history v v c) :
-    gs.2.world = (gs.1.sit v).world := by
+    gs.2.world = (gs.1 v).world := by
   unfold crossClausalBinding at h
   unfold dynIND at h
   exact h.2
@@ -106,12 +102,12 @@ This represents the complete anaphoric dependency:
 The result: temporal properties of the consequent are "inherited" from
 the situation introduced by the subjunctive.
 -/
-def subjIndChain {W Time E : Type*} [LE Time]
+def subjIndChain {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)  -- Shared situation variable
-    (antecedentPred : SitContext W Time E → SitContext W Time E)
-    (consequentPred : SitContext W Time E → SitContext W Time E)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (antecedentPred : SitContext W Time → SitContext W Time)
+    (consequentPred : SitContext W Time → SitContext W Time)
+    (c : SitContext W Time) : SitContext W Time :=
   -- Step 1: SUBJ introduces s₁
   let c₁ := dynSUBJ history v c
   -- Step 2: Filter by antecedent
@@ -130,16 +126,16 @@ world up to the introduction time.
 Q must be a context filter (`IsContextFilter`).
 Linguistically, predicates filter contexts without modifying assignments.
 -/
-theorem subj_ind_chain_modal_donkey {W Time E : Type*} [LE Time]
+theorem subj_ind_chain_modal_donkey {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
-    (P Q : SitContext W Time E → SitContext W Time E)
-    (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
+    (P Q : SitContext W Time → SitContext W Time)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
     (h : gs ∈ subjIndChain history v P Q c)
     (hQ : IsContextFilter Q) :
     -- The consequent situation shares its world with the bound situation
-    gs.2.world = (gs.1.sit v).world := by
+    gs.2.world = (gs.1 v).world := by
   unfold subjIndChain at h
   -- Q is a filter, so membership in Q(...) implies membership in dynIND(...)
   have h_in_ind : gs ∈ dynIND v (P (dynSUBJ history v c)) := hQ _ h
@@ -169,11 +165,11 @@ the antecedent in the historical base.
 
 This is the modal analog of donkey universals.
 -/
-theorem unselective_universal_force {W Time E : Type*} [LE Time]
+theorem unselective_universal_force {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
     (antecedent consequent : WorldTimeIndex W Time → Prop)
-    (c : SitContext W Time E) :
+    (c : SitContext W Time) :
     -- For all situations in the output...
     (∀ gs ∈ subjIndChain history v
       (λ c' => { gs' ∈ c' | antecedent gs'.2 })
@@ -194,18 +190,15 @@ The future-oriented interpretation of SF follows from modal donkey anaphora:
 1. SUBJ introduces s₁ ∈ hist(s₀) with τ(s₁) ≥ τ(s₀)
 2. The consequent is evaluated at s₁'s time via IND's retrieval
 3. Therefore, the consequent can refer to times after τ(s₀)
-
-This is the foundation for Theorem `temporal_shift_parasitic_on_modal`
-(formalized in Situations.lean extension).
 -/
-theorem modal_donkey_enables_temporal_shift {W Time E : Type*} [Preorder Time]
+theorem modal_donkey_enables_temporal_shift {W Time : Type*} [Preorder Time]
     (history : WorldHistory W Time)
     (v : SVar)
-    (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
     (h : gs ∈ dynSUBJ history v c) :
     ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧
-          (gs.1.sit v).time ≥ s₀.time := by
+          (gs.1 v).time ≥ s₀.time := by
   unfold dynSUBJ at h
   obtain ⟨g, s₀, s₁, hc, h_hist, h_upd, h_eq⟩ := h
   use s₀
@@ -214,11 +207,9 @@ theorem modal_donkey_enables_temporal_shift {W Time E : Type*} [Preorder Time]
   · -- s₁ ∈ historicalBase history s₀ means s₁.time ≥ s₀.time
     unfold historicalBase at h_hist
     simp only [Set.mem_setOf_eq] at h_hist
-    -- g' = g.updateSit v s₁, so g'.sit v = s₁
-    have h_sit : gs.1.sit v = s₁ := by
-      rw [h_upd]
-      unfold SitAssignment.updateSit
-      simp only [beq_self_eq_true, ite_true]
+    -- g' = g.update v s₁, so g' v = s₁
+    have h_sit : gs.1 v = s₁ := by
+      rw [h_upd]; simp only [Assignment.update_at]
     rw [h_sit]
     exact h_hist.2
 
@@ -303,16 +294,16 @@ The SUBJ-IND chain with predication filters on a singleton context
 characterizes the static existential conjunction:
 `∃ s₁ ∈ historicalBase(s₀), P(s₁) ∧ Q(s₁)`.
 -/
-theorem subjIndChain_singleton {W Time E : Type*} [LE Time]
+theorem subjIndChain_singleton {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
-    (g : SitAssignment W Time E)
+    (g : Assignment (WorldTimeIndex W Time))
     (s₀ : WorldTimeIndex W Time)
     (P Q : WorldTimeIndex W Time → Prop) :
     (∃ gs, gs ∈ subjIndChain history v
       (fun c => { gs ∈ c | P gs.2 })
       (fun c => { gs ∈ c | Q gs.2 })
-      ({(g, s₀)} : SitContext W Time E)) ↔
+      ({(g, s₀)} : SitContext W Time)) ↔
     (∃ s₁ ∈ historicalBase history s₀, P s₁ ∧ Q s₁) := by
   unfold subjIndChain
   constructor
@@ -320,9 +311,8 @@ theorem subjIndChain_singleton {W Time E : Type*} [LE Time]
     obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Set.mem_singleton_iff.mp h_ctx)
     exact ⟨s₁, h_hist, h_eq ▸ hP, h_eq ▸ hQ⟩
   · rintro ⟨s₁, h_hist, hP, hQ⟩
-    refine ⟨(g.updateSit v s₁, s₁), ⟨⟨⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩, hP⟩, ?_⟩, hQ⟩
-    unfold SitAssignment.updateSit
-    simp only [beq_self_eq_true, ite_true]
+    refine ⟨(g.update v s₁, s₁), ⟨⟨⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩, hP⟩, ?_⟩, hQ⟩
+    simp only [Assignment.update_at]
 
 /--
 The dynamic pipeline entails the static conditional (`conditionalSF`).
@@ -330,17 +320,17 @@ The dynamic pipeline entails the static conditional (`conditionalSF`).
 Conjunction is stronger than implication: if the dynamic pipeline finds
 an `s₁` satisfying both `P` and `Q`, then `P(s₁) → Q(s₁)` holds trivially.
 -/
-theorem subjIndChain_entails_conditionalSF {W Time E : Type*} [LE Time]
+theorem subjIndChain_entails_conditionalSF {W Time : Type*} [LE Time]
     (history : WorldHistory W Time)
     (v : SVar)
-    (g : SitAssignment W Time E)
+    (g : Assignment (WorldTimeIndex W Time))
     (s₀ : WorldTimeIndex W Time)
     (P : WorldTimeIndex W Time → Prop)
     (Q : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
     (h : ∃ gs, gs ∈ subjIndChain history v
       (fun c => { gs ∈ c | P gs.2 })
       (fun c => { gs ∈ c | Q gs.2 gs.2 })
-      ({(g, s₀)} : SitContext W Time E)) :
+      ({(g, s₀)} : SitContext W Time)) :
     conditionalSF history P (fun s₁ _ => Q s₁ s₁) s₀ := by
   unfold conditionalSF SUBJ
   obtain ⟨s₁, h_hist, hP, hQ⟩ := (subjIndChain_singleton history v g s₀ P (fun s => Q s s)).mp h

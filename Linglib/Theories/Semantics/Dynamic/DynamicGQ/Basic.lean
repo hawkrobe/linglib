@@ -18,6 +18,34 @@ Charlow shows that in the pointwise setting, sequencing `Mvar` inside vs outside
 `CardTest` yields pseudo-cumulative vs cumulative readings — and the pointwise
 system can only derive pseudo-cumulative.
 
+## Cross-cutting smell: five DynamicGQ variants, no "which to use" map
+
+`DynamicGQ/` hosts five formalizations of dynamic generalized quantifiers,
+each coping with the cumulative-reading problem differently. They are not
+ranked or ordered; downstream consumers must pick by hand.
+
+| Variant | State type | Cumulative? | File |
+|---------|-----------|-------------|------|
+| Pointwise (this file) | `S → S → Prop` | ✗ pseudo-cumulative only | `DynamicGQ/Basic.lean` |
+| Update-theoretic | `State W E → State W E` | ✓ via non-distributive `Mvar_u` | `DynamicGQ/UpdateTheoretic.lean` |
+| Higher-order tower | `((DRS S → DRS S) → DRS S) → DRS S` | ✓ via `LOWER` placement | `DynamicGQ/HigherOrder.lean` |
+| Post-suppositional | `Writer (DRS S) A` | ✓ via deferred cardinality tests | `DynamicGQ/PostSuppositional.lean` |
+| Subtype-polymorphic | `DRS S` with `Completeness` enum | rules out pseudo-cumulative by typing | `DynamicGQ/SubtypePolymorphism.lean` |
+
+All five are @cite{charlow-2021}'s work — the paper canvasses them as
+alternative repairs to the pointwise system's failure on
+`exactly 3 boys saw exactly 5 movies`. The variants are not equivalent:
+Update-theoretic and Higher-order produce genuine cumulative readings
+operationally; Post-suppositional defers the cardinality test as
+conventional implicature; Subtype-polymorphic blocks the pseudo-
+cumulative reading by type discipline rather than by deriving the
+cumulative one. New consumers should pick based on what they need:
+flat state-threading (Update-theoretic), explicit scope (Higher-order),
+post-suppositional content (Post-suppositional), or static well-
+formedness (Subtype-polymorphic). Pointwise is the baseline and the
+empirical counterexample, kept here primarily as the reference against
+which the other four are measured.
+
 -/
 
 namespace Semantics.Dynamic.DynamicGQ.Basic

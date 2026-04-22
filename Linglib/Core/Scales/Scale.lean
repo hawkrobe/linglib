@@ -156,6 +156,12 @@ theorem le_one (r : Rat01) : r.val ≤ 1 := r.prop.2
 instance : Repr Rat01 where
   reprPrec r _ := repr r.val
 
+/-- The endpoint 0. -/
+def zero : Rat01 := ⟨0, by norm_num, by norm_num⟩
+
+/-- The endpoint 1. -/
+def one : Rat01 := ⟨1, by norm_num, by norm_num⟩
+
 /-- The midpoint ½, the standard default threshold. -/
 def half : Rat01 := ⟨1/2, by norm_num, by norm_num⟩
 

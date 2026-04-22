@@ -219,19 +219,13 @@ noncomputable def eitherFelicitous
 /-- When `cond ⊆ alt`, `P(alt | cond) = 1`. -/
 private lemma condProb_eq_one_of_entails
     (prior : Prior W) (cond alt : Set W)
-    [DecidablePred (· ∈ cond)] [DecidablePred (· ∈ alt)]
     (hEntails : cond ⊆ alt)
     (hPos : prior.probOfSet cond > 0) :
     prior.condProbSet cond alt = 1 := by
-  have hEqMass : prior.probOfSet (cond ∩ alt) = prior.probOfSet cond := by
-    simp only [Core.FinitePMF.probOfSet]
-    refine Finset.sum_congr rfl (fun w _ => ?_)
-    by_cases hc : w ∈ cond
-    · have hAlt : w ∈ alt := hEntails hc
-      simp [hc, hAlt, Set.mem_inter_iff]
-    · simp [hc, Set.mem_inter_iff]
-  rw [prior.condProbSet_of_pos cond alt hPos, hEqMass]
-  exact div_self (ne_of_gt hPos)
+  have hEqMass : prior.probOfSet (cond ∩ alt) = prior.probOfSet cond :=
+    congrArg prior.probOfSet (Set.inter_eq_left.mpr hEntails)
+  rw [PMF.condProbSet_eq_div, hEqMass]
+  exact ENNReal.div_self hPos.ne' (PMF.probOfSet_ne_top prior cond)
 
 /-- **Theorem: Standard Use Reduction**
 

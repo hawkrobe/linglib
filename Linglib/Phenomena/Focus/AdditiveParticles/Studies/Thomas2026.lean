@@ -24,6 +24,7 @@ algebra approach to too/either (@cite{ahn-2015}).
 
 import Linglib.Phenomena.Focus.AdditiveParticles.Data
 import Linglib.Theories.Pragmatics.Particles.Additive
+import Linglib.Core.Probability.PMFFin
 import Mathlib.Algebra.BigOperators.Fin
 
 namespace Thomas2026
@@ -287,12 +288,12 @@ def fancyH : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 2}
 def goodHotel : Set (Fin 4) := {w | w.val = 0}
 
 /-- Non-uniform prior: room availability (w₀, w₁) more likely. -/
-def hotelPrior : Prior (Fin 4) where
-  mass := fun w => match w.val with | 0 => 3/8 | 1 => 1/8 | 2 => 2/8 | _ => 2/8
-  mass_nonneg := by native_decide
-  mass_sum_one := by native_decide
+noncomputable def hotelPrior : Prior (Fin 4) :=
+  PMF.ofFintype
+    (fun w => match w.val with | 0 => 3/8 | 1 => 1/8 | 2 => 2/8 | _ => 2/8)
+    (by rw [Fin.sum_univ_four]; ennreal_arith)
 
-def hotelCtx : AdditiveContext (Fin 4) :=
+noncomputable def hotelCtx : AdditiveContext (Fin 4) :=
   { resolvedQuestion := Core.Question.polar goodHotel
   , antecedent := roomAvail
   , prior := hotelPrior }
@@ -312,68 +313,57 @@ private lemma goodHotel_ne_univ : goodHotel ≠ Set.univ := by
   exact absurd (h ▸ Set.mem_univ (1 : Fin 4) : (1 : Fin 4) ∈ goodHotel) (by decide)
 
 private lemma hotel_prob_room : hotelPrior.probOfSet roomAvail = 1/2 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [hotelPrior, roomAvail]; norm_num
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [hotelPrior, roomAvail]; ennreal_arith
 
 private lemma hotel_prob_good : hotelPrior.probOfSet goodHotel = 3/8 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [hotelPrior, goodHotel]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [hotelPrior, goodHotel]
 
 private lemma hotel_prob_room_inter_good :
     hotelPrior.probOfSet (roomAvail ∩ goodHotel) = 3/8 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [hotelPrior, roomAvail, goodHotel]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [hotelPrior, roomAvail, goodHotel]
 
 private lemma hotel_prob_room_inter_goodC :
     hotelPrior.probOfSet (roomAvail ∩ goodHotelᶜ) = 1/8 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [hotelPrior, roomAvail, goodHotel, Set.mem_inter_iff, Set.mem_compl_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [hotelPrior, roomAvail, goodHotel, Set.mem_inter_iff]
 
 private lemma hotel_prob_roomFancy :
     hotelPrior.probOfSet (roomAvail ∩ fancyH) = 3/8 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [hotelPrior, roomAvail, fancyH, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [hotelPrior, roomAvail, fancyH]
 
 private lemma hotel_prob_roomFancy_inter_good :
     hotelPrior.probOfSet (roomAvail ∩ fancyH ∩ goodHotel) = 3/8 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [hotelPrior, roomAvail, fancyH, goodHotel, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [hotelPrior, roomAvail, fancyH, goodHotel]
 
 private lemma hotel_prob_roomFancy_inter_goodC :
     hotelPrior.probOfSet (roomAvail ∩ fancyH ∩ goodHotelᶜ) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [roomAvail, fancyH, goodHotel, Set.mem_inter_iff, Set.mem_compl_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [roomAvail, fancyH, goodHotel, Set.mem_inter_iff]
 
 private lemma hotel_cond_room_good :
     hotelPrior.condProbSet roomAvail goodHotel = 3/4 := by
-  rw [hotelPrior.condProbSet_of_pos roomAvail goodHotel
-        (by rw [hotel_prob_room]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       hotel_prob_room_inter_good, hotel_prob_room]
-  norm_num
+  ennreal_arith
 
 private lemma hotel_cond_room_goodC :
     hotelPrior.condProbSet roomAvail goodHotelᶜ = 1/4 := by
-  rw [hotelPrior.condProbSet_of_pos roomAvail goodHotelᶜ
-        (by rw [hotel_prob_room]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       hotel_prob_room_inter_goodC, hotel_prob_room]
-  norm_num
+  ennreal_arith
 
 private lemma hotel_cond_roomFancy_good :
     hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotel = 1 := by
-  rw [hotelPrior.condProbSet_of_pos (roomAvail ∩ fancyH) goodHotel
-        (by rw [hotel_prob_roomFancy]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       hotel_prob_roomFancy_inter_good, hotel_prob_roomFancy]
-  norm_num
+  ennreal_arith
 
 private lemma hotel_cond_roomFancy_goodC :
     hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotelᶜ = 0 := by
-  rw [hotelPrior.condProbSet_of_pos (roomAvail ∩ fancyH) goodHotelᶜ
-        (by rw [hotel_prob_roomFancy]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       hotel_prob_roomFancy_inter_goodC, hotel_prob_roomFancy]
-  norm_num
+  ennreal_arith
 
 /-- Hotel room "too" is felicitous: all four conditions of Def. 64 hold.
 - **Antecedent Condition**: P(good | room) = 3/4 > P(good) = 3/8
@@ -393,7 +383,7 @@ theorem hotel_too_felicitous : tooFelicitous hotelCtx fancyH := by
     refine ⟨goodHotel, hAltMem, ?_⟩
     have h : hotelPrior.condProbSet roomAvail goodHotel >
              hotelPrior.probOfSet goodHotel := by
-      rw [hotel_cond_room_good, hotel_prob_good]; norm_num
+      rw [hotel_cond_room_good, hotel_prob_good]; ennreal_arith
     convert h
   · show probAnswersS (hotelCtx.antecedent ∩ fancyH) hotelCtx.resolvedQuestion
          hotelCtx.prior
@@ -401,7 +391,7 @@ theorem hotel_too_felicitous : tooFelicitous hotelCtx fancyH := by
     refine ⟨goodHotel, hAltMem, ?_⟩
     have h : hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotel >
              hotelPrior.probOfSet goodHotel := by
-      rw [hotel_cond_roomFancy_good, hotel_prob_good]; norm_num
+      rw [hotel_cond_roomFancy_good, hotel_prob_good]; ennreal_arith
     convert h
   · show someResolutionStrengthenedS hotelCtx.antecedent fancyH
          hotelCtx.resolvedQuestion hotelCtx.prior
@@ -409,7 +399,7 @@ theorem hotel_too_felicitous : tooFelicitous hotelCtx fancyH := by
     refine ⟨goodHotel, hAltMem, ?_⟩
     have h : hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotel >
              hotelPrior.condProbSet roomAvail goodHotel := by
-      rw [hotel_cond_roomFancy_good, hotel_cond_room_good]; norm_num
+      rw [hotel_cond_roomFancy_good, hotel_cond_room_good]; ennreal_arith
     convert h
   · show nonTrivialityCondition hotelCtx fancyH
     unfold nonTrivialityCondition
@@ -419,7 +409,7 @@ theorem hotel_too_felicitous : tooFelicitous hotelCtx fancyH := by
       exact absurd (hsub (Or.inr rfl : (2 : Fin 4) ∈ fancyH)) (by decide)
     · have h : hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotel >
                hotelPrior.condProbSet roomAvail goodHotel := by
-        rw [hotel_cond_roomFancy_good, hotel_cond_room_good]; norm_num
+        rw [hotel_cond_roomFancy_good, hotel_cond_room_good]; ennreal_arith
       convert h
   · show maximalityCondition hotelCtx fancyH
     unfold maximalityCondition
@@ -433,7 +423,7 @@ theorem hotel_too_felicitous : tooFelicitous hotelCtx fancyH := by
       subst haAlt
       have hno : ¬ (hotelPrior.condProbSet (roomAvail ∩ fancyH) goodHotelᶜ >
                     hotelPrior.condProbSet roomAvail goodHotelᶜ) := by
-        rw [hotel_cond_roomFancy_goodC, hotel_cond_room_goodC]; norm_num
+        rw [hotel_cond_roomFancy_goodC, hotel_cond_room_goodC]; ennreal_arith
       exact absurd (by convert hStrengthen) hno
 
 -- § Happy/Ecstatic (ex. 11/29a/73) — infelicitous: non-triviality failure
@@ -459,12 +449,11 @@ def emotionRQ : Core.Question (Fin 4) :=
     , {w | w.val = 2 ∨ w.val = 3}        -- not happy
     ]
 
-def emotionPrior : Prior (Fin 4) where
-  mass := fun _ => 1/4
-  mass_nonneg := by intro _; norm_num
-  mass_sum_one := by native_decide
+noncomputable def emotionPrior : Prior (Fin 4) :=
+  PMF.ofFintype (fun _ => 1/4)
+    (by rw [Fin.sum_univ_four]; ennreal_arith)
 
-def emotionCtx : AdditiveContext (Fin 4) :=
+noncomputable def emotionCtx : AdditiveContext (Fin 4) :=
   { resolvedQuestion := emotionRQ
   , antecedent := happyE
   , prior := emotionPrior }
@@ -482,63 +471,53 @@ instance instEcstaticEDec : DecidablePred (· ∈ ecstaticE) :=
   fun w => inferInstanceAs (Decidable (w.val = 0))
 
 private lemma em_prob_happy : emotionPrior.probOfSet happyE = 1/2 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [emotionPrior, happyE]; norm_num
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [emotionPrior, happyE]; ennreal_arith
 
 private lemma em_prob_happy_ecst :
     emotionPrior.probOfSet (happyE ∩ ecstaticE) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [emotionPrior, happyE, ecstaticE, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [emotionPrior, happyE, ecstaticE]
 
 private lemma em_prob_happy_inter_h :
     emotionPrior.probOfSet (happyE ∩ {w | w.val = 1}) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [emotionPrior, happyE, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [emotionPrior, happyE]
 
 private lemma em_prob_happyEcst_inter_h :
     emotionPrior.probOfSet (happyE ∩ ecstaticE ∩ {w | w.val = 1}) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [happyE, ecstaticE, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [happyE, ecstaticE]
 
 private lemma em_prob_happy_inter_n :
     emotionPrior.probOfSet (happyE ∩ {w | w.val = 2 ∨ w.val = 3}) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [happyE, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [happyE]
 
 private lemma em_prob_happyEcst_inter_n :
     emotionPrior.probOfSet (happyE ∩ ecstaticE ∩ {w | w.val = 2 ∨ w.val = 3}) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [happyE, ecstaticE, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [happyE, ecstaticE]
 
 private lemma em_cond_happy_h :
     emotionPrior.condProbSet happyE {w | w.val = 1} = 1/2 := by
-  rw [emotionPrior.condProbSet_of_pos happyE _
-        (by rw [em_prob_happy]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       em_prob_happy_inter_h, em_prob_happy]
-  norm_num
+  ennreal_arith
 
 private lemma em_cond_happyEcst_h :
     emotionPrior.condProbSet (happyE ∩ ecstaticE) {w | w.val = 1} = 0 := by
-  rw [emotionPrior.condProbSet_of_pos (happyE ∩ ecstaticE) _
-        (by rw [em_prob_happy_ecst]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       em_prob_happyEcst_inter_h, em_prob_happy_ecst]
-  norm_num
+  ennreal_arith
 
 private lemma em_cond_happy_n :
     emotionPrior.condProbSet happyE {w | w.val = 2 ∨ w.val = 3} = 0 := by
-  rw [emotionPrior.condProbSet_of_pos happyE _
-        (by rw [em_prob_happy]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       em_prob_happy_inter_n, em_prob_happy]
-  norm_num
+  ennreal_arith
 
 private lemma em_cond_happyEcst_n :
     emotionPrior.condProbSet (happyE ∩ ecstaticE) {w | w.val = 2 ∨ w.val = 3} = 0 := by
-  rw [emotionPrior.condProbSet_of_pos (happyE ∩ ecstaticE) _
-        (by rw [em_prob_happy_ecst]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       em_prob_happyEcst_inter_n, em_prob_happy_ecst]
-  norm_num
+  ennreal_arith
 
 private lemma emotion_alt :
     Question.alt emotionRQ =
@@ -585,12 +564,12 @@ theorem ecstatic_too_infelicitous : ¬ tooFelicitous emotionCtx ecstaticE := by
   · exact hNotSub (fun _ h => h)
   · have hno : ¬ (emotionPrior.condProbSet (happyE ∩ ecstaticE) {w | w.val = 1} >
                   emotionPrior.condProbSet happyE {w | w.val = 1}) := by
-      rw [em_cond_happyEcst_h, em_cond_happy_h]; norm_num
+      rw [em_cond_happyEcst_h, em_cond_happy_h]; ennreal_arith
     exact hno (by convert hStr)
   · have hno : ¬ (emotionPrior.condProbSet (happyE ∩ ecstaticE)
                     {w | w.val = 2 ∨ w.val = 3} >
                   emotionPrior.condProbSet happyE {w | w.val = 2 ∨ w.val = 3}) := by
-      rw [em_cond_happyEcst_n, em_cond_happy_n]; norm_num
+      rw [em_cond_happyEcst_n, em_cond_happy_n]; ennreal_arith
     exact hno (by convert hStr)
 
 -- § Pizza/Spaghetti (ex. 5a/10/21) — felicitous standard "too"
@@ -618,12 +597,11 @@ def foodRQ : Core.Question (Fin 4) :=
     , {w | w.val = 3}    -- neither
     ]
 
-def foodPrior : Prior (Fin 4) where
-  mass := fun _ => 1/4
-  mass_nonneg := by intro _; norm_num
-  mass_sum_one := by native_decide
+noncomputable def foodPrior : Prior (Fin 4) :=
+  PMF.ofFintype (fun _ => 1/4)
+    (by rw [Fin.sum_univ_four]; ennreal_arith)
 
-def foodCtx : AdditiveContext (Fin 4) :=
+noncomputable def foodCtx : AdditiveContext (Fin 4) :=
   { resolvedQuestion := foodRQ
   , antecedent := likePizza
   , prior := foodPrior }
@@ -642,118 +620,99 @@ instance instFood3Dec : DecidablePred (· ∈ ({w : Fin 4 | w.val = 3} : Set (Fi
   fun w => inferInstanceAs (Decidable (w.val = 3))
 
 private lemma fd_prob_pizza : foodPrior.probOfSet likePizza = 1/2 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [foodPrior, likePizza]; norm_num
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [foodPrior, likePizza]; ennreal_arith
 
 private lemma fd_prob_pizza_spag :
     foodPrior.probOfSet (likePizza ∩ likeSpaghetti) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [foodPrior, likePizza, likeSpaghetti, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [foodPrior, likePizza, likeSpaghetti]
 
 private lemma fd_prob_0 : foodPrior.probOfSet {w : Fin 4 | w.val = 0} = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [foodPrior]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [foodPrior]
 
 private lemma fd_prob_pizza_inter_0 :
     foodPrior.probOfSet (likePizza ∩ {w | w.val = 0}) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [foodPrior, likePizza, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [foodPrior, likePizza]
 
 private lemma fd_prob_pizzaSpag_inter_0 :
     foodPrior.probOfSet (likePizza ∩ likeSpaghetti ∩ {w | w.val = 0}) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [foodPrior, likePizza, likeSpaghetti, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [foodPrior, likePizza, likeSpaghetti]
 
 private lemma fd_prob_pizza_inter_1 :
     foodPrior.probOfSet (likePizza ∩ {w | w.val = 1}) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [foodPrior, likePizza, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [foodPrior, likePizza]
 
 private lemma fd_prob_pizzaSpag_inter_1 :
     foodPrior.probOfSet (likePizza ∩ likeSpaghetti ∩ {w | w.val = 1}) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [likePizza, likeSpaghetti, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [likePizza, likeSpaghetti]
 
 private lemma fd_prob_pizza_inter_2 :
     foodPrior.probOfSet (likePizza ∩ {w | w.val = 2}) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [likePizza, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [likePizza]
 
 private lemma fd_prob_pizzaSpag_inter_2 :
     foodPrior.probOfSet (likePizza ∩ likeSpaghetti ∩ {w | w.val = 2}) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [likePizza, likeSpaghetti, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [likePizza, likeSpaghetti]
 
 private lemma fd_prob_pizza_inter_3 :
     foodPrior.probOfSet (likePizza ∩ {w | w.val = 3}) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [likePizza, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [likePizza]
 
 private lemma fd_prob_pizzaSpag_inter_3 :
     foodPrior.probOfSet (likePizza ∩ likeSpaghetti ∩ {w | w.val = 3}) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [likePizza, likeSpaghetti, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [likePizza, likeSpaghetti]
 
 private lemma fd_cond_pizza_0 :
     foodPrior.condProbSet likePizza {w | w.val = 0} = 1/2 := by
-  rw [foodPrior.condProbSet_of_pos likePizza _
-        (by rw [fd_prob_pizza]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       fd_prob_pizza_inter_0, fd_prob_pizza]
-  norm_num
+  ennreal_arith
 
 private lemma fd_cond_pizzaSpag_0 :
     foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 0} = 1 := by
-  rw [foodPrior.condProbSet_of_pos (likePizza ∩ likeSpaghetti) _
-        (by rw [fd_prob_pizza_spag]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       fd_prob_pizzaSpag_inter_0, fd_prob_pizza_spag]
-  norm_num
+  ennreal_arith
 
 private lemma fd_cond_pizza_1 :
     foodPrior.condProbSet likePizza {w | w.val = 1} = 1/2 := by
-  rw [foodPrior.condProbSet_of_pos likePizza _
-        (by rw [fd_prob_pizza]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       fd_prob_pizza_inter_1, fd_prob_pizza]
-  norm_num
+  ennreal_arith
 
 private lemma fd_cond_pizzaSpag_1 :
     foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 1} = 0 := by
-  rw [foodPrior.condProbSet_of_pos (likePizza ∩ likeSpaghetti) _
-        (by rw [fd_prob_pizza_spag]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       fd_prob_pizzaSpag_inter_1, fd_prob_pizza_spag]
-  norm_num
+  ennreal_arith
 
 private lemma fd_cond_pizza_2 :
     foodPrior.condProbSet likePizza {w | w.val = 2} = 0 := by
-  rw [foodPrior.condProbSet_of_pos likePizza _
-        (by rw [fd_prob_pizza]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       fd_prob_pizza_inter_2, fd_prob_pizza]
-  norm_num
+  ennreal_arith
 
 private lemma fd_cond_pizzaSpag_2 :
     foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 2} = 0 := by
-  rw [foodPrior.condProbSet_of_pos (likePizza ∩ likeSpaghetti) _
-        (by rw [fd_prob_pizza_spag]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       fd_prob_pizzaSpag_inter_2, fd_prob_pizza_spag]
-  norm_num
+  ennreal_arith
 
 private lemma fd_cond_pizza_3 :
     foodPrior.condProbSet likePizza {w | w.val = 3} = 0 := by
-  rw [foodPrior.condProbSet_of_pos likePizza _
-        (by rw [fd_prob_pizza]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       fd_prob_pizza_inter_3, fd_prob_pizza]
-  norm_num
+  ennreal_arith
 
 private lemma fd_cond_pizzaSpag_3 :
     foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 3} = 0 := by
-  rw [foodPrior.condProbSet_of_pos (likePizza ∩ likeSpaghetti) _
-        (by rw [fd_prob_pizza_spag]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       fd_prob_pizzaSpag_inter_3, fd_prob_pizza_spag]
-  norm_num
+  ennreal_arith
 
 private lemma food_alt :
     Question.alt foodRQ =
@@ -802,7 +761,7 @@ theorem pizza_spaghetti_too_felicitous : tooFelicitous foodCtx likeSpaghetti := 
     refine ⟨{w | w.val = 0}, hAltMem0, ?_⟩
     have h : foodPrior.condProbSet likePizza {w | w.val = 0} >
              foodPrior.probOfSet {w | w.val = 0} := by
-      rw [fd_cond_pizza_0, fd_prob_0]; norm_num
+      rw [fd_cond_pizza_0, fd_prob_0]; ennreal_arith
     convert h
   · show probAnswersS (foodCtx.antecedent ∩ likeSpaghetti)
          foodCtx.resolvedQuestion foodCtx.prior
@@ -810,7 +769,7 @@ theorem pizza_spaghetti_too_felicitous : tooFelicitous foodCtx likeSpaghetti := 
     refine ⟨{w | w.val = 0}, hAltMem0, ?_⟩
     have h : foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 0} >
              foodPrior.probOfSet {w | w.val = 0} := by
-      rw [fd_cond_pizzaSpag_0, fd_prob_0]; norm_num
+      rw [fd_cond_pizzaSpag_0, fd_prob_0]; ennreal_arith
     convert h
   · show someResolutionStrengthenedS foodCtx.antecedent likeSpaghetti
          foodCtx.resolvedQuestion foodCtx.prior
@@ -818,7 +777,7 @@ theorem pizza_spaghetti_too_felicitous : tooFelicitous foodCtx likeSpaghetti := 
     refine ⟨{w | w.val = 0}, hAltMem0, ?_⟩
     have h : foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 0} >
              foodPrior.condProbSet likePizza {w | w.val = 0} := by
-      rw [fd_cond_pizzaSpag_0, fd_cond_pizza_0]; norm_num
+      rw [fd_cond_pizzaSpag_0, fd_cond_pizza_0]; ennreal_arith
     convert h
   · show nonTrivialityCondition foodCtx likeSpaghetti
     unfold nonTrivialityCondition
@@ -829,7 +788,7 @@ theorem pizza_spaghetti_too_felicitous : tooFelicitous foodCtx likeSpaghetti := 
       exact absurd (hsub h2) (by decide)
     · have h : foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 0} >
                foodPrior.condProbSet likePizza {w | w.val = 0} := by
-        rw [fd_cond_pizzaSpag_0, fd_cond_pizza_0]; norm_num
+        rw [fd_cond_pizzaSpag_0, fd_cond_pizza_0]; ennreal_arith
       convert h
   · show maximalityCondition foodCtx likeSpaghetti
     unfold maximalityCondition
@@ -843,17 +802,17 @@ theorem pizza_spaghetti_too_felicitous : tooFelicitous foodCtx likeSpaghetti := 
     · exfalso
       have hno : ¬ (foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 1} >
                     foodPrior.condProbSet likePizza {w | w.val = 1}) := by
-        rw [fd_cond_pizzaSpag_1, fd_cond_pizza_1]; norm_num
+        rw [fd_cond_pizzaSpag_1, fd_cond_pizza_1]; ennreal_arith
       exact hno (by convert hStr)
     · exfalso
       have hno : ¬ (foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 2} >
                     foodPrior.condProbSet likePizza {w | w.val = 2}) := by
-        rw [fd_cond_pizzaSpag_2, fd_cond_pizza_2]; norm_num
+        rw [fd_cond_pizzaSpag_2, fd_cond_pizza_2]; ennreal_arith
       exact hno (by convert hStr)
     · exfalso
       have hno : ¬ (foodPrior.condProbSet (likePizza ∩ likeSpaghetti) {w | w.val = 3} >
                     foodPrior.condProbSet likePizza {w | w.val = 3}) := by
-        rw [fd_cond_pizzaSpag_3, fd_cond_pizza_3]; norm_num
+        rw [fd_cond_pizzaSpag_3, fd_cond_pizza_3]; ennreal_arith
       exact hno (by convert hStr)
 
 -- § Instrument/Cello (ex. 30/74) — infelicitous: maximality failure
@@ -874,12 +833,11 @@ def averyPlays : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1 ∨ w.val = 2}
 def baileyPlaysCello : Set (Fin 4) := {w | w.val = 0}
 def baileyPlays : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
 
-def instrumentPrior : Prior (Fin 4) where
-  mass := fun _ => 1/4
-  mass_nonneg := by intro _; norm_num
-  mass_sum_one := by native_decide
+noncomputable def instrumentPrior : Prior (Fin 4) :=
+  PMF.ofFintype (fun _ => 1/4)
+    (by rw [Fin.sum_univ_four]; ennreal_arith)
 
-def instrumentCtx : AdditiveContext (Fin 4) :=
+noncomputable def instrumentCtx : AdditiveContext (Fin 4) :=
   { resolvedQuestion := Core.Question.polar baileyPlays
   , antecedent := averyPlays
   , prior := instrumentPrior }
@@ -899,33 +857,28 @@ private lemma baileyPlays_ne_univ : baileyPlays ≠ Set.univ := by
   exact absurd (h ▸ Set.mem_univ (2 : Fin 4) : (2 : Fin 4) ∈ baileyPlays) (by decide)
 
 private lemma instr_prob_avery : instrumentPrior.probOfSet averyPlays = 3/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [instrumentPrior, averyPlays]; norm_num
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [instrumentPrior, averyPlays]; ennreal_arith
 
 private lemma instr_prob_avery_inter_bplays :
     instrumentPrior.probOfSet (averyPlays ∩ baileyPlays) = 1/2 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [instrumentPrior, averyPlays, baileyPlays, Set.mem_inter_iff]; norm_num
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [instrumentPrior, averyPlays, baileyPlays]; ennreal_arith
 
 private lemma instr_prob_avery_cello :
     instrumentPrior.probOfSet (averyPlays ∩ baileyPlaysCello) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
   simp [instrumentPrior, averyPlays, baileyPlaysCello]
 
 private lemma instr_prob_avery_cello_inter_bplays :
     instrumentPrior.probOfSet (averyPlays ∩ baileyPlaysCello ∩ baileyPlays) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
   simp [instrumentPrior, averyPlays, baileyPlaysCello, baileyPlays]
 
 private lemma instr_cond_avery_cello_bplays :
     instrumentPrior.condProbSet (averyPlays ∩ baileyPlaysCello) baileyPlays = 1 := by
-  rw [instrumentPrior.condProbSet_of_pos (averyPlays ∩ baileyPlaysCello) baileyPlays
-        (by rw [instr_prob_avery_cello]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       instr_prob_avery_cello_inter_bplays, instr_prob_avery_cello]
-  norm_num
+  ennreal_arith
 
 /-- "Avery plays an instrument. #Bailey plays the cello, too." is infelicitous.
 Maximality (Def. 64c.ii) fails: the strengthened resolution is `baileyPlays`
@@ -946,13 +899,13 @@ theorem cello_too_infelicitous : ¬ tooFelicitous instrumentCtx baileyPlaysCello
   have hStr : instrumentPrior.condProbSet (averyPlays ∩ baileyPlaysCello) baileyPlays >
               instrumentPrior.condProbSet averyPlays baileyPlays := by
     rw [instr_cond_avery_cello_bplays,
-        instrumentPrior.condProbSet_of_pos averyPlays baileyPlays
-          (by rw [instr_prob_avery]; norm_num),
+        PMF.condProbSet_eq_div,
         instr_prob_avery, instr_prob_avery_inter_bplays]
-    norm_num
+    ennreal_arith
   have h1in : (1 : Fin 4) ∈ averyPlays := Or.inr (Or.inl rfl)
   have h1bp : (1 : Fin 4) ∈ baileyPlays := Or.inr rfl
-  have hPos : instrumentPrior.mass 1 > 0 := by show (1/4 : ℚ) > 0; norm_num
+  have hPos : instrumentPrior 1 > 0 := by
+    simp [instrumentPrior, PMF.ofFintype_apply]
   have h1bpc : (1 : Fin 4) ∈ baileyPlaysCello := by
     refine hMax' baileyPlays hAltMem ?_ 1 hPos h1in h1bp
     convert hStr
@@ -973,13 +926,12 @@ Prior: uniform 1/4. ANT = "Avery ate pizza", π = "Bailey ate spaghetti". -/
 def averyPizzaCP : Set (Fin 4) := {w | w.val = 0 ∨ w.val = 1}
 def baileySpaghetti : Set (Fin 4) := {w | w.val = 1 ∨ w.val = 3}
 
-def crossPrior : Prior (Fin 4) where
-  mass := fun _ => 1/4
-  mass_nonneg := by intro _; norm_num
-  mass_sum_one := by native_decide
+noncomputable def crossPrior : Prior (Fin 4) :=
+  PMF.ofFintype (fun _ => 1/4)
+    (by rw [Fin.sum_univ_four]; ennreal_arith)
 
 /-- RQ = "What did Avery eat?" (polar: did Avery eat pizza?). -/
-def crossCtx : AdditiveContext (Fin 4) :=
+noncomputable def crossCtx : AdditiveContext (Fin 4) :=
   { resolvedQuestion := Core.Question.polar averyPizzaCP
   , antecedent := averyPizzaCP
   , prior := crossPrior }
@@ -997,64 +949,54 @@ private lemma averyPizzaCP_ne_univ : averyPizzaCP ≠ Set.univ := by
   exact absurd (h ▸ Set.mem_univ (2 : Fin 4) : (2 : Fin 4) ∈ averyPizzaCP) (by decide)
 
 private lemma cross_prob_apc : crossPrior.probOfSet averyPizzaCP = 1/2 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]; simp [crossPrior, averyPizzaCP]; norm_num
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]; simp [crossPrior, averyPizzaCP]; ennreal_arith
 
 private lemma cross_prob_apc_inter_bs :
     crossPrior.probOfSet (averyPizzaCP ∩ baileySpaghetti) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [crossPrior, averyPizzaCP, baileySpaghetti, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [crossPrior, averyPizzaCP, baileySpaghetti]
 
 private lemma cross_prob_apc_inter_bs_inter_apc :
     crossPrior.probOfSet (averyPizzaCP ∩ baileySpaghetti ∩ averyPizzaCP) = 1/4 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [crossPrior, averyPizzaCP, baileySpaghetti, Set.mem_inter_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [crossPrior, averyPizzaCP, baileySpaghetti]
 
 private lemma cross_prob_apc_inter_bs_inter_apcC :
     crossPrior.probOfSet (averyPizzaCP ∩ baileySpaghetti ∩ averyPizzaCPᶜ) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [averyPizzaCP, baileySpaghetti, Set.mem_inter_iff, Set.mem_compl_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [averyPizzaCP, baileySpaghetti, Set.mem_inter_iff]
 
 private lemma cross_prob_apc_inter_apc :
     crossPrior.probOfSet (averyPizzaCP ∩ averyPizzaCP) = 1/2 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [crossPrior, averyPizzaCP, Set.mem_inter_iff]; norm_num
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [crossPrior, averyPizzaCP]; ennreal_arith
 
 private lemma cross_prob_apc_inter_apcC :
     crossPrior.probOfSet (averyPizzaCP ∩ averyPizzaCPᶜ) = 0 := by
-  show (∑ w : Fin 4, _) = _
-  rw [Fin.sum_univ_four]
-  simp [averyPizzaCP, Set.mem_inter_iff, Set.mem_compl_iff]
+  rw [PMF.probOfSet_apply, Fin.sum_univ_four]
+  simp [averyPizzaCP]
 
 private lemma cross_cond_apc_apc :
     crossPrior.condProbSet averyPizzaCP averyPizzaCP = 1 := by
-  rw [crossPrior.condProbSet_of_pos averyPizzaCP averyPizzaCP
-        (by rw [cross_prob_apc]; norm_num), cross_prob_apc_inter_apc, cross_prob_apc]
-  norm_num
+  rw [PMF.condProbSet_eq_div, cross_prob_apc_inter_apc, cross_prob_apc]
+  ennreal_arith
 
 private lemma cross_cond_apc_apcC :
     crossPrior.condProbSet averyPizzaCP averyPizzaCPᶜ = 0 := by
-  rw [crossPrior.condProbSet_of_pos averyPizzaCP averyPizzaCPᶜ
-        (by rw [cross_prob_apc]; norm_num), cross_prob_apc_inter_apcC, cross_prob_apc]
-  norm_num
+  rw [PMF.condProbSet_eq_div, cross_prob_apc_inter_apcC, cross_prob_apc]
+  ennreal_arith
 
 private lemma cross_cond_apcbs_apc :
     crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCP = 1 := by
-  rw [crossPrior.condProbSet_of_pos (averyPizzaCP ∩ baileySpaghetti) averyPizzaCP
-        (by rw [cross_prob_apc_inter_bs]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       cross_prob_apc_inter_bs_inter_apc, cross_prob_apc_inter_bs]
-  norm_num
+  ennreal_arith
 
 private lemma cross_cond_apcbs_apcC :
     crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCPᶜ = 0 := by
-  rw [crossPrior.condProbSet_of_pos (averyPizzaCP ∩ baileySpaghetti) averyPizzaCPᶜ
-        (by rw [cross_prob_apc_inter_bs]; norm_num),
+  rw [PMF.condProbSet_eq_div,
       cross_prob_apc_inter_bs_inter_apcC, cross_prob_apc_inter_bs]
-  norm_num
+  ennreal_arith
 
 /-- "Avery ate pizza. #Bailey ate spaghetti, too." is infelicitous.
 Conjunction Condition (Def. 64b, strengthening half) fails: no resolution
@@ -1077,13 +1019,13 @@ theorem cross_product_too_infelicitous :
   rcases haAlt with rfl | haAlt
   · have hno : ¬ (crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCP >
                   crossPrior.condProbSet averyPizzaCP averyPizzaCP) := by
-      rw [cross_cond_apcbs_apc, cross_cond_apc_apc]; norm_num
+      rw [cross_cond_apcbs_apc, cross_cond_apc_apc]; ennreal_arith
     exact absurd (by convert hgt) hno
   · rw [Set.mem_singleton_iff] at haAlt
     subst haAlt
     have hno : ¬ (crossPrior.condProbSet (averyPizzaCP ∩ baileySpaghetti) averyPizzaCPᶜ >
                   crossPrior.condProbSet averyPizzaCP averyPizzaCPᶜ) := by
-      rw [cross_cond_apcbs_apcC, cross_cond_apc_apcC]; norm_num
+      rw [cross_cond_apcbs_apcC, cross_cond_apc_apcC]; ennreal_arith
     exact absurd (by convert hgt) hno
 
 end Verification

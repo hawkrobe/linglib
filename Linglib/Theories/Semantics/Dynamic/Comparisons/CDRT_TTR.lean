@@ -32,7 +32,7 @@ potential is carried by type structure, not side effects.
 
 -/
 
-namespace Comparisons.DynamicTTR
+namespace Semantics.Dynamic.Comparisons.CDRT_TTR
 
 open Semantics.Dynamic.CDRT (DProp Register SProp)
 open Semantics.TypeTheoretic (Ppty PPpty Parametric IsTrue IsFalse
@@ -310,4 +310,4 @@ theorem concrete_agreement :
 
 end ConcreteModel
 
-end Comparisons.DynamicTTR
+end Semantics.Dynamic.Comparisons.CDRT_TTR

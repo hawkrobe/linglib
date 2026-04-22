@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.DependenceLogic
+import Linglib.Theories.Semantics.Quantification.DependenceLogic
 import Linglib.Theories.Morphology.Nanosyntax.Core
 import Linglib.Phenomena.Reference.Studies.Dekier2021
 import Linglib.Fragments.Russian.Indefinites
@@ -65,7 +65,7 @@ set_option autoImplicit false
 
 namespace Bubnov2026
 
-open Semantics.Dynamic.DependenceLogic
+open Semantics.Quantification.DependenceLogic
 open Morphology.Nanosyntax
 open Dekier2021
 open Core.IndefiniteType

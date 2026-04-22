@@ -2,6 +2,8 @@ import Linglib.Theories.Pragmatics.Particles.DiscourseOnly
 import Linglib.Theories.Pragmatics.DecisionTheoretic.But
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Phenomena.Focus.DiscourseOnly
+import Linglib.Core.Probability.PMFFin
+import Mathlib.Algebra.BigOperators.Fin
 import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 
@@ -125,10 +127,9 @@ def buy : Set W := {w | w.val = 0}
 instance : DecidablePred (· ∈ buy) := fun w => Nat.decEq _ _
 
 /-- Uniform prior: P(w) = 1/8 for each world. -/
-def prior : Prior W where
-  mass := fun _ => 1 / 8
-  mass_nonneg := by intro _; norm_num
-  mass_sum_one := by native_decide
+noncomputable def prior : Prior W :=
+  PMF.ofFintype (fun _ => 1 / 8)
+    (by rw [Fin.sum_univ_eight]; ennreal_arith)
 
 -- ============================================================================
 -- § 2: QUD and Denotations
@@ -170,7 +171,7 @@ Subquestions per IKW §5.1: "Answering this question requires answering
 its plausible subquestions, such as *Is the house beautiful?
 Is the house expensive?*" We also include renovation since it
 appears in the polar Q examples. -/
-def coreCtx : Context W :=
+noncomputable def coreCtx : Context W :=
   { qud := qud
   , prior := prior
   , dox := doxBE
@@ -181,7 +182,7 @@ def coreCtx : Context W :=
 /-- Context for clause-type examples: S = "beautiful", S' = interrogative.
 Speaker believes S but doesn't know the answer to S'. Same subquestions
 as core context — the QUD structure doesn't change with clause type. -/
-def clauseTypeCtx : Context W :=
+noncomputable def clauseTypeCtx : Context W :=
   { qud := qud
   , prior := prior
   , dox := doxB

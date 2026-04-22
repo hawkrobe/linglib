@@ -1,4 +1,5 @@
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations
+import Linglib.Theories.Semantics.Tense.Dynamic
+import Linglib.Theories.Semantics.Mood.Dynamic
 import Linglib.Core.Modality.HistoricalAlternatives
 
 /-!
@@ -12,35 +13,243 @@ with future morphology) that:
    across clause boundaries (§3.1)
 2. Weakens existential presuppositions of strong quantifiers in
    restrictors (§2.2)
+3. Has a future-oriented temporal interpretation that is *parasitic on*
+   the modal anaphora — not stipulated by an independent temporal
+   operator (§3.2, following @cite{crouch-1993} @cite{crouch-1994})
 
-## Compositional derivations (§4.3.1)
+## Organization
 
-Target: "Se Maria estiver em casa, ela vai atender."
-        "If Maria be.SF at home, she will answer."
+- §1 The SF operator (§3.2): `subordinateFuture := dynSUBJ ∘ dynFUT`,
+  plus its conditional and relative-clause specializations.
+- §2 Temporal properties (§3.2): theorems showing the future shift
+  is derived from the modal component, not stipulated.
+- §3 Compositional CDRT derivations (§4.3.1): lexical entries and
+  end-to-end derivation of "Se Maria estiver em casa, ela vai atender".
+- §4 Presupposition weakening (§2.2): SF in restrictors of strong
+  quantifiers, formalized as modal displacement.
 
-Lexical entries are typed λ-terms with dynamic semantics following
-@cite{muskens-1996} CDRT. Situation drefs are introduced at top level
-(flat update) and temporally anchored via SF.
-
-## Presupposition weakening (§2.2)
-
-SF weakens existential presuppositions via modal displacement:
-quantifying over situations where the presupposition holds locally,
-rather than requiring it globally.
+The dynamic primitives are imported from co-located dynamic operator
+files: `dynSUBJ`/`dynIND` from `Theories/Semantics/Mood/Dynamic.lean`
+(siblings of static `Mood.SUBJ`/`IND`), `dynFUT` from
+`Theories/Semantics/Tense/Dynamic.lean`, and `SitContext`/`SVar` from
+`Theories/Semantics/Dynamic/Core/{ContextFilter,DiscourseRef}.lean`.
 -/
 
 namespace Mendes2025
 
-open Core (WorldTimeIndex)
-
+open Core (Assignment WorldTimeIndex)
 open Core.Time
 open Core.Modality.HistoricalAlternatives
-open Semantics.Dynamic.IntensionalCDRT
-open Semantics.Dynamic.IntensionalCDRT.Situations
+open Semantics.Dynamic.Core
+open Semantics.Tense
+open Semantics.Mood
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 1. Compositional CDRT Derivations (§4.3.1)
+-- § 1. The SF Operator (§3.2)
+-- ════════════════════════════════════════════════════════════════
+
+/--
+Subordinate Future (SF) analysis.
+
+The SF in Portuguese conditionals:
+  "Se Maria estiver em casa, ela vai atender."
+  "If Maria be.SF at home, she will answer."
+
+Structure (@cite{mendes-2025} §3.2):
+1. SF = SUBJ^{s₁}_{s₀} + FUT
+2. SUBJ introduces s₁ ∈ hist(s₀)
+3. FUT constrains τ(s₁) > τ(s₀)
+4. Main clause is anchored to τ(s₁)
+
+This is the compositional derivation:
+⟦SF⟧ = ⟦SUBJ⟧ ∘ ⟦FUT⟧
+-/
+def subordinateFuture {W Time : Type*} [LE Time] [LT Time]
+    (history : WorldHistory W Time)
+    (newSitVar : SVar)   -- Fresh variable for introduced situation
+    (refSitVar : SVar)   -- Variable for reference situation
+    (c : SitContext W Time) : SitContext W Time :=
+  -- First apply SUBJ to introduce s₁
+  let c' := dynSUBJ history newSitVar c
+  -- Then constrain τ(s₁) > τ(s₀)
+  dynFUT newSitVar refSitVar c'
+
+/--
+Conditional with SF antecedent (dynamic version).
+
+"Se Maria estiver em casa, ela vai atender."
+
+1. Antecedent: SF introduces s₁ ∈ hist(s₀) with τ(s₁) > τ(s₀)
+2. Antecedent predicate evaluated at s₁
+3. Consequent: temporally anchored to s₁ (future relative to s₀)
+-/
+def conditionalWithSF {W Time : Type*} [LE Time] [LT Time]
+    (history : WorldHistory W Time)
+    (antecedentVar : SVar)  -- Situation introduced by SF
+    (speechVar : SVar)      -- Speech time situation
+    (antecedent : SitContext W Time → SitContext W Time)  -- "Maria is home"
+    (consequent : SitContext W Time → SitContext W Time)  -- "she answers"
+    (c : SitContext W Time) : SitContext W Time :=
+  -- Apply SF to introduce antecedent situation
+  let c₁ := subordinateFuture history antecedentVar speechVar c
+  -- Filter by antecedent
+  let c₂ := antecedent c₁
+  -- Apply consequent (anchored to antecedentVar's time)
+  consequent c₂
+
+/--
+Relative clause with SF in restrictor.
+
+"Cada menino [que estiver acordado] vai receber um biscoito."
+"Every boy [who is.SF awake] will get a cookie."
+
+Structure:
+1. SF in relative clause introduces situation s₁ ∈ hist(s₀)
+2. Restrictor (boy ∧ awake) evaluated at s₁
+3. Nuclear scope (get cookie) evaluated with temporal anchor from s₁
+-/
+def relativeClauseSF {W Time : Type*} [LE Time] [LT Time]
+    (history : WorldHistory W Time)
+    (rcVar : SVar)           -- Situation variable for relative clause
+    (speechVar : SVar)       -- Speech time situation
+    (c : SitContext W Time) : SitContext W Time :=
+  subordinateFuture history rcVar speechVar c
+
+/--
+Strong quantifier with SF restrictor.
+
+"Todo livro [que Maria ler.SF] será interessante"
+"Every book [that Maria reads.SF] will be interesting"
+
+The SF in the restrictor:
+1. Introduces s₁ ∈ hist(s₀) for the relative clause
+2. Quantification over books is relativized to s₁
+3. Nuclear scope inherits temporal anchor from s₁
+-/
+def everyWithSFRestrictor {W Time : Type*} [LE Time] [LT Time]
+    (history : WorldHistory W Time)
+    (rcVar speechVar : SVar)
+    (restrictor : SitContext W Time → SitContext W Time)  -- "book that M reads"
+    (nuclear : SitContext W Time → SitContext W Time)     -- "is interesting"
+    (c : SitContext W Time) : SitContext W Time :=
+  -- First: SF introduces situation for restrictor
+  let c₁ := subordinateFuture history rcVar speechVar c
+  -- Then: Filter by restrictor content
+  let c₂ := restrictor c₁
+  -- Finally: Apply nuclear scope (inherits temporal anchor)
+  nuclear c₂
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 2. Temporal Properties of SF (§3.2)
+-- ════════════════════════════════════════════════════════════════
+
+/--
+SF introduces a future situation.
+
+The subordinate future always introduces a situation with time ≥ current.
+-/
+theorem sf_introduces_future {W Time : Type*} [Preorder Time]
+    (history : WorldHistory W Time)
+    (newVar refVar : SVar)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    (h : gs ∈ subordinateFuture history newVar refVar c) :
+    (gs.1 newVar).time ≥ (gs.1 refVar).time := by
+  -- The subordinateFuture composes SUBJ and FUT
+  -- FUT requires the new situation to be after the reference
+  unfold subordinateFuture dynFUT at h
+  obtain ⟨_, h_gt⟩ := h
+  -- h_gt gives us the strict ordering from FUT
+  exact le_of_lt h_gt
+
+/--
+Temporal shift is parasitic on modal donkey anaphora.
+
+@cite{mendes-2025} §3.2: the future-oriented interpretation of SF is not due
+to an independent temporal operator. Instead, it follows from:
+
+1. SUBJ introduces s₁ ∈ hist(s₀) - modal component
+2. hist(s₀) includes situations with τ(s₁) ≥ τ(s₀) - temporal consequence
+3. Main clause is evaluated at τ(s₁) via modal anaphora - binding
+
+The temporal shift is *derived* from the modal semantics, not stipulated.
+
+Modal donkey anaphora explains
+why subjunctive mood enables future reference in subordinate clauses.
+-/
+theorem temporal_shift_parasitic_on_modal {W Time : Type*} [Preorder Time]
+    (history : WorldHistory W Time)
+    (sfVar speechVar : SVar)
+    (c : SitContext W Time)
+    -- For any situation in the output of SF application...
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    (h : gs ∈ subordinateFuture history sfVar speechVar c)
+    -- ...there exists an original speech situation...
+    : ∃ (g₀ : Assignment (WorldTimeIndex W Time)) (s₀ : WorldTimeIndex W Time),
+        -- ...that was in the input context...
+        (g₀, s₀) ∈ c ∧
+        -- ...and the temporal shift comes from SUBJ's modal component:
+        -- 1. The bound situation s₁ is in the historical base of s₀
+        (gs.1 sfVar) ∈ historicalBase history s₀ ∧
+        -- 2. The temporal ordering τ(s₁) ≥ τ(s₀) follows from hist definition
+        (gs.1 sfVar).time ≥ s₀.time ∧
+        -- 3. The strict future τ(s₁) > τ(s₀) comes from FUT constraint
+        (gs.1 sfVar).time > (gs.1 speechVar).time := by
+  -- subordinateFuture = dynSUBJ ∘ dynFUT
+  unfold subordinateFuture at h
+  -- After dynFUT, we have the strict ordering
+  unfold dynFUT at h
+  obtain ⟨h_in_subj, h_gt⟩ := h
+  -- After dynSUBJ, we have the historical base membership
+  unfold dynSUBJ at h_in_subj
+  obtain ⟨g, s₀, s₁, hc, h_hist, h_upd, h_eq⟩ := h_in_subj
+  use g, s₀
+  -- Helper: gs.1 sfVar = s₁
+  have h_sit : gs.1 sfVar = s₁ := by
+    rw [h_upd]; simp only [Assignment.update_at]
+  refine ⟨hc, ?_, ?_, ?_⟩
+  -- 1. gs.1 sfVar = s₁ ∈ historicalBase history s₀
+  · rw [h_sit]
+    exact h_hist
+  -- 2. τ(s₁) ≥ τ(s₀) from historicalBase definition
+  · rw [h_sit]
+    unfold historicalBase at h_hist
+    simp only [Set.mem_setOf_eq] at h_hist
+    exact h_hist.2
+  -- 3. The FUT constraint gives us the strict ordering
+  · exact h_gt
+
+/--
+SF in restrictor enables future reference for strong quantifiers.
+
+With SF in the relative clause, "every" can quantify over future entities.
+
+Restrictor and nuclear must be context filters (`IsContextFilter`).
+Linguistically, predicates filter contexts without modifying assignments.
+-/
+theorem sf_restrictor_future_reference {W Time : Type*} [Preorder Time]
+    (history : WorldHistory W Time)
+    (rcVar speechVar : SVar)
+    (restrictor nuclear : SitContext W Time → SitContext W Time)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    (h : gs ∈ everyWithSFRestrictor history rcVar speechVar restrictor nuclear c)
+    (hR : IsContextFilter restrictor) (hN : IsContextFilter nuclear) :
+    -- The restrictor situation can be future relative to speech time
+    (gs.1 rcVar).time > (gs.1 speechVar).time := by
+  -- Track through the filter chain
+  unfold everyWithSFRestrictor at h
+  have h_sf : gs ∈ subordinateFuture history rcVar speechVar c :=
+    Set.Subset.trans (hN _) (hR _) h
+  -- subordinateFuture guarantees the future ordering via dynFUT
+  unfold subordinateFuture dynFUT at h_sf
+  exact h_sf.2
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 3. Compositional CDRT Derivations (§4.3.1)
 -- ════════════════════════════════════════════════════════════════
 
 variable {W Time E : Type*} [LE Time] [LT Time]
@@ -51,8 +260,8 @@ Maria — proper name.
 `⟦Maria⟧ = λP.P(maria)`
 -/
 def lexMaria (maria : E)
-    (P : E → SitContext W Time E → SitContext W Time E)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (P : E → SitContext W Time → SitContext W Time)
+    (c : SitContext W Time) : SitContext W Time :=
   P maria c
 
 /--
@@ -63,8 +272,8 @@ def lexAtHome
     (atHomeRel : E → WorldTimeIndex W Time → Prop)
     (x : E)
     (sitVar : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
-  { gs ∈ c | atHomeRel x (gs.1.sit sitVar) }
+    (c : SitContext W Time) : SitContext W Time :=
+  { gs ∈ c | atHomeRel x (gs.1 sitVar) }
 
 /--
 atender — "answer (the door)".
@@ -74,22 +283,22 @@ def lexAnswer
     (answerRel : E → WorldTimeIndex W Time → Prop)
     (x : E)
     (sitVar : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
-  { gs ∈ c | answerRel x (gs.1.sit sitVar) }
+    (c : SitContext W Time) : SitContext W Time :=
+  { gs ∈ c | answerRel x (gs.1 sitVar) }
 
 /--
 SF (Subordinate Future).
 `⟦SF⟧ = SUBJ ∘ FUT`
 -/
-def lexSF := @subordinateFuture W Time E _ _
+def lexSF := @subordinateFuture W Time _ _
 
 /--
 ela — "she" (pronoun bound to Maria).
 `⟦ela⟧ = λP.P(maria)`
 -/
 def lexShe (maria : E)
-    (P : E → SitContext W Time E → SitContext W Time E)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (P : E → SitContext W Time → SitContext W Time)
+    (c : SitContext W Time) : SitContext W Time :=
   P maria c
 
 /--
@@ -98,9 +307,9 @@ vai — future auxiliary "will".
 via modal anaphora.
 -/
 def lexWill
-    (VP : SVar → SitContext W Time E → SitContext W Time E)
+    (VP : SVar → SitContext W Time → SitContext W Time)
     (sitVar : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (c : SitContext W Time) : SitContext W Time :=
   VP sitVar c
 
 /--
@@ -114,8 +323,8 @@ force comes from SUBJ's quantification over historical alternatives, not
 from the conditional operator itself.
 -/
 def seqUpdate
-    (antecedent consequent : SitContext W Time E → SitContext W Time E)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (antecedent consequent : SitContext W Time → SitContext W Time)
+    (c : SitContext W Time) : SitContext W Time :=
   consequent (antecedent c)
 
 
@@ -129,7 +338,7 @@ def deriveAntecedent
     (maria : E)
     (atHomeRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (c : SitContext W Time) : SitContext W Time :=
   let c₁ := lexSF history sfVar speechVar c
   lexAtHome atHomeRel maria sfVar c₁
 
@@ -141,7 +350,7 @@ def deriveConsequent
     (maria : E)
     (answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (c : SitContext W Time) : SitContext W Time :=
   let c₁ := dynIND sfVar c
   lexAnswer answerRel maria sfVar c₁
 
@@ -153,7 +362,7 @@ def deriveFullSentence
     (maria : E)
     (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (c : SitContext W Time) : SitContext W Time :=
   let antecedent := deriveAntecedent history maria atHomeRel sfVar speechVar
   let consequent := deriveConsequent maria answerRel sfVar
   seqUpdate antecedent consequent c
@@ -166,11 +375,11 @@ theorem derivation_in_historical_base
     (maria : E)
     (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
-    (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
     ∃ s₀, (∃ g₀, (g₀, s₀) ∈ c) ∧
-          (gs.1.sit sfVar) ∈ historicalBase history s₀ := by
+          (gs.1 sfVar) ∈ historicalBase history s₀ := by
   unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
   simp only [Set.mem_setOf_eq] at h
@@ -187,10 +396,8 @@ theorem derivation_in_historical_base
   use s₀
   constructor
   · exact ⟨g, hc⟩
-  · have h_sit : gs.1.sit sfVar = s₁ := by
-      rw [h_upd]
-      unfold SitAssignment.updateSit
-      simp only [beq_self_eq_true, ite_true]
+  · have h_sit : gs.1 sfVar = s₁ := by
+      rw [h_upd]; simp only [Assignment.update_at]
     rw [h_sit]
     exact h_hist
 
@@ -201,10 +408,10 @@ theorem derivation_future_ordering
     (maria : E)
     (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
-    (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
-    (gs.1.sit sfVar).time > (gs.1.sit speechVar).time := by
+    (gs.1 sfVar).time > (gs.1 speechVar).time := by
   unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
   simp only [Set.mem_setOf_eq] at h
@@ -224,10 +431,10 @@ theorem derivation_conditional_holds
     (maria : E)
     (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sfVar speechVar : SVar)
-    (c : SitContext W Time E)
-    (gs : SitAssignment W Time E × WorldTimeIndex W Time)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
     (h : gs ∈ deriveFullSentence history maria atHomeRel answerRel sfVar speechVar c) :
-    atHomeRel maria (gs.1.sit sfVar) → answerRel maria (gs.1.sit sfVar) := by
+    atHomeRel maria (gs.1 sfVar) → answerRel maria (gs.1 sfVar) := by
   intro _
   unfold deriveFullSentence seqUpdate at h
   unfold deriveConsequent lexAnswer at h
@@ -244,7 +451,7 @@ def deriveCounterfactual
     (maria : E)
     (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (cfVar speechVar : SVar)
-    (c : SitContext W Time E) : SitContext W Time E :=
+    (c : SitContext W Time) : SitContext W Time :=
   let c₁ := dynSUBJ history cfVar c
   let c₂ := lexAtHome atHomeRel maria cfVar c₁
   let c₃ := dynIND cfVar c₂
@@ -253,14 +460,15 @@ def deriveCounterfactual
 /--
 SF constrains to future; counterfactual allows past/present.
 -/
-theorem sf_vs_counterfactual_temporal {W Time E : Type*} [Preorder Time]
+theorem sf_vs_counterfactual_temporal {W Time : Type*} [Preorder Time]
     (history : WorldHistory W Time)
+    {E : Type*}
     (maria : E)
     (atHomeRel answerRel : E → WorldTimeIndex W Time → Prop)
     (sitVar speechVar : SVar)
-    (c : SitContext W Time E) :
+    (c : SitContext W Time) :
     ∀ gs ∈ deriveFullSentence history maria atHomeRel answerRel sitVar speechVar c,
-      (gs.1.sit sitVar).time > (gs.1.sit speechVar).time :=
+      (gs.1 sitVar).time > (gs.1 speechVar).time :=
   derivation_future_ordering history maria atHomeRel answerRel sitVar speechVar c
 
 

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Generics
+import Linglib.Theories.Semantics.Noun.Kind.GenericsDynamic
 
 /-!
 # @cite{kirkpatrick-2024}: The Dynamics of Generics
@@ -41,7 +41,7 @@ makes exceptional individuals salient before the general claim is assessed.
 
 namespace Kirkpatrick2024
 
-open Semantics.Dynamic.Generics
+open Semantics.Noun.Kind.GenericsDynamic
 
 
 -- ═══ Toy Model: Ravens ═══

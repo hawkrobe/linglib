@@ -1,4 +1,6 @@
+import Mathlib.Data.List.Infix
 import Linglib.Core.Lexical.UD
+import Linglib.Core.Order.Tree
 
 /-!
 # Trees
@@ -28,6 +30,14 @@ bundles, `Unit` for unlabeled, ...) and terminal type `W`.
 
 Grounded in Universal Dependencies UPOS. Word-level categories via
 `head : UPOS → Cat`, phrasal via `proj : UPOS → Cat`, plus `S` and `CP`.
+
+## `TreePath` and `Tree.toTreeOrder`
+
+A `TreePath` is a list of child indices identifying a subtree position.
+The forgetful map `Tree.toTreeOrder` extracts the dominance partial order
+from any `Tree C W` as a `Core.Order.TreeOrder TreePath`, making the
+B&P command-relation library (`Linglib.Core.Order.Command`) applicable
+to concrete trees regardless of category type.
 -/
 
 namespace Core.Tree
@@ -189,6 +199,18 @@ where
   | [] => 0
   | t :: ts => size t + sizeList ts
 
+/-- Number of word-bearing terminals (leaves) in the tree.
+    Traces and binders contribute 0; internal nodes recurse. -/
+def leafCount : Tree C W → Nat
+  | .terminal _ _ => 1
+  | .node _ cs => leafCountList cs
+  | .trace _ _ => 0
+  | .bind _ _ body => leafCount body
+where
+  leafCountList : List (Tree C W) → Nat
+  | [] => 0
+  | t :: ts => leafCount t + leafCountList ts
+
 -- ════════════════════════════════════════════════════════════════════
 -- §6  Subtrees
 -- ════════════════════════════════════════════════════════════════════
@@ -240,6 +262,81 @@ where
   | [] => []
   | t :: ts => leafSubst target replacement c t ::
                leafSubstList target replacement c ts
+
+end Tree
+
+-- ════════════════════════════════════════════════════════════════════
+-- §9  TreePath and Forgetful Map to TreeOrder
+-- ════════════════════════════════════════════════════════════════════
+
+/-- A path from the root of a tree, encoded as a list of child indices.
+
+Each element is the index in the parent's child list (or `0` for the
+unique child of a `bind`). The empty path identifies the root. -/
+structure TreePath where
+  /-- The underlying list of child indices. -/
+  toList : List Nat
+
+namespace TreePath
+
+/-- Dominance order: `p ≤ q` iff `p` is a prefix of `q`. -/
+instance : LE TreePath := ⟨fun p q => p.toList <+: q.toList⟩
+
+instance : PartialOrder TreePath where
+  le_refl _ := List.prefix_rfl
+  le_trans _ _ _ := List.IsPrefix.trans
+  le_antisymm a b h₁ h₂ := by
+    cases a; cases b
+    have := h₁.eq_of_length <| h₁.length_le.antisymm h₂.length_le
+    simpa using this
+
+/-- Two prefixes of the same list are comparable. This is the **Connected
+    Ancestor Condition (CAC)** for the prefix order. -/
+theorem prefix_or_prefix {p q r : TreePath} (hp : p ≤ r) (hq : q ≤ r) :
+    p ≤ q ∨ q ≤ p := by
+  obtain ⟨s, hs⟩ := hp
+  obtain ⟨t, ht⟩ := hq
+  have heq : p.toList ++ s = q.toList ++ t := hs.trans ht.symm
+  rcases List.append_eq_append_iff.1 heq with ⟨a', hqeq, _⟩ | ⟨c', hpeq, _⟩
+  · left; exact ⟨a', hqeq.symm⟩
+  · right; exact ⟨c', hpeq.symm⟩
+
+end TreePath
+
+namespace Tree
+
+variable {C W : Type}
+
+/-- Subtree at the given path; `none` if the path leaves the tree.
+
+For `node c cs`, the next index `i` selects child `cs[i]?`; for
+`bind`, only index `0` is valid (binders have a single body). -/
+def subtreeAt : Tree C W → List Nat → Option (Tree C W)
+  | t,                  []          => some t
+  | .node _ cs,         (i :: rest) =>
+      (cs[i]?).bind (fun child => subtreeAt child rest)
+  | .bind _ _ body,     (0 :: rest) => subtreeAt body rest
+  | .bind _ _ _,        (_ :: _)    => none
+  | .terminal _ _,      (_ :: _)    => none
+  | .trace _ _,         (_ :: _)    => none
+
+/-- Set of valid paths in the tree (paths that resolve to a subtree). -/
+def validPaths (t : Tree C W) : Set TreePath :=
+  {p | (t.subtreeAt p.toList).isSome}
+
+theorem nil_validPath (t : Tree C W) : (⟨[]⟩ : TreePath) ∈ t.validPaths := by
+  simp [validPaths, subtreeAt]
+
+/-- **Forgetful map** from a `Tree C W` to its dominance order as a
+    `TreeOrder TreePath`. This makes the framework-agnostic command-
+    relation library (@cite{barker-pullum-1990}, B&P) directly applicable
+    to any concrete tree, regardless of category or word type. -/
+def toTreeOrder (t : Tree C W) : Core.Order.TreeOrder TreePath where
+  nodes := t.validPaths
+  root := ⟨[]⟩
+  root_in_nodes := t.nil_validPath
+  root_le_all := fun _ _ => List.nil_prefix
+  ancestor_connected _ _ _ h₁ h₂ := TreePath.prefix_or_prefix h₁ h₂
 
 end Tree
 

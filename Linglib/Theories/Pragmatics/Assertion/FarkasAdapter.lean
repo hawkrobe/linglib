@@ -1,11 +1,11 @@
-import Linglib.Theories.Semantics.Dynamic.State
+import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
 
 /-!
 # @cite{farkas-bruce-2010} Assertion Adapter
 
 @cite{farkas-bruce-2010}
 
-Wraps the existing `Semantics.Dynamic.State.DiscourseState` with
+Wraps the existing `Pragmatics.Assertion.FarkasBruce.DiscourseState` with
 bridge theorems for Farkas & Bruce's model. The model separates individual
 discourse commitments (dcS, dcL) from the common ground (cg), with
 assertions going through a "table" stage before reaching the CG.
@@ -21,13 +21,13 @@ assertions going through a "table" stage before reaching the CG.
 ## Architecture
 
 This file is an ADAPTER: it wraps the existing `DiscourseState` type
-from `Theories/Semantics/Dynamic/State.lean` rather than redefining it.
+from `Theories/Pragmatics/Assertion/FarkasBruce.lean` rather than redefining it.
 
 -/
 
 namespace Pragmatics.Assertion.FarkasAdapter
 
-open Semantics.Dynamic.State
+open Pragmatics.Assertion.FarkasBruce
 open Core.CommonGround (ContextSet)
 
 -- ════════════════════════════════════════════════════

@@ -1,4 +1,5 @@
-import Linglib.Core.FinitePMF
+import Mathlib.Probability.ProbabilityMassFunction.Monad
+import Mathlib.Topology.Algebra.InfiniteSum.Basic
 import Linglib.Theories.Processing.LanguageModel.Basic
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
@@ -13,9 +14,9 @@ that memory state alone.
 
 Following the paper's claims (their §3.1):
 
-1. **Incrementality of memory** — the encoder `encode : List Voc → FinitePMF Mem`
+1. **Incrementality of memory** — the encoder `encode : List Voc → PMF Mem`
    maps each observed history to a distribution over memory states.
-2. **Linguistic knowledge** — the predictor `predict : Mem → FinitePMF (Option Voc)`
+2. **Linguistic knowledge** — the predictor `predict : Mem → PMF (Option Voc)`
    maps each memory state to a next-symbol distribution (with `none` = end-of-string).
 3. **Inaccessibility of context** — the predictor sees *only* the memory state,
    never the underlying history. This is what makes the model *lossy*.
@@ -26,6 +27,11 @@ Following the paper's claims (their §3.1):
 This file provides the abstract type and the master cost function.
 Specialisations (lossless = classical surprisal, n-gram, erasure noise,
 cue-based retrieval) live in sibling files.
+
+The encoder and predictor are mathlib `PMF` kernels (countable support,
+`ℝ≥0∞`-valued), so neither `Voc` nor `Mem` need to be `Fintype`. Expected
+sums are taken as `tsum` (`∑'`) which collapses to `Finset.sum` whenever a
+`Fintype` instance is in scope.
 
 ## Main definitions
 
@@ -47,7 +53,8 @@ set_option autoImplicit false
 
 namespace Theories.Processing
 
-open Core Real
+open Real
+open scoped ENNReal
 open Theories.Processing.LanguageModel (LangModel)
 
 /-- A processing architecture with a memory bottleneck.
@@ -57,21 +64,21 @@ memory states; `predict` gives the next-symbol distribution from a memory
 state alone. The memory state mediates *all* information flow from the
 past to the prediction (the inaccessibility-of-context claim of
 @cite{futrell-gibson-levy-2020} §3.1.3). -/
-structure MemoryProcess (Voc Mem : Type*) [Fintype Voc] [Fintype Mem] where
+structure MemoryProcess (Voc Mem : Type*) where
   /-- Lossy encoder: history → distribution over memory states. -/
-  encode : List Voc → FinitePMF Mem
+  encode : List Voc → PMF Mem
   /-- Predictor: memory state → next-symbol distribution. -/
-  predict : Mem → FinitePMF (Option Voc)
+  predict : Mem → PMF (Option Voc)
 
 namespace MemoryProcess
 
-variable {Voc Mem : Type*} [Fintype Voc] [Fintype Mem]
+variable {Voc Mem : Type*}
 
 /-- Per-state surprisal: `D_lc(w | m) = -log P(w | m)`.
 (@cite{futrell-gibson-levy-2020} Eq. 2.) -/
 noncomputable def perStateSurprisal (mp : MemoryProcess Voc Mem)
     (m : Mem) (w : Voc) : ℝ :=
-  -Real.log (((mp.predict m).mass (some w)) : ℝ)
+  -Real.log (mp.predict m (some w)).toReal
 
 /-- Expected surprisal under the lossy memory process:
 `D_lc(w | c) = E_{m ~ encode(c)}[-log P(w | m)]`.
@@ -82,19 +89,22 @@ n-gram surprisal, and the cue-based retrieval cost all derive as
 instantiations of `(encode, predict)`. -/
 noncomputable def expectedSurprisal (mp : MemoryProcess Voc Mem)
     (c : List Voc) (w : Voc) : ℝ :=
-  ∑ m : Mem, ((mp.encode c).mass m : ℝ) * mp.perStateSurprisal m w
+  ∑' m : Mem, (mp.encode c m).toReal * mp.perStateSurprisal m w
 
 /-- Marginal next-symbol probability under the memory process:
 `P(w | c) = Σ_m P(m | c) · P(w | m)`.
 (@cite{futrell-gibson-levy-2020} Eq. 9.)
 
+Computed as `(encode c).bind predict` evaluated at `some w` — the
+mathlib `PMF` monad bind is exactly the marginal of the joint kernel.
+
 Note: `-log marginalProb` (the surprisal of the *marginal*) is not in
 general equal to `expectedSurprisal` (the *expected* surprisal). The two
 agree iff the encoder is a Dirac (no information loss); otherwise Jensen
 gives `expectedSurprisal ≥ -log marginalProb`. -/
-def marginalProb (mp : MemoryProcess Voc Mem)
-    (c : List Voc) (w : Voc) : ℚ :=
-  ∑ m : Mem, (mp.encode c).mass m * (mp.predict m).mass (some w)
+noncomputable def marginalProb (mp : MemoryProcess Voc Mem)
+    (c : List Voc) (w : Voc) : ℝ≥0∞ :=
+  ((mp.encode c).bind mp.predict) (some w)
 
 /-- The memory process is *Dirac at* `f` if the encoder concentrates
 all mass on `f c` for every history `c`. This is the lossless
@@ -103,9 +113,9 @@ function of the history.
 
 (@cite{futrell-gibson-levy-2020} §3.5.1: classical surprisal arises
 exactly in this case.) -/
-def IsDirac [DecidableEq Mem] (mp : MemoryProcess Voc Mem)
+def IsDirac (mp : MemoryProcess Voc Mem)
     (f : List Voc → Mem) : Prop :=
-  ∀ c, mp.encode c = FinitePMF.pure (f c)
+  ∀ c, mp.encode c = PMF.pure (f c)
 
 /-- **Dirac collapse.** When the encoder is a Dirac at `f c`, expected
 surprisal reduces to per-state surprisal evaluated at `f c`. The
@@ -115,25 +125,18 @@ This is the structural identity that lets us recover classical
 surprisal as the special case of `expectedSurprisal` with lossless
 memory (see `LossyContext.lean`'s
 `expectedSurprisal_eq_surprisal_of_lossless`). -/
-theorem expectedSurprisal_of_dirac [DecidableEq Mem]
+theorem expectedSurprisal_of_dirac
     {mp : MemoryProcess Voc Mem} {f : List Voc → Mem}
     (h : mp.IsDirac f) (c : List Voc) (w : Voc) :
     mp.expectedSurprisal c w = mp.perStateSurprisal (f c) w := by
   unfold expectedSurprisal
   rw [h c]
-  show ∑ m : Mem, ((FinitePMF.pure (f c)).mass m : ℝ) *
-        mp.perStateSurprisal m w = mp.perStateSurprisal (f c) w
-  have hpoint : ∀ m : Mem,
-      ((FinitePMF.pure (f c)).mass m : ℝ) * mp.perStateSurprisal m w =
-        if m = f c then mp.perStateSurprisal m w else 0 := by
-    intro m
-    unfold FinitePMF.pure
-    show ((if m = f c then (1 : ℚ) else 0 : ℚ) : ℝ) *
-        mp.perStateSurprisal m w = _
-    split_ifs with h
-    · simp
-    · simp
-  simp_rw [hpoint, Finset.sum_ite_eq', Finset.mem_univ, if_true]
+  classical
+  rw [tsum_eq_single (f c)]
+  · simp
+  · intro m hm
+    rw [PMF.pure_apply_of_ne _ _ hm]
+    simp
 
 end MemoryProcess
 

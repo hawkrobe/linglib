@@ -85,7 +85,7 @@ structure MemoryEncoding (W : Type) (Mem : Type) where
 
 /-- Iterate a `MemoryEncoding` over an entire history to produce the
 final memory state. This is the *context-summary function* that, when
-paired with a predictor `Mem → FinitePMF (Option W)`, induces a Dirac
+paired with a predictor `Mem → PMF (Option W)`, induces a Dirac
 `MemoryProcess` (in `Theories.Processing.Memory`). Such a
 process is lossless for its own virtual LM
 (`MemoryProcess.expectedSurprisal_eq_virtualLM_surprisal`), so

@@ -259,6 +259,19 @@ structure CVar where
   idx : Nat
   deriving DecidableEq, Repr, Hashable
 
+/--
+A situation variable (names a situation dref).
+
+Parallel to `IVar` for individuals and `PVar` for propositions; like
+`Var := Nat` above, kept as an `abbrev` so it inherits
+`DecidableEq`/`Repr`/`Hashable`/numeric literals from `Nat`.
+
+Used by Mendes 2025's CDRT analysis of the Subordinate Future, where
+situation drefs are introduced by `SUBJ` and retrieved by `IND` across
+clause boundaries (see `Theories/Semantics/{Tense,Mood}/Dynamic.lean`).
+-/
+abbrev SVar := Nat
+
 
 /--
 An ICDRT assignment maps variables to values.

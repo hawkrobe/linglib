@@ -1,4 +1,4 @@
-import Linglib.Core.FinitePMF
+import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
 import Linglib.Core.Question.Basic
@@ -6,7 +6,6 @@ import Linglib.Core.Question.Hamblin
 import Linglib.Core.Question.Relevance
 import Linglib.Core.Discourse.QUDStack
 import Linglib.Core.Discourse.Strategy
-import Mathlib.Algebra.Order.Field.Basic
 
 /-!
 # Probabilistic Answerhood @cite{thomas-2026}
@@ -37,35 +36,39 @@ EvidencesMoreStrongly(R, R', A) ≡ P(A|info(R)) > P(A|info(R'))
 These probabilistic notions of answerhood are central to Thomas's analysis
 of additive particles like "too", "also", "either".
 
-## API surface (Set/Prop)
+## API surface (Set/Prop, ENNReal-valued)
 
 All predicates operate on `Core.Question W` (the mathlib-aligned downward-closed
 inquisitive lattice) and `Set W` (with `[DecidablePred]` for computability),
-in line with project-wide mathlib discipline.
+in line with project-wide mathlib discipline. Probabilities are mathlib
+`PMF`-valued (`ℝ≥0∞`); comparisons are `Prop` (no `Decidable` instances —
+ENNReal `<`/`>` is not constructively decidable).
 -/
 
 namespace Semantics.Questions.ProbabilisticAnswerhood
 
 open Semantics.Questions
+open scoped ENNReal
 
 -- Conditional Probability Infrastructure
 
-/-- A prior distribution as a normalized mass function over worlds.
+/-- A prior distribution as a mathlib `PMF` over a finite world type.
 
-Bundled with non-negativity and normalization (∑ w, mass w = 1) proofs
-via `Core.FinitePMF`. Use `prior w` to access the mass at world `w`
+`PMF W` bundles a mass function `W → ℝ≥0∞` together with the
+normalization proof. Use `prior w` to access the mass at world `w`
 (via `CoeFun`). -/
-abbrev Prior (W : Type*) [Fintype W] := Core.FinitePMF W
+abbrev Prior (W : Type*) [Fintype W] := PMF W
 
 /-! ## Set/Prop API — full mathlib alignment
 
 Predicates operate on `Core.Question W` (with `[HasAltList]` for finiteness witness)
 and `Set W` (with `[DecidablePred]`) as the canonical types.
 
-The relationship to FinitePMF:
+The relationship to `PMF`:
 - `prior.probOfSet (s : Set W) [DecidablePred (· ∈ s)]` — P(s)
 - `prior.condProbSet (cond target : Set W) [...] [...]` — P(target | cond)
--/
+
+(see `Linglib.Core.Probability.PMFFin`). -/
 
 open Classical in
 /-- Probabilistic relevance: `s` changes the probability of some alternative
@@ -104,60 +107,38 @@ theorem probAnswersS_when_entailing {W : Type*} [Fintype W] [DecidableEq W]
     probAnswersS s q prior := by
   refine ⟨a, hAltMem, ?_⟩
   -- s ⊆ a ⟹ s ∩ a = s, so condProbSet s a = probOfSet s / probOfSet s = 1 > probOfSet a.
-  have hSA : prior.probOfSet (s ∩ a) = prior.probOfSet s := by
-    unfold Core.FinitePMF.probOfSet
-    refine Finset.sum_congr rfl (fun w _ => ?_)
-    by_cases hw : w ∈ s
-    · simp [hw, Set.mem_inter_iff, hEntails hw]
-    · simp [hw, Set.mem_inter_iff]
+  have hSA : prior.probOfSet (s ∩ a) = prior.probOfSet s :=
+    congrArg prior.probOfSet (Set.inter_eq_left.mpr hEntails)
   have hCond : prior.condProbSet s a = 1 := by
-    rw [prior.condProbSet_of_pos s a hPosS, hSA]
-    exact div_self (ne_of_gt hPosS)
+    rw [PMF.condProbSet_eq_div, hSA]
+    exact ENNReal.div_self hPosS.ne' (PMF.probOfSet_ne_top prior s)
   have hGt : prior.condProbSet s a > prior.probOfSet a := by
     rw [hCond]; exact hNotCertain
   convert hGt
 
-/-- Evidential boost: how much `evidence` raises the probability of `conclusion`.
-Returns ℚ. -/
-def evidentialBoostS {W : Type*} [Fintype W]
-    (evidence conclusion : Set W) (prior : Prior W)
-    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] : ℚ :=
-  prior.condProbSet evidence conclusion - prior.probOfSet conclusion
+/-- Evidence is positive iff `condProbSet evidence conclusion > probOfSet conclusion`.
 
-/-- Evidence is positive iff its boost is strictly positive. -/
-def isPositiveEvidenceS {W : Type*} [Fintype W]
+(In the prior `Core.FinitePMF` formulation this was the sign of an
+`evidentialBoostS` subtraction; ENNReal subtraction truncates at zero, so
+the positive-evidence predicate is now phrased as a direct comparison.) -/
+noncomputable def isPositiveEvidenceS {W : Type*} [Fintype W]
     (evidence conclusion : Set W) (prior : Prior W)
     [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] : Prop :=
-  evidentialBoostS evidence conclusion prior > 0
+  prior.condProbSet evidence conclusion > prior.probOfSet conclusion
 
-/-- Evidence is negative iff its boost is strictly negative. -/
-def isNegativeEvidenceS {W : Type*} [Fintype W]
+/-- Evidence is negative iff `condProbSet evidence conclusion < probOfSet conclusion`. -/
+noncomputable def isNegativeEvidenceS {W : Type*} [Fintype W]
     (evidence conclusion : Set W) (prior : Prior W)
     [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] : Prop :=
-  evidentialBoostS evidence conclusion prior < 0
-
-instance {W : Type*} [Fintype W] (evidence conclusion : Set W) (prior : Prior W)
-    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] :
-    Decidable (isPositiveEvidenceS evidence conclusion prior) :=
-  inferInstanceAs (Decidable (_ > _))
-
-instance {W : Type*} [Fintype W] (evidence conclusion : Set W) (prior : Prior W)
-    [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] :
-    Decidable (isNegativeEvidenceS evidence conclusion prior) :=
-  inferInstanceAs (Decidable (_ < _))
+  prior.condProbSet evidence conclusion < prior.probOfSet conclusion
 
 /-- Evidence-strength comparison: `r` evidences `a` more strongly than `r'`
 iff `P(a | r) > P(a | r')`. @cite{thomas-2026} Def. 63. -/
-def evidencesMoreStronglyS {W : Type*} [Fintype W]
+noncomputable def evidencesMoreStronglyS {W : Type*} [Fintype W]
     (r r' a : Set W) (prior : Prior W)
     [DecidablePred (· ∈ r)] [DecidablePred (· ∈ r')] [DecidablePred (· ∈ a)] :
     Prop :=
   prior.condProbSet r a > prior.condProbSet r' a
-
-instance {W : Type*} [Fintype W] (r r' a : Set W) (prior : Prior W)
-    [DecidablePred (· ∈ r)] [DecidablePred (· ∈ r')] [DecidablePred (· ∈ a)] :
-    Decidable (evidencesMoreStronglyS r r' a prior) :=
-  inferInstanceAs (Decidable (_ > _))
 
 /-! ### Conjunction strengthening
 
@@ -166,7 +147,7 @@ the conjunction `p1 ∩ p2` evidences `conclusion` more strongly than `p1`
 alone. -/
 
 /-- Conjunction `p1 ∩ p2` evidences `conclusion` more strongly than `p1`. -/
-def conjunctionStrengthensS {W : Type*} [Fintype W]
+noncomputable def conjunctionStrengthensS {W : Type*} [Fintype W]
     (p1 p2 conclusion : Set W) (prior : Prior W)
     [DecidablePred (· ∈ p1)] [DecidablePred (· ∈ p2)]
     [DecidablePred (· ∈ conclusion)] : Prop :=
@@ -174,20 +155,11 @@ def conjunctionStrengthensS {W : Type*} [Fintype W]
     intro w; exact inferInstanceAs (Decidable (_ ∧ _))
   evidencesMoreStronglyS (p1 ∩ p2) p1 conclusion prior
 
-instance {W : Type*} [Fintype W] (p1 p2 conclusion : Set W) (prior : Prior W)
-    [DecidablePred (· ∈ p1)] [DecidablePred (· ∈ p2)]
-    [DecidablePred (· ∈ conclusion)] :
-    Decidable (conjunctionStrengthensS p1 p2 conclusion prior) := by
-  unfold conjunctionStrengthensS
-  exact inferInstance
-
 open Classical in
 /-- Some alternative of `q` is strengthened by adding `p2` to `p1`.
 
 Spec uses `Classical.dec` for per-alternative decidability so the predicate
-body is well-typed without an `[∀ a, DecidablePred (· ∈ a)]` hypothesis.
-For computable `Decidable` instances at concrete consumers, supply the
-per-alternative `[DecidablePred]` and use `decide` directly. -/
+body is well-typed without an `[∀ a, DecidablePred (· ∈ a)]` hypothesis. -/
 noncomputable def someResolutionStrengthenedS {W : Type*} [Fintype W]
     (p1 p2 : Set W) (q : Core.Question W) (prior : Prior W) : Prop :=
   ∃ a ∈ Core.Question.alt q, prior.condProbSet (p1 ∩ p2) a > prior.condProbSet p1 a

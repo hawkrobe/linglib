@@ -11,6 +11,32 @@ This bilateral structure is NOT the same as @cite{hofmann-2025}'s full
 ICDRT analysis, which derives accessibility from veridicality + discourse
 consistency rather than bilateral negation (§5.1.1). The bilateral approach
 cannot handle disagreement or modal subordination contexts.
+
+## Cross-cutting smell: two competing approaches to cross-disjunct anaphora
+
+This file and `IntensionalCDRT/Basic.lean` are two formalizations of the
+same empirical territory — cross-negation and cross-disjunct anaphora
+(the "bathroom sentence" pattern: *Either there's no bathroom, or it's
+upstairs*). They are not stacked extensions; they are competitors.
+
+| Approach | Mechanism | Solves | Doesn't solve |
+|----------|-----------|--------|---------------|
+| Bilateral (this file) | Two update channels; negation = swap | DNE, bathroom sentence | Disagreement, modal subordination, speaker-vs-hearer commitment |
+| Full ICDRT (@cite{hofmann-2025}) | Propositional drefs + per-speaker DiscContext + veridicality classification | All of the above + three-way veridical/hypothetical/counterfactual | Pays in intensional machinery |
+
+The bilateral approach is the lighter formalism — a single information
+state with two update polarities. The full ICDRT machinery (per-speaker
+commitment sets, three-way veridicality) is heavier but covers cases
+the bilateral approach structurally cannot. Choose by phenomenon: if
+disagreement or modal subordination are in scope, use the full ICDRT;
+if only the basic bathroom pattern matters, the bilateral apparatus
+here suffices.
+
+The empirical comparison is formalized in
+`Dynamic/Comparisons/ICDRT_BUS.lean`, which proves both approaches
+solve the bathroom sentence and identifies the four cases (disagreement,
+modal subordination, three-way veridicality classification, negated
+existential truth conditions) where ICDRT is strictly more expressive.
 -/
 
 namespace Semantics.Dynamic.Bilateral.ICDRT
