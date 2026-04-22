@@ -297,9 +297,9 @@ theorem shape_nodeCount (so : SyntacticObject) :
   | node a b iha ihb =>
     simp [SyntacticObject.shape, TreeShape.nodeCount, SyntacticObject.nodeCount, iha, ihb]
 
-/-- SO.nodeCount = FreeMagma.length - 1 via the isomorphism -/
+/-- SO.nodeCount = FreeMagma.length - 1, since `SyntacticObject = FreeMagma LIToken`. -/
 theorem nodeCount_eq_freeMagma_length_sub (so : SyntacticObject) :
-    so.nodeCount = (toFreeMagma so).length - 1 := by
+    so.nodeCount = so.length - 1 := by
   have h1 := leafCount_eq_freeMagma_length so
   have h2 := leaf_node_relation so
   omega

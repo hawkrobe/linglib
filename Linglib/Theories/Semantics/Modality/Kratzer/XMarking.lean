@@ -40,7 +40,8 @@ variable {W : Type*}
 
 /-! ## Star-revision: X-marking on modal bases (Xf) -/
 
-/-- Property: f' is a **∗-revision** of f for p (@cite{ferreira-2023}, §3).
+/-- Property: f' is a **∗-revision** of f for p (@cite{ferreira-2023}).
+    UNVERIFIED: §3 reference removed pending check against the JoS pdf.
 
     A ∗-revision widens the modal domain by adding p-worlds:
     (1) every world accessible under f remains accessible under f',

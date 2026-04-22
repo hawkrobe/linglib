@@ -57,21 +57,23 @@ def bayesFactor (pGivenG pGivenNotG : ℚ) : ℚ :=
     else 1  -- 0/0 → neutral
   else pGivenG / pGivenNotG
 
-/-- Argumentative strength: log₂ of the Bayes factor.
+/-- Argumentative strength: log of the Bayes factor (in nats).
 
-argStr(u, G) = log₂(P(u|G) / P(u|¬G))
+argStr(u, G) = log(P(u|G) / P(u|¬G))
 
-C&F Eq. 17. Positive values mean u supports G; negative means u supports ¬G. -/
-def argStr (pGivenG pGivenNotG : ℚ) : ℚ :=
-  log2Approx (bayesFactor pGivenG pGivenNotG)
+C&F Eq. 17 (originally stated in bits; we follow the mathlib convention
+of nats — multiply by `1 / Real.log 2` to convert). Positive values mean
+u supports G; negative means u supports ¬G. -/
+noncomputable def argStr (pGivenG pGivenNotG : ℚ) : ℝ :=
+  Real.log ((bayesFactor pGivenG pGivenNotG : ℚ) : ℝ)
 
-/-- Pragmatic argumentative strength using assertability probabilities.
+/-- Pragmatic argumentative strength using assertability probabilities (in nats).
 
-pragArgStr(u, G) = log₂(P_a(u|G) / P_a(u|¬G))
+pragArgStr(u, G) = log(P_a(u|G) / P_a(u|¬G))
 
 C&F Eq. 25. Replaces literal truth with pragmatic assertability. -/
-def pragArgStr (pAssertableGivenG pAssertableGivenNotG : ℚ) : ℚ :=
-  log2Approx (bayesFactor pAssertableGivenG pAssertableGivenNotG)
+noncomputable def pragArgStr (pAssertableGivenG pAssertableGivenNotG : ℚ) : ℝ :=
+  Real.log ((bayesFactor pAssertableGivenG pAssertableGivenNotG : ℚ) : ℝ)
 
 
 -- ============================================================
@@ -139,11 +141,11 @@ def rationalHearerPragmatic (pAssertableGivenG pAssertableGivenNotG : ℚ) : Boo
 
 The KL divergence D_KL(P_G || P_¬G) = Σ_u P_G(u) · log(P_G(u)/P_¬G(u)).
 Each summand P_G(u) · log(P_G(u)/P_¬G(u)) contains the argStr as the log factor.
-That is, argStr(u, G) = log₂(P(u|G)/P(u|¬G)) is the pointwise divergence. -/
+That is, argStr(u, G) = log(P(u|G)/P(u|¬G)) is the pointwise divergence. -/
 theorem argStr_eq_pointwiseKL (pGivenG pGivenNotG : ℚ)
     (_hG : 0 < pGivenG) (hNotG : 0 < pGivenNotG) :
     argStr pGivenG pGivenNotG =
-    log2Approx (pGivenG / pGivenNotG) := by
+    Real.log ((pGivenG / pGivenNotG : ℚ) : ℝ) := by
   unfold argStr bayesFactor
   simp [ne_of_gt hNotG]
 

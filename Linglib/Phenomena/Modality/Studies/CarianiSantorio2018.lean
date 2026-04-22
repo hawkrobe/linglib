@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Conditionals.SelectionalRestrictor
 import Linglib.Core.Modality.HistoricalAlternatives
-import Linglib.Core.FinitePMF
+import Linglib.Core.Probability.PMFFin
 import Linglib.Fragments.English.Auxiliaries
 import Mathlib.Tactic.DeriveFintype
 
@@ -64,9 +64,10 @@ set_option autoImplicit false
 
 namespace Phenomena.Modality.Studies.CarianiSantorio2018
 
-open _root_.Core (SelectionFunction FinitePMF)
+open _root_.Core (SelectionFunction)
 open Semantics.Modality.Selectional
 open Semantics.Conditionals.SelectionalRestrictor (wouldConditional willConditional)
+open scoped ENNReal
 
 -- ============================================================================
 -- §1. The Sports Fan model
@@ -88,29 +89,15 @@ inductive W where
 def histAlt : Set W := { .cw, .cg, .cn }
 
 /-- Proposition: "Robin wears a Warriors cap." -/
-def warriorsCap : W → Prop
-  | .cw => True
-  | .cg => False
-  | .cn => False
+def warriorsCap : Set W := {.cw}
 
-/-- Bool-valued indicator for `warriorsCap`, used for credence
-    computations via `Core.FinitePMF.probOf`. -/
-def warriorsCapB : W → Bool
-  | .cw => true
-  | .cg => false
-  | .cn => false
+instance : DecidablePred (· ∈ warriorsCap) := fun w => decEq w .cw
 
 /-- Proposition: "Robin wears *some* cap" (Warriors or Giants). -/
-def wearsCap : W → Prop
-  | .cw => True
-  | .cg => True
-  | .cn => False
+def wearsCap : Set W := {.cw, .cg}
 
-/-- Bool-valued indicator for `wearsCap`. -/
-def wearsCapB : W → Bool
-  | .cw => true
-  | .cg => true
-  | .cn => false
+instance : DecidablePred (· ∈ wearsCap) := fun w =>
+  inferInstanceAs (Decidable (w = .cw ∨ w ∈ ({.cg} : Set W)))
 
 /-- The underlying selection function: prefer `w` if `w ∈ A`,
     otherwise the first available element in the order cw, cg, cn.
@@ -208,9 +195,9 @@ def counterfactualAlt : Set W := { .cn }
     though `warriorsCap cw = True`. -/
 theorem nonmember_no_collapse :
     ¬ willSem cynthiaSel warriorsCap counterfactualAlt .cw := by
-  show ¬ warriorsCap (selFn .cw counterfactualAlt)
-  unfold selFn counterfactualAlt warriorsCap
-  simp
+  show selFn .cw counterfactualAlt ∉ warriorsCap
+  unfold selFn counterfactualAlt
+  simp [warriorsCap]
 
 /-- **Prediction 5** (= @cite{cariani-santorio-2018} eq. (17) collapse):
     when `w` is in the modal parameter, `will A` collapses to `A w`. -/
@@ -234,26 +221,19 @@ private lemma univ_W_eq : (Finset.univ : Finset W) = {.cw, .cg, .cn} := by
     triviality argument: no proposition lands on probability 1/2
     unconditionally, so the selectional account survives Hájek's
     objection by construction (paper §8.2 footnote 32). -/
-def cynthiaPMF : FinitePMF W where
-  mass
-    | .cw => 1/3
-    | .cg => 1/3
-    | .cn => 1/3
-  mass_nonneg w := by cases w <;> norm_num
-  mass_sum_one := by
+noncomputable def cynthiaPMF : PMF W :=
+  PMF.ofFintype (fun _ => (1 : ℝ≥0∞) / 3) (by
     rw [univ_W_eq, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
         Finset.sum_singleton]
-    norm_num
+    ennreal_arith)
 
-/-- `cynthiaPMF` is supported on `histAlt`: every world outside
-    `histAlt` has zero mass. (Vacuously true here — every world is in
-    `histAlt`.) -/
-theorem cynthiaPMF_support : ∀ w ∉ histAlt, cynthiaPMF.mass w = 0 := by
-  intro w hw
-  cases w with
-  | cw => exact absurd (by simp [histAlt] : (.cw : W) ∈ histAlt) hw
-  | cg => exact absurd (by simp [histAlt] : (.cg : W) ∈ histAlt) hw
-  | cn => exact absurd (by simp [histAlt] : (.cn : W) ∈ histAlt) hw
+/-- `cynthiaPMF` is supported on `histAlt`: the support lies inside the
+    modal parameter. Vacuously true here, since every world is in
+    `histAlt` — but the discipline matches the `cognitive_role`
+    interface, which takes `μ.support ⊆ f`. -/
+theorem cynthiaPMF_support_in_histAlt : cynthiaPMF.support ⊆ histAlt := by
+  intro w _
+  cases w <;> simp [histAlt]
 
 /-- **Prediction 6** (selectional cognitive role, paper §8.1):
     Cynthia's credence in *Robin will wear a Warriors cap* equals her
@@ -262,18 +242,16 @@ theorem cynthiaPMF_support : ∀ w ∉ histAlt, cynthiaPMF.mass w = 0 := by
 
     Direct application of `Selectional.cognitive_role`. -/
 theorem cynthia_credence_one_third :
-    cynthiaPMF.probOf
-      (fun w => warriorsCapB (cynthiaSel.sel w histAlt)) = 1/3 := by
-  rw [cognitive_role cynthiaSel warriorsCapB histAlt cynthiaPMF
-      cynthiaPMF_support]
-  unfold FinitePMF.probOf
-  rw [univ_W_eq, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-      Finset.sum_singleton]
-  show (if warriorsCapB .cw = true then cynthiaPMF.mass .cw else 0)
-        + ((if warriorsCapB .cg = true then cynthiaPMF.mass .cg else 0)
-            + (if warriorsCapB .cn = true then cynthiaPMF.mass .cn else 0))
-        = 1/3
-  norm_num [warriorsCapB, cynthiaPMF]
+    cynthiaPMF.probOfSet {w | cynthiaSel.sel w histAlt ∈ warriorsCap} = 1/3 := by
+  rw [cognitive_role cynthiaSel warriorsCap histAlt cynthiaPMF
+      cynthiaPMF_support_in_histAlt]
+  rw [PMF.probOfSet_apply, univ_W_eq, Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_singleton,
+      if_pos (show (W.cw) ∈ warriorsCap by decide),
+      if_neg (show (W.cg) ∉ warriorsCap by decide),
+      if_neg (show (W.cn) ∉ warriorsCap by decide)]
+  simp only [cynthiaPMF, PMF.ofFintype_apply]
+  ennreal_arith
 
 /-- The universal-quantifier reading of *will Warriors-cap* is false at
     every world: `histAlt` contains the Giants-cap world `cg` where
@@ -281,19 +259,8 @@ theorem cynthia_credence_one_third :
 theorem universalWill_warriorsCap_const_false (w : W) :
     ¬ universalWill warriorsCap histAlt w := by
   intro h
-  exact (h .cg (by simp [histAlt]) : warriorsCap .cg)
-
-/-- Bool reflection of the always-false universal reading. -/
-def universalWillWarriorsCapB : W → Bool := fun _ => false
-
-/-- The `universalWillWarriorsCapB` indicator faithfully reflects the
-    universal-quantifier reading on this model: both are constantly false. -/
-theorem universalWillWarriorsCapB_correct (w : W) :
-    universalWillWarriorsCapB w = true ↔
-    universalWill warriorsCap histAlt w := by
-  constructor
-  · intro h; simp [universalWillWarriorsCapB] at h
-  · intro h; exact absurd h (universalWill_warriorsCap_const_false w)
+  have hcg : W.cg ∈ warriorsCap := h .cg (by simp [histAlt])
+  simp [warriorsCap] at hcg
 
 /-- **Prediction 7** (universal-base credence collapse, paper §8.1):
     under the universal-quantifier reading, Cynthia's credence in
@@ -305,9 +272,12 @@ theorem universalWillWarriorsCapB_correct (w : W) :
     selectional/universal split here is the substantive cognitive-role
     argument from @cite{cariani-santorio-2018} §8.1. -/
 theorem universal_will_credence_zero :
-    cynthiaPMF.probOf universalWillWarriorsCapB = 0 := by
-  unfold FinitePMF.probOf universalWillWarriorsCapB
-  simp
+    cynthiaPMF.probOfSet {w | universalWill warriorsCap histAlt w} = 0 := by
+  have hempty : {w | universalWill warriorsCap histAlt w} = (∅ : Set W) := by
+    ext w
+    simp only [Set.mem_setOf_eq, Set.mem_empty_iff_false, iff_false]
+    exact universalWill_warriorsCap_const_false w
+  rw [hempty, PMF.probOfSet_empty]
 
 -- ============================================================================
 -- §5. The cap-conditional (paper eq. (30), §8.1)
@@ -332,22 +302,30 @@ theorem universal_will_credence_zero :
     conditional uses `willConditional`, which Kratzer-restricts the
     modal parameter. -/
 theorem cap_warriors_credence_one_half :
-    cynthiaPMF.probOf wearsCapB ≠ 0 ∧
-    cynthiaPMF.probOf (fun w => wearsCapB w && warriorsCapB w) /
-        cynthiaPMF.probOf wearsCapB = 1/2 := by
+    cynthiaPMF.probOfSet wearsCap ≠ 0 ∧
+    cynthiaPMF.condProbSet wearsCap warriorsCap = 1/2 := by
+  -- Compute `probOfSet wearsCap = 2/3` once, reuse for both conjuncts.
+  have hwears : cynthiaPMF.probOfSet wearsCap = 2/3 := by
+    rw [PMF.probOfSet_apply, univ_W_eq, Finset.sum_insert (by decide),
+        Finset.sum_insert (by decide), Finset.sum_singleton,
+        if_pos (show (W.cw) ∈ wearsCap by decide),
+        if_pos (show (W.cg) ∈ wearsCap by decide),
+        if_neg (show (W.cn) ∉ wearsCap by decide)]
+    simp only [cynthiaPMF, PMF.ofFintype_apply]
+    ennreal_arith
+  have hinter : cynthiaPMF.probOfSet (wearsCap ∩ warriorsCap) = 1/3 := by
+    rw [PMF.probOfSet_apply, univ_W_eq, Finset.sum_insert (by decide),
+        Finset.sum_insert (by decide), Finset.sum_singleton,
+        if_pos (show (W.cw) ∈ wearsCap ∩ warriorsCap by decide),
+        if_neg (show (W.cg) ∉ wearsCap ∩ warriorsCap by decide),
+        if_neg (show (W.cn) ∉ wearsCap ∩ warriorsCap by decide)]
+    simp only [cynthiaPMF, PMF.ofFintype_apply]
+    ennreal_arith
   refine ⟨?_, ?_⟩
-  · -- prob of wearsCap = 2/3 ≠ 0
-    show cynthiaPMF.probOf wearsCapB ≠ 0
-    unfold FinitePMF.probOf
-    rw [univ_W_eq, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-        Finset.sum_singleton]
-    norm_num [wearsCapB, cynthiaPMF]
-  · -- (1/3) / (2/3) = 1/2
-    unfold FinitePMF.probOf
-    rw [univ_W_eq, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-        Finset.sum_singleton, Finset.sum_insert (by decide),
-        Finset.sum_insert (by decide), Finset.sum_singleton]
-    norm_num [wearsCapB, warriorsCapB, cynthiaPMF]
+  · rw [hwears, ← pos_iff_ne_zero]; ennreal_arith
+  · rw [PMF.condProbSet_eq_div, hwears, hinter]
+    -- (1/3) / (2/3) = 1/2 in ENNReal — `ennreal_arith` lifts to ℝ
+    ennreal_arith
 
 /-- **The morphological identity in action**: the would-conditional
     *if Robin had worn a cap, Robin would have worn a Warriors cap*
@@ -377,24 +355,21 @@ theorem cap_would_eq_will (w : W) :
     account is therefore not undermined by the triviality result on
     this paradigm.
 
-    Proved by exhaustive enumeration over `2³ = 8` Bool-valued
-    predicates. -/
-theorem no_unconditional_one_half :
-    ∀ B : W → Bool, cynthiaPMF.probOf B ≠ 1/2 := by
-  intro B
-  unfold FinitePMF.probOf
-  rw [univ_W_eq, Finset.sum_insert (by decide), Finset.sum_insert (by decide),
-      Finset.sum_singleton]
-  -- Sum is (b_cw * 1/3) + (b_cg * 1/3) + (b_cn * 1/3); the 8 Bool combos
-  -- give probabilities in {0, 1/3, 2/3, 1}, never 1/2.
-  show (if B .cw = true then cynthiaPMF.mass .cw else 0)
-        + ((if B .cg = true then cynthiaPMF.mass .cg else 0)
-            + (if B .cn = true then cynthiaPMF.mass .cn else 0))
-        ≠ 1/2
-  rcases Bool.eq_false_or_eq_true (B .cw) with hcw | hcw <;>
-    rcases Bool.eq_false_or_eq_true (B .cg) with hcg | hcg <;>
-    rcases Bool.eq_false_or_eq_true (B .cn) with hcn | hcn <;>
-    simp [hcw, hcg, hcn, cynthiaPMF] <;> norm_num
+    Proved by exhaustive enumeration over `2³ = 8` decidable subsets. -/
+theorem no_unconditional_one_half (S : Set W) [DecidablePred (· ∈ S)] :
+    cynthiaPMF.probOfSet S ≠ 1/2 := by
+  rw [PMF.probOfSet_apply, univ_W_eq, Finset.sum_insert (by decide),
+      Finset.sum_insert (by decide), Finset.sum_singleton]
+  simp only [cynthiaPMF, PMF.ofFintype_apply]
+  intro heq
+  have h := congrArg ENNReal.toReal heq
+  -- 8 cases: each of cw, cg, cn either in S or not
+  by_cases hcw : (W.cw) ∈ S <;>
+    by_cases hcg : (W.cg) ∈ S <;>
+    by_cases hcn : (W.cn) ∈ S <;>
+    (simp [hcw, hcg, hcn, ENNReal.toReal_add,
+           ENNReal.toReal_ofNat, ENNReal.add_eq_top] at h
+     try norm_num at h)
 
 -- ============================================================================
 -- §11. Morphological preconditions of the C&S analysis (Fragment binding)

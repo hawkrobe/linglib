@@ -38,9 +38,8 @@ argument).
 namespace Semantics.PIP.Bridges
 
 open Semantics.PIP
-open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity)
-open Semantics.Dynamic.IntensionalCDRT (IContext)
-open Core.IntensionalLogic (Refl)
+open Semantics.Dynamic.Core (IVar ICDRTAssignment Entity IContext)
+open Core.IntensionalLogic (IsReflexive)
 open Core.IntensionalLogic.Logic (frameConditions)
 
 
@@ -354,12 +353,12 @@ theorem pip_anaphora_requires_T :
 /--
 A reflexive accessibility relation satisfies Logic.T's frame condition.
 
-Stated for the Prop-valued `AccessRel`/`Refl`/`frameConditions` API in
+Stated for the Prop-valued `AccessRel`/`IsReflexive`/`frameConditions` API in
 `Core.IntensionalLogic`. To apply this to a PIP
 `BAccessRel R`, lift via `liftR R = fun a b => R a b = true`.
 -/
 theorem reflexive_satisfies_T {W : Type*}
-    (R : Core.IntensionalLogic.AccessRel W) (hRefl : Refl R) :
+    (R : Core.IntensionalLogic.AccessRel W) (hRefl : IsReflexive R) :
     frameConditions Core.IntensionalLogic.Logic.T R := by
   unfold frameConditions Core.IntensionalLogic.Logic.hasAxiom
     Core.IntensionalLogic.Logic.T

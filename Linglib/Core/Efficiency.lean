@@ -1,4 +1,4 @@
-import Mathlib.Algebra.Order.Ring.Rat
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!
 # Communicative Efficiency and Pareto Optimality
@@ -29,9 +29,8 @@ namespace Core.Efficiency
     In @cite{kemp-regier-2012}: cost₁ = complexity, cost₂ = informativeness loss.
     In @cite{zaslavsky-kemp-regier-tishby-2018}: cost₁ = I(W;U), cost₂ = D[p||q]. -/
 structure CostPair where
-  cost₁ : ℚ
-  cost₂ : ℚ
-  deriving Repr, DecidableEq
+  cost₁ : ℝ
+  cost₂ : ℝ
 
 /-- Pareto dominance: `a` dominates `b` iff `a` is at least as good on
     both dimensions and strictly better on at least one. -/
@@ -54,26 +53,26 @@ def isParetoOptimal (x : CostPair) (alternatives : List CostPair) : Prop :=
 /-- Weighted cost: linear scalarization of two costs.
     L_β = cost₂ + β · cost₁.
     β = 0 considers only cost₂; large β emphasizes cost₁. -/
-def weightedCost (c : CostPair) (β : ℚ) : ℚ :=
+def weightedCost (c : CostPair) (β : ℝ) : ℝ :=
   c.cost₂ + β * c.cost₁
 
 /-- Efficiency loss at a specific β: deviation from the optimal encoding. -/
-def efficiencyLossAt (attested optimal : CostPair) (β : ℚ) : ℚ :=
+def efficiencyLossAt (attested optimal : CostPair) (β : ℝ) : ℝ :=
   weightedCost attested β - weightedCost optimal β
 
 /-- Overall efficiency loss: minimum deviation across β values.
     ε = min_β (L_β[attested] − L_β[optimal_β])   (Eq. 8, @cite{xu-etal-2024}). -/
-def efficiencyLoss (attested : CostPair) (optimalAt : ℚ → CostPair)
-    (βs : List ℚ) : ℚ :=
+noncomputable def efficiencyLoss (attested : CostPair) (optimalAt : ℝ → CostPair)
+    (βs : List ℝ) : ℝ :=
   match βs.map (fun β => efficiencyLossAt attested (optimalAt β) β) with
   | [] => 0
   | x :: xs => xs.foldl min x
 
-theorem efficiencyLossAt_self (c : CostPair) (β : ℚ) :
+theorem efficiencyLossAt_self (c : CostPair) (β : ℝ) :
     efficiencyLossAt c c β = 0 := by
   simp [efficiencyLossAt]
 
-theorem weightedCost_mono_β (c : CostPair) {β₁ β₂ : ℚ}
+theorem weightedCost_mono_β (c : CostPair) {β₁ β₂ : ℝ}
     (hβ : β₁ ≤ β₂) (hc : 0 ≤ c.cost₁) :
     weightedCost c β₁ ≤ weightedCost c β₂ := by
   exact add_le_add (le_refl _) (mul_le_mul_of_nonneg_right hβ hc)

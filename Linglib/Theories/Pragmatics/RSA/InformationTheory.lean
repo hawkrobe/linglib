@@ -11,9 +11,11 @@ and adds RSA-specific definitions (`RSALevel`).
 
 The ℚ-based RSA evaluation infrastructure (RSAScenarioQ, RSA.Eval, RSA.Q) has been
 removed. This file retains the re-exported information-theoretic definitions
-(entropy, KL divergence, log2Approx) that are used by other modules
-(e.g., ArgumentativeStrength), but all RSAScenarioQ-dependent computations
-and dynamics have been removed.
+(entropy, conditional entropy, mutual information, JSD) that are used by other
+modules (e.g., ArgumentativeStrength), but all RSAScenarioQ-dependent
+computations and dynamics have been removed. The entropy family is real-valued
+and routes through `Real.negMulLog`; `deltaP`/`deltaPCounts` remain ℚ-valued
+(no logarithm).
 
 ## Original Results (To Be Re-derived with RSAConfig)
 
@@ -28,7 +30,7 @@ namespace RSA.InformationTheory
 
 -- Re-export core information-theoretic definitions so that all existing
 -- downstream code using `RSA.InformationTheory.entropy` etc. continues to work.
-export Core.InformationTheory (log2Approx entropy conditionalEntropy mutualInformation
+export Core.InformationTheory (entropy conditionalEntropy mutualInformation
   jsdOf deltaP deltaPCounts)
 
 end RSA.InformationTheory

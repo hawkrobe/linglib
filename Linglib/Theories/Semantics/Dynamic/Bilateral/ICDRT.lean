@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
+import Linglib.Theories.Semantics.Dynamic.Core.Intensional
 
 /-!
 # Bilateral Denotations for ICDRT Contexts
@@ -14,10 +14,11 @@ cannot handle disagreement or modal subordination contexts.
 
 ## Cross-cutting smell: two competing approaches to cross-disjunct anaphora
 
-This file and `IntensionalCDRT/Basic.lean` are two formalizations of the
-same empirical territory — cross-negation and cross-disjunct anaphora
-(the "bathroom sentence" pattern: *Either there's no bathroom, or it's
-upstairs*). They are not stacked extensions; they are competitors.
+This file and `Phenomena/Anaphora/Studies/Hofmann2025.lean` are two
+formalizations of the same empirical territory — cross-negation and
+cross-disjunct anaphora (the "bathroom sentence" pattern: *Either
+there's no bathroom, or it's upstairs*). They are not stacked
+extensions; they are competitors.
 
 | Approach | Mechanism | Solves | Doesn't solve |
 |----------|-----------|--------|---------------|
@@ -33,15 +34,16 @@ if only the basic bathroom pattern matters, the bilateral apparatus
 here suffices.
 
 The empirical comparison is formalized in
-`Dynamic/Comparisons/ICDRT_BUS.lean`, which proves both approaches
-solve the bathroom sentence and identifies the four cases (disagreement,
-modal subordination, three-way veridicality classification, negated
-existential truth conditions) where ICDRT is strictly more expressive.
+`Phenomena/Anaphora/Studies/Hofmann2025.lean §7`, which proves both
+approaches solve the bathroom sentence and identifies the four cases
+(disagreement, modal subordination, three-way veridicality
+classification, negated existential truth conditions) where ICDRT is
+strictly more expressive.
 -/
 
 namespace Semantics.Dynamic.Bilateral.ICDRT
 
-open IntensionalCDRT
+open Semantics.Dynamic.Core
 open Core
 
 

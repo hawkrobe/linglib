@@ -178,12 +178,12 @@ theorem cbc_from_uninformativeness (s : GunlogsonState W) (p : Set W) :
   · -- (rising).addresseeSlate.toContextSet w → s.addresseeSlate.toContextSet w
     intro h q hq
     refine h q ?_
-    show q ∈ List.map _ (⟨p, CommitmentSource.otherGenerated⟩ :: s.addresseeSlate.commitments)
+    show q ∈ List.map _ ((⟨p, CommitmentSource.otherGenerated, .doxastic⟩ : TaggedCommitment _) :: s.addresseeSlate.commitments)
     exact List.mem_cons_of_mem _ hq
   · -- s.addresseeSlate.toContextSet w → (rising).addresseeSlate.toContextSet w
     intro h q hq
     have hq' : q ∈ List.map (·.content)
-        (⟨p, CommitmentSource.otherGenerated⟩ :: s.addresseeSlate.commitments) := hq
+        ((⟨p, CommitmentSource.otherGenerated, .doxastic⟩ : TaggedCommitment _) :: s.addresseeSlate.commitments) := hq
     rw [List.map_cons] at hq'
     rcases List.mem_cons.mp hq' with rfl | hq''
     · exact hcbc w h

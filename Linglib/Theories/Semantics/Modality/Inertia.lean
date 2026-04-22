@@ -1,5 +1,4 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
-import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Inertial Modality @cite{dowty-1979}
@@ -26,7 +25,8 @@ Inertial modality underpins:
 namespace Semantics.Modality.Inertia
 
 open Semantics.Modality.Kratzer
-open Semantics.Attitudes.Intensional
+
+variable {W : Type*}
 
 /-- Inertial modal parameters: circumstantial base + inertial ordering.
 
@@ -37,14 +37,14 @@ open Semantics.Attitudes.Intensional
     In Kratzer's framework, this is a circumstantial modal base paired
     with an ordering source whose propositions describe what holds when
     the current course of events continues normally. -/
-structure InertialParams where
+structure InertialParams (W : Type*) where
   /-- Circumstantial modal base: facts holding at the evaluation world -/
-  circumstances : ModalBase World
+  circumstances : ModalBase W
   /-- Inertial ordering: propositions describing normal continuation -/
-  inertia : OrderingSource World
+  inertia : OrderingSource W
 
 /-- Extract Kratzer parameters from inertial parameters. -/
-def InertialParams.toKratzer (p : InertialParams) : KratzerParams World where
+def InertialParams.toKratzer (p : InertialParams W) : KratzerParams W where
   base := p.circumstances
   ordering := p.inertia
 
@@ -53,24 +53,24 @@ def InertialParams.toKratzer (p : InertialParams) : KratzerParams World where
 
     For intention readings: in all worlds where the experiencer's current
     course of action continues uninterrupted, the intended event obtains. -/
-def inertialNecessity (p : InertialParams) (prop : World → Prop) (w : World) : Prop :=
+def inertialNecessity (p : InertialParams W) (prop : W → Prop) (w : W) : Prop :=
   necessity p.circumstances p.inertia prop w
 
 /-- Inertial possibility: p holds in some best (most inertial) circumstantially
     accessible world. -/
-def inertialPossibility (p : InertialParams) (prop : World → Prop) (w : World) : Prop :=
+def inertialPossibility (p : InertialParams W) (prop : W → Prop) (w : W) : Prop :=
   possibility p.circumstances p.inertia prop w
 
 /-- Inertial modality satisfies modal duality: □p ↔ ¬◇¬p.
     Inherited from `Kratzer.duality` since inertial necessity/possibility
     are `boxR`/`diamondR` over the same Kratzer best-worlds relation. -/
-theorem inertial_duality (p : InertialParams) (prop : World → Prop) (w : World) :
+theorem inertial_duality (p : InertialParams W) (prop : W → Prop) (w : W) :
     inertialNecessity p prop w ↔ ¬ inertialPossibility p (fun w' => ¬ prop w') w :=
   Kratzer.duality p.circumstances p.inertia prop w
 
 /-- With empty inertial ordering, inertial modality reduces to simple
     circumstantial necessity (no preference among accessible worlds). -/
-theorem empty_inertia_is_simple (circ : ModalBase World) (prop : World → Prop) (w : World) :
+theorem empty_inertia_is_simple (circ : ModalBase W) (prop : W → Prop) (w : W) :
     inertialNecessity ⟨circ, emptyBackground⟩ prop w ↔
     simpleNecessity circ prop w := by
   simp only [inertialNecessity, necessity, simpleNecessity,

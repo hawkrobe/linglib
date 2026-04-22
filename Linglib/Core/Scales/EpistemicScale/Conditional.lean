@@ -21,7 +21,7 @@ plausibility:
 | Module | Operation | Mode |
 |--------|-----------|------|
 | `EpistemicScale/Conditional` | `condMu A B` | Bayesian (ratio) |
-| `BayesianSemantics` | `FinitePMF.prob` | Bayesian (marginalization) |
+| `BayesianSemantics` | `PMF.condProbSet` | Bayesian (marginalization) |
 | `Dynamic/Core/Update` | `InfoState.update s φ` | Eliminative |
 | `SDS/MeasureTheory` | (placeholder) | Continuous Bayesian |
 
@@ -239,10 +239,11 @@ def CondMeasure.inducedCondGe {W : Type*} (m : CondMeasure W)
 -- § 6. Conditioning Mode Relationships
 -- ══════════════════════════════════════════════════════════════════════
 
--- **FinitePMF** (BayesianSemantics.lean): `FinitePMF.prob pmf event`
--- computes P(event) = Σ_θ mass(θ) · 1[event(θ)]. Conditioning a
--- FinitePMF on evidence B corresponds to the ratio construction
--- P(A|B) = P(A ∩ B)/P(B), i.e., `(toCondMeasure m).condMu A B`.
+-- **PMF** (BayesianSemantics.lean + `Linglib.Core.Probability.PMFFin`):
+-- `pmf.probOfSet event` computes P(event) = Σ_θ mass(θ) · 1[event(θ)].
+-- Conditioning a `PMF` on evidence B is `pmf.condProbSet B A`, the
+-- ratio construction P(A|B) = P(A ∩ B)/P(B); this is the same construction
+-- as `(toCondMeasure m).condMu A B`.
 --
 -- **InfoState.update** (Dynamic/Core/Update.lean): eliminative
 -- conditioning — each possibility either survives (P = 1) or is

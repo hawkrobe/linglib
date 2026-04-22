@@ -368,8 +368,8 @@ RSA's graded φ emerges from:
 This is exactly Lassiter & Goodman's "threshold + uncertainty = graded".
 -/
 
--- `Pr[φ] = E_i[1_{φ(i)}]` is `Core.FinitePMF.prob` (over a normalized
--- `FinitePMF ι`). Use that rather than re-stipulating a bare-`mass` variant
--- here.
+-- `Pr[φ] = E_i[1_{φ(i)}]` is `PMF.probOfSet` (mathlib `PMF ι` +
+-- `Linglib.Core.Probability.PMFFin`). Use that rather than re-stipulating
+-- a bare-`mass` variant here.
 
 end Semantics.Dynamic.Probabilistic

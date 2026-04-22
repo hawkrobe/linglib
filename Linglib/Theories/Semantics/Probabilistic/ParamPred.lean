@@ -1,6 +1,4 @@
-import Linglib.Core.FinitePMF
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Algebra.BigOperators.Ring.Finset
+import Linglib.Core.Probability.PMFFin
 
 /-!
 # Parameterized Predicates
@@ -22,66 +20,43 @@ uncertainty) recovers Boolean truth — gradience is not stipulated but
 emerges from parameter uncertainty.
 -/
 
-namespace Semantics.Probabilistic.ParamPred
+set_option autoImplicit false
 
-open Core
+namespace Semantics.Probabilistic
+
+open scoped ENNReal
 
 /--
 A parameterized predicate has:
 - A parameter space Θ
 - For each θ, a Boolean predicate on entities
-- A prior distribution over Θ
+- A prior distribution over Θ (mathlib `PMF`, `ℝ≥0∞`-valued)
 
 The graded truth value emerges from marginalizing over Θ.
 -/
 structure ParamPred (E Θ : Type*) [Fintype Θ] where
   semantics : Θ → E → Bool
-  prior : FinitePMF Θ
+  prior : PMF Θ
 
 namespace ParamPred
 
-variable {E Θ : Type*} [Fintype Θ] [DecidableEq Θ]
+variable {E Θ : Type*} [Fintype Θ]
 
-/-- Graded truth value: `P(x) = E_θ[P_θ(x)]`. -/
-def gradedTruth (pred : ParamPred E Θ) (x : E) : ℚ :=
-  pred.prior.prob λ θ => pred.semantics θ x
+/-- Graded truth value: `P(x) = prior {θ | semantics θ x}`. The prior's
+mass on the set of parameter values where the Boolean predicate holds. -/
+noncomputable def gradedTruth (pred : ParamPred E Θ) (x : E) : ℝ≥0∞ :=
+  pred.prior.probOfSet {θ | pred.semantics θ x = true}
 
-/-- For a point mass prior (no uncertainty), graded truth = Boolean truth. -/
+/-- For a point-mass prior (no uncertainty), graded truth = Boolean truth.
+The substantive theorem: gradience emerges from parameter uncertainty,
+not from the predicate itself. -/
 theorem gradedTruth_pure (sem : Θ → E → Bool) (θ₀ : Θ) (x : E) :
-    (ParamPred.mk sem (FinitePMF.pure θ₀)).gradedTruth x =
+    (ParamPred.mk sem (PMF.pure θ₀)).gradedTruth x =
     if sem θ₀ x then 1 else 0 := by
-  simp only [gradedTruth, FinitePMF.prob, FinitePMF.expect_pure]
-
-/-- Graded truth unfolds to expected value of the Boolean indicator. -/
-theorem gradedTruth_eq_expect (sem : Θ → E → Bool) (prior : FinitePMF Θ) (x : E) :
-    (ParamPred.mk sem prior).gradedTruth x =
-    prior.expect (λ θ => if sem θ x then 1 else 0) := rfl
+  show (PMF.pure θ₀).toOuterMeasure {θ | sem θ x = true} = _
+  rw [PMF.toOuterMeasure_pure_apply]
+  simp [Set.mem_setOf_eq]
 
 end ParamPred
 
-/--
-Compose two parameterized predicates via conjunction.
-
-The result has uncertainty over both parameters (product space).
-Under independence, the joint prior is the product of individual priors.
--/
-def ParamPred.conj {E Θ₁ Θ₂ : Type*}
-    [Fintype Θ₁] [Fintype Θ₂] [DecidableEq Θ₁] [DecidableEq Θ₂]
-    (p : ParamPred E Θ₁) (q : ParamPred E Θ₂) : ParamPred E (Θ₁ × Θ₂) where
-  semantics := λ ⟨θ₁, θ₂⟩ x => p.semantics θ₁ x && q.semantics θ₂ x
-  prior := {
-    mass := λ ⟨θ₁, θ₂⟩ => p.prior.mass θ₁ * q.prior.mass θ₂
-    mass_nonneg := λ ⟨θ₁, θ₂⟩ => mul_nonneg (p.prior.mass_nonneg θ₁) (q.prior.mass_nonneg θ₂)
-    mass_sum_one := by
-      simp only [Fintype.sum_prod_type]
-      calc Finset.sum Finset.univ (λ a =>
-             Finset.sum Finset.univ (λ b => p.prior.mass a * q.prior.mass b))
-          = Finset.sum Finset.univ (λ a =>
-              p.prior.mass a * Finset.sum Finset.univ q.prior.mass) := by
-            congr 1; ext a; rw [← Finset.mul_sum]
-        _ = Finset.sum Finset.univ (λ a => p.prior.mass a * 1) := by
-            rw [q.prior.mass_sum_one]
-        _ = 1 := by simp [p.prior.mass_sum_one]
-  }
-
-end Semantics.Probabilistic.ParamPred
+end Semantics.Probabilistic

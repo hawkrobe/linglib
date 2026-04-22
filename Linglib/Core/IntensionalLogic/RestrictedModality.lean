@@ -67,31 +67,31 @@ theorem boxR_K (R : AccessRel W) (p q : W → Prop) (w : W)
 
 /-- **T axiom**: reflexive `R` gives `□_R p w → p w`.
     What is necessary is actual. -/
-theorem boxR_T (R : AccessRel W) (hR : Refl R) (p : W → Prop) (w : W)
+theorem boxR_T (R : AccessRel W) (hR : IsReflexive R) (p : W → Prop) (w : W)
     (h : boxR R p w) : p w :=
   h w (hR w)
 
 /-- **D axiom**: serial `R` gives `□_R p w → ◇_R p w`.
     What is necessary is possible. -/
-theorem boxR_D (R : AccessRel W) (hS : Serial R) (p : W → Prop) (w : W)
+theorem boxR_D (R : AccessRel W) (hS : IsSerial R) (p : W → Prop) (w : W)
     (h : boxR R p w) : diamondR R p w :=
   let ⟨v, hwv⟩ := hS w; ⟨v, hwv, h v hwv⟩
 
 /-- **4 axiom**: transitive `R` gives `□_R p → □_R □_R p`.
     Positive introspection. -/
-theorem boxR_four (R : AccessRel W) (hT : Trans R) (p : W → Prop) (w : W)
+theorem boxR_four (R : AccessRel W) (hT : IsTransitive R) (p : W → Prop) (w : W)
     (h : boxR R p w) : boxR R (boxR R p) w :=
   fun v hwv u hvu => h u (hT w v u hwv hvu)
 
 /-- **B axiom**: symmetric `R` gives `p w → □_R ◇_R p w`.
     What is actual is necessarily possible. -/
-theorem boxR_B (R : AccessRel W) (hS : Symm R) (p : W → Prop) (w : W)
+theorem boxR_B (R : AccessRel W) (hS : IsSymmetric R) (p : W → Prop) (w : W)
     (h : p w) : boxR R (diamondR R p) w :=
   fun v hwv => ⟨w, hS w v hwv, h⟩
 
 /-- **5 axiom**: euclidean `R` gives `◇_R p w → □_R ◇_R p w`.
     Positive possibility introspection. -/
-theorem boxR_five (R : AccessRel W) (hE : Eucl R) (p : W → Prop) (w : W)
+theorem boxR_five (R : AccessRel W) (hE : IsEuclidean R) (p : W → Prop) (w : W)
     (h : diamondR R p w) : boxR R (diamondR R p) w :=
   let ⟨u, hwu, hpu⟩ := h
   fun v hwv => ⟨u, hE w v u hwv hwu, hpu⟩
@@ -162,7 +162,7 @@ theorem diamondR_restrict {R₁ R₂ : AccessRel W}
 /-- With reflexive + euclidean accessibility (= S5 frame conditions),
     `boxR` validates all of T, D, 4, B, 5. -/
 theorem S5_frame_all_axioms (R : AccessRel W)
-    (hR : Refl R) (hE : Eucl R) :
+    (hR : IsReflexive R) (hE : IsEuclidean R) :
     (∀ p w, boxR R p w → p w) ∧                          -- T
     (∀ p w, boxR R p w → diamondR R p w) ∧               -- D
     (∀ p w, boxR R p w → boxR R (boxR R p) w) ∧          -- 4
@@ -338,7 +338,7 @@ theorem indicialNec_emptyR (p : W → Prop) (w : W) :
 /-! Following mathlib conventions: definitions are `Prop`-valued (in `Defs.lean`),
 with `Decidable` instances providing computation. With `[Fintype W]`,
 `[DecidableRel R]`, and `[DecidablePred p]`, formulas like `boxR R p w` and
-`Refl R` reduce by `decide`. -/
+`IsReflexive R` reduce by `decide`. -/
 
 /-- `boxR R p w` is decidable when worlds enumerate, accessibility is decidable,
     and the proposition is decidable. -/
@@ -437,11 +437,11 @@ def hasAxiom (L : Logic) (a : Axiom) : Bool := a ∈ L.axioms
 
 /-- Frame conditions required by a logic. -/
 def frameConditions {W : Type*} (L : Logic) (R : AccessRel W) : Prop :=
-  (L.hasAxiom .M → Refl R) ∧
-  (L.hasAxiom .D → Serial R) ∧
-  (L.hasAxiom .B → Symm R) ∧
-  (L.hasAxiom .four → Trans R) ∧
-  (L.hasAxiom .five → Eucl R)
+  (L.hasAxiom .M → IsReflexive R) ∧
+  (L.hasAxiom .D → IsSerial R) ∧
+  (L.hasAxiom .B → IsSymmetric R) ∧
+  (L.hasAxiom .four → IsTransitive R) ∧
+  (L.hasAxiom .five → IsEuclidean R)
 
 end Logic
 

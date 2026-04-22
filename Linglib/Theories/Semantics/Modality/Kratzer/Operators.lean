@@ -53,7 +53,7 @@ def kratzerBestR (f : ModalBase W) (g : OrderingSource W) : AccessRel W :=
 -- ════════════════════════════════════════════════════════════════
 
 /--
-**Simple f-necessity** (@cite{kratzer-1981} p. 32): p is true at ALL accessible worlds.
+**Simple f-necessity** (@cite{kratzer-1981}): p is true at ALL accessible worlds.
 
 ⟦must⟧_f(p)(w) = ∀w' ∈ ⋂f(w). p(w')
 
@@ -62,7 +62,7 @@ def simpleNecessity (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
   boxR (kratzerR f) p w
 
 /--
-**Simple f-possibility** (@cite{kratzer-1981} p. 32): p is true at SOME accessible world.
+**Simple f-possibility** (@cite{kratzer-1981}): p is true at SOME accessible world.
 
 ⟦can⟧_f(p)(w) = ∃w' ∈ ⋂f(w). p(w')
 
@@ -71,7 +71,7 @@ def simplePossibility (f : ModalBase W) (p : W → Prop) (w : W) : Prop :=
   diamondR (kratzerR f) p w
 
 /--
-**Necessity with ordering** (@cite{kratzer-1981} p. 40): p is true at ALL best worlds.
+**Necessity with ordering** (@cite{kratzer-1981}): p is true at ALL best worlds.
 
 ⟦must⟧_{f,g}(p)(w) = ∀w' ∈ Best(f,g,w). p(w')
 
@@ -148,11 +148,11 @@ the frame conditions aren't stipulated, they follow from what kind of
 conversational background the modal base is.
 
 Frame conditions on `kratzerR` are stated directly via the polymorphic
-`Refl`/`Trans`/`Symm`/`Eucl` predicates from `RestrictedModality`. -/
+`IsReflexive`/`IsTransitive`/`IsSymmetric`/`IsEuclidean` predicates from `RestrictedModality`. -/
 
 /-- A realistic modal base gives reflexive accessibility. -/
 theorem realistic_refl (f : ModalBase W) (hReal : isRealistic f) :
-    Refl (kratzerR f) :=
+    IsReflexive (kratzerR f) :=
   fun w p hp => hReal w p hp
 
 /-- An empty modal base gives universal accessibility. -/
@@ -205,7 +205,7 @@ theorem T_axiom (f : ModalBase W) (p : W → Prop) (w : W)
   boxR_T (kratzerR f) (realistic_refl f hReal) _ w hNec
 
 /--
-**D Axiom**: Serial accessibility → □p → ◇p.
+**D Axiom**: IsSerial accessibility → □p → ◇p.
 
 What is necessary is possible. -/
 theorem D_axiom_simple (f : ModalBase W) (p : W → Prop) (w : W)
@@ -218,7 +218,7 @@ theorem D_axiom_simple (f : ModalBase W) (p : W → Prop) (w : W)
 
 Positive introspection. -/
 theorem four_axiom (f : ModalBase W) (p : W → Prop) (w : W)
-    (hTrans : Trans (kratzerR f))
+    (hTrans : IsTransitive (kratzerR f))
     (hNec : simpleNecessity f p w) :
     simpleNecessity f (fun w' => simpleNecessity f p w') w :=
   boxR_four (kratzerR f) hTrans _ w hNec
@@ -228,7 +228,7 @@ theorem four_axiom (f : ModalBase W) (p : W → Prop) (w : W)
 
 What is actual is necessarily possible. -/
 theorem B_axiom (f : ModalBase W) (p : W → Prop) (w : W)
-    (hSym : Symm (kratzerR f))
+    (hSym : IsSymmetric (kratzerR f))
     (hP : p w) :
     simpleNecessity f (fun w' => simplePossibility f p w') w :=
   boxR_B (kratzerR f) hSym _ w hP
@@ -238,7 +238,7 @@ theorem B_axiom (f : ModalBase W) (p : W → Prop) (w : W)
 
 Positive possibility introspection. -/
 theorem five_axiom (f : ModalBase W) (p : W → Prop) (w : W)
-    (hEuc : Eucl (kratzerR f))
+    (hEuc : IsEuclidean (kratzerR f))
     (hPoss : simplePossibility f p w) :
     simpleNecessity f (fun w' => simplePossibility f p w') w :=
   boxR_five (kratzerR f) hEuc _ w hPoss
@@ -275,28 +275,9 @@ theorem empty_base_universal_access (w : W) :
              List.not_mem_nil, false_implies, forall_const, Set.mem_setOf_eq,
              Set.mem_univ]
 
-theorem euclidean_reflexive_implies_symmetric (f : ModalBase W)
-    (hReal : isRealistic f) (hEuc : isEuclideanAccess f) :
-    isSymmetricAccess f := by
-  intro w w' hw'Acc
-  have hwAcc := realistic_gives_reflexive_access f hReal w
-  exact hEuc w w' w hw'Acc hwAcc
-
-theorem euclidean_reflexive_implies_transitive (f : ModalBase W)
-    (hReal : isRealistic f) (hEuc : isEuclideanAccess f) :
-    isTransitiveAccess f := by
-  intro w w' w'' hw'Acc hw''AccW'
-  have hSym := euclidean_reflexive_implies_symmetric f hReal hEuc
-  have hwAccW' : w ∈ accessibleWorlds f w' := hSym w w' hw'Acc
-  exact hEuc w' w w'' hwAccW' hw''AccW'
-
-theorem S5_satisfies_all (f : ModalBase W) (hS5 : isS5Base f) :
-    isRealistic f ∧ isSymmetricAccess f ∧ isTransitiveAccess f ∧ isEuclideanAccess f := by
-  obtain ⟨hReal, hEuc⟩ := hS5
-  exact ⟨hReal,
-         euclidean_reflexive_implies_symmetric f hReal hEuc,
-         euclidean_reflexive_implies_transitive f hReal hEuc,
-         hEuc⟩
+/-! Frame condition derivations on `kratzerR` (IsReflexive/IsTransitive/IsSymmetric/IsEuclidean from
+the polymorphic foundation) flow through `realistic_refl` etc. above.
+S5 collapse is `RestrictedModality.S5_equiv` applied to `kratzerR f`. -/
 
 theorem realistic_is_serial (f : ModalBase W) (hReal : isRealistic f) (w : W) :
     (accessibleWorlds f w).Nonempty :=
@@ -341,12 +322,10 @@ Conditionals as modal base restrictors.
 def restrictedBase (f : ModalBase W) (antecedent : W → Prop) : ModalBase W :=
   fun w => antecedent :: f w
 
-/-- Material implication. -/
+/-- Pointwise material implication. -/
 def implies (p q : W → Prop) : W → Prop := fun w => p w → q w
 
-def materialImplication (p q : W → Prop) (w : W) : Prop :=
-  implies p q w
-
+/-- Strict implication: `p` entails `q` at every world. -/
 def strictImplication (p q : W → Prop) : Prop :=
   ∀ w : W, p w → q w
 

@@ -45,19 +45,19 @@ def identityR {W : Type*} : AccessRel W := fun w v => w = v
 -- ────────────────────────────────────────────────────────────────
 
 /-- Reflexivity: every world accesses itself. -/
-def Refl {W : Type*} (R : AccessRel W) : Prop := ∀ w, R w w
+def IsReflexive {W : Type*} (R : AccessRel W) : Prop := ∀ w, R w w
 
 /-- Seriality: every world accesses at least one world. -/
-def Serial {W : Type*} (R : AccessRel W) : Prop := ∀ w, ∃ v, R w v
+def IsSerial {W : Type*} (R : AccessRel W) : Prop := ∀ w, ∃ v, R w v
 
 /-- Transitivity. -/
-def Trans {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R v u → R w u
+def IsTransitive {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R v u → R w u
 
 /-- Symmetry. -/
-def Symm {W : Type*} (R : AccessRel W) : Prop := ∀ w v, R w v → R v w
+def IsSymmetric {W : Type*} (R : AccessRel W) : Prop := ∀ w v, R w v → R v w
 
 /-- Euclideanness. -/
-def Eucl {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R w u → R v u
+def IsEuclidean {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R w u → R v u
 
 -- ────────────────────────────────────────────────────────────────
 -- §3 Frame Condition Relationships
@@ -65,43 +65,43 @@ def Eucl {W : Type*} (R : AccessRel W) : Prop := ∀ w v u, R w v → R w u → 
 
 variable {W : Type*}
 
-theorem universalR_refl : Refl (universalR (W := W)) := fun _ => trivial
-theorem universalR_serial : Serial (universalR (W := W)) := fun w => ⟨w, trivial⟩
-theorem universalR_trans : Trans (universalR (W := W)) := fun _ _ _ _ _ => trivial
-theorem universalR_symm : Symm (universalR (W := W)) := fun _ _ _ => trivial
-theorem universalR_eucl : Eucl (universalR (W := W)) := fun _ _ _ _ _ => trivial
+theorem universalR_refl : IsReflexive (universalR (W := W)) := fun _ => trivial
+theorem universalR_serial : IsSerial (universalR (W := W)) := fun w => ⟨w, trivial⟩
+theorem universalR_trans : IsTransitive (universalR (W := W)) := fun _ _ _ _ _ => trivial
+theorem universalR_symm : IsSymmetric (universalR (W := W)) := fun _ _ _ => trivial
+theorem universalR_eucl : IsEuclidean (universalR (W := W)) := fun _ _ _ _ _ => trivial
 
-theorem refl_serial {R : AccessRel W} (h : Refl R) : Serial R :=
+theorem refl_serial {R : AccessRel W} (h : IsReflexive R) : IsSerial R :=
   fun w => ⟨w, h w⟩
 
-theorem refl_eucl_symm {R : AccessRel W} (hR : Refl R) (hE : Eucl R) : Symm R :=
+theorem refl_eucl_symm {R : AccessRel W} (hR : IsReflexive R) (hE : IsEuclidean R) : IsSymmetric R :=
   fun w v hwv => hE w v w hwv (hR w)
 
-theorem refl_eucl_trans {R : AccessRel W} (hR : Refl R) (hE : Eucl R) : Trans R :=
+theorem refl_eucl_trans {R : AccessRel W} (hR : IsReflexive R) (hE : IsEuclidean R) : IsTransitive R :=
   fun w v u hwv hvu => hE v w u (refl_eucl_symm hR hE w v hwv) hvu
 
-theorem symm_trans_eucl {R : AccessRel W} (hS : Symm R) (hT : Trans R) : Eucl R :=
+theorem symm_trans_eucl {R : AccessRel W} (hS : IsSymmetric R) (hT : IsTransitive R) : IsEuclidean R :=
   fun w v u hwv hwu => hT v w u (hS w v hwv) hwu
 
 /-- S5 frames are equivalence relations. -/
-theorem S5_equiv {R : AccessRel W} (hR : Refl R) (hE : Eucl R) :
-    Refl R ∧ Symm R ∧ Trans R :=
+theorem S5_equiv {R : AccessRel W} (hR : IsReflexive R) (hE : IsEuclidean R) :
+    IsReflexive R ∧ IsSymmetric R ∧ IsTransitive R :=
   ⟨hR, refl_eucl_symm hR hE, refl_eucl_trans hR hE⟩
 
 /-- S4 frames are preorders. -/
-theorem S4_preorder {R : AccessRel W} (hR : Refl R) (hT : Trans R) :
-    Refl R ∧ Trans R := ⟨hR, hT⟩
+theorem S4_preorder {R : AccessRel W} (hR : IsReflexive R) (hT : IsTransitive R) :
+    IsReflexive R ∧ IsTransitive R := ⟨hR, hT⟩
 
 /-- M implies D (reflexive implies serial). -/
-theorem M_implies_D {R : AccessRel W} (hM : Refl R) : Serial R :=
+theorem M_implies_D {R : AccessRel W} (hM : IsReflexive R) : IsSerial R :=
   refl_serial hM
 
 /-- M + 5 implies B. -/
-theorem M5_implies_B {R : AccessRel W} (hM : Refl R) (h5 : Eucl R) : Symm R :=
+theorem M5_implies_B {R : AccessRel W} (hM : IsReflexive R) (h5 : IsEuclidean R) : IsSymmetric R :=
   refl_eucl_symm hM h5
 
 /-- M + 5 implies 4. -/
-theorem M5_implies_4 {R : AccessRel W} (hM : Refl R) (h5 : Eucl R) : Trans R :=
+theorem M5_implies_4 {R : AccessRel W} (hM : IsReflexive R) (h5 : IsEuclidean R) : IsTransitive R :=
   refl_eucl_trans hM h5
 
 -- ────────────────────────────────────────────────────────────────

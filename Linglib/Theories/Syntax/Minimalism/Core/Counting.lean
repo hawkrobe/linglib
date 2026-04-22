@@ -46,10 +46,10 @@ def SyntacticObject.internalNodes : SyntacticObject → List SyntacticObject
 theorem internalNodes_length_eq_nodeCount (so : SyntacticObject) :
     so.internalNodes.length = so.nodeCount := by
   induction so with
-  | leaf _ => simp [SyntacticObject.internalNodes, SyntacticObject.nodeCount]
+  | leaf _ => rfl
   | node a b iha ihb =>
     simp [SyntacticObject.internalNodes, SyntacticObject.nodeCount, List.length_cons,
-          List.length_append]
+          List.length_append, iha, ihb]
     omega
 
 /-! ## Leaf multisets (frontier tokens) -/
@@ -62,10 +62,10 @@ def SyntacticObject.leafMultiset : SyntacticObject → List LIToken
 theorem leafMultiset_length_eq_leafCount (so : SyntacticObject) :
     so.leafMultiset.length = so.leafCount := by
   induction so with
-  | leaf _ => simp [SyntacticObject.leafMultiset, SyntacticObject.leafCount]
+  | leaf _ => rfl
   | node a b iha ihb =>
-    simp [SyntacticObject.leafMultiset, SyntacticObject.leafCount, List.length_append]
-    omega
+    simp [SyntacticObject.leafMultiset, SyntacticObject.leafCount, List.length_append,
+          iha, ihb]
 
 /-- Leaf multiset as a `Multiset` — the mathematically correct type
     (frontier token identity is order-independent). -/
@@ -100,19 +100,19 @@ def SyntacticObject.accessibleTermsM (so : SyntacticObject) : Multiset (Multiset
 theorem accessibleTerms_length_eq_nodeCount (so : SyntacticObject) :
     so.accessibleTerms.length = so.nodeCount := by
   induction so with
-  | leaf _ => simp [SyntacticObject.accessibleTerms, SyntacticObject.nodeCount]
+  | leaf _ => rfl
   | node a b iha ihb =>
     simp [SyntacticObject.accessibleTerms, SyntacticObject.nodeCount, List.length_cons,
-          List.length_append]
+          List.length_append, iha, ihb]
     omega
 
 /-- Proper accessible terms length = nodeCount - 1 (Nat subtraction).
     For leaves: 0 = 0. For nodes with n ≥ 1 internal nodes: n - 1. -/
 theorem properAccessibleTerms_length_eq (so : SyntacticObject) :
     so.properAccessibleTerms.length = so.nodeCount - 1 := by
-  cases so with
-  | leaf _ => simp [SyntacticObject.properAccessibleTerms, SyntacticObject.nodeCount]
-  | node a b =>
+  match so with
+  | .leaf _ => simp [SyntacticObject.properAccessibleTerms, SyntacticObject.nodeCount]
+  | .node a b =>
     simp [SyntacticObject.properAccessibleTerms, SyntacticObject.nodeCount,
           List.length_append, accessibleTerms_length_eq_nodeCount]
     omega
@@ -150,7 +150,7 @@ def wsSizeAlt (F : List SyntacticObject) : Nat := b₀ F + numVertices F
 
 /-- Depth of β in α (0 if β = α, +1 per level) -/
 def SyntacticObject.depthOf (α β : SyntacticObject) : Option Nat :=
-  if α == β then some 0
+  if decide (α = β) then some 0
   else match α with
     | .leaf _ => none
     | .node l r =>
@@ -315,9 +315,15 @@ theorem em_b0_decreases (T₁ T₂ : SyntacticObject)
     b₀ (emWorkspace T₁ T₂ F) = b₀ F - 1 := by
   -- merge T₁ T₂ = node T₁ T₂ is strictly larger than T₂ (and T₁)
   have hne_merge₂ : merge T₁ T₂ ≠ T₂ := by
-    intro heq; have := congrArg sizeOf heq; simp [merge] at this
+    intro heq
+    have h : (merge T₁ T₂).nodeCount = T₂.nodeCount := by rw [heq]
+    have hexpand : (merge T₁ T₂).nodeCount = 1 + T₁.nodeCount + T₂.nodeCount := rfl
+    omega
   have hne_merge₁ : merge T₁ T₂ ≠ T₁ := by
-    intro heq; have := congrArg sizeOf heq; simp [merge] at this; omega
+    intro heq
+    have h : (merge T₁ T₂).nodeCount = T₁.nodeCount := by rw [heq]
+    have hexpand : (merge T₁ T₂).nodeCount = 1 + T₁.nodeCount + T₂.nodeCount := rfl
+    omega
   simp only [emWorkspace, b₀]
   -- Unfold the outer filter on the cons cell
   rw [List.filter_cons,
@@ -343,7 +349,10 @@ theorem em_acc_increases (T₁ T₂ : SyntacticObject)
     (hnode₁ : T₁.nodeCount ≥ 1) (hnode₂ : T₂.nodeCount ≥ 1) :
     numAcc (emWorkspace T₁ T₂ F) = numAcc F + 2 := by
   have hne_merge₂ : merge T₁ T₂ ≠ T₂ := by
-    intro heq; have := congrArg sizeOf heq; simp [merge] at this
+    intro heq
+    have h : (merge T₁ T₂).nodeCount = T₂.nodeCount := by rw [heq]
+    have hexpand : (merge T₁ T₂).nodeCount = 1 + T₁.nodeCount + T₂.nodeCount := rfl
+    omega
   simp only [emWorkspace]
   rw [List.filter_cons, if_pos (by simp [bne_iff_ne, hne_merge₂])]
   rw [numAcc_cons]

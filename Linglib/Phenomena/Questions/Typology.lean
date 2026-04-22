@@ -228,32 +228,63 @@ inductive WhMovementStrategy where
 
     @cite{pesetsky-1987} @cite{sato-ngui-2017} @cite{chan-shen-2026} -/
 inductive WhInterpMechanism where
-  | overtMovement       -- successive cyclic movement to Spec-CP (checks [+wh])
-  | covertMovement      -- LF movement to Spec-CP (island-sensitive)
-  | unselectiveBinding  -- Q operator in C binds variable in situ (island-insensitive)
+  /-- Successive cyclic overt movement to matrix Spec-CP. -/
+  | overtMovement
+  /-- Single LF movement to Spec-CP (Huang 1982; Mandarin *daodi*). -/
+  | covertMovement
+  /-- Two-step: overt to intermediate Spec-CP, *then* covert to matrix
+      Spec-CP. This is Singlish partial wh-movement (@cite{sato-ngui-2017}).
+      Distinct from `.covertMovement` because the overt-then-covert
+      derivation has both a Spell-Out landing site and a separate covert
+      step that crosses islands at LF. -/
+  | partialMovement
+  /-- Q operator in C binds variable in situ; no movement (overt or
+      covert). Island-insensitive. -/
+  | unselectiveBinding
   deriving DecidableEq, Repr
 
 /-- Does this mechanism involve the wh-phrase reaching matrix Spec-CP
-    (overtly or covertly)? -/
-def WhInterpMechanism.reachesSpecCP : WhInterpMechanism → Bool
-  | .overtMovement      => true
-  | .covertMovement     => true
-  | .unselectiveBinding => false
+    (overtly or covertly, in one step or two)? -/
+def WhInterpMechanism.ReachesSpecCP : WhInterpMechanism → Prop
+  | .overtMovement      => True
+  | .covertMovement     => True
+  | .partialMovement    => True
+  | .unselectiveBinding => False
 
-/-- Is this mechanism sensitive to syntactic islands? -/
-def WhInterpMechanism.islandSensitive : WhInterpMechanism → Bool
-  | .overtMovement      => true
-  | .covertMovement     => true
-  | .unselectiveBinding => false
+instance (m : WhInterpMechanism) : Decidable m.ReachesSpecCP := by
+  cases m <;> unfold WhInterpMechanism.ReachesSpecCP <;> infer_instance
 
-/-- For all current mechanisms, `reachesSpecCP` and `islandSensitive` return
-    the same value. This is a contingent fact about the current taxonomy, not
+/-- Is this mechanism sensitive to syntactic islands? Partial movement
+    *is* island-sensitive at its covert step (@cite{sato-ngui-2017}: ex 15). -/
+def WhInterpMechanism.IslandSensitive : WhInterpMechanism → Prop
+  | .overtMovement      => True
+  | .covertMovement     => True
+  | .partialMovement    => True
+  | .unselectiveBinding => False
+
+instance (m : WhInterpMechanism) : Decidable m.IslandSensitive := by
+  cases m <;> unfold WhInterpMechanism.IslandSensitive <;> infer_instance
+
+/-- Does this mechanism involve a covert movement step? Distinguishes
+    overt-only from covert/partial. Used by analyses that care about
+    LF-only operations (e.g., island sensitivity diagnostics). -/
+def WhInterpMechanism.HasCovertStep : WhInterpMechanism → Prop
+  | .overtMovement      => False
+  | .covertMovement     => True
+  | .partialMovement    => True
+  | .unselectiveBinding => False
+
+instance (m : WhInterpMechanism) : Decidable m.HasCovertStep := by
+  cases m <;> unfold WhInterpMechanism.HasCovertStep <;> infer_instance
+
+/-- For all current mechanisms, `ReachesSpecCP` and `IslandSensitive`
+    coincide. This is a contingent fact about the current taxonomy, not
     a necessary truth: a future mechanism (e.g., long-distance Agree) could
     be island-sensitive without reaching Spec-CP, or reach Spec-CP without
-    island sensitivity. The functions are kept separate for this reason. -/
-theorem reachesSpecCP_eq_islandSensitive (m : WhInterpMechanism) :
-    m.reachesSpecCP = m.islandSensitive := by
-  cases m <;> rfl
+    island sensitivity. The predicates are kept separate for this reason. -/
+theorem reachesSpecCP_iff_islandSensitive (m : WhInterpMechanism) :
+    m.ReachesSpecCP ↔ m.IslandSensitive := by
+  cases m <;> exact Iff.rfl
 
 /-- WALS Ch 116A: How polar questions are formed. -/
 inductive PolarQuestionStrategy where

@@ -44,7 +44,8 @@ private theorem depthOf_node_of_left {a b β : SyntacticObject} {d : Nat}
     (ha : a.depthOf β = some d) :
     (SyntacticObject.node a b).depthOf β = some (d + 1) := by
   unfold SyntacticObject.depthOf
-  simp [beq_iff_eq, hne, ha]
+  rw [if_neg (by simpa using hne)]
+  simp [ha]
 
 /-- Helper: depthOf succeeds when right child has a match and left doesn't. -/
 private theorem depthOf_node_of_right {a b β : SyntacticObject} {d : Nat}
@@ -53,7 +54,8 @@ private theorem depthOf_node_of_right {a b β : SyntacticObject} {d : Nat}
     (hb : b.depthOf β = some d) :
     (SyntacticObject.node a b).depthOf β = some (d + 1) := by
   unfold SyntacticObject.depthOf
-  simp [beq_iff_eq, hne, ha, hb]
+  rw [if_neg (by simpa using hne)]
+  simp [ha, hb]
 
 /-- `containsOrEq` implies `depthOf` succeeds. -/
 theorem depthOf_some_of_containsOrEq {T β : SyntacticObject}

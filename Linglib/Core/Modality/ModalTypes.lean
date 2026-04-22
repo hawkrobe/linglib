@@ -21,7 +21,8 @@ force-flavor pairs) but conceptually independent.
   `ModalItem`, `ConcordType`, `ModalDecomposition` — linguistic classification
   of modal meanings.
 - **There** (`Core.IntensionalLogic`): `AccessRel`, `kripkeEval`, frame conditions
-  (`Refl`, `Serial`, `Trans`, `Symm`, `Eucl`), correspondence theorems,
+  (`IsReflexive`, `IsSerial`, `IsTransitive`, `IsSymmetric`, `IsEuclidean`),
+  correspondence theorems,
   the lattice of normal modal logics — mathematical semantics.
 -/
 
@@ -43,7 +44,7 @@ namespace Core.Modality
     - @cite{agha-jeretic-2022}: non-quantificational (plural predication).
 
     Weak necessity has no clean dual in this 3-point space: domain refinement
-    weakens ∀ but strengthens ∃ (@cite{agha-jeretic-2026} §2.4). -/
+    weakens ∀ but strengthens ∃ (@cite{agha-jeretic-2026}; UNVERIFIED §2.4). -/
 inductive ModalForce where
   | necessity
   | weakNecessity
@@ -58,10 +59,12 @@ instance : ToString ModalForce where
   toString | .necessity => "□" | .weakNecessity => "□w" | .possibility => "◇"
 
 /-- Classical dual: □ ↔ ◇. Weak necessity maps to possibility as a
-    stipulated default — no theoretically motivated dual for □w exists
-    in this 3-point space (@cite{agha-jeretic-2026} §2.4: "the notion
-    of a possibility counterpart to weak necessity has not received
-    much attention"). -/
+    stipulated default. The literature is unsettled: Yalcin 2016, Lassiter
+    2017, Carr 2024, and arguably von Fintel & Iatridou 2008 themselves
+    discuss candidate weak-necessity duals ("might-as-easily-not", "could",
+    priority *might*). The "no clean dual" claim attributed to
+    @cite{agha-jeretic-2026} (UNVERIFIED §2.4 quote) should be read as
+    "no consensus dual", not as a structural impossibility. -/
 def ModalForce.dual : ModalForce → ModalForce
   | .necessity => .possibility
   | .weakNecessity => .possibility
@@ -149,11 +152,11 @@ instance : LawfulBEq ForceFlavor where
 instance : ToString ForceFlavor where
   toString ff := s!"({ff.force},{ff.flavor})"
 
-/-- All nine points in the modal semantic space. -/
+/-- All twelve points in the modal semantic space (`|ModalForce| × |ModalFlavor| = 3 × 4`). -/
 def ForceFlavor.universe : List ForceFlavor :=
   ModalForce.all.flatMap fun fo => ModalFlavor.all.map fun fl => ⟨fo, fl⟩
 
-theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 12 := by native_decide
+theorem ForceFlavor.universe_length : ForceFlavor.universe.length = 12 := by decide
 
 /-- The Cartesian product of forces and flavors. Infrastructure for constructing
     modal meanings; no theoretical commitment (just list operations). -/
@@ -251,7 +254,7 @@ def ModalFeature.checks (checker checked : ModalFeature) : Bool :=
 
 /-- Negation flips the relevant modal force for concord purposes.
 
-    @cite{ciardelli-guerrini-2026} §4.2: modal concord across negation
+    @cite{ciardelli-guerrini-2026} (UNVERIFIED §4.2): modal concord across negation
     requires opposite forces — ALLOW[i∃](¬NEED[u∀]) is well-formed because
     ¬∀ = ∃, but *DEMAND[i∀](¬NEED[u∀]) is ill-formed (same force).
 
@@ -306,13 +309,13 @@ def ModalItem.isUnitary (m : ModalItem) : Bool :=
     one force-flavor pair always satisfies IFF. -/
 theorem singleton_decomposable (ff : ForceFlavor) :
     (({ form := "m", meaning := [ff] } : ModalItem)).isUnitary = false := by
-  cases ff with | mk f fl => cases f <;> cases fl <;> native_decide
+  cases ff with | mk f fl => cases f <;> cases fl <;> decide
 
 /-- A non-IFF meaning is unitary: necessity-epistemic + possibility-deontic
     without the cross-product pairs. -/
 theorem cross_cutting_is_unitary :
     (({ form := "m", meaning := [⟨.necessity, .epistemic⟩, ⟨.possibility, .deontic⟩] } : ModalItem)).isUnitary = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §8. Projection Modes (Kratzer 2012)
@@ -330,7 +333,7 @@ theorem cross_cutting_is_unitary :
       sensory evidence). The actual world need not be accessible — the
       speaker can disbelieve the content.
 
-    @cite{matthewson-2016}: Table 18.2.
+    @cite{matthewson-2016} (UNVERIFIED Table 18.2 reference).
 
     The old circumstantial class is entirely factual. The old epistemic
     class splits: factual epistemics (inferential, based on situation
@@ -345,7 +348,7 @@ instance : ToString ProjectionMode where
   toString | .factual => "factual" | .content => "content"
 
 /-- Three-way classification of conversational backgrounds.
-    @cite{matthewson-2016}: Table 18.3. Refines the traditional
+    @cite{matthewson-2016} (UNVERIFIED Table 18.3 reference). Refines the traditional
     epistemic/circumstantial binary into a three-way split based on
     projection mode and whether information source is encoded.
 
@@ -453,7 +456,7 @@ instance : DecidablePred ForceAnalysis.AdmitsPossibility :=
   fun _ => inferInstanceAs (Decidable (_ ∨ _))
 
 /-- Whether the modal has a lexical dual (contrasting force partner).
-    @cite{matthewson-2016} §18.3.2: modals without duals do not come
+    @cite{matthewson-2016} (UNVERIFIED §18.3.2): modals without duals do not come
     in necessity–possibility pairs. -/
 def ForceAnalysis.HasDual : ForceAnalysis → Prop
   | .fixed _ => True        -- presumes a dual exists in the language

@@ -44,13 +44,13 @@ def isMaximalProjectionIn (root so : SyntacticObject) : Bool :=
   -- contains it as a head (left daughter in our convention).
   -- Approximation: so is maximal if every parent of so in root
   -- contains so as a non-head daughter (right), or so is the root.
-  so == root ||
+  decide (so = root) ||
   root.subtrees.all λ parent =>
     match parent with
     | .node a b =>
-      if b == so then true       -- so is specifier/complement (right daughter) → maximal
-      else if a == so then false  -- so is head (left daughter) → not maximal
-      else true                   -- parent doesn't contain so
+      if decide (b = so) then true       -- so is specifier/complement (right) → maximal
+      else if decide (a = so) then false  -- so is head (left daughter) → not maximal
+      else true                           -- parent doesn't contain so
     | .leaf _ => true
 
 -- ============================================================================
@@ -75,7 +75,7 @@ def dominatesB (α β : SyntacticObject) : Bool :=
     that contains β, while m-command only requires that all maximal
     projections above α are also above β. -/
 def mCommandsB (root α β : SyntacticObject) : Bool :=
-  α != β &&
+  decide (α ≠ β) &&
   root.subtrees.all λ γ =>
     !(isMaximalProjectionIn root γ && dominatesB γ α && !dominatesB γ β)
 

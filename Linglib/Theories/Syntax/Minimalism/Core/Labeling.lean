@@ -200,7 +200,7 @@ def projectsIn (x y : SyntacticObject) : Prop :=
 def projectsInB (x y : SyntacticObject) : Bool :=
   match y with
   | .leaf _ => false
-  | .node a b => (x == a || x == b) && sameLabelB x y
+  | .node a b => (decide (x = a) || decide (x = b)) && sameLabelB x y
 
 instance (x y : SyntacticObject) : Decidable (projectsIn x y) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -434,7 +434,7 @@ def isSpecifierAtPosition (x root : SyntacticObject) (pos : TreePos) : Prop :=
 /-- Find positions where x occurs in root -/
 def findPositions (x root : SyntacticObject) : List TreePos :=
   let rec go (so : SyntacticObject) (pos : TreePos) (acc : List TreePos) : List TreePos :=
-    let acc' := if so == x then pos :: acc else acc
+    let acc' := if decide (so = x) then pos :: acc else acc
     match so with
     | .leaf _ => acc'
     | .node a b => go b (.right pos) (go a (.left pos) acc')

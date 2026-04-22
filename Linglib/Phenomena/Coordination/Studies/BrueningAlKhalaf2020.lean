@@ -460,8 +460,12 @@ theorem structural_requires_asymmetric :
     always structurally distinguished from the second. -/
 theorem merge_distinguishes_children
     (x y : Minimalism.SyntacticObject) (h : x ≠ y) :
-    Minimalism.merge x y ≠ Minimalism.merge y x :=
-  fun heq => h (Minimalism.SyntacticObject.node.inj heq).1
+    Minimalism.merge x y ≠ Minimalism.merge y x := by
+  intro heq
+  apply h
+  show x = y
+  unfold Minimalism.merge at heq
+  injection heq
 
 /-- Merge's asymmetry satisfies structural percolation's presupposition. -/
 theorem merge_satisfies_structural_presupposition :

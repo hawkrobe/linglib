@@ -118,9 +118,9 @@ theorem probAnswersS_when_entailing {W : Type*} [Fintype W] [DecidableEq W]
 
 /-- Evidence is positive iff `condProbSet evidence conclusion > probOfSet conclusion`.
 
-(In the prior `Core.FinitePMF` formulation this was the sign of an
-`evidentialBoostS` subtraction; ENNReal subtraction truncates at zero, so
-the positive-evidence predicate is now phrased as a direct comparison.) -/
+ENNReal subtraction truncates at zero, so the positive-evidence predicate
+is phrased as a direct comparison rather than a sign-of-subtraction
+predicate. -/
 noncomputable def isPositiveEvidenceS {W : Type*} [Fintype W]
     (evidence conclusion : Set W) (prior : Prior W)
     [DecidablePred (· ∈ evidence)] [DecidablePred (· ∈ conclusion)] : Prop :=

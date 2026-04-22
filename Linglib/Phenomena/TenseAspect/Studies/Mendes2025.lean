@@ -805,7 +805,7 @@ veridicality-based accessibility for individual drefs:
 - **Situation level** (this file, @cite{mendes-2025}): `dynIND`
   retrieves `s₁` via `s₂.world = s₁.world`. Governs cross-clausal
   situation binding (modal donkey anaphora).
-- **Propositional dref level** (`IntensionalCDRT/Operators.lean`,
+- **Propositional dref level** (`Phenomena/Anaphora/Studies/Hofmann2025.lean`,
   @cite{hofmann-2025}): a dref is accessible iff it has a referent in
   all worlds of the local context, plus a discourse-consistency
   condition. Governs individual dref accessibility across negation,

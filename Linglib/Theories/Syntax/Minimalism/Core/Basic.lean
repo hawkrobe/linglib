@@ -1,10 +1,21 @@
 /-
 # Syntactic Objects and Containment
-@cite{chomsky-2013}
+@cite{chomsky-2013} @cite{marcolli-chomsky-berwick-2025}
 
 Foundation module for the Minimalist Program formalization.
 
 ## Syntactic Objects
+
+`SyntacticObject` is `FreeMagma LIToken`: bare phrase structure as the
+free magma over lexical-item tokens, following @cite{marcolli-chomsky-berwick-2025}.
+The two constructors are `FreeMagma.of` (lexical leaves) and
+`FreeMagma.mul` (binary Merge). The shims `SyntacticObject.leaf` /
+`SyntacticObject.node` rename them at the linguistic interface.
+
+The Y-model branches by *map*, not by *type*: PF lives natively on
+`SyntacticObject` via `linearize`/`phonYield`; the LF lift to
+`Tree Unit String` lives in `SpellOut.lean` (`SyntacticObject.toLFTree`),
+which handles trace detection and phonForm extraction.
 
 - `SimpleLI`, `LexicalItem`, `LIToken`, `SyntacticObject`
 - `merge`, `externalMerge`, `internalMerge`
@@ -18,6 +29,7 @@ Foundation module for the Minimalist Program formalization.
 -/
 
 import Mathlib.Data.Set.Basic
+import Mathlib.Algebra.Free
 import Linglib.Core.Lexical.UD
 import Linglib.Core.Tree
 import Linglib.Theories.Syntax.Minimalism.Core.Cat
@@ -86,62 +98,71 @@ instance : DecidableEq LIToken := λ a b =>
   else
     isFalse (by intro heq; cases heq; exact hid rfl)
 
-/-- Syntactic object: LI token or binary set of two SOs (Definition 11).
+/-- Syntactic object (Definition 11): the free magma over `LIToken`.
 
-Implemented as the framework-neutral `Core.Tree.Tree Unit LIToken`. The
-unit category parameter reflects that Minimalism does not label internal
-nodes with categories at this layer (projection is handled separately).
-The four `Tree` constructors are: `terminal` (leaves), `node` (internal),
-`trace` and `bind` (used by movement; currently unreachable for objects
-built via `merge`/`mkLeaf`/`mkLeafPhon`/`mkTrace`). -/
-abbrev SyntacticObject := Core.Tree.Tree Unit LIToken
+Following @cite{marcolli-chomsky-berwick-2025}, bare phrase structure
+*is* `FreeMagma LIToken`. The two constructors are:
+
+- `.of tok` — a lexical leaf (aliased as `SyntacticObject.leaf tok`)
+- `.mul a b` — binary Merge (aliased as `SyntacticObject.node a b`,
+  also written `a * b` via the inherited `Mul` instance)
+
+Traces and binders, when needed by LF composition, are recovered via
+`SyntacticObject.toLFTree : SyntacticObject → Core.Tree.Tree Unit LIToken`. -/
+abbrev SyntacticObject := FreeMagma LIToken
 
 namespace SyntacticObject
 
-/-- Leaf shim: `SyntacticObject.leaf tok ≡ Tree.terminal () tok`. -/
+/-- Leaf shim: `SyntacticObject.leaf tok ≡ FreeMagma.of tok`. -/
 @[match_pattern] abbrev leaf (tok : LIToken) : SyntacticObject :=
-  Core.Tree.Tree.terminal () tok
+  FreeMagma.of tok
 
-/-- Binary-node shim: `SyntacticObject.node l r ≡ Tree.node () [l, r]`. -/
+/-- Binary-node shim: `SyntacticObject.node l r ≡ FreeMagma.mul l r`
+    (definitionally equal to `l * r`). -/
 @[match_pattern] abbrev node (l r : SyntacticObject) : SyntacticObject :=
-  Core.Tree.Tree.node () (l :: r :: [])
+  FreeMagma.mul l r
+
+/-- Custom recursor with linguistic case names so consumers can write
+    `induction so with | leaf tok => ... | node a b iha ihb => ...`
+    instead of `FreeMagma`'s `of`/`mul` jargon. Marked
+    `induction_eliminator` so `induction`/`cases` pick it up by default. -/
+@[elab_as_elim, induction_eliminator, cases_eliminator]
+def rec' {motive : SyntacticObject → Sort*}
+    (leaf : ∀ tok, motive (.leaf tok))
+    (node : ∀ a b, motive a → motive b → motive (.node a b))
+    (so : SyntacticObject) : motive so :=
+  FreeMagma.recOnMul so leaf node
 
 def isLeaf : SyntacticObject → Prop
-  | Core.Tree.Tree.terminal _ _ => True
-  | _ => False
+  | .leaf _ => True
+  | .node _ _ => False
 
 instance : DecidablePred isLeaf := fun so =>
   match so with
-  | Core.Tree.Tree.terminal _ _ => isTrue trivial
-  | Core.Tree.Tree.node _ _ => isFalse id
-  | Core.Tree.Tree.trace _ _ => isFalse id
-  | Core.Tree.Tree.bind _ _ _ => isFalse id
+  | .leaf _ => isTrue trivial
+  | .node _ _ => isFalse id
 
 def isNode : SyntacticObject → Prop
-  | Core.Tree.Tree.node _ [_, _] => True
-  | _ => False
+  | .leaf _ => False
+  | .node _ _ => True
 
 instance : DecidablePred isNode := fun so =>
   match so with
-  | Core.Tree.Tree.terminal _ _ => isFalse id
-  | Core.Tree.Tree.node _ [] => isFalse id
-  | Core.Tree.Tree.node _ [_] => isFalse id
-  | Core.Tree.Tree.node _ [_, _] => isTrue trivial
-  | Core.Tree.Tree.node _ (_ :: _ :: _ :: _) => isFalse id
-  | Core.Tree.Tree.trace _ _ => isFalse id
-  | Core.Tree.Tree.bind _ _ _ => isFalse id
+  | .leaf _ => isFalse id
+  | .node _ _ => isTrue trivial
 
 def getLIToken : SyntacticObject → Option LIToken
   | .leaf tok => some tok
-  | _ => none
+  | .node _ _ => none
 
 def getConstituents : SyntacticObject → Option (SyntacticObject × SyntacticObject)
+  | .leaf _ => none
   | .node a b => some (a, b)
-  | _ => none
 
 end SyntacticObject
 
-/-- Merge: the fundamental structure-building operation (Definition 12) -/
+/-- Merge: the fundamental structure-building operation (Definition 12).
+    Equal to `FreeMagma.mul` and to `(· * ·)`. -/
 def merge (x y : SyntacticObject) : SyntacticObject :=
   .node x y
 
@@ -184,14 +205,12 @@ def SyntacticObject.phonYield : SyntacticObject → List String
     let phon := tok.item.features.head?.map (·.phonForm) |>.getD ""
     if phon.isEmpty then [] else [phon]
   | .node a b => a.phonYield ++ b.phonYield
-  | _ => []
 
 /-- Linearize a `SyntacticObject` by collecting leaf `LIToken`s in
     left-to-right traversal order. -/
 def linearize : SyntacticObject → List LIToken
   | .leaf tok => [tok]
   | .node l r => linearize l ++ linearize r
-  | _ => []
 
 /-- Extract the phonological form from an LIToken. -/
 def LIToken.phonForm (tok : LIToken) : String :=
@@ -220,7 +239,7 @@ def mkTrace (index : Nat) : SyntacticObject :=
     Returns the trace index if so. -/
 def isTrace : SyntacticObject → Option Nat
   | .leaf tok => if tok.id ≥ 10000 then some (tok.id - 10000) else none
-  | _ => none
+  | .node _ _ => none
 
 def exampleVerb : SyntacticObject := mkLeaf .V [.D] 1
 
@@ -232,19 +251,17 @@ def exampleDet : SyntacticObject := mkLeaf .D [.N] 3
 def SyntacticObject.nodeCount : SyntacticObject → Nat
   | .leaf _ => 0
   | .node a b => 1 + a.nodeCount + b.nodeCount
-  | _ => 0
 
 def SyntacticObject.leafCount : SyntacticObject → Nat
   | .leaf _ => 1
   | .node a b => a.leafCount + b.leafCount
-  | _ => 0
+
 theorem leaf_node_relation (so : SyntacticObject) :
     so.leafCount = so.nodeCount + 1 := by
   induction so with
-  | leaf _ => simp [SyntacticObject.leafCount, SyntacticObject.nodeCount]
+  | leaf _ => rfl
   | node a b iha ihb =>
-    simp [SyntacticObject.leafCount, SyntacticObject.nodeCount]
-    omega
+    simp only [SyntacticObject.leafCount, SyntacticObject.nodeCount, iha, ihb]; omega
 
 -- ============================================================================
 -- Subterm Enumeration
@@ -254,13 +271,11 @@ theorem leaf_node_relation (so : SyntacticObject) :
 def SyntacticObject.subtrees : SyntacticObject → List SyntacticObject
   | so@(.leaf _) => [so]
   | so@(.node l r) => so :: (l.subtrees ++ r.subtrees)
-  | so => [so]
 
 /-- The terminal (leaf) nodes of a `SyntacticObject`. -/
 def terminalNodes : SyntacticObject → List SyntacticObject
   | so@(.leaf _) => [so]
   | .node l r => terminalNodes l ++ terminalNodes r
-  | _ => []
 
 /-- Every terminal node is a leaf. -/
 theorem terminalNodes_are_leaves {so t : SyntacticObject}
@@ -290,7 +305,7 @@ theorem terminalNodes_sub_subtrees {so t : SyntacticObject}
 /-- The root is always in its own subtrees. -/
 theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
   cases so with
-  | leaf _ => exact List.mem_cons.mpr (Or.inl rfl)
+  | leaf _ => exact List.mem_singleton.mpr rfl
   | node _ _ => exact List.mem_cons.mpr (Or.inl rfl)
 
 -- ============================================================================
@@ -307,29 +322,16 @@ theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
     two immediate daughters of X. -/
 def immediatelyContains (x y : SyntacticObject) : Prop :=
   match x with
+  | .leaf _ => False
   | .node a b => y = a ∨ y = b
-  | _ => False
 
 /-- Decidable immediate containment -/
 instance decImmediatelyContains (x y : SyntacticObject) :
     Decidable (immediatelyContains x y) := by
   unfold immediatelyContains
-  cases x with
-  | leaf _ => exact isFalse (λ h => h)
-  | node a b =>
-    cases h1 : decide (y = a) with
-    | true =>
-      simp at h1
-      exact isTrue (Or.inl h1)
-    | false =>
-      simp at h1
-      cases h2 : decide (y = b) with
-      | true =>
-        simp at h2
-        exact isTrue (Or.inr h2)
-      | false =>
-        simp at h2
-        exact isFalse (λ h => h.elim h1 h2)
+  match x with
+  | .leaf _ => exact isFalse id
+  | .node a b => exact inferInstanceAs (Decidable (y = a ∨ y = b))
 
 -- Part 2: Containment / Dominance (Definition 14)
 
@@ -374,14 +376,14 @@ theorem leaf_contains_nothing (tok : LIToken) (y : SyntacticObject) :
 /-- Immediate containment strictly decreases nodeCount -/
 theorem immediatelyContains_lt_nodeCount {x y : SyntacticObject}
     (h : immediatelyContains x y) : y.nodeCount < x.nodeCount := by
-  cases x with
-  | leaf _ => simp [immediatelyContains] at h
-  | node a b =>
+  match x, h with
+  | .node a b, h =>
     simp only [immediatelyContains] at h
     simp only [SyntacticObject.nodeCount]
     rcases h with rfl | rfl
     · omega
     · omega
+  | .leaf _, h => exact h.elim
 
 /-- Containment strictly decreases nodeCount -/
 theorem contains_lt_nodeCount {x y : SyntacticObject}
@@ -403,8 +405,8 @@ theorem contains_irrefl (x : SyntacticObject) : ¬contains x x := by
 
 /-- Boolean containment check: does `x` (strictly) contain `y`? -/
 def containsB : SyntacticObject → SyntacticObject → Bool
-  | .node a b, y => a == y || b == y || containsB a y || containsB b y
-  | _, _ => false
+  | .leaf _, _ => false
+  | .node a b, y => decide (a = y) || decide (b = y) || containsB a y || containsB b y
 
 /-- `containsB` implies `contains`. -/
 theorem containsB_implies_contains {x y : SyntacticObject}
@@ -412,7 +414,7 @@ theorem containsB_implies_contains {x y : SyntacticObject}
   induction x with
   | leaf _ => simp [containsB] at h
   | node a b iha ihb =>
-    simp only [containsB, Bool.or_eq_true, beq_iff_eq] at h
+    simp only [containsB, Bool.or_eq_true, decide_eq_true_eq] at h
     rcases h with ((rfl | rfl) | ha) | hb
     · exact contains.imm _ _ (Or.inl rfl)
     · exact contains.imm _ _ (Or.inr rfl)
@@ -424,21 +426,21 @@ theorem contains_implies_containsB {x y : SyntacticObject}
     (h : contains x y) : containsB x y = true := by
   induction h with
   | imm x y himm =>
-    cases x with
-    | leaf _ => exact absurd himm id
-    | node a b =>
-      simp only [containsB, Bool.or_eq_true, beq_iff_eq]
+    match x, himm with
+    | .node a b, himm =>
+      simp only [containsB, Bool.or_eq_true, decide_eq_true_eq]
       rcases himm with rfl | rfl
       · exact Or.inl (Or.inl (Or.inl rfl))
       · exact Or.inl (Or.inl (Or.inr rfl))
+    | .leaf _, himm => exact himm.elim
   | trans x _ z himm _ ih =>
-    cases x with
-    | leaf _ => exact absurd himm id
-    | node a b =>
-      simp only [containsB, Bool.or_eq_true, beq_iff_eq]
+    match x, himm with
+    | .node a b, himm =>
+      simp only [containsB, Bool.or_eq_true, decide_eq_true_eq]
       rcases himm with rfl | rfl
       · exact Or.inl (Or.inr ih)
       · exact Or.inr ih
+    | .leaf _, himm => exact himm.elim
 
 /-- Boolean and propositional containment are equivalent. -/
 theorem containsB_iff {x y : SyntacticObject} :
@@ -518,10 +520,10 @@ def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
 def cCommandsInB (root x y : SyntacticObject) : Bool :=
   root.subtrees.any λ parent =>
     match parent with
+    | .leaf _ => false
     | .node a b =>
-      (a == x && x != y && (b == y || containsB b y)) ||
-      (b == x && x != y && (a == y || containsB a y))
-    | _ => false
+      (decide (a = x) && decide (x ≠ y) && (decide (b = y) || containsB b y)) ||
+      (decide (b = x) && decide (x ≠ y) && (decide (a = y) || containsB a y))
 
 /-! ## Tree Shape — abstract geometry ignoring terminal labels -/
 
@@ -537,11 +539,18 @@ inductive TreeShape where
 def SyntacticObject.shape : SyntacticObject → TreeShape
   | .leaf _ => .leaf
   | .node l r => .node l.shape r.shape
-  | _ => .leaf
 
 /-- Two syntactic objects are structurally isomorphic iff they have
     the same tree shape (ignoring all terminal labels). -/
 def structurallyIsomorphic (x y : SyntacticObject) : Bool :=
   x.shape == y.shape
+
+/-! ## Y-model branch to LF
+
+The LF lift `SyntacticObject.toLFTree : SyntacticObject → Tree Unit String`
+lives in `Theories/Syntax/Minimalism/SpellOut.lean`, where trace
+detection and phonForm extraction are handled. PF (linearize /
+phonYield) operates natively on `SyntacticObject` and does not require
+a lift. -/
 
 end Minimalism

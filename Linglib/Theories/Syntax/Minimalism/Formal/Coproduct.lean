@@ -70,9 +70,16 @@ private theorem quotientTree_some_of_containsOrEq (T v : SyntacticObject)
     · exact absurd hc (leaf_contains_nothing tok v)
   | node a b iha ihb =>
     by_cases heq : SyntacticObject.node a b = v
-    · exact ⟨.leaf quotientLeafToken, by simp [quotientTree, beq_iff_eq, heq]⟩
+    · refine ⟨.leaf quotientLeafToken, ?_⟩
+      subst heq
+      unfold quotientTree
+      simp
     · -- T ≠ v, so the if-then-else falls through
-      simp only [quotientTree, beq_iff_eq, heq, ite_false]
+      have hbeq : ((SyntacticObject.node a b) == v) = false := by
+        rw [beq_eq_false_iff_ne]; exact heq
+      unfold quotientTree
+      rw [hbeq]
+      simp only [Bool.false_eq_true, ↓reduceIte]
       -- From containsOrEq and T ≠ v, we get contains T v
       have hc : contains (.node a b) v := by
         rcases h with rfl | hc
@@ -316,7 +323,10 @@ connecting them to the coproduct structure. -/
 
 /-- merge(T₁, T₂) = node T₁ T₂ is strictly larger than T₂ -/
 private theorem merge_ne_right (T₁ T₂ : SyntacticObject) : merge T₁ T₂ ≠ T₂ := by
-  intro heq; have := congrArg sizeOf heq; simp [merge] at this
+  intro heq
+  have h : (merge T₁ T₂).nodeCount = T₂.nodeCount := by rw [heq]
+  have hexpand : (merge T₁ T₂).nodeCount = 1 + T₁.nodeCount + T₂.nodeCount := rfl
+  omega
 
 /-- External Merge on workspaces produces a workspace containing merge(T₁, T₂) -/
 theorem em_contains_merge (T₁ T₂ : SyntacticObject)

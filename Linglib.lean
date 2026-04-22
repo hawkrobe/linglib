@@ -249,11 +249,11 @@ import Linglib.Core.Number
 import Linglib.Core.CoreConcept
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal
+import Linglib.Core.Lexical.ExpressiveModifier
 import Linglib.Core.Efficiency
 import Linglib.Core.SearchEfficiency
 import Linglib.Core.InformationTheory
 import Linglib.Core.Distributions
-import Linglib.Core.FinitePMF
 import Linglib.Core.Probability.PMFFin
 import Linglib.Core.Divergence
 import Linglib.Core.ChannelCapacity
@@ -492,6 +492,7 @@ import Linglib.Tactics.ENNRealArith
 -- Paradigms (contract layer between Theories/ and Phenomena/Studies/)
 import Linglib.Paradigms.VisualWorld
 import Linglib.Paradigms.WugTest
+import Linglib.Paradigms.AcceptabilityJudgment
 -- Fragments
 import Linglib.Fragments.Arabic.Relativization
 import Linglib.Fragments.Arabic.Morph
@@ -607,6 +608,7 @@ import Linglib.Fragments.Hebrew.Relativization
 import Linglib.Fragments.Hebrew.ConsonantalRoots
 import Linglib.Fragments.Amharic.ConsonantalRoots
 import Linglib.Fragments.HindiUrdu.Particles
+import Linglib.Fragments.Marathi.Particles
 import Linglib.Fragments.Urdu.CausativeSystem
 import Linglib.Fragments.Thai.Definiteness
 import Linglib.Fragments.Thai.Morph
@@ -992,6 +994,7 @@ import Linglib.Phenomena.Conditionals.Studies.Belnap1970
 import Linglib.Phenomena.Conditionals.Studies.McKayVanInwagen1977
 import Linglib.Phenomena.Conditionals.Studies.Stalnaker1981
 import Linglib.Phenomena.Conditionals.Studies.Stalnaker1975
+import Linglib.Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
@@ -1632,6 +1635,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
 import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
 import Linglib.Theories.Semantics.Dynamic.Core.DynProp
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
+import Linglib.Theories.Semantics.Dynamic.Core.Intensional
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
@@ -1664,10 +1668,6 @@ import Linglib.Theories.Semantics.Dynamic.DynamicGQ.UpdateTheoretic
 import Linglib.Theories.Semantics.Dynamic.DynamicGQ.HigherOrder
 import Linglib.Theories.Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
 import Linglib.Theories.Semantics.Dynamic.DynamicGQ.PostSuppositional
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Bridge
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Compositional
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Operators
 import Linglib.Theories.Semantics.PIP.Basic
 import Linglib.Theories.Semantics.PIP.Bridges
 import Linglib.Theories.Semantics.PIP.Composition
@@ -1684,7 +1684,6 @@ import Linglib.Theories.Semantics.Dynamic.PLA.Semantics
 import Linglib.Theories.Semantics.Dynamic.PLA.Update
 -- Theories: Dynamic Semantics — Comparisons & top-level
 import Linglib.Theories.Semantics.Dynamic.Comparisons.CDRT_TTR
-import Linglib.Theories.Semantics.Dynamic.Comparisons.ICDRT_BUS
 import Linglib.Theories.Semantics.Dynamic.Comparisons.PLA_BUS
 -- Theories: Decision-Theoretic Semantics (Merin 1999)
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
@@ -1736,6 +1735,7 @@ import Linglib.Theories.Syntax.HPSG.Inversion
 import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 -- Theories: Minimalism
 import Linglib.Theories.Syntax.Minimalism.Core.Features
+import Linglib.Theories.Syntax.Minimalism.Core.ANDL
 import Linglib.Theories.Syntax.Minimalism.Core.Checking
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.Probe
@@ -1764,6 +1764,7 @@ import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.Politeness.Studies.AlokBhalla2026
 import Linglib.Phenomena.Politeness.Studies.Wang2023
 import Linglib.Phenomena.SentenceMood.Studies.Gutzmann2015
+import Linglib.Phenomena.SentenceMood.Studies.Deo2025
 import Linglib.Phenomena.SocialMeaning.ING
 import Linglib.Phenomena.SocialMeaning.Studies.Burnett2019
 import Linglib.Phenomena.SocialMeaning.Studies.Eckert2008
@@ -2043,6 +2044,7 @@ import Linglib.Theories.Semantics.Attitudes.PreExistence
 import Linglib.Theories.Semantics.Attitudes.EpistemicThreshold
 import Linglib.Theories.Semantics.Attitudes.RationalAttitude
 import Linglib.Theories.Semantics.Attitudes.Representationality
+import Linglib.Theories.Semantics.Attitudes.CondoravdiLauer
 import Linglib.Theories.Semantics.Truthmaker.Basic
 import Linglib.Theories.Semantics.Causation.Interpretation
 import Linglib.Theories.Semantics.Causation.CCSelection

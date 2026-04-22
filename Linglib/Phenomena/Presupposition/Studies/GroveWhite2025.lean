@@ -3,7 +3,6 @@ import Linglib.Theories.Semantics.Probabilistic.ParamPred
 import Linglib.Phenomena.Presupposition.Gradience
 import Linglib.Phenomena.Presupposition.Studies.DegenTonhauser2022
 import Linglib.Phenomena.Presupposition.Studies.ScontrasTonhauser2025
-import Linglib.Core.FinitePMF
 import Linglib.Core.Scales.Scale
 
 /-!
@@ -61,10 +60,11 @@ is the active variable.
 
 The paper's formal framework is Probabilistic Dynamic Semantics (PDS),
 developed in @cite{grove-white-2025b}. The model's graded truth is the
-`FinitePMF.prob` of the satisfied-readings event under the Bernoulli prior:
-graded inference judgments emerge from marginalising over a *discrete*
-reading parameter, exactly the PDS pattern in which a `bind` over a
-discrete probability node feeds a Boolean predicate.
+`PMF.probOfSet` (= `toOuterMeasure`) of the satisfied-readings event
+under the Bernoulli prior: graded inference judgments emerge from
+marginalising over a *discrete* reading parameter, exactly the PDS
+pattern in which a `bind` over a discrete probability node feeds a
+Boolean predicate.
 
 ## Connection to @cite{scontras-tonhauser-2025}
 
@@ -91,12 +91,12 @@ set_option autoImplicit false
 namespace GroveWhite2025
 
 open Semantics.Attitudes.Factivity
-open Semantics.Probabilistic.ParamPred
+open Semantics.Probabilistic
 open Phenomena.Presupposition.Gradience
 open DegenTonhauser2021
 open DegenTonhauser2022
-open Core (FinitePMF)
 open Core.Scale (Rat01)
+open scoped ENNReal NNReal
 
 /-! ## §1. Clause-embedding semantics -/
 
@@ -134,13 +134,6 @@ def clauseEmbeddingSem : FactivityReading → W → Bool
   | .factive    => factivePos
   | .nonfactive => nonFactivePos
 
-/-- The factive reading entails the nonfactive reading: a `BEL ∧ C` world is
-    a `BEL` world. Lifted from `Factivity.factive_entails_nonfactive`. -/
-theorem factive_entails_nonfactive_reading (w : W) :
-    clauseEmbeddingSem .factive w = true →
-    clauseEmbeddingSem .nonfactive w = true :=
-  factive_entails_nonfactive w
-
 end ClauseEmbedding
 
 /-! ## §2. The τ-parameterised prior -/
@@ -149,25 +142,42 @@ section Prior
 
 variable {W : Type*}
 
+/-- `τ.val : ℚ` lifted to `ℝ≥0` via the canonical `ℝ`-coercion. Lives
+    outside the `Rat01` namespace because `Rat01` is an `abbrev` for
+    a `Subtype`, so dot notation on `τ : Rat01` resolves through the
+    underlying `Subtype` rather than the `Rat01` namespace. -/
+noncomputable def Rat01.toNNReal (τ : Rat01) : ℝ≥0 :=
+  Real.toNNReal τ.val
+
+theorem Rat01.toNNReal_le_one (τ : Rat01) : Rat01.toNNReal τ ≤ 1 :=
+  Real.toNNReal_le_one.mpr (by exact_mod_cast τ.prop.2)
+
+theorem Rat01.toNNReal_val (τ : Rat01) : ((Rat01.toNNReal τ : ℝ≥0) : ℝ) = τ.val :=
+  Real.coe_toNNReal _ (by exact_mod_cast τ.prop.1)
+
 /-- The Bernoulli prior over `FactivityReading`: factive with probability
     `τ.val`, nonfactive with probability `1 − τ.val`. The τ parameter is
     bundled as `Rat01` (`↥(Set.Icc (0:ℚ) 1)`), so the [0,1] constraint is
     intrinsic to the type rather than threaded as side hypotheses. This is
-    the τ-vertex of the discrete-factivity DAG (definition (13), p. 20). -/
-def factivityPrior (τ : Rat01) : FinitePMF FactivityReading where
-  mass := fun
-    | .factive    => τ.val
-    | .nonfactive => 1 - τ.val
-  mass_nonneg := fun
-    | .factive    => τ.prop.1
-    | .nonfactive => by linarith [τ.prop.2]
-  mass_sum_one := by rw [FactivityReading.sum_univ]; ring
+    the τ-vertex of the discrete-factivity DAG (definition (13), p. 20).
 
-@[simp] theorem factivityPrior_factive (τ : Rat01) :
-    (factivityPrior τ).mass .factive = τ.val := rfl
+    Built from mathlib's `PMF.bernoulli` (a `PMF Bool`) by relabeling
+    `true ↦ .factive`, `false ↦ .nonfactive`. -/
+noncomputable def factivityPrior (τ : Rat01) : PMF FactivityReading :=
+  (PMF.bernoulli (Rat01.toNNReal τ) (Rat01.toNNReal_le_one τ)).map
+    (fun b => bif b then .factive else .nonfactive)
 
-@[simp] theorem factivityPrior_nonfactive (τ : Rat01) :
-    (factivityPrior τ).mass .nonfactive = 1 - τ.val := rfl
+@[simp] theorem factivityPrior_apply_factive (τ : Rat01) :
+    (factivityPrior τ) FactivityReading.factive
+      = ((Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
+  unfold factivityPrior
+  simp [PMF.map_apply, PMF.bernoulli_apply]
+
+@[simp] theorem factivityPrior_apply_nonfactive (τ : Rat01) :
+    (factivityPrior τ) FactivityReading.nonfactive
+      = (((1 : ℝ≥0) - Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) := by
+  unfold factivityPrior
+  simp [PMF.map_apply, PMF.bernoulli_apply]
 
 end Prior
 
@@ -180,9 +190,9 @@ variable {W : Type*} [HasBelief W] [HasComplement W]
 /-- The discrete-factivity model packaged as a `ParamPred`: Boolean
     semantics dispatched on `FactivityReading`, with a Bernoulli prior over
     that reading. The graded truth value `gradedTruth` is then the
-    expectation of the indicator under the prior — `FinitePMF.prob` of the
-    "predicate satisfied at this world" event. -/
-def discreteFactivityPred (τ : Rat01) :
+    `ℝ≥0∞`-valued probability mass on the satisfied-readings set —
+    `PMF.probOfSet` of the "predicate satisfied at this world" event. -/
+noncomputable def discreteFactivityPred (τ : Rat01) :
     ParamPred W FactivityReading where
   semantics := clauseEmbeddingSem
   prior     := factivityPrior τ
@@ -193,26 +203,37 @@ def discreteFactivityPred (τ : Rat01) :
     readings. -/
 theorem discreteFactivity_gradedTruth (τ : Rat01) (w : W) :
     (discreteFactivityPred τ).gradedTruth w =
-    τ.val * (if factivePos w then 1 else 0) +
-    (1 - τ.val) * (if nonFactivePos (W := W) w then 1 else 0) := by
-  simp only [discreteFactivityPred, ParamPred.gradedTruth, FinitePMF.prob,
-    FinitePMF.expect, clauseEmbeddingSem]
-  rw [FactivityReading.sum_univ]
-  rfl
+    (if factivePos w then ((Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) else 0) +
+    (if nonFactivePos (W := W) w
+      then (((1 : ℝ≥0) - Rat01.toNNReal τ : ℝ≥0) : ℝ≥0∞) else 0) := by
+  classical
+  show (factivityPrior τ).probOfSet
+      {θ | clauseEmbeddingSem (W := W) θ w = true} = _
+  rw [PMF.probOfSet_apply, FactivityReading.sum_univ]
+  simp [clauseEmbeddingSem, factivityPrior_apply_factive, factivityPrior_apply_nonfactive,
+        Set.mem_setOf_eq]
 
 /-- With τ = 1 (certainly factive), graded truth reduces to `factivePos`. -/
 theorem discreteFactivity_certain_factive (w : W) :
     (discreteFactivityPred (W := W) Rat01.one).gradedTruth w =
     if factivePos w then 1 else 0 := by
   rw [discreteFactivity_gradedTruth]
-  simp only [Rat01.one, sub_self, zero_mul, add_zero, one_mul]
+  have hτ : Rat01.toNNReal Rat01.one = 1 := by
+    show Real.toNNReal ((1 : ℚ) : ℝ) = 1
+    simp
+  rw [hτ]
+  simp
 
 /-- With τ = 0 (certainly nonfactive), graded truth reduces to `nonFactivePos`. -/
 theorem discreteFactivity_certain_nonfactive (w : W) :
     (discreteFactivityPred (W := W) Rat01.zero).gradedTruth w =
     if nonFactivePos (W := W) w then 1 else 0 := by
   rw [discreteFactivity_gradedTruth]
-  simp only [Rat01.zero, sub_zero, one_mul, zero_mul, zero_add]
+  have hτ : Rat01.toNNReal Rat01.zero = 0 := by
+    show Real.toNNReal ((0 : ℚ) : ℝ) = 0
+    simp
+  rw [hτ]
+  simp
 
 /-- Monotonicity in τ: at a world that satisfies the factive reading but
     not the nonfactive reading, increasing τ strictly increases graded
@@ -229,9 +250,13 @@ theorem higher_tau_higher_gradedTruth
     (discreteFactivityPred τ₁).gradedTruth w >
     (discreteFactivityPred τ₂).gradedTruth w := by
   rw [discreteFactivity_gradedTruth, discreteFactivity_gradedTruth]
-  simp only [h_factive, h_nonfactive, Bool.false_eq_true, ↓reduceIte,
-    mul_one, mul_zero, add_zero]
-  exact h_tau
+  simp only [h_factive, h_nonfactive, Bool.false_eq_true, ↓reduceIte, add_zero]
+  have hlt : Rat01.toNNReal τ₂ < Rat01.toNNReal τ₁ := by
+    have : ((Rat01.toNNReal τ₂ : ℝ≥0) : ℝ) < ((Rat01.toNNReal τ₁ : ℝ≥0) : ℝ) := by
+      rw [Rat01.toNNReal_val, Rat01.toNNReal_val]
+      exact_mod_cast h_tau
+    exact_mod_cast this
+  exact_mod_cast hlt
 
 end DiscreteFactivity
 

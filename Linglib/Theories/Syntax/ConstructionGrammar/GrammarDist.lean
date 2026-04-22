@@ -56,22 +56,22 @@ structure Grammar (C W : Type) extends GrammarDist C where
 -- ============================================================================
 
 section EntropyAndSimilarity
-variable {C : Type} [BEq C]
+variable {C : Type}
 
-/-- Constructional diversity: Shannon entropy of the frequency profile.
+/-- Constructional diversity: Shannon entropy of the frequency profile (in nats).
 
 Higher entropy = more diverse construction usage. @cite{dunn-2025} uses
 grammar entropy to compare registers, dialects, and individual variation
 within L1 populations. -/
-def GrammarDist.entropyOver (g : GrammarDist C) (inventory : List C) : ℚ :=
-  entropy (inventory.map fun c => (c, g.freq c))
+noncomputable def GrammarDist.entropyOver (g : GrammarDist C) (inventory : List C) : ℝ :=
+  entropy (inventory.map fun c => (c, ((g.freq c : ℚ) : ℝ)))
 
-/-- Jensen-Shannon divergence between two grammars over a shared inventory.
+/-- Jensen-Shannon divergence between two grammars over a shared inventory (in nats).
 
 Symmetric, bounded, and a metric (after sqrt). Used by @cite{dunn-2025} to
 measure register distance, dialect boundaries, and L1-L2 differences. -/
-def GrammarDist.jsd (p q : GrammarDist C) (inventory : List C) : ℚ :=
-  jsdOf inventory p.freq q.freq
+noncomputable def GrammarDist.jsd (p q : GrammarDist C) (inventory : List C) : ℝ :=
+  jsdOf inventory (fun c => ((p.freq c : ℚ) : ℝ)) (fun c => ((q.freq c : ℚ) : ℝ))
 
 end EntropyAndSimilarity
 
@@ -128,15 +128,17 @@ end LexiconConnection
 section RSACost
 variable {C : Type}
 
-/-- Production cost derived from frequency: -log₂(freq).
+/-- Production cost derived from frequency: -log(freq), in nats.
 
 Frequent constructions are cheap; rare ones are expensive. This connects
 @cite{dunn-2025}'s frequency-based grammar to RSA's utterance cost: setting
-`cost(u) = -log₂(freq(u))` in S1's action-based scoring rule grounds
-utterance cost in production frequency rather than stipulating it. -/
-def GrammarDist.cost (g : GrammarDist C) (c : C) : ℚ :=
+`cost(u) = -log(freq(u))` in S1's action-based scoring rule grounds
+utterance cost in production frequency rather than stipulating it. The
+fallback `10` is an arbitrary high cost for the freq ≤ 0 (undefined log)
+case. To express in bits, multiply by `1 / Real.log 2`. -/
+noncomputable def GrammarDist.cost (g : GrammarDist C) (c : C) : ℝ :=
   if g.freq c ≤ 0 then 10
-  else -log2Approx (g.freq c)
+  else -Real.log ((g.freq c : ℚ) : ℝ)
 
 end RSACost
 

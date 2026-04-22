@@ -137,13 +137,13 @@ def phaseImpenetrable (strength : PICStrength) (phase goal : SyntacticObject) : 
     -- Strong PIC: goal is inside the complement and thus inaccessible
     match phase with
     | .node _ complement => contains complement goal
-    | .leaf _ => False
+    | _ => False
   | .weak =>
     -- Weak PIC: goal is inside the complement; accessible until next phase
     -- Modeled the same structurally — the difference is WHEN this is checked
     match phase with
     | .node _ complement => contains complement goal
-    | .leaf _ => False
+    | _ => False
 
 -- ============================================================================
 -- Part 5: Anti-Locality (@cite{abels-2012}, Ch. 4)

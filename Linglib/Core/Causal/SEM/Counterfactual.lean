@@ -17,55 +17,75 @@ Pearl's `do`-operator and the counterfactual queries built from it.
   consistency of supersituations
 - `causallyNecessary` (@cite{nadathur-2024} Def 10b) — but-for with
   precondition + achievability
-- `extractProfile` — packages sufficient/necessary/direct
+- `extractProfile` — packages sufficient/necessary/direct as a Bool record
+  (uses `decide` on the Prop-valued queries)
 - `simple_law_necessity` — structured proof that `c → e` makes `c`
   necessary for `e` against the empty background
+
+All counterfactual queries are `Prop`-valued with `Decidable` instances
+auto-derived from the underlying `Bool` computations, so they can be
+used both in propositional reasoning (`obtain`, `intro`) and in
+decidable contexts (`decide`, `if`).
 -/
 
 namespace Core.Causal
 
 -- ============================================================
--- § Convenience Functions
+-- § Convenience Predicates
 -- ============================================================
 
-/-- Check if a variable develops to a specific value. -/
-def developsToBe (dyn : CausalDynamics) (s : Situation) (v : Variable) (val : Bool) : Bool :=
-  (normalDevelopment dyn s).hasValue v val
+/-- A variable develops to a specific value. -/
+def developsToBe (dyn : CausalDynamics) (s : Situation) (v : Variable) (val : Bool) : Prop :=
+  (normalDevelopment dyn s).hasValue v val = true
 
-/-- Check if a variable becomes true after normal development. -/
-def developsToTrue (dyn : CausalDynamics) (s : Situation) (v : Variable) : Bool :=
+instance (dyn : CausalDynamics) (s : Situation) (v : Variable) (val : Bool) :
+    Decidable (developsToBe dyn s v val) :=
+  inferInstanceAs (Decidable (_ = true))
+
+/-- A variable becomes true after normal development. -/
+def developsToTrue (dyn : CausalDynamics) (s : Situation) (v : Variable) : Prop :=
   developsToBe dyn s v true
+
+instance (dyn : CausalDynamics) (s : Situation) (v : Variable) :
+    Decidable (developsToTrue dyn s v) :=
+  inferInstanceAs (Decidable (developsToBe ..))
 
 /-- The cause is present and the effect holds after normal development.
 
     Shared primitive for `actuallyCaused` (Necessity.lean) and
     `complementActualized` (Ability.lean). -/
 def factuallyDeveloped (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Bool :=
-  s.hasValue cause true &&
-  (normalDevelopment dyn s).hasValue effect true
+    (cause effect : Variable) : Prop :=
+  s.hasValue cause true = true ∧
+    (normalDevelopment dyn s).hasValue effect true = true
 
-/-- `factuallyDeveloped` unfolds to a conjunction of two `hasValue` checks. -/
-theorem factuallyDeveloped_iff (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) :
-    factuallyDeveloped dyn s cause effect =
-      (s.hasValue cause true && (normalDevelopment dyn s).hasValue effect true) := rfl
+instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+    Decidable (factuallyDeveloped dyn s cause effect) :=
+  inferInstanceAs (Decidable (_ ∧ _))
 
 -- ============================================================
 -- § Structural Graph Queries
 -- ============================================================
 
-/-- Does any causal law directly connect `cause` to `effect`? -/
-def hasDirectLaw (dyn : CausalDynamics) (cause effect : Variable) : Bool :=
-  dyn.laws.any fun law =>
-    law.preconditions.any (fun (v, _) => v == cause) && law.effect == effect
+/-- Some causal law directly connects `cause` to `effect`. -/
+def hasDirectLaw (dyn : CausalDynamics) (cause effect : Variable) : Prop :=
+  (dyn.laws.any fun law =>
+    law.preconditions.any (fun (v, _) => v == cause) && law.effect == effect) = true
 
-/-- Does the intermediate have a causal law not depending on `cause`? -/
+instance (dyn : CausalDynamics) (cause effect : Variable) :
+    Decidable (hasDirectLaw dyn cause effect) :=
+  inferInstanceAs (Decidable (_ = true))
+
+/-- The intermediate has a causal law not depending on `cause`. -/
 def hasIndependentSource (dyn : CausalDynamics)
-    (cause intermediate : Variable) : Bool :=
-  dyn.laws.any fun law =>
+    (cause intermediate : Variable) : Prop :=
+  (dyn.laws.any fun law =>
     law.effect == intermediate &&
-    !(law.preconditions.any (fun (v, _) => v == cause))
+    !(law.preconditions.any (fun (v, _) => v == cause))) = true
+
+instance (dyn : CausalDynamics) (cause intermediate : Variable) :
+    Decidable (hasIndependentSource dyn cause intermediate) :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- All variables mentioned in a dynamics (preconditions and effects). -/
 def allVariables (dyn : CausalDynamics) : List Variable :=
@@ -91,7 +111,7 @@ def intervene (dyn : CausalDynamics) (s : Situation)
   let s' := s.extend target val
   (dyn', s')
 
-/-- **Manipulates**: Does intervening on `cause` change the value of `effect`?
+/-- **Manipulates**: intervening on `cause` changes the value of `effect`.
 
     Compares normal development under do(cause = true) vs do(cause = false).
     If the effect's value differs, then `cause` manipulates `effect`.
@@ -99,12 +119,14 @@ def intervene (dyn : CausalDynamics) (s : Situation)
     This is the interventionist criterion for causation:
     X causes Y iff there exists an intervention on X that changes Y. -/
 def manipulates (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Bool :=
+    (cause effect : Variable) : Prop :=
   let (dynT, sT) := intervene dyn s cause true
   let (dynF, sF) := intervene dyn s cause false
-  let valT := (normalDevelopment dynT sT).get effect
-  let valF := (normalDevelopment dynF sF).get effect
-  valT != valF
+  (normalDevelopment dynT sT).get effect ≠ (normalDevelopment dynF sF).get effect
+
+instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+    Decidable (manipulates dyn s cause effect) :=
+  inferInstanceAs (Decidable (_ ≠ _))
 
 -- ============================================================
 -- § Counterfactual Queries (@cite{nadathur-lauer-2020} Definitions 23-24)
@@ -114,12 +136,14 @@ def manipulates (dyn : CausalDynamics) (s : Situation)
     C is causally sufficient for E in situation s iff adding C and
     developing normally produces E. -/
 def causallySufficient (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Bool :=
-  let sWithCause := s.extend cause true
-  let developed := normalDevelopment dyn sWithCause
-  developed.hasValue effect true
+    (cause effect : Variable) : Prop :=
+  (normalDevelopment dyn (s.extend cause true)).hasValue effect true = true
 
-/-- Is `s'` a consistent supersituation of `base` under dynamics `dyn`?
+instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+    Decidable (causallySufficient dyn s cause effect) :=
+  inferInstanceAs (Decidable (_ = true))
+
+/-- `s'` is a consistent supersituation of `base` under dynamics `dyn`.
     (@cite{nadathur-2024} Definition 9b)
 
     For each inner variable newly determined in `s'` (not in `base`),
@@ -132,13 +156,17 @@ def causallySufficient (dyn : CausalDynamics) (s : Situation)
     that become inconsistent only through variable interactions. For the small
     models in @cite{nadathur-lauer-2020} this is adequate. -/
 def isConsistentSuper (dyn : CausalDynamics) (base s' : Situation)
-    (innerVars : List Variable) : Bool :=
-  let developed := normalDevelopment dyn base
-  innerVars.all fun x =>
+    (innerVars : List Variable) : Prop :=
+  (innerVars.all fun x =>
+    let developed := normalDevelopment dyn base
     match base.get x, s'.get x with
     | none, some true  => !developed.hasValue x false
     | none, some false => !developed.hasValue x true
-    | _, _ => true
+    | _, _ => true) = true
+
+instance (dyn : CausalDynamics) (base s' : Situation) (innerVars : List Variable) :
+    Decidable (isConsistentSuper dyn base s' innerVars) :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- **Causal Necessity** (@cite{nadathur-2024} Definition 10b).
 
@@ -157,33 +185,39 @@ def isConsistentSuper (dyn : CausalDynamics) (base s' : Situation)
     necessity when cause/effect are already entailed, and achievability
     ensures the effect is reachable before testing but-for. -/
 def causallyNecessary (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Bool :=
-  let devS := normalDevelopment dyn s
-  -- Precondition: neither cause nor effect already entailed by s
-  if devS.hasValue cause true || devS.hasValue effect true then false
-  else
-    let innerVars := innerVariables dyn
-    let allVars := allVariables dyn
-    -- (i) Achievability: ∃ consistent supersituation of s[cause↦true]
-    --     with effect ∉ dom(s') where s' ⊨_D ⟨effect, true⟩
-    let sCause := s.extend cause true
-    let freeI := allVars.filter fun v =>
-      v != effect && (sCause.get v).isNone
-    let achievable := (sCause.allExtensions freeI).any fun s' =>
-      isConsistentSuper dyn sCause s' innerVars &&
-      (normalDevelopment dyn s').hasValue effect true
-    -- (ii) But-for: no consistent supersituation of s with
-    --      effect ∉ dom(s') achieves effect without cause
-    let freeII := allVars.filter fun v =>
-      v != effect && (s.get v).isNone
-    let hasAlternative := (s.allExtensions freeII).any fun s' =>
-      isConsistentSuper dyn s s' innerVars &&
-      (normalDevelopment dyn s').hasValue effect true &&
-      !(normalDevelopment dyn s').hasValue cause true
-    achievable && !hasAlternative
+    (cause effect : Variable) : Prop :=
+  (let devS := normalDevelopment dyn s
+   -- Precondition: neither cause nor effect already entailed by s
+   if devS.hasValue cause true || devS.hasValue effect true then false
+   else
+     let innerVars := innerVariables dyn
+     let allVars := allVariables dyn
+     -- (i) Achievability: ∃ consistent supersituation of s[cause↦true]
+     --     with effect ∉ dom(s') where s' ⊨_D ⟨effect, true⟩
+     let sCause := s.extend cause true
+     let freeI := allVars.filter fun v =>
+       v != effect && (sCause.get v).isNone
+     let achievable := (sCause.allExtensions freeI).any fun s' =>
+       decide (isConsistentSuper dyn sCause s' innerVars) &&
+       (normalDevelopment dyn s').hasValue effect true
+     -- (ii) But-for: no consistent supersituation of s with
+     --      effect ∉ dom(s') achieves effect without cause
+     let freeII := allVars.filter fun v =>
+       v != effect && (s.get v).isNone
+     let hasAlternative := (s.allExtensions freeII).any fun s' =>
+       decide (isConsistentSuper dyn s s' innerVars) &&
+       (normalDevelopment dyn s').hasValue effect true &&
+       !(normalDevelopment dyn s').hasValue cause true
+     achievable && !hasAlternative) = true
+
+instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+    Decidable (causallyNecessary dyn s cause effect) :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- Causal profile: packages the counterfactual properties of a
-    cause-effect pair in a structural model. -/
+    cause-effect pair in a structural model. Fields are `Bool` for use
+    in tabulation and pattern matching; populate via `decide` on the
+    `Prop`-valued queries. -/
 structure CausalProfile where
   sufficient : Bool
   necessary : Bool
@@ -193,9 +227,9 @@ structure CausalProfile where
 /-- Extract the causal profile of a cause-effect pair. -/
 def extractProfile (dyn : CausalDynamics) (bg : Situation)
     (cause effect : Variable) : CausalProfile :=
-  { sufficient := causallySufficient dyn bg cause effect
-  , necessary := causallyNecessary dyn bg cause effect
-  , direct := hasDirectLaw dyn cause effect }
+  { sufficient := decide (causallySufficient dyn bg cause effect)
+  , necessary := decide (causallyNecessary dyn bg cause effect)
+  , direct := decide (hasDirectLaw dyn cause effect) }
 
 -- ============================================================
 -- § Simple-law necessity (structured proof)
@@ -299,8 +333,8 @@ private theorem freeI_eq_nil (c e : Variable) :
 
 private theorem isConsistentSuper_self' (dyn : CausalDynamics) (s : Situation)
     (vars : List Variable) :
-    isConsistentSuper dyn s s vars = true := by
-  simp only [isConsistentSuper]
+    isConsistentSuper dyn s s vars := by
+  show (vars.all _) = true
   apply List.all_eq_true.mpr
   intro x _
   simp only [Situation.get]
@@ -326,7 +360,8 @@ set_option maxHeartbeats 3200000 in
        `¬cause` conjunct), or (b) has `c≠true`, in which case the law
        doesn't fire and `e` remains unset (blocking the `effect` conjunct) -/
 theorem simple_law_necessity (c e : Variable) :
-    causallyNecessary ⟨[CausalLaw.simple c e]⟩ Situation.empty c e = true := by
+    causallyNecessary ⟨[CausalLaw.simple c e]⟩ Situation.empty c e := by
+  show (_ : Bool) = true
   simp only [causallyNecessary]
   have hDevEmpty : normalDevelopment ⟨[CausalLaw.simple c e]⟩ Situation.empty = Situation.empty := by
     rw [normalDevelopment_simple]; simp [empty_hasValue_false']
@@ -334,7 +369,11 @@ theorem simple_law_necessity (c e : Variable) :
   simp only [empty_hasValue_false', Bool.false_or, Bool.false_eq_true, ↓reduceIte]
   rw [freeI_eq_nil]
   simp only [Situation.allExtensions, List.any_cons, List.any_nil, Bool.or_false]
-  rw [innerVars_simple, isConsistentSuper_self']
+  rw [innerVars_simple]
+  simp only [decide_eq_true_eq]
+  rw [show (decide (isConsistentSuper ⟨[CausalLaw.simple c e]⟩
+      (Situation.empty.extend c true) (Situation.empty.extend c true) [e]) = true)
+      from decide_eq_true (isConsistentSuper_self' _ _ _)]
   simp only [Bool.true_and]
   have hDevCause : (normalDevelopment ⟨[CausalLaw.simple c e]⟩
       (Situation.empty.extend c true)).hasValue e true = true := by
@@ -344,7 +383,7 @@ theorem simple_law_necessity (c e : Variable) :
   suffices hAlt : (Situation.empty.allExtensions
       ((allVariables ⟨[CausalLaw.simple c e]⟩).filter
         (fun v => v != e && (Situation.empty.get v).isNone))).any
-      (fun s' => isConsistentSuper ⟨[CausalLaw.simple c e]⟩ Situation.empty s' [e] &&
+      (fun s' => decide (isConsistentSuper ⟨[CausalLaw.simple c e]⟩ Situation.empty s' [e]) &&
         (normalDevelopment ⟨[CausalLaw.simple c e]⟩ s').hasValue e true &&
         !(normalDevelopment ⟨[CausalLaw.simple c e]⟩ s').hasValue c true) = false by
     rw [hAlt]; rfl

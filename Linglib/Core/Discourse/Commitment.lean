@@ -100,12 +100,47 @@ inductive CommitmentSource where
   | otherGenerated
   deriving DecidableEq, Repr, Inhabited
 
-/-- A commitment tagged with its source. -/
+/-- The **modal force** of a discourse commitment: doxastic (act-as-if-believe)
+    vs preferential (act-as-if-effectively-prefer).
+
+    @cite{condoravdi-lauer-2012} @cite{lauer-2013} introduce the preferential
+    side; @cite{portner-2018} (commitments to priorities) and @cite{rudin-2018}
+    (teleological common ground) develop the doxastic/preferential parallel
+    in scoreboard models; @cite{deo-2025-bara} lifts the existing
+    `CommitmentSource` source/dependent distinction to apply to *both* forces.
+
+    Default `.doxastic` matches the historical assumption that bare
+    `TaggedCommitment` means doxastic — preserves all existing call sites. -/
+inductive CommitmentForce where
+  /-- Doxastic commitment: speaker publicly commits to acting as though
+      they believe the content. The standard assertion case. -/
+  | doxastic
+  /-- Preferential commitment: speaker publicly commits to acting as
+      though the content is among their effective preferences
+      (@cite{condoravdi-lauer-2012}). The standard imperative-as-PEP /
+      C&L analysis case. -/
+  | preferential
+  deriving DecidableEq, Repr, Inhabited
+
+/-- A commitment tagged with its epistemic source and modal force.
+
+    Two orthogonal axes:
+    * `source` (selfGenerated / otherGenerated): whose evidence supports it
+      (@cite{gunlogson-2001}).
+    * `commitmentForce` (doxastic / preferential): whether it is a
+      belief-like or preference-like commitment (@cite{condoravdi-lauer-2012},
+      @cite{lauer-2013}, lifted across `source` by @cite{deo-2025-bara}).
+
+    `commitmentForce` defaults to `.doxastic` so existing two-argument
+    anonymous-constructor calls (`⟨content, source⟩`) and existing
+    `TaggedSlate.add s p src` invocations continue to type-check. -/
 structure TaggedCommitment (W : Type*) where
   /-- The propositional content -/
   content : W → Prop
   /-- How the commitment was generated -/
   source : CommitmentSource
+  /-- Whether the commitment is doxastic (default) or preferential. -/
+  commitmentForce : CommitmentForce := .doxastic
 
 /-- A source-tagged commitment slate. -/
 structure TaggedSlate (W : Type*) where
@@ -119,17 +154,33 @@ variable {W : Type*}
 /-- The empty tagged slate. -/
 def empty : TaggedSlate W := ⟨[]⟩
 
-/-- Add a tagged commitment. -/
-def add (s : TaggedSlate W) (p : W → Prop) (src : CommitmentSource) : TaggedSlate W :=
-  ⟨⟨p, src⟩ :: s.commitments⟩
+/-- Add a tagged commitment. The optional `force` parameter defaults to
+    `.doxastic` for backward compatibility with the pre-`CommitmentForce`
+    API; pass `.preferential` for C&L-style preferential commitments. -/
+def add (s : TaggedSlate W) (p : W → Prop) (src : CommitmentSource)
+    (force : CommitmentForce := .doxastic) : TaggedSlate W :=
+  ⟨⟨p, src, force⟩ :: s.commitments⟩
 
-/-- Get all self-generated commitments. -/
+/-- Get all self-generated commitments (any force). -/
 def selfGenerated (s : TaggedSlate W) : List (W → Prop) :=
   s.commitments.filter (·.source == .selfGenerated) |>.map (·.content)
 
-/-- Get all other-generated commitments. -/
+/-- Get all other-generated commitments (any force). -/
 def otherGenerated (s : TaggedSlate W) : List (W → Prop) :=
   s.commitments.filter (·.source == .otherGenerated) |>.map (·.content)
+
+/-- Get all doxastic commitments (any source). The contribution to an
+    agent's belief-like commitments — the input to a Stalnakerian
+    common ground when intersected across agents. -/
+def doxasticContents (s : TaggedSlate W) : List (W → Prop) :=
+  s.commitments.filter (·.commitmentForce == .doxastic) |>.map (·.content)
+
+/-- Get all preferential commitments (any source). The contribution to an
+    agent's preference-like commitments — the input to a "joint
+    preferences" set (@cite{deo-2025-bara} eq. 17c) when intersected
+    across agents. -/
+def preferentialContents (s : TaggedSlate W) : List (W → Prop) :=
+  s.commitments.filter (·.commitmentForce == .preferential) |>.map (·.content)
 
 /-- Convert to a plain (untagged) commitment slate. -/
 def toSlate (s : TaggedSlate W) : CommitmentSlate W :=

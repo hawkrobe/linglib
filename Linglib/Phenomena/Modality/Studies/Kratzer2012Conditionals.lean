@@ -35,9 +35,9 @@ open Semantics.Modality.Kratzer
     the restricted base is vacuously satisfied (no rain-worlds accessible). -/
 theorem conditional_material_implication (w : World) :
     necessity (restrictedBase totallyRealisticBg rained) emptyBackground streetWet w ↔
-    materialImplication rained streetWet w := by
+    implies rained streetWet w := by
   rw [necessity_iff_all, empty_ordering_emptyBackground]
-  unfold materialImplication implies
+  unfold implies
   constructor
   · intro h hRained
     -- w itself is accessible: it satisfies rained (by hypothesis) and the totallyRealisticBg singleton

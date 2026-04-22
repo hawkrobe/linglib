@@ -280,7 +280,8 @@ In ICDRT, we need to track two kinds of assignments:
 1. Individual variable assignments: IVar → Entity E
 2. Propositional variable assignments: PVar → Set W
 
-This is used by IntensionalCDRT; simpler theories can use Nat → E.
+This is used by intensional dynamic semantics
+(`Dynamic/Core/Intensional.lean`); simpler theories can use Nat → E.
 -/
 structure ICDRTAssignment (W : Type*) (E : Type*) where
   /-- Individual variable assignment: intensional individual drefs (individual

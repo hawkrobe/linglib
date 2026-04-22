@@ -120,7 +120,7 @@ private theorem inner_not_cCommandsIn_outer (s h c : LIToken)
       rcases hinner with rfl | rfl
       · exact hne_sh this.symm
       · exact hne_sc this.symm
-    · exact SyntacticObject.noConfusion hinj
+    · cases hinj
   · exact hw_inner -- w = .leaf s: leaves don't immediately contain
   · -- w = .node (.leaf h) (.leaf c): z is the other daughter
     rcases hinner with rfl | rfl

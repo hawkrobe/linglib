@@ -1,5 +1,7 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
+open Core.Tree
+
 /-!
 # Derivation Steps and Traces
 
@@ -24,9 +26,9 @@ namespace Minimalism
     appears exactly once, so this replaces at most one position. -/
 def SyntacticObject.replace (so target replacement : SyntacticObject) : SyntacticObject :=
   match so with
-  | .leaf _ => if so == target then replacement else so
+  | .leaf _ => if decide (so = target) then replacement else so
   | .node l r =>
-    if so == target then replacement
+    if decide (so = target) then replacement
     else .node (l.replace target replacement) (r.replace target replacement)
 
 /-- A single derivation step. -/
@@ -110,9 +112,9 @@ theorem stageAt_length (d : Derivation) : d.stageAt d.steps.length = d.final := 
 /-- Replacing `so` when it is the root returns the replacement. -/
 theorem replace_self (so replacement : SyntacticObject) :
     so.replace so replacement = replacement := by
-  cases so with
-  | leaf _ => simp [SyntacticObject.replace]
-  | node _ _ => simp [SyntacticObject.replace]
+  match so with
+  | .leaf _ => simp [SyntacticObject.replace]
+  | .node _ _ => simp [SyntacticObject.replace]
 
 /-- WLM at the root: if the target is the entire current tree,
     the result is `{target, restrictor}`. -/

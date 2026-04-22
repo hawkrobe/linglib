@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
+import Linglib.Theories.Semantics.Dynamic.Core.Intensional
 
 /-!
 # Plural Intensional Presuppositional Predicate Calculus (PIP)
@@ -20,7 +20,8 @@ evaluation world.
 PIP is natively a **static, truth-conditional** system: formulas denote
 truth values relative to a model, plural assignment set G, and evaluation
 world w*. Our formalization encodes PIP as a dynamic update system over
-IntensionalCDRT's `IContext W E`, which is a legitimate approach:
+the generic intensional context type `IContext W E` (in
+`Dynamic/Core/Intensional.lean`), which is a legitimate approach:
 @cite{brasoveanu-2010} shows the equivalence between plural predicate calculi
 and dynamic plural logics. The key properties (label monotonicity,
 external/local variable distinction) are faithfully preserved.
@@ -47,7 +48,6 @@ external/local variable distinction) are faithfully preserved.
 namespace Semantics.PIP
 
 open Semantics.Dynamic.Core
-open Semantics.Dynamic.IntensionalCDRT
 
 /-- Local Bool-valued accessibility for PIP's computational modal evaluation.
     PIP's modal operators use Bool predicates throughout for `List.all`/`List.any`

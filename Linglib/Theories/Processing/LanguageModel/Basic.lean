@@ -15,10 +15,9 @@ a unified notion of "the LM's predictive distribution at a context".
 
 `PMF` is mathlib's probability monad over a (countable) type
 (`PMF α := { f : α → ℝ≥0∞ // HasSum f 1 }`); using it here gives the
-language-model layer the canonical Markov-kernel typing and removes
-the `[Fintype Voc]` constraint that the old `FinitePMF`-based version
-inherited (vocabularies like `String` or token streams need not be
-finite).
+language-model layer the canonical Markov-kernel typing without
+imposing `[Fintype Voc]` (vocabularies like `String` or token streams
+need not be finite).
 
 ## Main definitions
 

@@ -95,7 +95,7 @@ def MemoryEncoding.summary {W Mem : Type} (me : MemoryEncoding W Mem)
     (history : List W) : Mem :=
   history.foldl me.encode me.initial
 
-/-- Average surprisal under a memory encoding.
+/-- Average surprisal under a memory encoding (in nats).
 
 This is the conditional entropy of the next word given the current
 memory state: S_M = H(W_t | M_t).
@@ -104,18 +104,18 @@ Lower memory → less information about the past → higher surprisal.
 When memory is unlimited, S_M = S_∞ (the entropy rate of the language).
 
 Uses `conditionalEntropy` from `Core.InformationTheory`. -/
-def averageSurprisal {W Mem : Type} [BEq W] [BEq Mem]
-    (joint : List ((Mem × W) × ℚ))
-    (marginalMem : List (Mem × ℚ)) : ℚ :=
+noncomputable def averageSurprisal {W Mem : Type}
+    (joint : List ((Mem × W) × ℝ))
+    (marginalMem : List (Mem × ℝ)) : ℝ :=
   RSA.InformationTheory.conditionalEntropy joint marginalMem
 
-/-- Memory entropy: the entropy of the memory state distribution.
+/-- Memory entropy: the entropy of the memory state distribution (in nats).
 
-H_M = H(M_t), measuring how many bits the processor uses.
+H_M = H(M_t), measuring how much information the processor uses.
 
 Uses `entropy` from `Core.InformationTheory`. -/
-def memoryEntropy {Mem : Type} [BEq Mem]
-    (memDist : List (Mem × ℚ)) : ℚ :=
+noncomputable def memoryEntropy {Mem : Type}
+    (memDist : List (Mem × ℝ)) : ℝ :=
   RSA.InformationTheory.entropy memDist
 
 -- ============================================================================

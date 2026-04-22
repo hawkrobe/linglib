@@ -92,22 +92,23 @@ structure FormConceptPair where
     Effort (Eq. 2) = expected word length.
     Information loss (Eq. 3) = expected surprisal under listener distribution.
     The aggregate is weighted by concept need probability. -/
-def encodingCosts
+noncomputable def encodingCosts
     (pairs : List FormConceptPair)
-    (needProb : String → ℚ)
-    (listenerScore : String → String → ℚ) : CostPair where
-  cost₁ := (pairs.map fun p => needProb p.concept * ↑p.formLength).sum
+    (needProb : String → ℝ)
+    (listenerScore : String → String → ℝ) : CostPair where
+  cost₁ := (pairs.map fun p => needProb p.concept * (p.formLength : ℝ)).sum
   cost₂ := (pairs.map fun p =>
     let score := listenerScore p.concept p.form
-    needProb p.concept * if score ≤ 0 then 20 else -log2Approx score).sum
+    needProb p.concept * if score ≤ 0 then 20 else -Real.log score).sum
 
 /-- Unified objective (Eq. 5): L_β = info_loss + β · effort.
-    Parameterizes the Pareto frontier. -/
-def unifiedObjective
+    Parameterizes the Pareto frontier. Cost₂ is in nats; multiply by
+    `1 / Real.log 2` to convert to bits. -/
+noncomputable def unifiedObjective
     (pairs : List FormConceptPair)
-    (needProb : String → ℚ)
-    (listenerScore : String → String → ℚ)
-    (β : ℚ) : ℚ :=
+    (needProb : String → ℝ)
+    (listenerScore : String → String → ℝ)
+    (β : ℝ) : ℝ :=
   weightedCost (encodingCosts pairs needProb listenerScore) β
 
 -- ============================================================================
@@ -134,7 +135,7 @@ def asS1ScoreSpec (β : ℚ) (length : String → ℚ) :
 /-- **Efficiency Claim** (Figs. 2–3): attested encodings are closer to the
     Pareto frontier than baseline encodings (random or near-synonym). -/
 def moreEfficientThan (attested baseline : CostPair)
-    (optimalAt : ℚ → CostPair) (βs : List ℚ) : Prop :=
+    (optimalAt : ℝ → CostPair) (βs : List ℝ) : Prop :=
   efficiencyLoss attested optimalAt βs < efficiencyLoss baseline optimalAt βs
 
 /-- **Strategy Tradeoff** (§Strategy Comparison): reuse items tend shorter;
@@ -148,7 +149,7 @@ def strategyTradeoff (reuseCosts compoundCosts : CostPair) : Prop :=
     reuse, endocentric compounds) are more efficient than nonliteral ones,
     because semantic transparency reduces information loss. -/
 def literalAdvantage (literalCosts nonliteralCosts : CostPair)
-    (optimalAt : ℚ → CostPair) (βs : List ℚ) : Prop :=
+    (optimalAt : ℝ → CostPair) (βs : List ℝ) : Prop :=
   efficiencyLoss literalCosts optimalAt βs ≤
   efficiencyLoss nonliteralCosts optimalAt βs
 

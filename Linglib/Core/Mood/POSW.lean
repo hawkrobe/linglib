@@ -17,7 +17,14 @@ ordering structure with `+`/`⋆` updates predates @cite{portner-2018};
 Stalnakerian context-set/Kratzerian ordering-source decomposition behind
 it goes back to @cite{stalnaker-1978} and @cite{kratzer-1981}.
 @cite{condoravdi-lauer-2012} works out the preferential-modal side
-(desire predicates over orderings) in detail.
+(desire predicates over orderings) in detail. **Caveat**: C&L's
+*preference structures* are strict partial orders on **propositions**
+(`Set (Set W)`), one type level above POSW's preorder on **worlds**
+(`W → W → Prop`); see `Core.Order.PreferenceStructure`. The two
+connect via the maximal-element-induced world preorder
+(`Core.Order.PreferenceStructure.maxInducedLe`) — POSW *consumes* the
+output of C&L's machinery rather than instantiating it. The
+"preferential-modal side" framing is thematic, not structural.
 
 A POSW is a pair `c = ⟨cs_c, ≤_c⟩` where:
 - `cs_c ⊆ W` is a non-empty set of worlds (the "context set" — the

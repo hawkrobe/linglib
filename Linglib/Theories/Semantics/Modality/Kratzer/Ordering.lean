@@ -35,11 +35,13 @@ noncomputable def satisfiedPropositions (A : List (W → Prop)) (w : W) : List (
 /--
 Kratzer's ordering relation: w ≤_A z
 
-Definition (p. 39): "For all worlds w and z ∈ W:
-  w ≤_A z iff {p: p ∈ A and z ∈ p} ⊆ {p: p ∈ A and w ∈ p}"
+@cite{kratzer-1981}: `w ≤_A z` iff every ideal proposition `p ∈ A` that
+holds at `z` also holds at `w`. Intuitively: `w` is at least as good as
+`z` (w.r.t. ideal `A`) iff every ideal proposition that `z` satisfies,
+`w` also satisfies.
 
-Intuitively: w is at least as good as z (w.r.t. ideal A) iff every
-ideal proposition that z satisfies, w also satisfies.
+UNVERIFIED page reference (p. 39 quoted in earlier version, not checked
+against the original).
 -/
 def atLeastAsGoodAs (A : List (W → Prop)) (w z : W) : Prop :=
   ∀ p ∈ A, p z → p w

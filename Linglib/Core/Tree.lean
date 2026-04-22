@@ -277,27 +277,30 @@ where
 
 /-- Custom recursor for binary trees over `Tree Unit W`. The default
 `induction` tactic refuses nested inductives like `Tree`; this recursor
-collapses the `node`-case enumeration into the binary-only branch
-(`binNode`) plus a fall-through `otherNode` branch covering 0-, 1-, and
-3+-child nodes. With `@[elab_as_elim]`, used as
-`induction t using Tree.binRec with | term … | binNode … | tr … | bd … | otherNode …`. -/
+expands the `node`-case enumeration so each non-binary arity (0, 1, ≥3
+children) gets its own branch, separate from the binary `binNode` case
+that carries inductive hypotheses. With `@[elab_as_elim]`, used as
+`induction t using Tree.binRec with | term … | binNode … | tr … | bd … | nilNode | singletonNode … | manyNode …`. -/
 @[elab_as_elim]
 def binRec {W : Type} {motive : Tree Unit W → Sort*}
     (term : ∀ w, motive (.terminal () w))
     (binNode : ∀ l r, motive l → motive r → motive (.node () [l, r]))
     (tr : ∀ n, motive (.trace n ()))
     (bd : ∀ n body, motive body → motive (.bind n () body))
-    (otherNode : ∀ cs, motive (.node () cs))
+    (nilNode : motive (.node () []))
+    (singletonNode : ∀ c, motive (.node () [c]))
+    (manyNode : ∀ c1 c2 c3 cs, motive (.node () (c1 :: c2 :: c3 :: cs)))
     : ∀ t, motive t
   | .terminal () w => term w
-  | .node () [] => otherNode []
-  | .node () (_ :: []) => otherNode _
+  | .node () [] => nilNode
+  | .node () [c] => singletonNode c
   | .node () [l, r] => binNode l r
-      (binRec term binNode tr bd otherNode l)
-      (binRec term binNode tr bd otherNode r)
-  | .node () (_ :: _ :: _ :: _) => otherNode _
+      (binRec term binNode tr bd nilNode singletonNode manyNode l)
+      (binRec term binNode tr bd nilNode singletonNode manyNode r)
+  | .node () (c1 :: c2 :: c3 :: cs) => manyNode c1 c2 c3 cs
   | .trace n () => tr n
-  | .bind n () body => bd n body (binRec term binNode tr bd otherNode body)
+  | .bind n () body => bd n body
+      (binRec term binNode tr bd nilNode singletonNode manyNode body)
 termination_by t => t.size
 decreasing_by all_goals (simp only [Tree.size, Tree.size.sizeList]; omega)
 

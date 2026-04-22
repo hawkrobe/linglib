@@ -34,7 +34,6 @@ produces the same truth conditions as `Core.IntensionalLogic.boxR`.
 namespace Semantics.PIP
 
 open Semantics.Dynamic.Core
-open Semantics.Dynamic.IntensionalCDRT
 
 variable {W E : Type*}
 
@@ -281,7 +280,7 @@ end Properties
 -- Grounding: PIP modals ↔ Core.IntensionalLogic.boxR/diamondR
 -- ============================================================
 
-open Core.IntensionalLogic (boxR diamondR Refl boxR_T)
+open Core.IntensionalLogic (boxR diamondR IsReflexive boxR_T)
 
 /-- Lift a Bool-valued accessibility to its Prop-valued equivalent. -/
 private def liftR {W : Type*} (R : BAccessRel W) : W → W → Prop :=
@@ -348,7 +347,7 @@ modal base guarantees the description holds at the evaluation world — from
 `Core.IntensionalLogic.boxR_T`.
 -/
 theorem must_realistic_of_refl [Fintype W]
-    (R : BAccessRel W) (hRefl : Refl (liftR R))
+    (R : BAccessRel W) (hRefl : IsReflexive (liftR R))
     (p : ICDRTAssignment W E → W → Bool)
     (d : Discourse W E) (g : ICDRTAssignment W E) (w₀ : W)
     (hd : (g, w₀) ∈ d.info)

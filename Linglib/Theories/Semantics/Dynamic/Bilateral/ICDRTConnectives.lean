@@ -20,7 +20,6 @@ cannot (§5.1.1).
 
 namespace Semantics.Dynamic.Bilateral.ICDRT
 
-open IntensionalCDRT
 open Semantics.Dynamic.Core
 
 

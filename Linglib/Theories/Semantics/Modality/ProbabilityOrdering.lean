@@ -1,8 +1,9 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Attitudes.Intensional
+import Mathlib.Data.Fintype.Basic
 
 /-!
-# Probability-Ordering Bridge — @cite{kratzer-2012} §2.4
+# Probability-Ordering Bridge — @cite{kratzer-2012}
 
 Connects probability assignments to Kratzer ordering sources.
 
@@ -20,59 +21,41 @@ When the probability assignment is uniform, the induced ordering is trivial
 (all worlds equivalent). When skewed, the best worlds are those with
 maximal probability.
 
-Reference: Kratzer, A. (2012). Modals and Conditionals. OUP. Ch. 2 §2.4.
+UNVERIFIED reference: Kratzer (2012) Modals and Conditionals, OUP — chapter
+and section number not checked against the original.
 -/
 
 namespace Semantics.Modality.ProbabilityOrdering
 
-open Semantics.Attitudes.Intensional (World allWorlds)
 open Semantics.Modality.Kratzer
 
-/-! ## Probability assignment -/
+/-! ## Polymorphic core -/
 
 /-- A probability assignment maps worlds to rational probabilities. -/
-abbrev ProbAssignment := World → ℚ
+abbrev ProbAssignment (W : Type*) := W → ℚ
 
-/-- Convert a probability assignment to a Kratzer ordering source.
+/-- Convert a probability assignment to a Kratzer ordering source over a
+    finite world type.
 
-    For each world v, generate the proposition "at least as probable as v":
-    w satisfies this iff P(w) ≥ P(v). The resulting ordering ranks worlds
-    by probability: w ≥_A z iff P(w) ≥ P(z). -/
-def probToOrdering (prob : ProbAssignment) : OrderingSource World := λ _ =>
-  allWorlds.map λ v => (λ w => prob w ≥ prob v)
+    For each world v in `Finset.univ`, generate the proposition "at least
+    as probable as v": w satisfies this iff P(w) ≥ P(v). The resulting
+    ordering ranks worlds by probability: w ≥_A z iff P(w) ≥ P(z). -/
+def probToOrdering {W : Type*} [Fintype W] (prob : ProbAssignment W) :
+    OrderingSource W := fun _ =>
+  (Finset.univ : Finset W).toList.map fun v => fun w => prob w ≥ prob v
 
 /-- `probToOrdering` is world-independent: the ordering source is the
     same regardless of which evaluation world is chosen. -/
-theorem probToOrdering_const (prob : ProbAssignment) (w w' : World) :
+theorem probToOrdering_const {W : Type*} [Fintype W] (prob : ProbAssignment W)
+    (w w' : W) :
     probToOrdering prob w = probToOrdering prob w' :=
   rfl
-
-/-! ## Concrete example -/
-
-/-- A skewed probability assignment: P(w0) > P(w1) > P(w2) > P(w3). -/
-def skewedProb : ProbAssignment := λ w =>
-  match w with | .w0 => 4/10 | .w1 => 3/10 | .w2 => 2/10 | .w3 => 1/10
-
-/-- A uniform probability assignment: P(w) = 1/4 for all w. -/
-def uniformProb : ProbAssignment := λ _ => 1/4
-
-/-! ## Membership helpers -/
-
-/-- Each world is in `allWorlds = [.w0, .w1, .w2, .w3]`. -/
-private lemma w0_mem_allWorlds : (.w0 : World) ∈ allWorlds :=
-  List.mem_cons_self
-private lemma w1_mem_allWorlds : (.w1 : World) ∈ allWorlds :=
-  List.mem_cons_of_mem _ List.mem_cons_self
-private lemma w2_mem_allWorlds : (.w2 : World) ∈ allWorlds :=
-  List.mem_cons_of_mem _ (List.mem_cons_of_mem _ List.mem_cons_self)
-private lemma w3_mem_allWorlds : (.w3 : World) ∈ allWorlds :=
-  List.mem_cons_of_mem _ (List.mem_cons_of_mem _
-    (List.mem_cons_of_mem _ List.mem_cons_self))
 
 /-- Convenience reducer: ordering relation reduces to probability comparison
     via transitivity over the threshold propositions. If `prob w₁ ≥ prob w₂`
     then `w₁ ≥_(probToOrdering prob w) w₂`. -/
-lemma higher_prob_dominates {prob : ProbAssignment} {w1 w2 wEval : World}
+lemma higher_prob_dominates {W : Type*} [Fintype W]
+    {prob : ProbAssignment W} {w1 w2 wEval : W}
     (hOrd : prob w1 ≥ prob w2) :
     atLeastAsGoodAs ((probToOrdering prob) wEval) w1 w2 := by
   intro p hp
@@ -81,13 +64,29 @@ lemma higher_prob_dominates {prob : ProbAssignment} {w1 w2 wEval : World}
   intro h
   exact le_trans h hOrd
 
-/-! ## Theorems -/
-
-/-- **Uniform probability makes all worlds equivalent under the ordering.**
-    Every world satisfies the same set of ordering propositions (all of them). -/
-theorem uniform_all_equivalent (w z : World) :
-    atLeastAsGoodAs ((probToOrdering uniformProb) .w0) w z :=
+/-- **Uniform probability makes all worlds equivalent under the ordering.** -/
+theorem uniform_all_equivalent {W : Type*} [Fintype W] [Inhabited W]
+    (c : ℚ) (w z wEval : W) :
+    atLeastAsGoodAs ((probToOrdering (fun _ : W => c)) wEval) w z :=
   higher_prob_dominates (le_refl _)
+
+/-! ## Concrete World-specific examples
+
+These examples instantiate the polymorphic core at `Attitudes.Intensional.World`
+(the toy 4-world type) for direct demonstration. -/
+
+open Semantics.Attitudes.Intensional (World allWorlds)
+
+/-- A skewed probability assignment: P(w0) > P(w1) > P(w2) > P(w3). -/
+def skewedProb : ProbAssignment World := λ w =>
+  match w with | .w0 => 4/10 | .w1 => 3/10 | .w2 => 2/10 | .w3 => 1/10
+
+/-- A uniform probability assignment: P(w) = 1/4 for all w. -/
+def uniformProb : ProbAssignment World := λ _ => 1/4
+
+private lemma w0_mem_univ_toList :
+    (.w0 : World) ∈ (Finset.univ : Finset World).toList := by
+  simp
 
 /-- **Under skewed P, best worlds (from universal base) = {w0}.**
     w0 has the highest probability and dominates all others. -/
@@ -103,10 +102,9 @@ theorem prob_ordering_best_w0 (w : World) :
     have hp_mem : (λ x => skewedProb x ≥ skewedProb (.w0 : World))
         ∈ probToOrdering skewedProb w := by
       rw [probToOrdering, List.mem_map]
-      exact ⟨.w0, w0_mem_allWorlds, rfl⟩
+      exact ⟨.w0, w0_mem_univ_toList, rfl⟩
     have h_w' : skewedProb w' ≥ skewedProb (.w0 : World) :=
       hLeq _ hp_mem (le_refl _)
-    -- skewedProb w' ≥ 4/10 forces w' = .w0
     cases w' with
     | w0 => rfl
     | w1 => simp [skewedProb] at h_w'; norm_num at h_w'
@@ -137,11 +135,10 @@ theorem prob_ordering_w0_strict_w1 :
     strictlyBetter ((probToOrdering skewedProb) .w0) .w0 .w1 := by
   refine ⟨prob_ordering_w0_ge_w1, ?_⟩
   intro h
-  -- The proposition "≥ skewedProb .w0" is satisfied by .w0 but not .w1.
   have hp_mem : (λ x => skewedProb x ≥ skewedProb (.w0 : World))
       ∈ probToOrdering skewedProb .w0 := by
     rw [probToOrdering, List.mem_map]
-    exact ⟨.w0, w0_mem_allWorlds, rfl⟩
+    exact ⟨.w0, w0_mem_univ_toList, rfl⟩
   have hp1 : skewedProb (.w1 : World) ≥ skewedProb (.w0 : World) :=
     h _ hp_mem (le_refl _)
   simp [skewedProb] at hp1

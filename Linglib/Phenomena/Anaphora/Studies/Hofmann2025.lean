@@ -1,5 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Compositional
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Bridge
+import Linglib.Theories.Semantics.Dynamic.Core.Intensional
 
 /-!
 # Hofmann (2025): Anaphoric Accessibility with Flat Update
@@ -40,7 +39,12 @@ patterns of anaphora to negated antecedents:
 The analysis is implemented in Intensional CDRT (ICDRT), extending
 @cite{muskens-1996}'s Compositional DRT with intensionality and
 propositional drefs, following @cite{stone-1999} and
-@cite{brasoveanu-2006}'s flat-update approach.
+@cite{brasoveanu-2006}'s flat-update approach. Generic ICDRT
+infrastructure (assignments, updates, variable updates, dynamic
+conditions, predication, veridicality typology, multi-agent discourse
+contexts, maximization) lives in `Dynamic/Core/Intensional.lean`;
+this file owns Hofmann's Appendix C compositional fragment and the
+empirical applications.
 
 ## Structure of this file
 
@@ -48,12 +52,16 @@ propositional drefs, following @cite{stone-1999} and
 2. **Concrete model M₁** (§2): The 4-world model from the paper
 3. **End-to-end derivations** (§3): Accessibility derived from ICDRT operators
 4. **Accessibility predictions** (§4): The classification, verified against derivations
+5. **Per-datum verification** (§5)
+6. **Compositional fragment** (§6): Hofmann's Appendix C lexical entries
+7. **Comparison with Bilateral Update Semantics** (§7): @cite{hofmann-2025} §5.1.1
+   — where ICDRT covers cases that bilateral accounts (BUS,
+   @cite{krahmer-muskens-1995}, @cite{elliott-sudo-2025}) cannot.
 -/
 
 namespace Hofmann2025
 
 open Semantics.Dynamic.Core
-open Semantics.Dynamic.IntensionalCDRT
 
 
 -- ════════════════════════════════════════════════════════════════
@@ -723,60 +731,232 @@ theorem all_data_correct :
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 6. Compositional Derivations (Appendix C)
+-- § 6. Compositional Fragment (Appendix C)
 -- ════════════════════════════════════════════════════════════════
 
-/-! ## Compositional Fragment Applied to Model M₁
+/-! ## Lexical entries from Appendix C
 
-The hand-built derivations in §3 construct output assignments directly.
-Here we DERIVE sentence meanings from lexical entries using the
-compositional fragment (Compositional.lean, @cite{hofmann-2025}
-Appendix C). Each sentence meaning is built by function application
-and sequential composition, then wrapped in `semDEC` for assertion.
+Type-driven compositional semantics for ICDRT. Each lexical entry is a
+higher-order function over dynamic meta-types; composition is function
+application + sequential update. The resulting `ICDRTUpdate` values lift
+to distributive CCPs via `Core/Intensional.lean`'s
+`toDynProp_isDistributive`.
 
-Every compositional derivation is an `ICDRTUpdate BWorld BEnt` —
-a static update relation — which lifts to a distributive CCP via
-`Bridge.lean`'s `toDynProp_isDistributive`.
+### Meta-types (Definition 13)
+
+| Paper | Lean | Interpretation |
+|-------|------|----------------|
+| **e** | `IVar` | Individual dref name |
+| **w** | `PVar` | Propositional dref name |
+| **t** | `ICDRTUpdate W E` | Static update relation |
+
+Compositional types are functions between these: `e(wt)` = VP type,
+`wt` = sentence type, etc.
 -/
 
-open Semantics.Dynamic.IntensionalCDRT.Compositional
+/-- VP / predicate type: `e(wt)` — takes individual dref and local context. -/
+abbrev SemE (W E : Type*) := IVar → PVar → ICDRTUpdate W E
 
-/-- "There is a bathroom" — existential with restrictor `bathroom`
-    and vacuous scope.
+/-- Sentence / clause type: `wt` — takes local context, returns update. -/
+abbrev SemW (W E : Type*) := PVar → ICDRTUpdate W E
 
-    `a^{v₁}(bathroom)(vacuous) = λφ.[φ:v₁]; [bathroom_φ(v₁)]` -/
+variable {W E : Type*}
+
+/-- Vacuous VP scope: identity predicate `λv.λφ.idUp`. Used when a
+sentence has no VP beyond the NP (e.g., "there is a bathroom"). -/
+def vacuousScope : SemE W E := λ _ _ => ICDRTUpdate.idUp
+
+/-- (15) Common noun: `bathroom ⟿ λv_e.λφ_w.[bathroom_φ(v)]`.
+A test update: assignment unchanged, but `R_φ(v)` must hold at the output. -/
+def commonNoun (R : E → W → Prop) : SemE W E :=
+  λ v φ => λ i j => i = j ∧ dynPred R φ v j
+
+/-- Intransitive VP: structurally identical to `commonNoun`. -/
+abbrev intransVP (R : E → W → Prop) : SemE W E := commonNoun R
+
+/-- (16) Indefinite: `a^v ⟿ λP.λP'.λφ.[φ : v]; P(v)(φ); P'(v)(φ)`.
+
+The biconditional in `relVarUp` ensures `v` has a referent exactly in
+the φ-worlds, preventing scope leakage. -/
+def indefinite (v : IVar) (P P' : SemE W E) (φ : PVar) : ICDRTUpdate W E :=
+  ICDRTUpdate.seq (ICDRTUpdate.seq (λ i j => relVarUp φ v i j) (P v φ)) (P' v φ)
+
+/-- (17) Pronoun: `it_v ⟿ λP.λφ.P(v)(φ)`. The pronoun contributes no
+update — it simply passes its index `v` to the predicate. -/
+def pronoun (v : IVar) (P : SemE W E) (φ : PVar) : ICDRTUpdate W E :=
+  P v φ
+
+/-- (14) Proper name: `Mary ⟿ λP.λφ.[v | v ≡ Mary_e]; P(v)(φ)`. -/
+def properName (name : E) (v : IVar) (P : SemE W E) (φ : PVar) :
+    ICDRTUpdate W E :=
+  ICDRTUpdate.seq
+    (λ i j => indivVarUp v i j ∧ ∀ w : W, j.indiv v w = .some name)
+    (P v φ)
+
+/-- (18a) Sentential negation: `NOT^{φ'} ⟿ λSc.λφ.[φ' | φ ≡ φ̄']; max_{φ'}(Sc(φ'))`.
+
+Static complementation over propositional drefs, NOT bilateral swap —
+the algebraic content of @cite{hofmann-2025}'s key insight (§5.1.1). -/
+def semNOT (φ' : PVar) (Sc : SemW W E) (φ : PVar) : ICDRTUpdate W E :=
+  ICDRTUpdate.seq
+    (λ i j => propVarUp φ' i j ∧ isComplement φ φ' j)
+    (propMaxOp φ' (Sc φ'))
+
+/-- (18b) Disjunction: `OR^{φ',φ''} ⟿ λSc'.λSc''.λφ.[φ',φ'' | φ ≡ φ'⊎φ''];
+max_{φ'}(Sc'(φ')); max_{φ''}(Sc''(φ''))`.
+
+The disjuncts' local contexts need NOT overlap — this is how bathroom
+disjunctions enable cross-disjunct anaphora. -/
+def semOR (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
+    ICDRTUpdate W E :=
+  ICDRTUpdate.seq
+    (ICDRTUpdate.seq
+      (λ i j => multiVarUp [φ', φ''] [] i j ∧
+        j.prop φ = j.prop φ' ∪ j.prop φ'')
+      (propMaxOp φ' (Sc' φ')))
+    (propMaxOp φ'' (Sc'' φ''))
+
+/-- (18c) Conditional: `IF^{φ',φ''} ⟿ λSc'.λSc''.λφ.[φ',φ'' | φ ≡ φ̄'⊎φ''];
+max_{φ'}(Sc'(φ')); max_{φ''}(Sc''(φ''))`. -/
+def semIF (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
+    ICDRTUpdate W E :=
+  ICDRTUpdate.seq
+    (ICDRTUpdate.seq
+      (λ i j => multiVarUp [φ', φ''] [] i j ∧
+        j.prop φ = (j.prop φ')ᶜ ∪ j.prop φ'')
+      (propMaxOp φ' (Sc' φ')))
+    (propMaxOp φ'' (Sc'' φ''))
+
+/-- (18d) Conjunction: `AND^{φ',φ''} ⟿ λSc'.λSc''.λφ.
+[φ' | φ'⊑φ]; max_{φ'}(Sc'(φ')); [φ'' | φ''⊑φ']; max_{φ''}(Sc''(φ''))`. -/
+def semAND (φ' φ'' : PVar) (Sc' Sc'' : SemW W E) (φ : PVar) :
+    ICDRTUpdate W E :=
+  ICDRTUpdate.seq
+    (ICDRTUpdate.seq
+      (ICDRTUpdate.seq
+        (λ i j => propVarUp φ' i j ∧ dynInclusion φ' φ j)
+        (propMaxOp φ' (Sc' φ')))
+      (λ i j => propVarUp φ'' i j ∧ dynInclusion φ'' φ' j))
+    (propMaxOp φ'' (Sc'' φ''))
+
+/-- (18e) Attitude verb: `believed ⟿ λv.λSc.λφ.[φ' | believe_φ(v,φ')]; max_{φ'}(Sc(φ'))`. -/
+def semBelieved (φ' : PVar) (dox : ICDRTAssignment W E → Set W)
+    (Sc : SemW W E) (_φ : PVar) : ICDRTUpdate W E :=
+  ICDRTUpdate.seq
+    (λ i j => propVarUp φ' i j ∧ believeCondition φ' dox j)
+    (propMaxOp φ' (Sc φ'))
+
+/-- (19) Declarative assertion: `DEC_S^φ ⟿ λSc.[φ | φ_{DC_S}⊑φ]; max_φ(Sc(φ))`. -/
+def semDEC (φ_DC : PVar) (φ : PVar) (Sc : SemW W E) :
+    ICDRTUpdate W E :=
+  ICDRTUpdate.seq
+    (λ i j => propVarUp φ i j ∧ decCondition φ_DC φ j)
+    (propMaxOp φ (Sc φ))
+
+-- § 6.1 Structural properties of lexical entries
+
+/-- A common noun is a test: it preserves the assignment. -/
+theorem commonNoun_is_test (R : E → W → Prop) (v : IVar) (φ : PVar)
+    (i j : ICDRTAssignment W E) (h : commonNoun R v φ i j) : i = j := h.1
+
+/-- `vacuousScope` is a test (identity). -/
+theorem vacuousScope_is_test (v : IVar) (φ : PVar)
+    (i j : ICDRTAssignment W E) (h : vacuousScope v φ i j) : i = j := h
+
+/-- `pronoun v P φ` is just `P v φ` — the pronoun is transparent. -/
+theorem pronoun_transparent (v : IVar) (P : SemE W E) (φ : PVar) :
+    pronoun v P φ = P v φ := rfl
+
+/-- Indefinite introduction implies local entailment when restrictor and
+scope are tests (preserve the assignment). The KEY structural connection
+between composition and accessibility. -/
+theorem indefinite_test_entails (v : IVar) (P P' : SemE W E) (φ : PVar)
+    (hP : ∀ a b, P v φ a b → a = b)
+    (hP' : ∀ a b, P' v φ a b → a = b)
+    (i j : ICDRTAssignment W E)
+    (h : indefinite v P P' φ i j) :
+    localEntailment φ v j := by
+  obtain ⟨l, ⟨m, hrel, hPml⟩, hP'lj⟩ := h
+  have hmj : m = j := (hP m l hPml).trans (hP' l j hP'lj)
+  rw [← hmj]
+  exact relVarUp_implies_localEntailment φ v i m hrel
+
+-- § 6.2 Operator decomposition
+
+/-- DEC introduces the inclusion condition. -/
+theorem semDEC_inclusion (φ_DC φ : PVar) (Sc : SemW W E)
+    (i j : ICDRTAssignment W E) (h : semDEC φ_DC φ Sc i j) :
+    ∃ k, propVarUp φ i k ∧ decCondition φ_DC φ k ∧
+      propMaxOp φ (Sc φ) k j := by
+  obtain ⟨k, hk, hmax⟩ := h
+  exact ⟨k, hk.1, hk.2, hmax⟩
+
+/-- NOT introduces the complement condition on the intermediate assignment. -/
+theorem semNOT_introduces_complement (φ' : PVar) (Sc : SemW W E) (φ : PVar)
+    (i j : ICDRTAssignment W E) (h : semNOT φ' Sc φ i j) :
+    ∃ k, propVarUp φ' i k ∧ isComplement φ φ' k ∧
+      propMaxOp φ' (Sc φ') k j := by
+  obtain ⟨k, hk, hmax⟩ := h
+  exact ⟨k, hk.1, hk.2, hmax⟩
+
+/-- Double negation restores the original local context via double
+complementation. -/
+theorem double_neg_complement (φ' φ'' : PVar) (φ : PVar)
+    (k j : ICDRTAssignment W E)
+    (h_outer : isComplement φ φ' k)
+    (h_inner : isComplement φ' φ'' j)
+    (h_prop_pres : j.prop φ = k.prop φ)
+    (h_prop_pres' : j.prop φ' = k.prop φ') :
+    j.prop φ = j.prop φ'' := by
+  have h_outer_j : isComplement φ φ' j := by
+    unfold isComplement at h_outer ⊢
+    rw [h_prop_pres, h_prop_pres', h_outer]
+  exact double_complement_eq φ' φ'' φ j h_inner h_outer_j
+
+-- § 6.3 Bridge to CCP
+
+/-- Every compositional derivation lifts to a distributive CCP. -/
+theorem comp_isDistributive (D : ICDRTUpdate W E) :
+    IsDistributive D.toDynProp :=
+  toDynProp_isDistributive D
+
+/-- Every compositional derivation factors through `fiberDRS`. -/
+theorem comp_factorizes (D : ICDRTUpdate W E) :
+    D.toDynProp = lift (fiberDRS D) :=
+  toDynProp_eq_lift_fiberDRS D
+
+/-- Sequential composition in the fragment lifts to CCP composition. -/
+theorem comp_seq_lifts (D₁ D₂ : ICDRTUpdate W E) (c : IContext W E) :
+    (ICDRTUpdate.seq D₁ D₂).toDynProp c = D₂.toDynProp (D₁.toDynProp c) :=
+  ICDRTUpdate.seq_toDynProp D₁ D₂ c
+
+-- § 6.4 Compositional derivations applied to Model M₁
+
+/-- "There is a bathroom" — existential with restrictor `bathroom` and
+vacuous scope. `a^{v₁}(bathroom)(vacuous) = λφ.[φ:v₁]; [bathroom_φ(v₁)]` -/
 def thereIsABathroom : SemW BWorld BEnt :=
   indefinite v1 (commonNoun isBathroom) vacuousScope
 
 /-- "It is upstairs" — pronoun `v₁` with VP predicate `upstairs`.
-
-    `it_{v₁}(upstairs) = λφ.[upstairs_φ(v₁)]` -/
+`it_{v₁}(upstairs) = λφ.[upstairs_φ(v₁)]` -/
 def itIsUpstairs : SemW BWorld BEnt :=
   pronoun v1 (intransVP isUpstairs)
 
-/-- **Veridical**: "There is a bathroom. It is upstairs."
-
-    `DEC_S^{φ₁}(a^{v₁}(bathroom)(vacuous)) ⨟ DEC_S^{φ₃}(it_{v₁}(upstairs))` -/
+/-- **Veridical**: "There is a bathroom. It is upstairs." -/
 def veridical_comp : ICDRTUpdate BWorld BEnt :=
   ICDRTUpdate.seq
     (semDEC pDC_S p1 thereIsABathroom)
     (semDEC pDC_S p3 itIsUpstairs)
 
-/-- **Negated**: "There isn't a bathroom."
-
-    `DEC_S^{φ₁}(NOT^{φ₂}(a^{v₁}(bathroom)(vacuous)))` -/
+/-- **Negated**: "There isn't a bathroom." -/
 def negated_comp : ICDRTUpdate BWorld BEnt :=
   semDEC pDC_S p1 (semNOT p2 thereIsABathroom)
 
-/-- **Double negation**: "It's not the case that there isn't a bathroom."
-
-    `DEC_S^{φ₁}(NOT^{φ₂}(NOT^{φ₃}(a^{v₁}(bathroom)(vacuous))))` -/
+/-- **Double negation**: "It's not the case that there isn't a bathroom." -/
 def doubleNeg_comp : ICDRTUpdate BWorld BEnt :=
   semDEC pDC_S p1 (semNOT p2 (semNOT p3 thereIsABathroom))
 
-/-- **Bathroom disjunction**: "Either there isn't a bathroom, or it's upstairs."
-
-    `DEC_S^{φ₁}(OR^{φ₂,φ₃}(NOT^{φ₄}(∃bathroom))(it_{v₁}(upstairs)))` -/
+/-- **Bathroom disjunction**: "Either there isn't a bathroom, or it's upstairs." -/
 def bathDisj_comp : ICDRTUpdate BWorld BEnt :=
   semDEC pDC_S p1
     (semOR p2 p3
@@ -784,23 +964,14 @@ def bathDisj_comp : ICDRTUpdate BWorld BEnt :=
       itIsUpstairs)
 
 /-- **Disagreement**: A: "There isn't a bathroom." B: "It is upstairs."
-
-    `DEC_A^{φ₁}(NOT^{φ₂}(∃bathroom)) ⨟ DEC_B^{φ₃}(it_{v₁}(upstairs))`
-
-    Different speakers have different commitment sets — this is
-    what bilateral accounts CANNOT handle (§5.1.1). -/
+Different speakers have different commitment sets — what bilateral
+accounts CANNOT handle (§5.1.1). -/
 def disagree_comp : ICDRTUpdate BWorld BEnt :=
   ICDRTUpdate.seq
     (semDEC pDC_A p1 (semNOT p2 thereIsABathroom))
     (semDEC pDC_B p3 itIsUpstairs)
 
-/-- **Modal subordination**: "There isn't a bathroom. Sue believes it's upstairs."
-
-    `DEC_S^{φ₁}(NOT^{φ₂}(∃bathroom)) ⨟
-     DEC_S^{φ₃}(believed^{φ₄}(dox_sue)(it_{v₁}(upstairs)))`
-
-    The pronoun resolves in Sue's doxastic state `φ₄`, not the
-    speaker's commitment set. -/
+/-- **Modal subordination**: "There isn't a bathroom. Sue believes it's upstairs." -/
 def modalSub_comp : ICDRTUpdate BWorld BEnt :=
   ICDRTUpdate.seq
     (semDEC pDC_S p1 (semNOT p2 thereIsABathroom))
@@ -808,9 +979,6 @@ def modalSub_comp : ICDRTUpdate BWorld BEnt :=
       (semBelieved p4_modal
         (λ j => { w | ∃ e, j.indiv v1 w = .some e })
         itIsUpstairs))
-
-
--- § 6.1 Bridge: compositional derivations are distributive CCPs
 
 /-- Every compositional derivation lifts to a distributive CCP. -/
 theorem veridical_comp_distributive :
@@ -823,6 +991,149 @@ theorem veridical_comp_factors (c : IContext BWorld BEnt) :
     (semDEC pDC_S p3 itIsUpstairs).toDynProp
       ((semDEC pDC_S p1 thereIsABathroom).toDynProp c) :=
   ICDRTUpdate.seq_toDynProp _ _ c
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 7. Comparison with Bilateral Update Semantics (§5.1.1)
+-- ════════════════════════════════════════════════════════════════
+
+/-! ## ICDRT vs. BUS: where the multi-agent architecture pays for itself
+
+@cite{hofmann-2025} §5.1.1 contrasts ICDRT with Bilateral Update
+Semantics (BUS, @cite{krahmer-muskens-1995}, @cite{elliott-sudo-2025}).
+BUS uses two update channels (positive/negative) and treats negation as
+a swap; ICDRT uses propositional drefs and per-speaker commitment sets.
+
+Both solve the bathroom sentence. ICDRT additionally covers
+**disagreement**, **modal subordination**, and the three-way
+**veridical/hypothetical/counterfactual** classification — none of
+which BUS can express, because BUS has a single information state with
+no per-speaker structure.
+
+| Property | ICDRT | BUS |
+|----------|-------|-----|
+| Negation | Static complementation | Dimension swap |
+| DNE | `double_complement_eq` | Definitional (`rfl`) |
+| Bathroom | `disjunction_enables_anaphora` | Swap feeds disjunct |
+| Disagreement | Per-speaker DC (`DiscContext`) | ✗ (single state) |
+| Modal subordination | `counterfactualIndiv` + modal shift | ✗ |
+| Veridicality | Three-way | ✗ |
+| Truth conditions | `dec_complement_counterfactual` | ✗ (no DC) |
+| State type | `ICDRTAssignment` | `InfoState` |
+
+The root cause: BUS is a **single-agent** system; ICDRT is
+**multi-agent** by construction.
+-/
+
+/-- ICDRT handles bathroom anaphora via disjunction + local entailment.
+If the second disjunct's context grants `v` a referent, and the anaphor's
+context is within it, the pronoun is resolved. -/
+theorem icdrt_bathroom_anaphora
+    (φ_disj2 φ_anaphor : PVar) (v : IVar)
+    (i : ICDRTAssignment W E)
+    (h_sub : i.prop φ_anaphor ⊆ i.prop φ_disj2)
+    (h_ref : ∀ w, w ∈ i.prop φ_disj2 → i.indiv v w ≠ .star) :
+    localEntailment φ_anaphor v i :=
+  disjunction_enables_anaphora φ_disj2 φ_anaphor v i h_sub h_ref
+
+/-- In ICDRT, two speakers can disagree about the same dref:
+`v` is counterfactual for A but veridical for B, simultaneously. -/
+theorem icdrt_disagreement_possible
+    (φ_DC_A φ_DC_B : PVar) (v : IVar)
+    (i : ICDRTAssignment W E)
+    (h_cf_A : counterfactualIndiv φ_DC_A v i)
+    (h_ver_B : veridicalIndiv φ_DC_B v i) :
+    (∀ w ∈ i.prop φ_DC_A, i.indiv v w = .star) ∧
+    (∀ w ∈ i.prop φ_DC_B, i.indiv v w ≠ .star) :=
+  ⟨h_cf_A, h_ver_B⟩
+
+/-- Disagreement is consistent: both speakers can have nonempty commitment
+sets while disagreeing about whether the bathroom exists. -/
+theorem icdrt_disagreement_consistent {Speaker : Type*}
+    (ctx : DiscContext W E Speaker)
+    (A B : Speaker)
+    (h_consistent : ctx.consistent)
+    (_v : IVar)
+    (_h_cf_A : counterfactualIndiv (ctx.dcVar A) _v ctx.state)
+    (_h_ver_B : veridicalIndiv (ctx.dcVar B) _v ctx.state) :
+    (ctx.state.prop (ctx.dcVar A)).Nonempty ∧
+    (ctx.state.prop (ctx.dcVar B)).Nonempty :=
+  ⟨h_consistent A, h_consistent B⟩
+
+/-- After A asserts "there isn't a bathroom" and B responds "it is
+upstairs", `pragMaxDC` updates each speaker's commitment set
+independently — A's stays excluding bathroom-worlds, B's expands to
+include them. The same dref `v` has different veridicality per speaker. -/
+theorem icdrt_disagreement_via_pragMaxDC {Speaker : Type*}
+    (dcVar : Speaker → PVar) (D : ICDRTUpdate W E)
+    (i j : ICDRTAssignment W E) (v : IVar)
+    (A B : Speaker)
+    (_h_max : pragMaxDC dcVar D i j)
+    (h_cf_A : counterfactualIndiv (dcVar A) v j)
+    (h_ver_B : veridicalIndiv (dcVar B) v j) :
+    (∀ w ∈ j.prop (dcVar A), j.indiv v w = .star) ∧
+    (∀ w ∈ j.prop (dcVar B), j.indiv v w ≠ .star) :=
+  ⟨h_cf_A, h_ver_B⟩
+
+/-- In ICDRT, a counterfactual dref can still be locally entailed in a
+hypothetical context: `v` maps to ⋆ in DC worlds but has referents in
+the modal context's worlds. -/
+theorem icdrt_modal_subordination
+    (φ_DC φ_modal : PVar) (v : IVar)
+    (i : ICDRTAssignment W E)
+    (h_cf : counterfactualIndiv φ_DC v i)
+    (h_ent : localEntailment φ_modal v i)
+    (_h_disjoint : i.prop φ_modal ∩ i.prop φ_DC = ∅) :
+    (∀ w ∈ i.prop φ_DC, i.indiv v w = .star) ∧
+    (∀ w ∈ i.prop φ_modal, i.indiv v w ≠ .star) :=
+  ⟨h_cf, h_ent⟩
+
+/-- The subset requirement is satisfied when the modal context shifts to
+hypothetical worlds where the antecedent's binding holds. -/
+theorem icdrt_modal_subset_satisfied
+    (_φ_DC φ_antecedent φ_modal : PVar) (v : IVar)
+    (i : ICDRTAssignment W E)
+    (h_sub : subsetReq φ_modal φ_antecedent i)
+    (h_rel : ∀ w, w ∈ i.prop φ_antecedent ↔ i.indiv v w ≠ .star) :
+    localEntailment φ_modal v i :=
+  λ w hw => (h_rel w).mp (h_sub hw)
+
+/-- The three veridicality categories are exhaustive. -/
+theorem icdrt_veridicality_exhaustive
+    (φ_DC : PVar) (v : IVar) (i : ICDRTAssignment W E) :
+    veridicalIndiv φ_DC v i ∨ counterfactualIndiv φ_DC v i ∨ hypotheticalIndiv φ_DC v i :=
+  veridicality_trichotomy φ_DC v i
+
+/-- ICDRT double negation: complementing twice recovers the original
+proposition. The static analog of BUS's definitional DNE. -/
+theorem icdrt_dne
+    (φ₁ φ₂ φ₃ : PVar) (i : ICDRTAssignment W E)
+    (h1 : isComplement φ₁ φ₂ i) (h2 : isComplement φ₃ φ₁ i) :
+    i.prop φ₃ = i.prop φ₂ :=
+  double_complement_eq φ₁ φ₂ φ₃ i h1 h2
+
+/-- After ICDRT negation, the negated dref is still in the discourse
+state — it just maps to ⋆ in the speaker's DC worlds. This persistence
+is what enables disagreement and modal subordination. -/
+theorem icdrt_negated_dref_persists
+    (φ_inner φ_outer : PVar) (v : IVar)
+    (i : ICDRTAssignment W E)
+    (_h_not : isComplement φ_outer φ_inner i)
+    (h_ent : localEntailment φ_inner v i) :
+    ∀ w ∈ i.prop φ_inner, i.indiv v w ≠ .star :=
+  h_ent
+
+/-- ICDRT derives negated existential truth conditions from DEC +
+complementation: `DC ⊆ assertion` and `assertion = complement of inner`
+together imply the inner content is counterfactual relative to the
+speaker. -/
+theorem icdrt_neg_existential_truth
+    (φ_DC φ_outer φ_inner : PVar)
+    (i : ICDRTAssignment W E)
+    (h_comp : isComplement φ_outer φ_inner i)
+    (h_dec : dynInclusion φ_DC φ_outer i) :
+    counterfactualProp φ_DC φ_inner i :=
+  dec_complement_counterfactual φ_DC φ_outer φ_inner i h_comp h_dec
 
 
 end Hofmann2025

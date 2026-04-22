@@ -1,6 +1,6 @@
 import Linglib.Core.SelectionFunction
 import Linglib.Core.Modality.HistoricalAlternatives
-import Linglib.Core.FinitePMF
+import Linglib.Core.Probability.PMFFin
 
 /-!
 # Selectional Semantics for *will*
@@ -63,8 +63,9 @@ set_option autoImplicit false
 
 namespace Semantics.Modality.Selectional
 
-open _root_.Core (SelectionFunction FinitePMF)
+open _root_.Core (SelectionFunction)
 open _root_.Core.Modality.HistoricalAlternatives
+open scoped ENNReal
 
 variable {W : Type*}
 
@@ -90,16 +91,6 @@ instance willSem_decidable (s : SelectionFunction W) (A : W → Prop)
     [DecidablePred A] (f : Set W) (w : W) :
     Decidable (willSem s A f w) :=
   inferInstanceAs (Decidable (A _))
-
-/-- Bool-valued selectional `will` — useful for credence calculations
-    via `Core.FinitePMF.probOf` (which takes Bool predicates). -/
-def willSemBool (s : SelectionFunction W) (A : W → Bool)
-    (f : Set W) (w : W) : Bool :=
-  A (s.sel w f)
-
-@[simp] theorem willSemBool_def (s : SelectionFunction W) (A : W → Bool)
-    (f : Set W) (w : W) :
-    willSemBool s A f w = A (s.sel w f) := rfl
 
 /-! ## §2. Scopelessness, CEM, and unembedded collapse -/
 
@@ -346,99 +337,33 @@ theorem universal_negation_swap_fails {A : W → Prop} {f : Set W} {w : W}
 The selectional analysis predicts `μ(‖will A‖_f) = μ(‖A‖_f)` whenever
 the credence `μ` is supported on the modal parameter `f`. This
 matches the empirically attested gradedness of *will*-credences and
-distinguishes selectional from universal accounts. -/
+distinguishes selectional from universal accounts.
+
+The single `cognitive_role` theorem subsumes the conjunction,
+disjunction, and negation variants of earlier drafts: those are just
+this theorem applied to `A ∩ B`, `A ∪ B`, and `Aᶜ` — the Bool
+connectives are encoding set algebra. -/
 
 /-- **Cognitive role** @cite{cariani-santorio-2018} §8.1: under any
-    credence `μ` supported on the modal parameter `f` (every world
-    outside `f` has zero mass), the credence assigned to `will A`
-    equals the credence assigned to `A` itself.
+    credence `μ` whose support lies within the modal parameter `f`,
+    the measure of `‖will A‖` (the worlds whose *selected* world is in
+    `A`) equals the measure of `‖A‖`.
 
     Reading: assertion of `will A` is licensed by ordinary, non-extreme
     credence in `A`. The universal-quantifier reading instead forces
     `μ(‖∀ A‖) ∈ {0, 1}` (collapsing into a step function on whether
-    `f ⊆ A`), which is empirically wrong. -/
-theorem cognitive_role [Fintype W] (s : SelectionFunction W)
-    (A : W → Bool) (f : Set W) (μ : FinitePMF W)
-    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
-    μ.probOf (fun w => A (s.sel w f)) = μ.probOf A := by
-  unfold FinitePMF.probOf
-  apply Finset.sum_congr rfl
-  intro w _
-  dsimp only
-  by_cases hw : w ∈ f
-  · congr 1
-    rw [s.centering w f hw]
-  · rw [h_supp w hw]; simp
+    `f ⊆ A`), which is empirically wrong.
 
-/-- **Cognitive role for conjunctions** @cite{cariani-santorio-2018}
-    §8.1: the transparency identity lifts to compositional prejacents.
-    `μ(‖will (A ∧ B)‖) = μ(‖A ∧ B‖)`. Direct corollary of
-    `cognitive_role` applied to the pointwise conjunction `fun w => A w && B w`. -/
-theorem cognitive_role_and [Fintype W] (s : SelectionFunction W)
-    (A B : W → Bool) (f : Set W) (μ : FinitePMF W)
-    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
-    μ.probOf (fun w => (A (s.sel w f)) && (B (s.sel w f))) =
-      μ.probOf (fun w => A w && B w) :=
-  cognitive_role s (fun w => A w && B w) f μ h_supp
-
-/-- **Cognitive role for disjunctions** @cite{cariani-santorio-2018}
-    §8.1: `μ(‖will (A ∨ B)‖) = μ(‖A ∨ B‖)`. Direct corollary of
-    `cognitive_role` applied to the pointwise disjunction. -/
-theorem cognitive_role_or [Fintype W] (s : SelectionFunction W)
-    (A B : W → Bool) (f : Set W) (μ : FinitePMF W)
-    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
-    μ.probOf (fun w => (A (s.sel w f)) || (B (s.sel w f))) =
-      μ.probOf (fun w => A w || B w) :=
-  cognitive_role s (fun w => A w || B w) f μ h_supp
-
-/-- **Cognitive role for negations** @cite{cariani-santorio-2018} §8.1:
-    `μ(‖will ¬A‖) = μ(‖¬A‖)`. By Negation Swap and transparency, the
-    credence in *will ¬A* matches the credence in `¬A`. -/
-theorem cognitive_role_not [Fintype W] (s : SelectionFunction W)
-    (A : W → Bool) (f : Set W) (μ : FinitePMF W)
-    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
-    μ.probOf (fun w => !(A (s.sel w f))) = μ.probOf (fun w => !(A w)) :=
-  cognitive_role s (fun w => !(A w)) f μ h_supp
-
-/-! ### Prop-friendly cognitive role bridge
-
-Wrappers that accept `Prop`-valued prejacents with a `DecidablePred` instance,
-coercing through `decide` so callers can stay in the Prop layer (matching the
-rest of `Selectional.lean`). Internally these delegate to the Bool variants
-because `FinitePMF.probOf` is Bool-typed by design (an intrinsic computational
-boundary, not a Bool stand-in for Prop content). -/
-
-/-- Prop-friendly variant of `cognitive_role`: under any credence supported on
-    `f`, `μ(‖will A‖) = μ(‖A‖)` for any decidable `Prop` prejacent. -/
-theorem cognitive_role_prop [Fintype W] (s : SelectionFunction W)
-    (A : W → Prop) [DecidablePred A] (f : Set W) (μ : FinitePMF W)
-    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
-    μ.probOf (fun w => decide (A (s.sel w f))) = μ.probOf (fun w => decide (A w)) :=
-  cognitive_role s (fun w => decide (A w)) f μ h_supp
-
-/-- Prop-friendly variant of `cognitive_role_and`. -/
-theorem cognitive_role_and_prop [Fintype W] (s : SelectionFunction W)
-    (A B : W → Prop) [DecidablePred A] [DecidablePred B]
-    (f : Set W) (μ : FinitePMF W) (h_supp : ∀ w ∉ f, μ.mass w = 0) :
-    μ.probOf (fun w => decide (A (s.sel w f)) && decide (B (s.sel w f))) =
-      μ.probOf (fun w => decide (A w) && decide (B w)) :=
-  cognitive_role s (fun w => decide (A w) && decide (B w)) f μ h_supp
-
-/-- Prop-friendly variant of `cognitive_role_or`. -/
-theorem cognitive_role_or_prop [Fintype W] (s : SelectionFunction W)
-    (A B : W → Prop) [DecidablePred A] [DecidablePred B]
-    (f : Set W) (μ : FinitePMF W) (h_supp : ∀ w ∉ f, μ.mass w = 0) :
-    μ.probOf (fun w => decide (A (s.sel w f)) || decide (B (s.sel w f))) =
-      μ.probOf (fun w => decide (A w) || decide (B w)) :=
-  cognitive_role s (fun w => decide (A w) || decide (B w)) f μ h_supp
-
-/-- Prop-friendly variant of `cognitive_role_not`. -/
-theorem cognitive_role_not_prop [Fintype W] (s : SelectionFunction W)
-    (A : W → Prop) [DecidablePred A] (f : Set W) (μ : FinitePMF W)
-    (h_supp : ∀ w ∉ f, μ.mass w = 0) :
-    μ.probOf (fun w => !(decide (A (s.sel w f)))) =
-      μ.probOf (fun w => !(decide (A w))) :=
-  cognitive_role s (fun w => !(decide (A w))) f μ h_supp
+    Proof: on the support, Centering forces `s.sel w f = w`, so the two
+    sets agree on the support, and `PMF.toOuterMeasure_apply_eq_of_inter_support_eq`
+    closes the goal. -/
+theorem cognitive_role (s : SelectionFunction W) (A f : Set W) (μ : PMF W)
+    (h_supp : μ.support ⊆ f) :
+    μ.probOfSet {w | s.sel w f ∈ A} = μ.probOfSet A := by
+  apply PMF.toOuterMeasure_apply_eq_of_inter_support_eq
+  ext w
+  simp only [Set.mem_inter_iff, Set.mem_setOf_eq]
+  exact and_congr_left fun hw => by rw [s.centering w f (h_supp hw)]
 
 /-! ## §9. Multi-premise validity (paper §6)
 

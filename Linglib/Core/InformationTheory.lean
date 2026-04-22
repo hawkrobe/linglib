@@ -1,88 +1,81 @@
 import Mathlib.Algebra.Order.Ring.Rat
+import Mathlib.Analysis.SpecialFunctions.Log.NegMulLog
 
 /-!
-# Information-Theoretic Primitives (ℚ-valued)
+# Information-Theoretic Primitives
 @cite{ackerman-malouf-2013} @cite{cheng-holyoak-1995} @cite{cover-thomas-2006}
 @cite{dunn-2025} @cite{ellis-2006}
 
-Domain-agnostic information-theoretic functions over rational numbers, suitable
-for decidable computation. These are used by both pragmatic models (RSA) and
-morphological complexity metrics.
+Domain-agnostic information-theoretic functions, used by both pragmatic models
+(RSA) and morphological complexity metrics.
 
-For the ℝ-valued counterpart, see `Core.shannonEntropy` in
-`Linglib/Core/Agent/RationalAction.lean` (§4), which uses `Real.log` and
-supports proofs of non-negativity, max-entropy bounds, and Gibbs VP.
+The entropy / mutual-information / conditional-entropy / Jensen-Shannon
+families are real-valued and route through mathlib's `Real.negMulLog`
+(`x ↦ -x · log x`), the canonical Shannon-entropy summand. Entropy is
+expressed in **nats** (natural log) — the mathlib convention. To convert
+to bits, multiply by `1 / Real.log 2` (or use `Real.logb 2` directly).
+
+For the abstract `(ι → ℝ)`-indexed counterpart with proven non-negativity,
+max-entropy bounds, and Gibbs VP, see `Core.shannonEntropy` in
+`Linglib/Core/Agent/RationalAction.lean` (§4). Both definitions agree
+pointwise via `Real.negMulLog`.
 
 ## Main definitions
 
-- `log2Approx`: rational approximation of log₂
-- `entropy`: Shannon entropy H(X)
+- `entropy`: Shannon entropy H(X) over a `List (α × ℝ)` of (outcome, prob) pairs
 - `conditionalEntropy`: H(Y|X) = H(X,Y) - H(X)
 - `mutualInformation`: I(X;Y) = H(X) + H(Y) - H(X,Y)
-- `deltaP`: ΔP directional association measure
-- `deltaPCounts`: ΔP from a 2×2 contingency table
-
+- `jsdOf`: Jensen-Shannon divergence over an explicit inventory
+- `deltaP`: ΔP directional association measure (ℚ-valued, no log)
+- `deltaPCounts`: ΔP from a 2×2 contingency table (ℚ-valued, no log)
 -/
 
 namespace Core.InformationTheory
 
-/-- Natural logarithm approximated as a rational (for decidable proofs).
+open Real
 
-We use a simple linear approximation log₂(x) ≈ 3 * (x - 1) / (x + 1).
-This is only used for concrete computations; proofs use abstract properties.
-For exact proofs about limiting behavior, we would need Mathlib.Analysis. -/
-def log2Approx (x : ℚ) : ℚ :=
-  if x ≤ 0 then 0
-  else
-    -- Linear approximation around x=1: log2(x) ≈ 2.885 * (x-1)/(x+1)
-    -- Reasonably accurate for 0.5 < x < 2
-    let ratio := (x - 1) / (x + 1)
-    -- 2.885 ≈ 2/ln(2) but we use 3 for simplicity
-    3 * ratio
+/-- Shannon entropy of a distribution (in nats).
 
-/-- Shannon entropy of a distribution (in bits).
+H(X) = -Σ_x P(x) log P(x) = Σ_x negMulLog(P(x))
 
-H(X) = -Σ_x P(x) log P(x)
+The convention `0 · log 0 = 0` is built into `Real.negMulLog` (which
+returns `0` at `x = 0` because `Real.log 0 = 0` in mathlib).
 
-Note: 0 log 0 is defined as 0 (standard convention).
-
-This is the ℚ counterpart of `Core.shannonEntropy` in `RationalAction.lean`,
-using `log2Approx` (rational linear approximation) instead of `Real.log`.
-Suitable for decidable computation; for mathematical proofs, use
-`shannonEntropy` and its theorems (`shannonEntropy_nonneg`,
-`shannonEntropy_le_log_card`, etc.). -/
-def entropy {α : Type} [BEq α] (dist : List (α × ℚ)) : ℚ :=
-  let terms := dist.map λ (_, p) =>
-    if p ≤ 0 then 0
-    else -p * log2Approx p
-  terms.sum
+This is a list-indexed counterpart of `Core.shannonEntropy` in
+`RationalAction.lean`; the latter is the function-indexed version with
+proven properties (`shannonEntropy_nonneg`, `shannonEntropy_le_log_card`,
+Gibbs VP). Use the function-indexed version for proofs over a `Fintype`
+domain; use this list-indexed version when the support is given as an
+explicit list. -/
+noncomputable def entropy {α : Type} (dist : List (α × ℝ)) : ℝ :=
+  (dist.map fun (_, p) => Real.negMulLog p).sum
 
 /-- Mutual information I(X;Y) = H(X) + H(Y) - H(X,Y).
 
-Alternative: I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X) -/
-def mutualInformation {α β : Type} [BEq α] [BEq β]
-    (joint : List ((α × β) × ℚ))
-    (marginalX : List (α × ℚ))
-    (marginalY : List (β × ℚ)) : ℚ :=
+Alternative form: I(X;Y) = H(X) - H(X|Y) = H(Y) - H(Y|X). In nats. -/
+noncomputable def mutualInformation {α β : Type}
+    (joint : List ((α × β) × ℝ))
+    (marginalX : List (α × ℝ))
+    (marginalY : List (β × ℝ)) : ℝ :=
   entropy marginalX + entropy marginalY - entropy joint
 
-/-- Conditional entropy H(Y|X) = H(X,Y) - H(X).
+/-- Conditional entropy H(Y|X) = H(X,Y) - H(X), in nats.
 
 Used by MemorySurprisal for computing average surprisal S_M = H(W_t | M_t),
 and by LCEC for paradigm cell conditional entropy H(Cᵢ|Cⱼ). -/
-def conditionalEntropy {α β : Type} [BEq α] [BEq β]
-    (joint : List ((α × β) × ℚ))
-    (marginalX : List (α × ℚ)) : ℚ :=
+noncomputable def conditionalEntropy {α β : Type}
+    (joint : List ((α × β) × ℝ))
+    (marginalX : List (α × ℝ)) : ℝ :=
   entropy joint - entropy marginalX
 
 /-- Jensen-Shannon divergence over an explicit inventory.
 
 JSD(p, q) = H(m) - (H(p) + H(q)) / 2 where m(x) = (p(x) + q(x)) / 2.
-Symmetric, bounded (0 ≤ JSD ≤ 1 bit), and a metric (after sqrt).
+Symmetric, bounded, and a metric (after sqrt). In nats.
 
 Used for grammar distance, register comparison, and anywhere
 KL divergence's asymmetry is undesirable. -/
-def jsdOf {α : Type} [BEq α] (xs : List α) (p q : α → ℚ) : ℚ :=
+noncomputable def jsdOf {α : Type} (xs : List α) (p q : α → ℝ) : ℝ :=
   let distP := xs.map fun x => (x, p x)
   let distQ := xs.map fun x => (x, q x)
   let distM := xs.map fun x => (x, (p x + q x) / 2)

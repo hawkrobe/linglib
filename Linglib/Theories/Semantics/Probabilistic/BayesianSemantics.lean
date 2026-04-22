@@ -1,4 +1,7 @@
-/-
+import Linglib.Theories.Semantics.Probabilistic.ParamPred
+import Mathlib.Algebra.BigOperators.Ring.Finset
+
+/-!
 # Bayesian Semantics: Graded Truth from Parameter Uncertainty
 
 This module explores approaches where graded truth values **emerge** from
@@ -9,7 +12,7 @@ uncertainty over predicate parameters, rather than being stipulated directly.
 Three approaches to probabilistic/graded semantics:
 
 ### 1. Stipulated Graded Values
-- Define `P : Entity → ℚ` directly
+- Define `P : Entity → ℝ≥0∞` directly
 - Compose using probabilistic operations (×, +−pq)
 - Simple but ad hoc
 
@@ -31,19 +34,16 @@ We implement approach #2 as a stepping stone. It shows that graded values
 can emerge from Boolean semantics + uncertainty, connecting to Lassiter &
 Goodman's result: "threshold semantics + uncertainty = graded semantics".
 
+Priors are mathlib `PMF`-valued (`ℝ≥0∞`), matching the rest of the
+probability layer.
 -/
 
-import Linglib.Theories.Semantics.Probabilistic.ParamPred
-import Linglib.Core.FinitePMF
-import Mathlib.Data.Fintype.Prod
-import Mathlib.Algebra.BigOperators.Ring.Finset
+set_option autoImplicit false
 
 namespace Semantics.Montague.BayesianSemantics
 
-open Semantics.Probabilistic.ParamPred
-
--- Use the canonical FinitePMF from Core
-open Core
+open Semantics.Probabilistic
+open scoped ENNReal
 
 -- Example: Threshold Predicates (Lassiter & Goodman Style)
 
@@ -56,11 +56,11 @@ structure ThresholdPred (E : Type*) (Θ : Type*) [Fintype Θ] [Preorder Θ] wher
   /-- The measure function (e.g., height, price) -/
   measure : E → Θ
   /-- Prior over thresholds -/
-  thresholdPrior : FinitePMF Θ
+  thresholdPrior : PMF Θ
 
 namespace ThresholdPred
 
-variable {E Θ : Type*} [Fintype Θ] [DecidableEq Θ] [Preorder Θ]
+variable {E Θ : Type*} [Fintype Θ] [Preorder Θ]
 variable [DecidableRel (· < · : Θ → Θ → Prop)]
 
 /-- Convert to a parameterized predicate -/
@@ -69,7 +69,7 @@ def toParamPred (pred : ThresholdPred E Θ) : ParamPred E Θ where
   prior := pred.thresholdPrior
 
 /-- Graded truth for threshold predicates -/
-def gradedTruth (pred : ThresholdPred E Θ) (x : E) : ℚ :=
+noncomputable def gradedTruth (pred : ThresholdPred E Θ) (x : E) : ℝ≥0∞ :=
   pred.toParamPred.gradedTruth x
 
 /--
@@ -77,8 +77,13 @@ Graded truth equals probability that measure > threshold.
 
 For "tall(John)": P(height(John) > θ) under the threshold prior.
 -/
-theorem gradedTruth_eq_prob (pred : ThresholdPred E Θ) (x : E) :
-    pred.gradedTruth x = pred.thresholdPrior.prob (λ θ => pred.measure x > θ) := rfl
+theorem gradedTruth_eq_probOfSet (pred : ThresholdPred E Θ) (x : E) :
+    pred.gradedTruth x =
+      pred.thresholdPrior.probOfSet {θ | pred.measure x > θ} := by
+  show pred.thresholdPrior.probOfSet {θ | decide (pred.measure x > θ) = true} = _
+  congr 1
+  ext θ
+  simp
 
 end ThresholdPred
 
@@ -105,7 +110,7 @@ structure FeaturePred (E : Type*) (n : ℕ) where
   /-- Weights for each parameter setting -/
   weights : params → Fin n → ℚ
   /-- Prior over parameters -/
-  prior : FinitePMF params
+  prior : PMF params
 
 attribute [instance] FeaturePred.paramsFintype FeaturePred.paramsDecEq
 
@@ -113,13 +118,10 @@ namespace FeaturePred
 
 variable {E : Type*} {n : ℕ}
 
-/-- Dot product of weight vector and feature vector -/
-def dotProduct (w f : Fin n → ℚ) : ℚ :=
-  Finset.sum Finset.univ λ i => w i * f i
-
-/-- Boolean semantics for a specific parameter setting -/
+/-- Boolean semantics for a specific parameter setting: the linear classifier
+`bias + Σᵢ weight_i · feature_i(x) > 0`. -/
 def satisfies (pred : FeaturePred E n) (p : pred.params) (x : E) : Bool :=
-  pred.bias p + dotProduct (pred.weights p) (pred.features x) > 0
+  pred.bias p + ∑ i, pred.weights p i * pred.features x i > 0
 
 /-- Convert to parameterized predicate -/
 def toParamPred (pred : FeaturePred E n) : ParamPred E pred.params where
@@ -127,7 +129,7 @@ def toParamPred (pred : FeaturePred E n) : ParamPred E pred.params where
   prior := pred.prior
 
 /-- Graded truth emerges from parameter uncertainty -/
-def gradedTruth (pred : FeaturePred E n) (x : E) : ℚ :=
+noncomputable def gradedTruth (pred : FeaturePred E n) (x : E) : ℝ≥0∞ :=
   pred.toParamPred.gradedTruth x
 
 end FeaturePred
@@ -140,7 +142,7 @@ end FeaturePred
 
 ### Two Strategies
 
-1. **Marginalize early** (`GradedProposition.lean`):
+1. **Marginalize early**:
    - Convert to graded values immediately
    - Compose using probabilistic operations (×, +−pq)
    - Algebraic structure (De Morgan, etc.)

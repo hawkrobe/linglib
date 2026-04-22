@@ -4,6 +4,430 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.134] - 2026-04-21
+
+### Changed — `Minimalism.SyntacticObject` migrated to `FreeMagma LIToken` (C5/C6 of Stage-0 architecture refactor)
+
+Bare phrase structure now *is* mathlib's free magma over lexical-item
+tokens, per @cite{marcolli-chomsky-berwick-2025} Definition 1.1.1. The
+old `Tree Unit LIToken` backing imposed a 5-case noise tax (catch-all
+branches for `Tree.node _ []`, `Tree.node _ [_]`, the `Tree.node _ (_ ::
+_ :: _ :: _)` arity overshoot, plus `Tree.trace`/`Tree.bind`) on every
+pattern match against a `SyntacticObject`. Two-constructor `FreeMagma`
+eliminates all of them.
+
+- **`Theories/Syntax/Minimalism/Core/Basic.lean`**: `abbrev
+  SyntacticObject := FreeMagma LIToken`. Shims `@[match_pattern] leaf` /
+  `node` rename `FreeMagma.of` / `.mul` at the linguistic interface so
+  consumers keep writing `.leaf tok` / `.node a b`. Custom `rec'` with
+  `@[induction_eliminator, cases_eliminator]` overrides the default
+  `FreeMagma` eliminator's `of` / `mul` case names — `induction so with
+  | leaf tok => ... | node a b iha ihb => ...` Just Works. The Y-model
+  branches by *map* not by *type*: PF lives natively on `SyntacticObject`,
+  the LF lift to `Tree Unit String` lives in `SpellOut.lean`
+  (`SyntacticObject.toLFTree`).
+- **`Core/Counting.lean`**, **`Core/MCommand.lean`**, **`Core/Derivation.lean`**,
+  **`Core/Labeling.lean`**, **`Formal/MinimalSearch.lean`**,
+  **`Formal/Coproduct.lean`**: all 8 Tree-shape catch-alls stripped;
+  recursors and `induction`/`cases` unified on `| leaf | node`. `merge ≠
+  T` proofs rewritten via explicit `nodeCount` arithmetic (`merge T₁ T₂
+  ≠ T → ((merge T₁ T₂).nodeCount = T.nodeCount) → omega`) to avoid
+  `simp [merge]` triggering `FreeMagma sizeOf` recursion blowup.
+- **`Core/Algebra.lean`**: `leafCount_eq_freeMagma_length` and friends
+  switch from `| of _ | mul a b iha ihb` to `| leaf _ | node a b iha
+  ihb` to match the new induction eliminator.
+- **`Interfaces/SyntaxPhonology/Minimalism/LCA.lean`**: `exact
+  SyntacticObject.noConfusion hinj` → `cases hinj` (FreeMagma's auto-
+  derived `noConfusion` keeps the equation but `cases` closes the
+  contradiction more cleanly).
+- **`Phenomena/Coordination/Studies/BrueningAlKhalaf2020.lean`**:
+  `merge_distinguishes_children` switched from `SyntacticObject.node.inj`
+  to the `injection` tactic (FreeMagma constructor distinctness comes
+  from `injection`, not a derived `.inj` lemma).
+
+The abstract MCB SO (free *non-associative commutative* magma) bridges
+to mathlib's planar `FreeMagma` via `nonplanarEquiv` setoid; the Y-model
+PF map sits natively on the planar representation.
+
+### Bundled — Concurrent-session work (0.230.126–0.230.133, already documented above)
+
+This bulk commit also lands the eight previously-documented entries
+that were sitting in `CHANGELOG.md` but not yet in the commit history:
+the C&L `PreferenceStructure` foundation (0.230.126), `CondoravdiLauer`
+theory file (0.230.128), `CommitmentForce` discourse-tag (0.230.129),
+the `ChanShen2026` overhaul + `Paradigms/AcceptabilityJudgment` +
+`Core/Lexical/ExpressiveModifier` + `Minimalism/Core/ANDL` (0.230.130),
+PMF mathlib-migration polish on `ParamPred` / `BayesianSemantics` /
+`GroveWhite2025` (0.230.127), the Selectional + CarianiSantorio2018
+PMF migration (0.230.131), the `Core/FinitePMF.lean` deletion ending
+the PMF migration (0.230.132), and the Deo 2025 Marathi *bərə* study
+(0.230.133). See per-version sections below.
+
+## [0.230.133] - 2026-04-21
+
+### Added — Phase 5: Deo (2025) Marathi *bərə* formalization
+
+Capstone of the Deo 2025 (`@cite{deo-2025-bara}`) formalization
+sequence. Builds on Phase 1–2: the Condoravdi-Lauer
+`PreferenceStructure` foundation (`Core/Order/PreferenceStructure*`),
+the C&L theory file (`Theories/Semantics/Attitudes/CondoravdiLauer.lean`),
+and the `CommitmentForce` doxastic/preferential tag on `TaggedCommitment`
+(`Core/Discourse/Commitment.lean`).
+
+- **`Phenomena/SentenceMood/Studies/Deo2025.lean`** (~210 LOC):
+  - `Scoreboard W` minimal two-agent state with per-agent `TaggedSlate`s;
+    `dcDep`/`dcDepDox`/`dcDepPref` projections derive Deo's eq. 17 splits.
+  - `baraMetaContent p K` — the higher-order content the speaker
+    preferentially commits to (`p ∈ K.dcDep .addressee`, eq. 20).
+  - `baraUpdate` — minimal update on the speaker's tagged slate.
+    Documented simplification: the embedded meta-content lifts to a
+    scoreboard predicate but is recorded propositionally; the full
+    higher-order encoding is flagged for future work per the
+    pragmatics-expert review's "major schema problem" finding.
+  - `IllocutionaryAct` enum (13 acts surveyed in @cite{deo-2025-bara} § 2).
+  - `deoEmpiricalReport` — Deo's reported felicity per act, each line
+    citing the example number.
+  - Three architectural conditions from § 2 / eq. 21:
+    `addresseeHasPreExistingPref`, `speakerHasAuthority`,
+    `goalBenefitsAddressee`. Their conjunction is `baraFelicitous`.
+  - `bara_predictions_match_empirical` — the architectural account
+    correctly predicts the empirical pattern for all 13 acts (proof:
+    `cases _ <;> rfl`; substantive content is in the structural
+    decomposition, not the proof).
+  - Fragment-bridge theorems: `bara_carries_preferential`,
+    `bara_excludes_polar_q`, `bara_in_three_clause_types`.
+- **`Fragments/Marathi/Particles.lean`** (~70 LOC): new directory.
+  `ParticleEntry` struct + `bara` + `na` (stub for the @cite{deo-2023}
+  particle).
+- **`blog/data/references.bib`**: 17 new entries — `deo-2025-bara`,
+  `deo-2023`, `condoravdi-lauer-{2011,2012,2017}`,
+  `condoravdi-lauer-anankastics`, `lauer-condoravdi-2014`, `rudin-2018`,
+  `roberts-rudin-2024`, `heim-wiltschko-2020`, `wiltschko-2021`,
+  `gunlogson-2008`, `portner-2007`, `scheffler-malamud-2023`,
+  `farkas-roelofsen-2017`, `malamud-stephenson-2015`,
+  `beyssade-marandin-2006`. DOIs included only where verified.
+
+What's deferred:
+- Phase 3: `roberts_vs_condoravdi_lauer_disagree` theorem in
+  `Phenomena/Directives/Studies/Roberts2023.lean` (cross-framework
+  reconciler's recommendation to make the LF-modal-vs-preferential-
+  commitment disagreement explicit).
+- Higher-order scoreboard-relative content for the bərə meta-update
+  (the pragmatics-expert review's key schema concern); blocked on a
+  scoreboard refactor that admits propositions whose denotation
+  references the discourse state.
+- The List-typed bridge from `CondoravdiLauer.maxOrderingSource` to
+  Kratzer's `OrderingSource`; blocked on the in-flight
+  `Core/IntensionalLogic/ConversationalBackground` rename.
+
+## [0.230.132] - 2026-04-21
+
+### Removed — `Core/FinitePMF.lean` (Phase 4h, end of PMF migration)
+
+`Linglib/Core/FinitePMF.lean` (452 LOC) deleted. The mathlib `PMF`
+migration is now complete: every former `Core.FinitePMF` consumer
+routes through mathlib `PMF α` plus the thin
+`Linglib.Core.Probability.PMFFin` naming layer (`probOfSet`,
+`condProbSet`, etc.). Umbrella `Linglib.lean` import removed.
+
+Stale docstring/comment references to `FinitePMF` rewritten to point
+at the `PMF` API in four files:
+
+- `Theories/Semantics/Questions/Answerhood/ProbabilisticAnswerhood.lean`
+  — drop the "prior `Core.FinitePMF` formulation" parenthetical from
+  `isPositiveEvidenceS`'s docstring.
+- `Theories/Semantics/Dynamic/Probability/Basic.lean` — comment
+  redirected from `Core.FinitePMF.prob` to `PMF.probOfSet`.
+- `Theories/Processing/LanguageModel/Basic.lean` — module docstring
+  drops the "old `FinitePMF`-based version" framing.
+- `Core/Scales/EpistemicScale/Conditional.lean` — conditioning-modes
+  table and § 6 prose reference `PMF.condProbSet` / `pmf.probOfSet`
+  in place of the old `FinitePMF.prob`.
+
+Closes the multi-phase migration that began with the introduction of
+`PMFFin` and the `FinitePMF.toPMF` adapter in 0.230.x. The single
+probability primitive across linglib is now mathlib `PMF`.
+
+## [0.230.131] - 2026-04-21
+
+### Changed — Selectional + CarianiSantorio2018 mathlib-PMF migration
+
+`Theories/Semantics/Modality/Selectional.lean` cognitive-role API
+collapses 8 per-utterance variants to a single set-typed theorem:
+
+```
+theorem cognitive_role (s : SelectionFunction W) (A f : Set W) (μ : PMF W)
+    (h_supp : μ.support ⊆ f) :
+    μ.probOfSet {w | s.sel w f ∈ A} = μ.probOfSet A
+```
+
+Proof is `PMF.toOuterMeasure_apply_eq_of_inter_support_eq` + Centering on
+the support — replaces the prior per-predicate enumeration. `μ` is a
+mathlib `PMF W` (was `Core.FinitePMF W`); set membership replaces
+`Bool`-valued `f w = true` predicates throughout.
+
+`Phenomena/Modality/Studies/CarianiSantorio2018.lean` migrated to use
+the new interface. `cynthiaPMF` is now `PMF.ofFintype (fun _ => 1/3) ...`,
+with `cynthiaPMF.support ⊆ histAlt` discharging the precondition for
+`cognitive_role`. `warriorsCap`/`wearsCap` are `Set W` (with
+`DecidablePred (· ∈ _)` instances); the prior `B`-suffixed Bool variants
+and their `_correct` rfl-bridges are dropped (no remaining consumers).
+All ten Sports Fan predictions still hold:
+`cynthia_credence_one_third`, `universal_will_credence_zero`,
+`cap_warriors_credence_one_half` (now via `condProbSet_eq_div`), and
+`no_unconditional_one_half` (8-case enumeration via `congrArg
+ENNReal.toReal` + `simp` + `try norm_num`) preserved verbatim in their
+public form.
+
+## [0.230.130] - 2026-04-21
+
+### Added — `Phenomena/Questions/Studies/ChanShen2026.lean` overhaul (multi-agent PR review fixes)
+
+Full rewrite of @cite{chan-shen-2026} formalization based on a four-agent
+critical review (mathlib-style, integration auditor, syntax-domain expert,
+cross-framework reconciler).
+
+**New foundational files:**
+
+- `Core/Lexical/ExpressiveModifier.lean` — theory-neutral lexical
+  infrastructure for ANDL wh-modifiers (the-hell, daodi, ittai,
+  ttaeyche, …). `ANDLMovementType.{parasitic, independent}`,
+  `ANDLHostPosition`, `ExpressiveWhModifier` structure, `Licensed`
+  predicate parameterized over a Prop "wh-host reaches scope" input.
+  No syntactic-framework commitments.
+
+- `Theories/Syntax/Minimalism/Core/ANDL.lean` — Minimalist analysis
+  layer: `povUnvaluedFeature`/`povOperatorFeature` (POV [*ud*]/[+d]
+  features per @cite{chou-2012}), `pov_probe_goal_match` Agree theorem,
+  `LicensedMinimalist` as Minimalist instantiation of theory-neutral
+  `Licensed`. Cleanly separates Minimalist commitments from lexical
+  data.
+
+- `Paradigms/AcceptabilityJudgment.lean` — third top-level paradigm
+  (after `VisualWorld`, `WugTest`), anchored on @cite{sprouse-2007} +
+  @cite{sprouse-et-al-2012}. Exports `FactorialCondition F1 F2`
+  (generic 2-factor cell), `DDResult` (difference-in-differences with
+  `dd : ℚ` per @cite{maxwell-delaney-2003}; `Superadditive`/`Additive`
+  Prop predicates), `AccountPredictions n` (n-cell prediction tuple
+  with structural `Matches` comparator).
+
+**Theory bug fixes:**
+
+- `Phenomena/Questions/Typology.lean`: added `WhInterpMechanism.partialMovement`
+  as a fourth dedicated constructor (overt-then-covert, two-step) per
+  @cite{sato-ngui-2017}. Distinct from `.covertMovement` (Huang 1982 /
+  Mandarin daodi single-step). Migrated `reachesSpecCP`/`islandSensitive`/
+  `hasCovertStep` from `Bool` to `Prop` with `Decidable` instances.
+  Added new `HasCovertStep` predicate. The previous Singlish partial
+  movement = `.covertMovement` collapse erased the paper's empirical
+  wedge (island sensitivity at the covert step).
+
+- `Fragments/Singlish/Questions.lean`: `partialMovement.mechanism` now
+  uses the dedicated `.partialMovement` constructor; theorems migrated
+  to Prop. Added theory-neutral `theHell : ExpressiveWhModifier`
+  lexeme; `partial_has_covert_step` and `full_no_covert_step`
+  theorems make the new distinction visible.
+
+- `Fragments/Mandarin/Questions.lean`: dropped layer-violating import
+  of `Phenomena/Questions/Studies/ChanShen2026` (Fragments → Phenomena
+  was forbidden); dropped `GramFeature` field from `daodi` lexeme
+  (Minimalism leaked into Fragments). Lexeme is now pure
+  `ExpressiveWhModifier` — no syntactic-framework commitments.
+
+**Study file rewrite (`Phenomena/Questions/Studies/ChanShen2026.lean`):**
+
+- §1 licensing predicate `TheHellLicensed` derived via theory-neutral
+  `Licensed` + Minimalist `LicensedMinimalist` (no longer a
+  bridge-wrapper around `reachesSpecCP`).
+- §3 conditions use `FactorialCondition Bool WhStrategy` (Paradigm
+  type), not local `Condition` struct.
+- §3 adds `whHellSituSubject : Condition` (paper §3.3 ex 22b) — the
+  separate subject in-situ failure case for the intervention account.
+- §4 DD scores use ℚ (was `Float`); `insituDD_superadditive` and
+  `partialDD_not_superadditive` actually prove the magnitudes.
+- §6 alternative-account predictions use `AccountPredictions 4` with
+  literal Prop values + explanatory docstrings (no more `attPSameDomain
+  := id` stipulation antipattern). `only_pov_account_matches` uses
+  decidable `Matches` comparator.
+- §7 retains Shen & Huang 2026 island bridge; adds
+  `partial_movement_pic_applies` (the new island story).
+- §8 adds **PerspP/Dayal 2025 bridge** (`theHell_no_knowledge`,
+  `theHell_persp_consistent`) — the largest single missing link
+  flagged by cross-framework reconciler. Connects POV [*ud*] checking
+  to PerspP's possible-ignorance presupposition via
+  `Theories/Interfaces/SyntaxSemantics/LeftPeriphery.lean`.
+- §9 cross-linguistic minimal pair `theHell_daodi_movement_contrast` +
+  `daodi_licensed_insitu` use the new typological abstraction.
+- All conjunctive theorems split or eliminated; @cite{pesetsky-1987}
+  added as historical anchor; floating module docstring removed; unused
+  `open`s dropped; explicit `open Phenomena.Islands (IslandSource)`.
+
+**Bib entries added** (DOIs verified via Crossref/publisher; no
+fabrication): `ippolito-2024`, `martin-2020`, `linebarger-1987`,
+`hoeksema-napoli-2008`, `jackendoff-audring-2020`. Plus
+`huang-ochi-2004` without DOI (NELS 34 proceedings; no DOI located).
+
+**Build status caveat:** transitive build of ChanShen2026.lean is
+currently blocked by pre-existing uncommitted edits in
+`Theories/Syntax/Minimalism/Core/Labeling.lean` (Redundant-alternative
+errors from another session's WIP). The new files all build cleanly in
+isolation; correctness of ChanShen2026 itself verified via standalone
+smoke test (`scratch/test_chanshen_core.lean`) bypassing the broken
+chain.
+
+## [0.230.129] - 2026-04-21
+
+### Added — Phase 2: `CommitmentForce` tag on `TaggedCommitment`
+
+`Core/Discourse/Commitment.lean` extended with `inductive CommitmentForce
+| doxastic | preferential` and a corresponding `commitmentForce :
+CommitmentForce := .doxastic` field on `TaggedCommitment`. The default
+preserves backward compatibility with existing `TaggedSlate.add s p src`
+calls (the new `force : CommitmentForce := .doxastic` parameter on `add`
+defaults). One concrete consumer (`Pragmatics/Assertion/Gunlogson.lean`
+lines 181, 186) had to update from `⟨p, .otherGenerated⟩` to
+`(⟨p, .otherGenerated, .doxastic⟩ : TaggedCommitment _)` because Lean 4
+anonymous constructors don't honor field defaults.
+
+Added `TaggedSlate.{doxasticContents, preferentialContents}` projections
+paralleling the existing `selfGenerated`/`otherGenerated` source-axis
+projections. The 2×2 force × source cross is now expressible at the
+slate level, ready for @cite{deo-2025-bara}'s discourse-particle analysis.
+
+The integration auditor's `ModalForce`-name-collision concern (with
+`Core.Modality.ModalTypes.ModalForce` for modal strength) is avoided by
+naming the new tag `CommitmentForce` — parallels `IllocutionaryForce`,
+`CommitmentSource`.
+
+### Refactored — Phase 1+1d mathlib hygiene pass
+
+Mathlib-reviewer feedback applied across the five Phase-1+1d files.
+
+- **`PreferenceStructure`**: replaced handrolled `prec_in`/`prec_irrefl`/
+  `prec_trans` fields with subtype-typed `prec : prefs → prefs → Prop`
+  + `isStrictOrder : IsStrictOrder prefs prec` typeclass field. The
+  `IsStrictOrder` instance is exposed for downstream consumption with
+  mathlib's order API. `mem_maxElts` `@[simp]` dropped (definitional
+  unfold). `consistent_implies_realistic` proof simplified to the
+  `simp [Set.mem_singleton_iff] + obtain ⟨_, rfl, _, rfl, _⟩` pattern.
+- **`EffectivePreference`**: field names camel-cased (`is_consistent`
+  → `isConsistent`, `is_realistic` → `isRealistic`).
+- **`MaxInducedOrdering`**: `@[simp]` on the unfold lemma dropped;
+  `maxInducedPreorder` def removed entirely (the `@[reducible]`
+  attribute was the worst-of-both-worlds — consumers can construct
+  `Preorder W` inline from `maxInducedLe_refl`/`maxInducedLe_trans`).
+- **`CondoravdiLauer.lean` moved** from `Theories/Pragmatics/Assertion/`
+  to `Theories/Semantics/Attitudes/` (namespace
+  `Semantics.Attitudes.CondoravdiLauer`). Sibling of the existing
+  attitude-semantics theory files (`Doxastic`, `Preferential`,
+  `Intensional`, etc.). The Pragmatics/Assertion/ siblings (Lauer,
+  Gunlogson, Krifka, FarkasBruce) are about commitment in assertion
+  specifically; C&L's `wantP` machinery is about preference attitudes,
+  which is what the Attitudes/ directory is for.
+- **`CondoravdiLauer.lean`** internals: dropped the
+  `toPreferentialBackground` one-line wrapper (inlined at the use site);
+  reflexivity witnesses now use `subset_rfl`; module docstrings
+  trimmed to mathlib-style §-numbered TOC + cite header (the prose
+  "What lives here vs. downstream" / "Why no semantic modal" / "deferred
+  due to dirty file" sections were project-narrative meta-commentary,
+  not module documentation).
+
+## [0.230.128] - 2026-04-21
+
+### Added — `Theories/Pragmatics/Assertion/CondoravdiLauer.lean` (Phase 1d)
+
+The C&L theory file: sibling of `Lauer.lean`, `Gunlogson.lean`,
+`Krifka.lean`, `FarkasBruce.lean`, `Brandom.lean`, `Stalnaker.lean`.
+Builds on Phase 1a–1c (`Core/Order/PreferenceStructure*`) to expose
+the C&L-line analysis of `want`.
+
+- **`PreferentialBackground Agent W`** — `Agent → W → PreferenceStructure W`,
+  the C&L analog of Kratzer's `ConvBackground`.
+- **`EffectivePreferentialBackground Agent W B`** — the distinguished
+  background returning, at each world, the agent's effective preference
+  structure (@cite{condoravdi-lauer-anankastics} eq. 68).
+  `toPreferentialBackground` forgets the consistency + realism axioms.
+- **`wantP{Exact,Success,QH}`** — the three readings from
+  @cite{condoravdi-lauer-anankastics} eq. 71. `wantPExact` (= eq. 69) is
+  the canonical reading; `wantPSuccess` is downward-entailing in φ;
+  `wantPQH` is upward-entailing in φ. Exact-match implies both
+  (`wantPExact_implies_success`, `wantPExact_implies_QH`).
+- **`wantEP`** — exact-match `want` against the effective preferential
+  background; the construal anankastic conditional antecedents target.
+- **`maxOrderingSource`** — `Set`-valued ordering source `max[EP(Ad, w)]`
+  (eq. 88, the double-modal anankastic recipe). The `List`-typed bridge
+  to `Theories.Semantics.Modality.Kratzer.OrderingSource` is deferred to
+  a sibling file once the in-flight `Core/IntensionalLogic/ConversationalBackground`
+  rename stabilizes.
+
+Closes the `Lauer.lean` half-truth (its docstring claims to formalize
+Lauer 2013 but covers only the probabilistic-credence side; the
+preference-structure machinery that everyone cites Lauer 2013 *for* now
+has a Lean home).
+
+## [0.230.127] - 2026-04-21
+
+### Polish — PMF migration cleanup (mathlib-reviewer punch list)
+
+Post-migration cleanup of the three PMF-migrated files
+(`ParamPred.lean`, `BayesianSemantics.lean`, `GroveWhite2025.lean`)
+following the mathlib-reviewer audit.
+
+- **`ParamPred.lean`**: Drop unused imports
+  (`Mathlib.Data.Fintype.Prod`, `Mathlib.Algebra.BigOperators.Ring.Finset`).
+- **`BayesianSemantics.lean`**: Inline `FeaturePred.dotProduct` directly
+  into `FeaturePred.satisfies` (single-use helper that collided with
+  `Matrix.dotProduct`); drop unused `Mathlib.Data.Fintype.Prod` import.
+- **`GroveWhite2025.lean`**: Drop redundant
+  `factive_entails_nonfactive_reading` lemma (defined never called;
+  trivial `Factivity.factive_entails_nonfactive` rename); rename
+  `factivityPrior_factive`/`_nonfactive` to
+  `factivityPrior_apply_factive`/`_apply_nonfactive` per mathlib
+  `_apply` convention for `f x = ...` lemmas.
+
+Deferred per scope: `Rat01` `abbrev` → `@[reducible] def` and
+`ParamPred.semantics` `Bool` → `Prop` would require touching
+`Core/Scales/Scale.lean` plus the broader Bool→Prop migration guidance.
+
+## [0.230.126] - 2026-04-21
+
+### Added — `Core/Order/PreferenceStructure` foundation (C&L 2012, Lauer 2013)
+
+Phase 1a–1c of the Deo 2025 (Marathi *bərə*) formalization: the
+Condoravdi-Lauer preference-structure primitive that everyone in the
+C&L–Lauer–Deo–Portner–Rudin lineage cites but which was previously only
+referenced in prose at `Core/Mood/POSW.lean:19`.
+
+- **`Core/Order/PreferenceStructure.lean`**: `PreferenceStructure W`
+  with `prefs : Set (Set W)` and a strict partial order `prec` on
+  propositions (@cite{condoravdi-lauer-2012} (65)). `maxElts` (eq. 70).
+  `consistent (B : Set W)` — strong information-state-relative variant
+  (eq. 66 / @cite{lauer-2013}, distinct from the weaker pairwise version
+  of @cite{condoravdi-lauer-2011}, fn. 29 of the anankastics paper).
+  `realistic (B : Set W)` (eq. 67). `consistent_implies_realistic`
+  derives the latter from the former via the singleton-X case.
+- **`Core/Order/PreferenceStructure/EffectivePreference.lean`**:
+  `EffectivePreference W B` extends `PreferenceStructure W` with
+  consistency + realism axioms parameterized by an information state.
+  This is the `EP(a, w)` of @cite{condoravdi-lauer-anankastics} (68) —
+  the agent's distinguished structure used to guide action choice.
+  `ofConsistent` smart constructor derives realism from consistency.
+- **`Core/Order/PreferenceStructure/MaxInducedOrdering.lean`**:
+  `maxInducedLe` — the world-level preorder induced by maximal
+  preferences (the recipe of @cite{condoravdi-lauer-anankastics} (88),
+  `g_epA(w) = max[EP(Ad,w)]`). Reflexive + transitive + packaged as a
+  `Preorder W`. List-rendering bridge to
+  `Theories.Semantics.Modality.Kratzer.OrderingSource` is deferred to
+  a downstream theory file (planned `Theories/Pragmatics/Assertion/CondoravdiLauer.lean`).
+- **`Core/Mood/POSW.lean`** docstring: hedged the
+  "@cite{condoravdi-lauer-2012} works out the preferential-modal side"
+  prose to flag that C&L's structures live one type level above POSW
+  (propositions vs. worlds) and connect via `maxInducedLe`, not by
+  identification — answering an integration-auditor finding.
+
+Additive only; no consumer migration. Sets up Phase 1d
+(`CondoravdiLauer.lean` theory file) and Phase 2+ (Deo 2025 study).
+
 ## [0.230.125] - 2026-04-21
 
 ### Refactored — ModalDonkeyAnaphora.lean dissolved into Mendes2025 study
