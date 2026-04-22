@@ -257,6 +257,7 @@ import Linglib.Core.SearchEfficiency
 import Linglib.Core.InformationTheory
 import Linglib.Core.Distributions
 import Linglib.Core.Probability.PMFFin
+import Linglib.Core.Probability.PMFPosterior
 import Linglib.Core.Divergence
 import Linglib.Core.ChannelCapacity
 import Linglib.Core.Inheritance.Basic
