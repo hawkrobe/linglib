@@ -82,10 +82,17 @@ def anookxw : ModalExpression := ⟨"anook(xw)", [pd]⟩
 
 /-- Circumstantial **weak** necessity. @cite{matthewson-2013} §4.3 (and
     Figure 1: column header is "(WEAK) NECESSITY"): sgi expresses
-    obligation, deontic 'should', and weak circumstantial necessity, but
-    is INFELICITOUS in pure strong-necessity contexts like the sneeze
-    case (ex. 96–98), where a plain future is used instead. The preferred
-    English translation is 'should', a weak necessity modal. -/
+    obligation, deontic 'should', and weak circumstantial necessity. The
+    preferred English translation is 'should', a weak necessity modal.
+
+    Caveat: Matthewson herself hedges. *sgi* is INFELICITOUS in some
+    pure strong-necessity contexts (sneeze case, ex. 96–98), but IS
+    felicitous in others (ex. 100, "*k'ap sgi dim gwalga daxw-'m*"
+    'We must all die'). The §4.3 conclusion (p. 384) suggests the
+    infelicity may be a modality-TYPE issue (perhaps *sgi* requires a
+    non-empty priority ordering source) rather than a strict
+    weak-necessity restriction. The Fig. 1 parenthesization of
+    "(WEAK)" reflects this uncertainty. -/
 def sgi : ModalExpression := ⟨"sgi", [wnd, wnc]⟩
 
 def allExpressions : List ModalExpression :=
@@ -172,33 +179,41 @@ def requiresDim (e : ModalExpression) (orient : TemporalOrientation) : Bool :=
     -- Circumstantial modal: dim always required.
     true
 
-/-- Epistemic `imaa` requires `dim` only for future orientation. -/
-theorem requiresDim_imaa :
-    requiresDim imaa .future = true ∧
-    requiresDim imaa .past = false ∧
-    requiresDim imaa .present = false := ⟨rfl, rfl, rfl⟩
+/-! ### Per-modal dim requirements
 
-/-- Epistemic `gat` requires `dim` only for future orientation. -/
-theorem requiresDim_gat :
-    requiresDim gat .future = true ∧
-    requiresDim gat .past = false ∧
-    requiresDim gat .present = false := ⟨rfl, rfl, rfl⟩
+@cite{matthewson-2013} §3.3 ex. 38–42 (`imaa`), §3.3 (`gat`):
+epistemic modals are felicitous without `dim` for past/present
+orientations and require `dim` for future. -/
 
-/-- Circumstantial modals always require `dim`. -/
+@[simp] theorem requiresDim_imaa_past    : requiresDim imaa .past    = false := rfl
+@[simp] theorem requiresDim_imaa_present : requiresDim imaa .present = false := rfl
+@[simp] theorem requiresDim_imaa_future  : requiresDim imaa .future  = true  := rfl
+
+@[simp] theorem requiresDim_gat_past    : requiresDim gat .past    = false := rfl
+@[simp] theorem requiresDim_gat_present : requiresDim gat .present = false := rfl
+@[simp] theorem requiresDim_gat_future  : requiresDim gat .future  = true  := rfl
+
+@[simp] theorem requiresDim_daakhlxw (o : TemporalOrientation) :
+    requiresDim daakhlxw o = true := by cases o <;> rfl
+
+@[simp] theorem requiresDim_anookxw (o : TemporalOrientation) :
+    requiresDim anookxw o = true := by cases o <;> rfl
+
+@[simp] theorem requiresDim_sgi (o : TemporalOrientation) :
+    requiresDim sgi o = true := by cases o <;> rfl
+
+/-- Circumstantial modals require `dim` for any orientation
+    (§4.1 ex. 51–58, §4.2 ex. 73–78, §4.3 ex. 82–88). -/
 theorem requiresDim_circumstantial :
     circumstantialModals.all (fun e =>
       [TemporalOrientation.past, .present, .future].all (fun o =>
         requiresDim e o)) = true := by decide
 
-/-- The flavor-keyed asymmetry: epistemic modals do *not* uniformly
-    require `dim`, but circumstantial modals do. -/
-theorem dim_asymmetry :
-    (epistemicModals.any (fun e =>
+/-- Epistemic modals do not uniformly require `dim`: at least one
+    epistemic / past-or-present pair is felicitous without it. -/
+theorem epistemics_nonuniform_dim :
+    epistemicModals.any (fun e =>
       [TemporalOrientation.past, .present].any (fun o =>
-        !requiresDim e o))) = true ∧
-    (circumstantialModals.all (fun e =>
-      [TemporalOrientation.past, .present, .future].all (fun o =>
-        requiresDim e o))) = true := by
-  refine ⟨?_, ?_⟩ <;> decide
+        !requiresDim e o)) = true := by decide
 
 end Fragments.Gitksan.Modals
