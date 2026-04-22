@@ -1427,6 +1427,7 @@ import Linglib.Phenomena.Reference.Studies.EngelhardtEtAl2006
 import Linglib.Phenomena.Reference.DirectReference
 import Linglib.Phenomena.Reference.Typology
 import Linglib.Phenomena.Reference.Studies.FrankGoodman2012
+import Linglib.Phenomena.Reference.Studies.FrankGoodman2012PMF
 import Linglib.Phenomena.Reference.Studies.HawkinsGweonGoodman2021
 import Linglib.Phenomena.Reference.Studies.SikosEtAl2021
 import Linglib.Phenomena.Reference.Studies.Percus2000

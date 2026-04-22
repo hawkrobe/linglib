@@ -56,20 +56,20 @@ open scoped ENNReal
 /-! ## L0: Literal Listener -/
 
 /-- Literal listener built by normalising a meaning function over worlds.
-For utterance `u`, `L0OfMeaning meaning u h0 h∞` is the PMF over worlds with
+For utterance `u`, `L0OfMeaning meaning u h0 hTop` is the PMF over worlds with
 mass `meaning u w / Σ_{w'} meaning u w'`.
 
 The two hypotheses are exactly `PMF.normalize`'s API: the marginal must be
 non-zero (so the utterance is true *somewhere*) and finite (automatic on
 `Fintype W` if every meaning value is `< ∞`). -/
 noncomputable def L0OfMeaning (meaning : U → W → ℝ≥0∞) (u : U)
-    (h0 : ∑' w, meaning u w ≠ 0) (h∞ : ∑' w, meaning u w ≠ ∞) : PMF W :=
-  PMF.normalize (meaning u) h0 h∞
+    (h0 : ∑' w, meaning u w ≠ 0) (hTop : ∑' w, meaning u w ≠ ∞) : PMF W :=
+  PMF.normalize (meaning u) h0 hTop
 
 @[simp] theorem L0OfMeaning_apply (meaning : U → W → ℝ≥0∞) (u : U)
-    (h0 : ∑' w, meaning u w ≠ 0) (h∞ : ∑' w, meaning u w ≠ ∞) (w : W) :
-    L0OfMeaning meaning u h0 h∞ w = meaning u w * (∑' w', meaning u w')⁻¹ :=
-  PMF.normalize_apply _ _ _ w
+    (h0 : ∑' w, meaning u w ≠ 0) (hTop : ∑' w, meaning u w ≠ ∞) (w : W) :
+    L0OfMeaning meaning u h0 hTop w = meaning u w * (∑' w', meaning u w')⁻¹ :=
+  PMF.normalize_apply _ _ w
 
 /-! ## S1: Pragmatic Speaker (belief-based) -/
 
@@ -85,15 +85,15 @@ noncomputable def L0OfMeaning (meaning : U → W → ℝ≥0∞) (u : U)
 Returns the speaker's distribution at world `w`. -/
 noncomputable def S1Belief (L0 : U → PMF W) (costFactor : U → ℝ≥0∞) (α : ℝ) (w : W)
     (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)
-    (h∞ : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) : PMF U :=
-  PMF.normalize (fun u => (L0 u w : ℝ≥0∞) ^ α * costFactor u) h0 h∞
+    (hTop : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) : PMF U :=
+  PMF.normalize (fun u => (L0 u w : ℝ≥0∞) ^ α * costFactor u) h0 hTop
 
 @[simp] theorem S1Belief_apply (L0 : U → PMF W) (costFactor : U → ℝ≥0∞) (α : ℝ) (w : W)
     (h0 : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ 0)
-    (h∞ : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) (u : U) :
-    S1Belief L0 costFactor α w h0 h∞ u =
+    (hTop : ∑' u, (L0 u w : ℝ≥0∞) ^ α * costFactor u ≠ ∞) (u : U) :
+    S1Belief L0 costFactor α w h0 hTop u =
       (L0 u w : ℝ≥0∞) ^ α * costFactor u * (∑' u', (L0 u' w : ℝ≥0∞) ^ α * costFactor u')⁻¹ :=
-  PMF.normalize_apply _ _ _ u
+  PMF.normalize_apply _ _ u
 
 /-! ## L1: Pragmatic Listener -/
 

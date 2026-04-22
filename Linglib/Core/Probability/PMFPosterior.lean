@@ -55,7 +55,7 @@ theorem marginal_le_one (κ : α → PMF β) (μ : PMF α) (b : β) :
   unfold marginal
   calc ∑' a, μ a * κ a b
       ≤ ∑' a, μ a := by
-        refine tsum_le_tsum (fun a => ?_) ENNReal.summable ENNReal.summable
+        refine ENNReal.tsum_le_tsum (fun a => ?_)
         calc μ a * κ a b ≤ μ a * 1 := mul_le_mul_left' (PMF.coe_le_one _ _) _
           _ = μ a := mul_one _
     _ = 1 := PMF.tsum_coe μ
@@ -75,7 +75,7 @@ noncomputable def posterior (κ : α → PMF β) (μ : PMF α) (b : β)
 theorem posterior_apply (κ : α → PMF β) (μ : PMF α) (b : β)
     (h : marginal κ μ b ≠ 0) (a : α) :
     posterior κ μ b h a = μ a * κ a b * (marginal κ μ b)⁻¹ :=
-  PMF.normalize_apply _ _ _ a
+  PMF.normalize_apply _ _ a
 
 /-- On a finite type the marginal is a `Finset.sum`. -/
 theorem marginal_eq_sum [Fintype α] (κ : α → PMF β) (μ : PMF α) (b : β) :
@@ -100,7 +100,7 @@ theorem mem_support_posterior_iff (κ : α → PMF β) (μ : PMF α) (b : β)
 theorem marginal_mul_posterior_apply (κ : α → PMF β) (μ : PMF α) (b : β)
     (h : marginal κ μ b ≠ 0) (a : α) :
     marginal κ μ b * posterior κ μ b h a = μ a * κ a b := by
-  rw [posterior_apply, ← mul_assoc, ENNReal.mul_inv_cancel h (marginal_ne_top κ μ b),
-      one_mul]
+  rw [posterior_apply, ← mul_assoc, mul_comm (marginal κ μ b) (μ a * κ a b),
+      mul_assoc, ENNReal.mul_inv_cancel h (marginal_ne_top κ μ b), mul_one]
 
 end PMF
