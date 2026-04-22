@@ -2224,6 +2224,7 @@ import Linglib.Theories.Pragmatics.RSA.BToM
 import Linglib.Theories.Pragmatics.RSA.Speaker.CombinedUtility
 import Linglib.Theories.Pragmatics.RSA.Defs
 import Linglib.Theories.Pragmatics.RSA.Basic
+import Linglib.Theories.Pragmatics.RSA.Operators
 import Linglib.Theories.Pragmatics.RSA.Monotonicity
 import Linglib.Theories.Pragmatics.RSA.Compositional
 import Linglib.Theories.Pragmatics.RSA.EmbeddedSI
