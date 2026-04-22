@@ -33,7 +33,7 @@ namespace Heim1992
 open Core.Presupposition (PrProp)
 open Core.CommonGround (ContextSet)
 open Semantics.Modality.EpistemicLogic (KnowledgeBeliefFrame)
-open Core.IntensionalLogic (Refl Serial Eucl Trans)
+open Core.IntensionalLogic (IsReflexive IsSerial IsEuclidean IsTransitive)
 open Semantics.Presupposition.LocalContext (presupFiltered)
 open Semantics.Presupposition.BeliefEmbedding
 
@@ -75,25 +75,25 @@ def believesRBool : AttWorld → AttWorld → Bool
   | _, .actual => false
 
 /-- Knowledge relation is reflexive. -/
-theorem knowsR_refl : Refl knowsR := fun _ => trivial
+theorem knowsR_refl : IsReflexive knowsR := fun _ => trivial
 
 /-- Belief relation is serial (every world accesses some world). -/
-theorem believesR_serial : Serial believesR :=
+theorem believesR_serial : IsSerial believesR :=
   fun w => ⟨.believed, by cases w <;> trivial⟩
 
 /-- Belief relation is NOT reflexive (`actual` does not access itself). -/
-theorem believesR_not_refl : ¬ Refl believesR := by
+theorem believesR_not_refl : ¬ IsReflexive believesR := by
   intro h; exact (h .actual : (False : Prop))
 
 /-- Belief relation is transitive. -/
-theorem believesR_trans : Trans believesR := by
+theorem believesR_trans : IsTransitive believesR := by
   intro w v u hwv hvu
   cases u with
   | believed => cases w <;> trivial
   | actual => exact hvu.elim
 
 /-- Belief relation is Euclidean. -/
-theorem believesR_eucl : Eucl believesR := by
+theorem believesR_eucl : IsEuclidean believesR := by
   intro w v u hwv hwu
   cases u with
   | believed => cases v <;> trivial

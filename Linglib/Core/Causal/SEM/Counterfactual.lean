@@ -166,6 +166,58 @@ instance (dyn : CausalDynamics) (base s' : Situation) (innerVars : List Variable
     Decidable (isConsistentSuper dyn base s' innerVars) :=
   inferInstanceAs (Decidable (_ = true))
 
+/-- Free-extension list: variables to allow ranging in a supersituation,
+    excluding `effect` (the one being tested) and any variable already
+    determined in `base`. Shared by `achievable` and `noAlternative`. -/
+def freeExtensions (dyn : CausalDynamics) (base : Situation)
+    (effect : Variable) : List Variable :=
+  (allVariables dyn).filter fun v =>
+    v != effect && (base.get v).isNone
+
+namespace causallyNecessary
+
+/-- **Precondition** of @cite{nadathur-2024} Definition 10b: neither
+    `cause` nor `effect` is already entailed by `s` under `dyn`. -/
+def precondition (dyn : CausalDynamics) (s : Situation)
+    (cause effect : Variable) : Prop :=
+  (normalDevelopment dyn s).hasValue cause true = false ∧
+  (normalDevelopment dyn s).hasValue effect true = false
+
+instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+    Decidable (precondition dyn s cause effect) :=
+  inferInstanceAs (Decidable (_ ∧ _))
+
+/-- **Achievability** clause (i) of @cite{nadathur-2024} Definition 10b:
+    some consistent supersituation of `s[cause ↦ true]` (with `effect`
+    left undetermined) develops to make `effect` true. -/
+def achievable (dyn : CausalDynamics) (s : Situation)
+    (cause effect : Variable) : Prop :=
+  let sCause := s.extend cause true
+  ∃ s' ∈ sCause.allExtensions (freeExtensions dyn sCause effect),
+    isConsistentSuper dyn sCause s' (innerVariables dyn) ∧
+    (normalDevelopment dyn s').hasValue effect true = true
+
+instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+    Decidable (achievable dyn s cause effect) :=
+  List.decidableBEx _ _
+
+/-- **But-for** clause (ii) of @cite{nadathur-2024} Definition 10b: every
+    consistent supersituation of `s` (with `effect` left undetermined)
+    that achieves `effect` also has `cause` true — i.e., there is no
+    `cause`-free path to the effect. -/
+def noAlternative (dyn : CausalDynamics) (s : Situation)
+    (cause effect : Variable) : Prop :=
+  ∀ s' ∈ s.allExtensions (freeExtensions dyn s effect),
+    isConsistentSuper dyn s s' (innerVariables dyn) →
+    (normalDevelopment dyn s').hasValue effect true = true →
+    (normalDevelopment dyn s').hasValue cause true = true
+
+instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+    Decidable (noAlternative dyn s cause effect) :=
+  List.decidableBAll _ _
+
+end causallyNecessary
+
 /-- **Causal Necessity** (@cite{nadathur-2024} Definition 10b).
 
     ⟨cause, true⟩ is causally necessary for ⟨effect, true⟩ relative
@@ -184,39 +236,72 @@ instance (dyn : CausalDynamics) (base s' : Situation) (innerVars : List Variable
     ensures the effect is reachable before testing but-for. -/
 def causallyNecessary (dyn : CausalDynamics) (s : Situation)
     (cause effect : Variable) : Prop :=
-  (let devS := normalDevelopment dyn s
-   -- Precondition: neither cause nor effect already entailed by s
-   if devS.hasValue cause true || devS.hasValue effect true then false
-   else
-     let innerVars := innerVariables dyn
-     let allVars := allVariables dyn
-     -- (i) Achievability: ∃ consistent supersituation of s[cause↦true]
-     --     with effect ∉ dom(s') where s' ⊨_D ⟨effect, true⟩
-     let sCause := s.extend cause true
-     let freeI := allVars.filter fun v =>
-       v != effect && (sCause.get v).isNone
-     let achievable := (sCause.allExtensions freeI).any fun s' =>
-       decide (isConsistentSuper dyn sCause s' innerVars) &&
-       (normalDevelopment dyn s').hasValue effect true
-     -- (ii) But-for: no consistent supersituation of s with
-     --      effect ∉ dom(s') achieves effect without cause
-     let freeII := allVars.filter fun v =>
-       v != effect && (s.get v).isNone
-     let hasAlternative := (s.allExtensions freeII).any fun s' =>
-       decide (isConsistentSuper dyn s s' innerVars) &&
-       (normalDevelopment dyn s').hasValue effect true &&
-       !(normalDevelopment dyn s').hasValue cause true
-     achievable && !hasAlternative) = true
+  causallyNecessary.precondition dyn s cause effect ∧
+  causallyNecessary.achievable dyn s cause effect ∧
+  causallyNecessary.noAlternative dyn s cause effect
 
 instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
     Decidable (causallyNecessary dyn s cause effect) :=
-  inferInstanceAs (Decidable (_ = true))
+  inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
 -- ============================================================
--- § Simple-law necessity (structured proof)
+-- § Structural lemmas on `Situation` operations
 -- ============================================================
 
-private theorem normalDevelopment_simple (c e : Variable) (s : Situation) :
+/-- Extending at `w ≠ v` doesn't affect the value of `v`. -/
+theorem Situation.extend_get_ne {s : Situation} {v w : Variable} {val : Bool}
+    (h : v ≠ w) : (s.extend w val).get v = s.get v := by
+  unfold Situation.get Situation.extend
+  simp only
+  rw [show (v == w) = false from beq_false_of_ne h]; rfl
+
+/-- The empty situation has no determined values. -/
+@[simp] theorem Situation.empty_hasValue (v : Variable) (b : Bool) :
+    Situation.empty.hasValue v b = false := by
+  simp [Situation.hasValue, Situation.empty, Option.none_beq_some]
+
+/-- Variables not in the extension list keep their `none` value through
+    `allExtensions`. -/
+theorem Situation.allExtensions_preserves_none (s : Situation) (vars : List Variable)
+    (v : Variable) (hv : v ∉ vars) (hs : s.get v = none) :
+    ∀ s' ∈ s.allExtensions vars, s'.get v = none := by
+  induction vars generalizing s with
+  | nil =>
+    intro s' hs'
+    simp [Situation.allExtensions] at hs'
+    subst hs'; exact hs
+  | cons w ws ih =>
+    intro s' hs'
+    have hw : v ≠ w := fun h => hv (h ▸ .head _)
+    have hws : v ∉ ws := fun h => hv (.tail _ h)
+    have hRest : ∀ t ∈ s.allExtensions ws, t.get v = none := ih s hws hs
+    change s' ∈ s.allExtensions (w :: ws) at hs'
+    simp only [Situation.allExtensions] at hs'
+    rw [List.mem_append, List.mem_append] at hs'
+    rcases hs' with (hs' | hs') | hs'
+    · exact hRest s' hs'
+    · have ⟨t, ht, heq⟩ := List.mem_map.mp hs'
+      rw [← heq, Situation.extend_get_ne hw]; exact hRest t ht
+    · have ⟨t, ht, heq⟩ := List.mem_map.mp hs'
+      rw [← heq, Situation.extend_get_ne hw]; exact hRest t ht
+
+/-- Any situation is a consistent supersituation of itself. -/
+theorem isConsistentSuper_self (dyn : CausalDynamics) (s : Situation)
+    (vars : List Variable) :
+    isConsistentSuper dyn s s vars := by
+  show (vars.all _) = true
+  apply List.all_eq_true.mpr
+  intro x _
+  simp only [Situation.get]
+  cases s.valuation x <;> simp
+
+-- ============================================================
+-- § Simple-law necessity
+-- ============================================================
+
+/-- Normal development for a single simple law `c → e`: fires once if
+    `c` is true, leaves the situation alone otherwise. -/
+theorem normalDevelopment_simple (c e : Variable) (s : Situation) :
     normalDevelopment ⟨[CausalLaw.simple c e]⟩ s =
       if s.hasValue c true = true then s.extend e true else s := by
   rcases Bool.eq_false_or_eq_true (s.hasValue c true) with hc | hc
@@ -239,39 +324,6 @@ private theorem normalDevelopment_simple (c e : Variable) (s : Situation) :
                  Bool.and_true, CausalLaw.preconditionsMet,
                  hc, Bool.not_false, Bool.true_or]
     exact normalDevelopment_of_fixpoint hFix _
-
-private theorem extend_get_ne {s : Situation} {v w : Variable} {val : Bool} (h : v ≠ w) :
-    (s.extend w val).get v = s.get v := by
-  unfold Situation.get Situation.extend
-  simp only
-  rw [show (v == w) = false from beq_false_of_ne h]; rfl
-
-private theorem allExtensions_preserves_none (s : Situation) (vars : List Variable)
-    (v : Variable) (hv : v ∉ vars) (hs : s.get v = none) :
-    ∀ s' ∈ s.allExtensions vars, s'.get v = none := by
-  induction vars generalizing s with
-  | nil =>
-    intro s' hs'
-    simp [Situation.allExtensions] at hs'
-    subst hs'; exact hs
-  | cons w ws ih =>
-    intro s' hs'
-    have hw : v ≠ w := fun h => hv (h ▸ .head _)
-    have hws : v ∉ ws := fun h => hv (.tail _ h)
-    have hRest : ∀ t ∈ s.allExtensions ws, t.get v = none := ih s hws hs
-    change s' ∈ s.allExtensions (w :: ws) at hs'
-    simp only [Situation.allExtensions] at hs'
-    rw [List.mem_append, List.mem_append] at hs'
-    rcases hs' with (hs' | hs') | hs'
-    · exact hRest s' hs'
-    · have ⟨t, ht, heq⟩ := List.mem_map.mp hs'
-      rw [← heq, extend_get_ne hw]; exact hRest t ht
-    · have ⟨t, ht, heq⟩ := List.mem_map.mp hs'
-      rw [← heq, extend_get_ne hw]; exact hRest t ht
-
-private theorem empty_hasValue_false' (v : Variable) (b : Bool) :
-    Situation.empty.hasValue v b = false := by
-  simp [Situation.hasValue, Situation.empty, Option.none_beq_some]
 
 private theorem eraseDupsBy_loop_subset {α : Type} [BEq α]
     (eq : α → α → Bool) (l acc : List α) :
@@ -303,32 +355,67 @@ private theorem innerVars_simple (c e : Variable) :
   unfold List.eraseDupsBy.loop; simp
   unfold List.eraseDupsBy.loop; simp
 
-private theorem freeI_eq_nil (c e : Variable) :
-    (allVariables ⟨[CausalLaw.simple c e]⟩).filter
-      (fun v => v != e && ((Situation.empty.extend c true).get v).isNone) = [] := by
-  rw [List.filter_eq_nil_iff]
+private theorem freeExtensions_simple_cause (c e : Variable) :
+    freeExtensions ⟨[CausalLaw.simple c e]⟩ (Situation.empty.extend c true) e = [] := by
+  rw [freeExtensions, List.filter_eq_nil_iff]
   intro v hv
   rcases allVars_mem_simple c e v hv with rfl | rfl
   · simp
   · simp [Situation.get, Situation.extend, Option.isNone]
 
-private theorem isConsistentSuper_self' (dyn : CausalDynamics) (s : Situation)
-    (vars : List Variable) :
-    isConsistentSuper dyn s s vars := by
-  show (vars.all _) = true
-  apply List.all_eq_true.mpr
-  intro x _
-  simp only [Situation.get]
-  cases s.valuation x <;> simp
-
-private theorem e_not_in_freeII (c e : Variable) :
-    e ∉ (allVariables ⟨[CausalLaw.simple c e]⟩).filter
-      (fun v => v != e && (Situation.empty.get v).isNone) := by
+private theorem e_not_in_freeExtensions_empty (c e : Variable) :
+    e ∉ freeExtensions ⟨[CausalLaw.simple c e]⟩ Situation.empty e := by
   intro h
-  rw [List.mem_filter] at h
+  rw [freeExtensions, List.mem_filter] at h
   simp at h
 
-set_option maxHeartbeats 3200000 in
+/-- For a simple causal law `c → e`, the precondition holds against
+    `Situation.empty`: `normalDevelopment(empty) = empty`, which has no
+    determined values. -/
+private theorem simple_precondition (c e : Variable) :
+    causallyNecessary.precondition ⟨[CausalLaw.simple c e]⟩ Situation.empty c e := by
+  rw [causallyNecessary.precondition, normalDevelopment_simple]
+  simp [Situation.empty_hasValue]
+
+/-- For a simple causal law `c → e`, achievability holds against
+    `Situation.empty`: extending with `c = true` fires the law and produces
+    `e = true`. -/
+private theorem simple_achievable (c e : Variable) :
+    causallyNecessary.achievable ⟨[CausalLaw.simple c e]⟩ Situation.empty c e := by
+  rw [causallyNecessary.achievable]
+  refine ⟨Situation.empty.extend c true, ?_, ?_, ?_⟩
+  · rw [freeExtensions_simple_cause]
+    simp [Situation.allExtensions]
+  · exact isConsistentSuper_self _ _ _
+  · rw [normalDevelopment_simple]
+    simp [Situation.extend_hasValue_same]
+
+/-- For a simple causal law `c → e`, the but-for clause holds against
+    `Situation.empty`: every supersituation that achieves `e = true` must
+    have `c = true` (because the only way to fire the law is via `c`). -/
+private theorem simple_noAlternative (c e : Variable) :
+    causallyNecessary.noAlternative ⟨[CausalLaw.simple c e]⟩ Situation.empty c e := by
+  rw [causallyNecessary.noAlternative]
+  intro s' hs' _ hE
+  -- s' is in allExtensions of empty over [c], so s'.get e = none
+  have hGetE : s'.get e = none :=
+    Situation.allExtensions_preserves_none Situation.empty _ e
+      (e_not_in_freeExtensions_empty c e)
+      (by simp [Situation.get, Situation.empty]) s' hs'
+  -- Case-split on whether s'.hasValue c true
+  -- Note: `Bool.eq_false_or_eq_true` yields `_ = true ∨ _ = false` (true first)
+  rcases Bool.eq_false_or_eq_true (s'.hasValue c true) with hc | hc
+  · -- c is true in s' → normalDev preserves it → goal holds
+    rw [normalDevelopment_simple, if_pos hc]
+    by_cases hce : c = e
+    · subst hce; exact Situation.extend_hasValue_same
+    · rw [Situation.extend_hasValue_diff hce]; exact hc
+  · -- c is false in s' → law doesn't fire → normalDev s' = s' → e = none, contradicting hE
+    rw [normalDevelopment_simple, if_neg (by rw [hc]; decide)] at hE
+    have : s'.hasValue e true = false := by
+      simp only [Situation.hasValue]; rw [show s'.valuation e = s'.get e from rfl, hGetE]; rfl
+    rw [this] at hE; exact absurd hE (by decide)
+
 /-- For a simple causal law `c → e`, the cause is necessary for the effect
     relative to the empty background under @cite{nadathur-2024} Definition 10b.
 
@@ -336,54 +423,11 @@ set_option maxHeartbeats 3200000 in
     1. **Precondition**: `normalDevelopment(empty)` = empty, so neither cause
        nor effect is entailed
     2. **Achievability**: extending with `c=true` fires the law → `e=true`
-    3. **But-for**: every consistent supersituation of empty either (a) has
-       `c=true`, in which case normalDev preserves it (blocking the
-       `¬cause` conjunct), or (b) has `c≠true`, in which case the law
-       doesn't fire and `e` remains unset (blocking the `effect` conjunct) -/
+    3. **But-for**: every consistent supersituation of empty either has
+       `c=true` (preserves cause) or has `c≠true` (law doesn't fire,
+       `e` stays undetermined) -/
 theorem simple_law_necessity (c e : Variable) :
-    causallyNecessary ⟨[CausalLaw.simple c e]⟩ Situation.empty c e := by
-  unfold causallyNecessary
-  have hDevEmpty : normalDevelopment ⟨[CausalLaw.simple c e]⟩ Situation.empty = Situation.empty := by
-    rw [normalDevelopment_simple]; simp [empty_hasValue_false']
-  rw [hDevEmpty]
-  simp only [empty_hasValue_false', Bool.false_or, Bool.false_eq_true, ↓reduceIte]
-  rw [freeI_eq_nil]
-  simp only [Situation.allExtensions, List.any_cons, List.any_nil, Bool.or_false]
-  rw [innerVars_simple]
-  rw [show (decide (isConsistentSuper ⟨[CausalLaw.simple c e]⟩
-      (Situation.empty.extend c true) (Situation.empty.extend c true) [e]) = true)
-      from decide_eq_true (isConsistentSuper_self' _ _ _)]
-  simp only [Bool.true_and]
-  have hDevCause : (normalDevelopment ⟨[CausalLaw.simple c e]⟩
-      (Situation.empty.extend c true)).hasValue e true = true := by
-    rw [normalDevelopment_simple]
-    simp [Situation.extend_hasValue_same]
-  rw [hDevCause]; simp only [Bool.true_and]
-  suffices hAlt : (Situation.empty.allExtensions
-      ((allVariables ⟨[CausalLaw.simple c e]⟩).filter
-        (fun v => v != e && (Situation.empty.get v).isNone))).any
-      (fun s' => decide (isConsistentSuper ⟨[CausalLaw.simple c e]⟩ Situation.empty s' [e]) &&
-        (normalDevelopment ⟨[CausalLaw.simple c e]⟩ s').hasValue e true &&
-        !(normalDevelopment ⟨[CausalLaw.simple c e]⟩ s').hasValue c true) = false by
-    rw [hAlt]; rfl
-  rw [List.any_eq_false]
-  intro s' hs'
-  have hGetE : s'.get e = none :=
-    allExtensions_preserves_none Situation.empty _ e (e_not_in_freeII c e)
-      (by simp [Situation.get, Situation.empty]) s' hs'
-  rcases Bool.eq_false_or_eq_true (s'.hasValue c true) with hc | hc
-  · rw [normalDevelopment_simple]
-    simp only [hc, ↓reduceIte]
-    by_cases hce : c = e
-    · subst hce
-      simp [Situation.extend_hasValue_same, Bool.and_true, Bool.not_true]
-    · simp [Situation.extend_hasValue_diff hce, hc, Bool.not_true, Bool.and_false]
-  · rw [normalDevelopment_simple]
-    simp only [hc, Bool.false_eq_true, ↓reduceIte]
-    have hE : s'.hasValue e true = false := by
-      simp only [Situation.hasValue]
-      rw [show s'.valuation e = s'.get e from rfl, hGetE]
-      rfl
-    simp [hE]
+    causallyNecessary ⟨[CausalLaw.simple c e]⟩ Situation.empty c e :=
+  ⟨simple_precondition c e, simple_achievable c e, simple_noAlternative c e⟩
 
 end Core.Causal

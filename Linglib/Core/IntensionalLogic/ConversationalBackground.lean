@@ -45,7 +45,7 @@ def isRealistic (f : ConvBackground W) : Prop :=
     `⋂f(w) = {w}`. The strongest form: only the actual world is accessible.
     UNVERIFIED page reference. -/
 def isTotallyRealistic (f : ConvBackground W) : Prop :=
-  ∀ w : W, propIntersection (f w) = {w}
+  ∀ w : W, Premise.propIntersection (f w) = {w}
 
 /-- The **empty** conversational background: `f(w) = ∅` for all w.
     `⋂f(w) = W` (vacuous intersection), so the empty background is itself

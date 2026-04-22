@@ -309,6 +309,26 @@ theorem self_mem_subtrees (so : SyntacticObject) : so ∈ so.subtrees := by
   | leaf _ => exact List.mem_singleton.mpr rfl
   | node _ _ => exact List.mem_cons.mpr (Or.inl rfl)
 
+/-- `subtrees` is downward-monotone along the subtree relation: if `t`
+    is a subtree of `s`, then every subtree of `t` is also a subtree
+    of `s`. -/
+theorem subtrees_subset_of_mem {t s : SyntacticObject}
+    (h : t ∈ s.subtrees) : t.subtrees ⊆ s.subtrees := by
+  induction s with
+  | leaf _ =>
+    simp only [SyntacticObject.subtrees, List.mem_singleton] at h
+    subst h; intro _ h'; exact h'
+  | node l r ihl ihr =>
+    simp only [SyntacticObject.subtrees, List.mem_cons, List.mem_append] at h
+    rcases h with rfl | hl | hr
+    · intro _ h'; exact h'
+    · intro x hx
+      simp only [SyntacticObject.subtrees, List.mem_cons, List.mem_append]
+      exact Or.inr (Or.inl (ihl hl hx))
+    · intro x hx
+      simp only [SyntacticObject.subtrees, List.mem_cons, List.mem_append]
+      exact Or.inr (Or.inr (ihr hr hx))
+
 -- ============================================================================
 -- Containment Relations
 -- ============================================================================
@@ -476,6 +496,9 @@ theorem contained_is_term {x y : SyntacticObject} (h : contains y x) : isTermOf 
 def containsOrEq (x y : SyntacticObject) : Prop :=
   x = y ∨ contains x y
 
+instance decContainsOrEq (x y : SyntacticObject) : Decidable (containsOrEq x y) := by
+  unfold containsOrEq; infer_instance
+
 /-- Every SO reflexively contains itself -/
 theorem refl_containsOrEq (x : SyntacticObject) : containsOrEq x x :=
   Or.inl rfl
@@ -497,34 +520,60 @@ theorem containsOrEq_trans {x y z : SyntacticObject}
 -- The tree-relative versions below restrict witnesses to subtrees of a
 -- given root, correctly capturing structural asymmetries.
 
+/-- Children of any subtree of `root` are themselves subtrees of `root`.
+    Used to bound the existential in `cCommandsIn` for decidability. -/
+theorem mem_subtrees_of_imm_contains {root w z : SyntacticObject}
+    (hw : w ∈ root.subtrees) (hwz : immediatelyContains w z) :
+    z ∈ root.subtrees := by
+  have hz_in_w : z ∈ w.subtrees := by
+    cases w with
+    | leaf _ => exact hwz.elim
+    | node a b =>
+      simp only [immediatelyContains] at hwz
+      simp only [SyntacticObject.subtrees, List.mem_cons, List.mem_append]
+      rcases hwz with rfl | rfl
+      · exact Or.inr (Or.inl (self_mem_subtrees _))
+      · exact Or.inr (Or.inr (self_mem_subtrees _))
+  exact subtrees_subset_of_mem hw hz_in_w
+
 /-- X and Y are sisters IN tree `root`: they are distinct co-daughters of
     some node that is a subtree of `root`. -/
 def areSistersIn (root x y : SyntacticObject) : Prop :=
   ∃ z, z ∈ root.subtrees ∧ immediatelyContains z x ∧ immediatelyContains z y ∧ x ≠ y
+
+instance decAreSistersIn (root x y : SyntacticObject) :
+    Decidable (areSistersIn root x y) := by
+  unfold areSistersIn
+  exact List.decidableBEx _ _
 
 /-- X c-commands Y IN tree `root`: X has a sister (in `root`) that
     contains-or-equals Y. -/
 def cCommandsIn (root x y : SyntacticObject) : Prop :=
   ∃ z, areSistersIn root x z ∧ containsOrEq z y
 
+/-- `cCommandsIn` is decidable: although the existential `∃ z` is
+    unbounded in the definition, any sister of `x` in `root` must lie
+    in `root.subtrees` (by `mem_subtrees_of_imm_contains`), so we can
+    search the bounded list instead. -/
+instance decCCommandsIn (root x y : SyntacticObject) :
+    Decidable (cCommandsIn root x y) :=
+  letI : DecidablePred fun z => areSistersIn root x z ∧ containsOrEq z y :=
+    fun z => inferInstanceAs (Decidable (_ ∧ _))
+  decidable_of_iff (∃ z ∈ root.subtrees, areSistersIn root x z ∧ containsOrEq z y) <| by
+    constructor
+    · rintro ⟨z, _, h₁, h₂⟩; exact ⟨z, h₁, h₂⟩
+    · rintro ⟨z, h₁, h₂⟩
+      obtain ⟨w, hw_mem, h_imm_x, hwz, h_neq⟩ := h₁
+      exact ⟨z, mem_subtrees_of_imm_contains hw_mem hwz,
+             ⟨w, hw_mem, h_imm_x, hwz, h_neq⟩, h₂⟩
+
 /-- X asymmetrically c-commands Y in tree `root`. -/
 def asymCCommandsIn (root x y : SyntacticObject) : Prop :=
   cCommandsIn root x y ∧ ¬cCommandsIn root y x
 
--- Part 5d: Boolean C-command (for decidability)
-
-/-- Boolean c-command check: does `x` c-command `y` in tree `root`?
-
-    Searches all subtrees of `root` for a parent node whose children
-    include `x` and some sibling `z` where `z` equals or contains `y`.
-    Mirrors `cCommandsIn` but is decidable by computation. -/
-def cCommandsInB (root x y : SyntacticObject) : Bool :=
-  root.subtrees.any λ parent =>
-    match parent with
-    | .leaf _ => false
-    | .node a b =>
-      (decide (a = x) && decide (x ≠ y) && (decide (b = y) || containsB b y)) ||
-      (decide (b = x) && decide (x ≠ y) && (decide (a = y) || containsB a y))
+instance decAsymCCommandsIn (root x y : SyntacticObject) :
+    Decidable (asymCCommandsIn root x y) := by
+  unfold asymCCommandsIn; infer_instance
 
 /-! ## C-command via Barker-Pullum command relations
 
