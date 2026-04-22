@@ -103,57 +103,21 @@ noncomputable def stepOnce [Fintype V] [DecidableEq V] [DecidableValuation α]
 -- § Forward propagation: develop fixpoint
 -- ════════════════════════════════════════════════════
 
-/-- Termination measure: count of undetermined vertices over `Fintype.elems`.
-    Noncomputable because `Finset.toList` is. -/
-private noncomputable def devMeasure [Fintype V] (s : Valuation α) : ℕ :=
-  s.undeterminedCount (Fintype.elems : Finset V).toList
-
-/-- Generic mathlib-missing piece: if a `ℕ`-valued measure strictly
-    decreases on non-stopping points, iterating `f` eventually reaches a
-    stopping point. (Inlined; promote if a second consumer materializes.) -/
-private theorem _root_.Function.exists_iterate_satisfies' {α : Type*} (f : α → α)
-    {Stop : α → Prop} [DecidablePred Stop]
-    (m : α → ℕ) (h : ∀ x, ¬ Stop x → m (f x) < m x) (x : α) :
-    ∃ n, Stop (f^[n] x) := by
-  induction hk : m x using Nat.strong_induction_on generalizing x with
-  | _ k ih =>
-    by_cases hStop : Stop x
-    · exact ⟨0, by simpa using hStop⟩
-    · have hLt : m (f x) < k := hk ▸ h x hStop
-      obtain ⟨n, hn⟩ := ih (m (f x)) hLt (f x) rfl
-      exact ⟨n + 1, by rw [Function.iterate_succ_apply]; exact hn⟩
-
-/-- **Strict-decrease lemma**: when `stepOnce M s ≠ s`, the
-    undetermined-vertex count strictly decreases.
-
-    Substantive content: at least one vertex transitioned from undetermined
-    to determined during the foldl sweep (since `stepOnce` only modifies
-    via `extend`); the rest preserve `isNone`-ness by info-monotonicity;
-    the differing vertex contributes -1 to the count.
-
-    TODO (C-1 completion): proof is foldl-induction over `Fintype.elems.toList`
-    with two helper lemmas:
-    - `stepOnce_info_monotone : (s.get v).isSome → ((stepOnce M s).get v).isSome`
-    - `stepOnce_witness : stepOnce M s ≠ s → ∃ v, (s.get v).isNone ∧ ((stepOnce M s).get v).isSome`
-    Then apply `countP_lt_of_imp_of_witness` (port from old `Monotonicity.lean`). -/
-theorem stepOnce_strict_decrease [Fintype V] [DecidableEq V] [DecidableValuation α]
-    (M : SEM V α) [IsDeterministic M] (s : Valuation α)
-    (hNotFix : stepOnce M s ≠ s) :
-    devMeasure (stepOnce M s) < devMeasure s := by
-  sorry
-
 /-- **Forward-development** of a deterministic acyclic SEM against a
-    partial valuation. Iterates `stepOnce` until fixpoint via
-    `Nat.find` on the existence of a fixpoint iterate.
+    partial valuation. Iterates `stepOnce` for a bounded number of steps
+    (`Fintype.card V`) — each effective iteration determines at least
+    one more vertex, so this many iterations always reach the fixpoint.
 
-    Termination relies on `stepOnce_strict_decrease`: when
-    `stepOnce M s ≠ s`, the undetermined-vertex count strictly decreases.
-
-    Replaces the old `normalDevelopment`. -/
+    Replaces the old `normalDevelopment`. The fact that the result IS a
+    fixpoint of `stepOnce` (i.e., `stepOnce M (develop M s) = develop M s`)
+    is the content of `develop_isFixpoint`, deferred to C-1 completion
+    along with the strict-decrease lemma. The bound `Fintype.card V`
+    suffices because `stepOnce` is info-monotonic (each iteration only
+    extends; never overwrites) and there are only `Fintype.card V`
+    vertices to determine. -/
 noncomputable def develop [Fintype V] [DecidableEq V] [DecidableValuation α]
     (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
     (s : Valuation α) : Valuation α :=
-  (stepOnce M)^[Nat.find (Function.exists_iterate_satisfies' (Stop := fun x => stepOnce M x = x)
-    (stepOnce M) devMeasure (fun x hx => stepOnce_strict_decrease M x hx) s)] s
+  (stepOnce M)^[Fintype.card V] s
 
 end Core.Causal.V2.SEM
