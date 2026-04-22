@@ -1,6 +1,8 @@
 import Linglib.Theories.Semantics.Tense.ModalTense
 import Linglib.Theories.Semantics.Modality.TemporalConstraint
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Fragments.Gitksan.Modals
+import Linglib.Phenomena.Modality.Studies.Matthewson2013
 
 /-!
 # @cite{klecha-2016}: Modality and Embedded Temporal Operators
@@ -323,6 +325,69 @@ theorem dox_only_block_future :
 theorem cir_compat_permit_future :
     (classificationTable.filter (! ·.isDoxOnly)).all (·.permitsFuture) = true := by
   decide
+
+
+-- ════════════════════════════════════════════════════════════════
+-- § 11. Cross-linguistic test: @cite{matthewson-2013} Gitksan imaa
+-- ════════════════════════════════════════════════════════════════
+
+/-! Klecha's central universal — epistemic modals are DOX, and DOX
+strictly blocks future orientation (§ 8) — predicts that no language
+will have a felicitous "epistemic modal + future orientation"
+configuration. @cite{matthewson-2013}'s Gitksan data is the obvious
+test case: the variable-force epistemic *imaa* combines with the
+prospective marker *dim* to produce future-oriented epistemic claims
+(Fig. 4, ex. 42 and 44). The cross-framework outcome is *refutation*,
+not reconciliation: the two analyses return different Bool values for
+the (epistemic, future) cell, and there is no flavor-keyed
+`ProspectiveMarkerPolicy` that would unify them. -/
+
+open Fragments.Gitksan.Modals (imaa requiresDim)
+
+/-- Klecha's universal applied to imaa: the flavor on every meaning
+    cell of imaa is epistemic, so the modal base is DOX, so future
+    orientation is blocked. -/
+theorem klecha_predicts_imaa_no_future :
+    imaa.meaning.all (fun ff =>
+      ModalBaseKind.permitsOrientation
+        (ModalFlavor.toModalBaseKind ff.flavor) .future = false) = true := by
+  decide
+
+/-- @cite{matthewson-2013} Fig. 4 records two future-orientation cells
+    for `imaa`: TP=PRESENT × TO=FUTURE (ex. 42) and TP=PAST × TO=FUTURE
+    (ex. 44). Both require `dim`. The empirical claim is that these
+    configurations are felicitous, not blocked. -/
+theorem matthewson_imaa_future_attested :
+    Matthewson2013.fig4Cells.filter (fun c =>
+      c.orientation == Core.Modality.TemporalOrientation.future)
+      = [⟨.present, .future, 42⟩, ⟨.past, .future, 44⟩] := rfl
+
+/-- The disagreement: Klecha predicts no felicitous future-oriented
+    imaa configurations exist; Matthewson reports two (Fig. 4 cells
+    ex. 42 and 44). The two frameworks return different Bool values
+    for the (epistemic, future) cell — the disagreement is concrete
+    and source-grounded. -/
+theorem gitksan_imaa_refutes_universal :
+    ModalBaseKind.permitsOrientation
+      (ModalFlavor.toModalBaseKind .epistemic) .future ≠
+    requiresDim imaa .future := by decide
+
+/-! ### Architectural consequence
+
+A unified Theories-level `ProspectiveMarkerPolicy : ModalFlavor →
+TemporalOrientation → Bool` would have to pick one of the two values
+for the (epistemic, future) cell:
+
+- Klecha's value: `false` (DOX cannot extend forward).
+- Matthewson's value: `true` (Gitksan imaa + dim is felicitous).
+
+The picking is a cross-linguistic theoretical commitment, not a
+structural primitive. Until other modal-system Fragments (Korean
+*-keyss*, Mandarin *huì*, etc.) supply additional data points that
+agree with one analysis or the other, the per-Fragment `requiresDim`
+in `Fragments/Gitksan/Modals.lean` should stay where it is. Promoting
+it to Theories would silently impose Klecha's universal on languages
+whose data refutes it. -/
 
 
 end Klecha2016
