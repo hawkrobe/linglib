@@ -17,7 +17,7 @@ British Columbia. The system shows two key typological properties:
    for modals; without it, epistemic ima('a) cannot be future-oriented
    (@cite{matthewson-2016} §18.4.3, examples 60–63).
 
-## Table 18.1: Gitksan modal system
+## @cite{matthewson-2013} Figure 1: Gitksan modal system
 
 |                  | Possibility  | (Weak) Necessity |
 |------------------|-------------|-----------------|
@@ -27,6 +27,13 @@ British Columbia. The system shows two key typological properties:
 | **Epistemic**    |             |                 |
 | Plain            | ima('a)     | ima('a)         |
 | Reportative      | gat         | gat             |
+
+The (WEAK) annotation in the column header is load-bearing: Gitksan has
+no STRONG circumstantial necessity modal — pure-necessity cases like
+"I have to sneeze" use a plain future, not sgi (@cite{matthewson-2013}
+ex. 95–98). This asymmetry is the crux of Matthewson's "mixed system"
+typological claim: strength is encoded in the circumstantial domain,
+but only weakly.
 -/
 
 namespace Fragments.Gitksan.Modals
@@ -36,10 +43,11 @@ open Semantics.Modality.Typology (ModalExpression)
 
 private abbrev ne := ForceFlavor.mk .necessity .epistemic
 private abbrev pe := ForceFlavor.mk .possibility .epistemic
-private abbrev nd := ForceFlavor.mk .necessity .deontic
-private abbrev nc := ForceFlavor.mk .necessity .circumstantial
+private abbrev wnd := ForceFlavor.mk .weakNecessity .deontic
+private abbrev wnc := ForceFlavor.mk .weakNecessity .circumstantial
 private abbrev pd := ForceFlavor.mk .possibility .deontic
 private abbrev pc := ForceFlavor.mk .possibility .circumstantial
+private abbrev pb := ForceFlavor.mk .possibility .bouletic
 
 /-! ## Modal expressions -/
 
@@ -56,17 +64,29 @@ def imaa : ModalExpression := ⟨"ima('a)", [pe, ne]⟩
     while ima('a) is **factual-evidential**. -/
 def gat : ModalExpression := ⟨"gat", [pe, ne]⟩
 
-/-- Circumstantial possibility ('able to'). -/
-def daakhlxw : ModalExpression := ⟨"da'akhlxw", [pc]⟩
+/-- General circumstantial possibility: pure circumstantial, ability,
+    bouletic, teleological, and (in competition with `anookxw`) deontic
+    permission. @cite{matthewson-2013} §4.1, ex. 63–65: da'akhlxw allows
+    bouletic interpretations ('You could eat less cake'), teleological
+    interpretations (subsumed under circumstantial in linglib's flavor
+    inventory), and deontic permission ('My mother told me I could play').
+    Listed flavors: circumstantial (covering pure circumstantial, ability,
+    teleological), deontic (permission overlap with anookxw), bouletic. -/
+def daakhlxw : ModalExpression := ⟨"da'akhlxw", [pc, pd, pb]⟩
 
-/-- Deontic possibility ('allowed to'). -/
+/-- Specialized deontic possibility ('allowed to'). @cite{matthewson-2013}
+    §4.2: anook competes with da'akhlxw in permission contexts but is
+    strictly deontic — infelicitous in pure circumstantial situations
+    (ex. 79). -/
 def anookxw : ModalExpression := ⟨"anook(xw)", [pd]⟩
 
-/-- Circumstantial necessity: deontic, pure circumstantial, and teleological.
-    @cite{matthewson-2016} Table 18.1: the only circumstantial necessity modal.
-    Covers obligation ('should/must go home'), pure circumstantial, and
-    goal-directed readings. -/
-def sgi : ModalExpression := ⟨"sgi", [nd, nc]⟩
+/-- Circumstantial **weak** necessity. @cite{matthewson-2013} §4.3 (and
+    Figure 1: column header is "(WEAK) NECESSITY"): sgi expresses
+    obligation, deontic 'should', and weak circumstantial necessity, but
+    is INFELICITOUS in pure strong-necessity contexts like the sneeze
+    case (ex. 96–98), where a plain future is used instead. The preferred
+    English translation is 'should', a weak necessity modal. -/
+def sgi : ModalExpression := ⟨"sgi", [wnd, wnc]⟩
 
 def allExpressions : List ModalExpression :=
   [imaa, gat, daakhlxw, anookxw, sgi]
@@ -83,7 +103,7 @@ def forceAnalysis : ModalExpression → ForceAnalysis
   | ⟨"gat", _⟩ => .variableForce
   | ⟨"da'akhlxw", _⟩ => .fixed .possibility
   | ⟨"anook(xw)", _⟩ => .fixed .possibility
-  | ⟨"sgi", _⟩ => .fixed .necessity
+  | ⟨"sgi", _⟩ => .fixed .weakNecessity
   | _ => .fixed .possibility
 
 /-! ## Three-way background classification (@cite{matthewson-2016} Table 18.3)
