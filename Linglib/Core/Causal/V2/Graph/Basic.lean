@@ -6,49 +6,41 @@ import Mathlib.Logic.Relation
 # CausalGraph: Acyclicity, Ancestor Relation (V2)
 
 `IsDAG` is a `Prop` mixin class on `CausalGraph V` (mirroring
-`IsMarkovKernel` from `Mathlib/Probability/Kernel/Defs.lean`): it's
-required only by operations that genuinely need acyclicity (topological
-sort, well-founded fixpoint induction). Parent lookup and root detection
-in `Graph/Defs.lean` work for any graph.
+`IsMarkovKernel` from `Mathlib/Probability/Kernel/Defs.lean`): required
+only by operations that genuinely need acyclicity (topological sort,
+well-founded fixpoint induction).
 
-The ancestor relation is defined via `Relation.ReflTransGen` from mathlib —
-the standard reflexive-transitive closure construction.
+The ancestor relation uses `Relation.ReflTransGen` directly (no
+intermediate adapter); consumers can use mathlib's existing API for
+reflexive-transitive closures.
 -/
 
 namespace Core.Causal.V2.CausalGraph
 
 variable {V : Type*}
 
-/-- The "is parent of" relation lifted from `parents : V → Finset V`. -/
-def parentRel (G : CausalGraph V) : V → V → Prop :=
-  fun u v => u ∈ G.parents v
-
 /-- `IsAncestor G u v` iff there is a chain `v ← w₁ ← ... ← u` via `parents`.
-    Defined via mathlib's `Relation.ReflTransGen`. -/
+    Defined via mathlib's `Relation.ReflTransGen` over the inlined
+    "is-parent-of" relation. -/
 def IsAncestor (G : CausalGraph V) : V → V → Prop :=
-  Relation.ReflTransGen G.parentRel
+  Relation.ReflTransGen (fun u v => u ∈ G.parents v)
 
 /-- `IsStrictAncestor G u v` iff there is a *nonempty* chain via `parents`.
     Defined via mathlib's `Relation.TransGen`. -/
 def IsStrictAncestor (G : CausalGraph V) : V → V → Prop :=
-  Relation.TransGen G.parentRel
+  Relation.TransGen (fun u v => u ∈ G.parents v)
 
-theorem IsAncestor.refl (G : CausalGraph V) (v : V) : G.IsAncestor v v :=
-  Relation.ReflTransGen.refl
+/-- **Acyclicity mixin**: the strict-ancestor relation is well-founded —
+    no infinite chain of parents. Required by `topologicalOrder`,
+    `develop` fixpoint, and well-founded recursion over the parent
+    relation.
 
-theorem IsAncestor.trans {G : CausalGraph V} {u v w : V}
-    (h₁ : G.IsAncestor u v) (h₂ : G.IsAncestor v w) : G.IsAncestor u w :=
-  Relation.ReflTransGen.trans h₁ h₂
+    Mathlib analogue: `IsMarkovKernel` from
+    `Mathlib.Probability.Kernel.Defs` — a `Prop` class on a value of a
+    structure, marking a property consumers may require.
 
-/-- **Acyclicity mixin**: the strict-ancestor relation is well-founded, i.e.,
-    every nonempty chain of parents must terminate. Equivalent to "no
-    nontrivial cycles" in the standard graph-theoretic sense.
-
-    Mathlib analogue: `IsMarkovKernel` from `Mathlib.Probability.Kernel.Defs` —
-    a `Prop` class on a value of a structure, marking a property that
-    consumers (`topologicalOrder`, `develop` fixpoint) may require.
-    `WellFounded` chosen because it directly enables well-founded recursion
-    over the parent relation. -/
+    A `Std.Irrefl` instance for `IsStrictAncestor` follows from
+    well-foundedness; deferred until a consumer needs it. -/
 class IsDAG (G : CausalGraph V) : Prop where
   /-- The strict-ancestor relation has no infinite descending chain. -/
   wf : WellFounded G.IsStrictAncestor

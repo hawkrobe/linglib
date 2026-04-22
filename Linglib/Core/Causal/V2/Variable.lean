@@ -14,21 +14,15 @@ canonical default. Use directly when you don't need polymorphism.
 namespace Core.Causal.V2
 
 /-- A variable in a causal model: a named atom. Semantic content lives in
-    the `Mechanism` attached to a vertex, not in the variable itself. -/
+    the `Mechanism` attached to a vertex, not in the variable itself.
+
+    `BEq`/`LawfulBEq` are auto-derived from `DecidableEq` via
+    `instBEqOfDecidableEq`. -/
 structure Variable where
   name : String
   deriving DecidableEq, Hashable, Repr, Inhabited
 
-instance : BEq Variable where beq a b := decide (a = b)
-
-instance : LawfulBEq Variable where
-  eq_of_beq h := of_decide_eq_true h
-  rfl := decide_eq_true rfl
-
 instance : ToString Variable where
   toString v := v.name
-
-/-- Create a variable from a string literal. -/
-def mkVar (name : String) : Variable := ⟨name⟩
 
 end Core.Causal.V2

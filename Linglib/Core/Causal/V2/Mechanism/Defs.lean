@@ -37,16 +37,18 @@ namespace Mechanism
 
 variable {α : V → Type*} {G : CausalGraph V} {v : V}
 
-/-- A mechanism is **deterministic** iff every parent assignment yields
-    a Dirac PMF (singleton support).
+/-- A mechanism is **deterministic** when it carries an explicit total
+    function over parents whose lifting via `PMF.pure` agrees with `run`.
 
-    Mathlib analogue: `IsMarkovKernel` from `Mathlib/Probability/Kernel/Defs.lean`
-    — a `Prop` class on a value of the structure, marking a property
-    that operations may require. -/
-class IsDeterministic (m : Mechanism G α v) : Prop where
-  /-- Every input has a unique output value (Dirac support). -/
-  pure_run : ∀ ρ : ∀ u : G.parents v, α u.val,
-    ∃ x : α v, m.run ρ = PMF.pure x
+    Data-carrying class (not `Prop`) so consumers can extract `toFun`
+    computably. Compare mathlib `Module R M` (data-carrying) vs
+    `IsMarkovKernel` (`Prop`); we choose data-carrying because the
+    underlying function is uniquely determined and useful in proofs. -/
+class IsDeterministic (m : Mechanism G α v) where
+  /-- The deterministic function over parent assignments. -/
+  toFun : (∀ u : G.parents v, α u.val) → α v
+  /-- The mechanism's `run` is the Dirac of `toFun`. -/
+  run_eq : ∀ ρ, m.run ρ = PMF.pure (toFun ρ)
 
 end Mechanism
 

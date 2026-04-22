@@ -38,16 +38,14 @@ namespace SEM
 variable {V : Type*} {α : V → Type*}
 
 /-- The SEM is fully **deterministic**: every vertex's mechanism is Dirac. -/
-class IsDeterministic (M : SEM V α) : Prop where
+class IsDeterministic (M : SEM V α) where
   mech_det : ∀ v, Mechanism.IsDeterministic (M.mech v)
 
-attribute [instance] IsDeterministic.mech_det
+/-- Project per-vertex `Mechanism.IsDeterministic` from `SEM.IsDeterministic`. -/
+instance (M : SEM V α) [h : IsDeterministic M] (v : V) :
+    Mechanism.IsDeterministic (M.mech v) := h.mech_det v
 
 end SEM
 
-/-- A `BoolSEM V` is the legacy SBH-style binary substrate: every vertex's
-    value is `Bool`. Convenience abbreviation for consumers that don't need
-    multi-valued variables. -/
-abbrev BoolSEM (V : Type*) := SEM V (fun _ => Bool)
 
 end Core.Causal.V2

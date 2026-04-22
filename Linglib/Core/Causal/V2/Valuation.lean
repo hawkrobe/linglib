@@ -26,18 +26,11 @@ namespace Core.Causal.V2
     elaboration unifies `Valuation α` with `Π v, Option (α v)` directly. -/
 abbrev Valuation {V : Type*} (α : V → Type*) := ∀ v : V, Option (α v)
 
-/-- Aggregator typeclass: every vertex's value type has decidable equality.
-    Threaded through `Valuation` API to avoid repeating
-    `[∀ v, DecidableEq (α v)]` constraints. -/
-class DecidableValuation {V : Type*} (α : V → Type*) where
-  decEq : ∀ v, DecidableEq (α v)
-
-/-- Project the per-vertex `DecidableEq` instance from `DecidableValuation`. -/
-@[reducible] instance {V : Type*} (α : V → Type*) [DecidableValuation α] (v : V) :
-    DecidableEq (α v) := DecidableValuation.decEq v
-
-instance {V : Type*} (α : V → Type*) [∀ v, DecidableEq (α v)] :
-    DecidableValuation α := ⟨inferInstance⟩
+/-- Per-vertex decidable equality. An `abbrev` (not a `class`) so it
+    unfolds transparently to the bare `∀ v, DecidableEq (α v)` constraint
+    typeclass search expects. Avoids the bundled-class antipattern. -/
+abbrev DecidableValuation {V : Type*} (α : V → Type*) :=
+  ∀ v, DecidableEq (α v)
 
 namespace Valuation
 
