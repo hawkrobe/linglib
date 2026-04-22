@@ -4,7 +4,6 @@ import Linglib.Theories.Semantics.Conditionals.WillConditional
 import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.SelectionFunction
-import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.NonBivalence
 
@@ -44,7 +43,6 @@ namespace Semantics.Conditionals.Counterfactual
 open Core (WorldTimeIndex)
 
 open Semantics.Conditionals
-open Core.Causal
 open Core.Duality (Truth3 ProjectionType dist)
 
 
@@ -222,41 +220,16 @@ The selection function s(w, A) can be grounded via causal intervention:
 
 s(w, A) = the world that results from intervening to make A true at w
 
-This connects to @cite{nadathur-lauer-2020}:
-- `normalDevelopment(s ⊕ {A = true})` gives the counterfactual A-world
-- Counterfactual dependence (necessity) = selection-based conditionals
+This connects to @cite{nadathur-lauer-2020}: `develop M (s.extend A true)`
+gives the counterfactual A-world (or, Pearl-style, `(M.intervene A true).develop s`).
+Counterfactual dependence (necessity) corresponds to selection-based conditionals.
 
-See `Theories/Semantics/Causation/` for the causal-model infrastructure.
-The full formalization of @cite{lewis-1973-causation}'s causal
-dependence — causation as transitive closure, epiphenomena asymmetry,
-and bridge theorems to CC-selection — appears as a paper-replication
-study under `Phenomena/Causation/Studies/`.
+The intervention-based counterfactual primitive lives in
+`Core/Causal/V2/SEM/Counterfactual.lean` as `causallySufficient` (which
+is exactly "extending with antecedent then developing produces consequent").
+The full formalization of @cite{lewis-1973-causation}'s causal dependence
+appears as a paper-replication study under `Phenomena/Causation/Studies/Lewis1973.lean`.
 -/
-
-/--
-Intervention-based selection: Select the world resulting from do(A).
-
-Given a causal dynamics and situation, the selected A-world is the
-result of normal development after intervening to make A true.
--/
-def interventionSelection (dyn : CausalDynamics) (s : Situation)
-    (antecedent : Variable) : Situation :=
-  let sWithA := s.extend antecedent true
-  normalDevelopment dyn sWithA
-
-/--
-Counterfactual via intervention.
-
-"If A were true, B would be true" using causal model semantics.
--/
-def causalCounterfactual (dyn : CausalDynamics) (s : Situation)
-    (antecedent consequent : Variable) : Prop :=
-  let counterfactualWorld := interventionSelection dyn s antecedent
-  counterfactualWorld.hasValue consequent true
-
-instance (dyn : CausalDynamics) (s : Situation) (antecedent consequent : Variable) :
-    Decidable (causalCounterfactual dyn s antecedent consequent) :=
-  inferInstanceAs (Decidable (Situation.hasValue ..))
 
 -- ════════════════════════════════════════════════════
 -- Bridge: Selectional Semantics as Supervaluation
