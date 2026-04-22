@@ -14,12 +14,19 @@ aliases for legacy SBH-style binary semantics.
   `cause` then developing produces `xE` at `effect`. Polymorphic generalization
   of @cite{nadathur-lauer-2020} Definition 23.
 
-- **`lewisNecessary M s cause xC_alt effect xE`**: developing under the
-  alternative cause-value `xC_alt` does NOT produce `xE` at `effect`.
-  Lewis-style but-for necessity (simpler than Nadathur 2024 Def 10b).
+**Necessity** is *not* exposed as a Core primitive. The 2026 canonical
+literature on causal-verb semantics (@cite{nadathur-2024} Def 10b,
+@cite{cao-white-lassiter-2025} graded ALT, @cite{beller-gerstenberg-2025}
+counterfactual simulation) has moved past simple Lewis but-for. Each
+necessity flavor is theory-specific:
+- Lewis-style but-for: `¬ causallySufficient M s cause xC_alt effect xE`
+  (one-liner — define in `Phenomena/Causation/Studies/Lewis1973.lean`)
+- Nadathur 2024 Def 10b: precondition + achievable + supersituation
+  (port lazily alongside `Theories/Semantics/Causation/Necessity.lean` migration)
+- CWL graded: not a discrete predicate (graded ALT measure)
 
-`BoolSEM`-namespace aliases specialize each predicate to the `α := fun _ => Bool`
-case with `xC = true`, `xC_alt = false`, `xE = true` (legacy SBH semantics).
+`BoolSEM`-namespace aliases specialize the polymorphic predicates to
+`α := fun _ => Bool` with `xC = true`, `xE = true` (legacy SBH semantics).
 
 ## Computability
 
@@ -67,26 +74,6 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     Decidable (causallySufficient M s cause xC effect xE) :=
   Classical.dec _
 
-/-- **Lewis-style but-for necessity**: developing under the *alternative*
-    cause-value `xC_alt` does NOT produce `xE` at `effect`.
-
-    Encodes "but for cause = xC, effect would not be xE": setting cause to its
-    alternative value `xC_alt` (in Bool, this is `false` for the absence of
-    a true-valued cause) blocks `effect = xE`.
-
-    Simpler than Nadathur 2024 Def 10b necessity (which adds achievability
-    + supersituation universality conditions). Both formulations agree on
-    simple chains; Def 10b additionally rules out chain-bypass cases. -/
-def lewisNecessary (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (s : Valuation α) (cause : V) (xC_alt : α cause)
-    (effect : V) (xE : α effect) : Prop :=
-  ¬ developsToValue M (s.extend cause xC_alt) effect xE
-
-noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (s : Valuation α) (cause : V) (xC_alt : α cause) (effect : V) (xE : α effect) :
-    Decidable (lewisNecessary M s cause xC_alt effect xE) :=
-  Classical.dec _
-
 -- ════════════════════════════════════════════════════
 -- § Basic API lemmas (polymorphic)
 -- ════════════════════════════════════════════════════
@@ -104,14 +91,6 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     causallySufficient M s cause xC effect xE ↔
       developsToValue M (s.extend cause xC) effect xE := Iff.rfl
 
-/-- `lewisNecessary` unfolds to the negation of `developsToValue` under the
-    alternative cause-value. -/
-@[simp] theorem lewisNecessary_iff (M : SEM V α)
-    [CausalGraph.IsDAG M.graph] [IsDeterministic M]
-    (s : Valuation α) (cause : V) (xC_alt : α cause) (effect : V) (xE : α effect) :
-    lewisNecessary M s cause xC_alt effect xE ↔
-      ¬ developsToValue M (s.extend cause xC_alt) effect xE := Iff.rfl
-
 end Core.Causal.V2.SEM
 
 -- ════════════════════════════════════════════════════
@@ -123,7 +102,7 @@ namespace Core.Causal.V2.BoolSEM
 variable {V : Type*} [Fintype V] [DecidableEq V]
 
 open Core.Causal.V2 (SEM Valuation BoolSEM)
-open Core.Causal.V2.SEM (developsToValue causallySufficient lewisNecessary)
+open Core.Causal.V2.SEM (developsToValue causallySufficient)
 
 /-- `BoolSEM`-flavored `developsToValue`: vertex `v` develops to `true`. -/
 abbrev developsToTrue (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
@@ -135,12 +114,5 @@ abbrev developsToTrue (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
 abbrev causallySufficient (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.causallySufficient M s cause true effect true
-
-/-- `BoolSEM`-flavored `lewisNecessary`: setting `cause = false` blocks
-    `effect = true`. The Bool specialization of `lewisNecessary` with
-    `xC_alt := false` (the absence value) and `xE := true`. -/
-abbrev lewisNecessary (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
-    [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
-  SEM.lewisNecessary M s cause false effect true
 
 end Core.Causal.V2.BoolSEM
