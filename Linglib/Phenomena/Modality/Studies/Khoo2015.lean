@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.Epistemic.Basic
+import Linglib.Phenomena.Assertion.Studies.Rudin2025
 
 /-!
 # @cite{khoo-2015}: Modal Disagreements
@@ -112,7 +112,7 @@ theorem interaction_reversal :
 -- § Neo-Stalnakerian Framework Grounding
 -- ============================================================================
 
-open Semantics.Dynamic.NeoStalnakerian in
+open Phenomena.Assertion.Studies.Rudin2025 in
 /-- The Mobster scenario has the structure predicted by the NSF:
     Smith (assertor) has examined evidence consistent with Fat Tony being dead,
     so his epistemic state contains p-worlds (p = "Fat Tony is dead").

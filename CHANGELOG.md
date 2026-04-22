@@ -4,6 +4,497 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.171] - 2026-04-22
+
+### Refactored — Dynamic/ stragglers move to phenomenon-application sites
+
+Three files in `Theories/Semantics/Dynamic/` were phenomenon-applied
+rather than framework-defining and now live with the phenomena they
+serve, matching the mathlib analogy where `Topology/MetricSpace/`
+defines topology while topology *of* X lives with X.
+
+**Move 1**: `Dynamic/Epistemic/Basic.lean` →
+`Phenomena/Assertion/Studies/Rudin2025.lean`. The Neo-Stalnakerian
+Framework (NSF) is `@cite{rudin-2025a}`'s contribution to assertion
+theory, not a sub-framework of dynamic semantics. Namespace rename
+`Semantics.Dynamic.NeoStalnakerian` → `Phenomena.Assertion.Studies.Rudin2025`.
+Consumer `Phenomena/Modality/Studies/Khoo2015.lean` updated.
+
+**Move 2**: `Dynamic/Bilateral/FreeChoice.lean` merged into
+`Phenomena/Modality/Studies/ElliottSudo2025.lean`. Both files were
+`@cite{elliott-sudo-2025}`; CLAUDE.md says study files are
+self-contained. The 266-line "theory" file was paper-specific apparatus
+(modal disjunction operators, FC theorems, bathroom configuration) and
+joins the 129-line empirical study as a single 9-section file. The
+generic Bilateral Update Semantics infrastructure stays in
+`Dynamic/Bilateral/{Basic,BUS,ICDRT,ICDRTConnectives}.lean`.
+
+**Move 3**: `Dynamic/DynamicGQ/` (5 files) →
+`Quantification/Dynamic/`. These five `@cite{charlow-2021}` variants of
+dynamic generalized quantifiers (Pointwise, Update-theoretic,
+Higher-order, Post-suppositional, Subtype-polymorphic) are quantification
+theory that happens to use dynamic-semantic state, not dynamic-semantic
+infrastructure. Namespace rename `Semantics.Dynamic.DynamicGQ` →
+`Semantics.Quantification.Dynamic`. Consumers
+`Phenomena/Plurals/Compare.lean` and
+`Phenomena/Plurals/Studies/Charlow2021/CumulativeReadings.lean` updated.
+
+**Why these three**: each was identified as a "phenomenon-applied"
+straggler in a prior architectural audit — the file's content is
+located in dynamic-semantic state but its theoretical contribution
+sits in another phenomenon (assertion, free choice, quantification).
+The move is purely organizational; no API changes, no proof changes.
+
+## [0.230.170] - 2026-04-22
+
+### Refactored — Dynamic/Context.lean: HasFiberedLookup + HasJointState + Id baseline
+
+Architectural fix to the effect-functor-parameterized lookup interface
+in `Theories/Semantics/Dynamic/Context.lean`, addressing convergent
+critique from mathlib-reviewer, linguistics-domain-expert, and
+cross-framework-reconciler agents. The unification at the lookup
+*signature* layer is real, but the previous `HasIndivLookupM` name
+elided two distinctions that were collapsing across families.
+
+**Rename**: `HasIndivLookupM` → `HasFiberedLookup`. The lookup signature
+`Ctx → V → W → M E` is fibered by construction — every state, joint or
+not, can answer "what is the M-distribution of v's value at world w?".
+For Charlow's joint `Set (W × Assignment E)` and Grove-White's joint
+`PMF (W × Assignment E)`, this requires marginalization; the old name
+hid that fact behind "indiv lookup". Three consumer files renamed:
+`Core/Intensional.lean`, `Nondeterminism/Charlow2019.lean`,
+`Probability/Lookup.lean`.
+
+**Add `HasJointState`** typeclass (Seam 2 promotion): frameworks whose
+underlying state is natively joint over (world, assignment) pairs, not
+fibered. Extends `HasFiberedLookup` (joint states automatically project
+to fibered ones, lossily). The `joint` field exposes the native
+`M (W × (V → E))` structure. Marginalization itself is per-family
+(Set needs filtering, PMF needs `PMF.cond`) so it's not a typeclass
+field — each instance provides its own `iLookup` whose agreement with
+marginalizing `joint` is a per-family proof obligation, not generic
+machinery. Charlow `instCharlowHasJointState` shipped (`joint := id`
+because `State W E := Set (W × Assignment E)` IS the joint shape).
+PDS Bayesian and FCS instances deferred — see Lookup.lean SEAM 2 block.
+
+**Add `HasFiberedLookup Id` baseline** for the extensional triplet
+(DPL, CDRT, DRT). Their state types are all definitionally
+`Nat → E = Assignment E`, so a single instance on `Assignment E` covers
+all three with `M = Id`, `W = PUnit`. Captures the indefinite-persistence
+pattern shared across these theories at the typeclass level.
+
+**Promote Seam 1 to four falsifiers**: the table in `Context.lean`'s
+docstring now lists `.star` (Hofmann/ICDRT), `∅` (Charlow), zero-mass
+(Bayesian), AND `Dom`-partiality (Heim FCS). Adding FCS as a fourth
+row is a co-move with the Seam 4 (definedness) refinement —
+FCS's definedness is metadata, not value-level.
+
+**Citations + bibliography hygiene**: `Context.lean` header gains
+`@cite{charlow-2019}`, `@cite{grove-white-2025b}`, `@cite{heim-1982}`.
+Seam 6 (anaphora resolution mechanism) replaces "Karttunen / Heim"
+binding-row attribution with "Heim/Kamp" (Karttunen 1976 introduced
+*the idea* of drefs without the assignment-update formalization),
+and adds an "E-type / situation" row for the Elbourne/Heim 1990
+tradition.
+
+**Step 3 (`BayesianState` → joint shape) deferred** with explicit
+documentation. The natural Grove-White PDS upgrade is
+`PMF (W × Assignment E)`, matching `Pσ`/`PState` already in
+`Probability/Basic.lean`. Refactoring requires `PMF.cond` machinery
+with mass-zero handling (return `Option (PMF E)` or `WithBot`) and
+would cascade through every per-world `PMF (Assignment E)` consumer.
+Tracked inline in Lookup.lean's SEAM 2 block; current fibered shape is
+the honest projection.
+
+**Files touched**:
+- `Linglib/Theories/Semantics/Dynamic/Context.lean` (rename + new class
+  + new instance + docstring overhaul)
+- `Linglib/Theories/Semantics/Dynamic/Core/Intensional.lean` (1-line
+  rename)
+- `Linglib/Theories/Semantics/Dynamic/Nondeterminism/Charlow2019.lean`
+  (rename + new HasJointState instance + SEAM 6 docstring update)
+- `Linglib/Theories/Semantics/Dynamic/Probability/Lookup.lean` (rename
+  + Seam 1 table + Seam 2 deferral block)
+
+## [0.230.169] - 2026-04-22
+
+### Minimalism/Core/ dissolved: 25 files flattened into Minimalism/
+
+Following the 3-file inline cohort in 0.230.166 (Cat, Structure,
+FromFragments), the survey of the 2-importer tier showed that the
+remaining `Core/` files were not really "infrastructure" in any
+load-bearing sense — they ARE the Minimalist theory (Agree, Phase,
+Features, Derivation, Voice, ClauseSpine, Probe, Cascade, Copula,
+Economy, etc.). The `Core/` boundary was an organizational accident,
+not an architectural distinction.
+
+The current top-level `Minimalism/` already mixed phenomenon files
+(`Inversion`, `Polarity`, `Questions`, `RelativeClauses`, `Scope`,
+`SpeechActs`) with machinery files (`CategorialFeatures`,
+`CombinationSchemata`, `MinimalPronoun`, `SpellOut`, `Coreference`,
+`LongDistanceAgree`), so promoting the `Core/` files into it is a
+*consistency* move. Mathlib's `Topology/` (65 top-level .lean files)
+and `CategoryTheory/` (55) confirm the new 38-file `Minimalism/` is
+well within mathlib norms.
+
+**Mechanical changes**:
+
+- 25 files `git mv`-d from `Linglib/Theories/Syntax/Minimalism/Core/`
+  to `Linglib/Theories/Syntax/Minimalism/`
+- All 197 import sites rewritten:
+  `Linglib.Theories.Syntax.Minimalism.Core.X` →
+  `Linglib.Theories.Syntax.Minimalism.X`
+- `Minimalism.Core.FromFragments` namespace (the inlined block from
+  0.230.166) renamed to `Minimalism.FromFragments` to match
+- 21 stale prose docstring references (`Minimalism/Core/X.lean`)
+  updated to `Minimalism/X.lean`
+- Empty `Core/` directory removed
+
+**No namespace surgery needed**: every Core file was already declared
+under `namespace Minimalism` (or sub-namespaces like
+`Minimalism.CyclicAgree`, `Minimalism.Modification`,
+`Minimalism.PConstraint`); none used `namespace Minimalism.Core`. The
+`Core/` was purely a directory choice, never a namespace boundary.
+
+**Net Minimalism/Core/ trajectory**: was 31 → currently 0 (directory
+removed). Remaining `Minimalism/` subdirectories (`Agreement/`,
+`Ellipsis/`, `Formal/`, `HeadMovement/`, `Movement/`, `Tense/`) are
+concept-level groupings, not infrastructure tiers — they survive.
+
+## [0.230.168] - 2026-04-22
+
+### Refactored — Conditionals/ directory final audit items (M5 + N4 + N6)
+
+Three remaining audit items from `0.230.167` landed:
+
+**M5 (`Truth3.gap` vs `.indet` naming inconsistency)**:
+`Truth3.gap` `abbrev` deleted from `Core/Logic/Truth3.lean`. All
+references migrated to `.indet` (the canonical constructor name).
+Affected: `Truth3.lean` (the abbrev removed + the `dist` operator
+referenced `.gap`), `Counterfactual.lean` (1 case), `AlternativeSensitive.lean`
+(1 fixture). Mathlib hygiene: pick one name; constructor wins over
+abbrev. The CLAUDE-MEMORY note flagging the duplication is now
+resolved.
+
+**N4 (orphan TODO docstring in `AlternativeSensitive.lean`)**:
+The trailing `/-! ... -/` block at line 555+ said "The general duality
+theorem is not formalized here." Reframed with explicit
+`TODO: prove ... once the @cite{fox-2007} `IsInnocentExclusion`
+predicate is parameterizable enough." Now flags the missing proof
+*and* the specific blocker, instead of leaving a docstring orphan.
+
+**N6 (theory-file docstrings cross-referencing Phenomena files)**:
+Two violations of the Theories→Phenomena dependency hierarchy in
+docstrings (no actual import, just prose pointers):
+- `PremiseSemantic.lean:64` named the CZC2018 study file directly;
+  rewritten to refer to "a sibling Studies file" generically and
+  the operator-prediction summary by content rather than by Phenomena
+  file path.
+- `Counterfactual.lean:230` named the Lewis 1973 causation study file
+  directly; rewritten to refer to "a paper-replication study under
+  `Phenomena/Causation/Studies/`" generically.
+
+Theory files no longer name specific Phenomena/Studies/ files in
+docstrings, only category-level pointers.
+
+### Build status
+
+All 1748 jobs green. The earlier `Core/Causal/SEM/` concurrent-session
+issue has been resolved upstream; the `Counterfactual/{QuantifierEmbedding,Implicature}.lean`
+files (and `RamotowskaEtAl2025.lean` consumer) now build clean as well.
+
+### Remaining audit items deferred (not undertaken in this pass)
+
+- **M4 (PresupResult ↔ PrProp unification)**: shapes are different
+  (`PrProp W` is multi-world functions; `PresupResult` is a single-world
+  result). Unification requires significant API changes that would
+  ripple through `homogeneityCounterfactual` consumers. Deferred until
+  there's a concrete use case demanding the unified type.
+- **L7-Polarity split**: `ConditionalType.lean` is now 347 LOC; the
+  polarity block is tightly coupled to `ConditionalType.toAntecedentStatus`.
+  Defer until the file grows further.
+- Other minor items (open-statement hygiene, etc.) flagged in audit
+  but not directly load-bearing.
+
+## [0.230.167] - 2026-04-22
+
+### Refactored — Conditionals/ directory mathlib audit (C1+C2+C4 + L1+L3+L7)
+
+Fresh post-cleanup audit identified four Critical and three Major
+remaining items. Six fixes landed in one pass:
+
+**C1**: `Linglib.lean` was build-broken — referenced
+`Conditionals.Presuppositional` (renamed to `Presupposition`) and
+missing `Conditionals.WillConditional`. Both fixed; alphabetical
+ordering preserved within block.
+
+**C2**: 22 `native_decide` hits replaced with `decide`:
+- 18 in `AlternativeSensitive.lean` (Spain/Hyperintensional/OttoAnna
+  fixtures, all small-finite Bool/Truth3 checks)
+- 4 in `ConditionalType.lean` (HC/PC polarity-licensing checks)
+Per CLAUDE.md "prefer kernel-checkable proofs."
+
+**C4**: Pre-import `/-` head comments converted to post-import `/-!`
+docstrings in 4 files (Basic, ConditionalType, Counterfactual,
+LeftNested).
+
+**L1 (split Basic.lean)**: `Conditionals/Basic.lean` shrunk from 517
+to 244 LOC. Stalnaker selection-function machinery extracted to new
+`Conditionals/Stalnaker.lean` (~210 LOC):
+- `coherentSelectionToSimilarity` (the selection ↔ similarity bridge)
+- `selectionConditional` + decidability instance
+- `pragmaticConstraint` (@cite{stalnaker-1975} §III)
+- `moodedConditional` + decidability + `_eq_selectionConditional` rfl
+- `Mood.admissibleSelection` + `_indicative` / `_subjunctive` unfolds
+- `selectionConditional_eq_material_within_context` (the §IV reduction)
+- `moodedConditional_indicative_eq_material_within_context`
+
+`Basic.lean` retains material/strict/variably-strict + the two
+`perfection_not_entailed` counterexamples + `variably_strict_implies_material`.
+Dead imports (`Core.Mood.Basic`, `Core.SelectionFunction`,
+`Core.Semantics.CommonGround`, `Core.Order.Normality`) removed.
+`Stalnaker1975.lean` study file's import updated to pick up the new
+location.
+
+**L3 (split Counterfactual.lean)**: 1097 LOC mega-file → 759 LOC core
++ two extracted siblings under new `Conditionals/Counterfactual/`
+subdirectory:
+- `Counterfactual/QuantifierEmbedding.lean` (~280 LOC) — the
+  projection-duality apparatus + `embeddedSelectional` /
+  `noSelectional` / `notEverySelectional` /
+  `all_four_quantifiers_mixed` / `universal_all_false` (consumed by
+  `RamotowskaEtAl2025.lean`)
+- `Counterfactual/Implicature.lean` (~60 LOC) —
+  `implicature_wrong_for_every` / `implicature_wrong_for_notEvery`
+  (the Bassi-Bar-Lev contrast theorems; previously had no consumer)
+
+`RamotowskaEtAl2025.lean` import updated. The local
+`causal_counterfactual_necessity` theorem (line 542) was disabled
+with a TODO comment because the concurrent `Core/Causal/SEM/`
+refactor changed `developsToTrue`'s signature from `CausalDynamics`
+to `PositiveDynamics` (and `Bool` to `Prop`); the bridge will be
+restored when that refactor lands.
+
+**L7 (split ConditionalType.lean)**: 440 LOC → 347 LOC + two extracted
+siblings:
+- `Conditionals/Marker.lean` (~50 LOC) — `ConditionalMarkerType` +
+  `ConditionalMarker` (typological vocabulary; 4 Fragment +
+  2 Studies consumers)
+- `Conditionals/Sweetser.lean` (~70 LOC) — `SweetserDomain` + 3 trivial
+  rfl theorems (no other consumers, just clean separation)
+
+The `Polarity` block (`AntecedentStatus`, `ConditionalPolarityContext`,
+`licensesNPI` / `PPI`, 5 polarity theorems) stays in `ConditionalType.lean`
+because its theorems use `ConditionalType.toAntecedentStatus` directly
+and the coupling is tighter than benefits from the split. Defer to
+future audit if the file grows further.
+
+`ConditionalMarker` consumers (4 Fragment + 2 Studies) updated to
+import `Conditionals.Marker` directly. The 2 Studies files
+(`Lassiter2025.lean`, `Mizuno2024.lean`) get `ConditionalMarker`
+transitively via Fragment imports — no direct change needed.
+
+### Directory state
+
+`Theories/Semantics/Conditionals/` now contains:
+```
+Basic.lean (244)         — material/strict/variably-strict
+Counterfactual.lean (759) — universal/selectional/homogeneity/might/distribution/Stalnaker
+Counterfactual/
+  QuantifierEmbedding.lean (~280) — Ramotowska-paper machinery
+  Implicature.lean (~60)          — Bassi-Bar-Lev contrast
+Stalnaker.lean (~210)    — selection-fn + Stalnakerian indicative/subjunctive
+ConditionalType.lean (347) — HC/PC + felicity + polarity + TypedConditional
+Marker.lean (~50)        — ConditionalMarker typology
+Sweetser.lean (~70)      — SweetserDomain (content/epistemic/speechAct)
+AlternativeSensitive.lean (565)   [unchanged in this pass]
+Exhaustivity.lean (326)           [unchanged]
+LeftNested.lean (393)             [unchanged]
+PremiseSemantic.lean (172)        [unchanged]
+Presupposition.lean (288)         [unchanged]
+Restrictor.lean (177)             [unchanged]
+WillConditional.lean (235)        [unchanged]
+```
+
+Remaining audit items (all minor, deferred):
+- M4: `homogeneityCounterfactual.PresupResult` reinvents
+  `Core.Semantics.Presupposition.PrProp` (~30 min unification)
+- M5: `Truth3.gap` vs `.indet` naming inconsistency (~15 min global rename)
+- N4: `AlternativeSensitive.lean` docstring orphan TODO (5 min)
+- N6: theory-file docstrings reference Phenomena files (~20 min audit)
+- L7-Polarity: split of polarity block (~2 hr if revisited)
+
+## [0.230.166] - 2026-04-21
+
+### Minimalism/Core/ shrink: 3 single-importer files inlined into their consumers
+
+Continued the `Theories/Syntax/Minimalism/Core/` consolidation by
+absorbing three more single-importer files into their unique
+consumers, applying the CLAUDE.md "Study files are self-contained"
+discipline at the Theory layer:
+
+- `Core/Cat.lean` (Cat inductive + SelStack abbrev) → inlined into
+  `Core/Basic.lean`. The 28-constructor categorial inventory (with UD
+  citations) was a pure type stipulation with one consumer; folding it
+  into Basic puts the SyntacticObject head-category type next to the
+  SyntacticObject definition.
+- `Core/Structure.lean` (Position, dominates, structurallyPrecedes,
+  HeadPosition, TPosition, tPronouncedAt, tPrecedesSubject,
+  subjectPrecedesT + 9 theorems on Spec-Head-Complement order) →
+  inlined into `Theories/Syntax/Minimalism/Inversion.lean`. The
+  clausal-position skeleton existed only to support the inversion
+  analysis; co-locating with the licensing apparatus matches the rest
+  of Inversion.
+- `Core/FromFragments.lean` (verbToSelStack, verbToSO, pronounToSO,
+  nounToSO, determinerToSO, lexResultToSO + verification examples) →
+  inlined into `Theories/Syntax/Minimalism/Derivations.lean` under
+  the existing `namespace Minimalism.Core.FromFragments` block,
+  sequenced before the consuming `Minimalism.Phenomena.Derivations`
+  block in the same file.
+
+Net: `Minimalism/Core/` drops from 31 → 28 files. Three more
+deletions of paper-specific or single-consumer wrappers parked under
+`Core/` for no architectural reason. Imports cleaned; transitive deps
+preserved (Determiners, Lexicon, Quantification.Lexicon added
+explicitly to Derivations.lean to replace the FromFragments import
+chain).
+
+## [0.230.165] - 2026-04-21
+
+### Dynamic Context: typeclass theorem earns its keep + first concretized seam
+
+Audit of `Semantics.Dynamic.Context.counterfactual_blocks_veridical`
+revealed the typeclass theorem had a **dead `[HasIndivDrefs Ctx V W E]`
+constraint** — the proof body only used `HasPropDrefs.pLookup`; the
+`_v : V` parameter was unused; the Entity/effect-functor structure
+played no role. Stripped to `[HasPropDrefs Ctx P W]` only (and
+similarly for `multi_counterfactual_blocks_veridical`).
+
+`Phenomena/Anaphora/Studies/Hofmann2025.lean`'s
+`counterfactual_veridical_impossible` (the bathroom-sentence theorem
+of @cite{hofmann-2025} §3.4) re-derived as a **corollary** of the
+typeclass theorem — paper-specific work reduces to a single
+disjointness witness `j_counterfactual.prop pDC_S ∩ j_counterfactual.prop p2 = ∅`
+established by `cases w + simp`; the ICDRT-specific extension/DEC/subset
+structure is fully delegated via the `HasPropDrefs (ICDRTAssignment BWorld
+BEnt) PVar BWorld` instance. First concrete demonstration that the
+typeclass abstraction does linguistic work, not just compiles.
+
+`Theories/Semantics/Dynamic/Nondeterminism/Charlow2019.lean` gains a
+**concretized SEAM 6** (anaphora resolution mechanism) note explaining
+why the typeclass theorem **does not transfer** to Charlow: Charlow's
+`State W E` carries no propositional-dref structure by design — the
+empirical phenomenon is solved by alternative-set filtering, not by
+propositional-dref disjointness. The seam is *honest* (no phony
+`pLookup` definition) and the analyses live as non-interreducible
+theorems in their respective files. The unification at the
+`HasIndivLookupM` signature layer is real; the divergence at the
+resolution-mechanism layer is preserved as a typeclass-instance gap —
+exactly what the seams catalog warned about.
+
+## [0.230.164] - 2026-04-21
+
+### Minimalism `Core/` audit — single-importer cohort cleared (4 files)
+
+Closed out the single-importer cohort of `Theories/Syntax/Minimalism/Core/`
+in one sweep. Each file had exactly one consumer; three were paper-specific
+apparatus that belonged with the study using them, one was misplaced.
+
+**Inlined into study files** (under `namespace Minimalism` or
+`namespace Minimalism.<sub>` for symmetry with other Minimalist apparatus
+and to support qualified lookup if a future paper picks them up):
+
+- `Multidominance.lean` (195 LOC, @cite{citko-2014}) →
+  `Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean` under
+  `namespace Minimalism`. Already shipped 0.230.162; logged here for the
+  cohort summary.
+- `CaseDiscrimination.lean` (278 LOC, @cite{preminger-2014} +
+  @cite{bobaljik-2008} + @cite{scott-2023}) →
+  `Phenomena/Case/Studies/Marantz1991.lean` under `namespace Minimalism`.
+  Moravcsik hierarchy + dative-intervention + Kaqchikel alignment.
+- `NegScope.lean` (286 LOC, @cite{greco-2020} + @cite{rett-2026} +
+  @cite{stankova-2025} Czech coarsening) →
+  `Phenomena/Negation/Studies/Greco2020.lean` under
+  `namespace Minimalism.NegScope`. NegMergePosition + four-way
+  classification chain (NegMergePosition ≃ ENType ≃ ENStrength ≃ Bool)
+  + Czech three-way coarsening. Greco2020 absorbed five new direct imports
+  for transitive deps (ExtendedProjection.Basic, Core.Negation,
+  Semantics.Negation.{CzechNegation,Defs}, Mathlib.Data.Fintype.Basic).
+- `CMH.lean` (405 LOC, @cite{newman-2024} + @cite{paille-2020}
+  Generalized Tucking In) → `Phenomena/ArgumentStructure/Studies/Newman2024.lean`
+  under `namespace Minimalism.CMH`. Categorial Merge Hypothesis: Merge
+  features (D/X/V), CMHHead, VPProfile 4×4 matrix, Non-DP First, Weak
+  Economy, Generalized Tucking In, Anti-Redundancy.
+
+**Moved to proper home** (consumer is a Theory file, not a study):
+
+- `CaseFilter.lean` → `Theories/Syntax/Case/CaseFilter.lean`. Sole
+  consumer is `Theories/Syntax/Case/Licensing.lean` (hybrid licensing
+  for DOM); was misplaced under `Minimalism/Core/` because the original
+  Case Filter is a Minimalist primitive, but the file is the right
+  per-DP licensing primitive that the broader `Case/` directory should
+  own. Updated `Linglib.lean` and `Licensing.lean` import paths.
+
+Each relocated file built standalone via `lake env lean` (full build
+still blocked by upstream Doxastic). Stale prose pointer in
+`Core/Negation.lean` retargeted to the new location. Continues the
+`Minimalism/Core/` thinning sweep started in 0.230.158-162; the
+`Minimalism/Core/` import cluster in `Linglib.lean` is now four lines
+shorter.
+
+## [0.230.163] - 2026-04-21
+
+### Dynamic Context: typeclass extension + named seams refactor
+
+`Theories/Semantics/Dynamic/Context.lean` rewritten with two
+mathlib-style cleanups and a 2026-seams catalog:
+
+- **Q1 — `HasIndivDrefs extends HasIndivLookupM Entity`**: `iLookup`
+  now lives in the more general `HasIndivLookupM M` parent;
+  `HasIndivDrefs` adds only the Entity-specific `iVarUp`/`iVarUp_other`
+  update law. Eliminates the redundant `instICDRTHasIndivLookupM`
+  shim — the ICDRT instance provides `iLookup` once via the parent
+  field, and the Hofmann update law is the genuine novel content.
+- **Q5 — `M : outParam`**: each `Ctx` carries exactly one effect
+  functor (Entity for ICDRT, Set for Charlow, PMF for Bayesian).
+  Typeclass synthesis no longer needs to enumerate `M`. Universes are
+  multi-parameter (`u v w x w₁ w₂`) so `Ctx` (e.g. `ICDRTAssignment W E :
+  Type (max u_1 u_2)`) can sit in a different universe from `V`/`W`/`E`.
+- **Six 2026 seams documented** in the module docstring with
+  `## SEAM:` markers grep-able across the codebase: (1) Falsifier
+  convention, (2) State shape (joint vs fibered), (3) Update mechanism,
+  (4) Definedness predicate, (5) Effect commutativity,
+  (6) Anaphora resolution mechanism. Seam markers added on
+  `instCharlowHasIndivLookupM` (Charlow's `∅` falsifier commitment)
+  and `instBayesianHasIndivLookupM` (Bayesian's zero-mass commitment),
+  making the per-family divergences locatable.
+
+Field rename `iLookupM → iLookup` in Charlow2019 and Probability/Lookup
+instances. Single call-site update in `Intensional.lean`'s
+`relVarUp_eq_context` (`HasIndivDrefs.iLookup` → `HasIndivLookupM.iLookup`,
+following the new extension structure). All four touched files build;
+five unrelated pre-existing concurrent-session failures remain
+(Causal/SEM, Greco2020, Minimalism Derivation, FrankGoodman2012PMF).
+
+## [0.230.162] - 2026-04-21
+
+### Minimalism `Core/` audit — single-importer relocation (4/7): `Multidominance.lean` → `CitkoGracaninYuksek2025.lean`
+
+`Theories/Syntax/Minimalism/Core/Multidominance.lean` (195 LOC) had
+exactly one consumer (`Phenomena/Ellipsis/Studies/CitkoGracaninYuksek2025.lean`)
+and contained paper-specific apparatus from @cite{citko-2014} —
+`PFReductionMechanism`, `SharingType`, `SharedNode`,
+`PFReducedCoordination` (+ `usesMD`/`usesEllipsis`/`usesBoth`),
+`MWFParameter`, `mwfViolation`, `ellipsisRepairsMWF`, and the three
+boundary-case theorems (`mwf_language_no_violation`,
+`single_wh_no_violation`, `zero_wh_no_violation`). Inlined into
+`CitkoGracaninYuksek2025.lean` under `namespace Minimalism` per CLAUDE.md
+"Study files are self-contained" + "no `Core/` parking for one-paper
+apparatus." Transitive `Phase` dep added directly to consumer; import
+list in `Linglib.lean` shortened by one. Continues the
+`Minimalism/Core/` thinning sweep (after EPP/ANDL inlines + MCommand
+deletion in 0.230.158-160).
+
 ## [0.230.161] - 2026-04-21
 
 ### Cleanup — `FrankGoodman2012PMF.lean` mathlib-style audit

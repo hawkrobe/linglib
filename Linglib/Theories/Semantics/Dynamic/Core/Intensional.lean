@@ -698,7 +698,7 @@ theorem relVarUp_eq_context (φ : PVar) (v : IVar)
   refine ⟨λ ⟨hiv, hbi⟩ => ⟨hiv, ?_⟩, λ ⟨hiv, heq⟩ => ⟨hiv, ?_⟩⟩
   · ext w
     show w ∈ j.prop φ ↔
-      Semantics.Dynamic.Context.HasIndivDrefs.iLookup j v w ≠ Entity.star
+      Semantics.Dynamic.Context.HasFiberedLookup.iLookup j v w ≠ Entity.star
     exact hbi w
   · intro w
     show w ∈ j.prop φ ↔ j.indiv v w ≠ Entity.star

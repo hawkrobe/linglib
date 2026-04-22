@@ -5,7 +5,7 @@ import Linglib.Core.Mereology
 # Update-Theoretic Dynamic Generalized Quantifiers
 @cite{charlow-2021}
 
-Same operators as `DynamicGQ.Basic`, but defined directly over
+Same operators as `Quantification.Dynamic.Basic`, but defined directly over
 `StateCCP W E := State W E → State W E` — @cite{charlow-2021}'s main contribution.
 
 The key insight: `Mvar_u` (equation 78) maximizes over **the entire context**,
@@ -21,7 +21,7 @@ produces cumulative readings automatically.
 
 -/
 
-namespace Semantics.Dynamic.DynamicGQ.UpdateTheoretic
+namespace Semantics.Quantification.Dynamic.UpdateTheoretic
 
 open Semantics.Dynamic.Core
 open Mereology
@@ -210,4 +210,4 @@ theorem exactlyN_u_distributive [PartialOrder E] [Fintype E]
       (isMaximal_congr (fun y => (evar_u_vvals_single v P i y).trans
         (evar_u_vvals v P s y ⟨i, his⟩).symm) _).mp hmax_i⟩, hcount_i⟩
 
-end Semantics.Dynamic.DynamicGQ.UpdateTheoretic
+end Semantics.Quantification.Dynamic.UpdateTheoretic

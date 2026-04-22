@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
-import Linglib.Theories.Semantics.Dynamic.DynamicGQ.UpdateTheoretic
+import Linglib.Theories.Semantics.Quantification.Dynamic.UpdateTheoretic
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.PointwiseUpdate
 
 /-!

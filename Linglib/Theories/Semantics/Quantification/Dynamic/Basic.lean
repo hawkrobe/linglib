@@ -18,19 +18,19 @@ Charlow shows that in the pointwise setting, sequencing `Mvar` inside vs outside
 `CardTest` yields pseudo-cumulative vs cumulative readings — and the pointwise
 system can only derive pseudo-cumulative.
 
-## Cross-cutting smell: five DynamicGQ variants, no "which to use" map
+## Cross-cutting smell: five dynamic-GQ variants, no "which to use" map
 
-`DynamicGQ/` hosts five formalizations of dynamic generalized quantifiers,
-each coping with the cumulative-reading problem differently. They are not
-ranked or ordered; downstream consumers must pick by hand.
+`Quantification/Dynamic/` hosts five formalizations of dynamic generalized
+quantifiers, each coping with the cumulative-reading problem differently.
+They are not ranked or ordered; downstream consumers must pick by hand.
 
 | Variant | State type | Cumulative? | File |
 |---------|-----------|-------------|------|
-| Pointwise (this file) | `S → S → Prop` | ✗ pseudo-cumulative only | `DynamicGQ/Basic.lean` |
-| Update-theoretic | `State W E → State W E` | ✓ via non-distributive `Mvar_u` | `DynamicGQ/UpdateTheoretic.lean` |
-| Higher-order tower | `((DRS S → DRS S) → DRS S) → DRS S` | ✓ via `LOWER` placement | `DynamicGQ/HigherOrder.lean` |
-| Post-suppositional | `Writer (DRS S) A` | ✓ via deferred cardinality tests | `DynamicGQ/PostSuppositional.lean` |
-| Subtype-polymorphic | `DRS S` with `Completeness` enum | rules out pseudo-cumulative by typing | `DynamicGQ/SubtypePolymorphism.lean` |
+| Pointwise (this file) | `S → S → Prop` | ✗ pseudo-cumulative only | `Quantification/Dynamic/Basic.lean` |
+| Update-theoretic | `State W E → State W E` | ✓ via non-distributive `Mvar_u` | `Quantification/Dynamic/UpdateTheoretic.lean` |
+| Higher-order tower | `((DRS S → DRS S) → DRS S) → DRS S` | ✓ via `LOWER` placement | `Quantification/Dynamic/HigherOrder.lean` |
+| Post-suppositional | `Writer (DRS S) A` | ✓ via deferred cardinality tests | `Quantification/Dynamic/PostSuppositional.lean` |
+| Subtype-polymorphic | `DRS S` with `Completeness` enum | rules out pseudo-cumulative by typing | `Quantification/Dynamic/SubtypePolymorphism.lean` |
 
 All five are @cite{charlow-2021}'s work — the paper canvasses them as
 alternative repairs to the pointwise system's failure on
@@ -48,7 +48,7 @@ which the other four are measured.
 
 -/
 
-namespace Semantics.Dynamic.DynamicGQ.Basic
+namespace Semantics.Quantification.Dynamic.Basic
 
 open Semantics.Dynamic.Core
 open Mereology
@@ -101,4 +101,4 @@ def cumulative [AssignmentStructure S E] [PartialOrder E] [Fintype E]
     (CardTest u 5))
     (CardTest v 3)
 
-end Semantics.Dynamic.DynamicGQ.Basic
+end Semantics.Quantification.Dynamic.Basic

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Dynamic.DynamicGQ.Basic
+import Linglib.Theories.Semantics.Quantification.Dynamic.Basic
 
 /-!
 # Subtype Polymorphism for Dynamic GQs
@@ -17,7 +17,7 @@ tests scope outside M_v.
 
 -/
 
-namespace Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
+namespace Semantics.Quantification.Dynamic.SubtypePolymorphism
 
 /-- Completeness level: `incomplete` (t) or `complete` (T).
     Incomplete meanings await further composition (e.g., a cardinality test).
@@ -75,4 +75,4 @@ theorem pseudo_cumulative_illtyped :
     ¬ subtypeOf CardTest_type Mvar_type := by
   simp [CardTest_type, Mvar_type, subtypeOf]
 
-end Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
+end Semantics.Quantification.Dynamic.SubtypePolymorphism

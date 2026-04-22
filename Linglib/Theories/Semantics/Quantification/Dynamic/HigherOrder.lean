@@ -1,5 +1,5 @@
 import Linglib.Core.Continuation
-import Linglib.Theories.Semantics.Dynamic.DynamicGQ.Basic
+import Linglib.Theories.Semantics.Quantification.Dynamic.Basic
 
 /-!
 # Higher-Order Dynamic Generalized Quantifiers
@@ -20,10 +20,10 @@ flat DRS — the nuclear scope can only be placed outside maximization.
 
 -/
 
-namespace Semantics.Dynamic.DynamicGQ.HigherOrder
+namespace Semantics.Quantification.Dynamic.HigherOrder
 
 open Semantics.Dynamic.Core
-open Semantics.Dynamic.DynamicGQ.Basic
+open Semantics.Quantification.Dynamic.Basic
 open Core.Continuation
 open Mereology
 
@@ -103,4 +103,4 @@ theorem ho_cumulative_derivation [AssignmentStructure S E] [PartialOrder E] [Fin
     cumulative v u boys movies saw' := by
   rfl
 
-end Semantics.Dynamic.DynamicGQ.HigherOrder
+end Semantics.Quantification.Dynamic.HigherOrder

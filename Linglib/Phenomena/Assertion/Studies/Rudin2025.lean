@@ -28,7 +28,7 @@ Following the Bool→Prop migration: predicates on worlds are `W → Prop`
 predicates carry `[DecidablePred p]` constraints.
 -/
 
-namespace Semantics.Dynamic.NeoStalnakerian
+namespace Phenomena.Assertion.Studies.Rudin2025
 
 open Core.CommonGround
 
@@ -804,4 +804,4 @@ theorem might_truth_acceptance_dissociate
 
 end TruthAcceptance
 
-end Semantics.Dynamic.NeoStalnakerian
+end Phenomena.Assertion.Studies.Rudin2025

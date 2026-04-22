@@ -4,12 +4,12 @@ import Mathlib.Probability.ProbabilityMassFunction.Constructions
 import Mathlib.Probability.Distributions.Uniform
 
 /-!
-# Probabilistic Lookup — `HasIndivLookupM PMF` instance
+# Probabilistic Lookup — `HasFiberedLookup PMF` instance
 
-@cite{lassiter-goodman-2017} @cite{grove-white-2025}
+@cite{lassiter-goodman-2017} @cite{grove-white-2025} @cite{grove-white-2025b}
 
 The Bayesian/probabilistic third corner of the effect-functor-parameterized
-`HasIndivLookupM M` family. Lookup at `(v, w)` returns a `PMF E` —
+`HasFiberedLookup M` family. Lookup at `(v, w)` returns a `PMF E` —
 a probability distribution over what value variable `v` takes at world `w`.
 
 | Family | `M` | Falsifier | Source file |
@@ -17,12 +17,30 @@ a probability distribution over what value variable `v` takes at world `w`.
 | ICDRT | `Entity` | `.star` | `Dynamic/Context.lean` |
 | Charlow | `Set` | `∅` | `Dynamic/Nondeterminism/Charlow2019.lean` |
 | Bayesian | `PMF` | zero-mass | this file |
+| FCS | partial-`Dom` | `Dom` partiality | `Dynamic/FileChange/Basic.lean` |
 
-## Bayesian state
+## Bayesian state — fibered shape (this file)
 
 `BayesianState W E := W → PMF (Assignment E)` — for each world, a
-distribution over assignments. The lookup `iLookupM s v w` marginalizes
+distribution over assignments. The lookup `iLookup s v w` marginalizes
 out variables other than `v` by mapping `(· v)` over `s w`.
+
+## SEAM (Seam 2): Joint-state Bayesian deferred
+
+@cite{grove-white-2025b}'s **parameterized dynamic semantics** (PDS) uses
+a *joint* shape: `Pσ σ σ' α := σ → P(α × σ')`, formalized as
+`Probability/Basic.lean:PState`. The natural Bayesian-as-`HasJointState`
+instance would refactor `BayesianState` to `PMF (W × Assignment E)` and
+declare `HasJointState PMF`. The `joint` field is then the identity (no
+marginalization at all); deriving the fibered `iLookup` requires
+`PMF.cond` machinery with a mass-zero-handling story (return `Option`
+or `WithBot`, since conditioning on a measure-zero world is undefined).
+
+The fibered shape preserved here is the *honest projection*; the joint
+upgrade is tracked separately to avoid churning every downstream file
+that consumes per-world `PMF (Assignment E)` priors. See
+`PState`/`Pσ`/`Probability/Basic.lean` for the joint shape that an
+eventual `HasJointState PMF` instance would hook into.
 
 ## Bridges to `Set` (Charlow)
 
@@ -45,10 +63,17 @@ def BayesianState (W E : Type) : Type := W → PMF (Assignment E)
 /-- Bayesian state as the **probabilistic** (`M = PMF`) instance of the
 unified lookup interface. The lookup at `(v, w)` is the marginal
 distribution of variable `v`'s value: take `s w` (the joint distribution
-over assignments at `w`) and map `(· v)`. -/
-noncomputable instance instBayesianHasIndivLookupM (W E : Type) :
-    HasIndivLookupM PMF (BayesianState W E) Nat W E where
-  iLookupM s v w := (s w).map (· v)
+over assignments at `w`) and map `(· v)`.
+
+## SEAM (Falsifier, Seam 1): Bayesian commits to **zero-mass** as the
+no-referent case. There is no value-level falsifier — "no referent"
+shows up as `(s w).map (· v) v = 0`, not as a distinguished `Entity.star`
+or empty alternative-set. Bridge to Charlow via `supportFiber`
+(probability → possibility) is lossy whenever the PMF has nontrivial
+spread. -/
+noncomputable instance instBayesianHasFiberedLookup (W E : Type) :
+    HasFiberedLookup PMF (BayesianState W E) Nat W E where
+  iLookup s v w := (s w).map (· v)
 
 -- ════════════════════════════════════════════════════════════════
 -- Bridge natural transformations — Bayesian ↔ Charlow (per-world fiber)

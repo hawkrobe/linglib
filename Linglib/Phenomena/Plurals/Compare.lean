@@ -1,7 +1,7 @@
-import Linglib.Theories.Semantics.Dynamic.DynamicGQ.UpdateTheoretic
-import Linglib.Theories.Semantics.Dynamic.DynamicGQ.HigherOrder
-import Linglib.Theories.Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
-import Linglib.Theories.Semantics.Dynamic.DynamicGQ.PostSuppositional
+import Linglib.Theories.Semantics.Quantification.Dynamic.UpdateTheoretic
+import Linglib.Theories.Semantics.Quantification.Dynamic.HigherOrder
+import Linglib.Theories.Semantics.Quantification.Dynamic.SubtypePolymorphism
+import Linglib.Theories.Semantics.Quantification.Dynamic.PostSuppositional
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
 
 /-!
@@ -25,7 +25,7 @@ is a *consequence* of the update-theoretic architecture, not an add-on.
 namespace Phenomena.Plurals.Compare
 
 open Data
-open Semantics.Dynamic.DynamicGQ.SubtypePolymorphism
+open Semantics.Quantification.Dynamic.SubtypePolymorphism
 
 /-- All three approaches derive the cumulative reading for Scenario A. -/
 theorem all_three_cumulative_scenarioA :
