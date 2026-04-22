@@ -61,6 +61,22 @@ The two situations are:
 abbrev SitPred (W Time : Type*) := WorldTimeIndex W Time → WorldTimeIndex W Time → Prop
 
 /--
+The `sameWorld` kernel: two situations share their world coordinate.
+
+This is the modal counterpart of the temporal kernels
+(`Semantics.Tense.precedes`/`coincides`/`follows`). The static `IND`
+operator and its dynamic lift `Semantics.Mood.dynIND` both call this
+kernel; they share *the same modal constraint*, lifted from a static
+situation predicate to a context filter via
+`Semantics.Dynamic.Core.dynRelationOn`.
+
+`abbrev` (= `@[reducible] def`) so `decide`/`rw` see through it.
+-/
+abbrev sameWorld {W Time : Type*}
+    (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
+  s₁.world = s₂.world
+
+/--
 SUBJ operator (@cite{mendes-2025}, Definition on p.29).
 
 ⟦SUBJ^{s₁}_{s₀}⟧ = λP. [s₁ | s₁ ∈ hist(s₀)]; P(s₁)(s₀)
@@ -94,7 +110,7 @@ Analogous to a definite for situations.
 def IND {W Time : Type*}
     (P : SitPred W Time)
     (s₁ s₂ : WorldTimeIndex W Time) : Prop :=
-  s₂.world = s₁.world ∧ P s₂ s₁
+  sameWorld s₂ s₁ ∧ P s₂ s₁
 
 -- ════════════════════════════════════════════════════════════════
 -- § Eventuality-Level Mood Operators (@cite{grano-2024})

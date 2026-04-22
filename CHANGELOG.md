@@ -4,6 +4,152 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.123] - 2026-04-21
+
+### Refactored — Mood: kernel extraction + eliminative/generative split
+
+Applies the kernel-extraction pattern from 0.230.120 (Tense) to Mood,
+honouring the algebraic asymmetry: `IND` is eliminative
+(`Set.filter`-shaped), `SUBJ` is generative (`Set.bind`-shaped). The
+two are now organized as the two basic operations of the powerset
+monad on situation contexts, with a separate generic primitive for
+each.
+
+- **`Dynamic/Core/ContextFilter.lean`**: added two generic primitives.
+  - `dynRelationOn proj₁ proj₂ R` — eliminative filter parameterized
+    by *two projection functions* on entries (rather than two bound
+    variables). Generalizes `dynRelation` (mathlib precedent:
+    `Set.image2` over `Set.image`). `dynRelation R v₁ v₂` is now a
+    rfl-special-case (`dynRelation_eq_dynRelationOn`). General algebra:
+    `dynRelationOn_isFilter`, `dynRelationOn_idempotent`,
+    `dynRelationOn_contradictory`.
+  - `dynIntroduce gen v` — generative Kleisli composition for the
+    powerset monad: for each input entry `(g, s)`, produce
+    `{ (g[v↦s'], s') | s' ∈ gen s }`. The canonical primitive behind
+    any operator that introduces a fresh situation dref. Carries
+    `dynIntroduce_binds_current` (looking up `v` returns the new
+    current situation) and `dynIntroduce_current_in_gen` (every output
+    current situation is drawn from `gen`).
+- **`Mood/Basic.lean`**: extracted `sameWorld : WTI → WTI → Prop`
+  as the static modal kernel — analogous to Tense's
+  `precedes`/`coincides`/`follows`. `IND` now defined as
+  `sameWorld s₂ s₁ ∧ P s₂ s₁`, calling the kernel directly.
+- **`Mood/Dynamic.lean`** (full rewrite, 250 lines, literature-anchored
+  docstring citing Veltman/GSV/Heim/de-Groote/Charlow):
+  - `dynIND v := dynRelationOn (·.2) (·.1 v) sameWorld` — the
+    "current-vs-bound" filter shape that motivated `dynRelationOn`.
+  - `dynSUBJ history v := dynIntroduce (historicalBase history) v` —
+    the canonical generative use of `dynIntroduce`.
+  - rfl-bridges (`dynIND_eq_dynRelationOn_sameWorld`,
+    `dynSUBJ_eq_dynIntroduce_historicalBase`) make the factoring
+    visible.
+  - `dynIND_iff_IND_with_true` — the "wrapper actually wraps"
+    realization theorem on the eliminative side, mirroring
+    `dynPAST_iff_PAST_with_true`.
+  - `dynIND_isFilter`, `dynIND_idempotent`, `dynSUBJ_existential`,
+    `dynSUBJ_binds_current` are now one-liners delegating to the
+    generic algebra in `ContextFilter`.
+  - `dynIND_after_dynSUBJ_same_var` (algebraic vacuity of
+    same-variable retrieval after introduction) preserved.
+- **Consumers** (`Phenomena/TenseAspect/Studies/Mendes2025.lean`,
+  `Theories/Semantics/Dynamic/IntensionalCDRT/ModalDonkeyAnaphora.lean`)
+  build unchanged — the `unfold dynIND`/`unfold dynSUBJ` calls in
+  their proofs reduce through the new primitives to the same
+  destructuring shape as before.
+
+Together with 0.230.120, the static-vs-dynamic relationship for both
+tense and mood is now a single shared kernel + a generic powerset-monad
+operation (filter for tense and IND, bind for SUBJ), rather than
+parallel stipulations connected by bridge theorems.
+
+## [0.230.122] - 2026-04-21
+
+### Refactored — Jeretič et al. 2025 deep integration (Tier A + B follow-up to multi-agent review)
+
+Multi-agent review (mathlib-PR + linglib-integration + cross-framework
++ pragmatics-domain-expert) flagged the original
+`JereticEtAl2025.lean` formalization as having a hollow headline
+theorem (`data = data` over two stipulated tables), several empirical
+errors, dead code, and missing derivation bridges. This release
+addresses:
+
+- **Restructured `JereticEtAl2025.lean`** to derive the typological
+  prediction from per-language Fragment data via `Lexicalizes` /
+  `IsIndirectAltOf`-style reasoning. `paperData` is now a list of
+  *paper-cited* `Datum` records (21 cells with `paperRef` audit
+  strings) rather than a 30-cell total function over languages × slots
+  with extrapolated cells. `theory_matches_data` checks predictions
+  against this evidence-grounded list.
+- **Distinguished three-way `Competitor`** (`lexicalDual` /
+  `unpronounceableWithIndirectAlt` / `noCompetitor`) — paper §4.3
+  Fig. 1 distinguishes the unpronounceable competitor from the
+  indirect alternative that licenses it; previous flat 3-bin enum
+  collapsed these.
+- **Fixed empirical errors**: removed German/Japanese rows extrapolated
+  beyond paper coverage; corrected German *immer* + *beide Male* from
+  `.lexicalDual` to `.unpronounceableWithIndirectAlt` (paper §5.4
+  treats it as a decomposition+surrogate pattern); added `Acceptability`
+  trichotomy (`hash`/`question`/`ok`) preserving the Japanese (`#`) vs
+  Icelandic (`?`) marginality contrast lost in earlier Boolean encoding.
+- **Slovenian discriminating prediction**: added Slovenian as a
+  `Language` whose morphologically realized dual yields *no anti-
+  duality* of the universal — `slovenian_universal_not_anti_dual` is
+  a real cross-linguistic prediction the previous formalization could
+  not make.
+- **Bridged to `Sauerland2003`**: `directAltAgrees` /
+  `directAltDiverges` mark the cells where the new MP-via-indirect-alts
+  account diverges from MP-via-direct-alts (French *tous*, English
+  *always*) — the empirical content of Jeretič et al.'s extension.
+- **`Core.Number.dualPredOnLattice_eq_via_features`** — bridge proving
+  that the paper's predicate-modifier semantics (eq 39) factors as
+  `P x ∧ latticeToFeatures … x = dualF`, grounding DUAL in the
+  existing Harbour decomposition rather than parallel-coexisting.
+  Helper: `not_atom_of_isMinimalNonAtom`.
+- **Promoted `QuantifierEntry`** (and `QForce`/`Monotonicity`/
+  `Strength` enums + `QuantifierEntry.toWord`) from
+  `Fragments/English/Determiners.lean` to
+  `Theories/Semantics/Quantification/Lexicon.lean`. Removes a
+  Theory→Fragment import direction violation in
+  `Theories/Syntax/{HPSG,CCG,Minimalism}/Core/FromFragments.lean` and
+  unblocks Italian/German fragment de-duplication. English/French
+  fragments now `open` the shared structure. `QuantifierEntry` gains
+  `DecidableEq`.
+- **English `both` / `neither` migrated** to `numberRestriction := some
+  .du` (was `.pl` with a comment about being "semantically dual").
+  `both_neither_dual_marked` theorem witnesses this. Connection to
+  `Core.Number.dualPredOnLattice` documented in docstring; full
+  rewrite of `both_sem`'s `|R| ≥ 2` clause via `dualPredOnLattice`
+  deferred (would change semantics).
+- **`Pragmatics` typeclass landmine removed**: dropped global
+  `defaultTreePronounceability` instance (would shadow lexicon-relative
+  pronounceability everywhere). Replaced `class HasPronounceability`
+  with `structure Pronounceability` (mathlib `Filter`-style: there is
+  no canonical pronounceability per type). Constants exposed via
+  `Pronounceability.trivial` / `Pronounceability.unpron`.
+- **Collapsed `IsIndirectAltOf`/`indirectFrom` redundancy** in
+  `Indirect.lean`. `indirectFrom` is now the single primary
+  definition; trivial-projection lemmas
+  (`indirect_meaning_eq_witness`, `indirect_requires_silent_witness`)
+  removed. Renamed `empty_when_all_pronounceable` for clarity.
+- **`AvoidAmbiguity` decidability**: `Decidable` instances for
+  `IsAmbiguous` and `UnambiguouslyRealizes`; `blockedOver` decision
+  function for `Blocked` against an explicit candidate list (avoids
+  imposing `Fintype S`).
+- **Cross-references**: `MaximizePresupposition.lean` docstring now
+  points to `Indirect.indirectFrom` as a fourth instantiation route;
+  `GriceanMaxims.MannerSubmaxim.avoidAmbiguity` docstring points to
+  `Pragmatics.AvoidAmbiguity.Blocked`.
+- **Dead code removal**: `selfOnly`/`IsReflexive`/`selfOnly_isReflexive`
+  in `Source.lean`; `competitorAsLexicalizes` in study file.
+
+### Bibliography
+- Added 8 entries previously omitted (the prior bibliography append
+  shipped with these): `chemla-2007`, `sauerland-2008`, `percus-2006`,
+  `buccola-kriz-chemla-2018`, `aravind-2018`, `marti-2020`,
+  `sauerland-alexiadou-2020`,
+  `jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025`
+  (DOI 10.1093/jos/ffaf014).
+
 ## [0.230.121] - 2026-04-21
 
 ### Added
