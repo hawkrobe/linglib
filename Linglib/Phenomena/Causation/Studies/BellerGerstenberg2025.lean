@@ -716,7 +716,7 @@ theorem overdetermination_divergence :
         (decide (causallyNecessary overdetModel overdetBg mA mC))
         (decide (hasDirectLaw overdetModel mA mC)) = some .production ∧
     expressionMeaning cw .caused = true ∧
-    Semantics.Causation.Necessity.¬ (causeSem overdetModel overdetBg mA mC) := by
+    ¬ Semantics.Causation.Necessity.causeSem overdetModel overdetBg mA mC := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 end EndToEnd

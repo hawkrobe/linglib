@@ -256,6 +256,57 @@ end CausalDynamics
 def isPositiveDynamics (dyn : CausalDynamics) : Bool :=
   dyn.laws.all (fun law => law.preconditions.all (·.2) && law.effectValue)
 
+/-- All variables mentioned in a dynamics (preconditions and effects). -/
+def allVariables (dyn : CausalDynamics) : List Variable :=
+  (dyn.laws.flatMap fun law =>
+    law.effect :: law.preconditions.map (·.1)).eraseDups
+
+/-- Inner (endogenous) variables: those appearing as effects of laws. -/
+def innerVariables (dyn : CausalDynamics) : List Variable :=
+  (dyn.laws.map (·.effect)).eraseDups
+
+/-- Every law's effect appears in `innerVariables`. -/
+theorem effect_mem_innerVariables (dyn : CausalDynamics) (law : CausalLaw)
+    (h : law ∈ dyn.laws) : law.effect ∈ innerVariables dyn := by
+  unfold innerVariables
+  exact List.mem_eraseDups.mpr (List.mem_map.mpr ⟨law, h, rfl⟩)
+
+-- ============================================================
+-- § Positivity Typeclass
+-- ============================================================
+
+/-- Typeclass marker: `dyn` is a positive dynamics (no inhibitory connections).
+
+    The whole linguistic API in `Counterfactual.lean` (`causallySufficient`,
+    `causallyNecessary`, etc.) requires this; for non-positive dynamics use
+    the structural `preventSem` from `Theories/Semantics/Causation/Prevention.lean`. -/
+class IsPositive (dyn : CausalDynamics) : Prop where
+  positive : isPositiveDynamics dyn = true
+
+namespace IsPositive
+
+/-- Empty dynamics is trivially positive. -/
+instance : IsPositive CausalDynamics.empty where positive := by decide
+
+/-- A simple law `c → e` is positive. -/
+instance (cause effect : Variable) :
+    IsPositive ⟨[CausalLaw.simple cause effect]⟩ where
+  positive := rfl
+
+/-- Disjunctive causation `a → c, b → c` is positive. -/
+instance (a b c : Variable) : IsPositive (CausalDynamics.disjunctiveCausation a b c) where
+  positive := rfl
+
+/-- Conjunctive causation `a ∧ b → c` is positive. -/
+instance (a b c : Variable) : IsPositive (CausalDynamics.conjunctiveCausation a b c) where
+  positive := rfl
+
+/-- Causal chain `a → b → c` is positive. -/
+instance (a b c : Variable) : IsPositive (CausalDynamics.causalChain a b c) where
+  positive := rfl
+
+end IsPositive
+
 -- ============================================================
 -- § Normal Causal Development (Def 15)
 -- ============================================================
@@ -270,12 +321,18 @@ def isFixpoint (dyn : CausalDynamics) (s : Situation) : Bool :=
     !law.preconditionsMet s ||
     s.hasValue law.effect law.effectValue
 
+/-- The default fuel level used by `normalDevelopment` when no explicit fuel
+    is supplied. Large enough for all dynamics in the codebase; for positive
+    dynamics, see `Monotonicity.lean` for a fuel-free `normalDevelopmentPositive`
+    via well-founded recursion. -/
+abbrev defaultFuel : Nat := 100
+
 /-- **Normal Causal Development** (Definition 15)
 
     Iterate forward propagation until fixpoint. Uses bounded iteration
     (fuel) to ensure termination. -/
 def normalDevelopment (dyn : CausalDynamics) (s : Situation)
-    (fuel : Nat := 100) : Situation :=
+    (fuel : Nat := defaultFuel) : Situation :=
   match fuel with
   | 0 => s
   | n + 1 =>
@@ -310,6 +367,14 @@ theorem normalDevelopment_fixpoint_after_one (dyn : CausalDynamics) (s : Situati
     normalDevelopment dyn s (fuel + 1) = applyLawsOnce dyn s := by
   simp [h]
 
+/-- Fuel-agnostic version: any positive fuel is enough when one round suffices. -/
+theorem normalDevelopment_eq_applyLawsOnce_of_fixpoint
+    (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
+    (h : isFixpoint dyn (applyLawsOnce dyn s) = true) (hpos : 0 < fuel) :
+    normalDevelopment dyn s fuel = applyLawsOnce dyn s := by
+  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.pos_iff_ne_zero.mp hpos)
+  exact normalDevelopment_fixpoint_after_one dyn s h
+
 /-- If the first round is not a fixpoint but the second is,
     normalDevelopment returns the second-round result. -/
 theorem normalDevelopment_fixpoint_after_two (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
@@ -318,6 +383,16 @@ theorem normalDevelopment_fixpoint_after_two (dyn : CausalDynamics) (s : Situati
     normalDevelopment dyn s (fuel + 2) =
       applyLawsOnce dyn (applyLawsOnce dyn s) := by
   simp [h1, h2]
+
+/-- Fuel-agnostic version of `_after_two`: any fuel ≥ 2 suffices. -/
+theorem normalDevelopment_eq_applyLawsTwice_of_fixpoint
+    (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
+    (h1 : isFixpoint dyn (applyLawsOnce dyn s) = false)
+    (h2 : isFixpoint dyn (applyLawsOnce dyn (applyLawsOnce dyn s)) = true)
+    (hge : 2 ≤ fuel) :
+    normalDevelopment dyn s fuel = applyLawsOnce dyn (applyLawsOnce dyn s) := by
+  match fuel, hge with
+  | n + 2, _ => exact normalDevelopment_fixpoint_after_two dyn s h1 h2
 
 /-- General fixpoint theorem: if `applyLawsOnce` reaches a fixpoint after
     exactly `n + 1` rounds, then `normalDevelopment` with sufficient fuel

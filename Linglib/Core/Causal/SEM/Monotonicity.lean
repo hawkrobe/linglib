@@ -256,4 +256,236 @@ theorem normalDevelopment_trueLE_positive (dyn : CausalDynamics) (s₁ s₂ : Si
     Situation.trueLE (normalDevelopment dyn s₁ fuel) (normalDevelopment dyn s₂ fuel) :=
   positive_normalDevelopment_trueLE dyn s₁ s₂ fuel hPos hLE
 
+/-- Default-fuel form of `normalDevelopment_trueLE_positive`: when both
+    `normalDevelopment` calls use the default fuel, monotonicity holds without
+    needing to thread an explicit fuel argument. -/
+theorem normalDevelopment_trueLE_positive_default {dyn : CausalDynamics} {s₁ s₂ : Situation}
+    (hPos : isPositiveDynamics dyn = true)
+    (hLE : Situation.trueLE s₁ s₂) :
+    Situation.trueLE (normalDevelopment dyn s₁) (normalDevelopment dyn s₂) :=
+  normalDevelopment_trueLE_positive dyn s₁ s₂ defaultFuel hPos hLE
+
+-- ============================================================
+-- § Termination measure & well-founded normalDevelopment
+-- ============================================================
+
+/-! For positive dynamics, the count of inner variables not yet `some true`
+    strictly decreases on every non-fixpoint step. This gives a well-founded
+    recursion measure, eliminating the fuel parameter. -/
+
+/-- List counting: if `P` implies `Q` pointwise, then `countP P ≤ countP Q`. -/
+private theorem countP_le_of_imp {α : Type*}
+    {P Q : α → Bool} (hMono : ∀ x, P x = true → Q x = true) :
+    ∀ (l : List α), l.countP P ≤ l.countP Q
+  | [] => Nat.le_refl _
+  | hd :: tl => by
+    cases hPhd : P hd
+    · cases hQhd : Q hd
+      · simp [List.countP_cons, hPhd, hQhd]
+        exact countP_le_of_imp hMono tl
+      · simp [List.countP_cons, hPhd, hQhd]
+        exact Nat.le_succ_of_le (countP_le_of_imp hMono tl)
+    · have hQhd : Q hd = true := hMono hd hPhd
+      simp [List.countP_cons, hPhd, hQhd]
+      exact countP_le_of_imp hMono tl
+
+/-- List counting: pointwise implication plus a witness `x ∈ l` with `Q x` and
+    `¬ P x` gives strict inequality `countP P < countP Q`. -/
+private theorem countP_lt_of_imp_of_witness {α : Type*}
+    {P Q : α → Bool} (hMono : ∀ x, P x = true → Q x = true)
+    {l : List α} {x : α} (hx : x ∈ l) (hQx : Q x = true) (hPx : P x = false) :
+    l.countP P < l.countP Q := by
+  induction l with
+  | nil => cases hx
+  | cons hd tl ih =>
+    rw [List.mem_cons] at hx
+    rcases hx with rfl | hxtl
+    · -- hd = x: P false, Q true at this position, count diverges by 1 + monotone tail
+      simp [List.countP_cons, hPx, hQx]
+      exact Nat.lt_succ_of_le (countP_le_of_imp hMono tl)
+    · cases hPhd : P hd
+      · cases hQhd : Q hd
+        · simp [List.countP_cons, hPhd, hQhd]
+          exact ih hxtl
+        · simp [List.countP_cons, hPhd, hQhd]
+          exact Nat.lt_succ_of_lt (ih hxtl)
+      · have hQhd : Q hd = true := hMono hd hPhd
+        simp [List.countP_cons, hPhd, hQhd]
+        exact ih hxtl
+
+/-- **Strict-decrease lemma**: for positive dynamics, if `s` is not a fixpoint
+    then `applyLawsOnce` strictly decreases the count of inner variables not
+    yet `some true`. The witness is the law whose preconditions are met but
+    effect not yet at value: `foldl_sets_witness_effect` ensures the law's
+    effect transitions to `some true` after applying. -/
+theorem positive_applyLawsOnce_strict_decrease
+    (dyn : CausalDynamics) (s : Situation)
+    (hPos : isPositiveDynamics dyn = true)
+    (hNotFix : isFixpoint dyn s = false) :
+    (innerVariables dyn).countP (fun v => !(applyLawsOnce dyn s).hasValue v true) <
+    (innerVariables dyn).countP (fun v => !s.hasValue v true) := by
+  -- Step 1: extract witness law L₀ from non-fixpoint
+  unfold isFixpoint at hNotFix
+  rw [List.all_eq_false] at hNotFix
+  obtain ⟨L₀, hL₀mem, hL₀_bad⟩ := hNotFix
+  -- hL₀_bad : ¬(!L₀.preconditionsMet s || s.hasValue L₀.effect L₀.effectValue) = true
+  -- Convert to Bool form: the disjunction = false
+  have hL₀_or_false : (!L₀.preconditionsMet s || s.hasValue L₀.effect L₀.effectValue) = false := by
+    cases h : (!L₀.preconditionsMet s || s.hasValue L₀.effect L₀.effectValue)
+    · rfl
+    · exact absurd h hL₀_bad
+  rw [Bool.or_eq_false_iff] at hL₀_or_false
+  obtain ⟨hPrecBool, hValueBool⟩ := hL₀_or_false
+  have hPrec : L₀.preconditionsMet s = true := by
+    cases hp : L₀.preconditionsMet s
+    · rw [hp] at hPrecBool; simp at hPrecBool
+    · rfl
+  -- Step 2: positivity for L₀
+  unfold isPositiveDynamics at hPos
+  have hL₀Pos := List.all_eq_true.mp hPos L₀ hL₀mem
+  rw [Bool.and_eq_true] at hL₀Pos
+  obtain ⟨_hPrecPos, hEffPos⟩ := hL₀Pos
+  -- Step 3: s.hasValue L₀.effect true = false (from hValueBool + hEffPos)
+  rw [hEffPos] at hValueBool
+  -- Step 4: (applyLawsOnce dyn s).hasValue L₀.effect true = true
+  have hValAfter : (applyLawsOnce dyn s).hasValue L₀.effect true = true := by
+    show (dyn.laws.foldl _ s).hasValue L₀.effect true = true
+    have hPos' : dyn.laws.all (fun law => law.preconditions.all (·.2) && law.effectValue) = true :=
+      hPos
+    exact foldl_sets_witness_effect dyn.laws s L₀ hPos' hL₀mem hEffPos hPrec
+  -- Step 5: L₀.effect ∈ innerVariables
+  have hMem : L₀.effect ∈ innerVariables dyn := effect_mem_innerVariables dyn L₀ hL₀mem
+  -- Step 6: apply countP_lt_of_imp_of_witness
+  refine countP_lt_of_imp_of_witness ?_ hMem ?_ ?_
+  · -- monotonicity: !(applyLawsOnce dyn s).hasValue v true → !s.hasValue v true
+    intro v hAfter
+    cases hSb : s.hasValue v true
+    · rfl
+    · -- s.hasValue v true = true → mono → applyLawsOnce.hasValue v true = true
+      -- → !true = false ≠ true, contradicting hAfter
+      have hMono : trueLE s (applyLawsOnce dyn s) := positive_applyLawsOnce_grows dyn s hPos
+      have hAfterTrue := hMono v hSb
+      rw [hAfterTrue] at hAfter
+      exact hAfter
+  · rw [hValueBool]; rfl
+  · rw [hValAfter]; rfl
+
+/-- **Termination-proven `normalDevelopment` for positive dynamics.**
+
+    Iterates `applyLawsOnce` until reaching a fixpoint, with no fuel parameter.
+    Termination is via well-founded recursion on the count of inner variables
+    not yet `some true` (decreased by `positive_applyLawsOnce_strict_decrease`
+    on every non-fixpoint step). -/
+def normalDevelopmentPositive (dyn : CausalDynamics)
+    (hPos : isPositiveDynamics dyn = true) (s : Situation) : Situation :=
+  if hFix : isFixpoint dyn s = true then s
+  else normalDevelopmentPositive dyn hPos (applyLawsOnce dyn s)
+termination_by (innerVariables dyn).countP (fun v => !s.hasValue v true)
+decreasing_by
+  simp_wf
+  have hNotFix : isFixpoint dyn s = false := by
+    cases hf : isFixpoint dyn s
+    · rfl
+    · exact absurd hf hFix
+  exact positive_applyLawsOnce_strict_decrease dyn s hPos hNotFix
+
+/-- Fixpoint case unfolds. -/
+theorem normalDevelopmentPositive_of_fixpoint
+    {dyn : CausalDynamics} {hPos : isPositiveDynamics dyn = true} {s : Situation}
+    (h : isFixpoint dyn s = true) :
+    normalDevelopmentPositive dyn hPos s = s := by
+  rw [normalDevelopmentPositive, dif_pos h]
+
+/-- Step case unfolds. -/
+theorem normalDevelopmentPositive_of_not_fixpoint
+    {dyn : CausalDynamics} {hPos : isPositiveDynamics dyn = true} {s : Situation}
+    (h : isFixpoint dyn s = false) :
+    normalDevelopmentPositive dyn hPos s =
+      normalDevelopmentPositive dyn hPos (applyLawsOnce dyn s) := by
+  rw [normalDevelopmentPositive]
+  have hne : ¬ (isFixpoint dyn s = true) := by rw [h]; decide
+  rw [dif_neg hne]
+
+/-- One-step convergence: if `applyLawsOnce dyn s` is a fixpoint, then
+    `normalDevelopmentPositive dyn hPos s = applyLawsOnce dyn s` (no fuel
+    appears anywhere). Handles both the case where `s` is itself a fixpoint
+    (in which case `applyLawsOnce` is the identity) and the case where it
+    takes one step. -/
+theorem normalDevelopmentPositive_eq_applyLawsOnce_of_fixpoint
+    (dyn : CausalDynamics) (hPos : isPositiveDynamics dyn = true) (s : Situation)
+    (hFix : isFixpoint dyn (applyLawsOnce dyn s) = true) :
+    normalDevelopmentPositive dyn hPos s = applyLawsOnce dyn s := by
+  by_cases hSFix : isFixpoint dyn s = true
+  · -- s is itself a fixpoint; both sides equal s
+    rw [normalDevelopmentPositive_of_fixpoint hSFix, applyLawsOnce_of_fixpoint hSFix]
+  · have hSNotFix : isFixpoint dyn s = false := by
+      cases h : isFixpoint dyn s
+      · rfl
+      · exact absurd h hSFix
+    rw [normalDevelopmentPositive_of_not_fixpoint hSNotFix,
+        normalDevelopmentPositive_of_fixpoint hFix]
+
+/-- **Agreement with the fuel-based version.** With sufficient fuel
+    (at least the count of undetermined inner variables), the two agree. -/
+theorem normalDevelopment_eq_normalDevelopmentPositive
+    (dyn : CausalDynamics) (hPos : isPositiveDynamics dyn = true) (s : Situation)
+    (fuel : Nat)
+    (hFuel : (innerVariables dyn).countP (fun v => !s.hasValue v true) ≤ fuel) :
+    normalDevelopment dyn s fuel = normalDevelopmentPositive dyn hPos s := by
+  induction fuel generalizing s with
+  | zero =>
+    -- Fuel = 0 means measure s = 0, so s has no undetermined inner variables
+    -- and is therefore a fixpoint (every law's effect is already at value).
+    rw [Nat.le_zero] at hFuel
+    have hSFix : isFixpoint dyn s = true := by
+      by_contra hNotFix
+      have hf : isFixpoint dyn s = false := by
+        cases hh : isFixpoint dyn s
+        · rfl
+        · exact absurd hh hNotFix
+      have hStrict := positive_applyLawsOnce_strict_decrease dyn s hPos hf
+      rw [hFuel] at hStrict
+      exact Nat.not_lt_zero _ hStrict
+    rw [normalDevelopmentPositive_of_fixpoint hSFix]
+    rfl
+  | succ n ih =>
+    by_cases hFix : isFixpoint dyn s = true
+    · -- s is a fixpoint
+      rw [normalDevelopment_of_fixpoint hFix, normalDevelopmentPositive_of_fixpoint hFix]
+    · -- s is not a fixpoint
+      have hNotFix : isFixpoint dyn s = false := by
+        cases hh : isFixpoint dyn s
+        · rfl
+        · exact absurd hh hFix
+      have hStrict := positive_applyLawsOnce_strict_decrease dyn s hPos hNotFix
+      have hFuel' : (innerVariables dyn).countP
+          (fun v => !(applyLawsOnce dyn s).hasValue v true) ≤ n := by omega
+      rw [normalDevelopmentPositive_of_not_fixpoint hNotFix]
+      -- Need to relate normalDevelopment dyn s (n+1) to normalDevelopment dyn (applyLawsOnce dyn s) n
+      by_cases hFix' : isFixpoint dyn (applyLawsOnce dyn s) = true
+      · rw [normalDevelopment_succ_fix hFix', normalDevelopmentPositive_of_fixpoint hFix']
+      · have hNotFix' : isFixpoint dyn (applyLawsOnce dyn s) = false := by
+          cases hh : isFixpoint dyn (applyLawsOnce dyn s)
+          · rfl
+          · exact absurd hh hFix'
+        rw [normalDevelopment_succ_step hNotFix']
+        exact ih (applyLawsOnce dyn s) hFuel'
+
+/-- Monotonicity for `normalDevelopmentPositive` (no fuel). Derived from
+    `normalDevelopment_trueLE_positive` via the agreement theorem. -/
+theorem normalDevelopmentPositive_trueLE (dyn : CausalDynamics)
+    (hPos : isPositiveDynamics dyn = true) (s₁ s₂ : Situation)
+    (hLE : Situation.trueLE s₁ s₂) :
+    Situation.trueLE (normalDevelopmentPositive dyn hPos s₁)
+                     (normalDevelopmentPositive dyn hPos s₂) := by
+  -- Pick fuel large enough for both measures, then bridge via agreement
+  let m₁ := (innerVariables dyn).countP (fun v => !s₁.hasValue v true)
+  let m₂ := (innerVariables dyn).countP (fun v => !s₂.hasValue v true)
+  have h₁ : normalDevelopment dyn s₁ (m₁ + m₂) = normalDevelopmentPositive dyn hPos s₁ :=
+    normalDevelopment_eq_normalDevelopmentPositive dyn hPos s₁ (m₁ + m₂) (Nat.le_add_right _ _)
+  have h₂ : normalDevelopment dyn s₂ (m₁ + m₂) = normalDevelopmentPositive dyn hPos s₂ :=
+    normalDevelopment_eq_normalDevelopmentPositive dyn hPos s₂ (m₁ + m₂) (Nat.le_add_left _ _)
+  rw [← h₁, ← h₂]
+  exact normalDevelopment_trueLE_positive dyn s₁ s₂ (m₁ + m₂) hPos hLE
+
 end Core.Causal

@@ -1,4 +1,4 @@
-import Linglib.Theories.Semantics.Conditionals.Anderson
+import Linglib.Theories.Semantics.Modality.Exclusion
 import Linglib.Fragments.Japanese.Conditionals
 import Linglib.Fragments.Mandarin.Conditionals
 import Linglib.Phenomena.Conditionals.Studies.Iatridou2000
@@ -268,7 +268,7 @@ theorem complementary_strategies :
 -- § Per-Language Strategy Classification
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Conditionals.Anderson (MarkingStrategy)
+open Semantics.Modality.Exclusion (MarkingStrategy)
 
 /-- English uses X-marking for Anderson conditionals:
     X-marking is felicitous (ex. 1a), O-marking is not (ex. 2). -/
@@ -393,8 +393,9 @@ theorem flv_data_matches_profiles :
 -- ════════════════════════════════════════════════════════════════
 
 open Iatridou2000
-open Semantics.Conditionals.Anderson (MarkingStrategy)
-open Semantics.Conditionals.Iatridou (ExclDimension CounterfactualType)
+open Semantics.Modality.Exclusion (MarkingStrategy)
+open Semantics.Modality.Exclusion (ExclDimension)
+open Iatridou2000 (CounterfactualType)
 
 /-- English X-marking for Anderson conditionals uses the same number of
     past layers as Iatridou's FLV type: 1 layer = 1 modal ExclF.

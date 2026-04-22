@@ -40,11 +40,11 @@ open Core.Causal
 export Core.Causal (causallySufficient)
 
 /-- Semantics of "make": X was causally sufficient for Y (@cite{nadathur-lauer-2020}). -/
-def makeSem (dyn : CausalDynamics) (background : Situation)
+def makeSem (dyn : CausalDynamics) [IsPositive dyn] (background : Situation)
     (causeEvent effectEvent : Variable) : Prop :=
   causallySufficient dyn background causeEvent effectEvent
 
-instance (dyn : CausalDynamics) (background : Situation)
+instance (dyn : CausalDynamics) [IsPositive dyn] (background : Situation)
     (causeEvent effectEvent : Variable) :
     Decidable (makeSem dyn background causeEvent effectEvent) :=
   inferInstanceAs (Decidable (causallySufficient ..))
@@ -95,26 +95,24 @@ private theorem extend_trueLE_extend (s : Situation) (c1 c2 : Variable) :
     Show that positive dynamics preserve `trueLE` through `applyLawsOnce`
     (induction on the law list) and `normalDevelopment` (induction on fuel,
     with a fixpoint absorption lemma for the asymmetric case). -/
-theorem sufficiency_monotone_positive (dyn : CausalDynamics) (s : Situation)
-    (c1 c2 effect : Variable)
-    (hPos : isPositiveDynamics dyn = true)
+theorem sufficiency_monotone_positive (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (c1 c2 effect : Variable)
     (h : causallySufficient dyn s c1 effect) :
     causallySufficient dyn (s.extend c2 true) c1 effect := by
   simp only [causallySufficient] at *
-  exact normalDevelopment_trueLE_positive dyn _ _ 100 hPos
+  exact normalDevelopmentPositive_trueLE dyn hPos.positive _ _
     (extend_trueLE_extend s c1 c2) effect h
 
 /-- Sufficiency implies effect occurrence (after cause). -/
-theorem sufficient_implies_effect (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable)
+theorem sufficient_implies_effect (dyn : CausalDynamics) [IsPositive dyn]
+    (s : Situation) (cause effect : Variable)
     (h : causallySufficient dyn s cause effect) :
     developsToTrue dyn (s.extend cause true) effect := h
 
 /-- In disjunctive causation (A ∨ B → C), each disjunct is sufficient. -/
 theorem disjunctive_each_sufficient (a b c : Variable) (_ha : a ≠ b) :
-    let dyn := CausalDynamics.disjunctiveCausation a b c
-    causallySufficient dyn Situation.empty a c := by
-  show (normalDevelopment _ (Situation.empty.extend a true)).hasValue c true = true
+    causallySufficient (CausalDynamics.disjunctiveCausation a b c) Situation.empty a c := by
+  show (normalDevelopmentPositive _ _ (Situation.empty.extend a true)).hasValue c true = true
   set dyn := CausalDynamics.disjunctiveCausation a b c
   set s := Situation.empty.extend a true
   have hfix : isFixpoint dyn (applyLawsOnce dyn s) = true := by
@@ -122,8 +120,7 @@ theorem disjunctive_each_sufficient (a b c : Variable) (_ha : a ≠ b) :
       CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet, List.all, Situation.hasValue, Situation.extend,
       Situation.empty, Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
     split_ifs <;> simp_all
-  change (normalDevelopment dyn s 100).hasValue c true = true
-  rw [show (100 : Nat) = 99 + 1 from rfl, normalDevelopment_fixpoint_after_one _ _ hfix]
+  rw [normalDevelopmentPositive_eq_applyLawsOnce_of_fixpoint _ _ _ hfix]
   simp only [dyn, s, applyLawsOnce, CausalDynamics.disjunctiveCausation,
     CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet, List.all, Situation.hasValue, Situation.extend,
     Situation.empty]
@@ -132,10 +129,9 @@ theorem disjunctive_each_sufficient (a b c : Variable) (_ha : a ≠ b) :
 /-- In conjunctive causation (A ∧ B → C), neither alone is sufficient. -/
 theorem conjunctive_neither_sufficient_alone (a b c : Variable)
     (_ha : a ≠ b) (_hac : a ≠ c) (_hbc : b ≠ c) :
-    let dyn := CausalDynamics.conjunctiveCausation a b c
-    ¬ (causallySufficient dyn Situation.empty a c) := by
-  intro dyn'
-  show ¬ (normalDevelopment _ (Situation.empty.extend a true)).hasValue c true = true
+    ¬ (causallySufficient (CausalDynamics.conjunctiveCausation a b c)
+        Situation.empty a c) := by
+  show ¬ (normalDevelopmentPositive _ _ (Situation.empty.extend a true)).hasValue c true = true
   set dyn := CausalDynamics.conjunctiveCausation a b c
   set s := Situation.empty.extend a true
   have hfix : isFixpoint dyn (applyLawsOnce dyn s) = true := by
@@ -143,10 +139,10 @@ theorem conjunctive_neither_sufficient_alone (a b c : Variable)
       CausalLaw.conjunctive, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet, List.all, Situation.hasValue, Situation.extend,
       Situation.empty, Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
     split_ifs <;> simp_all [Ne.symm _ha, Ne.symm _hac]
-  suffices hfalse : (normalDevelopment dyn s 100).hasValue c true = false by
+  suffices hfalse : (normalDevelopmentPositive dyn (IsPositive.positive (dyn := dyn)) s).hasValue
+      c true = false by
     intro htrue; rw [hfalse] at htrue; exact Bool.false_ne_true htrue
-  change (normalDevelopment dyn s 100).hasValue c true = false
-  rw [show (100 : Nat) = 99 + 1 from rfl, normalDevelopment_fixpoint_after_one _ _ hfix]
+  rw [normalDevelopmentPositive_eq_applyLawsOnce_of_fixpoint _ _ _ hfix]
   simp only [dyn, s, applyLawsOnce, CausalDynamics.conjunctiveCausation,
     CausalLaw.conjunctive, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet, List.all, Situation.hasValue, Situation.extend,
     Situation.empty]
@@ -155,10 +151,10 @@ theorem conjunctive_neither_sufficient_alone (a b c : Variable)
 /-- In conjunctive causation, A is sufficient when B is in the background. -/
 theorem conjunctive_sufficient_with_other (a b c : Variable)
     (_ha : a ≠ b) (_hac : a ≠ c) (_hbc : b ≠ c) :
-    let dyn := CausalDynamics.conjunctiveCausation a b c
-    let background := Situation.empty.extend b true
-    causallySufficient dyn background a c := by
-  show (normalDevelopment _ ((Situation.empty.extend b true).extend a true)).hasValue c true = true
+    causallySufficient (CausalDynamics.conjunctiveCausation a b c)
+      (Situation.empty.extend b true) a c := by
+  show (normalDevelopmentPositive _ _
+    ((Situation.empty.extend b true).extend a true)).hasValue c true = true
   set dyn := CausalDynamics.conjunctiveCausation a b c
   set s := (Situation.empty.extend b true).extend a true
   have hfix : isFixpoint dyn (applyLawsOnce dyn s) = true := by
@@ -166,8 +162,7 @@ theorem conjunctive_sufficient_with_other (a b c : Variable)
       CausalLaw.conjunctive, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet, List.all, Situation.hasValue, Situation.extend,
       Situation.empty, Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
     split_ifs <;> simp_all [Ne.symm _ha]
-  change (normalDevelopment dyn s 100).hasValue c true = true
-  rw [show (100 : Nat) = 99 + 1 from rfl, normalDevelopment_fixpoint_after_one _ _ hfix]
+  rw [normalDevelopmentPositive_eq_applyLawsOnce_of_fixpoint _ _ _ hfix]
   simp only [dyn, s, applyLawsOnce, CausalDynamics.conjunctiveCausation,
     CausalLaw.conjunctive, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet, List.all, Situation.hasValue, Situation.extend,
     Situation.empty]

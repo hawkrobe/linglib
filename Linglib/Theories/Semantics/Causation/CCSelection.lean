@@ -113,7 +113,7 @@ def completesForEffect (dyn : CausalDynamics) (background : Situation)
     (`makeSem`); the selection constraint (`completesForEffect`)
     determines that X must be the completing condition. -/
 def CCSelectionMode.toSemantics :
-    CCSelectionMode → (CausalDynamics → Situation → Variable → Variable → Bool)
+    CCSelectionMode → (CausalDynamics → Situation → Variable → Variable → Prop)
   | .memberOfSufficientSet => causeSem
   | .completionOfSufficientSet => makeSem
 
@@ -128,10 +128,18 @@ def CCSelectionMode.toSemantics :
       AND removing it blocks the effect (simple but-for) -/
 def ccConstraintSatisfied (mode : CCSelectionMode)
     (dyn : CausalDynamics) (bg : Situation)
-    (cause effect : Variable) : Bool :=
+    (cause effect : Variable) : Prop :=
   match mode with
   | .memberOfSufficientSet => causeSem dyn bg cause effect
-  | .completionOfSufficientSet => completesForEffect dyn bg cause effect
+  | .completionOfSufficientSet => completesForEffect dyn bg cause effect = true
+
+instance (mode : CCSelectionMode) (dyn : CausalDynamics) (bg : Situation)
+    (cause effect : Variable) :
+    Decidable (ccConstraintSatisfied mode dyn bg cause effect) := by
+  unfold ccConstraintSatisfied
+  cases mode
+  · exact inferInstanceAs (Decidable (causeSem _ _ _ _))
+  · exact inferInstanceAs (Decidable (_ = true))
 
 -- ════════════════════════════════════════════════════
 -- § 4. Entailment Properties
@@ -156,40 +164,34 @@ def ccConstraintSatisfied (mode : CCSelectionMode)
 theorem member_entails_completion (dyn : CausalDynamics) (bg : Situation)
     (c e : Variable)
     (hPos : isPositiveDynamics dyn = true)
-    (h : ccConstraintSatisfied .memberOfSufficientSet dyn bg c e = true) :
-    ccConstraintSatisfied .completionOfSufficientSet dyn bg c e = true := by
-  simp only [ccConstraintSatisfied] at *
-  simp only [causeSem, Bool.and_eq_true] at h
-  simp only [completesForEffect, Bool.and_eq_true, Bool.not_eq_true']
+    (h : ccConstraintSatisfied .memberOfSufficientSet dyn bg c e) :
+    ccConstraintSatisfied .completionOfSufficientSet dyn bg c e := by
+  -- h unfolds to causeSem dyn bg c e = ⟨hOccurred, hNec⟩
   obtain ⟨hOccurred, hNec⟩ := h
-  constructor
-  · exact hOccurred
-  · -- Simple but-for: normalDev(bg + c=false) doesn't achieve e=true.
-    -- Step 1: Extract from Def 10b that normalDev(bg) doesn't have e=true.
-    -- If it did, causallyNecessary would return false (precondition check).
-    have hNoE : (normalDevelopment dyn bg).hasValue e true = false := by
-      rcases Bool.eq_false_or_eq_true ((normalDevelopment dyn bg).hasValue e true)
-        with h | h
-      · -- h : ... = true → precondition fails → ¬ (causallyNecessary)
-        have hNotNec : ¬ (causallyNecessary dyn bg c e) := by
-          unfold causallyNecessary
-          simp only [h, Bool.or_true, ↓reduceIte]
-          decide
-        exact absurd (of_decide_eq_true hNec) hNotNec
-      · exact h
-    -- Step 2: trueLE (bg.extend c false) bg (c=false adds no true content)
-    have hLE : Situation.trueLE (bg.extend c false) bg := by
-      intro v hv
-      by_cases hvc : v = c
-      · subst hvc; simp at hv
-      · rw [Situation.extend_hasValue_diff hvc] at hv; exact hv
-    -- Step 3: Monotonicity → normalDev(bg+c=false) ⊑ normalDev(bg)
-    -- Therefore e=true in normalDev(bg+c=false) would imply e=true in normalDev(bg)
-    have hMono := normalDevelopment_trueLE_positive dyn _ _ 100 hPos hLE e
-    -- Step 4: Contrapositive of hMono + hNoE closes the goal
-    cases heq : (normalDevelopment dyn (bg.extend c false)).hasValue e true with
-    | false => rfl
-    | true => exact absurd (hMono heq) (by rw [hNoE]; exact Bool.false_ne_true)
+  -- Goal unfolds to completesForEffect dyn bg c e = true
+  show completesForEffect dyn bg c e = true
+  simp only [completesForEffect, Bool.and_eq_true, Bool.not_eq_true']
+  refine ⟨hOccurred, ?_⟩
+  -- Simple but-for: normalDev(bg + c=false) doesn't achieve e=true
+  have hNoE : (normalDevelopment dyn bg).hasValue e true = false := by
+    rcases Bool.eq_false_or_eq_true ((normalDevelopment dyn bg).hasValue e true)
+      with h | h
+    · -- h : ... = true → precondition fails → ¬ causallyNecessary
+      have hNotNec : ¬ (causallyNecessary dyn bg c e) := by
+        intro ⟨⟨_, hPreNotEffect⟩, _, _⟩
+        rw [h] at hPreNotEffect
+        exact absurd hPreNotEffect (by decide)
+      exact absurd hNec hNotNec
+    · exact h
+  have hLE : Situation.trueLE (bg.extend c false) bg := by
+    intro v hv
+    by_cases hvc : v = c
+    · subst hvc; simp at hv
+    · rw [Situation.extend_hasValue_diff hvc] at hv; exact hv
+  have hMono := normalDevelopment_trueLE_positive_default hPos hLE e
+  cases heq : (normalDevelopment dyn (bg.extend c false)).hasValue e true with
+  | false => rfl
+  | true => exact absurd (hMono heq) (by rw [hNoE]; exact Bool.false_ne_true)
 
 /-- Member does NOT entail completion for non-positive dynamics.
 
@@ -204,8 +206,8 @@ theorem member_entails_completion (dyn : CausalDynamics) (bg : Situation)
 theorem member_not_entails_completion_negative :
     ∃ (dyn : CausalDynamics) (bg : Situation) (c e : Variable),
       isPositiveDynamics dyn = false ∧
-      ccConstraintSatisfied .memberOfSufficientSet dyn bg c e = true ∧
-      ccConstraintSatisfied .completionOfSufficientSet dyn bg c e = false := by
+      ccConstraintSatisfied .memberOfSufficientSet dyn bg c e ∧
+      ¬ (ccConstraintSatisfied .completionOfSufficientSet dyn bg c e) := by
   let c := mkVar "c"
   let d := mkVar "d"
   let e := mkVar "e"
@@ -227,8 +229,8 @@ theorem member_not_entails_completion_negative :
     Witnessed by chain c → m → e from empty background. -/
 theorem completion_not_entails_member :
     ∃ (dyn : CausalDynamics) (bg : Situation) (c e : Variable),
-      ccConstraintSatisfied .completionOfSufficientSet dyn bg c e = true ∧
-      ccConstraintSatisfied .memberOfSufficientSet dyn bg c e = false := by
+      ccConstraintSatisfied .completionOfSufficientSet dyn bg c e ∧
+      ¬ (ccConstraintSatisfied .memberOfSufficientSet dyn bg c e) := by
   let c := mkVar "c"
   let m := mkVar "m"
   let e := mkVar "e"
@@ -245,29 +247,30 @@ theorem completion_not_entails_member :
 theorem completion_entails_member_single_pathway
     (c e : Variable) :
     let dyn := CausalDynamics.mk [CausalLaw.simple c e]
-    ccConstraintSatisfied .completionOfSufficientSet dyn Situation.empty c e = true →
-    ccConstraintSatisfied .memberOfSufficientSet dyn Situation.empty c e = true := by
+    ccConstraintSatisfied .completionOfSufficientSet dyn Situation.empty c e →
+    ccConstraintSatisfied .memberOfSufficientSet dyn Situation.empty c e := by
   intro dyn h
-  simp only [ccConstraintSatisfied] at *
-  simp only [completesForEffect, Bool.and_eq_true] at h
-  simp only [causeSem, Bool.and_eq_true]
-  constructor
-  · exact h.1
-  · exact decide_eq_true (simple_law_necessity c e)
+  -- h : completesForEffect dyn ∅ c e = true
+  show causeSem dyn Situation.empty c e
+  show _ ∧ _
+  have hCompl : completesForEffect dyn Situation.empty c e = true := h
+  simp only [completesForEffect, Bool.and_eq_true] at hCompl
+  refine ⟨hCompl.1, ?_⟩
+  exact simple_law_necessity c e
 
 /-- Member mode asserts Def 10b necessity. -/
 theorem member_asserts_necessity (dyn : CausalDynamics) (bg : Situation)
-    (c e : Variable) (h : ccConstraintSatisfied .memberOfSufficientSet dyn bg c e = true) :
-    causallyNecessary dyn bg c e := by
-  simp only [ccConstraintSatisfied, causeSem, Bool.and_eq_true] at h
-  exact of_decide_eq_true h.2
+    (c e : Variable) (h : ccConstraintSatisfied .memberOfSufficientSet dyn bg c e) :
+    causallyNecessary dyn bg c e := h.2
 
 /-- Completion mode asserts sufficiency. -/
 theorem completion_asserts_sufficiency (dyn : CausalDynamics) (bg : Situation)
-    (c e : Variable) (h : ccConstraintSatisfied .completionOfSufficientSet dyn bg c e = true) :
+    (c e : Variable) (h : ccConstraintSatisfied .completionOfSufficientSet dyn bg c e) :
     causallySufficient dyn bg c e := by
-  simp only [ccConstraintSatisfied, completesForEffect, Bool.and_eq_true] at h
-  exact h.1
+  -- h : completesForEffect dyn bg c e = true
+  have hCompl : completesForEffect dyn bg c e = true := h
+  simp only [completesForEffect, Bool.and_eq_true] at hCompl
+  exact hCompl.1
 
 -- ════════════════════════════════════════════════════
 -- § 5. Type-Level vs Token-Level Causation

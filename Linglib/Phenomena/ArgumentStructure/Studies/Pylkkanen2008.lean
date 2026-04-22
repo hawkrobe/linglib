@@ -112,30 +112,30 @@ def benefactiveTree : SyntacticObject :=
 
 /-- Agent c-commands goal. -/
 theorem ditransitive_agent_ccommands_goal :
-    cCommandsInB ditransitiveTree DP_john_t DP_mary_t = true := by native_decide
+    cCommandsIn ditransitiveTree DP_john_t DP_mary_t := by native_decide
 
 /-- Agent c-commands theme. -/
 theorem ditransitive_agent_ccommands_theme :
-    cCommandsInB ditransitiveTree DP_john_t DP_letter_t = true := by native_decide
+    cCommandsIn ditransitiveTree DP_john_t DP_letter_t := by native_decide
 
 /-- Goal c-commands theme — the @cite{barss-lasnik-1986} asymmetry
     derived structurally from V selecting ApplP. -/
 theorem ditransitive_goal_ccommands_theme :
-    cCommandsInB ditransitiveTree DP_mary_t DP_letter_t = true := by native_decide
+    cCommandsIn ditransitiveTree DP_mary_t DP_letter_t := by native_decide
 
 /-- Theme does NOT c-command goal: the asymmetry is structural. -/
 theorem ditransitive_theme_not_ccommands_goal :
-    cCommandsInB ditransitiveTree DP_letter_t DP_mary_t = false := by native_decide
+    ¬ cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by native_decide
 
 -- Benefactive (high Appl): benefactive > theme
 
 /-- Benefactive c-commands theme. -/
 theorem benefactive_benef_ccommands_theme :
-    cCommandsInB benefactiveTree DP_wife_t DP_food_t = true := by native_decide
+    cCommandsIn benefactiveTree DP_wife_t DP_food_t := by native_decide
 
 /-- Theme does NOT c-command benefactive. -/
 theorem benefactive_theme_not_ccommands_benef :
-    cCommandsInB benefactiveTree DP_food_t DP_wife_t = false := by native_decide
+    ¬ cCommandsIn benefactiveTree DP_food_t DP_wife_t := by native_decide
 
 -- Appl head containment
 
@@ -285,11 +285,11 @@ open Larson1988 in
     prediction for @cite{barss-lasnik-1986} asymmetries. -/
 theorem larson_modern_same_hierarchy :
     -- Larson's DOC: IO > DO
-    cCommandsInB docDativeShift.final DP_mary DP_letter = true ∧
-    cCommandsInB docDativeShift.final DP_letter DP_mary = false ∧
+    cCommandsIn docDativeShift.final DP_mary DP_letter ∧
+    ¬ cCommandsIn docDativeShift.final DP_letter DP_mary ∧
     -- Modern Voice/Appl: goal > theme (same asymmetry)
-    cCommandsInB ditransitiveTree DP_mary_t DP_letter_t = true ∧
-    cCommandsInB ditransitiveTree DP_letter_t DP_mary_t = false := by
+    cCommandsIn ditransitiveTree DP_mary_t DP_letter_t ∧
+    ¬ cCommandsIn ditransitiveTree DP_letter_t DP_mary_t := by
   refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 end Pylkkanen2008

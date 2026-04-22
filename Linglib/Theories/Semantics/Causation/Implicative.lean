@@ -321,7 +321,7 @@ namespace Core.Verbs
 
 /-- Map to the compositional semantics (`manageSem` or `failSem`). -/
 def Implicative.toSemantics : Implicative →
-    (Semantics.Causation.Implicative.ImplicativeScenario → Bool)
+    (Semantics.Causation.Implicative.ImplicativeScenario → Prop)
   | .positive => Semantics.Causation.Implicative.manageSem
   | .negative => Semantics.Causation.Implicative.failSem
 
@@ -334,14 +334,14 @@ open Core.Verbs (Implicative)
 
 /-- Positive builder entails complement: if `manageSem` holds, complement is true. -/
 theorem positive_entails_complement (sc : ImplicativeScenario)
-    (h : Implicative.positive.toSemantics sc = true) :
+    (h : Implicative.positive.toSemantics sc) :
     (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
       sc.complement true = true :=
   manage_entails_complement sc h
 
 /-- Negative builder entails NOT complement: if `failSem` holds, complement is false. -/
 theorem negative_entails_not_complement (sc : ImplicativeScenario)
-    (h : Implicative.negative.toSemantics sc = true) :
+    (h : Implicative.negative.toSemantics sc) :
     (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
       sc.complement true = false :=
   fail_entails_not_complement sc h
@@ -769,12 +769,12 @@ open Semantics.Attitudes.Intensional (World) in
 theorem CausalFrame.ability_differs_from_implicative :
     ∃ (f : CausalFrame World) (w : World),
       f.actualization = .aspectual ∧
-      f.¬ (sufficientAt w ∧ f.actualizedAt w) := by
+      ¬ (f.sufficientAt w ∧ f.actualizedAt w) := by
   let act := mkVar "act"
   let comp := mkVar "comp"
   let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
   let f := abilityFrame dyn act comp (λ _ => Situation.empty)
-  exact ⟨f, .w0, rfl, by native_decide, by native_decide⟩
+  exact ⟨f, .w0, rfl, by native_decide⟩
 
 open Semantics.Attitudes.Intensional (World) in
 /-- **Aspect governs actuality for ability**: the same ability frame
@@ -785,7 +785,7 @@ theorem CausalFrame.aspect_governs_ability :
       f.actualityWithAspect .perfective w ∧
       f.actualizedAt w ∧
       ∃ w', f.actualityWithAspect .imperfective w' ∧
-            f.¬ (actualizedAt w') := by
+            ¬ f.actualizedAt w' := by
   let act := mkVar "act"
   let comp := mkVar "comp"
   let dyn := CausalDynamics.ofList [CausalLaw.simple act comp]
@@ -812,13 +812,13 @@ theorem CausalFrame.aspect_governs_ability :
 /-- Monotone: if `s₁ ⊑ s₂`, then `cl(s₁) ⊑ cl(s₂)`. -/
 theorem closure_monotone (dyn : CausalDynamics) (s₁ s₂ : Situation)
     (hPos : isPositiveDynamics dyn = true) (hLE : Situation.trueLE s₁ s₂)
-    (fuel : Nat := 100) :
+    (fuel : Nat := Core.Causal.defaultFuel) :
     Situation.trueLE (normalDevelopment dyn s₁ fuel) (normalDevelopment dyn s₂ fuel) :=
   normalDevelopment_trueLE_positive dyn s₁ s₂ fuel hPos hLE
 
 /-- Inflationary: every truth in `s` is preserved by normal development. -/
 theorem closure_inflationary (dyn : CausalDynamics) (s : Situation)
-    (hPos : isPositiveDynamics dyn = true) (fuel : Nat := 100) :
+    (hPos : isPositiveDynamics dyn = true) (fuel : Nat := Core.Causal.defaultFuel) :
     Situation.trueLE s (normalDevelopment dyn s fuel) :=
   positive_normalDevelopment_grows dyn s fuel hPos
 

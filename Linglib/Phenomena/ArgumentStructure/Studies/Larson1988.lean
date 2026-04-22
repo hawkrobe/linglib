@@ -94,14 +94,14 @@ def obliqueDative : Derivation :=
 -- Oblique dative c-command predictions
 
 theorem oblique_do_ccommands_goal :
-    cCommandsInB obliqueDative.final DP_letter DP_mary = true := by native_decide
+    cCommandsIn obliqueDative.final DP_letter DP_mary := by native_decide
 
 theorem oblique_goal_not_ccommands_do :
-    cCommandsInB obliqueDative.final DP_mary DP_letter = false := by native_decide
+    ¬ cCommandsIn obliqueDative.final DP_mary DP_letter := by native_decide
 
 theorem oblique_agent_ccommands_both :
-    cCommandsInB obliqueDative.final DP_john DP_letter = true ∧
-    cCommandsInB obliqueDative.final DP_john DP_mary = true := by
+    cCommandsIn obliqueDative.final DP_john DP_letter ∧
+    cCommandsIn obliqueDative.final DP_john DP_mary := by
   constructor <;> native_decide
 
 -- ============================================================================
@@ -142,15 +142,15 @@ def docDativeShift : Derivation :=
     - Quantifier binding: "I gave every worker his paycheck"
     - Weak crossover, superiority, *each...the other*, NPI licensing -/
 theorem doc_io_ccommands_do :
-    cCommandsInB docDativeShift.final DP_mary DP_letter = true := by native_decide
+    cCommandsIn docDativeShift.final DP_mary DP_letter := by native_decide
 
 /-- The direct object does NOT c-command the indirect object in the DOC. -/
 theorem doc_do_not_ccommands_io :
-    cCommandsInB docDativeShift.final DP_letter DP_mary = false := by native_decide
+    ¬ cCommandsIn docDativeShift.final DP_letter DP_mary := by native_decide
 
 theorem doc_agent_ccommands_both :
-    cCommandsInB docDativeShift.final DP_john DP_mary = true ∧
-    cCommandsInB docDativeShift.final DP_john DP_letter = true := by
+    cCommandsIn docDativeShift.final DP_john DP_mary ∧
+    cCommandsIn docDativeShift.final DP_john DP_letter := by
   constructor <;> native_decide
 
 -- ============================================================================
@@ -173,10 +173,10 @@ def standardPassive : Derivation :=
 -- Passive c-command: promoted object c-commands demoted subject
 
 theorem passive_object_ccommands_subject :
-    cCommandsInB standardPassive.final DP_ball DP_john = true := by native_decide
+    cCommandsIn standardPassive.final DP_ball DP_john := by native_decide
 
 theorem passive_subject_not_ccommands_object :
-    cCommandsInB standardPassive.final DP_john DP_ball = false := by native_decide
+    ¬ cCommandsIn standardPassive.final DP_john DP_ball := by native_decide
 
 -- ============================================================================
 -- § 5: Structural Parallel — Passive and Dative Shift
@@ -202,9 +202,9 @@ theorem passive_has_one_im :
     Passive:         Obj > Subj (ball c-commands John)  [reversed by Step.im] -/
 theorem passive_dativeShift_parallel :
     -- Both reverse c-command via the same Step.im mechanism
-    cCommandsInB obliqueDative.final DP_letter DP_mary = true ∧
-    cCommandsInB docDativeShift.final DP_mary DP_letter = true ∧
-    cCommandsInB standardPassive.final DP_ball DP_john = true := by
+    cCommandsIn obliqueDative.final DP_letter DP_mary ∧
+    cCommandsIn docDativeShift.final DP_mary DP_letter ∧
+    cCommandsIn standardPassive.final DP_ball DP_john := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 -- ============================================================================
@@ -262,8 +262,8 @@ theorem bl_six_asymmetries : blAsymmetries.length = 6 := rfl
 /-- All six asymmetries are derived from a single structural fact:
     in the DOC, NP1 (IO) asymmetrically c-commands NP2 (DO). -/
 theorem bl_asymmetries_from_ccommand :
-    cCommandsInB docDativeShift.final DP_mary DP_letter = true ∧
-    cCommandsInB docDativeShift.final DP_letter DP_mary = false := by
+    cCommandsIn docDativeShift.final DP_mary DP_letter ∧
+    ¬ cCommandsIn docDativeShift.final DP_letter DP_mary := by
   constructor <;> native_decide
 
 -- ============================================================================
@@ -361,9 +361,9 @@ available. The data are recorded in `Phenomena.Quantification.Data`
     which records "Someone gave every student a book" as `surfaceOnly`. -/
 theorem doc_scope_freezing_structural_basis :
     -- IO > DO (IO c-commands DO): surface scope available
-    cCommandsInB docDativeShift.final DP_mary DP_letter = true ∧
+    cCommandsIn docDativeShift.final DP_mary DP_letter ∧
     -- DO ≯ IO (DO does not c-command IO): inverse scope blocked
-    cCommandsInB docDativeShift.final DP_letter DP_mary = false := by
+    ¬ cCommandsIn docDativeShift.final DP_letter DP_mary := by
   constructor <;> native_decide
 
 -- ============================================================================
@@ -404,7 +404,7 @@ def indirectPassive : Derivation :=
 /-- In the indirect passive, the promoted IO (Mary) c-commands the
     stranded DO (a letter). -/
 theorem indirect_passive_io_ccommands_do :
-    cCommandsInB indirectPassive.final DP_mary2 DP_letter2 = true := by native_decide
+    cCommandsIn indirectPassive.final DP_mary2 DP_letter2 := by native_decide
 
 /-- The indirect passive uses two Internal Merge steps:
     Dative Shift + Passive — both are `Step.im`. -/

@@ -1,5 +1,4 @@
 import Linglib.Theories.Syntax.Minimalism.Core.CMH
-import Linglib.Theories.Syntax.Minimalism.Core.MCommand
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Features
 import Linglib.Theories.Syntax.Minimalism.Core.ObligatoryOperations
@@ -379,30 +378,30 @@ def docTree : SyntacticObject :=
     DO (specifier of V, by Non-DP First) c-commands into the
     complement position. -/
 theorem low_xp_DO_ccommands_XP :
-    cCommandsInB lowXPTree DO₁ XP₁ = true := by native_decide
+    cCommandsIn lowXPTree DO₁ XP₁ := by native_decide
 
 theorem low_xp_XP_not_ccommands_DO :
-    cCommandsInB lowXPTree XP₁ DO₁ = false := by native_decide
+    ¬ cCommandsIn lowXPTree XP₁ DO₁ := by native_decide
 
 /-- DOC: neither internal argument c-commands the other — symmetric.
     DO is inside VP (outer specifier), IO is complement of v.
     They are in separate branches. -/
 theorem doc_DO_not_ccommands_IO :
-    cCommandsInB docTree DO₂ IO₂ = false := by native_decide
+    ¬ cCommandsIn docTree DO₂ IO₂ := by native_decide
 
 theorem doc_IO_not_ccommands_DO :
-    cCommandsInB docTree IO₂ DO₂ = false := by native_decide
+    ¬ cCommandsIn docTree IO₂ DO₂ := by native_decide
 
 /-- The structural asymmetry derived from VP-as-specifier:
     VP-as-complement gives binding asymmetry between internal
     arguments; VP-as-specifier gives symmetric binding. -/
 theorem binding_asymmetry_iff_vp_complement :
     -- Low-XP (VP complement): DO c-commands XP, not vice versa
-    (cCommandsInB lowXPTree DO₁ XP₁ = true ∧
-     cCommandsInB lowXPTree XP₁ DO₁ = false) ∧
+    (cCommandsIn lowXPTree DO₁ XP₁ ∧
+     ¬ cCommandsIn lowXPTree XP₁ DO₁) ∧
     -- DOC (VP specifier): neither c-commands the other
-    (cCommandsInB docTree DO₂ IO₂ = false ∧
-     cCommandsInB docTree IO₂ DO₂ = false) := by
+    (¬ cCommandsIn docTree DO₂ IO₂ ∧
+     ¬ cCommandsIn docTree IO₂ DO₂) := by
   exact ⟨⟨by native_decide, by native_decide⟩, ⟨by native_decide, by native_decide⟩⟩
 
 -- § 10b: Agent c-command differences
@@ -410,19 +409,19 @@ theorem binding_asymmetry_iff_vp_complement :
 /-- In the low-XP structure, the agent c-commands both internal
     arguments (VP is complement, fully inside agent's sister). -/
 theorem low_xp_agent_ccommands_DO :
-    cCommandsInB lowXPTree agent₁ DO₁ = true := by native_decide
+    cCommandsIn lowXPTree agent₁ DO₁ := by native_decide
 
 theorem low_xp_agent_ccommands_XP :
-    cCommandsInB lowXPTree agent₁ XP₁ = true := by native_decide
+    cCommandsIn lowXPTree agent₁ XP₁ := by native_decide
 
 /-- In the DOC structure with Tucking In, the agent (inner specifier)
     c-commands IO (complement of v) but NOT DO (inside VP, the outer
     specifier). The agent and VP are in separate branches — a direct
     consequence of VP being a specifier rather than a complement. -/
 theorem doc_agent_ccommands_IO :
-    cCommandsInB docTree agent₂ IO₂ = true := by native_decide
+    cCommandsIn docTree agent₂ IO₂ := by native_decide
 
 theorem doc_agent_not_ccommands_DO :
-    cCommandsInB docTree agent₂ DO₂ = false := by native_decide
+    ¬ cCommandsIn docTree agent₂ DO₂ := by native_decide
 
 end Newman2024

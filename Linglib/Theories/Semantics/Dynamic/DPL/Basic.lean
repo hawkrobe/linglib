@@ -28,6 +28,7 @@ In DPL:
 -/
 
 import Linglib.Theories.Semantics.Dynamic.Core.Update
+import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 
 namespace Semantics.Dynamic.DPL
 
@@ -337,5 +338,93 @@ theorem disj_isTest {E : Type*} (φ ψ : DPLRel E) (g h : Nat → E)
 /-- Universal quantification is a test. -/
 theorem forall_isTest {E : Type*} (x : Nat) (φ : DPLRel E) (g h : Nat → E)
     (h_fa : DPLRel.forall_ x φ g h) : g = h := h_fa.1
+
+/-! ## DPL-as-Dynamic-Ty2
+
+DPL embeds directly into Dynamic Ty2 with `S = Assignment E = Nat → E`.
+DPL assignments ARE Dynamic Ty2 assignments; DPL relations ARE DRS meanings.
+The cylindric algebra bridges (`closure(∃) = cylindrify`, `closure(=) = diagonal`)
+live in `Core/CylindricAlgebra/DynamicSemantics.lean`.
+-/
+
+/-- DPL dref: projection function for variable n. -/
+def dref {E : Type*} (n : Nat) : Dref (Assignment E) E := λ g => g n
+
+/-- DPL extend is `Assignment.update`. -/
+abbrev extend {E : Type*} (g : Assignment E) (n : Nat) (e : E) : Assignment E :=
+  g.update n e
+
+theorem extend_at {E : Type*} (g : Assignment E) (n : Nat) (e : E) :
+    dref n (extend g n e) = e := by simp [dref, extend]
+
+theorem extend_other {E : Type*} (g : Assignment E) (n m : Nat) (e : E) (h : n ≠ m) :
+    dref m (extend g n e) = dref m g := by simp [dref, extend, h.symm]
+
+/-- DPL relation IS a DRS over `Assignment E`. -/
+def toDRS {E : Type*} (φ : DPLRel E) : DRS (Assignment E) := φ
+
+/-- DRS IS a DPL relation. -/
+def ofDRS {E : Type*} (D : DRS (Assignment E)) : DPLRel E := D
+
+@[simp] theorem toDRS_ofDRS {E : Type*} (φ : DPLRel E) : ofDRS (toDRS φ) = φ := rfl
+@[simp] theorem ofDRS_toDRS {E : Type*} (D : DRS (Assignment E)) : toDRS (ofDRS D) = D := rfl
+
+theorem atom_eq_test {E : Type*} (p : Assignment E → Prop) :
+    toDRS (DPLRel.atom p) = test (λ g => p g) := by
+  ext g h
+  simp only [toDRS, DPLRel.atom, test, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hp⟩; exact ⟨heq, by rw [← heq]; exact hp⟩
+  · intro ⟨heq, hp⟩; exact ⟨heq, by rw [heq]; exact hp⟩
+
+theorem conj_eq_dseq {E : Type*} (φ ψ : DPLRel E) :
+    toDRS (DPLRel.conj φ ψ) = dseq (toDRS φ) (toDRS ψ) := by
+  ext g h
+  simp only [toDRS, DPLRel.conj, dseq]
+
+theorem neg_eq_test_dneg {E : Type*} (φ : DPLRel E) :
+    toDRS (DPLRel.neg φ) = test (dneg (toDRS φ)) := by
+  ext g h
+  simp only [toDRS, DPLRel.neg, test, dneg, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [← heq]; exact hnex⟩
+  · intro ⟨heq, hnex⟩; exact ⟨heq, by rw [heq]; exact hnex⟩
+
+theorem exists_eq {E : Type*} (x : Nat) (φ : DPLRel E) :
+    toDRS (DPLRel.exists_ x φ) = λ g h => ∃ d : E, toDRS φ (extend g x d) h := by
+  rfl
+
+/-- **DPL implication = test of dynamic implication.** -/
+theorem impl_eq_test_dimpl {E : Type*} (φ ψ : DPLRel E) :
+    toDRS (DPLRel.impl φ ψ) = test (dimpl (toDRS φ) (toDRS ψ)) := by
+  ext g h
+  simp only [toDRS, DPLRel.impl, test, dimpl, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hall⟩; exact ⟨heq, by rw [← heq]; exact hall⟩
+  · intro ⟨heq, hall⟩; exact ⟨heq, by rw [heq]; exact hall⟩
+
+/-- **DPL disjunction = test of dynamic disjunction.** -/
+theorem disj_eq_test_ddisj {E : Type*} (φ ψ : DPLRel E) :
+    toDRS (DPLRel.disj φ ψ) = test (ddisj (toDRS φ) (toDRS ψ)) := by
+  ext g h
+  simp only [toDRS, DPLRel.disj, test, ddisj, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hd⟩; exact ⟨heq, by rw [← heq]; exact hd⟩
+  · intro ⟨heq, hd⟩; exact ⟨heq, by rw [heq]; exact hd⟩
+
+/-- **DPL closure = test of existential closure.** -/
+theorem close_eq_test_closure {E : Type*} (φ : DPLRel E) :
+    toDRS (DPLRel.close φ) = test (closure (toDRS φ)) := by
+  ext g h
+  simp only [toDRS, DPLRel.close, test, closure, eq_iff_iff]
+  constructor
+  · intro ⟨heq, hc⟩; exact ⟨heq, by rw [← heq]; exact hc⟩
+  · intro ⟨heq, hc⟩; exact ⟨heq, by rw [heq]; exact hc⟩
+
+/-- **DPL truth = existential closure.** -/
+theorem trueAt_eq_closure {E : Type*} (φ : DPLRel E) (g : Assignment E) :
+    DPLRel.trueAt φ g ↔ closure (toDRS φ) g := Iff.rfl
+
+export DPLRel (atom conj exists_ neg impl disj forall_ close)
 
 end Semantics.Dynamic.DPL

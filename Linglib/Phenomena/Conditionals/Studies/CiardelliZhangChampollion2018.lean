@@ -35,16 +35,24 @@ counterfactuals; the discriminating contrast (Tables 7–8, p. 607):
 ## What this file proves
 
 1. **De Morgan equivalence**: `(A̅ ∨ B̅) = ¬(A ∧ B)` as sets of worlds.
-2. **Concrete prediction**: instantiating a Hamming-distance similarity
-   ordering at the actual world `uu`, the existing
-   `Conditionals.universalCounterfactual` (Lewis/Stalnaker/Kratzer-style
-   minimal-change CF) predicts ALL THREE — `A̅ > OFF`, `B̅ > OFF`, *and*
-   `¬(A ∧ B) > OFF`. The third is the empirically falsified one.
-3. **Abstract minimal-change forcing** (CZC §1.2 argument, p. 582):
-   for ANY similarity ordering, if both `A̅ > OFF` and `B̅ > OFF` are
-   true at the actual world, then `¬(A ∧ B) > OFF` is forced true. So
-   no choice of similarity ordering rescues the universal/Lewis/
-   Stalnaker semantics.
+2. **Concrete predictions across three operators**: instantiating a
+   Hamming-distance similarity ordering at the actual world `uu`, all
+   three closest-worlds operators in linglib —
+   `universalCounterfactual` (Lewis/Stalnaker), `selectionalCounterfactual`
+   (Stalnaker + supervaluation, returns `Truth3.true`), and
+   `homogeneityCounterfactual` (von Fintel/Križ, returns `assertion =
+   some true` with satisfied presupposition) — all predict `¬(A ∧ B) >
+   OFF` true. This is the empirically falsified prediction (~20% true,
+   Tables 7–8).
+3. **Generic structural argument** (CZC §1.2 argument, p. 582):
+   the operator-agnostic core
+   (`closestWorlds_predicate_forces_notBothUp`) shows that for ANY
+   similarity ordering and ANY consequent `B`, joint truth of "every
+   closest aDn-world is B" and "every closest bDn-world is B" entails
+   "every closest notBothUp-world is B". Three corollaries instantiate
+   this for `universalCounterfactual`,  `selectionalCounterfactual`,
+   and `homogeneityCounterfactual` — closing CZC's claim that *all*
+   minimal-change theories fail.
 
 ## Connection to linglib's Kratzer infrastructure
 
@@ -72,6 +80,13 @@ switches model and instantiating
 `Semantics.Conditionals.PremiseSemantic.wouldCF`; we leave this as
 future work.
 
+For the first concrete `wouldCF` instantiation on a situation-semantic
+scenario, see
+`Phenomena.Conditionals.Studies.Kratzer2012Lumping` — which
+formalizes Kratzer's own apple-buying example (§5.4.1–§5.4.3). That
+file establishes the template for an eventual situation-semantic
+switches model that would settle the question raised here.
+
 The CZC positive proposal — a foreground/background distinction
 combined with inquisitive lifting (§4) — and §6.4's SNCA derivation
 (Proposition 2 + Lemma 1) are also left as future formalization.
@@ -80,7 +95,10 @@ combined with inquisitive lifting (§4) — and §6.4's SNCA derivation
 namespace Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018
 
 open Core.Order (SimilarityOrdering)
-open Semantics.Conditionals.Counterfactual (universalCounterfactual)
+open Semantics.Conditionals.Counterfactual
+  (universalCounterfactual selectionalCounterfactual homogeneityCounterfactual
+   PresupStatus PresupResult)
+open Core.Duality (Truth3)
 
 /-! ## The switches scenario -/
 
@@ -122,9 +140,9 @@ def notBothUp (w : World) : Prop := ¬ (aUp w ∧ bUp w)
 /-- "The light is off." -/
 def lightOff (w : World) : Prop := ¬ lightOn w
 
-instance : DecidablePred aUp := fun w => by cases w <;> simp [aUp] <;> infer_instance
-instance : DecidablePred bUp := fun w => by cases w <;> simp [bUp] <;> infer_instance
-instance : DecidablePred lightOn := fun w => by cases w <;> simp [lightOn] <;> infer_instance
+instance : DecidablePred aUp := fun w => by cases w <;> simp only [aUp] <;> infer_instance
+instance : DecidablePred bUp := fun w => by cases w <;> simp only [bUp] <;> infer_instance
+instance : DecidablePred lightOn := fun w => by cases w <;> simp only [lightOn] <;> infer_instance
 instance : DecidablePred aDn := fun _ => inferInstanceAs (Decidable (¬ _))
 instance : DecidablePred bDn := fun _ => inferInstanceAs (Decidable (¬ _))
 instance : DecidablePred aOrBdn := fun _ => inferInstanceAs (Decidable (_ ∨ _))
@@ -196,6 +214,27 @@ theorem aOrBdn_off_at_uu :
 theorem notBothUp_off_at_uu :
     universalCounterfactual hammingSim notBothUp lightOff .uu := by decide
 
+/-! ### Same falsified prediction under selectional and homogeneity
+
+@cite{ciardelli-zhang-champollion-2018}'s argument targets *any*
+minimal-change semantics. Both `selectionalCounterfactual` (Stalnaker
++ supervaluation) and `homogeneityCounterfactual` (von Fintel/Križ)
+share the same closest-worlds substrate as `universalCounterfactual`,
+and so make the same falsified prediction on the switches scenario. -/
+
+/-- **Selectional CF** also predicts `¬(A ∧ B) > OFF` true at `uu`. -/
+theorem selectional_notBothUp_off_at_uu :
+    selectionalCounterfactual hammingSim notBothUp lightOff .uu = .true := by
+  decide
+
+/-- **Homogeneity CF** also predicts `¬(A ∧ B) > OFF` true at `uu`,
+    with satisfied presupposition (the closest worlds are not mixed
+    on `lightOff`). -/
+theorem homogeneity_notBothUp_off_at_uu :
+    homogeneityCounterfactual hammingSim notBothUp lightOff .uu =
+      { presupposition := .satisfied, assertion := some true } := by
+  decide
+
 /-! ## Abstract minimal-change forcing (@cite{ciardelli-zhang-champollion-2018} §1.2, p. 582)
 
 The concrete predictions above used a specific similarity ordering. The
@@ -205,55 +244,129 @@ world, then `¬(A ∧ B) > OFF` is forced true at that world. So there is
 no choice of similarity that vindicates the empirical pattern — the
 fault lies with the minimal-change architecture itself. -/
 
-private theorem aDn_imp_notBothUp (w : World) (h : aDn w) : notBothUp w :=
-  fun ⟨hA, _⟩ => h hA
+/-! ### The generic structural argument
 
-private theorem bDn_imp_notBothUp (w : World) (h : bDn w) : notBothUp w :=
-  fun ⟨_, hB⟩ => h hB
+CZC's §1.2 proof actually targets *any* operator definable as
+"every closest A-world satisfies B". We expose the generic version
+first; the universal/selectional/homogeneity instantiations below all
+collapse to it. -/
 
-/-- The structural lemma underlying CZC's argument: if `w` is a closest
-    `S`-world and `w` belongs to a sub-property `T ⊆ S`, then `w` is also
-    a closest `T`-world. (Adding more competitors can only make `w` lose
-    its "closest" status, not gain it.) -/
-private theorem closestWorlds_inherits {S T : World → Prop}
-    [DecidablePred S] [DecidablePred T]
-    (sim : SimilarityOrdering World) (w₀ w : World)
-    (hST : ∀ x, T x → S x)
-    (hw : w ∈ sim.closestWorlds w₀ (Finset.univ.filter S))
-    (hwT : T w) :
-    w ∈ sim.closestWorlds w₀ (Finset.univ.filter T) := by
-  rw [SimilarityOrdering.mem_closestWorlds] at hw ⊢
-  refine ⟨Finset.mem_filter.mpr ⟨Finset.mem_univ _, hwT⟩, ?_⟩
-  intro w'' hw''
-  rw [Finset.mem_filter] at hw''
-  exact hw.2 w'' (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hST w'' hw''.2⟩)
+/-- **Generic minimal-change forcing**: for any similarity ordering and
+    any consequent predicate `B`, joint truth of "every closest aDn-world
+    is B" and "every closest bDn-world is B" entails "every closest
+    notBothUp-world is B".
 
-/-- **Minimal-change forcing** (the abstract version of CZC's central
-    argument, p. 582): for any similarity ordering, joint truth of
-    `A̅ > OFF` and `B̅ > OFF` at a world entails truth of `¬(A ∧ B) > OFF`
-    at that world.
+    This is the operator-agnostic core of CZC §1.2 p. 582. The structural
+    fact is `SimilarityOrdering.mem_closestWorlds_of_subset`: a closest
+    `notBothUp`-world that happens to be `aDn` is also a closest
+    `aDn`-world (since `aDn ⊆ notBothUp` as Finsets), so `h_a` applies;
+    symmetric for `bDn`. -/
+theorem closestWorlds_predicate_forces_notBothUp
+    (sim : SimilarityOrdering World) (w₀ : World)
+    (B : World → Prop) [DecidablePred B]
+    (h_a : ∀ w' ∈ sim.closestWorlds w₀ (Finset.univ.filter aDn), B w')
+    (h_b : ∀ w' ∈ sim.closestWorlds w₀ (Finset.univ.filter bDn), B w') :
+    ∀ w' ∈ sim.closestWorlds w₀ (Finset.univ.filter notBothUp), B w' := by
+  intro w hw
+  have hwNAB : notBothUp w := (Finset.mem_filter.mp
+    ((SimilarityOrdering.mem_closestWorlds _ _ _ _).mp hw).1).2
+  have h_aDn_sub : Finset.univ.filter aDn ⊆ Finset.univ.filter notBothUp := by
+    intro x hx
+    rw [Finset.mem_filter] at hx ⊢
+    exact ⟨hx.1, fun ⟨hA, _⟩ => hx.2 hA⟩
+  have h_bDn_sub : Finset.univ.filter bDn ⊆ Finset.univ.filter notBothUp := by
+    intro x hx
+    rw [Finset.mem_filter] at hx ⊢
+    exact ⟨hx.1, fun ⟨_, hB⟩ => hx.2 hB⟩
+  by_cases hwA : aDn w
+  · exact h_a w (sim.mem_closestWorlds_of_subset h_aDn_sub hw
+      (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hwA⟩))
+  · have hwB : bDn w := fun hbU =>
+      hwNAB ⟨by by_contra hnA; exact hwA hnA, hbU⟩
+    exact h_b w (sim.mem_closestWorlds_of_subset h_bDn_sub hw
+      (Finset.mem_filter.mpr ⟨Finset.mem_univ _, hwB⟩))
 
-    Combined with the empirical data (Tables 7–8) — `A̅ > OFF` ~78% true,
-    `¬(A ∧ B) > OFF` ~20% true — this theorem shows that no
-    minimal-change account can fit the observed pattern. The formal
-    contrapositive: if `¬(A ∧ B) > OFF` is *false* (the majority
-    judgment), then at least one of `A̅ > OFF`, `B̅ > OFF` is also false
-    — but both are robustly judged true. -/
+/-! ### Operator-specific corollaries
+
+All three of `universalCounterfactual`, `selectionalCounterfactual`,
+and `homogeneityCounterfactual` reduce their "true" verdict to the
+same `∀ w' ∈ closestWorlds, B w'` condition (the first `if` branch in
+each definition). The structural lemma above therefore applies
+verbatim, only differing in how each operator packages its truth value. -/
+
+/-- **Universal CF version** (Lewis/Stalnaker). Direct corollary of the
+    generic lemma since `universalCounterfactual` *is* the universal
+    quantifier over closest worlds. -/
 theorem minimal_change_forces_notBothUp_off
     (sim : SimilarityOrdering World) (w₀ : World)
     (h_a : universalCounterfactual sim aDn lightOff w₀)
     (h_b : universalCounterfactual sim bDn lightOff w₀) :
-    universalCounterfactual sim notBothUp lightOff w₀ := by
-  intro w hw
-  have hw' := hw
-  rw [SimilarityOrdering.mem_closestWorlds, Finset.mem_filter] at hw'
-  obtain ⟨⟨_, hwNAB⟩, _⟩ := hw'
-  -- `notBothUp w` decidably splits into `aDn w ∨ bDn w`.
-  by_cases hwA : aDn w
-  · exact h_a w (closestWorlds_inherits sim w₀ w aDn_imp_notBothUp hw hwA)
-  · have hwB : bDn w := by
-      intro hbU; exact hwNAB ⟨by by_contra hnA; exact hwA hnA, hbU⟩
-    exact h_b w (closestWorlds_inherits sim w₀ w bDn_imp_notBothUp hw hwB)
+    universalCounterfactual sim notBothUp lightOff w₀ :=
+  closestWorlds_predicate_forces_notBothUp sim w₀ lightOff h_a h_b
+
+/-- The "true"-verdict condition for `selectionalCounterfactual` is
+    exactly the closest-worlds universal quantifier (the first `if`
+    branch in its definition). -/
+private theorem selectional_eq_true_iff
+    (sim : SimilarityOrdering World) (A B : World → Prop)
+    [DecidablePred A] [DecidablePred B] (w : World) :
+    selectionalCounterfactual sim A B w = .true ↔
+      ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w' := by
+  unfold selectionalCounterfactual
+  constructor
+  · intro heq
+    by_contra h_neg
+    rw [if_neg h_neg] at heq
+    split_ifs at heq
+  · intro h
+    rw [if_pos h]
+
+/-- The "true"-verdict condition for `homogeneityCounterfactual` is
+    likewise the closest-worlds universal quantifier. -/
+private theorem homogeneity_eq_true_iff
+    (sim : SimilarityOrdering World) (A B : World → Prop)
+    [DecidablePred A] [DecidablePred B] (w : World) :
+    homogeneityCounterfactual sim A B w =
+        { presupposition := .satisfied, assertion := some true } ↔
+      ∀ w' ∈ sim.closestWorlds w (Finset.univ.filter A), B w' := by
+  unfold homogeneityCounterfactual
+  constructor
+  · intro heq
+    by_contra h_neg
+    rw [if_neg h_neg] at heq
+    split_ifs at heq <;> injection heq with h1 h2 <;> cases h2
+  · intro h
+    rw [if_pos h]
+
+/-- **Selectional CF version** (Stalnaker + supervaluation). When both
+    simple counterfactuals return `.true` (every closest world is OFF),
+    so does the disjunctive-antecedent counterfactual. -/
+theorem selectional_minimal_change_forces_notBothUp_off
+    (sim : SimilarityOrdering World) (w₀ : World)
+    (h_a : selectionalCounterfactual sim aDn lightOff w₀ = .true)
+    (h_b : selectionalCounterfactual sim bDn lightOff w₀ = .true) :
+    selectionalCounterfactual sim notBothUp lightOff w₀ = .true :=
+  (selectional_eq_true_iff sim notBothUp lightOff w₀).mpr
+    (closestWorlds_predicate_forces_notBothUp sim w₀ lightOff
+      ((selectional_eq_true_iff sim aDn lightOff w₀).mp h_a)
+      ((selectional_eq_true_iff sim bDn lightOff w₀).mp h_b))
+
+/-- **Homogeneity CF version** (von Fintel/Križ). When both simple
+    counterfactuals satisfy their presupposition with `assertion = some
+    true` (every closest world is OFF), so does the disjunctive-
+    antecedent version. -/
+theorem homogeneity_minimal_change_forces_notBothUp_off
+    (sim : SimilarityOrdering World) (w₀ : World)
+    (h_a : homogeneityCounterfactual sim aDn lightOff w₀ =
+      { presupposition := .satisfied, assertion := some true })
+    (h_b : homogeneityCounterfactual sim bDn lightOff w₀ =
+      { presupposition := .satisfied, assertion := some true }) :
+    homogeneityCounterfactual sim notBothUp lightOff w₀ =
+      { presupposition := .satisfied, assertion := some true } :=
+  (homogeneity_eq_true_iff sim notBothUp lightOff w₀).mpr
+    (closestWorlds_predicate_forces_notBothUp sim w₀ lightOff
+      ((homogeneity_eq_true_iff sim aDn lightOff w₀).mp h_a)
+      ((homogeneity_eq_true_iff sim bDn lightOff w₀).mp h_b))
 
 /-! ## Empirical data (Tables 7 and 8, p. 607)
 

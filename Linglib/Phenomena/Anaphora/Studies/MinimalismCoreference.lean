@@ -1,5 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Fragments.English.Predicates.Verbal
 
 /-!
 # Bridge: Minimalist Coreference Theory to Anaphora Phenomena
@@ -23,27 +24,33 @@ open Phenomena.Anaphora.Coreference
 /-- Check if Minimalism correctly predicts a minimal pair for coreference.
 
     Grammatical sentence should pass, ungrammatical should fail. -/
-def capturesCoreferenceMinimalPair (pair : MinimalPair) : Bool :=
-  grammaticalForCoreference pair.grammatical &&
-  !grammaticalForCoreference pair.ungrammatical
+def capturesCoreferenceMinimalPair (pair : MinimalPair) : Prop :=
+  grammaticalForCoreference pair.grammatical ∧
+  ¬ grammaticalForCoreference pair.ungrammatical
+
+instance (pair : MinimalPair) : Decidable (capturesCoreferenceMinimalPair pair) := by
+  unfold capturesCoreferenceMinimalPair; infer_instance
 
 /-- Check all pairs in a PhenomenonData -/
-def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
-  phenom.pairs.all capturesCoreferenceMinimalPair
+def capturesCoreferenceData (phenom : PhenomenonData) : Prop :=
+  ∀ p ∈ phenom.pairs, capturesCoreferenceMinimalPair p
+
+instance (phenom : PhenomenonData) : Decidable (capturesCoreferenceData phenom) := by
+  unfold capturesCoreferenceData; infer_instance
 
 /-- Minimalism captures reflexiveCoreferenceData -/
 theorem captures_reflexive_coreference :
-    capturesCoreferenceData reflexiveCoreferenceData = true := by
+    capturesCoreferenceData reflexiveCoreferenceData := by
   native_decide
 
 /-- Minimalism captures complementaryDistributionData -/
 theorem captures_complementary_distribution :
-    capturesCoreferenceData complementaryDistributionData = true := by
+    capturesCoreferenceData complementaryDistributionData := by
   native_decide
 
 /-- Minimalism captures pronominalDisjointReferenceData -/
 theorem captures_pronominal_disjoint_reference :
-    capturesCoreferenceData pronominalDisjointReferenceData = true := by
+    capturesCoreferenceData pronominalDisjointReferenceData := by
   native_decide
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg
@@ -60,23 +67,23 @@ private abbrev eachOther := Fragments.English.Pronouns.eachOther.toWord
 
 /-- Check each pair individually for reflexiveCoreferenceData -/
 theorem reflexive_pairs_captured :
-    (grammaticalForCoreference [john, sees, himself] = true ∧
-     grammaticalForCoreference [himself, sees, john] = false) ∧
-    (grammaticalForCoreference [mary, sees, herself] = true ∧
-     grammaticalForCoreference [herself, sees, mary] = false) ∧
-    (grammaticalForCoreference [they, see, themselves] = true ∧
-     grammaticalForCoreference [themselves, see, them] = false) ∧
-    (grammaticalForCoreference [john, sees, himself] = true ∧
-     grammaticalForCoreference [john, sees, herself] = false) ∧
-    (grammaticalForCoreference [they, see, themselves] = true ∧
-     grammaticalForCoreference [they, see, himself] = false) := by
+    (grammaticalForCoreference [john, sees, himself] ∧
+     ¬ grammaticalForCoreference [himself, sees, john]) ∧
+    (grammaticalForCoreference [mary, sees, herself] ∧
+     ¬ grammaticalForCoreference [herself, sees, mary]) ∧
+    (grammaticalForCoreference [they, see, themselves] ∧
+     ¬ grammaticalForCoreference [themselves, see, them]) ∧
+    (grammaticalForCoreference [john, sees, himself] ∧
+     ¬ grammaticalForCoreference [john, sees, herself]) ∧
+    (grammaticalForCoreference [they, see, themselves] ∧
+     ¬ grammaticalForCoreference [they, see, himself]) := by
   native_decide
 
 /-- Minimalism captures the parseable reciprocal pair: plural antecedent
     required, singular antecedent blocked. -/
 theorem reciprocal_plural_antecedent :
-    grammaticalForCoreference [they, see, eachOther] = true ∧
-    grammaticalForCoreference [john, sees, eachOther] = false := by
+    grammaticalForCoreference [they, see, eachOther] ∧
+    ¬ grammaticalForCoreference [john, sees, eachOther] := by
   native_decide
 
 end MinimalismCoreference

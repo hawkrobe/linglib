@@ -4,6 +4,528 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.161] - 2026-04-21
+
+### Cleanup — `FrankGoodman2012PMF.lean` mathlib-style audit
+
+Mathlib-style cleanup of the Phase 2 RSA→PMF pilot file (210 → 202 LOC,
+despite adding witness scaffolding):
+
+- Extracted `truthWitness : Feature → Object` and
+  `utteranceWitness : Object → Feature` (both `private`) plus their
+  `appliesTo_*` lemmas. Collapses ~12 redundant `cases`/`exact`
+  branches across `meaning_sum_ne_zero`, `S1_sum_ne_zero`,
+  `marginal_ne_zero` into uniform applications of one witness lemma.
+- Renamed `meaning_pos_of_appliesTo` → `meaning_ne_zero_of_appliesTo`
+  (mathlib `_pos` = `0 < x`, `_ne_zero` = `x ≠ 0`).
+- Dropped `open RSA` to remove the local-`L1`/`S1` shadowing of
+  `RSA.L1`/`RSA.S1Belief`; explicit `RSA.L0OfMeaning`,
+  `RSA.S1Belief`, `RSA.S1Belief_apply`, `RSA.L0OfMeaning_apply`,
+  `RSA.mem_support_L1_iff`, `RSA.marginal_mul_L1_apply` throughout.
+- Replaced
+  `(lt_of_le_of_lt (PMF.coe_le_one _ _) ENNReal.one_lt_top).ne` with
+  `PMF.apply_ne_top _ _` (mathlib already has the lemma we wanted).
+- Marked the seven scaffolding lemmas (`meaning_ne_top`,
+  `meaning_ne_zero_of_appliesTo`, `meaning_sum_ne_zero`,
+  `meaning_sum_ne_top`, `S1_sum_ne_zero`, `S1_sum_ne_top`,
+  `S1_ne_zero_of_appliesTo`, `marginal_ne_zero`) `private`. Public
+  surface is now exactly `meaning`/`L0`/`S1`/`worldPrior`/`L1` plus the
+  three payoff theorems `L1_eq_posterior`/`mem_support_L1_iff_apply`/
+  `marginal_mul_L1_apply`.
+- Extracted `S1_ne_zero_of_appliesTo` from an inline `have` inside
+  `marginal_ne_zero` to a top-level `private theorem`.
+- Replaced `rw [ENNReal.rpow_one, mul_one]` (×4) with
+  `simp only [ENNReal.rpow_one, mul_one]`; replaced bare `simp` (×3)
+  with `split_ifs` + explicit `exact`/`rw [if_pos h] + exact one_ne_zero`.
+
+## [0.230.160] - 2026-04-21
+
+### Removed — `Minimalism/Core/MCommand.lean` (dead code)
+
+`Theories/Syntax/Minimalism/Core/MCommand.lean` (107 LOC) was imported
+by exactly one file — `Phenomena/ArgumentStructure/Studies/Newman2024.lean`
+— but a grep across the entire codebase shows that none of its
+exported symbols (`mCommandsIn`, `asymMCommandsIn`,
+`isMaximalProjection`, `isHeadChildOf`, `reflexiveLicensedM`,
+`pronounFreeM`) are referenced anywhere. The Newman2024 import was a
+dead `import` statement; the m-command apparatus was speculative
+infrastructure for predicted Newman2024 binding extensions that never
+materialized.
+
+Honest correction: delete rather than relocate. The docstring claimed
+"empirical coverage determines which is appropriate for a given
+phenomenon" — but no phenomenon ever picked it up, so the claim was
+aspirational at best. If a future Newman-style ditransitive binding
+analysis needs m-command, it can be re-derived from `cCommandsIn`
+(the standard relation: c-command requires *sister* containing β,
+m-command relaxes to *every maximal projection* containing α).
+
+Third move in the `Minimalism/Core/` audit. 4 single-importer files
+remain (Multidominance, NegScope, CaseDiscrimination, CMH) plus the
+misplaced CaseFilter.
+
+## [0.230.159] - 2026-04-21
+
+### Refactored — Inline `Minimalism/Core/ANDL.lean` into its sole consumer
+
+`Theories/Syntax/Minimalism/Core/ANDL.lean` (81 LOC) was imported by
+exactly one file — `Phenomena/Questions/Studies/ChanShen2026.lean` —
+and parked in `Minimalism/Core/` for no architectural reason. The
+ANDL apparatus (`povUnvaluedFeature`, `povOperatorFeature`,
+`pov_probe_goal_match`, `andl_pov_unvalued`, `pov_operator_valued`,
+`LicensedMinimalist`) moves into `ChanShen2026.lean` under
+`namespace Minimalism.ANDL` (so any future Mandarin *daodi* /
+*the heck* / *the dickens* study that wants the same apparatus can
+either reopen the namespace from this file or — when a second
+consumer materializes — promote it to a shared location). Imports
+shifted accordingly: `ChanShen2026` now imports
+`Minimalism/Core/Features.lean` and `Core/Lexical/ExpressiveModifier.lean`
+directly (previously transitive through the deleted ANDL.lean).
+
+Second move in the `Minimalism/Core/` audit (after EPP at 0.230.158).
+6 single-importer files remain: MCommand, Multidominance, NegScope,
+CaseDiscrimination, CMH, plus the misplaced CaseFilter.
+
+## [0.230.158] - 2026-04-21
+
+### Refactored — Inline `Minimalism/Core/EPP.lean` into its sole consumer
+
+`Theories/Syntax/Minimalism/Core/EPP.lean` (51 LOC) was imported by
+exactly one file — `Phenomena/WordOrder/Studies/ColeHermon2008.lean` —
+and its position in `Minimalism/Core/` was vestigial. Per CLAUDE.md
+"Study files are self-contained: they include the paper's data, model,
+and predictions in one file," the EPP definitions
+(`EPPStrategy`, `WordOrderParameter`, `english_wo`, `tobaBatak_wo`)
+move into `ColeHermon2008.lean` under `namespace Minimalism` (so the
+`Minimalism.EPPStrategy.vpRaising` qualified name still resolves for
+any future consumer that reopens the namespace). `irish_wo` dropped —
+no consumer.
+
+This is the first move in a `Minimalism/Core/` audit: 7 files in
+`Core/` are imported by exactly one `Phenomena/Studies/` consumer each
+(ANDL/CMH/MCommand/Multidominance/NegScope/CaseDiscrimination/EPP);
+they are paper-specific theory wrappers parked in `Core/` for no
+architectural reason. The smaller ones inline directly into their
+study; the larger ones will become `Phenomena/X/Studies/AuthorYear/
+Theory.lean` siblings. After the sweep `Core/` shrinks toward the
+genuine cross-paper foundation (`Basic`, `Algebra`, `Cat`, `Features`,
+`Derivation`, `Agree`, `Phase`, …).
+
+Drive-by: `Minimalism/Core/Derivation.lean` had a stale `open
+Core.Tree` from before 0.230.154 dropped `Linglib.Core.Tree` from
+`Basic.lean`; nothing in `Derivation.lean` actually used `Core.Tree`,
+so the line was deleted.
+
+## [0.230.157] - 2026-04-21
+
+### Removed — Author-named theory files `Conditionals/{Iatridou,Anderson}.lean` (L4 dissolution)
+
+`Theories/Semantics/Conditionals/Iatridou.lean` (332 LOC) and
+`Theories/Semantics/Conditionals/Anderson.lean` (369 LOC) were
+author-named files in the *theory* tree, violating CLAUDE.md's
+"study files live in `Phenomena/Studies/`, not `Theories/`" rule
+(explicitly flagged by the directory mathlib-reviewer audit as L4).
+Both dissolved per the auditor's plan:
+
+**Framework primitives → new `Theories/Semantics/Modality/Exclusion.lean`**
+(~330 LOC, namespace `Semantics.Modality.Exclusion`):
+- `ExclDimension` (temporal/modal) + `ExclF` predicate +
+  `exclF_temporal_iff` / `exclF_modal_iff` (definitional unfolds)
+- `ExclDimension.toDealUse` and bridges to
+  `Tense.CounterfactualTense.PastMorphologyUse`
+- `subjShift_produces_modal_exclF` /
+  `temporalShift_produces_temporal_exclF` /
+  `two_shifts_two_exclFs` / `root_no_*_exclF` (ContextTower bridges)
+- `xMarking_produces_modal_exclF` (RichContext / Kratzer ∗-revision bridge)
+- `MarkingStrategy` (xMarking / oMarking, @cite{von-fintel-iatridou-2023}
+  typological label) + `hasXMarking` / `producesExclF` /
+  `requiresActuallyOperator` / `exclDimension` / `toDealUse`
+- `xMarking_produces_exclF` / `actually_recovers_origin_after_shift` /
+  `oMarking_no_exclF` (tower-level theorems)
+- `domain_expansion_avoids_triviality` / `oMarking_hpShift_expanding` /
+  `oMarking_trivial` / `expanded_conditional_informative`
+  (general domain-expansion patterns)
+- `oMarking_indexicals_at_origin` (@cite{schlenker-2004} bicontextual
+  theorem)
+
+**Paper-specific typology → `Phenomena/Conditionals/Studies/Iatridou2000.lean`**:
+- `IatridouPredType` (ILP / stative / telic — paper-specific
+  predicate classification for FLV vs PresCF gating)
+- `VendlerClass.toIatridou` (Vendler → Iatridou bridge)
+- `CounterfactualType` (FLV / PresCF / PastCF — the paper's three-way
+  taxonomy) + `CounterfactualType.exclFCount`
+- `classifyCounterfactual` + 5 gating theorems
+  (`telic_one_exclF_is_flv`, `ilp_one_exclF_is_presCF`, etc.)
+- `iatridouSubjGeneralization` (paper's generalization (42))
+- `pastCF_tower_depth` (the paper's depth-counting result)
+- `CounterfactualType.toSubjunctiveType` +
+  `all_counterfactuals_are_counterfactual`
+
+**Anderson-paper-specific content stays in
+`Phenomena/Conditionals/Studies/Mizuno2024.lean`** (was already there);
+its imports updated to point at `Semantics.Modality.Exclusion` for
+`MarkingStrategy` (was `Semantics.Conditionals.Anderson`) and at
+`Iatridou2000` for `CounterfactualType` (was
+`Semantics.Conditionals.Iatridou`).
+
+This eliminates two of the three explicit author-named theory files
+in the conditionals subtree that the directory audit flagged
+(remaining work: the third Kratzer formalization at
+`Conditionals/Basic.lean:302-337`, deferred). The genuine framework
+primitives now live where multiple papers can find them; paper-specific
+typologies live with the paper that introduced them.
+
+## [0.230.156] - 2026-04-21
+
+### Added — Effect-functor unification of dynamic Context across three families
+
+`Theories/Semantics/Dynamic/Context.lean` gains the unifying typeclass
+`HasIndivLookupM (M : Type → Type) [Functor M]` that abstracts individual-
+dref lookup across the three dynamic-semantic families:
+
+| Family | `M` | Falsifier | Instance file |
+|---|---|---|---|
+| ICDRT (deterministic) | `Entity` | `.star` | `Dynamic/Context.lean` |
+| Charlow (nondeterministic) | `Set` | `∅` | `Dynamic/Nondeterminism/Charlow2019.lean` |
+| Bayesian | `PMF` | zero-mass | `Dynamic/Probability/Lookup.lean` (new) |
+
+`Functor M` is enough; no `Monad M` requirement (mathlib's `Set` lacks a
+clean `Monad` instance, so the standard `MonadLift` framework would
+preclude the Charlow corner). Bridge maps between families are explicit
+named natural transformations, not monad lifts — mirroring the mathlib
+pattern `Function`/`Set.Image`/`MeasurableFunction`/`PMF`/`Measure` of
+related-but-not-unified abstractions plus explicit bridges.
+
+The `Functor Entity` instance lands in `Dynamic/Core/DiscourseRef.lean`
+(`.some e ↦ .some (f e)`, `.star ↦ .star` — the `Option` functor under
+renaming).
+
+### Added — Hofmann ⇄ Charlow bridge (proven section/retraction)
+
+`Dynamic/Nondeterminism/Charlow2019.lean` adds `singletonLift`
+(ICDRT → Charlow, lifts a Hofmann assignment to a singleton-state on
+the worlds where every relevant variable has a non-`⋆` referent) and
+`supportCollapse` (Charlow → ICDRT, agreement-or-`⋆` via `Classical.choose`).
+The bridge theorem `supportCollapse_singletonLift` proves these form
+a section/retraction pair on the deterministic image: for `v ∈ vars`
+at `w ∈ worlds` where every listed variable has a referent,
+`(supportCollapse (singletonLift worlds vars i)).indiv v w = i.indiv v w`.
+
+### Added — Bayesian/PMF third corner with bridges to Charlow
+
+`Dynamic/Probability/Lookup.lean` (new file) adds
+`BayesianState W E := W → PMF (Assignment E)` plus the
+`HasIndivLookupM PMF` instance (`iLookupM s v w := (s w).map (· v)`,
+marginalizing the joint per-world distribution to variable `v`'s
+marginal). Plus per-world bridge maps `supportFiber` (PMF.support
+delivers the Charlow alternative-set) and `uniformFiber`
+(PMF.uniformOfFinset lifts a finite-nonempty alternative-set to its
+uniform distribution — the asymmetry in the Charlow → PMF direction
+matches mathlib's: PMF normalization rules out empty/infinite supports
+that Charlow happily admits).
+
+## [0.230.155] - 2026-04-21
+
+### Added — RSA Phase 2 pilot: FrankGoodman2012 on the unbundled `RSA.Op` API
+
+Phase 2 of the RSA → mathlib-PMF migration. New file
+`Phenomena/Reference/Studies/FrankGoodman2012PMF.lean` re-builds the
+@cite{frank-goodman-2012} reference game on the unbundled
+`RSA/Operators.lean` API (`L0OfMeaning`, `S1Belief`, `L1`) — alongside
+the existing `RSAConfig` formulation in `FrankGoodman2012.lean`, not as
+a replacement.
+
+Demonstrates the two payoffs of the unbundled formulation: (1) the API
+is usable on a real linguistic model without contortions; (2) `L1 IS
+PMF.posterior` of S1 against the world prior, true by construction
+(`rfl`), so support / Bayes-factor identities lift to the model as
+one-liners (`mem_support_L1_iff_apply`, `marginal_mul_L1_apply`)
+instead of separately-proved bridge theorems.
+
+In scope: building L0/S1/L1 + grounding theorem + support theorem.
+Out of scope: the comparative L1 inequalities (`L1 .square .blue_square
+> L1 .square .green_square`) — those continue to use the bundled
+`RSAConfig.L1` in the sibling file until Phase 4 extends `rsa_predict`
+to ENNReal/PMF.
+
+### Fixed — `Core/Probability/PMFPosterior.lean` mathlib API drift
+
+Three pre-existing build breaks in `PMFPosterior.lean` repaired:
+`tsum_le_tsum` → `ENNReal.tsum_le_tsum` (now protected, single-arg
+form); `PMF.normalize_apply _ _ _ a` → `PMF.normalize_apply _ _ a`
+(mathlib reduced explicit args by 1); rewrite path in
+`marginal_mul_posterior_apply` reordered with `mul_comm` + `mul_assoc`
+so `ENNReal.mul_inv_cancel` finds its pattern.
+
+### Fixed — `Theories/Pragmatics/RSA/Operators.lean` identifier name
+
+The `h∞` parameter name (U+221E in identifier position) caused a parse
+error; renamed to `hTop` throughout. Same `PMF.normalize_apply`
+explicit-arg fix as above.
+
+## [0.230.154] - 2026-04-21
+
+### Refactored — Delete path-side B&P infrastructure from Minimalism c-command / m-command
+
+The Stage-0 C6 "value/path correspondence" between sister-form
+`cCommandsIn` and B&P-form `kCCommand` (in
+`Theories/Syntax/Minimalism/Core/Basic.lean`), and the parallel
+correspondence between `mCommandsIn` and `mCCommand` (in
+`Theories/Syntax/Minimalism/Core/MCommand.lean`), is unprovable: the
+two relations genuinely differ on `FreeMagma`. Counterexample on
+`(a, (b, c))`: leaf `a` B&P-K-commands itself and the root (the only
+branching strict ancestor is the root, which trivially dominates
+everything), but sister-form c-command excludes those pairs. The
+recast was conceptually muddled — Reinhart c-command is ∃-form
+("∃ sister of α containing β"), while B&P `commandRelation` is
+∀-form ("every P-ancestor of α dominates β").
+
+Honest correction: delete the path-side companions entirely rather
+than carrying parallel sorried bridges. Removed from
+`Minimalism/Core/Basic.lean`: `branchingPaths`, `kCCommand`,
+`kCCommand_def`, `cCommandsIn_of_kCCommand` (sorry),
+`kCCommand_of_cCommandsIn` (sorry, and FALSE in general). Removed
+from `Minimalism/Core/MCommand.lean`: `maximalProjectionPaths`,
+`mCCommand`, `mCCommand_def`,
+`maximalProjectionPaths_subset_branchingPaths`,
+`kCCommand_subset_mCCommand`. Both files gain a brief explanatory
+note pointing to `Core/Order/Command.lean` for cross-tradition B&P
+unification (where its universal shape matches HPSG `o-command` /
+DG `d-command` native primitives) and explaining why Minimalism's
+sister-form c-command does not reduce to it.
+
+mathlib-style + 2026 syntactic theory: keep `cCommandsIn` /
+`mCommandsIn` value-side and sister-form (it's what binding consumers
+need, and reads directly off bare phrase structure per
+@cite{marcolli-chomsky-berwick-2025}). Imports `Linglib.Core.Tree`
+and `Linglib.Core.Order.Command` removed from `Basic.lean`;
+`Linglib.Core.Order.Command` removed from `MCommand.lean`.
+Downstream `Coreference.lean` and `Phenomena/Anaphora/Studies/
+MinimalismCoreference.lean` build clean.
+
+## [0.230.153] - 2026-04-21
+
+### Added — Switches scenario under Kratzer 2012 lumping CF: asymmetric failure across operators
+
+`Phenomena/Conditionals/Studies/CiardelliZhangChampollion2018Lumping.lean`
+applies the new `PremiseSemantic.wouldCF` operator to the
+@cite{ciardelli-zhang-champollion-2018} switches scenario and proves a
+genuine theoretical incompatibility between Kratzer 2012's
+lumping CF and minimal-change CF: they fail in *different* ways on
+the same scenario.
+
+**Empirical baseline** (CZC Tables 7–8):
+- `aDn > OFF`: TRUE (~78%)
+- `bDn > OFF`: TRUE (~76%)
+- `¬(A∧B) > OFF`: FALSE (~20%)
+
+**Minimal-change CF** (Lewis/Stalnaker/universal/selectional/homogeneity):
+predicts TRUE / TRUE / TRUE — wrong on the disjunctive antecedent
+(CZC §1.2 falsification, formalized in
+`CiardelliZhangChampollion2018.lean`).
+
+**Lumping CF** (Kratzer 2012 §5.4.4): predicts FALSE / FALSE / FALSE —
+**wrong on the simple antecedents**, *right* on the disjunctive one,
+this file's contribution.
+
+The two operators have **disjoint failure modes**. Neither gets all
+three right.
+
+**Why the asymmetry**: Lewis CF restricts to the *closest*
+antecedent-worlds (so for `aDn > OFF`, only `du` matters, where
+`lightOff` holds). Lumping CF considers *all consistent extensions*
+of the antecedent within an admissible Base Set; for `aDn` antecedent
+this includes `dd` (both switches down → light *on* by the wiring),
+which blocks the `Follows` step. Without a closest-worlds restriction,
+lumping has no way to break the `du`/`dd` symmetry on simple
+counterfactuals.
+
+**Headline theorems**:
+- `not_wouldCF_aDn_lightOff : ¬ wouldCF Fw₀ uu aDn lightOff`
+- `not_wouldCF_bDn_lightOff : ¬ wouldCF Fw₀ uu bDn lightOff`
+- `not_wouldCF_notBothUp_lightOff : ¬ wouldCF Fw₀ uu notBothUp lightOff`
+- `lumping_failure_pattern`: the two-conjunct summary
+
+**Supporting lemmas**:
+- `crucialSet_empty_Fw_eq_singleton`: with empty Base Set, the Crucial
+  Set for any consistent antecedent reduces to `{antecedent}`. Then
+  `wouldCF` collapses to `Follows {antecedent} consequent`.
+- `follows_*_lightOff_fails`: `dd` is the witness world that
+  satisfies the antecedent but not `lightOff`, blocking each
+  `Follows` step.
+
+**Setup**: worlds-only model (`Frame.toDiscreteSituationFrame` lift),
+empty Base Set. The result generalizes to any Base Set choice
+(including the wiring law and actual switch positions) since the
+`dd`-blocking argument is independent of `Fw`. Documented in the
+file's docstring along with the §5.5 non-accidental-generalization
+machinery as a possible (deferred) repair.
+
+**This is the first formalized cross-operator theoretical
+incompatibility on a shared phenomenon in linglib** — exactly the
+kind of finding the "interconnection density" goal exists to surface.
+
+## [0.230.152] - 2026-04-21
+
+### Added — CZC2018 selectional + homogeneity prediction theorems (operator-agnostic structural argument)
+
+`Phenomena/Conditionals/Studies/CiardelliZhangChampollion2018.lean`
+extended to cover @cite{ciardelli-zhang-champollion-2018}'s claim that
+**all minimal-change theories** fail on the switches scenario — not
+just `universalCounterfactual`. Three new operator instantiations
+land alongside the existing universal one:
+
+**Generic structural theorem** (the operator-agnostic core):
+- `closestWorlds_predicate_forces_notBothUp`: for any similarity
+  ordering and any consequent `B`, joint truth of "every closest
+  aDn-world is B" and "every closest bDn-world is B" forces "every
+  closest notBothUp-world is B". This is CZC §1.2 p. 582 abstracted
+  over the truth-value packaging.
+
+**Operator-specific corollaries** (all derived from the generic one):
+- `minimal_change_forces_notBothUp_off` (universal/Lewis/Stalnaker) —
+  was already there, now factored as a corollary
+- `selectional_minimal_change_forces_notBothUp_off`
+  (Stalnaker + supervaluation, returns `Truth3.true`)
+- `homogeneity_minimal_change_forces_notBothUp_off`
+  (von Fintel/Križ, returns `assertion = some true` with satisfied
+  presupposition)
+
+**Bridge lemmas**: `selectional_eq_true_iff` and `homogeneity_eq_true_iff`
+(both `private`) prove that each operator's "true" verdict reduces to
+the same `∀ w' ∈ closestWorlds, B w'` condition — so the structural
+argument transfers verbatim.
+
+**Concrete predictions on the switches scenario** (also added):
+- `selectional_notBothUp_off_at_uu : selectionalCounterfactual ... = .true`
+- `homogeneity_notBothUp_off_at_uu : homogeneityCounterfactual ... =
+  { presupposition := .satisfied, assertion := some true }`
+
+Now the CZC argument is fully realized in Lean: three closest-worlds
+operators all predict `¬(A ∧ B) > OFF` true on the switches scenario,
+and the abstract forcing theorem shows no choice of similarity
+ordering rescues any of them. Empirically only ~20% of speakers judge
+this true, falsifying all three operators in concert.
+
+Docstring updated to reflect the triple coverage.
+
+## [0.230.151] - 2026-04-21
+
+### Added — `Theories/Semantics/Dynamic/Context.lean` (abstract typeclass family)
+
+New file lifts the multi-field context structure shared across DPL,
+CDRT, ICDRT, bilateral, and presupposition-augmented dynamic semantics
+into a small typeclass family:
+
+| Class | Carries |
+|---|---|
+| `HasIndivDrefs Ctx V W E` | Individual drefs `V` over worlds `W` to `Entity E` (with falsifier ⋆) |
+| `HasPropDrefs Ctx P W` | Propositional drefs `P` to sets of worlds |
+| `HasDiscourseCommitment Ctx P` | Single distinguished commitment-set var |
+| `HasMultiDC Ctx P Speaker` | Per-speaker commitment-set vars (dialogue) |
+
+`instMultiDC_of_single` makes single-speaker the trivial
+`Speaker = Unit` case of multi-speaker.
+
+**Abstract predicates** (parameterized only by the typeclasses):
+`localEntailment`, `veridicalIndiv`, `counterfactualIndiv`, `subsetReq`,
+`decCondition`, `consistentAt`, `accessible`, `definedAt`, `relVarUp`,
+`multiConsistentAt`, `multiAccessible`. Hofmann's cross-field operation
+`relVarUp` is a *definition* combining `iVarUp` and `pLookup` — not a
+new typeclass.
+
+**Abstract theorems**:
+- `counterfactual_blocks_veridical` — typeclass-only proof of @cite{hofmann-2025}
+  bathroom theorem (§3.4): "There isn't a bathroom. #It is upstairs."
+- `multi_counterfactual_blocks_veridical` — multi-speaker generalization
+  blocking veridical anaphor for ANY speaker whose commitment set is
+  disjoint from the negative prejacent.
+
+`Core/Intensional.lean` registers `ICDRTAssignment W E` instances for
+both `HasIndivDrefs` and `HasPropDrefs`, plus five definitional bridge
+theorems (`localEntailment_eq_context`, `veridicalIndiv_eq_context`,
+`subsetReq_eq_context`, `decCondition_eq_context`,
+`relVarUp_eq_context`) showing the abstract predicates agree with the
+ICDRT-specific ones already in the file.
+
+### Scope
+
+Deterministic lookup signature only (`Ctx → V → W → Entity E`).
+Nondeterministic (Charlow-style monadic) and probabilistic (Bayesian)
+families need parallel typeclass families with lifted lookup signatures
+— planned as a separate landing.
+
+## [0.230.150] - 2026-04-21
+
+### Audited — Multi-agent review of Kratzer/Lumping/PremiseSemantic chain (12 fixes)
+
+Comprehensive audit by mathlib-reviewer + linglib-integration-auditor +
+cross-framework-reconciler + linguistics-domain-expert (with verification
+against the @cite{kratzer-2012} PDF) on the work landed in 0.230.140–146.
+Twelve fixes applied:
+
+**Critical (load-bearing claims now backed by theorems):**
+- `Phenomena/Conditionals/Studies/Kratzer2012Lumping.lean`: added
+  `crucialSet_notPa_eq_singleton` (the **full equality**
+  `CrucialSet Fw₀ actual notPa = {{notPa}}`, not just `∋ {notPa}`) and
+  `not_wouldCF_notPa_ad` (the **headline operator-level theorem**
+  `¬ wouldCF Fw₀ Sit.actual notPa ad`). Previously the file proved
+  membership + a follows-failure with the wouldCF connection in prose
+  only; now both are real Lean theorems.
+- Docstring corrected: Kratzer's (10a)/(10b) on p. 128 are
+  MIGHT-counterfactuals (verified against PDF); the file formalizes
+  the WOULD-CF analog of the same lumping argument. Reframed.
+- Docstring adds Non-Redundancy admissibility caveat: `Fw₀ = {pa, paOrAd}`
+  fails @cite{kratzer-2012} p. 132 Non-Redundancy because `pa ⊆ paOrAd`
+  everywhere. Lumping mechanism still demonstrated correctly but the
+  Base Set is technically inadmissible.
+- Docstring adds note that on Paula, `universalCounterfactual` ALSO
+  blocks the spurious prediction; the discriminating power of lumping
+  vs. closest-worlds shows up on @cite{ciardelli-zhang-champollion-2018}'s
+  switches scenario, not Paula. The actual target of Kratzer's §5.4
+  complaint is the maximal-consistent-extension premise semantics
+  (not yet formalized).
+
+**Architecture (`Theories/Semantics/Conditionals/PremiseSemantic.lean`):**
+- `CrucialSet` refactored to `structure IsCrucialSet` with named fields
+  (`subset_insert`, `antecedent_mem`, `consistent`, `lumping_closed`).
+  Eliminates `.2.1`/`.2.2.1`/`.2.2.2` projection chains in consumers.
+  `mem_crucialSet_iff` provides the bridge.
+- `mightCF_iff_not_wouldCF_compl` added as `sorry`-marked TODO with
+  docstring explaining the upward-directedness obstacle to proving
+  the duality @cite{kratzer-2012} p. 125 claims.
+- `antecedent_mem_crucialSet`, `crucialSet_isConsistent`, and
+  `antecedent_not_lumped_into` deleted — replaced by the structure's
+  named projections.
+
+**`Core/Order/SimilarityOrdering.lean`:**
+- `closestWorlds_anti` renamed to `mem_closestWorlds_of_subset`
+  (mathlib convention: not antitonicity-of-a-function, just
+  membership-restriction).
+- `comparativeCloseness` deleted — was a `rfl` re-export wrapper. The
+  `≤[sim, w₀]` notation now points directly at `SimilarityOrdering.closer`.
+- Bare `simp` replaced with `simp only [...]` in `closestWorlds_empty`
+  and `mem_closestWorlds`.
+
+**`Phenomena/Conditionals/Studies/Kratzer2012Lumping.lean`:**
+- `Sit.le` marked `@[reducible]` so case-analysis works directly on
+  `s ≤ t`. Eliminates the 3× repeated workaround
+  `have hs' : Sit.le s ... := hs`.
+- Cross-reference added pointing to CZC2018 as the open-question
+  consumer.
+
+**`Phenomena/Conditionals/Studies/CiardelliZhangChampollion2018.lean`:**
+- Updated to use `mem_closestWorlds_of_subset` (was `closestWorlds_anti`).
+- Cross-reference added pointing to `Kratzer2012Lumping` as the first
+  concrete `wouldCF` instantiation.
+- Bare `simp` in `DecidablePred` instances replaced with `simp only`.
+
+**Wiring (`Linglib.lean`):**
+- `import Linglib.Theories.Semantics.Conditionals.PremiseSemantic` moved
+  from the `Phenomena/Conditionals/Studies/` block (line 1002) to the
+  `Theories/Semantics/Conditionals/` block (alphabetical position
+  between `LeftNested` and `Restrictor`). Layer-discipline cosmetic.
+
 ## [0.230.149] - 2026-04-21
 
 ### Refactored — `Theories/Syntax/Minimalism/Coreference.lean` Bool→Prop migration

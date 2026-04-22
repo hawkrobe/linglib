@@ -57,16 +57,17 @@ open Core.Causal
 export Core.Causal (causallyNecessary)
 
 /-- Semantics of "cause": effect occurred AND cause was necessary.
-    Necessity uses @cite{nadathur-2024} Def 10b (supersituation test). -/
-def causeSem (dyn : CausalDynamics) (background : Situation)
+    Necessity uses @cite{nadathur-2024} Def 10b (supersituation test).
+    Requires `[IsPositive dyn]`. -/
+def causeSem (dyn : CausalDynamics) [hPos : IsPositive dyn] (background : Situation)
     (causeEvent effectEvent : Variable) : Prop :=
   let withCause := background.extend causeEvent true
-  let developed := normalDevelopment dyn withCause
+  let developed := normalDevelopmentPositive dyn hPos.positive withCause
   -- Effect occurred AND cause was necessary
   developed.hasValue effectEvent true = true ∧
   causallyNecessary dyn background causeEvent effectEvent
 
-instance (dyn : CausalDynamics) (background : Situation)
+instance (dyn : CausalDynamics) [IsPositive dyn] (background : Situation)
     (causeEvent effectEvent : Variable) :
     Decidable (causeSem dyn background causeEvent effectEvent) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -81,15 +82,15 @@ instance (dyn : CausalDynamics) (background : Situation)
     Under Def 10b, this follows from the **precondition check**: if c2 is
     sufficient and present in s, then the effect is already causally entailed
     by s (via monotonicity), so the precondition `s ⊭_D ⟨effect, true⟩` fails. -/
-theorem redundant_cause_not_necessary (dyn : CausalDynamics) (s : Situation)
-    (c1 c2 effect : Variable)
+theorem redundant_cause_not_necessary (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (c1 c2 effect : Variable)
     (hne : c1 ≠ c2)
-    (hPos : isPositiveDynamics dyn = true)
     (h_c2_present : s.hasValue c2 true = true)
     (h_c2_sufficient : causallySufficient dyn (s.remove c1) c2 effect) :
     ¬ (causallyNecessary dyn s c1 effect) := by
   -- The effect is already causally entailed by s (via c2 + monotonicity)
-  have h_effect_entailed : (normalDevelopment dyn s).hasValue effect true = true := by
+  have h_effect_entailed : (normalDevelopmentPositive dyn hPos.positive s).hasValue
+      effect true = true := by
     simp only [causallySufficient] at h_c2_sufficient
     have hLE : Situation.trueLE ((s.remove c1).extend c2 true) s := by
       intro v hv
@@ -105,44 +106,43 @@ theorem redundant_cause_not_necessary (dyn : CausalDynamics) (s : Situation)
             exact decide_eq_false hvc1
           simp only [Situation.hasValue, Situation.remove, hbeq] at hv ⊢
           exact hv
-    exact normalDevelopment_trueLE_positive dyn _ _ 100 hPos hLE effect h_c2_sufficient
-  -- Def 10b returns false when effect is already entailed by s
-  unfold causallyNecessary
-  simp only [h_effect_entailed, Bool.or_true, ↓reduceIte]
-  decide
+    -- Monotonicity at the well-founded fixpoint level (no fuel)
+    exact normalDevelopmentPositive_trueLE dyn hPos.positive _ _ hLE effect h_c2_sufficient
+  -- Def 10b precondition fails: effect is already entailed by s
+  intro ⟨⟨_, hPreNotEffect⟩, _, _⟩
+  rw [h_effect_entailed] at hPreNotEffect
+  exact absurd hPreNotEffect (by decide)
 
 /-- Sufficiency does NOT imply necessity (overdetermination). -/
 theorem sufficiency_not_implies_necessity :
-    ∃ (dyn : CausalDynamics) (s : Situation) (cause effect : Variable),
+    ∃ (dyn : CausalDynamics) (_ : IsPositive dyn) (s : Situation) (cause effect : Variable),
       causallySufficient dyn s cause effect ∧
       ¬ (causallyNecessary dyn s cause effect) := by
   -- Witness: disjunctive causation with both causes present
-  let a := mkVar "a"
-  let b := mkVar "b"
-  let c := mkVar "c"
-  let dyn := CausalDynamics.disjunctiveCausation a b c
-  let s := Situation.empty.extend b true  -- b is already present
-  use dyn, s, a, c
-  exact ⟨by native_decide, by native_decide⟩
+  refine ⟨CausalDynamics.disjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c"),
+          inferInstance,
+          Situation.empty.extend (mkVar "b") true,
+          mkVar "a", mkVar "c", ?_, ?_⟩
+  · native_decide
+  · native_decide
 
 /-- Necessity does NOT imply sufficiency (conjunctive causes). -/
 theorem necessity_not_implies_sufficiency :
-    ∃ (dyn : CausalDynamics) (s : Situation) (cause effect : Variable),
+    ∃ (dyn : CausalDynamics) (_ : IsPositive dyn) (s : Situation) (cause effect : Variable),
       causallyNecessary dyn s cause effect ∧
       ¬ (causallySufficient dyn Situation.empty cause effect) := by
   -- Witness: conjunctive causation where only one conjunct is tested
-  let a := mkVar "a"
-  let b := mkVar "b"
-  let c := mkVar "c"
-  let dyn := CausalDynamics.conjunctiveCausation a b c
-  let s := Situation.empty.extend b true  -- b is present
-  use dyn, s, a, c
-  exact ⟨by native_decide, by native_decide⟩
+  refine ⟨CausalDynamics.conjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c"),
+          inferInstance,
+          Situation.empty.extend (mkVar "b") true,
+          mkVar "a", mkVar "c", ?_, ?_⟩
+  · native_decide
+  · native_decide
 
 /-- INUS cause (Mackie): insufficient but necessary part of an
     unnecessary but sufficient condition. -/
-def isINUSCause (dyn : CausalDynamics) (cause effect : Variable)
-    (enablingConditions : Situation) : Prop :=
+def isINUSCause (dyn : CausalDynamics) [IsPositive dyn]
+    (cause effect : Variable) (enablingConditions : Situation) : Prop :=
   -- C + enabling conditions is sufficient
   causallySufficient dyn enablingConditions cause effect ∧
   -- C is necessary given the enabling conditions
@@ -150,7 +150,7 @@ def isINUSCause (dyn : CausalDynamics) (cause effect : Variable)
   -- C alone is NOT sufficient (it needs the enabling conditions)
   ¬ causallySufficient dyn Situation.empty cause effect
 
-instance (dyn : CausalDynamics) (cause effect : Variable)
+instance (dyn : CausalDynamics) [IsPositive dyn] (cause effect : Variable)
     (enablingConditions : Situation) :
     Decidable (isINUSCause dyn cause effect enablingConditions) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
@@ -169,39 +169,40 @@ instance (dyn : CausalDynamics) (cause effect : Variable)
 
     This is the retrospective causal judgment: "did C actually cause E
     in situation s?" -/
-def actuallyCaused (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Prop :=
+def actuallyCaused (dyn : CausalDynamics) [IsPositive dyn]
+    (s : Situation) (cause effect : Variable) : Prop :=
   s.hasValue cause true = true ∧
   causeSem dyn (s.remove cause) cause effect
 
-instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (cause effect : Variable) :
     Decidable (actuallyCaused dyn s cause effect) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- `actuallyCaused` is `causeSem` applied to the actual situation with
     the cause stripped from the background. -/
-theorem actuallyCaused_iff_causeSem (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) :
+theorem actuallyCaused_iff_causeSem (dyn : CausalDynamics) [IsPositive dyn]
+    (s : Situation) (cause effect : Variable) :
     actuallyCaused dyn s cause effect ↔
       (s.hasValue cause true = true ∧ causeSem dyn (s.remove cause) cause effect) :=
   Iff.rfl
 
 /-- Actual causation implies the cause occurred. -/
-theorem actual_cause_cause_occurred (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable)
+theorem actual_cause_cause_occurred (dyn : CausalDynamics) [IsPositive dyn]
+    (s : Situation) (cause effect : Variable)
     (h : actuallyCaused dyn s cause effect) :
     s.hasValue cause true = true := h.1
 
 /-- Actual causation implies the effect occurred. -/
-theorem actual_cause_effect_occurred (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable)
+theorem actual_cause_effect_occurred (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (cause effect : Variable)
     (h : actuallyCaused dyn s cause effect) :
-    (normalDevelopment dyn ((s.remove cause).extend cause true)).hasValue effect true = true :=
+    (normalDevelopmentPositive dyn hPos.positive
+      ((s.remove cause).extend cause true)).hasValue effect true = true :=
   h.2.1
 
 /-- Actual causation implies causal necessity. -/
-theorem actual_cause_necessary (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable)
+theorem actual_cause_necessary (dyn : CausalDynamics) [IsPositive dyn]
+    (s : Situation) (cause effect : Variable)
     (h : actuallyCaused dyn s cause effect) :
     causallyNecessary dyn (s.remove cause) cause effect := h.2.2
 

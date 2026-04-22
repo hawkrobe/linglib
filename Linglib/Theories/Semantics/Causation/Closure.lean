@@ -73,8 +73,8 @@ structure PositiveDynamics where
   dynamics : CausalDynamics
   /-- Proof of positivity -/
   positive : isPositiveDynamics dynamics = true
-  /-- Fuel for fixpoint iteration (default: 100) -/
-  fuel : Nat := 100
+  /-- Fuel for fixpoint iteration (default: `Core.Causal.defaultFuel`). -/
+  fuel : Nat := Core.Causal.defaultFuel
   /-- Fuel is sufficient: normalDevelopment always reaches a fixpoint. -/
   reachesFP : ∀ s, isFixpoint dynamics (normalDevelopment dynamics s fuel) = true
 

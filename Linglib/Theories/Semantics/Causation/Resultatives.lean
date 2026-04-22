@@ -570,9 +570,7 @@ theorem independent_source_disrupts_tightness
       List.all_cons, List.all_nil, Bool.and_true,
       hs2_c, hs2_i, hs2_d, hs2_e]; decide
   -- normalDevelopment reaches round 2 result; effect is true
-  change (normalDevelopment withIndep s 100).hasValue effect true = true
-  rw [show (100 : Nat) = 98 + 2 from rfl,
-      normalDevelopment_fixpoint_after_two _ _ hnfix hfix,
+  rw [normalDevelopment_eq_applyLawsTwice_of_fixpoint _ _ hnfix hfix (by decide),
       hround1, hround2]
   exact hs2_e
 

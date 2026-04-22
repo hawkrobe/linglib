@@ -137,11 +137,9 @@ theorem local_sufficient_not_implies_global :
       conjunctive_sufficient_with_other a b c (by decide) (by decide) (by decide)⟩
   · intro h
     have h1 := h Situation.empty rfl rfl
-    have h2 : causallySufficient (CausalDynamics.conjunctiveCausation a b c)
-        Situation.empty a c = false :=
-      conjunctive_neither_sufficient_alone a b c (by decide) (by decide) (by decide)
-    rw [h2] at h1
-    exact absurd h1 (by decide)
+    -- h1 : causallySufficient ...; h2 : ¬ causallySufficient ...
+    have h2 := conjunctive_neither_sufficient_alone a b c (by decide) (by decide) (by decide)
+    exact h2 h1
 
 /-- Local necessity does NOT imply global necessity
     (@cite{glass-2023b} (21b)).
@@ -234,11 +232,8 @@ theorem conjunctive_not_globally_sufficient (a b c : Variable)
     ¬ GloballySufficient (CausalDynamics.conjunctiveCausation a b c) a c := by
   intro h
   have h1 := h Situation.empty rfl rfl
-  have h2 : causallySufficient (CausalDynamics.conjunctiveCausation a b c)
-      Situation.empty a c = false :=
-    conjunctive_neither_sufficient_alone a b c hab hac hbc
-  rw [h2] at h1
-  exact absurd h1 (by decide)
+  have h2 := conjunctive_neither_sufficient_alone a b c hab hac hbc
+  exact h2 h1
 
 /-- In a conjunctive model, A **is** locally sufficient for C:
     the background {B = true} is a witness.
@@ -425,8 +420,12 @@ theorem von_wright_duality (a b c : Variable) :
     alignment (@cite{glass-2023b} p.16). Necessity (12c) is conversationally
     implicated, not entailed. -/
 def causeSemGlass (dyn : CausalDynamics) (bg : Situation)
-    (cause effect : Variable) : Bool :=
+    (cause effect : Variable) : Prop :=
   causallySufficient dyn bg cause effect
+
+instance (dyn : CausalDynamics) (bg : Situation) (cause effect : Variable) :
+    Decidable (causeSemGlass dyn bg cause effect) :=
+  inferInstanceAs (Decidable (causallySufficient ..))
 
 /-- Glass's *cause* is truth-conditionally identical to
     @cite{nadathur-lauer-2020}'s *make*. Both reduce to
@@ -442,9 +441,7 @@ theorem glass_cause_is_make :
 theorem nadathur_implies_glass {dyn : CausalDynamics} {bg : Situation}
     {cause effect : Variable}
     (h : causeSem dyn bg cause effect) :
-    causeSemGlass dyn bg cause effect = true := by
-  simp only [causeSemGlass, causeSem, Bool.and_eq_true] at *
-  exact h.1
+    causeSemGlass dyn bg cause effect := h.1
 
 /-- In a disjunctive model, the effect is entailed by the background
     when the second cause is already present — the precondition of
@@ -462,8 +459,7 @@ private theorem disjunctive_effect_entailed (x y z : Variable) :
       Situation.hasValue, Situation.extend, Situation.empty,
       Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
     split_ifs <;> simp_all
-  change (normalDevelopment dyn bg 100).hasValue z true = true
-  rw [show (100 : Nat) = 99 + 1 from rfl, normalDevelopment_fixpoint_after_one _ _ hfix]
+  rw [normalDevelopment_eq_applyLawsOnce_of_fixpoint _ _ hfix (by decide)]
   simp only [dyn, bg, applyLawsOnce, CausalDynamics.disjunctiveCausation,
     CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
     List.all_cons, List.all_nil, Bool.and_true,
@@ -481,7 +477,7 @@ set_option maxHeartbeats 800000 in
     of @cite{nadathur-2024} Def 10b fails (effect already entailed). -/
 theorem glass_strictly_weaker :
     ∃ (dyn : CausalDynamics) (bg : Situation) (c e : Variable),
-      causeSemGlass dyn bg c e = true ∧ ¬ (causeSem dyn bg c e) := by
+      causeSemGlass dyn bg c e ∧ ¬ (causeSem dyn bg c e) := by
   let x := mkVar "x"
   let y := mkVar "y"
   let z := mkVar "z"
@@ -492,16 +488,11 @@ theorem glass_strictly_weaker :
     exact sufficiency_monotone_positive dyn Situation.empty x y z
       (disjunctive_isPositive x y z)
       (disjunctive_each_sufficient x y z (by decide))
-  · -- Nadathur: causeSem requires necessity, which fails
-    -- Effect z is already entailed by bg (y fires simple y z)
+  · -- Nadathur: causeSem requires necessity, which fails because effect already entailed
+    intro ⟨_, ⟨_, hPreNotEffect⟩, _, _⟩
     have hEntailed := disjunctive_effect_entailed x y z
-    simp only [causeSem, Bool.and_eq_false_iff]
-    right
-    -- causallyNecessary returns false because effect already entailed
-    show causallyNecessary (CausalDynamics.disjunctiveCausation x y z)
-      (Situation.empty.extend y true) x z = false
-    unfold causallyNecessary
-    simp only [hEntailed, Bool.or_true, ↓reduceIte]
+    rw [hEntailed] at hPreNotEffect
+    exact absurd hPreNotEffect (by decide)
 
 -- ============================================================
 -- § 7. Bridge to Causative and CC-Selection
@@ -544,11 +535,12 @@ theorem glass_cause_equals_completion_mode :
 theorem glass_nadathur_disagreement :
     Causative.cause.toSemantics ≠ Causative.make.toSemantics ∧
     causeSemGlass = Causative.make.toSemantics := by
-  constructor
-  · -- Nadathur: cause ≠ make (witnessed by overdetermination)
-    have ⟨dyn, s, c, e, hne⟩ := truth_conditionally_distinct
-    exact fun h => hne (by simp only [Causative.toSemantics] at h ⊢; rw [h])
-  · rfl
+  refine ⟨?_, rfl⟩
+  -- Nadathur: cause ≠ make (witnessed by overdetermination)
+  intro h
+  have ⟨dyn, s, c, e, hne⟩ := truth_conditionally_distinct
+  apply hne
+  exact congrFun (congrFun (congrFun (congrFun h.symm dyn) s) c) e
 
 -- ============================================================
 -- § 8. Anna Karenina Principle + Sentiment (Sections 5–6, Table 3)

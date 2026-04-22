@@ -1,4 +1,4 @@
-import Linglib.Core.Causal.SEM.Defs
+import Linglib.Core.Causal.SEM.Monotonicity
 
 /-!
 # Structural Equation Model: Queries, Intervention, and Counterfactuals
@@ -7,9 +7,8 @@ import Linglib.Core.Causal.SEM.Defs
 Pearl's `do`-operator and the counterfactual queries built from it.
 
 - `developsToBe` / `developsToTrue` / `factuallyDeveloped` — convenience
-  predicates on the result of `normalDevelopment`
-- `hasDirectLaw` / `hasIndependentSource` / `allVariables` /
-  `innerVariables` — structural graph queries
+  predicates on the result of `normalDevelopmentPositive`
+- `hasDirectLaw` / `hasIndependentSource` — structural graph queries
 - `intervene` / `manipulates` — Pearl's `do(X = val)` and the
   interventionist criterion for causation
 - `causallySufficient` (@cite{nadathur-lauer-2020} Def 23)
@@ -19,6 +18,14 @@ Pearl's `do`-operator and the counterfactual queries built from it.
   precondition + achievability
 - `simple_law_necessity` — structured proof that `c → e` makes `c`
   necessary for `e` against the empty background
+
+**Positivity precondition.** All semantic queries below require an
+`[IsPositive dyn]` typeclass instance. Positive dynamics have a
+well-defined least-fixed-point semantics (via `normalDevelopmentPositive`,
+no fuel parameter); for non-positive dynamics, use the structural
+`preventSem` in `Theories/Semantics/Causation/Prevention.lean` instead.
+The `simple`/`conjunctive`/`disjunctive`/`causalChain` constructors all
+have `IsPositive` instances; ad-hoc dynamics need an explicit instance.
 
 All counterfactual queries are `Prop`-valued with `Decidable` instances
 auto-derived from the underlying `Bool` computations, so they can be
@@ -32,19 +39,21 @@ namespace Core.Causal
 -- § Convenience Predicates
 -- ============================================================
 
-/-- A variable develops to a specific value. -/
-def developsToBe (dyn : CausalDynamics) (s : Situation) (v : Variable) (val : Bool) : Prop :=
-  (normalDevelopment dyn s).hasValue v val = true
+/-- A variable develops to a specific value. Requires `[IsPositive dyn]`. -/
+def developsToBe (dyn : CausalDynamics) [hPos : IsPositive dyn] (s : Situation)
+    (v : Variable) (val : Bool) : Prop :=
+  (normalDevelopmentPositive dyn hPos.positive s).hasValue v val = true
 
-instance (dyn : CausalDynamics) (s : Situation) (v : Variable) (val : Bool) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (v : Variable) (val : Bool) :
     Decidable (developsToBe dyn s v val) :=
   inferInstanceAs (Decidable (_ = true))
 
 /-- A variable becomes true after normal development. -/
-def developsToTrue (dyn : CausalDynamics) (s : Situation) (v : Variable) : Prop :=
+def developsToTrue (dyn : CausalDynamics) [IsPositive dyn]
+    (s : Situation) (v : Variable) : Prop :=
   developsToBe dyn s v true
 
-instance (dyn : CausalDynamics) (s : Situation) (v : Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (v : Variable) :
     Decidable (developsToTrue dyn s v) :=
   inferInstanceAs (Decidable (developsToBe ..))
 
@@ -52,12 +61,12 @@ instance (dyn : CausalDynamics) (s : Situation) (v : Variable) :
 
     Shared primitive for `actuallyCaused` (Necessity.lean) and
     `complementActualized` (Ability.lean). -/
-def factuallyDeveloped (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Prop :=
+def factuallyDeveloped (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (cause effect : Variable) : Prop :=
   s.hasValue cause true = true ∧
-    (normalDevelopment dyn s).hasValue effect true = true
+    (normalDevelopmentPositive dyn hPos.positive s).hasValue effect true = true
 
-instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (cause effect : Variable) :
     Decidable (factuallyDeveloped dyn s cause effect) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
@@ -85,14 +94,7 @@ instance (dyn : CausalDynamics) (cause intermediate : Variable) :
     Decidable (hasIndependentSource dyn cause intermediate) :=
   inferInstanceAs (Decidable (_ = true))
 
-/-- All variables mentioned in a dynamics (preconditions and effects). -/
-def allVariables (dyn : CausalDynamics) : List Variable :=
-  (dyn.laws.flatMap fun law =>
-    law.effect :: law.preconditions.map (·.1)).eraseDups
-
-/-- Inner (endogenous) variables: those appearing as effects of laws. -/
-def innerVariables (dyn : CausalDynamics) : List Variable :=
-  (dyn.laws.map (·.effect)).eraseDups
+-- `allVariables` and `innerVariables` are defined in `Defs.lean`.
 
 -- ============================================================
 -- § Intervention (Pearl's do-operator)
@@ -109,20 +111,38 @@ def intervene (dyn : CausalDynamics) (s : Situation)
   let s' := s.extend target val
   (dyn', s')
 
+/-- Intervention preserves positivity: filtering laws can't make a positive
+    dynamics non-positive. -/
+instance intervene_isPositive (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (target : Variable) (val : Bool) :
+    IsPositive (intervene dyn s target val).1 where
+  positive := by
+    unfold intervene isPositiveDynamics
+    simp only
+    apply List.all_eq_true.mpr
+    intro law hlaw
+    have hMem : law ∈ dyn.laws := (List.mem_filter.mp hlaw).1
+    exact List.all_eq_true.mp hPos.positive law hMem
+
 /-- **Manipulates**: intervening on `cause` changes the value of `effect`.
 
     Compares normal development under do(cause = true) vs do(cause = false).
     If the effect's value differs, then `cause` manipulates `effect`.
 
     This is the interventionist criterion for causation:
-    X causes Y iff there exists an intervention on X that changes Y. -/
-def manipulates (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Prop :=
-  let (dynT, sT) := intervene dyn s cause true
-  let (dynF, sF) := intervene dyn s cause false
-  (normalDevelopment dynT sT).get effect ≠ (normalDevelopment dynF sF).get effect
+    X causes Y iff there exists an intervention on X that changes Y.
 
-instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+    Requires `[IsPositive dyn]`; positivity is preserved through `intervene`. -/
+def manipulates (dyn : CausalDynamics) [IsPositive dyn] (s : Situation)
+    (cause effect : Variable) : Prop :=
+  (normalDevelopmentPositive (intervene dyn s cause true).1
+    (intervene_isPositive dyn s cause true).positive
+    (intervene dyn s cause true).2).get effect ≠
+  (normalDevelopmentPositive (intervene dyn s cause false).1
+    (intervene_isPositive dyn s cause false).positive
+    (intervene dyn s cause false).2).get effect
+
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (cause effect : Variable) :
     Decidable (manipulates dyn s cause effect) :=
   inferInstanceAs (Decidable (_ ≠ _))
 
@@ -132,12 +152,12 @@ instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
 
 /-- **Causal Sufficiency** (@cite{nadathur-lauer-2020}, Definition 23).
     C is causally sufficient for E in situation s iff adding C and
-    developing normally produces E. -/
-def causallySufficient (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Prop :=
-  (normalDevelopment dyn (s.extend cause true)).hasValue effect true = true
+    developing normally produces E. Requires `[IsPositive dyn]`. -/
+def causallySufficient (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (cause effect : Variable) : Prop :=
+  (normalDevelopmentPositive dyn hPos.positive (s.extend cause true)).hasValue effect true = true
 
-instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (cause effect : Variable) :
     Decidable (causallySufficient dyn s cause effect) :=
   inferInstanceAs (Decidable (_ = true))
 
@@ -153,16 +173,17 @@ instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
     also inconsistent jointly) but conservative: it may admit supersituations
     that become inconsistent only through variable interactions. For the small
     models in @cite{nadathur-lauer-2020} this is adequate. -/
-def isConsistentSuper (dyn : CausalDynamics) (base s' : Situation)
-    (innerVars : List Variable) : Prop :=
+def isConsistentSuper (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (base s' : Situation) (innerVars : List Variable) : Prop :=
   (innerVars.all fun x =>
-    let developed := normalDevelopment dyn base
+    let developed := normalDevelopmentPositive dyn hPos.positive base
     match base.get x, s'.get x with
     | none, some true  => !developed.hasValue x false
     | none, some false => !developed.hasValue x true
     | _, _ => true) = true
 
-instance (dyn : CausalDynamics) (base s' : Situation) (innerVars : List Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (base s' : Situation)
+    (innerVars : List Variable) :
     Decidable (isConsistentSuper dyn base s' innerVars) :=
   inferInstanceAs (Decidable (_ = true))
 
@@ -178,26 +199,26 @@ namespace causallyNecessary
 
 /-- **Precondition** of @cite{nadathur-2024} Definition 10b: neither
     `cause` nor `effect` is already entailed by `s` under `dyn`. -/
-def precondition (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Prop :=
-  (normalDevelopment dyn s).hasValue cause true = false ∧
-  (normalDevelopment dyn s).hasValue effect true = false
+def precondition (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (cause effect : Variable) : Prop :=
+  (normalDevelopmentPositive dyn hPos.positive s).hasValue cause true = false ∧
+  (normalDevelopmentPositive dyn hPos.positive s).hasValue effect true = false
 
-instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (cause effect : Variable) :
     Decidable (precondition dyn s cause effect) :=
   inferInstanceAs (Decidable (_ ∧ _))
 
 /-- **Achievability** clause (i) of @cite{nadathur-2024} Definition 10b:
     some consistent supersituation of `s[cause ↦ true]` (with `effect`
     left undetermined) develops to make `effect` true. -/
-def achievable (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Prop :=
+def achievable (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (cause effect : Variable) : Prop :=
   let sCause := s.extend cause true
   ∃ s' ∈ sCause.allExtensions (freeExtensions dyn sCause effect),
     isConsistentSuper dyn sCause s' (innerVariables dyn) ∧
-    (normalDevelopment dyn s').hasValue effect true = true
+    (normalDevelopmentPositive dyn hPos.positive s').hasValue effect true = true
 
-instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (cause effect : Variable) :
     Decidable (achievable dyn s cause effect) :=
   List.decidableBEx _ _
 
@@ -205,14 +226,14 @@ instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
     consistent supersituation of `s` (with `effect` left undetermined)
     that achieves `effect` also has `cause` true — i.e., there is no
     `cause`-free path to the effect. -/
-def noAlternative (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Prop :=
+def noAlternative (dyn : CausalDynamics) [hPos : IsPositive dyn]
+    (s : Situation) (cause effect : Variable) : Prop :=
   ∀ s' ∈ s.allExtensions (freeExtensions dyn s effect),
     isConsistentSuper dyn s s' (innerVariables dyn) →
-    (normalDevelopment dyn s').hasValue effect true = true →
-    (normalDevelopment dyn s').hasValue cause true = true
+    (normalDevelopmentPositive dyn hPos.positive s').hasValue effect true = true →
+    (normalDevelopmentPositive dyn hPos.positive s').hasValue cause true = true
 
-instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (cause effect : Variable) :
     Decidable (noAlternative dyn s cause effect) :=
   List.decidableBAll _ _
 
@@ -234,13 +255,13 @@ end causallyNecessary
     Definition 24. The key improvement: the precondition prevents vacuous
     necessity when cause/effect are already entailed, and achievability
     ensures the effect is reachable before testing but-for. -/
-def causallyNecessary (dyn : CausalDynamics) (s : Situation)
-    (cause effect : Variable) : Prop :=
+def causallyNecessary (dyn : CausalDynamics) [IsPositive dyn]
+    (s : Situation) (cause effect : Variable) : Prop :=
   causallyNecessary.precondition dyn s cause effect ∧
   causallyNecessary.achievable dyn s cause effect ∧
   causallyNecessary.noAlternative dyn s cause effect
 
-instance (dyn : CausalDynamics) (s : Situation) (cause effect : Variable) :
+instance (dyn : CausalDynamics) [IsPositive dyn] (s : Situation) (cause effect : Variable) :
     Decidable (causallyNecessary dyn s cause effect) :=
   inferInstanceAs (Decidable (_ ∧ _ ∧ _))
 
@@ -286,8 +307,8 @@ theorem Situation.allExtensions_preserves_none (s : Situation) (vars : List Vari
       rw [← heq, Situation.extend_get_ne hw]; exact hRest t ht
 
 /-- Any situation is a consistent supersituation of itself. -/
-theorem isConsistentSuper_self (dyn : CausalDynamics) (s : Situation)
-    (vars : List Variable) :
+theorem isConsistentSuper_self (dyn : CausalDynamics) [IsPositive dyn]
+    (s : Situation) (vars : List Variable) :
     isConsistentSuper dyn s s vars := by
   show (vars.all _) = true
   apply List.all_eq_true.mpr
@@ -316,8 +337,7 @@ theorem normalDevelopment_simple (c e : Variable) (s : Situation) :
       simp only [isFixpoint, CausalLaw.simple, List.all_cons, List.all_nil,
                  Bool.and_true, CausalLaw.preconditionsMet,
                  Situation.extend_hasValue_same, beq_self_eq_true, Bool.or_true]
-    change normalDevelopment _ _ 100 = _
-    rw [show (100 : Nat) = 99 + 1 from rfl, normalDevelopment_succ_fix hFix, hApp]
+    rw [normalDevelopment_eq_applyLawsOnce_of_fixpoint _ _ hFix (by decide), hApp]
   · rw [if_neg (by rw [hc]; decide)]
     have hFix : isFixpoint ⟨[CausalLaw.simple c e]⟩ s = true := by
       simp only [isFixpoint, CausalLaw.simple, List.all_cons, List.all_nil,
@@ -355,6 +375,49 @@ private theorem innerVars_simple (c e : Variable) :
   unfold List.eraseDupsBy.loop; simp
   unfold List.eraseDupsBy.loop; simp
 
+/-- The well-founded analog of `normalDevelopment_simple`: same closed-form
+    description, but on `normalDevelopmentPositive`. Proved directly via the
+    `normalDevelopmentPositive` unfolding lemmas — no dependence on fuel. -/
+theorem normalDevelopmentPositive_simple (c e : Variable) (s : Situation) :
+    normalDevelopmentPositive ⟨[CausalLaw.simple c e]⟩
+        (IsPositive.positive (dyn := ⟨[CausalLaw.simple c e]⟩)) s =
+      if s.hasValue c true = true then s.extend e true else s := by
+  rcases Bool.eq_false_or_eq_true (s.hasValue c true) with hc | hc
+  · -- c is true in s
+    by_cases he : s.hasValue e true = true
+    · -- s already has e=true → fixpoint, return s. And s.extend e true = s.
+      have hFix : isFixpoint ⟨[CausalLaw.simple c e]⟩ s = true := by
+        simp only [isFixpoint, CausalLaw.simple, List.all_cons, List.all_nil,
+                   Bool.and_true, CausalLaw.preconditionsMet,
+                   Situation.extend_hasValue_same, hc, he, Bool.or_true]
+      rw [normalDevelopmentPositive_of_fixpoint hFix, if_pos hc]
+      exact (Situation.extend_eq_self he).symm
+    · -- s has c=true, e≠true → not fixpoint. After one step: s.extend e true (fixpoint).
+      have hNotFix : isFixpoint ⟨[CausalLaw.simple c e]⟩ s = false := by
+        have he' : s.hasValue e true = false := by
+          cases h : s.hasValue e true
+          · rfl
+          · exact absurd h he
+        simp only [isFixpoint, CausalLaw.simple, List.all_cons, List.all_nil,
+                   Bool.and_true, CausalLaw.preconditionsMet,
+                   hc, he', Bool.not_true, Bool.false_or, Bool.or_false]
+      have hApp : applyLawsOnce ⟨[CausalLaw.simple c e]⟩ s = s.extend e true := by
+        simp only [applyLawsOnce, CausalLaw.simple, List.foldl, CausalLaw.apply,
+                   CausalLaw.preconditionsMet, List.all_cons, List.all_nil,
+                   Bool.and_true, hc, cond_true]
+      have hFixApp : isFixpoint ⟨[CausalLaw.simple c e]⟩ (s.extend e true) = true := by
+        simp only [isFixpoint, CausalLaw.simple, List.all_cons, List.all_nil,
+                   Bool.and_true, CausalLaw.preconditionsMet,
+                   Situation.extend_hasValue_same, beq_self_eq_true, Bool.or_true]
+      rw [normalDevelopmentPositive_of_not_fixpoint hNotFix, hApp,
+          normalDevelopmentPositive_of_fixpoint hFixApp, if_pos hc]
+  · -- c is false (or none) in s → law doesn't fire → s is fixpoint
+    have hFix : isFixpoint ⟨[CausalLaw.simple c e]⟩ s = true := by
+      simp only [isFixpoint, CausalLaw.simple, List.all_cons, List.all_nil,
+                 Bool.and_true, CausalLaw.preconditionsMet,
+                 hc, Bool.not_false, Bool.true_or]
+    rw [normalDevelopmentPositive_of_fixpoint hFix, if_neg (by rw [hc]; decide)]
+
 private theorem freeExtensions_simple_cause (c e : Variable) :
     freeExtensions ⟨[CausalLaw.simple c e]⟩ (Situation.empty.extend c true) e = [] := by
   rw [freeExtensions, List.filter_eq_nil_iff]
@@ -374,7 +437,7 @@ private theorem e_not_in_freeExtensions_empty (c e : Variable) :
     determined values. -/
 private theorem simple_precondition (c e : Variable) :
     causallyNecessary.precondition ⟨[CausalLaw.simple c e]⟩ Situation.empty c e := by
-  rw [causallyNecessary.precondition, normalDevelopment_simple]
+  rw [causallyNecessary.precondition, normalDevelopmentPositive_simple]
   simp [Situation.empty_hasValue]
 
 /-- For a simple causal law `c → e`, achievability holds against
@@ -387,7 +450,7 @@ private theorem simple_achievable (c e : Variable) :
   · rw [freeExtensions_simple_cause]
     simp [Situation.allExtensions]
   · exact isConsistentSuper_self _ _ _
-  · rw [normalDevelopment_simple]
+  · rw [normalDevelopmentPositive_simple]
     simp [Situation.extend_hasValue_same]
 
 /-- For a simple causal law `c → e`, the but-for clause holds against
@@ -406,12 +469,12 @@ private theorem simple_noAlternative (c e : Variable) :
   -- Note: `Bool.eq_false_or_eq_true` yields `_ = true ∨ _ = false` (true first)
   rcases Bool.eq_false_or_eq_true (s'.hasValue c true) with hc | hc
   · -- c is true in s' → normalDev preserves it → goal holds
-    rw [normalDevelopment_simple, if_pos hc]
+    rw [normalDevelopmentPositive_simple, if_pos hc]
     by_cases hce : c = e
     · subst hce; exact Situation.extend_hasValue_same
     · rw [Situation.extend_hasValue_diff hce]; exact hc
   · -- c is false in s' → law doesn't fire → normalDev s' = s' → e = none, contradicting hE
-    rw [normalDevelopment_simple, if_neg (by rw [hc]; decide)] at hE
+    rw [normalDevelopmentPositive_simple, if_neg (by rw [hc]; decide)] at hE
     have : s'.hasValue e true = false := by
       simp only [Situation.hasValue]; rw [show s'.valuation e = s'.get e from rfl, hGetE]; rfl
     rw [this] at hE; exact absurd hE (by decide)

@@ -327,7 +327,7 @@ the command relations must agree.
 All four theories correctly predict the reflexive coreference patterns.
 -/
 theorem all_theories_capture_reflexive_coreference :
-    MinimalismCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
+    MinimalismCoreference.capturesCoreferenceData reflexiveCoreferenceData ∧
     HPSGCoreference.capturesCoreferenceData reflexiveCoreferenceData = true ∧
     Hudson1990.capturesCoreferenceData reflexiveCoreferenceData = true ∧
     OsborneLi2023.capturesCoreferenceData reflexiveCoreferenceData = true := by
@@ -343,7 +343,7 @@ theorem all_theories_capture_reflexive_coreference :
 **Main Agreement Theorem: Complementary Distribution**
 -/
 theorem all_theories_capture_complementary_distribution :
-    MinimalismCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
+    MinimalismCoreference.capturesCoreferenceData complementaryDistributionData ∧
     HPSGCoreference.capturesCoreferenceData complementaryDistributionData = true ∧
     Hudson1990.capturesCoreferenceData complementaryDistributionData = true ∧
     OsborneLi2023.capturesCoreferenceData complementaryDistributionData = true := by
@@ -359,7 +359,7 @@ theorem all_theories_capture_complementary_distribution :
 **Main Agreement Theorem: Pronominal Disjoint Reference**
 -/
 theorem all_theories_capture_pronominal_disjoint_reference :
-    MinimalismCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
+    MinimalismCoreference.capturesCoreferenceData pronominalDisjointReferenceData ∧
     HPSGCoreference.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
     Hudson1990.capturesCoreferenceData pronominalDisjointReferenceData = true ∧
     OsborneLi2023.capturesCoreferenceData pronominalDisjointReferenceData = true := by

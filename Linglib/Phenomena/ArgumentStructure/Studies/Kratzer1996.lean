@@ -100,11 +100,11 @@ def middleTree : SyntacticObject :=
 
 /-- Agent c-commands theme in the transitive. -/
 theorem transitive_agent_ccommands_theme :
-    cCommandsInB transitiveTree DP_john_t DP_vase_t = true := by native_decide
+    cCommandsIn transitiveTree DP_john_t DP_vase_t := by native_decide
 
 /-- Theme does NOT c-command agent. -/
 theorem transitive_theme_not_ccommands_agent :
-    cCommandsInB transitiveTree DP_vase_t DP_john_t = false := by native_decide
+    ¬ cCommandsIn transitiveTree DP_vase_t DP_john_t := by native_decide
 
 /-- Anticausative contains theme but no agent DP. -/
 theorem anticausative_contains_theme :

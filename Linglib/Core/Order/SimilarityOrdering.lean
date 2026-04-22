@@ -28,8 +28,8 @@ in `Theories/Semantics/Conditionals/`, by alternative-sensitive operators
 - `isCentered` — strong centering: `w` is the unique closest world to itself
 - `candidateSelections` — the set of selection-function candidates induced
   by the ordering (bridge to Stalnaker selection)
-- `comparativeCloseness` — pairwise binary form of `closer`, with notation
-  `w₁ ≤[sim, w₀] w₂` matching @cite{lewis-1973}
+- `≤[sim, w₀]` notation: `w₁ ≤[sim, w₀] w₂` reads "`w₁` is at least as
+  similar to `w₀` as `w₂` is" (@cite{lewis-1973}-style notation)
 
 ## Connection to selection functions
 
@@ -112,7 +112,7 @@ def closestWorlds [DecidableEq W] (sim : SimilarityOrdering W) (w₀ : W)
 theorem closestWorlds_empty [DecidableEq W] (sim : SimilarityOrdering W)
     (w₀ : W) :
     sim.closestWorlds w₀ ∅ = ∅ := by
-  simp [closestWorlds]
+  simp only [closestWorlds, Finset.filter_empty]
 
 theorem closestWorlds_subset [DecidableEq W] (sim : SimilarityOrdering W)
     (w₀ : W) (A : Finset W) :
@@ -123,19 +123,20 @@ theorem mem_closestWorlds [DecidableEq W] (sim : SimilarityOrdering W)
     (w₀ : W) (A : Finset W) (w' : W) :
     w' ∈ sim.closestWorlds w₀ A ↔
       w' ∈ A ∧ ∀ w'' ∈ A, sim.closer w₀ w' w'' ∨ ¬sim.closer w₀ w'' w' := by
-  simp [closestWorlds, Finset.mem_filter]
+  simp only [closestWorlds, Finset.mem_filter]
 
-/-- **Antitonicity of `closestWorlds` under shrinking the candidate set.**
-    If `B ⊆ A` and `w` is a closest `A`-world that lies in `B`, then `w`
-    is also a closest `B`-world. (Restricting to fewer competitors can
-    only preserve, never lose, "closest" status.)
+/-- **Closest-world membership is preserved when restricting to a
+    subset.** If `B ⊆ A` and `w` is a closest `A`-world that lies in
+    `B`, then `w` is also a closest `B`-world. (Restricting to fewer
+    competitors can only preserve, never lose, "closest" status.)
 
     This is the structural lemma underlying the
     @cite{ciardelli-zhang-champollion-2018} §1.2 argument that any
     minimal-change semantics inherits the switches falsification: at the
     actual world, the closest worlds in `A̅ ∪ B̅` decompose into closest
     worlds in `A̅` or `B̅` individually. -/
-theorem closestWorlds_anti [DecidableEq W] (sim : SimilarityOrdering W)
+theorem mem_closestWorlds_of_subset [DecidableEq W]
+    (sim : SimilarityOrdering W)
     {w₀ w : W} {A B : Finset W} (hBA : B ⊆ A)
     (hw : w ∈ sim.closestWorlds w₀ A) (hwB : w ∈ B) :
     w ∈ sim.closestWorlds w₀ B := by
@@ -162,14 +163,10 @@ def candidateSelections {W : Type*} (sim : SimilarityOrdering W)
   let pWorlds := A ∩ domain
   { w' ∈ pWorlds | ∀ w'' ∈ pWorlds, sim.closer w w' w'' }
 
-/-- **Comparative closeness**: pairwise form of `closer` for use with
-    @cite{lewis-1973}-style notation. `w₁ ≤[sim, w₀] w₂` reads "`w₁` is
-    at least as similar to `w₀` as `w₂` is". -/
-def comparativeCloseness {W : Type*} (sim : SimilarityOrdering W)
-    (w₀ w₁ w₂ : W) : Prop :=
-  sim.closer w₀ w₁ w₂
-
-@[inherit_doc] notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ =>
-  comparativeCloseness sim w₀ w₁ w₂
+/-- **Comparative-closeness notation** (@cite{lewis-1973}): `w₁ ≤[sim, w₀] w₂`
+    reads "`w₁` is at least as similar to `w₀` as `w₂` is". A direct
+    @cite{lewis-1973}-style alias for `sim.closer w₀ w₁ w₂`. -/
+notation:50 w₁ " ≤[" sim "," w₀ "] " w₂ =>
+  SimilarityOrdering.closer sim w₀ w₁ w₂
 
 end Core.Order

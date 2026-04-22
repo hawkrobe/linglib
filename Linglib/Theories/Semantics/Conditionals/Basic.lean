@@ -37,7 +37,7 @@ namespace Semantics.Conditionals
 open Core.CommonGround (ContextSet)
 open Core.Mood (GramMood)
 open _root_.Core (SelectionFunction selectionPrefers)
-open Core.Order (SimilarityOrdering candidateSelections comparativeCloseness)
+open Core.Order (SimilarityOrdering candidateSelections)
 
 -- Material Conditional
 
@@ -231,67 +231,14 @@ theorem variably_strict_implies_material {W : Type*} (sim : SimilarityOrdering W
       have ⟨h_closer, _⟩ := h_centered w w' h_eq
       exact h_q_close w hw_in_pWorlds h_closer
 
--- Kratzer-Style Conditionals (Modal Base + Ordering Source)
-
-/-!
-## Kratzer Conditionals
-@cite{nadathur-lauer-2020} @cite{stalnaker-1968}
-
-This section provides a **polymorphic, Set-based** version of Kratzer's
-conditional semantics for use in mathematical proofs.
-
-For the **computable, List-based** version with concrete examples and
-proven properties (preorder, duality, K axiom, etc.), see:
-  `Linglib.Theories.Semantics.Modality.Kratzer`
-
-Both use the same CORRECT subset-based ordering from @cite{kratzer-1981}:
-  w₁ ≤_A w₂ iff {p ∈ A : w₂ ∈ p} ⊆ {p ∈ A : w₁ ∈ p}
--/
-
-/--
-Kratzer's semantics for conditionals uses:
-1. A modal base f : W → Set W (epistemic, circumstantial, etc.)
-2. An ordering source g : W → Set (Set W) (stereotypical, deontic, etc.)
-
-The conditional "if p, then q" is true at w iff
-q holds at the "best" p-worlds according to the ordering.
--/
-structure KratzerContext (W : Type*) where
-  /-- Modal base: accessible worlds from w -/
-  modalBase : W → Set W
-  /-- Ordering source: propositions that induce a preference -/
-  orderingSource : W → Set (Set W)
-
-/--
-Kratzer's ordering relation (Set-based version for proofs).
-
-w₁ is at least as good as w₂ according to ordering source `os` iff
-every proposition in `os` satisfied by w₂ is also satisfied by w₁.
-
-This is the **correct** subset-based ordering from @cite{kratzer-1981}.
-Equivalent to `atLeastAsGoodAs` in `Kratzer.lean` (which uses Lists for computation).
-
-**NOT** a counting-based ordering (which would be incorrect).
--/
-def kratzerBetter {W : Type*} (os : Set (Set W)) (w₁ w₂ : W) : Prop :=
-  { p ∈ os | p w₂ } ⊆ { p ∈ os | p w₁ }
-
-/--
-Kratzer-style conditional semantics.
-
-"If p, then q" is true at w iff at the best p-worlds (in the modal base,
-according to the ordering source), q holds.
-
-Best worlds are those maximal under `kratzerBetter`: w' is best if
-for all w'' in pWorlds, if w' ≤ w'' then w'' ≤ w' (i.e., they're equivalent).
--/
-def kratzerConditional {W : Type*} (ctx : KratzerContext W) (p q : Set W) : Set W :=
-  λ w =>
-    let accessible := ctx.modalBase w
-    let pWorlds := { w' ∈ accessible | p w' }
-    let os := ctx.orderingSource w
-    -- All p-worlds that are "best" according to the ordering source satisfy q
-    ∀ w' ∈ pWorlds, (∀ w'' ∈ pWorlds, kratzerBetter os w' w'' → kratzerBetter os w'' w' → q w'')
+/-! `KratzerContext`/`kratzerBetter`/`kratzerConditional` previously
+    lived here as a Set-based parallel to the canonical List-based
+    Kratzer machinery in `Theories/Semantics/Modality/Kratzer/`. They
+    were a third parallel formalization (alongside Kratzer/Operators
+    and the late lumping CF in `Conditionals/PremiseSemantic.lean`)
+    and have been deleted in favour of `Restrictor.conditionalNecessity`
+    (which calls the canonical `Kratzer.necessity` directly). The sole
+    consumer (`LeftNested.lean`) now uses `conditionalNecessity`. -/
 
 -- (Indicative/subjunctive definitions moved below `SelectionFunction`,
 --  see `## Stalnakerian indicative/subjunctive split` further down.)
@@ -319,8 +266,9 @@ opened above. Field name is `sel`; axioms are `inclusion` (Stalnaker's
 underlies @cite{cariani-santorio-2018}'s selectional *will*; unifying
 the two avoids a duplicate type. -/
 
-/-! `candidateSelections`, `comparativeCloseness`, and the notation
-    `w₁ ≤[sim, w₀] w₂` live in `Core.Order.SimilarityOrdering`.
+/-! `candidateSelections` and the @cite{lewis-1973}-style notation
+    `w₁ ≤[sim, w₀] w₂` (now an alias for `sim.closer w₀ w₁ w₂`) live
+    in `Core.Order.SimilarityOrdering`.
 
     `SimilarityOrdering.closestWorlds` and its three companion lemmas
     (`closestWorlds_empty`, `closestWorlds_subset`, `mem_closestWorlds`)

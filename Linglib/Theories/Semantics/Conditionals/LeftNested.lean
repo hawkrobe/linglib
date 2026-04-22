@@ -35,6 +35,7 @@ import Mathlib.Data.Set.Basic
 import Mathlib.Data.Fintype.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
 import Linglib.Theories.Semantics.Conditionals.Basic
+import Linglib.Theories.Semantics.Conditionals.Restrictor
 
 namespace Semantics.Conditionals
 
@@ -83,11 +84,16 @@ def semantics (lnc : LNC W) : Set W :=
 /--
 Full LNC semantics using Kratzer-style conditionals.
 
-The outer conditional uses the Kratzer semantics with modal base and
-ordering source, while the inner conditional is the restrictor.
--/
-def kratzerSemantics (ctx : KratzerContext W) (lnc : LNC W) : Set W :=
-  kratzerConditional ctx lnc.innerConditional lnc.outerConsequent
+The outer conditional uses the canonical
+`Semantics.Conditionals.Restrictor.conditionalNecessity` (Kratzer's
+restrictor analysis: if-clauses restrict the modal base, then necessity
+quantifies over best worlds), with the inner conditional as the
+restrictor. -/
+def kratzerSemantics (f : Semantics.Modality.Kratzer.ModalBase W)
+    (g : Semantics.Modality.Kratzer.OrderingSource W) (lnc : LNC W) :
+    Set W :=
+  fun w => Semantics.Conditionals.Restrictor.conditionalNecessity f g
+    lnc.innerConditional lnc.outerConsequent w
 
 end LNC
 
@@ -201,9 +207,12 @@ theorem modal_lnc_prefers_pc {W : Type*} (ds : DiscourseState W) (lnc : LNC W)
 The LNC semantics is compositionally derived from Kratzer's conditional
 semantics - it's not stipulated specially for LNCs.
 -/
-theorem lnc_grounded {W : Type*} (ctx : KratzerContext W) (lnc : LNC W) :
-    lnc.kratzerSemantics ctx =
-    kratzerConditional ctx lnc.innerConditional lnc.outerConsequent := rfl
+theorem lnc_grounded {W : Type*}
+    (f : Semantics.Modality.Kratzer.ModalBase W)
+    (g : Semantics.Modality.Kratzer.OrderingSource W) (lnc : LNC W) :
+    lnc.kratzerSemantics f g =
+    fun w => Semantics.Conditionals.Restrictor.conditionalNecessity f g
+      lnc.innerConditional lnc.outerConsequent w := rfl
 
 -- Extended LNC with Metadata
 

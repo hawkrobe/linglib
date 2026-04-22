@@ -174,11 +174,11 @@ theorem same_modal_different_entailments :
 theorem root_pfv_matches_causal_frame :
     actualityEntailmentPredicted .belowAsp .perfective = true ∧
     (∀ (f : CausalFrame World) (w : World),
-      f.actualityWithAspect .perfective w =
-        (f.sufficientAt w && f.actualizedAt w)) := by
-  exact ⟨rfl, λ f w => by
-    simp only [CausalFrame.actualityWithAspect]
-    cases f.actualization <;> rfl⟩
+      f.actualityWithAspect .perfective w ↔
+        (f.sufficientAt w ∧ f.actualizedAt w)) := by
+  refine ⟨rfl, λ f w => ?_⟩
+  simp only [CausalFrame.actualityWithAspect]
+  cases f.actualization <;> rfl
 
 /-- Root + IMPF matches CausalFrame (aspectual mode): imperfective produces
     sufficiency only, and the theory predicts no actuality entailment. -/
@@ -186,7 +186,7 @@ theorem root_impfv_matches_causal_frame :
     actualityEntailmentPredicted .belowAsp .imperfective = false ∧
     (∀ (f : CausalFrame World) (w : World),
       f.actualization = .aspectual →
-      f.actualityWithAspect .imperfective w = f.sufficientAt w) :=
+      (f.actualityWithAspect .imperfective w ↔ f.sufficientAt w)) :=
   ⟨rfl, λ _ _ h => by simp only [CausalFrame.actualityWithAspect, h]⟩
 
 /-- The causal model (Nadathur) and the structural account (Hacquard) agree:
@@ -269,10 +269,10 @@ theorem three_way_interaction :
     actualityEntailmentPredicted .belowAsp .perfective = true ∧
     -- Prediction: epistemic + PFV → no AE
     actualityEntailmentPredicted .aboveAsp .perfective = false ∧
-    -- Validation: PFV = sufficiency ∧ actualization for any CausalFrame
+    -- Validation: PFV ↔ sufficiency ∧ actualization for any CausalFrame
     (∀ (f : CausalFrame World) (w : World),
-      f.actualityWithAspect .perfective w =
-        (f.sufficientAt w && f.actualizedAt w)) :=
+      f.actualityWithAspect .perfective w ↔
+        (f.sufficientAt w ∧ f.actualizedAt w)) :=
   ⟨rfl, rfl, rfl, rfl, rfl, λ f _ => by
     simp only [CausalFrame.actualityWithAspect]; cases f.actualization <;> rfl⟩
 

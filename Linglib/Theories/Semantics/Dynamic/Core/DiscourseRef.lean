@@ -115,6 +115,16 @@ def toOption : Entity E → Option E
 instance [Inhabited E] : Inhabited (Entity E) where
   default := .star
 
+/-- `Entity` is a functor: `f <$> .some e = .some (f e)` and `f <$> .star = .star`.
+This is just `Option`'s functor structure under the renaming
+`some ↔ Entity.some`, `none ↔ Entity.star`. Used by the
+effect-functor-parameterized lookup interface in
+`Theories/Semantics/Dynamic/Context.lean`. -/
+instance : Functor Entity where
+  map f
+    | .some e => .some (f e)
+    | .star => .star
+
 instance [Fintype E] : Fintype (Entity E) where
   elems := Finset.cons .star (Finset.map ⟨Entity.some, λ _ _ h => by cases h; rfl⟩ Finset.univ)
     (by simp [Finset.mem_map])

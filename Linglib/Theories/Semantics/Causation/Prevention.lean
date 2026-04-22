@@ -8,11 +8,32 @@ import Linglib.Theories.Semantics.Causation.Necessity
 `preventSem` formalizes the SEM semantics of "prevent": B := ¬A
 (Figure 4, eq. 4a). The preventer blocks an effect that would otherwise occur.
 
-Prevention requires **inhibitory dynamics** — causal laws with negative
-preconditions. This is proved by `preventSem_impossible_positive` (prevention
-is vacuous in positive-only dynamics) and `preventSem_possible_inhibitory`
-(prevention works with `CausalDynamics.prevention`, which wraps
-`CausalLaw.inhibitory`).
+## Definition
+
+Prevention is **structural**: "X prevents Y in background `bg`" means
+the dynamics contains an inhibitory law L such that
+
+  (i) L's effect is Y with effectValue = true
+  (ii) `(X, false)` is a precondition of L (X must be absent for L to fire)
+  (iii) every other precondition of L is met by `bg`
+
+Under this definition, X being present blocks L from firing (Y stays
+undetermined), while X being absent allows L to fire (Y becomes true).
+
+This is a **direct-prevention** semantics: chains like `B := ¬A, C := B`
+where A indirectly prevents C are NOT captured here. That kind of
+indirect prevention requires a richer semantics over chains.
+
+## Why structural, not fixpoint-based?
+
+Earlier versions defined `preventSem` via two `normalDevelopment` calls
+under contrasting interventions. That has a hidden correctness issue:
+`normalDevelopment` is fuel-bounded and only well-defined for *positive*
+(monotone) dynamics — for non-positive cases like prevention, the
+function can silently return iteration-100 state on dynamics with no
+fixpoint. The structural definition avoids that bog by reading prevention
+off the law list directly: decidable, terminating, and semantically
+crisp on the inhibitory laws that prevention actually requires.
 -/
 
 namespace Semantics.Causation.Prevention
@@ -21,105 +42,75 @@ open Core.Causal
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 
-/-- Semantics of "prevent" (@cite{sloman-barbey-hotaling-2009} Figure 4).
+/-- **Structural prevention semantics** (@cite{sloman-barbey-hotaling-2009} Figure 4).
 
-    "X prevented Y" is true iff:
-    1. With the preventer present, the effect does NOT occur
-    2. Without the preventer, the effect WOULD have occurred
-
-    This is the dual of `causeSem` (@cite{nadathur-lauer-2020}): cause
-    asserts the effect depends on the cause being present; prevent asserts
-    the effect depends on the preventer being absent.
-
-    Requires inhibitory dynamics (`CausalDynamics.prevention`);
-    vacuous for positive dynamics (`preventSem_impossible_positive`). -/
+    "X prevented Y in background `bg`" iff `dyn` contains an inhibitory
+    law for `effect` whose firing is blocked by `preventer` being true. -/
 def preventSem (dyn : CausalDynamics) (bg : Situation)
     (preventer effect : Variable) : Prop :=
-  let devWith := normalDevelopment dyn (bg.extend preventer true)
-  let devWithout := normalDevelopment dyn (bg.extend preventer false)
-  -- Effect blocked with preventer, would occur without
-  devWith.hasValue effect true = false ∧ devWithout.hasValue effect true = true
+  ∃ law ∈ dyn.laws,
+    law.effect = effect ∧
+    law.effectValue = true ∧
+    (preventer, false) ∈ law.preconditions ∧
+    ∀ p ∈ law.preconditions, p.1 ≠ preventer → bg.hasValue p.1 p.2 = true
 
 instance (dyn : CausalDynamics) (bg : Situation) (preventer effect : Variable) :
     Decidable (preventSem dyn bg preventer effect) :=
-  inferInstanceAs (Decidable (_ ∧ _))
-
-/-- `prevent` and `cause` are mutually exclusive: they cannot both
-    hold for the same variable in the same background.
-
-    `causeSem` requires the effect to occur WITH the cause, while
-    `preventSem` requires the effect NOT to occur WITH the preventer.
-    These are contradictory first conjuncts. -/
-theorem prevent_cause_exclusive
-    (dyn : CausalDynamics) (bg : Situation) (x e : Variable) :
-    ¬(preventSem dyn bg x e ∧ causeSem dyn bg x e) := by
-  intro ⟨hp, hc⟩
-  -- preventSem says effect = false with cause; causeSem says effect = true with cause
-  rw [hp.1] at hc
-  exact absurd hc.1 (by decide)
+  List.decidableBEx _ _
 
 /-- **Prevention is impossible in positive-only dynamics.**
 
-    In positive dynamics (all preconditions and effects are positive),
-    `normalDevelopment` is monotone: adding variables to a situation can
-    only add true values, never remove them. Since
-    `trueLE (bg.extend x false) (bg.extend x true)` holds (vacuously
-    for `x`, trivially for other variables), monotonicity gives:
-
-      devWithout.hasValue e true → devWith.hasValue e true
-
-    But `preventSem` requires `¬devWith.hasValue e true ∧ devWithout.hasValue e true`,
-    which contradicts monotonicity. Prevention requires inhibitory
-    (non-positive) causal laws — the structural equation must contain
-    negation (@cite{sloman-barbey-hotaling-2009} eq. 4a: B := ¬A). -/
+    Positive dynamics have no precondition with value `false`, so no law
+    can have `(preventer, false)` in its preconditions — hence no
+    structural prevention. -/
 theorem preventSem_impossible_positive
     (dyn : CausalDynamics) (bg : Situation)
     (x e : Variable) (hPos : isPositiveDynamics dyn = true) :
     ¬ (preventSem dyn bg x e) := by
-  intro ⟨hWithFalse, hWithoutTrue⟩
-  -- Key: trueLE (bg.extend x false) (bg.extend x true)
-  have hLE : Situation.trueLE (bg.extend x false) (bg.extend x true) := by
-    intro v hv
-    by_cases hv_eq : v = x
-    · subst hv_eq; simp [Situation.extend_hasValue_same] at hv
-    · rwa [Situation.extend_hasValue_diff hv_eq] at hv ⊢
-  -- Monotonicity: devWithout ⊑ devWith
-  have hMono := normalDevelopment_trueLE_positive dyn _ _ 100 hPos hLE
-  -- devWithout has e=true → by monotonicity, devWith has e=true → contradicts hWithFalse
-  have hWith := hMono e hWithoutTrue
-  rw [hWithFalse] at hWith
-  exact absurd hWith (by decide)
+  intro ⟨law, hLawMem, _hEffect, _hEffVal, hPrecMem, _hOther⟩
+  -- positivity says every law's preconditions have .2 = true
+  unfold isPositiveDynamics at hPos
+  have hLawPos := List.all_eq_true.mp hPos law hLawMem
+  rw [Bool.and_eq_true] at hLawPos
+  obtain ⟨hPosPrec, _⟩ := hLawPos
+  -- (x, false) ∈ preconditions, but each precondition has .2 = true
+  have hAllTrue : (x, false).2 = true := List.all_eq_true.mp hPosPrec (x, false) hPrecMem
+  -- (x, false).2 = false definitionally; so false = true, contradiction
+  exact Bool.false_ne_true hAllTrue
 
-/-- Witness: `preventSem` CAN return true with inhibitory dynamics.
-
-    Uses `CausalDynamics.prevention` (@cite{sloman-barbey-hotaling-2009}
-    eq. 4a: B := ¬A), which wraps `CausalLaw.inhibitory`: if x is absent,
-    produce e. The law fires when x=false but not when x=true, making x
-    a preventer of e.
-
-    Together with `preventSem_impossible_positive`, this shows that the
-    positivity constraint is exact: prevention requires inhibition, and
-    inhibition suffices for prevention. -/
+/-- Witness: `preventSem` holds with the canonical prevention dynamics. -/
 theorem preventSem_possible_inhibitory :
     ∃ (dyn : CausalDynamics) (bg : Situation) (x e : Variable),
       isPositiveDynamics dyn = false ∧
       preventSem dyn bg x e := by
   refine ⟨CausalDynamics.prevention (mkVar "x") (mkVar "e"),
-          Situation.empty, mkVar "x", mkVar "e", ?_, ?_⟩ <;> decide
+          Situation.empty, mkVar "x", mkVar "e", ?_, ?_⟩
+  · decide
+  · refine ⟨CausalLaw.inhibitory (mkVar "x") (mkVar "e"),
+            ?_, rfl, rfl, ?_, ?_⟩
+    · simp [CausalDynamics.prevention]
+    · simp [CausalLaw.inhibitory]
+    · -- ∀ p ∈ [(x, false)], p.1 ≠ x → ...; but only p = (x, false), and (x, false).1 = x
+      intro p hp hne
+      simp [CausalLaw.inhibitory] at hp
+      -- hp : p = (mkVar "x", false), so p.1 = mkVar "x", contradicting hne
+      subst hp
+      exact absurd rfl hne
 
-/-- `preventSem` returns true for the canonical prevention model.
-
-    @cite{sloman-barbey-hotaling-2009} eq. 4a: B := ¬A.
-    `CausalDynamics.prevention x e` wraps `CausalLaw.inhibitory x e`:
-    if x is absent, e fires. So x's presence blocks e (preventSem). -/
+/-- `preventSem` holds for the canonical prevention model. -/
 theorem preventSem_prevention_model :
     let x := mkVar "x"; let e := mkVar "e"
     preventSem (CausalDynamics.prevention x e) Situation.empty x e := by
-  decide
+  refine ⟨CausalLaw.inhibitory (mkVar "x") (mkVar "e"),
+          ?_, rfl, rfl, ?_, ?_⟩
+  · simp [CausalDynamics.prevention]
+  · simp [CausalLaw.inhibitory]
+  · intro p hp hne
+    simp [CausalLaw.inhibitory] at hp
+    subst hp
+    exact absurd rfl hne
 
-/-- The prevention model is not positive (it has an inhibitory law).
-    The precondition `(x, false)` in `CausalLaw.inhibitory` violates
-    `isPositiveDynamics`, which requires all precondition values to be `true`. -/
+/-- The prevention model is not positive (it has an inhibitory law). -/
 theorem prevention_not_positive :
     let x := mkVar "x"; let e := mkVar "e"
     isPositiveDynamics (CausalDynamics.prevention x e) = false := by
@@ -128,12 +119,24 @@ theorem prevention_not_positive :
 /-- Prevention with accessory: B := ¬A ∧ X.
 
     @cite{sloman-barbey-hotaling-2009} eq. 4b: the effect requires both
-    the preventer's absence AND an accessory cause. Prevents only when
-    the accessory is active. -/
+    the preventer's absence AND an accessory cause. -/
 theorem preventSem_with_accessory :
     let x := mkVar "x"; let acc := mkVar "acc"; let e := mkVar "e"
     preventSem (CausalDynamics.preventionWithAccessory x acc e)
       (Situation.empty.extend acc true) x e := by
-  decide
+  refine ⟨{ preconditions := [(mkVar "x", false), (mkVar "acc", true)],
+            effect := mkVar "e", effectValue := true },
+          ?_, rfl, rfl, ?_, ?_⟩
+  · simp [CausalDynamics.preventionWithAccessory]
+  · simp
+  · intro p hp hne
+    simp at hp
+    rcases hp with hpx | hpacc
+    · -- p = (x, false); contradicts p.1 ≠ x
+      subst hpx
+      exact absurd rfl hne
+    · -- p = (acc, true); bg has acc=true
+      subst hpacc
+      simp [Situation.hasValue, Situation.extend]
 
 end Semantics.Causation.Prevention

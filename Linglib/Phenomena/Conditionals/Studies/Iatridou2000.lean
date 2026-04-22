@@ -1,7 +1,5 @@
-import Linglib.Theories.Semantics.Conditionals.Iatridou
-import Linglib.Theories.Semantics.Tense.CounterfactualTense
-import Linglib.Core.Context.Tower
-import Linglib.Core.Context.Shifts
+import Linglib.Theories.Semantics.Modality.Exclusion
+import Linglib.Core.Lexical.VerbClass
 
 /-!
 # @cite{iatridou-2000} — Morphological Data @cite{iatridou-2000}
@@ -36,6 +34,124 @@ Theory-neutral cross-linguistic data on counterfactual morphology from
 -/
 
 namespace Iatridou2000
+
+open Semantics.Modality.Exclusion
+open Core.Verbs (VendlerClass)
+
+-- ════════════════════════════════════════════════════════════════
+-- § @cite{iatridou-2000}'s counterfactual typology
+-- ════════════════════════════════════════════════════════════════
+
+/-- @cite{iatridou-2000}'s predicate classification for counterfactual
+gating.
+
+The distinction between FLV and PresCF (both with 1 modal ExclF)
+depends on the predicate type:
+- ILPs and statives yield PresCF ("If he knew French,...")
+- Telic predicates yield FLV ("If he were to leave tomorrow,...") -/
+inductive IatridouPredType where
+  /-- Individual-Level Predicate: "be tall", "know French" -/
+  | ilp
+  /-- Stage-Level stative: "be sick", "be available" -/
+  | stative
+  /-- Telic predicate: "arrive", "build a house" -/
+  | telic
+  deriving DecidableEq, Repr
+
+/-- Map Vendler classes to @cite{iatridou-2000}'s predicate
+classification.
+
+States and activities map to stative; achievements and accomplishments
+map to telic. -/
+def VendlerClass.toIatridou : VendlerClass → IatridouPredType
+  | .state | .activity | .semelfactive => .stative
+  | .achievement | .accomplishment => .telic
+
+/-- @cite{iatridou-2000}'s three counterfactual conditional types,
+distinguished by the number of ExclFs and predicate type. -/
+inductive CounterfactualType where
+  /-- Future Less Vivid: 1 ExclF modal + telic predicate -/
+  | flv
+  /-- Present Counterfactual: 1 ExclF modal + ILP/stative -/
+  | presCF
+  /-- Past Counterfactual: 2 ExclFs (modal + temporal) -/
+  | pastCF
+  deriving DecidableEq, Repr
+
+/-- The number of ExclFs required for each counterfactual type. -/
+def CounterfactualType.exclFCount : CounterfactualType → Nat
+  | .flv | .presCF => 1
+  | .pastCF => 2
+
+/-- Classify a counterfactual from its ExclF configuration and
+predicate type. Returns `none` if there is no modal ExclF
+(a non-counterfactual sentence). -/
+def classifyCounterfactual (modalExcl temporalExcl : Bool)
+    (predType : IatridouPredType) : Option CounterfactualType :=
+  match modalExcl, temporalExcl with
+  | true, true => some .pastCF
+  | true, false => match predType with
+    | .telic => some .flv
+    | .ilp | .stative => some .presCF
+  | false, _ => none
+
+/-- Telic predicate + 1 modal ExclF = FLV. -/
+theorem telic_one_exclF_is_flv :
+    classifyCounterfactual true false .telic = some .flv := rfl
+
+/-- ILP + 1 modal ExclF = PresCF. -/
+theorem ilp_one_exclF_is_presCF :
+    classifyCounterfactual true false .ilp = some .presCF := rfl
+
+/-- Stative + 1 modal ExclF = PresCF. -/
+theorem stative_one_exclF_is_presCF :
+    classifyCounterfactual true false .stative = some .presCF := rfl
+
+/-- Two ExclFs = PastCF regardless of predicate type. -/
+theorem two_exclFs_is_pastCF (pred : IatridouPredType) :
+    classifyCounterfactual true true pred = some .pastCF := by
+  cases pred <;> rfl
+
+/-- No modal ExclF = not a counterfactual. -/
+theorem no_modal_not_cf (temporalExcl : Bool) (pred : IatridouPredType) :
+    classifyCounterfactual false temporalExcl pred = none := by
+  cases temporalExcl <;> rfl
+
+/-- @cite{iatridou-2000}'s subjunctive generalization (42): "A CF can
+contain a subjunctive morpheme only if that subjunctive morpheme has a
+past tense form".
+
+Strictly, the paper states this as a one-directional conditional
+(requires → has). We encode the biconditional because all languages in
+our data satisfy both directions: English and Greek lack past
+subjunctive and don't require subjunctive in CFs; Italian has past
+subjunctive and requires it. -/
+def iatridouSubjGeneralization (hasPastSubj requiresSubj : Bool) : Prop :=
+  requiresSubj = hasPastSubj
+
+/-- All three counterfactual types collapse to the framework-agnostic
+`Core.Mood.SubjunctiveType.counterfactual` tag. -/
+def CounterfactualType.toSubjunctiveType (_ : CounterfactualType) :
+    Core.Mood.SubjunctiveType :=
+  .counterfactual
+
+/-- Every @cite{iatridou-2000} counterfactual type maps to
+`.counterfactual`. -/
+theorem all_counterfactuals_are_counterfactual (t : CounterfactualType) :
+    t.toSubjunctiveType = .counterfactual := by cases t <;> rfl
+
+/-- PastCF tower has depth 2 — corresponding to the two past morpheme
+layers observed cross-linguistically.
+
+(Tower-level corollary; uses the `subjShift`/`temporalShift`
+infrastructure from `Semantics.Modality.Exclusion`.) -/
+theorem pastCF_tower_depth {W E P T : Type*} (c : Core.Context.KContext W E P T)
+    (w' : W) (t' t'' : T) :
+    (((Core.Context.ContextTower.root c).push
+        (Semantics.Mood.subjShift w' t')).push
+      (Core.Context.temporalShift t'')).depth = 2 := by
+  simp [Core.Context.ContextTower.push, Core.Context.ContextTower.depth,
+    Core.Context.ContextTower.root]
 
 -- ════════════════════════════════════════════════════════════════
 -- § Datum Structures
@@ -280,7 +396,6 @@ theorem pastCF_has_more_layers :
 -- § Bridge: ExclF, Classification, Deal
 -- ════════════════════════════════════════════════════════════════
 
-open Semantics.Conditionals.Iatridou
 open Semantics.Tense.CounterfactualTense
 
 /-- English FLV: 1 past layer = 1 ExclF (FLV). -/

@@ -1,7 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 
-open Core.Tree
-
 /-!
 # Derivation Steps and Traces
 

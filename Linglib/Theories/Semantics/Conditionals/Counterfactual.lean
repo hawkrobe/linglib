@@ -32,7 +32,7 @@ See `RamotowskaEtAl2025.lean` for experimental evaluation.
 
 import Mathlib.Data.Finset.Card
 import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Theories.Semantics.Conditionals.SelectionalRestrictor
+import Linglib.Theories.Semantics.Conditionals.WillConditional
 import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Supervaluation.Basic
 import Linglib.Core.SelectionFunction
@@ -978,10 +978,10 @@ parameter the tense morphology supplies. -/
 theorem stalnakerCounterfactual_eq_willConditional_universe
     {W : Type*} (s : Core.SelectionFunction W) (A B : W → Prop) (w : W) :
     stalnakerCounterfactual s A B w ↔
-    Semantics.Conditionals.SelectionalRestrictor.willConditional
+    Semantics.Conditionals.WillConditional.willConditional
       s A B Set.univ w := by
   unfold stalnakerCounterfactual
-    Semantics.Conditionals.SelectionalRestrictor.willConditional
+    Semantics.Conditionals.WillConditional.willConditional
     Semantics.Modality.Selectional.willSem
   rw [Set.univ_inter]
 
@@ -994,7 +994,7 @@ so the would-conditional reading is the more natural surface gloss. -/
 theorem stalnakerCounterfactual_eq_wouldConditional_universe
     {W : Type*} (s : Core.SelectionFunction W) (A B : W → Prop) (w : W) :
     stalnakerCounterfactual s A B w ↔
-    Semantics.Conditionals.SelectionalRestrictor.wouldConditional
+    Semantics.Conditionals.WillConditional.wouldConditional
       s A B Set.univ w :=
   stalnakerCounterfactual_eq_willConditional_universe s A B w
 
@@ -1004,7 +1004,7 @@ theorem stalnakerCounterfactual_eq_wouldConditional_universe
     `stalnakerCounterfactual_eq_wouldConditional_universe` (Bool ↔ Prop
     would-conditional under universe parameter) gives a direct bridge
     from the supervaluation-valued `selectionalCounterfactual` to the
-    Prop-valued *would*-conditional of `SelectionalRestrictor`.
+    Prop-valued *would*-conditional of `WillConditional`.
 
     Under the same `h_singleton` hypothesis that resolves the Truth3
     gap (the closest-worlds set is exactly Stalnaker's selected world),
@@ -1018,7 +1018,7 @@ theorem selectional_eq_wouldConditional_singleton_universe
     (h_singleton : sim.closestWorlds w (Finset.univ.filter A)
                    = {s.sel w {w' | A w'}}) :
     selectionalCounterfactual sim A B w = .true ↔
-    Semantics.Conditionals.SelectionalRestrictor.wouldConditional
+    Semantics.Conditionals.WillConditional.wouldConditional
       s A B Set.univ w := by
   rw [stalnaker_eq_selectional_singleton s sim A B w h_singleton]
   rw [← stalnakerCounterfactual_eq_wouldConditional_universe s A B w]

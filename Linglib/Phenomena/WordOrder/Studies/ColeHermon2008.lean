@@ -1,6 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Derivation
-import Linglib.Theories.Syntax.Minimalism.Core.EPP
 import Linglib.Theories.Syntax.Minimalism.Core.Position
 import Linglib.Fragments.TobaBatak.Basic
 
@@ -38,6 +37,42 @@ suffices for the word-order and c-command predictions; the extraction
 and binding predictions are formalized separately using the paper's
 empirical generalizations.
 -/
+
+namespace Minimalism
+
+/-! ## EPP Parameter (formerly `Core/EPP.lean`)
+
+The Extended Projection Principle (EPP) requires Spec,TP to be filled.
+Cross-linguistically, languages differ in *how* this requirement is
+satisfied, yielding different basic word orders from the same
+underlying vP-internal structure. This is the parameter space
+@cite{cole-hermon-2008} exploit. -/
+
+/-- What satisfies the EPP (requirement to fill Spec,TP). -/
+inductive EPPStrategy where
+  /-- Subject DP raises to Spec,TP (English, French, etc.). -/
+  | subjectRaising
+  /-- VP/predicate phrase raises to Spec,TP (Toba Batak VOS, Malagasy VOS). -/
+  | vpRaising
+  /-- Expletive inserted in Spec,TP (English *there*, French *il*). -/
+  | expletive
+  /-- No EPP — verb-initial order persists (one analysis of Irish/Arabic VSO). -/
+  | none
+  deriving Repr, DecidableEq
+
+/-- Word-order parameter: EPP strategy and predicted basic order. -/
+structure WordOrderParameter where
+  language : String
+  eppStrategy : EPPStrategy
+  predictedOrder : String
+
+def english_wo : WordOrderParameter :=
+  { language := "English", eppStrategy := .subjectRaising, predictedOrder := "SVO" }
+
+def tobaBatak_wo : WordOrderParameter :=
+  { language := "Toba Batak", eppStrategy := .vpRaising, predictedOrder := "VOS" }
+
+end Minimalism
 
 namespace ColeHermon2008
 
@@ -352,7 +387,7 @@ theorem binding_acceptability_pattern :
     c-commands into VP (can bind a reflexive DO), but the DO (inside VP)
     cannot c-command out past VP (cannot bind a reflexive subject). -/
 theorem object_does_not_ccommand_subject :
-    cCommandsInB tobaBatakVOS.final n_biangi n_dakdanakan = false := by
+    ¬ cCommandsIn tobaBatakVOS.final n_biangi n_dakdanakan := by
   native_decide
 
 -- ============================================================================
@@ -389,13 +424,12 @@ theorem voice_determines_pivot :
     Fragments.TobaBatak.Voice.ov.pivotRole = .patient := ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 10: Boolean C-Command Consistency
+-- § 10: Decidable C-Command
 -- ============================================================================
 
-/-- Sanity check: `cCommandsInB` agrees with the structured `cCommandsIn`
-    proof in `vp_ccommands_subject`. -/
-theorem vp_ccommands_subject_bool :
-    cCommandsInB tobaBatakVOS.final vp n_dakdanakan = true := by
+/-- `decide` confirmation of `vp_ccommands_subject`'s structured proof. -/
+theorem vp_ccommands_subject_decide :
+    cCommandsIn tobaBatakVOS.final vp n_dakdanakan := by
   native_decide
 
 -- ============================================================================
@@ -552,14 +586,14 @@ Both predictions follow from c-command in the derived tree:
 - Both: patient (raised to Spec,TP/FP) c-commands agent
 
 The formalization verifies the c-command predictions computationally
-using `cCommandsInB` over the derived trees.
+using `cCommandsIn` over the derived trees.
 -/
 
 /-- In the English passive, the patient (raised to Spec,TP) c-commands
     the by-phrase agent. This is why "The boy was injured by himself" is
     grammatical: the patient can bind a reflexive in the agent position. -/
 theorem english_passive_patient_ccommands_agent :
-    cCommandsInB englishPassive.final n_boy n_by_himself = true := by
+    cCommandsIn englishPassive.final n_boy n_by_himself := by
   native_decide
 
 /-- In the English passive, the by-phrase agent does NOT c-command the
@@ -567,7 +601,7 @@ theorem english_passive_patient_ccommands_agent :
     ungrammatical: the agent (low adjunct inside VP) cannot bind a
     reflexive in subject position. -/
 theorem english_passive_agent_not_ccommands_patient :
-    cCommandsInB englishPassive.final n_by_himself n_boy = false := by
+    ¬ cCommandsIn englishPassive.final n_by_himself n_boy := by
   native_decide
 
 /-- In the TB active **base structure** (pre-movement, stage 4), the
@@ -579,7 +613,7 @@ theorem english_passive_agent_not_ccommands_patient :
     contains the object. After VP-raising, the object moves to a
     different branch; reconstruction restores the base c-command. -/
 theorem tb_active_subject_ccommands_object_at_base :
-    cCommandsInB (tobaBatakVOS.stageAt 4) n_dakdanakan n_biangi = true := by
+    cCommandsIn (tobaBatakVOS.stageAt 4) n_dakdanakan n_biangi := by
   native_decide
 
 /-- Cross-linguistic contrast verified: same c-command theory, different
@@ -592,11 +626,11 @@ theorem tb_active_subject_ccommands_object_at_base :
     4. English passive (derived): agent does not c-command patient (ex. 96) -/
 theorem cross_linguistic_binding_contrast :
     -- TB active (base stage for binding, derived stage for anti-binding)
-    cCommandsInB (tobaBatakVOS.stageAt 4) n_dakdanakan n_biangi = true ∧
-    cCommandsInB tobaBatakVOS.final n_biangi n_dakdanakan = false ∧
+    cCommandsIn (tobaBatakVOS.stageAt 4) n_dakdanakan n_biangi ∧
+    ¬ cCommandsIn tobaBatakVOS.final n_biangi n_dakdanakan ∧
     -- English passive (derived tree)
-    cCommandsInB englishPassive.final n_boy n_by_himself = true ∧
-    cCommandsInB englishPassive.final n_by_himself n_boy = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    cCommandsIn englishPassive.final n_boy n_by_himself ∧
+    ¬ cCommandsIn englishPassive.final n_by_himself n_boy := by
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
 
 end ColeHermon2008

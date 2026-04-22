@@ -1,5 +1,5 @@
 import Linglib.Core.CylindricAlgebra
-import Linglib.Theories.Semantics.Dynamic.DPL.Bridge
+import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
 
@@ -32,6 +32,48 @@ namespace Core.CylindricAlgebra
 
 open Core (Assignment)
 open Core.CylindricAlgebra
+
+-- ════════════════════════════════════════════════════════════════
+-- § DPL bridges
+-- ════════════════════════════════════════════════════════════════
+
+section DPL
+
+open Semantics.Dynamic.DPL
+open Semantics.Dynamic.Core
+
+/-- **DPL existential = cylindrification.**
+
+`closure(∃x.φ) = cₓ(closure(φ))`: the truth-conditional content of
+DPL's existential quantifier at variable `x` is exactly cylindrification
+at register `x`. This is the defining correspondence between DPL
+and cylindric set algebra (@cite{groenendijk-stokhof-1991}). -/
+theorem dpl_closure_exists_eq_cylindrify {E : Type*} (x : Nat) (φ : DPLRel E) :
+    closure (toDRS (DPLRel.exists_ x φ)) =
+    cylindrify x (closure (toDRS φ)) := by
+  ext g; simp only [closure, toDRS, DPLRel.exists_, cylindrify]
+  exact ⟨fun ⟨h, d, hφ⟩ => ⟨d, h, hφ⟩, fun ⟨d, h, hφ⟩ => ⟨h, d, hφ⟩⟩
+
+/-- **DPL identity test = diagonal element.**
+
+`closure(atom(g(x) = g(y))) = Dxy`: the truth condition of the DPL
+atomic formula `x = y` is the diagonal element `Dxy` from cylindric
+algebra. -/
+theorem dpl_closure_identity_eq_diagonal {E : Type*} (x y : Nat) :
+    closure (toDRS (DPLRel.atom (fun g : Assignment E => g x = g y))) =
+    @diagonal E x y := by
+  ext g; simp only [closure, toDRS, DPLRel.atom, diagonal]
+  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨g, rfl, h⟩⟩
+
+/-- DPL negation under closure is a test for non-cylindrifiability:
+`closure(¬φ)(g)` iff no assignment update satisfies φ. -/
+theorem dpl_closure_neg_eq {E : Type*} (φ : DPLRel E) :
+    closure (toDRS (DPLRel.neg φ)) =
+    fun g => ¬ closure (toDRS φ) g := by
+  ext g; simp only [closure, toDRS, DPLRel.neg]
+  exact ⟨fun ⟨_, rfl, h⟩ => h, fun h => ⟨g, rfl, h⟩⟩
+
+end DPL
 
 -- ════════════════════════════════════════════════════════════════
 -- § CDRT bridges

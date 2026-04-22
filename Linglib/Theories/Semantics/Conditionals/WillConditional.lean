@@ -33,7 +33,7 @@ single-valuedness.
 
 set_option autoImplicit false
 
-namespace Semantics.Conditionals.SelectionalRestrictor
+namespace Semantics.Conditionals.WillConditional
 
 open _root_.Core (SelectionFunction)
 open Semantics.Modality.Selectional
@@ -232,4 +232,4 @@ theorem subordinated_eq_unrestricted_iff (s : SelectionFunction W)
   unfold subordinatedWillDiscourse willSem
   exact ⟨fun ⟨_, h⟩ => ⟨hB, h⟩, fun ⟨_, h⟩ => ⟨hB, h⟩⟩
 
-end Semantics.Conditionals.SelectionalRestrictor
+end Semantics.Conditionals.WillConditional

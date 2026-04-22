@@ -37,8 +37,8 @@ The bridge modules in `Core/CylindricAlgebra/` prove algebraic identities
 | Charlow (@cite{charlow-2019}) | `staticExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
 | Charlow | `dynamicExists x body` | `cylindrify x body` | `DynamicSemantics.lean` |
 | DRS/Accessibility | `closure (introReg n ;; D)` | `cylindrify n (closure D)` | `Accessibility.lean` |
-| DPL (@cite{groenendijk-stokhof-1991}) | `closure (DPLRel.exists_ x φ)` | `cylindrify x (closure φ)` | `DPL/Bridge.lean` |
-| DPL | `closure (atom (g(x) = g(y)))` | `diagonal x y` | `DPL/Bridge.lean` |
+| DPL (@cite{groenendijk-stokhof-1991}) | `closure (DPLRel.exists_ x φ)` | `cylindrify x (closure φ)` | `DynamicSemantics.lean` |
+| DPL | `closure (atom (g(x) = g(y)))` | `diagonal x y` | `DynamicSemantics.lean` |
 
 ### Unproved connections (same algebra, bridges not yet formalized)
 
@@ -49,7 +49,7 @@ been written yet.
 
 | Framework | Its existential | Cylindric reading |
 |---|---|---|
-| ~~DPL (@cite{groenendijk-stokhof-1991})~~ | moved to Proved bridges | see `DPL/Bridge.lean` |
+| ~~DPL (@cite{groenendijk-stokhof-1991})~~ | moved to Proved bridges | see `DynamicSemantics.lean` |
 | PLA (@cite{dekker-2012}) | `exists_ i φ` | `cylindrify i (⟦φ⟧)` |
 | DynamicGQ (@cite{chierchia-1995}) | `{p \| ∃ x, P x ∧ p.2 = q.2.update v x}` | `cylindrify v P` |
 | Bilateral Update (@cite{aloni-2022}) | `exists_ x domain φ` | `cylindrify x (domain ∩ φ)` |

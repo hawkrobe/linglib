@@ -475,7 +475,7 @@ Both theories make the same predictions for simple cases:
 3. AAP (agreement) ↔ Feature checking
 
 The difference is in mechanism:
-- Minimalism: structural (tree geometry, c-command via `cCommandsInB`)
+- Minimalism: structural (tree geometry, c-command via `cCommandsIn`)
 - HPSG: feature-based (ARG-ST ordering via `ArgSt.outranks`, constraint satisfaction)
 
 In this implementation, HPSG outranking is derived from the actual ARG-ST

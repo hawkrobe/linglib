@@ -31,8 +31,6 @@ which handles trace detection and phonForm extraction.
 import Mathlib.Data.Set.Basic
 import Mathlib.Algebra.Free
 import Linglib.Core.Lexical.UD
-import Linglib.Core.Tree
-import Linglib.Core.Order.Command
 import Linglib.Theories.Syntax.Minimalism.Core.Cat
 
 namespace Minimalism
@@ -575,95 +573,29 @@ instance decAsymCCommandsIn (root x y : SyntacticObject) :
     Decidable (asymCCommandsIn root x y) := by
   unfold asymCCommandsIn; infer_instance
 
-/-! ## C-command via Barker-Pullum command relations
+/-! ## Note on Barker-Pullum command relations
 
-@cite{reinhart-1976}'s c-command, recast as B&P K-command on the
-forgetful tree-order of `root`. The forgetful map
-`FreeMagma.toTree : SyntacticObject → Core.Tree.Tree Unit LIToken`
-(in `Core/Tree.lean`) carries dominance into the prefix order on
-`Core.Tree.TreePath`, where CAC holds and B&P's
-`Core.Order.commandRelation` library applies directly.
+An earlier draft of this file recast `cCommandsIn` as B&P K-command
+(`Core.Order.commandRelation` over `FreeMagma.toTree`'s tree-order),
+aiming to inherit B&P's antitonicity / intersection theorems "for
+free" in the same lattice as HPSG `o-command` and DG `d-command`.
 
-This grounds Minimalism's c-command in the same lattice that
-`sCommand` / `npCommand` / `kCommand` / `maxCommand` (in
-`Phenomena/Anaphora/Compare.lean`) all live in. The intersection,
-antitone, and embeddability theorems of B&P apply transitively
-without restipulation.
+That recast does not work: B&P's `commandRelation` is universal
+("every branching ancestor of α also dominates β") and admits pairs
+that sister-form c-command excludes — e.g., on tree `(a, (b, c))`,
+the leaf `a` B&P-commands itself and the root, since the only
+branching strict ancestor is the root, which trivially dominates
+everything. Reinhart c-command is sister-form (∃ sister of α
+containing β); the two relations are not biconditionally equivalent
+on `FreeMagma`.
 
-Per @cite{barker-pullum-1990}, `commandRelation T P` is parameterized
-by an arbitrary node-property `P`; Minimalism instantiates `P` with
-`branchingPaths` (paths whose subtree is a binary `.node`). In bare
-binary phrase structure every non-leaf is branching, so this
-coincides with "non-leaf paths" — but we keep the property
-explicit so alternative generators (XP-only, phase-only) remain
-expressible. -/
-
-/-- Branching paths of `root`: paths whose subtree is a binary
-    `.node () [_, _]` (the image of `FreeMagma.mul` under
-    `FreeMagma.toTree`). In bare binary phrase structure every
-    non-leaf is branching. -/
-def branchingPaths (root : SyntacticObject) : Set Core.Tree.TreePath :=
-  {p | ∃ a b, root.toTree.subtreeAt p.toList = some (.node () [a, b])}
-
-/-- @cite{reinhart-1976}'s c-command on `SyntacticObject`, recast as
-    B&P K-command on the forgetful tree-order. The set of pairs
-    `(px, py)` such that every branching path properly dominating
-    `px` also dominates `py`.
-
-    Use `kCCommand_def` to unfold to the underlying B&P apparatus
-    when needed; otherwise treat as opaque. -/
-def kCCommand (root : SyntacticObject) :
-    Set (Core.Tree.TreePath × Core.Tree.TreePath) :=
-  Core.Order.commandRelation root.toTree.toTreeOrder (branchingPaths root)
-
-/-- Definitional unfolding of `kCCommand` to its B&P shape. Use
-    `rw [kCCommand_def]` only when the underlying `commandRelation` /
-    `upperBounds` apparatus is needed in a proof; consumer code should
-    treat `kCCommand` as opaque. -/
-theorem kCCommand_def (root : SyntacticObject) :
-    kCCommand root =
-      Core.Order.commandRelation root.toTree.toTreeOrder
-        (branchingPaths root) :=
-  rfl
-
-/-- Path → value direction of the `cCommandsIn` ↔ `kCCommand` bridge.
-
-    If two paths `px`, `py` resolve to the value-images of `x` and
-    `y` and stand in `kCCommand root`, then `x` value-c-commands `y`
-    in the original `SyntacticObject` predicate.
-
-    TODO: prove. Strategy: `(px, py) ∈ kCCommand root` says every
-    branching path properly above `px` also dominates `py`. The
-    immediate parent path `pp` of `px` (i.e., `px` with its last
-    index dropped) is branching (since `subtreeAt pp` is a binary
-    `.node`). So `pp` dominates `py`, meaning `py` extends `pp`.
-    Read off the sister of `x` from the un-dropped index of `px`,
-    extract the value at that subtree, and witness `cCommandsIn`. -/
-theorem cCommandsIn_of_kCCommand
-    (root x y : SyntacticObject) (px py : Core.Tree.TreePath)
-    (_hx : root.toTree.subtreeAt px.toList = some x.toTree)
-    (_hy : root.toTree.subtreeAt py.toList = some y.toTree)
-    (_h : (px, py) ∈ kCCommand root) :
-    cCommandsIn root x y := by
-  sorry
-
-/-- Value → path direction of the bridge.
-
-    If `cCommandsIn root x y` holds, there exist witness paths `px`,
-    `py` resolving to `x.toTree`, `y.toTree` and standing in
-    `kCCommand root`.
-
-    TODO: prove. Strategy: `cCommandsIn` provides a parent `z` in
-    `root.subtrees` with `immediatelyContains z x` and
-    `containsOrEq z y` via `z`'s sister. Construct paths from `root`
-    down to `z`, then to `x` and `y`. -/
-theorem kCCommand_of_cCommandsIn
-    (root x y : SyntacticObject) (_h : cCommandsIn root x y) :
-    ∃ px py : Core.Tree.TreePath,
-      root.toTree.subtreeAt px.toList = some x.toTree ∧
-      root.toTree.subtreeAt py.toList = some y.toTree ∧
-      (px, py) ∈ kCCommand root := by
-  sorry
+The mathlib-style resolution: keep `cCommandsIn` value-side and
+sister-form (it's what binding consumers need, and it reads directly
+off bare phrase structure per @cite{marcolli-chomsky-berwick-2025}).
+Cross-tradition unification via B&P's parametric command lives in
+`Core/Order/Command.lean` and is exercised by HPSG / DG, where its
+universal shape matches the native primitive. Minimalism's c-command
+does not reduce to it, so no bridge belongs here. -/
 
 /-! ## Tree Shape — abstract geometry ignoring terminal labels -/
 

@@ -40,7 +40,7 @@ in `Counterfactual.closestWorlds`.
 
 -/
 
-namespace Semantics.Conditionals.Presuppositional
+namespace Semantics.Conditionals.Presupposition
 
 open Semantics.Conditionals
 open Core.Order (SimilarityOrdering)
@@ -285,4 +285,4 @@ theorem kp_presup_does_not_imply_kpstar :
     have := hall true (by simp [closB, trivialCloser, List.filter])
     exact this
 
-end Semantics.Conditionals.Presuppositional
+end Semantics.Conditionals.Presupposition

@@ -999,6 +999,8 @@ import Linglib.Phenomena.Conditionals.Studies.McKayVanInwagen1977
 import Linglib.Phenomena.Conditionals.Studies.Stalnaker1981
 import Linglib.Phenomena.Conditionals.Studies.Stalnaker1975
 import Linglib.Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018
+import Linglib.Phenomena.Conditionals.Studies.CiardelliZhangChampollion2018Lumping
+import Linglib.Phenomena.Conditionals.Studies.Kratzer2012Lumping
 import Linglib.Phenomena.DefaultReasoning.TweetyNixon
 import Linglib.Phenomena.DefaultReasoning.Studies.Spohn1988
 import Linglib.Phenomena.DefaultReasoning.Studies.GoldszmidtPearl1996
@@ -1640,6 +1642,7 @@ import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
 import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
 import Linglib.Theories.Semantics.Dynamic.Core.DynProp
 import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
+import Linglib.Theories.Semantics.Dynamic.Context
 import Linglib.Theories.Semantics.Dynamic.Core.Intensional
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition
@@ -1652,7 +1655,6 @@ import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Basic
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Default
 import Linglib.Theories.Semantics.Dynamic.UpdateSemantics.Frames
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
-import Linglib.Theories.Semantics.Dynamic.DPL.Bridge
 import Linglib.Theories.Semantics.Dynamic.DRT.Basic
 import Linglib.Theories.Semantics.Dynamic.Bilateral.Basic
 import Linglib.Theories.Semantics.Dynamic.Bilateral.FreeChoice
@@ -1663,6 +1665,7 @@ import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Basic
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.PointwiseUpdate
 import Linglib.Theories.Semantics.Dynamic.Probability.Basic
+import Linglib.Theories.Semantics.Dynamic.Probability.Lookup
 import Linglib.Theories.Semantics.Dynamic.Epistemic.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Fragment
@@ -1734,7 +1737,6 @@ import Linglib.Theories.Syntax.HPSG.Inversion
 import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
 -- Theories: Minimalism
 import Linglib.Theories.Syntax.Minimalism.Core.Features
-import Linglib.Theories.Syntax.Minimalism.Core.ANDL
 import Linglib.Theories.Syntax.Minimalism.Core.Checking
 import Linglib.Theories.Syntax.Minimalism.Core.Agree
 import Linglib.Theories.Syntax.Minimalism.Core.Probe
@@ -1777,7 +1779,6 @@ import Linglib.Theories.Syntax.Minimalism.Questions
 import Linglib.Theories.Syntax.Minimalism.Core.Labeling
 import Linglib.Theories.Syntax.Minimalism.Core.Phase
 import Linglib.Theories.Syntax.Minimalism.Core.Economy
-import Linglib.Theories.Syntax.Minimalism.Core.Multidominance
 import Linglib.Theories.Syntax.Minimalism.Core.Modification
 import Linglib.Theories.Syntax.Minimalism.Formal.MergeUnification
 import Linglib.Theories.Syntax.Minimalism.Scope
@@ -1788,14 +1789,12 @@ import Linglib.Theories.Syntax.Minimalism.Core.Structure
 import Linglib.Theories.Syntax.Minimalism.Core.Cat
 import Linglib.Theories.Syntax.Minimalism.Core.Basic
 import Linglib.Theories.Syntax.Minimalism.Core.Derivation
-import Linglib.Theories.Syntax.Minimalism.Core.EPP
 import Linglib.Theories.Syntax.Minimalism.Core.Voice
 import Linglib.Theories.Syntax.Minimalism.Core.Applicative
 import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
 import Linglib.Theories.Syntax.Minimalism.Core.Copula
 import Linglib.Theories.Syntax.Minimalism.Core.Cascade
 import Linglib.Theories.Syntax.Minimalism.Core.CMH
-import Linglib.Theories.Syntax.Minimalism.Core.MCommand
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.VoiceTheta
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.TopologicalMapping
@@ -2069,12 +2068,13 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.ConditionalType
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
 import Linglib.Theories.Semantics.Conditionals.Exhaustivity
-import Linglib.Theories.Semantics.Conditionals.Iatridou
 import Linglib.Theories.Semantics.Conditionals.LeftNested
+import Linglib.Theories.Semantics.Conditionals.PremiseSemantic
 import Linglib.Theories.Semantics.Conditionals.Restrictor
 import Linglib.Theories.Semantics.Conditionals.Presuppositional
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Modality.Disjunction
+import Linglib.Theories.Semantics.Modality.Exclusion
 import Linglib.Theories.Semantics.Modality.BiasedPQ
 import Linglib.Theories.Semantics.Modality.Kratzer.Background
 import Linglib.Theories.Semantics.Modality.Kratzer.Ordering

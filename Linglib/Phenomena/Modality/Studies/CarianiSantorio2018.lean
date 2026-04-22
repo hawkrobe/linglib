@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Modality.Selectional
-import Linglib.Theories.Semantics.Conditionals.SelectionalRestrictor
+import Linglib.Theories.Semantics.Conditionals.WillConditional
 import Linglib.Core.Modality.HistoricalAlternatives
 import Linglib.Core.Probability.PMFFin
 import Linglib.Fragments.English.Auxiliaries
@@ -66,7 +66,7 @@ namespace Phenomena.Modality.Studies.CarianiSantorio2018
 
 open _root_.Core (SelectionFunction)
 open Semantics.Modality.Selectional
-open Semantics.Conditionals.SelectionalRestrictor (wouldConditional willConditional)
+open Semantics.Conditionals.WillConditional (wouldConditional willConditional)
 open scoped ENNReal
 
 -- ============================================================================

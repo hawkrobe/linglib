@@ -281,7 +281,7 @@ theorem CausallyGroundedEvent.progressiveTrue
 theorem causallyGroundedEvent_progressive_not_perfective :
     ∃ (cge : CausallyGroundedEvent ℤ),
       cge.process.progressiveTrue ∧
-      cge.process.¬ (perfectiveTrue) := by
+      ¬ cge.process.perfectiveTrue := by
   refine ⟨{
     process := {
       dynamics := ⟨[CausalLaw.simple (mkVar "a") (mkVar "r"),

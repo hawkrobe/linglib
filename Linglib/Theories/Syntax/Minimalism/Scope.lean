@@ -104,7 +104,7 @@ def qrIsBlocked (q : PositionedQuantifier) : Option QRBarrier :=
     tree derivation. -/
 def superiorityFromTree (tree : SyntacticObject)
     (q1 q2 : SyntacticObject) : Bool :=
-  cCommandsInB tree q1 q2 && !cCommandsInB tree q2 q1
+  decide (asymCCommandsIn tree q1 q2)
 
 -- Scope Economy (@cite{fox-2000})
 

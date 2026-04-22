@@ -1,5 +1,5 @@
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Theories.Semantics.Conditionals.Presuppositional
+import Linglib.Theories.Semantics.Conditionals.Presupposition
 
 /-!
 # Rooth-Partee Conditionals: Empirical Data
@@ -112,7 +112,7 @@ theorem orFilter_defined_at_proud :
 -- Part II: K/P and K/P* Analysis
 -- ============================================================================
 
-open Semantics.Conditionals.Presuppositional
+open Semantics.Conditionals.Presupposition
 
 -- Decidable instances for compound PrProp assertions
 

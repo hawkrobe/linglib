@@ -163,9 +163,9 @@ theorem closestGoal_implies_closestGoalWith
     `pred` in `probe`'s c-command domain within `root`?
 
     This is the computational counterpart of `closestGoalWith`, using
-    `cCommandsInB` and a matching predicate. `pred` determines which
-    nodes are potential goals/interveners — typically a category check
-    (e.g., "is this node D-bearing?").
+    decidable `cCommandsIn` and a matching predicate. `pred` determines
+    which nodes are potential goals/interveners — typically a category
+    check (e.g., "is this node D-bearing?").
 
     1. `probe` c-commands `goal`
     2. `goal` matches the predicate
@@ -173,13 +173,13 @@ theorem closestGoal_implies_closestGoalWith
        c-commands `goal` (= no intervener) -/
 def closestGoalB (root probe goal : SyntacticObject)
     (pred : SyntacticObject → Bool) : Bool :=
-  cCommandsInB root probe goal &&
+  decide (cCommandsIn root probe goal) &&
   pred goal &&
   !(root.subtrees.any fun x =>
     x != goal &&
     pred x &&
-    cCommandsInB root probe x &&
-    cCommandsInB root x goal)
+    decide (cCommandsIn root probe x) &&
+    decide (cCommandsIn root x goal))
 
 -- ============================================================================
 -- § 3c: Horizons (@cite{keine-2019})
@@ -210,8 +210,8 @@ def behindHorizonB (root probe target : SyntacticObject)
     match n with
     | .leaf tok =>
       tok.item.outerCat == horizonCat &&
-      cCommandsInB root n target &&
-      cCommandsInB root probe n
+      decide (cCommandsIn root n target) &&
+      decide (cCommandsIn root probe n)
     | .node _ _ => false
 
 -- ============================================================================

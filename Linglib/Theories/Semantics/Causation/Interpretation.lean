@@ -117,9 +117,15 @@ theorem truth_conditionally_distinct :
   let c := mkVar "c"
   let dyn := CausalDynamics.disjunctiveCausation a b c
   let s := Situation.empty.extend b true
-  use dyn, s, a, c
-  simp only [Causative.toSemantics, ne_eq]
-  native_decide
+  refine ⟨dyn, s, a, c, ?_⟩
+  intro heq
+  -- makeSem holds (a sufficient for c via disjunctive law)
+  have hM : Causative.make.toSemantics dyn s a c := by
+    show makeSem dyn s a c; native_decide
+  -- causeSem fails (a not necessary because b alone suffices)
+  have hNotC : ¬ Causative.cause.toSemantics dyn s a c := by
+    show ¬ causeSem dyn s a c; native_decide
+  exact hNotC (heq ▸ hM)
 
 /-- `make` and `force` are distinguished by coercion despite sharing truth conditions. -/
 theorem make_force_distinguished_by_coercion :
@@ -146,14 +152,17 @@ theorem assertsSufficiency_iff_makeSem (b : Causative) :
     have ⟨dyn, s, c, e, hne⟩ := truth_conditionally_distinct
     simp only [Causative.toSemantics, h] at hne
     exact absurd rfl hne
-  · -- prevent: preventSem ≠ makeSem (same witness: fire still happens with preventer)
+  · -- prevent: preventSem ≠ makeSem (witnessed by disjunctive overdetermination)
     intro h
-    have : preventSem (CausalDynamics.disjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c"))
-           (Situation.empty.extend (mkVar "b") true) (mkVar "a") (mkVar "c") =
-           makeSem (CausalDynamics.disjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c"))
-           (Situation.empty.extend (mkVar "b") true) (mkVar "a") (mkVar "c") :=
+    set dyn := CausalDynamics.disjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c")
+    set s := Situation.empty.extend (mkVar "b") true
+    have hPM : preventSem dyn s (mkVar "a") (mkVar "c") =
+               makeSem dyn s (mkVar "a") (mkVar "c") :=
       congrFun (congrFun (congrFun (congrFun h _) _) _) _
-    revert this; native_decide
+    -- makeSem holds; preventSem doesn't (no inhibitory law)
+    have hM : makeSem dyn s (mkVar "a") (mkVar "c") := by native_decide
+    have hNotP : ¬ preventSem dyn s (mkVar "a") (mkVar "c") := by native_decide
+    exact hNotP (hPM.symm ▸ hM)
 
 /-- When a sufficiency variant's semantics holds, the cause is
     causally sufficient for the effect.
@@ -162,10 +171,8 @@ theorem assertsSufficiency_iff_makeSem (b : Causative) :
     as `causallySufficient`. -/
 theorem sufficiency_implies_causallySufficient
     (dyn : CausalDynamics) (s : Situation) (c e : Variable)
-    (h : Causative.make.toSemantics dyn s c e = true) :
-    causallySufficient dyn s c e := by
-  simp only [Causative.toSemantics, makeSem, decide_eq_true_eq] at h
-  exact h
+    (h : Causative.make.toSemantics dyn s c e) :
+    causallySufficient dyn s c e := h
 
 /-- When the cause variant's semantics holds, the cause is
     causally necessary for the effect.
@@ -174,10 +181,8 @@ theorem sufficiency_implies_causallySufficient
     with `causallyNecessary`. -/
 theorem necessity_implies_causallyNecessary
     (dyn : CausalDynamics) (s : Situation) (c e : Variable)
-    (h : Causative.cause.toSemantics dyn s c e = true) :
-    causallyNecessary dyn s c e := by
-  simp only [Causative.toSemantics, causeSem, Bool.and_eq_true, decide_eq_true_eq] at h
-  exact h.2
+    (h : Causative.cause.toSemantics dyn s c e) :
+    causallyNecessary dyn s c e := h.2
 
 -- ════════════════════════════════════════════════════
 -- § Bridge to CC-Selection

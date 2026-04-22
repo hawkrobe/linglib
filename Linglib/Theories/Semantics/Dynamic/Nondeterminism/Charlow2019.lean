@@ -10,6 +10,7 @@ are retained.
 
 import Linglib.Theories.Semantics.Dynamic.DPL.Basic
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Semantics.Dynamic.Context
 
 namespace Semantics.Dynamic.Charlow2019
 
@@ -141,5 +142,118 @@ systems. The static/dynamic divide reduces to a single operator ↑ determining
 whether modified assignments are retained. This claim is demonstrated by the
 theorems above (`static_dynamic_same_truth`, `destructive_preserves_truth`),
 not by a single formal statement. -/
+
+-- ════════════════════════════════════════════════════════════════
+-- Effect-functor lookup interface — Charlow as `M = Set` instance
+-- ════════════════════════════════════════════════════════════════
+
+/-- Charlow's `State W E = Set (W × Assignment E)` as the **nondeterministic**
+(`M = Set`) instance of the unified lookup interface. The lookup at
+variable `v` at world `w` yields `{ g v | (w, g) ∈ s }` — one alternative
+per assignment containing `w`. Empty set is the falsifier (no assignment
+defines `v` at `w`). -/
+instance instCharlowHasIndivLookupM (W E : Type) :
+    Semantics.Dynamic.Context.HasIndivLookupM Set (State W E) Nat W E where
+  iLookupM s v w := { e | ∃ g : Assignment E, (w, g) ∈ s ∧ g v = e }
+
+-- ════════════════════════════════════════════════════════════════
+-- Bridge natural transformations — Hofmann ⇄ Charlow
+-- ════════════════════════════════════════════════════════════════
+
+/-- **Hofmann ↪ Charlow**: lift an `ICDRTAssignment` to a Charlow state on
+the worlds where every `vars`-listed variable has a non-`⋆` referent.
+At such worlds the resulting state has exactly one alternative — the
+assignment forced by Hofmann's values on `vars` (free elsewhere).
+At ⋆-worlds for any `vars`-listed variable, the world contributes no
+alternatives. -/
+def singletonLift {W E : Type} [Inhabited E]
+    (worlds : Set W) (vars : Finset Nat) (i : ICDRTAssignment W E) :
+    State W E :=
+  { p | p.1 ∈ worlds ∧
+        (∀ v ∈ vars, i.indiv ⟨v⟩ p.1 ≠ Entity.star) ∧
+        (∀ v ∈ vars,
+          match i.indiv ⟨v⟩ p.1 with
+          | .some e => p.2 v = e
+          | .star => True) }
+
+/-- **Charlow ↠ Hofmann**: collapse a Charlow state to a Hofmann-style
+assignment by "agreement-or-`⋆`". At each world, if all alternatives
+agree on `v`'s value, that's `v`'s value; otherwise `⋆`. Propositional
+drefs are dropped (Charlow has no propositional-dref structure to
+preserve). The reverse-image `singletonLift` ∘ `supportCollapse` loses
+information whenever the Charlow state has genuine uncertainty. -/
+noncomputable def supportCollapse {W E : Type}
+    (s : State W E) : ICDRTAssignment W E where
+  prop _ := ∅
+  indiv v w :=
+    open Classical in
+    if h : ∃ e : E, ∀ g : Assignment E, (w, g) ∈ s → g v.idx = e
+      then Entity.some (Classical.choose h)
+      else Entity.star
+
+/-- **Bridge / section-retraction**: on the deterministic image,
+`supportCollapse ∘ singletonLift = id` for individual variables in the
+lift's `vars` set, at worlds in the lift's `worlds` set, where every
+listed variable has a non-`⋆` referent. (Outside this domain the maps
+behave differently — `singletonLift` produces an empty state at ⋆-worlds,
+and `supportCollapse` falls through to `⋆`.)
+
+This is a section/retraction relationship in the spirit of
+`Function.LeftInverse`, witnessing that `singletonLift` injects Hofmann
+states into Charlow states without information loss on its image. The
+reverse direction (`singletonLift ∘ supportCollapse`) is *not* the
+identity — collapsing genuine Charlow uncertainty to `⋆` and then
+re-singleton-lifting forgets which alternatives were possible. -/
+theorem supportCollapse_singletonLift {W E : Type} [Inhabited E]
+    (worlds : Set W) (vars : Finset Nat) (i : ICDRTAssignment W E)
+    (v : IVar) (w : W) (hw : w ∈ worlds) (hv : v.idx ∈ vars)
+    (hall : ∀ u ∈ vars, i.indiv ⟨u⟩ w ≠ Entity.star) :
+    (supportCollapse (singletonLift worlds vars i)).indiv v w =
+      i.indiv v w := by
+  -- Recover the entity v points to at w
+  obtain ⟨e₀, he₀⟩ : ∃ e, i.indiv v w = Entity.some e := by
+    cases h : i.indiv v w with
+    | some e => exact ⟨e, rfl⟩
+    | star =>
+      cases v
+      exact absurd h (hall _ hv)
+  -- Build a witness assignment g₀ at world w
+  let g₀ : Assignment E := fun n =>
+    if hn : n ∈ vars then
+      match i.indiv ⟨n⟩ w with
+      | .some e => e
+      | .star => default
+    else default
+  have hg₀ : (w, g₀) ∈ singletonLift worlds vars i := by
+    refine ⟨hw, hall, ?_⟩
+    intro v' hv'
+    show match i.indiv ⟨v'⟩ w with | .some e => g₀ v' = e | .star => True
+    cases h : i.indiv ⟨v'⟩ w with
+    | some e =>
+      show g₀ v' = e
+      simp only [g₀, dif_pos hv', h]
+    | star => trivial
+  -- The chosen value equals e₀
+  have hkey : ∀ g : Assignment E,
+      (w, g) ∈ singletonLift worlds vars i → g v.idx = e₀ := by
+    intro g ⟨_, _, hmatch⟩
+    have hfix := hmatch v.idx hv
+    have : i.indiv ⟨v.idx⟩ w = Entity.some e₀ := by cases v; exact he₀
+    rw [this] at hfix
+    exact hfix
+  have hex : ∃ e : E, ∀ g : Assignment E,
+      (w, g) ∈ singletonLift worlds vars i → g v.idx = e := ⟨e₀, hkey⟩
+  -- Unfold supportCollapse and discharge
+  show (open Classical in
+    if h : ∃ e : E, ∀ g : Assignment E,
+      (w, g) ∈ singletonLift worlds vars i → g v.idx = e
+      then Entity.some (Classical.choose h)
+      else Entity.star) = i.indiv v w
+  rw [dif_pos hex, he₀]
+  congr 1
+  -- Classical.choose hex satisfies the property; pin it down via g₀
+  have hch := Classical.choose_spec hex g₀ hg₀
+  have hg₀_v : g₀ v.idx = e₀ := hkey g₀ hg₀
+  rw [← hch, hg₀_v]
 
 end Semantics.Dynamic.Charlow2019
