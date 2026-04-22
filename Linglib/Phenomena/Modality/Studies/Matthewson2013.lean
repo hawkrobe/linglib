@@ -201,16 +201,22 @@ structure Fig4Cell where
   dimRequired : Bool
   deriving Repr
 
-/-- The six cells of Figure 4 for imaa, with example numbers. The
-    dim-requirement in each cell is the paper's empirical report;
+/-- The six cells of Figure 4 for imaa, with example numbers verified
+    against the actual figure on p. 369. The figure also shows `gat`
+    entries in the past-temporal-perspective row (47, 47, dim gat 48);
+    those are not encoded here — this struct is `imaa`-specific.
+
+    The dim-requirement in each cell is the paper's empirical report;
     `fig4_consistent_with_requiresDim` proves these match the
-    flavor-keyed predicate. -/
+    flavor-keyed predicate. The future-orientation cells (44, 42)
+    are notated "ima('a) dim" in the figure, encoding the obligatory
+    co-occurrence with prospective `dim`. -/
 def fig4Cells : List Fig4Cell := [
-  ⟨.present, .past,    37, false⟩,
-  ⟨.present, .present, 21, false⟩,
-  ⟨.present, .future,  38, true⟩,
-  ⟨.past,    .past,    36, false⟩,
-  ⟨.past,    .present, 36, false⟩,
+  ⟨.present, .past,    29, false⟩,
+  ⟨.present, .present, 22, false⟩,
+  ⟨.present, .future,  42, true⟩,
+  ⟨.past,    .past,    43, false⟩,
+  ⟨.past,    .present, 37, false⟩,
   ⟨.past,    .future,  44, true⟩
 ]
 
