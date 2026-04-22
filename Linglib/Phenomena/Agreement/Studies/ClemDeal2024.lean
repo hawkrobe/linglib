@@ -329,7 +329,7 @@ machinery that linglib does not yet have:
 1. **Bidirectional Agree (goal flagging)** — the probe-to-goal direction
    of feature transfer. Without this, the claim that `-ri` *is* the
    object's φ-features (rather than a primitive [ERG]) cannot be stated
-   structurally. `Theories/Syntax/Minimalism/Core/Agree.lean` currently
+   structurally. `Theories/Syntax/Minimalism/Agree.lean` currently
    models only valuation (goal→probe).
 2. **Distributed Morphology / Vocabulary Insertion** — for the VI rule
    `ri ↔ φ / ___ [φ,D]` (@cite{clem-deal-2024} (34)) and Kinyalolo's

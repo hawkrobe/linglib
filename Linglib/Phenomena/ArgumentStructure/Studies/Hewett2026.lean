@@ -1,8 +1,8 @@
 import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
-import Linglib.Theories.Syntax.Minimalism.Core.Checking
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
+import Linglib.Theories.Syntax.Minimalism.Applicative
+import Linglib.Theories.Syntax.Minimalism.Checking
+import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalism.VerbalDecomposition
 import Linglib.Theories.Morphology.Core.MirrorPrinciple
 
 /-!

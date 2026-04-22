@@ -1,4 +1,4 @@
-import Linglib.Core.Evidence
+import Linglib.Core.Evidentiality
 
 /-!
 # Epistemic Evidentiality — Empirical Data
@@ -29,7 +29,7 @@ The placement of the bare prejacent is Karttunen's Problem:
 
 namespace Phenomena.Modality.EpistemicEvidentiality
 
-open Core.Evidence
+open Core.Evidentiality
 
 -- ════════════════════════════════════════════════════════════════════════════
 -- Datum Structures
@@ -427,7 +427,7 @@ theorem bare_always_felicitous :
     allMinimalPairs.all (λ d => d.bareFelicitous) = true := by native_decide
 
 -- ════════════════════════════════════════════════════════════════════════════
--- Bridge to Core.Evidence
+-- Bridge to Core.Evidentiality
 -- ════════════════════════════════════════════════════════════════════════════
 
 /-- Map VF&G's four-way evidence types to Cumming's three-way canonical
@@ -440,10 +440,15 @@ def EvidenceType.toEvidentialSource : EvidenceType → EvidentialSource
   | .elimination => .direct
   | .reported => .hearsay
 
-/-- All VF&G evidence types map to nonfuture evidential perspectives:
-    every source's perspective satisfies `IsNonfuture`. -/
+/-- VF&G evidence types inherit an evidential perspective by composing the
+    four-to-three collapse with the canonical Aikhenvald source mapping. -/
+instance : HasEvidentialPerspective EvidenceType where
+  toEvidentialPerspective e := toEvidentialPerspective e.toEvidentialSource
+
+/-- All VF&G evidence types are nonfuture: their perspective is always
+    retrospective or contemporaneous (T ≤ A). -/
 theorem all_evidence_types_nonfuture (e : EvidenceType) :
-    (e.toEvidentialSource).toEvidentialPerspective.IsNonfuture := by
+    Core.Evidentiality.IsNonfuture e := by
   cases e <;> decide
 
 end Phenomena.Modality.EpistemicEvidentiality

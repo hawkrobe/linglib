@@ -1,6 +1,6 @@
 import Linglib.Fragments.Singlish.Questions
 import Linglib.Fragments.Mandarin.Questions
-import Linglib.Theories.Syntax.Minimalism.Core.Features
+import Linglib.Theories.Syntax.Minimalism.Features
 import Linglib.Core.Lexical.ExpressiveModifier
 import Linglib.Theories.Interfaces.SyntaxSemantics.LeftPeriphery
 import Linglib.Paradigms.AcceptabilityJudgment

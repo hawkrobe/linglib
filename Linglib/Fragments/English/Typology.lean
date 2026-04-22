@@ -20,5 +20,12 @@ def typology : LanguageProfile :=
     |>.withWordOrderFromWALS
     |>.withAdpositionFromWALS
     |>.withMorph morphProfile
+    |>.withRelativization
+        { subjStrategy := .mixed
+        , oblStrategy := .mixed
+        , rcPosition := .postNominal
+        , lowestRelativizable := .objComparison
+        , notes := "Gap + relative pronoun; P-stranding allows gap on obliques; "
+                ++ "can relativize all AH positions" }
 
 end Fragments.English

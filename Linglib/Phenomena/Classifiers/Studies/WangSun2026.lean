@@ -290,7 +290,7 @@ theorem modification_contrast :
     Adding Mod as Cl's 2-part does not disrupt the 1-part chain
     D → Q → Cl, so the classifier retains its sortal reading. -/
 theorem postCl_cl_still_visible :
-    labelInOnePartChain .Cl postCl_D = true := by native_decide
+    labelInOnePartChain .Cl postCl_D = true := by decide
 
 /-! ### Prediction 1b: Classifier independence from nouns
 
@@ -300,11 +300,11 @@ theorem postCl_cl_still_visible :
 /-- Cl has no N as subpart in (45b): classifier is structurally
     independent of nouns. -/
 theorem meas_cl_has_no_noun :
-    meas_Cl.containsLabel .N = false := by native_decide
+    meas_Cl.containsLabel .N = false := by decide
 
 /-- Cl is still in Pred's 1-part chain despite having no N. -/
 theorem meas_cl_visible :
-    labelInOnePartChain .Cl meas_Pred = true := by native_decide
+    labelInOnePartChain .Cl meas_Pred = true := by decide
 
 /-! ### Prediction 2: Cl spells out at Q
 
@@ -317,7 +317,7 @@ theorem meas_cl_visible :
 theorem q_compline : basic_Q.compLine = [.Q, .Cl, .N] := rfl
 
 theorem cl_in_q_spellout :
-    basic_Q.compLine.contains .Cl = true := by native_decide
+    basic_Q.compLine.contains .Cl = true := by decide
 
 /-- Q contains both Cl and Num: extracting Q extracts both. -/
 theorem q_contains_both :
@@ -335,16 +335,16 @@ theorem q_contains_both :
     content is invisible to D → abstract measure reading ("glassful"). -/
 
 theorem cl_visible_without_de :
-    labelInOnePartChain .Cl noDe_D = true := by native_decide
+    labelInOnePartChain .Cl noDe_D = true := by decide
 
 theorem cl_invisible_with_de :
-    labelInOnePartChain .Cl de_D = false := by native_decide
+    labelInOnePartChain .Cl de_D = false := by decide
 
 /-- The *de* contrast: same classifier, different visibility. -/
 theorem de_changes_visibility :
     labelInOnePartChain .Cl noDe_D = true ∧
     labelInOnePartChain .Cl de_D = false :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 /-! ### Prediction 3b: 的 detaches N from Cl
 
@@ -379,10 +379,10 @@ theorem postCl_D_not_full : postCl_D.isFull = false := rfl
     The noun's denotation always contributes to the referent. -/
 
 theorem n_visible_without_de :
-    labelInOnePartChain .N noDe_D = true := by native_decide
+    labelInOnePartChain .N noDe_D = true := by decide
 
 theorem n_visible_with_de :
-    labelInOnePartChain .N de_D = true := by native_decide
+    labelInOnePartChain .N de_D = true := by decide
 
 /-! ### Prediction 5: Wh-island via dimensionality (§5)
 
@@ -422,9 +422,9 @@ inductive ClReading where
 def classifierReading (d : SynObj) : ClReading :=
   if individuates d then .sortal else .mensural
 
-theorem noDe_is_sortal : classifierReading noDe_D = .sortal := by native_decide
+theorem noDe_is_sortal : classifierReading noDe_D = .sortal := by decide
 
-theorem de_is_mensural : classifierReading de_D = .mensural := by native_decide
+theorem de_is_mensural : classifierReading de_D = .mensural := by decide
 
 /-- Both modifier positions (post-Cl and pre-DP) preserve Cl visibility
     from D, so the classifier retains its sortal reading regardless of
@@ -432,7 +432,7 @@ theorem de_is_mensural : classifierReading de_D = .mensural := by native_decide
 theorem both_positions_sortal :
     classifierReading postCl_D = .sortal ∧
     classifierReading preDp_D = .sortal :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 5. Fragment Bridge
@@ -481,7 +481,7 @@ theorem noDe_matches_borer_spine :
     Borer: Q hosts CL#/Div, converting CUM → QUA.
     Wang & Sun: Cl subjoins to Q as 1-part; Q spells out the classifier. -/
 theorem q_is_individuation_locus :
-    noDe_D.compLine.contains .Q = true := by native_decide
+    noDe_D.compLine.contains .Q = true := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. End-to-End Chain
@@ -497,7 +497,7 @@ theorem bei_end_to_end :
     classifierReading noDe_D = .sortal ∧
     classifierReading de_D = .mensural ∧
     noDe_D.compLine = [.D, .Q, .Cl, .N] :=
-  ⟨rfl, by native_decide, by native_decide, rfl⟩
+  ⟨rfl, by decide, by decide, rfl⟩
 
 /-- End-to-end for modification: Cl has room for Mod (derives 28c),
     Q is full (blocks 29a), and post-Cl modification preserves
@@ -506,7 +506,7 @@ theorem modification_end_to_end :
     basic_Cl.isFull = false ∧
     basic_Q.isFull = true ∧
     classifierReading postCl_D = .sortal :=
-  ⟨rfl, rfl, by native_decide⟩
+  ⟨rfl, rfl, by decide⟩
 
 -- ════════════════════════════════════════════════════
 -- § 8. Semantic Grounding
@@ -526,17 +526,17 @@ variable {α : Type*} [SemilatticeSup α]
 /-- Without 的: Cl visible → denotation is individuated → QUA. -/
 theorem noDe_is_qua (P : α → Prop) :
     QUA (nominalDenotation noDe_D P) :=
-  visible_cl_gives_qua noDe_D P (by native_decide)
+  visible_cl_gives_qua noDe_D P (by decide)
 
 /-- With 的: Cl invisible → denotation equals the root predicate. -/
 theorem de_preserves_root (P : α → Prop) :
     nominalDenotation de_D P = P :=
-  invisible_cl_preserves_root de_D P (by native_decide)
+  invisible_cl_preserves_root de_D P (by decide)
 
 /-- With 的 and a cumulative root: denotation is CUM (mass/mensural). -/
 theorem de_is_cum (P : α → Prop) (hc : CUM P) :
     CUM (nominalDenotation de_D P) :=
-  invisible_cl_cum de_D P (by native_decide) hc
+  invisible_cl_cum de_D P (by decide) hc
 
 /-- End-to-end 的-contrast: same root, different structure, opposite
     mereological properties. -/
@@ -544,7 +544,7 @@ theorem bei_semantic_contrast (P : α → Prop) (hc : CUM P) :
     QUA (nominalDenotation noDe_D P) ∧
     CUM (nominalDenotation de_D P) :=
   de_semantic_contrast noDe_D de_D P
-    (by native_decide) (by native_decide) hc
+    (by decide) (by decide) hc
 
 end SemanticGrounding
 
@@ -603,10 +603,10 @@ theorem full_chain (P : α → Prop) (hc : CUM P) :
     CUM (nominalDenotation de_D P) :=
   ⟨Chierchia1998.mandarin_mapping,
    rfl,
-   by native_decide,
-   by native_decide,
-   visible_cl_gives_qua noDe_D P (by native_decide),
-   invisible_cl_cum de_D P (by native_decide) hc⟩
+   by decide,
+   by decide,
+   visible_cl_gives_qua noDe_D P (by decide),
+   invisible_cl_cum de_D P (by decide) hc⟩
 
 end CrossTheoryChain
 

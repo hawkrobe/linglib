@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
+import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalism.SmallClause
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 
 /-!

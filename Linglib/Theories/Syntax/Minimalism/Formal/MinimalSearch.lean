@@ -22,7 +22,7 @@ operations; all forms of Sideward Merge have positive cost.
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Counting
+import Linglib.Theories.Syntax.Minimalism.Counting
 
 namespace Minimalism
 

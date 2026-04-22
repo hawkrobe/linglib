@@ -21,7 +21,7 @@ parameters, formalized here.
 This file does **not** commit to a syntactic framework. It carries no
 features, no Spec-CP, no Agree, no AttP. The Minimalist analysis (POV
 features [*ud*]/[+d], Spec-head Agree, parasitic adjunction) lives in
-`Theories/Syntax/Minimalism/Core/ANDL.lean`. The semantic analysis
+`Theories/Syntax/Minimalism/ANDL.lean`. The semantic analysis
 (negative attitude, conventional implicature, possible-ignorance
 presupposition) lives in `Theories/Pragmatics/Expressives/` and
 `Theories/Interfaces/SyntaxSemantics/LeftPeriphery.lean`. Fragment

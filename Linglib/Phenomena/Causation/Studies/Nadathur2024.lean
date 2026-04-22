@@ -82,6 +82,11 @@ private def vNRV := mkVar "NRV"
 private def vSEC := mkVar "SEC"
 private def vMSG := mkVar "MSG"
 private def vLST := mkVar "LST"
+/-- "Broken" — the potential obstacle (@cite{nadathur-2024} ex. 33, p.345).
+    Negative precondition `(vBRK, false)` enters `lawCOM` directly under
+    the @cite{schulz-2011}/@cite{fitting-1985} info-monotone substrate,
+    making Nadathur's "potential obstacle" semantics visible in the
+    formalization (rather than hidden behind a positive `CHI` rewrite). -/
 private def vBRK := mkVar "BRK"
 private def vCOM := mkVar "COM"
 private def vSPY := mkVar "SPY"
@@ -92,7 +97,10 @@ private def lawSEC : CausalLaw := CausalLaw.simple vINT vSEC
 /-- MSG := INT ∧ NRV (intends and has the nerve → sends message) -/
 private def lawMSG : CausalLaw := CausalLaw.conjunctive vINT vNRV vMSG
 
-/-- COM := MSG ∧ LST ∧ ¬BRK (@cite{nadathur-2024} ex. 33c) -/
+/-- COM := MSG ∧ LST ∧ ¬BRK (@cite{nadathur-2024} ex. 33c, p.345).
+    `(vBRK, false)` is the negative-precondition encoding of the
+    "potential obstacle" — message-sending leads to communication only
+    when the channel is not broken. -/
 private def lawCOM : CausalLaw :=
   { preconditions := [(vMSG, true), (vLST, true), (vBRK, false)]
     effect := vCOM }
@@ -104,10 +112,10 @@ private def lawSPY : CausalLaw := CausalLaw.conjunctive vSEC vCOM vSPY
 def dreyfusDynamics : CausalDynamics :=
   CausalDynamics.ofList [lawSEC, lawMSG, lawCOM, lawSPY]
 
-/-- Background situation: Dreyfus intends to spy and has collected secrets.
-    s(INT) = 1, s(SEC) = 1. -/
+/-- Background situation: Dreyfus intends to spy, has collected secrets,
+    and the channel is intact (BRK=0). s(INT) = 1, s(SEC) = 1, s(BRK) = 0. -/
 private def dreyfusBg : Situation :=
-  Situation.empty.extend vINT true |>.extend vSEC true
+  Situation.empty.extend vINT true |>.extend vSEC true |>.extend vBRK false
 
 -- ── dare predictions (ex. 34) ──
 
@@ -211,8 +219,8 @@ theorem innocent_sufficiency_is_what_matters :
     ¬ (causallySufficient dreyfusDynamics innocentBg vNRV vMSG) ∧
     -- NRV is already determined by the background, so Def 10
     -- necessity is inapplicable (but-for test is vacuously true)
-    innocentBg.hasValue vNRV true = true := by
-  exact ⟨by native_decide, rfl⟩
+    innocentBg.hasValue vNRV true := by
+  exact ⟨by native_decide, by native_decide⟩
 
 -- ════════════════════════════════════════════════════════════════
 -- § 2. Fragment Verification: English

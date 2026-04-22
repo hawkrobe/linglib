@@ -43,7 +43,7 @@ satisfy a bimoraic Minimality requirement. Multisyllabic prepositions
 The 3rd person forms *-ye* and *-o* are also the noun class 1/2
 (animate) resumptive pronouns (Table 3). The theoretical analysis of
 why 1st/2nd person forms carry person features while 3rd person forms
-do not is in `Phenomena/FillerGap/Studies/Scott2021.lean`.
+do not is in `Phenomena/Relativization/Studies/Scott2021.lean`.
 -/
 
 namespace Fragments.Swahili.Relativization

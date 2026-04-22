@@ -16,5 +16,12 @@ def typology : LanguageProfile :=
     |>.withWordOrderFromWALS
     |>.withAdpositionFromWALS
     |>.withMorph morphProfile
+    |>.withRelativization
+        { subjStrategy := .mixed
+        , oblStrategy := .pronounRetention
+        , rcPosition := .postNominal
+        , lowestRelativizable := .oblique
+        , notes := "Gap on subject, resumptive on obliques; classic AH shift; "
+                ++ "complementizer alladhi/allati" }
 
 end Fragments.Arabic

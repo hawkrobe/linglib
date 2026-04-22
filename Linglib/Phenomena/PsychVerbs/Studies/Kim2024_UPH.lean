@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Cascade
+import Linglib.Theories.Syntax.Minimalism.Cascade
 import Linglib.Theories.Semantics.Causation.Psych
 import Linglib.Theories.Semantics.Causation.PsychLink
 import Linglib.Theories.Semantics.Verb.EntailmentProfile

@@ -1,7 +1,7 @@
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Semantics.Verb.ArgDerivation
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Voice
 
 /-!
 # @cite{krejci-2012} — Lexical Reflexivity and the Ingestive/Middle Class

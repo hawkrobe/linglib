@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Agreement.DifferentialIndexing
 import Linglib.Phenomena.Case.Typology
-import Linglib.Theories.Syntax.Minimalism.Core.PersonGeometry
+import Linglib.Theories.Syntax.Minimalism.PersonGeometry
 import Linglib.Fragments.Mayan.Kaqchikel.Agreement
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
@@ -17,7 +17,7 @@ Connects @cite{just-2024} differential indexing to three existing formalizations
    This bridge proves that DOM profiles and P-indexing profiles share the
    same monotonicity constraint over the same scales.
 
-2. **@cite{preminger-2014} PersonGeometry** (`Theories/Syntax/Minimalism/Core/`):
+2. **@cite{preminger-2014} PersonGeometry** (`Theories/Syntax/Minimalism/`):
    Just's binary person split (SAP vs 3rd) is precisely Preminger's
    [±participant] feature. This bridge makes the connection explicit.
 

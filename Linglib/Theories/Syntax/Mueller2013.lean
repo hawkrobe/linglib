@@ -1,6 +1,6 @@
 import Linglib.Core.CombinationKind
 import Linglib.Theories.Syntax.Minimalism.CombinationSchemata
-import Linglib.Theories.Syntax.Minimalism.Core.Labeling
+import Linglib.Theories.Syntax.Minimalism.Labeling
 import Linglib.Theories.Syntax.HPSG.Core.HeadFiller
 import Linglib.Theories.Syntax.HPSG.Core.LexicalRules
 import Linglib.Theories.Syntax.CCG.Core.Basic

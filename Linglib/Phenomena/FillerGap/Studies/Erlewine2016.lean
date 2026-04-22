@@ -1,5 +1,5 @@
 import Linglib.Fragments.Mayan.Kaqchikel.AgentFocus
-import Linglib.Theories.Syntax.Minimalism.Core.Position
+import Linglib.Theories.Syntax.Minimalism.Position
 
 /-!
 # Minimalism Bridge: Kaqchikel Agent Focus @cite{erlewine-2016}
@@ -86,7 +86,7 @@ about OT candidate competition.
 
 -/
 
-namespace Erlewine2016
+namespace Phenomena.FillerGap.Studies.Erlewine2016
 
 open Fragments.Mayan.Kaqchikel Minimalism
 open Core.Constraint.OT (mkTableau)
@@ -223,4 +223,4 @@ theorem locality_sensitivity :
 theorem strategy_is_af :
     kaqExtractionProfile.strategy = .agentFocusAlternation := rfl
 
-end Erlewine2016
+end Phenomena.FillerGap.Studies.Erlewine2016

@@ -18,7 +18,6 @@ Used for:
 ## Main definitions
 
 - `Truth3`: three-valued truth (`.true`, `.false`, `.indet`)
-- `Truth3.gap`: abbreviation for `.indet`, used in homogeneity contexts
 - `Truth3.neg`, `join`, `meet`: Strong Kleene connectives
 - Lattice instances: `false < indet < true`
 -/
@@ -33,10 +32,6 @@ inductive Truth3 where
   deriving Repr, DecidableEq, Inhabited
 
 namespace Truth3
-
-/-- Alias for `indet`, used in homogeneity contexts where the third value
-represents a truth-value gap (some but not all atoms satisfy the predicate). -/
-abbrev gap : Truth3 := .indet
 
 /-- Kleene strong negation. -/
 def neg : Truth3 → Truth3
@@ -659,7 +654,7 @@ inductive ProjectionType where
 def dist (results : List Bool) : Truth3 :=
   if results.all id then .true
   else if results.all (!·) then .false
-  else .gap
+  else .indet
 
 /-- `dist` on a homogeneous true list. -/
 @[simp] theorem dist_nil : dist [] = .true := rfl

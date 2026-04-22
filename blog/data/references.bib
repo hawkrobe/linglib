@@ -2580,6 +2580,16 @@
   role      = {cited},
   validated = {true},
   sources   = {Core/Semantics/Kleene.lean}
+}
+@article{fitting-1985,
+  author    = {Fitting, Melvin},
+  year      = {1985},
+  title     = {A {K}ripke-{K}leene Semantics for Logic Programs},
+  journal   = {The Journal of Logic Programming},
+  pages     = {295--312},
+  subfield  = {semantics/causation},
+  role      = {foundational},
+  sources   = {Core/Causal/SEM/Defs.lean, Core/Causal/SEM/Monotonicity.lean}
 }% REF: Strawson, P. (1952). Introduction to Logical Theory.
 @book{strawson-1952,
   author    = {Strawson, P. F.},
@@ -20948,4 +20958,448 @@
   role      = {cited},
   validated = {true},
   sources   = {Theories/Syntax/Minimalism/Core/ANDL.lean;Phenomena/Questions/Studies/ChanShen2026.lean}
+}
+
+% ══════════════════════════════════════════════════════════════════════════════
+%  semantics/reference + pragmatics — metasemantics of demonstratives,
+%  dogwhistles, plausible deniability
+%
+%  All entries below are transcribed from the references section of
+%  ney-2026 (Linguistics & Philosophy, DOI 10.1007/s10988-026-09456-0).
+%  DOIs only included where the source paper provides them; volume/issue
+%  fields omitted where not visible in the source. Per CLAUDE.md
+%  hallucination prevention: do not backfill these from memory.
+
+@article{ney-2026,
+  author    = {Ney, Milan},
+  year      = {2026},
+  title     = {Insinuative reference and the coordination account},
+  journal   = {Linguistics and Philosophy},
+  doi       = {10.1007/s10988-026-09456-0},
+  note      = {Online first; volume/pages not yet assigned},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean;Theories/Semantics/Reference/Metasemantics/Coordination.lean;Theories/Semantics/Reference/Metasemantics/Reasonableness.lean;Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@article{king-2013,
+  author    = {King, Jeffrey C.},
+  year      = {2013},
+  title     = {Supplementives, the coordination account, and conflicting intentions},
+  journal   = {Philosophical Perspectives},
+  volume    = {27},
+  pages     = {288--311},
+  subfield  = {semantics/reference},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/Coordination.lean;Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean;Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@incollection{king-2014a,
+  author    = {King, Jeffrey C.},
+  year      = {2014},
+  title     = {The metasemantics of contextual sensitivity},
+  booktitle = {Metasemantics: New essays on the foundations of meaning},
+  editor    = {Burgess, Alexis and Sherman, Brett},
+  pages     = {97--117},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/Coordination.lean}
+}
+
+@article{king-2014b,
+  author    = {King, Jeffrey C.},
+  year      = {2014},
+  title     = {Speaker intentions in context},
+  journal   = {No\^us},
+  volume    = {48},
+  number    = {2},
+  pages     = {219--237},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/Coordination.lean;Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean}
+}
+
+@article{lewis-2020,
+  author    = {Lewis, Karen S.},
+  year      = {2020},
+  title     = {The speaker authority problem for context-sensitivity (or: {Y}ou can't always mean what you want)},
+  journal   = {Erkenntnis},
+  volume    = {85},
+  number    = {6},
+  pages     = {1527--1555},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/Coordination.lean}
+}
+
+@article{stojnic-2024,
+  author    = {Stojni\'c, Una},
+  year      = {2024},
+  title     = {Metasemantics, context, and felicitous underspecification},
+  journal   = {Philosophical Studies},
+  volume    = {181},
+  number    = {11},
+  pages     = {3191--3201},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/Coordination.lean}
+}
+
+@article{stojnic-stone-lepore-2017,
+  author    = {Stojni\'c, Una and Stone, Matthew and Lepore, Ernie},
+  year      = {2017},
+  title     = {Discourse and logical form: {P}ronouns, attention and coherence},
+  journal   = {Linguistics and Philosophy},
+  volume    = {40},
+  number    = {5},
+  pages     = {519--547},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/Coordination.lean}
+}
+
+@article{rostworowski-kus-mackiewicz-2022,
+  author    = {Rostworowski, Wojciech and Ku\'s, Katarzyna and Ma\'ckiewicz, Bart\l{}omiej},
+  year      = {2022},
+  title     = {Against intentionalism: {A}n experimental study on demonstrative reference},
+  journal   = {Linguistics and Philosophy},
+  volume    = {45},
+  number    = {5},
+  pages     = {1027--1061},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/Coordination.lean}
+}
+
+@incollection{camp-2018,
+  author    = {Camp, Elisabeth},
+  year      = {2018},
+  title     = {Insinuation, common ground, and the conversational record},
+  booktitle = {New work on speech acts},
+  editor    = {Fogal, Daniel and Harris, Daniel W. and Moss, Matt},
+  pages     = {40--64},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean;Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@incollection{henderson-mccready-2018,
+  author    = {Henderson, Robert and McCready, Elin},
+  year      = {2018},
+  title     = {How dogwhistles work},
+  booktitle = {New Frontiers in Artificial Intelligence: {JSAI}-is{AI} 2017},
+  editor    = {Arai, Sachiyo and Kojima, Kazuhiro and Mineshima, Koji and Bekki, Daisuke and Satoh, Ken and Ohta, Yuiko},
+  series    = {Lecture Notes in Computer Science},
+  volume    = {10838},
+  publisher = {Springer},
+  address   = {Berlin},
+  doi       = {10.1007/978-3-319-93794-6_16},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean;Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@book{henderson-mccready-2024,
+  author    = {Henderson, Robert and McCready, Elin},
+  year      = {2024},
+  title     = {Signaling without saying: {T}he semantics and pragmatics of dogwhistles},
+  publisher = {Oxford University Press},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean}
+}
+
+@incollection{saul-2018,
+  author    = {Saul, Jennifer},
+  year      = {2018},
+  title     = {Dogwhistles, political manipulation, and philosophy of language},
+  booktitle = {New work on speech acts},
+  editor    = {Harris, Daniel W. and Fogal, Daniel and Moss, Matt},
+  pages     = {360--382},
+  publisher = {Oxford University Press},
+  address   = {Oxford},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean;Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@incollection{saul-2019,
+  author    = {Saul, Jennifer},
+  year      = {2019},
+  title     = {`{I}mmigration' in the {B}rexit campaign: {P}rotean dogwhistles and political manipulation},
+  booktitle = {Media ethics, free speech, and the requirements of democracy},
+  editor    = {Fox, Carl and Saunders, Joe},
+  pages     = {21--37},
+  publisher = {Routledge},
+  address   = {London},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@book{saul-2024,
+  author    = {Saul, Jennifer Mather},
+  year      = {2024},
+  title     = {Dogwhistles and Figleaves},
+  publisher = {Oxford University Press},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean;Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@article{khoo-2017,
+  author    = {Khoo, Justin},
+  year      = {2017},
+  title     = {Code in political discourse},
+  journal   = {Philosophical Topics},
+  volume    = {45},
+  number    = {2},
+  pages     = {33--64},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean}
+}
+
+@article{witten-2023,
+  author    = {Witten, Kim},
+  year      = {2023},
+  title     = {The definition and typological model of a dogwhistle},
+  journal   = {Manuscrito},
+  volume    = {46},
+  number    = {3},
+  note      = {Article 2023-0052},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean}
+}
+
+@book{stanley-2015,
+  author    = {Stanley, Jason},
+  year      = {2015},
+  title     = {How propaganda works},
+  publisher = {Princeton University Press},
+  address   = {Princeton},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean}
+}
+
+@book{beaver-stanley-2023,
+  author    = {Beaver, David and Stanley, Jason},
+  year      = {2023},
+  title     = {The politics of language},
+  publisher = {Princeton University Press},
+  address   = {Princeton},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean}
+}
+
+@article{asher-lascarides-2013,
+  author    = {Asher, Nicholas and Lascarides, Alex},
+  year      = {2013},
+  title     = {Strategic conversation},
+  journal   = {Semantics and Pragmatics},
+  volume    = {6},
+  pages     = {1--62},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean;Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@article{tuters-hagen-2020,
+  author    = {Tuters, Marc and Hagen, Sal},
+  year      = {2020},
+  title     = {(((They))) rule: {M}emetic antagonism and nebulous othering on 4chan},
+  journal   = {New Media \& Society},
+  volume    = {22},
+  number    = {12},
+  pages     = {2218--2237},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@book{buring-2005,
+  author    = {B\"uring, Daniel},
+  year      = {2005},
+  title     = {Binding theory},
+  publisher = {Cambridge University Press},
+  address   = {Cambridge},
+  subfield  = {semantics/reference},
+  role      = {cited},
+  validated = {true},
+  sources   = {Theories/Semantics/Reference/Metasemantics/InsinuativeReference.lean}
+}
+
+@article{ney-2024,
+  author    = {Ney, Milan},
+  year      = {2024},
+  title     = {Metaphors and hermeneutical resistance},
+  journal   = {European Journal of Philosophy},
+  volume    = {32},
+  number    = {1},
+  pages     = {159--178},
+  doi       = {10.1111/ejop.12839},
+  subfield  = {pragmatics},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Reference/Studies/Ney2026.lean}
+}
+
+@article{sudo-2016,
+  author    = {Sudo, Yasutada},
+  year      = {2016},
+  title     = {The Semantic Role of Classifiers in {J}apanese},
+  journal   = {The Baltic International Yearbook of Cognition, Logic and Communication},
+  volume    = {11},
+  pages     = {1--15},
+  doi       = {10.4148/1944-3676.1108},
+  subfield  = {semantics/lexical},
+  role      = {formalized},
+  validated = {true},
+  sources   = {Phenomena/Classifiers/Studies/Sudo2016.lean;Theories/Semantics/Classifier/Defs.lean;Theories/Semantics/Classifier/TypeN.lean;Theories/Semantics/Classifier/Composition.lean;Fragments/Japanese/Classifier.lean}
+}
+
+@article{allan-1977,
+  author    = {Allan, Keith},
+  year      = {1977},
+  title     = {Classifiers},
+  journal   = {Language},
+  volume    = {53},
+  number    = {2},
+  pages     = {285--311},
+  doi       = {10.2307/413103},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Fragments/Japanese/Classifier.lean;Core/Lexical/NounCategorization.lean}
+}
+
+@article{nemoto-2005,
+  author    = {Nemoto, Naoko},
+  year      = {2005},
+  title     = {On mass denotations of bare nouns in {J}apanese and {K}orean},
+  journal   = {Linguistics},
+  volume    = {43},
+  number    = {2},
+  pages     = {383--413},
+  doi       = {10.1515/ling.2005.43.2.383},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Classifiers/Studies/Sudo2016.lean}
+}
+
+@inproceedings{bale-khanjian-2008,
+  author    = {Bale, Alan and Khanjian, Hrayr},
+  year      = {2008},
+  title     = {Classifiers and number marking},
+  booktitle = {Proceedings of {SALT} 18},
+  editor    = {Friedman, Tova and Ito, Satoshi},
+  publisher = {Linguistic Society of America},
+  pages     = {73--89},
+  doi       = {10.3765/salt.v18i0.2478},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Classifiers/Studies/Sudo2016.lean}
+}
+
+@article{bale-khanjian-2014,
+  author    = {Bale, Alan and Khanjian, Hrayr},
+  year      = {2014},
+  title     = {Syntactic complexity and competition: The singular-plural distinction in {W}estern {A}rmenian},
+  journal   = {Linguistic Inquiry},
+  volume    = {45},
+  number    = {1},
+  pages     = {1--26},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Classifiers/Studies/Sudo2016.lean}
+}
+
+@incollection{doetjes-2013,
+  author    = {Doetjes, Jenny},
+  year      = {2013},
+  title     = {Count/mass distinctions across languages},
+  booktitle = {Semantics: An International Handbook of Meaning, Volume 3},
+  editor    = {Maienborn, Claudia and von Heusinger, Klaus and Portner, Paul},
+  publisher = {De Gruyter Mouton},
+  address   = {Berlin, Boston},
+  pages     = {2559--2580},
+  doi       = {10.1515/9783110253382.2559},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Classifiers/Studies/Sudo2016.lean}
+}
+
+@phdthesis{li-2011,
+  author    = {Li, XuPing},
+  year      = {2011},
+  title     = {On the Semantics of Classifiers in {C}hinese},
+  school    = {Bar-Ilan University},
+  address   = {Ramat Gan},
+  url       = {http://www.semanticsarchive.net/Archive/},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Classifiers/Studies/Sudo2016.lean}
+}
+
+@incollection{bliss-2004,
+  author    = {Bliss, Heather},
+  year      = {2004},
+  title     = {The semantics of the bare noun in {T}urkish},
+  booktitle = {Calgary Working Papers in Linguistics},
+  volume    = {25},
+  publisher = {University of Calgary},
+  address   = {Calgary},
+  pages     = {1--65},
+  url       = {https://ucalgary.scholaris.ca/items/4cbb595f-5f00-4faf-a3e2-20552ff08013},
+  subfield  = {semantics/lexical},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Plurals/Studies/BaleKhanjian2014.lean}
+}
+
+@article{singh-2011,
+  author    = {Singh, Raj},
+  year      = {2011},
+  title     = {Maximize {P}resupposition! and local contexts},
+  journal   = {Natural Language Semantics},
+  volume    = {19},
+  number    = {2},
+  pages     = {149--168},
+  doi       = {10.1007/s11050-010-9066-2},
+  subfield  = {semantics/presupposition},
+  role      = {cited},
+  validated = {true},
+  sources   = {Phenomena/Plurals/Studies/BaleKhanjian2014.lean}
 }

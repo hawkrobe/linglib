@@ -1,6 +1,8 @@
 import Linglib.Theories.Semantics.Focus.BackgroundedIslands
 import Linglib.Phenomena.Islands.Studies.Ross1967
+import Linglib.Phenomena.Islands.Studies.HofmeisterSag2010
 import Linglib.Phenomena.Islands.MannerOfSpeaking
+import Linglib.Phenomena.FillerGap.Studies.Sag2010
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Fragments.English.Predicates.Verbal
 
@@ -30,7 +32,7 @@ extraction predictions, with no stipulation.
 -/
 
 
-namespace LuPanDegen2025
+namespace Phenomena.FillerGap.Studies.LuPanDegen2025
 
 open Semantics.Focus.BackgroundedIslands
 open Core.InformationStructure
@@ -157,7 +159,7 @@ This is the core empirical prediction that distinguishes the two account types. 
 theorem discourse_structural_dissociation :
     manipulationPredictions.all
       (λ p => p.affectsStructuralIslands != p.affectsMoSIslands) = true := by
-  native_decide
+  decide
 
 /-! ## §4. D-Linking Prediction
 
@@ -211,7 +213,7 @@ theorem per_verb_correlation_predicted :
     -- All MoS verbs have manner weight (they all background)
     complementStatus (defaultDimension whisperDecomp) = .given ∧
     complementStatus (defaultDimension shoutDecomp) = .given := by
-  refine ⟨?_, rfl, rfl⟩; native_decide
+  refine ⟨?_, rfl, rfl⟩; decide
 
 /-! ## §6. Fragment Verb → Island Prediction Pipeline
 
@@ -321,7 +323,7 @@ theorem experimental_matches_model :
     -- Exp 1: verb focus → more backgrounded AND less acceptable
     (exp1_backgrounded_verbFocus > exp1_backgrounded_embeddedFocus ∧
      exp1_acceptability_verbFocus < exp1_acceptability_embeddedFocus) := by
-  refine ⟨?_, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> native_decide
+  refine ⟨?_, ⟨?_, ?_⟩, ⟨?_, ?_⟩⟩ <;> decide
 
 open Phenomena.Islands.MannerOfSpeaking in
 /-- **Say+adverb replicates formal model prediction**: adding manner weight
@@ -335,6 +337,178 @@ theorem adverb_replicates_model :
     (exp3a_acc_say > exp3a_acc_sayAdverb) := by
   constructor
   · rfl
-  · native_decide
+  · decide
 
-end LuPanDegen2025
+/-! ## §8. Cross-Theory Comparison Across Manipulations
+
+This section integrates @cite{lu-pan-degen-2025}'s findings with
+@cite{hofmeister-sag-2010}'s processing manipulations and
+@cite{sag-2010}'s grammar-based island typology, comparing how three
+account types (competence, processing, discourse) score against the
+empirical data.
+
+The key empirical claim of @cite{lu-pan-degen-2025}: discourse and
+processing accounts cover *disjoint* sets of manipulations. Together
+they explain the full range; neither suffices alone. -/
+
+/-- A nonstructural manipulation that changes island acceptability
+without altering the island configuration. Each account makes a
+prediction about whether the manipulation affects acceptability. -/
+structure IslandManipulation where
+  description : String
+  /-- Does any competence theory predict an acceptability difference? -/
+  competencePredictsDifference : Bool
+  /-- Does the processing account predict a difference? -/
+  processingPredictsDifference : Bool
+  /-- Does the discourse/backgroundedness account predict a difference? -/
+  discoursePredictsDifference : Bool
+  /-- Is a difference actually observed? -/
+  differenceObserved : Bool
+  deriving Repr
+
+/-! ### @cite{hofmeister-sag-2010} manipulations -/
+
+/-- Filler complexity in CNPC (which-N vs bare wh — same island structure). -/
+def fillerComplexityCNPC : IslandManipulation :=
+  { description := "Filler complexity (which-N vs bare) in CNPC"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    discoursePredictsDifference := false
+    differenceObserved := true }
+
+/-- Filler complexity in wh-islands (which-N vs bare wh — same island structure). -/
+def fillerComplexityWhIsland : IslandManipulation :=
+  { description := "Filler complexity (which-N vs bare) in wh-islands"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    discoursePredictsDifference := false
+    differenceObserved := true }
+
+/-- NP type in CNPC (definite vs indefinite — same CNPC configuration). -/
+def npTypeCNPC : IslandManipulation :=
+  { description := "NP definiteness (def vs indef) in CNPC"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    discoursePredictsDifference := false
+    differenceObserved := true }
+
+/-- Filler complexity in adjunct islands (complex vs simple temporal adjunct). -/
+def fillerComplexityAdjunct : IslandManipulation :=
+  { description := "Adjunct complexity (complex vs simple) in wh-islands"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    discoursePredictsDifference := false
+    differenceObserved := true }
+
+/-! ### @cite{lu-pan-degen-2025} MoS manipulations -/
+
+/-- Prosodic focus on embedded object in MoS islands. Focus changes
+information structure without changing syntax or processing load. -/
+def prosodicFocusMoS : IslandManipulation :=
+  { description := "Prosodic focus (embedded vs verb) in MoS islands"
+    competencePredictsDifference := false
+    processingPredictsDifference := false
+    discoursePredictsDifference := true
+    differenceObserved := true }
+
+/-- Say + manner adverb creates an island. Adding an adverb doesn't
+change CP structure but adds manner weight. -/
+def sayAdverbIsland : IslandManipulation :=
+  { description := "Say+adverb vs say alone (MoS island creation)"
+    competencePredictsDifference := false
+    processingPredictsDifference := false
+    discoursePredictsDifference := true
+    differenceObserved := true }
+
+/-- Verb-frame frequency in MoS islands: not significant in any experiment. -/
+def frequencyMoS : IslandManipulation :=
+  { description := "Verb-frame frequency as predictor of MoS acceptability"
+    competencePredictsDifference := false
+    processingPredictsDifference := true
+    discoursePredictsDifference := false
+    differenceObserved := false }
+
+def allManipulations : List IslandManipulation := [
+  fillerComplexityCNPC,
+  fillerComplexityWhIsland,
+  npTypeCNPC,
+  fillerComplexityAdjunct,
+  prosodicFocusMoS,
+  sayAdverbIsland,
+  frequencyMoS
+]
+
+/-- Processing correctly predicts the observed (non-)difference. -/
+def processingCorrect (m : IslandManipulation) : Bool :=
+  m.differenceObserved == m.processingPredictsDifference
+
+/-- Competence correctly predicts the observed (non-)difference. -/
+def competenceCorrect (m : IslandManipulation) : Bool :=
+  m.differenceObserved == m.competencePredictsDifference
+
+/-- Discourse correctly predicts the observed (non-)difference. -/
+def discourseCorrect (m : IslandManipulation) : Bool :=
+  m.differenceObserved == m.discoursePredictsDifference
+
+def processingScore : Nat := allManipulations.filter processingCorrect |>.length
+def competenceScore : Nat := allManipulations.filter competenceCorrect |>.length
+def discourseScore : Nat := allManipulations.filter discourseCorrect |>.length
+
+/-- Processing scores 4/7: correct on all four H&S manipulations,
+incorrect on the three MoS manipulations (predicts effect or null
+incorrectly). -/
+theorem processing_scores_4_of_7 :
+    processingScore = 4 := by decide
+
+/-- Competence scores 1/7 — only the frequency null result, where it
+correctly predicts no effect for the wrong reason. -/
+theorem competence_scores_1_of_7 :
+    competenceScore = 1 := by decide
+
+/-- Discourse scores 3/7: correct on prosodic focus, say+adverb, and
+the frequency null. Misses the four H&S effects, which are processing,
+not discourse. -/
+theorem discourse_scores_3_of_7 :
+    discourseScore = 3 := by decide
+
+/-- Processing and discourse are perfectly complementary: for every
+manipulation, exactly one of the two accounts is correct (XOR). They
+have full coverage (together 7/7) with zero overlap. -/
+theorem complementary_accounts :
+    allManipulations.all
+      (fun m => processingCorrect m != discourseCorrect m) = true := by decide
+
+/-! ## §9. Connection to @cite{sag-2010}'s Construction-Based Islands
+
+@cite{sag-2010}'s F-G typology classifies which constructions are
+grammar-based islands (those with `[GAP ⟨⟩]` on the mother).
+@cite{hofmeister-sag-2010}'s findings explain *within-island* gradient
+effects. @cite{lu-pan-degen-2025}'s MoS islands are a third mechanism.
+Together the three accounts cover disjoint islands. -/
+
+open Phenomena.FillerGap.Studies.Sag2010 (FGClauseType fgParams islandConstructions)
+
+/-- @cite{sag-2010}'s two island constructions are a proper subset of all
+F-G types. The non-island types (interrogative, relative, the-clause)
+freely permit extraction. -/
+theorem sag_island_subset :
+    islandConstructions.length < 5 := by decide
+
+/-- @cite{sag-2010}'s grammar-based islands (topicalization, exclamatives)
+are disjoint from @cite{hofmeister-sag-2010}'s processing-based islands
+(CNPC, wh-islands, adjuncts) and from @cite{lu-pan-degen-2025}'s
+discourse-based islands (MoS). The three accounts cover different cases
+under different mechanisms. -/
+theorem complementary_coverage :
+    (fgParams .topicalized).isIsland = true ∧
+    (fgParams .whExclamative).isIsland = true ∧
+    mosIslandSources = [.discourse] := ⟨rfl, rfl, rfl⟩
+
+/-- MoS islands are discourse-sourced and so distinct from the syntactic
+baseline assumed for traditional islands. -/
+theorem mos_distinct_from_traditional_islands :
+    mosIslandSources = [.discourse] ∧
+    mosIslandSources ≠ [traditionalIslandSource] := by
+  exact ⟨rfl, by decide⟩
+
+end Phenomena.FillerGap.Studies.LuPanDegen2025

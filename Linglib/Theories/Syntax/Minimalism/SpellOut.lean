@@ -38,7 +38,7 @@ for the full admissibility conditions.
 @cite{chomsky-1995} @cite{heim-kratzer-1998}
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
+import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Core.Tree
 
 namespace Minimalism

@@ -4,6 +4,1504 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.198] - 2026-04-22
+
+### Fixed — audit response on the classifier-typology PR (parallel session)
+
+Mathlib-style audit pass on the `Phenomena/Classifiers/` work that
+landed in parallel with the relativization promotion. Same anti-patterns
+as the relativization audit, plus one new category (`axiom` declarations
+stipulating typological universals).
+
+**B1+B8 (axioms + Inhabited soundness landmine)**: deleted six `axiom`
+declarations in `Phenomena/Classifiers/Typology.lean`
+(`noun_class_requires_agreement`, `numeral_classifier_no_agreement`,
+`classifier_assignment_semantic`, `animacy_universal`,
+`classifier_semantic_hierarchy`, `noun_class_small_inventory`). Strictly
+worse than the cherry-picked-`ImplicationalUniversal` pattern from
+relativization: an `axiom` can't be falsified by Fragment data, it just
+silently rejects any system that doesn't conform. Combined with the
+`Inhabited NounCategorizationSystem` instance returning a zeroed
+witness (which vacuously satisfied some axioms while violating
+others), this was a genuine soundness landmine. Both deleted; zero
+external consumers of either.
+
+**B3 (silent `.get!` accessors)**: replaced seven
+`def japanese := Fragments.Japanese.typology.classifierSystem.get!`
+accessors with a `csOf` helper using a sentinel default
+(`family := "<missing>"`, weird values across all fields), parallel to
+the `relOf` helper in `Phenomena/Relativization/Typology.lean`. After
+the `Inhabited` instance was dropped (B8), `.get!` wouldn't have
+typechecked anyway. Per-language abbrevs preserved for downstream
+ergonomics.
+
+**B2 (cherry-picked theorems)**: renamed/restructured several
+sample-restricted theorems with `sample_*` prefixes to make their
+honest scope visible at the name level. `bantu_satisfies_inventory_bound`
+→ `sample_bantu_inventory_within_aikhenvald_range`,
+`agreement_divides_types` → `fr_mandarin_jp_agreement_split`,
+`classifiers_prefer_physical` → `mandarin_japanese_prefer_shape`, etc.
+The cross-paper engagement is real; the universalist phrasing wasn't.
+Also dropped the unsourced `ch55Distribution` numbers + the 3
+proof-of-stipulation theorems over them.
+
+**B4 (73 `native_decide` calls)**: bulk converted to `decide`. All
+build clean — no `String`-equality cases that needed restructuring this
+time, unlike Scott2021.
+
+**B5 (encoding-conclusions-as-definitions)**: removed two `Bool`
+stipulation+rfl pairs in `Studies/Sudo2016.lean`
+(`japaneseHasOvertClassifiers := true` + `japanese_blocks_upShift := rfl`,
+`downNumAvailable := true` + `cap_available_in_japanese := rfl`).
+`japaneseHasOvertClassifiers` now derives from the Japanese fragment's
+classifier inventory being non-empty; `downNumAvailable` deleted as
+content-zero. The cross-paper `japaneseStrategy := .X` stipulation
+patterns in Chierchia1998/Sudo2016/LittleMoroneyRoyer2022 left intact —
+auditor's recommended fix (derive strategy from paper diagnostics via
+`predictionsOf⁻¹`) is its own architectural refactor.
+
+**B7 (basename collision)**: renamed
+`Core/Typology/NounCategorization.lean` →
+`Core/Typology/ClassifierSystem.lean` to break the collision with
+`Core/Lexical/NounCategorization.lean`. Imports updated in
+`LanguageProfile.lean`, `Phenomena/Classifiers/Typology.lean`,
+`Studies/LittleMoroneyRoyer2022.lean`, `Studies/TaraldsenEtAl2018.lean`,
+and the root `Linglib.lean`.
+
+**B9+B10 (dead code)**: deleted `ClassifierEntry.toString` alias +
+`ToString ClassifierEntry` instance (zero consumers, was a one-line
+projection of `c.form`). Deleted `allSystemsExtended` alias + the three
+`*_extended` duplicate theorems in `Phenomena/Classifiers/Typology.lean`
+that proved the same content as their non-`_extended` siblings.
+`LittleMoroneyRoyer2022.lean` updated to import `allSystems` directly.
+
+**Phenomena/Classifiers/Typology.lean**: 421 → 314 LOC, six axioms
+gone, eleven sample-restricted theorems clearly named, all `decide`
+proofs.
+
+**Deferred** (not in this PR):
+- B6 (mass `-- UNVERIFIED:` markers in Studies citations) — better as
+  a focused per-file pass than bulk find-replace; Downing1996 is the
+  model.
+- Layer rebalancing within the renamed Core files (`ClassifierStrategy`
+  belongs in typology, `GrammaticalCategory` belongs in lexical) —
+  touches every consumer of those types.
+- Auditor's `Predicate.IsAikhenvaldConsistent` schema unification (with
+  the parallel scaffold for relativization) — substantive architectural
+  work for a separate PR.
+
+## [0.230.197] - 2026-04-22
+
+### Added — Western Armenian (closes Sudo §5 coverage gap)
+
+Per the classifier-coverage audit (0.230.190 follow-up): Western Armenian
+is the worked example for @cite{sudo-2016}'s §5 self-flagged
+counterexample languages and the empirical pressure point on
+Aikhenvald-style "universals".
+
+**New files:**
+- `Fragments/Armenian/Typology.lean` — Western Armenian (ISO `hyw`)
+  `LanguageProfile` with `classifierSystem` set to non-obligatory:
+  `isObligatory := false`, `pluralClfCooccur := false` (per
+  @cite{bale-khanjian-2008} and @cite{bale-khanjian-2014} fn 3).
+  Numerals combine directly with bare nouns; the Sudo blocking
+  framework's input shape (overt classifiers in lexicon) is absent.
+- `Phenomena/Plurals/Studies/BaleKhanjian2014.lean` — formalizes the
+  paper's empirical paradigms (singular indefinite = general number,
+  singular definite = strict singular, *yergu dəgha-n unacceptable),
+  the four Bliss 2004-style syntactic structures (`singularIndef`,
+  `pluralIndef`, `singularDef`, `pluralDef` as `Tree Cat String`), and
+  the Katzir 2007 size-based asymmetry: indefinites are size-asymmetric
+  (no competition), definites are size-equal (competition applies).
+  Cross-paper note: Sudo's framework doesn't apply to Western Armenian
+  because the input shape is wrong.
+
+**Wired into typology:**
+- `Phenomena/Classifiers/Typology.westernArmenian` extractor +
+  `optionalClassifierSystems := [westernArmenian]` (kept SEPARATE from
+  `allSystems` because the Aikhenvald sample-restricted findings
+  presuppose obligatory systems; Armenian would falsify them in
+  instructive but disruptive ways).
+
+**Bib entries verified and committed:**
+- `bliss-2004` — Heather Bliss, "The semantics of the bare noun in
+  Turkish", Calgary WPL 25, pp. 1–65, verified via UCalgary scholarship URL
+- `singh-2011` — Raj Singh, "Maximize Presupposition! and local
+  contexts", *Natural Language Semantics* 19(2):149–168,
+  DOI 10.1007/s11050-010-9066-2 (verified via PDF)
+
+## [0.230.196] - 2026-04-22
+
+### Added — Halpern-Pearl 2005 instance for `CausalAccessibility`
+
+Third instance of the schema (alongside `lewis` and `nadathur10b`,
+0.230.192/0.230.195). HP introduces a **witness set** `W` held at
+its actual-world values, recovering preemption cases (Suzy/Billy
+throwing rocks) that Lewis misses.
+
+- **`CausalAccessibility.hpFixed (W : List Variable) (wValues : Situation)`**:
+  parameterized accessibility. The unique alternative is
+  `do(cause := false)` augmented with each `v ∈ W` extended to
+  `wValues.get v` (typically the actual-world value, i.e.,
+  `normalDevelopment dyn s`). Trivial consistency.
+- **`hpFixed_empty_eq_lewis`**: with `W = []`, the foldl is identity
+  and `hpFixed [] _ = lewis` definitionally — Lewis is the empty-witness
+  HP case.
+- **`hpActualCause`**: the full HP-modified actual cause predicate
+  (@cite{halpern-2015}'s simplified AC2): AC1 (cause and effect both
+  develop) ∧ ∃ W disjoint from {cause, effect} witnessing the
+  counterfactual via `hpFixed W (normalDevelopment dyn s)`.
+- **`lewis_implies_hp`**: every Lewis-but-for cause that satisfies
+  AC1 is HP-modified-actual-cause (witnessed by the empty `W`).
+  The converse fails on preemption, which is precisely HP's
+  contribution.
+
+HP's existential-over-W structure sits orthogonally to the schema's
+universal `.necessary` operator. The pattern: instantiate one
+`hpFixed` accessibility per `W`, and existentially quantify at the
+predicate level via `hpActualCause`. Nadathur 12b (situationally
+necessary) is structurally distinct (it fixes cause = effect, which
+trivializes the schema's `¬cause → ¬effect` implication) and stays
+as the standalone `situationallyNecessary` def for now.
+
+## [0.230.195] - 2026-04-22
+
+### Added — Lewis bridge for `CausalAccessibility` schema
+
+Closes the second of two foundational bridges for the
+`CausalAccessibility` schema added in 0.230.192. The Nadathur 10b
+bridge landed alongside the schema; the Lewis bridge needed a small
+preservation lemma in the SEM monotonicity layer first.
+
+- **`Monotonicity.lean`**: `normalDevelopment_preserves_hasValue`
+  (Bool-valued strengthening of `normalDevelopment_grows`). Where
+  `normalDevelopment_grows` says `s.hasValue v true →
+  (normalDevelopment dyn s).hasValue v true`, the new lemma covers
+  both polarities — once a variable is determined to *any* value,
+  normal development preserves it. Proof lifts
+  `applyLawsOnce_preserves_hasValue` along `Function.iterate` (same
+  shape as `normalDevelopment_grows`).
+- **`Counterfactual.lean`**:
+  `intervene_cause_not_developed_to_true` — Pearl's intervention sets
+  `cause := false` and removes structural laws targeting `cause`, so
+  the cause stays at `false` through normal development.
+  Then `lewis_necessary_iff_intervene_not_developed` shows that under
+  the `lewis` accessibility, `.necessary` reduces to the classical
+  Lewis but-for test (∼O(c) □→ ∼O(e)). The schema's
+  `¬cause-develops` hypothesis discharges automatically.
+- **`Lewis1973.lean`**: `lewisButFor_iff_lewis_necessary` — the
+  study's `lewisButFor` abbrev is exactly
+  `CausalAccessibility.lewis.necessary`, completing the circle
+  between the paper-specific definition and the schema instance.
+
+Both classical notions of causal necessity are now schema instances
+with bridge theorems witnessing the equivalence.
+
+## [0.230.194] - 2026-04-22
+
+### Fixed — Gitksan modal annotations per @cite{matthewson-2013}
+
+Two single-line corrections in `Fragments/Gitksan/Modals.lean` against the
+primary source for the Gitksan analysis:
+
+- `sgi`: force corrected from `.necessity` to `.weakNecessity`. Figure 1's
+  column header is "(WEAK) NECESSITY" — the parenthesis is load-bearing.
+  `sgi` is infelicitous in pure strong-necessity contexts (sneeze case,
+  ex. 95–98); a plain future is used instead. Updated `forceAnalysis`.
+- `da'akhlxw`: meaning expanded from `[pc]` to `[pc, pd, pb]`. §4.1
+  ex. 63–65 show da'akhlxw is acceptable in bouletic interpretations
+  ('You could eat less cake'), and competes with `anookxw` in deontic
+  permission contexts ('My mother told me I could play'). Teleological
+  is subsumed under circumstantial per linglib's flavor inventory.
+
+Both modals' meanings remain Cartesian products and continue to satisfy
+IFF (`Phenomena/Modality/Studies/ImelGuoST2026.lean :: gitksan_all_iff`).
+Background classifications (factualCircumstantial), epistemic/circumstantial
+split theorems, and Matthewson2016 consumers all rebuild green.
+
+## [0.230.193] - 2026-04-22
+
+### Refactored — collapsed 22 per-language WALS-grounding theorems into 2 generic ones
+
+Auditor's "obvious next move" from 0.230.191 was to add a
+`walsCode : String` field to `LanguageProfile` so the per-language
+grounding theorems could collapse into one generic statement. Quick
+survey of `Core/Typology/WordOrder.lean` showed the architecture
+already keys WALS lookups by ISO via `Datapoint.lookupISO` — and
+`F122A.lookupISO`/`F123A.lookupISO` already exist. The bug was
+narrower than the audit assumed: my per-language theorems hardcoded
+walsCode literals like `lookup "ger"` instead of using
+`lookupISO p.iso`.
+
+Replaced the 12 ch122 + 10 ch123 per-language theorems with two
+generic ones over explicit `groundedSubjLanguages` / `groundedOblLanguages`
+lists of Fragment `LanguageProfile`s:
+
+```lean
+theorem subj_strategy_consistent_with_WALS :
+    groundedSubjLanguages.all (fun p =>
+      (Core.WALS.F122A.lookupISO p.iso).map (fromWALS122A ·.value) =
+        p.relativization.map (·.subjStrategy)) = true := by
+  decide
+```
+
+One statement, one decide proof, one place to debug when WALS data
+refreshes. Adding a language to the grounded sample is now a single
+list-append, not a copy-paste of a 4-line theorem with the right
+walsCode literal.
+
+Per-language `abbrev english`, `abbrev german`, ... convenience
+accessors retained because `Studies/KeenanComrie1977.lean` consumes 7
+of them (`Typology.english.lowestRelativizable`,
+`Typology.welsh.lowestRelativizable`, etc.) for its KCProfile-vs-WALS
+agreement theorems. The 13 unused abbrevs are kept for symmetry but
+are candidates for removal in a follow-up.
+
+`Phenomena/Relativization/Typology.lean`: 358 → 278 LOC. Total
+relativization + WALS grounding API now fits in two generic theorems
+plus two explicit language lists.
+
+The structural fix (B1 from the audit) is now baked in: an
+ISO/walsCode mismatch can't happen because there is no separate
+walsCode — every WALS lookup goes through `LanguageProfile.iso` →
+`lookupISO` → WALS row. If a Fragment's iso disagrees with what WALS
+records for that language, the generic decide proof fails for that
+row, which is exactly the loud-failure mode we want.
+
+## [0.230.192] - 2026-04-22
+
+### Added — `CausalAccessibility` schema (modal-style parameterization of necessity)
+
+`Core/Causal/SEM/Counterfactual.lean` gains `CausalAccessibility`, a
+schema parameterizing the family of "causal necessity" notions over a
+counterfactual-accessibility relation, the way Kripke frames
+parameterize ◻-operators.
+
+- **`structure CausalAccessibility`** with three fields:
+  - `access : CausalDynamics → Situation → (cause effect : Variable) →
+    List (CausalDynamics × Situation)` — the alternative `(dyn', s')`
+    worlds the necessity claim is evaluated against
+  - `consistent : ... → Prop` — filter selecting which alternatives count
+  - `consistentDecidable` — required for `Decidable` on the necessity
+    operator
+- **`CausalAccessibility.necessary`**: ∀ accessible-and-consistent
+  alternative where the cause fails to develop, the effect also fails
+  to develop. Decidable via `List.decidableBAll`.
+- **`CausalAccessibility.lewis`**: the unique alternative is
+  `intervene dyn s cause false` (Pearl's `do(cause := false)`); trivial
+  consistency. Captures @cite{lewis-1973}.
+- **`CausalAccessibility.nadathur10b`**: alternatives are free
+  extensions of `s` over variables other than `effect`; consistency is
+  the per-variable `isConsistentSuper` filter from
+  @cite{nadathur-2024}'s Definition 9b.
+- **Bridge `nadathur10b_necessary_iff_noAlternative`**: the existing
+  `causallyNecessary.noAlternative` clause is exactly
+  `CausalAccessibility.nadathur10b.necessary`.
+
+The schema makes inequivalent literature notions (Lewis, Nadathur 10b,
+Halpern-Pearl 2005, Beckers-Vennekens 2018, Nadathur 12b) representable
+as named instances of a common abstraction, with their disagreements
+visible through bridge theorems and access-set inclusion. Subsequent
+work will add the Halpern-Pearl, Beckers-Vennekens, and 12b instances
+and migrate study files to use the named instance appropriate to each
+paper's actual claim.
+
+## [0.230.191] - 2026-04-22
+
+### Fixed — audit response on the relativization promotion
+
+Mathlib-style audit pass on 0.230.189 surfaced four block-merge issues
+and seven nits, all addressed:
+
+- **B1 (data correctness)**: `arabic_ch123` was looking up walsCode
+  `"aeg"` (Egyptian Arabic, iso `arz`) but the Fragment uses iso
+  `"arb"` (Modern Standard Arabic). Same shape for `malagasy_ch122`/
+  `malagasy_ch123`: walsCode `"mal"` is Plateau Malagasy (iso `plt`),
+  Fragment uses macrolanguage iso `"mlg"`. WALS Chs 122/123 don't
+  contain rows for MSA or the Malagasy macrolanguage at all, so the
+  three theorems can't be made honest by changing the lookup —
+  deleted them and added an exclusion comment alongside the existing
+  `.mixed` exclusions.
+
+- **B2 (cherry-pick anti-pattern)**: deleted
+  `prenominal_rc_implies_non_v_initial` + the `hasPreNominalRC`/
+  `hasNonVInitialOrder`/`relativizationSample`/`DecidablePred`
+  infrastructure that existed only to support it. The auditor's call:
+  the antecedent triggered only SOV/SVO languages because no V-initial
+  pre-nominal language was included in the 20-language sample to
+  begin with, so "no V-initial pre-nominal language exists in our
+  sample" reduced to a tautology. Same anti-pattern as the
+  20-language theorems deleted in 0.230.187, just dressed up via
+  `Core.Typology.ImplicationalUniversal`. Kept only the WALS-aggregate
+  findings (`gap_most_common_for_subjects`,
+  `retention_increases_for_obliques`,
+  `obliques_sometimes_not_relativizable`), which are over the **full**
+  WALS sample.
+
+- **B3 (silent default masks bug)**: the previous `relOf` fallback
+  used `{subjStrategy := .gap, oblStrategy := .gap, ...}` — values
+  that coincidentally matched WALS data for several languages.
+  Dropping the `relativization` field from a Fragment would silently
+  substitute the default, and 4 of the 12 ch122 grounding theorems
+  would still pass. `Option.get!` was tried first but doesn't reduce
+  through `decide`. Settled on a sentinel default of
+  `subjStrategy := .mixed, oblStrategy := .mixed` — values
+  `fromWALS122A`/`fromWALS123A` never produce, so every per-language
+  WALS-grounding theorem fails loudly if the fallback ever surfaces.
+
+- **B4 (root index)** — partial: added `Linglib.Fragments.Bambara.Typology`
+  + `Linglib.Fragments.Finnish.Typology` to `Linglib.lean`. The
+  remaining 11 (French, Hebrew, HindiUrdu, Malagasy, Mayan/Mam,
+  Navajo, Russian, Tagalog, Turkish, Welsh, Yoruba) deferred — the
+  parallel classifier session was actively churning `Linglib.lean`,
+  every Edit attempt collided. They build via transitive import from
+  `Phenomena.Relativization.Typology`, so this isn't a build blocker.
+
+Nits:
+
+- **N1**: deleted unused `RelativizationProfile` helpers
+  (`hasSubjGap`, `hasOblRetention`, `hasRelPronoun`, `canRelativize`,
+  `isPreNominal`, `isPostNominal`). Zero consumers; `hasPreNominalRC`
+  was reinvented two files away rather than reused, evidence the
+  abstraction layer didn't fit consumer needs.
+- **N2**: dropped the speculative `isEuropean` field. Populated `true`
+  in 6 Fragments, read by zero consumers.
+- **N3**: deleted `allRelativizations` (defined but unused).
+- **N10**: Navajo Fragment docstring previously called the language
+  "internally-headed/correlative" but the field was `.preNominal`.
+  Picked one (`.preNominal`).
+- **N11**: dropped unused `import Linglib.Core.Relativization.Hierarchy`
+  from `Phenomena/Relativization/Typology.lean`.
+- **N12**: fixed the stale "removing the relativization field
+  automatically excludes via `allRelativizations`" docstring claim
+  (the `relOf` accessors silently substituted the default instead).
+
+Auditor's "obvious next move" left for a follow-up: add a
+`walsCode : String` field to `LanguageProfile` so the 23 near-identical
+per-language WALS-grounding theorems can collapse into one generic
+`∀ p ∈ sample, ...` statement. That's its own focused PR.
+
+## [0.230.190] - 2026-04-22
+
+### Architecture — `Phenomena/Classifiers/Typology.lean` decomposed via `LanguageProfile`
+
+Migrated classifier typology from the monolithic-file pattern to the
+established `Core/Typology/` + `LanguageProfile` + per-language Fragment
+pattern. Brings classifiers in line with `WordOrder`, `Adposition`,
+`Morphology`, `Relativization` (the four pre-existing
+`LanguageProfile` domains).
+
+**New schema location** (`Core/Typology/NounCategorization.lean`):
+`NounCategorizationSystem` structure (Aikhenvald 2000's 7-property
+schema) + helpers (`isNounClassType`, `isClassifierType`,
+`GrammaticalCategory`, `interacts`). The schema lost its
+`language : String` field — that role is filled by `LanguageProfile.name`.
+`Inhabited` instance added so consumers can use `.get!` on
+`LanguageProfile.classifierSystem`.
+
+**`LanguageProfile` extended** (`Core/Typology/LanguageProfile.lean`):
+- New `classifierSystem : Option NounCategorizationSystem := none` field
+  (append-only per the schema discipline)
+- New `withClassifierSystem` setter (no `withClassifierSystemFromWALS`
+  because no single WALS feature covers Aikhenvald's 7-property schema)
+- Docstring section added on theory-ladenness — typological field
+  vocabulary (`SVO`, `numeralNP`, etc.) is broadly framework-neutral
+  but not strictly theory-free; documented to make the design explicit
+  to future readers.
+
+**Per-language Fragment Typology files** (Phase A3 + A4):
+- Updated existing: `Fragments/{Japanese,Mandarin,French}/Typology.lean`
+  now chain `.withClassifierSystem ...` into the LanguageProfile pipeline.
+- Created new: `Fragments/{Italian,Xhosa,Shona,Swahili}/Typology.lean`
+  (the four languages that previously had inline data in
+  `Phenomena/Classifiers/Typology.lean` without per-language Typology
+  files). Bantu languages get `hasObligatoryNumber := true` for the
+  singular/plural class-prefix pattern.
+
+**`Phenomena/Classifiers/Typology.lean` slimmed** from 694 to ~370 LOC.
+Drops the schema (now in `Core`) and the 7 inline language defs
+(now in fragments). Provides convenience extractors `def japanese`,
+`def mandarin`, etc. as `Fragments.{Lang}.typology.classifierSystem.get!`.
+`allSystems` is now built via `filterMap (·.classifierSystem)` over the
+list of imported language typologies, so adding a new classifier
+language extends the aggregation automatically. Universals (Aikhenvald
+U1–U12, Greenberg complementarity, WALS Ch 55 distribution) all retained.
+
+### Consumer updates
+
+- `LittleMoroneyRoyer2022.lean`: opens `Core.Typology` and
+  `Core.Typology.NounCategorizationSystem` to access the moved
+  `NounCategorizationSystem`/`isClassifierType` names. Local `chol`
+  and `shan` defs lose their `language` field.
+- `TaraldsenEtAl2018.lean`: opens
+  `Core.Typology.NounCategorizationSystem (isNounClassType isClassifierType)`.
+- Other consumers (Sudo2016, Downing1996, Chierchia1998, WangSun2026,
+  Moroney2021) use the unchanged `Phenomena.Classifiers.Typology`
+  extractors and need no edits.
+
+### Theory-ladenness flag for future work
+
+The `LanguageProfile` typological domains are not strictly theory-free —
+even calling something an "NP" or "subject" picks a syntactic side. This
+refactor inherits that pattern, doesn't introduce it. The deeper question
+of separating empirical Fragment data from typological-classification
+annotation is flagged in the LanguageProfile docstring as a separate
+architectural concern; not addressed here.
+
+## [0.230.189] - 2026-04-22
+
+### Added — `RelativizationProfile` promoted to Core; `LanguageProfile.relativization` field; 20 Fragment profiles + Greenberg-style cross-typology universal
+
+Follow-on to 0.230.187's `Phenomena/Relativization/` promotion. The
+relativization profile struct is now a peer field on
+`Core.Typology.LanguageProfile` alongside word order, adposition, and
+morphology — eliminating the parallel typology storage flagged in the
+audit and unlocking cross-typology generalizations via the existing
+`ImplicationalUniversal` machinery.
+
+**`Core/Relativization/Profile.lean`** (new): houses
+`RelativizationProfile` struct + `SubjRelStrategy`/`OblRelStrategy`
+inductives + `RelativizationProfile.{hasSubjGap, hasOblRetention,
+hasRelPronoun, canRelativize, isPreNominal, isPostNominal}` helpers +
+`fromWALS122A`/`fromWALS123A` converters. Reuses
+`Core.RCPosition`/`Core.AHPosition` from `Core/Relativization/Basic.lean`
++ `Hierarchy.lean`. Drops the redundant `language` and `iso` fields
+(those live on `LanguageProfile`).
+
+**`Core/Typology/LanguageProfile.lean`**: gains
+`relativization : Option Core.Relativization.RelativizationProfile := none`
+field + `withRelativization` builder. No `withRelativizationFromWALS`
+because WALS Chs 122/123 don't cover the full profile (`.mixed`,
+`lowestRelativizable`, `isEuropean` need hand-coding).
+
+**Fragment distribution** (20 languages):
+- 6 extends to existing Typology files: English, German, Japanese,
+  Korean, Mandarin, Arabic
+- 11 new Typology files: French, Russian, Hebrew, Turkish, HindiUrdu,
+  Swahili, Tagalog, Malagasy, Finnish, Welsh, Yoruba
+- 1 new nested Typology file: `Fragments/Mayan/Mam/Typology.lean`
+- 2 new Fragment dirs (Bambara, Navajo) per CLAUDE.md Fragment policy
+  (hand-coded relativization data + WALS citation meets the threshold)
+
+**`Phenomena/Relativization/Typology.lean`**: 968 → 358 LOC after the
+inline language profiles (now in Fragments) and the duplicated struct
+definitions (now in Core) are dropped. Convenience accessors
+(`abbrev english := relOf Fragments.English.typology`, etc.) preserve
+the consumer API for `Studies/KeenanComrie1977.lean`. Per-language
+WALS-grounding theorems re-stated against Fragment-sourced profiles —
+each is now a one-line `decide` integrity check that breaks loudly if
+either side (Fragment profile or WALS data) drifts.
+
+**Greenberg-style cross-typology universal** —
+`prenominal_rc_implies_non_v_initial`: every pre-nominal RC language in
+our 20-language sample has a non-V-initial basic word order (no VSO/VOS
+pre-nominal language exists). Proved via
+`Core.Typology.ImplicationalUniversal` over
+`relativizationSample : Finset LanguageProfile` derived from Fragment
+typologies. Antecedent triggered by Japanese, Korean, Mandarin, Turkish,
+Navajo — all non-verb-initial. This is the first cross-domain universal
+that simultaneously predicates over WALS Ch 81 (basic order) and WALS
+Chs 122/123 (relativization) using a single Fragment-sourced sample.
+
+The architectural payoff CLAUDE.md flagged: "Fragments as single
+typology endpoint" + `LanguageProfile`-as-aggregate now extend to
+relativization, completing the pattern across word order, adposition,
+morphology, and relativization.
+
+## [0.230.188] - 2026-04-22
+
+### Architecture — Sudo (2016) as first-class strategy + per-paper assignments
+
+Two architectural moves on the classifier-strategy front, completing the
+A.ii line of work:
+
+**A. `ClassifierStrategy` extended with `.sudoBlocking`.** Three theoretical
+positions are now first-class constructors (`forNumeral` per Krifka /
+Bale-Coon / LMR; `forNoun` per Chierchia / Jenks / Nomoto / LMR;
+`sudoBlocking` per Sudo). The constructor docstring lays out each
+position's empirical predictions; per-language assignments live in the
+appropriate study files, not on `NounCategorizationSystem`.
+
+**B. `classifierStrategy` field removed from `NounCategorizationSystem`.**
+The field encoded one paper's commitment as typological metadata, silently
+endorsing it over alternatives. Replaced with per-paper per-language
+assignments owned by the relevant study files:
+- `Chierchia1998.{japaneseStrategy, mandarinStrategy} := .forNoun`
+- `LittleMoroneyRoyer2022.{cholStrategy, shanStrategy} := .forNumeral, .forNoun`
+- `Sudo2016.japaneseStrategy := .sudoBlocking`
+
+This is the mathlib idiom for "different mathematicians' competing
+characterizations of the same object": named definitions in named
+namespaces, with relationships proved as theorems. The 4 instance defs
+(mandarin, japanese, chol, shan) lose the field; ~6 consumer theorems
+across Chierchia1998 / LMR2022 / Sudo2016 migrated to use per-paper
+per-language assignments.
+
+### LMR's `predictionsOf` extended; cross-paper empirical wedge
+
+`LittleMoroneyRoyer2022.predictionsOf : ClassifierStrategy → Predictions`
+gains a `.sudoBlocking` arm with `sudoBlockingPredictions := (false,
+false, false, true)`. Run through LMR's diagnostic battery, Chierchia's
+`.forNoun` and Sudo's `.sudoBlocking` strategies for Japanese disagree on
+three of four predictions. New theorems in LMR2022:
+- `chierchia_sudo_diverge_on_predictions` — full prediction profiles differ
+- `clfInCounting_distinguishes_chierchia_from_sudo` — Sudo predicts true
+  (eq. 22a *juu-ni-nin-da*), Chierchia predicts false; Japanese empirically
+  matches Sudo
+- `clfBeyondNumerals_distinguishes_chierchia_from_sudo` — symmetric divergence
+  the other direction
+
+This makes the cross-paper engagement empirically substantive: the two
+analyses of Japanese aren't just verbally different, they make distinct
+testable predictions, and the data favours Sudo on at least one diagnostic.
+
+### Sudo2016 `apply`-computation theorems (load-bearing denotations)
+
+The previous `japaneseSudoDenot` map could be replaced with `fun _ =>
+none` and the paradigm theorems would still close (per integration audit).
+Five new theorems make the denotations actually compute:
+- `nin_one_hanako` — `-nin` recognises hanako as one human via apply
+- `rin_one_hana` — `-rin` recognises hana as one flower
+- `hiki_one_inu` — `-hiki` recognises the dog as one small animal
+- `nin_not_inu` — sortal failure on a non-human input
+- `nin_ne_hiki` — distinct classifiers carry incompatible sortals
+
+Sortal predicates (`flowerIntens`, `humanIntens`, `smallAnimalIntens`,
+`bookIntens`, `roundIntens`, `flatIntens`) restored as named definitions
+so theorem statements can reference them directly. Helper lemma
+`ncard_part_singleton` reused across the apply-positive theorems.
+
+### Other corrections
+
+- `Theories/Semantics/Classifier/Basic.classifierDenot` extended with
+  `.sudoBlocking => clfForNoun P` (defensible at the noun-side composition;
+  Sudo's sortal presupposition individuates atoms via `.ofSortal`).
+- Sudo2016 namespace normalized from `Phenomena.Classifiers.Studies.Sudo2016`
+  to bare `Sudo2016`, matching sibling study files (Chierchia1998,
+  LittleMoroneyRoyer2022, Downing1996).
+- LMR2022 now imports Chierchia1998 and Sudo2016 (chronologically allowed:
+  LMR is newer than both).
+
+## [0.230.187] - 2026-04-22
+
+### Refactored — `Phenomena/FillerGap/` overhaul + `Phenomena/Relativization/` promotion
+
+Mathlib-style audit-driven cleanup of one of the oldest directories in
+linglib. Net result: 7 top-level FillerGap files dissolved/moved/merged
+into per-paper Studies, Relativization promoted to a sibling phenomenon,
+~180 of ~190 `native_decide` calls converted to `decide`.
+
+**Deletions** (legacy rot from before Studies/-dissolution discipline):
+- `OblExtraction.lean` — 30-line pointer to nonexistent `Bridge/`
+  directory; content overlapped `Studies/ElkinsTorrenceBrown2026.lean`
+- `Basic.lean` — 22-line re-export shell
+- `LongDistance.lean` — 150 LOC stipulating data + a
+  `CapturesLongDistance` typeclass with zero instances anywhere
+- `CCGGenerativeCapacity.lean` — single `rfl` bridge theorem with no
+  consumers (both sides already reduce to the same Core enum)
+- `Compare.lean` — 467 LOC dissolved per Compare-dissolution policy:
+  H&S 2010 Pareto profiles → `Islands/Studies/HofmeisterSag2010.lean`,
+  MoS material + IslandManipulation cross-paper aggregator →
+  `FillerGap/Studies/LuPanDegen2025.lean`, prose markdown table dropped
+- `TobaBatak.lean` — 205 LOC merged into `Studies/Erlewine2018.lean`
+  (already imported it; same paper, same data)
+
+**Renames + namespace fixes**:
+- `Studies/HPSGExtraction.lean` →
+  `Studies/SagWasowBender2003Extraction.lean` (per-paper convention)
+- `Studies/HPSGRelativeClauses.lean` →
+  `Relativization/Studies/SagWasowBender2003RelativeClauses.lean`
+- `Studies/Osborne2019Islands.lean` →
+  `Islands/Studies/Osborne2019.lean` (its primary phenomenon is islands)
+- `Studies/Charlow2020.lean` → `Quantification/Studies/Charlow2020.lean`
+  (its primary contribution is monadic scope, not filler-gap)
+- All 13 `Studies/` files: bare `namespace Foo` →
+  `namespace Phenomena.<Phen>.Studies.Foo` per CLAUDE.md convention
+- Fixed `Studies/Sag2010.lean` cite key: 5× `@cite{hofmeister-sag-2010}`
+  → `@cite{sag-2010}` (different paper)
+
+**`Phenomena/Relativization/` promoted as sibling phenomenon**:
+- `Typology.lean` (was `FillerGap/Typology.lean`, 975 LOC) cleaned to
+  ~770 LOC: deleted cherry-picked-over-20-language-sample theorems
+  (`internally_headed_rare`, `subject_only_relativization`,
+  `gap_to_resumptive_shift_exists`, `prenominal_uses_gap`,
+  `european_rel_pronoun_full_ah`, `all_can_relativize_subjects`,
+  `postnominal_more_common`, `rel_pronoun_european_concentration`,
+  3 AH-implicational over 20-lang sample, 9 sample-distribution lints,
+  `sample_size`, `ch122_total`/`ch123_total`/`ch122Counts_total`/
+  `ch123Counts_total` tripwires) and 11 per-language `example` lints.
+  Kept genuine WALS-aggregate findings (`gap_most_common_for_subjects`,
+  `retention_increases_for_obliques`, `obliques_sometimes_not_relativizable`)
+  and per-language WALS-grounding theorems (integrity checks).
+- `Studies/KeenanComrie1977.lean`, `Studies/Scott2021.lean`,
+  `Studies/SagWasowBender2003RelativeClauses.lean` moved here.
+
+**`native_decide` → `decide`**:
+- 189 of 199 calls converted across the directory. The 10 remaining
+  are in `Relativization/Studies/Scott2021.lean`, where `String`
+  equality through `Morphology.DM.VI.vocabularyInsertSimple` doesn't
+  reduce well via kernel `decide`. TODO marker added flagging future
+  restructuring as compositional lemmas.
+
+**Other audit nits addressed**:
+- Redundant `set_option autoImplicit false` removed (Charlow2020,
+  HofmeisterSag2010 — already disabled project-wide)
+- `#guard` directives in SagWasowBender2003Extraction.lean replaced
+  with `example : ... := rfl`
+- Augmented HofmeisterSag2010.lean and LuPanDegen2025.lean with the
+  cross-paper IslandManipulation infrastructure (3-way comparison of
+  competence vs. processing vs. discourse accounts: processing 4/7,
+  discourse 3/7, competence 1/7, perfect complementarity between
+  processing and discourse)
+
+**Deferred to a future PR** (decoupable):
+- Promoting `RelativizationProfile` to `Core/Relativization/Profile.lean`
+- Adding `relativization : Option RelativizationProfile` field to
+  `Core.Typology.LanguageProfile`
+- Distributing 20 inline language profiles to
+  `Fragments/{Lang}/Typology.lean` files
+- Promoting `WALSCount` to `Core/WALS/` (currently redefined in 8+
+  `Phenomena/X/Typology.lean` files — cross-cutting cleanup)
+- Marking remaining unverified `§N` / `Table N` / `eq. (N)` references
+  with `-- UNVERIFIED:` per CLAUDE.md hallucination-prevention
+
+## [0.230.198] - 2026-04-22
+
+### Added — @cite{beavers-zubair-2013} formalization
+
+Formalized B&Z 2013 ("Anticausatives in Sinhala"). Three new files
+plus a sortally-restricted operator added to `VoiceSemantics`:
+
+- `Theories/Semantics/Causation/CauserSort.lean`: B&Z's sortal-type
+  lattice (their ex. 81) — atoms `event`/`state`/`individual`; named
+  sorts via `Finset.Subset` pullback; `SemilatticeSup` instance
+  (closed under join, not meet); `admitsIndividual` /
+  `admitsVolitive` predicates as the lattice-level well-formedness
+  conditions for B&Z's `causerSuppress` and volitive operators.
+- `Fragments/Sinhala/Verbs.lean`: 6 verbs typed by causer sort
+  (*kadann* 'break', *gilann* 'drown', *marann* 'kill', *minimarann*
+  'murder', *kapann* 'cut', *vinaash-karann* 'destroy'). First
+  WALS-listed Sinhala fragment (snh).
+- `Phenomena/ArgumentStructure/Studies/BeaversZubair2013.lean`: the
+  study itself; uses `causerSuppress` from VoiceSemantics; per-verb
+  predictions follow from lattice `≤`-checks; `Reading` × `Core.Case`
+  bridge (animacy caveat from fn 27/29 documented).
+- `Theories/Interfaces/SyntaxSemantics/VoiceSemantics.lean`:
+  `causerSuppress` (B&Z 2013 sortally-restricted form) added
+  alongside the unrestricted `suppressArg` (B&U 2022 form);
+  proven to factor through `suppressArg` pointwise. The U_I
+  obligation IS the predictive engine: a verb that does not
+  anticausativize cannot have its operator instantiated.
+
+A `Theories/Semantics/Causation/Anticausativization.lean` enum of
+"competing analyses" was prototyped and dropped — mathlib's pattern
+is named predicates with bridge theorems, not enumerated theoretical
+positions. Cross-framework disagreements live as prose in the
+relevant study docstrings, with structural content captured by each
+analysis's distinct operator (KG's `reflexivize` in
+`KoontzGarboden2009.lean`, B&Z's `causerSuppress` in
+`VoiceSemantics`).
+
+### Fixed — BeaversUdayana2022 docstring corrections
+
+(1) "Consistency with B&Z 2013" claim corrected: 2022's open-variable
+form is consistent with 2013's *notation* but elides the U_I sortal
+restriction that does 2013's predictive work. Docstring now points
+to `causerSuppress` for the faithful 2013 operator. (2) (32d)
+"if and only if" → "if" (matches paper's surface text — the
+biconditional reading follows from (32a–c) jointly, not from (32d)
+alone). (3) UNVERIFIED markers added to equation numbers per
+CLAUDE.md.
+
+### Fixed — overclaims in BeaversZubair2013 + Sinhala fragment
+
+(1) `accusative_iff_existential` weakened to
+`accusative_implies_existential` + `reflexive_implies_nominative`,
+with animacy caveat from B&Z fn 27/29 documented in the docstring.
+(2) `hasInvolitive_iff_admitsIndividual` renamed to
+`fragment_involitive_correlates_with_causer_sort` + reframed as a
+fragment-internal data check, not a B&Z prediction (B&Z p. 38 are
+explicit that the involitive is the elsewhere form, not a sortal
+operator). (3) `marann` 'kill' annotated TODO (B&Z don't classify
+it directly). (4) `CauserSort.state` constructor annotated as
+predicted-but-not-attested per B&Z fn 40. (5) `vinaash-karann`
+docstring corrected: B&Z's ex. (80) `λv∈U_V` is the analysis of
+*English* destroy (which doesn't anticausativize), not Sinhala
+*vinaash-karann* (which does — classified `.any` to match Sinhala data).
+
+## [0.230.185] - 2026-04-22
+
+### Refactored — `normalDevelopment_eq_iterate_of_fixpoint` + native_decide → decide
+
+Two parallel cleanups continuing the Schulz/Fitting + Def 11/12/13 thread:
+
+**(3a) `decide`-friendly closed form for `normalDevelopment`**
+
+Added `Core.Causal.normalDevelopment_eq_iterate_of_fixpoint`: if any
+specific iterate `(applyLawsOnce dyn)^[n] s` is a fixpoint, that iterate
+equals `normalDevelopment dyn s`. Proof: `Nat.find_le` (on the fixpoint
+witness) + `Function.IsFixedPt.iterate` (iterating past the fixpoint
+is no-op).
+
+This closes the `decide`-vs-`native_decide` gap for concrete-data
+theorems on small SEMs:
+
+```
+rw [normalDevelopment_eq_iterate_of_fixpoint dyn s n (by decide)]
+decide
+```
+
+where `n` is a small explicit iteration count (typically 1-3 for the
+SEMs in study files). Demonstrated by replacing all four `native_decide`
+calls in `BarAsherSiegal2026.handleSituation_not_situationally_necessary_full`
+with `decide` + the closed-form rewrite. `native_decide` reservation
+per CLAUDE.md proof-style hierarchy is now actionable for SEM proofs.
+
+**(2) Bridge theorems Def 10b ↔ Def 12b**
+
+Added `Counterfactual.causallyNecessary_imp_situationallyNecessary_simple`:
+on single-pathway dynamics, fact-based necessity of the cause (Def 10b)
+implies situation-based necessity of the singleton situation fixing
+that cause (Def 12b). On multi-pathway dynamics this can fail — the
+`BarAsherSiegal2026` door scenario witnesses 12b failing while 10b
+holds at the fact level. Both-directions divergence documented in
+the docstring.
+
+**Bridge sorry closed**: `causallyNecessary_imp_situationallyNecessary_simple`
+proved structurally. The key insight: condition (ii) of Def 12b's
+universal quantifier extracts a witness `Y` in
+`dom(empty.extend c true) ∩ Anc(e)`, but `dom(empty.extend c true) = {c}`
+*independent of the ancestor list* — we get `Y = c` from the situation's
+structure alone, sidestepping `causalAncestors` reduction. With
+`s'.get c ≠ some true`, `normalDevelopment_simple` gives no firing,
+and condition (iii) discharges the conclusion.
+
+This pattern (use the situation's domain to bound condition (ii)'s
+witness, avoiding ancestor-list reduction) likely generalizes to many
+12b proofs where `s` is a small explicit situation.
+
+## [0.230.184] - 2026-04-22
+
+### Fixed — post-audit corrections to Japanese Classifier pilot
+
+Four-reviewer audit of the 0.230.181 enum-as-source-of-truth pilot
+surfaced bugs and a citation-discipline regression. This entry resolves
+the identified issues:
+
+**Encoding bugs (linguist review):**
+- `Classifier.encodes` now has explicit per-constructor arms for all
+  36 cases. The prior `_ => [.function]` fall-through silently classed
+  every unmatched constructor as functional, defeating the
+  enum-as-source-of-truth invariant. Adding a classifier now requires
+  deciding what it encodes.
+- `Classifier.IsMensural` now includes `daasu` (ダース = "dozen", a
+  borrowed measure word) — was misclassed as sortal.
+- `Core.NounCategorization.SemanticParameter` gains a new `register`
+  constructor for register/formality of the speech act, distinct from
+  `socialStatus` (honorific status of the referent). Japanese 名 *mei*
+  and Mandarin 位 *wèi* migrated from `.socialStatus` to `.register`;
+  the prior file-level docstring fix said register-not-honorific in
+  prose but the encoded structure still said `.socialStatus`. Now
+  consistent. Theorem `human_has_register_variant` updated.
+- `Classifier.shapeDim .rin = none` (was `.twoD`). Flowers/wheels
+  don't fit cleanly on the 1D/2D/3D axis; `.rin` now encodes
+  `[.shape, .boundedness]` instead. Per @cite{allan-1977}.
+- `mensural_count` updated `3 → 4` to reflect the corrected `daasu`
+  classification.
+
+**Citation discipline (linguist + cross-reviewer):**
+- Added 7 missing bibliography entries to `blog/data/references.bib`:
+  `sudo-2016` (DOI 10.4148/1944-3676.1108), `allan-1977`
+  (DOI 10.2307/413103), `nemoto-2005` (DOI 10.1515/ling.2005.43.2.383),
+  `bale-khanjian-2008` (DOI 10.3765/salt.v18i0.2478),
+  `bale-khanjian-2014` (LI 45.1, DOI omitted pending verification),
+  `doetjes-2013` (DOI 10.1515/9783110253382.2559), `li-2011`
+  (Bar-Ilan dissertation). All DOIs verified via publisher pages.
+- Corrected misattribution: `Sudo2016.lean` had cited
+  `borer-khanjian-{2008,2014}` and `doetjes-2012`; the actual papers
+  are by **Bale & Khanjian** (not Borer) and Doetjes 2013 (not 2012).
+  Cite keys updated to match.
+- Swept `Downing1996.lean` and `Classifier.lean` for unverified
+  chapter/section/table location citations per CLAUDE.md hallucination
+  policy. Replaced specific "Ch. 5", "Table 5.2", "Ch. 3, Table 3.1"
+  references with explicit `UNVERIFIED:` markers (grep-able for a
+  future verification pass). Sudo equation/section references retained
+  unmarked since they were verified against the PDF.
+- `Downing1996.lean` frequency table (n=500 corpus, nin=201, tsu=115,
+  ...) and anaphoric tables (n=55, nin=48, ...) now carry per-def
+  `UNVERIFIED:` warnings. Data preserved (testable against the
+  monograph) but unverified status is structurally visible. Theorem
+  docstrings split qualitative claims (robust) from precise counts
+  (unverified).
+- Bibliography regenerated.
+
+## [0.230.183] - 2026-04-22
+
+### Added — Causal ancestors + Def 12b (situation-based necessity)
+
+Continuation of the Schulz/Fitting unification thread (0.230.174-181):
+formalize @cite{nadathur-2024} Definitions 11, 12, and 13 — the
+situation-based and actual-cause apparatus that complements Def 10
+(fact-based necessity/sufficiency).
+
+**`Defs.lean`** adds:
+- `immediateAncestors dyn X` — variables in preconditions of laws
+  targeting X (Nadathur Def 2 / Schulz `R_F`)
+- `causalAncestors dyn X` — transitive closure of `immediateAncestors`,
+  computed via `expand^[|allVariables|]` (Nadathur Def 11)
+- `Situation.dom s vars` — variables in `vars` with `s(Y) ≠ u`
+  (Nadathur Def 7)
+
+**`Counterfactual.lean`** adds:
+- `situationallySufficient` — Def 12a, definitionally `developsToBe`
+- `situationallyNecessary` — Def 12b, the universal quantifier over
+  alternative situations s' that (i) cover s on Anc(X), (ii) disagree
+  with s on at least one ancestor, (iii) don't directly fix X
+- `actuallyCauses` — Def 13, the catalyst-account "actual cause"
+  (s leaves X undetermined, world w fixes X to x, w extends s on
+  the relevant variable set)
+
+**Demonstration**: `BarAsherSiegal2026.lean` adds
+`handleSituation_not_situationally_necessary_full` — the door scenario
+under Def 12b. Witness s' = (handle=0, lock=0, circuit=1, electricity=1)
+covers handleSituation's ancestor commitments {handle, lock} but
+disagrees on handle, doesn't fix doorOpens, and the automatic pathway
+fires giving doorOpens=true. All four side-conditions discharge via
+`native_decide` on the concrete dynamics.
+
+This makes the difference between Def 10b ("is the *fact* ⟨handle, true⟩
+necessary for ⟨doorOpens, true⟩?") and Def 12b ("is the *situation*
+{handle=1, lock=0} necessary for ⟨doorOpens, true⟩?") visible in the
+formalization. The Bar-Asher Siegal 2026 door scenario is fundamentally
+a 12b question — about a multi-variable causal commitment, not a single
+fact.
+
+## [0.230.182] - 2026-04-22
+
+### Metasemantics — Ney (2026) §3 prima facie challenge + anaphora discriminator
+
+Two substantive theorems that turn the formalization from "exhibits the
+gap" to "captures the paper's central §3 evidence". Both noted as
+deferred items in 0.230.180; landed now per user direction to formalize
+the deepest content of the paper.
+
+**(I) Prima facie challenge — `CGTransparency.lean` (new file).**
+Adds `Account.CGModalOperator` (an abstract common-ground modal
+operator with K-axiom MP and conjunction-introduction; standard
+K-system closure principles) plus `Account.CGTransparent` (the
+"if-true-then-CG" transparency predicate). Theorem
+`prima_facie_challenge_kingNeyReconstruction` formalizes the core
+inference of @cite{ney-2026} §3's `<ONE>`+`<TWO>` ⊢ `<THREE>`: under
+King's binary reconstruction, if both conceptions are CG-transparent,
+the success of the account is in CG. The contradiction with
+deniability ((iia)/(iib)) follows directly: insinuative reference
+requires success NOT to be in CG. Companion theorem
+`ney_revision_succeeds_without_cgTransparency` exhibits a witness
+where Ney's revision succeeds with neither conception in CG, and
+`king_neyRevision_cg_asymmetry` bundles both into the formal asymmetry.
+
+Docstring records the bridge to the existing `commonBelief` operator
+in `Theories/Semantics/Modality/EpistemicLogic.lean:183` (the K-system
+the abstract operator could be instantiated from, once the missing
+`CG.toAgentAccess : CG W → AgentAccessRel W E` bridge is built).
+
+**(II) Anaphora discriminator — added to `InsinuativeReference.lean`.**
+Adds `Account.LicensesAnaphora` (abbrev for the success condition; per
+@cite{buring-2005}, anaphora requires linguistic-antecedent semantic
+value), `Account.implicatureOnly` (a stub @cite{camp-2018}-style
+account that never validates the unavowed as a semantic value), and
+`Account.implicatureOnly_does_not_licenseAnaphora`. Headline theorem
+`ney_revision_anaphora_discriminator` formalizes @cite{ney-2026} §3
+"thirdly": in any insinuative-reference scenario where Ney's revision
+succeeds, the unavowed referent is anaphora-licensing under the
+revision but not under a Camp-style account. The contrast between
+(4)/(4.2) (anaphora to unavowed felicitous) and (11) (anaphora to
+implicated content infelicitous).
+
+**(III) Re-encoding `Phenomena/Reference/Studies/Ney2026.lean`.** The
+toy sentences (1)–(4) were re-encoded faithfully to @cite{ney-2026}'s
+empirical setup: in successful insinuative reference *the hearer in
+fact recognizes* the unavowed intention (Ney's premise `<ONE>`), so
+both `RS` and `RH` cover. Both King's binary reconstruction and Ney's
+revision succeed; the discriminator is at the CG-availability level.
+Per-sentence theorems: `king_succeeds`, `ney_succeeds`,
+`prima_facie_challenge`, `anaphora_discriminator`. Aggregate theorems:
+`all_four_examples_have_insinuative_structure`,
+`all_four_examples_are_jointly_successful`,
+`all_four_examples_exhibit_anaphora_discriminator`.
+
+The previous `not_kingNeyReconstruction` theorems on the toy sentences
+were dropped — they encoded a *different* scenario (one where
+conceptions diverge) that conflated the gap-existence theorem with
+Ney's actual §3 argument. The strict-gap existence claim
+`exists_ney_succeeds_kingNeyReconstruction_fails` survives in
+`InsinuativeReference.lean` over a separate `gapWitness`.
+
+**Why the abstract `CGModalOperator` rather than `commonBelief`.** Ney's
+`<ONE>`-`<FOUR>` argument needs only K-axiom MP + and-intro. The full
+S5 epistemic logic in `EpistemicLogic.lean` is overkill; the abstract
+operator gives the tightest formalization and forwards to the S5
+instance once the `CG.toAgentAccess` bridge is built. Built per the
+linguistics reviewer's note that "you don't need the full S5 epistemic
+logic / iterated `CommonBelief` machinery" for this argument.
+
+## [0.230.181] - 2026-04-22
+
+### Architecture — Japanese Classifier enum-as-source-of-truth pilot
+
+Replaced `Linglib/Fragments/Japanese/Classifiers.lean` (33 record literals
+keyed by form-string) with `Linglib/Fragments/Japanese/Classifier.lean`
+(36-constructor inductive type with derived projections). Pilot for the
+fragment-level architectural pattern that mathlib uses for finite typed
+data — the constructor is the primary key, properties are functions /
+`Decidable` predicates over the type, and aggregations work over a
+single source-of-truth `List Classifier`.
+
+Concretely:
+- `inductive Classifier` with 36 constructors: 27 Downing core
+  (Table 1.1), 6 Downing extended (Table 1.2), 3 Sudo additions
+  (`-rin` flowers / `-kumi` pair / `-daasu` dozen). Lists `core`,
+  `extended`, `sudoAdditions`, and `all := core ++ extended ++ sudoAdditions`
+  are the source of truth.
+- `Fintype Classifier` derived from `all.toFinset`; `inventory_size`,
+  `mensural_count`, `default_eq_tsu`, `isDefault_iff_tsu` proven by
+  `decide`. No more `native_decide` in the fragment.
+- Projection functions `form`, `romaji`, `gloss`, `encodes`, `shapeDim`.
+- Predicates `IsMensural`, `IsDefault`, `Encodes` as `Prop` with
+  trivial `Decidable` instances (equality-based: `IsDefault c := c = .tsu`,
+  `IsMensural c := c = .hai ∨ c = .shoku ∨ c = .teki`).
+- `kanji`/romaji split: `kenBuilding` 軒 vs `kenIncident` 件 disambiguated
+  by content (no more `ken'` prime-hack); `hon` (no prime). Theorem
+  `ken_homophony` records that the two share their Hepburn romanization.
+- `defaultClassifier? : Option Classifier` derived via
+  `all.find? (decide ∘ IsDefault)`; `default_eq_tsu` proves it equals
+  `some .tsu` by `decide`. Replaces the prior `defaultClassifier := tsu`
+  re-export.
+
+### Migration — consumers updated to typed inventory
+
+- `Linglib/Phenomena/Classifiers/Typology.lean`: `allClassifiers.length` →
+  `Classifier.all.length`, `semanticsFromClassifiers` → `allEncodedParams`,
+  `defaultClassifier.isDefault` → `default_eq_tsu`,
+  `japanese_inventory_from_fragment` updated 33 → 36.
+- `Linglib/Phenomena/Classifiers/Studies/Downing1996.lean`: full rewrite
+  using `Fragments.Japanese.Classifier` natively. `AnaphoricDistribution`,
+  `MorphemeRelationWitness`, `FrequencyEntry` now carry typed `Classifier`
+  fields; `witnesses_in_inventory` and `full_inventory_includes_core`
+  proven by `Classifier.mem_all` rather than enumeration. Removed
+  unused `Fragments.Mandarin.Classifiers` import. All `native_decide`
+  → `decide`.
+- `Linglib/Phenomena/Classifiers/Studies/Sudo2016.lean`: floating
+  `rinDenot/ninDenot/.../maiDenot` collapsed into single
+  `japaneseSudoDenot : Fragments.Japanese.Classifier →
+  Option (ClassifierDenot World Entity)` exhaustive pattern match.
+  Adding a Sudo denotation = adding a `some` arm; the type checker
+  catches missing cases. New theorem `six_classifiers_formalized`
+  records that exactly 6 of the 36 classifiers have an atomic-sortal
+  denotation in this file.
+- `Linglib/Fragments/Japanese/Nouns.lean`: `NounEntry.classifier :
+  Option Core.NounCategorization.ClassifierEntry` → `Option Classifier`.
+  Anonymous constructor notation: `classifier := some .hiki`. Two
+  `native_decide` → `decide`.
+
+### Bridge to legacy
+
+`Classifier.toEntry : Classifier → ClassifierEntry` and
+`Classifier.allEntries : List ClassifierEntry` are the migration seam
+to the old `Core.NounCategorization.ClassifierEntry` record that
+sibling fragments (Mandarin, Shan, Chol) and downstream consumers still
+use. Once those fragments are migrated to the same enum-per-language
+pattern, both `toEntry` and `ClassifierEntry` itself can be retired.
+
+### Out of scope (deferred)
+
+- Phonological allomorphy (rendaku/sokuon: `ippon`/`sanbon`/`roppon`
+  for `-hon`, `ippiki`/`sanbiki`/`roppiki` for `-hiki`) — would belong
+  with `Theories/Phonology/`.
+- Native vs Sino-Japanese numeral series split (`tsu` selects native
+  hitotsu/futatsu/...; Sino-classifiers select ichi/ni/san/...).
+- Inventory expansion to `-kai` 回, `-bai` 倍, `-ban` 番, `-do` 度, etc.
+- Mandarin / Shan / Chol fragments — to be migrated following the same
+  pattern after the Japanese pilot is validated in use.
+
+## [0.230.180] - 2026-04-22
+
+### Metasemantics — Ney (2026) review-pass corrections
+
+Acted on multi-agent PR review of 0.230.179. Three substantive fixes
+(faithfulness to source) plus de-abstraction:
+
+1. **Renamed `coordination.king` → `coordination.kingNeyReconstruction`.**
+   Linguistics review caught this: @cite{king-2013} as written posits a
+   *single* objective conception of reasonableness, not a pair (`shared₂
+   RS RH`). The intersection-of-conceptions reading is @cite{ney-2026}
+   §4's *reconstruction* of King for the binary comparison with the
+   revision. King's literal account is `coordination R` for an
+   unspecified single `R`; the binary form is Ney's framing. Renamed
+   accordingly, with a docstring clarifying the distinction.
+
+2. **Renamed `IsInsinuativeReference` → `HasInsinuativeStructure`.**
+   The current Prop captures the *structural pattern* (multi-licensed
+   referents with unavowed/avowable split), not the full phenomenon
+   (which per @cite{ney-2026} §2 also requires speaker intent to
+   preserve deniability — this is what excludes pseudo-insinuative
+   speech). Renamed to be honest about scope; intent component
+   deferred until a downstream consumer needs to discriminate it.
+
+3. **Three location-ref hallucinations corrected.** "@cite{ney-2026}
+   §4 conclusion" → "end of §4" (Ney's conclusion is §5, not §4); "Ney
+   §2, examples (1)–(4)" → "§1–§2" (example (1) is in §1).
+
+### De-abstraction (per `feedback_no_thin_bundled_struct`)
+
+`Account C W E` is now an `abbrev` for
+`SpeakerIntention C W E → CG W → Prop` rather than a one-field
+structure. Dropped the structure wrapper, the manual `LE` instance,
+hand-rolled `le_refl`/`le_trans`, and the redundant
+`@[simp] _succeeds_iff` lemmas (which were `Iff.rfl`). All
+`m.succeeds s cg` call sites become `m s cg`. Net: ~30 LOC removed,
+zero abstraction lost (any consumer wanting `Preorder` gets it from
+function-Pi inference; nobody currently does).
+
+Also removed unused `open Core (Intension)` from `InsinuativeReference.lean`.
+
+### Shape gaps still flagged (not fixed)
+
+The `TrueDemonstrative.demonstratum : C → Option E` functional shape
+and the missing `CG W` → `CommonBelief` bridge from
+`Theories/Semantics/Modality/EpistemicLogic.lean` (which, per cross-
+framework reviewer, *does* exist at line 183) remain documented as
+known gaps. The audit-recommended Centering-vs-coordination refutation
+theorem and Hofmann2025 anaphora-discriminator bridge are deferred as
+substantive follow-ons rather than YAGNI overhauls.
+
+## [0.230.179] - 2026-04-22
+
+### Metasemantics — Ney (2026) "Insinuative reference and the coordination account"
+
+Added `Theories/Semantics/Reference/Metasemantics/` (4 files) hosting the
+abstract metasemantic apparatus shared by King's coordination account and
+its variants. The directory follows the mathlib `Defs/Basic` split.
+
+Files:
+- `Defs.lean` — `SpeakerIntention C W E` (speaker, expression, context,
+  intendedRef) and `Account C W E` for metasemantic recipes
+  `succeeds : SpeakerIntention → CG W → Prop`. (Originally a structure;
+  refactored to `abbrev` in 0.230.180 per review.)
+- `Reasonableness.lean` — `ConceptionOfReasonableness C W E :=
+  SpeakerIntention C W E → Prop`. Combinators `shared₂` (∧, intersection)
+  and `joint₂` (∨, union); `shared₂_le_joint₂`,
+  `shared₂_self`, `joint₂_self`. Indexed-family generalizations
+  `shared`/`joint` for the `[Nonempty ι]` case.
+- `Coordination.lean` — `Account.coordination R` parametric account;
+  named instances `Account.coordination.kingNeyReconstruction`
+  (binary-conception reading of King, ∧) and
+  `Account.coordination.neyRevision` (Ney's revision, ∨).
+  Theorems: `coordination_mono`,
+  `kingNeyReconstruction_le_neyRevision`,
+  `kingNeyReconstruction_eq_neyRevision_when_aligned` (the cooperative
+  limit collapses them).
+- `InsinuativeReference.lean` — `HasInsinuativeStructure licenses s`
+  (Prop: unavowed referent licensed + at least one avowable alternative);
+  `Scenario` (intention + licensing predicate + both interlocutors'
+  conceptions); `Scenario.kingNeyReconstructionSucceeds` /
+  `neyRevisionSucceeds`; `kingNeyReconstruction_implies_neyRevision`.
+  Headline: `exists_ney_succeeds_kingNeyReconstruction_fails` — a
+  Bool-valued `gapWitness` exhibits a structural-insinuative scenario
+  where Ney's revision succeeds and King's binary reconstruction fails,
+  formalizing the punchline of @cite{ney-2026} (end of §4).
+
+Added `Phenomena/Reference/Studies/Ney2026.lean` (provenance ledger): each
+of the paper's four canonical examples is a concrete `Scenario` witness
+(@cite{ney-2026} §1 example (1) plus @cite{ney-2026} §2 examples (2)–(4))
+with its own small inductive entity type
+(family/residents, hispanicImmigrants/gangAndSmugglers, jewishElites/
+nonChristianWhiteCollar, sexualHarassmentPolicy/workSchedulingPolicy).
+The aggregate theorem `all_four_examples_exhibit_gap` shows each is a
+structural-insinuative case where Ney's revision succeeds and King's
+binary reconstruction fails.
+
+### Bibliography (20 new entries)
+
+Added @cite{ney-2026} plus the rest of its references section:
+@cite{king-2013}, @cite{king-2014a}, @cite{king-2014b}, @cite{lewis-2020},
+@cite{stojnic-2024}, @cite{stojnic-stone-lepore-2017},
+@cite{rostworowski-kus-mackiewicz-2022}, @cite{camp-2018},
+@cite{henderson-mccready-2018}, @cite{henderson-mccready-2024},
+@cite{saul-2018}, @cite{saul-2019}, @cite{saul-2024}, @cite{khoo-2017},
+@cite{witten-2023}, @cite{stanley-2015}, @cite{beaver-stanley-2023},
+@cite{asher-lascarides-2013}, @cite{tuters-hagen-2020}, @cite{buring-2005},
+@cite{ney-2024}. All transcribed from @cite{ney-2026}'s references
+section (highest-fidelity source); DOIs only included where the paper
+itself provides them; volume/issue omitted where not visible.
+
+### Shape gaps exposed (not fixed in this PR)
+
+This formalization exposes two shape problems documented in the
+docstrings as known gaps for future refactors:
+
+1. `TrueDemonstrative.demonstratum : C → Option E` is functional and
+   cannot represent a context with multiple simultaneously-licensed
+   referents. Insinuative reference requires this. Workaround:
+   `InsinuativeReference.lean` takes `licenses : E → Prop` as an abstract
+   input parameter; the principled fix is to refactor `demonstratum` to
+   a relation, mirroring the `HasFiberedLookup` move in `Dynamic/Core/`.
+
+2. `CG W = List (Set W)` is flat propositional accumulation; the full
+   @cite{ney-2026} §3 `<ONE>`-`<FOUR>` argument needs iterated mutual
+   acceptance (a `CommonBelief` operator). The pointer in
+   `Core/Semantics/CommonGround.lean:14` to `EpistemicLogic.lean` is
+   currently unbridged. The genuine-gap theorem
+   `exists_ney_succeeds_king_fails` is sufficient to discriminate the
+   two metasemantic accounts without that bridge.
+
+## [0.230.178] - 2026-04-22
+
+### Architecture — Sudo (2016) classifier semantics + flat Classifier/ promotion
+
+Promoted `Theories/Semantics/Noun/Classifier/` → `Theories/Semantics/Classifier/`
+to break the silent Chierchia-side commitment of nesting classifier semantics
+under `Noun/`. Sudo (2016) argues classifier semantics live with *numerals*,
+not nouns; the flat location at the same level as `Quantification/`,
+`Plurality/`, `Numerals/` is theory-neutral. Namespace `Semantics.Noun.Classifier`
+→ `Semantics.Classifier`; consumers in `Phenomena/Definiteness/Studies/Moroney2021`
+and `Phenomena/Classifiers/Studies/LittleMoroneyRoyer2022` updated.
+
+Added three new files in the directory mirroring the mathlib `Defs/Basic` split:
+- `Defs.lean` — `ClassifierDenot W E` structure (sortal presupposition +
+  counting predicate), `ofSortal` constructor, `apply` semantics using
+  `Set.ncard` for the `|{y ⊑ x : P_w(y)}| = n` body of @cite{sudo-2016} eq. 4.
+- `TypeN.lean` — `NumeralIntens W := Intension W ℕ` per @cite{sudo-2016} eq. 2;
+  `NumeralIntens.const` is the rigid-numeral constructor and is provably rigid.
+- `Composition.lean` — `upNum` (∪-shift on numerals, eq. 10), `downNum` (∩
+  partial inverse, eq. 24, noncomputable via Classical), and the
+  `UpAvailability` enum derived from a Boolean lexicon witness via
+  `upAvailability`. Encodes the @cite{chierchia-1998} Blocking Principle as a
+  derivation, not a stipulation.
+
+Added `Phenomena/Classifiers/Studies/Sudo2016.lean`: toy `World`/`Entity`
+domain, six per-classifier `ClassifierDenot` instances (`-rin`, `-nin`,
+`-hiki`, `-satsu`, `-ko`, `-mai`) using `ofSortal`, the four Sudo paradigms
+(15)/(16)/(17)/(22) at the type-shift level, and the cross-paper theorem
+`sudo_chierchia_disagree_on_classifier_locus` displaying that
+`Phenomena.Classifiers.Typology.japanese.classifierStrategy = some .forNoun`
+(Chierchia commitment) and `upAvailability ... = .blocked` (Sudo commitment)
+sit side by side. Out of scope: non-atomic `-kumi`/`-daasu` per Sudo (9a/b),
+the optional-classifier-language follow-up (Armenian, Hausa), and the full
+presupposition-tracking ∪-Shifted FA / PM rules.
+
+### Cleaned — Fragments/Japanese/Classifiers.lean
+
+Mechanical hygiene fixes from the four-reviewer audit:
+- 11 `native_decide` → `decide`/`rfl` (CLAUDE.md proof-style violation).
+- `coreClassifiers` and `allClassifiers` deduplicated: extracted
+  `extendedClassifiers` so `allClassifiers := coreClassifiers ++
+  extendedClassifiers` instead of repeating 27 entries.
+- Dropped 7 `rfl` re-export theorems (`tsu_is_default`, `hai_is_mensural`,
+  `hon_is_1D`, `mai_is_2D`, `ko_is_3D`, `tsubu_is_3D`, `hiki_encodes_animacy`,
+  `nin_encodes_humanness`) that just restated literal field assignments.
+- `mei` docstring corrected: `socialStatus` here indexes register/formality
+  (formal written counter for guest lists/casualty counts), not honorific
+  status of the referent. Theorem renamed `mei_encodes_honorific` →
+  `mei_encodes_humanness_and_register`.
+
+## [0.230.177] - 2026-04-22
+
+### Refactored — Causal SEM: post-Schulz audit fixes
+
+Phase 1-3 cleanup following four parallel audits of the Schulz/Fitting
+unification (0.230.174).
+
+**Phase 1 (paper-faithfulness)**: With negative preconditions now
+first-class, reverted the `vCHI`/`lockDisengaged`/`no_surgery`
+workarounds that were forced by the old A+ positivity restriction:
+- `Nadathur2024.lean`: `vCHI = true` → `vBRK = false` matching ex. (33),
+  p.345 of @cite{nadathur-2024}. The "potential obstacle" semantics
+  is now visible in the formalization.
+- `BarAsherSiegal2026.lean`: `lockDisengaged = true` → `lock = false`
+  for both manual and automatic pathways.
+- `NadathurLauer2020.lean`: `D := B ∧ no_surgery` → `D := B ∧ ¬S`
+  (genuine negative-precondition inhibitory law per
+  @cite{sloman-barbey-hotaling-2009}).
+
+**Phase 2 (mathlib hygiene)**:
+- `CausalFrame (W : Type)` → `CausalFrame (W : Type*)` (universe polymorphism)
+- `actualizationHolds` → `abbrev` for `completesForEffect` (textually
+  identical defs collapsed; `completesForEffect_eq_actualization`
+  bridge deleted)
+- `Mereology.lean` docstring stale reference to deleted
+  `CausalClosure.PositiveDynamics.closureOp` rewritten — now correctly
+  notes that the SEM operator is NOT a `ClosureOperator` per Schulz
+  footnote 7 (non-monotone), in contrast to the mereological case.
+- `Conditionals/Counterfactual.lean`'s `causalCounterfactual` migrated
+  Bool → Prop with Decidable instance.
+
+**Phase 3 (interconnection bridges + Option A closed-form lemmas)**:
+- `makeSem` made `abbrev` for `causallySufficient` +
+  `makeSem_iff_causallySufficient` (`Iff.rfl`)
+- `manageSem_iff_causallySufficient` in `Implicative.lean`
+- `enoughAt_iff_causallySufficient` in `Causation/Degree.lean`
+- Added 3 closed-form lemmas in `Counterfactual.lean` siblings to
+  `normalDevelopment_simple`:
+  `normalDevelopment_disjunctive_left/right` (each disjunct triggers C),
+  `normalDevelopment_conjunctive_blocked` (undetermined precondition →
+  `s` is fixpoint).
+- **Closed all 5 sorrys** added by the refactor:
+  - `conjunctive_globally_necessary` (Glass2023)
+  - `disjunctive_globally_sufficient` (Glass2023, now 4 lines via lemma)
+  - `disjunctive_not_globally_necessary` (Glass2023)
+  - `local_necessary_not_implies_global` (Glass2023, both halves)
+  - `disjunctive_effect_entailed` (Glass2023)
+  - `independent_source_disrupts_tightness` (Resultatives, ~80 LOC
+    structural proof — chain + alt source over 2 rounds of foldl with
+    explicit fixpoint check)
+
+**Linguistics audit caveat**: the linguistics agent flagged
+`isConsistentSuper` as a soundness bug. Direct re-reading of
+@cite{nadathur-2024} Definitions 9b and 10b (p.327) confirmed our
+implementation IS faithful — Def 9b checks consistency against `s`
+(= `base`), not against `s'` minus X. `bypass_profile_b`'s flip to
+`¬ causallyNecessary` is correct: the supersituation `(A=1, B=0, C=u)`
+is consistent with empty (empty doesn't entail ⟨B,1⟩) and achieves C
+without ⟨B,1⟩.
+
+**Outstanding**: 0 sorrys in causation files (down from 5 added by
+0.230.174). Build: 0 refactor-induced errors.
+
+## [0.230.176] - 2026-04-22
+
+### Added — `YoonEtAl2020PMF.lean` (Phase 2 stress test, S1 submodel)
+
+Fifth PMF stress test — politeness model with two architectural firsts:
+
+1. **Graded literal meaning** drives L0 through `RSA.L0OfMeaning` (ℝ≥0∞ variant) — first PMF migration to exercise it. The previous four (FG2012/Kao2014/GS2013/ScontrasPearl) all had Boolean meanings.
+2. **Fifth distinct S1 shape** — Yoon's utility decomposes as
+   `exp(α · (φ · log L0 + (1-φ) · E_L0[V] − cost))`
+   with a φ=0 gate for log-undefined utterances. This is exp-of-linear
+   rather than rpow (Kao/ScontrasPearl) or exp-of-expected-log
+   (GS2013/Goodman family), and does not factor through any operator
+   beyond `PMF.normalize`.
+
+S2 full model (§3 of original) deferred — adds presentational utility
+term `ω_pres · log L1(φ̂|u)` with its own PMF.bind. S1 inference
+theorems (`terrible_map_h0_vs_h3`, etc.) become L1 inequalities left
+as `sorry` per Task #36.
+
+**PMF stack**:
+* `worldPrior : PMF HeartState` — uniform on 4 heart states
+* `meaningE u w = ENNReal.ofReal ((utteranceSemantics u w : ℚ) : ℝ)`
+* `L0 = RSA.L0OfMeaning meaningE` — first ℝ≥0∞-meaning consumer
+* `s1Score φ w u` — Yoon's custom utility lifted via `Real.exp` + `ofReal`
+* `S1g φ w = PMF.normalize (s1Score φ w)` — speaker conditional on (φ, world)
+* `marginalSpeaker phiPrior w = phiPrior.bind (S1g · w)` — φ-marginalised
+* `L1 = PMF.posterior marginalSpeaker worldPrior` — Bayesian inversion
+
+**Cover discharge** uses dual coverage:
+* `coverUtterance : HeartState → Utterance` — at each state, some utterance
+  has positive L0 (drives `s1Score_tsum_ne_zero`)
+* `witnessState : Utterance → HeartState` — for each utterance, a state
+  where L0 is positive (drives `L1_marginal_ne_zero` for both positive
+  and negated forms; e.g., `notTerrible` covers via `.h2` where
+  `terrible .h2 = 0` so the negation is 1)
+
+**Operator usage tally — five PMF papers, five S1 shapes**:
+
+| Paper            | S1 shape                            | Shared operator     |
+|------------------|-------------------------------------|---------------------|
+| FG2012PMF        | uniform on extension (no rpow)      | L0OfBool            |
+| Kao2014PMF       | (qudProj L0)^α                      | rpow inline         |
+| GS2013PMF        | exp(α · Σ_s belief · log L0)        | softmaxBelief       |
+| ScontrasPearl21  | (qudProj L0)^α                      | rpow inline         |
+| **YoonEtAl2020** | **exp(α · (φ·log + (1-φ)·E[V] - c))** | **none — custom** |
+
+Operator-reuse counts after five papers:
+* `RSA.L0OfBoolMeaning` — 3 sites (FG2012, GS2013, ScontrasPearl)
+* `RSA.L0OfMeaning` — 1 site (YoonEtAl, NEW)
+* `RSA.softmaxBelief` — 1 site (GS2013)
+* Inline `rpow` — 2 sites (Kao2014, ScontrasPearl), never extracted
+* Yoon's custom S1 — 1 site (YoonEtAl), never extractable
+
+**Architectural takeaway**: the data point against extracting more
+shared operators is now decisive. Only `L0OfBoolMeaning` shows clear
+reuse (3/5 papers); every S1 shape is unique. `softmaxBelief` should
+likely be demoted to a private helper of GS2013, not promoted to
+`S1OfUtility`.
+
+## [0.230.175] - 2026-04-22
+
+### Added — `ScontrasPearl2021PMF.lean` (Phase 2 stress test, EveryNot model)
+
+Fourth PMF stress test, after FG2012/Kao2014/GS2013. ScontrasPearl
+contributes the **product latent** (`scope × QUD`, six values for the
+EveryNot model) — `PMF.bind` over a flat `latentPrior : PMF Latent` is
+the natural marginalisation idiom, mirroring Kao's `goalPrior.bind` over
+QUD goals but with two stacked latent dimensions.
+
+Architecture is Kao-shaped (`rpow` speaker, not `softmax`-of-log):
+* L0 = `RSA.L0OfBoolMeaning (uttMeaning lat.scope)` — uniform on extension,
+  parameterised by scope reading
+* QUD projection = `qudProjectE` (ENNReal lift of `qudProjectInline`)
+* S1g = `PMF.normalize` of `(qudProjectE lat.qud (L0 lat.scope u) w) ^ α`
+* `marginalSpeaker = latentPrior.bind S1g`
+* L1 = `PMF.posterior` of `marginalSpeaker` against `worldPrior`
+
+**Cover discharge collapses to one fact**: `null` utterance has
+universal extension (true at every world), so its L0 puts positive mass
+everywhere, the QUD projection sums in `L0(w)` itself, and rpow
+preserves positivity. This single witness drives every `PMF.normalize`
+precondition (S1g positivity at every `(lat, w)`, `marginal ≠ 0` for
+L1 at `null`). The non-trivial `everyNot` utterance gets cover at L1
+via worldPrior on `.zero` (where both scope readings make `everyNot`
+true).
+
+Two L1-inequality findings stated with `sorry` per the same Task #36
+pattern as GS2013PMF (PMF-shaped `rsa_predict` not yet built).
+
+**Operator usage tally so far**:
+* `RSA.extensionOf` / `RSA.L0OfBoolMeaning` — FG2012PMF, GS2013PMF, ScontrasPearl2021PMF (3 sites)
+* `RSA.softmaxBelief` (exp ∘ expected-log) — GS2013PMF only (1 site)
+* `RSA.L0OfMeaning` (ℝ≥0∞-meaning normalize) — Kao2014PMF could use it but
+  doesn't (would need refactor); 0 sites currently
+* Inline `(qudProjectE _ _) ^ α` rpow — Kao2014PMF, ScontrasPearl2021PMF
+  (2 sites). Architectural reconsideration still queued.
+
+TwoNot model deferred (5-world domain, 10-latent product, same shape).
+
+## [0.230.174] - 2026-04-22
+
+### Refactored — Causal SEM: Schulz/Fitting unification (drop A+ positivity restriction)
+
+Reverted the A+ positivity restriction from `Core/Causal/SEM/` and unified
+on the Schulz @cite{schulz-2011} / Fitting @cite{fitting-1985}
+information-monotone framework. `normalDevelopment` is now well-founded
+by `Option.isNone` measure (no fuel parameter, no positivity hypothesis),
+matching Schulz's `T_D` operator (Definition 3 + footnote 7). Adds
+explicit Lean witness for Schulz's "fixed point reached in finitely many
+steps" claim via `applyLawsOnce_strict_decrease`.
+
+**Core changes** (`Core/Causal/SEM/`):
+- `CausalLaw.apply` is now information-monotone: only fires when effect
+  is undetermined. Once a variable is `some _`, no law overwrites it.
+- `normalDevelopment` rewritten as well-founded recursion on
+  `(innerVariables dyn).countP (fun v => (s.get v).isNone)`. No fuel.
+- `Defs.lean`: `Situation.hasValue`, `CausalLaw.preconditionsMet`,
+  `isFixpoint` migrated `Bool → Prop` with `Decidable` instances.
+  Negative preconditions (`(v, false)` precondition entries) now
+  first-class — Schulz's "potential obstacle" reading works directly.
+- Deleted: `isPositiveDynamics`, `PositiveDynamics` structure (and smart
+  ctors), `normalDevelopmentPositive`, fuel-based `normalDevelopment`,
+  `defaultFuel`, all `_iff_of_positive` lemmas, `normalDevelopment_*`
+  fuel-shape lemmas, `normalDevelopment_eq_normalDevelopmentPositive`.
+- New: `normalDevelopment_isFixedPt` bridges to mathlib's
+  `Function.IsFixedPt` (`Mathlib.Dynamics.FixedPoints.Basic`).
+
+**Counterfactual.lean**: `developsToBe`, `developsToTrue`,
+`factuallyDeveloped`, `manipulates`, `causallySufficient`,
+`isConsistentSuper`, `causallyNecessary` (and `precondition`/
+`achievable`/`noAlternative` subdefs), `hasDirectLaw`,
+`hasIndependentSource` migrated to Prop with Decidable. Dropped
+`PositiveDynamics.normalDev`/`PositiveDynamics.intervene` and
+`intervene_preserves_positive`.
+
+**Theory layer**: `Sufficiency.lean`, `Necessity.lean`,
+`CCSelection.lean`, `Prevention.lean`, `Interpretation.lean`,
+`Implicative.lean`, `Modality/Ability.lean`, `Causation/Degree.lean`,
+`Causation/Progressive.lean` all dropped `hPos` parameters and migrated
+to Prop API. Closed sorrys at `Ability.lean:56`,
+`Implicative.lean:865/734`, `CCSelection.lean:174/219/237` (all become
+`Iff.rfl` or unconditional after the unification).
+
+**Deleted**: `Theories/Semantics/Causation/Closure.lean` — built around
+`ClosureOperator Situation` for positive dynamics. Schulz footnote 7
+explicitly: T_D is NOT order-monotone (`s₁ ≤ s₂ ⇏ T_D(s₁) ≤ T_D(s₂)`),
+so the closure-operator framing was unsound except in the all-positive
+sub-case. Mathlib's `OrderHom.lfp` does not apply.
+
+**Bib**: `fitting-1985` added to `references.bib` (J. Logic
+Programming).
+
+**Outstanding TODOs (sorrys)**: detailed structural proofs in
+`Resultatives.lean:independent_source_disrupts_tightness` and
+`Glass2023.lean:disjunctive_globally_sufficient`,
+`conjunctive_globally_necessary`, `disjunctive_not_globally_necessary`,
+`disjunctive_effect_entailed`. Concrete-witness companions (using
+`native_decide` over fixed `mkVar`s) remain proven.
+
+**Build**: 0 refactor-induced errors. 4 pre-existing unrelated errors
+(`ProbabilityOrdering.lean` noncomputable, `Singlish/Questions.lean`
+ExpressiveWhModifier, `Stalnaker1981`/`Kriz2016` `Truth3.gap` rename).
+
+## [0.230.173] - 2026-04-22
+
+### Refactored — `FrankGoodman2012PMF.lean` backport to shared operators
+
+`extension` and `L0` in `FrankGoodman2012PMF.lean` were predecessors of
+the now-shared `RSA.extensionOf` / `RSA.L0OfBoolMeaning` operators in
+`Theories/Pragmatics/RSA/Operators.lean` (extracted in 0.230.172 for
+GS2013PMF). Backported: `extension` is now an `abbrev` for
+`RSA.extensionOf Feature.appliesTo`; `L0` delegates to
+`RSA.L0OfBoolMeaning`; the local `mem_extension` simp lemma is dropped
+in favor of `RSA.mem_extensionOf`. The local `L0_apply_*` and
+`mem_support_L0_iff` lemmas keep their paper-context names but now
+delegate to the generic versions in one line each.
+
+`KaoEtAl2014PMF.lean` is unchanged: its meaning function is
+`ℝ≥0∞`-valued (the feature prior is baked into L0), and its speaker is
+`rpow`-shaped rather than `exp ∘ expected-log`, so neither
+`L0OfBoolMeaning` nor `softmaxBelief` applies.
+
+## [0.230.172] - 2026-04-22
+
+### Added — `GoodmanStuhlmuller2013PMF.lean` (Phase 2 stress test)
+
+Third stress test for the Phase-2 RSA → mathlib-PMF migration, after
+`FrankGoodman2012PMF.lean` and `KaoEtAl2014PMF.lean`. GS2013 differs from
+both pilots on every axis that mattered:
+
+- **Two posteriors**: speaker has imperfect access to the world via a
+  hypergeometric *observation* kernel ⇒ `PMF.posterior` enters at both
+  the speaker-belief layer (obs → world) and the listener layer
+  (utt → world).
+- **Real-valued score**: `S1 ∝ exp(α · Σ_s P(s | obs) · log P_lex(s | u))` —
+  log/exp arithmetic is real, lifted to `ℝ≥0∞` at the `PMF.normalize`
+  boundary via `RSA.softmaxBelief` (extracted to `RSA/Operators.lean`).
+- **Latent-variable bind**: `L1` inverts the *obs-marginalised* speaker
+  `marginalSpeaker = obsKernel.bindOnSupport S1g` — `bindOnSupport` is
+  mathlib's idiom for binding to a partial kernel, threading the cover
+  hypothesis through the `hObs` proof rather than via a junk-PMF
+  fallback.
+
+`Theories/Pragmatics/RSA/Operators.lean` extended with reusable
+`extensionOf`, `L0OfBoolMeaning`, and `softmaxBelief` operators (with
+`*_ne_top` and `*_ne_zero_of_witness` lemmas) so consumer files don't
+re-derive the boilerplate.
+
+### Surfaced — model defects under PMF discipline
+
+The original `gsCfg` resolves `0/0 = 0` silently at the `RSAConfig.S1`
+step. PMF cannot — `PMF.normalize` requires a nonzero finite tsum. Two
+defects surface as honest theorems:
+
+- `qMeaning_no_witness_at_o0a1` — at `(.a1, .o0a1)`, no quantifier in
+  `{none_, some_, all}` is qualityOk (compatible worlds are
+  `{s0, s1, s2}` and no quantifier holds at all three). Same for
+  `.o0a2`. Hence `qMeaning` only has full cover at `.a3` (`qCover_a3`);
+  the 2 minimal/partial findings carry the cover hypothesis as a
+  parameter.
+- `lb_defect_at_o0a3` — at `(.a3, .o0a3)`, no LB numeral is true at the
+  only compatible world `.s0`. The same `s0` defect blocks `.a1` and
+  `.a2`. Hence `lbMeaning` has no full cover at any access; all 7 LB
+  findings carry the cover hypothesis as a parameter.
+
+### Pending — PMF-shaped `rsa_predict` (Task #36)
+
+Each of the 11 findings is stated as an `L1` apply inequality (or its
+negation) with `sorry` per CLAUDE.md "Prefer `sorry` over weakening
+theorem statements". Manual discharge over a softmax-of-expected-log
+score is not realistic by hand — the PMF-shaped tactic is its own
+workstream. Grounding theorem to legacy `gsCfg` deferred for the same
+reason.
+
 ## [0.230.171] - 2026-04-22
 
 ### Refactored — Dynamic/ stragglers move to phenomenon-application sites

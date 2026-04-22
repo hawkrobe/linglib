@@ -26,7 +26,7 @@ key structure connecting Merge to Hopf algebra formalism from QFT renormalizatio
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Counting
+import Linglib.Theories.Syntax.Minimalism.Counting
 import Mathlib.Order.Antichain
 import Mathlib.Data.Finset.Basic
 

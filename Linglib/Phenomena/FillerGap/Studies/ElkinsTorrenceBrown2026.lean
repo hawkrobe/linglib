@@ -1,7 +1,7 @@
 import Linglib.Fragments.Mayan.Mam.ExtractionMorphology
 import Linglib.Fragments.Mayan.Mam.VoiceSystem
 import Linglib.Fragments.Mayan.Kiche.ExtractionMorphology
-import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
+import Linglib.Theories.Syntax.Minimalism.ClauseSpine
 
 /-!
 # Oblique Extraction in Mayan
@@ -47,7 +47,7 @@ and Spellout — to the empirical data on =(y)a' distribution in SJO Mam.
    independently Agrees, yielding multiple =(y)a' (one per Voice/Dir).
 -/
 
-namespace ElkinsTorrenceBrown2026
+namespace Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026
 
 -- ============================================================================
 -- Part I: Cross-Linguistic Comparison
@@ -102,7 +102,7 @@ theorem clause_size_sensitivity :
 theorem kichean_fpg_holds :
     Fragments.Mayan.Kiche.ldData.all (λ d =>
       d.embeddedType.hasComp == d.wiOnMatrix) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 3: Theoretical Implications
@@ -133,18 +133,18 @@ open Minimalism
 /-- Valued [+oblique] on Voice spells out as =(y)a'. -/
 theorem spellout_oblique_voice :
     spellout mamVoiceVocab [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
-  native_decide
+  decide
 
 /-- Without [+oblique], Voice has no exponent from this vocabulary. -/
 theorem spellout_no_oblique :
     spellout mamVoiceVocab [.valued (.oblique false)] (some .Voice) = none := by
-  native_decide
+  decide
 
 /-- [+oblique] on a non-Voice head does not yield =(y)a'
     (context restriction blocks insertion). -/
 theorem spellout_oblique_wrong_context :
     spellout mamVoiceVocab [.valued (.oblique true)] (some .T) = none := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 5: Prediction Function
@@ -165,32 +165,32 @@ theorem bridge_trans_obl :
     mamTransitiveSpine.projects .Voice = true ∧
     predictEqYa mamTransitiveSpine true = .licensed ∧
     transOblExtraction.judgment = .licensed := by
-  exact ⟨by native_decide, by native_decide, rfl⟩
+  exact ⟨by decide, by decide, rfl⟩
 
 /-- Transitive + subject extraction → no =(y)a'. -/
 theorem bridge_trans_subj :
     predictEqYa mamTransitiveSpine false = .blocked ∧
     transSubjExtraction.judgment = .blocked := by
-  exact ⟨by native_decide, rfl⟩
+  exact ⟨by decide, rfl⟩
 
 /-- Transitive + object extraction → no =(y)a'. -/
 theorem bridge_trans_obj :
     predictEqYa mamTransitiveSpine false = .blocked ∧
     transObjExtraction.judgment = .blocked := by
-  exact ⟨by native_decide, rfl⟩
+  exact ⟨by decide, rfl⟩
 
 /-- Passive + oblique → =(y)a' licensed. -/
 theorem bridge_passive_obl :
     mamTransitiveSpine.projects .Voice = true ∧
     predictEqYa mamTransitiveSpine true = .licensed ∧
     passiveOblExtraction.judgment = .licensed := by
-  exact ⟨by native_decide, by native_decide, rfl⟩
+  exact ⟨by decide, by decide, rfl⟩
 
 /-- Temporal oblique + full clause → =(y)a' BLOCKED. -/
 theorem bridge_temporal_obl :
     predictEqYa mamTransitiveSpine true (isTemporal := true) = .blocked ∧
     temporalOblExtraction.judgment = .blocked := by
-  exact ⟨by native_decide, rfl⟩
+  exact ⟨by decide, rfl⟩
 
 -- ============================================================================
 -- § 7: Long-Distance Theorems
@@ -207,21 +207,21 @@ theorem bridge_ld_fullCP :
     (spineOf ldFullCP.embeddedClauseType).projects .Voice = true ∧
     ldFullCP.matrixJudgment = .licensed ∧
     ldFullCP.embeddedJudgment = .licensed := by
-  exact ⟨by native_decide, rfl, rfl⟩
+  exact ⟨by decide, rfl, rfl⟩
 
 /-- LD from aspectless → =(y)a' licensed on both. -/
 theorem bridge_ld_aspectless :
     (spineOf ldAspectless.embeddedClauseType).projects .Voice = true ∧
     ldAspectless.matrixJudgment = .licensed ∧
     ldAspectless.embeddedJudgment = .licensed := by
-  exact ⟨by native_decide, rfl, rfl⟩
+  exact ⟨by decide, rfl, rfl⟩
 
 /-- LD from infinitival → =(y)a' on matrix only. -/
 theorem bridge_ld_infinitival :
     (spineOf ldInfinitival.embeddedClauseType).projects .Voice = false ∧
     ldInfinitival.matrixJudgment = .licensed ∧
     ldInfinitival.embeddedJudgment = .blocked := by
-  exact ⟨by native_decide, rfl, rfl⟩
+  exact ⟨by decide, rfl, rfl⟩
 
 /-- EQ → =(y)a' on embedded only. -/
 theorem bridge_ld_eq :
@@ -237,13 +237,13 @@ theorem all_mono_predictions_match :
     monoData.all (λ d =>
       predictEqYa (spineOf d.clauseType) d.obliqueExtracted d.isTemporal
         == d.judgment) = true := by
-  native_decide
+  decide
 
 /-- All LD embedded predictions match. -/
 theorem all_ld_embedded_predictions_match :
     ldData.all (λ d =>
       d.embeddedClauseType.projectsVoice == (d.embeddedJudgment == .licensed)) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 9: Against Alternative Analyses
@@ -268,7 +268,7 @@ theorem eqya_not_copy_spellout :
     (spineOf MamClauseType.infinitival).projects .Voice = false ∧
     ldAspectless.embeddedJudgment = .licensed ∧
     ldInfinitival.embeddedJudgment = .blocked := by
-  exact ⟨by native_decide, by native_decide, rfl, rfl⟩
+  exact ⟨by decide, by decide, rfl, rfl⟩
 
 -- ============================================================================
 -- § 10: ClauseSpine vs. ComplementSize
@@ -279,7 +279,7 @@ theorem eqya_not_copy_spellout :
 theorem clauseSpine_finer_than_complementSize :
     mamAspectlessSpine.projects .Voice = true ∧
     mamInfinitivalSpine.projects .Voice = false := by
-  exact ⟨by native_decide, by native_decide⟩
+  exact ⟨by decide, by decide⟩
 
 -- ============================================================================
 -- § 11: Dir⁰ Spellout
@@ -287,12 +287,12 @@ theorem clauseSpine_finer_than_complementSize :
 
 /-- Dir⁰ also carries [uOblique]. -/
 theorem dir_probe_matches_voice :
-    dirCis.features = mamVoice.features := by native_decide
+    dirCis.features = mamVoice.features := by decide
 
 /-- Dir⁰ with valued [+oblique] also spells out as =(y)a'. -/
 theorem dir_spellout_eqya :
     spellout mamVoiceVocab [.valued (.oblique true)] (some .Voice) = some "=(y)a'" := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 12: Derivation Tree
@@ -313,11 +313,11 @@ private def voiceP_obl := merge oblique_dp voiceP
 private def tp := merge t_head voiceP_obl
 private def cp := merge oblique_dp (merge c_head tp)
 
-theorem derivation_tree_size : cp.nodeCount = 6 := by native_decide
+theorem derivation_tree_size : cp.nodeCount = 6 := by decide
 
 theorem voice_has_uOblique :
     hasUnvaluedFeature mamVoice.features (.oblique false) = true := by
-  native_decide
+  decide
 
 private def oblique_goal_features : FeatureBundle := [.valued (.oblique true)]
 
@@ -325,20 +325,20 @@ private def oblique_goal_features : FeatureBundle := [.valued (.oblique true)]
 theorem voice_agree_values_oblique :
     applyAgree mamVoice.features oblique_goal_features (.oblique false) =
     some [.valued (.oblique true)] := by
-  native_decide
+  decide
 
 /-- Spellout: valued [+oblique] on Voice maps to "=(y)a'". -/
 theorem voice_spellout_eqya :
     spellout mamVoiceVocab [.valued (.oblique true)] (some .Voice) =
     some "=(y)a'" := by
-  native_decide
+  decide
 
 /-- Full derivation pipeline: Agree then Spellout → "=(y)a'". -/
 theorem full_derivation_pipeline :
     (applyAgree mamVoice.features oblique_goal_features (.oblique false)).bind
       (λ fb => spellout mamVoiceVocab fb (some .Voice)) = some "=(y)a'" := by
-  native_decide
+  decide
 
 end Derivation
 
-end ElkinsTorrenceBrown2026
+end Phenomena.FillerGap.Studies.ElkinsTorrenceBrown2026

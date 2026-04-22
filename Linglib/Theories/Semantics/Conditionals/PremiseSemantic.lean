@@ -60,16 +60,17 @@ three, the lumping CF does NOT use `SimilarityOrdering` /
   @cite{kratzer-2012} p. 133, "the big unknown" — a question for
   empirical cognitive science, not formal semantics.
 - **Testing on the @cite{ciardelli-zhang-champollion-2018} switches
-  scenario** is left as future work. The switches model in
-  `Phenomena/Conditionals/Studies/CiardelliZhangChampollion2018.lean`
-  is worlds-only (discrete order). To test lumping CF non-trivially
-  it must be enriched with partial situations encoding the wiring law
-  and individual switch positions — a substantial model-building
-  exercise.
+  scenario**: a worlds-only switches model is too coarse for
+  non-trivial lumping behaviour; the operator is genuinely tested in
+  partial-situation models where lumping closure has bite (see the
+  Paula apple-buying instantiation under @cite{kratzer-2012} §5.4.3,
+  formalized in a sibling `Studies/` file).
 - **Predicting the falsified `¬(A ∧ B) > OFF` judgment** of
-  @cite{ciardelli-zhang-champollion-2018} from this operator (or
-  showing the prediction does not arise) is the open question raised
-  in the docstring of the CZC2018 study file.
+  @cite{ciardelli-zhang-champollion-2018} from this operator: open
+  question raised by that paper. The result that drops out of a
+  worlds-only switches lift (lumping CF predicts `¬(A ∧ B) > OFF`
+  false, but also predicts `aDn > OFF` false — a failure mode disjoint
+  from minimal-change semantics) is documented separately.
 -/
 
 namespace Semantics.Conditionals.PremiseSemantic

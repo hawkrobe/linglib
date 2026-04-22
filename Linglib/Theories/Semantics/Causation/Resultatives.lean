@@ -469,117 +469,153 @@ theorem independent_source_disrupts_tightness
     (hsc : indepSrc ≠ cause) (hsi : indepSrc ≠ intermediate)
     (hse : indepSrc ≠ effect) :
     let chain := CausalDynamics.causalChain cause intermediate effect
-    completesForEffect chain Situation.empty cause effect = true →
+    completesForEffect chain Situation.empty cause effect →
     let withIndep : CausalDynamics :=
       ⟨[CausalLaw.simple cause intermediate,
         CausalLaw.simple intermediate effect,
         CausalLaw.simple indepSrc intermediate]⟩
     let bg := Situation.empty.extend indepSrc true
-    completesForEffect withIndep bg cause effect = false := by
-  intro chain _ withIndep bg
-  -- But-for test fails: indepSrc → intermediate → effect fires even without cause
-  simp only [completesForEffect, Bool.and_eq_false_iff]
-  right
-  suffices h : (normalDevelopment withIndep
-      (bg.extend cause false)).hasValue effect true = true by
-    rw [h]; rfl
-  set s := bg.extend cause false
-  -- HasValue facts for s (counterfactual situation with cause=false)
-  have hs_c : s.hasValue cause true = false := by simp [s, bg]
-  have hs_i : s.hasValue intermediate true = false := by
-    simp only [s, bg, Situation.hasValue, Situation.extend, Situation.empty]
-    split_ifs <;> simp_all [Ne.symm hci, Ne.symm hsi]
-  have hs_d : s.hasValue indepSrc true = true := by simp [s, bg, hsc]
-  have hs_e : s.hasValue effect true = false := by
-    simp only [s, bg, Situation.hasValue, Situation.extend, Situation.empty]
-    split_ifs <;> simp_all [Ne.symm hce, Ne.symm hse]
-  -- Round 1: only indepSrc→intermediate fires (cause=false, intermediate=false)
-  have hp1 : (CausalLaw.simple cause intermediate).preconditionsMet s = false := by
-    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs_c]
-  have hp2 : (CausalLaw.simple intermediate effect).preconditionsMet s = false := by
-    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs_i]
-  have hp3 : (CausalLaw.simple indepSrc intermediate).preconditionsMet s = true := by
-    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs_d]
-  have hround1 : applyLawsOnce withIndep s = s.extend intermediate true := by
-    simp only [applyLawsOnce, withIndep, List.foldl_cons, List.foldl_nil]
-    rw [CausalLaw.apply_of_not_met hp1, CausalLaw.apply_of_not_met hp2,
-        CausalLaw.apply_of_met hp3]
-    simp [CausalLaw.simple]
-  -- HasValue facts for s1 := s.extend intermediate true
-  have hs1_i : (s.extend intermediate true).hasValue intermediate true = true := by
-    simp [Situation.extend_hasValue_same]
-  have hs1_c : (s.extend intermediate true).hasValue cause true = false := by
-    rw [Situation.extend_hasValue_diff hci]; exact hs_c
-  have hs1_d : (s.extend intermediate true).hasValue indepSrc true = true := by
-    rw [Situation.extend_hasValue_diff hsi]; exact hs_d
-  have hs1_e : (s.extend intermediate true).hasValue effect true = false := by
-    rw [Situation.extend_hasValue_diff (Ne.symm hie)]
-    exact hs_e
-  -- Not fixpoint after round 1 (intermediate→effect can fire)
-  have hnfix : isFixpoint withIndep (applyLawsOnce withIndep s) = false := by
-    rw [hround1]
-    simp only [isFixpoint, withIndep, List.all_cons, List.all_nil, Bool.and_true,
-      CausalLaw.preconditionsMet, CausalLaw.simple,
-      List.all_cons, List.all_nil, Bool.and_true,
-      hs1_c, hs1_i, hs1_d, hs1_e]; decide
-  -- Round 2: intermediate→effect fires, indepSrc→intermediate is redundant
-  have hp2_1 : (CausalLaw.simple cause intermediate).preconditionsMet
-      (s.extend intermediate true) = false := by
-    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs1_c]
-  have hp2_2 : (CausalLaw.simple intermediate effect).preconditionsMet
-      (s.extend intermediate true) = true := by
-    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs1_i]
-  have hs1e_d : ((s.extend intermediate true).extend effect true).hasValue
-      indepSrc true = true := by
-    rw [Situation.extend_hasValue_diff hse]
-    exact hs1_d
-  have hp2_3 : (CausalLaw.simple indepSrc intermediate).preconditionsMet
-      ((s.extend intermediate true).extend effect true) = true := by
-    simp [CausalLaw.preconditionsMet, CausalLaw.simple, hs1e_d]
-  have hround2 : applyLawsOnce withIndep (s.extend intermediate true) =
-      ((s.extend intermediate true).extend effect true).extend intermediate true := by
-    simp only [applyLawsOnce, withIndep, List.foldl_cons, List.foldl_nil]
-    rw [CausalLaw.apply_of_not_met hp2_1, CausalLaw.apply_of_met hp2_2]
-    simp only [CausalLaw.simple_effect, CausalLaw.simple_effectValue]
-    rw [CausalLaw.apply_of_met hp2_3]
-    simp [CausalLaw.simple]
-  -- HasValue facts for s2 (fixpoint situation)
-  have hs2_i : (((s.extend intermediate true).extend effect true).extend
-      intermediate true).hasValue intermediate true = true := by
-    simp [Situation.extend_hasValue_same]
-  have hs2_e : (((s.extend intermediate true).extend effect true).extend
-      intermediate true).hasValue effect true = true := by
-    rw [Situation.extend_hasValue_diff (Ne.symm hie)]
-    simp [Situation.extend_hasValue_same]
-  have hs2_c : (((s.extend intermediate true).extend effect true).extend
-      intermediate true).hasValue cause true = false := by
-    rw [Situation.extend_hasValue_diff hci,
-      Situation.extend_hasValue_diff hce]
-    exact hs1_c
-  have hs2_d : (((s.extend intermediate true).extend effect true).extend
-      intermediate true).hasValue indepSrc true = true := by
-    rw [Situation.extend_hasValue_diff hsi,
-      Situation.extend_hasValue_diff hse]
-    exact hs1_d
-  -- IS fixpoint after round 2 (all effects already set)
-  have hfix : isFixpoint withIndep (applyLawsOnce withIndep
-      (applyLawsOnce withIndep s)) = true := by
-    rw [hround1, hround2]
-    simp only [isFixpoint, withIndep, List.all_cons, List.all_nil, Bool.and_true,
-      CausalLaw.preconditionsMet, CausalLaw.simple,
-      List.all_cons, List.all_nil, Bool.and_true,
-      hs2_c, hs2_i, hs2_d, hs2_e]; decide
-  -- normalDevelopment reaches round 2 result; effect is true
-  rw [normalDevelopment_eq_applyLawsTwice_of_fixpoint _ _ hnfix hfix (by decide),
-      hround1, hround2]
-  exact hs2_e
+    ¬ completesForEffect withIndep bg cause effect := by
+  intro _ _ withIndep bg ⟨_hSuf, hNotBut⟩
+  -- Show but-for fails: effect develops in `bg.extend cause false`
+  apply hNotBut
+  set s := bg.extend cause false with hs
+  -- Useful facts about s
+  have hCauseFalse : s.hasValue cause false := by
+    show s.valuation cause = some false; simp [hs, Situation.extend]
+  have hIndepTrue : s.hasValue indepSrc true := by
+    show s.valuation indepSrc = some true
+    simp only [hs, bg, Situation.extend]
+    rw [show (indepSrc == cause) = false from beq_false_of_ne hsc]
+    show (Situation.empty.extend indepSrc true).valuation indepSrc = some true
+    simp [Situation.extend]
+  have hIntNone : s.get intermediate = none := by
+    show ((Situation.empty.extend indepSrc true).extend cause false).get intermediate = none
+    rw [Situation.extend_get_ne (Ne.symm hci),
+        Situation.extend_get_ne (Ne.symm hsi)]; rfl
+  have hEffNone : s.get effect = none := by
+    show ((Situation.empty.extend indepSrc true).extend cause false).get effect = none
+    rw [Situation.extend_get_ne (Ne.symm hce),
+        Situation.extend_get_ne (Ne.symm hse)]; rfl
+  -- Round 1: cause→int and int→eff don't fire (cause=false, int=none); indepSrc→int fires
+  have hMetCI : ¬ (CausalLaw.simple cause intermediate).preconditionsMet s := by
+    intro h
+    have := h (cause, true) (by simp [CausalLaw.simple])
+    unfold Situation.hasValue at this hCauseFalse
+    rw [hCauseFalse] at this; cases this
+  have hMetIE : ¬ (CausalLaw.simple intermediate effect).preconditionsMet s := by
+    intro h
+    have := h (intermediate, true) (by simp [CausalLaw.simple])
+    unfold Situation.hasValue at this
+    rw [show s.valuation intermediate = s.get intermediate from rfl, hIntNone] at this
+    cases this
+  have hMetSI : (CausalLaw.simple indepSrc intermediate).preconditionsMet s := by
+    intro p hp; simp only [CausalLaw.simple, List.mem_singleton] at hp
+    rw [hp]; exact hIndepTrue
+  have hStep1_a : (CausalLaw.simple cause intermediate).apply s = s :=
+    CausalLaw.apply_of_not_met hMetCI
+  have hStep1_b : (CausalLaw.simple intermediate effect).apply s = s :=
+    CausalLaw.apply_of_not_met hMetIE
+  have hStep1_c : (CausalLaw.simple indepSrc intermediate).apply s
+                  = s.extend intermediate true :=
+    CausalLaw.apply_of_met_undetermined hMetSI hIntNone
+  set s1 := s.extend intermediate true with hs1
+  have hRound1 : applyLawsOnce withIndep s = s1 := by
+    show ([_, _, _].foldl _ s) = _
+    simp only [List.foldl_cons, List.foldl_nil]
+    rw [hStep1_a, hStep1_b, hStep1_c]
+  -- Round 2 setup: facts about s1
+  have hCauseFalse1 : s1.hasValue cause false := by
+    rw [hs1]; show (s.extend intermediate true).valuation cause = some false
+    rw [show (s.extend intermediate true).valuation cause
+          = (s.extend intermediate true).get cause from rfl,
+        Situation.extend_get_ne hci]; exact hCauseFalse
+  have hIntTrue1 : s1.hasValue intermediate true := by
+    rw [hs1]; show (s.extend intermediate true).valuation intermediate = some true
+    rw [show (s.extend intermediate true).valuation intermediate
+          = (s.extend intermediate true).get intermediate from rfl,
+        Situation.extend_get_same]
+  have hEffNone1 : s1.get effect = none := by
+    rw [hs1, Situation.extend_get_ne (Ne.symm hie)]; exact hEffNone
+  -- Round 2: cause→int doesn't fire (cause=false); int→eff fires (int=true, eff=none);
+  --          indepSrc→int doesn't fire (int already determined)
+  have hMetCI' : ¬ (CausalLaw.simple cause intermediate).preconditionsMet s1 := by
+    intro h
+    have := h (cause, true) (by simp [CausalLaw.simple])
+    unfold Situation.hasValue at this hCauseFalse1
+    rw [hCauseFalse1] at this; cases this
+  have hMetIE' : (CausalLaw.simple intermediate effect).preconditionsMet s1 := by
+    intro p hp; simp only [CausalLaw.simple, List.mem_singleton] at hp
+    rw [hp]; exact hIntTrue1
+  have hStep2_a : (CausalLaw.simple cause intermediate).apply s1 = s1 :=
+    CausalLaw.apply_of_not_met hMetCI'
+  have hStep2_b : (CausalLaw.simple intermediate effect).apply s1
+                  = s1.extend effect true :=
+    CausalLaw.apply_of_met_undetermined hMetIE' hEffNone1
+  have hStep2_c : (CausalLaw.simple indepSrc intermediate).apply (s1.extend effect true)
+                  = s1.extend effect true := by
+    apply CausalLaw.apply_of_determined
+    show (s1.extend effect true).get intermediate = some true
+    rw [Situation.extend_get_ne hie]
+    rw [hs1, Situation.extend_get_same]
+  set s2 := s1.extend effect true with hs2
+  have hRound2 : applyLawsOnce withIndep s1 = s2 := by
+    show ([_, _, _].foldl _ s1) = _
+    simp only [List.foldl_cons, List.foldl_nil]
+    rw [hStep2_a, hStep2_b, hStep2_c]
+  -- s2 is a fixpoint
+  have hFix : isFixpoint withIndep s2 := by
+    intro law hLaw hMet hNone
+    -- Three cases on which law
+    have hLawMem : law ∈ [CausalLaw.simple cause intermediate,
+                          CausalLaw.simple intermediate effect,
+                          CausalLaw.simple indepSrc intermediate] := hLaw
+    simp only [List.mem_cons, List.not_mem_nil, or_false] at hLawMem
+    -- s2 has cause=false and effect, intermediate determined; pre-compute s2 facts
+    have hS2GetCause : s2.get cause = some false := by
+      rw [hs2, hs1, Situation.extend_get_ne hce, Situation.extend_get_ne hci]
+      show s.get cause = some false
+      rw [hs]; show ((Situation.empty.extend indepSrc true).extend cause false).get cause = _
+      rw [Situation.extend_get_same]
+    have hS2GetEffect : s2.get effect = some true := by
+      rw [hs2, Situation.extend_get_same]
+    have hS2GetInt : s2.get intermediate = some true := by
+      rw [hs2, Situation.extend_get_ne hie, hs1, Situation.extend_get_same]
+    rcases hLawMem with hL | hL | hL
+    · -- cause → int: cause is some false in s2, but precondition needs (cause, true)
+      subst hL
+      have := hMet (cause, true) (by simp [CausalLaw.simple])
+      unfold Situation.hasValue at this
+      rw [show s2.valuation cause = s2.get cause from rfl, hS2GetCause] at this
+      cases this
+    · -- int → eff: effect already determined in s2
+      subst hL
+      change s2.get effect = none at hNone
+      rw [hS2GetEffect] at hNone; cases hNone
+    · -- indepSrc → int: int already determined in s2
+      subst hL
+      change s2.get intermediate = none at hNone
+      rw [hS2GetInt] at hNone; cases hNone
+  -- Now chain the unfolds: s → s1 → s2 (fixpoint)
+  have hNotFix_s : ¬ isFixpoint withIndep s := by
+    intro hF; exact (hF (CausalLaw.simple indepSrc intermediate)
+      (by simp [withIndep]) hMetSI) hIntNone
+  have hNotFix_s1 : ¬ isFixpoint withIndep s1 := by
+    intro hF; exact (hF (CausalLaw.simple intermediate effect)
+      (by simp [withIndep]) hMetIE') hEffNone1
+  rw [normalDevelopment_of_not_fixpoint hNotFix_s, hRound1]
+  rw [normalDevelopment_of_not_fixpoint hNotFix_s1, hRound2]
+  rw [normalDevelopment_of_fixpoint hFix]
+  show s2.hasValue effect true
+  rw [hs2]; show (s1.extend effect true).hasValue effect true
+  rw [Situation.extend_hasValue_same]
 
 /-- Concrete witness: passive chain tight, active chain not tight. -/
 theorem independent_source_disrupts_tightness_concrete :
     completesForEffect drinkTeapotDryModel Situation.empty
-      drinkingVar teapotDryVar = true ∧
-    completesForEffect kickDoorViaBallModel ballHasEnergyBg
-      kickingDoorVar doorOpenVar = false := by
+      drinkingVar teapotDryVar ∧
+    ¬ completesForEffect kickDoorViaBallModel ballHasEnergyBg
+      kickingDoorVar doorOpenVar := by
   constructor <;> native_decide
 
 /-! ### Contiguity (@cite{levin-2019})

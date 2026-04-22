@@ -171,7 +171,8 @@ theorem intransitive_has_resultState (t t' : Template) :
   rintro rfl; decide
 
 /-- The intransitive variant loses CAUSE (on the deletion analysis).
-    @cite{koontz-garboden-2009} disputes this — see `AnticausativeAnalysis`. -/
+    @cite{koontz-garboden-2009} disputes this on Monotonicity-Hypothesis
+    grounds; see `Phenomena/Causation/Studies/KoontzGarboden2009.lean`. -/
 theorem intransitive_no_cause (t t' : Template) :
     t.intransitiveVariant = some t' → ¬ t'.HasCause := by
   cases t <;> simp [Template.intransitiveVariant]

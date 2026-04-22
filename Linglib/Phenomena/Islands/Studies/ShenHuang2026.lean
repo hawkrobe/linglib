@@ -4,7 +4,7 @@ import Linglib.Core.Definiteness
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization
-import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Theories.Syntax.Minimalism.Phase
 
 set_option autoImplicit false
 
@@ -667,7 +667,7 @@ theorem binding_preserves_consistency (existing : OrderingTable)
 /-! The violation model's `vocNeutralizes .syntactic = true` (defined in
 §1 above) captures the empirical generalization that VOCs
 remove the syntactic barrier to extraction. Phase Theory
-(`Theories/Syntax/Minimalism/Core/Phase.lean`) provides the formal
+(`Theories/Syntax/Minimalism/Phase.lean`) provides the formal
 mechanism: N/D-incorporation deactivates the DP's phasehood.
 
 This section bridges the two layers, showing that the Phase Theory's

@@ -91,7 +91,10 @@ inductive SemanticParameter where
   | arrangement      -- configuration (coil, cluster, row)
   | quanta           -- quantity/measure
   -- Social
-  | socialStatus     -- honorific, kin, age
+  | socialStatus     -- honorific status of the referent (kin, age, social rank)
+  | register         -- formality/register of the speech act (formal/written vs casual);
+                     -- distinct from socialStatus, which tracks the referent's status.
+                     -- Japanese 名 mei and Mandarin 位 wèi index register, not referent status.
   -- Perceptual (salient but unattested in noun categorization)
   | colour           -- perceptually salient but no attested classifier system uses it
   deriving DecidableEq, Repr
@@ -178,36 +181,44 @@ structure ClassifierEntry where
 -- §5 Classifier Strategy (@cite{little-moroney-royer-2022})
 -- ============================================================================
 
-/-- The semantic strategy by which a classifier mediates between numeral and noun.
-    @cite{little-moroney-royer-2022} argue that "numeral classifier" is a
-    heterogeneous category: two typologically distinct languages (Ch'ol and Shan)
-    both have obligatory numeral classifiers, but the classifier plays a
-    fundamentally different semantic role.
+/-- The semantic strategy a theoretical framework attributes to classifier
+    constructions. Three competing positions are represented:
 
-    - **forNumeral** (CLF-for-NUM): the classifier is a measure function required
-      by the numeral. The numeral takes the classifier as its first argument:
-      ⟦TWO⟧ = λm⟨e,n⟩λPλx.[P(x) ∧ m(x) = 2]. Predicts: numeral idiosyncrasies
-      in CLF requirement, CLF obligatory even without a noun (counting contexts),
-      CLF + plural marking can co-occur (different projections).
-    - **forNoun** (CLF-for-N): the classifier atomizes the noun denotation so the
-      numeral can count. ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]. Predicts:
-      noun idiosyncrasies in CLF requirement, CLF appears beyond numerals
-      (with quantifiers, demonstratives, relative clauses), CLF + plural marking
-      in complementary distribution (same projection). -/
+    - **forNumeral** (CLF-for-NUM): @cite{krifka-1995}, @cite{bale-coon-2014},
+      @cite{little-moroney-royer-2022}. The classifier is a measure function
+      required by the numeral. The numeral takes the classifier as its first
+      argument: ⟦TWO⟧ = λm⟨e,n⟩λPλx.[P(x) ∧ m(x) = 2]. Predicts: numeral
+      idiosyncrasies in CLF requirement, CLF obligatory even without a noun
+      (counting contexts), CLF + plural marking can co-occur.
+    - **forNoun** (CLF-for-N): @cite{chierchia-1998}, @cite{jenks-2011},
+      @cite{nomoto-2013}, @cite{little-moroney-royer-2022}. The classifier
+      atomizes the noun denotation so the numeral can count.
+      ⟦CLF⟧ = λPλx.[P(x) ∧ ¬∃y[P(y) ∧ y < x]]. Predicts: noun idiosyncrasies
+      in CLF requirement, CLF appears beyond numerals (with quantifiers,
+      demonstratives, relative clauses), CLF + plural marking in complementary
+      distribution.
+    - **sudoBlocking**: @cite{sudo-2016}. Classifier semantics live with
+      *numerals*, not nouns. Numerals are universally type-n singular terms;
+      a phonologically silent ∪-operator type-shifts them to predicates in
+      languages without classifiers, but is *blocked* (per @cite{chierchia-1998}'s
+      Blocking Principle) in languages whose lexicon contains overt classifiers.
+      Predicts: no numeral or noun idiosyncrasies, CLF appears *with* numerals
+      not beyond them, CLF appears in counting contexts (via the ∩-operator).
+
+    Strategy assignments to specific languages live in study files
+    (`Phenomena/Classifiers/Studies/{Chierchia1998,LittleMoroneyRoyer2022,Sudo2016}.lean`),
+    not in this file or in `NounCategorizationSystem`. Each paper owns its
+    own per-language commitments; cross-paper agreement and disagreement
+    are first-class theorems in the study files. -/
 inductive ClassifierStrategy where
-  | forNumeral  -- CLF is measure function for the numeral (Krifka 1995; Bale & Coon 2014)
-  | forNoun     -- CLF atomizes noun denotation (Chierchia 1998; Jenks 2011; Nomoto 2013)
+  | forNumeral
+  | forNoun
+  | sudoBlocking
   deriving DecidableEq, Repr
 
 /-- Whether this classifier encodes a given semantic parameter. -/
 def ClassifierEntry.encodes (c : ClassifierEntry) (p : SemanticParameter) : Bool :=
   c.semantics.any (· == p)
-
-/-- The form string of a classifier entry (for backward compatibility). -/
-def ClassifierEntry.toString (c : ClassifierEntry) : String := c.form
-
-instance : ToString ClassifierEntry where
-  toString := ClassifierEntry.toString
 
 /-- Collect all distinct semantic parameters attested across a classifier inventory.
     Used to derive `preferredSemantics` from fragment data rather than hand-listing. -/

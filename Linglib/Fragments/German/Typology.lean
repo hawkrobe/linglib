@@ -17,5 +17,11 @@ def typology : LanguageProfile :=
     |>.withWordOrderFromWALS
     |>.withAdpositionFromWALS
     |>.withMorph morphProfile
+    |>.withRelativization
+        { subjStrategy := .relativePronoun
+        , oblStrategy := .relativePronoun
+        , rcPosition := .postNominal
+        , lowestRelativizable := .objComparison
+        , notes := "Relative pronoun der/die/das; all AH positions relativizable" }
 
 end Fragments.German

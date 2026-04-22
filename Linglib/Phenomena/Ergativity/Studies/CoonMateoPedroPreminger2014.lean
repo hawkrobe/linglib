@@ -1,6 +1,6 @@
 import Linglib.Phenomena.Ergativity.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalism.Phase
 import Linglib.Fragments.Mayan.Qanjobal.Agreement
 import Linglib.Fragments.Mayan.Qanjobal.AgentFocus
 import Linglib.Fragments.Mayan.Chol.Agreement

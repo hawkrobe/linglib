@@ -19,7 +19,7 @@ of the target event but not directly settling it.
 | Future → no constraint             | Bare assertion → no presupposition     |
 | Direct observation → bare past ok  | Direct evidence → must infelicitous    |
 
-`EvidentialPerspective` (the three temporal orientations) lives in `Core.Evidence`;
+`EvidentialPerspective` (the three temporal orientations) lives in `Core.Evidentiality`;
 `EPCondition`/`UPCondition` (the five attested constraint shapes) live in
 `Theories/Semantics.Montague/Sentence/Tense/Evidential.lean`.
 
@@ -175,7 +175,7 @@ theorem direct_evidence_blocks_both :
 -- ════════════════════════════════════════════════════
 
 open Core.Epistemicity
-open Core.Evidence
+open Core.Evidentiality
 
 /-- Strong assertions (ego + direct) correspond to settling kernels.
     When the speaker has privileged access AND direct evidence, the kernel

@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Properties
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
+import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalism.SmallClause
 
 /-!
 # Sluicing: Syntactic Isomorphism Condition

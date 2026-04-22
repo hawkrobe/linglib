@@ -171,6 +171,81 @@ theorem self_mem_katzirSource {C W : Type} (lex : List (Tree C W))
   Relation.ReflTransGen.refl
 
 -- ═══════════════════════════════════════════════════════════════════════
+-- §3a  equalComplexity is an equivalence relation
+-- ═══════════════════════════════════════════════════════════════════════
+
+namespace equalComplexity
+
+variable {C W : Type} {source : List (Tree C W)}
+
+theorem refl (φ : Tree C W) : equalComplexity source φ φ :=
+  ⟨Relation.ReflTransGen.refl, Relation.ReflTransGen.refl⟩
+
+theorem symm {a b : Tree C W} (h : equalComplexity source a b) :
+    equalComplexity source b a :=
+  ⟨h.2, h.1⟩
+
+theorem trans {a b c : Tree C W}
+    (h₁ : equalComplexity source a b) (h₂ : equalComplexity source b c) :
+    equalComplexity source a c :=
+  ⟨Relation.ReflTransGen.trans h₂.1 h₁.1,
+   Relation.ReflTransGen.trans h₁.2 h₂.2⟩
+
+end equalComplexity
+
+-- ═══════════════════════════════════════════════════════════════════════
+-- §3b  Building blocks for `equalComplexity` proofs
+-- ═══════════════════════════════════════════════════════════════════════
+
+/-- A single same-category terminal substitution gives equal complexity,
+    provided BOTH terminals are in the source (so the substitution is
+    reversible). The standard atom for any `equalComplexity` chain. -/
+theorem equalComplexity_terminal_subst {C W : Type}
+    (source : List (Tree C W)) (cat : C) (oldW newW : W)
+    (h_old : Tree.terminal cat oldW ∈ source)
+    (h_new : Tree.terminal cat newW ∈ source) :
+    equalComplexity source (.terminal cat oldW) (.terminal cat newW) :=
+  ⟨Relation.ReflTransGen.single (StructOp.subst rfl h_old),
+   Relation.ReflTransGen.single (StructOp.subst rfl h_new)⟩
+
+/-- `Relation.ReflTransGen` of `StructOp` is preserved by `inChild`
+    navigation: a chain transforming child `i` into `ψ_child` lifts to a
+    chain transforming the parent into the parent with that child
+    replaced. -/
+theorem reflTransGen_StructOp_inChild {C W : Type} (source : List (Tree C W))
+    {cat : C} {cs : List (Tree C W)} (i : Fin cs.length)
+    {a b : Tree C W} (h : Relation.ReflTransGen (StructOp source) a b) :
+    Relation.ReflTransGen (StructOp source)
+      (.node cat (cs.set i a)) (.node cat (cs.set i b)) := by
+  induction h with
+  | refl => exact Relation.ReflTransGen.refl
+  | tail _ hstep ih =>
+    -- ih : ReflTransGen ... (cs.set i a) (cs.set i b'), hstep : StructOp source b' c
+    -- Need: ReflTransGen ... (cs.set i a) (cs.set i c)
+    refine Relation.ReflTransGen.tail ih ?_
+    -- StructOp source (.node cat (cs.set i b')) (.node cat ((cs.set i b').set i c))
+    -- since (cs.set i b').set i c = cs.set i c, we apply inChild at index i' on cs.set i b'
+    have hi' : i.1 < (cs.set i _).length := by
+      simp [List.length_set]; exact i.2
+    have := StructOp.inChild (cat := cat) (cs := cs.set i _) ⟨i.1, hi'⟩ hstep
+    -- The result type uses (cs.set i b').get ⟨i.1, hi'⟩ = b' and (cs.set i b').set i c
+    -- which simplifies to cs.set i c
+    convert this using 2
+    · simp [List.get_set_eq]
+    · simp [List.set_set]
+
+/-- `equalComplexity` lifts through `inChild` navigation. The headline
+    lemma for proving same-complexity claims about deep tree positions:
+    apply `equalComplexity_terminal_subst` at the leaf, then lift via
+    `equalComplexity_inChild` for each step of the path back to the root. -/
+theorem equalComplexity_inChild {C W : Type} (source : List (Tree C W))
+    {cat : C} {cs : List (Tree C W)} (i : Fin cs.length)
+    {a b : Tree C W} (h : equalComplexity source a b) :
+    equalComplexity source (.node cat (cs.set i a)) (.node cat (cs.set i b)) :=
+  ⟨reflTransGen_StructOp_inChild source i h.2,
+   reflTransGen_StructOp_inChild source i h.1⟩
+
+-- ═══════════════════════════════════════════════════════════════════════
 -- §4  Worked Example: Some/All (§4.1)
 -- ═══════════════════════════════════════════════════════════════════════
 

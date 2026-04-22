@@ -1,7 +1,7 @@
 import Linglib.Core.Alternation
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Core.VoiceSystem
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Applicative
 
 /-!
 # Creissels (2025): Transitivity, Valency, and Voice
@@ -25,7 +25,7 @@ This study file bridges @cite{creissels-2025}'s framework (formalized in
 
 - `MorphologicalCausation.lean`: causativization and decausativization
 - `Core/VoiceSystem.lean`: pivot-based voice system typology
-- `Minimalism/Core/Applicative.lean`: Pylkkänen's high/low applicatives
+- `Minimalism/Applicative.lean`: Pylkkänen's high/low applicatives
 - `Core/RootDimensions.lean`: Levin's diathesis alternation diagnostics
 -/
 

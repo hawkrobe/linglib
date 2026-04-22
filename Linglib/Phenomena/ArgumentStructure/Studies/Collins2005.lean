@@ -1,5 +1,5 @@
 import Linglib.Phenomena.ArgumentStructure.Passive
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Voice
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 
 /-!
@@ -7,7 +7,7 @@ import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 
 @cite{collins-2005} @cite{chomsky-2001} @cite{legate-2003}Connects the empirical passive data in `Phenomena.ArgumentStructure.Passive`
 to the smuggling theory in `Minimalism.Movement.Smuggling`
-and the Voice/phase infrastructure in `Minimalism.Core.Voice`.
+and the Voice/phase infrastructure in `Minimalism.Voice`.
 
 ## The Analysis
 

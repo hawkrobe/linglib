@@ -22,7 +22,7 @@ Standard EPs:
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Labeling
+import Linglib.Theories.Syntax.Minimalism.Labeling
 
 namespace Minimalism
 

@@ -38,7 +38,7 @@ a split chain stranding the M-value on a contentless T. The specific
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.VerbMovement
-import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
 
 namespace Minimalism

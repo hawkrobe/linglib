@@ -6,7 +6,7 @@ import Linglib.Core.Nominal.Interpret
 import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Definiteness.Basic
-import Linglib.Theories.Semantics.Noun.Classifier
+import Linglib.Theories.Semantics.Classifier.Basic
 import Linglib.Fragments.English.Definiteness
 import Linglib.Fragments.German.Definiteness
 import Linglib.Fragments.Mandarin.Definiteness
@@ -648,10 +648,10 @@ theorem demonstrative_adds_spatial_info {E : Type}
     `ClassifierStrategy.forNoun` to the denotation function. -/
 theorem shan_clf_is_atomization {α : Type*} [PartialOrder α]
     (P : α → Prop) :
-    Semantics.Noun.Classifier.classifierDenot
+    Semantics.Classifier.classifierDenot
       Core.NounCategorization.ClassifierStrategy.forNoun P
       (fun _ => 0) 0   -- μ and n are unused for CLF-for-N
-    = Semantics.Noun.Classifier.clfForNoun P := rfl
+    = Semantics.Classifier.clfForNoun P := rfl
 
 -- ============================================================================
 -- §14: Integration with the Core.Nominal API

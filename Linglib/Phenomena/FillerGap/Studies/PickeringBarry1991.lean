@@ -48,7 +48,7 @@ association directly. This is the `subject_verb_composition` theorem in
 - §5: Bridges to ProcessingProfile, CrossSerial, and CCG
 -/
 
-namespace PickeringBarry1991
+namespace Phenomena.FillerGap.Studies.PickeringBarry1991
 
 open ProcessingModel
 
@@ -86,7 +86,7 @@ def AnalysisType.associationTypes : AnalysisType → Nat
 /-- The gap-free analysis is simpler: fewer association types to track. -/
 theorem gapFree_simpler :
     AnalysisType.gapFree.associationTypes <
-    AnalysisType.traceBased.associationTypes := by native_decide
+    AnalysisType.traceBased.associationTypes := by decide
 
 -- ============================================================================
 -- §2: The Four Sentence Types
@@ -216,7 +216,7 @@ It has nested filler-gap AND nested gap-verb (Table 1), yet the
 construction is easy to process and easily extensible (exx 54–55). -/
 theorem traceBased_piedPiping_wrong :
     traceBasedPrediction .engMultiPiedPiping ≠
-    observedDifficulty .engMultiPiedPiping := by native_decide
+    observedDifficulty .engMultiPiedPiping := by decide
 
 /-- The gap-free analysis correctly predicts pied-piping is easy —
 the critical case where it outperforms the trace-based account. -/
@@ -256,7 +256,7 @@ instance : HasProcessingProfile SentenceType where
 /-- Nested associations are Pareto-harder than disjoint. -/
 theorem nested_harder_than_disjoint :
     (nestingProfile .nested).compare (nestingProfile .disjoint) =
-    .harder := by native_decide
+    .harder := by decide
 
 /-- Processing ordering predictions verified via Pareto dominance. -/
 def orderingPredictions : List (OrderingPrediction SentenceType) := [
@@ -275,7 +275,7 @@ def orderingPredictions : List (OrderingPrediction SentenceType) := [
 ]
 
 theorem all_orderings_verified :
-    orderingPredictions.all verifyOrdering = true := by native_decide
+    orderingPredictions.all verifyOrdering = true := by decide
 
 /-! ### Bridge to CrossSerial dependencies -/
 
@@ -309,4 +309,4 @@ a constituent S/NP via rule (80a) (type-raising + composition), and
 operations use combinators rather than bound variables, which is the
 formal counterpart of "no empty categories." -/
 
-end PickeringBarry1991
+end Phenomena.FillerGap.Studies.PickeringBarry1991

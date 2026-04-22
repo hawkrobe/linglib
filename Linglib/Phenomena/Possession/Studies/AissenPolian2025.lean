@@ -1,6 +1,6 @@
 import Linglib.Fragments.Mayan.Tseltalan
 import Linglib.Theories.Morphology.DM.NominalStructure
-import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Core.SpecificityCondition
 import Linglib.Core.InformationStructure
 
@@ -751,7 +751,7 @@ The boolean functions `dLayerShields`, `hasIntervener`, and
 **stipulate** them directly. Here we **derive** them from Attract
 Closest applied to concrete `SyntacticObject` trees
 (@cite{aissen-polian-2025} (9a-c)), using `closestGoalB` from
-`Minimalism.Core.Agree`.
+`Minimalism.Agree`.
 
 **Key derivation**: T°'s [EPP:D] probe searches its c-command domain
 for the closest D-bearing element. The result depends only on tree

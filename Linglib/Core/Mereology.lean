@@ -190,9 +190,11 @@ theorem algClosure_idempotent {α : Type*} [SemilatticeSup α]
 /-- `AlgClosure` is a **closure operator** on the predicate lattice `(α → Prop, ⊆)`.
 
     The three axioms — extensive, monotone, idempotent — are grounded
-    in Mathlib's `ClosureOperator`. This is the mereological analog
-    of `CausalClosure.PositiveDynamics.closureOp`: both are monads
-    on **Pos** (the category of posets and monotone maps).
+    in Mathlib's `ClosureOperator`. (Compare with the causal-SEM
+    operator `Core.Causal.normalDevelopment`: that operator is
+    info-extensive but NOT order-monotone, per Schulz @cite{schulz-2011}
+    footnote 7, so it does NOT instantiate `ClosureOperator`. The
+    mereological case is genuinely closure-operator-shaped.)
 
     - `subset_algClosure` → `le_closure'` (extensive)
     - `algClosure_mono` → `monotone'` (monotone)

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
+import Linglib.Theories.Syntax.Minimalism.SmallClause
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 import Linglib.Phenomena.Constructions.ParticleVerbs.Data
 

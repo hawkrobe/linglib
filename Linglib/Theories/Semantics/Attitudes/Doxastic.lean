@@ -282,7 +282,7 @@ For "x knows p":
 -/
 theorem factive_satisfies_plc :
     satisfiesPLC BeliefVars.p BeliefVars.B_a_p := by
-  decide
+  native_decide
 
 /--
 **Theorem: Strong contrafactives VIOLATE the PLC**
@@ -298,7 +298,7 @@ that the Earth is flat.
 -/
 theorem strong_contrafactive_violates_plc :
     ¬ satisfiesPLC BeliefVars.not_p BeliefVars.B_a_p := by
-  decide
+  native_decide
 
 /--
 **The Contrafactive Gap Theorem**
@@ -334,7 +334,7 @@ theorem contrafactive_gap_is_structural :
     ¬ (causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_p) ∧
     -- But ¬p IS causally sufficient for B(a)(¬p)
     causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_not_p := by
-  decide
+  native_decide
 
 -- ============================================================================
 -- Why Weak Contrafactives Escape the Gap

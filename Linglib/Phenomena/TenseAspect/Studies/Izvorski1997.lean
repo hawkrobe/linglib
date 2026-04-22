@@ -1,4 +1,4 @@
-import Linglib.Core.Evidence
+import Linglib.Core.Evidentiality
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Tense.Evidential
@@ -165,7 +165,7 @@ theorem all_evidentialSurvives :
 open Semantics.Modality.Kratzer
 open Semantics.Attitudes.Intensional (World allWorlds)
 open Core.Presupposition
-open Core.Evidence
+open Core.Evidentiality
 open Semantics.Tense.Evidential
 open Fragments.Bulgarian.Evidentials
 

@@ -25,7 +25,7 @@ constraints on the suppressed variable.
 *ber-* suppresses one direct argument of a dyadic VP by leaving it
 as an open variable, while preserving truth conditions:
 
-    ⟦ber-⟧ = λP_{<e,α>}[P(z̲)]                           (the paper's (43))
+    ⟦ber-⟧ = λP_{<e,α>}[P(z̲)]                           -- UNVERIFIED: (43)
 
 The suppressed argument *z* is interpreted via lexical and pragmatic
 conventions: for naturally reflexive roots the convention is
@@ -33,10 +33,19 @@ coreferent interpretation; for other roots the convention is
 disjoint interpretation. An alternative formulation existentially
 binds z with a contextual constraint function f:
 
-    ⟦ber-⟧ = λP_{<e,α>} ∃z[f_{C,P}(z) ∧ P(z)]          (the paper's (47))
+    ⟦ber-⟧ = λP_{<e,α>} ∃z[f_{C,P}(z) ∧ P(z)]          -- UNVERIFIED: (47)
 
-The authors maintain (43) for consistency with
-@cite{beavers-zubair-2013}.
+The authors note "we see no particular reason to assume (43) over
+(47), but maintain the former for consistency with Beavers and Zubair
+(2013)" (the paper's §4.2). The "consistency" is notational
+(open-variable form): @cite{beavers-zubair-2013}'s final operator
+(their ex. (77)) likewise uses an open variable, but adds a sortal
+restriction `x ∈ U_I` that does the predictive work for Sinhala
+anticausatives (blocks *murder*-type verbs). The 2022 generalization
+to Indonesian middle voice drops this restriction because *ber-*
+suppresses arguments other than causers. The 2013 operator with the
+U_I restriction is formalized at
+`Phenomena.ArgumentStructure.Studies.BeaversZubair2013.causerSuppress`.
 
 ## 2×2 typology (the paper's (31))
 
@@ -58,8 +67,9 @@ realized as a full DP (functional application) or an incorporated NP:
     object DP.
 (c) The underlying object is always expressed lexically (as an
     NP or DP).
-(d) The base subject can be the surface subject if and only if
-    the object is an incorporated NP.
+(d) The base subject can be the surface subject if the object
+    is an incorporated NP. (The biconditional reading sometimes
+    quoted is implied by (32a–c) jointly, not by (32d) on its own.)
 
 ## Anticausatives (§5)
 

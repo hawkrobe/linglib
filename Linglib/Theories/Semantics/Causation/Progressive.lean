@@ -102,10 +102,10 @@ structure CausalProcess where
     result actually obtaining in the actual world. -/
 def CausalProcess.typeLevelHolds (proc : CausalProcess) : Prop :=
   (normalDevelopment proc.dynamics
-    (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true = true
+    (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true
 
 instance (proc : CausalProcess) : Decidable proc.typeLevelHolds :=
-  inferInstanceAs (Decidable (_ = true))
+  inferInstanceAs (Decidable (Situation.hasValue ..))
 
 /-- Token-level completion: the initiator actually occurred and the
     causal chain ran to completion, producing the result.
@@ -115,10 +115,10 @@ instance (proc : CausalProcess) : Decidable proc.typeLevelHolds :=
     result state actually obtained. -/
 def CausalProcess.tokenLevelCompleted (proc : CausalProcess) : Prop :=
   let fullSituation := proc.enablingConditions.extend proc.initiator true
-  (normalDevelopment proc.dynamics fullSituation).hasValue proc.result true = true
+  (normalDevelopment proc.dynamics fullSituation).hasValue proc.result true
 
 instance (proc : CausalProcess) : Decidable proc.tokenLevelCompleted :=
-  inferInstanceAs (Decidable (_ = true))
+  inferInstanceAs (Decidable (Situation.hasValue ..))
 
 /-- Progressive semantics: type-level process underway, completion open.
 
@@ -139,10 +139,10 @@ instance (proc : CausalProcess) : Decidable proc.progressiveTrue :=
     sufficient set. This captures "Mary opened the door." -/
 def CausalProcess.perfectiveTrue (proc : CausalProcess) : Prop :=
   completesForEffect proc.dynamics proc.enablingConditions
-    proc.initiator proc.result = true
+    proc.initiator proc.result
 
 instance (proc : CausalProcess) : Decidable proc.perfectiveTrue :=
-  inferInstanceAs (Decidable (_ = true))
+  inferInstanceAs (Decidable (completesForEffect ..))
 
 -- ════════════════════════════════════════════════════
 -- § 3. The Imperfective Paradox
@@ -172,10 +172,8 @@ theorem maryOpening_perfective :
     model had the relevant sufficiency. -/
 theorem perfective_entails_progressive (proc : CausalProcess)
     (h : proc.perfectiveTrue) :
-    proc.progressiveTrue := by
-  unfold CausalProcess.perfectiveTrue completesForEffect at h
-  rw [Bool.and_eq_true] at h
-  exact h.1
+    proc.progressiveTrue :=
+  (show completesForEffect .. from h).1
 
 /-- Progressive does NOT entail perfective in general.
 
@@ -219,7 +217,7 @@ theorem progressive_not_entails_perfective :
 theorem typeLevelHolds_is_normalDevelopment (proc : CausalProcess) :
     proc.typeLevelHolds ↔
     (normalDevelopment proc.dynamics
-      (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true = true :=
+      (proc.enablingConditions.extend proc.initiator true)).hasValue proc.result true :=
   Iff.rfl
 
 -- ════════════════════════════════════════════════════

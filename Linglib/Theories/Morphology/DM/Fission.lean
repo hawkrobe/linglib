@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
+import Linglib.Theories.Syntax.Minimalism.VerbalDecomposition
 
 /-!
 # Fission (Distributed Morphology)

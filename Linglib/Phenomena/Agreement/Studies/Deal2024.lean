@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Core.PConstraint
-import Linglib.Theories.Syntax.Minimalism.Core.CyclicAgree
+import Linglib.Theories.Syntax.Minimalism.PConstraint
+import Linglib.Theories.Syntax.Minimalism.CyclicAgree
 
 /-!
 # Interaction, Satisfaction, and the PCC @cite{deal-2024}

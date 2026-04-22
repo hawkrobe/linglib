@@ -177,7 +177,7 @@ theorem pluralTruthValue_eq_candidateSemantics (P : Atom → W → Bool) (x : Fi
     (hne : x.Nonempty) :
     (pluralTruthValue P x w = .true ↔ trueOnAll (fullCandidateSet P x) w) ∧
     (pluralTruthValue P x w = .false ↔ falseOnAll (fullCandidateSet P x) w) ∧
-    (pluralTruthValue P x w = .gap ↔ gapOnCandidates (fullCandidateSet P x) w) := by
+    (pluralTruthValue P x w = .indet ↔ gapOnCandidates (fullCandidateSet P x) w) := by
   refine ⟨?_, ?_, ?_⟩
   · -- .true ↔ trueOnAll
     rw [pluralTruthValue_eq_true_iff, trueOnAll_full_iff_allSatisfy]

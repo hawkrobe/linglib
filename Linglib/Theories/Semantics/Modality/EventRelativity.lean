@@ -494,7 +494,7 @@ for content licensing and actuality entailments. The finer-grained
 ordering relative to T and CF would require syntactic tree structure.
 
 This connects the clause structure formalized in
-`Theories/Syntax/Minimalism/Core/Voice.lean` and the aspect operators
+`Theories/Syntax/Minimalism/Voice.lean` and the aspect operators
 in `Theories/Semantics/Lexical/Verb/ViewpointAspect.lean` to the
 event-relative framework. -/
 

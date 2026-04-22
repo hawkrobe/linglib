@@ -252,7 +252,7 @@ alternative sets** of type `S(S b)`. These preserve the identity of
 distinct sources of alternatives, enabling selective exceptional scope
 when multiple indefinites occur on an island.
 
-See `Phenomena/FillerGap/Studies/Charlow2020.lean` for worked derivations
+See `Phenomena/Quantification/Studies/Charlow2020.lean` for worked derivations
 of exceptional scope, selectivity, and the Binder Roof Constraint. -/
 
 section HigherOrder

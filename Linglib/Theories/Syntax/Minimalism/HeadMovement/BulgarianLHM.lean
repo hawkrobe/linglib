@@ -32,7 +32,7 @@ Harizanov argues this is HEAD-TO-SPECIFIER movement:
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Formal.Constraints.HMC
-import Linglib.Theories.Syntax.Minimalism.Core.Derivation
+import Linglib.Theories.Syntax.Minimalism.Derivation
 
 namespace Minimalism.Phenomena.HeadMovement.BulgarianLHM
 

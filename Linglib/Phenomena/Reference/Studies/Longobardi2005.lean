@@ -1,7 +1,7 @@
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.TopologicalMapping
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Economy
+import Linglib.Theories.Syntax.Minimalism.Economy
 import Linglib.Phenomena.Reference.Studies.Longobardi2001
 
 /-!

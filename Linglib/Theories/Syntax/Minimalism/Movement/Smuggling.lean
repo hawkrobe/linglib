@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Voice
 
 /-!
 # Smuggling @cite{collins-2005}

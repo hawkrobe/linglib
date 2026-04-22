@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.CyclicAgree
+import Linglib.Theories.Syntax.Minimalism.CyclicAgree
 import Linglib.Fragments.Basque.Agreement
 import Linglib.Fragments.Georgian.Agreement
 
@@ -10,7 +10,7 @@ the agreement controller alternates between the EA and IA based on
 person — from cyclic Agree with articulated φ-probes.
 
 This study file connects the Cyclic Agree theory
-(`Theories/Syntax/Minimalism/Core/CyclicAgree.lean`) to the empirical
+(`Theories/Syntax/Minimalism/CyclicAgree.lean`) to the empirical
 fragment data for Basque and Georgian, proving that the **differential
 P indexing** pattern in both languages is predicted by the partial
 probe's direct/inverse classification.

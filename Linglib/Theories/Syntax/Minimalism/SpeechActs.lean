@@ -24,15 +24,15 @@ c-commands content.
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalism.Phase
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Context.Basic
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Mood.ClauseType
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
-import Linglib.Core.Evidence
+import Linglib.Core.Evidentiality
 import Linglib.Fragments.English.Pronouns
 
 namespace Minimalism.Phenomena.SpeechActs
@@ -338,13 +338,13 @@ def evalPSpecifier : SAPMood → PRole := seatOfKnowledge
 /-- The specifier of EvidP hosts the evidence type.
 
     Maps S&T's EVIDENCE argument to the framework-agnostic
-    `EvidentialSource` from `Core/Discourse/Evidence.lean`:
+    `EvidentialSource` from `Core/Evidentiality.lean`:
     - direct → sensory observation
     - inference → reasoning from effects
     - hearsay → reported evidence -/
-abbrev EvidPSpecifier := Core.Evidence.EvidentialSource
+abbrev EvidPSpecifier := Core.Evidentiality.EvidentialSource
 
-/-- Bridge to `Core/Discourse/Epistemicity.lean`: the Sentience Domain's
+/-- Bridge to `Core/Epistemicity.lean`: the Sentience Domain's
     two specifiers (SEAT OF KNOWLEDGE + EVIDENCE) correspond to
     `EpistemicProfile`'s two main fields (authority + source).
 

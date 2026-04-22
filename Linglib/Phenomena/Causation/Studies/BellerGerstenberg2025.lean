@@ -682,8 +682,12 @@ theorem solo_cause_chain :
     cfg.S1 () cw .caused > cfg.S1 () cw .affected := by
   refine ⟨by native_decide, by native_decide, ?_, ?_⟩
   -- cw reduces to ⟨true, true, true⟩ = scenario1
-  · exact s1_cfg_full_caused_gt_enabled
-  · exact lt_trans s1_cfg_full_enabled_gt_affected s1_cfg_full_caused_gt_enabled
+  · have h : causalWorldFromModel soloModel Situation.empty mA mC = scenario1 := by
+      native_decide
+    rw [h]; exact s1_cfg_full_caused_gt_enabled
+  · have h : causalWorldFromModel soloModel Situation.empty mA mC = scenario1 := by
+      native_decide
+    rw [h]; exact lt_trans s1_cfg_full_enabled_gt_affected s1_cfg_full_caused_gt_enabled
 
 /-- **Causal chain → S1 prefers "enabled".**
 

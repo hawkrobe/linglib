@@ -53,8 +53,10 @@ open Semantics.Causation.CCSelection
 
 /-- Helper: a variable that is undetermined has no value. -/
 private theorem hasValue_of_get_none {s : Situation} {v : Variable} {b : Bool}
-    (h : s.get v = none) : s.hasValue v b = false := by
-  simp only [Situation.hasValue, Situation.get] at *; rw [h]; rfl
+    (h : s.get v = none) : ¬ s.hasValue v b := by
+  intro hh; unfold Situation.hasValue at hh
+  rw [show s.valuation v = s.get v from rfl, h] at hh
+  cases hh
 
 /-- **Globally sufficient** (@cite{glass-2023b} def 11): C guarantees E
     no matter what other upstream variables are set to.
@@ -83,13 +85,13 @@ def LocallySufficient (dyn : CausalDynamics) (cause effect : Variable) : Prop :=
     precondition and achievability checks. -/
 def GloballyNecessary (dyn : CausalDynamics) (cause effect : Variable) : Prop :=
   ∀ bg : Situation, bg.get cause = none → bg.get effect = none →
-    (normalDevelopment dyn bg).hasValue effect true = false
+    ¬ (normalDevelopment dyn bg).hasValue effect true
 
 /-- **Locally necessary** (@cite{glass-2023b} def 8): there exists
     some background where E requires C — i.e., removing C blocks E. -/
 def LocallyNecessary (dyn : CausalDynamics) (cause effect : Variable) : Prop :=
   ∃ bg : Situation, bg.get cause = none ∧ bg.get effect = none ∧
-    (normalDevelopment dyn bg).hasValue effect true = false
+    ¬ (normalDevelopment dyn bg).hasValue effect true
 
 -- ============================================================
 -- § 2. Entailment: Global → Local (Glass (21a)–(22a))
@@ -151,50 +153,40 @@ theorem local_sufficient_not_implies_global :
 theorem local_necessary_not_implies_global :
     ∃ (dyn : CausalDynamics) (c e : Variable),
       LocallyNecessary dyn c e ∧ ¬ GloballyNecessary dyn c e := by
-  let a := mkVar "a"
-  let b := mkVar "b"
-  let c := mkVar "c"
-  refine ⟨CausalDynamics.disjunctiveCausation a b c, a, c, ?_, ?_⟩
-  · -- Local: empty background — without a, no law fires, c stays undetermined
+  refine ⟨CausalDynamics.disjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c"),
+          mkVar "a", mkVar "c", ?_, ?_⟩
+  · -- LocallyNecessary witness: empty bg → no laws fire → c stays none
     refine ⟨Situation.empty, rfl, rfl, ?_⟩
-    · -- normalDevelopment of empty situation: no preconditions met → fixpoint
-      show (normalDevelopment (CausalDynamics.disjunctiveCausation a b c)
-        Situation.empty).hasValue c true = false
-      suffices hfix : isFixpoint (CausalDynamics.disjunctiveCausation a b c)
-          Situation.empty = true by
-        rw [normalDevelopment_of_fixpoint hfix]; rfl
-      simp only [isFixpoint, CausalDynamics.disjunctiveCausation,
-        CausalLaw.simple, List.all_cons, List.all_nil, Bool.and_true,
-        CausalLaw.preconditionsMet, List.all_cons, List.all_nil, Bool.and_true,
-        Situation.hasValue, Situation.empty]; rfl
-  · -- Not global: background {b = true} → law b→c fires → c develops without a
+    have hFix : isFixpoint
+        (CausalDynamics.disjunctiveCausation (mkVar "a") (mkVar "b") (mkVar "c"))
+        Situation.empty := by
+      intro law _ hMet _
+      -- Either law has precondition (a, true) or (b, true); empty doesn't satisfy
+      have := hMet law.preconditions[0]! (by
+        simp [CausalDynamics.disjunctiveCausation, CausalLaw.simple] at *
+        rcases ‹_ ∨ _› with hL | hL <;> (subst hL; simp [CausalLaw.simple]))
+      -- this : Situation.empty.hasValue _ _; but empty has no values
+      simp [Situation.hasValue, Situation.empty] at this
+    rw [normalDevelopment_of_fixpoint hFix]
+    exact Situation.empty_hasValue _ _
+  · -- ¬ GloballyNecessary: with b=true bg, c develops via second disjunct
     intro h
-    have hBg : (Situation.empty.extend b true).get a = none := by
-      simp [Situation.get, Situation.extend]; decide
-    have hBgC : (Situation.empty.extend b true).get c = none := by
-      simp [Situation.get, Situation.extend]; decide
-    have := h (Situation.empty.extend b true) hBg hBgC
-    -- normalDevelopment with b=true: law b→c fires, c becomes true
-    have hContra : (normalDevelopment (CausalDynamics.disjunctiveCausation a b c)
-        (Situation.empty.extend b true)).hasValue c true = true := by
-      set dyn := CausalDynamics.disjunctiveCausation a b c
-      set bg := Situation.empty.extend b true
-      have hfix : isFixpoint dyn (applyLawsOnce dyn bg) = true := by
-        simp only [dyn, bg, isFixpoint, applyLawsOnce, CausalDynamics.disjunctiveCausation,
-          CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-          List.all_cons, List.all_nil, Bool.and_true,
-          Situation.hasValue, Situation.extend, Situation.empty]
-        split_ifs <;> simp_all
-      change (normalDevelopment dyn bg 100).hasValue c true = true
-      rw [show (100 : Nat) = 99 + 1 from rfl,
-        normalDevelopment_fixpoint_after_one _ _ hfix]
-      simp only [dyn, bg, applyLawsOnce, CausalDynamics.disjunctiveCausation,
-        CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-        List.all_cons, List.all_nil, Bool.and_true,
-        Situation.hasValue, Situation.extend, Situation.empty]
-      split_ifs <;> simp_all
-    rw [hContra] at this
-    exact absurd this (by decide)
+    let a := mkVar "a"; let b := mkVar "b"; let c := mkVar "c"
+    have hab : a ≠ b := by decide
+    have hac : a ≠ c := by decide
+    have hbc : b ≠ c := by decide
+    set bg := Situation.empty.extend b true
+    have hBgA : bg.get a = none := by
+      show (Situation.empty.extend b true).get a = none
+      rw [Situation.extend_get_ne hab]; rfl
+    have hBgC : bg.get c = none := by
+      show (Situation.empty.extend b true).get c = none
+      rw [Situation.extend_get_ne (Ne.symm hbc)]; rfl
+    have hBgB : bg.hasValue b true := by
+      show (Situation.empty.extend b true).hasValue b true
+      rw [Situation.extend_hasValue_same]
+    exact h bg hBgA hBgC
+      (normalDevelopment_disjunctive_right hac hbc bg hBgB hBgC)
 
 -- ============================================================
 -- § 3. Conjunctive Model — Glass's Lightbulb (Tables 1–2)
@@ -213,14 +205,21 @@ theorem local_necessary_not_implies_global :
 theorem conjunctive_globally_necessary (a b c : Variable) :
     GloballyNecessary (CausalDynamics.conjunctiveCausation a b c) a c := by
   intro bg ha hc
-  suffices hfix : isFixpoint (CausalDynamics.conjunctiveCausation a b c) bg = true by
-    rw [normalDevelopment_of_fixpoint hfix]
-    exact hasValue_of_get_none hc
-  simp only [isFixpoint, CausalDynamics.conjunctiveCausation,
-    CausalLaw.conjunctive, List.all_cons, List.all_nil, Bool.and_true]
-  simp only [CausalLaw.preconditionsMet, List.all_cons, List.all_nil, Bool.and_true]
-  have : bg.hasValue a true = false := hasValue_of_get_none ha
-  simp [this]
+  -- bg has a undetermined → conjunctive law's preconditions never met from bg
+  have hFix : isFixpoint (CausalDynamics.conjunctiveCausation a b c) bg := by
+    intro law hLaw hMet _
+    have hL : law = CausalLaw.conjunctive a b c := by
+      simp only [CausalDynamics.conjunctiveCausation, List.mem_cons,
+                 List.not_mem_nil, or_false] at hLaw
+      exact hLaw
+    rw [hL] at hMet
+    -- hMet says: a is some true in bg; but ha says a is none in bg — contradiction
+    have hMetA := hMet (a, true) (by simp [CausalLaw.conjunctive])
+    unfold Situation.hasValue at hMetA
+    rw [show bg.valuation a = bg.get a from rfl, ha] at hMetA
+    cases hMetA
+  rw [normalDevelopment_of_fixpoint hFix]
+  exact hasValue_of_get_none hc
 
 /-- In a conjunctive model, A is **NOT globally sufficient** for C:
     the empty background (B undetermined) is a counterexample.
@@ -280,33 +279,15 @@ theorem conjunctive_asymmetry (a b c : Variable)
     Proof: direct fixpoint argument. After one round of law application,
     `simple a c` fires (since A = true), setting C = true. Both laws
     have effect C, so the result is a fixpoint. -/
-theorem disjunctive_globally_sufficient (a b c : Variable) :
+theorem disjunctive_globally_sufficient (a b c : Variable)
+    (hac : a ≠ c) (hbc : b ≠ c) :
     GloballySufficient (CausalDynamics.disjunctiveCausation a b c) a c := by
-  intro bg ha hc
-  show (normalDevelopment (CausalDynamics.disjunctiveCausation a b c)
-    (bg.extend a true)).hasValue c true = true
-  -- After one round, c = true: first law (simple a c) fires since a = true
-  have hZ : (applyLawsOnce (CausalDynamics.disjunctiveCausation a b c)
-      (bg.extend a true)).hasValue c true = true := by
-    simp only [applyLawsOnce, CausalDynamics.disjunctiveCausation,
-      CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-      List.all_cons, List.all_nil, Bool.and_true,
-      Situation.hasValue, Situation.extend]
-    split_ifs <;> simp_all
-  -- Both laws have effect (c, true) → fixpoint once c = true
-  have hFix : isFixpoint (CausalDynamics.disjunctiveCausation a b c)
-      (applyLawsOnce (CausalDynamics.disjunctiveCausation a b c)
-        (bg.extend a true)) = true := by
-    simp only [isFixpoint, CausalDynamics.disjunctiveCausation,
-      CausalLaw.simple, List.all_cons, List.all_nil, Bool.and_true,
-      applyLawsOnce, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-      Situation.hasValue, Situation.extend]
-    split_ifs <;> simp_all
-  change (normalDevelopment (CausalDynamics.disjunctiveCausation a b c)
-    (bg.extend a true) 100).hasValue c true = true
-  rw [show (100 : Nat) = 99 + 1 from rfl,
-    normalDevelopment_fixpoint_after_one _ _ hFix]
-  exact hZ
+  intro bg _ha hc
+  apply normalDevelopment_disjunctive_left hac
+  · show (bg.extend a true).hasValue a true
+    rw [Situation.extend_hasValue_same]
+  · show (bg.extend a true).get c = none
+    rw [Situation.extend_get_ne (Ne.symm hac)]; exact hc
 
 /-- In a disjunctive model, A is **NOT globally necessary** for C:
     with B present, C develops without A.
@@ -315,37 +296,22 @@ theorem disjunctive_globally_sufficient (a b c : Variable) :
     necessity fails precisely where sufficiency succeeds in the
     dual model. -/
 theorem disjunctive_not_globally_necessary (a b c : Variable)
-    (hab : a ≠ b) (hbc : b ≠ c) :
+    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
     ¬ GloballyNecessary (CausalDynamics.disjunctiveCausation a b c) a c := by
   intro h
-  have hBg : (Situation.empty.extend b true).get a = none := by
-    simp only [Situation.get, Situation.extend, Situation.empty]
-    simp [show a ≠ b from hab]
-  have hBgC : (Situation.empty.extend b true).get c = none := by
-    simp only [Situation.get, Situation.extend, Situation.empty]
-    simp [show c ≠ b from Ne.symm hbc]
-  have := h (Situation.empty.extend b true) hBg hBgC
-  -- But b→c fires, so c develops
-  have hContra : (normalDevelopment (CausalDynamics.disjunctiveCausation a b c)
-      (Situation.empty.extend b true)).hasValue c true = true := by
-    set dyn := CausalDynamics.disjunctiveCausation a b c
-    set bg := Situation.empty.extend b true
-    have hfix : isFixpoint dyn (applyLawsOnce dyn bg) = true := by
-      simp only [dyn, bg, isFixpoint, applyLawsOnce, CausalDynamics.disjunctiveCausation,
-        CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-        List.all_cons, List.all_nil, Bool.and_true,
-        Situation.hasValue, Situation.extend, Situation.empty]
-      split_ifs <;> simp_all
-    change (normalDevelopment dyn bg 100).hasValue c true = true
-    rw [show (100 : Nat) = 99 + 1 from rfl,
-      normalDevelopment_fixpoint_after_one _ _ hfix]
-    simp only [dyn, bg, applyLawsOnce, CausalDynamics.disjunctiveCausation,
-      CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-      List.all_cons, List.all_nil, Bool.and_true,
-      Situation.hasValue, Situation.extend, Situation.empty]
-    split_ifs <;> simp_all
-  rw [hContra] at this
-  exact absurd this (by decide)
+  set bg := Situation.empty.extend b true with hbg
+  have hBgA : bg.get a = none := by
+    rw [Situation.extend_get_ne hab]; rfl
+  have hBgC : bg.get c = none := by
+    rw [Situation.extend_get_ne (Ne.symm hbc)]; rfl
+  -- bg has b=true; second disjunct gives c=true via `_disjunctive_right`
+  have hBgB : bg.hasValue b true := by
+    show (Situation.empty.extend b true).hasValue b true
+    rw [Situation.extend_hasValue_same]
+  have hHasC : (normalDevelopment (CausalDynamics.disjunctiveCausation a b c)
+                  bg).hasValue c true :=
+    normalDevelopment_disjunctive_right hac hbc bg hBgB hBgC
+  exact h bg hBgA hBgC hHasC
 
 /-- **Table 2 right column** (@cite{glass-2023b}): in the disjunctive
     model, A is globally sufficient but not globally necessary.
@@ -354,11 +320,11 @@ theorem disjunctive_not_globally_necessary (a b c : Variable)
     show the fundamental asymmetry: global sufficiency licenses
     inference under uncertainty; global necessity does not. -/
 theorem disjunctive_asymmetry (a b c : Variable)
-    (hab : a ≠ b) (hbc : b ≠ c) :
+    (hab : a ≠ b) (hac : a ≠ c) (hbc : b ≠ c) :
     GloballySufficient (CausalDynamics.disjunctiveCausation a b c) a c ∧
     ¬ GloballyNecessary (CausalDynamics.disjunctiveCausation a b c) a c :=
-  ⟨disjunctive_globally_sufficient a b c,
-   disjunctive_not_globally_necessary a b c hab hbc⟩
+  ⟨disjunctive_globally_sufficient a b c hac hbc,
+   disjunctive_not_globally_necessary a b c hab hac hbc⟩
 
 -- ============================================================
 -- § 5. Von Wright Duality (von Wright 1974, pp.9–10)
@@ -386,11 +352,11 @@ theorem disjunctive_asymmetry (a b c : Variable)
 
     Concretely: A is globally necessary for C in A∧B→C, AND
     A is globally sufficient for C in A∨B→C. -/
-theorem von_wright_duality (a b c : Variable) :
+theorem von_wright_duality (a b c : Variable) (hac : a ≠ c) (hbc : b ≠ c) :
     GloballyNecessary (CausalDynamics.conjunctiveCausation a b c) a c ∧
     GloballySufficient (CausalDynamics.disjunctiveCausation a b c) a c :=
   ⟨conjunctive_globally_necessary a b c,
-   disjunctive_globally_sufficient a b c⟩
+   disjunctive_globally_sufficient a b c hac hbc⟩
 
 -- ============================================================
 -- § 6. Glass's Alternative Semantics for *cause* (def 12)
@@ -447,52 +413,36 @@ theorem nadathur_implies_glass {dyn : CausalDynamics} {bg : Situation}
     when the second cause is already present — the precondition of
     @cite{nadathur-2024} Def 10b fails, making the first cause
     unnecessary. -/
-private theorem disjunctive_effect_entailed (x y z : Variable) :
+private theorem disjunctive_effect_entailed (x y z : Variable)
+    (hxz : x ≠ z) (hyz : y ≠ z) :
     (normalDevelopment (CausalDynamics.disjunctiveCausation x y z)
-      (Situation.empty.extend y true)).hasValue z true = true := by
-  set dyn := CausalDynamics.disjunctiveCausation x y z
-  set bg := Situation.empty.extend y true
-  have hfix : isFixpoint dyn (applyLawsOnce dyn bg) = true := by
-    simp only [dyn, bg, isFixpoint, applyLawsOnce, CausalDynamics.disjunctiveCausation,
-      CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-      List.all_cons, List.all_nil, Bool.and_true,
-      Situation.hasValue, Situation.extend, Situation.empty,
-      Bool.and_eq_true, Bool.not_eq_true', Bool.or_eq_true]
-    split_ifs <;> simp_all
-  rw [normalDevelopment_eq_applyLawsOnce_of_fixpoint _ _ hfix (by decide)]
-  simp only [dyn, bg, applyLawsOnce, CausalDynamics.disjunctiveCausation,
-    CausalLaw.simple, List.foldl, CausalLaw.apply, CausalLaw.preconditionsMet,
-    List.all_cons, List.all_nil, Bool.and_true,
-    Situation.hasValue, Situation.extend, Situation.empty]
-  split_ifs <;> simp_all
+      (Situation.empty.extend y true)).hasValue z true := by
+  apply normalDevelopment_disjunctive_right hxz hyz
+  · show (Situation.empty.extend y true).hasValue y true
+    rw [Situation.extend_hasValue_same]
+  · show (Situation.empty.extend y true).get z = none
+    rw [Situation.extend_get_ne (Ne.symm hyz)]; rfl
 
-set_option maxHeartbeats 800000 in
-/-- The converse fails: Glass's analysis is strictly weaker.
-
-    Witness: disjunctive model with backup cause present.
-    A is sufficient (law A → C fires), but A is not necessary
-    (backup cause B would produce C anyway).
-
-    Uses `disjunctive_effect_entailed` to show the precondition
-    of @cite{nadathur-2024} Def 10b fails (effect already entailed). -/
+/-- The converse fails: Glass's analysis is strictly weaker. Witness uses
+    overdetermination: A is sufficient (law fires) but not necessary
+    (backup B would produce C anyway). -/
 theorem glass_strictly_weaker :
     ∃ (dyn : CausalDynamics) (bg : Situation) (c e : Variable),
       causeSemGlass dyn bg c e ∧ ¬ (causeSem dyn bg c e) := by
-  let x := mkVar "x"
-  let y := mkVar "y"
-  let z := mkVar "z"
-  let dyn := CausalDynamics.disjunctiveCausation x y z
-  let bg := Situation.empty.extend y true
-  refine ⟨dyn, bg, x, z, ?_, ?_⟩
-  · -- Glass: x is sufficient (monotonicity from empty)
-    exact sufficiency_monotone_positive dyn Situation.empty x y z
-      (disjunctive_isPositive x y z)
-      (disjunctive_each_sufficient x y z (by decide))
-  · -- Nadathur: causeSem requires necessity, which fails because effect already entailed
+  refine ⟨CausalDynamics.disjunctiveCausation (mkVar "x") (mkVar "y") (mkVar "z"),
+          Situation.empty.extend (mkVar "y") true,
+          mkVar "x", mkVar "z", ?_, ?_⟩
+  · -- causeSemGlass = causallySufficient; one foldl round reaches fixpoint
+    show causallySufficient _ _ _ _
+    unfold causallySufficient
+    rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 1 (by decide)]
+    decide
+  · -- ¬ causeSem: the necessity clause's precondition fails (effect already
+    -- entailed by background y=true via the second disjunct)
     intro ⟨_, ⟨_, hPreNotEffect⟩, _, _⟩
-    have hEntailed := disjunctive_effect_entailed x y z
-    rw [hEntailed] at hPreNotEffect
-    exact absurd hPreNotEffect (by decide)
+    apply hPreNotEffect
+    rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 1 (by decide)]
+    decide
 
 -- ============================================================
 -- § 7. Bridge to Causative and CC-Selection
@@ -612,14 +562,14 @@ theorem work_locally_sufficient :
     fires regardless of unluckiness. -/
 theorem laziness_globally_sufficient :
     GloballySufficient failureModel laziness failure :=
-  disjunctive_globally_sufficient laziness unluckiness failure
+  disjunctive_globally_sufficient laziness unluckiness failure (by decide) (by decide)
 
 /-- Laziness is NOT globally necessary for failure: unluckiness alone
     also causes failure. -/
 theorem laziness_not_globally_necessary :
     ¬ GloballyNecessary failureModel laziness failure :=
   disjunctive_not_globally_necessary laziness unluckiness failure
-    (by decide) (by decide)
+    (by decide) (by decide) (by decide)
 
 /-! ### The sentiment prediction (Table 3) -/
 

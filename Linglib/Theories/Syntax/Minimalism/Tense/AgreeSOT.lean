@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Tense.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic
 import Linglib.Core.Time.Tense
 

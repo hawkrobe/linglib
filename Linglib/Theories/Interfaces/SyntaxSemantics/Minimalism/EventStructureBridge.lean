@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Applicative
 import Linglib.Theories.Semantics.Verb.EventStructure
 
 /-!
@@ -8,7 +8,7 @@ import Linglib.Theories.Semantics.Verb.EventStructure
 Connects Rappaport @cite{rappaport-hovav-levin-1998} event structure templates to
 @cite{cuervo-2003}'s syntactic verb head decomposition. This bridges the
 semantic layer (Semantics.Events/EventStructure) to the syntactic layer
-(Minimalism/Core/Applicative).
+(Minimalism/Applicative).
 
 ## Key Mapping
 

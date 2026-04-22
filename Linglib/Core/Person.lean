@@ -26,7 +26,7 @@ This decomposition is shared across theoretical frameworks:
 
 The Minimalist-specific extension [±proximate]
 (@cite{pancheva-zubizarreta-2018}) is added in
-`Theories/Syntax/Minimalism/Core/PersonGeometry.lean`.
+`Theories/Syntax/Minimalism/PersonGeometry.lean`.
 
 **§ 5–9: Person Categories** (@cite{cysouw-2009}). The 8 referential person
 categories from Cysouw's paradigmatic framework. Three singular categories

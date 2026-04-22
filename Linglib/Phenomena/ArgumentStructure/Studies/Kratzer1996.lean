@@ -1,6 +1,6 @@
 import Linglib.Fragments.English.Predicates.Verbal
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalism.Voice
 
 /-!
 # Linking Theory Predictions → Hand-Annotated θ-Roles

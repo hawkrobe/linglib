@@ -1,279 +1,127 @@
 import Linglib.Core.Causal.SEM.Defs
+import Mathlib.Dynamics.FixedPoints.Basic
+import Mathlib.Data.Nat.Find
+import Mathlib.Logic.Function.Iterate
 
 /-!
-# Structural Equation Model: Monotonicity for Positive Dynamics
-@cite{nadathur-lauer-2020}
+# SEM: Information-monotone fixpoint via well-founded recursion
+@cite{fitting-1985} @cite{schulz-2011} @cite{nadathur-2024} @cite{nadathur-lauer-2020}
 
-For *positive* dynamics (no inhibitory connections), `normalDevelopment`
-is monotone in the `trueLE` preorder. This is the key technical
-machinery that lets `Theories/Semantics/Causation/Closure.lean` build a
-mathlib `ClosureOperator` instance from `normalDevelopment` and exposes
-the inflationary closure-operator axiom as `positive_normalDevelopment_grows`.
+`normalDevelopment` iterates `applyLawsOnce` to a fixpoint. Termination is
+via well-founded recursion on the count of undetermined inner variables —
+a measure that strictly decreases on every non-fixpoint step because
+info-monotone `apply` (in `Defs.lean`) only transitions variables from
+`none` to `some _`, never the reverse.
+
+No polarity restriction: dynamics with negative preconditions like
+`COM := MSG ∧ ¬BRK` (Schulz @cite{schulz-2011}'s "potential obstacle"
+pattern) terminate just as cleanly as classical Pearl SEMs with
+all-positive preconditions. The measure proof uses only
+information-monotonicity, never the law's polarity.
+
+This is the Lean realization of @cite{schulz-2011} footnote 7: T_D is
+info-extensive (`s ≤ T_D(s)`) but not order-monotone (so Knaster–Tarski
+of @cite{fitting-1985} §6 does not apply); termination still holds via
+finite-state exhaustion, which we make explicit via `Nat`-valued
+`countP isNone` measure.
 -/
 
 namespace Core.Causal
 
--- ============================================================
--- § Positive Dynamics: Monotonicity
--- ============================================================
-
 private abbrev trueLE := Situation.trueLE
 
--- § Per-law monotonicity lemmas
+-- ════════════════════════════════════════════════════
+-- § Information-monotonicity primitives
+-- ════════════════════════════════════════════════════
 
-private theorem positive_preconditions_monotone
-    (law : CausalLaw) (s₁ s₂ : Situation)
-    (hPosPrec : law.preconditions.all (·.2) = true)
-    (hLE : trueLE s₁ s₂)
-    (hMet : law.preconditionsMet s₁ = true) :
-    law.preconditionsMet s₂ = true := by
-  simp only [CausalLaw.preconditionsMet, List.all_eq_true] at *
-  intro p hmem
-  have hval : p.2 = true := hPosPrec p hmem
-  exact hval ▸ hLE p.1 (hval ▸ hMet p hmem)
+/-- Once a variable is determined, no `apply` overwrites it. -/
+theorem CausalLaw.apply_preserves_determined (law : CausalLaw) (s : Situation)
+    (v : Variable) (h : s.get v ≠ none) :
+    (law.apply s).get v ≠ none := by
+  unfold CausalLaw.apply
+  cases hg : s.get law.effect with
+  | none =>
+    by_cases hMet : law.preconditionsMet s
+    · simp only [hMet, if_true]
+      by_cases hve : v = law.effect
+      · rw [hve, Situation.extend_get_same]; simp
+      · rw [Situation.extend_get_ne hve]; exact h
+    · simp [hMet]; exact h
+  | some b => exact h
 
-private theorem positive_law_apply_trueLE
-    (law : CausalLaw) (s₁ s₂ : Situation)
-    (hPosPrec : law.preconditions.all (·.2) = true)
-    (hPosEff : law.effectValue = true)
-    (hLE : trueLE s₁ s₂) :
-    trueLE (law.apply s₁) (law.apply s₂) := by
-  intro v hv
-  by_cases hMet₁ : law.preconditionsMet s₁ = true
-  · have hMet₂ := positive_preconditions_monotone law s₁ s₂ hPosPrec hLE hMet₁
-    rw [CausalLaw.apply_of_met hMet₁] at hv; rw [CausalLaw.apply_of_met hMet₂]
-    by_cases he : v = law.effect
-    · subst he; rw [Situation.extend_hasValue_same]; simp [hPosEff]
-    · rw [Situation.extend_hasValue_diff he] at hv ⊢
-      exact hLE v hv
-  · have h₁ : law.preconditionsMet s₁ = false := by
-      cases h : law.preconditionsMet s₁ <;> simp_all
-    rw [CausalLaw.apply_of_not_met h₁] at hv
-    by_cases hMet₂ : law.preconditionsMet s₂ = true
-    · rw [CausalLaw.apply_of_met hMet₂]
-      by_cases he : v = law.effect
-      · subst he; rw [Situation.extend_hasValue_same]; simp [hPosEff]
-      · rw [Situation.extend_hasValue_diff he]; exact hLE v hv
-    · have h₂ : law.preconditionsMet s₂ = false := by
-        cases h : law.preconditionsMet s₂ <;> simp_all
-      rw [CausalLaw.apply_of_not_met h₂]; exact hLE v hv
+/-- `apply` preserves `hasValue`: once `s.hasValue v val`, the law can't
+    overwrite it (info-monotonicity). -/
+theorem CausalLaw.apply_preserves_hasValue (law : CausalLaw) (s : Situation)
+    (v : Variable) (val : Bool) (h : s.hasValue v val) :
+    (law.apply s).hasValue v val := by
+  -- s.hasValue v val means s.valuation v = some val, so v is determined
+  unfold Situation.hasValue at h ⊢
+  unfold CausalLaw.apply
+  cases hg : s.get law.effect with
+  | none =>
+    by_cases hMet : law.preconditionsMet s
+    · simp only [hMet, if_true]
+      by_cases hve : v = law.effect
+      · -- v = effect; s.valuation v = some val, but s.get effect = none — contradiction
+        subst hve
+        rw [show s.valuation law.effect = s.get law.effect from rfl, hg] at h
+        cases h
+      · show (s.extend law.effect law.effectValue).valuation v = some val
+        rw [show (s.extend law.effect law.effectValue).valuation v
+              = (s.extend law.effect law.effectValue).get v from rfl,
+            Situation.extend_get_ne hve]
+        exact h
+    · simp [hMet]; exact h
+  | some b => exact h
 
-private theorem positive_law_apply_grows
-    (law : CausalLaw) (s : Situation) (hPosEff : law.effectValue = true) :
-    trueLE s (law.apply s) := by
-  intro v hv
-  by_cases hMet : law.preconditionsMet s = true
-  · rw [CausalLaw.apply_of_met hMet]
-    by_cases he : v = law.effect
-    · subst he; rw [Situation.extend_hasValue_same]; simp [hPosEff]
-    · rw [Situation.extend_hasValue_diff he]; exact hv
-  · have : law.preconditionsMet s = false := by
-      cases h : law.preconditionsMet s <;> simp_all
-    rw [CausalLaw.apply_of_not_met this]; exact hv
-
-private theorem positive_law_apply_absorbed
-    (law : CausalLaw) (s₁ s₂ : Situation)
-    (hPosPrec : law.preconditions.all (·.2) = true)
-    (hPosEff : law.effectValue = true)
-    (hLE : trueLE s₁ s₂)
-    (hFixLaw : (!law.preconditionsMet s₂ || s₂.hasValue law.effect law.effectValue) = true) :
-    trueLE (law.apply s₁) s₂ := by
-  intro v hv
-  by_cases hMet₁ : law.preconditionsMet s₁ = true
-  · rw [CausalLaw.apply_of_met hMet₁] at hv
-    by_cases he : v = law.effect
-    · subst he
-      have hMet₂ := positive_preconditions_monotone law s₁ s₂ hPosPrec hLE hMet₁
-      simp only [hMet₂, Bool.not_true, Bool.false_or] at hFixLaw
-      rw [hPosEff] at hFixLaw; exact hFixLaw
-    · rw [Situation.extend_hasValue_diff he] at hv; exact hLE v hv
-  · have : law.preconditionsMet s₁ = false := by
-      cases h : law.preconditionsMet s₁ <;> simp_all
-    rw [CausalLaw.apply_of_not_met this] at hv; exact hLE v hv
-
--- § Foldl (law-list) monotonicity
-
-private theorem positive_foldl_trueLE
-    (laws : List CausalLaw) (s₁ s₂ : Situation)
-    (hPos : laws.all (fun law => law.preconditions.all (·.2) && law.effectValue) = true)
-    (hLE : trueLE s₁ s₂) :
-    trueLE (laws.foldl (fun s' law => law.apply s') s₁)
-           (laws.foldl (fun s' law => law.apply s') s₂) := by
-  induction laws generalizing s₁ s₂ with
-  | nil => exact hLE
-  | cons law rest ih =>
-    simp only [List.foldl_cons, List.all_cons, Bool.and_eq_true] at *
-    exact ih (law.apply s₁) (law.apply s₂) hPos.2
-      (positive_law_apply_trueLE law s₁ s₂ hPos.1.1 hPos.1.2 hLE)
-
-private theorem positive_foldl_grows
-    (laws : List CausalLaw) (s : Situation)
-    (hPos : laws.all (fun law => law.preconditions.all (·.2) && law.effectValue) = true) :
-    trueLE s (laws.foldl (fun s' law => law.apply s') s) := by
-  induction laws generalizing s with
-  | nil => exact Situation.trueLE_refl s
-  | cons law rest ih =>
-    simp only [List.foldl_cons, List.all_cons, Bool.and_eq_true] at *
-    exact Situation.trueLE_trans
-      (positive_law_apply_grows law s hPos.1.2) (ih (law.apply s) hPos.2)
-
-private theorem positive_foldl_absorbed
-    (laws : List CausalLaw) (s₁ s₂ : Situation)
-    (hPos : laws.all (fun law => law.preconditions.all (·.2) && law.effectValue) = true)
-    (hLE : trueLE s₁ s₂)
-    (hFix : laws.all (fun law => !law.preconditionsMet s₂ ||
-            s₂.hasValue law.effect law.effectValue) = true) :
-    trueLE (laws.foldl (fun s' law => law.apply s') s₁) s₂ := by
-  induction laws generalizing s₁ with
-  | nil => exact hLE
-  | cons law rest ih =>
-    simp only [List.foldl_cons, List.all_cons, Bool.and_eq_true] at *
-    exact ih (law.apply s₁) hPos.2
-      (positive_law_apply_absorbed law s₁ s₂ hPos.1.1 hPos.1.2 hLE hFix.1) hFix.2
-
--- § Foldl sets witness effect (for convergence)
-
-/-- If a law `l` is in the list and its preconditions are met in `s`,
-    then after folding all positive laws, `l`'s effect is set.
-    Key helper for proving normalDevelopment convergence. -/
-private theorem foldl_sets_witness_effect :
-    ∀ (laws : List CausalLaw) (s : Situation) (l : CausalLaw),
-    laws.all (fun law => law.preconditions.all (·.2) && law.effectValue) = true →
-    l ∈ laws →
-    l.effectValue = true →
-    l.preconditionsMet s = true →
-    (laws.foldl (fun s' law => law.apply s') s).hasValue l.effect true = true
-  | [], _, _, _, hMem, _, _ => by simp at hMem
-  | hd :: tl, s, l, hPos, hMem, hPosEff, hMet => by
+/-- `applyLawsOnce` preserves `hasValue` (folded version). -/
+theorem applyLawsOnce_preserves_hasValue (dyn : CausalDynamics) (s : Situation)
+    (v : Variable) (val : Bool) (h : s.hasValue v val) :
+    (applyLawsOnce dyn s).hasValue v val := by
+  show (dyn.laws.foldl _ s).hasValue v val
+  induction dyn.laws generalizing s with
+  | nil => exact h
+  | cons hd tl ih =>
     simp only [List.foldl_cons]
-    have hPosAll := hPos
-    simp only [List.all_cons, Bool.and_eq_true] at hPos
-    cases List.mem_cons.mp hMem with
-    | inl heq =>
-      subst heq
-      rw [CausalLaw.apply_of_met hMet]
-      have hSet : (s.extend l.effect l.effectValue).hasValue l.effect true = true := by
-        simp [Situation.hasValue, Situation.extend, hPosEff]
-      exact positive_foldl_grows tl (s.extend l.effect l.effectValue) hPos.2
-        l.effect hSet
-    | inr hmem =>
-      have hLE := positive_law_apply_grows hd s hPos.1.2
-      have hLPos := List.all_eq_true.mp hPos.2 l hmem
-      simp only [Bool.and_eq_true] at hLPos
-      have hMet' := positive_preconditions_monotone l s (hd.apply s) hLPos.1 hLE hMet
-      exact foldl_sets_witness_effect tl (hd.apply s) l hPos.2 hmem hPosEff hMet'
+    exact ih (hd.apply s) (CausalLaw.apply_preserves_hasValue hd s v val h)
 
--- § applyLawsOnce / normalDevelopment monotonicity
+/-- `applyLawsOnce` preserves determined-ness (folded info-monotonicity). -/
+theorem applyLawsOnce_preserves_determined (dyn : CausalDynamics) (s : Situation)
+    (v : Variable) (h : s.get v ≠ none) :
+    (applyLawsOnce dyn s).get v ≠ none := by
+  show (dyn.laws.foldl _ s).get v ≠ none
+  induction dyn.laws generalizing s with
+  | nil => exact h
+  | cons hd tl ih =>
+    simp only [List.foldl_cons]
+    exact ih (hd.apply s) (CausalLaw.apply_preserves_determined hd s v h)
 
-private theorem positive_applyLawsOnce_trueLE
-    (dyn : CausalDynamics) (s₁ s₂ : Situation)
-    (hPos : isPositiveDynamics dyn = true) (hLE : trueLE s₁ s₂) :
-    trueLE (applyLawsOnce dyn s₁) (applyLawsOnce dyn s₂) :=
-  positive_foldl_trueLE dyn.laws s₁ s₂ hPos hLE
-
-private theorem positive_applyLawsOnce_grows
-    (dyn : CausalDynamics) (s : Situation)
-    (hPos : isPositiveDynamics dyn = true) :
+/-- `applyLawsOnce` is `trueLE`-extensive: every truth in `s` is preserved.
+    Follows from info-monotonicity. -/
+theorem applyLawsOnce_grows (dyn : CausalDynamics) (s : Situation) :
     trueLE s (applyLawsOnce dyn s) :=
-  positive_foldl_grows dyn.laws s hPos
+  fun v hv => applyLawsOnce_preserves_hasValue dyn s v true hv
 
-private theorem positive_applyLawsOnce_absorbed
-    (dyn : CausalDynamics) (s₁ s₂ : Situation)
-    (hPos : isPositiveDynamics dyn = true)
-    (hLE : trueLE s₁ s₂) (hFix : isFixpoint dyn s₂ = true) :
-    trueLE (applyLawsOnce dyn s₁) s₂ :=
-  positive_foldl_absorbed dyn.laws s₁ s₂ hPos hLE hFix
+/-- `applyLawsOnce` preserves `(s.get v).isNone = false` (Bool-valued
+    convenience for the strict-decrease measure). -/
+private theorem applyLawsOnce_preserves_isNone_eq_false (dyn : CausalDynamics)
+    (s : Situation) (v : Variable) (h : (s.get v).isNone = false) :
+    ((applyLawsOnce dyn s).get v).isNone = false := by
+  have hSome : s.get v ≠ none := by
+    cases hg : s.get v with
+    | none => rw [hg] at h; simp at h
+    | some _ => intro hh; cases hh
+  have : (applyLawsOnce dyn s).get v ≠ none :=
+    applyLawsOnce_preserves_determined dyn s v hSome
+  cases hg : (applyLawsOnce dyn s).get v with
+  | none => exact absurd hg this
+  | some _ => rfl
 
-/-- For positive dynamics, normal development is **inflationary** (extensive):
-    every truth in `s` is preserved. This is one of the three closure-operator
-    axioms. Used by `CausalClosure.lean` to build the `ClosureOperator` instance. -/
-theorem positive_normalDevelopment_grows
-    (dyn : CausalDynamics) (s : Situation) (fuel : Nat)
-    (hPos : isPositiveDynamics dyn = true) :
-    trueLE s (normalDevelopment dyn s fuel) := by
-  induction fuel generalizing s with
-  | zero => exact Situation.trueLE_refl s
-  | succ n ih =>
-    have hGrow := positive_applyLawsOnce_grows dyn s hPos
-    by_cases hFix : isFixpoint dyn (applyLawsOnce dyn s) = true
-    · rw [normalDevelopment_succ_fix hFix]; exact hGrow
-    · have : isFixpoint dyn (applyLawsOnce dyn s) = false := by
-        cases h : isFixpoint dyn (applyLawsOnce dyn s) <;> simp_all
-      rw [normalDevelopment_succ_step this]
-      exact Situation.trueLE_trans hGrow (ih (applyLawsOnce dyn s))
+-- ════════════════════════════════════════════════════
+-- § Strict-decrease: undetermined-count drops on non-fixpoint step
+-- ════════════════════════════════════════════════════
 
-private theorem fixpoint_absorbs
-    (dyn : CausalDynamics) (s₁ s₂ : Situation) (fuel : Nat)
-    (hPos : isPositiveDynamics dyn = true)
-    (hLE : trueLE s₁ s₂) (hFix : isFixpoint dyn s₂ = true) :
-    trueLE (normalDevelopment dyn s₁ fuel) s₂ := by
-  induction fuel generalizing s₁ with
-  | zero => exact hLE
-  | succ n ih =>
-    have hLE' := positive_applyLawsOnce_absorbed dyn s₁ s₂ hPos hLE hFix
-    by_cases hFixS₁ : isFixpoint dyn (applyLawsOnce dyn s₁) = true
-    · rw [normalDevelopment_succ_fix hFixS₁]; exact hLE'
-    · have : isFixpoint dyn (applyLawsOnce dyn s₁) = false := by
-        cases h : isFixpoint dyn (applyLawsOnce dyn s₁) <;> simp_all
-      rw [normalDevelopment_succ_step this]; exact ih (applyLawsOnce dyn s₁) hLE'
-
-private theorem positive_normalDevelopment_trueLE
-    (dyn : CausalDynamics) (s₁ s₂ : Situation) (fuel : Nat)
-    (hPos : isPositiveDynamics dyn = true) (hLE : trueLE s₁ s₂) :
-    trueLE (normalDevelopment dyn s₁ fuel) (normalDevelopment dyn s₂ fuel) := by
-  induction fuel generalizing s₁ s₂ with
-  | zero => exact hLE
-  | succ n ih =>
-    have hLE' := positive_applyLawsOnce_trueLE dyn s₁ s₂ hPos hLE
-    by_cases hFix₁ : isFixpoint dyn (applyLawsOnce dyn s₁) = true <;>
-    by_cases hFix₂ : isFixpoint dyn (applyLawsOnce dyn s₂) = true
-    · rw [normalDevelopment_succ_fix hFix₁, normalDevelopment_succ_fix hFix₂]; exact hLE'
-    · have h₂ : isFixpoint dyn (applyLawsOnce dyn s₂) = false := by
-        cases h : isFixpoint dyn (applyLawsOnce dyn s₂) <;> simp_all
-      rw [normalDevelopment_succ_fix hFix₁, normalDevelopment_succ_step h₂]
-      exact Situation.trueLE_trans hLE'
-        (positive_normalDevelopment_grows dyn (applyLawsOnce dyn s₂) n hPos)
-    · have h₁ : isFixpoint dyn (applyLawsOnce dyn s₁) = false := by
-        cases h : isFixpoint dyn (applyLawsOnce dyn s₁) <;> simp_all
-      rw [normalDevelopment_succ_step h₁, normalDevelopment_succ_fix hFix₂]
-      exact fixpoint_absorbs dyn (applyLawsOnce dyn s₁) (applyLawsOnce dyn s₂) n hPos
-        hLE' hFix₂
-    · have h₁ : isFixpoint dyn (applyLawsOnce dyn s₁) = false := by
-        cases h : isFixpoint dyn (applyLawsOnce dyn s₁) <;> simp_all
-      have h₂ : isFixpoint dyn (applyLawsOnce dyn s₂) = false := by
-        cases h : isFixpoint dyn (applyLawsOnce dyn s₂) <;> simp_all
-      rw [normalDevelopment_succ_step h₁, normalDevelopment_succ_step h₂]
-      exact ih (applyLawsOnce dyn s₁) (applyLawsOnce dyn s₂) hLE'
-
--- § Main monotonicity theorem
-
-/-- For positive dynamics, normalDevelopment is monotone in the trueLE ordering.
-    If s₁ ⊑ s₂ (every true in s₁ is true in s₂), then
-    normalDevelopment(s₁) ⊑ normalDevelopment(s₂). -/
-theorem normalDevelopment_trueLE_positive (dyn : CausalDynamics) (s₁ s₂ : Situation) (fuel : Nat)
-    (hPos : isPositiveDynamics dyn = true)
-    (hLE : Situation.trueLE s₁ s₂) :
-    Situation.trueLE (normalDevelopment dyn s₁ fuel) (normalDevelopment dyn s₂ fuel) :=
-  positive_normalDevelopment_trueLE dyn s₁ s₂ fuel hPos hLE
-
-/-- Default-fuel form of `normalDevelopment_trueLE_positive`: when both
-    `normalDevelopment` calls use the default fuel, monotonicity holds without
-    needing to thread an explicit fuel argument. -/
-theorem normalDevelopment_trueLE_positive_default {dyn : CausalDynamics} {s₁ s₂ : Situation}
-    (hPos : isPositiveDynamics dyn = true)
-    (hLE : Situation.trueLE s₁ s₂) :
-    Situation.trueLE (normalDevelopment dyn s₁) (normalDevelopment dyn s₂) :=
-  normalDevelopment_trueLE_positive dyn s₁ s₂ defaultFuel hPos hLE
-
--- ============================================================
--- § Termination measure & well-founded normalDevelopment
--- ============================================================
-
-/-! For positive dynamics, the count of inner variables not yet `some true`
-    strictly decreases on every non-fixpoint step. This gives a well-founded
-    recursion measure, eliminating the fuel parameter. -/
-
-/-- List counting: if `P` implies `Q` pointwise, then `countP P ≤ countP Q`. -/
+/-- List counting: pointwise implication gives `countP P ≤ countP Q`. -/
 private theorem countP_le_of_imp {α : Type*}
     {P Q : α → Bool} (hMono : ∀ x, P x = true → Q x = true) :
     ∀ (l : List α), l.countP P ≤ l.countP Q
@@ -281,16 +129,12 @@ private theorem countP_le_of_imp {α : Type*}
   | hd :: tl => by
     cases hPhd : P hd
     · cases hQhd : Q hd
-      · simp [List.countP_cons, hPhd, hQhd]
-        exact countP_le_of_imp hMono tl
-      · simp [List.countP_cons, hPhd, hQhd]
-        exact Nat.le_succ_of_le (countP_le_of_imp hMono tl)
+      · simp [hPhd, hQhd]; exact countP_le_of_imp hMono tl
+      · simp [hPhd, hQhd]; exact Nat.le_succ_of_le (countP_le_of_imp hMono tl)
     · have hQhd : Q hd = true := hMono hd hPhd
-      simp [List.countP_cons, hPhd, hQhd]
-      exact countP_le_of_imp hMono tl
+      simp [hPhd, hQhd]; exact countP_le_of_imp hMono tl
 
-/-- List counting: pointwise implication plus a witness `x ∈ l` with `Q x` and
-    `¬ P x` gives strict inequality `countP P < countP Q`. -/
+/-- List counting: strict variant. -/
 private theorem countP_lt_of_imp_of_witness {α : Type*}
     {P Q : α → Bool} (hMono : ∀ x, P x = true → Q x = true)
     {l : List α} {x : α} (hx : x ∈ l) (hQx : Q x = true) (hPx : P x = false) :
@@ -300,192 +144,247 @@ private theorem countP_lt_of_imp_of_witness {α : Type*}
   | cons hd tl ih =>
     rw [List.mem_cons] at hx
     rcases hx with rfl | hxtl
-    · -- hd = x: P false, Q true at this position, count diverges by 1 + monotone tail
-      simp [List.countP_cons, hPx, hQx]
-      exact Nat.lt_succ_of_le (countP_le_of_imp hMono tl)
+    · simp [hPx, hQx]; exact Nat.lt_succ_of_le (countP_le_of_imp hMono tl)
     · cases hPhd : P hd
       · cases hQhd : Q hd
-        · simp [List.countP_cons, hPhd, hQhd]
-          exact ih hxtl
-        · simp [List.countP_cons, hPhd, hQhd]
-          exact Nat.lt_succ_of_lt (ih hxtl)
+        · simp [hPhd, hQhd]; exact ih hxtl
+        · simp [hPhd, hQhd]; exact Nat.lt_succ_of_lt (ih hxtl)
       · have hQhd : Q hd = true := hMono hd hPhd
-        simp [List.countP_cons, hPhd, hQhd]
-        exact ih hxtl
+        simp [hPhd, hQhd]; exact ih hxtl
 
-/-- **Strict-decrease lemma**: for positive dynamics, if `s` is not a fixpoint
-    then `applyLawsOnce` strictly decreases the count of inner variables not
-    yet `some true`. The witness is the law whose preconditions are met but
-    effect not yet at value: `foldl_sets_witness_effect` ensures the law's
-    effect transitions to `some true` after applying. -/
-theorem positive_applyLawsOnce_strict_decrease
-    (dyn : CausalDynamics) (s : Situation)
-    (hPos : isPositiveDynamics dyn = true)
-    (hNotFix : isFixpoint dyn s = false) :
-    (innerVariables dyn).countP (fun v => !(applyLawsOnce dyn s).hasValue v true) <
-    (innerVariables dyn).countP (fun v => !s.hasValue v true) := by
-  -- Step 1: extract witness law L₀ from non-fixpoint
+/-- After folding `apply` over laws, if law `L` had met preconditions and
+    undetermined effect at the start, its effect ends up determined. -/
+private theorem foldl_determines_witness :
+    ∀ (laws : List CausalLaw) (s : Situation) (L : CausalLaw),
+    L ∈ laws →
+    L.preconditionsMet s →
+    s.get L.effect = none →
+    (laws.foldl (fun s' law => law.apply s') s).get L.effect ≠ none
+  | [], _, _, hMem, _, _ => by simp at hMem
+  | hd :: tl, s, L, hMem, hMet, hNone => by
+    simp only [List.foldl_cons]
+    rcases List.mem_cons.mp hMem with hLhd | hmemtl
+    · -- L = hd: applies first → effect determined; preserved through tail
+      have hMetHd : hd.preconditionsMet s := hLhd ▸ hMet
+      have hNoneHd : s.get hd.effect = none := hLhd ▸ hNone
+      rw [CausalLaw.apply_of_met_undetermined hMetHd hNoneHd]
+      have hDet : (s.extend hd.effect hd.effectValue).get L.effect ≠ none := by
+        rw [hLhd, Situation.extend_get_same]; simp
+      exact applyLawsOnce_preserves_determined ⟨tl⟩ _ L.effect hDet
+    · -- L is in tail; track L's preconditions through hd.apply
+      have hMet' : L.preconditionsMet (hd.apply s) := by
+        intro p hp
+        exact CausalLaw.apply_preserves_hasValue hd s p.1 p.2 (hMet p hp)
+      by_cases hHdEffL : L.effect = hd.effect
+      · -- hd's effect = L's effect; if hd fires, L.effect becomes determined
+        rw [hHdEffL] at hNone
+        by_cases hMetHd : hd.preconditionsMet s
+        · rw [CausalLaw.apply_of_met_undetermined hMetHd hNone]
+          have hDet : (s.extend hd.effect hd.effectValue).get L.effect ≠ none := by
+            rw [hHdEffL, Situation.extend_get_same]; simp
+          exact applyLawsOnce_preserves_determined ⟨tl⟩ _ L.effect hDet
+        · rw [CausalLaw.apply_of_not_met hMetHd]
+          rw [← hHdEffL] at hNone
+          exact foldl_determines_witness tl s L hmemtl hMet hNone
+      · -- hd's effect ≠ L's effect; L.effect stays `none` after hd.apply
+        have hNone' : (hd.apply s).get L.effect = none := by
+          unfold CausalLaw.apply
+          cases hg : s.get hd.effect with
+          | none =>
+            by_cases hMetHd : hd.preconditionsMet s
+            · simp only [hMetHd, if_true]
+              exact (Situation.extend_get_ne hHdEffL).trans hNone
+            · simp [hMetHd]; exact hNone
+          | some b => exact hNone
+        exact foldl_determines_witness tl (hd.apply s) L hmemtl hMet' hNone'
+
+/-- **Strict-decrease lemma**: if `s` is not a fixpoint, `applyLawsOnce`
+    strictly decreases the count of undetermined inner variables.
+
+    No positivity needed: works for arbitrary dynamics, including those
+    with negative preconditions. -/
+theorem applyLawsOnce_strict_decrease
+    (dyn : CausalDynamics) (s : Situation) (hNotFix : ¬ isFixpoint dyn s) :
+    (innerVariables dyn).countP (fun v => ((applyLawsOnce dyn s).get v).isNone) <
+    (innerVariables dyn).countP (fun v => (s.get v).isNone) := by
+  -- Extract witness law L₀ from non-fixpoint
   unfold isFixpoint at hNotFix
-  rw [List.all_eq_false] at hNotFix
-  obtain ⟨L₀, hL₀mem, hL₀_bad⟩ := hNotFix
-  -- hL₀_bad : ¬(!L₀.preconditionsMet s || s.hasValue L₀.effect L₀.effectValue) = true
-  -- Convert to Bool form: the disjunction = false
-  have hL₀_or_false : (!L₀.preconditionsMet s || s.hasValue L₀.effect L₀.effectValue) = false := by
-    cases h : (!L₀.preconditionsMet s || s.hasValue L₀.effect L₀.effectValue)
+  push Not at hNotFix
+  obtain ⟨L₀, hL₀mem, hMet, hNone⟩ := hNotFix
+  -- L₀.effect ∈ innerVariables
+  have hMemInner : L₀.effect ∈ innerVariables dyn :=
+    effect_mem_innerVariables dyn L₀ hL₀mem
+  -- After applyLawsOnce: L₀.effect determined
+  have hAfter : (applyLawsOnce dyn s).get L₀.effect ≠ none :=
+    foldl_determines_witness dyn.laws s L₀ hL₀mem hMet hNone
+  refine countP_lt_of_imp_of_witness ?_ hMemInner ?_ ?_
+  · -- monotonicity
+    intro v hAfterIsNone
+    cases hSb : (s.get v).isNone
+    · -- determined in s; preserved through applyLawsOnce
+      have := applyLawsOnce_preserves_isNone_eq_false dyn s v hSb
+      rw [this] at hAfterIsNone; exact hAfterIsNone
     · rfl
-    · exact absurd h hL₀_bad
-  rw [Bool.or_eq_false_iff] at hL₀_or_false
-  obtain ⟨hPrecBool, hValueBool⟩ := hL₀_or_false
-  have hPrec : L₀.preconditionsMet s = true := by
-    cases hp : L₀.preconditionsMet s
-    · rw [hp] at hPrecBool; simp at hPrecBool
-    · rfl
-  -- Step 2: positivity for L₀
-  unfold isPositiveDynamics at hPos
-  have hL₀Pos := List.all_eq_true.mp hPos L₀ hL₀mem
-  rw [Bool.and_eq_true] at hL₀Pos
-  obtain ⟨_hPrecPos, hEffPos⟩ := hL₀Pos
-  -- Step 3: s.hasValue L₀.effect true = false (from hValueBool + hEffPos)
-  rw [hEffPos] at hValueBool
-  -- Step 4: (applyLawsOnce dyn s).hasValue L₀.effect true = true
-  have hValAfter : (applyLawsOnce dyn s).hasValue L₀.effect true = true := by
-    show (dyn.laws.foldl _ s).hasValue L₀.effect true = true
-    have hPos' : dyn.laws.all (fun law => law.preconditions.all (·.2) && law.effectValue) = true :=
-      hPos
-    exact foldl_sets_witness_effect dyn.laws s L₀ hPos' hL₀mem hEffPos hPrec
-  -- Step 5: L₀.effect ∈ innerVariables
-  have hMem : L₀.effect ∈ innerVariables dyn := effect_mem_innerVariables dyn L₀ hL₀mem
-  -- Step 6: apply countP_lt_of_imp_of_witness
-  refine countP_lt_of_imp_of_witness ?_ hMem ?_ ?_
-  · -- monotonicity: !(applyLawsOnce dyn s).hasValue v true → !s.hasValue v true
-    intro v hAfter
-    cases hSb : s.hasValue v true
-    · rfl
-    · -- s.hasValue v true = true → mono → applyLawsOnce.hasValue v true = true
-      -- → !true = false ≠ true, contradicting hAfter
-      have hMono : trueLE s (applyLawsOnce dyn s) := positive_applyLawsOnce_grows dyn s hPos
-      have hAfterTrue := hMono v hSb
-      rw [hAfterTrue] at hAfter
-      exact hAfter
-  · rw [hValueBool]; rfl
-  · rw [hValAfter]; rfl
+  · rw [hNone]; rfl
+  · cases hg : (applyLawsOnce dyn s).get L₀.effect with
+    | none => exact absurd hg hAfter
+    | some _ => rfl
 
-/-- **Termination-proven `normalDevelopment` for positive dynamics.**
+-- ════════════════════════════════════════════════════
+-- § normalDevelopment via well-founded recursion
+-- ════════════════════════════════════════════════════
 
-    Iterates `applyLawsOnce` until reaching a fixpoint, with no fuel parameter.
-    Termination is via well-founded recursion on the count of inner variables
-    not yet `some true` (decreased by `positive_applyLawsOnce_strict_decrease`
-    on every non-fixpoint step). -/
-def normalDevelopmentPositive (dyn : CausalDynamics)
-    (hPos : isPositiveDynamics dyn = true) (s : Situation) : Situation :=
-  if hFix : isFixpoint dyn s = true then s
-  else normalDevelopmentPositive dyn hPos (applyLawsOnce dyn s)
-termination_by (innerVariables dyn).countP (fun v => !s.hasValue v true)
-decreasing_by
-  simp_wf
-  have hNotFix : isFixpoint dyn s = false := by
-    cases hf : isFixpoint dyn s
-    · rfl
-    · exact absurd hf hFix
-  exact positive_applyLawsOnce_strict_decrease dyn s hPos hNotFix
+/-- The `Nat`-valued termination measure: count of undetermined inner
+    variables. Strictly decreases on non-fixpoint steps under info-monotone
+    `applyLawsOnce` (the substantive content is `applyLawsOnce_strict_decrease`). -/
+private def measure (dyn : CausalDynamics) (s : Situation) : ℕ :=
+  (innerVariables dyn).countP (fun v => (s.get v).isNone)
 
-/-- Fixpoint case unfolds. -/
-theorem normalDevelopmentPositive_of_fixpoint
-    {dyn : CausalDynamics} {hPos : isPositiveDynamics dyn = true} {s : Situation}
-    (h : isFixpoint dyn s = true) :
-    normalDevelopmentPositive dyn hPos s = s := by
-  rw [normalDevelopmentPositive, dif_pos h]
+/-- Generic missing-from-mathlib piece: if a `ℕ`-valued measure strictly
+    decreases on non-stopping points, iterating `f` eventually reaches a
+    stopping point. After this, "iterate to fixed point" is `f^[Nat.find ...] x`
+    in pure mathlib. (Inlined here as a private lemma; promote to a
+    standalone file if a second consumer materializes.) -/
+private theorem _root_.Function.exists_iterate_satisfies {α : Type*} (f : α → α)
+    {Stop : α → Prop} [DecidablePred Stop]
+    (m : α → ℕ) (h : ∀ x, ¬ Stop x → m (f x) < m x) (x : α) :
+    ∃ n, Stop (f^[n] x) := by
+  induction hk : m x using Nat.strong_induction_on generalizing x with
+  | _ k ih =>
+    by_cases hStop : Stop x
+    · exact ⟨0, by simpa using hStop⟩
+    · have hLt : m (f x) < k := hk ▸ h x hStop
+      obtain ⟨n, hn⟩ := ih (m (f x)) hLt (f x) rfl
+      exact ⟨n + 1, by rw [Function.iterate_succ_apply]; exact hn⟩
 
-/-- Step case unfolds. -/
-theorem normalDevelopmentPositive_of_not_fixpoint
-    {dyn : CausalDynamics} {hPos : isPositiveDynamics dyn = true} {s : Situation}
-    (h : isFixpoint dyn s = false) :
-    normalDevelopmentPositive dyn hPos s =
-      normalDevelopmentPositive dyn hPos (applyLawsOnce dyn s) := by
-  rw [normalDevelopmentPositive]
-  have hne : ¬ (isFixpoint dyn s = true) := by rw [h]; decide
-  rw [dif_neg hne]
+/-- **Normal Causal Development** (@cite{nadathur-lauer-2020} Definition 15;
+    Schulz @cite{schulz-2011} Definition 4 of `s_Σ^*`).
+
+    `(applyLawsOnce dyn)^[k] s` for the smallest `k` reaching a fixpoint —
+    expressed via `Function.iterate` and `Nat.find` (no new combinator).
+    Termination of the search is `Function.exists_iterate_satisfies` applied
+    to the strict-decrease measure on undetermined inner variables. -/
+def normalDevelopment (dyn : CausalDynamics) (s : Situation) : Situation :=
+  (applyLawsOnce dyn)^[Nat.find (Function.exists_iterate_satisfies (applyLawsOnce dyn)
+    (measure dyn) (applyLawsOnce_strict_decrease dyn) s)] s
+
+/-- `normalDevelopment` reaches a fixpoint — directly from `Nat.find_spec`. -/
+theorem normalDevelopment_isFixpoint (dyn : CausalDynamics) (s : Situation) :
+    isFixpoint dyn (normalDevelopment dyn s) :=
+  Nat.find_spec (Function.exists_iterate_satisfies (applyLawsOnce dyn)
+    (measure dyn) (applyLawsOnce_strict_decrease dyn) s)
+
+/-- mathlib bridge: `normalDevelopment dyn s` is a fixed point of
+    `applyLawsOnce dyn` (`Mathlib.Dynamics.FixedPoints.Basic`). -/
+theorem normalDevelopment_isFixedPt (dyn : CausalDynamics) (s : Situation) :
+    Function.IsFixedPt (applyLawsOnce dyn) (normalDevelopment dyn s) :=
+  applyLawsOnce_of_fixpoint (normalDevelopment_isFixpoint dyn s)
+
+/-- Fixpoint case unfolds to identity — `Nat.find` returns 0. -/
+theorem normalDevelopment_of_fixpoint {dyn : CausalDynamics} {s : Situation}
+    (h : isFixpoint dyn s) : normalDevelopment dyn s = s := by
+  unfold normalDevelopment
+  rw [Nat.find_eq_zero _ |>.mpr h]
+  rfl
+
+/-- Step case unfolds via `Nat.find_eq_iff` and `iterate_succ_apply`. -/
+theorem normalDevelopment_of_not_fixpoint {dyn : CausalDynamics} {s : Situation}
+    (h : ¬ isFixpoint dyn s) :
+    normalDevelopment dyn s = normalDevelopment dyn (applyLawsOnce dyn s) := by
+  unfold normalDevelopment
+  -- Want: f^[Nat.find P_s] s = f^[Nat.find P_(fs)] (f s)
+  -- where P_s n := isFixpoint dyn (f^[n] s); similarly P_(fs).
+  -- Key: P_s (n+1) = P_(fs) n (since f^[n+1] s = f^[n] (f s)).
+  -- So Nat.find P_s = Nat.find P_(fs) + 1.
+  set k := Nat.find (Function.exists_iterate_satisfies (applyLawsOnce dyn)
+    (measure dyn) (applyLawsOnce_strict_decrease dyn) (applyLawsOnce dyn s))
+  have key : Nat.find (Function.exists_iterate_satisfies (applyLawsOnce dyn)
+      (measure dyn) (applyLawsOnce_strict_decrease dyn) s) = k + 1 := by
+    apply (Nat.find_eq_iff _).mpr
+    refine ⟨?_, ?_⟩
+    · rw [Function.iterate_succ_apply]
+      exact Nat.find_spec (Function.exists_iterate_satisfies (applyLawsOnce dyn)
+        (measure dyn) (applyLawsOnce_strict_decrease dyn) (applyLawsOnce dyn s))
+    · intro j hj hPj
+      match j with
+      | 0 => exact h hPj
+      | j' + 1 =>
+        rw [Function.iterate_succ_apply] at hPj
+        exact Nat.find_min (Function.exists_iterate_satisfies (applyLawsOnce dyn)
+          (measure dyn) (applyLawsOnce_strict_decrease dyn) (applyLawsOnce dyn s))
+          (Nat.lt_of_succ_lt_succ hj) hPj
+  rw [key, Function.iterate_succ_apply]
 
 /-- One-step convergence: if `applyLawsOnce dyn s` is a fixpoint, then
-    `normalDevelopmentPositive dyn hPos s = applyLawsOnce dyn s` (no fuel
-    appears anywhere). Handles both the case where `s` is itself a fixpoint
-    (in which case `applyLawsOnce` is the identity) and the case where it
-    takes one step. -/
-theorem normalDevelopmentPositive_eq_applyLawsOnce_of_fixpoint
-    (dyn : CausalDynamics) (hPos : isPositiveDynamics dyn = true) (s : Situation)
-    (hFix : isFixpoint dyn (applyLawsOnce dyn s) = true) :
-    normalDevelopmentPositive dyn hPos s = applyLawsOnce dyn s := by
-  by_cases hSFix : isFixpoint dyn s = true
-  · -- s is itself a fixpoint; both sides equal s
-    rw [normalDevelopmentPositive_of_fixpoint hSFix, applyLawsOnce_of_fixpoint hSFix]
-  · have hSNotFix : isFixpoint dyn s = false := by
-      cases h : isFixpoint dyn s
-      · rfl
-      · exact absurd h hSFix
-    rw [normalDevelopmentPositive_of_not_fixpoint hSNotFix,
-        normalDevelopmentPositive_of_fixpoint hFix]
+    `normalDevelopment dyn s = applyLawsOnce dyn s`. -/
+theorem normalDevelopment_eq_applyLawsOnce_of_fixpoint
+    (dyn : CausalDynamics) (s : Situation)
+    (hFix : isFixpoint dyn (applyLawsOnce dyn s)) :
+    normalDevelopment dyn s = applyLawsOnce dyn s := by
+  by_cases hSFix : isFixpoint dyn s
+  · rw [normalDevelopment_of_fixpoint hSFix, applyLawsOnce_of_fixpoint hSFix]
+  · rw [normalDevelopment_of_not_fixpoint hSFix,
+        normalDevelopment_of_fixpoint hFix]
 
-/-- **Agreement with the fuel-based version.** With sufficient fuel
-    (at least the count of undetermined inner variables), the two agree. -/
-theorem normalDevelopment_eq_normalDevelopmentPositive
-    (dyn : CausalDynamics) (hPos : isPositiveDynamics dyn = true) (s : Situation)
-    (fuel : Nat)
-    (hFuel : (innerVariables dyn).countP (fun v => !s.hasValue v true) ≤ fuel) :
-    normalDevelopment dyn s fuel = normalDevelopmentPositive dyn hPos s := by
-  induction fuel generalizing s with
-  | zero =>
-    -- Fuel = 0 means measure s = 0, so s has no undetermined inner variables
-    -- and is therefore a fixpoint (every law's effect is already at value).
-    rw [Nat.le_zero] at hFuel
-    have hSFix : isFixpoint dyn s = true := by
-      by_contra hNotFix
-      have hf : isFixpoint dyn s = false := by
-        cases hh : isFixpoint dyn s
-        · rfl
-        · exact absurd hh hNotFix
-      have hStrict := positive_applyLawsOnce_strict_decrease dyn s hPos hf
-      rw [hFuel] at hStrict
-      exact Nat.not_lt_zero _ hStrict
-    rw [normalDevelopmentPositive_of_fixpoint hSFix]
-    rfl
+/-- **n-step closed form**: if any specific iterate `(applyLawsOnce dyn)^[n] s`
+    is a fixpoint, that iterate equals `normalDevelopment dyn s`. The
+    consumer chooses `n` (often 1, 2, or 3 for small SEMs) and discharges
+    `isFixpoint` via `decide` — no `native_decide` needed.
+
+    Proof: `Nat.find ≤ n` (Nat.find_le on the fixpoint witness), and
+    iterating past the fixpoint is no-op (`Function.IsFixedPt.iterate`). -/
+theorem normalDevelopment_eq_iterate_of_fixpoint
+    (dyn : CausalDynamics) (s : Situation) (n : ℕ)
+    (hFix : isFixpoint dyn ((applyLawsOnce dyn)^[n] s)) :
+    normalDevelopment dyn s = (applyLawsOnce dyn)^[n] s := by
+  unfold normalDevelopment
+  set findN := Nat.find (Function.exists_iterate_satisfies (applyLawsOnce dyn)
+    (measure dyn) (applyLawsOnce_strict_decrease dyn) s)
+  have hLe : findN ≤ n := Nat.find_le hFix
+  have hFixFind : Function.IsFixedPt (applyLawsOnce dyn)
+      ((applyLawsOnce dyn)^[findN] s) :=
+    applyLawsOnce_of_fixpoint (Nat.find_spec
+      (Function.exists_iterate_satisfies (applyLawsOnce dyn)
+        (measure dyn) (applyLawsOnce_strict_decrease dyn) s))
+  conv_rhs => rw [show n = (n - findN) + findN from (Nat.sub_add_cancel hLe).symm,
+                  Function.iterate_add_apply]
+  exact (hFixFind.iterate _).symm
+
+-- ════════════════════════════════════════════════════
+-- § Closure properties
+-- ════════════════════════════════════════════════════
+
+/-- **Inflationary**: every truth in `s` is preserved by normal development.
+    Follows directly from `applyLawsOnce_grows` lifted along
+    `Function.iterate` (every iterate of a `trueLE`-extensive op is
+    `trueLE`-extensive). -/
+theorem normalDevelopment_grows (dyn : CausalDynamics) (s : Situation) :
+    trueLE s (normalDevelopment dyn s) := by
+  -- More general fact: every iterate is trueLE-extensive
+  suffices h : ∀ k (s : Situation), trueLE s ((applyLawsOnce dyn)^[k] s) from h _ _
+  intro k
+  induction k with
+  | zero => intro s; exact Situation.trueLE_refl s
   | succ n ih =>
-    by_cases hFix : isFixpoint dyn s = true
-    · -- s is a fixpoint
-      rw [normalDevelopment_of_fixpoint hFix, normalDevelopmentPositive_of_fixpoint hFix]
-    · -- s is not a fixpoint
-      have hNotFix : isFixpoint dyn s = false := by
-        cases hh : isFixpoint dyn s
-        · rfl
-        · exact absurd hh hFix
-      have hStrict := positive_applyLawsOnce_strict_decrease dyn s hPos hNotFix
-      have hFuel' : (innerVariables dyn).countP
-          (fun v => !(applyLawsOnce dyn s).hasValue v true) ≤ n := by omega
-      rw [normalDevelopmentPositive_of_not_fixpoint hNotFix]
-      -- Need to relate normalDevelopment dyn s (n+1) to normalDevelopment dyn (applyLawsOnce dyn s) n
-      by_cases hFix' : isFixpoint dyn (applyLawsOnce dyn s) = true
-      · rw [normalDevelopment_succ_fix hFix', normalDevelopmentPositive_of_fixpoint hFix']
-      · have hNotFix' : isFixpoint dyn (applyLawsOnce dyn s) = false := by
-          cases hh : isFixpoint dyn (applyLawsOnce dyn s)
-          · rfl
-          · exact absurd hh hFix'
-        rw [normalDevelopment_succ_step hNotFix']
-        exact ih (applyLawsOnce dyn s) hFuel'
+    intro s
+    rw [Function.iterate_succ_apply]
+    exact Situation.trueLE_trans (applyLawsOnce_grows dyn s) (ih (applyLawsOnce dyn s))
 
-/-- Monotonicity for `normalDevelopmentPositive` (no fuel). Derived from
-    `normalDevelopment_trueLE_positive` via the agreement theorem. -/
-theorem normalDevelopmentPositive_trueLE (dyn : CausalDynamics)
-    (hPos : isPositiveDynamics dyn = true) (s₁ s₂ : Situation)
-    (hLE : Situation.trueLE s₁ s₂) :
-    Situation.trueLE (normalDevelopmentPositive dyn hPos s₁)
-                     (normalDevelopmentPositive dyn hPos s₂) := by
-  -- Pick fuel large enough for both measures, then bridge via agreement
-  let m₁ := (innerVariables dyn).countP (fun v => !s₁.hasValue v true)
-  let m₂ := (innerVariables dyn).countP (fun v => !s₂.hasValue v true)
-  have h₁ : normalDevelopment dyn s₁ (m₁ + m₂) = normalDevelopmentPositive dyn hPos s₁ :=
-    normalDevelopment_eq_normalDevelopmentPositive dyn hPos s₁ (m₁ + m₂) (Nat.le_add_right _ _)
-  have h₂ : normalDevelopment dyn s₂ (m₁ + m₂) = normalDevelopmentPositive dyn hPos s₂ :=
-    normalDevelopment_eq_normalDevelopmentPositive dyn hPos s₂ (m₁ + m₂) (Nat.le_add_left _ _)
-  rw [← h₁, ← h₂]
-  exact normalDevelopment_trueLE_positive dyn s₁ s₂ (m₁ + m₂) hPos hLE
+/-- **Strong inflation**: every determined value (true *or* false) in `s`
+    is preserved by normal development. The Bool-valued strengthening of
+    `normalDevelopment_grows`, lifted from `applyLawsOnce_preserves_hasValue`
+    along `Function.iterate`. -/
+theorem normalDevelopment_preserves_hasValue (dyn : CausalDynamics) (s : Situation)
+    (v : Variable) (val : Bool) (h : s.hasValue v val) :
+    (normalDevelopment dyn s).hasValue v val := by
+  suffices haux : ∀ k (s : Situation), s.hasValue v val →
+      ((applyLawsOnce dyn)^[k] s).hasValue v val from haux _ _ h
+  intro k
+  induction k with
+  | zero => intro s hs; exact hs
+  | succ n ih =>
+    intro s hs
+    rw [Function.iterate_succ_apply]
+    exact ih (applyLawsOnce dyn s) (applyLawsOnce_preserves_hasValue dyn s v val hs)
 
 end Core.Causal

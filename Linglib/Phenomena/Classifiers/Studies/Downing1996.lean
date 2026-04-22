@@ -1,7 +1,6 @@
 import Linglib.Core.Lexical.NounCategorization
-import Linglib.Fragments.Japanese.Classifiers
+import Linglib.Fragments.Japanese.Classifier
 import Linglib.Fragments.Japanese.Nouns
-import Linglib.Fragments.Mandarin.Classifiers
 import Linglib.Phenomena.Classifiers.Typology
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
@@ -12,7 +11,7 @@ import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 Formalizes core contributions from Downing's monograph on Japanese numeral
 classifiers (Studies in Discourse and Grammar, vol. 4).
 
-## Two Central Hypotheses (Ch. 5)
+## Two Central Hypotheses
 
 **Hypothesis 1** (Universal semantic trends): Classifier categories encode
 culturally significant categories defined by physical, functional, and social
@@ -22,9 +21,15 @@ interaction. The choice of which features are exploited is culture-dependent.
 supplement the information carried by nouns — the classifier system provides
 categorization *independent of* and *additional to* the common noun system.
 
-## Individuation Function (Ch. 7)
+UNVERIFIED: chapter/section/table location references throughout this file
+were inherited from earlier formalization work and have not been
+cross-checked against the @cite{downing-1996} monograph. Specific cell
+counts in the frequency tables below should be treated as illustrative
+of the qualitative shape of the data, not as verbatim transcriptions.
 
-@cite{downing-1996} Ch. 7 treats classifier phrases and plural markers as
+## Individuation Function
+
+@cite{downing-1996} treats classifier phrases and plural markers as
 individuators. @cite{chierchia-1998}'s later Nominal Mapping Parameter provides
 a formal framework for this insight: in [+arg, -pred] languages, bare nouns
 denote kinds, and classifiers supply individuation for enumeration. The bridge
@@ -35,141 +40,154 @@ Li 2013 argues Chinese nouns are not uniformly mass), but the core insight —
 that classifiers relate to individuation — is preserved in current work, with
 the mechanism (atomization vs. unitization) still debated.
 
-## Anaphoric Use (Ch. 6)
+## Anaphoric Use
 
 Classifier phrases (numeral + classifier without accompanying noun) serve
 as anaphoric devices in discourse, occupying a unique niche between zero
-anaphora (short range) and full lexical NPs (long range). Empirical findings:
-- 87% of anaphoric classifier uses involve 人 *nin* (human classifier)
-- 75% use numeral 2
-- Striking distance is intermediate: longer than pronouns, shorter than NPs
+anaphora (short range) and full lexical NPs (long range). Qualitative
+findings (UNVERIFIED specific percentages): 人 *nin* dominates the
+anaphoric distribution; numeral 2 dominates the numeral distribution;
+striking distance is intermediate between pronouns and full NPs.
 
-## Shape Dimensionality (Ch. 5)
+## Shape Dimensionality
 
-Shape-based classifiers decompose along a 1D/2D/3D dimensionality axis,
-now formalized via `ShapeDimension` in `ClassifierEntry`.
+Shape-based classifiers decompose along a 1D/2D/3D dimensionality axis
+per @cite{allan-1977}, formalized via `Fragments.Japanese.Classifier.shapeDim`.
 
-## Core Inventory (Table 1.1)
+## Core Inventory
 
-All 27 classifiers from Table 1.1 are represented in the Japanese fragment,
-including the homophonous 軒 ken (buildings) / 件 ken' (incidents) pair, the
-maritime size split (隻 seki / 艘 soo), and the two building classifiers
-(軒 ken / 棟 mune).
+All 27 classifiers from Downing's core inventory (UNVERIFIED: claimed
+to be Table 1.1) are represented in the Japanese fragment
+(`Fragments.Japanese.Classifier.core`), including the homophonous
+軒 `kenBuilding` / 件 `kenIncident` pair, the maritime size split
+(隻 seki / 艘 soo), and the two building classifiers (軒 kenBuilding / 棟 mune).
 
-## Frequency Distribution (Ch. 3, Table 3.1)
+## Frequency Distribution
 
-A 500-form corpus sample reveals extreme Zipfian skew: 人 nin (40%) and
-つ tsu (23%) together account for 63% of all classifier uses. The top five
-classifiers cover 82%. Quality classifiers (shape-based) are collectively
-more frequent than kind classifiers (function-based).
+UNVERIFIED: the n=500 corpus sample and specific cell counts below were
+inherited from prior formalization work and have not been verified against
+the monograph. The qualitative pattern they encode is well-attested
+(extreme Zipfian skew with 人 nin and つ tsu dominating; shape-based
+classifiers collectively outweigh function-based ones), but the precise
+numbers should be regarded as a placeholder until reconfirmed.
 
 -/
 
 namespace Downing1996
 
-open Core.NounCategorization
-open Fragments.Japanese
+open Fragments.Japanese (Classifier)
 
 -- ============================================================================
--- § 1. Shape Dimensionality (Ch. 5)
+-- § 1. Shape Dimensionality (Downing 1996, UNVERIFIED location)
 -- ============================================================================
 
 /-- Shape-based classifiers in the Japanese inventory decompose into
-    three dimensionality classes (Ch. 5). -/
-def shapeClassifiers : List ClassifierEntry :=
-  Classifiers.allClassifiers.filter (·.encodes .shape)
+    three dimensionality classes (Downing 1996, UNVERIFIED location). -/
+def shapeClassifiers : List Classifier :=
+  Classifier.all.filter fun c => decide (Classifier.Encodes c .shape)
 
 /-- At least 5 classifiers in the inventory encode shape. -/
 theorem shape_classifier_count :
-    shapeClassifiers.length ≥ 5 := by native_decide
+    shapeClassifiers.length ≥ 5 := by decide
 
 /-- All three shape dimensions (1D, 2D, 3D) are attested. -/
 theorem all_dimensions_in_inventory :
-    shapeClassifiers.any (·.shapeDimension == some .oneD) = true ∧
-    shapeClassifiers.any (·.shapeDimension == some .twoD) = true ∧
-    shapeClassifiers.any (·.shapeDimension == some .threeD) = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+    shapeClassifiers.any (fun c => c.shapeDim == some .oneD) = true ∧
+    shapeClassifiers.any (fun c => c.shapeDim == some .twoD) = true ∧
+    shapeClassifiers.any (fun c => c.shapeDim == some .threeD) = true := by
+  refine ⟨?_, ?_, ?_⟩ <;> decide
 
 -- ============================================================================
--- § 2. Animacy Hierarchy in Classifiers (Ch. 5)
+-- § 2. Animacy Hierarchy in Classifiers (Downing 1996, UNVERIFIED location)
 -- ============================================================================
 
 /-- The animacy hierarchy in Japanese classifiers:
     human (nin/mei) > large animal (tou) > small animal (hiki) > inanimate (tsu).
     Each level is distinguished by a distinct classifier. -/
 theorem animacy_hierarchy_witnessed :
-    Classifiers.nin.encodes .humanness = true ∧
-    Classifiers.mei.encodes .humanness = true ∧
-    Classifiers.tou.encodes .animacy = true ∧
-    Classifiers.hiki.encodes .animacy = true ∧
-    Classifiers.tsu.isDefault = true := by
-  refine ⟨?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+    Classifier.Encodes .nin .humanness ∧
+    Classifier.Encodes .mei .humanness ∧
+    Classifier.Encodes .tou .animacy ∧
+    Classifier.Encodes .hiki .animacy ∧
+    Classifier.IsDefault .tsu := by decide
 
-/-- The human classifier has a formal register variant (名 mei)
-    encoding social status, unlike other animacy classifiers. -/
+/-- The human classifier has a formal register variant (名 mei) marking
+    formality/register of the speech act, unlike the neutral 人 nin.
+    Note: this indexes register (formal vs casual) rather than
+    `socialStatus` (honorific status of the referent — kin, age, social
+    rank). -/
 theorem human_has_register_variant :
-    Classifiers.nin.encodes .humanness = true ∧
-    Classifiers.mei.encodes .humanness = true ∧
-    Classifiers.mei.encodes .socialStatus = true ∧
-    Classifiers.nin.encodes .socialStatus = false := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+    Classifier.Encodes .nin .humanness ∧
+    Classifier.Encodes .mei .humanness ∧
+    Classifier.Encodes .mei .register ∧
+    ¬ Classifier.Encodes .nin .register := by decide
 
 -- ============================================================================
--- § 3. Anaphoric Use Data (Ch. 6, Tables 6.1–6.2)
+-- § 3. Anaphoric Use Data (Downing 1996, UNVERIFIED location)
 -- ============================================================================
 
 /-- Distribution of classifiers in anaphoric examples
-    (Ch. 6, Table 6.1, n = 55). -/
+    (Downing 1996, UNVERIFIED location). -/
 structure AnaphoricDistribution where
-  classifier : ClassifierEntry
+  classifier : Classifier
   count : Nat
   deriving Repr
 
+/-- UNVERIFIED: cell-precise counts (nin=48, tsu=4, hiki=2, wa=1) inherited
+    from prior formalization. The qualitative claim — that the anaphoric
+    distribution is dominated by `-nin` and skewed against the long tail —
+    is well-attested; the precise counts have not been cross-checked. -/
 def anaphoricClassifierData : List AnaphoricDistribution :=
-  [ { classifier := Classifiers.nin, count := 48 }
-  , { classifier := Classifiers.tsu, count := 4 }
-  , { classifier := Classifiers.hiki, count := 2 }
-  , { classifier := Classifiers.wa, count := 1 } ]
+  [ { classifier := .nin, count := 48 }
+  , { classifier := .tsu, count := 4 }
+  , { classifier := .hiki, count := 2 }
+  , { classifier := .wa, count := 1 } ]
 
-/-- Total anaphoric classifier examples = 55. -/
+/-- UNVERIFIED: total anaphoric classifier examples = 55 (sum of cells in
+    `anaphoricClassifierData`). -/
 theorem anaphoric_total :
-    (anaphoricClassifierData.map (·.count)).foldl (· + ·) 0 = 55 := by native_decide
+    (anaphoricClassifierData.map (·.count)).foldl (· + ·) 0 = 55 := by decide
 
-/-- 人 nin dominates anaphoric classifier use (48/55 = 87%). -/
+/-- UNVERIFIED specific count: 人 nin dominates anaphoric classifier use
+    at 48/55 ≈ 87%. The dominance claim is qualitatively robust; the
+    precise count is unverified. -/
 theorem nin_dominates_anaphoric :
-    (anaphoricClassifierData.find? (·.classifier == Classifiers.nin)).map (·.count)
-    = some 48 := by native_decide
+    (anaphoricClassifierData.find? (·.classifier == .nin)).map (·.count)
+    = some 48 := by decide
 
 /-- Distribution of numerals in anaphoric classifier examples
-    (Ch. 6, Table 6.2, n = 55).
+    (Downing 1996, UNVERIFIED location).
     Numeral 1 is absent — explained by competition with zero anaphora. -/
 structure NumeralDistribution where
   numeral : Nat
   count : Nat
   deriving Repr
 
+/-- UNVERIFIED: cell-precise counts (n=2:41, n=3:12, n=4:1, n=5:1)
+    inherited from prior formalization. -/
 def anaphoricNumeralData : List NumeralDistribution :=
   [ { numeral := 2, count := 41 }
   , { numeral := 3, count := 12 }
   , { numeral := 4, count := 1 }
   , { numeral := 5, count := 1 } ]
 
-/-- Numeral 2 dominates anaphoric use (41/55 = 75%). -/
+/-- UNVERIFIED specific count: numeral 2 dominates anaphoric use at
+    41/55 ≈ 75%. -/
 theorem two_dominates_anaphoric :
     (anaphoricNumeralData.find? (·.numeral == 2)).map (·.count)
-    = some 41 := by native_decide
+    = some 41 := by decide
 
 /-- Numeral 1 is absent from anaphoric classifier constructions.
-    explains: 'one' + CL has low contrastive
-    information potential and competes with zero anaphora. -/
+    Explanation: 'one' + CL has low contrastive information potential
+    and competes with zero anaphora. -/
 theorem one_absent_from_anaphoric :
-    anaphoricNumeralData.all (·.numeral ≠ 1) = true := by native_decide
+    anaphoricNumeralData.all (·.numeral ≠ 1) = true := by decide
 
 -- ============================================================================
--- § 4. Individuation Bridge (Ch. 7 ↔ Chierchia 1998)
+-- § 4. Individuation Bridge (Downing 1996 ↔ Chierchia 1998)
 -- ============================================================================
 
-/-- Ch. 7 discusses classifier phrases as individuators.
+/--  (UNVERIFIED location: Ch. 7) discusses classifier phrases as individuators.
     @cite{chierchia-1998}'s later linking hypothesis formalizes this:
     [+arg, -pred] languages have kind-denoting bare nouns and need classifiers
     for individuation. The strict correlation is contested (see module docstring),
@@ -177,7 +195,7 @@ theorem one_absent_from_anaphoric :
 
     Witnessed by: Japanese is [+arg, -pred] AND has numeral classifiers. -/
 theorem argOnly_has_classifiers :
-    Nouns.japaneseMapping = .argOnly ∧
+    Fragments.Japanese.Nouns.japaneseMapping = .argOnly ∧
     Phenomena.Classifiers.Typology.japanese.classifierType = .numeralClassifier := by
   exact ⟨rfl, rfl⟩
 
@@ -185,19 +203,20 @@ theorem argOnly_has_classifiers :
     type-shift blocking (no articles), so bare nouns freely occur as arguments.
     Classifiers rather than articles provide individuation. -/
 theorem no_blocking_needs_classifiers :
-    Nouns.japaneseBlocking.iotaBlocked = false ∧
-    Nouns.japaneseBlocking.existsBlocked = false ∧
+    Fragments.Japanese.Nouns.japaneseBlocking.iotaBlocked = false ∧
+    Fragments.Japanese.Nouns.japaneseBlocking.existsBlocked = false ∧
     Phenomena.Classifiers.Typology.japanese.classifierType = .numeralClassifier := by
   exact ⟨rfl, rfl, rfl⟩
 
 /-- Non-default classifiers encode at least one semantic parameter,
     confirming they carry individuation-relevant information beyond
     mere enumeration. The default classifier つ is the only one
-    that enumerates without individuating. -/
+    that enumerates without individuating. Delegates to the structural
+    theorem in `Fragments.Japanese.Classifier`. -/
 theorem classifiers_carry_individuation_info :
-    (Classifiers.allClassifiers.filter (λ c => !c.isDefault && !c.isMensural)).all
-      (·.semantics.length > 0) = true := by
-  native_decide
+    ∀ c : Classifier, ¬ Classifier.IsDefault c → ¬ Classifier.IsMensural c →
+      c.encodes ≠ [] :=
+  Classifier.specific_classifiers_have_semantics
 
 -- ============================================================================
 -- § 5. Semantic Supplementation (Hypothesis 2)
@@ -205,7 +224,7 @@ theorem classifiers_carry_individuation_info :
 
 /-- Seven recurrent semantic relations between the independent sense
     of the classifier morpheme and the classifier category.
-    Six are from Ch. 5, Table 5.2; the seventh
+    Six are from Downing 1996 (UNVERIFIED location: Ch. 5, Table 5.2); the seventh
     (`sharedQuality`) is attested in non-Japanese languages and noted
     by Downing as recurring cross-linguistically but absent in Japanese. -/
 inductive MorphemeCategoryRelation where
@@ -232,48 +251,48 @@ inductive MorphemeCategoryRelation where
   | sharedQuality
   deriving DecidableEq, Repr
 
-/-- A witness pairing a classifier with its Table 5.2 morpheme-category
+/-- A witness pairing a classifier with its morpheme (UNVERIFIED location: Table 5.2)-category
     relation and the independent meaning of the morpheme. -/
 structure MorphemeRelationWitness where
-  classifier : ClassifierEntry
+  classifier : Classifier
   relation : MorphemeCategoryRelation
   independentMeaning : String
   deriving Repr
 
-/-- Concrete Table 5.2 morpheme-category relation
+/-- Concrete morpheme (UNVERIFIED location: Table 5.2)-category relation
     assignments for classifiers in our inventory. Each entry records
     the classifier, the relation type, and the independent lexical
     meaning of the morpheme that motivates the relation. -/
 def table5_2_witnesses : List MorphemeRelationWitness :=
   [ -- Type 1: morpheme denotes a class identical/superordinate to the category
-    { classifier := Classifiers.ken', relation := .identicalClass
+    { classifier := .kenIncident, relation := .identicalClass
     , independentMeaning := "matter, case" }
-  , { classifier := Classifiers.ki, relation := .identicalClass
+  , { classifier := .ki, relation := .identicalClass
     , independentMeaning := "machine" }
     -- Type 2: morpheme denotes a part possessed by category members
-  , { classifier := Classifiers.tou, relation := .partOfMembers
+  , { classifier := .tou, relation := .partOfMembers
     , independentMeaning := "head" }
-  , { classifier := Classifiers.kyaku, relation := .partOfMembers
+  , { classifier := .kyaku, relation := .partOfMembers
     , independentMeaning := "leg" }
     -- Type 3: morpheme denotes an action associated with category members
-  , { classifier := Classifiers.tsuu, relation := .associatedAction
+  , { classifier := .tsuu, relation := .associatedAction
     , independentMeaning := "to pass" }
-  , { classifier := Classifiers.furi, relation := .associatedAction
+  , { classifier := .furi, relation := .associatedAction
     , independentMeaning := "to shake" }
     -- Type 6: morpheme denotes the beneficiary/goal of the category activity
-  , { classifier := Classifiers.soku, relation := .beneficiaryGoal
+  , { classifier := .soku, relation := .beneficiaryGoal
     , independentMeaning := "foot" } ]
 
-/-- At least four of the six Japanese-attested Table 5.2 relation types
+/-- At least four of the six Japanese-attested relation types
     are witnessed in the inventory (Types 1, 2, 3, 6). -/
 theorem four_relation_types_attested :
-    (table5_2_witnesses.map (·.relation)).eraseDups.length ≥ 4 := by native_decide
+    (table5_2_witnesses.map (·.relation)).eraseDups.length ≥ 4 := by decide
 
-/-- All Table 5.2 witnesses reference classifiers in our inventory. -/
+/-- All witnesses reference classifiers in our inventory.
+    Trivial since `Classifier.mem_all` says every constructor is in `all`. -/
 theorem witnesses_in_inventory :
-    table5_2_witnesses.all
-      (λ w => Classifiers.allClassifiers.any (· == w.classifier)) = true := by
-  native_decide
+    ∀ w ∈ table5_2_witnesses, w.classifier ∈ Classifier.all :=
+  fun w _ => Classifier.mem_all w.classifier
 
 -- ============================================================================
 -- § 6. Classifier System Composition
@@ -282,122 +301,114 @@ theorem witnesses_in_inventory :
 /-- The Japanese classifier inventory includes both sortal and mensural
     classifiers, with sortal classifiers dominating. -/
 theorem sortal_dominance :
-    (Classifiers.allClassifiers.filter (!·.isMensural)).length >
-    (Classifiers.allClassifiers.filter (·.isMensural)).length := by
-  native_decide
+    (Classifier.all.filter (fun c => ¬ decide (Classifier.IsMensural c))).length >
+    (Classifier.all.filter (fun c => decide (Classifier.IsMensural c))).length := by
+  decide
 
 /-- Function-based classifiers are the largest semantic group,
-    confirming observation that the system
-    concentrates on interactionally significant categories. -/
+    confirming Downing's observation that the system concentrates on
+    interactionally significant categories. -/
 theorem function_classifiers_numerous :
-    (Classifiers.allClassifiers.filter (·.encodes .function)).length ≥ 8 := by
-  native_decide
+    (Classifier.all.filter (fun c => decide (Classifier.Encodes c .function))).length ≥ 8 := by
+  decide
 
 -- ============================================================================
--- § 7. Core Inventory Completeness (Table 1.1)
+-- § 7. Core Inventory Completeness (Downing 1996 core inventory)
 -- ============================================================================
 
-/-- The core inventory from Table 1.1 has exactly 27
-    classifiers, all of which are represented in the Japanese fragment. -/
-theorem core_inventory_complete :
-    Classifiers.coreClassifiers.length = 27 := by native_decide
+/-- The core inventory (UNVERIFIED location: Table 1.1) has exactly 27 classifiers. -/
+theorem core_inventory_complete : Classifier.core.length = 27 := by decide
 
-/-- The full inventory includes the 27 core classifiers plus 6 extended
-    classifiers (sao, wa, furi, zen, kyaku, hai). -/
+/-- Every core classifier is in the full inventory.
+    Trivial by construction: `all := core ++ extended ++ sudoAdditions`. -/
 theorem full_inventory_includes_core :
-    Classifiers.coreClassifiers.all
-      (λ c => Classifiers.allClassifiers.any (· == c)) = true := by
-  native_decide
+    ∀ c ∈ Classifier.core, c ∈ Classifier.all :=
+  fun c _ => Classifier.mem_all c
 
 /-- The core inventory distinguishes two homophonous ken classifiers:
-    軒 ken (buildings) and 件 ken' (incidents) — different kanji, different
+    軒 `kenBuilding` and 件 `kenIncident` — different kanji, different
     semantic domains. -/
 theorem two_ken_classifiers :
-    Classifiers.ken.form = "軒" ∧ Classifiers.ken'.form = "件" ∧
-    Classifiers.ken.encodes .function = true ∧
-    Classifiers.ken'.encodes .function = true := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+    Classifier.kenBuilding.form = "軒" ∧ Classifier.kenIncident.form = "件" ∧
+    Classifier.Encodes .kenBuilding .function ∧
+    Classifier.Encodes .kenIncident .function := by decide
 
-/-- Two building classifiers exist: 軒 ken (functional capacity — home/shop)
-    and 棟 mune (roofed structure). -/
+/-- Two building classifiers exist: 軒 `kenBuilding` (functional capacity —
+    home/shop) and 棟 `mune` (roofed structure). -/
 theorem two_building_classifiers :
-    Classifiers.ken.gloss = "building" ∧
-    Classifiers.mune.gloss = "building.roof" := by
-  exact ⟨rfl, rfl⟩
+    Classifier.kenBuilding.gloss = "building" ∧
+    Classifier.mune.gloss = "building.roof" :=
+  ⟨rfl, rfl⟩
 
 /-- Two maritime classifiers exist: 隻 seki (large boats) and
     艘 soo (small boats), paralleling the animacy size split
     (頭 tou / 匹 hiki). -/
 theorem maritime_size_split :
-    Classifiers.seki.gloss = "large.boat" ∧
-    Classifiers.soo.gloss = "small.boat" := by
-  exact ⟨rfl, rfl⟩
+    Classifier.seki.gloss = "large.boat" ∧
+    Classifier.soo.gloss = "small.boat" :=
+  ⟨rfl, rfl⟩
 
 -- ============================================================================
--- § 8. Frequency Distribution (Ch. 3, Table 3.1)
+-- § 8. Frequency Distribution (Downing 1996, UNVERIFIED location)
 -- ============================================================================
 
-/-- Frequency data from Ch. 3, Table 3.1:
+/-- Frequency data (UNVERIFIED location: Ch. 3, Table 3.1):
     raw counts of classifiers in a 500-form corpus sample
     (first 50 uses from each of five works of fiction + 250 forms
     from transcribed conversations and oral narrative). -/
 structure FrequencyEntry where
-  classifier : ClassifierEntry
+  classifier : Classifier
   count : Nat
   deriving Repr
 
-/-- Frequency distribution of classifiers from our inventory that appear in
-    Table 3.1 (n = 500). Classifiers with 0 occurrences
-    in the sample are omitted. -/
+/-- UNVERIFIED: 17-cell frequency distribution claimed to be from
+    Downing 1996's n=500 corpus sample. Cells inherited from prior
+    formalization and not cross-checked against the monograph; the
+    qualitative shape (extreme Zipfian skew, `-nin` and `-tsu`
+    dominating, shape-based collectively outweighing function-based)
+    is well-attested but the precise counts are placeholders. -/
 def frequencyData : List FrequencyEntry :=
-  [ { classifier := Classifiers.nin,  count := 201 }
-  , { classifier := Classifiers.tsu,  count := 115 }
-  , { classifier := Classifiers.hiki, count := 32 }
-  , { classifier := Classifiers.hon', count := 31 }
-  , { classifier := Classifiers.mai,  count := 31 }
-  , { classifier := Classifiers.ken,  count := 11 }
-  , { classifier := Classifiers.ko,   count := 11 }
-  , { classifier := Classifiers.mei,  count := 6 }
-  , { classifier := Classifiers.teki, count := 6 }
-  , { classifier := Classifiers.tsuu, count := 5 }
-  , { classifier := Classifiers.dai,  count := 4 }
-  , { classifier := Classifiers.satsu, count := 4 }
-  , { classifier := Classifiers.wa,   count := 4 }
-  , { classifier := Classifiers.tsubu, count := 2 }
-  , { classifier := Classifiers.ken', count := 1 }
-  , { classifier := Classifiers.kabu, count := 1 }
-  , { classifier := Classifiers.soku, count := 1 } ]
+  [ { classifier := .nin,  count := 201 }
+  , { classifier := .tsu,  count := 115 }
+  , { classifier := .hiki, count := 32 }
+  , { classifier := .hon, count := 31 }
+  , { classifier := .mai,  count := 31 }
+  , { classifier := .kenBuilding,  count := 11 }
+  , { classifier := .ko,   count := 11 }
+  , { classifier := .mei,  count := 6 }
+  , { classifier := .teki, count := 6 }
+  , { classifier := .tsuu, count := 5 }
+  , { classifier := .dai,  count := 4 }
+  , { classifier := .satsu, count := 4 }
+  , { classifier := .wa,   count := 4 }
+  , { classifier := .tsubu, count := 2 }
+  , { classifier := .kenIncident, count := 1 }
+  , { classifier := .kabu, count := 1 }
+  , { classifier := .soku, count := 1 } ]
 
-/-- 人 nin is the single most frequent classifier (201/500 = 40%). -/
+/-- 人 nin is the single most frequent classifier (qualitatively robust).
+    UNVERIFIED specific count: 201/500 ≈ 40%. -/
 theorem nin_most_frequent :
-    (frequencyData.find? (·.classifier == Classifiers.nin)).map (·.count)
-    = some 201 := by native_decide
+    (frequencyData.find? (·.classifier == .nin)).map (·.count) = some 201 := by decide
 
-/-- 人 nin and つ tsu together account for 316/500 = 63% of all classifier
-    uses, a striking concentration that highlights as
-    the major frequency finding (Ch. 3). -/
+/-- 人 nin and つ tsu together dominate the distribution (qualitatively
+    robust). UNVERIFIED specific arithmetic: 201 + 115 = 316 ≈ 63% of 500. -/
 theorem nin_tsu_dominate :
-    let ninCount := 201
-    let tsuCount := 115
-    ninCount + tsuCount = 316 ∧ 316 * 100 / 500 = 63 := by
-  exact ⟨rfl, rfl⟩
+    (201 : Nat) + 115 = 316 ∧ 316 * 100 / 500 = 63 := ⟨rfl, rfl⟩
 
-/-- The top five classifiers (nin, tsu, hiki, hon, mai) account for
-    410/500 = 82% of uses, confirming the Zipfian skew. -/
+/-- The top five classifiers (nin, tsu, hiki, hon, mai) account for the
+    bulk of the distribution (Zipfian skew, qualitatively robust).
+    UNVERIFIED specific arithmetic: top-5 sum = 410 ≈ 82% of 500. -/
 theorem top_five_dominate :
     let top5 := [201, 115, 32, 31, 31]
-    top5.foldl (· + ·) 0 = 410 ∧ 410 * 100 / 500 = 82 := by
-  exact ⟨rfl, rfl⟩
+    top5.foldl (· + ·) 0 = 410 ∧ 410 * 100 / 500 = 82 := ⟨rfl, rfl⟩
 
 /-- Quality classifiers (shape-based: hon, mai, ko) are collectively more
     frequent than any individual kind classifier (function-based like ken,
-    dai). Ch. 3 observes that "classifiers denoting
-    categories united by a common shape ... are used relatively more often
-    than most of the 'kind-based' classifiers." -/
+    dai).  observes that "classifiers denoting categories united by
+    a common shape ... are used relatively more often than most of the
+    'kind-based' classifiers." -/
 theorem quality_over_kind_classifiers :
-    let qualityTotal := 31 + 31 + 11  -- hon + mai + ko
-    let kindMax := 11                 -- ken (buildings), the most frequent kind CL
-    qualityTotal > kindMax := by
-  omega
+    (31 + 31 + 11 : Nat) > 11 := by omega
 
 end Downing1996

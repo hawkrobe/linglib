@@ -1,7 +1,7 @@
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Core.Causal.BayesNet
-import Linglib.Theories.Semantics.Conditionals.Assertability
+import Linglib.Theories.Semantics.Probabilistic.ConditionalAssertability
 import Linglib.Theories.Semantics.Causation.Sufficiency
 import Linglib.Theories.Semantics.Causation.Necessity
 import Mathlib.Analysis.SpecialFunctions.Pow.Real
@@ -50,7 +50,7 @@ to `rsa_predict`.
 ## Grounding
 
 The assertability truth values are grounded in the probabilistic assertability
-condition from `Semantics.Conditionals.Assertability`: a conditional
+condition from `Semantics.Probabilistic.ConditionalAssertability`: a conditional
 "if A then C" is assertable when P(A) > 0 and P(C|A) ≥ θ.
 
 ## Experiments
@@ -70,7 +70,7 @@ namespace GrusdtLassiterFranke2022
 
 open Core.Causal
 open Core.Causal.BayesNet
-open Semantics.Conditionals.Assertability
+open Semantics.Probabilistic.ConditionalAssertability
 open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 

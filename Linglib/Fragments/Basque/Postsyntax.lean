@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Features
+import Linglib.Theories.Syntax.Minimalism.Features
 
 /-!
 # Basque Auxiliary Postsyntactic Inventory @cite{arregi-nevins-2012} @cite{middleton-2026}

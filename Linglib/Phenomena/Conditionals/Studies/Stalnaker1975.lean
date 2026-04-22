@@ -1,4 +1,5 @@
 import Linglib.Theories.Semantics.Conditionals.Basic
+import Linglib.Theories.Semantics.Conditionals.Stalnaker
 import Linglib.Theories.Pragmatics.Assertion.ReasonableInference
 
 /-!

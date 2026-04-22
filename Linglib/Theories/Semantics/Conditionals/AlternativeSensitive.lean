@@ -223,24 +223,24 @@ private def fightAllies : SpainW → Bool | .allies => true | _ => false
 /-- With DIST_π, SDA fails: the Allies simplification is false. -/
 theorem spain_sda_fails :
     sdaEval spainSim [fightAxis, fightAllies]
-      fightAxis .actual = false := by native_decide
+      fightAxis .actual = false := by decide
 
 /-- Homogeneity evaluation returns GAP (mixed results). -/
 theorem spain_homogeneity_gap :
     homogeneityEval spainSim [fightAxis, fightAllies]
-      fightAxis .actual = .gap := by native_decide
+      fightAxis .actual = .indet := by decide
 
 /-- Without DIST_π, Lewis's disjunctive closure gives TRUE: the closest
     (Axis ∨ Allies)-world is the Axis-world, which satisfies C. -/
 theorem spain_lewis_true :
     lewisDAC spainSim fightAxis fightAllies
-      fightAxis .actual = true := by native_decide
+      fightAxis .actual = true := by decide
 
 /-- DCR reading gives TRUE: at least one alternative succeeds
     (the Axis simplification is true). -/
 theorem spain_dcr_true :
     dcrEval spainSim [fightAxis, fightAllies]
-      fightAxis .actual = true := by native_decide
+      fightAxis .actual = true := by decide
 
 /-- **Failure of Antecedent Strengthening** (Constraint #1, p. 513):
     the Lewis reading of (8) "if Axis or Allies, fought Axis" is true,
@@ -249,7 +249,7 @@ theorem spain_dcr_true :
 theorem antecedent_strengthening_fails :
     lewisDAC spainSim fightAxis fightAllies fightAxis .actual = true ∧
     sdaEval spainSim [fightAllies] fightAxis .actual = false :=
-  ⟨by native_decide, by native_decide⟩
+  ⟨by decide, by decide⟩
 
 end Spain
 
@@ -303,13 +303,13 @@ theorem antecedents_equivalent :
     Closest annaCame-world is annaOnly; the party is fun there. -/
 theorem simple_antecedent_true :
     sdaEval partySim [annaCame] partyFun .actual = true := by
-  native_decide
+  decide
 
 /-- Disjunctive antecedent [annaCame, ottoAndAnnaCame]: FALSE.
     Closest ottoAndAnnaCame-world is both; the party is not fun there. -/
 theorem disjunctive_antecedent_false :
     sdaEval partySim [annaCame, ottoAndAnnaCame]
-      partyFun .actual = false := by native_decide
+      partyFun .actual = false := by decide
 
 /-- **Hyperintensionality**: logically equivalent antecedents with
     different alternatives yield different conditional truth values.
@@ -319,7 +319,7 @@ theorem hyperintensional :
     sdaEval partySim [annaCame] partyFun .actual ≠
     sdaEval partySim [annaCame, ottoAndAnnaCame]
       partyFun .actual :=
-  ⟨antecedents_equivalent, by native_decide⟩
+  ⟨antecedents_equivalent, by decide⟩
 
 /-- Substitution of Logical Equivalents fails: Constraint #3 from
     @cite{santorio-2018} (p. 514). Alias for `hyperintensional`. -/
@@ -486,31 +486,31 @@ private def oaAlts : List (OAWorld → Bool) :=
 /-- {O∨A} alone is NOT stable (p. 536): no world satisfies
     O∨A ∧ ¬O ∧ ¬A ∧ ¬(O∧A). -/
 theorem oa_singleton_not_stable :
-    isStable oaAlts [0] = false := by native_decide
+    isStable oaAlts [0] = false := by decide
 
 /-- {O∨A, O} IS stable (witness: ottoOnly satisfies
     O∨A ∧ O ∧ ¬A ∧ ¬(O∧A)). -/
 theorem oa_otto_stable :
-    isStable oaAlts [0, 1] = true := by native_decide
+    isStable oaAlts [0, 1] = true := by decide
 
 /-- {O∨A, A} IS stable (witness: annaOnly). -/
 theorem oa_anna_stable :
-    isStable oaAlts [0, 2] = true := by native_decide
+    isStable oaAlts [0, 2] = true := by decide
 
 /-- {O∨A, O∧A} is NOT stable: O∧A implies O∨A, but ¬O ∧ ¬A
     contradicts O∧A. -/
 theorem oa_conj_not_stable :
-    isStable oaAlts [0, 3] = false := by native_decide
+    isStable oaAlts [0, 3] = false := by decide
 
 -- ── Minimality checks ─────────────────────────────────────────
 
 /-- {O∨A, O} is MINIMAL stable: neither {O∨A} nor {O} alone is stable. -/
 theorem oa_otto_minimal :
-    isMinimalStable oaAlts [0, 1] = true := by native_decide
+    isMinimalStable oaAlts [0, 1] = true := by decide
 
 /-- {O∨A, A} is MINIMAL stable. -/
 theorem oa_anna_minimal :
-    isMinimalStable oaAlts [0, 2] = true := by native_decide
+    isMinimalStable oaAlts [0, 2] = true := by decide
 
 -- ── Truthmaker identification ─────────────────────────────────
 
@@ -518,19 +518,19 @@ theorem oa_anna_minimal :
     the stronger conjunct. -/
 theorem oa_otto_closure_eq :
     ∀ w : OAWorld, conjunctiveClosure oaAlts [0, 1] w = ottoWent w := by
-  intro w; cases w <;> native_decide
+  intro w; cases w <;> decide
 
 /-- ⋂₀ {O∨A, A} = A (Anna went). -/
 theorem oa_anna_closure_eq :
     ∀ w : OAWorld, conjunctiveClosure oaAlts [0, 2] w = annaWent w := by
-  intro w; cases w <;> native_decide
+  intro w; cases w <;> decide
 
 /-- O is a truthmaker of O∨A via the minimal stable subset {O∨A, O}:
     both conditions of the full definition (p. 540) are satisfied. -/
 theorem oa_otto_is_truthmaker :
     IsTruthmakerOf oaAlts ottoOrAnna [0, 1] := by
   unfold IsTruthmakerOf; constructor
-  · native_decide
+  · decide
   · intro w h
     have := oa_otto_closure_eq w
     simp [this] at h
@@ -540,7 +540,7 @@ theorem oa_otto_is_truthmaker :
 theorem oa_anna_is_truthmaker :
     IsTruthmakerOf oaAlts ottoOrAnna [0, 2] := by
   unfold IsTruthmakerOf; constructor
-  · native_decide
+  · decide
   · intro w h
     have := oa_anna_closure_eq w
     simp [this] at h
@@ -558,7 +558,15 @@ Fox finds maximal sets of alternatives that can consistently be
 **included** (with the complement negated). For disjunction alternatives
 `{p∨q, p, q, p∧q}`, the complement (within `NW = {p, q, p∧q}`) of each
 minimal stable subset equals the corresponding maximal consistent
-exclusion. The general duality theorem is not formalized here.
+exclusion.
+
+We have not formalized the general
+`santorio_minimal_stable_dual_to_fox_innocent_exclusion` theorem.
+TODO: prove it as `theorem ... : ... := by sorry` once the
+@cite{fox-2007} `IsInnocentExclusion` predicate
+(`Theories/Semantics/Exhaustification/Operators/InnocentExclusion.lean`)
+is parameterizable enough to take the disjunction-alternative shape
+the duality requires.
 -/
 
 

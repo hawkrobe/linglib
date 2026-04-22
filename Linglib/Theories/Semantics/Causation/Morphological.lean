@@ -384,7 +384,7 @@ theorem physImpact_no_induced :
       [BECOME [x STATE]], with no causer position. On the competing
       reflexivization analysis (@cite{koontz-garboden-2009}), CAUSE is
       retained and the EFFECTOR is identified with the THEME — the result
-      is bieventive. See `EventStructure.AnticausativeAnalysis`.
+      is bieventive. See `Phenomena/Causation/Studies/KoontzGarboden2009.lean`.
     - **reflexive**: the causer and causee are *coidentified* —
       a single participant fills both roles. The result is bieventive:
       [x ACT] CAUSE [BECOME [x STATE]] with causer = causee.
@@ -440,7 +440,8 @@ theorem bieventive_implies_bySelf (it : IntransitivizationType) :
 
 /-- Anticausatives are monoeventive on @cite{krejci-2012}'s analysis:
     no coidentification, no bieventivity, no "by itself" licensing.
-    @cite{koontz-garboden-2009} disputes this — see `AnticausativeAnalysis`. -/
+    @cite{koontz-garboden-2009} disputes this — see
+    `Phenomena/Causation/Studies/KoontzGarboden2009.lean`. -/
 theorem anticausative_monoeventive :
     IntransitivizationType.isBieventive .anticausative = false ∧
     IntransitivizationType.hasCoidentification .anticausative = false ∧

@@ -20,7 +20,7 @@ Amalgamation (a post-syntactic PF operation that respects HMC).
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Theories.Syntax.Minimalism.Phase
 
 namespace Minimalism
 

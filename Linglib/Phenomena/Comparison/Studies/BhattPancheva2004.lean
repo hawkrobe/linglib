@@ -20,7 +20,7 @@ This file is a paper-faithful study of B&P 2004. It does **not** define
 late merger or the Heim-Kennedy Constraint — those live in the
 syntax–semantics interface module
 `Theories/Interfaces/SyntaxSemantics/Minimalism/DegreeMovement.lean`,
-which itself imports `Theories/Syntax/Minimalism/Core/LateMerger.lean`
+which itself imports `Theories/Syntax/Minimalism/LateMerger.lean`
 (generic late merger, polymorphic in admissibility) and
 `Theories/Semantics/Degree/Comparative.lean` (set-of-degrees comparative
 operator). What this file *does* is instantiate that infrastructure for

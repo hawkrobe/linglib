@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.LateMerger
+import Linglib.Theories.Syntax.Minimalism.LateMerger
 import Linglib.Theories.Semantics.Degree.Comparative
 
 /-!
@@ -13,13 +13,13 @@ Their *syntactic* placement is constrained by late merger
 the Heim-Kennedy Constraint (@cite{heim-2000}). Both constraints
 relate the LF position of a DegP to the LF position of any
 quantificational DP whose trace appears inside it. This file is the
-bridge: it imports late merger from `Theories/Syntax/Minimalism/Core/`
+bridge: it imports late merger from `Theories/Syntax/Minimalism/`
 and the comparative operator from `Theories/Semantics/Degree/`, and
 expresses the constraints that reach across the two.
 
 ## What lives where
 
-- **Syntactic late merger** (`Theories/Syntax/Minimalism/Core/LateMerger.lean`):
+- **Syntactic late merger** (`Theories/Syntax/Minimalism/LateMerger.lean`):
   `lateMergerBleeds`, polymorphic over admissibility. Knows nothing
   about degrees.
 - **Comparative operator** (`Theories/Semantics/Degree/Comparative.lean`):

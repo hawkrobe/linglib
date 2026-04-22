@@ -16,5 +16,11 @@ def typology : LanguageProfile :=
     |>.withWordOrderFromWALS
     |>.withAdpositionFromWALS
     |>.withMorph morphProfile
+    |>.withRelativization
+        { subjStrategy := .gap
+        , oblStrategy := .gap
+        , rcPosition := .preNominal
+        , lowestRelativizable := .oblique
+        , notes := "Gap strategy; pre-nominal RC; parallel to Japanese" }
 
 end Fragments.Korean

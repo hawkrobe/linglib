@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Core.WALS.Features.F87A
-import Linglib.Theories.Syntax.Minimalism.Core.Modification
+import Linglib.Theories.Syntax.Minimalism.Modification
 import Linglib.Theories.Morphology.Core.ICP
 import Linglib.Fragments.Greek.AdjAgreement
 import Linglib.Fragments.German.AdjAgreement

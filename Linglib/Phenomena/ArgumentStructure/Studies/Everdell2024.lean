@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Applicative
 import Linglib.Phenomena.ArgumentStructure.Studies.Pylkkanen2008
 
 /-!

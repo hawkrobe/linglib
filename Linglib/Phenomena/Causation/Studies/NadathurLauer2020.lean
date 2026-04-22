@@ -93,9 +93,9 @@ end Preemption
 A surgeon operates (S), which prevents the patient from dying (D).
 Without surgery the disease (B) would kill the patient.
 
-Model: B → D (disease causes death), S ∧ B → ¬D is modeled by making
-surgery block the disease law. We model this as: B → D is the only law,
-and surgery removes B from the situation (counterfactual intervention). -/
+Model: `D := B ∧ ¬S` — disease causes death only when surgery doesn't
+intervene. Negative-precondition encoding (`(surgery, false)`) is
+first-class under the @cite{schulz-2011}/@cite{fitting-1985} substrate. -/
 
 section Prevention
 
@@ -103,23 +103,23 @@ def disease : Variable := mkVar "disease"
 def surgery : Variable := mkVar "surgery"
 def death : Variable := mkVar "death"
 
-/-- Without surgery: disease → death. -/
+/-- Disease causes death unless surgery intervenes: `D := B ∧ ¬S`. -/
 def preventionDyn : CausalDynamics :=
-  ⟨[CausalLaw.conjunctive disease (mkVar "no_surgery") death]⟩
+  ⟨[{ preconditions := [(disease, true), (surgery, false)], effect := death }]⟩
 
-/-- Background: disease present, no surgery (no_surgery = true). -/
+/-- Background: disease present, no surgery performed (S=0). -/
 def preventionBg : Situation :=
-  Situation.empty.extend disease true |>.extend (mkVar "no_surgery") true
+  Situation.empty.extend disease true |>.extend surgery false
 
 /-- Disease is sufficient for death when surgery is absent. -/
 theorem disease_sufficient_no_surgery :
     causallySufficient preventionDyn
-      (Situation.empty.extend (mkVar "no_surgery") true)
-      disease death = true := by
+      (Situation.empty.extend surgery false)
+      disease death := by
   native_decide
 
 /-- Disease is NOT sufficient for death in an empty background
-    (needs the no_surgery enabling condition). -/
+    (needs the surgery=false enabling condition). -/
 theorem disease_not_sufficient_alone :
     ¬ (causallySufficient preventionDyn Situation.empty disease death) := by
   native_decide
@@ -238,12 +238,11 @@ theorem bypass_profile_a :
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
 /-- Chain bypass: B has no causal power over C.
-    B is not sufficient (no B→C law), but IS necessary under Def 10b:
-    the only way to achieve C is through A→C, which also fires A→B,
-    so every path to C entails B. -/
+    B is not sufficient (no B→C law) AND not necessary (Def 10b allows
+    setting A directly in a supersituation, achieving C without B). -/
 theorem bypass_profile_b :
     ¬ causallySufficient bypassDyn Situation.empty b c ∧
-    causallyNecessary bypassDyn Situation.empty b c ∧
+    ¬ causallyNecessary bypassDyn Situation.empty b c ∧
     ¬ hasDirectLaw bypassDyn b c := by
   refine ⟨?_, ?_, ?_⟩ <;> native_decide
 
@@ -268,7 +267,7 @@ theorem intervene_cuts_laws :
 theorem intervene_overrides :
     let (dyn', s') := intervene preemptionDyn
       (Situation.empty.extend suzyThrows true) bottleShatters false
-    (normalDevelopment dyn' s').hasValue bottleShatters false = true := by
+    (normalDevelopment dyn' s').hasValue bottleShatters false := by
   native_decide
 
 /-- Suzy's throw manipulates the bottle: do(throw=T) vs do(throw=F)
@@ -335,8 +334,16 @@ With both present, lightning is sufficient (makeSem) but not necessary
 theorem make_cause_truth_conditionally_distinct :
     ∃ (dyn : CausalDynamics) (s : Situation) (c e : Variable),
       makeSem dyn s c e ≠ causeSem dyn s c e := by
-  exact ⟨.disjunctiveCausation (mkVar "l") (mkVar "a") (mkVar "f"),
+  refine ⟨.disjunctiveCausation (mkVar "l") (mkVar "a") (mkVar "f"),
          Situation.empty.extend (mkVar "l") true |>.extend (mkVar "a") true,
-         mkVar "l", mkVar "f", by decide⟩
+         mkVar "l", mkVar "f", ?_⟩
+  intro heq
+  have hM : makeSem (.disjunctiveCausation (mkVar "l") (mkVar "a") (mkVar "f"))
+      (Situation.empty.extend (mkVar "l") true |>.extend (mkVar "a") true)
+      (mkVar "l") (mkVar "f") := by native_decide
+  have hNotC : ¬ causeSem (.disjunctiveCausation (mkVar "l") (mkVar "a") (mkVar "f"))
+      (Situation.empty.extend (mkVar "l") true |>.extend (mkVar "a") true)
+      (mkVar "l") (mkVar "f") := by native_decide
+  exact hNotC (heq ▸ hM)
 
 end Phenomena.Causation.StructuralCausation

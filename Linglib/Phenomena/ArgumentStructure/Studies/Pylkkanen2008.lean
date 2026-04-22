@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalism.Applicative
 import Linglib.Phenomena.ArgumentStructure.Studies.Larson1988
 
 /-!

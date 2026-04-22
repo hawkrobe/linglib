@@ -2,7 +2,7 @@ import Mathlib.Logic.Function.Iterate
 
 /-!
 # Structural Equation Model: Definitions
-@cite{nadathur-lauer-2020}
+@cite{fitting-1985} @cite{schulz-2011} @cite{nadathur-2024} @cite{nadathur-lauer-2020} @cite{kleene-1952}
 
 Core types and forward propagation for deterministic causal models.
 
@@ -10,10 +10,50 @@ Core types and forward propagation for deterministic causal models.
 - **Situation**: Partial valuations (Variable → Option Bool)
 - **CausalLaw**: Structural equations (preconditions → effect)
 - **CausalDynamics**: Collections of causal laws
-- **normalDevelopment**: Forward propagation to fixpoint
 
-The `trueLE` preorder, monotonicity proofs, and counterfactual queries
-live in sibling files (`Monotonicity`, `Counterfactual`).
+## Three-valued substrate
+
+`Situation` interprets `none` as @cite{kleene-1952}'s `u` (undetermined),
+the third truth value alongside `false` (`some false`) and `true`
+(`some true`). The information ordering `u ⊑ false`, `u ⊑ true`
+(@cite{fitting-1985} §2-3) makes negative preconditions like `¬BRK`
+genuinely partial: a precondition `(v, false)` is met iff
+`s.get v = some false` (definite absence), not iff
+`s.get v ≠ some true` (default-to-false).
+
+This is the substrate @cite{schulz-2011} adopts for causal counterfactuals
+(§3.1, three-valued truth tables in Fig. 1) and that @cite{nadathur-2024}
+inherits for implicative-verb semantics (§4, Definitions 4 & 9):
+variables with `u`-status block law firing, modeling Nadathur's
+"potential obstacle" reading.
+
+## Information monotonicity (Schulz's T_D)
+
+`CausalLaw.apply` is the per-law version of @cite{schulz-2011}'s operator
+`T_D` (Definition 3): a law fires only when its effect is undetermined
+(`s.get q = u`); once determined, the value is preserved even if the
+dynamics would predict otherwise. As Schulz notes (footnote 7,
+p. 246): "T cannot change the truth value of propositional variable
+already set to 1 or 0, even if this contradicts the predictions made
+by causal regularities described in the dynamics D."
+
+This information-monotonicity gives well-founded fixpoint iteration via
+the `Option.isNone` measure (in `Monotonicity.lean`) — an explicit Lean
+realization of Schulz's footnoted claim that the fixpoint "can be
+reached in finitely many steps." No polarity restriction on
+preconditions is needed; @cite{fitting-1985}'s Kripke-Kleene framework
+admits negation natively.
+
+## Generalization beyond Schulz
+
+@cite{schulz-2011} associates each inner variable with a single truth
+function `f_q : {0,1}^n → {0,1}`. We allow multiple `CausalLaw`s per
+effect variable (disjunctive causation, conjunctive paths). With
+information-monotone `apply`, the foldl over laws produces a "first
+firing wins" semantics: if multiple compatible laws would fire, the
+first sets the value; subsequent laws are blocked by the determined
+effect. For well-formed dynamics (laws agree on effect values), this
+matches Schulz's single-`f_q` model.
 -/
 
 namespace Core.Causal
@@ -63,9 +103,12 @@ def empty : Situation := ⟨λ _ => none⟩
 /-- Get the value of a variable (if determined). -/
 def get (s : Situation) (v : Variable) : Option Bool := s.valuation v
 
-/-- Check if a variable has a specific value in the situation. -/
-def hasValue (s : Situation) (v : Variable) (val : Bool) : Bool :=
-  s.valuation v == some val
+/-- The variable has a specific value in the situation. -/
+def hasValue (s : Situation) (v : Variable) (val : Bool) : Prop :=
+  s.valuation v = some val
+
+instance (s : Situation) (v : Variable) (val : Bool) : Decidable (s.hasValue v val) :=
+  inferInstanceAs (Decidable (_ = _))
 
 /-- **Extend** a situation with a new assignment: s ⊕ {v = val}.
     If the variable was already determined, the new value overwrites. -/
@@ -96,25 +139,36 @@ def allExtensions (s : Situation) : List Variable → List Situation
     let rest := s.allExtensions vs
     rest ++ rest.map (·.extend v true) ++ rest.map (·.extend v false)
 
-/-- Extending at `v` and querying `v` returns whether the values match. -/
+/-- Extending at `v` and querying `v` returns true iff the values match. -/
 @[simp] theorem extend_hasValue_same {s : Situation} {v : Variable} {val bval : Bool} :
-    (s.extend v val).hasValue v bval = (val == bval) := by
+    (s.extend v val).hasValue v bval ↔ val = bval := by
   simp [hasValue, extend]
 
 /-- Extending at `v` doesn't affect queries at a different variable `w`. -/
 @[simp] theorem extend_hasValue_diff {s : Situation} {v w : Variable} {val bval : Bool}
-    (h : w ≠ v) : (s.extend v val).hasValue w bval = s.hasValue w bval := by
+    (h : w ≠ v) : (s.extend v val).hasValue w bval ↔ s.hasValue w bval := by
   simp [hasValue, extend, h]
 
 /-- Extending at a value already present is identity. -/
 theorem extend_eq_self {s : Situation} {v : Variable} {val : Bool}
-    (h : s.hasValue v val = true) : s.extend v val = s := by
-  unfold hasValue at h; simp only [beq_iff_eq] at h
+    (h : s.hasValue v val) : s.extend v val = s := by
   apply Situation.ext; funext w
   simp only [extend]
   by_cases hw : w = v
-  · subst hw; simp [h]
+  · subst hw; simp; exact h.symm
   · simp [hw]
+
+/-- Extending at `w ≠ v` doesn't affect the value of `v`. -/
+theorem extend_get_ne {s : Situation} {v w : Variable} {val : Bool}
+    (h : v ≠ w) : (s.extend w val).get v = s.get v := by
+  unfold get extend
+  simp only
+  rw [show (v == w) = false from beq_false_of_ne h]; rfl
+
+/-- Extending at a fresh variable produces `some val` at that variable. -/
+@[simp] theorem extend_get_same (s : Situation) (v : Variable) (val : Bool) :
+    (s.extend v val).get v = some val := by
+  unfold get extend; simp
 
 end Situation
 
@@ -124,7 +178,7 @@ end Situation
     is also `true` in s₂. This is the natural preorder for reasoning about
     monotonicity of positive causal dynamics. -/
 def Situation.trueLE (s₁ s₂ : Situation) : Prop :=
-  ∀ v, s₁.hasValue v true = true → s₂.hasValue v true = true
+  ∀ v, s₁.hasValue v true → s₂.hasValue v true
 
 theorem Situation.trueLE_refl (s : Situation) : s.trueLE s := fun _ hv => hv
 
@@ -153,22 +207,46 @@ structure CausalLaw where
 
 namespace CausalLaw
 
-/-- Check if all preconditions of a law are satisfied in a situation. -/
-def preconditionsMet (law : CausalLaw) (s : Situation) : Bool :=
-  law.preconditions.all λ (v, val) => s.hasValue v val
+/-- All preconditions of a law are satisfied in a situation.
 
-/-- Apply a law to a situation (if preconditions met, set effect). -/
+    A precondition `(v, val)` is met iff `s.get v = some val` — strong-Kleene
+    reading. Undetermined (`none`) variables do not satisfy any precondition,
+    so laws referring to them are blocked rather than defaulting their value. -/
+def preconditionsMet (law : CausalLaw) (s : Situation) : Prop :=
+  ∀ p ∈ law.preconditions, s.hasValue p.1 p.2
+
+instance (law : CausalLaw) (s : Situation) : Decidable (law.preconditionsMet s) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
+
+/-- Apply a law to a situation. The law fires iff (i) its preconditions are
+    met AND (ii) its effect is undetermined in `s`. Once a variable is
+    determined (`some _`), no law overwrites it — this is the
+    information-monotonicity invariant that makes `applyLawsOnce` strictly
+    decrease the count of undetermined variables on every effective step
+    (see `Monotonicity.lean`).
+
+    Exogenous overrides should go through `intervene` (Pearl's
+    `do(X = val)`), which removes laws targeting the variable and then
+    extends the situation; not through manual `extend` followed by `apply`. -/
 def apply (law : CausalLaw) (s : Situation) : Situation :=
-  bif law.preconditionsMet s then
-    s.extend law.effect law.effectValue
-  else
-    s
+  match s.get law.effect with
+  | none =>
+    if law.preconditionsMet s then
+      s.extend law.effect law.effectValue
+    else
+      s
+  | some _ => s
 
-/-- Create a simple law: if cause = true, then effect = true. -/
+/-- Create a simple law: if cause = true, then effect = true.
+    This is the structural equation B := A from @cite{sloman-barbey-hotaling-2009}
+    Figure 4 (eq. 2): the causal-model-theoretic representation of "A causes B". -/
 def simple (cause effect : Variable) : CausalLaw :=
   { preconditions := [(cause, true)], effect := effect }
 
-/-- Create a conjunctive law: if cause1 = true ∧ cause2 = true, then effect = true. -/
+/-- Create a conjunctive law: if cause1 = true ∧ cause2 = true, then effect = true.
+    This is the structural equation B := A ∧ X from @cite{sloman-barbey-hotaling-2009}
+    Figure 4 (eq. 3): the causal-model-theoretic representation of "A enables B"
+    where X is the accessory variable. -/
 def conjunctive (cause1 cause2 effect : Variable) : CausalLaw :=
   { preconditions := [(cause1, true), (cause2, true)], effect := effect }
 
@@ -179,17 +257,39 @@ def conjunctive (cause1 cause2 effect : Variable) : CausalLaw :=
 def inhibitory (cause effect : Variable) : CausalLaw :=
   { preconditions := [(cause, false)], effect := effect }
 
-/-- If preconditions are not met, applying the law is a no-op.
-    Avoids leaving stuck `if false = true then …` terms in goals. -/
-@[simp] theorem apply_of_not_met {law : CausalLaw} {s : Situation}
-    (h : law.preconditionsMet s = false) : law.apply s = s := by
-  unfold apply; rw [h]; rfl
+/-- Create a negated-conjunction law: if cause = false ∧ accessory = false,
+    then effect = true. This is the structural equation B := ¬(A ∧ X) from
+    @cite{sloman-barbey-hotaling-2009} Figure 4 (eq. 4c): a context-dependent
+    prevention form where the effect is blocked iff *both* the preventer and
+    the accessory are jointly present.
 
-/-- If preconditions are met, applying the law extends the situation. -/
-@[simp] theorem apply_of_met {law : CausalLaw} {s : Situation}
-    (h : law.preconditionsMet s = true) :
+    Note: eq. 4c says `B := ¬(A ∧ X)`, which is equivalent to `B := ¬A ∨ ¬X`.
+    A single `CausalLaw` encodes a conjunctive precondition; the disjunctive
+    representation requires two laws (use `CausalDynamics.preventionNegConj`). -/
+def inhibitoryConj (preventer accessory effect : Variable) : CausalLaw :=
+  { preconditions := [(preventer, false), (accessory, false)], effect := effect }
+
+/-- If preconditions are not met, applying the law is a no-op. -/
+@[simp] theorem apply_of_not_met {law : CausalLaw} {s : Situation}
+    (h : ¬ law.preconditionsMet s) : law.apply s = s := by
+  unfold apply
+  cases hg : s.get law.effect
+  · simp [h]
+  · rfl
+
+/-- If the effect is already determined, applying the law is a no-op
+    (information-monotonicity invariant). -/
+@[simp] theorem apply_of_determined {law : CausalLaw} {s : Situation} {b : Bool}
+    (h : s.get law.effect = some b) : law.apply s = s := by
+  unfold apply; rw [h]
+
+/-- If preconditions are met AND the effect is undetermined, applying the
+    law extends the situation with the effect's value. -/
+theorem apply_of_met_undetermined {law : CausalLaw} {s : Situation}
+    (hMet : law.preconditionsMet s)
+    (hNone : s.get law.effect = none) :
     law.apply s = s.extend law.effect law.effectValue := by
-  unfold apply; rw [h]; rfl
+  unfold apply; rw [hNone]; simp [hMet]
 
 /-- The effect variable of a simple law. -/
 @[simp] theorem simple_effect (c e : Variable) :
@@ -244,17 +344,15 @@ def prevention (preventer effect : Variable) : CausalDynamics :=
 def preventionWithAccessory (preventer accessory effect : Variable) : CausalDynamics :=
   ⟨[{ preconditions := [(preventer, false), (accessory, true)], effect := effect }]⟩
 
+/-- Prevention via negated conjunction: B := ¬(A ∧ X) (@cite{sloman-barbey-hotaling-2009}
+    eq. 4c). Equivalent to `B := ¬A ∨ ¬X` — the effect occurs unless *both*
+    preventer and accessory are jointly present. Models "A prevents B (when X)
+    only by means of being conjoined with X". Encoded as two disjunctive laws. -/
+def preventionNegConj (preventer accessory effect : Variable) : CausalDynamics :=
+  ⟨[CausalLaw.inhibitory preventer effect,
+    CausalLaw.inhibitory accessory effect]⟩
+
 end CausalDynamics
-
-/-- A dynamics is **positive** if all preconditions require `true` and all
-    effect values are `true`. Positive dynamics have no inhibitory connections:
-    causes can only enable effects, never block them.
-
-    This is the key structural condition for monotonicity results: in positive
-    dynamics, adding `true` values to a situation can only enable more laws,
-    never block them. -/
-def isPositiveDynamics (dyn : CausalDynamics) : Bool :=
-  dyn.laws.all (fun law => law.preconditions.all (·.2) && law.effectValue)
 
 /-- All variables mentioned in a dynamics (preconditions and effects). -/
 def allVariables (dyn : CausalDynamics) : List Variable :=
@@ -272,207 +370,90 @@ theorem effect_mem_innerVariables (dyn : CausalDynamics) (law : CausalLaw)
   exact List.mem_eraseDups.mpr (List.mem_map.mpr ⟨law, h, rfl⟩)
 
 -- ============================================================
--- § Positivity Typeclass
+-- § Causal ancestors (@cite{nadathur-2024} Definitions 2 & 11)
 -- ============================================================
 
-/-- Typeclass marker: `dyn` is a positive dynamics (no inhibitory connections).
+/-- **Immediate ancestors** of `X`: variables appearing as preconditions
+    of any law whose effect is `X`. (@cite{nadathur-2024} Def 2 — the
+    relation `R_F`.) -/
+def immediateAncestors (dyn : CausalDynamics) (X : Variable) : List Variable :=
+  (dyn.laws.filter (·.effect == X)
+    |>.flatMap (·.preconditions.map (·.1))).eraseDups
 
-    The whole linguistic API in `Counterfactual.lean` (`causallySufficient`,
-    `causallyNecessary`, etc.) requires this; for non-positive dynamics use
-    the structural `preventSem` from `Theories/Semantics/Causation/Prevention.lean`. -/
-class IsPositive (dyn : CausalDynamics) : Prop where
-  positive : isPositiveDynamics dyn = true
+/-- **Causal ancestors** of `X`: transitive closure of `immediateAncestors`.
+    @cite{nadathur-2024} Definition 11.
 
-namespace IsPositive
+    Computed by iterating "expand by immediate ancestors of current set"
+    `|allVariables|` times — guaranteed to reach the closure since the
+    ancestor set is bounded above by `allVariables` and grows monotonically. -/
+def causalAncestors (dyn : CausalDynamics) (X : Variable) : List Variable :=
+  let expand (acc : List Variable) : List Variable :=
+    (acc ++ acc.flatMap (immediateAncestors dyn)).eraseDups
+  expand^[(allVariables dyn).length] (immediateAncestors dyn X)
 
-/-- Empty dynamics is trivially positive. -/
-instance : IsPositive CausalDynamics.empty where positive := by decide
+namespace Situation
 
-/-- A simple law `c → e` is positive. -/
-instance (cause effect : Variable) :
-    IsPositive ⟨[CausalLaw.simple cause effect]⟩ where
-  positive := rfl
+/-- The **domain** of a situation `s`: variables `X` with `s(X) ≠ u`.
+    @cite{nadathur-2024} Definition 7. -/
+def dom (s : Situation) (vars : List Variable) : List Variable :=
+  vars.filter (fun v => decide ((s.get v).isSome))
 
-/-- Disjunctive causation `a → c, b → c` is positive. -/
-instance (a b c : Variable) : IsPositive (CausalDynamics.disjunctiveCausation a b c) where
-  positive := rfl
-
-/-- Conjunctive causation `a ∧ b → c` is positive. -/
-instance (a b c : Variable) : IsPositive (CausalDynamics.conjunctiveCausation a b c) where
-  positive := rfl
-
-/-- Causal chain `a → b → c` is positive. -/
-instance (a b c : Variable) : IsPositive (CausalDynamics.causalChain a b c) where
-  positive := rfl
-
-end IsPositive
+end Situation
 
 -- ============================================================
--- § Normal Causal Development (Def 15)
+-- § Normal Causal Development primitives
 -- ============================================================
 
 /-- Apply all laws once to a situation (one step of forward propagation). -/
 def applyLawsOnce (dyn : CausalDynamics) (s : Situation) : Situation :=
   dyn.laws.foldl (λ s' law => law.apply s') s
 
-/-- Check if a situation is a fixpoint (no law can change it). -/
-def isFixpoint (dyn : CausalDynamics) (s : Situation) : Bool :=
-  dyn.laws.all λ law =>
-    !law.preconditionsMet s ||
-    s.hasValue law.effect law.effectValue
+/-- A situation is a fixpoint of the dynamics: every law is satisfied —
+    either its preconditions are unmet or its effect is already determined.
 
-/-- The default fuel level used by `normalDevelopment` when no explicit fuel
-    is supplied. Large enough for all dynamics in the codebase; for positive
-    dynamics, see `Monotonicity.lean` for a fuel-free `normalDevelopmentPositive`
-    via well-founded recursion. -/
-abbrev defaultFuel : Nat := 100
+    With information-monotone `apply`, a third case — effect determined
+    to a *different* value than the law would predict — also counts as
+    satisfied (the law won't fire), but that case is semantically weird
+    for well-formed dynamics; the user should handle it via `intervene`
+    instead. -/
+def isFixpoint (dyn : CausalDynamics) (s : Situation) : Prop :=
+  ∀ law ∈ dyn.laws, law.preconditionsMet s → s.get law.effect ≠ none
 
-/-- **Normal Causal Development** (Definition 15)
+instance (dyn : CausalDynamics) (s : Situation) : Decidable (isFixpoint dyn s) :=
+  inferInstanceAs (Decidable (∀ _ ∈ _, _))
 
-    Iterate forward propagation until fixpoint. Uses bounded iteration
-    (fuel) to ensure termination. -/
-def normalDevelopment (dyn : CausalDynamics) (s : Situation)
-    (fuel : Nat := defaultFuel) : Situation :=
-  match fuel with
-  | 0 => s
-  | n + 1 =>
-    let s' := applyLawsOnce dyn s
-    bif isFixpoint dyn s' then s'
-    else normalDevelopment dyn s' n
-
--- Fixpoint Theorems
-
-/-- Unfold normalDevelopment one step. -/
-@[simp] theorem normalDevelopment_succ (dyn : CausalDynamics) (s : Situation) (n : Nat) :
-    normalDevelopment dyn s (n + 1) =
-      let s' := applyLawsOnce dyn s
-      bif isFixpoint dyn s' then s' else normalDevelopment dyn s' n := rfl
-
-/-- If the first round reaches a fixpoint, normalDevelopment returns it. -/
-theorem normalDevelopment_succ_fix {dyn : CausalDynamics} {s : Situation} {n : Nat}
-    (h : isFixpoint dyn (applyLawsOnce dyn s) = true) :
-    normalDevelopment dyn s (n + 1) = applyLawsOnce dyn s := by
-  simp [h]
-
-/-- If the first round is NOT a fixpoint, normalDevelopment recurses. -/
-theorem normalDevelopment_succ_step {dyn : CausalDynamics} {s : Situation} {n : Nat}
-    (h : isFixpoint dyn (applyLawsOnce dyn s) = false) :
-    normalDevelopment dyn s (n + 1) = normalDevelopment dyn (applyLawsOnce dyn s) n := by
-  simp [h]
-
-/-- If the result of one round of law application is a fixpoint,
-    normalDevelopment returns that result. -/
-theorem normalDevelopment_fixpoint_after_one (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
-    (h : isFixpoint dyn (applyLawsOnce dyn s) = true) :
-    normalDevelopment dyn s (fuel + 1) = applyLawsOnce dyn s := by
-  simp [h]
-
-/-- Fuel-agnostic version: any positive fuel is enough when one round suffices. -/
-theorem normalDevelopment_eq_applyLawsOnce_of_fixpoint
-    (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
-    (h : isFixpoint dyn (applyLawsOnce dyn s) = true) (hpos : 0 < fuel) :
-    normalDevelopment dyn s fuel = applyLawsOnce dyn s := by
-  obtain ⟨n, rfl⟩ := Nat.exists_eq_succ_of_ne_zero (Nat.pos_iff_ne_zero.mp hpos)
-  exact normalDevelopment_fixpoint_after_one dyn s h
-
-/-- If the first round is not a fixpoint but the second is,
-    normalDevelopment returns the second-round result. -/
-theorem normalDevelopment_fixpoint_after_two (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
-    (h1 : isFixpoint dyn (applyLawsOnce dyn s) = false)
-    (h2 : isFixpoint dyn (applyLawsOnce dyn (applyLawsOnce dyn s)) = true) :
-    normalDevelopment dyn s (fuel + 2) =
-      applyLawsOnce dyn (applyLawsOnce dyn s) := by
-  simp [h1, h2]
-
-/-- Fuel-agnostic version of `_after_two`: any fuel ≥ 2 suffices. -/
-theorem normalDevelopment_eq_applyLawsTwice_of_fixpoint
-    (dyn : CausalDynamics) (s : Situation) {fuel : Nat}
-    (h1 : isFixpoint dyn (applyLawsOnce dyn s) = false)
-    (h2 : isFixpoint dyn (applyLawsOnce dyn (applyLawsOnce dyn s)) = true)
-    (hge : 2 ≤ fuel) :
-    normalDevelopment dyn s fuel = applyLawsOnce dyn (applyLawsOnce dyn s) := by
-  match fuel, hge with
-  | n + 2, _ => exact normalDevelopment_fixpoint_after_two dyn s h1 h2
-
-/-- General fixpoint theorem: if `applyLawsOnce` reaches a fixpoint after
-    exactly `n + 1` rounds, then `normalDevelopment` with sufficient fuel
-    returns `(applyLawsOnce dyn)^[n + 1] s`.
-
-    `_after_one` and `_after_two` are special cases for `n = 0` and `n = 1`. -/
-theorem normalDevelopment_fixpoint_at (dyn : CausalDynamics) (s : Situation)
-    (n : Nat) {fuel : Nat}
-    (hnfix : ∀ k, k < n → isFixpoint dyn ((applyLawsOnce dyn)^[k + 1] s) = false)
-    (hfix : isFixpoint dyn ((applyLawsOnce dyn)^[n + 1] s) = true) :
-    normalDevelopment dyn s (fuel + n + 1) = (applyLawsOnce dyn)^[n + 1] s := by
-  induction n generalizing s with
-  | zero => exact normalDevelopment_succ_fix hfix
-  | succ m ih =>
-    rw [show fuel + (m + 1) + 1 = (fuel + m + 1) + 1 from by omega,
-        normalDevelopment_succ_step (hnfix 0 (Nat.zero_lt_succ m))]
-    exact ih (applyLawsOnce dyn s)
-      (fun k hk => hnfix (k + 1) (by omega))
-      hfix
-
-/-- If a law's fixpoint condition holds (preconditions unmet or effect present),
+/-- If a law is satisfied at `s` (preconditions unmet or effect determined),
     applying the law is a no-op. -/
 theorem CausalLaw.apply_of_fixpoint {law : CausalLaw} {s : Situation}
-    (h : (!law.preconditionsMet s || s.hasValue law.effect law.effectValue) = true) :
+    (h : law.preconditionsMet s → s.get law.effect ≠ none) :
     law.apply s = s := by
-  by_cases hMet : law.preconditionsMet s = true
-  · simp only [hMet, Bool.not_true, Bool.false_or] at h
-    rw [apply_of_met hMet]
-    exact Situation.extend_eq_self h
-  · have : law.preconditionsMet s = false := by
-      cases hb : law.preconditionsMet s <;> simp_all
-    exact apply_of_not_met this
+  cases hg : s.get law.effect with
+  | none =>
+    by_cases hMet : law.preconditionsMet s
+    · exact absurd hg (h hMet)
+    · exact apply_of_not_met hMet
+  | some b => exact apply_of_determined hg
 
 /-- Folding law application over a fixpoint is identity. -/
 private theorem foldl_apply_fixpoint (laws : List CausalLaw) (s : Situation)
-    (h : ∀ l, l ∈ laws →
-      (!l.preconditionsMet s || s.hasValue l.effect l.effectValue) = true) :
+    (h : ∀ l ∈ laws, l.preconditionsMet s → s.get l.effect ≠ none) :
     laws.foldl (fun s' l => l.apply s') s = s := by
-  revert h
   induction laws with
-  | nil => intro _; rfl
+  | nil => rfl
   | cons hd tl ih =>
-    intro h
-    simp only [List.forall_mem_cons] at h
     simp only [List.foldl_cons]
-    rw [CausalLaw.apply_of_fixpoint h.1]
-    exact ih h.2
+    rw [CausalLaw.apply_of_fixpoint (h hd (List.mem_cons_self ..))]
+    exact ih (fun l hl => h l (List.mem_cons_of_mem _ hl))
 
 /-- Applying all laws to a fixpoint situation is a no-op. -/
 theorem applyLawsOnce_of_fixpoint {dyn : CausalDynamics} {s : Situation}
-    (h : isFixpoint dyn s = true) : applyLawsOnce dyn s = s := by
-  simp only [isFixpoint, List.all_eq_true] at h
-  exact foldl_apply_fixpoint dyn.laws s h
-
-/-- Normal development from a fixpoint is a no-op regardless of fuel. -/
-theorem normalDevelopment_of_fixpoint {dyn : CausalDynamics} {s : Situation}
-    (h : isFixpoint dyn s = true) (fuel : Nat) :
-    normalDevelopment dyn s fuel = s := by
-  induction fuel with
-  | zero => rfl
-  | succ n ih =>
-    have hApp : applyLawsOnce dyn s = s := applyLawsOnce_of_fixpoint h
-    have hFix : isFixpoint dyn (applyLawsOnce dyn s) = true := hApp.symm ▸ h
-    rw [normalDevelopment_succ_fix hFix, hApp]
+    (h : isFixpoint dyn s) : applyLawsOnce dyn s = s :=
+  foldl_apply_fixpoint dyn.laws s h
 
 /-- Empty dynamics: any situation is a fixpoint. -/
 theorem empty_dynamics_fixpoint (s : Situation) :
-    isFixpoint CausalDynamics.empty s = true := by
-  simp only [isFixpoint, CausalDynamics.empty, List.all_eq_true]
-  intro x hx
-  simp at hx
-
-/-- Normal development of empty dynamics returns the input unchanged. -/
-theorem empty_dynamics_unchanged (s : Situation) (fuel : Nat) :
-    normalDevelopment CausalDynamics.empty s fuel = s := by
-  induction fuel with
-  | zero => rfl
-  | succ n _ =>
-    simp only [normalDevelopment, applyLawsOnce, CausalDynamics.empty, List.foldl_nil,
-               isFixpoint]
-    simp
+    isFixpoint CausalDynamics.empty s := by
+  intro law hLaw _ _
+  simp [CausalDynamics.empty] at hLaw
 
 end Core.Causal

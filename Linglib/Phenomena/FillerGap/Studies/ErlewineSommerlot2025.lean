@@ -1,6 +1,6 @@
 import Linglib.Theories.Interfaces.SyntaxPhonology.Minimalism.CyclicLinearization
 import Linglib.Fragments.Malayic.VoiceSystem
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Voice
 
 /-!
 # Voice and Extraction in Malayic
@@ -43,7 +43,7 @@ ordering contradictions. The key theorem is that object extraction with
 overt Voice creates a contradiction, while null Voice does not.
 -/
 
-namespace ErlewineSommerlot2025
+namespace Phenomena.FillerGap.Studies.ErlewineSommerlot2025
 
 open Fragments.Malayic.VoiceSystem
 
@@ -146,38 +146,38 @@ Each grammatical derivation produces consistent ordering across phases.
 /-- Active clause is consistently linearizable.
     @cite{erlewine-sommerlot-2025} (36). -/
 theorem active_consistent :
-    spelloutAndCheck [voiceP_active, cp_active] = true := by native_decide
+    spelloutAndCheck [voiceP_active, cp_active] = true := by decide
 
 /-- Active clause with short *N-* prefix (Desa free variation). -/
 theorem active_short_consistent :
-    spelloutAndCheck [voiceP_active_short, cp_active_short] = true := by native_decide
+    spelloutAndCheck [voiceP_active_short, cp_active_short] = true := by decide
 
 /-- Subject extraction from active is consistent.
     The subject (agent) was already leftmost in VoiceP and moves further
     left through Spec,TP to Spec,CP — classic edge movement (Scenario 1
     of @cite{fox-pesetsky-2005}). -/
 theorem subject_extraction_consistent :
-    spelloutAndCheck [voiceP_active, cp_subjExtr] = true := by native_decide
+    spelloutAndCheck [voiceP_active, cp_subjExtr] = true := by decide
 
 /-- *di-* passive is consistently linearizable.
     @cite{erlewine-sommerlot-2025} (37a). -/
 theorem di_passive_consistent :
-    spelloutAndCheck [voiceP_diPassive, cp_diPassive] = true := by native_decide
+    spelloutAndCheck [voiceP_diPassive, cp_diPassive] = true := by decide
 
 /-- Bare passive is consistently linearizable.
     @cite{erlewine-sommerlot-2025} (37b)/(39c). -/
 theorem bare_passive_consistent :
-    spelloutAndCheck [voiceP_barePassive, cp_barePassive] = true := by native_decide
+    spelloutAndCheck [voiceP_barePassive, cp_barePassive] = true := by decide
 
 /-- Object extraction with null Voice (Desa) is consistent.
     @cite{erlewine-sommerlot-2025} (44). -/
 theorem obj_extraction_desa_consistent :
-    spelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] = true := by native_decide
+    spelloutAndCheck [voiceP_objExtr_null, cp_objExtr_desa] = true := by decide
 
 /-- Object extraction with null Voice (SI/SM) is consistent.
     @cite{erlewine-sommerlot-2025} (54)–(56). -/
 theorem obj_extraction_sism_consistent :
-    spelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] = true := by native_decide
+    spelloutAndCheck [voiceP_objExtr_null_sism, cp_objExtr_sism] = true := by decide
 
 /-! ### The ordering paradox: overt Voice in object extraction
 
@@ -197,7 +197,7 @@ establishing agent < *me-*. The two are contradictory.
 
     These two statements contradict: me- < agent ∧ agent < me-. -/
 theorem men_deletion :
-    spelloutAndCheck [voiceP_objExtr_overt, cp_objExtr_overt] = false := by native_decide
+    spelloutAndCheck [voiceP_objExtr_overt, cp_objExtr_overt] = false := by decide
 
 /-- The specific contradiction: VoiceP says me- before agent;
     CP says agent before me-. -/
@@ -210,7 +210,7 @@ theorem men_deletion_witness :
       (fun s => s.before == "agent" && s.after == "me-") = true ∧
     -- combined is inconsistent
     hasContradiction (allPrecs voiceP_objExtr_overt ++ allPrecs cp_objExtr_overt)
-      = true := by native_decide
+      = true := by decide
 
 -- ============================================================================
 -- § 4: Cross-Linguistic Predictions
@@ -292,7 +292,7 @@ Voice is overt.
 theorem pp_extraction_with_overt_voice :
     spelloutAndCheck [["PP", "agent", "me-", "NV", "theme"],
                       ["PP", "agent", "Aux", "me-", "NV", "theme"]] = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- § 7: Summary Prediction Table
@@ -377,4 +377,4 @@ theorem active_consistent_with_core :
     (clauseToVoiceHead .active).flavor = .agentive ∧
     (clauseToVoiceHead .active).phaseHead = Minimalism.voiceAgent.phaseHead := ⟨rfl, rfl⟩
 
-end ErlewineSommerlot2025
+end Phenomena.FillerGap.Studies.ErlewineSommerlot2025

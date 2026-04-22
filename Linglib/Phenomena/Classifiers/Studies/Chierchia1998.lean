@@ -105,15 +105,29 @@ theorem french_italian_same_mapping :
     Fragments.French.Nouns.frenchMapping =
       Fragments.Italian.Nouns.italianMapping := rfl
 
-/-- @cite{chierchia-1998}'s theory is a CLF-for-N theory: the classifier
-    atomizes the noun denotation. This predicts CLF-for-N strategy for
-    [+arg, -pred] languages, which is confirmed by Mandarin and Japanese
-    (@cite{little-moroney-royer-2022}).
+/-! ## §2: @cite{chierchia-1998}'s per-language strategy assignments
 
-    The NMP determines that nouns denote kinds (need individuation),
-    so classifiers serve the noun (atomization), not the numeral. -/
-theorem chierchia_predicts_clf_for_noun :
-    mandarin.classifierStrategy = some .forNoun ∧
-    japanese.classifierStrategy = some .forNoun := ⟨rfl, rfl⟩
+@cite{chierchia-1998}'s theory is a CLF-for-N theory: the classifier
+atomizes the noun denotation. The NMP determines that nouns denote kinds
+(need individuation), so classifiers serve the noun (atomization), not the
+numeral. This commits Chierchia's framework to a `.forNoun` strategy for
+every [+arg, -pred] language with classifiers.
+
+Per-language assignments live here (in this study file) rather than on
+`NounCategorizationSystem`, where they would silently endorse Chierchia's
+framework over alternatives like @cite{sudo-2016}'s `.sudoBlocking`. -/
+
+/-- Chierchia's strategy assignment for Japanese: CLF atomizes a kind-denoting
+    noun. -/
+def japaneseStrategy : Core.NounCategorization.ClassifierStrategy := .forNoun
+
+/-- Chierchia's strategy assignment for Mandarin: CLF atomizes a kind-denoting
+    noun. -/
+def mandarinStrategy : Core.NounCategorization.ClassifierStrategy := .forNoun
+
+/-- Chierchia's framework assigns the CLF-for-N strategy to all
+    [+arg, -pred] classifier languages. -/
+theorem chierchia_assignments_uniform :
+    japaneseStrategy = .forNoun ∧ mandarinStrategy = .forNoun := ⟨rfl, rfl⟩
 
 end Chierchia1998

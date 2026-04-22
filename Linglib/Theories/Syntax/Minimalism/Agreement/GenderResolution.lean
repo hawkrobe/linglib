@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Features
+import Linglib.Theories.Syntax.Minimalism.Features
 
 /-!
 # Gender Resolution in Coordination

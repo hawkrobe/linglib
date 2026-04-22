@@ -5,12 +5,13 @@ import Linglib.Theories.Semantics.Causation.Necessity
 import Linglib.Theories.Semantics.Causation.Prevention
 
 /-!
-# Causative Interpretation
-@cite{nadathur-lauer-2020} @cite{sloman-barbey-hotaling-2009} @cite{talmy-1988} @cite{wolff-2003}
+# Causative Interpretation (force-dynamic dispatch)
+@cite{nadathur-lauer-2020} @cite{talmy-1988} @cite{wolff-2003}
 
 Maps `Causative` verb classifications to their compositional semantics
-and derives N&L's sufficiency/necessity properties from the force-dynamic
-mechanism.
+under the **force-dynamic** view (@cite{talmy-1988}, @cite{wolff-2003}),
+which collapses `enable`/`force`/`make` into a single sufficiency
+predicate (`makeSem`) distinguished post-hoc by `isCoercive`/`isPermissive`.
 
 | Causative | Mechanism | English verbs | N&L property (derived) |
 |-----------|-----------|---------------|----------------------|
@@ -19,6 +20,21 @@ mechanism.
 | force | Coercive (overcome resistance) | force | sufficiency + coercion |
 | enable | Barrier removal (permissive) | let, enable | sufficiency |
 | prevent | Barrier addition (blocking) | prevent | preventSem |
+
+## Theoretical commitment
+
+This file commits to the force-dynamic mapping. The competing
+**causal-model-theoretic** view (@cite{sloman-barbey-hotaling-2009})
+distinguishes `enable` from `make`/`cause` *structurally*: enable
+asserts `B := A ∧ X` (accessory variable required), while cause asserts
+`B := A`. Under that view, the present `Causative.toSemantics`
+mis-classifies enable. The Sloman alternative dispatch — and a
+divergence theorem witnessing the disagreement on `enable` — lives
+in `Phenomena/Causation/Studies/SlomanBarbeyHotaling2009.lean`.
+
+This is intentional. linglib does not pretend a single canonical
+mapping exists; both dispatches coexist as named functions and the
+disagreement is theorem-provable.
 -/
 
 -- ════════════════════════════════════════════════════
@@ -32,15 +48,17 @@ open Semantics.Causation.Sufficiency
 open Semantics.Causation.Necessity
 open Semantics.Causation.Prevention
 
-/-- Map a causative classification to its semantic function.
+/-- Force-dynamic dispatch: map a causative classification to its semantic
+    function under the @cite{talmy-1988}/@cite{wolff-2003} view.
 
-    This is the structural link between the lexical annotation and the
-    formal semantics. The classification NAMES the force-dynamic mechanism;
-    this function provides the actual truth-condition computation.
+    `force` and `enable` share `makeSem` truth conditions with `make`. They
+    differ in force-dynamic properties (coercion, permissivity), which are
+    captured by `isCoercive` and `isPermissive`.
 
-    Note: `force` and `enable` share `makeSem` truth conditions with `make`.
-    They differ in force-dynamic properties (coercion, permissivity),
-    which are captured by `isCoercive` and `isPermissive`. -/
+    The competing causal-model dispatch (which assigns enable a *distinct*
+    truth-conditional predicate based on the accessory variable, per
+    @cite{sloman-barbey-hotaling-2009}) lives as `Sloman.toSemantics` in
+    `Phenomena/Causation/Studies/SlomanBarbeyHotaling2009.lean`. -/
 def Causative.toSemantics : Causative →
     (CausalDynamics → Situation → Variable → Variable → Prop)
   | .cause => causeSem
@@ -182,7 +200,8 @@ theorem sufficiency_implies_causallySufficient
 theorem necessity_implies_causallyNecessary
     (dyn : CausalDynamics) (s : Situation) (c e : Variable)
     (h : Causative.cause.toSemantics dyn s c e) :
-    causallyNecessary dyn s c e := h.2
+    causallyNecessary dyn s c e :=
+  (show causeSem dyn s c e from h).2
 
 -- ════════════════════════════════════════════════════
 -- § Bridge to CC-Selection

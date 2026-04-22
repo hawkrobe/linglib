@@ -2,9 +2,11 @@ import Linglib.Core.Lexical.NounCategorization
 import Linglib.Core.Mereology
 import Linglib.Core.Tree
 import Linglib.Phenomena.Classifiers.Typology
+import Linglib.Phenomena.Classifiers.Studies.Chierchia1998
+import Linglib.Phenomena.Classifiers.Studies.Sudo2016
 import Linglib.Fragments.Mayan.Chol.Classifiers
 import Linglib.Fragments.Shan.Classifiers
-import Linglib.Theories.Semantics.Noun.Classifier
+import Linglib.Theories.Semantics.Classifier.Basic
 
 /-!
 # Little, Moroney & Royer (2022)
@@ -62,6 +64,8 @@ open Phenomena.Classifiers
 namespace LittleMoroneyRoyer2022
 
 open Core.NounCategorization
+open Core.Typology
+open Core.Typology.NounCategorizationSystem
 open Phenomena.Classifiers.Typology
 
 -- ============================================================================
@@ -78,8 +82,7 @@ open Phenomena.Classifiers.Typology
     - Plural marking *-ob* co-occurs with classifiers (ex. 30)
     - Classifiers are ungrammatical with quantifiers, demonstratives, modifiers (ex. 19) -/
 def chol : NounCategorizationSystem :=
-  { language := "Ch'ol"
-  , family := "Mayan"
+  { family := "Mayan"
   , classifierType := .numeralClassifier
   , scopes := [.numeralNP]  -- ONLY with numerals (ex. 19: *DEM-CLF, *ADJ-CLF)
   , assignment := .semantic
@@ -89,7 +92,6 @@ def chol : NounCategorizationSystem :=
   , isObligatory := true
   , hasUnmarkedDefault := true  -- -p'ej is default
   , preferredSemantics := collectSemantics Fragments.Mayan.Chol.Classifiers.allClassifiers
-  , classifierStrategy := some .forNumeral
   , pluralClfCooccur := true  -- ex. 30: cha'-tyikil wiñik-ob 'two men' (CLF + PL)
   , source := "@cite{little-moroney-royer-2022}; @cite{bale-coon-2014}" }
 
@@ -103,8 +105,7 @@ def chol : NounCategorizationSystem :=
     - Classifiers degraded/unacceptable in counting contexts (exs. 48–49)
     - No plural–classifier co-occurrence -/
 def shan : NounCategorizationSystem :=
-  { language := "Shan"
-  , family := "Kra-Dai"
+  { family := "Kra-Dai"
   , classifierType := .numeralClassifier
   , scopes := [.numeralNP, .attributiveNP]  -- With numerals AND dems/quantifiers
   , assignment := .semantic
@@ -114,7 +115,6 @@ def shan : NounCategorizationSystem :=
   , isObligatory := true
   , hasUnmarkedDefault := true  -- ʔǎn is default
   , preferredSemantics := collectSemantics Fragments.Shan.Classifiers.allClassifiers
-  , classifierStrategy := some .forNoun
   , pluralClfCooccur := false  -- CLF and PL in same projection (Borer 2005)
   , source := "@cite{little-moroney-royer-2022}; @cite{moroney-2021}" }
 
@@ -154,44 +154,107 @@ def clfForNounPredictions : Predictions :=
   , clfBeyondNumerals := true
   , clfInCounting := false }
 
-/-- Derive distributional predictions from classifier strategy.
-    This is the paper's core claim: given the semantic strategy, the four
-    distributional predictions (Table 8) follow deterministically. -/
+/-- Expected predictions for languages whose classifier system is the
+    @cite{sudo-2016} blocking strategy: classifier semantics live with
+    *numerals*, not nouns; the silent ∪-operator that lifts numerals to
+    predicates is blocked by the lexical presence of classifiers.
+
+    LMR's diagnostic battery applied to Sudo's framework:
+    - **numeralIdiosyncrasies = false**: ∪ is uniformly blocked across
+      all numerals; no per-numeral variation (contrast Ch'ol Mayan-vs-
+      Spanish split, which Sudo's framework does not predict).
+    - **nounIdiosyncrasies = false**: explanation lives in numerals, not
+      nouns; uniform across the noun lexicon.
+    - **clfBeyondNumerals = false**: classifiers exist *to lift numerals*
+      to predicate type; they appear *with* numerals, not beyond them
+      (contrast LMR's CLF-for-N prediction).
+    - **clfInCounting = true**: the ∩-operator (Sudo eq. 24) maps the
+      numeral+CL property back to type-n, so number-predicate uses like
+      *juu-ni-nin-da* "the number is twelve people" (Sudo eq. 22a) are
+      well-formed (contrast LMR's CLF-for-N prediction). -/
+def sudoBlockingPredictions : Predictions :=
+  { numeralIdiosyncrasies := false
+  , nounIdiosyncrasies := false
+  , clfBeyondNumerals := false
+  , clfInCounting := true }
+
+/-- Derive LMR's distributional predictions from any classifier strategy.
+    This is the paper's core claim for `.forNumeral` and `.forNoun`;
+    extended here to `.sudoBlocking` per @cite{sudo-2016}'s analysis. -/
 def predictionsOf : ClassifierStrategy → Predictions
   | .forNumeral => clfForNumPredictions
   | .forNoun => clfForNounPredictions
+  | .sudoBlocking => sudoBlockingPredictions
 
-/-- Ch'ol predictions derived from its CLF-for-NUM strategy.
-    - Prediction 1 ✓: Mayan numerals require CLF; Spanish numerals don't (exx. 33–34)
-    - Prediction 2 ✗: All nouns behave uniformly
-    - Prediction 3 ✗: *DEM-CLF, *Q-CLF, *ADJ-CLF (ex. 19)
-    - Prediction 4 ✓: CLF obligatory in counting (exx. 45–46) and multiplication (ex. 47) -/
-def cholPredictions : Predictions := predictionsOf .forNumeral
+/-! ## §2b: LMR's per-language strategy assignments
 
-/-- Shan predictions derived from its CLF-for-N strategy.
-    - Prediction 1 ✗: All numerals uniformly require CLF
-    - Prediction 2 ✓: Some nouns omit CLF (repeater classifiers, ex. 40)
-    - Prediction 3 ✓: CLF with *ku* 'every', *nâj* 'this', relative clauses (ex. 42)
-    - Prediction 4 ✗: CLF degraded in counting (ex. 48), unacceptable for number reference (ex. 49) -/
-def shanPredictions : Predictions := predictionsOf .forNoun
+@cite{little-moroney-royer-2022} assigns Ch'ol the CLF-for-NUM strategy
+and Shan the CLF-for-N strategy. They are *consistent with* the
+@cite{chierchia-1998} CLF-for-N assignment for Mandarin/Japanese (LMR
+treat Sinitic and Japonic as CLF-for-N). Per-language assignments live
+here (in this study file) rather than on `NounCategorizationSystem`. -/
+
+/-- LMR's strategy assignment for Ch'ol: classifier is a measure function
+    required by the numeral. -/
+def cholStrategy : ClassifierStrategy := .forNumeral
+
+/-- LMR's strategy assignment for Shan: classifier atomizes the noun
+    denotation. -/
+def shanStrategy : ClassifierStrategy := .forNoun
+
+/-- Ch'ol predictions derived from LMR's CLF-for-NUM assignment. -/
+def cholPredictions : Predictions := predictionsOf cholStrategy
+
+/-- Shan predictions derived from LMR's CLF-for-N assignment. -/
+def shanPredictions : Predictions := predictionsOf shanStrategy
 
 -- ============================================================================
 -- § 3: Prediction Verification
 -- ============================================================================
 
-/-- The two profiles are distinct — the theories make genuinely
-    different predictions. They disagree on all four predictions. -/
+/-- The CLF-for-NUM and CLF-for-N profiles are distinct — the two LMR
+    strategies make genuinely different predictions on all four diagnostics. -/
 theorem profiles_distinct :
     clfForNumPredictions ≠ clfForNounPredictions := by decide
 
-/-- Ch'ol predictions are determined by its classifier strategy:
-    extract the strategy, apply `predictionsOf`, get the empirical profile. -/
-theorem chol_predictions_from_system :
-    chol.classifierStrategy.map predictionsOf = some cholPredictions := rfl
+/-- Ch'ol predictions follow from LMR's strategy assignment via `predictionsOf`. -/
+theorem chol_predictions_from_strategy :
+    predictionsOf cholStrategy = cholPredictions := rfl
 
-/-- Shan predictions are determined by its classifier strategy. -/
-theorem shan_predictions_from_system :
-    shan.classifierStrategy.map predictionsOf = some shanPredictions := rfl
+/-- Shan predictions follow from LMR's strategy assignment via `predictionsOf`. -/
+theorem shan_predictions_from_strategy :
+    predictionsOf shanStrategy = shanPredictions := rfl
+
+-- ============================================================================
+-- § 3b: Cross-paper divergence on Japanese
+-- ============================================================================
+
+/-- @cite{chierchia-1998} and @cite{sudo-2016} disagree on Japanese's
+    classifier strategy: Chierchia assigns `.forNoun`, Sudo assigns
+    `.sudoBlocking`. Run through LMR's diagnostic battery, the two
+    strategies make divergent empirical predictions: -/
+theorem chierchia_sudo_diverge_on_predictions :
+    predictionsOf Chierchia1998.japaneseStrategy ≠
+      predictionsOf Sudo2016.japaneseStrategy := by decide
+
+/-- The empirical wedge: under LMR's diagnostics, Chierchia's `.forNoun`
+    and Sudo's `.sudoBlocking` agree on `numeralIdiosyncrasies = false`
+    but diverge on the other three. The most decisive disagreement is
+    `clfInCounting`: Sudo predicts `true` (citing eq. 22a — *juu-ni-nin-da*
+    "the number is twelve people" is well-formed via the ∩-operator),
+    Chierchia predicts `false`. Japanese empirically exhibits the Sudo
+    pattern on this diagnostic. -/
+theorem clfInCounting_distinguishes_chierchia_from_sudo :
+    (predictionsOf Chierchia1998.japaneseStrategy).clfInCounting = false ∧
+    (predictionsOf Sudo2016.japaneseStrategy).clfInCounting = true := ⟨rfl, rfl⟩
+
+/-- Symmetric divergence on `clfBeyondNumerals`: Chierchia predicts `true`
+    (CLF appears with quantifiers, demonstratives, relative clauses
+    independent of numerals); Sudo predicts `false` (CLF exists *for*
+    numerals, not beyond them). -/
+theorem clfBeyondNumerals_distinguishes_chierchia_from_sudo :
+    (predictionsOf Chierchia1998.japaneseStrategy).clfBeyondNumerals = true ∧
+    (predictionsOf Sudo2016.japaneseStrategy).clfBeyondNumerals = false := ⟨rfl, rfl⟩
 
 -- ============================================================================
 -- § 4: Empirical Data
@@ -266,9 +329,9 @@ def shanData : List ClfDatum :=
     Shan (CLF-for-N): *mǎa sǎam tǒ khǎw 'three CLF dogs PL' (unattested) -/
 theorem greenberg_refined_by_strategy :
     -- CLF-for-NUM: plural CAN co-occur with CLF
-    chol.classifierStrategy = some .forNumeral ∧ chol.pluralClfCooccur = true ∧
+    cholStrategy = .forNumeral ∧ chol.pluralClfCooccur = true ∧
     -- CLF-for-N: plural CANNOT co-occur with CLF
-    shan.classifierStrategy = some .forNoun ∧ shan.pluralClfCooccur = false :=
+    shanStrategy = .forNoun ∧ shan.pluralClfCooccur = false :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================
@@ -450,7 +513,7 @@ end SemanticDerivation
 
 /-- Extended system list including Ch'ol and Shan. -/
 def allSystemsWithCholShan : List NounCategorizationSystem :=
-  Typology.allSystemsExtended ++ [chol, shan]
+  Typology.allSystems ++ [chol, shan]
 
 /-- Ch'ol and Shan are both numeral classifier systems in Aikhenvald's
     typology, but have different classifier strategies.
@@ -459,14 +522,12 @@ def allSystemsWithCholShan : List NounCategorizationSystem :=
     coarse to capture the CLF-for-NUM vs CLF-for-N distinction. -/
 theorem same_aikhenvald_different_strategy :
     chol.classifierType = shan.classifierType ∧
-    chol.classifierStrategy ≠ shan.classifierStrategy :=
+    cholStrategy ≠ shanStrategy :=
   ⟨rfl, by decide⟩
 
-/-- All classifier systems in the extended list lack agreement.
-    Follows from the Typology-level universal
-    (`classifier_no_agreement_nounclass_agreement_extended`) plus
-    Ch'ol and Shan both having `hasAgreement := false`. -/
-theorem no_agreement_extended :
+/-- Sample-restricted: in the 7-language Aikhenvald sample plus Ch'ol
+    and Shan, every classifier-type language lacks agreement. -/
+theorem sample_no_agreement_with_chol_shan :
     (allSystemsWithCholShan.filter (isClassifierType ·.classifierType)).all
       (!·.hasAgreement) = true := by decide
 
@@ -480,8 +541,8 @@ theorem no_agreement_extended :
     strategy for Mandarin/Japanese; Little et al. provide the diagnostic
     framework that confirms it and extends it to new languages. -/
 theorem shan_agrees_with_chierchia_clf_for_noun :
-    shan.classifierStrategy = mandarin.classifierStrategy ∧
-    shan.classifierStrategy = japanese.classifierStrategy :=
+    shanStrategy = Chierchia1998.mandarinStrategy ∧
+    shanStrategy = Chierchia1998.japaneseStrategy :=
   ⟨rfl, rfl⟩
 
 /-- Ch'ol's CLF-for-NUM strategy differs from the Chierchia-predicted
@@ -489,7 +550,7 @@ theorem shan_agrees_with_chierchia_clf_for_noun :
     typological contribution: not all numeral classifier languages use
     the same semantic strategy. -/
 theorem chol_differs_from_chierchia_languages :
-    chol.classifierStrategy ≠ mandarin.classifierStrategy :=
+    cholStrategy ≠ Chierchia1998.mandarinStrategy :=
   by decide
 
 -- ============================================================================
@@ -504,10 +565,10 @@ theorem chol_differs_from_chierchia_languages :
     This confirms that the typological enum in `Core.NounCategorization`
     is structurally connected to semantic content, not just a label. -/
 theorem strategy_dispatch_forNoun :
-    Semantics.Noun.Classifier.classifierDenot
+    Semantics.Classifier.classifierDenot
       Core.NounCategorization.ClassifierStrategy.forNoun
       (fun (_ : Finset Dog) => True) (fun _ => 0) 0
-    = Semantics.Noun.Classifier.clfForNoun (fun (_ : Finset Dog) => True) := rfl
+    = Semantics.Classifier.clfForNoun (fun (_ : Finset Dog) => True) := rfl
 
 /-- The local `clfForNumSem` IS `QMOD` from `Core.Mereology`: both compute
     `R(x) ∧ μ(x) = n` with `μ = Finset.card` and `n = 2`. The unified

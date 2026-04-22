@@ -1,5 +1,5 @@
 import Linglib.Core.Empirical
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Voice
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates

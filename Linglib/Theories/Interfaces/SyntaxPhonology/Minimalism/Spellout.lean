@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Agree
 
 /-!
 # Spellout: Feature-to-Morphology Mapping

@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Polarity
-import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
+import Linglib.Theories.Syntax.Minimalism.ClauseSpine
 import Linglib.Core.Mood.ClauseType
 
 /-!

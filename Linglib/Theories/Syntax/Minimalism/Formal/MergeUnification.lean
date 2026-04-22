@@ -28,7 +28,7 @@ The key insight is that this is a distinction in *preconditions*, not in the
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Labeling
+import Linglib.Theories.Syntax.Minimalism.Labeling
 import Linglib.Theories.Syntax.Minimalism.Formal.HeadMovement.Basic
 
 namespace Minimalism

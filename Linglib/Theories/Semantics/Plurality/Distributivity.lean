@@ -199,10 +199,10 @@ theorem pluralTruthValue_eq_false_iff (P : Atom → W → Bool) (x : Finset Atom
   simp only [decide_eq_true_eq]
   split_ifs <;> simp_all
 
-/-- pluralTruthValue is .gap iff neither all nor none satisfy -/
+/-- pluralTruthValue is .indet iff neither all nor none satisfy -/
 @[simp]
 theorem pluralTruthValue_eq_gap_iff (P : Atom → W → Bool) (x : Finset Atom) (w : W) :
-    pluralTruthValue P x w = .gap ↔ allSatisfy P x w = false ∧ noneSatisfy P x w = false := by
+    pluralTruthValue P x w = .indet ↔ allSatisfy P x w = false ∧ noneSatisfy P x w = false := by
   unfold pluralTruthValue superTrue allSatisfy noneSatisfy
   simp only [decide_eq_true_eq]
   split_ifs <;> simp_all
@@ -281,7 +281,7 @@ Corollary: pluralTruthValue is gap iff negated version is gap.
 -/
 theorem pluralTruthValue_gap_iff_neg_gap (P : Atom → W → Bool) (x : Finset Atom) (w : W)
     (_hne : x.Nonempty) :
-    pluralTruthValue P x w = .gap ↔ pluralTruthValue (λ a w => !P a w) x w = .gap := by
+    pluralTruthValue P x w = .indet ↔ pluralTruthValue (λ a w => !P a w) x w = .indet := by
   rw [pluralTruthValue_eq_gap_iff, pluralTruthValue_eq_gap_iff]
   simp only [allSatisfy, noneSatisfy, decide_eq_false_iff_not,
              Bool.not_eq_true', Bool.not_eq_false']

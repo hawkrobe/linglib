@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
-import Linglib.Theories.Syntax.Minimalism.Core.VerbalDecomposition
+import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalism.Applicative
+import Linglib.Theories.Syntax.Minimalism.VerbalDecomposition
 
 /-!
 # Icelandic Verb Fragment: -st Constructions

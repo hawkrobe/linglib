@@ -346,7 +346,7 @@ theorem sufficient_positive_class_entails (sc : ImplicativeScenario)
     (_hSuf : k.isSufficient = true) (hPol : k.polarity = .positive)
     (hSem : k.polarity.toSemantics sc) :
     (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
-      sc.complement true = true := by
+      sc.complement true := by
   rw [hPol] at hSem
   exact manage_entails_complement sc hSem
 
@@ -355,8 +355,8 @@ theorem sufficient_negative_class_entails (sc : ImplicativeScenario)
     (k : KarttunenClass)
     (_hSuf : k.isSufficient = true) (hPol : k.polarity = .negative)
     (hSem : k.polarity.toSemantics sc) :
-    (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
-      sc.complement true = false := by
+    ¬ (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
+      sc.complement true := by
   rw [hPol] at hSem
   exact fail_entails_not_complement sc hSem
 
@@ -364,14 +364,14 @@ theorem sufficient_negative_class_entails (sc : ImplicativeScenario)
 theorem manage_class_entails (sc : ImplicativeScenario)
     (hSem : KarttunenClass.manage.polarity.toSemantics sc) :
     (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
-      sc.complement true = true :=
+      sc.complement true :=
   sufficient_positive_class_entails sc .manage rfl rfl hSem
 
 /-- Instantiation: `KarttunenClass.fail` entails complement falsity. -/
 theorem fail_class_entails (sc : ImplicativeScenario)
     (hSem : KarttunenClass.fail.polarity.toSemantics sc) :
-    (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
-      sc.complement true = false :=
+    ¬ (normalDevelopment sc.dynamics (sc.background.extend sc.prerequisite true)).hasValue
+      sc.complement true :=
   sufficient_negative_class_entails sc .fail rfl rfl hSem
 
 -- ════════════════════════════════════════════════════════════════

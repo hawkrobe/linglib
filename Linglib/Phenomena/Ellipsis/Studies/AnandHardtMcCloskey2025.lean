@@ -1,5 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.Ellipsis.FormalMatching
-import Linglib.Theories.Syntax.Minimalism.Core.Copula
+import Linglib.Theories.Syntax.Minimalism.Copula
 import Linglib.Phenomena.Ellipsis.Studies.AnandHardtMcCloskey2021
 import Linglib.Phenomena.Ellipsis.Sluicing
 

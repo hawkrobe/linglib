@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Verb.VerbEntry
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Applicative
 
 /-!
 # Spanish Verb Entries for the Causative Alternation

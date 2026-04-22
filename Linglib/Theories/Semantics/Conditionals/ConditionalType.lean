@@ -1,6 +1,10 @@
-/-
-# Conditional Type: Hypothetical vs Premise Conditionals
+import Mathlib.Data.Set.Basic
+import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
+import Linglib.Theories.Semantics.Entailment.Polarity
+import Linglib.Theories.Semantics.Conditionals.Basic
 
+/-!
+# Conditional Type: Hypothetical vs Premise Conditionals
 
 Formalizes the distinction between Hypothetical Conditionals (HCs) and
 Premise Conditionals (PCs) as described in the linguistics literature.
@@ -12,7 +16,7 @@ HCs and PCs have the SAME truth conditions but DIFFERENT felicity conditions:
 - **PC**: Antecedent echoes prior discourse; speaker treats as established
 
 The distinction is DISCOURSE-LEVEL, not semantic. This parallels the
-separation of truth from assertability in `Assertability.lean`.
+separation of truth from assertability.
 
 ## Polarity Licensing
 
@@ -25,13 +29,7 @@ This requires separating TWO factors:
 NPI licensing requires BOTH DE + uncertain (HC).
 PPI licensing requires established status (PC).
 This explains why PCs block NPIs despite being semantically DE!
-
 -/
-
-import Mathlib.Data.Set.Basic
-import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
-import Linglib.Theories.Semantics.Entailment.Polarity
-import Linglib.Theories.Semantics.Conditionals.Basic
 
 namespace Semantics.Conditionals
 
@@ -228,7 +226,7 @@ Because HCs have both:
 -/
 theorem hc_licenses_npi :
     (ConditionalPolarityContext.fromConditionalType .hypothetical).licensesNPI = true := by
-  native_decide
+  decide
 
 /--
 **PCs license PPIs in the antecedent.**
@@ -237,7 +235,7 @@ Because PCs have established epistemic status.
 -/
 theorem pc_licenses_ppi :
     (ConditionalPolarityContext.fromConditionalType .premise).licensesPPI = true := by
-  native_decide
+  decide
 
 /--
 **PCs do NOT license NPIs in the antecedent.**
@@ -247,7 +245,7 @@ required for NPI licensing. This is the key insight from @cite{cao-white-lassite
 -/
 theorem pc_blocks_npi :
     (ConditionalPolarityContext.fromConditionalType .premise).licensesNPI = false := by
-  native_decide
+  decide
 
 /--
 **HCs do NOT license PPIs in the antecedent.**
@@ -256,7 +254,7 @@ Because HCs have hypothetical (not established) epistemic status.
 -/
 theorem hc_blocks_ppi :
     (ConditionalPolarityContext.fromConditionalType .hypothetical).licensesPPI = false := by
-  native_decide
+  decide
 
 -- Conditional with Explicit Type
 
@@ -305,97 +303,6 @@ Kratzer, etc.).
 theorem hc_pc_same_semantics {W : Type*} (p q : Set W) :
     (TypedConditional.mk p q .hypothetical).semantics =
     (TypedConditional.mk p q .premise).semantics := rfl
-
--- ════════════════════════════════════════════════════
--- Sweetser's Three Domains
--- ════════════════════════════════════════════════════
-
-/-- @cite{sweetser-1990}'s three domains of conditional meaning.
-
-    Conditionals can express dependencies at three levels:
-    - **content**: Real-world causal or temporal dependency.
-      "If you drop the glass, it will shatter."
-    - **epistemic**: Inference based on speaker's knowledge.
-      "If the lights are on, someone is home."
-    - **speechAct**: Illocutionary relevance — the antecedent licenses
-      the speech act performed by the consequent.
-      "If you're hungry, there's food in the fridge."
-
-    @cite{bar-asher-siegal-2026}: content-domain conditionals frequently
-    presuppose or invite causal interpretations, connecting conditional
-    semantics to the causal model infrastructure in `Causation/`. -/
-inductive SweetserDomain where
-  /-- Real-world causal/temporal dependency between events. -/
-  | content
-  /-- Epistemic inference from evidence to conclusion. -/
-  | epistemic
-  /-- Illocutionary relevance: antecedent licenses the speech act. -/
-  | speechAct
-  deriving DecidableEq, Repr
-
-namespace SweetserDomain
-
-/-- Does this domain trigger causal inference?
-
-    Content-domain conditionals invite causal readings: "If P then Q"
-    is often interpreted as "P causes Q" or "P is a precondition for Q."
-    Epistemic and speech-act domains involve inference and relevance,
-    not causation. -/
-def triggersCausalInference : SweetserDomain → Bool
-  | .content => true
-  | .epistemic => false
-  | .speechAct => false
-
-/-- Does this domain involve speaker knowledge?
-
-    Epistemic conditionals express reasoning from evidence;
-    content and speech-act conditionals do not. -/
-def involvesEpistemicReasoning : SweetserDomain → Bool
-  | .content => false
-  | .epistemic => true
-  | .speechAct => false
-
-end SweetserDomain
-
-/-- Content domain triggers causal inference. -/
-theorem content_triggers_causal :
-    SweetserDomain.content.triggersCausalInference = true := rfl
-
-/-- Epistemic domain does not trigger causal inference. -/
-theorem epistemic_not_causal :
-    SweetserDomain.epistemic.triggersCausalInference = false := rfl
-
-/-- Speech-act domain does not trigger causal inference. -/
-theorem speechAct_not_causal :
-    SweetserDomain.speechAct.triggersCausalInference = false := rfl
-
--- Cross-Linguistic Markers
-
-/--
-Cross-linguistic conditional markers and their type restrictions.
-
-Some languages have distinct lexical items for HC vs PC conditionals.
-This captures the typological pattern.
-
-Note: `pcOnly` is currently uninstantiated across known languages;
-included for typological completeness.
--/
-inductive ConditionalMarkerType where
-  | hcOnly     -- Only marks HCs (e.g., Japanese -ra, German falls)
-  | pcOnly     -- Only marks PCs (currently uninstantiated)
-  | both       -- Can mark either (e.g., English "if", German wenn)
-  deriving DecidableEq, Repr
-
-/-- Cross-linguistic conditional marker datum.
-
-    Per-language marker entries live in `Fragments/{Language}/Conditionals.lean`. -/
-structure ConditionalMarker where
-  language : String
-  marker : String
-  gloss : String
-  markerType : ConditionalMarkerType
-  notes : String
-  deriving Repr
 
 -- Summary
 

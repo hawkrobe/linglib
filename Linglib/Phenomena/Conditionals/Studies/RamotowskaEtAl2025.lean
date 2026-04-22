@@ -2,6 +2,8 @@ import Linglib.Core.Empirical
 import Linglib.Core.Logic.NonBivalence
 import Linglib.Fragments.English.Determiners
 import Linglib.Theories.Semantics.Conditionals.Counterfactual
+import Linglib.Theories.Semantics.Conditionals.Counterfactual.QuantifierEmbedding
+import Linglib.Theories.Semantics.Conditionals.Counterfactual.Implicature
 import Mathlib.Data.Rat.Defs
 
 /-!

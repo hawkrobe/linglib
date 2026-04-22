@@ -26,7 +26,7 @@ head (Fin or SA) and a null addressee DP.
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Phenomena.Politeness.Honorifics
 import Linglib.Fragments.Basque.Pronouns
 import Linglib.Fragments.Magahi.Pronouns

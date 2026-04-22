@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Phenomena.Complementation.Typology
 import Linglib.Fragments.Tigrinya.ClausePrefixes
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic

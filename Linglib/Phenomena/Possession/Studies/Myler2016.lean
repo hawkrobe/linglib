@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Copula
+import Linglib.Theories.Syntax.Minimalism.Copula
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Semantics.Noun.Relational.Barker2011

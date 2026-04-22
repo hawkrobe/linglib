@@ -21,19 +21,13 @@ Under this definition, X being present blocks L from firing (Y stays
 undetermined), while X being absent allows L to fire (Y becomes true).
 
 This is a **direct-prevention** semantics: chains like `B := ¬A, C := B`
-where A indirectly prevents C are NOT captured here. That kind of
-indirect prevention requires a richer semantics over chains.
+where A indirectly prevents C are NOT captured here.
 
-## Why structural, not fixpoint-based?
-
-Earlier versions defined `preventSem` via two `normalDevelopment` calls
-under contrasting interventions. That has a hidden correctness issue:
-`normalDevelopment` is fuel-bounded and only well-defined for *positive*
-(monotone) dynamics — for non-positive cases like prevention, the
-function can silently return iteration-100 state on dynamics with no
-fixpoint. The structural definition avoids that bog by reading prevention
-off the law list directly: decidable, terminating, and semantically
-crisp on the inhibitory laws that prevention actually requires.
+After the @cite{schulz-2011}/@cite{fitting-1985} unification, negative
+preconditions like `(X, false)` are first-class in `normalDevelopment`
+itself (no positivity restriction). The structural definition below
+remains useful as a discriminator for "this is a prevention law" — it
+reads directly off the law structure rather than running the dynamics.
 -/
 
 namespace Semantics.Causation.Prevention
@@ -52,50 +46,11 @@ def preventSem (dyn : CausalDynamics) (bg : Situation)
     law.effect = effect ∧
     law.effectValue = true ∧
     (preventer, false) ∈ law.preconditions ∧
-    ∀ p ∈ law.preconditions, p.1 ≠ preventer → bg.hasValue p.1 p.2 = true
+    ∀ p ∈ law.preconditions, p.1 ≠ preventer → bg.hasValue p.1 p.2
 
 instance (dyn : CausalDynamics) (bg : Situation) (preventer effect : Variable) :
     Decidable (preventSem dyn bg preventer effect) :=
   List.decidableBEx _ _
-
-/-- **Prevention is impossible in positive-only dynamics.**
-
-    Positive dynamics have no precondition with value `false`, so no law
-    can have `(preventer, false)` in its preconditions — hence no
-    structural prevention. -/
-theorem preventSem_impossible_positive
-    (dyn : CausalDynamics) (bg : Situation)
-    (x e : Variable) (hPos : isPositiveDynamics dyn = true) :
-    ¬ (preventSem dyn bg x e) := by
-  intro ⟨law, hLawMem, _hEffect, _hEffVal, hPrecMem, _hOther⟩
-  -- positivity says every law's preconditions have .2 = true
-  unfold isPositiveDynamics at hPos
-  have hLawPos := List.all_eq_true.mp hPos law hLawMem
-  rw [Bool.and_eq_true] at hLawPos
-  obtain ⟨hPosPrec, _⟩ := hLawPos
-  -- (x, false) ∈ preconditions, but each precondition has .2 = true
-  have hAllTrue : (x, false).2 = true := List.all_eq_true.mp hPosPrec (x, false) hPrecMem
-  -- (x, false).2 = false definitionally; so false = true, contradiction
-  exact Bool.false_ne_true hAllTrue
-
-/-- Witness: `preventSem` holds with the canonical prevention dynamics. -/
-theorem preventSem_possible_inhibitory :
-    ∃ (dyn : CausalDynamics) (bg : Situation) (x e : Variable),
-      isPositiveDynamics dyn = false ∧
-      preventSem dyn bg x e := by
-  refine ⟨CausalDynamics.prevention (mkVar "x") (mkVar "e"),
-          Situation.empty, mkVar "x", mkVar "e", ?_, ?_⟩
-  · decide
-  · refine ⟨CausalLaw.inhibitory (mkVar "x") (mkVar "e"),
-            ?_, rfl, rfl, ?_, ?_⟩
-    · simp [CausalDynamics.prevention]
-    · simp [CausalLaw.inhibitory]
-    · -- ∀ p ∈ [(x, false)], p.1 ≠ x → ...; but only p = (x, false), and (x, false).1 = x
-      intro p hp hne
-      simp [CausalLaw.inhibitory] at hp
-      -- hp : p = (mkVar "x", false), so p.1 = mkVar "x", contradicting hne
-      subst hp
-      exact absurd rfl hne
 
 /-- `preventSem` holds for the canonical prevention model. -/
 theorem preventSem_prevention_model :
@@ -109,12 +64,6 @@ theorem preventSem_prevention_model :
     simp [CausalLaw.inhibitory] at hp
     subst hp
     exact absurd rfl hne
-
-/-- The prevention model is not positive (it has an inhibitory law). -/
-theorem prevention_not_positive :
-    let x := mkVar "x"; let e := mkVar "e"
-    isPositiveDynamics (CausalDynamics.prevention x e) = false := by
-  decide
 
 /-- Prevention with accessory: B := ¬A ∧ X.
 
@@ -132,11 +81,9 @@ theorem preventSem_with_accessory :
   · intro p hp hne
     simp at hp
     rcases hp with hpx | hpacc
-    · -- p = (x, false); contradicts p.1 ≠ x
-      subst hpx
-      exact absurd rfl hne
-    · -- p = (acc, true); bg has acc=true
-      subst hpacc
-      simp [Situation.hasValue, Situation.extend]
+    · subst hpx; exact absurd rfl hne
+    · subst hpacc
+      show (Situation.empty.extend (mkVar "acc") true).hasValue (mkVar "acc") true
+      unfold Situation.hasValue Situation.extend; simp
 
 end Semantics.Causation.Prevention

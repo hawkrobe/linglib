@@ -1,5 +1,6 @@
 import Linglib.Core.IntensionalLogic.Frame
 import Linglib.Core.IntensionalLogic.Variables
+import Linglib.Theories.Semantics.Causation.CauserSort
 
 /-!
 # Voice Semantics: Compositional Operations on Argument Structure
@@ -106,6 +107,45 @@ def berSemG {F : Frame} {τ : Ty} (n : ℕ)
 theorem berSemG_eq_suppressArg {F : Frame} {τ : Ty} (n : ℕ)
     (vp : DenotG F (.e ⇒ τ)) (g : Core.Assignment F.Entity) :
     berSemG n vp g = suppressArg (g n) (vp g) := rfl
+
+/-- @cite{beavers-zubair-2013}'s sortally-restricted causer suppression
+    operator (their ex. (77), p. 37):
+
+      ⟦+∅_CS⟧ = λPλyλe[P(y, x, e) ∧ x ∈ U_I]
+
+    The 2013 form differs from the 2022 generalization (`suppressArg`
+    above) by carrying a `CauserSort` parameter and an admittance
+    proof that the verb's selected sort is compatible with `U_I`
+    (`individual`). The proof obligation IS the predictive engine:
+    if a verb has `causerSort := .event` (e.g., *minimara-* 'murder')
+    or `.eventuality` (the destroy-class), the obligation cannot be
+    discharged and the operator is ill-typed at that verb.
+
+    Operationally the restricted form factors through `suppressArg`
+    (see `causerSuppress_eq_suppressArg`), so any compositional
+    derivation using `causerSuppress` agrees pointwise with the
+    unrestricted form. The difference is at the *type* level — the
+    proof obligation enforces well-formedness without changing
+    truth conditions.
+
+    Generalizes B&U 2022's `suppressArg` by adding a sort
+    precondition; B&U 2022 chooses the unrestricted form because
+    *ber-* targets arguments other than causers and so doesn't need
+    the U_I restriction. -/
+def causerSuppress {F : Frame} {τ : Ty}
+    (s : Semantics.Causation.CauserSort)
+    (_h : s.admitsIndividual)
+    (z : F.Entity) (vp : F.Denot (.e ⇒ τ)) : F.Denot τ :=
+  suppressArg z vp
+
+/-- The sortally-restricted operator factors through unrestricted
+    `suppressArg`: the truth conditions are identical, the
+    restriction lives only at the type level. -/
+theorem causerSuppress_eq_suppressArg {F : Frame} {τ : Ty}
+    (s : Semantics.Causation.CauserSort)
+    (h : s.admitsIndividual)
+    (z : F.Entity) (vp : F.Denot (.e ⇒ τ)) :
+    causerSuppress s h z vp = suppressArg z vp := rfl
 
 -- ============================================================================
 -- § 3: Passive (di-) — Existential Binding

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.Operators
 import Linglib.Theories.Semantics.Attitudes.Intensional
-import Linglib.Core.Evidence
+import Linglib.Core.Evidentiality
 
 /-!
 # Informational Backgrounds — @cite{kratzer-2012} §2.3d
@@ -26,7 +26,7 @@ namespace Phenomena.Modality.InformationalBackgroundsBridge
 
 open Semantics.Attitudes.Intensional (World)
 open Semantics.Modality.Kratzer
-open Core.Evidence
+open Core.Evidentiality
 
 /-! ## Propositions -/
 
@@ -127,6 +127,6 @@ def reportEvidence : EvidentialSource := .hearsay
 
 /-- Hearsay evidence is retrospective (the event precedes the report). -/
 theorem report_is_retrospective :
-    reportEvidence.toEvidentialPerspective = .retrospective := rfl
+    reportEvidence.toEvidentialPerspective = some .retrospective := rfl
 
 end Phenomena.Modality.InformationalBackgroundsBridge

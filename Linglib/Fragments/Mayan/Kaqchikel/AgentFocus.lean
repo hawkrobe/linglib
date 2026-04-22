@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Syntax.Minimalism.Core.ClauseSpine
+import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalism.ClauseSpine
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.ExtractionMorphology
 import Linglib.Core.VoiceSystem

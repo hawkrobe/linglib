@@ -1,5 +1,7 @@
 import Linglib.Core.Probability.PMFPosterior
 import Mathlib.Analysis.SpecialFunctions.Pow.NNReal
+import Mathlib.Analysis.SpecialFunctions.Log.Basic
+import Mathlib.Probability.Distributions.Uniform
 
 /-!
 # RSA — Unbundled Operators
@@ -71,6 +73,41 @@ noncomputable def L0OfMeaning (meaning : U → W → ℝ≥0∞) (u : U)
     L0OfMeaning meaning u h0 hTop w = meaning u w * (∑' w', meaning u w')⁻¹ :=
   PMF.normalize_apply _ _ w
 
+/-! ## L0 from a Boolean meaning (uniform on extension) -/
+
+/-- Extension of a Boolean meaning at utterance `u`: the `Finset` of worlds
+the meaning is true at. The `[Fintype W]`/`[DecidableEq W]` machinery is used
+implicitly via `Finset.univ.filter`. -/
+def extensionOf [Fintype W] (m : U → W → Bool) (u : U) : Finset W :=
+  Finset.univ.filter (fun w => m u w)
+
+@[simp] theorem mem_extensionOf [Fintype W] {m : U → W → Bool} {u : U} {w : W} :
+    w ∈ extensionOf m u ↔ m u w = true := by
+  simp [extensionOf]
+
+/-- Literal listener for a Boolean meaning: uniform distribution on the
+extension. Specialisation of `L0OfMeaning` to the case where each meaning
+value is `0` or `1` and the extension is non-empty. The `(extensionOf m u).Nonempty`
+hypothesis is `PMF.uniformOfFinset`'s API. -/
+noncomputable def L0OfBoolMeaning [Fintype W] (m : U → W → Bool) (u : U)
+    (h : (extensionOf m u).Nonempty) : PMF W :=
+  PMF.uniformOfFinset (extensionOf m u) h
+
+theorem L0OfBoolMeaning_apply_of_mem [Fintype W] {m : U → W → Bool} {u : U}
+    (h : (extensionOf m u).Nonempty) {w : W} (hw : m u w = true) :
+    L0OfBoolMeaning m u h w = ((extensionOf m u).card : ℝ≥0∞)⁻¹ :=
+  PMF.uniformOfFinset_apply_of_mem _ (mem_extensionOf.mpr hw)
+
+theorem L0OfBoolMeaning_apply_of_not_mem [Fintype W] {m : U → W → Bool} {u : U}
+    (h : (extensionOf m u).Nonempty) {w : W} (hw : m u w ≠ true) :
+    L0OfBoolMeaning m u h w = 0 :=
+  PMF.uniformOfFinset_apply_of_notMem _ (fun hMem => hw (mem_extensionOf.mp hMem))
+
+@[simp] theorem mem_support_L0OfBoolMeaning_iff [Fintype W] {m : U → W → Bool} {u : U}
+    (h : (extensionOf m u).Nonempty) (w : W) :
+    w ∈ (L0OfBoolMeaning m u h).support ↔ m u w = true := by
+  rw [L0OfBoolMeaning, PMF.mem_support_uniformOfFinset_iff, mem_extensionOf]
+
 /-! ## S1: Pragmatic Speaker (belief-based) -/
 
 /-- Belief-based pragmatic speaker (@cite{frank-goodman-2012}):
@@ -94,6 +131,55 @@ noncomputable def S1Belief (L0 : U → PMF W) (costFactor : U → ℝ≥0∞) (�
     S1Belief L0 costFactor α w h0 hTop u =
       (L0 u w : ℝ≥0∞) ^ α * costFactor u * (∑' u', (L0 u' w : ℝ≥0∞) ^ α * costFactor u')⁻¹ :=
   PMF.normalize_apply _ _ u
+
+/-! ## S1: Pragmatic Speaker (softmax-of-expected-log form) -/
+
+/-- @cite{goodman-stuhlmuller-2013} / @cite{kao-etal-2014-metaphor}-style speaker:
+`S1(u | obs) ∝ exp(α · Σ_s belief(s) · log lex(u, s))` when `qOk u`, else 0.
+
+Real-valued internally; lifted to `ℝ≥0∞` at the `PMF.normalize` boundary. The
+quality predicate `qOk` is *not* derived from `lex` and `belief` because Lean's
+`Real.log 0 = 0` does not match WebPPL's `log 0 = -∞`: in WebPPL the score is
+automatically zero on quality-violating utterances (via `exp (-∞) = 0`), but
+in Lean an explicit filter is required. Consumers typically pass
+`qOk u := ∀ s ∈ supp belief, lex u s > 0` or a problem-specific predicate.
+
+The score is positive iff `qOk u = true` (regardless of `lex`/`belief`
+internals — `Real.exp` is always positive). The `tsum`-positivity cover
+collapses to `∃ u, qOk u` (see `softmaxBelief_tsum_ne_zero_of_witness`),
+which is the natural shape for a `PMF.normalize` discharge. -/
+noncomputable def softmaxBelief [Fintype W]
+    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Bool) (u : U) : ℝ≥0∞ :=
+  if qOk u then
+    ENNReal.ofReal (Real.exp (α * ∑ s : W, belief s * Real.log (lex u s)))
+  else 0
+
+theorem softmaxBelief_ne_top [Fintype W]
+    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Bool) (u : U) :
+    softmaxBelief lex belief α qOk u ≠ ∞ := by
+  unfold softmaxBelief
+  split <;> simp [ENNReal.ofReal_ne_top]
+
+theorem softmaxBelief_tsum_ne_top [Fintype U] [Fintype W]
+    (lex : U → W → ℝ) (belief : W → ℝ) (α : ℝ) (qOk : U → Bool) :
+    ∑' u, softmaxBelief lex belief α qOk u ≠ ∞ :=
+  ENNReal.tsum_ne_top_of_fintype fun u => softmaxBelief_ne_top lex belief α qOk u
+
+theorem softmaxBelief_ne_zero_of_qOk [Fintype W]
+    {lex : U → W → ℝ} {belief : W → ℝ} {α : ℝ} {qOk : U → Bool} {u : U}
+    (h : qOk u = true) :
+    softmaxBelief lex belief α qOk u ≠ 0 := by
+  unfold softmaxBelief
+  rw [if_pos h]
+  exact (ENNReal.ofReal_pos.mpr (Real.exp_pos _)).ne'
+
+/-- Cover discharge: a single quality-OK witness is enough to make the
+fan-out sum non-zero — the standard `PMF.normalize` precondition shape. -/
+theorem softmaxBelief_tsum_ne_zero_of_witness [Fintype W]
+    {lex : U → W → ℝ} {belief : W → ℝ} {α : ℝ} {qOk : U → Bool}
+    {u : U} (h : qOk u = true) :
+    ∑' u', softmaxBelief lex belief α qOk u' ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨u, softmaxBelief_ne_zero_of_qOk h⟩
 
 /-! ## L1: Pragmatic Listener -/
 

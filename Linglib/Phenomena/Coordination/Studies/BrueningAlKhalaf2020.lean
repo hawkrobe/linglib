@@ -1,7 +1,7 @@
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Core.Coordination
 import Linglib.Core.Tree
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
+import Linglib.Theories.Syntax.Minimalism.Basic
 import Mathlib.Data.Finset.Basic
 
 /-!

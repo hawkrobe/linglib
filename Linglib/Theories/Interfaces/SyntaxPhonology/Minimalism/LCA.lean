@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
+import Linglib.Theories.Syntax.Minimalism.Basic
 
 /-!
 # Linear Correspondence Axiom

@@ -2,7 +2,7 @@ import Linglib.Phenomena.ArgumentStructure.Unaccusativity.Data
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Core.Lexical.DiathesisAlternation
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Voice
 import Linglib.Theories.Syntax.Minimalism.Movement.Smuggling
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Phenomena.Islands.Studies.Ross1967

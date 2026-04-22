@@ -22,7 +22,7 @@ connection for counting SO shapes.
 
 -/
 
-import Linglib.Theories.Syntax.Minimalism.Core.Algebra
+import Linglib.Theories.Syntax.Minimalism.Algebra
 import Mathlib.Combinatorics.Enumerative.Catalan
 import Mathlib.Algebra.Order.BigOperators.Group.Finset
 

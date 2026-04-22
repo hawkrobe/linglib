@@ -32,7 +32,7 @@ with a concrete linguistic example: "the book that John read _"
 -/
 
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.Interface
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
+import Linglib.Theories.Syntax.Minimalism.Basic
 
 namespace Minimalism.RelativeClauses
 

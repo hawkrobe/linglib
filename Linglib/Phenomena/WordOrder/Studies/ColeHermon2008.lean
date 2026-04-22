@@ -1,6 +1,6 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Derivation
-import Linglib.Theories.Syntax.Minimalism.Core.Position
+import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalism.Derivation
+import Linglib.Theories.Syntax.Minimalism.Position
 import Linglib.Fragments.TobaBatak.Basic
 
 /-!
@@ -235,7 +235,8 @@ Subject Constraint / Condition on Extraction Domain). The predictions:
 - **Adverbials**: likewise escape before VP raises → can extract
 
 These predictions match the Toba Batak extraction data formalized in
-`Fragments.TobaBatak.Basic` and verified in `Phenomena.FillerGap.TobaBatak`.
+`Fragments.TobaBatak.Basic` and verified in
+`Phenomena.FillerGap.Studies.Erlewine2018`.
 -/
 
 /-- The direct object is contained within the fronted VP. In the
@@ -398,8 +399,8 @@ theorem object_does_not_ccommand_subject :
 
 The VP-raising analysis's extraction predictions are independently
 formalized in `Fragments.TobaBatak.Basic` (empirical extraction data)
-and `Phenomena.FillerGap.TobaBatak` (verification theorems). This
-section bridges the derivational analysis to that data.
+and `Phenomena.FillerGap.Studies.Erlewine2018` (verification theorems).
+This section bridges the derivational analysis to that data.
 -/
 
 /-- The EPP strategy for Toba Batak is VP-raising, which is the

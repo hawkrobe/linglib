@@ -1,4 +1,5 @@
-import Linglib.Core.Evidence
+import Linglib.Core.Evidentiality
+import Linglib.Core.Mirativity
 import Linglib.Core.Context.Tower
 
 /-!
@@ -12,9 +13,9 @@ dimensions to the model-theoretic level (`KContext` / `ContextTower`).
 ## Motivation
 
 @cite{gawne-spronck-2024} identify 10 concept areas forming a coherent epistemic
-domain. Linglib already covers evidential source (`Core/Evidence.lean`), epistemic
-modality (`Modality/Kernel.lean`), and mirativity (`Core/Evidence.lean`), but these
-are scattered with no connective tissue. The main gap is **egophoricity** -- the
+domain. Linglib already covers evidential source (`Core/Evidentiality.lean`),
+epistemic modality (`Modality/Kernel.lean`), and mirativity (`Core/Mirativity.lean`),
+but these are scattered with no connective tissue. The main gap is **egophoricity** -- the
 dimension of WHO has privileged epistemic access (speaker vs addressee vs third
 party), which the glossary argues is independent of evidential source.
 
@@ -36,7 +37,8 @@ extension respectively) and are left for future work.
 
 namespace Core.Epistemicity
 
-open Core.Evidence
+open Core.Evidentiality
+open Core.Mirativity
 open Core.Context
 
 /-- Epistemic authority: WHO has privileged access to the propositional content.

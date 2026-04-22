@@ -38,17 +38,51 @@ consumer needs the measure-theoretic identity.
 
 set_option autoImplicit false
 
+open scoped ENNReal
+
+namespace ENNReal
+
+/-- On a finite type, an ENNReal `tsum` is finite iff every term is.
+Convenience composition of `tsum_fintype` + `ENNReal.sum_ne_top` — the
+combined form is the natural hypothesis shape for `PMF.normalize` /
+`PMF.posterior` consumers. -/
+theorem tsum_ne_top_of_fintype {α : Type*} [Fintype α] {f : α → ℝ≥0∞}
+    (h : ∀ a, f a ≠ ∞) : ∑' a, f a ≠ ∞ := by
+  rw [tsum_fintype]
+  exact ENNReal.sum_ne_top.mpr fun a _ => h a
+
+end ENNReal
+
 namespace PMF
 
 variable {α β : Type*}
 
-open scoped ENNReal
+/-- A finite-type kernel-marginal at `b` is finite. Convenience composition of
+`PMF.apply_ne_top` over a Fintype index — the natural hypothesis shape for
+consumers building `PMF.normalize` from a kernel slice. -/
+theorem tsum_apply_ne_top [Fintype α] (κ : α → PMF β) (b : β) :
+    ∑' a, κ a b ≠ ∞ :=
+  ENNReal.tsum_ne_top_of_fintype fun _ => PMF.apply_ne_top _ _
 
 /-- The marginal probability of observation `b` under the joint
 distribution induced by kernel `κ` and prior `μ`:
 `P(b) = ∑' a, μ a * κ a b`. -/
 noncomputable def marginal (κ : α → PMF β) (μ : PMF α) (b : β) : ℝ≥0∞ :=
   ∑' a, μ a * κ a b
+
+/-- A single witness `a` with `μ a ≠ 0` and `κ a b ≠ 0` suffices to make the
+marginal non-zero — the standard positivity discharge for `PMF.posterior`. -/
+theorem marginal_ne_zero (κ : α → PMF β) (μ : PMF α) (b : β)
+    {a : α} (hμ : μ a ≠ 0) (hκ : κ a b ≠ 0) : marginal κ μ b ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨a, mul_ne_zero hμ hκ⟩
+
+/-- Kernel-slice analogue of `marginal_ne_zero`: a single witness `a` with
+`κ a b ≠ 0` makes the prior-free fan-out `∑' a', κ a' b` non-zero. The
+shape consumers need when normalising the speaker step in RSA — there is
+no listener prior over `α` to multiply against. -/
+theorem tsum_apply_ne_zero (κ : α → PMF β) {a : α} {b : β} (h : κ a b ≠ 0) :
+    ∑' a', κ a' b ≠ 0 :=
+  ENNReal.summable.tsum_ne_zero_iff.mpr ⟨a, h⟩
 
 theorem marginal_le_one (κ : α → PMF β) (μ : PMF α) (b : β) :
     marginal κ μ b ≤ 1 := by

@@ -1,12 +1,21 @@
-/-
+import Mathlib.Data.Set.Basic
+import Mathlib.Data.Fintype.Basic
+import Linglib.Theories.Semantics.Conditionals.ConditionalType
+import Linglib.Theories.Semantics.Conditionals.Basic
+import Linglib.Theories.Semantics.Conditionals.Restrictor
+
+/-!
 # Left-Nested Conditionals (LNCs)
 
-Formalizes the analysis of left-nested conditionals following @cite{cao-white-lassiter-2025}
-"Sorting out left-nested conditionals."
+@cite{cao-white-lassiter-2025}
+
+Formalizes the analysis of left-nested conditionals following
+@cite{cao-white-lassiter-2025} "Sorting out left-nested conditionals."
 
 ## Overview
 
-A left-nested conditional (LNC) has another conditional in the antecedent:
+A left-nested conditional (LNC) has another conditional in the
+antecedent:
   "If (B if A), then C" = "If A → B, then C"
 
 Example:
@@ -14,13 +23,14 @@ Example:
 
 ## Key Claim
 
-@cite{cao-white-lassiter-2025} argues that bare LNCs are preferentially interpreted as
-**premise conditionals** (PCs), not hypothetical conditionals (HCs).
+@cite{cao-white-lassiter-2025} argues that bare LNCs are preferentially
+interpreted as **premise conditionals** (PCs), not hypothetical
+conditionals (HCs).
 
 ### Why?
 
-The inner conditional "B if A" refers to a **conditional proposition** -
-something that must be grounded in prior discourse to be suppposed. This
+The inner conditional "B if A" refers to a **conditional proposition** —
+something that must be grounded in prior discourse to be supposed. This
 automatically satisfies the discourse-anchoring requirement of PCs.
 
 ### Exception
@@ -28,14 +38,7 @@ automatically satisfies the discourse-anchoring requirement of PCs.
 LNCs with modals, quantificational adverbs, or generic/habitual readings
 CAN be interpreted as HCs, because these provide "object-level" content
 that can be genuinely supposed without prior discourse.
-
 -/
-
-import Mathlib.Data.Set.Basic
-import Mathlib.Data.Fintype.Basic
-import Linglib.Theories.Semantics.Conditionals.ConditionalType
-import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Theories.Semantics.Conditionals.Restrictor
 
 namespace Semantics.Conditionals
 

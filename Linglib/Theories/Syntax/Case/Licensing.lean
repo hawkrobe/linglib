@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Theories.Syntax.Case.Dependent
-import Linglib.Theories.Syntax.Minimalism.Core.CaseFilter
+import Linglib.Theories.Syntax.Case.CaseFilter
 
 /-!
 # Hybrid Licensing
@@ -92,7 +92,7 @@ licensers always activate uniformly.
 ## Bridge to the Case Filter
 
 § 7 connects this module's `LicensingOutcome` to the Chomskyan Case
-Filter formalized in `Theories/Syntax/Minimalism/Core/CaseFilter.lean`:
+Filter formalized in `Theories/Syntax/Minimalism/CaseFilter.lean`:
 an outcome that values Case (any of `.byPrimary`, `.bySecondary`, or
 `.byLexical`) satisfies the Case Filter, while `.unlicensed` does not.
 Kalin's framework thus *derives* the Case Filter as the convergence
@@ -456,7 +456,7 @@ theorem no_need_means_no_secondaries_used (cl : ClauseLicensers)
 -- ============================================================================
 
 /-! Connects `LicensingOutcome` to the Chomskyan Case Filter
-formalized in `Minimalism/Core/CaseFilter.lean`: an outcome valued by
+formalized in `Minimalism/CaseFilter.lean`: an outcome valued by
 *any* mechanism (primary, secondary, or lexical) satisfies the Case
 Filter; only `.unlicensed` violates it. Kalin's framework thus
 *derives* the Case Filter as the convergence condition on hybrid

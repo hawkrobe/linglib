@@ -1,6 +1,8 @@
 import Linglib.Core.Typology.WordOrder
 import Linglib.Core.Typology.Adposition
+import Linglib.Core.Typology.ClassifierSystem
 import Linglib.Core.Morphology.MorphProfile
+import Linglib.Core.Relativization.Profile
 
 /-!
 # Per-language typological profile
@@ -17,6 +19,21 @@ Fields are **append-only** and (apart from `iso`/`name`/`wordOrder`) all
 optional. Adding a domain doesn't break consumers — missing data
 defaults to `none`. A new field only lands when the same PR uses it in
 at least one stated universal/theorem; no speculative fields.
+
+## Theory-ladenness
+
+Per-domain field types use cross-linguistic typological vocabulary
+(`SVO`/`SOV` from `WordOrder`, `numeralNP`/`headModifierNP` from
+`NounCategorization`, etc.). This vocabulary is broadly framework-neutral
+within mainstream syntactic typology, but is not strictly theory-free —
+even calling something an "NP" or "subject" picks a side. Per-language
+`Fragments/{Lang}/Typology.lean` files therefore inherit a thin
+typological commitment by populating these fields.
+
+This is distinct from the lexicon files (`Fragments/{Lang}/Classifier.lean`,
+`Nouns.lean`, etc.), which carry typed lexical inventories and are kept
+theory-light. The Typology aggregator is explicitly a typological object;
+the lexicons are not.
 
 ## Composable builders
 
@@ -57,6 +74,13 @@ structure LanguageProfile where
   /-- Morphological profile (WALS Ch 20--29 etc); `none` until a Fragment
       populates it. -/
   morph : Option Core.Morphology.MorphProfile := none
+  /-- Relativization profile (WALS Chs 122/123 + AH cut-off + areal flag);
+      `none` until a Fragment populates it. -/
+  relativization : Option Core.Relativization.RelativizationProfile := none
+  /-- Noun categorization system (@cite{aikhenvald-2000} 7 properties);
+      `none` until a Fragment populates it. Hand-coded; no WALS source
+      covers the full schema. -/
+  classifierSystem : Option NounCategorizationSystem := none
   /-- Free-text commentary, including `@cite{...}` keys for hand-coded
       values that override or supplement WALS. -/
   notes : String := ""
@@ -86,6 +110,23 @@ def withAdpositionFromWALS (p : LanguageProfile) : LanguageProfile :=
 def withMorph (p : LanguageProfile) (m : Core.Morphology.MorphProfile) : LanguageProfile :=
   { p with morph := some m }
 
+/-- Populate `relativization` with a hand-supplied
+    `RelativizationProfile`. WALS Chs 122/123 do not cover the full
+    profile (`.mixed`, `lowestRelativizable`, `isEuropean` need
+    hand-coding), so there is no `withRelativizationFromWALS`. -/
+def withRelativization
+    (p : LanguageProfile) (r : Core.Relativization.RelativizationProfile) :
+    LanguageProfile :=
+  { p with relativization := some r }
+
+/-- Populate `classifierSystem` with a hand-supplied
+    `NounCategorizationSystem`. WALS does not cover the full
+    @cite{aikhenvald-2000} 7-property schema, so there is no
+    `withClassifierSystemFromWALS`. -/
+def withClassifierSystem (p : LanguageProfile)
+    (cs : NounCategorizationSystem) : LanguageProfile :=
+  { p with classifierSystem := some cs }
+
 /-- Attach free-text notes (including `@cite{...}` keys). -/
 def withNotes (p : LanguageProfile) (n : String) : LanguageProfile :=
   { p with notes := n }
@@ -95,6 +136,27 @@ def withNotes (p : LanguageProfile) (n : String) : LanguageProfile :=
     `empty iso name |>.withWordOrderFromWALS |>.withAdpositionFromWALS`. -/
 def ofWALS (iso name : String) : LanguageProfile :=
   empty iso name |>.withWordOrderFromWALS |>.withAdpositionFromWALS
+
+/-- The language has an obligatory classifier system (`classifierSystem`
+    populated with `isObligatory := true`). Any classifier-semantic
+    framework that presupposes obligatory classifier morphology in the
+    lexicon (Chierchia 1998, Sudo 2016, etc.) requires this predicate
+    to hold. Useful as the input-shape requirement for cross-paper
+    framework-applicability theorems. -/
+def hasObligatoryClassifierSystem (p : LanguageProfile) : Prop :=
+  ∃ cs : NounCategorizationSystem,
+    p.classifierSystem = some cs ∧ cs.isObligatory = true
+
+instance (p : LanguageProfile) : Decidable p.hasObligatoryClassifierSystem :=
+  match h : p.classifierSystem with
+  | none => isFalse fun ⟨_, h', _⟩ => by rw [h] at h'; exact Option.noConfusion h'
+  | some cs =>
+    if hb : cs.isObligatory = true then
+      isTrue ⟨cs, h, hb⟩
+    else
+      isFalse fun ⟨cs', h', hb'⟩ => by
+        rw [h] at h'
+        exact hb (Option.some.inj h' ▸ hb')
 
 end LanguageProfile
 

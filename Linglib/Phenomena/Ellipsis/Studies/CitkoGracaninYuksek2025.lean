@@ -1,5 +1,5 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Economy
-import Linglib.Theories.Syntax.Minimalism.Core.Phase
+import Linglib.Theories.Syntax.Minimalism.Economy
+import Linglib.Theories.Syntax.Minimalism.Phase
 import Linglib.Phenomena.Ellipsis.Sluicing
 /-!
 # Economy in PF Reduction
@@ -47,7 +47,7 @@ multidominance as the PF reduction mechanism.
 - RNR (§6.2) demonstrates that economy can force BOTH ellipsis and MD
   in a single derivation.
 
-## Multidominance Apparatus (relocated from `Minimalism/Core/Multidominance.lean`)
+## Multidominance Apparatus (relocated from `Minimalism/Multidominance.lean`)
 
 The PF-reduction primitives below are paper-specific to @cite{citko-2014}
 and @cite{citko-gracanin-yuksek-2025} and are not consumed elsewhere in

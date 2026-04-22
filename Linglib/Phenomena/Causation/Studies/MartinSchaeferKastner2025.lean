@@ -1,5 +1,5 @@
 import Linglib.Theories.Pragmatics.GriceanMaxims
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
+import Linglib.Theories.Syntax.Minimalism.Voice
 import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Fragments.French.Predicates
 

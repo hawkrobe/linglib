@@ -77,11 +77,26 @@ open Semantics.Causation.Necessity
     This implements the key counterfactual from @cite{lewis-1973-causation}
     p. 563: "if c had not been, e never had existed." In Pearl's framework,
     the intervention do(c=false) determines the closest ¬c-world for
-    deterministic causal models. -/
-def lewisButFor (dyn : CausalDynamics) (bg : Situation)
-    (cause effect : Variable) : Bool :=
+    deterministic causal models.
+
+    Defined as an `abbrev` over the SEM `developsToBe` predicate so the
+    SEM `_eq_iterate_of_fixpoint` machinery applies directly — no
+    parallel Lewis-specific decidability infrastructure needed. -/
+abbrev lewisButFor (dyn : CausalDynamics) (bg : Situation)
+    (cause effect : Variable) : Prop :=
   let (dyn', bg') := intervene dyn bg cause false
-  !(normalDevelopment dyn' bg').hasValue effect true
+  ¬ developsToBe dyn' bg' effect true
+
+/-- Bridge: `lewisButFor` is exactly `CausalAccessibility.lewis.necessary`.
+
+    The schema instance in `Core/Causal/SEM/Counterfactual.lean` recasts
+    Lewis's but-for test as one point in the family of counterfactual-
+    accessibility relations parameterized by `CausalAccessibility`. -/
+theorem lewisButFor_iff_lewis_necessary
+    (dyn : CausalDynamics) (bg : Situation) (cause effect : Variable) :
+    lewisButFor dyn bg cause effect ↔
+    CausalAccessibility.lewis.necessary dyn bg cause effect :=
+  (lewis_necessary_iff_intervene_not_developed dyn bg cause effect).symm
 
 -- ════════════════════════════════════════════════════
 -- § 2. Causal Dependence (Lewis p. 563)
@@ -97,14 +112,13 @@ def lewisButFor (dyn : CausalDynamics) (bg : Situation)
     substantive condition is ∼O(c) □→ ∼O(e).
 
     The `bg` parameter should include the cause (and any other exogenous
-    values). The "actual world" is `normalDevelopment dyn bg`. -/
-def lewisDependence (dyn : CausalDynamics) (bg : Situation)
-    (cause effect : Variable) : Bool :=
-  let actual := normalDevelopment dyn bg
-  -- Both c and e actually occur
-  actual.hasValue cause true &&
-  actual.hasValue effect true &&
-  -- But-for: e would not have occurred without c
+    values). The "actual world" is `normalDevelopment dyn bg`.
+
+    Composes SEM `developsToBe` queries with the `lewisButFor` abbrev. -/
+abbrev lewisDependence (dyn : CausalDynamics) (bg : Situation)
+    (cause effect : Variable) : Prop :=
+  developsToBe dyn bg cause true ∧
+  developsToBe dyn bg effect true ∧
   lewisButFor dyn bg cause effect
 
 -- ════════════════════════════════════════════════════
@@ -124,7 +138,7 @@ private def hasChainAux (dyn : CausalDynamics) (bg : Situation)
     if current == target then true
     else
       let candidates := (allVariables dyn).filter fun v =>
-        !(visited.contains v) && lewisDependence dyn bg current v
+        !(visited.contains v) && decide (lewisDependence dyn bg current v)
       candidates.any fun v =>
         hasChainAux dyn bg v target (current :: visited) fuel
 
@@ -139,8 +153,12 @@ private def hasChainAux (dyn : CausalDynamics) (bg : Situation)
     c causes e iff there exists a finite sequence c, d₁, d₂, ..., e
     where each consecutive pair is a Lewis causal dependence. -/
 def lewisCausation (dyn : CausalDynamics) (bg : Situation)
-    (cause effect : Variable) : Bool :=
-  hasChainAux dyn bg cause effect [] ((allVariables dyn).length + 1)
+    (cause effect : Variable) : Prop :=
+  hasChainAux dyn bg cause effect [] ((allVariables dyn).length + 1) = true
+
+instance (dyn : CausalDynamics) (bg : Situation) (cause effect : Variable) :
+    Decidable (lewisCausation dyn bg cause effect) :=
+  inferInstanceAs (Decidable (_ = true))
 
 /-- `hasChainAux` returns true when current equals target with nonzero fuel. -/
 private lemma hasChainAux_self (dyn : CausalDynamics) (bg : Situation)
@@ -157,9 +175,9 @@ private lemma hasChainAux_self (dyn : CausalDynamics) (bg : Situation)
     events implies causation." -/
 theorem dependence_implies_causation (dyn : CausalDynamics) (bg : Situation)
     (cause effect : Variable)
-    (h : lewisDependence dyn bg cause effect = true)
+    (h : lewisDependence dyn bg cause effect)
     (hVar : (allVariables dyn).contains effect = true) :
-    lewisCausation dyn bg cause effect = true := by
+    lewisCausation dyn bg cause effect := by
   simp only [lewisCausation]
   have h_mem : effect ∈ allVariables dyn := List.mem_of_elem_eq_true hVar
   by_cases h_eq : cause = effect
@@ -171,7 +189,7 @@ theorem dependence_implies_causation (dyn : CausalDynamics) (bg : Situation)
     rw [List.any_eq_true]
     refine ⟨effect, List.mem_filter.mpr ⟨h_mem, ?_⟩, ?_⟩
     · -- effect passes the filter: not visited ∧ dependence holds
-      simp [h]
+      simp [decide_eq_true h]
     · -- hasChainAux effect effect (cause :: []) n = true
       exact hasChainAux_self dyn bg effect (cause :: []) _
         (List.length_pos_of_mem h_mem)
@@ -188,19 +206,52 @@ private abbrev ve := mkVar "e"
 private def simpleDyn : CausalDynamics := ⟨[CausalLaw.simple va vb]⟩
 private def simpleBg : Situation := Situation.empty.extend va true
 
+/-! Local tactic to discharge `lewisButFor`, `lewisDependence`, `lewisCausation`
+    claims by unfolding to `normalDevelopment` queries, applying the
+    `_eq_iterate_of_fixpoint` rewrite, and closing via `decide`. -/
+
+/-- Try iteration counts 1-4 to find the fixpoint, then `decide`. -/
+local macro "lewis_decide" : tactic => `(tactic|
+  first
+  | (unfold lewisButFor; intro h
+     first
+     | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 1 (by decide)] at h)
+     | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 2 (by decide)] at h)
+     | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 3 (by decide)] at h)
+     | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 4 (by decide)] at h)
+     revert h; decide)
+  | (unfold lewisDependence
+     refine ⟨?_, ?_, ?_⟩
+     all_goals first
+       | (first
+          | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 1 (by decide)])
+          | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 2 (by decide)])
+          | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 3 (by decide)])
+          | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 4 (by decide)])
+          decide)
+       | (unfold lewisButFor
+          intro h
+          first
+          | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 1 (by decide)] at h)
+          | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 2 (by decide)] at h)
+          | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 3 (by decide)] at h)
+          | (rw [normalDevelopment_eq_iterate_of_fixpoint _ _ 4 (by decide)] at h)
+          revert h; decide))
+  | decide)
+
 /-- Lewis's but-for holds for a simple cause.
     Without a, b does not develop. -/
 theorem simple_butfor :
-    lewisButFor simpleDyn simpleBg va vb = true := by native_decide
+    lewisButFor simpleDyn simpleBg va vb := by lewis_decide
 
 /-- Lewis's causal dependence holds for a simple cause.
     a and b both actually occur, and the but-for holds. -/
 theorem simple_dependence :
-    lewisDependence simpleDyn simpleBg va vb = true := by native_decide
+    lewisDependence simpleDyn simpleBg va vb := by lewis_decide
 
 /-- Lewis's causation holds (trivially, one-step chain). -/
 theorem simple_causation :
-    lewisCausation simpleDyn simpleBg va vb = true := by native_decide
+    lewisCausation simpleDyn simpleBg va vb := by lewis_decide
 
 -- ════════════════════════════════════════════════════
 -- § 5. Causal Chain: A → B → C
@@ -212,24 +263,24 @@ private def chainBg : Situation := Situation.empty.extend va true
 /-- In the chain A→B→C, removing A prevents C.
     Lewis's but-for holds directly (no need for TC). -/
 theorem chain_direct_butfor :
-    lewisButFor chainDyn chainBg va vc = true := by native_decide
+    lewisButFor chainDyn chainBg va vc := by lewis_decide
 
 /-- Each step of the chain is a Lewis causal dependence.
     B depends on A, and C depends on B. -/
 theorem chain_step_AB :
-    lewisDependence chainDyn chainBg va vb = true := by native_decide
+    lewisDependence chainDyn chainBg va vb := by lewis_decide
 
 theorem chain_step_BC :
-    lewisDependence chainDyn chainBg vb vc = true := by native_decide
+    lewisDependence chainDyn chainBg vb vc := by lewis_decide
 
 /-- Lewis's causation via the full chain A→B→C. -/
 theorem chain_causation :
-    lewisCausation chainDyn chainBg va vc = true := by native_decide
+    lewisCausation chainDyn chainBg va vc := by lewis_decide
 
 /-- Direct dependence also holds for simple chains (without backup
     causes, the but-for test succeeds transitively). -/
 theorem chain_direct_dependence :
-    lewisDependence chainDyn chainBg va vc = true := by native_decide
+    lewisDependence chainDyn chainBg va vc := by lewis_decide
 
 -- ════════════════════════════════════════════════════
 -- § 6. Epiphenomena: Barometer and Storm
@@ -256,13 +307,13 @@ private def epiphBg : Situation := Situation.empty.extend pressure true
 
 /-- Pressure causes the barometer reading. -/
 theorem pressure_causes_barometer :
-    lewisDependence epiphDyn epiphBg pressure barometer = true := by
-  native_decide
+    lewisDependence epiphDyn epiphBg pressure barometer := by
+  lewis_decide
 
 /-- Pressure causes the storm. -/
 theorem pressure_causes_storm :
-    lewisDependence epiphDyn epiphBg pressure storm = true := by
-  native_decide
+    lewisDependence epiphDyn epiphBg pressure storm := by
+  lewis_decide
 
 /-- The barometer does NOT cause the storm.
 
@@ -270,13 +321,13 @@ theorem pressure_causes_storm :
     (do(B=false)) cuts B's incoming law (P→B) but leaves P→S intact.
     P still causes S regardless of B. -/
 theorem barometer_not_causes_storm :
-    lewisDependence epiphDyn epiphBg barometer storm = false := by
-  native_decide
+    ¬ (lewisDependence epiphDyn epiphBg barometer storm) := by
+  lewis_decide
 
 /-- The storm does NOT cause the barometer. -/
 theorem storm_not_causes_barometer :
-    lewisDependence epiphDyn epiphBg storm barometer = false := by
-  native_decide
+    ¬ (lewisDependence epiphDyn epiphBg storm barometer) := by
+  lewis_decide
 
 /-- Full causal asymmetry: pressure is the genuine cause; neither
     effect causes the other; and no effect causes the common cause.
@@ -286,15 +337,15 @@ theorem storm_not_causes_barometer :
     but the pressure does not depend on the reading. -/
 theorem full_causal_asymmetry :
     -- P → B and P → S (genuine causation)
-    lewisDependence epiphDyn epiphBg pressure barometer = true ∧
-    lewisDependence epiphDyn epiphBg pressure storm = true ∧
+    lewisDependence epiphDyn epiphBg pressure barometer ∧
+    lewisDependence epiphDyn epiphBg pressure storm ∧
     -- B ↛ S and S ↛ B (no spurious causation)
-    lewisDependence epiphDyn epiphBg barometer storm = false ∧
-    lewisDependence epiphDyn epiphBg storm barometer = false ∧
+    ¬ (lewisDependence epiphDyn epiphBg barometer storm) ∧
+    ¬ (lewisDependence epiphDyn epiphBg storm barometer) ∧
     -- B ↛ P and S ↛ P (no reverse causation)
-    lewisDependence epiphDyn epiphBg barometer pressure = false ∧
-    lewisDependence epiphDyn epiphBg storm pressure = false := by
-  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> native_decide
+    ¬ (lewisDependence epiphDyn epiphBg barometer pressure) ∧
+    ¬ (lewisDependence epiphDyn epiphBg storm pressure) := by
+  refine ⟨?_, ?_, ?_, ?_, ?_, ?_⟩ <;> lewis_decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Overdetermination
@@ -316,22 +367,22 @@ private def overdetBg : Situation :=
 /-- Neither overdetermining cause passes the but-for test.
     Without A, B still causes E. Without B, A still causes E. -/
 theorem overdetermination_no_butfor :
-    lewisButFor overdetDyn overdetBg va ve = false ∧
-    lewisButFor overdetDyn overdetBg vb ve = false := by
-  constructor <;> native_decide
+    ¬ (lewisButFor overdetDyn overdetBg va ve) ∧
+    ¬ (lewisButFor overdetDyn overdetBg vb ve) := by
+  constructor <;> lewis_decide
 
 /-- Neither overdetermining cause is a Lewis causal dependent. -/
 theorem overdetermination_no_dependence :
-    lewisDependence overdetDyn overdetBg va ve = false ∧
-    lewisDependence overdetDyn overdetBg vb ve = false := by
-  constructor <;> native_decide
+    ¬ (lewisDependence overdetDyn overdetBg va ve) ∧
+    ¬ (lewisDependence overdetDyn overdetBg vb ve) := by
+  constructor <;> lewis_decide
 
 /-- With only one cause present, dependence holds.
     Overdetermination is the problem, not sufficiency. -/
 theorem single_cause_dependence :
-    lewisDependence overdetDyn (Situation.empty.extend va true) va ve = true ∧
-    lewisDependence overdetDyn (Situation.empty.extend vb true) vb ve = true := by
-  constructor <;> native_decide
+    lewisDependence overdetDyn (Situation.empty.extend va true) va ve ∧
+    lewisDependence overdetDyn (Situation.empty.extend vb true) vb ve := by
+  constructor <;> lewis_decide
 
 -- ════════════════════════════════════════════════════
 -- § 8. Bridge to Bar-Asher Siegal 2026 Door Model
@@ -348,13 +399,13 @@ open BarAsherSiegal2026
 theorem door_manual_butfor :
     lewisButFor manualOnlyDynamics
       (unlocked.extend handle true) handle doorOpens = true := by
-  native_decide
+  lewis_decide
 
 /-- Lewis's causal dependence for the manual-only door. -/
 theorem door_manual_dependence :
     lewisDependence manualOnlyDynamics
       (unlocked.extend handle true) handle doorOpens = true := by
-  native_decide
+  lewis_decide
 
 /-- In the full model (both pathways active), the handle does NOT pass
     Lewis's but-for — the automatic pathway provides a backup.
@@ -367,7 +418,7 @@ theorem door_full_no_butfor :
       (unlocked.extend handle true |>.extend button true
         |>.extend electricity true)
       handle doorOpens = false := by
-  native_decide
+  lewis_decide
 
 /-- Lewis's analysis agrees with CC-selection on the single-pathway
     model: the handle is both a Lewis causal dependent and satisfies
@@ -379,7 +430,7 @@ theorem door_lewis_agrees_ccselection :
       manualOnlyDynamics unlocked handle doorOpens = true ∧
     ccConstraintSatisfied .memberOfSufficientSet
       manualOnlyDynamics unlocked handle doorOpens = true := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> lewis_decide
 
 -- ════════════════════════════════════════════════════
 -- § 9. Bridge Theorems
@@ -404,37 +455,37 @@ incoming laws, the law-cutting is vacuous. -/
 /-- For simple dynamics (A→B), Lewis's causal dependence agrees
     with `completesForEffect` from CC-selection theory. -/
 theorem lewis_agrees_completes_simple :
-    lewisDependence simpleDyn simpleBg va vb = true ∧
+    lewisDependence simpleDyn simpleBg va vb ∧
     completesForEffect simpleDyn Situation.empty va vb = true := by
-  constructor <;> native_decide
+  constructor <;> lewis_decide
 
 /-- For chain dynamics (A→B→C), Lewis's causal dependence agrees
     with `completesForEffect`. -/
 theorem lewis_agrees_completes_chain :
-    lewisDependence chainDyn chainBg va vc = true ∧
+    lewisDependence chainDyn chainBg va vc ∧
     completesForEffect chainDyn Situation.empty va vc = true := by
-  constructor <;> native_decide
+  constructor <;> lewis_decide
 
 /-- For overdetermination, both Lewis and `completesForEffect` agree:
     neither overdetermining cause is individually necessary. -/
 theorem lewis_agrees_completes_overdet :
-    lewisDependence overdetDyn overdetBg va ve = false ∧
+    ¬ (lewisDependence overdetDyn overdetBg va ve) ∧
     completesForEffect overdetDyn (Situation.empty.extend vb true) va ve = false := by
-  constructor <;> native_decide
+  constructor <;> lewis_decide
 
 /-- Lewis's but-for agrees with `causallyNecessary` (Def 10b) for
     simple dynamics — both identify the single cause as necessary. -/
 theorem lewis_agrees_necessity_simple :
-    lewisButFor simpleDyn simpleBg va vb = true ∧
+    lewisButFor simpleDyn simpleBg va vb ∧
     causallyNecessary simpleDyn Situation.empty va vb := by
-  constructor <;> native_decide
+  constructor <;> lewis_decide
 
 /-- For overdetermination, both Lewis and Def 10b agree: neither
     overdetermining cause is necessary. -/
 theorem lewis_agrees_necessity_overdet :
-    lewisButFor overdetDyn overdetBg va ve = false ∧
+    ¬ (lewisButFor overdetDyn overdetBg va ve) ∧
     ¬ (causallyNecessary overdetDyn Situation.empty va ve) := by
-  constructor <;> native_decide
+  constructor <;> lewis_decide
 
 -- ════════════════════════════════════════════════════
 -- § 10. Preemption: Where TC Matters
@@ -477,17 +528,17 @@ private def preemptBg : Situation :=
 /-- The direct but-for fails for c1: removing c1 still allows c2→e.
     This is the challenge of preemption. -/
 theorem preemption_direct_butfor_fails :
-    lewisButFor preemptDyn preemptBg c1 ve = false := by native_decide
+    ¬ (lewisButFor preemptDyn preemptBg c1 ve) := by lewis_decide
 
 /-- The intermediate step holds: d depends on c1. -/
 theorem preemption_d_depends_c1 :
-    lewisDependence preemptDyn preemptBg c1 d = true := by native_decide
+    lewisDependence preemptDyn preemptBg c1 d := by lewis_decide
 
 /-- But e does NOT depend on d: removing d (via intervention) still
     allows c2→e. This is Lewis's late preemption problem — the backup
     cause operates at the same level as the actual effect. -/
 theorem preemption_e_not_depends_d :
-    lewisDependence preemptDyn preemptBg d ve = false := by native_decide
+    ¬ (lewisDependence preemptDyn preemptBg d ve) := by lewis_decide
 
 /-- Consequence: Lewis's TC-based causation also fails for c1→e in
     late preemption. The chain c1→d→e breaks at d→e because c2
@@ -497,17 +548,17 @@ theorem preemption_e_not_depends_d :
     where the backup is blocked before reaching the effect. Late
     preemption motivated Lewis's 2000 revision. -/
 theorem preemption_tc_fails :
-    lewisCausation preemptDyn preemptBg c1 ve = false := by native_decide
+    lewisCausation preemptDyn preemptBg c1 ve = false := by lewis_decide
 
 /-- The backup cause c2 also fails the direct but-for (c1→d→e is the
     actual pathway and d→e fires even without c2). -/
 theorem preemption_c2_butfor_fails :
-    lewisButFor preemptDyn preemptBg c2 ve = false := by native_decide
+    ¬ (lewisButFor preemptDyn preemptBg c2 ve) := by lewis_decide
 
 /-- With only c1 (no backup c2), dependence holds directly. -/
 theorem preemption_no_backup :
     lewisDependence preemptDyn (Situation.empty.extend c1 true)
-      c1 ve = true := by native_decide
+      c1 ve = true := by lewis_decide
 
 -- ════════════════════════════════════════════════════
 -- § 11. Lewis's Causal Profiles
@@ -516,11 +567,11 @@ theorem preemption_no_backup :
 /-- For simple dynamics, Lewis's analysis and the SEM profile agree
     completely: a is sufficient, necessary, and direct. -/
 theorem lewis_profile_simple :
-    lewisDependence simpleDyn simpleBg va vb = true ∧
+    lewisDependence simpleDyn simpleBg va vb ∧
     causallySufficient simpleDyn Situation.empty va vb ∧
     causallyNecessary simpleDyn Situation.empty va vb ∧
     hasDirectLaw simpleDyn va vb := by
-  refine ⟨?_, ?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_, ?_⟩ <;> lewis_decide
 
 /-- **Lewis vs Def 10b on chains**: this is where they DIVERGE.
 
@@ -538,11 +589,11 @@ theorem lewis_profile_simple :
     prerequisite for C" — but was it the ONLY possible prerequisite?). -/
 theorem lewis_vs_def10b_chain :
     -- Lewis: A is necessary for C (simple but-for)
-    lewisButFor chainDyn chainBg va vc = true ∧
+    lewisButFor chainDyn chainBg va vc ∧
     -- Def 10b: A is NOT necessary for C (supersituation bypass)
     ¬ (causallyNecessary chainDyn Situation.empty va vc) ∧
     -- But both agree A is sufficient
     causallySufficient chainDyn Situation.empty va vc := by
-  refine ⟨?_, ?_, ?_⟩ <;> native_decide
+  refine ⟨?_, ?_, ?_⟩ <;> lewis_decide
 
 end Lewis1973

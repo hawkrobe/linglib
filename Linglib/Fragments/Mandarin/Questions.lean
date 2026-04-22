@@ -27,7 +27,7 @@ single typological parameter):
   in situ.
 
 This file is theory-neutral: the Minimalist POV-feature analysis lives
-in `Theories/Syntax/Minimalism/Core/ANDL.lean`; this file only carries
+in `Theories/Syntax/Minimalism/ANDL.lean`; this file only carries
 the lexical entries with their typological parameters.
 -/
 
@@ -54,7 +54,7 @@ def whMechanism : WhInterpMechanism := .unselectiveBinding
 
     Theory-neutral lexical entry: phonological form, gloss, and
     typological parameters only. The POV-feature analysis (shared with
-    *the-hell*) lives in `Theories/Syntax/Minimalism/Core/ANDL.lean`;
+    *the-hell*) lives in `Theories/Syntax/Minimalism/ANDL.lean`;
     no Minimalist commitments are baked in here. -/
 def daodi : ExpressiveWhModifier :=
   { form := "到底"

@@ -78,16 +78,23 @@ structure DegreeScenario where
     heat being sufficient is causally linked to the drinking event. -/
 def enoughAt (sc : DegreeScenario) (w : World) : Prop :=
   (normalDevelopment sc.dynamics ((sc.background w).extend sc.degreeMet true)).hasValue
-    sc.complement true = true
+    sc.complement true
 
 instance (sc : DegreeScenario) (w : World) : Decidable (enoughAt sc w) :=
-  inferInstanceAs (Decidable (_ = true))
+  inferInstanceAs (Decidable (Situation.hasValue ..))
+
+/-- Bridge: `enoughAt sc w ↔ causallySufficient` over the scenario fields. -/
+theorem enoughAt_iff_causallySufficient (sc : DegreeScenario) (w : World) :
+    enoughAt sc w ↔
+      Core.Causal.causallySufficient sc.dynamics (sc.background w)
+        sc.degreeMet sc.complement :=
+  Iff.rfl
 
 /-- The complement is actualized at `w`: degree was met AND complement
     developed via normal causal propagation. -/
 def enoughActualized (sc : DegreeScenario) (w : World) : Prop :=
-  (sc.background w).hasValue sc.degreeMet true = true ∧
-  (normalDevelopment sc.dynamics (sc.background w)).hasValue sc.complement true = true
+  (sc.background w).hasValue sc.degreeMet true ∧
+  (normalDevelopment sc.dynamics (sc.background w)).hasValue sc.complement true
 
 instance (sc : DegreeScenario) (w : World) : Decidable (enoughActualized sc w) :=
   inferInstanceAs (Decidable (_ ∧ _))
@@ -120,16 +127,16 @@ instance (sc : DegreeScenario) (asp : ViewpointAspectB) (w : World) :
     is causally sufficient for the complement NOT occurring. -/
 def tooAt (sc : DegreeScenario) (w : World) : Prop :=
   let bgWithDeg := (sc.background w).extend sc.degreeMet true
-  (normalDevelopment sc.dynamics bgWithDeg).hasValue sc.complement true = false
+  ¬ (normalDevelopment sc.dynamics bgWithDeg).hasValue sc.complement true
 
 instance (sc : DegreeScenario) (w : World) : Decidable (tooAt sc w) :=
-  inferInstanceAs (Decidable (_ = false))
+  inferInstanceAs (Decidable (¬ _))
 
 /-- The complement is blocked at `w`: degree was met AND complement
     did NOT develop. -/
 def tooActualized (sc : DegreeScenario) (w : World) : Prop :=
-  (sc.background w).hasValue sc.degreeMet true = true ∧
-  (normalDevelopment sc.dynamics (sc.background w)).hasValue sc.complement true = false
+  (sc.background w).hasValue sc.degreeMet true ∧
+  ¬ (normalDevelopment sc.dynamics (sc.background w)).hasValue sc.complement true
 
 instance (sc : DegreeScenario) (w : World) : Decidable (tooActualized sc w) :=
   inferInstanceAs (Decidable (_ ∧ _))

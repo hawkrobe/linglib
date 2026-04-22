@@ -55,11 +55,13 @@ def duo : ClassifierEntry :=
   { form := "朵", gloss := "flower/cloud"
   , semantics := [.shape, .size] }
 
-/-- 位 wèi — persons (honorific/polite register).
-    Encodes: humanness + social status. -/
+/-- 位 wèi — persons (formal/polite register).
+    Encodes: humanness + register. The `register` parameter indexes
+    formality/politeness of the speech act, not honorific status of
+    the referent. -/
 def wei : ClassifierEntry :=
-  { form := "位", gloss := "person.HON"
-  , semantics := [.humanness, .socialStatus] }
+  { form := "位", gloss := "person.formal"
+  , semantics := [.humanness, .register] }
 
 /-- 条 tiáo — long, thin, flexible objects (rivers, roads, snakes, fish).
     Encodes: shape (1D, elongated). -/

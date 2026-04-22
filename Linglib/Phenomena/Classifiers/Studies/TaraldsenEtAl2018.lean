@@ -49,6 +49,7 @@ open Morphology.Nanosyntax
 open Morphology.DM.VI
 open Fragments.Xhosa
 open Fragments.Bantu
+open Core.Typology.NounCategorizationSystem (isNounClassType isClassifierType)
 
 -- ============================================================================
 -- §1: Feature inventory
@@ -110,40 +111,40 @@ def xhosaClassPrefixes : List (TreeLexEntry NCFeature) :=
 /-- Singular: target N1 -> "um" (cl1Sg wins, smallest match). -/
 theorem spellout_cl1_sg :
     treeSpellout xhosaClassPrefixes (.leaf (.cls 1)) = some "um" := by
-  native_decide
+  decide
 
 /-- Plural: target [# N1] -> "aba" (cl2Pl matches — strong class). -/
 theorem spellout_cl2_pl :
     treeSpellout xhosaClassPrefixes (.node .num [.leaf (.cls 1)])
       = some "aba" := by
-  native_decide
+  decide
 
 /-- Singular: target N5 -> "ili". -/
 theorem spellout_cl5_sg :
     treeSpellout xhosaClassPrefixes (.leaf (.cls 5)) = some "ili" := by
-  native_decide
+  decide
 
 /-- Plural: target [# N6] -> "ama" (weak class — N₆ ≠ N₅). -/
 theorem spellout_cl6_pl :
     treeSpellout xhosaClassPrefixes (.node .num [.leaf (.cls 6)])
       = some "ama" := by
-  native_decide
+  decide
 
 /-- Singular: target N7 -> "isi". -/
 theorem spellout_cl7_sg :
     treeSpellout xhosaClassPrefixes (.leaf (.cls 7)) = some "isi" := by
-  native_decide
+  decide
 
 /-- Plural: target [# N7] -> "izi" (strong class). -/
 theorem spellout_cl8_pl :
     treeSpellout xhosaClassPrefixes (.node .num [.leaf (.cls 7)])
       = some "izi" := by
-  native_decide
+  decide
 
 /-- No prefix matches an unlexicalized N (class 2 has no singular form). -/
 theorem spellout_cl2_sg_none :
     treeSpellout xhosaClassPrefixes (.leaf (.cls 2)) = none := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §4: Strong vs weak classes
@@ -200,12 +201,12 @@ theorem cl4_foot_is_n4 : cl4Pl.tree.foot = .cls 4 := rfl
     is present in the target. No stacking needed. -/
 theorem foot_met_strong_cl2 :
     footConditionMet cl2Pl (.node .num [.leaf (.cls 1)]) = true := by
-  native_decide
+  decide
 
 /-- Strong class: "izi" CAN spell out [# N₇]. -/
 theorem foot_met_strong_cl8 :
     footConditionMet cl8Pl (.node .num [.leaf (.cls 7)]) = true := by
-  native_decide
+  decide
 
 /-- Weak class: "imi" CANNOT spell out a structure containing only N₃.
     The Foot Condition requires N₄ (the foot of imi's stored tree),
@@ -214,13 +215,13 @@ theorem foot_met_strong_cl8 :
     Changana/Rhonga. -/
 theorem foot_not_met_weak_cl4 :
     footConditionMet cl4Pl (.node .num [.leaf (.cls 3)]) = false := by
-  native_decide
+  decide
 
 /-- Weak class: "ama" CANNOT spell out a structure containing only N₅.
     Same logic: N₆ ≠ N₅. -/
 theorem foot_not_met_weak_cl6 :
     footConditionMet cl6Pl (.node .num [.leaf (.cls 5)]) = false := by
-  native_decide
+  decide
 
 /-- The stacking prediction: for weak classes, no entry in the lexicon
     can spell out the target [# N_sg]. The derivation must backtrack,
@@ -231,15 +232,15 @@ theorem foot_not_met_weak_cl6 :
     Contrast with strong classes (§3) where spellout succeeds directly. -/
 theorem no_spellout_forces_stacking_cl3 :
     treeSpellout xhosaClassPrefixes (.node .num [.leaf (.cls 3)]) = none := by
-  native_decide
+  decide
 
 theorem no_spellout_forces_stacking_cl5 :
     treeSpellout xhosaClassPrefixes (.node .num [.leaf (.cls 5)]) = none := by
-  native_decide
+  decide
 
 theorem no_spellout_forces_stacking_cl9 :
     treeSpellout xhosaClassPrefixes (.node .num [.leaf (.cls 9)]) = none := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §6: Pluralization derivation
@@ -287,12 +288,12 @@ def derivePlural (entries : List (TreeLexEntry NCFeature))
     the target [# N₁], so the derivation succeeds in one step. -/
 theorem cl1_plural_direct :
     derivePlural xhosaClassPrefixes 1 2 = some (.direct "aba") := by
-  native_decide
+  decide
 
 /-- Strong class 7/8: direct pluralization. -/
 theorem cl7_plural_direct :
     derivePlural xhosaClassPrefixes 7 8 = some (.direct "izi") := by
-  native_decide
+  decide
 
 /-- Weak class 3/4: stacking. No entry matches [# N₃] (because the
     only class 4 entry has [# N₄] and N₄ ≠ N₃), so the derivation
@@ -300,19 +301,19 @@ theorem cl7_plural_direct :
     Produces the Changana/Rhonga form *mi-mu-twa* 'thorns'. -/
 theorem cl3_plural_stacked :
     derivePlural xhosaClassPrefixes 3 4 = some (.stacked "imi" "um") := by
-  native_decide
+  decide
 
 /-- Weak class 5/6: stacking. ama ↔ [# N₆] on top of ili ↔ [N₅].
     Produces Rhonga *ma-rhi-tu* 'words'. -/
 theorem cl5_plural_stacked :
     derivePlural xhosaClassPrefixes 5 6 = some (.stacked "ama" "ili") := by
-  native_decide
+  decide
 
 /-- Weak class 9/10: stacking. iin ↔ [# N₁₀] on top of in ↔ [N₉].
     Produces Rhonga *ti-yi-n-dlu* 'houses'. -/
 theorem cl9_plural_stacked :
     derivePlural xhosaClassPrefixes 9 10 = some (.stacked "iin" "in") := by
-  native_decide
+  decide
 
 /-- Whether an entry is a plural prefix (has # at root).
     Structurally, plural entries are [# N_X] (node with `num` label);
@@ -325,12 +326,12 @@ def isPluralEntry (e : TreeLexEntry NCFeature) : Bool :=
 /-- All singular prefixes lack #. -/
 theorem singular_entries_not_plural :
     [cl1Sg, cl3Sg, cl5Sg, cl7Sg, cl9Sg].all (!isPluralEntry ·) = true := by
-  native_decide
+  decide
 
 /-- All plural prefixes have # at root. -/
 theorem plural_entries_have_number :
     [cl2Pl, cl4Pl, cl6Pl, cl8Pl, cl10Pl].all (isPluralEntry ·) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §7: Structural stacking-agreement correlation
@@ -406,35 +407,35 @@ theorem stacking_cl1_cl2 (r : PluralizationResult)
     (hr : derivePlural xhosaClassPrefixes 1 2 = some r) :
     r.isStacked = !sharesClassifierN cl1Sg cl2Pl :=
   stacking_iff_distinct_N_general _ _ _ _ _ _ rfl rfl
-    (by native_decide) r hr
+    (by decide) r hr
 
 /-- Strong class 7/8: no stacking (shared N₇). -/
 theorem stacking_cl7_cl8 (r : PluralizationResult)
     (hr : derivePlural xhosaClassPrefixes 7 8 = some r) :
     r.isStacked = !sharesClassifierN cl7Sg cl8Pl :=
   stacking_iff_distinct_N_general _ _ _ _ _ _ rfl rfl
-    (by native_decide) r hr
+    (by decide) r hr
 
 /-- Weak class 3/4: stacking (N₄ ≠ N₃). -/
 theorem stacking_cl3_cl4 (r : PluralizationResult)
     (hr : derivePlural xhosaClassPrefixes 3 4 = some r) :
     r.isStacked = !sharesClassifierN cl3Sg cl4Pl :=
   stacking_iff_distinct_N_general _ _ _ _ _ _ rfl rfl
-    (by native_decide) r hr
+    (by decide) r hr
 
 /-- Weak class 5/6: stacking (N₆ ≠ N₅). -/
 theorem stacking_cl5_cl6 (r : PluralizationResult)
     (hr : derivePlural xhosaClassPrefixes 5 6 = some r) :
     r.isStacked = !sharesClassifierN cl5Sg cl6Pl :=
   stacking_iff_distinct_N_general _ _ _ _ _ _ rfl rfl
-    (by native_decide) r hr
+    (by decide) r hr
 
 /-- Weak class 9/10: stacking (N₁₀ ≠ N₉). -/
 theorem stacking_cl9_cl10 (r : PluralizationResult)
     (hr : derivePlural xhosaClassPrefixes 9 10 = some r) :
     r.isStacked = !sharesClassifierN cl9Sg cl10Pl :=
   stacking_iff_distinct_N_general _ _ _ _ _ _ rfl rfl
-    (by native_decide) r hr
+    (by decide) r hr
 
 -- §7d: Uniform verification over all pairings
 
@@ -465,13 +466,13 @@ theorem stacking_outer_is_plural :
       | some (.stacked outer _) =>
         xhosaClassPrefixes.any (fun e => e.exponent == outer && isPluralEntry e)
       | _ => true) = true := by
-  native_decide
+  decide
 
 /-- Every class pairing produces a valid derivation (no failures). -/
 theorem all_pairings_derive :
     classPairings.all (fun p =>
       (derivePlural xhosaClassPrefixes p.sgClass p.plClass).isSome) = true := by
-  native_decide
+  decide
 
 -- ============================================================================
 -- §8: DM vs Nanosyntax on the same data
@@ -494,13 +495,13 @@ def scPrefixNano : List (TreeLexEntry NCFeature) :=
 theorem dm_nano_agree_cl1 :
     subsetPrinciple scPrefixDM [1] = some "u" ∧
     treeSpellout scPrefixNano (.leaf (.cls 1)) = some "u" := by
-  constructor <;> native_decide
+  refine ⟨?_, ?_⟩ <;> decide
 
 /-- DM and Nanosyntax agree: class 2 SC prefix = "ba". -/
 theorem dm_nano_agree_cl2 :
     subsetPrinciple scPrefixDM [2] = some "ba" ∧
     treeSpellout scPrefixNano (.leaf (.cls 2)) = some "ba" := by
-  constructor <;> native_decide
+  refine ⟨?_, ?_⟩ <;> decide
 
 -- ============================================================================
 -- §9: Agreement-classifier bridge

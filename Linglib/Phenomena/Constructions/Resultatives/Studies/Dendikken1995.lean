@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.SmallClause
+import Linglib.Theories.Syntax.Minimalism.SmallClause
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.GoldbergJackendoff2004
 
 /-!

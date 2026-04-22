@@ -53,7 +53,6 @@ inchoatives have CAUSE.
 - `CausationType.HasCauseInLSR` — internally vs externally caused distinction
 - `IntransitivizationType` — competing structural analysis (@cite{krejci-2012})
 - `reflexivization` / `decausativization` — valency alternation types
-- `AnticausativeAnalysis` — parameterization of competing analyses
 -/
 
 namespace KoontzGarboden2009
@@ -66,47 +65,7 @@ open Minimalism (VerbHead)
 open Core.Alternation
 
 -- ════════════════════════════════════════════════════
--- § 1. Competing Analyses of Anticausativization (§5)
--- ════════════════════════════════════════════════════
-
-/-- Competing analyses of the semantic impact of anticausativization.
-
-    @cite{koontz-garboden-2009} §5 reviews four families of analysis.
-    The choice determines whether derived inchoatives have CAUSE in
-    their denotation, which in turn predicts:
-    - licensing of *por sí solo* / *by itself* (CAUSE required)
-    - scope of negation over CAUSE (§4.3)
-    - NPI licensing in negated inchoatives (§4.3)
-    - acceptability in the Albanian "feel like" construction (§4.2) -/
-inductive AnticausativeAnalysis where
-  /-- Anticausativization deletes CAUSE + external argument.
-      Result: [BECOME [x STATE]]. Grimshaw 1982; @cite{krejci-2012}. -/
-  | deletion
-  /-- Anticausativization reflexivizes the causative denotation.
-      CAUSE retained. @cite{koontz-garboden-2009}; @cite{chierchia-2004}. -/
-  | reflexivization
-  /-- Existential binding of the external argument
-      (@cite{levin-hovav-1995} Ch. 3). -/
-  | existentialBinding
-  /-- Both forms derived from a more abstract root.
-      Doron 2003; Alexiadou et al. 2006. -/
-  | leastCommonDenominator
-  deriving DecidableEq, Repr
-
-/-- Does this analysis predict that derived inchoatives retain CAUSE? -/
-def AnticausativeAnalysis.retainsCause : AnticausativeAnalysis → Bool
-  | .reflexivization => true
-  | .existentialBinding => true
-  | .deletion => false
-  | .leastCommonDenominator => false
-
-/-- Does this analysis preserve the Monotonicity Hypothesis? -/
-def AnticausativeAnalysis.preservesMH : AnticausativeAnalysis → Bool
-  | .deletion => false
-  | _ => true
-
--- ════════════════════════════════════════════════════
--- § 2. The Reflexivization Operator (§2.2)
+-- § 1. The Reflexivization Operator (§2.2)
 -- ════════════════════════════════════════════════════
 
 /-! The reflexivization operator (eq. 11) = λℜλx[ℜ(x,x)].
@@ -416,16 +375,13 @@ theorem krejci_anticausative_monoeventive :
 theorem krejci_reflexive_bieventive :
     IntransitivizationType.isBieventive .reflexive = true := rfl
 
-/-- K-G's claim: anticausativization IS reflexivization. The
-    "anticausative" reading arises from EFFECTOR underspecification,
-    not from a structurally distinct operation. -/
-theorem kg_anticausative_is_reflexivization :
-    AnticausativeAnalysis.retainsCause .reflexivization = true ∧
-    AnticausativeAnalysis.preservesMH .reflexivization = true := ⟨rfl, rfl⟩
-
-/-- The deletion analysis fails the MH. -/
-theorem deletion_violates_mh :
-    AnticausativeAnalysis.preservesMH .deletion = false := rfl
+/-! K-G's central claim is that anticausativization IS reflexivization
+    (not deletion): the "anticausative" reading arises from EFFECTOR
+    underspecification, not from a structurally distinct operation.
+    This entails CAUSE retention (so K-G's analysis preserves the
+    Monotonicity Hypothesis), against deletion analyses which violate
+    it. The structural content lives in `reflexivize` above and the
+    `causative_does_not_entail_inchoative` theorem below. -/
 
 -- ════════════════════════════════════════════════════
 -- § 10. Cross-Linguistic Morphological Evidence (§3.3)

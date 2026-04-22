@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.PConstraint
+import Linglib.Theories.Syntax.Minimalism.PConstraint
 import Linglib.Core.Logophoricity
 
 /-!

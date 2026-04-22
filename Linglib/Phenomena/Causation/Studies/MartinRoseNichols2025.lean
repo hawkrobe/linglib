@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Causation.ProductionDependence
-import Linglib.Theories.Syntax.Minimalism.Core.Voice
-import Linglib.Theories.Syntax.Minimalism.Core.Applicative
+import Linglib.Theories.Syntax.Minimalism.Voice
+import Linglib.Theories.Syntax.Minimalism.Applicative
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.EventStructureBridge
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Core.Lexical.DiathesisAlternation

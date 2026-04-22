@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Agree
+import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Core.Polarity
 
 /-!

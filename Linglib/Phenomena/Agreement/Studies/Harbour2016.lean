@@ -1,6 +1,6 @@
 import Linglib.Core.Person
 import Linglib.Core.Number
-import Linglib.Theories.Syntax.Minimalism.Core.CyclicAgree
+import Linglib.Theories.Syntax.Minimalism.CyclicAgree
 import Linglib.Theories.Syntax.Minimalism.Agreement.FeatureRecursion
 import Linglib.Phenomena.Agreement.Studies.Corbett2000
 

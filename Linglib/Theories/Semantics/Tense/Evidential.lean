@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Tense.Compositional
-import Linglib.Core.Evidence
+import Linglib.Core.Evidentiality
+import Linglib.Core.Mirativity
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Mood.Basic
 import Linglib.Core.Context.Shifts
@@ -41,10 +42,13 @@ The tense evidential constraint parallels @cite{von-fintel-gillies-2010}
 `kernelMust` presupposition: both require non-direct evidence. The bridge
 between these two phenomena is formalized in `Comparisons/TenseModalEvidentiality.lean`.
 
-## Connection to Core.Evidence
+## Connection to Core.Evidentiality
 
-`EPCondition.toEvidentialPerspective` maps the five EP constraint shapes to
-the canonical `EvidentialPerspective` classification in `Core.Evidence`.
+`EPCondition` is a `HasEvidentialPerspective` instance: each of the five EP
+constraint shapes maps to (an `Option` of) the canonical `EvidentialPerspective`
+classification in `Core.Evidentiality`. `EPCondition.IsNonfuture` and
+`TAMEEntry.IsNonfuture` are dot-notation aliases for the typeclass-derived
+`Core.Evidentiality.IsNonfuture` predicate.
 
 -/
 
@@ -53,7 +57,8 @@ namespace Semantics.Tense.Evidential
 open Core.Time
 open Core.Time.Reichenbach
 open Semantics.Tense
-open Core.Evidence
+open Core.Evidentiality
+open Core.Mirativity
 open Core.Presupposition
 
 -- ════════════════════════════════════════════════════
@@ -104,14 +109,6 @@ def EPCondition.toRelation : EPCondition → Core.Time.Relation
 def EPCondition.toConstraint (e : EPCondition) (f : EvidentialFrame ℤ) : Prop :=
   e.toRelation.eval f.eventTime f.acquisitionTime
 
-/-- Is this EP constraint nonfuture? Downstream, strict downstream, and
-    contemporaneous all entail T ≤ A; prospective and unconstrained do not. -/
-def EPCondition.IsNonfuture (e : EPCondition) : Prop :=
-  e = .downstream ∨ e = .strictDownstream ∨ e = .contemporaneous
-
-instance : DecidablePred EPCondition.IsNonfuture :=
-  fun _ => inferInstanceAs (Decidable (_ ∨ _))
-
 /-- Map EP constraint shapes to `EvidentialPerspective` where applicable.
     Unconstrained has no single perspective. -/
 def EPCondition.toEvidentialPerspective : EPCondition → Option EvidentialPerspective
@@ -120,6 +117,34 @@ def EPCondition.toEvidentialPerspective : EPCondition → Option EvidentialPersp
   | .contemporaneous => some .contemporaneous
   | .prospective => some .prospective
   | .unconstrained => none
+
+instance : HasEvidentialPerspective EPCondition where
+  toEvidentialPerspective := EPCondition.toEvidentialPerspective
+
+/-- Dot-notation alias for the typeclass-derived `Core.Evidentiality.IsNonfuture`
+    on EP constraint shapes. Downstream, strict downstream, and contemporaneous
+    all project to retrospective/contemporaneous; prospective and unconstrained
+    do not. -/
+def EPCondition.IsNonfuture (e : EPCondition) : Prop :=
+  Core.Evidentiality.IsNonfuture e
+
+instance : DecidablePred EPCondition.IsNonfuture :=
+  fun _ => inferInstanceAs (Decidable (Core.Evidentiality.IsNonfuture _))
+
+@[simp] theorem EPCondition.toEvidentialPerspective_downstream :
+    EPCondition.toEvidentialPerspective .downstream = some .retrospective := rfl
+
+@[simp] theorem EPCondition.toEvidentialPerspective_strictDownstream :
+    EPCondition.toEvidentialPerspective .strictDownstream = some .retrospective := rfl
+
+@[simp] theorem EPCondition.toEvidentialPerspective_contemporaneous :
+    EPCondition.toEvidentialPerspective .contemporaneous = some .contemporaneous := rfl
+
+@[simp] theorem EPCondition.toEvidentialPerspective_prospective :
+    EPCondition.toEvidentialPerspective .prospective = some .prospective := rfl
+
+@[simp] theorem EPCondition.toEvidentialPerspective_unconstrained :
+    EPCondition.toEvidentialPerspective .unconstrained = none := rfl
 
 -- ════════════════════════════════════════════════════
 -- § 3. UP Constraint Enum
@@ -168,14 +193,18 @@ structure TAMEEntry where
   /-- Grammatical mood (indicative, subjunctive), if specified -/
   mood : Option Semantics.Mood.GramMood := none
   /-- Mirativity value (expected, unexpected, neutral), if specified -/
-  mirative : Option Core.Evidence.MirativityValue := none
+  mirative : Option MirativityValue := none
 
-/-- Is this a nonfuture tense? Derived from the EP constraint. -/
+instance : HasEvidentialPerspective TAMEEntry where
+  toEvidentialPerspective p := toEvidentialPerspective p.ep
+
+/-- Dot-notation alias for the typeclass-derived `Core.Evidentiality.IsNonfuture`
+    on TAME paradigm rows. A row is nonfuture iff its EP constraint is. -/
 def TAMEEntry.IsNonfuture (p : TAMEEntry) : Prop :=
-  p.ep.IsNonfuture
+  Core.Evidentiality.IsNonfuture p
 
 instance : DecidablePred TAMEEntry.IsNonfuture :=
-  fun p => inferInstanceAs (Decidable p.ep.IsNonfuture)
+  fun _ => inferInstanceAs (Decidable (Core.Evidentiality.IsNonfuture _))
 
 /-- The EP constraint as a predicate over `EvidentialFrame ℤ`. -/
 def TAMEEntry.epConstraint (p : TAMEEntry) :
@@ -212,8 +241,8 @@ theorem EPCondition.nonfuture_implies_downstream
   | downstream => exact h_ep
   | strictDownstream => exact le_of_lt h_ep
   | contemporaneous => exact le_of_eq h_ep
-  | prospective => simp [IsNonfuture] at h_nf
-  | unconstrained => simp [IsNonfuture] at h_nf
+  | prospective => exact absurd h_nf (by decide)
+  | unconstrained => exact absurd h_nf (by decide)
 
 -- ════════════════════════════════════════════════════
 -- § 7. Presuppositional Nonfuture Meaning

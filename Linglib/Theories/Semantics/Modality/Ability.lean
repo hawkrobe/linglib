@@ -43,7 +43,9 @@ def abilityAsKratzerPossibility (f : CausalFrame World) (w : World) : Prop :=
     (λ w' => f.actualizedAt w')
     w
 
-/-- Ability = causal sufficiency (definitional). -/
+/-- Ability = causal sufficiency. After the @cite{schulz-2011}/@cite{fitting-1985}
+    unification, both `f.sufficientAt` and `causallySufficient` reduce to the
+    same `normalDevelopment` query, so the bridge is definitional. -/
 theorem ability_is_causal_sufficiency (f : CausalFrame World) (w : World) :
     f.sufficientAt w ↔
       causallySufficient f.dynamics (f.background w) f.trigger f.complement :=

@@ -1,4 +1,4 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Modification
+import Linglib.Theories.Syntax.Minimalism.Modification
 
 /-!
 # Russian Adjective Agreement

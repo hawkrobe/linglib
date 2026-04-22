@@ -10,7 +10,7 @@ language fragments. Originally defined inside
 `Fragments/English/Determiners.lean`, but several theory files
 (`Theories/Syntax/HPSG/Core/FromFragments.lean`,
 `Theories/Syntax/CCG/Core/FromFragments.lean`,
-`Theories/Syntax/Minimalism/Core/FromFragments.lean`) and several
+`Theories/Syntax/Minimalism/FromFragments.lean`) and several
 fragments (English, French, Italian) all need it; promoting it here
 removes a Theory→Fragment import direction violation and lets all
 language fragments share a single `QuantifierEntry` shape.

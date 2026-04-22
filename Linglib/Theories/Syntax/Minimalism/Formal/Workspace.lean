@@ -21,8 +21,8 @@ and @cite{adger-2003} Chapter 3.
 -/
 
 import Linglib.Core.Grammar
-import Linglib.Theories.Syntax.Minimalism.Core.Agree
-import Linglib.Theories.Syntax.Minimalism.Core.Derivation
+import Linglib.Theories.Syntax.Minimalism.Agree
+import Linglib.Theories.Syntax.Minimalism.Derivation
 
 namespace Minimalism
 

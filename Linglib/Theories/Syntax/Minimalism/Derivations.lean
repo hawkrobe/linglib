@@ -1,9 +1,11 @@
-import Linglib.Theories.Syntax.Minimalism.Core.Basic
-import Linglib.Theories.Syntax.Minimalism.Core.Derivation
-import Linglib.Theories.Syntax.Minimalism.Core.FromFragments
+import Linglib.Theories.Syntax.Minimalism.Basic
+import Linglib.Theories.Syntax.Minimalism.Derivation
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Nouns
+import Linglib.Fragments.English.Determiners
+import Linglib.Fragments.English.Lexicon
+import Linglib.Theories.Semantics.Quantification.Lexicon
 
 /-!
 # Minimalist Derivations
@@ -15,15 +17,78 @@ Minimalist Program derivations using the Fragments lexicon, expressed as
 
   Fragments/English/... → Lexical entries (VerbEntry, PronounEntry, etc.)
           ↓
-  Theories/Minimalism/FromFragments → Interpretation: Entry → SyntacticObject
+  Minimalism.FromFragments → Interpretation: Entry → SyntacticObject
+                                  (defined below; was Core/FromFragments.lean)
           ↓
-  Theories/Minimalism/Derivations → Minimalist derivations (this file)
+  Minimalism.Phenomena.Derivations → Minimalist derivations (this file)
 -/
+
+namespace Minimalism.FromFragments
+
+open Minimalism
+open Fragments.English.Predicates.Verbal (VerbEntry ComplementType)
+open Fragments.English.Pronouns (PronounEntry PronounType)
+open Fragments.English.Nouns (NounEntry)
+open Theories.Semantics.Quantification.Lexicon (QuantifierEntry)
+open Fragments.English.Lexicon (LexResult)
+
+/-- Map a VerbEntry's complement type to a formal selectional stack. -/
+def verbToSelStack (v : VerbEntry) : SelStack :=
+  match v.complementType with
+  | .none => []                -- intransitive
+  | .np => [.D]               -- transitive: selects DP
+  | .np_np => [.D, .D]        -- ditransitive: selects two DPs
+  | .np_pp => [.D]            -- NP + PP (PP handled separately)
+  | .finiteClause => [.C]     -- clause-embedding: selects CP
+  | .infinitival => [.T]      -- control/raising: selects TP
+  | .gerund => [.V]           -- gerund complement
+  | .smallClause => [.D]      -- small clause (simplified)
+  | .question => [.C]         -- question-embedding: selects CP
+
+/-- Convert a VerbEntry to a formal SyntacticObject.
+    Uses `uposToCat` indirectly: verbs always map to `Cat.V`. -/
+def verbToSO (v : VerbEntry) (id : Nat) : SyntacticObject :=
+  mkLeafPhon .V (verbToSelStack v) v.form3sg id
+
+/-- Convert a PronounEntry to a formal SyntacticObject.
+    Pronouns are D heads (they project as DPs). -/
+def pronounToSO (p : PronounEntry) (id : Nat) : SyntacticObject :=
+  mkLeafPhon .D [] p.form id
+
+/-- Convert a NounEntry to a formal SyntacticObject.
+    Proper names are D (project as DP heads); common nouns are N. -/
+def nounToSO (n : NounEntry) (id : Nat) : SyntacticObject :=
+  if n.proper then
+    mkLeafPhon .D [] n.formSg id
+  else
+    mkLeafPhon .N [] n.formSg id
+
+/-- Convert a QuantifierEntry to a formal SyntacticObject.
+    Determiners are D heads that select N. -/
+def determinerToSO (d : QuantifierEntry) (id : Nat) : SyntacticObject :=
+  mkLeafPhon .D [.N] d.form id
+
+/-- Convert a unified LexResult to a formal SyntacticObject. -/
+def lexResultToSO (r : LexResult) (id : Nat) : SyntacticObject :=
+  match r with
+  | .verb v => verbToSO v id
+  | .pronoun p => pronounToSO p id
+  | .noun n => nounToSO n id
+  | .determiner d => determinerToSO d id
+
+-- Verification examples
+example : verbToSelStack Fragments.English.Predicates.Verbal.sleep = [] := rfl
+example : verbToSelStack Fragments.English.Predicates.Verbal.eat = [.D] := rfl
+example : verbToSelStack Fragments.English.Predicates.Verbal.give = [.D, .D] := rfl
+example : (nounToSO Fragments.English.Nouns.john 1).isLeaf := by decide
+example : (nounToSO Fragments.English.Nouns.cat 1).isLeaf := by decide
+
+end Minimalism.FromFragments
 
 namespace Minimalism.Phenomena.Derivations
 
 open Minimalism
-open Minimalism.Core.FromFragments
+open Minimalism.FromFragments
 open Fragments.English.Lexicon (LexResult)
 
 -- ============================================================================

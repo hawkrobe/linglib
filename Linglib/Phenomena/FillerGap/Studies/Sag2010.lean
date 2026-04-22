@@ -2,10 +2,10 @@
 # Filler-Gap Construction Typology
 
 Parametric variation across the five types of English filler-gap clauses,
-following @cite{hofmeister-sag-2010}. The core empirical contribution: F-G clauses share
+following @cite{sag-2010}. The core empirical contribution: F-G clauses share
 a common filler–gap structure but differ systematically along 7 parameters.
 
-## The Five F-G Clause Types (§2.1, examples 1–5)
+## The Five F-G Clause Types
 
 1. Wh-interrogative: "How foolish is he?" / "I wonder how foolish he is."
 2. Wh-exclamative: "What a fool he is!" / "It's amazing how odd it is."
@@ -17,7 +17,7 @@ a common filler–gap structure but differ systematically along 7 parameters.
 
 import Linglib.Phenomena.Islands.Studies.Ross1967
 
-namespace Sag2010
+namespace Phenomena.FillerGap.Studies.Sag2010
 
 -- ============================================================================
 -- F-G Clause Types
@@ -215,14 +215,16 @@ theorem topicalized_requires_independence :
 theorem relative_requires_embedding :
     (fgParams .whRelative).independence = .prohibited := rfl
 
-/-! ### All fillers are nonverb@cite{hofmeister-sag-2010} §2.1 / example 25: filler daughter is always nonverbal across
-all five F-G clause types. This is a constraint on the superordinate
-filler-head construction (58), not construction-specific. -/
+/-! ### All fillers are nonverbal
+
+@cite{sag-2010}: the filler daughter is always nonverbal across all five
+F-G clause types. This is a constraint on the superordinate filler-head
+construction, not construction-specific. -/
 
 theorem all_fillers_nonverbal :
     [FGClauseType.whInterrogative, .whExclamative, .topicalized,
      .whRelative, .theClause].all
-      (λ c => (fgParams c).fillerIsNonverbal) = true := by native_decide
+      (λ c => (fgParams c).fillerIsNonverbal) = true := by decide
 
 -- ============================================================================
 -- Bridge: Island Parameter ↔ Islands/Data.lean
@@ -230,22 +232,22 @@ theorem all_fillers_nonverbal :
 
 /-! ### Connection to `ConstraintType` in Islands/Data
 
-@cite{hofmeister-sag-2010} @cite{sag-2010} argues that island constraints are construction-specific
+@cite{sag-2010} argues that island constraints are construction-specific
 GAP restrictions, not universal Subjacency. The topicalization construction
 has `[GAP ⟨⟩]` on its mother, making it an absolute extraction island. This
 matches the `ConstraintType` classification from Islands/Data. -/
 
-/-- The island constructions in @cite{hofmeister-sag-2010} correspond to specific constraint
+/-- The island constructions in @cite{sag-2010} correspond to specific constraint
 types in the island classification system. The CNPC (complexNP) is the
-island tested in @cite{hofmeister-sag-2010}; Sag's topicalization and exclamative
-islands are additional construction-specific cases. -/
+island tested empirically; Sag's topicalization and exclamative islands
+are additional construction-specific cases. -/
 def islandConstructions : List FGClauseType :=
   [FGClauseType.whInterrogative, .whExclamative, .topicalized,
    .whRelative, .theClause].filter (λ c => (fgParams c).isIsland)
 
 /-- Exactly topicalization and wh-exclamatives are F-G island constructions. -/
 theorem island_constructions_are :
-    islandConstructions = [.whExclamative, .topicalized] := by native_decide
+    islandConstructions = [.whExclamative, .topicalized] := by decide
 
 -- ============================================================================
 -- Bridge: Semantic Type ↔ ClauseForm
@@ -301,12 +303,12 @@ def whWordProfiles : List WhWordProfile := [
 This supports Sag's claim that 'wh-expression' is not a unitary category. -/
 theorem no_universal_wh_word :
     whWordProfiles.all (λ w =>
-      w.interrogative && w.exclamative && w.relative) = false := by native_decide
+      w.interrogative && w.exclamative && w.relative) = false := by decide
 
 /-- 'how' participates in both interrogatives and exclamatives — one of the
 few wh-words that crosses this boundary (examples 18–20). -/
 theorem how_crosses_interrog_exclam :
     (whWordProfiles.filter (λ w =>
-      w.interrogative && w.exclamative)).length ≥ 1 := by native_decide
+      w.interrogative && w.exclamative)).length ≥ 1 := by decide
 
-end Sag2010
+end Phenomena.FillerGap.Studies.Sag2010

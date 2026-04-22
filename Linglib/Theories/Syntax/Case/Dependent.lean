@@ -51,10 +51,10 @@ cross-linguistic validation, and competing analyses live in
 
 ## Companion Infrastructure
 
-- `Theories/Syntax/Minimalism/Core/Voice.lean` — Voice flavors and
+- `Theories/Syntax/Minimalism/Voice.lean` — Voice flavors and
   phase-hood, used by the Agree-based competitor and by Voice-based
   case (Scott 2023)
-- `Theories/Syntax/Minimalism/Core/CaseFilter.lean` — the Agree-based
+- `Theories/Syntax/Minimalism/CaseFilter.lean` — the Agree-based
   licensing requirement that every DP must receive Case
 - `Theories/Syntax/Case/Licensing.lean` — Kalin's hybrid licensing
   framework: one obligatory primary licenser per clause + secondary
