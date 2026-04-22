@@ -68,7 +68,7 @@ structure QuantifierEntry where
   gqtThreshold : ℚ := 0
   ptPrototype : ℚ := 0
   ptSpread : ℚ := 2
-  deriving Repr, BEq
+  deriving Repr, BEq, DecidableEq
 
 /-- Project the lexical entry to a Core `Word`: form, category DET,
 and number features inherited from `numberRestriction`. -/

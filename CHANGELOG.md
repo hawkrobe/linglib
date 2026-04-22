@@ -4,6 +4,27 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.124] - 2026-04-21
+
+### Added — Jeretič et al. 2025 worked end-to-end example
+
+`Phenomena/Presupposition/Studies/JereticEtAl2025.lean` § 7
+"Worked end-to-end example": a minimal sentence pair (*tous V* /
+*les_deux V* / silent witness *tous_DUAL V*) that exercises the
+`AlternativeSource` / `Pronounceability` / `Indirect.indirectFrom` /
+`Alternatives.Structural.violatesMP` infrastructure end-to-end.
+Headline theorem `tous_violatesMP_via_indirect : violatesMP
+frenchIndirectSrc presupFn assertionFn tousVerres (fun _ => true)`
+fires on real `Tree Cat String` parse trees with a real silent
+witness via a real indirect alternative — the abstraction has its
+first genuine consumer beyond the typological table. Closes the
+multi-agent reviewers' convergent complaint that the abstraction
+infrastructure was not actually exercised by the headline theorem.
+
+`Theories/Semantics/Quantification/Lexicon.lean` `QuantifierEntry`
+gains `DecidableEq` derivation (needed by per-language fragment
+membership proofs in the study file's grounding bridges).
+
 ## [0.230.123] - 2026-04-21
 
 ### Refactored — Mood: kernel extraction + eliminative/generative split
