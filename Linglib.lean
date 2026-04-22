@@ -42,6 +42,7 @@ import Linglib.Core.IntensionalLogic.Algebra
 import Linglib.Core.IntensionalLogic.CategoryType
 import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.IntensionalLogic.Premise
+import Linglib.Core.IntensionalLogic.ConversationalBackground
 import Linglib.Core.IntensionalLogic.Situations
 import Linglib.Core.Logic.BeliefRevision
 import Linglib.Core.Order.Tree
@@ -51,6 +52,9 @@ import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
 import Linglib.Core.Order.FeaturePreorder
 import Linglib.Core.Order.SetPreimage
+import Linglib.Core.Order.PreferenceStructure
+import Linglib.Core.Order.PreferenceStructure.EffectivePreference
+import Linglib.Core.Order.PreferenceStructure.MaxInducedOrdering
 import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Logic.SystemZ
 import Linglib.Core.Register
@@ -1663,7 +1667,6 @@ import Linglib.Theories.Semantics.Dynamic.DynamicGQ.PostSuppositional
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Basic
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Bridge
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Compositional
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Operators
 import Linglib.Theories.Semantics.PIP.Basic
 import Linglib.Theories.Semantics.PIP.Bridges

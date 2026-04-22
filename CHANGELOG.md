@@ -4,6 +4,38 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.125] - 2026-04-21
+
+### Refactored — ModalDonkeyAnaphora.lean dissolved into Mendes2025 study
+
+`Theories/Semantics/Dynamic/IntensionalCDRT/ModalDonkeyAnaphora.lean`
+(339 lines) deleted and its contents folded into
+`Phenomena/TenseAspect/Studies/Mendes2025.lean` as new § 5 "Modal
+Donkey Anaphora (§3.1)". Every theorem in the deleted file cited
+@cite{mendes-2025} — it was a study file misplaced in `Theories/`,
+violating the CLAUDE.md "place each study under its primary phenomenon"
+discipline.
+
+Migrated (5 defs/theorems): `crossClausalBinding` +
+`cross_clausal_same_world`, `subjIndChain` +
+`subj_ind_chain_modal_donkey`, `unselective_universal_force`,
+`subjIndChain_singleton`, `subjIndChain_entails_conditionalSF`. The
+"Bridge to Hofmann (2025) accessibility" docstring section was
+preserved as documentation rather than a theorem (the prior
+`donkey_accessible_preserves_world_property` was a one-line `rwa`
+that is just `congr` over `Eq`, not a substantive bridge).
+
+Deleted as redundant: `modallyAccessible` (subsumed by `sameWorld` in
+`Mood/Basic.lean` from 0.230.123), `modal_donkey_enables_temporal_shift`
+(duplicates `temporal_shift_parasitic_on_modal` already in
+Mendes2025.lean), `donkey_accessibility_transitive` (trivial `Eq.trans`
+on world fields).
+
+`Linglib.lean` import removed; `Mood/Dynamic.lean` docstring updated
+to drop the dead reference. Mendes2025.lean's typo'd second "§ 2.
+Presupposition Weakening" header renumbered to "§ 4." for the
+sequence 1, 2, 3, 4, 5.
+
 ## [0.230.124] - 2026-04-21
 
 ### Added — Jeretič et al. 2025 worked end-to-end example

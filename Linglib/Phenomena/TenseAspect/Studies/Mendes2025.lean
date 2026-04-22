@@ -473,7 +473,7 @@ theorem sf_vs_counterfactual_temporal {W Time : Type*} [Preorder Time]
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 2. Presupposition Weakening (§2.2)
+-- § 4. Presupposition Weakening (§2.2)
 -- ════════════════════════════════════════════════════════════════
 
 /-!
@@ -625,5 +625,196 @@ theorem modal_displacement_weaker_than_accommodation {W Time E : Type*} [LE Time
     ∃ s₁ ∈ historicalBase history s₀, ∃ x, restrictor x s₁ := by
   obtain ⟨s₁, h_s₁⟩ := h_nonempty
   exact ⟨s₁, h_s₁, h_global s₁ h_s₁⟩
+
+-- ════════════════════════════════════════════════════════════════
+-- § 5. Modal Donkey Anaphora (§3.1)
+-- ════════════════════════════════════════════════════════════════
+
+/-!
+The central theoretical insight of @cite{mendes-2025} §3.1: SF enables
+modal donkey anaphora — subjunctive binds situation variables across
+clause boundaries, just like indefinites bind individual variables in
+classic donkey sentences.
+
+Classic donkey anaphora:
+  "If a farmer owns a donkey, he beats it."
+  - "a donkey" introduces individual dref x
+  - "it" retrieves x outside the syntactic scope of "a"
+
+Modal donkey anaphora:
+  "Se Maria estiver em casa, ela vai atender."
+  - SF introduces situation dref s₁
+  - Main clause retrieves s₁ for temporal anchoring
+
+Correspondence with the dynamic primitives in
+`Theories/Semantics/Mood/Dynamic.lean`:
+- SUBJ introduces: `dynSUBJ history v = dynIntroduce (historicalBase history) v`
+- IND retrieves: `dynIND v = dynRelationOn (·.2) (·.1 v) sameWorld`
+-/
+
+/--
+Cross-clausal situation binding: a situation introduced in one clause
+can be retrieved in another clause via modal donkey anaphora.
+
+Example:
+  "Se Maria estiver em casa, ela vai atender."
+       ↑ SUBJ introduces s₁ ↑ IND retrieves s₁
+-/
+def crossClausalBinding {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (antecedentVar _consequentVar : SVar)
+    (c : SitContext W Time) : SitContext W Time :=
+  dynIND antecedentVar (dynSUBJ history antecedentVar c)
+
+/--
+Cross-clausal binding preserves world identity: when a situation is
+introduced in the antecedent and retrieved in the consequent, the two
+clauses are evaluated at the same world.
+-/
+theorem cross_clausal_same_world {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (v : SVar)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    (h : gs ∈ crossClausalBinding history v v c) :
+    gs.2.world = (gs.1 v).world := by
+  unfold crossClausalBinding at h
+  unfold dynIND at h
+  exact h.2
+
+/--
+The SUBJ-IND anaphoric chain: SUBJ introduces `s₁`, the antecedent
+predicate filters at `s₁`, IND retrieves `s₁` (same-world check), and
+the consequent inherits the temporal anchor from `s₁`.
+-/
+def subjIndChain {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (v : SVar)
+    (antecedentPred : SitContext W Time → SitContext W Time)
+    (consequentPred : SitContext W Time → SitContext W Time)
+    (c : SitContext W Time) : SitContext W Time :=
+  consequentPred (dynIND v (antecedentPred (dynSUBJ history v c)))
+
+/--
+The SUBJ-IND chain establishes modal donkey anaphora: the consequent
+is evaluated at a world that agrees with the bound situation's world.
+
+`Q` must be a context filter — predicates filter contexts without
+modifying assignments.
+-/
+theorem subj_ind_chain_modal_donkey {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (v : SVar)
+    (P Q : SitContext W Time → SitContext W Time)
+    (c : SitContext W Time)
+    (gs : Assignment (WorldTimeIndex W Time) × WorldTimeIndex W Time)
+    (h : gs ∈ subjIndChain history v P Q c)
+    (hQ : IsContextFilter Q) :
+    gs.2.world = (gs.1 v).world := by
+  unfold subjIndChain at h
+  have h_in_ind : gs ∈ dynIND v (P (dynSUBJ history v c)) := hQ _ h
+  unfold dynIND at h_in_ind
+  exact h_in_ind.2
+
+/--
+Unselective binding gives universal force. When SUBJ introduces a
+situation in a conditional antecedent, the conditional quantifies
+universally over situations satisfying the antecedent — the modal
+analog of donkey universals.
+-/
+theorem unselective_universal_force {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (v : SVar)
+    (antecedent consequent : WorldTimeIndex W Time → Prop)
+    (c : SitContext W Time) :
+    ∀ gs ∈ subjIndChain history v
+      (λ c' => { gs' ∈ c' | antecedent gs'.2 })
+      (λ c' => { gs' ∈ c' | consequent gs'.2 })
+      c,
+      antecedent gs.2 → consequent gs.2 := by
+  intro gs h_mem _
+  unfold subjIndChain at h_mem
+  simp only [Set.mem_setOf_eq] at h_mem
+  exact h_mem.2
+
+/-!
+### Pipeline characterization
+
+The full pipeline `SUBJ → filter(P) → IND → filter(Q)` on a singleton
+context is equivalent to a static existential conjunction over
+historical alternatives. The dynamic pipeline gives *conjunction*
+(`P ∧ Q`), not *implication* (`P → Q`); sequential composition gives
+the stronger conjunctive reading, while the static `conditionalSF`
+uses implication.
+-/
+
+/--
+The SUBJ-IND chain with predication filters on a singleton context
+characterizes the static existential conjunction
+`∃ s₁ ∈ historicalBase(s₀), P(s₁) ∧ Q(s₁)`.
+-/
+theorem subjIndChain_singleton {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (v : SVar)
+    (g : Assignment (WorldTimeIndex W Time))
+    (s₀ : WorldTimeIndex W Time)
+    (P Q : WorldTimeIndex W Time → Prop) :
+    (∃ gs, gs ∈ subjIndChain history v
+      (fun c => { gs ∈ c | P gs.2 })
+      (fun c => { gs ∈ c | Q gs.2 })
+      ({(g, s₀)} : SitContext W Time)) ↔
+    (∃ s₁ ∈ historicalBase history s₀, P s₁ ∧ Q s₁) := by
+  unfold subjIndChain
+  constructor
+  · rintro ⟨gs, ⟨⟨⟨g', s₀', s₁, h_ctx, h_hist, h_upd, h_eq⟩, hP⟩, _⟩, hQ⟩
+    obtain ⟨rfl, rfl⟩ := Prod.mk.inj (Set.mem_singleton_iff.mp h_ctx)
+    exact ⟨s₁, h_hist, h_eq ▸ hP, h_eq ▸ hQ⟩
+  · rintro ⟨s₁, h_hist, hP, hQ⟩
+    refine ⟨(g.update v s₁, s₁), ⟨⟨⟨g, s₀, s₁, rfl, h_hist, rfl, rfl⟩, hP⟩, ?_⟩, hQ⟩
+    simp only [Assignment.update_at]
+
+/--
+The dynamic pipeline entails the static conditional (`conditionalSF`).
+Conjunction is stronger than implication: if the dynamic pipeline finds
+an `s₁` satisfying both `P` and `Q`, then `P(s₁) → Q(s₁)` holds trivially.
+-/
+theorem subjIndChain_entails_conditionalSF {W Time : Type*} [LE Time]
+    (history : WorldHistory W Time)
+    (v : SVar)
+    (g : Assignment (WorldTimeIndex W Time))
+    (s₀ : WorldTimeIndex W Time)
+    (P : WorldTimeIndex W Time → Prop)
+    (Q : WorldTimeIndex W Time → WorldTimeIndex W Time → Prop)
+    (h : ∃ gs, gs ∈ subjIndChain history v
+      (fun c => { gs ∈ c | P gs.2 })
+      (fun c => { gs ∈ c | Q gs.2 gs.2 })
+      ({(g, s₀)} : SitContext W Time)) :
+    conditionalSF history P (fun s₁ _ => Q s₁ s₁) s₀ := by
+  unfold conditionalSF SUBJ
+  obtain ⟨s₁, h_hist, hP, hQ⟩ :=
+    (subjIndChain_singleton history v g s₀ P (fun s => Q s s)).mp h
+  exact ⟨s₁, h_hist, fun _ => hQ⟩
+
+/-!
+### Bridge to Hofmann (2025) accessibility
+
+The same-world constraint enforced by `dynIND` (via the `sameWorld`
+kernel in `Mood/Basic.lean`) parallels @cite{hofmann-2025}'s
+veridicality-based accessibility for individual drefs:
+
+- **Situation level** (this file, @cite{mendes-2025}): `dynIND`
+  retrieves `s₁` via `s₂.world = s₁.world`. Governs cross-clausal
+  situation binding (modal donkey anaphora).
+- **Propositional dref level** (`IntensionalCDRT/Operators.lean`,
+  @cite{hofmann-2025}): a dref is accessible iff it has a referent in
+  all worlds of the local context, plus a discourse-consistency
+  condition. Governs individual dref accessibility across negation,
+  disjunction, and attitude contexts.
+
+Both enforce the structural pattern that the retrieval context must be
+compatible with the introduction context. For situations, this is
+world identity; for individual drefs, this is the subset-plus-
+existence condition (Hofmann 2025 Definition 39).
+-/
 
 end Mendes2025
