@@ -123,6 +123,7 @@ import Linglib.Core.Causal.V2.Mechanism.NoisyOr
 import Linglib.Core.Causal.V2.SEM.Defs
 import Linglib.Core.Causal.V2.SEM.Basic
 import Linglib.Core.Causal.V2.SEM.Bool
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 import Linglib.Core.NestedRestriction
 import Linglib.Core.Lexical.RootFeatures
 import Linglib.Core.Lexical.VerbClass
