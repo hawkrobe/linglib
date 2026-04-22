@@ -1,5 +1,6 @@
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Fragments.English.Auxiliaries
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Modal Force and its Realization across Languages

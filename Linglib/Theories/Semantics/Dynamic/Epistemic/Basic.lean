@@ -2,6 +2,7 @@ import Linglib.Core.Semantics.CommonGround
 import Mathlib.Data.Set.Basic
 import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Kratzer.Ordering
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Neo-Stalnakerian Formalization of Assertion

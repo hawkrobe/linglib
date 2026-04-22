@@ -6,6 +6,7 @@ import Linglib.Theories.Semantics.Plurality.Distributivity
 import Linglib.Fragments.English.Auxiliaries
 import Linglib.Fragments.Javanese.Modals
 import Linglib.Fragments.French.Modals
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Weak Necessity Modals as Homogeneous Pluralities of Worlds

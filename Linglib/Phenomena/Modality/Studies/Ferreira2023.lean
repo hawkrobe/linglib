@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Modality.Kratzer.XMarking
 import Linglib.Fragments.Portuguese.Modals
 import Linglib.Fragments.English.Auxiliaries
+import Linglib.Theories.Semantics.Attitudes.Intensional
 import Mathlib.Data.Set.Basic
 
 /-!

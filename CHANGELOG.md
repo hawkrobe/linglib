@@ -4,6 +4,262 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.115] - 2026-04-21
+
+### Removed
+- **Dissolved `Theories/Semantics/Modality/{Basic,Simple,Compare}.lean`**
+  (3 files, ~570 LOC) — the `World`-monomorphic `ModalTheory` wrapper
+  and its `Simple`/`KratzerTheory` instantiations. The wrapper bundled a
+  name-string + citation-string + `eval : ModalForce → (W → Prop) → W → Prop`
+  + decidability instance; the name/citation fields were never consumed,
+  the eval was just `boxR R`/`diamondR R` behind one level of indirection,
+  and `decEval` duplicated the polymorphic `boxR_decidable`/`diamondR_decidable`
+  already in `Core.IntensionalLogic.RestrictedModality`. Mathlib-shape
+  consumers (`PIP`, `BSML`, `EpistemicLogic`, `Kratzer/Operators`,
+  `Inertia`, `KnowledgeProbability`, `Wang2025`) were already going
+  directly to `boxR`/`diamondR`; only `Simple`, `KratzerTheory`,
+  `Compare`, and `ZwickyPullum1983` used the wrapper.
+
+### Changed
+- `Theories/Semantics/Modality/Inertia.lean`: `inertial_isNormal`
+  (which appealed to the deleted `kratzer_isNormal`) is replaced by
+  `inertial_duality` (a direct `Iff` statement deriving from
+  `Kratzer.duality`). True by construction rather than by wrapper.
+- `Phenomena/Directives/Studies/Roberts2023.lean`:
+  `imperativeCharacter_eq_kratzerTheory` becomes
+  `imperativeCharacter_eq_kratzer_necessity`, calling
+  `KratzerParams.necessity` (already in `Kratzer/Flavor.lean`) directly
+  instead of routing through the deleted `KratzerTheory.eval .necessity`.
+- `Phenomena/Morphology/Studies/ZwickyPullum1983.lean`: the scope
+  countermodel `kripkeT : ModalTheory` is replaced by
+  `kripkeR : AccessRel World`; `evalNegOverModal`/`evalModalOverNeg`
+  inline as `boxR`/`diamondR` directly. The two scope-divergence
+  theorems lose their `T.isNormal` side condition (which was structural
+  for any Kripke model, never load-bearing) and existentially quantify
+  over `AccessRel World` instead of `ModalTheory`.
+- Six downstream files (`Boylan2023`, `Dynamic/Epistemic/Basic`,
+  `AghaJeretic2026`, `Roberts2023`, `Ferreira2023`, `AghaJeretic2022`)
+  add an explicit `import Linglib.Theories.Semantics.Attitudes.Intensional`,
+  which they previously got transitively via the deleted
+  `Modality.Basic`'s import chain.
+- `Theories/Semantics/Modality/Kratzer/Flavor.lean`: `ModalTheoryBridge`
+  section deleted (`KratzerTheory`, `KratzerMinimal`,
+  `kratzerTheory_weakNec_eq_nec`, `kratzerTheory_duality`,
+  `kratzer_isNormal`, `kratzerMinimal_isNormal`).
+
+## [0.230.114] - 2026-04-21
+
+### Changed
+- **Phase 2 of `Dynamic/` directory dissolution.** Four wrapper /
+  bridge / misnamed files extracted from `Dynamic/`; each lands at a
+  more honest location.
+  - **Deleted** `Dynamic/Continuation/Basic.lean` (12 LOC). It was a
+    trivial re-export of `Linglib.Core.Continuation` with no consumers
+    beyond `Linglib.lean`. Continuation lives in `Core/` already.
+  - **Moved** `Dynamic/Core/KindAnaphora.lean` (261 LOC) →
+    `Theories/Semantics/Noun/Kind/Anaphora.lean`. Despite living under
+    `Dynamic/Core/`, the file is the @cite{krifka-2026} kind-anaphor
+    framework (concept-dref projection past anaphoric islands, DPL
+    bridge), naturally a sibling of `Chierchia1998.lean` /
+    `Krifka2004.lean`. Namespace
+    `Semantics.Dynamic.Core.KindAnaphora` →
+    `Semantics.Noun.Kind.Anaphora`. Sole consumer
+    `Phenomena/Reference/Studies/Krifka2026.lean` updated.
+  - **Moved** `Dynamic/DynamicTTR.lean` (313 LOC) →
+    `Dynamic/Comparisons/CDRT_TTR.lean`. The file is a CDRT↔TTR
+    cross-formalism bridge (truth-conditional equivalence + anaphoric
+    divergence), not a dynamic framework. Joins the existing
+    `Comparisons/` siblings `ICDRT_BUS.lean` and `PLA_BUS.lean`.
+    Namespace `Comparisons.DynamicTTR` →
+    `Semantics.Dynamic.Comparisons.CDRT_TTR`.
+  - **Moved** `Dynamic/DependenceLogic.lean` (110 LOC) →
+    `Theories/Semantics/Quantification/DependenceLogic.lean`. Despite
+    the `Dynamic/` placement, the file is a *static* dependence-logic
+    theory of indefinites (@cite{vaananen-2007},
+    @cite{degano-aloni-2025}: `variation`/`constancy` predicates over
+    assignment teams). No update primitives, no anaphora — pure
+    quantifier-typology infrastructure. Namespace
+    `Semantics.Dynamic.DependenceLogic` →
+    `Semantics.Quantification.DependenceLogic`. Sole consumer
+    `Phenomena/Reference/Studies/Bubnov2026.lean` updated.
+
+  After Phase 1+2, the `Dynamic/` directory hosts exactly framework
+  instances (DPL, DRT, CDRT, ICDRT, PLA, UpdateSemantics, Bilateral,
+  ABLE, FileChange, Epistemic, Probability, DynamicGQ, Nondeterminism,
+  Generics, State) + `Core/` + `Comparisons/`, with no stragglers
+  pretending to be dynamic frameworks.
+
+## [0.230.113] - 2026-04-21
+
+### Changed
+- **Phase 1 of `Dynamic/IntensionalCDRT/Situations/` dissolution.** The
+  4-file Situations subdirectory (Defs, Filter, Tense, Mood; 620 LOC)
+  is gone — its contents are relocated to per-phenomenon homes per the
+  mathlib-reviewer principle that wrappers belong with the phenomenon
+  they wrap.
+  - `SVar` (situation variable, sibling of IVar/PVar/CVar) added to
+    `Theories/Semantics/Dynamic/Core/DiscourseRef.lean`.
+  - `SitContext W Time` and `dynRelation` (the abstraction behind the
+    temporal trichotomy) absorbed into
+    `Theories/Semantics/Dynamic/Core/ContextFilter.lean`. The carrier
+    drops the `E` parameter — situation-variable semantics is
+    independent of the individual-dref machinery, and no consumer of
+    `SitContext` actually accesses entity drefs. Assignments now use
+    the shared `Core.Assignment (WorldTimeIndex W Time)` substrate.
+    The bundled `SitAssignment` struct is gone; `g.update v s` replaces
+    `g.updateSit v s`.
+  - `dynPAST`/`dynPRES`/`dynFUT` + temporal algebra
+    (`temporal_partition`, `dynPAST_dynFUT_empty`, `dynPAST_transitive`,
+    etc.) co-located with the static intensional tense in
+    `Theories/Semantics/Tense/Dynamic.lean`. The three operators are
+    `rfl`-equal to `dynRelation` instances.
+  - `dynSUBJ`/`dynIND` + bridge theorems (`dynSUBJ_realizes_SUBJ`,
+    `dynIND_realizes_IND`, `dynIND_after_dynSUBJ_same_var`,
+    `dynSUBJ_binds_current`) co-located with the static `Mood.SUBJ`/
+    `Mood.IND` in `Theories/Semantics/Mood/Dynamic.lean`.
+  - `Phenomena/TenseAspect/Studies/Mendes2025.lean` (633 LOC) and
+    `Theories/Semantics/Dynamic/IntensionalCDRT/ModalDonkeyAnaphora.lean`
+    (353 LOC) — the only two consumers — migrated: imports point to
+    the new homes, `gs.1.sit v` → `gs.1 v`, `SitAssignment.updateSit`
+    proof bodies replaced with `simp only [Assignment.update_at]`.
+  - `Linglib.lean` updated: 4 Situations imports replaced with
+    `Tense.Dynamic` + `Mood.Dynamic` slotted into the existing Tense
+    and Mood import blocks (lines 2099, 2116).
+
+## [0.230.112] - 2026-04-21
+
+### Changed
+- **Migrated the LangModel cluster (6 files) from `Core.FinitePMF` to
+  mathlib `PMF`.** This is Phase 4a of the `FinitePMF`/`PMF` coexistence
+  plan: per-consumer audit, identifying modules whose use of `FinitePMF`
+  is purely as a Markov kernel (no `decide` over masses, no rational
+  literal arithmetic) and porting them to mathlib's countable-support
+  `PMF` API.
+  - `Theories/Processing/LanguageModel/Basic.lean`: `LangModel.next`
+    typed as `List Voc → PMF (Option Voc)`; `[Fintype Voc]` constraint
+    dropped (vocabularies like `String` need not be finite); `nextProb`
+    returns `ℝ≥0∞`; `surprisal` becomes `noncomputable`.
+  - `Theories/Processing/Memory/Basic.lean`: `MemoryProcess` carries
+    `encode : List Voc → PMF Mem` and `predict : Mem → PMF (Option Voc)`;
+    both `[Fintype Voc]` and `[Fintype Mem]` constraints dropped.
+    `expectedSurprisal` switched from `Finset.sum` to `tsum` (`∑'`)
+    over `Mem`. `marginalProb` defined via `PMF.bind`. The Dirac
+    collapse theorem `expectedSurprisal_of_dirac` reproved using
+    `tsum_eq_single` + `PMF.pure_apply_of_ne`.
+  - `Theories/Processing/Memory/LossyContext.lean`: cascade — drops
+    `[Fintype Voc] [Fintype Mem] [DecidableEq Mem]` from all four
+    declarations; proofs unchanged.
+  - `Theories/Processing/MemorySurprisal/Basic.lean`: docstring update
+    only (`FinitePMF (Option W)` → `PMF (Option W)`).
+  - `Theories/Processing/PredictiveUncertainty/IAS.lean`: `(lm.next c).mass o`
+    → `((lm.next c) o).toReal` (4 sites); `import Linglib.Core.FinitePMF`
+    removed; `open Core` removed.
+  - `Phenomena/Processing/Studies/GiulianelliEtAl2026.lean`: `trivialLM`
+    uses `PMF.pure (some ())` instead of `Core.FinitePMF.pure`; marked
+    `noncomputable`; `simp [Core.FinitePMF.pure]` → bare `simp`.
+
+  Bookkeeping: this is the first cluster fully migrated off `FinitePMF`.
+  Remaining `FinitePMF` consumers (RSA, BayesianSemantics, DTS,
+  Probabilistic Frames, etc.) keep `FinitePMF` because they rely on
+  decidable equality / `decide`-driven proofs over rational masses;
+  porting them would force `noncomputable` and break ~400 `rsa_predict`
+  proofs.
+
+## [0.230.111] - 2026-04-21
+
+### Added
+- **`Core.FinitePMF` gains the probability-monad operations.**
+  `FinitePMF.bind d f`, with mass `(d.bind f).mass v = ∑ w, d(w) · (f w)(v)`
+  (the marginal of joint sampling), is added together with the three
+  monad laws as plain theorems: `pure_bind`, `bind_pure`, `bind_assoc`.
+  No `Monad FinitePMF` typeclass instance is provided — the `[Fintype]`
+  constraint puts `FinitePMF` outside the unrestricted `Type → Type`
+  signature `Monad` requires (mirroring `Finset.bind` / `Sym.bind`,
+  which exist as plain functions for the same reason). An `@[ext]`
+  lemma `FinitePMF.ext` is added to support the proofs.
+- **`Core.Probability.PMFAdapter` (new file): one-way bridge
+  `FinitePMF.toPMF : FinitePMF W → PMF W`** through `PMF.ofFintype` with
+  `ENNReal.ofReal` coercion of the rational masses. Adapter is
+  `noncomputable`, intended for use only at integration points where
+  mathlib's measure-theoretic `PMF` API (`LawfulMonad`, `toMeasure`,
+  integration over countable supports) is needed. Finite probabilistic
+  models retain `FinitePMF` for `decide`-friendly verification. A
+  `@[simp]` lemma `toPMF_apply` exposes the pointwise mass.
+  Phase 2 of the `FinitePMF`/`PMF` coexistence plan; Phase 3 (PDS on
+  `PMF` directly) and Phase 4 (per-consumer audit of the 34 sites that
+  use `FinitePMF`) follow in later versions.
+
+## [0.230.110] - 2026-04-21
+
+### Changed
+- **Mathlib-style review pass on the GroveWhite2025 / DegenTonhauser2022 /
+  Gradience / FinitePMF / Scale tranche.** Seven targeted cleanups, no
+  behavioural change:
+  1. `Core.Scale.Rat01` gains smart constructors `Rat01.zero` and
+     `Rat01.one` so consumers stop spelling out
+     `⟨0, by norm_num, by norm_num⟩` / `⟨1, by norm_num, by norm_num⟩`
+     four times in `GroveWhite2025`.
+  2. `FactivityHypothesis` + `FDH` / `FGH` (in
+     `Phenomena/Presupposition/Gradience.lean`) move from `abbrev` to
+     `@[reducible] def` per mathlib convention — the unfolding is now
+     explicit at use sites.
+  3. `Core.FinitePMF.bernoulli.mass_sum_one` replaces the bare `simp`
+     after `Fintype.sum_bool` with `simp only [Bool.false_eq_true,
+     ↓reduceIte]; linarith`, matching the project-wide simp-hygiene rule.
+  4. `FactivityReading.sum_univ` extracted as a reusable
+     `∑ x : FactivityReading, f x = f .factive + f .nonfactive` lemma;
+     `factivityPrior.mass_sum_one` collapses to
+     `by rw [FactivityReading.sum_univ]; ring`.
+  5. `DegenTonhauser2022` rating tables (`projectionRating_Exp1a/_Exp1b`,
+     `inferenceRating_Exp2a`) migrated `Float → ℚ` so the
+     `> 0.70`-style arithmetic theorems become kernel-checkable; all
+     `native_decide` replaced with `simp only [<rating>]; norm_num`.
+     `top_two_agree` rewritten with explicit case branching to match.
+  6. `omit [Fintype W] in` annotations removed from
+     `GroveWhite2025` after discovering `[Fintype W]` was never used in
+     the discrete-factivity section (`ParamPred E Θ` only requires
+     `[Fintype Θ]`); the `variable` line drops `[Fintype W]` instead.
+  7. `Core.FinitePMF` docstring documents the relationship to
+     `Mathlib.Probability.ProbabilityMassFunction.PMF` (the ℚ /
+     finite-decidable vs ℝ≥0∞ / countable-noncomputable tradeoff) so
+     future contributors don't reinvent the comparison.
+
+## [0.230.109] - 2026-04-21
+
+### Changed
+- **`GroveWhite2025.lean` rewritten with mathlib-style sectioning and
+  derived-from-foundations bridges.** The thin `FactivityParam` bundle
+  (a `(τ : ℚ) + 0 ≤ τ + τ ≤ 1` 3-tuple struct) is dissolved in favour of
+  `Core.Scale.Rat01` (`↥(Set.Icc (0 : ℚ) 1)`), removing a dual-numeric
+  bookkeeping layer. The 2-element `factivityPrior` is split out as a
+  named `FinitePMF FactivityReading` with `@[simp]` projection lemmas.
+  The Scontras–Tonhauser bridge is rewritten as a real grounding theorem
+  (`clauseEmbedding_factive_eq_st_know` /
+  `clauseEmbedding_nonfactive_eq_st_think`) connecting two paper-specific
+  lexical entries through the shared `Theories.Semantics.Attitudes.Factivity`
+  foundation, replacing the prior tautological `clauseEmbeddingSem .factive
+  = (factivePos w : Bool)` self-equality. File reorganised into six
+  `/-! ## §N. … -/` sections.
+- **`FactivityHypothesis` + `FDH` / `FGH` promoted to
+  `Phenomena.Presupposition.Gradience`** as an abbrev for `GradienceSource`
+  with the two named hypotheses, so the @cite{grove-white-2025} naming is
+  reusable by future studies that compare resolved- vs unresolved-source
+  accounts of gradience. The paper's three-way `ResolvedMechanism` taxonomy
+  (polysemy / structural ambiguity / discourse sensitivity) replaces the
+  prior unanchored 4-way `ResolvedSource` enum (no consumers).
+- **`probProp` deleted from
+  `Theories/Semantics/Dynamic/Probability/Basic.lean`** — it was a literal
+  duplicate of `Core.FinitePMF.prob` (sum of mass weighted by Boolean
+  indicator) with `_true` / `_false` corollaries that just re-derived the
+  obvious. Its sole consumer (`GroveWhite2025`) now uses `FinitePMF.prob`
+  directly through `ParamPred.gradedTruth`.
+
+### Added
+- **`Core.FinitePMF.bernoulli (p : ↥(Set.Icc (0:ℚ) 1)) : FinitePMF Bool`**
+  — Bernoulli helper bundling the [0, 1] constraint via mathlib's
+  `Set.Icc` subtype, eliminating threaded `0 ≤ p` / `p ≤ 1` hypotheses
+  for binary-PMF call sites. Companion to existing `pure` / `uniform`.
+
 ## [0.230.108] - 2026-04-21
 
 ### Changed

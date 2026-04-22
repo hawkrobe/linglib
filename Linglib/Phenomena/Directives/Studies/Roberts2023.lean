@@ -4,6 +4,7 @@ import Linglib.Theories.Semantics.Modality.Kratzer.Flavor
 import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Modality.Assert
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # Roberts (2023): Imperatives in Dynamic Pragmatics
@@ -155,12 +156,12 @@ def ImperativeCharacter.realize (ic : ImperativeCharacter) (w : World) : Prop :=
 theorem imperativeCharacter_is_necessity (ic : ImperativeCharacter) (w : World) :
     ic.realize w ↔ necessity ic.modalBase ic.orderingSource ic.prejacent w := Iff.rfl
 
-/-- The imperative character evaluates as `KratzerTheory` necessity
+/-- The imperative character evaluates as `KratzerParams` necessity
     under the teleological parameters. This connects Roberts' formalization
     directly to the Kratzer infrastructure. -/
-theorem imperativeCharacter_eq_kratzerTheory (ic : ImperativeCharacter) (w : World) :
+theorem imperativeCharacter_eq_kratzer_necessity (ic : ImperativeCharacter) (w : World) :
     ic.realize w ↔
-    (KratzerTheory ic.flavor.toKratzerParams).eval .necessity ic.prejacent w := Iff.rfl
+    ic.flavor.toKratzerParams.necessity ic.prejacent w := Iff.rfl
 
 /-- Roberts' imperative uses teleological (circumstantial) flavor.
     This is the structural encoding of her central claim:

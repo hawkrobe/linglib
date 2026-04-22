@@ -43,6 +43,8 @@ import Linglib.Core.IntensionalLogic.RestrictedModality
 import Linglib.Core.IntensionalLogic.Premise
 import Linglib.Core.IntensionalLogic.Situations
 import Linglib.Core.Logic.BeliefRevision
+import Linglib.Core.Order.Tree
+import Linglib.Core.Order.Command
 import Linglib.Core.Order.Normality
 import Linglib.Core.Order.Plausibility
 import Linglib.Core.Order.Satisfaction
@@ -246,6 +248,7 @@ import Linglib.Core.SearchEfficiency
 import Linglib.Core.InformationTheory
 import Linglib.Core.Distributions
 import Linglib.Core.FinitePMF
+import Linglib.Core.Probability.PMFAdapter
 import Linglib.Core.Divergence
 import Linglib.Core.ChannelCapacity
 import Linglib.Core.Inheritance.Basic
@@ -1550,7 +1553,6 @@ import Linglib.Theories.Syntax.Minimalism.CategorialFeatures
 import Linglib.Theories.Semantics.Questions.RelevanceTheories
 import Linglib.Theories.Semantics.TypeTheoretic.CNsAsTypes
 import Linglib.Theories.Semantics.TypeTheoretic.FrameComposition
-import Linglib.Theories.Semantics.Dynamic.DynamicTTR
 -- Phenomenon-level comparisons (moved from Comparisons/)
 import Linglib.Phenomena.Anaphora.Compare
 import Linglib.Phenomena.Assertion.Compare
@@ -1615,6 +1617,7 @@ import Linglib.Theories.Syntax.DependencyGrammar.LongDistance
 -- Theories: Dynamic Semantics
 -- Theories: Dynamic Semantics — Core
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
+import Linglib.Theories.Semantics.Dynamic.Core.ContextFilter
 import Linglib.Theories.Semantics.Dynamic.Core.DiscourseRef
 import Linglib.Theories.Semantics.Dynamic.Core.Accessibility
 import Linglib.Theories.Semantics.Dynamic.Core.DRSExpr
@@ -1623,7 +1626,6 @@ import Linglib.Theories.Semantics.Dynamic.Core.DynamicTy2
 import Linglib.Theories.Semantics.Dynamic.Core.Translation
 import Linglib.Theories.Semantics.Dynamic.Core.WeakestPrecondition
 import Linglib.Theories.Semantics.Dynamic.Core.Update
-import Linglib.Theories.Semantics.Dynamic.Core.KindAnaphora
 -- Theories: Dynamic Semantics — ABLE (Beaver 2001)
 import Linglib.Theories.Semantics.Dynamic.ABLE.Basic
 -- Theories: Dynamic Semantics — Frameworks
@@ -1644,7 +1646,6 @@ import Linglib.Theories.Semantics.Dynamic.Bilateral.ICDRTConnectives
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Basic
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.Charlow2019
 import Linglib.Theories.Semantics.Dynamic.Nondeterminism.PointwiseUpdate
-import Linglib.Theories.Semantics.Dynamic.Continuation.Basic
 import Linglib.Theories.Semantics.Dynamic.Probability.Basic
 import Linglib.Theories.Semantics.Dynamic.Epistemic.Basic
 import Linglib.Theories.Semantics.Dynamic.CDRT.Basic
@@ -1660,7 +1661,6 @@ import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Bridge
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Compositional
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.ModalDonkeyAnaphora
 import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Operators
-import Linglib.Theories.Semantics.Dynamic.IntensionalCDRT.Situations
 import Linglib.Theories.Semantics.PIP.Basic
 import Linglib.Theories.Semantics.PIP.Bridges
 import Linglib.Theories.Semantics.PIP.Composition
@@ -1676,10 +1676,9 @@ import Linglib.Theories.Semantics.Dynamic.PLA.Quantifiers
 import Linglib.Theories.Semantics.Dynamic.PLA.Semantics
 import Linglib.Theories.Semantics.Dynamic.PLA.Update
 -- Theories: Dynamic Semantics — Comparisons & top-level
+import Linglib.Theories.Semantics.Dynamic.Comparisons.CDRT_TTR
 import Linglib.Theories.Semantics.Dynamic.Comparisons.ICDRT_BUS
 import Linglib.Theories.Semantics.Dynamic.Comparisons.PLA_BUS
-import Linglib.Theories.Semantics.Dynamic.State
-import Linglib.Theories.Semantics.Dynamic.DependenceLogic
 -- Theories: Decision-Theoretic Semantics (Merin 1999)
 import Linglib.Theories.Pragmatics.DecisionTheoretic.Core
 import Linglib.Theories.Pragmatics.DecisionTheoretic.ScalarImplicature
@@ -1891,6 +1890,7 @@ import Linglib.Theories.Semantics.Numerals.Precision
 import Linglib.Theories.Semantics.Numerals.Basic
 import Linglib.Theories.Semantics.Numerals.Degree
 import Linglib.Theories.Semantics.Definiteness.Basic
+import Linglib.Theories.Semantics.Quantification.DependenceLogic
 import Linglib.Theories.Semantics.Quantification.DomainRestriction
 import Linglib.Theories.Semantics.Quantification.DomainVagueness
 import Linglib.Theories.Semantics.Quantification.PolarizedIndividuals
@@ -1919,6 +1919,7 @@ import Linglib.Theories.Semantics.Quantification.CovertQuantifier
 import Linglib.Theories.Semantics.Noun.Binominal
 import Linglib.Theories.Semantics.Noun.Classifier
 import Linglib.Theories.Semantics.Noun.GradableNouns
+import Linglib.Theories.Semantics.Noun.Kind.Anaphora
 import Linglib.Theories.Semantics.Noun.Kind.Carlson1977
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 import Linglib.Theories.Semantics.Noun.Kind.Dayal2004
@@ -2063,8 +2064,6 @@ import Linglib.Theories.Semantics.Conditionals.LeftNested
 import Linglib.Theories.Semantics.Conditionals.Restrictor
 import Linglib.Theories.Semantics.Conditionals.Kratzer.Lumping
 import Linglib.Theories.Semantics.Conditionals.Presuppositional
-import Linglib.Theories.Semantics.Modality.Basic
-import Linglib.Theories.Semantics.Modality.Compare
 import Linglib.Theories.Semantics.Modality.Directive
 import Linglib.Theories.Semantics.Modality.Disjunction
 import Linglib.Theories.Semantics.Modality.BiasedPQ
@@ -2081,7 +2080,6 @@ import Linglib.Theories.Semantics.Modality.ProbabilityOrdering
 import Linglib.Theories.Semantics.Modality.Ability
 import Linglib.Theories.Semantics.Modality.ActualityEntailments
 import Linglib.Theories.Semantics.Modality.Assert
-import Linglib.Theories.Semantics.Modality.Simple
 import Linglib.Theories.Semantics.Modality.Temporal
 import Linglib.Theories.Semantics.Modality.TemporalConstraint
 import Linglib.Theories.Semantics.Modality.Typology
@@ -2091,6 +2089,7 @@ import Linglib.Theories.Semantics.Modality.ModalIndefinites
 import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Modality.Narrog
 import Linglib.Theories.Semantics.Mood.Basic
+import Linglib.Theories.Semantics.Mood.Dynamic
 import Linglib.Theories.Semantics.Mood.Gutzmann
 import Linglib.Theories.Semantics.Mood.VerbalMood
 import Linglib.Theories.Semantics.UseConditional.LTU
@@ -2107,6 +2106,7 @@ import Linglib.Theories.Semantics.Reference.FreeIndirectDiscourse
 import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Reference.Reciprocals
 import Linglib.Theories.Semantics.Tense.Basic
+import Linglib.Theories.Semantics.Tense.Dynamic
 import Linglib.Theories.Semantics.Tense.TemporalDeRe
 import Linglib.Theories.Semantics.Tense.FeatureChecking
 import Linglib.Theories.Semantics.Tense.Decomposition
@@ -2274,6 +2274,7 @@ import Linglib.Phenomena.Reference.Studies.AhnKocabDavidson2026
 import Linglib.Phenomena.Binominals.Studies.TenWolde2023
 import Linglib.Theories.Pragmatics.Assertion.Stalnaker
 import Linglib.Theories.Pragmatics.Assertion.ReasonableInference
+import Linglib.Theories.Pragmatics.Assertion.FarkasBruce
 import Linglib.Theories.Pragmatics.Assertion.FarkasAdapter
 import Linglib.Theories.Pragmatics.Assertion.QuotationFBOntology
 import Linglib.Theories.Pragmatics.Assertion.Krifka

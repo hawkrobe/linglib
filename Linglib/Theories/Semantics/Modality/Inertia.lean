@@ -61,10 +61,12 @@ def inertialNecessity (p : InertialParams) (prop : World → Prop) (w : World) :
 def inertialPossibility (p : InertialParams) (prop : World → Prop) (w : World) : Prop :=
   possibility p.circumstances p.inertia prop w
 
-/-- Inertial modality is a normal modal logic (inherits from Kratzer). -/
-theorem inertial_isNormal (p : InertialParams) :
-    (KratzerTheory p.toKratzer).isNormal :=
-  kratzer_isNormal p.toKratzer
+/-- Inertial modality satisfies modal duality: □p ↔ ¬◇¬p.
+    Inherited from `Kratzer.duality` since inertial necessity/possibility
+    are `boxR`/`diamondR` over the same Kratzer best-worlds relation. -/
+theorem inertial_duality (p : InertialParams) (prop : World → Prop) (w : World) :
+    inertialNecessity p prop w ↔ ¬ inertialPossibility p (fun w' => ¬ prop w') w :=
+  Kratzer.duality p.circumstances p.inertia prop w
 
 /-- With empty inertial ordering, inertial modality reduces to simple
     circumstantial necessity (no preference among accessible worlds). -/

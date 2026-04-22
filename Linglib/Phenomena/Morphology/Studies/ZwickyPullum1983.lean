@@ -1,6 +1,7 @@
 import Linglib.Theories.Morphology.Core.CliticVsAffix
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Theories.Semantics.Modality.Basic
+import Linglib.Core.IntensionalLogic.RestrictedModality
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
 /-!
 # @cite{zwicky-pullum-1983}: Cliticization vs. Inflection
@@ -237,12 +238,15 @@ if *-n't* is an affix, it forms a lexical unit with the auxiliary, and
 lexical items can have idiosyncratic scope properties. If *-n't* were
 a clitic (a reduced form of *not*), its scope should always match *not*.
 
-We formalize this using `Semantics.Modality.ModalTheory`. -/
+We formalize this using `boxR`/`diamondR` from
+`Core.IntensionalLogic.RestrictedModality`: a Kripke countermodel exhibits
+an accessibility relation under which the two scope readings diverge. -/
 
 section ScopeBridge
 
-open Semantics.Modality
-open Semantics.Attitudes.Intensional (World allWorlds)
+open Core.Modality (ModalForce)
+open Core.IntensionalLogic.RestrictedModality (AccessRel boxR diamondR)
+open Semantics.Attitudes.Intensional (World)
 
 /-- Scope of negation relative to a modal operator. -/
 inductive NegModalScope where
@@ -253,22 +257,6 @@ inductive NegModalScope where
       *You mustn't go* = you must not go. -/
   | modalOverNeg
   deriving DecidableEq, Repr
-
-/-- Evaluate NOT(MODAL(P)) at world w. -/
-def evalNegOverModal (T : ModalTheory) (force : ModalForce) (p : World → Prop) (w : World) : Prop :=
-  ¬ T.eval force p w
-
-instance (T : ModalTheory) (force : ModalForce) (p : World → Prop) [DecidablePred p] (w : World) :
-    Decidable (evalNegOverModal T force p w) := by
-  unfold evalNegOverModal; infer_instance
-
-/-- Evaluate MODAL(NOT(P)) at world w. -/
-def evalModalOverNeg (T : ModalTheory) (force : ModalForce) (p : World → Prop) (w : World) : Prop :=
-  T.eval force (fun w' => ¬ p w') w
-
-instance (T : ModalTheory) (force : ModalForce) (p : World → Prop) [DecidablePred p] (w : World) :
-    Decidable (evalModalOverNeg T force p w) := by
-  unfold evalModalOverNeg; infer_instance
 
 /-- The scope pattern for a contracted negative auxiliary.
 
@@ -302,32 +290,21 @@ def mustntScope : ContractedNegScope where
 theorem scope_idiosyncrasy : cantScope.scope ≠ mustntScope.scope := by
   decide
 
-/-- Kripke model with non-trivial accessibility: w0 sees {w1, w2}.
+/-- Kripke accessibility with non-trivial structure: w0 sees {w1, w2};
+every other world sees only itself.
 
-This suffices to separate ¬◇P from ◇¬P and ¬□P from □¬P:
-at w0 with P true at w1 and false at w2, both accessible worlds
-disagree, making ◇P and ◇¬P both true while ¬◇P is false. -/
-private def kripkeT : ModalTheory where
-  name := "Kripke countermodel"
-  citation := ""
-  eval := fun force p w =>
-    match force, w with
-    | .necessity, .w0 | .weakNecessity, .w0 => p .w1 ∧ p .w2
-    | .necessity, .w1 | .weakNecessity, .w1 => p .w1
-    | .necessity, .w2 | .weakNecessity, .w2 => p .w2
-    | .necessity, .w3 | .weakNecessity, .w3 => p .w3
-    | .possibility, .w0 => p .w1 ∨ p .w2
-    | .possibility, .w1 => p .w1
-    | .possibility, .w2 => p .w2
-    | .possibility, .w3 => p .w3
-  decEval := fun force p _ w => by cases force <;> cases w <;> infer_instance
+This suffices to separate ¬◇P from ◇¬P and ¬□P from □¬P at w0:
+when P holds at w1 and fails at w2, both accessible worlds disagree,
+so ◇P and ◇¬P are both true while ¬◇P is false. -/
+private def kripkeR : AccessRel World := fun w v =>
+  match w with
+  | .w0 => v = .w1 ∨ v = .w2
+  | .w1 => v = .w1
+  | .w2 => v = .w2
+  | .w3 => v = .w3
 
-/-- Duality holds for Kripke models by De Morgan on the accessibility set. -/
-private theorem kripkeT_normal : kripkeT.isNormal := by
-  intro p w
-  classical
-  simp only [ModalTheory.dualityHolds, ModalTheory.necessity, ModalTheory.possibility, kripkeT]
-  cases w <;> tauto
+private instance : DecidableRel kripkeR := fun w v => by
+  unfold kripkeR; cases w <;> infer_instance
 
 /-- Witness proposition: true at w0/w1, false at w2/w3. -/
 private def witnessP : World → Prop := fun w =>
@@ -338,33 +315,31 @@ private instance : DecidablePred witnessP := fun w => by
 
 /-- NOT(CAN(P)) and CAN(NOT(P)) are not equivalent in general.
 
-There exists a normal modal theory where ¬◇P ≠ ◇¬P: when w0
+There exists a Kripke accessibility relation where ¬◇P ≠ ◇¬P: when w0
 accesses worlds where P differs, ◇P and ◇¬P are both true, so
 ¬◇P = false but ◇¬P = true. -/
 theorem neg_over_poss_ne_poss_over_neg :
-    ∃ (T : ModalTheory), T.isNormal ∧
+    ∃ (R : AccessRel World),
     ¬(∀ (p : World → Prop) (w : World),
-      evalNegOverModal T .possibility p w ↔
-      evalModalOverNeg T .possibility p w) := by
-  refine ⟨kripkeT, kripkeT_normal, ?_⟩
+      ¬ diamondR R p w ↔ diamondR R (fun w' => ¬ p w') w) := by
+  refine ⟨kripkeR, ?_⟩
   intro h
   have := h witnessP .w0
-  simp [evalNegOverModal, evalModalOverNeg, kripkeT, witnessP] at this
+  simp [diamondR, kripkeR, witnessP] at this
 
 /-- NOT(MUST(P)) and MUST(NOT(P)) are not equivalent in general.
 
-There exists a normal modal theory where ¬□P ≠ □¬P: failing to be
-necessary (¬□P = true when P fails at w2) is weaker than being
+There exists a Kripke accessibility relation where ¬□P ≠ □¬P: failing
+to be necessary (¬□P = true when P fails at w2) is weaker than being
 necessarily false (□¬P = false when P holds at w1). -/
 theorem neg_over_nec_ne_nec_over_neg :
-    ∃ (T : ModalTheory), T.isNormal ∧
+    ∃ (R : AccessRel World),
     ¬(∀ (p : World → Prop) (w : World),
-      evalNegOverModal T .necessity p w ↔
-      evalModalOverNeg T .necessity p w) := by
-  refine ⟨kripkeT, kripkeT_normal, ?_⟩
+      ¬ boxR R p w ↔ boxR R (fun w' => ¬ p w') w) := by
+  refine ⟨kripkeR, ?_⟩
   intro h
   have := h witnessP .w0
-  simp [evalNegOverModal, evalModalOverNeg, kripkeT, witnessP] at this
+  simp [boxR, kripkeR, witnessP] at this
 
 end ScopeBridge
 
