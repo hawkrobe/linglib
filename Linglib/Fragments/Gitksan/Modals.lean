@@ -142,26 +142,63 @@ theorem circumstantial_no_epistemic :
 
 /-! ## Prospective aspect marker `dim`
 
-@cite{matthewson-2016} §18.4.3: prospective aspect marking is obligatory
-for future temporal orientation in Gitksan. Without `dim`, epistemic
-ima('a) can only have past or present temporal orientation (examples 60–63).
-English and Gitksan are mirror images: past orientation is obligatorily
-marked in English (via *have*), future orientation is obligatorily marked
-in Gitksan (via *dim*). -/
+@cite{matthewson-2013} §3–4: prospective aspect marking with `dim` is
+required *asymmetrically*. Circumstantial modals (`da'akhlxw`, `anookxw`,
+`sgi`) require `dim` regardless of temporal orientation — past, present,
+or future, dim must always co-occur (§4.1 ex. 51–58, §4.2 ex. 73–78,
+§4.3 ex. 82–88). Epistemic modals (`imaa`, `gat`) require `dim` *only*
+when the temporal orientation is future (§3.3 ex. 38–42); past and
+present orientations are felicitous without dim.
 
-/-- Temporal orientation of Gitksan epistemic modals. -/
+The contrast with English is the central typological mirror @cite{matthewson-2013}
+§3.3 draws: English obligatorily marks past orientation (via *have*),
+Gitksan obligatorily marks future orientation (via *dim*) — but for
+Gitksan epistemics only. Circumstantials uniformly demand the marker. -/
+
+/-- Temporal orientation of Gitksan modals. -/
 inductive TemporalOrientation where
   | past | present | future
   deriving DecidableEq, Repr, BEq
 
-/-- Whether prospective `dim` is required for a given temporal orientation. -/
-def requiresDim : TemporalOrientation → Bool
-  | .future => true
-  | _ => false
+/-- Whether prospective `dim` is required, given a modal expression and
+    the temporal orientation of its prejacent. The asymmetry follows
+    the modal's flavor: circumstantials always require dim; epistemics
+    only require dim when oriented to the future. -/
+def requiresDim (e : ModalExpression) (orient : TemporalOrientation) : Bool :=
+  if e.meaning.all (fun ff => ff.flavor == .epistemic) then
+    -- Epistemic modal: dim required iff future orientation.
+    orient == .future
+  else
+    -- Circumstantial modal: dim always required.
+    true
 
-/-- Without `dim`, only past and present orientations are available. -/
-theorem no_dim_no_future :
-    [TemporalOrientation.past, .present].all (fun o => !requiresDim o) = true := by
-  decide
+/-- Epistemic `imaa` requires `dim` only for future orientation. -/
+theorem requiresDim_imaa :
+    requiresDim imaa .future = true ∧
+    requiresDim imaa .past = false ∧
+    requiresDim imaa .present = false := ⟨rfl, rfl, rfl⟩
+
+/-- Epistemic `gat` requires `dim` only for future orientation. -/
+theorem requiresDim_gat :
+    requiresDim gat .future = true ∧
+    requiresDim gat .past = false ∧
+    requiresDim gat .present = false := ⟨rfl, rfl, rfl⟩
+
+/-- Circumstantial modals always require `dim`. -/
+theorem requiresDim_circumstantial :
+    circumstantialModals.all (fun e =>
+      [TemporalOrientation.past, .present, .future].all (fun o =>
+        requiresDim e o)) = true := by decide
+
+/-- The flavor-keyed asymmetry: epistemic modals do *not* uniformly
+    require `dim`, but circumstantial modals do. -/
+theorem dim_asymmetry :
+    (epistemicModals.any (fun e =>
+      [TemporalOrientation.past, .present].any (fun o =>
+        !requiresDim e o))) = true ∧
+    (circumstantialModals.all (fun e =>
+      [TemporalOrientation.past, .present, .future].all (fun o =>
+        requiresDim e o))) = true := by
+  refine ⟨?_, ?_⟩ <;> decide
 
 end Fragments.Gitksan.Modals

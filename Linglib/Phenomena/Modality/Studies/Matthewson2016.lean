@@ -229,15 +229,21 @@ theorem all_fragments_iff :
 -- §6. Temporal orientation and prospective aspect (§18.4.3)
 -- ============================================================================
 
-/-- In Gitksan, future temporal orientation requires prospective `dim`. -/
-theorem future_requires_dim :
-    Fragments.Gitksan.Modals.requiresDim .future = true := rfl
+/-- In Gitksan, future temporal orientation of an epistemic modal
+    (`imaa`) requires prospective `dim`. The 2016 handbook chapter
+    presents this as the headline pattern; @cite{matthewson-2013} shows
+    it is part of a flavor-keyed asymmetry (circumstantials require
+    `dim` for any orientation). -/
+theorem imaa_future_requires_dim :
+    Fragments.Gitksan.Modals.requiresDim Fragments.Gitksan.Modals.imaa
+      .future = true := rfl
 
-/-- Past and present orientation do not require `dim`. -/
-theorem past_present_no_dim :
-    Fragments.Gitksan.Modals.requiresDim .past = false ∧
-    Fragments.Gitksan.Modals.requiresDim .present = false :=
-  ⟨rfl, rfl⟩
+/-- For epistemics, past and present orientation do not require `dim`. -/
+theorem imaa_past_present_no_dim :
+    Fragments.Gitksan.Modals.requiresDim Fragments.Gitksan.Modals.imaa
+      .past = false ∧
+    Fragments.Gitksan.Modals.requiresDim Fragments.Gitksan.Modals.imaa
+      .present = false := ⟨rfl, rfl⟩
 
 /-- English–Gitksan mirror: English obligatorily marks past orientation
     (via *have*), Gitksan obligatorily marks future orientation (via *dim*).
