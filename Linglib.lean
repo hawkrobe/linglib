@@ -1226,6 +1226,7 @@ import Linglib.Phenomena.Modality.ModalConcord.LiuRotter2025
 import Linglib.Phenomena.Modality.Studies.LiuRotter2025
 import Linglib.Phenomena.Modality.Studies.Matthewson2013
 import Linglib.Phenomena.Modality.Studies.Matthewson2016
+import Linglib.Phenomena.Modality.Studies.MatthewsonKlechaBridge
 import Linglib.Phenomena.TenseAspect.Studies.Mendes2025
 import Linglib.Phenomena.Modality.Basic
 import Linglib.Phenomena.Modality.EpistemicEvidentiality
