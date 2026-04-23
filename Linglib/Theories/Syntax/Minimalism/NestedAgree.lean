@@ -45,6 +45,30 @@ substrate (`SyntacticObject`, `cCommandsIn`, `containsOrEq`,
 `subtrees`) imported transitively via `Probe`. Predicates are `Prop`
 with `[Decidable]` instances; `runStack` returns
 `Option SyntacticObject`.
+
+## Sibling mechanisms in `Theories/Syntax/Minimalism/`
+
+`Theories/Syntax/Minimalism/CyclicAgree.lean` (@cite{bejar-rezac-2009})
+and `LongDistanceAgree.lean` (@cite{szabolcsi-2009}) are sibling
+Layer-2 patterns. All three address "what does a probe do beyond its
+first operation," but the answers differ:
+
+- **Nested Agree** (this file): *multiple ordered probes* on a single
+  head, all forced to target the *same* goal under maximized matching;
+  each subsequent probe operates on a *truncated* search domain
+  restricted to the prior goal's daughters.
+- **Cyclic Agree** (`CyclicAgree.lean`): a *single articulated probe*
+  with multiple feature segments; cycle I targets the IA, cycle II
+  targets the EA via the *expanded* residue domain. Subsequent
+  cycles see *more* (residue + EA), not less.
+- **Long-Distance Agree** (`LongDistanceAgree.lean`): a *single probe*
+  in the matrix relaxes locality across a non-defective C, reaching
+  an embedded goal.
+
+The three are conceptually orthogonal mechanisms for serial probing.
+A unified theory of probe behavior would treat them as alternatives
+in the design space; we keep them as independent Layer-2 patterns
+that consumers select by phenomenon.
 -/
 
 namespace Minimalism.NestedAgree

@@ -54,6 +54,28 @@ Connects to `PersonGeometry.lean` via bridge theorems. The direct/inverse
 classification predicts which languages show differential P indexing
 (Basque, Georgian fragments).
 
+## Sibling mechanisms in `Theories/Syntax/Minimalism/`
+
+`NestedAgree.lean` (@cite{amato-2025}) and `LongDistanceAgree.lean`
+(@cite{szabolcsi-2009}) are sibling Layer-2 patterns. All three
+address what a probe does beyond its first operation, but
+differently:
+
+- **Cyclic Agree** (this file): *single articulated probe* with
+  multiple feature segments; cycle II's residue probing *expands*
+  the domain to reach the EA after the IA partially checks the probe.
+- **Nested Agree**: *multiple ordered probes* on one head, all
+  forced under maximized matching to target the same goal; each
+  subsequent probe operates on a *truncated* domain restricted to
+  the first goal's daughters.
+- **Long-Distance Agree**: a single probe relaxes clause-locality
+  across a non-defective C.
+
+The three are conceptually orthogonal — Cyclic addresses
+articulation, Nested addresses ordering, LDA addresses
+clause-boundedness. A given construction may instantiate one but
+not the others.
+
 -/
 
 namespace Minimalism.CyclicAgree

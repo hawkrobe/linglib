@@ -157,22 +157,4 @@ theorem bulgarianMultiWh_excludes_wh_subject :
 
 end Bulgarian
 
--- ════════════════════════════════════════════════════════════════════════════
--- Part B: Cross-feature-type observations
--- ════════════════════════════════════════════════════════════════════════════
-
-/-! ## Part B: Cross-feature-type structural observations
-
-The Bulgarian configuration uses the same `NestedAgreeConfig` shape
-as Italian aux selection (Agree on `Perf`), Icelandic DAT-NOM (Agree
-on `T`), and Lak perfective (Agree on `Asp`). The fact that a *Merge*
-feature configuration consumes the identical primitive — same
-`apparent_intervener_excluded` framework lemma, same
-`cCommandsIn`-derived `daughters` — is the cross-feature-type
-validation that NestedAgree is Agree/Merge-neutral. -/
-
-theorem bulgarian_uses_same_framework_as_agree_cases :
-    Bulgarian.bulgarianMultiWh.stack.length =
-      Bulgarian.bulgarianMultiWh.stack.length := rfl
-
 end Phenomena.FillerGap.Studies.Amato2025

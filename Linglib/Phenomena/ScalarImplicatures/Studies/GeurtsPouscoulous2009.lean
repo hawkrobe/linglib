@@ -1,6 +1,8 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Linglib.Paradigms.Measurement
+import Linglib.Theories.Pragmatics.Implicature.Basic
+import Linglib.Theories.Pragmatics.Implicature.Competence
 import Linglib.Theories.Pragmatics.Implicature.Defs
 import Linglib.Theories.Pragmatics.Implicature.Diagnostics
 import Linglib.Theories.Pragmatics.Implicature.Scales
@@ -18,11 +20,12 @@ Geurts, B. & Pouscoulous, N. (2009). Embedded implicatures?!?
 Mainstream conventionalist theories of scalar implicature
 (@cite{landman-1998}, @cite{landman-2000}, @cite{levinson-2000},
 @cite{recanati-2003}, @cite{chierchia-2004}, @cite{chierchia-2006},
-@cite{fox-2007}, @cite{chierchia-fox-spector-2012}) predict that local
+@cite{fox-2007}, @cite{chierchia-fox-spector-2008}) predict that local
 SIs occur "systematically and freely in arbitrarily embedded
 positions." Four experiments in this paper present evidence that they
 do not — both for mainstream conventionalism and for a *minimal*
-conventionalism that merely claims local-SI readings exist.
+conventionalism that merely claims local-SI readings exist. The
+embedded-implicature problem is traced back to @cite{cohen-1971}.
 
 ## Paper structure
 
@@ -105,12 +108,65 @@ def quantifierMonotonicity : QuantifierContext → ContextPolarity
   | .notAll           => .downward
   | .notMoreThanOne   => .downward
 
-/-- Mainstream conventionalism predicts local SIs are *preferred* in
-non-DE contexts (paper §4): UE strongly, non-monotonic by some
-versions. The structural claim is "non-DE → predicts SI." Derived
-from the monotonicity table rather than stipulated case-by-case. -/
-def conventionalistPredictsLocalSI (q : QuantifierContext) : Bool :=
-  quantifierMonotonicity q != .downward
+/-- Conventionalist variants distinguished by the paper. The
+distinction matters for what counts as falsification (paper §6 vs §1).
+- **mainstreamLexicalist** (@cite{landman-1998}, @cite{landman-2000},
+  @cite{levinson-2000}): local SIs by lexical default.
+- **mainstreamSyntactic** (@cite{chierchia-2004}, @cite{chierchia-2006},
+  @cite{fox-2007}, @cite{chierchia-fox-spector-2008}): local SIs via
+  EXH operator in the grammar.
+- **minimal**: claims local-SI readings *exist* (i.e., are grammatically
+  available) but takes no stance on whether they are preferred. This is
+  the position whose falsifiability paper §6 carefully constructs. -/
+inductive ConventionalistVariant where
+  | mainstreamLexicalist
+  | mainstreamSyntactic
+  | minimal
+  deriving DecidableEq, Repr
+
+/-- Does this variant predict a *preference* for local SIs in the given
+context? Mainstream variants predict preference in non-DE; minimal
+makes no preference claim. -/
+def predictsLocalSI : ConventionalistVariant → QuantifierContext → Bool
+  | .minimal, _ => false
+  | _, q => quantifierMonotonicity q != .downward
+
+/-- Convenience: the prediction shared by both mainstream variants
+(paper's running "mainstream conventionalism" of §1). -/
+def conventionalistPredictsLocalSI : QuantifierContext → Bool :=
+  predictsLocalSI .mainstreamLexicalist
+
+
+-- ============================================================================
+-- Embedding types + experimental data structure
+-- (Used throughout §1, §2, §5; promoted from §1-local to file-level so
+--  helpers like `lookupRate` can reference them.)
+-- ============================================================================
+
+/-- Embedding types tested in Experiments 1a and 1b (paper §1). -/
+inductive EmbeddingType where
+  | simple   -- "Fred heard some of the Verdi operas" (∅-condition)
+  | think    -- "Betty thinks Fred heard some..."
+  | want     -- "Betty wants Fred to hear some..."
+  | must     -- "Fred has to hear some..."
+  | all      -- "All students heard some..."
+  deriving DecidableEq, Repr
+
+/-- One row from Exp 1a-b results (paper Table 2). Rates are in percent
+points (paper reports `.93`, `.27`, etc.; we use integer percentages). -/
+structure EmbeddingResult where
+  embedding : EmbeddingType
+  /-- Percentage of participants endorsing the local-SI inference -/
+  localSIRate : Nat
+  n : Nat
+  deriving Repr
+
+/-- Look up the local-SI rate for a given embedding type in a results
+list. Returns 0 if the embedding wasn't tested. Used to *derive*
+aggregate rates (`thinkAvgRate`, `complexConditionsMean`, etc.) from
+the data tables rather than restating them. -/
+def lookupRate (results : List EmbeddingResult) (e : EmbeddingType) : Nat :=
+  ((results.find? (·.embedding == e)).map (·.localSIRate)).getD 0
 
 -- ============================================================================
 -- Measure specifications (paradigm contracts)
@@ -140,24 +196,6 @@ Exp 1b: p = .012); complex-condition pairs all significant (Exp 1a:
 *all* vs *think* p = .039, *all* vs *must* p = .039, *think* vs *must*
 p = .001; Exp 1b: *think* vs *want* p = .031). -/
 
-/-- Embedding types tested in Experiments 1a and 1b (paper §1). -/
-inductive EmbeddingType where
-  | simple   -- "Fred heard some of the Verdi operas" (∅-condition)
-  | think    -- "Betty thinks Fred heard some..."
-  | want     -- "Betty wants Fred to hear some..."
-  | must     -- "Fred has to hear some..."
-  | all      -- "All students heard some..."
-  deriving DecidableEq, Repr
-
-/-- One row from Exp 1a-b results (paper Table 2). Rates are in percent
-points (paper reports `.93`, `.27`, etc.; we use integer percentages). -/
-structure EmbeddingResult where
-  embedding : EmbeddingType
-  /-- Percentage of participants endorsing the local-SI inference -/
-  localSIRate : Nat
-  n : Nat
-  deriving Repr
-
 /-- Experiment 1a results (paper Table 2, n = 30, French-speaking
 students at the Ecole Nationale des Arts Décoratifs). -/
 def exp1aResults : List EmbeddingResult :=
@@ -176,33 +214,42 @@ def exp1bResults : List EmbeddingResult :=
 
 /-- The cross-experiment average for *think* (paper §1.4 page 4:9):
 "local SIs were relatively frequent with *think* (57.5% across the two
-experiments)." This is the load-bearing rate in the §5.2 paradigm-
-correction argument. -/
-def thinkAvgRate : ℚ := (50 + 65 : ℚ) / 2
+experiments)." Derived directly from Table 2 via `lookupRate`. Load-
+bearing in the §5.2 paradigm-correction argument. -/
+def thinkAvgRate : ℚ :=
+  ((lookupRate exp1aResults .think + lookupRate exp1bResults .think : Nat) : ℚ) / 2
+
+/-- All embedded (i.e., non-simple) condition rates from Exp 1a-b. -/
+def complexConditionRates : List Nat :=
+  (exp1aResults ++ exp1bResults).filter (·.embedding != .simple) |>.map (·.localSIRate)
 
 /-- The mean rate across all complex (i.e. embedded) conditions in
 Exp 1a–b (paper §1.4 page 4:9): "complex conditions yielded local SIs
-at a much reduced mean rate of 35%." Computed: (50+27+3+65+32)/5 =
-35.4. -/
-def complexConditionsMean : ℚ := (50 + 27 + 3 + 65 + 32 : ℚ) / 5
+at a much reduced mean rate of 35%." Derived from
+`complexConditionRates`. -/
+def complexConditionsMean : ℚ :=
+  (complexConditionRates.sum : ℚ) / complexConditionRates.length
 
-/-- Paper's headline finding: SI rates vary from 3% (must) to 94%
-(simple, Exp 1b) — a 91-point range. This contradicts the conventionalist
-claim that local SIs occur "systematically and freely in arbitrarily
-embedded positions." -/
+/-- Paper's headline finding: SI rates vary from 3% (must, Exp 1a) to
+94% (simple, Exp 1b) — a 91-point range. Anchored in the actual data
+tables rather than literal arithmetic. This contradicts the
+conventionalist claim that local SIs occur "systematically and freely
+in arbitrarily embedded positions." -/
 theorem embedding_not_systematic :
-    94 - 3 = (91 : Nat) := rfl
+    lookupRate exp1bResults .simple - lookupRate exp1aResults .must = (91 : Nat) := rfl
 
 /-- Among embedded conditions, only *think* shows substantial local-SI
-endorsement (50% in Exp 1a, 65% in Exp 1b, averaging 57.5%). Other
+endorsement (averaging 57.5% across both experiments). Other
 embeddings — *all* (27%), *must* (3%), *want* (32%) — fall below 35%,
 the eventual conventionalism-disconfirmation threshold the paper builds
-toward. -/
+toward. Anchored in the data tables. -/
 theorem think_uniquely_elevated :
     thinkAvgRate = 575 / 10 ∧
-    27 < (35 : Nat) ∧ 3 < (35 : Nat) ∧ 32 < (35 : Nat) := by
+    lookupRate exp1aResults .all  < (35 : Nat) ∧
+    lookupRate exp1aResults .must < (35 : Nat) ∧
+    lookupRate exp1bResults .want < (35 : Nat) := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · unfold thinkAvgRate; norm_num
+  · unfold thinkAvgRate lookupRate; norm_num
   · decide
   · decide
   · decide
@@ -384,25 +431,33 @@ theorem inference_clusters_around_chance :
     exp3Results.all (fun r => r.inferenceRate ≥ 40 ∧ r.inferenceRate ≤ 65) := by
   decide
 
-/-- Mean inference rate in DE conditions: paper §5.2 reports 45%.
-Computed: (58 + 46) / 2 = 52, rounded by the paper to 45. The paper's
-exact wording is "in the DE conditions the rates of positive responses
-were too high (mean: 45%)" — the 45% is the paper's rounded figure;
-our integer arithmetic gives 52. We expose both for traceability. -/
-def deInferenceMean_computed : ℚ := (58 + 46 : ℚ) / 2
+/-- Filter `exp3Results` to a given monotonicity class. -/
+def exp3Filtered (m : ContextPolarity) : List Exp3Row :=
+  exp3Results.filter (fun r => quantifierMonotonicity r.quantifier == m)
 
-/-- Mean inference rate in non-DE conditions: paper §5.2 reports 51%.
-Computed: (46 + 62 + 50 + 50) / 4 = 52. Same caveat as
-`deInferenceMean_computed`. -/
-def nonDeInferenceMean_computed : ℚ := (46 + 62 + 50 + 50 : ℚ) / 4
+/-- Mean inference rate in DE conditions, derived from `exp3Results`.
+Paper §5.2 reports 45% as the rounded figure; our integer arithmetic
+over the filtered rows gives `(58 + 46) / 2 = 52`. Both the paper's
+rounding and our exact mean falsify the conventionalist prediction
+(which expects DE rates to be much *lower* than non-DE rates). -/
+def deInferenceMean : ℚ :=
+  let rates := (exp3Filtered .downward).map (·.inferenceRate)
+  (rates.sum : ℚ) / rates.length
+
+/-- Mean inference rate in non-DE conditions, derived from `exp3Results`.
+Paper §5.2 reports 51%; integer arithmetic gives 52. -/
+def nonDeInferenceMean : ℚ :=
+  let nonDe := exp3Results.filter (fun r => quantifierMonotonicity r.quantifier != .downward)
+  let rates := nonDe.map (·.inferenceRate)
+  (rates.sum : ℚ) / rates.length
 
 /-- The paper's "fails to coalesce into the predicted pattern"
-disconfirmation: the difference between non-DE and DE inference means
-is small (essentially within noise) — yet conventionalism predicts a
-*large* difference (non-DE high, DE low). -/
+disconfirmation (paper §5.2 page 4:23): the difference between non-DE
+and DE inference means is essentially zero — yet conventionalism
+predicts a *large* difference. Derived from `exp3Results`. -/
 theorem inference_fails_to_coalesce :
-    nonDeInferenceMean_computed - deInferenceMean_computed = 0 := by
-  unfold nonDeInferenceMean_computed deInferenceMean_computed
+    nonDeInferenceMean - deInferenceMean = 0 := by
+  unfold nonDeInferenceMean deInferenceMean exp3Filtered
   norm_num
 
 /-- After Exp 3 establishes the ~50% paradigm baseline in inference
@@ -504,29 +559,45 @@ def genuineAmbiguityResults : List AmbiguityControl :=
     , eitherRate := 59 }
   ]
 
+/-- Mean genuine-ambiguity detection across Table 5 items: derived from
+`genuineAmbiguityResults`. Paper §7.2 page 4:26 reports 70%. -/
+def genuineAmbiguityMean : Nat :=
+  (genuineAmbiguityResults.map (·.eitherRate)).sum /
+    genuineAmbiguityResults.length
+
+/-- Total non-DE trials in Exp 4: 4 critical items × 22 participants
+(paper §7.2 page 4:26 footnote on the 9-of-88 calculation). -/
+def exp4NonDeTotalResponses : Nat := 4 * 22
+
+/-- Total non-DE trials in Exp 4 *consistent with minimal conventionalism*
+(paper §7.2 page 4:26): "only 9 out of 88 responses". -/
+def exp4NonDeConventionalistConsistent : Nat := 9
+
 /-- The *ambiguity gap* (paper §7.2 page 4:26): genuine-ambiguity
 detection averages 70% across Table 5 items, while alleged SI-induced
 ambiguity (Table 4 non-DE rows) averages 6%. The 64-point gap is the
 strongest result against minimal conventionalism — participants reliably
-detect *real* ambiguities but not the ones conventionalism predicts. -/
+detect *real* ambiguities but not the ones conventionalism predicts.
+Derived from the data. -/
 theorem no_SI_ambiguity_detected :
-    (genuineAmbiguityResults.map (·.eitherRate)).sum /
-      genuineAmbiguityResults.length = 70 ∧
+    genuineAmbiguityMean = 70 ∧
     exp4Results.all (fun r => r.eitherRate ≤ 14) := by
   refine ⟨?_, ?_⟩ <;> decide
 
 /-- The total fraction of non-DE responses consistent with minimal
 conventionalism (paper §7.2 page 4:26): "only 9 out of 88 responses
-(i.e. 10%) were consistent with minimal conventionalism." Computed:
-9 * 100 / 88 = 10 (integer arithmetic). -/
+(i.e. 10%) were consistent with minimal conventionalism." Derived from
+`exp4NonDeConventionalistConsistent / exp4NonDeTotalResponses`. -/
 theorem minimal_conventionalist_support :
-    (9 : Nat) * 100 / 88 = 10 := rfl
+    exp4NonDeConventionalistConsistent * 100 / exp4NonDeTotalResponses = 10 := rfl
 
-/-- The 64-point gap: 70% genuine vs 6% alleged-SI ambiguity detection
-(paper page 4:26: "ambiguous controls were recognised as such in 70%
-of the cases, the corresponding rate for the critical non-DE sentences
-was 6%"). -/
-theorem ambiguity_gap : (70 : Nat) - 6 = 64 := rfl
+/-- The 64-point gap: genuine-ambiguity (70%) vs alleged-SI ambiguity
+(6%) detection (paper §7.2 page 4:26). The 6% is the *aggregate* the
+paper reports across non-DE trials; we use it as a stipulated paper
+figure rather than re-deriving (the per-row breakdown in Table 4 has
+mixed denominators with the exactly-two double-condition). -/
+theorem ambiguity_gap :
+    genuineAmbiguityMean - 6 = 64 := rfl
 
 
 -- ============================================================================
@@ -566,6 +637,16 @@ theorem competence_explains_think
     BobBelievesNotAll :=
   competence.elim (fun h => absurd h globalSI) id
 
+/-- The §8 derivation, expressed via `Implicature.processAlternative`
+from `Theories/Pragmatics/Implicature/Competence.lean`. When the speaker
+has a determinate negative stance about the alternative (here:
+`.disbelief` — speaker believes ¬(Bob-believes-all)) and competence is
+assumed, the Standard-Recipe `strongDerived` flag is set. This is the
+load-bearing link from the paper's §8 chain to the abstract Sauerland
+machinery the library already implements. -/
+theorem competence_explains_think_via_processAlternative :
+    (Implicature.processAlternative true .disbelief).strongDerived = true := by decide
+
 /-- The same derivation chain *applied to universal quantifiers*: given
 the global SI ¬(∀c, ShotAtAll c) and the strong-competence assumption
 ∀c, ShotAtAll c ∨ ShotAtNotAll c, conclude ∃c, ShotAtNotAll c.
@@ -589,15 +670,16 @@ theorem gricean_derivation_with_strong_competence
   exact globalSI (fun c => (strongCompetence c).elim id (fun h2 => absurd h2 (h c)))
 
 /-- Footnote 7 (paper page 4:10): *if A asymmetrically entails B, then B
-is at least as plausible as A.* This is the elegant logical core of the
-implausibility-objection rebuttal in §1.4 Objection #1: since the
-local-SI reading (a) asymmetrically entails the non-local-SI reading
-(b), (b) cannot be *less* plausible than (a). The implausibility
-defense of conventionalism therefore cannot rest on (a) being
-implausible relative to (b). -/
-theorem footnote7_paraphrase_asymmetry
-    {A B : Prop} (h : A → B) : ¬ B → ¬ A :=
-  fun nB hA => nB (h hA)
+is at least as plausible as A.* The contrapositive `mt` gives the
+elegant logical core of the implausibility-objection rebuttal in §1.4
+Objection #1: since the local-SI reading (a) asymmetrically entails
+the non-local-SI reading (b), implausibility of (b) would imply
+implausibility of (a) — the implausibility defense of conventionalism
+therefore cannot rest on (a) being implausible relative to (b).
+
+This is `mt` from Lean core; we expose it under the paper-citation
+name for cross-referencing. -/
+abbrev footnote7_paraphrase_asymmetry : ∀ {A B : Prop}, (A → B) → ¬ B → ¬ A := @mt
 
 
 -- ============================================================================

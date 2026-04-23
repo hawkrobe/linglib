@@ -1834,6 +1834,7 @@ import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Theories.Morphology.FragmentGrammars.MultinomialPCFG
 import Linglib.Theories.Morphology.FragmentGrammars.DMPCFG
 import Linglib.Theories.Morphology.FragmentGrammars.AdaptorGrammar
+import Linglib.Theories.Morphology.FragmentGrammars.FragmentGrammar
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Morphology.DM.CategorizerSemantics
 import Linglib.Theories.Morphology.DM.VocabularyInsertion

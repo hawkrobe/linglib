@@ -4,6 +4,116 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.269] - 2026-04-23
+
+### O'Donnell 2015 Phase 7: FragmentGrammar (FG)
+
+Fourth FG-family model, and the **central theoretical proposal**
+of @cite{odonnell-2015}: §2.4.4 / §3.1.8. Inference-based
+productivity-and-reuse via per-(rule, RHS-position) beta-binomial
+halt prior on top of an adaptor grammar.
+
+- **New file**:
+  `Linglib/Theories/Morphology/FragmentGrammars/FragmentGrammar.lean`
+  (~190 LOC). Provides `FragmentGrammar G extends AdaptorGrammar G`
+  with `haltPriorRecurse` / `haltPriorHalt` fields (Beta pseudo-
+  counts per (rule, RHS position)) and positivity constraints.
+- **Distinguishing feature vs. MAG**: per-slot halt decisions
+  (rather than per-nonterminal). This lets fragments be arbitrary
+  partial trees with selective open NT slots — the structural
+  commitment that gives FG its account of productivity-and-reuse.
+- **Honest three-argument signature**:
+  `corpusProbGivenStorage (D, Y, Z)` — `D` is the corpus, `Y` is
+  the per-LHS PYP table assignment (latent, inherited from AG),
+  `Z` is the per-(rule, position) recurse/halt count assignment
+  (latent, FG-specific).
+- **`fgFactor`** is the per-(rule, position) Beta-binomial factor,
+  inlined via `Real.Gamma` rather than mathlib's
+  `ProbabilityTheory.beta` to avoid the
+  `Mathlib.Probability.Distributions.Beta` dependency.
+- **`corpusProbGivenStorage`** = AG's `corpusProbGivenTables D Y`
+  × ∏_r ∏_i `fgFactor r i (Z r i)`. Inheritance via `extends` does
+  the heavy lifting.
+- **`fgFactor_pos`** proved via `Real.Gamma_pos_of_pos` repeatedly;
+  **`corpusProbGivenStorage_nonneg`** structurally derived.
+
+**Inheritance payoff (continued)**: FG is ~190 LOC because the
+DMPCFG + PYP infrastructure is inherited via `extends
+AdaptorGrammar`. The framework hierarchy
+`MultinomialPCFG / DMPCFG / AdaptorGrammar / FragmentGrammar`
+gives each model exactly the additional structure that
+distinguishes it.
+
+Build: 8.4s clean. No `sorry`. Full FG-family substrate (4 of 4
+chapter models) is implemented + sorry-free; only DOP (Phase 8,
+deferred) remains.
+
+## [0.230.268] - 2026-04-23
+
+### TemporalAdverbials Fragment refactor: consensus-only schema, paper apparatus to Studies
+
+`Fragments/English/TemporalAdverbials.lean` (235 LOC) audited against the
+"Fragment schemas carry consensus typological metadata only" discipline
+established by the Determiners refactor (0.230.262). Findings: schema baked
+in @cite{rouillard-2026}'s analytical apparatus (`TIAType`, `MapFunction`,
+`AdverbialPosition`, `AspectReq`) as if it were theory-neutral; three
+independent `inYears` lexicons existed across the codebase
+(`Theories/Tense/PTS.lean`, `Fragments/PolarityItems.lean`, here).
+
+- **`Fragments/English/TemporalExpressions.lean`** widened with sibling
+  structure `DurationExprEntry` (mathlib pattern, mirrors
+  `QuantifierEntry` + `NumericalDetEntry` in `Determiners.lean`):
+  - Schema fields are consensus-only: `form`, `kind : DurationKind`,
+    `isPostposition`, `vendlerSelection : List Telicity`,
+    `iaiClassification : Option AdverbialType`, `polaritySensitive`,
+    `polarityType : Option PolarityType`, `requiresPerfect`,
+    `requiresNegation`. No PTS apparatus, no Rouillard apparatus.
+  - Four entries: `inTelic`, `inGap` (formerly `inETIA`/`inGTIA`),
+    `forDur`, `ago`. Both *in*-readings share the surface form;
+    distinguished by `kind`.
+  - Imports `Theories/Semantics/Tense/TemporalAdverbials` (`AdverbialType`)
+    and `Core/Lexical/PolarityItem` (`PolarityType`).
+  - 7 sanity theorems: form agreement, postposition uniqueness,
+    polarity-sensitivity pattern, Vendler-selection pattern, IAI
+    classification pattern, kind-distinctness, *in*-form sharing.
+
+- **`Phenomena/TenseAspect/Studies/Rouillard2026.lean`** absorbs the
+  Rouillard-specific apparatus:
+  - `TIAType` / `AdverbialPosition` / `MapFunction` enums moved here
+    (paper-specific, not consensus).
+  - `tiaTypeOf?` / `positionOf?` / `mapFunctionOf?` projections from
+    `DurationExprEntry` → `Option (Rouillard label)` derive Rouillard's
+    classification from consensus Fragment fields.
+  - §5b "Fragment Bridges": 5 `native_decide` invocations replaced with
+    structural `⟨rfl, rfl⟩` proofs over the new entries and projections.
+  - `since_fragment_bridge` rewritten — it referenced the now-deleted
+    `since.specifiesLB` field; replaced with a check on
+    `since_conn.complementVeridical` + `order` against existing
+    `TemporalExprEntry` data.
+
+- **`Fragments/English/TemporalAdverbials.lean`** deleted (was reachable
+  only transitively via Rouillard2026).
+
+- **Deferred to follow-up**: per-theory projections
+  (`DurationExprEntry → Option BoundaryAdverbial`,
+  `→ Option PolarityItemEntry`) and three-way `inYears` consolidation —
+  each existing `inYears` is a different theoretical projection
+  (IAI/IZ via `BoundaryAdverbial`, Israel scalar-model via
+  `PolarityItemEntry`, Rouillard view); collapsing them requires
+  restructuring `PolarityItems.lean`'s scalar-model commitments. The
+  Fragment side now has the consensus entry the projections will derive
+  from. `Fragments/English/TemporalDeictic.lean` also untouched: its
+  paper-specific `ThenAdverb` typing is shared across 8 languages
+  (Eng/Jpn/Ger/Hun/Mnd/Rus/Grk/Heb) and is its own cross-language
+  refactor.
+
+- **Documentation hygiene**: hallucinated equation/schema/Table/footnote
+  numbers from @cite{rouillard-2026} (eq. 62/64/70, schemata 57/61,
+  Table 1, fn. 10) removed from new docstrings — replaced with content
+  descriptions per CLAUDE.md anti-hallucination policy.
+
+Full repo build green (5337 jobs).
+
 ## [0.230.267] - 2026-04-23
 
 ### O'Donnell 2015 Phase 6b: discharge AdaptorGrammar sorry

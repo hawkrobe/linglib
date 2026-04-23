@@ -273,22 +273,4 @@ theorem lakPerfective_excludes_ergative :
 
 end Lak
 
--- ════════════════════════════════════════════════════════════════════════════
--- Part C: Cross-case observations
--- ════════════════════════════════════════════════════════════════════════════
-
-/-! ## Part C: Cross-case structural observations -/
-
-/-- Both case studies in this file (and the Italian aux selection in
-    `Phenomena/AuxiliaryVerbs/Studies/Amato2025.lean`) consume the
-    *same* `NestedAgreeConfig` shape — same `apparent_intervener_excluded`
-    framework theorem, same `cCommandsIn`-derived `daughters`, same
-    well-formedness predicate. The cross-config invariance below
-    makes this concrete: the Icelandic and Lak configs differ only
-    in the data they carry (LITokens, tree, goal), not in the
-    machinery they invoke. -/
-theorem nested_agree_invariant_across_cases :
-    DatNom.icelandicOrderingA.stack.length =
-      Lak.lakPerfective.stack.length := rfl
-
 end Phenomena.Agreement.Studies.Amato2025
