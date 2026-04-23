@@ -39,7 +39,7 @@ is then a real reduction (loss of per-person information), not the
 identity.
 -/
 
-namespace Core.NullSubject
+namespace Phenomena.NullSubject
 
 /-- A language's null-vs-overt decision at every cell of the
     cross-classification. The abstract interface against which
@@ -127,4 +127,4 @@ instance (a : SubjectAssignment) : Decidable a.Satisfies :=
 
 end SubjectAssignment
 
-end Core.NullSubject
+end Phenomena.NullSubject

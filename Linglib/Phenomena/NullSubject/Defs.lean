@@ -26,7 +26,7 @@ files reach for. `matrixExtracted` is the locus for anti-agreement
 diagnostics.
 -/
 
-namespace Core.NullSubject
+namespace Phenomena.NullSubject
 
 /-- Grammatical person. Aliased to `UD.Person` for cross-linguistic
     compatibility with the rest of linglib's morphological feature
@@ -125,4 +125,4 @@ def matrixExtracted (p : Person) : SubjectContext :=
 
 end SubjectContext
 
-end Core.NullSubject
+end Phenomena.NullSubject

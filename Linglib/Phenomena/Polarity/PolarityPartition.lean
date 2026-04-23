@@ -30,7 +30,7 @@ connects them: the NL algebra *governs* partition structure.
 
 -/
 
-namespace Core.PolarityPartition
+namespace Phenomena.Polarity.PolarityPartition
 
 open Core.NaturalLogic
 
@@ -112,4 +112,4 @@ theorem complement_equally_negative_coarsening (R : M → Bool) (q : QUD M) :
 -- §3 — EntailmentSig and Partition Structure
 -- ============================================================================
 
-end Core.PolarityPartition
+end Phenomena.Polarity.PolarityPartition

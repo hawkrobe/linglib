@@ -35,7 +35,7 @@ pick out S=P (Dyirbal-type). The split between these patterns is one of
 the central diagnostics for "deep" vs "surface" ergativity.
 -/
 
-namespace Core.SubjectProperties
+namespace Phenomena.Subjecthood.SubjectProperties
 
 -- ============================================================================
 -- § 1: Property Types
@@ -135,4 +135,4 @@ theorem syntacticErgativity_converges :
 theorem morphErgativity_diverges :
     morphErgativityBundle.converges = false := by decide
 
-end Core.SubjectProperties
+end Phenomena.Subjecthood.SubjectProperties

@@ -36,7 +36,7 @@ coarse layer and lifting it to the fine layer keeps the typological
 content singly authored.
 -/
 
-namespace Core.NullSubject
+namespace Phenomena.NullSubject
 
 /-- A language's pro-drop / overt-PRO profile. The two Booleans are the
     typological observables; @cite{ostrove-2026}'s implicational
@@ -129,4 +129,4 @@ theorem satisfies_iff_attested (p : ProDropProfile) :
 
 end ProDropProfile
 
-end Core.NullSubject
+end Phenomena.NullSubject

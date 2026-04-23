@@ -26,7 +26,7 @@ lives in `Phenomena.Negation.Studies.Greco2020` under
 `namespace Minimalism.NegScope`.
 -/
 
-namespace Core
+namespace Phenomena.Negation.ExpletiveNegation
 
 open Core.Lexical.PolarityItem (PolarityType)
 
@@ -270,4 +270,4 @@ def PolarityLicensing.licensesType (p : PolarityLicensing) (t : PolarityType) :
     Option Bool :=
   (PolarityClass.fromPolarityType? t).map p.licenses
 
-end Core
+end Phenomena.Negation.ExpletiveNegation

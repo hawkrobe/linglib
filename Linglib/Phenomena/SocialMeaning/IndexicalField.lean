@@ -41,7 +41,7 @@ ideologically linked traits (Figures 3–4 in @cite{eckert-2008}).
 
 -/
 
-namespace Core.SocialMeaning
+namespace Phenomena.SocialMeaning.IndexicalField
 
 -- ============================================================================
 -- Indexical order (@cite{silverstein-2003})
@@ -252,4 +252,4 @@ def composeIndex {S M T : Type}
     (allM : List M) (s : S) (t : T) : ℚ :=
   (allM.map fun m => f₁ s m * f₂ m t).sum
 
-end Core.SocialMeaning
+end Phenomena.SocialMeaning.IndexicalField
