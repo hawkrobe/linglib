@@ -1005,6 +1005,7 @@ import Linglib.Phenomena.AuxiliaryVerbs.Diagnostics
 import Linglib.Phenomena.AuxiliaryVerbs.NegativeAuxiliaries
 import Linglib.Phenomena.AuxiliaryVerbs.Selection
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Anderson2006
+import Linglib.Phenomena.AuxiliaryVerbs.Studies.Olivier2026
 import Linglib.Phenomena.AuxiliaryVerbs.Studies.Sorace2000
 import Linglib.Phenomena.AuxiliaryVerbs.Typology
 import Linglib.Phenomena.Plurals.Studies.Charlow2021.Data
@@ -1354,6 +1355,7 @@ import Linglib.Phenomena.Pronouns.Typology
 import Linglib.Phenomena.Pronouns.ProDropRegistry
 import Linglib.Phenomena.Pronouns.Studies.Arnold2026
 import Linglib.Phenomena.Pronouns.Studies.KonnellyCowper2020
+import Linglib.Phenomena.Pronouns.Studies.Olivier2026
 import Linglib.Phenomena.PsychVerbs.Data
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024_UPH
 import Linglib.Phenomena.PsychVerbs.Studies.Kim2024

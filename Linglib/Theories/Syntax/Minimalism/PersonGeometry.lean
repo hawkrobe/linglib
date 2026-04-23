@@ -238,4 +238,83 @@ theorem rank_hierarchy :
     probeResolutionRank .first false > probeResolutionRank .third true ∧
     probeResolutionRank .third true > probeResolutionRank .third false := by decide
 
+-- ============================================================================
+-- § 8: Identity Subfeature (@cite{olivier-2026})
+-- ============================================================================
+
+/-! ### Referential identity as a person sub-feature
+
+@cite{olivier-2026}, extending @cite{harley-ritter-2002}, argues
+that two pronouns can share the same `[3, masc, sg]` φ-features yet
+differ in *referential identity*: `[the men]ᵢ` and `[the men]ₖ`
+have identical φ-values but distinct indices. ID-features are
+valued indices; reflexive clitics carry an unvalued ID-feature
+that gets valued through binding (mediated by Voice*).
+
+Auxiliary selection in Romance restructuring is then sensitive to
+ID-identity between T and vAux, not just person-value match: the
+matrix auxiliary surfaces as BE iff the two ID-features match,
+and as HAVE otherwise. This refines the φ-only matching of
+classical accounts and is what allows reflexive-clitic climbing
+(which equates ID across the matrix and embedded domains) to
+trigger Auxiliary Switch. -/
+
+/-- Identity subfeature on Person, representing referential identity
+    (distinct from grammatical person value).
+
+    @cite{olivier-2026} (extending @cite{harley-ritter-2002}) argues
+    that two pronouns can share `[3, masc, sg]` φ-features yet differ
+    in referential identity: `[the men]ᵢ` vs `[the men]ₖ`. ID-features
+    are valued indices; reflexive clitics carry an unvalued ID-feature
+    that gets valued through binding (mediated by Voice*).
+
+    Auxiliary selection in Romance restructuring is sensitive to
+    ID-identity between T and vAux, not just person-value match
+    (@cite{olivier-2026}). -/
+inductive IdFeature where
+  /-- Unvalued: reflexive clitic awaiting binding by an antecedent. -/
+  | unvalued
+  /-- Valued with a referential index. -/
+  | valued (idx : Nat)
+  deriving DecidableEq, Repr
+
+/-- ID-features match iff both are valued with the same index.
+    Two unvalued features do NOT match — valuation must occur first.
+    This drives @cite{olivier-2026}'s aux-selection rule. -/
+def IdFeature.matches : IdFeature → IdFeature → Bool
+  | .valued i, .valued j => i = j
+  | _, _ => false
+
+/-- Valuation by binding: an unvalued ID receives the binder's index.
+    A valued ID is not overwritten (idempotent on already-valued IDs). -/
+def IdFeature.valueBy : IdFeature → Nat → IdFeature
+  | .unvalued, k => .valued k
+  | .valued i, _ => .valued i
+
+/-- A valued ID-feature matches itself. -/
+theorem valued_matches_self (i : Nat) :
+    IdFeature.matches (.valued i) (.valued i) = true := by
+  simp only [IdFeature.matches, decide_true]
+
+/-- An unvalued ID-feature matches nothing — neither another
+    unvalued nor any valued feature. -/
+theorem unvalued_matches_nothing (f : IdFeature) :
+    IdFeature.matches .unvalued f = false := by
+  cases f <;> rfl
+
+/-- Valuation of an unvalued ID yields a valued ID at the binder's index. -/
+theorem valueBy_unvalued_yields_valued (k : Nat) :
+    IdFeature.valueBy .unvalued k = .valued k := rfl
+
+/-- Valuation is idempotent on already-valued IDs: a second
+    valuation attempt does not overwrite the existing index. -/
+theorem valueBy_idempotent (i k : Nat) :
+    IdFeature.valueBy (.valued i) k = .valued i := rfl
+
+/-- After binding by an antecedent with index `k`, a previously
+    unvalued reflexive ID matches an antecedent ID also valued at `k`. -/
+theorem reflexive_after_binding_matches_antecedent (k : Nat) :
+    IdFeature.matches (IdFeature.valueBy .unvalued k) (.valued k) = true := by
+  simp only [IdFeature.valueBy, IdFeature.matches, decide_true]
+
 end Minimalism

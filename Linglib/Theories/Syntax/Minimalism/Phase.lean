@@ -22,6 +22,7 @@ used by Containment → Labeling → Agree → Workspace.
 -/
 
 import Linglib.Theories.Syntax.Minimalism.Labeling
+import Linglib.Theories.Syntax.Minimalism.Features
 
 namespace Minimalism
 
@@ -215,37 +216,72 @@ def Transfer.fromPhase (ph : Phase) : Transfer :=
     lf_is_complement := rfl }
 
 -- ============================================================================
--- Part 8: Feature Inheritance (@cite{chomsky-2008})
+-- Part 8: Feature Inheritance / Transfer (@cite{chomsky-2008}, @cite{ouali-2008},
+--                                         @cite{olivier-2026})
 -- ============================================================================
 
-/-- Feature Inheritance: phase heads pass features to their complements.
+/-! ### Feature Inheritance and KEEP/SHARE/DONATE
 
-    - C passes tense/agreement features to T
-    - v* passes case/agreement features to V
+@cite{chomsky-2008}'s feature inheritance has phase heads passing
+operational features to their complements: C → T (tense/agreement),
+v* → V (case/agreement). The phase head retains its edge features
+while the inheritor takes over the agreement-driving features.
 
-    The phase head retains its edge features (EPP, etc.)
-    but the "operational" features are inherited by the complement head. -/
+@cite{ouali-2008} observes that "inheritance" is only one of three
+possible feature operations on adjacent functional heads, and that the
+choice is parametric (Berber agreement/anti-agreement is the empirical
+diagnostic):
+
+- **KEEP**: φ stays at the source head; the target lacks φ.
+- **SHARE**: φ surfaces at both source and target. This explains
+  clitic reduplication and is the operation @cite{olivier-2026}
+  argues for in Romance restructuring (Voice* → vMOD share).
+- **DONATE**: φ moves source → target; the source loses φ. This is
+  the classical @cite{chomsky-2008} C → T / v* → V inheritance.
+
+@cite{olivier-2026} extends this typology to Voice* → vMOD feature
+transfer in Romance restructuring clauses: under SHARE, φ-features
+are present at vMOD as well as Voice*, which is what enables clitic
+climbing (the climbing clitic enters Agree with the higher copy).
+The KEEP / SHARE / DONATE choice is parametric across languages and
+across constructions; we model it via a `style` field on
+`FeatureInheritance`. -/
+
+/-- Style of φ-feature transfer between two adjacent functional heads
+    (@cite{ouali-2008}).
+
+    - `keep`: φ stays at source — target lacks φ.
+    - `share`: φ surfaces at both source and target. Explains clitic
+      reduplication and licenses clitic climbing in
+      @cite{olivier-2026}'s Voice* → vMOD analysis of Romance
+      restructuring.
+    - `donate`: φ moves source → target. The classical
+      @cite{chomsky-2008} C → T / v* → V inheritance. -/
+inductive TransferStyle where
+  | keep    -- φ stays at source
+  | share   -- φ at source AND target
+  | donate  -- φ moves source → target
+  deriving DecidableEq, Repr
+
+/-- Feature inheritance / sharing between two adjacent heads.
+
+    Generalizes @cite{chomsky-2008}'s C → T and v* → V inheritance
+    (the `.donate` style) to cover @cite{ouali-2008}'s
+    KEEP/SHARE/DONATE typology and @cite{olivier-2026}'s extension to
+    Voice* → vMOD feature transfer in Romance restructuring clauses
+    (the `.share` style). -/
 structure FeatureInheritance where
-  /-- The phase head (C or v*) -/
-  phaseHead : SyntacticObject
-  /-- The inheriting head (T or V) -/
-  inheritor : SyntacticObject
-  /-- The phase head must immediately contain the inheritor -/
-  locality : immediatelyContains phaseHead inheritor
-
-/-- C→T inheritance: C is a phase head, T inherits -/
-def cToTInheritance (cHead tHead : SyntacticObject)
-    (h : immediatelyContains cHead tHead) : FeatureInheritance :=
-  { phaseHead := cHead
-    inheritor := tHead
-    locality := h }
-
-/-- v*→V inheritance: v* is a phase head, V inherits -/
-def vToVInheritance (vHead vbHead : SyntacticObject)
-    (h : immediatelyContains vHead vbHead) : FeatureInheritance :=
-  { phaseHead := vHead
-    inheritor := vbHead
-    locality := h }
+  /-- The feature-bearing source head (phase head, Voice*, etc.). -/
+  source : SyntacticObject
+  /-- The head receiving features (T, V, vMOD). -/
+  target : SyntacticObject
+  /-- Source must immediately contain target. -/
+  locality : immediatelyContains source target
+  /-- Which transfer operation applies (default: classical
+      @cite{chomsky-2008} donate). -/
+  style : TransferStyle := .donate
+  /-- The features transferred (default: none specified at this layer). -/
+  transferred : FeatureBundle := []
 
 -- ============================================================================
 -- Part 9: Phase-Bounded Locality
