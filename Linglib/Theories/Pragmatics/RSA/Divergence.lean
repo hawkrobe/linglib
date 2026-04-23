@@ -34,7 +34,7 @@ square roots, making it tolerant of "true enough" messages.
 
 set_option autoImplicit false
 
-namespace Core.Divergence
+namespace RSA.Divergence
 
 open Finset BigOperators Real
 
@@ -249,7 +249,7 @@ theorem expected_loglik_eq_neg_kl_plus_entropy {ι : Type*} [Fintype ι]
     "you can't do better than the truth." Uses the fundamental
     inequality ln x ≤ x − 1.
 
-    See also `Core.ChannelCapacity.gibbs_inequality` for a statement
+    See also `Pragmatics.InformationTheory.ChannelCapacity.gibbs_inequality` for a statement
     that doesn't reference `klDivergence` by name. -/
 theorem klDivergence_nonneg {ι : Type*} [Fintype ι]
     (P Q : ι → ℝ) (hP_nn : ∀ i, 0 ≤ P i) (hQ_pos : ∀ i, 0 < Q i)
@@ -273,4 +273,4 @@ theorem klDivergence_nonneg {ι : Type*} [Fintype ι]
     rw [log_div (ne_of_gt hPi) (ne_of_gt (hQ_pos i))]
     nlinarith
 
-end Core.Divergence
+end RSA.Divergence

@@ -49,7 +49,7 @@ namespace ShenHuang2026
 
 open Core.Verbs
 open Features.Definiteness
-open Core.SpecificityCondition (ExternalOperator blocked)
+open Syntax.Binding.SpecificityCondition (ExternalOperator blocked)
 
 -- ============================================================================
 -- §1. Wh-dependency type and source architecture

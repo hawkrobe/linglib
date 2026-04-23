@@ -53,7 +53,7 @@ The two universal pragmatic postulates from the Appendix
 
 * `Phenomena/Modality/Studies/CarianiSantorio2018.lean` — extends the
   Stalnaker selection-function mechanism from conditionals to bare
-  *will*. C&S's `Core.SelectionFunction` infrastructure is exactly the
+  *will*. C&S's `Semantics.Conditionals.SelectionFunction` infrastructure is exactly the
   one used here for `selectionConditional`; the `would`-conditional /
   Stalnaker-counterfactual identification in C&S §5.3.2 reuses this
   paper's selection-function semantics under universe parameter.
@@ -63,7 +63,7 @@ namespace Stalnaker1975
 
 open Core.Mood (GramMood)
 open Core.CommonGround (ContextSet)
-open _root_.Core (SelectionFunction)
+open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Conditionals
 open Pragmatics.Assertion.ReasonableInference
 

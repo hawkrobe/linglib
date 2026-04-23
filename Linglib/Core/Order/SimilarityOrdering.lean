@@ -33,11 +33,11 @@ in `Theories/Semantics/Conditionals/`, by alternative-sensitive operators
 
 ## Connection to selection functions
 
-`Core.SelectionFunction` and `SimilarityOrdering` are dual presentations of
+`Semantics.Conditionals.SelectionFunction` and `SimilarityOrdering` are dual presentations of
 the same intuition. A coherent selection function induces a similarity
 ordering via the `coherentSelectionToSimilarity` constructor (which lives
 in `Theories/Semantics/Conditionals/Basic.lean` because it depends on
-selection-function machinery from `Core.SelectionFunction`).
+selection-function machinery from `Semantics.Conditionals.SelectionFunction`).
 -/
 
 namespace Core.Order
@@ -148,7 +148,7 @@ end SimilarityOrdering
 /-! ## Selection-function bridge primitives
 
 These derive selection-function-flavoured notions from a similarity
-ordering without depending on `Core.SelectionFunction` itself, so they
+ordering without depending on `Semantics.Conditionals.SelectionFunction` itself, so they
 can sit in `Core.Order`. The full selection-function ↔ similarity
 duality (`coherentSelectionToSimilarity`) lives in
 `Theories/Semantics/Conditionals/Basic.lean` where both sides of the

@@ -35,7 +35,7 @@ games are in `Theories/Semantics/Questions/SignalingGames.lean`.
 
 set_option autoImplicit false
 
-namespace Core.GameTheory
+namespace Pragmatics.GameTheory
 
 open Core.Agent.SocialUtility
 
@@ -168,4 +168,4 @@ theorem splitOrSteal_cooperate_preferred_high_aia (pot : ℚ) (hpot : 0 < pot)
   rw [max_eq_right (le_of_lt hpot), max_eq_left (show (0 : ℚ) - pot ≤ 0 by linarith)]
   nlinarith
 
-end Core.GameTheory
+end Pragmatics.GameTheory

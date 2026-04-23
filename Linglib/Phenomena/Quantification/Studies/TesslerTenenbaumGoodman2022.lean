@@ -31,8 +31,8 @@ This equivalence is proved as `stateCom_eq_beliefAlignment`.
   from `Quantifier.lean` applied to Venn diagram regions as entities
 - Subalternation (All→Some) proved via `subalternation_a_i` from `Quantifier.lean`
 - Noisy semantics via `RSA.Noise.noiseChannel`
-- Belief Alignment utility via `Core.Divergence.klDivergence`
-- SC ≡ BA equivalence via `Core.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy`
+- Belief Alignment utility via `RSA.Divergence.klDivergence`
+- SC ≡ BA equivalence via `RSA.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy`
 - "Nothing follows" as vacuous utterance (true in every state)
 -/
 
@@ -333,11 +333,11 @@ noncomputable def stateComScore
 
     S₁(u₃ | u₁,u₂) ∝ exp[α · −KL(L₀(·|u₁,u₂) ‖ L₀(·|u₃))]
 
-    Uses `Core.Divergence.klDivergence` directly. -/
+    Uses `RSA.Divergence.klDivergence` directly. -/
 noncomputable def beliefAlignmentScore
     (premPost : VennState → ℝ) (naivePost : Conclusion → VennState → ℝ)
     (α : ℝ) (c : Conclusion) : ℝ :=
-  Real.exp (α * (-Core.Divergence.klDivergence premPost (naivePost c)))
+  Real.exp (α * (-RSA.Divergence.klDivergence premPost (naivePost c)))
 
 -- ============================================================================
 -- §9. State Communication ≡ Belief Alignment
@@ -363,7 +363,7 @@ theorem stateCom_eq_beliefAlignment
     Real.exp (α * (-(∑ s : VennState, premPost s * Real.log (premPost s)))) *
     stateComScore premPost naivePost α c := by
   simp only [beliefAlignmentScore, stateComScore]
-  rw [Core.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy premPost
+  rw [RSA.Divergence.kl_eq_neg_crossEntropy_plus_negEntropy premPost
     (naivePost c) hQ]
   rw [show α * -((_ : ℝ) - _) = α * -(∑ s, premPost s * Real.log (premPost s))
     + α * ∑ s, premPost s * Real.log (naivePost c s) from by ring]
@@ -381,7 +381,7 @@ theorem stateCom_eq_beliefAlignment
 theorem beliefAlignment_nvc_uninformative
     (post prior : VennState → ℝ) (α : ℝ) :
     beliefAlignmentScore post (fun c => if c = .nvc then prior else fun _ => 0) α .nvc =
-    Real.exp (α * (-Core.Divergence.klDivergence post prior)) := by
+    Real.exp (α * (-RSA.Divergence.klDivergence post prior)) := by
   simp [beliefAlignmentScore]
 
 -- ============================================================================
@@ -500,7 +500,7 @@ def naiveL0Post (φ : ℚ) (c : Conclusion) (s : VennState) : ℚ :=
 noncomputable def baScore (α : ℝ) (φ β : ℚ) (syl : Syllogism)
     (c : Conclusion) : ℝ :=
   (figuralWeight β syl c : ℝ) *
-  Real.exp (α * (-Core.Divergence.klDivergence
+  Real.exp (α * (-RSA.Divergence.klDivergence
     (fun s => (l0Post φ syl s : ℝ))
     (fun s => (naiveL0Post φ c s : ℝ))))
 

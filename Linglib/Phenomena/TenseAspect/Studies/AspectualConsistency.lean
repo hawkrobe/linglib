@@ -37,7 +37,7 @@ open Core.Scale (LicensingPipeline Boundedness MereoTag)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Krifka1998 (predictsGRAD)
 open Champollion2017 (predictsSSR)
-open Core.Path (PathShape)
+open Semantics.Spatial.Path (PathShape)
 open Semantics.Verb.DegreeAchievement (DegreeAchievementScale)
 
 -- ════════════════════════════════════════════════════

@@ -24,7 +24,7 @@ namespace Semantics.Quantification.Dynamic.HigherOrder
 
 open Semantics.Dynamic.Core
 open Semantics.Quantification.Dynamic.Basic
-open Core.Continuation
+open Semantics.Composition.Continuation
 open Mereology
 
 variable {S E : Type*}

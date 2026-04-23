@@ -32,7 +32,7 @@ open Semantics.Events.DimensionCoherence
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
 open Core.Verbs
 open Core.Scale (LicensingPipeline Boundedness MereoTag)
-open Core.Path (PathShape)
+open Semantics.Spatial.Path (PathShape)
 open _root_.Mereology (quaBoundedness cumBoundedness)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 open Fragments.English.Predicates.Verbal

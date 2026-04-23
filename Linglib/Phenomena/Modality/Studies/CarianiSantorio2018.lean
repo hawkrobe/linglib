@@ -64,7 +64,7 @@ set_option autoImplicit false
 
 namespace Phenomena.Modality.Studies.CarianiSantorio2018
 
-open _root_.Core (SelectionFunction)
+open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Modality.Selectional
 open Semantics.Conditionals.WillConditional (wouldConditional willConditional)
 open scoped ENNReal
@@ -142,7 +142,7 @@ noncomputable def cynthiaSel : SelectionFunction W where
     Proved by exhaustive enumeration over 3⁴ = 81 quadruples. -/
 theorem cynthiaSel_coherent : cynthiaSel.isCoherent := by
   intro w₀ w₁ w₂ w₃ h12 h23
-  unfold _root_.Core.selectionPrefers cynthiaSel selFn at *
+  unfold _root_.Semantics.Conditionals.selectionPrefers cynthiaSel selFn at *
   revert h12 h23
   cases w₀ <;> cases w₁ <;> cases w₂ <;> cases w₃ <;>
     simp_all (config := { decide := true })

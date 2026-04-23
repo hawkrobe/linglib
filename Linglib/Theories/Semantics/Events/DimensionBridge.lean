@@ -38,7 +38,7 @@ open Semantics.Events
 open Semantics.Events.Mereology
 open Semantics.Tense.MaximalInformativity
 open Core.Scale
-open Core.Path
+open Semantics.Spatial.Path
 open Core.Time
 open Mereology
 

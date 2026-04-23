@@ -19,7 +19,7 @@ attested forms tend to be Pareto-efficient compromises.
 - `efficiencyLoss`: deviation from the Pareto frontier (Eq. 8 of @cite{xu-etal-2024})
 -/
 
-namespace Core.Efficiency
+namespace Pragmatics.Efficiency
 
 /-- A pair of communicative costs. The framework is general: `cost₁` and
     `cost₂` can represent any two pressures in a functional tradeoff.
@@ -77,4 +77,4 @@ theorem weightedCost_mono_β (c : CostPair) {β₁ β₂ : ℝ}
     weightedCost c β₁ ≤ weightedCost c β₂ := by
   exact add_le_add (le_refl _) (mul_le_mul_of_nonneg_right hβ hc)
 
-end Core.Efficiency
+end Pragmatics.Efficiency

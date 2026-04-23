@@ -44,7 +44,7 @@ All three use the same QUA/CUM pullback mechanism via `MereoDim`.
 
 open Semantics.Events
 open Semantics.Events.Mereology
-open Core.Path
+open Semantics.Spatial.Path
 open Semantics.Tense.Aspect.LexicalAspect
 open Core.Verbs
 open _root_.Mereology
@@ -182,7 +182,7 @@ namespace Core.Verbs
     lexicalize a bounded path. Manner-of-motion verbs (51.3: run, walk)
     are path-neutral — the path comes from a PP complement.
     @cite{talmy-2000}: verb-framed vs. satellite-framed distinction. -/
-def LevinClass.pathSpec : LevinClass → Option Core.Path.PathShape
+def LevinClass.pathSpec : LevinClass → Option Semantics.Spatial.Path.PathShape
   | .inherentlyDirectedMotion => some .bounded
   | .leave => some .source
   | .mannerOfMotion => none    -- path from PP

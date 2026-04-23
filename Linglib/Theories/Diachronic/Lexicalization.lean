@@ -24,7 +24,7 @@ The model extends RSA's speaker-listener framework to lexicon evolution:
   with `beliefAction` scoring where `cost(w) = β · l(w)`.
 - The **encoding** E* is the set of (concept, form) pairs for emerging
   concepts. Its efficiency is measured against the Pareto frontier
-  of possible encodings (`Core.Efficiency`).
+  of possible encodings (`Pragmatics.Efficiency`).
 
 ## Connection to LCEC
 
@@ -38,7 +38,7 @@ high enumerative complexity, via structured redundancy.
 
 namespace Diachronic.Lexicalization
 
-open Core.Efficiency Core.InformationTheory
+open Pragmatics.Efficiency Core.InformationTheory
 
 -- ============================================================================
 -- §1. Lexicalization Strategies

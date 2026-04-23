@@ -33,7 +33,7 @@ Identity is strictly stronger (§3 below).
 
 -/
 
-namespace Core
+namespace Semantics.Attitudes
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Content Individual Sort
@@ -118,4 +118,4 @@ theorem ContentIndividual.entails_not_implies_eq :
   -- But identity would require (λ_ => False) = (λ_ => True)
   exact (iff_of_eq (congr_fun heq true)).mpr trivial
 
-end Core
+end Semantics.Attitudes

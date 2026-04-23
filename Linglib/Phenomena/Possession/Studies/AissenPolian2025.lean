@@ -369,7 +369,7 @@ theorem highest_agrees_alienable :
 -- ============================================================================
 
 /-- Convergence: both A&P's D-layer shielding and the Specificity Condition
-    (see `Core.SpecificityCondition`) predict that specific DPs resist
+    (see `Syntax.Binding.SpecificityCondition`) predict that specific DPs resist
     possessor extraction by stranding/binding into the DP.
 
     Divergence: A&P predict pied-piping IS available for specific DPs
@@ -379,12 +379,12 @@ theorem highest_agrees_alienable :
     the Specificity Condition targets operator-variable binding. -/
 theorem specificity_convergence_on_stranding :
     ¬ ExtractionAvailable .stranding .dp ∧
-    Core.SpecificityCondition.blocked .whTrace .definite :=
+    Syntax.Binding.SpecificityCondition.blocked .whTrace .definite :=
   ⟨fun h => h trivial, rfl⟩
 
 theorem specificity_divergence_on_piedpiping :
     ExtractionAvailable .piedPiping .dp ∧
-    Core.SpecificityCondition.blocked .whTrace .definite :=
+    Syntax.Binding.SpecificityCondition.blocked .whTrace .definite :=
   ⟨trivial, rfl⟩
 
 -- ============================================================================

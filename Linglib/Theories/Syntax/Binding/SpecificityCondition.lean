@@ -39,7 +39,7 @@ independently constrains binding. Both are needed for full crosslinguistic
 coverage (@cite{shen-huang-2026} §4.1).
 -/
 
-namespace Core.SpecificityCondition
+namespace Syntax.Binding.SpecificityCondition
 
 open Features.Definiteness
 
@@ -137,4 +137,4 @@ theorem wh_indefinite_blocked_in_specific_dp :
 theorem wh_indefinite_allowed_in_nonspecific_dp :
     ¬ blocked .existentialClosure .indefinite := by decide
 
-end Core.SpecificityCondition
+end Syntax.Binding.SpecificityCondition

@@ -39,7 +39,7 @@ closure:
 
 namespace Semantics.Attitudes.ContentComposition
 
-open Core (ContentIndividual)
+open Semantics.Attitudes (ContentIndividual)
 
 -- ════════════════════════════════════════════════════
 -- § 1. Complementizer Semantics

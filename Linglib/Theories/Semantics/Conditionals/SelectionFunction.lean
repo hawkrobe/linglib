@@ -24,7 +24,7 @@ Behavior on empty `A` is left unspecified: the axioms are vacuous
 there, and concrete instances may pick any default.
 -/
 
-namespace Core
+namespace Semantics.Conditionals
 
 /-- A **selection function** on `W`: maps a world and a proposition to
     a "selected" world, satisfying @cite{stalnaker-1968}'s Inclusion
@@ -94,4 +94,4 @@ def SelectionFunction.isCoherent {W : Type*} (s : SelectionFunction W) : Prop :=
     selectionPrefers s w₀ w₁ w₂ → selectionPrefers s w₀ w₂ w₃ →
     selectionPrefers s w₀ w₁ w₃
 
-end Core
+end Semantics.Conditionals

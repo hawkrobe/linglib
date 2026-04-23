@@ -51,7 +51,7 @@ set_option autoImplicit false
 
 namespace HoulihanEtAl2023
 
-open Core.Agent.Emotion Core.GameTheory Core.Agent.SocialUtility
+open Core.Agent.Emotion Pragmatics.GameTheory Core.Agent.SocialUtility
      Core.DecisionTheory
 
 -- ════════════════════════════════════════════════════════════════
@@ -376,7 +376,7 @@ end HoulihanEtAl2023
 /-! Game→DecisionProblem bridges are defined in the `SymmetricGame`
 namespace for dot notation. -/
 
-namespace Core.GameTheory.SymmetricGame
+namespace Pragmatics.GameTheory.SymmetricGame
 
 open Core.DecisionTheory
 
@@ -401,11 +401,11 @@ def toSocialDecisionProblem (g : SymmetricGame)
   utility a₂ a₁ := g.socialUtility a₁ a₂ ωMoney ωAIA ωDIA
   prior := opponentBelief
 
-end Core.GameTheory.SymmetricGame
+end Pragmatics.GameTheory.SymmetricGame
 
 namespace HoulihanEtAl2023
 
-open Core.Agent.Emotion Core.GameTheory Core.Agent.SocialUtility
+open Core.Agent.Emotion Pragmatics.GameTheory Core.Agent.SocialUtility
      Core.DecisionTheory
 
 /-- The social decision problem uses SocialValueProfile.evaluate as

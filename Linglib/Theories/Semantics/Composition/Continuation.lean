@@ -18,7 +18,7 @@ scope-taking expressions generally.
 
 -/
 
-namespace Core.Continuation
+namespace Semantics.Composition.Continuation
 
 universe u v w
 
@@ -80,4 +80,4 @@ theorem Cont.map_via_bind (f : A → B) (m : Cont R A) :
 /-- Lower of pure is identity. -/
 theorem Cont.lower_pure (a : A) : Cont.lower (Cont.pure a) = a := rfl
 
-end Core.Continuation
+end Semantics.Composition.Continuation

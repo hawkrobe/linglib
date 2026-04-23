@@ -25,7 +25,7 @@ to an urn scenario with 10 balls, where both the proportion of red balls
 manipulated. The key innovation over @cite{goodman-stuhlmuller-2013}:
 Hellinger distance replaces KL divergence as the speaker utility measure,
 because KL-divergence assigns infinite disutility to "true enough" messages
-(see `Core.Divergence` for the theoretical analysis).
+(see `RSA.Divergence` for the theoretical analysis).
 
 ## Model (Eq. 12–18)
 
@@ -58,7 +58,7 @@ set_option autoImplicit false
 
 namespace HerbstrittFranke2019
 
-open Core.Distributions Core.Divergence
+open RSA.Distributions RSA.Divergence
 
 -- ============================================================================
 -- §1. Domain Types
@@ -89,7 +89,7 @@ abbrev Obs := Fin 11
     making explicit guards unnecessary except for the Nat subtraction issue
     (truncated subtraction gives wrong results when obs > access).
 
-    Instantiates `Core.Distributions.hypergeometric` for N=10. -/
+    Instantiates `RSA.Distributions.hypergeometric` for N=10. -/
 noncomputable def obsPrior (access : ℕ) (s : UrnState) (obs : Obs) : ℝ :=
   if obs.val ≤ access then
     ↑(Nat.choose s.val obs.val * Nat.choose (10 - s.val) (access - obs.val)) /
@@ -111,7 +111,7 @@ def speakerBeliefQ (access obs : ℕ) (s : UrnState) : ℚ :=
   h / ((Finset.univ : Finset UrnState).sum fun s' => hypergeometric 10 s'.val access obs)
 
 /-- The observation model is an instance of the general hypergeometric
-    from `Core.Distributions` (N=10). -/
+    from `RSA.Distributions` (N=10). -/
 theorem obsPrior_eq_hypergeometric (access : ℕ) (s : UrnState) (obs : Obs)
     (h : obs.val ≤ access) :
     obsPrior access s obs =
@@ -344,10 +344,10 @@ open RSA Real in
     Eq. 18: P_PL(s, o, a|m) ∝ P_S · Hyp(o|a, s) · P(a) · P(s)  (pragmatic listener)
 
     The speaker utility uses **Hellinger distance** (not KL divergence),
-    imported from `Core.Divergence.negHellingerDist`. This is necessary
+    imported from `RSA.Divergence.negHellingerDist`. This is necessary
     because KL divergence assigns infinite disutility to "true enough"
     messages — a speaker who is 95% sure of RED can never say "certainly"
-    under KL, but CAN under Hellinger (see `Core.Divergence` §5 for the
+    under KL, but CAN under Hellinger (see `RSA.Divergence` §5 for the
     theoretical comparison).
 
     The model is parametric in `access` (number of balls the speaker draws).
@@ -491,7 +491,7 @@ The key structural difference is the speaker utility:
 - G&S 2013: expected log-likelihood ∝ −D_KL, uses `Real.log` (in `RExpr`)
 - H&F 2019: negative Hellinger distance, uses `Real.sqrt` (in `RExpr` via `.rsqrt`)
 
-Both models use `Core.Distributions.hypergeometric` for the observation model
+Both models use `RSA.Distributions.hypergeometric` for the observation model
 and share the same RSAConfig pattern (access-parametric, Latent = Obs).
 -/
 
@@ -506,7 +506,7 @@ theorem belief_uses_general_hypergeometric (access : ℕ) (s : UrnState)
 ### Hellinger vs KL: Why the Divergence Measure Matters
 
 The choice of divergence measure is not a free parameter — it determines
-which messages the speaker can consider. See `Core.Divergence` §5 for the
+which messages the speaker can consider. See `RSA.Divergence` §5 for the
 full theoretical analysis.
 
 **Example**: Consider a speaker who observes 9/10 red balls (access=10).

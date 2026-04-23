@@ -247,7 +247,7 @@ are definitionally `Cont.pure` and the derived `<*>` from
 
 section ContinuationApplicative
 
-open Core.Continuation
+open Semantics.Composition.Continuation
 
 variable {R A B : Type}
 

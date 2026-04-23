@@ -28,7 +28,7 @@ different population sizes.
 
 set_option autoImplicit false
 
-namespace Core.Distributions
+namespace RSA.Distributions
 
 -- ============================================================================
 -- §1. Hypergeometric PMF
@@ -84,4 +84,4 @@ example : hypergeometric 10 0 8 0 = 1 := by unfold hypergeometric; simp [Nat.cho
 /-- Impossible draw: 5 red from 3 total red. -/
 example : hypergeometric 10 3 8 5 = 0 := by unfold hypergeometric; simp [Nat.choose]
 
-end Core.Distributions
+end RSA.Distributions

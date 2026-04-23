@@ -31,7 +31,7 @@ open Core.Verbs (LevinClass MeaningComponents)
 open Fragments.English.Predicates.Verbal
 open Semantics.Events.SpatialTrace (pathShapeToTelicity)
 open Core.Verbs
-open Core.Path (PathShape)
+open Semantics.Spatial.Path (PathShape)
 open Core.Scale (LicensingPipeline)
 open Phenomena.TenseAspect.Diagnostics (forXPrediction inXPrediction)
 

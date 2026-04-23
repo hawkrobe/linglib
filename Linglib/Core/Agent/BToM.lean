@@ -314,7 +314,7 @@ end OtherMarginals
 /-!
 ## Connection to Content Individuals
 
-BToM's Belief and Desire types correspond to content individuals — see `Core.ContentIndividual` for the ontological sort.
+BToM's Belief and Desire types correspond to content individuals — see `Semantics.Attitudes.ContentIndividual` for the ontological sort.
 A `BToMModel` can be instantiated with `ContentIndividual W` as the Belief
 type, making the observer's posterior a distribution over content individuals.
 -/

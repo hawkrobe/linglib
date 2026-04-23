@@ -47,7 +47,7 @@ learns from the speaker. Channel capacity is the best-case informativity.
 
 set_option autoImplicit false
 
-namespace Core.ChannelCapacity
+namespace Pragmatics.InformationTheory.ChannelCapacity
 
 open Finset BigOperators Real
 
@@ -364,4 +364,4 @@ theorem mutualInfo_le_log_fin {C : Type} [Fintype C] {k : Nat}
   simp [Fintype.card_fin] at this
   exact this
 
-end Core.ChannelCapacity
+end Pragmatics.InformationTheory.ChannelCapacity

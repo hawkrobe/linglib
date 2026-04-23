@@ -23,7 +23,7 @@ from `Core/Mereology.lean`.
 
 -/
 
-namespace Core.Path
+namespace Semantics.Spatial.Path
 
 -- ════════════════════════════════════════════════════
 -- § 1. Path Type
@@ -93,4 +93,4 @@ theorem source_path_licensed :
 theorem unbounded_path_blocked :
     PathShape.unbounded.toBoundedness.isLicensed = false := rfl
 
-end Core.Path
+end Semantics.Spatial.Path

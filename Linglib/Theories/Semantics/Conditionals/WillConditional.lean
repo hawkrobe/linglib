@@ -35,7 +35,7 @@ set_option autoImplicit false
 
 namespace Semantics.Conditionals.WillConditional
 
-open _root_.Core (SelectionFunction)
+open _root_.Semantics.Conditionals (SelectionFunction)
 open Semantics.Modality.Selectional
 
 variable {W : Type*}
@@ -57,7 +57,7 @@ def willConditional (s : SelectionFunction W) (A B : W → Prop)
     selectional `will`-conditional, the disjunction `(if A, will B) ∨
     (if A, will ¬B)` holds at every point.
 
-    Derived from `Core.SelectionFunction.sel_em` applied at the
+    Derived from `Semantics.Conditionals.SelectionFunction.sel_em` applied at the
     restricted parameter `f ∩ ‖A‖`. Will Excluded Middle and
     Compositional CEM share this single structural origin: the
     selected world is single-valued no matter which proposition
@@ -79,7 +79,7 @@ theorem valid2_compositional_CEM (A B : W → Prop) :
 /-- **Narrow Negation Swap in Conditionals** @cite{cariani-santorio-2018}
     §7: under the *narrow* reading where negation scopes under the
     if-clause, `¬ (if A, will B) ↔ (if A, will ¬B)`. Derived from
-    `Core.SelectionFunction.sel_neg_swap` at the restricted parameter
+    `Semantics.Conditionals.SelectionFunction.sel_neg_swap` at the restricted parameter
     `f ∩ ‖A‖`; the conditional analogue of the matrix Negation Swap,
     lifted by restrictor-style restriction of the modal parameter. -/
 theorem narrow_negation_swap (s : SelectionFunction W) (A B : W → Prop)

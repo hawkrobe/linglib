@@ -59,7 +59,7 @@ namespace Semantics.Conditionals
 
 open Core.CommonGround (ContextSet)
 open Core.Mood (GramMood)
-open _root_.Core (SelectionFunction selectionPrefers)
+open _root_.Semantics.Conditionals (SelectionFunction selectionPrefers)
 open Core.Order (SimilarityOrdering)
 
 /-! ## Coherent selection ⇒ similarity ordering -/

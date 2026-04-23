@@ -27,11 +27,11 @@ communicated). Their key finding is that *both* matter.
 3. **The CAP theorem links need and precision.**
    At a capacity-achieving prior, −log p(c) = S(c) + log Z. This
    information-theoretic identity is the paper's central theoretical
-   contribution, formalized in `Core.ChannelCapacity.cap_linear`.
+   contribution, formalized in `Pragmatics.InformationTheory.ChannelCapacity.cap_linear`.
 
 ## Integration
 
-- Theory layer: `Core.ChannelCapacity` (NamingChannel, CAP, cap_linear)
+- Theory layer: `Pragmatics.InformationTheory.ChannelCapacity` (NamingChannel, CAP, cap_linear)
 - The RSA connection: a NamingChannel is an RSA literal speaker S₀,
   and the posterior is the literal listener L₀.
 -/
@@ -40,7 +40,7 @@ set_option autoImplicit false
 
 namespace ZaslavskyEtAl2019
 
-open Core.ChannelCapacity
+open Pragmatics.InformationTheory.ChannelCapacity
 
 -- ============================================================================
 -- §1. The WCS Color Domain

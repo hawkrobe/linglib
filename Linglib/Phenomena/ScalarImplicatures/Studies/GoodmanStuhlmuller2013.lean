@@ -361,20 +361,20 @@ def obsCompatible (obs : Obs) (s : WorldState) : Bool :=
 /-- P(obs | access, world). Hypergeometric probability of observing k successes
     when sampling n from 3 total with K successes:
     P(k | N=3, K, n) = C(K,k) · C(3−K, n−k) / C(3,n).
-    Instantiates `Core.Distributions.hypergeometric` for N=3. -/
+    Instantiates `RSA.Distributions.hypergeometric` for N=3. -/
 noncomputable def obsPriorTable (a : Access) (w : WorldState) (obs : Obs) : ℝ :=
   if obs.access != a then 0 else
   ↑(Nat.choose w.toNat obs.count * Nat.choose (3 - w.toNat) (obs.sampleSize - obs.count)) /
   ↑(Nat.choose 3 obs.sampleSize)
 
 /-- The observation model is an instance of the general hypergeometric
-    from `Core.Distributions` (N=3). The ℝ-arithmetic form is used
+    from `RSA.Distributions` (N=3). The ℝ-arithmetic form is used
     for `rsa_predict` compatibility; this theorem witnesses the equivalence. -/
 theorem obsPriorTable_eq_hypergeometric (a : Access) (w : WorldState) (obs : Obs)
     (h : obs.access = a) :
     obsPriorTable a w obs =
-    ↑(Core.Distributions.hypergeometric 3 w.toNat obs.sampleSize obs.count) := by
-  unfold obsPriorTable Core.Distributions.hypergeometric
+    ↑(RSA.Distributions.hypergeometric 3 w.toNat obs.sampleSize obs.count) := by
+  unfold obsPriorTable RSA.Distributions.hypergeometric
   subst h
   have : (obs.access != obs.access) = false := by cases obs.access <;> rfl
   rw [this]; simp [Rat.cast_div, Rat.cast_natCast]

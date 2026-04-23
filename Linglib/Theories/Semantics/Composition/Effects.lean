@@ -56,7 +56,7 @@ Omitted: Ū/Ũ (Unit Left/Right) are trivial wrappers around `pure`;
 
 namespace Semantics.Composition.Effects
 
-open Core.Continuation
+open Semantics.Composition.Continuation
 open Semantics.Composition.WriterMonad
 open Semantics.Composition.Tree
 open Semantics.Composition.QuantifierComposition
