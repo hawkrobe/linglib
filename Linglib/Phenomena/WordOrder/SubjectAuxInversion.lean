@@ -1,5 +1,3 @@
-import Linglib.Core.Grammar
-
 /-!
 # Subject-Auxiliary Inversion: Empirical Data
 @cite{radford-2009} @cite{adger-2003} @cite{sag-wasow-bender-2003} @cite{chomsky-1957} @cite{henry-1995} @cite{klima-1964} @cite{mccloskey-2006} @cite{westergaard-2009}

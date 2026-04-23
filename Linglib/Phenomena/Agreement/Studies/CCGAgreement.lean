@@ -1,8 +1,10 @@
-import Linglib.Core.Grammar
+import Linglib.Paradigms.AcceptabilityJudgment
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Theories.Syntax.CCG.Core.FromFragments
 import Linglib.Fragments.English.Lexicon
 import Linglib.Phenomena.Agreement.Basic
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # CCG Bridge: Agreement Phenomena

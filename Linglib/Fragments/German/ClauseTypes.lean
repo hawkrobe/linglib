@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Mood.Gutzmann
-import Linglib.Core.Grammar
+import Linglib.Features.ClauseForm
 
 /-!
 # German Clause Types

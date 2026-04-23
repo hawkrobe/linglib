@@ -1,5 +1,8 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Core.Nominal
 import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # Bridge: DG Nominal → Anaphora Coreference

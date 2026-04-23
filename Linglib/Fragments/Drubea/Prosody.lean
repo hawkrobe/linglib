@@ -1,4 +1,7 @@
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # Drubea Prosodic Fragment

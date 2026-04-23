@@ -8,8 +8,6 @@ combinatory rules (>, <, B, T, S) deriving phrases.
 -. Combinatory Categorial Grammar.
 -/
 
-import Linglib.Core.Grammar
-
 namespace CCG
 
 section Categories

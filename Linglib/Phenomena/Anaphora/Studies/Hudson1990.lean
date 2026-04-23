@@ -1,5 +1,8 @@
 import Linglib.Theories.Syntax.DependencyGrammar.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # Dependency Grammar d-command binding → Coreference Phenomena

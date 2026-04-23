@@ -8,7 +8,9 @@ and their interfaces. See README.md for documentation links.
 import Linglib.Features.Gender
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Lexical.PolarityItem
-import Linglib.Core.Grammar
+import Linglib.Features.V2
+import Linglib.Features.ClauseForm
+import Linglib.Theories.Syntax.Common.Inversion
 import Linglib.Core.Lexical.Pronouns
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.Consequence

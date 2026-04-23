@@ -1,5 +1,8 @@
 import Linglib.Theories.Syntax.HPSG.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # Bridge: HPSG Coreference Theory to Anaphora Phenomena

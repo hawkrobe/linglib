@@ -1,6 +1,9 @@
 import Linglib.Theories.Syntax.Minimalism.Coreference
 import Linglib.Phenomena.Anaphora.Coreference
 import Linglib.Fragments.English.Predicates.Verbal
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # Bridge: Minimalist Coreference Theory to Anaphora Phenomena

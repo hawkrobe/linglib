@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.TypeTheoretic.Core
 import Linglib.Theories.Semantics.Dynamic.Core.CCP
 import Linglib.Core.Mood.IllocutionaryMood
+import Linglib.Features.ClauseForm
 
 /-!
 # Type Theory with Records — Discourse State & Pragmatics

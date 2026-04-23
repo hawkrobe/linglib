@@ -1,4 +1,7 @@
 import Linglib.Features.Evidentiality
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # Epistemic Evidentiality — Empirical Data

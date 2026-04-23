@@ -1,4 +1,4 @@
-import Linglib.Core.Grammar
+import Linglib.Features.V2
 
 /-!
 # German V2 Profile

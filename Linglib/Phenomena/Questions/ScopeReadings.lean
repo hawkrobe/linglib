@@ -23,6 +23,9 @@ different disjuncts can give different complete answers.
 -/
 
 import Linglib.Phenomena.Questions.Basic
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 namespace Phenomena.Questions.ScopeReadings
 

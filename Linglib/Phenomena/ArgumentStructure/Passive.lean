@@ -1,4 +1,6 @@
-import Linglib.Core.Grammar
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # The Passive Construction

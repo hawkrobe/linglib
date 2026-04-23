@@ -1,6 +1,7 @@
 import Linglib.Theories.Semantics.Mood.Gutzmann
 import Linglib.Fragments.German.ClauseTypes
 import Linglib.Fragments.German.ModalParticles
+import Linglib.Features.ClauseForm
 
 /-!
 # Gutzmann (2015): Sentence Mood as Use-Conditional Meaning

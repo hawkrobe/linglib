@@ -26,7 +26,9 @@ Some determiners (the, some) are compatible with either.
   (5b) the girls ✓ neutral det, pl noun
 -/
 
-import Linglib.Core.Grammar
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 namespace Phenomena.Agreement.DetNoun
 

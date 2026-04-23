@@ -24,6 +24,9 @@ Two readings:
 -/
 
 import Linglib.Phenomena.Questions.Basic
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 namespace Phenomena.Questions.Coordination
 

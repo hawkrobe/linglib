@@ -1,5 +1,8 @@
 import Linglib.Theories.Syntax.DependencyGrammar.CRDC
 import Linglib.Phenomena.Anaphora.Coreference
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 /-!
 # CRDC (Conjunct Referential Dependency Constraint) → Coreference Phenomena

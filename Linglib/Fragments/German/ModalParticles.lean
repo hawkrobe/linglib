@@ -4,6 +4,7 @@ import Linglib.Fragments.German.ClauseTypes
 import Linglib.Core.Discourse.IllocutionaryForce
 import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
+import Linglib.Features.ClauseForm
 
 /-!
 # German Modal Particles

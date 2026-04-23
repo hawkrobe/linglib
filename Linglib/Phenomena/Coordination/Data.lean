@@ -42,7 +42,9 @@ The CP is "smuggled" into a position it could not occupy alone.
   (3b) *John sees and sleeps Mary ✗ valence mismatch (trans + intrans)
 -/
 
-import Linglib.Core.Grammar
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 -- ============================================================================
 -- Core Coordination Data (String-Based)

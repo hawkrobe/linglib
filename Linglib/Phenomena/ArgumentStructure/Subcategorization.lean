@@ -21,7 +21,9 @@ Verbs select for a specific number and type of arguments.
   (3c) *John gives the book. ✗ ditransitive with one object
 -/
 
-import Linglib.Core.Grammar
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 namespace Phenomena.ArgumentStructure.Subcategorization
 

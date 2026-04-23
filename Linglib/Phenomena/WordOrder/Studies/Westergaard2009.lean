@@ -1,4 +1,4 @@
-import Linglib.Core.Grammar
+import Linglib.Features.V2
 import Linglib.Phenomena.WordOrder.Typology
 import Linglib.Phenomena.WordOrder.SubjectAuxInversion
 import Linglib.Theories.Syntax.Minimalism.Formal.ExtendedProjection.Basic

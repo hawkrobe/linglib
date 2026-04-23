@@ -41,7 +41,9 @@ In this formalization, we use separate lexical entries for the two frames:
 A full analysis would derive both from a single lexical entry via lexical rules.
 -/
 
-import Linglib.Core.Grammar
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 namespace Phenomena.ArgumentStructure.DativeAlternation
 

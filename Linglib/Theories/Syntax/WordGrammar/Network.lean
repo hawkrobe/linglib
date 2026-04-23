@@ -1,6 +1,6 @@
 import Linglib.Core.Inheritance.Basic
 import Linglib.Core.Inheritance.Default
-import Linglib.Core.Grammar
+import Linglib.Features.ClauseForm
 import Linglib.Core.Dependency.Basic
 
 /-!

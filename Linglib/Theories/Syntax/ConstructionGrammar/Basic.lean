@@ -1,4 +1,3 @@
-import Linglib.Core.Grammar
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.CommonGround
 

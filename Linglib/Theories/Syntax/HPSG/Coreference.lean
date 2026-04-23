@@ -17,7 +17,9 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Features.CoreferenceStatus
-import Linglib.Core.Grammar
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev mary := Fragments.English.Nouns.mary.toWordSg

@@ -16,7 +16,9 @@ The subject precedes the verb, and the object follows the verb.
   (2b) *The cat pizza eats. ✗ SOV order
 -/
 
-import Linglib.Core.Grammar
+import Linglib.Paradigms.AcceptabilityJudgment
+
+open Paradigms.AcceptabilityJudgment
 
 namespace Phenomena.WordOrder
 
