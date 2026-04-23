@@ -7,7 +7,7 @@ Core infrastructure for intensional semantics:
 - Up/down operators (now in Core.IntensionalLogic.Frame)
 
 For worked examples using this infrastructure, see:
-- `Phenomena/Attitudes/IntensionalExamples.lean`
+- `Phenomena/Attitudes/Studies/Montague1973.lean`
 -/
 
 import Linglib.Core.IntensionalLogic.Frame

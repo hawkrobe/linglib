@@ -35,7 +35,7 @@ extraction predictions, with no stipulation.
 namespace Phenomena.FillerGap.Studies.LuPanDegen2025
 
 open Semantics.Focus.BackgroundedIslands
-open Core.InformationStructure
+open Features.InformationStructure
 open Core.Verbs
 
 /-! ## §1. Island Source Classification

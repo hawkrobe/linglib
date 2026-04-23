@@ -1,19 +1,16 @@
-/-
-# Intensional Semantics Examples
+import Linglib.Theories.Semantics.Attitudes.Intensional
 
-Toy examples demonstrating intensional semantics phenomena:
+/-! # Montague (1973) intensional examples @cite{montague-1973}
+
+Toy examples in Montague's PTQ-style intensional logic:
 - Hesperus/Phosphorus puzzle (co-reference vs co-intension)
 - Belief contexts and substitution failure
 - De dicto vs de re readings
 
-These examples use the infrastructure from `Theories/Semantics/Attitudes/Intensional.lean`.
+Uses the infrastructure from
+`Theories/Semantics/Attitudes/Intensional.lean`. -/
 
-Reference: Montague, R. (1973). The Proper Treatment of Quantification in Ordinary English.
--/
-
-import Linglib.Theories.Semantics.Attitudes.Intensional
-
-namespace Phenomena.Attitudes.IntensionalExamples
+namespace Phenomena.Attitudes.Studies.Montague1973
 
 open Core.IntensionalLogic
 open Semantics.Attitudes.Intensional
@@ -197,4 +194,4 @@ theorem name_vs_concept_independence :
     simp only [hesperus_rigid, Core.Intension.rigid, morningStar] at this
     cases this
 
-end Phenomena.Attitudes.IntensionalExamples
+end Phenomena.Attitudes.Studies.Montague1973

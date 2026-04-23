@@ -77,7 +77,7 @@ A full derivation of SCF would require:
 
 This module formalizes the taxonomy and the OLE derivation. The SCF derivation
 requires additional pragmatic machinery that connects to QUD theory and
-information structure (see Core.QUD, Core.InformationStructure).
+information structure (see Core.QUD, Features.InformationStructure).
 
 -/
 
