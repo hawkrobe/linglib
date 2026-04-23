@@ -91,6 +91,21 @@ noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterminist
     causallySufficient M s cause xC effect xE ↔
       developsToValue M (s.extend cause xC) effect xE := Iff.rfl
 
+/-- **Interventionist manipulation** (Woodward's criterion): cause's value
+    affects effect's value under `develop`. Defined via `extend` rather
+    than `intervene` because for deterministic acyclic SEMs they agree
+    and `extend` doesn't require re-establishing `IsDeterministic` on the
+    intervened SEM. -/
+def manipulates (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (s : Valuation α) (cause : V) (xC1 xC2 : α cause) (effect : V) : Prop :=
+  (M.develop (s.extend cause xC1)).get effect ≠
+  (M.develop (s.extend cause xC2)).get effect
+
+noncomputable instance (M : SEM V α) [CausalGraph.IsDAG M.graph] [IsDeterministic M]
+    (s : Valuation α) (cause : V) (xC1 xC2 : α cause) (effect : V) :
+    Decidable (manipulates M s cause xC1 xC2 effect) :=
+  Classical.dec _
+
 end Core.Causal.V2.SEM
 
 -- ════════════════════════════════════════════════════
@@ -114,5 +129,11 @@ abbrev developsToTrue (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
 abbrev causallySufficient (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
     [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
   SEM.causallySufficient M s cause true effect true
+
+/-- `BoolSEM`-flavored `manipulates`: cause's value (true vs false) flips
+    effect's value under `develop`. -/
+abbrev manipulates (M : BoolSEM V) [CausalGraph.IsDAG M.graph]
+    [SEM.IsDeterministic M] (s : Valuation (fun _ : V => Bool)) (cause effect : V) : Prop :=
+  SEM.manipulates M s cause true false effect
 
 end Core.Causal.V2.BoolSEM
