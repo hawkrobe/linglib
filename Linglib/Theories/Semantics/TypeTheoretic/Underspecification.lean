@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.TypeTheoretic.Quantification
 import Linglib.Theories.Semantics.Composition.Scope
-import Linglib.Core.BindingSemantics
+import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 
 /-!
 # Type Theory with Records — Chapter 8: Type-Based Underspecification
@@ -826,7 +826,7 @@ end BindingPhenomenon
 /-! ### Bridge to positional binding interface
 
 Connect TTR's semantic binding (ℜ / @_{i,j}) to the syntactic binding
-interface in `Core.BindingSemantics`.
+interface in `Theories.Interfaces.SyntaxSemantics.Binding`.
 
 TTR's binding theory is *semantic* (argument identification via types),
 while `BindingSemantics` is *syntactic* (position-based binder–bindee

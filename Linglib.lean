@@ -66,7 +66,6 @@ import Linglib.Features.Register
 import Linglib.Phenomena.SocialMeaning.IndexicalField
 import Linglib.Core.Conjectures
 import Linglib.Core.Semantics.CommonGround
-import Linglib.Core.Parse
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.PresuppositionContext
 import Linglib.Core.Semantics.Postsupposition
@@ -89,7 +88,6 @@ import Linglib.Core.Modality.TemporalAxes
 import Linglib.Core.SelectionFunction
 import Linglib.Core.Question.Partition.QUD
 import Linglib.Core.Question.PrecisionProjection
-import Linglib.Core.InfoState
 import Linglib.Core.Question.Support
 import Linglib.Core.Question.Basic
 import Linglib.Core.Question.Hamblin
@@ -104,7 +102,7 @@ import Linglib.Core.Discourse.Goal
 import Linglib.Core.Discourse.Scoreboard
 import Linglib.Core.Discourse.AtIssueness
 import Linglib.Features.CoreferenceStatus
-import Linglib.Core.BindingSemantics
+import Linglib.Theories.Interfaces.SyntaxSemantics.Binding
 import Linglib.Core.CombinationKind
 import Linglib.Features.AssertionTypes
 import Linglib.Features.ImplicatureTypes
@@ -2228,7 +2226,6 @@ import Linglib.Theories.Semantics.Exhaustification.Combinators
 import Linglib.Theories.Semantics.Exhaustification.Excluder
 import Linglib.Theories.Semantics.Exhaustification.FreeChoice
 import Linglib.Theories.Semantics.Exhaustification.Innocent
-import Linglib.Theories.Semantics.Exhaustification.SetFinsetBridge
 import Linglib.Theories.Semantics.Exhaustification.PresuppositionalExhaustification
 import Linglib.Theories.Semantics.Exhaustification.Relevance
 import Linglib.Theories.Semantics.Exhaustification.ScalePredictions

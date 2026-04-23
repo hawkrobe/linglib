@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.236] - 2026-04-23
+
+### Cleanup — Tier 2 dead trio of Core/ triage
+
+Three quick wins from the triage backlog (`memory/project_core_triage.md`):
+
+- **Deleted `Core/InfoState.lean`** (63 LOC, 0 consumers) — pure
+  `Discourse.InfoState := Set W` aliasing + 4 trivial lemmas. The
+  consumers that conceptually want this notion either use mathlib
+  `Set W` directly or have their own `InfoState` in
+  `Semantics.Dynamic.Core.InfoState`.
+- **Deleted `Core/Parse.lean`** (34 LOC, 0 consumers) — `Parse` String-id
+  wrapper + `Parse.surface`/`inverse` consts that no one reaches for.
+- **Moved `Core/BindingSemantics.lean` → `Theories/Interfaces/
+  SyntaxSemantics/Binding.lean`** (48 LOC, 2 consumers) — the file's
+  namespace was already `Interfaces.BindingSemantics`, signaling it
+  belonged in the Interfaces tier; moved without content changes. Two
+  consumers (`Theories/Semantics/Reference/Binding.lean`,
+  `Theories/Semantics/TypeTheoretic/Underspecification.lean`) had their
+  imports repointed.
+
+`Linglib.lean` lost two imports and gained one repointed import. ~145
+LOC of Core/ removed in total.
+
 ## [0.230.235] - 2026-04-23
 
 ### Dissolved — `Core/Empirical.lean` (Tier 1 #2 of Core/ triage)
