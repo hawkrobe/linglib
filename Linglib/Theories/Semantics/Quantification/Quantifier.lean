@@ -1414,4 +1414,20 @@ theorem half_proportional : Proportional (half_sem F) := by
 
 end FintypeProofs
 
+/-! ## Open conjectures (van de Pol et al. 2023)
+
+`TODO`: Quantifiers satisfying the B&C semantic universals
+(conservativity, quantity, monotonicity) have *strictly lower*
+complexity (Lempel-Ziv on truth-table representations, or MDL in a
+language-of-thought grammar) than violators.
+
+`TODO`: Among the three universals, **monotonicity** is the strongest
+predictor of complexity reduction; conservativity is intermediate;
+quantity shows a weaker but robust effect.
+
+Both were previously stubbed in the deleted `Core/Conjectures.lean`.
+Formal content depends on choosing canonical complexity measures (LZ
+over Boolean truth tables; MDL over LoT grammars) and connecting them
+to the existing `SatisfiesUniversals` predicate. -/
+
 end Semantics.Quantification.Quantifier

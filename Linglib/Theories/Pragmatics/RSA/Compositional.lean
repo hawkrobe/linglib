@@ -1032,4 +1032,26 @@ Bergen & Franke's empirical validation of GI is also validation of
 compositional RSA, without requiring EXH as a grammatical primitive.
 -/
 
+/-! ## Open conjectures
+
+`TODO`: **Sharp characterization theorem for RSA ≅ EXH** (previously stubbed
+in the deleted `Core/Conjectures.lean`). Under uniform prior + α → ∞ +
+depth one + no QUD sensitivity, RSA L1's positive-credence support should
+coincide with EXH's truth set:
+`(uniform_prior ∧ high_rationality ∧ depth_one ∧ no_qud) → ∀ u w, L1(u,w) > 0 ↔ EXH(u) w`.
+Conjectured to be the precise boundary between notational variants and
+genuine empirical disagreement of the two frameworks
+(@cite{frank-goodman-2012}, @cite{fox-2007},
+@cite{chierchia-fox-spector-2012}).
+
+`TODO`: **Phase-bounded exhaustification (3 related conjectures)** —
+@cite{charlow-2014} treats scope islands as evaluation boundaries and
+CFS treats Exh as applying at scope positions. Hypothesis: phase
+boundaries delimit both exhaustification and RSA computation. (a) Local
+Exh (within a phase) and global Exh agree within the phase domain.
+(b) S1 optimizes within the current phase; for utterances in the same
+phase, local and global S1 agree. (c) Alternatives are computed from
+material within the same phase (cf. @cite{fox-katzir-2011}'s locally-
+available alternatives). -/
+
 end RSA.Compositional

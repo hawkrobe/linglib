@@ -228,7 +228,16 @@ scalar implicature: using the weak term (I) implicates the negation of
 the strong term (¬A = O). The "O-corner gap" — the non-lexicalization of O —
 is pragmatically explained: O is always recoverable as the implicature of I.
 
-See `Core.Conjectures.o_corner_gap` for the formal statement. -/
+`TODO`: Open conjectures (previously stubbed in deleted
+`Core/Conjectures.lean`):
+
+- **O-corner lexicalization gap**: across natural languages, A/E/I are
+  lexicalized but O is always periphrastic (¬A): `lexicalized A ∧
+  lexicalized E ∧ lexicalized I ∧ ¬lexicalized O`. Requires a
+  cross-linguistic lexicalization registry.
+- **Pragmatic explanation of the gap** (@cite{horn-2001}, §4.5): the
+  scalar implicature of the I-corner recovers the O-corner's content,
+  making lexicalization of O communicatively redundant. -/
 
 /-- Subalternation A→I is equivalent to the Horn-scale ordering:
 the A-corner entails the I-corner, which is the scale `⟨I, A⟩`. -/

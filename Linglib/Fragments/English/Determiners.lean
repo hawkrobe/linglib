@@ -402,7 +402,7 @@ From a `QuantityWord` you can reach:
 - **Prototype semantics**: `QuantityWord.ptMeaning` (gradient PT representation)
 - **RSA domains**: `RSA.Quantity` (pragmatic reasoning over quantity scales)
 - **Monotonicity**: `Semantics.Entailment.Monotonicity` (polarity)
-- **Complexity**: `Core.Conjectures.simplicity_explains_universals`
+- **Complexity**: TODO conjecture in `Theories/Semantics/Quantification/Quantifier.lean` (van de Pol et al. 2023 — quantifiers satisfying B&C universals have lower MDL/LZ complexity)
 -/
 
 -- ============================================================================

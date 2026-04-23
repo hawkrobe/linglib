@@ -64,7 +64,6 @@ import Linglib.Core.Logic.RankingFunction
 import Linglib.Core.Logic.SystemZ
 import Linglib.Features.Register
 import Linglib.Phenomena.SocialMeaning.IndexicalField
-import Linglib.Core.Conjectures
 import Linglib.Core.Semantics.CommonGround
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.Semantics.PresuppositionContext

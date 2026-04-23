@@ -428,4 +428,26 @@ theorem softmaxObserver_add_const [Nonempty ι]
     fun t k => congr_fun (softmax_add_const (fun j => score j t) α (c t)) k
   simp_rw [h]
 
+/-! ## Open conjectures
+
+Four open questions about the algebraic and emergent properties of RSA
+(previously stubbed in the deleted `Core/Conjectures.lean`).
+
+`TODO`: **Fixed-point uniqueness** — RSA iteration converges to a
+unique fixed point for any rationality `α > 0`.
+
+`TODO`: **Lexicon-refinement monotonicity** — if `meaning₂` refines
+`meaning₁` (i.e., `meaning₂ u w → meaning₁ u w`), then
+`L1 meaning₂ u w ≤ L1 meaning₁ u w`. Refining lexical meanings can only
+strengthen pragmatic inferences, never weaken them.
+
+`TODO`: **Tropical limit** — in the `α → ∞` limit, soft-max S1
+converges to iterated best response (argmax / tropical semiring): for
+every `ε > 0`, `(S1 α u w − bestResponse u w)² < ε` eventually.
+
+`TODO`: **Neural-symbolic emergence** — there exists a coarsening map
+from a language model's token-level predictions to world-level
+predictions such that the result approximates L1 to arbitrary
+ε-precision. Bridges next-token modeling to Gricean reasoning. -/
+
 end Softmax

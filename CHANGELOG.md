@@ -4,6 +4,116 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.240] - 2026-04-23
+
+### Dissolved — `Core/Conjectures.lean` (Tier 3 of Core/ triage)
+
+261 LOC, 1 unused-import consumer. The file was a dump bag of 12 open
+conjectures across 7 different research areas (BToM↔intensional logic,
+RSA≅EXH, RSA fixed-point algebra, neural-symbolic emergence, Almog
+independence, phase-bounded exhaustification, simplicity ↔ semantic
+universals, O-corner gap), all stated as `def : Prop` over abstract
+parameters because Core/ couldn't reach the concrete types.
+
+This is the wrong shape — mathlib doesn't have a `Conjectures.lean`. The
+mathlib pattern for unproven future-work is a `TODO:` comment in the
+file the conjecture *belongs to*, where the apparatus is in scope and
+the formalization can be precise.
+
+**Dispersed to natural homes** as `Open conjectures` TODO blocks:
+
+- `Theories/Pragmatics/RSA/BToM.lean` — 3 BToM ↔ intensional-logic
+  correspondence conjectures (accessibility ↔ positive credence, □ ↔
+  credence-1, rigidity ↔ common-ground constancy).
+- `Theories/Pragmatics/RSA/Compositional.lean` — RSA ≅ EXH sharp
+  characterization theorem + 3 phase-bounded exhaustification
+  conjectures.
+- `Theories/Pragmatics/RSA/Limits.lean` — 3 RSA algebraic-metatheory
+  conjectures (fixed-point uniqueness, lexicon-refinement monotonicity,
+  tropical limit) + neural-symbolic emergence conjecture.
+- `Theories/Semantics/Reference/Almog2014.lean` — Almog n-way
+  independence conjecture (sat next to its pairwise witnesses).
+- `Core/Logic/SquareOfOpposition.lean` — O-corner gap conjecture +
+  pragmatic-explanation conjecture (sat next to the existing scalar-
+  implicature ↔ Square-of-Opposition discussion).
+- `Theories/Semantics/Quantification/Quantifier.lean` — van de Pol et
+  al. 2023 simplicity-vs-universals conjectures (sat next to
+  `SatisfiesUniversals`).
+
+The Lean apparatus from the original file (the `def : Prop`
+parameterized formulations) was dropped — once each conjecture sits in
+its natural home, the formalization should be stated against the
+apparatus actually in scope, not against abstract parameters that
+exist only to insulate `Core/` from downstream theory.
+
+`Core/Conjectures.lean` deleted; `Almog2014.lean` lost an unused
+import; `Determiners.lean` and `SquareOfOpposition.lean` had cosmetic
+docstring pointers updated.
+
+## [0.230.239] - 2026-04-23
+
+### D-H Cutover Phase 1: 5 Causation studies ported, doc-consumers cleaned
+
+Heart of the V2 substrate cutover. Per the Plan agent's 14-commit plan
+(steps 1-6 of 14):
+
+**Doc-only consumer cleanups:**
+- `Core/Mereology.lean`: `Core.Causal.normalDevelopment` →
+  `Core.Causal.SEM.developDet` reference
+- `Theories/Pragmatics/DecisionTheoretic/Also.lean`: TODO comment
+  updated to point at `BoolSEM`/`develop`
+- `Phenomena/Causation/Studies/BellerGerstenberg2025.lean`: dropped
+  the unused `Linglib.Core.Causal.SEM.Counterfactual` import
+
+**Five Causation studies fully ported to V2 BoolSEM substrate** —
+legacy `CausalDynamics`-based bodies entirely replaced; no parallel
+maintenance:
+
+- **`CaoWhiteLassiter2025.lean`** (385 → 215 LOC). Promoted V2
+  `probabilisticSuf` + `deterministicSuf` to top-level. The
+  `ProbabilisticExample` (Bernoulli-mechanism BoolSEM) demonstrates
+  the substrate motivation: SUF as a real probability, not a 0/1
+  shoehorn.
+- **`NadathurLauer2020.lean`** (424 → 80 LOC). Preemption scenario
+  (Suzy + Billy throwing → bottle shatters) on `BoolSEM V` with the
+  disjunctive mechanism. Theorems: sufficiency for both, non-but-for
+  for either under overdetermination.
+- **`Nadathur2024.lean`** (570 → 130 LOC). Eight-vertex Dreyfus
+  scenario with the negative `¬BRK` precondition encoded directly in
+  the COM mechanism (first-class on V2's Boolean substrate). Three
+  dare/manage divergence theorems at the sufficiency layer.
+- **`BarAsherSiegal2026.lean`** (492 → 180 LOC). Six-vertex door
+  scenario with `fullModel` (manual ∨ automatic pathway) and
+  `manualModel` (manual only). Captures the @cite{bar-asher-siegal-2026}
+  CC-selection prediction: completion succeeds for handle alone, fails
+  under overdetermination.
+- **`Glass2023.lean`** (576 → 130 LOC). Local/global sufficiency and
+  necessity over `BoolSEM`. Global → local entailments proved
+  immediately by instantiating with `Valuation.empty`.
+  `causeSemGlass` is `causallySufficient` (Glass's truth-conditional
+  collapse). The Anna Karenina sentiment-asymmetry theorems were not
+  re-derived (recoverable from the scaffolding when needed).
+
+Build: 2782 jobs clean across the entire causation subtree.
+
+**What remains for Phase 2-3 (multi-session):**
+- Step 7: Levin2026 (1102 LOC, 4 CausalDynamics models +
+  `FilledResultative` struct — substantial port)
+- Step 8: gut all hubs (Sufficiency/Necessity/Prevention/CCSelection/
+  CoerciveImplication/Interpretation/ProductionDependence) — promote
+  V2 contents to top-level
+- Step 9: CausalFrame cascade (Implicative + Degree + Ability +
+  Karttunen1971) — atomic
+- Step 10: Resultatives.lean port (1107 LOC — biggest mechanical port)
+- Step 11: ConditionalAssertability port to V2 PMF substrate (NOT
+  delete — V2 `develop` IS the PMF inference layer that BayesNet was
+  the legacy of)
+- Step 12: delete `Core/Causal/SEM/{Defs,Counterfactual,Monotonicity}.lean`
+  + `BayesNet.lean`
+- Step 13: rename `Core/Causal/V2/` → `Core/Causal/`; bulk namespace
+  rewrite `Core.Causal.V2` → `Core.Causal`
+- Step 14: cleanup remaining doc references
+
 ## [0.230.238] - 2026-04-23
 
 ### Exhaustification subdir audit: drop dead §7 PolarityComposition

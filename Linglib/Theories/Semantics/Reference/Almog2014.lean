@@ -4,7 +4,6 @@ import Linglib.Theories.Semantics.Reference.Donnellan
 import Linglib.Theories.Semantics.Reference.KaplanLD
 import Linglib.Theories.Semantics.Reference.Kripke
 import Linglib.Theories.Semantics.Attitudes.Doxastic
-import Linglib.Core.Conjectures
 
 /-!
 # @cite{almog-2014}: Referential Mechanics — Synthesis
@@ -730,5 +729,16 @@ all three desiderata cannot be satisfied simultaneously. -/
 theorem rpk_impossibility {E : Type*} (a b : E) (hab : a ≠ b) :
     ¬ ∃ e : E, (fun P : E → Prop => P e) = (fun P => ∀ x, P x) :=
   rpkLift_not_surjective a b hab
+
+/-! ## Open conjecture
+
+`TODO`: Generalize the pairwise independence theorems
+(`designation_indep_singularProp` etc.) to a single n-way statement:
+for any two of the three direct-reference mechanisms (designation,
+singular proposition, referential use), there exists an expression
+exhibiting one but not the other. The pairwise theorems above witness
+this for each pair; lifting to a quantifier-over-pairs statement
+requires choosing a canonical `Mechanism` enum and an `exprs` registry.
+Previously stubbed in the deleted `Core/Conjectures.lean`. -/
 
 end Semantics.Reference.Almog2014
