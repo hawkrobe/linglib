@@ -19,7 +19,8 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Auxiliaries
-import Linglib.Core.Grammar
+import Linglib.Features.ClauseForm
+import Linglib.Theories.Syntax.Common.Inversion
 import Linglib.Core.Lexical.Word
 
 namespace Minimalism
@@ -145,8 +146,8 @@ structure Clause where
 
 /-- Word order must match the structural prediction -/
 def wordOrderMatchesStructure (c : Clause) : Prop :=
-  (tPrecedesSubject c.tPosition = true → _root_.auxPrecedesSubject c.words = true) ∧
-  (subjectPrecedesT c.tPosition = true → _root_.subjectPrecedesAux c.words = true)
+  (tPrecedesSubject c.tPosition = true → Inversion.auxPrecedesSubject c.words = true) ∧
+  (subjectPrecedesT c.tPosition = true → Inversion.subjectPrecedesAux c.words = true)
 
 /-- Well-formed clause -/
 def wellFormed (c : Clause) : Prop :=
@@ -162,7 +163,7 @@ def licenses (ws : List Word) (ct : ClauseForm) : Prop :=
 
 /-- Matrix questions with T-first word order are licensed -/
 theorem licenses_matrix_t_first (ws : List Word)
-    (h : _root_.auxPrecedesSubject ws = true) :
+    (h : Inversion.auxPrecedesSubject ws = true) :
     licenses ws .matrixQuestion := by
   refine ⟨.inC, ⟨?_, ?_⟩, ?_, ?_⟩
   · simp only [tPrecedesSubject, tPronouncedAt, structurallyPrecedes]
@@ -174,20 +175,20 @@ theorem licenses_matrix_t_first (ws : List Word)
 
 /-- Matrix questions with subject-first are NOT licensed -/
 theorem not_licenses_matrix_subject_first (ws : List Word)
-    (h : _root_.auxPrecedesSubject ws = false) :
+    (h : Inversion.auxPrecedesSubject ws = false) :
     ¬ licenses ws .matrixQuestion := by
   intro ⟨tPos, wf⟩
   obtain ⟨⟨hword, _⟩, htrig, _⟩ := wf
   have hpos : tPos = .inC := htrig rfl
   have ht : tPrecedesSubject tPos = true := by
     simp [hpos, tPrecedesSubject, tPronouncedAt, structurallyPrecedes]
-  have hws : _root_.auxPrecedesSubject ws = true := hword ht
+  have hws : Inversion.auxPrecedesSubject ws = true := hword ht
   rw [h] at hws
   cases hws
 
 /-- Embedded questions with subject-first are licensed -/
 theorem licenses_embedded_subject_first (ws : List Word)
-    (h : _root_.subjectPrecedesAux ws = true) :
+    (h : Inversion.subjectPrecedesAux ws = true) :
     licenses ws .embeddedQuestion := by
   refine ⟨.inT, ⟨?_, ?_⟩, ?_, ?_⟩
   · simp only [tPrecedesSubject, tPronouncedAt, structurallyPrecedes]
@@ -199,14 +200,14 @@ theorem licenses_embedded_subject_first (ws : List Word)
 
 /-- Embedded questions with T-first are NOT licensed -/
 theorem not_licenses_embedded_t_first (ws : List Word)
-    (h : _root_.subjectPrecedesAux ws = false) :
+    (h : Inversion.subjectPrecedesAux ws = false) :
     ¬ licenses ws .embeddedQuestion := by
   intro ⟨tPos, wf⟩
   obtain ⟨⟨_, hword⟩, _, hemb⟩ := wf
   have hpos : tPos = .inT := hemb rfl
   have ht : subjectPrecedesT tPos = true := by
     simp [hpos, subjectPrecedesT, tPronouncedAt, structurallyPrecedes]
-  have hws : _root_.subjectPrecedesAux ws = true := hword ht
+  have hws : Inversion.subjectPrecedesAux ws = true := hword ht
   rw [h] at hws
   cases hws
 

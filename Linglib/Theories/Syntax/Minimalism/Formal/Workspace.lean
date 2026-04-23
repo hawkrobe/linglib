@@ -20,7 +20,6 @@ and @cite{adger-2003} Chapter 3.
 
 -/
 
-import Linglib.Core.Grammar
 import Linglib.Theories.Syntax.Minimalism.Agree
 import Linglib.Theories.Syntax.Minimalism.Derivation
 
@@ -344,35 +343,5 @@ def theCatNumeration : Numeration :=
     |>.add nounCat 1 (by omega)
 
 #guard theCatNumeration.totalCount == 2
-
--- ============================================================================
--- MinimalistGrammar: Grammar Instance Using Formal Types
--- ============================================================================
-
-/-- A Minimalist grammar specifies the lexicon as a list of extended LIs. -/
-structure MinimalistGrammar where
-  lexicon : List ExtendedLI
-
-/-- Minimalist derivations link a formal derivation to a clause type. -/
-structure MinDerivation (g : MinimalistGrammar) where
-  deriv : FullDerivation
-  clauseType : ClauseForm
-
-/-- Minimalism Grammar instance.
-
-    Derivations are formal `FullDerivation`s from Workspace.lean.
-    Realization checks that the phonological yield matches. -/
-instance : Grammar MinimalistGrammar where
-  Derivation := Σ g : MinimalistGrammar, MinDerivation g
-  realizes d ws ct :=
-    let result := d.2.deriv.final.workspace.getResult
-    match result with
-    | some so => so.phonYield = ws.map (·.form) ∧ d.2.clauseType = ct
-    | none => False
-  derives g ws ct :=
-    ∃ d : MinDerivation g,
-      match d.deriv.final.workspace.getResult with
-      | some so => so.phonYield = ws.map (·.form) ∧ d.clauseType = ct
-      | none => False
 
 end Minimalism

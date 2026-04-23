@@ -4,6 +4,35 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.208] - 2026-04-22
+
+### Dissolved — `Core/Grammar.lean` (parallel-session migration finished)
+
+The `Core/Grammar.lean` garbage drawer (random `V2Data`, `ClauseForm`,
+word-order helpers, `Grammar` typeclass, `MinimalPair` testing harness,
+no namespace, root-pollution forcing `_root_.` qualifications in HPSG /
+Minimalism) had been split out by a parallel session — `V2Data` to
+`Features/V2.lean`, `ClauseForm` to `Features/ClauseForm.lean`, the
+inversion helpers to `Theories/Syntax/Common/Inversion.lean` (now
+namespaced `Inversion`), `MinimalPair`/`PhenomenonData`/`SentencePair`/
+`StringPhenomenonData` appended to `Paradigms/AcceptabilityJudgment.lean`
+as `§4 Introspective Minimal Pairs` (the pre-experimental ancestor of
+the existing Sprouse-anchored factorial machinery) — but the consuming
+sites still imported the deleted file and the three `Grammar` typeclass
+instances (`HPSGGrammar`, `MinimalistGrammar`, `DependencyGrammar`) were
+still in place. This commit finishes the dissolution: deletes the three
+dead instances + their host structs (`HPSGGrammar`/`HPSGDerivation`,
+`MinimalistGrammar`/`MinDerivation`, `DependencyGrammar`/`defaultGrammar`
+— zero external consumers; the Grammar typeclass was overspecified with
+a `ClauseForm` argument every instance ignored, and the
+`grammars_agree_on_phenomenon` agreement theorem was vacuous), removes
+the `_root_.auxPrecedesSubject` / `_root_.subjectPrecedesAux` defensive
+qualifications in `HPSG/Core/Basic.lean` + `Minimalism/Inversion.lean`
+in favor of the clean `Inversion.`-namespaced calls, adds `open
+Inversion` to `HPSG/Inversion.lean`, and replaces the lost transitive
+`Word` import in `Core/Dependency/Basic.lean` and
+`Theories/Semantics/TypeTheoretic/Core.lean`.
+
 ## [0.230.207] - 2026-04-22
 
 ### Major refactor — Core/Causal mathlib-style V2 substrate (Phase A through C-3)

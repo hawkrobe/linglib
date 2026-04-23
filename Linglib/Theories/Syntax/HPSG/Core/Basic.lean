@@ -3,7 +3,7 @@ HPSG formalization: typed feature structures, signs, and phrase structure schema
 @cite{pollard-sag-1994}, @cite{sag-wasow-bender-2003}, @cite{ginzburg-sag-2000}.
 -/
 
-import Linglib.Core.Grammar
+import Linglib.Theories.Syntax.Common.Inversion
 
 namespace HPSG
 
@@ -179,51 +179,15 @@ def satisfiesInversionConstraint (s : Sign) : Prop :=
 
 end InversionConstraint
 
-section ClauseTypes
-
-/-- Matrix questions require [INV +]. -/
-def matrixQuestionRequiresInv (s : Sign) (ct : ClauseForm) : Prop :=
-  ct = .matrixQuestion → s.synsem.head.inv = .plus
-
-/-- Embedded questions require [INV -]. -/
-def embeddedQuestionProhibitsInv (s : Sign) (ct : ClauseForm) : Prop :=
-  ct = .embeddedQuestion → s.synsem.head.inv = .minus
-
-end ClauseTypes
-
-section HPSGGrammarDef
-
-/-- An HPSG grammar is a collection of signs with constraints. -/
-structure HPSGGrammar where
-  signs : List Sign
-  wellFormed : ∀ s ∈ signs, satisfiesInversionConstraint s
-
-/-- HPSG derivations are signs that satisfy all constraints. -/
-structure HPSGDerivation (g : HPSGGrammar) where
-  sign : Sign
-  clauseType : ClauseForm
-  inSign : sign ∈ g.signs
-  invOk : satisfiesInversionConstraint sign
-  matrixOk : matrixQuestionRequiresInv sign clauseType
-  embeddedOk : embeddedQuestionProhibitsInv sign clauseType
-
-/-- HPSG Grammar instance. -/
-instance : Grammar HPSGGrammar where
-  Derivation := Σ g : HPSGGrammar, HPSGDerivation g
-  realizes d ws ct := d.2.sign.yield = ws ∧ d.2.clauseType = ct
-  derives g ws ct := ∃ d : HPSGDerivation g, d.sign.yield = ws ∧ d.clauseType = ct
-
-end HPSGGrammarDef
-
 section WordOrder
 
 /-- [INV +] correlates with aux-before-subject order. -/
 def invPlusImpliesAuxFirst (inv : Inv) (ws : List Word) : Prop :=
-  inv = .plus → _root_.auxPrecedesSubject ws = true
+  inv = .plus → Inversion.auxPrecedesSubject ws = true
 
 /-- [INV -] correlates with subject-before-aux order. -/
 def invMinusImpliesSubjectFirst (inv : Inv) (ws : List Word) : Prop :=
-  inv = .minus → _root_.subjectPrecedesAux ws = true
+  inv = .minus → Inversion.subjectPrecedesAux ws = true
 
 end WordOrder
 

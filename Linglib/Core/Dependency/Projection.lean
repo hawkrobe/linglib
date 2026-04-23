@@ -6,8 +6,8 @@ Projection theory for dependency trees: BFS-based projection computation,
 interval/gap/block analysis, Prop-level Dominance (reflexive-transitive
 closure), and the bridge theorems connecting BFS membership to dominance.
 
-Also contains the `isProjective` / `isWellFormed` predicates and the
-`Grammar` instance, which depend on projection infrastructure.
+Also contains the `isProjective` / `isWellFormed` predicates, which
+depend on projection infrastructure.
 
 References: @cite{kuhlmann-nivre-2006}, @cite{kuhlmann-2013}.
 -/
@@ -903,22 +903,5 @@ def isWellFormed (t : DepTree) : Bool :=
   checkSubjVerbAgr t &&
   checkDetNounAgr t &&
   checkVerbSubcat t
-
-section GrammarInstance
-
-/-- Dependency grammar configuration. -/
-structure DependencyGrammar where
-  checkProjectivity : Bool := true
-  checkAgreement : Bool := true
-  checkSubcat : Bool := true
-
-instance : Grammar DependencyGrammar where
-  Derivation := DepTree
-  realizes t ws _ := t.words = ws ∧ isWellFormed t = true
-  derives _ ws _ := ∃ t : DepTree, t.words = ws ∧ isWellFormed t = true
-
-def defaultGrammar : DependencyGrammar := {}
-
-end GrammarInstance
 
 end DepGrammar

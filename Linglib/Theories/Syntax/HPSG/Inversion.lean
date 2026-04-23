@@ -19,7 +19,10 @@ import Linglib.Fragments.English.Nouns
 import Linglib.Fragments.English.Pronouns
 import Linglib.Fragments.English.Predicates.Verbal
 import Linglib.Fragments.English.Auxiliaries
+import Linglib.Features.ClauseForm
 import Linglib.Theories.Syntax.HPSG.Core.Basic
+
+open Inversion
 
 namespace HPSG
 
