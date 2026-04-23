@@ -4,6 +4,30 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.259] - 2026-04-23
+
+### Implicature/Defs.lean — cross-mechanism spine
+
+First piece of the API expansion identified by the linguistics-domain-expert
+audit (post-0.230.256). Adds the typed object that lets neo-Gricean,
+EXH, RSA, and IBR derivations be compared at all.
+
+- **New file**: `Linglib/Theories/Pragmatics/Implicature/Defs.lean` (~190 LOC).
+  Declares `inductive ImplicatureKind` (scalar / freeChoice / ignorance /
+  clausal / manner / conventional), `inductive ImplicatureMechanism`
+  (neoGricean / exhIE / exhII / exhIEII / rsa / ibr / lexical), and
+  `structure Implicature W` (kind, content, altsUsed, mechanism).
+  Includes `Implicature.Agree` (cross-mechanism content equivalence)
+  with refl/symm/trans, and `isConversational` lifted from
+  `ImplicatureKind` to `Implicature`.
+- **Anchored citations**: @cite{grice-1975}, @cite{horn-1972},
+  @cite{gazdar-1979}, @cite{sauerland-2004},
+  @cite{chierchia-fox-spector-2012}, @cite{bar-lev-fox-2020}.
+- **Naming**: `Filter.Filter`-style — struct `Implicature` declared at
+  root, helpers under `namespace Implicature`. Avoids `dupNamespace`
+  lint and matches mathlib precedent for cases where the central
+  concept names the directory.
+
 ## [0.230.258] - 2026-04-23
 
 ### O'Donnell 2015 Phase 3: FragmentGrammars typeclass anchor

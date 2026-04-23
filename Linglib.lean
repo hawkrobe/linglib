@@ -2206,6 +2206,7 @@ import Linglib.Phenomena.ScalarImplicatures.Studies.Denic2023
 import Linglib.Theories.Pragmatics.AvoidAmbiguity
 import Linglib.Theories.Pragmatics.Implicature.Basic
 import Linglib.Theories.Pragmatics.Implicature.Competence
+import Linglib.Theories.Pragmatics.Implicature.Defs
 import Linglib.Theories.Pragmatics.Implicature.EpistemicBlocking
 import Linglib.Theories.Pragmatics.Implicature.Markedness
 import Linglib.Theories.Pragmatics.Implicature.Scales
