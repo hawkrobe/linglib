@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Theories.Phonology.OptimalityTheory.Constraints
 import Linglib.Phenomena.Case.Typology
 import Linglib.Theories.Syntax.Case.Dependent
@@ -41,7 +41,7 @@ to a possible OT grammar.
 
 namespace Aissen2003
 
-open Core.Prominence
+open Features.Prominence
 open Core.Constraint.OT Phonology.Constraints
 open Phenomena.Case.Typology
 

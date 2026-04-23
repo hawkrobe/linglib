@@ -19,7 +19,7 @@ core-concept structure — is available (Indirect Alternatives,
 
 This module is a small registry. The actual *denotation* of each core
 concept lives where its semantic content does (e.g. `dualPredOnLattice`
-in `Core/Number.lean` for `dual`). Use `Lexicalizes` to express the
+in `Features/Number.lean` for `dual`). Use `Lexicalizes` to express the
 typological claim "language L lexicalizes core concept c", which is
 the formal content of "L has a word for c".
 -/
@@ -33,7 +33,7 @@ correspond to conceptual primitives independently motivated in the
 literature, with a denotation defined elsewhere in linglib. -/
 inductive Id where
   /-- Number-feature dual: predicate-modifier "and has exactly 2
-  atomic parts"; denotation in `Core.Number.dualPredOnLattice`. -/
+  atomic parts"; denotation in `Features.Number.dualPredOnLattice`. -/
   | dual
   /-- Number-feature trial. Mentioned in @cite{harbour-2014} as
   morphologically stable but rare. Denotation TBD. -/

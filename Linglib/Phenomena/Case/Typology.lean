@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.WALS.Features.F49A
 import Linglib.Core.WALS.Features.F50A
 import Linglib.Core.WALS.Features.F51A
@@ -851,12 +851,12 @@ Formalizes the bidimensional DOM predictions from:
   Natural Language & Linguistic Theory 21(3): 435--483.
 
 The prominence scales (`AnimacyLevel`, `DefinitenessLevel`) and their
-orderings are defined in `Core.Prominence` and re-exported here.
+orderings are defined in `Features.Prominence` and re-exported here.
 DOM is the P-flagging specialization of the general differential marking
 framework.
 -/
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- DOM Profiles: Bidimensional Marking Grids

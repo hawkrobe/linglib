@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Split
@@ -41,7 +41,7 @@ is person-conditioned regardless of the case frame.
 
 namespace Fragments.Georgian.Agreement
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 1: Person-Number Values

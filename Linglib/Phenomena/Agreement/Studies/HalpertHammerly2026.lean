@@ -1,7 +1,7 @@
 import Linglib.Fragments.Bantu.Params
 import Linglib.Fragments.Xhosa.Basic
 import Linglib.Fragments.Swahili.Basic
-import Linglib.Core.Person
+import Linglib.Features.Person
 import Linglib.Theories.Morphology.DM.Categorizer
 
 /-!
@@ -57,9 +57,9 @@ is derived from it via `AnimacyFeatures.toCoreClass`.
 
 ## Integration
 
-- `AnimacyFeatures` instantiates `Core.PhiFeatures` (same `PrivativePair`
+- `AnimacyFeatures` instantiates `Features.PhiFeatures` (same `PrivativePair`
   as person features), connecting person and animacy containment
-- `AnimacyFeatures.toAnimacyLevel` bridges to the `Core.Prominence`
+- `AnimacyFeatures.toAnimacyLevel` bridges to the `Features.Prominence`
   hierarchy used throughout the codebase
 - `impossible_human_inanimate_without_animal` proves the conflation
   impossibility predicted by containment
@@ -72,8 +72,8 @@ is derived from it via `AnimacyFeatures.toCoreClass`.
 namespace HalpertHammerly2026
 
 open Fragments.Bantu
-open Core.Person (Features)
-open Core.Prominence (PersonLevel)
+open Features.Person (Features)
+open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Person–Animacy Containment Bridge
@@ -101,7 +101,7 @@ def ProminenceFeatures.wellFormed (pf : ProminenceFeatures) : Bool :=
 
 /-- Extract the person projection. -/
 def ProminenceFeatures.personFeatures (pf : ProminenceFeatures) :
-    Core.Person.Features :=
+    Features.Person.Features :=
   ⟨pf.hasParticipant, pf.hasAuthor⟩
 
 /-- Extract the animacy projection. -/
@@ -148,15 +148,15 @@ theorem first_person_is_human_animate :
   | false => simp [ProminenceFeatures.wellFormed] at hw
 
 /-- Person and animacy features share the `PrivativePair` structure.
-    Both `Core.Person.Features` and `AnimacyFeatures` are `PhiFeatures`
+    Both `Features.Person.Features` and `AnimacyFeatures` are `PhiFeatures`
     instances — the same three-cell, no-four-way-distinction architecture.
     This is not a coincidence: they are fragments of the same containment
     hierarchy (@cite{hammerly-2023}). -/
 theorem person_animacy_same_structure :
-    (Core.PhiFeatures.toPair Core.Person.first).wellFormed = true ∧
-    (Core.PhiFeatures.toPair AnimacyFeatures.human).wellFormed = true ∧
-    (Core.PhiFeatures.toPair Core.Person.third).wellFormed = true ∧
-    (Core.PhiFeatures.toPair AnimacyFeatures.inanimate).wellFormed = true :=
+    (Features.PhiFeatures.toPair Features.Person.first).wellFormed = true ∧
+    (Features.PhiFeatures.toPair AnimacyFeatures.human).wellFormed = true ∧
+    (Features.PhiFeatures.toPair Features.Person.third).wellFormed = true ∧
+    (Features.PhiFeatures.toPair AnimacyFeatures.inanimate).wellFormed = true :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 -- ============================================================================

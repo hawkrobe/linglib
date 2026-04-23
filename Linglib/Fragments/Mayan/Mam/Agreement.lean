@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Fragments.Mayan.Params
 
 /-!
@@ -54,7 +54,7 @@ namespace Fragments.Mayan.Mam
 
 /-- Set A (ERG) markers: prefixes/proclitics on the verb that
     cross-reference the transitive agent (@cite{scott-2023}, Table 2.8). -/
-def setAMarkers : List (Core.Prominence.PersonLevel × Bool × String) :=
+def setAMarkers : List (Features.Prominence.PersonLevel × Bool × String) :=
   [ (.first,  true,  "n-/w-")
   , (.second, true,  "t-")
   , (.third,  true,  "t-")
@@ -68,7 +68,7 @@ def setAMarkers : List (Core.Prominence.PersonLevel × Bool × String) :=
     agreement with a 2/3SG intransitive S and for default Set B in
     transitives when Infl's probe is blocked by VoiceP.
     1SG = chin, 2SG = tz'=, 3SG = tz'=, 1PL = qo, 2PL = chi, 3PL = chi. -/
-def setBMarkers : List (Core.Prominence.PersonLevel × Bool × String) :=
+def setBMarkers : List (Features.Prominence.PersonLevel × Bool × String) :=
   [ (.first,  true,  "chin")
   , (.second, true,  "tz'=")
   , (.third,  true,  "tz'=")
@@ -81,8 +81,8 @@ def setBMarkers : List (Core.Prominence.PersonLevel × Bool × String) :=
 def defaultSetB : String := "tz'="
 
 /-- Look up a marker by person and number (true = singular). -/
-def lookupMarker (markers : List (Core.Prominence.PersonLevel × Bool × String))
-    (person : Core.Prominence.PersonLevel) (sg : Bool) : Option String :=
+def lookupMarker (markers : List (Features.Prominence.PersonLevel × Bool × String))
+    (person : Features.Prominence.PersonLevel) (sg : Bool) : Option String :=
   markers.find? (λ ⟨p, n, _⟩ => p == person && n == sg) |>.map (·.2.2)
 
 -- ============================================================================
@@ -254,7 +254,7 @@ inductive PronounForm where
 /-- Is this person 1st (= [+author])? Only [+author] persons are
     eligible for the impoverishment rule (84) that deletes [±singular]
     and bleeds base morpheme insertion. -/
-def isFirstPerson : Core.Prominence.PersonLevel → Prop
+def isFirstPerson : Features.Prominence.PersonLevel → Prop
   | .first => True
   | _      => False
 
@@ -275,7 +275,7 @@ instance : DecidablePred isFirstPerson := fun p => by
     so their subj/poss forms equal their independent forms (Table 4.25).
     For unagreed-with positions (objects), there is no F diacritic,
     so impoverishment does not apply regardless of person. -/
-def derivePronounForm (pos : MamArgPosition) (person : Core.Prominence.PersonLevel) :
+def derivePronounForm (pos : MamArgPosition) (person : Features.Prominence.PersonLevel) :
     PronounForm :=
   if pos.isPhiAgreed then
     if isFirstPerson person then .reduced

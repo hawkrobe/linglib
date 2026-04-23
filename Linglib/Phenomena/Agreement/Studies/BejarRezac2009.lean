@@ -39,7 +39,7 @@ second-cycle information: *m-* appears when valued on cycle I (IA=1P),
 
 namespace BejarRezac2009
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 open Minimalism.CyclicAgree
 
 -- ============================================================================

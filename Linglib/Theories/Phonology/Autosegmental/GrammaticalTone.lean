@@ -1,4 +1,4 @@
-import Linglib.Core.Prosody
+import Linglib.Features.Prosody
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 
 /-!
@@ -138,7 +138,7 @@ inductive GTOperation where
     interaction between trigger-sponsor and target-host tonal values
     (@cite{rolle-2018} §3.1, Table 2).
 
-    This is the tonal instantiation of `Core.Prosody.ProsodicDominance`,
+    This is the tonal instantiation of `Features.Prosody.ProsodicDominance`,
     which captures the abstract dominant/recessive/neutral distinction
     across both accentual and tonal morphology. The GT-specific split
     of dominant into replacive vs subtractive reflects whether the
@@ -210,7 +210,7 @@ def GTDominance.IsNonDominant (d : GTDominance) : Prop := ¬ d.IsDominant
 instance : DecidablePred GTDominance.IsNonDominant :=
   fun _ => inferInstanceAs (Decidable (¬ _))
 
-open Core.Prosody (ProsodicDominance)
+open Features.Prosody (ProsodicDominance)
 
 /-- Collapse the GT-specific 4-way dominance to the abstract 3-way.
     Both replacive and subtractive dominant map to `ProsodicDominance.dominant`. -/

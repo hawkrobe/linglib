@@ -1,8 +1,8 @@
 import Linglib.Core.Mereology
-import Linglib.Core.PrivativePair
-import Linglib.Core.Number
-import Linglib.Core.Person
-import Linglib.Core.Gender
+import Linglib.Features.PrivativePair
+import Linglib.Features.Number
+import Linglib.Features.Person
+import Linglib.Features.Gender
 import Linglib.Core.Semantics.Presupposition
 
 /-!
@@ -11,7 +11,7 @@ import Linglib.Core.Semantics.Presupposition
 
 Phi-features (number, person, definiteness) are **presuppositional partial
 identity functions** on the entity domain, ordered by presuppositional
-strength via `Core.PrivativePair.specLevel`.
+strength via `Features.PrivativePair.specLevel`.
 
 The core mathematical object is `phiPresup`: a single function that maps
 each `PrivativePair` cell to a `PrProp`, using two predicates (innerP,
@@ -50,7 +50,7 @@ set_option autoImplicit false
 namespace Semantics.Presupposition.PhiFeatures
 
 open Mereology (Atom)
-open Core (PrivativePair PhiFeatures)
+open Features (PrivativePair PhiFeatures)
 open Core.Presupposition (PrProp)
 
 -- ============================================================================
@@ -146,21 +146,21 @@ def dualSem {E : Type*} (minimalP : E → Prop) : PrProp E where
 @[simp] theorem plSem_eq_phiPresup {E : Type*} (innerP outerP : E → Prop) :
     phiPresup innerP outerP .minimal = plSem E := rfl
 
--- ── Bridge to Core.Number ─────
+-- ── Bridge to Features.Number ─────
 
 /-- Singular features map to the maximal `PrivativePair` cell (specLevel 2). -/
 @[simp] theorem sg_is_maximal_cell :
-    PhiFeatures.toPair Core.Number.singularF = .maximal := rfl
+    PhiFeatures.toPair Features.Number.singularF = .maximal := rfl
 
 /-- Plural features map to the minimal cell (specLevel 0). -/
 @[simp] theorem pl_is_minimal_cell :
-    PhiFeatures.toPair Core.Number.pluralF = .minimal := rfl
+    PhiFeatures.toPair Features.Number.pluralF = .minimal := rfl
 
 /-- The presuppositional asymmetry tracks specification level:
     singular (specLevel 2) has content; plural (specLevel 0) is vacuous. -/
 theorem presup_strength_tracks_specLevel :
-    PhiFeatures.specLevel Core.Number.singularF >
-    PhiFeatures.specLevel Core.Number.pluralF := by decide
+    PhiFeatures.specLevel Features.Number.singularF >
+    PhiFeatures.specLevel Features.Number.pluralF := by decide
 
 -- ============================================================================
 -- §3  Person Presuppositions
@@ -232,12 +232,12 @@ theorem person_nesting_from_phi (speaker addressee : E)
     so `phiPresup_nesting` applies to both: the nesting is structural,
     not a per-domain coincidence. -/
 theorem person_number_isomorphism :
-    PhiFeatures.specLevel Core.Person.first =
-      PhiFeatures.specLevel Core.Number.singularF ∧
-    PhiFeatures.specLevel Core.Person.second =
-      PhiFeatures.specLevel Core.Number.dualF ∧
-    PhiFeatures.specLevel Core.Person.third =
-      PhiFeatures.specLevel Core.Number.pluralF :=
+    PhiFeatures.specLevel Features.Person.first =
+      PhiFeatures.specLevel Features.Number.singularF ∧
+    PhiFeatures.specLevel Features.Person.second =
+      PhiFeatures.specLevel Features.Number.dualF ∧
+    PhiFeatures.specLevel Features.Person.third =
+      PhiFeatures.specLevel Features.Number.pluralF :=
   ⟨rfl, rfl, rfl⟩
 
 end PersonPresuppositions
@@ -250,7 +250,7 @@ end PersonPresuppositions
 ## §3b: Gender Presuppositions (@cite{sauerland-2003} §6)
 
 Gender features [±feminine, ±neuter] form a third `PrivativePair` instance,
-with containment [+neuter] → [+feminine] (see `Core.Gender.Features`).
+with containment [+neuter] → [+feminine] (see `Features.Gender.Features`).
 
 The presuppositional semantics mirrors number and person:
 - **neuter** (maximal, specLevel 2): presupposes inanimate
@@ -299,19 +299,19 @@ def mascSem : PrProp E where
 @[simp] theorem mascSem_eq_phiPresup (innerP outerP : E → Prop) :
     phiPresup innerP outerP .minimal = (mascSem : PrProp E) := rfl
 
--- ── Bridge to Core.Gender ─────
+-- ── Bridge to Features.Gender ─────
 
 /-- Neuter features map to the maximal `PrivativePair` cell (specLevel 2). -/
 @[simp] theorem neut_is_maximal_cell :
-    PhiFeatures.toPair Core.Gender.neuterF = .maximal := rfl
+    PhiFeatures.toPair Features.Gender.neuterF = .maximal := rfl
 
 /-- Feminine features map to the intermediate cell (specLevel 1). -/
 @[simp] theorem fem_is_intermediate_cell :
-    PhiFeatures.toPair Core.Gender.feminineF = .intermediate := rfl
+    PhiFeatures.toPair Features.Gender.feminineF = .intermediate := rfl
 
 /-- Masculine features map to the minimal cell (specLevel 0). -/
 @[simp] theorem masc_is_minimal_cell :
-    PhiFeatures.toPair Core.Gender.masculineF = .minimal := rfl
+    PhiFeatures.toPair Features.Gender.masculineF = .minimal := rfl
 
 /-- Gender domain nesting: dom(Neut) ⊆ dom(Fem) ⊆ dom(Masc).
     Parallels number (sg ⊆ pl) and person (1st ⊆ 3rd). -/
@@ -337,14 +337,14 @@ theorem gender_nesting_from_phi (isInanimate isFemale : E → Prop)
 /-- Gender, person, and number have the same `specLevel` ordering —
     all three domains share the phi kernel structure. -/
 theorem gender_person_number_isomorphism :
-    PhiFeatures.specLevel Core.Gender.neuterF =
-      PhiFeatures.specLevel Core.Person.first ∧
-    PhiFeatures.specLevel Core.Gender.neuterF =
-      PhiFeatures.specLevel Core.Number.singularF ∧
-    PhiFeatures.specLevel Core.Gender.feminineF =
-      PhiFeatures.specLevel Core.Person.second ∧
-    PhiFeatures.specLevel Core.Gender.masculineF =
-      PhiFeatures.specLevel Core.Person.third :=
+    PhiFeatures.specLevel Features.Gender.neuterF =
+      PhiFeatures.specLevel Features.Person.first ∧
+    PhiFeatures.specLevel Features.Gender.neuterF =
+      PhiFeatures.specLevel Features.Number.singularF ∧
+    PhiFeatures.specLevel Features.Gender.feminineF =
+      PhiFeatures.specLevel Features.Person.second ∧
+    PhiFeatures.specLevel Features.Gender.masculineF =
+      PhiFeatures.specLevel Features.Person.third :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 end GenderPresuppositions

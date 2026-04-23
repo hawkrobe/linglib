@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 /-!
@@ -27,7 +27,7 @@ person objects are not.
 
 namespace Fragments.Basque.Agreement
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 1: Person-Number Values

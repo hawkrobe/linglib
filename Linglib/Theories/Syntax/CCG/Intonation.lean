@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.CCG.Core.Basic
 import Linglib.Core.InformationStructure
-import Linglib.Core.Prosody
+import Linglib.Features.Prosody
 
 /-!
 # CCG Intonation and Information Structure
@@ -32,7 +32,7 @@ namespace CCG.Intonation
 
 open CCG
 open Core.InformationStructure
-open Core.Prosody
+open Features.Prosody
 
 -- Information Feature
 

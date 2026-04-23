@@ -1,4 +1,4 @@
-import Linglib.Core.PrivativePair
+import Linglib.Features.PrivativePair
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 
@@ -66,7 +66,7 @@ set_option autoImplicit false
 
 namespace Semantics.Presupposition.MaximizePresupposition
 
-open Core (PrivativePair)
+open Features (PrivativePair)
 open Core.Constraint.OT (NamedConstraint ConstraintFamily mkTableau
               mkTableau_optimal_zero_first mkTableau_optimal_mem)
 open Core.Constraint.Evaluation

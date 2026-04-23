@@ -1,7 +1,7 @@
 import Linglib.Phenomena.Plurals.Typology
 import Linglib.Phenomena.Agreement.Typology
 import Linglib.Theories.Syntax.Minimalism.Agreement.CoordinateResolution
-import Linglib.Core.Number
+import Linglib.Features.Number
 import Linglib.Core.AgreementTarget
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
@@ -27,7 +27,7 @@ Formalizes the core typological framework from:
 
 3. **Animacy Hierarchy constraints** (Ch 3, @cite{smith-stark-1974}): the
    likelihood of number being distinguished decreases monotonically from
-   speaker toward inanimate. Connects to `AnimacyRank` in `Core.Prominence`.
+   speaker toward inanimate. Connects to `AnimacyRank` in `Features.Prominence`.
 
 4. **The Agreement Hierarchy** (Ch 6, §6.2): for controllers permitting
    alternative agreement, semantic agreement increases monotonically along
@@ -53,9 +53,9 @@ Formalizes the core typological framework from:
 
 namespace Corbett2000
 
--- Number categories, predicates, and UD bridges are in `Core/Number.lean`.
+-- Number categories, predicates, and UD bridges are in `Features/Number.lean`.
 -- We alias `NumberValue` here for backward compatibility within this file.
-open Core.Number
+open Features.Number
 
 abbrev NumberValue := Category
 
@@ -237,7 +237,7 @@ theorem all_unitAug_implies_augmented :
 -- §3: Animacy Hierarchy and Number Marking (Ch 3)
 -- ============================================================================
 
-open Core.Prominence (AnimacyRank)
+open Features.Prominence (AnimacyRank)
 
 /-- Number marking status at a position on the Animacy Hierarchy. -/
 inductive MarkingStatus where
@@ -576,7 +576,7 @@ theorem sg_du_resolves_tri_with_trial :
 -- ============================================================================
 
 /-- Bridge: AnimacyRank monotonicity constraint is consistent with the
-    animacy hierarchy defined in `Core.Prominence`. The ranking used here
+    animacy hierarchy defined in `Features.Prominence`. The ranking used here
     agrees with the ranking there: speaker (8) > ... > nondiscrete (0). -/
 theorem animacy_rank_ordering_consistent :
     AnimacyRank.speaker.toNat > AnimacyRank.human.toNat ∧

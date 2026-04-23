@@ -47,7 +47,7 @@ prominence scales.
 
 -/
 
-namespace Core.Prominence
+namespace Features.Prominence
 
 -- ============================================================================
 -- § 1: Animacy Scale (@cite{aissen-2003}, §2)
@@ -605,4 +605,4 @@ theorem frequency_class_monotone :
     (⟨.third, .third⟩ : Scenario).frequencyClass >
     (⟨.third, .first⟩ : Scenario).frequencyClass := by decide
 
-end Core.Prominence
+end Features.Prominence

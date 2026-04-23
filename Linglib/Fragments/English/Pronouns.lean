@@ -36,7 +36,7 @@ inductive GenderParadigm where
 /-- Coarsening from English gender paradigm to cross-linguistic surface
     gender. Returns `none` for epicene (no single `SurfaceGender` for
     animate-ungendered) and unspecified. -/
-def GenderParadigm.toSurfaceGender : GenderParadigm → Option Core.SurfaceGender
+def GenderParadigm.toSurfaceGender : GenderParadigm → Option Features.SurfaceGender
   | .masculine => some .masculine
   | .feminine  => some .feminine
   | .neuter    => some .neuter

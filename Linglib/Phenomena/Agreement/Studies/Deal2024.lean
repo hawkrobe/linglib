@@ -44,7 +44,7 @@ This study file connects @cite{deal-2024}'s framework to both:
 
 namespace Deal2024
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 open Minimalism (decomposePerson)
 open Minimalism.PConstraint (pccLicit strongGrammar ultraStrongGrammar
   weakGrammar meFirstGrammar)

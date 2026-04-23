@@ -32,7 +32,7 @@ open Phonology.Syllable (SyllWeight)
 
 namespace Kawahara2015
 
-open Core.Prosody
+open Features.Prosody
 open Fragments.Japanese.Prosody
 
 -- ============================================================================

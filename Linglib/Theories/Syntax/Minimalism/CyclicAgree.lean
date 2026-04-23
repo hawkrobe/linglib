@@ -58,7 +58,7 @@ classification predicts which languages show differential P indexing
 
 namespace Minimalism.CyclicAgree
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 open Minimalism (DecomposedPerson decomposePerson)
 
 -- ============================================================================

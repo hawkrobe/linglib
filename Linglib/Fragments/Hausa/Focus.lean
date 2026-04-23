@@ -1,6 +1,6 @@
 import Linglib.Fragments.Hausa.TAM
 import Linglib.Fragments.Hausa.Tone
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 
 /-!
 # Hausa Focus and the Stabilizer *nē/cē* — mathlib-style
@@ -39,7 +39,7 @@ namespace Fragments.Hausa.Focus
 open Fragments.Hausa.Inflection (TAM Mode Subject PAC)
 open Fragments.Hausa.Tone (polarOf)
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Focus Strategy

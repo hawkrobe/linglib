@@ -1,4 +1,4 @@
-import Linglib.Core.Person
+import Linglib.Features.Person
 
 /-!
 # Person Feature Geometry @cite{preminger-2014}
@@ -40,7 +40,7 @@ alignment systems (@cite{pancheva-zubizarreta-2018}, §2.1 (11)).
 
 ## Relationship to Core PersonFeatures
 
-`DecomposedPerson` extends `Core.Person.Features`
+`DecomposedPerson` extends `Features.Person.Features`
 (the framework-neutral [±participant, ±author] decomposition) with
 the Minimalism-specific [±proximate] feature. The two-feature core
 is shared across all theoretical frameworks; `[±proximate]` is
@@ -48,7 +48,7 @@ specific to @cite{pancheva-zubizarreta-2018}'s P-Constraint.
 
 ## Person Type
 
-`decomposePerson` takes `Core.Prominence.PersonLevel` (`.first |
+`decomposePerson` takes `Features.Prominence.PersonLevel` (`.first |
 .second |.third`) — the canonical person type shared across the
 library — rather than a raw `Nat`. This eliminates meaningless
 person values and grounds the decomposition in the same type used
@@ -58,7 +58,7 @@ by `DifferentialIndexing`, `Prominence.PersonLevel.isSAP`, etc.
 
 namespace Minimalism
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 1: Decomposed Person Features
@@ -68,7 +68,7 @@ open Core.Prominence
     geometry, extended with `[±proximate]` from
     @cite{pancheva-zubizarreta-2018}.
 
-    Extends `Core.Person.Features` (the framework-neutral
+    Extends `Features.Person.Features` (the framework-neutral
     [±participant, ±author] core) with the Minimalism-specific
     [±proximate] feature:
 
@@ -85,7 +85,7 @@ open Core.Prominence
     [−participant]. We encode this as `Bool` for computational
     convenience; the well-formedness constraint `wellFormed`
     ensures the privative entailments are maintained. -/
-structure DecomposedPerson extends Core.Person.Features where
+structure DecomposedPerson extends Features.Person.Features where
   /-- Bears [proximate]? SAPs inherently; 3P contextually. -/
   hasProximate : Bool
   deriving DecidableEq, Repr

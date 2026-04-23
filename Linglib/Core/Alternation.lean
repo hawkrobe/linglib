@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.Lexical.DiathesisAlternation
 
 /-!
@@ -44,7 +44,7 @@ verbal morphology). The `marking` field captures this.
 
 namespace Core.Alternation
 
-open Prominence (ArgumentRole)
+open Features.Prominence (ArgumentRole)
 
 -- ════════════════════════════════════════════════════
 -- § 1. TR-Roles (§1.3.3)

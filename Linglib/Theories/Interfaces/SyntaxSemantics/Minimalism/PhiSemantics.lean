@@ -31,9 +31,9 @@ G \ F. This derives marked reference patterns.
 via ∩. This structural difference explains why person/animacy trigger PCC effects
 (they compete for the same D-head position) but number/gender do not.
 
-**Connection to `Core.PrivativePair`**: the containment hierarchy SPEAKER ⊂
+**Connection to `Features.PrivativePair`**: the containment hierarchy SPEAKER ⊂
 PARTICIPANT ⊂ π is the set-theoretic realization of the [+inner] → [+outer]
-constraint in `Core.PrivativePair`. The 3-cell partition (speaker/participant/π)
+constraint in `Features.PrivativePair`. The 3-cell partition (speaker/participant/π)
 corresponds to the three well-formed cells (maximal/intermediate/minimal) of the
 privative pair. See `Harbour2016` for bridge theorems
 connecting the algebraic and syntactic person hierarchies.

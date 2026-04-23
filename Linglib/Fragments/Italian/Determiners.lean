@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Core.Lexical.Word
 
 /-! # Italian Determiners (Quantifiers)
@@ -19,7 +19,7 @@ Italian quantifiers agree in gender and/or number with their NP:
 
 namespace Fragments.Italian.Determiners
 
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Shared Enums
@@ -46,7 +46,7 @@ inductive Strength where
   | strong
   deriving DecidableEq, Repr
 
--- Gender for agreement: uses Core.SurfaceGender.
+-- Gender for agreement: uses Features.SurfaceGender.
 
 -- ============================================================================
 -- § 2: Quantifier Entry

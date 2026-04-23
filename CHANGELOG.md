@@ -4,6 +4,71 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.204] - 2026-04-22
+
+### Restructured — `Features/` slice 2: 7 more taxonomy files moved from `Core/`
+
+Continues the [0.230.203] Features/ extraction. Per-file audit (delegated to
+Explore agent) classified the deferred files into MOVE-FEATURES /
+MOVE-PHENOMENA / STAY-CORE; this slice executes the FEATURES tier, leaving
+the PHENOMENA tier and the STAY-CORE residual for future passes.
+
+**Moved (7 files)**: `Number` (628 LOC), `Person` (381), `Gender` (248),
+`Prominence` (608), `Prosody` (323), `PrivativePair` (222), `VerbCluster`
+(257). All confirmed framework-agnostic feature taxonomies — Harbour-style
+binary phi-feature decompositions, Pierrehumbert-style ToBI prosodic
+hierarchy, Comrie/Cysouw cross-linguistic taxonomies, animacy hierarchies,
+projectivity primitives. None contain empirical data or theory-specific
+formalization.
+
+**Pattern continuation**: same `git mv` + perl-substitution mechanics as
+slice 1 (0.230.203). Two additional patterns this slice surfaced:
+- `open Core (X Y)` and `open Core (X)` patterns referencing moved
+  symbols (~15 sites, mostly `SurfaceGender` in Fragment files +
+  `PhiFeatures PrivativePair` in Phi-feature consumer studies). All
+  swapped whole-line to `open Features (...)`.
+- One mixed-source open in `Steedman2000CrossSerial.lean`
+  (`open Core (FormalLanguageType VerbClusterBinding)` —
+  `FormalLanguageType` stays in `Core/Computability/`, `VerbClusterBinding`
+  moves) split into two separate `open` lines.
+
+**Bare `namespace Core` files** (Gender, PrivativePair, VerbCluster) needed
+the same fix as Polarity in 0.230.203: rename `namespace Core` →
+`namespace Features` (singleton) so that the contained types resolve to
+`Features.SurfaceGender`, `Features.PhiFeatures`, `Features.VerbClusterBinding`,
+etc. Top-level Decl substitution (second-pass perl) caught the
+`Core.SurfaceGender` / `Core.PhiFeatures` / `Core.VerbClusterBinding` /
+`Core.GenderInfo` consumer references that the file-name-based regex had
+missed (which only catches `Core.Number`, `Core.Person`, …).
+
+**Cross-references** between sliced files (Number ↔ PrivativePair, Person
+↔ PrivativePair, Person ↔ Prominence, Gender ↔ PrivativePair) all
+re-resolved cleanly within the same substitution pass.
+
+**Naming collision tolerated**: Gender.lean's `structure Features`
+becomes `Features.Features` after the namespace rename. Lean handles
+the namespace/type homonymy fine; no external consumers used
+`Core.Features` so no consumer-side disambiguation was needed.
+
+**Build status**: 7 failures, all pre-existing or parallel-session-introduced
+(`Core.Typology.LanguageProfile`,
+`Theories.Semantics.Modality.ProbabilityOrdering`,
+`Phenomena.Conditionals.Studies.Stalnaker1981`,
+`Fragments.Singlish.Questions`,
+`Phenomena.Plurals.Studies.Kriz2016` — same 5 as 0.230.203;
+`Phenomena.Modality.Studies.AghaJeretic2022` and
+`Phenomena.Presupposition.Studies.Glass2025` — newly broken by parallel
+work in `Core/Duality.lean` and noncomputable `presupClassIsValid` chain,
+not by this slice).
+
+**Features/ now contains 22 files** (15 + 7). Subsequent slices: the
+MOVE-PHENOMENA tier from the audit (8 files: ExtractionMorphology,
+PolarityPartition, SearchEfficiency, SubjectProperties, VoiceSystem,
+SocialMeaning, Negation, NullSubject directory — each needs per-file
+routing decision about target Phenomena/ subdirectory); subdir-clash
+files (Mood / Modality / Question / Time / Lexical); WALS promotion to
+top-level `Datasets/`.
+
 ## [0.230.203] - 2026-04-22
 
 ### Restructured — established `Linglib/Features/` as the linguistic-primitives top level

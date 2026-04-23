@@ -58,7 +58,7 @@ namespace Phenomena.Relativization.Studies.Scott2021
 
 open Core Fragments.Swahili Fragments.Swahili.Relativization
 open Minimalism (FeatureBundle FeatureVal PhiFeature)
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: DP-Internal Categories

@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 
 /-!
 # Form-Frequency Correspondence @cite{haspelmath-2021}
@@ -30,7 +30,7 @@ indexing exist: they track frequency gradients on the prominence scales.
 
 namespace Core.FormFrequency
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 1: Coding Length

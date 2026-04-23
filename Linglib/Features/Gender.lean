@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.UD
-import Linglib.Core.PrivativePair
+import Linglib.Features.PrivativePair
 
 /-!
 # Surface Gender
@@ -22,7 +22,7 @@ its own fine-grained `Gender` type and provides a bridge to `SurfaceGender`
 via a `.primary` function.
 -/
 
-namespace Core
+namespace Features
 
 /-- Surface gender categories attested cross-linguistically.
 
@@ -136,7 +136,7 @@ def masculineF : Features := ⟨false, false⟩
     The containment [+neuter] → [+feminine] maps to PrivativePair's
     [+inner] → [+outer], unifying the structure with person and number.
     All shared properties are inherited by construction. -/
-instance : Core.PhiFeatures Features where
+instance : Features.PhiFeatures Features where
   toPair f := ⟨f.isFeminine, f.isNeuter⟩
   ofPair p := ⟨p.outer, p.inner⟩
   roundtrip := fun ⟨_, _⟩ => rfl
@@ -153,7 +153,7 @@ theorem no_fourth_gender :
       c.wellFormed = true → d.wellFormed = true →
       a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
   fun a b c d ha hb hc hd =>
-    Core.PhiFeatures.no_four_way a b c d ha hb hc hd
+    Features.PhiFeatures.no_four_way a b c d ha hb hc hd
 
 @[simp] theorem neuter_wellFormed : neuterF.wellFormed = true := rfl
 @[simp] theorem feminine_wellFormed : feminineF.wellFormed = true := rfl
@@ -245,4 +245,4 @@ def GenderInfo.toSurfaceGender : GenderInfo → Option SurfaceGender
 theorem GenderInfo.roundtrip_known (g : SurfaceGender) :
     (SurfaceGender.toGenderInfo g).toSurfaceGender = some g := rfl
 
-end Core
+end Features

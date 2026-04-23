@@ -1,4 +1,4 @@
-import Linglib.Core.Person
+import Linglib.Features.Person
 import Linglib.Fragments.Finnish.Negation
 
 /-!
@@ -38,7 +38,7 @@ sharing a class are homophonous (marked by the same form).
 
 namespace Phenomena.Agreement.Typology
 
-open Core.Person
+open Features.Person
 
 -- ============================================================================
 -- §2: Paradigmatic Structure

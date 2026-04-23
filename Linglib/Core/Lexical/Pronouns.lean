@@ -1,7 +1,7 @@
 import Linglib.Core.Lexical.Word
 import Linglib.Features.Register
-import Linglib.Core.Prominence
-import Linglib.Core.Gender
+import Linglib.Features.Prominence
+import Linglib.Features.Gender
 
 /-!
 # Shared Pronoun and Allocutive Entry Types
@@ -38,7 +38,7 @@ clitics (Galician) that realize speaker-addressee agreement.
 namespace Core.Pronouns
 
 open Features.Register (Level)
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Personal Pronoun Specification
@@ -92,7 +92,7 @@ structure PronounEntry where
       resolved agreement). For ordinary pronouns, leave as `none` —
       referential person coincides with formal person.
       @cite{adamson-zompi-2025} -/
-  referentialPerson : Option Core.Prominence.PersonLevel := none
+  referentialPerson : Option Features.Prominence.PersonLevel := none
   /-- Native script form (hangul, kanji, Devanagari, etc.) -/
   script : Option String := none
   deriving Repr, BEq

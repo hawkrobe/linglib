@@ -170,8 +170,8 @@ def an : QuantifierEntry :=
 
     `numberRestriction := some .du` carries the dual core concept
     (@cite{harbour-2014} `[−atomic, +minimal]`) — the "presupposes
-    exactly 2" meaning is `Core.Number.dualPredOnLattice` of the
-    restrictor (Core/Number.lean § 11). -/
+    exactly 2" meaning is `Features.Number.dualPredOnLattice` of the
+    restrictor (Features/Number.lean § 11). -/
 def both : QuantifierEntry :=
   { form := "both"
   , qforce := .universal
@@ -605,13 +605,13 @@ theorem both_neither_mono_duality :
 
 /-- The lexical entries `both` and `neither` carry `numberRestriction
 := some .du`, which is the Harbour `[−atomic, +minimal]` bundle
-(@cite{harbour-2014}, `Core.Number.dualF`). The cardinality clause
+(@cite{harbour-2014}, `Features.Number.dualF`). The cardinality clause
 `|R| ≥ 2` in `both_sem`/`neither_sem` is the assertional reflex of the
-predicate-modifier denotation `Core.Number.dualPredOnLattice`
+predicate-modifier denotation `Features.Number.dualPredOnLattice`
 (@cite{jeretic-bassi-gonzalez-yatsushiro-meyer-sauerland-2025} eq 39):
 "and has exactly 2 atomic parts". On a powerset lattice over the
 R-extension this is a `latticeToFeatures … = dualF` condition
-(`Core.Number.dualPredOnLattice_eq_via_features`). -/
+(`Features.Number.dualPredOnLattice_eq_via_features`). -/
 theorem both_neither_dual_marked :
     both.numberRestriction = some .du ∧ neither.numberRestriction = some .du :=
   ⟨rfl, rfl⟩

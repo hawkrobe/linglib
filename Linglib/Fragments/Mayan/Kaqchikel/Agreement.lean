@@ -91,7 +91,7 @@ def personNumbers : List PersonNumber :=
 -- ============================================================================
 
 /-- Person value as `PersonLevel` (the canonical person type). -/
-def PersonNumber.person : PersonNumber → Core.Prominence.PersonLevel
+def PersonNumber.person : PersonNumber → Features.Prominence.PersonLevel
   | .p1sg | .p1pl => .first
   | .p2sg | .p2pl => .second
   | .p3sg | .p3pl => .third

@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Fragments.Bantu.Params
 
 /-!
@@ -165,14 +165,14 @@ def animalInClass1 : NPStack where
   status := .interpretable .animal
 
 -- ============================================================================
--- § 6: Bridge to Core.SurfaceGender
+-- § 6: Bridge to Features.SurfaceGender
 -- ============================================================================
 
 /-- Map Xhosa gender classes to the shared surface-level gender type.
     Gender A (cl1/cl2, human) → animate; all others → inanimate.
     Xhosa's finer-grained semantic cores ([animal] for E, [inanimate] for D)
     are captured in `GenderStatus`, not at the SurfaceGender level. -/
-def Gender.toSurfaceGender : Gender → Core.SurfaceGender
+def Gender.toSurfaceGender : Gender → Features.SurfaceGender
   | .genderA => .animate
   | _ => .inanimate
 

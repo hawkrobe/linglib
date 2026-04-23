@@ -5,7 +5,7 @@ A Lean 4 library for formal linguistics, covering semantics, pragmatics,
 and their interfaces. See README.md for documentation links.
 -/
 -- Core
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Core.Lexical.Word
 import Linglib.Core.Lexical.PolarityItem
 import Linglib.Core.Grammar
@@ -199,7 +199,7 @@ import Linglib.Core.Context.Tower
 import Linglib.Core.Context.Shifts
 import Linglib.Core.Context.Rich
 import Linglib.Core.InformationStructure
-import Linglib.Core.Prosody
+import Linglib.Features.Prosody
 import Linglib.Features.Definiteness
 import Linglib.Core.Deixis.Feature
 import Linglib.Core.Nominal.Description
@@ -208,7 +208,7 @@ import Linglib.Core.Nominal.Interpret
 import Linglib.Core.Nominal.ArticleInventory
 import Linglib.Features.IndefiniteType
 import Linglib.Core.SpecificityCondition
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Features.Genericity
 import Linglib.Core.Computability.FormalLanguage
@@ -221,7 +221,7 @@ import Linglib.Core.Computability.Subregular.Piecewise
 import Linglib.Core.Computability.Subregular.Definite
 import Linglib.Core.Computability.Subregular.ForbiddenPairs
 import Linglib.Core.StringHom
-import Linglib.Core.VerbCluster
+import Linglib.Features.VerbCluster
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
 import Linglib.Core.Case.Order
@@ -259,10 +259,10 @@ import Linglib.Core.Continuation
 import Linglib.Core.CylindricAlgebra
 import Linglib.Core.CylindricAlgebra.VarAssignment
 import Linglib.Core.CylindricAlgebra.DynamicSemantics
-import Linglib.Core.PrivativePair
-import Linglib.Core.Person
+import Linglib.Features.PrivativePair
+import Linglib.Features.Person
 import Linglib.Theories.Interfaces.SyntaxSemantics.Minimalism.PhiSemantics
-import Linglib.Core.Number
+import Linglib.Features.Number
 import Linglib.Core.CoreConcept
 import Linglib.Core.Lexical.MorphRule
 import Linglib.Core.Lexical.Binominal

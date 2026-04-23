@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.UD
-import Linglib.Core.PrivativePair
+import Linglib.Features.PrivativePair
 
 /-!
 # Number
@@ -42,7 +42,7 @@ hierarchy, language data) remains in
 
 -/
 
-namespace Core.Number
+namespace Features.Number
 
 -- ============================================================================
 -- § 1: Number Categories
@@ -258,7 +258,7 @@ def Features.fromCategory : Category → Option Features
     The containment [+atomic] → [+minimal] maps to PrivativePair's
     [+inner] → [+outer], unifying the structure with person features.
     All shared properties are inherited by construction. -/
-instance : Core.PhiFeatures Features where
+instance : Features.PhiFeatures Features where
   toPair f := ⟨f.isMinimal, f.isAtomic⟩
   ofPair p := ⟨p.inner, p.outer⟩
   roundtrip := fun ⟨_, _⟩ => rfl
@@ -275,7 +275,7 @@ theorem no_fourth_base_number :
       c.wellFormed = true → d.wellFormed = true →
       a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
   fun a b c d ha hb hc hd =>
-    Core.PhiFeatures.no_four_way a b c d ha hb hc hd
+    Features.PhiFeatures.no_four_way a b c d ha hb hc hd
 
 -- ============================================================================
 -- § 7: Features Verification
@@ -625,4 +625,4 @@ theorem ps3_dual_triple_excluded :
     dualPredOnLattice bitmaskJoin ps3Domain (fun _ => true) 7 = false := by
   decide
 
-end Core.Number
+end Features.Number

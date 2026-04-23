@@ -1,5 +1,5 @@
 import Linglib.Theories.Morphology.DM.Categorizer
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 
 /-!
 # Russian Noun Gender @cite{corbett-1991} @cite{kramer-2020}
@@ -119,7 +119,7 @@ def vrač : RussianNoun :=
     Unlike Set 1 Spanish (plain n → masculine) or Set 2 Maa
     (plain n → feminine), Russian maps plain n to a THIRD gender
     (neuter), yielding 3 surface genders from 5 n-head types. -/
-def surfaceGender (ch : CatHead) : Core.SurfaceGender :=
+def surfaceGender (ch : CatHead) : Features.SurfaceGender :=
   match ch.phi.gender with
   | some gf => if gf.val == ⟨.fem, .pos⟩ then .feminine else .masculine
   | none    => .neuter

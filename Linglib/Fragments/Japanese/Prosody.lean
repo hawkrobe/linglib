@@ -1,4 +1,4 @@
-import Linglib.Core.Prosody
+import Linglib.Features.Prosody
 import Linglib.Theories.Phonology.Prosodic.Accent
 import Linglib.Theories.Phonology.LexicalFrequency.Defs
 import Linglib.Phenomena.Intonation.Studies.BeckmanPierrehumbert1986
@@ -33,7 +33,7 @@ affix typology from @cite{kawahara-2015}.
 
 namespace Fragments.Japanese.Prosody
 
-open Core.Prosody
+open Features.Prosody
 open Phonology.Accent (defaultAccentAAR latinStressRule accentToTones
   LevelTone shortN2CompoundAccent longN2CompoundAccent)
 open Phonology.Syllable (SyllWeight)
@@ -253,7 +253,7 @@ theorem accented_ap :
 structure JSuffixAccent where
   form : String
   gloss : String
-  dominance : Core.Prosody.ProsodicDominance
+  dominance : Features.Prosody.ProsodicDominance
   deriving Repr
 
 /-- *-teki* (的): deaccenting suffix. Removes stem accent regardless

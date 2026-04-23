@@ -1,5 +1,5 @@
 import Linglib.Core.Dependency.Dominance
-import Linglib.Core.VerbCluster
+import Linglib.Features.VerbCluster
 
 /-!
 # Mildly Non-Projective Dependency Structures
@@ -1137,9 +1137,9 @@ theorem german_fully_projective :
     and German nested (projective) patterns. -/
 theorem binding_matches_projectivity :
     isProjective dutchCrossSerial = false ∧
-    Core.VerbClusterBinding.isProjective (Core.VerbClusterBinding.identity 3) = false ∧
+    Features.VerbClusterBinding.isProjective (Features.VerbClusterBinding.identity 3) = false ∧
     isProjective germanNested = true ∧
-    Core.VerbClusterBinding.isProjective (Core.VerbClusterBinding.reverse 3) = true := by
+    Features.VerbClusterBinding.isProjective (Features.VerbClusterBinding.reverse 3) = true := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · native_decide
   · decide

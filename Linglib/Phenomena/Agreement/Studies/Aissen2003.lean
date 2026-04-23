@@ -31,7 +31,7 @@ Connects @cite{just-2024} differential indexing to three existing formalizations
 
 namespace Aissen2003
 
-open Core.Prominence
+open Features.Prominence
 open Phenomena.Agreement.DifferentialIndexing
 open Phenomena.Case.Typology
 open Minimalism

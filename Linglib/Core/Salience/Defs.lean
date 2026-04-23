@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.Discourse.Accessibility
 import Linglib.Core.InformationStructure
 
@@ -36,7 +36,7 @@ set_option autoImplicit false
 
 namespace Core.Salience
 
-open Core.Prominence
+open Features.Prominence
 open Core.Discourse.Accessibility
 open Core.InformationStructure
 

@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Fragments.Bantu.Params
 
 /-!
@@ -137,14 +137,14 @@ def Gender.status : Gender → GenderStatus
   | _ => .uninterpretable
 
 -- ============================================================================
--- § 5: Bridge to Core.SurfaceGender
+-- § 5: Bridge to Features.SurfaceGender
 -- ============================================================================
 
 /-- Map Swahili gender classes to the shared surface-level gender type.
     Gender A (cl1/cl2, human) → animate; all others → inanimate.
     This is the coarsest descriptive mapping — Bantu class distinctions
     within the inanimate domain are not captured at the SurfaceGender level. -/
-def Gender.toSurfaceGender : Gender → Core.SurfaceGender
+def Gender.toSurfaceGender : Gender → Features.SurfaceGender
   | .genderA => .animate
   | _ => .inanimate
 

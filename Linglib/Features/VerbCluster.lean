@@ -22,7 +22,7 @@ Using `Equiv.Perm` (Mathlib) gives bijectivity by construction, `DecidableEq`,
 and group structure. Projectivity is characterized as `Antitone σ`.
 -/
 
-namespace Core
+namespace Features
 
 /-- Verb cluster binding: a permutation on n verb positions.
     `σ i` gives the surface position (among verbs) of the verb that NP_i binds to. -/
@@ -254,4 +254,4 @@ def VerbClusterBinding.pattern {n : Nat} (σ : VerbClusterBinding n) : BindingPa
   else if σ = VerbClusterBinding.reverse n then .nested
   else .other
 
-end Core
+end Features

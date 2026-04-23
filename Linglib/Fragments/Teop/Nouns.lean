@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Theories.Morphology.DM.Categorizer
 
@@ -146,12 +146,12 @@ theorem spleen_unpossessed_article :
     articleForm ⟨bina.gender, false, false⟩ = "o" := rfl
 
 -- ============================================================================
--- § 7: Bridge to Core.SurfaceGender
+-- § 7: Bridge to Features.SurfaceGender
 -- ============================================================================
 
 /-- Map Teop gender classes to the shared surface-level gender type.
     Gender I (animates) → animate; Gender II (inanimates) → inanimate. -/
-def Gender.toSurfaceGender : Gender → Core.SurfaceGender
+def Gender.toSurfaceGender : Gender → Features.SurfaceGender
   | .gI  => .animate
   | .gII => .inanimate
 

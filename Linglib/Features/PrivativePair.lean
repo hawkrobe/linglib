@@ -27,7 +27,7 @@ and number.
 
 -/
 
-namespace Core
+namespace Features
 
 -- ============================================================================
 -- § 1: The Privative Pair
@@ -47,8 +47,8 @@ namespace Core
     violates containment.
 
     Instances:
-    - `Core.Person.Features`: outer = hasParticipant, inner = hasAuthor
-    - `Core.Number.Features`: outer = isMinimal, inner = isAtomic -/
+    - `Features.Person.Features`: outer = hasParticipant, inner = hasAuthor
+    - `Features.Number.Features`: outer = isMinimal, inner = isAtomic -/
 structure PrivativePair where
   /-- The entailed (outer) feature. -/
   outer : Bool
@@ -219,4 +219,4 @@ def specLevel (a : α) : Nat := (toPair a).specLevel
 
 end PhiFeatures
 
-end Core
+end Features

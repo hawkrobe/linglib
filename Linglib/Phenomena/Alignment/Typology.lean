@@ -2,7 +2,7 @@ import Linglib.Core.Lexical.Word
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.FeatureBundle
 import Linglib.Core.Case.Split
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.WALS.Features.F98A
 import Linglib.Core.WALS.Features.F99A
 import Linglib.Core.WALS.Features.F100A
@@ -1004,7 +1004,7 @@ alignment profile above.
 
 section SilversteinSplit
 
-open Core.Prominence (AnimacyLevel)
+open Features.Prominence (AnimacyLevel)
 
 /-- Map the binary Core alignment family to the full alignment type. -/
 private def toAlignmentType : Core.AlignmentFamily → AlignmentType

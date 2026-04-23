@@ -1,8 +1,8 @@
 import Linglib.Core.Mereology
-import Linglib.Core.PrivativePair
-import Linglib.Core.Number
-import Linglib.Core.Person
-import Linglib.Core.Gender
+import Linglib.Features.PrivativePair
+import Linglib.Features.Number
+import Linglib.Features.Person
+import Linglib.Features.Gender
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Phenomena.Plurals.Multiplicity
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
@@ -50,7 +50,7 @@ set_option autoImplicit false
 namespace Sauerland2003
 
 open Mereology (Atom AlgClosure isMaximal CUM cum_maximal_unique algClosure_cum)
-open Core (PrivativePair PhiFeatures)
+open Features (PrivativePair PhiFeatures)
 open Core.Presupposition (PrProp)
 open Core.Constraint.OT (NamedConstraint mkTableau)
 open Semantics.Presupposition.PhiFeatures
@@ -637,20 +637,20 @@ which proves that all three cross-linguistic honorific strategies
     three cross-linguistic politeness strategies. -/
 theorem politeness_uses_unmarked :
     -- Plural (number)
-    isSemanticUnmarked (PhiFeatures.toPair Core.Number.pluralF) = true ∧
+    isSemanticUnmarked (PhiFeatures.toPair Features.Number.pluralF) = true ∧
     -- 3rd person
-    isSemanticUnmarked (PhiFeatures.toPair Core.Person.third) = true ∧
+    isSemanticUnmarked (PhiFeatures.toPair Features.Person.third) = true ∧
     -- Masculine (gender)
-    isSemanticUnmarked (PhiFeatures.toPair Core.Gender.masculineF) = true :=
+    isSemanticUnmarked (PhiFeatures.toPair Features.Gender.masculineF) = true :=
   ⟨rfl, rfl, rfl⟩
 
 /-- The three semantically marked phi-values are NOT used for
     politeness — their presuppositions would impose unwanted
     restrictions on the addressee. -/
 theorem marked_not_polite :
-    isSemanticMarked (PhiFeatures.toPair Core.Number.singularF) = true ∧
-    isSemanticMarked (PhiFeatures.toPair Core.Person.first) = true ∧
-    isSemanticMarked (PhiFeatures.toPair Core.Gender.neuterF) = true :=
+    isSemanticMarked (PhiFeatures.toPair Features.Number.singularF) = true ∧
+    isSemanticMarked (PhiFeatures.toPair Features.Person.first) = true ∧
+    isSemanticMarked (PhiFeatures.toPair Features.Gender.neuterF) = true :=
   ⟨rfl, rfl, rfl⟩
 
 end Sauerland2003

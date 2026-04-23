@@ -1,5 +1,5 @@
-import Linglib.Core.Person
-import Linglib.Core.Gender
+import Linglib.Features.Person
+import Linglib.Features.Gender
 
 /-!
 # Hausa TAM and the Person-Aspect-Complex (PAC) — mathlib-style
@@ -45,8 +45,8 @@ that pattern).
 
 namespace Fragments.Hausa.Inflection
 
-open Core.Person
-open Core (SurfaceGender)
+open Features.Person
+open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: TAM Inventory (@cite{newman-2000} ch. 70)
@@ -99,7 +99,7 @@ inductive Mode where
 
 /-- The subject slot of the PAC. Hausa makes a 2sg / 3sg gender
     distinction (M vs F), absent in the plural and 1st person.
-    We use `Core.Person.Category` for the singular/group cut and add
+    We use `Features.Person.Category` for the singular/group cut and add
     a `gender` field that is empty (`none`) outside the 2sg/3sg cells. -/
 structure Subject where
   person : Category

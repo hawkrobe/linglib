@@ -5,7 +5,7 @@ import Linglib.Fragments.Italian.Pronouns
 import Linglib.Fragments.Spanish.Pronouns
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.German.Pronouns
-import Linglib.Core.Person
+import Linglib.Features.Person
 import Linglib.Phenomena.Agreement.Studies.Deal2024
 
 /-!
@@ -53,7 +53,7 @@ not addressee reference per se.
 
 namespace AdamsonZompi2025
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 open Minimalism (DecomposedPerson decomposePerson)
 open Minimalism.PConstraint (PCCGrammar pccLicit weakGrammar strongGrammar
   isInherentlyProximate)
@@ -680,7 +680,7 @@ theorem all_fragments_grounded :
 -- § 16: Person Category Bridge — Unifying Person Decompositions
 -- ============================================================================
 
-open Core.Person in
+open Features.Person in
 /-- The [±participant] decomposition in `Core/Person/Category.lean`
     (operating on `Category`) is the same decomposition as
     `PersonGeometry.decomposePerson` (operating on `PersonLevel`).

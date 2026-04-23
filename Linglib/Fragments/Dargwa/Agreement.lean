@@ -1,6 +1,6 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 
 /-!
 # Dargwa (Tanti) Agreement @cite{sumbatova-2021}
@@ -37,7 +37,7 @@ tense (*=de*), creating a homophony that is typologically unusual.
 
 namespace Fragments.Dargwa.Agreement
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Gender System
@@ -58,7 +58,7 @@ inductive PlGender where
   deriving DecidableEq, Repr
 
 /-- Bridge to cross-linguistic surface gender. -/
-def SgGender.toSurfaceGender : SgGender → Core.SurfaceGender
+def SgGender.toSurfaceGender : SgGender → Features.SurfaceGender
   | .masculine => .masculine
   | .feminine  => .feminine
   | .neuter    => .neuter
@@ -231,7 +231,7 @@ theorem both_sap_absolutive_wins :
 
 /-- The "SAP wins" rule directly reflects the person prominence hierarchy:
     SAP (1st/2nd) > 3rd. This is the same hierarchy formalized in
-    `Core.Prominence.PersonLevel`. -/
+    `Features.Prominence.PersonLevel`. -/
 theorem sap_hierarchy_from_prominence :
     PersonLevel.first.isSAP = true ∧
     PersonLevel.second.isSAP = true ∧

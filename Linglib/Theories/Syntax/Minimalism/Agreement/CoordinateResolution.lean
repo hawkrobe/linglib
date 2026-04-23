@@ -1,5 +1,5 @@
-import Linglib.Core.Number
-import Linglib.Core.Prominence
+import Linglib.Features.Number
+import Linglib.Features.Prominence
 import Linglib.Theories.Syntax.Minimalism.Agreement.GenderResolution
 import Linglib.Theories.Syntax.Minimalism.Agreement.FeatureRecursion
 
@@ -59,8 +59,8 @@ open Minimalism.Agreement.GenderResolution (AnnotatedFeature)
 
 namespace Minimalism.Agreement.CoordinateResolution
 
-open Core.Number (Category)
-open Core.Prominence (PersonLevel)
+open Features.Number (Category)
+open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Resolution Operations
@@ -193,28 +193,28 @@ def numberResolveConfig (c : FeatureRecursion.HarbourConfig)
     powerset lattice. Atoms: {a}=1, {b}=2, {c}=4. Pairs: {a,b}=3,
     {a,c}=5, {b,c}=6. Triple: {a,b,c}=7. Join = bitwise OR.
 
-    `Core.Number.latticeToFeatures` classifies elements by lattice
+    `Features.Number.latticeToFeatures` classifies elements by lattice
     position: atoms → singular, minimal non-atoms → dual, non-minimal
     non-atoms → plural. -/
 
-open Core.Number (bitmaskJoin ps3Domain) in
+open Features.Number (bitmaskJoin ps3Domain) in
 
 /-- Atom 1 ⊔ Atom 2 = 3, which is dual (minimal non-atom).
     Lattice grounding: `canonicalResolve sg sg = du`. -/
 theorem lattice_atom_join_dual :
-    Core.Number.latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 1 2) =
-      Core.Number.dualF := by native_decide
+    Features.Number.latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 1 2) =
+      Features.Number.dualF := by native_decide
 
-open Core.Number (bitmaskJoin ps3Domain) in
+open Features.Number (bitmaskJoin ps3Domain) in
 
 /-- Atom 4 ⊔ Pair 3 = 7, which is plural (non-minimal non-atom).
     Lattice grounding: `canonicalResolve sg du = trial` (plural in
     base system, trial with recursion). -/
 theorem lattice_atom_pair_plural :
-    Core.Number.latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 4 3) =
-      Core.Number.pluralF := by native_decide
+    Features.Number.latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 4 3) =
+      Features.Number.pluralF := by native_decide
 
-open Core.Number (bitmaskJoin ps3Domain) in
+open Features.Number (bitmaskJoin ps3Domain) in
 
 /-- The derived `canonicalResolve` agrees with the powerset lattice:
     join in the concrete lattice, then classify via `latticeToFeatures`,
@@ -227,12 +227,12 @@ open Core.Number (bitmaskJoin ps3Domain) in
     pushed through `latticeToFeatures`, not a stipulation. -/
 theorem lattice_grounding_agrees :
     -- sg ⊔ sg → du: atom(1) ⊔ atom(2) = pair(3), classified as dual
-    Core.Number.latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 1 2)
-      = Core.Number.dualF ∧
+    Features.Number.latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 1 2)
+      = Features.Number.dualF ∧
     -- sg ⊔ du → trial/plural: atom(4) ⊔ pair(3) = triple(7), classified as plural
     -- (plural in the base 3-atom lattice; trial under Harbour's recursion)
-    Core.Number.latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 4 3)
-      = Core.Number.pluralF := by
+    Features.Number.latticeToFeatures bitmaskJoin ps3Domain (bitmaskJoin 4 3)
+      = Features.Number.pluralF := by
   native_decide
 
 -- § 2c: System-Dependent Predictions

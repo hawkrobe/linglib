@@ -1,5 +1,5 @@
 import Linglib.Theories.Phonology.Prosodic.Syllable.Foot
-import Linglib.Core.Prosody
+import Linglib.Features.Prosody
 
 /-!
 # Prosodic Word (PrWd)
@@ -36,7 +36,7 @@ effects, and obligatory vs optional hiatus resolution
 
 ## Connection to Linglib
 
-`Core.Prosody` defines the prosodic hierarchy levels (σ, f, ω, φ, ι)
+`Features.Prosody` defines the prosodic hierarchy levels (σ, f, ω, φ, ι)
 and intonational structure. This module provides the *internal
 structure* of the prosodic word: syllable constituency, weight
 profiles, minimal word constraints, and the morphosyntax-prosody

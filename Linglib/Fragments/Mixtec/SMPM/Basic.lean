@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Core.Lexical.Word
 
 /-!
@@ -68,7 +68,7 @@ inductive Gender where
     Only fem/masc map directly; the remaining four genders
     (neutral, liquid, wooden, animal) are language-specific
     noun class distinctions without cross-linguistic surface equivalents. -/
-def Gender.toSurfaceGender : Gender → Core.SurfaceGender
+def Gender.toSurfaceGender : Gender → Features.SurfaceGender
   | .fem  => .feminine
   | .masc => .masculine
   | _     => .common  -- neutral/liq/wd/aml: no sex-based distinction

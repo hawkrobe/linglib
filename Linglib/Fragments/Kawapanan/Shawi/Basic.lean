@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Case.Hierarchy
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 
 /-!
 # Shawi Agreement Fragment @cite{clem-deal-2024}
@@ -38,7 +38,7 @@ of ergative distribution to a particular Agree configuration — lives in
 
 namespace Fragments.Kawapanan.Shawi
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 
 -- ============================================================================
 -- § 1: Number system

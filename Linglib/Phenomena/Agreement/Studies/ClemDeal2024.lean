@@ -45,7 +45,7 @@ machinery as a separate follow-up.
 
 namespace Phenomena.Agreement.Studies.ClemDeal2024
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 open Deal2024 (DealGrammar isLicit strictlyDescending dpBears
   sd_off_diagonal_iff_outranks)
 open Fragments.Kawapanan.Shawi (ObjectPosition ObjectSyntax Phi mustBeHigh

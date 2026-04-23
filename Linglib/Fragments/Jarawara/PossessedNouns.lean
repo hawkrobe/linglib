@@ -1,7 +1,7 @@
 import Linglib.Theories.Morphology.DM.NominalStructure
 import Linglib.Phenomena.Possession.Typology
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 
 /-!
 # Jarawara Possessed Nouns @cite{adamson-2024} @cite{dixon-2004}
@@ -149,7 +149,7 @@ inductive Person where | first | second | third deriving DecidableEq, Repr
 inductive PossGender where | masc | fem deriving DecidableEq, Repr
 
 /-- Bridge to cross-linguistic surface gender. -/
-def PossGender.toSurfaceGender : PossGender → Core.SurfaceGender
+def PossGender.toSurfaceGender : PossGender → Features.SurfaceGender
   | .masc => .masculine
   | .fem  => .feminine
 

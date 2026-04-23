@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 
 /-!
 # Referential Form in Production
@@ -29,7 +29,7 @@ set_option autoImplicit false
 
 namespace Core.Discourse.Accessibility
 
-open Core.Prominence
+open Features.Prominence
 
 -- ════════════════════════════════════════════════════
 -- § 1. Accessibility Marking Scale

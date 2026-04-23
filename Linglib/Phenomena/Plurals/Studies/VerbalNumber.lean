@@ -1,4 +1,4 @@
-import Linglib.Core.Number
+import Linglib.Features.Number
 import Linglib.Core.WALS.Features.F80A
 
 /-!
@@ -26,7 +26,7 @@ languages. 159 have no verbal number; 34 have singular-plural pairs
 
 namespace VerbalNumber
 
-open Core.Number (Category)
+open Features.Number (Category)
 
 -- ============================================================================
 -- § 1: Verbal Number Types

@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Theories.Morphology.DM.Categorizer
 
 /-!
@@ -22,7 +22,7 @@ follows from the feature on n, not from a phonological rule.
 namespace Fragments.German.Gender
 
 open Morphology.DM (CatHead)
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Derivational Suffixes as n Heads

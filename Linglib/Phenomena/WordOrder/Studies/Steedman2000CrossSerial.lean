@@ -19,7 +19,8 @@ namespace Steedman2000CrossSerial
 open CCG
 open CCG.CrossSerial
 open Phenomena.WordOrder.CrossSerial
-open Core (FormalLanguageType VerbClusterBinding)
+open Core (FormalLanguageType)
+open Features (VerbClusterBinding)
 
 /--
 A CCG derivation annotated with which NP binds to which verb.

@@ -1,5 +1,5 @@
-import Linglib.Core.PrivativePair
-import Linglib.Core.Prominence
+import Linglib.Features.PrivativePair
+import Linglib.Features.Prominence
 
 /-!
 # Bantu Language Family: Shared Parameters
@@ -85,15 +85,15 @@ theorem exactly_three :
     structure as person features (outer = [±participant], inner = [±author]),
     confirming @cite{hammerly-2023}'s claim that person and animacy features
     share a common containment architecture. -/
-instance : Core.PhiFeatures AnimacyFeatures where
+instance : Features.PhiFeatures AnimacyFeatures where
   toPair af := ⟨af.isAnimate, af.isHuman⟩
   ofPair p := ⟨p.outer, p.inner⟩
   roundtrip := fun ⟨_, _⟩ => rfl
 
-/-- Bridge to `Core.Prominence.AnimacyLevel`: the three well-formed
+/-- Bridge to `Features.Prominence.AnimacyLevel`: the three well-formed
     feature bundles map to the three animacy levels used throughout the
     codebase for differential argument marking, agreement hierarchies, etc. -/
-def toAnimacyLevel : AnimacyFeatures → Core.Prominence.AnimacyLevel
+def toAnimacyLevel : AnimacyFeatures → Features.Prominence.AnimacyLevel
   | ⟨_, true⟩  => .human
   | ⟨true, false⟩ => .animate
   | ⟨false, false⟩ => .inanimate

@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.NounCategorization
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Phenomena.Classifiers.Typology
 
 /-!
@@ -43,7 +43,7 @@ amplification (@cite{griffiths-kalish-2007}, @cite{kirby-et-al-2007},
 The typological observation (§1) connects to existing `NounCategorization`
 infrastructure. Predictive power is formalized via Table 6's conditional
 entropy data from the experimental stimuli. The connection to
-`Core.Prominence.AnimacyLevel` — the Silverstein hierarchy —
+`Features.Prominence.AnimacyLevel` — the Silverstein hierarchy —
 makes explicit that animacy's grammatical privilege spans both case marking
 and noun classification.
 
@@ -314,12 +314,12 @@ theorem exp3b_no_animacy_advantage :
     exp3b_colourBasis_x1000 ≥ exp3b_animacyBasis_x1000 := by decide
 
 -- ============================================================================
--- §8: Connection to Silverstein Hierarchy (Core.Prominence)
+-- §8: Connection to Silverstein Hierarchy (Features.Prominence)
 -- ============================================================================
 
 /-- The animacy hierarchy that governs noun classification
     (@cite{aikhenvald-2000}, @cite{silverstein-1976}) is the same hierarchy
-    that governs differential argument marking (`Core.Prominence`).
+    that governs differential argument marking (`Features.Prominence`).
 
     @cite{prasertsom-smith-culbertson-2026} provide a domain-general
     explanation for WHY animacy is grammatically privileged in both domains:
@@ -331,10 +331,10 @@ theorem exp3b_no_animacy_advantage :
     `SemanticParameter.animacy` / `.humanness` distinction. -/
 theorem prominence_encodes_categorization_parameters :
     -- The prominence hierarchy distinguishes human vs animate vs inanimate
-    Core.Prominence.AnimacyLevel.human.rank >
-    Core.Prominence.AnimacyLevel.animate.rank ∧
-    Core.Prominence.AnimacyLevel.animate.rank >
-    Core.Prominence.AnimacyLevel.inanimate.rank ∧
+    Features.Prominence.AnimacyLevel.human.rank >
+    Features.Prominence.AnimacyLevel.animate.rank ∧
+    Features.Prominence.AnimacyLevel.animate.rank >
+    Features.Prominence.AnimacyLevel.inanimate.rank ∧
     -- These correspond to the top two semantic parameters in noun categorization
     isAttestedInTypology .animacy = true ∧
     isAttestedInTypology .humanness = true := by

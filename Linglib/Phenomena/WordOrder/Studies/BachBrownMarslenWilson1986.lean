@@ -57,8 +57,8 @@ against push-down-store models of human parsing (@cite{evers-1975}).
 
 namespace BachBrownMarslenWilson1986
 
-open Core (VerbClusterBinding)
-open Core.VerbClusterBinding (identity reverse unintegratedCount npVerbDist
+open Features (VerbClusterBinding)
+open Features.VerbClusterBinding (identity reverse unintegratedCount npVerbDist
   identity_unintegratedCount reverse_unintegratedCount)
 open Phenomena.WordOrder.CrossSerial (crossSerialRequires nestedRequires)
 

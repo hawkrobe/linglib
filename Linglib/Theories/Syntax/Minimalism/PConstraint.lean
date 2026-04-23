@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Theories.Syntax.Minimalism.PersonGeometry
 
 /-!
@@ -42,7 +42,7 @@ features with no contextual variant.
 
 namespace Minimalism.PConstraint
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 open Minimalism (DecomposedPerson decomposePerson)
 
 -- ============================================================================

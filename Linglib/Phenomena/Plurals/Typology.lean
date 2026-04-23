@@ -1,5 +1,5 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.WALS.Features.F33A
 import Linglib.Core.WALS.Features.F34A
 import Linglib.Core.WALS.Features.F35A
@@ -595,7 +595,7 @@ theorem all_sample_pronouns_distinguish_number :
     allLanguages.all (·.pronounsDistinguishNumber) = true := by
   native_decide
 
-open Core.Prominence (AnimacyRank)
+open Features.Prominence (AnimacyRank)
 
 -- ============================================================================
 -- WALS Converter Functions

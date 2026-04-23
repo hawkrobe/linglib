@@ -428,7 +428,7 @@ theorem culminativity_parallel_but_distinct :
   decide
 
 /-- Culminativity (distributional: at most one X per domain) is orthogonal
-    to prosodic dominance (`Core.Prosody.ProsodicDominance`, interactional:
+    to prosodic dominance (`Features.Prosody.ProsodicDominance`, interactional:
     does a morpheme override the prosodic specification of its base?).
 
     A system can be culminative — at most one accent per prosodic word —

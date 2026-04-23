@@ -1,4 +1,4 @@
-import Linglib.Core.Prosody
+import Linglib.Features.Prosody
 import Linglib.Theories.Phonology.Autosegmental.RegisterTier
 import Linglib.Theories.Syntax.CCG.Intonation
 import Linglib.Theories.Semantics.Focus.KratzerSelkirk2020
@@ -44,7 +44,7 @@ across phrases.
 
 namespace BeckmanPierrehumbert1986
 
-open Core.Prosody
+open Features.Prosody
 open Phonology.Autosegmental.RegisterTier
 
 -- ============================================================================

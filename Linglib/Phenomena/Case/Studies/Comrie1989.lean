@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.Relativization.Hierarchy
 import Linglib.Core.SubjectProperties
 import Linglib.Theories.Semantics.Causation.Morphological
@@ -24,7 +24,7 @@ grammatical domains:
 
 - **Case marking** (Ch 6): Differential Object Marking driven by
   animacy/definiteness (@cite{aissen-2003} in `Case.Studies.Aissen2003`).
-  `Core.Prominence.AnimacyLevel` is the shared type.
+  `Features.Prominence.AnimacyLevel` is the shared type.
 - **Alignment** (Ch 5–6): Split ergativity conditioned by
   @cite{silverstein-1976}'s hierarchy (`Alignment.Typology`).
   Same `AnimacyLevel` type governs the split threshold.
@@ -37,7 +37,7 @@ grammatical domains:
   directness (`Theories.Semantics.Causation.Morphological`); causee
   marking follows the GR hierarchy (`CauseeSlot`).
 
-The shared infrastructure in `Core.Prominence` ensures the animacy
+The shared infrastructure in `Features.Prominence` ensures the animacy
 connection is structural — by construction, not by theorem. The GR
 hierarchy parallel between the AH and causee demotion is proved below.
 
@@ -68,7 +68,7 @@ namespace Comrie1989
 
 /-! ### Cross-domain unity of the animacy hierarchy
 
-The `AnimacyLevel` type in `Core.Prominence` is imported by both
+The `AnimacyLevel` type in `Features.Prominence` is imported by both
 `Phenomena.Alignment.Typology` (Silverstein's split ergativity) and
 `Aissen2003` (DOM via OT). This is structural
 grounding: the same 3-level hierarchy (human > animate > inanimate)
@@ -76,10 +76,10 @@ governs both phenomena, with no possibility of drift between separate
 definitions.
 
 The same pattern holds for `DefinitenessLevel` and `PersonLevel` — all
-three prominence scales are defined once in `Core.Prominence` and
+three prominence scales are defined once in `Features.Prominence` and
 imported by every downstream module. -/
 
-open Core.Prominence (AnimacyLevel ArgumentRole)
+open Features.Prominence (AnimacyLevel ArgumentRole)
 open Phenomena.Alignment.Typology (AlignmentType)
 open Core.SubjectProperties
 
@@ -111,7 +111,7 @@ theorem neutral_marks_neither :
 /-- The directionality of differential marking follows from alignment:
     accusative systems differentially mark the low-default role (P),
     ergative systems differentially mark the high-default role (A).
-    This mirrors the polarity of marking in `Core.Prominence`:
+    This mirrors the polarity of marking in `Features.Prominence`:
     P is lowDefault, A is highDefault. -/
 theorem marking_polarity_matches_alignment :
     ArgumentRole.P.lowDefault = true ∧
@@ -418,9 +418,9 @@ argument available for prominence-sensitive marking.
 The critical structural point: the **same** prominence hierarchies
 (`AnimacyLevel`, `DefinitenessLevel`) that condition split ergativity
 (@cite{silverstein-1976}) also condition DOM (@cite{aissen-2003}). This
-connection is built in by construction — both import `Core.Prominence`. -/
+connection is built in by construction — both import `Features.Prominence`. -/
 
-open Core.Prominence (DefinitenessLevel)
+open Features.Prominence (DefinitenessLevel)
 open Phenomena.Case.Typology
   (DOMProfile spanishDOM russianDOM turkishDOM hindiDOM noDOMProfile)
 open Phenomena.Alignment.Typology (russian turkish dyirbalSplit)

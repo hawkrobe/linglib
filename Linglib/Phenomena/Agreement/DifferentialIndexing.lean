@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 
 /-!
 # Differential Indexing Typology @cite{just-2024}
@@ -40,7 +40,7 @@ marking targets departures from these defaults.
 
 namespace Phenomena.Agreement.DifferentialIndexing
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 1: Person Prominence Scale
@@ -52,7 +52,7 @@ open Core.Prominence
     participants (SAP: 1st/2nd person) and non-participants (3rd person).
     This mirrors @cite{preminger-2014}'s [±participant] feature decomposition.
 
-    This is coarser than `Core.Prominence.PersonLevel` (1st > 2nd > 3rd),
+    This is coarser than `Features.Prominence.PersonLevel` (1st > 2nd > 3rd),
     which is needed for scenario splits. The binary split suffices for
     indexing because indexing does not distinguish 1st from 2nd. -/
 inductive IndexingPersonLevel where

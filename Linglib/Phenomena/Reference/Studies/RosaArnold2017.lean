@@ -66,7 +66,7 @@ namespace RosaArnold2017
 
 open Core.Discourse.Coherence
 open Core.Discourse.Accessibility
-open Core.Prominence
+open Features.Prominence
 
 -- ════════════════════════════════════════════════════
 -- § 1. Experimental Design

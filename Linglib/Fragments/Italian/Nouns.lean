@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Core.Lexical.Word
 import Linglib.Theories.Semantics.Noun.Kind.Chierchia1998
 
@@ -26,7 +26,7 @@ indefinite plural — Italian has no bare plural arguments.
 namespace Fragments.Italian.Nouns
 
 open Semantics.Noun.Kind.Chierchia1998 (BlockingPrinciple NominalMapping)
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 2: Noun Entry

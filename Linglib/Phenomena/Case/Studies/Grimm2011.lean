@@ -38,7 +38,7 @@ namespace Grimm2011
 
 open Semantics.Verb.AgentivityLattice
 open Semantics.Verb.EntailmentProfile
-open Core.Prominence
+open Features.Prominence
 open Phenomena.Case.Typology
 
 -- ════════════════════════════════════════════════════

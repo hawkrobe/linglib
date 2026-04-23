@@ -22,7 +22,7 @@ see `Voice.lean` and `Fragments.Mayan.Mam.Agreement`.
 
 namespace Minimalism
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 1: Case Assignment Bundles (Agree-based)

@@ -1,4 +1,4 @@
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Core.FormFrequency
 import Linglib.Core.InformationStructure
 import Linglib.Phenomena.Case.Studies.Aissen2003
@@ -62,7 +62,7 @@ alternation) are noted but require additional infrastructure.
 
 namespace Haspelmath2021
 
-open Core.Prominence
+open Features.Prominence
 open Core.FormFrequency
 open Core.Constraint.Evaluation
 open Aissen2003

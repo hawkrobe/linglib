@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Phenomena.Gender.Typology
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Fragments.Spanish.Gender
@@ -880,7 +880,7 @@ In Set 2 languages (Maa, Wari'), the same logic yields feminine as default:
 
 The polarity of the u-feature determines which gender is arbitrary vs default. -/
 
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 -- Set 1 (Spanish) derivation chain — uses DM bridge (CatHead.surfaceGenderSet1)
 

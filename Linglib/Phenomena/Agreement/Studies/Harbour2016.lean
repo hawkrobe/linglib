@@ -1,5 +1,5 @@
-import Linglib.Core.Person
-import Linglib.Core.Number
+import Linglib.Features.Person
+import Linglib.Features.Number
 import Linglib.Theories.Syntax.Minimalism.CyclicAgree
 import Linglib.Theories.Syntax.Minimalism.Agreement.FeatureRecursion
 import Linglib.Phenomena.Agreement.Studies.Corbett2000
@@ -19,7 +19,7 @@ Person categories are not primitives — they are **derived** from two privative
 features [±author] and [±participant] operating on **sets** of discourse
 participants. These features have the containment relation [+author] ⊂
 [+participant] (an author is necessarily a participant), making them an instance
-of the `Core.PrivativePair` abstraction.
+of the `Features.PrivativePair` abstraction.
 
 The key insight: features evaluate over groups (non-empty sets of individuals),
 not just atomic referents. A group is [+author] iff it **contains** the speaker;
@@ -51,9 +51,9 @@ not just atomic referents. A group is [+author] iff it **contains** the speaker;
 
 namespace Harbour2016
 
-open Core.Person
-open Core.Number (singularF dualF pluralF)
-open Core (PhiFeatures PrivativePair)
+open Features.Person
+open Features.Number (singularF dualF pluralF)
+open Features (PhiFeatures PrivativePair)
 
 -- ============================================================================
 -- § 1: Clusivity
@@ -136,11 +136,11 @@ theorem DiscourseGroup.wellFormed (g : DiscourseGroup) :
   simp [toPrivativePair, participant, author, PrivativePair.wellFormed]
   cases g.hasSpeaker <;> simp
 
-/-- Group-level person features agree with Core.Person.Features
+/-- Group-level person features agree with Features.Person.Features
     on the atomic (singular) cases. -/
 theorem DiscourseGroup.agrees_with_core (g : DiscourseGroup) :
     g.toPrivativePair =
-      PhiFeatures.toPair (Core.Person.Features.mk g.participant g.author) := by
+      PhiFeatures.toPair (Features.Person.Features.mk g.participant g.author) := by
   rfl
 
 -- ============================================================================
@@ -219,15 +219,15 @@ theorem group_features_match_category :
 
     And so on for intermediate (2nd/dual) and minimal (3rd/plural). -/
 theorem person_number_isomorphism :
-    PhiFeatures.toPair singularF = PhiFeatures.toPair Core.Person.first ∧
-    PhiFeatures.toPair dualF = PhiFeatures.toPair Core.Person.second ∧
-    PhiFeatures.toPair pluralF = PhiFeatures.toPair Core.Person.third := ⟨rfl, rfl, rfl⟩
+    PhiFeatures.toPair singularF = PhiFeatures.toPair Features.Person.first ∧
+    PhiFeatures.toPair dualF = PhiFeatures.toPair Features.Person.second ∧
+    PhiFeatures.toPair pluralF = PhiFeatures.toPair Features.Person.third := ⟨rfl, rfl, rfl⟩
 
 /-- The isomorphism factors through PrivativePair's canonical cells. -/
 theorem person_number_via_cells :
-    PhiFeatures.toPair Core.Person.first = .maximal ∧
-    PhiFeatures.toPair Core.Person.second = .intermediate ∧
-    PhiFeatures.toPair Core.Person.third = .minimal ∧
+    PhiFeatures.toPair Features.Person.first = .maximal ∧
+    PhiFeatures.toPair Features.Person.second = .intermediate ∧
+    PhiFeatures.toPair Features.Person.third = .minimal ∧
     PhiFeatures.toPair singularF = .maximal ∧
     PhiFeatures.toPair dualF = .intermediate ∧
     PhiFeatures.toPair pluralF = .minimal := ⟨rfl, rfl, rfl, rfl, rfl, rfl⟩
@@ -272,17 +272,17 @@ theorem clusivity_matches_category :
 -- § 8: Impossibility Results
 -- ============================================================================
 
-/-- **No 4-way singular person.** (Immediate from `Core.Person.no_fourth_person`.)
+/-- **No 4-way singular person.** (Immediate from `Features.Person.no_fourth_person`.)
 
     Since singular categories are atomic discourse groups, and person
     features on atomic groups reduce to individual-level features,
     the 3-cell PrivativePair limit applies directly (Ch 4). -/
 theorem no_four_singular_persons :
-    ∀ (a b c d : Core.Person.Features),
+    ∀ (a b c d : Features.Person.Features),
       a.wellFormed = true → b.wellFormed = true →
       c.wellFormed = true → d.wellFormed = true →
       a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
-  Core.Person.no_fourth_person
+  Features.Person.no_fourth_person
 
 /-- **No exclusive without inclusive** (system-level).
 
@@ -313,10 +313,10 @@ theorem no_exclusive_without_inclusive :
     used in @cite{bejar-rezac-2009}'s Cyclic Agree and
     @cite{preminger-2014}'s relativized probing. -/
 theorem person_hierarchy_is_spec_ordering :
-    PhiFeatures.specLevel Core.Person.first >
-      PhiFeatures.specLevel Core.Person.second ∧
-    PhiFeatures.specLevel Core.Person.second >
-      PhiFeatures.specLevel Core.Person.third := ⟨by decide, by decide⟩
+    PhiFeatures.specLevel Features.Person.first >
+      PhiFeatures.specLevel Features.Person.second ∧
+    PhiFeatures.specLevel Features.Person.second >
+      PhiFeatures.specLevel Features.Person.third := ⟨by decide, by decide⟩
 
 /-- The number hierarchy sg > du > pl is the same specification ordering. -/
 theorem number_hierarchy_is_spec_ordering :
@@ -330,7 +330,7 @@ theorem number_hierarchy_is_spec_ordering :
 -- ============================================================================
 
 open Minimalism.CyclicAgree (personSpec)
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 
 /-- The person hierarchy from `PrivativePair.specLevel` agrees with the
     segment count hierarchy from @cite{bejar-rezac-2009}'s Cyclic Agree.

@@ -20,7 +20,7 @@ within nP can condition gender; features outside nP cannot.
 namespace Fragments.Italian.NumberGender
 
 open Morphology.DM
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Plural Classes

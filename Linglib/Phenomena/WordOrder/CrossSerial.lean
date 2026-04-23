@@ -1,4 +1,4 @@
-import Linglib.Core.VerbCluster
+import Linglib.Features.VerbCluster
 import Linglib.Core.Computability.FormalLanguage
 
 /-!
@@ -54,7 +54,7 @@ is purely formal and irrefutable.
 
 namespace Phenomena.WordOrder.CrossSerial
 
-open Core (VerbClusterBinding BindingPattern)
+open Features (VerbClusterBinding BindingPattern)
 
 -- Dutch Examples (@cite{bresnan-etal-1982}, @cite{steedman-2000})
 

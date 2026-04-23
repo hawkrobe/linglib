@@ -1,6 +1,6 @@
 import Linglib.Core.Case.Basic
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 
 /-!
 # Feature Infrastructure for Minimalist Agree
@@ -27,12 +27,12 @@ host category: person on N is +Interpretable, person on T is
 
 ## Design Decision: `PersonLevel` replaces `Nat`
 
-`PhiFeature.person` uses `Core.Prominence.PersonLevel` (`.first |.second
+`PhiFeature.person` uses `Features.Prominence.PersonLevel` (`.first |.second
 |.third`) rather than a raw `Nat`. This eliminates the possibility of
 meaningless person values (e.g., `person 47`) and grounds the feature
 inventory in the same canonical type used across the library:
 
-- `Core.Prominence.PersonLevel` — framework-agnostic person hierarchy
+- `Features.Prominence.PersonLevel` — framework-agnostic person hierarchy
 - `PersonGeometry.DecomposedPerson` — @cite{preminger-2014}'s [±participant,
   ±author] decomposition, now mapping from `PersonLevel`
 - `DifferentialIndexing.IndexingPersonLevel` — @cite{just-2024}'s SAP/3rd
@@ -48,7 +48,7 @@ for probes.
 
 namespace Minimalism
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 1: Phi-Features

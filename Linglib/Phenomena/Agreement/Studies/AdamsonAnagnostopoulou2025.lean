@@ -1,6 +1,6 @@
 import Linglib.Theories.Syntax.Minimalism.Agreement.GenderResolution
 import Linglib.Theories.Morphology.DM.VocabularyInsertion
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 
 /-!
 # Adamson & Anagnostopoulou 2025 @cite{adamson-anagnostopoulou-2025}
@@ -109,7 +109,7 @@ inductive Infl where | fem | masc | neut
   deriving DecidableEq, Repr
 
 /-- Bridge from VI inflection class to cross-linguistic surface gender. -/
-def Infl.toSurfaceGender : Infl → Core.SurfaceGender
+def Infl.toSurfaceGender : Infl → Features.SurfaceGender
   | .fem  => .feminine
   | .masc => .masculine
   | .neut => .neuter

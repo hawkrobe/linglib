@@ -41,7 +41,7 @@ import Linglib.Theories.Syntax.Minimalism.Probe
 
 namespace Minimalism
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 1: Extended Lexical Items with Features

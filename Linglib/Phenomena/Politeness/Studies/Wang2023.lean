@@ -1,4 +1,4 @@
-import Linglib.Core.PrivativePair
+import Linglib.Features.PrivativePair
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Theories.Semantics.Presupposition.PhiFeatures
 import Linglib.Theories.Semantics.Presupposition.MaximizePresupposition
@@ -36,7 +36,7 @@ semantics, plus a single pragmatic constraint (ToD).
 ## Architecture
 
 This file connects three layers:
-- `Core.PrivativePair`: the algebraic structure (specLevel ordering)
+- `Features.PrivativePair`: the algebraic structure (specLevel ordering)
 - `Theories.Semantics.Presupposition.PhiFeatures`: presuppositional
   denotations, semantic markedness, and presuppositional strength ordering
 - `Core.Constraint.OT`: constraint evaluation and factorial typology
@@ -57,7 +57,7 @@ set_option autoImplicit false
 
 namespace Wang2023
 
-open Core (PrivativePair PhiFeatures)
+open Features (PrivativePair PhiFeatures)
 open Core.Constraint.OT (NamedConstraint ConstraintFamily mkTableau
               mkFactorialOptima mkFactorialTypologySize)
 open Semantics.Presupposition.PhiFeatures (isSemanticUnmarked presupStrength
@@ -431,13 +431,13 @@ section DomainBridges
     which is `plSem` — the PrProp with vacuous presupposition.
     `pl_is_minimal_cell` (PhiFeatures) proves `pluralF` maps to `.minimal`. -/
 theorem plural_strategy_is_plSem :
-    honStrategyCell .plural = PhiFeatures.toPair Core.Number.pluralF :=
+    honStrategyCell .plural = PhiFeatures.toPair Features.Number.pluralF :=
   rfl
 
 /-- The 3rd-person strategy targets the minimal PERSON cell,
     which is `thirdSem` — the PrProp with vacuous presupposition. -/
 theorem thirdPerson_strategy_is_third :
-    honStrategyCell .thirdPerson = PhiFeatures.toPair Core.Person.third :=
+    honStrategyCell .thirdPerson = PhiFeatures.toPair Features.Person.third :=
   rfl
 
 /-- Both strategies target cells whose presuppositional denotations

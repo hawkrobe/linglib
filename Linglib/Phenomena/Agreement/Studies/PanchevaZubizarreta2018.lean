@@ -38,7 +38,7 @@ object as a **point-of-view center**.
 
 namespace PanchevaZubizarreta2018
 
-open Core.Prominence (PersonLevel)
+open Features.Prominence (PersonLevel)
 open Minimalism (DecomposedPerson decomposePerson)
 open Minimalism.PConstraint
 

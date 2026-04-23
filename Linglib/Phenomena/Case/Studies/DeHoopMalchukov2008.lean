@@ -1,6 +1,6 @@
 import Linglib.Core.Constraint.OT.Basic
 import Linglib.Core.Constraint.Evaluation
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Linglib.Phenomena.Case.Typology
 import Linglib.Phenomena.Case.Studies.Aissen2003
 
@@ -78,7 +78,7 @@ namespace DeHoopMalchukov2008
 
 open Core.Constraint.Evaluation (superoptimal)
 open Core.Constraint.OT
-open Core.Prominence
+open Features.Prominence
 open Phenomena.Case.Typology
 open Aissen2003
 

@@ -58,7 +58,7 @@ open Fragments.Hausa.Inflection
    cmp_1sg_G cont_1sg_R fut_1sg subj_3sm)
 open Fragments.Hausa.Tone (polarOf)
 open Phonology.Autosegmental.RegisterTier (TRN)
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 open Theories.Semantics.Focus.MSMH
 
 -- ============================================================================
@@ -168,7 +168,7 @@ def exSitu_selective : FocusUtterance :=
 /-- Ex-situ + contrastive focus (paper eq. 27):
     *cî kawài akèe ta yî* 'it is only EATING that is going on.'
     Approximated with 3sg.M relative completive — paper uses the 4sg
-    impersonal *akèe* which `Core.Person.Category` does not yet expose. -/
+    impersonal *akèe* which `Features.Person.Category` does not yet expose. -/
 def exSitu_contrastive : FocusUtterance :=
   mkExSituUtt cmp_3sm_R .masculine true (fun _ => rfl) .contrastive
 

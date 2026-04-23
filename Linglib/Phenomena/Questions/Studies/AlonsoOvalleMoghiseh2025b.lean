@@ -72,7 +72,7 @@ def allEntities : List Entity := [.t1, .t2, .t12]
 def allWorlds : List World := [.w1, .w2, .w12]
 
 /-- Mereological atom predicate. Corresponds to `[+atomic]` in
-    @cite{harbour-2014} (`Core.Number`) and `Mereology.Atom`. -/
+    @cite{harbour-2014} (`Features.Number`) and `Mereology.Atom`. -/
 def isAtom : Entity → Prop
   | .t1 | .t2 => True
   | .t12 => False
@@ -501,7 +501,7 @@ theorem full_paradigm :
 -- ============================================================================
 
 /-- CI domain = atom filter of all entities. Connects SING (eq. 42) to
-    `Core.Number.Category.singular` ([+atomic]). -/
+    `Features.Number.Category.singular` ([+atomic]). -/
 theorem ciDomain_is_atoms : ciDomain = allEntities.filter (fun e => decide (isAtom e)) := rfl
 
 /-- The Farsi/English SCI divergence in one theorem.

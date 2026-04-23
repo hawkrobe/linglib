@@ -1,5 +1,5 @@
 import Linglib.Fragments.Zapotec.Basic
-import Linglib.Core.Person
+import Linglib.Features.Person
 
 /-!
 # Toosarvandani (2023): The Interpretation and Grammatical Representation of Animacy
@@ -32,8 +32,8 @@ Formalizes the core empirical and theoretical contributions:
    ∩ SINGULAR (number) because ⊕ creates new pluralities that undo
    SINGULAR's filtering. Non-commutativity proved concretely.
 
-7. **Bridges to Core** — PronType maps to `Core.Person.Features` (±participant,
-   ±author), `Core.Prominence.PersonLevel`, and `Core.Prominence.AnimacyLevel`.
+7. **Bridges to Core** — PronType maps to `Features.Person.Features` (±participant,
+   ±author), `Features.Prominence.PersonLevel`, and `Features.Prominence.AnimacyLevel`.
    The 4-way Zapotec animacy system refines the 3-way typological scale.
 -/
 
@@ -327,8 +327,8 @@ theorem elder_human_LC_disjoint :
 -- ============================================================================
 
 /-- Map pronoun types to the coarser 3-way person distinction used in
-    `Core.Prominence`. All third-person animacy subtypes collapse to `.third`. -/
-def PronType.toPersonLevel : PronType → Core.Prominence.PersonLevel
+    `Features.Prominence`. All third-person animacy subtypes collapse to `.third`. -/
+def PronType.toPersonLevel : PronType → Features.Prominence.PersonLevel
   | .first => .first
   | .second => .second
   | _ => .third
@@ -399,8 +399,8 @@ theorem wrong_order_produces_plural :
 
 /-- Map PronType to binary person features (±participant, ±author).
     Connects the 6-feature DFeature geometry to the binary person system
-    in `Core.Person`. -/
-def PronType.toPersonFeatures : PronType → Core.Person.Features
+    in `Features.Person`. -/
+def PronType.toPersonFeatures : PronType → Features.Person.Features
   | .first => ⟨true, true⟩
   | .second => ⟨true, false⟩
   | _ => ⟨false, false⟩
@@ -415,7 +415,7 @@ theorem person_features_consistent : ∀ p : PronType,
 /-- Map third-person pronoun types to AnimacyLevel.
     Elder and human both map to `.human` (elder is a human subtype).
     SAPs return `none` — they are typed by person, not animacy. -/
-def PronType.toAnimacyLevel : PronType → Option Core.Prominence.AnimacyLevel
+def PronType.toAnimacyLevel : PronType → Option Features.Prominence.AnimacyLevel
   | .thirdElder => some .human
   | .thirdHuman => some .human
   | .thirdAnimal => some .animate

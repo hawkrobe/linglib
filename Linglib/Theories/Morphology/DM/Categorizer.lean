@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Theories.Morphology.RootTypology
 import Linglib.Theories.Syntax.Minimalism.Basic
 import Linglib.Theories.Syntax.Minimalism.Features
@@ -788,7 +788,7 @@ Three VI patterns are attested (@cite{kramer-2015} Chs 5-7):
 For animacy-based systems (Teop, Algonquian), [+ANIM] → animate,
 [−ANIM]/none → inanimate (2 genders). -/
 
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 /-- Set 1 VI: [+FEM] → feminine, else → masculine.
     Default gender: masculine (plain n has no [+FEM]).
@@ -860,7 +860,7 @@ theorem set1_set2_default_contrast :
 -- § 7: Composed Morphisms: DM → Discourse
 -- ============================================================================
 
-open Core (GenderInfo)
+open Features (GenderInfo)
 
 /-- Composed morphism: DM categorizer → discourse-level gender knowledge.
 

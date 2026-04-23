@@ -1,4 +1,4 @@
-import Linglib.Core.Gender
+import Linglib.Features.Gender
 import Linglib.Theories.Morphology.DM.Categorizer
 
 /-!
@@ -38,7 +38,7 @@ rule) becomes a *negative* claim: "ends in -ā" does not entail
 namespace Fragments.Hausa.Gender
 
 open Morphology.DM (CatHead)
-open Core (SurfaceGender)
+open Features (SurfaceGender)
 
 -- ============================================================================
 -- § 1: Noun Entries

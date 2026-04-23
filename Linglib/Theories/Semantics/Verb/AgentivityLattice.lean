@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Verb.EntailmentProfile
 import Linglib.Theories.Semantics.Verb.Affectedness
 import Linglib.Theories.Semantics.Verb.LevinClassProfiles
 import Linglib.Core.Case.Basic
-import Linglib.Core.Prominence
+import Linglib.Features.Prominence
 import Mathlib.Order.Lattice
 import Mathlib.Order.BoundedOrder.Basic
 import Mathlib.Data.Fintype.Prod
@@ -1030,7 +1030,7 @@ theorem persistence_chain :
     NOM/ERG provide less contrast — DOM remains sensitive to nominal
     properties. -/
 
-open Core.Prominence
+open Features.Prominence
 
 -- ── §21.1 Animacy → agentivity mapping ──
 

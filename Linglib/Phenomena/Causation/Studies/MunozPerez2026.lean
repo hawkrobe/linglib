@@ -166,7 +166,7 @@ open Morphology.DM.Fission
 open Fragments.Spanish.PersonFeatures
 open Fragments.Spanish.Predicates
 open Fragments.Spanish.Clitics
-open Core.Person
+open Features.Person
 
 /-- The stylistic applicative Fission rule for Chilean Spanish.
     Instantiates the generic Fission framework with Spanish-specific data:

@@ -1,4 +1,4 @@
-import Linglib.Core.Number
+import Linglib.Features.Number
 import Linglib.Core.Mereology
 import Mathlib.Data.Fintype.Basic
 import Mathlib.Order.UpperLower.Basic
@@ -52,7 +52,7 @@ captures all implicational universals in a single statement.
 
 namespace Minimalism.Agreement.FeatureRecursion
 
-open Core.Number
+open Features.Number
 
 -- ============================================================================
 -- § 1: Recursion Regions

@@ -1,6 +1,6 @@
 import Linglib.Core.Lexical.UD
-import Linglib.Core.Prominence
-import Linglib.Core.PrivativePair
+import Linglib.Features.Prominence
+import Linglib.Features.PrivativePair
 
 /-!
 # Person
@@ -38,7 +38,7 @@ language data) remains in `Phenomena/Agreement/PersonMarkingTypology.lean`.
 
 -/
 
-namespace Core.Person
+namespace Features.Person
 
 -- ============================================================================
 -- § 1: Person Features
@@ -82,21 +82,21 @@ def third : Features := ⟨false, false⟩
 -- § 3: PersonLevel Bridge
 -- ============================================================================
 
-end Core.Person
+end Features.Person
 
-namespace Core.Prominence
+namespace Features.Prominence
 
 /-- Decompose `PersonLevel` into binary person features. -/
-def PersonLevel.toFeatures : PersonLevel → Core.Person.Features
-  | .first  => Core.Person.first
-  | .second => Core.Person.second
-  | .third  => Core.Person.third
+def PersonLevel.toFeatures : PersonLevel → Features.Person.Features
+  | .first  => Features.Person.first
+  | .second => Features.Person.second
+  | .third  => Features.Person.third
 
-end Core.Prominence
+end Features.Prominence
 
-namespace Core.Person
+namespace Features.Person
 
-open Core.Prominence
+open Features.Prominence
 
 -- ============================================================================
 -- § 4: Features Verification
@@ -132,7 +132,7 @@ theorem PersonLevel.isSAP_eq_participant (p : PersonLevel) :
 
     All shared properties (`no_four_way`, `specLevel`, `wellFormed`,
     `injective`) are inherited by construction. -/
-instance : Core.PhiFeatures Features where
+instance : Features.PhiFeatures Features where
   toPair f := ⟨f.hasParticipant, f.hasAuthor⟩
   ofPair p := ⟨p.outer, p.inner⟩
   roundtrip := fun ⟨_, _⟩ => rfl
@@ -149,7 +149,7 @@ theorem no_fourth_person :
       c.wellFormed = true → d.wellFormed = true →
       a ≠ b → a ≠ c → a ≠ d → b ≠ c → b ≠ d → c ≠ d → False :=
   fun a b c d ha hb hc hd =>
-    Core.PhiFeatures.no_four_way a b c d ha hb hc hd
+    Features.PhiFeatures.no_four_way a b c d ha hb hc hd
 
 -- ============================================================================
 -- § 6: Person Categories (Cysouw)
@@ -307,20 +307,20 @@ theorem toFeatures_wellFormed (p : Category) :
     person distinction used by PersonGeometry, DifferentialIndexing, etc.).
     Group categories map to `none` — they encode number distinctions that
     PersonLevel does not capture. -/
-def Category.toPersonLevel : Category → Option Core.Prominence.PersonLevel
+def Category.toPersonLevel : Category → Option Features.Prominence.PersonLevel
   | .s1 => some .first
   | .s2 => some .second
   | .s3 => some .third
   | _   => none
 
 /-- Map PersonLevel to singular Category. -/
-def Category.fromPersonLevel : Core.Prominence.PersonLevel → Category
+def Category.fromPersonLevel : Features.Prominence.PersonLevel → Category
   | .first  => .s1
   | .second => .s2
   | .third  => .s3
 
 /-- Round-trip: PersonLevel → Category → PersonLevel is identity. -/
-theorem personLevel_roundtrip (p : Core.Prominence.PersonLevel) :
+theorem personLevel_roundtrip (p : Features.Prominence.PersonLevel) :
     (Category.fromPersonLevel p).toPersonLevel = some p := by
   cases p <;> rfl
 
@@ -353,11 +353,11 @@ theorem singular_sap_match :
 /-- Singular categories: Category.toFeatures agrees with
     PersonLevel.toFeatures via the PersonLevel bridge. -/
 theorem s1_features_match :
-    Category.s1.toFeatures = Core.Prominence.PersonLevel.first.toFeatures := rfl
+    Category.s1.toFeatures = Features.Prominence.PersonLevel.first.toFeatures := rfl
 theorem s2_features_match :
-    Category.s2.toFeatures = Core.Prominence.PersonLevel.second.toFeatures := rfl
+    Category.s2.toFeatures = Features.Prominence.PersonLevel.second.toFeatures := rfl
 theorem s3_features_match :
-    Category.s3.toFeatures = Core.Prominence.PersonLevel.third.toFeatures := rfl
+    Category.s3.toFeatures = Features.Prominence.PersonLevel.third.toFeatures := rfl
 
 -- ============================================================================
 -- § 11: Epistemic Authority (@cite{bickel-nichols-2001})
@@ -378,4 +378,4 @@ inductive EpistemicAuthority where
   | disjunct    -- speaker lacks epistemic authority
   deriving DecidableEq, Repr
 
-end Core.Person
+end Features.Person

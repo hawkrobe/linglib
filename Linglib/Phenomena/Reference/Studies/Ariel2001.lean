@@ -36,7 +36,7 @@ anti-correlated with accessibility degree:
 
 ## Non-Equivalence with `DefinitenessLevel`
 
-The 5-level `DefinitenessLevel` scale (used for DOM/DSM in `Core.Prominence`)
+The 5-level `DefinitenessLevel` scale (used for DOM/DSM in `Features.Prominence`)
 is a many-to-one coarsening of the 18-level scale, but the coarsening is
 **not monotone**: proper names are less accessible than definite descriptions
 on Ariel's scale (names are more informative, lower accessibility), but more
@@ -116,7 +116,7 @@ end Core.Discourse.Accessibility
 
 namespace Phenomena.Reference.Studies.Ariel2001
 
-open Core.Prominence (DefinitenessLevel)
+open Features.Prominence (DefinitenessLevel)
 open Core.Discourse.Accessibility
 
 -- ════════════════════════════════════════════════════
