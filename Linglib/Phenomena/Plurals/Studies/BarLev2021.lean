@@ -321,11 +321,9 @@ private theorem mc_set_without_neg_jane :
 
 /-- someLaughed is not innocently excludable (it's the prejacent). -/
 private theorem someLaughed_not_ie :
-    ¬IsInnocentlyExcludable homAlt homPrejacent someLaughed := by
-  intro ⟨_, hIE⟩
-  obtain ⟨E, hMC⟩ := exists_MCset homAlt homPrejacent homAlt_finite homPrejacent_sat
-  obtain ⟨u, hu⟩ := hMC.1.2.2
-  exact hu (someLaughedᶜ) (hIE E hMC) (hu homPrejacent hMC.1.1)
+    ¬IsInnocentlyExcludable homAlt homPrejacent someLaughed :=
+  not_isInnocentlyExcludable_of_phi_subset homAlt_finite homPrejacent_sat
+    (Set.Subset.refl _)
 
 /-- kellyLaughed is NOT innocently excludable.
 
@@ -334,12 +332,10 @@ private theorem someLaughed_not_ie :
     kellyLaughedᶜ ≠ janeLaughedᶜ (differ at .onlyKelly). -/
 private theorem kellyLaughed_not_ie :
     ¬IsInnocentlyExcludable homAlt homPrejacent kellyLaughed := by
-  intro ⟨_, hIE⟩
-  have hNotIn : kellyLaughedᶜ ∉ ({homPrejacent, janeLaughedᶜ} : Set (Set HomWorld)) := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-    exact ⟨fun h => Eq.mp (congrFun h .neither) id,
-           fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩
-  exact hNotIn (hIE _ mc_set_without_neg_kelly)
+  refine mc_set_without_neg_kelly.not_isInnocentlyExcludable_of_compl_notMem ?_
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
+  exact ⟨fun h => Eq.mp (congrFun h .neither) id,
+         fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩
 
 /-- janeLaughed is NOT innocently excludable.
 
@@ -348,12 +344,10 @@ private theorem kellyLaughed_not_ie :
     janeLaughedᶜ ≠ kellyLaughedᶜ (differ at .onlyJane). -/
 private theorem janeLaughed_not_ie :
     ¬IsInnocentlyExcludable homAlt homPrejacent janeLaughed := by
-  intro ⟨_, hIE⟩
-  have hNotIn : janeLaughedᶜ ∉ ({homPrejacent, kellyLaughedᶜ} : Set (Set HomWorld)) := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-    exact ⟨fun h => Eq.mp (congrFun h .neither) id,
-           fun h => Eq.mpr (congrFun h .onlyJane) id trivial⟩
-  exact hNotIn (hIE _ mc_set_without_neg_jane)
+  refine mc_set_without_neg_jane.not_isInnocentlyExcludable_of_compl_notMem ?_
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
+  exact ⟨fun h => Eq.mp (congrFun h .neither) id,
+         fun h => Eq.mpr (congrFun h .onlyJane) id trivial⟩
 
 /-- **Nothing is innocently excludable** in the homogeneity configuration.
 
@@ -614,12 +608,10 @@ private theorem mc_partial :
 /-- someLaughed is not IE-excludable for partialPrunedAlt. -/
 private theorem someLaughed_not_ie_partial :
     ¬IsInnocentlyExcludable partialPrunedAlt homPrejacent someLaughed := by
-  intro ⟨_, hIE⟩
-  have hNotIn : someLaughedᶜ ∉ ({homPrejacent, janeLaughedᶜ} : Set (Set HomWorld)) := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-    exact ⟨fun h => Eq.mp (congrFun h .neither) id,
-           fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩
-  exact hNotIn (hIE _ mc_partial)
+  refine mc_partial.not_isInnocentlyExcludable_of_compl_notMem ?_
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
+  exact ⟨fun h => Eq.mp (congrFun h .neither) id,
+         fun h => Eq.mpr (congrFun h .onlyKelly) id trivial⟩
 
 /-- janeLaughed IS IE-excludable for partialPrunedAlt.
     janeLaughedᶜ is in every MC-set: if E omits janeLaughedᶜ, E can be

@@ -205,6 +205,19 @@ theorem IsInnocentlyExcludable.of_full_exclusion_consistent
   -- Step 4: aᶜ ∈ S_max, so aᶜ ∈ E
   exact h_sup (Or.inr ⟨a, ha, rfl⟩)
 
+/--
+Contrapositive of `IsInnocentlyExcludable`'s defining condition: a single
+witness MC-set whose complement-of-`a` membership fails refutes innocent
+excludability. Useful when a specific MC-set has been constructed by hand.
+-/
+theorem IsMCSet.not_isInnocentlyExcludable_of_compl_notMem
+    {ALT : Set (Set World)} {φ : Set World}
+    {a : Set World} {E : Set (Set World)}
+    (hE : IsMCSet ALT φ E) (h : aᶜ ∉ E) :
+    ¬IsInnocentlyExcludable ALT φ a := by
+  intro ⟨_, hIE⟩
+  exact h (hIE E hE)
+
 -- DEFINITION 4: exh_ie (Spector p.8)
 
 /--
@@ -545,6 +558,24 @@ This combines:
 -/
 theorem exists_MCset (hfin : Set.Finite ALT) (hsat : ∃ w, φ w) : ∃ E, IsMCSet ALT φ E :=
   exists_MCset_of_minimal ALT φ (exists_minimal_of_finite ALT φ hfin hsat)
+
+/--
+A prejacent-entailed alternative is never innocently excludable (when ALT is
+finite and φ is satisfiable). The MC-set's consistency witness satisfies
+both `φ` (hence `a` by entailment) and `aᶜ` (since `aᶜ ∈ E`), contradiction.
+
+Specializes to `a = φ` (the prejacent itself can never be IE) via
+`Set.Subset.refl`.
+-/
+theorem not_isInnocentlyExcludable_of_phi_subset
+    {ALT : Set (Set World)} {φ : Set World}
+    (hfin : Set.Finite ALT) (hsat : ∃ w, φ w)
+    {a : Set World} (h_subset : φ ⊆ a) :
+    ¬IsInnocentlyExcludable ALT φ a := by
+  intro ⟨_, hIE⟩
+  obtain ⟨E, hMC⟩ := exists_MCset ALT φ hfin hsat
+  obtain ⟨u, hu⟩ := hMC.1.2.2
+  exact hu (aᶜ) (hIE E hMC) (h_subset (hu φ hMC.1.1))
 
 /--
 Every element of IE is either φ or aᶜ for some a ∈ ALT.

@@ -4,6 +4,59 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.225] - 2026-04-23
+
+### Exhaustification: hoist two negative-IE criteria, refactor 7 callers
+
+Follow-through audit of `IsInnocentlyExcludable` consumers identified two recurring proof patterns with ≥2 callers each (mathlib's hoisting threshold). Both extracted to `Theories/Semantics/Exhaustification/Operators/Basic.lean`:
+
+- **`IsMCSet.not_isInnocentlyExcludable_of_compl_notMem`**: when a hand-constructed MC-set `E` doesn't contain `aᶜ`, `a` is not innocently excludable. Direct contrapositive of `IsInnocentlyExcludable`'s definition. Dot-notation via `IsMCSet` receiver.
+- **`not_isInnocentlyExcludable_of_phi_subset`**: when ALT is finite and φ is satisfiable, any prejacent-entailed `a` (i.e., `φ ⊆ a`) is not IE — the MC-set's consistency witness derives a contradiction. Specializes to the prejacent itself via `Set.Subset.refl`.
+
+5 callers refactored to use Pattern A (`mc_witness.not_isInnocentlyExcludable_of_compl_notMem`):
+- `Phenomena/Modality/Studies/BarLevFox2020.lean` — `permA_not_ie`, `permB_not_ie`
+- `Phenomena/Plurals/Studies/BarLev2021.lean` — `kellyLaughed_not_ie`, `janeLaughed_not_ie`, `someLaughed_not_ie_partial`
+
+2 callers refactored to use Pattern B:
+- `BarLevFox2020.lean:permAorB_not_ie` (3-line term proof)
+- `BarLev2021.lean:someLaughed_not_ie` (3-line term proof)
+
+Net: ~30 lines removed across the consumer files; the deductive structure is now explicit at each call site rather than reconstructed inline.
+
+The earlier audit (0.230.220) found that the first promoted IE criterion (`of_full_exclusion_consistent`) didn't simplify any existing proofs — it captured a sharper precondition than the codebase needed. This follow-up confirms the discipline: not every audit yields refactor opportunities, but the ones that do should be taken.
+
+## [0.230.224] - 2026-04-23
+
+### Phase D-G (partial): Verbal.lean legacy grounding theorems stripped
+
+Deletes 7 legacy grounding theorems from
+`Fragments/English/Predicates/Verbal.lean` whose V2 (polymorphic
+`SEM V α`) replacements landed in Phase D-D:
+- `make_semantics`, `cause_semantics`, `prevent_semantics`
+- `sufficiency_verbs_share_truth_conditions`
+- `lexical_causatives_match_make`
+- `manage_semantics_implicative`, `fail_semantics_implicative`
+
+Plus the now-unused `open Semantics.Causation.{Prevention,Sufficiency,
+Necessity,Implicative} (preventSem makeSem causeSem manageSem failSem)`
+statements. Docstring updated to point readers to the V2 sub-namespace
+for semantic-dispatch grounding.
+
+Theorems that don't reference legacy hub semantics (purely about the
+`Causative` enum's `assertsSufficiency`/`isCoercive`/`isPermissive`
+properties, or about `causative` field equality) stay — they're
+substrate-independent.
+
+Build: 2773 jobs clean.
+
+**Phase D-G2 deferred** — the larger legacy hub strip cascades through
+Interpretation.lean's grounding section (~10 theorems referencing
+legacy `Causative.toSemantics` + `makeSem`/`causeSem`/`preventSem`),
+ProductionDependence's `selectionMode_roundtrip` (which depends on
+both legacy `Causative.toSemantics` and `CCSelectionMode.toSemantics`),
+and the legacy hub abbrevs themselves. Multi-file coordinated deletion;
+separate phase.
+
 ## [0.230.223] - 2026-04-23
 
 ### Phonology StratalCorr.lean: substrate-level Stratal↔Corr↔TCT bridge

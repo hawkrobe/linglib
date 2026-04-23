@@ -160,11 +160,9 @@ private theorem fcALT_finite : Set.Finite fcALT :=
 private theorem fcPrejacent_sat : ∃ w, fcPrejacent w := ⟨.onlyA, trivial⟩
 
 private theorem permAorB_not_ie :
-    ¬IsInnocentlyExcludable fcALT fcPrejacent permAorB := by
-  intro ⟨_, hIE⟩
-  obtain ⟨E, hMC⟩ := exists_MCset fcALT fcPrejacent fcALT_finite fcPrejacent_sat
-  obtain ⟨u, hu⟩ := hMC.1.2.2
-  exact hu (permAorBᶜ) (hIE E hMC) (hu fcPrejacent hMC.1.1)
+    ¬IsInnocentlyExcludable fcALT fcPrejacent permAorB :=
+  not_isInnocentlyExcludable_of_phi_subset fcALT_finite fcPrejacent_sat
+    (Set.Subset.refl _)
 
 /-- ¬`permA` and ¬`permB` together with the prejacent are inconsistent on
 `FCWorld`: every world satisfying `permAorB` satisfies at least one disjunct. -/
@@ -235,23 +233,19 @@ private theorem mc_set_without_neg_permB :
 
 private theorem permA_not_ie :
     ¬IsInnocentlyExcludable fcALT fcPrejacent permA := by
-  intro ⟨_, hIE⟩
-  have hNotIn : permAᶜ ∉ ({fcPrejacent, permBᶜ, permAandBᶜ} : Set (Set FCWorld)) := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-    exact ⟨fun h => Eq.mp (congrFun h .neither) id,
-           fun h => Eq.mpr (congrFun h .onlyA) id trivial,
-           fun h => Eq.mpr (congrFun h .onlyA) id trivial⟩
-  exact hNotIn (hIE _ mc_set_without_neg_permA)
+  refine mc_set_without_neg_permA.not_isInnocentlyExcludable_of_compl_notMem ?_
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
+  exact ⟨fun h => Eq.mp (congrFun h .neither) id,
+         fun h => Eq.mpr (congrFun h .onlyA) id trivial,
+         fun h => Eq.mpr (congrFun h .onlyA) id trivial⟩
 
 private theorem permB_not_ie :
     ¬IsInnocentlyExcludable fcALT fcPrejacent permB := by
-  intro ⟨_, hIE⟩
-  have hNotIn : permBᶜ ∉ ({fcPrejacent, permAᶜ, permAandBᶜ} : Set (Set FCWorld)) := by
-    simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
-    exact ⟨fun h => Eq.mp (congrFun h .neither) id,
-           fun h => Eq.mp (congrFun h .onlyA) id trivial,
-           fun h => Eq.mpr (congrFun h .onlyB) id trivial⟩
-  exact hNotIn (hIE _ mc_set_without_neg_permB)
+  refine mc_set_without_neg_permB.not_isInnocentlyExcludable_of_compl_notMem ?_
+  simp only [Set.mem_insert_iff, Set.mem_singleton_iff, not_or]
+  exact ⟨fun h => Eq.mp (congrFun h .neither) id,
+         fun h => Eq.mp (congrFun h .onlyA) id trivial,
+         fun h => Eq.mpr (congrFun h .onlyB) id trivial⟩
 
 /-- `permAandB` *is* innocently excludable: every MC-set contains `permAandBᶜ`,
 because adjoining `permAandBᶜ` to any MC-set is consistent (witnessed at
