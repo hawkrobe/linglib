@@ -1,4 +1,4 @@
-import Linglib.Core.Path
+import Linglib.Theories.Semantics.Spatial.Path
 
 /-!
 # Dutch Adposition Fragment

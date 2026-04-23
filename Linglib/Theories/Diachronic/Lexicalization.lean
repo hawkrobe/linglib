@@ -1,4 +1,4 @@
-import Linglib.Core.Efficiency
+import Linglib.Theories.Pragmatics.Efficiency
 import Linglib.Core.InformationTheory
 import Linglib.Theories.Pragmatics.RSA.ConfigData
 

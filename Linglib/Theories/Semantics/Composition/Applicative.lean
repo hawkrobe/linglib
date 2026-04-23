@@ -1,4 +1,4 @@
-import Linglib.Core.Continuation
+import Linglib.Theories.Semantics.Composition.Continuation
 
 /-!
 # Applicative Functors in Natural Language Semantics

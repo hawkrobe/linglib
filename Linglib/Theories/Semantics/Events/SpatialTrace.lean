@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Events.Mereology
-import Linglib.Core.Path
+import Linglib.Theories.Semantics.Spatial.Path
 import Linglib.Core.Lexical.VerbClass
 
 /-!

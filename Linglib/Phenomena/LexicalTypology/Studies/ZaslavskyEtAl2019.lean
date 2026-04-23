@@ -1,4 +1,4 @@
-import Linglib.Core.ChannelCapacity
+import Linglib.Theories.Pragmatics.InformationTheory.ChannelCapacity
 
 /-!
 # Zaslavsky, Kemp, Tishby & Regier (2019)

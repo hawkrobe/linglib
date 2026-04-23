@@ -1,4 +1,4 @@
-import Linglib.Core.Distributions
+import Linglib.Theories.Pragmatics.RSA.Distributions
 import Linglib.Tactics.RSAPredict
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Phenomena.ScalarImplicatures.QuantityDomain

@@ -4,6 +4,86 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.243] - 2026-04-23
+
+### Tier 4 of Core/ triage: 10 MOVE-THEORIES files relocated
+
+Batch-moved 10 theory-infrastructure files out of `Core/` to their
+natural homes in `Theories/` per the triage backlog
+(`memory/project_core_triage.md`). Each was theory content masquerading
+as substrate (≤4 consumers, clearly Pragmatics/Semantics/Composition
+shaped per its docstring + citations).
+
+| Source | Destination |
+|---|---|
+| `Core/ChannelCapacity.lean` | `Theories/Pragmatics/InformationTheory/ChannelCapacity.lean` (NEW dir) |
+| `Core/Divergence.lean` | `Theories/Pragmatics/RSA/Divergence.lean` |
+| `Core/Distributions.lean` | `Theories/Pragmatics/RSA/Distributions.lean` |
+| `Core/Efficiency.lean` | `Theories/Pragmatics/Efficiency.lean` |
+| `Core/GameTheory.lean` | `Theories/Pragmatics/GameTheory.lean` |
+| `Core/Continuation.lean` | `Theories/Semantics/Composition/Continuation.lean` |
+| `Core/SelectionFunction.lean` | `Theories/Semantics/Conditionals/SelectionFunction.lean` |
+| `Core/ContentIndividual.lean` | `Theories/Semantics/Attitudes/ContentIndividual.lean` |
+| `Core/Path.lean` | `Theories/Semantics/Spatial/Path.lean` (NEW dir) |
+| `Core/SpecificityCondition.lean` | `Theories/Syntax/Binding/SpecificityCondition.lean` (NEW dir) |
+
+19 consumer import lines repointed across 17 distinct files; 10
+`Linglib.lean` root imports updated. All moves used `git mv` to
+preserve history.
+
+**Deferred (namespace cleanup):** the moved files keep their original
+`namespace Core.X` declarations — there are 28 qualified `Core.X.Y`
+references across consumers (some load-bearing in `def`/`unfold`/`rw`,
+e.g., `Core.SelectionFunction.sel` in `Counterfactual.lean`,
+`Core.Path.PathShape` type annotation in `SpatialTrace.lean`,
+`Core.SpecificityCondition.blocked` in `AissenPolian2025.lean`) that
+would need updating in lockstep with namespace renames. Path-vs-
+namespace mismatch is a known smell to be cleaned in a follow-up
+along with Tier 6 REFACTOR-IN-PLACE.
+
+## [0.230.242] - 2026-04-23
+
+### B&E 2026: Section 5 main theorem proved (negated_sharvit_SDE)
+
+The actual NPI-licensing result of @cite{bondarenko-elliott-2026} (eqs.
+69, 72 — the SDE-not-SUE asymmetry capturing Sharvit's contrast) is now
+a Lean theorem rather than a docstring sketch. The chain
+`TECM ∘ MSI ∘ BelievingDIV ∘ WorldLocatedDIV ∘ MSO ∘ RumorDIV ∘ TECM`
+is the load-bearing mechanism.
+
+**Strengthened TECM** (paper eq. 65) from the prior weak `Option`-form
+(equality only when both sides are `some`) to the paper-faithful
+`Option`-equality form: `believe e → THEME e = some te → CONT_v e = CONT_e te`.
+No prior theorems used TECM, so the change is non-breaking.
+
+**New axioms** for §5:
+- `RumorDIV : ∀ r r', rumor r → r' ≤ r → rumor r'` — parts of rumors
+  are rumors. Implicit in paper §4.4; now explicit.
+- `WorldLocatedDIV : ∀ e e' w, e' ≤ e → located e w → located e' w` —
+  the world parameter is preserved under eventuality parts (paper fn. 2:
+  "possible worlds are maximal eventualities").
+
+**New def** `BelievesTheRumorThatAt` — equality semantics for "M
+believes the rumor that p" *with* the world parameter restored
+(paper eqs. 60a/61a's `∃e ≤ w[…]` form).
+
+**Two new theorems**:
+- `positive_sharvit_closure` (paper eq. 69) — the closure direction:
+  if `M believes the rumor that p` at `w` and `p' < p`, then `M believes
+  the rumor that p'` at `w`. Proof carries through the seven-step
+  paper chain mechanically.
+- `negated_sharvit_SDE` (paper eq. 72) — contrapositive: if `M doesn't
+  believe the rumor that p'` and `p' < p`, then `M doesn't believe the
+  rumor that p`. **The actual NPI licensing direction**, capturing the
+  Sharvit contrast: *Katya doesn't believe the rumor that Anton has
+  ever snowboarded* (eq. 67b) is SDE wrt the embedded indefinite's
+  restrictor, hence licenses *ever*.
+
+The paper's main empirical result is now a Lean theorem. The companion
+"not-SUE" direction (paper eq. 73) was deferred — it's a *non-existence*
+claim relying on functionality of CONT, not on MSI/MSO/TECM, so it
+doesn't fit the current axioms cleanly.
+
 ## [0.230.241] - 2026-04-23
 
 ### Phonology Stage 2A: `Corr.diagram` unifying constructor

@@ -1,5 +1,5 @@
 import Linglib.Theories.Semantics.Conditionals.Basic
-import Linglib.Core.SelectionFunction
+import Linglib.Theories.Semantics.Conditionals.SelectionFunction
 import Linglib.Core.Mood.Basic
 import Linglib.Core.Order.SimilarityOrdering
 import Linglib.Core.Semantics.CommonGround

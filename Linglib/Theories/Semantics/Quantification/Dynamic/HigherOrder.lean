@@ -1,4 +1,4 @@
-import Linglib.Core.Continuation
+import Linglib.Theories.Semantics.Composition.Continuation
 import Linglib.Theories.Semantics.Quantification.Dynamic.Basic
 
 /-!

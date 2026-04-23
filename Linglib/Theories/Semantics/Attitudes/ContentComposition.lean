@@ -1,4 +1,4 @@
-import Linglib.Core.ContentIndividual
+import Linglib.Theories.Semantics.Attitudes.ContentIndividual
 
 /-!
 # Content Composition @cite{moulton-2015}

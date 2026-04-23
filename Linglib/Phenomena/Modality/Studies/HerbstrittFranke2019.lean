@@ -1,5 +1,5 @@
-import Linglib.Core.Distributions
-import Linglib.Core.Divergence
+import Linglib.Theories.Pragmatics.RSA.Distributions
+import Linglib.Theories.Pragmatics.RSA.Divergence
 import Linglib.Theories.Pragmatics.RSA.Basic
 import Linglib.Theories.Semantics.Modality.EpistemicProbability
 

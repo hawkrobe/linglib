@@ -3,7 +3,7 @@ import Linglib.Theories.Semantics.Conditionals.Basic
 import Linglib.Theories.Semantics.Conditionals.WillConditional
 import Linglib.Theories.Semantics.Modality.Selectional
 import Linglib.Theories.Semantics.Supervaluation.Basic
-import Linglib.Core.SelectionFunction
+import Linglib.Theories.Semantics.Conditionals.SelectionFunction
 import Linglib.Core.Logic.Truth3
 import Linglib.Core.Logic.NonBivalence
 

@@ -1,5 +1,5 @@
 import Linglib.Phenomena.Islands.Studies.Ross1967
-import Linglib.Core.SpecificityCondition
+import Linglib.Theories.Syntax.Binding.SpecificityCondition
 import Linglib.Features.Definiteness
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Fragments.English.Predicates.Verbal

@@ -1,6 +1,6 @@
 import Linglib.Theories.Semantics.Quantification.Quantifier
 import Linglib.Theories.Pragmatics.RSA.Channel
-import Linglib.Core.Divergence
+import Linglib.Theories.Pragmatics.RSA.Divergence
 import Mathlib.Analysis.SpecialFunctions.Log.Basic
 
 /-!

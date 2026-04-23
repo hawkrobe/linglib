@@ -1,4 +1,4 @@
-import Linglib.Core.Continuation
+import Linglib.Theories.Semantics.Composition.Continuation
 import Linglib.Theories.Semantics.Composition.WriterMonad
 import Linglib.Theories.Semantics.Composition.SetMonad
 import Linglib.Theories.Semantics.Composition.Tree
