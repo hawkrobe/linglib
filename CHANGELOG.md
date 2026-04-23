@@ -4,6 +4,74 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.241] - 2026-04-23
+
+### Phonology Stage 2A: `Corr.diagram` unifying constructor
+
+Per a 4-agent design audit, `Theories/Phonology/OptimalityTheory/Correspondence.lean`
+gains the unifying constructor
+
+```lean
+def Corr.diagram (form : Role → List α) (hasEdge : Role → Role → Bool)
+    : Corr Role α
+```
+
+with three `@[simp]` lemmas (`diagram_form`, `diagram_edge_of_true`,
+`diagram_edge_of_false`). Where `hasEdge r₁ r₂ = true`, builds a
+parallel-pair correspondence `(0,0), (1,1), …` truncated to
+`min (form r₁).length (form r₂).length`; where false, no correspondence.
+
+#### Refactored as 3-line wrappers
+
+- `Corr.parallel s₁ s₂ : Corr Side α`
+- `Corr.identity s : Corr Side α`
+- `Corr.reduplication input base reduplicant : Corr RedupRole α`
+- `StratalCorr.stratalDerivToCorr` (was ~50 LOC of `match` + `wf`)
+- `StratalCorr.StratalToTCT.project` (was ~38 LOC)
+- `Transderivational.diagram` (was 9 LOC reducing to `diagramWithEdge`)
+
+Net **−67 LOC** across the substrate. Eliminates the redundant
+reverse-direction `match` clauses that swap-imaged parallel-pair edges
+(no-op since `(i, i)` is symmetric under swap).
+
+#### Design choice rationale
+
+Audit synthesis: agents split 2-2 between **Option A** (Bool predicate,
+mathlib-reviewer + linguistics-domain-expert) and **Option B** (`CorrEdge`
+sum type with `.custom`, integration-auditor + cross-framework-reconciler).
+Option A wins on:
+
+- Mathlib pattern (smart constructors per shape, no tagged-union
+  discriminator)
+- `wf_custom` propagation in Option B is fundamental (Lean can't
+  case-analyze `Role → Role → CorrEdge` at type-level for default proofs);
+  every consumer pays the proof tax
+- Linguistics-domain expert: M&P 1995 has *one* relation type ℛ; Option B
+  reifies a programmer's distinction the field doesn't make
+- `Transderivational.diagramWithEdge` (the only custom-edge case) stays
+  as a separate constructor — clean two-constructor split
+
+#### Wolf 2008 OI / OT-CC: defer-to-Stage-4 confirmed
+
+Read Wolf 2008 PDF (529 pp., UMass dissertation). OT-CC chains are a
+*structurally distinct* shape from `Corr Role α` — linear `Fin n` index,
+edges between consecutive steps, each edge carrying a faithfulness
+LUM label (the constraint violated to license that step). PREC(F₁, F₂)
+constraints check temporal ordering of LUMs.
+
+The labels are per-edge-as-a-whole, not per-position-pair, so even a
+generalized `Corr Role α L` wouldn't fit. The right Stage 4 architecture
+is a *sibling type* `CandidateChain α F` (new file
+`Theories/Phonology/OptimalityTheory/CandidateChain.lean`), not a
+generalization of `Corr`. Wolf §5.4-5.5 explicitly positions OT-CC as a
+*competitor* to Benua TCT and Stratal OT — both already formalized in
+linglib — making the eventual cross-framework bridge theorems on the
+existing Sundanese / Tiberian Hebrew / cyclic English data
+exactly the kind of empirical engagement linglib values.
+
+(Wolf 2008 attributes OT-CC to McCarthy 2007a; bib should add
+`mccarthy-2007` once DOI verified.)
+
 ## [0.230.240] - 2026-04-23
 
 ### Dissolved — `Core/Conjectures.lean` (Tier 3 of Core/ triage)
