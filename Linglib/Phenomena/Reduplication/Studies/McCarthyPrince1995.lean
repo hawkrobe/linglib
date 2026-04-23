@@ -274,6 +274,81 @@ theorem balangao_emergence_unmarked :
     = {.partialRedup} := by decide
 
 -- ============================================================================
+-- § 2.5: Balangao — Corr-grounded layer
+-- ============================================================================
+
+/-! ### Grounding the Balangao tableau in `Corr`
+
+Mirroring the Javanese §1.5 refactor: the MAX-IO and MAX-BR violation
+counts now follow from the structural correspondence diagram via
+`Corr.maxViol`, rather than being stipulated as λ-tables. NO-CODA is
+markedness over a single output and stays as the original stipulation. -/
+
+namespace BalangaoCorr
+
+open Phonology.Correspondence (Corr RedupRole)
+
+/-- Phonological segments for the Balangao stem. Minimal abstract
+    inventory (just the contrasts that matter for /tagtag/-reduplication). -/
+inductive Seg where
+  | t | a | g
+  deriving DecidableEq, Repr
+
+/-- The input stem `/tagtag/` (6 segments). -/
+def stemInput : List Seg := [.t, .a, .g, .t, .a, .g]
+
+/-- The faithful base output `[tagtag]` (6 segments). For
+    `.totalRedup` and `.partialRedup`. -/
+def baseFaithful : List Seg := [.t, .a, .g, .t, .a, .g]
+
+/-- The deleted base output `[tagta]` (5 segments, final g deleted).
+    For `.totalFaithful` (counter-intuitively named: it deletes from
+    the input to make the base match the reduplicant's coda-less shape). -/
+def baseDeleted : List Seg := [.t, .a, .g, .t, .a]
+
+/-- The full reduplicant `[tagtag]` (6 segments) for `.totalRedup`. -/
+def redFull : List Seg := [.t, .a, .g, .t, .a, .g]
+
+/-- The partial (coda-less) reduplicant `[tagta]` (5 segments) for
+    `.totalFaithful` and `.partialRedup`. -/
+def redPartial : List Seg := [.t, .a, .g, .t, .a]
+
+/-- The `Corr` for the `totalFaithful` candidate: input deleted to fit
+    the coda-less shape (1 MAX-IO violation); B = R structurally. -/
+def totalFaithfulCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput baseDeleted redPartial
+
+/-- The `Corr` for the `totalRedup` candidate: full faithful copy
+    everywhere; 0 MAX-IO, 0 MAX-BR violations. -/
+def totalRedupCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput baseFaithful redFull
+
+/-- The `Corr` for the `partialRedup` candidate: faithful base, but
+    reduplicant misses the final coda (1 MAX-BR violation, 0 MAX-IO). -/
+def partialRedupCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput baseFaithful redPartial
+
+/-- Each candidate's structural `Corr` representation. -/
+def toCorr : BalangaoCand → Corr RedupRole Seg
+  | .totalFaithful => totalFaithfulCorr
+  | .totalRedup    => totalRedupCorr
+  | .partialRedup  => partialRedupCorr
+
+/-- **Structural derivation of MAX-IO**: the `Corr`-derived MAX-IO
+    violation count equals the original stipulated `balMaxIO.eval`. -/
+theorem balMaxIO_eq_corr (c : BalangaoCand) :
+    balMaxIO.eval c = (toCorr c).maxViol .input .base := by
+  cases c <;> decide
+
+/-- **Structural derivation of MAX-BR**: the `Corr`-derived MAX-BR
+    violation count equals the original stipulated `balMaxBR.eval`. -/
+theorem balMaxBR_eq_corr (c : BalangaoCand) :
+    balMaxBR.eval c = (toCorr c).maxViol .base .reduplicant := by
+  cases c <;> decide
+
+end BalangaoCorr
+
+-- ============================================================================
 -- § 3: Basic Model Factorial Typology (§4)
 -- ============================================================================
 
@@ -580,6 +655,97 @@ theorem akan_over_identIO_grounded :
     seg_tc.HasValue Feature.coronal true = true := ⟨by native_decide, by native_decide⟩
 
 end AkanGrounding
+
+-- ============================================================================
+-- § 5b: Akan — Corr-grounded layer (featural)
+-- ============================================================================
+
+/-! ### Grounding the Akan tableau in `Corr` via featural IDENT
+
+Mirroring the Javanese §1.5 / Balangao §2.5 refactors, with one addition:
+Akan's `IDENT-BR(-cor)` and `IDENT-IO(-cor)` are *featural* faithfulness
+constraints on the `[coronal]` feature, not segmental identity. This
+section uses `Corr.identViolFeature` with a `coronal` projection to
+derive the constraint values structurally.
+
+This is the first study file to exercise `Corr.identViolFeature`
+(introduced in 0.230.217). Successful agreement theorems here validate
+the featural-IDENT pattern for any future paper using `IDENT-[F]`
+constraints. -/
+
+namespace AkanCorr
+
+open Phonology.Correspondence (Corr RedupRole)
+
+/-- Phonological segments for the Akan /RED-ka/ paradigm. The minimal
+    abstract inventory tracking the [coronal] feature contrast. -/
+inductive Seg where
+  | k          -- velar [-coronal]
+  | tɕ         -- palatal affricate [+coronal] (the palatalization output)
+  | a          -- low back vowel
+  | ɪ          -- high front vowel (the reduplicant's vowel)
+  deriving DecidableEq, Repr
+
+/-- The [coronal] feature projection. Vowels are `false` (out of the
+    relevant natural class for this paradigm; their featural value
+    doesn't enter the IDENT-[coronal] computation). -/
+def coronal : Seg → Bool
+  | .k  => false
+  | .tɕ => true
+  | .a  => false
+  | .ɪ  => false
+
+/-- Input `/ka/`. -/
+def stemInput : List Seg := [.k, .a]
+
+/-- Faithful base (`k a`) — for `.normal` and `.under`. -/
+def baseFaithful : List Seg := [.k, .a]
+
+/-- Palatalized base (`tɕ a`) — for `.over` (palatalization in B). -/
+def basePalatalized : List Seg := [.tɕ, .a]
+
+/-- Palatalized reduplicant (`tɕ ɪ`) — for `.over` and `.normal`. -/
+def redPalatalized : List Seg := [.tɕ, .ɪ]
+
+/-- Faithful reduplicant (`k ɪ`) — for `.under`. -/
+def redFaithful : List Seg := [.k, .ɪ]
+
+/-- The `Corr` for the `over` candidate: palatalization in both B and R. -/
+def overCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput basePalatalized redPalatalized
+
+/-- The `Corr` for the `normal` candidate: palatalization in R only. -/
+def normalCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput baseFaithful redPalatalized
+
+/-- The `Corr` for the `under` candidate: no palatalization. -/
+def underCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput baseFaithful redFaithful
+
+/-- Each candidate's structural `Corr` representation. -/
+def toCorr : AkanCand → Corr RedupRole Seg
+  | .over   => overCorr
+  | .normal => normalCorr
+  | .under  => underCorr
+
+/-- **Structural derivation of IDENT-IO(-cor)** via featural IDENT on
+    the `(.input, .base)` edge. Input /k/ → base /tɕ/ is the only IO
+    coronal mismatch; only `over` violates. -/
+theorem akanIdentIO_eq_corr (c : AkanCand) :
+    akanIdentIO.eval c =
+      (toCorr c).identViolFeature coronal .input .base := by
+  cases c <;> decide
+
+/-- **Structural derivation of IDENT-BR(-cor)** via featural IDENT on
+    the `(.base, .reduplicant)` edge. Only `normal` has B/R coronal
+    mismatch (B has /k/ [-cor], R has /tɕ/ [+cor]); the vowels' coronal
+    values agree (both [-cor] in this featural inventory). -/
+theorem akanIdentBR_eq_corr (c : AkanCand) :
+    akanIdentBR.eval c =
+      (toCorr c).identViolFeature coronal .base .reduplicant := by
+  cases c <;> decide
+
+end AkanCorr
 
 -- ============================================================================
 -- § 6: Generic ConstraintSystem Predictions
