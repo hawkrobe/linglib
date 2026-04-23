@@ -41,7 +41,8 @@ import Linglib.Core.Discourse.Intentionality
 import Linglib.Core.Discourse.Commitment
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Core.IntensionalLogic.RestrictedModality
-import Linglib.Core.Causal.SEM.Counterfactual
+import Linglib.Core.Causal.V2.SEM.Bool
+import Linglib.Core.Causal.V2.SEM.Counterfactual
 import Linglib.Core.Lexical.VerbClass
 import Linglib.Theories.Semantics.Questions.Denotation.Hamblin
 
@@ -184,157 +185,158 @@ This asymmetry DERIVES the gap from independent causal-cognitive principles.
 -/
 
 -- ============================================================================
--- Causal Model Infrastructure (via Core.Causal)
+-- Causal Model Infrastructure (via Core.Causal.V2)
 -- ============================================================================
 
 /-!
-The belief formation causal model uses `Core.Causal` —
-the same Pearl-style SCM framework used for resultatives, prerequisite
-semantics, and counterfactual conditionals. This avoids a parallel
-graph implementation and connects the PLC to the full causal infrastructure
-(interventions, counterfactuals, monotonicity proofs).
+The belief formation causal model uses `Core.Causal.V2` — the V2 SEM
+substrate (PMF-canonical Mechanism, BoolSEM specialization for the
+deterministic-binary case). The PLC predicate is defined via
+`SEM.developOn` with an explicit vertex list so kernel reduction
+works structurally (no `native_decide`; mathlib-quality `rfl`/`decide`
+proofs).
 -/
 
-open Core.Causal
+open Core.Causal.V2 Core.Causal.V2.Mechanism Core.Causal.V2.SEM
 
 -- ============================================================================
 -- Belief Formation Causal Model (Roberts & Özyıldız 2025)
 -- ============================================================================
 
-/-!
-Standard variables in belief formation, represented as
-`Core.Causal.Variable`.
--/
-namespace BeliefVars
+/-- Standard variables in belief formation. Inductive enum so the type
+    is `Fintype` and the develop fixpoint reduces structurally. -/
+inductive BeliefVar
+  | p | not_p
+  | indic_p | indic_not_p
+  | acq_a_ip | acq_a_inp
+  | B_a_p | B_a_not_p
+  deriving DecidableEq, Fintype, Repr
 
-def p : Variable := ⟨"p"⟩
-def not_p : Variable := ⟨"¬p"⟩
-def indic_p : Variable := ⟨"indic(p)"⟩
-def indic_not_p : Variable := ⟨"indic(¬p)"⟩
-def acq_a_ip : Variable := ⟨"acq(a)(iₚ)"⟩
-def acq_a_inp : Variable := ⟨"acq(a)(i¬ₚ)"⟩
-def B_a_p : Variable := ⟨"B(a)(p)"⟩
-def B_a_not_p : Variable := ⟨"B(a)(¬p)"⟩
+/-- The causal graph for belief formation. Chain structure:
+    `p → indic(p) → acq(a)(iₚ) → B(a)(p)` (parallel chain for ¬p).
+    Each derived vertex has its single causal predecessor as parent. -/
+def beliefGraph : CausalGraph BeliefVar :=
+  ⟨fun
+    | .p => ∅
+    | .not_p => ∅
+    | .indic_p => {.p}
+    | .indic_not_p => {.not_p}
+    | .acq_a_ip => {.indic_p}
+    | .acq_a_inp => {.indic_not_p}
+    | .B_a_p => {.acq_a_ip}
+    | .B_a_not_p => {.acq_a_inp}⟩
 
-end BeliefVars
+/-- The belief-formation BoolSEM. Roots (`p`, `¬p`) get `Mechanism.const false`
+    (default; the input valuation overrides). Each derived vertex's mechanism
+    is "true iff its sole parent is true" — the chain copies values forward. -/
+noncomputable def beliefSEM : BoolSEM BeliefVar :=
+  { graph := beliefGraph
+    mech := fun v => match v with
+      | .p => const (G := beliefGraph) false
+      | .not_p => const (G := beliefGraph) false
+      | .indic_p => deterministic (fun ρ => ρ ⟨.p, by simp [beliefGraph]⟩)
+      | .indic_not_p => deterministic (fun ρ => ρ ⟨.not_p, by simp [beliefGraph]⟩)
+      | .acq_a_ip => deterministic (fun ρ => ρ ⟨.indic_p, by simp [beliefGraph]⟩)
+      | .acq_a_inp => deterministic (fun ρ => ρ ⟨.indic_not_p, by simp [beliefGraph]⟩)
+      | .B_a_p => deterministic (fun ρ => ρ ⟨.acq_a_ip, by simp [beliefGraph]⟩)
+      | .B_a_not_p => deterministic (fun ρ => ρ ⟨.acq_a_inp, by simp [beliefGraph]⟩) }
 
-/--
-The standard causal dynamics for knowledge/belief formation, expressed as
-structural equations in the `Core.Causal` framework.
+noncomputable instance : SEM.IsDeterministic beliefSEM where
+  mech_det v := match v with
+    | .p => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .not_p => inferInstanceAs (Mechanism.IsDeterministic (const _))
+    | .indic_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .indic_not_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .acq_a_ip => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .acq_a_inp => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .B_a_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
+    | .B_a_not_p => inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
-Each `CausalLaw.simple c e` says: if c is true, then e becomes true.
-The chain p → indic(p) → acq(a)(iₚ) → B(a)(p) is four simple laws;
-`normalDevelopment` propagates to fixpoint.
-
-Key structural equations:
-- indic(p) := p ∨ q (p is sufficient for its indicators; q = other sources)
-- acq(a)(iₚ) := indic(p) ∧ exp(a)(iₚ) (acquaintance requires indicator + experience)
-- B(a)(p) := acq(a)(iₚ) (belief results from acquaintance with evidence)
--/
-def beliefFormationDynamics : CausalDynamics :=
-  ⟨[ -- p generates indicators for p
-     CausalLaw.simple BeliefVars.p BeliefVars.indic_p,
-     -- ¬p generates indicators for ¬p, not for p
-     CausalLaw.simple BeliefVars.not_p BeliefVars.indic_not_p,
-     -- Acquiring indicator for p leads to belief in p
-     CausalLaw.simple BeliefVars.indic_p BeliefVars.acq_a_ip,
-     CausalLaw.simple BeliefVars.acq_a_ip BeliefVars.B_a_p,
-     -- Acquiring indicator for ¬p leads to belief in ¬p
-     CausalLaw.simple BeliefVars.indic_not_p BeliefVars.acq_a_inp,
-     CausalLaw.simple BeliefVars.acq_a_inp BeliefVars.B_a_not_p ]⟩
+/-- Explicit vertex list for `developOn`. Topological order ensures one
+    `stepOnceOn` pass propagates the entire chain. -/
+def beliefVarList : List BeliefVar :=
+  [.p, .not_p, .indic_p, .indic_not_p, .acq_a_ip, .acq_a_inp, .B_a_p, .B_a_not_p]
 
 -- ============================================================================
 -- The Predicate Lexicalization Constraint
 -- ============================================================================
 
-/--
-**Predicate Lexicalization Constraint (PLC)**
+/-- **Predicate Lexicalization Constraint (PLC)** (@cite{roberts-ozyildiz-2025}).
 
-A verbal predicate with at-issue content α can have presupposition π iff
-setting π to true and running `normalDevelopment` produces α.
+    A verbal predicate with at-issue content α can have presupposition π iff
+    setting π to true and running the belief-formation SEM's `developOn`
+    produces α at the at-issue vertex.
 
-This uses `causallySufficient` from `Core.Causal`:
-the presupposition being true must be causally sufficient for the
-at-issue content in the belief formation model. This is stronger than
-mere graph reachability — it actually runs the structural equations.
+    Defined via `developOn` with the explicit `beliefVarList` so kernel
+    reduction works structurally (no `native_decide`). One iteration of
+    `stepOnceOn` over a topologically-ordered list propagates the entire
+    chain; we use `8 = beliefVarList.length` iterations conservatively. -/
+noncomputable def satisfiesPLC (presup atIssue : BeliefVar) : Prop :=
+  (developOn beliefSEM beliefVarList 1
+    (Valuation.empty.extend presup true)).hasValue atIssue true
 
-This is the central constraint from Roberts & Özyıldız (2025).
--/
-def satisfiesPLC (presup atIssue : Variable)
-    (dyn : CausalDynamics := beliefFormationDynamics) : Prop :=
-  causallySufficient dyn Situation.empty presup atIssue
-
-instance (presup atIssue : Variable) (dyn : CausalDynamics) :
-    Decidable (satisfiesPLC presup atIssue dyn) :=
-  inferInstanceAs (Decidable (causallySufficient ..))
+noncomputable instance (presup atIssue : BeliefVar) : Decidable (satisfiesPLC presup atIssue) :=
+  Classical.dec _
 
 -- ============================================================================
 -- Deriving the Contrafactive Gap
 -- ============================================================================
 
-/--
-**Theorem: Factives satisfy the PLC**
+/-- **Theorem: Factives satisfy the PLC**
 
-For "x knows p":
-- Presupposition: p
-- At-issue: B(a)(p)
-- Causal chain: p → indic(p) → acq(a)(iₚ) → B(a)(p) ✓
--/
+    For "x knows p":
+    - Presupposition: p
+    - At-issue: B(a)(p)
+    - Causal chain: p → indic(p) → acq(a)(iₚ) → B(a)(p) ✓ -/
 theorem factive_satisfies_plc :
-    satisfiesPLC BeliefVars.p BeliefVars.B_a_p := by
-  native_decide
+    satisfiesPLC .p .B_a_p := by
+  unfold satisfiesPLC
+  rfl
 
-/--
-**Theorem: Strong contrafactives VIOLATE the PLC**
+/-- **Theorem: Strong contrafactives VIOLATE the PLC**
 
-For hypothetical "x contras p":
-- Presupposition: ¬p
-- At-issue: B(a)(p)
-- NO causal chain from ¬p to B(a)(p) ✗
+    For hypothetical "x contras p":
+    - Presupposition: ¬p
+    - At-issue: B(a)(p)
+    - NO causal chain from ¬p to B(a)(p) ✗
 
-This is because ¬p generates indicators for ¬p, not for p.
-The fact that the Earth is round does not generate evidence
-that the Earth is flat.
--/
+    The fact that the Earth is round does not generate evidence
+    that the Earth is flat. -/
 theorem strong_contrafactive_violates_plc :
-    ¬ satisfiesPLC BeliefVars.not_p BeliefVars.B_a_p := by
-  native_decide
+    ¬ satisfiesPLC .not_p .B_a_p := by
+  unfold satisfiesPLC
+  intro h
+  exact Bool.false_ne_true (Option.some.inj h)
 
-/--
-**The Contrafactive Gap Theorem**
+/-- **The Contrafactive Gap Theorem**
 
-The asymmetry between factives and strong contrafactives follows from
-the Predicate Lexicalization Constraint:
+    The asymmetry between factives and strong contrafactives follows from
+    the Predicate Lexicalization Constraint:
 
-1. Factives (know): presup p → at-issue B(a)(p) — PLC SATISFIED
-2. Strong contrafactives (contra): presup ¬p → at-issue B(a)(p) — PLC VIOLATED
+    1. Factives (know): presup p → at-issue B(a)(p) — PLC SATISFIED
+    2. Strong contrafactives (contra): presup ¬p → at-issue B(a)(p) — PLC VIOLATED
 
-This DERIVES the gap from the independently motivated causal constraint.
--/
+    This DERIVES the gap from the independently motivated causal constraint. -/
 theorem contrafactive_gap :
-    satisfiesPLC BeliefVars.p BeliefVars.B_a_p ∧
-    ¬ satisfiesPLC BeliefVars.not_p BeliefVars.B_a_p := by
-  exact ⟨factive_satisfies_plc, strong_contrafactive_violates_plc⟩
+    satisfiesPLC .p .B_a_p ∧ ¬ satisfiesPLC .not_p .B_a_p :=
+  ⟨factive_satisfies_plc, strong_contrafactive_violates_plc⟩
 
-/--
-**Corollary: The asymmetry is structural, not stipulated**
+/-- **Corollary: The asymmetry is structural, not stipulated**
 
-The contrafactive gap emerges from the structure of belief formation:
-- Beliefs are formed based on evidence
-- Evidence for p comes from p being true
-- Evidence for p does NOT come from ¬p being true
+    The contrafactive gap emerges from the structure of belief formation:
+    - Beliefs are formed based on evidence
+    - Evidence for p comes from p being true
+    - Evidence for p does NOT come from ¬p being true
 
-Therefore any predicate trying to presuppose ¬p while asserting B(x)(p)
-is describing a causally incoherent eventuality.
--/
+    Therefore any predicate trying to presuppose ¬p while asserting B(x)(p)
+    is describing a causally incoherent eventuality. -/
 theorem contrafactive_gap_is_structural :
-    -- p is causally sufficient for B(a)(p)
-    causallySufficient beliefFormationDynamics .empty BeliefVars.p BeliefVars.B_a_p ∧
-    -- ¬p is NOT causally sufficient for B(a)(p)
-    ¬ (causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_p) ∧
-    -- But ¬p IS causally sufficient for B(a)(¬p)
-    causallySufficient beliefFormationDynamics .empty BeliefVars.not_p BeliefVars.B_a_not_p := by
-  native_decide
+    satisfiesPLC .p .B_a_p ∧
+    ¬ satisfiesPLC .not_p .B_a_p ∧
+    satisfiesPLC .not_p .B_a_not_p := by
+  refine ⟨factive_satisfies_plc, strong_contrafactive_violates_plc, ?_⟩
+  unfold satisfiesPLC
+  rfl
 
 -- ============================================================================
 -- Why Weak Contrafactives Escape the Gap
@@ -374,9 +376,9 @@ Map a `PresupClass` to the corresponding causal variables for PLC checking.
 
 For nonfactive (no presupposition) and other, the PLC doesn't apply.
 -/
-def presupClassToCausalVars : PresupClass → Option (Variable × Variable)
-  | .factive => some (BeliefVars.p, BeliefVars.B_a_p)
-  | .contrafactive => some (BeliefVars.not_p, BeliefVars.B_a_p)
+def presupClassToCausalVars : PresupClass → Option (BeliefVar × BeliefVar)
+  | .factive => some (.p, .B_a_p)
+  | .contrafactive => some (.not_p, .B_a_p)
   | .nonfactive => none
   | .other => none
 
@@ -386,7 +388,7 @@ Check if a `PresupClass` satisfies the Predicate Lexicalization Constraint.
 Returns `none` if the PLC doesn't apply (nonfactive, postsuppositions).
 Returns `some true` if it satisfies PLC, `some false` if it violates PLC.
 -/
-def presupClassSatisfiesPLC (pc : PresupClass) : Option Bool :=
+noncomputable def presupClassSatisfiesPLC (pc : PresupClass) : Option Bool :=
   match presupClassToCausalVars pc with
   | none => none
   | some (presup, atIssue) => some (decide (satisfiesPLC presup atIssue))
@@ -397,7 +399,7 @@ Is this presuppositional profile valid (attestable)?
 Valid means: either satisfies PLC (factives) or not subject to PLC
 (nonfactives, postsuppositions). Invalid = violates PLC (contrafactives).
 -/
-def presupClassIsValid (pc : PresupClass) : Bool :=
+noncomputable def presupClassIsValid (pc : PresupClass) : Bool :=
   match presupClassSatisfiesPLC pc with
   | none => true
   | some b => b
