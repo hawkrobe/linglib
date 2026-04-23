@@ -4,6 +4,47 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.270] - 2026-04-23
+
+### GP2009 deepening pass — derive from data, integrate with Implicature/
+
+Follow-up to the 0.230.266 attribution. Brings GP2009 to full mathlib
+discipline against the actual paper PDF (S&P 2:4, 2009).
+
+- **Bib citation fix**: paper cites *Chierchia, Fox & Spector. 2008*
+  (manuscript) — we were citing the 2012 print version. Switched.
+- **Added Cohen 1971** as the historical anchor of the embedded-
+  implicature problem (paper §1).
+- **Stipulation chains derived from data**: `lookupRate` helper added;
+  `thinkAvgRate`, `complexConditionsMean`, `deInferenceMean`,
+  `nonDeInferenceMean` all now computed from `exp1aResults` /
+  `exp1bResults` / `exp3Results` rather than restating values.
+  `embedding_not_systematic`, `ambiguity_gap`,
+  `minimal_conventionalist_support` anchor in data tables.
+- **`footnote7_paraphrase_asymmetry`** is now `abbrev … := @mt` —
+  reuses Lean core's `mt` (modus tollens) instead of reinventing.
+- **`competence_explains_think_via_processAlternative`** added —
+  load-bearing bridge from §8 derivation to
+  `Implicature.Competence.processAlternative` machinery.
+- **`PassWorld` deriving `Fintype`** (was `DecidableEq, Repr`) for
+  downstream `Implicature PassWorld` operations.
+- **`notAllPassed` derived from `allPassedProp`** rather than
+  defined as a separate match (literal negation).
+- **Spine bridge data-linked**:
+  `someStudentsSleepUE_corresponds_to_unembedded_data` ties the
+  `Implicature PassWorld` value to Exp 1a-b's 93%/94% empirical rate.
+- **`saladOrDessertExample`** added — paper's §Conclusion (39) marked
+  contrastive construction (the punchline counter-example).
+- **`appendixSamples`** added — the 8 paper-Appendix stimulus pairs
+  used in Exps 1a-b.
+- **`ConventionalistVariant` enum + `predictsLocalSI`**: distinguish
+  mainstream-lexicalist / mainstream-syntactic / minimal variants
+  (paper §1 vs §6 distinction).
+- **`AmbiguitySource` enum + map**: classify the Table 5 control
+  sentences (collective/distributive, predicate scope, etc.).
+- **`EmbeddingType` + `EmbeddingResult` promoted** to file-level
+  shared types (were §1-local).
+
 ## [0.230.269] - 2026-04-23
 
 ### O'Donnell 2015 Phase 7: FragmentGrammar (FG)

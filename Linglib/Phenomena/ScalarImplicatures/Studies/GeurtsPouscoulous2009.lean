@@ -249,7 +249,10 @@ theorem think_uniquely_elevated :
     lookupRate exp1aResults .must < (35 : Nat) ∧
     lookupRate exp1bResults .want < (35 : Nat) := by
   refine ⟨?_, ?_, ?_, ?_⟩
-  · unfold thinkAvgRate lookupRate; norm_num
+  · have h : (lookupRate exp1aResults .think + lookupRate exp1bResults .think : Nat) = 115 := by
+      decide
+    unfold thinkAvgRate
+    rw [h]; norm_num
   · decide
   · decide
   · decide
@@ -431,25 +434,32 @@ theorem inference_clusters_around_chance :
     exp3Results.all (fun r => r.inferenceRate ≥ 40 ∧ r.inferenceRate ≤ 65) := by
   decide
 
-/-- Filter `exp3Results` to a given monotonicity class. -/
-def exp3Filtered (m : ContextPolarity) : List Exp3Row :=
-  exp3Results.filter (fun r => quantifierMonotonicity r.quantifier == m)
+/-- Inference rates from DE rows of `exp3Results`. -/
+def deInferenceRates : List Nat :=
+  (exp3Results.filter (fun r => quantifierMonotonicity r.quantifier == .downward)).map
+    (·.inferenceRate)
+
+/-- Inference rates from non-DE rows of `exp3Results`. -/
+def nonDeInferenceRates : List Nat :=
+  (exp3Results.filter (fun r => quantifierMonotonicity r.quantifier != .downward)).map
+    (·.inferenceRate)
 
 /-- Mean inference rate in DE conditions, derived from `exp3Results`.
-Paper §5.2 reports 45% as the rounded figure; our integer arithmetic
-over the filtered rows gives `(58 + 46) / 2 = 52`. Both the paper's
-rounding and our exact mean falsify the conventionalist prediction
-(which expects DE rates to be much *lower* than non-DE rates). -/
-def deInferenceMean : ℚ :=
-  let rates := (exp3Filtered .downward).map (·.inferenceRate)
-  (rates.sum : ℚ) / rates.length
+Paper §5.2 reports 45% as the rounded figure; integer arithmetic over
+the filtered rows gives `(58 + 46) / 2 = 52`. Both falsify the
+conventionalist prediction (which expects DE rates *low*, non-DE *high*). -/
+def deInferenceMean : ℚ := (deInferenceRates.sum : ℚ) / deInferenceRates.length
 
 /-- Mean inference rate in non-DE conditions, derived from `exp3Results`.
 Paper §5.2 reports 51%; integer arithmetic gives 52. -/
-def nonDeInferenceMean : ℚ :=
-  let nonDe := exp3Results.filter (fun r => quantifierMonotonicity r.quantifier != .downward)
-  let rates := nonDe.map (·.inferenceRate)
-  (rates.sum : ℚ) / rates.length
+def nonDeInferenceMean : ℚ := (nonDeInferenceRates.sum : ℚ) / nonDeInferenceRates.length
+
+/-- Concrete numeric computation: non-DE conditions sum to 208 over
+4 rows; DE conditions sum to 104 over 2 rows. Both yield mean 52. -/
+private theorem exp3_sums :
+    nonDeInferenceRates.sum = 208 ∧ deInferenceRates.sum = 104 ∧
+    nonDeInferenceRates.length = 4 ∧ deInferenceRates.length = 2 := by
+  decide
 
 /-- The paper's "fails to coalesce into the predicted pattern"
 disconfirmation (paper §5.2 page 4:23): the difference between non-DE
@@ -457,7 +467,9 @@ and DE inference means is essentially zero — yet conventionalism
 predicts a *large* difference. Derived from `exp3Results`. -/
 theorem inference_fails_to_coalesce :
     nonDeInferenceMean - deInferenceMean = 0 := by
-  unfold nonDeInferenceMean deInferenceMean exp3Filtered
+  obtain ⟨hN, hD, hLN, hLD⟩ := exp3_sums
+  unfold nonDeInferenceMean deInferenceMean
+  rw [hN, hD, hLN, hLD]
   norm_num
 
 /-- After Exp 3 establishes the ~50% paradigm baseline in inference
@@ -465,13 +477,18 @@ tasks, the rates from Exp 1a–b for *all* (27%) and *want* (32%) are
 *below* baseline — they may be entirely paradigm artifacts. Only *think*
 (57.5% averaged) survives correction. -/
 theorem only_think_survives_correction :
-    27 ≤ (50 : Nat) ∧ 32 ≤ (50 : Nat) ∧ 3 ≤ (50 : Nat) ∧
+    lookupRate exp1aResults .all  ≤ (50 : Nat) ∧
+    lookupRate exp1bResults .want ≤ (50 : Nat) ∧
+    lookupRate exp1aResults .must ≤ (50 : Nat) ∧
     thinkAvgRate > (50 : ℚ) := by
   refine ⟨?_, ?_, ?_, ?_⟩
   · decide
   · decide
   · decide
-  · unfold thinkAvgRate; norm_num
+  · have h : (lookupRate exp1aResults .think + lookupRate exp1bResults .think : Nat) = 115 := by
+      decide
+    unfold thinkAvgRate
+    rw [h]; norm_num
 
 
 -- ============================================================================
@@ -637,7 +654,7 @@ theorem competence_explains_think
     BobBelievesNotAll :=
   competence.elim (fun h => absurd h globalSI) id
 
-/-- The §8 derivation, expressed via `Implicature.processAlternative`
+/-- The §8 derivation, expressed via `Implicature.Competence.processAlternative`
 from `Theories/Pragmatics/Implicature/Competence.lean`. When the speaker
 has a determinate negative stance about the alternative (here:
 `.disbelief` — speaker believes ¬(Bob-believes-all)) and competence is
@@ -645,7 +662,7 @@ assumed, the Standard-Recipe `strongDerived` flag is set. This is the
 load-bearing link from the paper's §8 chain to the abstract Sauerland
 machinery the library already implements. -/
 theorem competence_explains_think_via_processAlternative :
-    (Implicature.processAlternative true .disbelief).strongDerived = true := by decide
+    (Implicature.Competence.processAlternative true .disbelief).strongDerived = true := by decide
 
 /-- The same derivation chain *applied to universal quantifiers*: given
 the global SI ¬(∀c, ShotAtAll c) and the strong-competence assumption
@@ -690,12 +707,14 @@ abbrev footnote7_paraphrase_asymmetry : ∀ {A B : Prop}, (A → B) → ¬ B →
 a small discourse model, exercising the spine in `Defs.lean` and the
 diagnostics in `Diagnostics.lean`. -/
 
-/-- A three-world discourse model for *some students passed*. -/
+/-- A three-world discourse model for *some students passed*. `Fintype`
+to support downstream `Implicature PassWorld` operations that need
+finite enumeration. -/
 inductive PassWorld where
   | nonePassed
   | someButNotAll
   | allPassed
-  deriving DecidableEq, Repr
+  deriving DecidableEq, Repr, Fintype
 
 /-- The classical (non-SI) content of *some students passed*: at least
 one passed. -/
@@ -708,10 +727,18 @@ def allPassedProp : PassWorld → Prop
   | .allPassed => True
   | _ => False
 
-/-- The canonical scalar implicature *not all students passed*. -/
-def notAllPassed : PassWorld → Prop
-  | .allPassed => False
-  | _ => True
+instance : DecidablePred allPassedProp
+  | .nonePassed => isFalse not_false
+  | .someButNotAll => isFalse not_false
+  | .allPassed => isTrue trivial
+
+/-- The canonical scalar implicature *not all students passed* —
+literally the negation of `allPassedProp`. Derived rather than
+stipulated. -/
+def notAllPassed (w : PassWorld) : Prop := ¬ allPassedProp w
+
+instance : DecidablePred notAllPassed := fun w =>
+  inferInstanceAs (Decidable (¬ allPassedProp w))
 
 /-- The neo-Gricean SI derived from *some students passed* in a UE
 context (paper §1's ∅-condition). Mechanism is the Sauerland Standard
@@ -727,7 +754,7 @@ where the assertion holds but the inferred content fails — so adding
 "…but not all" is non-redundant. -/
 theorem someStudentsSleepUE_isReinforceable :
     Implicature.IsReinforceable somePassed someStudentsSleepUE :=
-  ⟨.allPassed, trivial, fun h => h⟩
+  ⟨.allPassed, trivial, fun h => h trivial⟩
 
 /-- The SI is *cancellable* (Sadock 1978's diagnostic): from
 reinforceability via `IsReinforceable.toCancellable`. The witness
@@ -745,6 +772,99 @@ theorem someStudentsSleepUE_isCalculable :
 not form (any paraphrase of "some students passed" gives the same SI). -/
 theorem someStudentsSleepUE_isNonDetachable :
     Implicature.IsNonDetachable someStudentsSleepUE := trivial
+
+/-- The neo-Gricean SI for `someStudentsSleepUE` corresponds to the
+∅-condition tested in Experiments 1a-b, where the empirical SI
+endorsement rate is 93% (Exp 1a) and 94% (Exp 1b). The spine bridge
+is anchored in the data. -/
+theorem someStudentsSleepUE_corresponds_to_unembedded_data :
+    lookupRate exp1aResults .simple = 93 ∧
+    lookupRate exp1bResults .simple = 94 := by decide
+
+
+-- ============================================================================
+-- §Conclusion — Chierchia et al. (2008) (39) counter-example
+-- ============================================================================
+
+/-- Paper §Conclusion (page 4:30) example (39): the marked contrastive
+construction @cite{chierchia-fox-spector-2008} cite as evidence for
+embedded SI. Geurts & Pouscoulous's punchline: such examples are
+*strongly marked*, in which "the contrast between *or* and *both* is
+essential" — not generic embedded-SI evidence. The paper's verdict
+(page 4:31) is that mainstream conventionalism's defense "primarily
+relies on data that are strongly marked, like (39), for example." -/
+def saladOrDessertExample : String :=
+  "If you take a salad OR desert, you pay $20; but if you take BOTH there is a surcharge."
+
+
+-- ============================================================================
+-- Appendix — sample stimuli used in Experiments 1a-b (paper page 4:31)
+-- ============================================================================
+
+/-- Sample stimulus pairs from Experiments 1a-b (paper Appendix
+page 4:31). Each pair consists of (a) a premise sentence and (b) a
+candidate inference; participants judged whether (a) implies (b).
+The full materials are in @cite{geurts-pouscoulous-2009}'s background-
+materials file (doi:10.3765/sp.2.4a). -/
+def appendixSamples : List (String × String) :=
+  [ ( "Betty thinks that Fred has read some of the Harry Potter books."
+    , "Betty thinks that Fred hasn't read all the Harry Potter books." )
+  , ( "Betty thinks that Fred has bought some of Daniel Pennac's novels."
+    , "Betty thinks that Fred hasn't bought all of Daniel Pennac's novels." )
+  , ( "Betty wants Fred to listen to some Beethoven symphonies."
+    , "Betty wants Fred not to listen to all Beethoven symphonies." )
+  , ( "Betty wants Fred to rent some Tarantino movies."
+    , "Betty wants Fred not to rent all Tarantino movies." )
+  , ( "Fred has to read some poems from Fleurs du Mal."
+    , "Fred is not allowed to read all poems from Fleurs du Mal." )
+  , ( "Fred has to see some of the Harry Potter movies."
+    , "Fred is not allowed to see all the Harry Potter movies." )
+  , ( "All the students have seen some of the plays by Racine."
+    , "None of the students has seen all the plays by Racine." )
+  , ( "All the students have heard some of the Verdi operas."
+    , "None of the students has heard all the Verdi operas." )
+  ]
+
+
+-- ============================================================================
+-- §7 ambiguity-source taxonomy
+-- ============================================================================
+
+/-- Source of ambiguity in the Table 5 control sentences. Paper §7.1
+page 4:25 (29a)–(29e) cites these as "clearly ambiguous" controls but
+doesn't formally taxonomize the ambiguity sources; this enum captures
+the standard linguistic classification (collective vs distributive
+predication, scope, etc.). -/
+inductive AmbiguitySource where
+  /-- "X and Y are connected with each other" — collective vs
+  distributive reading (each X-Y pair connected, vs the whole set
+  collectively). -/
+  | collectiveDistributive
+  /-- "X are P and Q" — predicate scope: are individual X's P and Q,
+  or is the *set* of X's split into P-ones and Q-ones? -/
+  | predicateScope
+  /-- "There are P X and Y" — coordination scope: are X's and Y's
+  both P, or only X's? -/
+  | coordinationScope
+  /-- "X and Y have the same Z" — collective vs distributive on the
+  shared property. -/
+  | sharedPropertyScope
+  deriving DecidableEq, Repr
+
+/-- Map a Table 5 control sentence to its ambiguity source. -/
+def ambiguitySource : String → Option AmbiguitySource
+  | "The circles and the squares are connected with each other"        => some .collectiveDistributive
+  | "The green and the orange figures are connected with each other"   => some .collectiveDistributive
+  | "All the figures are orange and green"                             => some .predicateScope
+  | "There are green circles and squares"                              => some .coordinationScope
+  | "The circles and the squares have the same colour"                 => some .sharedPropertyScope
+  | _                                                                  => none
+
+/-- Every control sentence in `genuineAmbiguityResults` has a
+classified ambiguity source. -/
+theorem all_controls_classified :
+    genuineAmbiguityResults.all (fun r => (ambiguitySource r.sentence).isSome) := by
+  decide
 
 
 end Phenomena.ScalarImplicatures.Studies.GeurtsPouscoulous2009
