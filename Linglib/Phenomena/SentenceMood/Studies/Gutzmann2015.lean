@@ -33,6 +33,7 @@ Oxford University Press.
 
 namespace Gutzmann2015
 
+open Features
 open Semantics.Mood.Gutzmann
 open Fragments.German.ClauseTypes
 open Fragments.German.ModalParticles

@@ -110,7 +110,7 @@ def embeddedQuestionConstraint : PhenomenonData := {
       ungrammatical := [what, do_, you, wonder, who, bought]
       clauseType := .matrixQuestion
       description := "Wh-dependency blocked by intervening wh-word"
-      citation := some "Ross (1967)" },
+      citation := "Ross (1967)" },
 
     { grammatical := [who, did, john, see]
       ungrammatical := [who, do_, you, wonder, what, saw]
@@ -128,7 +128,7 @@ def complexNPConstraint : PhenomenonData := {
       ungrammatical := [who, did, you, met, the, man, that, saw]
       clauseType := .matrixQuestion
       description := "Wh-dependency blocked into relative clause"
-      citation := some "Ross (1967)" }
+      citation := "Ross (1967)" }
   ]
 }
 
@@ -141,7 +141,7 @@ def adjunctClauseConstraint : PhenomenonData := {
       ungrammatical := [what, did, john, leave, before, buy]
       clauseType := .matrixQuestion
       description := "Wh-dependency blocked into temporal adjunct"
-      citation := some "Huang (1982)" },
+      citation := "Huang (1982)" },
 
     { grammatical := [what, did, john, buy]
       ungrammatical := [what, did, john, leave, because, mary, bought]
@@ -159,7 +159,7 @@ def coordinateStructureConstraint : PhenomenonData := {
       ungrammatical := [what, did, john, buy, books, and_]
       clauseType := .matrixQuestion
       description := "Wh-dependency into single conjunct blocked"
-      citation := some "Ross (1967)" },
+      citation := "Ross (1967)" },
 
     { grammatical := [what, did, john, buy, and_, sell]
       ungrammatical := [what, did, john, buy, and_, sell, books]
@@ -177,7 +177,7 @@ def subjectConstraint : PhenomenonData := {
       ungrammatical := [who, did, sees, john]
       clauseType := .matrixQuestion
       description := "Wh-dependency into subject blocked"
-      citation := some "Ross (1967)" }
+      citation := "Ross (1967)" }
   ]
 }
 

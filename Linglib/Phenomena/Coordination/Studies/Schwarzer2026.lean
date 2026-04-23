@@ -50,6 +50,7 @@ out linear/temporal closeness accounts and supports bottom-up analyses.
 
 namespace Schwarzer2026
 
+open Features
 open Features.Coordination
 open Core.Verbs (ComplementType VerbCore)
 open Fragments.German.Predicates
@@ -80,13 +81,13 @@ The competing analyses make different predictions for the preverbal
 /-- German has V2 in root declaratives: the finite verb moves to C°,
     placing it in second position. Complements follow the verb. -/
 theorem german_root_v2 :
-    Fragments.German.german.declV2 = true := rfl
+    Fragments.German.german.declarativeV2 = true := rfl
 
 /-- German has V-to-I movement in embedded finite clauses (not full
     V-to-C). Combined with the independently motivated SOV base order,
     this yields verb-final surface order in embedded clauses. -/
 theorem german_embedded_v_to_i :
-    Fragments.German.german.embFinV2 = true := rfl
+    Fragments.German.german.embeddedFinV2 = true := rfl
 
 /-- In German root declaratives, V2 places the verb before its complements.
     Coordination of complements is therefore postverbal.
@@ -105,13 +106,13 @@ def germanEmbeddedComplementPosition : VerbPosition := .preverbal
 
 /-- V2 root → postverbal complement position, grounded in V2Data. -/
 theorem german_v2_grounds_postverbal :
-    Fragments.German.german.declV2 = true ∧
+    Fragments.German.german.declarativeV2 = true ∧
     germanRootComplementPosition = .postverbal := ⟨rfl, rfl⟩
 
 /-- Embedded V-to-I + SOV base → preverbal complement position,
     grounded in V2Data. -/
 theorem german_vfinal_grounds_preverbal :
-    Fragments.German.german.embFinV2 = true ∧
+    Fragments.German.german.embeddedFinV2 = true ∧
     germanEmbeddedComplementPosition = .preverbal := ⟨rfl, rfl⟩
 
 -- ============================================================================

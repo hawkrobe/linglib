@@ -63,19 +63,19 @@ NOT @cite{laka-1990}'s ΣP (which is `Cat.Pol` in linglib at F-value 2).
 open Minimalism (ForceHead V2Profile) in
 /-- Map theory-neutral V2 observations to's
     split-ForceP micro-parameter representation. The mapping:
-    - `declV2`   → Decl° (verb movement in declaratives)
-    - `whQV2`    → Int°  (verb movement in wh-questions)
-    - `ynQV2`    → Pol°  (verb movement in yes/no-questions)
-    - `exclV2`   → Excl° (verb movement in exclamatives)
-    - `impV2`    → Imp°  (verb movement in imperatives)
-    - `embFinV2` → Fin°  (V-to-I in embedded finite clauses)
-    - `embQV2`   → Wh°   (verb movement in embedded questions) -/
+    - `declarativeV2`   → Decl° (verb movement in declaratives)
+    - `whQuestionV2`    → Int°  (verb movement in wh-questions)
+    - `yesNoQuestionV2`    → Pol°  (verb movement in yes/no-questions)
+    - `exclamativeV2`   → Excl° (verb movement in exclamatives)
+    - `imperativeV2`    → Imp°  (verb movement in imperatives)
+    - `embeddedFinV2` → Fin°  (V-to-I in embedded finite clauses)
+    - `embeddedQuestionV2`   → Wh°   (verb movement in embedded questions) -/
 def V2Data.toProfile (d : V2Data) : V2Profile where
   name := d.name
   verbMovement
-    | .Decl => d.declV2  | .Int  => d.whQV2   | .Pol  => d.ynQV2
-    | .Excl => d.exclV2  | .Imp  => d.impV2   | .Fin  => d.embFinV2
-    | .Wh   => d.embQV2
+    | .Decl => d.declarativeV2  | .Int  => d.whQuestionV2   | .Pol  => d.yesNoQuestionV2
+    | .Excl => d.exclamativeV2  | .Imp  => d.imperativeV2   | .Fin  => d.embeddedFinV2
+    | .Wh   => d.embeddedQuestionV2
 
 namespace Westergaard2009
 

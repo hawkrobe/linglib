@@ -4,6 +4,102 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.210] - 2026-04-22
+
+### Polished — mathlib-style audit follow-ups on the Grammar dissolution
+
+Address every issue from the post-dissolution mathlib code-quality
+audit (commit `abc29d51`):
+
+- **Namespaced `Features/V2.lean` and `Features/ClauseForm.lean` under
+  `namespace Features`** (matching `Features/Polarity.lean`,
+  `Features/Gender.lean`, `Features/PrivativePair.lean`,
+  `Features/VerbCluster.lean`). The dissolution had moved both files
+  into `Features/` but left them at root namespace, contradicting all
+  16 sibling files. All ~15 consumers updated to `open Features`.
+- **Expanded `V2Data` field abbreviations** — `declV2`/`whQV2`/
+  `ynQV2`/`exclV2`/`impV2`/`embFinV2`/`embQV2` →
+  `declarativeV2`/`whQuestionV2`/`yesNoQuestionV2`/`exclamativeV2`/
+  `imperativeV2`/`embeddedFinV2`/`embeddedQuestionV2`. Field docstrings
+  also flag that `embeddedFinV2` is V-to-I rather than V2 strictly.
+- **Dropped `ClauseForm.echo`** — echo questions are declarative-form
+  sentences with question force in discourse, handled via
+  `Core.InformationStructure`, not as a syntactic-form distinction. Both
+  consumers updated (`Discourse.lean` `IllocutionaryMood.fromClauseForm`
+  arm dropped; `Fragments/German/ClauseTypes.lean` `no_german_echo`
+  vacuous theorem removed).
+- **Fixed `Inversion.precedes` docstring** to match the first-match
+  implementation (was framed existentially, but the `findIdx?`-based
+  code only checks the earliest `p`-word vs the earliest `q`-word).
+- **Renamed `Inversion.isSubject` → `Inversion.isSubjectWord`** to avoid
+  the cross-namespace name collision with `UD.DepRel.isSubject` (which
+  classifies dependency labels rather than words).
+- **Added Prop wrappers + Decidable instances** to `Inversion`:
+  `IsSubjectWord`, `AuxPrecedesSubject`, `SubjectPrecedesAux` for new
+  consumer code per the project's Bool→Prop migration policy. Existing
+  Bool helpers preserved for backward compat with the ~18 `... ws =
+  true` consumer sites.
+- **Moved `open Inversion` inside `namespace HPSG`** in
+  `Theories/Syntax/HPSG/Inversion.lean` (was leaking into the root
+  namespace before the `namespace HPSG` block).
+- **`MinimalPair` / `SentencePair` `citation : Option String := none` →
+  `citation : String := ""`**, and added `Repr` deriving to
+  `MinimalPair` / `PhenomenonData` to match `SentencePair` /
+  `StringPhenomenonData`. `MinimalPair` docstring acknowledges the
+  conceptual relationship to `FactorialCondition Unit Bool`. Two
+  consumer files (`Phenomena/Anaphora/Coreference.lean`,
+  `Phenomena/Islands/Studies/Ross1967.lean`) had their `citation := some
+  "..."` calls flattened to `citation := "..."`.
+- **Replaced the dead `Linglib.Core.Lexical.Word` import in
+  `Theories/Semantics/TypeTheoretic/Core.lean`** (added in commit
+  `abc29d51` as a band-aid) with the actual needed direct dependency
+  `Linglib.Core.Lexical.UD` (the file's single line-679 reference is
+  to `UD.UPOS`, not anything `Word` brings).
+
+## [0.230.209] - 2026-04-22
+
+### Phase D-B: `Causative.V2.toSemantics` dispatch + `Resultatives.V2` sub-namespace
+
+Continues the V2 substrate migration arc (Phase D-A added `Prevention.V2`,
+`CCSelection.V2`, `CoerciveImplication.V2` wrappers).
+
+- **`Interpretation.lean`**: added `Core.Verbs.Causative.V2.toSemantics`
+  parallel dispatch over `BoolSEM V` substrate. Maps `.cause →
+  Necessity.V2.causeSem`, `.make/.force/.enable → Sufficiency.V2.makeSem`,
+  `.prevent → Prevention.V2.preventSem`. Polymorphic over `V` with
+  `[Fintype] [DecidableEq] [CausalGraph.IsDAG] [SEM.IsDeterministic]`.
+  `Causative.V2.selectionMode` is an `abbrev` of the legacy version
+  (mode is substrate-independent). Verbal.lean (15 rfl theorems) can
+  now migrate verb-cluster-by-verb-cluster in Phase D-D.
+- **`Resultatives.lean`**: added `Resultatives.V2` sub-namespace with 7
+  scenario sub-namespaces (`HammerFlat`, `KickIntoField`, `LaughSilly`,
+  `FreezeSolid`, `DrinkTeapotDry`, `KickDoorDirect`, `KickDoorViaBall`).
+  Each scenario gets its own `inductive V` enum + `BoolSEM` model +
+  `IsDeterministic` instance. Local `sufficient`/`completes` predicates
+  use `developOn` (Lewis1973 pattern, no IsDAG required for structural
+  proofs). All theorems close via `rfl` / `Bool.false_ne_true` —
+  zero `native_decide`. Legacy section preserved untouched. The big
+  `independent_source_disrupts_tightness` proof (legacy fixpoint
+  reasoning) is not ported; its qualitative claim is witnessed
+  concretely by `KickDoorViaBall.kick_door_via_ball_not_tight`.
+
+### Side-quest fixes (build chain unblocking)
+
+Two pre-existing main-branch breakages discovered while building
+Resultatives:
+
+- `ConstructionGrammar/Studies/FillmoreKayOConnor1988.lean`: added
+  missing `import Mathlib.Data.Fintype.Basic` (file used `Fintype`
+  instances without importing the typeclass).
+- `ConstructionGrammar/ArgumentStructure.lean`: added missing
+  `import Linglib.Core.Lexical.UD` (file referenced `UD.UPOS` without
+  importing it).
+
+Build status: 1733 jobs build clean for the Causation/Verbal subtree.
+The remaining `Core/Typology/LanguageProfile.lean` and
+`Phenomena/Plurals/Studies/Kriz2016.lean` failures are concurrent
+parallel-session in-flight work, not touched by this commit.
+
 ## [0.230.208] - 2026-04-22
 
 ### Dissolved — `Core/Grammar.lean` (parallel-session migration finished)

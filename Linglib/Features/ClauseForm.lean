@@ -12,9 +12,12 @@ mood. The two complement each other: a polar question has
 ⟨interrogative, indicative⟩`.
 -/
 
+namespace Features
+
 inductive ClauseForm where
   | declarative
   | matrixQuestion      -- requires inversion in English
   | embeddedQuestion    -- no inversion in English
-  | echo                -- no inversion even in matrix position
   deriving Repr, DecidableEq
+
+end Features

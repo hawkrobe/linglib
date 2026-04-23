@@ -36,6 +36,8 @@ true backchannels live in `Theories/Pragmatics/Dialogue/KOS/`).
 
 namespace Semantics.TypeTheoretic
 
+open Features
+
 -- ============================================================================
 -- Signs & Illocutionary Force (§2.5–2.6)
 -- ============================================================================
@@ -67,7 +69,7 @@ instance (Phon Cont : Type) : SubtypeOf (ForcedSign Phon Cont) (TTRSign Phon Con
     illocutionary force alone, so we project to the matrix variant.
 
     Imperatives, promissives, and exclamatives have no `ClauseForm`
-    form-counterpart in `Core.Grammar` (which only enumerates the
+    form-counterpart in `Features.ClauseForm` (which only enumerates the
     declarative/question word-order distinctions); they map to `none`. -/
 def IllocutionaryMood.toClauseForm? : IllocutionaryMood → Option ClauseForm
   | .declarative   => some .declarative
@@ -78,13 +80,11 @@ def IllocutionaryMood.toClauseForm? : IllocutionaryMood → Option ClauseForm
 
 /-- Bridge: form-level `ClauseForm` → `IllocutionaryMood`. The form
     distinction between matrix and embedded questions collapses on the
-    force side; echo questions share declarative force (the syntactic
-    in-situ wh has no force-level reflex). -/
+    force side. -/
 def IllocutionaryMood.fromClauseForm : ClauseForm → IllocutionaryMood
   | .declarative      => .declarative
   | .matrixQuestion   => .interrogative
   | .embeddedQuestion => .interrogative
-  | .echo             => .declarative
 
 /-- Round-trip: `fromClauseForm` preserves the declarative slot. -/
 theorem illoc_declarative_roundtrip :

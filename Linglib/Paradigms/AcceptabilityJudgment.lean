@@ -54,6 +54,8 @@ not the statistical apparatus that produces the pattern.
 
 namespace Paradigms.AcceptabilityJudgment
 
+open Features
+
 -- ============================================================================
 -- §1. Factorial conditions
 -- ============================================================================
@@ -203,19 +205,26 @@ end AccountPredictions
 
 -- §4.1 Word-based
 
-/-- A minimal pair: grammatical vs ungrammatical, with context. -/
+/-- A minimal pair: grammatical vs ungrammatical, with context.
+
+    Conceptually a degenerate `FactorialCondition Unit Bool` with the
+    Bool factor being grammaticality and a single trivial Unit factor;
+    kept as a distinct shape because the introspective tradition speaks
+    in `grammatical` / `ungrammatical` rather than factorial cells. -/
 structure MinimalPair where
   grammatical : List Word
   ungrammatical : List Word
   clauseType : ClauseForm
   description : String
-  citation : Option String := none
+  citation : String := ""
+  deriving Repr
 
 /-- Collection of minimal pairs for a phenomenon. -/
 structure PhenomenonData where
   name : String
   pairs : List MinimalPair
   generalization : String
+  deriving Repr
 
 /-- Check if a grammaticality predicate captures a minimal pair.
 
@@ -246,8 +255,8 @@ structure SentencePair where
   clauseType : ClauseForm
   /-- Description of what the pair tests -/
   description : String
-  /-- Optional citation for the data -/
-  citation : Option String := none
+  /-- Citation for the data; empty string for uncited examples. -/
+  citation : String := ""
   deriving Repr, BEq
 
 /-- String-based phenomenon data for theory-neutral representation.

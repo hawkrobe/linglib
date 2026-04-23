@@ -20,6 +20,8 @@ import Linglib.Features.ClauseForm
 
 namespace Phenomena.FillerGap.Studies.Sag2010
 
+open Features
+
 -- ============================================================================
 -- F-G Clause Types
 -- ============================================================================

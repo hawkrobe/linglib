@@ -22,9 +22,10 @@ import Linglib.Fragments.English.Auxiliaries
 import Linglib.Features.ClauseForm
 import Linglib.Theories.Syntax.HPSG.Core.Basic
 
-open Inversion
-
 namespace HPSG
+
+open Features
+open Inversion
 
 -- ============================================================================
 -- Clause Type Constraints (Inversion-Specific)

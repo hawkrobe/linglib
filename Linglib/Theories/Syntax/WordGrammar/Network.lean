@@ -26,6 +26,7 @@ set_option autoImplicit false
 
 namespace WordGrammar
 
+open Features
 open Core.Inheritance
 open DepGrammar (Dir ArgStr ArgSlot DepTree satisfiesArgStr)
 

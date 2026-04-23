@@ -54,6 +54,7 @@ L_TU's composition rules, without any special syntactic assumptions:
 
 namespace Fragments.German.ModalParticles
 
+open Features
 open Core.Mood (IllocutionaryMood)
 open Semantics.UseConditional (UCIClass UCExprKind RestrictionKind functionalExpletive)
 open Semantics.Mood.Gutzmann (MoodStructure)

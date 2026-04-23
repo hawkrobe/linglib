@@ -25,6 +25,8 @@ import Linglib.Core.Lexical.Word
 
 namespace Minimalism
 
+open Features
+
 -- Basic Clause Structure (positions, dominance, precedence)
 
 /-- Positions in the clause structure -/

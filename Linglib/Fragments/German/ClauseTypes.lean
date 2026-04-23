@@ -29,6 +29,7 @@ defines DEONT, EPIS, the E modifier, and HKNOW; this file specifies
 
 namespace Fragments.German.ClauseTypes
 
+open Features
 open Semantics.Mood.Gutzmann
 
 
@@ -106,16 +107,16 @@ theorem imperative_equals_dassVL {W : Type*}
 
 
 -- ════════════════════════════════════════════════════════════════
--- § 3. German Clause Types as a refinement of Core.Grammar.ClauseForm
+-- § 3. German Clause Types as a refinement of Features.ClauseForm
 -- ════════════════════════════════════════════════════════════════
 
 /-! ### `GermanClauseType` as `ClauseForm`-indexed inductive
 
 `GermanClauseType` is a Gutzmann-2015-specific refinement of the
-framework-agnostic `Core.Grammar.ClauseForm`: it distinguishes clauses
+framework-agnostic `Features.ClauseForm`: it distinguishes clauses
 by both verb position (V2 vs VL) and complementizer presence (dass vs
 not), where `ClauseForm` only records the matrix-vs-embedded question /
-declarative / echo word-order distinction.
+declarative word-order distinction.
 
 We encode the refinement *structurally* as an indexed inductive
 `GermanClauseType : ClauseForm → Type`. Each constructor specifies the
@@ -129,23 +130,19 @@ We encode the refinement *structurally* as an indexed inductive
 | `vlInterrogative`  | `embeddedQuestion`  |
 | `imperative`       | `declarative`       |
 
-Three consequences fall out of the indexing rather than requiring
+Two consequences fall out of the indexing rather than requiring
 separate proof:
 
 1. **No bridge function.** The "projection to `ClauseForm`" is the
    type-level index — `(ct : GermanClauseType f)` witnesses both the
    refined value *and* its `ClauseForm` projection `f` simultaneously.
-2. **Echo questions are uninhabited.** `GermanClauseType .echo` has no
-   constructor, so `(ct : GermanClauseType .echo)` is impossible by
-   typing — Gutzmann's theory does not analyze echo questions, and
-   that absence is now type-enforced.
-3. **`(ct : GermanClauseType .matrixQuestion)` is *exactly* the
+2. **`(ct : GermanClauseType .matrixQuestion)` is *exactly* the
    v2Interrogative case.** `cases ct` on this type produces a single
    branch, capturing the structural fact that "matrix-question German
    clause" picks out v2Interrogative without auxiliary filtering. -/
 
 /-- German clause types distinguished by verb position and complementizer,
-indexed by their `Core.Grammar.ClauseForm` projection. The
+indexed by their `Features.ClauseForm` projection. The
 verb-position/complementizer information determines mood operator
 inventory (@cite{gutzmann-2015}, Ch 5). -/
 inductive GermanClauseType : ClauseForm → Type where
@@ -205,13 +202,6 @@ theorem v2_vl_differ_only_in_hknow :
 
 These theorems exploit the indexed structure: instead of projecting via
 a forgetful function and filtering, the type-level index does the work. -/
-
-/-- Echo questions are uninhabited in the German fragment: there is no
-constructor `c : GermanClauseType .echo`. The fragment does not analyze
-echo questions; this is type-enforced rather than checked by a side
-condition. -/
-theorem no_german_echo : IsEmpty (GermanClauseType .echo) :=
-  ⟨fun ct => nomatch ct⟩
 
 /-- A matrix-question German clause type is *exactly* `v2Interrogative`.
 Pattern matching on `GermanClauseType .matrixQuestion` produces a single

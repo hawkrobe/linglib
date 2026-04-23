@@ -42,7 +42,7 @@ def reflexiveCoreferenceData : PhenomenonData := {
       ungrammatical := [himself, sees, john]
       clauseType := .declarative
       description := "Reflexive needs c-commanding antecedent"
-      citation := some "Chomsky (1981); Pollard & Sag (1994)" },
+      citation := "Chomsky (1981); Pollard & Sag (1994)" },
 
     { grammatical := [mary, sees, herself]
       ungrammatical := [herself, sees, mary]
@@ -77,7 +77,7 @@ def pronominalDisjointReferenceData : PhenomenonData := {
       ungrammatical := [john, sees, him]  -- intended: John₁ sees him₁
       clauseType := .declarative
       description := "Pronoun resists coreference with local subject"
-      citation := some "Chomsky (1981)" },
+      citation := "Chomsky (1981)" },
 
     { grammatical := [mary, sees, john]
       ungrammatical := [mary, sees, her]  -- intended: Mary₁ sees her₁
@@ -95,7 +95,7 @@ def referentialExpressionFreedomData : PhenomenonData := {
       ungrammatical := [he, sees, john]  -- intended: He₁ sees John₁
       clauseType := .declarative
       description := "Name resists coreference with c-commanding pronoun"
-      citation := some "Chomsky (1981)" }
+      citation := "Chomsky (1981)" }
   ]
 }
 
@@ -108,7 +108,7 @@ def complementaryDistributionData : PhenomenonData := {
       ungrammatical := [john, sees, him]  -- intended coreference
       clauseType := .declarative
       description := "Local coreference: reflexive required, pronoun blocked"
-      citation := some "Chomsky (1981)" },
+      citation := "Chomsky (1981)" },
 
     { grammatical := [mary, sees, herself]
       ungrammatical := [mary, sees, her]  -- intended coreference
@@ -137,7 +137,7 @@ def reciprocalCoreferenceData : PhenomenonData := {
       ungrammatical := [eachOther, saw, sam, and_, pat]
       clauseType := .declarative
       description := "Reciprocal needs c-commanding antecedent"
-      citation := some "Dalrymple et al. (1998)" },
+      citation := "Dalrymple et al. (1998)" },
 
     -- Reciprocal vs reflexive complementary distribution
     { grammatical := [sam, and_, pat, saw, eachOther]
