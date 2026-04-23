@@ -78,7 +78,9 @@ import Linglib.Core.Question.Partition.Negativity
 import Linglib.Phenomena.Negation.ExpletiveNegation
 import Linglib.Features.Polarity
 import Linglib.Phenomena.Polarity.PolarityPartition
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
+import Linglib.Features.Antonymy
+import Linglib.Features.Valence
 import Linglib.Core.Modality.ModalIndefinite
 import Linglib.Core.Modality.ModalBaseKind
 import Linglib.Core.Modality.ModalTypes
@@ -938,6 +940,7 @@ import Linglib.Phenomena.Copulas.Studies.Elbourne2026
 import Linglib.Phenomena.Copulas.Studies.Romero2005
 import Linglib.Phenomena.Attitudes.IntensionalExamples
 import Linglib.Phenomena.Attitudes.IntentionalIdentity.Data
+import Linglib.Phenomena.Attitudes.Studies.BondarenkoElliott2026
 import Linglib.Phenomena.Complementation.Studies.ChatzikyriakidisEtAl2025
 import Linglib.Phenomena.Anaphora.Studies.Hofmann2025
 import Linglib.Phenomena.Anaphora.Bridging

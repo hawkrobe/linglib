@@ -1,7 +1,8 @@
 import Linglib.Theories.Semantics.Gradability.Theory
 import Linglib.Fragments.English.Predicates.Adjectival
 import Linglib.Core.Scales.Scale
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
+import Linglib.Features.Antonymy
 
 /-!
 # @cite{kennedy-2007} Adjective Licensing Bridge
@@ -115,7 +116,7 @@ structure AntonymDatum where
   /-- The underlying scale -/
   scale : String
   /-- Contradictory (A ≡ ¬B, no gap) or contrary (can both be false, gap). -/
-  negationType : Core.NegationType
+  negationType : Features.NegationType
   /-- Example where positive applies -/
   positiveExample : String
   /-- Example where negative applies -/

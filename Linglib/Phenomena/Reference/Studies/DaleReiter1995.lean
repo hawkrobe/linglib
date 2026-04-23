@@ -118,7 +118,7 @@ inductive REGAttribute where
       we use basic-level values directly. -/
   | headNoun
   /-- Modifying property (colour, size, material, ...). -/
-  | modifier (d : Core.PropertyDomain)
+  | modifier (d : Features.PropertyDomain)
   deriving DecidableEq, Repr
 
 /-- A knowledge base entity: attribute-value pairs.
@@ -360,9 +360,9 @@ theorem full_discrimination_ordering :
     This means noise parameters, comparison-class properties, and
     cross-study data are all accessible for IA modifier attributes. -/
 theorem modifier_domains_have_discrimination :
-    Core.PropertyDomain.noiseDiscrimination .color = some RSA.Noise.colorDiscrimination ∧
-    Core.PropertyDomain.noiseDiscrimination .size = some RSA.Noise.sizeDiscrimination ∧
-    Core.PropertyDomain.noiseDiscrimination .material = some RSA.Noise.materialDiscrimination :=
+    Features.PropertyDomain.noiseDiscrimination .color = some RSA.Noise.colorDiscrimination ∧
+    Features.PropertyDomain.noiseDiscrimination .size = some RSA.Noise.sizeDiscrimination ∧
+    Features.PropertyDomain.noiseDiscrimination .material = some RSA.Noise.materialDiscrimination :=
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================

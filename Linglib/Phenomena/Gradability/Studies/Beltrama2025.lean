@@ -390,7 +390,7 @@ theorem good_also_licensed :
 -- § 11. Integration: Evaluative Valence
 -- ============================================================================
 
-open Core (EvaluativeValence)
+open Features (EvaluativeValence)
 
 /-- MPAs have positive evaluative valence: they denote a favorable
     (if mild) assessment. This connects to @cite{nouwen-2024}'s

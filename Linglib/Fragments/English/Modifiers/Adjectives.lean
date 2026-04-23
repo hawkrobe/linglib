@@ -19,7 +19,7 @@ Both share scale type and antonym information, but serve different grammatical f
 -/
 
 import Linglib.Core.Lexical.Word
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
 import Linglib.Theories.Morphology.Core.Exponence
 import Linglib.Theories.Interfaces.Morphosyntax.DegreeContainment
 import Linglib.Theories.Semantics.Gradability.Theory
@@ -28,7 +28,7 @@ namespace Fragments.English.Modifiers.Adjectives
 
 open Semantics.Gradability (AntonymRelation)
 open Core.Scale (Boundedness)
-open Semantics.Gradability (NegationType)
+open Features (NegationType)
 
 -- ============================================================================
 -- Adjective Modifier Entry Structure
@@ -50,7 +50,7 @@ structure AdjModifierEntry where
   /-- Scale boundedness (from @cite{kennedy-2007}) -/
   scaleType : Boundedness := .open_
   /-- What dimension is being measured? -/
-  dimension : Core.Dimension
+  dimension : Features.Dimension
   /-- Antonym form (if any) -/
   antonymForm : Option String := none
   /-- Antonym relation: contrary (gap) vs contradictory (no gap) -/

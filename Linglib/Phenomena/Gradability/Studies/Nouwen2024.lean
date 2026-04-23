@@ -73,7 +73,7 @@ All qualitative Goldilocks predictions are preserved.
 
 namespace Phenomena.Gradability.Intensifiers
 
-open Core (EvaluativeValence)
+open Features (EvaluativeValence)
 
 /--
 Intensifier degree class (Figure 2).
@@ -608,7 +608,7 @@ abbrev Height := Core.Scale.Degree 6
 abbrev Threshold := Core.Scale.Threshold 6
 
 open Core.Scale (deg thr)
-open Core (EvaluativeValence)
+open Features (EvaluativeValence)
 open Semantics.Gradability.Intensification (EvaluativeMeasure)
 open Semantics.Degree (positiveMeaning)
 

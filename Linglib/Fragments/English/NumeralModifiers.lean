@@ -19,7 +19,8 @@ from "up to" (positive), predicting divergent framing effects.
 -/
 
 import Linglib.Core.Lexical.Word
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
+import Linglib.Features.Valence
 import Linglib.Theories.Semantics.Numerals.Basic
 import Mathlib.Data.Rat.Defs
 
@@ -57,7 +58,7 @@ inductive PragmaticFunction where
   | boundSignal     -- Signals bound on the distribution (at least, at most, etc.)
   deriving Repr, DecidableEq
 
-open Core (EvaluativeValence)
+open Features (EvaluativeValence)
 
 /-- Lexical entry for a numeral modifier. -/
 structure NumeralModifierEntry where

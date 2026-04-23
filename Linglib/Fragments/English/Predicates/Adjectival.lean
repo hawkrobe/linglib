@@ -9,8 +9,8 @@ namespace Fragments.English.Predicates.Adjectival
 
 open Semantics.Gradability (AntonymRelation GradableAdjEntry)
 open Core.Scale (Boundedness)
-open Core (EvaluativeValence)
-open Semantics.Gradability (NegationType)
+open Features (EvaluativeValence)
+open Features (NegationType)
 
 
 /-- @cite{kennedy-2007}

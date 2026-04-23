@@ -1,4 +1,4 @@
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
 import Linglib.Theories.Pragmatics.RSA.Channel
 import Linglib.Phenomena.Reference.Studies.DegenEtAl2020
 import Linglib.Phenomena.Reference.Studies.WaldonDegen2021
@@ -77,8 +77,8 @@ namespace KursatDegen2021
 -- ============================================================================
 
 /-- Property types tested across experiments — re-exported from
-    `Core.PropertyDomain` for local use. -/
-abbrev PropertyType := Core.PropertyDomain
+    `Features.PropertyDomain` for local use. -/
+abbrev PropertyType := Features.PropertyDomain
 
 -- ============================================================================
 -- § Regression Results
@@ -223,9 +223,9 @@ def propertyToDiscrimination : PropertyType → ℚ
 /-- The local `propertyToDiscrimination` agrees with the canonical
     `PropertyDomain.noiseDiscrimination` for all parameterized domains. -/
 theorem propertyToDiscrimination_canonical :
-    Core.PropertyDomain.noiseDiscrimination .color = some (propertyToDiscrimination .color) ∧
-    Core.PropertyDomain.noiseDiscrimination .size = some (propertyToDiscrimination .size) ∧
-    Core.PropertyDomain.noiseDiscrimination .material = some (propertyToDiscrimination .material) :=
+    Features.PropertyDomain.noiseDiscrimination .color = some (propertyToDiscrimination .color) ∧
+    Features.PropertyDomain.noiseDiscrimination .size = some (propertyToDiscrimination .size) ∧
+    Features.PropertyDomain.noiseDiscrimination .material = some (propertyToDiscrimination .material) :=
   ⟨rfl, rfl, rfl⟩
 
 -- ============================================================================

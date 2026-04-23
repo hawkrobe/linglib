@@ -4,6 +4,62 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.227] - 2026-04-23
+
+### Dissolved — `Core/PropertyDomain.lean`
+
+Continues the random-Core/-file audit campaign (after `Core/Grammar.lean`
+in `0.230.208–215`). The file bundled three independent feature
+taxonomies in a single `namespace Core` umbrella:
+
+- **`PropertyDomain`** — perceptual/cognitive channel taxonomy
+  (color/size/material/orientation/...) used by gradability + reference
+  studies.
+- **`NegationType`** — contradictory vs contrary antonymy distinction
+  (Cruse/Horn/Kennedy), used by gradability + negation files.
+- **`EvaluativeValence`** — good/bad/neutral classification of gradable
+  predicates (Nouwen 2024), used by intensifier studies.
+- **`Dimension`** — named dimensions classified by `PropertyDomain`,
+  populated via 50+ smart constructors (`Dimension.height`,
+  `Dimension.color`, …) consumed by `Modifiers/Adjectives.lean` via
+  anonymous-constructor syntax (`dimension := .height`).
+
+All three taxonomies are linguistic substance, not formal substrate, so
+they belong in `Features/` per the substance/substrate split.
+
+**Split into:**
+
+- `Features/PropertyDomain.lean` — `PropertyDomain` + `Dimension` +
+  `requiresComparisonClass` + all 50+ `Dimension` smart constructors.
+- `Features/Antonymy.lean` — `NegationType` (file-level rename to the
+  linguistically accurate concept; the type name itself is preserved
+  for backward compat).
+- `Features/Valence.lean` — `EvaluativeValence`.
+
+All three new files are under `namespace Features`, matching
+`Features/Polarity.lean`/`Features/Gender.lean`/etc.
+
+**Cleanup:**
+
+- Deleted the `abbrev NegationType := Core.NegationType` shim in
+  `Theories/Semantics/Gradability/Theory.lean:41` (a textbook
+  bridge-shim symptom that the canonical home was wrong).
+- `Core.PropertyDomain.noiseDiscrimination` (defined cross-namespace in
+  `Theories/Pragmatics/RSA/Channel.lean:265`) renamespaced to
+  `Features.PropertyDomain.noiseDiscrimination`. The cross-namespace
+  attachment pattern is still in place — relocating the bridge into a
+  dedicated `Studies/` file is a separate follow-up.
+- ~20 consumer files updated: `Core.PropertyDomain` →
+  `Features.PropertyDomain`, `Core.NegationType` →
+  `Features.NegationType`, `Core.EvaluativeValence` →
+  `Features.EvaluativeValence`, `Core.Dimension` → `Features.Dimension`;
+  `open Core (X)` → `open Features (X)` for the moved types.
+
+**Reviewer's `Dimension`-is-dead-code claim was wrong** — the smart
+constructors are consumed via anonymous-constructor syntax
+(`dimension := .height`) which the constructor-name grep missed.
+`Dimension` is preserved.
+
 ## [0.230.226] - 2026-04-23
 
 ### Phonology McCarthyPrince1995: Corr-grounded layer for Javanese

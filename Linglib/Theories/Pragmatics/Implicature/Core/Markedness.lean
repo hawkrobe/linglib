@@ -30,7 +30,8 @@ namespace Implicature.Markedness
 
 open Semantics.Gradability
 open Core.Scale (Degree Threshold Degree.toNat Threshold.toNat deg thr)
-open Semantics.Gradability (NegationType ThresholdPair)
+open Semantics.Gradability (ThresholdPair)
+open Features (NegationType)
 open Fragments.English.Predicates.Adjectival (tall short happy unhappy)
 
 
@@ -357,7 +358,7 @@ structure MAlternativeSet where
   /-- The unmarked (cheaper) form -/
   unmarked : String
   /-- The dimension they share (e.g., .height) -/
-  dimension : Core.Dimension
+  dimension : Features.Dimension
   /-- The cost difference between forms -/
   costDifference : ℚ
   /-- Construction where they're equivalent -/

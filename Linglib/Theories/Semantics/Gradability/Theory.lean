@@ -23,7 +23,9 @@ extensional), see `Classification.lean`.
 -/
 
 import Linglib.Core.Scales.Scale
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
+import Linglib.Features.Antonymy
+import Linglib.Features.Valence
 import Linglib.Theories.Semantics.Gradability.MLScale
 import Linglib.Theories.Semantics.Degree.Core
 
@@ -31,14 +33,7 @@ namespace Semantics.Gradability
 
 open Core.Scale (Boundedness Degree Threshold Degree.toNat Threshold.toNat
   deg thr allDegrees allThresholds)
-
--- ════════════════════════════════════════════════════
--- Negation Types: Contradictory vs. Contrary
--- ════════════════════════════════════════════════════
-
-/-- Antonymy type: contradictory (no gap) vs contrary (gap).
-    Canonical definition in `Core.PropertyDomain`. -/
-abbrev NegationType := Core.NegationType
+open Features (NegationType)
 
 -- Two-Threshold Model for Contrary Antonyms
 
@@ -157,7 +152,7 @@ inductive SpatialConfigType where
 structure GradableAdjEntry where
   form : String
   scaleType : Boundedness
-  dimension : Core.Dimension
+  dimension : Features.Dimension
   antonymForm : Option String := none
   antonymRelation : Option AntonymRelation := none
   spatialConfigType : Option SpatialConfigType := none
@@ -165,7 +160,7 @@ structure GradableAdjEntry where
       Determines intensifier degree class (@cite{nouwen-2024}):
       negative-evaluative bases yield H-degree intensifiers,
       positive-evaluative bases yield M-degree intensifiers. -/
-  evaluativeValence : Option Core.EvaluativeValence := none
+  evaluativeValence : Option Features.EvaluativeValence := none
   deriving Repr
 
 -- ════════════════════════════════════════════════════

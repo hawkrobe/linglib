@@ -22,7 +22,7 @@ set_option autoImplicit false
 
 namespace AlexandropoulouGotzner2024
 
-open Core (NegationType)
+open Features (NegationType)
 open Core.Scale (Boundedness Degree Threshold
   Degree.toNat Threshold.toNat deg thr)
 open Semantics.Gradability (GradableAdjEntry InformationalStrength

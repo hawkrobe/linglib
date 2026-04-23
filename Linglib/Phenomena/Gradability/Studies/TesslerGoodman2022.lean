@@ -555,12 +555,12 @@ Since the weight functions are identical, the § 8 predictions transfer:
 | summer  | warm  | superordinate | `basketball_tall_infers_super` |
 | summer  | cold  | subordinate   | `basketball_short_infers_sub` |
 
-This connects to `Core.Dimension.temperature`: a `sensory` domain with
+This connects to `Features.Dimension.temperature`: a `sensory` domain with
 `requiresComparisonClass = true` (@cite{sedivy-etal-1999}). -/
 
 /-- Temperature is a comparison-class-sensitive dimension. -/
 theorem temperature_requires_cc :
-    Core.PropertyDomain.requiresComparisonClass .sensory = true := rfl
+    Features.PropertyDomain.requiresComparisonClass .sensory = true := rfl
 
 /-- The literal/pragmatic reversal transfers to temperature via the
     winter ↔ jockey mapping. The literal model predicts "warm in winter"

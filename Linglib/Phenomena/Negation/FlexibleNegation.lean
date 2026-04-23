@@ -6,7 +6,8 @@
 -/
 
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
+import Linglib.Features.Antonymy
 
 /-!
 
@@ -32,7 +33,7 @@ This file captures the empirical patterns around flexible negation, where:
 namespace Phenomena.Negation.FlexibleNegation
 
 
-open Core (NegationType)
+open Features (NegationType)
 
 /--
 Negation markers in English and their flexibility.

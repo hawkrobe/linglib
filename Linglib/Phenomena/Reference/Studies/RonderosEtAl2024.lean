@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
 import Linglib.Paradigms.VisualWorld
 import Linglib.Theories.Pragmatics.RSA.Channel
 import Linglib.Phenomena.Reference.Studies.SedivyEtAl1999
@@ -122,7 +122,7 @@ Two prior accounts of the contrastive inference effect:
    the contrast pair pragmatically informative. Predicts an effect
    for scalar but *not* for color or material (color and material do
    not require a comparison class — see
-   `Core.PropertyDomain.requiresComparisonClass`).
+   `Features.PropertyDomain.requiresComparisonClass`).
 
 2. **Perceptual discrimination** (@cite{kursat-degen-2021},
    @cite{giles-etal-2026}): high perceptual discriminability makes a
@@ -153,7 +153,7 @@ is observable independent of any contrast manipulation.
 - **Connection to `Theories/Semantics/Gradability/`**: Ronderos's
   semantic factor (scalar = gradable + comparison-class-dependent;
   color/material = non-gradable) is currently mediated only through
-  `Core.PropertyDomain.requiresComparisonClass`. A deeper bridge
+  `Features.PropertyDomain.requiresComparisonClass`. A deeper bridge
   would tie `AdjType.scalar` to the
   `Semantics.Gradability.Classification` subsective/comparison-class
   hierarchy, so the "scalar requires a comparison class" claim is
@@ -185,13 +185,13 @@ inductive AdjType where
   | material
   deriving DecidableEq, Repr, Inhabited, Fintype
 
-/-- Map adjective type to its `Core.PropertyDomain`. Scalar adjectives
+/-- Map adjective type to its `Features.PropertyDomain`. Scalar adjectives
     are spatial dimensions (`size`); color and material map to their
     eponymous domains. This is the bridge that lets cross-study
     theorems connect Ronderos's adjective-type stratification to
     Sedivy's domain-level reasoning and to `RSA.Noise`'s
     discrimination ordering. -/
-def AdjType.toDomain : AdjType → Core.PropertyDomain
+def AdjType.toDomain : AdjType → Features.PropertyDomain
   | .color    => .color
   | .scalar   => .size
   | .material => .material
@@ -423,16 +423,16 @@ theorem trivial_satisfies_pattern :
 
 /-! These theorems articulate the theoretical positions Ronderos's data
 take on. They are *type-level* connections to the relevant
-infrastructure (`Core.PropertyDomain`, `RSA.Noise`,
+infrastructure (`Features.PropertyDomain`, `RSA.Noise`,
 `SedivyEtAl1999`), not restated empirical claims. -/
 
 /-- **Agreement with @cite{sedivy-etal-1999} on scalar adjectives.**
     Both studies place the scalar contrast effect on the size domain,
-    which `Core.PropertyDomain` flags as requiring comparison-class
+    which `Features.PropertyDomain` flags as requiring comparison-class
     binding. -/
 theorem scalar_shares_sedivy_domain :
     AdjType.toDomain .scalar = SedivyEtAl1999.adjDomain ∧
-    Core.PropertyDomain.requiresComparisonClass
+    Features.PropertyDomain.requiresComparisonClass
       (AdjType.toDomain .scalar) = true :=
   ⟨rfl, rfl⟩
 
@@ -441,7 +441,7 @@ theorem scalar_shares_sedivy_domain :
     Bierwisch/Sedivy mechanism alone predicts no contrast effect for
     color), yet Ronderos finds a robust color contrast effect. -/
 theorem color_does_not_require_comparison_class :
-    Core.PropertyDomain.requiresComparisonClass
+    Features.PropertyDomain.requiresComparisonClass
       (AdjType.toDomain .color) = false := rfl
 
 /-- **Material fails the comparison-class route.** Material adjectives,
@@ -451,7 +451,7 @@ theorem color_does_not_require_comparison_class :
     is insufficient for color, however; see
     `color_does_not_require_comparison_class`.) -/
 theorem material_does_not_require_comparison_class :
-    Core.PropertyDomain.requiresComparisonClass
+    Features.PropertyDomain.requiresComparisonClass
       (AdjType.toDomain .material) = false := rfl
 
 /-- **Effect ordering aligns with noise discrimination.** The
@@ -470,25 +470,25 @@ theorem effect_ordering_aligns_with_noise_discrimination :
 
 /-- **PropertyDomain ↔ noise discrimination wiring.** Each adjective
     type maps through `AdjType.toDomain` to a `PropertyDomain` that
-    `Core.PropertyDomain.noiseDiscrimination` resolves to the
+    `Features.PropertyDomain.noiseDiscrimination` resolves to the
     corresponding `RSA.Noise` constant. Recorded here so the bridge
     to discrimination ordering is auditable. -/
 theorem adjType_to_noise_discrimination :
-    Core.PropertyDomain.noiseDiscrimination (AdjType.toDomain .color)
+    Features.PropertyDomain.noiseDiscrimination (AdjType.toDomain .color)
       = some RSA.Noise.colorDiscrimination ∧
-    Core.PropertyDomain.noiseDiscrimination (AdjType.toDomain .scalar)
+    Features.PropertyDomain.noiseDiscrimination (AdjType.toDomain .scalar)
       = some RSA.Noise.sizeDiscrimination ∧
-    Core.PropertyDomain.noiseDiscrimination (AdjType.toDomain .material)
+    Features.PropertyDomain.noiseDiscrimination (AdjType.toDomain .material)
       = some RSA.Noise.materialDiscrimination :=
   ⟨rfl, rfl, rfl⟩
 
 /-- **The two empirical families project onto different mechanisms.**
     The contrast-effect family is keyed off
-    `Core.PropertyDomain.noiseDiscrimination` (perceptual route): all
+    `Features.PropertyDomain.noiseDiscrimination` (perceptual route): all
     three adjective types have *some* discrimination value, but only
     those above the material level produce a contrast effect. The
     baseline-restrictiveness family is keyed off
-    `Core.PropertyDomain.requiresComparisonClass` (semantic route):
+    `Features.PropertyDomain.requiresComparisonClass` (semantic route):
     only the scalar (size) domain returns `true`, predicting the
     no-contrast baseline disadvantage to be uniquely scalar.
 
@@ -502,11 +502,11 @@ theorem adjType_to_noise_discrimination :
     pattern is the joint envelope. -/
 theorem two_mechanisms_factorise :
     -- Semantic route: scalar uniquely requires comparison class
-    Core.PropertyDomain.requiresComparisonClass
+    Features.PropertyDomain.requiresComparisonClass
       (AdjType.toDomain .scalar) = true ∧
-    Core.PropertyDomain.requiresComparisonClass
+    Features.PropertyDomain.requiresComparisonClass
       (AdjType.toDomain .color) = false ∧
-    Core.PropertyDomain.requiresComparisonClass
+    Features.PropertyDomain.requiresComparisonClass
       (AdjType.toDomain .material) = false ∧
     -- Perceptual route: color and scalar strictly above material
     RSA.Noise.colorDiscrimination > RSA.Noise.materialDiscrimination ∧

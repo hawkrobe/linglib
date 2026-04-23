@@ -2,7 +2,7 @@ import Mathlib.Data.Rat.Defs
 import Mathlib.Data.Fintype.Sigma
 import Mathlib.Tactic.NormNum
 import Mathlib.Tactic.DeriveFintype
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
 import Linglib.Paradigms.VisualWorld
 
 /-!
@@ -126,18 +126,18 @@ instance : HasDisplayKind Cell where
 /-- The perceptual domain targeted by Exps 2 and 3 (scalar size adjectives:
     "tall", "short", "long"). Cross-study bridges use this to connect
     Sedivy's findings to the comparison-class typology in
-    `Core.PropertyDomain`. Exp 1's intersective adjectives (color,
+    `Features.PropertyDomain`. Exp 1's intersective adjectives (color,
     material, shape) live in different domains and are not summarised
     here — see the docstring for the per-experiment breakdown. -/
-def adjDomain : Core.PropertyDomain := .size
+def adjDomain : Features.PropertyDomain := .size
 
 /-- The size domain requires comparison-class binding, which is the
     structural prerequisite for Bierwisch's lexical account of the
     contrast effect (§5 of @cite{sedivy-etal-1999}). This is not a
-    stipulation: it follows from `Core.PropertyDomain.requiresComparisonClass`
+    stipulation: it follows from `Features.PropertyDomain.requiresComparisonClass`
     by reduction. -/
 theorem adjDomain_requires_comparison_class :
-    Core.PropertyDomain.requiresComparisonClass adjDomain = true := rfl
+    Features.PropertyDomain.requiresComparisonClass adjDomain = true := rfl
 
 -- ============================================================================
 -- §2. Norming Data (Table 5)
@@ -289,7 +289,7 @@ theorem trivial_satisfies_pattern :
 /-! The lexical-semantic account of the contrast effect (@cite{bierwisch-1989},
 adopted in §5 of @cite{sedivy-etal-1999}) places a free comparison-class
 variable in the lexical entry of every scalar adjective. The
-`Core.PropertyDomain` infrastructure flags this with
+`Features.PropertyDomain` infrastructure flags this with
 `requiresComparisonClass`; the connection is made formal by
 `adjDomain_requires_comparison_class` above.
 

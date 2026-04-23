@@ -1,7 +1,7 @@
 import Mathlib.Data.Rat.Defs
 import Mathlib.Tactic.Linarith
 import Mathlib.Tactic.Ring
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
 
 /-!
 # Unified Noise Theory for RSA
@@ -262,7 +262,7 @@ end RSA.Noise
 
 /-- Map a `PropertyDomain` to its established noise discrimination value.
     Returns `none` for domains without empirically grounded noise params. -/
-def Core.PropertyDomain.noiseDiscrimination : Core.PropertyDomain → Option ℚ
+def Features.PropertyDomain.noiseDiscrimination : Features.PropertyDomain → Option ℚ
   | .color       => some RSA.Noise.colorDiscrimination       -- 0.98
   | .orientation => some RSA.Noise.orientationDiscrimination  -- 0.98
   | .size        => some RSA.Noise.sizeDiscrimination         -- 0.60

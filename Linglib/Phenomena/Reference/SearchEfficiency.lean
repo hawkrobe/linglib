@@ -1,5 +1,5 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.PropertyDomain
+import Linglib.Features.PropertyDomain
 
 /-!
 # Search Efficiency in Reference Production
@@ -71,7 +71,7 @@ structure SearchContext where
       Range: 0 (no discrimination) to 1 (perfect). -/
   discriminability : ℚ
   /-- The redundant attribute's property domain. -/
-  domain : Core.PropertyDomain
+  domain : Features.PropertyDomain
   deriving Repr
 
 -- ============================================================================
