@@ -588,15 +588,14 @@ noncomputable instance : SEM.IsDeterministic chainModel where
       inferInstanceAs (Mechanism.IsDeterministic (deterministic _))
 
 -- ── DAG instances ──
--- TODO (Phase D cleanup): replace `sorry` with explicit Acc-based proofs.
--- Each graph is structurally acyclic (linear/tree over 4 vertices); the
--- proof is mechanical but verbose. Acyclicity is semantically obvious;
--- the WellFounded witness is the only blocker.
+-- TODO (Phase D structural proofs): close these sorries with explicit
+-- depth-based WellFounded proofs (Subrelation.wf + InvImage on Nat.lt)
+-- after working out the TransGen.single/tail case-analysis tactics for
+-- the simp-resistant `match` in `IsStrictAncestor`. Acyclicity is
+-- semantically obvious for these 4-vertex toy graphs.
 
 noncomputable instance soloGraph_isDAG : CausalGraph.IsDAG soloGraph := ⟨sorry⟩
-
 noncomputable instance overdetGraph_isDAG : CausalGraph.IsDAG overdetGraph := ⟨sorry⟩
-
 noncomputable instance chainGraph_isDAG : CausalGraph.IsDAG chainGraph := ⟨sorry⟩
 
 noncomputable instance : CausalGraph.IsDAG soloModel.graph := soloGraph_isDAG
