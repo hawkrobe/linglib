@@ -109,7 +109,7 @@ import Linglib.Features.FelicityTypes
 import Linglib.Features.ScopeTypes
 import Linglib.Phenomena.FillerGap.ExtractionMorphology
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
-import Linglib.Core.Alternation
+import Linglib.Theories.Syntax.ArgumentStructure.Alternation
 import Linglib.Core.Causal.BayesNet
 import Linglib.Core.Causal.SEM.Counterfactual
 import Linglib.Core.Causal.SEM.Defs

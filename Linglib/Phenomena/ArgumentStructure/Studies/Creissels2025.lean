@@ -1,4 +1,4 @@
-import Linglib.Core.Alternation
+import Linglib.Syntax.ArgumentStructure.Alternation
 import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Phenomena.ArgumentStructure.VoiceSystem
 import Linglib.Theories.Syntax.Minimalism.Applicative
@@ -31,7 +31,7 @@ This study file bridges @cite{creissels-2025}'s framework (formalized in
 
 namespace Creissels2025
 
-open Core.Alternation
+open Syntax.ArgumentStructure.Alternation
 open Semantics.Causation.Morphological
   (IntransitivizationType CausativeComplexity CausativeConstruction
    CausativizabilityData)

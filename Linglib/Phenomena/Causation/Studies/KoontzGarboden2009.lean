@@ -2,7 +2,7 @@ import Linglib.Theories.Semantics.Causation.Morphological
 import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Morphology.Core.Monotonicity
 import Linglib.Fragments.Spanish.Predicates
-import Linglib.Core.Alternation
+import Linglib.Syntax.ArgumentStructure.Alternation
 
 /-!
 # @cite{koontz-garboden-2009} — Anticausativization
@@ -62,7 +62,7 @@ open Semantics.Causation.Morphological
 open Semantics.Verb.EventStructure
 open Morphology.Core.Monotonicity
 open Minimalism (VerbHead)
-open Core.Alternation
+open Syntax.ArgumentStructure.Alternation
 
 -- ════════════════════════════════════════════════════
 -- § 1. The Reflexivization Operator (§2.2)

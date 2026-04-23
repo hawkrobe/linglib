@@ -42,7 +42,7 @@ while @cite{creissels-2025}'s voice alternations are *coded* (marked by
 verbal morphology). The `marking` field captures this.
 -/
 
-namespace Core.Alternation
+namespace Syntax.ArgumentStructure.Alternation
 
 open Features.Prominence (ArgumentRole)
 
@@ -820,4 +820,4 @@ theorem p_ambi_is_uncoded_decausativization :
 theorem a_ambi_is_uncoded_antipassivization :
     antipassivization.involvesDenucleativization = true := rfl
 
-end Core.Alternation
+end Syntax.ArgumentStructure.Alternation

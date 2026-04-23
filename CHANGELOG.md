@@ -4,6 +4,37 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.244] - 2026-04-23
+
+### Tier 4 leftover: `Core/Alternation.lean` → `Theories/Syntax/ArgumentStructure/`
+
+Largest remaining MOVE-THEORIES file (823 LOC, 4 consumers): the
+@cite{creissels-2025} valency-alternation framework + @cite{levin-1993}
+diathesis-alternation bridge. Substantive theory of valency
+alternations — not framework-agnostic substrate.
+
+- **Moved** `Linglib/Core/Alternation.lean` →
+  `Linglib/Theories/Syntax/ArgumentStructure/Alternation.lean` (NEW
+  directory mirroring `Phenomena/ArgumentStructure/`).
+- **Renamed namespace** `Core.Alternation` →
+  `Syntax.ArgumentStructure.Alternation` (unlike the Tier 4 batch where
+  namespaces were preserved). Updated 7 qualified `Core.Alternation.X`
+  references across `Fragments/Dargwa/ComplexPredicates.lean` and
+  `Phenomena/Control/Studies/Chierchia1984.lean`.
+- 4 consumer imports repointed; `Linglib.lean` root import updated.
+
+**Deferred audit notes** (not in scope for this commit, flagged for
+future cleanup):
+- `ValencyAlternation.name : String` field (unused-id anti-pattern,
+  per the original Core/ triage). Internal theorem `Core.Alternation`
+  line 442 reads `.name`, so dropping requires also dropping the
+  theorem.
+- 7 `Bool` fields on `ValencyAlternation` that should be `Prop` +
+  `[Decidable]` per the project Bool-migration policy.
+- File still imports `Core.Lexical.DiathesisAlternation` (a substance-
+  in-Lexical-substrate file that is itself a triage candidate); fixing
+  that requires moving the bridge target too.
+
 ## [0.230.243] - 2026-04-23
 
 ### Tier 4 of Core/ triage: 10 MOVE-THEORIES files relocated
