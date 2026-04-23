@@ -4,6 +4,7 @@ import Linglib.Theories.Pragmatics.Expressives.Basic
 import Linglib.Theories.Morphology.DM.Categorizer
 import Linglib.Theories.Phonology.Autosegmental.CoPScope
 import Linglib.Theories.Phonology.Autosegmental.BasemapCorrespondence
+import Linglib.Theories.Phonology.OptimalityTheory.Correspondence
 import Linglib.Theories.Phonology.OptimalityTheory.CophonologyTheory
 import Linglib.Phenomena.Tone.Studies.Hyman2006
 
@@ -924,5 +925,76 @@ theorem t26System_predict_d : t26System.predict t26d = 1 :=
   tableauSystem_predict_unique_winner _ _ t26_optimal
 
 end PredictAPI
+
+-- ============================================================================
+-- S 9: Structural Lift to `Corr RedupRole OutputTBU`
+-- ============================================================================
+
+/-! ### Surface the substrate connection
+
+The pluractional candidate type `PlurCand` already carries explicit
+base + reduplicant outputs (`baseOutput`, `redOutput`). This section
+lifts the candidate to the unifying `Corr RedupRole OutputTBU`
+substrate from `Theories/Phonology/OptimalityTheory/Correspondence.lean`,
+making the BR structure available to consumers expecting the
+M&P 1995 correspondence-theoretic representation.
+
+**Note on constraint derivation**: the existing constraints
+(`lAnchorViolations`, `rAnchorViolations`, `maxToneViolations`) are
+*predicate-positional measures* over single output strings — they
+filter for output TBUs by `(source, tone)` predicate and count
+positions. They are NOT naturally derived from `Corr.maxViol` /
+`Corr.identViol` etc. (which are correspondence-relation operations).
+The constraint *family* is faithfulness in @cite{akinbo-fwangwar-2026}'s
+sense (faithfulness of the abstract verbaliser tone to its host's
+edge), but the *implementation* doesn't reduce to a single Corr edge.
+
+A future refactor could reformulate the verbaliser as an explicit
+input-side morpheme with a `(.input, .reduplicant)` / `(.input, .base)`
+correspondence edge for gram-source TBUs, then derive the anchor
+counts from `Corr.anchorLViol`/`Corr.anchorRViol`-with-predicate.
+That requires adding a `morphemeId`-tagged edge structure, which is
+substantial. For now, the structural lift below provides the substrate
+connection without re-deriving the constraints. -/
+
+namespace PlurCorr
+
+open Phonology.Correspondence (Corr RedupRole)
+
+/-- Lift a `PlurCand` to a 3-role `Corr RedupRole OutputTBU` via
+    `Corr.reduplication`. The `.input` form is the empty list (no
+    explicit input segments in the paper's representation; verbaliser
+    tones are abstract morphemes); `.base` and `.reduplicant` get the
+    candidate's `baseOutput` and `redOutput` directly.
+
+    The cross-role edges are the parallel-pair correspondences that
+    `Corr.reduplication` builds by default. The `(.base, .reduplicant)`
+    edge is structurally available for any future refactor that
+    derives BR-correspondence-based constraints (e.g., a featural
+    OO-IDENT comparing tone values position-by-position). -/
+def toCorr (c : PlurCand) : Corr RedupRole OutputTBU :=
+  Corr.reduplication [] c.baseOutput c.redOutput
+
+@[simp] theorem toCorr_form_input (c : PlurCand) :
+    (toCorr c).form .input = [] := rfl
+
+@[simp] theorem toCorr_form_base (c : PlurCand) :
+    (toCorr c).form .base = c.baseOutput := rfl
+
+@[simp] theorem toCorr_form_reduplicant (c : PlurCand) :
+    (toCorr c).form .reduplicant = c.redOutput := rfl
+
+/-- The lifted Corr's `(.base, .reduplicant)` edge is the parallel-pair
+    correspondence between the base and reduplicant outputs (truncated
+    to `min` of their lengths). When the two outputs have the same
+    length (the typical pluractional case where RED fully copies BASE),
+    every position participates. -/
+theorem toCorr_edge_base_reduplicant (c : PlurCand) :
+    (toCorr c).edge .base .reduplicant =
+      (Finset.range (min c.baseOutput.length c.redOutput.length)).image
+        (fun i => (i, i)) := by
+  simp [toCorr, Corr.reduplication, Corr.diagram_edge_of_true]
+
+end PlurCorr
 
 end AkinboFwangwar2026
