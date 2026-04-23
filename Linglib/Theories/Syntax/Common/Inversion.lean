@@ -71,13 +71,13 @@ def AuxPrecedesSubject (ws : List Word) : Prop := auxPrecedesSubject ws = true
 /-- `Prop`-valued companion to `subjectPrecedesAux`. -/
 def SubjectPrecedesAux (ws : List Word) : Prop := subjectPrecedesAux ws = true
 
-instance (w : Word) : Decidable (IsSubjectWord w) := by
-  unfold IsSubjectWord; infer_instance
+instance (w : Word) : Decidable (IsSubjectWord w) :=
+  inferInstanceAs (Decidable (isSubjectWord w = true))
 
-instance (ws : List Word) : Decidable (AuxPrecedesSubject ws) := by
-  unfold AuxPrecedesSubject; infer_instance
+instance (ws : List Word) : Decidable (AuxPrecedesSubject ws) :=
+  inferInstanceAs (Decidable (auxPrecedesSubject ws = true))
 
-instance (ws : List Word) : Decidable (SubjectPrecedesAux ws) := by
-  unfold SubjectPrecedesAux; infer_instance
+instance (ws : List Word) : Decidable (SubjectPrecedesAux ws) :=
+  inferInstanceAs (Decidable (subjectPrecedesAux ws = true))
 
 end Inversion

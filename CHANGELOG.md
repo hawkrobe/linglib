@@ -4,6 +4,300 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.215] - 2026-04-22
+
+### Polished — second-round audit follow-ups on the Grammar dissolution
+
+Address the regressions and quality concerns from the post-`90efd22c`
+re-audit:
+
+- **Fixed broken `Westergaard2009.lean`** — the `0.230.210` namespacing
+  of `V2Data` under `Features` missed one consumer: the file's
+  `open Minimalism (ForceHead V2Profile) in def V2Data.toProfile` line
+  needed `Features` added to the open list. The break was masked by an
+  upstream pre-existing `LanguageProfile.lean` build failure.
+- **Cleaned up `Features/ClauseForm.lean` module docstring** — removed
+  stale "vs echo" reference left over from the `0.230.210` constructor
+  drop; added explicit "Echo questions are *not* a constructor" note
+  with a pointer to `Core.InformationStructure`.
+- **Inversion `Decidable` instances now use `inferInstanceAs`** instead
+  of `unfold ...; infer_instance` (mathlib idiom: term-mode for
+  typeclass synthesis to keep elaborator dependencies visible).
+- **Added `SentencePair.toFactorial` bridge** to
+  `Paradigms/AcceptabilityJudgment.lean` — concretizes the §4 docstring
+  claim that `MinimalPair`/`SentencePair` are degenerate
+  `FactorialCondition Unit Bool` cells, replacing the prose
+  rationalization with an actual structural relationship. Maps a
+  `SentencePair` to its two-cell factorial decomposition (one cell per
+  Bool grammaticality value).
+
+## [0.230.214] - 2026-04-22
+
+### Truthmaker subtree: rewrite + 3 new files + headline theorem
+
+`Theories/Semantics/Truthmaker/Basic.lean` rewritten from a B&E support
+file into a proper Fine/Jago foundation, plus three new sibling files —
+`Inexact.lean`, `Closure.lean`, `Entailment.lean` — and the load-bearing
+headline theorem proved.
+
+**Correctness fixes** in `Basic.lean`: `IsContentPart` now exposes both
+the **Down** clause (`IsSubsumedBy`, what @cite{bondarenko-elliott-2026}
+use) and the **Up** clause (`Subserves`) per Jago Def 5; bilateral
+`subjectMatter` fuses verifiers ∪ falsifiers (was verifier-only) with
+the headline structural property `subjectMatter_neg : (¬A).σ = A.σ`
+proved (was unprovable previously); `Possibility S = LowerSet S` from
+mathlib (was bespoke struct).
+
+**`Truthmaker/Inexact.lean`** (~150 LOC): Jago Def 3 inexact
+verification (`▷`); upward monotonicity; extensional clauses for `tmOr`
+(full iff) and `tmAnd` (forward only — converse is genuinely
+hyperintensional); `ExactEntails` (`⊨ₑ`) and `InexactEntails` (`⊨ᵢ`)
+defined as **pointwise `≤` on `TMProp S = S → Prop` via Pi.preorder** so
+refl/trans come from `Preorder` for free; bridge `InexactEntails.of_exact`.
+
+**`Truthmaker/Closure.lean`** (~100 LOC after dedup): `IsClosed` is now
+an alias for `Mereology.CUM` (was a third synonym); `IsConvex` re-exports
+`Mereology.IsConvex`; `convexClose` re-exports `Mereology.convexClosure`
+(`Set α = α → Prop` definitionally); regular = closed ∧ convex as a
+`Prop` def (was structure for inconsistency with `IsClosed/IsConvex`).
+
+**`Truthmaker/Entailment.lean`** (~140 LOC): analytic / Angellic
+entailment `≼` via `IsContentPart`; `InexactEntails.of_analytic` (uses
+the Down clause); the **conjunction-elimination / disjunction-introduction
+asymmetry** proved as `not_isSubsumedBy_tmOr_intro_general` over Bool
+— Jago's headline distinction now a Lean theorem rather than a
+docstring promise.
+
+### Headline theorem: `subjectMatter_distinguishes_classically_equivalent`
+
+`Basic.lean` now proves the framework's load-bearing thesis as a Lean
+theorem: there exist bilateral propositions over `Set TwoAtom` with
+pointwise-equivalent verifier sets (= classically equivalent at every
+"world") but distinct `subjectMatter` (= mereologically different
+content). PW semantics cannot make this distinction; truthmaker can.
+The proof witness is `A := ⟨{·={a}}, ∅⟩` vs `B := ⟨{·={a}}, {·={b}}⟩`.
+
+### `Core/Mereology.lean` extensions
+
+- `IsConvex` predicate (Jago Def 4 convex closure condition).
+- `IsConvex.convexClosure` proving `convexClosure` is convex.
+- `convexClosureOp : ClosureOperator (Set α)` — sibling to `algClosureOp`.
+- `IsSubsumedBy`, `Subserves`, `IsContentPart` (Jago Def 5 Up + Down)
+  as generic poset relations, with refl/trans namespaces. Truthmaker
+  re-exports them as paper-flavored aliases.
+
+### Cross-framework convergence: `InvolutiveNeg (BilProp S)`
+
+Both `BilProp` (Truthmaker) and `BilateralDen`
+(`Theories/Semantics/Dynamic/Bilateral/Basic.lean`) implement the
+swap-pair pattern with DNE-by-`rfl`. Both now instance mathlib's
+`InvolutiveNeg` — the abstraction unifying them is mathlib-existing,
+not a fresh `Core/Bilateral.lean` invention. Cross-framework docstring
+links added between `Truthmaker/Entailment.lean` and
+`Conditionals/AlternativeSensitive.IsTruthmaker` documenting that
+"truthmaker" denotes two non-equivalent relations across the two
+frameworks (Santorio-style world-extensional ≠ Fine-style mereological).
+
+### Bibliography fixes (hallucinations corrected)
+
+- `bondarenko-elliott-2026`: title corrected to *"Monotonicity via
+  mereology in the semantics of attitude reports"* (was truncated);
+  removed `note = {Manuscript}` (paper is published Feb 2026 EARLY
+  ACCESS); removed fabricated `pages = {1}`.
+- `jago-2026`: added missing co-author Andrea Raimondi.
+- `vanfraassen-1969` added (cited from `Inexact.lean`/`Entailment.lean`
+  for the FDE bridge — now downgraded from "verified bridge" to
+  external-claim status since FDE is not formalized in linglib).
+
+## [0.230.213] - 2026-04-22
+
+### Phonology Correspondence substrate: `Corr (Role α : Type*)`
+
+Generalized `Corr α` (binary, M&P 1995) to `Corr (Role α : Type*)` — a
+labeled diagram of strings indexed by role. The unifying substrate
+behind I-O / B-R / I-R / O-O (@cite{mccarthy-prince-1995}, @cite{benua-1997}),
+basemap (@cite{rolle-2018}), paradigm-uniformity (@cite{mccarthy-2005},
+@cite{steriade-2000}), antifaithfulness (@cite{alderete-2001}), and
+stratal correspondence theories.
+
+**Edge type**: `List (ℕ × ℕ) → Finset (ℕ × ℕ)`. Correspondences are sets,
+not sequences; mathlib's `Finset` makes one-to-many (INTEGRITY) and
+many-to-one (UNIFORMITY) violations measurable as `Finset.card` of suitable
+filters, no double-counting.
+
+**Constraint families**: each takes `(r₁ r₂ : Role)` — `MAX-IO` is
+`c.maxViol .input .output`; `IDENT-OO` is `c.identViol .o₁ .o₂`. The
+"same constraint schema generates distinct constraints for each domain"
+claim of @cite{mccarthy-prince-1995} §1 is now literally true at the
+type level.
+
+### Triple-IDENT duplication eliminated
+
+`basemapViolations` (Autosegmental/BasemapCorrespondence.lean) and
+`identViolations` (Process/Harmony/OT.lean) now derive from
+`Corr.identViol` on `Corr.parallel`-built diagrams. ~70 lines of
+parallel proofs collapse to corollaries of `Corr.identity_ident_zero`.
+
+### TCT — Benua's recursive evaluator
+
+New `Theories/Phonology/OptimalityTheory/TCT.lean`. The architectural
+distinction of TCT (asymmetric base-priority via recursive evaluation)
+is encoded **at the type level**: `TCTGrammar.baseEval : List α → List α`
+(no derivative argument); `TCTGrammar.derivativeEval : List α → List α → List α`
+(base as frozen parameter). Includes the **TETRU schema**
+(`M₁ ≫ OO-Ident ≫ M₂ ≫ IO-Faith`) and structural ranking-position theorems.
+"Priority of the Base" (@cite{benua-1997} §2.3.1) is a *type-level
+commitment*, not a theorem.
+
+### Antifaithfulness + Transderivational PU
+
+Two new ParadigmUniformity sibling files completing the four-corner
+taxonomy (OP / LC / TCT-PU / Antifaith). `Antifaithfulness.lean`
+(@cite{alderete-2001}): `antifaithViol` counts position pairs that
+*agree*; `antifaith_plus_ident_eq_edge_card` proves the duality with
+IDENT. `Transderivational.lean`: PU face of TCT — 3-role correspondence
+diagram constructor + IDENT-OO/MAX-OO/DEP-OO specializations.
+
+### Benua 1997 study
+
+New `Phenomena/Phonology/Studies/Benua1997.lean`: misapplication
+unification. Sundanese nasal harmony overapplication formalized
+end-to-end (TCT diagram with morphological OO-edge,
+`overapplied_beats_normal_on_OO_ident` theorem proved by `decide`).
+Tiberian Hebrew spirantization underapplication: structural diagrams
+set up; full ranking analysis deferred (requires featural OO-Ident).
+
+### Bib
+
+- `benua-1997` sources updated; role bumped `cited → formalized`.
+- New: `alderete-2001` (Phonology 18:201-253, doi 10.1017/S0952675701004067).
+
+### Citation policy fixes
+
+- `Correspondence.lean:57` raw "Benua 1997" → `@cite{benua-1997}` form.
+- `ParadigmUniformity/Defs.lean:18` raw inline cite removed; docstring
+  tightened to stop conflating Benua's asymmetric architecture with OP's
+  symmetric lift.
+- `AkinboFwangwar2026.lean:866` "transparadigmatic uniformity (Benua 1997)"
+  attribution corrected — "transparadigmatic uniformity" is Rolle's
+  coinage, not Benua's.
+
+## [0.230.212] - 2026-04-22
+
+### Phase D-C: V2 sub-namespaces for 4 Causation studies
+
+Resumes Phase D after Phase V landed. Adds focused V2 sub-namespaces
+(BoolSEM substrate, structural `rfl` / `Bool.false_ne_true` proofs) to:
+
+- **CaoWhiteLassiter2025**: `deterministicSuf` + `probabilisticSuf` +
+  `ProbabilisticExample` (Bernoulli mechanism). Already landed in V-3.
+- **BarAsherSiegal2026**: 6-vertex door scenario (`fullModel`,
+  `manualModel`) with multi-parent disjunctive mechanism for
+  `doorOpens`. Theorems: `handle_completes_manual`,
+  `handle_completes_full`, `handle_no_completion_overdetermined`
+  (overdetermination kills completion CC-selection).
+- **Nadathur2024**: 8-vertex Dreyfus scenario (`dreyfusSEM`) with
+  `¬BRK` negative precondition encoded directly in the Boolean COM
+  mechanism. Theorems: `nrv_sufficient_for_msg` (dare felicitous for
+  MSG), `nrv_not_sufficient_for_com` / `nrv_not_sufficient_for_spy`
+  (dare INFELICITOUS for COM/SPY because LST is undetermined).
+- **NadathurLauer2020**: 3-vertex Preemption scenario (Suzy + Billy
+  throwing) with disjunctive mechanism for `shatters`. Theorems:
+  `suzy_sufficient`, `billy_sufficient`,
+  `suzy_not_but_for_when_billy_throws` (overdetermination).
+
+Pattern: each study's V2 sub-namespace mirrors its key model on V2
+substrate, demonstrates the central sufficiency claim, and defers
+Def-10b necessity proofs (which need additional V2 supersituation
+infrastructure for multi-parent mechanisms). Legacy bodies preserved
+intact.
+
+Build: 1828 jobs clean across the V2 substrate + 12 deterministic
+consumers + 4 V2-aware studies.
+
+Phase D-D (Verbal.lean's 15 rfl theorems) unblocked next.
+
+## [0.230.211] - 2026-04-22
+
+### Phase V: PMF-canonical `develop` (V2 substrate refactor)
+
+The motivating shoehorn for the entire V2 refactor —
+@cite{cao-white-lassiter-2025}'s `SUF := if causallySufficient then 1 else 0`
+— is now eliminated. SUF is `ENNReal`-valued from a probabilistic SEM,
+and the deterministic indicator is recovered as a special case via a
+proved bridge theorem.
+
+**The mathlib pattern**: `Kernel α β` is always measure-valued; the
+deterministic `Kernel.deterministic (f : α → β)` is the Dirac
+specialization. Translating to SEM:
+
+- **Canonical**: `develop : SEM V α → Valuation α → PMF (Valuation α)`
+  — PMF-valued unconditionally. Threads `PMF.bind` through Fintype-enumerated
+  vertex order.
+- **Deterministic specialization**: `developDet [IsDeterministic M]`
+  — kernel-reducible `Function.iterate` form (what consumers like
+  Doxastic/Lewis1973 lean on).
+- **Bridge theorem** `develop_eq_pure_of_deterministic` connects them
+  (load-bearing, proved structurally — no sorry).
+
+Consumers needing a `Valuation α` go through `developDet`; consumers
+chaining probabilistic operations go through `develop`. Two forms, same
+mathematical object, no API drift.
+
+#### V-1: Mechanical rename pass
+
+`develop → developDet`, `developOn → developDetOn`, `stepOnce → stepOnceDet`,
+`stepOnceOn → stepOnceDetOn`, `singleStepAt → singleStepAtDet` across 12
+files (V2 substrate + 10 consumers). Plus paired simp lemma renames.
+Single perl pass; all consumer proofs unchanged.
+
+#### V-2: PMF-valued `develop` substrate
+
+Added to `Core/Causal/V2/SEM/Basic.lean`:
+- `singleStepAt : SEM V α → Valuation α → V → PMF (Valuation α)` — uses
+  `Mechanism.run |>.map (s.extend v ·)` for the per-vertex bind.
+- `stepOnce : SEM V α → Valuation α → PMF (Valuation α)` — foldl PMF.bind
+  over `(Fintype.elems : Finset V).toList`.
+- `develop : SEM V α → Valuation α → PMF (Valuation α)` — iterates
+  `PMF.bind · stepOnce` for `Fintype.card V` rounds.
+- Bridge theorems `singleStepAt_eq_pure_of_deterministic`,
+  `stepOnce_eq_pure_of_deterministic`, `develop_eq_pure_of_deterministic`
+  — all proved structurally via `Mechanism.IsDeterministic.run_eq` +
+  `PMF.pure_bind` + `PMF.pure_map`. Zero sorries on the bridge chain.
+- `IsDeterministic` instance for `M.intervene v x` (transfers via
+  `Mechanism.const`), plus `CausalGraph.IsDAG (M.intervene v x).graph`
+  (transfers via `intervene_graph`).
+
+`develop_perm_invariant` (topological-order independence) deferred as
+sorry-of-convenience — not load-bearing for current consumers.
+
+Added to `Core/Causal/V2/SEM/Counterfactual.lean`:
+- `SEM.probabilisticSuf : SEM V α → Valuation α → V → α cause → V → α effect → ENNReal`
+  — the canonical probability that `effect = xE` after `do(cause := xC)`.
+  PMF-valued via `tsum` over development outcomes.
+- `probabilisticSuf_of_deterministic` — bridge: under `IsDeterministic`,
+  collapses to `if (intervened-developDet).hasValue effect xE then 1 else 0`.
+  Proved via `develop_eq_pure_of_deterministic` + `tsum_eq_single` +
+  `PMF.pure_apply_*`.
+
+#### V-3: CWL2025 with both deterministic and probabilistic SUF
+
+`Phenomena/Causation/Studies/CaoWhiteLassiter2025.lean` gains a `V2`
+sub-namespace with:
+- `deterministicSuf` (V2 form: indicator over BoolSEM `causallySufficient`)
+- `probabilisticSuf_eq_deterministicSuf` (grounding theorem; one sorry
+  pending an `intervene≡extend` bridge lemma)
+- `ProbabilisticExample`: a 2-vertex SEM with `effect`'s mechanism
+  `PMF.bernoulli p` — genuinely non-Dirac, demonstrating that
+  `probabilisticSuf` accepts non-deterministic SEMs (the legacy
+  `deterministicSuf` requires `[IsDeterministic M]` and would reject
+  this model outright). One IsDAG sorry (mechanical, Phase D-E queue).
+
+Build: 1805 jobs clean across V2 substrate + 12 consumers + CWL2025.
+
+D-C migration of the remaining 3 study files (BAS2026, Nadathur2024,
+NadathurLauer2020) resumes against the new V2 substrate next.
+
 ## [0.230.210] - 2026-04-22
 
 ### Polished — mathlib-style audit follow-ups on the Grammar dissolution

@@ -60,7 +60,7 @@ NOT @cite{laka-1990}'s ΣP (which is `Cat.Pol` in linglib at F-value 2).
 -- Theory Bridge (before namespace, so V2Data.toProfile is at root level)
 -- ============================================================================
 
-open Minimalism (ForceHead V2Profile) in
+open Minimalism (ForceHead V2Profile) Features in
 /-- Map theory-neutral V2 observations to's
     split-ForceP micro-parameter representation. The mapping:
     - `declarativeV2`   → Decl° (verb movement in declaratives)

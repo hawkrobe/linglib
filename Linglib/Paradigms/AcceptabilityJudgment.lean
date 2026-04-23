@@ -273,4 +273,14 @@ structure StringPhenomenonData where
   generalization : String
   deriving Repr
 
+/-- A `SentencePair` is structurally a 1×2 factorial design: one
+    `Unit`-valued first factor, a `Bool`-valued grammaticality factor,
+    one cell per Bool value. This makes the relationship to §1's
+    factorial discipline explicit: `SentencePair` is the degenerate case
+    of `FactorialCondition Unit Bool` lifted to a pair of cells. -/
+def SentencePair.toFactorial (sp : SentencePair) :
+    FactorialCondition Unit Bool × FactorialCondition Unit Bool :=
+  (⟨sp.description, (), true,  sp.grammatical⟩,
+   ⟨sp.description, (), false, sp.ungrammatical⟩)
+
 end Paradigms.AcceptabilityJudgment
