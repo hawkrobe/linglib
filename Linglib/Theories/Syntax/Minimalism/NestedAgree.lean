@@ -17,13 +17,13 @@ A `NestedAgreeConfig` packages:
 2. `root : SyntacticObject` — the tree under consideration.
 3. `probingHead : SyntacticObject` — the head bearing the probes.
 4. `goalHead : SyntacticObject` — the shared goal targeted under MME.
-5. `phiActive : SyntacticObject → Bool` — *lexical* primitive: which
+5. `validGoal : SyntacticObject → Bool` — *lexical* primitive: which
    subtrees carry active φ-features. Defective v of unaccusatives
    gets `false`; this is what blocks π-Agree in @cite{amato-2025}'s
    §3.4.2 unaccusative analysis.
 
 `initialDomain`, `daughters`, `searchDomain` are *derived* via
-`cCommandsIn` and reflexive containment, filtered by `phiActive`. The
+`cCommandsIn` and reflexive containment, filtered by `validGoal`. The
 matryoshka claim — post-initial domains restricted to the goal's
 daughters — is structural, not axiomatic. Consequently
 `IsNestedAgreeConfig` is non-vacuous: it requires `goalHead` to be
@@ -35,7 +35,7 @@ Italian aux selection (§3) is formalized at
 `Phenomena/AuxiliaryVerbs/Studies/Amato2025.lean`. Other Amato 2025 §4
 case studies (Icelandic DAT-NOM, Lak perfective, Spanish VOS,
 Bulgarian wh, ditransitives) are deferred — their consumers will
-construct `SyntacticObject` trees and `phiActive` predicates the
+construct `SyntacticObject` trees and `validGoal` predicates the
 same way.
 
 ## Architecture
@@ -99,7 +99,7 @@ structure NestedAgreeConfig where
   /-- Lexical primitive: which subtrees carry active φ-features.
       Defective v of unaccusatives gets `false`. Distinct from any
       derivational fact about whether Agree succeeded. -/
-  phiActive : SyntacticObject → Bool
+  validGoal : SyntacticObject → Bool
 
 namespace NestedAgreeConfig
 
@@ -110,7 +110,7 @@ def length (c : NestedAgreeConfig) : Nat := c.stack.length
     from `cCommandsIn` (Minimalist c-command on `SyntacticObject`). -/
 def initialDomain (c : NestedAgreeConfig) : List SyntacticObject :=
   c.root.subtrees.filter (fun y =>
-    decide (cCommandsIn c.root c.probingHead y) && c.phiActive y)
+    decide (cCommandsIn c.root c.probingHead y) && c.validGoal y)
 
 /-- The shared goal's daughters: the goal itself plus everything it
     c-commands, filtered by phi-activity. The reflexive inclusion of
@@ -119,7 +119,7 @@ def initialDomain (c : NestedAgreeConfig) : List SyntacticObject :=
 def daughters (c : NestedAgreeConfig) : List SyntacticObject :=
   c.root.subtrees.filter (fun y =>
     (y == c.goalHead || decide (cCommandsIn c.root c.goalHead y)) &&
-      c.phiActive y)
+      c.validGoal y)
 
 /-- Search domain at probe `i`: derived from the structural
     primitives. The matryoshka claim is encoded definitionally —
@@ -137,8 +137,8 @@ end NestedAgreeConfig
 /-- A *bona fide* Nested Agree configuration: the shared goal lies in
     probe 0's c-command domain and is phi-active. Non-vacuous: derives
     a structural claim about `root` (via `cCommandsIn`) plus the
-    lexical primitive (`phiActive`). When phi-Agree fails (unaccusative
-    v has `phiActive = false`), this predicate is correctly false —
+    lexical primitive (`validGoal`). When phi-Agree fails (unaccusative
+    v has `validGoal = false`), this predicate is correctly false —
     the formal expression of @cite{amato-2025}'s "the chain breaks
     down at π-Agree." -/
 def IsNestedAgreeConfig (c : NestedAgreeConfig) : Prop :=
@@ -221,7 +221,51 @@ theorem apparent_minimality_not_actual
   exact hOut (hδEq ▸ goalHead_mem_daughters c h)
 
 -- ============================================================================
--- § 7: Worked Italian-style example
+-- § 7: Consumer builder API
+-- ============================================================================
+
+/-! ### Standard linear-Spec configuration builder
+
+The four landed Amato 2025 case studies (Italian aux, Icelandic
+DAT-NOM, Lak perfective, Bulgarian wh) all share a structural
+template: a 4-leaf binary tree `[probe-head [intervener [mid goal]]]`
+with a 2-probe stack on the head. The builder below extracts this
+template so consumers don't repeat it.
+
+Consumers vary in:
+- LIToken category labels (T / C / Asp; DPsubj / DPdat / Erg / WhSbj;
+  V; DPobj / DPnom / Abs / WhObj)
+- Which leaf is the chosen goal (typically `midNode` in Italian/Lak,
+  `terminal` in Icelandic/Bulgarian)
+- The `validGoal` predicate
+
+The common shape — a single ProbeProfile used twice, a 4-leaf linear
+tree, the 2-probe stack — is captured by `standardConfig`. -/
+
+/-- Standard 4-leaf linear-Spec tree:
+    `[probeHd [intervener [midNode terminal]]]`.
+    Shared template across the landed Amato 2025 case studies. -/
+def standardLinearTree (probeHd intervener midNode terminal : LIToken) :
+    SyntacticObject :=
+  .node (.leaf probeHd)
+    (.node (.leaf intervener)
+      (.node (.leaf midNode) (.leaf terminal)))
+
+/-- A `NestedAgreeConfig` over the standard linear tree, with a
+    2-probe stack on `probeHd`. The `goalHd` selects which leaf
+    serves as the shared goal under maximized matching. -/
+def standardConfig (probeProfile : ProbeProfile)
+    (probeHd intervener midNode terminal : LIToken)
+    (goalHd : LIToken) (vg : SyntacticObject → Bool) :
+    NestedAgreeConfig where
+  stack := [probeProfile, probeProfile]
+  root := standardLinearTree probeHd intervener midNode terminal
+  probingHead := .leaf probeHd
+  goalHead := .leaf goalHd
+  validGoal := vg
+
+-- ============================================================================
+-- § 8: Worked Italian-style example
 -- ============================================================================
 
 /-! ### A 2-probe stack on a Perf+vP `SyntacticObject`
@@ -233,8 +277,8 @@ in Perf's c-command but not in v's, so it is structurally excluded
 from probe 1 — encoding @cite{amato-2025}'s resolution of the
 apparent minimality violation.
 
-`phiActive` is `true` everywhere here (transitive case); the
-unaccusative case (`phiActive (.leaf aV) = false`) is the one tested
+`validGoal` is `true` everywhere here (transitive case); the
+unaccusative case (`validGoal (.leaf aV) = false`) is the one tested
 in `Phenomena/AuxiliaryVerbs/Studies/Amato2025.lean`. -/
 
 private def aT : LIToken := ⟨LexicalItem.simple .T [], 0⟩
@@ -242,22 +286,11 @@ private def aV : LIToken := ⟨LexicalItem.simple .V [], 1⟩
 private def aDPsubj : LIToken := ⟨LexicalItem.simple .D [], 2⟩
 private def aDPobj : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 
-/-- The structural tree for the worked example. -/
-private def perfTree : SyntacticObject :=
-  .node (.leaf aT)
-    (.node (.leaf aDPsubj)
-      (.node (.leaf aV) (.leaf aDPobj)))
-
-/-- Both probes sit on Perf with horizon C. Identical `ProbeProfile`
-    data; the list ordering is what distinguishes them. -/
 private def perfProbe : ProbeProfile := ⟨.T, some .C⟩
 
-def italianAuxExample : NestedAgreeConfig where
-  stack := [perfProbe, perfProbe]
-  root := perfTree
-  probingHead := .leaf aT
-  goalHead := .leaf aV
-  phiActive := fun _ => true
+/-- Italian-style 2-probe configuration constructed via `standardConfig`. -/
+def italianAuxExample : NestedAgreeConfig :=
+  standardConfig perfProbe aT aDPsubj aV aDPobj aV (fun _ => true)
 
 theorem italianAuxExample_is_nested :
     IsNestedAgreeConfig italianAuxExample := by decide

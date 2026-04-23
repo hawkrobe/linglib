@@ -24,9 +24,11 @@ The lexical entries `inTelic` (= Rouillard's E-TIA) and `inGap` (= Rouillard's
 G-TIA) are defined in `Fragments/English/TemporalExpressions.lean` with
 **consensus typological metadata** (Vendler selection, IAI 2001 classification,
 polarity-item status). The Rouillard-specific reanalysis — the `TIAType`
-labels, the M = τ vs M = id parameterization, the syntactic eventLevel /
-perfectLevel distinction — lives below in this file as **partial projections
-from the consensus entries**, not as Fragment-level fields.
+labels and the eventLevel / perfectLevel `AdverbialPosition` distinction —
+lives below in this file as a **partial projection from the consensus
+entries** (`DurationExprEntry.rouillardClassification?`), not as
+Fragment-level fields. The map-function dimension (M = τ vs M = id) is
+redundant with TIA type and is omitted from the projection.
 
 ## Data Points
 
@@ -48,9 +50,10 @@ from the consensus entries**, not as Fragment-level fields.
 
 This file is a **Phenomena/Studies** file: it imports Theories + Fragments
 and verifies that theoretical predictions match empirical observations.
-The Rouillard-specific apparatus (TIAType, MapFunction, AdverbialPosition)
-is co-located here rather than in a Fragment file because it is paper-specific
-analytical machinery, not consensus typological metadata.
+The Rouillard-specific apparatus (`TIAType`, `AdverbialPosition`,
+`RouillardClassification`) is co-located here rather than in a Fragment
+file because it is paper-specific analytical machinery, not consensus
+typological metadata.
 
 -/
 
@@ -67,8 +70,8 @@ open Fragments.English.TemporalExpressions
 -- ════════════════════════════════════════════════════
 
 /-- Rouillard's TIA-type classification.
-    Derived from a `DurationExprEntry` via `tiaTypeOf?` below; this enum
-    is paper-specific apparatus, not consensus Fragment metadata. -/
+    Derived from a `DurationExprEntry` via `rouillardClassification?` below;
+    this enum is paper-specific apparatus, not consensus Fragment metadata. -/
 inductive TIAType where
   | eTIA   -- Event TIA: measures event durations
   | gTIA   -- Gap TIA: measures gap durations
@@ -82,34 +85,25 @@ inductive AdverbialPosition where
   | perfectLevel
   deriving DecidableEq, Repr
 
-/-- Rouillard's map function: what the *in*-adverbial relates to time.
-    E-TIAs use the runtime function τ (events → times); G-TIAs use the
-    identity function (times → times). -/
-inductive MapFunction where
-  | runtime    -- τ : events → times (E-TIA)
-  | identity   -- id : times → times (G-TIA)
+/-- Bundle of Rouillard's analytical labels for an *in*-adverbial:
+    TIA type (E-TIA / G-TIA) and syntactic position (event-level vs
+    perfect-level). The map-function dimension (M = τ vs M = id) is
+    redundant with TIA type and is omitted; consumers reconstruct it
+    from `tiaType` if needed. -/
+structure RouillardClassification where
+  tiaType : TIAType
+  position : AdverbialPosition
   deriving DecidableEq, Repr
 
-/-- Project a `DurationExprEntry` to its Rouillard TIA-type label.
-    Returns `none` for entries outside the *in*-adverbial paradigm. -/
-def tiaTypeOf? (e : DurationExprEntry) : Option TIAType :=
+/-- Project a `DurationExprEntry` to Rouillard's analytical labels.
+    Returns `none` for entries outside the *in*-adverbial paradigm
+    (`forDur`, `ago`). Defined in the `DurationExprEntry` namespace so
+    that consumers can use dot notation (`e.rouillardClassification?`). -/
+def _root_.Fragments.English.TemporalExpressions.DurationExprEntry.rouillardClassification?
+    (e : DurationExprEntry) : Option RouillardClassification :=
   match e.kind with
-  | .telicCompletion => some .eTIA
-  | .npiGap          => some .gTIA
-  | _                => none
-
-/-- Project a `DurationExprEntry` to its Rouillard syntactic position. -/
-def positionOf? (e : DurationExprEntry) : Option AdverbialPosition :=
-  match e.kind with
-  | .telicCompletion => some .eventLevel
-  | .npiGap          => some .perfectLevel
-  | _                => none
-
-/-- Project a `DurationExprEntry` to its Rouillard map function. -/
-def mapFunctionOf? (e : DurationExprEntry) : Option MapFunction :=
-  match e.kind with
-  | .telicCompletion => some .runtime
-  | .npiGap          => some .identity
+  | .telicCompletion => some ⟨.eTIA, .eventLevel⟩
+  | .npiGap          => some ⟨.gTIA, .perfectLevel⟩
   | _                => none
 
 -- ════════════════════════════════════════════════════
@@ -156,7 +150,7 @@ def eTIA_predicted_by_telicity (d : ETIADatum) : Bool :=
 
 /-- All E-TIA data points are predicted by telicity. -/
 theorem eTIA_all_predicted : eTIAData.all eTIA_predicted_by_telicity = true := by
-  native_decide
+  decide
 
 /-- (1a) Accomplishment → telic → E-TIA acceptable. -/
 theorem datum_1a_telic : datum_1a.vendlerClass.telicity = .telic := rfl
@@ -194,7 +188,7 @@ def eTIA_predicted_by_boundedness (d : ETIADatum) : Bool :=
   (scaleBoundedness d.vendlerClass).isLicensed == d.acceptable
 
 theorem eTIA_boundedness_all_predicted :
-    eTIAData.all eTIA_predicted_by_boundedness = true := by native_decide
+    eTIAData.all eTIA_predicted_by_boundedness = true := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 4. G-TIA Distribution Data
@@ -241,7 +235,7 @@ def gTIA_predicted (d : GTIADatum) : Bool :=
 
 /-- All G-TIA data points match the polarity + perfect prediction. -/
 theorem gTIA_all_predicted : gTIAData.all gTIA_predicted = true := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 5b. Fragment Bridges: derive predictions from Fragment entries
@@ -250,33 +244,36 @@ theorem gTIA_all_predicted : gTIAData.all gTIA_predicted = true := by
 /-- G-TIA licensing is derived from Fragment fields: the consensus
     `inGap` entry records `requiresNegation` and `requiresPerfect`. -/
 theorem gTIA_licensing_from_fragment :
-    inGap.requiresNegation = true ∧ inGap.requiresPerfect = true :=
-  ⟨rfl, rfl⟩
+    inGap.requiresNegation ∧ inGap.requiresPerfect :=
+  ⟨trivial, trivial⟩
 
 /-- E-TIA licensing is derived from Fragment: requires telic VP selection,
     not polarity. -/
 theorem eTIA_licensing_from_fragment :
-    inTelic.vendlerSelection = [.telic] ∧ inTelic.requiresNegation = false :=
-  ⟨rfl, rfl⟩
+    inTelic.vendlerSelection = some .telic ∧ ¬ inTelic.requiresNegation :=
+  ⟨rfl, not_false⟩
 
 /-- Polarity-sensitivity status from Fragment: the gap reading is an NPI,
     the telic-completion reading is not. -/
 theorem polarity_status_from_fragment :
-    inGap.polaritySensitive = true ∧ inTelic.polaritySensitive = false :=
+    inGap.polaritySensitive ∧ ¬ inTelic.polaritySensitive :=
+  ⟨trivial, not_false⟩
+
+/-- The Rouillard projection assigns the expected analytical labels:
+    E-TIA at event-level for telic-completion *in*; G-TIA at perfect-level
+    for the NPI-gap *in*. Stacking acceptability follows: the inner TIA
+    must be event-level, the outer must be perfect-level. -/
+theorem rouillard_classification :
+    inTelic.rouillardClassification? = some ⟨.eTIA, .eventLevel⟩ ∧
+    inGap.rouillardClassification?    = some ⟨.gTIA, .perfectLevel⟩ :=
   ⟨rfl, rfl⟩
 
-/-- Stacking constraint via the Rouillard projection: E-TIA is event-level
-    (inner), G-TIA is perfect-level (outer). The syntactic positions
-    determine the only acceptable stacking order. -/
-theorem stacking_positions_from_fragment :
-    positionOf? inTelic = some .eventLevel ∧
-    positionOf? inGap = some .perfectLevel :=
-  ⟨rfl, rfl⟩
-
-/-- The Rouillard projection assigns the expected TIA-type labels. -/
-theorem tiaType_projection :
-    tiaTypeOf? inTelic = some .eTIA ∧
-    tiaTypeOf? inGap = some .gTIA :=
+/-- Out-of-paradigm entries return `none` from the Rouillard projection:
+    *for* and *ago* are duration adverbials but not *in*-adverbials, so
+    Rouillard's E-TIA / G-TIA dichotomy doesn't apply to them. -/
+theorem rouillard_partial :
+    forDur.rouillardClassification? = none ∧
+    ago.rouillardClassification?    = none :=
   ⟨rfl, rfl⟩
 
 /-- E-TIA and G-TIA share the preposition *in*. -/
@@ -312,13 +309,13 @@ def table1 : List Table1Entry :=
 
 /-- Exactly one reading survives: NEG + G-TIA + PFV (E-perfect). -/
 theorem exactly_one_survives :
-    (table1.filter (fun e => !e.mipBlocks)).length = 1 := by native_decide
+    (table1.filter (fun e => !e.mipBlocks)).length = 1 := by decide
 
 /-- The surviving reading is the negative G-TIA with perfective aspect. -/
 theorem surviving_is_neg_gtia_pfv :
     table1.filter (fun e => !e.mipBlocks) =
     [{ polarity := false, tiaType := false, aspect := true, mipBlocks := false }] := by
-  native_decide
+  decide
 
 -- ════════════════════════════════════════════════════
 -- § 7. Cross-Domain Bridge: Homogeneity ↔ Scale Openness
@@ -333,7 +330,7 @@ theorem homogeneous_implies_open_scale (p : AspectualProfile)
     (h : p.isHomogeneous = true) :
     scaleBoundedness p.toVendlerClass = .open_ := by
   have hvc := (homogeneous_iff_durative_atelic p).mp h
-  rcases hvc with hc | hc <;> rw [hc] <;> native_decide
+  rcases hvc with hc | hc <;> rw [hc] <;> decide
 
 /-- Telic → closed scale → E-TIA licensed.
     Note: non-homogeneous alone is insufficient — semelfactives are
@@ -394,7 +391,7 @@ def mipPrediction : NPIPrediction :=
     DE handles only G-TIAs and makes wrong predictions for E-TIAs. -/
 theorem mip_subsumes_de :
     (mipPrediction.predictsETIA && mipPrediction.predictsGTIA = true) ∧
-    (dePrediction.predictsETIA = false) := by native_decide
+    (dePrediction.predictsETIA = false) := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 9. Since-When Questions (§5.2)
@@ -435,7 +432,7 @@ def sinceWhen_131 : SinceWhenDatum :=
     but the E-perfect Hamblin set can never have one (by density). -/
 theorem sinceWhen_blocks_ePerfect :
     sinceWhen_131.ePerfect = false ∧ sinceWhen_131.uPerfect = true := by
-  native_decide
+  decide
 
 /-- Fragment bridge: *since* is veridical (presupposes its complement)
     and pins the PTS left boundary (IAI 2001 durative classification),
@@ -493,7 +490,7 @@ def stacking_predicted (d : StackingDatum) : Bool :=
   (d.innerIsETIA && d.outerIsGTIA) == d.acceptable
 
 theorem stacking_all_predicted :
-    stackingData.all stacking_predicted = true := by native_decide
+    stackingData.all stacking_predicted = true := by decide
 
 -- ════════════════════════════════════════════════════
 -- § 11. LicensingPipeline Extension
@@ -511,7 +508,7 @@ def eTIA_predicted_by_pipeline (d : ETIADatum) : Bool :=
   LicensingPipeline.isLicensed d.vendlerClass == d.acceptable
 
 theorem eTIA_pipeline_all_predicted :
-    eTIAData.all eTIA_predicted_by_pipeline = true := by native_decide
+    eTIAData.all eTIA_predicted_by_pipeline = true := by decide
 
 /-- Pipeline agrees with direct scaleBoundedness on all four Vendler classes.
     With compositional chains, the pipeline instance and `scaleBoundedness`

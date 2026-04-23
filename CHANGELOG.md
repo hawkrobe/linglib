@@ -6,44 +6,44 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [0.230.270] - 2026-04-23
 
-### GP2009 deepening pass — derive from data, integrate with Implicature/
+### O'Donnell 2015 Phase 7': first study file
 
-Follow-up to the 0.230.266 attribution. Brings GP2009 to full mathlib
-discipline against the actual paper PDF (S&P 2:4, 2009).
+First Phenomena study using the FG-family substrate. Demonstrates
+the API on the central empirical contrast of @cite{odonnell-2015}
+Chapters 6–7 (the productivity ordering of -*ness* > -*ity* >
+-*th*).
 
-- **Bib citation fix**: paper cites *Chierchia, Fox & Spector. 2008*
-  (manuscript) — we were citing the 2012 print version. Switched.
-- **Added Cohen 1971** as the historical anchor of the embedded-
-  implicature problem (paper §1).
-- **Stipulation chains derived from data**: `lookupRate` helper added;
-  `thinkAvgRate`, `complexConditionsMean`, `deInferenceMean`,
-  `nonDeInferenceMean` all now computed from `exp1aResults` /
-  `exp1bResults` / `exp3Results` rather than restating values.
-  `embedding_not_systematic`, `ambiguity_gap`,
-  `minimal_conventionalist_support` anchor in data tables.
-- **`footnote7_paraphrase_asymmetry`** is now `abbrev … := @mt` —
-  reuses Lean core's `mt` (modus tollens) instead of reinventing.
-- **`competence_explains_think_via_processAlternative`** added —
-  load-bearing bridge from §8 derivation to
-  `Implicature.Competence.processAlternative` machinery.
-- **`PassWorld` deriving `Fintype`** (was `DecidableEq, Repr`) for
-  downstream `Implicature PassWorld` operations.
-- **`notAllPassed` derived from `allPassedProp`** rather than
-  defined as a separate match (literal negation).
-- **Spine bridge data-linked**:
-  `someStudentsSleepUE_corresponds_to_unembedded_data` ties the
-  `Implicature PassWorld` value to Exp 1a-b's 93%/94% empirical rate.
-- **`saladOrDessertExample`** added — paper's §Conclusion (39) marked
-  contrastive construction (the punchline counter-example).
-- **`appendixSamples`** added — the 8 paper-Appendix stimulus pairs
-  used in Exps 1a-b.
-- **`ConventionalistVariant` enum + `predictsLocalSI`**: distinguish
-  mainstream-lexicalist / mainstream-syntactic / minimal variants
-  (paper §1 vs §6 distinction).
-- **`AmbiguitySource` enum + map**: classify the Table 5 control
-  sentences (collective/distributive, predicate scope, etc.).
-- **`EmbeddingType` + `EmbeddingResult` promoted** to file-level
-  shared types (were §1-local).
+- **New file**:
+  `Linglib/Phenomena/Morphology/Studies/ODonnell2015Derivational.lean`
+  (~150 LOC). Provides:
+  - `Suffix2015` / `SuffixNT` / four `ContextFreeRule`s + the toy
+    `suffixGrammar : ContextFreeGrammar Suffix2015`.
+  - `pseudoVal` — per-rule pseudo-counts encoding the empirical
+    productivity ordering (3 / 2 / 1 / 1 for ness/ity/th/adj).
+  - `dmpcfgFromObserved : DMPCFG suffixGrammar` — first concrete
+    instantiation of the Phase 5 substrate.
+  - `corpusProb_nonneg_of_dmpcfg` — the FG-family `corpusProb_nonneg`
+    instantiates cleanly on the toy grammar.
+  - Three `dmpcfgFromObserved_pseudo_r{Ness,Ity,Th}` lemmas
+    computing the concrete pseudo-count values (rfl-style with
+    `if_pos`/`if_neg` discharges).
+  - `dmpcfgFromObserved_pseudo_strictly_orders_suffixes` — the
+    bridge theorem: the structure's pseudo-counts strictly
+    reproduce `Suffix.productivityIndex`'s -ness > -ity > -th
+    ordering. Per @cite{odonnell-2015} §2.4.1 this propagates to
+    posterior MAP weights via Dirichlet conjugacy.
+- **`change pseudoVal _ = _`** rather than `show` — needed to
+  unfold `dmpcfgFromObserved.pseudo` to its definition (`pseudo
+  := pseudoVal`), which is definitional but not syntactic.
+- **Bridge claims for future study files** documented in a `/-! ## ... -/`
+  block (not as fake `True`-placeholder theorems): the
+  `lhsFactor`-orders-with-productivity claim, the *-ability*
+  paradox MAG-vs-FG discriminator (§7.3.2), and the cross-study
+  bridge to `albright-hayes-2003`. All require either richer
+  grammars or substrate not yet available.
+
+Build: 7.6s clean. No `sorry`. First end-to-end consumer of the
+Phase 0–7 substrate.
 
 ## [0.230.269] - 2026-04-23
 

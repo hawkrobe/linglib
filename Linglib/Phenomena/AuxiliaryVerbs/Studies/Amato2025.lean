@@ -3,63 +3,62 @@ import Linglib.Phenomena.AuxiliaryVerbs.Studies.Olivier2026
 import Linglib.Theories.Syntax.Minimalism.NestedAgree
 
 /-!
-# @cite{amato-2025} — Italian auxiliary selection via Nested Agree
+# @cite{amato-2025} mechanism applied to Italian restructuring AS
 
-The cyclic-Agree person-feature analysis adopted here originates in
-@cite{amato-2023}'s monograph; @cite{amato-2025} (NLLT) advances
-*Nested Agree* — the configuration of ordered probes plus maximized
-matching, formalized at
-`Theories/Syntax/Minimalism/NestedAgree.lean` — as a unifying account
-across at least six syntactic phenomena:
+**Scope clarification.** This file does *not* model @cite{amato-2025}'s
+§3 (monoclausal Italian auxiliary selection in non-restructuring
+contexts). It models the @cite{amato-2025}/@cite{amato-2024}
+*mechanism* (cyclic-Agree person feature on Perf, with Nested Agree
+restricting the second probe) *applied to* the Romance restructuring
+problem set up by @cite{olivier-2026}. The clause structure
+(`RestructuringClauseAmato extends Olivier2026.RestructuringClause`)
+inherits matrix-modal / compound-tense / clitic-position fields from
+the Olivier restructuring framework — not from Amato §3, which is
+monoclausal throughout.
 
-- Italian auxiliary selection (this file).
-- Case + agreement alignments in ditransitives.
-- Dative intervention in Icelandic biclausal sentences.
-- φ-agreement on the perfective in Lak.
-- Subject φ-agreement in Spanish VOS clauses.
-- Multiple wh-fronting in Bulgarian, via Merge features.
+Concrete consequence: the reflexive-case predicate
+`VIsPhiActive c.base.embeddedClass = .reflexive →
+c.base.refCliticPos ≠ .climbed` uses **clitic climbing as a
+diagnostic** for whether the chain reaches v. Climbing is a
+restructuring-domain criterion (Olivier 2026, Amato 2024), *not* an
+Amato 2025 §3 criterion (which doesn't deal with restructuring or
+clitic climbing). The Amato §3 reflexive analysis (φ-defective
+reflexive + SCC counter-feeding, §3.4.3) is *not* what this file
+models.
 
-The paper is also explicit about what is *not* a Nested-Agree
-configuration: Italian past participle agreement requires Edge Features,
-not Nested Agree. This file consumes only the §3 Italian auxiliary slot;
-the other applications are deferred.
+What this file *does* model faithfully:
+- The Nested-Agree-on-Perf configuration (`toNestedConfig`)
+- The DM vocabulary insertion rule HAVE = `Perf[π:α]`, BE elsewhere
+  (@cite{amato-2025} rule 14)
+- The Amato-2024 complement-size lever (vP vs TP) for restructuring
+  optionality
+- The Olivier 2026 / Amato 2024 prediction divergence on the
+  TP-complement reflexive case
 
-## Italian auxiliary selection (§3)
+What this file *does not* model (out of scope, requires further
+work):
+- Indirect reflexive (Amato §3.4.3 example 5b: `Teresa si è lavata
+  il vestito`)
+- Impersonal `si` (Amato §3.4.4 example 5d)
+- §3.5 Ariellese-style feature-ordering parametrization
+- The φ-defective-reflexive + SCC counter-feeding mechanism (the
+  alternative to clitic-climbing-as-diagnostic for the reflexive
+  case)
 
-In Standard Italian, the perfect head Perf bears two ordered probes:
-`[*Infl:perf*] ≻ [*π:_*]`. Infl-Agree fires first (Perf agrees with the
-v head for [Infl]); π-Agree fires second, restricted by Nested Agree to
-the daughters of v. Under this restriction the higher subject is
-*outside* π-Agree's search domain — there is no minimality violation,
-even though the lower argument controls the auxiliary form.
-
-When the lower v is φ-defective (unaccusatives) or φ-defective-via-
-clitic (reflexives), π-Agree on Perf fails to value `[*π:_*]`. The DM
-elsewhere allomorph BE then surfaces; HAVE is the more specific
-allomorph inserted whenever π is valued.
-
-## Complement size (precursor: @cite{amato-2024})
-
-The complement-size argument — vP vs TP — is the key contribution of
-@cite{amato-2024} and is preserved here as the structural lever for
-restructuring optionality. With a TP complement, the embedded T is the
-closest goal for π-Agree; the chain bottoms out at T (HAVE). With a vP
-complement, the chain reaches v (BE under defectiveness conditions).
-
-## Relation to @cite{olivier-2026}
-
-Both theories agree on the canonical AS configuration (modal + compound
-+ reflexive + climbed). They diverge on the TP-complement reflexive:
-Amato predicts HAVE (T closes the chain), Olivier predicts BE (climbed
-reflexive equates ID across domains regardless of complement size). The
-divergence is preserved at the bottom of this file, with the prediction
-inverted to track the new framework.
+The cross-domain Amato 2025 case studies for non-restructuring
+phenomena live in `Phenomena/Agreement/Studies/Amato2025.lean`
+(§4.1.2 Icelandic DAT-NOM, §4.2.1 Lak perfective) and
+`Phenomena/FillerGap/Studies/Amato2025.lean` (§4.2.3 Bulgarian wh).
 
 ## DM elsewhere inversion (vs @cite{olivier-2026})
 
-@cite{amato-2025}: HAVE = `Perf[π:α]`, BE = elsewhere. @cite{olivier-2026}
-inverts: HAVE = elsewhere, BE = `T[ID:α] = vAux[ID:α]`. This file follows
-the Amato convention.
+@cite{amato-2025}: HAVE = `Perf[π:α]`, BE = elsewhere.
+@cite{olivier-2026} inverts: HAVE = elsewhere, BE = `T[ID:α] =
+vAux[ID:α]`. This file follows the Amato convention — load-bearing
+for the cross-theory divergence theorem at the bottom.
+
+The cyclic-Agree person-feature analysis adopted here originates in
+@cite{amato-2023}'s monograph and is refined by @cite{amato-2025}.
 -/
 
 namespace Phenomena.AuxiliaryVerbs.Studies.Amato2025
@@ -309,7 +308,7 @@ theorem amato_vp_reflexive_climbed_predicts_be (c : RestructuringClauseAmato)
 
     The translation builds an abstract `SyntacticObject` standing in
     for the Italian Perf+vP structure (Perf with vP complement; vP =
-    DPsubj + v' = v + DPobj) and uses `phiActive` to mark v as
+    DPsubj + v' = v + DPobj) and uses `validGoal` to mark v as
     φ-active iff `VIsPhiActive c` — the structural primitive both
     `PersonAgreeSucceeds` and the abstract NestedAgree machinery
     consume. The bridge theorem `personAgree_iff_runStack_hits` then
@@ -322,34 +321,21 @@ private def aV : LIToken := ⟨LexicalItem.simple .V [], 1⟩
 private def aDPsubj : LIToken := ⟨LexicalItem.simple .D [], 2⟩
 private def aDPobj : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 
-/-- Abstract `SyntacticObject` for an Italian Perf+vP structure:
-    `Perf [DPsubj [v DPobj]]`. The same tree models all Amato §3
-    cases; what changes between them is `phiActive` on `v`. -/
-private def perfTree : SyntacticObject :=
-  .node (.leaf aT)
-    (.node (.leaf aDPsubj)
-      (.node (.leaf aV) (.leaf aDPobj)))
+private def perfProbe : ProbeProfile := ⟨.T, some .C⟩
 
 /-- Translate an Amato clause to an abstract `NestedAgreeConfig` over
-    a Minimalist `SyntacticObject`. `phiActive` flags v as φ-active
-    iff `VIsPhiActive c`; all other heads are phi-active by default
-    (irrelevant for the worked example). The `daughters` /
-    `initialDomain` / `searchDomain` fields are *derived* in
-    `NestedAgree.lean` from `cCommandsIn` on `perfTree`, not
-    stipulated here. -/
-def toNestedConfig (c : RestructuringClauseAmato) : NestedAgreeConfig where
-  stack := [⟨.T, some .C⟩, ⟨.T, some .C⟩]
-  root := perfTree
-  probingHead := .leaf aT
-  goalHead := .leaf aV
-  phiActive := fun y =>
-    if y = SyntacticObject.leaf aV then decide (VIsPhiActive c) else true
+    a Minimalist `SyntacticObject`, using `NestedAgree.standardConfig`.
+    Tree: `Perf [DPsubj [v DPobj]]`, goal = v. `validGoal` flags v as
+    φ-active iff `VIsPhiActive c`; all other heads are phi-active. -/
+def toNestedConfig (c : RestructuringClauseAmato) : NestedAgreeConfig :=
+  standardConfig perfProbe aT aDPsubj aV aDPobj aV
+    (fun y => if y = SyntacticObject.leaf aV then decide (VIsPhiActive c) else true)
 
 /-- Every Amato clause whose v is φ-active yields a well-formed Nested
     Agree configuration. The precondition is structurally meaningful
     — `IsNestedAgreeConfig` requires `goalHead` (= v) to be in
-    `initialDomain` (= Perf's c-command, filtered by `phiActive`); a
-    φ-defective v has `phiActive (.leaf aV) = false` and is correctly
+    `initialDomain` (= Perf's c-command, filtered by `validGoal`); a
+    φ-defective v has `validGoal (.leaf aV) = false` and is correctly
     excluded. This is the formal expression of @cite{amato-2025}'s
     "the chain breaks down at π-Agree" for unaccusative and
     vP-reflexive-with-climbing cases. -/
@@ -359,17 +345,18 @@ theorem amato_clause_is_nested (c : RestructuringClauseAmato)
   unfold IsNestedAgreeConfig NestedAgreeConfig.initialDomain
   rw [List.mem_filter]
   refine ⟨?_, ?_⟩
-  · -- .leaf aV ∈ perfTree.subtrees: purely structural, c-free after unfold.
-    show SyntacticObject.leaf aV ∈ perfTree.subtrees
+  · -- .leaf aV ∈ standardLinearTree _.subtrees: purely structural after unfold.
+    show SyntacticObject.leaf aV ∈
+      (standardLinearTree aT aDPsubj aV aDPobj).subtrees
     decide
-  · -- (decide (cCommandsIn perfTree perf v) && phiActive v) = true
+  · -- (decide (cCommandsIn _ perf v) && validGoal v) = true
     rw [Bool.and_eq_true]
     refine ⟨?_, ?_⟩
-    · -- Perf c-commands v: purely structural after unfold.
-      show decide (cCommandsIn perfTree (SyntacticObject.leaf aT)
-        (SyntacticObject.leaf aV)) = true
+    · -- Perf c-commands v in the standardLinearTree: purely structural.
+      show decide (cCommandsIn (standardLinearTree aT aDPsubj aV aDPobj)
+        (SyntacticObject.leaf aT) (SyntacticObject.leaf aV)) = true
       decide
-    · -- phiActive (.leaf aV) = decide (VIsPhiActive c) = true (from h).
+    · -- validGoal (.leaf aV) = decide (VIsPhiActive c) = true (from h).
       show (decide (VIsPhiActive c)) = true
       exact decide_eq_true h
 
@@ -377,8 +364,9 @@ theorem amato_clause_is_nested (c : RestructuringClauseAmato)
     Both sides reduce through the shared `VIsPhiActive` primitive on
     the same `SyntacticObject` substrate — the abstract Nested-Agree
     machinery faithfully models the linguistic predicate. The proof
-    chases through `cCommandsIn`/`containsOrEq` on `perfTree`, not
-    through a stipulated `daughters` field. -/
+    chases through `cCommandsIn`/`containsOrEq` on the
+    `standardLinearTree` instance, not through a stipulated
+    `daughters` field. -/
 theorem personAgree_iff_runStack_hits (c : RestructuringClauseAmato) :
     PersonAgreeSucceeds c ↔ (runStack (toNestedConfig c) 1).isSome = true := by
   rw [runStack_some_iff]
@@ -395,13 +383,13 @@ theorem personAgree_iff_runStack_hits (c : RestructuringClauseAmato) :
       rw [searchDomain_succ]
       exact goalHead_mem_daughters _ (amato_clause_is_nested c h)
   · rintro ⟨_, hMem⟩
-    -- hMem : goalHead ∈ daughters; the filter requires phiActive,
+    -- hMem : goalHead ∈ daughters; the filter requires validGoal,
     -- which reduces to `decide (VIsPhiActive c)`.
     rw [searchDomain_succ] at hMem
     show VIsPhiActive c
     have hMemFilter := (List.mem_filter.mp hMem).2
     rw [Bool.and_eq_true] at hMemFilter
-    -- hMemFilter.2 : phiActive (.leaf aV) = true
+    -- hMemFilter.2 : validGoal (.leaf aV) = true
     --             ≡ decide (VIsPhiActive c) = true
     exact of_decide_eq_true hMemFilter.2
 

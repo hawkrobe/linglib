@@ -101,33 +101,20 @@ private def aV : LIToken := ⟨LexicalItem.simple .V [], 2⟩
     chosen goal of `[•wh•]` by Nested Agree. -/
 private def aWhObj : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 
-/-- Pre-movement Bulgarian tree: `C [wh-sbj [V wh-obj]]`. The wh-subject
-    is structurally above wh-obj (Spec,T > Spec,v in the full tree;
-    here flattened to a binary structure with wh-sbj in upper Spec
-    and wh-obj at the bottom). -/
-private def bulgarianTree : SyntacticObject :=
-  .node (.leaf aC)
-    (.node (.leaf aWhSbj)
-      (.node (.leaf aV) (.leaf aWhObj)))
-
 /-- C's probe with C-area horizon. Both `[*wh*]` and `[•wh•]` use
     this profile; the Agree-vs-Merge distinction is at the consumer
     interpretive layer, not at the abstract `NestedAgreeConfig` level. -/
 private def cProbe : ProbeProfile := ⟨.C, none⟩
 
 /-- Bulgarian multi-wh configuration at the relevant derivational
-    step (post-Multiple-Agree, pre-movement). The shared goal is
-    `aWhObj` — the last token Multiple Agree reached, what Nested
-    Agree forces the Merge probe to also target. All heads are
-    wh-active for the structural Nested-Agree claim; the
-    Agree-vs-Merge distinction between probes 0 and 1 is implicit
-    in the linguistic interpretation, not in the abstract config. -/
-def bulgarianMultiWh : NestedAgreeConfig where
-  stack := [cProbe, cProbe]
-  root := bulgarianTree
-  probingHead := .leaf aC
-  goalHead := .leaf aWhObj
-  phiActive := fun _ => true
+    step (post-Multiple-Agree, pre-movement). Pre-movement tree:
+    `C [wh-sbj [V wh-obj]]`, goal = wh-obj (the last token Multiple
+    Agree reached, what Nested Agree forces the Merge probe to also
+    target). The Agree-vs-Merge distinction between probes 0 and 1
+    is implicit in the linguistic interpretation, not in the
+    abstract config. -/
+def bulgarianMultiWh : NestedAgreeConfig :=
+  standardConfig cProbe aC aWhSbj aV aWhObj aWhObj (fun _ => true)
 
 theorem bulgarianMultiWh_is_nested :
     IsNestedAgreeConfig bulgarianMultiWh := by decide

@@ -1,4 +1,5 @@
 import Linglib.Theories.Syntax.Minimalism.NestedAgree
+import Linglib.Phenomena.Case.Studies.Marantz1991
 
 /-!
 # @cite{amato-2025} — Agreement case studies via Nested Agree
@@ -31,7 +32,7 @@ phenomenon directories.
 
 Every case study here uses *the same* `NestedAgreeConfig` shape with
 *zero* API changes — different `SyntacticObject`s, different choices
-of `goalHead`, different `phiActive` predicates, but one Theory layer.
+of `goalHead`, different `validGoal` predicates, but one Theory layer.
 This validates `NestedAgree.lean` as a genuine cross-domain primitive
 rather than Italian-shaped scaffolding.
 
@@ -67,7 +68,7 @@ co-existing feature orderings on T (@cite{sigurdsson-holmberg-2008}):
   for valuation purposes; default 3sg agreement surfaces.
 
 The two orderings give two `NestedAgreeConfig`s with the same root
-`SyntacticObject` but different `goalHead` choices and `phiActive`
+`SyntacticObject` but different `goalHead` choices and `validGoal`
 predicates. Optionality follows from which is well-formed.
 
 **Out of scope**: biclausal Icelandic (Amato 29b, requires modeling
@@ -88,17 +89,9 @@ private def aDPdat : LIToken := ⟨LexicalItem.simple .D [], 2⟩
     ordering A. -/
 private def aDPnom : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 
-/-- Monoclausal Icelandic DAT-NOM tree: `T [DPdat [V DPnom]]`.
-    Both feature orderings on T operate on this same tree — the
-    difference is which goal the probe stack targets. -/
-private def icelandicTree : SyntacticObject :=
-  .node (.leaf aT)
-    (.node (.leaf aDPdat)
-      (.node (.leaf aV) (.leaf aDPnom)))
-
 /-- T's probe with C horizon. The two orderings use the same probe
     profile twice; the ordering distinction is captured by `goalHead`
-    and `phiActive` in the two configs below. -/
+    and `validGoal` in the two configs below. -/
 private def tProbe : ProbeProfile := ⟨.T, some .C⟩
 
 /-! ### Configuration A — agreement with the nominative -/
@@ -107,13 +100,9 @@ private def tProbe : ProbeProfile := ⟨.T, some .C⟩
     case-marked dative and reaches the nominative; φ-Agree by Nested
     Agree must target the same nominative goal. All heads are
     phi-active under this ordering — the dative is irrelevant since
-    it's not the chosen goal. -/
-def icelandicOrderingA : NestedAgreeConfig where
-  stack := [tProbe, tProbe]
-  root := icelandicTree
-  probingHead := .leaf aT
-  goalHead := .leaf aDPnom
-  phiActive := fun _ => true
+    it's not the chosen goal. Tree: `T [DPdat [V DPnom]]`, goal = DPnom. -/
+def icelandicOrderingA : NestedAgreeConfig :=
+  standardConfig tProbe aT aDPdat aV aDPnom aDPnom (fun _ => true)
 
 /-- Ordering A is well-formed: T c-commands DPnom in `icelandicTree`,
     and DPnom is phi-active. -/
@@ -141,12 +130,9 @@ theorem orderingA_excludes_dative :
 /-- Ordering B: `[*φ:_*] ≻ [*case:nom*]`. φ-Agree fires first and hits
     the dative subject (closest), but the dative's φ-features are
     quirky/defective for finite T's valuation purposes. -/
-def icelandicOrderingB : NestedAgreeConfig where
-  stack := [tProbe, tProbe]
-  root := icelandicTree
-  probingHead := .leaf aT
-  goalHead := .leaf aDPdat
-  phiActive := fun y => decide (y ≠ .leaf aDPdat)
+def icelandicOrderingB : NestedAgreeConfig :=
+  standardConfig tProbe aT aDPdat aV aDPnom aDPdat
+    (fun y => decide (y ≠ .leaf aDPdat))
 
 /-- Ordering B is *not* well-formed: the chosen goal is φ-defective.
     The formal expression of "default agreement surfaces because
@@ -172,6 +158,34 @@ theorem icelandic_optionality :
     representation. -/
 theorem orderingA_orderingB_same_tree :
     icelandicOrderingA.root = icelandicOrderingB.root := rfl
+
+/-! ### Bridge to @cite{marantz-1991}'s threshold analysis
+
+    @cite{marantz-1991} models dative intervention through a *case
+    accessibility threshold*: a dative DP intervenes (blocks the probe)
+    when its lexical case is below the probe's accessibility threshold
+    (so the probe can't Agree with it) but it still blocks access to
+    the intended target by minimality. The Marantz analysis produces
+    a Bool `dativeIntervenes`; @cite{amato-2025} §4.1.2 produces a
+    Prop `¬ IsNestedAgreeConfig orderingB`. The bridge below shows
+    they make the same prediction on the same configuration. -/
+
+/-- A `DativeInterventionContext` corresponding to ordering B's
+    structural setup: dative present, standard `unmarked` threshold
+    (lexical case is *not* accessible), nominative target. -/
+def orderingB_marantzContext : DativeInterventionContext :=
+  ⟨true, .unmarked, .unmarked⟩
+
+/-- **Bridge**: under ordering B's parameter setting,
+    @cite{marantz-1991}'s `dativeIntervenes` predicts intervention iff
+    @cite{amato-2025}'s `IsNestedAgreeConfig` rejects the configuration.
+    Both theories agree: dative intervention → agreement failure
+    (default 3sg in Amato's surface, agreement-failure in Marantz's
+    threshold model). -/
+theorem marantz_amato_agree_on_dative_intervention :
+    dativeIntervenes orderingB_marantzContext = true ∧
+    ¬ IsNestedAgreeConfig icelandicOrderingB :=
+  ⟨by decide, orderingB_not_nested⟩
 
 end DatNom
 
@@ -223,28 +237,16 @@ private def aErg : LIToken := ⟨LexicalItem.simple .D [], 2⟩
     surface on Asp via cyclic Agree through v. -/
 private def aAbs : LIToken := ⟨LexicalItem.simple .D [], 3⟩
 
-/-- Lak perfective tree: `Asp [Erg [v Abs]]`. The ergative is in
-    Spec,vP; the absolutive is in V's complement. Asp probes downward
-    via Nested Agree to reach v (which has prior agreed with Abs). -/
-private def lakPerfectiveTree : SyntacticObject :=
-  .node (.leaf aAsp)
-    (.node (.leaf aErg)
-      (.node (.leaf aV) (.leaf aAbs)))
-
 /-- Asp's probe with C horizon. Both `[*Infl:perf*]` and `[*π:_*]`
     use the same profile; the Nested Agree ordering is captured by
     list position, the shared goal by `goalHead`. -/
 private def aspProbe : ProbeProfile := ⟨.T, some .C⟩
 
-/-- The Lak perfective configuration: 2-probe stack on Asp with v as
-    the shared goal. v is reachable (c-commanded by Asp) and
-    phi-active (carries Abs's φ via cyclic Agree). -/
-def lakPerfective : NestedAgreeConfig where
-  stack := [aspProbe, aspProbe]
-  root := lakPerfectiveTree
-  probingHead := .leaf aAsp
-  goalHead := .leaf aV
-  phiActive := fun _ => true
+/-- The Lak perfective configuration. Tree: `Asp [Erg [v Abs]]`,
+    goal = v. v is reachable (c-commanded by Asp) and phi-active
+    (carries Abs's φ via cyclic Agree). -/
+def lakPerfective : NestedAgreeConfig :=
+  standardConfig aspProbe aAsp aErg aV aAbs aV (fun _ => true)
 
 theorem lakPerfective_is_nested : IsNestedAgreeConfig lakPerfective := by decide
 

@@ -362,11 +362,14 @@ def allModifiers : List TemporalExprEntry :=
 -- § 6: Form Agreement with FunctionWords
 -- ============================================================================
 
-open Fragments.English.FunctionWords in
+section FormAgreement
+open Fragments.English.FunctionWords
+
 theorem before_form_agrees : before_.form = FunctionWords.before.form := rfl
 
-open Fragments.English.FunctionWords in
 theorem after_form_agrees : after_.form = FunctionWords.after.form := rfl
+
+end FormAgreement
 
 -- ============================================================================
 -- § 7: Coverage — Every TemporalOrder Has an Entry
@@ -509,27 +512,28 @@ structure DurationExprEntry where
   /-- Sub-class of duration adverbial -/
   kind : DurationKind
   /-- True for postpositions (*ago*); most duration adverbials are prepositions. -/
-  isPostposition : Bool := false
-  /-- Aspectual classes the adverbial selects for at the VP it modifies
-      (Vendler-level consensus; @cite{vendler-1957}). Empty list = no
-      restriction; `[.telic]` = requires accomplishment/achievement;
-      `[.atelic]` = requires state/activity. -/
-  vendlerSelection : List Telicity := []
+  isPostposition : Prop := False
+  /-- Aspectual class the adverbial selects for at the VP it modifies
+      (Vendler-level consensus; @cite{vendler-1957}).
+      `none` = no restriction; `some .telic` = requires
+      accomplishment/achievement; `some .atelic` = requires
+      state/activity. -/
+  vendlerSelection : Option Telicity := none
   /-- Iatridou-Anagnostopoulou-Izvorski 2001 typological classification.
       `durative` = pins the left boundary of the perfect time span;
       `inclusive` = leaves the LB free. `none` for entries that don't
       participate in the perfect-time-span typology. -/
   iaiClassification : Option AdverbialType := none
   /-- Is this entry itself a polarity-sensitive item? -/
-  polaritySensitive : Bool := false
+  polaritySensitive : Prop := False
   /-- Polarity-item type if `polaritySensitive` (Zwarts 1998 strong/weak).
       Strong NPIs (*in years*) require anti-additive licensors; weak NPIs
       require any DE licensor. -/
   polarityType : Option PolarityType := none
   /-- Distributional licensing flags (theory-neutral surface facts). -/
-  requiresPerfect : Bool := false
-  requiresNegation : Bool := false
-  deriving Repr, BEq
+  requiresPerfect : Prop := False
+  requiresNegation : Prop := False
+  deriving Repr
 
 -- ============================================================================
 -- § 9: Duration Adverbial Entries
@@ -541,7 +545,7 @@ structure DurationExprEntry where
 def inTelic : DurationExprEntry :=
   { form := "in"
     kind := .telicCompletion
-    vendlerSelection := [.telic]
+    vendlerSelection := some .telic
     iaiClassification := some .inclusive }
 
 /-- *in years* / *in days* / *in months* (NPI-gap reading):
@@ -554,10 +558,10 @@ def inGap : DurationExprEntry :=
   { form := "in"
     kind := .npiGap
     iaiClassification := some .durative
-    polaritySensitive := true
+    polaritySensitive := True
     polarityType := some .npiStrong
-    requiresPerfect := true
-    requiresNegation := true }
+    requiresPerfect := True
+    requiresNegation := True }
 
 /-- *for three hours* (atelic-durative): "Mary was sick for three hours".
     Selects atelic VPs (state / activity). IAI 2001 classification:
@@ -566,7 +570,7 @@ def inGap : DurationExprEntry :=
 def forDur : DurationExprEntry :=
   { form := "for"
     kind := .atelicDurative
-    vendlerSelection := [.atelic]
+    vendlerSelection := some .atelic
     iaiClassification := some .durative }
 
 /-- *three days ago*: postposed deictic past offset.
@@ -576,7 +580,7 @@ def forDur : DurationExprEntry :=
 def ago : DurationExprEntry :=
   { form := "ago"
     kind := .pastOffset
-    isPostposition := true }
+    isPostposition := True }
 
 /-- All duration adverbial entries. -/
 def allDurationEntries : List DurationExprEntry := [inTelic, inGap, forDur, ago]
@@ -591,38 +595,41 @@ theorem in_readings_share_form : inTelic.form = inGap.form := rfl
 /-- The two *in*-readings are distinguished by `kind`. -/
 theorem in_readings_distinct_kind : inTelic.kind ≠ inGap.kind := by decide
 
+section DurationFormAgreement
+open Fragments.English.FunctionWords
+
 /-- Surface form of telic *in* agrees with the canonical preposition entry. -/
-theorem inTelic_form_agrees :
-    inTelic.form = Fragments.English.FunctionWords.in_.form := rfl
+theorem inTelic_form_agrees : inTelic.form = FunctionWords.in_.form := rfl
 
 /-- Surface form of NPI-gap *in* agrees with the canonical preposition entry. -/
-theorem inGap_form_agrees :
-    inGap.form = Fragments.English.FunctionWords.in_.form := rfl
+theorem inGap_form_agrees : inGap.form = FunctionWords.in_.form := rfl
+
+end DurationFormAgreement
 
 /-- *Ago* is the only postposition among duration adverbials. -/
 theorem ago_unique_postposition :
-    ago.isPostposition = true ∧
-    inTelic.isPostposition = false ∧
-    inGap.isPostposition = false ∧
-    forDur.isPostposition = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    ago.isPostposition ∧
+    ¬ inTelic.isPostposition ∧
+    ¬ inGap.isPostposition ∧
+    ¬ forDur.isPostposition :=
+  ⟨trivial, not_false, not_false, not_false⟩
 
 /-- Only the NPI-gap reading is polarity-sensitive. -/
 theorem only_inGap_polarity_sensitive :
-    inGap.polaritySensitive = true ∧
-    inTelic.polaritySensitive = false ∧
-    forDur.polaritySensitive = false ∧
-    ago.polaritySensitive = false :=
-  ⟨rfl, rfl, rfl, rfl⟩
+    inGap.polaritySensitive ∧
+    ¬ inTelic.polaritySensitive ∧
+    ¬ forDur.polaritySensitive ∧
+    ¬ ago.polaritySensitive :=
+  ⟨trivial, not_false, not_false, not_false⟩
 
 /-- Telicity-selection pattern: telic *in* selects telic VPs;
     atelic *for* selects atelic VPs; the gap reading and *ago*
     have no Vendler restriction. -/
 theorem vendler_selection_pattern :
-    inTelic.vendlerSelection = [.telic] ∧
-    forDur.vendlerSelection = [.atelic] ∧
-    inGap.vendlerSelection = [] ∧
-    ago.vendlerSelection = [] :=
+    inTelic.vendlerSelection = some .telic ∧
+    forDur.vendlerSelection = some .atelic ∧
+    inGap.vendlerSelection = none ∧
+    ago.vendlerSelection = none :=
   ⟨rfl, rfl, rfl, rfl⟩
 
 /-- IAI 2001 durative-vs-inclusive classification:

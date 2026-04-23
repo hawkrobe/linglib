@@ -50,8 +50,9 @@ subject's ID. Reflexives are the only category with all three. -/
 structure CliticFeatureProfile where
   /-- Bears φ-features (person/number/gender). -/
   hasPhi : Bool
-  /-- Carries an ID-subfeature (referential index, in the sense
-      of `Minimalism.IdFeature`). -/
+  /-- Carries an ID-subfeature (referential index, in
+      @cite{olivier-2025b}'s extension of @cite{harley-ritter-2002}'s
+      person geometry). -/
   hasId : Bool
   /-- ID-feature matches the binder's ID (as it does for a
       reflexive bound by the matrix subject). -/
