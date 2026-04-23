@@ -205,7 +205,7 @@ the key structural observation that NP₃ cannot c-command NP₁. -/
     This holds in both binary and n-ary trees: PP is the first
     branching node above Dan, and PP does not dominate the subject. -/
 theorem preposed_pp_no_ccommand :
-    cCommand [Dir.L, Dir.R] [Dir.R, Dir.L] = false := by native_decide
+    cCommand [Dir.L, Dir.R] [Dir.R, Dir.L] = false := by decide
 
 -- ============================================================================
 -- §6: Bridge — Address-Based cCommand = B&P kCommand
@@ -231,23 +231,23 @@ theorem subject_ccommands_into_vp :
     cCommand [Dir.L] [Dir.R, Dir.L] = true ∧
     cCommand [Dir.L] [Dir.R, Dir.R] = true := by
   constructor
-  · native_decide
-  constructor <;> native_decide
+  · decide
+  constructor <;> decide
 
 /-- The object [R, R] does NOT c-command the subject [L] -/
 theorem object_does_not_ccommand_subject :
-    cCommand [Dir.R, Dir.R] [Dir.L] = false := by native_decide
+    cCommand [Dir.R, Dir.R] [Dir.L] = false := by decide
 
 /-- The object [R, R] c-commands the verb [R, L] (mutual c-command within VP) -/
 theorem object_ccommands_verb :
-    cCommand [Dir.R, Dir.R] [Dir.R, Dir.L] = true := by native_decide
+    cCommand [Dir.R, Dir.R] [Dir.R, Dir.L] = true := by decide
 
 /-- C-command is NOT symmetric in general: subject c-commands object
     but object does not c-command subject. -/
 theorem ccommand_asymmetric_example :
     cCommand [Dir.L] [Dir.R, Dir.R] = true ∧
     cCommand [Dir.R, Dir.R] [Dir.L] = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- Subject–object asymmetry for coreference (@cite{reinhart-1976}'s key prediction):
     - "She denied that Rosa met the Shah" — *she* c-commands *Rosa*, blocks coref
@@ -262,7 +262,7 @@ theorem subject_object_asymmetry :
     cCommand [Dir.L] [Dir.R, Dir.R, Dir.L] = true ∧
     -- NP deep inside subject [L, R, R, R, R] does NOT c-command embedded subject
     cCommand [Dir.L, Dir.R, Dir.R, Dir.R, Dir.R] [Dir.R, Dir.R, Dir.L] = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 -- ============================================================================
 -- §7: End-to-End Verification — The (11) Paradigm (pp. 14-15)
@@ -308,35 +308,35 @@ NP₂ to be a pronoun for coreference to be permitted. -/
 private theorem matrix_ccommands_embedded :
     cCommand [Dir.L] [Dir.R, Dir.R, Dir.L] = true ∧
     cCommand [Dir.R, Dir.R, Dir.L] [Dir.L] = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- **(11a)** Rosa₁ denied that Rosa₂ has met the Shah: coref **blocked**.
 
     Rosa₂ is in the domain of Rosa₁ and is not a pronoun. -/
 theorem paradigm_11a_blocked :
     corefPermittedAddr (isPronA := false) (isPronB := false)
-      [Dir.L] [Dir.R, Dir.R, Dir.L] = false := by native_decide
+      [Dir.L] [Dir.R, Dir.R, Dir.L] = false := by decide
 
 /-- **(11b)** She₁ denied that Rosa₂ has met the Shah: coref **blocked**.
 
     Rosa₂ is in the domain of She₁ and is not a pronoun. -/
 theorem paradigm_11b_blocked :
     corefPermittedAddr (isPronA := true) (isPronB := false)
-      [Dir.L] [Dir.R, Dir.R, Dir.L] = false := by native_decide
+      [Dir.L] [Dir.R, Dir.R, Dir.L] = false := by decide
 
 /-- **(11c)** Rosa₁ denied that she₂ has met the Shah: coref **permitted**.
 
     she₂ is in the domain of Rosa₁ but IS a pronoun. -/
 theorem paradigm_11c_permitted :
     corefPermittedAddr (isPronA := false) (isPronB := true)
-      [Dir.L] [Dir.R, Dir.R, Dir.L] = true := by native_decide
+      [Dir.L] [Dir.R, Dir.R, Dir.L] = true := by decide
 
 /-- **(11d)** She₁ denied that she₂ has met the Shah: coref **permitted**.
 
     she₂ is in the domain of She₁ but IS a pronoun. -/
 theorem paradigm_11d_permitted :
     corefPermittedAddr (isPronA := true) (isPronB := true)
-      [Dir.L] [Dir.R, Dir.R, Dir.L] = true := by native_decide
+      [Dir.L] [Dir.R, Dir.R, Dir.L] = true := by decide
 
 -- ============================================================================
 -- §8: (10a) vs (10b) — The Superiority of the Domain Formulation
@@ -382,7 +382,7 @@ theorem restriction_10a_vs_10b :
     corefPermitted_10a false false [Dir.L] [Dir.R, Dir.R, Dir.L] = true ∧
     -- (10b) CORRECTLY blocks (11a)
     corefPermittedAddr false false [Dir.L] [Dir.R, Dir.R, Dir.L] = false := by
-  constructor <;> native_decide
+  constructor <;> decide
 
 /-- **(10b) subsumes (10a)**: whenever (10a) blocks coreference, (10b) does too.
 

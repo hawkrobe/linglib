@@ -37,17 +37,17 @@ def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
 /-- HPSG captures `reflexiveCoreferenceData`. -/
 theorem captures_reflexive_coreference :
     capturesCoreferenceData reflexiveCoreferenceData = true := by
-  native_decide
+  decide
 
 /-- HPSG captures `complementaryDistributionData`. -/
 theorem captures_complementary_distribution :
     capturesCoreferenceData complementaryDistributionData = true := by
-  native_decide
+  decide
 
 /-- HPSG captures `pronominalDisjointReferenceData`. -/
 theorem captures_pronominal_disjoint_reference :
     capturesCoreferenceData pronominalDisjointReferenceData = true := by
-  native_decide
+  decide
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev mary := Fragments.English.Nouns.mary.toWordSg
@@ -77,7 +77,7 @@ theorem reflexive_pairs_captured :
     -- Pair 5: agreement - they see themselves vs they see himself
     (grammaticalForCoreference [they, see, themselves] = true ∧
      grammaticalForCoreference [they, see, himself] = false) := by
-  native_decide
+  decide
 
 /-- Reciprocal binding: plural antecedent required, singular blocked.
     (Pairs 1–2 of `reciprocalCoreferenceData` use 5-word coordinated
@@ -85,6 +85,6 @@ theorem reflexive_pairs_captured :
 theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [they, see, eachOther] = true ∧
     grammaticalForCoreference [john, sees, eachOther] = false := by
-  native_decide
+  decide
 
 end SagWasowBender2003

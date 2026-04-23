@@ -39,7 +39,7 @@ This study file imports:
 - **Data**: `Phenomena/Anaphora/` (theory-neutral judgments)
 
 and proves that PIP's predictions match the empirical data via worked
-finite models with `native_decide` verification.
+finite models with `decide` verification.
 
 -/
 
@@ -339,7 +339,7 @@ theorem paycheck_needs_descriptions :
           else if v == vPossessor then .some .bill
           else .star
         prop := λ _ => ∅ }
-    isPaycheckOf g .w0 = true := by native_decide
+    isPaycheckOf g .w0 = true := by decide
 
 end Paycheck
 
@@ -459,21 +459,21 @@ def pipPredictsModalSub (datum : ModalSubDatum) : Bool :=
   classifyModal2 datum.modal2 == .subordinating
 
 theorem pip_wolf_might_would :
-    pipPredictsModalSub wolfMightWould = true := by native_decide
+    pipPredictsModalSub wolfMightWould = true := by decide
 
 theorem pip_wolf_might_could :
-    pipPredictsModalSub wolfMightCould = true := by native_decide
+    pipPredictsModalSub wolfMightCould = true := by decide
 
 theorem pip_wolf_indicative_fails :
-    pipPredictsModalSub wolfMightIndicative = false := by native_decide
+    pipPredictsModalSub wolfMightIndicative = false := by decide
 
 theorem pip_wolf_will_fails :
-    pipPredictsModalSub wolfMightWill = false := by native_decide
+    pipPredictsModalSub wolfMightWill = false := by decide
 
 theorem pip_modal_sub_felicitous_agreement :
     felicitousModalSub.all
       (λ d => pipPredictsModalSub d == d.felicitous) = true := by
-  native_decide
+  decide
 
 /-- External/local binding modes under modals (paper §2.1). -/
 theorem modal_sub_binding_modes :
@@ -880,11 +880,11 @@ theorem labels_registered_in_both_cases :
 /-- Static felicity operator F distinguishes might from must. -/
 theorem felicity_might_blocks :
     (Felicity.singlePresup (W := IBWorld) (λ w => w == .burgerW)).felicitous .actual = false := by
-  native_decide
+  decide
 
 theorem felicity_must_allows :
     (Felicity.singlePresup (W := IAWorld) (λ _ => true)).felicitous .actual = true := by
-  native_decide
+  decide
 
 
 -- ============================================================
@@ -1316,23 +1316,23 @@ def coverageData : List CoverageDatum := [
 
 /-- PIP covers all phenomena (all pip fields are true). -/
 theorem pip_covers_all :
-    coverageData.all (·.pip) = true := by native_decide
+    coverageData.all (·.pip) = true := by decide
 
 /-- DPL misses 5 phenomena. -/
 theorem dpl_misses_five :
-    (coverageData.filter (! ·.dpl)).length = 5 := by native_decide
+    (coverageData.filter (! ·.dpl)).length = 5 := by decide
 
 /-- ICDRT misses 2 phenomena (paycheck + intensional). -/
 theorem icdrt_misses_two :
-    (coverageData.filter (! ·.icdrt)).length = 2 := by native_decide
+    (coverageData.filter (! ·.icdrt)).length = 2 := by decide
 
 /-- PIP strictly extends ICDRT: everything ICDRT covers, PIP covers too. -/
 theorem pip_extends_icdrt :
-    coverageData.all (λ d => !d.icdrt || d.pip) = true := by native_decide
+    coverageData.all (λ d => !d.icdrt || d.pip) = true := by decide
 
 /-- PIP strictly extends DPL. -/
 theorem pip_extends_dpl :
-    coverageData.all (λ d => !d.dpl || d.pip) = true := by native_decide
+    coverageData.all (λ d => !d.dpl || d.pip) = true := by decide
 
 
 end KeshetAbney2024

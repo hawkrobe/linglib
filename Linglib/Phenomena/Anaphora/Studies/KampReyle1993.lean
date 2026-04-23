@@ -62,7 +62,7 @@ theorem persistence_merge (rels : RelInterp E) :
   (reduce_sound rels exPersistence_compositional).symm
 
 /-- The merged DRS is proper: dref 1 is bound by the box. -/
-example : isProper exPersistence = true := by native_decide
+example : isProper exPersistence = true := by decide
 
 /-- Truth conditions for cross-sentential anaphora:
 `∃ e, man(e) ∧ walked_in(e) ∧ sat_down(e)`.
@@ -103,7 +103,7 @@ def exDonkeyStandalone : DRSExpr :=
     (.box [] [.atom 3 [1, 2]])]
 
 /-- The donkey conditional is proper: no free discourse referents. -/
-example : isProper exDonkeyStandalone = true := by native_decide
+example : isProper exDonkeyStandalone = true := by decide
 
 /-- Donkey truth conditions: universal reading.
 
@@ -150,7 +150,7 @@ def exNegationBlocking : DRSExpr :=
   .box [] [.neg (.box [1] [.atom 0 [1], .atom 1 [1]])]
 
 /-- The negated DRS is proper (dref 1 is bound by its box). -/
-example : isProper exNegationBlocking = true := by native_decide
+example : isProper exNegationBlocking = true := by decide
 
 /-- Truth conditions under negation:
 `¬∃ e, man(e) ∧ walked_in(e)`.
@@ -292,7 +292,7 @@ theorem exManAdoresWoman_merge (rels : RelInterp E) :
   mergingLemma rels [1] [2] [.atom 0 [1]] [.atom 1 [2], .atom 2 [1, 2]]
     (by intro n hn c hc
         simp only [List.mem_cons, List.mem_nil_iff, or_false] at hn hc
-        subst hn; subst hc; native_decide)
+        subst hn; subst hc; decide)
 
 /-- Truth conditions via the compositional route:
 `∃ e₁ e₂, man(e₁) ∧ woman(e₂) ∧ adores(e₁, e₂)`. -/

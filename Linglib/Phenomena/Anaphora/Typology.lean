@@ -273,7 +273,7 @@ def allData : List PronounSystemDatum :=
   , frenchData, italianData, spanishData, catalanData, kutchiGujaratiData
   , englishData ]
 
-theorem allData_count : allData.length = 11 := by native_decide
+theorem allData_count : allData.length = 11 := by decide
 
 /-- Finnish: "hän" (3sg human, PER, no gender), "he" (3pl human, PER),
     "se" (3sg non-human / DEM), "tämä" (proximal DEM), "tuo" (distal DEM).
@@ -346,7 +346,7 @@ def allProfiles : List PronounComplexityProfile :=
   , frenchProfile, italianProfile, spanishProfile, catalanProfile
   , kutchiGujaratiProfile, englishProfile ]
 
-theorem allProfiles_count : allProfiles.length = 11 := by native_decide
+theorem allProfiles_count : allProfiles.length = 11 := by decide
 
 def finnishProfile : PronounComplexityProfile := finnishData.toProfile
 
@@ -354,7 +354,7 @@ def finnishProfile : PronounComplexityProfile := finnishData.toProfile
     PG&G sample's dem_productivity_from_article_system generalization. -/
 theorem finnish_counterexample_to_article_dem :
     finnishData.dLayers == 2 ∧ finnishData.demProductive ∧
-    finnishData.articleType == .none_ := by native_decide
+    finnishData.articleType == .none_ := by decide
 
 -- ============================================================================
 -- §E: Verified Generalizations
@@ -368,7 +368,7 @@ all require pragmatic licensing (demLicensing is non-empty).
 DEM is the marked choice; PER is the default. -/
 theorem minimize_dp :
     (allData.filter (·.demProductive)).all
-      (·.demLicensing.length > 0) = true := by native_decide
+      (·.demLicensing.length > 0) = true := by decide
 
 /-- **Implicational universal**: If DEM exists in a language's inventory,
 PER also exists. No language has DEM without PER.
@@ -379,19 +379,19 @@ theorem dem_implies_per :
     allData.all (λ d =>
       if d.forms.any (·.pronClass == .dem)
       then d.forms.any (·.pronClass == .per)
-      else true) = true := by native_decide
+      else true) = true := by decide
 
 /-- **Article-D-layer correlation** (@cite{schwarz-2009} → PG&G):
 Languages with both weak and strong articles have 2 D-layers. -/
 theorem strong_article_two_layers :
     (allData.filter (·.articleType == .weakAndStrong)).all
-      (·.dLayers == 2) = true := by native_decide
+      (·.dLayers == 2) = true := by decide
 
 /-- PER-only languages (1 D-layer) have only weak or no articles.
 The converse of `strong_article_two_layers`. -/
 theorem one_layer_no_strong_articles :
     (allData.filter (·.dLayers == 1)).all
-      (·.articleType != .weakAndStrong) = true := by native_decide
+      (·.articleType != .weakAndStrong) = true := by decide
 
 /-! ### Gradient Claims -/
 
@@ -400,24 +400,24 @@ to 3 (most languages with m/f/n), not a binary split. -/
 theorem per_inventory_range :
     kutchiGujaratiProfile.perInventory = 2 ∧
     germanProfile.perInventory = 3 ∧
-    allProfiles.all (·.perInventory ≥ 2) = true := by native_decide
+    allProfiles.all (·.perInventory ≥ 2) = true := by decide
 
 /-- **DEM inventory correlates with article system**: languages with
 weakAndStrong articles have non-zero DEM inventory. -/
 theorem strong_articles_have_dem_forms :
     (allData.filter (·.articleType == .weakAndStrong)).all
-      (λ d => (d.forms.filter (·.pronClass == .dem)).length > 0) = true := by native_decide
+      (λ d => (d.forms.filter (·.pronClass == .dem)).length > 0) = true := by decide
 
 /-- **Strength levels vary**: Romance languages (French, Italian, Spanish, Catalan)
 have 3 strength levels (strong+weak+clitic), while Germanic typically has 2. -/
 theorem romance_three_strength_levels :
     let romance := [frenchProfile, italianProfile, spanishProfile, catalanProfile]
-    romance.all (·.strengthLevels == 3) = true := by native_decide
+    romance.all (·.strengthLevels == 3) = true := by decide
 
 /-- Germanic languages with DEM (German, Bavarian) have 2 strength levels. -/
 theorem germanic_two_strength_levels :
     let germanic := [germanProfile, bavarianProfile]
-    germanic.all (·.strengthLevels == 2) = true := by native_decide
+    germanic.all (·.strengthLevels == 2) = true := by decide
 
 /-- DEM licensing count ranges from 0 to 5, forming a continuum
 rather than a binary productive/non-productive distinction. -/
@@ -425,7 +425,7 @@ theorem dem_licensing_is_gradient :
     englishProfile.demLicensingCount = 0 ∧
     germanProfile.demLicensingCount = 5 ∧
     allProfiles.any (·.demLicensingCount == 2) = true ∧
-    allProfiles.any (·.demLicensingCount == 3) = true := by native_decide
+    allProfiles.any (·.demLicensingCount == 3) = true := by decide
 
 /-! ### Open Problem -/
 
@@ -446,7 +446,7 @@ productivity? PG&G suggest familiarity/frequency; @cite{schwarz-2013} suggests
 the strong article's anaphoric function naturally extends to pronominal use. -/
 theorem dem_productivity_from_article_system :
     (allData.filter (λ d => d.dLayers == 2 ∧ d.demProductive)).all
-      (·.articleType == .weakAndStrong) = true := by native_decide
+      (·.articleType == .weakAndStrong) = true := by decide
 
 -- ============================================================================
 -- §F: @cite{schwarz-2013} Article Typology
@@ -554,38 +554,38 @@ def allSchwarzData : List SchwarzArticleDatum :=
   [ schwarz_german, schwarz_fering, schwarz_akan, schwarz_mauritianCreole
   , schwarz_lakhota, schwarz_hausa, schwarz_haitianCreole ]
 
-theorem allSchwarzData_count : allSchwarzData.length = 7 := by native_decide
+theorem allSchwarzData_count : allSchwarzData.length = 7 := by decide
 
 /-! ### @cite{schwarz-2013} verified generalizations -/
 
 /-- **Strong article → anaphoric use** (@cite{schwarz-2013} §3.1.1):
 All surveyed languages use the strong article for anaphoric definites. -/
 theorem strong_for_anaphoric :
-    allSchwarzData.all (·.strongForAnaphoric) = true := by native_decide
+    allSchwarzData.all (·.strongForAnaphoric) = true := by decide
 
 /-- **Weak form → uniqueness/situational use** (@cite{schwarz-2013} §3.1.2):
 All surveyed languages use weak articles (or bare nominals) for
 uniqueness-based definites. -/
 theorem weak_for_uniqueness :
-    allSchwarzData.all (·.weakForUniqueness) = true := by native_decide
+    allSchwarzData.all (·.weakForUniqueness) = true := by decide
 
 /-- **Bridging split** (@cite{schwarz-2013} §3.2): Most languages split bridging
 across article forms (part-whole = weak, producer = strong). 5 of 7
 languages show this pattern; Hausa lacks data, and Haitian Creole
 uses a single form for everything. -/
 theorem bridging_split_is_majority :
-    (allSchwarzData.filter (·.bridgingSplit)).length = 5 := by native_decide
+    (allSchwarzData.filter (·.bridgingSplit)).length = 5 := by decide
 
 /-- **Bare-nominal strategy** (@cite{schwarz-2013} §4.1): Languages with only
 one overt article form (Akan, Mauritian Creole) use bare nominals
 for weak-article definites. -/
 theorem bare_nominal_languages :
-    (allSchwarzData.filter (·.weakStrategy == .bareNominal)).length = 2 := by native_decide
+    (allSchwarzData.filter (·.weakStrategy == .bareNominal)).length = 2 := by decide
 
 /-- **Haitian Creole is exceptional** (@cite{schwarz-2013} §4.3): single determiner
 `la` for both anaphoric and uniqueness uses — no weak/strong split. -/
 theorem haitian_creole_no_split :
-    schwarz_haitianCreole.weakStrategy == .sameAsStrong := by native_decide
+    schwarz_haitianCreole.weakStrategy == .sameAsStrong := by decide
 
 /-! ### Bridge: Schwarz article types ↔ PG&G pronoun D-layers
 
@@ -605,7 +605,7 @@ theorem schwarz_pgg_german_consistent :
     schwarz_german.strongForm.isSome ∧
     schwarz_german.weakForm.isSome ∧
     germanData.dLayers == 2 ∧
-    germanData.articleType == .weakAndStrong := by native_decide
+    germanData.articleType == .weakAndStrong := by decide
 
 /-- The semantic mapping is compositional (@cite{schwarz-2013} §2.2):
 - Weak article contributes uniqueness presupposition (ι-operator)
@@ -649,7 +649,7 @@ theorem dem_requires_deixis_layer :
     allData.all (λ d =>
       if d.forms.any (·.pronClass == .dem)
       then d.dLayers == 2
-      else true) = true := by native_decide
+      else true) = true := by decide
 
 /-! ### Bridge 3: PER pronouns ↔ Direct Reference
 
@@ -666,7 +666,7 @@ potentially non-rigid under some analyses. -/
 directly referential (rigid designators). -/
 theorem per_only_directly_referential :
     (allData.filter (·.dLayers == 1)).all
-      (λ d => d.forms.all (·.pronClass == .per)) = true := by native_decide
+      (λ d => d.forms.all (·.pronClass == .per)) = true := by decide
 
 /-! ### Bridge 4: Article system ↔ D-layer count
 
@@ -679,6 +679,6 @@ can exist without overt article morphology. The D_deix layer is
 present in the syntax even without morphological exponence. -/
 theorem covert_deixis_layer :
     (allData.filter (λ d => d.articleType == .none_ ∧ d.dLayers == 2)).length > 0 := by
-  native_decide
+  decide
 
 end Phenomena.Anaphora.Typology

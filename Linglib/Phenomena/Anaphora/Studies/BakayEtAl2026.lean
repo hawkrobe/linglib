@@ -139,11 +139,11 @@ private def exp1Anaphor : Address := [Dir.R, Dir.L]
 
 /-- The target subject c-commands the anaphor. -/
 theorem exp1_target_ccommands :
-    cCommand exp1Target exp1Anaphor = true := by native_decide
+    cCommand exp1Target exp1Anaphor = true := by decide
 
 /-- The distractor possessor does NOT c-command the anaphor. -/
 theorem exp1_distractor_no_ccommand :
-    cCommand exp1Distractor exp1Anaphor = false := by native_decide
+    cCommand exp1Distractor exp1Anaphor = false := by decide
 
 /-- Target item: embedded subject (cameramen).
     Features: c-commanding, clause-mate, plural, genitive case. -/
@@ -166,20 +166,20 @@ def exp1DistractorMismatch : Item Feature :=
 
 -- Structural match counts
 theorem exp1_target_structural :
-    matchCount exp1TargetItem birbirleriCues .structural = 2 := by native_decide
+    matchCount exp1TargetItem birbirleriCues .structural = 2 := by decide
 
 theorem exp1_distractor_structural :
-    matchCount exp1DistractorMatch birbirleriCues .structural = 1 := by native_decide
+    matchCount exp1DistractorMatch birbirleriCues .structural = 1 := by decide
 
 -- Item-level match counts are equal in the Match condition
 theorem exp1_itemLevel_equal :
     matchCount exp1TargetItem birbirleriCues .itemLevel =
-    matchCount exp1DistractorMatch birbirleriCues .itemLevel := by native_decide
+    matchCount exp1DistractorMatch birbirleriCues .itemLevel := by decide
 
 -- No positional cues
 theorem exp1_positional_equal :
     matchCount exp1TargetItem birbirleriCues .positional =
-    matchCount exp1DistractorMatch birbirleriCues .positional := by native_decide
+    matchCount exp1DistractorMatch birbirleriCues .positional := by decide
 
 /-- **Experiment 1 prediction**: target is retrieved over distractor in the
     Match condition — the hardest case, where item-level cues don't
@@ -190,7 +190,7 @@ theorem exp1_target_retrieved (ws wi wp : Nat) (h : 0 < ws) :
     weightedActivation ws wi wp exp1TargetItem birbirleriCues :=
   structural_advantage ws wi wp h
     exp1TargetItem exp1DistractorMatch birbirleriCues
-    (by native_decide) (by native_decide) (by native_decide)
+    (by decide) (by decide) (by decide)
 
 /-- Target also wins in the Mismatch condition. The distractor is
     singular, so it matches **fewer** cues on both the structural and
@@ -198,12 +198,12 @@ theorem exp1_target_retrieved (ws wi wp : Nat) (h : 0 < ws) :
 theorem exp1_target_retrieved_mismatch (ws wi wp : Nat) (h : 0 < ws) :
     weightedActivation ws wi wp exp1DistractorMismatch birbirleriCues <
     weightedActivation ws wi wp exp1TargetItem birbirleriCues := by
-  have h1 : matchCount exp1TargetItem birbirleriCues .structural = 2 := by native_decide
-  have h2 : matchCount exp1DistractorMismatch birbirleriCues .structural = 1 := by native_decide
-  have h3 : matchCount exp1TargetItem birbirleriCues .itemLevel = 1 := by native_decide
-  have h4 : matchCount exp1DistractorMismatch birbirleriCues .itemLevel = 0 := by native_decide
-  have h5 : matchCount exp1TargetItem birbirleriCues .positional = 0 := by native_decide
-  have h6 : matchCount exp1DistractorMismatch birbirleriCues .positional = 0 := by native_decide
+  have h1 : matchCount exp1TargetItem birbirleriCues .structural = 2 := by decide
+  have h2 : matchCount exp1DistractorMismatch birbirleriCues .structural = 1 := by decide
+  have h3 : matchCount exp1TargetItem birbirleriCues .itemLevel = 1 := by decide
+  have h4 : matchCount exp1DistractorMismatch birbirleriCues .itemLevel = 0 := by decide
+  have h5 : matchCount exp1TargetItem birbirleriCues .positional = 0 := by decide
+  have h6 : matchCount exp1DistractorMismatch birbirleriCues .positional = 0 := by decide
   simp only [weightedActivation, h1, h2, h3, h4, h5, h6]
   omega
 
@@ -242,11 +242,11 @@ private def exp2AnaphorDist : Address := [Dir.R, Dir.R, Dir.L]
 
 /-- The IO c-commands the anaphor. -/
 theorem exp2_io_ccommands :
-    cCommand exp2IO exp2AnaphorIO = true := by native_decide
+    cCommand exp2IO exp2AnaphorIO = true := by decide
 
 /-- The adjunct distractor does NOT c-command the anaphor. -/
 theorem exp2_distractor_no_ccommand :
-    cCommand exp2Distractor exp2AnaphorDist = false := by native_decide
+    cCommand exp2Distractor exp2AnaphorDist = false := by decide
 
 def exp2IOItem : Item Feature :=
   { label := "IO (target, c-commanding)"
@@ -264,7 +264,7 @@ theorem exp2_io_retrieved (ws wi wp : Nat) (h : 0 < ws) :
     weightedActivation ws wi wp exp2IOItem birbirleriCues :=
   structural_advantage ws wi wp h
     exp2IOItem exp2DistractorItem birbirleriCues
-    (by native_decide) (by native_decide) (by native_decide)
+    (by decide) (by decide) (by decide)
 
 end Experiment2
 
@@ -304,16 +304,16 @@ theorem structural_advantage_robust :
     predict the target advantage: the target is privileged (matches all
     structural cues), while the distractor is not. -/
 theorem exp1_target_privileged :
-    isPrivileged exp1TargetItem birbirleriCues = true := by native_decide
+    isPrivileged exp1TargetItem birbirleriCues = true := by decide
 
 theorem exp1_distractor_not_privileged :
-    isPrivileged exp1DistractorMatch birbirleriCues = false := by native_decide
+    isPrivileged exp1DistractorMatch birbirleriCues = false := by decide
 
 /-- Under the privileged-access model, target and distractor have
     different accessibility status: the target is directly accessible,
     the distractor requires search. -/
 theorem exp1_privileged_advantage :
     isPrivileged exp1TargetItem birbirleriCues ≠
-    isPrivileged exp1DistractorMatch birbirleriCues := by native_decide
+    isPrivileged exp1DistractorMatch birbirleriCues := by decide
 
 end BakayEtAl2026

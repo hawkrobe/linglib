@@ -35,17 +35,17 @@ def capturesCoreferenceData (phenom : PhenomenonData) : Bool :=
 /-- CRDC captures reflexiveCoreferenceData -/
 theorem captures_reflexive_coreference :
     capturesCoreferenceData reflexiveCoreferenceData = true := by
-  native_decide
+  decide
 
 /-- CRDC captures complementaryDistributionData -/
 theorem captures_complementary_distribution :
     capturesCoreferenceData complementaryDistributionData = true := by
-  native_decide
+  decide
 
 /-- CRDC captures pronominalDisjointReferenceData -/
 theorem captures_pronominal_disjoint_reference :
     capturesCoreferenceData pronominalDisjointReferenceData = true := by
-  native_decide
+  decide
 
 /-- Detailed verification of each reflexive pair -/
 theorem reflexive_pairs_captured :
@@ -64,13 +64,13 @@ theorem reflexive_pairs_captured :
     -- Pair 5: agreement - they see themselves vs they see himself
     (grammaticalForCoreference [they, see, themselves] = true ∧
      grammaticalForCoreference [they, see, himself] = false) := by
-  native_decide
+  decide
 
 /-- CRDC captures the parseable reciprocal pair: plural antecedent
     required, singular antecedent blocked. -/
 theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [they, see, eachOther] = true ∧
     grammaticalForCoreference [john, sees, eachOther] = false := by
-  native_decide
+  decide
 
 end OsborneLi2023

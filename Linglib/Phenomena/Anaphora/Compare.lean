@@ -246,11 +246,11 @@ structure ConfigurationalClause where
 
 /-- Helper: c-command holds for standard configurational addresses -/
 theorem cCommand_configurational :
-    cCommand [Dir.L] [Dir.R, Dir.R] = true := by native_decide
+    cCommand [Dir.L] [Dir.R, Dir.R] = true := by decide
 
 /-- Helper: o-command holds for "John" before "himself" -/
 theorem oCommand_john_himself :
-    oCommand ⟨["John", "himself"]⟩ "John" "himself" = true := by native_decide
+    oCommand ⟨["John", "himself"]⟩ "John" "himself" = true := by decide
 
 /-- The ConfigurationalClause structure constraints ensure command equivalence.
 
@@ -260,7 +260,7 @@ theorem oCommand_john_himself :
     The structural constraints (subjAddr = [L], objAddr = [R,R], argSt = [subj, obj],
     dependency labels) force all three command notions to agree for any valid instance. -/
 theorem configurational_command_equivalence_addresses :
-    cCommand [Dir.L] [Dir.R, Dir.R] = true := by native_decide
+    cCommand [Dir.L] [Dir.R, Dir.R] = true := by decide
 
 -- C.3: Concrete Example
 
@@ -287,10 +287,10 @@ theorem johnSeesHimself_commands :
     oCommand johnSeesHimself.argSt "John" "himself" = true ∧
     dCommand johnSeesHimself.depGraph "John" "himself" = true := by
   constructor
-  · native_decide
+  · decide
   constructor
-  · native_decide
-  · native_decide
+  · decide
+  · decide
 
 #guard cCommand johnSeesHimself.subjAddr johnSeesHimself.objAddr
 #guard oCommand johnSeesHimself.argSt "John" "himself"

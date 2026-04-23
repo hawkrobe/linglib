@@ -49,17 +49,17 @@ instance (phenom : PhenomenonData) : Decidable (capturesCoreferenceData phenom) 
 /-- Minimalism captures `reflexiveCoreferenceData`. -/
 theorem captures_reflexive_coreference :
     capturesCoreferenceData reflexiveCoreferenceData := by
-  native_decide
+  decide
 
 /-- Minimalism captures `complementaryDistributionData`. -/
 theorem captures_complementary_distribution :
     capturesCoreferenceData complementaryDistributionData := by
-  native_decide
+  decide
 
 /-- Minimalism captures `pronominalDisjointReferenceData`. -/
 theorem captures_pronominal_disjoint_reference :
     capturesCoreferenceData pronominalDisjointReferenceData := by
-  native_decide
+  decide
 
 private abbrev john := Fragments.English.Nouns.john.toWordSg
 private abbrev mary := Fragments.English.Nouns.mary.toWordSg
@@ -84,12 +84,12 @@ theorem reflexive_pairs_captured :
      ¬ grammaticalForCoreference [john, sees, herself]) ∧
     (grammaticalForCoreference [they, see, themselves] ∧
      ¬ grammaticalForCoreference [they, see, himself]) := by
-  native_decide
+  decide
 
 /-- Reciprocal binding: plural antecedent required, singular blocked. -/
 theorem reciprocal_plural_antecedent :
     grammaticalForCoreference [they, see, eachOther] ∧
     ¬ grammaticalForCoreference [john, sees, eachOther] := by
-  native_decide
+  decide
 
 end Chomsky1981
