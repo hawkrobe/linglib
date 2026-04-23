@@ -4,6 +4,20 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.237] - 2026-04-23
+
+### Exhaustification subdir audit (Phase F partial): three relocations
+
+**SetFinsetBridge.lean (320 lines): deleted.** 0 external callers across Linglib + blog. The 5 exports (`coeSet`, `dropToFinset`, `phi_mem_IE_set`, `coeSet_innocentlyExcludable_iff`, `IE_set_eq_coeSet_IE_finset`) had zero downstream users; Set consumers stayed on the Set side, Finset consumers on the Finset side. The bridge claimed to unify but solved a problem nobody had. Rescued one general lemma:
+
+- **`Exhaustification.phi_mem_IE`** promoted to `Operators/Basic.lean` next to the `IE` definition (mirrors `Innocent.phi_mem_IE` on the Finset side). 2-line proof, useful structural lemma about IE that should have lived with its type.
+
+**Trivalent.BathroomDisjunction (~75 lines): moved to consumer study.** The `BathWorld` toy model + `pT3`/`qT3`/`inclDisj`/`exclDisj`/`bathAlts` defs + the 6 bathroom-specific theorems (including the 2 `native_decide` ones) were paper-anchored to @cite{wang-davidson-2026} and consumed only by `Phenomena/Presupposition/Studies/WangDavidson2026.lean`. Moved into the study file as native content. `Trivalent.lean` now contains only generic EXH¹/EXH² infrastructure (no `native_decide`, no toy models). Per `project_examples_to_phenomena.md` policy.
+
+**SplitExhaustification.lean (498 lines): moved to consumer study.** `Theories/Semantics/Exhaustification/SplitExhaustification.lean` → `Phenomena/Modality/Studies/AlonsoOvalleMoghiseh2025Generic.lean`. Single-paper formalization of @cite{alonso-ovalle-moghiseh-2025}'s split exhaustification analysis. Imports nothing from the Exhaustification subdir; companion study file `AlonsoOvalleMoghiseh2025.lean` already ran the same theorems via `native_decide` on a finite world type. Renamed `namespace Exhaustification.SplitExhaustification` → `namespace AlonsoOvalleMoghiseh2025.Generic`. Linglib.lean import wiring updated.
+
+Total Theories/Semantics/Exhaustification/ subdir size: 4402 → ~3500 lines after Phases B-F partial. Remaining queued: FreeChoice.lean section cleanup (sections 2-7 are generic monotonicity/antitonicity, don't use exhaustification machinery), existsIn unification.
+
 ## [0.230.236] - 2026-04-23
 
 ### Cleanup — Tier 2 dead trio of Core/ triage

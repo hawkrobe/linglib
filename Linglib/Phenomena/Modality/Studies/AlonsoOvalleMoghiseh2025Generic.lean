@@ -1,7 +1,7 @@
 import Mathlib.Tactic.FinCases
 import Mathlib.Data.Fintype.Fin
 
-/-! # Split Exhaustification: General Theory
+/-! # Alonso-Ovalle & Moghiseh 2025: Generic split exhaustification
 @cite{alonso-ovalle-moghiseh-2025}
 
 General theorems grounding the split exhaustification analysis of
@@ -9,9 +9,9 @@ Existential Free Choice Items (EFCIs). These results hold for arbitrary
 domains — not specific world types — capturing the logical core of
 the analysis at full generality.
 
-The study file `Phenomena/Modality/Studies/AlonsoOvalleMoghiseh2025.lean`
-verifies each result computationally via `native_decide` on 2-book worlds.
-This file proves them structurally, without `native_decide`.
+The companion file `AlonsoOvalleMoghiseh2025.lean` (same directory)
+verifies each result computationally via `native_decide` on 2-book worlds;
+this file proves them structurally, without `native_decide`.
 
 ## Architecture
 
@@ -63,7 +63,7 @@ at `Q d := ∃ w, Acc w ∧ P d w`. The modal theorems add:
 15. **General plurality** (`modal_domain_exh_plurality`): ∃≥2 for any D
 -/
 
-namespace Exhaustification.SplitExhaustification
+namespace AlonsoOvalleMoghiseh2025.Generic
 
 
 -- ============================================================
@@ -495,4 +495,4 @@ theorem modal_split_full_compatible_with_joint :
     · exact Or.inr ⟨rfl, by decide⟩
 
 
-end Exhaustification.SplitExhaustification
+end AlonsoOvalleMoghiseh2025.Generic

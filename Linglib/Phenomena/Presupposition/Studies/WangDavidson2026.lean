@@ -254,29 +254,80 @@ theorem bool_xor_lifts_to_sk (a b : Bool) :
 -- ════════════════════════════════════════════════════════════════
 
 /-!
-### Trivalent exhaustification and presupposition inheritance
+### Bathroom disjunction model
 
-The bathroom disjunction verification from `Trivalent.lean` shows:
-- EXH¹ preserves filtering at the critical world (`pOnly`)
-- EXH² destroys filtering at the critical world (`pOnly`)
-
-This drives the Type A/B split. The mechanism:
-- EXH¹ uses **weak negation** (`~# = true`), so the conjunction
-  alternative's undefinedness at `pOnly` is harmlessly "negated"
-- EXH² uses **strong negation** (`~# = #`), so the conjunction
-  alternative's undefinedness propagates upward as a new
-  presupposition requirement
+"φ or ψ" where ψ presupposes π and ¬φ entails π. We instantiate the
+generic trivalent EXH¹/EXH² operators on a 3-world toy model that
+captures the experiment's critical configuration.
 -/
 
-/-- Re-export: EXH¹ preserves filtering (Type B). -/
-theorem exh1_preserves_filtering :
-    exh1 bathAlts inclDisj .pOnly = .true :=
-  exh1_disjunction_pOnly
+/-- Three worlds for the bathroom disjunction:
+    - `pOnly`: p true, q's presupposition fails (#)
+    - `qOnly`: p false, q true (presupposition satisfied)
+    - `neither`: p false, q false (presupposition satisfied) -/
+inductive BathWorld where
+  | pOnly | qOnly | neither
+  deriving Repr, DecidableEq, Fintype
 
-/-- Re-export: EXH² destroys filtering (Type A). -/
+/-- p: always defined (no presupposition). -/
+def pT3 : BathWorld → Truth3
+  | .pOnly => .true
+  | _ => .false
+
+/-- q: presupposes ¬p (defined only when p is false). -/
+def qT3 : BathWorld → Truth3
+  | .pOnly => .indet  -- presupposition failure
+  | .qOnly => .true
+  | .neither => .false
+
+/-- Inclusive disjunction under Strong Kleene allows filtering:
+    at `pOnly`, p is true and q is undefined, but `join` returns true.
+    The second disjunct's presupposition is "filtered". -/
+theorem inclusive_allows_filtering :
+    Truth3.join (pT3 .pOnly) (qT3 .pOnly) = .true := by rfl
+
+/-- Exclusive disjunction does NOT allow filtering:
+    at `pOnly`, `xor` returns undefined because q's value is unknown. -/
+theorem exclusive_no_filtering :
+    Truth3.xor (pT3 .pOnly) (qT3 .pOnly) = .indet := by rfl
+
+/-- Inclusive disjunction as Prop3 (Strong Kleene). -/
+def inclDisj : BathWorld → Truth3 := fun w => Truth3.join (pT3 w) (qT3 w)
+
+/-- Exclusive disjunction as Prop3 (Strong Kleene). -/
+def exclDisj : BathWorld → Truth3 := fun w => Truth3.xor (pT3 w) (qT3 w)
+
+/-- Inclusive disjunction is defined at pOnly (filtering). -/
+theorem incl_defined_at_pOnly : inclDisj .pOnly = .true := by rfl
+
+/-- Exclusive disjunction is undefined at pOnly (no filtering). -/
+theorem excl_undef_at_pOnly : exclDisj .pOnly = .indet := by rfl
+
+/-- Alternative set for the bathroom disjunction: {p∨q, p, q, p∧q}.
+    The conjunction alternative `p ∧ q` is the only IE alternative
+    (by @cite{fox-2007}). -/
+def bathAlts : List (BathWorld → Truth3) :=
+  [ inclDisj, pT3, qT3
+  , fun w => Truth3.meet (pT3 w) (qT3 w) ]
+
+/-!
+### EXH¹ vs EXH² on the bathroom disjunction
+
+EXH¹ uses **weak negation** (`~# = true`), so the conjunction
+alternative's undefinedness at `pOnly` is harmlessly "negated":
+EXH¹ preserves filtering (Type B).
+
+EXH² uses **strong negation** (`~# = #`), so the conjunction
+alternative's undefinedness propagates upward as a new presupposition
+requirement: EXH² destroys filtering (Type A). -/
+
+/-- EXH¹ preserves filtering at the critical world (Type B). -/
+theorem exh1_preserves_filtering :
+    exh1 bathAlts inclDisj .pOnly = .true := by native_decide
+
+/-- EXH² destroys filtering at the critical world (Type A). -/
 theorem exh2_destroys_filtering :
-    exh2 bathAlts inclDisj .pOnly = .indet :=
-  exh2_disjunction_pOnly
+    exh2 bathAlts inclDisj .pOnly = .indet := by native_decide
 
 
 -- ════════════════════════════════════════════════════════════════

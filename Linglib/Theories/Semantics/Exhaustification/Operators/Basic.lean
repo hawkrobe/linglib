@@ -168,6 +168,11 @@ the negations of innocently excludable alternatives."
 def IE : Set (Set World) :=
   {ψ | ∀ E, IsMCSet ALT φ E → ψ ∈ E}
 
+/-- The prejacent always lies in IE — every MC-set is `(ALT, φ)`-compatible
+and therefore contains `φ`. Mirrors `Innocent.phi_mem_IE` on the Finset side. -/
+theorem phi_mem_IE : φ ∈ IE ALT φ :=
+  fun _ hE_mc => hE_mc.1.1
+
 /--
 Definition 3.5: An alternative a is innocently excludable given ALT and φ
 if and only if ¬a ∈ IE_(ALT,φ).
