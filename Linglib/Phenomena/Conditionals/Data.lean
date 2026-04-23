@@ -17,7 +17,8 @@ or pragmatic theory.
 
 -/
 
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Mathlib.Data.Rat.Defs
 
 namespace Phenomena.Conditionals

@@ -32,11 +32,13 @@ These tests identify what's presupposed vs. what's asserted.
 -/
 
 import Linglib.Core.Semantics.Presupposition
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 
 namespace Phenomena.Presupposition.Diagnostics
 
-open Core.Empirical
+open Features (Acceptability)
+open Paradigms.Measurement
 
 /--
 A diagnostic test result: sentence + judgment.

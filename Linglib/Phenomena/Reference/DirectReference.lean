@@ -17,7 +17,8 @@ in `Theories/Semantics.Intensional/Reference/`.
 
 -/
 
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 
 namespace Phenomena.Reference.DirectReference
 

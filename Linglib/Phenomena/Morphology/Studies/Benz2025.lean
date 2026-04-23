@@ -1,5 +1,6 @@
 import Linglib.Theories.Morphology.DM.Allosemy
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Linglib.Fragments.German.Predicates
 
 /-!
@@ -29,13 +30,14 @@ This file formalizes three interconnected contributions from @cite{benz-2025}:
 ## Architecture
 
 - `Morphology.DM.Allosemy`: general framework + v/n/Voice allosemy
-- `Core.Empirical`: Acceptability type
+- `Features.Acceptability`: Acceptability type
 -/
 
 namespace Benz2025
 
 open Morphology.DM.Allosemy
-open Core.Empirical
+open Features (Acceptability)
+open Paradigms.Measurement
 open Fragments.German.Predicates
 open Core.Verbs
 

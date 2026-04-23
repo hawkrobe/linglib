@@ -96,7 +96,7 @@ open Lechner2004 (BindingDatum RAPredictsCoref DAPredictsCoref
   realizesReduction realizesDirect HeadAvailability headAvailabilityFromBinding
   PhrasalAnalysis)
 open Bresnan1973 (BresnanThanClauseAnalysis bresnanAnalysisOf)
-open Core.Empirical (Acceptability)
+open Features (Acceptability)
 open Minimalism.Semantics.DegreeMovement
   (ScopeBinding IsBhattTakahashiScopeLicit
    not_isBhattTakahashiScopeLicit_base_above_DegP

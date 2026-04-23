@@ -1,5 +1,6 @@
 import Linglib.Core.Semantics.ContentLayer
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 
 /-!
 # Denial in Discourse

@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Linglib.Theories.Pragmatics.Implicature.ScalarImplicatures.Basic
 import Linglib.Theories.Semantics.Exhaustification.ScalePredictions
 import Linglib.Phenomena.ScalarImplicatures.Basic
@@ -49,7 +50,8 @@ Griceans predict SIs are global pragmatic inferences only.
 
 namespace GeurtsPouscoulous2009
 
-open Core.Empirical
+open Features (Acceptability)
+open Paradigms.Measurement
 
 -- ============================================================================
 -- Shared Types

@@ -1,4 +1,5 @@
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 
 /-!
 # Psych Verb Data (@cite{belletti-rizzi-1988}, @cite{kim-2024})

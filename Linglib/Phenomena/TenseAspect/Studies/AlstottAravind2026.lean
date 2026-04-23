@@ -1,11 +1,13 @@
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Linglib.Fragments.English.TemporalExpressions
 import Linglib.Phenomena.TemporalConnectives.Studies.Rett2020
 import Linglib.Fragments.Tagalog.TemporalConnectives
 import Linglib.Fragments.Serbian.TemporalConnectives
 import Linglib.Phenomena.TemporalConnectives.Compare
 
-open Core.Empirical
+open Features (Acceptability)
+open Paradigms.Measurement
 
 /-!
 # @cite{alstott-aravind-2026}: On aspectual coercion in *before*- and *after*-clauses

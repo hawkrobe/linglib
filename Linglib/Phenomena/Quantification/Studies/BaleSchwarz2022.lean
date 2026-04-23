@@ -1,4 +1,5 @@
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Linglib.Core.Semantics.Presupposition
 import Linglib.Theories.Semantics.Probabilistic.Measurement.Basic
 import Linglib.Fragments.English.MeasurePhrases
@@ -51,7 +52,7 @@ namespace Phenomena.Quantification.BaleSchwarz2022
 open Semantics.Probabilistic.Measurement
 open Fragments.English.MeasurePhrases (gram kilo milliliter liter MeasureTermEntry)
 open Core.Presupposition (PrProp PrValue)
-open Core.Empirical (Acceptability)
+open Features (Acceptability)
 
 -- ============================================================================
 -- § 1. The Two Theories of *per*

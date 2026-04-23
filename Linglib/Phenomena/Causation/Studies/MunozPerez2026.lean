@@ -1,11 +1,13 @@
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Linglib.Theories.Syntax.Minimalism.Voice
 import Linglib.Theories.Morphology.DM.Fission
 import Linglib.Fragments.Spanish.PersonFeatures
 import Linglib.Fragments.Spanish.Predicates
 import Linglib.Fragments.Spanish.Clitics
 
-open Core.Empirical
+open Features (Acceptability)
+open Paradigms.Measurement
 
 /-!
 # Muñoz @cite{munoz-perez-2026} — Empirical Data

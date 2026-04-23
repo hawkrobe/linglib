@@ -1,4 +1,5 @@
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 
 /-!
 # Lechner 2004: Ellipsis in Comparatives
@@ -72,7 +73,7 @@ schema.
 
 namespace Lechner2004
 
-open Core.Empirical (Acceptability)
+open Features (Acceptability)
 
 -- ════════════════════════════════════════════════════
 -- § 1. The two analyses

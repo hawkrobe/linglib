@@ -1,5 +1,6 @@
 import Mathlib.Data.Rat.Defs
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 
 /-!
 # @cite{van-tiel-geurts-2016} — Scalar Diversity

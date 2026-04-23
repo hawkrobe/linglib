@@ -1,4 +1,5 @@
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Mathlib.Data.Rat.Defs
 import Linglib.Theories.Semantics.Conditionals.Exhaustivity
 import Linglib.Theories.Semantics.Conditionals.Basic

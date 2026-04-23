@@ -1,5 +1,6 @@
 import Linglib.Core.Lexical.Word
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 import Linglib.Theories.Syntax.ConstructionGrammar.Studies.FillmoreKayOConnor1988
 import Linglib.Core.Lexical.PolarityItem
 
@@ -24,7 +25,8 @@ Idiomaticity in Grammatical Constructions: The Case of *Let Alone*"
 
 namespace FillmoreKayOConnor1988
 
-open Core.Empirical
+open Features (Acceptability)
+open Paradigms.Measurement
 
 /-- A single attested or judged example. -/
 structure ExampleDatum where
@@ -347,13 +349,13 @@ classification: *barely* is a syntactic negative polarity trigger,
 *almost* is not. -/
 
 open _root_.FillmoreKayOConnor1988 in
-open Core.Empirical in
+open Features (Acceptability) in
 /-- *barely* licenses *let alone* in the phenomena data. -/
 theorem barely_licenses_let_alone :
     ex115.judgment = Acceptability.ok := rfl
 
 open _root_.FillmoreKayOConnor1988 in
-open Core.Empirical in
+open Features (Acceptability) in
 /-- *almost* does NOT license *let alone* in the phenomena data. -/
 theorem almost_blocks_let_alone :
     ex113.judgment = Acceptability.unacceptable := rfl

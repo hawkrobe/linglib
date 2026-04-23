@@ -2,7 +2,8 @@ import Linglib.Theories.Syntax.ConstructionGrammar.ArgumentStructure
 import Linglib.Theories.Semantics.Tense.Aspect.LexicalAspect
 import Linglib.Theories.Semantics.Verb.EventStructure
 import Linglib.Theories.Interfaces.SyntaxSemantics.Linking
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 
 /-!
 # @cite{goldberg-jackendoff-2004}: The English Resultative as a Family of Constructions
@@ -1022,7 +1023,8 @@ Theory-neutral grammaticality judgments and aspectual contrasts drawn
 from §§2–8 of the paper. These provide the shared data layer that
 other studies (Dendikken, Tay, Levin) connect to their own analyses. -/
 
-open Core.Empirical
+open Features (Acceptability)
+open Paradigms.Measurement
 
 /-- What type of resultative is exemplified.
 

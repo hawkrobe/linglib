@@ -1,4 +1,5 @@
-import Linglib.Core.Empirical
+import Linglib.Features.Acceptability
+import Linglib.Paradigms.Measurement
 
 /-!
 # Left-Nested Conditionals: Empirical Data

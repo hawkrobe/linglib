@@ -4,6 +4,47 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.235] - 2026-04-23
+
+### Dissolved — `Core/Empirical.lean` (Tier 1 #2 of Core/ triage)
+
+98-LOC, 25-importer dump bag identified by the triage as priority 2.
+Three concerns bundled (substance taxonomy + methodology types + dead
+empirical-fit table) plus the `TaskType` clash with `Paradigms/`.
+
+**Split into:**
+
+- **`Features/Acceptability.lean`** (`namespace Features`) — the
+  `Acceptability` linguistic-judgment-diacritic enum (`*`/`?`/`#`/`%`/...)
+  Substance taxonomy; the most heavily-used symbol from Empirical.lean
+  (~9 direct callers + transitive use everywhere `Acceptability` is
+  pattern-matched).
+- **`Paradigms/Measurement.lean`** (`namespace Paradigms.Measurement`) —
+  `ScaleType` (binary/proportion/ordinal/continuous), `TaskType`
+  (selfPacedReading/eyeTracking/...), `MeasureSpec`. Methodology types
+  with a docstring flagging that `TaskType` is a placeholder enum
+  pending per-paradigm anchored files (the long-term goal: each
+  `TaskType` constructor migrates into a `Paradigms/X.lean` anchored on
+  the paradigm's methodological review, à la `Paradigms/VisualWorld.lean`
+  on Huettig-Rommers-Meyer 2011).
+
+**Deleted:**
+
+- `ProcessingDimension`, `taskSensitiveDimensions`,
+  `ProcessingObservation` — zero consumers; the
+  `taskSensitiveDimensions` hand-coded `TaskType → List
+  ProcessingDimension` table was the empirical-fit-table anti-pattern
+  flagged by CLAUDE.md `Theories/Processing/` scope rules ("no enums of
+  measurement instruments, no per-paper empirical-fit tables").
+- `Core/Empirical.lean` — file removed entirely.
+
+**Consumer updates:** all 25 `import Linglib.Core.Empirical` sites
+repointed; `open Core.Empirical` (no specifier) → `open Features
+(Acceptability)` + `open Paradigms.Measurement`; `open Core.Empirical
+(Acceptability)` → `open Features (Acceptability)`. Bulk perl handled
+`Core.Empirical.X` → either `Features.Acceptability` /
+`Paradigms.Measurement.X` based on which symbol.
+
 ## [0.230.234] - 2026-04-23
 
 ### Exhaustification subdir audit (Phases D+E): drop thin bundles + 3 dead modules

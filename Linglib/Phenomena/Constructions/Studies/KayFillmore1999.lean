@@ -33,7 +33,8 @@ Generalizations: The *What's X doing Y?* Construction" (Language 75(1):1–33).
 namespace KayFillmore1999
 
 open FillmoreKayOConnor1988
-open Core.Empirical
+open Features (Acceptability)
+open Paradigms.Measurement
 
 /-- Check if a string contains a substring. -/
 def containsSubstr (s : String) (sub : String) : Bool :=
