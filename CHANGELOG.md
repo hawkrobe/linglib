@@ -4,6 +4,32 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.238] - 2026-04-23
+
+### Exhaustification subdir audit: drop dead §7 PolarityComposition
+
+`Theories/Semantics/Exhaustification/FreeChoice.lean` § 7 (Polarity Composition) deleted: 4 theorems (`double_negation_ue`, `ue_under_de`, `de_under_ue`, `ue_under_ue`) that were trivial 1-line wrappers around `Antitone.comp`/`Monotone.comp`/etc. from mathlib. 0 external callers across all of Linglib.
+
+The remaining mixed content in `FreeChoice.lean` (§§2-5 Chierchia 2013 polarity corpus, consumed by Polarity studies) needs a structural decision (rename-to-Chierchia2013 vs split out) that's deferred. §7 deletion is the unblocked sub-fix.
+
+**Phase G deferred**: `existsIn`/`existsInDomain` reinvented across 3 files (Antiexhaustive uses `List Entity` for computability, FreeChoice uses `Set Entity`, Polarity/AlonsoOvalleMoghiseh2025 uses `Domain Entity`). Unification means committing to semantic tradeoffs (computability, downstream proof shape). Genuine cleanup but more involved than the other audit items; queued for a focused follow-up.
+
+### Exhaustification audit roll-up (Phases B-F summary)
+
+Across commits 0.230.230, 0.230.234, 0.230.237, 0.230.238, the `Theories/Semantics/Exhaustification/` subdir went 4402 → ~3470 lines. Major changes:
+
+- **2 hoisted IE criteria + 1 IE structural lemma + 1 compatibility helper** added to `Operators/Basic.lean`: `IsCompatible.exists_phi_witness`, `IsInnocentlyExcludable.of_extension_consistent`, `phi_mem_IE`. Combined with the earlier 0.230.220 + 0.230.225 hoists, the IE criterion API surface is now 5 constructors/destructors next to `IsInnocentlyExcludable` for discoverability.
+- **3 dead operator files deleted** (Flat/MaximizeStrength/ExhMX, ~195 lines): paper-anchored to Wang 2025 / Spector 2016, but neither paper's study file imported them.
+- **`SetFinsetBridge.lean` deleted** (320 lines): bridge to nowhere, 0 cross-side consumers across all of Linglib.
+- **`SplitExhaustification.lean` relocated** to `Phenomena/Modality/Studies/AlonsoOvalleMoghiseh2025Generic.lean` (498 lines): single-paper formalization belongs with its phenomenon.
+- **`Trivalent.BathroomDisjunction` relocated** to `WangDavidson2026.lean` (~75 lines): worked example moved to consumer study; removes 2 `native_decide` calls from `Theories/`.
+- **Thin bundles dropped**: `ModalFCAltSet`, `entailment` field on `HurfordSemantic`/`SinghSemantic`. `pdisj` alias for `∪` inlined. `IsMinimal` redefined through `exhMW` membership (definitional, preserves named concept).
+- **4 ScalePredictions implicature theorems refactored** to use new IE criteria: ~150 → ~88 lines.
+
+The discipline through this audit: **don't force-fit refactors that don't apply, but commit to the ones that do.** `of_full_exclusion_consistent` (0.230.220) didn't simplify any existing proofs — captures a sharper precondition than the codebase needed. `not_isInnocentlyExcludable_of_compl_notMem`/`not_isInnocentlyExcludable_of_phi_subset` (0.230.225) found 7 callers. `of_extension_consistent` (this batch) found 4. The first didn't earn its line count yet; the others did.
+
+Set/Finset duplication (parallel hierarchies in `Operators/Basic.lean` vs `Innocent.lean`, glued by what's left after the bridge deletion) flagged as the structural fault line in this subdir but **deferred** as a multi-day refactor that needs its own design discussion.
+
 ## [0.230.237] - 2026-04-23
 
 ### Exhaustification subdir audit (Phase F partial): three relocations

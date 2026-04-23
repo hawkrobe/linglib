@@ -448,50 +448,7 @@ theorem diamond_distributes_iff (p q : Set World) :
 end FCDuality
 
 -- ============================================================================
--- § 7. Polarity Composition (grounded from Mathlib)
--- ============================================================================
-
-/-!
-## Polarity Composition Laws
-
-@cite{chierchia-2013} Ch. 1 §1.1.3:
-
-The four composition rules for monotonicity, grounded in Mathlib's
-order theory. These are the foundation for all of Chierchia's results.
--/
-
-section PolarityComposition
-
-variable {World : Type*}
-
-/-- Double negation restores UE: "Nobody doubts that..." is UE.
-    DE ∘ DE = UE, from Mathlib's `Antitone.comp`. -/
-theorem double_negation_ue {f g : Set World → Set World}
-    (hf : Antitone f) (hg : Antitone g) : Monotone (f ∘ g) :=
-  hf.comp hg
-
-/-- DE under UE stays DE: "It's true that nobody..." is DE.
-    UE ∘ DE = DE -/
-theorem ue_under_de {f g : Set World → Set World}
-    (hf : Monotone f) (hg : Antitone g) : Antitone (f ∘ g) :=
-  hf.comp_antitone hg
-
-/-- UE under DE stays DE: "Nobody said..." is DE when "said" is UE.
-    DE ∘ UE = DE -/
-theorem de_under_ue {f g : Set World → Set World}
-    (hf : Antitone f) (hg : Monotone g) : Antitone (f ∘ g) :=
-  hf.comp_monotone hg
-
-/-- UE under UE stays UE: "Somebody said..." is UE.
-    UE ∘ UE = UE -/
-theorem ue_under_ue {f g : Set World → Set World}
-    (hf : Monotone f) (hg : Monotone g) : Monotone (f ∘ g) :=
-  hf.comp hg
-
-end PolarityComposition
-
--- ============================================================================
--- § 8. Bridge: Maximize Strength = Exhaustification
+-- § 7. Bridge: Maximize Strength = Exhaustification
 -- ============================================================================
 
 /-!
