@@ -87,6 +87,31 @@ def Side.label : Side → String
   | .lhs => "L"
   | .rhs => "R"
 
+/-- The three roles for a reduplicative correspondence diagram
+    (@cite{mccarthy-prince-1995} §3): underlying input, base output,
+    and reduplicant output. Substrate role type for `Corr.reduplication`
+    — the canonical `(I, B, R)` triple of M&P 1995 reduplicative
+    correspondence. Sibling of `Side` (binary), `TCT.Role` (BR vs OO
+    distinction), and `StratalCorr.StratalRole` (chain of strata).
+
+    The 3-role pattern with `.input` and `.base` is shared with
+    `TCT.Role` (whose third role is `.derivative` for OO-correspondence
+    over morphologically-related words rather than within-form
+    reduplication). The architectural distinction between BR and OO is
+    a *role-type* commitment, not a substrate distinction. -/
+inductive RedupRole where
+  | input
+  | base
+  | reduplicant
+  deriving DecidableEq, Repr
+
+/-- Display label for a `RedupRole` (used in constraint names: `MAX-IO`,
+    `MAX-BR`, `IDENT-BR`). -/
+def RedupRole.label : RedupRole → String
+  | .input       => "I"
+  | .base        => "B"
+  | .reduplicant => "R"
+
 -- ============================================================================
 -- § 2: The Correspondence Diagram
 -- ============================================================================
@@ -234,8 +259,20 @@ def integrityViol (c : Corr Role α) (r₁ r₂ : Role) : ℕ :=
     ((c.edge r₁ r₂).filter fun p => p.1 = i).card > 1).card
 
 -- ============================================================================
--- § 7: Universal Constructors (binary case via `Side`)
+-- § 7: Universal Constructors (binary case via `Side`, ternary via `RedupRole`)
 -- ============================================================================
+
+/-- Generic well-formedness lemma: parallel-pair edges of length `n`
+    `(0,0), (1,1), …, (n-1, n-1)` are well-formed for any pair of forms
+    of length `≥ n`. The substrate `wf` proof every multi-role
+    `Corr` constructor reduces to. -/
+theorem range_image_wf (n m₁ m₂ : ℕ) (h₁ : n ≤ m₁) (h₂ : n ≤ m₂) :
+    ∀ p ∈ (Finset.range n).image (fun i => (i, i)),
+      p.1 < m₁ ∧ p.2 < m₂ := by
+  intro p hmem
+  simp only [Finset.mem_image, Finset.mem_range] at hmem
+  obtain ⟨i, hi, rfl⟩ := hmem
+  exact ⟨lt_of_lt_of_le hi h₁, lt_of_lt_of_le hi h₂⟩
 
 /-- The parallel-pair correspondence between two strings. Forms `.lhs ↦ s₁`,
     `.rhs ↦ s₂`; for cross-side edges, position `i` of one is paired with
@@ -267,6 +304,77 @@ def parallel (s₁ s₂ : List α) : Corr Side α where
     candidate of @cite{mccarthy-prince-1995}: input = output, every
     position paired with itself. -/
 def identity (s : List α) : Corr Side α := parallel s s
+
+/-- The reduplicative correspondence diagram: 3-role `Corr RedupRole α`
+    over input + base + reduplicant forms. Cross-role edges are
+    parallel-pair correspondences (truncated to the shorter form's
+    length):
+
+    - `(.input, .base)` and reverse: IO-correspondence
+    - `(.base, .reduplicant)` and reverse: BR-correspondence
+    - `(.input, .reduplicant)` and reverse: IR-correspondence
+      (M&P 1995 §6 Full Model)
+
+    The canonical 3-role substrate of @cite{mccarthy-prince-1995}'s
+    reduplicative correspondence theory. Study files build their
+    paper-specific candidates as `Corr.reduplication input base reduplicant`,
+    then derive constraint values via `Corr.maxViol .input .base` etc.
+    rather than stipulating violation tables.
+
+    For non-parallel BR alignments (e.g., infixation, partial reduplication
+    with morphologically-determined skip patterns), see
+    `ParadigmUniformity.Transderivational.diagramWithEdge` for the
+    explicit-edge variant. -/
+def reduplication (input base reduplicant : List α) : Corr RedupRole α where
+  form
+    | .input       => input
+    | .base        => base
+    | .reduplicant => reduplicant
+  edge r₁ r₂ :=
+    match r₁, r₂ with
+    | .input, .base       => (Finset.range (min input.length base.length)).image fun i => (i, i)
+    | .base,  .input      => (Finset.range (min input.length base.length)).image fun i => (i, i) |>.image fun p => (p.2, p.1)
+    | .input, .reduplicant => (Finset.range (min input.length reduplicant.length)).image fun i => (i, i)
+    | .reduplicant, .input => (Finset.range (min input.length reduplicant.length)).image fun i => (i, i) |>.image fun p => (p.2, p.1)
+    | .base,  .reduplicant => (Finset.range (min base.length reduplicant.length)).image fun i => (i, i)
+    | .reduplicant, .base  => (Finset.range (min base.length reduplicant.length)).image fun i => (i, i) |>.image fun p => (p.2, p.1)
+    | _, _ => ∅
+  wf := by
+    intro r₁ r₂ p hmem
+    match r₁, r₂, hmem with
+    | .input, .base, h =>
+        exact range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) p h
+    | .base, .input, h =>
+        simp only [Finset.mem_image] at h
+        obtain ⟨q, hq, rfl⟩ := h
+        have ⟨h1, h2⟩ := range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) q hq
+        exact ⟨h2, h1⟩
+    | .input, .reduplicant, h =>
+        exact range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) p h
+    | .reduplicant, .input, h =>
+        simp only [Finset.mem_image] at h
+        obtain ⟨q, hq, rfl⟩ := h
+        have ⟨h1, h2⟩ := range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) q hq
+        exact ⟨h2, h1⟩
+    | .base, .reduplicant, h =>
+        exact range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) p h
+    | .reduplicant, .base, h =>
+        simp only [Finset.mem_image] at h
+        obtain ⟨q, hq, rfl⟩ := h
+        have ⟨h1, h2⟩ := range_image_wf _ _ _ (min_le_left _ _) (min_le_right _ _) q hq
+        exact ⟨h2, h1⟩
+    | .input, .input, h => exact absurd h (Finset.notMem_empty _)
+    | .base, .base, h => exact absurd h (Finset.notMem_empty _)
+    | .reduplicant, .reduplicant, h => exact absurd h (Finset.notMem_empty _)
+
+@[simp] theorem reduplication_form_input (input base reduplicant : List α) :
+    (reduplication input base reduplicant).form .input = input := rfl
+
+@[simp] theorem reduplication_form_base (input base reduplicant : List α) :
+    (reduplication input base reduplicant).form .base = base := rfl
+
+@[simp] theorem reduplication_form_reduplicant (input base reduplicant : List α) :
+    (reduplication input base reduplicant).form .reduplicant = reduplicant := rfl
 
 -- ============================================================================
 -- § 8: Identity Zero Theorems
@@ -390,6 +498,47 @@ def toMaxConstraint {Role α : Type} (r₁ r₂ : Role) (label : String) :
 def toDepConstraint {Role α : Type} (r₁ r₂ : Role) (label : String) :
     NamedConstraint (Corr Role α) :=
   toConstraint .faithfulness ("DEP-" ++ label) (fun c => c.depViol r₁ r₂)
+
+end Corr
+
+-- ============================================================================
+-- § 10b: Reduplication-specific NamedConstraints (M&P 1995 §3)
+-- ============================================================================
+
+/-- The canonical M&P 1995 reduplicative-faithfulness constraints, as
+    `NamedConstraint (Corr RedupRole α)`. Each is a 1-line specialization
+    of the role-polymorphic `Corr.toMaxConstraint`/`toIdentConstraint`
+    family above. Study files import these names instead of re-rolling
+    `Corr.toMaxConstraint .input .base "IO"` inline at every callsite. -/
+namespace Reduplication
+
+/-- **MAX-IO**: every input segment has a base correspondent. -/
+def maxIO {α : Type} : NamedConstraint (Corr RedupRole α) :=
+  Corr.toMaxConstraint .input .base "IO"
+
+/-- **MAX-BR**: every base segment has a reduplicant correspondent
+    (penalises partial reduplication). -/
+def maxBR {α : Type} : NamedConstraint (Corr RedupRole α) :=
+  Corr.toMaxConstraint .base .reduplicant "BR"
+
+/-- **DEP-IO**: every base segment has an input correspondent
+    (penalises epenthesis). -/
+def depIO {α : Type} : NamedConstraint (Corr RedupRole α) :=
+  Corr.toDepConstraint .input .base "IO"
+
+/-- **IDENT-BR**: corresponding base/reduplicant segments are featurally
+    identical. -/
+def identBR {α : Type} [DecidableEq α] : NamedConstraint (Corr RedupRole α) :=
+  Corr.toIdentConstraint .base .reduplicant "BR"
+
+/-- **IDENT-IO**: corresponding input/base segments are featurally
+    identical. -/
+def identIO {α : Type} [DecidableEq α] : NamedConstraint (Corr RedupRole α) :=
+  Corr.toIdentConstraint .input .base "IO"
+
+end Reduplication
+
+namespace Corr
 
 -- ============================================================================
 -- § 11: Quiver Structure

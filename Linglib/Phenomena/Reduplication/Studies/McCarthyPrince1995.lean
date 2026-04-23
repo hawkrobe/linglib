@@ -110,37 +110,24 @@ theorem javanese_overapplication :
 
 The constraints `javMaxIO`, `javIdentBR`, `javStarVhV` above stipulate
 violation counts via λ-tables. This section adds the *structural*
-substrate: each candidate is associated with a `Corr JavRedupRole Seg`
-recording the input → base / base ↔ reduplicant correspondences.
-The MAX-IO and "IDENT-BR" violation counts are then **derived from
-`Corr.maxViol`** rather than stipulated.
+substrate: each candidate is associated with a
+`Corr Phonology.Correspondence.RedupRole Seg` recording the input → base /
+base ↔ reduplicant correspondences. MAX-IO and "IDENT-BR" violation
+counts are then **derived from `Corr.maxViol`** rather than stipulated.
 
-Architectural payoff: the constraint values are no longer free
-parameters of the formalization — they follow from the segmental
-data and the morphological alignment. The *encoding-conclusions-as-
-definitions* anti-pattern flagged by the integration auditor is
-discharged: the agreement theorems below prove the original
-stipulations match the structural counts.
+The 3-role substrate (`RedupRole`, `Corr.reduplication`,
+`Reduplication.maxIO`/`maxBR`) lives in
+`Theories/Phonology/OptimalityTheory/Correspondence.lean` — paper-agnostic
+and reusable across reduplicative studies (Balangao, Akan, Tagalog, …).
+This section supplies only the Javanese-specific data + agreement theorems.
 
 (`*VhV` remains a markedness constraint with no `Corr`-derived form
 — markedness is structural over a single output, not a correspondence
-relation.)
-
-Pattern documented for Javanese only; the same refactor applies to
-Balangao (§2) and Akan (§5), deferred to follow-up sessions. -/
+relation.) -/
 
 namespace JavaneseCorr
 
-open Phonology.Correspondence (Corr)
-
-/-- Roles for a reduplicative correspondence diagram: input UR, base
-    output, reduplicant output. (M&P 1995's basic 3-way correspondence
-    family — `.io`, `.br`, `.ir` — projected onto vertex roles.) -/
-inductive RedupRole where
-  | input
-  | base
-  | reduplicant
-  deriving DecidableEq, Repr
+open Phonology.Correspondence (Corr RedupRole)
 
 /-- Phonological segments for the Javanese stem. Minimal abstract
     inventory (just the contrasts that matter for h-deletion). -/
@@ -157,141 +144,22 @@ def baseDeleted : List Seg := [.b, .ə, .d, .a]
 /-- The base output `[bədah]` (h preserved, 5 segments). For `.under`/`.normal`. -/
 def baseFaithful : List Seg := [.b, .ə, .d, .a, .h]
 
-/-- IO-correspondence edge for a faithful base: parallel pairs
-    `(0,0)…(4,4)`. -/
-def ioFaithfulEdge : Finset (ℕ × ℕ) :=
-  (Finset.range 5).image fun i => (i, i)
-
-/-- IO-correspondence edge for the deleted base: parallel pairs
-    `(0,0)…(3,3)` — input position 4 (h) has no base correspondent. -/
-def ioDeletedEdge : Finset (ℕ × ℕ) :=
-  (Finset.range 4).image fun i => (i, i)
-
-/-- BR-correspondence edge for full copying: parallel pairs `(0,0)…(n-1,n-1)`. -/
-def brFullEdge (n : ℕ) : Finset (ℕ × ℕ) :=
-  (Finset.range n).image fun i => (i, i)
-
-/-- BR-correspondence edge for partial copying (R missing the last
-    segment): parallel pairs `(0,0)…(n-2,n-2)` — base position `n-1`
-    has no R correspondent. -/
-def brPartialEdge (n : ℕ) : Finset (ℕ × ℕ) :=
-  (Finset.range (n - 1)).image fun i => (i, i)
-
-/-- Helper: parallel-pair edges of length `n` are well-formed for any
-    pair of forms whose lengths are at least `n`. -/
-private theorem range_image_wf (n m₁ m₂ : ℕ) (h₁ : n ≤ m₁) (h₂ : n ≤ m₂) :
-    ∀ p ∈ (Finset.range n).image (fun i => (i, i)),
-      p.1 < m₁ ∧ p.2 < m₂ := by
-  intro p hmem
-  simp only [Finset.mem_image, Finset.mem_range] at hmem
-  obtain ⟨i, hi, rfl⟩ := hmem
-  exact ⟨lt_of_lt_of_le hi h₁, lt_of_lt_of_le hi h₂⟩
-
 /-- The `Corr` for the `over` candidate: h deleted from base and
-    reduplicant; B = R structurally; one IO-MAX violation (the deleted h). -/
-def overCorr : Corr RedupRole Seg where
-  form
-    | .input       => stemInput
-    | .base        => baseDeleted
-    | .reduplicant => baseDeleted
-  edge r₁ r₂ :=
-    match r₁, r₂ with
-    | .input, .base       => ioDeletedEdge
-    | .base,  .input      => ioDeletedEdge.image fun p => (p.2, p.1)
-    | .base,  .reduplicant => brFullEdge 4
-    | .reduplicant, .base  => (brFullEdge 4).image fun p => (p.2, p.1)
-    | _, _ => ∅
-  wf := by
-    intro r₁ r₂ p hmem
-    match r₁, r₂, hmem with
-    | .input, .base, h => exact range_image_wf 4 5 4 (by decide) (by decide) p h
-    | .base, .input, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf 4 5 4 (by decide) (by decide) q hq
-        exact ⟨h2, h1⟩
-    | .base, .reduplicant, h => exact range_image_wf 4 4 4 le_rfl le_rfl p h
-    | .reduplicant, .base, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf 4 4 4 le_rfl le_rfl q hq
-        exact ⟨h2, h1⟩
-    | .input, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .input, .reduplicant, h => exact absurd h (Finset.notMem_empty _)
-    | .reduplicant, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .base, .base, h => exact absurd h (Finset.notMem_empty _)
-    | .reduplicant, .reduplicant, h => exact absurd h (Finset.notMem_empty _)
+    reduplicant. -/
+def overCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput baseDeleted baseDeleted
 
-/-- The `Corr` for the `under` candidate: h preserved in base and
-    reduplicant; B = R structurally; zero IO-MAX violations. -/
-def underCorr : Corr RedupRole Seg where
-  form
-    | .input       => stemInput
-    | .base        => baseFaithful
-    | .reduplicant => baseFaithful
-  edge r₁ r₂ :=
-    match r₁, r₂ with
-    | .input, .base       => ioFaithfulEdge
-    | .base,  .input      => ioFaithfulEdge.image fun p => (p.2, p.1)
-    | .base,  .reduplicant => brFullEdge 5
-    | .reduplicant, .base  => (brFullEdge 5).image fun p => (p.2, p.1)
-    | _, _ => ∅
-  wf := by
-    intro r₁ r₂ p hmem
-    match r₁, r₂, hmem with
-    | .input, .base, h => exact range_image_wf 5 5 5 le_rfl le_rfl p h
-    | .base, .input, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf 5 5 5 le_rfl le_rfl q hq
-        exact ⟨h2, h1⟩
-    | .base, .reduplicant, h => exact range_image_wf 5 5 5 le_rfl le_rfl p h
-    | .reduplicant, .base, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf 5 5 5 le_rfl le_rfl q hq
-        exact ⟨h2, h1⟩
-    | .input, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .input, .reduplicant, h => exact absurd h (Finset.notMem_empty _)
-    | .reduplicant, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .base, .base, h => exact absurd h (Finset.notMem_empty _)
-    | .reduplicant, .reduplicant, h => exact absurd h (Finset.notMem_empty _)
+/-- The `Corr` for the `under` candidate: h preserved everywhere. -/
+def underCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput baseFaithful baseFaithful
 
 /-- The `Corr` for the `normal` candidate: h preserved in base, *not*
-    in reduplicant; B ≠ R structurally (R missing base position 4 = h);
-    zero IO-MAX violations, one BR-MAX violation. -/
-def normalCorr : Corr RedupRole Seg where
-  form
-    | .input       => stemInput
-    | .base        => baseFaithful
-    | .reduplicant => baseDeleted
-  edge r₁ r₂ :=
-    match r₁, r₂ with
-    | .input, .base       => ioFaithfulEdge
-    | .base,  .input      => ioFaithfulEdge.image fun p => (p.2, p.1)
-    | .base,  .reduplicant => brPartialEdge 5
-    | .reduplicant, .base  => (brPartialEdge 5).image fun p => (p.2, p.1)
-    | _, _ => ∅
-  wf := by
-    intro r₁ r₂ p hmem
-    match r₁, r₂, hmem with
-    | .input, .base, h => exact range_image_wf 5 5 5 le_rfl le_rfl p h
-    | .base, .input, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf 5 5 5 le_rfl le_rfl q hq
-        exact ⟨h2, h1⟩
-    | .base, .reduplicant, h => exact range_image_wf 4 5 4 (by decide) (by decide) p h
-    | .reduplicant, .base, h =>
-        simp only [Finset.mem_image] at h
-        obtain ⟨q, hq, rfl⟩ := h
-        have ⟨h1, h2⟩ := range_image_wf 4 5 4 (by decide) (by decide) q hq
-        exact ⟨h2, h1⟩
-    | .input, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .input, .reduplicant, h => exact absurd h (Finset.notMem_empty _)
-    | .reduplicant, .input, h => exact absurd h (Finset.notMem_empty _)
-    | .base, .base, h => exact absurd h (Finset.notMem_empty _)
-    | .reduplicant, .reduplicant, h => exact absurd h (Finset.notMem_empty _)
+    in reduplicant. The default `Corr.reduplication` constructor uses
+    parallel-pair correspondence truncated to `min`-length, which gives
+    the right BR-MAX count (1 violation: base position 4 = h has no R
+    correspondent). -/
+def normalCorr : Corr RedupRole Seg :=
+  Corr.reduplication stemInput baseFaithful baseDeleted
 
 /-- Each candidate's structural `Corr` representation. -/
 def toCorr : JavaneseCand → Corr RedupRole Seg
@@ -317,15 +185,15 @@ theorem javIdentBR_eq_corr (c : JavaneseCand) :
     javIdentBR.eval c = (toCorr c).maxViol .base .reduplicant := by
   cases c <;> decide
 
-/-- The Corr-grounded versions of the two faithfulness constraints
-    are NamedConstraints over `Corr RedupRole Seg`. They make the
-    constraint identity ("MAX-IO" = MAX on the input/base edge)
-    structural rather than verbal. -/
-def javMaxIOFromCorr : NamedConstraint (Corr RedupRole Seg) :=
-  Corr.toMaxConstraint .input .base "IO"
+/-- The Javanese tableau as `NamedConstraint (Corr RedupRole Seg)`s.
+    These are direct uses of the paper-agnostic
+    `Phonology.Correspondence.Reduplication.maxIO` / `maxBR` — no
+    Javanese-specific constraint construction needed. -/
+abbrev javMaxIOFromCorr : NamedConstraint (Corr RedupRole Seg) :=
+  Phonology.Correspondence.Reduplication.maxIO
 
-def javMaxBRFromCorr : NamedConstraint (Corr RedupRole Seg) :=
-  Corr.toMaxConstraint .base .reduplicant "BR"
+abbrev javMaxBRFromCorr : NamedConstraint (Corr RedupRole Seg) :=
+  Phonology.Correspondence.Reduplication.maxBR
 
 end JavaneseCorr
 
