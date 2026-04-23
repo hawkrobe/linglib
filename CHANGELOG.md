@@ -4,6 +4,160 @@ The release clock (`v4.29.1`, ...) tracks Lean/mathlib compatibility and is what
 
 ## [Unreleased]
 
+## [0.230.248] - 2026-04-23
+
+### Phonology consumer refactors: AkinboFwangwar2026 + McCarthyPrince1995 §§2.5/5b
+
+Two consumer-side commits applying the Stage-1+2A `Corr` substrate to
+study files. Per a triage of 20 `NamedConstraint`-using study files:
+2 Tier-A targets (high benefit, mirror established pattern), 4 Tier-B
+(low ROI, defer), 14 Tier-C (already substrate-aligned or non-phonological).
+
+#### AkinboFwangwar2026 — `PlurCorr` structural lift
+
+`Phenomena/Tone/Studies/AkinboFwangwar2026.lean §9`. The candidate type
+`PlurCand` already carries explicit `{label, redOutput, baseOutput}` —
+the data of a `Corr RedupRole OutputTBU`. Adds:
+
+- `PlurCorr.toCorr : PlurCand → Corr RedupRole OutputTBU` via
+  `Corr.reduplication` (with `[]` input — verbaliser tones are abstract)
+- 3 form-projection `@[simp]` lemmas
+- `toCorr_edge_base_reduplicant` characterizing the BR edge
+
+**Honest scoping note**: the existing constraints
+(`lAnchorViolations`, `rAnchorViolations`, `maxToneViolations`) are
+*predicate-positional measures* over single output strings, not
+naturally derived from `Corr.maxViol` / `Corr.identViol`. Lifting them
+to substrate-derived form would require modeling the verbaliser as an
+input-side morpheme with a predicate-filtered anchor variant
+(`Corr.anchorL[F]`) — a candidate-model refactor, not a constraint
+substitution. Deferred. The structural lift is enough to surface the
+substrate connection for future consumers expecting `Corr`.
+
+#### McCarthyPrince1995 — Balangao §2.5 + Akan §5b
+
+`Phenomena/Reduplication/Studies/McCarthyPrince1995.lean`. Mirroring
+the Javanese §1.5 pattern landed in 0.230.226:
+
+**Balangao (§2.5)** — `BalangaoCorr` namespace:
+- `Seg` enum (`.t | .a | .g`) — minimal /tagtag/ inventory
+- 3 candidate-specific `Corr.reduplication` instances
+  (`totalFaithfulCorr`, `totalRedupCorr`, `partialRedupCorr`)
+- `balMaxIO_eq_corr` — derives MAX-IO from `Corr.maxViol .input .base`
+- `balMaxBR_eq_corr` — derives MAX-BR from `Corr.maxViol .base .reduplicant`
+- (NO-CODA stays stipulated — markedness over single output)
+
+**Akan (§5b)** — `AkanCorr` namespace, **first study to exercise
+featural IDENT** (`Corr.identViolFeature`):
+- `Seg` enum (`.k | .tɕ | .a | .ɪ`) — minimal palatalization inventory
+- `coronal : Seg → Bool` projection (vowels = `false`, out of natural class)
+- 3 candidate-specific `Corr.reduplication` instances
+- `akanIdentIO_eq_corr` — derives IDENT-IO(-cor) via
+  `identViolFeature coronal .input .base`
+- `akanIdentBR_eq_corr` — derives IDENT-BR(-cor) via
+  `identViolFeature coronal .base .reduplicant`
+- (OCP, PAL stay stipulated — markedness)
+
+Validates the featural-IDENT pattern for any future paper using
+`IDENT-[F]` constraints. Full McCarthyPrince1995 §1.5/§2.5/§5b coverage
+of correspondence-based constraints achieved; markedness constraints
+correctly remain non-Corr (they're structural over single outputs, not
+correspondence relations).
+
+#### Triage outcome
+
+Tier A done (Balangao, Akan, AkinboFwangwar). Tier B (Stojkovic2026,
+Zuraw2010, Wang2023, Krifka2007) deferred — auditor: each saves <30 LOC
+without architectural insight. Tier C (14 files) confirmed
+substrate-aligned or non-phonological.
+
+Future Stage-2B opportunity: refactor `Theories/Phonology/Process/Harmony/OT.lean`'s
+`mkSpread`/`mkIdentHarmony` to delegate to `Corr.toIdentFeatureConstraint`,
+which would unify the 7 already-aligned harmony study files
+(SiptarTorkenczy2000, RoseWalker2004, Hansson2010, etc.) with the
+reduplication studies under one substrate.
+
+## [0.230.247] - 2026-04-23
+
+### B&E 2026: paper's strongest theorem — full SDE-and-not-SUE profile
+
+`negated_sharvit_not_SUE` (paper eq. 73) added — the existential
+counterexample showing the negated configuration is *not also* SUE.
+Combined with the previously-proved `negated_sharvit_SDE` (eq. 72),
+this gives the **full SDE-and-not-SUE monotonicity profile** that the
+NPI licensing condition (paper eq. 21) actually requires. SDE alone
+isn't enough — the NPI condition has an explicit `not SUE` clause to
+rule out the singular-definite uniqueness-collapse case.
+
+Witness model: `V = Unit`, `W = Bool`, `E = NotSUESubj` (3 elements
+with discrete preorder). One event with `CONT_v = some Set.univ`
+themed to the unique `Set.univ`-rumor; a `{true}`-rumor exists in the
+lexicon but no event has it as theme. Verifies all six §5 axioms
+(MSI, MSO, TECM, BelievingDIV, RumorDIV, WorldLocatedDIV) plus the
+two B/¬B claims. MSI is vacuous because `Set.univ` has no proper
+supersets in `Set Bool`; MSO and BelievingDIV are vacuous because
+`V = Unit` has no proper sub-eventualities; RumorDIV is vacuous
+because `NotSUESubj`'s preorder is discrete.
+
+Sharvit's empirical contrast (paper eq. 2) — *Katya doesn't believe
+the rumor that Anton has ever snowboarded* (NPI licensed) vs.
+*Katya doesn't believe the rumor that Anton has ever spread*
+(NPI blocked) — is now derivable as a Lean theorem. The paper's
+main empirical result is *fully* formalized.
+
+## [0.230.246] - 2026-04-23
+
+### D-H Cutover Phase 2: Resultatives + Tay2024 + Levin2026 ported
+
+Continues the V2 substrate cutover. Three more files migrated:
+
+- **`Theories/Semantics/Causation/Resultatives.lean`** (1107 → ~480 LOC).
+  Promoted V2 sub-namespace to top-level (`HammerFlat`, `KickIntoField`,
+  `LaughSilly`, `FreezeSolid`, `DrinkTeapotDry`, `KickDoorDirect`,
+  `KickDoorViaBall`). Local `sufficient`/`completes` predicates are
+  the canonical surface. Deleted the 7 legacy `*Var : Variable`/
+  `*Model : CausalDynamics` defs, the 150-LOC
+  `independent_source_disrupts_tightness` proof over `applyLawsOnce`,
+  the legacy `Tightness` section, the `export` of legacy CC machinery,
+  and `isCompletionEvent` + 3 theorems. Constructional grammar content
+  preserved (`deriveCausativeBuilder`, `resultativeCausativeBuilder = .make`,
+  Aspect, ChangeOfState, Müller decomposability, Mandarin parameters).
+
+- **`Phenomena/Constructions/Resultatives/Studies/Tay2024.lean`**.
+  §5 Causal Models rewritten on V2 BoolSEM: `Dasi` (dǎ-sǐ "hit-die"),
+  `Kulei` (kū-lèi "cry-tired"), `Tuikai` (tuī-kāi "push-open") each
+  get a 2-vertex BoolSEM + tightness proof via `Resultatives.completes`.
+
+- **`Phenomena/Constructions/Resultatives/Studies/Levin2026.lean`**
+  (1102 → 880 LOC). Deleted: `pushDoorOpenModel`,
+  `causationConsistent` + 2 theorems, `projectileModel`/
+  `continuousModel`/`projectileWithEnergyModel` + 4 PCC theorems,
+  `theme_has_independent_source`, the `dynamics : CausalDynamics` field
+  + `causalConsistency` proof obligation in `FilledResultative`. The
+  qualitative PCC tightness analysis is recoverable from
+  `Resultatives.KickDoorViaBall`.
+
+Build: 2795 jobs clean.
+
+**Cumulative D-H progress (Phase 1 + Phase 2):**
+- Doc cleanups: Mereology, Also, Verbal, BG2025 import (4 files)
+- Study ports: CWL2025, NL2020, N2024, BAS2026, Glass2023, Tay2024,
+  Levin2026 (~3700 LOC of legacy CausalDynamics deleted, ~1500 LOC V2
+  BoolSEM written)
+- Hub port: `Resultatives.lean` (1107 → ~480 LOC; legacy removed
+  wholesale, V2 promoted to canonical)
+
+**Remaining for D-H Phase 3+:**
+- Hub gutting: Sufficiency/Necessity/Prevention/CCSelection/
+  CoerciveImplication/Interpretation/ProductionDependence — promote V2
+  sub-namespaces to canonical, delete legacy bodies
+- CausalFrame cascade: Implicative (909 LOC) + Degree + Ability +
+  Karttunen1971 — atomic, big
+- ConditionalAssertability port to V2 PMF (V2 `develop` IS the PMF
+  inference layer)
+- Substrate deletion: `Core/Causal/SEM/*` + `BayesNet.lean`
+- `Core/Causal/V2/` → `Core/Causal/` rename + bulk namespace rewrite
+
 ## [0.230.245] - 2026-04-23
 
 ### Exhaustification: unify Set/Finset hierarchies (single source of truth for IsCompatible/IsMCSet)
